@@ -1,278 +1,186 @@
-Return-Path: <linux-kernel+bounces-428341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B46749E0DFA
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 22:38:18 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91E459E0E0F
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 22:45:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0A3A3B39059
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 20:40:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 696B7B3B11E
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 20:40:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 369501DA31F;
-	Mon,  2 Dec 2024 20:39:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6F6B1DF24D;
+	Mon,  2 Dec 2024 20:40:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T/ShCADX"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TDLOnpsM"
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8747C1DEFD2;
-	Mon,  2 Dec 2024 20:39:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 707581DEFC7;
+	Mon,  2 Dec 2024 20:40:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733171974; cv=none; b=j/UmFDsFUpHh4mA1bIree5tgWqG5P+JV7Uxai0QA6uaYIHNJq90YsXpkqzsOcteML8wKnHf5+5J0L7O8MBdQ+MPdfXlbCKPYFCu2nVrh6wjze9Ko4RwHJTdsndsikYvrh17yhs7SdskEcS18+dQgUrBgnkFPx5e2MxC5IM+imvU=
+	t=1733172030; cv=none; b=ZO1z0nvwtrrV+B/lARN3bznn7TNBljvxkm4yNATf3YuzIVK3/wT6LemEjJozuZPGF7vwGM4pJJBXFiD5PKe6H91nLFgVKjdk0dngyJDpDvJfRsX4LfdQFYBcPsLzh/1XTekgNeGmmHwvChv5kcrwKK2p3irgrjgSyQsBjjnvDfk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733171974; c=relaxed/simple;
-	bh=2PA3p9GOdm8qCLg8nr1vPh3TBdstHUOtl6ZXM6hqv4c=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=u6NBivt/BjeWLoLzyy6K4WuRzXLR6VGc9yqITgv3ExsDYpurctr/4LQyguYfygyOGqJL2eBtD0y9mIlE2e10r8EKGYmcjHmvmPA6PLLQijhSEXl5Nv9Pt9rE0w8Xdm4whhpmD+kzXvOkmtIT8fY9D0usCKtaHgvM/Ou1TgWclEE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T/ShCADX; arc=none smtp.client-ip=209.85.221.48
+	s=arc-20240116; t=1733172030; c=relaxed/simple;
+	bh=acPLnXf1i8ia07iNsomd5ZYgV7y8bgpJHhsKhg/amdI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DgX8noWsCAxMmhDGjow97IT2Fpk3EgH6A/nnzbHs0hdxPwZ8dAU+r5kGiCyWOQA2I+zMtfVbiTns/gCEwKmvDD3Y2vq8Xu5Jxao/f2vsbt6RB0kLzD4DZdWGSZlzDnzVobre/ghSJk1jjzVF1822uHl6mRlUYRx2ZLz+L9o+7p4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TDLOnpsM; arc=none smtp.client-ip=209.85.160.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-385d7b4da2bso3793313f8f.1;
-        Mon, 02 Dec 2024 12:39:32 -0800 (PST)
+Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-46686a258f7so45438581cf.1;
+        Mon, 02 Dec 2024 12:40:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733171971; x=1733776771; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1733172027; x=1733776827; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=RBCNxIql7vOqDHapA7sEh3yy9UhiEVzICf6BciQ2ElQ=;
-        b=T/ShCADX8NB3HI2Sy6e4NGT2TR1Uv0otMvG9noBPpB1cDGj+mji8n6oHQ/5IgH86Lx
-         W5ZO5Y0oBHjh8sschvCccPqFTY8iYBXtSiqj1WgFo7WY7L47sA7jsFhmFAmdvT937kH6
-         PpCNZbcP5HLSM1iw5V3QvLm5BlX+yEnhwV1Fcrx3SLstMzUeo0dh7LcwMer8fT0OIz/1
-         jEX7V3NNQ5frrFpJjo9LgZKEwE/U5nhrIdjPaZwnbYLGSj9z4/LI9lUR97v5cb0trEt6
-         IXQ97kiCKKYUIMOCxPpiVPimeCszqszM4gjnvpisKrpj57C4YCVhwLq/bZ3a93S5b5Vw
-         dxng==
+        bh=pJzYRHGrM4fQi49Zqib0i2zY9is9beuUhOSrZpSJwNk=;
+        b=TDLOnpsMnNmZTM1WmHvJdU/t3/38elCxshfEMuAFYabRa8aGNrTB6aJRLtzj5bc1R9
+         ZVp9lXN2LezJ61I9M53W96x1/ui3ZnQtLu9kF8GwHSIG0jj9EeXkT56J3ZIeh/jJ+zIi
+         JfFIh0ZBT5BxK6+qfycD7GGi8cSXHiD8IZT6uUA4n7JZ7Xn84huAC0yKoBFoorLGX1pR
+         jDgAE6kYDB5qoAxLLxVcMDzfONNUs3RVozSbyDApz5rS1VLJEYMGOQvTSZHvZvj/i66U
+         e+wh/6ECbqiLXWK+qqLQh+yIv62skGKXGAnbornpaotKGFG2XnKvL4TnH0fcjdODneIb
+         cdKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733171971; x=1733776771;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1733172027; x=1733776827;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=RBCNxIql7vOqDHapA7sEh3yy9UhiEVzICf6BciQ2ElQ=;
-        b=s9nAcs/4npoJ/keeOTAb9p9b/b/kmEygOYPJVPDsEWWP9L99AKJRgPzTqnBRGuz089
-         zPsm/tvyfOXYh5EWCkSRl5tgugWHYotjL9Fp3MiN35kZj2PSTC4ouWOI8DQXxRN0cW+Q
-         POtyvrQmbUqVk9utBcXcs/hOAHhyBzIpnBw2bXjyMqJhzcQ2/LVDkCYwCHe4eIcoO7T1
-         zGOhIhBM2XkEwH4kXuYePrg2CHcvNgNoQke55ra4XMn/KZ/RHPZZA/Mdk2yuq0MoFEHu
-         eBqlpH82Ph3RBp2+kk/mWp/g9u7yUJ3XDP8uWkpIvvFOpK0SwJ6NcMgqXgVhlU8xRAOM
-         8+8w==
-X-Forwarded-Encrypted: i=1; AJvYcCW2vJ0/HKSKCloQURsvvsz6hW1lKkDVsjCLYfF0OlfMEk+1iLX6oDCQwA+DxLjpYnXYE8mpdn2wEy0=@vger.kernel.org, AJvYcCXIt1DxquykECqyvK+c0+ayzaGijSe7uh8QTfaH74WgP1SOJH4NQIJJYEuBfN70ToOSuQDQbZghgcFN9cdK@vger.kernel.org
-X-Gm-Message-State: AOJu0YwooLJsABRZS780GSJIz5fN372RLXrJVzFi5CnNJ0lIkqq1wrbO
-	dyyg+rNVP1BVpZPObyV3xMTglvtKT81oYRHUAiYCbA3qdIPkzB5I
-X-Gm-Gg: ASbGncseoBEk9WIt5SYwwQdTk92lkX1gTLAE6FjrrsRhWC08ONsA09BOpW2AL9aVpdw
-	4aTp2u4WvK5LadHZmMliChyHH6bMvUTIpC0dOB8Fzagzpv58hBQCHxfKooVHts4zsDkcaew5GCm
-	TCXlloehz8GWLfJo1Rroub11FJvZVzRvdRYze3tqRs5kep3Gb+iMeLzUt4m+1D1ODBYC4N3xK7k
-	3nI2ljjXr7tU0fgipJWyVVFYXU/5il4cyeB1g5pzzNnJCcHUMD8MoXyXEspXdevaILwn4Hdw276
-	gw==
-X-Google-Smtp-Source: AGHT+IExicnqlI7MUgisnDfcR3qET/OtXbBsZ99IMepiGNG6dt39iYau4MNLehxwgZdZoiXpqlypRA==
-X-Received: by 2002:a05:6000:1446:b0:385:e5dc:e285 with SMTP id ffacd0b85a97d-385e5dce400mr10941824f8f.58.1733171970573;
-        Mon, 02 Dec 2024 12:39:30 -0800 (PST)
-Received: from prasmi.Home ([2a06:5906:61b:2d00:7f2:1e67:9db5:ea0c])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385e8783843sm7640201f8f.4.2024.12.02.12.39.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Dec 2024 12:39:28 -0800 (PST)
-From: Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Prabhakar <prabhakar.csengg@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v3 1/2] clk: renesas: rzv2h: Add selective Runtime PM support for clocks
-Date: Mon,  2 Dec 2024 20:39:15 +0000
-Message-ID: <20241202203916.48668-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241202203916.48668-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20241202203916.48668-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+        bh=pJzYRHGrM4fQi49Zqib0i2zY9is9beuUhOSrZpSJwNk=;
+        b=Em7zszsBnRZqsgtTFn3QKEQIPCz06TTrqLeMQJVzOxU4AWPXR9SUSWS5ZUoS88Nlvw
+         T9QwMX1rZ8iQ3nkY6xTDtk2wRTTKCV7O7l9V6h3J/UmtMAu5mxfXbFetFLr0wtKKRpCc
+         Iig/5ec8LUguSFVSjSN0AYAbniOyen1a1R5JgHk3UQE9rgxMD9jgKmuqwWtdvfoOeuLC
+         BaKA/5sTijToZtzs4G0ZKQyGKCu/EI00eofvL3ev2/mxIzX0d1el64i1PGpV+ofeXvpv
+         5h7T14l4EgZ9kN01eh3QmDREFHmUB/ICid66JITh+6yTBeqW0JEU4kVhqWCRAKrcZ7xd
+         Mb0A==
+X-Forwarded-Encrypted: i=1; AJvYcCUqO+JwFgmQWm2bzCObfK9UusllG4mQvqf/0J67m498cpamPoobuPtM2UWKdarO/msD8yS8ZW7r/vCGGZe/@vger.kernel.org, AJvYcCV4B//P8LchMafS8jRo7zjjX17l/sz2wjK236kWJ9QpXY+hvkfl70WD+q1+OBCSyAFOayDI6zf8N3b7Ikly@vger.kernel.org
+X-Gm-Message-State: AOJu0YxAAjkHUMAzk4vkJapwwGoFwD8G/we8maX6bV7Or175ztpQHOLV
+	Ie0xguelD+JplkPw3aPmHA6XNSudywpXzOJD0WVGZENwty41wMDMPx5y6gj48WYcgTMfeqjDTMO
+	UqloEtZ/Fzau5MPv7XWsj2mdE2Z8=
+X-Gm-Gg: ASbGnctI0bUzmKLU2i36KZfauENIpVGl4ZKUtqRTJGWLflBvxuX+iohlGn2fUw4d89u
+	nm3TLoDw0dxPJu+mIPI6WUwaX289WP4Om/TLkb4jGOa0PmTQ=
+X-Google-Smtp-Source: AGHT+IHx9pQSSUrRr6swBEQGXWXCJIgjyyV8BmKZStLy0exVB684kUT2ZdY3mPLc0d1H2HJTe+VrZ0RZEa9nP2l+PN8=
+X-Received: by 2002:a05:622a:181c:b0:460:f34c:12b6 with SMTP id
+ d75a77b69052e-466b366ef55mr382212701cf.44.1733172027102; Mon, 02 Dec 2024
+ 12:40:27 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241130065118.539620-1-niharchaithanya@gmail.com> <8806fcd7-8db3-4f9e-ae58-d9a2c7c55702@fastmail.fm>
+In-Reply-To: <8806fcd7-8db3-4f9e-ae58-d9a2c7c55702@fastmail.fm>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Mon, 2 Dec 2024 12:40:16 -0800
+Message-ID: <CAJnrk1b1zM=Zyn+LiV2bLbShQoCj4z5b++W2H4h7zR0QbTdZjg@mail.gmail.com>
+Subject: Re: [PATCH] fuse: add a null-ptr check
+To: Bernd Schubert <bernd.schubert@fastmail.fm>
+Cc: Nihar Chaithanya <niharchaithanya@gmail.com>, miklos@szeredi.hu, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	skhan@linuxfoundation.org, 
+	syzbot+87b8e6ed25dbc41759f7@syzkaller.appspotmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On Sat, Nov 30, 2024 at 12:22=E2=80=AFAM Bernd Schubert
+<bernd.schubert@fastmail.fm> wrote:
+>
+> On 11/30/24 07:51, Nihar Chaithanya wrote:
 
-Update `rzv2h_cpg_attach_dev` to prevent external and core clocks not tied
-to the power domain from being managed by Runtime PM. This ensures that
-only clocks originating from the domain are controlled, thereby avoiding
-unintended handling of external and core clocks.
+Hi Nihar and Bernd,
 
-Additionally, introduce a `no_pm` flag in `mod_clock` and `rzv2h_mod_clk`
-structures to exclude specific clocks from Runtime PM when needed. Some
-clocks, such as those in the CRU block, require unique enable/disable
-sequences that are incompatible with standard Runtime PM. For example,
-the CSI-2 D-PHY clock initialization requires toggling individual clocks,
-making Runtime PM unsuitable.
+> > The bug KASAN: null-ptr-deref is triggered due to *val being
+> > dereferenced when it is null in fuse_copy_do() when performing
+> > memcpy().
 
-The helper function `rzv2h_cpg_is_pm_clk()` checks whether a clock should
-be managed by Runtime PM based on this `no_pm` flag. New macros, such as
-`DEF_MOD_NO_PM`, allow straightforward declaration of clocks that bypass
-PM.
+It's not clear to me that syzbot's "null-ptr-deref" complaint is about
+*val being dereferenced when val is NULL.
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
-v2->v3
--> Replaced `rzv2h-cpg` to `rzv2h` in commit header
--> Switched to use for loop while looping
--> Considering core clocks to be non pm clocks
+The stack trace [1] points to the 2nd memcpy in fuse_copy_do():
 
-v1->v2
-- Updated code to skip external clocks to be controlled from runtime PM
-- Updated id range check
-- Updated commit message
----
- drivers/clk/renesas/rzv2h-cpg.c | 44 ++++++++++++++++++++++++++++++---
- drivers/clk/renesas/rzv2h-cpg.h | 12 ++++++---
- 2 files changed, 49 insertions(+), 7 deletions(-)
+/* Do as much copy to/from userspace buffer as we can */
+static int fuse_copy_do(struct fuse_copy_state *cs, void **val, unsigned *s=
+ize)
+{
+        unsigned ncpy =3D min(*size, cs->len);
+        if (val) {
+                void *pgaddr =3D kmap_local_page(cs->pg);
+                void *buf =3D pgaddr + cs->offset;
 
-diff --git a/drivers/clk/renesas/rzv2h-cpg.c b/drivers/clk/renesas/rzv2h-cpg.c
-index b524a9d33610..1154493583a7 100644
---- a/drivers/clk/renesas/rzv2h-cpg.c
-+++ b/drivers/clk/renesas/rzv2h-cpg.c
-@@ -98,6 +98,7 @@ struct pll_clk {
-  *
-  * @priv: CPG private data
-  * @hw: handle between common and hardware-specific interfaces
-+ * @no_pm: flag to indicate PM is not supported
-  * @on_index: register offset
-  * @on_bit: ON/MON bit
-  * @mon_index: monitor register offset
-@@ -106,6 +107,7 @@ struct pll_clk {
- struct mod_clock {
- 	struct rzv2h_cpg_priv *priv;
- 	struct clk_hw hw;
-+	bool no_pm;
- 	u8 on_index;
- 	u8 on_bit;
- 	s8 mon_index;
-@@ -541,6 +543,7 @@ rzv2h_cpg_register_mod_clk(const struct rzv2h_mod_clk *mod,
- 	clock->on_bit = mod->on_bit;
- 	clock->mon_index = mod->mon_index;
- 	clock->mon_bit = mod->mon_bit;
-+	clock->no_pm = mod->no_pm;
- 	clock->priv = priv;
- 	clock->hw.init = &init;
- 
-@@ -668,17 +671,51 @@ struct rzv2h_cpg_pd {
- 	struct generic_pm_domain genpd;
- };
- 
-+static bool rzv2h_cpg_is_pm_clk(struct rzv2h_cpg_pd *pd,
-+				const struct of_phandle_args *clkspec)
-+{
-+	if (clkspec->np != pd->genpd.dev.of_node || clkspec->args_count != 2)
-+		return false;
-+
-+	switch (clkspec->args[0]) {
-+	case CPG_MOD: {
-+		struct rzv2h_cpg_priv *priv = pd->priv;
-+		unsigned int id = clkspec->args[1];
-+		struct mod_clock *clock;
-+
-+		if (id >= priv->num_mod_clks)
-+			return false;
-+
-+		if (priv->clks[priv->num_core_clks + id] == ERR_PTR(-ENOENT))
-+			return false;
-+
-+		clock = to_mod_clock(__clk_get_hw(priv->clks[priv->num_core_clks + id]));
-+
-+		return !clock->no_pm;
-+	}
-+
-+	case CPG_CORE:
-+	default:
-+		return false;
-+	}
-+}
-+
- static int rzv2h_cpg_attach_dev(struct generic_pm_domain *domain, struct device *dev)
- {
-+	struct rzv2h_cpg_pd *pd = container_of(domain, struct rzv2h_cpg_pd, genpd);
- 	struct device_node *np = dev->of_node;
- 	struct of_phandle_args clkspec;
- 	bool once = true;
- 	struct clk *clk;
-+	unsigned int i;
- 	int error;
--	int i = 0;
- 
--	while (!of_parse_phandle_with_args(np, "clocks", "#clock-cells", i,
--					   &clkspec)) {
-+	for (i = 0; !of_parse_phandle_with_args(np, "clocks", "#clock-cells", i, &clkspec); i++) {
-+		if (!rzv2h_cpg_is_pm_clk(pd, &clkspec)) {
-+			of_node_put(clkspec.np);
-+			continue;
-+		}
-+
- 		if (once) {
- 			once = false;
- 			error = pm_clk_create(dev);
-@@ -700,7 +737,6 @@ static int rzv2h_cpg_attach_dev(struct generic_pm_domain *domain, struct device
- 				error);
- 			goto fail_put;
- 		}
--		i++;
- 	}
- 
- 	return 0;
-diff --git a/drivers/clk/renesas/rzv2h-cpg.h b/drivers/clk/renesas/rzv2h-cpg.h
-index 819029c81904..0723df4c1134 100644
---- a/drivers/clk/renesas/rzv2h-cpg.h
-+++ b/drivers/clk/renesas/rzv2h-cpg.h
-@@ -100,6 +100,7 @@ enum clk_types {
-  * @name: handle between common and hardware-specific interfaces
-  * @parent: id of parent clock
-  * @critical: flag to indicate the clock is critical
-+ * @no_pm: flag to indicate PM is not supported
-  * @on_index: control register index
-  * @on_bit: ON bit
-  * @mon_index: monitor register index
-@@ -109,17 +110,19 @@ struct rzv2h_mod_clk {
- 	const char *name;
- 	u16 parent;
- 	bool critical;
-+	bool no_pm;
- 	u8 on_index;
- 	u8 on_bit;
- 	s8 mon_index;
- 	u8 mon_bit;
- };
- 
--#define DEF_MOD_BASE(_name, _parent, _critical, _onindex, _onbit, _monindex, _monbit) \
-+#define DEF_MOD_BASE(_name, _parent, _critical, _no_pm, _onindex, _onbit, _monindex, _monbit) \
- 	{ \
- 		.name = (_name), \
- 		.parent = (_parent), \
- 		.critical = (_critical), \
-+		.no_pm = (_no_pm), \
- 		.on_index = (_onindex), \
- 		.on_bit = (_onbit), \
- 		.mon_index = (_monindex), \
-@@ -127,10 +130,13 @@ struct rzv2h_mod_clk {
- 	}
- 
- #define DEF_MOD(_name, _parent, _onindex, _onbit, _monindex, _monbit)		\
--	DEF_MOD_BASE(_name, _parent, false, _onindex, _onbit, _monindex, _monbit)
-+	DEF_MOD_BASE(_name, _parent, false, false, _onindex, _onbit, _monindex, _monbit)
- 
- #define DEF_MOD_CRITICAL(_name, _parent, _onindex, _onbit, _monindex, _monbit)	\
--	DEF_MOD_BASE(_name, _parent, true, _onindex, _onbit, _monindex, _monbit)
-+	DEF_MOD_BASE(_name, _parent, true, false, _onindex, _onbit, _monindex, _monbit)
-+
-+#define DEF_MOD_NO_PM(_name, _parent, _onindex, _onbit, _monindex, _monbit)		\
-+	DEF_MOD_BASE(_name, _parent, false, true, _onindex, _onbit, _monindex, _monbit)
- 
- /**
-  * struct rzv2h_reset - Reset definitions
--- 
-2.43.0
+                if (cs->write)
+                        memcpy(buf, *val, ncpy);
+                else
+                        memcpy(*val, buf, ncpy);
 
+                kunmap_local(pgaddr);
+                *val +=3D ncpy;
+        }
+...
+}
+
+but AFAICT, if val is NULL then we never try to deref val since it's
+guarded by the "if (val)" check.
+
+It seems like syzbot is either complaining about buf being NULL / *val
+being NULL and then trying to deference those inside the memcpy call,
+or maybe it actually is (mistakenly) complaining about val being NULL.
+
+It's not clear to me either how the "fuse: convert direct io to use
+folios" patch (on the fuse tree, it's commit 3b97c36) [2] directly
+causes this.
+
+If I'm remembering correctly, it's possible to add debug printks to a
+patch and syzbot will print out the debug messages as it triggers the
+issue? It'd be interesting to see which request opcode triggers this,
+and what exactly is being deref-ed here that is NULL. I need to look
+at this more deeply but so far, nothing stands out as to what could be
+the culprit.
+
+
+Thanks,
+Joanne
+
+[1] https://lore.kernel.org/linux-fsdevel/67475f25.050a0220.253251.005b.GAE=
+@google.com/
+[2] https://lore.kernel.org/linux-fsdevel/20241024171809.3142801-13-joannel=
+koong@gmail.com/
+
+> > Add a check in fuse_copy_one() to prevent this.
+> >
+> > Reported-by: syzbot+87b8e6ed25dbc41759f7@syzkaller.appspotmail.com
+> > Closes: https://syzkaller.appspot.com/bug?extid=3D87b8e6ed25dbc41759f7
+> > Fixes: 3b97c3652d91 ("fuse: convert direct io to use folios")
+> > Tested-by: syzbot+87b8e6ed25dbc41759f7@syzkaller.appspotmail.com
+> > Signed-off-by: Nihar Chaithanya <niharchaithanya@gmail.com>
+> > ---
+> >  fs/fuse/dev.c | 3 +++
+> >  1 file changed, 3 insertions(+)
+> >
+> > diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+> > index 563a0bfa0e95..9c93759ac14b 100644
+> > --- a/fs/fuse/dev.c
+> > +++ b/fs/fuse/dev.c
+> > @@ -1070,6 +1070,9 @@ static int fuse_copy_pages(struct fuse_copy_state=
+ *cs, unsigned nbytes,
+> >  /* Copy a single argument in the request to/from userspace buffer */
+> >  static int fuse_copy_one(struct fuse_copy_state *cs, void *val, unsign=
+ed size)
+> >  {
+> > +     if (!val)
+> > +             return -EINVAL;
+> > +
+> >       while (size) {
+> >               if (!cs->len) {
+> >                       int err =3D fuse_copy_fill(cs);
+>
+> I'm going to read through Joannes patches in the evening. Without
+> further explanation I find it unusual to have size, but no value.
+>
+>
+> Thanks,
+> Bernd
 
