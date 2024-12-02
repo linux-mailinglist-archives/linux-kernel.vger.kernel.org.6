@@ -1,84 +1,60 @@
-Return-Path: <linux-kernel+bounces-428429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BAC59E0E47
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 23:01:42 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 949F59E0EB7
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 23:11:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2ACB2B28E4D
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 21:58:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6B98DB286EE
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 22:02:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83BBC1DF74B;
-	Mon,  2 Dec 2024 21:58:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 590091DF962;
+	Mon,  2 Dec 2024 22:02:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jn4qmnZ+"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mXcBzXPX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5985F1D5AC0
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 21:58:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFA641DA103;
+	Mon,  2 Dec 2024 22:02:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733176697; cv=none; b=nz45y7Ac2+yo/LOfYch0tG5mi7g/WY6ecPMJlHluy61i3adbrrwTwWuHQeDPHwU4nnnWus3oUYyPmuZz6RX8MVohWFYT12bgA6fYTxCcuOybMf2EOLSXZKcDeDuVDQZwvPutiFuxJL/bpoguR4lLQkyuY/ulSKmfFY1GKsILEXo=
+	t=1733176939; cv=none; b=Nddd7B5pNR5ddRJyyx+C82aP4/P2QOgs4HKCLsWhL6m/ZKe4lefRd2zza4bHtbVPIAbEVsR1gVWl7Cka3IcCi6f23yzGrf7esxzeeBanMBQwNqZyzyebinzotPyGl8ceqgKaZng33miIFdQfYM9VKpF2WUs0uN6gfxMWOcAxCwk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733176697; c=relaxed/simple;
-	bh=+/DVVW6WUjdjLg5RORA2jmgavCUSk2XulB8IIihD9Wg=;
+	s=arc-20240116; t=1733176939; c=relaxed/simple;
+	bh=BgRpjY7BC7q4xN3V+4faL6OopzCSu02L2UVZ++G5pL4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MEMJ3XxYFC+yxGYYE2n9nfwxvGJ0/37UohbItO/sgJTkKUh0ho+oomlQ7y+2o3jqB1AGJoz76GeHGghUIxB+8mXV9unxAQuK9sbzSzt1yREG832ECIIRBVLF98Be543hi0p0x59PRzU3PnnMd9wm13xnHvNmDcX8WzmZCe3muu8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jn4qmnZ+; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5d0c7c8cd6cso4672169a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 13:58:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733176695; x=1733781495; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=mrBbGY/AkvyAnPMS5AoFhOpFUDEMtFSR3nExs8D5+LU=;
-        b=jn4qmnZ+2sigx6c7+gTG1R+RF0F0YnxS0ypyboB4WqQ2NFPGB+D1+HXrxNTyGmHEUp
-         CphabwIpQxiJJHifQ2XLl42OYOZO119NmY/QnzC4WPIleLhDgmVSu0Ci8PRS+tE+q1kG
-         kYrcjoSBrRtyOaHhJRuHZPlDdfvZCZu3xKTK5VgfCWBSES02MvMBuOapbO1SeRu9Wdd4
-         4XMNZjHfu5H1o9VUFPPPBdCMTYa74oyARhRF39BRC1QQRe+Z7yHR63fP604TpEuS1327
-         ZIqHgUoqWSFVdYUS37VaXwoZyNexbixzA5QMiJ9ea02qABVIFG0uCrwNwrr7+6Yl75oS
-         4Wng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733176695; x=1733781495;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mrBbGY/AkvyAnPMS5AoFhOpFUDEMtFSR3nExs8D5+LU=;
-        b=Did7nO0QmQogRUoOKu0NDz4ugTUtp9gufxip3lFTno6uyjeF1aBa0BOEtd7mRzwlg1
-         M3jkL3cppy3Eb9ThV+Ku/BL7LrDprL6O+Nz60/yps6ijLw0ThS6qF7jgiuARNLamOOla
-         P3mhu0irl9Rem7jaDtnLd4oJxaogfv7stbDu7/+af/QzSkEkCSzJhhUFKGtCeWMna1sF
-         eEXVT2gkKH6m2VvzbK49WLLJJ+Yn6zmIqDka1Zo+uYKH1jTQTePumgoocDUPIS6W72uf
-         x2tJsUPT5lh/78AI1BK62X9dgB6167Y6nsjEGvtpokzYO7VQfO0Lozv3IiaPzs3EIp+Y
-         md6g==
-X-Forwarded-Encrypted: i=1; AJvYcCWBFGbGCNukb4QjaONaW8gJILdg6BOWly8iGa2JjBoBM23/caa1qfv1o0DZfW84e8nvJoSSw4iENyNSbrY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzkvKWy3/zmx0u2ng0Ce5/mUwT1qJ4xCNiBcsIARt4Y78jNmXvO
-	aWWgPeH4RJdZvgrHmeGFaLGp6MZE2Oy3CHPDwb8qEUw+kjedUaQY
-X-Gm-Gg: ASbGnctWVDUeeOLJkQfHzjjBeVMgfvfSRlipCpoOIVjJjXWgMkq/XDen8BQ+CC2jCXr
-	W5syPphKQ2y0K5O0qrUBxKiGPTWNgl/zvlJ4u59AHsJ7QXPKzykTY0CuBmFz49/cFirmDMbeUy5
-	CDvOuvs0/wzegAzweseZGCVJTt1lnnwHsTlXTz0fD5v3UZB1/7AaY0BFRKCD7AT1zkbC4wplkbY
-	wBgUIfZtGdF5m2xS6UJZKAmrJ2mMc/jI/g8m2gpNO4ryxyw9efqHe8phTaz
-X-Google-Smtp-Source: AGHT+IFv6TBZ6aOG0/JTNc8Vt0A1Qh+GjctKsIGgi8qOVpyNGGZQc7lLfKo4DABA0G+DDReqWQW1Ag==
-X-Received: by 2002:a05:6402:270e:b0:5d0:d845:2882 with SMTP id 4fb4d7f45d1cf-5d0d8452bfbmr10046018a12.13.1733176694488;
-        Mon, 02 Dec 2024 13:58:14 -0800 (PST)
-Received: from f (cst-prg-22-5.cust.vodafone.cz. [46.135.22.5])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d0bfa327dcsm3724662a12.83.2024.12.02.13.58.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Dec 2024 13:58:13 -0800 (PST)
-Date: Mon, 2 Dec 2024 22:58:04 +0100
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: Frank van der Linden <fvdl@google.com>
-Cc: linux-mm@kvack.org, akpm@linux-foundation.org, 
-	Muchun Song <muchun.song@linux.dev>, Miaohe Lin <linmiaohe@huawei.com>, 
-	Oscar Salvador <osalvador@suse.de>, David Hildenbrand <david@redhat.com>, 
-	Peter Xu <peterx@redhat.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm/hugetlb: optionally pre-zero hugetlb pages
-Message-ID: <3tqmyo3qqaykszxmrmkaa3fo5hndc4ok6xrxozjvlmq5qjv4cs@2geqqedyfzcf>
-References: <20241202202058.3249628-1-fvdl@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=HQiLdyYCY469BOCKSpe7JMdZzIpC6lHAuu4tqZXfYZhsKrP7nEKBSWCWf6VUoU3rYjuXgcjUwLPqhmI8qXVuVgIVgt+4rUmTpsRgav6iKGsQKXPxTD1y077c89PoJkqgem55GiYPTUB1QoxQr0WOCHV/LurYHMWruMZUnstBI+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mXcBzXPX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BF0DC4CED1;
+	Mon,  2 Dec 2024 22:02:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733176939;
+	bh=BgRpjY7BC7q4xN3V+4faL6OopzCSu02L2UVZ++G5pL4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mXcBzXPXkMrEi7/qxQ92iL8uL9zfW4Zul0hYwlTceeWq6SmcioR0UbW7QlQgpYk0o
+	 /ChsC72XdqUxD7IUNgApSmwsm3S4HEcZ3bqyZ8woSSjQzRy/PaG06Tp3xcqfiWl/gb
+	 yEmG4zybtiuzhZRGbpQTNglK1Idm9BLJOIEDisiM32eoYnXiedADIqvLjYQ+PiEo1L
+	 go4MLjuMgQwXtwu5ghoThHe0K4k3VKCYaB979TQrf5I50mlcXs8kbvcz/xfHHCDM8/
+	 CdI6Jrreh3tQXZRG5Av0OM7x45MC1jC60h6d1A6WS+6zP/CGIUWGf+hdDW7Y/mLWGr
+	 NzubDmrw7mIcA==
+Date: Mon, 2 Dec 2024 14:02:17 -0800
+From: Namhyung Kim <namhyung@kernel.org>
+To: Zhongqiu Han <quic_zhonhan@quicinc.com>
+Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
+	kan.liang@linux.intel.com, james.clark@linaro.org,
+	yangyicong@hisilicon.com, song@kernel.org,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org
+Subject: Re: [PATCH 3/3] perf bpf: Fix two memory leakages when calling
+ perf_env__insert_bpf_prog_info()
+Message-ID: <Z04uaWQxI3LXfAtg@google.com>
+References: <20241128125432.2748981-1-quic_zhonhan@quicinc.com>
+ <20241128125432.2748981-4-quic_zhonhan@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,39 +63,97 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241202202058.3249628-1-fvdl@google.com>
+In-Reply-To: <20241128125432.2748981-4-quic_zhonhan@quicinc.com>
 
-On Mon, Dec 02, 2024 at 08:20:58PM +0000, Frank van der Linden wrote:
-> Fresh hugetlb pages are zeroed out when they are faulted in,
-> just like with all other page types. This can take up a good
-> amount of time for larger page sizes (e.g. around 40
-> milliseconds for a 1G page on a recent AMD-based system).
+Hello,
+
+On Thu, Nov 28, 2024 at 08:54:32PM +0800, Zhongqiu Han wrote:
+> If perf_env__insert_bpf_prog_info() returns false due to a duplicate bpf
+> prog info node insertion, the temporary info_node and info_linear memory
+> will leak. Add a check to ensure the memory is freed if the function
+> returns false.
 > 
-> This normally isn't a problem, since hugetlb pages are typically
-> mapped by the application for a long time, and the initial
-> delay when touching them isn't much of an issue.
+> Fixes: 9c51f8788b5d ("perf env: Avoid recursively taking env->bpf_progs.lock")
+> Signed-off-by: Zhongqiu Han <quic_zhonhan@quicinc.com>
+> ---
+>  tools/perf/util/bpf-event.c | 10 ++++++++--
+>  tools/perf/util/env.c       |  7 +++++--
+>  tools/perf/util/env.h       |  2 +-
+>  3 files changed, 14 insertions(+), 5 deletions(-)
 > 
-> However, there are some use cases where a large number of hugetlb
-> pages are touched when an application (such as a VM backed by these
-> pages) starts. For 256 1G pages and 40ms per page, this would take
-> 10 seconds, a noticeable delay.
+> diff --git a/tools/perf/util/bpf-event.c b/tools/perf/util/bpf-event.c
+> index 13608237c50e..c81444059ad0 100644
+> --- a/tools/perf/util/bpf-event.c
+> +++ b/tools/perf/util/bpf-event.c
+> @@ -289,7 +289,10 @@ static int perf_event__synthesize_one_bpf_prog(struct perf_session *session,
+>  		}
+>  
+>  		info_node->info_linear = info_linear;
+> -		perf_env__insert_bpf_prog_info(env, info_node);
+> +		if (!perf_env__insert_bpf_prog_info(env, info_node)) {
+> +			free(info_linear);
+> +			free(info_node);
+> +		}
+>  		info_linear = NULL;
+>  
+>  		/*
+> @@ -480,7 +483,10 @@ static void perf_env__add_bpf_info(struct perf_env *env, u32 id)
+>  	info_node = malloc(sizeof(struct bpf_prog_info_node));
+>  	if (info_node) {
+>  		info_node->info_linear = info_linear;
+> -		perf_env__insert_bpf_prog_info(env, info_node);
+> +		if (!perf_env__insert_bpf_prog_info(env, info_node)) {
+> +			free(info_linear);
+> +			free(info_node);
+> +		}
+>  	} else
+>  		free(info_linear);
+>  
+> diff --git a/tools/perf/util/env.c b/tools/perf/util/env.c
+> index d7865ae5f8f5..38401a289c24 100644
+> --- a/tools/perf/util/env.c
+> +++ b/tools/perf/util/env.c
+> @@ -24,12 +24,15 @@ struct perf_env perf_env;
+>  #include "bpf-utils.h"
+>  #include <bpf/libbpf.h>
+>  
+> -void perf_env__insert_bpf_prog_info(struct perf_env *env,
+> +bool perf_env__insert_bpf_prog_info(struct perf_env *env,
+>  				    struct bpf_prog_info_node *info_node)
+>  {
+> +	bool ret = true;
 
-The current huge page zeroing code is not that great to begin with.
+Please add a blank line between declaration and the other statements.
+Also I think you can just use the return value of the internal function
+instead of initializaing it to true.
 
-There was a patchset posted some time ago to remedy at least some of it:
-https://lore.kernel.org/all/20230830184958.2333078-1-ankur.a.arora@oracle.com/
+Thanks,
+Namhyung
 
-but it apparently fell through the cracks.
 
-Any games with "background zeroing" are notoriously crappy and I would
-argue one should exhaust other avenues before going there -- at the end
-of the day the cost of zeroing will have to get paid.
-
-To that end I would suggest picking up the patchset and experimenting
-with more variants of the zeroing code (for example for 1G it may be it
-is faster to employ SIMD usage in the routine).
-
-If this is really such a problem I wonder if this could start as a
-series of 2MB pages instead faulted as needed, eventually promoted to
-1G after passing some threshold?
+>  	down_write(&env->bpf_progs.lock);
+> -	__perf_env__insert_bpf_prog_info(env, info_node);
+> +	if (!__perf_env__insert_bpf_prog_info(env, info_node))
+> +		ret = false;
+>  	up_write(&env->bpf_progs.lock);
+> +	return ret;
+>  }
+>  
+>  bool __perf_env__insert_bpf_prog_info(struct perf_env *env, struct bpf_prog_info_node *info_node)
+> diff --git a/tools/perf/util/env.h b/tools/perf/util/env.h
+> index 9db2e5a625ed..da11add761d0 100644
+> --- a/tools/perf/util/env.h
+> +++ b/tools/perf/util/env.h
+> @@ -178,7 +178,7 @@ int perf_env__nr_cpus_avail(struct perf_env *env);
+>  void perf_env__init(struct perf_env *env);
+>  bool __perf_env__insert_bpf_prog_info(struct perf_env *env,
+>  				      struct bpf_prog_info_node *info_node);
+> -void perf_env__insert_bpf_prog_info(struct perf_env *env,
+> +bool perf_env__insert_bpf_prog_info(struct perf_env *env,
+>  				    struct bpf_prog_info_node *info_node);
+>  struct bpf_prog_info_node *perf_env__find_bpf_prog_info(struct perf_env *env,
+>  							__u32 prog_id);
+> -- 
+> 2.25.1
+> 
 
