@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-428221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26AD89E0B8F
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 20:03:57 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2DF19E0BA3
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 20:06:11 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA7DC280CE4
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 19:03:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 068EB165EA0
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 19:05:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA4721DF752;
-	Mon,  2 Dec 2024 19:01:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82C1C1DED7C;
+	Mon,  2 Dec 2024 19:02:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="NFfgHJrX"
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="HJHQ1cOp"
 Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D40771DE8AD;
-	Mon,  2 Dec 2024 19:01:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D19D1DE3D8;
+	Mon,  2 Dec 2024 19:02:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733166104; cv=none; b=PMQRv6Hf839lbSpFihZmPauDel3jhYzWAdSsXtHSHt1NEH9xbIIn+ij7QPhQahOELQ1XIOHcV1KWqsPOcOP04rlLFnBI7UQg2W/qsUQYFYYTBjnZ1LetqXalxhniZqT5f5VpF36Yd3fz47jNwgX036/Hifu4ZINR1F8EtUnSJr8=
+	t=1733166142; cv=none; b=OW6gExTtesXTRMQ/lEVk+Tbs6Ulj+4GnYhvkFMNs+V1+s84D2Ihy+GKCzLdN1YexEgtMLm10m3BcQsLsq8yO2W4h95SGTaIFCuYkAr8k+cVQFKhO9dcueMYtzZmfl76EzgqWg7LLpPhLiTSq61mTV7C+EbZcQnmiBWSeR5PSOOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733166104; c=relaxed/simple;
-	bh=GrX8bTf9cJi04Oy6X8nbhkoX39lESfzTFSk3V/Mc9RM=;
+	s=arc-20240116; t=1733166142; c=relaxed/simple;
+	bh=vs237hxNCHuIOeDxAr5dea8fYVyVtnREj4eNa7u5ziw=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=SmWLrJReH5VzS9SW9kpEcP2TiqItUN5MaG7xrq+ZUxP3HbEmncmGuA4Qsgl94kN98V1n/AU/vs/JW1OVw9rUo4jmNEYzXlYcoq96ZtVcpDcn3/wMUpIOGci6GiyjHj3zPZojrwjF6vcpocau37CjNGLL2QoTV9t8QiSTqNnaKag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=NFfgHJrX; arc=none smtp.client-ip=159.69.126.157
+	 In-Reply-To:To:Cc; b=gSxN51j6/v7x8J+hD0GFaF+dejI3j0kDgkV8U4wxw4K7xKCRASupIntLoaE0jkg2JDsUxJ6x33SJqXXIxMnAowkIIxmHJwOTiu+rR0zds2VQ3CehQsWSIdnVx8XXpPqrXXFIYxg4r5B5aRwGpWJD1defUevFNm5byMVgryng+8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=HJHQ1cOp; arc=none smtp.client-ip=159.69.126.157
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1733166098;
-	bh=GrX8bTf9cJi04Oy6X8nbhkoX39lESfzTFSk3V/Mc9RM=;
+	s=mail; t=1733166139;
+	bh=vs237hxNCHuIOeDxAr5dea8fYVyVtnREj4eNa7u5ziw=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=NFfgHJrXrq4PKIYWGoyCf/HvmqVPVSxCrZSjBl3ziFOwqU8vHzoUpoh7QPRWUiD+S
-	 zn5ATxAMaCArER/zdzq47R1rEvY+E354ZSz5OxkcpkvsWsa147BURflZmIGclPIZiV
-	 Yi/8am2fIPSH/WqFTpLDeqlJ9fgTVghexHKd27Nk=
+	b=HJHQ1cOpqRRHj15C7dTKRxiEUyRQZHPeMmL/iv77nBqIrW85va1896BUPBl3BAtwx
+	 7xB0u8iQLrosdpZfcR+9yPCJxxcEBgtW4kOpy3YzxlLWhdCsFmrJbES2UPs941Ny14
+	 0tk3FwG2dSs3alUIIOqQn6PAukYk/0+B35dRQ0po=
 From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Date: Mon, 02 Dec 2024 20:01:41 +0100
-Subject: [PATCH 10/10] HID: roccat: pyro: constify 'struct bin_attribute'
+Date: Mon, 02 Dec 2024 20:02:19 +0100
+Subject: [PATCH 1/4] power: supply: ds2760: constify 'struct bin_attribute'
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -48,19 +48,18 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20241202-sysfs-const-bin_attr-hid-v1-10-16369423a48a@weissschuh.net>
-References: <20241202-sysfs-const-bin_attr-hid-v1-0-16369423a48a@weissschuh.net>
-In-Reply-To: <20241202-sysfs-const-bin_attr-hid-v1-0-16369423a48a@weissschuh.net>
-To: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>, 
- Stefan Achatz <erazor_de@users.sourceforge.net>
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, 
+Message-Id: <20241202-sysfs-const-bin_attr-psy-v1-1-f846430b8b66@weissschuh.net>
+References: <20241202-sysfs-const-bin_attr-psy-v1-0-f846430b8b66@weissschuh.net>
+In-Reply-To: <20241202-sysfs-const-bin_attr-psy-v1-0-f846430b8b66@weissschuh.net>
+To: Sebastian Reichel <sre@kernel.org>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
  =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1733166097; l=6442;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1733166139; l=1541;
  i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=GrX8bTf9cJi04Oy6X8nbhkoX39lESfzTFSk3V/Mc9RM=;
- b=k2BZMbPJN1o4kNzfgID5b+1W5//S6RZh0UBFaS6YvCL5pcXg4E1onTwgG6AWTBzNiAmpECi08
- HjuQcd64FLND1/HM3I9EaBnYJCWDOvRyLua61Knn9t0DecND/OeBvI5
+ bh=vs237hxNCHuIOeDxAr5dea8fYVyVtnREj4eNa7u5ziw=;
+ b=FhfmEOx2XZpc+pfW3LjqcL+yoz3Mx/qIIYNe/k5GfKMq8H2PePGstWivVaV3cFEviHhaNwmjj
+ wWAdeU3tiajAPSd9hjumOWZ96TrbZSM/Jueebh6w8p0sp59IarFqctx
 X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
  pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
@@ -70,152 +69,40 @@ accidental or malicious modifications.
 
 Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
 ---
- drivers/hid/hid-roccat-pyra.c | 50 +++++++++++++++++++++----------------------
- 1 file changed, 25 insertions(+), 25 deletions(-)
+ drivers/power/supply/ds2760_battery.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/hid/hid-roccat-pyra.c b/drivers/hid/hid-roccat-pyra.c
-index eeb3d38cd80584bd716ad493cff2892a2d5af552..2b53fbfbb8979ad1d1994e462b624b3f72480447 100644
---- a/drivers/hid/hid-roccat-pyra.c
-+++ b/drivers/hid/hid-roccat-pyra.c
-@@ -129,8 +129,8 @@ static ssize_t pyra_sysfs_write(struct file *fp, struct kobject *kobj,
- 
- #define PYRA_SYSFS_W(thingy, THINGY) \
- static ssize_t pyra_sysfs_write_ ## thingy(struct file *fp, \
--		struct kobject *kobj, struct bin_attribute *attr, char *buf, \
--		loff_t off, size_t count) \
-+		struct kobject *kobj, const struct bin_attribute *attr, \
-+		char *buf, loff_t off, size_t count) \
- { \
- 	return pyra_sysfs_write(fp, kobj, buf, off, count, \
- 			PYRA_SIZE_ ## THINGY, PYRA_COMMAND_ ## THINGY); \
-@@ -138,8 +138,8 @@ static ssize_t pyra_sysfs_write_ ## thingy(struct file *fp, \
- 
- #define PYRA_SYSFS_R(thingy, THINGY) \
- static ssize_t pyra_sysfs_read_ ## thingy(struct file *fp, \
--		struct kobject *kobj, struct bin_attribute *attr, char *buf, \
--		loff_t off, size_t count) \
-+		struct kobject *kobj, const struct bin_attribute *attr, \
-+		char *buf, loff_t off, size_t count) \
- { \
- 	return pyra_sysfs_read(fp, kobj, buf, off, count, \
- 			PYRA_SIZE_ ## THINGY, PYRA_COMMAND_ ## THINGY); \
-@@ -151,27 +151,27 @@ PYRA_SYSFS_R(thingy, THINGY)
- 
- #define PYRA_BIN_ATTRIBUTE_RW(thingy, THINGY) \
- PYRA_SYSFS_RW(thingy, THINGY); \
--static struct bin_attribute bin_attr_##thingy = { \
-+static const struct bin_attribute bin_attr_##thingy = { \
- 	.attr = { .name = #thingy, .mode = 0660 }, \
- 	.size = PYRA_SIZE_ ## THINGY, \
--	.read = pyra_sysfs_read_ ## thingy, \
--	.write = pyra_sysfs_write_ ## thingy \
-+	.read_new = pyra_sysfs_read_ ## thingy, \
-+	.write_new = pyra_sysfs_write_ ## thingy \
+diff --git a/drivers/power/supply/ds2760_battery.c b/drivers/power/supply/ds2760_battery.c
+index 7cf4ea06b5003427ac9719043c9a5a4361cb5341..83bdec5a2bda901460e0a8618949baa7ecc11e46 100644
+--- a/drivers/power/supply/ds2760_battery.c
++++ b/drivers/power/supply/ds2760_battery.c
+@@ -195,22 +195,22 @@ static int w1_ds2760_recall_eeprom(struct device *dev, int addr)
  }
  
- #define PYRA_BIN_ATTRIBUTE_R(thingy, THINGY) \
- PYRA_SYSFS_R(thingy, THINGY); \
--static struct bin_attribute bin_attr_##thingy = { \
-+static const struct bin_attribute bin_attr_##thingy = { \
- 	.attr = { .name = #thingy, .mode = 0440 }, \
--	.size = PYRA_SIZE_ ## THINGY, \
--	.read = pyra_sysfs_read_ ## thingy, \
-+	.size_new = PYRA_SIZE_ ## THINGY, \
-+	.read_new = pyra_sysfs_read_ ## thingy, \
- }
- 
- #define PYRA_BIN_ATTRIBUTE_W(thingy, THINGY) \
- PYRA_SYSFS_W(thingy, THINGY); \
--static struct bin_attribute bin_attr_##thingy = { \
-+static const struct bin_attribute bin_attr_##thingy = { \
- 	.attr = { .name = #thingy, .mode = 0220 }, \
- 	.size = PYRA_SIZE_ ## THINGY, \
--	.write = pyra_sysfs_write_ ## thingy \
-+	.write_new = pyra_sysfs_write_ ## thingy \
- }
- 
- PYRA_BIN_ATTRIBUTE_W(control, CONTROL);
-@@ -180,8 +180,8 @@ PYRA_BIN_ATTRIBUTE_RW(profile_settings, PROFILE_SETTINGS);
- PYRA_BIN_ATTRIBUTE_RW(profile_buttons, PROFILE_BUTTONS);
- 
- static ssize_t pyra_sysfs_read_profilex_settings(struct file *fp,
--		struct kobject *kobj, struct bin_attribute *attr, char *buf,
--		loff_t off, size_t count)
-+		struct kobject *kobj, const struct bin_attribute *attr,
-+		char *buf, loff_t off, size_t count)
+ static ssize_t w1_slave_read(struct file *filp, struct kobject *kobj,
+-			     struct bin_attribute *bin_attr, char *buf,
++			     const struct bin_attribute *bin_attr, char *buf,
+ 			     loff_t off, size_t count)
  {
- 	struct device *dev = kobj_to_dev(kobj)->parent->parent;
- 	struct usb_device *usb_dev = interface_to_usbdev(to_usb_interface(dev));
-@@ -198,8 +198,8 @@ static ssize_t pyra_sysfs_read_profilex_settings(struct file *fp,
+ 	struct device *dev = kobj_to_dev(kobj);
+ 	return w1_ds2760_read(dev, buf, off, count);
  }
  
- static ssize_t pyra_sysfs_read_profilex_buttons(struct file *fp,
--		struct kobject *kobj, struct bin_attribute *attr, char *buf,
--		loff_t off, size_t count)
-+		struct kobject *kobj, const struct bin_attribute *attr,
-+		char *buf, loff_t off, size_t count)
- {
- 	struct device *dev = kobj_to_dev(kobj)->parent->parent;
- 	struct usb_device *usb_dev = interface_to_usbdev(to_usb_interface(dev));
-@@ -216,16 +216,16 @@ static ssize_t pyra_sysfs_read_profilex_buttons(struct file *fp,
- }
+-static BIN_ATTR_RO(w1_slave, DS2760_DATA_SIZE);
++static const BIN_ATTR_RO(w1_slave, DS2760_DATA_SIZE);
  
- #define PROFILE_ATTR(number)						\
--static struct bin_attribute bin_attr_profile##number##_settings = {	\
-+static const struct bin_attribute bin_attr_profile##number##_settings = {	\
- 	.attr = { .name = "profile" #number "_settings", .mode = 0440 },	\
- 	.size = PYRA_SIZE_PROFILE_SETTINGS,				\
--	.read = pyra_sysfs_read_profilex_settings,			\
-+	.read_new = pyra_sysfs_read_profilex_settings,			\
- 	.private = &profile_numbers[number-1],				\
- };									\
--static struct bin_attribute bin_attr_profile##number##_buttons = {	\
-+static const struct bin_attribute bin_attr_profile##number##_buttons = {	\
- 	.attr = { .name = "profile" #number "_buttons", .mode = 0440 },	\
- 	.size = PYRA_SIZE_PROFILE_BUTTONS,				\
--	.read = pyra_sysfs_read_profilex_buttons,			\
-+	.read_new = pyra_sysfs_read_profilex_buttons,			\
- 	.private = &profile_numbers[number-1],				\
- };
- PROFILE_ATTR(1);
-@@ -235,8 +235,8 @@ PROFILE_ATTR(4);
- PROFILE_ATTR(5);
- 
- static ssize_t pyra_sysfs_write_settings(struct file *fp,
--		struct kobject *kobj, struct bin_attribute *attr, char *buf,
--		loff_t off, size_t count)
-+		struct kobject *kobj, const struct bin_attribute *attr,
-+		char *buf, loff_t off, size_t count)
- {
- 	struct device *dev = kobj_to_dev(kobj)->parent->parent;
- 	struct pyra_device *pyra = hid_get_drvdata(dev_get_drvdata(dev));
-@@ -273,7 +273,7 @@ static ssize_t pyra_sysfs_write_settings(struct file *fp,
- }
- 
- PYRA_SYSFS_R(settings, SETTINGS);
--static struct bin_attribute bin_attr_settings =
-+static const struct bin_attribute bin_attr_settings =
- 	__BIN_ATTR(settings, (S_IWUSR | S_IRUGO),
- 		   pyra_sysfs_read_settings, pyra_sysfs_write_settings,
- 		   PYRA_SIZE_SETTINGS);
-@@ -334,7 +334,7 @@ static struct attribute *pyra_attrs[] = {
+-static struct bin_attribute *w1_ds2760_bin_attrs[] = {
++static const struct bin_attribute *const w1_ds2760_bin_attrs[] = {
+ 	&bin_attr_w1_slave,
  	NULL,
  };
  
--static struct bin_attribute *pyra_bin_attributes[] = {
-+static const struct bin_attribute *const pyra_bin_attributes[] = {
- 	&bin_attr_control,
- 	&bin_attr_info,
- 	&bin_attr_profile_settings,
-@@ -355,7 +355,7 @@ static struct bin_attribute *pyra_bin_attributes[] = {
- 
- static const struct attribute_group pyra_group = {
- 	.attrs = pyra_attrs,
--	.bin_attrs = pyra_bin_attributes,
-+	.bin_attrs_new = pyra_bin_attributes,
+ static const struct attribute_group w1_ds2760_group = {
+-	.bin_attrs = w1_ds2760_bin_attrs,
++	.bin_attrs_new = w1_ds2760_bin_attrs,
  };
  
- static const struct attribute_group *pyra_groups[] = {
+ static const struct attribute_group *w1_ds2760_groups[] = {
 
 -- 
 2.47.1
