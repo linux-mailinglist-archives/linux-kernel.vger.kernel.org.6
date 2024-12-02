@@ -1,246 +1,177 @@
-Return-Path: <linux-kernel+bounces-427317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D76839DFFC4
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 12:09:24 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 952EA161D75
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 11:09:21 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCC831FDE2B;
-	Mon,  2 Dec 2024 11:09:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YtOh1Zfn"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FE449DFFCD
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 12:10:08 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 398311FCFE7;
-	Mon,  2 Dec 2024 11:08:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3FD7281B1C
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 11:10:06 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B9651FDE05;
+	Mon,  2 Dec 2024 11:09:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=cogentembedded-com.20230601.gappssmtp.com header.i=@cogentembedded-com.20230601.gappssmtp.com header.b="CbdEhWDn"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A8AF1FCFF4
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 11:09:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733137740; cv=none; b=uVT/zmyGRYlRfLCAHsslSWgghkN7znGsDlYWj/ai38XdsgDu0uPwmh/xNMyw5RazDYKgdRp4/bgUxZojiOPT66SAdF2idmXsPjlyaBsn1GfENdfAh/JJm3C/5rO/0GpoGzWpKGcK7CTdRSsCkjvcBmlqBCDkJT1iyP0EDNBxe8E=
+	t=1733137789; cv=none; b=cDZfvNOPQ32QLkB5as9Qihm1p2EhaxasCS1GfT5uQ9biFYfmghEYftrCzCvSjfOLMVZrz0lg1y5ev8vfiiemiNuMyunKfN+GDQjnmWkw7ruNkVmvTigTvmkr0fQBXWxE4/SjeQGwqCcEWFR3Il9V5HhIrIN9Zks4IbFcR+I8/5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733137740; c=relaxed/simple;
-	bh=at//qM/YFMQGTbDA34HJdPgRhqXrmHXaNFIPcP6Ayls=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=p2MCApq4u8zZfF3AYKuhly7oMOIZDtVE1ZzgjasiAad3y4QHTr9oUzK1aFYVHbooAlfIrZWhnPHr93NnKGdyw7LIaau6Ry1xUf3gD3ypybwroS5TcQjqvRwRjG6czRPhLew3caNGHKaacioenK/6qfi57JOJAd79Meekz+yeIYs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YtOh1Zfn; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733137739; x=1764673739;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=at//qM/YFMQGTbDA34HJdPgRhqXrmHXaNFIPcP6Ayls=;
-  b=YtOh1Zfn8xMmiTD4QnfgHDy2zZRT8W+PVsPaDReacMkyYQxSkEfIyP1o
-   /kt9WZ+kHrn17CbOSsVqxS7yYdNqh8oN438Qgs4icSWYWdtSEjF0gC/oY
-   2c/Yyw3MP98+tJQEleBQh46NrHfDrzIHhwJLIrcluSptuMlIP8gjORikT
-   IswRa9acqRDYfhT1ARGZB2xexmt7OJCzJfrpI9IgigD0LHiKa02Zy4aT8
-   +ioBQFrpkvDPtXl957zHe8CDEs5e01zD2REUTU9I5DLsKN6JjNnA4NdE7
-   gyqmefTQHnm+heFPescjiT8Jn+NNQiTcADBB6s2E8I4U7wgcuO6PAgdK8
-   Q==;
-X-CSE-ConnectionGUID: 0x+IMBLVSWSKn5nSW6txvg==
-X-CSE-MsgGUID: ACl451fQQd+e5HczW7SIMw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11273"; a="33452323"
-X-IronPort-AV: E=Sophos;i="6.12,202,1728975600"; 
-   d="scan'208";a="33452323"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Dec 2024 03:08:58 -0800
-X-CSE-ConnectionGUID: 1rAJNp8aSWuqgzgvc+dsHA==
-X-CSE-MsgGUID: sS4Qgx5dTQuYXycpgkSYug==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,202,1728975600"; 
-   d="scan'208";a="130556176"
-Received: from fdefranc-mobl3.ger.corp.intel.com (HELO wieczorr-mobl1.intel.com) ([10.245.244.51])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Dec 2024 03:08:55 -0800
-From: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
-To: shuah@kernel.org,
-	reinette.chatre@intel.com,
-	fenghua.yu@intel.com
-Cc: linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	ilpo.jarvinen@linux.intel.com,
-	tony.luck@intel.com
-Subject: [PATCH v6 2/2] selftests/resctrl: Discover SNC kernel support and adjust messages
-Date: Mon,  2 Dec 2024 12:08:43 +0100
-Message-ID: <6b0fee7f5d97f8140442a73ecdd50429cd697938.1733136454.git.maciej.wieczor-retman@intel.com>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <cover.1733136454.git.maciej.wieczor-retman@intel.com>
-References: <cover.1733136454.git.maciej.wieczor-retman@intel.com>
+	s=arc-20240116; t=1733137789; c=relaxed/simple;
+	bh=qUcESZ0YUaBtbhD+aoGet9WbGSp2Qo1gyt7ZDRohhNI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RWPAHDdyodtFL+gIf3YLbxn6fIlGOwM3Aw+pLxXDPEloac3FbR119bLKXpXgKOzT/rqC47VpFxQCHZnfiG6VNBqw0Cx302D9OqTvWQ7+7Wue7v2rxd+fjna1VbJXreUKtmqVnpxCaFUlaCbgsHBl/nhn0zeuH1c7sYutVhvnm8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cogentembedded.com; spf=pass smtp.mailfrom=cogentembedded.com; dkim=pass (2048-bit key) header.d=cogentembedded-com.20230601.gappssmtp.com header.i=@cogentembedded-com.20230601.gappssmtp.com header.b=CbdEhWDn; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cogentembedded.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cogentembedded.com
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2ffc76368c6so59573771fa.0
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 03:09:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cogentembedded-com.20230601.gappssmtp.com; s=20230601; t=1733137786; x=1733742586; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=JIz3utMm0/sU5BMr5sIEd+mlpszlZQSMeIY1+TfyJxY=;
+        b=CbdEhWDnrF5LHf8ong5EQLwqU++3HIUr6JWW9UhSDEUGeGqZ1xZpkSy1qV+nUgc1GQ
+         KmrqeSUDUCn/TbP0SDiCtPDWuOLbf9F2g2v459mK8+QXP08G1cfQPpJ4sfeMjdMMNLlr
+         GC5fhshN6b4Gk8kUr1KOpMGYsHuiga5QmPo7XkxTFcXoEwqlL+pqL96d9SaF1mRrn9L9
+         A3HkCbMu9C/7P21fQmV6R3gjdhrsY2gNVWrzI+3BZn5ami3i/P8xwuQXsKsnAFo2HV69
+         LsZzZjeVo5ZlLZrVBl859FG3+auRIp+a/cKGfXK/KROWiDMPaXbBRNs5rCqbOGEQK7Kr
+         g5IQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733137786; x=1733742586;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JIz3utMm0/sU5BMr5sIEd+mlpszlZQSMeIY1+TfyJxY=;
+        b=kbX14KaxmkIBuPskFaaNGzBbuTPrQJiWE5RpL1D6zztTypi1rttuyvjsAqARj3GvZq
+         rX03W0leGU+TJ812S+xQ7cwCoZgO/W5lbSi+GTw472WkXX6omiHt/a9bShr4LoWSl183
+         S1YBP3JVFQqur4AiRBQUEk2Hm/grOvLMXci7L9pVlhSLA7VSsCD/ceEXyENTHlSugMEk
+         biCeTTHKSibwI2AnDJiA4EyzBDKUj9/Wz/NPDuclERASqRU45N993+ISZpAj3wANNQJK
+         oiq2RQqvwLkESEsXqR6nn2NgXyscP1ZmXg6Vfb1B98dVlFF6Ve5W8bc0LCQcWHgqIT4Y
+         RJTw==
+X-Forwarded-Encrypted: i=1; AJvYcCUkk5s3Oj8lVVn93fsPCA5FoIP45pJHkfS6HB5sS+ak6hw2MLUojMFav4540Zdx8old6i4EX8bZtKDG8es=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyAvcPXzxiQTNGFcOBAP+bn701ZrGaeamUsrYZETsFJVZgsxg66
+	EIV/WU2IgtthK3qoisH0a+sFrBIqOKp59Jnphxc2asbJ8XsPJyn1osA7TI0CT0o=
+X-Gm-Gg: ASbGnctc7Ej4F386w5/b3v+27TH4b83tH7ioKucMAJh744+erBdModUM+DRxWRfwajB
+	KYDSoJiou5tLdV3YjY6xZrNFsVBPVz1N4rU5805FO/czKmGv3O5zBt1IJH1YZLbSAJS5TDeFF0/
+	ZZ3Jm9e/N3ikwQ6kYmXSPtMd1F1uE7eaiFLmcv4a3mfqzGwY77kcaBZE3rN47K7fBbgaNGLhx5D
+	0UcRfl0emCfxhOUOcWS6jJivM2BQ384md70eEqAE7SJxrpVMR8E2OhwIVa3LzVVesjlJw==
+X-Google-Smtp-Source: AGHT+IHAvBtf0OQXFo4WX8SQik/WEe881XNPtRWavelPBjYiw87rg6F4KhsnlxUq7isC2k5Va1zqnw==
+X-Received: by 2002:a05:6512:3e1e:b0:53d:eced:f634 with SMTP id 2adb3069b0e04-53df01171b4mr16308916e87.48.1733137786215;
+        Mon, 02 Dec 2024 03:09:46 -0800 (PST)
+Received: from [192.168.0.104] ([91.198.101.25])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53df649f6dcsm1421513e87.243.2024.12.02.03.09.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 02 Dec 2024 03:09:45 -0800 (PST)
+Message-ID: <c1296735-81be-4f7d-a601-bc1a3718a6a2@cogentembedded.com>
+Date: Mon, 2 Dec 2024 16:09:43 +0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] net: phy: phy_ethtool_ksettings_set: Allow any supported
+ speed
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>,
+ Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Michael Dege <michael.dege@renesas.com>,
+ Christian Mardmoeller <christian.mardmoeller@renesas.com>,
+ Dennis Ostermann <dennis.ostermann@renesas.com>
+References: <20241202083352.3865373-1-nikita.yoush@cogentembedded.com>
+ <20241202100334.454599a7@fedora.home>
+ <73ca1492-d97b-4120-b662-cc80fc787ffd@cogentembedded.com>
+ <Z02He-kU6jlH-TJb@shell.armlinux.org.uk>
+ <eddde51a-2e0b-48c2-9681-48a95f329f5c@cogentembedded.com>
+ <Z02KoULvRqMQbxR3@shell.armlinux.org.uk>
+Content-Language: en-US, ru-RU
+From: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+In-Reply-To: <Z02KoULvRqMQbxR3@shell.armlinux.org.uk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Resctrl selftest prints a message on test failure that Sub-Numa
-Clustering (SNC) could be enabled and points the user to check their BIOS
-settings. No actual check is performed before printing that message so
-it is not very accurate in pinpointing a problem.
+>> Right now, 'ethtool -s tsn0 master-slave forced-slave' causes a call to
+>> driver's ethtool set_link_ksettings method. Which does error out for me
+>> because at the call time, speed field is 2500.
+> 
+> Are you saying that the PHY starts in fixed-speed 2.5G mode?
+> 
+> What does ethtool tsn0 say after boot and the link has come up but
+> before any ethtool settings are changed?
 
-When there is SNC support for kernel's resctrl subsystem and SNC is
-enabled then sub node files are created for each node in the resctrlfs.
-The sub node files exist in each regular node's L3 monitoring directory.
-The reliable path to check for existence of sub node files is
-/sys/fs/resctrl/mon_data/mon_L3_00/mon_sub_L3_00.
+On a freshly booted board, with /etc/systemd/network temporary moved away.
 
-Add helper that checks for mon_sub_L3_00 existence.
+(there are two identical boards, connected to each other)
 
-Correct old messages to account for kernel support of SNC in
-resctrl.
+root@vc4-033:~# ip l show dev tsn0
+19: tsn0: <BROADCAST,MULTICAST> mtu 1500 qdisc noop state DOWN mode DEFAULT group default qlen 1000
+     link/ether 3a:e3:5c:56:ba:bd brd ff:ff:ff:ff:ff:ff
 
-Signed-off-by: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
----
-Changelog v6:
-- Remove snc_unreliable checks at the end of the tests since now the
-  tests are skipped if snc_unreliable was set.
-- Move snc_kernel_support() back to this patch since it's not used in
-  the previous patch anymore.
-- Redo the patch message after code changes.
+root@vc4-033:~# ethtool tsn0
+Settings for tsn0:
+         Supported ports: [ MII ]
+         Supported link modes:   2500baseT/Full
+         Supported pause frame use: Symmetric Receive-only
+         Supports auto-negotiation: No
+         Supported FEC modes: Not reported
+         Advertised link modes:  2500baseT/Full
+         Advertised pause frame use: No
+         Advertised auto-negotiation: No
+         Advertised FEC modes: Not reported
+         Speed: 2500Mb/s
+         Duplex: Unknown! (255)
+         Auto-negotiation: off
+         master-slave cfg: unknown
+         Port: Twisted Pair
+         PHYAD: 0
+         Transceiver: external
+         MDI-X: Unknown
 
-Changelog v5:
-- Move all resctrlfs.c code from this patch to 1/2. (Reinette)
-- Remove kernel support check and error message from CAT since it can't
-  be happen.
-- Remove snc checks in CAT since snc doesn't affect it here.
-- Skip MBM, MBA and CMT tests if snc is unreliable.
+PHY driver is out of tree and can do things wrong. AFAIU it does nothing more than wrapping Marvell 
+setup sequences into a phy driver skeleton.
 
-Changelog v4:
-- Change messages at the end of tests and at the start of
-  run_single_test. (Reinette)
-- Add messages at the end of CAT since it can also fail due to enabled
-  SNC + lack of kernel support.
-- Remove snc_mode global variable. (Reinette)
-- Fix wrong description of snc_kernel_support(). (Reinette)
-- Move call to cpus_offline_empty() into snc_nodes_per_l3_cache() so the
-  whole detection flow is in one place as discussed. (Reinette)
+Still, with the patch in question applied, things just work:
 
-Changelog v3:
-- Change snc_ways() to snc_nodes_per_l3_cache(). (Reinette)
-- Add printing the discovered SNC mode. (Reinette)
-- Change method of kernel support discovery from cache sizes to
-  existance of sub node files.
-- Check if SNC detection is unreliable.
-- Move SNC detection to only the first run_single_test() instead on
-  error at the end of test runs.
-- Add global value to remind user at the end of relevant tests if SNC
-  detection was found to be unreliable.
-- Redo the patch message after the changes.
+root@vc4-033:~# ip l set dev tsn0 up
+root@vc4-033:~# ethtool -s tsn0 master-slave forced-slave
+[   83.743711] renesas_eth_sw e68c0000.ethernet tsn0: Link is Up - 2.5Gbps/Full - flow control off
+root@vc4-033:~# ethtool tsn0
+Settings for tsn0:
+         Supported ports: [ MII ]
+         Supported link modes:   2500baseT/Full
+         Supported pause frame use: Symmetric Receive-only
+         Supports auto-negotiation: No
+         Supported FEC modes: Not reported
+         Advertised link modes:  2500baseT/Full
+         Advertised pause frame use: No
+         Advertised auto-negotiation: No
+         Advertised FEC modes: Not reported
+         Speed: 2500Mb/s
+         Duplex: Full
+         Auto-negotiation: off
+         master-slave cfg: forced slave
+         master-slave status: slave
+         Port: Twisted Pair
+         PHYAD: 0
+         Transceiver: external
+         MDI-X: Unknown
 
-Changelog v2:
-- Move snc_ways() checks from individual tests into
-  snc_kernel_support().
-- Write better comment for snc_kernel_support().
-
- tools/testing/selftests/resctrl/cmt_test.c  |  4 +--
- tools/testing/selftests/resctrl/mba_test.c  |  2 ++
- tools/testing/selftests/resctrl/mbm_test.c  |  4 +--
- tools/testing/selftests/resctrl/resctrl.h   |  1 +
- tools/testing/selftests/resctrl/resctrlfs.c | 32 +++++++++++++++++++++
- 5 files changed, 39 insertions(+), 4 deletions(-)
-
-diff --git a/tools/testing/selftests/resctrl/cmt_test.c b/tools/testing/selftests/resctrl/cmt_test.c
-index 3bbf3042fb06..d09e693dc739 100644
---- a/tools/testing/selftests/resctrl/cmt_test.c
-+++ b/tools/testing/selftests/resctrl/cmt_test.c
-@@ -169,8 +169,8 @@ static int cmt_run_test(const struct resctrl_test *test, const struct user_param
- 		return ret;
- 
- 	ret = check_results(&param, span, n);
--	if (ret && (get_vendor() == ARCH_INTEL))
--		ksft_print_msg("Intel CMT may be inaccurate when Sub-NUMA Clustering is enabled. Check BIOS configuration.\n");
-+	if (ret && (get_vendor() == ARCH_INTEL) && !snc_kernel_support())
-+		ksft_print_msg("Kernel doesn't support Sub-NUMA Clustering but it is enabled on the system.\n");
- 
- 	return ret;
- }
-diff --git a/tools/testing/selftests/resctrl/mba_test.c b/tools/testing/selftests/resctrl/mba_test.c
-index 536d9089d2f6..c7e9adc0368f 100644
---- a/tools/testing/selftests/resctrl/mba_test.c
-+++ b/tools/testing/selftests/resctrl/mba_test.c
-@@ -201,6 +201,8 @@ static int mba_run_test(const struct resctrl_test *test, const struct user_param
- 		return ret;
- 
- 	ret = check_results();
-+	if (ret && (get_vendor() == ARCH_INTEL) && !snc_kernel_support())
-+		ksft_print_msg("Kernel doesn't support Sub-NUMA Clustering but it is enabled on the system.\n");
- 
- 	return ret;
- }
-diff --git a/tools/testing/selftests/resctrl/mbm_test.c b/tools/testing/selftests/resctrl/mbm_test.c
-index 315b2ef3b3bc..84d8bc250539 100644
---- a/tools/testing/selftests/resctrl/mbm_test.c
-+++ b/tools/testing/selftests/resctrl/mbm_test.c
-@@ -160,8 +160,8 @@ static int mbm_run_test(const struct resctrl_test *test, const struct user_param
- 		return ret;
- 
- 	ret = check_results(param.fill_buf ? param.fill_buf->buf_size : 0);
--	if (ret && (get_vendor() == ARCH_INTEL))
--		ksft_print_msg("Intel MBM may be inaccurate when Sub-NUMA Clustering is enabled. Check BIOS configuration.\n");
-+	if (ret && (get_vendor() == ARCH_INTEL) && !snc_kernel_support())
-+		ksft_print_msg("Kernel doesn't support Sub-NUMA Clustering but it is enabled on the system.\n");
- 
- 	return ret;
- }
-diff --git a/tools/testing/selftests/resctrl/resctrl.h b/tools/testing/selftests/resctrl/resctrl.h
-index 38dfe5a03fcd..560171f66332 100644
---- a/tools/testing/selftests/resctrl/resctrl.h
-+++ b/tools/testing/selftests/resctrl/resctrl.h
-@@ -202,6 +202,7 @@ void ctrlc_handler(int signum, siginfo_t *info, void *ptr);
- int signal_handler_register(const struct resctrl_test *test);
- void signal_handler_unregister(void);
- unsigned int count_bits(unsigned long n);
-+int snc_kernel_support(void);
- 
- void perf_event_attr_initialize(struct perf_event_attr *pea, __u64 config);
- void perf_event_initialize_read_format(struct perf_event_read *pe_read);
-diff --git a/tools/testing/selftests/resctrl/resctrlfs.c b/tools/testing/selftests/resctrl/resctrlfs.c
-index 50561993d37c..d0a5c0f78397 100644
---- a/tools/testing/selftests/resctrl/resctrlfs.c
-+++ b/tools/testing/selftests/resctrl/resctrlfs.c
-@@ -949,3 +949,35 @@ unsigned int count_bits(unsigned long n)
- 
- 	return count;
- }
-+
-+/**
-+ * snc_kernel_support - Check for existence of mon_sub_L3_00 file that indicates
-+ * SNC resctrl support on the kernel side.
-+ *
-+ * Return: 0 if not supported, 1 if SNC is disabled or SNC discovery is
-+ * unreliable or SNC is both enabled and supported.
-+ */
-+int snc_kernel_support(void)
-+{
-+	char node_path[PATH_MAX];
-+	struct stat statbuf;
-+	int ret;
-+
-+	ret = snc_nodes_per_l3_cache();
-+	/*
-+	 * If SNC is disabled then its kernel support isn't important. If SNC
-+	 * got disabled because the discovery process was unreliable the
-+	 * snc_unreliable variable was set. It can be used to verify the SNC
-+	 * discovery reliability elsewhere in the selftest.
-+	 */
-+	if (ret == 1)
-+		return ret;
-+
-+	snprintf(node_path, sizeof(node_path), "%s/%s/%s", RESCTRL_PATH, "mon_data",
-+		 "mon_L3_00/mon_sub_L3_00");
-+
-+	if (!stat(node_path, &statbuf))
-+		return 1;
-+
-+	return 0;
-+}
--- 
-2.47.1
-
+root@vc4-033:~# ip a add 192.168.70.11/24 dev tsn0
+root@vc4-033:~# ping 192.168.70.10
+PING 192.168.70.10 (192.168.70.10) 56(84) bytes of data.
+64 bytes from 192.168.70.10: icmp_seq=1 ttl=64 time=1.03 ms
+64 bytes from 192.168.70.10: icmp_seq=2 ttl=64 time=0.601 ms
+...
 
