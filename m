@@ -1,78 +1,79 @@
-Return-Path: <linux-kernel+bounces-427337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E09AC9DFFF5
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 12:16:54 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF37A9DFFF3
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 12:16:45 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5A5E1B2499D
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 11:15:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1117F162980
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 11:16:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 912D21FF7C4;
-	Mon,  2 Dec 2024 11:14:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 737DF202F99;
+	Mon,  2 Dec 2024 11:14:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="PPBV4BG5";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="sAM3yZaJ"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="2nh2VQrE";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="rvWa+NvA"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 067821FECAD;
-	Mon,  2 Dec 2024 11:14:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65A5B1FF7A3;
+	Mon,  2 Dec 2024 11:14:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733138058; cv=none; b=AQOm7MR7tnk7g9rqCtMnB4kx1TitODanuDYcs9VxYA9KriFsyjBCA/xIHZGCcEa3DkIWlJZmCr+7VmSZdqPf4ImduiHjq5fyNdS10GifN1vcb4a2+mRzKAp6ClblV1OO5tdj9r/nBGSEKo2D/69k9z4bflzIAEM3v86zU+u2RxA=
+	t=1733138061; cv=none; b=evMGISXtfHFBPiPFXASwdsh+HpOJ0xKjYncbEiXQpcL3x69ySyj/uThvB+mQ/USxhiEor78djq0MAED9GeicjDd/CcEEjJMor8JtUskrmjfKcgXLgfYvsrR5rqcUMK33vfr38BdSRmskq/r3C8NYK9TD3XQzin+NX5eQ46hyt8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733138058; c=relaxed/simple;
-	bh=xcvadBoG0e+OULmKQbYdi6rbjaeAWPwOxJZUGKnQ29Y=;
+	s=arc-20240116; t=1733138061; c=relaxed/simple;
+	bh=LK5HXiPW8Ui+bHksZXNSR4m1nNezliGdFXWHGqoI0Zs=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=CWIWgPNoxt8N708KyM7473Sl686Q/A3TaY0TpKMlFy7KW3n5jzSm+/8ueYvIMdzOrsUQna+/niHdG7ESv22th3Sb0v8WB/coYBqJT3aLa0XzSezrG66/D+SKivlr/YH/tsp2IZYsPlt65XcmwU42iioVxyeGhQC9dBEVTBHH2c0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=PPBV4BG5; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=sAM3yZaJ; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=VSxqT2dLk7Jx9SlhVdQDQM06B5oAsh+DeMoMuUNnaqAcst6iKXh4u7t1Xc4/Dx85jght+Yz5En/aiTsOWTyFq4uOgH/lH367+7IqJwMxhQ+EFzfHYat3D0xCLpYYmozQWxOtqcqrXmdg2qRRYV8jtmoS9/QG3bdw23sHyv/IKvQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=2nh2VQrE; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=rvWa+NvA; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 02 Dec 2024 11:14:14 -0000
+Date: Mon, 02 Dec 2024 11:14:15 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1733138055;
+	s=2020; t=1733138056;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=YIeqbfI4NjOUCh2F7cKk47SFriapkQt9vWXFdJxVtZ4=;
-	b=PPBV4BG5NUZ6f0e/OILStQ2a98DY6eoSw/6NhA9cNxYU4I2t+1H8FtT+hMKlDk1z2Wu8l4
-	npNu0fySESRtwcSIgDNvm0GBJ4QRBvpMR9Ad1w17hT7Dy1NPPH8uzB+FvZsbdSml97/nyv
-	yWSAdhD4WQiW7F5pY0sQegW5umcJveOVDE+gppyPvYv53GtnczWASdfL64mSB3kxoITZmQ
-	BB2ELefhx+YNfVytpEq04QApI26P0wpC30dUd8rrO+CSdv1yKI2O2wDtlDiqfmE+A/t7SP
-	ueianXvnk4IUKv11gK0M7V9o3eFoyDhjbxqXqg0OwtBkuQ7R0OqytJSIJQWWwg==
+	bh=3EwmR18SzxzeL8qcxUdyXY1D2zlwxZWtpC8Z7Y6U6TM=;
+	b=2nh2VQrEWaRzhy6EDm8KHZCOXbdRisek0bEqeKpxw5opG8Aq5huJ4CMF+m2UXJJZ9fOjR2
+	Hdcuc5kWI5IzQHlDSUFYCToebaE6Z47tABF8mN7uh5UzzJ+stuhqqQ9Z4xLZ4F2rBReelL
+	WsWaMBDykeXzEeBwBMzwuhChuXPtrtVS9FQNK9CfZf57/rzy0vLjkoBqTkt/QPMaRoCpzg
+	Nnf43gx3E8v8evWz43+J7dqmUYag0pfSD1+BKV96RacL/TGeQ8oh15/veTTtSci6O+ax2P
+	TNgrvTKriMFgnlFvZFDRjJNNgLXtVYxtxXJW7EpnP9gB8jMHrHF7y+FAvku4Fw==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1733138055;
+	s=2020e; t=1733138056;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=YIeqbfI4NjOUCh2F7cKk47SFriapkQt9vWXFdJxVtZ4=;
-	b=sAM3yZaJLSxU+C/hAU6u/Mu4/PepWDID0ZaQOboG9ouxJ8lWqgaUAYtc8fv0xegsgznCnx
-	A4FivL7ybL3erNAQ==
+	bh=3EwmR18SzxzeL8qcxUdyXY1D2zlwxZWtpC8Z7Y6U6TM=;
+	b=rvWa+NvAlfPtee3E6fX8zUylTZJhNp+rQJpvh+vHmVAbprVOBOOQRPV7kSPFiSMirO4NsA
+	SlRW2Rpghra1vEBQ==
 From: "tip-bot2 for Dhananjay Ugwekar" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/core] perf/x86/rapl: Remove the global variable rapl_msrs
+Subject: [tip: perf/core] perf/x86/rapl: Add arguments to the init and cleanup
+ functions
 Cc: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>,
  "Peter Zijlstra (Intel)" <peterz@infradead.org>,
  "Gautham R. Shenoy" <gautham.shenoy@amd.com>, Zhang Rui <rui.zhang@intel.com>,
  x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20241115060805.447565-9-Dhananjay.Ugwekar@amd.com>
-References: <20241115060805.447565-9-Dhananjay.Ugwekar@amd.com>
+In-Reply-To: <20241115060805.447565-7-Dhananjay.Ugwekar@amd.com>
+References: <20241115060805.447565-7-Dhananjay.Ugwekar@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <173313805444.412.14474756773372469878.tip-bot2@tip-bot2>
+Message-ID: <173313805585.412.13173575120952927966.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -82,60 +83,127 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the perf/core branch of tip:
 
-Commit-ID:     bdc57ec7054842e5cb3b0a2da87b0e73075a96e6
-Gitweb:        https://git.kernel.org/tip/bdc57ec7054842e5cb3b0a2da87b0e73075a96e6
+Commit-ID:     eeca4c6b2529ff41a10519952bf988c0f3605353
+Gitweb:        https://git.kernel.org/tip/eeca4c6b2529ff41a10519952bf988c0f3605353
 Author:        Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
-AuthorDate:    Fri, 15 Nov 2024 06:08:04 
+AuthorDate:    Fri, 15 Nov 2024 06:08:02 
 Committer:     Peter Zijlstra <peterz@infradead.org>
 CommitterDate: Mon, 02 Dec 2024 12:01:36 +01:00
 
-perf/x86/rapl: Remove the global variable rapl_msrs
+perf/x86/rapl: Add arguments to the init and cleanup functions
 
 Prepare for the addition of RAPL core energy counter support.
 
-After making the rapl_model struct global, the rapl_msrs global
-variable isn't needed, so remove it.
+Add arguments to the init and cleanup functions, which will help in
+initialization and cleaning up of two separate PMUs.
+
+No functional change.
 
 Signed-off-by: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Reviewed-by: "Gautham R. Shenoy" <gautham.shenoy@amd.com>
 Reviewed-by: Zhang Rui <rui.zhang@intel.com>
 Tested-by: Zhang Rui <rui.zhang@intel.com>
-Link: https://lore.kernel.org/r/20241115060805.447565-9-Dhananjay.Ugwekar@amd.com
+Link: https://lore.kernel.org/r/20241115060805.447565-7-Dhananjay.Ugwekar@amd.com
 ---
- arch/x86/events/rapl.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ arch/x86/events/rapl.c | 28 ++++++++++++++++------------
+ 1 file changed, 16 insertions(+), 12 deletions(-)
 
 diff --git a/arch/x86/events/rapl.c b/arch/x86/events/rapl.c
-index 8cdc578..aef2d0e 100644
+index 1049686..249bcd3 100644
 --- a/arch/x86/events/rapl.c
 +++ b/arch/x86/events/rapl.c
-@@ -150,7 +150,6 @@ static int rapl_pkg_hw_unit[NR_RAPL_PKG_DOMAINS] __read_mostly;
- static struct rapl_pmus *rapl_pmus_pkg;
- static unsigned int rapl_pkg_cntr_mask;
- static u64 rapl_timer_ms;
--static struct perf_msr *rapl_msrs;
- static struct rapl_model *rapl_model;
+@@ -603,7 +603,7 @@ static void __init rapl_advertise(void)
+ 	}
+ }
  
- /*
-@@ -382,7 +381,7 @@ static int rapl_pmu_event_init(struct perf_event *event)
- 		return -EINVAL;
+-static void cleanup_rapl_pmus(void)
++static void cleanup_rapl_pmus(struct rapl_pmus *rapl_pmus)
+ {
+ 	int i;
  
- 	event->pmu_private = rapl_pmu;
--	event->hw.event_base = rapl_msrs[bit].msr;
-+	event->hw.event_base = rapl_model->rapl_pkg_msrs[bit].msr;
- 	event->hw.config = cfg;
- 	event->hw.idx = bit;
+@@ -621,7 +621,7 @@ static const struct attribute_group *rapl_attr_update[] = {
+ 	NULL,
+ };
  
-@@ -811,9 +810,7 @@ static int __init rapl_pmu_init(void)
+-static int __init init_rapl_pmu(void)
++static int __init init_rapl_pmu(struct rapl_pmus *rapl_pmus)
+ {
+ 	struct rapl_pmu *rapl_pmu;
+ 	int idx;
+@@ -647,20 +647,20 @@ free:
+ 	return -ENOMEM;
+ }
  
- 	rapl_model = (struct rapl_model *) id->driver_data;
+-static int __init init_rapl_pmus(void)
++static int __init init_rapl_pmus(struct rapl_pmus **rapl_pmus_ptr, int rapl_pmu_scope)
+ {
+ 	int nr_rapl_pmu = topology_max_packages();
+-	int rapl_pmu_scope = PERF_PMU_SCOPE_PKG;
++	struct rapl_pmus *rapl_pmus;
  
--	rapl_msrs = rapl_model->rapl_pkg_msrs;
--
--	rapl_pkg_cntr_mask = perf_msr_probe(rapl_msrs, PERF_RAPL_PKG_EVENTS_MAX,
-+	rapl_pkg_cntr_mask = perf_msr_probe(rapl_model->rapl_pkg_msrs, PERF_RAPL_PKG_EVENTS_MAX,
- 					false, (void *) &rapl_model->pkg_events);
+-	if (!rapl_pmu_is_pkg_scope()) {
+-		nr_rapl_pmu *= topology_max_dies_per_package();
+-		rapl_pmu_scope = PERF_PMU_SCOPE_DIE;
+-	}
++	if (rapl_pmu_scope == PERF_PMU_SCOPE_DIE)
++		nr_rapl_pmu	*= topology_max_dies_per_package();
  
- 	ret = rapl_check_hw_unit();
+ 	rapl_pmus = kzalloc(struct_size(rapl_pmus, rapl_pmu, nr_rapl_pmu), GFP_KERNEL);
+ 	if (!rapl_pmus)
+ 		return -ENOMEM;
+ 
++	*rapl_pmus_ptr = rapl_pmus;
++
+ 	rapl_pmus->nr_rapl_pmu		= nr_rapl_pmu;
+ 	rapl_pmus->pmu.attr_groups	= rapl_attr_groups;
+ 	rapl_pmus->pmu.attr_update	= rapl_attr_update;
+@@ -675,7 +675,7 @@ static int __init init_rapl_pmus(void)
+ 	rapl_pmus->pmu.module		= THIS_MODULE;
+ 	rapl_pmus->pmu.capabilities	= PERF_PMU_CAP_NO_EXCLUDE;
+ 
+-	return init_rapl_pmu();
++	return init_rapl_pmu(rapl_pmus);
+ }
+ 
+ static struct rapl_model model_snb = {
+@@ -799,8 +799,12 @@ MODULE_DEVICE_TABLE(x86cpu, rapl_model_match);
+ static int __init rapl_pmu_init(void)
+ {
+ 	const struct x86_cpu_id *id;
++	int rapl_pmu_scope = PERF_PMU_SCOPE_DIE;
+ 	int ret;
+ 
++	if (rapl_pmu_is_pkg_scope())
++		rapl_pmu_scope = PERF_PMU_SCOPE_PKG;
++
+ 	id = x86_match_cpu(rapl_model_match);
+ 	if (!id)
+ 		return -ENODEV;
+@@ -816,7 +820,7 @@ static int __init rapl_pmu_init(void)
+ 	if (ret)
+ 		return ret;
+ 
+-	ret = init_rapl_pmus();
++	ret = init_rapl_pmus(&rapl_pmus, rapl_pmu_scope);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -829,7 +833,7 @@ static int __init rapl_pmu_init(void)
+ 
+ out:
+ 	pr_warn("Initialization failed (%d), disabled\n", ret);
+-	cleanup_rapl_pmus();
++	cleanup_rapl_pmus(rapl_pmus);
+ 	return ret;
+ }
+ module_init(rapl_pmu_init);
+@@ -837,6 +841,6 @@ module_init(rapl_pmu_init);
+ static void __exit intel_rapl_exit(void)
+ {
+ 	perf_pmu_unregister(&rapl_pmus->pmu);
+-	cleanup_rapl_pmus();
++	cleanup_rapl_pmus(rapl_pmus);
+ }
+ module_exit(intel_rapl_exit);
 
