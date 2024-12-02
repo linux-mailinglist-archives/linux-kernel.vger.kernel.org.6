@@ -1,189 +1,102 @@
-Return-Path: <linux-kernel+bounces-428027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14DCC9E0922
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:55:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 890809E0925
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:55:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A392E1615E2
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 16:44:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CFB561634B9
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 16:45:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8EDB1D6DC8;
-	Mon,  2 Dec 2024 16:44:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EDB81D935C;
+	Mon,  2 Dec 2024 16:45:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="JK6AjuaF"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="fMZUqAQB"
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A08E1D31B2
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 16:44:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 053D31D79BE;
+	Mon,  2 Dec 2024 16:45:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733157870; cv=none; b=KLpKCxlrcD50I4Ep/xxHJNPcV0GpG0iNXMFnaFwwMGwXv5X1MCbjLwEOq0E3D1yJHLZ0HwUn/cTrSX7EAdMwx9M1Fcm/P7monUO+8FMi8YTSjanOnbb+zzi06um1JOIOPotlj/cu46UP+NCC0ED4EPmYG6I8nFh90HKaN5wmWq4=
+	t=1733157906; cv=none; b=Bnuiqw9ScVJFF+aehVnfzVZqeTsWlKg45fphRFEJU9aAOtxm8vF04W3Hkc1wHat3dpbS6/je1xe1yAVDHxG6V8N5k/7BslU+MndGap17pNbbJrACviGs0QJGfSlRwWa5bzGzar4nAYCLrmsuXcQE3nlal+sB5kDmMciCGOZNq4Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733157870; c=relaxed/simple;
-	bh=Kov19Kcf5hBRpnDlYC0mQmJZQDHLQKXhh4VXSpk7UlE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=HSA9HYTrwu1vgHtziBLpfedLzdtKYSTCvnRDwRj4nCHRclUMVm3HC6vzKCFNb6jzOnom0dEKheIU/tdROhFissoxeDxY6KNdFxN7w5fYOugoyGZ0aRMyx4spcUVak9TyjDcphYbTsCS7LcRPoEQCwhk0c/uhwgIGkgP0W2FDxko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=JK6AjuaF; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1733157868; x=1764693868;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=Kov19Kcf5hBRpnDlYC0mQmJZQDHLQKXhh4VXSpk7UlE=;
-  b=JK6AjuaFiTdBAdnYY2YCobIyTL+c5f2TZM30KC/xUPW2Tht349g/+34e
-   RifGUvi1SrHgBpXqytHR7dVcjp6ISj+DdNcGtRNXI8RUZupO10eMB0BOX
-   lG7exe4XZQKQNar1UsMIjRFeZ/14hJDs6QRrKaVjrVge53X4Y67aC3EXG
-   92480KuM2wxmGsIXMcUGVtw+R3lCnh5If6E01/XPt86aZFhAla4Q6Lc5V
-   3ZI2u1G1YZaoJXP0kx+MsMYOqOC2hB4+hIo/bUXKNPX+MM92HaUR8hdWK
-   BnAaQ9kqZWGmQOp6uD8dCCDjwA8qpkwsSzFo49jLpdy4WTT13m9+E9Sqt
-   g==;
-X-CSE-ConnectionGUID: VXJLcTK3S827uIOuKWwAmg==
-X-CSE-MsgGUID: 3CVsFPfDSQ2L2zwHmwYC3g==
-X-IronPort-AV: E=Sophos;i="6.12,202,1728975600"; 
-   d="scan'208";a="202476758"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 02 Dec 2024 09:44:25 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Mon, 2 Dec 2024 09:44:22 -0700
-Received: from [10.171.248.21] (10.10.85.11) by chn-vm-ex03.mchp-main.com
- (10.10.85.151) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
- Transport; Mon, 2 Dec 2024 09:44:21 -0700
-Message-ID: <24069031-9ed4-4592-af98-ff53222caf03@microchip.com>
-Date: Mon, 2 Dec 2024 17:44:28 +0100
+	s=arc-20240116; t=1733157906; c=relaxed/simple;
+	bh=I4VHummiJrKsJbIUwMd52De56NeUEhWbPfaStA1+8kE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=d/Mh3wWBZTnXAH0PXc13p+9gj56HFj4blj/EeVfEZ0oqCLhuX2YAlCgPGtM6xJDpy6PdM/99Fcjbrgbgo+RsZ8QUa1g1ymKUb0G4177yPCMyZI0X50vrP3i/cmWOQ3F6WCi7jBzcp0NdQspARXitMtgKtkAonBD/JXCxvYpvPVk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=fMZUqAQB; arc=none smtp.client-ip=217.70.183.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPA id AF488C0008;
+	Mon,  2 Dec 2024 16:45:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1733157902;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=imbv659LCzWmKKL5WFDY3dC6juoBFr1RJzTd9558NvU=;
+	b=fMZUqAQBK2vAl+1QGbORAF7xexnH/uspJ3FXPTTF8FrYeqx/dJ0MPkPbx2q9njcmhQZ0Au
+	Fp4Gas+n/6lTdWk43wD7n8AzwwUjbZz/1tysffdQrtslgUUvbjK4RuwbhHCrtCUb2/DLrx
+	viPmNiCEEKTJfphmer4z5TDBCQ2OnQOAczvylh/8McRz5dNT1gOEShcG9hkCcyfYeukQFB
+	VHcOxwJPMWIqYWjUFhfnkDMwUVRKeyu2/iiFKrI5mI2seKQCN3Skgb41+k2GbYjM7s7o9m
+	Er0Fy21+EEqVmoMaLi+Z/XZNjprapuhc5G52TzYhT/HI3RuLVUdhKGGTJet5oQ==
+From: Herve Codina <herve.codina@bootlin.com>
+To: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+Cc: Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	linux-pwm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Herve Codina <herve.codina@bootlin.com>
+Subject: [PATCH 1/1] pwm: Add support for pwm nexus dt bindings
+Date: Mon,  2 Dec 2024 17:44:59 +0100
+Message-ID: <20241202164459.157672-1-herve.codina@bootlin.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ARM: at91: pm: change BU Power Switch to automatic mode
-Content-Language: en-US, fr-FR
-To: Claudiu Beznea <claudiu.beznea@tuxon.dev>, Alexandre Belloni
-	<alexandre.belloni@bootlin.com>
-CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	Cristian Birsan <cristian.birsan@microchip.com>
-References: <20241125165648.509162-1-nicolas.ferre@microchip.com>
- <34a5b77b-e732-4393-a469-d9c719afa879@tuxon.dev>
-From: Nicolas Ferre <nicolas.ferre@microchip.com>
-Organization: microchip
-In-Reply-To: <34a5b77b-e732-4393-a469-d9c719afa879@tuxon.dev>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: herve.codina@bootlin.com
 
-On 02/12/2024 at 09:05, Claudiu Beznea wrote:
-> Hi, Nicolas,
-> 
-> On 25.11.2024 18:56, nicolas.ferre@microchip.com wrote:
->> From: Nicolas Ferre <nicolas.ferre@microchip.com>
->>
->> Change how the Backup Unit Power is configured and force the
->> automatic/hardware mode.
->> This change eliminates the need for software management of the power
->> switch, ensuring it transitions to the backup power source before
->> entering low power modes.
->>
->> This is done in the only locaton where this swich was configured. It's
-> 
-> s/locaton/location
-> 
->> usually done in the bootloader.
->>
->> Previously, the loss of the VDDANA (or VDDIN33) power source was not
->> automatically compensated by an alternative power source. This resulted
->> in the loss of Backup Unit content, including Backup Self-refresh low
->> power mode information, OTP emulation configuration, and boot
->> configuration, for instance.
-> 
-> Should we add a fixes for this?
+Platforms can have a standardized connector/expansion slot that exposes
+signals like PWMs to expansion boards in an SoC agnostic way.
 
-Not so easy to tell as there's a loose dependency with the bootloader. 
-But it's true that switching to automatic never harm. So probably yes.
+The support for nexus node [1] has been added to handle those cases in
+commit bd6f2fd5a1d5 ("of: Support parsing phandle argument lists through
+a nexus node") and the gpio subsystem adopted the support in commit
+c11e6f0f04db ("gpio: Support gpio nexus dt bindings")
 
->> Signed-off-by: Nicolas Ferre <nicolas.ferre@microchip.com>
->> ---
->>   arch/arm/mach-at91/pm.c | 31 ++++++++++++++++++++-----------
->>   1 file changed, 20 insertions(+), 11 deletions(-)
->>
->> diff --git a/arch/arm/mach-at91/pm.c b/arch/arm/mach-at91/pm.c
->> index b9b995f8a36e..05a1547642b6 100644
->> --- a/arch/arm/mach-at91/pm.c
->> +++ b/arch/arm/mach-at91/pm.c
->> @@ -598,7 +598,21 @@ static int at91_suspend_finish(unsigned long val)
->>        return 0;
->>   }
->>
->> -static void at91_pm_switch_ba_to_vbat(void)
->> +/**
->> + * at91_pm_switch_ba_to_auto() - Configure Backup Unit Power Switch
->> + * to automatic/hardware mode.
->> + *
->> + * The Backup Unit Power Switch can be managed either by software or hardware.
->> + * Enabling hardware mode allows the automatic transition of power between
->> + * VDDANA (or VDDIN33) and VDDBU (or VBAT, respectively), based on the
->> + * availability of these power sources.
->> + *
->> + * If the Backup Unit Power Switch is already in automatic mode, no action is
->> + * required. If it is in software-controlled mode, it is switched to automatic
->> + * mode to enhance safety and eliminate the need for toggling between power
->> + * sources.
->> + */
->> +static void at91_pm_switch_ba_to_auto(void)
->>   {
->>        unsigned int offset = offsetof(struct at91_pm_sfrbu_regs, pswbu);
->>        unsigned int val;
->> @@ -609,24 +623,19 @@ static void at91_pm_switch_ba_to_vbat(void)
->>
->>        val = readl(soc_pm.data.sfrbu + offset);
->>
->> -     /* Already on VBAT. */
->> -     if (!(val & soc_pm.sfrbu_regs.pswbu.state))
->> +     /* Already on auto/hardware. */
->> +     if (!(val & soc_pm.sfrbu_regs.pswbu.ctrl))
->>                return;
->>
->> -     val &= ~soc_pm.sfrbu_regs.pswbu.softsw;
-> 
-> It seems that softsw and state members of at91_pm_sfrbu_regs.pswbu along
-> with their initialization could be dropped. What do you think?
+Add support for nexus node dt binding in the pwm subsystem.
 
-I think that I tried when writing the patch but I think that there's a 
-little difference with sama5d2 register layout. Give me a couple more 
-days to come back to this and verify.
+[1] https://github.com/devicetree-org/devicetree-specification/blob/v0.4/source/chapter2-devicetree-basics.rst#nexus-nodes-and-specifier-mapping
 
-> I can do it while applying, if any.
-> 
-> Thank you,
-> Claudiu
-> 
-> 
->> -     val |= soc_pm.sfrbu_regs.pswbu.key | soc_pm.sfrbu_regs.pswbu.ctrl;
->> +     val &= ~soc_pm.sfrbu_regs.pswbu.ctrl;
->> +     val |= soc_pm.sfrbu_regs.pswbu.key;
->>        writel(val, soc_pm.data.sfrbu + offset);
->> -
->> -     /* Wait for update. */
->> -     val = readl(soc_pm.data.sfrbu + offset);
->> -     while (val & soc_pm.sfrbu_regs.pswbu.state)
->> -             val = readl(soc_pm.data.sfrbu + offset);
->>   }
->>
->>   static void at91_pm_suspend(suspend_state_t state)
->>   {
->>        if (soc_pm.data.mode == AT91_PM_BACKUP) {
->> -             at91_pm_switch_ba_to_vbat();
->> +             at91_pm_switch_ba_to_auto();
->>
->>                cpu_suspend(0, at91_suspend_finish);
->>
+Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+---
+ drivers/pwm/core.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/pwm/core.c b/drivers/pwm/core.c
+index 9c733877e98e..4a7454841cef 100644
+--- a/drivers/pwm/core.c
++++ b/drivers/pwm/core.c
+@@ -1707,8 +1707,7 @@ static struct pwm_device *of_pwm_get(struct device *dev, struct device_node *np,
+ 			return ERR_PTR(index);
+ 	}
+ 
+-	err = of_parse_phandle_with_args(np, "pwms", "#pwm-cells", index,
+-					 &args);
++	err = of_parse_phandle_with_args_map(np, "pwms", "pwm", index, &args);
+ 	if (err) {
+ 		pr_err("%s(): can't parse \"pwms\" property\n", __func__);
+ 		return ERR_PTR(err);
+-- 
+2.47.0
 
 
