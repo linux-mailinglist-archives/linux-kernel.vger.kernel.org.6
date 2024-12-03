@@ -1,198 +1,161 @@
-Return-Path: <linux-kernel+bounces-429809-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429810-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B72149E2593
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 17:02:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FDFF9E25B1
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 17:03:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A9FA287EAA
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:02:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6006288487
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:03:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A8341F76D9;
-	Tue,  3 Dec 2024 16:02:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A19E1F76D7;
+	Tue,  3 Dec 2024 16:03:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="g0oLlUba"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="DTCMe78g"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42A5714A088
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 16:02:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E70C223CE;
+	Tue,  3 Dec 2024 16:03:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733241732; cv=none; b=XgmT5mVURGw6AY7RVNSMMV8UXawsu+5Nuys4m1svNYVo7OpcqXfIxS5bk2QoR5hSWKxlliDR4Qd1vXNIz1s45ymYfodGSaZw/XdiZARBs7snZ856dBOXE0e25hPcRHGYa85wLUXtGCd2wOwAYu0DJKm+DK6UljAgAwBgI/ZGBQA=
+	t=1733241810; cv=none; b=ONPhPZnaxYmCOgezLJs4UY6FkzK5LwjAFAk/zpUAJjdts2mwqDHYH+0wmuOaAKpMcZ8p4CWx+XB+mTzuCxb3SYw0zxkjSjXjV7voZNAq+YTpNyOjq4wd6KiU8UZQE87Nygc7RIH8btv3pFdroKG3Glg0BJ/P+3sRfB8I8AMsfDk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733241732; c=relaxed/simple;
-	bh=+4mrmWyTZWE7aCCuD7WX0ogXyiBhmTYam64FyTss/OU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=joyWKb0vivxexiSEvGQXCaicxeQ/syWV/zgKzPxtBAWVwPk+56fPxEwn1MhAJ+bulhWbYKjzI2I1GD3t1/BB082D+LGgDth1UnOW6lSIZY+Q/G0VOAie9oLfJss0dfDXHhQoKjup+FzYSRX4vhi4CiQiIMXpYWhgA5PsxCVkudE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=g0oLlUba; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 3649C40E0269;
-	Tue,  3 Dec 2024 16:02:08 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id qi4ltd9liB1p; Tue,  3 Dec 2024 16:02:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1733241722; bh=Da8ztEBd6tGjshSL+53XVwoH2c/TWIrC04L/xA+dUgw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=g0oLlUbaqNLUnuo3ZNjSyxsQVC9stpguSVBqOpeQs5YROxl88pHuNKjbqtKII2119
-	 x78XVnLQJ4QbrKLAn5LF9NDQwsg+8MeyPz7ppd1cYI2qw62WWDUQrlGxs964+HwuVs
-	 A2CTbLAmFVdtDL78fPkf6zmYD4TZ53Be4jmO77fdMjkufHUGxPfEviXIRt2VJdxOiF
-	 KouD5UD1Vxq4lGK+WuCj4gVqFCQJh4lrMcDDMoyWbqHOrmV1udFLt4skRt88uVyyPL
-	 XvLIcV8Y5wecay7zkeKQNU25eStQ5JRrYT/pO4eVMR5/F8I2SzMKKzt/o0ZS54yaNZ
-	 asQXq+BWar2W2DBJVpdfw6T3uPf/jQm99dT3iqMmvx++A/VHxOmMkrttn/KngEdnzO
-	 fMer96uY+bheqQpDeJ3qfqYWJ2ofbTWOIm7G8i9pH8Gr/aUR6o9346p2f8VbjabxBi
-	 BSF50Kl7SM391pHQyMmgPWmPD4C96Y96v1H5xQBCk78G9tYUg+IA/QmO4yvgZVFERF
-	 SLcuQ6K34GJbxQFcF+QAinzBKaKSdFzXl8pG7e6AVxUQE5WyL+/pgi5F5y3DIxf9Ri
-	 gm+kQRJlDAJxdmK40ZuIyoIDD4EQVjCPK3QZHBmxG7V/sesWxsxIJzAYfrwA991hrS
-	 WfTGDUiaSOXfkhFTbGw5dgfw=
-Received: from zn.tnic (pd9530b86.dip0.t-ipconnect.de [217.83.11.134])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id A161F40E0163;
-	Tue,  3 Dec 2024 16:01:52 +0000 (UTC)
-Date: Tue, 3 Dec 2024 17:01:46 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Michael Roth <michael.roth@amd.com>,
-	Ashish Kalra <ashish.kalra@amd.com>,
-	Nikunj A Dadhania <nikunj@amd.com>,
-	Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
-Subject: Re: [PATCH v6 1/8] x86/sev: Prepare for using the RMPREAD
- instruction to access the RMP
-Message-ID: <20241203160146.GDZ08rahZMYc3vyoxq@fat_crate.local>
-References: <cover.1733172653.git.thomas.lendacky@amd.com>
- <da49d5af1eb7f9039f35f14a32ca091efb2dd818.1733172653.git.thomas.lendacky@amd.com>
+	s=arc-20240116; t=1733241810; c=relaxed/simple;
+	bh=1wm8VU2k6nsO+/umiWcRuh2paY89HdBSNb686MfE21k=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=chkPq2rMto+LWenVKEBwj7BQpiEkA5mr1bzW/XDUzIv/D359Yi5ucuMBRlZFTTDeYFdcsWiNWfH8L22vBHKKdsJMZDCdhk+L8aOzBtMVYlWgQgcrrRIHfdTqjOX9Ziq27imHD+pLt4vB4HcNtB/R2Wa2M5SEHEiLcesAmkNN+Is=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=DTCMe78g; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B3Csm4W014626;
+	Tue, 3 Dec 2024 16:03:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=AB6ql1
+	Lm3mqwBjXtDY+Mfmwa6WnsslgZoWq9phCEbKc=; b=DTCMe78gmAyVzpknlkLOXL
+	Rpg+loZpBVZD3CPAOwljK8au0mWPAbsEXnT4FWxSnDbOtTorhiCJ0JMi5iXJ1AIl
+	NAqha6wnUp/jvZUSpwrnLKyEDmGecr+cT6FHq8LnzBmPaMRskW3QH6tzl/LwjTcL
+	uUaGZbdX40imH9baD33q2Dn+a6nT538Yrczc/tBRiaN2IL+t/5Voavfwl1wu67TB
+	x0+YwggWo5EjHVAUxS6UyGqzquTDro9yP5ZUzWbYtTFRxks0IzjV+aAEbwThwEf7
+	TZsF4Lzt01HQYoMaH+MwwqxJnAPhZvyaJq0LGcfh+DJQVCdTFAMrGE1He/R1D44g
+	==
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 437tbxjjjk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 03 Dec 2024 16:03:10 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4B3D3PMW023551;
+	Tue, 3 Dec 2024 16:03:09 GMT
+Received: from smtprelay02.wdc07v.mail.ibm.com ([172.16.1.69])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 438e1n0cwe-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 03 Dec 2024 16:03:09 +0000
+Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
+	by smtprelay02.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4B3G39U622348424
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 3 Dec 2024 16:03:09 GMT
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id E5B5A58043;
+	Tue,  3 Dec 2024 16:03:08 +0000 (GMT)
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 6808C58055;
+	Tue,  3 Dec 2024 16:03:08 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.31.103.152])
+	by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Tue,  3 Dec 2024 16:03:08 +0000 (GMT)
+Message-ID: <f588fffdb27b28531e900e59cc17182617726b59.camel@linux.ibm.com>
+Subject: Re: [PATCH] ima: instantiate the bprm_creds_for_exec() hook
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: =?ISO-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc: linux-integrity@vger.kernel.org, roberto.sassu@huawei.com,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+        audit@vger.kernel.org, Paul Moore <paul@paul-moore.com>,
+        Jeff Xu
+	 <jeffxu@chromium.org>, Kees Cook <kees@kernel.org>
+Date: Tue, 03 Dec 2024 11:03:08 -0500
+In-Reply-To: <20241203.oZu0aemaiv5a@digikod.net>
+References: <20241127210234.121546-1-zohar@linux.ibm.com>
+	 <20241129.keeDathoo3Oh@digikod.net>
+	 <421b119b81ec044fcdc714aac5748ebe5b4557aa.camel@linux.ibm.com>
+	 <20241203.oZu0aemaiv5a@digikod.net>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <da49d5af1eb7f9039f35f14a32ca091efb2dd818.1733172653.git.thomas.lendacky@amd.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: V0vnWNp8XSm0ldcdvHu0FdPdWm7dODi0
+X-Proofpoint-GUID: V0vnWNp8XSm0ldcdvHu0FdPdWm7dODi0
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 impostorscore=0
+ mlxscore=0 suspectscore=0 mlxlogscore=884 priorityscore=1501 bulkscore=0
+ phishscore=0 adultscore=0 malwarescore=0 spamscore=0 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
+ definitions=main-2412030134
 
-On Mon, Dec 02, 2024 at 02:50:46PM -0600, Tom Lendacky wrote:
-> +static int __snp_lookup_rmpentry(u64 pfn, struct rmpentry *e, int *level)
-> +{
-> +	struct rmpentry e_large;
-> +	int ret;
-> +
-> +	if (!cc_platform_has(CC_ATTR_HOST_SEV_SNP))
+On Tue, 2024-12-03 at 12:53 +0100, Micka=C3=ABl Sala=C3=BCn wrote:
+> On Mon, Dec 02, 2024 at 02:40:35PM -0500, Mimi Zohar wrote:
+> > On Fri, 2024-11-29 at 12:06 +0100, Micka=C3=ABl Sala=C3=BCn wrote:
+> > > For reference, here is the base patch series:
+> > > https://lore.kernel.org/all/20241112191858.162021-1-mic@digikod.net/
+> > >=20
+> > > CCing audit@
+> > >=20
+> > > On Wed, Nov 27, 2024 at 04:02:34PM -0500, Mimi Zohar wrote:
+> > > > Like direct file execution (e.g. ./script.sh), indirect file execut=
+ion
+> > > > (e.g. sh script.sh) needs to be measured and appraised.  Instantiat=
+e
+> > > > the new security_bprm_creds_for_exec() hook to measure and verify t=
+he
+> > > > indirect file's integrity.  Unlike direct file execution, indirect =
+file
+> > > > execution integrity is optionally enforced by the interpreter.
+> > > >=20
+> > > > Update the audit messages to differentiate between kernel and users=
+pace
+> > > > enforced integrity.
+> > >=20
+> > > I'm not sure to see the full picture.  What is the difference between
+> > > execveat() calls and execveat() + AT_EXECVE_CHECK calls?  Both are fr=
+om
+> > > user space, the only difference is that the first can lead to a full
+> > > execution, but the intent is the same.
+> >=20
+> > We do want the full execution in order to measure/appraise/audit both t=
+he direct
+> > file execution (e.g. ./script.sh) and the interpreter (e.g. #!/usr/bin/=
+bash)
+> > specified.
+>=20
+> Yes, but I was wondering about the difference in the log messages.  In
+> both cases the script is checked, but only without AT_EXECVE_CHECK its
+> "dependencies" (e.g. script interpreter) are checked.  I guess it could
+> be useful to differenciate those but I wanted to make sure we were on
+> the same page.
 
-Btw, just a side note: this is AMD-specific and x86 code so we probably should
-use:
+By "those" I assume you're referring to with/without AT_EXECVE_CHECK and no=
+t the
+missing "dependencies".
 
-	if (!cpu_feature_enabled(X86_FEATURE_SEV_SNP))
+In both cases the integrity of the script is being checked, but in one case=
+ the
+integrity is being enforced by the kernel, while in the other case userspac=
+e may
+enforce integrity.  The audit message should different between these two ca=
+ses.
 
-For another series.
+Mimi
 
-> +		return -ENODEV;
-> +
-> +	ret = get_rmpentry(pfn, e);
-> +	if (ret)
-> +		return ret;
->  
->  	/*
->  	 * Find the authoritative RMP entry for a PFN. This can be either a 4K
->  	 * RMP entry or a special large RMP entry that is authoritative for a
->  	 * whole 2M area.
->  	 */
-> -	large_entry = get_rmpentry(pfn & PFN_PMD_MASK);
-> -	if (IS_ERR(large_entry))
-> -		return large_entry;
-> +	ret = get_rmpentry(pfn & PFN_PMD_MASK, &e_large);
-> +	if (ret)
-> +		return ret;
->  
-> -	*level = RMP_TO_PG_LEVEL(large_entry->pagesize);
-> +	*level = RMP_TO_PG_LEVEL(e_large.pagesize);
->  
-> -	return entry;
-> +	return 0;
->  }
 
-...
-
->  static void dump_rmpentry(u64 pfn)
->  {
-> +	struct rmpentry_raw *e_raw;
->  	u64 pfn_i, pfn_end;
-> -	struct rmpentry *e;
-> -	int level;
-> +	struct rmpentry e;
-> +	int level, ret;
->  
-> -	e = __snp_lookup_rmpentry(pfn, &level);
-> -	if (IS_ERR(e)) {
-> -		pr_err("Failed to read RMP entry for PFN 0x%llx, error %ld\n",
-> -		       pfn, PTR_ERR(e));
-> +	ret = __snp_lookup_rmpentry(pfn, &e, &level);
-> +	if (ret) {
-> +		pr_err("Failed to read RMP entry for PFN 0x%llx, error %d\n",
-> +		       pfn, ret);
->  		return;
->  	}
->  
-> -	if (e->assigned) {
-> +	if (e.assigned) {
-> +		e_raw = get_raw_rmpentry(pfn);
-> +		if (IS_ERR(e_raw)) {
-> +			pr_err("Failed to read RMP contents for PFN 0x%llx, error %ld\n",
-> +			       pfn, PTR_ERR(e_raw));
-> +			return;
-> +		}
-> +
->  		pr_info("PFN 0x%llx, RMP entry: [0x%016llx - 0x%016llx]\n",
-> -			pfn, e->lo, e->hi);
-> +			pfn, e_raw->lo, e_raw->hi);
->  		return;
->  	}
-
-Do I see it correctly that we don't really need to call that
-get_raw_rmpentry() again for that @pfn because __snp_lookup_rmpentry()
-returned the whole thing in @e already?
-
-IOW:
-
-diff --git a/arch/x86/virt/svm/sev.c b/arch/x86/virt/svm/sev.c
-index cf64e9384ea0..2e1833426b08 100644
---- a/arch/x86/virt/svm/sev.c
-+++ b/arch/x86/virt/svm/sev.c
-@@ -387,15 +387,8 @@ static void dump_rmpentry(u64 pfn)
- 	}
- 
- 	if (e.assigned) {
--		e_raw = get_raw_rmpentry(pfn);
--		if (IS_ERR(e_raw)) {
--			pr_err("Failed to read RMP contents for PFN 0x%llx, error %ld\n",
--			       pfn, PTR_ERR(e_raw));
--			return;
--		}
--
--		pr_info("PFN 0x%llx, RMP entry: [0x%016llx - 0x%016llx]\n",
--			pfn, e_raw->lo, e_raw->hi);
-+		pr_info("PFN 0x%llx, RMP entry: [ASID: 0x%x, pagesize: 0x%x, immutable: %d]\n",
-+			e.gpa, e.asid, e.pagesize, e.immutable);
- 		return;
- 	}
- 
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
 
