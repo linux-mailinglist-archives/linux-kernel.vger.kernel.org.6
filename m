@@ -1,129 +1,102 @@
-Return-Path: <linux-kernel+bounces-429915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B31EC9E28C3
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 18:10:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D0B7B9E28C5
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 18:10:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E00EF1687CB
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 17:10:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4DDA168980
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 17:10:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 555191FA14D;
-	Tue,  3 Dec 2024 17:10:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="qTKwebU5"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C361E1EF0B0;
-	Tue,  3 Dec 2024 17:10:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 945B11FA14D;
+	Tue,  3 Dec 2024 17:10:30 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32DF61F9F69;
+	Tue,  3 Dec 2024 17:10:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733245804; cv=none; b=WHXIXKHUxJzpFIxovb1TMpo8jDMYmqgs8nWY/sIolyEicV7jiaz6nW2Wm1YK1ScD6VvDfA1zoT5EWqqX+VxkskUXzRCNWf4ogCG1j40mAiyMwVHc6Da+CWDoNt0nPZFd/3AYY0sMghJTX47Wnr1+Dq23LiVXfhlRgXK1pJLo5a4=
+	t=1733245830; cv=none; b=CcI75fsFi40GdtwwRcsULVPZXyhDSJ3Ia1ptYWypLEeH8WEnhwIf9z4L/C+wmmv8DAX7kNmdFYlK9p6jGVLTd1oDBSyd5qpR4RETdbK2hnDdGz8XL41yUoQvxuye8l6WAQN5W3wmYuHwFV+gxyi1cdP7/YbIGwmpH3oisPg9ZQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733245804; c=relaxed/simple;
-	bh=rwEHrrXueGZMJiVETxJoeHOIYYHseKE4baJD4wTStts=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=fjVCfZUNXkFwm0uwP087gCtHpoe5uhHdy243roNFVSDkfH0P9qxr9kLQY25VjkINZD1d5eAU2dL/jfocYcsPo78fCWxWr2F/EoVZ2nlPSdKx+wNFHPMcr7a4UPTQYSEgnlfHHqa3hJCIndjUR3EJhOE3jhV7cJVZqz/gAY+55/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=qTKwebU5; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1733245799;
-	bh=rwEHrrXueGZMJiVETxJoeHOIYYHseKE4baJD4wTStts=;
-	h=From:Date:Subject:To:Cc:From;
-	b=qTKwebU54UNDqPL8vrh1qxJ+nT6yt8ZcOfwWgZ0zRejXNiK6Qt4pvawdd97nn/g+f
-	 A98KoeMUA0KjHDn7daHffa5k6HkPlj53LFBIcaL0Lizt9s9LjWxMHnZhLS7smYEY44
-	 zROXqksRxf1prDnRjT4PvGTVEQ3YH06vak/Ot+Ow=
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Date: Tue, 03 Dec 2024 18:09:55 +0100
-Subject: [PATCH net v2] ptp: kvm: x86: Return EOPNOTSUPP instead of ENODEV
- from kvm_arch_ptp_init()
+	s=arc-20240116; t=1733245830; c=relaxed/simple;
+	bh=layJ8AEP2jkieiFEILen2Xx0k2HD5GdQ7NJvRS5Hzpo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FnurQt5uEU1KHi/RH+i3Ms243LkKMJMfDRN9ELBJJtSxmZ2eRPGGcDdVi7+yO2eZw57KPMEcIp7/6SoqnRZ8YGpdeLdsjYTtmf6alBsBV6LfBNCykPliAaAQEJKQVDpveexOoWEphqe808VA5kW3GBZwzgGZx0tWoHUUUjhW1KU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D6E05FEC;
+	Tue,  3 Dec 2024 09:10:54 -0800 (PST)
+Received: from e133380.arm.com (e133380.arm.com [10.1.197.37])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BDD173F58B;
+	Tue,  3 Dec 2024 09:10:25 -0800 (PST)
+Date: Tue, 3 Dec 2024 17:10:23 +0000
+From: Dave Martin <Dave.Martin@arm.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH 5/6] arm64/signal: Avoid corruption of SME state when
+ entering signal handler
+Message-ID: <Z087f9lkTBPFyOzA@e133380.arm.com>
+References: <20241203-arm64-sme-reenable-v1-0-d853479d1b77@kernel.org>
+ <20241203-arm64-sme-reenable-v1-5-d853479d1b77@kernel.org>
+ <Z08kvi0znVM2RHx4@e133380.arm.com>
+ <537fe318-a679-4b5c-b87f-93a7812dbeca@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20241203-kvm_ptp-eopnotsuppp-v2-1-d1d060f27aa6@weissschuh.net>
-X-B4-Tracking: v=1; b=H4sIAGI7T2cC/32NUQrCMBBEryL7bSRZCq1+eQ8Rqc3WBDFZsmlUS
- u9uyAH8fDPMmxWEkieB026FRMWLj6EC7ncwuTE8SHlbGVBjZwz26lleN86sKHKIWRZmVlZr7Ae
- LeNcG6pITzf7TrBcIlOFaQ+clx/RtT8W06q+0GGWUnUfqBkvHHqfzm7yITG5xhybdtu0HAPcBf
- 8AAAAA=
-X-Change-ID: 20241127-kvm_ptp-eopnotsuppp-d00278d22b01
-To: Richard Cochran <richardcochran@gmail.com>, 
- Jon Hunter <jonathanh@nvidia.com>, Marc Zyngier <maz@kernel.org>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1733245799; l=1737;
- i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=rwEHrrXueGZMJiVETxJoeHOIYYHseKE4baJD4wTStts=;
- b=5bedkw5e3KI7XfnLhXwxDPx+WP47G6SMv1QXPAIjDxl8r6Po6WhJUVaL9GzBMThZ8yET9iGKT
- i502KuT3DSaBlUA5QkVQ1mpNAlhs46Y8txVEACHhJ8XqtPteQHfnXdC
-X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
- pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <537fe318-a679-4b5c-b87f-93a7812dbeca@sirena.org.uk>
 
-The caller, ptp_kvm_init(), emits a warning if kvm_arch_ptp_init() exits
-with any error which is not EOPNOTSUPP:
+Hi,
 
-	"fail to initialize ptp_kvm"
+On Tue, Dec 03, 2024 at 04:12:33PM +0000, Mark Brown wrote:
+> On Tue, Dec 03, 2024 at 03:33:18PM +0000, Dave Martin wrote:
+> > On Tue, Dec 03, 2024 at 12:45:57PM +0000, Mark Brown wrote:
+> 
+> > > +	get_cpu_fpsimd_context();
+> 
+> > > +		if (current->thread.svcr & SVCR_SM_MASK) {
+> > > +			memset(&current->thread.uw.fpsimd_state.vregs, 0,
+> > > +			       sizeof(current->thread.uw.fpsimd_state.vregs));
+> 
+> > Do we need to hold the CPU fpsimd context across this memset?
+> 
+> > IIRC, TIF_FOREIGN_FPSTATE can be spontaneously cleared along with
+> > dumping of the regs into thread_struct (from current's PoV), but never
+> > spontaneously set again.  So ... -> [*]
+> 
+> Yes, we could drop the lock here.  OTOH this is very simple and easy to
+> understand.
 
-Replace ENODEV with EOPNOTSUPP to avoid this spurious warning,
-aligning with the ARM implementation.
+Ack; it works either way.
 
-Fixes: a86ed2cfa13c ("ptp: Don't print an error if ptp_kvm is not supported")
-Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
----
-Changes in v2:
-- Reword commit message slightly
-- Retarget for net tree
-- Add Fixes: tag
-- Link to v1: https://lore.kernel.org/r/20241127-kvm_ptp-eopnotsuppp-v1-1-dfae48de972c@weissschuh.net
----
- drivers/ptp/ptp_kvm_x86.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Since this is a Fixes: patch, it may be better to keep it simple.
 
-diff --git a/drivers/ptp/ptp_kvm_x86.c b/drivers/ptp/ptp_kvm_x86.c
-index 617c8d6706d3d00f7167fbf7e5b624ced29a206d..6cea4fe39bcfe46ba3b54b0815d3a3d034d415ea 100644
---- a/drivers/ptp/ptp_kvm_x86.c
-+++ b/drivers/ptp/ptp_kvm_x86.c
-@@ -26,7 +26,7 @@ int kvm_arch_ptp_init(void)
- 	long ret;
- 
- 	if (!kvm_para_available())
--		return -ENODEV;
-+		return -EOPNOTSUPP;
- 
- 	if (cc_platform_has(CC_ATTR_GUEST_MEM_ENCRYPT)) {
- 		p = alloc_page(GFP_KERNEL | __GFP_ZERO);
-@@ -46,14 +46,14 @@ int kvm_arch_ptp_init(void)
- 
- 	clock_pair_gpa = slow_virt_to_phys(clock_pair);
- 	if (!pvclock_get_pvti_cpu0_va()) {
--		ret = -ENODEV;
-+		ret = -EOPNOTSUPP;
- 		goto err;
- 	}
- 
- 	ret = kvm_hypercall2(KVM_HC_CLOCK_PAIRING, clock_pair_gpa,
- 			     KVM_CLOCK_PAIRING_WALLCLOCK);
- 	if (ret == -KVM_ENOSYS) {
--		ret = -ENODEV;
-+		ret = -EOPNOTSUPP;
- 		goto err;
- 	}
- 
+> 
+> > > +		/* Ensure any copies on other CPUs aren't reused */
+> > > +		fpsimd_flush_task_state(current);
+> 
+> > (This is very similar to fpsimd_flush_thread(); can they be unified?)
+> 
+> I have a half finished series to replace the whole setup around
+> accessing the state with get/put operations for working on the state
+> which should remove all these functions.  The pile of similarly and
+> confusingly named operations we have for working on the state is one of
+> the major sources of issues with this code, even when actively working
+> on the code it's hard to remember exactly which operation does what
+> never mind the rules for which is needed.
 
----
-base-commit: cdd30ebb1b9f36159d66f088b61aee264e649d7a
-change-id: 20241127-kvm_ptp-eopnotsuppp-d00278d22b01
+Sure, something like that would definitely help.
 
-Best regards,
--- 
-Thomas Weißschuh <linux@weissschuh.net>
-
+Cheers
+---Dave
 
