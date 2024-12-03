@@ -1,86 +1,104 @@
-Return-Path: <linux-kernel+bounces-429430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 594479E1BFB
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 13:20:40 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A5E19E1BF7
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 13:20:21 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9ABE7167A2F
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 12:20:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A91D2816B0
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 12:20:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E65B21E5711;
-	Tue,  3 Dec 2024 12:19:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CFC71E572B;
+	Tue,  3 Dec 2024 12:19:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IJLzxgE7"
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zAWKXfM2"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8AE71E4908;
-	Tue,  3 Dec 2024 12:19:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74D791E048B
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 12:19:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733228347; cv=none; b=fDfWw7K8SctupJQc8+T6fhMK3+jdznhFg2ZzkSw8RL559ui57JUJ47IQ3pEsbNlUbG4RLGliIA7uUURdRFYVZvnMrxJaxvtN0ehUpyuE+avvPY3KhEiNryYUzWrAg0aVxzrqX0QPCyAgnQwe+VxM0qLEG41/2QqIOowBqsoipuw=
+	t=1733228388; cv=none; b=llNul4naxfk2zxGQhx3x+oqEtOPxi/lxUUbaqBxBz3ACCCbRYI+MMIDAqj8nV162sHoH3/RICgwUN4THXuvOB69lP1SQKIsM1+aL7GZ54WZmNQOs7/RyYezzskFvFWGIXjB1ZVo+l8qvcf0anx2hyjBW8SDBvNyZFV1/6ngdCVk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733228347; c=relaxed/simple;
-	bh=ndKEPt7of7/kxIz3Ya4S9dp3qvpwDd3rQMoPCIHXakQ=;
+	s=arc-20240116; t=1733228388; c=relaxed/simple;
+	bh=kpQG97neEOTfmw8LT50c3EPenmcddI5a2M0V4jVWKmc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l6SThhRi+bvTw4jNtDZpqXfIOebpiK3AOPxzyo/O8SCqeyQvCoH+j4g3inwHtWv4iiVH+4qGfiQ27y0rjFTobGu1+ZPnyiEn4I+T6XEyxgDXZeopRNbiTf/QfmcIGpCGtERPsgxVin5vO6EUteO3uWGa7a+xanAoJ/0yxPH0Qi0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IJLzxgE7; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2ee6c2d6db0so3113981a91.1;
-        Tue, 03 Dec 2024 04:19:05 -0800 (PST)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y9PazRzGOvLhmPUc69ttWLGaOImppJhZktDAs5efYT4EvhpjPHrGLXYAUTQUOoh2EpaBtjrKJMlF0S37ROj3BwOM2DoJMXglmIJZ68T+IoX01IVBBdJXyn4/OK7YHG6QsZAFJkI6nPtiihZo3ITdzo70X40CGNKnWF2lKKNEaU4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zAWKXfM2; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-53df1e0641fso6213173e87.1
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 04:19:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733228345; x=1733833145; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1733228384; x=1733833184; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=o9N4bf5lFwCp0Geh+81OBCgf6RNbshA4H4t2xhZyJ0I=;
-        b=IJLzxgE71U5bjJU9Rx1E5GXZFltE5dC7QPaNjq3joI8PcmZbkJHECMqnGzUw0Suq1V
-         yaQ+i3N7g0ffX6oaBYCgBWz3IkuJgLsYuUNi8D7s6hRy4yfG312tcNikCgIkFAKnAU51
-         kjbGLk0easiyfmRegKW9ld//K3VM7N5Erh4I2RsIrC47gz4QdfoozGwfIrU0i1seU3bU
-         24RfBOhCEsNg3ZdKTI3IZJvgoSz3FosOGrk7sOpcmyEp5QNlr0claUpso7MjYOuHYVI8
-         q2u/BH5tLCsC9lRgLH4cND8s3qtpQQsS/IyIRfbSaZN2XKHipcCcmafHRHAHJHQlIdSk
-         gt7A==
+        bh=5n+OPgKd4OeVfRcOdyszAmWQAYwYUA33KJvbyrKBpj8=;
+        b=zAWKXfM2peg7BAHmz8T3EWRad4/q7t5dNAlCsWR8UImR7RMKl8lhDFFCQ70vqKCvPM
+         1bEvuoHJ9lXpecjAcIrTfe3CUtzHoAXWkLQ/9YPNS2213Qiip6900QwCViM4ll1x5GoP
+         IW/OgzPXeEQqZGeSWWHVhL81W2vRVn1u9EYhIMOsJ6/Npi6fhe7ubnWKwyoC9veWfSpK
+         8ROMFxJcn0DgmLxuqayM+3Yn18zndg8l1UEJLthcXgtVomwqVwx/m28+rXyZ7tr/Wxh5
+         UWAw3kDBNjb4h3zmX/hJP8rdwkcSxg92wFn7tZCiBStKPGXU6xlYQFR47eV6VvL33BkM
+         Q+9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733228345; x=1733833145;
+        d=1e100.net; s=20230601; t=1733228384; x=1733833184;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=o9N4bf5lFwCp0Geh+81OBCgf6RNbshA4H4t2xhZyJ0I=;
-        b=XB42rBaM2KXMR4KYHYiDWxr4VVPteRzWu6oWLajeVBRLIRvDVbM68gZGN4dXIk9nl2
-         lhQ96N4jVRTBF5ofEDFOXWk/5sQ0xPLWleOx13ys/xaBrm3pKVMYgmb8nz3jkGnoL3a7
-         X737w2AdAAfIUBUvVVDoJFMG0evu481Yzaw3OGFQk6lID1dIG3dykVzvJljBtkZ34AHI
-         KsDPZ0o5slpc/cxAs6ZYyso7fbeKv6YGY+dsFM7KnSZyueYVATH17dRQlafGxJ0PY83Y
-         lsIAB6FfNBlYYONbVYn9PYfQH3KsFsJefIHNsrInKIDfVYC82jaR8m/DKO6gqRK14dpP
-         fWyw==
-X-Forwarded-Encrypted: i=1; AJvYcCV1mQVMnrXbeCcQAp42fNlLRAv4aSxOH8LVDBfD07IAKAkUdELHmI2WbzBuRLYEc+DezYspr7k4dBPSyWY0@vger.kernel.org, AJvYcCWM5e4w3F5n+QMLwEDMzY8IofRgJd23vS26pd1YksNTtBPmi8/C5atKSdLC0o1BiGVYRIwd+4jVfXk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZgtUhWXsrPZdFECwp87jUAceGUXo6Wjz1bhYIcHfiywk0t3mH
-	2uakvOMtTvmneiGj7x/SOa6pMWp6I8UDcMZ9EZiUGeexwVO9jVVi
-X-Gm-Gg: ASbGncvk8QqbwWzEE/vpcJVgZD0vJojBwrI9TjscdOMZwqYRL5VG89Hr4k2k/Eca9ty
-	evoUFT6T3baZgwJ2p8HKICTDWXNQ2v2nMGQHerrxbXk3I8v7yheH7x089wrMhqpRWMdKSYUMCBD
-	qAuf4HC6R9zGKJBn534n4mCC/LjwbYEa7XCwWUWOC5tCMic0CweHiZeKZkUJvEqskEtz9qvfLLW
-	3Huqu6B4Kx0nrVkOUKRwJARHCRiGHfcA95T3ezsX16oRH/NBdo/tk0pJSM=
-X-Google-Smtp-Source: AGHT+IFpphu+frZ+0DihURUZf8DhfsSFTBOlZqNjtMtBQudjLmN08seIWfD4cJJjCl+fZZFpr+d/qQ==
-X-Received: by 2002:a17:90b:1c07:b0:2ee:74a1:fba2 with SMTP id 98e67ed59e1d1-2ef012101demr2966167a91.20.1733228344698;
-        Tue, 03 Dec 2024 04:19:04 -0800 (PST)
-Received: from localhost ([2804:30c:1618:9800:694b:286f:2b3a:5414])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2eeab112db4sm4585179a91.43.2024.12.03.04.19.03
+        bh=5n+OPgKd4OeVfRcOdyszAmWQAYwYUA33KJvbyrKBpj8=;
+        b=AUfb9WG1/j5XpNlktr1uDcG2rEjt3VD9JNWLIHBNBOUb37Qqn+I7gf26BjaAUjOBON
+         hLZABBz9GWu3V0bqESCH4DE7nrU0mzSNmb70bmowMe4H2G+hjbYqhQBcBHl1eNc9LGZQ
+         kVT1p5N92hnxw1MKVuQD+fA64WVUN29wme0iOGgnURN5qTdLHIJlZdDJpHLDsIzeFVD8
+         0Kq2KGPFJ3Hp0j3xrGMKsDFTom1orvPCOelO4tW2rTqMEHCOW4UGssosYur3wgE/ugR0
+         yYnSlK1OCbDa2fyW9b0V/AMOOpmAVIyG4gh3w8Xwwr7tG+mZjWIA4naHWPRtml8ot5hD
+         oH6w==
+X-Forwarded-Encrypted: i=1; AJvYcCXFZg7WpIaoJIx2F2AwD8CgMPlpapVSMEaQxNEIBD7cptMSzLDkPSIIEivrvQjYt7zbCHJM7ZpJ5stYGIg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwgcBBEh20Hnknt21haOeqe+wVIZEeYQ0u5qy9HwDhrxRAAIui7
+	qBLphObmBPWLq72216GUUeimCxudOM6FtlT3blGevARsAL53BC5lFqrp7AGMmEU=
+X-Gm-Gg: ASbGncuWKKoQs/j6cQN4sBPYCrzh6vD5XEVTTh4pEU1C52F/Vf7Yw1dHs0zacZrt0v+
+	+m5C7PsEzdFsF6QRi21A0UrVrxXow8DuiUMWmBN3hzy+Su4CPUsxpo4p9ATisLGd37md8sLXjj/
+	G0iAzKir1OXVcgd4uQg8JA2kUk4Y00K/nsAXAdayoty7bUxAI+ToZTnppUHDUqESQRNTPnSqy6M
+	FRGsJ09GGPs3wjsnkrOGDE/6aD8X/zdVfaCONAipOvPWceCswK5WJXgKBpzrmlh+9GJ+p1XjRs/
+	vSMej9i6tl8Oqj1KIYIogpJoEPKsEw==
+X-Google-Smtp-Source: AGHT+IGqrNK3/JV3p7HUHgNYWUEc9ZkYpw0A4baw1aq7D6bW6M82dv1dR6gPJHjyZhTW0XLXbh3VUg==
+X-Received: by 2002:a05:6512:32c9:b0:53d:e43c:9c5d with SMTP id 2adb3069b0e04-53e12a06a29mr1124957e87.27.1733228384467;
+        Tue, 03 Dec 2024 04:19:44 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53df643149asm1854312e87.37.2024.12.03.04.19.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Dec 2024 04:19:03 -0800 (PST)
-Date: Tue, 3 Dec 2024 09:19:30 -0300
-From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Marcelo Schmitt <marcelo.schmitt@analog.com>, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, jic23@kernel.org, lars@metafoo.de,
-	Guillaume Ranquet <granquet@baylibre.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>
-Subject: Re: [PATCH 1/1] Documentation: ABI: IIO: Re-add
- filter_type/filter_mode
-Message-ID: <Z073UvHZToWl88f9@debian-BULLSEYE-live-builder-AMD64>
-References: <b2132bd3ca1d64cdd8d5afab1f1f33c574718b50.1732901318.git.marcelo.schmitt@analog.com>
- <52513d34-8484-4c4b-8f87-29cbbdcefc06@baylibre.com>
+        Tue, 03 Dec 2024 04:19:43 -0800 (PST)
+Date: Tue, 3 Dec 2024 14:19:41 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Phong LE <ple@baylibre.com>, 
+	Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, 
+	Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, Russell King <linux@armlinux.org.uk>, 
+	Chun-Kuang Hu <chunkuang.hu@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Sandy Huang <hjc@rock-chips.com>, 
+	Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>, Andy Yan <andy.yan@rock-chips.com>, 
+	Alain Volmat <alain.volmat@foss.st.com>, Raphael Gallais-Pou <rgallaispou@gmail.com>, 
+	Dave Stevenson <dave.stevenson@raspberrypi.com>, =?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>, 
+	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, Jani Nikula <jani.nikula@linux.intel.com>, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	linux-mediatek@lists.infradead.org, linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH v5 8/9] drm/vc4: hdmi: switch to using generic HDMI Codec
+ infrastructure
+Message-ID: <e7jngrc4nljdsksekinbkir2h76ztsth2xj4yqcyapfv43uryh@356yrxv3j4x6>
+References: <20241201-drm-bridge-hdmi-connector-v5-0-b5316e82f61a@linaro.org>
+ <20241201-drm-bridge-hdmi-connector-v5-8-b5316e82f61a@linaro.org>
+ <20241202-industrious-unnatural-beagle-7da5d4@houat>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,99 +107,73 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <52513d34-8484-4c4b-8f87-29cbbdcefc06@baylibre.com>
+In-Reply-To: <20241202-industrious-unnatural-beagle-7da5d4@houat>
 
-On 12/02, David Lechner wrote:
-> On 12/2/24 12:22 PM, Marcelo Schmitt wrote:
-> > The ad4130 driver exports in_voltageY-voltageZ_filter_mode and
-> > in_voltage-voltage_filter_mode_available attributes to user space.
-> > The ad7779 driver exports filter_type and filter_type_available.
-> > Add (back again) documentation for filter_type/filter_mode attributes.
+On Mon, Dec 02, 2024 at 02:20:04PM +0100, Maxime Ripard wrote:
+> Hi,
+> 
+> Sorry, I've been drowning under work and couldn't review that series before.
+
+No worries, at this point I'm more concerned about my IGT series rather
+than this one.
+
+> 
+> I'll review the driver API for now, and we can focus on the exact
+> implementation later on.
+> 
+> On Sun, Dec 01, 2024 at 02:44:12AM +0200, Dmitry Baryshkov wrote:
+> > Drop driver-specific implementation and use the generic HDMI Codec
+> > framework in order to implement the HDMI audio support.
 > > 
-> > Fixes: 01bb12922b60 ("Documentation: ABI: added filter mode doc in sysfs-bus-iio")
-> > Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
+> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 > > ---
-> > Digressing a bit away from the specific ABI used by ad4130 and ad7779,
-> > the sinc3/4/5 filters are called `filter_mode` in ad4130 driver while other
-> > drivers (ad7779, ad7124, ad7768-1) call sinc3/4/5 filters a `filter_type`.
-> > Datasheets use the term `filter type`.
+> >  drivers/gpu/drm/vc4/vc4_hdmi.c | 68 ++++++++++--------------------------------
+> >  drivers/gpu/drm/vc4/vc4_hdmi.h |  2 --
+> >  2 files changed, 15 insertions(+), 55 deletions(-)
 > > 
-> > Depending on the particular ADC chip/design, the sinc3/4/5 filter configuration
-> > may have an impact on the output data rate (ODR) (which is equivalent to the
-> > sampling frequency for SAR ADCs - `sampling_frequency` ABI), 3dB cutoff
-> > frequency of the filter (`_low_pass_3db_frequency` attributes), or settling
-> > time.
-> > 
-> > ad7768-1 sets sinc3/4/5 according to the sampling_frequency attribute. No
-> > filter_type attribute.
-> > 
-> > ad7173 sets the filter_type according to sampling_frequency too, though it
-> > looks like support for only one filter type is implemented.
-> > 
-> > ad7124 sets sinc3/4/5 filters according to a filter_low_pass_3db_frequency
-> > attribute so it doesn't export filter type attributes to user space.
-> > Missing `in_voltageY-voltageZ_filter_low_pass_3db_frequency` documentation?
-> > follow up patch?
-> 
-> cc: Guillaume and Uwe since they are working on these last two drivers
-> currently. Maybe something they could address?
-> 
-> > 
-> >  Documentation/ABI/testing/sysfs-bus-iio | 14 ++++++++++++++
-> >  1 file changed, 14 insertions(+)
-> > 
-> > diff --git a/Documentation/ABI/testing/sysfs-bus-iio b/Documentation/ABI/testing/sysfs-bus-iio
-> > index f83bd6829285..704c9033cb5b 100644
-> > --- a/Documentation/ABI/testing/sysfs-bus-iio
-> > +++ b/Documentation/ABI/testing/sysfs-bus-iio
-> > @@ -2268,6 +2268,20 @@ Description:
-> >  		An example format is 16-bytes, 2-digits-per-byte, HEX-string
-> >  		representing the sensor unique ID number.
+> > diff --git a/drivers/gpu/drm/vc4/vc4_hdmi.c b/drivers/gpu/drm/vc4/vc4_hdmi.c
+> > index 7295834e75fb1ab0cd241ed274e675567e66870b..d0a9aff7ad43016647493263c00d593296a1e3ad 100644
+> > --- a/drivers/gpu/drm/vc4/vc4_hdmi.c
+> > +++ b/drivers/gpu/drm/vc4/vc4_hdmi.c
+> > @@ -595,6 +595,9 @@ static int vc4_hdmi_connector_init(struct drm_device *dev,
+> >  	if (vc4_hdmi->variant->supports_hdr)
+> >  		max_bpc = 12;
 > >  
-> > +What:		/sys/bus/iio/devices/iio:deviceX/filter_type
-> > +What:		/sys/bus/iio/devices/iio:deviceX/in_voltageY-voltageZ_filter_mode
-> > +voltageY_filter_type_available
-> > +KernelVersion:	6.1
-> > +Contact:	linux-iio@vger.kernel.org
-> > +Description:
-> > +		Set the filter mode of the channel. When the filter mode
-> > +		changes, the in_voltageY-voltageZ_sampling_frequency and
-> > +		in_voltageY-voltageZ_sampling_frequency_available attributes
-> > +		might also change to accommodate the new filter mode.
-> > +		If the current sampling frequency is out of range for the new
-> > +		filter mode, the sampling frequency will be changed to the
-> > +		closest valid one.
-> 
-> I think it can be safely assumed that changing any IIO attribute can
-> cause any other to change, so we probably don't need to mention the
-> sampling frequency interaction here, especially since it doesn't apply
-> to every possible user of these attributes.
-
-Besides these filter attributes, the _offset attribute was allowed to change
-after a change in _scale for a different driver so I'm also thinking IIO
-attribute changes are allowed to cause updates to other device attributes.
-The description above is roughly the same that was removed in 01bb12922b60.
-Can think of something more accurate if that would be appreciated.
-
-Jonathan, let me know if you prefer to re-add ABI doc as it was or if we
-can re-add an updated version of it.
-
-> 
-> Some other useful things to add instead:
-> * Mention that the values are the same as the ones listed in the
->   "..._available" attribute docs.
-Sure, will do if going to update the ABI description.
-
-> * We should deprecate one of the names and recommend the other for
->   future drivers to use. Since "type" is used more than once and
->   "mode" only once, it seems natural to keep using "type" going
->   forward.
-Agree.
-
-> 
+> > +	connector->hdmi_codec.max_i2s_channels = 8;
+> > +	connector->hdmi_codec.i2s = 1;
 > > +
-> >  What:		/sys/bus/iio/devices/iio:deviceX/filter_type_available
-> >  What:		/sys/bus/iio/devices/iio:deviceX/in_voltage-voltage_filter_mode_available
-> >  KernelVersion:	6.1
-> > 
+> 
+> I guess it's a similar discussion than we had with HDMI2.0+ earlier
+> today, but I don't really like initializing by structs. Struct fields
+> are easy to miss, and can be easily uninitialized by mistake.
+> 
+> I think I'd prefer to have them as argument to the init function. And if
+> they are optional, we can explicitly mark them as unused.
+
+Do you mean drm_connector_hdmi_init()? I think it's overloaded already,
+but I defintely can think about:
+
+drmm_connector_hdmi_init(..., max_bpc, HDMI_CODEC_I2S_PLAYBACK(8) |
+HDMI_CODEC_NO_CAPTURE | HDMI_CODEC_DAI_ID(4));
+
+or
+
+... | HDMI_CODEC_NO_DAI_ID)
+
+The default (0) being equivalent to:
+
+HDMI_CODEC_NO_I2S | HDMI_CODEC_NO_SPDIF | HDMI_CODEC_NO_CAPTURE | HDMI_CODEC_NO_DAI_ID
+
+WDYT?
+
+> 
+> Like, it looks like the get_dai_id implementation relies on it being set
+> to < 0 for it to be ignored, but it's not here, so I'd assume it's used
+> with an ID of 0, even though the driver didn't support get_dai_id so
+> far?
+
+
+-- 
+With best wishes
+Dmitry
 
