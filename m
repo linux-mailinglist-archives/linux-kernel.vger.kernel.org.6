@@ -1,167 +1,109 @@
-Return-Path: <linux-kernel+bounces-429878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9AE49E280A
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 17:49:50 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15733167CE6
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:49:47 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25A281F8EF6;
-	Tue,  3 Dec 2024 16:49:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uJo1JZl2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DED829E2820
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 17:51:11 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62A611F8927;
-	Tue,  3 Dec 2024 16:49:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A546C2883EC
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:51:10 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BD561FC0E5;
+	Tue,  3 Dec 2024 16:50:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="T9WrCOrx";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="7UtLMG0F"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F4441FA176;
+	Tue,  3 Dec 2024 16:50:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733244584; cv=none; b=Tc8jlGPFlbHdpOSJoAhsiS49d8lHEgv7UmpiYnpXUl3hKRdYD03kMXUPedrsYHCrEm595gsK3CK4tAPqBZGNvWayS/tTPHnh2rs5bqFhBVnxk4NUYTh4EhI/qEO9IaLM8Q3/bpJLd24OXP2izlpCibjnFyU7hY+gLChpL9m1D4c=
+	t=1733244617; cv=none; b=b0nFUW8lTPr8RfdszRl2MfsggKrjsZZCSgT/fSwESVQnCHFqOvQmYybocglL35DMwRs8CS3v99567ZHdg1SDUgvM7s1nfDL00vpPoKZiXCXkIOYfB/Hy+cAoWeumbZR00cOIBt+1HYtQpUhliNXolDfQtkyBcR7vcojVYAybz+I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733244584; c=relaxed/simple;
-	bh=1NqLuuLFwHm0v/yK7wKaDo26NhV34tP1XmqEcIsx8to=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mD9h7UD6u/SVh1n6rpkx+dx7F84ixxARhF848GzDZt4rxj2yHo0wy27BNgliFOsfF2YqBWHAGxsGzuSGfKkzzHsGvccGM0g4XQ/H7xzPG0xINDUYgU3YJtxauA6cGStuoTSvFyNvTlIvGBvwn3Q5r/PVZgEQ9Htlyay+hwPHMlw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uJo1JZl2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5CEBC4CECF;
-	Tue,  3 Dec 2024 16:49:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733244583;
-	bh=1NqLuuLFwHm0v/yK7wKaDo26NhV34tP1XmqEcIsx8to=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uJo1JZl25KEUEqfUZcLBB/tMBA0DqTkqNW9sWubx4kv7Y3pfx/lt5a+4iT+XQL0W5
-	 Txc43BClWHT6BKKuL7HBYTCMYPXmMS7V/t6cmHshp7VtgQnN9cAbB0LHUZCswVGJdc
-	 DKHlIUuRyXVLaOQJbpL0q6rHr6D89fQVmdPLC61hw3lsn1M1x4dlSb+hV5S6sxRry3
-	 dSuHczvq1DBSm+SCu7n4Y6K0QiEcqdGQo5ECPrRLkbwAiPNPYrO0tVEOabwTXRvjEs
-	 3C1LyxcAoye0/25Q7rKK6tt5+i3LvrKa24QHpz300wIipXPYveiVEftvQvo6EzBScm
-	 u870mSPB8nrlg==
-Date: Tue, 3 Dec 2024 16:49:39 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Chen-Yu Tsai <wenst@chromium.org>
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linuxppc-dev@lists.ozlabs.org,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Frank Li <Frank.Li@nxp.com>,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: soc: fsl: cpm_qe: Limit matching to nodes
- with "fsl,qe"
-Message-ID: <20241203-egotistic-certainly-116f38bd39b6@spud>
-References: <20241202045757.39244-1-wenst@chromium.org>
+	s=arc-20240116; t=1733244617; c=relaxed/simple;
+	bh=dCLZ/6d9Emqzk6rjNaKFq70Ab/o+bBlDNmnOufWyYvo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=tZ3kYYBWM8vFjVcFfDcgsYufJHZhsdzpzaTqCZC930WEaDVnwQDaUz0f2MePbW7E30EGInl1bd3V2oXvj3UOoiiFD0++mQpqcFZfhcuwfE27JLDI7rSr2J0IW/ky50eT5T5N2g49eV7AQaphoqiSurMmMwEzKBg1xg+eUxHGJWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=T9WrCOrx; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=7UtLMG0F; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1733244613;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ddUgFgPxg+SS7wo0+tjynAsBYR5Mxah4PrQSaFnCmnk=;
+	b=T9WrCOrxKvgOzRX18+gpG03ZanbaXNOW4Q8EJ+AjPslvATRO09l/e/uoFg5o0u3V7mUxIc
+	FKCFbTtx7TWQa10iy/a+u0zHSpl3oM+K6vPIY9QN3aZr19zGDrMJOmgz4vPYA6x3G1/c3M
+	WxUqbqLRsTrv/siOEk3R5LiTzgSo1JgEv+NOVe8nSL0VGMxhIKdtW2JlhhQbsGo42ibEke
+	2lZUHWjzXEzzayRZlFzV90vwPiuaNQ2p8MbtOrPSWndbBJzlUJHotzmppPVkuKRyl+XUKe
+	4OyeIQ55HqBlfvUvBUNtTExzn47SF13chN/bZbI7ZfD22izCmNHBbNZyXaOqwQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1733244613;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ddUgFgPxg+SS7wo0+tjynAsBYR5Mxah4PrQSaFnCmnk=;
+	b=7UtLMG0FCrXqstktFxvDODEZS+Zvp0Wod9CVP17RsZNtcP0UOJ6fcJsb5uKaTcWojLI+EE
+	5MXVE3lGdmrbDeBQ==
+To: Andrew Jones <ajones@ventanamicro.com>
+Cc: iommu@lists.linux.dev, kvm-riscv@lists.infradead.org,
+ kvm@vger.kernel.org, linux-riscv@lists.infradead.org,
+ linux-kernel@vger.kernel.org, tjeznach@rivosinc.com, zong.li@sifive.com,
+ joro@8bytes.org, will@kernel.org, robin.murphy@arm.com,
+ anup@brainfault.org, atishp@atishpatra.org, alex.williamson@redhat.com,
+ paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu
+Subject: Re: [RFC PATCH 01/15] irqchip/riscv-imsic: Use hierarchy to reach
+ irq_set_affinity
+In-Reply-To: <20241203-1cadc72be6883bc2d77a8050@orel>
+References: <20241114161845.502027-17-ajones@ventanamicro.com>
+ <20241114161845.502027-18-ajones@ventanamicro.com> <87mshcub2u.ffs@tglx>
+ <20241203-1cadc72be6883bc2d77a8050@orel>
+Date: Tue, 03 Dec 2024 17:50:13 +0100
+Message-ID: <87a5dcu2wq.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="5+M0C7v+8zXCbXJ/"
-Content-Disposition: inline
-In-Reply-To: <20241202045757.39244-1-wenst@chromium.org>
+Content-Type: text/plain
 
+On Tue, Dec 03 2024 at 17:27, Andrew Jones wrote:
+> On Tue, Dec 03, 2024 at 02:53:45PM +0100, Thomas Gleixner wrote:
+>> On Thu, Nov 14 2024 at 17:18, Andrew Jones wrote:
+>> The whole IMSIC MSI support can be moved over to MSI LIB which makes all
+>> of this indirection go away and your intermediate domain will just fit
+>> in.
+>> 
+>> Uncompiled patch below. If that works, it needs to be split up properly.
+>
+> Thanks Thomas. I gave your patch below a go, but we now fail to have an
+> msi domain set up when probing devices which go through aplic_msi_setup(),
+> resulting in an immediate NULL deference in
+> msi_create_device_irq_domain(). I'll look closer tomorrow.
 
---5+M0C7v+8zXCbXJ/
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Duh! I forgot to update the .select callback. I don't know how you fixed that
+compile fail up. Delta patch below.
 
-On Mon, Dec 02, 2024 at 12:57:55PM +0800, Chen-Yu Tsai wrote:
-> Otherwise the binding matches against random nodes with "simple-bus"
-> giving out all kinds of invalid warnings:
->=20
->     $ make CHECK_DTBS=3Dy mediatek/mt8188-evb.dtb
->       SYNC    include/config/auto.conf.cmd
->       UPD     include/config/kernel.release
->       SCHEMA  Documentation/devicetree/bindings/processed-schema.json
->       DTC [C] arch/arm64/boot/dts/mediatek/mt8188-evb.dtb
->     arch/arm64/boot/dts/mediatek/mt8188-evb.dtb: soc: compatible:0: 'fsl,=
-qe' was expected
-> 	    from schema $id: http://devicetree.org/schemas/soc/fsl/cpm_qe/fsl,qe=
-=2Eyaml#
->     arch/arm64/boot/dts/mediatek/mt8188-evb.dtb: soc: compatible: ['simpl=
-e-bus'] is too short
-> 	    from schema $id: http://devicetree.org/schemas/soc/fsl/cpm_qe/fsl,qe=
-=2Eyaml#
->     arch/arm64/boot/dts/mediatek/mt8188-evb.dtb: soc: interrupt-controlle=
-r@c000000:compatible:0: 'fsl,qe-ic' was expected
-> 	    from schema $id: http://devicetree.org/schemas/soc/fsl/cpm_qe/fsl,qe=
-=2Eyaml#
->     arch/arm64/boot/dts/mediatek/mt8188-evb.dtb: soc: interrupt-controlle=
-r@c000000:reg: [[0, 201326592, 0, 262144], [0, 201588736, 0, 2097152]] is t=
-oo long
-> 	    from schema $id: http://devicetree.org/schemas/soc/fsl/cpm_qe/fsl,qe=
-=2Eyaml#
->     arch/arm64/boot/dts/mediatek/mt8188-evb.dtb: soc: interrupt-controlle=
-r@c000000:#interrupt-cells:0:0: 1 was expected
-> 	    from schema $id: http://devicetree.org/schemas/soc/fsl/cpm_qe/fsl,qe=
-=2Eyaml#
->     arch/arm64/boot/dts/mediatek/mt8188-evb.dtb: soc: interrupt-controlle=
-r@c000000: '#redistributor-regions', 'ppi-partitions' do not match any of t=
-he regexes: 'pinctrl-[0-9]+'
-> 	    from schema $id: http://devicetree.org/schemas/soc/fsl/cpm_qe/fsl,qe=
-=2Eyaml#
->     arch/arm64/boot/dts/mediatek/mt8188-evb.dtb: soc: 'reg' is a required=
- property
-> 	    from schema $id: http://devicetree.org/schemas/soc/fsl/cpm_qe/fsl,qe=
-=2Eyaml#
->     arch/arm64/boot/dts/mediatek/mt8188-evb.dtb: soc: 'bus-frequency' is =
-a required property
-> 	    from schema $id: http://devicetree.org/schemas/soc/fsl/cpm_qe/fsl,qe=
-=2Eyaml#
+Thanks,
 
-I'm curious why this is only coming up now, Rob applied this apparently
-in July.
-
->=20
-> Fixes: ecbfc6ff94a2 ("dt-bindings: soc: fsl: cpm_qe: convert to yaml form=
-at")
-> Cc: Frank Li <Frank.Li@nxp.com>
-> Cc: <stable@vger.kernel.org> # v6.11+
-> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
-> ---
->  .../devicetree/bindings/soc/fsl/cpm_qe/fsl,qe.yaml        | 8 ++++++++
->  1 file changed, 8 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,qe.yaml=
- b/Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,qe.yaml
-> index 89cdf5e1d0a8..9e07a2c4d05b 100644
-> --- a/Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,qe.yaml
-> +++ b/Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,qe.yaml
-> @@ -21,6 +21,14 @@ description: |
->    The description below applies to the qe of MPC8360 and
->    more nodes and properties would be extended in the future.
-> =20
-> +select:
-> +  properties:
-> +    compatible:
-> +      contains:
-> +        const: fsl,qe
-> +  required:
-> +    - compatible
-> +
->  properties:
->    compatible:
->      items:
-> --=20
-> 2.47.0.338.g60cca15819-goog
->=20
-
---5+M0C7v+8zXCbXJ/
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ082owAKCRB4tDGHoIJi
-0s0HAQDAWUaDFTMODECrGoMpk/JQ6X3sb4Uok6Yl2lbO7EaJUwEAkJy4Xvisf0FS
-fWsESM6zpR0CkagNmMJ9ezdGDBwYAAE=
-=ZvIG
------END PGP SIGNATURE-----
-
---5+M0C7v+8zXCbXJ/--
+        tglx
+---
+--- a/drivers/irqchip/irq-riscv-imsic-platform.c
++++ b/drivers/irqchip/irq-riscv-imsic-platform.c
+@@ -180,7 +180,7 @@ static void imsic_irq_debug_show(struct
+ static const struct irq_domain_ops imsic_base_domain_ops = {
+ 	.alloc		= imsic_irq_domain_alloc,
+ 	.free		= imsic_irq_domain_free,
+-	.select		= imsic_irq_domain_select,
++	.select		= msi_lib_irq_domain_select,
+ #ifdef CONFIG_GENERIC_IRQ_DEBUGFS
+ 	.debug_show	= imsic_irq_debug_show,
+ #endif
 
