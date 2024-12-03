@@ -1,183 +1,124 @@
-Return-Path: <linux-kernel+bounces-428618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0E6C9E116F
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 03:46:57 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 911F69E1171
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 03:47:14 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1E841B22B19
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 02:46:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 625DF1620C0
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 02:47:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE8DD154430;
-	Tue,  3 Dec 2024 02:46:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B091313FD72;
+	Tue,  3 Dec 2024 02:47:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HwFRtTk1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Qpwt6OGM"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F8ED537E9;
-	Tue,  3 Dec 2024 02:46:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53868364AE
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 02:47:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733194007; cv=none; b=RvJlZRExT3VCe2wrC6ozAY6eSsR1yGikiOCwDj8g9zlP52avvJkMR4VH2CrK9ic941SHgQT8jysz5ruonI6+9ogOZCkYyrI2rom6mtn2QGqLuY2Vvs/1ZyK1CmxBQwE5yVo3y2MYzTtZ1Wfse6YKNdIPJZtBSPMgeHnbobwVOYs=
+	t=1733194029; cv=none; b=s80+UvMYc3CzuuJJhAuB9wFaBJTnoIJKndBmRX4wxJnLgLjF8fwMKXPOI3kKh9PcY9EDc7BYKiRQbmGS/Fyvh7zgZUtoZallM8Eo9TS3pxzjrinREw9GbNjffpsK9MjWOLZj56qhx+uykKR7fjEOwvYJHxgzabF2pooN548TyLs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733194007; c=relaxed/simple;
-	bh=xKVi89L7ac97ndmNAqbzFdCpSOEK1iUEUOiBRblPYRY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kGvow3+1oQGdhRiaMDSnFS6Qqky8O/QaRY1H6bdx/4TzAo110bE4AiM0tRrh75h5TnCGm9gAt5ZSSPyK/0gxxsXHN0B9kDAm7Ea08gB5+hYvRkQeNF23ov0jmHQshT/c/XI8pLYn489eQKD01nbhc02cweOuGQHJEZVbYZu20pE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HwFRtTk1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C79AEC4CED1;
-	Tue,  3 Dec 2024 02:46:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733194006;
-	bh=xKVi89L7ac97ndmNAqbzFdCpSOEK1iUEUOiBRblPYRY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=HwFRtTk1IoYjYHIbn7+eV/HRil7AKrqIVrAPBhNekz8zvS5/5BXcAEgMMhnx0hCWx
-	 q59YYBmu/ZTHc1lqhGFvRQRsK/F15c2AiAUK4Mjvts2yM3FPBuq3Zz8bCp7LviF810
-	 0vZEL1iIY/Tcmamh62bE1TENsbdwZ4XtJkdpAh0cslyuxZ6VvAyAVnI2S37LAntEHY
-	 dtt96/t10AVYqFWzpWt3/bLLWsTgsoH7VrgHTl/4ZE4vdw3Jm/gOVBUSEBWcuTR9iz
-	 c/Pepc3NHYadFyXme032efVQPzWA1s+C6ZzP/FG16QxIZu829C/N7wcSqNFaDWFR/q
-	 c61t+V7q7z0Ww==
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-aa51b8c5f4dso717391566b.2;
-        Mon, 02 Dec 2024 18:46:46 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUP+FTmWtSUrYkcHByMvuz9sRwLV5T6c5tePKUCxuwdRhnkaP62sLDKFEiyI+XCIppwXNo=@vger.kernel.org, AJvYcCWtmIkrseG/GDbmHQ2ugcr8elo+RiFuNeYweFl5ixD7wy1sk+uyUmrUU9pz4ZLru43X9FakXnENMxeC/g5w@vger.kernel.org
-X-Gm-Message-State: AOJu0YzcmR62A8xuWlnvRvE4mKWvyZHiy3dsimvsomoVJTMc1qwl3ujr
-	FqDHKZqQYKMvlDj1LDWb0XvgkSSPNMhqtK9zmUTkg9sIxQ0X6VDPSjyDVjla4nE6qCyeB5OBnaB
-	KGvdpyo2ul4W09IuWN7lBQH5XlBo=
-X-Google-Smtp-Source: AGHT+IHfHqhhI01QfIKaZT2stl6foHnCHZqWTf1mI7OIlldIoAaFVcU+D3Ifb02BBONWPt4DcGk65bbdyw9cFwCh+lg=
-X-Received: by 2002:a17:906:4c2:b0:aa5:4672:663b with SMTP id
- a640c23a62f3a-aa5f7f2ba80mr37338566b.55.1733194005376; Mon, 02 Dec 2024
- 18:46:45 -0800 (PST)
+	s=arc-20240116; t=1733194029; c=relaxed/simple;
+	bh=/1Hu86galPiO1j46qkPprgYcMn/t3TD7cqWMxQMt5s0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lmHkAjLiUTzXYya/esNOFunPEilx5X6DlyLt8g27tSXmt70dc9kdoTMXDaU8sQvHoKiAxNXac3kLqatKhAddjsd4J45iV9R0/cnD1xE7sr/f5Cd7eDxnKfxjoxYBcIDsQeFxHliOMwoJXRdZyOwrW0bLS5hsVfXQo9mII7zk5/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Qpwt6OGM; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733194025;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ClTlVFTFurX5oXTNx4i+KqY1w2R5KKrVUj+CsjT5+JI=;
+	b=Qpwt6OGME3Ogfrc+Y3JRQNnOA2E6a1NzBRPLMv0TevI16DXX8wupZzWX6D2kgEeqa5FleP
+	8HrK4IUClO0c/QFc8boxKbblV4y4+SioDakb1MIXzzcS4p+zsH6ye2UnipREmXhx+Z1/pJ
+	9Ta0gz718zqNaWmTPgw25bxWgIdwF3c=
+Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com
+ [209.85.215.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-423-gZUZcilfMbO7gl4GFk5hNw-1; Mon, 02 Dec 2024 21:47:04 -0500
+X-MC-Unique: gZUZcilfMbO7gl4GFk5hNw-1
+X-Mimecast-MFC-AGG-ID: gZUZcilfMbO7gl4GFk5hNw
+Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-7fc1becad32so3879428a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 18:47:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733194023; x=1733798823;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ClTlVFTFurX5oXTNx4i+KqY1w2R5KKrVUj+CsjT5+JI=;
+        b=dd9TD92YE0KxtFfx+bfCAnOdNb59NbYg82RQzJrNFprkrf1Xl2e6Yskkb1DS/AtHaK
+         hvK1Ki5Ji621Wh4/PGOGriuG5c/Kai41zhQp9UXCj4UUmH6i18hLLvPpSrqlxAhEZN2p
+         4zFZzTXmNPux67SfN0uMuU80ZlesMYitHQmvAX3b18Vd4RLTXr5eFS1qb3P3m0TEpAHv
+         +se/KnNU71zzp1fVHygp1xP+OlDMUISg6ZfYn2HHB269FzG7DtkocqF0+GGWiFq3GdaM
+         hLuAhECbdaIM/cX/C+tTmZWmJksdAxpi6UoEeZPDVFmPKKsliG4TISHMpZDbqMqit/WK
+         XoSw==
+X-Forwarded-Encrypted: i=1; AJvYcCW8nlADhOFgdlDGBggRZH9wV78BdICAokXyYWA+XP9bECPJaUgGnHu/h1nccE0LD/FKpC1tru2baMNmzGI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwGgn2HaE4E3guvDRuOpE1zrzfyEOJOSS4SRx2e6m3ajOSS1Uwm
+	Zoa3Glv9I4297SCXdX9RPTYC0S+qgGfz3FjCjUSLB20IdjVZns6Rv+MasUznRhc0MVx61rLArUi
+	ZRKj3CXjo+iBY4T7BXhxxPn2IkvujCW+7u6wHaa/Nv9r8zaT1sWVNP4QvaqZqsw==
+X-Gm-Gg: ASbGncu9rFql96Qt8YpWYCOBRIbtNNAUw9vihwYERlcHUsUbxn/ov1+85xoVBv7yNW2
+	p7BZRRfMnryVTidxhxK+Jm7YgXsY4A0cam8Z2uYSod1DbpEv/T0kBm+a7VmeLWv5irxhSJDP8Jz
+	oan7gjUHAKY8k5L1tm/Ytwojj3lAzK0fZ3Y6cvA/LmEFGlzBTZ8qXdxFxwX0v3ahjfY9hUjTlX1
+	qUOmY6ArsPUIVLzmr1QCaQe6hTTUYRwvbE7Ft+Rdj84ZiiPaoM=
+X-Received: by 2002:a05:6a21:38d:b0:1e0:e042:59fb with SMTP id adf61e73a8af0-1e1653f6b74mr1564777637.30.1733194023099;
+        Mon, 02 Dec 2024 18:47:03 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IF9eFzD9WG0Hqv5IQOxlc3XDhwP+H9Hs6Mbmnq+pKxPw+93nYH2bBH5+6wJ1GFGp+i1k+N1ug==
+X-Received: by 2002:a05:6a21:38d:b0:1e0:e042:59fb with SMTP id adf61e73a8af0-1e1653f6b74mr1564759637.30.1733194022801;
+        Mon, 02 Dec 2024 18:47:02 -0800 (PST)
+Received: from [10.72.112.107] ([43.228.180.230])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-725417fbf2fsm9271296b3a.112.2024.12.02.18.46.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 02 Dec 2024 18:47:02 -0800 (PST)
+Message-ID: <498151ad-6fa4-4f16-9044-e0b1f78d161a@redhat.com>
+Date: Tue, 3 Dec 2024 12:46:55 +1000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241113031727.2815628-1-maobibo@loongson.cn> <20241113031727.2815628-2-maobibo@loongson.cn>
-In-Reply-To: <20241113031727.2815628-2-maobibo@loongson.cn>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Tue, 3 Dec 2024 10:46:36 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H5PoitK=a_snYA=PjDoZxWT5QcbrJfnMe3DJGXN=J0tZA@mail.gmail.com>
-Message-ID: <CAAhV-H5PoitK=a_snYA=PjDoZxWT5QcbrJfnMe3DJGXN=J0tZA@mail.gmail.com>
-Subject: Re: [RFC 1/5] LoongArch: KVM: Add vmid support for stage2 MMU
-To: Bibo Mao <maobibo@loongson.cn>
-Cc: Tianrui Zhao <zhaotianrui@loongson.cn>, WANG Xuerui <kernel@xen0n.name>, kvm@vger.kernel.org, 
-	loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64/mm: Replace open encodings with PXD_TABLE_BIT
+To: Anshuman Khandual <anshuman.khandual@arm.com>,
+ linux-arm-kernel@lists.infradead.org
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Ard Biesheuvel <ardb@kernel.org>, Ryan Roberts <ryan.roberts@arm.com>,
+ Mark Rutland <mark.rutland@arm.com>, linux-kernel@vger.kernel.org
+References: <20241202083850.73207-1-anshuman.khandual@arm.com>
+Content-Language: en-US
+From: Gavin Shan <gshan@redhat.com>
+In-Reply-To: <20241202083850.73207-1-anshuman.khandual@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi, Bibo,
-
-On Wed, Nov 13, 2024 at 11:17=E2=80=AFAM Bibo Mao <maobibo@loongson.cn> wro=
-te:
->
-> LoongArch KVM hypervisor supports two-level MMU, vpid index is used
-> for stage1 MMU and vmid index is used for stage2 MMU.
->
-> On 3A5000, vmid must be the same with vpid. On 3A6000 platform vmid
-> may separate from vpid. If vcpu migrate to different physical CPUs,
-> vpid need change however vmid can keep the same with old value. Also
-> vmid index of the while VM machine on physical CPU the same, all vCPUs
-> on the VM can share the same vmid index on one physical CPU.
->
-> Here vmid index is added and it keeps the same with vpid still.
->
-> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
+On 12/2/24 6:38 PM, Anshuman Khandual wrote:
+> [pgd|p4d]_bad() helpers have open encodings for their respective table bits
+> which can be replaced with corresponding macros. This makes things clearer,
+> thus improving their readability as well.
+> 
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Will Deacon <will@kernel.org>
+> Cc: Ard Biesheuvel <ardb@kernel.org>
+> Cc: Ryan Roberts <ryan.roberts@arm.com>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-kernel@vger.kernel.org
+> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
 > ---
->  arch/loongarch/include/asm/kvm_host.h | 3 +++
->  arch/loongarch/kernel/asm-offsets.c   | 1 +
->  arch/loongarch/kvm/main.c             | 1 +
->  arch/loongarch/kvm/switch.S           | 5 ++---
->  arch/loongarch/kvm/tlb.c              | 5 ++++-
->  5 files changed, 11 insertions(+), 4 deletions(-)
->
-> diff --git a/arch/loongarch/include/asm/kvm_host.h b/arch/loongarch/inclu=
-de/asm/kvm_host.h
-> index d6bb72424027..6151c7c470d5 100644
-> --- a/arch/loongarch/include/asm/kvm_host.h
-> +++ b/arch/loongarch/include/asm/kvm_host.h
-> @@ -166,6 +166,9 @@ struct kvm_vcpu_arch {
->         unsigned long host_tp;
->         unsigned long host_pgd;
->
-> +       /* vmid info for guest VM */
-> +       unsigned long vmid;
-vmid is a member of kvm_vcpu_arch, no of kvm_arch?
+> This patch applies on v6.13-rc1
+> 
+>   arch/arm64/include/asm/pgtable.h | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
 
-> +
->         /* Host CSRs are used when handling exits from guest */
->         unsigned long badi;
->         unsigned long badv;
-> diff --git a/arch/loongarch/kernel/asm-offsets.c b/arch/loongarch/kernel/=
-asm-offsets.c
-> index bee9f7a3108f..4e9a9311afd3 100644
-> --- a/arch/loongarch/kernel/asm-offsets.c
-> +++ b/arch/loongarch/kernel/asm-offsets.c
-> @@ -307,6 +307,7 @@ static void __used output_kvm_defines(void)
->         OFFSET(KVM_ARCH_HSP, kvm_vcpu_arch, host_sp);
->         OFFSET(KVM_ARCH_HTP, kvm_vcpu_arch, host_tp);
->         OFFSET(KVM_ARCH_HPGD, kvm_vcpu_arch, host_pgd);
-> +       OFFSET(KVM_ARCH_VMID, kvm_vcpu_arch, vmid);
->         OFFSET(KVM_ARCH_HANDLE_EXIT, kvm_vcpu_arch, handle_exit);
->         OFFSET(KVM_ARCH_HEENTRY, kvm_vcpu_arch, host_eentry);
->         OFFSET(KVM_ARCH_GEENTRY, kvm_vcpu_arch, guest_eentry);
-> diff --git a/arch/loongarch/kvm/main.c b/arch/loongarch/kvm/main.c
-> index 27e9b94c0a0b..8c16bff80053 100644
-> --- a/arch/loongarch/kvm/main.c
-> +++ b/arch/loongarch/kvm/main.c
-> @@ -212,6 +212,7 @@ static void kvm_update_vpid(struct kvm_vcpu *vcpu, in=
-t cpu)
->
->         context->vpid_cache =3D vpid;
->         vcpu->arch.vpid =3D vpid;
-I think vpid should also be:
-           vcpu->arch.vpid =3D vpid & vpid_mask;
+Reviewed-by: Gavin Shan <gshan@redhat.com>
 
-Huacai
-
-> +       vcpu->arch.vmid =3D vcpu->arch.vpid & vpid_mask;
->  }
->
->  void kvm_check_vpid(struct kvm_vcpu *vcpu)
-> diff --git a/arch/loongarch/kvm/switch.S b/arch/loongarch/kvm/switch.S
-> index 0c292f818492..2774343f64d3 100644
-> --- a/arch/loongarch/kvm/switch.S
-> +++ b/arch/loongarch/kvm/switch.S
-> @@ -72,9 +72,8 @@
->         ldx.d   t0, t1, t0
->         csrwr   t0, LOONGARCH_CSR_PGDL
->
-> -       /* Mix GID and RID */
-> -       csrrd           t1, LOONGARCH_CSR_GSTAT
-> -       bstrpick.w      t1, t1, CSR_GSTAT_GID_SHIFT_END, CSR_GSTAT_GID_SH=
-IFT
-> +       /* Set VMID for gpa --> hpa mapping */
-> +       ld.d            t1, a2, KVM_ARCH_VMID
->         csrrd           t0, LOONGARCH_CSR_GTLBC
->         bstrins.w       t0, t1, CSR_GTLBC_TGID_SHIFT_END, CSR_GTLBC_TGID_=
-SHIFT
->         csrwr           t0, LOONGARCH_CSR_GTLBC
-> diff --git a/arch/loongarch/kvm/tlb.c b/arch/loongarch/kvm/tlb.c
-> index ebdbe9264e9c..38daf936021d 100644
-> --- a/arch/loongarch/kvm/tlb.c
-> +++ b/arch/loongarch/kvm/tlb.c
-> @@ -23,7 +23,10 @@ void kvm_flush_tlb_all(void)
->
->  void kvm_flush_tlb_gpa(struct kvm_vcpu *vcpu, unsigned long gpa)
->  {
-> +       unsigned int vmid;
-> +
->         lockdep_assert_irqs_disabled();
->         gpa &=3D (PAGE_MASK << 1);
-> -       invtlb(INVTLB_GID_ADDR, read_csr_gstat() & CSR_GSTAT_GID, gpa);
-> +       vmid =3D (vcpu->arch.vmid << CSR_GSTAT_GID_SHIFT) & CSR_GSTAT_GID=
-;
-> +       invtlb(INVTLB_GID_ADDR, vmid, gpa);
->  }
-> --
-> 2.39.3
->
 
