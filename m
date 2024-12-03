@@ -1,94 +1,119 @@
-Return-Path: <linux-kernel+bounces-429552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 889509E1DA8
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 14:35:51 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D8D29E1DB8
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 14:37:48 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48E8E281476
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 13:35:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23132165CB1
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 13:37:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE8DA1EF0AA;
-	Tue,  3 Dec 2024 13:35:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B14781EF0BC;
+	Tue,  3 Dec 2024 13:37:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sx6zWmOX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="u75sQhoN"
+Received: from www530.your-server.de (www530.your-server.de [188.40.30.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28709192D98;
-	Tue,  3 Dec 2024 13:35:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38C42192D98;
+	Tue,  3 Dec 2024 13:37:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.30.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733232945; cv=none; b=SBDXMi7EY2TFLfTBbQWnBeZ7S2cDYhQPOWZ/y56GVbOTM52zDM+xhrk1yTrrZeznXoAREEPOtKhbx0Ge4CrpSqjs8I33BZ3fz/TJsuc6g13/n+st30Z0Q/kL632uPRf7M13sD24fE1cmCFlJSInj9jUUy1VCV+3FZRDjeAP/yF8=
+	t=1733233062; cv=none; b=iOrcfVghg/I3zkHZ3RC/f8EmEBtMcQbSn6MVeT1K+frR1P0N9e+v00lLh26+nEjqOMy/DprhFMgv4AOs25INw1ZYdhUbmD9YyzGL8CgSeIfdBoNYPDSYwO+us08f+YhjLktR9EJHcdO+O8wfCXSoRhUsaU3i2Mio7+MxBAB1va8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733232945; c=relaxed/simple;
-	bh=dXDrDtN5XaSL7lVIDYJ3Rm5FRszCej7xDYfP7QV04Kk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AWpyOU0qB2oqJOZ/j+v20fWpryWt0nuf16K69F/MRQ65AmJwCJMMaupbeynn+bMT3bWuVak7+Sp8wntEkm0G4dbkhCaOmfm2Q/0JZE5lHs746K/6sqreOJhoSFXzsaZ1RjhWmznAOA73uw4c+X3+9varnw0N1O0w4KoJQrOYM9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sx6zWmOX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C01ACC4CED6;
-	Tue,  3 Dec 2024 13:35:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733232944;
-	bh=dXDrDtN5XaSL7lVIDYJ3Rm5FRszCej7xDYfP7QV04Kk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sx6zWmOXljO2J9kWAcinw+IGcbZxfufoFfJTCWxkOFBTR6zoKNakrtAEn1gUWoAY6
-	 eGNh/pfgYqPnAg1VQB06Fez4JQRSVS/l2yktXAm2HQxXRLrCiq2GJPDKRdNPhHIURf
-	 /8Tt6zmdvMt/UkMF05P/hZcjhoHvYqse2UYZoITIC/qck7QLnvqlhm3y3yf011e2Fm
-	 4fnt0aDjOuNh+xxQEAYG21guoBtOzxzANrIa6gFjVIkkwx/ZOXjTTF6fwPfQ5pGj7+
-	 CGh7IovTGTFkG1riVvgXngh1NBWrDeNq678k7CiKymIC9qdQ+sFDdPRZFQZbzHp7Ud
-	 33mEQz+gM97HQ==
-Date: Tue, 3 Dec 2024 13:35:40 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: Tree for Nov 28
-Message-ID: <ad4c0bbb-51df-4a5d-8c7a-e5dceb290bf9@sirena.org.uk>
-References: <20241128133214.6a39d091@canb.auug.org.au>
+	s=arc-20240116; t=1733233062; c=relaxed/simple;
+	bh=GsCicvMScGn7z6L4S6M5h+/9mj2B4x/kGTcdM7apyVo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=CCt2njcjwb3Z2ubV/WNmHUYN8RZYcQ7DN0MGk+Bc8wFgU3Mnh1b2eKhiAdCubvYUhHL6Ul7OO/MuojM/m1qK4w7IpzmJdhwx/9myHJUI4zb6B669o5/Bh45Bv4wnEPfqenHKQ1L3PHM7fTdSTrf2GicJsssoqKtnr4FYTD9ECqg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=u75sQhoN; arc=none smtp.client-ip=188.40.30.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=geanix.com;
+	s=default2211; h=Content-Type:MIME-Version:Message-ID:Date:References:
+	In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=6I/jTxWjwgLTjkEk8olI2grbbedbDAW6cOesFET5tGQ=; b=u75sQhoNYd14D/9cDtkKOIMuhp
+	1CnXgAILC58nVqEpN/UEsvNz5PlQ19wLgMBkC98SjBox7vw+xumHZ+ZHDp7bhmwC7N/cvFF2snqgB
+	SR96+t7wUEpGyYot+Fvve6FezzWXAzWqC4XnsxvwXdjTFWfmE1OA6q36b0LvacycZB6bOl3tDxz/p
+	0A1LAbDxYPyrZ8yyd+fxcutG/Y/fTwXYe00JZsc/YB0Eo+IduoOlB7uo//+WDFWlPYMbP7M4Y5r5c
+	oWk/MlxsQfr+zOf4wa2yKvedcvC7dPcp664P7GW7YTj/KGSStXSW2mZfR/qkEQqeWwORhqSN2sgU1
+	yEWLd8cA==;
+Received: from sslproxy04.your-server.de ([78.46.152.42])
+	by www530.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <esben@geanix.com>)
+	id 1tIT5p-0009sc-A6; Tue, 03 Dec 2024 14:37:33 +0100
+Received: from [185.17.218.86] (helo=localhost)
+	by sslproxy04.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <esben@geanix.com>)
+	id 1tIT5o-000OZv-34;
+	Tue, 03 Dec 2024 14:37:32 +0100
+From: Esben Haabendal <esben@geanix.com>
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: linux-rtc@vger.kernel.org,  linux-kernel@vger.kernel.org,
+  linux-arm-kernel@lists.infradead.org,  Patrice Chotard
+ <patrice.chotard@foss.st.com>
+Subject: Re: [PATCH 4/6] rtc: st-lpc: Fix initial enable_irq/disable_irq
+ balance
+In-Reply-To: <202412031325408acbe302@mail.local> (Alexandre Belloni's message
+	of "Tue, 3 Dec 2024 14:25:40 +0100")
+References: <20241203-rtc-uie-irq-fixes-v1-0-01286ecd9f3f@geanix.com>
+	<20241203-rtc-uie-irq-fixes-v1-4-01286ecd9f3f@geanix.com>
+	<202412031325408acbe302@mail.local>
+Date: Tue, 03 Dec 2024 14:37:32 +0100
+Message-ID: <87h67klwf7.fsf@geanix.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="c7fF2wfXWEDgUDBF"
-Content-Disposition: inline
-In-Reply-To: <20241128133214.6a39d091@canb.auug.org.au>
-X-Cookie: Alimony is the high cost of leaving.
+Content-Type: text/plain
+X-Authenticated-Sender: esben@geanix.com
+X-Virus-Scanned: Clear (ClamAV 0.103.10/27476/Tue Dec  3 10:52:11 2024)
 
+Alexandre Belloni <alexandre.belloni@bootlin.com> writes:
 
---c7fF2wfXWEDgUDBF
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> On 03/12/2024 11:45:34+0100, Esben Haabendal wrote:
+>> Interrupts are automatically enabled when requested, so we need to
+>> initialize irq_enabled accordingly to avoid causing an unbalanced enable
+>> warning.
+>> 
+>> To: Patrice Chotard <patrice.chotard@foss.st.com>
+>> Signed-off-by: Esben Haabendal <esben@geanix.com>
+>> ---
+>>  drivers/rtc/rtc-st-lpc.c | 1 +
+>>  1 file changed, 1 insertion(+)
+>> 
+>> diff --git a/drivers/rtc/rtc-st-lpc.c b/drivers/rtc/rtc-st-lpc.c
+>> index c6d4522411b312f94de2701ff4ff491e5323aa96..dbc2c23bca23f5de6de3fd4b39c9c67290bfd78d 100644
+>> --- a/drivers/rtc/rtc-st-lpc.c
+>> +++ b/drivers/rtc/rtc-st-lpc.c
+>> @@ -218,6 +218,7 @@ static int st_rtc_probe(struct platform_device *pdev)
+>>  		return -EINVAL;
+>>  	}
+>>  
+>> +	rtc->irq_enabled = true;
+>>  	ret = devm_request_irq(&pdev->dev, rtc->irq, st_rtc_handler,
+>>  			       IRQF_NO_AUTOEN, pdev->name, rtc);
+>
+> Seeing the IRQF_NO_AUTOEN here, I guess the patch is not correct.
 
-On Thu, Nov 28, 2024 at 01:32:14PM +1100, Stephen Rothwell wrote:
-> Hi all,
->=20
-> News: There will be no linux-next releases tomorrow or next week.
+I guess you are right :)
+Sorry about that. I only have HW available for testing the rtc-isl12022
+driver here.
 
-I didn't notice this until this morning.  I've got a build running for
-today, if there isn't a -next today there should hopefully be ones for
-the rest of the week.
+This patch should be dropped.
 
---c7fF2wfXWEDgUDBF
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmdPCSwACgkQJNaLcl1U
-h9D/Rwf+JBR2g1t7r1z/EZK6AWJJRVYZuYXlwqOpSfV8q/G1Kl6YFnMTrJxDVg0a
-YzvZ7TnBS+HL8g07HnXCCicFdWWoCLf4o7GpKCtxG4G5n4QEzz6QyJxFcsSiLGX8
-oiq4KYpKdRL5IvrZ3v5xB/WVeBH/6FlbVbKFvoV5BZV5Ip1M6F6aQd/GZPXFZ7LG
-EkWIPoRIhYceEJtXNiSb9brJ9DCUhf7mKEotU7I2L8CDteqwGhXYaLWWKrERWlMg
-y2GgPcZ9ege+Reuisax1bdKpk729LOZ5WLhhjb4rdHdHN05NPuXaxaiRXPlSlmIs
-KECVwqXMW0eGJ1Vg7DgqYetQ0iZpUg==
-=vP70
------END PGP SIGNATURE-----
-
---c7fF2wfXWEDgUDBF--
+>
+>>  	if (ret) {
+>> 
+>> -- 
+>> 2.47.1
+>> 
 
