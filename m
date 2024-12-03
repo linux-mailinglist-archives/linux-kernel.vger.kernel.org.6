@@ -1,127 +1,198 @@
-Return-Path: <linux-kernel+bounces-430275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1638E9E2EB3
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 23:09:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BFC49E2EB6
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 23:10:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1523F165B08
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 22:09:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F11F916667A
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 22:09:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B5131FA84F;
-	Tue,  3 Dec 2024 22:09:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06C9020A5DA;
+	Tue,  3 Dec 2024 22:09:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="KBz/qKwZ"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z1lYktJw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F39C1DDA3D;
-	Tue,  3 Dec 2024 22:09:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A3441DDA3D;
+	Tue,  3 Dec 2024 22:09:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733263781; cv=none; b=NnDzjd8chBGhSmX1k3Vh8zYYOR5cRr0l5gkBtm0qnsNbwY611KWW7jo2rM1fETedfl8eM8PG65rSeRH2IXEaS1JUnf74xZq6iDRIvtyw7oV3kCtkTAhPbv30vaTORxk5tgq/ZpDLgHKVWLPM1qiWJNKQq41a6SPp13UdHzjmWHk=
+	t=1733263786; cv=none; b=u6Q3Xj0W4F7QsHuJa0khlYQyteCJ/pFxea9Vgcy4QsBiohP9OZaRc4JaBCpsJTfg+1Ln1Bm+V8sk5Kd1O6Q0TslpYB6iGjC/05Ak8JHVmd3l7T3bHksd6eo/EFLHA6IQc72c5D8iXsvuNU0LefSDqWmqO4XMejI9rjMwYXA9Kas=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733263781; c=relaxed/simple;
-	bh=+OI97RttOwWbVb6vhDaP2/G9TkHStlnAitmerH4Rprc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lgY0DmwOupmocH/SBYy+PiJ1L8UqSpJLHntdYZbhkQ7EhZDR80LlFBLV1NL1PwRzIKNv8J01w4drRd9du+XBeizw6F1AH2qqRgKHjW48fzLOwkq5sIZT8VV7kb6XhN9gJxJxSU88zdVszeyz4ncMr0axr73zS+PHLfXJTCLSKgk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=KBz/qKwZ; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-385ea29eee1so2416077f8f.3;
-        Tue, 03 Dec 2024 14:09:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1733263778; x=1733868578; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=wq7RlqBqYTJgNcVGikdgd/6+YugmYFoD+v+g89HEvfY=;
-        b=KBz/qKwZ3gK7tFo4NeI1KU5d6KcBOm96xug+nXAVfcJ4jUuWyvH3wo6JQbJHJDxkG+
-         vgoTSsphPbg4sBAxBx6rRSGH7qFZW8mB/ozwGuxQJYnpIwaHCJ8/nhFbZnFuE7fvs1IE
-         LUuFjljmpd2Of8HuVvUZQE0gl4sD0Bds4Mgido62SUj8kNmriS0pBjL/olYuqGUi7WIC
-         8IiOg0LKgYqPhqna4XPELSeNwctHbfpPP/KLGk+bkCxMLhHJqlNrmw0oBq1ePG5ZRNQl
-         VIhs+V2mI4JCVki0VCboCZnhXGs2WmG8lXe2rlRITL4rPIWbbu1h0S76qj7C8nY/l89h
-         3vqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733263778; x=1733868578;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wq7RlqBqYTJgNcVGikdgd/6+YugmYFoD+v+g89HEvfY=;
-        b=duCpd2EnQDZ2t7pjFRSmrvBqPUdvxcbBiwjpEDypxHnEpgULun4Lwl/T64yIr1w2je
-         vDWaVxTCPn5ujjVMVIvve6PoAFz49ZLMYFcplYb0r+5jMk6ImEqOmwXR0obtpwmTlX9q
-         CyZCZwp9VQA/03UYia0DzkkuqfhS5NVvGOGsUxd5262HrSiuk80KhijITefdQMFMKGbf
-         fqe3Ui5t5G1zwoqvrG+aw1eTtt1HEa3T9NNEe1tokTqzV1KPVK9va5H0Qnz8qV0yp8nZ
-         kgytjrP2LTV2w3n/uMkl7lrvoBBSv0U2omPSR+XoTaORDOfscZ8k9R0L8xGmtmkLHUWB
-         LL/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUnCFm4hiVQadvqBwQkns0QUnybiMAlgOx/v2I61rMKoOu72I1JVslUndwOxehlWrBfXzwXCXVagyyEhpU=@vger.kernel.org, AJvYcCWqYo7h/EHGpgtvkpTiY26rSWuq4OfL7cQhpw+dVRaH2pQ4WpgwTPdO3XXUoI5/Zzc66dzfMP9M@vger.kernel.org
-X-Gm-Message-State: AOJu0YwRsweabxx1nBXVGlnSmanarAcnbD+qNKoSkLyGhEE7vszpn425
-	f8kErrYX8RFf1vkRlCFTbvATUCsXGqX6ARmel7w+Ni1Lec+srgM=
-X-Gm-Gg: ASbGncsOEU6BID3Edl4TKGH4nNDCkLMjpggZlugmt6Lz/Bm9BGBU8lUKRpOyxrMYY65
-	oAp6XRSf/PczvFuvwG9kInc1rfao8qpHASUaI2ryrEuWRoWcp7qtgKgHYmTp8eVw3ONLEs+GoR5
-	X1GToxR6p7IvpJvfWFZR2u0jL+s1vnIBBJIrz8pJfx72xvM3QNu64xfyX3xowYx78xt+iKlgYwi
-	qsNbG5XNJ8OXyVbOBanVQximSOlLYFhpXQze+qnfaKJekhHsV3bSkhVm6uQuGmIID54iTpjNCja
-	SUXsjM6YFwrTO3p09Dh9UiGRlmM=
-X-Google-Smtp-Source: AGHT+IFJgvZy0ng1MDxsWS2X4TUhHyqqMOIIIsx8jSXLNYBrh3HO5W77s7kYQIniZGNfqY1bA7ScPA==
-X-Received: by 2002:a05:6000:4025:b0:385:f573:1f78 with SMTP id ffacd0b85a97d-385fd40ab50mr3841152f8f.24.1733263778334;
-        Tue, 03 Dec 2024 14:09:38 -0800 (PST)
-Received: from [192.168.1.3] (p5b2ac059.dip0.t-ipconnect.de. [91.42.192.89])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434d52c0bc7sm1426565e9.35.2024.12.03.14.09.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Dec 2024 14:09:36 -0800 (PST)
-Message-ID: <04de8963-2d60-492b-afd7-4a271dae95ea@googlemail.com>
-Date: Tue, 3 Dec 2024 23:09:34 +0100
+	s=arc-20240116; t=1733263786; c=relaxed/simple;
+	bh=N8XGQ/OdIAHqBKWwDiHLRvWWphx300ZW1+T6n2w3q4Q=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=LhVY8UNYxy0cVh/VXnNPgS6aUJRCZFAUw8rRpC18qZZRGeQo5oz1CSbTU770dzojFC/dXGBytztj2jqKJurmm9oWl6vHE06ztP4xm9Ucji8TRI5kvDT7VLLjjB4Mx9rNlCUUGp3+7avHcXJqKlSDwgtwvfNkI9h/l2O1q1oSQDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z1lYktJw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C300EC4CEE1;
+	Tue,  3 Dec 2024 22:09:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733263785;
+	bh=N8XGQ/OdIAHqBKWwDiHLRvWWphx300ZW1+T6n2w3q4Q=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=Z1lYktJwhwxb4fl0qRkD2ddZzctqBiHfP5C0SeKomjElccyY1GJ3KwuyilqX2aoy5
+	 LZYkhStNAttnie1om9fp1q0NL5A3xpvZIvL6sakKxLzCZyAxMo4j1Fiuv3TxD7BMuh
+	 RrdIvv/4/erDRZqUvnrEiiLb9GP69a4UCyRiRdQhzjvZlYwGDs+Y8kMkFFKaPMxPk7
+	 OhnD5ekygSOJLwOC91T+BWgecZXe1PX9Ar9mrPoUP6cUPJzm5GhYV8ZRlWZ+TTEpkk
+	 rwjm9txMzlfIDjdb7UK/KUMg/22P5PTmIPn6yptjY2NADzHiQGdniGdsSkDFnenbqL
+	 VY9ybUsoBkWlA==
+Message-ID: <5f05f2305f37bd40bf92299c04480fbf.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [PATCH 6.11 000/817] 6.11.11-rc1 review
-Content-Language: de-DE
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
-References: <20241203143955.605130076@linuxfoundation.org>
-From: Peter Schneider <pschneider1968@googlemail.com>
-In-Reply-To: <20241203143955.605130076@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20241128-sm8750-dispcc-v1-3-120705a4015c@linaro.org>
+References: <20241128-sm8750-dispcc-v1-0-120705a4015c@linaro.org> <20241128-sm8750-dispcc-v1-3-120705a4015c@linaro.org>
+Subject: Re: [PATCH 3/3] clk: qcom: dispcc-sm8750: Add SM8750 Display clock controller
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Bjorn Andersson <andersson@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Michael Turquette <mturquette@baylibre.com>, Neil Armstrong <neil.armstrong@linaro.org>, Rob Herring <robh@kernel.org>
+Date: Tue, 03 Dec 2024 14:09:43 -0800
+User-Agent: alot/0.12.dev1+gaa8c22fdeedb
 
-Am 03.12.2024 um 15:32 schrieb Greg Kroah-Hartman:
-> -----------
-> Note, this is will probably be the last 6.11.y kernel to be released.
-> Please move to the 6.12.y branch at this time.
-> -----------
-> 
-> This is the start of the stable review cycle for the 6.11.11 release.
-> There are 817 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+Quoting Krzysztof Kozlowski (2024-11-28 07:08:01)
+> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+> index 2ec9be21ff678e3343cccafa85801aa68805f440..d9ab42c625ddd61f9bf185752=
+2d44d4547e42bf5 100644
+> --- a/drivers/clk/qcom/Kconfig
+> +++ b/drivers/clk/qcom/Kconfig
+> @@ -1022,6 +1022,16 @@ config SM_DISPCC_8550
+>           Say Y if you want to support display devices and functionality =
+such as
+>           splash screen.
+> =20
+> +config SM_DISPCC_8750
+> +       tristate "SM8750 Display Clock Controller"
+> +       depends on ARM64 || COMPILE_TEST
 
-Builds, boots and works on my 2-socket Ivy Bridge Xeon E5-2697 v2 server. No dmesg 
-oddities or regressions found.
+Please select QCOM_GDSC
 
-Tested-by: Peter Schneider <pschneider1968@googlemail.com>
+> +       depends on SM_GCC_8750
 
+select? Or imply? It's a functional dependency, not a build time one.
 
-Beste Grüße,
-Peter Schneider
+> +       help
+> diff --git a/drivers/clk/qcom/dispcc-sm8750.c b/drivers/clk/qcom/dispcc-s=
+m8750.c
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..ff64ff93c4dbdd2aae22b55dd=
+0e404544cc9373e
+> --- /dev/null
+> +++ b/drivers/clk/qcom/dispcc-sm8750.c
+> @@ -0,0 +1,1960 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright (c) 2021, The Linux Foundation. All rights reserved.
+> + * Copyright (c) 2023-2024, Linaro Ltd.
+> + */
+> +
+> +#include <linux/clk.h>
 
--- 
-Climb the mountain not to plant your flag, but to embrace the challenge,
-enjoy the air and behold the view. Climb it so you can see the world,
-not so the world can see you.                    -- David McCullough Jr.
+Is this include used?
 
-OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
-Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
+> +#include <linux/clk-provider.h>
+> +#include <linux/err.h>
+> +#include <linux/kernel.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/regmap.h>
+> +#include <linux/pm_runtime.h>
+> +
+> +#include <dt-bindings/clock/qcom,sm8750-dispcc.h>
+> +
+> +#include "common.h"
+> +#include "clk-alpha-pll.h"
+> +#include "clk-branch.h"
+> +#include "clk-pll.h"
+> +#include "clk-rcg.h"
+> +#include "clk-regmap.h"
+> +#include "clk-regmap-divider.h"
+> +#include "clk-regmap-mux.h"
+> +#include "reset.h"
+> +#include "gdsc.h"
+[...]
+> +};
+> +
+> +static struct clk_rcg2 disp_cc_mdss_mdp_clk_src =3D {
+> +       .cmd_rcgr =3D 0x8150,
+> +       .mnd_width =3D 0,
+> +       .hid_width =3D 5,
+> +       .parent_map =3D disp_cc_parent_map_9,
+> +       .freq_tbl =3D ftbl_disp_cc_mdss_mdp_clk_src,
+> +       .clkr.hw.init =3D &(const struct clk_init_data) {
+> +               .name =3D "disp_cc_mdss_mdp_clk_src",
+> +               .parent_data =3D disp_cc_parent_data_9,
+> +               .num_parents =3D ARRAY_SIZE(disp_cc_parent_data_9),
+> +               .flags =3D CLK_SET_RATE_PARENT,
+> +               .ops =3D &clk_rcg2_shared_ops, /* TODO: switch to cesta m=
+anaged clocks */
+
+What is cesta?
+
+> +       },
+> +};
+> +
+> +static struct clk_rcg2 disp_cc_mdss_pclk0_clk_src =3D {
+> +       .cmd_rcgr =3D 0x8108,
+> +       .mnd_width =3D 8,
+> +       .hid_width =3D 5,
+> +       .parent_map =3D disp_cc_parent_map_1,
+> +       .freq_tbl =3D ftbl_disp_cc_esync0_clk_src,
+> +       .clkr.hw.init =3D &(const struct clk_init_data) {
+> +               .name =3D "disp_cc_mdss_pclk0_clk_src",
+> +               .parent_data =3D disp_cc_parent_data_1,
+> +               .num_parents =3D ARRAY_SIZE(disp_cc_parent_data_1),
+> +               .flags =3D CLK_SET_RATE_PARENT,
+> +               .ops =3D &clk_pixel_ops,
+> +       },
+[...]
+> +               .enable_reg =3D 0x80b4,
+> +               .enable_mask =3D BIT(0),
+> +               .hw.init =3D &(const struct clk_init_data) {
+> +                       .name =3D "disp_cc_osc_clk",
+> +                       .parent_hws =3D (const struct clk_hw*[]) {
+> +                               &disp_cc_osc_clk_src.clkr.hw,
+> +                       },
+> +                       .num_parents =3D 1,
+> +                       .flags =3D CLK_SET_RATE_PARENT,
+> +                       .ops =3D &clk_branch2_ops,
+> +               },
+> +       },
+> +};
+> +
+> +static struct gdsc mdss_gdsc =3D {
+> +       .gdscr =3D 0x9000,
+> +       .en_rest_wait_val =3D 0x2,
+> +       .en_few_wait_val =3D 0x2,
+> +       .clk_dis_wait_val =3D 0xf,
+> +       .pd =3D {
+> +               .name =3D "mdss_gdsc",
+> +       },
+> +       .pwrsts =3D PWRSTS_OFF_ON,
+> +       .flags =3D POLL_CFG_GDSCR | HW_CTRL | RETAIN_FF_ENABLE,
+> +       // TODO: no supply?
+
+What is this?
+
+> +};
+> +
+> +static struct gdsc mdss_int2_gdsc =3D {
+> +       .gdscr =3D 0xb000,
+> +       .en_rest_wait_val =3D 0x2,
+> +       .en_few_wait_val =3D 0x2,
+> +       .clk_dis_wait_val =3D 0xf,
+> +       .pd =3D {
+> +               .name =3D "mdss_int2_gdsc",
+> +       },
+> +       .pwrsts =3D PWRSTS_OFF_ON,
+> +       .flags =3D POLL_CFG_GDSCR | HW_CTRL | RETAIN_FF_ENABLE,
 
