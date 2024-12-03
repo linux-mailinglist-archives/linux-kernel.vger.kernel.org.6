@@ -1,135 +1,160 @@
-Return-Path: <linux-kernel+bounces-429795-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CB899E2A12
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 18:55:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E49129E2A5E
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 19:07:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9CB0FBE2FE8
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 15:52:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EE1B3BC1FFD
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 15:53:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0772C1F890B;
-	Tue,  3 Dec 2024 15:51:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE50F1F76A2;
+	Tue,  3 Dec 2024 15:53:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="fHCeqkM6"
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dAhPwoe+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A1141E0496;
-	Tue,  3 Dec 2024 15:51:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02F611AB6C9;
+	Tue,  3 Dec 2024 15:53:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733241116; cv=none; b=jPtaFq+5fFuYxqW8wqbM6wfEOCOpsNE9aH63nJo25+12sYQS130yvQk2uKNCWO0CmAeG+9G39cmTrU48VC1mxEPImZNTOyT7/tkdE6pRtaDk2YckXgqIe2iATGSdPzg4k3H1GonUXH7elXelUqEKPF865PqvgJilAzZCW6k9R7Y=
+	t=1733241224; cv=none; b=LijjuBfoywHpvds8WYw1a/FIb9p+9M4HR+7xGz2rrKAezQ/QgJLtEbbrl2bBZO+NQH6HzKJlwHdE3IXnheuMI8nYb5b7N9b37ORI/Mvx6iyGjULNxwoQjrlgidAkUws8CjcLtCHZrgOOJaGt/Ydl21T7T0lqccMS5vGDZyJf4rc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733241116; c=relaxed/simple;
-	bh=bpMNhT7hs+A5dnCGGIqDp8qwNNx3fUETcoweFQOjllk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eqGlhlEN4RqLfuFq17v1l1vha0aNaBUKz6ykXg1CJYbzSK9bGOBRKalyIktZ1UlAsgte6k8K+cWV2DrzLCsvH/+sJVSQysMnLD30OIJXcQCE6njV5tHE5FbNyUJZ7juEWYMhwIm7sudVEI70VcodMhNdQ87930IiArCKvXc6NhM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=fHCeqkM6; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id E8697FF811;
-	Tue,  3 Dec 2024 15:51:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1733241111;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6mUUXlg2Sdr2QZ9xxnJnQJbYN76Rdm3JD+IpxMezPKc=;
-	b=fHCeqkM6Iljfd74vtUc6Go6drgzqlVnBl28AhspXXsK9XVyHDw/IVJcBm9JqWph4Y99KxK
-	4Oro9o3pP/wPORR2+ulupss5Q9szZdXpVRv5q4lBhgqtHRUHexaRBubmlFgh8Yx88ACHrN
-	p67sdXIJNWOhgNSxbFIkX5JYKy6CVzPRqbh4XsfskquLEX4QaJSI3a50jia5diUnqVDPCH
-	YnQ8eWcVajvIpP7Ocm5NhTPzKrUMJlS8eRbBFUUg23B7A6ehwCIsDcQsk39VtL6VyNjWi2
-	iuT79F2GWfUNiGlkYhbyZHqSrZYL+gWTXPDyFVf2XDdLpvkQC/1ZdZIqCH5hPg==
-Date: Tue, 3 Dec 2024 16:51:47 +0100
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc: Andrew Lunn <andrew@lunn.ch>, Dennis Ostermann
- <dennis.ostermann@renesas.com>, "nikita.yoush"
- <nikita.yoush@cogentembedded.com>, Heiner Kallweit <hkallweit1@gmail.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
- <pabeni@redhat.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Michael Dege
- <michael.dege@renesas.com>, Christian Mardmoeller
- <christian.mardmoeller@renesas.com>
-Subject: Re: [PATCH] net: phy: phy_ethtool_ksettings_set: Allow any
- supported speed
-Message-ID: <20241203165147.4706cc3b@fedora.home>
-In-Reply-To: <Z08h95dUlS7zacTY@shell.armlinux.org.uk>
-References: <73ca1492-d97b-4120-b662-cc80fc787ffd@cogentembedded.com>
-	<Z02He-kU6jlH-TJb@shell.armlinux.org.uk>
-	<eddde51a-2e0b-48c2-9681-48a95f329f5c@cogentembedded.com>
-	<Z02KoULvRqMQbxR3@shell.armlinux.org.uk>
-	<c1296735-81be-4f7d-a601-bc1a3718a6a2@cogentembedded.com>
-	<Z02oTJgl1Ldw8J6X@shell.armlinux.org.uk>
-	<5cef26d0-b24f-48c6-a5e0-f7c9bd0cefec@cogentembedded.com>
-	<Z03aPw_QgVYn8WyR@shell.armlinux.org.uk>
-	<TYCPR01MB1047854DA050E52CADB04393A8E362@TYCPR01MB10478.jpnprd01.prod.outlook.com>
-	<1ff52755-ef24-4e4b-a671-803db37b58fc@lunn.ch>
-	<Z08h95dUlS7zacTY@shell.armlinux.org.uk>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1733241224; c=relaxed/simple;
+	bh=l8fINQy3Gnwqpw7GCZQguNQePxGrCID3r6VZRai5wPA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YsFfn3EYipOltteru2n55O75/cuqTZ90/y3818y294TCePVJcSz0llweISB4rWur5DJX2YGSyYrg0zhpwUsz3Pr8/o3p0kKDlQtaP/FOq+Jsyz5LQspWsMsTsBdzsfu6fZulY5RwVyuX744eZX9EMnvs3vK99d8Kft32DIKMy3w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dAhPwoe+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43375C4CECF;
+	Tue,  3 Dec 2024 15:53:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733241223;
+	bh=l8fINQy3Gnwqpw7GCZQguNQePxGrCID3r6VZRai5wPA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=dAhPwoe+HQY613tN3sOKEVsCBcvdIvGyf+9kItT0385GyVBP3ex7VSH+pDyf1A/1K
+	 cuwpvqlutvh9SKF4HLjQgFQhwLO9naKi4Vwl/qEZOxF2MEjxJQ3PCPUf7F81DFt4lc
+	 1Fg368XLD61lq8z0A8eoU3RZYrq7BCr3xuueC3zeXONA6yBdsuXUxvclNOjuNXP8JJ
+	 WcF/GQ/hnP+GRTR7dC+XB0QjUy0O+ZNeGIrqcYD3TYxGFsREA/eGi0Wnq0Hi1H6lNW
+	 CYLDpGpj6AKaOhptCPC6I1+gOPvqivuO4XimCGfnljaUjSwATcnuJos84yOOiq1oaR
+	 FhJm98p57Dyzg==
+Message-ID: <077f04d4-0419-4017-86e4-d518bd312e93@kernel.org>
+Date: Tue, 3 Dec 2024 16:53:32 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v1 14/14] riscv: dts: Add GPU node to TH1520 device
+ tree
+To: Michal Wilczynski <m.wilczynski@samsung.com>, mturquette@baylibre.com,
+ sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ drew@pdp7.com, guoren@kernel.org, wefu@redhat.com, jassisinghbrar@gmail.com,
+ paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
+ frank.binns@imgtec.com, matt.coster@imgtec.com,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
+ airlied@gmail.com, simona@ffwll.ch, ulf.hansson@linaro.org,
+ jszhang@kernel.org, m.szyprowski@samsung.com
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+ dri-devel@lists.freedesktop.org, linux-pm@vger.kernel.org
+References: <20241203134137.2114847-1-m.wilczynski@samsung.com>
+ <CGME20241203134207eucas1p29a2d095c527858729ae706d2a9027a5c@eucas1p2.samsung.com>
+ <20241203134137.2114847-15-m.wilczynski@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
+ QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
+ gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
+ /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
+ iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
+ VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
+ 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
+ xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
+ eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
+ AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
+ MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
+ Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
+ ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
+ vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
+ oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
+ lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
+ t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
+ uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
+ 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
+ 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
+In-Reply-To: <20241203134137.2114847-15-m.wilczynski@samsung.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-GND-Sasl: maxime.chevallier@bootlin.com
 
-Hi Andrew,
-
-On Tue, 3 Dec 2024 15:21:27 +0000
-"Russell King (Oracle)" <linux@armlinux.org.uk> wrote:
-
-> On Tue, Dec 03, 2024 at 03:45:09PM +0100, Andrew Lunn wrote:
-> > On Tue, Dec 03, 2024 at 02:05:07PM +0000, Dennis Ostermann wrote:  
-> > > Hi,
-> > > 
-> > > according to IEE 802.3-2022, ch. 125.2.4.3, Auto-Negotiation is optional for 2.5GBASE-T1
-> > >   
-> > > > 125.2.4.3 Auto-Negotiation, type single differential-pair media
-> > > > Auto-Negotiation (Clause 98) may be used by 2.5GBASE-T1 and 5GBASE-T1 devices to detect the
-> > > > abilities (modes of operation) supported by the device at the other end of a link segment, determine common
-> > > > abilities, and configure for joint operation. Auto-Negotiation is performed upon link startup through the use
-> > > > of half-duplex differential Manchester encoding.
-> > > > The use of Clause 98 Auto-Negotiation is optional for 2.5GBASE-T1 and 5GBASE-T1 PHYs  
-> > > 
-> > > So, purposed change could make sense for T1 PHYs.  
-> > 
-> > The proposed change it too liberal. We need the PHY to say it supports
-> > 2.5GBASE-T1, not 2.5GBASE-T. We can then allow 2.5GBASE-T1 to not use
-> > autoneg, but 2.5GBASE-T has to use autoneg.  
+On 03/12/2024 14:41, Michal Wilczynski wrote:
+> Add a device tree node for the IMG BXM-4-64 GPU present in the T-HEAD
+> TH1520 SoC used by the Lichee Pi 4A board. This node enables support for
+> the GPU using the drm/imagination driver.
 > 
-> I'm wondering whether we should add:
+> By adding this node, the kernel can recognize and initialize the GPU,
+> providing graphics acceleration capabilities on the Lichee Pi 4A and
+> other boards based on the TH1520 SoC.
 > 
-> 	__ETHTOOL_DECLARE_LINK_MODE_MASK(requires_an);
+> This commit is following convention introduced here [1].
 > 
-> to struct phy_device, and have phylib populate that by default with all
-> base-T link modes > 1G (which would be the default case as it is now.)
-> Then, PHY drivers can change this bitmap as they need for their device.
-> After the PHY features have been discovered, this should then get
-> AND-ed with the supported bitmap.
+> Link: https://lore.kernel.org/all/20241118-sets-bxs-4-64-patch-v1-v2-1-3fd45d9fb0cf@imgtec.com/ [1]
+> 
+> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
+> ---
+>  arch/riscv/boot/dts/thead/th1520.dtsi | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
+> 
+> diff --git a/arch/riscv/boot/dts/thead/th1520.dtsi b/arch/riscv/boot/dts/thead/th1520.dtsi
+> index 58f93ad3eb6e..5023c0c29168 100644
+> --- a/arch/riscv/boot/dts/thead/th1520.dtsi
+> +++ b/arch/riscv/boot/dts/thead/th1520.dtsi
+> @@ -500,6 +500,18 @@ clk: clock-controller@ffef010000 {
+>  			#clock-cells = <1>;
+>  		};
+>  
+> +		gpu: gpu@ffef400000 {
+> +			compatible = "img,img-bxm-4-64", "img,img-rogue";
+> +			reg = <0xff 0xef400000 0x0 0x100000>;
+> +			interrupt-parent = <&plic>;
+> +			interrupts = <102 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&vosys_clk CLK_GPU_CORE>,
+> +				 <&vosys_clk CLK_GPU_CFG_ACLK>;
+> +			clock-names = "core", "sys";
+> +			power-domains = <&pd TH1520_AON_GPU_PD>;
+> +			status = "okay";
 
-If the standards says that BaseT4 >1G needs aneg, and that we can't
-have it for baseT1, couldn't we just have some lookup table for each
-mode indicating if they need or support aneg ? I'm thinking about
-something similar as the big table in net/ethtool/common.c where we
-have the linkmode - speed - duplex - lanes mapping :
+Open existing DTSI and look how it is done. There is no single line like
+'status = okay', so please do not introduce some entirely different
+coding style.
 
-https://elixir.bootlin.com/linux/v6.12.1/source/net/ethtool/common.c#L270
-
-maybe looking it up for each config operation would be too expensive ?
-or it maybe isn't flexible enough in case we have to deal with
-phy-pecific quirks...
-
-Maxime
-
-
+Best regards,
+Krzysztof
 
