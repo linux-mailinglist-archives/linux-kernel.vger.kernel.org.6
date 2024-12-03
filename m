@@ -1,124 +1,143 @@
-Return-Path: <linux-kernel+bounces-428888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE2639E14AB
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 08:54:20 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D5829E14A6
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 08:53:16 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4A23FB26704
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 07:53:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3076D160361
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 07:53:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 425DF1A256C;
-	Tue,  3 Dec 2024 07:52:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BD761A4F2F;
+	Tue,  3 Dec 2024 07:53:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="DAbTSFLj";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="gyyHg26m"
-Received: from fout-a4-smtp.messagingengine.com (fout-a4-smtp.messagingengine.com [103.168.172.147])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="5mreDrvi"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EED141BF37;
-	Tue,  3 Dec 2024 07:52:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 068BF1B21AC
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 07:53:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733212376; cv=none; b=mErk+tLBWod05QJcIyrtRMj3rDNZmHPgfTyiVCGguabVFRuALvA2F1mifhM73YiTPJykjVJEXaSrqs7fJoKj3vy4qagrROFZ5CGtyxt0peMyo+6TNHL3S8heKGHYhXQiek5XnDXnFU7nLU50c2yEq+5tWr7oJGYYP5fCydt/PAk=
+	t=1733212383; cv=none; b=sB+sxW5k7/zgrq8o5xsM/BFr7QPIzattoZR0HYUBDSvXpq90iEIiJjrbR8jJr0eUcv13/CpRAOvOua4U4mU4xWFAbI1t7uNdHmnHkt6v/UXDvDlTFPqz8lBWUaI2nvASCTBLBslSiFYvvh3M6OzqHn3b7HS4Oj/5tgVQy8tEf2s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733212376; c=relaxed/simple;
-	bh=NpGJ3FYp0x/U61oEWQE/B8UhnMCs74sc/jIUD/ic0IA=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=THpibp8ZDTkhiYqY2Bc/1MBr7WgqclCuhGpZfFInNmvTJ2jNz8wl2JbDf99Lv67hEYB12wR1GT3a/YMkAM2uYcrz+QbPGf+YtKjLxsWvtxLJQyP7ZA2QamdVnylTDHJGvTsVpPj+PopP/YpLPldgOLcu3F770y/oArs551vpYXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=DAbTSFLj; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=gyyHg26m; arc=none smtp.client-ip=103.168.172.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfout.phl.internal (Postfix) with ESMTP id DDE0B138028D;
-	Tue,  3 Dec 2024 02:52:53 -0500 (EST)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Tue, 03 Dec 2024 02:52:53 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1733212373;
-	 x=1733298773; bh=F3BqFrUqY/RcjXeMbNxrbNkBD3uFmqchTzbdweVKxKk=; b=
-	DAbTSFLjRnjs2KGtrWGQVmrjp5CCqGxFUSz7FNigYSoIv9kf9VVmtn78KLYRhosR
-	9a5kGx/8sfuijV1tMFJeV3UsmPhBjO+azHYdsfuXoA8Vf4evC2wRPjwTdVnGgHXe
-	B4Bp807AU0gNspXSmET1Gy6eBUyrbQCM06HduXwHUSME/GPTtY/Wo6q1VvsoNvpJ
-	61oJcJzlE/bQg/XPC8OloEO8tuG8+skLO/m01OYQ3Z8rBPYfCdQwfPgnWqrS++EZ
-	IvVWuqSgOzm2ZI3BH/0dWvIwYogz+2ciT5olfQk0S3VtOptZiQsEfoi9+k21ceUL
-	oYSnTpMps7gmbahSViZWDg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1733212373; x=
-	1733298773; bh=F3BqFrUqY/RcjXeMbNxrbNkBD3uFmqchTzbdweVKxKk=; b=g
-	yyHg26m4OiWVrJezHOfZnbThrvtieYO3tdLlYSMOSWF0ellB35CKXCTavd4KmOyr
-	c1JXwBjGmS1B66YbI+lO4ROHFbiEvtK3745efq5d/15xz0Mi04sx1PSnhwu4E2Dr
-	nmtEacccv7vuzLmNlvQjx9+6Y/j+62WLUrQnKhN25irgRdab2iyKM4rCj/OLjyO0
-	8zlgxy1If0HYOwwuiPtPhOnkmeOtrbJRdt7wDysZS7/BMJ/mgrNehJqTLPcmCD56
-	UOKaGTdYtbNlKiq9stw1WLl7WCHh+vxhcKS83l8J2m2bwZnkfw3XDRRLi8AkMM3y
-	vNF4ZIIUlWUldazVAQvAg==
-X-ME-Sender: <xms:1bhOZyCGx4FdHoK5fj4WRUGF2L5f82ElMJdKm2QqcHetYU5sWJDj9w>
-    <xme:1bhOZ8j36jEL0eRIzpgdlUYNnA8YvoWHUHM6pv7Lp_illDip_Mg6zc6i-Rnz5zQZu
-    wFXDVpAeBWOI3aazCI>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddriedugdeffecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
-    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
-    hsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredttden
-    ucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdrug
-    gvqeenucggtffrrghtthgvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffg
-    vedugeduveelvdekhfdvieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmh
-    grihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopeehpdhm
-    ohguvgepshhmthhpohhuthdprhgtphhtthhopegthhgvnhhsohhnghgpvddttddtseduke
-    elrdgtnhdprhgtphhtthhopehmtghhvghhrggssehkvghrnhgvlhdrohhrghdprhgtphht
-    thhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtph
-    htthhopehlihhnuhigqdhmvgguihgrsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghp
-    thhtohephhhvvghrkhhuihhlqdgtihhstghoseigshegrghllhdrnhhl
-X-ME-Proxy: <xmx:1bhOZ1mIaS9vwPplJK5-_N2sQsqkJ-DnoIqGWSVNUxur7Mhgbz9poA>
-    <xmx:1bhOZwxwXiXzBuglN1HTpX5A4rWQhZPzBbg65A79M2cc_kxn05GLyQ>
-    <xmx:1bhOZ3RBNLFQ6oN2Jg8_Bol5X23_omtXaD9O9aXLGp6ZrtfrvspWFA>
-    <xmx:1bhOZ7ay5NVwK1rAUS0Fp3OFAAMqWVzv39fHx3szf_ho11CSSQJJMg>
-    <xmx:1bhOZ1PYdfWr5c9TL7j2WviyR4EZ4EGRLOA31h3IgZOdiGD7LHIr8I4W>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 402EC2220072; Tue,  3 Dec 2024 02:52:53 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1733212383; c=relaxed/simple;
+	bh=7rsJx8PPlBUPhNYZpY4C2T1GcmfaUB0tv/4wQt6eSwQ=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=qPlnX6HbMWJjPXGKPx27I2n8X+Jk24FL6LghaIDk+Hp4Mfs2PbfeWv28NJCDIYqUz1geitH8VLrMQs7d48LviFa3kXWFG7v3q3GTtDreeVvHLhmdnRxMRs0nO6iLwiAfO/aQigvVUBo8PbcxS2rM91XKQ6sxWewsS6ZfPpu83TY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=5mreDrvi; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5cec9609303so6137326a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 23:53:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fairphone.com; s=fair; t=1733212380; x=1733817180; darn=vger.kernel.org;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0D7zw9MHhki0fQyrcbsaXtFGQSkwrEFiOvoXEAaY/xE=;
+        b=5mreDrvisXdmU0+p8DFDxeGIiyupLJoDkLv8XDdd/CHi1lEy02hanxmk6zWLfyowjR
+         NgwFRMJhnZUkHQCmbdMAwZ9oaIgmrnI6bHF0UbKkxXXBX4idrgEOQxE1V7WsnQjPqMcK
+         LWB5Wn4HAXF6vAVBCGDeMMrC9xLJbivTWv/Vw68v3bxumnEP+D8B9s4De3u46ttvBdI1
+         R/5OB80A02susf0LbhHs3YlOcHElYWGW5LRqF5prvB0ohAq1rcZKHjqZQ1o6qS8bvAfB
+         uW/d6CyPf2N+HUBOkMofkRBU6pBkKW7m9DyGXnH3xkl5iBb9v2C9eUBTS0B9samKgHCW
+         /EwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733212380; x=1733817180;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=0D7zw9MHhki0fQyrcbsaXtFGQSkwrEFiOvoXEAaY/xE=;
+        b=UUdgxeW/GevEqqdT7DloVFQCLsFq3wTepnCL81wFNbkO5ERPUbv++4JqC742tUlIFj
+         MEmKniPh0sJ09FJfJKus1qx6PzhmXxVjyQiJ+bfmzk+gkzcVXrnO63cfH5oNBzIKYYKG
+         AK2rz84KRau6Mas1+nvgdQ7BD1oVKK5++rc4R+2hhGczUCUGhE6eYZxAOlwtsyfzqbRj
+         Fq8Qp/hM+3GqAvZ/v2pVWPpIqfXzu7pSAk+UyI1BW+/4YOuyOsm7rlPqbv3xOhSdSC5l
+         F3/SVRspPW1oy6gMddmfZyLxj+Ws2G1bajqCWDsJ8g37iSu3LFcvL73bhiCMVkfpFIlt
+         UBIw==
+X-Forwarded-Encrypted: i=1; AJvYcCWZSgzZPuXwTFH26QGQDr85AL8Umlk1KECcyIXisFSS5WHBJMh0+Iava3s3dMInyHXYPbRDf5diPD4r9yU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3sO9v9FJq18b6viTtgX95nOriPTU5EYQ87QdJLSD8M6I/jLeP
+	YxfB4D/ethdd7CF+zi2BC3STeq3Y74+Otg//GYQ70i9E6WNsvCreibn6Nby0/kU=
+X-Gm-Gg: ASbGncvlLVpR0Ifr3wUmlVln43es7/SxomWHs76D7j3carbMVXtQXKqAvUxGWbnklwG
+	UZCSq4ZF+aJKCBRHMGKQfPDDoE1o/9JtRNRedOeGi6QAmMdVj8IYQg7cnWRS4oe1xFNEhMfXdX/
+	O2e8emd6x5HDBcUnixMcun33MaEete+YpnusblVlYW9hRI5IYEZefW/4/R2WrHp+ZvJ6zIjezuA
+	dqO+155O9BaTvRJd5sGLw8MsO5qrWV4iBK5oWoj9/UGzdIso6576ypTl8hri4v1eNXzlfp/YZsj
+	mnKNWXYtF+57vwSNa84=
+X-Google-Smtp-Source: AGHT+IH5Y4Euy0lKtptex0iUPrTdDlymLHlyKHDlm+teFEcJLphIHtL9LraZ6mJjjupisyuttL8ryg==
+X-Received: by 2002:a17:906:1db2:b0:aa5:152c:1995 with SMTP id a640c23a62f3a-aa5f7eefc47mr81228366b.45.1733212380291;
+        Mon, 02 Dec 2024 23:53:00 -0800 (PST)
+Received: from localhost (144-178-202-138.static.ef-service.nl. [144.178.202.138])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa5998e771csm591681166b.127.2024.12.02.23.52.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 02 Dec 2024 23:53:00 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Date: Tue, 03 Dec 2024 08:52:32 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Song Chen" <chensong_2000@189.cn>,
- "Mauro Carvalho Chehab" <mchehab@kernel.org>,
- "Hans Verkuil" <hverkuil-cisco@xs4all.nl>
-Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
-Message-Id: <070175a7-1bea-4dbb-8b5b-9edee06fec79@app.fastmail.com>
-In-Reply-To: <f552e0f5-6350-416f-89e5-e1a0e6aa2886@189.cn>
-References: <20241203072742.191787-1-chensong_2000@189.cn>
- <9489561e-bc41-481d-b542-07fed1161a03@app.fastmail.com>
- <f552e0f5-6350-416f-89e5-e1a0e6aa2886@189.cn>
-Subject: Re: [PATCH] drivers/media/pci/sta2x11: replace legacy GPIO APIs
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 03 Dec 2024 08:52:59 +0100
+Message-Id: <D61WIF2XWKL8.MWU6PK2XGX4F@fairphone.com>
+Cc: "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski"
+ <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>,
+ <~postmarketos/upstreaming@lists.sr.ht>, <phone-devel@vger.kernel.org>,
+ <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] dt-bindings: power: rpmpd: Fix comment for SM6375
+From: "Luca Weiss" <luca.weiss@fairphone.com>
+To: "Dmitry Baryshkov" <dmitry.baryshkov@linaro.org>
+X-Mailer: aerc 0.18.2-0-ge037c095a049
+References: <20241202-rpmpd-sm6375-v1-1-12a4f0182133@fairphone.com>
+ <yo5cc3cvvwwdrqrrgwlquztj52sijip3ffyyqag55jrnztxi2m@hn75ylkhnxie>
+In-Reply-To: <yo5cc3cvvwwdrqrrgwlquztj52sijip3ffyyqag55jrnztxi2m@hn75ylkhnxie>
 
-On Tue, Dec 3, 2024, at 08:48, Song Chen wrote:
-> ok, then remove it.
+On Mon Dec 2, 2024 at 9:00 PM CET, Dmitry Baryshkov wrote:
+> On Mon, Dec 02, 2024 at 04:45:02PM +0100, Luca Weiss wrote:
+> > During an earlier commit, the comment from SM6350 was copied without
+> > modifying. Adjust the comment to reflect the defines.
+> >=20
+> > Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
 >
-> what about drivers/staging/media/atomisp/pci/atomisp_gmin_platform.c,
-> it has the same problem, are you going to remove it as well?
+> Fixes tag, please.
 
-No, that one is likely to stay around for a while. I think it
-was actually removed before and brought back because there are
-users. That one is just the on-chip component on certain Atom
-SoCs.
+I thought for just a comment fix it's not necessary / desired.
 
-The sta2x11 platform was never that widely used and I think might
-have not been completely upstreamed.
+Anyways:
 
-      Arnd
+Fixes: 2d48e6ea3080 ("dt-bindings: power: rpmpd: Add SM6375 power domains")
+
+
+>
+> > ---
+> >  include/dt-bindings/power/qcom-rpmpd.h | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >=20
+> > diff --git a/include/dt-bindings/power/qcom-rpmpd.h b/include/dt-bindin=
+gs/power/qcom-rpmpd.h
+> > index df599bf462207267a412eac8e01634189a696a59..d9b7bac309537cbfd2488e7=
+d4fe21d195c919ef5 100644
+> > --- a/include/dt-bindings/power/qcom-rpmpd.h
+> > +++ b/include/dt-bindings/power/qcom-rpmpd.h
+> > @@ -65,7 +65,7 @@
+> >  #define SM6350_MSS	4
+> >  #define SM6350_MX	5
+> > =20
+> > -/* SM6350 Power Domain Indexes */
+> > +/* SM6375 Power Domain Indexes */
+> >  #define SM6375_VDDCX		0
+> >  #define SM6375_VDDCX_AO	1
+> >  #define SM6375_VDDCX_VFL	2
+> >=20
+> > ---
+> > base-commit: 40384c840ea1944d7c5a392e8975ed088ecf0b37
+> > change-id: 20241202-rpmpd-sm6375-06582e126d7f
+> >=20
+> > Best regards,
+> > --=20
+> > Luca Weiss <luca.weiss@fairphone.com>
+> >=20
+
 
