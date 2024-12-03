@@ -1,266 +1,115 @@
-Return-Path: <linux-kernel+bounces-429782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC1C09E2491
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:50:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAAC79E22B4
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:28:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13D1816D912
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 15:45:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDFEB165A59
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 15:23:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E181D1FC0F3;
-	Tue,  3 Dec 2024 15:41:53 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8FA41F76D3;
+	Tue,  3 Dec 2024 15:22:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OIBmZhR3"
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF3231F8AD4;
-	Tue,  3 Dec 2024 15:41:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9FD71F76BF;
+	Tue,  3 Dec 2024 15:22:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733240513; cv=none; b=clwHYYWSGuFl27VbE7xceg0kIqzHd8pt9uP/gxL6Vlf34gOggZw2zyfpUC93Lc89CEZpFviYLcHCdKayvS/EqiZqM0HYEtWx0MfW4q4BxxFAC8GJ7fsxSwDHV9z/uW/NhGiei+sK4Dt561MfSZU3qe5lxeZeoBInVSijjeaTAO8=
+	t=1733239365; cv=none; b=NLZ3jW/R2Vo7kmACys4oe4bCGGpGFxJSBP7Axxl8k+2PeQCt2ckkB4oveh957k/hUWdFYBABbUhrGFVSgzMfvR3dsdN6Oy54KEKHMEJcdXxEJbR9r1NMQPjJwbb3X5TKvrhB2efVoZtbat0run94MpZp25hPVqTSoOT918PLWns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733240513; c=relaxed/simple;
-	bh=vsJYp3o9xBnk5BZ2+j/Ak9wF0vvUADAk/LxRCPfyTlA=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=STrizW9S1dU/QhmIoFjiIIq6OeD8DJGyVD6zkOZk4X+0tpj/5ukSRJZ5JIIwo+jj0rE12D4I7mRDUsvDFuUr5x7D+kIB+QNM0fd9bxZzp7fGpL8zR5RJ2Tep1ULLltUjkRGTqHkPyrXbYeYTDyomdbLQHZqCEiRCRKYJO8rA8Lk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Y2krF6872z6LDG0;
-	Tue,  3 Dec 2024 23:21:01 +0800 (CST)
-Received: from frapeml100005.china.huawei.com (unknown [7.182.85.132])
-	by mail.maildlp.com (Postfix) with ESMTPS id 69051140CB9;
-	Tue,  3 Dec 2024 23:21:44 +0800 (CST)
-Received: from frapeml500007.china.huawei.com (7.182.85.172) by
- frapeml100005.china.huawei.com (7.182.85.132) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 3 Dec 2024 16:21:44 +0100
-Received: from frapeml500007.china.huawei.com ([7.182.85.172]) by
- frapeml500007.china.huawei.com ([7.182.85.172]) with mapi id 15.01.2507.039;
- Tue, 3 Dec 2024 16:21:44 +0100
-From: Shiju Jose <shiju.jose@huawei.com>
-To: Steven Rostedt <rostedt@goodmis.org>
-CC: "dave.jiang@intel.com" <dave.jiang@intel.com>, "dan.j.williams@intel.com"
-	<dan.j.williams@intel.com>, Jonathan Cameron <jonathan.cameron@huawei.com>,
-	"alison.schofield@intel.com" <alison.schofield@intel.com>,
-	"nifan.cxl@gmail.com" <nifan.cxl@gmail.com>, "vishal.l.verma@intel.com"
-	<vishal.l.verma@intel.com>, "ira.weiny@intel.com" <ira.weiny@intel.com>,
-	"dave@stgolabs.net" <dave@stgolabs.net>, "linux-cxl@vger.kernel.org"
-	<linux-cxl@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, Linuxarm <linuxarm@huawei.com>, tanxiaofei
-	<tanxiaofei@huawei.com>, "Zengtao (B)" <prime.zeng@hisilicon.com>
-Subject: RE: [PATCH v4 3/6] cxl/events: Update General Media Event Record to
- CXL spec rev 3.1
-Thread-Topic: [PATCH v4 3/6] cxl/events: Update General Media Event Record to
- CXL spec rev 3.1
-Thread-Index: AQHbOy/jEKs9N8Ou/EWSGme10Yml3rLJc4IQgABPV4CAAS95QIAATDQAgAA1zlD///prgIABEYyggAHA21CABm0UcA==
-Date: Tue, 3 Dec 2024 15:21:44 +0000
-Message-ID: <e4187844aed14d4897f0071dcfce7455@huawei.com>
-References: <20241120093745.1847-1-shiju.jose@huawei.com>
-	<20241120093745.1847-4-shiju.jose@huawei.com>
-	<180fcfd623c64cdb86cdc9059f749af0@huawei.com>
-	<20241126120237.1598854d@gandalf.local.home>
-	<a24524dccbf442d5a3c910d7f46c7b6c@huawei.com>
-	<20241127104132.6c1729e1@gandalf.local.home>
-	<53a299d3cca6417d90d553e8399f834b@huawei.com>
- <20241127133407.7bc1376a@gandalf.local.home>
- <dc8fa73e871949eeaf4117c622d66ac5@huawei.com>
- <3c9808a694d242cab35bab67602edebf@huawei.com>
-In-Reply-To: <3c9808a694d242cab35bab67602edebf@huawei.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1733239365; c=relaxed/simple;
+	bh=182UmQCu5g2TPwxJMht8MviW/zfKZDGkhyX3FIcaS8Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=f3Qx3T34rPvFgwrz0sJql7f/PxAIsBKiVI82X0khlJwJQV7CQESmETC7IGuBWejzsJ9EQdzKDJham3uq1FtAZ4VlOS7BwhfT4J3O90Fy2SqiI3udHMEubTP2vp+lQMHvuH8VYbkgZMZS8uQNcmh12IiPJiIywyjk/z8Dw40mRhI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OIBmZhR3; arc=none smtp.client-ip=209.85.215.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-7ea7e2204d1so449807a12.0;
+        Tue, 03 Dec 2024 07:22:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733239362; x=1733844162; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=182UmQCu5g2TPwxJMht8MviW/zfKZDGkhyX3FIcaS8Y=;
+        b=OIBmZhR3U96R83JyJWoxRVZ3rybBiSiewM3nwPvv0Ipi+lbVMUattpt94xP+J7WU9e
+         nsbDYNVryNibP+g8ycG+JAkbqBgAKZBzmmB85ih98FroeeU+cMyU00MX3UKwt39i+Jbt
+         lGhO3UIyO4l8YtqyfVwEUz7nhn0Z+H2xu1s3vcWu6sFC5Y7vIPf7UDye8TZf6ffVYTbN
+         jJJfpnS+F5G5WXG+M+FcyTlB5a/BNap6/VGjK3o3wK7yX6WoYNOYYBDnx0x2BNvo/2ge
+         6OHAlvyHC0Jr76t21z0OZ8WK3bSiCskixiIZHlUhIkT6Eab3ZhxUS0Hj5RBjcMbLTvzB
+         ZWhA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733239362; x=1733844162;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=182UmQCu5g2TPwxJMht8MviW/zfKZDGkhyX3FIcaS8Y=;
+        b=Lw/ETlN5X6SS+//wUWJDwoUrR1IP2+Wn1jvq736A/IkKfyVEX2lzkrZFwOCL3hHqZS
+         qbAqt6zSpHkrm2nk1uldCvabZzJMHCe6QwDzi/rH3oPCQcQ99AK9E2uquh5+Ruhv+YOC
+         4qy42iwrq3HKS9oAC33HPNbYxt254T7CDbkLxWXj/7wD/KIPbuj5VoanIgVuswsiuoy8
+         dfdy9/60OhIngsI2Bi5fl03+hWPHFlz3b/GSW9dMs5zL4FHIwReG5x9Pxn8zf2FSPW/0
+         qa2XNVuWgax4mfQTGYmS1Pz5Ch6a4OehHT4rLUSZrJ5KO/wH7j+rKgdgEZlLSb7FkqXI
+         95nQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVrkoaNG34sLrk/zOwKcAHyaqUg89BrUHz9aZVYQgh0Sp6pqm/84a0vkmzaeXOJEz+nv0vwoex0xVg3Kpo=@vger.kernel.org, AJvYcCXsPnQ71//XBK/cnXsTduyrytYcZrSt6m2mI35DYdX6dJE/gfQ28QsuHSA5W+3eXChfu7lhHwuEjUU0tn45m/g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyvCDlUT8om4+O+HhAFOcIc9VhIGe/MsfKqsG+PkNl2zIjeFYMR
+	fT7JLlOw+tPtjWjbjZUtcHyF1GiSxzFVAN7Gk95miEk+Amxe/QFpBANY8YMWl/RQ1WMxBjdHLvX
+	YbyR2j6v4dRLEM9yzcjcMuwjhXQk=
+X-Gm-Gg: ASbGnctb67nUGKDoevQWZhozkIclklUY8g7IkRovznqsacO6hkoWmHcFeCyO/f/WIjF
+	ar9gpTCJkZ2A7Pmv9M9CQspiyyH6wfAU=
+X-Google-Smtp-Source: AGHT+IHWgpear/lfANs3KvdqvVwJNJUX4pt7DEsqjZBvp1WEc8BE/IG+rftI1oghw0DW5bnOVZ5UwFkhvE+O/m/fK/8=
+X-Received: by 2002:a17:90b:3b8d:b0:2ee:acea:9ec4 with SMTP id
+ 98e67ed59e1d1-2ef011fece0mr1735290a91.3.1733239362024; Tue, 03 Dec 2024
+ 07:22:42 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20241120-rust-xarray-bindings-v10-0-a25b2b0bf582@gmail.com>
+ <20241120-rust-xarray-bindings-v10-2-a25b2b0bf582@gmail.com>
+ <CAH5fLgipntMtu7_pdZDZGerGRO499yxDdz2dP=2Bb5FobcykYg@mail.gmail.com> <CAJ-ks9kwGi+hhsNUC=Ti3CL8iJ4mEN2vSkoFUnz67Usu+-_P6Q@mail.gmail.com>
+In-Reply-To: <CAJ-ks9kwGi+hhsNUC=Ti3CL8iJ4mEN2vSkoFUnz67Usu+-_P6Q@mail.gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Tue, 3 Dec 2024 16:22:29 +0100
+Message-ID: <CANiq72=8kyfRomVijZO-5tW-Ckuf5KshCTYnHt96CSi6PbDkqA@mail.gmail.com>
+Subject: Re: [PATCH v10 2/2] rust: xarray: Add an abstraction for XArray
+To: Tamir Duberstein <tamird@gmail.com>
+Cc: Alice Ryhl <aliceryhl@google.com>, Danilo Krummrich <dakr@kernel.org>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, =?UTF-8?B?TWHDrXJhIENhbmFs?= <mcanal@igalia.com>, 
+	Asahi Lina <lina@asahilina.net>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
->-----Original Message-----
->From: Shiju Jose <shiju.jose@huawei.com>
->Sent: 29 November 2024 13:23
->To: Shiju Jose <shiju.jose@huawei.com>; Steven Rostedt <rostedt@goodmis.or=
-g>
->Cc: dave.jiang@intel.com; dan.j.williams@intel.com; Jonathan Cameron
-><jonathan.cameron@huawei.com>; alison.schofield@intel.com;
->nifan.cxl@gmail.com; vishal.l.verma@intel.com; ira.weiny@intel.com;
->dave@stgolabs.net; linux-cxl@vger.kernel.org; linux-kernel@vger.kernel.org=
-;
->Linuxarm <linuxarm@huawei.com>; tanxiaofei <tanxiaofei@huawei.com>;
->Zengtao (B) <prime.zeng@hisilicon.com>
->Subject: RE: [PATCH v4 3/6] cxl/events: Update General Media Event Record =
-to
->CXL spec rev 3.1
+On Tue, Dec 3, 2024 at 4:00=E2=80=AFPM Tamir Duberstein <tamird@gmail.com> =
+wrote:
 >
->>-----Original Message-----
->>From: Shiju Jose <shiju.jose@huawei.com>
->>Sent: 28 November 2024 10:02
->>To: Steven Rostedt <rostedt@goodmis.org>
->>Cc: dave.jiang@intel.com; dan.j.williams@intel.com; Jonathan Cameron
->><jonathan.cameron@huawei.com>; alison.schofield@intel.com;
->>nifan.cxl@gmail.com; vishal.l.verma@intel.com; ira.weiny@intel.com;
->>dave@stgolabs.net; linux-cxl@vger.kernel.org;
->>linux-kernel@vger.kernel.org; Linuxarm <linuxarm@huawei.com>;
->>tanxiaofei <tanxiaofei@huawei.com>; Zengtao (B)
->><prime.zeng@hisilicon.com>
->>Subject: RE: [PATCH v4 3/6] cxl/events: Update General Media Event
->>Record to CXL spec rev 3.1
->>
-[...]
->
->Hi Steve,
->
->I debug this case and please find the info, 1. rasdaemon :  read() from fo=
-rmat
->file return around 1/3rd of the
->    actual data in the file only when the total size of the format's file
->    is above 4K bytes (page size), For example, in this case, the total si=
-ze was 4512
->bytes,
->    but read only 1674 bytes.
->    This partial data resulted  tep_parse_event() in libtraceevent failed =
-internally
->in the parse_format()
->    and  since __parse_event() does not return error when parse_format() f=
-ail,
->    thus initialization of the event does not fail.
->
->   The following  solution in rasdaemon solved the issue,
->   (provided if no other fix for the above issue with read()),
->    1. read() and accumulate content of format file until EOF reached.
->    2. Increased the buffer size from 4K bytes to  8K bytes.
->    3. May be __parse_event()  in libtraceevent  and thus tep_parse_event(=
-)
->return error
->        when parse_format() fail so that the initialization would fail if =
-the input
->data is
->        corrupted or partial?
+> I prefer to be explicit, unless there's guidance on this somewhere?
 
-Hi Steve,
+I like explicitness in general, but do you think there is an advantage
+for things in the prelude?
 
-Identified the root cause of this issue in the kernel:
-The read() function for the event's format file calls seq_read() and seq_re=
-ad_iter() in the kernel,=20
-which allocates a buffer of PAGE_SIZE (4 KB) for sequential reads. However,=
- it
-detects an overflow in the following marked call (seq_has_overflowed()) and=
-=20
-returns with partial data read.
+I am asking because I am considering adding more things there, e.g. I
+have a series to be sent to add the `ffi::c_*` types -- having things
+like those in the prelude reduces the noise in imports that everyone
+knows about (and that nobody should be tempted to alias anyway), makes
+things more consistent (because then every use is unqualified vs. the
+mix we have now) and generally the code looks easier to read to focus
+on the other things that may be less common.
 
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+Thanks!
 
-File : https://elixir.bootlin.com/linux/v6.13-rc1/source/fs/seq_file.c
-
-ssize_t seq_read_iter(struct kiocb *iocb, struct iov_iter *iter)
-{
-	struct seq_file *m =3D iocb->ki_filp->private_data;
-[...]
-	/* grab buffer if we didn't have one */
-	if (!m->buf) {
---------->		m->buf =3D seq_buf_alloc(m->size =3D PAGE_SIZE);
-		if (!m->buf)
-			goto Enomem;
-	}
-	// something left in the buffer - copy it out first
-[...]
-	// get a non-empty record in the buffer
-	m->from =3D 0;
-	p =3D m->op->start(m, &m->index);
-	while (1) {
-		err =3D PTR_ERR(p);
-		if (!p || IS_ERR(p))	// EOF or an error
-			break;
-[...]
-	}
-	// EOF or an error
-	m->op->stop(m, p);
-	m->count =3D 0;
-	goto Done;
-Fill:
-	// one non-empty record is in the buffer; if they want more,
-	// try to fit more in, but in any case we need to advance
-	// the iterator once for every record shown.
-	while (1) {
-		size_t offs =3D m->count;
-		loff_t pos =3D m->index;
-
-[...]
-		err =3D m->op->show(m, p);
-		if (err > 0) {		// ->show() says "skip it"
-			m->count =3D offs;
----------->	} else if (err || seq_has_overflowed(m)) {
-			m->count =3D offs;
-			break;
-		}
-	}
-	m->op->stop(m, p);
-	n =3D copy_to_iter(m->buf, m->count, iter);
-	copied +=3D n;
-	m->count -=3D n;
-	m->from =3D n;
-Done:
-[...]
-	goto Done;
-}
-EXPORT_SYMBOL(seq_read_iter);
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-
-The following fix in the kernel's seq_read_iter() allows userspace to read =
-the
-content of the format file etc in one go if the requested size exceeds PAGE=
-_SIZE,
-and resolves the parsing error caused by the event's format file exceeding =
-PAGE_SIZE.
-
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-diff --git a/fs/seq_file.c b/fs/seq_file.c index e676c8b0cf5d..f1f1af180562=
- 100644
---- a/fs/seq_file.c
-+++ b/fs/seq_file.c
-@@ -207,7 +207,11 @@ ssize_t seq_read_iter(struct kiocb *iocb, struct iov_i=
-ter *iter)
-=20
-        /* grab buffer if we didn't have one */
-        if (!m->buf) {
--               m->buf =3D seq_buf_alloc(m->size =3D PAGE_SIZE);
-+               if (iter->count % PAGE_SIZE)
-+                       m->size =3D ((iter->count / PAGE_SIZE) + 1) * PAGE_=
-SIZE;
-+               else
-+                       m->size =3D (iter->count / PAGE_SIZE) * PAGE_SIZE;
-+                m->buf =3D seq_buf_alloc(m->size);
-                if (!m->buf)
-                        goto Enomem;
-        }
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-
-Can you suggest which fix is the right one,  kernel based fix or rasdaemon =
-based fix (which
-mentioned in the previous email)?=20
-
-Thanks,
-Shiju
->>
->>>
->>>>
->>>> I've also attached another format file,
->>>> "format_cxl_general_media_v3.1_full",
->>>> which contains the complete TP_printk() intended.
->>>
-[...]
->>>-- Steve
->>
->
+Cheers,
+Miguel
 
