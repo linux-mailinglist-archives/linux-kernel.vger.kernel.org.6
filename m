@@ -1,136 +1,85 @@
-Return-Path: <linux-kernel+bounces-429871-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEB519E27EB
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 17:45:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 48E4C9E27DE
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 17:43:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80356288AC5
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:45:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0EB6D2888A0
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:43:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66D1D1FDE05;
-	Tue,  3 Dec 2024 16:43:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 507AB1F8AF8;
+	Tue,  3 Dec 2024 16:43:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="DBcpRnSr";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="a/ISmL5H"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ffqX/vSo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 091AC1FA856
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 16:43:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABF3D2BD1D;
+	Tue,  3 Dec 2024 16:43:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733244225; cv=none; b=sRKR7jVq5ywVOR1L2EDxbjEO4XMY4dnzIDE4R2Lt886Gi7s5jTj5sIfxW4YK6fdkmunnSBQrF8N5hchXNGKr3yF55BJ53E6TKiG6asUE/t/3HSeIDGAc0ZybJE2R42Sou7UhTaQarQSVrIYcgB9aNJoeYAKvw7kH8cEpaNpbjtg=
+	t=1733244211; cv=none; b=tGsXly/BX4M+WlKwY1+cXBkgOhjcc/3wo/M4zazWkh7nDra3Xt30fTxRr8CKLYgByRslghpPkX03vou0k/TDYFef0bUokfO2tfMognQqz5eyprzrNV/vDk8XrFtNsei+DFEbNKeSayFRTbrdFd8jFUlia5ibRAhMipRJ95AEFZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733244225; c=relaxed/simple;
-	bh=lg8axIUYclb2T6+boQQvvI4x/adQdWN/2MeRAxM1I+E=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hLHQuTCZy9rqbzhZPbE2hrPmjVApgn8Ttffjm6DpYWAblHQEFfBV0bzmbmYOGeM87NkcgEYter+B3nUCCV0Lp7AJA+OS6XkOxIXuaCA/2V/y5KCU6aRVzSHt8sAyZ6IW0x6Idc/aA3+AH5pgJxj6AC6aOEvn31UB0qUe+mzHpTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=DBcpRnSr; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=a/ISmL5H; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1733244220;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=E6O0H8PocWBBcPGtHkLgMVhBIfVergybbi7OL8FwAuw=;
-	b=DBcpRnSrvKq6BYw4qSNnTpbp5w1GXXkZ4+lWDZsmzIoYZU2gdMLICwjQ2GDUgBhi3sbwG6
-	f6TcqeTuhvvVtyigVSbRtGnmk7r6ROzxsveu0VLk+TW9CaUvJ5PoQjTcnCGwSLk3Ih0Ifn
-	/HEmglVhVxRsfkDPWmwa1gyLRIsgUPGz/oZCS03LetXFaoKQ4lHHWAMekKxt+kwaFpCRK8
-	f5RdnLzdICm7aE0CdCQVjFo+89Rlm4IMBa2/fjCR8QYVp5WnFrXv8N381xegdIkY8DUG6l
-	XxEbr3YqXmP2hvcauGMojhoHDL+grOP7715OGth8J1WoZioVh+BVOcKcW6kH7A==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1733244220;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=E6O0H8PocWBBcPGtHkLgMVhBIfVergybbi7OL8FwAuw=;
-	b=a/ISmL5HlE1mncnUp/VtOQw2xilo06rJ0JxH5DNqCjxZGawJ4StqmK62DXYqcxNgg7Unj+
-	H9S5QPNqL7HkGvCw==
-To: linux-kernel@vger.kernel.org
-Cc: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>,
-	Darren Hart <dvhart@infradead.org>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	Ingo Molnar <mingo@redhat.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Waiman Long <longman@redhat.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH v4 11/11] tools/perf: Allocate futex locks on the local CPU-node.
-Date: Tue,  3 Dec 2024 17:42:19 +0100
-Message-ID: <20241203164335.1125381-12-bigeasy@linutronix.de>
-In-Reply-To: <20241203164335.1125381-1-bigeasy@linutronix.de>
-References: <20241203164335.1125381-1-bigeasy@linutronix.de>
+	s=arc-20240116; t=1733244211; c=relaxed/simple;
+	bh=RiisfK4pAZ4XFYQ0qcJb6xGVWJO1a0mox2NLwW3Bcpg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RoUPwPfSzkmxtpN4pw9WbtLm3C6XLwgvgTMzICWOjh1g3xt4h2cxN3bIbyz8M0xkMTjpIWQJ6K1vC4SU7JR0++PUBZkWZkR7nmMmBFZCjXLCMScxmV4tIMLDW4S9avk4UYDiTlMQB/Esf1CZYyy4VzFZlh+m+pYELLW/HEHojAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ffqX/vSo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 198E1C4CED6;
+	Tue,  3 Dec 2024 16:43:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733244211;
+	bh=RiisfK4pAZ4XFYQ0qcJb6xGVWJO1a0mox2NLwW3Bcpg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=ffqX/vSoDazV5SozWsi6fo0l4euoK876VodyD7CQZz4LeUKPOGv3cy1aeudRw8f6G
+	 sj9jbpMtHMBLIq5NUZg7xnUh59j1y4gbD6OaRokUywKwSQVJLm5FoCGxivp6t6R3xW
+	 WtqDB923r4lqYGW1G8JfOvH4uw78dJNHY+cD0wc8VZBss+9+4z+ZmmzBhl/mGlcpTI
+	 LrXLzqDwu7CRRNWfoGuiaMHp2L1SYsbE7lFnLCpEUPu9HfrF8U8K1x+xvYVAo4VAgk
+	 F3JwXnbk6ajt4h7uVCIhtJ/ZFvvG2COsx8XtWw/EhEnxqzxcWyvuBf4+VLNMICP8or
+	 DR2VGizTJ/r8g==
+Received: by mail-ot1-f52.google.com with SMTP id 46e09a7af769-71d554dedc6so2337807a34.1;
+        Tue, 03 Dec 2024 08:43:31 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVupfoEEEJ8hO2ZWfGRjRzeFPxMY2TC78zhqIRwIQVGj4FcNoqbjjcT+nEeb2OPMLFD4WHQrCf5uSI=@vger.kernel.org, AJvYcCXF9tRKkaql9y4jkeWtUxKU+Bt+ymBt/QexH+zIxoBYqmzI22akh9U+1MawGbss8acfvatWcN75JV25+FE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzxSah4hBNu/ftiRGSdwxiTz5URMwVB7O86WaXyqJos2eF09lEi
+	O6QD6lmJpdYJTNR7YvfYHig4dofXRiUUS2ha+EWBwmk2kMl9Sa71k4bPKacdXtlo12FwR4JJGPg
+	sVraFCfhO3wzD5xzvgSOAx1NdyNo=
+X-Google-Smtp-Source: AGHT+IH+1vpnfR4q9huVZvnSA+pXTvZUQa2zDYDMZB7hiVjQq9YCN8D6HJsDMyGoxcMRp9ujryi95flemjlzLwsbKGA=
+X-Received: by 2002:a05:6830:3689:b0:718:9c7c:2b33 with SMTP id
+ 46e09a7af769-71dad6c74dcmr4219944a34.23.1733244210501; Tue, 03 Dec 2024
+ 08:43:30 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20241203075119.584419-1-rui.zhang@intel.com> <20241203075119.584419-2-rui.zhang@intel.com>
+In-Reply-To: <20241203075119.584419-2-rui.zhang@intel.com>
+From: Len Brown <lenb@kernel.org>
+Date: Tue, 3 Dec 2024 11:43:19 -0500
+X-Gmail-Original-Message-ID: <CAJvTdKneoA7xZs-PwNsLBWf54TH7yi7TW1hjdoe19DA9OuKpzQ@mail.gmail.com>
+Message-ID: <CAJvTdKneoA7xZs-PwNsLBWf54TH7yi7TW1hjdoe19DA9OuKpzQ@mail.gmail.com>
+Subject: Re: [PATCH 1/4] tools/power turbostat: Exit on unsupported Intel models
+To: Zhang Rui <rui.zhang@intel.com>
+Cc: rafael.j.wysocki@intel.com, linux-kernel@vger.kernel.org, 
+	linux-pm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
----
- tools/perf/bench/futex-hash.c | 17 ++++++++++++-----
- 1 file changed, 12 insertions(+), 5 deletions(-)
+On Tue, Dec 3, 2024 at 2:51=E2=80=AFAM Zhang Rui <rui.zhang@intel.com> wrot=
+e:
 
-diff --git a/tools/perf/bench/futex-hash.c b/tools/perf/bench/futex-hash.c
-index 216b0d1301ffc..4c7c6677463f8 100644
---- a/tools/perf/bench/futex-hash.c
-+++ b/tools/perf/bench/futex-hash.c
-@@ -122,6 +122,8 @@ static void print_summary(void)
- 	       (int)bench__runtime.tv_sec);
- }
-=20
-+#include <numa.h>
-+
- #define PR_FUTEX_HASH			77
- # define PR_FUTEX_HASH_SET_SLOTS	1
- # define PR_FUTEX_HASH_GET_SLOTS	2
-@@ -212,14 +214,19 @@ int bench_futex_hash(int argc, const char **argv)
- 	size =3D CPU_ALLOC_SIZE(4096);
-=20
- 	for (i =3D 0; i < params.nthreads; i++) {
-+		unsigned int cpu_num;
- 		worker[i].tid =3D i;
--		worker[i].futex =3D calloc(params.nfutexes, sizeof(*worker[i].futex));
--		if (!worker[i].futex)
--			goto errmem;
-=20
- 		CPU_ZERO_S(size, cpuset);
-+		cpu_num =3D get_cpu_bit(&cpuset_, sizeof(cpuset_), i % nrcpus);
-+		//worker[i].futex =3D calloc(params.nfutexes, sizeof(*worker[i].futex));
-=20
--		CPU_SET_S(get_cpu_bit(&cpuset_, sizeof(cpuset_), i % nrcpus), size, cpus=
-et);
-+		worker[i].futex =3D numa_alloc_onnode(params.nfutexes * sizeof(*worker[i=
-].futex),
-+						    numa_node_of_cpu(cpu_num));
-+		if (worker[i].futex =3D=3D MAP_FAILED || worker[i].futex =3D=3D NULL)
-+			goto errmem;
-+
-+		CPU_SET_S(cpu_num, size, cpuset);
-=20
- 		ret =3D pthread_attr_setaffinity_np(&thread_attr, size, cpuset);
- 		if (ret) {
-@@ -271,7 +278,7 @@ int bench_futex_hash(int argc, const char **argv)
- 				       &worker[i].futex[params.nfutexes-1], t);
- 		}
-=20
--		zfree(&worker[i].futex);
-+		numa_free(worker[i].futex, params.nfutexes * sizeof(*worker[i].futex));
- 	}
-=20
- 	print_summary();
---=20
-2.45.2
+> +               "\tTo get latest turbostat support, please contact\n" ...
 
+"\t Please refer to turbostat(8) to find the latest version of turbostat.\n=
+"
+
+
+I'll create a patch to turbostat.8 to with clear instructions.
+
+thanks!
+-Len
 
