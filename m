@@ -1,157 +1,140 @@
-Return-Path: <linux-kernel+bounces-428781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95CDF9E1357
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 07:28:09 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AC369E1363
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 07:33:30 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50B00164522
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 06:28:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E0EBFB22F5B
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 06:33:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74492187561;
-	Tue,  3 Dec 2024 06:28:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nkMF/SeP"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64E751885B3;
+	Tue,  3 Dec 2024 06:33:18 +0000 (UTC)
+Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FADB7DA8C;
-	Tue,  3 Dec 2024 06:27:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B8C2173;
+	Tue,  3 Dec 2024 06:33:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733207281; cv=none; b=ok1SvDKaknFJU1k0KTwBNGqp60hARYPspaLxBux4nHWMtZLOM7rHgCXZeOh/eosbK3dkaD5AzYyNwtWfY7Vgdat1oCxK/E8FE3zWUTLBa/kGlIO+YE7EyAfAleKD2BAxYFyIxc8huCEpt+h/UDrjZyfFa8HvNVacb/RiCKVKOVA=
+	t=1733207598; cv=none; b=h+cVfOPKPONi8maFrf2Rz1vHsPD7NfneJwHu/JF1W955HT2nsAOf94/TKJGVtYuTvtALViQluwjeYzeI7qwuwPp580rM1A7fgDBbGMDzGt++6AL5xX9McGjI2SpM+SRdPrFF2Pc41f9BxN9tOlBa5IGLYE+AIfKe51/m5bOcs6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733207281; c=relaxed/simple;
-	bh=BVNz6a6RQMt/P4mz6tdTnhvoVtjhnxgIemE1GaEyFuM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=np49sIKJHkqYbDoRjJRzpoUEKG1IFCwNK13aMFCOjSKGv9ItGWhbkRe3fhWrhlqumvfewU0P0tIRRX8gg+gNMugtwyQBxvP2erbdsZzj2rSRah/5N/VmHpiHe4Wbyqy4qsf+jAXmuxlAAESfKNIR6P2hgwxOplEAHQ0Wt5sbfcs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nkMF/SeP; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-53df80eeeedso5322819e87.2;
-        Mon, 02 Dec 2024 22:27:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733207278; x=1733812078; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=tn8XClVZRZxX3/WQO34yniUIKIw8qkK1xsMKchWydIA=;
-        b=nkMF/SeP7oGso6gPPRKpCjDx9nlZzN8KUfAUQvJKp/ePPnvlsRY9bz9FgV5EstikFj
-         QcQ9ukL5iWEEFZ6a02ceFv/ufpMyBV1k1yB5OzWY8eA+XGDPhF06nZf4HzeRsdzKM7+l
-         Mces4/O/rrv6mtJaS+XwQ2HwqCVIxRjWPPiHP1yS9kzykZlkAgPrFTKQsYVxxltzNKb0
-         wb3+gB2ApmKlhIKRVeovmBt9BvHad0uKFN3K1vzAaRhWtVP+5oAtEcwrJq+aFuMbz23O
-         eAFC+p+9jA028iFuPu+apRbMPaJY88PS8JvGOOjbmssY413/e2Qbd3MdM85Sor45p2RE
-         NN1Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733207278; x=1733812078;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tn8XClVZRZxX3/WQO34yniUIKIw8qkK1xsMKchWydIA=;
-        b=etgjKDz1ytnmrRy5ZJTyVwGgBi8OeVijSeVDULv44hCidlwcfu7JeBXJd0akWAS76L
-         pud4ZouPHJ8OqALLf1gIEpmNoXsHtnh7FsFEeYVqcsNi7ui4ISsX0fEste1t0KL9c9E6
-         j8NcsL0WEHUqiIoeOCtadUvEs3Gl0MD1/RyJX1F5Baae9iVTUPXDtxVCrAC9iT8RFlZv
-         qpSUXfzPg/mzmDGZI7lKD9jOkNwSxlmlQLuvJUZPzCXQpdxUVSAB7n7qET9eLdSYzuGS
-         IE81a4XPXHsEGh6yO9uvr580GGcOrxln7XIOQIYgcsI1TtDqoQyPzISp4+PJDS7sajzM
-         hr/g==
-X-Forwarded-Encrypted: i=1; AJvYcCUc7qAe1Wrr1EIgmeqPjM67VAJna2IPE6vVh6DKudwZ4ef/GAMRiGGIvvVJoRBj79WihqXRr16+rjkzEStl@vger.kernel.org, AJvYcCW3OSusfyDxi1xAIKbupLLL0IfxDaiUEsIoDRGuXKCJEGZXNJusOeAAznUexiAOvx5RWSLpaSx0AM0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YypgV6oXKKETQH4sMyH0CHtHq1Qke51jeaqHH9ijUyC8q6QCVAW
-	cZwJdwIke/NKPhYJVwnEnHdqCPbAnFL9getJtqXFbNa2zTh5GDJU
-X-Gm-Gg: ASbGncu/4yrZipjW5spFfYDGC3eD705kh3iPJ4cTuE90HtYaiHdLLw6LxPa982t1/Re
-	chGdHCnnkKxWdyLWPTiB10gvxYBAcQZvGd/cVz3EAr4QCoeNIci0EYA2QdCIEcIZO8qL2IqId3+
-	PqS0ClS/gydDmwzfNAJWIdhdIAQVdsdHIbnMgMO4CpmfnmSxlZxDP9HDvvS6g0xA31LbDL8Ne1Y
-	SD5B27pjfkkNxaucsVWQ3GwJ7NDaQB6F25lZqqcCpkinluSZB6RwPKL2f8V1NWCZ21Tu4Q8fIW3
-	tLHwK73AlLqKoYBDr5YqXEW1NoUu3s4=
-X-Google-Smtp-Source: AGHT+IG6/iBhi38LxIDWitZejm7IOANx4mjE7WdE7+FthbU+d4d0bYVm1bQgAKA/JAOkusW63REprQ==
-X-Received: by 2002:a05:6512:2254:b0:53d:d486:9705 with SMTP id 2adb3069b0e04-53e129f0048mr704191e87.9.1733207277766;
-        Mon, 02 Dec 2024 22:27:57 -0800 (PST)
-Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53df646f0e6sm1710764e87.154.2024.12.02.22.27.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 Dec 2024 22:27:55 -0800 (PST)
-Message-ID: <4004fafd-7596-4def-bf78-e91685f0c934@gmail.com>
-Date: Tue, 3 Dec 2024 08:27:53 +0200
+	s=arc-20240116; t=1733207598; c=relaxed/simple;
+	bh=xXzj5lui4mmh8UNRyRnUSzrAo+0fyVSgY5TeYZqjTo4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=plhMKvES51WxcU9ZHMD5ZMJyE5gORlzVXT53fAyhwCNbzkQGKNPNW+76wy0Z4/avObc9qNk/KfibJnrfKV6oUG3chDaYUDQqh4QxOvtOLgXJezfqHOa5ORJlN/LXElAmBYGVzgPeAO9kfcnY/V5n6HOaMg+GSdoKqZqtWF6XUlg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; arc=none smtp.client-ip=92.121.34.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 099B91A05B3;
+	Tue,  3 Dec 2024 07:33:15 +0100 (CET)
+Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
+	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id F00441A05A5;
+	Tue,  3 Dec 2024 07:33:14 +0100 (CET)
+Received: from lsv051416.swis.nl-cdc01.nxp.com (lsv051416.swis.nl-cdc01.nxp.com [10.168.48.122])
+	by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 48117202A7;
+	Tue,  3 Dec 2024 07:33:14 +0100 (CET)
+Date: Tue, 3 Dec 2024 07:33:14 +0100
+From: Jan Petrous <jan.petrous@oss.nxp.com>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Emil Renner Berthing <kernel@esmil.dk>,
+	Minda Chen <minda.chen@starfivetech.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Iyappan Subramanian <iyappan@os.amperecomputing.com>,
+	Keyur Chudgar <keyur@os.amperecomputing.com>,
+	Quan Nguyen <quan@os.amperecomputing.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	imx@lists.linux.dev, devicetree@vger.kernel.org,
+	NXP S32 Linux Team <s32@nxp.com>, 0x1207@gmail.com,
+	fancer.lancer@gmail.com
+Subject: Re: [PATCH net-next v7 14/15] net: stmmac: dwmac-s32: add basic NXP
+ S32G/S32R glue driver
+Message-ID: <Z06mKpcvBO23RSx+@lsv051416.swis.nl-cdc01.nxp.com>
+References: <20241202-upstream_s32cc_gmac-v7-0-bc3e1f9f656e@oss.nxp.com>
+ <20241202-upstream_s32cc_gmac-v7-14-bc3e1f9f656e@oss.nxp.com>
+ <b9ad385b-7702-4c71-b14f-64f2714a35a4@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] iio: kx022a: document new chip_info structure members
-To: Mehdi Djait <mehdi.djait@linux.intel.com>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
- Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <Z02eXtrrO8U5-ffo@mva-rohm>
- <hv7kqspym5qkcwbw4r6ogi362sbooohijplxbkro5qdmndvhr6@t2cftbs4n7rz>
-Content-Language: en-US, en-AU, en-GB, en-BW
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <hv7kqspym5qkcwbw4r6ogi362sbooohijplxbkro5qdmndvhr6@t2cftbs4n7rz>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b9ad385b-7702-4c71-b14f-64f2714a35a4@lunn.ch>
+X-Virus-Scanned: ClamAV using ClamSMTP
 
-On 02/12/2024 15:41, Mehdi Djait wrote:
-> Hi Matti,
-
-> On Mon, Dec 02, 2024 at 01:47:42PM +0200, Matti Vaittinen wrote:
->> The kx022a driver supports a few different HW variants. A chip-info
->> structure is used to describe sensor specific details. Support for
->> sensors with different measurement g-ranges was added recently,
->> introducing sensor specific scale arrays.
->>
->> The members of the chip-info structure have been documented using
->> kerneldoc. The newly added members omitted the documentation. It is nice
->> to have all the entries documented for the sake of the consistency.
->> Furthermore, the scale table format may not be self explatonary, nor how
->> the amount of scales is informed.
->>
->> Add documentation to scale table entries to maintain consistency and to
->> make it more obvious how the scales should be represented.
->>
->> Suggested-by: Mehdi Djait <mehdi.djait@linux.intel.com>
->> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
->>
->> ---
->> Wording is difficult. Especially when not working on ones native
->> language. So, I am glad is someone evaluates whether using the 'NANO'
->> to describe 0.000 000 001 is correct - or if term like 'ppb' would make
->> more sense...
->> ---
->>   drivers/iio/accel/kionix-kx022a.h | 5 +++++
->>   1 file changed, 5 insertions(+)
->>
->> diff --git a/drivers/iio/accel/kionix-kx022a.h b/drivers/iio/accel/kionix-kx022a.h
->> index 142652ff4b22..82c4ced7426d 100644
->> --- a/drivers/iio/accel/kionix-kx022a.h
->> +++ b/drivers/iio/accel/kionix-kx022a.h
->> @@ -137,6 +137,11 @@ struct kx022a_data;
->>    *
->>    * @name:			name of the device
->>    * @regmap_config:		pointer to register map configuration
->> + * scale_table:			Array of two integer tables containing
->> + *				supported scales. Each scale is represented
->> + *				a 2 value array. First value being full
->> + *				integers, second being NANOs.
+On Tue, Dec 03, 2024 at 12:43:58AM +0100, Andrew Lunn wrote:
+> > +static int s32_gmac_init(struct platform_device *pdev, void *priv)
+> > +{
+> > +	struct s32_priv_data *gmac = priv;
+> > +	int ret;
+> > +
+> > +	ret = clk_set_rate(gmac->tx_clk, GMAC_TX_RATE_125M);
+> > +	if (!ret)
+> > +		ret = clk_prepare_enable(gmac->tx_clk);
+> > +
+> > +	if (ret) {
+> > +		dev_err(&pdev->dev, "Can't set tx clock\n");
+> > +		return ret;
+> > +	}
 > 
-> How about:
+> The ordering is a bit odd here. Normally you would test each operation
+> individually for errors. So:
 > 
-> Array of tables containing two scaling factors for the supported
-> acceleration measurement ranges. First value is the integer part and
-> second value is the fractional part in nano units.
+> 	ret = clk_set_rate(gmac->tx_clk, GMAC_TX_RATE_125M);
+> 	if (ret) {
+> 		dev_err(&pdev->dev, "Can't set tx clock\n");
+> 		return ret;
+> 	}
+> 	ret = clk_prepare_enable(gmac->tx_clk);
+> 	if (ret) {
+> 		dev_err(&pdev->dev, "Can't enable tx clock\n");
+> 		return ret;
+> 	}
 > 
 
-Hi Mehdi. Thanks for the input. I definitely prefer your wording over 
-what I wrote. Except maybe the note about each table containing two 
-scaling factors. I think a table contains two integers, but only one 
-scaling factor which is composed of those integers.
+Thanks for it. The ordering is incorrect, agree. I will fix it in v8.
 
-I am also still wondering if ppb (or even fully written "parts per 
-billion") should be used instead of nano. In my ears the "nano" needs 
-units, but I suppose the scale does not have any.
+> 
+> > +
+> > +	ret = clk_prepare_enable(gmac->rx_clk);
+> > +	if (ret) {
+> > +		clk_disable_unprepare(gmac->tx_clk);
+> > +		dev_err(&pdev->dev, "Can't set rx clock\n");
+> > +		return ret;
+> > +	}
+> 
+> Is there no need to set the TX clock rate?
+> 
 
-Yours,
-	-- Matti
+Do you mean RX clock, right? Yes, I'll add it in v8 too.
+
+BR.
+/Jan
 
