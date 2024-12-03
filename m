@@ -1,207 +1,592 @@
-Return-Path: <linux-kernel+bounces-429385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6609D9E1B5D
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 12:53:03 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 073339E1B61
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 12:53:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C2D11679D0
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 11:52:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4916C167711
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 11:53:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82B241E5027;
-	Tue,  3 Dec 2024 11:51:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9312B1E47B4;
+	Tue,  3 Dec 2024 11:52:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="X0Bu4nmo"
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b="HJ35+pSp"
+Received: from lahtoruutu.iki.fi (lahtoruutu.iki.fi [185.185.170.37])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E767F1E501B
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 11:51:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733226717; cv=none; b=JhjZ53K/4DA02VULesRmtkkh2LN4Q7dR9hWfv13IA/Nh6s6O0LpK2Wk4AhpkaC43MknCzjgEEKfKl613OXhRCFWEtwAOe47HLcUMMgJeyYtjzXj0klaEam6Z6kEt77AFpciImkO/njXy8p5swO8IBf5ol7AbINwJGrO6+Byeaew=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733226717; c=relaxed/simple;
-	bh=xODsXxgFfNZd8MjPBZGqmi3sIBbEKRslq024Q4XA774=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eZ2HNfuXa7RWvgT/Jt7+mDdc43fAar2R6P5ts0pl8Q2peKnpCz5krouMZ655pVeW4MiCG7ULeInjeUt29M509H9NWUVGPRGxOjfuK4HS6usxkE99aOIY6PP6zSV7CCRpMBp4XdhMUsGB3HmCgDKxXgGD1c4JpzyzzPAKrwWcxg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=X0Bu4nmo; arc=none smtp.client-ip=209.85.128.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-6efa08f91c8so19181007b3.1
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 03:51:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733226715; x=1733831515; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=jJmN9vm0KKdkbgYJY1kJ2PT7vRHayhKSRB17RM5kC5E=;
-        b=X0Bu4nmocEtYnkYNZV3jm3+ODoDpXf7OFUSD4BK/eNEAnGS92mxk0QKcWlfWaqd/t0
-         bKan83juUuc5txilEUJnJKr266BkeuwZs11HmnfIIFId0bUZK942UkyzZjafisK9doDa
-         5uB31FoFPQSAcVIMtrd3oHZZEFpZAdOUXNu46lVNiBlb2B8OF9ub7va69WFNwxtQmIaU
-         vTMyZCyG3++mj5oF+xqTNthMlYM4Untn1TvWhS/s5z0QjaD1NKuD8Vwz6cCO6E/OTwRr
-         pVI3kW668KSehmrYZZye/FIFtvSjCLqF5ROYDf4byEq7/hFVlyROhu7oO+AjQ7lkRd4G
-         MJBQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733226715; x=1733831515;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jJmN9vm0KKdkbgYJY1kJ2PT7vRHayhKSRB17RM5kC5E=;
-        b=qxd0AW07sh0Nrt3tdOJCL+Xww0RVJp5NMGUysKmevlJbEdyMgzgkem5nSeXEcPdcp5
-         NglL1xbGXdITM+P//hMDyY7KcprtlbtqjXNR1ITEpOAUtt9hYrlH6hoydAuFE2oKPD63
-         m3hT4tdCo1PPASdtKraKXgiF5vU2WetYa/0tFqnidCHbcpr7FybSEdWZpYN/tRJ1SCcC
-         QyPuSDNls6inZxu0LxLSTc9cIjcEprz+vM3R3ifCIX6Yf0hMDAd8Yrdzq4w46Osc4xNM
-         WTA43DeXeiWxWKvpeSBzs3v0TBq0I3enInfAjAgWnPGk0oFuOWXPbvL4FGQ4L7szI+aY
-         G2pg==
-X-Forwarded-Encrypted: i=1; AJvYcCVbMGJtpGVzNlNn0jaerjDU/cpsuUQ+tvGaY6ENbTDBbFFRqVv8/Fli+VK/3RHPIFLA4kIF9b59/HFQLLI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGvCyzGKAHmElAUK0VEIzrrQdbPTG57PmvvCwcPt/9dyp1ucQa
-	4NgcpCta//GrbKQwEIPQXFAfj1mE00re5S4GqvU2gw66JoZGA+Wh5x44DPlmo6toxYVsZHmgb4i
-	XLQsZVB4OLiQljvBFjtLhpy77ekch54HPluUtLw==
-X-Gm-Gg: ASbGncv17PglYg4I8kBX/xcALrnqgTpUNEWGgRMEkfK59IJqX/OqsYCh+Z+3WZiKyjS
-	1hmNCW3Xht714kN3OXLDyoiMfKbVcJw==
-X-Google-Smtp-Source: AGHT+IEjsHAYwArBu8zqyJKRiaq0r1rzH6TwAontXOXbJw7jEjz6js3BPKBbGiqM6LVavcAfeIYgmun7BtLOfMgwhmU=
-X-Received: by 2002:a05:6902:150d:b0:e39:772b:4bae with SMTP id
- 3f1490d57ef6-e39d39ee384mr1903823276.6.1733226714940; Tue, 03 Dec 2024
- 03:51:54 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 513D81E47DE;
+	Tue,  3 Dec 2024 11:52:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=185.185.170.37
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733226737; cv=pass; b=Zg1T59HsqUDIP9+KxKD+zlquXPJhtqfTHyBHAzzbDHz6XLZmdtu1F2SC3UttIeLGGyQPAD3esQRy2ctIQthwsJl4Qsc3L7P9GaQvNtoXayKssCxvtCn8FAHay6iL4c6BQ6EFbB0KfDW9d1PVLtviq7iHCvPmtmsLVLiN2tVwo0I=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733226737; c=relaxed/simple;
+	bh=es6wgSpx4CP8emXTwjGZAKAOIRM2t/VROdlckuRptxo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LIbT9y48ZlG6iMRO7eDSJVz2fpZ+6H7tHFdqfe59lHjdMEYAV2iyrl3S4qLD6hWQz01QaMw67KAcPkHjTBdmEi7DYZbdX3BEaWE8RQPuMGfRvmP4/zTaQA4wngB6vAQslTWBaNCd9p4116SwD6P+ucPXDjyVarZYnmOhTXLbxss=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi; spf=pass smtp.mailfrom=iki.fi; dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b=HJ35+pSp; arc=pass smtp.client-ip=185.185.170.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iki.fi
+Received: from hillosipuli.retiisi.eu (2a00-1190-d1dd-0-c641-1eff-feae-163c.v6.cust.suomicom.net [IPv6:2a00:1190:d1dd:0:c641:1eff:feae:163c])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: sailus)
+	by lahtoruutu.iki.fi (Postfix) with ESMTPSA id 4Y2fCG1D6Xz49PsJ;
+	Tue,  3 Dec 2024 13:52:10 +0200 (EET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=lahtoruutu;
+	t=1733226730;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CgMClWnzoODt2oRQNy4r1FeVoxLFtXUzbSaTa9/17Wk=;
+	b=HJ35+pSpDjxuUwOKLMTPVHy0OJwSB6bFvW+erMt53vb8E7ZPacsvsPeFWIexZbcXhY6rUQ
+	gveXFwEi/XXZbaApN8fO8lOocb6NAqNkHz2KEcpKntYZc5GGK1y8SUVl/8Ky3gX5jAbqKP
+	piVKHvpk0DLaRmyg4Z/KrInPReNohN7yjjcm3NyBuMM3EkUtrz4xNvQWO7VTYmRjL+vOmn
+	S1L8EbWQbl7MqOUJh6b3do5az2YZyq7yt3nxAHQ6eN/Fk6KjVgNYeI/2czlg6nkvK14E/p
+	9sBaSEp/oNTwF/ubir0e1dU4BxdzyvuGY0MExC/sfi7QqeByXAuqpJ5TYBYqnw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
+	s=lahtoruutu; t=1733226730;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CgMClWnzoODt2oRQNy4r1FeVoxLFtXUzbSaTa9/17Wk=;
+	b=tHLNvD+yiQVPHiphFSAm/Gv1EsGCR4omRDtNM2Zq90ncFG4/SzfBG42IF3aUxYjWzqQCNf
+	esxoiVr5YeLiyyjkEnoCcdtcFCBj67vAE4OFMqCUpneJ5iBccHJY6XaXwIYbIvvnlKleru
+	vbROhu51xkrNM5Vyt3m5V+s5vcZMYqiUqFbp/30HvffKRx8MNdblKF603xMRMEMc6MgEAw
+	PWwZxO9hBkqCEmwlg7J4XMqnRDvXljs2gPr4E6XxdxyvpjEu6RneqON1xrq8lkkwOW3vlt
+	et8ThO5FCVQQ5FLBNgvWQQxnOJf2Q4CSb+KCg5Cn/2HJ2ZFde20JV8V964nZEg==
+ARC-Authentication-Results: i=1;
+	ORIGINATING;
+	auth=pass smtp.auth=sailus smtp.mailfrom=sakari.ailus@iki.fi
+ARC-Seal: i=1; s=lahtoruutu; d=iki.fi; t=1733226730; a=rsa-sha256;
+	cv=none;
+	b=P0UJzN+BMbjCL4XAzvnuEfhr3gb4dLcguHaKKWaiM2b4l4tniI8+5VsOpoxZgk7vyR5LJw
+	7hO6ZI99D6uhKHS6VcZH2qBbdyw5qL/nqX62GO1Vcn2Nh0NVm8TAUO5Hc2lYsBHn4FAvCm
+	RLuVevyeY+y67rfJTjYl6kFVezYlUlLl633PUsVXFZmIFOZAaVDS4MtEQcOOeCiXX9p+IG
+	eVZiczg7bawDFfAJoyWgnLiPOUlcPPkowv7AOuTMPIvlEdcdc69bOkeO6T6O7PGS4IAvRs
+	kUUqtPiuRNyjyHKS3KbZcFNTCEF1ODgTeGITAM6Q3LD53cxidLPvELdsNkht2g==
+Received: from valkosipuli.retiisi.eu (valkosipuli.localdomain [192.168.4.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by hillosipuli.retiisi.eu (Postfix) with ESMTPS id C091D634C94;
+	Tue,  3 Dec 2024 13:52:08 +0200 (EET)
+Date: Tue, 3 Dec 2024 11:52:08 +0000
+From: Sakari Ailus <sakari.ailus@iki.fi>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Hans Verkuil <hverkuil@xs4ll.nl>,
+	Ricardo Ribalda <ribalda@chromium.org>
+Subject: Re: [PATCH v3 1/3] docs: media: update maintainer-entry-profile for
+ multi-committers
+Message-ID: <Z07w6E-MNAicbgkc@valkosipuli.retiisi.eu>
+References: <cover.1733131405.git.mchehab+huawei@kernel.org>
+ <e9a5f9f49b185c694d38ea620bd68252eb52e9d3.1733131405.git.mchehab+huawei@kernel.org>
+ <Z02qzF7e665uq44a@valkosipuli.retiisi.eu>
+ <20241202142334.60fbc25f@foz.lan>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241112003017.2805670-1-quic_molvera@quicinc.com>
- <20241112003017.2805670-3-quic_molvera@quicinc.com> <em4vkg4totsg435s4usu7kqn45vfqfot2j7sikzmnof2kkyidi@26b6kkpz7z4c>
- <0ca812e7-bf5b-463a-83dc-9195aee14589@quicinc.com> <828dbdb1-d987-43e6-8cd1-7ba267da9e67@quicinc.com>
-In-Reply-To: <828dbdb1-d987-43e6-8cd1-7ba267da9e67@quicinc.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Tue, 3 Dec 2024 13:51:46 +0200
-Message-ID: <CAA8EJpqPRpV_aGH_LHoG8EWkaQ_tCR3u0jM3C_jXKowCAUEqPQ@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] interconnect: qcom: Add interconnect provider
- driver for SM8750
-To: Melody Olvera <quic_molvera@quicinc.com>
-Cc: Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Adam Skladowski <a39.skl@gmail.com>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Sibi Sankar <quic_sibis@quicinc.com>, =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
-	Vladimir Lypak <vladimir.lypak@gmail.com>, Danila Tikhonov <danila@jiaxyga.com>, 
-	Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Rajendra Nayak <quic_rjendra@quicinc.com>, Mike Tipton <quic_mdtipton@quicinc.com>, 
-	Abel Vesa <abel.vesa@linaro.org>, Trilok Soni <quic_tsoni@quicinc.com>, 
-	Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>, linux-arm-msm@vger.kernel.org, 
-	linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241202142334.60fbc25f@foz.lan>
 
-On Tue, 3 Dec 2024 at 00:04, Melody Olvera <quic_molvera@quicinc.com> wrote:
->
->
->
-> On 11/18/2024 10:01 AM, Melody Olvera wrote:
-> >
-> >
-> > On 11/15/2024 7:27 AM, Dmitry Baryshkov wrote:
-> >> On Mon, Nov 11, 2024 at 04:30:17PM -0800, Melody Olvera wrote:
-> >>> From: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
-> >>>
-> >>> Introduce SM8750 interconnect provider driver using the interconnect
-> >>> framework.
-> >>>
-> >>> Signed-off-by: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
-> >>> Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
-> >>> ---
-> >>>   drivers/interconnect/qcom/Kconfig  |    9 +
-> >>>   drivers/interconnect/qcom/Makefile |    2 +
-> >>>   drivers/interconnect/qcom/sm8750.c | 1585
-> >>> ++++++++++++++++++++++++++++
-> >>>   drivers/interconnect/qcom/sm8750.h |  132 +++
-> >>>   4 files changed, 1728 insertions(+)
-> >>>   create mode 100644 drivers/interconnect/qcom/sm8750.c
-> >>>   create mode 100644 drivers/interconnect/qcom/sm8750.h
-> >>>
-> >>> diff --git a/drivers/interconnect/qcom/Kconfig
-> >>> b/drivers/interconnect/qcom/Kconfig
-> >>> index 362fb9b0a198..1219f4f23d40 100644
-> >>> --- a/drivers/interconnect/qcom/Kconfig
-> >>> +++ b/drivers/interconnect/qcom/Kconfig
-> >>> @@ -337,6 +337,15 @@ config INTERCONNECT_QCOM_SM8650
-> >>>         This is a driver for the Qualcomm Network-on-Chip on
-> >>> SM8650-based
-> >>>         platforms.
-> >>>   +config INTERCONNECT_QCOM_SM8750
-> >>> +    tristate "Qualcomm SM8750 interconnect driver"
-> >>> +    depends on INTERCONNECT_QCOM_RPMH_POSSIBLE
-> >>> +    select INTERCONNECT_QCOM_RPMH
-> >>> +    select INTERCONNECT_QCOM_BCM_VOTER
-> >>> +    help
-> >>> +      This is a driver for the Qualcomm Network-on-Chip on
-> >>> SM8750-based
-> >>> +      platforms.
-> >>> +
-> >>>   config INTERCONNECT_QCOM_X1E80100
-> >>>       tristate "Qualcomm X1E80100 interconnect driver"
-> >>>       depends on INTERCONNECT_QCOM_RPMH_POSSIBLE
-> >>> diff --git a/drivers/interconnect/qcom/Makefile
-> >>> b/drivers/interconnect/qcom/Makefile
-> >>> index 9997728c02bf..7887b1e8d69b 100644
-> >>> --- a/drivers/interconnect/qcom/Makefile
-> >>> +++ b/drivers/interconnect/qcom/Makefile
-> >>> @@ -40,6 +40,7 @@ qnoc-sm8350-objs            := sm8350.o
-> >>>   qnoc-sm8450-objs            := sm8450.o
-> >>>   qnoc-sm8550-objs            := sm8550.o
-> >>>   qnoc-sm8650-objs            := sm8650.o
-> >>> +qnoc-sm8750-objs            := sm8750.o
-> >>>   qnoc-x1e80100-objs            := x1e80100.o
-> >>>   icc-smd-rpm-objs            := smd-rpm.o icc-rpm.o icc-rpm-clocks.o
-> >>>   @@ -80,5 +81,6 @@ obj-$(CONFIG_INTERCONNECT_QCOM_SM8350) +=
-> >>> qnoc-sm8350.o
-> >>>   obj-$(CONFIG_INTERCONNECT_QCOM_SM8450) += qnoc-sm8450.o
-> >>>   obj-$(CONFIG_INTERCONNECT_QCOM_SM8550) += qnoc-sm8550.o
-> >>>   obj-$(CONFIG_INTERCONNECT_QCOM_SM8650) += qnoc-sm8650.o
-> >>> +obj-$(CONFIG_INTERCONNECT_QCOM_SM8750) += qnoc-sm8750.o
-> >>>   obj-$(CONFIG_INTERCONNECT_QCOM_X1E80100) += qnoc-x1e80100.o
-> >>>   obj-$(CONFIG_INTERCONNECT_QCOM_SMD_RPM) += icc-smd-rpm.o
-> >>> diff --git a/drivers/interconnect/qcom/sm8750.c
-> >>> b/drivers/interconnect/qcom/sm8750.c
-> >>> new file mode 100644
-> >>> index 000000000000..bc72954d54ff
-> >>> --- /dev/null
-> >>> +++ b/drivers/interconnect/qcom/sm8750.c
-> >>> @@ -0,0 +1,1585 @@
-> >>> +// SPDX-License-Identifier: GPL-2.0-only
-> >>> +/*
-> >>> + * Copyright (c) 2024, Qualcomm Innovation Center, Inc. All rights
-> >>> reserved.
-> >>> + *
-> >>> + */
-> >>> +
-> >>> +#include <linux/device.h>
-> >>> +#include <linux/interconnect.h>
-> >>> +#include <linux/interconnect-provider.h>
-> >>> +#include <linux/module.h>
-> >>> +#include <linux/of_platform.h>
-> >>> +#include <dt-bindings/interconnect/qcom,sm8750-rpmh.h>
-> >>> +
-> >>> +#include "bcm-voter.h"
-> >>> +#include "icc-rpmh.h"
-> >>> +#include "sm8750.h"
-> >> Nit: please merge sm8750.h here, there is no need to have a separate
-> >> header, there are no other users.
-> >
-> > Ack.
-> >
-> >>
-> >> Also, is there QoS support? I see no qcom_icc_qosbox entries.
-> >
-> > Unsure; will let Raviteja comment.
-> >
->
-> Spoke w Raviteja; looks like he wants to do this later.
+Hi Mauro,
 
-Will that cause bindings changes?
+On Mon, Dec 02, 2024 at 02:23:34PM +0100, Mauro Carvalho Chehab wrote:
+> Em Mon, 2 Dec 2024 12:40:44 +0000
+> Sakari Ailus <sakari.ailus@iki.fi> escreveu:
+> 
+> > Hi Mauro,
+> > 
+> > Thanks for the set.
+> > 
+> > Looks good overall, please still see my comments below.
+> > 
+> > On Mon, Dec 02, 2024 at 10:26:19AM +0100, Mauro Carvalho Chehab wrote:
+> > > As the media subsystem will experiment with a multi-committers model,
+> > > update the Maintainer's entry profile to the new rules.
+> > > 
+> > > Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> > > Signed-off-by: Hans Verkuil <hverkuil@xs4ll.nl>
+> > > Reviewed-by: Ricardo Ribalda <ribalda@chromium.org>
+> > > ---
+> > >  .../media/maintainer-entry-profile.rst        | 208 ++++++++++++++----
+> > >  MAINTAINERS                                   |   1 +
+> > >  2 files changed, 163 insertions(+), 46 deletions(-)
+> > > 
+> > > diff --git a/Documentation/driver-api/media/maintainer-entry-profile.rst b/Documentation/driver-api/media/maintainer-entry-profile.rst
+> > > index ffc712a5f632..dc764163cf1c 100644
+> > > --- a/Documentation/driver-api/media/maintainer-entry-profile.rst
+> > > +++ b/Documentation/driver-api/media/maintainer-entry-profile.rst
+> > > @@ -27,19 +27,139 @@ It covers, mainly, the contents of those directories:
+> > >  Both media userspace and Kernel APIs are documented and the documentation
+> > >  must be kept in sync with the API changes. It means that all patches that
+> > >  add new features to the subsystem must also bring changes to the
+> > > -corresponding API files.
+> > > +corresponding API documentation files.
+> > >  
+> > > -Due to the size and wide scope of the media subsystem, media's
+> > > -maintainership model is to have sub-maintainers that have a broad
+> > > -knowledge of a specific aspect of the subsystem. It is the sub-maintainers'
+> > > -task to review the patches, providing feedback to users if the patches are
+> > > +Due to the size and wide scope of the media subsystem, the media's
+> > > +maintainership model is to have committers that have a broad knowledge of
+> > > +a specific aspect of the subsystem. It is the committers' task to
+> > > +review the patches, providing feedback to users if the patches are
+> > >  following the subsystem rules and are properly using the media kernel and
+> > >  userspace APIs.
+> > >  
+> > > -Patches for the media subsystem must be sent to the media mailing list
+> > > -at linux-media@vger.kernel.org as plain text only e-mail. Emails with
+> > > -HTML will be automatically rejected by the mail server. It could be wise
+> > > -to also copy the sub-maintainer(s).
+> > > +Media committers
+> > > +----------------
+> > > +
+> > > +In the media subsystem, there are experienced developers who can push  
+> > 
+> > The media subsystem is generally understood to comprise of what's under
+> > drivers/media, this should be referring to the community instead.
+> 
+> Do you have a proposal for a different text here?
+
+How about:
+
+In the Linux Media community developers with formal status are classified as
+follows.
+
+> 
+> > 
+> > > +patches directly to the development tree. These developers are called
+> > > +Media committers and are divided into the following categories:
+> > > +
+> > > +- Committers:
+> > > +    contributors for one or more drivers within the media subsystem.
+> > > +    They can push changes to the tree that do not affect the core or ABI.
+> > > +
+> > > +- Core committers:
+> > > +    responsible for part of the media core. They are typically
+> > > +    responsible for one or more drivers within the media subsystem, but, besides
+> > > +    that, they can also merge patches that change the code common to multiple
+> > > +    drivers, including the kernel internal API.
+> > > +
+> > > +- Subsystem maintainers:  
+> > 
+> > s/Subsystem/Media tree/
+> 
+> Here, we're talking specifically about my hole and Hans, which will
+> co-maintain the subsystem with me.. I guess subsystem maintainer is the 
+> best to describe it.
+> 
+> Besides that, we used "media maintainers" in the past with a different
+> meaning. Better to not re-use it here.
+
+Seems good, although...
+
+> > 
+> > ?
+> > > +    responsible for the subsystem as a whole, with access to the
+
+I'd do here:
+
+s/subsystem/Media tree/ or
+s/subsystem/Media subsystem/
+
+> > > +    entire subsystem.
+> > > +
+> > > +    Only subsystem maintainers can push changes that affect the userspace
+> > > +    API/ABI.  
+> > 
+> > This is ambiguous. I think it should intend to say API/ABI changes require
+> > approval from Media tree maintainers.
+> 
+> At the first moment, the idea is to commit them via PRs. So, no such
+> commits will be merged by committers/core committers, but yeah, it
+> could also be merged directly by a committer if it has our approval.
+> 
+> In any case, such changes need a consensus from the subsystem maintainers,
+> which can just be based on a trust relationship between them with
+> regards to certain parts of the subsystem, or via explicit acks.
+> 
+> Maybe:
+> 
+> 	API/ABI changes are done via consensus between subsystem
+> 	maintainers.
+> 
+> 	Only subsystem maintainers push changes that affect the userspace
+> 	API/ABI. Committers may push directly if they have approvals
+> 	from subsystem maintainers.
+
+Seems good to me. These could be in the same paragraph.
+
+> 
+> > What constitutes a UAPI change is a topic of discussion on its own. 
+> 
+> Everything that would break backward compatibility with existing non-kernel
+> code are API/ABI changes.
+> 
+> > Does it
+> > require adding a new IOCTL? Taking into use a reserved field? Changing
+> > little-used driver behaviour slightly? 
+> 
+> For all of those, yes: any changes affecting the behavior or fields/nodes
+> exported via ioctls and sysfs, including new V4L2 controls are API/ABI changes.
+> 
+> Some changes at OF are also API/ABI changes, but those can flow via
+> committers, provided that OF maintainers added their review or acked-by.
+> 
+> > Fixing a bug in a driver?
+> 
+> No, fixing a bug, even if related to ABI/API non-compliance aren't.
+> 
+> Yet, ABI/API behavior changes at drivers shall not cause regressions.
+> 
+> I don't think we need to let it clear at the text
+
+Works for me.
+
+> 
+> > The first two obviously yes, but the latter two probably not.
+> > 
+> > Also:
+> > 
+> > s/Only subsystem maintainers can push/Media tree maintainers' ack is
+> > required for/
+> > 
+> > ?
+> > 
+> > > +
+> > > +All media committers shall explicitly agree with the Kernel development process
+> > > +as described at Documentation/process/index.rst and to the Kernel
+> > > +development rules inside the Kernel documentation, including its code of
+> > > +conduct.
+> > > +
+> > > +Media development tree
+> > > +----------------------
+> > > +
+> > > +The main development tree used by the media subsystem is hosted at LinuxTV.org,
+> > > +where we also maintain news about the subsystem, wiki pages and a patchwork
+> > > +instance where we track patches though their lifetime.
+> > > +
+> > > +The main tree used by media developers is at:
+> > > +
+> > > +https://git.linuxtv.org/media.git/
+> > > +
+> > > +.. _Media development workflow:
+> > > +
+> > > +Media development workflow
+> > > +++++++++++++++++++++++++++
+> > > +
+> > > +All changes for the media subsystem must be sent first as e-mails to the
+> > > +media mailing list, following the process documented at  
+> > 
+> > s/^/linux-/
+> > 
+> > Also I'd refer to it as "LMML".
+> 
+> We can add an alias there, but better to be explicit about what mailing
+> list we're referring to.
+
+The list is known as the Linux Media mailing list. We should refer it by
+that name or an abbreviation (LMML).
+
+> 
+> > 
+> > > +Documentation/process/index.rst.
+> > > +
+> > > +It means that patches shall be submitted as plain text only via e-mail to
+> > > +linux-media@vger.kernel.org. While subscription is not mandatory, you
+> > > +can find details about how to subscribe to it and to see its archives at:
+> > > +
+> > > +  https://subspace.kernel.org/vger.kernel.org.html
+> > > +
+> > > +Emails with HTML will be automatically rejected by the mail server.
+> > > +
+> > > +It could be wise to also copy the media committer(s). You should use
+> > > +``scripts/get_maintainers.pl`` to identify whom else needs to be copied.
+> > > +Please always copy driver's authors and maintainers.
+> > > +
+> > > +Such patches need to be based against a public branch or tag as follows:
+> > > +
+> > > +1. Patches for new features need to be based at the ``next`` branch of
+> > > +   media.git tree;
+> > > +
+> > > +2. Fixes against an already released kernel should preferably be against
+> > > +   the latest released Kernel. If they require a previously-applied
+> > > +   change at media.git tree, they need to be against its ``fixes`` branch.  
+> > 
+> > This would be a change to the current process that I don't think has been
+> > discussed. If I understand correctly, generally this applies to patches
+> > that have been merged to the development branch (formerly media stage tree
+> > master) with Cc: stable and Fixes: tags.
+> 
+> 
+> Not really a change: this is what we do in practice (except that we renamed
+> master to next).
+
+I mean fixes in particular. Fixes are generally meant for an *upcoming*
+release, not a past release, and primarily fixing issues that have been
+introduced in that cycle. Other bugfixes should go through the normal
+process.
+
+How about adding:
+
+Patches with security implications should be handled using a different
+process defined in Documentation/process/security-bugs.rst.
+
+> 
+> We did discuss that during the LPC week. There was a request there about
+> simplifying the trees during media summit with some suggestions. I did a 
+> followup meeting with Hans afterwards for us to check what would work best.
+> 
+> The change is, basically:
+> 	media-tree master -> media.git next
+> 	media-tree fixes   -> media.git fixes
+> 
+> 	media-stage master -> media-committers next
+> 
+> Subsystem maintainers are also merging patches at media-committers fixes,
+> in order to let media-ci to test the fixes branch.
+> 
+> As agreed during the media summit, only subsystem maintainers will be
+> merging fixes patches.
+> 
+> > > +
+> > > +3. Fixes for issues not present at the latest released kernel shall
+> > > +   be either against a -rc kernel for an upcoming release or
+> > > +   against the ``fixes`` branch of the media.git tree.
+> > > +
+> > > +Patches with fixes shall have:
+> > > +
+> > > +- a ``Fixes:`` tag pointing to the first commit that introduced the bug;
+> > > +- when applicable, a ``Cc: stable@vger.kernel.org``.
+> > > +
+> > > +Patches that were fixing bugs publicly reported by someone at the
+> > > +linux-media@vger.kernel.org mailing list shall have:
+> > > +
+> > > +- a ``Reported-by:`` tag immediately followed by a ``Closes:`` tag.
+> > > +
+> > > +Patches that change API shall update documentation accordingly at the
+> > > +same patch series.
+> > > +
+> > > +See Documentation/process/index.rst for more details about e-mail submission.
+> > > +
+> > > +Once a patch is submitted, it may follow either one of the following
+> > > +workflows:
+> > > +
+> > > +a. Pull request workflow: patches are handled by subsystem maintainers::
+> > > +
+> > > +     +------+   +---------+   +-------+   +-----------------------+   +---------+
+> > > +     |e-mail|-->|patchwork|-->|pull   |-->|maintainers merge      |-->|media.git|  
+> > 
+> > s/e-mail/LMML/
+> 
+> maybe, instead: e-mail to LMML.
+
+Sounds good.
+
+> 
+> > (see earlier comment)? Same below.
+> > 
+> > > +     +------+   |picks it |   |request|   |in media-committers.git|   +---------+
+> > > +                +---------+   +-------+   +-----------------------+
+> > > +
+> > > +   For this workflow, pull requests can be generated by a committer,
+> > > +   a previous committer, subsystem maintainers or by a trusted long-time  
+> > 
+> > s/previous/former/
+> > 
+> > I'd also use plural in all cases here.
+> 
+> Ok.
+> 
+> > 
+> > > +   contributor. If you are not in such group, please don't submit  
+> > 
+> > > +   pull requests, as they will not be processed.
+> > > +
+> > > +b. Committers' workflow: patches are handled by media committers::
+> > > +
+> > > +     +------+   +---------+   +--------------------+   +-----------+   +---------+
+> > > +     |e-mail|-->|patchwork|-->|committers merge at |-->|maintainers|-->|media.git|
+> > > +     +------+   |picks it |   |media-committers.git|   |approval   |   +---------+
+> > > +                +---------+   +--------------------+   +-----------+
+> > > +
+> > > +On both workflows, all patches shall be properly reviewed at
+> > > +linux-media@vger.kernel.org before being merged at media-committers.git.
+> > > +
+> > > +When patches are picked by patchwork and when merged at media-committers,
+> > > +CI bots will check for errors and may provide e-mail feedback about
+> > > +patch problems. When this happens, the patch submitter must fix them, or
+> > > +explain why the errors are false positives.
+> > > +
+> > > +Patches will only be moved to the next stage in those two workflows if they
+> > > +don't fail on CI or if there are false-positives in the CI reports.  
+> > 
+> > s/don't fail on/pass/
+> 
+> Ok.
+> 
+> > 
+> > > +
+> > > +Failures during e-mail submission
+> > > ++++++++++++++++++++++++++++++++++
+> > >  
+> > >  Media's workflow is heavily based on Patchwork, meaning that, once a patch
+> > >  is submitted, the e-mail will first be accepted by the mailing list
+> > > @@ -47,51 +167,48 @@ server, and, after a while, it should appear at:
+> > >  
+> > >     - https://patchwork.linuxtv.org/project/linux-media/list/
+> > >  
+> > > -If it doesn't automatically appear there after a few minutes, then
+> > > +If it doesn't automatically appear there after some time [2]_, then
+> > >  probably something went wrong on your submission. Please check if the
+> > > -email is in plain text\ [2]_ only and if your emailer is not mangling
+> > > +email is in plain text\ [3]_ only and if your emailer is not mangling
+> > >  whitespaces before complaining or submitting them again.
+> > >  
+> > > -You can check if the mailing list server accepted your patch, by looking at:
+> > > +To troubleshoot problems, you should first check if the mailing list
+> > > +server has accepted your patch, by looking at:
+> > >  
+> > >     - https://lore.kernel.org/linux-media/
+> > >  
+> > > -.. [2] If your email contains HTML, the mailing list server will simply
+> > > +If the patch is there and not at patchwork, it is likely that your e-mailer
+> > > +mangled the patch. Patchwork internally has a logic that checks if the
+> > > +received e-mail contain a valid patch. Any whitespace and new line
+> > > +breakages mangling the patch won't be recognized by patchwork, thus such
+> > > +patch will be rejected.
+> > > +
+> > > +.. [2] It usually takes a few minutes for the patch to arrive, but
+> > > +       the e-mail server may be busy, so it may take up to a few hours
+> > > +       for a patch to be picked by patchwork.
+> > > +
+> > > +.. [3] If your email contains HTML, the mailing list server will simply
+> > >         drop it, without any further notice.
+> > >  
+> > > +.. _media-developers-gpg:
+> > >  
+> > > -Media maintainers
+> > > -+++++++++++++++++
+> > > +Authentication for pull and merge requests
+> > > +++++++++++++++++++++++++++++++++++++++++++
+> > >  
+> > > -At the media subsystem, we have a group of senior developers that
+> > > -are responsible for doing the code reviews at the drivers (also known as
+> > > -sub-maintainers), and another senior developer responsible for the
+> > > -subsystem as a whole. For core changes, whenever possible, multiple
+> > > -media maintainers do the review.
+> > > +The authenticity of developers submitting pull requests and merge requests
+> > > +shall be validated by using PGP sign. See: :ref:`kernel_org_trust_repository`.
+> > >  
+> > > -The media maintainers that work on specific areas of the subsystem are:
+> > > +With the pull request workflow, pull requests shall use a PGP-signed tag.
+> > >  
+> > > -- Remote Controllers (infrared):
+> > > -    Sean Young <sean@mess.org>
+> > > +For more details about PGP sign, please read
+> > > +Documentation/process/maintainer-pgp-guide.rst.  
+> > 
+> > s/.*/:ref:`the PGP guide <pgpguide>`/
+> 
+> No need. A Sphinx plugin does that automatically.
+
+Ack.
+
+> 
+> > 
+> > >  
+> > > -- HDMI CEC:
+> > > -    Hans Verkuil <hverkuil@xs4all.nl>
+> > > +Subsystem maintainers
+> > > +---------------------
+> > >  
+> > > -- Media controller drivers:
+> > > -    Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > > -
+> > > -- ISP, v4l2-async, v4l2-fwnode, v4l2-flash-led-class and Sensor drivers:
+> > > -    Sakari Ailus <sakari.ailus@linux.intel.com>
+> > > -
+> > > -- V4L2 drivers and core V4L2 frameworks:
+> > > -    Hans Verkuil <hverkuil@xs4all.nl>
+> > > -
+> > > -The subsystem maintainer is:
+> > > -  Mauro Carvalho Chehab <mchehab@kernel.org>
+> > > -
+> > > -Media maintainers may delegate a patch to other media maintainers as needed.
+> > > -On such case, checkpatch's ``delegate`` field indicates who's currently
+> > > -responsible for reviewing a patch.
+> > > +The subsystem maintainers are:
+> > > +  - Mauro Carvalho Chehab <mchehab@kernel.org> and
+> > > +  - Hans Verkuil <hverkuil@xs4all.nl>
+> > >  
+> > >  Submit Checklist Addendum
+> > >  -------------------------
+> > > @@ -108,17 +225,14 @@ implementing the media APIs:
+> > >  ====================	=======================================================
+> > >  Type			Tool
+> > >  ====================	=======================================================
+> > > -V4L2 drivers\ [3]_	``v4l2-compliance``
+> > > +V4L2 drivers\ [4]_	``v4l2-compliance``
+> > >  V4L2 virtual drivers	``contrib/test/test-media``
+> > >  CEC drivers		``cec-compliance``
+> > >  ====================	=======================================================
+> > >  
+> > > -.. [3] The ``v4l2-compliance`` also covers the media controller usage inside
+> > > +.. [4] The ``v4l2-compliance`` also covers the media controller usage inside
+> > >         V4L2 drivers.
+> > >  
+> > > -Other compilance tools are under development to check other parts of the
+> > > -subsystem.
+> > > -
+> > >  Those tests need to pass before the patches go upstream.
+> > >  
+> > >  Also, please notice that we build the Kernel with::
+> > > @@ -134,6 +248,8 @@ Where the check script is::
+> > >  Be sure to not introduce new warnings on your patches without a
+> > >  very good reason.
+> > >  
+> > > +Please see `Media development workflow`_ for e-mail submission rules.
+> > > +
+> > >  Style Cleanup Patches
+> > >  +++++++++++++++++++++
+> > >  
+> > > @@ -199,7 +315,7 @@ tree between -rc6 and the next -rc1.
+> > >  Please notice that the media subsystem is a high traffic one, so it
+> > >  could take a while for us to be able to review your patches. Feel free
+> > >  to ping if you don't get a feedback in a couple of weeks or to ask
+> > > -other developers to publicly add Reviewed-by and, more importantly,
+> > > +other developers to publicly add ``Reviewed-by:`` and, more importantly,
+> > >  ``Tested-by:`` tags.
+> > >  
+> > >  Please note that we expect a detailed description for ``Tested-by:``,
+> > > diff --git a/MAINTAINERS b/MAINTAINERS
+> > > index 1e930c7a58b1..c77f56a2e695 100644
+> > > --- a/MAINTAINERS
+> > > +++ b/MAINTAINERS
+> > > @@ -14510,6 +14510,7 @@ MEDIA INPUT INFRASTRUCTURE (V4L/DVB)
+> > >  M:	Mauro Carvalho Chehab <mchehab@kernel.org>
+> > >  L:	linux-media@vger.kernel.org
+> > >  S:	Maintained
+> > > +P:	Documentation/driver-api/media/maintainer-entry-profile.rst
+> > >  W:	https://linuxtv.org
+> > >  Q:	http://patchwork.kernel.org/project/linux-media/list/
+> > >  T:	git git://linuxtv.org/media.git  
+> > 
+> 
+> 
 
 -- 
-With best wishes
-Dmitry
+Kind regards,
+
+Sakari Ailus
 
