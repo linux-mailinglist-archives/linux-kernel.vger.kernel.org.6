@@ -1,144 +1,212 @@
-Return-Path: <linux-kernel+bounces-429180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429184-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C09C9E1836
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:48:33 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98ABD9E183F
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:49:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3FABF166EA4
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:48:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5DB1F167156
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:49:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 249721E0DF8;
-	Tue,  3 Dec 2024 09:47:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D3361DFE3B;
+	Tue,  3 Dec 2024 09:48:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bcDXOCKi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BIbLZRUb"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 683601E0DB8;
-	Tue,  3 Dec 2024 09:47:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05E8E1DF72C
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 09:48:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733219270; cv=none; b=VTk372SvMuS4L/G/xfROXUd+JWWtg/9LsAAHFRN2UYqj3w58QQg4B0PXMNLhYJO8WnsGWuoMQ6pUFlUumOFN92sJF7UqOk3lQLt8CjGOyF/wNfTW5m6xUtoyK1KNIWWr+dh2wHRd4Wr7+nIanANCf0BKPrpFyL2Vt2U+NBoNuK0=
+	t=1733219311; cv=none; b=ZwGK9q519pHmV78/yDZYDEG3QeIjdqSBkKHe1sbUkYhfiacrBqZmEz0fRch6g3b6qofJPaM0c8amECMN9EfetKwN2Pc72baKfO1Ll4lDUcb8s7ap0IxIPM9kQW95OnD7hJbaGG/x1P2qpM21CnT1098LzGIaLnDb1aw2PJ9N9M4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733219270; c=relaxed/simple;
-	bh=axbblIP+V7r+abl7v3A2uc7Tx8LWYO0pQorlGP5rxjw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HofA87FH1pZLaHargXWBoYUcLzeAZfld+Y4FJfcp4zLnGCcbNvBgZiq/igZhZFoNPPsW7n/XCVuchrN25afo3f/fHYq7edXYV2/vXPtwQkXKsQp4epxJsX5KOjd/fM7W2iYLLTAIXby7yUniObujFng8nzGhWAgActW8qB7v5VU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bcDXOCKi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D15D7C4CEDF;
-	Tue,  3 Dec 2024 09:47:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733219269;
-	bh=axbblIP+V7r+abl7v3A2uc7Tx8LWYO0pQorlGP5rxjw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=bcDXOCKi0wcTa3ZPiYWu+aGOSogvZfl+WkxlKhpDlA9GAuenHUrvNeyz8REsuAGWT
-	 2qq9wmE8/QucsAjj/5eVKfYfL2AEgBbw1PmpGSQBtC1jKN5wsYxCQyVMDeUWZxu4Dp
-	 9V0RyIzaMgtJ+lL7X0l1iBqIaV28ZsvbQE+CT7IRrnHGus2ioPNh5L/iU9Liz3LEVJ
-	 ZOJvlx8I6TJwbU4DQNIhKDjW3cdhZ5oW5maxU3ZsK6fmKiS0mqesHhMHoS6x90fTDP
-	 nXC8zGB3sql1Acymr0XhZpRsvZRhpI5kxflypeZOeraj5ti2B0yu0Pm5pcmLFBv5kQ
-	 PwURzdnE0BW7w==
-Message-ID: <b6e54b27-a756-4d7a-8b51-4a65772b75e5@kernel.org>
-Date: Tue, 3 Dec 2024 10:47:44 +0100
+	s=arc-20240116; t=1733219311; c=relaxed/simple;
+	bh=RDe8/pimVJ3ypinoyM2ZBd4rBo4g5vCyIs/smrNQSdY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=OYr4hdW4EkTGcR3oW8+HxsQPts53Q62u9OXjCxEEA7GvaDOrIdn0435hee1m4Zmd/RHkSSJ50ZZ2uw5q0bZaYh9N8d+UgbcQ5kq/6NjNPptMenOukx21gb2CWiR8CiKfaIRjBkMRGFwaSeoqbzcQGuGwNyFNBQxWgHW9AuRSKc4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BIbLZRUb; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733219308;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HcYFnzD/H6bLNbir/uAcZ0RGwnpWZLD70cC/6A5H/H4=;
+	b=BIbLZRUb3wYoUYgAp8jP8/ieogxqMpra0nKaCX5QzvJAP3vQZVKw2HNasd7izMooV+jf8P
+	14BXhJq3wN9FhAicngsZVWYmeqk/9D+wnwVg2wIIU+x9isir7jyU+WTvb2mUzGCp+a9Iom
+	Uv+IjLjVDUeiNPbKI78mF4NW/a9QGFw=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-425-kQl09MV-NZCdcB4ktD1TqA-1; Tue,
+ 03 Dec 2024 04:48:27 -0500
+X-MC-Unique: kQl09MV-NZCdcB4ktD1TqA-1
+X-Mimecast-MFC-AGG-ID: kQl09MV-NZCdcB4ktD1TqA
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4C28B1955F43;
+	Tue,  3 Dec 2024 09:48:26 +0000 (UTC)
+Received: from fedora.redhat.com (unknown [10.39.192.136])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 0D4621956063;
+	Tue,  3 Dec 2024 09:48:21 +0000 (UTC)
+From: Jose Ignacio Tornos Martinez <jtornosm@redhat.com>
+To: quic_yuzha@quicinc.com
+Cc: ath11k@lists.infradead.org,
+	jjohnson@kernel.org,
+	jtornosm@redhat.com,
+	kvalo@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-wireless@vger.kernel.org,
+	quic_cjhuang@quicinc.com,
+	vbenes@redhat.com
+Subject: Re: [PATCH] wifi: ath11k: allow APs combination when dual stations are supported
+Date: Tue,  3 Dec 2024 10:48:20 +0100
+Message-ID: <20241203094820.106225-1-jtornosm@redhat.com>
+In-Reply-To: <20bf2693-ce53-48e9-8b54-7e3273815033@quicinc.com>
+References: <20bf2693-ce53-48e9-8b54-7e3273815033@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] dt-bindings: mtd: mchp48l640 add mb85rs128ty
- compatible
-To: Jonas Rebmann <jre@pengutronix.de>,
- Miquel Raynal <miquel.raynal@bootlin.com>,
- Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Heiko Schocher <hs@denx.de>
-Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, David Jander <david@protonic.nl>,
- kernel@pengutronix.de
-References: <20241203-mb85rs128ty-v2-0-42df3e7ff147@pengutronix.de>
- <20241203-mb85rs128ty-v2-2-42df3e7ff147@pengutronix.de>
-Content-Language: en-US
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241203-mb85rs128ty-v2-2-42df3e7ff147@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-On 03/12/2024 10:37, Jonas Rebmann wrote:
-> Add a compatible string to support Fujitsu MB85RS128TY.
-> 
-> Signed-off-by: Jonas Rebmann <jre@pengutronix.de>
-> ---
->  Documentation/devicetree/bindings/mtd/microchip,mchp48l640.yaml | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/mtd/microchip,mchp48l640.yaml b/Documentation/devicetree/bindings/mtd/microchip,mchp48l640.yaml
-> index 0ff32bd00bf6aee279fa78c624d8d47c6162f7f1..11f64056a28f98ad633265b00605ffd2c3e026c8 100644
-> --- a/Documentation/devicetree/bindings/mtd/microchip,mchp48l640.yaml
-> +++ b/Documentation/devicetree/bindings/mtd/microchip,mchp48l640.yaml
-> @@ -16,8 +16,9 @@ description: |
->  
->  properties:
->    compatible:
-> -    items:
-> -      - const: microchip,48l640
-> +    enum:
-> +      - microchip,48l640
-> +      - fujitsu,mb85rs128ty
+> Which chip do you use?
+Since I am not totally sure about the useful information, let me show you
+the kernel logs:
+$ dmesg | grep ath11k 
+[    3.659388] ath11k_pci 0000:01:00.0: BAR 0 [mem 0x84200000-0x843fffff 64bit]: assigned
+[    3.659405] ath11k_pci 0000:01:00.0: enabling device (0000 -> 0002)
+[    3.659649] ath11k_pci 0000:01:00.0: MSI vectors: 32
+[    3.659653] ath11k_pci 0000:01:00.0: wcn6855 hw2.1
+[    4.871571] ath11k_pci 0000:01:00.0: chip_id 0x2 chip_family 0xb board_id 0xff soc_id 0x400c0210
+[    4.871586] ath11k_pci 0000:01:00.0: fw_version 0x11088c35 fw_build_timestamp 2024-04-17 08:34 fw_build_id WLAN.HSP.1.1-03125-QCAHSPSWPL_V1_V2_SILICONZ_LITE-3.6510.41
+[    5.241485] ath11k_pci 0000:01:00.0 wlp1s0: renamed from wlan0
 
+If I try to setup 2 APs with your interface combination I get this:
+# iw list | grep -A6 "valid interface combinations:"
+	valid interface combinations:
+		 * #{ managed } <= 2, #{ AP, P2P-client, P2P-GO } <= 16, #{ P2P-device } <= 1,
+		   total <= 16, #channels <= 1, STA/AP BI must match, radar detect widths: { 20 MHz (no HT), 20 MHz, 40 MHz, 80 MHz, 80+80 MHz, 160 MHz }
 
-Keep alphabetical order. That's generic rule for all compatible lists in
-bindings and drivers. It's a rule for many other growing things as well,
-because it helps to avoid conflicts.
+		 * #{ managed } <= 2, #{ AP, P2P-client, P2P-GO } <= 16, #{ P2P-device } <= 1,
+		   total <= 3, #channels <= 2, STA/AP BI must match
+	HT Capability overrides:
+# iw dev
+phy#0
+	Interface wlp1s0_1
+		ifindex 6
+		wdev 0x4
+		addr a2:42:d2:1e:89:a3
+		type managed
+		txpower 16.00 dBm
+		multicast TXQ:
+			qsz-byt	qsz-pkt	flows	drops	marks	overlmt	hashcol	tx-bytes	tx-packets
+			0	0	0	0	0	0	0	0		0
+	Interface wlp1s0_0
+		ifindex 5
+		wdev 0x3
+		addr 52:e9:be:33:6a:61
+		ssid test-qe-wpa2-psk
+		type AP
+		channel 13 (2472 MHz), width: 20 MHz, center1: 2472 MHz
+		txpower 14.00 dBm
+		multicast TXQ:
+			qsz-byt	qsz-pkt	flows	drops	marks	overlmt	hashcol	tx-bytes	tx-packets
+			0	0	0	0	0	0	0	0		0
+	Interface wlp1s0
+		ifindex 3
+		wdev 0x1
+		addr c8:94:02:b5:fe:fb
+		type managed
+		txpower 16.00 dBm
+		multicast TXQ:
+			qsz-byt	qsz-pkt	flows	drops	marks	overlmt	hashcol	tx-bytes	tx-packets
+			0	0	0	0	0	0	0	0		0
+Or even this with no AP up:
+# iw dev
+phy#0
+	Interface wlp1s0_1
+		ifindex 6
+		wdev 0x4
+		addr ca:e5:84:22:10:ec
+		type managed
+		txpower 16.00 dBm
+		multicast TXQ:
+			qsz-byt	qsz-pkt	flows	drops	marks	overlmt	hashcol	tx-bytes	tx-packets
+			0	0	0	0	0	0	0	0		0
+	Interface wlp1s0_0
+		ifindex 5
+		wdev 0x3
+		addr 9e:4e:c5:ea:4c:e9
+		type AP
+		txpower 16.00 dBm
+		multicast TXQ:
+			qsz-byt	qsz-pkt	flows	drops	marks	overlmt	hashcol	tx-bytes	tx-packets
+			0	0	0	0	0	0	0	0		0
+	Interface wlp1s0
+		ifindex 3
+		wdev 0x1
+		addr c8:94:02:b5:fe:fb
+		type managed
+		txpower 16.00 dBm
+		multicast TXQ:
+			qsz-byt	qsz-pkt	flows	drops	marks	overlmt	hashcol	tx-bytes	tx-packets
+			0	0	0	0	0	0	0	0		0
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+If I use the parameter to ignore the feature and configure the interface combination as before:
+# iw list | grep -A4 "valid interface combinations:"
+	valid interface combinations:
+		 * #{ managed } <= 1, #{ AP, P2P-client, P2P-GO } <= 16, #{ P2P-device } <= 1,
+		   total <= 16, #channels <= 1, STA/AP BI must match, radar detect widths: { 20 MHz (no HT), 20 MHz, 40 MHz, 80 MHz }
 
-Best regards,
-Krzysztof
+	HT Capability overrides:
+# iw dev
+phy#1
+	Interface wlp1s0_1
+		ifindex 7
+		wdev 0x100000004
+		addr 82:90:89:90:c1:37
+		ssid test-qe-wpa3-psk
+		type AP
+		channel 13 (2472 MHz), width: 20 MHz, center1: 2472 MHz
+		txpower 16.00 dBm
+		multicast TXQ:
+			qsz-byt	qsz-pkt	flows	drops	marks	overlmt	hashcol	tx-bytes	tx-packets
+			0	0	0	0	0	0	0	0		0
+	Interface wlp1s0_0
+		ifindex 6
+		wdev 0x100000003
+		addr 6a:ef:d0:db:10:f0
+		ssid test-qe-wpa2-psk
+		type AP
+		channel 13 (2472 MHz), width: 20 MHz, center1: 2472 MHz
+		txpower 16.00 dBm
+		multicast TXQ:
+			qsz-byt	qsz-pkt	flows	drops	marks	overlmt	hashcol	tx-bytes	tx-packets
+			0	0	0	0	0	0	0	0		0
+	Interface wlp1s0
+		ifindex 4
+		wdev 0x100000001
+		addr c8:94:02:b5:fe:fb
+		type managed
+		txpower 16.00 dBm
+		multicast TXQ:
+			qsz-byt	qsz-pkt	flows	drops	marks	overlmt	hashcol	tx-bytes	tx-packets
+			0	0	0	0	0	0	0	0		0
+
+Thanks
+
+Best regards
+Jose Ignacio
+
 
