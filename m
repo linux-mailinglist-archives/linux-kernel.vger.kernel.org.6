@@ -1,226 +1,157 @@
-Return-Path: <linux-kernel+bounces-429577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5F4E9E1E12
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 14:46:54 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91B0A9E1E8E
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 15:01:18 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C74E162398
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 13:46:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7A7ABB36777
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 13:47:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A75D71F1315;
-	Tue,  3 Dec 2024 13:43:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 724AA1F4279;
+	Tue,  3 Dec 2024 13:43:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DpNk56ja"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Shl3/REX"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A9111F12F6
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 13:43:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C4481F4282
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 13:43:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733233421; cv=none; b=SCHqUSA+nOqG0nFVWu29T/AGzFLcdGhEc2wnAY/DDYSeVI12r/XX55m4TjW18ldxXHz3CA8WtsJoVLjq9GOTsMFMJPaOmv0gK3Bi0Zd0VaU1RgU0wHQn0HHrNxBGg0VSgL/D64I7x5G091rmsSH/aG5ThJ9thsUvNhbA5s95XCE=
+	t=1733233434; cv=none; b=OROTnli53qSrOrkAR2r5JJNgMg0i5U4hQW9Z3zqvIB4SqnaWVy+X8BW45e+96sKV0vG6hFxoaRwqszc6QaBFbzB9j29AXwF1FzbetWtKRWyl421beBpMxRAfOsY7bHwcexr85+wM2jgCifFkzfhXSHFXFHGAQL4lbfCkubS8Zc8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733233421; c=relaxed/simple;
-	bh=F6JTPbaZ0AnfReoQLyIReQvRzUqbdKV8lK42/skKSls=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KiYbYQGN+Ju4qgnXskXADbRe0s9bWqfzdm11y1TRmhPnZ2JsubFhwFVUnCtGzdkd82X/VQn9O6SPhTGSIh4My7+Sb9Aao5I8ug4RBTy1ljsmnfcQb4P/wg0ACmjn3vXn/UTIihZK2x77RMxIiVtduYtI4VFdiHnTScAoo5iRz/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DpNk56ja; arc=none smtp.client-ip=209.85.167.50
+	s=arc-20240116; t=1733233434; c=relaxed/simple;
+	bh=h/H64AjH1resYYh7pSajSeRAMmIf+GNc/QzMRHg5pcU=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=fYXotu+Jt3BMNRIWz+p+7oxixsr2FhojjocXqIewvss2EDrHOav1jsfUjqSHYCbXgmsUtob8u8Pu3hJtF4bdYy1ZcI9Re+LwpFQZ+Fue77hmO3Pqx4jLMQu70/gw5zX+5WKyI9ctNLSp21r06Ldv+PRb+bXi4slEdjp6C/lpM9w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Shl3/REX; arc=none smtp.client-ip=209.85.128.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-53de771c5ebso6519094e87.2
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 05:43:39 -0800 (PST)
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-434a766b475so51156845e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 05:43:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733233418; x=1733838218; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=BexXqu1YANquKbhWrZTOr7m0R8hKt1AEONAGEhu8ML8=;
-        b=DpNk56jauH1VgV1EFVhyi8NKrDtLYmWxaJ1llpxq5Bz1lbg4x+hD+gWz6VwoSo/Q8i
-         uzqYgEZz84KA55k7CJ4VTo4rJa2Ygj73OuC5jC5aRqy9v0woVUAZvJsYNaOCIfp+pCRx
-         jdhk7rtbwzEEMrRIGr/SHPejX6dvaV9d5MWwKkk8MRE5hxX8e3ps5XqBYfZ9+Dxjbijj
-         loIHr3/4SBZLZ8odYI6MSX2vdSMaQedhiCfKx9DEqU0MsWokPerJaETqSSVWxJMShkv3
-         64NEqei5qVdCXS87Lw5tcdLwoOq5vGwnCye/NSv9y4xlrTt1mepDxXRu3RjOeRTJYYOF
-         tglQ==
+        d=linaro.org; s=google; t=1733233431; x=1733838231; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=DgdXZzkRST/sLdc7nrSWhwokS4E7nABem3RymMknfnU=;
+        b=Shl3/REXYe6Vp+IjtQG52B8n6ayXOG5eQJZTrW9Fq6nwchOTVvd+W7zhpJZIwCm4bv
+         zGVDs+/Ulj1CBXcbubI+eOG39mrJsUdnMMCO1SRcqkrVRd/fvmC3/L/+N23U9NL0Ksuz
+         4hD4knNuY6hyx2JWHR2DxNO/uyuzADfPncIYHe3Xdgqnr0uuTGU8ER55aNOiQ/f7JESD
+         djC4logeXyvbrUF+PqbXmkhN1VlGxH5mAXUGUiPos7DjYxyuih+JVJZ9AmpWzfiZHzvf
+         qcsr+Yx3rP2Y5kYIlZ8CJXtmlmS4FBV4pfHBnwE7r9GPDEQAIuumNeyTsmI2SHTS88m9
+         zLnA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733233418; x=1733838218;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BexXqu1YANquKbhWrZTOr7m0R8hKt1AEONAGEhu8ML8=;
-        b=OiIuvDQWOcvkxFxN9zlGeNVexBp0GlYh7msGmQ0ps+heGoUB6gQNQcp8/0nroR4khq
-         0Jnmiv3KxWHaBRS0jM3bIxCGuH1deX8HkZ8E/grOvU6zWR68DHqgOofFg52Ix2TWxEQS
-         wi49W46vf+AO4WUxp7o2cYiv3IBE/VqoHsurVgi1tUKDTdHg/dRtxqZv3BmerFEkNBub
-         DGhUbn8rb0vKVC2sgp8/UtORzyD/wcYcS1CdBNSr/11JdMFZwrHyCW5fgBNQERaZ7Fpf
-         L267fA5bgEFQWEZRsSpdKzPCYEoeSWGmD1kUNTrQsKXgDwwtZbu39E+DJI9uveAXq5XW
-         X0bA==
-X-Forwarded-Encrypted: i=1; AJvYcCXJFvmPMr1lIwPLVgn1E+ABlOVI1bEL7a6HyQ1388th9mZp1bjzO94tvpU2BYEcEAOBHYaxHuVJyF5Yf9c=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+Jt/hHtUtCfSgNLUf/ORCJCnxtrooqMGpGQ/9V5vgDzqSuexz
-	qt2Y1T5Kp/p9wVCu+gABjoeKvwRMzttZmNT8gTh4lbSNCQkbzB4vevAoZ0j3y+g=
-X-Gm-Gg: ASbGncvxhriTRp/MrcRofWVkr+qYW6HE9D/NcxS7wKDptRcf7351fXuJBMZiYUw2PcU
-	VHrXYMnJzOyFSLW/s8g/HD2v3WRLQORwR7mvA7xFEkxxQG3+3yX6xiEDpF+/a/L+0smsGZD+GBT
-	3o3JZBZs3pTe2Y4JOje04SdQHnA+xdsaCfPiDXiGk8ZoRfNNqcri3WIuJoD40rP9uAqasKLLDxq
-	RlmMn7++yZzqkuUUhbTjtMwo2SWEx9qL5FZwfE4nWdko6VFXMizMfz0a+QIka6bXzRQg2/8KKOF
-	JKgwg9CMVyPRiFpLqY2jRIIvkQfzqA==
-X-Google-Smtp-Source: AGHT+IE8R6jm4cCT/ek6WXdRlNZG6O64AcF1SkyDRfFBDn4mzR/uUulOEMTuStC5oxV2xJ+QqSD9DQ==
-X-Received: by 2002:a05:6512:12cd:b0:53d:ea1d:50fc with SMTP id 2adb3069b0e04-53e12a28351mr1659356e87.48.1733233418239;
-        Tue, 03 Dec 2024 05:43:38 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53e1394662fsm197862e87.38.2024.12.03.05.43.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Dec 2024 05:43:37 -0800 (PST)
-Date: Tue, 3 Dec 2024 15:43:35 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Abhinav Kumar <quic_abhinavk@quicinc.com>
-Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Kuogee Hsieh <quic_khsieh@quicinc.com>, 
-	Mahadevan <quic_mahap@quicinc.com>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	freedreno@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/4] dt-bindings: display/msm: add stream 1 pixel clock
- binding
-Message-ID: <edlw7grqy74rihy5jw5t2krcyfn24c6b2lfxht4b52wx6fvck6@pqeqrbnwtsf3>
-References: <20241202-dp_mst_bindings-v1-0-9a9a43b0624a@quicinc.com>
- <20241202-dp_mst_bindings-v1-3-9a9a43b0624a@quicinc.com>
+        d=1e100.net; s=20230601; t=1733233431; x=1733838231;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=DgdXZzkRST/sLdc7nrSWhwokS4E7nABem3RymMknfnU=;
+        b=bUuo7sgFi0tJ9CHZbyZth6W+2FiQ1k480ywxmSVWTKEIKX0Eov57SRa99PAAnxf3FL
+         szqovrXmPWm6iIq+CT1pWThoIMd3OAHKe4O4r3qYH0U4vNZMGyz4ekWwl93JX5eRY96t
+         wgcnxBjgGyzCWhJMnRm5lcjIC0T30QkD5NpsHLh0LJmY776m3gZknWbeGC3gwIdhIgsq
+         lZJiNaY/L2ka1eSY9IhgtAvFKpCcJD4nmrVluUA9QWdfz00Wuab7ogeaG5pmwhNLcJgt
+         Gj7jbOnePLZ0O6+QCZsTGBiwn6W11tgPYVvvpuWxZ/SSegzTy4XEtKYGoDfrgH6lNWJu
+         vg3A==
+X-Forwarded-Encrypted: i=1; AJvYcCV0PVWqN3h4cHMVZDn2Xk+c8dOAjpmmlaksBiJwuZZMdlcgdXU9N5eTvLydvNJbqa5EP+pwXpbZABTmOPg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwmIW7Sd/B8NsDafSbANw5acUC91eBECb2oK8Jh4EbMFiIhJ8VM
+	0l0eljpuGbno4Y/tnS/oKjPeXCLfX/NwaIsVgz7fYKbWj9kGmkiZBKUSlmXycbE=
+X-Gm-Gg: ASbGnctWs6QgWVoUmO1C6YUKZB739KT/gD6Xbetr0EuOe+iO1F895e4d8weRlKeiNEz
+	/onowZRsmvZ+EpTRG8UXRpcHXpnXdrmnLUtX5FkxvPqRAmFUIJyCDeOXEYOT9+YSwYSBirMQQlH
+	XPqMU58AyLpOeYG9ByN0mnJtciZlaiZCs2k7Zps7DFGQ9xlEyguH30W+9wkaYNOUgILz0ozbNRa
+	Pj9tBjnOVo0ZC2ZZ9uLpL6Dd2F7H+psmCJvkBmLhqDjQXjyiuPQjbUhJcIqLP2/XvF0GtwsgDJL
+	v3GKZmc//giDR7WfBVl/gpj+
+X-Google-Smtp-Source: AGHT+IGbWePKnUO3Kq9oBel6RKE1Sq780i2MRlsxxW+cGbXtoJO2MzF/5XoVky0eO3VG0u70U6nKtQ==
+X-Received: by 2002:a05:600c:4fc9:b0:434:a0bf:98ea with SMTP id 5b1f17b1804b1-434d09c0b88mr23428935e9.9.1733233431323;
+        Tue, 03 Dec 2024 05:43:51 -0800 (PST)
+Received: from ?IPV6:2a01:e0a:982:cbb0:b668:b88:4ecf:c065? ([2a01:e0a:982:cbb0:b668:b88:4ecf:c065])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434b0f70ea8sm196319275e9.40.2024.12.03.05.43.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 03 Dec 2024 05:43:50 -0800 (PST)
+Message-ID: <2a799583-3d19-4517-aa7f-347a05d02e0b@linaro.org>
+Date: Tue, 3 Dec 2024 14:43:49 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241202-dp_mst_bindings-v1-3-9a9a43b0624a@quicinc.com>
+User-Agent: Mozilla Thunderbird
+From: neil.armstrong@linaro.org
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH 1/9] crypto: qce - fix goto jump in error path
+To: Bartosz Golaszewski <brgl@bgdev.pl>,
+ Thara Gopinath <thara.gopinath@gmail.com>,
+ Herbert Xu <herbert@gondor.apana.org.au>,
+ "David S. Miller" <davem@davemloft.net>,
+ Stanimir Varbanov <svarbanov@mm-sol.com>
+Cc: linux-crypto@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, stable@vger.kernel.org
+References: <20241203-crypto-qce-refactor-v1-0-c5901d2dd45c@linaro.org>
+ <20241203-crypto-qce-refactor-v1-1-c5901d2dd45c@linaro.org>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20241203-crypto-qce-refactor-v1-1-c5901d2dd45c@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Dec 02, 2024 at 07:31:41PM -0800, Abhinav Kumar wrote:
-> On some chipsets the display port controller can support more
-> than one pixel stream (multi-stream transport). To support MST
-> on such chipsets, add the binding for stream 1 pixel clock for
-> display port controller. Since this mode is not supported on all
-> chipsets, add exception rules and min/max items to clearly mark
-> which chipsets support only SST mode (single stream) and which ones
-> support MST.
+On 03/12/2024 10:19, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 > 
-> Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+> If qce_check_version() fails, we should jump to err_dma as we already
+> called qce_dma_request() a couple lines before.
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: ec8f5d8f6f76 ("crypto: qce - Qualcomm crypto engine driver")
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 > ---
->  .../bindings/display/msm/dp-controller.yaml        | 32 ++++++++++++++++++++++
->  .../bindings/display/msm/qcom,sa8775p-mdss.yaml    |  9 ++++--
->  2 files changed, 38 insertions(+), 3 deletions(-)
+>   drivers/crypto/qce/core.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/display/msm/dp-controller.yaml b/Documentation/devicetree/bindings/display/msm/dp-controller.yaml
-> index 9fe2bf0484d8..650d19e58277 100644
-> --- a/Documentation/devicetree/bindings/display/msm/dp-controller.yaml
-> +++ b/Documentation/devicetree/bindings/display/msm/dp-controller.yaml
-> @@ -50,30 +50,38 @@ properties:
->      maxItems: 1
->  
->    clocks:
-> +    minItems: 5
->      items:
->        - description: AHB clock to enable register access
->        - description: Display Port AUX clock
->        - description: Display Port Link clock
->        - description: Link interface clock between DP and PHY
->        - description: Display Port stream 0 Pixel clock
-> +      - description: Display Port stream 1 Pixel clock
->  
->    clock-names:
-> +    minItems: 5
->      items:
->        - const: core_iface
->        - const: core_aux
->        - const: ctrl_link
->        - const: ctrl_link_iface
->        - const: stream_pixel
-> +      - const: stream_1_pixel
->  
->    assigned-clocks:
-> +    minItems: 2
->      items:
->        - description: link clock source
->        - description: stream 0 pixel clock source
-> +      - description: stream 1 pixel clock source
->  
->    assigned-clock-parents:
-> +    minItems: 2
->      items:
->        - description: Link clock PLL output provided by PHY block
->        - description: Stream 0 pixel clock PLL output provided by PHY block
-> +      - description: Stream 1 pixel clock PLL output provided by PHY block
->  
->    phys:
->      maxItems: 1
-> @@ -175,6 +183,30 @@ allOf:
->        required:
->          - "#sound-dai-cells"
->  
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - qcom,sa8775p-dp
-
-Why do you need an extra platform conditional?
-
-> +
-> +    then:
-> +      properties:
-> +        clocks:
-> +          maxItems: 6
-> +        clock-names:
-> +          items:
-> +            - const: core_iface
-> +            - const: core_aux
-> +            - const: ctrl_link
-> +            - const: ctrl_link_iface
-> +            - const: stream_pixel
-> +            - const: stream_1_pixel
-> +        assigned-clocks:
-> +          maxItems: 3
-> +        assigned-clock-parents:
-> +          maxItems: 3
-> +
->  additionalProperties: false
->  
->  examples:
-> diff --git a/Documentation/devicetree/bindings/display/msm/qcom,sa8775p-mdss.yaml b/Documentation/devicetree/bindings/display/msm/qcom,sa8775p-mdss.yaml
-> index 58f8a01f29c7..7f10e6ad8f63 100644
-> --- a/Documentation/devicetree/bindings/display/msm/qcom,sa8775p-mdss.yaml
-> +++ b/Documentation/devicetree/bindings/display/msm/qcom,sa8775p-mdss.yaml
-> @@ -177,16 +177,19 @@ examples:
->                       <&dispcc_dptx0_aux_clk>,
->                       <&dispcc_dptx0_link_clk>,
->                       <&dispcc_dptx0_link_intf_clk>,
-> -                     <&dispcc_dptx0_pixel0_clk>;
-> +                     <&dispcc_dptx0_pixel0_clk>,
-> +                     <&dispcc_dptx0_pixel1_clk>;
->              clock-names = "core_iface",
->                            "core_aux",
->                            "ctrl_link",
->                            "ctrl_link_iface",
-> -                          "stream_pixel";
-> +                          "stream_pixel",
-> +                          "stream_1_pixel";
->  
->              assigned-clocks = <&dispcc_mdss_dptx0_link_clk_src>,
-> +                              <&dispcc_mdss_dptx0_pixel1_clk_src>,
->                                <&dispcc_mdss_dptx0_pixel0_clk_src>;
-> -            assigned-clock-parents = <&mdss0_edp_phy 0>, <&mdss0_edp_phy 1>;
-> +            assigned-clock-parents = <&mdss0_edp_phy 0>, <&mdss0_edp_phy 1>, <&mdss0_edp_phy 1>;
->  
->              phys = <&mdss0_edp_phy>;
->              phy-names = "dp";
-> 
-> -- 
-> 2.34.1
+> diff --git a/drivers/crypto/qce/core.c b/drivers/crypto/qce/core.c
+> index e228a31fe28dc..58ea93220f015 100644
+> --- a/drivers/crypto/qce/core.c
+> +++ b/drivers/crypto/qce/core.c
+> @@ -247,7 +247,7 @@ static int qce_crypto_probe(struct platform_device *pdev)
+>   
+>   	ret = qce_check_version(qce);
+>   	if (ret)
+> -		goto err_clks;
+> +		goto err_dma;
+>   
+>   	spin_lock_init(&qce->lock);
+>   	tasklet_init(&qce->done_tasklet, qce_tasklet_req_done,
 > 
 
--- 
-With best wishes
-Dmitry
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
 
