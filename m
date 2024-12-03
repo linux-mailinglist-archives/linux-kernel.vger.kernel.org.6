@@ -1,108 +1,78 @@
-Return-Path: <linux-kernel+bounces-429819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 488F79E2633
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 17:10:13 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FF8D9E2695
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 17:14:49 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A2F0288EE5
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:10:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7126C168CD2
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:10:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFC901F8912;
-	Tue,  3 Dec 2024 16:10:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7D4F1F8AC5;
+	Tue,  3 Dec 2024 16:10:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b="CpNww9DN";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="XxWEPaY3"
-Received: from fhigh-a4-smtp.messagingengine.com (fhigh-a4-smtp.messagingengine.com [103.168.172.155])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Z+2ReGAd";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="JClbkhKx"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2D3881ADA;
-	Tue,  3 Dec 2024 16:10:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92BDC1F76D7;
+	Tue,  3 Dec 2024 16:10:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733242207; cv=none; b=i8HZ/K6NhJtlyUx4aWs4nJACHw6JGxU43SVqbf7fpUOWHSK4CFstd1DX2yRdqIzcOLBQpRvmHJFpNlBMHE8JJ8txKvLh51Z538a6G94hB8VGbsW9O98WBdjpx1lTB6Fjy3vGxnpVZsfiqkOr5IbAFv/J5qusUgddtdibWjRbj7Q=
+	t=1733242214; cv=none; b=JWDMWCPGEvM8Ycnm7lawalX/r761dWd3sNSoGViQTIc2AEMvAsMoEaoqXWy1bnwg6M+suoSIKYu930RtGJP1eSsn0QXyQrmdMAbEH/vpMNkJxbM7AL6Bg8xF70gFByr3waeLe9+1l5VBS/qor7BFB6DE4hH5dBkqrpJsjAdQSRU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733242207; c=relaxed/simple;
-	bh=8pAHF54ui4zA+Mj4UHdwG1hk0crm6ZJaVaOSy/hclf8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cLI0F0NAGSi6w0ObWhy4BBk1tQZhxSuHv/06BOSWtxau0RU1T5jZujo2PBZ9gcFU+YNIxp78jFwOMZpEll+w9JzFvAi6zN7zQw62RHjTezXAPVr2QKW+Knt7MVCobUr2Xa5VwKHt41om1bgKGWrpOIp+qoTb6XWMqsyYAOVhZSs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net; spf=pass smtp.mailfrom=queasysnail.net; dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b=CpNww9DN; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=XxWEPaY3; arc=none smtp.client-ip=103.168.172.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=queasysnail.net
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id A812311400E2;
-	Tue,  3 Dec 2024 11:10:02 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-05.internal (MEProxy); Tue, 03 Dec 2024 11:10:02 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=queasysnail.net;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm2; t=1733242202; x=
-	1733328602; bh=RzGwZAu9mlE2QMETXgnsEf6IwW4zhq+aCq4xASv7ZF0=; b=C
-	pNww9DNQEYeNcbr5JjoNABjeIQu8wjz7pzrXiEjruKGHKH4FPUoNwVtbegy0j1dx
-	WFPe/onNZCH1omZXzQz4HebBWtMxxWvLJJJ+/dieLUrt00RFxGL4KgCrX+cjusxl
-	Pp4IjyX5BeZNl8cPjaOJpSg6HanXOaI8WbeEV/63ppFIzvHW0I7ZX5M79r/4THK0
-	hJTmdFr1UhHO77RGbHEvcX+/cnGtAs31kYD9O5Uhr0xgmuOjUhMhtFHh0DRvP33w
-	eGJKXeKBavXx/jAqM01aSg3lazYa1riVmQwie9OTbjg9/PeRnkf6e7TObJw8eGSX
-	wq/Cfss5OWCPwvYPyFaCw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1733242202; x=1733328602; bh=RzGwZAu9mlE2QMETXgnsEf6IwW4zhq+aCq4
-	xASv7ZF0=; b=XxWEPaY3aeEbK65xYQJpEiZtof3I/2R+fwVMqHU8snwA+BI0t82
-	G0/iZN4M4xMHeg6aYb2Cx0PM5L3V//q1pufcrvQ39ArW47ZspdVttN1szeCwQ8ZC
-	pSoq0fRHb4MlMUeJuNLK0wOkI5Xn2VhPH4+Ez1IZbP4W8jpLgHRCwQh9hGPIZIpw
-	dFRcXS80cxwL6KnuHkPYoSy7ivNX4v16npE4kbYTw7jYzKW/sKq/9ssCEHfkWpOZ
-	Urd6IZ7qt7ANX98E4gHxd36ykdd7Jx6VI4NtYVPQMj24E2VElNRPkd54dX2MA3oo
-	yR41jJFgMWANRX6R+i4GrS9KmDIlxn4Iuug==
-X-ME-Sender: <xms:Wi1PZ-RKs4CV2dw3pvOjr_LldADvLKDNiUPa1QGnEaG0LvbmgqQCig>
-    <xme:Wi1PZzzXxeub_8Y584N2KxRhDk0IlQ_j7Famvf9jBEkWBzlaajckMMxPyeDtREN5F
-    -7f6f7cvJfFomGf01E>
-X-ME-Received: <xmr:Wi1PZ73kTI23uaUr2ChYGeHx1PL3OnP-79Wo7xPQlZ7J-fuOPq64jHvVYbtr>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrieefgdehiecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
-    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
-    hsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttdejnecu
-    hfhrohhmpefurggsrhhinhgrucffuhgsrhhotggruceoshgusehquhgvrghshihsnhgrih
-    hlrdhnvghtqeenucggtffrrghtthgvrhhnpeeuhffhfffgfffhfeeuiedugedtfefhkeeg
-    teehgeehieffgfeuvdeuffefgfduffenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
-    grmhepmhgrihhlfhhrohhmpehsugesqhhuvggrshihshhnrghilhdrnhgvthdpnhgspghr
-    tghpthhtohepuddvpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegrnhhtohhnih
-    hosehophgvnhhvphhnrdhnvghtpdhrtghpthhtohepphgrsggvnhhisehrvgguhhgrthdr
-    tghomhdprhgtphhtthhopehnvghtuggvvhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprh
-    gtphhtthhopehrhigriigrnhhovhdrshdrrgesghhmrghilhdrtghomhdprhgtphhtthho
-    pehhohhrmhhssehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnh
-    gvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkshgv
-    lhhfthgvshhtsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepvgguuhhmrg
-    iivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdho
-    rhhg
-X-ME-Proxy: <xmx:Wi1PZ6CeXkjHU0kiZODljeL8K3ck430Gsw6JoM-Yne3hJGHXq3e9PA>
-    <xmx:Wi1PZ3gOkQpD9mPhOUWKU6u8_GjayXo2glBqcNDxwDk1ejwueXEVZg>
-    <xmx:Wi1PZ2qVSbqD-ihe2WyAr7JNcVMUlKoRDOFVkZ_dFCMZcVTyqaG2xw>
-    <xmx:Wi1PZ6hr54nRYZZRC9QasRt7lCwtH8XDjqe9l-Y1B7AlZVv1tjj8NQ>
-    <xmx:Wi1PZwamZUEZq7Cv_d0iaWEHK60RkI3DAuxLV2jjMWcmU8CQO3ogzfYD>
-Feedback-ID: i934648bf:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 3 Dec 2024 11:10:01 -0500 (EST)
-Date: Tue, 3 Dec 2024 17:09:59 +0100
-From: Sabrina Dubroca <sd@queasysnail.net>
-To: Antonio Quartulli <antonio@openvpn.net>
-Cc: Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
-	ryazanov.s.a@gmail.com, Simon Horman <horms@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	Shuah Khan <shuah@kernel.org>, Andrew Lunn <andrew@lunn.ch>
-Subject: Re: [PATCH net-next v12 13/22] ovpn: implement peer lookup logic
-Message-ID: <Z08tV5vQe2S4iawi@hog>
-References: <20241202-b4-ovpn-v12-0-239ff733bf97@openvpn.net>
- <20241202-b4-ovpn-v12-13-239ff733bf97@openvpn.net>
- <5052453b-edd8-44e2-8df7-00ea439805ad@openvpn.net>
+	s=arc-20240116; t=1733242214; c=relaxed/simple;
+	bh=fG2igQkn+4+8e57/uPhJs9Uh52Ls0xvv3KuRt0L7L8g=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=SMcTEb2cv+J0niaqMJ+sGWZ8LfKYn2FCL6MKRIoe9j1rMD3TK+0xqFR2dYF+SR0j7Q97TWuE/mYZHXAWWnnYVFeW3MxygiUga1kt9bjcsEkfiyDZSaHNrr9WObl0zmq/1h0TjOKR7317kQ9kOFLzY81dKL76yQPQHHILgeGyaHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Z+2ReGAd; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=JClbkhKx; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1733242210;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ddk6G81ViUFgr4R1ETgTtudIxbjBUqRlwB5igRmXu4g=;
+	b=Z+2ReGAdXtDLEPMXg5raBwXetTEwjAfMflPPAVrOEfwrcGysNtb8Ptm4XzSqdf4ddJMGIq
+	ZZBqiBOgCOuNuIq7DGHEpXVU5Xu4jv5Ii0TG4PGQvsseXUozaeu5T5eRpVLSIubrfSBUZY
+	lFZrJk3uf2apYr8jS5FoEhfHHkKwHL1pNg0eQKunI6+PHruC3fqVPA0XwdV0EArk+NSne1
+	qRUQSW5+Hn6udBK6/6UYU3VD1Qvh1dzaS5h0bDf2GWTmtVuK2vdUqgTz4h/DjFGF7xoGyx
+	74YrDneOpK3BgwfyF7vv7CsmkugBesXXEbSgxcas7HUjervqVsUTsLXvAgoZEw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1733242210;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ddk6G81ViUFgr4R1ETgTtudIxbjBUqRlwB5igRmXu4g=;
+	b=JClbkhKx8PC6kkrMhZFXxilt17KHhS6wyGx8qQN8eby8jwpBXi3PGasAee6M7LJ+MvpgRm
+	h+JYswnTZp71zZAw==
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
+ 20241015061522.25288-1-rui.zhang@intel.com, Zhang Rui
+ <rui.zhang@intel.com>, hpa@zytor.com, peterz@infradead.org,
+ thorsten.blum@toblux.com, yuntao.wang@linux.dev, tony.luck@intel.com,
+ len.brown@intel.com, srinivas.pandruvada@intel.com,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org, mingo@redhat.com,
+ bp@alien8.de, dave.hansen@linux.intel.com, rafael.j.wysocki@intel.com,
+ x86@kernel.org, linux-pm@vger.kernel.org, Nathan Chancellor
+ <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>,
+ linux-kbuild@vger.kernel.org
+Subject: Re: [PATCH] modpost: Add .irqentry.text to OTHER_SECTIONS
+In-Reply-To: <CAK7LNARufW5wc=qBt5R=RJ9BkFirLKAgRgg_t=OmTTGbjLfsAg@mail.gmail.com>
+References: <20241128111844.GE10431@google.com> <87o71xvuf3.ffs@tglx>
+ <20241130114549.GI10431@google.com> <87iks3wt2t.ffs@tglx>
+ <CAK7LNARWpcbVsJFYCDN28vuuLfEibZmT+m5=qMEJcKD9Abzv4Q@mail.gmail.com>
+ <87iks1vlu5.ffs@tglx>
+ <CAK7LNARufW5wc=qBt5R=RJ9BkFirLKAgRgg_t=OmTTGbjLfsAg@mail.gmail.com>
+Date: Tue, 03 Dec 2024 17:10:09 +0100
+Message-ID: <87h67ku4ri.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -110,52 +80,34 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <5052453b-edd8-44e2-8df7-00ea439805ad@openvpn.net>
+Content-Transfer-Encoding: quoted-printable
 
-2024-12-03, 15:58:17 +0100, Antonio Quartulli wrote:
-> On 02/12/2024 16:07, Antonio Quartulli wrote:
-> [...]
-> > +#define ovpn_get_hash_slot(_key, _key_len, _tbl) ({	\
-> > +	typeof(_tbl) *__tbl = &(_tbl);			\
-> > +	jhash(_key, _key_len, 0) % HASH_SIZE(*__tbl);	\
-> > +})
-> > +
-> > +#define ovpn_get_hash_head(_tbl, _key, _key_len) ({		\
-> > +	typeof(_tbl) *__tbl = &(_tbl);				\
-> > +	&(*__tbl)[ovpn_get_hash_slot(_key, _key_len, *__tbl)];	\
-> > +})
-> 
-> clang a reporting various warnings like this:
-> 
-> ../drivers/net/ovpn/peer.c:406:9: warning: variable '__tbl' is uninitialized
-> when used within its own initialization [-Wuninitialized]
->   406 |         head = ovpn_get_hash_head(ovpn->peers->by_id, &peer_id,
->       |                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->   407 |                                   sizeof(peer_id));
->       |                                   ~~~~~~~~~~~~~~~~
-> ../drivers/net/ovpn/peer.c:179:48: note: expanded from macro
-> 'ovpn_get_hash_head'
->   179 |         &(*__tbl)[ovpn_get_hash_slot(_key, _key_len, *__tbl)];  \
->       |                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~
-> ../drivers/net/ovpn/peer.c:173:26: note: expanded from macro
-> 'ovpn_get_hash_slot'
->   173 |         typeof(_tbl) *__tbl = &(_tbl);                  \
->       |                       ~~~~~     ^~~~
-> 
-> Anybody willing to help me understand this issue?
-> 
-> I have troubles figuring out how __tbl is being used uninitialized.
-> I wonder if the parameters naming is fooling clang (or me) somehow.
+On Wed, Dec 04 2024 at 00:27, Masahiro Yamada wrote:
+> On Tue, Dec 3, 2024 at 6:03=E2=80=AFAM Thomas Gleixner <tglx@linutronix.d=
+e> wrote:
+>> > In this mainline kernel, DEFINE_IDTENTRY_SYSVEC()
+>> > expands to a normal .text function which is explicitly
+>> > annotated 'noinline'.
+>>
+>> It's not annotated noinline, it's annotated 'noinstr', which puts the
+>> code into the .noinstr.text section. That one is indeed covered.
+>
+> The callsite of local_apic_timer_interrupt() is annotated 'noinline'
+> if I correctly understand this line:
+>   https://github.com/torvalds/linux/blob/v6.13-rc1/arch/x86/include/asm/i=
+dtentry.h#L272
 
-Not really a solution to this specific issue, but do you actually need
-ovpn_get_hash_slot as a separate macro? AFAICT all users could also be
-converted to ovpn_get_hash_head, then you can merge ovpn_get_hash_slot
-into ovpn_get_hash_head and maybe clang won't get confused?
+You're right. I got lost in the macro maze and looked at the actual
+sysvec_...() part.
 
-No guarantee that this fixes anything (except saving one or two lines
-in a few functions).
+>> So yes, the fix is only required for pre 5.8 kernels.
+>
+> This never occurs on x86 after commit f0178fc01fe46,
+> but theoretically this may occur for other architectures.
 
--- 
-Sabrina
+Correct.
+
+Thanks,
+
+        tglx
 
