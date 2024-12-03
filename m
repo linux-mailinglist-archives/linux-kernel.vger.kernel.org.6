@@ -1,85 +1,108 @@
-Return-Path: <linux-kernel+bounces-430372-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E01D9E300F
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 00:47:40 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A5D89E3012
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 00:49:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A2D4166EB0
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 23:47:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42568167802
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 23:49:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D67F205E28;
-	Tue,  3 Dec 2024 23:47:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0434120A5E5;
+	Tue,  3 Dec 2024 23:49:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="0AbiEI/Y"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PdM8Mhbm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C580817;
-	Tue,  3 Dec 2024 23:47:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 563831E0E16;
+	Tue,  3 Dec 2024 23:49:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733269652; cv=none; b=M91EyOtXfkyvsTCGV1g4aGIhtE6/GOp3u8GxaLI7vjeXudsz2W+usqy9SUbygddGKNZubjxS8pzlyJ3O1QNoDv20g+hG1+YrnfNoU3iIHnv0C4xmsOJrPzZV7M8502BYdbMr3VCCvLxU6IODnXoADzHDXlr6mMerO3xcVFmYEd0=
+	t=1733269776; cv=none; b=lo3yD3zfrg3lR0s4Gg6O+YMX3fqA/XggUMkBpmT6g6XnDUTiAB7WRPgZYVC5cB5D0RBCbTRb/GsZoCCZ+3p56hloE0iDJv+J0LdTEqRHULepBG4/cMIPTJft7j4dAiORNSza/yEwZV0ZCZMVu8iH2lLbeKMPocpqdj3pDqTujeE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733269652; c=relaxed/simple;
-	bh=hvYiJ8DILkDocF2JxnBT+Iylc4sHP3AK6c+tIx1sHKk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FX2qwTc2vupSDJoZ83xGauLGQS4IqXC2N3buzQ2c9xbVLpcXpzOEunf7MkGnh+oLNFBhh6WVVBR+zOqUZhbcnyYJpgCyDrv6rN4KPZEhnbK4QWxz8RWUmtI4wND1p9DBQkQxvqBxCBYv6jb9E5mVvIbBXMcmD3jKVJhFEPMcpHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=0AbiEI/Y; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=q7VC29OQznk9CyIabFBwdnET1FupuG6Cc4HOBI/prxc=; b=0AbiEI/YKvg8/d4/rd3Rb31fsI
-	aC+gxVu3+U91p/jh3cIac+ke77abgkgUKIFPERRoI1jyzcIIcDSZowKYf88ZBQ2p+DzyHOIHyhwYt
-	1pO4ETWZaPiP7TyR/Zn3HBJiVbVovqJL4DzcocUhQagE/syxuWX94WI/mJpFHuIQGeCo=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tIcbx-00F96u-2v; Wed, 04 Dec 2024 00:47:21 +0100
-Date: Wed, 4 Dec 2024 00:47:21 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Rosen Penev <rosenp@gmail.com>
-Cc: netdev@vger.kernel.org, ansuelsmth@gmail.com,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCHv2 net-next 0/2] simplify with devm
-Message-ID: <9bb90d44-1658-446a-99ff-b4ecbeef5b54@lunn.ch>
-References: <20241203221644.136104-1-rosenp@gmail.com>
+	s=arc-20240116; t=1733269776; c=relaxed/simple;
+	bh=oBGSdGwFKttJK94EcGcr1B9zaIvf7CVE1OQjRO4AzTU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=scHtZSHYeBeTPqH0B2GG2LF+4t60TGaSV9AFy7IB0BxJhdcWmigv7TRbpLPVXdAcZfXdYaJZEoOVBsOm7XRtUiZ4aEkCYdL0RaYYqp8nYb6JYT9Feux3TgCCDmFpB5oky1fwMLGw5TN0mr+EIXW7hKU+pLb3Ojn98/Zj73lStdw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PdM8Mhbm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCAEDC4CEDF;
+	Tue,  3 Dec 2024 23:49:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733269775;
+	bh=oBGSdGwFKttJK94EcGcr1B9zaIvf7CVE1OQjRO4AzTU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=PdM8MhbmgEc4KUnnH7l2Lyu99zwl7Z5OebgXLkLRbHHl3nlJBc943qLs2XN8Z47qO
+	 QkDetjG0XTWQXSuAYjMyhISoerkUS+BC0ZyxlHW+jkIesqe0EuWzYa0+lxnbXGOz+i
+	 y/iRwTcEB7kGl/XBI7vIncHFTXbYKk+EBje3v+16pez04w6sOZCYUc9NAs71+k4s+W
+	 7tPLkwJY7GT/1WxvGvcjsKKfqwLcApQDr+Wl6K1uZv6vDyqt/QAMZ/8NGz9WZVgkaV
+	 /3b3IdVB/KHADOtS9Ok2rUxKPdMq6KmUoDhJUS3MAUVfCsb0zeAnq/l1QakdVlOHkF
+	 8aiauNIXH3AiQ==
+Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e3995f1fe30so3640481276.3;
+        Tue, 03 Dec 2024 15:49:35 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUYDQM3o/P75+D8bl3cl/Ldpr0ercUnBZnN/5NpKnJU6f3wGO+JsrNcsr/g9sBBC67x8EOjB0y3cl/d@vger.kernel.org, AJvYcCVoV0Vps80yFHkUjeiGU5tcQ2rzFzYNuKSvgC74rYDOOld0egh3SK/y4fKGNYEAehjQ5MwFFQ2/vowdb9OF@vger.kernel.org, AJvYcCVxdMLrjgsD8Q3p3kUu9Xn1eXj9ITIDcXCQmPA1HSAnnZVD/lxN6xPVJnAzpME8UJTqKpLMA3MsXU0b@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzw6a1paug2nYiRi70PAO8zuE2CTU5cotS923QB5FrQBghLzu0j
+	TYjSJm6420Sp/loUHsy5Q3aIlHM94fJu37jKSTWOneNphw8ivZJm9Z/OsGc1v565NPYspcExpdz
+	voVQeRUW+VGfGdkNFpvcYDFHPvg==
+X-Google-Smtp-Source: AGHT+IEHwiS/Hv3MtPo4+oC2+2cXOibwYBmxjiIn4+KhsVq2OjzCoLHYn29mTnBeut5dsub41r+sQbgZVD6lI1xuV3Q=
+X-Received: by 2002:a05:6902:f87:b0:e39:a780:d110 with SMTP id
+ 3f1490d57ef6-e39d438956emr4652958276.46.1733269774980; Tue, 03 Dec 2024
+ 15:49:34 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241203221644.136104-1-rosenp@gmail.com>
+References: <20241121094020.3679787-1-wenst@chromium.org> <20241121164648.GA2387727@bhelgaas>
+In-Reply-To: <20241121164648.GA2387727@bhelgaas>
+From: Rob Herring <robh@kernel.org>
+Date: Tue, 3 Dec 2024 17:49:24 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqL7w4BBOqb=NaOh7Xewe5QXrSF+7SYoFtay0O5hw1QnTw@mail.gmail.com>
+Message-ID: <CAL_JsqL7w4BBOqb=NaOh7Xewe5QXrSF+7SYoFtay0O5hw1QnTw@mail.gmail.com>
+Subject: Re: [PATCH] PCI/pwrctl: Do not assume device node presence
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Chen-Yu Tsai <wenst@chromium.org>, Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Klara Modin <klarasmodin@gmail.com>, 
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, stable+noautosel@kernel.org, 
+	Saravana Kannan <saravanak@google.com>, devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Dec 03, 2024 at 02:16:42PM -0800, Rosen Penev wrote:
-> Makes probe simpler and easier to reason about.
+On Thu, Nov 21, 2024 at 10:46=E2=80=AFAM Bjorn Helgaas <helgaas@kernel.org>=
+ wrote:
+>
+> [+cc OF folks]
+>
+> On Thu, Nov 21, 2024 at 05:40:19PM +0800, Chen-Yu Tsai wrote:
+> > A PCI device normally does not have a device node, since the bus is
+> > fully enumerable. Assuming that a device node is presence is likely
+> > bad.
+>
+> > The newly added pwrctl code assumes such and crashes with a NULL
+> > pointer dereference.
+>
+> > Besides that, of_find_device_by_node(NULL)
+> > is likely going to return some random device.
+>
+> I thought this sounded implausible, but after looking at the code, I
+> think you're right, because bus_find_device() will use
+> device_match_of_node(), which decides the device matches if
+> "dev->of_node =3D=3D np" (where "np" is NULL in this case).
+>
+> I'm sure many devices will have "dev->of_node =3D=3D NULL", so it does
+> seem like of_find_device_by_node(NULL) will return the first one it
+> finds.
+>
+> This seems ... pretty janky and unexpected to me, but it's been this
+> way for years, so maybe it's safe?  Cc'ing the OF folks just in case.
 
-Hi Rosen
+This is a surprise to me, too. I think ACPI matching is broken in this
+way too. I'm sending out a fix.
 
-For all future patches, please say either:
-
-Test on real hardware.
-
-or
-
-Compile tested only
-
-We need to know this to help determine the risk of accepting the
-patches. Clearly something you have tested is a lot lower risk than
-something which is only compile tested.
-
-	Andrew
+Rob
 
