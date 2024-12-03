@@ -1,130 +1,186 @@
-Return-Path: <linux-kernel+bounces-428804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03B949E13BD
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 08:08:32 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C92799E13BF
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 08:09:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCD1D282B32
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 07:08:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D027BB21F88
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 07:09:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C86E8189F45;
-	Tue,  3 Dec 2024 07:08:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAE81189BB1;
+	Tue,  3 Dec 2024 07:09:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oldschoolsolutions.biz header.i=jens.glathe@oldschoolsolutions.biz header.b="1WyptBjK"
-Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.17.24])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AAI9YJr8"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C97142AA3;
-	Tue,  3 Dec 2024 07:08:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB98142AA3;
+	Tue,  3 Dec 2024 07:09:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733209703; cv=none; b=tlkcIAh9VDoHV0gcHn5ukEGfCdA0opbCrJz/PZ8mb+iLyXDboKWWRgRDg7vusDN7Ku1YW+MlJYQv0ZBqJY4yy/0+wTtktQ6chzSrDOweOF8bPTOSqEARmuVuCTLnsx/L4xYIHCWjHGAnCg6XdusIl3DivxC05+2JjEcay90uchU=
+	t=1733209744; cv=none; b=FVMKbZzUIF0wavv/l5CRdtgICS5ye6pNFu0B+HN1fHOj6DpEehM+b/6aI8uWI6ExRZU5o7vilnv7r8xouHzwTdtBMBtweOcmKRyb2KNaxshMDnYJTOKL1B3ZimmhPo/3iHEu/q+QUKEsNiY4VMTf4Eure80/92FywM31mNvdEQk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733209703; c=relaxed/simple;
-	bh=sv/ZLZNiP+ORYCqKhKoa1tROOZS7hHnvR4oSVaz6GKA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NEzONaIig5+ydWNUlkSVI3OvFafyqwz4qFMN9+Z1IceVwSU7+iL4QoypQKR9h3YlsVWDPNr6vHQT5txhXcSYOSqM/n+GPaipYVNIuAypBggPMoSpvtSOceaAdLfj5zmowZksUgQgLlZHD61fXMUTViYMjpqIErcyqe/k5XSu8Y0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=oldschoolsolutions.biz; spf=pass smtp.mailfrom=oldschoolsolutions.biz; dkim=pass (2048-bit key) header.d=oldschoolsolutions.biz header.i=jens.glathe@oldschoolsolutions.biz header.b=1WyptBjK; arc=none smtp.client-ip=212.227.17.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=oldschoolsolutions.biz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oldschoolsolutions.biz
+	s=arc-20240116; t=1733209744; c=relaxed/simple;
+	bh=LjSURVKP1ndSn064bpc11n7MVWZaepXqpN0kFdE6CEc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=H0Bj29tzTqvNFPLOrs8CF7UqJIbyg8sCTzvmbehsWETfC7EjIph3o3VuUPLq6Fn2Hl36EM+ifYYr/cqupqQ5nb/D+NcLKcPPBGl8MwyBJHZUZ1XcdKNnGqxeYpQPvqQxsePMU9sHM05Ttsod8hT0woiAO9chZTKpVHCOuGdZnDE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AAI9YJr8; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2ee86a1a92dso2036300a91.1;
+        Mon, 02 Dec 2024 23:09:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=oldschoolsolutions.biz; s=s1-ionos; t=1733209676; x=1733814476;
-	i=jens.glathe@oldschoolsolutions.biz;
-	bh=sv/ZLZNiP+ORYCqKhKoa1tROOZS7hHnvR4oSVaz6GKA=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=1WyptBjKNhHiqJNh8cQZueublvUjY6F7C5tt6kytTzW/16O45V1RTDzpY37rc4d3
-	 y9DFHa4zlknelPMcuu4Gxz2F1yJKuGxjKN2E4Ennr79Qi/3lwyl4i2WLKg45N2qcq
-	 C57/Z2msEzrrL+IjjovVquqjwDVe5gYeGTteUCYcVbnnzVQIwmS7XvdtFUHw6rctZ
-	 9rIYfRC814clNGeQc0ztVxgsCsch0FxA3G5f9bWzvZAg2XLBTEsDbc8AKAueXOaRz
-	 oPWbXgwop7r/a+MhSNuIZ8Wp/TH8Jxw8e+jgyvxBlwQYw+BP3AvLr3mV9ni39HJBn
-	 AvDH6tc2Vvv70x3jPw==
-X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
-Received: from [192.168.0.174] ([91.64.229.215]) by mrelayeu.kundenserver.de
- (mreue109 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 1MJV9S-1sydCW2ICe-00TY9Z; Tue, 03 Dec 2024 08:07:56 +0100
-Message-ID: <7f5d424d-09a1-46ca-92a6-a1e7f8084bf0@oldschoolsolutions.biz>
-Date: Tue, 3 Dec 2024 08:07:55 +0100
+        d=gmail.com; s=20230601; t=1733209742; x=1733814542; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tN8RvTSNJ77BxP7aNU9oyJmnuomj8CAUum0N9RHjg6M=;
+        b=AAI9YJr8oNCpAjV2rLZxMXMhuJEHec+RpgRBl2uVzbHwmPDd9zUt7B+qwtKJ7P+zOt
+         S3msk1GGE+R5tkdfOJ/K9g5iae16ohJufITTp6koH+FS19S4gjm/oADiA+Gr3XLRjOKf
+         db149kEgiafrNO2xoatYmAVFNWygb2SP8lhqjf9xpU1kcto2R3ZKJvRouJplW3WA5W+5
+         pzEDwAtZygMf7AlmCy/yED3+w9aTF4QgZlLlU3wXoIiqxajf+PQ5bYoI+LAcTd3qJ96O
+         aeLPMlvg/lgWactstuk8jGYH9rO+/ZFedUH6/aRVd4h1MTiGlVGRPbvWLOulP50q1Opq
+         JkXA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733209742; x=1733814542;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tN8RvTSNJ77BxP7aNU9oyJmnuomj8CAUum0N9RHjg6M=;
+        b=nfnMvDUWIy9IyTuHf1wJSaqM33m8yPzSM+jwqnVoWxBUu2ttmwiCaYxVsqvb9yIAaz
+         Rx2XIgNPB6f1cUIgMy/kivo/9IMmqf/hPHMB+xSLsbBzHQm1bcwCRanou/0RBStdu7+5
+         i1bT5Yymm41hQGjXsKgFUNSrPPKPuxefX1Yh92Lo2dDCdC+r9KSZY2zTeAeUbrC8NLGj
+         T66effaK2hI0fTamXGb/3RQ0E7Qc6gOlT8kcI015ZEA97dD8ghIvKEYHgMEQbvgaSPaU
+         SodUTOeF6tNms7pOBpDn2aXo3295rEu+ZDVjIvjT/J/VKz04qsr+6RmWAeYbjBTvM0z0
+         uATQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUwudYCj4kwUSbRhWl7mHQXOt27w4ArrqSmk/88D+aN7Gxf047/QoyrxShP2Rph1GIm1xjdJfhHpP2e5w==@vger.kernel.org, AJvYcCVaOo9Un4NuEWICIiZPLAYRKVK/JbW6LMqGvwIiknrYXrO5uG+zwugg0Nn8fAy03PjyX8frLmVjiT547Owu@vger.kernel.org
+X-Gm-Message-State: AOJu0YyxYUXedy+hgb6F7d+ZvLn0TQPiKSpwmcvx7wedF2bsDl66jLZb
+	e4caTiy69vDHAE/QXmdS9E84DcE7r9abJ+d7KboFv0l9V3+pgc4ka4VbR624/Gya8lElVLAPlTR
+	0fo4TM/tdCSrtRow5DG0upoG8GYA=
+X-Gm-Gg: ASbGncuX0oa6VNt58j44MB5kLZh8fmQKGDtCOHZBOXsEJHQXtg0DS9wVKdmNUfglykN
+	9eSX06jQSAAaHDoRdgtCj0Etblym00vwF
+X-Google-Smtp-Source: AGHT+IG7iIrgIOozrTQ2WIDeOgwlgF3yEAmk34/z++g6ioXUsRSSTL7EwRCTPGMRwf2mBMybQZY0giWeqJEMfY9BjQU=
+X-Received: by 2002:a17:90b:3949:b0:2ee:5bc9:75c7 with SMTP id
+ 98e67ed59e1d1-2ef011e6a98mr2046298a91.5.1733209741921; Mon, 02 Dec 2024
+ 23:09:01 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 3/3] arm64: dts: qcom: sc8280xp-blackrock: dt
- definition for WDK2023
-To: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: Kalle Valo <kvalo@kernel.org>, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Rob Herring <robh@kernel.org>, Merck Hung <merckhung@gmail.com>,
- xlazom00@gmail.com, Conor Dooley <conor+dt@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>
-References: <20241202-jg-blackrock-for-upstream-v9-0-385bb46ca122@oldschoolsolutions.biz>
- <20241202-jg-blackrock-for-upstream-v9-3-385bb46ca122@oldschoolsolutions.biz>
- <0352b36d-92fa-42ba-bc20-40cef0f9ea42@oss.qualcomm.com>
-Content-Language: en-US
-From: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
-In-Reply-To: <0352b36d-92fa-42ba-bc20-40cef0f9ea42@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+References: <CAL3q7H5U_88NA2PmyMvtwv1aZ7k+V6v=eetp7Hs2HqDdfVjokw@mail.gmail.com>
+ <20241202133515.92286-1-zhenghaoran154@gmail.com> <CAL3q7H7dxA+Y30XbB1nng1duaoT8c9Pf4ZG6+iwikTGvb4cAXA@mail.gmail.com>
+In-Reply-To: <CAL3q7H7dxA+Y30XbB1nng1duaoT8c9Pf4ZG6+iwikTGvb4cAXA@mail.gmail.com>
+From: haoran zheng <zhenghaoran154@gmail.com>
+Date: Tue, 3 Dec 2024 15:08:51 +0800
+Message-ID: <CAKa5YKhbfwWtyBDNyT-9Tudz17=PJawuqLjD10D5VaUdmdbiPw@mail.gmail.com>
+Subject: Re: [PATCH v2] btrfs: fix data race when accessing the inode's
+ disk_i_size at btrfs_drop_extents()
+To: Filipe Manana <fdmanana@kernel.org>
+Cc: clm@fb.com, josef@toxicpanda.com, dsterba@suse.com, 
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	baijiaju1990@gmail.com, 21371365@buaa.edu.cn
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:tWOFzcbo+m+ObCOiNlwoCMMFHZX41Levru0sbPKXuhwKAASYWST
- fyBC0QtCcJoFmuAQ7ET6NKAZHh/jPmRh10gEyGNY4CyCWapsiiiUhHvP1tEcd18RuHXgWZc
- sXv/rnYuF6uso3VsXPet71gcNVPSzv7qCVBkdd81DGzI+Mz7vc8bmjSGxdY87SObOFkdfxr
- 9BT55lV2G4CJOOyvVQrlw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:FD4rmPGlEW4=;j2SPBrS/ywcUJ4QmXa8fDkTDkG1
- cORRp8hCXcarqbGLeHcQfugA68zlus5gxsgB0olmhfe0Qxt0LVLf7mm3ZU2ThaHlXAmCxMCeY
- oZggykU6Zc/Jvlh6f434yPDG3WmAZa6EvgB4iiYqgzhd74GpkcXo1riOb22WrmnmWILFE/skO
- 5nzyjVGTmKs87FYY2aRdEM4+qyjs2PNBfz7rBC6pL5CkS92D68JUL8iEtdRqK/siQGlVqlVR4
- pylB0K4tA8MSXvBtaBc1jEbrQGFK7mNrpb80cGsZz9QTodpLrWHq7LUZBBHgAXAeunky5IA/v
- CrM7lVmI/2+IfJCwO5pkutexuvyYsaDkb+6PMcnhy80RV3kWHZcEwxTJ5WVKxHQ/n/LMlX08/
- oolAbqPeWvPuoWOzhkEpGoQ9ovM+mGvvRsLXQAppLze3KItlHICabfJMbnNVQOHV2c2wM34KP
- f8FJJ4LJ44x8nERG6ztA9BBbmn/GPectVzwWpRbpCTdjQI+0H9e0ksDuOUCy/5GoCj8cuPJK/
- sdfsmTMuhYipPxpltTM3N7rTTVRWMjtIgHxrGzk/W9IVGnfnpZLCV7Ndp0p6VC6vijGZ0u7K6
- bgHGTV3gBUgIchiPDytg7YCfRQGqxewLyrBPwh1bmLPny13JGVEpvsbnq+pMhmkvLGly9EpT+
- isMuQIe/KdSAgTIiRg+ub6ljEgabcMixb/z1e+vv8G/U196BvhsW1ArU8igrsdbZ6aAbzwW17
- TVXWiBdTBS6P1gqc+Y91xdOfwFi0dJ9bAfyUSSYRh43DcOZS2nmSo6HZSC+Fi09RIeztRJCcV
- /o0w0yVscx5pieXC3zNhWW14RN4cCOvwZ9AZbeiyb13/NSdeVI6zXEfOI0lofFO6I1hxdYIig
- gEYkoRGCqGupP3AZzRYKlK+a4V1Iqn0wj5yl0Az0U1+kSmPBi+bxHUm4C1RtNl+/lFqb5uUMY
- PV0AJnW3+cfFd0NKgTu53K1KVQBHSM2cn7dBlSTvDhb2i9gnZSNqDYPt2unaKbWal3WQ9U17Q
- NcSUfNnx2G7Str4LrNFTq0B7/7Ua3B5Ifhoq2NV
 
-On 03.12.24 06:08, Krishna Kurapati wrote:
+Thanks for the advice, I will explain in detail why it's a harmless race.
+And submit patch v3.
 
-[...]
+On Mon, Dec 2, 2024 at 10:40=E2=80=AFPM Filipe Manana <fdmanana@kernel.org>=
+ wrote:
 >
-> Although functionally unused, there is one more connector node that
-> runs between QMPPHY and DWC3 node. For example in [1], please check
-> "usb_dp_qmpphy_usb_ss_in" and "usb_1_dwc3_ss"
+> On Mon, Dec 2, 2024 at 1:35=E2=80=AFPM Hao-ran Zheng <zhenghaoran154@gmai=
+l.com> wrote:
+> >
+> > A data race occurs when the function `insert_ordered_extent_file_extent=
+()`
+> > and the function `btrfs_inode_safe_disk_i_size_write()` are executed
+> > concurrently. The function `insert_ordered_extent_file_extent()` is not
+> > locked when reading inode->disk_i_size, causing
+> > `btrfs_inode_safe_disk_i_size_write()` to cause data competition when
+> > writing inode->disk_i_size, thus affecting the value of `modify_tree`.
+> >
+> > Since the impact of data race is limited, it is recommended to use the
+> > `data_race` mark judgment.
 >
-> Would be good to check why it is missing and add it further.
+> This should explain why it's a harmless race.
+> Also it's better to explicitly say harmless race rather than say it
+> has limited impact, because the latter gives the idea of rare problems
+> when we don't have any.
 >
-> [1]:
-> https://github.com/torvalds/linux/blob/master/arch/arm64/boot/dts/qcom/q=
-cs6490-rb3gen2.dts
+> >
+> > The specific call stack that appears during testing is as follows:
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3DDATA_RACE=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D
+> >  btrfs_drop_extents+0x89a/0xa060 [btrfs]
+> >  insert_reserved_file_extent+0xb54/0x2960 [btrfs]
+> >  insert_ordered_extent_file_extent+0xff5/0x1760 [btrfs]
+> >  btrfs_finish_one_ordered+0x1b85/0x36a0 [btrfs]
+> >  btrfs_finish_ordered_io+0x37/0x60 [btrfs]
+> >  finish_ordered_fn+0x3e/0x50 [btrfs]
+> >  btrfs_work_helper+0x9c9/0x27a0 [btrfs]
+> >  process_scheduled_works+0x716/0xf10
+> >  worker_thread+0xb6a/0x1190
+> >  kthread+0x292/0x330
+> >  ret_from_fork+0x4d/0x80
+> >  ret_from_fork_asm+0x1a/0x30
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3DOTHER_INFO=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D
+> >  btrfs_inode_safe_disk_i_size_write+0x4ec/0x600 [btrfs]
+> >  btrfs_finish_one_ordered+0x24c7/0x36a0 [btrfs]
+> >  btrfs_finish_ordered_io+0x37/0x60 [btrfs]
+> >  finish_ordered_fn+0x3e/0x50 [btrfs]
+> >  btrfs_work_helper+0x9c9/0x27a0 [btrfs]
+> >  process_scheduled_works+0x716/0xf10
+> >  worker_thread+0xb6a/0x1190
+> >  kthread+0x292/0x330
+> >  ret_from_fork+0x4d/0x80
+> >  ret_from_fork_asm+0x1a/0x30
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> >
+> > Signed-off-by: Hao-ran Zheng <zhenghaoran154@gmail.com>
+> > ---
+> > V1->V2: Modify patch description and format
+> > ---
+> >  fs/btrfs/file.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/fs/btrfs/file.c b/fs/btrfs/file.c
+> > index 4fb521d91b06..f9631713f67d 100644
+> > --- a/fs/btrfs/file.c
+> > +++ b/fs/btrfs/file.c
+> > @@ -242,7 +242,7 @@ int btrfs_drop_extents(struct btrfs_trans_handle *t=
+rans,
+> >         if (args->drop_cache)
+> >                 btrfs_drop_extent_map_range(inode, args->start, args->e=
+nd - 1, false);
+> >
+> > -       if (args->start >=3D inode->disk_i_size && !args->replace_exten=
+t)
+> > +       if (data_race(args->start >=3D inode->disk_i_size && !args->rep=
+lace_extent))
 >
+> Don't surround the whole condition with data_race().
+> Just put it around the disk_i_size check:
 >
-I checked, there's an extra endpoint for usb_?_qmpphy_usb_ss_in and
-usb_?_qmpphy_dp_in.=C2=A0 usb_?_qmpphy_usb_ss_in=C2=A0 are defined (and "w=
-ired")
-between port@1 of usb_?_qmpphy and port@1 of usb_?_dwc3, in
-sc8280xp.dtsi. On port@2 of the qmpphy is usb_?_qmpphy_dp_in as
-endpoint, which is further defined in sc8280xp-microsoft-blackrock.dts
-as connecting to mdss0_dp?_out. Maybe that's wrong, it's the same as in
-sc8280xp-lenvo-thinkpad-x13s.dts.
-
-with best regards
-
-Jens
-
-
+> if (data_race(args->start >=3D inode->disk_i_size) && !args->replace_exte=
+nt))
+>
+> This makes it more clear it's about disk_i_size and nothing else.
+>
+> Thanks.
+>
+> >                 modify_tree =3D 0;
+> >
+> >         update_refs =3D (btrfs_root_id(root) !=3D BTRFS_TREE_LOG_OBJECT=
+ID);
+> > --
+> > 2.34.1
+> >
+> >
 
