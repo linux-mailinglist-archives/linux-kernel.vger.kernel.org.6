@@ -1,150 +1,128 @@
-Return-Path: <linux-kernel+bounces-429285-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C46EE9E1AE0
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 12:27:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B5BE59E1B12
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 12:34:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D87B9B36393
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:46:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 37B91B29CD4
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:58:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69C981E32B8;
-	Tue,  3 Dec 2024 10:45:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B89651E32C5;
+	Tue,  3 Dec 2024 10:58:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="tqaVNbPc"
-Received: from www530.your-server.de (www530.your-server.de [188.40.30.78])
+	dkim=pass (2048-bit key) header.d=public-files.de header.i=frank-w@public-files.de header.b="catE6Oo8"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7C491E2825;
-	Tue,  3 Dec 2024 10:45:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.30.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D5CB1E2610;
+	Tue,  3 Dec 2024 10:58:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733222758; cv=none; b=adYID8UC5HSr8cimnnP3zPQv/xTslrIWUZamKTq8eD7vv9J/VlPHJdkvP5KCEsBzRpubDCuqGdHl2XuS+lk0Fe2VtmQMPyOBEujf43zw72EMVlJa7/TtaFIbqYYk0uuKSZfA6yz1yfgluhdGYZUWZz2rOKwiQvKupRsnrd3IZTA=
+	t=1733223503; cv=none; b=TxCJHep9mICWqBsOWlp0TSvhxU4F/pXlLjjAdbRgTyjvSCSfn2A9WYS6MPxL0KZ0d3tqAKVlZRuBgNJ3AKh0LRUNvFTPnP7je1QQ/3fVFVpGQ+GhQFMlbywgbHtW1ZTHok73aQRqjsgDZUJ3GGkWhtos/alogQK17510Pnz4e+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733222758; c=relaxed/simple;
-	bh=UAN7dJJYBHqrrdv1gqBUohBZJi21Jc3c9XZjYqmVsUA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ivx4C3QWftn5G2LPm1ZfucRjWghgm2uppdV0bJbR2HiucLlzwjx3mWErdvyhRFHiQQvNJrmX9T9zm768KZNIX8Xv6/IKyhQj7XRPCF4/NSLz3KZqbKIEt/mhnC5i2fcE49PESjq5CA97D3R+OxN6hcClZtiXq67v/nHI4Dvez/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=tqaVNbPc; arc=none smtp.client-ip=188.40.30.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=geanix.com;
-	s=default2211; h=Cc:To:In-Reply-To:References:Message-Id:
-	Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:Date:From:Sender:
-	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
-	:Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=f4GQahu87vhd88hFE8JRJ4HYD1rmTxDILIyZYp/HAr0=; b=tqaVNbPcmZNh+77T/UilL7CrLP
-	hH97DpmQufsim5ee71fVIWWOPVc9PDHG+XRTv40HynXgbp34guCl4PRSYIEm41jsO9mlGc2CUexM+
-	caJFCKBIfL8am3OCGuYPMnyB9iyBp33SJrc2UvuT+gZHBMzPxltUdA91XVEsE0hsBOEe79BTBp/1P
-	5lJn2qKzt/+QXaQQ5RBMnffyYEzw34UbijAuQAzD1W2JW8vh5LzHsMXbDIurMsBdTBqvxkHOOvB1Z
-	SKWv4W31aByqTB+Heuw2UxesLhuYKfy5mJPCDYNbQw7nZVPuzMTTweXyDqoz7dBjYYAkTQEB+w1XF
-	EZKMvqGw==;
-Received: from sslproxy06.your-server.de ([78.46.172.3])
-	by www530.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <esben@geanix.com>)
-	id 1tIQPh-0001On-FH; Tue, 03 Dec 2024 11:45:53 +0100
-Received: from [185.17.218.86] (helo=localhost)
-	by sslproxy06.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <esben@geanix.com>)
-	id 1tIQPg-000L8G-2g;
-	Tue, 03 Dec 2024 11:45:53 +0100
-From: Esben Haabendal <esben@geanix.com>
-Date: Tue, 03 Dec 2024 11:45:31 +0100
-Subject: [PATCH 1/6] rtc: interface: Fix long-standing race when setting
- alarm
+	s=arc-20240116; t=1733223503; c=relaxed/simple;
+	bh=ViWFhif/deFZuZbnJbaYJlieWHE9b1wDUanLpmlN4gs=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=h4zBdGr382OA2hQ8B1nq3cru1ckrFCFi7N+u7jG2Xu5BWVcmFVBOp4jnDiRxmapNOQQqaR+CQjnu6ft8j+qlQiNyfx1lZrYtSKB/0zQmjzCIJDrI8P46hdNKwDHW93627c1UYEU369y9aKE3HQ3dqteJmmxLv8bjZ5l4dr9nkM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=public-files.de; spf=pass smtp.mailfrom=public-files.de; dkim=pass (2048-bit key) header.d=public-files.de header.i=frank-w@public-files.de header.b=catE6Oo8; arc=none smtp.client-ip=212.227.17.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=public-files.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=public-files.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=public-files.de;
+	s=s31663417; t=1733223487; x=1733828287; i=frank-w@public-files.de;
+	bh=ViWFhif/deFZuZbnJbaYJlieWHE9b1wDUanLpmlN4gs=;
+	h=X-UI-Sender-Class:Date:From:To:CC:Subject:Reply-to:In-Reply-To:
+	 References:Message-ID:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=catE6Oo8vo76H6xateUNLsfwp9A1mxYE8wru5d7gmBXwD/wQoM3xHUHsO9Kjx4bu
+	 c+G2p0YieMUzdvcxXcMRBIiO7d4AW+fICVP4HlVthGFWGf82FMxQxJ7ekE6YhrWwC
+	 jf6f4E2dbhppLK3SkWXDrASN5IymeN8UqqUt2bqsjMydYiHZ12twnarjX+MVwx0e5
+	 x/eHrhzhaTX6qZUa5PoZlqvxFheXi5p//DfaPfFggA5bLBolJHDqfLCHVUCXvAfPF
+	 v7PhObqnw1WyC7gPtqyfxoDTl6QgPAsRdInPuZEwmcshYx69y8JLVJ5PotjAFVU3B
+	 o5EOoWM1LChNVHI+4w==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [127.0.0.1] ([157.180.225.184]) by mail.gmx.net (mrgmx104
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1Mn2aN-1tysUC0VwV-00bTSm; Tue, 03
+ Dec 2024 11:58:07 +0100
+Date: Tue, 03 Dec 2024 11:58:07 +0100
+From: Frank Wunderlich <frank-w@public-files.de>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Frank Wunderlich <linux@fw-web.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Matthias Brugger <matthias.bgg@gmail.com>
+CC: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v2_13/18=5D_arm64=3A_dts=3A_medi?=
+ =?US-ASCII?Q?atek=3A_mt7988=3A_add_i2c_to_bpi-r4_board?=
+User-Agent: K-9 Mail for Android
+Reply-to: frank-w@public-files.de
+In-Reply-To: <1ad355df-3f2a-4257-9374-1d125e138791@collabora.com>
+References: <20241202122602.30734-1-linux@fw-web.de> <20241202122602.30734-14-linux@fw-web.de> <1ad355df-3f2a-4257-9374-1d125e138791@collabora.com>
+Message-ID: <CA7E06EB-D26A-45D0-BF13-9C6B640F27A0@public-files.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241203-rtc-uie-irq-fixes-v1-1-01286ecd9f3f@geanix.com>
-References: <20241203-rtc-uie-irq-fixes-v1-0-01286ecd9f3f@geanix.com>
-In-Reply-To: <20241203-rtc-uie-irq-fixes-v1-0-01286ecd9f3f@geanix.com>
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, Esben Haabendal <esben@geanix.com>, 
- stable@vger.kernel.org
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1733222752; l=2485;
- i=esben@geanix.com; s=20240523; h=from:subject:message-id;
- bh=UAN7dJJYBHqrrdv1gqBUohBZJi21Jc3c9XZjYqmVsUA=;
- b=Gioy18FoeQopz/OaoQ+E5tbVP+NcprFBYM1Wuwd8vtThzFcyh6O4hvETtrPhXzR2z1l7vN4hh
- eN702yy0ltZAyvpluSKY5QQatXoRSASaJdKAcEkpnxBOS59ucOImBnP
-X-Developer-Key: i=esben@geanix.com; a=ed25519;
- pk=PbXoezm+CERhtgVeF/QAgXtEzSkDIahcWfC7RIXNdEk=
-X-Authenticated-Sender: esben@geanix.com
-X-Virus-Scanned: Clear (ClamAV 0.103.10/27476/Tue Dec  3 10:52:11 2024)
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:wVh/VT4zyLEOOLYLOzpPuxIpal1zwRBxEtQNrRChYqjhtpSmpbf
+ 2U6qcQfUeOBex46poaqbKi3AsAoyE3PrgU+6UobajJqfs5EeA/g67gxFWAo5Uf01+zSU8Eb
+ gtypw3djq16hUoUtPI8Pvyil2HlMh1Hwc4TWp+7Ysoz/2Ijadww/0BK5wP3O6niNzJsiNpT
+ 5Gf7Xw8LjOXzGBhgWXZoQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:LV1CDWyYqq8=;r6TAGlS+V55H76U9GsrrMswN3d+
+ 8Xwv/2BFoCClTb58octvBihMkB4cdzns2fsZkwNByO4DV4jAUOfSzwVaLD6PSZv6oe46A9Bix
+ REDnk+Y2hQHGcFYN/vYDRNlejxHv8A+8CUvTc6RGvWS608xkCCK1hYh+aUM8K+DEp442Q8orf
+ VUoK2q4Wstzc8UpVPIt1epv5HYUl2sdD8w7kXQ0qbu2/z+5W1kbP6FT4Gg5D0GkLpren9Mtai
+ ap7c7ZnVy3qjuPwimzre6n1sbyR75c57Ramv/ngkrjanx9kIwqzr+LnEo64+jivcBsY5iQea+
+ NM/ZNRNIH3GrEG7sP/3HQHOuElw9Q99iMfyiXH75Om9OW+Xnpl9WOi8G/Rz7clUv9lcIhkiX5
+ 8+cUJ5kXgEmK23ufk76pZQt5qkPrGgABSzepJIYD9QgOO3qo295de3d5kOg4j+m3le66pcbzv
+ M8WIeVeXb6r1kH3GyApzXTIGUb8mqI9qVDsvS2tx9vdMdFNd9biAdkAElvdRY9JDNxZikdZt6
+ TykXsiCNLW92XNvYL4v7oKW43Hffndcjo8mtYCSe8tT5PxOS2AFGLhenT5FXPKQ0luRYguP6L
+ dE+52dgmcLU7Qc00tHZASvL4FaYLYktWmizpZEIe/KvUP4r+DcBKuce+CT5EUXx+YHOZ8StDN
+ CyXr7PMGhbqp6DJFOpsTr8aSKoP8I9EjcUAjRL0wIqoPNz1a7U0JfwomHcvy1WI7MpVkODoHi
+ uYLiVrFXvWxjn7j7pq9lRJ95bGYNXG3VXVmup5gYSm0sB8pIgB2jbmBTr6rX0CfhcS7eRKhgi
+ WGUTQz14iCtCZgqaWlTZcGHPQOQf6mC5beFxFHO3Hc+7CImx1aO1EDuLe0g49T6Ij/h1xGhhF
+ vlfAp43zPPkngtG7wy+4XpH2jBH0vQ5fv+3dNgSgsJUXnwnkIIKDyUXFntRA5dJKD9ZDNZj1M
+ 2e1EFE/1PPCapEkI+za5CCiu8NAezMdonRvcX+YCKSb9fOvLljqI7Mn5Wb6d616RwiY4NHk/q
+ 7lihezwS9v4Tt2yYSExI494kmDgWTgXGs4JaWDtL6R6QiaSlfwNU3yz6Gat103/J6bFfKZO7G
+ nIByL/MNjYpizZammHW2BNDUf57wuQ
 
-As described in the old comment dating back to
-commit 6610e0893b8b ("RTC: Rework RTC code to use timerqueue for events")
-from 2010, we have been living with a race window when setting alarm
-with an expiry in the near future (i.e. next second).
-With 1 second resolution, it can happen that the second ticks after the
-check for the timer having expired, but before the alarm is actually set.
-When this happen, no alarm IRQ is generated, at least not with some RTC
-chips (isl12022 is an example of this).
+Am 3=2E Dezember 2024 10:40:38 MEZ schrieb AngeloGioacchino Del Regno <ange=
+logioacchino=2Edelregno@collabora=2Ecom>:
+>Il 02/12/24 13:25, Frank Wunderlich ha scritto:
+>> From: Frank Wunderlich <frank-w@public-files=2Ede>
+>>=20
+>> Add basic i2c nodes to bananapi R4 board=2E
+>>=20
+>> Signed-off-by: Frank Wunderlich <frank-w@public-files=2Ede>
+>
+>arm64: dts: mediatek: mt7988a-bpi-r4: Enable I2C controllers
+>
+>Enable the I2C0, I2C2 controllers found on the BananaPi R4 board; these
+>controllers are accessible at =2E=2E=2E I don't know, a header on the boa=
+rd?
 
-With UIE RTC timer being implemented on top of alarm irq, being re-armed
-every second, UIE will occasionally fail to work, as an alarm irq lost
-due to this race will stop the re-arming loop.
+These 2 i2c have directly connected spare devices (pmic on i2c0 and i2c-mu=
+x on i2c2 added in later commits to have it a bit cleaner)=2E I2c1 is on gp=
+io header which i have not added to let user choose if he wants i2c option =
+or gpio=2E I can also add i2c1 to r4 board with the right pinctrl but imho =
+it should be disabled to have gpio function default=2E
 
-For now, I have limited the additional expiry check to only be done for
-alarms set to next seconds. I expect it should be good enough, although I
-don't know if we can now for sure that systems with loads could end up
-causing the same problems for alarms set 2 seconds or even longer in the
-future.
+>After which,
+>
+>Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino=2Edelregno@coll=
+abora=2Ecom>
+>
+>
 
-I haven't been able to reproduce the problem with this check in place.
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Esben Haabendal <esben@geanix.com>
----
- drivers/rtc/interface.c | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
-
-diff --git a/drivers/rtc/interface.c b/drivers/rtc/interface.c
-index aaf76406cd7d7d2cfd5479fc1fc892fcb5efbb6b..e365e8fd166db31f8b44fac9fb923d36881b1394 100644
---- a/drivers/rtc/interface.c
-+++ b/drivers/rtc/interface.c
-@@ -443,6 +443,29 @@ static int __rtc_set_alarm(struct rtc_device *rtc, struct rtc_wkalrm *alarm)
- 	else
- 		err = rtc->ops->set_alarm(rtc->dev.parent, alarm);
- 
-+	/*
-+	 * Check for potential race described above. If the waiting for next
-+	 * second, and the second just ticked since the check above, either
-+	 *
-+	 * 1) It ticked after the alarm was set, and an alarm irq should be
-+	 *    generated.
-+	 *
-+	 * 2) It ticked before the alarm was set, and alarm irq most likely will
-+	 * not be generated.
-+	 *
-+	 * While we cannot easily check for which of these two scenarios we
-+	 * are in, we can return -ETIME to signal that the timer has already
-+	 * expired, which is true in both cases.
-+	 */
-+	if ((scheduled - now) <= 1) {
-+		err = __rtc_read_time(rtc, &tm);
-+		if (err)
-+			return err;
-+		now = rtc_tm_to_time64(&tm);
-+		if (scheduled <= now)
-+			return -ETIME;
-+	}
-+
- 	trace_rtc_set_alarm(rtc_tm_to_time64(&alarm->time), err);
- 	return err;
- }
-
--- 
-2.47.1
-
+regards Frank
 
