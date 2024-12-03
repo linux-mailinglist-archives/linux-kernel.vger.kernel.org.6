@@ -1,110 +1,114 @@
-Return-Path: <linux-kernel+bounces-429943-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429944-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 298A19E2A31
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 19:01:45 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0FEC9E2961
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 18:34:43 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 69686B837A7
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 17:31:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8405165931
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 17:34:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 475ED1FC100;
-	Tue,  3 Dec 2024 17:31:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3DCC1FAC51;
+	Tue,  3 Dec 2024 17:34:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="EPLRIGlq"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yrx/lgxz"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 013C41F76AC;
-	Tue,  3 Dec 2024 17:31:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A74811FA840
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 17:34:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733247095; cv=none; b=RKsTRzRFm2mASAgiGcbGL71iG7IQc9xJ9Fo4/PjX+ptETLGRtcdBy2lNZ9Eg19VYlpR1q9PymU6oG1wsNaNi4SRstzWrPzaCbbb9T0k/5Psx9cyLQ2ruDtbGXs/zznGtxovfiZA1J4MV3YM1rb2ZPdE1HmalaNI9hSHf/e3TGJM=
+	t=1733247278; cv=none; b=iuoATuGeCrUX5rdptezKsqjeQuO0DaZ9SKkZ7k3GrO4pqx5ALJ3XlWMgRPOXNRPbPmZsEsMN7UKcPnSdZZOktr2JVtAE3P9W8uRAio/sCJuATnFAW6BtqKHB1XM526bLcmO9LUb2OgW5/yJVLLMxwoxWY8GTgIyVYTk+ktNXo7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733247095; c=relaxed/simple;
-	bh=imjulwoRiA8aa2hU0EXgqu0DGBARmGnHLzsElo9S1Ag=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GbyLwPzLJ4yVxrmtY0m8yvoNTzzpXTL6VAaSBOea/5evReCp/yW1aH2gA25PS5MO8OQnPRZnbEOAbcMOxBJdDFb2svWySzH2oBgbf0MosgdLVrnmWyz3GSaRKhTMzeXnNd/v0LGAyco86Qy788YmJWIjRQKPsBovYwFGM0/lYYs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=EPLRIGlq; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 4B3HVFjl1647614
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-	Tue, 3 Dec 2024 11:31:15 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1733247076;
-	bh=pnb86O08snZJxBvF7Q9B/HnxlE8/fHHTr3MMXko/bgQ=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=EPLRIGlq7SSV3emVzW+YVQQzfscOGbeP49OCo563WNJFi2oUf6yrH0GtnZIOx29E5
-	 LT0kxsSgBjAB9dmNTEqUESAlZgBA9QXrIaFK88J64Gy03vzJ46qtIRSwDmg2S71Yaf
-	 02YK47vB7Edj090iQ4ouJC/imSiUAWX1qlV+T1lA=
-Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4B3HVFq8069938;
-	Tue, 3 Dec 2024 11:31:15 -0600
-Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 3
- Dec 2024 11:31:15 -0600
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE110.ent.ti.com
- (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 3 Dec 2024 11:31:15 -0600
-Received: from lelvsmtp5.itg.ti.com ([10.249.42.149])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4B3HVEpQ094200;
-	Tue, 3 Dec 2024 11:31:15 -0600
-From: Andrew Davis <afd@ti.com>
-To: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
-        Rob
- Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Andrew Davis <afd@ti.com>
-Subject: [PATCH 3/4] dt-bindings: soc: ti: ti,j721e-system-controller: Add PCIe ctrl property
-Date: Tue, 3 Dec 2024 11:31:12 -0600
-Message-ID: <20241203173113.90009-3-afd@ti.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20241203173113.90009-1-afd@ti.com>
-References: <20241203173113.90009-1-afd@ti.com>
+	s=arc-20240116; t=1733247278; c=relaxed/simple;
+	bh=3zGYGdTB6TnUBgQNb9FaHLEtVUBY7U330q2Taimm1TU=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Content-Type; b=lT0MOYysgUyhRqL8ppxT2W0ujNy0V5+6Iumm7/T2ZfAiDq7j7IUOReL7jVEu24+vZmkhx19csKLFh22HczWdAqQ3hy8wotLW0xRnJRBxjiymVkY6jK4fmpkbSLJ3FpLmsmLCG0yFwIpR0aohqsifnpsiBV/n99WohjFuso1nyMQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--xur.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yrx/lgxz; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--xur.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2ee31227b58so5126360a91.3
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 09:34:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1733247276; x=1733852076; darn=vger.kernel.org;
+        h=to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=zXBncvZ9vdZsF5fbKzAkxX5C8KUR7SVsxPVJa+dSNY0=;
+        b=yrx/lgxz4ti6D9d4iRncft2t+Hc/1sVXIFs4xUZAI7JASn/qAbmS+vjGKZAURmeYiO
+         fqjiY3qmr8TAXaB9afPkeyx4a8SnlNcg/0O1B77WPhIzxjxyZmiNB7no5WBopjJ0d7eG
+         62VmFwqnL5V3j4c53BHGThWxiP+zTtPdoA3JhNSWt1mOndP9qaG3sLU0kYLfcErQflUO
+         1gHKKS48TXWIbb/dJKUr+DZ8rSUXZ4Dakf8CpKE5rMGztHggUs3nzdhAr3gv4VT1Z8Xs
+         VHBo9oes9V0j2X2vbPI/4nmCsbP+lbXOV7jVOwbvXbDwK+aM6VSwEFrUs4SPB77C8J9Y
+         eJ+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733247276; x=1733852076;
+        h=to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=zXBncvZ9vdZsF5fbKzAkxX5C8KUR7SVsxPVJa+dSNY0=;
+        b=ipgZnMerEfshORzvYchzhsNYsAKbezEhsh2DUseiTDYr6CDMVGFW1G88fT8EuCdQmW
+         m1T68K0p8U8djn/6M3j7c+SflbwW0NtRu9vDWyIUZurRPwkC0idtPRqewcOqwJDXZIjg
+         sBJ7QSkrGoTNZDospTMRpJSc/9WNfY1TsWl+V3JpN20gfW2FY9KD8osDNdhj7rgha7P5
+         P0w3/Bs4aa4NgrZbfv1j/k3xSLuwL3o4Yk4bBQxCNdVzcZ2eqKgOQFbwcjH4tCUxgdda
+         Q68Znc0Zj1eydGvzsWqOdYgtR2/niY/ZNdjiq9Hl5w0BN7NWg9RJnVwGD/nb2ztUSKMw
+         SU/g==
+X-Forwarded-Encrypted: i=1; AJvYcCVS0NiowEeHCwcijlN4PuztFflp5wZmE/J6W+wJFwnLyuu4Zx1/jXlDcuLQu5rC/If6Y2ko6gKsd6J0bIA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9TC9Hsn66s92Rm75Zvh4hk5KGkLBZ4ftGCmsIzvJpm0CZkhqt
+	MTxHi0LAevi8auLolbBoJ+Qf1ej4zf0ZtZe+uQzgu/TgzMa1zhKA8IwSVu8tGA2yeg==
+X-Google-Smtp-Source: AGHT+IFms79qBBOYMxF4VMXPfrG3RDmQyAJYwTiDO8KGvvXv58S9bgUJmgQo9KkixTuUky/11qsvSFA=
+X-Received: from pjbsz16.prod.google.com ([2002:a17:90b:2d50:b0:2e2:44f2:9175])
+ (user=xur job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90a:ec90:b0:2ef:19d0:2261
+ with SMTP id 98e67ed59e1d1-2ef19d02442mr1788593a91.16.1733247276107; Tue, 03
+ Dec 2024 09:34:36 -0800 (PST)
+Date: Tue,  3 Dec 2024 09:34:31 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
+Message-ID: <20241203173431.3790387-1-xur@google.com>
+Subject: [PATCH v2] MIPS: Add a blank line after __HEAD
+From: Rong Xu <xur@google.com>
+To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Masahiro Yamada <masahiroy@kernel.org>, 
+	Klara Modin <klarasmodin@gmail.com>, Rong Xu <xur@google.com>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, Michael Ellerman <mpe@ellerman.id.au>, 
+	Nicolas Schier <nicolas@fjasle.eu>, Chris Packham <chris.packham@alliedtelesis.co.nz>, 
+	"Maciej W. Rozycki" <macro@orcam.me.uk>, Sergey Shtylyov <s.shtylyov@omp.ru>, linux-mips@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Add a pattern property for pcie-ctrl which can be part of this controller.
+Add a blank line after __HEAD in the text section.
 
-Signed-off-by: Andrew Davis <afd@ti.com>
+The __HEAD symbol was added in commit 52892ed6b03a ("MIPS:
+Place __kernel_entry at the beginning of text section").
+
+Signed-off-by: Rong Xu <xur@google.com>
+Suggested-by: Maciej W. Rozycki <macro@orcam.me.uk>
+
+---Changelog--
+Added suggested-by.
 ---
- .../bindings/soc/ti/ti,j721e-system-controller.yaml         | 6 ++++++
- 1 file changed, 6 insertions(+)
+ arch/mips/kernel/head.S | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/soc/ti/ti,j721e-system-controller.yaml b/Documentation/devicetree/bindings/soc/ti/ti,j721e-system-controller.yaml
-index 9ba9cb100ab30..ead0679b30e3f 100644
---- a/Documentation/devicetree/bindings/soc/ti/ti,j721e-system-controller.yaml
-+++ b/Documentation/devicetree/bindings/soc/ti/ti,j721e-system-controller.yaml
-@@ -74,6 +74,12 @@ patternProperties:
-     description:
-       This is the ICSSG control region.
+diff --git a/arch/mips/kernel/head.S b/arch/mips/kernel/head.S
+index e3ff6179c99f9..d99ed58b7043d 100644
+--- a/arch/mips/kernel/head.S
++++ b/arch/mips/kernel/head.S
+@@ -60,6 +60,7 @@
+ 	.endm
  
-+  "^pcie-ctrl@[0-9a-f]+$":
-+    type: object
-+    $ref: /schemas/mfd/syscon.yaml#
-+    description:
-+      This is the PCIe control region.
+ 	__HEAD
 +
- required:
-   - compatible
-   - reg
+ #ifndef CONFIG_NO_EXCEPT_FILL
+ 	/*
+ 	 * Reserved space for exception handlers.
+
+base-commit: e70140ba0d2b1a30467d4af6bcfe761327b9ec95
 -- 
-2.39.2
+2.47.0.338.g60cca15819-goog
 
 
