@@ -1,115 +1,92 @@
-Return-Path: <linux-kernel+bounces-430211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67E8D9E2DEA
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 22:16:31 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3570A9E2E04
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 22:23:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6C2C165834
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 21:16:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0CE56162F8F
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 21:23:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72546208978;
-	Tue,  3 Dec 2024 21:16:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4753B207A20;
+	Tue,  3 Dec 2024 21:23:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mentallysanemainliners.org header.i=@mentallysanemainliners.org header.b="QfzRP0W2"
-Received: from out-03.smtp.spacemail.com (out-03.smtp.spacemail.com [63.250.43.88])
+	dkim=pass (2048-bit key) header.d=uni-hamburg.de header.i=@uni-hamburg.de header.b="kQAV5zg1"
+Received: from mxchg04.rrz.uni-hamburg.de (mxchg04.rrz.uni-hamburg.de [134.100.38.114])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3138B1F6693;
-	Tue,  3 Dec 2024 21:16:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.250.43.88
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F44A1F75AB
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 21:23:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.100.38.114
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733260565; cv=none; b=O1P49w6LmPpLN0bEi3oljkJFYdKSxJ/X6oDdoGSC+E+BvBDzwF3DlItplntRu3Tvgrwkx7T6cPyFZaK6ut7SXzaVtSWnMSAZhd8gbWsEZ/P8Rzq2UYRFOtRzQqpP+Aq5l+pMdPyY0K4RNcjZGz4o2KJpVcVQIontS5HIf0mXTlM=
+	t=1733260986; cv=none; b=GYtD4Zz13rT9N476OQ3xcWqfNDOvO+q+kkUu0F3HPQGxOlnpQU4CpW17GEvR6t6ihh8/Vfqdb40YP4c8yVWdb1DlyFEGmg6MDMANqmLb22k62C27my4szj0/gu9KqkWqfvZUtggaJlH8xtb8pHS3VLYNeMzg1qHl612ZVNpKoro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733260565; c=relaxed/simple;
-	bh=BOopPzcToEprpdw2LIS55Y82go8hBPaS/MvQht0hXKk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UObRP9ofQ8nV/W05AivI/Sacg7hbdKQW8U7AhuW0DHZi+3Eu2shaEpaRzCuqyCfZ9eakiPBa/0oRRoSxcED/z+UC/zZ3sBmzlP5ocamrg+Dnegk8CMdEQziK1LMnAMpEojlcsTkQaDeHuSaEOfa9w25050pmeXMqcuVkuRPbVMQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org; spf=pass smtp.mailfrom=mentallysanemainliners.org; dkim=pass (2048-bit key) header.d=mentallysanemainliners.org header.i=@mentallysanemainliners.org header.b=QfzRP0W2; arc=none smtp.client-ip=63.250.43.88
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mentallysanemainliners.org
-Received: from prod-lbout-phx.jellyfish.systems (unknown [198.177.122.3])
-	by smtp.spacemail.com (Postfix) with ESMTPA id 4Y2tjk64zzzGp9W;
-	Tue, 03 Dec 2024 21:15:54 +0000 (UTC)
-Received: from localhost.localdomain (83.21.102.241.ipv4.supernova.orange.pl [83.21.102.241])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.spacemail.com (Postfix) with ESMTPSA id 4Y2tjb4hMTz2x99;
-	Tue,  3 Dec 2024 21:15:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=mentallysanemainliners.org; s=spacemail; t=1733260549;
-	bh=BOopPzcToEprpdw2LIS55Y82go8hBPaS/MvQht0hXKk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=QfzRP0W2T4Rp6Z8+zzdY/1ueAkstrlVjNE+c1I0F4pM+4oSTRiFyZOeNymQ/StDtH
-	 wXv+sn60rYhiV4s8QZse92CEVg2zfzfZ1z5cJdkM1w+6smoutjqTm7qx49t3tk928V
-	 yL5rQc7F3KKfHytttjG1cNt3Kg1XO5B1JX7f48oJZBFeJB7CMpv2z0frrvmRXbByv7
-	 GtX6GS4iDNFiOdVYZvF4yZHoh9YgZaBrzYzkgw6H9PmxdyCN/IS8PiHVIeh7r5JtjG
-	 vTt2TrsmmdeGk5jtvpXeUAUj15WFOLvlttaC8mM/xAV0rDD7kwi+Z4pjpxfjG8rpSc
-	 o1YcGNxTVwUQw==
-From: Igor Belwon <igor.belwon@mentallysanemainliners.org>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>
-Cc: devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 2/2] arm64: dts: exynos990: Add pmu and syscon-reboot nodes
-Date: Tue,  3 Dec 2024 22:13:44 +0100
-Message-ID: <20241203211344.515431-3-igor.belwon@mentallysanemainliners.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241203211344.515431-1-igor.belwon@mentallysanemainliners.org>
-References: <20241203211344.515431-1-igor.belwon@mentallysanemainliners.org>
+	s=arc-20240116; t=1733260986; c=relaxed/simple;
+	bh=7ImcT9X6OeasvmYOtfTUAGvmj/4277VgcxWggrlwpbc=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=KlyOW9ZRtvtNXz73mF/lJ4Ff6FaoetMHvr3rAuQzoanlbHHycGTBDTzZRKWTSvoW6NNqoKXaQIcrqzmUrRtDnvn1GxHRBM7Wna9QEsqoHJj8kvI2b2usY5fAvtAeaX7++kdun37KkTU4t2iIKDxz31OChNZ3r1Ugti1ZV6CAD60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=uni-hamburg.de; spf=pass smtp.mailfrom=uni-hamburg.de; dkim=pass (2048-bit key) header.d=uni-hamburg.de header.i=@uni-hamburg.de header.b=kQAV5zg1; arc=none smtp.client-ip=134.100.38.114
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=uni-hamburg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uni-hamburg.de
+Received: from mxchg04.rrz.uni-hamburg.de (mxchg04.rrz.uni-hamburg.de [134.100.38.114])
+	by mxchg04.rrz.uni-hamburg.de (Postfix) with ESMTPS id 4Y2tkp02qbzLldX;
+	Tue,  3 Dec 2024 22:16:50 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uni-hamburg.de;
+	s=rrzs003; t=1733260610;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7ImcT9X6OeasvmYOtfTUAGvmj/4277VgcxWggrlwpbc=;
+	b=kQAV5zg1/NCp7CxOHTJwBzZ3A7spPE97XDZbKl1FDesY76oKIb8NVc3XszKJFX6VcPnudY
+	AA74xB17eRgri5Je5osXFe78mWGtNI+7nXv8xT5GFBhum+sPpV6rtss2ayoUQjn7DLu8mz
+	PboYYmCTC/KGFDcf5HffyC5MIqkmdSyBPMxBuQt7TFfsCRJP59Fi56QT1GPT6MPdzMHluK
+	JiQIUDa/ur1jmGh1uX+d7Te4BYkUSP05SvwH0RdLwgKIW7iQOgUm3nuMiwaI6J02ZT3Lwr
+	F7PGrAck3+adAmsSPvzLVrOVdhyhD8XrB2Jd2tBTjMitqmOOlRlyihjeOiXiLQ==
+Received: from exchange.uni-hamburg.de (EX-S-MR06.uni-hamburg.de [134.100.84.89])
+	by mxchg04.rrz.uni-hamburg.de (Postfix) with ESMTPS id 4Y2tkn5KKBzLldW;
+	Tue,  3 Dec 2024 22:16:49 +0100 (CET)
+Received: from plasteblaster (134.100.32.91) by EX-S-MR06.uni-hamburg.de
+ (134.100.84.89) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 3 Dec
+ 2024 22:16:49 +0100
+Date: Tue, 3 Dec 2024 22:16:47 +0100
+From: "Dr. Thomas Orgis" <thomas.orgis@uni-hamburg.de>
+To: zhangjiao2 <zhangjiao2@cmss.chinamobile.com>
+CC: <akpm@linux-foundation.org>, <linux-kernel@vger.kernel.org>,
+	<ismael@iodev.co.uk>
+Subject: Re: [PATCH v2] tools/accounting/procacct: Fix minor errors
+Message-ID: <20241203221647.5892b37b@plasteblaster>
+In-Reply-To: <20241203020550.3145-1-zhangjiao2@cmss.chinamobile.com>
+References: <20241203020550.3145-1-zhangjiao2@cmss.chinamobile.com>
+Organization: =?UTF-8?B?VW5pdmVyc2l0w6R0?= Hamburg
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-debian-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: EX-S-MR05.uni-hamburg.de (134.100.84.88) To
+ EX-S-MR06.uni-hamburg.de (134.100.84.89)
+X-Rspamd-UID: 586a95
+X-Rspamd-UID: 4d4d42
 
-Add PMU syscon, and syscon-reboot nodes to the Exynos990 dtsi.
 
-Reboot of the Exynos990 SoC is handled by setting bit(SWRESET_TRIGGER[1])
-of SWRESET register (PMU + 0x3a00).
+> Reviewed-by: Dr. Thomas Orgis <thomas.orgis@uni-hamburg.de>
 
-Tested using the "reboot" command.
+I repeat. Thanks for picking it up.
 
-Signed-off-by: Igor Belwon <igor.belwon@mentallysanemainliners.org>
----
- arch/arm64/boot/dts/exynos/exynos990.dtsi | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/exynos/exynos990.dtsi b/arch/arm64/boot/dts/exynos/exynos990.dtsi
-index c1986f00e443..2619f821bc7c 100644
---- a/arch/arm64/boot/dts/exynos/exynos990.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynos990.dtsi
-@@ -227,6 +227,20 @@ wakeup-interrupt-controller {
- 			};
- 		};
- 
-+		pmu_system_controller: system-controller@15860000 {
-+			compatible = "samsung,exynos990-pmu",
-+				     "samsung,exynos7-pmu", "syscon";
-+			reg = <0x15860000 0x10000>;
-+
-+			reboot: syscon-reboot {
-+				compatible = "syscon-reboot";
-+				regmap = <&pmu_system_controller>;
-+				offset = <0x3a00>; /* SWRESET */
-+				mask = <0x2>; /* SWRESET_TRIGGER */
-+				value = <0x2>;
-+			};
-+		};
-+
- 		pinctrl_cmgp: pinctrl@15c30000 {
- 			compatible = "samsung,exynos990-pinctrl";
- 			reg = <0x15c30000 0x1000>;
--- 
-2.45.2
+Alrighty then,
 
+Thomas
+
+--=20
+Dr. Thomas Orgis
+HPC @ Universit=C3=A4t Hamburg
 
