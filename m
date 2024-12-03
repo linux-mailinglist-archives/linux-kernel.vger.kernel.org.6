@@ -1,338 +1,198 @@
-Return-Path: <linux-kernel+bounces-428791-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24B569E137C
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 07:47:54 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6ADA19E1381
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 07:48:19 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE2B6160FB8
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 06:47:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C703282A62
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 06:48:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34244188A0E;
-	Tue,  3 Dec 2024 06:47:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAE4F189F3F;
+	Tue,  3 Dec 2024 06:48:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zx4RWlwx"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="ON/teFOr";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="ON/teFOr"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E55B1632D2
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 06:47:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6CB18837;
+	Tue,  3 Dec 2024 06:47:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733208467; cv=none; b=hYPXdFCqX6FYZJG4uKv/CA6ZQf4aatZqXA6Ye/WYmxhw5GZ7H0XY2ITBOZY0+HJfmowTCEocHfREOhlfyBTR+2ACVitrN3t9ehkFtGR12YYGZArxFpXQw4AO+3KZddOefU1njyjby1wXJQOQHWQNJaSUzFiuEh7U2MoJc16o2Mw=
+	t=1733208483; cv=none; b=tsSpViOsiDavod29D5sQOZ6suhPJk8W18Ngco62h0QpS0XtJsVTCFhtwsYbxGtsKVGab16OiyjwbBgEx4gUktz16iZSW3qZHJLIc9Xt8wWEebJVASVmJED+8hvODfgrRkbFFZnTWDatU8Fcw7KqqHJEwSDuZIEOO8Xou1HDFsZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733208467; c=relaxed/simple;
-	bh=nwOsh6nyzqZL3o0Ea+HUPnu7JkD/ffwmQ52XqyJkfwY=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=hm3hunka26i93buVZfZWCT9afKbwWQjH/uqI1lsv1wQWNSt67v5fqmB5vILPh1N+6mZRBMEkNY4UmFLHuYAy1ST0OPLjXS7dusRAcKSMqYF7JUQmi7XJnt6j+8I54doRj+je1pkCRQouTW3LJJiaVR0paLDOa3C4h4A4iLAtJ3w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zx4RWlwx; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-385df8815fcso2382295f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 22:47:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733208463; x=1733813263; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=/RobnTVBYLiaDMD8JmMIw8HC0/tWcGzmOm0rswY3UxM=;
-        b=zx4RWlwxsbBq8fQh0DA45aPCa09+/abLRkuEvC2uUyd+usDjbgknJkUBRUr4+v1gRW
-         iUzIOmPVDEPoKJEHnNQn1yuOWDbMQ6stvdtNf4Rsh9eDNS2V8qPoA01Om3RD+H1mVGkY
-         Wp1ATKTiL7EMSwScoRzAqN+PGGj91/1Yin+xVyMnv7+Qna3XtpJO+ORlZWaBiQP5vqZ4
-         f47zBH7xywe76Ff73L2+o/caL3qUMWkS/cDe1kiquDONfpxa8m2i9fuY46xMUoks/d/S
-         vyrCJBzoWQr/cOR8e8OYE644zsCEFG2gGllbnKEN+m8AqDB/o4gLQZkRbZB1cQz2AJwe
-         ie2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733208463; x=1733813263;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/RobnTVBYLiaDMD8JmMIw8HC0/tWcGzmOm0rswY3UxM=;
-        b=k6qEi+nsy+j2caHLSc/gDe1LKzpOwbQQg3b/MJDk9uSLzcw9+mrlv7AewSTQM5zy+N
-         DMvewLT6mDs7+GNerxS9Oal+PztmqWM0lqKTyZ9uM5v6doDza8rZt5T5+Ib5C1KOxZeD
-         FXIFBViOnwFzUDGxLREhrGqKu6WqFMF7pNyOU/nuz2s8vc4OlGp7Rw+CkupkK0oaluTG
-         Wq3P5TI+/+O02ZiiIQkTTOHpcVVFfxxagOxZG7vTuaYOrwGsVtqcAWe8VcdwBk6q7hjC
-         NgPVJuZXt4VFF+2snewolDyV5ijXhOHfn/whXmwi1X9n05UmGsmvXboQbk/6UlgQHcrp
-         u/zA==
-X-Forwarded-Encrypted: i=1; AJvYcCXlDANe019R+D/DW4Ae0nphJCNGrbDlUSzlX4p2mYPUHDw2uCir1/Oo3Nu83a2recftoFn+IhpJoZggH6w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDRJKYq7F1agTVipMy/eWLRasoAOHtJGQhMKu4IDAKGZVq8Jqh
-	3kfEcXAr7rmHQVdY0Pw952BdYlVvt4SJypbs0EDbACm8mwgVINcFgS98/hFq1zk=
-X-Gm-Gg: ASbGncv6xHcNJWOyhDcGRjOnoYCh+OSx37JVGnQM934VVbrgcsM5G+EbtBA5yj5d3Hx
-	z07EcrDIfULbiIWZU3nSkSZj8PRgJppEf/XeW1lEc0KgyKmaVpsAg7REgvEMXTOHJMaTKO4AUUz
-	NuDfp7iTVB3JjcA7RtLEbplPFwUu3cx+WGr6dne8GBa3+u4pdd/0BAi8SsNMb7ZoS2KGWjQW0u1
-	3yV5DB2JzHRh+UsIt2nj/+kEgXHeBSFPr02cdg04WS8SY7QTePSMcM=
-X-Google-Smtp-Source: AGHT+IFvIm1Cj+m9L3+8eoO1wguyNHK3N/D+YEl/HgW5fjyufsSwyyXyAHnmtnybYP0D7O4sZNMCrg==
-X-Received: by 2002:a05:6000:1acd:b0:385:de67:2297 with SMTP id ffacd0b85a97d-385fd532bdcmr879010f8f.54.1733208463581;
-        Mon, 02 Dec 2024 22:47:43 -0800 (PST)
-Received: from [10.1.1.109] ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385e391656csm9296916f8f.47.2024.12.02.22.47.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Dec 2024 22:47:43 -0800 (PST)
-Message-ID: <c377f3302c6c282ad826211c859e2b65bb1222cb.camel@linaro.org>
-Subject: Re: [PATCH 1/4] power: supply: add support for max77759 fuel gauge
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: t.antoine@uclouvain.be, Sebastian Reichel <sre@kernel.org>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Dimitri Fedrau <dima.fedrau@gmail.com>, Catalin
- Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Peter
- Griffin <peter.griffin@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org
-Date: Tue, 03 Dec 2024 06:47:41 +0000
-In-Reply-To: <20241202-b4-gs101_max77759_fg-v1-1-98d2fa7bfe30@uclouvain.be>
-References: <20241202-b4-gs101_max77759_fg-v1-0-98d2fa7bfe30@uclouvain.be>
-	 <20241202-b4-gs101_max77759_fg-v1-1-98d2fa7bfe30@uclouvain.be>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.1-4 
+	s=arc-20240116; t=1733208483; c=relaxed/simple;
+	bh=skXBrguFnEEJ9cK1Wgw6mdBV+KU7BMDS9WBaBnwTQ3U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dIiaG5E8nbGspiao0XCs8y5tVe+iIuq264pByivkAYt3EmPGfiE51coHOlgDpc3q9wgHwBNdnPEa4+apmvSjWWblmnZPU529vakuLckR1PafkeBdQOzHTPLJM032Nz0PEw7Zw4sJTZsZKuAymGGyeVHDoD1Ve5RA0FhUwW8L9as=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=ON/teFOr; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=ON/teFOr; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id C9C0A2116D;
+	Tue,  3 Dec 2024 06:47:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1733208475; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KmTgfQaLPbT4i+fON6Y5ezxxdO6L+T5ytkzLsgHmxZg=;
+	b=ON/teFOrcct37tAnFgOR2NrHAzcYeTxxCe+Wn8mh605pWh3cYXyGwQEBkWPTRFw7+/i7NV
+	qwzuhbiRwNVQTD4toB3ap+JgGGMd2lLu28dXvzkFxz++s2mQnTKsVu3K1n5Q/fYktaQ9vp
+	A64vaMyCcjx0mZv1ZUdJGrpLd9e1rRI=
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1733208475; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KmTgfQaLPbT4i+fON6Y5ezxxdO6L+T5ytkzLsgHmxZg=;
+	b=ON/teFOrcct37tAnFgOR2NrHAzcYeTxxCe+Wn8mh605pWh3cYXyGwQEBkWPTRFw7+/i7NV
+	qwzuhbiRwNVQTD4toB3ap+JgGGMd2lLu28dXvzkFxz++s2mQnTKsVu3K1n5Q/fYktaQ9vp
+	A64vaMyCcjx0mZv1ZUdJGrpLd9e1rRI=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1459F139C2;
+	Tue,  3 Dec 2024 06:47:55 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id IfMAApupTmdmIAAAD6G6ig
+	(envelope-from <jgross@suse.com>); Tue, 03 Dec 2024 06:47:55 +0000
+Message-ID: <24b80006-dcea-4a76-b5c8-e147d9191ed2@suse.com>
+Date: Tue, 3 Dec 2024 07:47:54 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 1/2] x86, lib, xenpv: Add WBNOINVD helper functions
+To: Xin Li <xin@zytor.com>, Kevin Loughlin <kevinloughlin@google.com>,
+ Andrew Cooper <andrew.cooper3@citrix.com>
+Cc: linux-kernel@vger.kernel.org, seanjc@google.com, pbonzini@redhat.com,
+ tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+ dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+ kvm@vger.kernel.org, thomas.lendacky@amd.com, pgonda@google.com,
+ sidtelang@google.com, mizhang@google.com, virtualization@lists.linux.dev,
+ xen-devel@lists.xenproject.org, bcm-kernel-feedback-list@broadcom.com
+References: <20241203005921.1119116-1-kevinloughlin@google.com>
+ <20241203005921.1119116-2-kevinloughlin@google.com>
+ <a9560e97-478d-4e03-b936-cf6f663279a4@citrix.com>
+ <CAGdbjmLRA5g+Rgiq-fRbWaNqXK51+naNBi0b3goKxsN-79wpaw@mail.gmail.com>
+ <bc4a4095-d8bd-4d97-a623-be35ef81aad0@zytor.com>
+Content-Language: en-US
+From: Juergen Gross <jgross@suse.com>
+In-Reply-To: <bc4a4095-d8bd-4d97-a623-be35ef81aad0@zytor.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Score: -4.30
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	FROM_HAS_DN(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[20];
+	MIME_TRACE(0.00)[0:+];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	MID_RHS_MATCH_FROM(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:mid]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-Hi Thomas,
+On 03.12.24 05:09, Xin Li wrote:
+> On 12/2/2024 5:44 PM, Kevin Loughlin wrote:
+>> On Mon, Dec 2, 2024 at 5:28 PM Andrew Cooper <andrew.cooper3@citrix.com> wrote:
+>>>
+>>> On 03/12/2024 12:59 am, Kevin Loughlin wrote:
+>>>> diff --git a/arch/x86/include/asm/paravirt.h b/arch/x86/include/asm/paravirt.h
+>>>> index d4eb9e1d61b8..c040af2d8eff 100644
+>>>> --- a/arch/x86/include/asm/paravirt.h
+>>>> +++ b/arch/x86/include/asm/paravirt.h
+>>>> @@ -187,6 +187,13 @@ static __always_inline void wbinvd(void)
+>>>>        PVOP_ALT_VCALL0(cpu.wbinvd, "wbinvd", ALT_NOT_XEN);
+>>>>   }
+>>>>
+>>>> +extern noinstr void pv_native_wbnoinvd(void);
+>>>> +
+>>>> +static __always_inline void wbnoinvd(void)
+>>>> +{
+>>>> +     PVOP_ALT_VCALL0(cpu.wbnoinvd, "wbnoinvd", ALT_NOT_XEN);
+>>>> +}
+>>>
+>>> Given this, ...
+>>>
+>>>> diff --git a/arch/x86/kernel/paravirt.c b/arch/x86/kernel/paravirt.c
+>>>> index fec381533555..a66b708d8a1e 100644
+>>>> --- a/arch/x86/kernel/paravirt.c
+>>>> +++ b/arch/x86/kernel/paravirt.c
+>>>> @@ -149,6 +154,7 @@ struct paravirt_patch_template pv_ops = {
+>>>>        .cpu.write_cr0          = native_write_cr0,
+>>>>        .cpu.write_cr4          = native_write_cr4,
+>>>>        .cpu.wbinvd             = pv_native_wbinvd,
+>>>> +     .cpu.wbnoinvd           = pv_native_wbnoinvd,
+>>>>        .cpu.read_msr           = native_read_msr,
+>>>>        .cpu.write_msr          = native_write_msr,
+>>>>        .cpu.read_msr_safe      = native_read_msr_safe,
+>>>
+>>> this, and ...
+>>>
+>>>> diff --git a/arch/x86/xen/enlighten_pv.c b/arch/x86/xen/enlighten_pv.c
+>>>> index d6818c6cafda..a5c76a6f8976 100644
+>>>> --- a/arch/x86/xen/enlighten_pv.c
+>>>> +++ b/arch/x86/xen/enlighten_pv.c
+>>>> @@ -1162,6 +1162,7 @@ static const typeof(pv_ops) xen_cpu_ops __initconst = {
+>>>>                .write_cr4 = xen_write_cr4,
+>>>>
+>>>>                .wbinvd = pv_native_wbinvd,
+>>>> +             .wbnoinvd = pv_native_wbnoinvd,
+>>>>
+>>>>                .read_msr = xen_read_msr,
+>>>>                .write_msr = xen_write_msr,
+>>>
+>>> this, what is the point having a paravirt hook which is wired to
+>>> native_wbnoinvd() in all cases?
+>>>
+>>> That just seems like overhead for overhead sake.
+>>
+>> I'm mirroring what's done for WBINVD here, which was changed to a
+>> paravirt hook in 10a099405fdf ("cpuidle, xenpv: Make more PARAVIRT_XXL
+>> noinstr clean") in order to avoid calls out to instrumented code as
+>> described in the commit message in more detail. I believe a hook is
+>> similarly required for WBNOINVD, but please let me know if you
+>> disagree. Thanks!
+> 
+> Then the question is why we need to add WBINVD/WBNOINVD to the paravirt
+> hooks.
+> 
 
-Thanks for looking into this!
+We don't.
 
-> From: Thomas Antoine <t.antoine@uclouvain.be>
->=20
-> The Maxim max77759 fuel gauge has the same interface as the Maxim max1720=
-x
-> except for the non-volatile memory slave address which is not available.
+The wbinvd hook is a leftover from lguest times.
 
-It is not fully compatible, and it also has a lot more registers.
+I'll send a patch to remove it.
 
-For example, the voltage now is not in register 0xda as this driver assumes=
-.
-With these changes, POWER_SUPPLY_PROP_VOLTAGE_NOW just reads as 0. 0xda
-doesn't exist in max77759
 
-I haven't compared in depth yet, though.
+Juergen
 
-> No slave is available at address 0xb of the i2c bus, which is coherent
-> with the following driver from google: line 5836 disables non-volatile
-> memory for m5 gauge.
->=20
-> Link:
-> https://android.googlesource.com/kernel/google-modules/bms/+/1a68c36bef47=
-4573cc8629cc1d121eb6a81ab68c/max1720x_battery.c
->=20
-> Add support for the max77759 by allowing to use the non-volatile
-> memory or not based on the chip. Value for RSense comes from the followin=
-g
-> stock devicetree:
->=20
-> Link:
-> https://android.googlesource.com/kernel/devices/google/gs101/+/33eca36d43=
-da6c2b6a546806eb3e7411bbe6d60d/dts/gs101-raviole-battery.dtsi
->=20
-> Signed-off-by: Thomas Antoine <t.antoine@uclouvain.be>
-> ---
-> =C2=A0drivers/power/supply/max1720x_battery.c | 71 ++++++++++++++++++++++=
-+++++-
-> -----
-> =C2=A01 file changed, 59 insertions(+), 12 deletions(-)
->=20
-> diff --git a/drivers/power/supply/max1720x_battery.c
-> b/drivers/power/supply/max1720x_battery.c
-> index
-> 33105419e2427bb37963bda9948b647c239f8faa..faf336938dd4306dd2ceeb0a84b90ca=
-8
-> 0ad41a9f 100644
-> --- a/drivers/power/supply/max1720x_battery.c
-> +++ b/drivers/power/supply/max1720x_battery.c
-> @@ -13,6 +13,7 @@
-> =C2=A0#include <linux/nvmem-provider.h>
-> =C2=A0#include <linux/power_supply.h>
-> =C2=A0#include <linux/regmap.h>
-> +#include <linux/types.h>
-
-Please keep file names in alphabetical order.
-
-> =C2=A0
-> =C2=A0#include <linux/unaligned.h>
-> =C2=A0
-> @@ -39,6 +40,7 @@
-> =C2=A0#define MAX172XX_DEV_NAME_TYPE_MASK	GENMASK(3, 0)
-> =C2=A0#define MAX172XX_DEV_NAME_TYPE_MAX17201	BIT(0)
-> =C2=A0#define MAX172XX_DEV_NAME_TYPE_MAX17205	(BIT(0) | BIT(2))
-> +#define MAX172XX_DEV_NAME_TYPE_MAX77759	0
-> =C2=A0#define MAX172XX_QR_TABLE10		0x22
-> =C2=A0#define MAX172XX_BATT			0xDA	/* Battery voltage */
-> =C2=A0#define MAX172XX_ATAVCAP		0xDF
-> @@ -46,6 +48,7 @@
-> =C2=A0static const char *const max1720x_manufacturer =3D "Maxim Integrate=
-d";
-> =C2=A0static const char *const max17201_model =3D "MAX17201";
-> =C2=A0static const char *const max17205_model =3D "MAX17205";
-> +static const char *const max77759_model =3D "MAX77759";
-> =C2=A0
-> =C2=A0struct max1720x_device_info {
-> =C2=A0	struct regmap *regmap;
-> @@ -54,6 +57,21 @@ struct max1720x_device_info {
-> =C2=A0	int rsense;
-> =C2=A0};
-> =C2=A0
-> +struct chip_data {
-> +	u16 default_nrsense; /* in regs in 10^-5 */
-> +	u8 has_nvmem;
-> +};
-> +
-> +static const struct chip_data max1720x_data=C2=A0 =3D {
-> +	.default_nrsense =3D 1000,
-> +	.has_nvmem =3D 1,
-> +};
-> +
-> +static const struct chip_data max77759_data =3D {
-> +	.default_nrsense =3D 500,
-> +	.has_nvmem =3D 0,
-> +};
-
-This should be made a required devicetree property instead, at least for
-max77759, as it's completely board dependent, 'shunt-resistor-micro-ohms'
-is widely used.
-
-I also don't think there should be a default. The driver should just fail
-to probe if not specified in DT (for max77759).
-
-> +
-> =C2=A0/*
-> =C2=A0 * Model Gauge M5 Algorithm output register
-> =C2=A0 * Volatile data (must not be cached)
-> @@ -369,6 +387,8 @@ static int max1720x_battery_get_property(struct
-> power_supply *psy,
-> =C2=A0			val->strval =3D max17201_model;
-> =C2=A0		else if (reg_val =3D=3D MAX172XX_DEV_NAME_TYPE_MAX17205)
-> =C2=A0			val->strval =3D max17205_model;
-> +		else if (reg_val =3D=3D MAX172XX_DEV_NAME_TYPE_MAX77759)
-> +			val->strval =3D max77759_model;
-> =C2=A0		else
-
-This is a 16 bit register, and while yes, MAX172XX_DEV_NAME_TYPE_MASK only
-cares about the bottom 4 bits, the register is described as 'Firmware
-Version Information'.
-
-But maybe it's ok to do it like that, at least for now.
-
-> =C2=A0			return -ENODEV;
-> =C2=A0		break;
-> @@ -416,7 +436,6 @@ static int max1720x_probe_nvmem(struct i2c_client
-> *client,
-> =C2=A0		.priv =3D info,
-> =C2=A0	};
-> =C2=A0	struct nvmem_device *nvmem;
-> -	unsigned int val;
-> =C2=A0	int ret;
-> =C2=A0
-> =C2=A0	info->ancillary =3D i2c_new_ancillary_device(client, "nvmem", 0xb)=
-;
-> @@ -438,6 +457,27 @@ static int max1720x_probe_nvmem(struct i2c_client
-> *client,
-> =C2=A0		return PTR_ERR(info->regmap_nv);
-> =C2=A0	}
-> =C2=A0
-> +	nvmem =3D devm_nvmem_register(dev, &nvmem_config);
-> +	if (IS_ERR(nvmem)) {
-> +		dev_err(dev, "Could not register nvmem!");
-> +		return PTR_ERR(nvmem);
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int max1720x_get_rsense(struct device *dev,
-> +					 struct max1720x_device_info
-> *info,
-> +					 const struct chip_data *data)
-> +{
-> +	unsigned int val;
-> +	int ret;
-> +
-> +	if (!data->has_nvmem) {
-> +		info->rsense =3D data->default_nrsense;
-> +		return 0;
-> +	}
-> +
-> =C2=A0	ret =3D regmap_read(info->regmap_nv, MAX1720X_NRSENSE, &val);
-> =C2=A0	if (ret < 0) {
-> =C2=A0		dev_err(dev, "Failed to read sense resistor value\n");
-> @@ -446,14 +486,9 @@ static int max1720x_probe_nvmem(struct i2c_client
-> *client,
-> =C2=A0
-> =C2=A0	info->rsense =3D val;
-> =C2=A0	if (!info->rsense) {
-> -		dev_warn(dev, "RSense not calibrated, set 10 mOhms!\n");
-> -		info->rsense =3D 1000; /* in regs in 10^-5 */
-> -	}
-> -
-> -	nvmem =3D devm_nvmem_register(dev, &nvmem_config);
-> -	if (IS_ERR(nvmem)) {
-> -		dev_err(dev, "Could not register nvmem!");
-> -		return PTR_ERR(nvmem);
-> +		dev_warn(dev, "RSense not calibrated, set %d mOhms!\n",
-> +						data-
-> >default_nrsense/100);
-> +		info->rsense =3D data->default_nrsense;
-> =C2=A0	}
-> =C2=A0
-> =C2=A0	return 0;
-> @@ -474,6 +509,7 @@ static int max1720x_probe(struct i2c_client *client)
-> =C2=A0	struct device *dev =3D &client->dev;
-> =C2=A0	struct max1720x_device_info *info;
-> =C2=A0	struct power_supply *bat;
-> +	const struct chip_data *data;
-> =C2=A0	int ret;
-> =C2=A0
-> =C2=A0	info =3D devm_kzalloc(dev, sizeof(*info), GFP_KERNEL);
-> @@ -488,9 +524,19 @@ static int max1720x_probe(struct i2c_client *client)
-> =C2=A0		return dev_err_probe(dev, PTR_ERR(info->regmap),
-> =C2=A0				=C2=A0=C2=A0=C2=A0=C2=A0 "regmap initialization failed\n");
-> =C2=A0
-> -	ret =3D max1720x_probe_nvmem(client, info);
-> +	data =3D device_get_match_data(dev);
-> +	if (!data)
-> +		return dev_err_probe(dev, ret, "Failed to get chip
-> data\n");
-> +
-> +	if (data->has_nvmem) {
-> +		ret =3D max1720x_probe_nvmem(client, info);
-> +		if (ret)
-> +			return dev_err_probe(dev, ret, "Failed to probe
-> nvmem\n");
-> +	}
-> +
-> +	ret =3D max1720x_get_rsense(dev, info, data);
-> =C2=A0	if (ret)
-> -		return dev_err_probe(dev, ret, "Failed to probe
-> nvmem\n");
-> +		return dev_err_probe(dev, ret, "Failed to get RSense");
-> =C2=A0
-> =C2=A0	bat =3D devm_power_supply_register(dev, &max1720x_bat_desc,
-> &psy_cfg);
-> =C2=A0	if (IS_ERR(bat))
-> @@ -501,7 +547,8 @@ static int max1720x_probe(struct i2c_client *client)
-> =C2=A0}
-> =C2=A0
-> =C2=A0static const struct of_device_id max1720x_of_match[] =3D {
-> -	{ .compatible =3D "maxim,max17201" },
-> +	{ .compatible =3D "maxim,max17201", .data =3D (void *) &max1720x_data
-> },
-> +	{ .compatible =3D "maxim,max77759-fg", .data =3D (void *)
-> &max77759_data},
-
-missing space before }
-
-Cheers,
-Andre'
-
-> =C2=A0	{}
-> =C2=A0};
-> =C2=A0MODULE_DEVICE_TABLE(of, max1720x_of_match);
->=20
-
+P.S.: As the paravirt maintainer I would have preferred to be Cc-ed in the
+       initial patch mail.
 
