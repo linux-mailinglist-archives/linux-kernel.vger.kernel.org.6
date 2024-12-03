@@ -1,146 +1,205 @@
-Return-Path: <linux-kernel+bounces-428613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69FFB9E1165
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 03:37:23 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 432979E1168
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 03:37:56 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F2611651CE
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 02:37:53 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 325D61531C4;
+	Tue,  3 Dec 2024 02:37:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=jaguarmicro.com header.i=@jaguarmicro.com header.b="c6+TrShR"
+Received: from HK3PR03CU002.outbound.protection.outlook.com (mail-eastasiaazon11021117.outbound.protection.outlook.com [52.101.129.117])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0C845B225A3
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 02:37:21 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DD5B14F136;
-	Tue,  3 Dec 2024 02:37:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gIWS2hT+"
-Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com [209.85.217.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07EA717555;
-	Tue,  3 Dec 2024 02:37:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.41
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733193433; cv=none; b=Q607tU4hMNIWRfRrhDygkhkeb9uCgYAaUSQWyLa6tHmMu6v5189yEWWh97z+NFeCZWG1c7n/68OqybTsEBGx8++IMM5YO8kJfY52O4Pz0nay6jtlubWziPdYb2jbcG23HWoP/kQeiSzZNYMUb+FXNwOsbmDjshsTSNq0J2LPO5M=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733193433; c=relaxed/simple;
-	bh=6Ja4w+58kzvqSCMhVlQfCP1pDkXx6r+Q8RYdMY+p/rc=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=ki7NM2iLxwV6bC2cOmTDE/Vyz4XtHYj0VfqTgRnVPNdqsDWLDkX1sremirehpxXqp1KHslbXXvchLWRjyhN1fZsnnpMr25c7MRRC2ic708Uz8vxZGtv+uBNLJBMd+DRHTKf9IC03IGGE0vAL8TL6HgemmtmPn5hOTZtFtGq3mI8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gIWS2hT+; arc=none smtp.client-ip=209.85.217.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f41.google.com with SMTP id ada2fe7eead31-4add8596cccso134806137.0;
-        Mon, 02 Dec 2024 18:37:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733193431; x=1733798231; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=GtLF14vm7EJeeDXSwAcjR67YkypYDnF88/MBHtM834c=;
-        b=gIWS2hT+sb/Y1ePZheApd1reoB3eADE5Fi03FRaRPrGBYwwxz6jhNiHFPH2qXH8YAr
-         fRTz1NOGQZVwzLnRHiWNLS8PtnOAr+6ghe6WSsUk2qMvaRKQcwiae0zax/P8qy3bnPWP
-         dqQl5OEgF827Caz+iYOQTt4EMIyZK5uMqAw3e/Uhc5+87eGEk1ILdHQ6JWRPU6QD0Hh6
-         OLJfU19KnZU/EAeJ1yFOd5nY52Ta4jloZ3NgGnBrJbP38lY4ilsCkeHucwKp3YIOG/yE
-         8n2yDYnfGGKtWAS+HpDJGHZK2V66Clu2dQ9/xmMS1K83qk4D2Q8B4xBx1sSyGnd8pc3H
-         fM2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733193431; x=1733798231;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=GtLF14vm7EJeeDXSwAcjR67YkypYDnF88/MBHtM834c=;
-        b=nbJS3sUg7J4+90H0Nxhb+0i812ig2I51tFy69wRjHeU4c/2lUTaoRPhiC5FjHWjgrc
-         tyXHlIzn9rLLX3j0STJs7m+UxHAVFF2zPbRDdL/5JvjQO6tXdUv6D0VlU2kgzRTPfkh/
-         OwgRLEm2StZJGEm6Cw7fyYH0qBAk4H1i6pZsmwrJx4B41V4GV0cMC8EUOh1tjmHSzFUq
-         Gjpuv/OhuydXS0bQNb8NYl3S3BsIr7G5l+OVmdij4Z1SsXYsXs8iz0qOT/7QWERDg83v
-         GAXaE+lviUW0Oj9RI7huTJj85xhlGYYjQfl3866oMcBmqF+HGTSPRlkxnchxDW4g5CHz
-         Z9nw==
-X-Forwarded-Encrypted: i=1; AJvYcCVmE6dPiSSyMwb9IX+MM5OtA7U0FahpB6rZTFCZ6I7WqtgpIGDsMbATFSbogqbxHiaLF47EKgoeuzSt2BA=@vger.kernel.org, AJvYcCW6qPKh+8zxZcsoAV65BhPBNUAvXW7NTn5w13f/bVV9nH8DwWLKC8dqm/oKVtbvlEGuJe6Ab26q@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNaDU6B0v++BdEGB9YcdtJ7cp+q7WcBN0PaF0rfeWG3djPI5Vk
-	tCVbTfQlGd9EWqo/Qa4lJn3P7YCGllq/HuqTTJAmiUI85vMLeaIYxizFvx9DQz+B9/v04RtmGuR
-	Jsu6v1u7Y+rIOewCw6qhviJZntVE=
-X-Gm-Gg: ASbGncsXabeq/tLB+5ENSdyItTJdNvSYY3f0xsHF5TmsP+f71iYCn/aNYufkq530+Kd
-	Cl6ytieb3Yg5NzgOPsm1fmjpivHkU9Dan+A==
-X-Google-Smtp-Source: AGHT+IHReezRoW3eC5Hg8cWzDQ7b13LwHDtgUBT/+WZ1p3E0aok+cX8yIGzzysN0TH1L+BC/T0e88MLB9Q/MSYvGUJs=
-X-Received: by 2002:a05:6102:3707:b0:4af:3d99:f591 with SMTP id
- ada2fe7eead31-4af97311588mr602372137.10.1733193430820; Mon, 02 Dec 2024
- 18:37:10 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A4401EA84
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 02:37:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.129.117
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733193469; cv=fail; b=b3CcUm4T5+2Ko0lai3DFxioDCjRAtIbOmPMfF6jNPpNcT061GCTZlY50g56/+k0wjaY7/TOoxsUNsQznOL5/nD9pVyStMV6cLTlfo4keKAKVy+zDIrb4kxNvh9G0mCxSRWMJLxacxpPQYEa5Mcl+iEwF3Ez0BtCbpDFgDwwPrHE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733193469; c=relaxed/simple;
+	bh=z+aCgE/vr9Q++2MmGL2m7ElnSHnEHn+3/bzvgfy6rho=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=nBjlnUM3j/CfayUa7XGjQby/ic+pgeB1R+LPeGl4njwrmO14nfmSkgBtuoByhAZyk/8zXO7x7YEh6vWZjsLKIpxHw6gA7bERX94rvUgvEM05vdBRzoJfb2KBQYj2MM5TsvJwmzMPuGizsbTT+Z4nIez4z9um7qvDohkJwZVMjgs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jaguarmicro.com; spf=pass smtp.mailfrom=jaguarmicro.com; dkim=pass (2048-bit key) header.d=jaguarmicro.com header.i=@jaguarmicro.com header.b=c6+TrShR; arc=fail smtp.client-ip=52.101.129.117
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jaguarmicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jaguarmicro.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=EU27LKNmqp+NoM46dbkPaNhhdsljs2uQFCAIkMvGvzQl6v8ZIb38LDwYpvPrUCizNrl0yi6jCAcOelOg0WYAl4xV3WP5keYSr3KAj1WjK3ebHr0FlFZTht2aiXYpmQGnBGdXfesdpc9UrFPjRe5QSNKcP4MNgHQNGqonSIFKfL1rEfYEefzyVhJkXOkU8l+NT2jki7TR16X+NAs9bvBuXLReP0ujcs/NC+A7fZa8kpYyT+G4a160q3x6Zwyo/bQr94EgTflDXePQnBzE5ahwI/bgPayuAtKkzcizPASU73U0Cd3GRpX8M87StXjqiDXU79lGY9a/mxNvyJ2lRD59jQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=3NlcPSssFiT/Xbd9EZOQilwl4flvU6ARypuFSQmmKnQ=;
+ b=OKKcULNHgsOhpr9d9pgR3Ze3nr5QTJ8MZlCjD+WMd7YzcLf081TtwiwIHS+l4DDXpHiGUjC9uwQ1zXBpvisSHTL4xkqx5lPpH0B9on2BoQ9ZvQK5rEx4jmXYisvftb++EdxCzQp3pnAW3v0117yYTAiBQmfXRHdDeolSlyvRWYr4ljEH4Bk3EWJwLVrFeCjOtXl7qavrOvFKOKtEFkBHlM3MWlmO+EpFWGj0UzTbofQaeMV3GQVdKytdU7tRGS+8ygbJ61ItyCcP8DjQe0gXYcgFIDLhnrD9RBXlXYbmXvbS0wS9cdOyhLsQkn6cjXSS1qtPchrCaC0P8FeAj7E2xQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=jaguarmicro.com; dmarc=pass action=none
+ header.from=jaguarmicro.com; dkim=pass header.d=jaguarmicro.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jaguarmicro.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3NlcPSssFiT/Xbd9EZOQilwl4flvU6ARypuFSQmmKnQ=;
+ b=c6+TrShR4bhoaIpzTCOdXXFwsDSAV1Tx2rIeuLagDq5IwAc5RBsyzrh5OLH9bEzydY57zoiLx2BlEVMfwg9+UVrSjcU8Tx7HnIyyhOs6jqeUAM5ddO/RrSVyMgETSKBqJcNm2/9b5UnRP/2Va9uq6V6aIkzrylk0BaP6dfX+2dcwYjtOPJ/mFQKGQboZ2UPl81WflwpOBGfNKkDqK1bESMnHtBOS7u/JBqdztujGlJ35+2iHAZWfw/eQa/Hv9v6YHKG2hBEAO57TTbvdYFfdHW3SlNMLjA2XNSM/Lq4AVx+dPzJPYboefQp1QfzRmuyolToukYCmcCpP3xvrpZd3yw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=jaguarmicro.com;
+Received: from SEYPR06MB6756.apcprd06.prod.outlook.com (2603:1096:101:165::11)
+ by SEZPR06MB7186.apcprd06.prod.outlook.com (2603:1096:101:231::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.6; Tue, 3 Dec
+ 2024 02:37:41 +0000
+Received: from SEYPR06MB6756.apcprd06.prod.outlook.com
+ ([fe80::922f:a649:adbf:6634]) by SEYPR06MB6756.apcprd06.prod.outlook.com
+ ([fe80::922f:a649:adbf:6634%5]) with mapi id 15.20.8230.008; Tue, 3 Dec 2024
+ 02:37:40 +0000
+From: "Yuxue Liu yuxue.liu@jaguarmicro.com" <yuxue.liu@jaguarmicro.com>
+To: jasowang@redhat.com,
+	lkp@intel.com
+Cc: mst@redhat.com,
+	angus.chen@jaguarmicro.com,
+	linux-kernel@vger.kernel.org,
+	virtualization@lists.linux.dev,
+	xuanzhuo@linux.alibaba.com,
+	oe-kbuild-all@lists.linux.dev,
+	llvm@lists.linux.dev,
+	yuxue.liu@jaguarmicro.com
+Subject: [PATCH v2] vdpa/vp_vdpa: implement kick_vq_with_data callback
+Date: Tue,  3 Dec 2024 10:37:43 +0800
+Message-Id: <20241203023743.1757-1-yuxue.liu@jaguarmicro.com>
+X-Mailer: git-send-email 2.33.0.windows.2
+In-Reply-To: <CACGkMEvf9TS6c9PTiwWn3POr33m7m1shNfHOkviZpk-Pkbf79Q@mail.gmail.com>
+References: <CACGkMEvf9TS6c9PTiwWn3POr33m7m1shNfHOkviZpk-Pkbf79Q@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SG2P153CA0014.APCP153.PROD.OUTLOOK.COM (2603:1096::24) To
+ SEYPR06MB6756.apcprd06.prod.outlook.com (2603:1096:101:165::11)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: =?UTF-8?B?5LiH6Ie06L+c?= <kmlinuxm@gmail.com>
-Date: Tue, 3 Dec 2024 10:37:01 +0800
-Message-ID: <CAHwZ4N0gbTvXFYCawbOUFWk7yitTeAWwUmfmb7RU68n-md8x4Q@mail.gmail.com>
-Subject: Re: [PATCH 2/2] net: phy: realtek: add dt property to disable
- broadcast PHY address
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: kuba@kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	willy.liu@realtek.com, Yuki Lee <febrieac@outlook.com>
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SEYPR06MB6756:EE_|SEZPR06MB7186:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4001c0e2-7b81-4eff-ba46-08dd13437529
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|52116014|376014|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?NsIshxzEX1Nccy323Rn1SFzHM7RnN29GBkMXhbwxP8C/bGld9MIAYobkKyZn?=
+ =?us-ascii?Q?/6x/H1eszXGpN7m7rWj445J8kFd0XHs9Diz2nKISaIM7YcYgqnbhvJhB07D1?=
+ =?us-ascii?Q?iYUvqbJ8HwLz7HntUw/7EWZRB2xPGhxMF9k+xEQxbkZTsA+jKPnNptvP7DGF?=
+ =?us-ascii?Q?A3WefzE1DPpYC3vkNxEfmU5yqDx58PI2IXw/uC16qSRjty3fmpG5zd51IGYb?=
+ =?us-ascii?Q?7IB8WKGQy58AF3znnj0+vQd05r5T3KDA8kBVYvM+IfCPQoF+qVQv59GiZrar?=
+ =?us-ascii?Q?z8qjfRIKHwtr1RsPWR/aPXUTm1IWBABbfF6uLCUuz3fRveHYzzR1vALFrO/Z?=
+ =?us-ascii?Q?/DyYON1LR96NvPUyyYVULvxOaYBwBImHe/haflcfYXaezz1O5JYqBXAxCh0E?=
+ =?us-ascii?Q?610llbV1YR1QevSM5xWqXVxh0sBnX1I4MHuxG5+LMb1ZR7BxqrWnn5sDk86q?=
+ =?us-ascii?Q?mPIC+J3MXSIJvPf53E/JJ9tWm+NsDGxYUpUW5DBXPx7IgeS5SOMrT1RTJKd1?=
+ =?us-ascii?Q?kcO4ZVUEpsvaSJATj9mjrZ3SB+04ZiLpPozAvDVExJvXq0hEH7jGM3WfM64D?=
+ =?us-ascii?Q?ojdhmQ993NwrL6Z/3xJjKJb4oMu6msiywcKmpr8h4qsd5KQeJFe+1kJoWaQy?=
+ =?us-ascii?Q?YHErDxWP6S2LHgGij642LYwiLVWcpacb4eShSjCFOq3wbDij+ugz+lzI5rOt?=
+ =?us-ascii?Q?msPVoHYZSsb41IZ8PDjUyNlojmPfHRmyFLLnMVrPUPNK2R4H0PDgwK7mQuiV?=
+ =?us-ascii?Q?RUQEM2nhoLAKFoj9LS3goLXRYiSpxjZmdnp7Dfdq66z+8j7OablEdUDajgai?=
+ =?us-ascii?Q?U7XzMVMx+59i2O0N+v8sSBuIcCPlL5ho92aevc0q7iurfs5RdybTaW5KiMsP?=
+ =?us-ascii?Q?rtUD7t0NeSKYvEiYqGNo8i6Fz3BsOoVTo6mVGjw0tufwo1Hwhsuw13L//aA6?=
+ =?us-ascii?Q?s2THtASR2JOyeZ2yIL9M6RFh8COhIsQt4eqUC6DjoBWHexhN8u42DQ1UwYfr?=
+ =?us-ascii?Q?3EhkQEWHZlst+l5MO12jxcDgwrBXbi0hO/O1BxjbiH+ts78S648T+mNZRxKv?=
+ =?us-ascii?Q?bMG1ub1Cr1F1S98LAv5L0uX0R+xHdEjlwQ0AbCYWCYz5tbf8YAi80UTZMxKL?=
+ =?us-ascii?Q?PJWMpPbX/IKd4TxyYfBH1n8NNbQG3IRnI+ZW1LIT/Ydgyq6aQDA6rXdl8AFN?=
+ =?us-ascii?Q?N0nbwqmoXWpMDwmne6zrsBcwRoGTtBYUdGvioQTFj7/hHZvGnGQiXNvm3EGv?=
+ =?us-ascii?Q?xcqXDNG/bONv5YBQSDV74soiNMn5QKVDDN3BmtNALZtmGwQ85qDVozIS7fro?=
+ =?us-ascii?Q?dzuQ1v2BsmNbQYA1jDTt51KEPChBLETGKv+GpH47tm9pOWSH5VOAXb+53+ZR?=
+ =?us-ascii?Q?SSz1Kvz70WKFSMHvLmDxDo8uc7l8DjL6H/FmAst6X+Yj6eOX+Q=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEYPR06MB6756.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(52116014)(376014)(1800799024)(38350700014);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?Jrn0Iwo6iXfkI0qBWHDDBKNj4IgNPOJ1i/JtMgRVsFpjExLm/y3dEGBWLZJh?=
+ =?us-ascii?Q?QgLDpd6eXBqZEppSrkpGyTQYVmc1KE7QQSEOee3jARbYP/Pp3P0udbbTYqAC?=
+ =?us-ascii?Q?c7EQ1wgNDYukfadNdoK+dg2CWssvdLVPDCd2oU3CjUDM6f+T0AmWUAWIQKVa?=
+ =?us-ascii?Q?WAb6FhiKdfDl5u730aILERMb0tB61wpAKMEQAAjB+KbtNXxc1O21POZvS6cE?=
+ =?us-ascii?Q?4/ppYCHGHPyXor30eDbwoPAsPpY/OeqqjZtix/GhobhPlyo51c3wFIW1+qNv?=
+ =?us-ascii?Q?pmZ7xdl2w8yldXMN7HKRxZxfvEE48MskzKSb75R24OgASGGy38DKS1Vs8P1t?=
+ =?us-ascii?Q?ZXebPxGmNYCO8k8DmPihK9ol2p4PpTY5ZMQt4FnEMhA8KKCtw6A9M8qKLWDa?=
+ =?us-ascii?Q?nZBvf0a/dFvCteMBcRTab66oDZMLMA6q3AoE08CZKQDRZdtCET4z6I0qMs6d?=
+ =?us-ascii?Q?3N+Q939yzi7qwYnZ1cG5Q/4BdGlWapDHCu/zmiCv+CVa8cVAwt2mYcnmAOCp?=
+ =?us-ascii?Q?ZnAkuFsv/IhG1HBFBvaVpbnW5ZP3sGgZz3yUJ2GO0ofBfv3FUmeQBJ+wBtC4?=
+ =?us-ascii?Q?uLLiIsp/drg0GRgU/96Cn5/Cw45WYTThF5cQBplF15xBnT7DGAR/ENPhu4i6?=
+ =?us-ascii?Q?oDfRdfd7D3inQiCd939fUibnmmuwT5SvJhqBDdWbHsphyFj6FAjxh+ZallPw?=
+ =?us-ascii?Q?vBLBz13mFNcySfIDSkG1MUSqAaTE83tMSaPd6Fy8vjgc2Rb1O+0u7m1v0x3x?=
+ =?us-ascii?Q?v3OzJEKibnKiobB7XZhISHHufnBjUiiTDAVaMhDXisnMGjbD+/RVkxVfeUjN?=
+ =?us-ascii?Q?3FNO7/f4RyUBF6rKTa4ciLptIh0q3LtIiDlFvNwn4o71h3vuLGnnqVKaKnMe?=
+ =?us-ascii?Q?YFNTR4jXeNYU1Ow6suElKD+AJfuoMmH19XrHAfkTY8RAuNxdCeq+/W41N2pn?=
+ =?us-ascii?Q?zS5VMzHGedSuXazN/40/w5BMDoXjEedTc7Nr4vhE5dOk89d4uMQAbJwQJT+U?=
+ =?us-ascii?Q?CeC1gtESf6OmRYyGPT6CAtXGe6BRVGzjgFBa9AdFzRP070Ct4uk8KkhQfLoU?=
+ =?us-ascii?Q?TXrxw9SZsOBi54xB/WQ90ls8oIuRd+NyVIfIFm25yBaLCsjfnIqXU5oJbQom?=
+ =?us-ascii?Q?Awo6nlAW5DaP48pOpukDBHZctIg5ieuCubgcnUVxzwiRzjwKr0w5tU7znKjj?=
+ =?us-ascii?Q?B1hCtj8DOIV7xlyHGkuAS9z8dr+kassyCQ3NqOgfauioIIkEnRYkISvMz5BC?=
+ =?us-ascii?Q?A+/OUfYT+CfrIJq56975WopwFc1+8M3/n+AOeUb2y2vKI+ZiBEKsqtXEVzb+?=
+ =?us-ascii?Q?v41iv3uX04dn7kBHl9VZrnCyHMZ2pWAZJzUZA/SjGIidFIrMlvRYojL23YBL?=
+ =?us-ascii?Q?ITrfduKuMq+rh4Ji/isi4lJsrbfmRCllfFNqew8Ah5LNQwKiOymlRFO7otyx?=
+ =?us-ascii?Q?YsFfmrVHIGU2xsIbBfG/FhGUvi5nb5IsPNHhw/d8S3BLMNuPZayYF9PnVjpp?=
+ =?us-ascii?Q?kOfFoajS2FSjA2mHzlFkPhbmCe6X1Fp1sYyWbdSsU7SEGAijqg3tZYg5oFi4?=
+ =?us-ascii?Q?bpeILqfAbikLZ/DQ81rTkw1RfrdunWfJKC97rnEZrAY0FN6K1I5Yp5XioMSK?=
+ =?us-ascii?Q?Zg=3D=3D?=
+X-OriginatorOrg: jaguarmicro.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4001c0e2-7b81-4eff-ba46-08dd13437529
+X-MS-Exchange-CrossTenant-AuthSource: SEYPR06MB6756.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Dec 2024 02:37:40.8221
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 1e45a5c2-d3e1-46b3-a0e6-c5ebf6d8ba7b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Xm/Yffhn+htR7FsMzd5qIonDKU2jioDAHGnS7TuBiJD4Lw0dlAx+ZOTzayzREuBZdVelQxN0KxZEP9Ir0cf99AxTTDxm/LkVmZrXfB9E7gE=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR06MB7186
 
-On 2024/12/3 8:04, Andrew Lunn wrote:
-> On Tue, Dec 03, 2024 at 03:50:29AM +0800, Zhiyuan Wan wrote:
->> This patch add support to disable 'broadcast PHY address' feature of
->> RTL8211F.
->>
->> This feature is enabled defaultly after a reset of this transceiver.
->> When this feature is enabled, the phy not only responds to the
->> configuration PHY address by pin states on board, but also responds
->> to address 0, the optional broadcast address of the MDIO bus.
->>
->> But not every transceiver supports this feature, when RTL8211
->> shares one MDIO bus with other transceivers which doesn't support
->> this feature, like mt7530 switch chip (integrated in mt7621 SoC),
->> it usually causes address conflict, leads to the
->> port of RTL8211FS stops working.
->
-> I think you can do this without needing a new property. The DT binding
-> has:
->
->             reg = <4>;
->
-> This is the address the PHY should respond on. If reg is not 0, then
-> broadcast is not wanted.
->
-First, broadcast has no relationship with PHY address, it allows MAC
-broadcast command to all supported PHY on the MDIO bus.
+From: Yuxue Liu <yuxue.liu@jaguarmicro.com>
 
-I can't assume that there's no user use this feature to configure multiple
-PHY devices (e.g. there's like 3 or more PHYs on board, their address
-represented as 1, 2, 3. When this feature is enabled (default behavior),
-users can send commands to address 0 to configure common parameters shared
-by these PHYs) at the same time. And they can configure each PHY by it's
-own address without influencing other PHY too.
+Implement the kick_vq_with_data vDPA callback.
+On kick, we pass the next available data to the hardware by writing it in
+the kick offset.
 
-> If reg is 0, it means one of two things:
->
-> The DT author did not know about this broadcast feature, the PHY
-> appeared at address 0, so they wrote that. It might actually be
-> strapped to another address, but it does not matter.
->
-Well, that's possible. A misconfiguration on DT with only ONE PHY may
-just works, if we disable this feature by default, may cause some device
-stops working.
+Signed-off-by: Yuxue Liu <yuxue.liu@jaguarmicro.com>
+---
+v2: fix build error for kernel test robot
 
-> The DT author wants it to use the broadcast address, it might even be
-> strapped to address 0.
->
-Again, the broadcast address is shared by all PHYs on MDIO which
-support this feature, it's handy for MAC to change multiple PHYs
-setting at the same time. But each PHY must have their own address,
-and the address usually can't be broadcast address (0).
+ drivers/vdpa/virtio_pci/vp_vdpa.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-> Am i missing anything?
->
->       Andrew
+diff --git a/drivers/vdpa/virtio_pci/vp_vdpa.c b/drivers/vdpa/virtio_pci/vp_vdpa.c
+index 16380764275e..8787407f75b0 100644
+--- a/drivers/vdpa/virtio_pci/vp_vdpa.c
++++ b/drivers/vdpa/virtio_pci/vp_vdpa.c
+@@ -367,6 +367,14 @@ static void vp_vdpa_kick_vq(struct vdpa_device *vdpa, u16 qid)
+ 	vp_iowrite16(qid, vp_vdpa->vring[qid].notify);
+ }
+ 
++static void vp_vdpa_kick_vq_with_data(struct vdpa_device *vdpa, u32 data)
++{
++	struct vp_vdpa *vp_vdpa = vdpa_to_vp(vdpa);
++	u16 qid = data & 0xFFFF;
++
++	vp_iowrite32(data, vp_vdpa->vring[qid].notify);
++}
++
+ static u32 vp_vdpa_get_generation(struct vdpa_device *vdpa)
+ {
+ 	struct virtio_pci_modern_device *mdev = vdpa_to_mdev(vdpa);
+@@ -472,6 +480,7 @@ static const struct vdpa_config_ops vp_vdpa_ops = {
+ 	.get_vq_size	= vp_vdpa_get_vq_size,
+ 	.set_vq_address	= vp_vdpa_set_vq_address,
+ 	.kick_vq	= vp_vdpa_kick_vq,
++	.kick_vq_with_data      = vp_vdpa_kick_vq_with_data,
+ 	.get_generation	= vp_vdpa_get_generation,
+ 	.get_device_id	= vp_vdpa_get_device_id,
+ 	.get_vendor_id	= vp_vdpa_get_vendor_id,
+-- 
+2.34.1
 
-I would recommend to add this feature, because it doesn't change the
-behavior of this driver, and allows this PHY works together with
-other PHY or switch chip which don't support this feature, like mt7530 or
-Marvell ones.
-
-Sincerely,
-
-Zhiyuan Wan
 
