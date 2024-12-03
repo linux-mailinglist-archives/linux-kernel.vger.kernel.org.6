@@ -1,140 +1,203 @@
-Return-Path: <linux-kernel+bounces-428517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D0819E0F8C
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 01:15:14 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E0889E0F8E
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 01:15:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9513AB22FDB
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 00:15:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6094AB234B8
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 00:15:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD96D2500C2;
-	Tue,  3 Dec 2024 00:15:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8423A1370;
+	Tue,  3 Dec 2024 00:15:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QSTXGLGH"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="ovKzJy+Y"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD26163B9;
-	Tue,  3 Dec 2024 00:15:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F085564D
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 00:15:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733184906; cv=none; b=e6yBAlirAQUc0EYYGN9Kao8RqqD4I3z++FKAhpPpOwSuzLbukEuP1dVRuo9UuvPESkyckv/IoNpmK8I96xW6ulefrhS9bUh9Jv8nJ8REcmJzepH/L6wz9pHcPbS1eClaNKmVbdAzArch31litP82gW+N2USV61PKbK6bFghdvag=
+	t=1733184936; cv=none; b=ILy/09SJ9v/0W667DldqdBzR0m7N2uD3WGUuhvZ6mrcqrnFAOn0Sz8XJSNV+riQZnw1afCOVB3II3OSGUTDJQVpGQabxjtgx0EovRwIwOqQikq2QTXLeBprrIhl5r8VYp0QPJl3ZBT+7MUtMauCsADbBPuZrbFvsfydBPcVZtUE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733184906; c=relaxed/simple;
-	bh=sFpARMD5DEnpcvy3BKqI9LW6BSUs9SACQXTXuoBRu7s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i4W2l6M5SB31GoPIOb5gyYYJ+oJc450bSCez9qTUOvHy8Ft5A6DUSElsFtXeb+ZHtbyn2q6zkinE92sPGUxT64Z+Lz/wyPaIRpOfU5tmpIqXTpESrn2MjJftVMNF7mFN6YrLuU+mkUzlqxr6UfnZokbcXggpw0za1pNrs7b+kps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QSTXGLGH; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-211fb27cc6bso38952515ad.0;
-        Mon, 02 Dec 2024 16:15:04 -0800 (PST)
+	s=arc-20240116; t=1733184936; c=relaxed/simple;
+	bh=r0YDfQRpMEbID59vFjWbfe/cgrEj5t8qE0gvWCUMUrs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=T4S/4yPS81AQx1EFBCRVpbSiGmXsZBtaWfBz6bgSmN6NTee0mqgqZYLqk3qnlTFclDANmGdUUZ+3eBeoI/rNMOhQTwYq83oBiCABT8m9Su+dTis7QQEkq6E4qzFYx4puLbqfsCOr/vKIqFqG8ybF551xnT3qaFijHsWP4qAOW20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=ovKzJy+Y; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-724d57a9f7cso4160542b3a.3
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 16:15:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733184904; x=1733789704; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=P799PVpPLal4v1SIHjVIekWVJppU4272KgWygSJqrNM=;
-        b=QSTXGLGHz8Ee17aOddBZ2hLPZK24HVPs1QBthZ4G9ny5atfcW7i3/AggD3q+qt0XrU
-         23r5acjwr84brC5OZwtJliryUFRLoZsdF4Wt5qmgiH3IG9sAkdz6rUBFD6sfzPHc//9W
-         jjF10iXJKcmLzCX1sQNFLMRpuX+gtt8uZb4WyQsDnZxWRCGgCCmScIgdw/A2BU+7xIGO
-         T1/sUU9HF/4CdpcPBy1SOfTU4dyP5mG1fUcpPC8oxmszIoVqoQq3Cw9riI6GV6QR8FWx
-         O875TN2hDspZlVSWs0SVdx/EKAIU0cYDfFsVZy92RbsOvz/Vdo30TbnraaJFzlkHRF5k
-         Ho0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733184904; x=1733789704;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1733184934; x=1733789734; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=P799PVpPLal4v1SIHjVIekWVJppU4272KgWygSJqrNM=;
-        b=ZJJCZ5/r2xFuJsLcs4eP5O3NkZblu1VtVi2ZJ3RMcHyICxFeraKQy3v1CrzaDwUYOt
-         aaPXjySjZf5w/C0RVM4FfDd16wrWrv7UhD/tAWz4GdXBfehX9hvKiFCXsUrSbCtl0LZy
-         t5LRE90adHIwhfgf8qnYLHl1F6+JBPC0GizvAiqgqGpjDZUx3J4Usy+8q2IuEb+hOZ7H
-         QjtBeOPpsak0yxIE/t08RvAY5Ljm+EiYjS86OsUxkySHrSEe1Vj4FYN1802rqRYMR2nx
-         2ohz9cA+Xt+ZPTBf7/SxeKIBV5qWkTDXWYx1mQwIEKhXqBWskqHpX+C7t9X4+SUCYqCm
-         GijA==
-X-Forwarded-Encrypted: i=1; AJvYcCUL3DUlDYY+ki6pE+9rltwDAHDNkErt425J3Ed9hb8JcxLtlPIy6bSuO8LBpw4gHJR7caI=@vger.kernel.org, AJvYcCVb4dwqKm6Ips12gg7Ad9YCvlNUClrYKUpOzG6U4UpmsNT/U1VrIt+kPt6z9APdDeG0NHpvlAhAB29tggMr5GQj@vger.kernel.org, AJvYcCWKV1yU1B1mjEPlRoWiVom7Hw5CIXvAscTa0urWR3KquW+5Emto1Kj9DNdCJYdZG0LlXAvEDgs62fj1+lhF@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8m00GuowvgFMizVvnz3WRIGWtkMRQ6BcjaNCNO2/pzokpRr5p
-	rV7TJZcGqbXR2QjDnZXMP8lR/3crwY9tHUf0z5BMlDk7cmTltjM=
-X-Gm-Gg: ASbGncsDyOpMQWBzSbRAhV4mO1P0DN6mqLYsofeEzmFNMAESVicZVa1js3Ql6pMZWz2
-	erdS21kuB3c51/td+uMdRIpM4clBF0FSRhbQNo/zfEqvkUUDXCIwc2UGrvi1sdbtKg8XMkWh58z
-	JpcjKnHBazt/OJEgNOpligotJpTKQBEF0ZWYQXMPypdHUYcEbv5/BlPC9RQVuu++Fd+AU6QqDQ0
-	S+vdZ2yT9zSJ4ALcaLxKVjNdVhMWV85XN+PKIe9mjtgwVazbQ==
-X-Google-Smtp-Source: AGHT+IEE13VgAHt+B51vFr1A06FMBG0kR2b3nUwpxvlGKx/VNPWE5tC0MM+Effxm7wknS84m3P5qMA==
-X-Received: by 2002:a17:902:ecc4:b0:215:a028:4ed with SMTP id d9443c01a7336-215bceb3e5amr7595615ad.20.1733184904014;
-        Mon, 02 Dec 2024 16:15:04 -0800 (PST)
-Received: from localhost ([2601:646:9e00:f56e:123b:cea3:439a:b3e3])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-725417611dcsm9160425b3a.3.2024.12.02.16.15.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Dec 2024 16:15:03 -0800 (PST)
-Date: Mon, 2 Dec 2024 16:15:02 -0800
-From: Stanislav Fomichev <stfomichev@gmail.com>
-To: Marco Leogrande <leogrande@google.com>
-Cc: Andrii Nakryiko <andrii@kernel.org>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Mykola Lysenko <mykolal@fb.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	Shuah Khan <shuah@kernel.org>,
-	"Alessandro Carminati (Red Hat)" <alessandro.carminati@gmail.com>,
-	willemb@google.com, zhuyifei@google.com, bpf@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH bpf-next] tools/testing/selftests/bpf/test_tc_tunnel.sh:
- Fix wait for server bind
-Message-ID: <Z05NhvyagBbHs8Gq@mini-arch>
-References: <20241202204530.1143448-1-leogrande@google.com>
+        bh=k+YlV66sEeV5Gi1JEnWTwo3a+A+kAB7BmLzMmDK0RYY=;
+        b=ovKzJy+YOLwww/ObTOZTaGhWoyxvWJgWCkkFRPayduzbl3n3BThwwa8r+0wqRwMzWj
+         T3vm2iZo1/26rDvBivf6sYnYPm0AyLJkHAFCjAXv3UiP3KsU5J3eZPxhJPJuXfPwOM6c
+         rWfBe0hHCxl7uoyqzLdZjBF5DFdtGHKiTaxsCZlZrM3l67bfk4ch8BhjocILbpaNGNOs
+         BHSINwFUapr25U0xWlFozAwk+GjQ0EbJfbcw2cPeiFJhQWo/FvYFniUArQUyVuxgOFeg
+         UyO2QBPpGO67ZoGqCs4bS/jlOISEFkvq+32fADf8zOFZ8S+y0qu8pB4+k17MA6FAciXQ
+         w8Aw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733184934; x=1733789734;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=k+YlV66sEeV5Gi1JEnWTwo3a+A+kAB7BmLzMmDK0RYY=;
+        b=di6FCKOkMdbDn8LU/C5GsF2VC419Umoq2j4slFo2SNM4HlwvGJSeS0mRbSSE1idpW2
+         7DKKIdf0h6r7JchT0cbNevWBnxlB/21iZu/e3+j8/sVj05dexoOrlzTY3CvSSBg300dJ
+         frRB9nkgrMgxThDkaiuDK4rt6i/Fyy1DGvjhSFHJ+NR427Uol5NwPVICVwiFit6Yb/S2
+         K0A1yF/uB9nwjNsm+MhdoS+U/6X+yb9Ch2Cb/eVGQJOtmDa4MAypWVywmEmiEhHQHCZ8
+         voEeFy0iNJoM66CP/FfT0tzhM0sC5SmE7rbZ75DjmTSaCGaBglWQFv3EwVTDV4u8mXuh
+         znyA==
+X-Forwarded-Encrypted: i=1; AJvYcCUfOE5Vt6/p0ZEy5JE9bkUQHSjEPj0b9lMR3nAT0Os824Akl/EypuwcDWQOmBBAo3gP6qXLlVJ0vqbM/Yg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyc1IgzqJaApEPQGkYNRYh9L0yrA13RDg6vn/kzKgochRb+2sDv
+	9FS0SCrQ9ynZIPwQkbRPLdK7rzrCOM2eCQE0ZjD2wf8mOQFem9MOaz1wFCl55a8eWGsWXeotOvr
+	IF/k94guyuEbZz96o9v6nhttnFlC2zZK8nBZadg==
+X-Gm-Gg: ASbGncvpEh3IFxVCL13ht09Jh6ca7wzpTsaT9ObuMkxoTWcvFOQjtfvQVM1FACc1LS6
+	w+GabEcV8ZUd3jPBt+F2x7VU+HgKQgg==
+X-Google-Smtp-Source: AGHT+IHkfSZg8nwRSMyT59R8Thc83SJq1L85mjo/aMDSMjUafqwNxe8ioi4sjLMkGcNLINNqRnY9VhmQH6Pl1GzeePc=
+X-Received: by 2002:a17:90b:4f4e:b0:2ee:693e:ed7a with SMTP id
+ 98e67ed59e1d1-2ef012796c8mr807474a91.35.1733184934283; Mon, 02 Dec 2024
+ 16:15:34 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241202204530.1143448-1-leogrande@google.com>
+References: <20241119-pmu_event_info-v1-0-a4f9691421f8@rivosinc.com>
+ <20241119-pmu_event_info-v1-3-a4f9691421f8@rivosinc.com> <e124c532-7a08-4788-843d-345827e35f5f@sifive.com>
+In-Reply-To: <e124c532-7a08-4788-843d-345827e35f5f@sifive.com>
+From: Atish Kumar Patra <atishp@rivosinc.com>
+Date: Mon, 2 Dec 2024 16:15:23 -0800
+Message-ID: <CAHBxVyEwkPUcut0L7K9eewcmhOOidU16WnGRiPiP3D7-OS7HvQ@mail.gmail.com>
+Subject: Re: [PATCH 3/8] drivers/perf: riscv: Add raw event v2 support
+To: Samuel Holland <samuel.holland@sifive.com>
+Cc: Anup Patel <anup@brainfault.org>, Will Deacon <will@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Mayuresh Chitale <mchitale@ventanamicro.com>, 
+	linux-riscv@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, Palmer Dabbelt <palmer@rivosinc.com>, kvm@vger.kernel.org, 
+	kvm-riscv@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 12/02, Marco Leogrande wrote:
-> Commit f803bcf9208a ("selftests/bpf: Prevent client connect before
-> server bind in test_tc_tunnel.sh") added code that waits for the
-> netcat server to start before the netcat client attempts to connect to
-> it. However, not all calls to 'server_listen' were guarded.
-> 
-> This patch adds the existing 'wait_for_port' guard after the remaining
-> call to 'server_listen'.
-> 
-> Fixes: f803bcf9208a ("selftests/bpf: Prevent client connect before server bind in test_tc_tunnel.sh")
-> Signed-off-by: Marco Leogrande <leogrande@google.com>
-> ---
->  tools/testing/selftests/bpf/test_tc_tunnel.sh | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/tools/testing/selftests/bpf/test_tc_tunnel.sh b/tools/testing/selftests/bpf/test_tc_tunnel.sh
-> index 7989ec6084545..cb55a908bb0d7 100755
-> --- a/tools/testing/selftests/bpf/test_tc_tunnel.sh
-> +++ b/tools/testing/selftests/bpf/test_tc_tunnel.sh
-> @@ -305,6 +305,7 @@ else
->  	client_connect
->  	verify_data
->  	server_listen
-> +	wait_for_port ${port} ${netcat_opt}
->  fi
->  
->  # serverside, use BPF for decap
-> -- 
-> 2.47.0.338.g60cca15819-goog
-> 
+On Mon, Dec 2, 2024 at 2:37=E2=80=AFPM Samuel Holland <samuel.holland@sifiv=
+e.com> wrote:
+>
+> Hi Atish,
+>
+> On 2024-11-19 2:29 PM, Atish Patra wrote:
+> > SBI v3.0 introduced a new raw event type that allows wider
+> > mhpmeventX width to be programmed via CFG_MATCH.
+> >
+> > Use the raw event v2 if SBI v3.0 is available.
+> >
+> > Signed-off-by: Atish Patra <atishp@rivosinc.com>
+> > ---
+> >  arch/riscv/include/asm/sbi.h |  4 ++++
+> >  drivers/perf/riscv_pmu_sbi.c | 18 ++++++++++++------
+> >  2 files changed, 16 insertions(+), 6 deletions(-)
+> >
+> > diff --git a/arch/riscv/include/asm/sbi.h b/arch/riscv/include/asm/sbi.=
+h
+> > index 9be38b05f4ad..3ee9bfa5e77c 100644
+> > --- a/arch/riscv/include/asm/sbi.h
+> > +++ b/arch/riscv/include/asm/sbi.h
+> > @@ -159,7 +159,10 @@ struct riscv_pmu_snapshot_data {
+> >
+> >  #define RISCV_PMU_RAW_EVENT_MASK GENMASK_ULL(47, 0)
+> >  #define RISCV_PMU_PLAT_FW_EVENT_MASK GENMASK_ULL(61, 0)
+> > +/* SBI v3.0 allows extended hpmeventX width value */
+> > +#define RISCV_PMU_RAW_EVENT_V2_MASK GENMASK_ULL(55, 0)
+> >  #define RISCV_PMU_RAW_EVENT_IDX 0x20000
+> > +#define RISCV_PMU_RAW_EVENT_V2_IDX 0x30000
+> >  #define RISCV_PLAT_FW_EVENT  0xFFFF
+> >
+> >  /** General pmu event codes specified in SBI PMU extension */
+> > @@ -217,6 +220,7 @@ enum sbi_pmu_event_type {
+> >       SBI_PMU_EVENT_TYPE_HW =3D 0x0,
+> >       SBI_PMU_EVENT_TYPE_CACHE =3D 0x1,
+> >       SBI_PMU_EVENT_TYPE_RAW =3D 0x2,
+> > +     SBI_PMU_EVENT_TYPE_RAW_V2 =3D 0x3,
+> >       SBI_PMU_EVENT_TYPE_FW =3D 0xf,
+> >  };
+> >
+> > diff --git a/drivers/perf/riscv_pmu_sbi.c b/drivers/perf/riscv_pmu_sbi.=
+c
+> > index 50cbdbf66bb7..f0e845ff6b79 100644
+> > --- a/drivers/perf/riscv_pmu_sbi.c
+> > +++ b/drivers/perf/riscv_pmu_sbi.c
+> > @@ -59,7 +59,7 @@ asm volatile(ALTERNATIVE(                            =
+               \
+> >  #define PERF_EVENT_FLAG_USER_ACCESS  BIT(SYSCTL_USER_ACCESS)
+> >  #define PERF_EVENT_FLAG_LEGACY               BIT(SYSCTL_LEGACY)
+> >
+> > -PMU_FORMAT_ATTR(event, "config:0-47");
+> > +PMU_FORMAT_ATTR(event, "config:0-55");
+> >  PMU_FORMAT_ATTR(firmware, "config:62-63");
+> >
+> >  static bool sbi_v2_available;
+> > @@ -527,18 +527,24 @@ static int pmu_sbi_event_map(struct perf_event *e=
+vent, u64 *econfig)
+> >               break;
+> >       case PERF_TYPE_RAW:
+> >               /*
+> > -              * As per SBI specification, the upper 16 bits must be un=
+used
+> > -              * for a hardware raw event.
+> > +              * As per SBI v0.3 specification,
+> > +              *  -- the upper 16 bits must be unused for a hardware ra=
+w event.
+> > +              * As per SBI v3.0 specification,
+> > +              *  -- the upper 8 bits must be unused for a hardware raw=
+ event.
+> >                * Bits 63:62 are used to distinguish between raw events
+> >                * 00 - Hardware raw event
+> >                * 10 - SBI firmware events
+> >                * 11 - Risc-V platform specific firmware event
+> >                */
+> > -
+> >               switch (config >> 62) {
+> >               case 0:
+> > -                     ret =3D RISCV_PMU_RAW_EVENT_IDX;
+> > -                     *econfig =3D config & RISCV_PMU_RAW_EVENT_MASK;
+> > +                     if (sbi_v3_available) {
+> > +                             *econfig =3D config & RISCV_PMU_RAW_EVENT=
+_V2_MASK;
+> > +                             ret =3D RISCV_PMU_RAW_EVENT_V2_IDX;
+> > +                     } else {
+> > +                             *econfig =3D config & RISCV_PMU_RAW_EVENT=
+_MASK;
+> > +                             ret =3D RISCV_PMU_RAW_EVENT_IDX;
+>
+> Shouldn't we check to see if any of bits 48-55 are set and return an erro=
+r,
+> instead of silently requesting the wrong event?
+>
 
-Do you see this failing in your CI or in the BPF CI? It seems ok
-to add wait_for_port here, but the likelihood of the issue seems
-minuscule. There is a bunch of ip/tc/etc calls between this
-server_listen and the next client_connect (and I'd be surprised to hear
-that netcat is still not listening by the time we reach next
-client_connect).
+We can. I did not add it originally as we can't do much validation for
+the raw events for anyways.
+If the encoding is not supported the user will get the error anyways
+as it can't find a counter.
+We will just save 1 SBI call if the kernel doesn't allow requesting an
+event if bits 48-55 are set.
+
+> Regards,
+> Samuel
+>
+> > +                     }
+> >                       break;
+> >               case 2:
+> >                       ret =3D (config & 0xFFFF) | (SBI_PMU_EVENT_TYPE_F=
+W << 16);
+> >
+>
 
