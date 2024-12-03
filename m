@@ -1,120 +1,136 @@
-Return-Path: <linux-kernel+bounces-429726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D66479E24AA
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:51:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EE129E26D8
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 17:17:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9696AB42D10
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 15:12:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 921A2B29ADA
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 15:12:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 807001F76AD;
-	Tue,  3 Dec 2024 15:09:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0294B204081;
+	Tue,  3 Dec 2024 15:09:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NrE3L91t"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="LAia4PpJ"
+Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com [209.85.167.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05D7C1F75B1
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 15:09:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB42E1F8904
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 15:09:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733238556; cv=none; b=aJX3ABz7q0IW6SUBIbfv+oYWajhMn6YsGWiDN2USq5sJz8rTuQ+mtEkRnwy0RvqjToEroaFWqfwthjzwzNkGauohuiSId+oB0AF7oiiyQnZQjTNrdAWaSN7UymIobla2ndMMe8ke/lbAbtTmKb5EEksmkoyv9P09co7CKp1726s=
+	t=1733238570; cv=none; b=RgXSZLCGxpkK5XaTkw9BpbJasZglSSFfE/aPt8eeSbk2bE7kajyfYwVZsOS38OlGRMY6Mq91GGeV9dYVPKk4pL+A6iJCMUhy14XOmrd1CM3JD/tV4bjTxJBjLaeVqD8NtshdkRqfjDSDJGRmI2wS7IcVQZnyi2YcV+2W/LUcjh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733238556; c=relaxed/simple;
-	bh=hClaAh2hG+fl4q8Wxap5/MCIGXH/gdtXL08wBlBbQhk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qXkftEjvX+OuH+relCjWEW8i8BgiiFXIDrGmFO6z5zv4NgCNI9m+qA2BiLAY/c4Z2AhsTdmDW5JpfRQit9bIfx2K+DXJk940+7Ny76nJOblzEBiap0Z0Xw112JBkJGZ+ueCKBjNQQMvLWIkXiDjBTnP/GUSqF1K3mK0A2PH8anU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NrE3L91t; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-53df119675dso6889527e87.0
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 07:09:14 -0800 (PST)
+	s=arc-20240116; t=1733238570; c=relaxed/simple;
+	bh=ptJpUzd/BhAIeWpF97J96wy/fzTMEo/QGYZYJybeNNQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Jtbgmh186ebU2EY8I5Bwe1mONnOSUjK0GwxhIqnTBEZx+cQzz004ua2tI51pwX0BWh9sO1pOEmE9SI/Sz8l6aRuKGvFeYdrtxq6QNmv4KGHreLaWx5he7x45t8M2KGJoP+a/qcq8rUcn+28sho4VAAgNCRR1s404GkM//nsjpQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=LAia4PpJ; arc=none smtp.client-ip=209.85.167.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-oi1-f181.google.com with SMTP id 5614622812f47-3ead60cedb7so1220800b6e.1
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 07:09:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733238553; x=1733843353; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=W8QM3peqYBpltbi1DIHb+zoz79Kj1Hf/KKrtdC4QJc4=;
-        b=NrE3L91t8V8conzf5PkSEnRNofaruFQ8NmqocNBolhmf1uWETKwiBoQ63rt2AxQuIe
-         SRON2M5jhoZiGqFdDwIUBShrk2NeXLGUH0GFp2GPtb9i9HZ/ou3gk78eyr7bPeHSdBvX
-         hE1T9AgbewN3aDNOP2XZltpfJuBxuFZCVQfGGvXXAGmOP6t5Ozxb0BDnVseds09eDChB
-         NraIX7TvDZnDawgrQsza1eTvnA5uhkFWEecZbh4oWvOct57i+sNAr6ozLcuwOJAKtvqr
-         IUxBcKsbkOz2bGjObpz1jV4s2nQ6gilGIezTn07hjfWA8YBaHqp9IpffBZs1ivSt1NfX
-         6g4A==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1733238566; x=1733843366; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ii6/Eam+Rd1w/XN536sPdorZmSq0gN6Qv3+oQutPo10=;
+        b=LAia4PpJP2JnNrSS7Ew62eOvhwSKt3vQu9i7e90gsbvhRigAw6QAz0imLnYMfczm5V
+         2js3TxBTO6Pkw+ADPGDcANglO35y4ohkV/lYSowWrJbhhY06w9egBCIQ2mW5Y8mBNiVl
+         sWEc6tNVjdDmIgkF6NAt/G84skUE0a+prK4zkgW42arkftHiPQzL8DIsqwTu2cdqBBh4
+         GN1s4Oi0avDlK0w48OBhoEuxs23XoTT2jI3Ni3Q+du8v72IvrGeCsB/P0Ll68IbcYZiJ
+         GrA9xTjD8O1JYuy9hVH5EDj34z0ayO9nH8G+ZQd0ur8xAsWmnTMDdypXvrkAFr7K09ff
+         Iiyw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733238553; x=1733843353;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=W8QM3peqYBpltbi1DIHb+zoz79Kj1Hf/KKrtdC4QJc4=;
-        b=BV3Kjy3V6mWKaiBj1/iQR5Nfbs1tYgDtUHHtDeo4iZH1LvD7DOTOFg2MrRsOQHSJtp
-         BlObD1khAGbyWDRa47qic61Nt6I18kbFKTfn7tYZ9T4abdFzN2QXO14Bkwl2O7UlRwNv
-         gIBoEzET8/c+BdMb6i6sOGZTW9K1v2vVNOFCTO/lB10J40fmA3s8CD1QcptXYVpj9WRG
-         P04Gp6S33kri4PNSr0+mA1qXlUzvKLNCOtl6PIO/7+MxNne7JiUUyFeBdglRl5EBWFCL
-         dHq5ENxJLxJSCUHIhs1fWrgFuo/nX6YwQx8FDC6x5NS6gCplP6jKmsuqcufyQkgOr5mY
-         fdFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUO6qYJrM+fj7mhUZ7hjGcaA03dRa9tUhSmsjVEEvuIAzBIWJqtA4CgPKX4xZauVmvFQ2Avth5eKA6TP2k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxmVCpkmsfBJ4VDSCN729Z0Ui+vvPq347CrayRu6hAvbqlo2o0u
-	7wa/uLX/TgKESnS+b5ovh1hbZyzVm7aUfJ0ql7U/HyNfcKT0dbzJVLthni1gDrw=
-X-Gm-Gg: ASbGncu9tNzD7dObSqmPE4M4dEZ6XZoKuZz4Kjd56yhUiwqZaL87ZDZH5/5M8g/MrBf
-	hmDAF/25633uBzuNbiebyJ+0Wyb6jeHiB9PY2Lqf9GK5PY53U3URZPV1ez4MxyNCgSYph76qCHU
-	/EP2CiTcMDshYNeZftUvzv4KxK+a4bAP76nUuiQdsvUQbZCAT/H4SgkApSWyj7rnO5aF2CRcE1U
-	amdzC8UDsuu9n7P39cjxeWSdYs5Pj/s8+L/6zaGP1aXDHXYXKjEtnO7eIPCO3Dn0e+ahYHlmYYi
-	PoruNPB3fuQD8gYFPKxCz+IWidE4/Q==
-X-Google-Smtp-Source: AGHT+IEjlfUflJI02ZJGU+Y+a8G3HUQsKv6NYL+aTiOcebMKzBeRoE8K/ZaRgeCLnat3VtUDppoaYQ==
-X-Received: by 2002:a05:6512:31ca:b0:53e:1b79:ada3 with SMTP id 2adb3069b0e04-53e1b79aea5mr687508e87.6.1733238551539;
-        Tue, 03 Dec 2024 07:09:11 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53df646f08csm1852548e87.164.2024.12.03.07.09.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Dec 2024 07:09:10 -0800 (PST)
-Date: Tue, 3 Dec 2024 17:09:08 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Abhinav Kumar <quic_abhinavk@quicinc.com>
-Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Stephen Boyd <swboyd@chromium.org>, 
-	Kuogee Hsieh <quic_khsieh@quicinc.com>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	Jessica Zhang <quic_jesszhan@quicinc.com>
-Subject: Re: [PATCH 2/3] drm/msm/dp: do not touch the MMSS_DP_INTF_CONFIG for
- tpg
-Message-ID: <fieuuhtisu6ztpuzks32rvnjdfnusywmmcyj2oz7rg36ablo6l@thq5p2xha6jx>
-References: <20241202-tpg-v1-0-0fd6b518b914@quicinc.com>
- <20241202-tpg-v1-2-0fd6b518b914@quicinc.com>
+        d=1e100.net; s=20230601; t=1733238566; x=1733843366;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ii6/Eam+Rd1w/XN536sPdorZmSq0gN6Qv3+oQutPo10=;
+        b=JnLj+VGOLiMUvTCsnLWmbzAlkAg/M55y28xgKOpz0/9lhZRjFdeDGvl37ljOfH7ikc
+         +mtr9kvEuSsaNvMbxAgEO3MKqRuJQOrttcOC17T2V3VLMAwMycCTeKQ7fp6rUx1x6QGp
+         e97nYBQm2CpdkSFokm0V/YiwmvRzXH0DS5xfxi5Sb20i4lbR73mq28Pehs73IWB3FyUn
+         uye2oY6It6XdquYJ/qa5aEh8N/SLWnlDVwC6KGjTaJqDGWV1+R/C4sqQ4VEHG3x/2y40
+         Rjw+2j1pxPAPNFB6a3iWAxq0ytH3dt8lrWwvz0P59J/CKcIr5u87k3ZX5HciI5gADLe0
+         8BIg==
+X-Forwarded-Encrypted: i=1; AJvYcCXAx9TP2yT9rIkyHnks2w8OR31fa/Zjtb0ahJFRHsgys61u3gFV2ujssxkVHzrhy01c9I/DLl/fGH6Lce4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwEw61ZDeIZocDgHgYBI5ZDiHKqzYMY0ikaZt7q7oT8Mfw+ZFP4
+	1bg4jie6E8uhIgWnf0t1l4xmY7KDEqLotuN15d5iEJejGPm4EdQBA9F+Wp3BDsM=
+X-Gm-Gg: ASbGncuiIbDhmu7P/mWvFDAy2m7j+NcVlkxVlhnhcGVMwP2e6PIJ4uqh8h0JrpRcPnN
+	4mKMuGDP0eA4fx4XTP8YkZzE3YZReLBPzJmS1vZY2K+B/8sDQ4QnHMiSPjHEoRBqme0yZdpNzjf
+	Ob4FogLE10BlM/ZqLQlWDEaglt+0MeC8ApHYpxbAL9puWj7n941n16b6OwBnRsqauaKDHyDR2uL
+	RwlLkNHVAiWMLB8hdyqMWdXke0UCJn+QQ6kPFYKfeJqkHht
+X-Google-Smtp-Source: AGHT+IHdP/r0VTOfmHgK6zsgpRftwhI0VmkZTrKusX1MqvGl6wn141rPYAXz2iiNvED/ZdfolUyPmA==
+X-Received: by 2002:a05:6808:3843:b0:3e8:1f5d:b7f8 with SMTP id 5614622812f47-3eae4edadc4mr3237519b6e.1.1733238565720;
+        Tue, 03 Dec 2024 07:09:25 -0800 (PST)
+Received: from [172.20.2.46] ([130.250.255.163])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-3ea8609f140sm2829517b6e.19.2024.12.03.07.09.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 03 Dec 2024 07:09:24 -0800 (PST)
+Message-ID: <c3407d1c-6c5c-42ee-b446-ccbab1643a62@kernel.dk>
+Date: Tue, 3 Dec 2024 08:09:21 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241202-tpg-v1-2-0fd6b518b914@quicinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RESEND v7 00/17] Hardware wrapped key support for QCom ICE
+ and UFS core
+To: Eric Biggers <ebiggers@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Jonathan Corbet <corbet@lwn.net>, Alasdair Kergon <agk@redhat.com>,
+ Mike Snitzer <snitzer@kernel.org>, Mikulas Patocka <mpatocka@redhat.com>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ Asutosh Das <quic_asutoshd@quicinc.com>,
+ Ritesh Harjani <ritesh.list@gmail.com>, Ulf Hansson
+ <ulf.hansson@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Avri Altman <avri.altman@wdc.com>, Bart Van Assche <bvanassche@acm.org>,
+ "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+ Gaurav Kashyap <quic_gaurkash@quicinc.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>,
+ "Theodore Y. Ts'o" <tytso@mit.edu>, Jaegeuk Kim <jaegeuk@kernel.org>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ linux-block@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, dm-devel@lists.linux.dev,
+ linux-mmc@vger.kernel.org, linux-scsi@vger.kernel.org,
+ linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org,
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+ Om Prakash Singh <quic_omprsing@quicinc.com>
+References: <20241202-wrapped-keys-v7-0-67c3ca3f3282@linaro.org>
+ <20241202183643.GB2037@sol.localdomain>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20241202183643.GB2037@sol.localdomain>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Dec 02, 2024 at 12:41:59PM -0800, Abhinav Kumar wrote:
-> MMSS_DP_INTF_CONFIG has already been setup by the main datapath
-> for DP to account for widebus to be used/unused etc.
+On 12/2/24 11:36 AM, Eric Biggers wrote:
+> On Mon, Dec 02, 2024 at 01:02:16PM +0100, Bartosz Golaszewski wrote:
+>> The previous iteration[1] has been on the list for many weeks without
+>> receiving any comments - neither positive nor negative. If there are no
+>> objections - could we start discussing how to make these patches go
+>> upstream for v6.14?
 > 
-> In current implementation, TPG only switches the DP controller
-> to use the main datapath stream OR use the test pattern but expects
-> the rest of the controller to be already setup.
-> 
-> Keeping the same behavior intact, drop the clearing of MMSS_DP_INTF_CONFIG
-> from the msm_dp_catalog_panel_tpg_enable() API.
-> 
-> Fixes: 757a2f36ab09 ("drm/msm/dp: enable widebus feature for display port")
-> Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
-> ---
->  drivers/gpu/drm/msm/dp/dp_catalog.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
+> The way to do it will be for the block patches to be taken through the block
+> tree first.  That will unblock the rest, which can be taken through their
+> respective trees in subsequent cycles.
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+I can queue up patches 1..3 in a separate branch that we can both use,
+and that can get pulled into for-6.14/block as well. Didn't want to do
+that before the rest of them are ready. IOW, if it's going to be bound
+for 6.14, let me know, and I'll setup the branch with the patches.
 
 -- 
-With best wishes
-Dmitry
+Jens Axboe
 
