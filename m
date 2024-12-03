@@ -1,242 +1,150 @@
-Return-Path: <linux-kernel+bounces-429267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429269-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAFA29E1BA0
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 13:04:49 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D25419E1B4D
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 12:51:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1FEE7B47E6C
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:43:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6A3B5B3C225
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:43:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 082DF1E3771;
-	Tue,  3 Dec 2024 10:40:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 552141E3DF7;
+	Tue,  3 Dec 2024 10:41:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="SUMpr5Pq"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OxOWo3F7"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29FAF1E2605;
-	Tue,  3 Dec 2024 10:40:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCAD91E3DDD
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 10:40:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733222424; cv=none; b=J81/xUHA4KyGzQjtO0nP4J9hrrDYGk5KVXHgsbNaxW/DNtSRjmcV7ZPlio4SIQqFtHqhDRhtUaBTLdA66Z+102ZHotWBYkRfUZEfWxQga5mqZGzxrSqDhXhrv06nX1DPbpeFPuZA7nBOtnGYzdaulRKnHNR5CGsSgcc4C68hWVc=
+	t=1733222461; cv=none; b=mJmFn9LRpVN59HyU77sAlg6xHy6uJpSb0II82H2wZC2RzVG1xDmdBpLBk2B7iYbKNyWfzrVbY4WXxfbwN3fTO1Bs+LmfNrW5tczoUxkyZ/b6u9Puz5t8+taa1WNjvkdPMVDOZmppHhs4YTpqOkryPfOOY2fe/T+zXXmlf8s5EHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733222424; c=relaxed/simple;
-	bh=AgD4sUxGspGjnJqKj6uE5BA2J1nTqX8g/zDM10q08B0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WvwTwm5g8CBryfC9t55twLB1ElSjPGFkG+anaQJyOyHcHqJ4z8CkHF4tM8itoiCm2pQeatMbigpFnmy1Sjo8whwqLfL7Qi3ty1JetaidGaNcfAX4iJIaWCab92+jQ4BnmU8zlnCnFIp1eYt0PRUUHfQ48dCliZWFEHUiEEuOGds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=SUMpr5Pq; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id E67808DB;
-	Tue,  3 Dec 2024 11:39:50 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1733222391;
-	bh=AgD4sUxGspGjnJqKj6uE5BA2J1nTqX8g/zDM10q08B0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SUMpr5Pqiart36e+UnmS+68J5xy25ZrQyWErnK4XJLIgVtNJU4/SAhaAfipIiBgmP
-	 CE0aC+w9ZivDv7e+1tHUXYv/ImhqMj3wOGDRlILD9yzvBosAuEvZpxSxdiqfY9VSH/
-	 pyfYwBSmifXlB+eymmPgl5Dthvo+lh0rNjiB9nVo=
-Date: Tue, 3 Dec 2024 12:40:06 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>, Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, LUU HOAI <hoai.luu.ub@renesas.com>,
-	Jagan Teki <jagan@amarulasolutions.com>,
-	Sam Ravnborg <sam@ravnborg.org>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-Subject: Re: [PATCH 9/9] arm64: dts: renesas: gray-hawk-single: Add
- DisplayPort support
-Message-ID: <20241203104006.GM10736@pendragon.ideasonboard.com>
-References: <20241203-rcar-gh-dsi-v1-0-738ae1a95d2a@ideasonboard.com>
- <20241203-rcar-gh-dsi-v1-9-738ae1a95d2a@ideasonboard.com>
+	s=arc-20240116; t=1733222461; c=relaxed/simple;
+	bh=QjRZn9m36UpoMU1YfOpgfL0cMt4DBCuwE5rzTlpXXfM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=E0iIOaNZsFsT36QIE7aFOcw4Yu/FhXuRD/U1D5D0fVt9MJWij6/Z+O0wCJSa5JXlelxGnbVnDibt0G4EwkMBlwgCj/weU6iknsvKArUBye6O8EW4A7XL05JvX49KS4atgWW+tSYRP4gGoTnB/ir6Ge8bSdcjV2o6gmeDwXOfzbQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OxOWo3F7; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-385e27c75f4so2231780f8f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 02:40:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733222458; x=1733827258; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=QjRZn9m36UpoMU1YfOpgfL0cMt4DBCuwE5rzTlpXXfM=;
+        b=OxOWo3F7jP7TGyd4NJQyFqKsdjhHMVHiVJe4N/fNBnM843i6AEfAwCGHY+G3p6CoOe
+         m7GvaXOyAyDl2t0XJzBdJ1q0Ac5mz+2cqbgLM9i68lB3TaE/Xxse5Z7vWTzIEx3vElzw
+         tlGIajOtu4cbHyPl2ush28cvbrmPQlgPdlQHaz7nidZmvFkxhNCRK8zCBfNNhbZMaWmG
+         5P3Jpt98ipr4v0gIONCb5fGBZAU5vy2JnXpzNk44tX0oyoTl+/lUI/rn1gESaO/7QDiu
+         zaD4SWlunESeZOL54L42ayk2rec4OWMwFAQAls0EcNA/Eu4kyiO8I5wfpcrhGFTXkVWZ
+         P2eQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733222458; x=1733827258;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=QjRZn9m36UpoMU1YfOpgfL0cMt4DBCuwE5rzTlpXXfM=;
+        b=CfVx9lfD7NqsjiGt4K3ReA+8QrTQSPR6/ieqs+9EuTEQe6q09AsYmxljCrsuuiPyxT
+         hTY+cZXsT0nLhs+gzHNxHMtIFngjFBXDvBwxfrFz26wQpUTiwt0IaYtv4s2DNLkDMIGe
+         JiIdfhQNCQeFnXLZ4qnHjNzef3FK6tQiPZM1GSz05bqVPddw+FTD2KKtP30E3S9tRYeL
+         Tib6GsZIlwV9wLuSw6SeubNtxG0dFLByxBIxpMhSDAgJn17ujrQQOpGbyamDFLEEWXDI
+         my8hW92MBzD78xdhWurX8mfrHX7FCcjGInb0slprVFLdb4ejpDGifi8HJ1iU82Ta2hF/
+         dSHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUJWEYkVws01FkoSDU1x+tgvkuIjY1vw0GvDI9EFMkn23hWqVq3ihM8NpMfGL8V60FiGWjFSTQD38iROLc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVGX8vxQcNzeA31G2RRmFxx1RkPzD8MngkTq5Qd7ou+I9w9YxH
+	JRunIZUQ/pRPS0BmDhg54VqjxmgDaao4t8kJr3m+oCU8cQ6iLqgiMPI1NT8zbhA=
+X-Gm-Gg: ASbGnctOqTzBF2K7xJ97DUJZiUELZ63Noou23gAK+l33Q4MQwr1ZC7NwA63ee86JQ93
+	e+eOBgH/rN1U/fNyk5ha/csvYtJsN8Won8pR3WYYfUIKQPyZGoaJzrPlUkcxxzQ3tdvmK7SrewZ
+	Dx7CLepU6o1ICtk0GZCkStlWppGxuYRN8XjMKhWkkEBKeVdp8kzOlb8t+DviSyySkqMArptbe4v
+	sx/EypxdG74KquKlRSC/+oSEMnUhhezi2U+n/Akk1eGMHTT/FurBeM=
+X-Google-Smtp-Source: AGHT+IEIQMRTqJYQglD4CUOE9KJIR7TrCdL2VS3fYUudSCxmJ2z/a94ILKbvxrjP3h0f3AYq8lLHfA==
+X-Received: by 2002:a5d:5988:0:b0:385:dedb:a12f with SMTP id ffacd0b85a97d-385fd3c6547mr1799666f8f.6.1733222458153;
+        Tue, 03 Dec 2024 02:40:58 -0800 (PST)
+Received: from [10.1.1.109] ([80.111.64.44])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385ee2c7559sm6885746f8f.12.2024.12.03.02.40.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Dec 2024 02:40:57 -0800 (PST)
+Message-ID: <30b0995903fb7db3f866d1304783d878f563fe2f.camel@linaro.org>
+Subject: Re: [PATCH 2/4] dt-bindings: power: supply: add max77759-fg flavor
+ and don't require nvme address
+From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+To: Thomas Antoine <t.antoine@uclouvain.be>, Sebastian Reichel
+ <sre@kernel.org>,  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,  Dimitri Fedrau
+ <dima.fedrau@gmail.com>, Catalin Marinas <catalin.marinas@arm.com>, Will
+ Deacon <will@kernel.org>,  Peter Griffin <peter.griffin@linaro.org>, Alim
+ Akhtar <alim.akhtar@samsung.com>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org
+Date: Tue, 03 Dec 2024 10:40:56 +0000
+In-Reply-To: <575b3275-b2fa-4e5c-bb6b-759394b02e18@uclouvain.be>
+References: <20241202-b4-gs101_max77759_fg-v1-0-98d2fa7bfe30@uclouvain.be>
+	 <20241202-b4-gs101_max77759_fg-v1-2-98d2fa7bfe30@uclouvain.be>
+	 <e23721ebd766f410103ddfb8705f3d7d6e5ae3e9.camel@linaro.org>
+	 <575b3275-b2fa-4e5c-bb6b-759394b02e18@uclouvain.be>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.1-4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241203-rcar-gh-dsi-v1-9-738ae1a95d2a@ideasonboard.com>
 
-Hi Tomi,
+On Tue, 2024-12-03 at 11:23 +0100, Thomas Antoine wrote:
+> On 12/3/24 08:12, Andr=C3=A9 Draszik wrote:
+> > On Mon, 2024-12-02 at 14:07 +0100, Thomas Antoine via B4 Relay wrote:
+> > > From: Thomas Antoine <t.antoine@uclouvain.be>
+> > >=20
+> > > As the Maxim max77759 fuel gauge has no non-volatile memory slave add=
+ress,
+> > > make it non-obligatory. Except for this, the max77759 seems to behave=
+ the
+> > > same as the max1720x.
+> >=20
+> > What about the battery characterization tables? Aren't they needed for
+> > correct reporting?
+>=20
+> I checked some other patches which added fuel gauge and other bindings an=
+d I
+> couldn't find such characterization table. Can you point me to an example=
+ or
+> explain what it should contain if there needs one?
 
-Thank you for the patch.
+I haven't looked in detail, but there is
 
-On Tue, Dec 03, 2024 at 10:01:43AM +0200, Tomi Valkeinen wrote:
-> From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-> 
-> Add support for the mini DP output on the Gray Hawk board.
-> 
-> Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
 
-Assuming this has passed the DT checks,
+https://android.googlesource.com/kernel/google-modules/raviole-device/+/ref=
+s/heads/android-gs-raviole-mainline/arch/arm64/boot/dts/google/gs101-oriole=
+-battery.dtsi#13
+https://android.googlesource.com/kernel/google-modules/raviole-device/+/ref=
+s/heads/android-gs-raviole-mainline/arch/arm64/boot/dts/google/gs101-raven-=
+battery.dtsi#13
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+which include
+https://android.googlesource.com/kernel/google-modules/raviole-device/+/ref=
+s/heads/android-gs-raviole-mainline/arch/arm64/boot/dts/google/gs101-oriole=
+-battery-data.dtsi
+https://android.googlesource.com/kernel/google-modules/raviole-device/+/ref=
+s/heads/android-gs-raviole-mainline/arch/arm64/boot/dts/google/gs101-raven-=
+battery-data.dtsi
+respectively
 
-> ---
->  .../boot/dts/renesas/r8a779h0-gray-hawk-single.dts | 95 ++++++++++++++++++++++
->  1 file changed, 95 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/renesas/r8a779h0-gray-hawk-single.dts b/arch/arm64/boot/dts/renesas/r8a779h0-gray-hawk-single.dts
-> index 057f959d67b3..7cdf07b6dde6 100644
-> --- a/arch/arm64/boot/dts/renesas/r8a779h0-gray-hawk-single.dts
-> +++ b/arch/arm64/boot/dts/renesas/r8a779h0-gray-hawk-single.dts
-> @@ -59,6 +59,12 @@ chosen {
->  		stdout-path = "serial0:921600n8";
->  	};
->  
-> +	sn65dsi86_refclk: clk-x6 {
-> +		compatible = "fixed-clock";
-> +		#clock-cells = <0>;
-> +		clock-frequency = <38400000>;
-> +	};
-> +
->  	keys {
->  		compatible = "gpio-keys";
->  
-> @@ -126,6 +132,27 @@ memory@480000000 {
->  		reg = <0x4 0x80000000 0x1 0x80000000>;
->  	};
->  
-> +	mini-dp-con {
-> +		compatible = "dp-connector";
-> +		label = "CN5";
-> +		type = "mini";
-> +
-> +		port {
-> +			mini_dp_con_in: endpoint {
-> +				remote-endpoint = <&sn65dsi86_out0>;
-> +			};
-> +		};
-> +	};
-> +
-> +	reg_1p2v: regulator-1p2v {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "fixed-1.2V";
-> +		regulator-min-microvolt = <1200000>;
-> +		regulator-max-microvolt = <1200000>;
-> +		regulator-boot-on;
-> +		regulator-always-on;
-> +	};
-> +
->  	reg_1p8v: regulator-1p8v {
->  		compatible = "regulator-fixed";
->  		regulator-name = "fixed-1.8V";
-> @@ -200,6 +227,24 @@ channel1 {
->  	};
->  };
->  
-> +&dsi0 {
-> +	status = "okay";
-> +
-> +	ports {
-> +		port@1 {
-> +			reg = <1>;
-> +			dsi0_out: endpoint {
-> +				remote-endpoint = <&sn65dsi86_in0>;
-> +				data-lanes = <1 2 3 4>;
-> +			};
-> +		};
-> +	};
-> +};
-> +
-> +&du {
-> +	status = "okay";
-> +};
-> +
->  &extal_clk {
->  	clock-frequency = <16666666>;
->  };
-> @@ -269,6 +314,51 @@ eeprom@53 {
->  	};
->  };
->  
-> +&i2c1 {
-> +	pinctrl-0 = <&i2c1_pins>;
-> +	pinctrl-names = "default";
-> +
-> +	status = "okay";
-> +	clock-frequency = <400000>;
-> +
-> +	bridge@2c {
-> +		compatible = "ti,sn65dsi86";
-> +		reg = <0x2c>;
-> +
-> +		clocks = <&sn65dsi86_refclk>;
-> +		clock-names = "refclk";
-> +
-> +		interrupt-parent = <&intc_ex>;
-> +		interrupts = <0 IRQ_TYPE_LEVEL_HIGH>;
-> +
-> +		enable-gpios = <&gpio1 26 GPIO_ACTIVE_HIGH>;
-> +
-> +		vccio-supply = <&reg_1p8v>;
-> +		vpll-supply = <&reg_1p8v>;
-> +		vcca-supply = <&reg_1p2v>;
-> +		vcc-supply = <&reg_1p2v>;
-> +
-> +		ports {
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +
-> +			port@0 {
-> +				reg = <0>;
-> +				sn65dsi86_in0: endpoint {
-> +					remote-endpoint = <&dsi0_out>;
-> +				};
-> +			};
-> +
-> +			port@1 {
-> +				reg = <1>;
-> +				sn65dsi86_out0: endpoint {
-> +					remote-endpoint = <&mini_dp_con_in>;
-> +				};
-> +			};
-> +		};
-> +	};
-> +};
-> +
->  &i2c3 {
->  	pinctrl-0 = <&i2c3_pins>;
->  	pinctrl-names = "default";
-> @@ -361,6 +451,11 @@ i2c0_pins: i2c0 {
->  		function = "i2c0";
->  	};
->  
-> +	i2c1_pins: i2c1 {
-> +		groups = "i2c1";
-> +		function = "i2c1";
-> +	};
-> +
->  	i2c3_pins: i2c3 {
->  		groups = "i2c3";
->  		function = "i2c3";
+Both overlay
+https://android.googlesource.com/kernel/google-modules/raviole-device/+/ref=
+s/heads/android-gs-raviole-mainline/arch/arm64/boot/dts/google/gs101-raviol=
+e-battery.dtsi#177
 
--- 
-Regards,
 
-Laurent Pinchart
+Cheers,
+Andre'
+
 
