@@ -1,175 +1,113 @@
-Return-Path: <linux-kernel+bounces-429764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E56B39E2B8A
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 20:00:39 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91F749E2A52
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 19:06:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 093ABBC3829
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 15:36:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D156BB88439
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 15:34:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 000E7205AAF;
-	Tue,  3 Dec 2024 15:32:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C6331FA82E;
+	Tue,  3 Dec 2024 15:32:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="fe79W8Nh"
-Received: from mail-oi1-f170.google.com (mail-oi1-f170.google.com [209.85.167.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FgIgt+mD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA3E5203718
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 15:32:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA99D1F8AFA;
+	Tue,  3 Dec 2024 15:32:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733239978; cv=none; b=W2dJKZ9iNltIuhJOKX6YMd2cWDBbkZI7+86DySIX5zR3JJrseCHXBueKsGXOLH8hyCLNJl+yY5C/WWC8BCTAE3LExtsbG1EXuAuNNADQis2maT773wWggLs80UF4C6CgPv1n1A/dxzsxSFqZepAJ5ur8rWdvzKqsgFEBsVjsIwY=
+	t=1733239955; cv=none; b=oDoUMj3p77OEgcP8zbMzs3NLnFg6PFpooAUzvC4JIS0QUa60I0USQ93JjTaq+SRxWhLUoota90ccG9EuLt5BCW1XHiVGtbs/wEl7/iTqGvllrA+sCYRyHrXdQe7fdw3yc/5EaeN466k1EOxxw74q8abnR63BWeNw85vv7oRRDI8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733239978; c=relaxed/simple;
-	bh=mhIaz7b2lyC1oOrpy7fcg+5AljdReMhMByTLtm2p4EM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qP/CODif2lgBncwAKDF7IaDiTILzlu5ZUA5sHYxrUmq1rZvSUdMA2JDhSX1Hy/KPHunXWd3JjSWooLpTQ87gd6IHGot8d7v16XROuB9cFwozgUIKlQnqY8ECN6QgDSYZnqLz7HpVqgdUjPQqHsx81SyYSrJtjWX3++FW0WX0t2A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=fe79W8Nh; arc=none smtp.client-ip=209.85.167.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oi1-f170.google.com with SMTP id 5614622812f47-3ea55a2a38bso3014473b6e.1
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 07:32:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1733239976; x=1733844776; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=99ZtQ6Npm+o/kkpmwDDPCgpJncZgiN/IMlRLftnmHuc=;
-        b=fe79W8Nht1SNccoLINB3gun47a42Nyg7qCWlAyUHn7wod5WZJVvfj5epG7rdRBk3EL
-         IHI6Fy0gmAc/hoo/Rbj2tnqec0JQnK3TI8eslyBHs0GimM6Ve/bXBH8t1EsM0F/r4nfY
-         H4Z6eo24b7YiLr6tn1N0IfuVI7ti0ebkN27qDrvk17HP0T/yfIErOWX8/joQS+PO8D1K
-         XKVccScUJYUVpHgO01Ep1qUIMQLv5tSbIZAIOTweoUPn82mbpQd8wMNBlhJx/ax0jvx7
-         +36yZ/NEp7WyKD9QrNsMJu9mb7b1Ypg4OQD0Xftl71coTjK/xpubRFXvsgbVSogeKAJY
-         L2kw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733239976; x=1733844776;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=99ZtQ6Npm+o/kkpmwDDPCgpJncZgiN/IMlRLftnmHuc=;
-        b=s+mM3D5aT+7g10EKCDUU2u+CD9sYb9Y8ju4fxwDQTyfygDc5X9F5WXnytuKSNfERP0
-         ahyPhDO1udoBibyJWfNtCI4A5tHoEHKgzK9nbat5Ee4tyAyD2tdyYbaSQIehp6WBkWT+
-         /03LyPAaOftbxeYMRFgZ3jPlHRFRC3vnQGcrb1s8972JnVRVxqVvn4tTwQLSXFz3mV5q
-         UHLpk/qzIaEFOsbbMu9n8u1nZxlELi7luaxpdj2xjL8JpzGE3qma5oZ5bBR3zZwrjjdW
-         xyRWensdbRJVcZ1U1ltqM4+tyalHt7yJds5ZYT0hUBLs1JDLXrLqemG9evv7yjhZftSX
-         QiGg==
-X-Forwarded-Encrypted: i=1; AJvYcCXMkXW7H7nvRSNBuUorZ72CgBvqQ5OE27QKCXGARfSjI4n6gB4bujxOTwkmoom+ichLI0jAl6esLuejBvI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzkX2zVfbDXHjr9MjcheUu/rljhYkdhdhi2oy8nCj4MZpLRzVOb
-	3e1zHc5KYEEgelDxf6EwD1PAxb0+9sj1aaDgy+70VrmcCrRRS8VQfl4H5ooqwJs=
-X-Gm-Gg: ASbGncsW4+5EThuPcir51xgQHHGgNUw7hB8YY61ywxLAsbXV3TtT9h6GNL+GRhio01v
-	pKepS3Qe7FueanGWR96n7KWL6p+yl9KjLkCq2QDUgfFG2XlEeV3lMXOWIkEDOmv+B/skavSrAwR
-	hVJWS8XHCSK2zz34nPkd8Mk7pCU3vYnC18uNKeyQ8LH8E6CZbGp8B8CIg4VHQLcFrdaZ7UrEWDU
-	66+PUC5EBwGnvYmFEXnGFY7g0BYD/3QAVtZLu6m8Zg2kF3Gg9q/lHI4UAw=
-X-Google-Smtp-Source: AGHT+IHMJnWLWXZesvRG8H115i2+SnEyGT/XbMmAgLxKcYoNaa8g7OGxqlE3KOV7Yd59LM9TrdKc0w==
-X-Received: by 2002:a05:6808:152c:b0:3e6:14a6:4288 with SMTP id 5614622812f47-3eae4f366f8mr2926476b6e.11.1733239975822;
-        Tue, 03 Dec 2024 07:32:55 -0800 (PST)
-Received: from localhost.localdomain ([130.250.255.163])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-3ea86036cbbsm2891878b6e.8.2024.12.03.07.32.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Dec 2024 07:32:55 -0800 (PST)
-From: Jens Axboe <axboe@kernel.dk>
-To: linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org
-Cc: hannes@cmpxchg.org,
-	clm@meta.com,
-	linux-kernel@vger.kernel.org,
-	willy@infradead.org,
-	kirill@shutemov.name,
-	bfoster@redhat.com,
-	Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 07/12] fs: add RWF_UNCACHED iocb and FOP_UNCACHED file_operations flag
-Date: Tue,  3 Dec 2024 08:31:43 -0700
-Message-ID: <20241203153232.92224-9-axboe@kernel.dk>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241203153232.92224-2-axboe@kernel.dk>
-References: <20241203153232.92224-2-axboe@kernel.dk>
+	s=arc-20240116; t=1733239955; c=relaxed/simple;
+	bh=9dyobPuiAigqFkgy1nXf6Wr/bRq7fJo42aRsWAsXsgo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PJZRjqTaHDElOutYO/m0dZn/DwENUpPo+s8+lw+25AugtLr+9Cs6LX5kbROrM7eubNA+ENTsRcLmSqJ67kCIFFKK4CrvVUH/ufqTOVgiiwcg83LtlNylNRMhR+crtit2ES3tQUS1KRe70P18b5YzxZl8++Zwc2KD4Xmv4/NPSRw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FgIgt+mD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F2A1C4CECF;
+	Tue,  3 Dec 2024 15:32:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733239954;
+	bh=9dyobPuiAigqFkgy1nXf6Wr/bRq7fJo42aRsWAsXsgo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FgIgt+mDsPsf122bbvT7gowNtGD6kjdn6EEl6x0FUr0CUyTUYIJteho8ZB7nVavOP
+	 lt70sI7leixdD4LrqXBoBSVEyjXfKTToeyBirNZ51JgaRyLg3r6zwpAWb4IDTtJTgS
+	 k/8gyMVgex2SMy5t47Yt1bCmq+cQ3+vZzqvPpsLIaz6+vGPAWHB6BbkAaY0ca59U2Y
+	 qkWOihUmIblKZd9MCQ9NIWUuL775HQYE5q/5UAtOp/PxvaYMb1oUVcIsuspo5tZYH1
+	 OeUHN02rqALZzqHEFZNACYGMvkz2kSYOApIOwBWTDVXTuvS6cSpf9i5dYmSENSkOJj
+	 F5LDvT6ys9pLA==
+Date: Tue, 3 Dec 2024 09:32:31 -0600
+From: Bjorn Andersson <andersson@kernel.org>
+To: Taniya Das <quic_tdas@quicinc.com>
+Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, quic_imrashai@quicinc.com, quic_jkona@quicinc.com, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Ajit Pandey <quic_ajipan@quicinc.com>
+Subject: Re: [PATCH v6 2/2] arm64: dts: qcom: sa8775p: Add support for clock
+ controllers
+Message-ID: <gpikswuggsfnfu5ay3se46ah6rdehaeu5ylaa5aidmqtcejoo2@um7inmnjrcvq>
+References: <20241025-sa8775p-mm-v4-resend-patches-v6-0-329a2cac09ae@quicinc.com>
+ <20241025-sa8775p-mm-v4-resend-patches-v6-2-329a2cac09ae@quicinc.com>
+ <e810ab3d-a225-4c85-a755-3aa18c311cc5@oss.qualcomm.com>
+ <9e0f200b-53dd-4dbf-8b0d-1a2f576d3e3f@oss.qualcomm.com>
+ <97c6ef74-7ce8-4e67-85f9-d5452678f45f@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <97c6ef74-7ce8-4e67-85f9-d5452678f45f@quicinc.com>
 
-If a file system supports uncached buffered IO, it may set FOP_UNCACHED
-and enable RWF_UNCACHED. If RWF_UNCACHED is attempted without the file
-system supporting it, it'll get errored with -EOPNOTSUPP.
+On Tue, Dec 03, 2024 at 10:04:13AM +0530, Taniya Das wrote:
+> 
+> 
+> On 10/26/2024 12:12 AM, Konrad Dybcio wrote:
+> > On 25.10.2024 8:42 PM, Konrad Dybcio wrote:
+> > > On 25.10.2024 10:52 AM, Taniya Das wrote:
+> > > > Add support for video, camera, display0 and display1 clock controllers
+> > > > on SA8775P. The dispcc1 will be enabled based on board requirements.
+> > 
+> > Actually, why would that be? CCF should park it gracefully with
+> > unused cleanup
+> > 
+> 
+> Yes, CCF should take care to cleanup. But I am of an opinion that as we are
+> aware that this platform do not require the dispcc1 so we could avoid the
+> clock driver initialization and help in boot KPI.
+> 
 
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
----
- include/linux/fs.h      | 14 +++++++++++++-
- include/uapi/linux/fs.h |  6 +++++-
- 2 files changed, 18 insertions(+), 2 deletions(-)
+Does that imply that we're guaranteed that the bootloader will never
+configure any clocks in dispcc1 that needs to be gracefully parked from
+the OS? Is this guaranteed to be the case for all QCS9100 boards?
 
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 7e29433c5ecc..b64a78582f06 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -322,6 +322,7 @@ struct readahead_control;
- #define IOCB_NOWAIT		(__force int) RWF_NOWAIT
- #define IOCB_APPEND		(__force int) RWF_APPEND
- #define IOCB_ATOMIC		(__force int) RWF_ATOMIC
-+#define IOCB_UNCACHED		(__force int) RWF_UNCACHED
- 
- /* non-RWF related bits - start at 16 */
- #define IOCB_EVENTFD		(1 << 16)
-@@ -356,7 +357,8 @@ struct readahead_control;
- 	{ IOCB_SYNC,		"SYNC" }, \
- 	{ IOCB_NOWAIT,		"NOWAIT" }, \
- 	{ IOCB_APPEND,		"APPEND" }, \
--	{ IOCB_ATOMIC,		"ATOMIC"}, \
-+	{ IOCB_ATOMIC,		"ATOMIC" }, \
-+	{ IOCB_UNCACHED,	"UNCACHED" }, \
- 	{ IOCB_EVENTFD,		"EVENTFD"}, \
- 	{ IOCB_DIRECT,		"DIRECT" }, \
- 	{ IOCB_WRITE,		"WRITE" }, \
-@@ -2127,6 +2129,8 @@ struct file_operations {
- #define FOP_UNSIGNED_OFFSET	((__force fop_flags_t)(1 << 5))
- /* Supports asynchronous lock callbacks */
- #define FOP_ASYNC_LOCK		((__force fop_flags_t)(1 << 6))
-+/* File system supports uncached read/write buffered IO */
-+#define FOP_UNCACHED		((__force fop_flags_t)(1 << 7))
- 
- /* Wrap a directory iterator that needs exclusive inode access */
- int wrap_directory_iterator(struct file *, struct dir_context *,
-@@ -3614,6 +3618,14 @@ static inline int kiocb_set_rw_flags(struct kiocb *ki, rwf_t flags,
- 		if (!(ki->ki_filp->f_mode & FMODE_CAN_ATOMIC_WRITE))
- 			return -EOPNOTSUPP;
- 	}
-+	if (flags & RWF_UNCACHED) {
-+		/* file system must support it */
-+		if (!(ki->ki_filp->f_op->fop_flags & FOP_UNCACHED))
-+			return -EOPNOTSUPP;
-+		/* DAX mappings not supported */
-+		if (IS_DAX(ki->ki_filp->f_mapping->host))
-+			return -EOPNOTSUPP;
-+	}
- 	kiocb_flags |= (__force int) (flags & RWF_SUPPORTED);
- 	if (flags & RWF_SYNC)
- 		kiocb_flags |= IOCB_DSYNC;
-diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
-index 753971770733..dc77cd8ae1a3 100644
---- a/include/uapi/linux/fs.h
-+++ b/include/uapi/linux/fs.h
-@@ -332,9 +332,13 @@ typedef int __bitwise __kernel_rwf_t;
- /* Atomic Write */
- #define RWF_ATOMIC	((__force __kernel_rwf_t)0x00000040)
- 
-+/* buffered IO that drops the cache after reading or writing data */
-+#define RWF_UNCACHED	((__force __kernel_rwf_t)0x00000080)
-+
- /* mask of flags supported by the kernel */
- #define RWF_SUPPORTED	(RWF_HIPRI | RWF_DSYNC | RWF_SYNC | RWF_NOWAIT |\
--			 RWF_APPEND | RWF_NOAPPEND | RWF_ATOMIC)
-+			 RWF_APPEND | RWF_NOAPPEND | RWF_ATOMIC |\
-+			 RWF_UNCACHED)
- 
- #define PROCFS_IOCTL_MAGIC 'f'
- 
--- 
-2.45.2
+IMHO we should default to correctness, and then make product-specific
+boot time optimizations from that starting point.
 
+Regards,
+Bjorn
+
+> > Konrad
+> > 
+> > > > 
+> > > > Reviewed-by: Jagadeesh Kona <quic_jkona@quicinc.com>
+> > > > Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+> > > > ---
+> > > 
+> > > Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> > > 
+> > > Konrad
+> 
+> -- 
+> Thanks & Regards,
+> Taniya Das.
 
