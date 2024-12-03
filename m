@@ -1,149 +1,150 @@
-Return-Path: <linux-kernel+bounces-429711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 600579E20F3
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:05:43 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81F439E214C
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:10:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 266D32840F3
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 15:05:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 95DA0B2B9A1
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 13:18:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F7381F756E;
-	Tue,  3 Dec 2024 15:05:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 302181F12ED;
+	Tue,  3 Dec 2024 13:18:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="qcgRW6FX"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QBQW9DEi"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AFF31F7557
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 15:05:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DAFC193403;
+	Tue,  3 Dec 2024 13:18:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733238336; cv=none; b=f0DUlRGWpOwBpLXS/upLjeWmaOv94tCUOltIR1TQHyF0VDHdP/gNm/PvuNV+4CMC/vNB335kGYyPWKO7YpSNhg8FCvDXI9tm1x0HizCM385W/VTzdXtdO7wUX33j4kJmkxzuCAOkdKNquGM11+5+he5exNwnmL46dGH8HJIZjFQ=
+	t=1733231912; cv=none; b=arB1OqGtC8HdDNK15I9ABVqLeh4dDYBbKs5NyIEUdAqpSRbUC2K57zlWqa8KDnavWF2pIgAZ/R6ryjYXp5Xc4ophMZ65cH0FN/qKLrnv7K0ff/OY0EjNBEZ9eUB/VXDn/DW0l3uO9mdkuazIpRJIV0k772dWAmAKnri1jnOQrEU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733238336; c=relaxed/simple;
-	bh=+uMifMZiAcMA3nATNagPBAOmW0eThPHsSBWPDm8brnM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cBWSKi+giQ5kZApSnfIYxLUVqfv6iLqhxcxbpxosTub7D69bjZ9WI0atykmyjlw1jVqeXeAn7Hv7f01bdpRPO8yZYqo80iRtF5ovgwZUFSTS2v3oa6Q9HRoZOKfZRlgKDm0UDPuQiJzkbj+Q3oZ7x1qM2uQn0oEhtPdaI9UznZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=qcgRW6FX; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-53dde4f0f23so5644823e87.3
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 07:05:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1733238331; x=1733843131; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RtbEhhKoiTh0qiQnRaAPey6dwf1k7ZRMkRrGbgxGB18=;
-        b=qcgRW6FXOmVZqr/7ItfiiT4o+GpW9CiMQGqeLHaYy5YYDiPs3QPRDA70zm1++WBCA6
-         3n9M9QdGjwcDsvL76n9/3+Atcz4d8pOltWtz5KD1tS37jJBAnnPAn/y7lPePup+TUgj8
-         zF8X7lIVE6tjEsyRbn5vLvq993MELPmScUvGpwcLtmjE96jrOnDF9heHTg26BBGxmVEu
-         buyF1DiadpMX7BnYI208GatUBSzHWTDR1Ser8GUrhDrm5sVeRxBTYpiKcJuAh+BmeUWB
-         yWl8dVGbpipppX/1YBo1Geluupu86ofHQiJI0z0sbDYPZidH9CUAc39HGh84BgClzFsP
-         8gUQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733238331; x=1733843131;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RtbEhhKoiTh0qiQnRaAPey6dwf1k7ZRMkRrGbgxGB18=;
-        b=m8t/2FwRjrMWAqNQjqqdu5qeglNQprErBsJYOMOHkgavbw9MDGLfCtjwShVPnoKPKO
-         sqyCuhnhDeXiMyLOXdXbPmpkm2RUrFtVbrM/pCwKwIDk06ea1smIU0sUyIMtreXN0JNQ
-         eJeSF05cqmke68vRvk9BBWzO1ISE+a06wqHFQbpGK+kBshpxMu4iFOhkqe54cHtC03fF
-         YemSV1JfMr/AY53grsD202yIjKFPzID+ZZR+ByzvGoro7yxWlKC6u4Ogu4DFV8YDD5jO
-         x2zzCpGGmOiTjs6aegv5tpiQXIOvjf6ESCqJeRI58ol8znNUuNc3QM/FapcBjKywjWTT
-         yZMw==
-X-Forwarded-Encrypted: i=1; AJvYcCVkmE9XKxPBwIzyXo5Pixf/Ab9x6YEsY4ooiIYYCWB/A+XWFwkrHHcP2f6DgY0qEp+TvnB3uT9OUEJsorM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1bWBDeHS77WqNdv7rRs817SCx8adYo7/tvOPPSOmFD+yHDKw2
-	Kjwh/+Dr5k26vEWSbcpwK5tObZ2hhBiL7R+d3c6GJ1hyIr6nG7E4VZ0papY4SDU2Oj8gcBPmk8Z
-	aTsRjh/Be8mVOTQfZide2PA+pZ4n5d9R+QQ1Htw==
-X-Gm-Gg: ASbGncteMGTRR5cbYCSKRzbWzCAwwT2OPZ8/ULlhdzqNtj/6VnPwvSStbFt8yY5EeqV
-	nfjK8LSGPlGusI9W0pBYoWmvY/kPs8LA=
-X-Google-Smtp-Source: AGHT+IFXcMRum6Fgpn/fpkHjlbTye37au8KaG1skCplnVjgk7auCVG9uYkhWXukENlDICE2p3O83N7kw41MOt8qO7js=
-X-Received: by 2002:a05:6512:2804:b0:53e:1b6a:60f5 with SMTP id
- 2adb3069b0e04-53e1b6a61d3mr623994e87.29.1733238329662; Tue, 03 Dec 2024
- 07:05:29 -0800 (PST)
+	s=arc-20240116; t=1733231912; c=relaxed/simple;
+	bh=i7szRebw6WQA5QpBUiel/GHy/A8mHrGYWbddHxs31ms=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=DSBtwnDdCfRbZOSB7gzdrfOWOvJOkc6XWVGj9AkOSQKjXBfUZqMOF251Oqcpjq3AOCHWncEJY0l1MA9Xwyu2BDQxeg7DAS1kroXSkYkPJUPoMZt3eV9+chrRaRXQzcR+alcDTMRYsoJzEoKSaTR5FCGPSz06aWBS70vRjX3nNDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QBQW9DEi; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733231910; x=1764767910;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=i7szRebw6WQA5QpBUiel/GHy/A8mHrGYWbddHxs31ms=;
+  b=QBQW9DEi8Ex3X0kN6urbAAfnsfr6rr+YNJR/HzcIh5AfDI/33pehvtTO
+   RKqYee05EIz5lGh24PC6h244/5Lh0tnWWtpsm1+3MUaoiEZXvdUjKVRUJ
+   2XHkwH6TXO30fsn5mkQHObA8UDCkwwmFUYT1fsYpxn6Lvp2dkZ5eTrbEw
+   iwF0L2zgALvBH96CjU4wUrZP34wTtPdbywFjhHDtO/W9BXxB42zPB6h8r
+   MlmLOexbdx3IcAZWETDBKO5Wa27Esh7vyeGZIqsAdQtYZpbfhR/KzlA/I
+   SUXfkneWk/Hx+ygphWcXVqI3SBsDj+Mskgw8czqqTpsOXdIif++qxRlND
+   A==;
+X-CSE-ConnectionGUID: QCBg9sApQSmpVMTJl+8jyA==
+X-CSE-MsgGUID: 3Tz/ch/STpKe/B0yUziNsw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11274"; a="33500711"
+X-IronPort-AV: E=Sophos;i="6.12,205,1728975600"; 
+   d="scan'208";a="33500711"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Dec 2024 05:18:30 -0800
+X-CSE-ConnectionGUID: 2ofiEKzESa2de5yu/56FbQ==
+X-CSE-MsgGUID: 96S9exBNS8i0GrTcr/98+g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,205,1728975600"; 
+   d="scan'208";a="130896051"
+Received: from ccbilbre-mobl3.amr.corp.intel.com (HELO yungchua-desk.intel.com) ([10.124.223.75])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Dec 2024 05:18:29 -0800
+From: Bard Liao <yung-chuan.liao@linux.intel.com>
+To: linux-sound@vger.kernel.org,
+	vkoul@kernel.org
+Cc: vinod.koul@linaro.org,
+	linux-kernel@vger.kernel.org,
+	pierre-louis.bossart@linux.dev,
+	bard.liao@intel.com
+Subject: [PATCH v2 01/14] soundwire: add lane field in sdw_port_runtime
+Date: Tue,  3 Dec 2024 21:18:00 +0800
+Message-ID: <20241203131813.58454-2-yung-chuan.liao@linux.intel.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20241203131813.58454-1-yung-chuan.liao@linux.intel.com>
+References: <20241203131813.58454-1-yung-chuan.liao@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241203-crypto-qce-refactor-v1-0-c5901d2dd45c@linaro.org>
- <20241203-crypto-qce-refactor-v1-2-c5901d2dd45c@linaro.org> <b3e5184d-19bc-45ed-92e3-a751842839b3@linaro.org>
-In-Reply-To: <b3e5184d-19bc-45ed-92e3-a751842839b3@linaro.org>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Tue, 3 Dec 2024 16:05:18 +0100
-Message-ID: <CAMRc=Mc+hKeAwyvm_aaWe_r07iXuBMy0hRQrXSQjpy0irKzvMw@mail.gmail.com>
-Subject: Re: [PATCH 2/9] crypto: qce - unregister previously registered algos
- in error path
-To: neil.armstrong@linaro.org
-Cc: Thara Gopinath <thara.gopinath@gmail.com>, Herbert Xu <herbert@gondor.apana.org.au>, 
-	"David S. Miller" <davem@davemloft.net>, Stanimir Varbanov <svarbanov@mm-sol.com>, linux-crypto@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Dec 3, 2024 at 2:55=E2=80=AFPM <neil.armstrong@linaro.org> wrote:
->
-> On 03/12/2024 10:19, Bartosz Golaszewski wrote:
-> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> >
-> > If we encounter an error when registering alorithms with the crypto
-> > framework, we just bail out and don't unregister the ones we
-> > successfully registered in prior iterations of the loop.
-> >
-> > Add code that goes back over the algos and unregisters them before
-> > returning an error from qce_register_algs().
-> >
-> > Cc: stable@vger.kernel.org
-> > Fixes: ec8f5d8f6f76 ("crypto: qce - Qualcomm crypto engine driver")
-> > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> > ---
-> >   drivers/crypto/qce/core.c | 11 +++++++----
-> >   1 file changed, 7 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/drivers/crypto/qce/core.c b/drivers/crypto/qce/core.c
-> > index 58ea93220f015..848e5e802b92b 100644
-> > --- a/drivers/crypto/qce/core.c
-> > +++ b/drivers/crypto/qce/core.c
-> > @@ -51,16 +51,19 @@ static void qce_unregister_algs(struct qce_device *=
-qce)
-> >   static int qce_register_algs(struct qce_device *qce)
-> >   {
-> >       const struct qce_algo_ops *ops;
-> > -     int i, ret =3D -ENODEV;
-> > +     int i, j, ret =3D -ENODEV;
-> >
-> >       for (i =3D 0; i < ARRAY_SIZE(qce_ops); i++) {
-> >               ops =3D qce_ops[i];
-> >               ret =3D ops->register_algs(qce);
-> > -             if (ret)
-> > -                     break;
-> > +             if (ret) {
-> > +                     for (j =3D i - 1; j >=3D 0; j--)
-> > +                             ops->unregister_algs(qce);
-> > +                     return ret;
-> > +             }
-> >       }
-> >
-> > -     return ret;
-> > +     return 0;
-> >   }
-> >
-> >   static int qce_handle_request(struct crypto_async_request *async_req)
-> >
->
-> Perhaps you can also use the devm trick here aswell ?
->
+Currently, lane_ctrl is always 0. Add a lane field in sdw_port_runtime
+to indicate the data lane of the data port.
+They are 0 by default.
 
-I wanted to keep this one brief for backporting but I also think that
-scheduling a separate action here for every algo would be a bit
-overkill. This is quite concise so I'd keep it this way.
+Signed-off-by: Bard Liao <yung-chuan.liao@linux.intel.com>
+---
+ drivers/soundwire/amd_manager.c                  | 2 +-
+ drivers/soundwire/bus.h                          | 2 ++
+ drivers/soundwire/generic_bandwidth_allocation.c | 4 ++--
+ 3 files changed, 5 insertions(+), 3 deletions(-)
 
-Bart
+diff --git a/drivers/soundwire/amd_manager.c b/drivers/soundwire/amd_manager.c
+index 5a4bfaef65fb..f47d4cd656ae 100644
+--- a/drivers/soundwire/amd_manager.c
++++ b/drivers/soundwire/amd_manager.c
+@@ -410,7 +410,7 @@ static int amd_sdw_compute_params(struct sdw_bus *bus)
+ 			sdw_fill_xport_params(&p_rt->transport_params, p_rt->num,
+ 					      false, SDW_BLK_GRP_CNT_1, sample_int,
+ 					      port_bo, port_bo >> 8, hstart, hstop,
+-					      SDW_BLK_PKG_PER_PORT, 0x0);
++					      SDW_BLK_PKG_PER_PORT, p_rt->lane);
+ 
+ 			sdw_fill_port_params(&p_rt->port_params,
+ 					     p_rt->num, bps,
+diff --git a/drivers/soundwire/bus.h b/drivers/soundwire/bus.h
+index fda6b24ac2da..ff03b97f1d8b 100644
+--- a/drivers/soundwire/bus.h
++++ b/drivers/soundwire/bus.h
+@@ -90,6 +90,7 @@ int sdw_find_col_index(int col);
+  * @transport_params: Transport parameters
+  * @port_params: Port parameters
+  * @port_node: List node for Master or Slave port_list
++ * @lane: Which lane is used
+  *
+  * SoundWire spec has no mention of ports for Master interface but the
+  * concept is logically extended.
+@@ -100,6 +101,7 @@ struct sdw_port_runtime {
+ 	struct sdw_transport_params transport_params;
+ 	struct sdw_port_params port_params;
+ 	struct list_head port_node;
++	unsigned int lane;
+ };
+ 
+ /**
+diff --git a/drivers/soundwire/generic_bandwidth_allocation.c b/drivers/soundwire/generic_bandwidth_allocation.c
+index b9316207c3ab..abf9b85daa52 100644
+--- a/drivers/soundwire/generic_bandwidth_allocation.c
++++ b/drivers/soundwire/generic_bandwidth_allocation.c
+@@ -56,7 +56,7 @@ void sdw_compute_slave_ports(struct sdw_master_runtime *m_rt,
+ 					      sample_int, port_bo, port_bo >> 8,
+ 					      t_data->hstart,
+ 					      t_data->hstop,
+-					      SDW_BLK_PKG_PER_PORT, 0x0);
++					      SDW_BLK_PKG_PER_PORT, p_rt->lane);
+ 
+ 			sdw_fill_port_params(&p_rt->port_params,
+ 					     p_rt->num, bps,
+@@ -109,7 +109,7 @@ static void sdw_compute_master_ports(struct sdw_master_runtime *m_rt,
+ 		sdw_fill_xport_params(&p_rt->transport_params, p_rt->num,
+ 				      false, SDW_BLK_GRP_CNT_1, sample_int,
+ 				      *port_bo, (*port_bo) >> 8, hstart, hstop,
+-				      SDW_BLK_PKG_PER_PORT, 0x0);
++				      SDW_BLK_PKG_PER_PORT, p_rt->lane);
+ 
+ 		sdw_fill_port_params(&p_rt->port_params,
+ 				     p_rt->num, bps,
+-- 
+2.43.0
+
 
