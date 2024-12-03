@@ -1,141 +1,147 @@
-Return-Path: <linux-kernel+bounces-429967-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CC2E9E29CC
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 18:46:09 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B69D9E29D2
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 18:46:56 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 804F0160609
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 17:46:44 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5892B1FBE9B;
+	Tue,  3 Dec 2024 17:46:22 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62A892889B5
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 17:46:08 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B38CE204F9D;
-	Tue,  3 Dec 2024 17:44:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="E7+J0tKw"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AF921FCFD3
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 17:44:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C11471F892F
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 17:46:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733247864; cv=none; b=YQaLv1ztDTg+RbkbJ7vGc09hbha1CdYQCkPZI654HYrABsdCZq8ULyA/tGF3akW/o0VkDO3HVWUp/F+Nd0VNAx4VJoZaNLlDYkAN8Ve4KGkSNhUZFleasnFD9LPnBfghn0yhf0ig4LS0bK3pt7wU8+C0jwGLAFBZ5OlwWmEAWZ4=
+	t=1733247982; cv=none; b=AAlnb7CBf88RSpPJhDsluwoe71Ve1LEQp3bjl297l7A8oaOgY1MRi1OB0dzoKYzXD4ltURGWPLaJ92EAtE9fDCR9peQCMDozDFY66XuNf8B3oebeQFCDzNVujQ+uKmx7BeLMZMZn2ytsMpYhnIkszEGiNaqNu8svyxWdBOMwDvo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733247864; c=relaxed/simple;
-	bh=2vUh2HRZeyPWfbk0QDMsBffCmlUfC7m/5QcWWanc6W8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=AGPVwZ4Jpqc+7J7wjJbG9MtN+C5AyeMLhMup+5YRjlLYzs8j+B9zCI5JjPckuTrmyN8Et6CHcpDQaYmhkvdz/KoJBzjLXlCpwXfiN8yszFHUeZZI29/Zlf6xagbos65tCKjypKXKua6t8IcVugfDetuy721lSQd0bjcjSdMFb7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=E7+J0tKw; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-385e06af753so2466685f8f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 09:44:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733247860; x=1733852660; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=eiErjYAhu8MnB1/TnKAdAC45bnXaP34pbBdqkHH8OQc=;
-        b=E7+J0tKwi9qZsncfVqm68oPZRrKd/kk6i7iObD+hk2Zg+LSFigy3K7jEIhaG9heEPX
-         WUEIFemmw+8CUpl2krzhNneQPYnYzYVfmsockR1akn97XxKdymfNsCqVAEfwdqqHSkoK
-         MI3yVWhb4Hjm6epVMgaH5WH/np8OWjbhn9WTTONmiF/lnz8QIvrRl6NxEdloWslI1BnR
-         9U2oNrPD9h7sx3MJHw4NgnsH/Nbd+ogjrgd+pD9/R3eloFFh+qioVkTCIqvMsWIGXz+y
-         1vU9Fvk+Dr7mjz/J+kGaCVee5LwHyeLAGzae6yir+80YpXYRtkHcmN+zvwPt7NQWIMoG
-         8AxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733247860; x=1733852660;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eiErjYAhu8MnB1/TnKAdAC45bnXaP34pbBdqkHH8OQc=;
-        b=DmIfzehRPWzMfMCOUivNxIuJM6N3Z8NuuMVSs7fHOPswYv4lO9LrRcIf79ufBxSxYM
-         PbOAPE2Bs+aNvCw++wfH2CveOYbClmolHcHioz45FPRPTexy9vL7Ll1vJrri6fuNJzmI
-         VzEEPpeLGstPkpN9Ue5gVKnrDbfi+CYgSUMLBCTcl69v+ZfcNblc4s2V3SZOz2CRDMRd
-         VNG4SIsf5OFFSjsIf6SlVftX0qLkHjcs8GFyA7Ptp9NYHl7Taw4yMFs5xSe01Pmd52nL
-         hjhMcVvN1hRmfJfjZ95h6oDA5mwv3eD99KoVVdOGz4OYJbkV2goLqt0D2+/2gyChx3yo
-         WIjA==
-X-Forwarded-Encrypted: i=1; AJvYcCV7alnvBKTICLTMOWrhKmmerPYDDQP5Ytw2tYIHksJ82v1iIsSHh20DYpXS9AI0JJINxGiKd1FkRLPZTmw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9U87xobltoZn5/5jMWqm95ps37EAoritkhuEPAC51IsF4PyyG
-	qsbKD8ZfxmHs18VdP1zup953WVa6x0adlKtfkskQ99g2f6uHNDoQ2NA92FJ4pzA=
-X-Gm-Gg: ASbGncsRIOYUdkVjR7KGbKZc4vvsiJ/SXRTp5m5q+IhdjARPyLrdjVtPA/c70nWQYlf
-	MvQzKBuyiG4EIdUHp6oPhbAO+gB4FeJCj4WgVbFmRTfPRZAaoq2qz6cvKgxqXRRTN43BEcrFLZQ
-	JlHlOnK7EOfrSZeImSis55VHwj+CFWrGpEmyQXugdbQur6hJhP/yigwJh3zQR7Py0TyimDWgftD
-	5x1laTOSdnxqNYbNiDujHDRERyQgVlkyvVP7hOtiqhVNFhqwG0xIAgbAdWHzUs=
-X-Google-Smtp-Source: AGHT+IFL8yQpR4qeo7vpbXPHJqpugZ+Ztt1Yb4rNNqrVGzJhhHzSTPAwa0n5C5zUlHAIIYEJzjKpwQ==
-X-Received: by 2002:a05:6000:2a1:b0:385:fc00:f5d4 with SMTP id ffacd0b85a97d-385fd3e9d3amr2314279f8f.29.1733247859714;
-        Tue, 03 Dec 2024 09:44:19 -0800 (PST)
-Received: from [127.0.0.2] ([2a02:2454:ff21:ef40:9f9f:834f:9008:1528])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434d05b4909sm17648055e9.2.2024.12.03.09.44.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Dec 2024 09:44:19 -0800 (PST)
-From: Stephan Gerhold <stephan.gerhold@linaro.org>
-Date: Tue, 03 Dec 2024 18:44:03 +0100
-Subject: [PATCH 2/2] arm64: dts: qcom: x1e80100-crd: Drop duplicate DMIC
- supplies
+	s=arc-20240116; t=1733247982; c=relaxed/simple;
+	bh=8qUM+s0Bl7lCWEZpNYt3clTxFF5yfYs/BJyLD3pOnAE=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Jj9WLuBNAAsZSC0zvn8xbkhFPwNztoOEWkfmBAFS1P1PiTJ7PZ4wbVduoaTE6j8f5L+0ugmwbGPqLcxschZQmR0rACExb6cX5z2Ktxqj6hJDhaqyBt8V/kQu3hjRjI6iObP9tEOxnoTwC1BfIIAtRgawKkZXGRnkMdPFNcQUSqo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[IPv6:::1])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <l.stach@pengutronix.de>)
+	id 1tIWyN-0003yC-P7; Tue, 03 Dec 2024 18:46:07 +0100
+Message-ID: <fa93f48960c9ea5f5cb5693e6870e885fb1957ee.camel@pengutronix.de>
+Subject: Re: [PATCH] drm/etnaviv: Add fdinfo support for memory stats
+From: Lucas Stach <l.stach@pengutronix.de>
+To: Christian Gmeiner <christian.gmeiner@gmail.com>, Russell King
+	 <linux+etnaviv@armlinux.org.uk>, David Airlie <airlied@gmail.com>, Simona
+ Vetter <simona@ffwll.ch>
+Cc: kernel-dev@igalia.com, tursulin@igalia.com, Christian Gmeiner
+	 <cgmeiner@igalia.com>, etnaviv@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Date: Tue, 03 Dec 2024 18:46:07 +0100
+In-Reply-To: <20241121092409.3859592-1-christian.gmeiner@gmail.com>
+References: <20241121092409.3859592-1-christian.gmeiner@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241203-x1e80100-va-mic-bias-v1-2-0dfd4d9b492c@linaro.org>
-References: <20241203-x1e80100-va-mic-bias-v1-0-0dfd4d9b492c@linaro.org>
-In-Reply-To: <20241203-x1e80100-va-mic-bias-v1-0-0dfd4d9b492c@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
- Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Abel Vesa <abel.vesa@linaro.org>, 
- Johan Hovold <johan@kernel.org>
-X-Mailer: b4 0.14.2
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
+X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-The WCD938x codec provides two controls for each of the MIC_BIASn outputs:
+Am Donnerstag, dem 21.11.2024 um 10:24 +0100 schrieb Christian Gmeiner:
+> From: Christian Gmeiner <cgmeiner@igalia.com>
+>=20
+> Use the new helper to export stats about memory usage.
+>=20
+Thanks, applied to etnaviv/next.
 
- - "MIC BIASn" enables an internal regulator to generate the output
-   with a configurable voltage (qcom,micbiasN-microvolt).
+Regards,
+Lucas
 
- - "VA MIC BIASn" enables "pull-up mode" that bypasses the internal
-   regulator and directly outputs fixed 1.8V from the VDD_PX pin.
-   This is intended for low-power VA (voice activation) use cases.
-
-The audio-routing setup for the X1E80100 CRD currently specifies both
-as power supplies for the DMICs, but only one of them can be active
-at the same time. In practice, only the internal regulator is used
-with the current setup because the driver prefers it over pull-up mode.
-
-Make this more clear by dropping the redundant routes to the pull-up
-"VA MIC BIASn" supply. There is no functional difference except that we
-skip briefly switching to pull-up mode when shutting down the microphone.
-
-Fixes: 4442a67eedc1 ("arm64: dts: qcom: x1e80100-crd: add sound card")
-Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
----
- arch/arm64/boot/dts/qcom/x1e80100-crd.dts | 4 ----
- 1 file changed, 4 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/qcom/x1e80100-crd.dts b/arch/arm64/boot/dts/qcom/x1e80100-crd.dts
-index 39f9d9cdc10d8e79824b72288e2529536144fa9e..a4d8da81bb4468e03ba8a9d37efaae10f7a6b53e 100644
---- a/arch/arm64/boot/dts/qcom/x1e80100-crd.dts
-+++ b/arch/arm64/boot/dts/qcom/x1e80100-crd.dts
-@@ -188,10 +188,6 @@ sound {
- 				"VA DMIC1", "MIC BIAS3",
- 				"VA DMIC2", "MIC BIAS1",
- 				"VA DMIC3", "MIC BIAS1",
--				"VA DMIC0", "VA MIC BIAS3",
--				"VA DMIC1", "VA MIC BIAS3",
--				"VA DMIC2", "VA MIC BIAS1",
--				"VA DMIC3", "VA MIC BIAS1",
- 				"TX SWR_INPUT1", "ADC2_OUTPUT";
- 
- 		wcd-playback-dai-link {
-
--- 
-2.47.0
+> Signed-off-by: Christian Gmeiner <cgmeiner@igalia.com>
+> ---
+>  drivers/gpu/drm/etnaviv/etnaviv_drv.c | 12 +++++++++++-
+>  drivers/gpu/drm/etnaviv/etnaviv_gem.c | 12 ++++++++++++
+>  2 files changed, 23 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_drv.c b/drivers/gpu/drm/etna=
+viv/etnaviv_drv.c
+> index 6500f3999c5f..35f47dd6367f 100644
+> --- a/drivers/gpu/drm/etnaviv/etnaviv_drv.c
+> +++ b/drivers/gpu/drm/etnaviv/etnaviv_drv.c
+> @@ -488,7 +488,16 @@ static const struct drm_ioctl_desc etnaviv_ioctls[] =
+=3D {
+>  	ETNA_IOCTL(PM_QUERY_SIG, pm_query_sig, DRM_RENDER_ALLOW),
+>  };
+> =20
+> -DEFINE_DRM_GEM_FOPS(fops);
+> +static void etnaviv_show_fdinfo(struct drm_printer *p, struct drm_file *=
+file)
+> +{
+> +	drm_show_memory_stats(p, file);
+> +}
+> +
+> +static const struct file_operations fops =3D {
+> +	.owner =3D THIS_MODULE,
+> +	DRM_GEM_FOPS,
+> +	.show_fdinfo =3D drm_show_fdinfo,
+> +};
+> =20
+>  static const struct drm_driver etnaviv_drm_driver =3D {
+>  	.driver_features    =3D DRIVER_GEM | DRIVER_RENDER,
+> @@ -498,6 +507,7 @@ static const struct drm_driver etnaviv_drm_driver =3D=
+ {
+>  #ifdef CONFIG_DEBUG_FS
+>  	.debugfs_init       =3D etnaviv_debugfs_init,
+>  #endif
+> +	.show_fdinfo        =3D etnaviv_show_fdinfo,
+>  	.ioctls             =3D etnaviv_ioctls,
+>  	.num_ioctls         =3D DRM_ETNAVIV_NUM_IOCTLS,
+>  	.fops               =3D &fops,
+> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_gem.c b/drivers/gpu/drm/etna=
+viv/etnaviv_gem.c
+> index 5c0c9d4e3be1..e81c261b0017 100644
+> --- a/drivers/gpu/drm/etnaviv/etnaviv_gem.c
+> +++ b/drivers/gpu/drm/etnaviv/etnaviv_gem.c
+> @@ -527,6 +527,17 @@ void etnaviv_gem_obj_add(struct drm_device *dev, str=
+uct drm_gem_object *obj)
+>  	mutex_unlock(&priv->gem_lock);
+>  }
+> =20
+> +static enum drm_gem_object_status etnaviv_gem_status(struct drm_gem_obje=
+ct *obj)
+> +{
+> +	struct etnaviv_gem_object *etnaviv_obj =3D to_etnaviv_bo(obj);
+> +	enum drm_gem_object_status status =3D 0;
+> +
+> +	if (etnaviv_obj->pages)
+> +		status |=3D DRM_GEM_OBJECT_RESIDENT;
+> +
+> +	return status;
+> +}
+> +
+>  static const struct vm_operations_struct vm_ops =3D {
+>  	.fault =3D etnaviv_gem_fault,
+>  	.open =3D drm_gem_vm_open,
+> @@ -540,6 +551,7 @@ static const struct drm_gem_object_funcs etnaviv_gem_=
+object_funcs =3D {
+>  	.get_sg_table =3D etnaviv_gem_prime_get_sg_table,
+>  	.vmap =3D etnaviv_gem_prime_vmap,
+>  	.mmap =3D etnaviv_gem_mmap,
+> +	.status =3D etnaviv_gem_status,
+>  	.vm_ops =3D &vm_ops,
+>  };
+> =20
 
 
