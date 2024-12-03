@@ -1,145 +1,126 @@
-Return-Path: <linux-kernel+bounces-428918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA9DC9E14FC
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:03:41 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EEB49E14FF
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:04:04 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9CE6916046D
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 08:03:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D88B62820E5
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 08:04:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4DD51DF242;
-	Tue,  3 Dec 2024 07:59:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB3DD1BCA1B;
+	Tue,  3 Dec 2024 07:59:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JkGRDXoJ"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eLGFx5KK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9F8B1AB6CC;
-	Tue,  3 Dec 2024 07:59:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44E0B1AD41F;
+	Tue,  3 Dec 2024 07:59:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733212753; cv=none; b=OfQm8rRpwHlSmEuWKXIdqopdnzanwxmFwhlX6hLbCrvy+oDvRG94IWpEq/mBoQMK36ghgVp/YdA5iqKHKpPS7ekLSW+1kXxqWc5IQOVkW/L7UNbGiMXofemYZt7um3pMHE+C2iRGq4XPLbb7zrXu7luomV7JlsDpbskyF+Vo7Qw=
+	t=1733212793; cv=none; b=Hj4rWP9y8Os4SPdILZuqThL++nW1nLfEq239u+a0/gsgYMkGbzY6+vdzyne1OX5gHZQloKIxRIdr4EFDwWVnyaLU7RY1la56L5jPd3ncI1NxluoybJcOsREZmvX2jFcpqiv7RJ/EzZ2vfW6gxzyBEgimIwMGbLRd6wHVgPzy5SA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733212753; c=relaxed/simple;
-	bh=clpkBCGLDVMVR5pZCRShuH5wToaBnPfTlcc+xdY8wzA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kluN/Vvyp5G2vIorhpygCt+0GeEsqMBeJ1r5MYiSSLvGOylbbkHdes5YGIEg6XrPtIfmMgQkcO11PFDsj1WZycoiUjJTvVT9UCeNtvI5L36yhvBNdQurL9jaKaIlCPIhcEgJFlbXNLGHnTHr4BOQWHWNyd291/GpIc2XQP8Ed90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JkGRDXoJ; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-215513ea198so24850725ad.1;
-        Mon, 02 Dec 2024 23:59:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733212751; x=1733817551; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=pUE0Vq+/WDIwmmUNrcZovJ+MHEgUVuI1n1+DEZCijos=;
-        b=JkGRDXoJhiaCQYrTONCpvUpWSySyPnJ0/yfmr4kQ22ZMV8Mn49fPDq2H7wgbzsGUnl
-         q9bl2Wo5acpCZ4HWdE9y2OdDvPPln+vAlrxhG/2+cA5dF22ZiCshg7yOZAMN8tJJuOB2
-         emDHf1+0WDsXaV2T1eyFScdD4VT/DS3kGw6/n3T1lg10JNTYG7/suwGLMhD+FPAhiRGG
-         NSpLQkVIe57hScZv7vo6Cf3p8kJpGXrmyT7s8tsNYi3y+riY5fmsqnuMMBOf4nNjaPcl
-         8u1YcrcNgizEPynCuliBA2YMptFsT00zvnVj1exJy6Oc6N/zxhFMUJC/LRcSOha8WnYP
-         HTMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733212751; x=1733817551;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pUE0Vq+/WDIwmmUNrcZovJ+MHEgUVuI1n1+DEZCijos=;
-        b=LP2SzQ1+z3+fuU+1jpQcXOFDafEoy8zzyXj3Dj35mp7a+NXPIX1Me9SfNI4Oe7iY/B
-         YROoxCwyZvP/S9MyMWyBCOSD/7Ni93KFqNvxslRqX4biQDMFEVRD6NZAkMKbE8eTbyHz
-         kjo4PCmZP7raQxB76OTx50I42x0D1itiEBiMNxnVGRe/4+DqsOe+922m3Xaf5Pog5bG4
-         0o0g1O0P4VMq9pdJlL5JvWse1BuO4MG13n/CaQkR1JBzAGMXC7ljoGnQPimhFEbFx1jc
-         CkfwoSunuQCJuYUf1BANArJyGw4+R2PSI8E9dfH9hUnhMfxB/4W0Q9V8Ym1fOQBEBjmu
-         lRyg==
-X-Forwarded-Encrypted: i=1; AJvYcCVsw0BuL+xUIUd+RreKAOiYWBWbsvRPAvrXZrfd6rBfHkpdVy4pd2qMkE53eM314gn1jtlw/H0vbBhvVg==@vger.kernel.org, AJvYcCW1JJf1xi7V/+KNZThMfBoU6CKXX+CBFKh5aoBwjIogYVpl57OJwzcdaZYpNGMVENXo35flF/8uCaXux4c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzFYFn00Nde3mRGMQIu/JVjXGU04YhjnZ5GDBR2U2MucU1dnF7
-	u/H6n9QudY9+5G5IUNwBjz6LA16ACIbyexB6RNKpMLTzeQOD3b7Y9JZiTyB6V6U=
-X-Gm-Gg: ASbGncuEg4nJdZiTjhR+AFCqyA/eZOgerhgiqHOGAdCxMaUn12X54/HWvYQJCU/6Ua9
-	KNY/88qMIkphngdLIFQiidUCDTvR/mWm0vh1PDcS8JBBDWZrk5rIJdYFE4s1MIobqesIOLJg6yc
-	S+nyA5sPSShX738T0kEf3gdArxvYzb0fJKSo4JibTbOtf7s9prRVKFweglsmLtiqa9GtqUWwu5L
-	UT8KJZtWTIaak0qE4qPpeA6vMKOSpqCKf+rhixfLNBqVlkwJJ5BIJU=
-X-Google-Smtp-Source: AGHT+IG6upqXMJff71Rg4NKM6z78ZKwnFw+H2kH/5Wpva0oCYSKoZ/+9hj0T4GifRUnQmN+l88ai3A==
-X-Received: by 2002:a17:902:e845:b0:215:9c06:272a with SMTP id d9443c01a7336-2159c062adbmr100923315ad.24.1733212751208;
-        Mon, 02 Dec 2024 23:59:11 -0800 (PST)
-Received: from melbuntu ([2401:4900:1cb9:6d90:4398:1b59:5c22:1aa8])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72541849453sm10120310b3a.183.2024.12.02.23.59.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Dec 2024 23:59:10 -0800 (PST)
-Date: Tue, 3 Dec 2024 13:29:04 +0530
-From: Dhruv Menon <dhruvmenon1104@gmail.com>
-To: Andreas Kemnade <andreas@kemnade.info>
-Cc: Aaro Koskinen <aaro.koskinen@iki.fi>, vigneshr@ti.com,
-	andi.shyti@kernel.org, jmkrzyszt@gmail.com, tony@atomide.com,
-	khilman@baylibre.com, rogerq@kernel.org, linux-omap@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] i2c: omap: Cleaned up coding style and parameters
-Message-ID: <Z066SMd4XjNLd_Wt@melbuntu>
-References: <Z04CA8fGCC-nyZIY@melbuntu>
- <Z04faeJUgZTydiMb@darkstar.musicnaut.iki.fi>
- <20241203083547.0213c054@akair>
+	s=arc-20240116; t=1733212793; c=relaxed/simple;
+	bh=RGJC9wsQ45SKkxBUklnjFLbfk9BJwNBdCz/jc1eUN20=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=A7E4qt2Sk08Iuzkz4YOuBkZQFk4lUeusIHHXQiMs8I/Ip6lTR8OtMDRykVQ0X/7nOrNDLXK9c/3/b/ryacgg2hKMJjpII8mjDowJWUmQtPYS1+9c5gl+bywKTsPfltclXpo6EB/CAWO2YNT0sZ8aUW/j3Q714MsG3PAZkVjgVN0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eLGFx5KK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DDFEC4CECF;
+	Tue,  3 Dec 2024 07:59:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733212792;
+	bh=RGJC9wsQ45SKkxBUklnjFLbfk9BJwNBdCz/jc1eUN20=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=eLGFx5KK3oc+SnKyoGW73B4AQTSxdq1gb6jA3MAhox+mHpCrqsfYyvwMrMwKI5El4
+	 9YtaUgOGlc4AuTN63Jmp6C8iTRXVjQga8qKeNPnWC1g9y5wQO7+kF/dqFR5nAW7qcJ
+	 hy8tJCFwqf3o74DzEk9Pi+mE6nOhQqX/YgkPJaMU4T2+g/Dr5coB19QSDUePqfMId0
+	 wonDRZIMCg0fs/nf4tjiyI48Tu7NvIaqTkg7a96hHrXbY2spV5NZnECK4v9NECsYgk
+	 cO8k9ddg8oQmVNm39vnnGI/LPNf4XiaziGTSe1q2m08ZgmphJit0xBtJkSfAfjeA86
+	 iROpJwMn0IpeA==
+Message-ID: <11038b0c-e9f7-46ce-bd7f-2d763db230cb@kernel.org>
+Date: Tue, 3 Dec 2024 08:59:45 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241203083547.0213c054@akair>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 09/10] arm64: dts: qcom: sm8650: add support for QTEE
+To: Amirreza Zarrabi <quic_azarrabi@quicinc.com>,
+ Jens Wiklander <jens.wiklander@linaro.org>,
+ Sumit Garg <sumit.garg@linaro.org>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+ Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, op-tee@lists.trustedfirmware.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-doc@vger.kernel.org
+References: <20241202-qcom-tee-using-tee-ss-without-mem-obj-v1-0-f502ef01e016@quicinc.com>
+ <20241202-qcom-tee-using-tee-ss-without-mem-obj-v1-9-f502ef01e016@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241202-qcom-tee-using-tee-ss-without-mem-obj-v1-9-f502ef01e016@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-> > Not sure if that is correct as sleeps can be now shorter? I wouldn't
-> > touch them unless you can show some real benefit (checkpatch.pl warning
-> > isn't one for old driver code).
-> > 
-> The sleeps are not shorter, instead possibly longer. I do not think
-> that is an issue, AFAIK the idea with sleep range is to bundle wakeups
-> and reduce power consumption.
-> 
-As per timer,how-to docs present, using ms_sleep(1) will 
-lead longer sleep time (about 20ms in HZ=100)
+On 03/12/2024 05:19, Amirreza Zarrabi wrote:
+> Add qcom_tee node.
 
-> > Maybe also changes should be split into separate patches for easier
-> > review.
-> > 
-> I would leave out omap_i2c_*data() parameter stuff until the i2c irq
-> regressions are fixed, maybe that parameter is needed.
-> 
-Using git blame, the only usage of it has been for error logging.
+Why? "What" we see from the diff. Stop repeating subjects, but say
+something useful. This applies to all your patches.
 
-On Tue, Dec 03, 2024 at 08:35:47AM +0100, Andreas Kemnade wrote:
-> Am Mon, 2 Dec 2024 22:58:17 +0200
-> schrieb Aaro Koskinen <aaro.koskinen@iki.fi>:
-> 
-> > On Tue, Dec 03, 2024 at 12:22:51AM +0530, Dhruv Menon wrote:
-> > > This commit addresses the coding style issues present in i2c-omap.c,
-> > > identified by checkpatch.pl and removes unused parameters present in
-> > > two functions.
-> > > 
-> > > 1. Coding style issues includes Macro Utilization, alignnment
-> > >    correction, updating ms_sleep() < 20 to usleep_range().
-> > > 2. Removed unused parameters from omap_i2c_receive_data()
-> > >    and omap_i2c_transmit_data().
-> > > 
-> > > No functional changes have been introduced in this commit.  
-> > 
-> > Not sure if that is correct as sleeps can be now shorter? I wouldn't
-> > touch them unless you can show some real benefit (checkpatch.pl warning
-> > isn't one for old driver code).
-> > 
-> The sleeps are not shorter, instead possibly longer. I do not think
-> that is an issue, AFAIK the idea with sleep range is to bundle wakeups
-> and reduce power consumption.
-> 
-> > Maybe also changes should be split into separate patches for easier
-> > review.
-> > 
-> I would leave out omap_i2c_*data() parameter stuff until the i2c irq
-> regressions are fixed, maybe that parameter is needed.
-> 
-> Regards,
-> Andreas
+Anyway, your driver and binding say that this is just a fake node used
+purely to instantiate the Linux driver. Drop the patch.
+
+
+Best regards,
+Krzysztof
 
