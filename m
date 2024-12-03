@@ -1,250 +1,201 @@
-Return-Path: <linux-kernel+bounces-429696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA6629E2053
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 15:56:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F7A59E2074
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 15:58:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7335166241
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 14:56:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A246165F9D
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 14:57:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 034151F757D;
-	Tue,  3 Dec 2024 14:56:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEDC31F7590;
+	Tue,  3 Dec 2024 14:57:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="V0Uo6uzK"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2077.outbound.protection.outlook.com [40.107.94.77])
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="WJoHxyHP"
+Received: from pv50p00im-zteg10011501.me.com (pv50p00im-zteg10011501.me.com [17.58.6.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9170C13B5B6;
-	Tue,  3 Dec 2024 14:56:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.77
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733237774; cv=fail; b=f7Ve2MwCb9GQL8jPuIXWZ6AZ6CBypGQnj8hAk6BrjEZk/9F0GOVS784xqrkQl9ZubPx4Z8c9HORkEuGiaWA3UnM2SA32gWpbCM8laS02dkHtDXj0apvuw/JYgGIrNbL2bpNevbhYhNvSQ6nqk6zfzff6AGBHv2gS33nEUpoLiVI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733237774; c=relaxed/simple;
-	bh=ZbJF9uJuAtN0ZXeXjD5loeifOlGrKRSWvbbpXdI1ySI=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Tqm6HzZwSvxl0X2uuaQiWQ/Iiue1Yr7LzEC4ywmZmNUD8u5kphiqm6+gUvvHKZxu1uJRN/md/Ft/DrkKfpS7fONjRlqSOJDZWqUNJiBz3nPL6FBhwwGv+N8z71HZu5mz2RvYvzxE0HkqeJeOfH3ZxKd1EK+yzt5qY+2CSVF7XQc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=V0Uo6uzK; arc=fail smtp.client-ip=40.107.94.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=hkV2qAimWlvTTVkJ54Mx5X63mncNB6UsfFlDFignxCxgXUHikYkfpChLREwN45ctoV52xn3SK61ugl0VfW8/lMC7evV13oitgMUpWWjniJi/KyfwmS+UoJ7e9121hTdfw0kLX476WcCIlp9INSIdk3kWsOHVQYH/5cfoTN7l/N2CU88V0SJAtrEneNnfCshWYIW+Ig7RTh8Us+j3b3WCNk8CKeoUAxrMd9uZ6OH01ePtqjv80etAY9Ll1WxuG9Ces7oKtcdZqbb+QiRoi+q8ltumQX5MAHwIz9HDPoJsm7YznleR2uLO4svv/wjRMWJk+WcYTUOXt29xVWZYgNVd2w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=GzdDLkp2JcpJLmlCoY5b7KnCSkGGIdZ8V6KrG5nH53U=;
- b=K0OGsbhYoVFd5l6Fp4ZoSlyaCactV6ubTUQwl5qbCaXHPl/2UD8uNJpvEh+I33LYTN32R6gJCH38mr60JoFhtpRS3LdlG6hSg+apoLQoiXzme0jtKVRHBrmXlFLA/DNDqWdPYniU5IXH9nRxm7+0/aN4riz1bfiDnFUDVozmCd1Vkl4yL0rAgoqbck+O3QhY7JFPY4AJHhAFHRhEsHrLxShiylubCmMW1mdIv1H47Am2QFeNWflDlIDibT/7MWJ5IE32Rc2dsRKJuA20JiJG4shoFzyMEBkOgIYnwbt3ZsZtbZgL06DRq9Snbw9RII1bmZsGicSLznzh6V1OIxQj2A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GzdDLkp2JcpJLmlCoY5b7KnCSkGGIdZ8V6KrG5nH53U=;
- b=V0Uo6uzKOWMBlAUIrkEbjJUsbjdNehv4IwMM2Kcg63nwQ4qbB794xeI7ozxizwHHYJqiAytJP9M4QY9tAJEN5w6iiHFwtAkIumTDX+UWuCxpvgOSnmL+9t2lhvdozZhFxSOT/LRnEUv60/xFvDrRa0m3kcf/2DKjuTEs7UkNr4g=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from SA1PR12MB5672.namprd12.prod.outlook.com (2603:10b6:806:23c::5)
- by SN7PR12MB8601.namprd12.prod.outlook.com (2603:10b6:806:26e::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.18; Tue, 3 Dec
- 2024 14:56:03 +0000
-Received: from SA1PR12MB5672.namprd12.prod.outlook.com
- ([fe80::60f:5e8d:f0da:4eca]) by SA1PR12MB5672.namprd12.prod.outlook.com
- ([fe80::60f:5e8d:f0da:4eca%4]) with mapi id 15.20.8207.017; Tue, 3 Dec 2024
- 14:56:01 +0000
-Message-ID: <03530f39-8abe-4c24-b5a8-3b6f91eb1c74@amd.com>
-Date: Tue, 3 Dec 2024 08:55:59 -0600
-User-Agent: Mozilla Thunderbird
-Reply-To: michael.day@amd.com
-Subject: Re: [RFC PATCH v2 1/2] KVM: guest_memfd: add generic population via
- write
-To: Nikita Kalyazin <kalyazin@amazon.com>, pbonzini@redhat.com,
- shuah@kernel.org, kvm@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: linux-mm@kvack.org, david@redhat.com, quic_eberman@quicinc.com,
- jthoughton@google.com, brijesh.singh@amd.com, michael.roth@amd.com,
- graf@amazon.de, jgowans@amazon.com, roypat@amazon.co.uk, derekmn@amazon.com,
- nsaenz@amazon.es, xmarcalx@amazon.com
-References: <20241129123929.64790-1-kalyazin@amazon.com>
- <20241129123929.64790-2-kalyazin@amazon.com>
-From: Mike Day <michael.day@amd.com>
-Content-Language: en-US
-In-Reply-To: <20241129123929.64790-2-kalyazin@amazon.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SN1PR12CA0101.namprd12.prod.outlook.com
- (2603:10b6:802:21::36) To SA1PR12MB5672.namprd12.prod.outlook.com
- (2603:10b6:806:23c::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C5921F4709
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 14:57:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.42
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733237855; cv=none; b=dllwoB5M2pTbEZk3OUB01qFDGeGbuUv7PTlq9zwoBiyd6VHyvCN9PmJai09/Qa/BXN2nR3O6tzMfUDTyHUBHs0+k0xxDYgngJjpJ1iSwP8lZGpJ+rhCg+RrC4bjmIkJuaWBUYSvwiBXT5b1/rvrRiHUrR4qFER7PByUJAcaT9Ps=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733237855; c=relaxed/simple;
+	bh=I1QE9YqXRd/95EuZ6shU92lVYpx6jSwp7U8UdDQ+eqY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=A3X1y+hgAQJw9iepjAu/FOidBLXRzIVP6O+jR7ZmkVaddNBMrVu4CqoxueEq60ms2ftXHxvpl7o3RzgBWMIftJNESt6IF7oPK8UVJrbGf2N/2PG9/bh9ckWvQAZy4X0B0wkmx1E6h0bgRnx25yX427CZBOULFu5VyzaNUT4g9lU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=WJoHxyHP; arc=none smtp.client-ip=17.58.6.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
+	s=1a1hai; t=1733237853;
+	bh=zPP2M6RHoQlxRDoHnjCsF/MyKgy2Hv/oTH6yXikXqgI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:
+	 x-icloud-hme;
+	b=WJoHxyHPQic0UPYroDs8nCEAWsZm40sH8RhZy74XvLp/u3uVoK8y0NcRam0ip/lrx
+	 bXSlxO0ATLyoBoLBgb1HPjJ6VzOkweGc3d49hUpXLFFHcJz2ky04rRviy7vj4V1Uv0
+	 UrP8xtrDy605sSzzXJfwV92hCnmVSa/In2c5FK+QwsvdkOzwtlVoKR8MfrPuM+OkJ3
+	 kTV9qWoS0uz7z4phORc7Uz1s0gw2Ayri2PFJ13eQLHgrebkECU60pYLHuubiEEJ1y+
+	 pdLr+ixZhVq84c1mKgl9tDNm6hKdk1MRV7Fp8S0cKzjfCmv+0IlvKjaoM5N1+JgTTH
+	 Pur3pBzgfGODA==
+Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
+	by pv50p00im-zteg10011501.me.com (Postfix) with ESMTPSA id 367E14A0413;
+	Tue,  3 Dec 2024 14:56:59 +0000 (UTC)
+Message-ID: <f5ea7e17-5550-4658-8f4c-1c51827c7627@icloud.com>
+Date: Tue, 3 Dec 2024 22:56:54 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA1PR12MB5672:EE_|SN7PR12MB8601:EE_
-X-MS-Office365-Filtering-Correlation-Id: ab6b7e40-2f5b-4de7-c7f9-08dd13aa9a83
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?R1dIQ3dnTVVnZDNIbVFxNUtiSXRFU2grSHhSVEtSek9KL0FQV0hrNHc2K2p0?=
- =?utf-8?B?MGtvWGtCVWQvWVZLRkphMWVXcDBVaW5FSUlYSk5LZlZWUi9nZ0ZiZFJmUXdM?=
- =?utf-8?B?ckIyUW5xR0d0REVIV1N3TWI1YmlOUGJZOVBYNVI5bEtlYlozdWlJa2x4eEFo?=
- =?utf-8?B?a1JleVpIdGFuWVRVK2NOdWFrS3VqdHBISllpa1RtMHRYTU1kbTVaY3hRTVZC?=
- =?utf-8?B?ZUVFdjFZK241MFlNUW1LSG9XdFVJMDljMlR1NnhDTitpa2dOa2w0M3JvRlpM?=
- =?utf-8?B?NGhYd0Y0dFhnV0dLTWdLcUxpODV1TmdYQzN3eHE1RGhZbzBNV1k0djh4eVhh?=
- =?utf-8?B?NWo1bXhVWC9qd0tueXptRDR4OE0xQTRhS2dyQkNPSjQ5V1MxUmxEK01aRWZH?=
- =?utf-8?B?Q2t4YVU3TUxVLy90Qi9zb2xqSkcyR2xKZ3hnWFhFQVlQNHJUWGF2eDE1akhh?=
- =?utf-8?B?WG1NbmxScUdCRG9ISjBLUERXN0FpRElza2Jrb2Q0YWZ1Q2lDUjNxalNEUm44?=
- =?utf-8?B?bXFORHVMRFNGUE1ESk04VlRpdjNQUWp1VkZFNkV4UC9CSWR4Q0hKTzEvS3Jw?=
- =?utf-8?B?L1RWNSswcU1mQ1lpZ3VaWDNIalhlMUU0V3d2V3pZSlVpcFFaazhIWnFRSk5t?=
- =?utf-8?B?TkUxYmVoeVZ0elNYS0FFN0hJTkdtV1VmdEtodnNaYjBuYnJzSVVTNCtjNGVJ?=
- =?utf-8?B?VEdUdWFjSzlQOFNtMzlmTVNRRm5PNTlHTXpDVkJKV1daZHZLRG56V1VZY054?=
- =?utf-8?B?dHlSbWk3MmdWYm1Wdysxa251M2pzT0Y5NmRJNVMvdzNrMG1aMGg1VHFub0dt?=
- =?utf-8?B?SHpyamZBaVdJdE02UWFVYWh0dnkyUjFteVNwQ3g4WEM5SU04cnIzWTJ3bDNV?=
- =?utf-8?B?Vmk5VGs4Y3k4L293VTZqYmsyYzBTd21jNldVTUtHQzJvMVl2bnhXNU4zWm04?=
- =?utf-8?B?dDZSUTUxZXRDSnpWNTl3QXpuVmF1WExzZ3FPdThvb0hkUFNYTmNGYitkSnRD?=
- =?utf-8?B?NkU3UmpzOVNPVStnQkt4T01Fekp6YW9KWVcza1Avb1pMZjVjQ0wvTkhvYXAr?=
- =?utf-8?B?bVgzdnQ3TkJMQ3hhVzhuWDdhTDZHQ29ieFFpeFlqMHJhVkZHSElOdUVyU3hI?=
- =?utf-8?B?NmFXQVBMbkMvMGNidysxamNWMXBhVk10TFRiQkNPOFI0cEZhOWp4ajBBZUY0?=
- =?utf-8?B?c09RQUtQTTllV1pVU1VLazByc2J0b1VqZmE1UytWTnQ1akgxVHE0OUcxL0FN?=
- =?utf-8?B?MjVBeTR5VGNpOG9HcTdMamxaS0ozcUgxTE4xR2FmT29vWFJNQmFiSXltbmFP?=
- =?utf-8?B?TTZEZy9oS3AvMWJMRjRwOXN6YTBBdTFLeUpIcHVpZDEwY2pQU0IxNCtIcWZ0?=
- =?utf-8?B?bkZrMDFwVFlrajNVMkU0SmVXeVliNHkxZitEVjZCK3hhL3h3N0xSU2ZCR3Jx?=
- =?utf-8?B?WjZGY3lLTEw5K2p0T3FUTlBZTFFkSkY2aEg1amNmT3RDRDMyOWlxTVp4b0Ju?=
- =?utf-8?B?VnE3WVM1ajNyRHlZb3BWRDBnNkt0RXdiaXJkdVZrQzdlWVF5Ulp4TzhndmVJ?=
- =?utf-8?B?YWNiaVVSMVRkNUFzL0Q2cjV0Z0t0a1ZIREhBRXVmdUQ1eHlUQVdRVjJIQlI2?=
- =?utf-8?B?Nk1ma3VJUFAzZmhaWnlpTnJkUm45clBMN2I0dTBlQVNVZ0RCOE9yZktYYU4z?=
- =?utf-8?B?KzB5NEpoMXlCVjRRd1ZJeE1UUXhmZUtxbHl4cDEzV1JPOVNLck42bzFyenJs?=
- =?utf-8?B?MW1lT2lRR1p2d1JSN2ZndE1VOGEzUWlpZU1oblNHaXFjUmZPSm4zL3JTbitG?=
- =?utf-8?B?RlVTKzNEa2ZsUGVodktVQT09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR12MB5672.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?cERGNzFmc0ZablpjWlNWWE5aUFBOUUVEclcxTmMxMHNHdDNwblA5RGtaQXF3?=
- =?utf-8?B?UmphNE1Pdit2NUttZXphZnlQdDY1M3AvelFnV2xJaWVzcDB0UnhQSlgvT25V?=
- =?utf-8?B?L2NjYnZWVEt0eEZkYWZOM01FNEJ4bUJOSDc1aWZMUjZnUzhLSm0wUitmWElx?=
- =?utf-8?B?RjhHNGU5OEljVGFQUTFUYXBUQTkrQ290Zy95c1Jzb3dMZS9LWWpmbFBiVkRj?=
- =?utf-8?B?SmQ2V21NNXJxdTlHVWNUTXBqNTRsOVZvbFlMWGoybHAvU1VraHo1aWNaMVV6?=
- =?utf-8?B?ZGVoQXJWT1BUZmY0WCtUQXZEcnpsMnhvMmRXMnJ2NStYME44YU95T0wrNVRF?=
- =?utf-8?B?TVF2REZiVUE5MFEwdGpUazlySlRtaTNMMm1zZ0Y0dlRKYzYxQ0lRTm1PMW90?=
- =?utf-8?B?YXlvOXNlV2x5R2dtdXp5OXUyMUlqL0dsYnlGcUppeUZoKytEVmxaUGRSMEho?=
- =?utf-8?B?VEcyY0FLOTJNb3l2cHNJRTR6S0Fpc0JhWW5FV1lqUWt3TnprcGFQVWdRaU1V?=
- =?utf-8?B?Lzl2c1BsN1Vlb2Y0NEFhQWJ2WUx0OHlWY0NGZDBBcEh5SmN6NkdOejlEdk5t?=
- =?utf-8?B?bndvc1JwS096YThZcDVqM3lOL3drb01SQVpzZ1ZuY0pOSWkrVVlYcjBXSFNY?=
- =?utf-8?B?RlUvWE9YTzlxMTVBb1JLZUgrekxYT3RtMVB4Rk5pTHFjbkRNMi9jV2xzaGV6?=
- =?utf-8?B?YUlmVDYwR2RiNElHbVZKdmhzSWF6L21wa2lJNGVIN2RaYXNFbm5iTXZkMzBE?=
- =?utf-8?B?OEdlNEtsRlk5dXVTZml0aitDclhQTU1ySWdmQVFEYm9HdTFNdE1LK0NibVJr?=
- =?utf-8?B?ME5VaFVRMCtBUm5FcEVEamtQNlFWaXNjaldCV3UvbGtPM3kxTnRzQmZWNzBo?=
- =?utf-8?B?SmtPRkhONC9Ea24xN2N6TXFIODQwWSs3R3o5aE9zc2RMYTZIdXRGZjJ6QzFP?=
- =?utf-8?B?dTVqbkNvZlp5cDAwSkVuWE1VeDBxcVA2NEF4Z0VkRTZHMisyS0dveFViVW1v?=
- =?utf-8?B?Z1JTVWpHaGRXMjZ6aWFpTmQrdWJjczBxVno3dU9vQW10dWJiV0dGOUw2S09U?=
- =?utf-8?B?bi96amh4RUJMeVEzSXgxdU5aeU1Xc1VoV0JIQ2p0MEtocDlLaGNDYkZsV1do?=
- =?utf-8?B?MkgvN3hMT0k3Rm1XN1FOdVh0QXYzRXo5NmcwejVxRUtvdWhqQjkrMGh4Rkln?=
- =?utf-8?B?VlVXRC84aGhwQ0tidFZJaUNva3dDMTFPbTRvb1dFOHp1MVp4UGtkNEtHdm1w?=
- =?utf-8?B?N2hBbmFyaDAyazdkZ0U2U3g5M3BhZGhGWmliK3NZbHh2VnV5V2hQN0VKdTZq?=
- =?utf-8?B?TmtKQU9tTTBjaUtUSHlHQUFYVzJoMlZFWlFlb2J1c0ZrN2ZPZE90LzJYMnZP?=
- =?utf-8?B?Wjh5N0UyN3Nzd2t6Q2hoaVdNdk5GSjkyOGxic09LRFQ3N0hXNmN2Yng2akdI?=
- =?utf-8?B?WlU1VTdleFh4Qk1mR3ZkZ0RmSFVDeFdpTkdXNWUyRmhNL0FhK1Fxb0JXeGJJ?=
- =?utf-8?B?djJ3b1R5WEIxMXh2Zk9uWGFKVkVOekc5MG44STBXd0hUMEE2UzlCeC9ia0dR?=
- =?utf-8?B?azdDQnRjeUNrcytsYTJCRmZESGtZTVozNlZLNXJmSjJ6NDFyNkZNUmt1NTdS?=
- =?utf-8?B?am02VXZUWVYrbTlFazR0ZDhHTWZaYkpoektzYVpwSHJxd0JvTS9kaWJlMFFG?=
- =?utf-8?B?ZXFkT1c5T1lXditMa0xNbTdrMkZkdEl5dXA5S1M4WEFqUG5nQlpwemZxR2ND?=
- =?utf-8?B?bmt0cVM5YW4yaXVJZ29xSDhkS2ZDTk5CNHNUS3o2YncwSmFQUWgyYVFMYnVt?=
- =?utf-8?B?UXlUdWJvT0VRTURTWEZmNFVPc3pOOFdPbkpCbTBFN1hTWnNoSWdISHozRGtU?=
- =?utf-8?B?TUQvWmlLZHBwY0F3VHQ0Uk9lQ0VBS0NnTVFDaTZZbkV3cnhWVzRqQUlZSlgx?=
- =?utf-8?B?ZjVOQ3c1L2wxSFpqSHJSRFBMUTlxVGJhK09kbm9aeE4vdDkyUGFXVnkvOXQw?=
- =?utf-8?B?VTZYSEk4cmFjWmVnSjcxUE00U1psTE1VbDdVMnNPMmlZVEttVUpCOTBMMGFs?=
- =?utf-8?B?VDMvOFEweFVSNGE2M3BzeUx0cms5NG5BL2NYOVcrQXQ4emF3SzVheWxFTSsz?=
- =?utf-8?Q?8jqWqm/OA/aVUlXB+LAzkVQ1c?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ab6b7e40-2f5b-4de7-c7f9-08dd13aa9a83
-X-MS-Exchange-CrossTenant-AuthSource: SA1PR12MB5672.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Dec 2024 14:56:01.5826
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: uOjBRzNTZQbxbvXo3qBfEoMO8oj0EeMZ+OoKbd5UbKUeTEf6E+bTcR3iAn8v1rAdhmqfQkpIleFuACrNJQunIQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB8601
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 00/32] driver core: Constify API device_find_child()
+ and adapt for various existing usages
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas@t-8ch.de>,
+ James Bottomley <James.Bottomley@hansenpartnership.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+ Philipp Zabel <p.zabel@pengutronix.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
+ Martin Tuma <martin.tuma@digiteqautomotive.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Andreas Noever <andreas.noever@gmail.com>,
+ Michael Jamet <michael.jamet@intel.com>,
+ Mika Westerberg <mika.westerberg@linux.intel.com>,
+ Yehezkel Bernat <YehezkelShB@gmail.com>,
+ Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski
+ <brgl@bgdev.pl>, Andrew Lunn <andrew@lunn.ch>,
+ Vladimir Oltean <olteanv@gmail.com>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Simon Horman <horms@kernel.org>, Dan Williams <dan.j.williams@intel.com>,
+ Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>,
+ Ira Weiny <ira.weiny@intel.com>, Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+ Jiri Slaby <jirislaby@kernel.org>,
+ Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+ Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+ Lee Duncan <lduncan@suse.com>, Chris Leech <cleech@redhat.com>,
+ Mike Christie <michael.christie@oracle.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>,
+ Nilesh Javali <njavali@marvell.com>,
+ Manish Rangankar <mrangankar@marvell.com>,
+ GR-QLogic-Storage-Upstream@marvell.com, Davidlohr Bueso <dave@stgolabs.net>,
+ Jonathan Cameron <jonathan.cameron@huawei.com>,
+ Alison Schofield <alison.schofield@intel.com>,
+ Andreas Larsson <andreas@gaisler.com>, Stuart Yoder <stuyoder@gmail.com>,
+ Laurentiu Tudor <laurentiu.tudor@nxp.com>, Jens Axboe <axboe@kernel.dk>,
+ Sudeep Holla <sudeep.holla@arm.com>,
+ Cristian Marussi <cristian.marussi@arm.com>, Ard Biesheuvel
+ <ardb@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-hwmon@vger.kernel.org,
+ linux-media@vger.kernel.org, linux-usb@vger.kernel.org,
+ linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
+ linux-pwm@vger.kernel.org, nvdimm@lists.linux.dev,
+ linux1394-devel@lists.sourceforge.net, linux-serial@vger.kernel.org,
+ linux-sound@vger.kernel.org, open-iscsi@googlegroups.com,
+ linux-scsi@vger.kernel.org, linux-cxl@vger.kernel.org,
+ sparclinux@vger.kernel.org, linux-block@vger.kernel.org,
+ arm-scmi@vger.kernel.org, linux-efi@vger.kernel.org,
+ linux-remoteproc@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>
+References: <20241203-const_dfc_done-v2-0-7436a98c497f@quicinc.com>
+ <g32cigmktmj4egkq2tof27el2yss4liccfxgebkgqvkil32mlb@e3ta4ezv7y4m>
+ <9d34bd6f-b120-428a-837b-5a5813e14618@icloud.com>
+ <2024120320-manual-jockey-dfd1@gregkh>
+ <b9885785-d4d4-4c72-b425-3dc552651d7e@icloud.com>
+ <8eb7c0c54b280b8eb72f82032ede802c001ab087.camel@HansenPartnership.com>
+ <8fb887a0-3634-4e07-9f0d-d8d7c72ca802@t-8ch.de>
+Content-Language: en-US
+From: Zijun Hu <zijun_hu@icloud.com>
+In-Reply-To: <8fb887a0-3634-4e07-9f0d-d8d7c72ca802@t-8ch.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-GUID: JxnDC87bqdECTEQWZZVsnICFx4KSLLiI
+X-Proofpoint-ORIG-GUID: JxnDC87bqdECTEQWZZVsnICFx4KSLLiI
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2024-12-03_04,2024-12-03_03,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 spamscore=0 mlxlogscore=999
+ bulkscore=0 clxscore=1011 malwarescore=0 phishscore=0 suspectscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2308100000 definitions=main-2412030127
 
-On 11/29/24 06:39, Nikita Kalyazin wrote:
->   
-> +#if defined(CONFIG_KVM_GENERIC_PRIVATE_MEM) && !defined(CONFIG_KVM_AMD_SEV)
+On 2024/12/3 22:07, Thomas Weißschuh wrote:
+> On 2024-12-03 08:58:26-0500, James Bottomley wrote:
+>> On Tue, 2024-12-03 at 21:02 +0800, Zijun Hu wrote:
+>>> On 2024/12/3 20:41, Greg Kroah-Hartman wrote:
+>>>> On Tue, Dec 03, 2024 at 08:23:45PM +0800, Zijun Hu wrote:
+>> [...]
+>>>>> or squash such patch series into a single patch ?
+>>>>>
+>>>>> various subsystem maintainers may not like squashing way.
+>>>>
+>>>> Agreed, so look into either doing it in a bisectable way if at all
+>>>> possible.  As I don't see a full series here, I can't suggest how
+>>>> it needs to happen :(
+>>>>
+>>>
+>>> let me send you a full series later and discuss how to solve this
+>>> issue.
+>>
+>> It's only slightly more complex than what we normally do: modify all
+>> instances and then change the API.  In this case you have an additional
+>> problem because the prototype "const void *" will cause a mismatch if a
+>> function has "void *".  The easiest way to solve this is probably to
+>> make device_find_child a macro that coerces its function argument to
+>> having a non const "void *" and then passes off to the real function. 
+>> If you do that in the first patch, then you can constify all the
+>> consumers and finally remove the macro coercion in the last patch.
+> 
+> Casting function pointers like that should be detected and trapped by
+> control flow integrity checking (KCFI).
+> 
+> Another possibility would be to use a macro and _Generic to dispatch to
+> two different backing functions. See __BIN_ATTR() in
+> include/linux/sysfs.h for an inspiration.
 
-Another option is to use the confidential computing (coco) attributes to keep
-the write operation limited to clear-text guests (diff against patch 1/2):
-There are a couple of benefits and shortcomings that I've listed below the diff.
+this way may fix building error issue but does not achieve our purpose.
+our purpose is that there are only constified device_find_child().
 
-diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
-index 9aba0ba25276..b7a0c7f2f82d 100644
---- a/virt/kvm/guest_memfd.c
-+++ b/virt/kvm/guest_memfd.c
-@@ -1,5 +1,6 @@
-  // SPDX-License-Identifier: GPL-2.0
-  #include <linux/backing-dev.h>
-+#include <linux/cc_platform.h>
-  #include <linux/falloc.h>
-  #include <linux/kvm_host.h>
-  #include <linux/pagemap.h>
-@@ -274,7 +275,14 @@ static struct folio *kvm_gmem_get_folio(struct inode *inode, pgoff_t index)
-         return filemap_grab_folio(inode->i_mapping, index);
-  }
 
--#if defined(CONFIG_KVM_GENERIC_PRIVATE_MEM) && !defined(CONFIG_KVM_AMD_SEV)
-+static bool kvm_has_cc(void)
-+{
-+       if (cc_platform_has(CC_ATTR_MEM_ENCRYPT))
-+               return true;
-+       return false;
-+}
-+
-+#if defined(CONFIG_KVM_GENERIC_PRIVATE_MEM)
-  static ssize_t kvm_kmem_gmem_write(struct file *file, const char __user *buf,
-                                    size_t count, loff_t *offset)
-  {
-@@ -290,6 +298,9 @@ static ssize_t kvm_kmem_gmem_write(struct file *file, const char __user *buf,
-         if (!buf)
-                 return -EINVAL;
+> This also enables an incremental migration.
+> 
+> 
 
-+       if (kvm_has_cc())
-+               return -EIO;
-+
-         start = *offset >> PAGE_SHIFT;
-          end = (*offset + count) >> PAGE_SHIFT;
+change the API prototype from:
+device_find_child(..., void *data_0, int (*match)(struct device *dev,
+void *data));
 
-@@ -564,7 +575,7 @@ static pgoff_t kvm_gmem_get_index(struct kvm_memory_slot *slot, gfn_t gfn)
-  }
+to:
+device_find_child(..., const void *data_0, int (*match)(struct device
+*dev, const void *data));
 
-  static struct file_operations kvm_gmem_fops = {
--#if defined(CONFIG_KVM_GENERIC_PRIVATE_MEM) && !defined(CONFIG_KVM_AMD_SEV)
-+#if defined(CONFIG_KVM_GENERIC_PRIVATE_MEM)
-         .llseek         = default_llseek,
-         .write          = kvm_kmem_gmem_write,
-  #endif
+For @data_0,  void * -> const void * is okay.
+but for @match, the problem is function pointer type incompatibility.
 
-Advantages:
-  * works with multiple architectures (powerpc and x86 so far)
-  * enumerates specific types of coco attributes
+there are two solutions base on discussions.
 
-Disadvantages:
-  * The platform can have an encryption attribute but still be running a guest in clear text
-  * Some guests could be encrypted while others are clear text
+1) squashing likewise Greg mentioned.
+   Do all of the "prep work" first, and then
+   do the const change at the very end, all at once.
 
-To remedy the disadvantage, the write function would need to check if guest encryption is
-currently active for a specific guest.
+2)  as changing platform_driver's remove() prototype.
+Commit: e70140ba0d2b ("Get rid of 'remove_new' relic from platform
+driver struct")
 
-Mike
+ introduce extra device_find_child_new() which is constified  -> use
+*_new() replace ALL device_find_child() instances one by one ->  remove
+device_find_child() -> rename *_new() to device_find_child() once.
 
-> +static ssize_t kvm_kmem_gmem_write(struct file *file, const char __user *buf,
-> +				   size_t count, loff_t *offset)
-> +{
-> +	pgoff_t start, end, index;
-> +	ssize_t ret = 0;
+> Thomas
+
 
