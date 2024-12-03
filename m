@@ -1,230 +1,204 @@
-Return-Path: <linux-kernel+bounces-429100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 132AE9E18BD
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 11:04:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 375FA9E175D
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:25:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0055DB2CDE3
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:26:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC0672853AC
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:25:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5AFB1DF26B;
-	Tue,  3 Dec 2024 09:26:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3D051DEFEA;
+	Tue,  3 Dec 2024 09:25:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=uclouvain.be header.i=@uclouvain.be header.b="rbF2uqQF"
-Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2137.outbound.protection.outlook.com [40.107.20.137])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zh0JgbkR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEADD16EBE9;
-	Tue,  3 Dec 2024 09:26:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.137
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733217964; cv=fail; b=OWQ3Rifiqgdk0cGKkmtldrNFLMoio/FWn9O8XzTsxXxuICsICTJafmrGvk3pXjetCf+VNHgvNkpTZZCXM1IXfixStlOS8X3knWpEsueQJ+viZMGZoe/GQ8wv7dBulQY7nqAFDmV6aaVXnFhwP3ucoOq9UHyWtcg2X0h4Cz4OF0Y=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733217964; c=relaxed/simple;
-	bh=J9zWr19dg5YDYcz27M9HdIs9ewdDq56+7yKKsItKAw8=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=u1kz//kt4ZujUA1Vp8wWQ383uC4CHXhEXP8fCDznR32Y64ilwZ8wZGtseWLovUBLzt2Polft1uppkR+NKAV0pD+mvfP00g+XMi63wkPcx94n/23nkCsnfop4xt/amgC1Wpf0GrgR+3oL8b9Dwo9Gu1Ywqw7XVvOL+xCKU074dgw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=uclouvain.be; spf=pass smtp.mailfrom=uclouvain.be; dkim=pass (2048-bit key) header.d=uclouvain.be header.i=@uclouvain.be header.b=rbF2uqQF; arc=fail smtp.client-ip=40.107.20.137
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=uclouvain.be
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uclouvain.be
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=JlhWLm6Er0PaO+m9r5B5oj0dLHEIkqE5PBfJQocNCYyg/ookrylOrMyRi/HW31Q3KXXIFRjLIEtCOmLsHcREC8akqej8X041dnQLTSBVFd+55LS+Q61XqrsoUJzJmtRYJMk9G/WZYg7PAIJVMQjBkDGqUqhFMW2mgyn5mZCYi66e6tkSm/ps/OQ6C5LXkwvWVhZtCr4ujVR8K77IrUzOvxzcn4ZiNGSNTDK35jtr9nUH5SF9GhiwcnfbHtDYKTGL5cvropiGFnaNqVrguE+qOLMwZtYv6WibTcuS1CmCYZH5lHLiqgP4xpHL76gzrS3xTs+tUkO5sJ6lF7r4LnvGSw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=2ZD7b+vM71mZfpqF64PRHfvwJTG/DyKr2uo0wPXi0/U=;
- b=JwbnMwTrl8OqmqPh743N4JDI/P7saTWtMMHqYxBDLcS4CVI32nz/LPUAWy75wuCGq33KMwRsI5ROBGBm3zxFlxtFvzSChKHrvLxko7c1pJrj3T3jEvOEa4aIYGNpCTpDbcG+6NrloOLmbK18pnPtaJxxZP8rzm8WXzbMfDnXMvcmB5NvkqCNqRBHKJ6o1uYAJWgxWpO0fKkDz9bhjnJYvcOCc2KjpjvW6cnn8iiYMjk4bUZaY5qvpmz8XcvwD7Naj0zQePVUJ/7rUNxfQ+evjcxeNx8iG4EgpEJXfvHfy9Rxlyvdoxd4h/zc48vj6ofngZXQwqT52rlA6sgw9iCs8A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=uclouvain.be; dmarc=pass action=none header.from=uclouvain.be;
- dkim=pass header.d=uclouvain.be; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uclouvain.be;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2ZD7b+vM71mZfpqF64PRHfvwJTG/DyKr2uo0wPXi0/U=;
- b=rbF2uqQFIWMiiTImSePsledHwdOtRmXfPSVPwM5W68yCAH4E7ikVvaNcRCJFmeKfJXSiJrKVga3r5qETHY0IJ3mWARtxiUVeN3nUTDROq33Kad9B/NUPyMBACxTYzTw1+Rrup217OLZQvNs56AxguhrScYww/ltZNlJAPjVXNXp2WkzksKJ7FZKDrNbHGhEFTPxHmtl8TcwP3Ta78N7ob2uEn663AyQtdbUf0C6eoHIaiOtuhoT6e3GEghbJlkPvsHRcix2281HHzr+IwnT3VXkoMdGdNKZ6YL/u5Y3iZ1hsJumLqDxYfSDphjV+t8BJ/ej7jwkH6iciyIXacsIqFQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=uclouvain.be;
-Received: from AS8PR03MB9047.eurprd03.prod.outlook.com (2603:10a6:20b:5b6::13)
- by GV1PR03MB10607.eurprd03.prod.outlook.com (2603:10a6:150:203::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.18; Tue, 3 Dec
- 2024 09:25:55 +0000
-Received: from AS8PR03MB9047.eurprd03.prod.outlook.com
- ([fe80::c90e:deef:6dcf:538c]) by AS8PR03MB9047.eurprd03.prod.outlook.com
- ([fe80::c90e:deef:6dcf:538c%6]) with mapi id 15.20.8207.017; Tue, 3 Dec 2024
- 09:25:55 +0000
-Message-ID: <9426d88b-0a8b-4cd1-81a4-83cfa61bb595@uclouvain.be>
-Date: Tue, 3 Dec 2024 10:25:13 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] power: supply: add support for max77759 fuel gauge
-To: Dimitri Fedrau <dima.fedrau@gmail.com>
-Cc: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
- Will Deacon <will@kernel.org>, Peter Griffin <peter.griffin@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>, linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-References: <20241202-b4-gs101_max77759_fg-v1-0-98d2fa7bfe30@uclouvain.be>
- <20241202-b4-gs101_max77759_fg-v1-1-98d2fa7bfe30@uclouvain.be>
- <20241203073556.GA3936@debian>
-Content-Language: en-US
-From: Thomas Antoine <t.antoine@uclouvain.be>
-In-Reply-To: <20241203073556.GA3936@debian>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MI2P293CA0008.ITAP293.PROD.OUTLOOK.COM
- (2603:10a6:290:45::19) To AS8PR03MB9047.eurprd03.prod.outlook.com
- (2603:10a6:20b:5b6::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 288871B1D61;
+	Tue,  3 Dec 2024 09:25:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733217930; cv=none; b=ayB0lkXAWV0CfOP/iQQQNXJc2VuuhsEcwYEybJHB0io49QGc8C/JJrx4BVrT/kU+0isnBzaOgXovZfOHWWQ7uVZexRp28ZKVEevKmph4G5v0y+HJh0Logdp2U0wqj4IqRIdnnQANLJtMsHCc4dg52NDtoJpdVsVstpa2CkmkXhY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733217930; c=relaxed/simple;
+	bh=HwwyHKZpSpwbNj5lmUmqqtV+pJ6DtpE/w3ilanXMcO0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lfiP2UpAAo6tvl8Fp/znKH4hxlqKNoCOSBWR1nHCwSq1G24HYCi/Z7Pci2NQAGRe/E6auaa9lN1Sldu9STkBAsMGQYvV0HlHnouM3IylrmJ3kXilHU96a9znC0nIJO6jvxxuLrsGW2LM2hf1p8pAIz55kqt28wNX0rjiyS3WJV8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zh0JgbkR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A24F4C4CED6;
+	Tue,  3 Dec 2024 09:25:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733217929;
+	bh=HwwyHKZpSpwbNj5lmUmqqtV+pJ6DtpE/w3ilanXMcO0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Zh0JgbkRdP2KmuXfPVysz3DJESjr17Sqi2LvmPRU+IoNSYd8ybikrs0/DVMMJLoTb
+	 oGj8F/WT7oGgYInBTIKyc+G3fyFMKMPBFA3yZNFXpGTneRC0UuwhzgrcCfKLAargbI
+	 UWeZLlIbUhrXotXYm3z6W3LOvPUVkU+JAmih/p5GaiFq86VULgDL5Z1x1Sr7bUt7Tv
+	 S2W4xqKfYrCxAhAdx5BYsjTXCTf/OVHMCfRWgTpAq3GEEk1mstwXIiZjbgBeBHgd23
+	 A6wABnvPBSVX621TrDs3GEkuCIPBEOmgl0VLsjbrSM62TuSgS0/bcMT1RZDvdufWAT
+	 iUUcXICR9/GoQ==
+Message-ID: <4c5044a0-8286-463c-ace9-78a4245f112e@kernel.org>
+Date: Tue, 3 Dec 2024 10:25:16 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS8PR03MB9047:EE_|GV1PR03MB10607:EE_
-X-MS-Office365-Filtering-Correlation-Id: 629e0651-79ef-4d1c-1996-08dd137c7d59
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|1800799024|10070799003|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?bU5vd3ZkR0ZZNktYdjVxLzZyS3VmRzRTM2pjbWNyamJBWE4zMDdyZWFaSDZI?=
- =?utf-8?B?bXZsWmFUSXlJKzFwUGtNeHBDZ3MvUHlSUlpOS01ROGNXMmRNU0dJRG5zL0RW?=
- =?utf-8?B?cEZEK2JLZGU1RmhPOStVODN2Q0RpNzJxOTZaakpETlBYTTVwRldJTW1uZ3BS?=
- =?utf-8?B?SFhGNHYyVEQ3NGRuMVlkby9vR0hJVzg5M0NidWlFaVpxazhFejhXQkNkT0xY?=
- =?utf-8?B?UnlYKzRzbU5mc3l4c3BVcEhsZUdjaTFIOHU5Y3JDUGxTem5PbWUwWUFHb3RO?=
- =?utf-8?B?bVAyWjlPVXNYam1BcU42bmdYdjVKVFExUWRzNndab0VGcWNBZnhNTmYxUytS?=
- =?utf-8?B?S0FzeXNzV1BMelJqK1lqWnhiNkk4aU5TU054eG5Yd1k1OGpCTmM4czFneThU?=
- =?utf-8?B?QzYwVHJxNkhGdFRnYzRMVktCMTUwZUZKajlnN050amVvSThJQlRIdk84YWJX?=
- =?utf-8?B?TDJJQzVrVkdTSkhBV1oyODM4ODdzT2J5djNFVUhEeDZrQ1JZV2lmUitaQ2w1?=
- =?utf-8?B?ejlSWHI4SmJaYkZZWFFzZ0RHdWVxb1EyUTN3OUtyWkxUWGZyQW9RZGUwQ0tC?=
- =?utf-8?B?dTNCSkhGQVFvMjFmV3R4bmtoQ1FiSjl6cXdKcmRNbFR4ODBnVUpPTXNMZE9t?=
- =?utf-8?B?eHdLbkk4bk1lYjVUb2V3NkJiS2RIUlk3c1FqQ041MlZ5WEZEdkZLOERLZkc1?=
- =?utf-8?B?Ukx1ejNNOC9HRlBhZjJiM1dvRlp4aVpuVURXNVY0YzA2am5zODdDSmVJZFFq?=
- =?utf-8?B?RFYvbXVNTC9pQi9uc25ldkRBTmVmV2tTVFNhcG42N05JcS9paGU0WHpGMjQr?=
- =?utf-8?B?OW1LbW1MU3FNbHVhVmg3b0p3ZjJDTzNtekRjOTJOSmFWTjFZZjFoTTBqQzZr?=
- =?utf-8?B?UkNEaTA0bHNGWEk2eWNoaTc3M2h4YUhRb1Zmb1ZMa1lxbGs1VjRzakpNTVdK?=
- =?utf-8?B?Y0x1UHdib0k3Ykk2ZTFRTTB0cm41NFJON2tRMm9oSXJMSk5NdkdFVThTWG8x?=
- =?utf-8?B?RzVSNkZyaElhUEhWVTRDZWxGUVdJcURRLzREY0tGZnNkU0VlbVlMR2dZYVlI?=
- =?utf-8?B?d2tXM1MvbFVFRjF3RFc4UjFjVTFwekQ2UHM5TWpiQUk2b3M4Uk03WlFxQ3py?=
- =?utf-8?B?TFdDZ24yVzF1Z3V6bWFUTjhzNTlkdFI3d2tSZmw5M3E0RFd4R1NURHA4em5K?=
- =?utf-8?B?NVM0TmYybGRyYjhMWkovV2Exb0pJaVlxMGFWYTVWYTlVVFVKcS8zZWV6elYx?=
- =?utf-8?B?aysxNHY3aW9oeHM4SXJoZW1qNWhwWHU2a0tFS1VDZS82Z0NDeWFNNER4ekJh?=
- =?utf-8?B?K1BkM3pPWkZqRDY0a2ZCWUxSaGs3cWdRTC9WR0NENzF3cEEzM1FzZzJUQTNu?=
- =?utf-8?B?WHMrYjF2Rm85WTE1OFlXUUMveEJTRGd2bzhmTVJMZTI1TWZXRW95ay9WWElt?=
- =?utf-8?B?cm9hQXcwU0o5ZTVaYzRQZzBGZ21HRlpxQ0NOd2R6ZGIvVWZmUFVQNTVvdzhJ?=
- =?utf-8?B?eDUwZm5QNzFjaW42dGowbzE0WGRXbVcxTGpJUFV4aTV6M01FNCtnOVFwTEVK?=
- =?utf-8?B?ZVJBOTJYR0pHaFdsYUFyQmxRdzZRQzQ0bHFXZWNRQndtQkVXMUpUVWVsNkZ4?=
- =?utf-8?B?bktmMXZJM3ZIMTB5WEh3Z0hwcXpoTDNNUGZyVncwSGtObTNzdElzc3B3ajJw?=
- =?utf-8?B?WFB1dnRjOVhQRzhMaWUvSkQzS3NOcmdlbWsyc3VtRkk3YnpyUWRtc3JEK01r?=
- =?utf-8?B?ZjUyaXRaNDdwR2p2VmFFM0tOV3FodjcySkxnbWZFSzlNcExyWjNlb0ovNmx2?=
- =?utf-8?B?L3Jua05EWnkwMXpRU2x0Zz09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR03MB9047.eurprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(10070799003)(366016);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?NC9GektYU2xZN1pLNDlQZ1ptTVJqMGhkak9IWE1RR1JCK1pWREVCNERuVVFT?=
- =?utf-8?B?L2tRaGVtRDU1Zm9jdlhNWW55ZUw3MlRlNmNka3padnVXc3c2cEFSMjh5N2pj?=
- =?utf-8?B?aGVnNkxWbTFlNE8wTGxVZXFrcGc3YXZJakl5NXRiN1ZKU2lVNHQ0VlUraEJ2?=
- =?utf-8?B?MUtkOFRuaUFCNTF0a08yQ2l0WmtGMFlqclBxcUNwaDMyWko3VThYa1NvNnFz?=
- =?utf-8?B?VWd3QWxUS0xnVnZpUVpSVEd0K25TOEorVmwxWkFKY2Z5Q01IT1h0RnEzakNN?=
- =?utf-8?B?VDM1TVJ0S0I2NFlKamozbGpYZGxldjhVcWNkZUxnWmpEZ0hMR1psdGVxZy9k?=
- =?utf-8?B?SFZ2Z3ovWUtXLzh4VWxMb0lHK1Z2MG9qVmpWWGtNUlVUUlNyYTRJcC9vMU1U?=
- =?utf-8?B?Zi9BTm5CVmhjVDFQSmQvV1k0ZFR5QmJKVUE2S0hHTGlnUHQ2SjdCbjdiNnVY?=
- =?utf-8?B?T0xNSnhhZDBFOXRaUDlRRnlLQkRLazVEaURkWit2QlpoeFFqbG9oYjRqbHVx?=
- =?utf-8?B?a014RFBJVEU3TjFXQjdhYzU3ZmErakJqNmtFdTVidVZzeUY1Z0I3UVZ5bzZB?=
- =?utf-8?B?YzErNmF2ZmNyTmZCN2E2OERXd1U3dE1DN0JWR2JNdzh6ZnV3Wm5IS3ljSFhw?=
- =?utf-8?B?enUwVDArSUhwMTRJZ3VyS1VkbHhCT0xxVTM3S3pWZ0QyLzRUcmVCLzJ5NmNv?=
- =?utf-8?B?ZFhCZ0k3Tk42a0ZCeml3ckI5dkNUSmtTTVN4V25OaGJEeFUwM0tFK0VHSUFG?=
- =?utf-8?B?OWRWWHJGQnIrNVNkb0pLZVA5NG50YVA0VXdvMk1US1kyM29qU3RPUHhWVjNr?=
- =?utf-8?B?ODAvUUtURlpadEk4OXJPYlJtNUFYV2YydXkwTjhtNFZqMDR3V3p5RlBQd1N2?=
- =?utf-8?B?NFgyS1pSU3NsVFZPL2kyL2pKbW9uVk1DQzJCa3ZTVm5pKzBsTjNXTHVLZ1Vx?=
- =?utf-8?B?dno5bVlMSlEybTBVd1RyVENrRi9LQXB6Wjh4NGRjblJHMU00UURFSlpQQlNW?=
- =?utf-8?B?OFhRc2JBSUJ3V0NCZ1h4bzkyV3pUZ05TMXJET0hBRDR2VUdOdjcwbys5cmJH?=
- =?utf-8?B?WWdtekFUbVJyQUdiRDhSWDB5RTdiMnJmTjI2TS9vMGJsekJ1NXpPOTF3RzZ1?=
- =?utf-8?B?S0FQa0RoZEdoY2d5TTRVSWpwM0VXRE9CTHFuUVhKaXBQZ0pKMkZsZ2lPeVNh?=
- =?utf-8?B?WUNENUozamdkWXorWUgxekJvSHVGb21DUSsrM0d3REtKRlNqUkpCb3pTK256?=
- =?utf-8?B?bk9SMTlTMzh1cG1HQVdtTVpBdXNYcklxMkhFUjZFMkRpc1ZTRzV4eTdLaWJ6?=
- =?utf-8?B?MTE0K0hNRGc3bGZyaTQ5QW9tcDg0TzJjNXdRSmI0ZUR5WDY4bzZScTJUaHBl?=
- =?utf-8?B?S2NMRFVyZ0NEL0o3SHJITEhaTzFXOVZBdzF3MWZlVXVmVGpPN2pVRGtiMnhO?=
- =?utf-8?B?d1lRTlgySTFUaTRPd2JWUG12V1J4ZXUzZEdlQzZXU0xqeTMyc3k1OW04R21F?=
- =?utf-8?B?QmxmOVRmcEJIMEMyS0txYmdKejFadVRaSi8vUXV4MzFuR1hrL3FUai9TTWQr?=
- =?utf-8?B?RjU3T2tsMkV4VUQwVGdDaHNhUytQZXZYRnd2aW8xenczaTNOK2J0ZjRac3Bv?=
- =?utf-8?B?Rm9aTG54a3hnNjVTN2E4UDMvZ0RZd3o5RnNFQzVNbGhiZi9uMThmNXR0alpp?=
- =?utf-8?B?VjV3dXRrdjdVYmZMVGZuUHUyT3Njci9LcGI0MHlOQVJmSDFzKytWT0c5d2xR?=
- =?utf-8?B?Y3B6ZlAreFVxM1ExcGZMbVc4UlVzdTE2SmdDcnFOckNXTlVPY0lPUU1CRlll?=
- =?utf-8?B?NGFDN2d3alVRU2E2SU1pazI5L05FNW9ualVSQ2FXanU2TVRWZTQ0SXB3UHNH?=
- =?utf-8?B?UDgwbDQ4K290NUFpYjhIT1gvR3diRXRCMlZsMDd6Uk9VMUtCWmJaSHlnZWhM?=
- =?utf-8?B?cWJwQmRkUCtEekI5TnU2c09MSXA1MzBBVnVLZU80RVFheTZtVWRtU3JRZzgx?=
- =?utf-8?B?NnpCL1ZqLzZKSnlPanNlMDRiclNidDByQVJhdVdIV0dRYjFWSFR1eEphSWpH?=
- =?utf-8?B?VHFLNFp0a2JhSy9DaFM2NlYzcFpFdDdKWGQzSFNJNTA0MjVqaHBHUUc4OHdL?=
- =?utf-8?B?RFhLQ3lzSXBIeVBpWEdJeTRUOENNaGRvdUFzZ1FZZy9HNzI4OGxLVWJWRER0?=
- =?utf-8?Q?arcUvRhYK1LT4yfzLgrep/94EZay2G/sTsOxx2EMN/Ao?=
-X-OriginatorOrg: uclouvain.be
-X-MS-Exchange-CrossTenant-Network-Message-Id: 629e0651-79ef-4d1c-1996-08dd137c7d59
-X-MS-Exchange-CrossTenant-AuthSource: AS8PR03MB9047.eurprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Dec 2024 09:25:55.8361
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 7ab090d4-fa2e-4ecf-bc7c-4127b4d582ec
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: KIsgJuLR/7CGKaLlQGFDwXx1yojBsMdSJ8w2bwa+l75rUtfWQWV7eedhAn3Sv5labwQKZBsKxbGsUmbx1DeBzA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR03MB10607
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] dt-bindings: iio: adc: Add binding for Nuvoton
+ NCT720x ADCs
+To: Eason Yang <j2anfernee@gmail.com>, avifishman70@gmail.com,
+ tmaimon77@gmail.com, tali.perry1@gmail.com, venture@google.com,
+ yuenn@google.com, benjaminfair@google.com, jic23@kernel.org,
+ lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ nuno.sa@analog.com, dlechner@baylibre.com, javier.carrasco.cruz@gmail.com,
+ andriy.shevchenko@linux.intel.com, marcelo.schmitt@analog.com,
+ olivier.moysan@foss.st.com, mitrutzceclan@gmail.com, tgamblin@baylibre.com,
+ matteomartelli3@gmail.com, alisadariana@gmail.com, gstols@baylibre.com,
+ thomas.bonnefille@bootlin.com, ramona.nechita@analog.com,
+ mike.looijmans@topic.nl, chanh@os.amperecomputing.com, KWLIU@nuvoton.com,
+ yhyang2@nuvoton.com
+Cc: openbmc@lists.ozlabs.org, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241203091540.3695650-1-j2anfernee@gmail.com>
+ <20241203091540.3695650-2-j2anfernee@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241203091540.3695650-2-j2anfernee@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 12/3/24 08:35, Dimitri Fedrau wrote:
-> Hi Antoine,
+On 03/12/2024 10:15, Eason Yang wrote:
+> This adds a binding specification for the Nuvoton NCT7201/NCT7202
+
+
+Please do not use "This commit/patch/change", but imperative mood. See
+longer explanation here:
+https://elixir.bootlin.com/linux/v5.17.1/source/Documentation/process/submitting-patches.rst#L95
+
+A nit, subject: drop second/last, redundant "bindings". The
+"dt-bindings" prefix is already stating that these are bindings.
+See also:
+https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
+
 > 
-> Am Mon, Dec 02, 2024 at 02:07:15PM +0100 schrieb Thomas Antoine via B4 Relay:
->> From: Thomas Antoine <t.antoine@uclouvain.be>
->> +#include <linux/types.h>
->>  
-> No need to include it, it is done by <linux/i2.c> which includes
-> <linux/device.h> which includes <linux/types.h>
+> Signed-off-by: Eason Yang <j2anfernee@gmail.com>
+> ---
+>  .../bindings/iio/adc/nuvoton,nct720x.yaml     | 40 +++++++++++++++++++
+>  MAINTAINERS                                   |  1 +
+>  2 files changed, 41 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/iio/adc/nuvoton,nct720x.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/iio/adc/nuvoton,nct720x.yaml b/Documentation/devicetree/bindings/iio/adc/nuvoton,nct720x.yaml
+> new file mode 100644
+> index 000000000000..2ed1e15b953b
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/iio/adc/nuvoton,nct720x.yaml
+> @@ -0,0 +1,40 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/iio/adc/nuvoton,nct720x.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Nuvoton nct7202 and similar ADCs
+> +
+> +maintainers:
+> +  - Eason Yang <j2anfernee@gmail.com>
+> +
+> +description: |
+> +   Family of ADCs with i2c interface.
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - nuvoton,nct7201
+> +      - nuvoton,nct7202
+> +
+> +  reg:
+> +    maxItems: 1
 
-Hi,
-Will remove for v2.
 
->>  static const char *const max17201_model = "MAX17201";
->>  static const char *const max17205_model = "MAX17205";
->> +static const char *const max77759_model = "MAX77759";
->>  
->>  struct max1720x_device_info {
->>  	struct regmap *regmap;
->> @@ -54,6 +57,21 @@ struct max1720x_device_info {
->>  	int rsense;
->>  };
->>  
->> +struct chip_data {
->> +	u16 default_nrsense; /* in regs in 10^-5 */
->> +	u8 has_nvmem;
->> +};
->> +
->> +static const struct chip_data max1720x_data  = {
->> +	.default_nrsense = 1000,
->> +	.has_nvmem = 1,
->> +};
->> +
->> +static const struct chip_data max77759_data = {
->> +	.default_nrsense = 500,
->> +	.has_nvmem = 0,
->> +};
->> +
-> You can get rid of chip_data by reading rsense from DT and moving
-> has_nvmem to max1720x_device_info. By doing so you don't have to rely on
-> default values. Either it is specified by DT or by rsense value in
-> nvmem.
+No other properties? No resources?
 
-I guess I can just get has_nvmem by seeing if of_property_read of the
-rsense value fails. As long as the binding is well defined as to not
-allow a rsense value for the max1720x, there should be no problem.
-Will do that for v2.
+I think you skipped quite a lot from previous review.
 
-Thanks, best regards,
-Thomas
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    i2c {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        nct7202@1d {
+
+Nothing improved here.
+
+<form letter>
+This is a friendly reminder during the review process.
+
+It seems my or other reviewer's previous comments were not fully
+addressed. Maybe the feedback got lost between the quotes, maybe you
+just forgot to apply it. Please go back to the previous discussion and
+either implement all requested changes or keep discussing them.
+
+Thank you.
+</form letter>
+
+
+Best regards,
+Krzysztof
 
