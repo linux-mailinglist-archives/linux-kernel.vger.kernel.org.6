@@ -1,314 +1,201 @@
-Return-Path: <linux-kernel+bounces-429435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3222A9E1C09
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 13:23:23 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5FD51618F7
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 12:23:19 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 737421E47B9;
-	Tue,  3 Dec 2024 12:23:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="e57QpHxs"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D5589E1C1C
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 13:26:43 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5DBD1E0DA0
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 12:23:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B55128350B
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 12:26:42 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F4F31E5000;
+	Tue,  3 Dec 2024 12:26:38 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91D711E47A6
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 12:26:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733228597; cv=none; b=lT68t9v3Tu9co2TyBIRoBaoBC7TFO1z9J6MUAuo8OH/k47E97EvnEhrrPzfmWalW+8GssKV/19GC3/u9XlehD3Ve2hw1096s7EB08lzMrK4B2MOCHzHnxLgtVcQpBqko3hxf8pnN2tVwI9sQ5tGvnGepfslswxVR/5FM5TwkSfM=
+	t=1733228798; cv=none; b=ceNr8AoNnicVuAx+/WWZYVgtTo8t6wHiYUqa4YjFm10V46FD0aKAU6wbHOR/6lZArDMKfcuIbVarxB6ut3xG8sAQrlzE9KLNnp8U1kIm3BHcP/Uzr15zZYfV3ypykinKBzJIhP44CVffZdSfPMmTlIsgQ7+H/fk8hT7hwfoMb/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733228597; c=relaxed/simple;
-	bh=qPKeza9KT5AbkbxBw25CDTRfGDNQ1EX5vvogHSF14RA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mdCgfqJoX0+HaMRT/QghCuWqMmiKGeLcqpj9MmSt1UynbM7VvyZvdyaNBk5J8nIfTrOZ871SYNu96todgDcL3j/lXp3f1ZAHPL84DN7dt7yiUnlcMyK7MNGt4JW0AfdTAv/qnqZjW6mvTLCftIb/dUMk5tbwKPrQ8tTJrVHeVB8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=e57QpHxs; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=SjSxPn4aupSOnf7jQvwJw7sydsd99XouD0qE9mJcBt4=; b=e57QpHxsuz0OI6pdz9BNkBq7G0
-	jJm/sVbEUHpNGIcE3+pp1J7ea3QEbbXqn6676RqsrLwYYHJRSBkG3sIzlIszbOo5pdY+iDALyG7iK
-	LZ99IlxrGt23JnLi5i1Uu1q5RjYPy2kaKLLZeyQxLHIj8RqspjsgwfLotd3Zrms8qwes1LWIViugF
-	rjNilG7lVtvYqHBs+vrf5gSYvoaxm0l8RK+UOuXBXivLFjPka2LUsd6eM8KjHVL9v8Ab7IB6OeKSH
-	bHaI5BzoGGZo0e6dn30+Q9P8dgFkFO40ZgM7l7jXrtLxEF7B9xPvdOrG3wgp4LoFyMCjBtk1Yo++G
-	yq+m6faQ==;
-Received: from [191.38.218.80] (helo=[192.168.121.142])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1tIRvf-00Fmne-0d; Tue, 03 Dec 2024 13:22:59 +0100
-Message-ID: <fcefae12-7d1e-41ac-974c-06bc88c175e6@igalia.com>
-Date: Tue, 3 Dec 2024 09:22:52 -0300
+	s=arc-20240116; t=1733228798; c=relaxed/simple;
+	bh=4RnOKptB94SO2bFhv67ipSP7R0mT3WdRHm7+gxkVwy0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HDJ7lSum0VA/pY5m7xN3loRh7zQabz8n2YEW+6C/hv9p6Ez+67CsA8Q/mYEynAVB5TiaAIiyKn3f9vXkKbVsHqJfL2Yicoco3HSVNYzE6r6pRANmTvplucIOqf0/6g/ma4SS+hIv6GYxhTc67+nDaE+WUykfFyKQJ+JGwjaOqr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0137BFEC;
+	Tue,  3 Dec 2024 04:27:02 -0800 (PST)
+Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1E2AC3F58B;
+	Tue,  3 Dec 2024 04:26:32 -0800 (PST)
+Date: Tue, 3 Dec 2024 12:26:22 +0000
+From: Mark Rutland <mark.rutland@arm.com>
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: Uros Bizjak <ubizjak@gmail.com>,
+	Alejandro Jimenez <alejandro.j.jimenez@oracle.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: Help with atomic fallback
+Message-ID: <Z0747n5bSep4_1VX@J2N7QTR9R3>
+References: <20241203003856.GJ1253388@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4] drm/v3d: Add DRM_IOCTL_V3D_PERFMON_SET_GLOBAL
-To: Christian Gmeiner <christian.gmeiner@gmail.com>,
- Melissa Wen <mwen@igalia.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Cc: kernel-dev@igalia.com, Christian Gmeiner <cgmeiner@igalia.com>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20241202140615.74802-1-christian.gmeiner@gmail.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>
-In-Reply-To: <20241202140615.74802-1-christian.gmeiner@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241203003856.GJ1253388@nvidia.com>
 
-Hi Christian,
+On Mon, Dec 02, 2024 at 08:38:56PM -0400, Jason Gunthorpe wrote:
+> Hi Mark/Uros,
 
-Thanks for your patch!
+Hi Jason,
 
-On 02/12/24 11:06, Christian Gmeiner wrote:
-> From: Christian Gmeiner <cgmeiner@igalia.com>
+> I hope one of you can help me unravel this, I'm trying to use
+> try_cmpxchg64_release() from driver code and 0-day is saying arc
+> compiles explode:
 > 
-> Add a new ioctl, DRM_IOCTL_V3D_PERFMON_SET_GLOBAL, to allow
-> configuration of a global performance monitor (perfmon).
-> Use the global perfmon for all jobs to ensure consistent
-> performance tracking across submissions. This feature is
-> needed to implement a Perfetto datasources in user-space.
-> 
-> Signed-off-by: Christian Gmeiner <cgmeiner@igalia.com>
+>    In file included from include/linux/atomic.h:80,
+>                     from drivers/iommu/generic_pt/fmt/../pt_defs.h:17,
+>                     from drivers/iommu/generic_pt/fmt/iommu_template.h:35,
+>                     from drivers/iommu/generic_pt/fmt/iommu_armv8_4k.c:13:
+>    drivers/iommu/generic_pt/fmt/../pt_defs.h: In function 'pt_table_install64':
+> >> include/linux/atomic/atomic-arch-fallback.h:295:14: error: void value not ignored as it ought to be
+>      295 |         ___r = raw_cmpxchg64_release((_ptr), ___o, (_new)); \
+>          |              ^
+>    include/linux/atomic/atomic-instrumented.h:4937:9: note: in expansion of macro 'raw_try_cmpxchg64_release'
+>     4937 |         raw_try_cmpxchg64_release(__ai_ptr, __ai_oldp, __VA_ARGS__); \
+>          |         ^~~~~~~~~~~~~~~~~~~~~~~~~
+>    drivers/iommu/generic_pt/fmt/../pt_defs.h:144:16: note: in expansion of macro 'try_cmpxchg64_release'
+>      144 |         return try_cmpxchg64_release(entryp, &old_entry, table_entry);
 
-Reviewed-by: Maíra Canal <mcanal@igalia.com>
+I'm assuming that's the report at:
 
-Best Regards,
-- Maíra
+  https://lore.kernel.org/oe-kbuild-all/202411301219.jHkzXdJD-lkp@intel.com/
 
-> ---
-> Changes in v4:
-> - Rebased on drm-misc-next.
-> - Factored out a small change as separate patch.
-> - Fixed some grammar mistakes: s/job/jobs.
-> 
-> Changes in v3:
-> - Reworked commit message.
-> - Refined some code comments.
-> - Added missing v3d_perfmon_stop(..) call to v3d_perfmon_destroy_ioctl(..).
-> 
-> Changes in v2:
-> - Reworked commit message.
-> - Removed num_perfmon counter for tracking perfmon allocations.
-> - Allowing allocation of perfmons when the global perfmon is active.
-> - Return -EAGAIN for submissions with a per job perfmon if the global perfmon is active.
-> ---
->   drivers/gpu/drm/v3d/v3d_drv.c     |  1 +
->   drivers/gpu/drm/v3d/v3d_drv.h     |  8 +++++++
->   drivers/gpu/drm/v3d/v3d_perfmon.c | 37 +++++++++++++++++++++++++++++++
->   drivers/gpu/drm/v3d/v3d_sched.c   | 14 +++++++++---
->   drivers/gpu/drm/v3d/v3d_submit.c  | 10 +++++++++
->   include/uapi/drm/v3d_drm.h        | 15 +++++++++++++
->   6 files changed, 82 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/v3d/v3d_drv.c b/drivers/gpu/drm/v3d/v3d_drv.c
-> index fb35c5c3f1a7..8e5cacfa38d3 100644
-> --- a/drivers/gpu/drm/v3d/v3d_drv.c
-> +++ b/drivers/gpu/drm/v3d/v3d_drv.c
-> @@ -224,6 +224,7 @@ static const struct drm_ioctl_desc v3d_drm_ioctls[] = {
->   	DRM_IOCTL_DEF_DRV(V3D_PERFMON_GET_VALUES, v3d_perfmon_get_values_ioctl, DRM_RENDER_ALLOW),
->   	DRM_IOCTL_DEF_DRV(V3D_SUBMIT_CPU, v3d_submit_cpu_ioctl, DRM_RENDER_ALLOW | DRM_AUTH),
->   	DRM_IOCTL_DEF_DRV(V3D_PERFMON_GET_COUNTER, v3d_perfmon_get_counter_ioctl, DRM_RENDER_ALLOW),
-> +	DRM_IOCTL_DEF_DRV(V3D_PERFMON_SET_GLOBAL, v3d_perfmon_set_global_ioctl, DRM_RENDER_ALLOW),
->   };
-> 
->   static const struct drm_driver v3d_drm_driver = {
-> diff --git a/drivers/gpu/drm/v3d/v3d_drv.h b/drivers/gpu/drm/v3d/v3d_drv.h
-> index de73eefff9ac..dc1cfe2e14be 100644
-> --- a/drivers/gpu/drm/v3d/v3d_drv.h
-> +++ b/drivers/gpu/drm/v3d/v3d_drv.h
-> @@ -183,6 +183,12 @@ struct v3d_dev {
->   		u32 num_allocated;
->   		u32 pages_allocated;
->   	} bo_stats;
-> +
-> +	/* To support a performance analysis tool in user space, we require
-> +	 * a single, globally configured performance monitor (perfmon) for
-> +	 * all jobs.
-> +	 */
-> +	struct v3d_perfmon *global_perfmon;
->   };
-> 
->   static inline struct v3d_dev *
-> @@ -594,6 +600,8 @@ int v3d_perfmon_get_values_ioctl(struct drm_device *dev, void *data,
->   				 struct drm_file *file_priv);
->   int v3d_perfmon_get_counter_ioctl(struct drm_device *dev, void *data,
->   				  struct drm_file *file_priv);
-> +int v3d_perfmon_set_global_ioctl(struct drm_device *dev, void *data,
-> +				 struct drm_file *file_priv);
-> 
->   /* v3d_sysfs.c */
->   int v3d_sysfs_init(struct device *dev);
-> diff --git a/drivers/gpu/drm/v3d/v3d_perfmon.c b/drivers/gpu/drm/v3d/v3d_perfmon.c
-> index b4c3708ea781..a1429b9684e0 100644
-> --- a/drivers/gpu/drm/v3d/v3d_perfmon.c
-> +++ b/drivers/gpu/drm/v3d/v3d_perfmon.c
-> @@ -313,6 +313,9 @@ static int v3d_perfmon_idr_del(int id, void *elem, void *data)
->   	if (perfmon == v3d->active_perfmon)
->   		v3d_perfmon_stop(v3d, perfmon, false);
-> 
-> +	/* If the global perfmon is being destroyed, set it to NULL */
-> +	cmpxchg(&v3d->global_perfmon, perfmon, NULL);
-> +
->   	v3d_perfmon_put(perfmon);
-> 
->   	return 0;
-> @@ -398,6 +401,9 @@ int v3d_perfmon_destroy_ioctl(struct drm_device *dev, void *data,
->   	if (perfmon == v3d->active_perfmon)
->   		v3d_perfmon_stop(v3d, perfmon, false);
-> 
-> +	/* If the global perfmon is being destroyed, set it to NULL */
-> +	cmpxchg(&v3d->global_perfmon, perfmon, NULL);
-> +
->   	v3d_perfmon_put(perfmon);
-> 
->   	return 0;
-> @@ -457,3 +463,34 @@ int v3d_perfmon_get_counter_ioctl(struct drm_device *dev, void *data,
-> 
->   	return 0;
->   }
-> +
-> +int v3d_perfmon_set_global_ioctl(struct drm_device *dev, void *data,
-> +				 struct drm_file *file_priv)
-> +{
-> +	struct v3d_file_priv *v3d_priv = file_priv->driver_priv;
-> +	struct drm_v3d_perfmon_set_global *req = data;
-> +	struct v3d_dev *v3d = to_v3d_dev(dev);
-> +	struct v3d_perfmon *perfmon;
-> +
-> +	if (req->flags & ~DRM_V3D_PERFMON_CLEAR_GLOBAL)
-> +		return -EINVAL;
-> +
-> +	perfmon = v3d_perfmon_find(v3d_priv, req->id);
-> +	if (!perfmon)
-> +		return -EINVAL;
-> +
-> +	/* If the request is to clear the global performance monitor */
-> +	if (req->flags & DRM_V3D_PERFMON_CLEAR_GLOBAL) {
-> +		if (!v3d->global_perfmon)
-> +			return -EINVAL;
-> +
-> +		xchg(&v3d->global_perfmon, NULL);
-> +
-> +		return 0;
-> +	}
-> +
-> +	if (cmpxchg(&v3d->global_perfmon, NULL, perfmon))
-> +		return -EBUSY;
-> +
-> +	return 0;
-> +}
-> diff --git a/drivers/gpu/drm/v3d/v3d_sched.c b/drivers/gpu/drm/v3d/v3d_sched.c
-> index 99ac4995b5a1..a6c3760da6ed 100644
-> --- a/drivers/gpu/drm/v3d/v3d_sched.c
-> +++ b/drivers/gpu/drm/v3d/v3d_sched.c
-> @@ -120,11 +120,19 @@ v3d_cpu_job_free(struct drm_sched_job *sched_job)
->   static void
->   v3d_switch_perfmon(struct v3d_dev *v3d, struct v3d_job *job)
->   {
-> -	if (job->perfmon != v3d->active_perfmon)
-> +	struct v3d_perfmon *perfmon = v3d->global_perfmon;
-> +
-> +	if (!perfmon)
-> +		perfmon = job->perfmon;
-> +
-> +	if (perfmon == v3d->active_perfmon)
-> +		return;
-> +
-> +	if (perfmon != v3d->active_perfmon)
->   		v3d_perfmon_stop(v3d, v3d->active_perfmon, true);
-> 
-> -	if (job->perfmon && v3d->active_perfmon != job->perfmon)
-> -		v3d_perfmon_start(v3d, job->perfmon);
-> +	if (perfmon && v3d->active_perfmon != perfmon)
-> +		v3d_perfmon_start(v3d, perfmon);
->   }
-> 
->   static void
-> diff --git a/drivers/gpu/drm/v3d/v3d_submit.c b/drivers/gpu/drm/v3d/v3d_submit.c
-> index d607aa9c4ec2..9e439c9f0a93 100644
-> --- a/drivers/gpu/drm/v3d/v3d_submit.c
-> +++ b/drivers/gpu/drm/v3d/v3d_submit.c
-> @@ -981,6 +981,11 @@ v3d_submit_cl_ioctl(struct drm_device *dev, void *data,
->   		goto fail;
-> 
->   	if (args->perfmon_id) {
-> +		if (v3d->global_perfmon) {
-> +			ret = -EAGAIN;
-> +			goto fail_perfmon;
-> +		}
-> +
->   		render->base.perfmon = v3d_perfmon_find(v3d_priv,
->   							args->perfmon_id);
-> 
-> @@ -1196,6 +1201,11 @@ v3d_submit_csd_ioctl(struct drm_device *dev, void *data,
->   		goto fail;
-> 
->   	if (args->perfmon_id) {
-> +		if (v3d->global_perfmon) {
-> +			ret = -EAGAIN;
-> +			goto fail_perfmon;
-> +		}
-> +
->   		job->base.perfmon = v3d_perfmon_find(v3d_priv,
->   						     args->perfmon_id);
->   		if (!job->base.perfmon) {
-> diff --git a/include/uapi/drm/v3d_drm.h b/include/uapi/drm/v3d_drm.h
-> index 2376c73abca1..97b1faf04fc4 100644
-> --- a/include/uapi/drm/v3d_drm.h
-> +++ b/include/uapi/drm/v3d_drm.h
-> @@ -43,6 +43,7 @@ extern "C" {
->   #define DRM_V3D_PERFMON_GET_VALUES                0x0a
->   #define DRM_V3D_SUBMIT_CPU                        0x0b
->   #define DRM_V3D_PERFMON_GET_COUNTER               0x0c
-> +#define DRM_V3D_PERFMON_SET_GLOBAL                0x0d
-> 
->   #define DRM_IOCTL_V3D_SUBMIT_CL           DRM_IOWR(DRM_COMMAND_BASE + DRM_V3D_SUBMIT_CL, struct drm_v3d_submit_cl)
->   #define DRM_IOCTL_V3D_WAIT_BO             DRM_IOWR(DRM_COMMAND_BASE + DRM_V3D_WAIT_BO, struct drm_v3d_wait_bo)
-> @@ -61,6 +62,8 @@ extern "C" {
->   #define DRM_IOCTL_V3D_SUBMIT_CPU          DRM_IOW(DRM_COMMAND_BASE + DRM_V3D_SUBMIT_CPU, struct drm_v3d_submit_cpu)
->   #define DRM_IOCTL_V3D_PERFMON_GET_COUNTER DRM_IOWR(DRM_COMMAND_BASE + DRM_V3D_PERFMON_GET_COUNTER, \
->   						   struct drm_v3d_perfmon_get_counter)
-> +#define DRM_IOCTL_V3D_PERFMON_SET_GLOBAL  DRM_IOW(DRM_COMMAND_BASE + DRM_V3D_PERFMON_SET_GLOBAL, \
-> +						   struct drm_v3d_perfmon_set_global)
-> 
->   #define DRM_V3D_SUBMIT_CL_FLUSH_CACHE             0x01
->   #define DRM_V3D_SUBMIT_EXTENSION		  0x02
-> @@ -766,6 +769,18 @@ struct drm_v3d_perfmon_get_counter {
->   	__u8 reserved[7];
->   };
-> 
-> +#define DRM_V3D_PERFMON_CLEAR_GLOBAL    0x0001
-> +
-> +/**
-> + * struct drm_v3d_perfmon_set_global - ioctl to define a global performance
-> + * monitor that is used for all jobs. If a global performance monitor is
-> + * defined, jobs with a self-defined performance monitor are not allowed.
-> + */
-> +struct drm_v3d_perfmon_set_global {
-> +	__u32 flags;
-> +	__u32 id;
-> +};
-> +
->   #if defined(__cplusplus)
->   }
->   #endif
-> --
-> 2.47.1
-> 
+... for which the config is:
 
+  https://download.01.org/0day-ci/archive/20241130/202411301219.jHkzXdJD-lkp@intel.com/config
+
+> Which is immediately because of a typo in atomic-arch-fallback.h code gen:
+> 
+> #if defined(arch_cmpxchg64_release)
+> #define raw_cmpxchg64_release arch_cmpxchg64_release
+> #elif defined(arch_cmpxchg64_relaxed)
+> #define raw_cmpxchg64_release(...) \
+> 	__atomic_op_release(arch_cmpxchg64, __VA_ARGS__)
+> #elif defined(arch_cmpxchg64)
+> #define raw_cmpxchg64_release arch_cmpxchg64
+> #else
+> extern void raw_cmpxchg64_release_not_implemented(void);
+>      ^^^^^^^^^^^^^^^^^^^^^
+
+This means that arc isn't providing a suitable defintion to build
+raw_cmpxchg64_release() from, or for some reason the header includes up
+to this point haven't included the relevant definition.
+
+From the ifdeffery, there's no definition of:
+
+  arch_cmpxchg64_release
+  arch_cmpxchg64_relaxed
+  arch_cmpxchg64
+
+... and hence no way to build raw_cmpxchg64_release().
+
+The intent here is to have a build failure at point of use, since some
+architectures do not or cannot provide these, but we should clean this
+up to be clearer. The mismatch is intentional and this isn't a typo, but
+I agree it's not great.
+
+> That should return int to make the compiler happy, but then it will
+> fail to link (I think, my cross compiler ICEs before it gets there)
+> 
+> However, arc defines:
+> 
+> static inline s64
+> arch_atomic64_cmpxchg(atomic64_t *ptr, s64 expected, s64 new)
+> {
+>
+> And I see a:
+> 
+> static __always_inline s64
+> raw_atomic64_cmpxchg_release(atomic64_t *v, s64 old, s64 new)
+> {
+> #if defined(arch_atomic64_cmpxchg_release)
+> 	return arch_atomic64_cmpxchg_release(v, old, new);
+> #elif defined(arch_atomic64_cmpxchg_relaxed)
+> 	__atomic_release_fence();
+> 	return arch_atomic64_cmpxchg_relaxed(v, old, new);
+> #elif defined(arch_atomic64_cmpxchg)
+> 	return arch_atomic64_cmpxchg(v, old, new);
+> 
+> Which seems to strongly imply that arc can do the cmpxchg64_release
+> primitive.
+> 
+> But I haven't been able to figure out what is expected here for
+> arch_atomic64 vs try_cmpxchg64 to guess what is missing part here :\
+
+In this case I think this is an oversight in the arc code, and arc *can*
+provide a definition of arch_cmpxchg64(), as per the hack below (which
+implicilty provides arch_atomic64_cmpxchg*()):
+
+| diff --git a/arch/arc/include/asm/atomic64-arcv2.h b/arch/arc/include/asm/atomic64-arcv2.h
+| index 9b5791b854713..ce3fdcb48b0f9 100644
+| --- a/arch/arc/include/asm/atomic64-arcv2.h
+| +++ b/arch/arc/include/asm/atomic64-arcv2.h
+| @@ -137,12 +137,10 @@ ATOMIC64_OPS(xor, xor, xor)
+|  #undef ATOMIC64_OP_RETURN
+|  #undef ATOMIC64_OP
+|  
+| -static inline s64
+| -arch_atomic64_cmpxchg(atomic64_t *ptr, s64 expected, s64 new)
+| +static inline u64
+| +__arch_cmpxchg64_relaxed(volatile void *ptr, u64 old, u64 new)
+|  {
+| -       s64 prev;
+| -
+| -       smp_mb();
+| +       u64 prev;
+|  
+|         __asm__ __volatile__(
+|         "1:     llockd  %0, [%1]        \n"
+| @@ -152,14 +150,12 @@ arch_atomic64_cmpxchg(atomic64_t *ptr, s64 expected, s64 new)
+|         "       bnz     1b              \n"
+|         "2:                             \n"
+|         : "=&r"(prev)
+| -       : "r"(ptr), "ir"(expected), "r"(new)
+| -       : "cc");        /* memory clobber comes from smp_mb() */
+| -
+| -       smp_mb();
+| +       : "r"(ptr), "ir"(old), "r"(new)
+| +       : "memory", "cc");
+|  
+|         return prev;
+|  }
+| -#define arch_atomic64_cmpxchg arch_atomic64_cmpxchg
+| +#define arch_cmpxchg64_relaxed __arch_cmpxchg64_relaxed
+|  
+|  static inline s64 arch_atomic64_xchg(atomic64_t *ptr, s64 new)
+|  {
+
+However, there are other cases where cmpxchg64 doesn't exist or cannot
+be used, and the existing (x86-specific) system_has_cmpxchg64() isn't
+ideal. I suspect we need both a Kconfig symbol and a runtime check to
+handle this properly.
+
+I think if we fix up arc along the lines of the above (with xchg too,
+and handled in the cmpxchg header), then we can rely on the Kconfig
+check that the existing io-pgtable code has:
+
+  depends on !GENERIC_ATOMIC64    # for cmpxchg64()
+
+... and we'll (separately) need to figure out what to do for the runtime
+system_has_cmpxchg64() check.
+
+Mark.
 
