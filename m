@@ -1,225 +1,122 @@
-Return-Path: <linux-kernel+bounces-429564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAF3F9E1E9E
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 15:04:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C13889E1DD2
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 14:41:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5F901B31AAB
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 13:43:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81AE0282129
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 13:41:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1C1C1F4738;
-	Tue,  3 Dec 2024 13:42:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8EBA1F12E8;
+	Tue,  3 Dec 2024 13:41:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="dPo+T0rd"
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SuPNq+Mt"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5399F1F1303
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 13:42:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 666F41E009F;
+	Tue,  3 Dec 2024 13:41:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733233324; cv=none; b=Tcd8TZsc+sUFxVToglTQr1HHs+d1s7DL1MeFXajrC5cc8I0RZ5d+fch3Ok7mFk+yhI30ppesIK9UCnzCx0YaP5Z7b5IJPK0j/kYd541HTkF1/EqJgQvhaa67cACOkHMOyoGuoqLV5FbTqF//SuUggmTETrRac7pGmyCta9D/xdk=
+	t=1733233299; cv=none; b=Qye4O0WtHXj2rnyOx6p26+0qeaI1e1M0T8oGBpS0uzxQ4+vu0gFAeJnca3OMC0mWaUBoADiM4EwnoBLbj3jG+gDUGpnOqLg5jTGBBKm90Zau//17VOEzGpokOmO7FfXowwZuAN0l2Vy+e+vCmvMBJyu/Do+Er0URG2kce/0m4fI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733233324; c=relaxed/simple;
-	bh=Nqyna1A9VacqtygRVnIGLEVKoTV2UL7pR34DW34RArY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=bHtrp3nOWhfXeuSScRJC2OVz/Or2HsfDfRrhy3N95prpa7y+QBGFq/vl+DcLVQGiIaGIJgLzT1OZme9UQaxrurcS/36dV1sBtq/tEMzwnfF71RwQ78cHoTrQop9BtpPMioFtO9s+GZt1lfYzOqUa0JSigJkLlSV5SwmwFRGdQIg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=dPo+T0rd; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20241203134156euoutp0169201967d087cc0ddab1eab05d6ba675~NroSmiLuA2554425544euoutp01Y
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 13:41:56 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20241203134156euoutp0169201967d087cc0ddab1eab05d6ba675~NroSmiLuA2554425544euoutp01Y
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1733233316;
-	bh=oC+R2AH5wsqjet5ieb6+rxFp1u3nZ9Z07QmkpORzdC0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=dPo+T0rdkn45cMrQ0jm8Wk68x/51nKYFsWCfxjcXwXzxO8hNluqZ+bNekjTxg25M2
-	 b2A4WmUf/rNntP1/Pfdt5buqOCP3Y/0sCrjq3OJIxrnKhNtpj/h+qzAxKS21P7QA1N
-	 jT0OfDLgP79B2U62XG8Ruds92UaGgh9b6y80zIkU=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-	20241203134155eucas1p294a7b3f321d9cfa02c1aad2d8fa8d87e~NroSMRyE71760217602eucas1p2r;
-	Tue,  3 Dec 2024 13:41:55 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-	eusmges1new.samsung.com (EUCPMTA) with SMTP id 56.CA.20821.3AA0F476; Tue,  3
-	Dec 2024 13:41:55 +0000 (GMT)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20241203134155eucas1p1e90c71c4f8eb5da41d2cc8a500f54dc7~NroRwtF5v1266212662eucas1p1w;
-	Tue,  3 Dec 2024 13:41:55 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20241203134155eusmtrp1407a8f487afcd4c15fd63225fc616274~NroRv7CKL0888908889eusmtrp1C;
-	Tue,  3 Dec 2024 13:41:55 +0000 (GMT)
-X-AuditID: cbfec7f2-b11c470000005155-6b-674f0aa3a1bb
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-	eusmgms2.samsung.com (EUCPMTA) with SMTP id 8C.F6.19654.3AA0F476; Tue,  3
-	Dec 2024 13:41:55 +0000 (GMT)
-Received: from AMDC4942.home (unknown [106.210.136.40]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20241203134153eusmtip2eceb173357aae7426c9f6aa66d4a47de~NroQX2oFo3160631606eusmtip2D;
-	Tue,  3 Dec 2024 13:41:53 +0000 (GMT)
-From: Michal Wilczynski <m.wilczynski@samsung.com>
-To: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, drew@pdp7.com, guoren@kernel.org,
-	wefu@redhat.com, jassisinghbrar@gmail.com, paul.walmsley@sifive.com,
-	palmer@dabbelt.com, aou@eecs.berkeley.edu, frank.binns@imgtec.com,
-	matt.coster@imgtec.com, maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
-	ulf.hansson@linaro.org, jszhang@kernel.org, m.szyprowski@samsung.com
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-	dri-devel@lists.freedesktop.org, linux-pm@vger.kernel.org, Michal Wilczynski
-	<m.wilczynski@samsung.com>
-Subject: [RFC PATCH v1 05/14] dt-bindings: clock: thead,th1520: Add support
- for Video Output subsystem
-Date: Tue,  3 Dec 2024 14:41:28 +0100
-Message-Id: <20241203134137.2114847-6-m.wilczynski@samsung.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241203134137.2114847-1-m.wilczynski@samsung.com>
+	s=arc-20240116; t=1733233299; c=relaxed/simple;
+	bh=BFUTGSKYwpmQrNItOM3iPUHLJXb0xZtcnGzNjRiZ9xA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FhOOj/wLwwKb06/2lbpkIWGBabSeymjyBy5R6VFOdQrn17/wBIG3MJ5LQhcKpzw/0UYZjsQP4rgsIdy0h0+RmwNMBNpEYSjJHKrxL6D7ts+az3s0b8ASTnD/oBumx5T0vslSUZ0ThfOXgecOKy5TegrTf1+6xL9344Mp42lxiKg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SuPNq+Mt; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733233297; x=1764769297;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=BFUTGSKYwpmQrNItOM3iPUHLJXb0xZtcnGzNjRiZ9xA=;
+  b=SuPNq+Mt9n2Ut0ZmbjKtWv2555CYfgjJh0So7lxT/mKa5tKhJh2tAZHg
+   l0fHgeHqDB3mMnkHyIUAOmrCSx3LpB05pj0b9/UqobVTvkS8O3XI+Cb90
+   voiBAfVrQELtDtKtYjx4oosfHy01/ZQ8qJTTvIwOhPVkAIP+Mh1A6qq/q
+   XrSqVRNsdI/6gnmSwMHlCuhD6dCjMdrjWWuIkWdb5ZICG6kJa8XNYaMmo
+   wfFkoHRZlAlwpCdnCp+S7JS59bNuVQiovKXUrGxJHqZkOrWHHIyRkuoMW
+   I7Diy8E83iDw0dhoEHEAnj34EZzBSM6bhlSpKtf57+RqomtYWPh9Pntjs
+   w==;
+X-CSE-ConnectionGUID: DRQ17aJdT0ucypZIoFYorw==
+X-CSE-MsgGUID: Rrw51WZnRCqzQNVA6vlY2A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11275"; a="33191241"
+X-IronPort-AV: E=Sophos;i="6.12,205,1728975600"; 
+   d="scan'208";a="33191241"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Dec 2024 05:41:37 -0800
+X-CSE-ConnectionGUID: Xt3N8INIQTangqT1Z3zb0w==
+X-CSE-MsgGUID: GBHzDLcxQxml9A+qka5abA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,205,1728975600"; 
+   d="scan'208";a="93345181"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Dec 2024 05:41:33 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tIT9c-00000003S1o-3KHu;
+	Tue, 03 Dec 2024 15:41:28 +0200
+Date: Tue, 3 Dec 2024 15:41:28 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: "Huang, Ying" <ying.huang@linux.alibaba.com>
+Cc: Raghavendra K T <raghavendra.kt@amd.com>, linux-kernel@vger.kernel.org,
+	linux-cxl@vger.kernel.org, bharata@amd.com,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Dan Williams <dan.j.williams@intel.com>,
+	David Hildenbrand <david@redhat.com>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Alison Schofield <alison.schofield@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	Alistair Popple <apopple@nvidia.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, Baoquan He <bhe@redhat.com>,
+	ilpo.jarvinen@linux.intel.com,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Fontenot Nathan <Nathan.Fontenot@amd.com>,
+	Wei Huang <wei.huang2@amd.com>
+Subject: Re: [RFC PATCH] resource: Fix CXL node not populated issue
+Message-ID: <Z08KiPwwiw72Vo9R@smile.fi.intel.com>
+References: <20241202111941.2636613-1-raghavendra.kt@amd.com>
+ <87frn5wac3.fsf@DESKTOP-5N7EMDA>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Sa0xTZxjed87pOaVZ8VBc+qXg2FgwMjIuuixfcDKmgx2iCc4sIdsypIyz
-	YsbFtCAgJkOLTKDdxi3MUi4OFNaAXbFlXMpQ6KhaYBsqoAHGiHWrIKRctilaRjl189/zvs/z
-	vO/7fPn4uMhASvhHMrJYeYY0LZAUEB2DD0deaxTEy8JPd4Wjq+PfYsi0pqFQa+8IhuotIzw0
-	PWrE0M3VRRJdtP9CoT97TxJorKWWQspBPYkcmmkSOVXTPHSjW0uiZbUFoI7lQhK1WaYopF+t
-	x9A5p4lATZ3dABUVX+ChX6/HIMcNFY6KNFvQurmTQq4xA4FqFvooZJwv4yFrWwIq7Kskorcx
-	ixOnKWbe4SCYgTMrFNP7VwPBdGmmKEbVNQSYdl0xyUyOmUmm7tp7zG+lVoy51PQ5U9g2iDGL
-	P94imS+NOsCMKscp5pIt/6DPh4I3U9i0I8dYeVhUkiB13TZKHB0Q51aNv1EAbolKgBcf0q/D
-	ldovyBIg4IvoFgAHrWbAFSsAunoWPcwygCvLp6inFofGRXBEM4DlP9+juGIewK4a86aKpHfC
-	meZ6npvYSs/hcGL19uYsnP4DwI67WtKt8qVTYcmAGndjgg6Clkn7pltIvwXtlx+Q3L4A2Hdl
-	eFPjRUfDuaoSHqfxgdfO3iXcGN/QKE01OKf/TgAbe2I5/A78qu5vjMO+8L7V6MngD20VKoLD
-	mXDGtOTxnoBdKqsH74aTI482buBvzA+G+u4wrv02vGptodxtSHvDiQc+3AXesLyjGufaQnim
-	yPO+22GVSv3f0pGWDs8xDJz93kR8DV7WPJNF80wWzf97GwCuA2I2W5EuYxURGWxOqEKarsjO
-	kIV+kpneDjZ+tc1lXeoEtfedof0A44N+APl44FZhs36/TCRMkeYdZ+WZh+XZaayiH/jxiUCx
-	MCglgBXRMmkW+xnLHmXlT1mM7yUpwKIPTVrL/Cr+8Y/cgxmS/WNOCYy7vGOX7IlbYkPq3p15
-	nDeaElBaY26/rd/jzYq1zkRFTLfA8jtmM79iUDfk6lZlF5+futxn3dFZoRM/UkaF1xlCatVr
-	5uIDzav4wrG4A5LI7ezZ+DzJc+qChW/27aoc+DSo3y/HmnCubN/JO1l7g2201+E7ZtHazQR1
-	clRd2GNV8pNWOKsaiqh+QRzXnrtCz+y990GO7sRPwT/EzWEP4z/edl63Yy0yxDksm9dW98Y7
-	9OUN8Pr+vHw62Tk6bJpPtw+dj5ndqe12ReTnv3iwuicpqfUJeyW7MtFXqbV81ERKjlONhvXd
-	yCeotPGl9wMJRao04lVcrpD+C1022ddEBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprHKsWRmVeSWpSXmKPExsVy+t/xe7qLufzTDf7eELQ4cX0Rk8XW37PY
-	LdbsPcdkMf/IOVaLe5e2MFlc+fqezWLd0wvsFi/2NrJYXFsxl92i+dh6NouXs+6xWXzsucdq
-	cXnXHDaLz71HGC22fW5hs1h75C67xfqv85ksFn7cymKxZMcuRou2zmWsFhdPuVq8vNzDbNE2
-	i9/i/54d7Bb/rm1ksZj9bj+7xZY3E1ktjq8Nt2jZP4XFQdbj/Y1Wdo83L1+yeBzu+MLusffb
-	AhaPnbPusnv07DzD6LFpVSebx51re9g85p0M9LjffZzJY/OSeo+WtceYPN7vu8rm0bdlFaPH
-	pebr7B6bT1cHCEbp2RTll5akKmTkF5fYKkUbWhjpGVpa6BmZWOoZGpvHWhmZKunb2aSk5mSW
-	pRbp2yXoZfw/fYml4LB4xdTrZg2MV4W6GDk5JARMJF7O+scCYgsJLGWU+LZPFSIuI3Gt+yUL
-	hC0s8edaFxtEzStGidY/NSA2m4CRxIPl81m7GLk4RAQ6WSTebl7LCOIwC7xllLg+cyNQNweH
-	sECaxI79kiANLAKqEkfuPGUHsXkF7CWeHnjLBrFAXmL/wbPMIDangIPE66ldrBDL7CV2/D3M
-	ClEvKHFy5hOwg5iB6pu3zmaewCgwC0lqFpLUAkamVYwiqaXFuem5xUZ6xYm5xaV56XrJ+bmb
-	GIEJZduxn1t2MK589VHvECMTB+MhRgkOZiUR3uXrvdOFeFMSK6tSi/Lji0pzUosPMZoC3T2R
-	WUo0OR+Y0vJK4g3NDEwNTcwsDUwtzYyVxHnZrpxPExJITyxJzU5NLUgtgulj4uCUamBqsePT
-	dIlyDRQ8P2ObSqDNrp2asydliV4uOs2wWfngNKvpxc22HlwRa2u3pcQmntfh/Lrg0fzJJ73D
-	7LR1fkuYhu97rmrPlh6461fMQRdfgyO3uhb6PeVKbnrL1XrROWSWUWD3vFL5KMEtaVPb7rQy
-	Ktfa/mSY3ZW9XHf5nHczvc/UKoqf232KU99cp6Vp/q4SQfeqzz/OehVLaj6cIMIbYXOa41+q
-	m8/S26ubcn5Eqs9Ie3Uh8ATfk5kaa3Jk91qJrZq8O8GSP8A609MzJnfXEitdoaaPz60u622y
-	Dln+1XWB88OtG2/52F48O/X0qWlmleEc3Q0Pl//0iF+4SUTp0alP6ySf7j/fJD7lbrESS3FG
-	oqEWc1FxIgDl0upfsQMAAA==
-X-CMS-MailID: 20241203134155eucas1p1e90c71c4f8eb5da41d2cc8a500f54dc7
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20241203134155eucas1p1e90c71c4f8eb5da41d2cc8a500f54dc7
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20241203134155eucas1p1e90c71c4f8eb5da41d2cc8a500f54dc7
-References: <20241203134137.2114847-1-m.wilczynski@samsung.com>
-	<CGME20241203134155eucas1p1e90c71c4f8eb5da41d2cc8a500f54dc7@eucas1p1.samsung.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87frn5wac3.fsf@DESKTOP-5N7EMDA>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-The device tree bindings for the T-Head TH1520 SoC clocks currently
-support only the Application Processor (AP) subsystem. This commit
-extends the bindings to include the Video Output (VO) subsystem clocks.
+On Tue, Dec 03, 2024 at 02:26:52PM +0800, Huang, Ying wrote:
+> Raghavendra K T <raghavendra.kt@amd.com> writes:
 
-Update the YAML schema to define the VO subsystem clocks, allowing the
-clock driver to configure and manage these clocks appropriately. This
-addition is necessary to enable the proper operation of the video output
-features on the TH1520 SoC.
+...
 
-Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
----
- .../bindings/clock/thead,th1520-clk-ap.yaml   | 31 +++++++++++++++----
- 1 file changed, 25 insertions(+), 6 deletions(-)
+> > git bisect had led to below commit
+> > Fixes: b4afe4183ec7 ("resource: fix region_intersects() vs add_memory_driver_managed()")
+> 
+> This breaks you case, sorry about that.  But this also fixed a real bug
+> too.  So, it's not appropriate just to revert it blindly.
 
-diff --git a/Documentation/devicetree/bindings/clock/thead,th1520-clk-ap.yaml b/Documentation/devicetree/bindings/clock/thead,th1520-clk-ap.yaml
-index 4a0806af2bf9..5a8f1041f766 100644
---- a/Documentation/devicetree/bindings/clock/thead,th1520-clk-ap.yaml
-+++ b/Documentation/devicetree/bindings/clock/thead,th1520-clk-ap.yaml
-@@ -4,11 +4,13 @@
- $id: http://devicetree.org/schemas/clock/thead,th1520-clk-ap.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
--title: T-HEAD TH1520 AP sub-system clock controller
-+title: T-HEAD TH1520 sub-systems clock controller
- 
- description: |
--  The T-HEAD TH1520 AP sub-system clock controller configures the
--  CPU, DPU, GMAC and TEE PLLs.
-+  The T-HEAD TH1520 sub-systems clock controller configures the
-+  CPU, DPU, GMAC and TEE PLLs for the AP subsystem. For the VO
-+  subsystem clock gates can be configured for the HDMI, MIPI and
-+  the GPU.
- 
-   SoC reference manual
-   https://openbeagle.org/beaglev-ahead/beaglev-ahead/-/blob/main/docs/TH1520%20System%20User%20Manual.pdf
-@@ -20,7 +22,9 @@ maintainers:
- 
- properties:
-   compatible:
--    const: thead,th1520-clk-ap
-+    enum:
-+      - thead,th1520-clk-ap
-+      - thead,th1520-clk-vo
- 
-   reg:
-     maxItems: 1
-@@ -29,6 +33,17 @@ properties:
-     items:
-       - description: main oscillator (24MHz)
- 
-+  thead,vosys-regmap:
-+    $ref: /schemas/types.yaml#/definitions/phandle
-+    description: |
-+      Phandle to a syscon node representing the shared register
-+      space of the VO (Video Output) subsystem. This register space
-+      includes both clock control registers and other control
-+      registers used for operations like resetting the GPU. Since
-+      these registers reside in the same address space, access to
-+      them is coordinated through a shared syscon regmap provided by
-+      the specified syscon node.
-+
-   "#clock-cells":
-     const: 1
-     description:
-@@ -36,8 +51,6 @@ properties:
- 
- required:
-   - compatible
--  - reg
--  - clocks
-   - "#clock-cells"
- 
- additionalProperties: false
-@@ -51,3 +64,9 @@ examples:
-         clocks = <&osc>;
-         #clock-cells = <1>;
-     };
-+
-+    clock-controller-vo {
-+        compatible = "thead,th1520-clk-vo";
-+        thead,vosys-regmap = <&vosys_regmap>;
-+        #clock-cells = <1>;
-+    };
+Linus was clear about this recently. Even if it fixes a bug, regression is
+still regression and might (*) lead to a revert.
+https://lwn.net/Articles/990599/
+
+(*) in general fixes are better than reverts, but depends on the timing in
+    the release cycle the revert may be the only option.
+
 -- 
-2.34.1
+With Best Regards,
+Andy Shevchenko
+
 
 
