@@ -1,98 +1,78 @@
-Return-Path: <linux-kernel+bounces-430318-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 579649E2F1C
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 23:33:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E070A9E2F1E
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 23:33:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C8CF283842
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 22:32:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A3EAC2838C0
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 22:33:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BE0B1EF0B6;
-	Tue,  3 Dec 2024 22:32:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB71420A5FC;
+	Tue,  3 Dec 2024 22:32:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="lKeUpq1H"
-Received: from out-184.mta1.migadu.com (out-184.mta1.migadu.com [95.215.58.184])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X+hVtUmX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F3311DFD84
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 22:32:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34EBD1DFD84;
+	Tue,  3 Dec 2024 22:32:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733265172; cv=none; b=WjEuqhHi6E3q0KlxLmGwpjMTSKkAPjrdyafmf+92n2qbfaBTcmfBiCmYnICQ7GS1EJgVWS/EP/t0nwkICWzXCXdMhbljM/XrgV2gbo8HnBPgl4irdsg3uBR371qvl+/NS4JmKsvIJyb+WSXDgYcTyqYJhE5fYD9wT4wSzTuFhS8=
+	t=1733265179; cv=none; b=q0x9XLGIAaV0IRyD3N8zzO7s9D7bJHMk6hRWhRZTW09pxADdTGQdsEyjNek8vZoiNif4F254vMvgGIzBow5R01QgkZ7b/cDqhZhH3GCbmEnYsXvhISRsQvfGcWBT0LRNxM3wxHsmnwviUO5HjKs19RLdM8yBXu0twNSsY5Pg3I0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733265172; c=relaxed/simple;
-	bh=5xMXuje2rUezOB3vk/lCC+YV5xNh0tfH3rMlg84BM68=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MOriIiw8Tg8AZWbUQ+kICkWHC+VZVLPn39QC6K6y+kbH6QPVaBeW1ywQY6x5vqH3LNw4QbhXY2aNuPRFIIgGlPJmOQp+7g11ks/A82dEFEbWC7OKMPddaidM8d9f/LoDTQYUKXSMsHskx8GOFZTKiTG59+bzMy7ljbx3sbktToQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=lKeUpq1H; arc=none smtp.client-ip=95.215.58.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Tue, 3 Dec 2024 14:32:38 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1733265168;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hW6mNNVP48/Mj7mfy3CFRZP/i3VCK2OWGnyJMzSgKV8=;
-	b=lKeUpq1HixcYGhKHPIjBx5QNSGodFFQIQucOMLyelNmPqr3SCb6YdppIiid4Fl1hXAcTEX
-	paJ1KXPjqk2uMXzF/3ifnchnBBeUQUhezqTLsRyfaCJIEhd+DDnQOw8HBeLP7nZTCdH73E
-	mxQwVWdcMoCujqQhOH+fthdwYpPQL5k=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Oliver Upton <oliver.upton@linux.dev>
-To: Marc Zyngier <maz@kernel.org>
-Cc: kvmarm@lists.linux.dev, Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Mingwei Zhang <mizhang@google.com>,
-	Colton Lewis <coltonlewis@google.com>,
-	Raghavendra Rao Ananta <rananta@google.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 05/14] KVM: arm64: Always allow fixed cycle counter
-Message-ID: <Z0-HBsBgf6WB7x4R@linux.dev>
-References: <20241203193220.1070811-1-oliver.upton@linux.dev>
- <20241203193220.1070811-6-oliver.upton@linux.dev>
- <87ldwwsbad.wl-maz@kernel.org>
+	s=arc-20240116; t=1733265179; c=relaxed/simple;
+	bh=Bpvf6PT2sZ1szXiUwNXmHPoiyL0/w8E+wBOIB5MmOEk=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=CVtu7o74vLb7mfJvJXT5MAdbo22sNPrV3r8AycUyK6eOSz6EYuOEtB2useC/MXepF90TEgLPiVDKQdeNsNJ9o3iMCRNo0hmrmxlDCOrNbvYYuo18PBV3/rr/u8qsibO6por1Qshqw8lqjhQ+GDEBHqnj/Jx+QBZRCEnwR+4/62s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X+hVtUmX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 957ADC4CEDC;
+	Tue,  3 Dec 2024 22:32:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733265178;
+	bh=Bpvf6PT2sZ1szXiUwNXmHPoiyL0/w8E+wBOIB5MmOEk=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=X+hVtUmXnkjxybS5JhrS3ehCvzAbgpvf7j4evJfuNyWITgL3BhTr1L/wW2h1gsde9
+	 MdhxOyc+UgPe0okIyWW2D5Uz3m+TXGItm4fLPp1IubXkl/KXka2D9D79ZgB7H/IFbb
+	 CqvkltHyQNaL/RmVQ8ZX3i2PWHLij+yEZgME0ES0UAZOxKiYcDmaB+Fe2qoY7pOv/I
+	 kqtmTgU+uCGNv6Gvz5UBbE2Gaz0jGHtF5vXC9WceJs6J7+vRu36h9HxATcQF6EmqUX
+	 6fTZp+7sZ0Pv4LjmFxk7a4nE8bpErisdROU0u+QCysy/xcYkaQ5Gkw0tWjpLzdZL0H
+	 qtX4o9OvZB+sg==
+Message-ID: <c982c5061ea6b0d465dd8b7fefc59cc7.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87ldwwsbad.wl-maz@kernel.org>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <dbb2de3c-cb29-4384-a00b-4fdedeab1a10@sirena.org.uk>
+References: <f8de4a2a-776f-4c10-b75e-e845bcc38dde@app.fastmail.com> <306b0b30-5a32-4c7c-86b4-57d50e2307e8@app.fastmail.com> <1jy1131kxz.fsf@starbuckisacylon.baylibre.com> <c06317c6-b2b2-4b6d-96e4-0c2cfc6846de@app.fastmail.com> <1jplmf1jqa.fsf@starbuckisacylon.baylibre.com> <ce67e512-a15b-4482-8194-b917096f4eeb@app.fastmail.com> <df0a53ee859e450d84e81547099f5f36.sboyd@kernel.org> <1jr06pkof6.fsf@starbuckisacylon.baylibre.com> <37b656cc8272552ba07c93c5a9a59641.sboyd@kernel.org> <dbb2de3c-cb29-4384-a00b-4fdedeab1a10@sirena.org.uk>
+Subject: Re: [PATCH] clk: amlogic: axg-audio: select RESET_MESON_AUX
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: Jerome Brunet <jbrunet@baylibre.com>, Arnd Bergmann <arnd@arndb.de>, Neil Armstrong <neil.armstrong@linaro.org>, Michael Turquette <mturquette@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>, linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>
+Date: Tue, 03 Dec 2024 14:32:56 -0800
+User-Agent: alot/0.12.dev1+gaa8c22fdeedb
 
-On Tue, Dec 03, 2024 at 09:32:10PM +0000, Marc Zyngier wrote:
-> On Tue, 03 Dec 2024 19:32:11 +0000,
-> Oliver Upton <oliver.upton@linux.dev> wrote:
-> > 
-> > The fixed CPU cycle counter is mandatory for PMUv3, so it doesn't make a
-> > lot of sense allowing userspace to filter it. Only apply the PMU event
-> > filter to *programmed* event counters.
-> 
-> But that's a change in ABI, isn't it? We explicitly say in the
-> documentation that the cycle counter can be filtered by specifying
-> event 0x11.
+Quoting Mark Brown (2024-12-03 14:22:04)
+> On Tue, Dec 03, 2024 at 12:15:48PM -0800, Stephen Boyd wrote:
+> > Quoting Jerome Brunet (2024-12-03 03:15:41)
+>=20
+> > > I suspect the the generic path is likely to trigger more discussion.
+> > > I'd like to be able to finish this migration, instead of leaving half
+> > > finished like it is now.
+>=20
+> > Is the half finished migration a problem for this cycle? I was intending
+> > to send the revert later this week and try again next cycle.
+>=20
+> Yes, this patch was triggered by me reporting that multiple boards in my
+> test farm have completely broken audio with defconfig.=20
 
-Yeah... A bit of a dirty shortcut I took because I don't like the ABI,
-but distaste isn't enough to break it :)
-
-> More importantly, the current filtering works in terms of events, and
-> not in terms of counters.
-> 
-> Instead of changing the ABI, how about simply not supporting filtering
-> on such non-compliant HW? Surely that would simplify a few things.
-
-Yeah, that sounds reasonable. Especially if we allow programmable event
-counters where the event ID space doesn't match the architecture.
-
--- 
-Thanks,
-Oliver
+I thought that commit 5ae1a43486fb ("clk: amlogic: axg-audio: revert
+reset implementation") was sufficient to fix the problem. Is that
+incorrect?
 
