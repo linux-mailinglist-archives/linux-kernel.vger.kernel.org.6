@@ -1,259 +1,127 @@
-Return-Path: <linux-kernel+bounces-429583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A3479E1E30
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 14:50:24 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB79D9E1EB1
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 15:08:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF65B28558F
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 13:50:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 21D58B6295C
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 13:50:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C449D2AD02;
-	Tue,  3 Dec 2024 13:50:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E42A1F130A;
+	Tue,  3 Dec 2024 13:50:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="D1xMwcNp"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dZsoufkj"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20CF51F12F2
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 13:50:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB1F11EE006;
+	Tue,  3 Dec 2024 13:50:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733233804; cv=none; b=aEL5RFwcayrv7rLmEyJ+sxl0kwDhXM0qMEIUVufVaHMxKyY2deTN8hZcs7+v04ueUM4qHlMzOBqMEiVgaNQoC47bBIsNeTHEDsrCnm0yvUNQJttDxfz3mA7RYVKBfLYZPYlvfjuqZ966zJU2/J0Z75n60ed0YbGqEO0uV4gNTAM=
+	t=1733233822; cv=none; b=SyFZq1ZfWBDLevonW+BWMUKIfHGELe2IBP1rCytKRDc4+pk7EjUzpGqqxyq0CXRP8s8rCvhGM9H8uu07feaYF51suyuDv41LkxfU0k2RjMaxVXQHvldsbpPBg2UBNj8doUvp76NaHYfmYBQ8i9yt0qunxK/GYsBYm8HnDJ6/XD4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733233804; c=relaxed/simple;
-	bh=XOBIbK57Lqm+Qdsjjzx2vA7YrEICxtWa2H55+Jb6cpA=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=gimotWCHU5zAoYkQMsHc5Qzmnujl9E9tdG80HBfp41qs0FfBKRMiit3LfPRz6IrPXUnojYs28zaIQmP0vNmMedF0q1jwB0/t2sOVcDogAnRQCMEeFlBwYgGdamIhk5Ag+6nKHRtQZGHODl+gQN1Yy0zxi8z5gx/hiD4BTGChSBA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=D1xMwcNp; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-385ef8b64b3so2013203f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 05:50:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733233800; x=1733838600; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=I7ZVhvMkEckvx4CVyZO/KuVa4o52a6A+0jidqX5kLxg=;
-        b=D1xMwcNpprEeoFORldELpuvevi2ecC/fW7yLYg5MQaAU/vevYfdNUrpr0cryabpOqc
-         B2Stj0F/XyasaZw6f4ecZ7Z4CnRJ58i0TJq8L4R5V0nr2LCRuK/wYSpoG/wpBG9QWeln
-         rfMUCLD94+jSnytghDf0uNhLwFsaO0jwbuSi5oixAqFmNVphHKgflEDjDAwQ7xEC7+Vn
-         kz0vCPnThIxqJ64ppWTBi7R+3zrgCw4BUjvtIvWQxgBbSXWjmq9SKRdHTz07wig8vS3K
-         AmG9lboWNqE4cZJqsTLW1+ORa1fZoX5sZPthXYhYK0hA/pN0RLNkOZ6tw5hU5Gwvjtxp
-         1cGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733233800; x=1733838600;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=I7ZVhvMkEckvx4CVyZO/KuVa4o52a6A+0jidqX5kLxg=;
-        b=TYvOR0AYTni1qEI31Tz4LnLPnoXcJnjxBjXkozP8TNXHdZsUFSh66qdjHjqYUc61Lz
-         qC4qyn2O5eN/UH5LaLFxq4zhgXtdwJtQBh/Gzg+3Md40bxTseZev26XQRP8+CS3YjP8n
-         7VTO5dX9RMnve1Y4p8NXoDsru/8GE8IS5fc50RKGaogMg7UELISoTARnxsPC3bRpwgfN
-         eobaWT3NEEYpjw8lJ60QscsLvac88xEGk0BIS1i0+FXY2y9dgdFeMYR9RbqyOpcFNjda
-         n6Dbd3QF47mE84cOj+Z4DUoF0BCJdAjSDUYruegahxB8ulOApFI31pJ8t/Cge6jYDUa9
-         LmQw==
-X-Forwarded-Encrypted: i=1; AJvYcCW5OoOwyKH6qYJgjSaXTPo2c+t+jF25IYh75JIOoT64uWJ7DbVkvn0Okn+LCZDn/JBOapw4F/rxF9SHokI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yye+CihH2W1ahLYhEun0zATr8QRKkvrey+etZ6bXAX2aodXtyEr
-	qzbaagIVcbTgSXcoVTDT9htjQ9qLXkY1MZFzdHiZbyZ1BwfLeeJA0U28BTSUrTY=
-X-Gm-Gg: ASbGncs1DOuuEK6DbnzqMXjkwxLni+MOctU1HNr0WkaML6hrhtRV4ZtoieUCkeg80XA
-	Oo2P+B1na77fMzALlOxDQ4CYTGeQCWOZSfMOIVfC2jQQQfpExnxsyE9hSD7BQtcCAyrtw0uoUyx
-	rbznUWTz24h/p+babTLvwrBGGxqWiZO4G1bEp9b/m24LarM6dIiHgMoGbEEqQbYX4w4RWnt7AwT
-	1od3c/K2Q0e5HuM13tzbR8kqQDxt6Ga67nlT7OnbaqwkIzMVxm5OWKUCsuDi2Ug39MOGUNwsOH+
-	bzjCZwckw5zDfMOeh6lj5Rhq
-X-Google-Smtp-Source: AGHT+IFns2fvOnWah4kqIP+pyc4yb58R5STtuxrZAjmn8u5H0mVgyD+T7yFjtMub5is1RfAH6dg4cg==
-X-Received: by 2002:a5d:6d0a:0:b0:385:df87:28de with SMTP id ffacd0b85a97d-385fd433607mr2094851f8f.56.1733233800359;
-        Tue, 03 Dec 2024 05:50:00 -0800 (PST)
-Received: from ?IPV6:2a01:e0a:982:cbb0:b668:b88:4ecf:c065? ([2a01:e0a:982:cbb0:b668:b88:4ecf:c065])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385ccd687c3sm15966443f8f.77.2024.12.03.05.49.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Dec 2024 05:50:00 -0800 (PST)
-Message-ID: <c23bbf5a-7e1b-491e-9a59-5bf382e4174f@linaro.org>
-Date: Tue, 3 Dec 2024 14:49:58 +0100
+	s=arc-20240116; t=1733233822; c=relaxed/simple;
+	bh=Zib4VMRdhk2SyW/n2/OIybINtZxsOwBjr0XGB3bosyo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OOY4zvJvYlffNO86tJv3+slXnbiIksYbiMlnxEhuqfq0J5LtHpF9MEPrft3vLg9hmnSAQujAOQ7BhLSlh+jkCJsZPta43UXRF49gnYVYur9HJ9dOzGqsgCvpu2ikEdvRqXate8QJPySVfiMa69Z5AYNwkLBScgmpnYtRNIIKFUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dZsoufkj; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733233821; x=1764769821;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Zib4VMRdhk2SyW/n2/OIybINtZxsOwBjr0XGB3bosyo=;
+  b=dZsoufkjYJiRMBnMGI+ljKejykHpieC7uSDfBfpMuF/C8SYsLG+4kNL5
+   0lrOREsiLKD93WMo9joY1rsW4xu8qt+htzacOiUmafNWCB27zq2IAlP5q
+   WRo2EAU2JxnwfnZds1FlGAgJWYDIAUrdkM4Da25/k1RaisF2Ntf4/8PP9
+   pPTNXPIHbVTtMj/hZUwBqGj6/GJWDOxItqDsihFm1n/BnM6iQJN7Vnt8d
+   QnxT/ohjRHBbeSSbpCtmOIfWFYlif3KG2Ihc/oFnSHjqM3ENUWaDcIYnl
+   sXqaPQOPSz0lUne1vIvQFpMJsLqCOpX/8ac8yk72dnLBZF+VONj0Bbdfs
+   Q==;
+X-CSE-ConnectionGUID: C4gnboSiRYO8WQHA3/mU6Q==
+X-CSE-MsgGUID: Z6rHieKvSMOIyfAUnbVPyQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11275"; a="36299231"
+X-IronPort-AV: E=Sophos;i="6.12,205,1728975600"; 
+   d="scan'208";a="36299231"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Dec 2024 05:50:20 -0800
+X-CSE-ConnectionGUID: Y3t33y3ySZ+ldxE8KMacsw==
+X-CSE-MsgGUID: 4TpyAc/pSOWCHKgyzIC1TQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,205,1728975600"; 
+   d="scan'208";a="130904309"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Dec 2024 05:50:13 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tITI1-00000003S9G-1cCT;
+	Tue, 03 Dec 2024 15:50:09 +0200
+Date: Tue, 3 Dec 2024 15:50:09 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Eason Yang <j2anfernee@gmail.com>
+Cc: avifishman70@gmail.com, tmaimon77@gmail.com, tali.perry1@gmail.com,
+	venture@google.com, yuenn@google.com, benjaminfair@google.com,
+	jic23@kernel.org, lars@metafoo.de, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, nuno.sa@analog.com,
+	dlechner@baylibre.com, javier.carrasco.cruz@gmail.com,
+	marcelo.schmitt@analog.com, olivier.moysan@foss.st.com,
+	mitrutzceclan@gmail.com, tgamblin@baylibre.com,
+	matteomartelli3@gmail.com, alisadariana@gmail.com,
+	gstols@baylibre.com, thomas.bonnefille@bootlin.com,
+	ramona.nechita@analog.com, mike.looijmans@topic.nl,
+	chanh@os.amperecomputing.com, KWLIU@nuvoton.com,
+	yhyang2@nuvoton.com, openbmc@lists.ozlabs.org,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] iio: adc: add Nuvoton NCT720x ADC driver
+Message-ID: <Z08MkR40fjfW3MXZ@smile.fi.intel.com>
+References: <20241203091540.3695650-1-j2anfernee@gmail.com>
+ <20241203091540.3695650-3-j2anfernee@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: neil.armstrong@linaro.org
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH 5/9] crypto: qce - convert qce_dma_request() to use devres
-To: Bartosz Golaszewski <brgl@bgdev.pl>,
- Thara Gopinath <thara.gopinath@gmail.com>,
- Herbert Xu <herbert@gondor.apana.org.au>,
- "David S. Miller" <davem@davemloft.net>,
- Stanimir Varbanov <svarbanov@mm-sol.com>
-Cc: linux-crypto@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-References: <20241203-crypto-qce-refactor-v1-0-c5901d2dd45c@linaro.org>
- <20241203-crypto-qce-refactor-v1-5-c5901d2dd45c@linaro.org>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20241203-crypto-qce-refactor-v1-5-c5901d2dd45c@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241203091540.3695650-3-j2anfernee@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On 03/12/2024 10:19, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On Tue, Dec 03, 2024 at 05:15:40PM +0800, Eason Yang wrote:
+> Add Nuvoton NCT7201/NCT7202 system voltage monitor 12-bit ADC driver
 > 
-> Make qce_dma_request() into a managed interface. With this we can
-> simplify the error path in probe() and drop another operations from
-> remove().
+> NCT7201/NCT7202 supports up to 12 analog voltage monitor inputs and up to
+> 4 SMBus addresses by ADDR pin. Meanwhile, ALERT# hardware event pins for
+> independent alarm signals, and the all threshold values could be set for
+> system protection without any timing delay. It also supports reset input
+> RSTIN# to recover system from a fault condition.
 > 
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> ---
->   drivers/crypto/qce/core.c | 16 +++-------------
->   drivers/crypto/qce/dma.c  | 22 +++++++++++++---------
->   drivers/crypto/qce/dma.h  |  3 +--
->   3 files changed, 17 insertions(+), 24 deletions(-)
-> 
-> diff --git a/drivers/crypto/qce/core.c b/drivers/crypto/qce/core.c
-> index cdcddf8f9f02b..e2cda24960f63 100644
-> --- a/drivers/crypto/qce/core.c
-> +++ b/drivers/crypto/qce/core.c
-> @@ -232,13 +232,13 @@ static int qce_crypto_probe(struct platform_device *pdev)
->   	if (ret)
->   		return ret;
->   
-> -	ret = qce_dma_request(qce->dev, &qce->dma);
-> +	ret = devm_qce_dma_request(qce->dev, &qce->dma);
->   	if (ret)
->   		return ret;
->   
->   	ret = qce_check_version(qce);
->   	if (ret)
-> -		goto err_dma;
-> +		return ret;
->   
->   	spin_lock_init(&qce->lock);
->   	tasklet_init(&qce->done_tasklet, qce_tasklet_req_done,
-> @@ -248,16 +248,7 @@ static int qce_crypto_probe(struct platform_device *pdev)
->   	qce->async_req_enqueue = qce_async_request_enqueue;
->   	qce->async_req_done = qce_async_request_done;
->   
-> -	ret = qce_register_algs(qce);
-> -	if (ret)
-> -		goto err_dma;
-> -
-> -	return 0;
-> -
-> -err_dma:
-> -	qce_dma_release(&qce->dma);
-> -
-> -	return ret;
-> +	return qce_register_algs(qce);
->   }
->   
->   static void qce_crypto_remove(struct platform_device *pdev)
-> @@ -266,7 +257,6 @@ static void qce_crypto_remove(struct platform_device *pdev)
->   
->   	tasklet_kill(&qce->done_tasklet);
->   	qce_unregister_algs(qce);
-> -	qce_dma_release(&qce->dma);
->   }
->   
->   static const struct of_device_id qce_crypto_of_match[] = {
-> diff --git a/drivers/crypto/qce/dma.c b/drivers/crypto/qce/dma.c
-> index 46db5bf366b44..1dec7aea852dd 100644
-> --- a/drivers/crypto/qce/dma.c
-> +++ b/drivers/crypto/qce/dma.c
-> @@ -3,12 +3,22 @@
->    * Copyright (c) 2012-2014, The Linux Foundation. All rights reserved.
->    */
->   
-> +#include <linux/device.h>
->   #include <linux/dmaengine.h>
->   #include <crypto/scatterwalk.h>
->   
->   #include "dma.h"
->   
-> -int qce_dma_request(struct device *dev, struct qce_dma_data *dma)
-> +static void qce_dma_release(void *data)
-> +{
-> +	struct qce_dma_data *dma = data;
-> +
-> +	dma_release_channel(dma->txchan);
-> +	dma_release_channel(dma->rxchan);
-> +	kfree(dma->result_buf);
-> +}
-> +
-> +int devm_qce_dma_request(struct device *dev, struct qce_dma_data *dma)
->   {
->   	int ret;
->   
-> @@ -31,7 +41,8 @@ int qce_dma_request(struct device *dev, struct qce_dma_data *dma)
->   
->   	dma->ignore_buf = dma->result_buf + QCE_RESULT_BUF_SZ;
->   
-> -	return 0;
-> +	return devm_add_action_or_reset(dev, qce_dma_release, dma);
-> +
->   error_nomem:
->   	dma_release_channel(dma->rxchan);
->   error_rx:
-> @@ -39,13 +50,6 @@ int qce_dma_request(struct device *dev, struct qce_dma_data *dma)
->   	return ret;
->   }
->   
-> -void qce_dma_release(struct qce_dma_data *dma)
-> -{
-> -	dma_release_channel(dma->txchan);
-> -	dma_release_channel(dma->rxchan);
-> -	kfree(dma->result_buf);
-> -}
-> -
->   struct scatterlist *
->   qce_sgtable_add(struct sg_table *sgt, struct scatterlist *new_sgl,
->   		unsigned int max_len)
-> diff --git a/drivers/crypto/qce/dma.h b/drivers/crypto/qce/dma.h
-> index 7864021693608..31629185000e1 100644
-> --- a/drivers/crypto/qce/dma.h
-> +++ b/drivers/crypto/qce/dma.h
-> @@ -34,8 +34,7 @@ struct qce_dma_data {
->   	void *ignore_buf;
->   };
->   
-> -int qce_dma_request(struct device *dev, struct qce_dma_data *dma);
-> -void qce_dma_release(struct qce_dma_data *dma);
-> +int devm_qce_dma_request(struct device *dev, struct qce_dma_data *dma);
->   int qce_dma_prep_sgs(struct qce_dma_data *dma, struct scatterlist *sg_in,
->   		     int in_ents, struct scatterlist *sg_out, int out_ents,
->   		     dma_async_tx_callback cb, void *cb_param);
-> 
+> Currently, only single-edge mode conversion and threshold events support.
 
-Nice rework :-)
+Please, get rid of explicit castings where the are not needed or implied, like
 
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+	u16 foo;
+	...
+	foo = (u16)bar;
+
+you have a lot of this in the code.
+
+Second, why do you need two regmaps? How debugfs is supposed to work on the
+registers that are 16-bit if you access them via 8-bit regmap and vice versa?
+
+Can't you simply use bulk reads/writes when it makes sense and drop 16-bit
+regmap completely?
+
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
