@@ -1,195 +1,214 @@
-Return-Path: <linux-kernel+bounces-429220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 525DD9E18FF
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 11:16:08 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 041389E1A0E
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 11:56:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13BC0283097
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:16:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 816A1B2C696
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:16:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D52D71E1036;
-	Tue,  3 Dec 2024 10:16:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F29C1E0E1D;
+	Tue,  3 Dec 2024 10:16:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="IAubPj8n"
-Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sg2apc01on2041.outbound.protection.outlook.com [40.107.215.41])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="UraGzI05";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="qhi4n6E0"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D45E5189915;
-	Tue,  3 Dec 2024 10:15:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.215.41
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733220959; cv=fail; b=BJNZTb958UplDlCeMpdoLaocOm7OOIdgK0TeLC7cYoWrjJXEyozfwaGKNrYtz8nGnQAimIn8PYHr6EJBbNWo99RKZVUmtdjWesvBIGe0K0a633qd4xOp4Et973AOyyCiz7LzB3cO3z5hF1SFJXGYnwYb0mWMfzZmYW5cAyd7ibc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733220959; c=relaxed/simple;
-	bh=1M93cgGQZMsq0fGiokMidzghIp5uKvod1NqpCZ/07Nk=;
-	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=KWU3wUfO/hwlF+MRU4siviA9NCAEbAqYRaAGN3UFC5xRiInTEKBWmmXCfmeJV4AxoNUoid02KuGqRK7ITnTfUNZRGxk1USyStwu2WCzvF/ZVDZy7/3WPiiq52W9duNz8XuYfK0x+2fQTJNEMqW32039WbMIoDwKF5fWFWCRrT1w=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=IAubPj8n; arc=fail smtp.client-ip=40.107.215.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=lqQ04t1m5nvimpUgDiceK73PP4LTnpUPca0VVTTOtVV9KaEczGBa/9wzBxdptfi5mZS2KKUbiY1x1Nn+I6OJ08dHZebLGL5xBcyUz7pVfXoXurZTxRmQzhYaJ9J5P5AxV2ehzyUau+bN0HQe3ZsfO9U7sLstCAHo+FxjzeifhQoz7DN0gyPmcJAIkFWLjeQxI8PI1dBeBeVKMriuc3T39auLnTT04ZxyGnGQkQH/gElrWn5CuuwqI1j7Zhy4AuJtXFfXnmpzvzblXhgWrVwwaG4wUbcrA/GDvZNfbKPOjElHcVMNJXLOhwNzlHZMA9S6WbbIttYF63vuskc1I0XjSg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=1M93cgGQZMsq0fGiokMidzghIp5uKvod1NqpCZ/07Nk=;
- b=WQ21gHFP1tTEWswkdKYPjxn+6jf1EVhoIsQ4CRPjMRSx+zQmcxWdDY8tF7COFEgWseDg1KWG9KjgiFC8Dh0vr5qWFxl76WSTGcQwVhmfRCpHcxytu/hzPRi76eOeDdiHE6LPsud5yEL9o6PhYivgx0zSIASIHu4MBsk2amowcpSI0GXySffeMJjpUbHbvUFsj8fPswZK6XAbubxHvTX+8xOPKYJLYJ82daUxOWHYK7xODdYh3jXmkbFLL8rz+Q7fnQ4VWQIVarSJ2XqPMsV8ku+Vv3HcOg/567q/fIFDdiiaz1PaIP/muUftIupQTfXifwXI6jTA5L8oBVES0Tybsw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1M93cgGQZMsq0fGiokMidzghIp5uKvod1NqpCZ/07Nk=;
- b=IAubPj8njd9IlSSrXD5ZI2RK6za67dZSivv+SDDGnsEkYUrpOoFQGFKrLiCrx0cAX9G40kDU+g6+vUilw/7O9Sc0cIh+LnT1gQkmSAOKNb9+DAx8LSsaYdmAw0+L82Fy1Rt7JNF5d5tE/428L1byg68FnhpjK9APbm/JJ+ePjq4tTVfCJsSepLf4/KdtqXsTvxbwoDGPqLUzTLT0IRNtWfqXqEHIUMTXmRzQ36KZeRnfKBEn1KKIu8PzwW+4ee/27y/WVIUCFjzdHgkcuy5cRAF2z/+fHNH/oENF5TLBKxd3sjimCjiIwhGquoht8e4ijkAaiX93u5O5DI/WTPFWLw==
-Received: from TYUPR06MB6217.apcprd06.prod.outlook.com (2603:1096:400:358::7)
- by TYZPR06MB5420.apcprd06.prod.outlook.com (2603:1096:400:200::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.4; Tue, 3 Dec
- 2024 10:15:51 +0000
-Received: from TYUPR06MB6217.apcprd06.prod.outlook.com
- ([fe80::c18d:f7c6:7590:64fe]) by TYUPR06MB6217.apcprd06.prod.outlook.com
- ([fe80::c18d:f7c6:7590:64fe%6]) with mapi id 15.20.8230.008; Tue, 3 Dec 2024
- 10:15:51 +0000
-From: =?gb2312?B?uvrBrMfa?= <hulianqin@vivo.com>
-To: Prashanth K <quic_prashk@quicinc.com>, "gregkh@linuxfoundation.org"
-	<gregkh@linuxfoundation.org>, "quic_jjohnson@quicinc.com"
-	<quic_jjohnson@quicinc.com>, "mwalle@kernel.org" <mwalle@kernel.org>
-CC: "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	opensource.kernel <opensource.kernel@vivo.com>
-Subject:
- =?gb2312?B?tPC4tDogW1BBVENIIHYzXSB1c2I6IGdhZGdldDogdV9zZXJpYWw6IEZpeCB0?=
- =?gb2312?B?aGUgaXNzdWUgdGhhdCBnc19zdGFydF9pbyBjcmFzaGVkIGR1ZSB0byBhY2Nl?=
- =?gb2312?Q?ssing_null_pointer?=
-Thread-Topic: [PATCH v3] usb: gadget: u_serial: Fix the issue that gs_start_io
- crashed due to accessing null pointer
-Thread-Index: AdtFbD9AT972nKHiQsKXxwBpOClQXw==
-Date: Tue, 3 Dec 2024 10:15:51 +0000
-Message-ID:
- <TYUPR06MB62172E7B32CEA62F7FB53A3DD2362@TYUPR06MB6217.apcprd06.prod.outlook.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TYUPR06MB6217:EE_|TYZPR06MB5420:EE_
-x-ms-office365-filtering-correlation-id: f59175e3-0d7e-4d33-da2d-08dd13837709
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|376014|1800799024|366016|38070700018;
-x-microsoft-antispam-message-info:
- =?gb2312?B?SUNiNXRURm9OMTVoS0VTZDNpbVBZNys1SUVsb2p2ODBVb2JkUXdMU2xzVlpl?=
- =?gb2312?B?ZTFNc0R0eXprQWFHRElVV3M2OU1lMFlrRjlMU3U5TnE1b1NERXJtK1BLMDFO?=
- =?gb2312?B?YzFvLzFnenpFcFRuVGc0cU9rYlVIcFJ6RitEeGFMc0pWYlBYNGtPSVBqWWt2?=
- =?gb2312?B?T3JKNzdPUEVDOEpvV3ZlemxqVXVjemNFTWMxUG9LTGJ5OFovWlRZcWVBaXNq?=
- =?gb2312?B?d1AyS0dOSERzME9FTk1ML1JwMnhPdHREVWlxSTlmNk9VdTJISnhuWCtNSUVU?=
- =?gb2312?B?b2l4R1BoRFRDTVB6ZWhsOGl1c2tzaGN0Z3loWEhmUjFzenB3WUREdEMvKzV5?=
- =?gb2312?B?YjNsUmxCSVc3ekdpZG5oRXRsQXRTWlB1VkdoQTVoK0pvb2d5ZTYyc2o1ZEdH?=
- =?gb2312?B?V1BNUWM1RFZ0emZnMm9UaWNBVlV3WWFpaHlvQUZKRlhYbzJqM0dXaGRTNUVy?=
- =?gb2312?B?ZWkreFdZM1p2TVhFZUZ6Z0t0VytWV2hoUmFzcDVCaW03bzBUOE8rMHhlWWhU?=
- =?gb2312?B?STJwcmplRy8rYXBMQWQ5R0xpdzF4SXNJc2RES3M5eTcyekxPWS95ZmpBdFFF?=
- =?gb2312?B?RW10OW5nSUlBNDhUcktsV1d5cHdxUXorL2dQSzNuSHh2NnJsclRNYkk5WUxq?=
- =?gb2312?B?d1JaTFMyS3BRWEphYmt5b2szT2tCNnNNRWM4WTdFbEhldEd2bHV1NXdNbXEw?=
- =?gb2312?B?WXFqc21na2w0cUV5SEtYUktwUnp3ZkJNN1htaHdHc2djbzA2emQrVUNqSjZW?=
- =?gb2312?B?UnJSRXBBSHRqYVR3TXU2cGMxcHpVNk9XSjlIU3Y5eVBhQnJnWUxyS3BGVUdN?=
- =?gb2312?B?OTdnOVdZYnpQdlZ4dTBmMUY2ZWNldFhraG41SzVYaDlIaDNxbWhJbHNVTlgx?=
- =?gb2312?B?SnovcmQ4dGFNZFhvQXdha25xS0dFOTlpRGt2R3RmYVZJakZ4ZEdEaUJuVUxm?=
- =?gb2312?B?VmFaWEc3Z2ViN09nM1U0eUQ2Qy85Ris1UG1zcVJubzlqOEQwU3kwRXVpQzR6?=
- =?gb2312?B?TmlRSTRneTQwSlIzN2lQUFdUcjdKRzQwaU5uZVc4WU1nK2VROFp4c0xHeXFo?=
- =?gb2312?B?STEzeGdmYWNBWUtObzBrb2hmTDl5T3V0QUpOQW8wa2djK0lOclRkcWpOVTNa?=
- =?gb2312?B?ODQrU0lDdHRVV2ROb2VSRXE1SnlvU3g5WlNIa0lKU09NanJqMmRKRG15anc3?=
- =?gb2312?B?MkN1dUhUQi9mR1IzeVJJOVQ5cUpuY3U2THhuU0tURUdSZE1EakZ4SkdBTUVi?=
- =?gb2312?B?RzhlOUxwYUFXSEhtbXU5UEFpa2MzOTNQWUlYVCtWcytCa283YVBOQ25OU2pG?=
- =?gb2312?B?OXRHYzRjWFAyUnVuQWZDUVpvRlhvWENMWDczRWx0SUprcSs5Z0cxcE5KcEtW?=
- =?gb2312?B?TUdUN2NIWkk5cTVLUlZwallGWEJRUUFycG9Jd1ovMHZza0crTW4xbHp2bmlV?=
- =?gb2312?B?TlFUR0RXTVptOTBlYkVXdCtiQmV4T3hxc0F1WDZJbGtXejVJRVU2bGRlRmVm?=
- =?gb2312?B?dTU4b2o2YTZSZzVUeUZYbS9KOEZuMDZqZVBPVldzM1UwYUIzbEE4M2x6dE9F?=
- =?gb2312?B?K1IyNE9oUnpGbWtDTlRycmRISHUwaWRVOGRiOHdiK2NIQ2ZVMTNtNU9BYkVT?=
- =?gb2312?B?YzZJN1FxUENsU2xidzlacUJvTHo2T21ieTB4USs4SkJxczB3a3NNbWVzcFNl?=
- =?gb2312?B?cjJVZ2ZQcDVsZXZlVjZhMkQ4YVlBREk4dW1kTkptYzRNZ1lMaUtReXpONHFL?=
- =?gb2312?B?YzJiVnFYQ01oTzI3eGJEYzU5SlZubzRaNFNud0dLTS9JT3I3UVRFdnU3SUhl?=
- =?gb2312?Q?Rt4vvhD+rY4QWUEjeq91GcFZ3ZIAVHblL/NCU=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:zh-cn;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYUPR06MB6217.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?gb2312?B?LzdsSVhVQU1RSVBuVjFkYXhmZWkvVVJnSmJ6MTVLRlM3UzhSVTlwRnZtN1NE?=
- =?gb2312?B?cFBWaGJ1VHZpbytKVFQxUVlSWUU3b2hiQ0lSazM0eitMSzRTT1BqNlcxR0xL?=
- =?gb2312?B?RkpSb3JSYTlLdEl3SmgxNjJXSGI5SHhuUUY0akMvZDBVRFNmUHNxMXFjdVBR?=
- =?gb2312?B?YnUwZS9sSmlxd0RubG5hMDVobkpUQnhtMzNjVW8wZ0M2ZVVtdEx4RDdxeDdY?=
- =?gb2312?B?TEZwSUFDSVVPRXFXVDR6UHZidk9hamhaOXBQWEs2WUZ4cXZLS0JlRXZKWXYr?=
- =?gb2312?B?Z1FtcUlDM2N3d1gvYnhTNzEzNlVIYkk3L3l1WW1WVW9lWU5DTkRyYTNkYkNY?=
- =?gb2312?B?UlhnVHNzOG0rZWpNYUxUZzlGNk9ETTNITldHdkNhY0ZnWm44UjJpcFNtU2JS?=
- =?gb2312?B?RnYrMjUzRnVwUkdmMFZkY3BlM256UFAzcDBQT2xxS3hzWG1Vc3ZMdWM5RFFp?=
- =?gb2312?B?WG5kR1YvdGhPb1JkdVg4THQ3cWJGaDA4RE45eVBkMUtVOEF2OE0rWTZDYzVG?=
- =?gb2312?B?c0Y2L3ZtTDBuZ1Q2QlVqODNYaEE3NGxIQ0hlRVJXZjRCSk4xamVyMUxHdmpX?=
- =?gb2312?B?bytuT1lKcjNJcS9KTlFuWW12a0ZjekFYU3ZRQjlaYS9Fb2c5TmJXUVYxVWh2?=
- =?gb2312?B?aDhpeGlLSDZaTkV2ZnJ5YkdZQWRRdkE4bnc3VllIU21TQ2N1MXVwOFQ2SzVE?=
- =?gb2312?B?Y0FjQWVYM3BmVmFVSlhuNk9QKzdVWHdXQkVnMHJ0NWQyN3JvOUN1Z0tkRXlk?=
- =?gb2312?B?UTlnYWkraVN0TDZzSHlNaG9yNnZ0S3BoYjRmRy9Hd2RlSWtqdTFtc2ViaUM4?=
- =?gb2312?B?MVdVWXViTDM1L1lSR0VRNDE2SEY3ekVsTENPb3NObG8rQnA3dC9mUEVXVi82?=
- =?gb2312?B?L21CdEk4ZWJlUlRJUkpnR1lELzN6N0E3YW53bXQ2SExxV3Zka1pjRVJsR1I1?=
- =?gb2312?B?bWtNM2UxN2NXOXpRcklybVlXU1RVak5EYkYzVzdzMU5pdVI4ZlJEcHBhRnB2?=
- =?gb2312?B?c0FhaXFNc0F0cmtnUzJ3b041dC9aT1RZYkhZRGdyaGkrYXFBR1lUcVJyNUNp?=
- =?gb2312?B?V09OalZuNGNnOTFMdGZ0VzQvN1RNNTZacFZIUCtwcktzRHJ0VFg5Q3NRbTdO?=
- =?gb2312?B?VTFJWE1hNWJiNndpRjV1ZjZPZU83Tk1FVUdyb3pvdW5NSDZvRFI2SGo4bHNT?=
- =?gb2312?B?ZDkzdWg1U0FQN1hNaVROV3RsaG9iQWhGQ3pZWjU1K0JyajB6NnhIZVh3ajlE?=
- =?gb2312?B?UXc3QnY0Nm12cUZQcHErTGFCSXJiR3dRZG51YW1wNzIzNHRVaVdoQmN4Z2Fv?=
- =?gb2312?B?VVVwd2RUYjNtdHBVOFI0Uy8wZUxhby9rcFkwVS9VVDBnT1VtMVdhcVFDYkFH?=
- =?gb2312?B?WWFKVmV4RzRrZnpkalNHNVlhN2Y5UUVqOFMwM2RwWU1JSVNBbGRyT29Ubnl0?=
- =?gb2312?B?NzFpREgxMjJiVXJjTFpCMTluaDFCTXVaY1hJNEVtNzRPZTdnU0lwM0JxY01S?=
- =?gb2312?B?TERxTGhuVXVXNG1NZE9PNzlpbFV2SDVnY0lNRTBoYVo0cnRNTFVWbjN1WGdm?=
- =?gb2312?B?anJ4RDA3ekJxWEhmeDdMVHcyN1ArVTI1U2oyck0rY0FTZlg3SHhPeDhVRXBl?=
- =?gb2312?B?a0dYM0dLTUY0SzlXRnlPMnA4WVE4eDkyLzJWTW5WL0x4anVBNjlrNWpRclM0?=
- =?gb2312?B?bGcyNlQvTkh2aEFERExqS1hUaWlMQTdEZDdwRlRwamtXRy9Nc2J0WWQvcnRM?=
- =?gb2312?B?TmxWNHhRTStCd1dqVEIzaUs2K215cGlqWU11YmZzTGFMeVJNV0VFb2QvaTlF?=
- =?gb2312?B?MnlWZy80UGJlSWEwVmVSQVNlTjI3TXRwSG5ub2RTNEpaWkdWOWhsRkNmdHpK?=
- =?gb2312?B?dXNHZ0RLdDVVMVlTdHhRZXRQU1gwYzdHUFZDNmFseXU2UjJLK2twRVRGYXk0?=
- =?gb2312?B?QisrU2JocEJqNkxtd2FRWVROSW9KSXg4aDFVTENyT1R4TEF2K2M0VmNVSFdI?=
- =?gb2312?B?OUFOemtHcTNlYS9xamlYd0RXSitPdUxSWUk5ZUlmRGcrbDBHcXZqYWxuQkxB?=
- =?gb2312?B?b09KZU9vMWRKZDJaeExBdHgxaDdBaVJFWjVJUlE2T3ZoaWx4MVp5djRVc3Jt?=
- =?gb2312?Q?pV9o=3D?=
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C04ED192583
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 10:16:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733220996; cv=none; b=dXGCW9bdURU5ERcpzs2mtdF4vP71BOaqgncAiCEHfDayq7B9MDreF43IN5GfsfjnBvLl3av95MLC6Uu0p/cTRLUIWj++NCwzBThhMtEBnOlaqmPL/kpyxlQ26cHouvA3csR6T/JgD5725xBiU7w7MnFrBk+0NcXTuBj9o+rrWuE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733220996; c=relaxed/simple;
+	bh=xJZFzYbKU5tfV7DH4LciImH4NAIrHAk2Y+Ca33P+C4w=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=O83zxkXOs4G1l8BV2aecaOZAW4ZGx2XffCIlGvmd5pbzh+bTP64sXFDDC+sOyO5bWIdCtz5MC3B/uKAhvNHuMZbbzaof96nq1F0SQVaRz4P7tXeBzMDXemNFDBf4o/ibgDDV4cYRSQUZV3UbGKQvaacSFFNZdSiT1NdiidGNtvE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=UraGzI05; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=qhi4n6E0; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1733220991;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wiRele5vXkMhicUTP2J6tI55wSQl0sF6iH1Pv6V77Cs=;
+	b=UraGzI05WcgK3gWPNcEr3FGyvkezMfb47SN/wUy7iD2MXEerAhcm8cXL04RrUR6lwZJ1b7
+	D2Dq3AqIZJhMP69sm5RK9d6kJgDOw7uuxtmqOyp6WdZHxP65CWeMKmDNDfapmjPB4agELz
+	a8O4tf642b3HPMVcLZQ2o5QU+oMcTbMh7nX3VIvn/0K8TmER6yxHnSlqM21XmuFQXpwFD3
+	PN8PlbrKnHH3msJJawic0GbGH3oK62CFl0IEc8BQxrPPObvL8ujuUImZwDOnLiAzfqgY4Y
+	dsDvDnBs+Zb0GHXj4DM8FpDqce8nsfmS82nrCJnGNC+8rrCtserPCe7kNOl7JQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1733220991;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wiRele5vXkMhicUTP2J6tI55wSQl0sF6iH1Pv6V77Cs=;
+	b=qhi4n6E04FjjjtqukvgeJ+2wYrrltUzF6G4mZ3k+AmM2h8O/Lfs22gWmEBeoseKBoLGsPV
+	YFGvULjCyaNDw4BA==
+To: Guenter Roeck <linux@roeck-us.net>, John Stultz <jstultz@google.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, Anna-Maria Behnsen
+ <anna-maria@linutronix.de>, Frederic Weisbecker <frederic@kernel.org>,
+ Stephen Boyd <sboyd@kernel.org>, Peter Zijlstra <peterz@infradead.org>
+Subject: [patch] clocksource: Make negative motion detection more robust
+In-Reply-To: <a79b27d5-ae85-4b7c-bd08-ac7b345f3a20@roeck-us.net>
+References: <20241031115448.978498636@linutronix.de>
+ <20241031120328.599430157@linutronix.de>
+ <387b120b-d68a-45e8-b6ab-768cd95d11c2@roeck-us.net>
+ <CANDhNCo1RtcfqUJsuAQ+HdS7E29+gByfek5-4KYiAk3Njk4M3Q@mail.gmail.com>
+ <65b412ef-fc57-4988-bf92-3c924a1c74a5@roeck-us.net> <87cyifxvgj.ffs@tglx>
+ <2cb25f89-50b9-4e72-9b18-bee78e09c57c@roeck-us.net> <874j3qxmk7.ffs@tglx>
+ <2b732d25-63e7-40f7-8d66-b1e6dc0b701d@roeck-us.net> <87r06tvuzd.ffs@tglx>
+ <a79b27d5-ae85-4b7c-bd08-ac7b345f3a20@roeck-us.net>
+Date: Tue, 03 Dec 2024 11:16:30 +0100
+Message-ID: <8734j5ul4x.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TYUPR06MB6217.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f59175e3-0d7e-4d33-da2d-08dd13837709
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Dec 2024 10:15:51.5160
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 2ip0z+wqxivLhpt5vNYOJe2pS4ZU5LeneZ1fWhROnpvYUVE4zcKaQn9wehopMJCSV0LfQNvQI+5FkjDN/969Mg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR06MB5420
+Content-Type: text/plain
 
-SGVsbG8gIFByYXNoYW50aCBLOg0KDQo+ID4+PiBGcm9tOiBMaWFucWluIEh1IDxodWxpYW5xaW5A
-dml2by5jb20+DQo+ID4+Pg0KPg0KPiBbLi4uXQ0KPiA+PiBBbmQgdGhlIHJlc3Qgc2VlbXMgZmlu
-ZSB0byBtZS4NCj4gPj4NCj4gPj4gQWNrZWQtYnk6IFByYXNoYW50aCBLIDxxdWljX3ByYXNoa0Bx
-dWljaW5jLmNvbT4NCj4gPg0KPiA+IEknbSB2ZXJ5IHNvcnJ5IHRoYXQgSSBkaWRuJ3Qgbm90aWNl
-IHNvbWUgb2YgdGhlIHByZXZpb3VzIHJlcXVpcmVtZW50cyBkdWUNCj4gdG8gbmVnbGlnZW5jZSBp
-biByZWFkaW5nLg0KPiA+IEkgd2lsbCBtb2RpZnkgYW5kIHJlLXJlbGVhc2UgdGhlIHZlcnNpb24g
-YXMgcmVxdWVzdGVkIGJlZm9yZS4NCj4gPg0KPiBodHRwczovL2xvcmUuay8NCj4gZXJuZWwub3Jn
-JTJGYWxsJTJGYjBjNzg3YWQtNTVhMS00ZmIxLWI5Y2QtDQo+IDFmNjg4ZWE2NTMxNiU0MHF1aWNp
-bmMuY29tJTJGJmRhdGE9MDUlN0MwMiU3Q2h1bGlhbnFpbiU0MHZpdm8uY29tDQo+ICU3QzcxNDlm
-NWE2NWM4OTQ3ZGYwNzM0MDhkZDEzODAwMDFmJTdDOTIzZTQyZGM0OGQ1NGNiZWI1ODIxYTc5N2E2
-DQo+IDQxMmVkJTdDMCU3QzAlN0M2Mzg2ODgxNjI3MTM4MTIzOTglN0NVbmtub3duJTdDVFdGcGJH
-WnNiM2Q4DQo+IGV5SkZiWEIwZVUxaGNHa2lPblJ5ZFdVc0lsWWlPaUl3TGpBdU1EQXdNQ0lzSWxB
-aU9pSlhhVzR6TWlJc0lrRk9JDQo+IGpvaVRXRnBiQ0lzSWxkVUlqb3lmUSUzRCUzRCU3QzAlN0Ml
-N0MlN0Mmc2RhdGE9a0U3ZXJoUDVRbWVKUjYNCj4gUXo5V0diZ2o2NzdJWFF3OGp2VzBjQzh0V2py
-VzAlM0QmcmVzZXJ2ZWQ9MA0KPiA+DQo+IFllYSwgQWxvbmcgd2l0aCB0aG9zZSwgbWFrZSBzdXJl
-IHRvIGFkZCBmaXhlcyB0YWcgYW5kIGNjIHN0YWJsZSBrZXJuZWwuDQo+IEZlZWwgZnJlZSB0byBh
-ZGQgdGhlIEFja2VkLWJ5IHRhZyBhZnRlciBtYWtpbmcgdGhlIGFib3ZlIGNoYW5nZXMuDQoNCk9L
-LCB0aGFua3MgYSBsb3QgZm9yIHRoZSBhZHZpY2UgZnJvbSB0aGUgY29tbXVuaXR5IHRlY2huaWNh
-bCBleHBlcnRzLg0KDQpUaGFua3MNCg==
+Guenter reported boot stalls on a emulated ARM 32-bit platform, which has a
+24-bit wide clocksource.
+
+It turns out that the calculated maximal idle time, which limits idle
+sleeps to prevent clocksource wrap arounds, is close to the point where the
+negative motion detection triggers.
+
+  max_idle_ns:                    597268854 ns
+  negative motion tripping point: 671088640 ns
+
+If the idle wakeup is delayed beyond that point, the clocksource
+advances far enough to trigger the negative motion detection. This
+prevents the clock to advance and in the worst case the system stalls
+completely if the consecutive sleeps based on the stale clock are
+delayed as well.
+
+Cure this by calculating a more robust cut-off value for negative motion,
+which covers 87.5% of the actual clocksource counter width. Compare the
+delta against this value to catch negative motion. This is specifically for
+clock sources with a small counter width as their wrap around time is close
+to the half counter width. For clock sources with wide counters this is not
+a problem because the maximum idle time is far from the half counter width
+due to the math overflow protection constraints.
+
+For the case at hand this results in a tripping point of 1174405120ns.
+
+Note, that this cannot prevent issues when the delay exceeds the 87.5%
+margin, but that's not different from the previous unchecked version which
+allowed arbitrary time jumps.
+
+Systems with small counter width are prone to invalid results, but this
+problem is unlikely to be seen on real hardware. If such a system
+completely stalls for more than half a second, then there are other more
+urgent problems than the counter wrapping around.
+
+Fixes: c163e40af9b2 ("timekeeping: Always check for negative motion")
+Reported-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Tested-by: Guenter Roeck <linux@roeck-us.net>
+Closes: https://lore.kernel.org/all/387b120b-d68a-45e8-b6ab-768cd95d11c2@roeck-us.net
+---
+ include/linux/clocksource.h        |    2 ++
+ kernel/time/clocksource.c          |   11 ++++++++++-
+ kernel/time/timekeeping.c          |    6 ++++--
+ kernel/time/timekeeping_internal.h |    8 ++++----
+ 4 files changed, 20 insertions(+), 7 deletions(-)
+
+--- a/include/linux/clocksource.h
++++ b/include/linux/clocksource.h
+@@ -49,6 +49,7 @@ struct module;
+  * @archdata:		Optional arch-specific data
+  * @max_cycles:		Maximum safe cycle value which won't overflow on
+  *			multiplication
++ * @max_raw_delta:	Maximum safe delta value for negative motion detection
+  * @name:		Pointer to clocksource name
+  * @list:		List head for registration (internal)
+  * @freq_khz:		Clocksource frequency in khz.
+@@ -109,6 +110,7 @@ struct clocksource {
+ 	struct arch_clocksource_data archdata;
+ #endif
+ 	u64			max_cycles;
++	u64			max_raw_delta;
+ 	const char		*name;
+ 	struct list_head	list;
+ 	u32			freq_khz;
+--- a/kernel/time/clocksource.c
++++ b/kernel/time/clocksource.c
+@@ -24,7 +24,7 @@ static void clocksource_enqueue(struct c
+ 
+ static noinline u64 cycles_to_nsec_safe(struct clocksource *cs, u64 start, u64 end)
+ {
+-	u64 delta = clocksource_delta(end, start, cs->mask);
++	u64 delta = clocksource_delta(end, start, cs->mask, cs->max_raw_delta);
+ 
+ 	if (likely(delta < cs->max_cycles))
+ 		return clocksource_cyc2ns(delta, cs->mult, cs->shift);
+@@ -993,6 +993,15 @@ static inline void clocksource_update_ma
+ 	cs->max_idle_ns = clocks_calc_max_nsecs(cs->mult, cs->shift,
+ 						cs->maxadj, cs->mask,
+ 						&cs->max_cycles);
++
++	/*
++	 * Threshold for detecting negative motion in clocksource_delta().
++	 *
++	 * Allow for 0.875 of the counter width so that overly long idle
++	 * sleeps, which go slightly over mask/2, do not trigger the
++	 * negative motion detection.
++	 */
++	cs->max_raw_delta = (cs->mask >> 1) + (cs->mask >> 2) + (cs->mask >> 3);
+ }
+ 
+ static struct clocksource *clocksource_find_best(bool oneshot, bool skipcur)
+--- a/kernel/time/timekeeping.c
++++ b/kernel/time/timekeeping.c
+@@ -755,7 +755,8 @@ static void timekeeping_forward_now(stru
+ 	u64 cycle_now, delta;
+ 
+ 	cycle_now = tk_clock_read(&tk->tkr_mono);
+-	delta = clocksource_delta(cycle_now, tk->tkr_mono.cycle_last, tk->tkr_mono.mask);
++	delta = clocksource_delta(cycle_now, tk->tkr_mono.cycle_last, tk->tkr_mono.mask,
++				  tk->tkr_mono.clock->max_raw_delta);
+ 	tk->tkr_mono.cycle_last = cycle_now;
+ 	tk->tkr_raw.cycle_last  = cycle_now;
+ 
+@@ -2230,7 +2231,8 @@ static bool timekeeping_advance(enum tim
+ 		return false;
+ 
+ 	offset = clocksource_delta(tk_clock_read(&tk->tkr_mono),
+-				   tk->tkr_mono.cycle_last, tk->tkr_mono.mask);
++				   tk->tkr_mono.cycle_last, tk->tkr_mono.mask,
++				   tk->tkr_mono.clock->max_raw_delta);
+ 
+ 	/* Check if there's really nothing to do */
+ 	if (offset < real_tk->cycle_interval && mode == TK_ADV_TICK)
+--- a/kernel/time/timekeeping_internal.h
++++ b/kernel/time/timekeeping_internal.h
+@@ -30,15 +30,15 @@ static inline void timekeeping_inc_mg_fl
+ 
+ #endif
+ 
+-static inline u64 clocksource_delta(u64 now, u64 last, u64 mask)
++static inline u64 clocksource_delta(u64 now, u64 last, u64 mask, u64 max_delta)
+ {
+ 	u64 ret = (now - last) & mask;
+ 
+ 	/*
+-	 * Prevent time going backwards by checking the MSB of mask in
+-	 * the result. If set, return 0.
++	 * Prevent time going backwards by checking the result against
++	 * @max_delta. If greater, return 0.
+ 	 */
+-	return ret & ~(mask >> 1) ? 0 : ret;
++	return ret > max_delta ? 0 : ret;
+ }
+ 
+ /* Semi public for serialization of non timekeeper VDSO updates. */
 
