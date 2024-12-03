@@ -1,173 +1,130 @@
-Return-Path: <linux-kernel+bounces-430339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC9509E2FD0
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 00:27:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BDA69E2FA8
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 00:16:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 611BFB2B427
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 23:09:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D5FCCB289A7
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 23:11:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EF2720A5E8;
-	Tue,  3 Dec 2024 23:09:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 699DF20A5DB;
+	Tue,  3 Dec 2024 23:11:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="b1ASdtAH"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TAEm4p+8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 458078460;
-	Tue,  3 Dec 2024 23:09:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4D338460;
+	Tue,  3 Dec 2024 23:11:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733267357; cv=none; b=Pwr9j/PbgaKTglohvRnS3Q/NkshYLBd280u1ruFcWoPaC4BSfM09QqIMFkNABx3WivkaYv/8bMoNdYliHhkOnQlJojAFLlLTXcn0S2ZZ0zlw+UGIOAQfvgmlwEYh22ggXbApuy7X7nVtCgfYnriqqTmUvpz4FimeVZUM/z2yB0U=
+	t=1733267512; cv=none; b=mfcQeyGV2lMoCcW9bRfA/TCSUxjtyiM4OJV7uCpzY7pTa4C0wt+SUQZitieVDw5Xs4AHN16Rol0HY+A4jrM2gsfux6uOBpWeZIwIZ/6F0baVxtoKKesUJEsQfX6sdASr8GYTlu2qt+mz8PjCDtIf8d9bxq+L4hvPO+pjU491ZxE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733267357; c=relaxed/simple;
-	bh=3zN1x3N+s9QrJx4DCJMFRRP/JtlOXiWxV6oDmoR/K0E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZOKyQ/ivVknfuovA8kp62ZZgBn2FuchtCUS8ciTOKk0h0mvup7uFLwK6QBo5aAdOOfs5+S5USVG0RVKOyKtOg2nWL62sh6iGh2Qt7u0bXS5h1yulex6aIhwZuga1taLkGBfO7Ewen6fuK0b87blTmRG+/9qZIC94AtRyxxW+JBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=b1ASdtAH; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1733267349;
-	bh=3zN1x3N+s9QrJx4DCJMFRRP/JtlOXiWxV6oDmoR/K0E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=b1ASdtAHY6b2cx0XrR2Y7/JBFvWsaNY22fJtiUq98k0Rkk9vF4BvVGNeGmqFWijz4
-	 MNQY1TwPW7/kF2houjesmHMja7FUDIaWYCHxNP1v8GbxgvCLEo/AIHtmM+1KnfZ9Dy
-	 NGnV5GWwWzh9YbSgHeG6l6Rfad+CuHi3mEKhlBPM=
-Date: Wed, 4 Dec 2024 00:09:08 +0100
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Masahiro Yamada <masahiroy@kernel.org>, 
-	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, 
-	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] tools/resolve_btfids: Add --fatal-warnings option
-Message-ID: <9a11cf2f-ddca-4a50-817f-74183d31dcaf@t-8ch.de>
-References: <20241126-resolve_btfids-v2-0-288c37cb89ee@weissschuh.net>
- <20241126-resolve_btfids-v2-1-288c37cb89ee@weissschuh.net>
- <CAEf4BzahMQWVH0Gaub-tWjH9GweG8Kt7OBU-f+PBhmmRDCKfrA@mail.gmail.com>
+	s=arc-20240116; t=1733267512; c=relaxed/simple;
+	bh=d20KR80wasI7XHqdiONKe8v4ECQvsTbtaE1E6K21lOE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=PIEDE+lbD1T9mZJ89DenZlJLWd1OdI26IyZzc3SLJCjLeijWrN2BpjKCBe27RV0UFZaQs6RJUerb/N1c7BxSd6uTHnRiNhx9/EnFVcB2TxhkNIrXt4PTwPTFg64edtODdq1SVpUBUgmNoBfXWzjJ++oa6CELXzoirW7RBRvLORE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TAEm4p+8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0BF39C4CEDC;
+	Tue,  3 Dec 2024 23:11:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733267512;
+	bh=d20KR80wasI7XHqdiONKe8v4ECQvsTbtaE1E6K21lOE=;
+	h=Date:From:To:Cc:Subject:From;
+	b=TAEm4p+8lEWq30wBFYWMWtQOFNiPLtOIzWYiFAUNSoY8VF993rVjGoBO1R0V1GiXG
+	 2W3uiQfUUNz9K5tLZptTklNvIBgnL/s355jxFiq3saywQYplismCyUrOMykhtRffcF
+	 rScMWMyc6xhViqYSN//fBKzGdq38ikMCExHbv44yZaOHeEInNcKJBCytx9GBLD41MW
+	 mhzwuHdGO9s4CvKj3A2WHgQLZomSNLETT1OAqwPn8u7e7U3j9Yyl9nM7nW9+1AoWTY
+	 ezQ4ar1wpzyHeP8LFP3bIMIJOQUKEEShH/1YMmZpV3yY9iOiFvRQD5iQ22yRlGPf9O
+	 dTlrACIAgfiQA==
+Date: Tue, 3 Dec 2024 23:11:46 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: Tree for Dec 3
+Message-ID: <Z0-QMgYYurkzyjV6@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="cWo/kyIJZvmOjkfc"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEf4BzahMQWVH0Gaub-tWjH9GweG8Kt7OBU-f+PBhmmRDCKfrA@mail.gmail.com>
 
-On 2024-12-03 14:31:01-0800, Andrii Nakryiko wrote:
-> On Tue, Nov 26, 2024 at 1:17 PM Thomas Weißschuh <linux@weissschuh.net> wrote:
-> >
-> > Currently warnings emitted by resolve_btfids are buried in the build log
-> > and are slipping into mainline frequently.
-> > Add an option to elevate warnings to hard errors so the CI bots can
-> > catch any new warnings.
-> >
-> > Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
-> > Acked-by: Jiri Olsa <jolsa@kernel.org>
-> > ---
-> >  tools/bpf/resolve_btfids/main.c | 12 ++++++++++--
-> >  1 file changed, 10 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/tools/bpf/resolve_btfids/main.c b/tools/bpf/resolve_btfids/main.c
-> > index bd9f960bce3d5b74dc34159b35af1e0b33524d2d..571d29d2da97fea75e5f9c544a95b9ac65f9e579 100644
-> > --- a/tools/bpf/resolve_btfids/main.c
-> > +++ b/tools/bpf/resolve_btfids/main.c
-> > @@ -141,6 +141,7 @@ struct object {
-> >  };
-> >
-> >  static int verbose;
-> > +static int warnings;
-> >
-> >  static int eprintf(int level, int var, const char *fmt, ...)
-> >  {
-> > @@ -604,6 +605,7 @@ static int symbols_resolve(struct object *obj)
-> >                         if (id->id) {
-> >                                 pr_info("WARN: multiple IDs found for '%s': %d, %d - using %d\n",
-> >                                         str, id->id, type_id, id->id);
-> > +                               warnings++;
-> >                         } else {
-> >                                 id->id = type_id;
-> >                                 (*nr)--;
-> > @@ -625,8 +627,10 @@ static int id_patch(struct object *obj, struct btf_id *id)
-> >         int i;
-> >
-> >         /* For set, set8, id->id may be 0 */
-> > -       if (!id->id && !id->is_set && !id->is_set8)
-> > +       if (!id->id && !id->is_set && !id->is_set8) {
-> >                 pr_err("WARN: resolve_btfids: unresolved symbol %s\n", id->name);
-> > +               warnings++;
-> > +       }
-> >
-> >         for (i = 0; i < id->addr_cnt; i++) {
-> >                 unsigned long addr = id->addr[i];
-> > @@ -782,6 +786,7 @@ int main(int argc, const char **argv)
-> >                 .funcs    = RB_ROOT,
-> >                 .sets     = RB_ROOT,
-> >         };
-> > +       bool fatal_warnings = false;
-> >         struct option btfid_options[] = {
-> >                 OPT_INCR('v', "verbose", &verbose,
-> >                          "be more verbose (show errors, etc)"),
-> > @@ -789,6 +794,8 @@ int main(int argc, const char **argv)
-> >                            "BTF data"),
-> >                 OPT_STRING('b', "btf_base", &obj.base_btf_path, "file",
-> >                            "path of file providing base BTF"),
-> > +               OPT_BOOLEAN(0, "fatal-warnings", &fatal_warnings,
-> > +                           "turn warnings into errors"),
-> 
-> We are mixing naming styles here: we have "btf_base" with underscore
-> separator, and you are adding "fatal-warnings" with dash separator. I
-> personally like dashes, but whichever way we should stay consistent.
-> So let's fix it, otherwise it looks a bit sloppy.
 
-Ack.
+--cWo/kyIJZvmOjkfc
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> 
-> Please also use [PATCH bpf-next v3] subject prefix to make it explicit
-> that this should go through bpf-next tree.
+Hi all,
 
-Ack.
+Changes since 20241127:
 
-> 
-> pw-bot: cr
-> 
-> >                 OPT_END()
-> >         };
-> >         int err = -1;
-> > @@ -823,7 +830,8 @@ int main(int argc, const char **argv)
-> >         if (symbols_patch(&obj))
-> >                 goto out;
-> >
-> > -       err = 0;
-> > +       if (!(fatal_warnings && warnings))
-> > +               err = 0;
-> 
-> nit: just
-> 
-> if (!fatal_warnings)
->     err = 0;
-> 
-> ?
+The crc-next tree was added.
 
-This seems wrong. Now the actual warning counter is never evaluated.
-And --fatal_warnings will always lead to an error exit code.
+The iio related trees were dropped due to build issues from an
+interaction with Linus' tree.
 
-> >  out:
-> >         if (obj.efile.elf) {
-> >                 elf_end(obj.efile.elf);
-> >
-> > --
-> > 2.47.1
-> >
+The hwmon-staging tree gained a build failure due to an interaction with
+Linus' tree, I used the version from 20241128 instead.
+
+The net-next tree gained a conflict with Linus' tree.
+
+The drm-intel tree gained a conflict with the drm-intel-fixes tree.
+
+The ASoC tree interacted badly with Linus' tree which I fixed up.
+
+The watchdog tree gained a conflict with Linus' tree.
+
+Non-merge commits (relative to Linus' tree): 1345
+ 1274 files changed, 51599 insertions(+), 24657 deletions(-)
+
+----------------------------------------------------------------------------
+
+I have created today's linux-next tree at
+git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+(patches at http://www.kernel.org/pub/linux/kernel/next/ ).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" and checkout or reset to the new
+master.
+
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There is also the merge.log file in the Next
+directory.  Between each merge, the tree was built with a defconfig
+for arm64, an allmodconfig for x86_64, a multi_v7_defconfig for arm
+and a native build of tools/perf.
+
+Below is a summary of the state of the merge.
+
+I am currently merging 387 trees (counting Linus' and 148 trees of bug
+fix patches pending for the current release).
+
+Stats about the size of the tree over time can be seen at
+http://neuling.org/linux-next-size.html .
+
+Thanks to Randy Dunlap for doing many randconfig builds.  And to Paul
+Gortmaker for triage and bug fixes.
+
+--cWo/kyIJZvmOjkfc
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmdPkDIACgkQJNaLcl1U
+h9DAFQf/cfWiGGAQokMSIiEY8d8IahZCi8lvzgaekrLynNJ2LnFoVSQn8gg9yf6c
+yVMefzCx3RFO2MIZdGnH9ACodo+hXAa9fSdeQC8tJDNplaJp3fIxVqnD4O6etrz+
+MrIqzZTqPaEnXSlPFs9Sxp0Owo3SAIpSsY1fh3bOpUgEZOyASrsXRxWU7kmDpmQZ
+TyWsxNeOXhAkDgD7qNatn4yVXxFNAZV/kz/g79fiijDXc6JvDEms55HCt/tHk6TZ
+roFIpVAGeC7kvK34zAvYgLJhoHUZwLl9VhV0t37BfitxGmJ9xkmHrzbwIp2XSQke
+9XnqZrP5xhcIliOXR90POda+eP9bbw==
+=zgqd
+-----END PGP SIGNATURE-----
+
+--cWo/kyIJZvmOjkfc--
 
