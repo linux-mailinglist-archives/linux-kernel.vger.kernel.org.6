@@ -1,163 +1,127 @@
-Return-Path: <linux-kernel+bounces-430068-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20F2F9E2C38
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 20:43:03 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C33349E2DBF
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 22:00:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE8FC2841B8
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 19:43:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 060F2B2E4C7
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 19:46:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F51F20011E;
-	Tue,  3 Dec 2024 19:42:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="YAJe7iUt"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C44F31FDE2A;
+	Tue,  3 Dec 2024 19:46:32 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94A301F9F6C;
-	Tue,  3 Dec 2024 19:42:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C519A204F77
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 19:46:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733254976; cv=none; b=OPL92tdGcji2++F0D3mf+sCTP7fvXri8GXO2p3Vt/MM44Xd8lGNWTi9dzrb7NLz5yHWUUplJruthV6xJFfE4cOiq807fJ/e4P5L+PvHYh6cLRdrL0raya+sRkvO8QUNz2uWd+vKTuN/sc4WFQPGbuVewrBXgNMdgITMcSfVi2So=
+	t=1733255192; cv=none; b=bczSWoXQb8MGTvIw52w5ottzioB0qtND28cvpS/blAmVrfX6MqOfv7pSUw3XMUiSDLae3rdf8Wz9WMi2f/nXEbdXXi5vJr0ZDgl0NZENLIGE5334odY6QxexziUC7LCPr4OEJvwV/5Bt53fQ679IT6vO9p7/vmNVSjmzagckyEU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733254976; c=relaxed/simple;
-	bh=XPvrZGB6rFhA//poGTIcqJOfXf+IxPuK8vN2qtrT8FY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=KdjrV2sqnjGljNPH3/5uVbOBoSTxN3npaSptjO9l1nm1Q0JHDY+IyWgFDcbmqd0L4yWI2WAXUe+Sq63g0mfwNy5YB7egC5SD0/OR+5fyM+nEBjht2nhrE8oxxq5ARl7aMEY8m+516x9PfcInaW0OD6dgkp6ilj7wsRbyXQRoD5w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=YAJe7iUt; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B3Gi0Mu027853;
-	Tue, 3 Dec 2024 19:42:45 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	9EPMgjVNLChb8n92Kc2ub47qgMBtVTWQlZoZbDBRsJs=; b=YAJe7iUtIyJ/+L2f
-	tjUYspVQTeKXRpZMXI6qVoJGQdOCn8CigFsag6A4bjGhneu05KggD7zNiSqpLnpc
-	Wt2J5JSEWgQ/JJ4gpv0NfRDkYQ6lxSCq6lIasYucfdwxQBjfS9LkzQkUvkugf5e3
-	5Q3+qsnd5iVz/6nUUxazTd0J/mAovvtvFtZXez5GvdkoEBVwKfocIAwgqnEtfre2
-	3eE1aATImGoVhMqsl1ywtcvVl/qyMtmCGio7WzAmJUq+s/N2wwNJBt1RnH2aILPE
-	//KGLEvRnxPRWVAC3cZzKm6eFd8zVCAE+DqQtSofdoxKWBul6rxnxtPTfcWlO23R
-	tJ9Kuw==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 439vcej41h-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 03 Dec 2024 19:42:44 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B3JgiIA008499
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 3 Dec 2024 19:42:44 GMT
-Received: from [10.134.71.247] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 3 Dec 2024
- 11:42:43 -0800
-Message-ID: <f8bb9597-c5b3-4dbf-a65e-7bd17cd3ffc5@quicinc.com>
-Date: Tue, 3 Dec 2024 11:42:42 -0800
+	s=arc-20240116; t=1733255192; c=relaxed/simple;
+	bh=ayjJhvEnqmcVSyaBeb998Pk3PUd3CnrM4zKpciianxY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Z7+lKrnnoNzv/e8bRYrQS/hIhEN1xfnCfSVpGs2hQdbxO9OBpSvZ5/6nGGNvflbHaoQ//MqEuvzI0jaw6SQ3xNC1x9y3kDlLlJSiDH+WIB8rwtVxMk9pc2C05UlBA2sJUEt03s14fZoclN/HK0O1tCCZRn0TObLl1tRqvu27wQ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4Y2rkT2frSz9stG;
+	Tue,  3 Dec 2024 20:46:25 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id UCG2vu4-nnmU; Tue,  3 Dec 2024 20:46:25 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4Y2rkT1jk9z9stD;
+	Tue,  3 Dec 2024 20:46:25 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 212AB8B763;
+	Tue,  3 Dec 2024 20:46:25 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id 7pxtHpRMStCP; Tue,  3 Dec 2024 20:46:25 +0100 (CET)
+Received: from PO20335.idsi0.si.c-s.fr (unknown [192.168.232.97])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 50EC78B76C;
+	Tue,  3 Dec 2024 20:46:24 +0100 (CET)
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+To: Shrikanth Hegde <sshegde@linux.ibm.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Jason Baron <jbaron@akamai.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Naveen N Rao <naveen@kernel.org>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
+	linux-kernel@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH v4 1/4] static_call_inline: Provide trampoline address when updating sites
+Date: Tue,  3 Dec 2024 20:44:49 +0100
+Message-ID: <5efe0cffc38d6f69b1ec13988a99f1acff551abf.1733245362.git.christophe.leroy@csgroup.eu>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <cover.1733245362.git.christophe.leroy@csgroup.eu>
+References: <cover.1733245362.git.christophe.leroy@csgroup.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/3] drm/msm/dp: Fix and utilize TPG with a debugfs
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        "Marijn
- Suijten" <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Stephen Boyd <swboyd@chromium.org>,
-        "Kuogee
- Hsieh" <quic_khsieh@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        Jessica Zhang <quic_jesszhan@quicinc.com>
-References: <20241202-tpg-v1-0-0fd6b518b914@quicinc.com>
- <lpkhftx62hbnrftzoy6zprhvir7dffz5ynwo3kr5j5obc3dcle@73ljnmpdt7ts>
-Content-Language: en-US
-From: Abhinav Kumar <quic_abhinavk@quicinc.com>
-In-Reply-To: <lpkhftx62hbnrftzoy6zprhvir7dffz5ynwo3kr5j5obc3dcle@73ljnmpdt7ts>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: uWTxjPu4I4L3dZ9LsX6b3pNVeN4PKqB9
-X-Proofpoint-ORIG-GUID: uWTxjPu4I4L3dZ9LsX6b3pNVeN4PKqB9
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- bulkscore=0 mlxlogscore=832 adultscore=0 suspectscore=0 spamscore=0
- impostorscore=0 phishscore=0 mlxscore=0 malwarescore=0 clxscore=1015
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412030163
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1733255162; l=1424; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=ayjJhvEnqmcVSyaBeb998Pk3PUd3CnrM4zKpciianxY=; b=02Xc17llbaI9+HAI9fOhqoUpXP83GAbmDUMspEMI0XYRDQgjtkrcMaERuxOP1mNS67iZtKewZ UgUC4pDJ0qpDkFH9z99XF7s8DNM0Zhc9ouFoi9BG6F7WIgo+TnQk8yj
+X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
+Content-Transfer-Encoding: 8bit
 
+In preparation of support of inline static calls on powerpc, provide
+trampoline address when updating sites, so that when the destination
+function is too far for a direct function call, the call site is
+patched with a call to the trampoline.
 
+Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+---
+ arch/x86/kernel/static_call.c | 2 +-
+ kernel/static_call_inline.c   | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-On 12/3/2024 6:31 AM, Dmitry Baryshkov wrote:
-> On Mon, Dec 02, 2024 at 12:41:57PM -0800, Abhinav Kumar wrote:
->> DP Test Patten Generator is a very useful tool to debug issues such
->> as blank screen or corruption seen on the DP monitor by isolating it
->> to whether the corruption is coming from further upstream such as DPU
->> OR from the DP controller and below. It was noted in [1] that this API
->> is unused. Rather than dropping the API, it should be fixed and used.
->>
->> Hence, this series fixes the DP Test Patten Generator API and also utilizes
->> it by adding a debugfs for it.
->>
->> [1] : https://patchwork.freedesktop.org/patch/623508/?series=141074&rev=1
-> 
-> I'd prefer for this to be rebased on top of [2]. The series has been
-> posted a month ago.
-> 
-> [2] https://patchwork.freedesktop.org/series/141074/
-> 
+diff --git a/arch/x86/kernel/static_call.c b/arch/x86/kernel/static_call.c
+index 4eefaac64c6c..00b2ea40cbef 100644
+--- a/arch/x86/kernel/static_call.c
++++ b/arch/x86/kernel/static_call.c
+@@ -158,7 +158,7 @@ void arch_static_call_transform(void *site, void *tramp, void *func, bool tail)
+ {
+ 	mutex_lock(&text_mutex);
+ 
+-	if (tramp) {
++	if (tramp && !site) {
+ 		__static_call_validate(tramp, true, true);
+ 		__static_call_transform(tramp, __sc_insn(!func, true), func, false);
+ 	}
+diff --git a/kernel/static_call_inline.c b/kernel/static_call_inline.c
+index 5259cda486d0..7fefbb3d8074 100644
+--- a/kernel/static_call_inline.c
++++ b/kernel/static_call_inline.c
+@@ -206,7 +206,7 @@ void __static_call_update(struct static_call_key *key, void *tramp, void *func)
+ 				continue;
+ 			}
+ 
+-			arch_static_call_transform(site_addr, NULL, func,
++			arch_static_call_transform(site_addr, tramp, func,
+ 						   static_call_is_tail(site));
+ 		}
+ 	}
+-- 
+2.47.0
 
-Well, the review of that series which tried dropping the tpg led to this 
-one really.
-
-I will review that one within a couple of days. Lets first agree on that 
-series before deciding to rebase.
-
->>
->> To: Rob Clark <robdclark@gmail.com>
->> To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
->> To: Sean Paul <sean@poorly.run>
->> To: Marijn Suijten <marijn.suijten@somainline.org>
->> To: David Airlie <airlied@gmail.com>
->> To: Simona Vetter <simona@ffwll.ch>
->> To: Stephen Boyd <swboyd@chromium.org>
->> To: Kuogee Hsieh <quic_khsieh@quicinc.com>
->> Cc: linux-arm-msm@vger.kernel.org
->> Cc: dri-devel@lists.freedesktop.org
->> Cc: freedreno@lists.freedesktop.org
->> Cc: linux-kernel@vger.kernel.org
->> Cc: Jessica Zhang <quic_jesszhan@quicinc.com>
->>
->> Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
->> ---
->> Abhinav Kumar (3):
->>        drm/msm/dp: account for widebus in msm_dp_catalog_panel_tpg_enable()
->>        drm/msm/dp: do not touch the MMSS_DP_INTF_CONFIG for tpg
->>        drm/msm/dp: add a debugfs node for using tpg
->>
->>   drivers/gpu/drm/msm/dp/dp_catalog.c | 15 +++++++--
->>   drivers/gpu/drm/msm/dp/dp_debug.c   | 61 +++++++++++++++++++++++++++++++++++++
->>   drivers/gpu/drm/msm/dp/dp_panel.h   |  2 ++
->>   3 files changed, 76 insertions(+), 2 deletions(-)
->> ---
->> base-commit: 798bb342e0416d846cf67f4725a3428f39bfb96b
->> change-id: 20241202-tpg-3f7543c036ac
->>
->> Best regards,
->> -- 
->> Abhinav Kumar <quic_abhinavk@quicinc.com>
->>
-> 
 
