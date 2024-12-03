@@ -1,290 +1,366 @@
-Return-Path: <linux-kernel+bounces-429741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429743-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B942F9E224D
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:23:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E41A29E225C
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:23:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 794D92838CF
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 15:23:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A55E528185F
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 15:23:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86DB51F76B4;
-	Tue,  3 Dec 2024 15:22:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F04961F755B;
+	Tue,  3 Dec 2024 15:23:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UOuFnNua"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mn9dP7oe"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 309091F757D
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 15:22:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C1722D7BF
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 15:23:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733239360; cv=none; b=roOY6Vsb9WAfTw4U75kAXQ5PGb6hpJ721NVyUuRtekXdpey4giJliyhEsieX555apnX4P0muAWaLqXlGV1dGyeOjxuwQZcW2Yk6imcYyvu4qbcWf/cJSoY+vLYdZpqyBZwf+kU+tkvjWKCB6o3DcYef919Lcb+xIwhdhh3c6HHo=
+	t=1733239394; cv=none; b=Luz/Nar4MRmyxro+kGZuCAE1uIGASYz8QsynE4/0zbAh6ll1XEBzw6u+bE6ZoQ7+8geXU1WjuUvDmfJlk87zfm6Vdv39jkxC0CnPLk1pMXrrx4ApJhUXsgSgOVHM9qMW0FZkAtt8ZkryNNBRE2Hj5SJszcdekAQPX9SHNbwGtMk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733239360; c=relaxed/simple;
-	bh=3HKMqPH2mz9m9zUiyexitBS0CiX5BNdBQAn5qpYcUUw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Mql2rbHofyRyKA1VmJ8Z1Vx5XR7AStDXeujitfhHDa76u5B6JlDPALEy/JAT4amYpJB+1HcvjNbnWC/su+yO8ojbTuqtbrJk14EzNDbX06KQi0m029TcfHS9Z3FzNlF4UcYqWuabNSe+tWyyXupA37mt+HusKmU5mCZEKFAeMJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UOuFnNua; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-724f41d520cso3389980b3a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 07:22:37 -0800 (PST)
+	s=arc-20240116; t=1733239394; c=relaxed/simple;
+	bh=brepOeS7n5X+UWWcbVubxKFFGZ0LiN2Cr5JnlKHLeq8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=WJGqhjO26pxE0n8I5N1USwKHGYQmmCxkoSo7N67NYMicTLdz31BzPyPx7M2r0I9KzJ26C55KF/HlLYZHPykO8dayrJISE6Ha1s88lCOLNTwECnPEA/s7f38PfU/Gr6270bkwM4JtcHF7rm5nhqRIc1kbfhb41DEu3mfD1RFkajQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Mn9dP7oe; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4349fb56260so49618975e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 07:23:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733239357; x=1733844157; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=3axE8hWFEOAcBbBVlVC5J9i71o0iCzSmsJDKDt+tz5A=;
-        b=UOuFnNuapXdK7ztlXYhcWUhmsYGLUMqVpnC7kJTa0b4wcHThxZIhxtiQibmm+TZpuT
-         C/PhA9lT/47M6jt/qpV+b3g3YESYMvg/60SoZ6SPI1qaslUOzPaR6FUuJBD7PCkjqQff
-         hkuFoGFFBN2vEfEgNtTqCLsXZY9vofTsy/u7tyTnKglCBjdTbJd042v7/SUtQUg8IBLV
-         3mf2NCzGNRxy/PP7kVEATu6DdetFzR86lcYmizZPsWoy6QmIgEaEA/nTbMbMbWR9GAWD
-         qP57LdFFcRROzSHoaif1AI6idCG5h2c8+lVNRZvKGegY8ImzBBBjUSLlOdX2jZkMvJ2W
-         0RZQ==
+        d=gmail.com; s=20230601; t=1733239390; x=1733844190; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6tH9mD1nqqP2Ca+mLMpBrk6uGXtWUB0Ty3khrHJQfmQ=;
+        b=Mn9dP7oep5K05CytJny9wXHKLzkpB1XOCsT4FooP9BVyut+SKY7ovMKMSy2LlRmL+N
+         KV2IvxckSniq1h9jsLxCnJXfFEvE83f1fkDtTheqwf2a1fdsr3xHZ2oSO24WHvNmPMoV
+         jWqxBj/NsWoonlWBErIX+pzpfRk6GZDYZiebctWcXJG83Udg73K+7iNZdTHzN+1lL6h4
+         CO9Uxh21y9DvRnJ49g5qk0TXYCFhUnlisYSOmweKsCH5HoYniKQ35mc6HDnJH5bx/0VN
+         wGjRMFNwzq+0KH9cv2ZIzZR4H7a6GbEo15FTUylPCBSBft3GN3N4v+ZdXABxqopG8op3
+         PrJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733239357; x=1733844157;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3axE8hWFEOAcBbBVlVC5J9i71o0iCzSmsJDKDt+tz5A=;
-        b=i1nXK5nmcMRGrRcggOZI5/bDBnGWOsCKXDaddflRV7JMtOlEBZnh/bg/kdf3unWcdu
-         PqUJp0Zr46HKYE/lOT8l43+FA+An/Leo7TZ4ysR9rsCkcsXcfBXaI6G4dfdVfk0yMOJ1
-         aM3G7pJuioNr0/qh6B3PkQrd0i9kdjWNm//a6AOiCZaqw83OLVZKedhekDNDWKLFcloZ
-         Nr3yEXuXF/DNUctaf/mVuYLcM4zNqmqTgcbobXQRePyvSd/mEH/EOYbg3YaIMzyZThhV
-         nI0mN4gzVr/jOf48Iv7s4BEs8pYXxi5HuGSRujPOr9TOTEWmev0RtyslfbxDZPIHxi09
-         sJIw==
-X-Forwarded-Encrypted: i=1; AJvYcCUf8YMstI9KhTGObfchzXnRw3RQkdBe+FkY0Xq9Uc2pfed8H9KFcPgbreFqPs5FVGi6BkSawHPTV3uCHh4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4KLpqBI2LGl2m1XEqmXOkrWNVDWS1nt/OOLrIG+MRTQF1mqTE
-	udoIhz4Qpvc8yHgMTs5AzGYZU1RonJhsLHsL0sZsr1MXo4TEAYgZ8e670J9kOA==
-X-Gm-Gg: ASbGncuBIkkrE/APOdugKPSRNv1Fk0qUrnJwAEtD6sYvQNksQlowFOBAKMNqEqAs5VS
-	L+XADoZmpdXADaKBNlXrM8Xl4Rlx+XxBdqW0C0NoQ/29A59qSCg1fSNKxxucwjDcjL+uD6GDt01
-	DW3JkoFYswEi5aZ9FvyP9U1iOdDh4k6V0pY6ipY0G3bz1jvBd71IsaSNs1ddmdjkni/SXY2lt2b
-	CA1w1A4qh4HRgvvH/JBPyDnQyqqQVRolaWnfFPbxfVPdWpgCCVhs7+jObhZ
-X-Google-Smtp-Source: AGHT+IEZzaiAa/sDP0NIqy+9CcPtC9S0iqjWkUM0fW3/+Qg2jpqxzNaED37DXLoNtAbdVeskjdanNg==
-X-Received: by 2002:a05:6a00:1826:b0:71e:74bf:6b1a with SMTP id d2e1a72fcca58-7257fcae158mr3814643b3a.16.1733239357479;
-        Tue, 03 Dec 2024 07:22:37 -0800 (PST)
-Received: from thinkpad ([120.60.48.217])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7254176f8f9sm10906738b3a.66.2024.12.03.07.22.32
+        d=1e100.net; s=20230601; t=1733239390; x=1733844190;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6tH9mD1nqqP2Ca+mLMpBrk6uGXtWUB0Ty3khrHJQfmQ=;
+        b=XURQYhie/obXnjqkI+tpQr5wOBfn/BJihwzsx+F8ikipI/pI7dmFT6NF24P3iRkBN8
+         KQWqiPCAGeIPi9ibcL19d/yytqhu6OIoyBHBNqTkwoboORJwRrEOYUG/o+33BRogGTq7
+         +MkdfRbayR7NUnNWptfFL/nqL6cZHP2b7B9iwxnuGhPtDXgQBR+BCKmpSZbukBQTPhJw
+         WCMsyHcjp4laulm21MbU3XsvIwTUAfWvSAoVOCL4D0mgjhIueIU+efBfoGWb9ZC66nLR
+         C9Uxn294jZ3xSUkGp0J3wGb43zBH3NpUFiDj/NJy8FDmvbX2H6TbZafniO8m3OirdgYM
+         ZYTA==
+X-Forwarded-Encrypted: i=1; AJvYcCW0Hi/0wzhSmnzundN3CV4a+YVuX2Cju9u4liBkzzrgS0ZkYQqrYR/3IqI+5m0LkOkt66mnMgjVizGVFK4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzc9YEF6Yxev2oOxOkQMCe+P0Z55z3RhEqHkY3jheWfkUxEKVVV
+	12NngMt00pXvQRWnZLZswqRmT0qwgAiw3HnB7JJ0Z+PdB21UBc1APbrW2tLD
+X-Gm-Gg: ASbGncvxGwGhHN1jinc+HEuabw4+giPeh7hFsnHTLhfeGRYKiaMpCoflWp7nOno7n36
+	5BFvk/KxmvXB50oknQTkV1Xch2XXyt2VfSca1LPig1S6BSrgU7KvcETYICz7tNXU4vykBb8QQPi
+	GSm0kPlDiMDuREITVmRLCR68GuhJQVl5Ryw8ltx7nK7zOchRB8iGHwzTUHI4Ykm/ocBBiZ4gW1n
+	Q/kCys2XyiSwOvzbJMPlzS44F/1MuyU/u/JeOVXhkOtdl64Y94=
+X-Google-Smtp-Source: AGHT+IEqZ54qZ4pc8Wj9oHk5qi/L7jSC2q/MmK6rQsOqzNDfLgxnJWBQYuQ8BXOPyJXb5Ki9ZPGMUA==
+X-Received: by 2002:a05:600c:3546:b0:434:9fb5:fddd with SMTP id 5b1f17b1804b1-434d0a07350mr21493555e9.23.1733239390032;
+        Tue, 03 Dec 2024 07:23:10 -0800 (PST)
+Received: from fedora.. ([213.94.26.75])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385ccd2e1bdsm16235462f8f.9.2024.12.03.07.23.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Dec 2024 07:22:37 -0800 (PST)
-Date: Tue, 3 Dec 2024 20:52:30 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Christian Bruel <christian.bruel@foss.st.com>
-Cc: lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
-	bhelgaas@google.com, krzk+dt@kernel.org, conor+dt@kernel.org,
-	mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com,
-	p.zabel@pengutronix.de, cassel@kernel.org,
-	quic_schintav@quicinc.com, fabrice.gasnier@foss.st.com,
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 4/5] PCI: stm32: Add PCIe endpoint support for
- STM32MP25
-Message-ID: <20241203152230.5mdrt27u5u5ecwcz@thinkpad>
-References: <20241126155119.1574564-1-christian.bruel@foss.st.com>
- <20241126155119.1574564-5-christian.bruel@foss.st.com>
+        Tue, 03 Dec 2024 07:23:09 -0800 (PST)
+From: =?UTF-8?q?Jos=C3=A9=20Exp=C3=B3sito?= <jose.exposito89@gmail.com>
+To: louis.chauvet@bootlin.com
+Cc: airlied@gmail.com,
+	dri-devel@lists.freedesktop.org,
+	hamohammed.sa@gmail.com,
+	linux-kernel@vger.kernel.org,
+	maarten.lankhorst@linux.intel.com,
+	mairacanal@riseup.net,
+	melissa.srw@gmail.com,
+	mripard@kernel.org,
+	rodrigosiqueiramelo@gmail.com,
+	simona.vetter@ffwll.ch,
+	simona@ffwll.ch,
+	thomas.petazzoni@bootlin.com,
+	tzimmermann@suse.de,
+	=?UTF-8?q?Jos=C3=A9=20Exp=C3=B3sito?= <jose.exposito89@gmail.com>
+Subject: [PATCH v2 3/4] drm/vkms: Switch to dynamic allocation for CRTC
+Date: Tue,  3 Dec 2024 16:23:05 +0100
+Message-ID: <20241203152306.3018-1-jose.exposito89@gmail.com>
+X-Mailer: git-send-email 2.47.1
+In-Reply-To: <20241122-b4-vkms-allocated-v2-3-ff7bddbf0bfb@bootlin.com>
+References: <20241122-b4-vkms-allocated-v2-3-ff7bddbf0bfb@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241126155119.1574564-5-christian.bruel@foss.st.com>
 
-On Tue, Nov 26, 2024 at 04:51:18PM +0100, Christian Bruel wrote:
+Hi Louis,
 
-[...]
+Patches 1 and 2:
 
-> +static int stm32_pcie_start_link(struct dw_pcie *pci)
-> +{
-> +	struct stm32_pcie *stm32_pcie = to_stm32_pcie(pci);
-> +	int ret;
+Reviewed-by: José Expósito <jose.exposito89@gmail.com>
+
+I noticed a bug in this patch:
+
+> A specific allocation for the CRTC is not strictly necessary at this point,
+> but in order to implement dynamic configuration of VKMS (configFS), it
+> will be easier to have one allocation per CRTC.
+> 
+> Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
+> ---
+>  drivers/gpu/drm/vkms/vkms_crtc.c      | 32 +++++++++++++++++---------------
+>  drivers/gpu/drm/vkms/vkms_drv.h       |  9 +++++----
+>  drivers/gpu/drm/vkms/vkms_output.c    | 26 +++++++++++++++-----------
+>  drivers/gpu/drm/vkms/vkms_writeback.c | 17 +++++++++--------
+>  4 files changed, 46 insertions(+), 38 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/vkms/vkms_crtc.c b/drivers/gpu/drm/vkms/vkms_crtc.c
+> index ace8d293f7da611110c1e117b6cf2f3c9e9b4381..d014dec117e7d4ec7e9e38037a4a4cb4bc6be4ca 100644
+> --- a/drivers/gpu/drm/vkms/vkms_crtc.c
+> +++ b/drivers/gpu/drm/vkms/vkms_crtc.c
+> @@ -84,9 +84,7 @@ static bool vkms_get_vblank_timestamp(struct drm_crtc *crtc,
+>  				      int *max_error, ktime_t *vblank_time,
+>  				      bool in_vblank_irq)
+>  {
+> -	struct drm_device *dev = crtc->dev;
+> -	struct vkms_device *vkmsdev = drm_device_to_vkms_device(dev);
+> -	struct vkms_output *output = &vkmsdev->output;
+> +	struct vkms_output *output = drm_crtc_to_vkms_output(crtc);
+>  	struct drm_vblank_crtc *vblank = drm_crtc_vblank_crtc(crtc);
+>  
+>  	if (!READ_ONCE(vblank->enabled)) {
+> @@ -279,25 +277,29 @@ static void vkms_crtc_destroy_workqueue(struct drm_device *dev,
+>  	destroy_workqueue(vkms_out->composer_workq);
+>  }
+>  
+> -int vkms_crtc_init(struct drm_device *dev, struct drm_crtc *crtc,
+> -		   struct drm_plane *primary, struct drm_plane *cursor)
+> +struct vkms_output *vkms_crtc_init(struct drm_device *dev, struct drm_plane *primary,
+> +				   struct drm_plane *cursor)
+>  {
+> -	struct vkms_output *vkms_out = drm_crtc_to_vkms_output(crtc);
+> +	struct vkms_output *vkms_out;
+> +	struct drm_crtc *crtc;
+>  	int ret;
+>  
+> -	ret = drmm_crtc_init_with_planes(dev, crtc, primary, cursor,
+> -					 &vkms_crtc_funcs, NULL);
+> -	if (ret) {
+> -		DRM_ERROR("Failed to init CRTC\n");
+> -		return ret;
+> +	vkms_out = drmm_crtc_alloc_with_planes(dev, struct vkms_output, crtc,
+> +					       primary, cursor,
+> +					       &vkms_crtc_funcs, NULL);
+> +	if (IS_ERR(vkms_out)) {
+> +		DRM_DEV_ERROR(dev->dev, "Failed to init CRTC\n");
+> +		return vkms_out;
+>  	}
+>  
+> +	crtc = &vkms_out->crtc;
 > +
-> +	if (stm32_pcie->link_status == STM32_PCIE_EP_LINK_ENABLED) {
-> +		dev_dbg(pci->dev, "Link is already enabled\n");
-> +		return 0;
+>  	drm_crtc_helper_add(crtc, &vkms_crtc_helper_funcs);
+>  
+>  	ret = drm_mode_crtc_set_gamma_size(crtc, VKMS_LUT_SIZE);
+>  	if (ret) {
+>  		DRM_ERROR("Failed to set gamma size\n");
+> -		return ret;
+> +		return ERR_PTR(ret);
+>  	}
+>  
+>  	drm_crtc_enable_color_mgmt(crtc, 0, false, VKMS_LUT_SIZE);
+> @@ -307,12 +309,12 @@ int vkms_crtc_init(struct drm_device *dev, struct drm_crtc *crtc,
+>  
+>  	vkms_out->composer_workq = alloc_ordered_workqueue("vkms_composer", 0);
+>  	if (!vkms_out->composer_workq)
+> -		return -ENOMEM;
+> +		return ERR_PTR(-ENOMEM);
+>  
+>  	ret = drmm_add_action_or_reset(dev, vkms_crtc_destroy_workqueue,
+>  				       vkms_out);
+>  	if (ret)
+> -		return ret;
+> +		return ERR_PTR(ret);
+>  
+> -	return ret;
+> +	return vkms_out;
+>  }
+> diff --git a/drivers/gpu/drm/vkms/vkms_drv.h b/drivers/gpu/drm/vkms/vkms_drv.h
+> index 19fd99b8e506c4454d7878b67f692a0441c22665..fbe7de67fb9c6a6a6964d71b452b9a3ce573e0f8 100644
+> --- a/drivers/gpu/drm/vkms/vkms_drv.h
+> +++ b/drivers/gpu/drm/vkms/vkms_drv.h
+> @@ -214,7 +214,6 @@ struct vkms_config {
+>  struct vkms_device {
+>  	struct drm_device drm;
+>  	struct platform_device *platform;
+> -	struct vkms_output output;
+>  	const struct vkms_config *config;
+>  };
+>  
+> @@ -241,8 +240,9 @@ struct vkms_device {
+>   * @primary: primary plane to attach to the CRTC
+>   * @cursor: plane to attach to the CRTC
+>   */
+> -int vkms_crtc_init(struct drm_device *dev, struct drm_crtc *crtc,
+> -		   struct drm_plane *primary, struct drm_plane *cursor);
+> +struct vkms_output *vkms_crtc_init(struct drm_device *dev,
+> +				   struct drm_plane *primary,
+> +				   struct drm_plane *cursor);
+>  
+>  /**
+>   * vkms_output_init() - Initialize all sub-components needed for a VKMS device.
+> @@ -273,6 +273,7 @@ void vkms_set_composer(struct vkms_output *out, bool enabled);
+>  void vkms_writeback_row(struct vkms_writeback_job *wb, const struct line_buffer *src_buffer, int y);
+>  
+>  /* Writeback */
+> -int vkms_enable_writeback_connector(struct vkms_device *vkmsdev);
+> +int vkms_enable_writeback_connector(struct vkms_device *vkmsdev,
+> +				    struct vkms_output *vkms_out);
+>  
+>  #endif /* _VKMS_DRV_H_ */
+> diff --git a/drivers/gpu/drm/vkms/vkms_output.c b/drivers/gpu/drm/vkms/vkms_output.c
+> index 102b6ad466cb4f7c6704f30cea669e5d7f81540a..6a5cf6e7714938f23b4276a96991d05431bcd76e 100644
+> --- a/drivers/gpu/drm/vkms/vkms_output.c
+> +++ b/drivers/gpu/drm/vkms/vkms_output.c
+> @@ -30,11 +30,10 @@ static const struct drm_connector_helper_funcs vkms_conn_helper_funcs = {
+>  
+>  int vkms_output_init(struct vkms_device *vkmsdev)
+>  {
+> -	struct vkms_output *output = &vkmsdev->output;
+>  	struct drm_device *dev = &vkmsdev->drm;
+>  	struct drm_connector *connector;
+>  	struct drm_encoder *encoder;
+> -	struct drm_crtc *crtc = &output->crtc;
+> +	struct vkms_output *output;
+>  	struct vkms_plane *primary, *overlay, *cursor = NULL;
+>  	int ret;
+>  	int writeback;
+> @@ -56,9 +55,12 @@ int vkms_output_init(struct vkms_device *vkmsdev)
+>  			return PTR_ERR(cursor);
+>  	}
+>  
+> -	ret = vkms_crtc_init(dev, crtc, &primary->base, &cursor->base);
+> -	if (ret)
+> -		return ret;
+> +	output = vkms_crtc_init(dev, &primary->base,
+> +				cursor ? &cursor->base : NULL);
+> +	if (IS_ERR(output)) {
+> +		DRM_ERROR("Failed to allocate CRTC\n");
+> +		return PTR_ERR(output);
 > +	}
-> +
-> +	ret = stm32_pcie_enable_link(pci);
-> +	if (ret) {
-> +		dev_err(pci->dev, "PCIe cannot establish link: %d\n", ret);
-> +		return ret;
-> +	}
+>  
+>  	if (vkmsdev->config->overlay) {
+>  		for (n = 0; n < NUM_OVERLAY_PLANES; n++) {
+> @@ -67,7 +69,7 @@ int vkms_output_init(struct vkms_device *vkmsdev)
+>  				DRM_DEV_ERROR(dev->dev, "Failed to init vkms plane\n");
+>  				return PTR_ERR(overlay);
+>  			}
+> -			overlay->base.possible_crtcs = drm_crtc_mask(crtc);
+> +			overlay->base.possible_crtcs = drm_crtc_mask(&output->crtc);
+>  		}
+>  	}
+>  
+> @@ -97,23 +99,25 @@ int vkms_output_init(struct vkms_device *vkmsdev)
+>  		DRM_ERROR("Failed to init encoder\n");
+>  		return ret;
+>  	}
+> -	encoder->possible_crtcs = drm_crtc_mask(crtc);
+> +	encoder->possible_crtcs = drm_crtc_mask(&output->crtc);
+>  
+> +	/* Attach the encoder and the connector */
+>  	ret = drm_connector_attach_encoder(connector, encoder);
+>  	if (ret) {
+>  		DRM_ERROR("Failed to attach connector to encoder\n");
+>  		return ret;
+>  	}
+>  
+> +	/* Initialize the writeback component */
+>  	if (vkmsdev->config->writeback) {
+> -		writeback = vkms_enable_writeback_connector(vkmsdev);
+> -		if (writeback)
+> +		writeback = vkms_enable_writeback_connector(vkmsdev, output);
+> +		if (writeback) {
+>  			DRM_ERROR("Failed to init writeback connector\n");
+> +			return ret;
 
-How the REFCLK is supplied to the endpoint? From host or generated locally?
+In case of error "if (writeback)", you are returning "ret", which must
+be 0 at this point.
 
-> +
-> +	stm32_pcie->link_status = STM32_PCIE_EP_LINK_ENABLED;
-> +
-> +	enable_irq(stm32_pcie->perst_irq);
-> +
-> +	return 0;
-> +}
-> +
-> +static void stm32_pcie_stop_link(struct dw_pcie *pci)
-> +{
-> +	struct stm32_pcie *stm32_pcie = to_stm32_pcie(pci);
-> +
-> +	if (stm32_pcie->link_status == STM32_PCIE_EP_LINK_DISABLED) {
-> +		dev_dbg(pci->dev, "Link is already disabled\n");
-> +		return;
-> +	}
-> +
-> +	disable_irq(stm32_pcie->perst_irq);
-> +
-> +	stm32_pcie_disable_link(pci);
-> +
-> +	stm32_pcie->link_status = STM32_PCIE_EP_LINK_DISABLED;
-> +}
-> +
-> +static int stm32_pcie_raise_irq(struct dw_pcie_ep *ep, u8 func_no,
-> +				unsigned int type, u16 interrupt_num)
-> +{
-> +	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
-> +
-> +	switch (type) {
-> +	case PCI_IRQ_INTX:
-> +		return dw_pcie_ep_raise_intx_irq(ep, func_no);
-> +	case PCI_IRQ_MSI:
-> +		return dw_pcie_ep_raise_msi_irq(ep, func_no, interrupt_num);
-> +	default:
-> +		dev_err(pci->dev, "UNKNOWN IRQ type\n");
-> +		return -EINVAL;
-> +	}
-> +}
-> +
-> +static const struct pci_epc_features stm32_pcie_epc_features = {
-> +	.msi_capable = true,
-> +	.align = 1 << 16,
+I'm not sure if it is a bug using the wrong variable or you want to keep
+the previous behaviour. If that's the case, the code used the call
+drm_mode_config_reset() before this change.
 
-Use SZ_64K
-
-> +};
-> +
-
-[...]
-
-> +static int stm32_add_pcie_ep(struct stm32_pcie *stm32_pcie,
-> +			     struct platform_device *pdev)
-> +{
-> +	struct dw_pcie *pci = stm32_pcie->pci;
-> +	struct dw_pcie_ep *ep = &pci->ep;
-> +	struct device *dev = &pdev->dev;
-> +	int ret;
-> +
-> +	ret = regmap_update_bits(stm32_pcie->regmap, SYSCFG_PCIECR,
-> +				 STM32MP25_PCIECR_TYPE_MASK,
-> +				 STM32MP25_PCIECR_EP);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = pm_runtime_resume_and_get(dev);
-> +	if (ret < 0) {
-> +		dev_err(dev, "pm runtime resume failed: %d\n", ret);
-> +		return ret;
-> +	}
-
-You might want to do runtime resume before accessing regmap.
-
-> +
-> +	reset_control_assert(stm32_pcie->rst);
-> +	reset_control_deassert(stm32_pcie->rst);
-> +
-> +	ep->ops = &stm32_pcie_ep_ops;
-> +
-> +	ret = dw_pcie_ep_init(ep);
-> +	if (ret) {
-> +		dev_err(dev, "failed to initialize ep: %d\n", ret);
-> +		goto err_init;
-> +	}
-> +
-> +	ret = stm32_pcie_enable_resources(stm32_pcie);
-> +	if (ret) {
-> +		dev_err(dev, "failed to enable resources: %d\n", ret);
-> +		goto err_clk;
-> +	}
-> +
-> +	ret = dw_pcie_ep_init_registers(ep);
-> +	if (ret) {
-> +		dev_err(dev, "Failed to initialize DWC endpoint registers\n");
-> +		goto err_init_regs;
-> +	}
-> +
-> +	pci_epc_init_notify(ep->epc);
-> +
-> +	return 0;
-> +
-> +err_init_regs:
-> +	stm32_pcie_disable_resources(stm32_pcie);
-> +
-> +err_clk:
-> +	dw_pcie_ep_deinit(ep);
-> +
-> +err_init:
-> +	pm_runtime_put_sync(dev);
-> +	return ret;
-> +}
-> +
-> +static int stm32_pcie_probe(struct platform_device *pdev)
-> +{
-> +	struct stm32_pcie *stm32_pcie;
-> +	struct dw_pcie *dw;
-> +	struct device *dev = &pdev->dev;
-> +	int ret;
-> +
-> +	stm32_pcie = devm_kzalloc(dev, sizeof(*stm32_pcie), GFP_KERNEL);
-> +	if (!stm32_pcie)
-> +		return -ENOMEM;
-> +
-> +	dw = devm_kzalloc(dev, sizeof(*dw), GFP_KERNEL);
-> +	if (!dw)
-> +		return -ENOMEM;
-
-Why can't you allocate it statically inside 'struct stm32_pcie'?
-
-> +
-> +	stm32_pcie->pci = dw;
-> +
-> +	dw->dev = dev;
-> +	dw->ops = &dw_pcie_ops;
-> +
-> +	stm32_pcie->regmap = syscon_regmap_lookup_by_compatible("st,stm32mp25-syscfg");
-> +	if (IS_ERR(stm32_pcie->regmap))
-> +		return dev_err_probe(dev, PTR_ERR(stm32_pcie->regmap),
-> +				     "No syscfg specified\n");
-> +
-> +	stm32_pcie->phy = devm_phy_get(dev, "pcie-phy");
-> +	if (IS_ERR(stm32_pcie->phy))
-> +		return dev_err_probe(dev, PTR_ERR(stm32_pcie->phy),
-> +				     "failed to get pcie-phy\n");
-> +
-> +	stm32_pcie->clk = devm_clk_get(dev, NULL);
-> +	if (IS_ERR(stm32_pcie->clk))
-> +		return dev_err_probe(dev, PTR_ERR(stm32_pcie->clk),
-> +				     "Failed to get PCIe clock source\n");
-> +
-> +	stm32_pcie->rst = devm_reset_control_get_exclusive(dev, NULL);
-> +	if (IS_ERR(stm32_pcie->rst))
-> +		return dev_err_probe(dev, PTR_ERR(stm32_pcie->rst),
-> +				     "Failed to get PCIe reset\n");
-> +
-> +	stm32_pcie->perst_gpio = devm_gpiod_get(dev, "reset", GPIOD_IN);
-> +	if (IS_ERR(stm32_pcie->perst_gpio))
-> +		return dev_err_probe(dev, PTR_ERR(stm32_pcie->perst_gpio),
-> +				     "Failed to get reset GPIO\n");
-> +
-> +	ret = phy_set_mode(stm32_pcie->phy, PHY_MODE_PCIE);
-
-Hmm, so PHY mode is common for both endpoint and host?
-
-- Mani
-
--- 
-மணிவண்ணன் சதாசிவம்
+> +		}
+>  	}
+>  
+>  	drm_mode_config_reset(dev);
+>  
+>  	return 0;
+> -
+> -	return ret;
+>  }
+> diff --git a/drivers/gpu/drm/vkms/vkms_writeback.c b/drivers/gpu/drm/vkms/vkms_writeback.c
+> index f12417b2d24803a33e4ff56108cc89704a500faf..c9b6e161fa8698491f20082dfe0b713f27bcb918 100644
+> --- a/drivers/gpu/drm/vkms/vkms_writeback.c
+> +++ b/drivers/gpu/drm/vkms/vkms_writeback.c
+> @@ -105,7 +105,9 @@ static void vkms_wb_cleanup_job(struct drm_writeback_connector *connector,
+>  				struct drm_writeback_job *job)
+>  {
+>  	struct vkms_writeback_job *vkmsjob = job->priv;
+> -	struct vkms_device *vkmsdev;
+> +	struct vkms_output *vkms_output = container_of(connector,
+> +						       struct vkms_output,
+> +						       wb_connector);
+>  
+>  	if (!job->fb)
+>  		return;
+> @@ -114,8 +116,7 @@ static void vkms_wb_cleanup_job(struct drm_writeback_connector *connector,
+>  
+>  	drm_framebuffer_put(vkmsjob->wb_frame_info.fb);
+>  
+> -	vkmsdev = drm_device_to_vkms_device(job->fb->dev);
+> -	vkms_set_composer(&vkmsdev->output, false);
+> +	vkms_set_composer(vkms_output, false);
+>  	kfree(vkmsjob);
+>  }
+>  
+> @@ -124,8 +125,7 @@ static void vkms_wb_atomic_commit(struct drm_connector *conn,
+>  {
+>  	struct drm_connector_state *connector_state = drm_atomic_get_new_connector_state(state,
+>  											 conn);
+> -	struct vkms_device *vkmsdev = drm_device_to_vkms_device(conn->dev);
+> -	struct vkms_output *output = &vkmsdev->output;
+> +	struct vkms_output *output = drm_crtc_to_vkms_output(connector_state->crtc);
+>  	struct drm_writeback_connector *wb_conn = &output->wb_connector;
+>  	struct drm_connector_state *conn_state = wb_conn->base.state;
+>  	struct vkms_crtc_state *crtc_state = output->composer_state;
+> @@ -139,7 +139,7 @@ static void vkms_wb_atomic_commit(struct drm_connector *conn,
+>  	if (!conn_state)
+>  		return;
+>  
+> -	vkms_set_composer(&vkmsdev->output, true);
+> +	vkms_set_composer(output, true);
+>  
+>  	active_wb = conn_state->writeback_job->priv;
+>  	wb_frame_info = &active_wb->wb_frame_info;
+> @@ -162,9 +162,10 @@ static const struct drm_connector_helper_funcs vkms_wb_conn_helper_funcs = {
+>  	.atomic_check = vkms_wb_atomic_check,
+>  };
+>  
+> -int vkms_enable_writeback_connector(struct vkms_device *vkmsdev)
+> +int vkms_enable_writeback_connector(struct vkms_device *vkmsdev,
+> +				    struct vkms_output *vkms_output)
+>  {
+> -	struct drm_writeback_connector *wb = &vkmsdev->output.wb_connector;
+> +	struct drm_writeback_connector *wb = &vkms_output->wb_connector;
+>  
+>  	drm_connector_helper_add(&wb->base, &vkms_wb_conn_helper_funcs);
+>  
+> 
 
