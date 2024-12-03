@@ -1,105 +1,114 @@
-Return-Path: <linux-kernel+bounces-429641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45D1F9E2771
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 17:29:54 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91B1D9E2314
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:32:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EC270B28CC7
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 14:23:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AF218B42C7A
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 14:25:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B2131EF0BC;
-	Tue,  3 Dec 2024 14:23:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 971501F6679;
+	Tue,  3 Dec 2024 14:25:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="HDHGIQr4"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P1QUk00R"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E86D1DE2DE;
-	Tue,  3 Dec 2024 14:23:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2ECC1F4738;
+	Tue,  3 Dec 2024 14:25:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733235830; cv=none; b=QqPELJ6Y/hdYbaTkHUnKxM9EDI2v/DxoG//evTGXLONrPiJLrZO0eDUdkQTrFlSLgmyi1T137tiraQo6gWUeoubRt3CZRio94vLUUh4lQ2v5Jh27X78Y3mA85scdAnA/Vd39OBnNBVfx+YLgyH7fzCc4gUI/r87LVeqVUTsBJ6o=
+	t=1733235901; cv=none; b=Symm11e81z0Ig2TqXL4O8DkV3xP2ct3iNkAXLVzFPHQQCu4vPwLGTyGg4hexZ4sNf0JfD0FzEOcSVe7teiVI5rBWes8OPu3EapTw7Wt/4gs2JWkWJ6+4hIQD2bopLWw8Rb7LnqB6QXVIXhWHedOUS1zSwzwsF3/Xn5XYskaxw8U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733235830; c=relaxed/simple;
-	bh=iUYCthuBSmOjrDmuj+W4FEtenoQajCGj/nGcHrCp+Y4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cvSueQxQMN3g+S3TkYVNshyyo562wksYAbspKdTaPL44R77UHUTcM2TA54FNlIlFyQUH8abkgWSYsX0mvy1xyeQu1OecsxMPyC295YVVJ3HU8+VduFJIw0yQpvXv1lF191JxwdTpQY/y8/Wr2SaAH2s0D4uBcl7tk13CFKJVTL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=HDHGIQr4; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1733235826;
-	bh=iUYCthuBSmOjrDmuj+W4FEtenoQajCGj/nGcHrCp+Y4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=HDHGIQr4ZOP+6nOkv9NiLDKRLFN6dAlvE+LiEiArCuc2pwc4PJxfifRwd/H0l+aOp
-	 xl3UdXx7s/BRwqRPH+fZUkxHhYyBqHjVgvVAzjKJXfdsnb/8z+FMvCbT7BvLsOsCiN
-	 fnScm7AdEeAZN1lRaZN/YdWTd/ozIK2qmRU8wsHvQyevysrNgS1UftlaLrJc8WxO0D
-	 5JfSWj27FNx88mUwpo2OdvlQZo4rwBxtU0jdhkqJuFDsmRF7ojCgkp6sGUyT6Gezk1
-	 uiXAf8CEm/u7wKYtiGtYlPlU13NFbP8WMGNsCCciKdZj4xQH3inLfGbNIjlIjh258Q
-	 1hKZ/TuOSSCKg==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 2536517E0E37;
-	Tue,  3 Dec 2024 15:23:46 +0100 (CET)
-Message-ID: <fea3783a-0ca2-4a46-8b82-ef1156dc8f3c@collabora.com>
-Date: Tue, 3 Dec 2024 15:23:44 +0100
+	s=arc-20240116; t=1733235901; c=relaxed/simple;
+	bh=2YzBw+E/SaxJ/Xhevrp8m+nYUF9iMZkfbG7PMPw8nWI=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=O9C4R1cAjJbUFOTZtLm07WlNbDkuyRES+ZA4Eo26SJcZXyIApHAMbf5ilP1ax6JaHLDwZSIB5S29SqUNpVLSF2WagLwhedZTy4blhKSJJqgGf1r15RzNtkiiyXOb765KOqybEpCZwfrv7K4+AC8k9zOo9S29c6AaOjdncQr5vqU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P1QUk00R; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74ECAC4CECF;
+	Tue,  3 Dec 2024 14:25:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733235900;
+	bh=2YzBw+E/SaxJ/Xhevrp8m+nYUF9iMZkfbG7PMPw8nWI=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=P1QUk00RJ2PQq+Qud5Wj6Mzq39OAz31Fl9JSjIedmjs2mJ5LYOEWDr9s8NMXluet/
+	 SS/ffNdlXggtzaImkIfGRdUEWBUUpQDQZP/g/a37xT8spsdDDvWreHJHAdROhfznQM
+	 nVCIfbP+cvg2lAud0q8TOme+5AzThCyB6tr3k1+0akaLGEPOdMr+FXUBc67yNp49+M
+	 1MCOAP/YHePnW+FLTlivfy7VPudy/TpYmHlo0YbMwK6Q0NnwQu/auewyxZT0LWN3F/
+	 Jm2Mc62VpmD/14mm30U5n0xjHkbldkxTaQgc3g9swouxv/61KjDqFLTsEVYEul4DFz
+	 jJvsOi0VhCcYg==
+Date: Tue, 03 Dec 2024 08:24:59 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 10/18] arm64: dts: mediatek: mt7988: enable serial0 on
- bpi-r4
-To: frank-w@public-files.de, Frank Wunderlich <linux@fw-web.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-References: <20241202122602.30734-1-linux@fw-web.de>
- <20241202122602.30734-11-linux@fw-web.de>
- <32ef5ab8-a163-4fdc-8603-f5a6f0e8526b@collabora.com>
- <6964E096-7C19-450C-8434-6A4456AFDD55@public-files.de>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <6964E096-7C19-450C-8434-6A4456AFDD55@public-files.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: maarten.lankhorst@linux.intel.com, aou@eecs.berkeley.edu, 
+ wefu@redhat.com, jassisinghbrar@gmail.com, jszhang@kernel.org, 
+ mturquette@baylibre.com, dri-devel@lists.freedesktop.org, 
+ devicetree@vger.kernel.org, ulf.hansson@linaro.org, mripard@kernel.org, 
+ linux-kernel@vger.kernel.org, frank.binns@imgtec.com, 
+ matt.coster@imgtec.com, linux-riscv@lists.infradead.org, 
+ linux-pm@vger.kernel.org, guoren@kernel.org, sboyd@kernel.org, 
+ linux-clk@vger.kernel.org, m.szyprowski@samsung.com, drew@pdp7.com, 
+ krzk+dt@kernel.org, palmer@dabbelt.com, paul.walmsley@sifive.com, 
+ airlied@gmail.com, simona@ffwll.ch, tzimmermann@suse.de, 
+ conor+dt@kernel.org
+To: Michal Wilczynski <m.wilczynski@samsung.com>
+In-Reply-To: <20241203134137.2114847-6-m.wilczynski@samsung.com>
+References: <20241203134137.2114847-1-m.wilczynski@samsung.com>
+ <CGME20241203134155eucas1p1e90c71c4f8eb5da41d2cc8a500f54dc7@eucas1p1.samsung.com>
+ <20241203134137.2114847-6-m.wilczynski@samsung.com>
+Message-Id: <173323589655.1743530.2406812042403623910.robh@kernel.org>
+Subject: Re: [RFC PATCH v1 05/14] dt-bindings: clock: thead,th1520: Add
+ support for Video Output subsystem
 
-Il 03/12/24 12:27, Frank Wunderlich ha scritto:
-> Am 3. Dezember 2024 10:40:45 MEZ schrieb AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>:
->> Il 02/12/24 13:25, Frank Wunderlich ha scritto:
->>> From: Frank Wunderlich <frank-w@public-files.de>
->>>
->>
->> arm64: dts: mediatek: mt7988a-bpi-r4: Enable serial0 debug uart
+
+On Tue, 03 Dec 2024 14:41:28 +0100, Michal Wilczynski wrote:
+> The device tree bindings for the T-Head TH1520 SoC clocks currently
+> support only the Application Processor (AP) subsystem. This commit
+> extends the bindings to include the Video Output (VO) subsystem clocks.
 > 
-> You want new prefix here? That will change all r4 commits,right?
+> Update the YAML schema to define the VO subsystem clocks, allowing the
+> clock driver to configure and manage these clocks appropriately. This
+> addition is necessary to enable the proper operation of the video output
+> features on the TH1520 SoC.
+> 
+> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
+> ---
+>  .../bindings/clock/thead,th1520-clk-ap.yaml   | 31 +++++++++++++++----
+>  1 file changed, 25 insertions(+), 6 deletions(-)
 > 
 
-Yeah - that prefix should be shortening the commit titles but mainly will
-make it more straightforward when reading the commit history with --oneline.
+My bot found errors running 'make dt_binding_check' on your patch:
 
-Thanks,
-Angelo
+yamllint warnings/errors:
 
->>> Enable the debug uart on Bananapi R4 board.
->>>
->>> Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
->>
->> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
->>
-> 
-> 
-> regards Frank
+dtschema/dtc warnings/errors:
 
 
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20241203134137.2114847-6-m.wilczynski@samsung.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
 
