@@ -1,30 +1,30 @@
-Return-Path: <linux-kernel+bounces-428894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428893-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7E509E14B5
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 08:56:59 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAA469E14B4
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 08:56:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6EDA416086E
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 07:56:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C61916087C
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 07:56:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37E2A1BD9EB;
-	Tue,  3 Dec 2024 07:56:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B25ED1AF4C1;
+	Tue,  3 Dec 2024 07:56:41 +0000 (UTC)
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54BAA199247
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 07:56:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF0BD185B48
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 07:56:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733212601; cv=none; b=hQztY1RvlWplvxkV6Qgr6M3aI7mhL5f7G+8fLGxi5nZWoH6kQ3Yjmx/pcpKpOmmwQBZESFzcTRuTJgbKP1ObwmKNnQj3AqSpIxro3i7CkuErS2RFCaSXOp9Zr5ytvynYjHoA1zcyMXlaLTG6NeW04TVt08/VIBcLCWZYk/vIbXA=
+	t=1733212601; cv=none; b=nyrz8TK0BA7PWc0Jrwf7vvRKEsLFUm4fO/TG7jsh+LSMQ75fdkTmktv12UgL+gi9YUETCgTiOfwFBUxYTfkN0JHIziDZVIaSYnOdg+ZtqRhwplM47g75NfcdWNCs37YjEO2vDA7GITiFWpTeu7RMS/YUlbLM5b8WdS6LbxnqH0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1733212601; c=relaxed/simple;
-	bh=hVd5tnauehki0EC7uyVUjToNlUh6nLbMFADO/U21EQY=;
+	bh=oSPdpmoBlXHFSd4Hu5Dq7Ep5kgm70t61USTk5+qm7rs=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ETgzXtB/TXulxlnGEOP0IksJkyp5UiMzuag+j4YcFB6t2XE+dYDhjif2PqJthYusLiHGAGTxBRFeNlTbCmXKspa2y4mJQK4O2Ym4VZeyJeAgREf8EwnjlP++Rd5LfANhjEbhHalSh376dqA/UG3VYYPQdJqfDl+b5ir2Eo2Amys=
+	 MIME-Version; b=sH57woHlBHwMeyfZ78U8gl/sqNeA9Aui17qAyqEpR3yFHD1zTS59xrVt5b0Eh9EGvBUsZnmfFcEgKoUANnnM7S8N7j9Zu+s2Tm6V8BVFnrdWcM603icocLqXfqJokoiYe7TW0l+uVL5EPRC4E6TNW7h7jBD652YQZX8UsroA2jo=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
@@ -32,16 +32,16 @@ Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
 	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
 	(Exim 4.92)
 	(envelope-from <ore@pengutronix.de>)
-	id 1tINlj-000396-Kk; Tue, 03 Dec 2024 08:56:27 +0100
+	id 1tINlj-000397-Kk; Tue, 03 Dec 2024 08:56:27 +0100
 Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
 	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.96)
 	(envelope-from <ore@pengutronix.de>)
-	id 1tINle-001R8z-0k;
+	id 1tINle-001R92-0r;
 	Tue, 03 Dec 2024 08:56:23 +0100
 Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
 	(envelope-from <ore@pengutronix.de>)
-	id 1tINle-00AHwI-2z;
+	id 1tINle-00AHwS-33;
 	Tue, 03 Dec 2024 08:56:22 +0100
 From: Oleksij Rempel <o.rempel@pengutronix.de>
 To: "David S. Miller" <davem@davemloft.net>,
@@ -59,9 +59,9 @@ Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
 	Russell King <linux@armlinux.org.uk>,
 	Maxime Chevallier <maxime.chevallier@bootlin.com>,
 	linux-doc@vger.kernel.org
-Subject: [PATCH net-next v1 4/7] phy: introduce optional polling interface for PHY statistics
-Date: Tue,  3 Dec 2024 08:56:18 +0100
-Message-Id: <20241203075622.2452169-5-o.rempel@pengutronix.de>
+Subject: [PATCH net-next v1 5/7] ethtool: add helper to prevent invalid statistics exposure to userspace
+Date: Tue,  3 Dec 2024 08:56:19 +0100
+Message-Id: <20241203075622.2452169-6-o.rempel@pengutronix.de>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20241203075622.2452169-1-o.rempel@pengutronix.de>
 References: <20241203075622.2452169-1-o.rempel@pengutronix.de>
@@ -77,80 +77,44 @@ X-SA-Exim-Mail-From: ore@pengutronix.de
 X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
 X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Add an optional polling interface for PHY statistics to simplify driver
-implementation. Drivers can request the PHYlib to handle the polling task by
-explicitly setting the `PHY_POLL_STATS` flag in their driver configuration.
+Introduce a new helper function, `ethtool_stat_add`, to update 64-bit
+statistics with proper handling of the reserved value
+`ETHTOOL_STAT_NOT_SET`. This ensures that statistics remain valid and
+are always reported to userspace, even if the driver accidentally sets
+`ETHTOOL_STAT_NOT_SET` during an update.
 
 Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
 ---
- drivers/net/phy/phy.c | 15 +++++++++++++++
- include/linux/phy.h   |  6 ++++++
- 2 files changed, 21 insertions(+)
+ include/linux/ethtool.h | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-diff --git a/drivers/net/phy/phy.c b/drivers/net/phy/phy.c
-index 0d20b534122b..b10ee9223fc9 100644
---- a/drivers/net/phy/phy.c
-+++ b/drivers/net/phy/phy.c
-@@ -1346,6 +1346,18 @@ static int phy_enable_interrupts(struct phy_device *phydev)
- 	return phy_config_interrupt(phydev, PHY_INTERRUPT_ENABLED);
+diff --git a/include/linux/ethtool.h b/include/linux/ethtool.h
+index b0ed740ca749..657bd69ddaf7 100644
+--- a/include/linux/ethtool.h
++++ b/include/linux/ethtool.h
+@@ -371,6 +371,22 @@ static inline void ethtool_stats_init(u64 *stats, unsigned int n)
+ 		stats[n] = ETHTOOL_STAT_NOT_SET;
  }
  
 +/**
-+ * phy_update_stats - update the PHY statistics
-+ * @phydev: target phy_device struct
++ * ethtool_stat_add - Add a value to a u64 statistic with wraparound handling
++ * @stat: Pointer to the statistic to update
++ * @value: Value to add to the statistic
++ *
++ * Adds the specified value to a u64 statistic. If the result of the addition
++ * equals the reserved value (`ETHTOOL_STAT_NOT_SET`), it increments the result
++ * by 1 to avoid the reserved value.
 + */
-+static int phy_update_stats(struct phy_device *phydev)
++static inline void ethtool_stat_add(u64 *stat, u64 value)
 +{
-+	if (!phydev->drv->update_stats)
-+		return 0;
-+
-+	return phydev->drv->update_stats(phydev);
++	*stat += value;
++	if (*stat == ETHTOOL_STAT_NOT_SET)
++		(*stat)++;
 +}
 +
- /**
-  * phy_request_interrupt - request and enable interrupt for a PHY device
-  * @phydev: target phy_device struct
-@@ -1415,6 +1427,9 @@ static enum phy_state_work _phy_state_machine(struct phy_device *phydev)
- 	case PHY_RUNNING:
- 		err = phy_check_link_status(phydev);
- 		func = &phy_check_link_status;
-+
-+		if (!err)
-+			err = phy_update_stats(phydev);
- 		break;
- 	case PHY_CABLETEST:
- 		err = phydev->drv->cable_test_get_status(phydev, &finished);
-diff --git a/include/linux/phy.h b/include/linux/phy.h
-index a6c47b0675af..21cd44d177d2 100644
---- a/include/linux/phy.h
-+++ b/include/linux/phy.h
-@@ -90,6 +90,7 @@ extern const int phy_10gbit_features_array[1];
- #define PHY_RST_AFTER_CLK_EN	BIT(1)
- #define PHY_POLL_CABLE_TEST	BIT(2)
- #define PHY_ALWAYS_CALL_SUSPEND	BIT(3)
-+#define PHY_POLL_STATS		BIT(4)
- #define MDIO_DEVICE_IS_PHY	BIT(31)
- 
- /**
-@@ -1101,6 +1102,8 @@ struct phy_driver {
- 			      struct ethtool_phy_stats *stats);
- 	void (*get_link_stats)(struct phy_device *dev,
- 			       struct ethtool_link_ext_stats *link_stats);
-+	int (*update_stats)(struct phy_device *dev);
-+
- 	/** @get_sset_count: Number of statistic counters */
- 	int (*get_sset_count)(struct phy_device *dev);
- 	/** @get_strings: Names of the statistic counters */
-@@ -1591,6 +1594,9 @@ static inline bool phy_polling_mode(struct phy_device *phydev)
- 		if (phydev->drv->flags & PHY_POLL_CABLE_TEST)
- 			return true;
- 
-+	if (phydev->drv->update_stats && phydev->drv->flags & PHY_POLL_STATS)
-+		return true;
-+
- 	return phydev->irq == PHY_POLL;
- }
- 
+ /* Basic IEEE 802.3 MAC statistics (30.3.1.1.*), not otherwise exposed
+  * via a more targeted API.
+  */
 -- 
 2.39.5
 
