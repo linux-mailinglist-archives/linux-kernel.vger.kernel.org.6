@@ -1,115 +1,124 @@
-Return-Path: <linux-kernel+bounces-428523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8047D9E0F9F
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 01:24:21 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F65F9E0FA0
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 01:24:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A36A282F6A
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 00:24:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E2793B22899
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 00:24:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 299998460;
-	Tue,  3 Dec 2024 00:24:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAD841FC8;
+	Tue,  3 Dec 2024 00:24:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WmA9psQh"
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mCZHpaQZ"
+Received: from mail-oo1-f49.google.com (mail-oo1-f49.google.com [209.85.161.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A70E10F2
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 00:24:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB94C5684
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 00:24:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733185454; cv=none; b=eued3VQ2YSHzR2gvzvF3WURmuCrgChiyfWWHLZReOFFOb5vqOVMiqzOL+xClwhofAufN4NLyA15lPOSr9kOo1cx/RCjOHTmD0UK8QT0N9wPBYnjbXAeIM4b4t7isJ1QmgeDKq18HDpifWNKfIVRZKZZNl5vLrR8LbUPqr2UFQvQ=
+	t=1733185465; cv=none; b=B2tQSctpo2LO5PbZI2d9rSFfX2yc0tq/c4q+DdY517NcOPPCQiGg3lbt/e6rh+037u7gZQzONKft8B2Ac6PeXU7CJOXQ0/8+um4ebMNLjAnox+YNTK3ogdNpwyYMNusirbbTMpJln0IySK8tvT+3ikM0TQbWsClOGgD1hXEdzu4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733185454; c=relaxed/simple;
-	bh=PdsVFCQYAE/sv+UsjYSnw0UjlyMnxIcK5DXw6edeFJk=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=sV/8cjeiBprG2AkBfLS29QY0Kby9Yd6Lc8ZxYrApu8GI6CpidpNvhkRir4CLo/Ey4sVpUSNltCoa0qKGtwcBFzuIVXPkc7XvTn7CR4INyfU78olu//bcAJGAUmWq3YKfeBLP3aDuAugz84hdx1hTD6cyDba1Z46/tuoLRK7TNxY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--yuanchu.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WmA9psQh; arc=none smtp.client-ip=209.85.210.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--yuanchu.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-72524409ab8so4310305b3a.2
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 16:24:13 -0800 (PST)
+	s=arc-20240116; t=1733185465; c=relaxed/simple;
+	bh=+W7KDL+OEt/F8m0iAhk3AP52eX+WQu4nCWXJFGtXNX0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=P7BNAN81SlNLp6012vGLjQr0LvedXvpJLQXHmUGlMmkLChETYPLVufO1J4A3XItrIpRnKwWTNgzKGPV6nPbIK2e7iCNehbRAEw1bTAQbQ02AxA0kLXL1jU0zWxUqNHCazgNaD50BFwPozHtmntbDe0MJx3k76eYGdtAEbpWhpgE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mCZHpaQZ; arc=none smtp.client-ip=209.85.161.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f49.google.com with SMTP id 006d021491bc7-5f1ecd0d9ecso2250629eaf.1
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 16:24:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733185452; x=1733790252; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=+TsiFxHi1VF1XagXj5qBJT0OVJosUppxUogJhrvvgIg=;
-        b=WmA9psQh5nHzOHdHjsxfwX9yEL1PAe/IzJC6BS2WUQsvL/o8BUvrAD7Kn6oSXVe/Dm
-         fSGZuDQAHf4mpKrgQuo05gBAXLn8HYEppHXg/4dC8k+0RHzaPC9jOlR0ajQxGPzuX/Di
-         M9sPeRRkgoDsxPPLHtfU41ZOXvwtoW3yuaPDStc8ivAmxkdOk1DwLrHBi8Jw7bmkKLdv
-         TwYZW5B8Z1JGxd7V1roVfeV8sph5BlETvU1z2E4Fq/koM5YhXt2nhcI/Ro21egzSHONv
-         dNa0U2KgAwGExJbAEomH1eenfr+PEI53YcN+HYgb0HNjvH+GYLLXzKrACtj1dq+InE5q
-         HfdA==
+        d=gmail.com; s=20230601; t=1733185463; x=1733790263; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=769c20wy0Vv+GBDNra53cIKjEqA3OwLkS64TJk5Hd40=;
+        b=mCZHpaQZ/Lr6ZjfjgApQIuGAoAD+IuiUX3fzC7UqJn655D1yIHmEMM7xlXUY24+/dR
+         bN926N6+IhlfePJ0fUmlOA/gQrfg6BFzLwApSJkFoOYqqFgeeUomq1hn9sMKwfYVgJm5
+         GpLGmZc0cnx6mbVbnnHqGzul8SZzYri2MGoIexUWvBxNvRTAcTFUhstvAC+GccgRIWHL
+         NSZjSPbXDmLRwHwofU1EzW28jwxcmWBerupM1tndiQ/j1IRxrFZ+dp3Y5meMx6gKpJnd
+         jHovQk16FPIjnV7hb0bqd4X/PS62LURK6g+vbt37YLnaVG1VEcnvLRhrmfseR067vU2H
+         Lojw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733185452; x=1733790252;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+TsiFxHi1VF1XagXj5qBJT0OVJosUppxUogJhrvvgIg=;
-        b=kFBkho4uXSAyKcZAnRfCbUZwMv8tTwIDpH9JzSyaqFSrF/anzUgl71nVry/kOXYMmB
-         qgcX6IwwygOFOeMoYCbugSKAwNib6tLGl9g1gLAFFuzSK0s3nz3+vxJ7DU2m6OuFhseN
-         0ENvgGyKEq0KjIu58zMuKfuYDi4KbmpyvlQGLJFc/0eSXIYqkb2X9PBT2blWhqRz0FpD
-         ZC1xyHaiwSrbU0gU2cvq+PpnSZb3pJ8xOGNYasXmzrHbKoVzhx8yjRulm3Blf/6Jlnrl
-         Ig2XMHZHb3vC5RHUo3nGFB6qgOaM2cFxi/rYalucU0Ud9Qz4b9IkUP+ZU++77VBq7/Ch
-         KIFA==
-X-Forwarded-Encrypted: i=1; AJvYcCWEZpqwnTjQocyQxqBNIxVSqlO0iHYzFPYNFHapDebDHROcyKqtUN/Ak+r7um+fwXXqtE08JqIyZmFoAng=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyuuJJnM9jgjU9HFWIhAh+6ts4tjeO1rdSCxHBcCezxRL707teK
-	TYZ5125VVtBxyVEc9H3UZLivav/vk7cp7T/zJDGSqly3qyBhW1O1H+QzL/rzk+/eSAIO/NUuxvQ
-	YboxKmw==
-X-Google-Smtp-Source: AGHT+IH1YI5TryAw2nTRBP/xW56Am59du2xa6FfKQesWVivnYYo3eiklKbzBqxct7qqAefyOGK+9SC1oss7A
-X-Received: from pfbeb28.prod.google.com ([2002:a05:6a00:4c9c:b0:725:44a1:b5c2])
- (user=yuanchu job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:2ea8:b0:724:fac6:35f2
- with SMTP id d2e1a72fcca58-7257fa74556mr456519b3a.9.1733185452519; Mon, 02
- Dec 2024 16:24:12 -0800 (PST)
-Date: Mon,  2 Dec 2024 16:23:28 -0800
-In-Reply-To: <20241203002328.694071-1-yuanchu@google.com>
+        d=1e100.net; s=20230601; t=1733185463; x=1733790263;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=769c20wy0Vv+GBDNra53cIKjEqA3OwLkS64TJk5Hd40=;
+        b=lI8CWNBhXSTkWRQ7le2ui6Vidld8YnAE8QaPqNd4XOXVXdFxmRHmCVaekOnwzN5P/F
+         s+/9DaJ6bWXMmYBatDPSfN1cWV4TgI8uak4+ewle7QoeULo1ABnRIzE/qsPEHAyq1Zhw
+         SLajEYhufnO2Ked0tpACwefk38Aoy/JANxp6u2uBOUodKOn5Gx89qWIby7+ezda3afPP
+         HCEoic+Wtl6isBEwvb9k45UxzEiNNxWPcl7NjQu05LISvkpa3RirzHaLDT105d3ooVpJ
+         Uq0MmhkD4Tj1pca3d/zPKzQpHOIrM4+S6pv4iOTvIxtM5W8EE7y91q0zgNhx9D+MtUdN
+         mliQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXRNv+zL+lKxMh2tQkSZYWKJo6vank7phKgv4YDf7j3jyE2c5osTFNrVyAbsyP192n0jgdl1xhZnq21LKk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7lAzqqF4I4byidJtWWI2wqG9iRVReXV9XDtMLb7qMnHZ7Ax5T
+	RAnMhUqB9WLvliqAPY2WXGMPxNRJxzT5tnmude0COd7A5dDcVY+IArwLLj1yp1vAqBO891n6sr1
+	gGR5f7tAw1ygKldlLKGRi7GVIh/U=
+X-Gm-Gg: ASbGncuT9XbR9scvEREnqWtcqHlObWleITF1kSGU0rBqft6jP6jmsN1uTLLmBrKwulO
+	l129TCGxG3j+LKueZZb0YT+PzLwki1Q6RVjWCLBa8tIW9KkvsyTXaTwgeQ7LoYGglLQ==
+X-Google-Smtp-Source: AGHT+IEFO7KqdcLAxyn/uQOZcHSTfFKHJ188mKQ98vsbqhUJI1Nakeqcl4diWmzwM+nQJadnACQQqvfmmPle1QCzT8k=
+X-Received: by 2002:a05:6359:230b:b0:1c3:94:8ffa with SMTP id
+ e5c5f4694b2df-1caeabc2133mr97690755d.22.1733185462641; Mon, 02 Dec 2024
+ 16:24:22 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241203002328.694071-1-yuanchu@google.com>
-X-Mailer: git-send-email 2.46.0
-Message-ID: <20241203002328.694071-2-yuanchu@google.com>
-Subject: [PATCH v5 2/2] virt: pvmemcontrol: add Yuanchu and Pasha as maintainers
-From: Yuanchu Xie <yuanchu@google.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Wei Liu <liuwe@microsoft.com>, Rob Bradford <rbradford@rivosinc.com>, 
-	Pasha Tatashin <pasha.tatashin@soleen.com>, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, virtualization@lists.linux.dev, 
-	dev@lists.cloudhypervisor.org, Yuanchu Xie <yuanchu@google.com>
+MIME-Version: 1.0
+References: <20241202184154.19321-1-ryncsn@gmail.com> <20241202184154.19321-2-ryncsn@gmail.com>
+In-Reply-To: <20241202184154.19321-2-ryncsn@gmail.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Tue, 3 Dec 2024 13:24:11 +1300
+Message-ID: <CAGsJ_4wg0MozOt5cp3unbg4pH5eb9EPVt_kdM8u9LoF=9iTohA@mail.gmail.com>
+Subject: Re: [PATCH 1/4] mm, memcontrol: avoid duplicated memcg enable check
+To: Kairui Song <kasong@tencent.com>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
+	Chris Li <chrisl@kernel.org>, Hugh Dickins <hughd@google.com>, 
+	"Huang, Ying" <ying.huang@intel.com>, Yosry Ahmed <yosryahmed@google.com>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Shakeel Butt <shakeel.butt@linux.dev>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The pvmemcontrol driver lives under drivers/virt/pvmemcontrol. We
-specify maintainers for the driver.
+On Tue, Dec 3, 2024 at 7:42=E2=80=AFAM Kairui Song <ryncsn@gmail.com> wrote=
+:
+>
+> From: Kairui Song <kasong@tencent.com>
+>
+> mem_cgroup_uncharge_swap() implies a mem_cgroup_disabled() check,
+> which is already checked by the caller here. Skip it by calling
+> __mem_cgroup_uncharge_swap() directly.
+>
+> Signed-off-by: Kairui Song <kasong@tencent.com>
 
-Signed-off-by: Yuanchu Xie <yuanchu@google.com>
----
- MAINTAINERS | 7 +++++++
- 1 file changed, 7 insertions(+)
+Reviewed-by: Barry Song <baohua@kernel.org>
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 1e930c7a58b1..92db5dcf0212 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -18894,6 +18894,13 @@ L:	linux-wireless@vger.kernel.org
- S:	Supported
- F:	drivers/net/wireless/purelifi/plfxlc/
- 
-+PVMEMCONTROL GUEST DRIVER
-+M:	Yuanchu Xie <yuanchu@google.com>
-+M:	Pasha Tatashin <pasha.tatashin@soleen.com>
-+L:	linux-kernel@vger.kernel.org
-+S:	Supported
-+F:	drivers/virt/pvmemcontrol/
-+
- PVRUSB2 VIDEO4LINUX DRIVER
- M:	Mike Isely <isely@pobox.com>
- L:	pvrusb2@isely.net	(subscribers-only)
--- 
-2.46.0
-
+> ---
+>  mm/memcontrol.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> index 7b3503d12aaf..d3d1eb506eee 100644
+> --- a/mm/memcontrol.c
+> +++ b/mm/memcontrol.c
+> @@ -4615,7 +4615,7 @@ void mem_cgroup_swapin_uncharge_swap(swp_entry_t en=
+try, unsigned int nr_pages)
+>                  * let's not wait for it.  The page already received a
+>                  * memory+swap charge, drop the swap entry duplicate.
+>                  */
+> -               mem_cgroup_uncharge_swap(entry, nr_pages);
+> +               __mem_cgroup_uncharge_swap(entry, nr_pages);
+>         }
+>  }
+>
+> --
+> 2.47.0
+>
 
