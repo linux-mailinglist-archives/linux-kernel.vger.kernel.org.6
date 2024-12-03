@@ -1,146 +1,156 @@
-Return-Path: <linux-kernel+bounces-429811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CDE59E262A
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 17:09:40 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62FC69E23E2
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:43:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE050166F1C
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:04:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DEB88161637
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 15:39:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12DE41F76D7;
-	Tue,  3 Dec 2024 16:04:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC01A20ADE1;
+	Tue,  3 Dec 2024 15:34:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="o1gKWlRH"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="cw+tBO6K"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6816123CE;
-	Tue,  3 Dec 2024 16:04:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D5B81FA27C;
+	Tue,  3 Dec 2024 15:34:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733241863; cv=none; b=tGFxmM4NXgxumiTo5VVtJlZLyzX5ONRQ9w0NvyJujX4+cl1bx/x7dC4nxTKf8yoekBzy9jkIQQHTC3aADkLUW0PdxGA13i7/S7oxZos93VrJrCIV25T5rlCnyBdpIWaP8DrJu7OwgBQWWMvZhtG3RgfzCgbYd2WFzl4+hsANurI=
+	t=1733240056; cv=none; b=JE0aeA/D50a9gyLOipOT+Wial1t8O3HadrQNwZnvqFYl6VOvUyu9JMTM0z5N4xA/O23CdVZXDlOLPuUbyrF73vL05ff0GAgkpL3WeM0FlFNgwut37hsxtYREmDbF+fPbxLjPAlGYM7j9G5nRVqNGxRq6XvUdLAZRob15+p912/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733241863; c=relaxed/simple;
-	bh=kPBA1uGXckS3skb4j5MBMZfRIEk4RHoHqbIXz3T9tqA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=eOQic6XTICufgRyyldUH/3BhFzvNezcm/8fqUDz3DcgQCghTqrQaUl5wkJty/UrqSALDf9q3duECSDc8a1jyGhMsmEtHHdANz1yGHQAfIjwOK4ksPpT+hYMXwgmNl0B2amPDkZDCMVvEs1qEK9UdnK8ePGW6Vd9crEP92I5MKuo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=o1gKWlRH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD4E0C4CECF;
-	Tue,  3 Dec 2024 16:04:22 +0000 (UTC)
+	s=arc-20240116; t=1733240056; c=relaxed/simple;
+	bh=JkY+5fOV9qIOnxsCxpI9LuFE3gW4OY/AYWWLkZk6dT8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uyGhDYywNgXcVhXiT9iaRIflXP3wrP0nbu/Xs+5gveU+cILHl7BJe8VrxCw6BT0Ed6SsyxZPp2N03gKtGP0YldXovpdorKtO+jl/4pJyVLISHpptUOPCZx8jnSigo+hoE57ZiqW8XDQk79cr4QKVU65DGtu736YHGzzC/qrMEFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=cw+tBO6K; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B548C4CED6;
+	Tue,  3 Dec 2024 15:34:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1733241863;
-	bh=kPBA1uGXckS3skb4j5MBMZfRIEk4RHoHqbIXz3T9tqA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=o1gKWlRHBZYBenWn5blUhI8iJOfNaD749znasEqofWKF7H0esKt7j2XvV0F4PU5tY
-	 506bdcyggB3ZKJ7tJ7yv5mxdWMC1x155CileYr2IqdQSrcTP487nVwJkHpLZYc2gTO
-	 esw/kNdOk6UbiEWsVtEWikNpsCCLNArE65AIP6ak=
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: stable@vger.kernel.org,
-	Greg Ungerer <gerg@linux-m68k.org>,
-	Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	patches@lists.linux.dev,
-	linux-m68k@lists.linux-m68k.org,
-	linux-kernel@vger.kernel.org,
-	Antonio Quartulli <antonio@mandelbit.com>,
-	Greg Ungerer <gerg@kernel.org>,
-	Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 6.12 512/826] m68k: coldfire/device.c: only build FEC when HW macros are defined
-Date: Tue,  3 Dec 2024 15:43:59 +0100
-Message-ID: <20241203144803.729180619@linuxfoundation.org>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20241203144743.428732212@linuxfoundation.org>
-References: <20241203144743.428732212@linuxfoundation.org>
-User-Agent: quilt/0.67
-X-stable: review
-X-Patchwork-Hint: ignore
+	s=korg; t=1733240056;
+	bh=JkY+5fOV9qIOnxsCxpI9LuFE3gW4OY/AYWWLkZk6dT8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cw+tBO6K4ei6BBayeOiLRkFW07O1fa5MF9AkitxqR9pP9zKAp7HWJ+ED/tGNWCHw6
+	 sCR+Dup7q6Bl/5guOfooulr0VAkud+sL2WAlfgORxiVnDmAyoyhgj4uN5xBUsM8d+y
+	 E8V65kOlexnY0r23jyd5Np5jk1x3b/wAxwJ/ZjuM=
+Date: Tue, 3 Dec 2024 15:48:07 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Dominique Martinet <asmadeus@codewreck.org>
+Cc: Oliver Neukum <oneukum@suse.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Dominique Martinet <dominique.martinet@atmark-techno.com>,
+	netdev@vger.kernel.org, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: usb: usbnet: restore usb%d name exception for local
+ mac addresses
+Message-ID: <2024120357-vertebrae-squatted-f670@gregkh>
+References: <20241203130457.904325-1-asmadeus@codewreck.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241203130457.904325-1-asmadeus@codewreck.org>
 
-6.12-stable review patch.  If anyone has any objections, please let me know.
+On Tue, Dec 03, 2024 at 10:04:55PM +0900, Dominique Martinet wrote:
+> From: Dominique Martinet <dominique.martinet@atmark-techno.com>
+> 
+> The previous commit assumed that local addresses always came from the
+> kernel, but some devices hand out local mac addresses so we ended up
+> with point-to-point devices with a mac set by the driver, renaming to
+> eth%d when they used to be named usb%d.
+> 
+> Userspace should not rely on device name, but for the sake of stability
+> restore the local mac address check portion of the naming exception:
+> point to point devices which either have no mac set by the driver or
+> have a local mac handed out by the driver will keep the usb%d name.
+> 
+> Fixes: 8a7d12d674ac ("net: usb: usbnet: fix name regression")
+> Signed-off-by: Dominique Martinet <dominique.martinet@atmark-techno.com>
+> ---
+>  drivers/net/usb/usbnet.c | 20 ++++++++++++++------
+>  1 file changed, 14 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/net/usb/usbnet.c b/drivers/net/usb/usbnet.c
+> index 44179f4e807f..d044dc7b7622 100644
+> --- a/drivers/net/usb/usbnet.c
+> +++ b/drivers/net/usb/usbnet.c
+> @@ -178,6 +178,17 @@ int usbnet_get_ethernet_addr(struct usbnet *dev, int iMACAddress)
+>  }
+>  EXPORT_SYMBOL_GPL(usbnet_get_ethernet_addr);
+>  
+> +static bool usbnet_needs_usb_name_format(struct usbnet *dev, struct net_device *net)
+> +{
+> +	/* Point to point devices which don't have a real MAC address
+> +	 * (or report a fake local one) have historically used the usb%d
+> +	 * naming. Preserve this..
+> +	 */
+> +	return (dev->driver_info->flags & FLAG_POINTTOPOINT) != 0 &&
+> +		(is_zero_ether_addr(net->dev_addr) ||
+> +		 is_local_ether_addr(net->dev_addr));
+> +}
+> +
+>  static void intr_complete (struct urb *urb)
+>  {
+>  	struct usbnet	*dev = urb->context;
+> @@ -1762,13 +1773,10 @@ usbnet_probe (struct usb_interface *udev, const struct usb_device_id *prod)
+>  		if (status < 0)
+>  			goto out1;
+>  
+> -		// heuristic:  "usb%d" for links we know are two-host,
+> -		// else "eth%d" when there's reasonable doubt.  userspace
+> -		// can rename the link if it knows better.
+> +		/* heuristic: rename to "eth%d" if we are not sure this link
+> +		 * is two-host (these links keep "usb%d") */
+>  		if ((dev->driver_info->flags & FLAG_ETHER) != 0 &&
+> -		    ((dev->driver_info->flags & FLAG_POINTTOPOINT) == 0 ||
+> -		     /* somebody touched it*/
+> -		     !is_zero_ether_addr(net->dev_addr)))
+> +		    !usbnet_needs_usb_name_format(dev, net))
+>  			strscpy(net->name, "eth%d", sizeof(net->name));
+>  		/* WLAN devices should always be named "wlan%d" */
+>  		if ((dev->driver_info->flags & FLAG_WLAN) != 0)
+> -- 
+> 2.47.0
+> 
+> 
 
-------------------
+Hi,
 
-From: Antonio Quartulli <antonio@mandelbit.com>
+This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
+a patch that has triggered this response.  He used to manually respond
+to these common problems, but in order to save his sanity (he kept
+writing the same thing over and over, yet to different people), I was
+created.  Hopefully you will not take offence and will fix the problem
+in your patch and resubmit it so that it can be accepted into the Linux
+kernel tree.
 
-[ Upstream commit 63a24cf8cc330e5a68ebd2e20ae200096974c475 ]
+You are receiving this message because of the following common error(s)
+as indicated below:
 
-When CONFIG_FEC is set (due to COMPILE_TEST) along with
-CONFIG_M54xx, coldfire/device.c has compile errors due to
-missing MCFEC_* and MCF_IRQ_FEC_* symbols.
+- You have marked a patch with a "Fixes:" tag for a commit that is in an
+  older released kernel, yet you do not have a cc: stable line in the
+  signed-off-by area at all, which means that the patch will not be
+  applied to any older kernel releases.  To properly fix this, please
+  follow the documented rules in the
+  Documentation/process/stable-kernel-rules.rst file for how to resolve
+  this.
 
-Make the whole FEC blocks dependent on having the HW macros
-defined, rather than on CONFIG_FEC itself.
+If you wish to discuss this problem further, or you have questions about
+how to resolve this issue, please feel free to respond to this email and
+Greg will reply once he has dug out from the pending patches received
+from other developers.
 
-This fix is very similar to commit e6e1e7b19fa1 ("m68k: coldfire/device.c: only build for MCF_EDMA when h/w macros are defined")
+thanks,
 
-Fixes: b7ce7f0d0efc ("m68knommu: merge common ColdFire FEC platform setup code")
-To: Greg Ungerer <gerg@linux-m68k.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: linux-m68k@lists.linux-m68k.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Antonio Quartulli <antonio@mandelbit.com>
-Signed-off-by: Greg Ungerer <gerg@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- arch/m68k/coldfire/device.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/arch/m68k/coldfire/device.c b/arch/m68k/coldfire/device.c
-index 7dab46728aeda..b6958ec2a220c 100644
---- a/arch/m68k/coldfire/device.c
-+++ b/arch/m68k/coldfire/device.c
-@@ -93,7 +93,7 @@ static struct platform_device mcf_uart = {
- 	.dev.platform_data	= mcf_uart_platform_data,
- };
- 
--#if IS_ENABLED(CONFIG_FEC)
-+#ifdef MCFFEC_BASE0
- 
- #ifdef CONFIG_M5441x
- #define FEC_NAME	"enet-fec"
-@@ -145,6 +145,7 @@ static struct platform_device mcf_fec0 = {
- 		.platform_data		= FEC_PDATA,
- 	}
- };
-+#endif /* MCFFEC_BASE0 */
- 
- #ifdef MCFFEC_BASE1
- static struct resource mcf_fec1_resources[] = {
-@@ -182,7 +183,6 @@ static struct platform_device mcf_fec1 = {
- 	}
- };
- #endif /* MCFFEC_BASE1 */
--#endif /* CONFIG_FEC */
- 
- #if IS_ENABLED(CONFIG_SPI_COLDFIRE_QSPI)
- /*
-@@ -624,12 +624,12 @@ static struct platform_device mcf_flexcan0 = {
- 
- static struct platform_device *mcf_devices[] __initdata = {
- 	&mcf_uart,
--#if IS_ENABLED(CONFIG_FEC)
-+#ifdef MCFFEC_BASE0
- 	&mcf_fec0,
-+#endif
- #ifdef MCFFEC_BASE1
- 	&mcf_fec1,
- #endif
--#endif
- #if IS_ENABLED(CONFIG_SPI_COLDFIRE_QSPI)
- 	&mcf_qspi,
- #endif
--- 
-2.43.0
-
-
-
+greg k-h's patch email bot
 
