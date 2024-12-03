@@ -1,203 +1,104 @@
-Return-Path: <linux-kernel+bounces-429462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1B879E1D8D
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 14:28:59 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 873B39E1D3F
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 14:14:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DC2E0B43DA9
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 12:44:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 85846B39247
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 12:49:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 427CB1EC01A;
-	Tue,  3 Dec 2024 12:43:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE6481EBA17;
+	Tue,  3 Dec 2024 12:48:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="aWdJRXg1"
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="noSR49HA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C87F1EB9EF;
-	Tue,  3 Dec 2024 12:43:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 243EF1E8849;
+	Tue,  3 Dec 2024 12:48:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733229812; cv=none; b=auE5mgiURdkXJkUqoyYpvsyJVvsZpecF68vL3ygdbvPGI2oRbPoMY+BDelcTsbuAO4kiq7URFHb6/doZuJwzWuL2b3YWHY0Uu0BRSLxd7BGAifd8jHdC9l3iFjgt0kBp14pNRBVdFgbnBdN9m3SX0lIZGM8VqywRaczf3ZXkHyA=
+	t=1733230088; cv=none; b=ANPLD9L/MaL+FAVkOQIcpc6gT6PiwMKIu4PKCwzBOdpqvMRPw6loPv3gw2vTAkEP+v7GbmYqxMWAI/J+eMFPyvGJw0XGkDNpToVZkYDmUv5/sTb5Q7d9pJOSe9Y2uv1DipJn+Oegb1MWd0lzQ3zAtFnCgW/GAr/WYPMiWaACeWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733229812; c=relaxed/simple;
-	bh=RDRWFO8FAKxs5V+akUJuUVJeLeitR8MFJOfvu4K+OFQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=apePQxxXaQLtVsA0oUDxCOJ2A0ZaOLYlcWI8VSofp2C3/Txw3I0jH9X1j2bqRUsJuFV4rM5A2OjafCXWqcreSEx6o9Ipz48262tFC3MzIQHxMpS3A/I6/rWnM3RYDq56Oi03NUckOLgv/iK+5YssA4wS0NAiBU4R/sPnZvX+5dI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=aWdJRXg1; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 9C32CE0005;
-	Tue,  3 Dec 2024 12:43:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1733229807;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GQHlIb4Gfh8EqQ2vSbSyZTfbQITqF3RlPmf5reSnDvM=;
-	b=aWdJRXg1SUHhrQsmh6B9K24oj+/v22dZ9v4dFk6aeC96LNTXaL5ikt4H50Cz8z2CLi4PwR
-	7U9RhzNA9QkLvyB5pAWVPGy2boNtJMg76SlA6Hd1OzYyHb8UgnTU+j5YX2hXV/UHPLZ/VN
-	bsgATAR89BPXreycmPjzzE2IPCm/GRho22ia0KjvUP0kZlZLb9CicfftKT6i4ObnmIC7y7
-	k96Qeplcol8lVrolJRpcpJXvFSbyNOy4RAnr/UTBF/qFcgREykjnRPNCErL48Be5MhgiHK
-	WcK7TPGMUBmtpO8NhmpfNiR0EQa1hJmWBPhAx9dtF3VOs4gMpKZhr/yHsxZ/Mw==
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: davem@davemloft.net,
-	Andrew Lunn <andrew@lunn.ch>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Eric Dumazet <edumazet@google.com>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Heiner Kallweit <hkallweit1@gmail.com>
-Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	thomas.petazzoni@bootlin.com,
-	Simon Horman <horms@kernel.org>,
-	Herve Codina <herve.codina@bootlin.com>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
-	linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH net-next v3 01/10] net: freescale: ucc_geth: Drop support for the "interface" DT property
-Date: Tue,  3 Dec 2024 13:43:12 +0100
-Message-ID: <20241203124323.155866-2-maxime.chevallier@bootlin.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241203124323.155866-1-maxime.chevallier@bootlin.com>
-References: <20241203124323.155866-1-maxime.chevallier@bootlin.com>
+	s=arc-20240116; t=1733230088; c=relaxed/simple;
+	bh=hUhkDJMd6hgc8nFH5J2k6Ct3EbWCpkiTzHeH8+7iWyE=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=aosJ6zlbGDEu1YKFRSAKny6lD37rniqiY8wLiZWiJJRB4s6zl66iv65lP2jk37q03kIKgsUS5JAo8UrZvLn4Td4F4oKHiYiLAnMBYS3tUHHRV3aK2lTS8Bj81tMQnAHX4CWnXUfgANcXCS2azNoZ3EsZKk2GgOjQsYP5en+/qsk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=noSR49HA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99A49C4CECF;
+	Tue,  3 Dec 2024 12:48:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733230087;
+	bh=hUhkDJMd6hgc8nFH5J2k6Ct3EbWCpkiTzHeH8+7iWyE=;
+	h=From:Subject:Date:To:Cc:From;
+	b=noSR49HAbUT52tj/WTvh8Ly59C4mWU3tFJUHQ3EEdsg9VqsgTkyYgwnS5xjM/fyN0
+	 Nn9kwAKb07OBTVYKkoFjg6L+6/hc93AoiLspBnwWqtxVJd+pLsyNvywsEgKLFCsT6o
+	 HtIvkICLgR31xaJ+8zEFaqj5VGWNfo+/ISAyJBK6rGIaQ6GGY19LwXrb+A/iuGGIq9
+	 8MiWmE5VKuL/knlywr85ooXupYKX0uZsE3TYZT8ZOv8pweIPUYXpPyMU6ivXs2GHDH
+	 GMbEsEkRvlsDxdz15roDmfyupJU0/zG/hxPon7KdlYx01QESTUXdFCII1zHaNuyJoh
+	 w62HF6ao68wGA==
+From: Mark Brown <broonie@kernel.org>
+Subject: [PATCH 0/6] arm64/sme: Collected SME fixes
+Date: Tue, 03 Dec 2024 12:45:52 +0000
+Message-Id: <20241203-arm64-sme-reenable-v1-0-d853479d1b77@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: maxime.chevallier@bootlin.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAID9TmcC/x2MQQqAMBDEviJ7dsFKKepXxEOtoy5olS2IIP7d4
+ iWQQ/JQggoSdcVDikuSHDGLKQsKq48LWKbsVFe1NRnsdXeW0w5WIPpxA7cNnA3GGd+AcngqZrn
+ /aT+87wd6yZpnZAAAAA==
+X-Change-ID: 20241202-arm64-sme-reenable-98e64c161a8e
+To: Catalin Marinas <catalin.marinas@arm.com>, 
+ Will Deacon <will@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Mark Brown <broonie@kernel.org>, stable@vger.kernel.org
+X-Mailer: b4 0.15-dev-9b746
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1165; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=hUhkDJMd6hgc8nFH5J2k6Ct3EbWCpkiTzHeH8+7iWyE=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBnTv3/XvODq4EdoPt4webzJUAwhfutXI2IVlatkT69
+ XtSrsFOJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZ079/wAKCRAk1otyXVSH0Du9B/
+ 4q0qp5ZLV0GHKhGbpjQCdHNnjtg2vEXE3Cp0R7Fbk6Sf/1EnZ6BU523FIlFvoxB5mK2hC7NnYCSitX
+ yWifk1i+AYKN84DAmX2zT0vubitt0lOlQ6CDi4klMJRhEWXXyR3+Ol6ta+3NGUOPX4oIEaBHq2wjFG
+ i2kDjQAVEbwAbp4er7pguBjVj6vusJC/BjNl96sm4dQSkkegKgdFqwgAORyy6eR83Nz9U/PjQOm911
+ 8LH2kce+iQqqULpLSSqZqX4d+5QDwmZp8nO/4Jv2+BCHsfYEJK2Ugti8tugl21OGER251GQYeDk6bb
+ Oats3tuql3BgX+fyDkBMFGq0yyppZb
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-In april 2007, ucc_geth was converted to phylib with :
+This series collects the various SME related fixes that were previously
+posted separately.  These should address all the issues I am aware of so
+a patch which reenables the SME configuration option is also included.
 
-commit 728de4c927a3 ("ucc_geth: migrate ucc_geth to phylib").
-
-In that commit, the device-tree property "interface", that could be used to
-retrieve the PHY interface mode was deprecated.
-
-DTS files that still used that property were converted along the way, in
-the following commit, also dating from april 2007 :
-
-commit 0fd8c47cccb1 ("[POWERPC] Replace undocumented interface properties in dts files")
-
-17 years later, there's no users of that property left and I hope it's
-safe to say we can remove support from that in the ucc_geth driver,
-making the probe() function a bit simpler.
-
-Should there be any users that have a DT that was generated when 2.6.21 was
-cutting-edge, print an error message with hints on how to convert the
-devicetree if the 'interface' property is found.
-
-With that property gone, we can greatly simplify the parsing of the
-phy-interface-mode from the devicetree by using of_get_phy_mode(),
-allowing the removal of the open-coded parsing in the driver.
-
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
-V3 :  Return an error code on failure. I kept Andrew's R'd-by though,
-let me know if I should drop it.
+Mark Brown (6):
+      arm64/sme: Flush foreign register state in do_sme_acc()
+      arm64/fp: Don't corrupt FPMR when streaming mode changes
+      arm64/ptrace: Zero FPMR on streaming mode entry/exit
+      arm64/signal: Consistently invalidate the in register FP state in restore
+      arm64/signal: Avoid corruption of SME state when entering signal handler
+      arm64/sme: Reenable SME
 
- drivers/net/ethernet/freescale/ucc_geth.c | 63 +++++------------------
- 1 file changed, 12 insertions(+), 51 deletions(-)
+ arch/arm64/Kconfig              |  1 -
+ arch/arm64/include/asm/fpsimd.h |  1 +
+ arch/arm64/kernel/fpsimd.c      | 49 +++++++++++++++++++++--
+ arch/arm64/kernel/ptrace.c      | 12 +++++-
+ arch/arm64/kernel/signal.c      | 89 +++++++++++------------------------------
+ 5 files changed, 79 insertions(+), 73 deletions(-)
+---
+base-commit: 40384c840ea1944d7c5a392e8975ed088ecf0b37
+change-id: 20241202-arm64-sme-reenable-98e64c161a8e
 
-diff --git a/drivers/net/ethernet/freescale/ucc_geth.c b/drivers/net/ethernet/freescale/ucc_geth.c
-index 6663c1768089..b023a1a1dc5c 100644
---- a/drivers/net/ethernet/freescale/ucc_geth.c
-+++ b/drivers/net/ethernet/freescale/ucc_geth.c
-@@ -3469,32 +3469,6 @@ static int ucc_geth_resume(struct platform_device *ofdev)
- #define ucc_geth_resume NULL
- #endif
- 
--static phy_interface_t to_phy_interface(const char *phy_connection_type)
--{
--	if (strcasecmp(phy_connection_type, "mii") == 0)
--		return PHY_INTERFACE_MODE_MII;
--	if (strcasecmp(phy_connection_type, "gmii") == 0)
--		return PHY_INTERFACE_MODE_GMII;
--	if (strcasecmp(phy_connection_type, "tbi") == 0)
--		return PHY_INTERFACE_MODE_TBI;
--	if (strcasecmp(phy_connection_type, "rmii") == 0)
--		return PHY_INTERFACE_MODE_RMII;
--	if (strcasecmp(phy_connection_type, "rgmii") == 0)
--		return PHY_INTERFACE_MODE_RGMII;
--	if (strcasecmp(phy_connection_type, "rgmii-id") == 0)
--		return PHY_INTERFACE_MODE_RGMII_ID;
--	if (strcasecmp(phy_connection_type, "rgmii-txid") == 0)
--		return PHY_INTERFACE_MODE_RGMII_TXID;
--	if (strcasecmp(phy_connection_type, "rgmii-rxid") == 0)
--		return PHY_INTERFACE_MODE_RGMII_RXID;
--	if (strcasecmp(phy_connection_type, "rtbi") == 0)
--		return PHY_INTERFACE_MODE_RTBI;
--	if (strcasecmp(phy_connection_type, "sgmii") == 0)
--		return PHY_INTERFACE_MODE_SGMII;
--
--	return PHY_INTERFACE_MODE_MII;
--}
--
- static int ucc_geth_ioctl(struct net_device *dev, struct ifreq *rq, int cmd)
- {
- 	struct ucc_geth_private *ugeth = netdev_priv(dev);
-@@ -3564,19 +3538,6 @@ static int ucc_geth_probe(struct platform_device* ofdev)
- 	int err, ucc_num, max_speed = 0;
- 	const unsigned int *prop;
- 	phy_interface_t phy_interface;
--	static const int enet_to_speed[] = {
--		SPEED_10, SPEED_10, SPEED_10,
--		SPEED_100, SPEED_100, SPEED_100,
--		SPEED_1000, SPEED_1000, SPEED_1000, SPEED_1000,
--	};
--	static const phy_interface_t enet_to_phy_interface[] = {
--		PHY_INTERFACE_MODE_MII, PHY_INTERFACE_MODE_RMII,
--		PHY_INTERFACE_MODE_RGMII, PHY_INTERFACE_MODE_MII,
--		PHY_INTERFACE_MODE_RMII, PHY_INTERFACE_MODE_RGMII,
--		PHY_INTERFACE_MODE_GMII, PHY_INTERFACE_MODE_RGMII,
--		PHY_INTERFACE_MODE_TBI, PHY_INTERFACE_MODE_RTBI,
--		PHY_INTERFACE_MODE_SGMII,
--	};
- 
- 	ugeth_vdbg("%s: IN", __func__);
- 
-@@ -3627,18 +3588,18 @@ static int ucc_geth_probe(struct platform_device* ofdev)
- 	/* Find the TBI PHY node.  If it's not there, we don't support SGMII */
- 	ug_info->tbi_node = of_parse_phandle(np, "tbi-handle", 0);
- 
--	/* get the phy interface type, or default to MII */
--	prop = of_get_property(np, "phy-connection-type", NULL);
--	if (!prop) {
--		/* handle interface property present in old trees */
--		prop = of_get_property(ug_info->phy_node, "interface", NULL);
--		if (prop != NULL) {
--			phy_interface = enet_to_phy_interface[*prop];
--			max_speed = enet_to_speed[*prop];
--		} else
--			phy_interface = PHY_INTERFACE_MODE_MII;
--	} else {
--		phy_interface = to_phy_interface((const char *)prop);
-+	prop = of_get_property(ug_info->phy_node, "interface", NULL);
-+	if (prop) {
-+		dev_err(&ofdev->dev,
-+			"Device-tree property 'interface' is no longer supported. Please use 'phy-connection-type' instead.");
-+		err = -EINVAL;
-+		goto err_deregister_fixed_link;
-+	}
-+
-+	err = of_get_phy_mode(np, &phy_interface);
-+	if (err) {
-+		dev_err(&ofdev->dev, "Invalid phy-connection-type");
-+		goto err_deregister_fixed_link;
- 	}
- 
- 	/* get speed, or derive from PHY interface */
+Best regards,
 -- 
-2.47.0
+Mark Brown <broonie@kernel.org>
 
 
