@@ -1,197 +1,429 @@
-Return-Path: <linux-kernel+bounces-430022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2FA29E2B30
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 19:44:12 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B9589E2B4A
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 19:46:02 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4449C168452
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 18:45:59 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 410A520899C;
+	Tue,  3 Dec 2024 18:44:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cRtRONcq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 887A9284F59
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 18:44:11 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14E0F1FECDC;
-	Tue,  3 Dec 2024 18:44:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="o0lAqsNO"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D9711FE467
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 18:43:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E0D01FECA4;
+	Tue,  3 Dec 2024 18:44:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733251439; cv=none; b=YW1b/HI2JMaTuLawAiiGagCp0Wp9YrQmtCDTZgVkNDyw9fVXC4evI174yusHjyRjYlVTOF3bAX7PmnvuxELUlqTfF55ahDIyaTYYvBHogXzS2JG1KD+sOdSu3RmyP7qrCWTLLxzbs6I39ry6yqo06dMbZ951E7R19s5oTwe/lrM=
+	t=1733251485; cv=none; b=ZYzWE/0QTkLj8M8WtDjQ0DA7PxLiI8T1cd9532Iff7FzoBG3V9KPVnmNIKrYT9C1kTq0FmtEUVyNQm1SbwB4DdCFFPfS4w7jvVA1NNb1HJO7/bWNxqYtUIPjBra+gdgSMsfkaZxoBFxEWNQpZQdsQkMuEHwIrQ12s8nCfneBfVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733251439; c=relaxed/simple;
-	bh=N4xXJylFZqlsahnMeoivnIPjXugVik2yDGL6h+UJAIw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QBqX20gPIJr21TicAhfIwZDfoLcR5apjt9xZwGTNuTphdK3oA1gtB/d/FZFJd7kLBSEcYDFrMS1rVkW63U3+sbtfGuBGNMMqU26jWlPnL9dbzLSud4L2Ae2NRV3uC4uwQv2sFRIpeChsY2d1GVtTGi9W/LF12XrNkp/dh9tusbI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=o0lAqsNO; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-53dd5f68c33so956e87.0
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 10:43:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733251435; x=1733856235; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+YWgVPK/SpoACBIKJFxQCjuZ+EEWYYEXx3gjh4xmrLI=;
-        b=o0lAqsNO/6iNNxECqaesmNmAowqA63SHzpS3ynBVsO08E5V3BFF0AxdlPdeGDIlVSe
-         OQm2JWFkxfW76lqVaupbSYseuIGfMh+rxVAQJ+0Cy2h/M49Qq7RF10NlRQl7UekyfXlv
-         8Uqi7oZ3LIRyglom+GYKk0782yMMxqvKR4Bl2kQ6wUxQ+5jf+PQahmf92ZfxUWpJPBY+
-         lZJXgh68LpmG6QHdFIUEH+j2KXA3xsGdY3ozIOOzZtPU63mxdWTjFeOZetA6phrXWFcM
-         qCpR2Xc4iBYmCt5zjbz7xJhd9aza4x8OoTRqH6BYgA6moJVw0DdEwwjdv+tgPK62/m6C
-         gjDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733251435; x=1733856235;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+YWgVPK/SpoACBIKJFxQCjuZ+EEWYYEXx3gjh4xmrLI=;
-        b=sxEXQBrGnSxzBpNjrsSQhbY2H06jyQ517PEhZkrXqEVfYncyLFTrovbdBk87OLMDmQ
-         fwxs5fTK42CRXBEYvtb58omsqjAn4XResawjuQGK0BmJuaiZFUatR03i/bsQk6u/CRxq
-         bdojn0RpCkiEZolfOtH7aP0RfFYM20PCBCccuQCWhLbDC2G5PPNc3eAI5G1mRj2sJm9d
-         Fvcj/1Tb9lvhWxa9Eo/sNOdve7zGZfXxwTMtQ6FBL4CH0qoFXQYQa/sGsU3kYVTksIb6
-         cU/TIQNWvMysASIL1JdGQ8CE2muj2ml/LU5+UaOmSlmao7e1I4JxHr40R3his66btBvj
-         g4EQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVUhtj7XehkbxHcVUzPCYRr2wFFPk64ej+y4C7rVsk/uM7RuOoNgU+9X2gKqL2l7ohM+OsSKHH7/y3ZngU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzjIsWGrWnANKkjQ4qDs9Qou3adL4k+f6NY8WahtzoH7R5Jp5a2
-	IAdRJ6eX9n0wBB1wOCOGe9hLzJi41SoGSJUySv7euUwDTJHfBzoJ2ipCTiGdTp42lNYTcnLKpvN
-	fD0elmc/Pja6rpIawQrvv5rcWNZjElwggNUuu
-X-Gm-Gg: ASbGnctXxJrD6kjl/vQ5Obb4XR7Izk28B+IHSdk3gES8XGC5b/cWP9Cw8z3SMdLL26d
-	IY4vTKVvOlUDLZQksCiXT+o67WPYE
-X-Google-Smtp-Source: AGHT+IHQGk/5NHJx9Qv8zG7XVG5iZYG6w0hBvWOe/S7jbkmz5Xy2Mtt2Pp+kLrED+4ngNlmDPTOw3wpvxhPeLdNe3MY=
-X-Received: by 2002:a05:6512:6207:b0:53d:f58a:2f81 with SMTP id
- 2adb3069b0e04-53e134b225dmr205818e87.5.1733251434202; Tue, 03 Dec 2024
- 10:43:54 -0800 (PST)
+	s=arc-20240116; t=1733251485; c=relaxed/simple;
+	bh=p3DzkDVZP2SFkK3VI5qaeiKq62xeJDdDTo+pXAW1T3g=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=fcIaKhEDxELNnY8mNIWbcx2s3JoszeOmMFymhQ4ftDtyxdhdIKBqbeusPeqcfqoTTiPww5MPnH4wuygAv9YY2wiJZqxGni/0sFqZU9PtMUTN17jmFHH9MgWIrbLr/9okueMNOC2CH1ts5A8fxrf7kAvjrPLJuo8uXicnSbhjME0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cRtRONcq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F909C4CED8;
+	Tue,  3 Dec 2024 18:44:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733251484;
+	bh=p3DzkDVZP2SFkK3VI5qaeiKq62xeJDdDTo+pXAW1T3g=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=cRtRONcqr0q+YLq6k7S3xnLtANTRzDq+Vu7NYJO+CZEJLliTqMiOKRw+HosgNiSib
+	 QTFk502s6voIVCzaeCWSSzDLXVUEujFScsUKKF10x1qTVSkSf3ATEhGSu7uoWkKGKQ
+	 XT6KKuz8gEBRJ0RvTsVSZXZEyuCUz0ZgWznGCsU6/51I+lryRsFBAFZB1VJw/xRdgv
+	 OnlSGSdvRGRPAidcP8PrPRbPVgvAMwx1GZHyEeRXPoIg0bqYYG43VQ1aNTI+WzZLbY
+	 zEKEKHIkffhMJ4teVSd/SZwKdrpDu1Dr5FR0fXkX1TLNLiFC9rQS92In5VhJEoz6/t
+	 GZR9ks4xGp5nw==
+From: Mark Brown <broonie@kernel.org>
+Date: Tue, 03 Dec 2024 18:43:42 +0000
+Subject: [PATCH RFT v13 8/8] selftests/clone3: Test shadow stack support
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241202202058.3249628-1-fvdl@google.com> <3tqmyo3qqaykszxmrmkaa3fo5hndc4ok6xrxozjvlmq5qjv4cs@2geqqedyfzcf>
- <CAPTztWbmkFisL7qnmAnre5hv=UD1E60P0hr_kXNyLoQFy9OoTA@mail.gmail.com>
- <Z070YE81kJ-OnSX8@tiehlicka> <d1f224fb-c0fb-47f9-bea8-3c33137be161@oracle.com>
-In-Reply-To: <d1f224fb-c0fb-47f9-bea8-3c33137be161@oracle.com>
-From: Frank van der Linden <fvdl@google.com>
-Date: Tue, 3 Dec 2024 10:43:42 -0800
-Message-ID: <CAPTztWYnmgMNTStH_Z-012MmFDG2vDN8AU2aZRaUeLhwaR8=qg@mail.gmail.com>
-Subject: Re: [PATCH] mm/hugetlb: optionally pre-zero hugetlb pages
-To: Joao Martins <joao.m.martins@oracle.com>
-Cc: Michal Hocko <mhocko@suse.com>, Mateusz Guzik <mjguzik@gmail.com>, linux-mm@kvack.org, 
-	akpm@linux-foundation.org, Muchun Song <muchun.song@linux.dev>, 
-	Miaohe Lin <linmiaohe@huawei.com>, Oscar Salvador <osalvador@suse.de>, 
-	David Hildenbrand <david@redhat.com>, Peter Xu <peterx@redhat.com>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241203-clone3-shadow-stack-v13-8-93b89a81a5ed@kernel.org>
+References: <20241203-clone3-shadow-stack-v13-0-93b89a81a5ed@kernel.org>
+In-Reply-To: <20241203-clone3-shadow-stack-v13-0-93b89a81a5ed@kernel.org>
+To: "Rick P. Edgecombe" <rick.p.edgecombe@intel.com>, 
+ Deepak Gupta <debug@rivosinc.com>, Szabolcs Nagy <Szabolcs.Nagy@arm.com>, 
+ "H.J. Lu" <hjl.tools@gmail.com>, Florian Weimer <fweimer@redhat.com>, 
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
+ x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
+ Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
+ Vincent Guittot <vincent.guittot@linaro.org>, 
+ Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, 
+ Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>, 
+ Christian Brauner <brauner@kernel.org>, Shuah Khan <shuah@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>, 
+ Will Deacon <will@kernel.org>, jannh@google.com, bsegall@google.com, 
+ Yury Khrustalev <yury.khrustalev@arm.com>, 
+ Wilco Dijkstra <wilco.dijkstra@arm.com>, linux-kselftest@vger.kernel.org, 
+ linux-api@vger.kernel.org, Mark Brown <broonie@kernel.org>, 
+ Kees Cook <kees@kernel.org>, Shuah Khan <skhan@linuxfoundation.org>
+X-Mailer: b4 0.15-dev-9b746
+X-Developer-Signature: v=1; a=openpgp-sha256; l=10296; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=p3DzkDVZP2SFkK3VI5qaeiKq62xeJDdDTo+pXAW1T3g=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBnT1FkefVjlQJeh4HGx4nCsNJ0Kz6k0tMk3rQC8PZL
+ 4DwRewyJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZ09RZAAKCRAk1otyXVSH0HXxB/
+ 97+gFJ4ckAXVv6ZbGYmi4WtUfmtVwvv9u2nql5u+ctKhoFvtDLt9b9TpnUXooA7fq6fgec/mE/9PzF
+ wN+T65o3R0pywMoyVHMvVsqBx2XJlo22uCiqjy5Dz+xW5fvqKCrIsjgYvclboFzD5JUVLP/6v+LRBt
+ NBldj4eNGiEDZX0fQLA2cbNsa3GKOKKQRpJH0u8bSxQcU9ufJUL51J3JA17s/1Z9wTa3udiZZ5ISJn
+ 0MCqmWRrsSMcx86teMHu0zWV6vozmEg2QPOgGaukKCpJFim42H+c2JNvop2HiAvNs59DyboUOCukJo
+ yJraeQObRUI5yFTh1jpR4371QZ5r9L
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-On Tue, Dec 3, 2024 at 6:26=E2=80=AFAM Joao Martins <joao.m.martins@oracle.=
-com> wrote:
->
-> On 03/12/2024 12:06, Michal Hocko wrote:
-> > On Mon 02-12-24 14:50:49, Frank van der Linden wrote:
-> >> On Mon, Dec 2, 2024 at 1:58=E2=80=AFPM Mateusz Guzik <mjguzik@gmail.co=
-m> wrote:
-> >>> Any games with "background zeroing" are notoriously crappy and I woul=
-d
-> >>> argue one should exhaust other avenues before going there -- at the e=
-nd
-> >>> of the day the cost of zeroing will have to get paid.
-> >>
-> >> I understand that the concept of background prezeroing has been, and
-> >> will be, met with some resistance. But, do you have any specific
-> >> concerns with the patch I posted? It's pretty well isolated from the
-> >> rest of the code, and optional.
-> >
-> > The biggest concern I have is that the overhead is payed by everybody o=
-n
-> > the system - it is considered to be a system overhead regardless only
-> > part of the workload benefits from hugetlb pages. In other words the
-> > workload using those pages is not accounted for the use completely.
-> >
-> > If the startup latency is a real problem is there a way to workaround
-> > that in the userspace by preallocating hugetlb pages ahead of time
-> > before those VMs are launched and hand over already pre-allocated pages=
-?
->
-> It should be relatively simple to actually do this. Me and Mike had exper=
-imented
-> ourselves a couple years back but we never had the chance to send it over=
-. IIRC
-> if we:
->
-> - add the PageZeroed tracking bit when a page is zeroed
-> - clear it in the write (fixup/non-fixup) fault-path
->
-> [somewhat similar to this series I suspect]
->
-> Then what's left is to change the lookup of free hugetlb pages
-> (dequeue_hugetlb_folio_node_exact() I think) to search first for non-zero=
-ed
-> pages. Provided we don't track its 'cleared' state, there's no UAPI chang=
-e in
-> behaviour. A daemon can just allocate/mmap+touch/etc them with read-only =
-and
-> free them back 'as zeroed' to implement a userspace scrubber. And in prin=
-ciple
-> existing apps should see no difference. The amount of changes is conseque=
-ntly
-> significantly smaller (or it looked as such in a quick PoC years back).
+Add basic test coverage for specifying the shadow stack for a newly
+created thread via clone3(), including coverage of the newly extended
+argument structure.  We check that a user specified shadow stack can be
+provided, and that invalid combinations of parameters are rejected.
 
-This would work, and is easy to do, but:
-  * You now have a userspace daemon that depends on kernel-internal behavio=
-r.
-  * It has no way to track how much work is left to do or what needs
-to be done (unless it is part of an application that is the only user
-of hugetlbfs on the system).
+In order to facilitate testing on systems without userspace shadow stack
+support we manually enable shadow stacks on startup, this is architecture
+specific due to the use of an arch_prctl() on x86. Due to interactions with
+potential userspace locking of features we actually detect support for
+shadow stacks on the running system by attempting to allocate a shadow
+stack page during initialisation using map_shadow_stack(), warning if this
+succeeds when the enable failed.
 
->
-> Something extra on the top would perhaps be the ability so select a looku=
-p
-> heuristic such that we can pick the search method of
-> non-zero-first/only-nonzero/zeroed pages behind ioctl() (or a better gene=
-ric
-> UAPI) to allow a scrubber to easily coexist with hugepage user (e.g. a VM=
-M, etc)
-> without too much of a dance.
+In order to allow testing of user configured shadow stacks on
+architectures with that feature we need to ensure that we do not return
+from the function where the clone3() syscall is called in the child
+process, doing so would trigger a shadow stack underflow.  To do this we
+use inline assembly rather than the standard syscall wrapper to call
+clone3().  In order to avoid surprises we also use a syscall rather than
+the libc exit() function., this should be overly cautious.
 
-Again, that would probably work, but if you take a step back: you now
-have a kernel behavior that can be guided in certain directions, but
-no guarantees and no stats to see if things are working out. And an
-explicit allocation method option (basically: take from the head or
-the tail of the freelist). The picture is getting murkier. At least
-with the patch I sent you have a clearly defined, optional, behavior
-that can be switched on or off, and stats to see if it's working.
+Acked-by: Shuah Khan <skhan@linuxfoundation.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ tools/testing/selftests/clone3/clone3.c           | 143 +++++++++++++++++++++-
+ tools/testing/selftests/clone3/clone3_selftests.h |  63 ++++++++++
+ 2 files changed, 205 insertions(+), 1 deletion(-)
 
-I do understand the argument against having pre-zeroing not being
-accounted to the current thread. I would counter that benefiting from
-work by kernel threads is not unheard of in the kernel today already.
-Also, the other proposals so far also have another thread doing the
-zeroing - it just is explicitly started by userspace. So, the cost is
-still not paid by the user of the pages. You just end up with
-explicitly controlling who does pay the cost. Which I suppose is
-better, but it's still not trivial to get it completely right (you
-perhaps could do it at the container level with some trickery).
+diff --git a/tools/testing/selftests/clone3/clone3.c b/tools/testing/selftests/clone3/clone3.c
+index 5b8b7d640e70132242fc6939450669acd0c534f9..b0378d7418cc8b00caebc6f92f58280bc04b0f80 100644
+--- a/tools/testing/selftests/clone3/clone3.c
++++ b/tools/testing/selftests/clone3/clone3.c
+@@ -3,6 +3,7 @@
+ /* Based on Christian Brauner's clone3() example */
+ 
+ #define _GNU_SOURCE
++#include <asm/mman.h>
+ #include <errno.h>
+ #include <inttypes.h>
+ #include <linux/types.h>
+@@ -11,6 +12,7 @@
+ #include <stdint.h>
+ #include <stdio.h>
+ #include <stdlib.h>
++#include <sys/mman.h>
+ #include <sys/syscall.h>
+ #include <sys/types.h>
+ #include <sys/un.h>
+@@ -19,8 +21,12 @@
+ #include <sched.h>
+ 
+ #include "../kselftest.h"
++#include "../ksft_shstk.h"
+ #include "clone3_selftests.h"
+ 
++static bool shadow_stack_supported;
++static size_t max_supported_args_size;
++
+ enum test_mode {
+ 	CLONE3_ARGS_NO_TEST,
+ 	CLONE3_ARGS_ALL_0,
+@@ -28,6 +34,10 @@ enum test_mode {
+ 	CLONE3_ARGS_INVAL_EXIT_SIGNAL_NEG,
+ 	CLONE3_ARGS_INVAL_EXIT_SIGNAL_CSIG,
+ 	CLONE3_ARGS_INVAL_EXIT_SIGNAL_NSIG,
++	CLONE3_ARGS_SHADOW_STACK,
++	CLONE3_ARGS_SHADOW_STACK_MISALIGNED,
++	CLONE3_ARGS_SHADOW_STACK_NO_TOKEN,
++	CLONE3_ARGS_SHADOW_STACK_NORMAL_MEMORY,
+ };
+ 
+ typedef bool (*filter_function)(void);
+@@ -44,6 +54,44 @@ struct test {
+ 	filter_function filter;
+ };
+ 
++
++/*
++ * We check for shadow stack support by attempting to use
++ * map_shadow_stack() since features may have been locked by the
++ * dynamic linker resulting in spurious errors when we attempt to
++ * enable on startup.  We warn if the enable failed.
++ */
++static void test_shadow_stack_supported(void)
++{
++	long ret;
++
++	ret = syscall(__NR_map_shadow_stack, 0, getpagesize(), 0);
++	if (ret == -1) {
++		ksft_print_msg("map_shadow_stack() not supported\n");
++	} else if ((void *)ret == MAP_FAILED) {
++		ksft_print_msg("Failed to map shadow stack\n");
++	} else {
++		ksft_print_msg("Shadow stack supportd\n");
++		shadow_stack_supported = true;
++
++		if (!shadow_stack_enabled)
++			ksft_print_msg("Mapped but did not enable shadow stack\n");
++	}
++}
++
++static void *get_shadow_stack_page(unsigned long flags)
++{
++	unsigned long long page;
++
++	page = syscall(__NR_map_shadow_stack, 0, getpagesize(), flags);
++	if ((void *)page == MAP_FAILED) {
++		ksft_print_msg("map_shadow_stack() failed: %d\n", errno);
++		return 0;
++	}
++
++	return (void *)page;
++}
++
+ static int call_clone3(uint64_t flags, size_t size, enum test_mode test_mode)
+ {
+ 	struct __clone_args args = {
+@@ -57,6 +105,7 @@ static int call_clone3(uint64_t flags, size_t size, enum test_mode test_mode)
+ 	} args_ext;
+ 
+ 	pid_t pid = -1;
++	void *p;
+ 	int status;
+ 
+ 	memset(&args_ext, 0, sizeof(args_ext));
+@@ -89,6 +138,26 @@ static int call_clone3(uint64_t flags, size_t size, enum test_mode test_mode)
+ 	case CLONE3_ARGS_INVAL_EXIT_SIGNAL_NSIG:
+ 		args.exit_signal = 0x00000000000000f0ULL;
+ 		break;
++	case CLONE3_ARGS_SHADOW_STACK:
++		p = get_shadow_stack_page(SHADOW_STACK_SET_TOKEN);
++		p += getpagesize() - sizeof(void *);
++		args.shadow_stack_pointer = (unsigned long long)p;
++		break;
++	case CLONE3_ARGS_SHADOW_STACK_MISALIGNED:
++		p = get_shadow_stack_page(SHADOW_STACK_SET_TOKEN);
++		p += getpagesize() - sizeof(void *) - 1;
++		args.shadow_stack_pointer = (unsigned long long)p;
++		break;
++	case CLONE3_ARGS_SHADOW_STACK_NORMAL_MEMORY:
++		p = malloc(getpagesize());
++		p += getpagesize() - sizeof(void *);
++		args.shadow_stack_pointer = (unsigned long long)p;
++		break;
++	case CLONE3_ARGS_SHADOW_STACK_NO_TOKEN:
++		p = get_shadow_stack_page(0);
++		p += getpagesize() - sizeof(void *);
++		args.shadow_stack_pointer = (unsigned long long)p;
++		break;
+ 	}
+ 
+ 	memcpy(&args_ext.args, &args, sizeof(struct __clone_args));
+@@ -102,7 +171,12 @@ static int call_clone3(uint64_t flags, size_t size, enum test_mode test_mode)
+ 
+ 	if (pid == 0) {
+ 		ksft_print_msg("I am the child, my PID is %d\n", getpid());
+-		_exit(EXIT_SUCCESS);
++		/*
++		 * Use a raw syscall to ensure we don't get issues
++		 * with manually specified shadow stack and exit handlers.
++		 */
++		syscall(__NR_exit, EXIT_SUCCESS);
++		ksft_print_msg("CHILD FAILED TO EXIT PID is %d\n", getpid());
+ 	}
+ 
+ 	ksft_print_msg("I am the parent (%d). My child's pid is %d\n",
+@@ -184,6 +258,26 @@ static bool no_timenamespace(void)
+ 	return true;
+ }
+ 
++static bool have_shadow_stack(void)
++{
++	if (shadow_stack_supported) {
++		ksft_print_msg("Shadow stack supported\n");
++		return true;
++	}
++
++	return false;
++}
++
++static bool no_shadow_stack(void)
++{
++	if (!shadow_stack_supported) {
++		ksft_print_msg("Shadow stack not supported\n");
++		return true;
++	}
++
++	return false;
++}
++
+ static size_t page_size_plus_8(void)
+ {
+ 	return getpagesize() + 8;
+@@ -327,6 +421,50 @@ static const struct test tests[] = {
+ 		.expected = -EINVAL,
+ 		.test_mode = CLONE3_ARGS_NO_TEST,
+ 	},
++	{
++		.name = "Shadow stack on system with shadow stack",
++		.size = 0,
++		.expected = 0,
++		.e2big_valid = true,
++		.test_mode = CLONE3_ARGS_SHADOW_STACK,
++		.filter = no_shadow_stack,
++	},
++	{
++		.name = "Shadow stack with misaligned address",
++		.flags = CLONE_VM,
++		.size = 0,
++		.expected = -EINVAL,
++		.e2big_valid = true,
++		.test_mode = CLONE3_ARGS_SHADOW_STACK_MISALIGNED,
++		.filter = no_shadow_stack,
++	},
++	{
++		.name = "Shadow stack with normal memory",
++		.flags = CLONE_VM,
++		.size = 0,
++		.expected = -EFAULT,
++		.e2big_valid = true,
++		.test_mode = CLONE3_ARGS_SHADOW_STACK_NORMAL_MEMORY,
++		.filter = no_shadow_stack,
++	},
++	{
++		.name = "Shadow stack with no token",
++		.flags = CLONE_VM,
++		.size = 0,
++		.expected = -EINVAL,
++		.e2big_valid = true,
++		.test_mode = CLONE3_ARGS_SHADOW_STACK_NO_TOKEN,
++		.filter = no_shadow_stack,
++	},
++	{
++		.name = "Shadow stack on system without shadow stack",
++		.flags = CLONE_VM,
++		.size = 0,
++		.expected = -EINVAL,
++		.e2big_valid = true,
++		.test_mode = CLONE3_ARGS_SHADOW_STACK,
++		.filter = have_shadow_stack,
++	},
+ };
+ 
+ int main(int argc, char *argv[])
+@@ -334,9 +472,12 @@ int main(int argc, char *argv[])
+ 	size_t size;
+ 	int i;
+ 
++	enable_shadow_stack();
++
+ 	ksft_print_header();
+ 	ksft_set_plan(ARRAY_SIZE(tests));
+ 	test_clone3_supported();
++	test_shadow_stack_supported();
+ 
+ 	for (i = 0; i < ARRAY_SIZE(tests); i++)
+ 		test_clone3(&tests[i]);
+diff --git a/tools/testing/selftests/clone3/clone3_selftests.h b/tools/testing/selftests/clone3/clone3_selftests.h
+index 39b5dcba663c30b9fc2542d9a0d2686105ce5761..26ff1554408a59af26bd708dc9c852210e370828 100644
+--- a/tools/testing/selftests/clone3/clone3_selftests.h
++++ b/tools/testing/selftests/clone3/clone3_selftests.h
+@@ -31,12 +31,75 @@ struct __clone_args {
+ 	__aligned_u64 set_tid;
+ 	__aligned_u64 set_tid_size;
+ 	__aligned_u64 cgroup;
++#ifndef CLONE_ARGS_SIZE_VER2
++#define CLONE_ARGS_SIZE_VER2 88	/* sizeof third published struct */
++#endif
++	__aligned_u64 shadow_stack_pointer;
++#ifndef CLONE_ARGS_SIZE_VER3
++#define CLONE_ARGS_SIZE_VER3 96 /* sizeof fourth published struct */
++#endif
+ };
+ 
++/*
++ * For architectures with shadow stack support we need to be
++ * absolutely sure that the clone3() syscall will be inline and not a
++ * function call so we open code.
++ */
++#ifdef __x86_64__
++static pid_t __always_inline sys_clone3(struct __clone_args *args, size_t size)
++{
++	long ret;
++	register long _num  __asm__ ("rax") = __NR_clone3;
++	register long _args __asm__ ("rdi") = (long)(args);
++	register long _size __asm__ ("rsi") = (long)(size);
++
++	__asm__ volatile (
++		"syscall\n"
++		: "=a"(ret)
++		: "r"(_args), "r"(_size),
++		  "0"(_num)
++		: "rcx", "r11", "memory", "cc"
++	);
++
++	if (ret < 0) {
++		errno = -ret;
++		return -1;
++	}
++
++	return ret;
++}
++#elif defined(__aarch64__)
++static pid_t __always_inline sys_clone3(struct __clone_args *args, size_t size)
++{
++	register long _num  __asm__ ("x8") = __NR_clone3;
++	register long _args __asm__ ("x0") = (long)(args);
++	register long _size __asm__ ("x1") = (long)(size);
++	register long arg2 __asm__ ("x2") = 0;
++	register long arg3 __asm__ ("x3") = 0;
++	register long arg4 __asm__ ("x4") = 0;
++
++	__asm__ volatile (
++		"svc #0\n"
++		: "=r"(_args)
++		: "r"(_args), "r"(_size),
++		  "r"(_num), "r"(arg2),
++		  "r"(arg3), "r"(arg4)
++		: "memory", "cc"
++	);
++
++	if ((int)_args < 0) {
++		errno = -((int)_args);
++		return -1;
++	}
++
++	return _args;
++}
++#else
+ static pid_t sys_clone3(struct __clone_args *args, size_t size)
+ {
+ 	return syscall(__NR_clone3, args, size);
+ }
++#endif
+ 
+ static inline void test_clone3_supported(void)
+ {
 
-What we have done so far is to bind the khzerod threads introduced in
-this patch to CPUs in such a way that it doesn't interfere with the
-rest of the system. Which you would also have to do with any userspace
-solution.
+-- 
+2.39.5
 
-Again, this is optional - if you are a system manager who prefers to
-have the resources used by zeroing hugetlb pages to be explicitly
-accounted to the actual user, you can not enable this behavior (it's
-off by default).
-
-I guess I can summarize my thoughts like this: while I understand the
-argument against doing this outside of the context of the actual user
-of the pages, this is 1) optional, and 2) so far the other solutions
-introduce interfaces that I don't think are that great, or would
-require maintaining a hugetlb 'shadow pool' in userspace through
-hugetlbfs files.
-
-- Frank
 
