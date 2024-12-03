@@ -1,106 +1,140 @@
-Return-Path: <linux-kernel+bounces-428516-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 410829E0F88
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 01:14:54 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D0819E0F8C
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 01:15:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9EB528306F
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 00:14:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9513AB22FDB
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 00:15:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D844510E4;
-	Tue,  3 Dec 2024 00:14:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD96D2500C2;
+	Tue,  3 Dec 2024 00:15:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NLlrZs1H"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QSTXGLGH"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3FE0A32
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 00:14:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD26163B9;
+	Tue,  3 Dec 2024 00:15:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733184886; cv=none; b=Y9mCrBhVvA1hEnLu5HZyDDo2CV77vRSsH4CuHCZjkKypTMS+y4HP+Ww1gtVB3RyjnaRYA3wkDbAHIWEYlSopCOD7t1xUVrpkzLqprrhphvw9J+/uuFXvQGDsdPogAsgJR8t4L2kEiCv7c9hMqFuYX9dylDeliRJ/7k1Q+9vLlmQ=
+	t=1733184906; cv=none; b=e6yBAlirAQUc0EYYGN9Kao8RqqD4I3z++FKAhpPpOwSuzLbukEuP1dVRuo9UuvPESkyckv/IoNpmK8I96xW6ulefrhS9bUh9Jv8nJ8REcmJzepH/L6wz9pHcPbS1eClaNKmVbdAzArch31litP82gW+N2USV61PKbK6bFghdvag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733184886; c=relaxed/simple;
-	bh=MHJjeZa/reEVzgbcKX2JOJvOOjtlk9wAJDBjubCoJxM=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=eHEJ3cl0jCawVvfE7YUVRT/Qx011D7el856rSOO1u/bSYzJmwCNUb+BDfgKijWEeSN9df3VELDSPsgssVXjfrXwmBcXpqLmwxaneruVICZLkXBuFFBfWa8Wx+lCk2/qZgLAoFKiMreozIN/TjdBP7BdljHJA3kyczv7RX7eDwSA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NLlrZs1H; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2e95713327eso4600325a91.1
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 16:14:44 -0800 (PST)
+	s=arc-20240116; t=1733184906; c=relaxed/simple;
+	bh=sFpARMD5DEnpcvy3BKqI9LW6BSUs9SACQXTXuoBRu7s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=i4W2l6M5SB31GoPIOb5gyYYJ+oJc450bSCez9qTUOvHy8Ft5A6DUSElsFtXeb+ZHtbyn2q6zkinE92sPGUxT64Z+Lz/wyPaIRpOfU5tmpIqXTpESrn2MjJftVMNF7mFN6YrLuU+mkUzlqxr6UfnZokbcXggpw0za1pNrs7b+kps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QSTXGLGH; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-211fb27cc6bso38952515ad.0;
+        Mon, 02 Dec 2024 16:15:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733184884; x=1733789684; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=vHmbDNthMFLWB5i9RKAwYv3EBfwAod31XjZ5W9vetUE=;
-        b=NLlrZs1HW6ViweR1JJqfw5FupGNZgaoVrAvHzV1H1c4n3cje5koG4vOzQ1F3iYj2ZW
-         o+N2n6MJJb2wEeI6qZudy74ui/Yu4gE6kx13n+xPvs+C/d25Jg50JL7q9c0OA4nRB4bF
-         GQr5ElBoxvql7zfoyyLpB0BCBZpNqNAeixlSAwG+8AEMB+PaVExrbKHGC5XARDYB8sl7
-         ajU4UMf2PJ1Dv/kQsEQn+BhrUwAcHllodCKVYN9mcKE2Uakk763z+dGDrrPGSpZn/yRv
-         K5JcBz7mvCVRqxvIgdtcDN0s4KGOTxWD0aLbsy6GXq7WOqxdqQSX3jjxH3xoSNYQWebe
-         us/g==
+        d=gmail.com; s=20230601; t=1733184904; x=1733789704; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=P799PVpPLal4v1SIHjVIekWVJppU4272KgWygSJqrNM=;
+        b=QSTXGLGHz8Ee17aOddBZ2hLPZK24HVPs1QBthZ4G9ny5atfcW7i3/AggD3q+qt0XrU
+         23r5acjwr84brC5OZwtJliryUFRLoZsdF4Wt5qmgiH3IG9sAkdz6rUBFD6sfzPHc//9W
+         jjF10iXJKcmLzCX1sQNFLMRpuX+gtt8uZb4WyQsDnZxWRCGgCCmScIgdw/A2BU+7xIGO
+         T1/sUU9HF/4CdpcPBy1SOfTU4dyP5mG1fUcpPC8oxmszIoVqoQq3Cw9riI6GV6QR8FWx
+         O875TN2hDspZlVSWs0SVdx/EKAIU0cYDfFsVZy92RbsOvz/Vdo30TbnraaJFzlkHRF5k
+         Ho0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733184884; x=1733789684;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vHmbDNthMFLWB5i9RKAwYv3EBfwAod31XjZ5W9vetUE=;
-        b=heRwrfCGT7Xbh9jTjKegA1xpyYE8NxSbsIhCkrRgG7mHqXBXJxt1YXIcww4Gbz6hej
-         zmhgLWEMmQQqLwuNI1XWi5yBmdMoCEwCbhuAK33q4sEom1nKKgoGD+1Drjb3NKxDYtpW
-         uQmnP4R/4eea+BPl0VR7kH/n0wVMNnvEoEfZsbV+wQ4auwDWgAp5CEVWYLCONe4g+CsR
-         Tdr6ik8S0BU4MGke2wSUCxEC9oGA6RmwJASV1ooAnKtTPhsZEtrEY4+NYumU8LzhhI7v
-         gN3Q/cz8ZUb42fLOANPT7OgzYapYhNIi08ZrsrHSBdghIyfue/79JXEbMBcRZ0Jey1YX
-         gvwg==
-X-Forwarded-Encrypted: i=1; AJvYcCUZzvMUfIA7RjaEqeaJQcUK8MiA2YAdcCKNmLyzKIpL3P4dRAO/BGuAtnk1bsiyQuWzyxiwBL9+seSrAjE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzoaLbhVEJeaKT9Wdh5tv7ZcSCMaiqCRgo25qpsEmIqc6RpPrDF
-	03erSm5wEQuQB0XLfaqEiAC7N/dfygv/ygiBJwsctkUq7Tdd7w+aEBhi8u7zu8TGOOXLyCDhbJg
-	2hQ==
-X-Google-Smtp-Source: AGHT+IHnBi8JiasKd6b9FR3Eah0ap7D3VLh2iriUG48oInOKWNVAMYuz8N+zAnjehBKrmxwSwb36IkikFng=
-X-Received: from pjf5.prod.google.com ([2002:a17:90b:3f05:b0:2ea:7fd8:9dca])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3a85:b0:2ee:e961:303d
- with SMTP id 98e67ed59e1d1-2ef01275c7dmr796832a91.35.1733184884307; Mon, 02
- Dec 2024 16:14:44 -0800 (PST)
-Date: Mon, 2 Dec 2024 16:14:42 -0800
-In-Reply-To: <0a8cda3e-8185-0620-32f7-0696a31f4877@amd.com>
+        d=1e100.net; s=20230601; t=1733184904; x=1733789704;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=P799PVpPLal4v1SIHjVIekWVJppU4272KgWygSJqrNM=;
+        b=ZJJCZ5/r2xFuJsLcs4eP5O3NkZblu1VtVi2ZJ3RMcHyICxFeraKQy3v1CrzaDwUYOt
+         aaPXjySjZf5w/C0RVM4FfDd16wrWrv7UhD/tAWz4GdXBfehX9hvKiFCXsUrSbCtl0LZy
+         t5LRE90adHIwhfgf8qnYLHl1F6+JBPC0GizvAiqgqGpjDZUx3J4Usy+8q2IuEb+hOZ7H
+         QjtBeOPpsak0yxIE/t08RvAY5Ljm+EiYjS86OsUxkySHrSEe1Vj4FYN1802rqRYMR2nx
+         2ohz9cA+Xt+ZPTBf7/SxeKIBV5qWkTDXWYx1mQwIEKhXqBWskqHpX+C7t9X4+SUCYqCm
+         GijA==
+X-Forwarded-Encrypted: i=1; AJvYcCUL3DUlDYY+ki6pE+9rltwDAHDNkErt425J3Ed9hb8JcxLtlPIy6bSuO8LBpw4gHJR7caI=@vger.kernel.org, AJvYcCVb4dwqKm6Ips12gg7Ad9YCvlNUClrYKUpOzG6U4UpmsNT/U1VrIt+kPt6z9APdDeG0NHpvlAhAB29tggMr5GQj@vger.kernel.org, AJvYcCWKV1yU1B1mjEPlRoWiVom7Hw5CIXvAscTa0urWR3KquW+5Emto1Kj9DNdCJYdZG0LlXAvEDgs62fj1+lhF@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8m00GuowvgFMizVvnz3WRIGWtkMRQ6BcjaNCNO2/pzokpRr5p
+	rV7TJZcGqbXR2QjDnZXMP8lR/3crwY9tHUf0z5BMlDk7cmTltjM=
+X-Gm-Gg: ASbGncsDyOpMQWBzSbRAhV4mO1P0DN6mqLYsofeEzmFNMAESVicZVa1js3Ql6pMZWz2
+	erdS21kuB3c51/td+uMdRIpM4clBF0FSRhbQNo/zfEqvkUUDXCIwc2UGrvi1sdbtKg8XMkWh58z
+	JpcjKnHBazt/OJEgNOpligotJpTKQBEF0ZWYQXMPypdHUYcEbv5/BlPC9RQVuu++Fd+AU6QqDQ0
+	S+vdZ2yT9zSJ4ALcaLxKVjNdVhMWV85XN+PKIe9mjtgwVazbQ==
+X-Google-Smtp-Source: AGHT+IEE13VgAHt+B51vFr1A06FMBG0kR2b3nUwpxvlGKx/VNPWE5tC0MM+Effxm7wknS84m3P5qMA==
+X-Received: by 2002:a17:902:ecc4:b0:215:a028:4ed with SMTP id d9443c01a7336-215bceb3e5amr7595615ad.20.1733184904014;
+        Mon, 02 Dec 2024 16:15:04 -0800 (PST)
+Received: from localhost ([2601:646:9e00:f56e:123b:cea3:439a:b3e3])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-725417611dcsm9160425b3a.3.2024.12.02.16.15.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Dec 2024 16:15:03 -0800 (PST)
+Date: Mon, 2 Dec 2024 16:15:02 -0800
+From: Stanislav Fomichev <stfomichev@gmail.com>
+To: Marco Leogrande <leogrande@google.com>
+Cc: Andrii Nakryiko <andrii@kernel.org>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Mykola Lysenko <mykolal@fb.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+	Shuah Khan <shuah@kernel.org>,
+	"Alessandro Carminati (Red Hat)" <alessandro.carminati@gmail.com>,
+	willemb@google.com, zhuyifei@google.com, bpf@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH bpf-next] tools/testing/selftests/bpf/test_tc_tunnel.sh:
+ Fix wait for server bind
+Message-ID: <Z05NhvyagBbHs8Gq@mini-arch>
+References: <20241202204530.1143448-1-leogrande@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241128004344.4072099-1-seanjc@google.com> <20241128004344.4072099-6-seanjc@google.com>
- <6f4aabdb-5971-1d07-c581-0cd9471eff88@amd.com> <0a8cda3e-8185-0620-32f7-0696a31f4877@amd.com>
-Message-ID: <Z05NcpNLCgnL61jH@google.com>
-Subject: Re: [PATCH v4 5/6] KVM: x86: Always complete hypercall via function callback
-From: Sean Christopherson <seanjc@google.com>
-To: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Binbin Wu <binbin.wu@linux.intel.com>, Isaku Yamahata <isaku.yamahata@intel.com>, 
-	Kai Huang <kai.huang@intel.com>, Xiaoyao Li <xiaoyao.li@intel.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241202204530.1143448-1-leogrande@google.com>
 
-On Mon, Dec 02, 2024, Tom Lendacky wrote:
-> On 12/2/24 14:57, Tom Lendacky wrote:
-> > On 11/27/24 18:43, Sean Christopherson wrote:
+On 12/02, Marco Leogrande wrote:
+> Commit f803bcf9208a ("selftests/bpf: Prevent client connect before
+> server bind in test_tc_tunnel.sh") added code that waits for the
+> netcat server to start before the netcat client attempts to connect to
+> it. However, not all calls to 'server_listen' were guarded.
 > 
-> >> @@ -10071,13 +10072,15 @@ unsigned long __kvm_emulate_hypercall(struct kvm_vcpu *vcpu, unsigned long nr,
-> >>  	}
-> >>  
-> >>  out:
-> >> -	return ret;
-> >> +	vcpu->run->hypercall.ret = ret;
-> >> +	complete_hypercall(vcpu);
-> >> +	return 1;
-> > 
-> > Should this do return complete_hypercall(vcpu) so that you get the
-> > return code from kvm_skip_emulated_instruction()?
+> This patch adds the existing 'wait_for_port' guard after the remaining
+> call to 'server_listen'.
 > 
-> Bah, ignore...  already commented on by Xiaoyao.
+> Fixes: f803bcf9208a ("selftests/bpf: Prevent client connect before server bind in test_tc_tunnel.sh")
+> Signed-off-by: Marco Leogrande <leogrande@google.com>
+> ---
+>  tools/testing/selftests/bpf/test_tc_tunnel.sh | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/tools/testing/selftests/bpf/test_tc_tunnel.sh b/tools/testing/selftests/bpf/test_tc_tunnel.sh
+> index 7989ec6084545..cb55a908bb0d7 100755
+> --- a/tools/testing/selftests/bpf/test_tc_tunnel.sh
+> +++ b/tools/testing/selftests/bpf/test_tc_tunnel.sh
+> @@ -305,6 +305,7 @@ else
+>  	client_connect
+>  	verify_data
+>  	server_listen
+> +	wait_for_port ${port} ${netcat_opt}
+>  fi
+>  
+>  # serverside, use BPF for decap
+> -- 
+> 2.47.0.338.g60cca15819-goog
+> 
 
-Reviewers: 2, Sean: 0
-
-:-)
+Do you see this failing in your CI or in the BPF CI? It seems ok
+to add wait_for_port here, but the likelihood of the issue seems
+minuscule. There is a bunch of ip/tc/etc calls between this
+server_listen and the next client_connect (and I'd be surprised to hear
+that netcat is still not listening by the time we reach next
+client_connect).
 
