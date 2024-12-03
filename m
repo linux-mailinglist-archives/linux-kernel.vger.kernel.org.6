@@ -1,162 +1,132 @@
-Return-Path: <linux-kernel+bounces-428609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEBB39E1157
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 03:33:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1532E9E1159
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 03:33:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 45821B2432D
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 02:33:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CED4C28314C
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 02:33:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA4FA14F136;
-	Tue,  3 Dec 2024 02:33:01 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 930FC13AD38;
+	Tue,  3 Dec 2024 02:33:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="oPbim6ay"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D563E38DDB;
-	Tue,  3 Dec 2024 02:32:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A03FE154C0B;
+	Tue,  3 Dec 2024 02:33:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733193181; cv=none; b=cZL+9xpIfd/IesgKN1gFsayFf+Syq+jaCi6EcDyo4UtUAsl2afoqAx8y9l1Gf4ODBsdrxcInB+UjTwU0lHxkmR2SKka/OCfUWmXsnf1AxGmI6fXgaaKhcxlN3nAC1fUiP0xEiLFO20y04XRH3lDfN405c+mfiloKgQjioaS01KI=
+	t=1733193199; cv=none; b=meSCDaGPkz6S0ppNzba5XEYT8P5VgDx95a7wPUC4IyR0ibYtvRZ4I88JXG0L0gj/Wv8yuVBKSgoG2I5TXB8pQdRi1XqChGBlgMEK5wBjuymWUab33E9p/liwjvCht8g4T7PN5rG4mnFE8PTb5JQhsXHI8PLbFIh5V5kMULEKMoc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733193181; c=relaxed/simple;
-	bh=+9LVcEwIo6QDQUbVZLllWmynl+/S10V4KlESp46uoOk=;
+	s=arc-20240116; t=1733193199; c=relaxed/simple;
+	bh=9N23yqUoFWJPxouORASrI1wdXzhgpNaDXev2IiCgr+o=;
 	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=pkFLU3GqxctG0RBNwtZmLlcN+bMC8UpNC2Gvt/qa/uKGtf/V5nf01/K1cYfvrqavpkZqH3h0tGxk5oWUqkSU9yI73AFS1RYSQ2zB1PCergWSO6LXo2VIeZlQ8Q4h6XxKNU6fT7R8WQ1wJ0ZPm3jaHY7BeOXNDU/q6Y5cn+Riepg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4Y2Pkd45qsz1V5Sx;
-	Tue,  3 Dec 2024 10:30:01 +0800 (CST)
-Received: from kwepemg500017.china.huawei.com (unknown [7.202.181.81])
-	by mail.maildlp.com (Postfix) with ESMTPS id 510BD1802D0;
-	Tue,  3 Dec 2024 10:32:56 +0800 (CST)
-Received: from [10.174.179.155] (10.174.179.155) by
- kwepemg500017.china.huawei.com (7.202.181.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 3 Dec 2024 10:32:55 +0800
-Message-ID: <88a5ad9b-03c0-43e3-8297-e30cd2b5d713@huawei.com>
-Date: Tue, 3 Dec 2024 10:32:54 +0800
+	 In-Reply-To:Content-Type; b=qGd4ynDhusOsTVjG3/SQsf/i47tkZt6IeuLlX/zxAnMsxjLCZTLS87cenRKM0GSV1gx426f8Ha2AF30W+ENxLDutEI4Bp59G+lmqNSRveBHNLMRsFvtdodAwRnxY+uhMCD37URMFerkV57Qyi/sOJFm7izGPGNubMtKchDerSeA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=oPbim6ay; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B2J5nJ8004593;
+	Tue, 3 Dec 2024 02:33:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	wZd0z3ZWOH13xeJnttEEz5pZ9+IpIV6V22dj5EbFz5s=; b=oPbim6ay6uCcBTVK
+	zKk0406/zXbNEhw7TTdL7DWllMhgofbQLOIDHxFc3+2tZmhFoo4kpIB2YevmSTpg
+	rhC12uELAP4k9r9dV3zew+7GJP2KQRXxaceJm71TNPThfAn2qMWrQIycCrefkz3c
+	6XLUaixp5UcHSg3K+otzc2HtfH5Xqgscy/pa0riV8x3Ni7l6Q+pJgPmOBua8GX4R
+	ML2b5kWvzwsYLBTY+GAeZFPFZu10TzoAOrq3b3oN/yTIA7x8oQTpnVBOIXljz6Vz
+	Qv1Y0KNaaSZjKYj9Qw3gLXYkwdYOn1B9B+UEw8wJW7KRrkXA86Ija0+p9IJuw5Om
+	vkGHPQ==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 437ufe6f2q-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 03 Dec 2024 02:33:08 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B32X810012299
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 3 Dec 2024 02:33:08 GMT
+Received: from [10.134.71.247] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 2 Dec 2024
+ 18:33:07 -0800
+Message-ID: <15695281-4c14-4653-9591-774069210ae3@quicinc.com>
+Date: Mon, 2 Dec 2024 18:33:07 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: =?UTF-8?B?TW96aWxsYSBUaHVuZGVyYmlyZCDmtYvor5XniYg=?=
-Subject: Re: [bug report] deploying both NFS client and server on the same
- machine triggle hungtask
-To: Chuck Lever III <chuck.lever@oracle.com>
-CC: Dai Ngo <dai.ngo@oracle.com>, Jeff Layton <jlayton@kernel.org>, Neil Brown
-	<neilb@suse.de>, Olga Kornievskaia <okorniev@redhat.com>, Tom Talpey
-	<tom@talpey.com>, Trond Myklebust <trond.myklebust@hammerspace.com>, Linux
- NFS Mailing List <linux-nfs@vger.kernel.org>, Linux Kernel Mailing List
-	<linux-kernel@vger.kernel.org>, Yu Kuai <yukuai1@huaweicloud.com>, Hou Tao
-	<houtao1@huawei.com>, "zhangyi (F)" <yi.zhang@huawei.com>, yangerkun
-	<yangerkun@huawei.com>, "chengzhihao1@huawei.com" <chengzhihao1@huawei.com>,
-	Li Lingfeng <lilingfeng@huaweicloud.com>
-References: <887cd8f6-3e49-410c-8b36-9e617c34ca6f@huawei.com>
- <8b155d3c-62b4-4f16-ab00-e3d030148d29@huawei.com>
- <D4E120A4-D877-48CC-AE40-D55DBB6265D0@oracle.com>
-From: Li Lingfeng <lilingfeng3@huawei.com>
-In-Reply-To: <D4E120A4-D877-48CC-AE40-D55DBB6265D0@oracle.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 02/14] drm/msm/dp: fix msm_dp_utils_pack_sdp_header
+ interface
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Rob Clark
+	<robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        Marijn Suijten
+	<marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, "Simona
+ Vetter" <simona@ffwll.ch>,
+        Paloma Arellano <quic_parellan@quicinc.com>
+CC: Douglas Anderson <dianders@chromium.org>,
+        Stephen Boyd
+	<swboyd@chromium.org>, <linux-arm-msm@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <freedreno@lists.freedesktop.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20241202-fd-dp-audio-fixup-v2-0-d9187ea96dad@linaro.org>
+ <20241202-fd-dp-audio-fixup-v2-2-d9187ea96dad@linaro.org>
+Content-Language: en-US
+From: Abhinav Kumar <quic_abhinavk@quicinc.com>
+In-Reply-To: <20241202-fd-dp-audio-fixup-v2-2-d9187ea96dad@linaro.org>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemg500017.china.huawei.com (7.202.181.81)
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: NT0j4USn8r3N-piTQzmkESnBUh3tDPnr
+X-Proofpoint-GUID: NT0j4USn8r3N-piTQzmkESnBUh3tDPnr
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
+ spamscore=0 impostorscore=0 lowpriorityscore=0 priorityscore=1501
+ mlxlogscore=853 clxscore=1015 adultscore=0 bulkscore=0 mlxscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412030020
 
 
-在 2024/12/3 0:05, Chuck Lever III 写道:
->
->> On Nov 28, 2024, at 2:22 AM, Li Lingfeng <lilingfeng3@huawei.com> wrote:
->>
->> Besides nfsd_file_shrinker, the nfsd_client_shrinker added by commit
->> 7746b32f467b ("NFSD: add shrinker to reap courtesy clients on low memory
->> condition") in 2022 and the nfsd_reply_cache_shrinker added by commit
->> 3ba75830ce17 ("nfsd4: drc containerization") in 2019 may also trigger such
->> an issue.
->> Was this scenario not considered when designing the shrinkers for NFSD, or
->> was it deemed unreasonable and not worth considering?
-> I'm speculating, but it is possible that the issue was
-> introduced by another patch in an area related to the
-> rwsem. Seems like there is a testing gap in this area.
->
-> Can you file a bugzilla report on bugzilla.kernel.org <http://bugzilla.kernel.org/>
-> under Filesystems/NFSD ?
 
-Hi Chuck,
+On 12/2/2024 2:06 AM, Dmitry Baryshkov wrote:
+> The msm_dp_utils_pack_sdp_header() accepts an unlimited-size u32 pointer
+> for the header output, while it expects a two-element array. It performs
+> a sizeof check which is always true on 64-bit platforms (since
+> sizeof(u32*) is 8) and is always falce on 32-bit platforms. It returns
 
-I have uploaded the dmesg log and some information from the vmcore here:
-https://bugzilla.kernel.org/show_bug.cgi?id=219550
+falce --> false
 
-Thanks,
+> an error code which nobody actually checks.
+> 
+> Fix the function interface to accept u32[2] and return void, skipping
+> all the checks.
+> 
+> Fixes: 55fb8ffc1802 ("drm/msm/dp: add VSC SDP support for YUV420 over DP")
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+>   drivers/gpu/drm/msm/dp/dp_utils.c | 10 +---------
+>   drivers/gpu/drm/msm/dp/dp_utils.h |  2 +-
+>   2 files changed, 2 insertions(+), 10 deletions(-)
+> 
 
-Li
+Apart from that LGTM,
 
->
->> 在 2024/11/25 19:17, Li Lingfeng 写道:
->>> Hi, we have found a hungtask issue recently.
->>>
->>> Commit 7746b32f467b ("NFSD: add shrinker to reap courtesy clients on low
->>> memory condition") adds a shrinker to NFSD, which causes NFSD to try to
->>> obtain shrinker_rwsem when starting and stopping services.
->>>
->>> Deploying both NFS client and server on the same machine may lead to the
->>> following issue, since they will share the global shrinker_rwsem.
->>>
->>>      nfsd                            nfs
->>>                              drop_cache // hold shrinker_rwsem
->>>                              write back, wait for rpc_task to exit
->>> // stop nfsd threads
->>> svc_set_num_threads
->>> // clean up xprts
->>> svc_xprt_destroy_all
->>>                              rpc_check_timeout
->>>                               rpc_check_connected
->>>                               // wait for the connection to be disconnected
->>> unregister_shrinker
->>> // wait for shrinker_rwsem
->>>
->>> Normally, the client's rpc_task will exit after the server's nfsd thread
->>> has processed the request.
->>> When all the server's nfsd threads exit, the client’s rpc_task is expected
->>> to detect the network connection being disconnected and exit.
->>> However, although the server has executed svc_xprt_destroy_all before
->>> waiting for shrinker_rwsem, the network connection is not actually
->>> disconnected. Instead, the operation to close the socket is simply added
->>> to the task_works queue.
->>>
->>> svc_xprt_destroy_all
->>>   ...
->>>   svc_sock_free
->>>    sockfd_put
->>>     fput_many
->>>      init_task_work // ____fput
->>>      task_work_add // add to task->task_works
->>>
->>> The actual disconnection of the network connection will only occur after
->>> the current process finishes.
->>> do_exit
->>>   exit_task_work
->>>    task_work_run
->>>    ...
->>>     ____fput // close sock
->>>
->>> Although it is not a common practice to deploy NFS client and server on
->>> the same machine, I think this issue still needs to be addressed,
->>> otherwise it will cause all processes trying to acquire the shrinker_rwsem
->>> to hang.
->>>
->>> I don't have any ideas yet on how to solve this problem, does anyone have
->>> any suggestions?
->>>
->>> Thanks.
->>>
-> --
-> Chuck Lever
->
->
+Reviewed-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+
+No need to resend, I can fix it up while applying.
 
