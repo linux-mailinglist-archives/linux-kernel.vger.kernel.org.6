@@ -1,62 +1,35 @@
-Return-Path: <linux-kernel+bounces-429050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA4AB9E1762
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:26:36 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C71B9E16B7
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:07:57 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 70F05B37A9E
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:08:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 51C87160835
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:07:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAEF01DF736;
-	Tue,  3 Dec 2024 09:07:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="aDIyNH7w"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FC051DE3BD;
+	Tue,  3 Dec 2024 09:07:37 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D66D91D79B3;
-	Tue,  3 Dec 2024 09:07:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 035531D79B3;
+	Tue,  3 Dec 2024 09:07:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733216863; cv=none; b=UkuNKCDjQ4LD0WXnip37L/GQ82rL1802jzfoDH5TBdtFjPAjkn5vME54guoAB8k8+aZkIOtFNYwXuId4LU6gRWEjqdktQaam9zDNNs4OGnJHkf4eX4Pzfhbm3vx7zLuVwb4J2wry9roQ/5KX/Ky/7AW3imzemS7S3K6CzSGfI7c=
+	t=1733216857; cv=none; b=sbL1XIXbsVdGKW/MEWtooY+6lJX84QqeRajXQrfkvTOCily+BsSimagkM0XK1UvMfp1b1wDwqWOReLJpslqtfxccOdggotV1lqQaTymCQeUz+ONE9p2Nk8kTpXtn6Lzq7K97iTAzjpkr8vzOvNW7xZVWYVNyf85YE3V6JBTURKI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733216863; c=relaxed/simple;
-	bh=q2h16nFsJEvopVnmnKedZf+JsvoWwyryecvQef7kxJ0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=U2a78uwd1db4xxQrw0qNW/Rsx5nOqp7SnJIO1mrYsd4aCbx4ZWXFGC6uC9zCZHIFI84CZk2CFRSIwaBPVlfiksubWljB6HmyliwzxpCDudqUsCQ4uDBG1/gmSjzarK7+mqKB6jpk8g8F8LjLrjOt2Epn3YNdcjZS/l2pqmrcyrs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=aDIyNH7w; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B38fkLe021814;
-	Tue, 3 Dec 2024 09:07:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	G1muunHMO0qhemB3t3/pd4lMQXg4gXbg6foMud8uBek=; b=aDIyNH7wsDc4imd0
-	CGqT+ATgS/Om2x/pDEPUQ2AhBEIwgcx9MQsW1CsBUOYghxUTj3Z02NCb+jBMjJ7+
-	mjS1RmpYXXUC2a1NGuuJKWBis5mS0Qq2peeVTIGNP608RjMfYgBp3j75Q7raes9o
-	E3sLsyisgBBW+rOIUN7MZ58gc4G1Z4KfB8nAZh6GoNZ+WaXpmxMnVmCDfgZCE6gx
-	0Yc9TPzzGSuaC539Q0xNhnUj6y40xu9AGBAnWAn5r2N6u45HVSrB34YuuKUW6F5g
-	sMcCs7O1aIHssZnSB7HLq3tYyk6F3OtepMRwkafvTBo+RcVbyOmeo5DSl/YKlAC/
-	2j0hOw==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 437uvjyckv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 03 Dec 2024 09:07:38 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B397bM5024022
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 3 Dec 2024 09:07:37 GMT
-Received: from [10.151.41.184] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 3 Dec 2024
- 01:07:32 -0800
-Message-ID: <2abf7644-7c52-4069-9a50-559e7414e18f@quicinc.com>
-Date: Tue, 3 Dec 2024 14:37:29 +0530
+	s=arc-20240116; t=1733216857; c=relaxed/simple;
+	bh=FlC5ceALkQRM8ePGitK90A/GLW9WBPK7icrNzlP61Fo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qanB3GHs88kPW7tu8UM20EW5K5CC/kpwTK0s5FaerrKhzA9UCGZyggGjriblrLxR8VJDxINtmSFL0612gT9hCmiCX3kjdKOtHYY4Tcev89b5iZZDH9t2v8T10fdauxCVn2OGgh19Fn5B4Ec2zs8mvxDh84KR7e1EB3gHeZuRwCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D721C4CECF;
+	Tue,  3 Dec 2024 09:07:33 +0000 (UTC)
+Message-ID: <832ee6b4-8238-4ef6-b870-f541b744880b@xs4all.nl>
+Date: Tue, 3 Dec 2024 10:07:31 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,84 +37,246 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 05/22] wifi: ath12k: add ath12k_hw_regs for IPQ5332
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        <ath12k@lists.infradead.org>
-CC: <linux-wireless@vger.kernel.org>, Kalle Valo <kvalo@kernel.org>,
-        "Rob
- Herring" <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        "Conor
- Dooley" <conor+dt@kernel.org>,
-        Jeff Johnson <jjohnson@kernel.org>,
-        "Bjorn
- Andersson" <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        P Praneesh <quic_ppranees@quicinc.com>,
-        Balamurugan S <quic_bselvara@quicinc.com>
-References: <20241015182637.955753-1-quic_rajkbhag@quicinc.com>
- <20241015182637.955753-6-quic_rajkbhag@quicinc.com>
- <940da07b-1286-4b88-8384-16ca2f996d90@oss.qualcomm.com>
-Content-Language: en-US
-From: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>
-In-Reply-To: <940da07b-1286-4b88-8384-16ca2f996d90@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH v3 13/15] media: stm32: dcmipp: add core support for the
+ stm32mp25
+To: Alain Volmat <alain.volmat@foss.st.com>,
+ Hugues Fruchet <hugues.fruchet@foss.st.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-media@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <20241118-csi_dcmipp_mp25-v3-0-c1914afb0a0f@foss.st.com>
+ <20241118-csi_dcmipp_mp25-v3-13-c1914afb0a0f@foss.st.com>
+Content-Language: en-US, nl
+From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+In-Reply-To: <20241118-csi_dcmipp_mp25-v3-13-c1914afb0a0f@foss.st.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: uUGqDSzVQVFXBkHouEIG0RRlNkZTq_KY
-X-Proofpoint-ORIG-GUID: uUGqDSzVQVFXBkHouEIG0RRlNkZTq_KY
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
- suspectscore=0 mlxlogscore=999 impostorscore=0 adultscore=0 phishscore=0
- bulkscore=0 priorityscore=1501 clxscore=1015 spamscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412030078
 
-On 10/19/2024 1:28 AM, Konrad Dybcio wrote:
-> On 15.10.2024 8:26 PM, Raj Kumar Bhagat wrote:
->> From: P Praneesh <quic_ppranees@quicinc.com>
->>
->> Add register addresses (ath12k_hw_regs) for new ath12k AHB based
->> WiFi device IPQ5332.
->>
->> Tested-on: IPQ5332 hw1.0 AHB WLAN.WBE.1.3.1-00130-QCAHKSWPL_SILICONZ-1
->> Tested-on: QCN9274 hw2.0 PCI WLAN.WBE.1.1.1-00210-QCAHKSWPL_SILICONZ-1
->>
->> Signed-off-by: P Praneesh <quic_ppranees@quicinc.com>
->> Co-developed-by: Balamurugan S <quic_bselvara@quicinc.com>
->> Signed-off-by: Balamurugan S <quic_bselvara@quicinc.com>
->> Signed-off-by: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>
->> ---
+Hi Alain,
+
+On 18/11/2024 14:35, Alain Volmat wrote:
+> The stm32mp25 supports both parallel & csi inputs.
+> An additional clock control is necessary.
+> Skeleton of the subdev structures for the stm32mp25 is added,
+> identical for the time being to the stm32mp13 however more subdeves
+> will be added in further commits.
 > 
-> [...]
+> Signed-off-by: Alain Volmat <alain.volmat@foss.st.com>
+> ---
+>  .../platform/st/stm32/stm32-dcmipp/dcmipp-core.c   | 98 ++++++++++++++++++----
+>  1 file changed, 80 insertions(+), 18 deletions(-)
 > 
->> +	/* CE base address */
->> +	.hal_umac_ce0_src_reg_base = 0x00740000,
->> +	.hal_umac_ce0_dest_reg_base = 0x00741000,
->> +	.hal_umac_ce1_src_reg_base = 0x00742000,
->> +	.hal_umac_ce1_dest_reg_base = 0x00743000,
->> +};
->> +
->>  static const struct ath12k_hw_regs wcn7850_regs = {
->>  	/* SW2TCL(x) R0 ring configuration address */
->>  	.hal_tcl1_ring_id = 0x00000908,
->> @@ -1126,7 +1210,7 @@ static const struct ath12k_hw_params ath12k_hw_params[] = {
->>  		.internal_sleep_clock = false,
->>  
->>  		.hw_ops = &qcn9274_ops,
->> -		.regs = NULL,
->> +		.regs = &ipq5332_regs,
-> 
-> This makes me believe the patches should be reordered (or perhaps
-> this should be squashed with "add ath12k_hw_params for IPQ5332"?)
+> diff --git a/drivers/media/platform/st/stm32/stm32-dcmipp/dcmipp-core.c b/drivers/media/platform/st/stm32/stm32-dcmipp/dcmipp-core.c
+> index d2cc19bb40d77f67a1f5fe565bc62f45eff2d266..0087f9017f024ba6b918b99c1ef39212ad6b881a 100644
+> --- a/drivers/media/platform/st/stm32/stm32-dcmipp/dcmipp-core.c
+> +++ b/drivers/media/platform/st/stm32/stm32-dcmipp/dcmipp-core.c
+> @@ -40,6 +40,7 @@ struct dcmipp_device {
+>  
+>  	/* Hardware resources */
+>  	void __iomem			*regs;
+> +	struct clk			*mclk;
+>  	struct clk			*kclk;
+>  
+>  	/* The pipeline configuration */
+> @@ -132,6 +133,40 @@ static const struct dcmipp_pipeline_config stm32mp13_pipe_cfg = {
+>  	.hw_revision	= DCMIPP_STM32MP13_VERR
+>  };
+>  
+> +static const struct dcmipp_ent_config stm32mp25_ent_config[] = {
+> +	{
+> +		.name = "dcmipp_input",
+> +		.init = dcmipp_inp_ent_init,
+> +		.release = dcmipp_inp_ent_release,
+> +	},
+> +	{
+> +		.name = "dcmipp_dump_postproc",
+> +		.init = dcmipp_byteproc_ent_init,
+> +		.release = dcmipp_byteproc_ent_release,
+> +	},
+> +	{
+> +		.name = "dcmipp_dump_capture",
+> +		.init = dcmipp_bytecap_ent_init,
+> +		.release = dcmipp_bytecap_ent_release,
+> +	},
+> +};
+> +
+> +static const struct dcmipp_ent_link stm32mp25_ent_links[] = {
+> +	DCMIPP_ENT_LINK(ID_INPUT, 1, ID_DUMP_BYTEPROC, 0,
+> +			MEDIA_LNK_FL_ENABLED | MEDIA_LNK_FL_IMMUTABLE),
+> +	DCMIPP_ENT_LINK(ID_DUMP_BYTEPROC, 1, ID_DUMP_CAPTURE,  0,
+> +			MEDIA_LNK_FL_ENABLED | MEDIA_LNK_FL_IMMUTABLE),
+> +};
+> +
+> +#define DCMIPP_STM32MP25_VERR  0x30
+> +static const struct dcmipp_pipeline_config stm32mp25_pipe_cfg = {
+> +	.ents		= stm32mp25_ent_config,
+> +	.num_ents	= ARRAY_SIZE(stm32mp25_ent_config),
+> +	.links		= stm32mp25_ent_links,
+> +	.num_links	= ARRAY_SIZE(stm32mp25_ent_links),
+> +	.hw_revision    = DCMIPP_STM32MP25_VERR
+> +};
+> +
+>  #define LINK_FLAG_TO_STR(f) ((f) == 0 ? "" :\
+>  			     (f) == MEDIA_LNK_FL_ENABLED ? "ENABLED" :\
+>  			     (f) == MEDIA_LNK_FL_IMMUTABLE ? "IMMUTABLE" :\
+> @@ -212,6 +247,7 @@ static int dcmipp_create_subdevs(struct dcmipp_device *dcmipp)
+>  
+>  static const struct of_device_id dcmipp_of_match[] = {
+>  	{ .compatible = "st,stm32mp13-dcmipp", .data = &stm32mp13_pipe_cfg },
+> +	{ .compatible = "st,stm32mp25-dcmipp", .data = &stm32mp25_pipe_cfg },
+>  	{ /* end node */ },
+>  };
+>  MODULE_DEVICE_TABLE(of, dcmipp_of_match);
+> @@ -261,13 +297,22 @@ static int dcmipp_graph_notify_bound(struct v4l2_async_notifier *notifier,
+>  {
+>  	struct dcmipp_device *dcmipp = notifier_to_dcmipp(notifier);
+>  	unsigned int ret;
+> -	int src_pad;
+> +	int src_pad, i;
+>  	struct dcmipp_ent_device *sink;
+> -	struct v4l2_fwnode_endpoint vep = { .bus_type = V4L2_MBUS_PARALLEL };
+> +	struct v4l2_fwnode_endpoint vep = { 0 };
+>  	struct fwnode_handle *ep;
+> +	enum v4l2_mbus_type supported_types[] = {
+> +		V4L2_MBUS_PARALLEL, V4L2_MBUS_BT656, V4L2_MBUS_CSI2_DPHY
+> +	};
+> +	int supported_types_nb = ARRAY_SIZE(supported_types);
+>  
+>  	dev_dbg(dcmipp->dev, "Subdev \"%s\" bound\n", subdev->name);
+>  
+> +	/* Only MP25 supports CSI input */
+> +	if (!of_device_is_compatible(dcmipp->dev->of_node,
+> +				     "st,stm32mp25-dcmipp"))
+> +		supported_types_nb--;
+> +
+>  	/*
+>  	 * Link this sub-device to DCMIPP, it could be
+>  	 * a parallel camera sensor or a CSI-2 to parallel bridge
+> @@ -284,21 +329,23 @@ static int dcmipp_graph_notify_bound(struct v4l2_async_notifier *notifier,
+>  		return -ENODEV;
+>  	}
+>  
+> -	/* Check for parallel bus-type first, then bt656 */
+> -	ret = v4l2_fwnode_endpoint_parse(ep, &vep);
+> -	if (ret) {
+> -		vep.bus_type = V4L2_MBUS_BT656;
+> +	/* Check for supported MBUS type */
+> +	for (i = 0; i < supported_types_nb; i++) {
+> +		vep.bus_type = supported_types[i];
+>  		ret = v4l2_fwnode_endpoint_parse(ep, &vep);
+> -		if (ret) {
+> -			dev_err(dcmipp->dev, "Could not parse the endpoint\n");
+> -			fwnode_handle_put(ep);
+> -			return ret;
+> -		}
+> +		if (!ret)
+> +			break;
+>  	}
+>  
+>  	fwnode_handle_put(ep);
+>  
+> -	if (vep.bus.parallel.bus_width == 0) {
+> +	if (ret) {
+> +		dev_err(dcmipp->dev, "Could not parse the endpoint\n");
+> +		return ret;
+> +	}
+> +
+> +	if (vep.bus_type != V4L2_MBUS_CSI2_DPHY &&
+> +	    vep.bus.parallel.bus_width == 0) {
+>  		dev_err(dcmipp->dev, "Invalid parallel interface bus-width\n");
+>  		return -ENODEV;
+>  	}
+> @@ -311,11 +358,13 @@ static int dcmipp_graph_notify_bound(struct v4l2_async_notifier *notifier,
+>  		return -ENODEV;
+>  	}
+>  
+> -	/* Parallel input device detected, connect it to parallel subdev */
+> +	/* Connect input device to the dcmipp_input subdev */
+>  	sink = dcmipp->entity[ID_INPUT];
+> -	sink->bus.flags = vep.bus.parallel.flags;
+> -	sink->bus.bus_width = vep.bus.parallel.bus_width;
+> -	sink->bus.data_shift = vep.bus.parallel.data_shift;
+> +	if (vep.bus_type != V4L2_MBUS_CSI2_DPHY) {
+> +		sink->bus.flags = vep.bus.parallel.flags;
+> +		sink->bus.bus_width = vep.bus.parallel.bus_width;
+> +		sink->bus.data_shift = vep.bus.parallel.data_shift;
+> +	}
+>  	sink->bus_type = vep.bus_type;
+>  	ret = media_create_pad_link(&subdev->entity, src_pad, sink->ent, 0,
+>  				    MEDIA_LNK_FL_IMMUTABLE |
+> @@ -414,7 +463,7 @@ static int dcmipp_graph_init(struct dcmipp_device *dcmipp)
+>  static int dcmipp_probe(struct platform_device *pdev)
+>  {
+>  	struct dcmipp_device *dcmipp;
+> -	struct clk *kclk;
+> +	struct clk *kclk, *mclk;
+>  	const struct dcmipp_pipeline_config *pipe_cfg;
+>  	struct reset_control *rstc;
+>  	int irq;
+> @@ -474,12 +523,20 @@ static int dcmipp_probe(struct platform_device *pdev)
+>  		return ret;
+>  	}
+>  
+> -	kclk = devm_clk_get(&pdev->dev, NULL);
+> +	kclk = devm_clk_get(&pdev->dev, "kclk");
+>  	if (IS_ERR(kclk))
+>  		return dev_err_probe(&pdev->dev, PTR_ERR(kclk),
+>  				     "Unable to get kclk\n");
+>  	dcmipp->kclk = kclk;
+>  
+> +	if (!of_device_is_compatible(pdev->dev.of_node, "st,stm32mp13-dcmipp")) {
+> +		mclk = devm_clk_get(&pdev->dev, "mclk");
+> +		if (IS_ERR(mclk))
+> +			return dev_err_probe(&pdev->dev, PTR_ERR(mclk),
+> +					     "Unable to get mclk\n");
+> +		dcmipp->mclk = mclk;
+> +	}
+> +
+>  	dcmipp->entity = devm_kcalloc(&pdev->dev, dcmipp->pipe_cfg->num_ents,
+>  				      sizeof(*dcmipp->entity), GFP_KERNEL);
+>  	if (!dcmipp->entity)
+> @@ -542,6 +599,7 @@ static int dcmipp_runtime_suspend(struct device *dev)
+>  	struct dcmipp_device *dcmipp = dev_get_drvdata(dev);
+>  
+>  	clk_disable_unprepare(dcmipp->kclk);
+> +	clk_disable_unprepare(dcmipp->mclk);
+>  
+>  	return 0;
+>  }
+> @@ -551,6 +609,10 @@ static int dcmipp_runtime_resume(struct device *dev)
+>  	struct dcmipp_device *dcmipp = dev_get_drvdata(dev);
+>  	int ret;
+>  
+> +	ret = clk_prepare_enable(dcmipp->mclk);
+> +	if (ret)
+> +		dev_err(dev, "%s: Failed to prepare_enable mclk\n", __func__);
+> +
+
+Shouldn't this return on error?
+
+>  	ret = clk_prepare_enable(dcmipp->kclk);
+>  	if (ret)
+>  		dev_err(dev, "%s: Failed to prepare_enable kclk\n", __func__);
+
+And on error here, it should call clk_disable_unprepare for mclk.
+
 > 
 
-Sure, in next version we will squash patch[2/22] to patch[8/22] into single patch that will add the complete hardware parameters.
+This was reported by smatch:
 
+.../dcmipp-core.c:620 dcmipp_runtime_resume() warn: 'dcmipp->mclk' from clk_prepare_enable() not released on lines: 620.
+
+Everything else in this series looks good to me, so you can either post a fix for this
+and I will fold it into this 13/15 patch, or you post an updated v3.1 13/15 patch.
+Or of course a v4, if you prefer.
+
+Regards,
+
+	Hans
 
