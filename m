@@ -1,157 +1,163 @@
-Return-Path: <linux-kernel+bounces-428520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5ED7F9E0F97
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 01:22:08 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A66029E0F99
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 01:22:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0995A282B1F
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 00:22:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0D29EB2289E
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 00:22:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F1DB1FC8;
-	Tue,  3 Dec 2024 00:22:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ROuAjmzK"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B88463B9;
+	Tue,  3 Dec 2024 00:22:18 +0000 (UTC)
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE3CE10E4
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 00:22:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1BF01CABA;
+	Tue,  3 Dec 2024 00:22:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733185322; cv=none; b=tffNqks4SJmVa75wYCXkbKkU/DiRZNtveqAqLJsTb98TIdWbr0c/Gm7NdA28shiDPsvkKNV3iKrH4Q550W8m4gEMShd5NvTbu0uBUDWckYrkavPoOoJ81da8ZNvr89yCxLGwkwzO1vIAo3TkMPJegZIoczWNv+GA1U6CnxKLIF8=
+	t=1733185337; cv=none; b=Tp6YpI21OpNlXOvHAxZyXcUH2pOMr+AdXxwHM3zcVEDtt9TfjeqJ9T3D+/GgtA8Jg8Z9D3aZgzprgCeUYHabxveeNASkI2QLwxDOEhmbamM+9CfEAOdFkdBjFEVmcgRK0PvXLsgk7FOtl+DmA+JhDVfFZ3yxGdZMYl4MuMVlFEc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733185322; c=relaxed/simple;
-	bh=ZIqiEe4aHXKyut8yu0lcCiIS/JPzdSENYOxr/6qGggk=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=OtTTaH0/Sp0sPHVQvnW03qmcP00tO7iiMIUwQoM21A0W5GBW2jOr5tpfXpzQg3UQmU9n6RUc29a72Zk82t/rZulV0WmHrdSOanPX6s/wo1nYhnfdMI+cTvea8kZ9L8Qn4GPLluxgp6IFkYw9kbStH/26EcQvKl0YqhCQLtUXOsg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ROuAjmzK; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733185320; x=1764721320;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=ZIqiEe4aHXKyut8yu0lcCiIS/JPzdSENYOxr/6qGggk=;
-  b=ROuAjmzK3oeihlKUH4Bd4ITeecQ7p+FxDsSlrnfDDF1t0libkDJX7BIN
-   as5Ip/M/UQaEMKRLYqYNqDSCEavAGW4CXX9pw8ssrSX6c2x5KZfzCJMC8
-   tpIsNwKCntmEz/YNt574Jdb0Nrwaql0n9eNtRRWptIjXOvhEFrVd0TaQB
-   2aV3mKDDOAfYHYNHOAhUq5Se15JprdhrR4OHk595ggHH9nuCp/2TUfW6e
-   g/cwiTrLiB7gLTO9/agU/uasUsRJnu88eE1/q3iTvDXw+3kvcs5m6bp0O
-   T6e12xac6wGF2VrdFTRQBx0ptm7F9AwQD0oWj/mdhCQxpcDkoMLGvOX1o
-   g==;
-X-CSE-ConnectionGUID: 20vUbHiHQcGrlm4/RjaJNQ==
-X-CSE-MsgGUID: x5BAs3Q0TQy0ZFTLr+sGDg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11274"; a="33514246"
-X-IronPort-AV: E=Sophos;i="6.12,203,1728975600"; 
-   d="scan'208";a="33514246"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Dec 2024 16:22:00 -0800
-X-CSE-ConnectionGUID: MOrpJsuvShqhG2se4296NQ==
-X-CSE-MsgGUID: wA8EyWWgSlKXQ7gQe0b6FQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,203,1728975600"; 
-   d="scan'208";a="93671351"
-Received: from lkp-server02.sh.intel.com (HELO 36a1563c48ff) ([10.239.97.151])
-  by orviesa007.jf.intel.com with ESMTP; 02 Dec 2024 16:21:57 -0800
-Received: from kbuild by 36a1563c48ff with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tIGfq-000349-1B;
-	Tue, 03 Dec 2024 00:21:54 +0000
-Date: Tue, 3 Dec 2024 08:21:15 +0800
-From: kernel test robot <lkp@intel.com>
-To: Andrii Nakryiko <andrii@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Alexei Starovoitov <ast@kernel.org>
-Subject: versioncheck: ./tools/lib/bpf/bpf_helpers.h: 146: need
- linux/version.h
-Message-ID: <202412030848.SurLnYqd-lkp@intel.com>
+	s=arc-20240116; t=1733185337; c=relaxed/simple;
+	bh=FEdYhWbX1ktjJWhrNGE95iYZxN2flC9/9+OY5Qrf82g=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=syMmr1Gl95pNNS8OzGi5agh58mRhFxTB7INW02G3t6dz+tZRD/oe++Jd0sE97ayJUrBLTR6NGbBXKm6dKnOYGDv+agz32kJ7h3Z8jvcJ9EWkmlzpyVHunWdgNalqAATntbHQNaRLiSw+sITeXy4UQuF0YHOlMbLF87BnQrUrJ0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-aa52bb7beceso563634466b.3;
+        Mon, 02 Dec 2024 16:22:15 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733185334; x=1733790134;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rTJLHISN93NueCES22Bj6/yLdEvLjYu4oKh8KeAHgvg=;
+        b=eIU2ROn2/YLdljNklyw6vDl+Huy8UH810UsitwvaH5HWOR2XiMbvT8irXlautN+QvM
+         +keI4Wvkf5vfBSZb9TbudnwFcAyUPRo7enNpbA9hbiKkxBgl9UMm2YdHD/xV8DUvq+y5
+         PzP65AI0+6BQ3pLBUmK5ySZp+36aNwekJqz34XmugvpOoSnLjxgzIfiotaue8aEe0D5x
+         aCw9CnXkvVfcPO/3CttiUPXloOn0vpi3R2WK3VwW45UoBEYq/1fWsK8qalezglOkalCf
+         mHFo4jzL44IlwfYFgZ/VTRrNsywbbizg2eJYO7AHAVASzknYPKaR0J5VRSS9dArB7oFr
+         iPeA==
+X-Forwarded-Encrypted: i=1; AJvYcCWEfGSLkZjCY6nULuYzu0RNxtrVBlW2kOKoz4m/7V8PtQ24T+MV0OPbU72rszZFg8qDSMpj5ZuBKqWpvJw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9Wrlh+Jn9vhJyYuwwGeZs+6YNpl/sMaR7y/JVUH9l+IQLHjs2
+	O5Qi4gjOy+FHGxrZsBgYKNd0Tt8iUA5XH5XVff8DgdIrxHv1N1tG
+X-Gm-Gg: ASbGncu2PBKGB7qNC61nxi88ht5Ca77aWgNQI8I0Y8f3U3L9K4iST+I79wwt+r1o22c
+	of0fYOZaXjO2Oa5EUroF75Q1rYEl95rq5hp9ExTHC+B01gJCpUxkzTWVdhsV1vfunWgWFEBgAkU
+	K8Wmjp3OKjtIkgP8aZPat1MXtqD+Q7JaIAdNwmWxwhUXUuKaYzeBQDpfFuw9L/WuuMEp1JCDx0l
+	z6Q7ZlRjyIC0swc3nGJY+oIyTmSrnUpsB537oTOPNQ/X715fOE1McThdm3spO+VAO+CXPamv3iD
+	Dd0=
+X-Google-Smtp-Source: AGHT+IEUOk/iyWhfLGsKgCCArT7N7iLJqFlfsKupNomnbTW0lCJ0xs7C039Zt4bnP5GtGYREEtAbmg==
+X-Received: by 2002:a17:906:cc1:b0:aa4:ecf6:baa2 with SMTP id a640c23a62f3a-aa5f7eefb7bmr13378766b.46.1733185334149;
+        Mon, 02 Dec 2024 16:22:14 -0800 (PST)
+Received: from localhost (fwdproxy-lla-116.fbsv.net. [2a03:2880:30ff:74::face:b00c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa5996dfc2fsm557686666b.70.2024.12.02.16.22.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Dec 2024 16:22:13 -0800 (PST)
+From: Breno Leitao <leitao@debian.org>
+Date: Mon, 02 Dec 2024 16:22:05 -0800
+Subject: [PATCH RESEND net-next v2] netpoll: Use rtnl_dereference() for
+ npinfo pointer access
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241202-netpoll_rcu_herbet_fix-v2-1-2b9d58edc76a@debian.org>
+X-B4-Tracking: v=1; b=H4sIAC1PTmcC/4XNPQ+CMBSF4b/S3JkabsEPmBx0ddDRGNLSW2hCC
+ imVYAz/3dhJB+N6cvK8TxjJWxqhZE/wNNnR9g5KJhIGdStdQ9xqKBmIVOSIArmjMPRdV/n6XrX
+ kFYXK2JlnJpV5lqntbpNCwmDwZOwc4Sucj5fj6fCeHQXuaA5wSxi0dgy9f8T2hPH5LzMhR56vt
+ /XaEBXa6L0mZaVb9b6J5iQ+HfHTERx5kckcjVYKC/nlLMvyAgXnZ6gZAQAA
+X-Change-ID: 20241121-netpoll_rcu_herbet_fix-3f0a433b7860
+To: "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+ Michal Kubiak <michal.kubiak@intel.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Herbert Xu <herbert@gondor.apana.org.au>, Breno Leitao <leitao@debian.org>, 
+ Jacob Keller <jacob.e.keller@intel.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2208; i=leitao@debian.org;
+ h=from:subject:message-id; bh=FEdYhWbX1ktjJWhrNGE95iYZxN2flC9/9+OY5Qrf82g=;
+ b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBnTk8zg7hQ1TyVCiuRFBp3PuGYL44zHBZh7D7+l
+ uszw3c4zS6JAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCZ05PMwAKCRA1o5Of/Hh3
+ bdmOD/9RU3N6dMhPag/GSsOnHh0tIB90KoRteud0xwql81uqorDc7cYUPEyUa7WMYZkkJCSarvl
+ aQeI8fPzTc30YZVu8j7LrGDyYNp2/lmjQ1l2HJHAIHuL+SyY6lmbF5qdx1ubqjivR4insLkjpmL
+ NZdAKd49aO1kBJWJ53wPrqt1vxJ0DzBPq2Pf+tU43fvz9/fZ+DvNXu9wcveR+vOH18GFW3a4NYI
+ q0tb9EtS9zHCv5fdS0XtdyvQdYT5+mbUjk1MXz52ZPRJMxT0NfRNtxQJo7i1EK+pK4013yNXmTE
+ S5k/rkHQgvqW2iVgwy2E6poY1uKb1wsrnbaan0Dc/zI570rQYSgTVUZGyVpcEZhsfD4lQPTFXsc
+ 199YC4OgWl9a3oDwPwKWYbw1e0ymTfVqbTRp2yo+e9BIpqW1tfiIqINT2ZFsDZumfG/0XADEV7P
+ 4Csy42WK7oBSpVDYk9FavTbzDHNOydfouZxQOVlLkP4Rv23eSD+99OM1Dx56Bs4hbpge8MqVlz6
+ C2L/KaqApjnUsEQp/aFXkptQzCE/IEko0NJSB9VGjrQE0exPjKz80gVzza02OJ0V76ENdn/bIyr
+ e4QTb752yIU/V7caOHRKTKgBrNg0PlU7MbliAi1ZECIvEM3hMoyWlxL5tDkAcZAvsDxjtYq51ts
+ Ha5zzcUePAWdHJQ==
+X-Developer-Key: i=leitao@debian.org; a=openpgp;
+ fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   cdd30ebb1b9f36159d66f088b61aee264e649d7a
-commit: 9ae2c26e43248b722e79fe867be38062c9dd1e5f libbpf: provide NULL and KERNEL_VERSION macros in bpf_helpers.h
-date:   3 years, 9 months ago
-reproduce: (https://download.01.org/0day-ci/archive/20241203/202412030848.SurLnYqd-lkp@intel.com/reproduce)
+In the __netpoll_setup() function, when accessing the device's npinfo
+pointer, replace rcu_access_pointer() with rtnl_dereference(). This
+change is more appropriate, as suggested by Herbert Xu[1].
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202412030848.SurLnYqd-lkp@intel.com/
+The function is called with the RTNL mutex held, and the pointer is
+being dereferenced later, so, dereference earlier and just reuse the
+pointer for the if/else.
 
-versioncheck warnings: (new ones prefixed by >>)
-   INFO PATH=/opt/cross/clang/bin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-   /usr/bin/timeout -k 100 3h /usr/bin/make KCFLAGS= -Wtautological-compare -Wno-error=return-type -Wreturn-type -Wcast-function-type -funsigned-char -Wundef -Wformat-overflow -Wformat-truncation -Wrestrict -Wenum-conversion W=1 --keep-going HOSTCC=gcc-12 CC=gcc-12 -j32 ARCH=x86_64 versioncheck
-   find ./* \( -name SCCS -o -name BitKeeper -o -name .svn -o -name CVS -o -name .pc -o -name .hg -o -name .git \) -prune -o \
-   	-name '*.[hcS]' -type f -print | sort \
-   	| xargs perl -w ./scripts/checkversion.pl
-   ./arch/csky/include/asm/io.h: 8 linux/version.h not needed.
-   ./arch/csky/include/asm/uaccess.h: 14 linux/version.h not needed.
-   ./arch/csky/kernel/process.c: 5 linux/version.h not needed.
-   ./arch/csky/mm/dma-mapping.c: 12 linux/version.h not needed.
-   ./arch/s390/include/asm/setup.h: 177: need linux/version.h
-   ./arch/um/drivers/vector_kern.c: 11 linux/version.h not needed.
-   ./arch/x86/hyperv/hv_proc.c: 3 linux/version.h not needed.
-   ./drivers/crypto/cavium/cpt/cptpf_main.c: 13 linux/version.h not needed.
-   ./drivers/crypto/cavium/zip/common.h: 59 linux/version.h not needed.
-   ./drivers/gpu/drm/pl111/pl111_display.c: 14 linux/version.h not needed.
-   ./drivers/gpu/drm/pl111/pl111_drv.c: 47 linux/version.h not needed.
-   ./drivers/hv/hv.c: 16 linux/version.h not needed.
-   ./drivers/i2c/busses/i2c-brcmstb.c: 25 linux/version.h not needed.
-   ./drivers/i2c/busses/i2c-xgene-slimpro.c: 22 linux/version.h not needed.
-   ./drivers/media/pci/cx25821/cx25821.h: 31 linux/version.h not needed.
-   ./drivers/media/platform/s3c-camif/camif-core.c: 26 linux/version.h not needed.
-   ./drivers/media/platform/sti/c8sectpfe/c8sectpfe-common.h: 16 linux/version.h not needed.
-   ./drivers/media/platform/sti/c8sectpfe/c8sectpfe-core.c: 31 linux/version.h not needed.
-   ./drivers/media/platform/sti/c8sectpfe/c8sectpfe-dvb.c: 14 linux/version.h not needed.
-   ./drivers/media/usb/uvc/uvc_driver.c: 19 linux/version.h not needed.
-   ./drivers/net/ethernet/broadcom/genet/bcmgenet_wol.c: 21 linux/version.h not needed.
-   ./drivers/net/ethernet/mellanox/mlx5/core/main.c: 53 linux/version.h not needed.
-   ./drivers/net/ethernet/qlogic/qede/qede.h: 10 linux/version.h not needed.
-   ./drivers/net/ethernet/qlogic/qede/qede_ethtool.c: 7 linux/version.h not needed.
-   ./drivers/net/ethernet/qlogic/qede/qede_main.c: 10 linux/version.h not needed.
-   ./drivers/net/usb/lan78xx.c: 5 linux/version.h not needed.
-   ./drivers/net/wireless/rsi/rsi_91x_ps.c: 19 linux/version.h not needed.
-   ./drivers/scsi/cxgbi/libcxgbi.h: 27 linux/version.h not needed.
-   ./drivers/scsi/qedf/qedf.h: 14 linux/version.h not needed.
-   ./drivers/scsi/qedf/qedf_dbg.h: 13 linux/version.h not needed.
-   ./drivers/scsi/qedi/qedi_dbg.h: 14 linux/version.h not needed.
-   ./drivers/soc/tegra/powergate-bpmp.c: 10 linux/version.h not needed.
-   ./drivers/staging/media/atomisp/include/linux/atomisp.h: 23 linux/version.h not needed.
-   ./drivers/staging/rtl8723bs/include/drv_types.h: 17 linux/version.h not needed.
-   ./drivers/staging/rtl8723bs/include/ioctl_cfg80211.h: 10 linux/version.h not needed.
-   ./drivers/usb/core/hcd.c: 14 linux/version.h not needed.
-   ./drivers/usb/gadget/udc/aspeed-vhub/hub.c: 33 linux/version.h not needed.
-   ./include/linux/qed/qed_ll2_if.h: 15 linux/version.h not needed.
-   ./include/linux/usb/composite.h: 39 linux/version.h not needed.
-   ./init/version.c: 16 linux/version.h not needed.
-   ./kernel/sys.c: 42 linux/version.h not needed.
-   ./samples/bpf/sampleip_kern.c: 7 linux/version.h not needed.
-   ./samples/bpf/trace_event_kern.c: 8 linux/version.h not needed.
-   ./sound/soc/codecs/cs35l35.c: 12 linux/version.h not needed.
-   ./sound/soc/codecs/cs42l42.c: 14 linux/version.h not needed.
->> ./tools/lib/bpf/bpf_helpers.h: 146: need linux/version.h
-   ./tools/perf/include/bpf/bpf.h: 70: need linux/version.h
-   ./tools/perf/tests/bpf-script-example.c: 49: need linux/version.h
-   ./tools/perf/tests/bpf-script-test-kbuild.c: 21: need linux/version.h
-   ./tools/perf/tests/bpf-script-test-prologue.c: 47: need linux/version.h
-   ./tools/perf/tests/bpf-script-test-relocation.c: 51: need linux/version.h
-   ./tools/testing/selftests/bpf/progs/test_map_lock.c: 4 linux/version.h not needed.
-   ./tools/testing/selftests/bpf/progs/test_send_signal_kern.c: 4 linux/version.h not needed.
-   ./tools/testing/selftests/bpf/progs/test_spin_lock.c: 4 linux/version.h not needed.
-   ./tools/testing/selftests/bpf/progs/test_tcp_estats.c: 37 linux/version.h not needed.
-   ./tools/testing/selftests/wireguard/qemu/init.c: 25 linux/version.h not needed.
+The replacement ensures correct pointer access while maintaining
+the existing locking and RCU semantics of the netpoll subsystem.
 
+Link: https://lore.kernel.org/lkml/Zz1cKZYt1e7elibV@gondor.apana.org.au/ [1]
+Suggested-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Breno Leitao <leitao@debian.org>
+Reviewed-by: Jacob Keller <jacob.e.keller@intel.com>
+Acked-by: Herbert Xu <herbert@gondor.apana.org.au>
+---
+v2 RESEND:
+- Resending the same v2, since I sent it when the net-next was closed.  :-P
+- Link to v2: https://lore.kernel.org/r/20241122-netpoll_rcu_herbet_fix-v2-1-93a41fdbb19a@debian.org
+
+Changes in v2:
+- Targeting net-next instead of net
+- Added the Acked-by and Reviewed-by
+- Added the link in the commit summary
+- Link to v1: https://lore.kernel.org/r/20241121-netpoll_rcu_herbet_fix-v1-1-457c5fee9dfd@debian.org
+---
+ net/core/netpoll.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/net/core/netpoll.c b/net/core/netpoll.c
+index 2e459b9d88eb52b7c5e4710bf3f7740045d9314b..99e5aa9cc992f429eecf20aeadd04dc293b8f22b 100644
+--- a/net/core/netpoll.c
++++ b/net/core/netpoll.c
+@@ -634,7 +634,8 @@ int __netpoll_setup(struct netpoll *np, struct net_device *ndev)
+ 		goto out;
+ 	}
+ 
+-	if (!rcu_access_pointer(ndev->npinfo)) {
++	npinfo = rtnl_dereference(ndev->npinfo);
++	if (!npinfo) {
+ 		npinfo = kmalloc(sizeof(*npinfo), GFP_KERNEL);
+ 		if (!npinfo) {
+ 			err = -ENOMEM;
+@@ -654,7 +655,6 @@ int __netpoll_setup(struct netpoll *np, struct net_device *ndev)
+ 				goto free_npinfo;
+ 		}
+ 	} else {
+-		npinfo = rtnl_dereference(ndev->npinfo);
+ 		refcount_inc(&npinfo->refcnt);
+ 	}
+ 
+
+---
+base-commit: 65ae975e97d5aab3ee9dc5ec701b12090572ed43
+change-id: 20241121-netpoll_rcu_herbet_fix-3f0a433b7860
+
+Best regards,
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Breno Leitao <leitao@debian.org>
+
 
