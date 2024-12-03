@@ -1,94 +1,170 @@
-Return-Path: <linux-kernel+bounces-429114-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79DC19E1792
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:30:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DE699E179E
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:32:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D94716570F
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:30:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 59D751639CD
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:32:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B295A1DFE0D;
-	Tue,  3 Dec 2024 09:28:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0047E1DF73E;
+	Tue,  3 Dec 2024 09:31:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HUOiOw+F"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=coelacanthus.name header.i=@coelacanthus.name header.b="RNJplb1y";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ep3/xxhN"
+Received: from flow-b2-smtp.messagingengine.com (flow-b2-smtp.messagingengine.com [202.12.124.137])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17294192583;
-	Tue,  3 Dec 2024 09:28:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA2691DEFEA;
+	Tue,  3 Dec 2024 09:30:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.137
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733218130; cv=none; b=U7b+xH/e8BhgY/rdTxcDdmPbF1UTtNo7k3zsn3yybG6bJp9MPN18ERSVFnpBWE0uaLMz1ggHUyhsUw/gpPEA1ANM0ofmPtWkKz7ctV70UrO9MPVeq+ygXEbpuU+81LGrL5O2TSzdtse8iwJ2jkLGzk7GR3Onsg5E1f5pQmRsRRY=
+	t=1733218262; cv=none; b=VvuVCeSpNMYMxGAdyVPhu985CF9KTCFzeJuyjgulVxMgNAlCV00O4cKM4dNkeJByC6azNdmcqi7et9JS9zOGz9O1p5U63pstlxTLzjqJEAVfgevdy55oOSgGyWO5wlz7y72W36hAWWWLnU5j6tg4wzSHkM7dAK9V1QgCK2BwLis=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733218130; c=relaxed/simple;
-	bh=hSUTZ+7c2lAqNzwNB66gSvhu3iCfehKaHKcTiRiETzU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=V9VjJOxVfljyj3GD10xCEEj/1rV2YqvxHkSQ66857j09G3FGyXFq4QSvfInNHJM9Y99qBPqPi6oi+Xq0Xh907/Ah0CUhL3zYSskUydCAfhyS3UpZilpPVlz2Fr8POt67aQk3HoSRrSgsjma9ZlZVDmGwKrUYqsJ71F0cH3lncOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HUOiOw+F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13C73C4CED6;
-	Tue,  3 Dec 2024 09:28:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733218129;
-	bh=hSUTZ+7c2lAqNzwNB66gSvhu3iCfehKaHKcTiRiETzU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=HUOiOw+FRrSqH2cWn+B4dS2L9ciiGipo1T86uNLmYArskZUCCZ1yUGs9xtRxOD2my
-	 4nhl/xNKbV6mAQi4qWOE+DUUv+sPgL3OXP/MRwcAVmVxz7M0pD//JGCR/wmCjp4tml
-	 XPVBfvSIxObsgbwamW7Shy9ErAJ7LmMGDdspklAQfTypUIPDSpTedrtm1GFN8au6+D
-	 0wOI+myWFcKwcdGOHeDT/QcYnl7C0GspUzjj+/lsB6uS0LVKo5yhl1W94Ceb3foS3D
-	 X3RLSqIvIboZJXGX1gKQWQ+E0Ev80BGJ/rPEwPhRCXhYtVIa2bU1WMNAHqfVJ7GqC4
-	 cqzn9S0MpzNpQ==
-Date: Tue, 3 Dec 2024 10:28:46 +0100
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Sakari Ailus <sakari.ailus@iki.fi>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 3/3] docs: media: profile: make it clearer about
- maintainership duties
-Message-ID: <20241203102846.6fb3ab52@foz.lan>
-In-Reply-To: <Z03I1R0aRylSz742@valkosipuli.retiisi.eu>
-References: <cover.1733131405.git.mchehab+huawei@kernel.org>
-	<f47082a84e0c799dd047525d4bc351eb3a759e83.1733131405.git.mchehab+huawei@kernel.org>
-	<Z03I1R0aRylSz742@valkosipuli.retiisi.eu>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1733218262; c=relaxed/simple;
+	bh=v3UR4n3upO1L3GtOj7I7EX/ml6xx42eddSbkQxGVPzA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=jucJts6YI07jWrUOLLdnL24TkjZFYtQR3iI/mvX/QGfAMuzjmV7Znx8GRcsknWMII3gNs+9DeuoKSwtHLiRXkS6HFDUDIbOn2dEh125N7pJSDliJmYRRnfnHLCBelPXhXLJJVJZWPMOxZ1/3p0/Osco98wV6D8rB8J/WTkHMdYQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=coelacanthus.name; spf=pass smtp.mailfrom=coelacanthus.name; dkim=pass (2048-bit key) header.d=coelacanthus.name header.i=@coelacanthus.name header.b=RNJplb1y; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ep3/xxhN; arc=none smtp.client-ip=202.12.124.137
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=coelacanthus.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=coelacanthus.name
+Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
+	by mailflow.stl.internal (Postfix) with ESMTP id 18D5D1D40988;
+	Tue,  3 Dec 2024 04:30:57 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-04.internal (MEProxy); Tue, 03 Dec 2024 04:30:57 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	coelacanthus.name; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:from:from:in-reply-to
+	:message-id:mime-version:reply-to:subject:subject:to:to; s=fm2;
+	 t=1733218256; x=1733221856; bh=9Whz9OzImmI197gBlbvEhE00BE9mdgVf
+	ySVnOACTR9Y=; b=RNJplb1yrN00f7zdFJdcu6N7y5hK1UMRnFRIDc4o6KCa4+De
+	ORA2IlbnFsh7hdJRe3sFZRhKsdNYK0MNGJFsxumrcH3SE3XbqiVxannw8oZnL0c/
+	WHviJmqp7NY82KIdRTJ3mqeqtmdXUmsbvQvQx9RjNeQa9oBPg4XHU/V7OiIPSg8H
+	DAfdYqL+mxVovbI+6ey0r1YTWN68weWPbpCcJzQ2JGRw6s/PY2NdVOJb3fipkg9o
+	7jRPs0GlHN6VvOjddBgoEsnf1pG58asUhLX0xZqQh2roThopvhFGA38Gy3eB+li0
+	zgCsdlirWllX/N3UvsYnz9IynuGK5SmC3KeiJA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
+	:subject:to:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm1; t=1733218256; x=1733221856; bh=9Whz9OzImmI197gBlbvEhE00BE9m
+	dgVfySVnOACTR9Y=; b=ep3/xxhN56CEHoJQrzbZHejN1asBPwqo7/vdAJjsxVRv
+	xFpCJBpkaYWoz69zOkIRVLQ210jLUh9Gsyo/lsPDaWgD7HrM7U36B+kYKv/+0qmP
+	sinTW5YCqO8Z8kuohlWdYzob9fqazOKhlvbqoTuD9FLemzdvhUB6TCeVTmMTKC2j
+	EYFViZFZ0D83aheL/4b7giDv6A/inHSGdbztRBPbO1Hwa0iY+zmkoBZzI6eTZ6Fi
+	6gIGip7jV4/B0hjelDhAq+bV8wS0EVhlWiTcUgq9t0fym5vcqJfoN/cuKM/nR8O5
+	37ujKRya7M/LsrIcr6AfQ3foVBjJEEShJMpNbJvf8A==
+X-ME-Sender: <xms:zc9OZ90xpeteE_hY16-W3ByxLs9wco_EGSUkaSV8I3YIJKZim75P9w>
+    <xme:zc9OZ0Hl1KV3lBxqwY9PqVUYfHdgyqn7kMYlaZFM40N3h46H9uyT7X0-4nwRv32SG
+    2T2gz613wZL5dwDEiw>
+X-ME-Received: <xmr:zc9OZ95a6o7_TcMJPg8mo5D4Yt1YJbO0Rx5XIudTYudBxBsOkZRXWa2u3RMOCw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddriedvgddthecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
+    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
+    hsucdlqddutddtmdenucfjughrpefhufffkfggtgfgvfevofesthejredtredtjeenucfh
+    rhhomhepvegvlhgvshhtvgcunfhiuhcuoehufihusegtohgvlhgrtggrnhhthhhushdrnh
+    grmhgvqeenucggtffrrghtthgvrhhnpeduveelffdvkeekkedvgeeugfdutdekteeuudfh
+    leffhffhffeihfetjefhleehueenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuve
+    hluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepuhifuhestgho
+    vghlrggtrghnthhhuhhsrdhnrghmvgdpnhgspghrtghpthhtohepvdejpdhmohguvgepsh
+    hmthhpohhuthdprhgtphhtthhopehufihusegtohgvlhgrtggrnhhthhhushdrnhgrmhgv
+    pdhrtghpthhtohepshhtrggslhgvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpth
+    htohepshhhuhgrhheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepphgruhhlrdifrghl
+    mhhslhgvhiesshhifhhivhgvrdgtohhmpdhrtghpthhtohepghhuohhrvghnsehkvghrnh
+    gvlhdrohhrghdprhgtphhtthhopehkvggvsheskhgvrhhnvghlrdhorhhgpdhrtghpthht
+    ohepiihihigrohesughishhrohhothdrohhrghdprhgtphhtthhopehlihhnuhigqdhksh
+    gvlhhfthgvshhtsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhguvhes
+    shhtrhgrtggvrdhioh
+X-ME-Proxy: <xmx:zc9OZ62Q9_RVpr9UReo8VK9HZLHaSnOWWl5lXLbg2bniUpu9OCwjog>
+    <xmx:zc9OZwHMI1vHVnWtFO5ACJjizWuM9d_z5UxXdmF7ug0mcDoBc_dQBQ>
+    <xmx:zc9OZ79eWWeaKPnQDQzr34y_Op-wE6uAvbAnWqc8S_vu3xpFqGa3qw>
+    <xmx:zc9OZ9mC3rhFgNhp0oLV_JAUEcnGq0GwFNemt54juzHUulkN480rew>
+    <xmx:0M9OZwUEnubuc9QGHm8_txPbk40pvTI1l3D5IixhIfiMpCosaBwOVzOU>
+Feedback-ID: i95c648bc:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 3 Dec 2024 04:30:52 -0500 (EST)
+From: Celeste Liu <uwu@coelacanthus.name>
+Subject: [PATCH v2 0/2] riscv/ptrace: add new regset to access original a0
+ register
+Date: Tue, 03 Dec 2024 17:30:03 +0800
+Message-Id: <20241203-riscv-new-regset-v2-0-d37da8c0cba6@coelacanthus.name>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJvPTmcC/32NQQ6CMBBFr0Jm7RhaJYIr72FYlOkIk2ghHawaw
+ t2tHMDle8l/fwHlKKxwLhaInERlDBnsrgAaXOgZxWcGW9qjsaXBKEoJA78wcq88o69s0zWVdb7
+ 0kGdT5Ju8t+S1zTyIzmP8bA/J/OyfWDJokOoDVbXriE7dhUa+O3JhHp66D+7B0K7r+gVGqTKju
+ AAAAA==
+X-Change-ID: 20241201-riscv-new-regset-d529b952ad0d
+To: Oleg Nesterov <oleg@redhat.com>, 
+ Paul Walmsley <paul.walmsley@sifive.com>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+ Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>, 
+ Shuah Khan <shuah@kernel.org>
+Cc: Alexandre Ghiti <alex@ghiti.fr>, "Dmitry V. Levin" <ldv@strace.io>, 
+ Andrea Bolognani <abologna@redhat.com>, 
+ =?utf-8?q?Bj=C3=B6rn_T=C3=B6pel?= <bjorn@kernel.org>, 
+ Thomas Gleixner <tglx@linutronix.de>, Ron Economos <re@w6rz.net>, 
+ Charlie Jenkins <charlie@rivosinc.com>, Quan Zhou <zhouquan@iscas.ac.cn>, 
+ Felix Yan <felixonmars@archlinux.org>, Ruizhe Pan <c141028@gmail.com>, 
+ Shiqi Zhang <shiqi@isrc.iscas.ac.cn>, Guo Ren <guoren@kernel.org>, 
+ Yao Zi <ziyao@disroot.org>, Han Gao <gaohan@iscas.ac.cn>, 
+ linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ linux-mm@kvack.org, stable@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+ Celeste Liu <uwu@coelacanthus.name>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1306; i=uwu@coelacanthus.name;
+ h=from:subject:message-id; bh=v3UR4n3upO1L3GtOj7I7EX/ml6xx42eddSbkQxGVPzA=;
+ b=owJ4nJvAy8zAJeafov85RWVtBeNptSSGdL/zR1nEExOVj0Udc7NZ5BrYLlLjpzZj4c9vS5aL8
+ CVtijVnm9tRysIgxsUgK6bIklfC8pPz0tnuvR3bu2DmsDKBDGHg4hSAiSSIMvz3nbjSK/59vqDt
+ hI11mxh7W2f3MOr1rPQN5Hv9YYLhv9p6hv9OIfuPB6UvXO9h3JgQERqzOq7qhWqKfPzcnctKbxr
+ 0dbEDAJu6Rqg=
+X-Developer-Key: i=uwu@coelacanthus.name; a=openpgp;
+ fpr=892EBC7DC392DFF9C9C03F1D15F4180E73787863
 
-Em Mon, 2 Dec 2024 14:48:53 +0000
-Sakari Ailus <sakari.ailus@iki.fi> escreveu:
+The orig_a0 is missing in struct user_regs_struct of riscv, and there is
+no way to add it without breaking UAPI. (See Link tag below)
 
-> Hi Mauro,
-> 
-> On Mon, Dec 02, 2024 at 10:26:21AM +0100, Mauro Carvalho Chehab wrote:
-> > During the review of the media committes profile, it was noticed  
-> 
-> s/committe\K/r/
+Like NT_ARM_SYSTEM_CALL do, we add a new regset name NT_RISCV_ORIG_A0 to
+access original a0 register from userspace via ptrace API.
 
-Addressed this and the other editorial changes.
+Link: https://lore.kernel.org/all/59505464-c84a-403d-972f-d4b2055eeaac@gmail.com/
 
-> Can we expect people listed as maintainers to either send PRs or be media
-> committers? I think this might be eventually the result but I think we're
-> quite far from this currently and I expect things to remain that way in the
-> near future.
+Signed-off-by: Celeste Liu <uwu@coelacanthus.name>
+---
+Changes in v2:
+- Fix integer width.
+- Add selftest.
+- Link to v1: https://lore.kernel.org/r/20241201-riscv-new-regset-v1-1-c83c58abcc7b@coelacanthus.name
 
-Yes, having driver maintainers being committers and sending PRs is what we
-expect to happen first.
+---
+Celeste Liu (1):
+      riscv/ptrace: add new regset to access original a0 register
 
-For mid/long-term, once driver maintainers get in board, we may also have
-other committers for the drivers whose maintainer is also a committer.
+Charlie Jenkins (1):
+      riscv: selftests: Add a ptrace test to verify syscall parameter modification
 
-Now, having committers for drivers whose maintainer is not a committer
-doesn't sound a good idea, except if such committer is doing just
-janitorial work and gets A-B/R-B from the driver maintainer on all
-patches he merges.
+ arch/riscv/kernel/ptrace.c                   |  32 +++++++
+ include/uapi/linux/elf.h                     |   1 +
+ tools/testing/selftests/riscv/abi/.gitignore |   1 +
+ tools/testing/selftests/riscv/abi/Makefile   |   5 +-
+ tools/testing/selftests/riscv/abi/ptrace.c   | 134 +++++++++++++++++++++++++++
+ 5 files changed, 172 insertions(+), 1 deletion(-)
+---
+base-commit: 0e287d31b62bb53ad81d5e59778384a40f8b6f56
+change-id: 20241201-riscv-new-regset-d529b952ad0d
 
-Thanks,
-Mauro
+Best regards,
+-- 
+Celeste Liu <uwu@coelacanthus.name>
+
 
