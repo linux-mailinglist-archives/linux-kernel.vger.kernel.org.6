@@ -1,86 +1,47 @@
-Return-Path: <linux-kernel+bounces-429780-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429781-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB7DA9E2444
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:48:04 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D4DC16CDA2
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 15:43:02 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06BE0205E2E;
-	Tue,  3 Dec 2024 15:37:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="XD/PUHdv"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CC479E23FE
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:45:14 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D2A31F76B0
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 15:37:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB1D82876C4
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 15:45:12 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E07B31F8925;
+	Tue,  3 Dec 2024 15:41:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YvHU+quh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B2151F755B;
+	Tue,  3 Dec 2024 15:41:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733240255; cv=none; b=DaCvW3mval18v2DqEMDBy1wd3yYpQInxMVitz2rwvZQ/tMIqCy4ikSIGhu/vJxI+2XCZlfcq1XslaqNGmqjHQhzYBkwYP88Q6KjjR8uhvSFgrBd/gZYm2FaX9OlWGKkqgQ96QxwdaMFIQVWmLevHglz/v7amg0qJgdH9+wzRnYM=
+	t=1733240513; cv=none; b=kKFW0wl88ysJFbRsLX0bJK7DUpQdkKTbRmNwC1s2RbygGg65rCx5RQE8pokCBp6nVtlAHAHJcj67jKOSbP38SVJ6fAsYuxpYToF1T4/YjBEuNNFTVIRQJTPaSKXo/4j2qT/Nl3eaewmLpzU4FcCL1HIzYxTTYQSFMDgqTVUAFDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733240255; c=relaxed/simple;
-	bh=fO/qh5sqTmf1eBA7gFi+J1C/OQQ+064q95v0fANMQ3E=;
+	s=arc-20240116; t=1733240513; c=relaxed/simple;
+	bh=VyAdMxSYG+cl45PhOpWPbrnYSr+SfukqYZMo12P6x78=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EaPMDqixKzVEYAwsbghxPik3r7IW32MK50SyNqT41YrVPkeDc7nMNlp40lS/OHGVVAmhcRAJNIz+/OHD5ZGx29d6wWr/UqG6n+KK4r4Uuilaev1T7JvJfQmU1n1KiOR+WhKjOQqdPoaKWtIIKEXTVD76XzIApvJPXtnW17dd23g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=XD/PUHdv; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B3FXk7d010103
-	for <linux-kernel@vger.kernel.org>; Tue, 3 Dec 2024 15:37:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	WVsAf3br7q2QiAZQkRJosEe0peHLoK9e9ACnt+YXgwE=; b=XD/PUHdv0pH24DGj
-	QktgXOvaT1YY7+tqc+sgFM6pJkrFYRvvxXEqjtw1dSD7jCicsW4iTFdW3HiSbkTV
-	ASikHoLrlvz00Cm+zbDh1SHI6CQeEQiRIL9c2SSAekoxzsYOuw+w2DTtKzm612mk
-	r/uu/ASE56q8BW3hia+/A2B42PTA7tN/HaR7r/2MCVY/V2/GeHeooLnZJlPI6eaj
-	kAij6dxg7dAJiq1qGxSk+etXFAnwNzrDjI+vjitoWWqy038DcNEytwb14Vztyt2y
-	Z6gLrF4nsybrJsXcqnbNlpmwFGPIhdlYlaxHydpZEaWCko4sD5fU5cdx2HAi1xpi
-	yX/3Iw==
-Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com [209.85.216.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 439v7ysf3p-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 15:37:32 +0000 (GMT)
-Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-2ee964e6a50so3939827a91.1
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 07:37:31 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733240251; x=1733845051;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WVsAf3br7q2QiAZQkRJosEe0peHLoK9e9ACnt+YXgwE=;
-        b=rklEF/nS9zYzkiLR5Awf+zMwawY2MRZvlWRU3XTr6MMQDNleKqDQznGSYfuPL1/vaw
-         aGCBvC+MAiD+VJosXprd3oYFyh61P5b42d797vEND9xmcBo9dh/Ma4U2tki/yP6GI/7/
-         MfUk3VcBtnSfx00Icl/7icSFxN4k2bh2PW8AOp3//xbKoTvFkwnhQpecanHLJM6ekCj/
-         LM1puVfSTPWgnJYN0UAigAKoOMtWKbGztZJ8Aj5TqXj++HBryxe/PDf09Gob+pJKfaDZ
-         ZWKeh++zmkv7fwCOof5jqN55o+k5EF3vsMaQWq0LIMGqKY93Ep5cOWdqTsZMh3FL+FWh
-         Z4gw==
-X-Forwarded-Encrypted: i=1; AJvYcCWGoVzl1O3eOzTkZ3CXI9rhZhnlKp8LABMnDXfA5NfbIRvCM/paQe7+PL5xRtvkkhVmBWCa4xNQhBUolcA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyXdGT/Fwa9t2/nb2CIREuJuqRUDzGVxwp0t+vVd4wtSWT85X0+
-	6BEV3xABZ1qCNNDAlPF+/t8gxS1UJm6WRFRzR/Fn39n7Bi8ndkZPDtPEGZpxUKdj9uiQhiLyL8/
-	/XqXtdtU2Iv9S57T4CWQTHLv44lwnoQ3uhEpNdz9UbFhtyfAdL7XNFuGXXxQCaLY=
-X-Gm-Gg: ASbGncsgE7NcDxyMY7QH+KdKw1pCxq+Igu1D/958gS5F/0+N4Tbo5RKa7Js0cC1PiVN
-	nsj0jo2lm61opeubaTs+IBJ3aAN+CQFUg7CcXFU3E1gTyhMTGJFuKLmiFFlKOBKrBKTiosKu9pO
-	XZFacdj5JgahRDOwE/v4BkdVuIDN8JKp//Jgb58sWnx8OPwD/6FIJ1eSrueDMODufMA2pdZX1zU
-	oeZyVmi+ZZ8DX6s4i5A6qPaMg6KIVXtl+oVcHGmRDN001PtF+VuqwOOmhbYTgNopN0IU2KFTnZ4
-	7H55QG0Fatvd
-X-Received: by 2002:a17:90b:4e90:b0:2ee:a58d:cd96 with SMTP id 98e67ed59e1d1-2ef01204128mr3593126a91.18.1733240250762;
-        Tue, 03 Dec 2024 07:37:30 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IF1wCFkJuDY3iAo1YW3xzVreeVpHJUxKTejY6gq824aM6cXlEoKfgBRQ345ghJyDtEXjV2f1g==
-X-Received: by 2002:a17:90b:4e90:b0:2ee:a58d:cd96 with SMTP id 98e67ed59e1d1-2ef01204128mr3593087a91.18.1733240250314;
-        Tue, 03 Dec 2024 07:37:30 -0800 (PST)
-Received: from [192.168.31.128] ([152.58.197.11])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ee488af41dsm8955256a91.28.2024.12.03.07.37.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Dec 2024 07:37:29 -0800 (PST)
-Message-ID: <41106fd7-5348-4d21-9ae7-8466f5634b4c@oss.qualcomm.com>
-Date: Tue, 3 Dec 2024 21:07:22 +0530
+	 In-Reply-To:Content-Type; b=Y5FyychLDhCGB2EYtX6PtZypPzE07UAJ5KLY3XJi+fmCS+MVyHO7BttZjo1gGaLp4+8Eqmw0MzYUFAVPuf+Is1rPZE5pSFZ9Jsg/AJ4NuiaTb7M/PulTcu5bN4IGcGi4mNKPKjsM5TdIlGEfDDhpHPRuLnz/NvZz/GfVEWQ4Fpg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YvHU+quh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B0B7C4CED6;
+	Tue,  3 Dec 2024 15:41:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733240512;
+	bh=VyAdMxSYG+cl45PhOpWPbrnYSr+SfukqYZMo12P6x78=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=YvHU+quh/Q3xeeBQ3KUKeCqM8UWiDuQYe0SqnXFhj94mQ2T3rM2ELnQXjJJburTcH
+	 B8ngd0ILz4lRv5abztXP4x37jqbg4U/yqVxdNL2ib9d7/+Z62VHW998vYIawPO5MhG
+	 9Zty7IDG05pIHd3RiuWBGfzwaOgaJbxH87GmdkblKHN1J38XTnYP5qvN9CNNtBYvqR
+	 ETouzXeRIkebGiJhpSSAG6ICCt7jdCPKwM+R5O47ZNao8NhZe4yPYkaO+nZKg4HcVn
+	 CER1WGmX2q38uOrTf78XbytTRdE2NNt65a9NkL46lgYQeRFziUWG+eem9zMoCExiVe
+	 PQ/9uIc1eU4Yw==
+Message-ID: <1954a13a-6102-45cd-a8a4-0aa8939b7e0e@kernel.org>
+Date: Tue, 3 Dec 2024 16:41:41 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,191 +49,96 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] arm64: dts: qcom: x1e80100-crd: Add USB multiport
- fingerprint readery
-To: Stephan Gerhold <stephan.gerhold@linaro.org>,
-        Johan Hovold <johan@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, Abel Vesa <abel.vesa@linaro.org>,
-        Krishna Kurapati <quic_kriskura@quicinc.com>,
-        Thinh Nguyen <Thinh.Nguyen@synopsys.com>, linux-usb@vger.kernel.org
-References: <20241118-x1e80100-crd-fp-v1-0-ec6b553a2e53@linaro.org>
- <20241118-x1e80100-crd-fp-v1-1-ec6b553a2e53@linaro.org>
- <Z07bgH5vVk44zuEH@hovoldconsulting.com> <Z07r3Upr50vLluyn@linaro.org>
+Subject: Re: [RFC PATCH v1 02/14] dt-bindings: clock: thead,th1520: Rename
+ header file
+To: Michal Wilczynski <m.wilczynski@samsung.com>, mturquette@baylibre.com,
+ sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ drew@pdp7.com, guoren@kernel.org, wefu@redhat.com, jassisinghbrar@gmail.com,
+ paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
+ frank.binns@imgtec.com, matt.coster@imgtec.com,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
+ airlied@gmail.com, simona@ffwll.ch, ulf.hansson@linaro.org,
+ jszhang@kernel.org, m.szyprowski@samsung.com
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+ dri-devel@lists.freedesktop.org, linux-pm@vger.kernel.org
+References: <20241203134137.2114847-1-m.wilczynski@samsung.com>
+ <CGME20241203134151eucas1p18edf7fb37cd8f30983a559d7481f560b@eucas1p1.samsung.com>
+ <20241203134137.2114847-3-m.wilczynski@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
-In-Reply-To: <Z07r3Upr50vLluyn@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241203134137.2114847-3-m.wilczynski@samsung.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: h_9XA-v3L7TH8I0FHowSSTLcG-VAWbss
-X-Proofpoint-GUID: h_9XA-v3L7TH8I0FHowSSTLcG-VAWbss
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxscore=0
- impostorscore=0 adultscore=0 priorityscore=1501 clxscore=1011
- lowpriorityscore=0 suspectscore=0 mlxlogscore=999 malwarescore=0
- bulkscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412030132
+
+On 03/12/2024 14:41, Michal Wilczynski wrote:
+> As support for clocks from new subsystems is being added to the T-Head
+> TH1520 SoC, the header file name should reflect this broader scope. The
+
+No, there is no such rule, so "should" is not appropriate.
 
 
+> existing header file 'thead,th1520-clk-ap.h' includes the '-ap' suffix,
+> indicating it's specific to the Application Processor (AP) subsystem.
+> 
+> Rename the header file to 'thead,th1520-clk.h' to generalize it for all
+> subsystems.  Update all references to this header file accordingly.
+> 
+> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
+> ---
+>  .../devicetree/bindings/clock/thead,th1520-clk-ap.yaml        | 4 ++--
+>  .../devicetree/bindings/mailbox/thead,th1520-mbox.yaml        | 2 +-
+>  MAINTAINERS                                                   | 2 +-
+>  arch/riscv/boot/dts/thead/th1520.dtsi                         | 2 +-
+>  drivers/clk/thead/clk-th1520.h                                | 2 +-
+>  .../clock/{thead,th1520-clk-ap.h => thead,th1520-clk.h}       | 0
 
-On 12/3/2024 5:00 PM, Stephan Gerhold wrote:
-> On Tue, Dec 03, 2024 at 11:20:48AM +0100, Johan Hovold wrote:
->> [ +CC: Krishna, Thinh and the USB list ]
->>
->> On Mon, Nov 18, 2024 at 11:34:29AM +0100, Stephan Gerhold wrote:
->>> The X1E80100 CRD has a Goodix fingerprint reader connected to the USB
->>> multiport controller on eUSB6. All other ports (including USB super-speed
->>> pins) are unused.
->>>
->>> Set it up in the device tree together with the NXP PTN3222 repeater.
->>>
->>> Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
->>> ---
->>>   arch/arm64/boot/dts/qcom/x1e80100-crd.dts | 48 +++++++++++++++++++++++++++++++
->>>   1 file changed, 48 insertions(+)
->>>
->>> diff --git a/arch/arm64/boot/dts/qcom/x1e80100-crd.dts b/arch/arm64/boot/dts/qcom/x1e80100-crd.dts
->>> index 39f9d9cdc10d..44942931c18f 100644
->>> --- a/arch/arm64/boot/dts/qcom/x1e80100-crd.dts
->>> +++ b/arch/arm64/boot/dts/qcom/x1e80100-crd.dts
->>> @@ -735,6 +735,26 @@ keyboard@3a {
->>>   	};
->>>   };
->>>   
->>> +&i2c5 {
->>> +	clock-frequency = <400000>;
->>> +
->>> +	status = "okay";
->>> +
->>> +	eusb6_repeater: redriver@4f {
->>> +		compatible = "nxp,ptn3222";
->>> +		reg = <0x4f>;
->>
->> The driver does not currently check that there's actually anything at
->> this address. Did you verify that this is the correct address?
->>
->> (Abel is adding a check to the driver as we speak to catch any such
->> mistakes going forward).
->>
-> 
-> Yes, I verified this using
-> https://git.codelinaro.org/stephan.gerhold/linux/-/commit/45d5add498612387f88270ca944ee16e2236fddd
-> 
-> (I sent this to Abel back then, so I'm surprised he didn't run that :-))
-> 
->>> +		#phy-cells = <0>;
->>
->> nit: I'd put provider properties like this one last.
->>
->>> +		vdd3v3-supply = <&vreg_l13b_3p0>;
->>> +		vdd1v8-supply = <&vreg_l4b_1p8>;
->>
->> Sort by supply name?
->>
-> 
-> Ack.
-> 
->>> +		reset-gpios = <&tlmm 184 GPIO_ACTIVE_LOW>;
->>> +
->>> +		pinctrl-0 = <&eusb6_reset_n>;
->>> +		pinctrl-names = "default";
->>> +	};
->>> +};
->>> +
->>>   &i2c8 {
->>>   	clock-frequency = <400000>;
->>>   
->>> @@ -1047,6 +1067,14 @@ edp_reg_en: edp-reg-en-state {
->>>   		bias-disable;
->>>   	};
->>>   
->>> +	eusb6_reset_n: eusb6-reset-n-state {
->>> +		pins = "gpio184";
->>> +		function = "gpio";
->>> +		drive-strength = <2>;
->>> +		bias-disable;
->>> +		output-low;
->>
->> I don't think the pin config should assert reset, that should be up to
->> the driver to control.
->>
-> 
-> I can drop it I guess, but pinctrl is applied before the driver takes
-> control of the GPIO. This means if the GPIO happens to be in input mode
-> before the driver loads (with pull up or pull down), then we would
-> briefly leave it floating when applying the bias-disable.
-> 
-> Or I guess we could drop the bias-disable, since it shouldn't be
-> relevant for a pin we keep in output mode all the time?
-> 
->>> +	};
->>> +
->>>   	hall_int_n_default: hall-int-n-state {
->>>   		pins = "gpio92";
->>>   		function = "gpio";
->>> @@ -1260,3 +1288,23 @@ &usb_1_ss2_dwc3_hs {
->>>   &usb_1_ss2_qmpphy_out {
->>>   	remote-endpoint = <&pmic_glink_ss2_ss_in>;
->>>   };
->>> +
->>> +&usb_mp {
->>> +	status = "okay";
->>> +};
->>> +
->>> +&usb_mp_dwc3 {
->>> +	/* Limit to USB 2.0 and single port */
->>> +	maximum-speed = "high-speed";
->>> +	phys = <&usb_mp_hsphy1>;
->>> +	phy-names = "usb2-1";
->>> +};
->>
->> The dwc3 driver determines (and acts on) the number of ports based on
->> the port interrupts in DT and controller capabilities.
->>
->> I'm not sure we can (should) just drop the other HS PHY and the SS PHYs
->> that would still be there in the SoC (possibly initialised by the boot
->> firmware).
->>
->> I had a local patch to enable the multiport controller (for the suspend
->> work) and I realise that you'd currently need to specify a repeater also
->> for the HS PHY which does not have one, but that should be possible to
->> fix somehow.
->>
-> 
-> I think there are two separate questions here:
-> 
->   1. Should we (or do we even need to) enable unused PHYs?
->   2. Do we need to power off unused PHYs left enabled by the firmware?
-> 
-> For (1), I'm not not sure if there is a technical reason that requires
-> us to. And given that PHYs typically consume quite a bit of power, I'm
-> not sure if we should. Perhaps it's not worth spending effort on this
-> minor optimization now, but then the device tree would ideally still
-> tell us which PHYs are actually used (for future optimizations).
-> 
-> For (2), yes, we probably need to. But my impression so far is that this
-> might be a larger problem that we need to handle on the SoC level. I
-> have seen some firmware versions that blindly power up all USB
-> controllers, even completely unused ones. Ideally we would power down
-> unused components during startup and then leave them off.
->
+Don't mix driver, bindings and DTS. See checkpatch warning. Don't rename
+files just because you prefer other names.
 
-This question might be a dumb one, if so please ignore it.
-
-But if we skip adding unused phys in DTS node, the core driver wouldn't 
-have access to all phys and we wouldn't be able to get references to 
-unused ones (un-mentioned ones in DTS). So how can we power them off 
-from core driver if we don't have reference to them ?
-
-Regards,
-Krishna,
+Best regards,
+Krzysztof
 
