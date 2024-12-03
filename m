@@ -1,199 +1,147 @@
-Return-Path: <linux-kernel+bounces-429073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCD509E1784
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:29:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id ECC919E19C5
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 11:48:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C6ED1B334BD
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:17:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9D01EB29CBE
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:18:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 830161DE89C;
-	Tue,  3 Dec 2024 09:17:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 072DE1DE882;
+	Tue,  3 Dec 2024 09:18:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YFc8O9oo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ntHcuhQ6"
+Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C395A19C543;
-	Tue,  3 Dec 2024 09:17:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9F491D63EC;
+	Tue,  3 Dec 2024 09:18:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733217438; cv=none; b=AVMbwajUwe+MyAvF8qrOBuWestHtJHALYHohHaAco6rgR+1vBszlhEDvIJypSMJ4pAy2hNmu4arsuLcW+nAtNSKqOV60K4bAl7FJ40za5su6iEFB6kQIUwAqM3hCxSuHtBF3o4mS6Lpe5RRTJTS2E0snARJ4ljRU6vaGsn5JiIM=
+	t=1733217498; cv=none; b=XAG1HAoNjHT9AIo3hHWx5iCif5NpH0gol8VCJjqaBAB2Lwrs74nNpJYr9BBogc6V85SWxWlJVwSB34e9P2RwchuZ39C4+b4v0pOAoe1bn1Tr5tSn1hPkqKJnbqvUOUZeVk75/PrJ4FmmSbxFvMxlixMI7HUVpZJ3B3lFXG7wd+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733217438; c=relaxed/simple;
-	bh=Mm+270InuXW4V+yYCDDQXwH3B1E27S4QTtpkk0TtKIE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=E9CtVcd5Oz1KyAhal2h7AAEQc97TkUCNZmm0kq6aIBmuNC/y94po2DPtNkKvsJEzqvl/MoOtPQ9jgMF6WGLL2JSfKM8n+g557ZKpp9JcCV9TORbsffuFmzfxoL0MAJdq/zUACGLa8iNIVmtZUxrrK5YesGGykSH1bm7duI9htRs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YFc8O9oo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 800F0C4CEDA;
-	Tue,  3 Dec 2024 09:17:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733217438;
-	bh=Mm+270InuXW4V+yYCDDQXwH3B1E27S4QTtpkk0TtKIE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=YFc8O9ooVjlinp7b76LDLm8IwaQOkVpKGrPwv7Df/iWT3gcMZDCxIBTx/X1GDtvba
-	 KZFN/p+cEKCITuruMcMUqsWz4kqVenkKgplSvIurmj/nJi7BhLtl4IyGY+ZheOXUiz
-	 WsntnS4EMtu/f0T7UsmXoANsAKXI97t7nFrzPghsslHEsFIZj8PameCF7SjRO2/IZz
-	 9KLo4elgzPX8KtCsoD5fG6eYv8v80x4dtDCDhZLiYL1fHv62fv2dK508WX4NK1UxWz
-	 MUMJLaootVRv+JDpveapEeXsoof7HzdF9s+Uo8GCicUJW/6XoQ5PVApqU6EXG6yqBC
-	 SlqPMmD1hIgww==
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-53df6322ea7so9018040e87.0;
-        Tue, 03 Dec 2024 01:17:18 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVPS9qW1C76/iRjTgFpnsY8GPLvdZa3fSD4Oq6l5JuYYFz+oUSe4SVjU/NCtDPd2S8J9ofG2iW8@vger.kernel.org, AJvYcCVu6lE3odF8o5JBTn6DgHqbQ1bChq4KTIcR+icgLjAoD5/ZgFN3WwN4+5FS7slHNf9xI7Y=@vger.kernel.org, AJvYcCXwZkb+KDcbeqorUDI0frQcT+VsAKPp+wRHCzptscK3sgy64Go06no9VBZvAoi008v7cXScEPU3hD2Y+28C@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYZwETTXgkT2tG5n5XQcKXasI/Te5F1X+1erEEzfxpP9ISkuts
-	CunIeuaHQzYtYY9hh7AL4GX8fAct2KUjx+GtxEGW5nRcPibbjhgm3U0I0GHEHXxULr5I+ZFnw5U
-	wtOgkvLwHoyiSEJl09rzd+i24BjU=
-X-Google-Smtp-Source: AGHT+IHWQfIrndfB98TtLAtHKiRdwn/fuXrMMY8g+Ye7zMHVObxe+6srcegoXHPwcagdFF66wmqT8AioviE8HwFt7rw=
-X-Received: by 2002:a19:e006:0:b0:53e:1364:d756 with SMTP id
- 2adb3069b0e04-53e1364d988mr740188e87.13.1733217436844; Tue, 03 Dec 2024
- 01:17:16 -0800 (PST)
+	s=arc-20240116; t=1733217498; c=relaxed/simple;
+	bh=6BXbAOjCw5aBhHqklYbSDlSHWUFzfTiI55oePrqS2pU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MIXMT/ZWIyIKZhDGb+vZx2Ya+rC3rifL2DsDbpWvYXz8gBblqsHzljAHrZ1HwBvicg10Y57VegsVpnlh698qzuRqtuljqBaPMTnFCzGAvwSXK94R1O+hRA/X13X8lVCao03YT50gldGCEvXutdHx2Fta7OJ9j3uQACq122BXero=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ntHcuhQ6; arc=none smtp.client-ip=209.85.210.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-71d4e043dd9so2327158a34.1;
+        Tue, 03 Dec 2024 01:18:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733217495; x=1733822295; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=3rH15lOfc44plaRCzN7FQcIPWREiXBgWt55OFo1yciQ=;
+        b=ntHcuhQ6ujmbLUPSlJO0Ht7s61XUPZRoQEpbPMNG9hLnz+Z73iMz9DMAcmGrPBfReD
+         cZUX29JiuMobb4EL/j0EnvMZDIcJ03NRJjxFsYvLou4q4dBZZFmpBaqjHd2ba0tjjul4
+         sGs34ZzU/D8KKiyjh98kSTrKMDf8tr1vnTo7C4/kDzeFw5xj2FNxT+NH29uX/UALWyZi
+         vvJ0y7+92zGTaIx7UxdK9xZO6393RD+m5axIuMv6NmOl/878d2xP6AZ2A781OzYrCTGb
+         aC2KtRid9my+yQ591b/fLT2op/Wd2frMMrJOl/VQeF1+pDiNwGqtz2eP3VJupf8Vrw5B
+         ARQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733217495; x=1733822295;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3rH15lOfc44plaRCzN7FQcIPWREiXBgWt55OFo1yciQ=;
+        b=S7tLuP+TEiDE1spbYlGSXplcqhvAfvKDCTwYcM7KbHFJ39YSReUCc/5kc3gX9Xf1DX
+         WkPkNCUNs7NznhesO8nkgjWtZPcUdoboHm2o0Mj8UDdyctSBi/OWxv9iFrBsqFYQJC9d
+         EU/PciZq9xr6yVvFIYu9JKFXNknMScqZuYggSGE97dqJ8KmNUMSKchaiyA3nU52Yl5nH
+         RHuLPAE1ttFIMfK0o/vXeHjOdYlr4Txfs13EnqX+WqeScU4lT2ZTP82rwxx6bNNyXPO5
+         kkQsW6mBDB6KtY5jKmc2CHTHuBpOIv8q3PQBnDbkd3ftmQ+BgWFPhXJzM7nDxkDCy8E+
+         sfWg==
+X-Forwarded-Encrypted: i=1; AJvYcCVp9eYjY0k9rYbBVFhSLNZ97tjVcJx80xf9bXLngi3Uu1wjMSiVmieR1xliaDmuTEVyj5HHwCrbYNGHohtL@vger.kernel.org, AJvYcCWrsXgQhy9mU7G2XSIYonIbOQtHBsjoFCKFWCQBvvlta7DQEUSHj3xwhLETT8ueJrOpQRU8ceB7oBeh@vger.kernel.org
+X-Gm-Message-State: AOJu0YwogBdyrudpdia+gEhS8YYO4UALuTXwgnZ+6G+Ej207EABn2rAY
+	YTkGDYq5tPGukck3l4sJgFhB6YgjMC1XlUME7AtbUSw7lvSbb3CW
+X-Gm-Gg: ASbGncvsRO7YY5gs8Ky67AjtRkyopS/T0h1V9Qjx7suWDYWSMHeNkoVvZUkdluoVktN
+	VDKYdej9G2SRyJvg+ZXLfMrp2ZivgYpQ8vF5cRlRKiXYQXE6lm5l+S7gkWV2b0xGE//WzCq9Jdq
+	MrG6jFZHicYClICrfv5SJokXv9LzyxFLWMne5T2lOVmlHTUCC5Ks2RrTZXrYp7ztSQ0XtfSPhsg
+	BNqqkTWBKnWTb7zt6YR/Yu9SrIukoWV7T28qzT3v+aN+WVxkRM1JkP6DLlELZB+
+X-Google-Smtp-Source: AGHT+IFCdQvpqgQFplX/66sYo3+F4QadcwYNDBOm5oyPuaoASMuYeKuCMbE6x08pAqORVgImfi7tWw==
+X-Received: by 2002:a05:6830:648b:b0:717:fe2d:a4e4 with SMTP id 46e09a7af769-71dad6d27f0mr2281039a34.19.1733217494946;
+        Tue, 03 Dec 2024 01:18:14 -0800 (PST)
+Received: from [192.168.0.203] ([14.139.108.62])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fc9c39f4d7sm8001378a12.69.2024.12.03.01.18.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 03 Dec 2024 01:18:14 -0800 (PST)
+Message-ID: <25cd49b5-eb6b-4c8f-899b-71005ef0c4c6@gmail.com>
+Date: Tue, 3 Dec 2024 14:48:06 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241203065058.4164631-1-chenhuacai@loongson.cn> <e0c59558-09ec-1e51-9b36-86b69f7e8bde@loongson.cn>
-In-Reply-To: <e0c59558-09ec-1e51-9b36-86b69f7e8bde@loongson.cn>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Tue, 3 Dec 2024 17:17:05 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H58ct9uGzyyL5Pz2kVM50K+1B0eGJ0zzb_2aV1Jzwp5+Q@mail.gmail.com>
-Message-ID: <CAAhV-H58ct9uGzyyL5Pz2kVM50K+1B0eGJ0zzb_2aV1Jzwp5+Q@mail.gmail.com>
-Subject: Re: [PATCH 1/2] LoongArch: KVM: Protect kvm_check_requests() with SRCU
-To: bibo mao <maobibo@loongson.cn>
-Cc: Huacai Chen <chenhuacai@loongson.cn>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Tianrui Zhao <zhaotianrui@loongson.cn>, kvm@vger.kernel.org, loongarch@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, Xuerui Wang <kernel@xen0n.name>, 
-	Jiaxun Yang <jiaxun.yang@flygoat.com>, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6] acpi: nfit: vmalloc-out-of-bounds Read in
+ acpi_nfit_ctl
+To: Ira Weiny <ira.weiny@intel.com>, dan.j.williams@intel.com
+Cc: vishal.l.verma@intel.com, dave.jiang@intel.com, rafael@kernel.org,
+ lenb@kernel.org, nvdimm@lists.linux.dev, linux-acpi@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ syzbot+7534f060ebda6b8b51b3@syzkaller.appspotmail.com
+References: <20241118162609.29063-1-surajsonawane0215@gmail.com>
+ <1813d5d3-6413-4a44-b3dd-a1be4762f839@gmail.com>
+ <674ddfa6abc4d_3cb8e0294cf@iweiny-mobl.notmuch>
+Content-Language: en-US
+From: Suraj Sonawane <surajsonawane0215@gmail.com>
+In-Reply-To: <674ddfa6abc4d_3cb8e0294cf@iweiny-mobl.notmuch>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Dec 3, 2024 at 4:27=E2=80=AFPM bibo mao <maobibo@loongson.cn> wrote=
-:
->
->
->
-> On 2024/12/3 =E4=B8=8B=E5=8D=882:50, Huacai Chen wrote:
-> > When we enable lockdep we get such a warning:
-> >
-> >   =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D
-> >   WARNING: suspicious RCU usage
-> >   6.12.0-rc7+ #1891 Tainted: G        W
-> >   -----------------------------
-> >   include/linux/kvm_host.h:1043 suspicious rcu_dereference_check() usag=
-e!
-> >   other info that might help us debug this:
-> >   rcu_scheduler_active =3D 2, debug_locks =3D 1
-> >   1 lock held by qemu-system-loo/948:
-> >    #0: 90000001184a00a8 (&vcpu->mutex){+.+.}-{4:4}, at: kvm_vcpu_ioctl+=
-0xf4/0xe20 [kvm]
-> >   stack backtrace:
-> >   CPU: 0 UID: 0 PID: 948 Comm: qemu-system-loo Tainted: G        W     =
-     6.12.0-rc7+ #1891
-> >   Tainted: [W]=3DWARN
-> >   Hardware name: Loongson Loongson-3A5000-7A1000-1w-CRB/Loongson-LS3A50=
-00-7A1000-1w-CRB, BIOS vUDK2018-LoongArch-V2.0.0-prebeta9 10/21/2022
-> >   Stack : 0000000000000089 9000000005a0db9c 90000000071519c8 900000012c=
-578000
-> >           900000012c57b920 0000000000000000 900000012c57b928 9000000007=
-e53788
-> >           900000000815bcc8 900000000815bcc0 900000012c57b790 0000000000=
-000001
-> >           0000000000000001 4b031894b9d6b725 0000000004dec000 9000000100=
-3299c0
-> >           0000000000000414 0000000000000001 000000000000002d 0000000000=
-000003
-> >           0000000000000030 00000000000003b4 0000000004dec000 9000000118=
-4a0000
-> >           900000000806d000 9000000007e53788 00000000000000b4 0000000000=
-000004
-> >           0000000000000004 0000000000000000 0000000000000000 9000000107=
-baf600
-> >           9000000008916000 9000000007e53788 9000000005924778 0000000010=
-000044
-> >           00000000000000b0 0000000000000004 0000000000000000 0000000000=
-071c1d
-> >           ...
-> >   Call Trace:
-> >   [<9000000005924778>] show_stack+0x38/0x180
-> >   [<90000000071519c4>] dump_stack_lvl+0x94/0xe4
-> >   [<90000000059eb754>] lockdep_rcu_suspicious+0x194/0x240
-> >   [<ffff8000022143bc>] kvm_gfn_to_hva_cache_init+0xfc/0x120 [kvm]
-> >   [<ffff80000222ade4>] kvm_pre_enter_guest+0x3a4/0x520 [kvm]
-> >   [<ffff80000222b3dc>] kvm_handle_exit+0x23c/0x480 [kvm]
-> >
-> > Fix it by protecting kvm_check_requests() with SRCU.
-> >
-> > Cc: stable@vger.kernel.org
-> > Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
-> > ---
-> >   arch/loongarch/kvm/vcpu.c | 4 +++-
-> >   1 file changed, 3 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/arch/loongarch/kvm/vcpu.c b/arch/loongarch/kvm/vcpu.c
-> > index cab1818be68d..d18a4a270415 100644
-> > --- a/arch/loongarch/kvm/vcpu.c
-> > +++ b/arch/loongarch/kvm/vcpu.c
-> > @@ -240,7 +240,7 @@ static void kvm_late_check_requests(struct kvm_vcpu=
- *vcpu)
-> >    */
-> >   static int kvm_enter_guest_check(struct kvm_vcpu *vcpu)
-> >   {
-> > -     int ret;
-> > +     int idx, ret;
-> >
-> >       /*
-> >        * Check conditions before entering the guest
-> > @@ -249,7 +249,9 @@ static int kvm_enter_guest_check(struct kvm_vcpu *v=
-cpu)
-> >       if (ret < 0)
-> >               return ret;
-> >
-> > +     idx =3D srcu_read_lock(&vcpu->kvm->srcu);
-> >       ret =3D kvm_check_requests(vcpu);
-> > +     srcu_read_unlock(&vcpu->kvm->srcu, idx);
-> >
-> >       return ret;
-> >   }
-> >
-> How about adding rcu readlock with closest function
-> kvm_update_stolen_time()?
-I have considered this method before. But then I read vcpu_run() of
-x86, it protect the whole vcpu_run() except  the subroutine
-xfer_to_guest_mode_handle_work(), so I think protect the whole
-kvm_check_requests() is more like x86.
+On 12/2/24 21:56, Ira Weiny wrote:
+> Suraj Sonawane wrote:
+>> On 11/18/24 21:56, Suraj Sonawane wrote:
+> 
+> [snip]
+> 
+>>>
+>>>    drivers/acpi/nfit/core.c | 7 ++++++-
+>>>    1 file changed, 6 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/acpi/nfit/core.c b/drivers/acpi/nfit/core.c
+>>> index 5429ec9ef..a5d47819b 100644
+>>> --- a/drivers/acpi/nfit/core.c
+>>> +++ b/drivers/acpi/nfit/core.c
+>>> @@ -454,8 +454,13 @@ int acpi_nfit_ctl(struct nvdimm_bus_descriptor *nd_desc, struct nvdimm *nvdimm,
+>>>    	if (cmd_rc)
+>>>    		*cmd_rc = -EINVAL;
+>>>    
+>>> -	if (cmd == ND_CMD_CALL)
+>>> +	if (cmd == ND_CMD_CALL) {
+>>> +		if (!buf || buf_len < sizeof(*call_pkg))
+>>> +			return -EINVAL;
+>>> +
+>>>    		call_pkg = buf;
+>>> +	}
+>>> +
+>>>    	func = cmd_to_func(nfit_mem, cmd, call_pkg, &family);
+>>>    	if (func < 0)
+>>>    		return func;
+>>
+>> Hello!
+>>
+>> I wanted to follow up on the patch I submitted. I have incorporated all
+>> the suggested changes up to v6. I was wondering if you had a chance to
+>> review it and if there are any comments or feedback.
+> 
+> It just missed the soak period for the merge.  But I'll be looking at it
+> for an rc pull request.
+> 
+> Thanks for sticking with it,
+> Ira
+> 
+> [snip]
+Thank you for the update.
+I also appreciate everyone's efforts in reviewing the patch.
+Thank you for reviewing the patch.
 
-Huacai
-
->
->   static int kvm_check_requests(struct kvm_vcpu *vcpu)
->   {
-> +       int idx;
-> +
->          if (!kvm_request_pending(vcpu))
->                  return RESUME_GUEST;
->
-> @@ -213,8 +215,11 @@ static int kvm_check_requests(struct kvm_vcpu *vcpu)
->          if (kvm_dirty_ring_check_request(vcpu))
->                  return RESUME_HOST;
->
-> -       if (kvm_check_request(KVM_REQ_STEAL_UPDATE, vcpu))
-> +       if (kvm_check_request(KVM_REQ_STEAL_UPDATE, vcpu)) {
-> +               idx =3D srcu_read_lock(&vcpu->kvm->srcu);
->                  kvm_update_stolen_time(vcpu);
-> +               srcu_read_unlock(&vcpu->kvm->srcu, idx);
-> +       }
->
->          return RESUME_GUEST;
->   }
->
-> Both method look good to me.
->
-> Regards
-> Bibo Mao
->
+Best regards,
+Suraj
 
