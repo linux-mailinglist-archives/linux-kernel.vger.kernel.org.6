@@ -1,177 +1,256 @@
-Return-Path: <linux-kernel+bounces-430010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430018-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C15A09E2C01
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 20:27:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 46BD19E2D83
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 21:48:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5D7C5B42F4F
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 18:30:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3E103B2BCA3
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 18:36:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 629201FDE05;
-	Tue,  3 Dec 2024 18:30:30 +0000 (UTC)
-Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84E3C1FCFF5;
+	Tue,  3 Dec 2024 18:36:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="ksOrMPfR"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 579CE1FBEAE
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 18:30:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 137D714A088;
+	Tue,  3 Dec 2024 18:36:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733250629; cv=none; b=dfQybOycnhFI5N/jfK/vNiqUbYusKfZu7VQtnnffBtYIdEzdmvuvZP+/Lub52KwzL3bmhOZ95BNgSSaTVZ2ZE9q9PfpZ8CcQpwDPmIOqk3164uVWCkLLUvceCIo+PskFmImtuj9Tz5vZI9zuvusvAs+tJ6D8FrmBKPPeB80Nlk4=
+	t=1733250972; cv=none; b=HPWE1WRZGzgw3wIMHpnUwVfiyE8oRD8bpwTfQNygKRIBHVcS6r3v5qC11UXRWJCH5BGIRc9p8ifzFbT9eaiXg0Kz7ua7okgqiJzVt8TkikAXL7f2Dof+tVa0ghLfm8Tn7fKZJKzSNtiJ/Z4y2++uNKUar//sfmo1BiD2W6H1KG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733250629; c=relaxed/simple;
-	bh=BxqTgZ8DYcMuxGIHQF8207mN1Bw/kyEKETBG/wI9/QU=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=l9vabnMV+4UdcEAf+a0UT+/CR0hvfx7F0mkeYy+oV4XOMNfy1oYXrUbnERhl26Y4PA+uKIyJLj3BUwmMkM3pQU3VJb1C90bYqE/TIdMMWKnrXArJeZBSRMnfqPX/N2z4g0sx8An412IAaQrriisu8JNTb+5GbbkY/ATHJEsGYOk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3a7c8259214so64853025ab.2
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 10:30:28 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733250627; x=1733855427;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=SPSwDYSzv5BOLQJE1aVIaeyzWYq8dii3twSMxx62AzQ=;
-        b=FA2eDzOFJ96tC9Sy2UBryDEEf5w1pb8KY2gKtV0jOQo2EnPt4ZSeWMnZIJVaCemTtx
-         5Y/fIqYpte5OiMfhLa2LFSpCixMZ6alCq+s/QQvzq8k5QQQFh3ZyBbeEJUfGUBV3bxGY
-         3F6Zfr6UTZeg4PqNx2N8F3eiYS2jAXdmB4n0H29gnAM0GjcYV7wUePMPhk3XAq5BqTg5
-         P7GcJYkBG8ZGAW6v6WKOEUi5lgtDY2CvxyEBFPuHFKP19oTTHvmrFkXljMDewnGpnrM1
-         AkYEB8Yjpwh2PVKoFVbpOc8nTrMuZGK5Q4KqS5KFbgIKqAbCNpMwMmTXwst8lCg4Aln/
-         WUUA==
-X-Forwarded-Encrypted: i=1; AJvYcCXLF1VlIQARF0sZgHAxZ50mIcH8hieLUojusqJ8mi6ky080tY0sEWUvbF+u95jh54hw3PdFfVQuVJl5gok=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDj6pTrlQpfDTIh+PRTCcsOiPau/P5QM8RBN0Iti1pIgZVt8cy
-	WfVFfIte/dNVgaRvwsRR1cQTcoxy5uOT/GJBcDpzhEqtOZ4Fp7JeGGa6Re+oMXUX6QVyxuPnhd9
-	TThHQyyaBKbsfhtU57gMHDx96/mOFXL0hNKpTezBYO2wWH3OAlrrzY0g=
-X-Google-Smtp-Source: AGHT+IH0dEbt2xIjnZ+uR8pkNYcCL9c/MaWU9jlZkBtlNFay+6dUatnai5fO4S9OZrJeX+XZFmbHfF0l+jX9qib5gvF2Ixtvw330
+	s=arc-20240116; t=1733250972; c=relaxed/simple;
+	bh=TcGLLUD9uMOYsuBJvRw54mbBra/9tntvzY8X8oSktKU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=L11qOxEdctsprgOzLTlQ8ynC4IEEZ1qXTFB+HDMKiC5Q/XkGdzv0QpPlhwDnEKT7TWHjyiaF7wm7HbI5NeHWzwlC5ey0T/KI4yaxypDAIlldQxulYbOn6/XdoTb5JhmEmvoOqgcMpijy7aW7ZZXGhVix/b9Rc32j7Fy++lNTkfE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=ksOrMPfR; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [192.168.88.20] (91-157-155-49.elisa-laajakaista.fi [91.157.155.49])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id E60BA670;
+	Tue,  3 Dec 2024 19:35:39 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1733250941;
+	bh=TcGLLUD9uMOYsuBJvRw54mbBra/9tntvzY8X8oSktKU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ksOrMPfRxzfbTdTiQiz0cKEqBrcsN2Q0uB5vplNoLNLa6rFck6UJvRR1oAbjUsuo8
+	 074vFhXVLAmyXLWe4WckW4ZpMshHf+aQuYtFkX35hceq6wvbPE3IJVQMBSfy9sRt82
+	 peeUF6tPe7eTJeMxVmCXVnzOR0SFfVs6BI5XO8Ho=
+Message-ID: <9ade7a5d-dd87-4a08-9fdd-c24eb20e733c@ideasonboard.com>
+Date: Tue, 3 Dec 2024 20:36:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a8a:b0:3a7:c5ca:5f58 with SMTP id
- e9e14a558f8ab-3a7f9a46486mr36929875ab.7.1733250627431; Tue, 03 Dec 2024
- 10:30:27 -0800 (PST)
-Date: Tue, 03 Dec 2024 10:30:27 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <674f4e43.050a0220.17bd51.004e.GAE@google.com>
-Subject: [syzbot] [exfat?] general protection fault in exfat_get_dentry_cached
-From: syzbot <syzbot+8f8fe64a30c50b289a18@syzkaller.appspotmail.com>
-To: linkinjeon@kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, sj1557.seo@samsung.com, 
-	syzkaller-bugs@googlegroups.com, yuezhang.mo@sony.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 0/3] drm/tidss: Add OLDI bridge support
+To: Aradhya Bhatia <aradhya.bhatia@linux.dev>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Nishanth Menon
+ <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+ Devarsh Thakkar <devarsht@ti.com>, Praneeth Bajjuri <praneeth@ti.com>,
+ Udit Kumar <u-kumar1@ti.com>, Jayesh Choudhary <j-choudhary@ti.com>,
+ Francesco Dolcini <francesco@dolcini.it>,
+ Alexander Sverdlin <alexander.sverdlin@siemens.com>,
+ Max Krummenacher <max.oss.09@gmail.com>,
+ DRI Development List <dri-devel@lists.freedesktop.org>,
+ Devicetree List <devicetree@vger.kernel.org>,
+ Linux Kernel List <linux-kernel@vger.kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Jyri Sarha <jyri.sarha@iki.fi>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Thomas Zimmermann <tzimmermann@suse.de>, Maxime Ripard <mripard@kernel.org>,
+ David Airlie <airlied@gmail.com>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Simona Vetter <simona@ffwll.ch>
+References: <20241124143649.686995-1-aradhya.bhatia@linux.dev>
+ <8b57d6a4-6bc1-4542-abf4-8bc4a3120c25@ideasonboard.com>
+ <b8bde033-13a8-4726-a9ff-2fa4eff898e1@linux.dev>
+Content-Language: en-US
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
+ 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
+In-Reply-To: <b8bde033-13a8-4726-a9ff-2fa4eff898e1@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hello,
+Hi,
 
-syzbot found the following issue on:
+On 03/12/2024 20:14, Aradhya Bhatia wrote:
+> Hi,
+> 
+> On 03/12/24 17:42, Tomi Valkeinen wrote:
+>> Hi,
+>>
+>> On 24/11/2024 16:36, Aradhya Bhatia wrote:
+>>> Hello all,
+>>>
+>>> This patch series add support for the dual OLDI TXes supported in Texas
+>>> Instruments' AM62x and AM62Px family of SoCs. The OLDI TXes support
+>>> single-lvds
+>>> lvds-clone, and dual-lvds modes. These have now been represented
+>>> through DRM
+>>> bridges within TI-DSS.
+>>>
+>>>    - Some history and hardware description for this patch series.
+>>>
+>>> This patch series is a complete re-vamp from the previously posted
+>>> series[1] and
+>>> hence, the version index has been reset to v1. The OLDI support from
+>>> that series
+>>> was dropped and only the base support for AM62x DSS was kept (and
+>>> eventually
+>>> merged)[2].
+>>>
+>>> The OLDI display that the tidss driver today supports, could not be
+>>> extended for
+>>> the newer SoCs. The OLDI display in tidss is modelled after the DSS
+>>> and OLDI
+>>> hardware in the AM65x SoC. The DSS in AM65x SoC, has two video-ports.
+>>> Both these
+>>> video-ports (VP) output DPI video signals. One of the DPI output (from
+>>> VP1) from
+>>> the DSS connects to a singular OLDI TX present inside the SoC. There
+>>> is no other
+>>> way for the DPI from VP1 to be taken out of the SoC. The other DPI output
+>>> however - the one from VP2 - is taken out of the SoC as is. Hence we
+>>> have an
+>>> OLDI bus output and a DPI bus output from the SoC. Since the VP1 and
+>>> OLDI are
+>>> tightly coupled, the tidss driver considers them as a single entity.
+>>> That is
+>>> why, any OLDI sink connects directly to the DSS ports in the OF graphs.
+>>>
+>>> The newer SoCs have varying DSS and OLDI integrations.
+>>>
+>>> The AM62x DSS also has 2 VPs. The 2nd VP, VP2, outputs DPI signals
+>>> which are
+>>> taken out of the SoC - similar to the AM65x above. For the VP1, there
+>>> are 2 OLDI
+>>> TXes. These OLDI TXes can only receive DPI signals from VP1, and don't
+>>> connect
+>>> to VP2 at all.
+>>>
+>>> The AM62Px SoC has 2 OLDI TXes like AM62x SoC. However, the AM62Px SoC
+>>> also has
+>>> 2 separate DSSes. The 2 OLDI TXes can now be shared between the 2 VPs
+>>> of the 2
+>>> DSSes.
+>>>
+>>> The addition of the 2nd OLDI TX (and a 2nd DSS in AM62Px) creates a
+>>> need for
+>>> some major changes for a full feature experience.
+>>>
+>>> 1. The OF graph needs to be updated to accurately show the data flow.
+>>> 2. The tidss and OLDI drivers now need to support the dual-link and
+>>> the cloned
+>>>      single-link OLDI video signals.
+>>> 3. The drivers also need to support the case where 2 OLDI TXes are
+>>> connected to
+>>>      2 different VPs - thereby creating 2 independent streams of
+>>> single-link OLDI
+>>>      outputs.
+>>>
+>>> Note that the OLDI does not have registers of its own. It is still
+>>> dependent on
+>>> the parent VP. The VP that provides the DPI video signals to the OLDI
+>>> TXes, also
+>>> gives the OLDI TXes all the config data. That is to say, the hardware
+>>> doesn't
+>>> sit on the bus directly - but does so through the DSS.
+>>>
+>>> In light of all of these hardware variations, it was decided to have a
+>>> separate
+>>> OLDI driver (unlike AM65x) but not entirely separate so as to be a
+>>> platform
+>>> device. The OLDI TXes are now being represented as DRM bridges under
+>>> the tidss.
+>>>
+>>> Also, since the DRM framework only really supports a linear encoder-
+>>> bridge
+>>> chain, the OLDI driver creates a DRM bridge ONLY for the primary OLDI
+>>> TX in
+>>> cases of dual-link or cloned single-link OLDI modes. That bridge then
+>>> attaches
+>>
+>> How does the clone case work, then? There are two panels, what does the
+>> second one connect to?
+> 
+> For the clone case, the devicetree will show the true connections - as
+> they are in the hardware.
+> 
+> 2 endpoints from a single DSS VP devicetree port will be connected to 2
+> OLDIs, OLDI0 and OLDI1. The outputs of these OLDIs will be connected to
+> 2 distinct single-link panels.
+> 
+> The driver and DRM side of things do not show the same picture, however.
+> The tidss_oldi code creates and registers a drm_bridge only for the
+> primary OLDI. The driver is capable of detecting the expected OLDI mode,
+> and if a companion OLDI is present, then the primary OLDI drm_bridge
+> keeps a note of that.
+> 
+> The clock and config resources are shared between the primary and
+> companion OLDI hardware. So configuring the primary OLDI takes care of
+> the companion too.
+> The only case where it is not shared is the OLDI IO bit in the Control
+> MMR (ctrl_mmr) region. But, since the primary OLDI drm_bridge remains
+> aware about the presence of companion OLDI, it makes sure to enable /
+> disable the comapnion OLDI IO when required.
 
-HEAD commit:    40384c840ea1 Linux 6.13-rc1
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1768d5e8580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ad7dafcfaa48849c
-dashboard link: https://syzkaller.appspot.com/bug?extid=8f8fe64a30c50b289a18
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+But if there's just one bridge (for the first oldi), how is the second 
+panel connected to the DRM pipeline? Who e.g. calls the 
+drm_panel_funcs.enable() in the panel driver for the second panel?
 
-Unfortunately, I don't have any reproducer for this issue yet.
+Or, say, if we have two LVDS->HDMI bridges, with the cloning setup, how 
+does all the plumbing work if "DRM framework only really supports a 
+linear encoder-bridge chain"?
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/32ee9cd04555/disk-40384c84.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/e7894cd1da27/vmlinux-40384c84.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/2129df5d769f/bzImage-40384c84.xz
+  Tomi
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+8f8fe64a30c50b289a18@syzkaller.appspotmail.com
-
-syz.2.96: attempt to access beyond end of device
-loop2: rw=0, sector=161, nr_sectors = 1 limit=64
-Oops: general protection fault, probably for non-canonical address 0xdffffc0000000005: 0000 [#1] PREEMPT SMP KASAN NOPTI
-KASAN: null-ptr-deref in range [0x0000000000000028-0x000000000000002f]
-CPU: 0 UID: 0 PID: 6259 Comm: syz.2.96 Not tainted 6.13.0-rc1-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-RIP: 0010:exfat_get_dentry_cached+0x11a/0x1b0 fs/exfat/dir.c:727
-Code: df 48 89 da 48 c1 ea 03 80 3c 02 00 0f 85 9d 00 00 00 48 b8 00 00 00 00 00 fc ff df 48 8b 1b 48 8d 7b 28 48 89 fa 48 c1 ea 03 <80> 3c 02 00 75 61 49 8d 7d 18 48 8b 43 28 48 ba 00 00 00 00 00 fc
-RSP: 0018:ffffc9000bd8f378 EFLAGS: 00010216
-RAX: dffffc0000000000 RBX: 0000000000000000 RCX: 0000000000000009
-RDX: 0000000000000005 RSI: ffffffff8270df36 RDI: 0000000000000028
-RBP: 0000000000000200 R08: 0000000000000001 R09: 000000000000001f
-R10: 0000000000000009 R11: 0000000000000003 R12: ffffc9000bd8f4a0
-R13: ffff88805919c000 R14: 0000000000000009 R15: 0000000000000010
-FS:  00007f71995436c0(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000001b3031cff8 CR3: 000000007b9ce000 CR4: 0000000000350ef0
-Call Trace:
- <TASK>
- exfat_init_ext_entry+0x1b6/0x3b0 fs/exfat/dir.c:498
- exfat_add_entry+0x321/0x7a0 fs/exfat/namei.c:517
- exfat_create+0x1cf/0x5c0 fs/exfat/namei.c:565
- lookup_open.isra.0+0x1177/0x14c0 fs/namei.c:3649
- open_last_lookups fs/namei.c:3748 [inline]
- path_openat+0x904/0x2d60 fs/namei.c:3984
- do_filp_open+0x20c/0x470 fs/namei.c:4014
- do_sys_openat2+0x17a/0x1e0 fs/open.c:1402
- do_sys_open fs/open.c:1417 [inline]
- __do_sys_creat fs/open.c:1495 [inline]
- __se_sys_creat fs/open.c:1489 [inline]
- __x64_sys_creat+0xcd/0x120 fs/open.c:1489
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f7198780849
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f7199543058 EFLAGS: 00000246 ORIG_RAX: 0000000000000055
-RAX: ffffffffffffffda RBX: 00007f7198946240 RCX: 00007f7198780849
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000020000e00
-RBP: 00007f71987f3986 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000001 R14: 00007f7198946240 R15: 00007ffd4aed7f08
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:exfat_get_dentry_cached+0x11a/0x1b0 fs/exfat/dir.c:727
-Code: df 48 89 da 48 c1 ea 03 80 3c 02 00 0f 85 9d 00 00 00 48 b8 00 00 00 00 00 fc ff df 48 8b 1b 48 8d 7b 28 48 89 fa 48 c1 ea 03 <80> 3c 02 00 75 61 49 8d 7d 18 48 8b 43 28 48 ba 00 00 00 00 00 fc
-----------------
-Code disassembly (best guess), 1 bytes skipped:
-   0:	48 89 da             	mov    %rbx,%rdx
-   3:	48 c1 ea 03          	shr    $0x3,%rdx
-   7:	80 3c 02 00          	cmpb   $0x0,(%rdx,%rax,1)
-   b:	0f 85 9d 00 00 00    	jne    0xae
-  11:	48 b8 00 00 00 00 00 	movabs $0xdffffc0000000000,%rax
-  18:	fc ff df
-  1b:	48 8b 1b             	mov    (%rbx),%rbx
-  1e:	48 8d 7b 28          	lea    0x28(%rbx),%rdi
-  22:	48 89 fa             	mov    %rdi,%rdx
-  25:	48 c1 ea 03          	shr    $0x3,%rdx
-* 29:	80 3c 02 00          	cmpb   $0x0,(%rdx,%rax,1) <-- trapping instruction
-  2d:	75 61                	jne    0x90
-  2f:	49 8d 7d 18          	lea    0x18(%r13),%rdi
-  33:	48 8b 43 28          	mov    0x28(%rbx),%rax
-  37:	48                   	rex.W
-  38:	ba 00 00 00 00       	mov    $0x0,%edx
-  3d:	00 fc                	add    %bh,%ah
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
