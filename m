@@ -1,162 +1,246 @@
-Return-Path: <linux-kernel+bounces-429092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABE099E1749
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:23:34 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D6E29E1851
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:54:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B30D286231
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:23:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 32D4DB271C0
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:23:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 070BC1DE3AE;
-	Tue,  3 Dec 2024 09:22:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48FD81DF24C;
+	Tue,  3 Dec 2024 09:22:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CCjRbDQc"
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="lQomKArm"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99C031DFE1E
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 09:22:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84B481DF96B;
+	Tue,  3 Dec 2024 09:22:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733217729; cv=none; b=IgrnikpoWUrJcDIHEjxicWgLsfXM7bO8M/3QwJR34yctVGttxEmLy//gNSJ08zPNBF2tcEzmzXtrpcuoiDSWlvl6b2gxt2tIc7GcxOQsUubSsjzcIHp2tje5geZK+7Lss1vRjyL/Ml6fMCGZEd6BaGM5/whrDrj76iRVLHoLdnk=
+	t=1733217745; cv=none; b=d4m9Kf1KsaO2u2YoIt/2l8m67KvkyEAvb3UE65hKI8bf2mQ3KowFlEmbtaI5RbB6rt3SO4VgvrhTqUF//nZRe+LFo9oq5s4ZEtGwWl2rwoiLOq71gZhS3S4FWjmtx7U6F9qE5rfjgQE3EH106T4TtjIB5khdi90ISYkccwVVhtg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733217729; c=relaxed/simple;
-	bh=tAUvidCL9cRweVfC/2kXnjRALxKyYX7dCB9chBszEZY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CTGZbfV4Uhf2CqGxCSKDO/kS7vkUJDL7au3DR3cNgVv7SG94836s7JKd3kvdJR8oM51Z6F8mQQFCSFVYvGtP8KiX3yo/ehNbGvuaD+vVdKa/SLhSThTF8hq8jDp92of0PFEYxn3gMyQenCp5lcT0Pq+cM9zJdIGu1LUVqsyMAEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CCjRbDQc; arc=none smtp.client-ip=209.85.216.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2ee786b3277so2367320a91.1
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 01:22:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733217727; x=1733822527; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=3a7w9E16Z/EosAKMu1bm/FzpFNeifD2WnNFT8adcORE=;
-        b=CCjRbDQcoziO+wAPOUf7S7UjOE0SnX0Tuq38lst5BXefPVG7wWaPYi9Qv/uhx9mZnz
-         /S5dUZztY0EmJJftXsH2Re2TPZDIgNf2ZbVPsR66xsBW5HLnxW/EDsfisFb3pabojBU3
-         dynrdGVYhXHdVMUB+CksquC91nGoFlDjzoBVpQ9DRmT0SMMk5b7rZLkD/gPtG3w1m5sM
-         +o6RGdR90El7Oz+21CDwzl7QrqXI5SAygz09kj0mXsrRuOroApn5ecp940Hg5EF/tA3f
-         I4Y+p8lqYLA0MHo9b1HahovhFNlP4yKhcuEH4qWZrSYG+KoBUbbINmJkWTKTz8JeHJFd
-         Uu+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733217727; x=1733822527;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3a7w9E16Z/EosAKMu1bm/FzpFNeifD2WnNFT8adcORE=;
-        b=BcjUWAeOs9W4vVh6Lg4JzJJBr46uAeHKSVw2xm+IItpLZhBnbwOrHXPoXucHk+2huu
-         u19bkiXIpGDGLmjzpG0QFZKuLMl0R4jcSJVVUX/XIIcfFo3U8GYtGDV0jAUwXPfzXa88
-         Mik1wwF5GlKbdb7kDoFD5a6WPhbsti4842M+r89ZjKaxcwOBgW0qwt8nJdYuQS86Nk9M
-         yqiuJEhZGmj7P1nvAvZxBwCI1CDUtA9SNlf1tsrJXWW7b7iDeYoF1meyACVeiBIQHhVx
-         39Hl0DRPyZjYF+z/CDsyjwFGj8ZWukvrZXiVYsrhmPTGQE3u7FNZnB98zFke4ICItyhh
-         UNpg==
-X-Forwarded-Encrypted: i=1; AJvYcCUNfKmMTXoN5MP17+edNKCvCEQ4qiNYE0RvV8sd4jc+fTVjInn5Fvelr79HZQFPIp242sSGVBlwWPSaMGI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywvpg+/EfN1uXfifHkbMHVVbQ19XxNEpcIBk+o9r/c2VwwRtM+V
-	zRyENtOMD3mHnJ5FoGrOvLuce/J6CVJ1hTW+4cuMugVfq+vhuhPQxONJdN1aOQ==
-X-Gm-Gg: ASbGnctsRf51mqzovKo7msPMaMcGbhpIKbYQZkBzfbV5eaUDURAHiaKhHfSkQReaDKq
-	wDiEJZ6hKJg2EIZv7/u8EnHvokH2Sz6TmA1dAe308ka71iWU1Y93bg83meoRpulBOpvyMSRJUfx
-	7IzdJGtKlclqW0Piijk7DewyCbACbTTpzFSsvZTNWUFAQLUfFKg11yIiUQpkVNFq9UdaTdbmS5z
-	v8OfyZ/cXm5Vnqh9gvSayiwNenD3FKtB6354wc6E9sD/VZap4ZffqX7Xe7W
-X-Google-Smtp-Source: AGHT+IFMtDbNR1ZzC8JtoJ2Q1vFtRk/LtU82uZrGwY7TKzZ61sbiHL4d7qYEx6wuyZzyYv4Os2n5uw==
-X-Received: by 2002:a17:90b:4a84:b0:2ea:59e3:2d2e with SMTP id 98e67ed59e1d1-2ef011f5fecmr2562312a91.10.1733217726913;
-        Tue, 03 Dec 2024 01:22:06 -0800 (PST)
-Received: from thinkpad ([120.60.48.217])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ee36170536sm9113500a91.28.2024.12.03.01.22.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Dec 2024 01:22:06 -0800 (PST)
-Date: Tue, 3 Dec 2024 14:51:51 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Johan Hovold <johan@kernel.org>, Stephen Boyd <sboyd@kernel.org>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>,
-	Johan Hovold <johan+linaro@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	regressions@lists.linux.dev, Aishwarya TCV <aishwarya.tcv@arm.com>,
-	Chuan Liu <chuan.liu@amlogic.com>,
-	Sudeep Holla <sudeep.holla@arm.com>, linux-pm@vger.kernel.org
-Subject: Re: [PATCH] Revert "clk: Fix invalid execution of clk_set_rate"
-Message-ID: <20241203092151.izcsgzqep4imbcwe@thinkpad>
-References: <20241202100621.29209-1-johan+linaro@kernel.org>
- <3fd004add188460bf2bdd1a718387c7f.sboyd@kernel.org>
- <Z07AXbQvvZwI8Ki6@hovoldconsulting.com>
+	s=arc-20240116; t=1733217745; c=relaxed/simple;
+	bh=4zy6CY0fpOLVqr3JTKJMWeLbeBgOZXh+WP+kci8xRF4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cOOkXQ+OSbMKlA+SzEk9jtLHMoR+ICpfwNLhtU29aNSA/4E1kENwjbMr3SFSklMni5p1J/6QDkSl2TAjFY5kHluLSmsnfrHJ/vcXUsYHfwwJiTJ5GeR/2UOGZ1li1iYNhPoiOBgclZmOSUJrDmJfe8OQHxE3McZr04xJ5gcaXQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=lQomKArm; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [192.168.88.20] (91-157-155-49.elisa-laajakaista.fi [91.157.155.49])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 1B3EB4CE;
+	Tue,  3 Dec 2024 10:21:52 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1733217713;
+	bh=4zy6CY0fpOLVqr3JTKJMWeLbeBgOZXh+WP+kci8xRF4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=lQomKArm3pFthfuyWJmQUy7rsBHo8bnscV9hV0DSwVNI/GHicUuEEeJAR+tcTl1T8
+	 reSM1ZC95+aR1Rzh85dDboMfrlkl/6VGbpnKr+Le+ktoWs02ErQafO5zLkDIV2+e0U
+	 21zm5NR8FNBFh7r30AkT7sY9ZNi4OoUUUyWl8bCo=
+Message-ID: <e155c9b1-a43f-4be3-9825-2639ac3bb61d@ideasonboard.com>
+Date: Tue, 3 Dec 2024 11:22:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Z07AXbQvvZwI8Ki6@hovoldconsulting.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6/9] drm/rcar-du: Add support for r8a779h0
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+ Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Magnus Damm <magnus.damm@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, LUU HOAI <hoai.luu.ub@renesas.com>,
+ Jagan Teki <jagan@amarulasolutions.com>, Sam Ravnborg <sam@ravnborg.org>,
+ Biju Das <biju.das.jz@bp.renesas.com>, dri-devel@lists.freedesktop.org,
+ linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+References: <20241203-rcar-gh-dsi-v1-0-738ae1a95d2a@ideasonboard.com>
+ <20241203-rcar-gh-dsi-v1-6-738ae1a95d2a@ideasonboard.com>
+ <20241203085654.GJ10736@pendragon.ideasonboard.com>
+Content-Language: en-US
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
+ 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
+In-Reply-To: <20241203085654.GJ10736@pendragon.ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Dec 03, 2024 at 09:25:01AM +0100, Johan Hovold wrote:
-> [ +CC: Viresh and Sudeep ]
+On 03/12/2024 10:56, Laurent Pinchart wrote:
+> Hi Tomi,
 > 
-> On Mon, Dec 02, 2024 at 05:20:06PM -0800, Stephen Boyd wrote:
-> > Quoting Johan Hovold (2024-12-02 02:06:21)
-> > > This reverts commit 25f1c96a0e841013647d788d4598e364e5c2ebb7.
-> > > 
-> > > The offending commit results in errors like
-> > > 
-> > >         cpu cpu0: _opp_config_clk_single: failed to set clock rate: -22
-> > > 
-> > > spamming the logs on the Lenovo ThinkPad X13s and other Qualcomm
-> > > machines when cpufreq tries to update the CPUFreq HW Engine clocks.
-> > > 
-> > > As mentioned in commit 4370232c727b ("cpufreq: qcom-hw: Add CPU clock
-> > > provider support"):
-> > > 
-> > >         [T]he frequency supplied by the driver is the actual frequency
-> > >         that comes out of the EPSS/OSM block after the DCVS operation.
-> > >         This frequency is not same as what the CPUFreq framework has set
-> > >         but it is the one that gets supplied to the CPUs after
-> > >         throttling by LMh.
-> > > 
-> > > which seems to suggest that the driver relies on the previous behaviour
-> > > of clk_set_rate().
-> > 
-> > I don't understand why a clk provider is needed there. Is anyone looking
-> > into the real problem?
+> Thank you for the patch.
 > 
-> I mentioned this to Mani yesterday, but I'm not sure if he has had time
-> to look into it yet. And I forgot to CC Viresh who was involved in
-> implementing this. There is comment of his in the thread where this
-> feature was added:
+> On Tue, Dec 03, 2024 at 10:01:40AM +0200, Tomi Valkeinen wrote:
+>> From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+>>
+>> Add support for r8a779h0. It is very similar to r8a779g0, but has only
+>> one output.
+>>
+>> Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+>> ---
+>>   drivers/gpu/drm/renesas/rcar-du/rcar_du_drv.c   | 19 +++++++++++++++++++
+>>   drivers/gpu/drm/renesas/rcar-du/rcar_du_drv.h   |  1 +
+>>   drivers/gpu/drm/renesas/rcar-du/rcar_du_group.c | 16 ++++++++++------
+>>   3 files changed, 30 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/renesas/rcar-du/rcar_du_drv.c b/drivers/gpu/drm/renesas/rcar-du/rcar_du_drv.c
+>> index fb719d9aff10..afbc74e18cce 100644
+>> --- a/drivers/gpu/drm/renesas/rcar-du/rcar_du_drv.c
+>> +++ b/drivers/gpu/drm/renesas/rcar-du/rcar_du_drv.c
+>> @@ -545,6 +545,24 @@ static const struct rcar_du_device_info rcar_du_r8a779g0_info = {
+>>   	.dsi_clk_mask =  BIT(1) | BIT(0),
+>>   };
+>>   
+>> +static const struct rcar_du_device_info rcar_du_r8a779h0_info = {
+>> +	.gen = 4,
+>> +	.features = RCAR_DU_FEATURE_CRTC_IRQ
+>> +		  | RCAR_DU_FEATURE_VSP1_SOURCE
+>> +		  | RCAR_DU_FEATURE_NO_BLENDING
+>> +		  | RCAR_DU_FEATURE_NO_DPTSR,
+>> +	.channels_mask = BIT(0),
+>> +	.routes = {
+>> +		/* R8A779H0 has one MIPI DSI output. */
+>> +		[RCAR_DU_OUTPUT_DSI0] = {
+>> +			.possible_crtcs = BIT(0),
+>> +			.port = 0,
+>> +		},
+>> +	},
+>> +	.num_rpf = 5,
+>> +	.dsi_clk_mask = BIT(0),
+>> +};
+>> +
+>>   static const struct of_device_id rcar_du_of_table[] = {
+>>   	{ .compatible = "renesas,du-r8a7742", .data = &rcar_du_r8a7790_info },
+>>   	{ .compatible = "renesas,du-r8a7743", .data = &rzg1_du_r8a7743_info },
+>> @@ -571,6 +589,7 @@ static const struct of_device_id rcar_du_of_table[] = {
+>>   	{ .compatible = "renesas,du-r8a77995", .data = &rcar_du_r8a7799x_info },
+>>   	{ .compatible = "renesas,du-r8a779a0", .data = &rcar_du_r8a779a0_info },
+>>   	{ .compatible = "renesas,du-r8a779g0", .data = &rcar_du_r8a779g0_info },
+>> +	{ .compatible = "renesas,du-r8a779h0", .data = &rcar_du_r8a779h0_info },
+>>   	{ }
+>>   };
+>>   
+>> diff --git a/drivers/gpu/drm/renesas/rcar-du/rcar_du_drv.h b/drivers/gpu/drm/renesas/rcar-du/rcar_du_drv.h
+>> index 5cfa2bb7ad93..d7004f76f735 100644
+>> --- a/drivers/gpu/drm/renesas/rcar-du/rcar_du_drv.h
+>> +++ b/drivers/gpu/drm/renesas/rcar-du/rcar_du_drv.h
+>> @@ -32,6 +32,7 @@ struct rcar_du_device;
+>>   #define RCAR_DU_FEATURE_INTERLACED	BIT(3)	/* HW supports interlaced */
+>>   #define RCAR_DU_FEATURE_TVM_SYNC	BIT(4)	/* Has TV switch/sync modes */
+>>   #define RCAR_DU_FEATURE_NO_BLENDING	BIT(5)	/* PnMR.SPIM does not have ALP nor EOR bits */
+>> +#define RCAR_DU_FEATURE_NO_DPTSR	BIT(6)  /* V4M does not have DPTSR */
 > 
-> 	Most likely no one will ever do clk_set_rate() on this new
-> 	clock, which is fine, though OPP core will likely do
-> 	clk_get_rate() here.
+> Do we need a quirk ? At first glance it seems the DPTSR register is only
+> used for DU instances that have two channels, so a check on the number
+> of channels should be enough ?
+
+What do you mean with "DPTSR register is only used for DU instances that 
+have two channels"? The upstream code sets it for all SoCs, doesn't it, 
+without any checks?
+
+Most of the SoCs seem to have two channels, but r8a77970 has one. 
+However, I don't have docs for that one. It could be that it does not 
+have DPTSR register, and indeed we could use the num_crtcs > 1 check there.
+
+  Tomi
+
 > 
-> which may suggest that some underlying assumption has changed. [1]
+>>   
+>>   #define RCAR_DU_QUIRK_ALIGN_128B	BIT(0)	/* Align pitches to 128 bytes */
+>>   
+>> diff --git a/drivers/gpu/drm/renesas/rcar-du/rcar_du_group.c b/drivers/gpu/drm/renesas/rcar-du/rcar_du_group.c
+>> index 2ccd2581f544..132d930670eb 100644
+>> --- a/drivers/gpu/drm/renesas/rcar-du/rcar_du_group.c
+>> +++ b/drivers/gpu/drm/renesas/rcar-du/rcar_du_group.c
+>> @@ -107,10 +107,12 @@ static void rcar_du_group_setup_didsr(struct rcar_du_group *rgrp)
+>>   		 */
+>>   		rcrtc = rcdu->crtcs;
+>>   		num_crtcs = rcdu->num_crtcs;
+>> -	} else if (rcdu->info->gen >= 3 && rgrp->num_crtcs > 1) {
+>> +	} else if ((rcdu->info->gen == 3 && rgrp->num_crtcs > 1) ||
+>> +		   rcdu->info->gen == 4) {
+>>   		/*
+>>   		 * On Gen3 dot clocks are setup through per-group registers,
+>>   		 * only available when the group has two channels.
+>> +		 * On Gen4 the registers are there for single channel too.
+>>   		 */
+>>   		rcrtc = &rcdu->crtcs[rgrp->index * 2];
+>>   		num_crtcs = rgrp->num_crtcs;
+>> @@ -185,11 +187,13 @@ static void rcar_du_group_setup(struct rcar_du_group *rgrp)
+>>   		dorcr |= DORCR_PG1T | DORCR_DK1S | DORCR_PG1D_DS1;
+>>   	rcar_du_group_write(rgrp, DORCR, dorcr);
+>>   
+>> -	/* Apply planes to CRTCs association. */
+>> -	mutex_lock(&rgrp->lock);
+>> -	rcar_du_group_write(rgrp, DPTSR, (rgrp->dptsr_planes << 16) |
+>> -			    rgrp->dptsr_planes);
+>> -	mutex_unlock(&rgrp->lock);
+>> +	if (!rcar_du_has(rcdu, RCAR_DU_FEATURE_NO_DPTSR)) {
+>> +		/* Apply planes to CRTCs association. */
+>> +		mutex_lock(&rgrp->lock);
+>> +		rcar_du_group_write(rgrp, DPTSR, (rgrp->dptsr_planes << 16) |
+>> +				    rgrp->dptsr_planes);
+>> +		mutex_unlock(&rgrp->lock);
+>> +	}
+>>   }
+>>   
+>>   /*
 > 
 
-I just looked into the issue this morning. The commit that triggered the errors
-seem to be doing the right thing (although the commit message was a bit hard to
-understand), but the problem is this check which gets triggered now:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/clk/clk.c?h=v6.13-rc1#n2319
-
-Since the qcom-cpufreq* clocks doesn't have parents now (they should've been
-defined anyway) and there is no CLK_SET_RATE_PARENT flag set, the check returns
-NULL for the 'top' clock. Then clk_core_set_rate_nolock() returns -EINVAL,
-causing the reported error.
-
-But I don't quite understand why clk_core_set_rate_nolock() fails if there is no
-parent or CLK_SET_RATE_PARENT is not set. The API is supposed to set the rate of
-the passed clock irrespective of the parent. Propagating the rate change to
-parent is not strictly needed and doesn't make sense if the parent is a fixed
-clock like XO.
-
-Stephen, thoughts?
-
-- Mani
-
--- 
-மணிவண்ணன் சதாசிவம்
 
