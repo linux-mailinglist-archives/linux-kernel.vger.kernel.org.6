@@ -1,75 +1,74 @@
-Return-Path: <linux-kernel+bounces-430240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4CC49E2E5F
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 22:46:57 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C30519E2E8B
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 22:59:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 981B0281B03
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 21:46:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 569D6B2B5BB
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 21:50:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 390C5207A20;
-	Tue,  3 Dec 2024 21:46:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99AC8207A0F;
+	Tue,  3 Dec 2024 21:50:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="SN0A0j7i"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2065.outbound.protection.outlook.com [40.107.243.65])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="SD64SAqH"
+Received: from mail-io1-f49.google.com (mail-io1-f49.google.com [209.85.166.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 056C317ADE1;
-	Tue,  3 Dec 2024 21:46:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.65
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733262409; cv=fail; b=brYspvLwr0BQwiYPfDP9OX2U785NyFXtzV6Stfct2Tl4gAo6J58IJVKLsvO93WS/NHplJGYbqGJp3107/pLmDwjFO7ArjA5rBqtUsq83AXbat6UnI6NlE13cFMAqtrzhw4bzy8JdAcZwPvhBbf0ZAk82unWPe6jhEhE1KCI3vrA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733262409; c=relaxed/simple;
-	bh=gPWWF56n/hgtrWPF7kDDP0YlC8p5NXDq6BF/w/ZO3qc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=fM1O/ALfSnU/tGn/VCMOnVbKQnbpaNIDO0CiNDofjIWMuTw3+KmxcDLp8XDZCD8TQ9kXNEAygv7UYuTeDJhvbxIIJIwzEJfUNKJUCcZRXdgG/ofKM2S2dOTiepOPyTEfXOD505BfsrHoRrqONIkFdn3TQBE7zWYQpIXWIi+Fgug=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=SN0A0j7i; arc=fail smtp.client-ip=40.107.243.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=DpbVuwcX7FvZKrulWqGWctal8Ais3GA+URPrQ/s0x/UCyWj6rfvKW6e/mTehHQpww0R/zda5+A4wnqtHrmk+XLtkjIBhqyrmWewHtzVCc55aGDWtIQb3pve5XgVef8f6dsquU64pE+ItWNRhnyyyofFfRl0VKovx1fbciXKPOceuTs4+eLNZs/ZnaFqUBOA9iAFXng9z9g0E/9vWtWLz1QkpiLRPUT7BDkPGwqM49Xbu4o34LH3vTk1taR938OpQKzVojcLFzyQghmTT9XV3miCy+Um0SbUDOBvNNc0lh0fV8O/MS82F2rBxjQkr0LSvDHiExMcTfiEjtS1FZatQog==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=snmwSH0bVGsJ19kIjdDwEwLPlFgd6KfZt49K+Wf9ii4=;
- b=B1uoYCvVPIOZ3CdqVN1CtuYsltK1nhPh0b0EFU7D2rqAoA6MgUADaY7DmngEGgBvQAHn2GQ2nHZvCrJypI3oG9k4NSqWMPC97lBwaCVZ5tLDlw6JHduTEF9A6lGXfIiO186ddyqh53KyBMOMYhJ0z5GeYEtrO86fxtITdm7qZFM7l6hZQMEPl25xrY8a98+t2ChjO7TXoTDBfx0/nFjtLg8uCNaeNNgR0Gr3+kGfZS29up5LXZOsXdqVQOCyUiVZ/EhpiZh10+xv9grTJHmfkxrBqN64BgZIb3TjtrxlAMNiFv1Y5Tt7/X1/dRsQU4bcp7evXB7HE27OqUKd6Cj5gA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=google.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=snmwSH0bVGsJ19kIjdDwEwLPlFgd6KfZt49K+Wf9ii4=;
- b=SN0A0j7iS2Os/Yja1ACRmfvrjS/ijniiKKcDbhyBVB6lLZ67lOiq3PJBqLvIinCo8dAnK1Zf7pYiaYo4UZUARpCT6jLy8zsO3QM5Ry67uTdBPTs8i0+JtRZx4OYcuVBWVpi1YROhKBE4qaM795K0mJx5rCA2Z1LLzaZ1xkuqwDE=
-Received: from CH2PR05CA0013.namprd05.prod.outlook.com (2603:10b6:610::26) by
- SJ2PR12MB8925.namprd12.prod.outlook.com (2603:10b6:a03:542::9) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8207.18; Tue, 3 Dec 2024 21:46:44 +0000
-Received: from CH3PEPF00000011.namprd21.prod.outlook.com
- (2603:10b6:610:0:cafe::4) by CH2PR05CA0013.outlook.office365.com
- (2603:10b6:610::26) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8230.9 via Frontend Transport; Tue, 3
- Dec 2024 21:46:43 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- CH3PEPF00000011.mail.protection.outlook.com (10.167.244.116) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8251.1 via Frontend Transport; Tue, 3 Dec 2024 21:46:43 +0000
-Received: from [10.23.192.43] (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 3 Dec
- 2024 15:46:42 -0600
-Message-ID: <c09a99e8-913f-4a86-ba0b-c64d5cdcfb2e@amd.com>
-Date: Tue, 3 Dec 2024 13:46:36 -0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3210E1E47C6
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 21:50:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.49
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733262605; cv=none; b=oVsTElngylmj85vfgRzJ+R4RZxUWrumcNy7BXrUwl54uja/0Wx4hk80oF+1xIiJkLiwxjAeymC8+PCSJ/PnZKGeWSPc5UMPnx0GWSmu+V7s0IlZhlmjU0t+WKBnkT0DxPwWBOoYxbA5aPc0nMoFTxHajDqlow5HqkY03ms99seM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733262605; c=relaxed/simple;
+	bh=S52DfKwMNGc5EiRkh/HfsI5lbDqe35eUnjhynS4EPyU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qaq0Z7eWk/re8zw0Mi0j0EegaWmY1T+BYaibWkqAKc1HCkWUU7fEhlT9+zQ8pa0PynQ6yUf631abkNSlHRYk5+1MQHsgZ8jj3Xy9WxcXRTTSfbj/Rszz5wbXjaatjY29OZFgM/kTUQo4pETwl/aqt8XJdttaeG1XcZwKBGKTehM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=SD64SAqH; arc=none smtp.client-ip=209.85.166.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f49.google.com with SMTP id ca18e2360f4ac-84198253281so212594539f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 13:50:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1733262603; x=1733867403; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=hl74QNFi9+204dN29m57Rrn4d5enBoTw7nPdzuHs9Rc=;
+        b=SD64SAqH2EJs7zCx6T0WmaYsT5T2MyVRVCqGflvyos9aSjXqEjh6lJp/393L6n8S8J
+         ciBWzZRUyP9NgSCo6HEe+sx9kr4kKZyZOpb3uaKYLgo9DMQrAHw/Dy0HS27BDbiplqt0
+         rFoUlyz1tKn+v7RwS5410Pj5mgjAcmVE99fsI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733262603; x=1733867403;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hl74QNFi9+204dN29m57Rrn4d5enBoTw7nPdzuHs9Rc=;
+        b=n6AZZPK2Ojn/cH+jrTg2i7ahOOSterpxr001XJFBOLYoPANVrecie4oltsVqBzbS0Q
+         wYFiMKSxazufGgZrf3pcOxXSeyC3e/IQ2IqL69eONwVu8/knhNnttOwV6bwTmIHvTYSs
+         mLxqwIpc5tXu/cSkwLWKl0Fi93x314ewr4+mMXzAFZ1WBe6oVMIPy2frF80azKyYltgo
+         fEtb4Qw9BvhvolnTQUTP2c+6TSJ6kBM2N8mz3GCLmwGm6pq8EZ7DblAgmN0LeKXFeClk
+         Mrbt3FqIrpOFUqSpO0haw0AsUkOT6sDUFQmrcfq4PhiYpaQFWdw58OAhOB1FpD1DQHNW
+         CWDw==
+X-Forwarded-Encrypted: i=1; AJvYcCVNgzJU8NMIDLoWC7IxsMw8HRGxyzIp7fquobyc0hZjICUUX0ZkINyTGFd2B19hrcV3nTZ9c4FpCXx9gZw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxT0+PfUS7h5m3bLhqltzamvAxwzuj/Lr4ZPuZkXquSKMGcRNg8
+	wSsADo1SRKrapWLUiR13dsnGrT/iRI0MKpkFJTbbXG7PCk3oVkPwjJD5uk/zGro=
+X-Gm-Gg: ASbGncs9V5go52ybaE3oVTseYvBGUGHG5iNaUfGOTJhY0Cp08dVh7d48wt7f0LEmGCz
+	95B0vAjfULQes0ndIAaKnk8X+g6TGUJH4czz0Se13UVzFJFK3Q7BMxBIPOpp6v6p4BoFbTY33bk
+	+a3ErNwcxy6tN+E/EntU6hGu/xteCvucRMMEI7mdYupbjhesY4XVdHhz75TXNOoVeOaM3t2HE1z
+	FIOrp/DrjwJsOyl+oLJ0IXEVF1WImtUg0JoB42kVPqN931xtOh/eNEjXk8Wgg==
+X-Google-Smtp-Source: AGHT+IG7nNwe7zA9gJvUkLM02efBSPZHgWiV5Pu/3sPNlc7wpYvQ76+GXzXV+MXJxcQdj+NfN1jKOQ==
+X-Received: by 2002:a05:6602:2cd4:b0:843:e8d0:a728 with SMTP id ca18e2360f4ac-8445b54e8b3mr575381539f.4.1733262603303;
+        Tue, 03 Dec 2024 13:50:03 -0800 (PST)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-84405ec8d88sm269933739f.19.2024.12.03.13.50.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 03 Dec 2024 13:50:02 -0800 (PST)
+Message-ID: <c74c8f0c-f8f0-4005-821d-c0897e5c3f4b@linuxfoundation.org>
+Date: Tue, 3 Dec 2024 14:50:01 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,104 +76,83 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] KVM: SVM: Convert plain error code numbers to defines
-To: Sean Christopherson <seanjc@google.com>
-CC: LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>, "Paolo
- Bonzini" <pbonzini@redhat.com>, Tom Lendacky <thomas.lendacky@amd.com>, KVM
-	<kvm@vger.kernel.org>, Pavan Kumar Paluri <papaluri@amd.com>
-References: <20241202214032.350109-1-huibo.wang@amd.com>
- <Z05MrWbtZQXOY2qk@google.com>
+Subject: Re: [PATCH v5 1/2] selftests: tmpfs: Add Test-fail if not run as root
+To: Shivam Chaudhary <cvam0000@gmail.com>, shuah@kernel.org
+Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20241112143056.565122-1-cvam0000@gmail.com>
+ <20241112143056.565122-2-cvam0000@gmail.com>
 Content-Language: en-US
-From: "Melody (Huibo) Wang" <huibo.wang@amd.com>
-In-Reply-To: <Z05MrWbtZQXOY2qk@google.com>
-Content-Type: text/plain; charset="UTF-8"
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20241112143056.565122-2-cvam0000@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PEPF00000011:EE_|SJ2PR12MB8925:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9558454f-db6b-4d72-aeaa-08dd13e3fa87
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|1800799024|36860700013|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?a2E1ODcwaTRpVzFNcDBzMisramlnN0FZODhaYjVBb1RIQmhFdk11ZDVWREcr?=
- =?utf-8?B?ejZnRS9ndXhVcG5yYnVjeWVWTDkzMFNmNlpBZzVFRUkxLzkvUnhObjdOWTJS?=
- =?utf-8?B?SnBVeVVaSG5QVks2bFh3ZTE3bkR0MXFsL1FmOFRMbk84ellLRXhVa0sza01V?=
- =?utf-8?B?VGQ0VUp6RitiaFQ3TkpoRStuNFJISEFtMnZUcjAyQ2czMnVWRWhReHV2YTh0?=
- =?utf-8?B?M2NzcjdRWVlzczdZQzNkVUt1THpMZ1FTYlB5REM3V0pjQk8yNERIdXUvaTZD?=
- =?utf-8?B?bkdsM1VoektKWFVFWUhsZXI5bUh1SmZNQk9oakphN1B0UkYvQnVEVnpXMXVU?=
- =?utf-8?B?TTd5UTBvVm52a25GaG55a1ZzSDlkRnJIdEExeWFYNW13Y3R2R0grRU01REd4?=
- =?utf-8?B?MnpSUGZVY3hWM0N5elNJdTVaNTBpR1VWU1BwZ1NLVDkvYlpOeG91bUtBT1U2?=
- =?utf-8?B?QWxRcEN6QmhXTzlCOVNmdEJuL2lCMDQwZnZ3Q0V1S1VEYWdpUVlOSEo4cVVR?=
- =?utf-8?B?cHhFemNZVk5EV0RTc3NKQzcrV2V5TGQyNjRPbDZqV0VCalBSVms2RjBYajd5?=
- =?utf-8?B?QUZmekpNU05xQ3QzdTYrc096RkZaQmoxYWFsTnJISEFKVXB4YndKbDc3QnlS?=
- =?utf-8?B?UVlZbDJjTlFmdUdZUG0xZlFaM0JjeHE4VmE0TE5RZmtpZjEraUlKVDA2RzRt?=
- =?utf-8?B?Q0o0Y3F0WktSdS9rdTRqMTAwVXEybEdiQVNTNFErN2svcHJUUVVTdk5IWG5m?=
- =?utf-8?B?WkxqTkhtaFpVN2RTcUtmbjZEazJETHFWWWdHR1pUTFRCTjgzNU9QZlJlR1B3?=
- =?utf-8?B?YUxVSll3L2hWcGg2b3A1UFVXZVZzRTFpZVVQODUwQS8wdm1Bc0pGSllYZWxS?=
- =?utf-8?B?bEVOcXNHeWxydStqVUk2T0JvSG42RmRuSS9FNUNaQ0N5MmVJa1V2K0FHVGx1?=
- =?utf-8?B?S0EyaDBDK1Voald4ZmpFSEdCYk5oSTRhVzFzdUV0azlmM1ZmajRIaUd1cEVR?=
- =?utf-8?B?eTl6WWxmZUdWdjNBRjY0bktFYzJyZGw2S0lNNWpQODJPbkZNdlhKYTljQ1Vt?=
- =?utf-8?B?N1R5NVdzNUFLOHp6RGJUYmtEaERPOGpnUm9pQjZqbUNEdVpCalE1TGNsMDhs?=
- =?utf-8?B?aVR1TGxZTTZ0dHRWYzlxZVZPN0REU1RneG9lbVdXeXBuUlhIcXdsbFhkQ2w5?=
- =?utf-8?B?ZTAzUFBwbXl1RUJJVkp1bDVmVkhOaWRQRytHblp4MnUxeUd6UHlKaG1jVXJ0?=
- =?utf-8?B?UEE4MmFtOFRhdDlLSitMVlhzZDhhaHlxMlBSbU5iaXRjTVBscE1VV2lWdGR0?=
- =?utf-8?B?L3JIYmhDd1M1bS82WFd6cUpXL2l0U0tMYTFROVZTM1htc0IzNlFjSVNnWmhX?=
- =?utf-8?B?TEhLOUVVRlNpVmpHYk8waGFCUFJ4VXRPUXN0QTlNMm9sblVublhsdUhZWWtX?=
- =?utf-8?B?ZFV2RWtHVVlnZU5tcVo3NUdQRm5lZEZXSjkveFlrNnRxWkx2UjNHVzhOcEJE?=
- =?utf-8?B?VS8wSlFpaHcxdW5wUVlSdms3S280TUd0aEdxRWphRjlIWGhKaVoxVXcxWFA2?=
- =?utf-8?B?ejVEVjZzbGZEQlBEM0JINzkxb1d1Wm5QWEVEYWR0Q3kxTG9POHpOblpGOXZO?=
- =?utf-8?B?M0tRTzZ1UXJDbmVibjcxR25NOEgvUUNQUXNBVUtMTndwcWdCUUUvRUY0WGZP?=
- =?utf-8?B?czY4SGZOcUtXWHNtTjdzTlFKdmZOVEh0c2FhOTFIaks4MTdLT0l4dnNUck1W?=
- =?utf-8?B?UThrTEUvSWJETUgvM3RJcmw3dHdHUFhvK1BnMTU4amU0QVpFTHlDNE4rOG1k?=
- =?utf-8?B?UUMyZFdhVDZKOWN3RWVVOFllSzRjMHQ2aVdGUWxObHlPM1p6S0lTeEtydGtS?=
- =?utf-8?B?RFZsVGlqK25ySmxQblFaQlYzdTZHblhmZWVWQy9WS1RHTXlPelY0WGJVQ3Fq?=
- =?utf-8?Q?fghmatOohupwPvdIi8Q/Qfh4FL+5Keaj?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(36860700013)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Dec 2024 21:46:43.7240
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9558454f-db6b-4d72-aeaa-08dd13e3fa87
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CH3PEPF00000011.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB8925
 
-Hi Sean,
+On 11/12/24 07:30, Shivam Chaudhary wrote:
+> Add 'ksft_exit_fail_msg()', if  not run as root, with an appropriate
+> Warning.
 
-On 12/2/2024 4:11 PM, Sean Christopherson wrote:
+This should be a skip - not a fail.
 
 > 
-> E.g. something like this?  Definitely feel free to suggest better names.
+> Add 'ksft_print_header()' and 'ksft_set_plan()' to structure test
+> outputs more effectively.
 > 
-> static inline void svm_vmgexit_set_return_code(struct vcpu_svm *svm,
-> 					       u64 response, u64 data)
-> {
-> 	ghcb_set_sw_exit_info_1(svm->sev_es.ghcb, response);
-> 	ghcb_set_sw_exit_info_2(svm->sev_es.ghcb, data);
-> }
+> Test logs:
 > 
-If I make this function more generic where the exit info is set for both KVM and the guest, then maybe I can write something like this:
+> Before Change:
+> - Without root
+>   error: unshare, errno 1
+> 
+> - With root
+>   No, output
+> 
+> After Change:
+> - Without root
+> TAP version 13
+> 1..1
+> Bail out! Error : Need to run as root# Planned tests != run tests (1 != 0)
+> 
+> - With root
+> TAP version 13
+> 1..1
+> 
+> Signed-off-by: Shivam Chaudhary <cvam0000@gmail.com>
+> ---
+>   tools/testing/selftests/tmpfs/bug-link-o-tmpfile.c | 11 +++++++++++
+>   1 file changed, 11 insertions(+)
+> 
+> diff --git a/tools/testing/selftests/tmpfs/bug-link-o-tmpfile.c b/tools/testing/selftests/tmpfs/bug-link-o-tmpfile.c
+> index b5c3ddb90942..f0b36e7a152e 100644
+> --- a/tools/testing/selftests/tmpfs/bug-link-o-tmpfile.c
+> +++ b/tools/testing/selftests/tmpfs/bug-link-o-tmpfile.c
+> @@ -23,10 +23,21 @@
+>   #include <sys/mount.h>
+>   #include <unistd.h>
+>   
+> +#include "../kselftest.h"
+> +
+>   int main(void)
+>   {
+>   	int fd;
+>   
+> +	/* Setting up kselftest framework */
+> +	ksft_print_header();
+> +	ksft_set_plan(1);
+> +
+> +	/* Check if test is run as root */
+> +	if (geteuid()) {
+> +		ksft_exit_fail_msg("Error : Need to run as root");
 
-void ghcb_set_exit_info(struct ghcb *ghcb,
-                      u64 info1, u64 info2)
-{
-	ghcb_set_sw_exit_info_1(ghcb, info1);
-	ghcb_set_sw_exit_info_2(ghcb, info2);
+Use ksft_skip call.
 
-}
-This way we can address every possible case that sets the exit info - not only KVM. 
+> +	}
+> +
+>   	if (unshare(CLONE_NEWNS) == -1) {
+>   		if (errno == ENOSYS || errno == EPERM) {
+>   			fprintf(stderr, "error: unshare, errno %d\n", errno);
 
-And I am not sure about the wrappers for each specific case because we will have too many, too specific small functions, but if you want them I can add them.
-
-Thanks,
-Melody
+thanks,
+-- Shuah
 
 
