@@ -1,84 +1,87 @@
-Return-Path: <linux-kernel+bounces-429899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B23149E2AC8
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 19:27:38 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3FB29E2B78
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 19:58:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C3BE8B34E8A
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:58:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DE22EB272B4
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 17:03:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D91F1F9418;
-	Tue,  3 Dec 2024 16:58:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57C0F1FA252;
+	Tue,  3 Dec 2024 17:03:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YA/+5FUC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CoQAxbGk"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA6591304BA;
-	Tue,  3 Dec 2024 16:58:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2501D1F76C6;
+	Tue,  3 Dec 2024 17:02:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733245109; cv=none; b=ElSi9ucc25wlB22d+3Gmf0+Eii8XOhunFrh/BJCTBw+Lw3/mRUORBvFfWPQhvHzBZ7Y19DsGsYtvTQsqj/dJt9l9OvJb1utUPQP+el8pHAllxqF2fr9Jy4LxCjpFM/ExRKvJrrmhAh9uOMHaoKgdH4hXrJ2n1gaQlpoh5SeQusA=
+	t=1733245380; cv=none; b=D6xqcaBmmG5BWaTz6U1sWnJQLOdd9Kqw7GuYA6LjtN1NYqLI/s7g+3j1EKzk18hTcIaMtdt2L8hjDe37u0UBrTR4P19FWNAEAmB8R1+Y8VhhJt4SbcYSw4D/f+eroyIpGZVnW9b9V3iuB+5sQ77hyvsG2NEPj0+OPhgkPmRyd7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733245109; c=relaxed/simple;
-	bh=arF+AUtSeu6ScqKrFJj4z1B2pVwQCLt63eW9K0h113I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lcdM6S/vynftENeOYTJsPKyzCTxH0e3GxIuvlO+oHxNcl6O+GnpiyokyuFivrAK8WxaA0xowVVAngM/itQYSA04ixXAPsB3hCQtyTzqki09+s4+01gR1h3mss0fNrCBqObb/54ylWQ+iKOeWBYc/bBVEUcCGOFBT4Lz6K8ZFkmg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YA/+5FUC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EDD3DC4CECF;
-	Tue,  3 Dec 2024 16:58:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733245109;
-	bh=arF+AUtSeu6ScqKrFJj4z1B2pVwQCLt63eW9K0h113I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YA/+5FUCNsnzc7OLhztiJaztpx3YVhqilIZltxUkySH8DqVvnFKO/OXroDo3LgeWn
-	 uE8dW8TU8STjU4G3thzdB8bI2m7LSqs1TlH0rahyfAt2Ok5J0pZO4UMMSRIogcgJh9
-	 FI2tGRgC//SEy3MVb/TGxsLK6kahOu3BPmkeZkUmHwUFIfkERsKMN+ZRszO4q6LyF8
-	 DRKgCORo7yHFban6Du/ieT/y1Bzi5WI+xhsOwX6zDdR5tvnVdyb2F/Vn+3fEQbT/Q1
-	 LUfN4eTq6DIdmmjvfZuHVgQHZVvizSHYxgmD6D/D36aELHM/cDPt6xDUQPxslOU0UE
-	 k0d+YW0B12Xew==
-Date: Tue, 3 Dec 2024 10:58:27 -0600
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Damon Ding <damon.ding@rock-chips.com>
-Cc: sebastian.reichel@collabora.com, cristian.ciocaltea@collabora.com,
-	krzk+dt@kernel.org, rfoss@kernel.org, devicetree@vger.kernel.org,
-	linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org,
-	l.stach@pengutronix.de, algea.cao@rock-chips.com,
-	linux-arm-kernel@lists.infradead.org,
-	dri-devel@lists.freedesktop.org, hjc@rock-chips.com,
-	conor+dt@kernel.org, vkoul@kernel.org, kever.yang@rock-chips.com,
-	linux-rockchip@lists.infradead.org, andy.yan@rock-chips.com,
-	heiko@sntech.de
-Subject: Re: [PATCH v1 07/10] dt-bindings: display: rockchip: Fix label name
- of hdptxphy for RK3588 HDMI TX Controller
-Message-ID: <173324510682.1955832.14077962445640350158.robh@kernel.org>
-References: <20241127075157.856029-1-damon.ding@rock-chips.com>
- <20241127075157.856029-8-damon.ding@rock-chips.com>
+	s=arc-20240116; t=1733245380; c=relaxed/simple;
+	bh=76NB2wMnWzWLzvkfmhJUYDxLuZU1HP2J+kABwgXrLrQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nCLEY6cpiJs3a7xOqmpzMeaJpQEmhxo2K8YgcC/9jRZq5Y+AzxsE9pjE7KpbWe7mspJ5A3lghjfETV/XQCeIJqo949HJPdt/Xko5IKb2aEyrYMlvfJ1X2ClYACuEFS8mwEC07xDHGnHW+4hjuNRizmnuDDYQ1r2QtXlWC+ELaF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CoQAxbGk; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2ffdbc0c103so82071611fa.3;
+        Tue, 03 Dec 2024 09:02:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733245377; x=1733850177; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=76NB2wMnWzWLzvkfmhJUYDxLuZU1HP2J+kABwgXrLrQ=;
+        b=CoQAxbGkz1OkCqunslM4imhpxQ2h0Lj+AbV+2me0lJdWoddu6J5tVikTeQrP0a/qj/
+         t7U6qSisVrWcGI00SnkCXmL5n7E0VCfU9Ca2HPIXhjcEUlhS4+jORrcS7cb15oPOfT9j
+         vjv19w4BWpyavFwwXoRn3OeB12qVJ1O0YddRwdL5uGVoMyQYGkCMYg0Nd+uTnHt9PeWR
+         vXzQ17JzpHvjupZASCXONwLZDTtUoXMkyXOIgKKmkb6tmSNJ7JzHBUZPcn4n/rgbNpzR
+         4/bmU5A1aWaGRTmeHQJadLNCcGZyiknDz4l27OESAziPxrlpQcGnQN51WebsmqaBQhEw
+         w5HA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733245377; x=1733850177;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=76NB2wMnWzWLzvkfmhJUYDxLuZU1HP2J+kABwgXrLrQ=;
+        b=Ty3qjK2cBGLZQDBD50DPocuyM48b41gqnVr/18211uFFiOkD4ZLkRnPxAbl88csjYN
+         7AFOJsicb7xIAsnTrwio+281wmYreN6IQ/GrN8ujFhsE+Jr3UsaKvhLqi3yotQ3WzQsM
+         Wec7R/CBTHEEVQRFt88qI67VcTEmXrT0yN4rVnvrnTEMWZix264kXXmRt0aGljWU96Vq
+         UrHnHFgFBW3/YQ+6h4SQY6uy6F6OogyaJhs/rONQOhjFdvbsQbdOzZL0pMxvQM8HIaBF
+         JF/yBmBE69FpNTmei3diRo2B12ftTXBtDE+eYVt+So0QGqr2za7HWCOJBfaqGa+dAyLe
+         jN+A==
+X-Forwarded-Encrypted: i=1; AJvYcCU0BueYvLuvfzv5PvNMtG4xH/ZTvpQkL2wxafcSnHjUKBBzeebtII2rmZDPu8ZLx04hCOtgDUnkT5helT0E@vger.kernel.org, AJvYcCUw55c5x4DWzfAIGDzA/NM/OY3IDdQO/ijUJNoklVuY4AlN5YCbIeQ9cWt8l08c34nLBIhMnX1sOUQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3B2X6BzyDngF1DNXB4TpetYiw4XBDMwLtNo369e84grU4f4ZR
+	AiBw2aLmhmFHLuGD4AiSjvAIKXgtTJPUmCGMY05DagDgoRo++xaRhOVEXnqxl+ZXj9QBxzOU4sD
+	ZzKQwXJAMJl1V2707ezxJSjti5Qk=
+X-Gm-Gg: ASbGncvFuApeRat9AvEbR7m1f7tDMkHWFQJCwZKgyidTH1Gyy/qFVzHhi0TFTUdoKjr
+	JMAdP1xCKU0hrBn5qrAbFFaTFAyfjgmZosmurRp9Tjx1WUyQ=
+X-Google-Smtp-Source: AGHT+IGqM5oQaVz2x2s7/Atw27CI2FwxkpodpOX0PPsmv5aDcc5i2aOnpXpcfouxbg+gdLwS/d23greQtBw9MjFHJew=
+X-Received: by 2002:a05:651c:1988:b0:2ff:a2ba:103d with SMTP id
+ 38308e7fff4ca-30009b8c32amr30583031fa.0.1733245375346; Tue, 03 Dec 2024
+ 09:02:55 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241127075157.856029-8-damon.ding@rock-chips.com>
+References: <20241105-xarray-documentation-v5-1-8e1702321b41@gmail.com>
+In-Reply-To: <20241105-xarray-documentation-v5-1-8e1702321b41@gmail.com>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Tue, 3 Dec 2024 12:02:19 -0500
+Message-ID: <CAJ-ks9kJSNMJCzVSyp1YUJ7RHsLU+QLsVdUkGuAnu-ny-kturA@mail.gmail.com>
+Subject: Re: [PATCH RESEND v5] XArray: minor documentation improvements
+To: Matthew Wilcox <willy@infradead.org>, Jonathan Corbet <corbet@lwn.net>
+Cc: linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>, 
+	Bagas Sanjaya <bagasdotme@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 
-
-On Wed, 27 Nov 2024 15:51:54 +0800, Damon Ding wrote:
-> The hdptxphy is a combo transmit-PHY for HDMI2.1 TMDS Link, FRL Link, DP
-> and eDP Link. Therefore, it is better to name it hdptxphy0 other than
-> hdptxphy_hdmi0, which will be referenced by both hdmi0 and edp0 nodes.
-> 
-> Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
-> ---
->  .../bindings/display/rockchip/rockchip,rk3588-dw-hdmi-qp.yaml   | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
-
+Gentle bump. Matthew, could you please have a look?
 
