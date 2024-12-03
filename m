@@ -1,191 +1,106 @@
-Return-Path: <linux-kernel+bounces-428576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C32C9E10C8
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 02:29:21 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5831F9E10CA
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 02:33:36 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A28C16245C
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 01:33:33 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6588538DE5;
+	Tue,  3 Dec 2024 01:33:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fb8YYhoZ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ACE9EB23464
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 01:29:18 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 598A97DA67;
-	Tue,  3 Dec 2024 01:29:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b="ck2HxuP/"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72B5A38DE5
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 01:28:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19DAD2500C3
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 01:33:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733189340; cv=none; b=tTXuFIzuPewBRf2kMn8zJA49iXW60d9YGPxT5UCTF5lOxFHAM8NQVHZC3RBWPR8bEQWV87uKKA8SQ6YVPj2NPbyHufO9klpbIvqpQkTEk1CKU4ZtnkXOPOIXNEzwuKsVrIRTP6z2D/Z6RXE8LlSu1hEKbEb/Fo5kPiokDDMFhBI=
+	t=1733189610; cv=none; b=FgZJvXXR26At6WD2V3/DZkODslHXno0TBtdcqL/EVS+u6Tu6OQ7mrivmHlskgmtspdzVYfWGAlSYb5L8+YBvzQcigx5TPWzFkrNjb4BZdJ6sOEd2vmHye34BqUfKqThQvh0Zt2KMmqXSZ/4KXTPS0Ad3FXVieUCsiGVehl5WypA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733189340; c=relaxed/simple;
-	bh=WDixq/MIa40Q47q+L2Fe0gz1ziSNqRoxkhPQvLpZWTA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sUXOCkrkzLzkn0tX2OdWf/oCh0frhxhJJOIBoO5z/3PPhXe9oGCJxpVX731MoEX9K/PRrn9Z7zm13Jq7zj4sLKjUxavVFaBr/Yy2hRG+EX7BZdZMr2i0GbkAy+rDgbX1VxEDPk82akbI7jQOClyWpSq0Gz962x60ZVwFcBwo5CM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com; spf=pass smtp.mailfrom=cloud.com; dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b=ck2HxuP/; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloud.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-aa51bf95ce1so163468566b.3
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 17:28:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=citrix.com; s=google; t=1733189336; x=1733794136; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=uq0J8rWPM2r7OFPHUCmfWJUZ2yRsTZhEnzsRvPF/O2A=;
-        b=ck2HxuP/sJI0XiRTWsgDrSwghG+gmL0x86/BKLfgXjPXhHXTWQpwqwaQUjOZ/teC7e
-         vKxbsuGXeXvdoGKg/S+jnmWo5/s4zaEXbFP1T2tmi47XelhLW+GimLKsRry/f61tpgbR
-         OaJlu98yim3ikC1HaFhytbUOcg9L5MIdJrchI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733189336; x=1733794136;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uq0J8rWPM2r7OFPHUCmfWJUZ2yRsTZhEnzsRvPF/O2A=;
-        b=AlMCF6/SEondsGozydEhOLRLiOT7l+IZqhrEPo9sWIuCO75QREq/ye1oG0XhZ5l/Hu
-         +U1y+kCl90RjbFGOeAqNAhg9GMt4wXHyqvHsQueNVDtMXcNmuy+Wq4rVUEyIbilF3Uw9
-         Nd10HqvZ7eoFJWjENGJemK3NcSXy0drV+5oHDKuwRiUrK4XiLLqTevKdqbhDs48pkYbv
-         6rEfNZDSKJ6KX88c2TXUv//c0w0iPb2cACLIFhiTReeBq0Y4/txr9bRgEs5lOIAROafF
-         1/JQFDnlPpHv74ugMTfbaIISOIv8p8NwNeUqEJdwzV7Rv3JbgFMp9R0qgHTTX/ILL3K5
-         Hjbg==
-X-Forwarded-Encrypted: i=1; AJvYcCWhOXexKXBAJ1w+wj0n4Qol7TZ57JsXP9jCeIbyFxTgoVuqounHJ5uWKt9zFe/A1FyWWzIl66Ib78FH5lg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzWTBRqvTUwZvmyCcf3/5U7HgMsBoJApZIVZ1/h4vr0waV5WoaI
-	0ZIJ4gU7XVaDx+0EMgIW01S9Lt5LNZ3EjrvjPjANxq9jPCkYwo1MU738iI8c14g=
-X-Gm-Gg: ASbGncsUZoNeBqQHMli6N+b1i5eFZeblssA5wol7yLGN6XAwT/OAdyPzVfDF0RSJ/RS
-	4GuE0V19T5oA3YuMWqehaQRblnfMsMuj/YeFr7cGRRHc27MRGmGrj+otLil9ST2Ek0/cHQn9keb
-	8tEM8PMdDfthx9IMYQoCM2d0c14RmDPOSNh9uE1z3W9Rh0eHMH5FrYLrugK6jelqOpKdWPh1B/L
-	cgcYx4A0/VkkXWb8NpvK6cxKHAOeaE5+7bsiiS7Fu4IgJwLsa1pFfEFFbGrokI=
-X-Google-Smtp-Source: AGHT+IGU7jxH5mfvqjUzNNO+cJvYRC6zia50akRFOhFPYVPqR473ZqGd/ljEGbus5kELxvRnJrn/Pw==
-X-Received: by 2002:a17:907:3f96:b0:aa5:4ea6:fcae with SMTP id a640c23a62f3a-aa5f7daba68mr38700666b.28.1733189335776;
-        Mon, 02 Dec 2024 17:28:55 -0800 (PST)
-Received: from [192.168.86.29] ([90.240.255.120])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa5997d560asm563452966b.61.2024.12.02.17.28.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 Dec 2024 17:28:55 -0800 (PST)
-Message-ID: <a9560e97-478d-4e03-b936-cf6f663279a4@citrix.com>
-Date: Tue, 3 Dec 2024 01:28:54 +0000
+	s=arc-20240116; t=1733189610; c=relaxed/simple;
+	bh=dKmlHlkb7WbW+4b8/pXx9raRh/cUFXpHa9D93jn+wv0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Jq11l0QvxomdKTsu3PZdtjZ1P2nCWwhUSXzOOlMxtrE3CMc0aNomXXK+wWwasmPxrfiwUzPLcg1whzrbW8GhSgW/KHCFdNRN4NQtEimvVy33Q457iAkKhWFH4Yjk5fLVkSMn1axKfQVM4g6J7Jt1kXZKbr+FY6kMKXzhna4yivU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fb8YYhoZ; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733189608; x=1764725608;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=dKmlHlkb7WbW+4b8/pXx9raRh/cUFXpHa9D93jn+wv0=;
+  b=fb8YYhoZmB4it0vHrbMTktE41J6z7HoOyF3EHELN8ms2MLTU/vsXix8L
+   hacVS+E613FyMMIlZDaIm4bSM55dB1/QHQ91tja/Scu5XfkeoERKeWCD7
+   SQnyZCaJnP58IOekdOuuIjiGUhYzWtTOQw5W120HxYawP85AKF9mqcK1l
+   6W7X5VlstpL88e2VPkL6UxsmqTOrdD34lbZyEkcyuY4bFA4S/QKoJFJtJ
+   CV7MdA7kx4XPf8uMpudZcNUgToEGIIxUV6cn8XORFi2Bf7n2IDDm0wEex
+   F8QcKPTPgc41M7/FDYp1LKN7tfPAGY5k0fz3sRzHFCZUiYKCLTFPq1rUF
+   w==;
+X-CSE-ConnectionGUID: 4TNrmjrkRaWaXLQtT2EQhw==
+X-CSE-MsgGUID: DMfNnewURjKjbAzMfp9BSg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11274"; a="33634797"
+X-IronPort-AV: E=Sophos;i="6.12,204,1728975600"; 
+   d="scan'208";a="33634797"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Dec 2024 17:33:27 -0800
+X-CSE-ConnectionGUID: 6zTRF/TrT9CYE1yJpqRsvw==
+X-CSE-MsgGUID: 0g4FHChITwaaxuin/nIZPg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,204,1728975600"; 
+   d="scan'208";a="93112331"
+Received: from lkp-server02.sh.intel.com (HELO 36a1563c48ff) ([10.239.97.151])
+  by fmviesa007.fm.intel.com with ESMTP; 02 Dec 2024 17:33:27 -0800
+Received: from kbuild by 36a1563c48ff with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tIHmz-00037x-34;
+	Tue, 03 Dec 2024 01:33:22 +0000
+Date: Tue, 3 Dec 2024 09:33:15 +0800
+From: kernel test robot <lkp@intel.com>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: WARNING: modpost: vmlinux: section mismatch in reference:
+ __trace_event_discard_commit+0x160 (section: .text.unlikely) ->
+ initcall_level_names (section: .init.data)
+Message-ID: <202412030913.OTV5Qxsz-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 1/2] x86, lib, xenpv: Add WBNOINVD helper functions
-To: Kevin Loughlin <kevinloughlin@google.com>, linux-kernel@vger.kernel.org
-Cc: seanjc@google.com, pbonzini@redhat.com, tglx@linutronix.de,
- mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org,
- hpa@zytor.com, kvm@vger.kernel.org, thomas.lendacky@amd.com,
- pgonda@google.com, sidtelang@google.com, mizhang@google.com,
- virtualization@lists.linux.dev, xen-devel@lists.xenproject.org,
- bcm-kernel-feedback-list@broadcom.com
-References: <20241203005921.1119116-1-kevinloughlin@google.com>
- <20241203005921.1119116-2-kevinloughlin@google.com>
-Content-Language: en-GB
-From: Andrew Cooper <andrew.cooper3@citrix.com>
-Autocrypt: addr=andrew.cooper3@citrix.com; keydata=
- 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
- 6+ahAA==
-In-Reply-To: <20241203005921.1119116-2-kevinloughlin@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 03/12/2024 12:59 am, Kevin Loughlin wrote:
-> diff --git a/arch/x86/include/asm/paravirt.h b/arch/x86/include/asm/paravirt.h
-> index d4eb9e1d61b8..c040af2d8eff 100644
-> --- a/arch/x86/include/asm/paravirt.h
-> +++ b/arch/x86/include/asm/paravirt.h
-> @@ -187,6 +187,13 @@ static __always_inline void wbinvd(void)
->  	PVOP_ALT_VCALL0(cpu.wbinvd, "wbinvd", ALT_NOT_XEN);
->  }
->  
-> +extern noinstr void pv_native_wbnoinvd(void);
-> +
-> +static __always_inline void wbnoinvd(void)
-> +{
-> +	PVOP_ALT_VCALL0(cpu.wbnoinvd, "wbnoinvd", ALT_NOT_XEN);
-> +}
+Hi Masahiro,
 
-Given this, ...
+FYI, the error/warning still remains.
 
-> diff --git a/arch/x86/kernel/paravirt.c b/arch/x86/kernel/paravirt.c
-> index fec381533555..a66b708d8a1e 100644
-> --- a/arch/x86/kernel/paravirt.c
-> +++ b/arch/x86/kernel/paravirt.c
-> @@ -149,6 +154,7 @@ struct paravirt_patch_template pv_ops = {
->  	.cpu.write_cr0		= native_write_cr0,
->  	.cpu.write_cr4		= native_write_cr4,
->  	.cpu.wbinvd		= pv_native_wbinvd,
-> +	.cpu.wbnoinvd		= pv_native_wbnoinvd,
->  	.cpu.read_msr		= native_read_msr,
->  	.cpu.write_msr		= native_write_msr,
->  	.cpu.read_msr_safe	= native_read_msr_safe,
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   e70140ba0d2b1a30467d4af6bcfe761327b9ec95
+commit: 481461f5109919babbb393d6f68002936b8e2493 linux/export.h: make <linux/export.h> independent of CONFIG_MODULES
+date:   1 year, 4 months ago
+config: xtensa-randconfig-r121-20241114 (https://download.01.org/0day-ci/archive/20241203/202412030913.OTV5Qxsz-lkp@intel.com/config)
+compiler: xtensa-linux-gcc (GCC) 14.2.0
+reproduce: (https://download.01.org/0day-ci/archive/20241203/202412030913.OTV5Qxsz-lkp@intel.com/reproduce)
 
-this, and ...
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202412030913.OTV5Qxsz-lkp@intel.com/
 
-> diff --git a/arch/x86/xen/enlighten_pv.c b/arch/x86/xen/enlighten_pv.c
-> index d6818c6cafda..a5c76a6f8976 100644
-> --- a/arch/x86/xen/enlighten_pv.c
-> +++ b/arch/x86/xen/enlighten_pv.c
-> @@ -1162,6 +1162,7 @@ static const typeof(pv_ops) xen_cpu_ops __initconst = {
->  		.write_cr4 = xen_write_cr4,
->  
->  		.wbinvd = pv_native_wbinvd,
-> +		.wbnoinvd = pv_native_wbnoinvd,
->  
->  		.read_msr = xen_read_msr,
->  		.write_msr = xen_write_msr,
+All warnings (new ones prefixed by >>, old ones prefixed by <<):
 
-this, what is the point having a paravirt hook which is wired to
-native_wbnoinvd() in all cases?
+WARNING: modpost: missing MODULE_DESCRIPTION() in vmlinux.o
+WARNING: modpost: vmlinux: section mismatch in reference: trace_initcall_level+0x94 (section: .text.unlikely) -> initcall_level_names (section: .init.data)
+>> WARNING: modpost: vmlinux: section mismatch in reference: __trace_event_discard_commit+0x160 (section: .text.unlikely) -> initcall_level_names (section: .init.data)
 
-That just seems like overhead for overhead sake.
-
-~Andrew
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
