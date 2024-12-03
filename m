@@ -1,208 +1,90 @@
-Return-Path: <linux-kernel+bounces-429714-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429747-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A5379E29CB
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 18:46:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AF989E2AD2
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 19:28:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D34B0B2A12C
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 15:07:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AEBA2BA7F59
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 15:28:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E42231F756A;
-	Tue,  3 Dec 2024 15:07:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="hRYoc9qB"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D739E1F76AD;
+	Tue,  3 Dec 2024 15:28:19 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8CBA1F7576;
-	Tue,  3 Dec 2024 15:07:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E95B71F76A8
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 15:28:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733238448; cv=none; b=JIlG8vBet8gCN0MkhXlXtBmIMqzgta+kD2nlUleKSCQoQXybUpLsBTQjdReV5Vg2XUYUHc1GswNVtwWj2lWSHCoysOYVS4h3GmkApNR7yPtGgBbvkgxjeACKueyTUvbygWRzzTCJkYR/3pEiWK3zZMaY8g0lqooyUbO7Dc1rOG4=
+	t=1733239699; cv=none; b=lvgAfDGfOuvDv8hxER2hr7jns2orq1kcjr0bt+zzwQZuc7apuRTKdobYfehxU9Ycc1psncBJTKj2N5NfNyE3O3G5NNe+qwoXfAuLEzmGdlqqe3IW8gTZVClSnWh7aPwV4f+q9c5Z2QNqkFiux9S0M2wsQVGZWWxM3+4buG0QC4U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733238448; c=relaxed/simple;
-	bh=oHTER3kECGc7CIOHuxx4SO6NtWbnmsPpqQg9GmUoODY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=h3/PM2XikTIuo+ydVrqITLHUHjTQnfYHsj6arqwRfrF+K9EHLHh2d2UhS9kqDJK7Ty/u53KNQAV23T3GM64ycm5q7+rS2ctqoAKiK9YSb3lKBSf75MkxOc4r00afhL7KcoXlvaeAtPc2eZ1Y2KbZnIkljRdtXarvcvNbWWwG31U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=hRYoc9qB; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B3CisFT008837;
-	Tue, 3 Dec 2024 15:07:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=pp1; bh=h/hQDsUZ0WqQMvbrf
-	aNILMaNiX0RhWMSf3/Z0BtexhE=; b=hRYoc9qBWhmW6x1KM3JxM9XcajurirLwV
-	zn5t2WG0IG2+x6G1qTNM4csgI1YZUFGII3AB/VEsAe7eJ5uzY72yddv32USdGkQX
-	yYVSQKf9vNNPeTI4JzdnxveWAD7joGPCnFRah6wK6eSjAJojsgrrhzTtoUlhbjp2
-	QumahEJBIPGS+lApCvhY2Dkp8pLFJ2NGiisD8bPydXpR4zOAYA6fD6/2WVpVxIIz
-	1SopVHH+CKeIgVaWf7uLSnyItLWwRSCFbWH6D6mG96SjGtaWNhlpQtte1eBs7hQc
-	PjzMUNoKefH6/d+Lb6BHtDwojfg5Jy3cW9CpjwspazJm9HxSCrPow==
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 438kfgq7x8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 03 Dec 2024 15:07:16 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4B3DfHKv008622;
-	Tue, 3 Dec 2024 15:07:16 GMT
-Received: from smtprelay02.wdc07v.mail.ibm.com ([172.16.1.69])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 438f8jh90n-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 03 Dec 2024 15:07:16 +0000
-Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
-	by smtprelay02.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4B3F7Ets9634546
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 3 Dec 2024 15:07:14 GMT
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 2EEF05805D;
-	Tue,  3 Dec 2024 15:07:14 +0000 (GMT)
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id E161858043;
-	Tue,  3 Dec 2024 15:07:13 +0000 (GMT)
-Received: from WIN-DU0DFC9G5VV.austin.ibm.com (unknown [9.41.105.143])
-	by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Tue,  3 Dec 2024 15:07:13 +0000 (GMT)
-From: Konstantin Shkolnyy <kshk@linux.ibm.com>
-To: sgarzare@redhat.com
-Cc: virtualization@lists.linux.dev, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mjrosato@linux.ibm.com,
-        pabeni@redhat.com, AVKrasnov@sberdevices.ru, mst@redhat.com,
-        Konstantin Shkolnyy <kshk@linux.ibm.com>
-Subject: [PATCH net v8 2/3] vsock/test: fix parameter types in SO_VM_SOCKETS_* calls
-Date: Tue,  3 Dec 2024 09:06:55 -0600
-Message-Id: <20241203150656.287028-3-kshk@linux.ibm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241203150656.287028-1-kshk@linux.ibm.com>
-References: <20241203150656.287028-1-kshk@linux.ibm.com>
+	s=arc-20240116; t=1733239699; c=relaxed/simple;
+	bh=KKArLD2PtA+0fQiwv05bnHE0KuyHHIErcEbFZSDiyew=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=bz9r9BZHE0orp8YbPLcShc1jYU+SYHDtuH6itfGF6Jv5vpmm3hXrBjxvinS1rh08TeFshKjEnfkyeiovXchFxGWKyDhuE1OiqpFmUJ6J1Yz59/xJnwpHpYh+9nLLv+lSx3sR234bQ6cJeal4bipVo1+GAK0/DJSmCeZudaBZD4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a7c729bfbaso60249705ab.0
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 07:28:16 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733239696; x=1733844496;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=szv38NxdIHplzP9jE1syYGjbmBichZ65BAZ5VuKYs4c=;
+        b=QHYGikyYheWXlMELe87wIJli2C+Y/i5LNTe+1+5Ebl1zfCGZIOTSO48yJgLbR3vLfP
+         dHl5Hw85TmVges0CGewVMPeGlMPFITFPJuNBxW3U9sRKBZuX1L6XVtU3Awezlbmcf5yS
+         2eEVY5BHOBlVn/bbtYTK0glWSZ1TV3kypQnw643IOu/VcxcklHddTJ5IOlgE19y5orti
+         RgE5awEB6W5G7aLcCdUL9HHmrXoQZ9pX1xkGpMDoF2aMsaL5EyRw/N5DIzAKOL467S1K
+         iemV5arHAaQX2sdisB9oIgTIhB/OKlCl+qg/shsLHIS8ghvcSBS3Tm9Snpwv5b7H154N
+         p/AQ==
+X-Gm-Message-State: AOJu0Yx+nOH2E0Z8saO6OZGuUFzkOxCM9bjofcpTC1M0cM5MX7UXGrx/
+	7gDNTM6lhEYd8lDr4ej9HbYhWY2Q5957P156u77WmBXZMIco8Zv9wnPSlrr0SSZVCsXsxnrKuvv
+	ii13XAZhCiHEZabElc+XSlCeniUpTsMdkobSWpVaBXF29rm29rg5lqmQ=
+X-Google-Smtp-Source: AGHT+IGGghU1f+T3bgD6X4cCYNtk//AHyzTcS3oLLJ6CAUMiYKa64MMjFBqCEQb4cTBH34ACZAlLv/Cya8tuXSJ3YSBOqDc/YJzI
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: wI8VYMRXivoYEt4FnH8sh9VLWKMSfo-Z
-X-Proofpoint-GUID: wI8VYMRXivoYEt4FnH8sh9VLWKMSfo-Z
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- spamscore=0 clxscore=1011 malwarescore=0 bulkscore=0 adultscore=0
- priorityscore=1501 mlxlogscore=999 impostorscore=0 phishscore=0 mlxscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412030127
+X-Received: by 2002:a05:6e02:2164:b0:3a7:7811:1101 with SMTP id
+ e9e14a558f8ab-3a7f9aa4753mr41859905ab.20.1733239696142; Tue, 03 Dec 2024
+ 07:28:16 -0800 (PST)
+Date: Tue, 03 Dec 2024 07:28:16 -0800
+In-Reply-To: <67409854.050a0220.363a1b.013f.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <674f2390.050a0220.17bd51.0047.GAE@google.com>
+Subject: Re: [syzbot] Re: KMSAN: uninit-value in ip6table_mangle_hook()
+From: syzbot <syzbot+6023ea32e206eef7920a@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Change parameters of SO_VM_SOCKETS_* to unsigned long long as documented
-in the vm_sockets.h, because the corresponding kernel code requires them
-to be at least 64-bit, no matter what architecture. Otherwise they are
-too small on 32-bit machines.
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-Fixes: 5c338112e48a ("test/vsock: rework message bounds test")
-Fixes: 685a21c314a8 ("test/vsock: add big message test")
-Fixes: 542e893fbadc ("vsock/test: two tests to check credit update logic")
-Fixes: 8abbffd27ced ("test/vsock: vsock_perf utility")
-Signed-off-by: Konstantin Shkolnyy <kshk@linux.ibm.com>
-Reviewed-by: Stefano Garzarella <sgarzare@redhat.com>
----
- tools/testing/vsock/vsock_perf.c |  4 ++--
- tools/testing/vsock/vsock_test.c | 22 +++++++++++++++++-----
- 2 files changed, 19 insertions(+), 7 deletions(-)
+***
 
-diff --git a/tools/testing/vsock/vsock_perf.c b/tools/testing/vsock/vsock_perf.c
-index 22633c2848cc..8e0a6c0770d3 100644
---- a/tools/testing/vsock/vsock_perf.c
-+++ b/tools/testing/vsock/vsock_perf.c
-@@ -33,7 +33,7 @@
- 
- static unsigned int port = DEFAULT_PORT;
- static unsigned long buf_size_bytes = DEFAULT_BUF_SIZE_BYTES;
--static unsigned long vsock_buf_bytes = DEFAULT_VSOCK_BUF_BYTES;
-+static unsigned long long vsock_buf_bytes = DEFAULT_VSOCK_BUF_BYTES;
- static bool zerocopy;
- 
- static void error(const char *s)
-@@ -162,7 +162,7 @@ static void run_receiver(int rcvlowat_bytes)
- 	printf("Run as receiver\n");
- 	printf("Listen port %u\n", port);
- 	printf("RX buffer %lu bytes\n", buf_size_bytes);
--	printf("vsock buffer %lu bytes\n", vsock_buf_bytes);
-+	printf("vsock buffer %llu bytes\n", vsock_buf_bytes);
- 	printf("SO_RCVLOWAT %d bytes\n", rcvlowat_bytes);
- 
- 	fd = socket(AF_VSOCK, SOCK_STREAM, 0);
-diff --git a/tools/testing/vsock/vsock_test.c b/tools/testing/vsock/vsock_test.c
-index 7fd25b814b4b..0b7f5bf546da 100644
---- a/tools/testing/vsock/vsock_test.c
-+++ b/tools/testing/vsock/vsock_test.c
-@@ -429,7 +429,7 @@ static void test_seqpacket_msg_bounds_client(const struct test_opts *opts)
- 
- static void test_seqpacket_msg_bounds_server(const struct test_opts *opts)
- {
--	unsigned long sock_buf_size;
-+	unsigned long long sock_buf_size;
- 	unsigned long remote_hash;
- 	unsigned long curr_hash;
- 	int fd;
-@@ -634,7 +634,8 @@ static void test_seqpacket_timeout_server(const struct test_opts *opts)
- 
- static void test_seqpacket_bigmsg_client(const struct test_opts *opts)
- {
--	unsigned long sock_buf_size;
-+	unsigned long long sock_buf_size;
-+	size_t buf_size;
- 	socklen_t len;
- 	void *data;
- 	int fd;
-@@ -655,13 +656,20 @@ static void test_seqpacket_bigmsg_client(const struct test_opts *opts)
- 
- 	sock_buf_size++;
- 
--	data = malloc(sock_buf_size);
-+	/* size_t can be < unsigned long long */
-+	buf_size = (size_t)sock_buf_size;
-+	if (buf_size != sock_buf_size) {
-+		fprintf(stderr, "Returned BUFFER_SIZE too large\n");
-+		exit(EXIT_FAILURE);
-+	}
-+
-+	data = malloc(buf_size);
- 	if (!data) {
- 		perror("malloc");
- 		exit(EXIT_FAILURE);
- 	}
- 
--	send_buf(fd, data, sock_buf_size, 0, -EMSGSIZE);
-+	send_buf(fd, data, buf_size, 0, -EMSGSIZE);
- 
- 	control_writeln("CLISENT");
- 
-@@ -1360,6 +1368,7 @@ static void test_stream_credit_update_test(const struct test_opts *opts,
- 	int recv_buf_size;
- 	struct pollfd fds;
- 	size_t buf_size;
-+	unsigned long long sock_buf_size;
- 	void *buf;
- 	int fd;
- 
-@@ -1371,8 +1380,11 @@ static void test_stream_credit_update_test(const struct test_opts *opts,
- 
- 	buf_size = RCVLOWAT_CREDIT_UPD_BUF_SIZE;
- 
-+	/* size_t can be < unsigned long long */
-+	sock_buf_size = buf_size;
-+
- 	if (setsockopt(fd, AF_VSOCK, SO_VM_SOCKETS_BUFFER_SIZE,
--		       &buf_size, sizeof(buf_size))) {
-+		       &sock_buf_size, sizeof(sock_buf_size))) {
- 		perror("setsockopt(SO_VM_SOCKETS_BUFFER_SIZE)");
- 		exit(EXIT_FAILURE);
- 	}
--- 
-2.34.1
+Subject: Re: KMSAN: uninit-value in ip6table_mangle_hook()
+Author: dmantipov@yandex.ru
 
+#syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git cdd30ebb1b9f36159d66f088b61aee264e649d7a
+
+diff --git a/net/ipv6/ip6_tunnel.c b/net/ipv6/ip6_tunnel.c
+index 48fd53b98972..0d4a213ce145 100644
+--- a/net/ipv6/ip6_tunnel.c
++++ b/net/ipv6/ip6_tunnel.c
+@@ -1098,7 +1098,7 @@ int ip6_tnl_xmit(struct sk_buff *skb, struct net_device *dev, __u8 dsfield,
+ 	unsigned int max_headroom = psh_hlen;
+ 	__be16 payload_protocol;
+ 	bool use_cache = false;
+-	u8 hop_limit;
++	u8 hop_limit = 0;
+ 	int err = -1;
+ 
+ 	payload_protocol = skb_protocol(skb, true);
 
