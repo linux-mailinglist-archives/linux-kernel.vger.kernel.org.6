@@ -1,159 +1,120 @@
-Return-Path: <linux-kernel+bounces-429873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCABD9E27F2
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 17:46:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3723A9E27F6
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 17:46:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 95176168E74
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:46:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 632271636AD
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:46:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA4BE2036FD;
-	Tue,  3 Dec 2024 16:43:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47CCE1F8AD8;
+	Tue,  3 Dec 2024 16:45:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HJmRDA5d"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="zpNO17yG";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="cfCmn6mi"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B5BF1FCCFE
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 16:43:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FAF11F8EE8;
+	Tue,  3 Dec 2024 16:45:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733244230; cv=none; b=hz35OYgoCpPnXgkWS+VcuRqvcFaeMRa3rP+SU/+6SCniD/XIKHK/vpcXhHlsJ4SUrJgx46WsInn9+QSZfsNJgY3nCw7u9HX6BwIP2TisjQsVbHRfI5bk9zJBIe07vKfqz0MyUsd3QaHLyKxLkHNpb4aYHo/0cXane2CjNSFEMSE=
+	t=1733244324; cv=none; b=napZA79BLRj1VZBu/87T/m9z6HqqMRUgzC55QtAl1ASNervjZqlKqyZ3X6x5z+SeSKapELN1yomRgcO3pO1kYQOPW/Rky0qpb4X5AxflaCdep4a0P9zEz4Zp1PbWYc0ewxX/qelwh7nUqAGxKKkoGaxmrc8zh68q5zfYgBHn5jo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733244230; c=relaxed/simple;
-	bh=L+J2LAH2xdGpEZwR6QJBfnfB05WXMwbkYAQ2hJQlyiQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jMLSOtjVxm/klqjLhxHGRlcGj03HGFIWvdq0IRJnjywUKU25pbWWDEQo+mwAI8IFX8M3HL79OyaiSihHuADKkszWZbeXNPl9b8F4gDOPjZ9/RzIow6bVPd9gvjeSY6V2boig2dO7whnFuLe/81rNTeyqYw5uyCjSxwi4Ta+mUO4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HJmRDA5d; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-53e18b1baecso934224e87.3
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 08:43:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733244226; x=1733849026; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=nkPiAjAYY+rl831HCza+zQDKH3sh7oPNvT/kEFoX/5Y=;
-        b=HJmRDA5dk60P6XMETmThRI8RnLw8Zo/urMbTUqjVLA/OqGMN6bcOKELf5EMmXeuF2D
-         U8xtoM2pPvFdUscVdeXnVl9Szf9s6VFyknJWfpuuoYYrfrlPteMU9Rs4TLxOff8cZXY4
-         YgjbduwCq3GhLsAXFSj8AwJ8XsNs/ZmjycvfC8wOBvhGycL7q+xuhT3LZFl5YZEmONGx
-         8WZybCl6MLKfuOGV/Zs5oNGWsi/DPaNZM0amWH2G6wPx6CBrokELvpLm6NN0srSgb1s4
-         aI6KvUtSbR50UPEHyF4GoNfZa/J9fNJzPIvzZam+k/SFcmJAjZIJf82+ro8wRY5LahaE
-         8EUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733244226; x=1733849026;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nkPiAjAYY+rl831HCza+zQDKH3sh7oPNvT/kEFoX/5Y=;
-        b=eRrsLz7hxI/d2rJuWvohbFcOUHrMNS/HKKpNYZF2z2hzNhQS44odwPKym//C1hyXvH
-         mLbfrmxOpzElLxfA9RVV3XEjxDfsf5dCG+O5Vo4XoPnHr9U7g9FtFVuvQB/AaCcdVXtr
-         wdtWuiJHWuLRdOY14KLjmUj40haSFf5kbfGIO8epcopGspez/X6T0SjxC1eHhN6a318N
-         LVlQvY8B3i70f+NiLjumS5uIgAp/PAXjtComxeF+FBapgNnqilqetLokAE2wAE6ParW5
-         vJRHdW/iz4sjP1URJZkeXavlrluBIr41yBWtQYEFvREQe/0CuAmHKKzQ/xfTbpGim4qz
-         Rq0w==
-X-Forwarded-Encrypted: i=1; AJvYcCWGMEL8pSwYkk455U2n1HWJNAeIOKSKd2h47DuHktKsnjtzH97fsFC45hrEkyW2DOpQwg0AEQFDXwfYWQc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxzSTVd2yQsNJ1tPCGTgaAqS2tX3SCKpvobEeGj3lHsoc/RayxE
-	C5wA9DMFj2mnYEZ8CYXUh7tYoADeVoL9FDu5twZS/7Y/XsCq0O+cfLp0F7PFKZc=
-X-Gm-Gg: ASbGnctOhZASksZKb7Q3rvvBhywgOc7rwIY8YctNTnD/MKVFpZhWKsova47DC3qjm4+
-	2sBaroZDQdpvSfiQrJID1HdnT3LX7NbHtsmQuMGRlVwjyN9FT77bYC/9pHmRojynBu4w8I6KtC6
-	YUjbjES0vHIGTumgkUaP9e1RCPi9+EJkaJsAqqDPA9z2tmg6Rd66IslyXbe7EUAdQwoVt/c9dhH
-	JdHyvgDzyFVfBlrxDwQRUGz3fQYTEHwfh7NjJGvlY7q5fDJPX8kXk0pt/Mz
-X-Google-Smtp-Source: AGHT+IH2FSS1PjtCeF6YlLSfRzI7x09bN1JRS4N+jhSdGJOM0Zoc9/YCrXoFVktGXAB4Hvw/GHFg3Q==
-X-Received: by 2002:a05:6512:3d0d:b0:53e:168a:1b2b with SMTP id 2adb3069b0e04-53e168a1e05mr1724853e87.36.1733244226176;
-        Tue, 03 Dec 2024 08:43:46 -0800 (PST)
-Received: from [192.168.68.163] ([145.224.90.200])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa59990a9dfsm632884066b.157.2024.12.03.08.43.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Dec 2024 08:43:45 -0800 (PST)
-Message-ID: <981436ce-2d41-4c3e-b77e-63e4c200cd0e@linaro.org>
-Date: Tue, 3 Dec 2024 16:43:44 +0000
+	s=arc-20240116; t=1733244324; c=relaxed/simple;
+	bh=1Bw0F+SxSTnmR8dNHiR66xY/jvQrWs8B9IBh14mL3xk=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=BHg/+thHpOfPd18id8MzLflLL+B/ngSoGaUD7vpOfGdKT6D3XUdMNwo5jS5jmwHxfrvi6dYSrLtCyiRXiIDU9NG2Z4bLxdajVFYMByHmHBnhfBYyQ/OVeosF1lD5+0vWJjxgdRIErj2/2hRRZlv7kfv9gKRgsOv676huZKAZa2U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=zpNO17yG; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=cfCmn6mi; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 03 Dec 2024 16:45:20 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1733244321;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MeQ/5R0x1kZEGyRLFZJnmfj/7Aw1+ksokYH2Jf7fc90=;
+	b=zpNO17yGbB9IHpGbH4CjdDZJMEzpdLcV7/sqHqpCDLRmk0KHL/HN0HzQ43wyUaDCjDIL/m
+	ui0jEqnqF8BEZhlOvLAIh4uaQyxOn6bIuiYSoqTnpyAN/UIGWoQjoGffX21G22P/IFm2qv
+	Whfl+aGrfQLToZT98Jo6fbAAtngJrbNv9Gb+YMrI0w5MbpnwG5jZWw4w9Ev/Vy5OK9Dnnj
+	i4486lGU7lHiI9zihIPQEkFwWzlsAfbnqLguR870rWIJ246V2XG5YAXi+H3eeTmUumQiQ9
+	Lo5FRWBvdNeozxOe1AapBmip3skD0cFvQ1GKNl8fBLeZZcISjy5Hllk47qwdhA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1733244321;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MeQ/5R0x1kZEGyRLFZJnmfj/7Aw1+ksokYH2Jf7fc90=;
+	b=cfCmn6mi6pJ/+XDxPtSoHNFSzAJVedqBBoxK1pUZMBR76KaE2WS9D6awdTmiXNQRuVMijk
+	WGaBFUjNpwaAl0AQ==
+From: "tip-bot2 for Geert Uytterhoeven" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: irq/urgent] irqchip/stm32mp-exti: CONFIG_STM32MP_EXTI should
+ not default to y when compile-testing
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+ Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
+ linux-kernel@vger.kernel.org, maz@kernel.org
+In-Reply-To: =?utf-8?q?=3Cef5ec063b23522058f92087e072419ea233acfe9=2E17332?=
+ =?utf-8?q?43115=2Egit=2Egeert+renesas=40glider=2Ebe=3E?=
+References: =?utf-8?q?=3Cef5ec063b23522058f92087e072419ea233acfe9=2E173324?=
+ =?utf-8?q?3115=2Egit=2Egeert+renesas=40glider=2Ebe=3E?=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 11/11] perf tools: Fix build error on
- generated/fs_at_flags_array.c
-To: Namhyung Kim <namhyung@kernel.org>,
- Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Ian Rogers <irogers@google.com>, Jiri Olsa <jolsa@kernel.org>,
- Adrian Hunter <adrian.hunter@intel.com>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
- LKML <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org
-References: <20241203035349.1901262-1-namhyung@kernel.org>
- <20241203035349.1901262-12-namhyung@kernel.org>
-Content-Language: en-US
-From: James Clark <james.clark@linaro.org>
-In-Reply-To: <20241203035349.1901262-12-namhyung@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Message-ID: <173324432003.412.3343520734679406090.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
+The following commit has been merged into the irq/urgent branch of tip:
 
+Commit-ID:     9151299ee5101e03eeed544c1280b0e14b89a8a4
+Gitweb:        https://git.kernel.org/tip/9151299ee5101e03eeed544c1280b0e14b89a8a4
+Author:        Geert Uytterhoeven <geert+renesas@glider.be>
+AuthorDate:    Tue, 03 Dec 2024 17:27:40 +01:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Tue, 03 Dec 2024 17:40:30 +01:00
 
-On 03/12/2024 3:53 am, Namhyung Kim wrote:
-> It should only have generic flags in the array but the recent header
-> sync brought a new flags to fcntl.h and caused a build error.  Let's
-> update the shell script to exclude flags specific to name_to_handle_at().
-> 
->      CC      trace/beauty/fs_at_flags.o
->    In file included from trace/beauty/fs_at_flags.c:21:
->    tools/perf/trace/beauty/generated/fs_at_flags_array.c:13:30: error: initialized field overwritten [-Werror=override-init]
->       13 |         [ilog2(0x002) + 1] = "HANDLE_CONNECTABLE",
->          |                              ^~~~~~~~~~~~~~~~~~~~
->    tools/perf/trace/beauty/generated/fs_at_flags_array.c:13:30: note: (near initialization for ‘fs_at_flags[2]’)
-> 
-> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+irqchip/stm32mp-exti: CONFIG_STM32MP_EXTI should not default to y when compile-testing
 
-Hi Namhyung,
+Merely enabling compile-testing should not enable additional functionality.
 
-Is it possible to fix this before the updates to keep it buildable? 
-Maybe it's not feasible, I didn't check.
+Fixes: 0be58e0553812fcb ("irqchip/stm32mp-exti: Allow building as module")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lore.kernel.org/all/ef5ec063b23522058f92087e072419ea233acfe9.1733243115.git.geert+renesas@glider.be
 
-I did notice a build issue in the kvm tests after this update:
+---
+ drivers/irqchip/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-$ make O=../build/local/ summary=1 TARGETS=kvm kselftest
-
-In file included from aarch64/aarch32_id_regs.c:14:
-include/aarch64/processor.h:15:10: fatal error: asm/brk-imm.h: No such 
-file or directory
-    15 | #include <asm/brk-imm.h>
-
-But I tried the same on v6.13-rc1 and got a different error, so I don't 
-know if it's any worse.
-
-Thanks
-James
-
-> ---
->   tools/perf/trace/beauty/fs_at_flags.sh | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/tools/perf/trace/beauty/fs_at_flags.sh b/tools/perf/trace/beauty/fs_at_flags.sh
-> index e3f13f96a27c227c..fac4d0c049fcc89f 100755
-> --- a/tools/perf/trace/beauty/fs_at_flags.sh
-> +++ b/tools/perf/trace/beauty/fs_at_flags.sh
-> @@ -13,13 +13,14 @@ printf "static const char *fs_at_flags[] = {\n"
->   regex='^[[:space:]]*#[[:space:]]*define[[:space:]]+AT_([^_]+[[:alnum:]_]+)[[:space:]]+(0x[[:xdigit:]]+)[[:space:]]*.*'
->   # AT_EACCESS is only meaningful to faccessat, so we will special case it there...
->   # AT_STATX_SYNC_TYPE is not a bit, its a mask of AT_STATX_SYNC_AS_STAT, AT_STATX_FORCE_SYNC and AT_STATX_DONT_SYNC
-> -# AT_HANDLE_FID and AT_HANDLE_MNT_ID_UNIQUE are reusing values and are valid only for name_to_handle_at()
-> +# AT_HANDLE_FID, AT_HANDLE_MNT_ID_UNIQUE and AT_HANDLE_CONNECTABLE are reusing values and are valid only for name_to_handle_at()
->   # AT_RENAME_NOREPLACE reuses 0x1 and is valid only for renameat2()
->   grep -E $regex ${linux_fcntl} | \
->   	grep -v AT_EACCESS | \
->   	grep -v AT_STATX_SYNC_TYPE | \
->   	grep -v AT_HANDLE_FID | \
->   	grep -v AT_HANDLE_MNT_ID_UNIQUE | \
-> +	grep -v AT_HANDLE_CONNECTABLE | \
->   	grep -v AT_RENAME_NOREPLACE | \
->   	sed -r "s/$regex/\2 \1/g"	| \
->   	xargs printf "\t[ilog2(%s) + 1] = \"%s\",\n"
-
+diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
+index 55d7122..9bee02d 100644
+--- a/drivers/irqchip/Kconfig
++++ b/drivers/irqchip/Kconfig
+@@ -415,7 +415,7 @@ config PARTITION_PERCPU
+ config STM32MP_EXTI
+ 	tristate "STM32MP extended interrupts and event controller"
+ 	depends on (ARCH_STM32 && !ARM_SINGLE_ARMV7M) || COMPILE_TEST
+-	default y
++	default ARCH_STM32 && !ARM_SINGLE_ARMV7M
+ 	select IRQ_DOMAIN_HIERARCHY
+ 	select GENERIC_IRQ_CHIP
+ 	help
 
