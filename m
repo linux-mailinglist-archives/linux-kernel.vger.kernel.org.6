@@ -1,159 +1,81 @@
-Return-Path: <linux-kernel+bounces-430300-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23CA49E2EF2
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 23:19:02 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F19A9E2F3E
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 23:49:27 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB92B16229B
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 22:17:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2A5C2B3AE17
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 22:17:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2530B20B1FE;
-	Tue,  3 Dec 2024 22:16:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A2DF20B800;
+	Tue,  3 Dec 2024 22:16:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S02K4VsF"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b="EQk2k2kB"
+Received: from gentwo.org (gentwo.org [62.72.0.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2996420A5E7;
-	Tue,  3 Dec 2024 22:16:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BD6B20B7F0;
+	Tue,  3 Dec 2024 22:16:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.72.0.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733264212; cv=none; b=ZNDJl49efNBLPw65EEjwjLZ2Tm3BCfuRu82aHwdUask0QiZ9VsHBfIb/ECheO8ZqdoCar+TyAsYzZVyxl4IsE7s9FoeWktQRDnf9n2zXu+q+m97hEH9SjWKjTChvVeeCwNO0c24UaTCLzobOyVTxtjemKSA4FgyZfOTmmgjXMds=
+	t=1733264216; cv=none; b=QHcMEmK3gYyONiMftS++2qw8a5zH7i7EHabzolEluHZnq15iw/AmTVxiGCND7jeiklgAbfy/t6NOvixrGM0IT+zgtgYXhLBzaghj3TCi88SUdhxW9CLGDwjrRrLlR5RBQuzkPbbNyxC+aNJFuA1PtXteG1vT9mUHFa1Cpu2ZXug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733264212; c=relaxed/simple;
-	bh=ozRvIq+5MLZjFrIsB9dsL65UNaZZtxTlG8giMAmKx58=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=DVzF0JWlNsm16HdD3Z+q4GX2gVOSn2FxQ6LkVappWyBo4KurQ2xouy+eW0tKAwDfqPljeoHdGMNxS9/CDcuq9OQvTB5yCBOMAZn+WdksgEaAMeDJI0BIbsvf6uvdDnAKKGBazx1vPpGHskVelpzm90yj3uZJM5YVzMNhcUJMsOM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S02K4VsF; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2155312884fso44723175ad.0;
-        Tue, 03 Dec 2024 14:16:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733264210; x=1733869010; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iook0iJ9F0LvdQG0CTeBdy7oSyhdF855HqAsvOcFkV4=;
-        b=S02K4VsFAcP05962F005ZDSpj2CwYGlzAivJvjH/BipmH3g5b0Wr8VEX6cp7Swcg0x
-         2/XBgZH3efol1nJF1iFBNyhpM9EuijaVp/B5vWtKek6+zUQiCx07ublo89M/VraKScUa
-         clWk95gUQktcx+J4Q+jtjzQtgIIabjRXbrHkQNjUOb4Qluphu6bH+XP0hY0d+hyd4/cW
-         FD58YcxNp4eafIpfJMyS95GfU8xJaXv7qhrqZ/G/Os3WllgcDxvkhLF29yPhW3aEwWEM
-         ros7HONUvVSOGJZMrZj3o+mywTPgivhy9oShRhWe6OgaCJZLAFjrp1E+8BdY7nLhcL9X
-         Kurw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733264210; x=1733869010;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=iook0iJ9F0LvdQG0CTeBdy7oSyhdF855HqAsvOcFkV4=;
-        b=W3NHc+kr11Iuu5sDqdL0r48JyRSsTF2pRAB7Nu86BZk/KWJhhqy7fweJceqEHauWtH
-         CAq7Q3IWqLGF94k62eIYy919z1+V3dqIslMlMv32c/i2naAqf18BmFjUe9PWMS3Lk1ge
-         qf2L7ilK0X7panUJgRtCVBwLt2Dhyy50Ej9+j0xEQjLXXFg9PRtJThB8MiRt3eD+/yXf
-         RRN69f6mk+kBj8jJr7tizPCTs+l/Yiz5o544mI0poGUDOn9/FOIsKR70cIa+cDuJ/Ltp
-         UcIzL7LyJgTYlnidHim+U67LcQceFWsgk/NZF0CzDW6VrtyogSyGULlnxCpDKFS9UFpM
-         f4Aw==
-X-Forwarded-Encrypted: i=1; AJvYcCU6QptN76iPyU8FRzTWqUeaAuwkGwqWTxaZvEYHnrtDBZrzWATQyvDsWJOQwQAhbkx6YggYnb72EECrfRQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxlhwXMzDIZc0d6pL/fmsLWjOglA+YIa+omIqInxj2aIuF0x+F/
-	LFTUDRMogeFwflj0KY/kgL4HCdVMXFMjRoQZvCCR0czgMQuOnmiYxuU2m/qJ
-X-Gm-Gg: ASbGncuGxALw+Dddago9ebg8KyrSYyb4pnOZ013xmwx+dvSewIaOa8ioj45DOTeU9WJ
-	Lm6MezJtdOST3V6nFKk5dfUsOxusTbddZVUdQozaCj+cQcOhebDdUlL8KF0W0QupW91mtiBkynH
-	OozU05wPeXPLmucXJb5ajhN1DgJSSUQHJbcBiy6AQn2OXco6ogJy4BRo8fM00fQvpHyrcQjdSx5
-	Frfyk9pFOTab2LST8OrN4wL5g==
-X-Google-Smtp-Source: AGHT+IFd7GY0XIIVva9Ld8S7Wr/DyeFJs64AJ22tF1yAfTjDvoEVMKtixlKdmf+HJ1dIP4Hdt0p1rA==
-X-Received: by 2002:a17:902:ce08:b0:212:e29:3b2f with SMTP id d9443c01a7336-215bd250316mr49565195ad.44.1733264210034;
-        Tue, 03 Dec 2024 14:16:50 -0800 (PST)
-Received: from ryzen.lan ([2601:644:8200:dab8::a86])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21521904caasm99779045ad.60.2024.12.03.14.16.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Dec 2024 14:16:49 -0800 (PST)
-From: Rosen Penev <rosenp@gmail.com>
-To: netdev@vger.kernel.org
-Cc: Andrew Lunn <andrew@lunn.ch>,
-	ansuelsmth@gmail.com,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH net-next 2/2] net: mdio-ipq8064: remove _remove function
-Date: Tue,  3 Dec 2024 14:16:44 -0800
-Message-ID: <20241203221644.136104-3-rosenp@gmail.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241203221644.136104-1-rosenp@gmail.com>
-References: <20241203221644.136104-1-rosenp@gmail.com>
+	s=arc-20240116; t=1733264216; c=relaxed/simple;
+	bh=oBzlVvTuMah1WhutZPHI1W7HZDgpAB39ccyTU1ownI8=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=kYkWw+CVE1U5HAiNQl9pNrT1S8tbEMAih+MHwI01BA34rsBrLzgQ9CK1YlSPDOnEaj17Z3AmAMoQ60XlzPvAhpgkLYBxPlsDS8XxVeGNd1bfXyIZCqbzZjP4GgRaIfak2zvJ9TYpZ53d531p+SxALvstwsSs9MZcb+Zheh5YULo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org; spf=pass smtp.mailfrom=gentwo.org; dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b=EQk2k2kB; arc=none smtp.client-ip=62.72.0.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentwo.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gentwo.org;
+	s=default; t=1733264214;
+	bh=oBzlVvTuMah1WhutZPHI1W7HZDgpAB39ccyTU1ownI8=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+	b=EQk2k2kB21r1FclQzxFxsGZqsJt8oM2wOffnFeFJfSXaSiUZ+6ECrMWcwgbnCKA9t
+	 k0kdVyIGSXD/HA9D93hxMXNC48xaR70kpSjLEiFV3q43jaa3OVORqw7fPK4uAiBwF1
+	 fayMmAHhG1Ihx50D3FWLyqkzrOXhs5i8PqUAp7XU=
+Received: by gentwo.org (Postfix, from userid 1003)
+	id 1CF744069A; Tue,  3 Dec 2024 14:16:54 -0800 (PST)
+Received: from localhost (localhost [127.0.0.1])
+	by gentwo.org (Postfix) with ESMTP id 1BE08401E0;
+	Tue,  3 Dec 2024 14:16:54 -0800 (PST)
+Date: Tue, 3 Dec 2024 14:16:54 -0800 (PST)
+From: "Christoph Lameter (Ampere)" <cl@gentwo.org>
+To: Jens Axboe <axboe@kernel.dk>
+cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org, 
+    clm@meta.com, linux-kernel@vger.kernel.org, willy@infradead.org, 
+    kirill@shutemov.name, bfoster@redhat.com
+Subject: Re: [PATCHSET v6 0/12] Uncached buffered IO
+In-Reply-To: <668f271f-dc44-49e1-b8dc-08e65e1fec23@kernel.dk>
+Message-ID: <36599cce-42ba-ddfb-656f-162548fdb300@gentwo.org>
+References: <20241203153232.92224-2-axboe@kernel.dk> <e31a698c-09f0-c551-3dfe-646816905e65@gentwo.org> <668f271f-dc44-49e1-b8dc-08e65e1fec23@kernel.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 
-Change of_mdiobus_register to devm_mdiobus_register as devm allows
-removing the _remove function as well as slightly cleaning up the probe
-function.
+On Tue, 3 Dec 2024, Jens Axboe wrote:
 
-Regular mdiobus_register is fine here as the platform device's of_node
-is used. Removes two variables from _probe.
+> I actually did consider using some form of temporal, as it's the only
+> other name I liked. But I do think cached_uncached becomes pretty
+> unwieldy. Which is why I just stuck with uncached. Yes I know it means
+> different things in different circles, but probably mostly an overlap
+> with deeper technical things like that. An honestly almost impossible to
+> avoid overlap these days, everything has been used already :-)
+>
+> IOW, I think uncached is probably still the most descriptive thing out
+> there, even if I'm certainly open to entertaining other names. Just not
+> anything yet that has really resonated with me.
 
-Signed-off-by: Rosen Penev <rosenp@gmail.com>
----
- drivers/net/mdio/mdio-ipq8064.c | 17 +----------------
- 1 file changed, 1 insertion(+), 16 deletions(-)
+How about calling this a "transitory" page? It means fleeting, not
+persistent and I think we have not used that term with a page/folio yet.
 
-diff --git a/drivers/net/mdio/mdio-ipq8064.c b/drivers/net/mdio/mdio-ipq8064.c
-index e3d311ce3810..9f13e16edb17 100644
---- a/drivers/net/mdio/mdio-ipq8064.c
-+++ b/drivers/net/mdio/mdio-ipq8064.c
-@@ -109,12 +109,10 @@ static const struct regmap_config ipq8064_mdio_regmap_config = {
- static int
- ipq8064_mdio_probe(struct platform_device *pdev)
- {
--	struct device_node *np = pdev->dev.of_node;
- 	struct ipq8064_mdio *priv;
- 	struct resource *res;
- 	struct mii_bus *bus;
- 	void __iomem *base;
--	int ret;
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	if (!res)
-@@ -140,19 +138,7 @@ ipq8064_mdio_probe(struct platform_device *pdev)
- 	if (IS_ERR(priv->base))
- 		return PTR_ERR(priv->base);
- 
--	ret = of_mdiobus_register(bus, np);
--	if (ret)
--		return ret;
--
--	platform_set_drvdata(pdev, bus);
--	return 0;
--}
--
--static void ipq8064_mdio_remove(struct platform_device *pdev)
--{
--	struct mii_bus *bus = platform_get_drvdata(pdev);
--
--	mdiobus_unregister(bus);
-+	return devm_mdiobus_register(&pdev->dev, bus);
- }
- 
- static const struct of_device_id ipq8064_mdio_dt_ids[] = {
-@@ -163,7 +149,6 @@ MODULE_DEVICE_TABLE(of, ipq8064_mdio_dt_ids);
- 
- static struct platform_driver ipq8064_mdio_driver = {
- 	.probe = ipq8064_mdio_probe,
--	.remove = ipq8064_mdio_remove,
- 	.driver = {
- 		.name = "ipq8064-mdio",
- 		.of_match_table = ipq8064_mdio_dt_ids,
--- 
-2.47.0
+
 
 
