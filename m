@@ -1,103 +1,420 @@
-Return-Path: <linux-kernel+bounces-429441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429389-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 884009E1C2D
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 13:30:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 249539E1B67
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 12:54:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 55F0C1664E2
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 12:30:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C00C3167B6C
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 11:53:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C87C1E3DCA;
-	Tue,  3 Dec 2024 12:30:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CC941E47BF;
+	Tue,  3 Dec 2024 11:53:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-watchdog.org header.i=@linux-watchdog.org header.b="PsU/nsmj"
-Received: from www.linux-watchdog.org (www.linux-watchdog.org [185.87.125.42])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DE113398B;
-	Tue,  3 Dec 2024 12:30:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.87.125.42
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="Dp3qSVZD"
+Received: from smtp-190d.mail.infomaniak.ch (smtp-190d.mail.infomaniak.ch [185.125.25.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E430F1632E6
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 11:53:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733229016; cv=none; b=CtC24p/4SzDcAhHiwEBWRN6PbdyLY9v3pjkcK/X1TP8U5XwiX9AzFBQm81c0dFlMQGZE6I0uKlZoZSMDYez6KG2ZUWDzGajv+Utt/EN6NWGfQVSO+so0IfrBNYGVctjNlGF0CdJT42PnjuQ7xSHoMEHQjwDCkz/kG+oLLQ9AzuA=
+	t=1733226820; cv=none; b=Wt8uyBciR6Mt6RW1g0Okj7K0zLVoMpEl9JD5d/Fu1j4gdm3BjMa+23rsCGpCEF8j8FQkt9w9MfBMpMgL56J8fkTDZkrFvPvwQEYeJ8nxgs925a8ZWytOjY4Zy7ZIh1pxIwPRhNx9OfR2NFcsZFfYT2RM1+1YkDFCVYtxp/zGuEM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733229016; c=relaxed/simple;
-	bh=7TRfX5wfxjYCtySYywhqY3QFl04GfuL1p+0jXqV0IUc=;
+	s=arc-20240116; t=1733226820; c=relaxed/simple;
+	bh=0Ao4eT/8fVUK1kOamzPiFew8wk9LUkUUOCqvyg3sN0U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HnUqmmdXOV0MQvcqRPJe+6EvQt+kf26PkUrwzqzusqJlgNBnqbDzC8577cjIGRPqFa+xIvo0RfOYXZ7HNtavzHdWyBPW3lLci5UpaNhco00htlYxuqbVde2uBU2Lz76m5OxZapMfrzieK8fitH+O/OKpCsZRA8HKJt7ARAChh9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=linux-watchdog.org; spf=pass smtp.mailfrom=linux-watchdog.org; dkim=pass (1024-bit key) header.d=linux-watchdog.org header.i=@linux-watchdog.org header.b=PsU/nsmj; arc=none smtp.client-ip=185.87.125.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=linux-watchdog.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux-watchdog.org
-Received: by www.linux-watchdog.org (Postfix, from userid 500)
-	id B1E8140A03; Tue,  3 Dec 2024 12:53:01 +0100 (CET)
-DKIM-Filter: OpenDKIM Filter v2.11.0 www.linux-watchdog.org B1E8140A03
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-watchdog.org;
-	s=odk20180602; t=1733226781;
-	bh=7TRfX5wfxjYCtySYywhqY3QFl04GfuL1p+0jXqV0IUc=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=pA8qBmIhstU4tZIhvOJflX9e8D3f70oqDZDY0B3ynK7kr/GcvJ33OZqOuTs22op35TeI0FU3Y7QHwanxhdtHJ8ZbDMrW+g2WyYvZfX7xfjk6eCzH6OpygBMaKoRb8DmyAi9LxilVVdseRHlfAFdwrwQ9n0CENIzdgSw5IEMCwm8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=Dp3qSVZD; arc=none smtp.client-ip=185.125.25.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Y2fDl6MqBzn9L;
+	Tue,  3 Dec 2024 12:53:27 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1733226807;
+	bh=uVP6xeVGF+DF+rBiRGFZ66SqEoa+zqntUsncijuxsy4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PsU/nsmjo7eAfQ8nOWB6wrzAMT/ufBB15lRccnOOfh2mzjP33K80Bpe6Vs6rQTsGQ
-	 VFBv3odsw54tzVv1WBkukfTU13W18ZbmyV2AuiEmthL8cG39GS267PKGM1wk1rqQmp
-	 ex7SkMHUs7j41H7vs/qiMG63yKKCNfbZqyr48faY=
-Date: Tue, 3 Dec 2024 12:53:01 +0100
-From: Wim Van Sebroeck <wim@linux-watchdog.org>
-To: Sasha Levin <sashal@kernel.org>
-Cc: Wim Van Sebroeck <wim@linux-watchdog.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Alexander Sverdlin <alexander.sverdlin@siemens.com>,
-	Animesh Agarwal <animeshagarwal28@gmail.com>,
-	Byoungtae Cho <bt.cho@samsung.com>,
-	Christian Marangi <ansuelsmth@gmail.com>,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
-	Colin Ian King <colin.i.king@gmail.com>,
-	Fabio Estevam <festevam@denx.de>, Harini T <harini.t@amd.com>,
-	James Hilliard <james.hilliard1@gmail.com>,
-	Jean Delvare <jdelvare@suse.de>, lijuang <quic_lijuang@quicinc.com>,
-	Marek Vasut <marex@denx.de>, Nick Chan <towinchenmi@gmail.com>,
-	Oleksandr Ocheretnyi <oocheret@cisco.com>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Rosen Penev <rosenp@gmail.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Xingyu Wu <xingyu.wu@starfivetech.com>,
-	Xin Liu <quic_liuxin@quicinc.com>, Yan Zhen <yanzhen@vivo.com>,
-	Yassine Oudjana <y.oudjana@protonmail.com>
-Subject: Re: [GIT PULL REQUEST] watchdog - v6.13 release cycle.
-Message-ID: <20241203115301.GA27487@www.linux-watchdog.org>
-References: <20241202181849.GA5357@www.linux-watchdog.org>
- <Z04WJYlsYQABwAZb@sashalap>
+	b=Dp3qSVZDi3xJ2YFwphu7XXFrOQ0EMn52sqQzwovjGdemPIFu3WPkfH+ANzgfACuw8
+	 XlCKERzvZuUVSLiXtvJ/wcnjOlWGZhE28DiGO/qG1vH42ZZhgUnMwQm3znte5rr3Gz
+	 H/dG9Urz+jwKCNRn3VFzcncEWScC6e2YLqnOjG68=
+Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4Y2fDl2kmwz3GS;
+	Tue,  3 Dec 2024 12:53:27 +0100 (CET)
+Date: Tue, 3 Dec 2024 12:53:25 +0100
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Mimi Zohar <zohar@linux.ibm.com>
+Cc: linux-integrity@vger.kernel.org, roberto.sassu@huawei.com, 
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, audit@vger.kernel.org, 
+	Paul Moore <paul@paul-moore.com>, Jeff Xu <jeffxu@chromium.org>, Kees Cook <kees@kernel.org>
+Subject: Re: [PATCH] ima: instantiate the bprm_creds_for_exec() hook
+Message-ID: <20241203.oZu0aemaiv5a@digikod.net>
+References: <20241127210234.121546-1-zohar@linux.ibm.com>
+ <20241129.keeDathoo3Oh@digikod.net>
+ <421b119b81ec044fcdc714aac5748ebe5b4557aa.camel@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <Z04WJYlsYQABwAZb@sashalap>
-User-Agent: Mutt/1.5.20 (2009-12-10)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <421b119b81ec044fcdc714aac5748ebe5b4557aa.camel@linux.ibm.com>
+X-Infomaniak-Routing: alpha
 
-Hi Sasha,
-
-> On Mon, Dec 02, 2024 at 07:18:49PM +0100, Wim Van Sebroeck wrote:
-> >are available in the git repository at:
-> >
-> > git://www.linux-watchdog.org/linux-watchdog.git linux-watchdog-6.13-rc1
+On Mon, Dec 02, 2024 at 02:40:35PM -0500, Mimi Zohar wrote:
+> On Fri, 2024-11-29 at 12:06 +0100, Mickaël Salaün wrote:
+> > For reference, here is the base patch series:
+> > https://lore.kernel.org/all/20241112191858.162021-1-mic@digikod.net/
+> > 
+> > CCing audit@
+> > 
+> > On Wed, Nov 27, 2024 at 04:02:34PM -0500, Mimi Zohar wrote:
+> > > Like direct file execution (e.g. ./script.sh), indirect file execution
+> > > (e.g. sh script.sh) needs to be measured and appraised.  Instantiate
+> > > the new security_bprm_creds_for_exec() hook to measure and verify the
+> > > indirect file's integrity.  Unlike direct file execution, indirect file
+> > > execution integrity is optionally enforced by the interpreter.
+> > > 
+> > > Update the audit messages to differentiate between kernel and userspace
+> > > enforced integrity.
+> > 
+> > I'm not sure to see the full picture.  What is the difference between
+> > execveat() calls and execveat() + AT_EXECVE_CHECK calls?  Both are from
+> > user space, the only difference is that the first can lead to a full
+> > execution, but the intent is the same.
 > 
-> Hey Wim,
+> We do want the full execution in order to measure/appraise/audit both the direct
+> file execution (e.g. ./script.sh) and the interpreter (e.g. #!/usr/bin/bash)
+> specified.
+
+Yes, but I was wondering about the difference in the log messages.  In
+both cases the script is checked, but only without AT_EXECVE_CHECK its
+"dependencies" (e.g. script interpreter) are checked.  I guess it could
+be useful to differenciate those but I wanted to make sure we were on
+the same page.
+
 > 
-> Have you pushed the tag to the repo?
+> > 
+> > > 
+> > > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> > > Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+> > > ---
+> > >  security/integrity/ima/ima_appraise.c | 84 ++++++++++++++++++++-------
+> > >  security/integrity/ima/ima_main.c     | 22 +++++++
+> > >  2 files changed, 86 insertions(+), 20 deletions(-)
+> > > 
+> > > diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
+> > > index 656c709b974f..b5f8e49cde9d 100644
+> > > --- a/security/integrity/ima/ima_appraise.c
+> > > +++ b/security/integrity/ima/ima_appraise.c
+> > > @@ -8,6 +8,7 @@
+> > >  #include <linux/module.h>
+> > >  #include <linux/init.h>
+> > >  #include <linux/file.h>
+> > > +#include <linux/binfmts.h>
+> > >  #include <linux/fs.h>
+> > >  #include <linux/xattr.h>
+> > >  #include <linux/magic.h>
+> > > @@ -16,6 +17,7 @@
+> > >  #include <linux/fsverity.h>
+> > >  #include <keys/system_keyring.h>
+> > >  #include <uapi/linux/fsverity.h>
+> > > +#include <linux/securebits.h>
+> > >  
+> > >  #include "ima.h"
+> > >  
+> > > @@ -276,7 +278,8 @@ static int calc_file_id_hash(enum evm_ima_xattr_type type,
+> > >   */
+> > >  static int xattr_verify(enum ima_hooks func, struct ima_iint_cache *iint,
+> > >  			struct evm_ima_xattr_data *xattr_value, int xattr_len,
+> > > -			enum integrity_status *status, const char **cause)
+> > > +			enum integrity_status *status, const char **cause,
+> > > +			bool is_check)
+> > >  {
+> > >  	struct ima_max_digest_data hash;
+> > >  	struct signature_v2_hdr *sig;
+> > > @@ -292,9 +295,11 @@ static int xattr_verify(enum ima_hooks func, struct ima_iint_cache *iint,
+> > >  		if (*status != INTEGRITY_PASS_IMMUTABLE) {
+> > >  			if (iint->flags & IMA_DIGSIG_REQUIRED) {
+> > >  				if (iint->flags & IMA_VERITY_REQUIRED)
+> > > -					*cause = "verity-signature-required";
+> > > +					*cause = !is_check ? "verity-signature-required" :
+> > > +						"verity-signature-required(userspace)";
+> > 
+> > This looks simpler (same for all following checks):
+> > is_check ? "verity-signature-required(userspace)" : "verity-signature-required";
+> > 
+> > >  				else
+> > > -					*cause = "IMA-signature-required";
+> > > +					*cause = !is_check ? "IMA-signature-required" :
+> > > +						"IMA-signature-required(userspace)";
+> > >  				*status = INTEGRITY_FAIL;
+> > >  				break;
+> > >  			}
+> > > @@ -314,7 +319,8 @@ static int xattr_verify(enum ima_hooks func, struct ima_iint_cache *iint,
+> > >  		else
+> > >  			rc = -EINVAL;
+> > >  		if (rc) {
+> > > -			*cause = "invalid-hash";
+> > > +			*cause = !is_check ? "invalid-hash" :
+> > > +				"invalid-hash(userspace)";
+> > >  			*status = INTEGRITY_FAIL;
+> > >  			break;
+> > >  		}
+> > > @@ -325,14 +331,16 @@ static int xattr_verify(enum ima_hooks func, struct ima_iint_cache *iint,
+> > >  
+> > >  		mask = IMA_DIGSIG_REQUIRED | IMA_VERITY_REQUIRED;
+> > >  		if ((iint->flags & mask) == mask) {
+> > > -			*cause = "verity-signature-required";
+> > > +			*cause = !is_check ? "verity-signature-required" :
+> > > +				"verity-signature-required(userspace)";
+> > >  			*status = INTEGRITY_FAIL;
+> > >  			break;
+> > >  		}
+> > >  
+> > >  		sig = (typeof(sig))xattr_value;
+> > >  		if (sig->version >= 3) {
+> > > -			*cause = "invalid-signature-version";
+> > > +			*cause = !is_check ? "invalid-signature-version" :
+> > > +				"invalid-signature-version(userspace)";
+> > >  			*status = INTEGRITY_FAIL;
+> > >  			break;
+> > >  		}
+> > > @@ -353,7 +361,8 @@ static int xattr_verify(enum ima_hooks func, struct ima_iint_cache *iint,
+> > >  						     iint->ima_hash->digest,
+> > >  						     iint->ima_hash->length);
+> > >  		if (rc) {
+> > > -			*cause = "invalid-signature";
+> > > +			*cause = !is_check ? "invalid-signature" :
+> > > +				"invalid-signature(userspace)";
+> > >  			*status = INTEGRITY_FAIL;
+> > >  		} else {
+> > >  			*status = INTEGRITY_PASS;
+> > > @@ -364,7 +373,8 @@ static int xattr_verify(enum ima_hooks func, struct ima_iint_cache *iint,
+> > >  
+> > >  		if (iint->flags & IMA_DIGSIG_REQUIRED) {
+> > >  			if (!(iint->flags & IMA_VERITY_REQUIRED)) {
+> > > -				*cause = "IMA-signature-required";
+> > > +				*cause = !is_check ? "IMA-signature-required" :
+> > > +					"IMA-signature-required(userspace)";
+> > >  				*status = INTEGRITY_FAIL;
+> > >  				break;
+> > >  			}
+> > > @@ -372,7 +382,8 @@ static int xattr_verify(enum ima_hooks func, struct ima_iint_cache *iint,
+> > >  
+> > >  		sig = (typeof(sig))xattr_value;
+> > >  		if (sig->version != 3) {
+> > > -			*cause = "invalid-signature-version";
+> > > +			*cause = !is_check ? "invalid-signature-version" :
+> > > +				"invalid-signature-version(userspace)";
+> > >  			*status = INTEGRITY_FAIL;
+> > >  			break;
+> > >  		}
+> > > @@ -382,7 +393,8 @@ static int xattr_verify(enum ima_hooks func, struct ima_iint_cache *iint,
+> > >  				       container_of(&hash.hdr,
+> > >  					       struct ima_digest_data, hdr));
+> > >  		if (rc) {
+> > > -			*cause = "sigv3-hashing-error";
+> > > +			*cause = !is_check ? "sigv3-hashing-error" :
+> > > +				"sigv3-hashing-error(userspace)";
+> > >  			*status = INTEGRITY_FAIL;
+> > >  			break;
+> > >  		}
+> > > @@ -392,7 +404,8 @@ static int xattr_verify(enum ima_hooks func, struct ima_iint_cache *iint,
+> > >  					     xattr_len, hash.digest,
+> > >  					     hash.hdr.length);
+> > >  		if (rc) {
+> > > -			*cause = "invalid-verity-signature";
+> > > +			*cause = !is_check ? "invalid-verity-signature" :
+> > > +				"invalid-verify-signature(userspace)";
+> > >  			*status = INTEGRITY_FAIL;
+> > >  		} else {
+> > >  			*status = INTEGRITY_PASS;
+> > > @@ -401,7 +414,8 @@ static int xattr_verify(enum ima_hooks func, struct ima_iint_cache *iint,
+> > >  		break;
+> > >  	default:
+> > >  		*status = INTEGRITY_UNKNOWN;
+> > > -		*cause = "unknown-ima-data";
+> > > +		*cause = !is_check ? "unknown-ima-data" :
+> > > +			"unknown-ima-data(userspace)";
+> > >  		break;
+> > >  	}
+> > >  
+> > > @@ -469,6 +483,18 @@ int ima_check_blacklist(struct ima_iint_cache *iint,
+> > >  	return rc;
+> > >  }
+> > >  
+> > > +static int is_bprm_creds_for_exec(enum ima_hooks func, struct file *file)
+> > > +{
+> > > +	struct linux_binprm *bprm = NULL;
+> > > +
+> > > +	if (func == BPRM_CHECK) {
+> > > +		bprm = container_of(&file, struct linux_binprm, file);
+> > > +		if (bprm->is_check)
+> > > +			return 1;
+> > > +	}
+> > > +	return 0;
+> > > +}
+> > > +
+> > >  /*
+> > >   * ima_appraise_measurement - appraise file measurement
+> > >   *
+> > > @@ -489,11 +515,24 @@ int ima_appraise_measurement(enum ima_hooks func, struct ima_iint_cache *iint,
+> > >  	enum integrity_status status = INTEGRITY_UNKNOWN;
+> > >  	int rc = xattr_len;
+> > >  	bool try_modsig = iint->flags & IMA_MODSIG_ALLOWED && modsig;
+> > > +	bool is_check = false;
+> > >  
+> > >  	/* If not appraising a modsig, we need an xattr. */
+> > >  	if (!(inode->i_opflags & IOP_XATTR) && !try_modsig)
+> > >  		return INTEGRITY_UNKNOWN;
+> > >  
+> > > +	/*
+> > > +	 * Unlike any of the other LSM hooks where the kernel enforces file
+> > > +	 * integrity, enforcing file integrity for the bprm_creds_for_exec()
+> > > +	 * LSM hook is left up to the discretion of the script interpreter
+> > > +	 * (userspace).
+> > > +	 *
+> > > +	 * Since the SECBIT_EXEC_RESTRICT_FILE flag is just a hint as to
+> > > +	 * userspace intentions, simply annotate the audit messages indicating
+> > > +	 * a userspace based query.
+> > > +	 */
+> > > +	is_check = is_bprm_creds_for_exec(func, file);
+> > > +
+> > >  	/* If reading the xattr failed and there's no modsig, error out. */
+> > >  	if (rc <= 0 && !try_modsig) {
+> > >  		if (rc && rc != -ENODATA)
+> > > @@ -501,11 +540,14 @@ int ima_appraise_measurement(enum ima_hooks func, struct ima_iint_cache *iint,
+> > >  
+> > >  		if (iint->flags & IMA_DIGSIG_REQUIRED) {
+> > >  			if (iint->flags & IMA_VERITY_REQUIRED)
+> > > -				cause = "verity-signature-required";
+> > > +				cause = !is_check ? "verity-signature-required" :
+> > > +					"verity-signature-required(userspace)";
+> > >  			else
+> > > -				cause = "IMA-signature-required";
+> > > +				cause = !is_check ? "IMA-signature-required" :
+> > > +					"IMA-signature-required(userspace)";
+> > >  		} else {
+> > > -			cause = "missing-hash";
+> > > +			cause = !is_check ? "missing-hash" :
+> > > +				"missing-hash(userspace)";
+> > >  		}
+> > >  
+> > >  		status = INTEGRITY_NOLABEL;
+> > > @@ -531,14 +573,15 @@ int ima_appraise_measurement(enum ima_hooks func, struct ima_iint_cache *iint,
+> > >  			break;
+> > >  		fallthrough;
+> > >  	case INTEGRITY_NOLABEL:		/* No security.evm xattr. */
+> > > -		cause = "missing-HMAC";
+> > > +		cause = !is_check ? "missing-HMAC" : "missing-HMAC(userspace)";
+> > >  		goto out;
+> > >  	case INTEGRITY_FAIL_IMMUTABLE:
+> > >  		set_bit(IMA_DIGSIG, &iint->atomic_flags);
+> > > -		cause = "invalid-fail-immutable";
+> > > +		cause = !is_check ? "invalid-fail-immutable" :
+> > > +		       "invalid-fail-immutable(userspace)";
+> > >  		goto out;
+> > >  	case INTEGRITY_FAIL:		/* Invalid HMAC/signature. */
+> > > -		cause = "invalid-HMAC";
+> > > +		cause = !is_check ? "invalid-HMAC" : "invalid-HMAC(userspace)";
+> > >  		goto out;
+> > >  	default:
+> > >  		WARN_ONCE(true, "Unexpected integrity status %d\n", status);
+> > > @@ -546,7 +589,7 @@ int ima_appraise_measurement(enum ima_hooks func, struct ima_iint_cache *iint,
+> > >  
+> > >  	if (xattr_value)
+> > >  		rc = xattr_verify(func, iint, xattr_value, xattr_len, &status,
+> > > -				  &cause);
+> > > +				  &cause, is_check);
+> > >  
+> > >  	/*
+> > >  	 * If we have a modsig and either no imasig or the imasig's key isn't
+> > > @@ -568,7 +611,8 @@ int ima_appraise_measurement(enum ima_hooks func, struct ima_iint_cache *iint,
+> > >  	    ((inode->i_sb->s_iflags & SB_I_UNTRUSTED_MOUNTER) ||
+> > >  	     (iint->flags & IMA_FAIL_UNVERIFIABLE_SIGS))) {
+> > >  		status = INTEGRITY_FAIL;
+> > > -		cause = "unverifiable-signature";
+> > > +		cause = !is_check ? "unverifiable-signature" :
+> > > +			"unverifiable-signature(userspace)";
+> > >  		integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode, filename,
+> > >  				    op, cause, rc, 0);
+> > 
+> > Instead of adding new causes, another option would be to add a new audit
+> > record type (e.g. AUDIT_INTEGRITY_DATA_CHECK).  This would help filter
+> > these new kind of messages and I guess scale better.
 > 
-> $ git ls-remote --tags git://www.linux-watchdog.org/linux-watchdog.git | grep v6\.13 | wc -l
-> 0
+> Thanks.  This sounds like a better alternative.
+> 
+> > 
+> > Another alternative would be to extend the audit message with a new
+> > field (e.g. "check=1"), but that would not help for efficient filtering.
+> > 
+> > >  	} else if (status != INTEGRITY_PASS) {
+> > > diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+> > > index 06132cf47016..2b5d6bae77a4 100644
+> > > --- a/security/integrity/ima/ima_main.c
+> > > +++ b/security/integrity/ima/ima_main.c
+> > > @@ -554,6 +554,27 @@ static int ima_bprm_check(struct linux_binprm *bprm)
+> > >  				   MAY_EXEC, CREDS_CHECK);
+> > >  }
+> > >  
+> > > +/**
+> > > + * ima_bprm_creds_for_exec - based on policy, collect/store/appraise measurement.
+> > > + * @bprm: contains the linux_binprm structure
+> > > + *
+> > > + * Based on the IMA policy and the execvat(2) AT_CHECK flag, measure and
+> > > + * appraise the integrity of a file to be executed by script interpreters.
+> > > + * Unlike any of the other LSM hooks where the kernel enforces file integrity,
+> > > + * enforcing file integrity is left up to the discretion of the script
+> > > + * interpreter (userspace).
+> > > + *
+> > > + * On success return 0.  On integrity appraisal error, assuming the file
+> > > + * is in policy and IMA-appraisal is in enforcing mode, return -EACCES.
+> > > + */
+> > > +static int ima_bprm_creds_for_exec(struct linux_binprm *bprm)
+> > > +{
+> > > +	if (!bprm->is_check)
+> > > +		return 0;
+> > > +
+> > > +	return ima_bprm_check(bprm);
+> > > +}
+> > > +
+> > >  /**
+> > >   * ima_file_check - based on policy, collect/store measurement.
+> > >   * @file: pointer to the file to be measured
+> > > @@ -1177,6 +1198,7 @@ static int __init init_ima(void)
+> > >  
+> > >  static struct security_hook_list ima_hooks[] __ro_after_init = {
+> > >  	LSM_HOOK_INIT(bprm_check_security, ima_bprm_check),
+> > > +	LSM_HOOK_INIT(bprm_creds_for_exec, ima_bprm_creds_for_exec),
+> > 
+> > Why not replace bprm_check_security with bprm_creds_for_exec
+> > implementation altogether?
+> 
+> To measure/appraise/audit the interpreter specified in the direct file (e.g.
+> ./script.sh).
 
-Due to lack of sleep, I indeed added the tag on the wrong repo (the linux-watchdog-next repo).
-Fixed.
+It makes sense. :)
 
-Kind regards,
-Wim.
+And there is no need to add another is_check check in the
+bprm_check_security implementation because it will not be called when
+is_check is set.
 
+> 
+> > 
+> > >  	LSM_HOOK_INIT(file_post_open, ima_file_check),
+> > >  	LSM_HOOK_INIT(inode_post_create_tmpfile, ima_post_create_tmpfile),
+> > >  	LSM_HOOK_INIT(file_release, ima_file_free),
+> > > -- 
+> > > 2.47.0
+> > > 
+> > > 
+> > 
+> 
+> 
 
