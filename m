@@ -1,110 +1,143 @@
-Return-Path: <linux-kernel+bounces-430343-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7BD79E2F96
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 00:14:36 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D36FF9E2FA1
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 00:15:58 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AEEB28304C
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 23:14:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ABEB4164BC9
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 23:15:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6496620A5EB;
-	Tue,  3 Dec 2024 23:14:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94B8520ADD3;
+	Tue,  3 Dec 2024 23:15:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="uGdF7Wd4";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="I+74efFb"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="eR+qloIo"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65A691EF096;
-	Tue,  3 Dec 2024 23:14:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E71C8460;
+	Tue,  3 Dec 2024 23:15:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733267669; cv=none; b=F3BgDTKIyJtU3mmlw1UUP0dW+8XzWLg2rW44FFhKWrcuVqmOl/8eLOWF5wmP19mmGSeAd2i0WXubgt71tzCFEUhU9zlFLQt0kd3/R36SMVTZfaeZBnMnATNKeJHEkP6uCXK6WiDn1y0mULQIcqtfrbUnaIfdoMDJnPh4TvDqKAQ=
+	t=1733267748; cv=none; b=Wj0277Ubfp92cCbas3NNjwhlfqF/ypLl9HjROnas0ADtV7rVCyAl45G1Kz1Eh/2KVoHdL2GKMnxNAy5II36qCm04DVmvGjCl2R8zTxByWXUJ7e1HdhaRXfnMCdGsTuiczf3Srh5hBLVkzLbUER5ukMet0WJT5lCIW9VH7Ua0A2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733267669; c=relaxed/simple;
-	bh=P9I8+Rvwv/9S/ZImA3AtB2up+Y15XK414ln9rAgTeJQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=BooaobpcC2X/LWRE0z4Xn1bqbvGEwTToGQDbB49lQYytiGy3ul0PaTt7kjG0pjLyMWjyA3MroP7VrTQxB8sloPr+xkj2tWNfjMNtJfzTnRlMDA37IA/m/jUgiLP+VCCSagCFzGcefpBYNfRRr3HuqRjp/a9zEartoT5E+HhGXEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=uGdF7Wd4; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=I+74efFb; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1733267666;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AwG8bjCzJpnjiYjQenvpNH701rJgmgaojMUFj2iL/Vc=;
-	b=uGdF7Wd4Kue1Y0fcH2j/hkgoB/fhGzmQswuYBdLkhxtekcrOpOWrejr9iW9UiCZYq5AGmM
-	0QjZuljhk/UjVn0VvpNp1WxWrpJPU0Qo5wZpmjUL3iGPnoOVty7mBF+suZuYoxsu+xIf9r
-	eSx5IBQw/DdQ8jVXNczsF6J/aqQFAc5kTZZ3KrMAuEKM7fEPhwrDKfQUoTkH/PcZzHRoEo
-	XL1gCR/AvJqHFyDXyOU0eKIcD1sZ35NXCnRDthGDE00tn64YvMPZGpcS0dXnWxLzZV11fW
-	lajQLWKPNR33WvQAu3wnHmWJ1qTZBWxe/WdCirZZUWzNfBtYieLmlmmdEpNkkw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1733267666;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AwG8bjCzJpnjiYjQenvpNH701rJgmgaojMUFj2iL/Vc=;
-	b=I+74efFbzlOGTz6lDCdzXKlbP5s1uQOdQ+XY7NBpJW/7xbOUY3Tqaz88xFpCQIAOzVf4pg
-	DpwZXD4F62cEbYBQ==
-To: Frank Li <Frank.li@nxp.com>
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Krzysztof
- =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, Kishon Vijay Abraham I
- <kishon@kernel.org>,
- Bjorn Helgaas <bhelgaas@google.com>, Arnd Bergmann <arnd@arndb.de>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
- <rafael@kernel.org>, Anup Patel <apatel@ventanamicro.com>,
- linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
- imx@lists.linux.dev, Niklas Cassel <cassel@kernel.org>,
- dlemoal@kernel.org, maz@kernel.org, jdmason@kudzu.us, stable@kernel.org
-Subject: Re: [PATCH v9 1/6] platform-msi: Add msi_remove_device_irq_domain()
- in platform_device_msi_free_irqs_all()
-In-Reply-To: <Z096wCMFmR7AyfWn@lizhi-Precision-Tower-5810>
-References: <20241203-ep-msi-v9-0-a60dbc3f15dd@nxp.com>
- <20241203-ep-msi-v9-1-a60dbc3f15dd@nxp.com> <87y10wsc6z.ffs@tglx>
- <Z096wCMFmR7AyfWn@lizhi-Precision-Tower-5810>
-Date: Wed, 04 Dec 2024 00:14:25 +0100
-Message-ID: <87plm8s6jy.ffs@tglx>
+	s=arc-20240116; t=1733267748; c=relaxed/simple;
+	bh=YkZAsANfAmRYtI/Mt+2RDqFV4yBRm6bxvA1qhI5AL7s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=u8nmnksC9KFvaRTk2rCge+BSJPk8HtYF0BCsaKCwajQvMerIuXetZVbslltpwYoVS+R48yVYSDllae0ZY1f9sHMrTus1mjZSaP4Ujp9lPMaiQz1AYH1PCW5KDqitgINl48oBwBUt5v8gArN5EoOP9g1ITtyMmPixhkPL3pLdfT0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=eR+qloIo; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B3HoXEb030978;
+	Tue, 3 Dec 2024 23:15:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	YkZAsANfAmRYtI/Mt+2RDqFV4yBRm6bxvA1qhI5AL7s=; b=eR+qloIoJOhXZhC3
+	+GWiiJaVz2i49lUqyAj6fCUrb9PgOUliB6bWQccpZaGU7P93SrpaGtY8kEJUIjIb
+	W9z5tEKDGINKGUU+XBLRhXY62FlwSMfe/FNsKjPr9B0Kcz/Nwj4OOzynEPAMMTwO
+	bXIrTZZkm4fDBk5+S/Qr54JN0+6zp5xJ0fKsKTqF7aZgZiRYD8RXIPIzwQPSCvgJ
+	CR45+vroSXgspmZXj9cLOj47Llb6i8HJr2TdX/G5SfE2QEbm+X5k+KPE2krE1axX
+	Kvz36WzMH4+93BgHFa37ZdPjfIRnsc33wR+f1a2+5s+CzN3dc928N5JS+D+fh8zO
+	jNHveA==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 439w90tdtb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 03 Dec 2024 23:15:26 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B3NFOQc010563
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 3 Dec 2024 23:15:24 GMT
+Received: from [10.110.57.23] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 3 Dec 2024
+ 15:15:23 -0800
+Message-ID: <28023a83-04a5-4c62-85a9-ca41be0ba9e1@quicinc.com>
+Date: Tue, 3 Dec 2024 15:15:23 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v30 28/30] ALSA: usb-audio: Add USB offload route kcontrol
+To: Cezary Rojewski <cezary.rojewski@intel.com>
+CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-sound@vger.kernel.org>, <linux-usb@vger.kernel.org>,
+        <linux-input@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-doc@vger.kernel.org>, <srinivas.kandagatla@linaro.org>,
+        <mathias.nyman@intel.com>, <perex@perex.cz>, <conor+dt@kernel.org>,
+        <dmitry.torokhov@gmail.com>, <corbet@lwn.net>, <broonie@kernel.org>,
+        <lgirdwood@gmail.com>, <krzk+dt@kernel.org>,
+        <pierre-louis.bossart@linux.intel.com>, <Thinh.Nguyen@synopsys.com>,
+        <tiwai@suse.com>, <robh@kernel.org>, <gregkh@linuxfoundation.org>
+References: <20241106193413.1730413-1-quic_wcheng@quicinc.com>
+ <20241106193413.1730413-29-quic_wcheng@quicinc.com>
+ <1a361446-7a18-4f49-9eeb-d60d1adaa088@intel.com>
+Content-Language: en-US
+From: Wesley Cheng <quic_wcheng@quicinc.com>
+In-Reply-To: <1a361446-7a18-4f49-9eeb-d60d1adaa088@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: IBwKgWcd3KUzuxMkopp3EOItLDqwSWCj
+X-Proofpoint-GUID: IBwKgWcd3KUzuxMkopp3EOItLDqwSWCj
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=709 bulkscore=0
+ impostorscore=0 phishscore=0 suspectscore=0 adultscore=0 mlxscore=0
+ spamscore=0 clxscore=1011 priorityscore=1501 malwarescore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412030192
 
-On Tue, Dec 03 2024 at 16:40, Frank Li wrote:
-> On Tue, Dec 03, 2024 at 10:12:36PM +0100, Thomas Gleixner wrote:
->> Sure, but that's not a fix and not required for stable because no
->> existing driver is affected by this unless I'm missing something.
->>
->> What's the actual use case for this? You describe in great length what
->> fails, which is nice, but I'm missing the larger picture here.
->
-> PCI host send a door bell to PCI endpoint, which use platform msi to
-> trigger a IRQ.
->
-> PCI Host side				PCI endpoint side
->
-> Send "enable"  command      ->         call platform_device_msi_init_and_alloc_irqs()
-> Get doorbell address        <-         send back MSI address by shared memory
-> Write data to doorbell      -> 	       MSI irq handler triggered.
-> Send "Disable"  command     ->	       call platform_device_msi_free_irqs_all()
->
->
-> At endpoint side, need dymatic response "enable/disable" commands. Of
-> course, I can call msi_remove_device_irq_domain() in my disable function.
-> But I think it should be symetic in alloc/free pair functions.
 
-No objections, but that's not a justification for a stable backport as
-nothing in tree has this problem right now. You add a new use case which
-requires it, so only that new use case has this dependency, no?
+On 12/3/2024 8:13 AM, Cezary Rojewski wrote:
+> On 2024-11-06 8:34 PM, Wesley Cheng wrote:
+>> In order to allow userspace/applications know about USB offloading status,
+>> expose a sound kcontrol that fetches information about which sound card
+>> and PCM index the USB device is mapped to for supporting offloading.  In
+>> the USB audio offloading framework, the ASoC BE DAI link is the entity
+>> responsible for registering to the SOC USB layer.
+>
+> ...
+>
+> R) += mixer_usb_offload.o
+>> diff --git a/sound/usb/mixer_usb_offload.c b/sound/usb/mixer_usb_offload.c
+>> new file mode 100644
+>> index 000000000000..e0689a3b9b86
+>> --- /dev/null
+>> +++ b/sound/usb/mixer_usb_offload.c
+>> @@ -0,0 +1,102 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
+>> + */
+>> +
+>> +#include <linux/usb.h>
+>> +
+>> +#include <sound/core.h>
+>> +#include <sound/control.h>
+>> +#include <sound/soc-usb.h>
+>
+> ALSA-components should not be dependent on ASoC ones. It should be done the other way around: ALSA <- ASoC.
+>
 
-Thanks,
+At least for this kcontrol, we need to know the status of the ASoC state, so that we can communicate the proper path to userspace.  If the ASoC path is not probed or ready, then this module isn't blocked.  It will just communicate that there isn't a valid offload path.
 
-        tglx
+
+>> +
+>> +#include "usbaudio.h"
+>> +#include "card.h"
+>> +#include "helper.h"
+>> +#include "mixer.h"
+>> +
+>> +#include "mixer_usb_offload.h"
 
