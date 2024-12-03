@@ -1,163 +1,187 @@
-Return-Path: <linux-kernel+bounces-429274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A798D9E1A25
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 12:01:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F37889E19A3
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 11:45:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 46498B62F5D
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:44:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8135285D98
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:45:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56BC11E230E;
-	Tue,  3 Dec 2024 10:44:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E8221E25F5;
+	Tue,  3 Dec 2024 10:44:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="FrREfCdS"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="An5JReBz";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0nMmcWaw"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB6A21E230D
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 10:44:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EFA01E22E9;
+	Tue,  3 Dec 2024 10:44:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733222646; cv=none; b=BiSd4z3L0YVK7tAwvI7bOVr+wHB4NE35oFCOWIgLiP+l1Bx8oyJ1hZHA4qde+2MokuWd8YAcHJci3auh9LHlroUh+vJDmdV5O7ir3Or9+sVR/8bnIFWTaz2hOU09oGZ+rz1PIM7crd0qP+/DZH1CRrMvkbX/Vtz5pBHy3C5VdvI=
+	t=1733222680; cv=none; b=Z3q6zTC6l1cEoM6BWAld9OJbA9Nj8IqZeXkxk+m6+FmmD3qHEJNwi2nlQYXHLOvOKnJebIYpecDo78CHdWSD6sqUbm7eQEX8fyUfZgkK5ompuFbBVA4b0ItINK4FDoLQi+NIhSk+sidGCkC6zgUnm6UET8DYIcQeA5o7aJ1gySs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733222646; c=relaxed/simple;
-	bh=iL+OdIGkXYlFltzIJA5/1Zmew0K54VlsMV2aPYAo6UQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XuRtodtD8YDlo5u+fFk7kk+gisXF5D5loEG2i60gKvO/9PQrt4Vhcw8F/ipR4x4MHqrMpBtQUr/ucYmyR94F5lJRL1Df23qinKUTTVqimZD+kscNPwKJDqazqwKgZoCQxUuLfy8yaf5mkpGCE9cLAQN9E5RbK9YY8xH/F2LMuiY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=FrREfCdS; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4349fb56260so46673115e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 02:44:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1733222643; x=1733827443; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=U03OPGQRaXmE1ghscIoxpSXZHQUjfrvCB18PsXKgzhs=;
-        b=FrREfCdSV2/aYsFXHTO5+1VisvRSH3XhkkNnwg2dePJ4vo5G+7A51+Lv69Aq2OccOX
-         CQ8v1u0LbsDbncdeoSWDUj7zq/okhSnr5dmnyR+AabbVY7iVJX+F6896zpBFR/1przUQ
-         y/r7AslBCTRCq+P09s9wizR/5V3sStFKw4yO2LxeFzZAvezUKrY+0iRnAmjCwfwHxHVM
-         MBUxjDnCoxFhNoZg2lA0/xByj7Hv/wS3MhwIkSrQqmMEtiJLhLIMSY6Lnqqi7ZTPsLst
-         cbQsR2qEqSxUC4moFMXwqXsJde74EubSqTPOYdq47Sdf694cX+MFBEqO0Oy5Fx5ML9wG
-         hW0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733222643; x=1733827443;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=U03OPGQRaXmE1ghscIoxpSXZHQUjfrvCB18PsXKgzhs=;
-        b=QtKBsV97phe224ZvQZl07+q2Y/uyyjbz0f1CjOzQr+T/xtho+c6bVCsDaGJe9NVOa+
-         VroXuKYufaje3ns5uw0PEfpn8Xq3RLlVfpoCyFinrIdU5UU0YZqElmN/ATCkC4uaeUkA
-         sknWGhlPuxzLLiiEK8qBxRt7kXUKpX3j3HAlOkpc9tvm+S29+x4vOZC/NKoLOF7FoxNC
-         zrLpsWfMdm6GO1zgYVKccFVqOElHWUlaKi/pR1toZ8JUrjruZtFqZakXiyyU4Fo28HuE
-         30LEidW00u3TiQ/NbFbEd5IPCagC31mMcYqig6bc+fzdP+mTtUQbE6EO8qfMj0iePtyd
-         sFuw==
-X-Forwarded-Encrypted: i=1; AJvYcCVQ13QoLr67FuNWxvnSA9I/+U49oIrnuJ9Kf3z5F52pbvODe2K2t9P7xGzo8Kv9LKeVIrPIEHGTXc7B8+E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEOH+MCKqC5yKO4wcKIh2ZRFtRm4K832uUPIbUMomsWy8/TX6O
-	c9amiKKiUUeldXaWqPND4hG+YykJzuXegqVmlYF/co2Rh7EDptymbHy0Z7ZSZyycorpW3yhZCE+
-	o
-X-Gm-Gg: ASbGncuxXg23mSwz727BdRKwUjKUuw4tCBbtAS9A1jo1R5oxlHPPD0rvNnJErLxJRfd
-	oY1e8jgXSWY7fxdmkZA0sqU5FwucLEiLLXNnzxnFsg7lzdRtqQclq98VHyPxOfvRzKaivSyy0/f
-	zxNLtfia3oQugrL/gnC/MngfoVv6sL/z2XYLdAeJvUqCPu5kgUujXgECDEOBv1govnIxkr+BYv0
-	Z3lVkRPk3GL1Y1UeoZ76v8CfT/qTim9ugbuhi4I9nTCxvaD4qb1
-X-Google-Smtp-Source: AGHT+IFjjbvEeALxzGnisfRqO1VWpGZ6FOPcBFJVA64KLUcBabiM0AVQuu2EXYMYgxb4LiiFJ5aWzg==
-X-Received: by 2002:a05:600c:3546:b0:434:9fb5:fddd with SMTP id 5b1f17b1804b1-434d0a07350mr13720895e9.23.1733222643100;
-        Tue, 03 Dec 2024 02:44:03 -0800 (PST)
-Received: from blackdock.suse.cz ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434b0f32594sm187382555e9.32.2024.12.03.02.44.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Dec 2024 02:44:02 -0800 (PST)
-Date: Tue, 3 Dec 2024 11:44:00 +0100
-From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
-To: Dave Chinner <david@fromorbit.com>, Alice Ryhl <aliceryhl@google.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, Nhat Pham <nphamcs@gmail.com>, 
-	Qi Zheng <zhengqi.arch@bytedance.com>, Roman Gushchin <roman.gushchin@linux.dev>, 
-	Muchun Song <muchun.song@linux.dev>, Linux Memory Management List <linux-mm@kvack.org>, 
-	Michal Hocko <mhocko@kernel.org>, Shakeel Butt <shakeel.butt@linux.dev>, cgroups@vger.kernel.org, 
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [QUESTION] What memcg lifetime is required by list_lru_add?
-Message-ID: <siexzzafqmgtya5jas4v5pjpartt2h4l2amimjhaaztqidapht@2rexlquzrdsx>
-References: <CAH5fLghFWi=xbTgaG7oFNJo_7B7zoMRLCzeJLXd_U5ODVGaAUA@mail.gmail.com>
- <Z0eXrllVhRI9Ag5b@dread.disaster.area>
+	s=arc-20240116; t=1733222680; c=relaxed/simple;
+	bh=Zr3P9bnPsfdrN22F3DTQ6+XOmUzBlGEeKjBs/OU/Avo=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=OuXecO4me4hIVAWpktPQAgBQdLbNgth9gxSh1LcLF1lY7h7O8LWK7BPk3Iymor0RzbKWLLSfm7k3HYbzwNObPT46BvkpwRROT/1LV7c0sToFGQyIURplsjvSUJFt2vIMd2jGK6wg6xBYob+QUXklk+tlZHUx0DrxifUM5fRmG0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=An5JReBz; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0nMmcWaw; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 03 Dec 2024 10:44:36 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1733222677;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BIrXjrNs8GypLg/iqHwrNA3eu3+7CZN+VKLSe2NLMjg=;
+	b=An5JReBzGVMzJzjRwogG5W4IBYryW9IedMa/VtTJlYjlb1lDQ9JPaEkuYbydWstZnt5o0K
+	cw27cPjbsg+LcaYVUTEVagkq/B6nI21Hjq0/q912X4d2u/Z+kXTXJKYXaWBxKW01Hp1OJ1
+	CfXDWKLlYS59Wquw1GhxXZ52Yqwe1lvvqAb4R+V1SR9APQTL0ycnfSO9bY+W3c4rjR72EL
+	5XSHNS23u7uA4mg8U3kQ61Wf6z6rRwpxu+xb9+3243CvRmOjasCF9yeBPTH42+4OUtTbMe
+	T+XCAZwOuERElqmAEfDiD6dRFKP331Uwu3OIRwDymB0slN9SapqqUOWeQWFm8Q==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1733222677;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BIrXjrNs8GypLg/iqHwrNA3eu3+7CZN+VKLSe2NLMjg=;
+	b=0nMmcWawK1cOONTDAE2AObaLbL5dk9TuqU70eCDjtXdh8mg/vVZJNOGtcy4PhmSuNEtfQg
+	z6YfHOQakggHwQBA==
+From: "tip-bot2 for Waiman Long" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: sched/core] sched: Unify HK_TYPE_{TIMER|TICK|MISC} to
+ HK_TYPE_KERNEL_NOISE
+Cc: Waiman Long <longman@redhat.com>,
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+ Frederic Weisbecker <frederic@kernel.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20241030175253.125248-5-longman@redhat.com>
+References: <20241030175253.125248-5-longman@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="f7hgwm4vbrllohur"
-Content-Disposition: inline
-In-Reply-To: <Z0eXrllVhRI9Ag5b@dread.disaster.area>
+Message-ID: <173322267649.412.12071655642494350420.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
+The following commit has been merged into the sched/core branch of tip:
 
---f7hgwm4vbrllohur
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Commit-ID:     c907cd44a108eff7005a2b5689bb91f50637df8b
+Gitweb:        https://git.kernel.org/tip/c907cd44a108eff7005a2b5689bb91f50637df8b
+Author:        Waiman Long <longman@redhat.com>
+AuthorDate:    Wed, 30 Oct 2024 13:52:53 -04:00
+Committer:     Peter Zijlstra <peterz@infradead.org>
+CommitterDate: Mon, 02 Dec 2024 12:24:28 +01:00
 
-On Thu, Nov 28, 2024 at 09:05:34AM GMT, Dave Chinner <david@fromorbit.com> =
-wrote:
-> It's enforced by the -complex- state machine used to tear down
-> control groups.
+sched: Unify HK_TYPE_{TIMER|TICK|MISC} to HK_TYPE_KERNEL_NOISE
 
-True.
+As all the non-domain and non-managed_irq housekeeping types have been
+unified to HK_TYPE_KERNEL_NOISE, replace all these references in the
+scheduler to use HK_TYPE_KERNEL_NOISE.
 
-> tl;dr: If the memcg gets torn down, it will reparent the objects on
-> the LRU to it's parent memcg during the teardown process.
->=20
-> This reparenting happens in the cgroup ->css_offline() method, which
-> only happens after the cgroup reference count goes to zero and is
-> waited on via:
+Signed-off-by: Waiman Long <longman@redhat.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Acked-by: Frederic Weisbecker <frederic@kernel.org>
+Link: https://lore.kernel.org/r/20241030175253.125248-5-longman@redhat.com
+---
+ kernel/sched/core.c | 12 ++++++------
+ kernel/sched/fair.c |  5 +++--
+ 2 files changed, 9 insertions(+), 8 deletions(-)
 
-What's waited for is seeing "killing" of the _initial_ reference, the
-refcount may be still non-zero. I.e. ->css_offline() happens with some
-referencs around (e.g. from struct page^W folio) and only
-->css_released() is called after refs drop to zero (and ->css_free()
-even after RCU period given there were any RCU readers who didn't
-css_get()).
-
-> See the comment above css_free_rwork_fn() for more details about the
-> teardown process:
->=20
-> /*
->  * css destruction is four-stage process.
->  *
->  * 1. Destruction starts.  Killing of the percpu_ref is initiated.
->  *    Implemented in kill_css().
->  *
->  * 2. When the percpu_ref is confirmed to be visible as killed on all CPUs
->  *    and thus css_tryget_online() is guaranteed to fail, the css can be
->  *    offlined by invoking offline_css().  After offlining, the base ref =
-is
->  *    put.  Implemented in css_killed_work_fn().
->  *
->  * 3. When the percpu_ref reaches zero, the only possible remaining
->  *    accessors are inside RCU read sections.  css_release() schedules the
->  *    RCU callback.
->  *
->  * 4. After the grace period, the css can be freed.  Implemented in
->  *    css_free_rwork_fn().
-
-This is a useful comment.
-
-HTH,
-Michal
-
---f7hgwm4vbrllohur
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQTd6mfF2PbEZnpdoAkt3Wney77BSQUCZ07g7gAKCRAt3Wney77B
-SWSLAQDYSjM8dIWjMx78MOe0HwHi7Jr3Zy7NTu/rfkCngqsLhQEAq0eCFBipF6FO
-zr4LRLdBi2pGv+clMNdjT1BSgdjqBQo=
-=UtFx
------END PGP SIGNATURE-----
-
---f7hgwm4vbrllohur--
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 1dee3f5..5fbec67 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -1170,13 +1170,13 @@ int get_nohz_timer_target(void)
+ 	struct sched_domain *sd;
+ 	const struct cpumask *hk_mask;
+ 
+-	if (housekeeping_cpu(cpu, HK_TYPE_TIMER)) {
++	if (housekeeping_cpu(cpu, HK_TYPE_KERNEL_NOISE)) {
+ 		if (!idle_cpu(cpu))
+ 			return cpu;
+ 		default_cpu = cpu;
+ 	}
+ 
+-	hk_mask = housekeeping_cpumask(HK_TYPE_TIMER);
++	hk_mask = housekeeping_cpumask(HK_TYPE_KERNEL_NOISE);
+ 
+ 	guard(rcu)();
+ 
+@@ -1191,7 +1191,7 @@ int get_nohz_timer_target(void)
+ 	}
+ 
+ 	if (default_cpu == -1)
+-		default_cpu = housekeeping_any_cpu(HK_TYPE_TIMER);
++		default_cpu = housekeeping_any_cpu(HK_TYPE_KERNEL_NOISE);
+ 
+ 	return default_cpu;
+ }
+@@ -5634,7 +5634,7 @@ void sched_tick(void)
+ 	unsigned long hw_pressure;
+ 	u64 resched_latency;
+ 
+-	if (housekeeping_cpu(cpu, HK_TYPE_TICK))
++	if (housekeeping_cpu(cpu, HK_TYPE_KERNEL_NOISE))
+ 		arch_scale_freq_tick();
+ 
+ 	sched_clock_tick();
+@@ -5773,7 +5773,7 @@ static void sched_tick_start(int cpu)
+ 	int os;
+ 	struct tick_work *twork;
+ 
+-	if (housekeeping_cpu(cpu, HK_TYPE_TICK))
++	if (housekeeping_cpu(cpu, HK_TYPE_KERNEL_NOISE))
+ 		return;
+ 
+ 	WARN_ON_ONCE(!tick_work_cpu);
+@@ -5794,7 +5794,7 @@ static void sched_tick_stop(int cpu)
+ 	struct tick_work *twork;
+ 	int os;
+ 
+-	if (housekeeping_cpu(cpu, HK_TYPE_TICK))
++	if (housekeeping_cpu(cpu, HK_TYPE_KERNEL_NOISE))
+ 		return;
+ 
+ 	WARN_ON_ONCE(!tick_work_cpu);
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index ef30226..d5127d9 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -12203,7 +12203,7 @@ static inline int find_new_ilb(void)
+ 	const struct cpumask *hk_mask;
+ 	int ilb_cpu;
+ 
+-	hk_mask = housekeeping_cpumask(HK_TYPE_MISC);
++	hk_mask = housekeeping_cpumask(HK_TYPE_KERNEL_NOISE);
+ 
+ 	for_each_cpu_and(ilb_cpu, nohz.idle_cpus_mask, hk_mask) {
+ 
+@@ -12221,7 +12221,8 @@ static inline int find_new_ilb(void)
+  * Kick a CPU to do the NOHZ balancing, if it is time for it, via a cross-CPU
+  * SMP function call (IPI).
+  *
+- * We pick the first idle CPU in the HK_TYPE_MISC housekeeping set (if there is one).
++ * We pick the first idle CPU in the HK_TYPE_KERNEL_NOISE housekeeping set
++ * (if there is one).
+  */
+ static void kick_ilb(unsigned int flags)
+ {
 
