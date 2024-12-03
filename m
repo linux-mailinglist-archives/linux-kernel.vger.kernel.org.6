@@ -1,224 +1,185 @@
-Return-Path: <linux-kernel+bounces-428950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C91B49E161D
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:46:28 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 528FB9E154A
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:12:02 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A7A9DB225E2
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 08:11:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C3EC716222A
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 08:11:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A92C1E3DCF;
-	Tue,  3 Dec 2024 08:04:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF8EF1DDC1A;
+	Tue,  3 Dec 2024 08:06:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E1OLJTvP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WwPCrcPq"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B928D1E3799;
-	Tue,  3 Dec 2024 08:04:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82DB11D279F
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 08:06:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733213088; cv=none; b=esen2XRGlk1E5azn4eq+++Tb9isWq1rQaX5pmhiZI99KGs3RBIG2KV9KSUcGlYdhSR9Md/XPdfWCOmnDb5CuPAHkCK45v1ZSEtAdBnYyR0802OTOmP9YS/9B8Cu1AM0PEmBAjIATj09zQ0nOfBBxpy82j2lL9hS56KGebYi8UOw=
+	t=1733213195; cv=none; b=JwDfA3mvPWo9HkeuDd4mqSzU9ImCM81TLkHyFaxJbKZ+iOjbjYvGGzXdqaTr80dXd93hyi6gsN6ywdn4CjZuI3HiOy4FgE+L/FDzAvgLdqii4Szjhn7LhBmVGJBPYSziZ3fw3woYYwY+UwHrDJfyZwW3WxBElvjOPIfmVIGqvHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733213088; c=relaxed/simple;
-	bh=ogGT+tEgRtvtjmlcfLtQ/kpDFOq88/tpRAoBFCiwBaM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=itOwcQqse84E8j2h+MZeN7oVfwqdHLLq3otKe0gEOyc2jqnixopimkc0BiJORNNdRlPPjsdm+Na+A/8xi5whDPvw/ZbExV82CbAcGuQx/wmSCQZmdUXr4LeGBMJqP4ffVytYqScJJXMTqElsJWPpJpt+FhUtgW1UKs68Zgf7hJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E1OLJTvP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB014C4CECF;
-	Tue,  3 Dec 2024 08:04:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733213088;
-	bh=ogGT+tEgRtvtjmlcfLtQ/kpDFOq88/tpRAoBFCiwBaM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=E1OLJTvPW7aL/ytZ91En4Qv5s9bDlLu2RRY9dHv4QaFIhJzj0eNcqCmmSDx6b3Zq2
-	 lk6GcRXGj/o8I857pOw9AWhVcjnuXxyELZvmPY9xwvtZvUdXA7jJcI/yCehkHMpMSv
-	 fvm1Oqp4YKbyiGtN7S3AB5kHwdFeYsCcjZTcghAfSVOJg5TOxLZnXlKTKmQ/mQNaQ1
-	 kn82yo4q+CxS/xd8VXvgwRB1oyIsoBo2vHjQmjLG3ywMfC1E9Jw9BsXLprO1HVT+QE
-	 tHyPk8ye7D5aMmJZJIGD1CHbjTmRj3MG4efWlRsxufCSBDLxWVPMRUMEuPEbSy8suD
-	 8FJ/4wV5L0aEA==
-Message-ID: <39f8e20a-e8c3-4625-abb1-9f35f416705d@kernel.org>
-Date: Tue, 3 Dec 2024 09:04:39 +0100
+	s=arc-20240116; t=1733213195; c=relaxed/simple;
+	bh=vVdSAEjjF7vnzpDJHSamMgZWZo+QvXJUBwY/WGwFsY8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=r5z12f9q863D4zuLkpRTo20QEeA/FQlSnodvGPiJT0+/220db8T2ML2+xDIlK2uSkRLI7xDPNd+z/8TZg8/droDcWZUiOwXO1rFwwFx5Hira5w7ObrMh+ja8tyaQAuDmlNadW8VXfhjtYbInbIMLujUZaelOunkpEDAwV49HGrk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WwPCrcPq; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2ffe4569fbeso45962351fa.1
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 00:06:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733213192; x=1733817992; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=opzO5V2DPUxW/Rc2D9ZvCCFz3JWoSwzWzqi7j3oV4q0=;
+        b=WwPCrcPqMRvfH9SdmnmWHpyBFsxL+lQCTRdeDY7eoSMyuBbJbm4HmVyWDfFz+QZnxd
+         A9m8MHly96TEdISXZ4IrxGF+YXhmk3EOlKpI36rUl9LD+EJ9wFGMUjH9/5+vNhPupZoq
+         vcv8cNv2r/PLhLc0+qgOv9emUvmSgInvJvQIjck2yWaiVxtfvrW192WoKKVbzj+3eCpi
+         uU49Y4+/WSw6tOIA2Scx9s/7jVKsGu9pAMpEUmAeeJzWW+nyWsl+2sDOq8+gZgHaR3p1
+         WtyTEq9HuiUbPOqk0NUwoBW5cr3OpaQtaSvphe/pbrKzX3AHsF8Xm5dtUkFRIGxroJWp
+         PMIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733213192; x=1733817992;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=opzO5V2DPUxW/Rc2D9ZvCCFz3JWoSwzWzqi7j3oV4q0=;
+        b=l4LSnq+9y2nPqPXNnvZW2lFDt/G4Wq0dk43Sj6QwSxNHDaNBME1paoH9ZeH00pMvVv
+         Cm0iOGxA6mwXpYfDpekySblN4tjRc71u5xo1+35LKOo09mDCyamUJvQx2I2/WgnI2gcb
+         FV6ngFA6hkr7oozRaSK1hWMB74r2EwLa0w+Laowuc7tzWJdBJenoagp9tR4QsD1qaall
+         xaQJFOnfOg/AbDaG37PXRcWCsVCAhmLWmH7tPh+vmlRnXTDRmWkJ+zvBuMHVlsFjnR0v
+         egQ5pRw94gUGdI0uPPV1LVEXDNumLiqh1ykMVw61YUc4X5rtdlJo9yDkmvWtpMZFpIvH
+         iUqw==
+X-Forwarded-Encrypted: i=1; AJvYcCXI9oENcSTnPhjHnRBKYjsQ3yLZSCfVHp0YwQR2YTTno0RRdTLFqAn1JTV3ZrOZBfAdailLoMk2gwCcRio=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/i8Jft35GlfQOin8jHaQ7rb3y+EdOPTrEAJuUcgb3sm8DcqZC
+	0xmO72dF5tB+Qu321lOuj6upEelyJCJb/JzrkwJhFnMhObxgB8y+ZFD/VWsVvK8s7c1Kvpme7Qz
+	5jH1kooqgMMNTKRKHfrm6ALVuAI6PZSfpNSo=
+X-Gm-Gg: ASbGncuLwVaYtn5IAcce2xE7upgs5tqO2GoKJhNJFx+y7Xt9OGBzzPXntDmLs/2cz5z
+	uUERlc+KeoojlWmlyVzQN2I/wXIeY7b4=
+X-Google-Smtp-Source: AGHT+IEZkrRNfqEsSMOAAQH9zZ2mDiwqcIpswUxDOG6rdnSBzlAHRaz2pHU1Tf+50XhBjy7FOtBeQeKK6vCNOfTpnkA=
+X-Received: by 2002:a05:651c:542:b0:2fa:c185:ac4e with SMTP id
+ 38308e7fff4ca-2ffde23e3dcmr64644741fa.13.1733213191374; Tue, 03 Dec 2024
+ 00:06:31 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/4] dt-bindings: display/msm: add stream 1 pixel clock
- binding
-To: Abhinav Kumar <quic_abhinavk@quicinc.com>, Rob Clark
- <robdclark@gmail.com>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Kuogee Hsieh <quic_khsieh@quicinc.com>,
- Mahadevan <quic_mahap@quicinc.com>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
- freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241202-dp_mst_bindings-v1-0-9a9a43b0624a@quicinc.com>
- <20241202-dp_mst_bindings-v1-3-9a9a43b0624a@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241202-dp_mst_bindings-v1-3-9a9a43b0624a@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20241203003856.GJ1253388@nvidia.com>
+In-Reply-To: <20241203003856.GJ1253388@nvidia.com>
+From: Uros Bizjak <ubizjak@gmail.com>
+Date: Tue, 3 Dec 2024 09:06:20 +0100
+Message-ID: <CAFULd4ZpFVaKVkuTS=RjtYk=_vU8yuXBQ2mPYP9+mpoLk_-S5A@mail.gmail.com>
+Subject: Re: Help with atomic fallback
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, 
+	Alejandro Jimenez <alejandro.j.jimenez@oracle.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 03/12/2024 04:31, Abhinav Kumar wrote:
-> On some chipsets the display port controller can support more
+On Tue, Dec 3, 2024 at 1:39=E2=80=AFAM Jason Gunthorpe <jgg@nvidia.com> wro=
+te:
+>
+> Hi Mark/Uros,
+>
+> I hope one of you can help me unravel this, I'm trying to use
+> try_cmpxchg64_release() from driver code and 0-day is saying arc
+> compiles explode:
+>
+>    In file included from include/linux/atomic.h:80,
+>                     from drivers/iommu/generic_pt/fmt/../pt_defs.h:17,
+>                     from drivers/iommu/generic_pt/fmt/iommu_template.h:35=
+,
+>                     from drivers/iommu/generic_pt/fmt/iommu_armv8_4k.c:13=
+:
+>    drivers/iommu/generic_pt/fmt/../pt_defs.h: In function 'pt_table_insta=
+ll64':
+> >> include/linux/atomic/atomic-arch-fallback.h:295:14: error: void value =
+not ignored as it ought to be
+>      295 |         ___r =3D raw_cmpxchg64_release((_ptr), ___o, (_new)); =
+\
+>          |              ^
+>    include/linux/atomic/atomic-instrumented.h:4937:9: note: in expansion =
+of macro 'raw_try_cmpxchg64_release'
+>     4937 |         raw_try_cmpxchg64_release(__ai_ptr, __ai_oldp, __VA_AR=
+GS__); \
+>          |         ^~~~~~~~~~~~~~~~~~~~~~~~~
+>    drivers/iommu/generic_pt/fmt/../pt_defs.h:144:16: note: in expansion o=
+f macro 'try_cmpxchg64_release'
+>      144 |         return try_cmpxchg64_release(entryp, &old_entry, table=
+_entry);
+>
+> Which is immediately because of a typo in atomic-arch-fallback.h code gen=
+:
+>
+> #if defined(arch_cmpxchg64_release)
+> #define raw_cmpxchg64_release arch_cmpxchg64_release
+> #elif defined(arch_cmpxchg64_relaxed)
+> #define raw_cmpxchg64_release(...) \
+>         __atomic_op_release(arch_cmpxchg64, __VA_ARGS__)
+> #elif defined(arch_cmpxchg64)
+> #define raw_cmpxchg64_release arch_cmpxchg64
+> #else
+> extern void raw_cmpxchg64_release_not_implemented(void);
+>      ^^^^^^^^^^^^^^^^^^^^^
+>
+> That should return int to make the compiler happy, but then it will
+> fail to link (I think, my cross compiler ICEs before it gets there)
+>
+> However, arc defines:
+>
+> static inline s64
+> arch_atomic64_cmpxchg(atomic64_t *ptr, s64 expected, s64 new)
+> {
 
-Which chipsets?
+Please note that arch_atomic64_cmpxchg() and arch_cmpxchg64() are two
+different things.
 
-> than one pixel stream (multi-stream transport). To support MST
-> on such chipsets, add the binding for stream 1 pixel clock for
-> display port controller. Since this mode is not supported on all
-> chipsets, add exception rules and min/max items to clearly mark
-> which chipsets support only SST mode (single stream) and which ones
-> support MST.
-> 
-> Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
-> ---
->  .../bindings/display/msm/dp-controller.yaml        | 32 ++++++++++++++++++++++
->  .../bindings/display/msm/qcom,sa8775p-mdss.yaml    |  9 ++++--
->  2 files changed, 38 insertions(+), 3 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/display/msm/dp-controller.yaml b/Documentation/devicetree/bindings/display/msm/dp-controller.yaml
-> index 9fe2bf0484d8..650d19e58277 100644
-> --- a/Documentation/devicetree/bindings/display/msm/dp-controller.yaml
-> +++ b/Documentation/devicetree/bindings/display/msm/dp-controller.yaml
-> @@ -50,30 +50,38 @@ properties:
->      maxItems: 1
->  
->    clocks:
-> +    minItems: 5
->      items:
->        - description: AHB clock to enable register access
->        - description: Display Port AUX clock
->        - description: Display Port Link clock
->        - description: Link interface clock between DP and PHY
->        - description: Display Port stream 0 Pixel clock
-> +      - description: Display Port stream 1 Pixel clock
->  
->    clock-names:
-> +    minItems: 5
->      items:
->        - const: core_iface
->        - const: core_aux
->        - const: ctrl_link
->        - const: ctrl_link_iface
->        - const: stream_pixel
-> +      - const: stream_1_pixel
->  
->    assigned-clocks:
-> +    minItems: 2
->      items:
->        - description: link clock source
->        - description: stream 0 pixel clock source
-> +      - description: stream 1 pixel clock source
->  
->    assigned-clock-parents:
-> +    minItems: 2
->      items:
->        - description: Link clock PLL output provided by PHY block
->        - description: Stream 0 pixel clock PLL output provided by PHY block
-> +      - description: Stream 1 pixel clock PLL output provided by PHY block
->  
->    phys:
->      maxItems: 1
-> @@ -175,6 +183,30 @@ allOf:
->        required:
->          - "#sound-dai-cells"
->  
+> And I see a:
+>
+> static __always_inline s64
+> raw_atomic64_cmpxchg_release(atomic64_t *v, s64 old, s64 new)
+> {
+> #if defined(arch_atomic64_cmpxchg_release)
+>         return arch_atomic64_cmpxchg_release(v, old, new);
+> #elif defined(arch_atomic64_cmpxchg_relaxed)
+>         __atomic_release_fence();
+>         return arch_atomic64_cmpxchg_relaxed(v, old, new);
+> #elif defined(arch_atomic64_cmpxchg)
+>         return arch_atomic64_cmpxchg(v, old, new);
+>
+> Which seems to strongly imply that arc can do the cmpxchg64_release
+> primitive.
 
-Missing if: narrowing this to 5 items for other devices.
+No, this is *atomic64* version. Arc has to define arch_cmpxchg64 in
+its cmpxchg.h. An example can be seen in e.g.
+arch/m68k/include/asm/cmpxchg.h [1], where we have:
 
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - qcom,sa8775p-dp
-> +
-> +    then:
-> +      properties:
-> +        clocks:
+#include <asm-generic/cmpxchg-local.h>
 
-Missing minItems, otherwise it is pointless.
+#define arch_cmpxchg64_local(ptr, o, n)
+__generic_cmpxchg64_local((ptr), (o), (n))
 
-> +          maxItems: 6
-> +        clock-names:
-> +          items:
-> +            - const: core_iface
-> +            - const: core_aux
-> +            - const: ctrl_link
-> +            - const: ctrl_link_iface
-> +            - const: stream_pixel
-> +            - const: stream_1_pixel
-> +        assigned-clocks:
-> +          maxItems: 3
+#define arch_cmpxchg64(ptr, o, n) arch_cmpxchg64_local((ptr), (o), (n))
 
-Missing minItems... or just drop, it's not accurate or not even correct.
-I can assign 4 clocks, why not? Or rather: why do you stop users from
-assigning 4 clocks?
+[1] https://elixir.bootlin.com/linux/v6.12.1/source/arch/m68k/include/asm/c=
+mpxchg.h
 
+> But I haven't been able to figure out what is expected here for
+> arch_atomic64 vs try_cmpxchg64 to guess what is missing part here :\
+>
+> Any advice?
 
-> +        assigned-clock-parents:
-> +          maxItems: 3
-> +
->  additionalProperties: false
+Please use system_has_cmpxchg64 define, as is the case in
+source/mm/slab.h. Arc does not define arch_cmpxchg64() and should be
+excluded from compilation.
 
-
-
-Best regards,
-Krzysztof
+Uros.
 
