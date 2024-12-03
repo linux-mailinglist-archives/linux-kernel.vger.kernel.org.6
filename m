@@ -1,118 +1,417 @@
-Return-Path: <linux-kernel+bounces-429537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429538-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19F329E1D78
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 14:23:34 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0AB001652A8
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 13:23:10 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E43C31EC013;
-	Tue,  3 Dec 2024 13:23:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GG+N/WIf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0E379E1D77
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 14:23:32 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D707224F0;
-	Tue,  3 Dec 2024 13:23:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60657281553
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 13:23:31 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAE4B1EF0A9;
+	Tue,  3 Dec 2024 13:23:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="B9yNAsPn"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CC9E224F0
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 13:23:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733232187; cv=none; b=jiHTUQjkSk0H43/UeS49BWiGjZ24SBFwnJTw4aNmLqJlJD+tvc2ps4RhgZSKsppV9YGIJIb0aSi3Qsor1mztsNCc+S0t4pXbI48wksoEOC1T3w9HVXD/4HAjTWFCbhDnPV4QyC9lzktzoROqBhh05EHswvwJThaKuZoh1XrhfyQ=
+	t=1733232204; cv=none; b=jNtIBeML0qLG9TOUljjrspuiTVRz5p/GxGpPwpRILLr3BlJRqfQtJiDmE8FRpLvaYV1/3peaTDHek6l1S3ym33k5e11XAysNepUfjic/ijDzSKAYM4turQuxssyQI1/1FSc/itkKL4yXJl9591Wr3UACWpG3kmx7cjZj6ceHIm0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733232187; c=relaxed/simple;
-	bh=iZ4QmU3VYs0LDZ8lr0fIemo81foNLGPlwRopsTWq1P0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=GQ8y3+GDPMO93lYOSmFtuHgkdUAHjok80Blzr6KuLeF7+7jq9j9VTMdow1J6DN08KCuVd1s/jIj1uLlOosplWrg216otR+HsRhROxToRRHyTNrz8HjRJtzu+XWwXMqCuQBPLv3ub5lw1ZriJojq90P2JFDWxfHRKi7HuKLaWSPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GG+N/WIf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 74229C4CED8;
-	Tue,  3 Dec 2024 13:23:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733232186;
-	bh=iZ4QmU3VYs0LDZ8lr0fIemo81foNLGPlwRopsTWq1P0=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=GG+N/WIfnow38JRGkOfEUiqgEc8xibKWgESFJaJwR0/r5CeXFZfjHzUPdkXqIVXoZ
-	 sSSEQ7mkh31hGjPyo1lXQ0JdWOf5gS/pK7+x21tsqZyBOGzK1xDwtBUEdzPjclGXMk
-	 q67bDbgYt8PCuctS91TY55sFkMoZL/N3iXF4eAdedqqd0kCUlL6J7SnW4As8neP9M7
-	 LYmT2SClZZbkYnk1DeHDGbkt2m4nuUW2CKjvUIxFjCDm0HvS+iPn1+mdONVT1mn2iP
-	 siHZgH2lDRXJ8VBcdmW/odcujw3h1He5t1pFB2mj5ck3JKb6R8Ie0+Kh43UUc8aLDi
-	 M79Lh9i6I1xSQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A53BE64A93;
-	Tue,  3 Dec 2024 13:23:06 +0000 (UTC)
-From: Manojkiran Eda via B4 Relay <devnull+manojkiran.eda.gmail.com@kernel.org>
-Date: Tue, 03 Dec 2024 18:52:45 +0530
-Subject: [PATCH] ARM: dts: aspeed: Enable video engine for IBM System1
+	s=arc-20240116; t=1733232204; c=relaxed/simple;
+	bh=Nr+dM1lnx6dA95NrBDJySoAkIYZQBZZep833WRZWNcI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dN+owGZtqcGUK61f5aagMgv9JJtY/BSoypaLf0L1vLNLTLo1sbN79Q9swv3VXdCEUvKrbFMb1nuvimzaoUJelQgrINQkfVdoqzhtqkMflzpnbSs+FxhGXMOktr51qsPLEckIzLbmdts+L6EWwgP9loZEMZewZt6pKC6M4Xteyz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=B9yNAsPn; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5ceb03aaddeso6815370a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 05:23:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1733232201; x=1733837001; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5PbBkZlbczsljYkJKkDmTi4zCydPAq8t8D3jHFuNldM=;
+        b=B9yNAsPnqxjSUJGcWri1YdUhOtfoqgslVBspgdwviXoMrzYn0jmTH21V1rqEdOZQjv
+         FuCK9SaYN0x7uSKPbTX9jj1hiP41pwmrKvBocCQLuJzMXjhnRIoHcCxsOxqmPXViaAd7
+         khFc8IE5tugCbsbRxRj++nqayt8MhakN0fc/tm98UvcJVoOGogUKSYEhkHCMqYfvpGQz
+         L72iPXlbGIhEBPYSoCmtL/GN7duFtWVjkZTlI0WhGJAinlykbQKgYlkMluuRHYjXEo/A
+         +kWeQElpqzyth6XKVCoQlXC+Gge9EyQ42fH6CkVtGAK9oiU/Ginnlml/uEgqI6E4GBmN
+         geYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733232201; x=1733837001;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5PbBkZlbczsljYkJKkDmTi4zCydPAq8t8D3jHFuNldM=;
+        b=u3agsjjSmKGNwS8K/h38mjgiGGQd2fXqLIzzhLb8/ljTJJaRTzggNQ2/ReuePA7YiF
+         d1H9rUMtor5kciT8nt3HBHMUSbUpLkAYDts9V/uVkjTINFiRZy8YtreVN9hNlmYu8e/M
+         owUDVc9T04e5o0d5dypDvrqKfvN7QML8Zif2Tbys/OeNPctGoS7yGAJHxRqxaGyo/+/3
+         medJrcwBDxtiYPhmw/3jk1uur0bLgWRhcvGnzL7NynkXsHUwg+WW87KdQIFIguLSW2DA
+         q8CIkCgmYFm66KnetBmy8Dq/wzl61pmGXU450XZcpye8UxgnyySAaZ8ajdxthokNOn26
+         TnKw==
+X-Forwarded-Encrypted: i=1; AJvYcCXvJnVSwilpY1b3CYf9R4Gm3X5Pd7IuikGq+3OYu5YpVZx0deLp09jMlkCLQ4Mb3aQv91Wjtmn/y76AYR8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxU+wOsSACk3bKBywxNlF0dCj08izv0HfK76DIKcFLFZPNozm+B
+	vnszrUfVuS58STC16MVQ1Jp0BqiEoTNpOY6rTPYc2GMFBOlvx2PLMDN1d3iWBVj3T41b1YzqIq4
+	zOJgOgLQcZoZ1ZlOnMEFhzLwusrYnPuo68+kJ
+X-Gm-Gg: ASbGncvqHW8x9gEejBAcWOfU5wjqCLY+Z2DerBTWnfUHrlIws1eNJjaqrk0ItELnd0O
+	/psAgcqq0FFVhyTD7o1V4JsEQd14Cw4Tz
+X-Google-Smtp-Source: AGHT+IHYI+YpdKmFFyJjukPGyKVqDKngfSq/qqNeLwyp/PuWzwyL8L1/Gmosqf+MkOGLA3zRFHpHLFzz1/gVz/IYfhM=
+X-Received: by 2002:a05:6402:2553:b0:5d0:e826:f0f5 with SMTP id
+ 4fb4d7f45d1cf-5d10cb4d7f8mr2638522a12.7.1733232200594; Tue, 03 Dec 2024
+ 05:23:20 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241203-dts-system1-video-v1-1-008e5e660106@gmail.com>
-X-B4-Tracking: v=1; b=H4sIACQGT2cC/x3MMQqAMAxA0atIZgNNtSJeRRzERs1glUZEKd7d4
- viG/xMoR2GFrkgQ+RKVPWRQWcC0jmFhFJ8N1tiarKnQn4r66Mkb4SWedzSmJe/cSK5hyN0ReZb
- 7f/bD+36t1tcFYwAAAA==
-To: Rob Herring <robh+dt@kernel.org>, 
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
- Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, 
- Andrew Jeffery <andrew@codeconstruct.com.au>, 
- Eddie James <eajames@linux.ibm.com>, Ninad Palsule <ninad@linux.ibm.com>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org, 
- openbmc@lists.ozlabs.org, Manojkiran Eda <manojkiran.eda@gmail.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1733232165; l=1038;
- i=manojkiran.eda@gmail.com; s=20241203; h=from:subject:message-id;
- bh=ejXpM+ALtz0H3f+cLC7p2P7soAQAZRSfhVgLG/KNusk=;
- b=JjpeBLox0ewhPlPyR7prwy4gXMJDMjI5b0bU4tGW8YA3C9sw1giJi/yDs/0TpN8fL4ElkieUV
- 1aQ6F65esdRAp5zDtx9n76PrAZNP1uwmNdM+yruTohVCsvcdrDKlH7S
-X-Developer-Key: i=manojkiran.eda@gmail.com; a=ed25519;
- pk=54WqHEFtBzlAODOpTWKI2J1uhv/sAk3WQ+lDMxMyKTI=
-X-Endpoint-Received: by B4 Relay for manojkiran.eda@gmail.com/20241203 with
- auth_id=292
-X-Original-From: Manojkiran Eda <manojkiran.eda@gmail.com>
-Reply-To: manojkiran.eda@gmail.com
+References: <d1a7dea8-ce20-4c6f-beed-8a28b07e9468@ovn.org> <672d143c-7ccd-4b77-a843-24d0d60ada14@ovn.org>
+In-Reply-To: <672d143c-7ccd-4b77-a843-24d0d60ada14@ovn.org>
+From: Eric Dumazet <edumazet@google.com>
+Date: Tue, 3 Dec 2024 14:23:09 +0100
+Message-ID: <CANn89i+FPHAz=O-KfUV5nv8KNVPgpx+PX+2xzm0EwTJs8UqqMg@mail.gmail.com>
+Subject: Re: [v6.12] BUG: KASAN: slab-use-after-free in dst_destroy+0x2e2/0x340
+To: Ilya Maximets <i.maximets@ovn.org>
+Cc: "netdev@vger.kernel.org" <netdev@vger.kernel.org>, Jakub Kicinski <kuba@kernel.org>, 
+	"David S. Miller" <davem@davemloft.net>, Paolo Abeni <pabeni@redhat.com>, 
+	LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Manojkiran Eda <manojkiran.eda@gmail.com>
+On Tue, Dec 3, 2024 at 1:15=E2=80=AFPM Ilya Maximets <i.maximets@ovn.org> w=
+rote:
+>
+> On 12/3/24 12:58, Ilya Maximets wrote:
+> > Hello there.  I was running some tests with openvswitch+ipsec on v6.12 =
+tag
+> > and got the KASAN UAF splat provided below.  It doesn't seem to be rela=
+ted
+> > to anything specific to openvswitch module, more like core parts of net=
+working.
+> > At lest, at the first glance.
+> >
+> > For the context, what I'm running is an OVS system test that creates 20=
+ network
+> > namespaces, starts OVS and Libreswan in each of them, creates a full me=
+sh of
+> > Geneve tunnels with IPsec (a separate tunnel between each pair of names=
+paces),
+> > then checks that pings work through all the tunnels and then deletes al=
+l the
+> > ports, OVS datapath and namespaces.  While removing namespaces, I see t=
+he
+> > following KASAN report in the logs:
+> >
+>
+> The decoded trace:
+>
+> Dec 03 05:46:17 kernel: genev_sys_6081 (unregistering): left promiscuous =
+mode
+> Dec 03 05:46:17 kernel: br-ipsec: left promiscuous mode
+> Dec 03 05:46:17 kernel: ovs-system: left promiscuous mode
+> Dec 03 05:46:18 kernel: =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> Dec 03 05:46:18 kernel: BUG: KASAN: slab-use-after-free in dst_destroy (n=
+et/core/dst.c:112)
+> Dec 03 05:46:18 kernel: Read of size 8 at addr ffff8882137ccab0 by task s=
+wapper/37/0
+> Dec 03 05:46:18 kernel:
+> Dec 03 05:46:18 kernel: CPU: 37 UID: 0 PID: 0 Comm: swapper/37 Kdump: loa=
+ded Not tainted 6.12.0 #67
+> Dec 03 05:46:18 kernel: Hardware name: Red Hat KVM/RHEL, BIOS 1.16.1-1.el=
+9 04/01/2014
+> Dec 03 05:46:18 kernel: Call Trace:
+> Dec 03 05:46:18 kernel:  <IRQ>
+> Dec 03 05:46:18 kernel: dump_stack_lvl (lib/dump_stack.c:124)
+> Dec 03 05:46:18 kernel: print_address_description.constprop.0 (mm/kasan/r=
+eport.c:378)
+> Dec 03 05:46:18 kernel: ? dst_destroy (net/core/dst.c:112)
+> Dec 03 05:46:18 kernel: print_report (mm/kasan/report.c:489)
+> Dec 03 05:46:18 kernel: ? dst_destroy (net/core/dst.c:112)
+> Dec 03 05:46:18 kernel: ? kasan_addr_to_slab (mm/kasan/common.c:37)
+> Dec 03 05:46:18 kernel: kasan_report (mm/kasan/report.c:603)
+> Dec 03 05:46:18 kernel: ? dst_destroy (net/core/dst.c:112)
+> Dec 03 05:46:18 kernel: ? rcu_do_batch (kernel/rcu/tree.c:2567)
+> Dec 03 05:46:18 kernel: dst_destroy (net/core/dst.c:112)
+> Dec 03 05:46:18 kernel: rcu_do_batch (kernel/rcu/tree.c:2567)
+> Dec 03 05:46:18 kernel: ? __pfx_rcu_do_batch (kernel/rcu/tree.c:2491)
+> Dec 03 05:46:18 kernel: ? lockdep_hardirqs_on_prepare (kernel/locking/loc=
+kdep.c:4339 kernel/locking/lockdep.c:4406)
+> Dec 03 05:46:18 kernel: rcu_core (kernel/rcu/tree.c:2825)
+> Dec 03 05:46:18 kernel: handle_softirqs (kernel/softirq.c:554)
+> Dec 03 05:46:18 kernel: __irq_exit_rcu (kernel/softirq.c:589 kernel/softi=
+rq.c:428 kernel/softirq.c:637)
+> Dec 03 05:46:18 kernel: irq_exit_rcu (kernel/softirq.c:651)
+> Dec 03 05:46:18 kernel: sysvec_apic_timer_interrupt (arch/x86/kernel/apic=
+/apic.c:1049 arch/x86/kernel/apic/apic.c:1049)
+> Dec 03 05:46:18 kernel:  </IRQ>
+> Dec 03 05:46:18 kernel:  <TASK>
+> Dec 03 05:46:18 kernel: asm_sysvec_apic_timer_interrupt (./arch/x86/inclu=
+de/asm/idtentry.h:702)
+> Dec 03 05:46:18 kernel: RIP: 0010:default_idle (./arch/x86/include/asm/ir=
+qflags.h:37 ./arch/x86/include/asm/irqflags.h:92 arch/x86/kernel/process.c:=
+743)
+> Dec 03 05:46:18 kernel: Code: 00 4d 29 c8 4c 01 c7 4c 29 c2 e9 6e ff ff f=
+f 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 66 90 0f 00 2d c7 c9 27 0=
+0 fb f4 <fa> c3 cc cc cc cc 66 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 90
+> All code
+> =3D=3D=3D=3D=3D=3D=3D=3D
+>    0:   00 4d 29                add    %cl,0x29(%rbp)
+>    3:   c8 4c 01 c7             enterq $0x14c,$0xc7
+>    7:   4c 29 c2                sub    %r8,%rdx
+>    a:   e9 6e ff ff ff          jmpq   0xffffffffffffff7d
+>    f:   90                      nop
+>   10:   90                      nop
+>   11:   90                      nop
+>   12:   90                      nop
+>   13:   90                      nop
+>   14:   90                      nop
+>   15:   90                      nop
+>   16:   90                      nop
+>   17:   90                      nop
+>   18:   90                      nop
+>   19:   90                      nop
+>   1a:   90                      nop
+>   1b:   90                      nop
+>   1c:   90                      nop
+>   1d:   90                      nop
+>   1e:   90                      nop
+>   1f:   66 90                   xchg   %ax,%ax
+>   21:   0f 00 2d c7 c9 27 00    verw   0x27c9c7(%rip)        # 0x27c9ef
+>   28:   fb                      sti
+>   29:   f4                      hlt
+>   2a:*  fa                      cli             <-- trapping instruction
+>   2b:   c3                      retq
+>   2c:   cc                      int3
+>   2d:   cc                      int3
+>   2e:   cc                      int3
+>   2f:   cc                      int3
+>   30:   66 66 2e 0f 1f 84 00    data16 nopw %cs:0x0(%rax,%rax,1)
+>   37:   00 00 00 00
+>   3b:   0f 1f 40 00             nopl   0x0(%rax)
+>   3f:   90                      nop
+>
+> Code starting with the faulting instruction
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>    0:   fa                      cli
+>    1:   c3                      retq
+>    2:   cc                      int3
+>    3:   cc                      int3
+>    4:   cc                      int3
+>    5:   cc                      int3
+>    6:   66 66 2e 0f 1f 84 00    data16 nopw %cs:0x0(%rax,%rax,1)
+>    d:   00 00 00 00
+>   11:   0f 1f 40 00             nopl   0x0(%rax)
+>   15:   90                      nop
+> Dec 03 05:46:18 kernel: RSP: 0018:ffff888100d2fe00 EFLAGS: 00000246
+> Dec 03 05:46:18 kernel: RAX: 00000000001870ed RBX: 1ffff110201a5fc2 RCX: =
+ffffffffb61a3e46
+> Dec 03 05:46:18 kernel: RDX: 0000000000000000 RSI: 0000000000000000 RDI: =
+ffffffffb3d4d123
+> Dec 03 05:46:18 kernel: RBP: 0000000000000000 R08: 0000000000000001 R09: =
+ffffed11c7e1835d
+> Dec 03 05:46:18 kernel: R10: ffff888e3f0c1aeb R11: 0000000000000000 R12: =
+0000000000000000
+> Dec 03 05:46:18 kernel: R13: ffff888100d20000 R14: dffffc0000000000 R15: =
+0000000000000000
+> Dec 03 05:46:18 kernel: ? ct_kernel_exit.constprop.0 (kernel/context_trac=
+king.c:148)
+> Dec 03 05:46:18 kernel: ? cpuidle_idle_call (kernel/sched/idle.c:186)
+> Dec 03 05:46:18 kernel: default_idle_call (./include/linux/cpuidle.h:143 =
+kernel/sched/idle.c:118)
+> Dec 03 05:46:18 kernel: cpuidle_idle_call (kernel/sched/idle.c:186)
+> Dec 03 05:46:18 kernel: ? __pfx_cpuidle_idle_call (kernel/sched/idle.c:16=
+8)
+> Dec 03 05:46:18 kernel: ? lock_release (kernel/locking/lockdep.c:467 kern=
+el/locking/lockdep.c:5848)
+> Dec 03 05:46:18 kernel: ? lockdep_hardirqs_on_prepare (kernel/locking/loc=
+kdep.c:4347 kernel/locking/lockdep.c:4406)
+> Dec 03 05:46:18 kernel: ? tsc_verify_tsc_adjust (arch/x86/kernel/tsc_sync=
+.c:59)
+> Dec 03 05:46:18 kernel: do_idle (kernel/sched/idle.c:326)
+> Dec 03 05:46:18 kernel: cpu_startup_entry (kernel/sched/idle.c:423 (discr=
+iminator 1))
+> Dec 03 05:46:18 kernel: start_secondary (arch/x86/kernel/smpboot.c:202 ar=
+ch/x86/kernel/smpboot.c:282)
+> Dec 03 05:46:18 kernel: ? __pfx_start_secondary (arch/x86/kernel/smpboot.=
+c:232)
+> Dec 03 05:46:18 kernel: ? soft_restart_cpu (arch/x86/kernel/head_64.S:452=
+)
+> Dec 03 05:46:18 kernel: common_startup_64 (arch/x86/kernel/head_64.S:414)
+> Dec 03 05:46:18 kernel:  </TASK>
+> Dec 03 05:46:18 kernel:
+> Dec 03 05:46:18 kernel: Allocated by task 12184:
+> Dec 03 05:46:18 kernel: kasan_save_stack (mm/kasan/common.c:48)
+> Dec 03 05:46:18 kernel: kasan_save_track (./arch/x86/include/asm/current.=
+h:49 mm/kasan/common.c:60 mm/kasan/common.c:69)
+> Dec 03 05:46:18 kernel: __kasan_slab_alloc (mm/kasan/common.c:319 mm/kasa=
+n/common.c:345)
+> Dec 03 05:46:18 kernel: kmem_cache_alloc_noprof (mm/slub.c:4085 mm/slub.c=
+:4134 mm/slub.c:4141)
+> Dec 03 05:46:18 kernel: copy_net_ns (net/core/net_namespace.c:421 net/cor=
+e/net_namespace.c:480)
+> Dec 03 05:46:18 kernel: create_new_namespaces (kernel/nsproxy.c:110)
+> Dec 03 05:46:18 kernel: unshare_nsproxy_namespaces (kernel/nsproxy.c:228 =
+(discriminator 4))
+> Dec 03 05:46:18 kernel: ksys_unshare (kernel/fork.c:3313)
+> Dec 03 05:46:18 kernel: __x64_sys_unshare (kernel/fork.c:3382)
+> Dec 03 05:46:18 kernel: do_syscall_64 (arch/x86/entry/common.c:52 arch/x8=
+6/entry/common.c:83)
+> Dec 03 05:46:18 kernel: entry_SYSCALL_64_after_hwframe (arch/x86/entry/en=
+try_64.S:130)
+> Dec 03 05:46:18 kernel:
+> Dec 03 05:46:18 kernel: Freed by task 11:
+> Dec 03 05:46:18 kernel: kasan_save_stack (mm/kasan/common.c:48)
+> Dec 03 05:46:18 kernel: kasan_save_track (./arch/x86/include/asm/current.=
+h:49 mm/kasan/common.c:60 mm/kasan/common.c:69)
+> Dec 03 05:46:18 kernel: kasan_save_free_info (mm/kasan/generic.c:582)
+> Dec 03 05:46:18 kernel: __kasan_slab_free (mm/kasan/common.c:271)
+> Dec 03 05:46:18 kernel: kmem_cache_free (mm/slub.c:4579 mm/slub.c:4681)
+> Dec 03 05:46:18 kernel: cleanup_net (net/core/net_namespace.c:456 net/cor=
+e/net_namespace.c:446 net/core/net_namespace.c:647)
+> Dec 03 05:46:18 kernel: process_one_work (kernel/workqueue.c:3229)
+> Dec 03 05:46:18 kernel: worker_thread (kernel/workqueue.c:3304 kernel/wor=
+kqueue.c:3391)
+> Dec 03 05:46:18 kernel: kthread (kernel/kthread.c:389)
+> Dec 03 05:46:18 kernel: ret_from_fork (arch/x86/kernel/process.c:147)
+> Dec 03 05:46:18 kernel: ret_from_fork_asm (arch/x86/entry/entry_64.S:257)
+> Dec 03 05:46:18 kernel:
+> Dec 03 05:46:18 kernel: Last potentially related work creation:
+> Dec 03 05:46:18 kernel: kasan_save_stack (mm/kasan/common.c:48)
+> Dec 03 05:46:18 kernel: __kasan_record_aux_stack (mm/kasan/generic.c:541)
+> Dec 03 05:46:18 kernel: insert_work (./include/linux/instrumented.h:68 ./=
+include/asm-generic/bitops/instrumented-non-atomic.h:141 kernel/workqueue.c=
+:788 kernel/workqueue.c:795 kernel/workqueue.c:2186)
+> Dec 03 05:46:18 kernel: __queue_work (kernel/workqueue.c:2340)
+> Dec 03 05:46:18 kernel: queue_work_on (kernel/workqueue.c:2391)
+> Dec 03 05:46:18 kernel: xfrm_policy_insert (net/xfrm/xfrm_policy.c:1610)
+> Dec 03 05:46:18 kernel: xfrm_add_policy (net/xfrm/xfrm_user.c:2116)
+> Dec 03 05:46:18 kernel: xfrm_user_rcv_msg (net/xfrm/xfrm_user.c:3321)
+> Dec 03 05:46:18 kernel: netlink_rcv_skb (net/netlink/af_netlink.c:2536)
+> Dec 03 05:46:18 kernel: xfrm_netlink_rcv (net/xfrm/xfrm_user.c:3344)
+> Dec 03 05:46:18 kernel: netlink_unicast (net/netlink/af_netlink.c:1316 ne=
+t/netlink/af_netlink.c:1342)
+> Dec 03 05:46:18 kernel: netlink_sendmsg (net/netlink/af_netlink.c:1886)
+> Dec 03 05:46:18 kernel: sock_write_iter (net/socket.c:729 net/socket.c:74=
+4 net/socket.c:1165)
+> Dec 03 05:46:18 kernel: vfs_write (fs/read_write.c:590 fs/read_write.c:68=
+3)
+> Dec 03 05:46:18 kernel: ksys_write (fs/read_write.c:736)
+> Dec 03 05:46:18 kernel: do_syscall_64 (arch/x86/entry/common.c:52 arch/x8=
+6/entry/common.c:83)
+> Dec 03 05:46:18 kernel: entry_SYSCALL_64_after_hwframe (arch/x86/entry/en=
+try_64.S:130)
+> Dec 03 05:46:18 kernel:
+> Dec 03 05:46:18 kernel: Second to last potentially related work creation:
+> Dec 03 05:46:18 kernel: kasan_save_stack (mm/kasan/common.c:48)
+> Dec 03 05:46:18 kernel: __kasan_record_aux_stack (mm/kasan/generic.c:541)
+> Dec 03 05:46:18 kernel: insert_work (./include/linux/instrumented.h:68 ./=
+include/asm-generic/bitops/instrumented-non-atomic.h:141 kernel/workqueue.c=
+:788 kernel/workqueue.c:795 kernel/workqueue.c:2186)
+> Dec 03 05:46:18 kernel: __queue_work (kernel/workqueue.c:2340)
+> Dec 03 05:46:18 kernel: queue_work_on (kernel/workqueue.c:2391)
+> Dec 03 05:46:18 kernel: __xfrm_state_insert (./include/linux/workqueue.h:=
+723 net/xfrm/xfrm_state.c:1150 net/xfrm/xfrm_state.c:1145 net/xfrm/xfrm_sta=
+te.c:1513)
+> Dec 03 05:46:18 kernel: xfrm_state_update (./include/linux/spinlock.h:396=
+ net/xfrm/xfrm_state.c:1940)
+> Dec 03 05:46:18 kernel: xfrm_add_sa (net/xfrm/xfrm_user.c:912)
+> Dec 03 05:46:18 kernel: xfrm_user_rcv_msg (net/xfrm/xfrm_user.c:3321)
+> Dec 03 05:46:18 kernel: netlink_rcv_skb (net/netlink/af_netlink.c:2536)
+> Dec 03 05:46:18 kernel: xfrm_netlink_rcv (net/xfrm/xfrm_user.c:3344)
+> Dec 03 05:46:18 kernel: netlink_unicast (net/netlink/af_netlink.c:1316 ne=
+t/netlink/af_netlink.c:1342)
+> Dec 03 05:46:18 kernel: netlink_sendmsg (net/netlink/af_netlink.c:1886)
+> Dec 03 05:46:18 kernel: sock_write_iter (net/socket.c:729 net/socket.c:74=
+4 net/socket.c:1165)
+> Dec 03 05:46:18 kernel: vfs_write (fs/read_write.c:590 fs/read_write.c:68=
+3)
+> Dec 03 05:46:18 kernel: ksys_write (fs/read_write.c:736)
+> Dec 03 05:46:18 kernel: do_syscall_64 (arch/x86/entry/common.c:52 arch/x8=
+6/entry/common.c:83)
+> Dec 03 05:46:18 kernel: entry_SYSCALL_64_after_hwframe (arch/x86/entry/en=
+try_64.S:130)
+> Dec 03 05:46:18 kernel:
+> Dec 03 05:46:18 kernel: The buggy address belongs to the object at ffff88=
+82137cb680
+> which belongs to the cache net_namespace of size 6720
+> Dec 03 05:46:18 kernel: The buggy address is located 5168 bytes inside of
+> freed 6720-byte region [ffff8882137cb680, ffff8882137cd0c0)
+> Dec 03 05:46:18 kernel:
+> Dec 03 05:46:18 kernel: The buggy address belongs to the physical page:
+> Dec 03 05:46:18 kernel: page: refcount:1 mapcount:0 mapping:0000000000000=
+000 index:0x0 pfn:0x2137c8
+> Dec 03 05:46:18 kernel: head: order:3 mapcount:0 entire_mapcount:0 nr_pag=
+es_mapped:0 pincount:0
+> Dec 03 05:46:18 kernel: memcg:ffff88812794d901
+> Dec 03 05:46:18 kernel: flags: 0x17ffffc0000040(head|node=3D0|zone=3D2|la=
+stcpupid=3D0x1fffff)
+> Dec 03 05:46:18 kernel: page_type: f5(slab)
+> Dec 03 05:46:18 kernel: raw: 0017ffffc0000040 ffff888100053980 dead000000=
+000122 0000000000000000
+> Dec 03 05:46:18 kernel: raw: 0000000000000000 0000000080040004 00000001f5=
+000000 ffff88812794d901
+> Dec 03 05:46:18 kernel: head: 0017ffffc0000040 ffff888100053980 dead00000=
+0000122 0000000000000000
+> Dec 03 05:46:18 kernel: head: 0000000000000000 0000000080040004 00000001f=
+5000000 ffff88812794d901
+> Dec 03 05:46:18 kernel: head: 0017ffffc0000003 ffffea00084df201 fffffffff=
+fffffff 0000000000000000
+> Dec 03 05:46:18 kernel: head: 0000000000000008 0000000000000000 00000000f=
+fffffff 0000000000000000
+> Dec 03 05:46:18 kernel: page dumped because: kasan: bad access detected
+> Dec 03 05:46:18 kernel:
+> Dec 03 05:46:18 kernel: Memory state around the buggy address:
+> Dec 03 05:46:18 kernel:  ffff8882137cc980: fb fb fb fb fb fb fb fb fb fb =
+fb fb fb fb fb fb
+> Dec 03 05:46:18 kernel:  ffff8882137cca00: fb fb fb fb fb fb fb fb fb fb =
+fb fb fb fb fb fb
+> Dec 03 05:46:18 kernel: >ffff8882137cca80: fb fb fb fb fb fb fb fb fb fb =
+fb fb fb fb fb fb
+> Dec 03 05:46:18 kernel:                                      ^
+> Dec 03 05:46:18 kernel:  ffff8882137ccb00: fb fb fb fb fb fb fb fb fb fb =
+fb fb fb fb fb fb
+> Dec 03 05:46:18 kernel:  ffff8882137ccb80: fb fb fb fb fb fb fb fb fb fb =
+fb fb fb fb fb fb
+> Dec 03 05:46:18 kernel: =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>
+> Best regards, Ilya Maximets.
 
-Signed-off-by: Manojkiran Eda <manojkiran.eda@gmail.com>
----
-This patch enables the aspeed video engine support in ASPEED BMC for
-IBM System1. It is crucial for facilitating the BMC's video capture
-and redirection capabilities, which are integral to remote management
-and KVM (Keyboard-Video-Mouse) over IP functionality.
----
- arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-system1.dts | 4 ++++
- 1 file changed, 4 insertions(+)
+Issue is in xfrm6_net_init() and xfrm4_net_init() :
+They copies xfrm6_dst_ops_template into net->xfrm.xfrm6_dst_ops, (or
+xfrm4_dst_ops_template to net->xfrm.xfrm4_dst_ops)
 
-diff --git a/arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-system1.dts b/arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-system1.dts
-index c8597dcded31..bea858b2eee6 100644
---- a/arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-system1.dts
-+++ b/arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-system1.dts
-@@ -479,6 +479,10 @@ &lpc_snoop {
- 	snoop-ports = <0x80>, <0x81>;
- };
- 
-+&video {
-+	status = "okay";
-+};
-+
- &i2c0 {
- 	status = "okay";
- 
-
----
-base-commit: f6d73b12ca9fd3b1c29a6a725cd751b972c740cf
-change-id: 20241203-dts-system1-video-0081d55a156e
-
-Best regards,
--- 
-Manojkiran Eda <manojkiran.eda@gmail.com>
+But net structure is freed before all the dst callbacks are called.
 
 
+So when dst_destroy() calls later :
+
+if (dst->ops->destroy)
+    dst->ops->destroy(dst);
+
+dst->ops point to the old net->xfrm.xfrm6_dst_ops, which has been freed.
+
+See for a similar issue fixed in , and that I warned XFRM maintainers
+at that time:
+
+ac888d58869b net: do not delay dst_entries_add() in dst_release()
+
+A solution could be to queue the 'struct net' to be freed after one
+another cleanup_net() round (and existing rcu barrier)
+
+net_free() would need to not directly call kmem_cache_free(net_cachep, net)=
+.
+
+I can cook a patch, thanks for the report.
 
