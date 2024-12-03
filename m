@@ -1,116 +1,200 @@
-Return-Path: <linux-kernel+bounces-430265-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430266-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C5C09E2E9F
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 23:06:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CFC989E2EA2
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 23:06:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 491422837A4
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 22:06:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8EBC0282EF6
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 22:06:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 177671F7081;
-	Tue,  3 Dec 2024 22:06:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D169A20898C;
+	Tue,  3 Dec 2024 22:06:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ftUS/Wpf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bqc7qY9M"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68F051D79A0;
-	Tue,  3 Dec 2024 22:06:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53C491DFE32
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 22:06:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733263569; cv=none; b=hqUMxlkW9GSVLrlCTvl1RFuyqxLmK4jztjiS+hBw7YGwI/QE26xJypN6wehV3x5ptoxUZEcU0r3gV+GZpjYeKV+wq3SvNN5QC1cLDYXw759AfrncPvPjo+7ZWc4at74Pn1DnbrnDprUkZz+baqnvyEKQviG4H9Hw44a15fFa05Y=
+	t=1733263589; cv=none; b=orETG2SIg56i3WD6kCQHKdHJ+5GhrFvmiUf43xWBSmR8GvGGh96l7AE9fhPJV88iPr43biH804boMdLDZhILymr2bZwFE06xQ6djsGvn3TDRILIHiLTV850/PW9rUcVfyXyuZJ8SbeFrSxWiuAvLG7wxCNPU2spFVQYOdmyFb9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733263569; c=relaxed/simple;
-	bh=IehJ4AIWWz0772NCAQO8hzMuGVgotMd1OEvMqgvLjO8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bR+b2NDAf/tHNsUn4uOGKHTHFuQWke6UrSkQPU5T78/tm93PfuASE7HnUbzK/lE6rt35hM6oohjt+73kMCue7X/WK5xeL/p+/PSRCEv34Aq2IWefX/uylzbwF7nDMA45cN6HqFz5tp7SCUhOR0bo51dm1zB7lqNluKk5ymiuVoM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ftUS/Wpf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 326F6C4CEDC;
-	Tue,  3 Dec 2024 22:06:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733263568;
-	bh=IehJ4AIWWz0772NCAQO8hzMuGVgotMd1OEvMqgvLjO8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ftUS/Wpfzl6rAV6W1Fv9Nj0Z6nP375x3sX3S0EgpAXN8jeJSSHevR7r9/J59WGnn6
-	 dnKlO1CeZ6WUoZPPy5V8p4VlDsak2GM3J8JYiF6GRNs339aHB5OOj7OYFVEsCMKCes
-	 KcDTggAMPlAndWscRzMlHDRP7g3d8Iff+lHx5SR1Qfft59Ao7bw8ipN+xGGDGjWNzG
-	 MDrxHBUGoA5kZzYBC8GnzU6AfcV+nh9AA8/2bpludCpwJQ4vKC9unAx9PYysaWnHRg
-	 UwZao6PW+eaQl3Ng39j7t1kBtsjKdifmmJyi2iL3HB3hx9vax/GzF3HQPIbap/3bdy
-	 2AqNY9CNhRKCA==
-Date: Tue, 3 Dec 2024 22:06:01 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, mcgrof@kernel.org,
-	x86@kernel.org, hpa@zytor.com, petr.pavlu@suse.com,
-	samitolvanen@google.com, da.gomez@samsung.com, masahiroy@kernel.org,
-	nathan@kernel.org, nicolas@fjasle.eu, linux-kernel@vger.kernel.org,
-	linux-modules@vger.kernel.org, linux-kbuild@vger.kernel.org,
-	hch@infradead.org, gregkh@linuxfoundation.org,
-	linux-next@vger.kernel.org
-Subject: Re: [PATCH -v2 1/7] module: Convert symbol namespace to string
- literal
-Message-ID: <93a900b2-7740-4bfa-bfac-1ec2e5bfa383@sirena.org.uk>
-References: <20241202145946.108093528@infradead.org>
- <20241202150810.048548103@infradead.org>
- <20241202151533.GF8562@noisy.programming.kicks-ass.net>
- <CAHk-=wh7KugYO+R-1DMmkLz4fD_-A9BMyrWTVsH_K0a86Ojn4A@mail.gmail.com>
- <d707cb3b-1569-45d9-bdc3-dcc98eb88bc4@sirena.org.uk>
+	s=arc-20240116; t=1733263589; c=relaxed/simple;
+	bh=AD9m5l1akbuPM1ybWrq29tq8zaQy3+HM6xJLensm4Qg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=odcmvoqzBZHHNSvRdg8p1/ikLBt1WJQa24vzFpXKKKNbeH187qr6oNwv//ZZYyuP9NID58Ufk7ZGTUubznJO+ULyyr4TxT6F4Tm77474l/K4LzqH3JuKL7ylpn+d8ACfLRi69DiWeLO5hhJl5+pjjsdJIKevq5nKLY6NGs4clPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bqc7qY9M; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733263586;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WIePSw9erBGB0EkQKOgbCaIeXQNXPbcij9sycEa1gJw=;
+	b=bqc7qY9M13k/fi+/eIXlGtXlprb+CXf1VHQJYi8cz74ZjHWY3tsF3MKiX09BHDZ1pjCAvQ
+	NhQCqfPtarVJD0TtRoFfqOn84USLCHGUSE+4Dz9cyd6YTcsqIOX5CtKy0NRVVsAYPFXcgy
+	vMFQo0sIUaP/GEjloQa+aQ6PjLjeFW8=
+Received: from mail-ot1-f72.google.com (mail-ot1-f72.google.com
+ [209.85.210.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-248-hpxoMhC9NySqn7nr6SgjJQ-1; Tue, 03 Dec 2024 17:06:25 -0500
+X-MC-Unique: hpxoMhC9NySqn7nr6SgjJQ-1
+X-Mimecast-MFC-AGG-ID: hpxoMhC9NySqn7nr6SgjJQ
+Received: by mail-ot1-f72.google.com with SMTP id 46e09a7af769-71d57d0f847so977909a34.3
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 14:06:25 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733263584; x=1733868384;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WIePSw9erBGB0EkQKOgbCaIeXQNXPbcij9sycEa1gJw=;
+        b=KD4rYr4G0BuK2xXtxCQg0/2N8ij29nwDVp+U3P/0kp4ZOilDLMHJimXplZoytctnN8
+         2iMeokAE/BCoivRLmUPJmvcYGROo7tRMmYQJ8Z95CCcBIsH0WNJQAGpUrqexNEnetUJH
+         l8OWCzdxkoUOWwvL476/522+6Mf7t2UVQswi3g5qZtQq+oxY2EVw6r2E29wVNEXj8JNl
+         a7et2OHYKvX/j26Fx95FeWGkuF9ykF2usJ0EnjD/WVnOJ5QOTc8z4z/5S5HuPJbb78w3
+         8/kOmveHwWefey4Wnl1RA4wSDvw5zsjWoij0ZsgKpeJ2XbdZeFKYViJq2qvoFgY/53Wt
+         oDsQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWIrRk9YxABEHe9kyWR+knYFeKGsgn1zXEk2n7aPkw5965+9aRQ+O8bWxr2//TDCgWkN1O6/LhuRl9wpn0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw00RrzS0a29LBlWfY21HKd7EzTJdvF7QGrcT4W8UsjaIPgKsl8
+	kyTGNM3AEv3EFEgbalN3XFvxBOTjj0+kTOqVSTiC/I3PU6PuDMhvLLsq4Ltx70jm5m6x4hyvpwh
+	Xzgv2JlId5CQBWXFGFPF/+gOMm+dv3OZbSfNP0H2TNLNOJuhgYiDRFgTt7v/FE8Wb3JxxSg==
+X-Gm-Gg: ASbGncvkHILaEVSIKY+oNJCsSnmezLh6hwK4RgRjYAJlzhBANkxaSQPHaChGWkLD6xJ
+	nM2MuzOlFVOPYtNHybLKZrkjH1q2H74k+DxBLm3S8DLT8P22/ACISpOS9gfbD5z31FRyc9cU4++
+	1Fy/R6NqVExD6HgKAcA0gn2wx6O98a1mMTneYISF6lJDrHbwtYFDa/6sRUQB6kGYvn1XmMQDV96
+	Ejy0pAm/nEUDbDzkhMl8hjzWaCqavon7BlfSb6HFZpwrO4UDweTvw==
+X-Received: by 2002:a05:6870:82a0:b0:29e:723c:8e9d with SMTP id 586e51a60fabf-29e8864ab96mr932471fac.4.1733263584304;
+        Tue, 03 Dec 2024 14:06:24 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IH7jGvGfB3Me4o3Jd6sSOMboIoUa4ByGG2+wC0X4ZrR+2bwV76NNF/fqntlqJRNv1VOTSapnA==
+X-Received: by 2002:a05:6870:82a0:b0:29e:723c:8e9d with SMTP id 586e51a60fabf-29e8864ab96mr932465fac.4.1733263583944;
+        Tue, 03 Dec 2024 14:06:23 -0800 (PST)
+Received: from redhat.com ([38.15.36.11])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-29de9945bc7sm4029719fac.43.2024.12.03.14.06.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Dec 2024 14:06:23 -0800 (PST)
+Date: Tue, 3 Dec 2024 15:06:20 -0700
+From: Alex Williamson <alex.williamson@redhat.com>
+To: Mitchell Augustin <mitchell.augustin@canonical.com>
+Cc: linux-pci@vger.kernel.org, kvm@vger.kernel.org, Bjorn Helgaas
+ <bhelgaas@google.com>, linux-kernel@vger.kernel.org
+Subject: Re: drivers/pci: (and/or KVM): Slow PCI initialization during VM
+ boot with passthrough of large BAR Nvidia GPUs on DGX H100
+Message-ID: <20241203150620.15431c5c.alex.williamson@redhat.com>
+In-Reply-To: <CAHTA-uZWGmoLr0R4L608xzvBAxnr7zQPMDbX0U4MTfN3BAsfTQ@mail.gmail.com>
+References: <CAHTA-uYp07FgM6T1OZQKqAdSA5JrZo0ReNEyZgQZub4mDRrV5w@mail.gmail.com>
+	<20241126103427.42d21193.alex.williamson@redhat.com>
+	<CAHTA-ubXiDePmfgTdPbg144tHmRZR8=2cNshcL5tMkoMXdyn_Q@mail.gmail.com>
+	<20241126154145.638dba46.alex.williamson@redhat.com>
+	<CAHTA-uZp-bk5HeE7uhsR1frtj9dU+HrXxFZTAVeAwFhPen87wA@mail.gmail.com>
+	<20241126170214.5717003f.alex.williamson@redhat.com>
+	<CAHTA-uY3pyDLH9-hy1RjOqrRR+OU=Ko6hJ4xWmMTyoLwHhgTOQ@mail.gmail.com>
+	<20241127102243.57cddb78.alex.williamson@redhat.com>
+	<CAHTA-uaGZkQ6rEMcRq6JiZn8v9nZPn80NyucuSTEXuPfy+0ccw@mail.gmail.com>
+	<20241203122023.21171712.alex.williamson@redhat.com>
+	<CAHTA-uZWGmoLr0R4L608xzvBAxnr7zQPMDbX0U4MTfN3BAsfTQ@mail.gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="DLVYcvakTOgKySND"
-Content-Disposition: inline
-In-Reply-To: <d707cb3b-1569-45d9-bdc3-dcc98eb88bc4@sirena.org.uk>
-X-Cookie: Alimony is the high cost of leaving.
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+On Tue, 3 Dec 2024 14:33:10 -0600
+Mitchell Augustin <mitchell.augustin@canonical.com> wrote:
 
---DLVYcvakTOgKySND
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> Thanks.
+> 
+> I'm thinking about the cleanest way to accomplish this:
+> 
+> 1. I'm wondering if replacing the pci_info() calls with equivalent
+> printk_deferred() calls might be sufficient here. This works in my
+> initial test, but I'm not sure if this is definitive proof that we
+> wouldn't have any issues in all deployments, or if my configuration is
+> just not impacted by this kind of deadlock.
 
-On Tue, Dec 03, 2024 at 07:20:05PM +0000, Mark Brown wrote:
-> On Mon, Dec 02, 2024 at 11:33:58AM -0800, Linus Torvalds wrote:
+Just switching to printk_deferred() alone seems like wishful thinking,
+but if you were also to wrap the code in console_{un}lock(), that might
+be a possible low-impact solution.
 
-> > If we have these kinds of big scripted things, right after the merge
-> > window tends to be the best time to do them. The conflict potential of
-> > leaving it hanging in linux-next can be somewhat annoying. They may be
-> > fairly unlikely, and easy to resolve individually, but it's one of
-> > those "one is trivial to deal with, but even just a handful is
-> > annoying".
+> 2. I did also draft a patch that would just eliminate the redundancy
+> and disable the impacted logs by default, and allow them to be
+> re-enabled with a new kernel command line option
+> "pci=bar_logging_enabled" (at the cost of the performance gains due to
+> reduced redundancy). This works well in all of my tests.
 
-> > So I'll run your script and take your commit message, and we'll have
-> > this part over and done with.
+I suspect Bjorn would prefer not to add yet another pci command line
+option and as we've seen here, the logs are useful by default.
+ 
+> Do you think either of those approaches would work / be appropriate?
+> Ultimately I am trying to avoid messy changes that would require
+> actually propagating all of the info needed for these logs back up to
+> pci_read_bases(), if at all possible, since there seems like no
+> obvious way to do that without changing the signature of
+> __pci_read_base() or tracking additional state.
 
-> I *think* this is interacting in a fun way with at least the IIO
-> subsystem in -next (Linus' tree is fine, I didn't do too much
-> investigation as I'd quite like the -next build to finish some time
-> today):
+The calling convention of __pci_read_base() is already changing if
+we're having the caller disable decoding and it doesn't have a lot of
+callers, so I don't think I'd worry about changing the signature.
 
-Yes, this is breaking ASoC and possibly other things as well.  I guess
-any tree adding a new use of these macros needs to merge mainline to
-avoid a mess here.
+I think maybe another alternative that doesn't hold off the console
+would be to split the BAR sizing and resource processing into separate
+steps.  For example pci_read_bases() might pass arrays like:
 
---DLVYcvakTOgKySND
-Content-Type: application/pgp-signature; name="signature.asc"
+        u32 bars[PCI_STD_NUM_BARS] = { 0 };
+        u32 romsz = 0;
 
------BEGIN PGP SIGNATURE-----
+To a function like:
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmdPgMgACgkQJNaLcl1U
-h9BV/gf9HfmQ/2rTxmyGvtTJh/xuiW79W2pQGjCcU3r7niEke5B2mPtIAyGIpqSI
-ID4mHsuGkFAxk3XAL636XS3ccDCUIAXpGAVnTr4mqX8EeknHK932vfg0fAua3AUU
-/qANxVOhvIE+NNoat2sDq9WH3EBDdLtG02Wa0EhYr5e5QOO7H4yZSpkAhVTyAbxd
-BXcYq50biFFnQ9z1srulbSUzYJ7ldpKKX3j40noJ9GfRGifKAOIbXjY10uYG1Au7
-1KxhGqxZ/RssMsfrMov1wgd08F73IautuDwJTbVicPCm6Nbucoz85wASWZtkboss
-hLEkq7WkGbChUldcW7TsNbTRrjSquQ==
-=Qf1I
------END PGP SIGNATURE-----
+void __pci_read_bars(struct pci_dev *dev, u32 *bars, u32 *romsz,
+                     int num_bars, int rom)
+{
+        u16 orig_cmd;
+        u32 tmp;
+        int i;
 
---DLVYcvakTOgKySND--
+        if (!dev->mmio_always_on) {
+                pci_read_config_word(dev, PCI_COMMAND, &orig_cmd);
+                if (orig_cmd & PCI_COMMAND_DECODE_ENABLE) {
+                        pci_write_config_word(dev, PCI_COMMAND,
+                                orig_cmd & ~PCI_COMMAND_DECODE_ENABLE);
+                }
+        }
+
+        for (i = 0; i < num_bars; i++) {
+                unsigned int pos = PCI_BASE_ADDRESS_0 + (i << 2);
+
+                pci_read_config_dword(dev, pos, &tmp);
+                pci_write_config_dword(dev, pos, ~0);
+                pci_read_config_dword(dev, pos, &bars[i]);
+                pci_write_config_dword(dev, pos, tmp);
+        }
+                
+        if (rom) {
+                pci_read_config_dword(dev, rom, &tmp);
+                pci_write_config_dword(dev, rom, PCI_ROM_ADDRESS_MASK);
+                pci_read_config_dword(dev, rom, romsz);
+                pci_write_config_dword(dev, rom, tmp);
+        }
+
+        if (!dev->mmio_always_on && (orig_cmd & PCI_COMMAND_DECODE_ENABLE))
+                pci_write_config_word(dev, PCI_COMMAND, orig_cmd);
+}
+
+pci_read_bases() would then iterate in a similar way that it does now,
+passing pointers to the stashed data to __pci_read_base(), which would
+then only do the resource processing and could freely print.
+
+To me that seems better than blocking the console... Maybe there are
+other ideas on the list.  Thanks,
+
+Alex
+
 
