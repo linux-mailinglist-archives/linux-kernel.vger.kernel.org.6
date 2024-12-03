@@ -1,148 +1,108 @@
-Return-Path: <linux-kernel+bounces-430144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430143-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B70FA9E2CF0
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 21:22:10 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C31A39E2CEE
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 21:22:00 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DA1928270A
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 20:22:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 994C1163530
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 20:21:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 924F4207A02;
-	Tue,  3 Dec 2024 20:21:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2980F205AA0;
+	Tue,  3 Dec 2024 20:21:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="per9G6Ph"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pT74FNcN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BE112500D3;
-	Tue,  3 Dec 2024 20:21:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 821AC143759;
+	Tue,  3 Dec 2024 20:21:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733257317; cv=none; b=ui533W0OllDkFfO9j5cbIBZ4DPwa+yjmjcmPNfTaTF4ZSVlZz028dd0E3QsRdq4p36Agq+e52ofsEI6cYsgFQCajdN3i+kKokNTmuFhuEnyXLJ5U2pGOGt1f9hMwid8gwKIXkGQq2K8um43e0oC53Snyqe5V6TrWF6mtBmz7jSM=
+	t=1733257315; cv=none; b=KS2i4uJY40VRMMFtWH9yO0LGjhippg9XTjBxJSTVXKug3N0lU41quPcfqxmQiaAYDqfITWY8t7yp24yZ7vz6Q0rlfTEg95CbOK08lPm8RUCiNixj9BJ1rx7eNWbWvg3UqkhppRDtMsIGJOOC9Bt7CvnK7T+ikMI6JzDKBAjQOT4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733257317; c=relaxed/simple;
-	bh=BiGlY2hWa0V4f0c4u85vO766gfI+6XOttfOkcSwCNoQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SG5qOMPWHPI4u1c0iiibOHdKhHZhg/VMKbxcLs//vJ+XATb35lefOzWOBT6gnTA92TmrTNldGp4U+K+onPpUKW5jIXEhjkNG4jFMuePndAJQJAzI4B6HVn3pd4s8PdjSEfTceiPglx8XYu1jAe0ws/VHKoNFSiOLgaMgu/SXqm4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=per9G6Ph; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 930FA670;
-	Tue,  3 Dec 2024 21:21:23 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1733257283;
-	bh=BiGlY2hWa0V4f0c4u85vO766gfI+6XOttfOkcSwCNoQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=per9G6PhnE+7g9P8jEkN1wmVVciskxbhr/vguF3DPpwK/aqFSaQLa4V99/ZfduNnD
-	 QGkEZhPWqe5Mkjs2lQWnEWfjkxOnYkXQ62F5wldfKPzYca0LoTJiFjDUVKz/6eqYrD
-	 2bMW46JXqWYfknUsJ0JHN2ZrrwgMa+uYzmj71P9E=
-Date: Tue, 3 Dec 2024 22:21:39 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Ricardo Ribalda <ribalda@chromium.org>
-Cc: Hans de Goede <hdegoede@redhat.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Guennadi Liakhovetski <guennadi.liakhovetski@intel.com>,
-	Hans Verkuil <hverkuil@xs4all.nl>,
-	Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v5 1/5] media: uvcvideo: Only save async fh if success
-Message-ID: <20241203202139.GB5196@pendragon.ideasonboard.com>
-References: <20241202-uvc-fix-async-v5-0-6658c1fe312b@chromium.org>
- <20241202-uvc-fix-async-v5-1-6658c1fe312b@chromium.org>
+	s=arc-20240116; t=1733257315; c=relaxed/simple;
+	bh=XvHonDC5Zqxszw1JDIsgXnXHPmUro0m9SxjIASwNeoY=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=eZorv0o6JTnSpQpv3llOqvNeTRufxp0AyeC0aEA45gjjymG+2HbHW37AR8B1idfqhTPg6snSroJkLqIDgnp71YMHvoI7COkUKhiG4W2fqmoHNIdKzlXkZYK0ZWozAksECWq2v5EbVhJJWbuPLyXAPpX+aVzQdejD20Hf+AohjAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pT74FNcN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE8D9C4CED6;
+	Tue,  3 Dec 2024 20:21:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733257315;
+	bh=XvHonDC5Zqxszw1JDIsgXnXHPmUro0m9SxjIASwNeoY=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=pT74FNcNxVkwjB2rO21AYzErpMozWgTU1hTUGLgG4jrT/AT9oTopc+JJA2k5xCnPc
+	 QRhKyQxHvSPCH9GpGhlq199vQsqESY27KWU5qxMGQOZuYkYI6IhjUtkNwDS4HyQ9mg
+	 iR4NqZ9P7ie3R4/an+2UTmtdLM03G3KE6WPfJxbFMZZk8L6QE7NdFyiBazL+LkBUn8
+	 kL9Jx5YT/23Q/+LN2eiZech0HVdiXU9QuDAE0Sa+F93HRf3f9x9bz/k8sk/gwOTAHc
+	 hirQL9oa7nLkeOG62oyKY7AWwzd/zUnMna4NaWvrFHLS4nLM2hfZatzqVh9ga+JlSi
+	 E5MB+w+PEzKGA==
+Message-ID: <c9556de589e289cb1d278d41014791a6.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241202-uvc-fix-async-v5-1-6658c1fe312b@chromium.org>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <0f07300a-8b32-4d3e-a447-b3fe3cf1ca81@app.fastmail.com>
+References: <20241127-clk-audio-fix-rst-missing-v1-1-9f9d0ab98fce@baylibre.com> <f8de4a2a-776f-4c10-b75e-e845bcc38dde@app.fastmail.com> <1j4j3r32ld.fsf@starbuckisacylon.baylibre.com> <306b0b30-5a32-4c7c-86b4-57d50e2307e8@app.fastmail.com> <1jy1131kxz.fsf@starbuckisacylon.baylibre.com> <c06317c6-b2b2-4b6d-96e4-0c2cfc6846de@app.fastmail.com> <1jplmf1jqa.fsf@starbuckisacylon.baylibre.com> <ce67e512-a15b-4482-8194-b917096f4eeb@app.fastmail.com> <df0a53ee859e450d84e81547099f5f36.sboyd@kernel.org> <0f07300a-8b32-4d3e-a447-b3fe3cf1ca81@app.fastmail.com>
+Subject: Re: [PATCH] clk: amlogic: axg-audio: select RESET_MESON_AUX
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>, Michael Turquette <mturquette@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>, linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
+To: Arnd Bergmann <arnd@arndb.de>, Jerome Brunet <jbrunet@baylibre.com>
+Date: Tue, 03 Dec 2024 12:21:52 -0800
+User-Agent: alot/0.12.dev1+gaa8c22fdeedb
 
-On Mon, Dec 02, 2024 at 02:24:35PM +0000, Ricardo Ribalda wrote:
-> Now we keep a reference to the active fh for any call to uvc_ctrl_set,
-> regardless if it is an actual set or if it is a just a try or if the
-> device refused the operation.
-> 
-> We should only keep the file handle if the device actually accepted
-> applying the operation.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: e5225c820c05 ("media: uvcvideo: Send a control event when a Control Change interrupt arrives")
-> Suggested-by: Hans de Goede <hdegoede@redhat.com>
-> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+Quoting Arnd Bergmann (2024-12-03 04:43:03)
+> On Tue, Dec 3, 2024, at 03:53, Stephen Boyd wrote:
+> > Quoting Arnd Bergmann (2024-11-28 07:34:46)
+> >> On Thu, Nov 28, 2024, at 16:06, Jerome Brunet wrote:
+> >> Stephen, can you please take a look here and see if you
+> >> have a better idea for either decoupling the two drivers
+> >> enough to avoid the link time dependency, or to reintegrate
+> >> the reset controller code into the clk driver and avoid
+> >> the complexity?
+> >
+> > I think the best approach is to add the reset auxilary device with a
+> > function that creates the auxiliary device directly by string name and
+> > does nothing else. Maybe we can have some helper in the auxiliary
+> > layer that does that all for us, because it's quite a bit of boiler
+> > plate that we need to write over and over again. Something like:
+> >
+> >   int devm_auxiliary_device_create(struct device *parent, const char *n=
+ame)
+> >
+> > that does the whole kzalloc() + ida dance that
+> > devm_meson_rst_aux_register() is doing today and wraps it all up so that
+> > the device is removed when the parent driver unbinds. Then this clk
+> > driver can register the reset device with a single call and not need to
+> > do anything besides select AUXILIARY_BUS. The regmap can be acquired
+> > from the parent device in the auxiliary driver probe with
+> > dev_get_regmap(adev->parent).
+>=20
+> I like the idea. Two questions about the interface:
+>=20
+>  - should there be a 'void *platform_data' argument anyway?
+>    Even if this can be looked up from the parent, it seems
+>    useful enough
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Sure. Probably that can be added as some variant like
+devm_auxiliary_device_create_pdata() when/if it's needed.
 
-> ---
->  drivers/media/usb/uvc/uvc_ctrl.c | 18 +++++++++++-------
->  1 file changed, 11 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
-> index 4fe26e82e3d1..9a80a7d8e73a 100644
-> --- a/drivers/media/usb/uvc/uvc_ctrl.c
-> +++ b/drivers/media/usb/uvc/uvc_ctrl.c
-> @@ -1811,7 +1811,10 @@ int uvc_ctrl_begin(struct uvc_video_chain *chain)
->  }
->  
->  static int uvc_ctrl_commit_entity(struct uvc_device *dev,
-> -	struct uvc_entity *entity, int rollback, struct uvc_control **err_ctrl)
-> +				  struct uvc_fh *handle,
-> +				  struct uvc_entity *entity,
-> +				  int rollback,
-> +				  struct uvc_control **err_ctrl)
->  {
->  	struct uvc_control *ctrl;
->  	unsigned int i;
-> @@ -1859,6 +1862,10 @@ static int uvc_ctrl_commit_entity(struct uvc_device *dev,
->  				*err_ctrl = ctrl;
->  			return ret;
->  		}
-> +
-> +		if (!rollback && handle &&
-> +		    ctrl->info.flags & UVC_CTRL_FLAG_ASYNCHRONOUS)
-> +			ctrl->handle = handle;
->  	}
->  
->  	return 0;
-> @@ -1895,8 +1902,8 @@ int __uvc_ctrl_commit(struct uvc_fh *handle, int rollback,
->  
->  	/* Find the control. */
->  	list_for_each_entry(entity, &chain->entities, chain) {
-> -		ret = uvc_ctrl_commit_entity(chain->dev, entity, rollback,
-> -					     &err_ctrl);
-> +		ret = uvc_ctrl_commit_entity(chain->dev, handle, entity,
-> +					     rollback, &err_ctrl);
->  		if (ret < 0) {
->  			if (ctrls)
->  				ctrls->error_idx =
-> @@ -2046,9 +2053,6 @@ int uvc_ctrl_set(struct uvc_fh *handle,
->  	mapping->set(mapping, value,
->  		uvc_ctrl_data(ctrl, UVC_CTRL_DATA_CURRENT));
->  
-> -	if (ctrl->info.flags & UVC_CTRL_FLAG_ASYNCHRONOUS)
-> -		ctrl->handle = handle;
-> -
->  	ctrl->dirty = 1;
->  	ctrl->modified = 1;
->  	return 0;
-> @@ -2377,7 +2381,7 @@ int uvc_ctrl_restore_values(struct uvc_device *dev)
->  			ctrl->dirty = 1;
->  		}
->  
-> -		ret = uvc_ctrl_commit_entity(dev, entity, 0, NULL);
-> +		ret = uvc_ctrl_commit_entity(dev, NULL, entity, 0, NULL);
->  		if (ret < 0)
->  			return ret;
->  	}
+>=20
+>  - What is the scope of the 'ida' number? My impression was
+>    this should be local to one parent device, but I don't
+>    know how the number is used in the end, so maybe a global
+>    number allocator is sufficient.
+>=20
 
--- 
-Regards,
-
-Laurent Pinchart
+From what I can tell it's only used for the device name and not for
+driver matching. That's probably to make it so we don't get conflicts in
+sysfs with devices because they all share the same bus. I'd guess that a
+global allocator is sufficient.
 
