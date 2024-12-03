@@ -1,123 +1,147 @@
-Return-Path: <linux-kernel+bounces-429145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74B0E9E17E5
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:39:30 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D176E9E17E9
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:39:48 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 48C42160EC1
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:39:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 980342813B0
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:39:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 265BF1E008D;
-	Tue,  3 Dec 2024 09:39:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD0DC1DE882;
+	Tue,  3 Dec 2024 09:39:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="y6xBdlZJ"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="kKZ19qM6"
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB1A2364AE
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 09:39:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80570181B8F;
+	Tue,  3 Dec 2024 09:39:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733218750; cv=none; b=shpFpWZaLvJfLJT89LdnatV1ZA40GMXEYgIt0rAPOmYwTfCHHFd7alHGeq/TEoeUI90OP/htBSpoxyaiM4SA/D51hSd0FaEPdwz1ArltRHRuVQ/NY90zE+EsGRM78W2iPX7xw0qXn/QNFLYSr5zkRVWB1+APPurJpemNO3LunZU=
+	t=1733218779; cv=none; b=I154X9iIHTZrewRjRwW9/wXh53ATXqVBAR27HAJJIypr6YA1iaiP2HGLaFffAsGiY6u0mRcVRALiyHSJJyl9Ew+9qLaZq04ntngrA+Kg1NI4VKK9DwBDzzYRNNc69Sv+wUFUeMj37i9N7FlIGt0hIekkfAAsRK86Nvdyn4dvnpM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733218750; c=relaxed/simple;
-	bh=f4yo24MCyvcNw5BjdCp4RT4JHWYru/YdElzMFQMZDkg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XszsBSwM+X3bL7N+ODTR/XreJIEjGBw1VRXpbToPLQz5z748GRZuQjWtcUE5/1aAufz3xRk0k8dx+/Wjkk4g4u4ASgJ48NDXKqNzArsq6RHfDKyWkCC4IGRwANyRW7MvkaYRmJmyhOiSHOojOPgQkrePOhkPZaQkqv8bmxyFOao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=y6xBdlZJ; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-434a0fd9778so48727155e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 01:39:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733218747; x=1733823547; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=kAfAbX2jpmVWuMhv4f3fZGpU5CJs4ntFjeUeVvna/QY=;
-        b=y6xBdlZJDIxUvbRYDMQ3a0rvI04pw8wKHjWx+Sn+fwkgPJn9t5rClPcmRiln8vUCev
-         BDTlovrblcX/vAZpPXlOi9ca72C8bCYZDILRjYPZ+OYi1XFOF5UhBnjjxo19D3iIvsyc
-         k8rpKomDLIq1Tt8RqsQ9LF4lNtBfOod5E/M1yfLs+V+jdPZRHiEE7AHSSq8eL4a65RDu
-         oKExQJk5pZRLpNpdp+/Jyl1T4zemAJpHCWFZ+/G9xXL9kl9Ul9vimkviYkZipVlgQVS+
-         ZNN6+YSNsB/S8n8IML5GL9zWM0i0mLHGwjP3+jTjct1gG94M5EAsWfYYlmmHca649/9V
-         JrsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733218747; x=1733823547;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kAfAbX2jpmVWuMhv4f3fZGpU5CJs4ntFjeUeVvna/QY=;
-        b=mzg1BkEfGqc4Mfo31Z13ji7+ws6SGEuzjRcz9ZWeLclPFYH1c+4WHYmcVugIoQDrLg
-         TqdRftU81PfTBIhdZx0AHcJWLzoJIp2Kwp0TRpzr1mN7QBoqvsOBCNjksoHOP64DhbbK
-         LY7ppokRMdEV10Wo8oWXOnd8TrOEyoyQCvdGy4n96+YqTBSFPuy8g7CIhKOrElQSgC9E
-         v6Ee0MRTqMTaHw0FIo7YsJcURArWOq3u9WL5zw380WGXIkFhLWt+26wy6SYfBnSYkPX1
-         B1S1yGGMvqlHmmFW9y7LCBj2JZR0yiwcUbcPGnlgzQje6JseLak65O8KgqWDX51NGIqj
-         I5Rw==
-X-Forwarded-Encrypted: i=1; AJvYcCUxi98n6kZ/+ELhnv/a9xt1o5Ta9scaTpoJjfLo8H6L3+Xkrba0zXx1Hp3M9zYdG038y+zbNF5sNkvCb2U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyrBwp9mtBquFenZdrtMIPQRgEo+WHNE05ukn5ls3B1K+jcn8US
-	QRXus/ahnIihDoc14/dkOmuWGZvi8RqRPVja/PLAPNdBmEapf4v0PZMLFahUgJI=
-X-Gm-Gg: ASbGncv0+S0DsQHJVPnm1hAodnImjNs0t4kbwwOv8vDi+JBCYWP8QCsKIqz/INR6W0q
-	UOcFMZ24vyc5oVygaN1d33uqwVz/qalBlFUiYDRbIexXo0ZuMwujZpcGfF1B3s6OLub8F/t/AoU
-	qgB9ljLtz+CUlQ0JfuB2lMwKhuBm1CBC+XbzFoUpA154wdgWfgqY87hRC6G0v6OTQHDsYf7cuyD
-	lOY00AUzrlrgoHGJf5TnZHGoPmkHySHN15IYokBEygeZnFT6W0fnaA=
-X-Google-Smtp-Source: AGHT+IFuW8hsbnPhok9NFkBE4GSNLWnfGNwEuWOJe5NvY0AGJzwDm00YwQeKFz6uXex+mAAN6s/h6g==
-X-Received: by 2002:a05:600c:138a:b0:431:52da:9d67 with SMTP id 5b1f17b1804b1-434d09b1831mr16625405e9.3.1733218747389;
-        Tue, 03 Dec 2024 01:39:07 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434b0f32589sm186562195e9.28.2024.12.03.01.39.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Dec 2024 01:39:06 -0800 (PST)
-Date: Tue, 3 Dec 2024 12:39:02 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Mateusz Polchlopek <mateusz.polchlopek@intel.com>
-Cc: Yevgeny Kliteynik <kliteyn@nvidia.com>,
-	Saeed Mahameed <saeedm@nvidia.com>,
-	Leon Romanovsky <leon@kernel.org>, Tariq Toukan <tariqt@nvidia.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Muhammad Sammar <muhammads@nvidia.com>, netdev@vger.kernel.org,
-	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH net] net/mlx5: DR, prevent potential error pointer
- dereference
-Message-ID: <bf47a26a-ec69-433b-9cf9-667f9bccbec1@stanley.mountain>
-References: <aadb7736-c497-43db-a93a-4461d1426de4@stanley.mountain>
- <ad93dd90-671b-4c0e-8a96-9dab239a5d07@intel.com>
+	s=arc-20240116; t=1733218779; c=relaxed/simple;
+	bh=OnRvcO9ff5GeDassvmP1g8WmIJjTqDGNnMD3/SIR0aM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Tyst08vOGnE91HoqF7nop6jcxUNrS/cP1mkSlYK6BAHzpZC1m+/qZVpCmXTRBEweFpngpUgPjiYh8NbJsMVRJO2ztWwCNKw1PzSBHF+Wz9T6x2uCIUXSuyB+8u2VXlSlX6k1C84V3k8LZ4cBELMP1Q9w1dBJGGnpDxotWA//+KI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=kKZ19qM6; arc=none smtp.client-ip=217.70.183.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 79C2BC0007;
+	Tue,  3 Dec 2024 09:39:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1733218774;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=v6zNT53T8ioxvldB3XPoiSk/CN07S+/FHZ5EB5jmDQo=;
+	b=kKZ19qM6wVfiFSOLJbEfceZEnoTZipZnYd5ErrkqxCG0c2zp/yF993MZr2OFZKVUpiM0q9
+	nr1RfMnpryAfh9nZ/DA4JmiNL/rDcowKiKxzx/cu4LZ1lPrf0PgKiEv57MuUXNPInLxYer
+	cmOoSccBYLoFlTvOpaE/4T0nLH1qNM+nR4w+UCHbCalB0Kf2DWulFjnhFnZdiyfWxK45r5
+	3648YkooaJMMlpXX9oSq+bxc9jTJU6h5AsTBGFDDaOsqdbbpKti9JlD3lBHbAdyc6J7PRE
+	YSa5cfqL5XMm4Fce1PYyZUB7DiH5FfHioX6cIB9wTemR0PrfkBAa75wlb36mNA==
+Date: Tue, 3 Dec 2024 10:39:32 +0100
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, Andy Shevchenko
+ <andriy.shevchenko@linux.intel.com>, Sakari Ailus
+ <sakari.ailus@linux.intel.com>, linux-i2c@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Wolfram Sang <wsa@kernel.org>, Mauro Carvalho
+ Chehab <mchehab@kernel.org>, Cosmin Tanislav <demonsingur@gmail.com>, Tomi
+ Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, Romain Gantois
+ <romain.gantois@bootlin.com>, Matti Vaittinen
+ <Matti.Vaittinen@fi.rohmeurope.com>
+Subject: Re: [PATCH v2 2/3] i2c: atr: Allow unmapped addresses from nested
+ ATRs
+Message-ID: <20241203103932.3cd412bc@booty>
+In-Reply-To: <9bae963f-037a-46e1-abf6-f2ec464c4cf8@ideasonboard.com>
+References: <20241122-i2c-atr-fixes-v2-0-0acd325b6916@ideasonboard.com>
+	<20241122-i2c-atr-fixes-v2-2-0acd325b6916@ideasonboard.com>
+	<20241126091610.05e2d7c7@booty>
+	<b954c7b7-1094-48f9-afd9-00e386cd2443@ideasonboard.com>
+	<20241127131931.19af84c2@booty>
+	<30732dbb-21e6-4075-84b1-544fc6e6abce@ideasonboard.com>
+	<20241129125340.0e2c57d9@booty>
+	<9bae963f-037a-46e1-abf6-f2ec464c4cf8@ideasonboard.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ad93dd90-671b-4c0e-8a96-9dab239a5d07@intel.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: luca.ceresoli@bootlin.com
 
-On Tue, Dec 03, 2024 at 10:32:13AM +0100, Mateusz Polchlopek wrote:
+Hello Tomi,
+
+On Fri, 29 Nov 2024 15:31:45 +0200
+Tomi Valkeinen <tomi.valkeinen@ideasonboard.com> wrote:
+
+> On 29/11/2024 13:53, Luca Ceresoli wrote:
 > 
+> >> So strictly speaking it's not an ATR, but this achieves the same.  
+> > 
+> > Thanks for the extensive and very useful explanation. I had completely
+> > missed the GMSL serder and their different I2C handling, apologies.
+> > 
+> > So, the "parent ATR" is the GMSL deser, which is not an ATR but
+> > implementing it using i2c-atr makes the implementation cleaner. That
+> > makes sense.  
 > 
-> On 11/30/2024 11:01 AM, Dan Carpenter wrote:
-> > The dr_domain_add_vport_cap() function genereally returns NULL on error
+> Right.
 > 
-> Typo. Should be "generally"
+> But, honestly, I can't make my mind if I like the use of ATR here or not =).
+
+Hehe, indeed, hardware designers use a lot of fantasy in stretching the
+I2C standard to its limits, perhaps more than actually needed.
+
+> So it's not an ATR, but I'm not quite sure what it is. It's not just 
+> that we need to change the addresses of the serializers, we need to do 
+> that in particular way, enabling one port at a time to do the change.
 > 
-
-Sure.
-
-> > but sometimes we want it to return ERR_PTR(-EBUSY) so the caller can
-> > retry.  The problem here is that "ret" can be either -EBUSY or -ENOMEM
+> If we forget about the init time hurdles, and consider the situation 
+> after the serializers are been set up and all ports have been enabled, 
+> we have:
 > 
-> Please remove unnecessary space.
+> There's the main i2c bus, on which we have the deserializer. The 
+> deserializer acts as a i2c repeater (for any transaction that's not 
+> directed to the deser), sending the messages to all serializers. The 
+> serializers catch transactions directed at the ser, and everything else 
+> goes through ATR and to the remote bus.
 > 
+> Do we have something that represents such a "i2c repeater"? I guess we 
+> could just have an i2c bus, created by the deser, and all the sers would 
+> be on that bus. So we'd somehow do the initial address change first, 
+> then set up the i2c bus, and the serializer i2c clients would be added 
+> to that bus.
 
-What are you talking about?
+So you think about another thing, like i2c-repeater, in addition to
+i2c-mux and i2c-atr?
 
-regards,
-dan carpenter
+Well, I think it would make sense, as it would generalize a feature
+that might be used by other chips. However at the moment we do have a
+working driver for the GMSL deser, and so I don't see the benefit of
+extracting the i2c-repeater functionality to a separate file, unless
+there are drivers for other chips being implemented: this would motivate
+extracting common features to a shared file. IOW, I'd not generalize
+something with a single user.
 
+[Interesting side note: the i2c-atr has been implemented with a single
+user, violating the above principle O:-) but I think that was due to the
+similarity with i2c-mux or something like that. Out of luck, another
+ATR user appeared after some time.]
 
+Luca
+
+-- 
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
