@@ -1,271 +1,158 @@
-Return-Path: <linux-kernel+bounces-428809-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428810-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97E5A9E13CA
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 08:16:05 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E9239E13D3
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 08:17:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5153A282479
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 07:16:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5D84AB2175D
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 07:17:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF95C188701;
-	Tue,  3 Dec 2024 07:15:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1D47189F57;
+	Tue,  3 Dec 2024 07:17:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="S/nw+k6y";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="S/nw+k6y"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B5qqApr9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D86A233080
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 07:15:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4908F2500A8;
+	Tue,  3 Dec 2024 07:17:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733210159; cv=none; b=U3w8y1OiAPmAVUKIPZuBgX0apQMA8mwUodrn7XZucTjpFlygTIF8bKN5hO6wokvdaHF/q6lQyNPcfV0Dii5PiD+cAkrg1VMTobBcIIZabT82rGMXT3vlM/8YPGxRvw0CBrpK4KefM3kh5+Y3Kj9bgKqhdHPf4HebaWj/3GvvXfY=
+	t=1733210238; cv=none; b=WG3Vqe/puAg7w5Th0jAbCt/rO7SJLtwpTUKdvZpedvLWgvYB0RrLj4w4EjKy3m+L8PJDrSGkcJyVCTXn+3ybUqGLsfnZxJNKMcWslkE3vSRAHeDeSU3w8NiIWLYY3zNrNv0KAu1lcgbZM0liUnEr2ZBHq/GbWZQnOKeFrkRai2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733210159; c=relaxed/simple;
-	bh=J10i5Rw9KdijJRZqFQefVKtIoprmQfGE6CbdBPqKixQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sQvg4f3cMJGZACwYueeQzDIshw3FE7NOrUXZMusgPLMof5JEJ2Zca6zkZAdOamAOZJGJB+2hXmJX95qH/5C704IXxCvMvRF2Q90iaZqP7T4moLvkemPdSGVsO4Avd1Tx9s7sZ8857IluF+FVyDD7uNCGLyn45YaD4bms0+PJTeI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=S/nw+k6y; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=S/nw+k6y; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id ED95D2116D;
-	Tue,  3 Dec 2024 07:15:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1733210155; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=YteXmpzJovraoUH7Bk6Fvs0Z1YQksr+1l5QkNJPajMU=;
-	b=S/nw+k6yAnLTqZGvI+KqLMq9SD/ydjeYjWSkKssGFQ5/wmKWcKZAc0hdpWkm5il70c5Wtr
-	oMTbYJC1dGwwa+hXGAppeD1nq5eMoWerYwtTzeInPPkovaKmiQia53Rj0Tl0ks8dbR5ABl
-	8Hrg+j0bW5/3hcrY8zfcspXZzGbEhp0=
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.com header.s=susede1 header.b="S/nw+k6y"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1733210155; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=YteXmpzJovraoUH7Bk6Fvs0Z1YQksr+1l5QkNJPajMU=;
-	b=S/nw+k6yAnLTqZGvI+KqLMq9SD/ydjeYjWSkKssGFQ5/wmKWcKZAc0hdpWkm5il70c5Wtr
-	oMTbYJC1dGwwa+hXGAppeD1nq5eMoWerYwtTzeInPPkovaKmiQia53Rj0Tl0ks8dbR5ABl
-	8Hrg+j0bW5/3hcrY8zfcspXZzGbEhp0=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6E6A8139C2;
-	Tue,  3 Dec 2024 07:15:54 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id abvvGCqwTmeVJwAAD6G6ig
-	(envelope-from <jgross@suse.com>); Tue, 03 Dec 2024 07:15:54 +0000
-From: Juergen Gross <jgross@suse.com>
-To: linux-kernel@vger.kernel.org,
-	x86@kernel.org,
-	virtualization@lists.linux.dev
-Cc: Juergen Gross <jgross@suse.com>,
-	Ajay Kaher <ajay.kaher@broadcom.com>,
-	Alexey Makhalov <alexey.amakhalov@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Fenghua Yu <fenghua.yu@intel.com>,
-	Reinette Chatre <reinette.chatre@intel.com>,
-	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-	xen-devel@lists.xenproject.org
-Subject: [PATCH] x86/paravirt: remove the wbinvd hook
-Date: Tue,  3 Dec 2024 08:15:50 +0100
-Message-ID: <20241203071550.26487-1-jgross@suse.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1733210238; c=relaxed/simple;
+	bh=oHoyC7GK2kz/nIjAQJxYXF9aa8lo5J4l0FqurxPxZEQ=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=DUoN9v/y5ocbgF7WU1tlqWgRjAwXE11Is3spHDs/gVwRwcbus9VSIF3l+23ntYMcKUP9qXPVDFe0wfxR39VfvVU6nJIg/PmjeZNg/s1YskbKg9hkqO9ROye45F0yjKCcy3fYRc2ZLRBIYW5MF8yfoyxW/bQZitGPxpAZFsEHnJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B5qqApr9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42CA3C4CECF;
+	Tue,  3 Dec 2024 07:17:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733210237;
+	bh=oHoyC7GK2kz/nIjAQJxYXF9aa8lo5J4l0FqurxPxZEQ=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=B5qqApr9HlCf1+hmDijd6BVI9RvJZryiJNpBpaAUzj6AaVi5CHoczEZ3sTxF+V8Tw
+	 v4Y5+hzP2JE0gmKTd6b5WFnvfkCwO5zKeoigYTd7t2gg9Uk4wb2D16clHZOiQU8bfv
+	 JJrtKsjzmIIe1/sxowJUSqLz2v9BtwhhpfGS1r2hMnt0V5qGMM5d8esELw3mdi6xrT
+	 KvYsMmAdELsXxejc3oresj6yiamBoOgGpNTmCMTJGhwKRSOIspjTtJwfF0BU0+cwa+
+	 wkottm8U/J+XWB8CxHcYcAxJRxR4yQoqnQNu9ZOr4ILSYJD6zFxEIabheKne84UO5N
+	 0e545FfaYJNfg==
+Message-ID: <990b0efe-0018-4910-910a-8d1431ea26d8@kernel.org>
+Date: Tue, 3 Dec 2024 08:17:13 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: ED95D2116D
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	R_MISSING_CHARSET(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.com:dkim,suse.com:mid];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[16];
-	MIME_TRACE(0.00)[0:+];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	TO_DN_SOME(0.00)[];
-	DKIM_TRACE(0.00)[suse.com:+]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -3.01
-X-Spam-Flag: NO
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] dt-bindings: pwm: add atcpit100-pwm
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Ben Zong-You Xie <ben717@andestech.com>
+Cc: linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, ukleinek@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org
+References: <20241202060147.1271264-1-ben717@andestech.com>
+ <20241202060147.1271264-2-ben717@andestech.com>
+ <qmbaftzr4ww35txfjvt6iao5g5jjikx5swgh6cdqbiu36dwo2y@74vnlk2a3ihn>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <qmbaftzr4ww35txfjvt6iao5g5jjikx5swgh6cdqbiu36dwo2y@74vnlk2a3ihn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The wbinvd paravirt hook is a leftover of lguest times. Today it is
-no longer needed, as all users use the native wbinvd implementation.
+On 02/12/2024 08:40, Krzysztof Kozlowski wrote:
+> On Mon, Dec 02, 2024 at 02:01:46PM +0800, Ben Zong-You Xie wrote:
+>> Document devicetree bindings for Andes atcpit100-pwm.
+>>
+>> Signed-off-by: Ben Zong-You Xie <ben717@andestech.com>
+>> ---
+>>  .../bindings/pwm/andestech,atcpit100-pwm.yaml | 51 +++++++++++++++++++
+>>  MAINTAINERS                                   |  5 ++
+>>  2 files changed, 56 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/pwm/andestech,atcpit100-pwm.yaml
+>>
+>> diff --git a/Documentation/devicetree/bindings/pwm/andestech,atcpit100-pwm.yaml b/Documentation/devicetree/bindings/pwm/andestech,atcpit100-pwm.yaml
+>> new file mode 100644
+>> index 000000000000..4b707f32ad72
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/pwm/andestech,atcpit100-pwm.yaml
+>> @@ -0,0 +1,51 @@
+>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/pwm/andestech,atcpit100-pwm.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Andes atcpit100 PWM
+>> +
+>> +maintainers:
+>> +  - Ben Zong-You Xie <ben717@andestech.com>
+>> +
+>> +allOf:
+>> +  - $ref: pwm.yaml#
+>> +
+>> +properties:
+>> +  compatible:
+>> +    const: andestech,atcpit100-pwm
+> 
+> 
+> Previously, before we removed it in 2022, this was just
+> andestech,atcpit100, so questions:
+> 
+> 1. Why are you re-introducing it? Please address all the comments or
+> aspects leading to removal.
+> 2. Why are you using different compatible? Is this one device?
 
-Remove the hook and rename native_wbinvd() to wbinvd().
+For some reason you replied while removing most of the people from
+address list. That's weird. Don't change the recipients list.
 
-Signed-off-by: Juergen Gross <jgross@suse.com>
----
- arch/x86/include/asm/paravirt.h           | 7 -------
- arch/x86/include/asm/paravirt_types.h     | 2 --
- arch/x86/include/asm/special_insns.h      | 8 +-------
- arch/x86/kernel/cpu/resctrl/pseudo_lock.c | 2 +-
- arch/x86/kernel/paravirt.c                | 6 ------
- arch/x86/kernel/process.c                 | 4 ++--
- arch/x86/xen/enlighten_pv.c               | 2 --
- 7 files changed, 4 insertions(+), 27 deletions(-)
-
-diff --git a/arch/x86/include/asm/paravirt.h b/arch/x86/include/asm/paravirt.h
-index d4eb9e1d61b8..041aff51eb50 100644
---- a/arch/x86/include/asm/paravirt.h
-+++ b/arch/x86/include/asm/paravirt.h
-@@ -180,13 +180,6 @@ static inline void halt(void)
- 	PVOP_VCALL0(irq.halt);
- }
- 
--extern noinstr void pv_native_wbinvd(void);
--
--static __always_inline void wbinvd(void)
--{
--	PVOP_ALT_VCALL0(cpu.wbinvd, "wbinvd", ALT_NOT_XEN);
--}
--
- static inline u64 paravirt_read_msr(unsigned msr)
- {
- 	return PVOP_CALL1(u64, cpu.read_msr, msr);
-diff --git a/arch/x86/include/asm/paravirt_types.h b/arch/x86/include/asm/paravirt_types.h
-index 8d4fbe1be489..fea56b04f436 100644
---- a/arch/x86/include/asm/paravirt_types.h
-+++ b/arch/x86/include/asm/paravirt_types.h
-@@ -86,8 +86,6 @@ struct pv_cpu_ops {
- 	void (*update_io_bitmap)(void);
- #endif
- 
--	void (*wbinvd)(void);
--
- 	/* cpuid emulation, mostly so that caps bits can be disabled */
- 	void (*cpuid)(unsigned int *eax, unsigned int *ebx,
- 		      unsigned int *ecx, unsigned int *edx);
-diff --git a/arch/x86/include/asm/special_insns.h b/arch/x86/include/asm/special_insns.h
-index aec6e2d3aa1d..fab7c8af27a4 100644
---- a/arch/x86/include/asm/special_insns.h
-+++ b/arch/x86/include/asm/special_insns.h
-@@ -115,7 +115,7 @@ static inline void wrpkru(u32 pkru)
- }
- #endif
- 
--static __always_inline void native_wbinvd(void)
-+static __always_inline void wbinvd(void)
- {
- 	asm volatile("wbinvd": : :"memory");
- }
-@@ -167,12 +167,6 @@ static inline void __write_cr4(unsigned long x)
- {
- 	native_write_cr4(x);
- }
--
--static __always_inline void wbinvd(void)
--{
--	native_wbinvd();
--}
--
- #endif /* CONFIG_PARAVIRT_XXL */
- 
- static __always_inline void clflush(volatile void *__p)
-diff --git a/arch/x86/kernel/cpu/resctrl/pseudo_lock.c b/arch/x86/kernel/cpu/resctrl/pseudo_lock.c
-index 972e6b6b0481..b72f7e91387e 100644
---- a/arch/x86/kernel/cpu/resctrl/pseudo_lock.c
-+++ b/arch/x86/kernel/cpu/resctrl/pseudo_lock.c
-@@ -459,7 +459,7 @@ static int pseudo_lock_fn(void *_rdtgrp)
- 	 * increase likelihood that allocated cache portion will be filled
- 	 * with associated memory.
- 	 */
--	native_wbinvd();
-+	wbinvd();
- 
- 	/*
- 	 * Always called with interrupts enabled. By disabling interrupts
-diff --git a/arch/x86/kernel/paravirt.c b/arch/x86/kernel/paravirt.c
-index fec381533555..927e33e6843a 100644
---- a/arch/x86/kernel/paravirt.c
-+++ b/arch/x86/kernel/paravirt.c
-@@ -116,11 +116,6 @@ static noinstr void pv_native_set_debugreg(int regno, unsigned long val)
- 	native_set_debugreg(regno, val);
- }
- 
--noinstr void pv_native_wbinvd(void)
--{
--	native_wbinvd();
--}
--
- static noinstr void pv_native_safe_halt(void)
- {
- 	native_safe_halt();
-@@ -148,7 +143,6 @@ struct paravirt_patch_template pv_ops = {
- 	.cpu.read_cr0		= native_read_cr0,
- 	.cpu.write_cr0		= native_write_cr0,
- 	.cpu.write_cr4		= native_write_cr4,
--	.cpu.wbinvd		= pv_native_wbinvd,
- 	.cpu.read_msr		= native_read_msr,
- 	.cpu.write_msr		= native_write_msr,
- 	.cpu.read_msr_safe	= native_read_msr_safe,
-diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
-index f63f8fd00a91..58ead05a1c29 100644
---- a/arch/x86/kernel/process.c
-+++ b/arch/x86/kernel/process.c
-@@ -825,7 +825,7 @@ void __noreturn stop_this_cpu(void *dummy)
- 	 * X86_FEATURE_SME due to cmdline options.
- 	 */
- 	if (c->extended_cpuid_level >= 0x8000001f && (cpuid_eax(0x8000001f) & BIT(0)))
--		native_wbinvd();
-+		wbinvd();
- 
- 	/*
- 	 * This brings a cache line back and dirties it, but
-@@ -846,7 +846,7 @@ void __noreturn stop_this_cpu(void *dummy)
- 		/*
- 		 * Use native_halt() so that memory contents don't change
- 		 * (stack usage and variables) after possibly issuing the
--		 * native_wbinvd() above.
-+		 * wbinvd() above.
- 		 */
- 		native_halt();
- 	}
-diff --git a/arch/x86/xen/enlighten_pv.c b/arch/x86/xen/enlighten_pv.c
-index d6818c6cafda..fd2169063480 100644
---- a/arch/x86/xen/enlighten_pv.c
-+++ b/arch/x86/xen/enlighten_pv.c
-@@ -1161,8 +1161,6 @@ static const typeof(pv_ops) xen_cpu_ops __initconst = {
- 
- 		.write_cr4 = xen_write_cr4,
- 
--		.wbinvd = pv_native_wbinvd,
--
- 		.read_msr = xen_read_msr,
- 		.write_msr = xen_write_msr,
- 
--- 
-2.43.0
-
+All my statements are still standing.
+Best regards,
+Krzysztof
 
