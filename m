@@ -1,169 +1,255 @@
-Return-Path: <linux-kernel+bounces-428848-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95F279E1427
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 08:30:00 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAD1B9E144F
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 08:34:01 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5764D2857D4
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 07:29:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2118B164C0A
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 07:33:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B40D1D517B;
-	Tue,  3 Dec 2024 07:25:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oKfUSdsB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95C4418FC90;
-	Tue,  3 Dec 2024 07:25:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAD0E18C03A;
+	Tue,  3 Dec 2024 07:32:40 +0000 (UTC)
+Received: from 189.cn (ptr.189.cn [183.61.185.104])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 053BD7E591;
+	Tue,  3 Dec 2024 07:32:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=183.61.185.104
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733210746; cv=none; b=LvCzCh7lVKue59ZM4RR5ANCsgozPkkVSOtizdN/cHrjlq/id/tMlBJlL+0tEVpvQLI8OUkBZQDPs3evAbSwS85WwqAyEBYehQina7LtCNNS8oyuuLgpyRc/11o2VhWnrrhAr637FtMO2DJG3GMoPIARu2tnReIa+ww6pX/7aIWY=
+	t=1733211160; cv=none; b=Vutldxihgg2aYJ4uEnxCtUg0d+TuZDIiSkYQsKM/LoV1KEO46LDhIO+uftz8S03P3z833rjakxuGskMnKXNNBVsqpWO56KjYbOgETghSJZc59jJuEXiEZ6IubpQLW/H+FMUte/ryiyVbekTe4t0Vk65NScX3fH3NRYS5gmyoHfo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733210746; c=relaxed/simple;
-	bh=Dowwf5vOCbH6Ot1zhsb+tcWHaPLxDB1jAvKz9HFlY4w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Wc3HNIjspQstTWYFHk+hE1bG3XkUu9gpcZwu32kRZ8UrqbgY+Apsd5FSDZOHdC/ZV70sMk6hnbuKHiBs8wtAa+nrGlA1N/yXXhfVzZ4SrxauF4W90pEVEZDTDRFAD5h3eqv8AShegf0MLPU4S+jt+xQVvCfPHnKQNxE157qo2cM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oKfUSdsB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA524C4CECF;
-	Tue,  3 Dec 2024 07:25:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733210746;
-	bh=Dowwf5vOCbH6Ot1zhsb+tcWHaPLxDB1jAvKz9HFlY4w=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=oKfUSdsBIJwlO6rUdfy6UFCBfTvSJmL/AhzIRHJQpr9YRCJp1kdT4SUuujrHGgfl+
-	 4tNS5JWFvcPNuLraiIuGAqPQOMkYfH624sC4A5fm/I5VC/23cpztI0Y3QGeKQ1hR4b
-	 rYYLPaRuquO6GPkNhWe4kDXn1PIYIcEj1sPzQ+YWL8eSFjA8D4wU8Q9pRlhZOtUo/B
-	 9F+GKEfpDP1zycQ2TiOnoLIhr+UNHw/7V6DYPsLpmGe50LfUQsNvCx1e4zxQWRM6Cp
-	 O1OfolnUfu5AwKFl6Le4czkOInYHXNVvI6cF8q5weXjcyyH/5J5iq89iedwUShzMRl
-	 A+d+MsMQR54AQ==
-Message-ID: <1b5ebd38-1f2c-42fe-b863-e93916252e8c@kernel.org>
-Date: Tue, 3 Dec 2024 08:25:37 +0100
+	s=arc-20240116; t=1733211160; c=relaxed/simple;
+	bh=+Xl3lu+VXqqmJBdNllhibQiFsvDx9x822+cm3lXnKpA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=eSwMnsltnL6zIXNcmWkAy/z9GjWzFuE0kzkwmwKKJaIclBmDIA/LumNhmyIoZnqMCP2Wn1TRygSvbG0c4DP/XMJlqljRGjCZ8H9LUzxRjYNL0Xoc0dYYSN0DpcSrF2glSR0r++vaCRz+aI4ujuN24u8cmCDM1iLpzqXp45dDB2A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=189.cn; spf=pass smtp.mailfrom=189.cn; arc=none smtp.client-ip=183.61.185.104
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=189.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=189.cn
+HMM_SOURCE_IP:10.158.243.220:9667.1260465660
+HMM_ATTACHE_NUM:0000
+HMM_SOURCE_TYPE:SMTP
+Received: from clientip-123.150.8.42 (unknown [10.158.243.220])
+	by 189.cn (HERMES) with SMTP id EF84A102915;
+	Tue,  3 Dec 2024 15:27:44 +0800 (CST)
+Received: from  ([123.150.8.42])
+	by gateway-153622-dep-5c5f88b874-f78lq with ESMTP id 4830e516074d44918743ff5d3f586373 for mchehab@kernel.org;
+	Tue, 03 Dec 2024 15:27:44 CST
+X-Transaction-ID: 4830e516074d44918743ff5d3f586373
+X-Real-From: chensong_2000@189.cn
+X-Receive-IP: 123.150.8.42
+X-MEDUSA-Status: 0
+Sender: chensong_2000@189.cn
+From: Song Chen <chensong_2000@189.cn>
+To: mchehab@kernel.org,
+	arnd@arndb.de,
+	hverkuil-cisco@xs4all.nl
+Cc: linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org,
+	Song Chen <chensong_2000@189.cn>
+Subject: [PATCH] drivers/media/pci/sta2x11: replace legacy GPIO APIs
+Date: Tue,  3 Dec 2024 15:27:42 +0800
+Message-Id: <20241203072742.191787-1-chensong_2000@189.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/5] ASoC: dt-bindings: Add bindings for wcd937x static
- channel mapping
-To: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
-Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
- Bard Liao <yung-chuan.liao@linux.intel.com>, Jaroslav Kysela
- <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
- Sanyog Kale <sanyog.r.kale@intel.com>, linux-arm-msm@vger.kernel.org,
- linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, quic_rohkumar@quicinc.com, kernel@quicinc.com
-References: <20241126164300.3305903-1-quic_mohs@quicinc.com>
- <20241126164300.3305903-2-quic_mohs@quicinc.com>
- <br4vo2iygjc6p5zezss6wccuakodthej4cut3cpw76ltxyxkpb@pjalqvpszxvo>
- <ab9d5e1c-ffb6-88df-80e6-243bfae8cf59@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <ab9d5e1c-ffb6-88df-80e6-243bfae8cf59@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 03/12/2024 05:52, Mohammad Rafi Shaik wrote:
-> On 11/27/2024 1:35 PM, Krzysztof Kozlowski wrote:
->> On Tue, Nov 26, 2024 at 10:12:56PM +0530, Mohammad Rafi Shaik wrote:
->>> Add wcd937x static channel mapping values to avoid
->>> having to use unclear number indices in device trees.
->>>
->>> Signed-off-by: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
->>> ---
->>>   include/dt-bindings/sound/qcom,wcd93xx.h | 13 +++++++++++++
->>>   1 file changed, 13 insertions(+)
->>>   create mode 100644 include/dt-bindings/sound/qcom,wcd93xx.h
->>>
->>> diff --git a/include/dt-bindings/sound/qcom,wcd93xx.h b/include/dt-bindings/sound/qcom,wcd93xx.h
->>> new file mode 100644
->>> index 000000000000..45bcc30d0393
->>> --- /dev/null
->>> +++ b/include/dt-bindings/sound/qcom,wcd93xx.h
->>
->> Filename matching compatible, always.
->>
->>> @@ -0,0 +1,13 @@
->>> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->>> + * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
->>> + */
->>> +
->>> +#ifndef __DT_SOUND_QCOM_WCD93xx_H
->>> +#define __DT_SOUND_QCOM_WCD93xx_H
->>> +
->>> +#define SWRM_CH1 1
->>> +#define SWRM_CH2 2
->>> +#define SWRM_CH3 4
->>> +#define SWRM_CH4 8
->>
->> Bindings define interface between driver and DTS. The values are
->> abstract, so alwys start from 0 or 1 and are incremented by 1, not by
->> power of 2. Also missing some sort of prefix, w.g. WCD9390_xxx
->>
->> Anyway, this does not look like binding.
->>
-> 
-> Ack,
-> 
-> Will add the Prefix WCD9370_SWRM_CH1,
+GPIO subsystem is moving toward a descriptor-based approach
+from global GPIO numberspace, but some of legacy GPIO APIs
+callings still remain in sta2x11.
 
+This patch mainly replaces gpio_request with gpiod_get_index
+and removes including gpio.h.
 
-No, this is not a binding, so drop. You skipped my entire reply
-explaining why this is not a binding.
+Signed-off-by: Song Chen <chensong_2000@189.cn>
+---
+ drivers/media/pci/sta2x11/sta2x11_vip.c | 84 ++++++++++++-------------
+ 1 file changed, 42 insertions(+), 42 deletions(-)
 
+diff --git a/drivers/media/pci/sta2x11/sta2x11_vip.c b/drivers/media/pci/sta2x11/sta2x11_vip.c
+index 364ce9e57018..03ad75899e09 100644
+--- a/drivers/media/pci/sta2x11/sta2x11_vip.c
++++ b/drivers/media/pci/sta2x11/sta2x11_vip.c
+@@ -19,7 +19,6 @@
+ #include <linux/interrupt.h>
+ #include <linux/io.h>
+ #include <linux/gpio/consumer.h>
+-#include <linux/gpio.h>
+ #include <linux/i2c.h>
+ #include <linux/delay.h>
+ #include <media/v4l2-common.h>
+@@ -139,6 +138,8 @@ struct sta2x11_vip {
+ 
+ 	void __iomem *iomem;	/* I/O Memory */
+ 	struct vip_config *config;
++	struct gpio_desc  *gpiod_pwr;
++	struct gpio_desc  *gpiod_reset;
+ };
+ 
+ static const unsigned int registers_to_save[AUX_COUNT] = {
+@@ -888,18 +889,16 @@ static int sta2x11_vip_init_controls(struct sta2x11_vip *vip)
+  * @name: GPIO pin name
+  *
+  */
+-static int vip_gpio_reserve(struct device *dev, int pin, int dir,
+-			    const char *name)
++static int vip_gpio_reserve(struct device *dev, struct gpio_desc **pgpiod,
++			int pin, int dir, const char *name)
+ {
+-	struct gpio_desc *desc = gpio_to_desc(pin);
++	struct gpio_desc *desc;
+ 	int ret = -ENODEV;
+ 
+-	if (!gpio_is_valid(pin))
+-		return ret;
+-
+-	ret = gpio_request(pin, name);
+-	if (ret) {
++	desc = gpiod_get_index(dev, name, pin, GPIOD_ASIS);
++	if (IS_ERR(desc)) {
+ 		dev_err(dev, "Failed to allocate pin %d (%s)\n", pin, name);
++		ret = PTR_ERR(desc);
+ 		return ret;
+ 	}
+ 
+@@ -907,18 +906,21 @@ static int vip_gpio_reserve(struct device *dev, int pin, int dir,
+ 	if (ret) {
+ 		dev_err(dev, "Failed to set direction for pin %d (%s)\n",
+ 			pin, name);
+-		gpio_free(pin);
+-		return ret;
++		goto err;
+ 	}
+ 
+ 	ret = gpiod_export(desc, false);
+ 	if (ret) {
+ 		dev_err(dev, "Failed to export pin %d (%s)\n", pin, name);
+-		gpio_free(pin);
+-		return ret;
++		goto err;
+ 	}
+ 
++	*pgpiod = desc;
+ 	return 0;
++
++err:
++	gpiod_put(desc);
++	return ret;
+ }
+ 
+ /**
+@@ -928,15 +930,12 @@ static int vip_gpio_reserve(struct device *dev, int pin, int dir,
+  * @name: GPIO pin name
+  *
+  */
+-static void vip_gpio_release(struct device *dev, int pin, const char *name)
++static void vip_gpio_release(struct device *dev, struct gpio_desc *desc,
++			int pin, const char *name)
+ {
+-	if (gpio_is_valid(pin)) {
+-		struct gpio_desc *desc = gpio_to_desc(pin);
+-
+-		dev_dbg(dev, "releasing pin %d (%s)\n",	pin, name);
+-		gpiod_unexport(desc);
+-		gpio_free(pin);
+-	}
++	dev_dbg(dev, "releasing pin %d (%s)\n",	pin, name);
++	gpiod_unexport(desc);
++	gpiod_put(desc);
+ }
+ 
+ /**
+@@ -964,6 +963,7 @@ static int sta2x11_vip_init_one(struct pci_dev *pdev,
+ 	int ret;
+ 	struct sta2x11_vip *vip;
+ 	struct vip_config *config;
++	struct gpio_desc  *gpiod_pwr, *gpiod_reset;
+ 
+ 	/* Check if hardware support 26-bit DMA */
+ 	if (dma_set_mask(&pdev->dev, DMA_BIT_MASK(26))) {
+@@ -984,30 +984,27 @@ static int sta2x11_vip_init_one(struct pci_dev *pdev,
+ 	}
+ 
+ 	/* Power configuration */
+-	ret = vip_gpio_reserve(&pdev->dev, config->pwr_pin, 0,
++	ret = vip_gpio_reserve(&pdev->dev, &gpiod_pwr, config->pwr_pin, 0,
+ 			       config->pwr_name);
+ 	if (ret)
+ 		goto disable;
+ 
+-	ret = vip_gpio_reserve(&pdev->dev, config->reset_pin, 0,
++	ret = vip_gpio_reserve(&pdev->dev, &gpiod_reset, config->reset_pin, 0,
+ 			       config->reset_name);
+-	if (ret) {
+-		vip_gpio_release(&pdev->dev, config->pwr_pin,
+-				 config->pwr_name);
+-		goto disable;
+-	}
++	if (ret)
++		goto release_gpio_pwr;
+ 
+-	if (gpio_is_valid(config->pwr_pin)) {
+-		/* Datasheet says 5ms between PWR and RST */
+-		usleep_range(5000, 25000);
+-		gpio_direction_output(config->pwr_pin, 1);
+-	}
++	/* Datasheet says 5ms between PWR and RST */
++	usleep_range(5000, 25000);
++	ret = gpiod_direction_output(gpiod_pwr, 1);
++	if (ret)
++		goto release_gpios;
++
++	usleep_range(5000, 25000);
++	ret = gpiod_direction_output(gpiod_reset, 1);
++	if (ret)
++		goto release_gpios;
+ 
+-	if (gpio_is_valid(config->reset_pin)) {
+-		/* Datasheet says 5ms between PWR and RST */
+-		usleep_range(5000, 25000);
+-		gpio_direction_output(config->reset_pin, 1);
+-	}
+ 	usleep_range(5000, 25000);
+ 
+ 	/* Allocate a new VIP instance */
+@@ -1020,6 +1017,8 @@ static int sta2x11_vip_init_one(struct pci_dev *pdev,
+ 	vip->std = V4L2_STD_PAL;
+ 	vip->format = formats_50[0];
+ 	vip->config = config;
++	vip->gpiod_reset = gpiod_reset;
++	vip->gpiod_pwr = gpiod_pwr;
+ 	mutex_init(&vip->v4l_lock);
+ 
+ 	ret = sta2x11_vip_init_controls(vip);
+@@ -1113,8 +1112,9 @@ static int sta2x11_vip_init_one(struct pci_dev *pdev,
+ free_mem:
+ 	kfree(vip);
+ release_gpios:
+-	vip_gpio_release(&pdev->dev, config->reset_pin, config->reset_name);
+-	vip_gpio_release(&pdev->dev, config->pwr_pin, config->pwr_name);
++	vip_gpio_release(&pdev->dev, gpiod_reset, config->reset_pin, config->reset_name);
++release_gpio_pwr:
++	vip_gpio_release(&pdev->dev, gpiod_pwr, config->pwr_pin, config->pwr_name);
+ disable:
+ 	/*
+ 	 * do not call pci_disable_device on sta2x11 because it break all
+@@ -1152,9 +1152,9 @@ static void sta2x11_vip_remove_one(struct pci_dev *pdev)
+ 
+ 	v4l2_device_unregister(&vip->v4l2_dev);
+ 
+-	vip_gpio_release(&pdev->dev, vip->config->pwr_pin,
++	vip_gpio_release(&pdev->dev, vip->gpiod_pwr, vip->config->pwr_pin,
+ 			 vip->config->pwr_name);
+-	vip_gpio_release(&pdev->dev, vip->config->reset_pin,
++	vip_gpio_release(&pdev->dev, vip->gpiod_reset, vip->config->reset_pin,
+ 			 vip->config->reset_name);
+ 
+ 	kfree(vip);
+-- 
+2.25.1
 
-Best regards,
-Krzysztof
 
