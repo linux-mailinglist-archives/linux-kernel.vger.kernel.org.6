@@ -1,118 +1,206 @@
-Return-Path: <linux-kernel+bounces-429695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429693-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E780A9E2031
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 15:55:29 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01C859E20CF
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:03:53 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3487D165CD4
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 14:55:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D063EB46F03
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 14:55:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B2D21F76B2;
-	Tue,  3 Dec 2024 14:54:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2226E1F75A2;
+	Tue,  3 Dec 2024 14:54:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WEszCSdy"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b="N3kiKX9i"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CFF01F758C
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 14:54:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43ED71F756C
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 14:54:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733237681; cv=none; b=CYz/DNcgJRf9d1J4sOKxHlv3FCckXWg6RtV1xb3T57LnJBI7VnvLn2hCUb6Rj1XVSLVVOfKsZFV/s4E5L2+hTFRM8nFgIpq/WxgW0gBANoQmY3jnt/a4ClhMp9xRDKU+RgC6QvQ4o0At6n+Ulv+oDDF271thF0oT3GePsD8YpsI=
+	t=1733237675; cv=none; b=gW++VprIp9O89nKv2skuOEgVF1X+dFOHL+hnis3pwyCS9UsECiZwfqrTB49OAlpiuULwEzuBnL3ljVPBSypm/A92CreXaNVNwoYzsVpd/OKKLrrjGufsSKjRr3yzx283ip+qRkyPReZ1OrA2V5FUzYBV299AV6i7MCUWcq9ZFMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733237681; c=relaxed/simple;
-	bh=1IAIN/8H5junEHBZ26iMTzfLpfhHD6gUNd1uIhVvdUw=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=l5ZAyrkaERGiWT1e0MzQ9lTCHIXhp9KNAoEIME0xTK5b87vYQGa1pjPMFkowIFC1iQKR/406yarJkKw4X/qUKCSBS36QJHq0eQoAcbvunWzLiuJwvJSp3Pev83mZHeKkCAZHwAl1n/L6j91zp78I+BHXAUZMid9iGFOm5Wj3inE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WEszCSdy; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-385e40aa2e6so206389f8f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 06:54:39 -0800 (PST)
+	s=arc-20240116; t=1733237675; c=relaxed/simple;
+	bh=UQjRB/iiGNlLdWFTbEyxRMpgOYyShYMtFGUSVio+OHE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Q4/1mc1qr/0CYep77LgFUf+Kw8GqHRFXC2HhOrE3Hd0CvDGQ8uNp3rWxCx0o0FWOR9xxCJZtqgrdxI7aUXQOwCdgcfDQAbfCjId0wwvxkkWG/6k+NttP1+5Gn8Hq1zi1eW0EwVSnz8adg4zMW/GWB67A3QwRjbWdN3yLHzFRd4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net; spf=pass smtp.mailfrom=openvpn.com; dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b=N3kiKX9i; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=openvpn.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-aa530a94c0eso907428766b.2
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 06:54:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733237678; x=1733842478; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KVQnKfNjMPfmMsvNdciOTib0L8uKRN+DbCQBwL/l93U=;
-        b=WEszCSdyb/quMaY/xM90z0vbReOThk7ymw8H2b8CXqyZytrnoncXrTaS3iyO4tfJp5
-         0oUmDVFKuNFpb0H02/3/Bx80fE2P4qXHZqSA+2Pngba7anNwWdV1W7kUHLKTMLv2eD8b
-         07nOQLsosDRp/fJACnPmjMQlzXoNWXrkamo6n4p1c8LpMlu5LqA737bB0vCP5zHQMVDX
-         G8BSLNa1HYfQWnFAcSI7SIClmMFOvcCBJ4UmyRBn/tHfek7LPaieaW80vCAu35YaTBrQ
-         gu2UGUp/mJJp9g3qNcABz34cZDLTxF/Qf/xDIA2LAJNk31fdy8VB5qCOYm0DtYALvJkd
-         21sQ==
+        d=openvpn.net; s=google; t=1733237671; x=1733842471; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=EPo5vhgAlRLo/paB/QgTHFTZuoAtooYyqQxA/gwq1FI=;
+        b=N3kiKX9iOcAqos+NlSoaSMburskWHliksCaoXpKKtC+/UhGYbCJEiiL/2mgdJD1J0h
+         c2Hen0/TxVrI2MRF5XBaPVpUjmbrDi/I6rlTVxZP0bGkOIz5hZl4EV6UTkQV3Qma6rIz
+         cIcTdKKUJQ6pY785J636lvJ9lZzZAtrado45DbzPFJmeAvwWHkBM2K2mOUQE7XhZXGAH
+         HPAuBnMT0o43lrl40SBw/n5fzm8SxPKqdUTRFtzmPMW0/ydCjHKE9RgC0jSs+splypC4
+         x2UwManCyTDEAsbTyz+riAxmvpHdVTH38hrc6FvXgLHD26EtvQEEWxgS5aCQPee0jcCc
+         izgw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733237678; x=1733842478;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KVQnKfNjMPfmMsvNdciOTib0L8uKRN+DbCQBwL/l93U=;
-        b=FibE6uTbTztqS7AOoqQ7iukvE0ZQ5e9mvm8jJ1za5mRPx1/NqKGYkcouVDzS1CftMJ
-         pzdci3rse3Yb51qDbUutSo8+hGg/siE3OUDMZQdaJolfoslfvD5fwVgFih9G7WLftPjA
-         qh46o07wHUT9CQceNFiS+KfjHekprHcGDZ93rXCgO5i4DSOgfmZplwjsq2z+NhY1rRxT
-         pPcrVjLLBKNxMmde9PAUWRSi1jTAxtJ/bOywKkz13qSMwN7p4RMSbjRW9uIe39xarH0P
-         iD96sSKJgfuTp1GpeaKXuolq3yEDJWkUEEvwdFQY9ltHsP9BukSRPoU3xTpr+M9+pRja
-         O5Kg==
-X-Forwarded-Encrypted: i=1; AJvYcCWjJDuMgHYykbh7SybnVjzkmyfqcYUHPztruYRpnx3s74vVSmIJQQv6JGNipUED7jkm3n4irC3390QOwD0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0tkxhK4TOVVqHRYAncugJ3OBYQ0tl3Dt8+vw0v/ZbqTOtwdIZ
-	9VvhWxwZnYo00B6DB3s7JZUiTagxgk+4c6CbWdHsZyocVix1ga8gwVSwcmeLb3I=
-X-Gm-Gg: ASbGncsfjw0zzYs6yzOrm0yWZtRFwH5ob31XoQjXsyN5Jr3LpxubpUzo7aKgE/rNYSh
-	cv7bktCrcOxoA3kHyGRULgW9y6HHc0hN49/AF9Jw47USayDskggUO11w9MYdn+eipBuce+xN/67
-	Yv9P6LVBg6S4FfTHLIjFqBzOZ0r6VhKcaVHVWR0XH5WeYkQM7Xb8uaWhsA40HlviMstwGxdft5q
-	l/S5gQbPVCOQKLZYjadPljnNk7Bus731hKgDGREhNXKvjBBznGGKKyhzymu2ug3
-X-Google-Smtp-Source: AGHT+IHjNqIwgyhBQxftpcXHAw9igzv0feJ/dyVPh3zNKBEM6I1JcxxoasxFhTbuCSeSbCfEViDLAQ==
-X-Received: by 2002:a5d:5988:0:b0:385:e374:bd4 with SMTP id ffacd0b85a97d-385fd3c76c5mr949206f8f.3.1733237677714;
-        Tue, 03 Dec 2024 06:54:37 -0800 (PST)
-Received: from [127.0.1.1] ([178.197.218.23])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434aa7e4df1sm223440855e9.39.2024.12.03.06.54.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Dec 2024 06:54:37 -0800 (PST)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Stefan Wahren <stefan.wahren@chargebyte.com>, 
- Stefan Wahren <wahrenst@gmx.net>, 
- =?utf-8?q?Kry=C5=A1tof_=C4=8Cern=C3=BD?= <cleverline1mc@gmail.com>
-Cc: Ben Gardner <bgardner@wabtec.com>, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>
-In-Reply-To: <20241129-ds2482-add-reg-v6-0-bd95ad171e19@gmail.com>
-References: <20241129-ds2482-add-reg-v6-0-bd95ad171e19@gmail.com>
-Subject: Re: [PATCH v6 0/4] Add support for attaching a regulator to w1:
- ds2482
-Message-Id: <173323767575.74728.10700048422477290412.b4-ty@linaro.org>
-Date: Tue, 03 Dec 2024 15:54:35 +0100
+        d=1e100.net; s=20230601; t=1733237671; x=1733842471;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EPo5vhgAlRLo/paB/QgTHFTZuoAtooYyqQxA/gwq1FI=;
+        b=PKFCNYLbK82mPkSiQpE8/gdtT3IP2dtJf6s/cgFMHpFo+2SxrqFeBDxS/cK9H+omws
+         8KWsdj1REyPKkX65w1N4i9+8eUWKREAFRzM/ao+Xvxju+GJ153LUtis1BSz2rioJJH+7
+         QByup4RUYr33K4UbmVjMAuu5vhM9Or2xCX0QEsHakE403fL/cOoP8b88qxcj40QpLfmA
+         vkkL9QaiE+UFisFqZtNiKPFmxxq1XeVb9cl0Tn1zO7HuPLkdzgV5+eufsEkHzqAKL0pf
+         CaMeLl809wtY+K0ayyjl9u025VXC0cGYFV4Wf53ShWEwteTEhpbrB5c36ozs0m8HRuIn
+         2kCA==
+X-Forwarded-Encrypted: i=1; AJvYcCWaceiq5Hu/GOcq5vV5P61HrCXgLn1gxanQ9cNmAqMkwIkrkcpU76Xfu6PA/F8bvEbc0FDVbfdQHF3yqZY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFlost4jlzeJ+QQJ56ofUPnFMaRhXFG7bA69cHOe8eMFrw8WQo
+	Zww37HWapm2JEqAAuMQAFt0uH/xYaWXr9GVKY7JZWG0KxSSGxts0yB6vuGivi5c=
+X-Gm-Gg: ASbGncvyjIX9gIPVUx8qArK+WpK7azfjAwlRjPQ+/6yAz5hcB9ogdmcDqNhHnUKWFqg
+	+PnPztxEZw+RCFg3jmp8Vs2isLzWXnA7JQmZzWAyXWYpmzVCUIQnoLdO6h0uKEEHC5Bj2StJTCd
+	Rk5+LzePo0I8ydhesHcLks/W0iO+dspiqB1y1tXSasJf91HDafM37LTcnOXr6b3SAEoDxJFz/Fi
+	Ns63xMIAJjiatMI8OgFLknaGTtK8pf3IqxYuEIdQ8tvxy9mT0BMjS3Gk3ByU+cKF8/uH+ENFf6C
+	UN9ies1JIBKp
+X-Google-Smtp-Source: AGHT+IFJGYTiaJyBkXpfaAcxdpCUi6aRICoEvqJpoe6f7aKKifkDK0+AYFyZ2Z56/DN0Nj7XpUN2gw==
+X-Received: by 2002:a17:906:1db2:b0:aa5:451c:ce21 with SMTP id a640c23a62f3a-aa5f7eccd3emr207126266b.40.1733237671630;
+        Tue, 03 Dec 2024 06:54:31 -0800 (PST)
+Received: from ?IPV6:2001:67c:2fbc:1:138c:c1e3:75bf:72b5? ([2001:67c:2fbc:1:138c:c1e3:75bf:72b5])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa599953c69sm625987866b.187.2024.12.03.06.54.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 03 Dec 2024 06:54:31 -0800 (PST)
+Message-ID: <9950a359-4a3c-4c7f-a915-e96d55571c40@openvpn.net>
+Date: Tue, 3 Dec 2024 15:55:10 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.14.2
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v12 07/22] ovpn: implement basic TX path (UDP)
+To: netdev@vger.kernel.org
+Cc: Simon Horman <horms@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Donald Hunter <donald.hunter@gmail.com>, Shuah Khan <shuah@kernel.org>,
+ sd@queasysnail.net, ryazanov.s.a@gmail.com, Andrew Lunn <andrew@lunn.ch>
+References: <20241202-b4-ovpn-v12-0-239ff733bf97@openvpn.net>
+ <20241202-b4-ovpn-v12-7-239ff733bf97@openvpn.net>
+Content-Language: en-US
+From: Antonio Quartulli <antonio@openvpn.net>
+Autocrypt: addr=antonio@openvpn.net; keydata=
+ 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
+Organization: OpenVPN Inc.
+In-Reply-To: <20241202-b4-ovpn-v12-7-239ff733bf97@openvpn.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+On 02/12/2024 16:07, Antonio Quartulli wrote:
+[...]
+> +/**
+> + * ovpn_udp_output - transmit skb using udp-tunnel
+> + * @peer: the destination peer
+> + * @cache: dst cache
+> + * @sk: the socket to send the packet over
+> + * @skb: the packet to send
+> + *
+> + * rcu_read_lock should be held on entry.
+> + * On return, the skb is consumed.
+> + *
+> + * Return: 0 on success or a negative error code otherwise
+> + */
+> +static int ovpn_udp_output(struct ovpn_peer *peer, struct dst_cache *cache,
+> +			   struct sock *sk, struct sk_buff *skb)
+> +{
+> +	struct ovpn_bind *bind;
+> +	int ret;
+> +
+> +	/* set sk to null if skb is already orphaned */
+> +	if (!skb->destructor)
+> +		skb->sk = NULL;
+> +
+> +	/* always permit openvpn-created packets to be (outside) fragmented */
+> +	skb->ignore_df = 1;
+> +
+> +	rcu_read_lock();
+> +	bind = rcu_dereference(peer->bind);
+> +	if (unlikely(!bind)) {
+> +		net_warn_ratelimited("%s: no bind for remote peer %u\n",
+> +				     netdev_name(peer->ovpn->dev), peer->id);
+> +		goto out;
 
-On Fri, 29 Nov 2024 14:25:52 +0100, Kryštof Černý wrote:
-> Kept the exit_w1_remove path as requested in the review.
-> 
-> 
+I just saw on patchwork that this goto leads to returning ret 
+uninitialized. It was reported by clang.
 
-Applied, thanks!
+> +	}
+> +
+> +	switch (bind->remote.in4.sin_family) {
+> +	case AF_INET:
+> +		ret = ovpn_udp4_output(peer, bind, cache, sk, skb);
+> +		break;
+> +#if IS_ENABLED(CONFIG_IPV6)
+> +	case AF_INET6:
+> +		ret = ovpn_udp6_output(peer, bind, cache, sk, skb);
+> +		break;
+> +#endif
+> +	default:
+> +		ret = -EAFNOSUPPORT;
+> +		break;
+> +	}
+> +
+> +out:
+> +	rcu_read_unlock();
+> +	return ret;
 
-[1/4] dt-bindings: w1: ds2482: Add vcc-supply property
-      https://git.kernel.org/krzk/linux-w1/c/be197d90def4282af7d1f7f1210ee1f9342a67d1
-[2/4] w1: ds2482: switch to devm_kzalloc() from kzalloc()
-      https://git.kernel.org/krzk/linux-w1/c/19c6d8bd88652936c43f5c53550d74563829a15e
-[3/4] w1: ds2482: Add regulator support
-      https://git.kernel.org/krzk/linux-w1/c/6e0bb206c6af6c8775b447b2fae9209f02f13143
-[4/4] w1: ds2482: Fix datasheet URL
-      https://git.kernel.org/krzk/linux-w1/c/5f69c091a6c0001ffade8bc00c1d33e1e224a2e7
+here.
 
-Best regards,
+Will fix this.
+
+Regards,
+
 -- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Antonio Quartulli
+OpenVPN Inc.
 
 
