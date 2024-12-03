@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-429797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E49129E2A5E
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 19:07:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E43AE9E2A47
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 19:05:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EE1B3BC1FFD
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 15:53:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 22482BE4322
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 15:58:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE50F1F76A2;
-	Tue,  3 Dec 2024 15:53:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CEED1F890E;
+	Tue,  3 Dec 2024 15:58:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dAhPwoe+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UjXlOj3k"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02F611AB6C9;
-	Tue,  3 Dec 2024 15:53:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61DD21F76AD;
+	Tue,  3 Dec 2024 15:58:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733241224; cv=none; b=LijjuBfoywHpvds8WYw1a/FIb9p+9M4HR+7xGz2rrKAezQ/QgJLtEbbrl2bBZO+NQH6HzKJlwHdE3IXnheuMI8nYb5b7N9b37ORI/Mvx6iyGjULNxwoQjrlgidAkUws8CjcLtCHZrgOOJaGt/Ydl21T7T0lqccMS5vGDZyJf4rc=
+	t=1733241523; cv=none; b=Mj9w6L4NnK5msbekpqVNRbe6kZ8I8mJUbz7mVCppDd/yD3Fwkx23DnfS+r/C0Kka+k6E7gYf8cUWrh3m22S4VLOM+ecF7egqsGx6vxae1LQj7Hw/eIHhJ1J0I0L484+gc0gSXVuWOWwMYRjW6Jepz3shfKAVrp6HTi0+rGBLEBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733241224; c=relaxed/simple;
-	bh=l8fINQy3Gnwqpw7GCZQguNQePxGrCID3r6VZRai5wPA=;
+	s=arc-20240116; t=1733241523; c=relaxed/simple;
+	bh=XIcKNOfiIWK3lnEygoZBuYhAOFl3mmPl+5JRrgpRj94=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YsFfn3EYipOltteru2n55O75/cuqTZ90/y3818y294TCePVJcSz0llweISB4rWur5DJX2YGSyYrg0zhpwUsz3Pr8/o3p0kKDlQtaP/FOq+Jsyz5LQspWsMsTsBdzsfu6fZulY5RwVyuX744eZX9EMnvs3vK99d8Kft32DIKMy3w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dAhPwoe+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43375C4CECF;
-	Tue,  3 Dec 2024 15:53:34 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=DCM72O9Q902CBgrvxc16U2TQ7Th03arIxEQeBqaKOqUK2aqANi/lxDfm7K1P7DPrDxC0kHj8aIAgLyho7Nyvzccniny46vBGYZsrCIBF4zutacb0MqF30O1oLW0lL6TGIDsRBD03c4jpcg1j+J+xdkagHheoAMac7dtIYe08EtE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UjXlOj3k; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 060DBC4CED6;
+	Tue,  3 Dec 2024 15:58:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733241223;
-	bh=l8fINQy3Gnwqpw7GCZQguNQePxGrCID3r6VZRai5wPA=;
+	s=k20201202; t=1733241523;
+	bh=XIcKNOfiIWK3lnEygoZBuYhAOFl3mmPl+5JRrgpRj94=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=dAhPwoe+HQY613tN3sOKEVsCBcvdIvGyf+9kItT0385GyVBP3ex7VSH+pDyf1A/1K
-	 cuwpvqlutvh9SKF4HLjQgFQhwLO9naKi4Vwl/qEZOxF2MEjxJQ3PCPUf7F81DFt4lc
-	 1Fg368XLD61lq8z0A8eoU3RZYrq7BCr3xuueC3zeXONA6yBdsuXUxvclNOjuNXP8JJ
-	 WcF/GQ/hnP+GRTR7dC+XB0QjUy0O+ZNeGIrqcYD3TYxGFsREA/eGi0Wnq0Hi1H6lNW
-	 CYLDpGpj6AKaOhptCPC6I1+gOPvqivuO4XimCGfnljaUjSwATcnuJos84yOOiq1oaR
-	 FhJm98p57Dyzg==
-Message-ID: <077f04d4-0419-4017-86e4-d518bd312e93@kernel.org>
-Date: Tue, 3 Dec 2024 16:53:32 +0100
+	b=UjXlOj3kmx95EVRr6poZcNT35j3F6GnAt6ahYy9BVBeUuYWKIvGzCuz7ebjkOgjmP
+	 xhYMZnp21cLCHWLwUHAuLe4U5s3st7DyUl09sBm6Qd/4wALJOxgSR2LT1qFzdDL0Yx
+	 thaq31UVv2cGr8+5T+qbgaEmzsIUWu6ezVpaiv8eeZNAarY6i6i1aV60dW+sebRNEx
+	 tLdigGZr/dFckxNmvsbvSypkg1zndloin8aQ+uQp6q669zsZK6xCg9BNi6sYFVD59Z
+	 8OvMYNh5Otd1dk+wmLLxt6Ufkdji5ziDHv75+ItCZxAzNwqUbXXeTnDg5pAOlAiDzh
+	 K9XY5KWJ/Xt0w==
+Message-ID: <62fa5594-6245-4dff-a1f0-99f2702f5826@kernel.org>
+Date: Tue, 3 Dec 2024 16:58:24 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,8 +49,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v1 14/14] riscv: dts: Add GPU node to TH1520 device
- tree
+Subject: Re: [RFC PATCH v1 07/14] soc: thead: power-domain: Add skeleton
+ power-domain driver for TH1520
 To: Michal Wilczynski <m.wilczynski@samsung.com>, mturquette@baylibre.com,
  sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
  drew@pdp7.com, guoren@kernel.org, wefu@redhat.com, jassisinghbrar@gmail.com,
@@ -63,8 +63,8 @@ Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
  linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
  dri-devel@lists.freedesktop.org, linux-pm@vger.kernel.org
 References: <20241203134137.2114847-1-m.wilczynski@samsung.com>
- <CGME20241203134207eucas1p29a2d095c527858729ae706d2a9027a5c@eucas1p2.samsung.com>
- <20241203134137.2114847-15-m.wilczynski@samsung.com>
+ <CGME20241203134158eucas1p1fae346180c0166570ea7e7723076225c@eucas1p1.samsung.com>
+ <20241203134137.2114847-8-m.wilczynski@samsung.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -110,50 +110,184 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20241203134137.2114847-15-m.wilczynski@samsung.com>
+In-Reply-To: <20241203134137.2114847-8-m.wilczynski@samsung.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 03/12/2024 14:41, Michal Wilczynski wrote:
-> Add a device tree node for the IMG BXM-4-64 GPU present in the T-HEAD
-> TH1520 SoC used by the Lichee Pi 4A board. This node enables support for
-> the GPU using the drm/imagination driver.
+> The T-Head TH1520 SoC contains multiple power islands that can be
+> programmatically turned on and off using the AON (Always-On) protocol
+> and a hardware mailbox [1]. The relevant mailbox driver has already been
+> merged into the mainline kernel in commit 5d4d263e1c6b ("mailbox:
+> Introduce support for T-head TH1520 Mailbox driver"); however, the AON
+> implementation is still under development.
 > 
-> By adding this node, the kernel can recognize and initialize the GPU,
-> providing graphics acceleration capabilities on the Lichee Pi 4A and
-> other boards based on the TH1520 SoC.
+> This commit introduces a skeleton power-domain driver for the TH1520
+> SoC, designed to be easily extended to work with the AON protocol in the
+> future.  Currently, it only supports the GPU. Since there is no
+> mechanism yet to turn the GPU power island on, the driver will only set
+> the relevant registers to bring the GPU out of the reset state.  This
+> should be done after the power-up sequence requested through the mailbox
+> is completed.
 > 
-> This commit is following convention introduced here [1].
-> 
-> Link: https://lore.kernel.org/all/20241118-sets-bxs-4-64-patch-v1-v2-1-3fd45d9fb0cf@imgtec.com/ [1]
+> Link: https://openbeagle.org/beaglev-ahead/beaglev-ahead/-/blob/main/docs/TH1520%20System%20User%20Manual.pdf [1]
 > 
 > Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
 > ---
->  arch/riscv/boot/dts/thead/th1520.dtsi | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
-> 
-> diff --git a/arch/riscv/boot/dts/thead/th1520.dtsi b/arch/riscv/boot/dts/thead/th1520.dtsi
-> index 58f93ad3eb6e..5023c0c29168 100644
-> --- a/arch/riscv/boot/dts/thead/th1520.dtsi
-> +++ b/arch/riscv/boot/dts/thead/th1520.dtsi
-> @@ -500,6 +500,18 @@ clk: clock-controller@ffef010000 {
->  			#clock-cells = <1>;
->  		};
->  
-> +		gpu: gpu@ffef400000 {
-> +			compatible = "img,img-bxm-4-64", "img,img-rogue";
-> +			reg = <0xff 0xef400000 0x0 0x100000>;
-> +			interrupt-parent = <&plic>;
-> +			interrupts = <102 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks = <&vosys_clk CLK_GPU_CORE>,
-> +				 <&vosys_clk CLK_GPU_CFG_ACLK>;
-> +			clock-names = "core", "sys";
-> +			power-domains = <&pd TH1520_AON_GPU_PD>;
-> +			status = "okay";
+>  MAINTAINERS                                   |   2 +
+>  drivers/pmdomain/Kconfig                      |   1 +
+>  drivers/pmdomain/Makefile                     |   1 +
+>  drivers/pmdomain/thead/Kconfig                |  12 ++
+>  drivers/pmdomain/thead/Makefile               |   2 +
+>  drivers/pmdomain/thead/th1520-pm-domains.c    | 195 ++++++++++++++++++
+>  .../dt-bindings/power/thead,th1520-power.h    |  19 ++
+>  7 files changed, 232 insertions(+)
 
-Open existing DTSI and look how it is done. There is no single line like
-'status = okay', so please do not introduce some entirely different
-coding style.
+
+Please run scripts/checkpatch.pl and fix reported warnings. Then please
+run `scripts/checkpatch.pl --strict` and (probably) fix more warnings.
+
+
+>  create mode 100644 drivers/pmdomain/thead/Kconfig
+>  create mode 100644 drivers/pmdomain/thead/Makefile
+>  create mode 100644 drivers/pmdomain/thead/th1520-pm-domains.c
+>  create mode 100644 include/dt-bindings/power/thead,th1520-power.h
+> 
+
+
+...
+
+> +
+> +static int th1520_pd_power_off(struct generic_pm_domain *domain)
+> +{
+> +	struct th1520_power_domain *pd = to_th1520_power_domain(domain);
+> +
+> +	/* The missing component here is the call to E902 core through the
+
+Use Linux coding style comments (see coding style). This applies to
+multiple places in your code.
+
+> +	 * AON protocol using hardware mailbox.
+> +	 */
+> +
+> +	/* Put the GPU into reset state after powering it off */
+> +	th1520_rst_gpu_disable(pd->reg);
+> +
+> +	return 0;
+> +}
+> +
+> +static struct generic_pm_domain *th1520_pd_xlate(const struct of_phandle_args *spec,
+> +						 void *data)
+> +{
+> +	struct generic_pm_domain *domain = ERR_PTR(-ENOENT);
+> +	struct genpd_onecell_data *pd_data = data;
+> +	unsigned int i;
+> +
+> +	for (i = 0; i < ARRAY_SIZE(th1520_pd_ranges); i++) {
+> +		struct th1520_power_domain *pd;
+> +
+> +		pd = to_th1520_power_domain(pd_data->domains[i]);
+> +		if (pd->rsrc == spec->args[0]) {
+> +			domain = &pd->genpd;
+> +			break;
+> +		}
+> +	}
+> +
+> +	return domain;
+> +}
+> +
+> +static struct th1520_power_domain *
+> +th1520_add_pm_domain(struct device *dev, const struct th1520_power_info *pi)
+> +{
+> +	struct th1520_power_domain *pd;
+> +	int ret;
+> +
+> +	pd = devm_kzalloc(dev, sizeof(*pd), GFP_KERNEL);
+> +	if (!pd)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	pd->rsrc = pi->rsrc;
+> +	pd->genpd.power_on = th1520_pd_power_on;
+> +	pd->genpd.power_off = th1520_pd_power_off;
+> +	pd->genpd.name = pi->name;
+> +
+> +	ret = pm_genpd_init(&pd->genpd, NULL, true);
+> +	if (ret) {
+> +		devm_kfree(dev, pd);
+
+You should rather fail the probe. Failures of power domains are important.
+
+> +		return ERR_PTR(ret);
+> +	}
+> +
+> +	return pd;
+> +}
+> +
+> +static int th1520_pd_probe(struct platform_device *pdev)
+> +{
+> +	struct generic_pm_domain **domains;
+> +	struct genpd_onecell_data *pd_data;
+> +	struct device *dev = &pdev->dev;
+> +	struct device_node *np = dev->of_node;
+> +	struct regmap *reg;
+> +	int i;
+> +
+> +	reg = syscon_regmap_lookup_by_phandle(np, "thead,vosys-regmap");
+> +	if (IS_ERR(reg))
+> +		return PTR_ERR(reg);
+> +
+> +	domains = devm_kcalloc(dev, ARRAY_SIZE(th1520_pd_ranges),
+> +			       sizeof(*domains), GFP_KERNEL);
+> +	if (!domains)
+> +		return -ENOMEM;
+> +
+> +	pd_data = devm_kzalloc(dev, sizeof(*pd_data), GFP_KERNEL);
+> +	if (!pd_data)
+> +		return -ENOMEM;
+> +
+> +	for (i = 0; i < ARRAY_SIZE(th1520_pd_ranges); i++) {
+> +		struct th1520_power_domain *pd;
+> +
+> +		pd = th1520_add_pm_domain(dev, &th1520_pd_ranges[i]);
+> +		if (IS_ERR_OR_NULL(pd))
+> +			continue;
+> +
+> +		pd->reg = reg;
+> +		domains[i] = &pd->genpd;
+> +		dev_dbg(dev, "added power domain %s\n", pd->genpd.name);
+> +	}
+> +
+> +	pd_data->domains = domains;
+> +	pd_data->num_domains = ARRAY_SIZE(th1520_pd_ranges);
+> +	pd_data->xlate = th1520_pd_xlate;
+> +
+> +	return of_genpd_add_provider_onecell(dev->of_node, pd_data);
+> +}
+> +
+> +static const struct of_device_id th1520_pd_match[] = {
+> +	{ .compatible = "thead,th1520-pd",},
+> +	{ /* sentinel */ }
+> +};
+> +
+
+
+Make the driver tristate and module. There is nothing here which
+prevents it being a module.
+
+
+> +builtin_platform_driver(th1520_pd_driver);
+> diff --git a/include/dt-bindings/power/thead,th1520-power.h b/include/dt-bindings/power/thead,th1520-power.h
+> new file mode 100644
+> index 000000000000..30fb4e9892e7
+> --- /dev/null
+> +++ b/include/dt-bindings/power/thead,th1520-power.h
+> @@ -0,0 +1,19 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+
+
+Wrong license. See checkpatch.
+
+
 
 Best regards,
 Krzysztof
