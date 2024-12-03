@@ -1,181 +1,142 @@
-Return-Path: <linux-kernel+bounces-429575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1EE39E1EE9
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 15:20:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93C779E1DD6
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 14:42:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D868AB44E30
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 13:45:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A0A02829ED
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 13:42:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB8A81F76CF;
-	Tue,  3 Dec 2024 13:42:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2EC61F12F8;
+	Tue,  3 Dec 2024 13:41:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="LzKmSEpZ"
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eBra507H"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1610A1F707D
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 13:42:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB71E1DF96C
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 13:41:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733233333; cv=none; b=dnf23/Be6vDlhxoK0g/+zGvpFz88NmW9u/tUBNtMzPrgFZuyobI1uerJWJd34pnfOfITPHEu7qxmIHwytdhm2L4TRmECSK8mqxlSrllPMQ9D9VBAkdNyJ+Vd79MvctFKgI/8AsHe6rhijCw2qR7qFlK+mo7XaDVoBCMc5EQ23O4=
+	t=1733233317; cv=none; b=ReTMCSdnyft/qTwyasJnyUFV4+J2R1Vxu/i2J9kBuTcgdzGGcBWlBwNGCGGr03BmXq+Vb5+Uo7liatMJaBKoqmCc0qSOHCvFP65ZSCgS4QxIHi+hlkYkQZ51v43wqplvAOdY6OenttVB7fa7SMo3k0PqqLSXVXzKIwvBOE+w7PY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733233333; c=relaxed/simple;
-	bh=Q09K24s6mZGeMftMhbsRCZSwqpl712NwsEN3b5mMKQs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=kzyM3mZXPn5vyhT41wQQTJ9FHCc4OoC0z/RK1MqZqgeLq3XxvL9Gwz63bBbU03f3MjFATy97eMfAtDWUMP5i5mqdu8CjyZP5HmCiRJM1V5kiPCLFI3ojW9EKR3hs4PiLXqnJZrBlfHhshzKdrjVO3jzNhWt7EK5sKqjEObL+Hqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=LzKmSEpZ; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20241203134208euoutp02f6d3b3f451a17fb8d37341de799a1451~NrodvF_pl0144901449euoutp02Y
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 13:42:08 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20241203134208euoutp02f6d3b3f451a17fb8d37341de799a1451~NrodvF_pl0144901449euoutp02Y
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1733233328;
-	bh=asLRQbzZayMb9yjHqxeg3uy1MkPJO2HP86mTn2EInqs=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=LzKmSEpZlf1ut93GLgZgZkL5DvwA9/s4Z4tXQvpfizc1ptHHgyzvlvncYlfq23/kH
-	 koSmiIRIpYqjRAwjaBCHioczuiP5BFvOXVnOeS6DKnKMjxEEZZQlXAbLP71fAOB5w5
-	 2dIsgkMX7v142vE668YZEtP1iuEE35338SBxkwes=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-	20241203134207eucas1p2192873d281269b06d9a62beceeba8f3d~NrodRG3hq2525825258eucas1p2T;
-	Tue,  3 Dec 2024 13:42:07 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-	eusmges3new.samsung.com (EUCPMTA) with SMTP id EA.61.20397.FAA0F476; Tue,  3
-	Dec 2024 13:42:07 +0000 (GMT)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20241203134207eucas1p29a2d095c527858729ae706d2a9027a5c~NrocvXTNQ0681706817eucas1p27;
-	Tue,  3 Dec 2024 13:42:07 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20241203134207eusmtrp1bbfbc45095ec0d11460c41a654f8dea7~NrocuVBR50888908889eusmtrp1h;
-	Tue,  3 Dec 2024 13:42:07 +0000 (GMT)
-X-AuditID: cbfec7f5-e59c770000004fad-5e-674f0aaf06f9
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-	eusmgms2.samsung.com (EUCPMTA) with SMTP id FA.07.19654.FAA0F476; Tue,  3
-	Dec 2024 13:42:07 +0000 (GMT)
-Received: from AMDC4942.home (unknown [106.210.136.40]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20241203134205eusmtip25691c9bf5366d4112ecb39c2227629f5~Nrobfx7Vv3160631606eusmtip2L;
-	Tue,  3 Dec 2024 13:42:05 +0000 (GMT)
-From: Michal Wilczynski <m.wilczynski@samsung.com>
-To: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, drew@pdp7.com, guoren@kernel.org,
-	wefu@redhat.com, jassisinghbrar@gmail.com, paul.walmsley@sifive.com,
-	palmer@dabbelt.com, aou@eecs.berkeley.edu, frank.binns@imgtec.com,
-	matt.coster@imgtec.com, maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
-	ulf.hansson@linaro.org, jszhang@kernel.org, m.szyprowski@samsung.com
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-	dri-devel@lists.freedesktop.org, linux-pm@vger.kernel.org, Michal Wilczynski
-	<m.wilczynski@samsung.com>
-Subject: [RFC PATCH v1 14/14] riscv: dts: Add GPU node to TH1520 device tree
-Date: Tue,  3 Dec 2024 14:41:37 +0100
-Message-Id: <20241203134137.2114847-15-m.wilczynski@samsung.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241203134137.2114847-1-m.wilczynski@samsung.com>
+	s=arc-20240116; t=1733233317; c=relaxed/simple;
+	bh=DqfltT7T9BezPLgtZyLHK/lyVoHlR7r77Ivrvg4Dg2s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JgXx65FGHdQSfa6g6/cD2UwoQX/z0xtyfi80P0DnvOAwEUem4FKGg4v8sJT4M3WBcruF+n5oH2v59MHCUUyv8GlJsvIhnwINrwaWKd4Ob8sy3MDuqPFhhCKYlPw/niFxoMfe72TL0JdnNTbBLM1AgxH1W9HZvErtia15KsjFwx4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eBra507H; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2ffc7a2c5d5so58049641fa.1
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 05:41:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733233312; x=1733838112; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=b9EQvBAb2SX0qrGU/ZgIliBiKbnHvi2rA/qAWxRRbY0=;
+        b=eBra507H+jqog4Lr0wPhtilGP+q3t97Y+wM5N+XMDPucSk2F4wIUx94Zd/n4NykM3N
+         umAKdQyaZelp2YwsWvXFwnShFTUZxTkyik//einNrO/uoXE+Vbo25SWW52I3Z8H05R2J
+         j1bztD9CrrSfX+iKEE77vZNlj0AfDMesEBqbAqxenH5Jz3HEa/smpNl+tAQEIPnziKNR
+         k5qwtWt909L3UGyBBCREqjjFC4ERtfnYv7zR3zO4fY+83p5CIIE/J1qY/DMuvcmbtGJ4
+         cuHURRjzx9YkvKMyiGE8q7XdWur9YnZcYYYf78ih107JTpYFu3c0trQrRPLFThRlUBPZ
+         7png==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733233312; x=1733838112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=b9EQvBAb2SX0qrGU/ZgIliBiKbnHvi2rA/qAWxRRbY0=;
+        b=mnQu+XqWJITeQheUtue1D/t+RNLrK8QcrVgz1EQWiTYKFQeoRZXL41yiGRS+kKlZeN
+         6dLTkRcHoT5GrIjEhZWDVc8FiDVS2lXWPIDI6OL87HrliOjjtYf/nlcvp7QlSbhyLnBi
+         ugcX0rjwm2AJnkeLYDl+6KCNuZ4eoyZe5HQWbg80cpVIrkdxor/nJr0mWDQC1U6+tmZI
+         mxQZEWd46XzG4cbMJ/NOA+exLCvt/W5ShCD3SCESDZVTU3cJCp3b9TMbpkmdsY3jOz8d
+         E2IKUwMEiAWLtnMGSP7/C+HFnzZEs1sYlO4tBwF7w9GZ56wwHt2kAArTywAfvq9YWJV6
+         HJKg==
+X-Forwarded-Encrypted: i=1; AJvYcCUgSjoN18PAPfeCpZvuPmgpxVX/UTxK6MNwA2GzkZeXcyPCF5vc6T8Xs2jP73tiIym0doKVkzaskWkJxv8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+mrO1YsH1TZXqNf8V5WEx/Yp6naUTrzpzHWtQQVTM93gP39fx
+	+F0kiUImmfidiuezyii51DFXP9mX/KNcjkQ1pIp5vfJHEfKkWBaK0sqgMVmoXMQ=
+X-Gm-Gg: ASbGncuybU5VTI6bkED/1/izV3gG2u79X5f6OeZh3wL0z5+LS2kfCePmiox+UB8oErK
+	PAnhHX2nyBHgKESxZxUXUOCp03gYf4l1EoQiCgHoFTBj/uNTcyiUk9Wspkv7afGkrUNS6stsncJ
+	mD2J9MKgsF2o0Wj1MlwL1rTUZ03T407u3m2d6fl4G/EX9++v9CgQ9emgufHjs5e8KO8cyYRoFJF
+	tqaKdoXz6SMP1AfCMc+KYA3ZDDl50UhZJXvmUK5jYssItRncNIlZ+jj5DIm6RGq7J6WS4MKOaCb
+	vcZ8bBCuuxb2ETxxyMxsLDv+hx0Abg==
+X-Google-Smtp-Source: AGHT+IHpMzPr6Lls4GRyBuCcJBMUBsc/X9uSkqqmTyZzvhlEVvAz5e+LXYqBKqUPPK3QZnPGFneqVQ==
+X-Received: by 2002:a2e:a99f:0:b0:2ff:d49f:dd4a with SMTP id 38308e7fff4ca-30014e2437fmr870081fa.21.1733233311908;
+        Tue, 03 Dec 2024 05:41:51 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ffdfc75236sm16038451fa.86.2024.12.03.05.41.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Dec 2024 05:41:50 -0800 (PST)
+Date: Tue, 3 Dec 2024 15:41:48 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+	Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Kuogee Hsieh <quic_khsieh@quicinc.com>, 
+	Mahadevan <quic_mahap@quicinc.com>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	freedreno@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/4] dt-bindings: display: msm: dp-controller: document
+ clock parents better
+Message-ID: <gpqrugcsyhz32bvip5mgjtcservhral2o5b6c5nz4ocwbjw5uo@eypv4x6jyrdr>
+References: <20241202-dp_mst_bindings-v1-0-9a9a43b0624a@quicinc.com>
+ <20241202-dp_mst_bindings-v1-2-9a9a43b0624a@quicinc.com>
+ <bfa857c2-cd74-4fe2-a88c-3b35a58710b0@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Sf1CTdRzH7/s8z55nWzd6GJjfdMRBJ3cSoQjFlzSlu8qn1My6wyv/sBFP
-	g+KHt4ml0AXxQwdT1MXQgfLzxkLmANnip+C2YyoG6nQCAZFJBix2gOwuMojxWPnf6/t+vz/3
-	+XFfPi5uJNfwk1IPsvJUaXIwKSTMPX/2v2wU7pZttLrC0NV7VRgy/aWlUH1nH4bKbX08NHq7
-	GUN35t0kujh+k0K/d2YTyKk/R6GcHiOJJrSjJJpRjfKQo62MRHPHbQCZ53JJZLCNUMg4X46h
-	yhkTgWpa2gDKV+p46Nb1t9CEQ4WjfO2zaKmjhUKLzkYClU53UajZdYqH7Ia9KLfrOyI2gHEP
-	5FGMa2KCYKzHHlFMp6eCYFq1IxSjar0BmKY6JckMOztI5vy1PczPhXaMuVTzDZNr6MEY9+W7
-	JHOiuQ4wt3PuUcyl3oz3fT8Wbklgk5MOsfINWz8RJi643MSBxWe+0tU/BllgXlAABHxIR8Gs
-	kiZQAIR8Ma0H8IZRQ3kNMf0IwG9toZwxB+BpXf6ywV+psDiiOb0WwJs9lST3cAHYPraEeatJ
-	ehMcqy3neQ1/egqHA/ODKymcfgig+UEZ6U350TthSdEQ8DJBr4PnbIsrLKJj4W/TwzxuwEDY
-	deVH3MuCZX2quIDHZXzhtbMPCC/jy5kcUynubQDp74Uwz9aAc8VvQtP9LMCxH5y0N1McS2Cv
-	WkVwnAbHTLNP8pmwVWV/wpvhcN8C6d0Zp9dDY9sGTn4DapU5PO4UPnDgD19uBB942lyCc7II
-	HssXc+kQWKw6/l/TPr0Z45iBP3kawEkQpH1qGe1Ty2j/71sB8Dqwmk1XpMhYRWQq+2W4Qpqi
-	SE+VhX+altIEln9176J9vgXoJ2fCLQDjAwuAfDzYX1Rr3CETixKkh4+w8rT98vRkVmEBa/lE
-	8GrRuoRAVkzLpAfZL1j2ACv/18X4gjVZWAw5npy5R22K9OiqPI4GZcogDxktiWyRRZtR2K0+
-	HFKl+XBG927IZ5c/Oro9MiT+6rZSkTM2Ptr6nr9j1vP2viPmM1vW9jddeG0pu6Px632FqyL4
-	1ovZuqXNSUPMc67uU8UT1RF+kib3xvCzC2EvadSBZb/MWarPKKdiVlX7Lr3op38n6EKFtT4v
-	UdJQ5KwRZRCS9hfuB1yJuivatd41XTwlid5bF58XFxfwOTa+/+/z2300/duU7A+e0nrDkDa/
-	Ky7q+SqX5PXqyhL1bLs6raMxc2T40C3HY81kdOjI1lFBN3N999HkXTHWQcP0naCwE8WvOj/Y
-	9DA37pXYX7vaRgf9M4IJRaI0IhSXK6T/AGsy6TFEBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrIKsWRmVeSWpSXmKPExsVy+t/xe7rrufzTDeY+57Q4cX0Rk8XW37PY
-	LdbsPcdkMf/IOVaLe5e2MFlc+fqezWLd0wvsFi/2NrJYXFsxl92i+dh6NouXs+6xWXzsucdq
-	cXnXHDaLz71HGC22fW5hs1h75C67xfqv85ksFn7cymKxZMcuRou2zmWsFhdPuVq8vNzDbNE2
-	i9/i/54d7Bb/rm1ksZj9bj+7xZY3E1ktjq8Nt2jZP4XFQdbj/Y1Wdo83L1+yeBzu+MLusffb
-	AhaPnbPusnv07DzD6LFpVSebx51re9g85p0M9LjffZzJY/OSeo+WtceYPN7vu8rm0bdlFaPH
-	pebr7B6bT1cHCEbp2RTll5akKmTkF5fYKkUbWhjpGVpa6BmZWOoZGpvHWhmZKunb2aSk5mSW
-	pRbp2yXoZfx6856l4B93xbI1fxgbGL9ydjFycEgImEgcumzexcjFISSwlFHix9Jeli5GTqC4
-	jMS17pdQtrDEn2tdbBBFrxglXp+cA5ZgEzCSeLB8PitIQkSgk0Xi7ea1jCAOs8BbRonrMzeC
-	VQkL+EhM77/FCGKzCKhKzD3yD8zmFXCQePbuDivECnmJ/QfPMoPYnEDx11O7wOJCAvYSO/4e
-	ZoWoF5Q4OfMJ2ExmoPrmrbOZJzAKzEKSmoUktYCRaRWjSGppcW56brGRXnFibnFpXrpecn7u
-	JkZgWtl27OeWHYwrX33UO8TIxMF4iFGCg1lJhHf5eu90Id6UxMqq1KL8+KLSnNTiQ4ymQHdP
-	ZJYSTc4HJra8knhDMwNTQxMzSwNTSzNjJXFetivn04QE0hNLUrNTUwtSi2D6mDg4pRqYNmlv
-	imsyitncuSiw/uS3jUEn5/Wtli65ePHAZrdDclxBhg4Fc68G2Ehnvk7lYTQxnLk4ifn0iuMH
-	bvHn5Zd/sv8XNV1fjFFqn9prPr5ZTDYTPF0W83/TtVNdkjmtQmHe5jkbsz81P87eOcPa3yT6
-	oM8Ocau+Yvc6G9am75ct5PN1Er4z6qRxnpo6ifv15FyTyA/7ijbqWUzo6TtYoXGQb5maxe4V
-	mY415refeZ3bf10v9aZT0859Uttn7zRi3Ls08dprE+27nL//fPsS039LvS7lk2TiDnW9d9MP
-	H536Sb1MSsvhhcf7GYesXKoV+Yu4DNokFqxIV1ZUapA50bArUfuM1uzD63Mrtl9zl+ZTYinO
-	SDTUYi4qTgQACEKcjLQDAAA=
-X-CMS-MailID: 20241203134207eucas1p29a2d095c527858729ae706d2a9027a5c
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20241203134207eucas1p29a2d095c527858729ae706d2a9027a5c
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20241203134207eucas1p29a2d095c527858729ae706d2a9027a5c
-References: <20241203134137.2114847-1-m.wilczynski@samsung.com>
-	<CGME20241203134207eucas1p29a2d095c527858729ae706d2a9027a5c@eucas1p2.samsung.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <bfa857c2-cd74-4fe2-a88c-3b35a58710b0@kernel.org>
 
-Add a device tree node for the IMG BXM-4-64 GPU present in the T-HEAD
-TH1520 SoC used by the Lichee Pi 4A board. This node enables support for
-the GPU using the drm/imagination driver.
+On Tue, Dec 03, 2024 at 09:01:31AM +0100, Krzysztof Kozlowski wrote:
+> On 03/12/2024 04:31, Abhinav Kumar wrote:
+> > Document the assigned-clock-parents better for the DP controller node
+> > to indicate its functionality better.
+> 
+> 
+> You change the clocks entirely, not "document". I would say that's an
+> ABI break if it really is a Linux requirement. You could avoid any
+> problems by just dropping the property from binding.
 
-By adding this node, the kernel can recognize and initialize the GPU,
-providing graphics acceleration capabilities on the Lichee Pi 4A and
-other boards based on the TH1520 SoC.
+But if you take a look at the existing usage, the proposed change
+matches the behaviour. So, I'd say, it's really a change that makes
+documentation follow the actual hardware.
 
-This commit is following convention introduced here [1].
+> 
+> > 
+> > Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+> > ---
+> >  Documentation/devicetree/bindings/display/msm/dp-controller.yaml | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/display/msm/dp-controller.yaml b/Documentation/devicetree/bindings/display/msm/dp-controller.yaml
+> > index 35ae2630c2b3..9fe2bf0484d8 100644
+> > --- a/Documentation/devicetree/bindings/display/msm/dp-controller.yaml
+> > +++ b/Documentation/devicetree/bindings/display/msm/dp-controller.yaml
+> > @@ -72,8 +72,8 @@ properties:
+> >  
+> >    assigned-clock-parents:
+> >      items:
+> > -      - description: phy 0 parent
+> > -      - description: phy 1 parent
+> > +      - description: Link clock PLL output provided by PHY block
+> > +      - description: Stream 0 pixel clock PLL output provided by PHY block
+> 
+> 
+> Best regards,
+> Krzysztof
 
-Link: https://lore.kernel.org/all/20241118-sets-bxs-4-64-patch-v1-v2-1-3fd45d9fb0cf@imgtec.com/ [1]
-
-Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
----
- arch/riscv/boot/dts/thead/th1520.dtsi | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
-
-diff --git a/arch/riscv/boot/dts/thead/th1520.dtsi b/arch/riscv/boot/dts/thead/th1520.dtsi
-index 58f93ad3eb6e..5023c0c29168 100644
---- a/arch/riscv/boot/dts/thead/th1520.dtsi
-+++ b/arch/riscv/boot/dts/thead/th1520.dtsi
-@@ -500,6 +500,18 @@ clk: clock-controller@ffef010000 {
- 			#clock-cells = <1>;
- 		};
- 
-+		gpu: gpu@ffef400000 {
-+			compatible = "img,img-bxm-4-64", "img,img-rogue";
-+			reg = <0xff 0xef400000 0x0 0x100000>;
-+			interrupt-parent = <&plic>;
-+			interrupts = <102 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&vosys_clk CLK_GPU_CORE>,
-+				 <&vosys_clk CLK_GPU_CFG_ACLK>;
-+			clock-names = "core", "sys";
-+			power-domains = <&pd TH1520_AON_GPU_PD>;
-+			status = "okay";
-+		};
-+
- 		vosys_clk: clock-controller {
- 			compatible = "thead,th1520-clk-vo";
- 			thead,vosys-regmap = <&vosys_reg>;
 -- 
-2.34.1
-
+With best wishes
+Dmitry
 
