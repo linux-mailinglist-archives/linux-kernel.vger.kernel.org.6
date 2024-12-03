@@ -1,30 +1,30 @@
-Return-Path: <linux-kernel+bounces-428822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 793BE9E13F0
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 08:23:46 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C7789E13F2
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 08:23:50 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 16146B22C09
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 07:23:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 248AE164754
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 07:23:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97D181DDC0D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B000C1DDC2D;
 	Tue,  3 Dec 2024 07:22:08 +0000 (UTC)
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90D031D8E1E
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC2631D9592
 	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 07:22:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733210527; cv=none; b=E2rS7eSpGuoKtq1cCZVC46pdmsVZUJ97AJ1NTZNJD/CN3lJxEqJRcTruGqoM/ZbFbDceG5PlEOVfQdIdyULbtTJGnL3rS6uv/4uc6u18cKOnQaozRviZL6dI43RUwgnproOmhO4cadi8sR6vo1WUjxW1XAtBk6vQi0tKyHRjK2s=
+	t=1733210527; cv=none; b=tVzWqlBOJfIKfgz5a2S5HuQz017bFTn09OTYgBX+tEfYw8CYd2LntYUMNPBTzAKof6djMt36x/vUsDLc1D7vqGLoFcU8XDLVNien+/uF/y3HTQs+VL/zZP3HKRyl2PDcMk5GgApCXdS00mgG3wusy6zL1t0IinYhL8jVEd2cI+I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1733210527; c=relaxed/simple;
-	bh=RzEPvgcUSo8p8Q3eyoUfZA7qfP1T4vfeUOzesxnjCbw=;
+	bh=UnHLfhf1YV8TxVWKllpqYg/Sg1jZmQ3fTomBfGIX/1I=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ObVPzfyca9V1H9Wm6hHrEY+jzc2221zypHQI0i7N5OJ8XZk4ZaHBbxZOV2YvIkbKNqLwhvv2nyS+QmK6if8QG/CdVdd/x2aZJI4TAvVN4nKoTRBuehdj63jrPI26mQLM9hzNEWIf0Qxe8TGdcMZRn2cE2uikwkEvbkUIWnAt6Rk=
+	 MIME-Version; b=fnaJCpgHxJk3kJPhur/YcnzFQxh6gdoUTHRU0jmb+uVJkJC5ZReYypJoeFc+bh+eUZdwijrXaLYrqkOFfOECW648pl2SEaWO5E+domfGklgI9L0kxkkbkLmKoxo+ep7Dhj4DYqDhwNTGxRGSvR/l3E+UkJunMgjNhIsQozQm7vM=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
@@ -32,16 +32,16 @@ Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
 	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
 	(Exim 4.92)
 	(envelope-from <ore@pengutronix.de>)
-	id 1tINEL-0004s1-6F; Tue, 03 Dec 2024 08:21:57 +0100
+	id 1tINEL-0004s2-6F; Tue, 03 Dec 2024 08:21:57 +0100
 Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
 	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.96)
 	(envelope-from <ore@pengutronix.de>)
-	id 1tINEJ-001Qyo-08;
+	id 1tINEJ-001Qyp-0E;
 	Tue, 03 Dec 2024 08:21:55 +0100
 Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
 	(envelope-from <ore@pengutronix.de>)
-	id 1tINEJ-00AEn4-2O;
+	id 1tINEJ-00AEnE-2S;
 	Tue, 03 Dec 2024 08:21:55 +0100
 From: Oleksij Rempel <o.rempel@pengutronix.de>
 To: "David S. Miller" <davem@davemloft.net>,
@@ -56,9 +56,9 @@ Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
 	netdev@vger.kernel.org,
 	UNGLinuxDriver@microchip.com,
 	Phil Elwell <phil@raspberrypi.org>
-Subject: [PATCH net-next v1 04/21] net: usb: lan78xx: Improve error reporting with %pe specifier
-Date: Tue,  3 Dec 2024 08:21:37 +0100
-Message-Id: <20241203072154.2440034-5-o.rempel@pengutronix.de>
+Subject: [PATCH net-next v1 05/21] net: usb: lan78xx: Fix error handling in MII read/write functions
+Date: Tue,  3 Dec 2024 08:21:38 +0100
+Message-Id: <20241203072154.2440034-6-o.rempel@pengutronix.de>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20241203072154.2440034-1-o.rempel@pengutronix.de>
 References: <20241203072154.2440034-1-o.rempel@pengutronix.de>
@@ -74,41 +74,60 @@ X-SA-Exim-Mail-From: ore@pengutronix.de
 X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
 X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Replace integer error codes with the `%pe` format specifier in register
-read and write error messages. This change provides human-readable error
-strings, making logs more informative and debugging easier.
+Ensure proper error handling in `lan78xx_mdiobus_read` and
+`lan78xx_mdiobus_write` by checking return values of register read/write
+operations and returning errors to the caller.
 
 Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
 ---
- drivers/net/usb/lan78xx.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/net/usb/lan78xx.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/net/usb/lan78xx.c b/drivers/net/usb/lan78xx.c
-index dd9b5d3abcb3..94320deaaeea 100644
+index 94320deaaeea..ee308be1e618 100644
 --- a/drivers/net/usb/lan78xx.c
 +++ b/drivers/net/usb/lan78xx.c
-@@ -621,8 +621,8 @@ static int lan78xx_read_reg(struct lan78xx_net *dev, u32 index, u32 *data)
- 		*data = *buf;
- 	} else if (net_ratelimit()) {
- 		netdev_warn(dev->net,
--			    "Failed to read register index 0x%08x. ret = %d",
--			    index, ret);
-+			    "Failed to read register index 0x%08x. ret = %pe",
-+			    index, ERR_PTR(ret));
- 	}
+@@ -2136,12 +2136,16 @@ static int lan78xx_mdiobus_read(struct mii_bus *bus, int phy_id, int idx)
+ 	/* set the address, index & direction (read from PHY) */
+ 	addr = mii_access(phy_id, idx, MII_READ);
+ 	ret = lan78xx_write_reg(dev, MII_ACC, addr);
++	if (ret < 0)
++		goto done;
  
- 	kfree(buf);
-@@ -652,8 +652,8 @@ static int lan78xx_write_reg(struct lan78xx_net *dev, u32 index, u32 data)
- 	if (unlikely(ret < 0) &&
- 	    net_ratelimit()) {
- 		netdev_warn(dev->net,
--			    "Failed to write register index 0x%08x. ret = %d",
--			    index, ret);
-+			    "Failed to write register index 0x%08x. ret = %pe",
-+			    index, ERR_PTR(ret));
- 	}
+ 	ret = lan78xx_phy_wait_not_busy(dev);
+ 	if (ret < 0)
+ 		goto done;
  
- 	kfree(buf);
+ 	ret = lan78xx_read_reg(dev, MII_DATA, &val);
++	if (ret < 0)
++		goto done;
+ 
+ 	ret = (int)(val & 0xFFFF);
+ 
+@@ -2172,10 +2176,14 @@ static int lan78xx_mdiobus_write(struct mii_bus *bus, int phy_id, int idx,
+ 
+ 	val = (u32)regval;
+ 	ret = lan78xx_write_reg(dev, MII_DATA, val);
++	if (ret < 0)
++		goto done;
+ 
+ 	/* set the address, index & direction (write to PHY) */
+ 	addr = mii_access(phy_id, idx, MII_WRITE);
+ 	ret = lan78xx_write_reg(dev, MII_ACC, addr);
++	if (ret < 0)
++		goto done;
+ 
+ 	ret = lan78xx_phy_wait_not_busy(dev);
+ 	if (ret < 0)
+@@ -2184,7 +2192,7 @@ static int lan78xx_mdiobus_write(struct mii_bus *bus, int phy_id, int idx,
+ done:
+ 	mutex_unlock(&dev->phy_mutex);
+ 	usb_autopm_put_interface(dev->intf);
+-	return 0;
++	return ret;
+ }
+ 
+ static int lan78xx_mdio_init(struct lan78xx_net *dev)
 -- 
 2.39.5
 
