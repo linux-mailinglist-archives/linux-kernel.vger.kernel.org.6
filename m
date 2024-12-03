@@ -1,102 +1,54 @@
-Return-Path: <linux-kernel+bounces-429334-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46AF39E1C06
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 13:22:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 15FA49E1B98
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 13:02:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B70A6B60F8C
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 11:17:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 15CB5B41CAC
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 11:14:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A02111EE01C;
-	Tue,  3 Dec 2024 11:14:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 775481E5725;
+	Tue,  3 Dec 2024 11:13:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="It1J3/+s"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S49ISk3b"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DABE1E47AC
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 11:13:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B4961E5712;
+	Tue,  3 Dec 2024 11:13:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733224440; cv=none; b=Vx5b3xfLPbD8QDbw5Aex50R2j93mOs789JmQ3vL08BGjh5X91/83h5Jnk0ostfJP9/KWY0bBaaJ7sVKXNQs8/CW4MbUrir4bMoyTKLDpi/2mzKDgVxQRhtDQ8e4i7KJovqSM5m4r6PILdW3kKciy4V9n2BZX0Pxhgcfy6mgQss8=
+	t=1733224422; cv=none; b=IjFxSsk2cZI13EuM49lrCq8fnMJG638Z7LRfOycV7Ma2CNrpxnePBGk6gGDLGNQZFuw+olKNazn3v7cxzktYOhMs200v52pC3UIvaJUlnO3mXhmTm2Z0mTq/K+2WnR1AKUSYzJn5LcpoZXPL7xr7gBKqUSZJjlCShpkGf0zJyz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733224440; c=relaxed/simple;
-	bh=hPzvAQBya4lMaHbeDMGEHEu0Sst46VpHxejcDLV1/YY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=cT5AkmhHFdFbXR7i9DyXsEk+mlY825y0mqQgy4LaBU1oU557xHtYBD2E2knjOmXALa/w8R7GQDgYOavmEGXCrPD4hirNdt12WZL54yQw2bYl1iOdyXbDd4PAK54v0gF4Tb3ANJ/LO67Ku5PwcbcaU8pc2rSqEQstmgaLhdbInhA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=It1J3/+s; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-434a852bb6eso49489545e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 03:13:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1733224437; x=1733829237; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vuYmwt2mwWEd+Tu2KpQNpDTdmewly+5/W4Kvuhh8MtU=;
-        b=It1J3/+s9eSfgOa8xL59iWVGv+bPplYPchi3wNeRX2rnrYbTkBFFvQtNbDfm1r41OG
-         qgBVYtaUStEnB5rBO3lZRE2JNiqq/BrOXom1WDnToiQxwuP+th0L+oEeaEuz6BZtxlWQ
-         GAqrdY74ufxHua152q5gx1h0V/u2yPDuoCozhjPXuFj5YxlLGafPWd1XrJyX7U3nezW5
-         CTHDPFT1pdavJiWU2Khk+m6t02EbH9zCCuTWuAmUz4d7Zpo7VwRze2UVDrr6odo25X7T
-         GnlaqtR4KRk7r2WiViqaEkG8rJDo49sD7BFGDvlsLGyOUvyr7SOnUSvF/zgT017NrMi5
-         avig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733224437; x=1733829237;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vuYmwt2mwWEd+Tu2KpQNpDTdmewly+5/W4Kvuhh8MtU=;
-        b=tb+LYa8KIyVTyslL67FnVHhGPiOhYsIDDBv9r/X1/n5AL8H6djz4sO9S7TsBG3XN9B
-         lKLvHrc+Mve0XjnjuhWup2uVw72NmQhQCoD9QRY0r7o9FdrtOrJViKV7sz9/BKcD5m6f
-         7ziT3wwMR+liL9dI9EldeNMtJhMclgjuJTMx0xyqE145I9xf5UxOWsZTqHuxj4Mgj2kq
-         RXeaHRBUkozK1N22OobrDxzMjhSUatbws9CSlDAQy+fUBRBtRDokshg7jrcVADDG3YTG
-         rp8HCg5vqkxjebO4qfFlWOFpAKSrZphBr/BKYFqciWBQStJdQtgoJJCxcrzFZsyDH1Wh
-         bOlQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVd/iDpNWI5JXuJOcRjONL9A5t2ciIcvDmL1yqnJuH2pCg7ucO4xAqjPR0CUqcbgA2VQW41iGq7qIhGye8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/x+OBVp5OtEQsm0msMq6UeEMkitrAz9P3NUZSa4S8S45w009a
-	C4PzcTu+2hwpw1L5/TYzxsDxXCEDVq88tz2hFKRmbeRF7ZdIGcb1KHAc9DiwqIE=
-X-Gm-Gg: ASbGncu3qajtOKY+Ntq5ZT1ZhU88eS4+eLaenQSWg+GWnLf+wSSJQJQDzEJasfOsUw8
-	3g64JT7ptlOTtLjTGHaRHfqMYrQcIgMrEvqiyj8uluB8ValIMFHUKIQsMQ1T290XUQ7V/0Ip9bW
-	/P+FwgiyNmQh79k2nd7wuP9AHhtJPyDkq+ZHQnJn5er4TW4LLsvL5/GC7sPtUNm+Phouqfa0tCq
-	IyHmWXad8s0YCgYNfGOf/y+2bNG2/cFIbu9MxnIzR7ID/M5DxT6YaZ5z4IHNWQEe/BoiZq9Qqne
-	3sJj
-X-Google-Smtp-Source: AGHT+IHOuquR0Z2Y/9RwvEymwXXAAW6Jm4OPLCo5DQNmdYBocmhFqjdVsjkAP+GiCZweMjILCABwxQ==
-X-Received: by 2002:a05:600c:4710:b0:434:a30b:5455 with SMTP id 5b1f17b1804b1-434d0a239c3mr16423245e9.27.1733224435487;
-        Tue, 03 Dec 2024 03:13:55 -0800 (PST)
-Received: from claudiu-X670E-Pro-RS.. ([82.78.167.161])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385e0117069sm11794315f8f.60.2024.12.03.03.13.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Dec 2024 03:13:55 -0800 (PST)
-From: Claudiu <claudiu.beznea@tuxon.dev>
-X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
-To: prabhakar.mahadev-lad.rj@bp.renesas.com,
-	jic23@kernel.org,
-	lars@metafoo.de,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	geert+renesas@glider.be,
-	magnus.damm@gmail.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	p.zabel@pengutronix.de
-Cc: claudiu.beznea@tuxon.dev,
-	linux-iio@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH 14/14] arm64: dts: renesas: rzg3s-smarc-som: Enable ADC
-Date: Tue,  3 Dec 2024 13:13:14 +0200
-Message-Id: <20241203111314.2420473-15-claudiu.beznea.uj@bp.renesas.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20241203111314.2420473-1-claudiu.beznea.uj@bp.renesas.com>
-References: <20241203111314.2420473-1-claudiu.beznea.uj@bp.renesas.com>
+	s=arc-20240116; t=1733224422; c=relaxed/simple;
+	bh=rOeCeaD8RbHOy2EdA1lamNP0ZONIbYQ5vVg8n94CjVw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=keKvNL0RBZ4mw3/vTGheAnNZVdMlvE5W9uYgDyx1HXB0LJB71BnafKe0JzXbB4b8BQ3nxOcYjyWpsPKte0gOuL53C/BVXiKEmZT1tsOi/KKEDzBw6eMIwBcAdURHmKQ7LBVBi0iQaDEnSpXdcYwQPQPq0t3VEZ7XQIYbIWxqd9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S49ISk3b; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0ABE3C4CECF;
+	Tue,  3 Dec 2024 11:13:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733224421;
+	bh=rOeCeaD8RbHOy2EdA1lamNP0ZONIbYQ5vVg8n94CjVw=;
+	h=From:To:Cc:Subject:Date:From;
+	b=S49ISk3b4HD+MdRR22+C5enP3QTno5+6m8rEu1Id0Dsg1EDzIkMmSBdU0Ro1KbZHe
+	 T8FXCXlwBepWuT0fMd+9Oj0dFFBDj8wbzQ1uI8kVmq4/z3Rqxs5xn0fjaRTeU0r7xe
+	 CKdI0g1NcBMV+Zclo/qcRg58NIp5nF0l0IGPj8Qvav5s051AWaxdE54vHSxNbuJsRr
+	 bAWgU0Aeg0JnUeniO1gFHP9ST/PW5134iuqxR94nZjXCw6atqyZll8LikXnvvAfnLp
+	 C8wVIJ2U3Xqa/jhuq3nPqdAc98t/st7XOjF3cfGCZvtGw1V1H79Kkal8o+//4IqvMV
+	 +y97hqYpwi76A==
+From: Masahiro Yamada <masahiroy@kernel.org>
+To: linux-kbuild@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>
+Subject: [PATCH] kbuild: refactor cross-compiling linux-headers package
+Date: Tue,  3 Dec 2024 20:13:31 +0900
+Message-ID: <20241203111334.3331231-1-masahiroy@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -105,31 +57,111 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Since commit 13b25489b6f8 ("kbuild: change working directory to external
+module directory with M="), when cross-building host programs for the
+linux-headers package, the "Entering directory" and "Leaving directory"
+messages appear multiple times, and each object path shown is relative
+to the working directory. This makes it difficult to track which objects
+are being rebuilt.
 
-Enable ADC.
+In hindsight, using the external module build (M=) was not a good idea.
 
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+This commit simplifies the code by leveraging the run-command target,
+resulting in a cleaner build log again.
+
+[Before]
+
+  $ make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- bindeb-pkg
+    [ snip ]
+  Rebuilding host programs with aarch64-linux-gnu-gcc...
+  make[5]: Entering directory '/home/masahiro/linux'
+  make[6]: Entering directory '/home/masahiro/linux/debian/linux-headers-6.13.0-rc1+/usr/src/linux-headers-6.13.0-rc1+'
+    HOSTCC  scripts/kallsyms
+    HOSTCC  scripts/sorttable
+    HOSTCC  scripts/asn1_compiler
+  make[6]: Leaving directory '/home/masahiro/linux/debian/linux-headers-6.13.0-rc1+/usr/src/linux-headers-6.13.0-rc1+'
+  make[5]: Leaving directory '/home/masahiro/linux'
+  make[5]: Entering directory '/home/masahiro/linux'
+  make[6]: Entering directory '/home/masahiro/linux/debian/linux-headers-6.13.0-rc1+/usr/src/linux-headers-6.13.0-rc1+'
+    HOSTCC  scripts/basic/fixdep
+    HOSTCC  scripts/mod/modpost.o
+    HOSTCC  scripts/mod/file2alias.o
+    HOSTCC  scripts/mod/sumversion.o
+    HOSTCC  scripts/mod/symsearch.o
+    HOSTLD  scripts/mod/modpost
+  make[6]: Leaving directory '/home/masahiro/linux/debian/linux-headers-6.13.0-rc1+/usr/src/linux-headers-6.13.0-rc1+'
+  make[5]: Leaving directory '/home/masahiro/linux'
+
+[After]
+
+  $ make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- bindeb-pkg
+    [ snip ]
+    HOSTCC  debian/linux-headers-6.13.0-rc1+/usr/src/linux-headers-6.13.0-rc1+/scripts/basic/fixdep
+    HOSTCC  debian/linux-headers-6.13.0-rc1+/usr/src/linux-headers-6.13.0-rc1+/scripts/kallsyms
+    HOSTCC  debian/linux-headers-6.13.0-rc1+/usr/src/linux-headers-6.13.0-rc1+/scripts/sorttable
+    HOSTCC  debian/linux-headers-6.13.0-rc1+/usr/src/linux-headers-6.13.0-rc1+/scripts/asn1_compiler
+    HOSTCC  debian/linux-headers-6.13.0-rc1+/usr/src/linux-headers-6.13.0-rc1+/scripts/mod/modpost.o
+    HOSTCC  debian/linux-headers-6.13.0-rc1+/usr/src/linux-headers-6.13.0-rc1+/scripts/mod/file2alias.o
+    HOSTCC  debian/linux-headers-6.13.0-rc1+/usr/src/linux-headers-6.13.0-rc1+/scripts/mod/sumversion.o
+    HOSTCC  debian/linux-headers-6.13.0-rc1+/usr/src/linux-headers-6.13.0-rc1+/scripts/mod/symsearch.o
+    HOSTLD  debian/linux-headers-6.13.0-rc1+/usr/src/linux-headers-6.13.0-rc1+/scripts/mod/modpost
+
+Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
 ---
- arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi | 4 ++++
- 1 file changed, 4 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi b/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
-index 2ed01d391554..57ebdfc858eb 100644
---- a/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
-+++ b/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
-@@ -94,6 +94,10 @@ vcc_sdhi2: regulator2 {
- 	};
- };
+ scripts/package/install-extmod-build | 31 ++++++----------------------
+ 1 file changed, 6 insertions(+), 25 deletions(-)
+
+diff --git a/scripts/package/install-extmod-build b/scripts/package/install-extmod-build
+index 64d958ee45f3..47d752249547 100755
+--- a/scripts/package/install-extmod-build
++++ b/scripts/package/install-extmod-build
+@@ -49,38 +49,19 @@ mkdir -p "${destdir}"
+ # This caters to host programs that participate in Kbuild. objtool and
+ # resolve_btfids are out of scope.
+ if [ "${CC}" != "${HOSTCC}" ]; then
+-	echo "Rebuilding host programs with ${CC}..."
+-
+-	# This leverages external module building.
+-	# - Clear sub_make_done to allow the top-level Makefile to redo sub-make.
+-	# - Filter out --no-print-directory to print "Entering directory" logs
+-	#   when Make changes the working directory.
+-	unset sub_make_done
+-	MAKEFLAGS=$(echo "${MAKEFLAGS}" | sed s/--no-print-directory//)
+-
+-	cat <<-'EOF' >  "${destdir}/Kbuild"
+-	subdir-y := scripts
++	cat "${destdir}/scripts/Makefile" - <<-'EOF' > "${destdir}/scripts/Kbuild"
++	subdir-y += basic
++	hostprogs-always-y += mod/modpost
++	mod/modpost-objs := $(addprefix mod/, modpost.o file2alias.o sumversion.o symsearch.o)
+ 	EOF
  
-+&adc {
-+	status = "okay";
-+};
-+
- #if SW_CONFIG3 == SW_ON
- &eth0 {
- 	pinctrl-0 = <&eth0_pins>;
+ 	# HOSTCXX is not overridden. The C++ compiler is used to build:
+ 	# - scripts/kconfig/qconf, which is unneeded for external module builds
+ 	# - GCC plugins, which will not work on the installed system even after
+ 	#   being rebuilt.
+-	#
+-	# Use the single-target build to avoid the modpost invocation, which
+-	# would overwrite Module.symvers.
+-	"${MAKE}" HOSTCC="${CC}" KBUILD_EXTMOD="${destdir}" scripts/
++	"${MAKE}" run-command KBUILD_RUN_COMMAND='+$(MAKE) HOSTCC=$(CC) $(build)='"${destdir}"/scripts
+ 
+-	cat <<-'EOF' >  "${destdir}/scripts/Kbuild"
+-	subdir-y := basic
+-	hostprogs-always-y := mod/modpost
+-	mod/modpost-objs := $(addprefix mod/, modpost.o file2alias.o sumversion.o symsearch.o)
+-	EOF
+-
+-	# Run once again to rebuild scripts/basic/ and scripts/mod/modpost.
+-	"${MAKE}" HOSTCC="${CC}" KBUILD_EXTMOD="${destdir}" scripts/
+-
+-	rm -f "${destdir}/Kbuild" "${destdir}/scripts/Kbuild"
++	rm -f "${destdir}/scripts/Kbuild"
+ fi
+ 
+ find "${destdir}" \( -name '.*.cmd' -o -name '*.o' \) -delete
 -- 
-2.39.2
+2.43.0
 
 
