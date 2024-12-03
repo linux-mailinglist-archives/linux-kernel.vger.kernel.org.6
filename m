@@ -1,84 +1,84 @@
-Return-Path: <linux-kernel+bounces-429988-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429989-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 007759E2A5C
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 19:06:47 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E2B59E2A5D
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 19:06:53 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BCBA116144E
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 18:06:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3397285B2B
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 18:06:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38AEE2040A7;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3962204F71;
 	Tue,  3 Dec 2024 18:06:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="C0nKvadF";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="ENpe6prf"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="RQH30V0e";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="eN85Fi2F"
 Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE1AE1FCF72;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFE851FECC3;
 	Tue,  3 Dec 2024 18:06:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733249162; cv=fail; b=oMJYSQRkPaRRDUaCWpPJmFO4Yq906agt8xAueA21BJR9TZRsoNXfMJox3wdmsgb41M1l11kU2nI3jH9mpQxSD57GDb41xiwn1Afuw/TEqPde7vTzi0ZO1vOX1F0bvP7vFOrRNl8eT6DXcEtYGXpGx8Io4dC5CpF7+ZVWOghtxSA=
+	t=1733249163; cv=fail; b=GZ+PKiGzmCzxwiEotXJBKGNGkQONlKmJFGcLEFsQZc5uqpUoVwMstD+4LGyOCH9zXJt0sj8laAj2DMtfIMyHnOW90CyvDNX9YdhH8H9cdJM27gex1HKkYomSne5K8K9GaAQ7KFslErQgBDAwFDu1Tu0QKJB14JiquN5kH+2PL4Q=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733249162; c=relaxed/simple;
-	bh=S1B/Mml5yLlchv1TpVuq1OEvpxY88r+OaxSQMZEBufs=;
+	s=arc-20240116; t=1733249163; c=relaxed/simple;
+	bh=ijSqR7vQeesx9ToiOXXWqmTLUzHTbMcyZ/f8EIqPNrc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Aese9UZLC5YYgStpqJz+AQMGTa/hUrsAh/C/1SjQs5+eewMsqF8DMW4WLmZb2L6mCIDjRjYZ9XQMeBmRcH4TknOWBbQb1raHCaDD1LXHGYk9G9ZfGrQf+DTzMgfvPy9cUpVl69XqxNuN6rXHaJU88vxQDYtUb7TE1BR09A3ArmU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=C0nKvadF; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=ENpe6prf; arc=fail smtp.client-ip=205.220.177.32
+	 Content-Type:MIME-Version; b=DHZ7PJ7X7gbiMChpGT0vt+r+94NCAhVa0o4r5IuOHBsuuCDX4JAmZKd6BFGS/XOIJW2CoDbiWiue+p61sg6WBD6Je1rJ8xVK/9rONy1zvqNd/lRpkOYEQ1v0IAV6zGZmMgkNJ6DahHw5NyRo2zZxoI6eKoW8NrMc84MWLOs+w2U=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=RQH30V0e; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=eN85Fi2F; arc=fail smtp.client-ip=205.220.177.32
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
 Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B3HtcAA030390;
-	Tue, 3 Dec 2024 18:05:37 GMT
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B3HtY0v030152;
+	Tue, 3 Dec 2024 18:05:44 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
 	:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=
-	corp-2023-11-20; bh=LQR0MlY3DN6I9QkGWPkfUs2y6O6Dm9f9JD8+KM54Z/Q=; b=
-	C0nKvadFInBxmb6ZM3RJe9ZhpohZkepq5I2NnZ1zaa48qKslFcVRy6CX0qtpL5GN
-	1x6K1bIS59DKKAOTP/iil4fS3SGQQk6EU3KoWbPgLWZruxz2ImFPNIhL8xtJNaEg
-	jBkQQ0vkoKM5vg5rSsEDY7Zp1rseITyNuiGX95J/P1mIKDr1a0Wc7vJQnZsKLCSV
-	/UXe6CbvGnUU63TNPeQbqX8UsAJxzUpUB9YvefunsU7Y7JJZT982IjHFHqPqbiVV
-	QE4M/plLugxZcFnkjoF4D2Vn/BS7A0plsAlCbD1qqhhJZdMUjBKbF0k6eUFf2/dh
-	H+nbxO2zj+SOirCGlwW5QA==
+	corp-2023-11-20; bh=f8U/gqFVS1QCBDY/iVkzXmoF1Dj4A8+V07OZpj6ShB8=; b=
+	RQH30V0e2OB8NtN+txK9AtVkNo/pCz8GS9+IL50Ou1lnOLHm4TSK6ZSmDFhLSmiU
+	dU8ufq5Rarg090USVxEzYXPYBhNNGY+FhUTJnXf11v8Q1QHtjOv2QHGeT6OsoL5q
+	7tVarRDwp5TU07jkiLyzF1dnJEDovWObGrQUf0pGosK2CZEuEyPpYzA8YqR2ETme
+	do8n5BTELp+RpuyZepnFALVYjmLKE0RjHYohnJkJIINkAc8TxCRzMy0o+nKf4iyl
+	fRUjBp2J/i6vIEtBp3Tqc8s4oUtOAbaDsA2Io/Tt/91Dh12HZ0HNqLpy7pPcCCuY
+	PKfgHZS3xgIHgm/lSTowvQ==
 Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 437tas6n4b-1
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 437tas6n4p-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 03 Dec 2024 18:05:37 +0000 (GMT)
+	Tue, 03 Dec 2024 18:05:43 +0000 (GMT)
 Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 4B3GT4YD031378;
-	Tue, 3 Dec 2024 18:05:36 GMT
-Received: from nam11-dm6-obe.outbound.protection.outlook.com (mail-dm6nam11lp2171.outbound.protection.outlook.com [104.47.57.171])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 43836u8ge7-1
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 4B3GT4YF031378;
+	Tue, 3 Dec 2024 18:05:42 GMT
+Received: from nam10-dm6-obe.outbound.protection.outlook.com (mail-dm6nam10lp2047.outbound.protection.outlook.com [104.47.58.47])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 43836u8ghx-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 03 Dec 2024 18:05:36 +0000
+	Tue, 03 Dec 2024 18:05:42 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=WtPp/KaZFwbhcjZeAKoPgv6nFIjTXyyrcpYQypcQcE0vHMTY0txNxo1Un0dhyDhe4tnhtMhwyI6w87/fu0A80rYMfWTGFCc101GYpvF8vgE1e7L4mqfQ/EpHtpODSYchjPq8Rf40KP2KK/7p7n8budjm9SPMCTe8rKLEZl3DjN/7qc89ut5klAaMRdJKfqLMGrCgAUZH2lIRfTk+UKbINHVercRHMDtOUwNQoktE9N9jKSuHuRn77F/GrIOPZmKyYrOjU3oLnqD6tiqVVM3x7rAvuUObMgJVoZNvy3lFUp5OeTspWPyvT/ScDsE7yWJHO2lWOlnqxURlQY9q2QLFYQ==
+ b=vg3VOgVAlcfndi7pvpntjJ1TWo62pOnBvX+iz/zqnmKrWnZyo1xFlYDxh4EjoF11Ccvj88xX2xReSGMiTShu01pTggChpFVAFjoFiIVAYzTLbI0CedQGQd6Q/wlxMv0KpoOI6t1l61HuMMrBYAvd9jHIqT6/acr10EdXJsI9eUP9t41PJThMYGL7EYveNDxBO6+K+93grGhwNXQw3FPdj0CkdUKR72IPpImhoXkU8lOQMokALaV+TheOjd94rXzl/hDNlzbAiKE5uOSpGTNYukP591QPQeOpxFz/o4Zwi19p4duR/GHlvPCzArMQ6Rg7koZ91f8elMSJqGbNsT11kg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=LQR0MlY3DN6I9QkGWPkfUs2y6O6Dm9f9JD8+KM54Z/Q=;
- b=WEiRIEfUEc7sO3hkscx1FWrGGQiFwSZr3Am4kRpLIF2GSiiTPkQV/JJlcXzXaWHsYdZqh0x6o8mJC9gnCyVEVVe7beWtbeS687qHxtL1ZcUOHROJ4nRQtBxH28DXEIFtf973e4h/Y2DXwiXODj0yZLbbVeDm41EGwaQgxr0BI0cW0kTRTNzUWh3hoQF41jPDL4HHDjUIpLGo1GwXdolkrMJRZ/3NtrR1YLbioeG6s7vtmwqrHJgULuuFOgVkOUiFRBav/ZQzOTINZd1+LKwpg3KtMk2h29xezS5xBinL1qNouEKH7TVN0VaQIV0UAWC+IrDptzwWlVWcg7moa9UyFQ==
+ bh=f8U/gqFVS1QCBDY/iVkzXmoF1Dj4A8+V07OZpj6ShB8=;
+ b=yAMHz9SPSnVQa1spYY/mq32JSXK1IitWWxjUo83g3NzSRV3ut1nhfojhkZ1R8BFhyQ3EVrtTsrkS7GF2x+IV9giorxrL0EDvH7UkVb3uGsovdDwdxTASuikX7jRtfcWqoGhcgUaBWY06ygDbZEALyc3Vl5f1Mgvdoii7KF3JxhR1xmFcmVhiJKmOI2iHgIqXgrFXAfRtDG4hZt0GZfQx9C9ORai0Xmfl0Ida10EHbthdAgOYox9hYkteoUEcKzt24xCyBe42c8ilH4LHM8B74T2L0TlXHo8bNY8AHSxty8mzoyEEzN4gJKlh9sWWmAhDZSq9bdkyTAJt44bdMsCMsA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
  dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LQR0MlY3DN6I9QkGWPkfUs2y6O6Dm9f9JD8+KM54Z/Q=;
- b=ENpe6prfQjcivjCc0eV4TaRgeootnb34VnJ353KWPhsrDW9lfNO4XcRaEWTTJQdacTSEtM/84tw1GSIKoUxxVTblUk7nv0DV5FrgKpeK+Mzoaeld9EQIVaxjngKv2zLZ1Myb6G+EC08wiZGs7pkJp8T0oIbVVYCOy/LaDiOG0yk=
+ bh=f8U/gqFVS1QCBDY/iVkzXmoF1Dj4A8+V07OZpj6ShB8=;
+ b=eN85Fi2FmRso12FrFE6LoMNCl2tQZSp/4w8wS8q1YAKDepZU6Gvnf59Ttxbh/k5BmieUOkQE/2YQZS6v/0eROtXkXDZOGFBYCAimBSREVzTCqsOb+kPwCeYpI4i/78bbWENCQyPz6gr8xpkc9UAvj1nuLz4VFsP+03ozABYgkG8=
 Received: from BYAPR10MB3366.namprd10.prod.outlook.com (2603:10b6:a03:14f::25)
- by CH3PR10MB6762.namprd10.prod.outlook.com (2603:10b6:610:149::21) with
+ by LV3PR10MB8129.namprd10.prod.outlook.com (2603:10b6:408:285::15) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.19; Tue, 3 Dec
- 2024 18:05:33 +0000
+ 2024 18:05:39 +0000
 Received: from BYAPR10MB3366.namprd10.prod.outlook.com
  ([fe80::baf2:dff1:d471:1c9]) by BYAPR10MB3366.namprd10.prod.outlook.com
  ([fe80::baf2:dff1:d471:1c9%7]) with mapi id 15.20.8207.017; Tue, 3 Dec 2024
- 18:05:33 +0000
+ 18:05:39 +0000
 From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 To: Andrew Morton <akpm@linux-foundation.org>
 Cc: "Liam R . Howlett" <Liam.Howlett@oracle.com>,
@@ -88,16 +88,16 @@ Cc: "Liam R . Howlett" <Liam.Howlett@oracle.com>,
         Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
         linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 2/5] mm/vma: move unmapped_area() internals to mm/vma.c
-Date: Tue,  3 Dec 2024 18:05:09 +0000
-Message-ID: <53a57a52a64ea54e9d129d2e2abca3a538022379.1733248985.git.lorenzo.stoakes@oracle.com>
+Subject: [PATCH 4/5] mm/vma: move stack expansion logic to mm/vma.c
+Date: Tue,  3 Dec 2024 18:05:11 +0000
+Message-ID: <0feb104eff85922019d4fb29280f3afb130c5204.1733248985.git.lorenzo.stoakes@oracle.com>
 X-Mailer: git-send-email 2.47.1
 In-Reply-To: <cover.1733248985.git.lorenzo.stoakes@oracle.com>
 References: <cover.1733248985.git.lorenzo.stoakes@oracle.com>
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: LO4P265CA0156.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:2c7::18) To BYAPR10MB3366.namprd10.prod.outlook.com
+X-ClientProxiedBy: LO2P265CA0450.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:e::30) To BYAPR10MB3366.namprd10.prod.outlook.com
  (2603:10b6:a03:14f::25)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -106,81 +106,81 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BYAPR10MB3366:EE_|CH3PR10MB6762:EE_
-X-MS-Office365-Filtering-Correlation-Id: 71f13595-baee-447d-8a23-08dd13c5146f
+X-MS-TrafficTypeDiagnostic: BYAPR10MB3366:EE_|LV3PR10MB8129:EE_
+X-MS-Office365-Filtering-Correlation-Id: e2221735-4f24-4201-2249-08dd13c5183b
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?ICsVShJ5xoO5eb7w5vOEl2LgVGvh+fELOWx7haX0pVg7hcK/DgiUEYqH8Pan?=
- =?us-ascii?Q?WD8tDq1HObhdjQ3/n7equWnJJb0AuH1hw3E1TdYp68mdEzioUvsRJz5k2DMk?=
- =?us-ascii?Q?vpbCjKzN3medIQ3nh9+SEDa9lhBXoEzg1JGAKxiJ/G6Z+T8nTkveCqG+fOt0?=
- =?us-ascii?Q?TJQzWgOP8tVX8Ud15vQ1O5DJ52OeFv93iGtwy+ALGQ4rcHRHnQbzrcAGGlw2?=
- =?us-ascii?Q?/mHsQWokCd7d5MfZjWMjCLq7DKamKk7Lfc1EI735Wt4g0vQkCgFiQR5ZxEcA?=
- =?us-ascii?Q?IGArMaoKx0ZhAO+JTxeNZWi2PNmI1rdKusiYp9/kJYX13Q/x2tKpG6n5RcEK?=
- =?us-ascii?Q?9mmFDUAluox+KDmWojZLYxojCgjaflZfULvIUnlRGcl8pcOPUspbawDtsqsx?=
- =?us-ascii?Q?xKZ1v211JaGqcUZupTEGrAyKb1MZD10kIQ6nXP9m+8w57mfsIp9CVHpho7lT?=
- =?us-ascii?Q?eL/yHAxVkJSJ7ZodAXemx8H7MboVcrb+oN9DonMxYuf35yRd4iBZhXGZWbAS?=
- =?us-ascii?Q?Xqrtuwl1ktopUkeZCcg5UHWnQP4oFUK/GXSJot8Et+Plrh/xA1hxY9qyceTd?=
- =?us-ascii?Q?q29QljcdqbDnZbGPDMSWY8dusRk/qOrEytEyrRnYQM8qwcKqCtzYdYMfbjK7?=
- =?us-ascii?Q?jp7Ddo+9xMySuw1y4X95jPsx9mNjnSeeE2pL1Em4IkQUtD7TDgkQIaUsJJnU?=
- =?us-ascii?Q?GRvPv9DupHqyXTI7wfxbaCI1Gk/uHOGf9uiAXNKnJNy3Fx0EdbklBUIOYVGg?=
- =?us-ascii?Q?qaYcdz2i2kx+VuHs9PmaEstnXeZgAHdgJl9eZajkdWEoBvxB9BFt855nHRoB?=
- =?us-ascii?Q?NkoY73lOq3h9dLFulXj+lkk+MTJ4Rbi6HLT6kq/ZSCkM7P2XFscb/J7+cZHE?=
- =?us-ascii?Q?JdWWxomnTc5YPZw/W7dcfkxxFkLeOGlkj3Wrlb3A6SMzc4oEszl1tnxjGKaw?=
- =?us-ascii?Q?gyJ4xyipbcj/yaQ801Ku0Ib4+RYOY7KhgwcI6/y667U2kZn8LlXxA02pZBEc?=
- =?us-ascii?Q?jel1hhsYmIaZgPXWRD1xgBxr/+PDsstSYrQg3qz6r4jr31NophK2Hf2rRQ0A?=
- =?us-ascii?Q?EWvWYnjsBLvItAwxPIyuoBGr9B+pOUj6TcPDe5PpliOGeNzvXPnHk/hEOmfP?=
- =?us-ascii?Q?uCq5FeqxyWG+VWOZeO6QspLkF5aETheETt1QUII3X1Ab4J8S8HlCgTDOgwQ8?=
- =?us-ascii?Q?14MDz5QDfIUU8WIXVgGfm+iHGZeSRoFDerUXKW7w48zaw4H2/FPUArdQLxP+?=
- =?us-ascii?Q?0gYc3C0zvxdINHRNedIKgfX/ro/f1f1fPLK4WyN8zIHFAAqczeUsdC3NnotM?=
- =?us-ascii?Q?xgsRDygcqKLuBuMXO5bT+AcnYQ+vQjFHhLjXknNKAPRZJg=3D=3D?=
+	=?us-ascii?Q?mO/7ZWbxQ7ryjf1GR7njAiVkUTPrG7h08jewPkfQfeZU37TsdHMNG5C9fm8f?=
+ =?us-ascii?Q?kJwEu8X/Ud/ZLn3f/3Xkd85lry0M//G7nswKH6J9cC7oTSWeBeVw6oq3mmQl?=
+ =?us-ascii?Q?M/JGR2mlhxiL3usjaujqUhhEoAjguATMpPlxoxm0MBF8EE++xDzdNshg/g7C?=
+ =?us-ascii?Q?Bsq3SVSDx/wpj11FpbS+58ixARWWekAgdXLTz/HLjQKf1N3X04aN1/6Zkn5X?=
+ =?us-ascii?Q?eyXwNHENAKMk4ChqKSL5CMYk1+OTk4ape2elLiPp4+b/KrOgZLXUACKM+Fg+?=
+ =?us-ascii?Q?qsFwlyxxO6oAFrInZCE9CNP4cb7rMQ6Xm6fA7nKkTCncv7zKN0KntoyMm95E?=
+ =?us-ascii?Q?PskdfAb5P89DJZPbDr2VaRPfmIlIEWTUBdevqbLcm4VKxcIkbjjpJdNR5RkG?=
+ =?us-ascii?Q?4fV4olQAsZA3lR0Of/fT9+PCIHiX0C3iEf714Y4rhQjHEwQJt8/uINygt0vL?=
+ =?us-ascii?Q?sC5xoYxH3S43zlbawB7ttE5kUvcLZ6l1ehBk1qCrNEvyJYOGS1bEUa+28DT0?=
+ =?us-ascii?Q?0FP9Be697q+mq5hJ595I3wzWIjPVXBUzerllE7JdnG1wpq8C30XcymcRlBws?=
+ =?us-ascii?Q?19goL+PGuOrt1Owdqe4XF4tZo4QnWNmqZZ4J3pxyh8vOUjAsGt6VeM6FEnkg?=
+ =?us-ascii?Q?lzPlBdk7ShXKYmw0VTntmZ3bbuyUSGZsmYNgXo+ojabydQRWinXTI5auht63?=
+ =?us-ascii?Q?L3+pDWT0WY/z+ZMVjlLYxaC9k7UwKEyi5cFVDwsrZDsZra15iN7qoUErXbhZ?=
+ =?us-ascii?Q?SwPLoGquB7+fqiyOEgBNrqwQJAkN5i6jtqgVstWjX8BlxWNjNUWEvxiCleFi?=
+ =?us-ascii?Q?OXNd7Lxn0xKkCj88/ltjqm7f9onU3owi0WRwOUqEKxTxISiqqcZW5FwzXfIN?=
+ =?us-ascii?Q?osec4oLL8KU2XfKgJMR35QCvpREC3b/mqL05B49ktjxXy2/cZcGaiU78cLtd?=
+ =?us-ascii?Q?zBx70coMNMPyIBWwp/pzPdC/dCJNTRPO+yo5iXFUernsWgtyzf9urj+CdTyK?=
+ =?us-ascii?Q?xKW1EOa9hHf5AGz4OtOiCFj4LLAlUJuxXve5WETwob3eMAPRbKsskUbXP7Vw?=
+ =?us-ascii?Q?vwAAKX+6K6mmweKt3zKpC7Pez+diBnXUWC1UFzjMrIcbilAT3thvzU7cvssT?=
+ =?us-ascii?Q?7/64MuvQUlpnW8C0nVpO84RlIBgKNIL+WwAJV3wwQ9m7UdpSDTXBidOjGzcO?=
+ =?us-ascii?Q?rJN+IgdeEHVPEMs6bUwJhl8L+WnG5BNAEadfaQlXtrrj+mlu2ik+6r4HPhRK?=
+ =?us-ascii?Q?l4zpXod5JSnkPymswtsCk1aU92HbkTNtWm8VyYz9etIlf1UgdNDaSKeMfF/x?=
+ =?us-ascii?Q?X+m+ljOSg710NxDn/B5kJlcwCddiASTRCAd9D6jVfQqq7g=3D=3D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR10MB3366.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR10MB3366.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?HmhS/KZyXdT25548PPgG+650iJteWwkaISXzbcH0ARddxPdGop/IyH6E2A08?=
- =?us-ascii?Q?fI47zM5kTTocfYKwyXcLkYIS+8DWGuIUID6jQUzIfjSNO1E0LdZ5bPlde66b?=
- =?us-ascii?Q?NNinGTSlQR9Ebe8vC+B73HOBJ7vMpsYfG4paYdHosFqqibcbaQloWqMQTPZL?=
- =?us-ascii?Q?/6+vhMcMnwuwfADT4hOYdoLpjGwi281mYujphAMUC+kmWdO/P0v3iRcVexir?=
- =?us-ascii?Q?a8TLSoPnXrPO/OhXtUDhV+YhCFePBS1uAQ5nTpaXRWKOHxQh9PyUqipr3r2J?=
- =?us-ascii?Q?Z0dsOScma0ZE92GDh1MlfVufgUg6L2TFSEQ3vs8KztgUufi6MKLl28VQlKUd?=
- =?us-ascii?Q?dyGDizVQ60jj+4y1++gWncWgqxVMZ5OduqiD7eTtBr58Fv4omMjcyMnrkcLh?=
- =?us-ascii?Q?Vq12z+iDlLQRF8fsrl2h+8UX1OXCcUQcFCpateqYL5S9/h1BPR3R1uAnPH4I?=
- =?us-ascii?Q?WEyvu12isI/6DE5zUqdXJArkJwb56w7HYconknCfCu4RcKqjkjWWwMrAshHn?=
- =?us-ascii?Q?+TczWf7g9xvrRgeGifJmuI/YNoY/PWjmpcR2bEAGsJ+ezUqNIT7SCg+qqZyD?=
- =?us-ascii?Q?JZxzR6UbDSGGtfWZjwzVTn72PDrnthmoZjP4NpvttINN5Mz8Jacd89VhN+Es?=
- =?us-ascii?Q?Z6RtRZeXXr2GOKk595UsfUBgl7nGtbKprmx171cjs9nh2AscLax1vFA/NcPP?=
- =?us-ascii?Q?f6/ZiKD9kOwwhzmz8l80iP5N7YDag4xPHMvLamyiVzDWZrvlt/i+ySm6S7O7?=
- =?us-ascii?Q?OAELKurE3Sie0k5xjEXuqrPl/+DpOWhnw7XfQ1lQx8JmqGa378Vw+mvtSMKI?=
- =?us-ascii?Q?HXWXimDITI81Gu6XOyUTpxjwiMa6f3d4WsnydVxGhPFM3pdRxT6jxshmOdJE?=
- =?us-ascii?Q?1LzD2uXArUvVjawD/YBWhsJ8UFEA2Gb0rhsVpgPyMs7FJzklMKtYN9FR1AEP?=
- =?us-ascii?Q?NhzO/7wXHoqk4zh921L4k/nJGJZF3dW/5rkRrbeBSmES9ATdTYJdVFsqbMQ7?=
- =?us-ascii?Q?jiN7mAF5WT1w4OCNn/1ZL5KJ+Z6Ui3cOynhZTIEbF5FBWfPvM9mv+pctY345?=
- =?us-ascii?Q?ZCfnF90QXIF96Xsmuy4XaCG8Pgh9430UndV/m9T6s3JEGg0IIibPQ7zV3b2G?=
- =?us-ascii?Q?K/ke3tfhVct+VPNBPLkQJ+z836GmfCF+Ab8F/FE3ZitVjK0vqyjdtRLUWjcf?=
- =?us-ascii?Q?QCaELmrdklNXkrCMX2pMtUrVrO71GwPA85YiVxmzuGgdVg3tjXBaQ1wI09gh?=
- =?us-ascii?Q?V3+9R0c3QaBdfoXIXkt/hCorVogDkYQhlOK2XMs/kUJpM7szCgUPAyqzPtJG?=
- =?us-ascii?Q?pE6g2wj3vNrYM1jyVV2zIZJSm0EQsDDeQqMWEmes7m4C7WnqI2IOLkPkAsqw?=
- =?us-ascii?Q?9/B6RpBsSr0zhxL8zU9mVyKdgAxqHDftvXbVstSlCBeofUgkKUyPTeZaVIaS?=
- =?us-ascii?Q?N09amQIZhMpvRs5uf4DvbHQkEXp/sw57bmbo5dIzzPSOu6o/UeUDTirHzNzz?=
- =?us-ascii?Q?0FbR1zIAe9eb3OYvYR6r6k0yZ8jqlGRGEh75qIurn3axiClb1CXHfIihUlO1?=
- =?us-ascii?Q?WsINIpDzWQ0dWT7QpLOBL+eZJIK1kG7f3Z6CJr6ZFyobw8JYo3Svrhn+DM79?=
- =?us-ascii?Q?Bg=3D=3D?=
+	=?us-ascii?Q?AmVzT7wNXyzQGS0RivGuYDYOofCRdfRagh2NLJU0OoWkq5vUeAwCSkuQSfNK?=
+ =?us-ascii?Q?gEDfsL4Do0Pk9DiWmtLbNFP/Be9ne4sH/fiCIOeaUDPGwJX/bzR8rh9JN6dU?=
+ =?us-ascii?Q?ARbYNHjoWpMi6/oS+GRPie6x48L+xQ/yVr2PLMqdUBac4bZEgXw/mgs+6ysq?=
+ =?us-ascii?Q?xXWBe3q46eKW0Fa7BdqE0clXRFKhWMrYubBKoMp7y1m8F7mBx7SRcnzWsZtO?=
+ =?us-ascii?Q?Bmon+0y6DP4uqQfBKqoDKjCQAom1aHgf0juIm80VpHRg48XM4EItVbv7Lgww?=
+ =?us-ascii?Q?aJ1Rq5JnEcrbwSRarx0kXhE3uNVBlMRN6Zh4asab4Ged45j/vsJqff5QppOv?=
+ =?us-ascii?Q?o6bhEC4C6gqS37qwxR17toguElzegWHgjzxh3F6M4VsRcGLGZyJKDUQwWMcP?=
+ =?us-ascii?Q?uWrNEd4MvXyiUeHRnBtUNS2B6lS8muBc6qFl7+jC+a5dCSGYqWZUEYWgiN5H?=
+ =?us-ascii?Q?JAcKftzhuq/uLpO75Es0+HwkMHsI3pz5Gi/xZf50vN/4uSiS5idOBzg73m8S?=
+ =?us-ascii?Q?UoLh8g267GImc/xe0C67utfU5ytSyGapa5N6f6qld7qHF4T8Ke/0WyNgvrlj?=
+ =?us-ascii?Q?cg4cS0a0ZNKuOMtQWBPpUhaLEsdg4kRD8RQfvj+7JYrPiM2XA/MWCbiGC0T/?=
+ =?us-ascii?Q?9oAMPtbRfWCXX/dUUFoU+evs3UhlSy1ANVCamJYh5SI/bnVvIqi8mVs+INre?=
+ =?us-ascii?Q?zYpk0w7PxthUoo6nv0gbjCiH401QDIUwFlmNx0l4np9wg8HqPS2L72gKrc11?=
+ =?us-ascii?Q?UDNFvrP9vPu6KFV6giP4teOzsWIOB+oPoN88LCD4FKvlZ7YtWgTcd7ID+37d?=
+ =?us-ascii?Q?wpEknJER/y+sGlsrS66nkLaPcoZOJ6PHipbd3s8mYeIqN8mDGWz4uwRlD987?=
+ =?us-ascii?Q?YP628VSDdF/AJIwnM+6h+TdcFxoA5LXxACSNl42NAN6W8EafFfKWLVM9IwOq?=
+ =?us-ascii?Q?EN9wofKv9Lm7NRwEiCA3C3ZhaswzEQFgJUormNDFThSzana4+s8fLrnlBMYy?=
+ =?us-ascii?Q?VElsBcpIDYYLuFGkLqh1NEOlat2jbzAdk2RkH1BTjJBLHQoTPx+8UJl9r8cV?=
+ =?us-ascii?Q?DIKvDhVGzBSg/mBKkNsY3vP/Hk2WGaOtzO1TVUuniAfQBVWdUrXeGT1JgiLl?=
+ =?us-ascii?Q?fqA80ELl81B5B32CMPv4+Udo/x2N7BVagiS+ILGiHlj4x9N64xhq+O/adrjj?=
+ =?us-ascii?Q?Y5HlTzTdXkzfRmZqtq5hIX59vd3QFJy/pxRS4xgyB7zwV2SdNxs/b6u54N+3?=
+ =?us-ascii?Q?LVRA+a7coB8rWhQyqDEJYt5s1lrd1P9QOB3lIvB7p2oMSk6r5YE7kgxaz3/U?=
+ =?us-ascii?Q?edk+9VzuHQ/hr+onMkooS7Y+em2kph+C4HH7ldcEhZaYgY9oJ3hoOOYlK3ia?=
+ =?us-ascii?Q?DEkGakwRPanJmyusPsnzNBn+wcTOUcaE7+jXEWKtLJ0kQH8fZ6lQ/hwzSCq4?=
+ =?us-ascii?Q?7PeaWqPsXcqcK54fFZXqwYJbBLUtMvOt8ZBFs4Z0OCOi9OJSoPZ/lJL4VHTK?=
+ =?us-ascii?Q?GadXsc5SOLVMmLXE1LVpzccPWHOPGSd0CwCWktgeI5C0aDPPiNJvENEK0Cim?=
+ =?us-ascii?Q?JCE6Ij8k1UdjKQ5Qa5po4/WvSr4cs3FEL3lm4/XqOYkRWRF7oKc86S4HojAR?=
+ =?us-ascii?Q?vg=3D=3D?=
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	IDa02bT/8L4pMa9RphvG3AcyV3WhdtfzZYoX6gFrPNbpdXt02tZPPGCAmPNVKBrCwbeBy4t8ucewK9IBgEswy50eJqGw5EhwSVO6nlQPMxygb+PYZIkIaxjCJFzfV5d9Xqbz0UH0TZr5CFENuxwCCLPxk2U7+jInMGT0lHn3ck1IXvqlk+9RgCn7DCEHL5r6c9Q8Xu25gksY4Y8KP7S3mwSaKWk/5zmMMw+eL5dHo1ZxYA6DmIexDB1jayAS2FLlF2mpGDkcE4ggYba/kdWwU/mxanU0EsOUvqXi860c42JOVYJUP3Xt68t8DvdhQlg9B8EqkGHZPL5YmFvOoxuQ1HwH02PB6vr4afETNWLVs+B8FaQuziQUB6n6Ot/SJ913bL3XB1VHtPS7xzjKgYLl6YLNCbk1XO5dkxAL/b50Poqvzsnx7dQEPl+ILJ9w5b5hgIiQIeS+hMjoRaAhdjhl8OfbExJ96CjGK0jqhxKn2l/McxVy1NwDQDU9qGLouIu02Sxx0Haqu2GIHfaMLFduiti60vz4O09fbUnTUMhmoFx0RcnY1L4Dp9J2TNaSEXwWo56EwwhyzNI2THjqnk5eHeFZ+rsvkFJ+3gmNKSBiVoQ=
+	oSQLbxK4ZqvrEKo8LFQHwihuY/zkIJlrTfcy/n7DssK+FX9fCL/TIk9ybWTfc5//CQ/cV2wuDsPk3eBNdM6MyV30B+KOnHDcxl5BAtobn+zycoo7ERpkyTDX69QCDVtv5g495CfXqXp792PMYkhy8cVvDp9EzzR5r2G2n6FagUILagUpdyPepOuTrCb+H1WcJFsB/dp7pd9wVw/TfMgNdcY8474W8UiYFtyVl9Od2T68HJ5CPSMDwkdfsC2t8xSEtrXl7rsddARco5nEuEpviY5fuB+c4BpjDCpBXAYKihzzIWL+P2nfzrrc4Uzoy09vr5xHGiwoDGjGRjePwguzxiCStt5kIujPsEK+aBwo0teMXjvWF7W9/EF57GM+MMcsei2P0Obf4ltuwS1rnHEaz0YR4GgMpMgXJZEt3bYjUQ9KhzdqnTPhbsnsaM6Ab5MAoAPeopOAs+JpVJc106IzgO8Ugm3snkGRB/EZFlT1fp1VXOSWeNv1HKiDyFvPlqSl5lS+ml75i+nUvKQjnqmDnurJAzp88PmpRNj2M6njo1GnlLGwib9FgeV17gjV+aTBe4aRPBVl4KydgeSbRSQ7PH+8Kb6IjrAkpvpfc3NkY6Q=
 X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 71f13595-baee-447d-8a23-08dd13c5146f
+X-MS-Exchange-CrossTenant-Network-Message-Id: e2221735-4f24-4201-2249-08dd13c5183b
 X-MS-Exchange-CrossTenant-AuthSource: BYAPR10MB3366.namprd10.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Dec 2024 18:05:33.0420
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Dec 2024 18:05:39.4078
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: SvQIeyqxOPpalGPvGV43fntbeAvTG4oB8C8pvpBDQqb55Rn+BDFpKrf38GDECq5qc3tbIRXVuzEEEule+iWk+clfJQjwTYokTJjuVIw09yk=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR10MB6762
+X-MS-Exchange-CrossTenant-UserPrincipalName: tZScrNk+VWbsJY5Gs9JK8mI4Ma/+cdQL96X2g9j/OLPAzvk0qtdOdiW4SbF2j0s+B2Tc8J4si4xVAZQMjpgndO6+/Mx48Geh4wX2dRsx1OA=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR10MB8129
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
  definitions=2024-12-03_06,2024-12-03_03,2024-11-22_01
@@ -188,386 +188,665 @@ X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 phishs
  malwarescore=0 bulkscore=0 spamscore=0 mlxlogscore=999 adultscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2411120000
  definitions=main-2412030151
-X-Proofpoint-GUID: qndHoWZXSMVnuKX_pkRmQP1wbk7I9NP1
-X-Proofpoint-ORIG-GUID: qndHoWZXSMVnuKX_pkRmQP1wbk7I9NP1
+X-Proofpoint-GUID: slcM9c0nE1THh8PRMfCu9KscHYkJdCbe
+X-Proofpoint-ORIG-GUID: slcM9c0nE1THh8PRMfCu9KscHYkJdCbe
 
-We want to be able to unit test the unmapped area logic, so move it to
-mm/vma.c. The wrappers which invoke this remain in place in mm/mmap.c.
+We build on previous work making expand_downwards() an entirely internal
+function.
 
-In addition, naturally, update the existing test code to enable this to be
-compiled in userland.
+This logic is subtle and so it is highly useful to get it into vma.c so we
+can then userland unit test.
+
+We must additionally move acct_stack_growth() to vma.c as it is a helper
+function used by both expand_downwards() and expand_upwards().
+
+We are also then able to mark anon_vma_interval_tree_pre_update_vma() and
+anon_vma_interval_tree_post_update_vma() static as these are no longer used
+by anything else.
 
 Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 ---
- mm/mmap.c                        | 109 -------------------------------
- mm/vma.c                         | 109 +++++++++++++++++++++++++++++++
- mm/vma.h                         |   3 +
- tools/testing/vma/vma.c          |   6 ++
- tools/testing/vma/vma_internal.h |  59 +++++++++++++++++
- 5 files changed, 177 insertions(+), 109 deletions(-)
+ mm/mmap.c                        | 205 -----------------------
+ mm/vma.c                         | 269 +++++++++++++++++++++++++++----
+ mm/vma.h                         |  12 +-
+ tools/testing/vma/vma.c          |   5 +
+ tools/testing/vma/vma_internal.h |  62 +++++++
+ 5 files changed, 310 insertions(+), 243 deletions(-)
 
 diff --git a/mm/mmap.c b/mm/mmap.c
-index 93188ef46dae..f053de1d6fae 100644
+index 4df38d3717ff..55a8f2332b7c 100644
 --- a/mm/mmap.c
 +++ b/mm/mmap.c
-@@ -580,115 +580,6 @@ SYSCALL_DEFINE1(old_mmap, struct mmap_arg_struct __user *, arg)
+@@ -879,211 +879,6 @@ find_vma_prev(struct mm_struct *mm, unsigned long addr,
+ 	return vma;
  }
- #endif /* __ARCH_WANT_SYS_OLD_MMAP */
  
--/**
-- * unmapped_area() - Find an area between the low_limit and the high_limit with
-- * the correct alignment and offset, all from @info. Note: current->mm is used
-- * for the search.
-- *
-- * @info: The unmapped area information including the range [low_limit -
-- * high_limit), the alignment offset and mask.
-- *
-- * Return: A memory address or -ENOMEM.
+-/*
+- * Verify that the stack growth is acceptable and
+- * update accounting. This is shared with both the
+- * grow-up and grow-down cases.
 - */
--static unsigned long unmapped_area(struct vm_unmapped_area_info *info)
+-static int acct_stack_growth(struct vm_area_struct *vma,
+-			     unsigned long size, unsigned long grow)
 -{
--	unsigned long length, gap;
--	unsigned long low_limit, high_limit;
--	struct vm_area_struct *tmp;
--	VMA_ITERATOR(vmi, current->mm, 0);
+-	struct mm_struct *mm = vma->vm_mm;
+-	unsigned long new_start;
 -
--	/* Adjust search length to account for worst case alignment overhead */
--	length = info->length + info->align_mask + info->start_gap;
--	if (length < info->length)
+-	/* address space limit tests */
+-	if (!may_expand_vm(mm, vma->vm_flags, grow))
 -		return -ENOMEM;
 -
--	low_limit = info->low_limit;
--	if (low_limit < mmap_min_addr)
--		low_limit = mmap_min_addr;
--	high_limit = info->high_limit;
--retry:
--	if (vma_iter_area_lowest(&vmi, low_limit, high_limit, length))
+-	/* Stack limit test */
+-	if (size > rlimit(RLIMIT_STACK))
 -		return -ENOMEM;
+-
+-	/* mlock limit tests */
+-	if (!mlock_future_ok(mm, vma->vm_flags, grow << PAGE_SHIFT))
+-		return -ENOMEM;
+-
+-	/* Check to ensure the stack will not grow into a hugetlb-only region */
+-	new_start = (vma->vm_flags & VM_GROWSUP) ? vma->vm_start :
+-			vma->vm_end - size;
+-	if (is_hugepage_only_range(vma->vm_mm, new_start, size))
+-		return -EFAULT;
 -
 -	/*
--	 * Adjust for the gap first so it doesn't interfere with the
--	 * later alignment. The first step is the minimum needed to
--	 * fulill the start gap, the next steps is the minimum to align
--	 * that. It is the minimum needed to fulill both.
+-	 * Overcommit..  This must be the final test, as it will
+-	 * update security statistics.
 -	 */
--	gap = vma_iter_addr(&vmi) + info->start_gap;
--	gap += (info->align_offset - gap) & info->align_mask;
--	tmp = vma_next(&vmi);
--	if (tmp && (tmp->vm_flags & VM_STARTGAP_FLAGS)) { /* Avoid prev check if possible */
--		if (vm_start_gap(tmp) < gap + length - 1) {
--			low_limit = tmp->vm_end;
--			vma_iter_reset(&vmi);
--			goto retry;
--		}
--	} else {
--		tmp = vma_prev(&vmi);
--		if (tmp && vm_end_gap(tmp) > gap) {
--			low_limit = vm_end_gap(tmp);
--			vma_iter_reset(&vmi);
--			goto retry;
--		}
--	}
+-	if (security_vm_enough_memory_mm(mm, grow))
+-		return -ENOMEM;
 -
--	return gap;
+-	return 0;
 -}
 -
--/**
-- * unmapped_area_topdown() - Find an area between the low_limit and the
-- * high_limit with the correct alignment and offset at the highest available
-- * address, all from @info. Note: current->mm is used for the search.
-- *
-- * @info: The unmapped area information including the range [low_limit -
-- * high_limit), the alignment offset and mask.
-- *
-- * Return: A memory address or -ENOMEM.
+-#if defined(CONFIG_STACK_GROWSUP)
+-/*
+- * PA-RISC uses this for its stack.
+- * vma is the last one with address > vma->vm_end.  Have to extend vma.
 - */
--static unsigned long unmapped_area_topdown(struct vm_unmapped_area_info *info)
+-static int expand_upwards(struct vm_area_struct *vma, unsigned long address)
 -{
--	unsigned long length, gap, gap_end;
--	unsigned long low_limit, high_limit;
--	struct vm_area_struct *tmp;
--	VMA_ITERATOR(vmi, current->mm, 0);
+-	struct mm_struct *mm = vma->vm_mm;
+-	struct vm_area_struct *next;
+-	unsigned long gap_addr;
+-	int error = 0;
+-	VMA_ITERATOR(vmi, mm, vma->vm_start);
 -
--	/* Adjust search length to account for worst case alignment overhead */
--	length = info->length + info->align_mask + info->start_gap;
--	if (length < info->length)
+-	if (!(vma->vm_flags & VM_GROWSUP))
+-		return -EFAULT;
+-
+-	mmap_assert_write_locked(mm);
+-
+-	/* Guard against exceeding limits of the address space. */
+-	address &= PAGE_MASK;
+-	if (address >= (TASK_SIZE & PAGE_MASK))
 -		return -ENOMEM;
+-	address += PAGE_SIZE;
 -
--	low_limit = info->low_limit;
--	if (low_limit < mmap_min_addr)
--		low_limit = mmap_min_addr;
--	high_limit = info->high_limit;
--retry:
--	if (vma_iter_area_highest(&vmi, low_limit, high_limit, length))
--		return -ENOMEM;
+-	/* Enforce stack_guard_gap */
+-	gap_addr = address + stack_guard_gap;
 -
--	gap = vma_iter_end(&vmi) - info->length;
--	gap -= (gap - info->align_offset) & info->align_mask;
--	gap_end = vma_iter_end(&vmi);
--	tmp = vma_next(&vmi);
--	if (tmp && (tmp->vm_flags & VM_STARTGAP_FLAGS)) { /* Avoid prev check if possible */
--		if (vm_start_gap(tmp) < gap_end) {
--			high_limit = vm_start_gap(tmp);
--			vma_iter_reset(&vmi);
--			goto retry;
--		}
--	} else {
--		tmp = vma_prev(&vmi);
--		if (tmp && vm_end_gap(tmp) > gap) {
--			high_limit = tmp->vm_start;
--			vma_iter_reset(&vmi);
--			goto retry;
--		}
+-	/* Guard against overflow */
+-	if (gap_addr < address || gap_addr > TASK_SIZE)
+-		gap_addr = TASK_SIZE;
+-
+-	next = find_vma_intersection(mm, vma->vm_end, gap_addr);
+-	if (next && vma_is_accessible(next)) {
+-		if (!(next->vm_flags & VM_GROWSUP))
+-			return -ENOMEM;
+-		/* Check that both stack segments have the same anon_vma? */
 -	}
 -
--	return gap;
+-	if (next)
+-		vma_iter_prev_range_limit(&vmi, address);
+-
+-	vma_iter_config(&vmi, vma->vm_start, address);
+-	if (vma_iter_prealloc(&vmi, vma))
+-		return -ENOMEM;
+-
+-	/* We must make sure the anon_vma is allocated. */
+-	if (unlikely(anon_vma_prepare(vma))) {
+-		vma_iter_free(&vmi);
+-		return -ENOMEM;
+-	}
+-
+-	/* Lock the VMA before expanding to prevent concurrent page faults */
+-	vma_start_write(vma);
+-	/* We update the anon VMA tree. */
+-	anon_vma_lock_write(vma->anon_vma);
+-
+-	/* Somebody else might have raced and expanded it already */
+-	if (address > vma->vm_end) {
+-		unsigned long size, grow;
+-
+-		size = address - vma->vm_start;
+-		grow = (address - vma->vm_end) >> PAGE_SHIFT;
+-
+-		error = -ENOMEM;
+-		if (vma->vm_pgoff + (size >> PAGE_SHIFT) >= vma->vm_pgoff) {
+-			error = acct_stack_growth(vma, size, grow);
+-			if (!error) {
+-				if (vma->vm_flags & VM_LOCKED)
+-					mm->locked_vm += grow;
+-				vm_stat_account(mm, vma->vm_flags, grow);
+-				anon_vma_interval_tree_pre_update_vma(vma);
+-				vma->vm_end = address;
+-				/* Overwrite old entry in mtree. */
+-				vma_iter_store(&vmi, vma);
+-				anon_vma_interval_tree_post_update_vma(vma);
+-
+-				perf_event_mmap(vma);
+-			}
+-		}
+-	}
+-	anon_vma_unlock_write(vma->anon_vma);
+-	vma_iter_free(&vmi);
+-	validate_mm(mm);
+-	return error;
+-}
+-#endif /* CONFIG_STACK_GROWSUP */
+-
+-/*
+- * vma is the first one with address < vma->vm_start.  Have to extend vma.
+- * mmap_lock held for writing.
+- */
+-static int expand_downwards(struct vm_area_struct *vma, unsigned long address)
+-{
+-	struct mm_struct *mm = vma->vm_mm;
+-	struct vm_area_struct *prev;
+-	int error = 0;
+-	VMA_ITERATOR(vmi, mm, vma->vm_start);
+-
+-	if (!(vma->vm_flags & VM_GROWSDOWN))
+-		return -EFAULT;
+-
+-	mmap_assert_write_locked(mm);
+-
+-	address &= PAGE_MASK;
+-	if (address < mmap_min_addr || address < FIRST_USER_ADDRESS)
+-		return -EPERM;
+-
+-	/* Enforce stack_guard_gap */
+-	prev = vma_prev(&vmi);
+-	/* Check that both stack segments have the same anon_vma? */
+-	if (prev) {
+-		if (!(prev->vm_flags & VM_GROWSDOWN) &&
+-		    vma_is_accessible(prev) &&
+-		    (address - prev->vm_end < stack_guard_gap))
+-			return -ENOMEM;
+-	}
+-
+-	if (prev)
+-		vma_iter_next_range_limit(&vmi, vma->vm_start);
+-
+-	vma_iter_config(&vmi, address, vma->vm_end);
+-	if (vma_iter_prealloc(&vmi, vma))
+-		return -ENOMEM;
+-
+-	/* We must make sure the anon_vma is allocated. */
+-	if (unlikely(anon_vma_prepare(vma))) {
+-		vma_iter_free(&vmi);
+-		return -ENOMEM;
+-	}
+-
+-	/* Lock the VMA before expanding to prevent concurrent page faults */
+-	vma_start_write(vma);
+-	/* We update the anon VMA tree. */
+-	anon_vma_lock_write(vma->anon_vma);
+-
+-	/* Somebody else might have raced and expanded it already */
+-	if (address < vma->vm_start) {
+-		unsigned long size, grow;
+-
+-		size = vma->vm_end - address;
+-		grow = (vma->vm_start - address) >> PAGE_SHIFT;
+-
+-		error = -ENOMEM;
+-		if (grow <= vma->vm_pgoff) {
+-			error = acct_stack_growth(vma, size, grow);
+-			if (!error) {
+-				if (vma->vm_flags & VM_LOCKED)
+-					mm->locked_vm += grow;
+-				vm_stat_account(mm, vma->vm_flags, grow);
+-				anon_vma_interval_tree_pre_update_vma(vma);
+-				vma->vm_start = address;
+-				vma->vm_pgoff -= grow;
+-				/* Overwrite old entry in mtree. */
+-				vma_iter_store(&vmi, vma);
+-				anon_vma_interval_tree_post_update_vma(vma);
+-
+-				perf_event_mmap(vma);
+-			}
+-		}
+-	}
+-	anon_vma_unlock_write(vma->anon_vma);
+-	vma_iter_free(&vmi);
+-	validate_mm(mm);
+-	return error;
 -}
 -
- /*
-  * Determine if the allocation needs to ensure that there is no
-  * existing mapping within it's guard gaps, for use as start_gap.
+ /* enforced gap between the expanding stack and other mappings. */
+ unsigned long stack_guard_gap = 256UL<<PAGE_SHIFT;
+ 
 diff --git a/mm/vma.c b/mm/vma.c
-index 9955b5332ca2..50c0c9c443d2 100644
+index 50c0c9c443d2..83c79bb42675 100644
 --- a/mm/vma.c
 +++ b/mm/vma.c
-@@ -2560,3 +2560,112 @@ int do_brk_flags(struct vma_iterator *vmi, struct vm_area_struct *vma,
- 	vm_unacct_memory(len >> PAGE_SHIFT);
- 	return -ENOMEM;
+@@ -202,6 +202,38 @@ static void __remove_shared_vm_struct(struct vm_area_struct *vma,
+ 	flush_dcache_mmap_unlock(mapping);
  }
-+
-+/**
-+ * unmapped_area() - Find an area between the low_limit and the high_limit with
-+ * the correct alignment and offset, all from @info. Note: current->mm is used
-+ * for the search.
+ 
++/*
++ * vma has some anon_vma assigned, and is already inserted on that
++ * anon_vma's interval trees.
 + *
-+ * @info: The unmapped area information including the range [low_limit -
-+ * high_limit), the alignment offset and mask.
++ * Before updating the vma's vm_start / vm_end / vm_pgoff fields, the
++ * vma must be removed from the anon_vma's interval trees using
++ * anon_vma_interval_tree_pre_update_vma().
 + *
-+ * Return: A memory address or -ENOMEM.
++ * After the update, the vma will be reinserted using
++ * anon_vma_interval_tree_post_update_vma().
++ *
++ * The entire update must be protected by exclusive mmap_lock and by
++ * the root anon_vma's mutex.
 + */
-+unsigned long unmapped_area(struct vm_unmapped_area_info *info)
++static void
++anon_vma_interval_tree_pre_update_vma(struct vm_area_struct *vma)
 +{
-+	unsigned long length, gap;
-+	unsigned long low_limit, high_limit;
-+	struct vm_area_struct *tmp;
-+	VMA_ITERATOR(vmi, current->mm, 0);
++	struct anon_vma_chain *avc;
 +
-+	/* Adjust search length to account for worst case alignment overhead */
-+	length = info->length + info->align_mask + info->start_gap;
-+	if (length < info->length)
-+		return -ENOMEM;
-+
-+	low_limit = info->low_limit;
-+	if (low_limit < mmap_min_addr)
-+		low_limit = mmap_min_addr;
-+	high_limit = info->high_limit;
-+retry:
-+	if (vma_iter_area_lowest(&vmi, low_limit, high_limit, length))
-+		return -ENOMEM;
-+
-+	/*
-+	 * Adjust for the gap first so it doesn't interfere with the
-+	 * later alignment. The first step is the minimum needed to
-+	 * fulill the start gap, the next steps is the minimum to align
-+	 * that. It is the minimum needed to fulill both.
-+	 */
-+	gap = vma_iter_addr(&vmi) + info->start_gap;
-+	gap += (info->align_offset - gap) & info->align_mask;
-+	tmp = vma_next(&vmi);
-+	if (tmp && (tmp->vm_flags & VM_STARTGAP_FLAGS)) { /* Avoid prev check if possible */
-+		if (vm_start_gap(tmp) < gap + length - 1) {
-+			low_limit = tmp->vm_end;
-+			vma_iter_reset(&vmi);
-+			goto retry;
-+		}
-+	} else {
-+		tmp = vma_prev(&vmi);
-+		if (tmp && vm_end_gap(tmp) > gap) {
-+			low_limit = vm_end_gap(tmp);
-+			vma_iter_reset(&vmi);
-+			goto retry;
-+		}
-+	}
-+
-+	return gap;
++	list_for_each_entry(avc, &vma->anon_vma_chain, same_vma)
++		anon_vma_interval_tree_remove(avc, &avc->anon_vma->rb_root);
 +}
 +
-+/**
-+ * unmapped_area_topdown() - Find an area between the low_limit and the
-+ * high_limit with the correct alignment and offset at the highest available
-+ * address, all from @info. Note: current->mm is used for the search.
-+ *
-+ * @info: The unmapped area information including the range [low_limit -
-+ * high_limit), the alignment offset and mask.
-+ *
-+ * Return: A memory address or -ENOMEM.
-+ */
-+unsigned long unmapped_area_topdown(struct vm_unmapped_area_info *info)
++static void
++anon_vma_interval_tree_post_update_vma(struct vm_area_struct *vma)
 +{
-+	unsigned long length, gap, gap_end;
-+	unsigned long low_limit, high_limit;
-+	struct vm_area_struct *tmp;
-+	VMA_ITERATOR(vmi, current->mm, 0);
++	struct anon_vma_chain *avc;
 +
-+	/* Adjust search length to account for worst case alignment overhead */
-+	length = info->length + info->align_mask + info->start_gap;
-+	if (length < info->length)
-+		return -ENOMEM;
-+
-+	low_limit = info->low_limit;
-+	if (low_limit < mmap_min_addr)
-+		low_limit = mmap_min_addr;
-+	high_limit = info->high_limit;
-+retry:
-+	if (vma_iter_area_highest(&vmi, low_limit, high_limit, length))
-+		return -ENOMEM;
-+
-+	gap = vma_iter_end(&vmi) - info->length;
-+	gap -= (gap - info->align_offset) & info->align_mask;
-+	gap_end = vma_iter_end(&vmi);
-+	tmp = vma_next(&vmi);
-+	if (tmp && (tmp->vm_flags & VM_STARTGAP_FLAGS)) { /* Avoid prev check if possible */
-+		if (vm_start_gap(tmp) < gap_end) {
-+			high_limit = vm_start_gap(tmp);
-+			vma_iter_reset(&vmi);
-+			goto retry;
-+		}
-+	} else {
-+		tmp = vma_prev(&vmi);
-+		if (tmp && vm_end_gap(tmp) > gap) {
-+			high_limit = tmp->vm_start;
-+			vma_iter_reset(&vmi);
-+			goto retry;
-+		}
-+	}
-+
-+	return gap;
++	list_for_each_entry(avc, &vma->anon_vma_chain, same_vma)
++		anon_vma_interval_tree_insert(avc, &avc->anon_vma->rb_root);
 +}
-diff --git a/mm/vma.h b/mm/vma.h
-index 83a15d3a8285..c60f37d89eb1 100644
---- a/mm/vma.h
-+++ b/mm/vma.h
-@@ -250,6 +250,9 @@ unsigned long __mmap_region(struct file *file, unsigned long addr,
- int do_brk_flags(struct vma_iterator *vmi, struct vm_area_struct *brkvma,
- 		 unsigned long addr, unsigned long request, unsigned long flags);
- 
-+unsigned long unmapped_area(struct vm_unmapped_area_info *info);
-+unsigned long unmapped_area_topdown(struct vm_unmapped_area_info *info);
-+
- static inline bool vma_wants_manual_pte_write_upgrade(struct vm_area_struct *vma)
- {
- 	/*
-diff --git a/tools/testing/vma/vma.c b/tools/testing/vma/vma.c
-index 8fab5e13c7c3..39ee61e55634 100644
---- a/tools/testing/vma/vma.c
-+++ b/tools/testing/vma/vma.c
-@@ -18,6 +18,12 @@ static bool fail_prealloc;
- #define vma_iter_prealloc(vmi, vma)					\
- 	(fail_prealloc ? -ENOMEM : mas_preallocate(&(vmi)->mas, (vma), GFP_KERNEL))
- 
-+#define CONFIG_DEFAULT_MMAP_MIN_ADDR 65536
-+
-+unsigned long mmap_min_addr = CONFIG_DEFAULT_MMAP_MIN_ADDR;
-+unsigned long dac_mmap_min_addr = CONFIG_DEFAULT_MMAP_MIN_ADDR;
-+unsigned long stack_guard_gap = 256UL<<PAGE_SHIFT;
 +
  /*
-  * Directly import the VMA implementation here. Our vma_internal.h wrapper
-  * provides userland-equivalent functionality for everything vma.c uses.
-diff --git a/tools/testing/vma/vma_internal.h b/tools/testing/vma/vma_internal.h
-index 7c3c15135c5b..6ad8bd8edaad 100644
---- a/tools/testing/vma/vma_internal.h
-+++ b/tools/testing/vma/vma_internal.h
-@@ -27,6 +27,15 @@
- #include <linux/rbtree.h>
- #include <linux/rwsem.h>
- 
-+extern unsigned long stack_guard_gap;
-+#ifdef CONFIG_MMU
-+extern unsigned long mmap_min_addr;
-+extern unsigned long dac_mmap_min_addr;
-+#else
-+#define mmap_min_addr		0UL
-+#define dac_mmap_min_addr	0UL
-+#endif
-+
- #define VM_WARN_ON(_expr) (WARN_ON(_expr))
- #define VM_WARN_ON_ONCE(_expr) (WARN_ON_ONCE(_expr))
- #define VM_BUG_ON(_expr) (BUG_ON(_expr))
-@@ -52,6 +61,8 @@
- #define VM_STACK	VM_GROWSDOWN
- #define VM_SHADOW_STACK	VM_NONE
- #define VM_SOFTDIRTY	0
-+#define VM_ARCH_1	0x01000000	/* Architecture-specific flag */
-+#define VM_GROWSUP	VM_NONE
- 
- #define VM_ACCESS_FLAGS (VM_READ | VM_WRITE | VM_EXEC)
- #define VM_SPECIAL (VM_IO | VM_DONTEXPAND | VM_PFNMAP | VM_MIXEDMAP)
-@@ -66,6 +77,8 @@
- 
- #define VM_DATA_DEFAULT_FLAGS	VM_DATA_FLAGS_TSK_EXEC
- 
-+#define VM_STARTGAP_FLAGS (VM_GROWSDOWN | VM_SHADOW_STACK)
-+
- #ifdef CONFIG_64BIT
- /* VM is sealed, in vm_flags */
- #define VM_SEALED	_BITUL(63)
-@@ -395,6 +408,17 @@ struct vm_operations_struct {
- 					  unsigned long addr);
- };
- 
-+struct vm_unmapped_area_info {
-+#define VM_UNMAPPED_AREA_TOPDOWN 1
-+	unsigned long flags;
-+	unsigned long length;
-+	unsigned long low_limit;
-+	unsigned long high_limit;
-+	unsigned long align_mask;
-+	unsigned long align_offset;
-+	unsigned long start_gap;
-+};
-+
- static inline void vma_iter_invalidate(struct vma_iterator *vmi)
- {
- 	mas_pause(&vmi->mas);
-@@ -1055,4 +1079,39 @@ static inline int mmap_file(struct file *, struct vm_area_struct *)
- 	return 0;
+  * vma_prepare() - Helper function for handling locking VMAs prior to altering
+  * @vp: The initialized vma_prepare struct
+@@ -510,38 +542,6 @@ static int split_vma(struct vma_iterator *vmi, struct vm_area_struct *vma,
+ 	return __split_vma(vmi, vma, addr, new_below);
  }
  
-+static inline unsigned long stack_guard_start_gap(struct vm_area_struct *vma)
-+{
-+	if (vma->vm_flags & VM_GROWSDOWN)
-+		return stack_guard_gap;
+-/*
+- * vma has some anon_vma assigned, and is already inserted on that
+- * anon_vma's interval trees.
+- *
+- * Before updating the vma's vm_start / vm_end / vm_pgoff fields, the
+- * vma must be removed from the anon_vma's interval trees using
+- * anon_vma_interval_tree_pre_update_vma().
+- *
+- * After the update, the vma will be reinserted using
+- * anon_vma_interval_tree_post_update_vma().
+- *
+- * The entire update must be protected by exclusive mmap_lock and by
+- * the root anon_vma's mutex.
+- */
+-void
+-anon_vma_interval_tree_pre_update_vma(struct vm_area_struct *vma)
+-{
+-	struct anon_vma_chain *avc;
+-
+-	list_for_each_entry(avc, &vma->anon_vma_chain, same_vma)
+-		anon_vma_interval_tree_remove(avc, &avc->anon_vma->rb_root);
+-}
+-
+-void
+-anon_vma_interval_tree_post_update_vma(struct vm_area_struct *vma)
+-{
+-	struct anon_vma_chain *avc;
+-
+-	list_for_each_entry(avc, &vma->anon_vma_chain, same_vma)
+-		anon_vma_interval_tree_insert(avc, &avc->anon_vma->rb_root);
+-}
+-
+ /*
+  * dup_anon_vma() - Helper function to duplicate anon_vma
+  * @dst: The destination VMA
+@@ -2669,3 +2669,208 @@ unsigned long unmapped_area_topdown(struct vm_unmapped_area_info *info)
+ 
+ 	return gap;
+ }
 +
-+	/* See reasoning around the VM_SHADOW_STACK definition */
-+	if (vma->vm_flags & VM_SHADOW_STACK)
-+		return PAGE_SIZE;
++/*
++ * Verify that the stack growth is acceptable and
++ * update accounting. This is shared with both the
++ * grow-up and grow-down cases.
++ */
++static int acct_stack_growth(struct vm_area_struct *vma,
++			     unsigned long size, unsigned long grow)
++{
++	struct mm_struct *mm = vma->vm_mm;
++	unsigned long new_start;
++
++	/* address space limit tests */
++	if (!may_expand_vm(mm, vma->vm_flags, grow))
++		return -ENOMEM;
++
++	/* Stack limit test */
++	if (size > rlimit(RLIMIT_STACK))
++		return -ENOMEM;
++
++	/* mlock limit tests */
++	if (!mlock_future_ok(mm, vma->vm_flags, grow << PAGE_SHIFT))
++		return -ENOMEM;
++
++	/* Check to ensure the stack will not grow into a hugetlb-only region */
++	new_start = (vma->vm_flags & VM_GROWSUP) ? vma->vm_start :
++			vma->vm_end - size;
++	if (is_hugepage_only_range(vma->vm_mm, new_start, size))
++		return -EFAULT;
++
++	/*
++	 * Overcommit..  This must be the final test, as it will
++	 * update security statistics.
++	 */
++	if (security_vm_enough_memory_mm(mm, grow))
++		return -ENOMEM;
 +
 +	return 0;
 +}
 +
-+static inline unsigned long vm_start_gap(struct vm_area_struct *vma)
++#if defined(CONFIG_STACK_GROWSUP)
++/*
++ * PA-RISC uses this for its stack.
++ * vma is the last one with address > vma->vm_end.  Have to extend vma.
++ */
++int expand_upwards(struct vm_area_struct *vma, unsigned long address)
 +{
-+	unsigned long gap = stack_guard_start_gap(vma);
-+	unsigned long vm_start = vma->vm_start;
++	struct mm_struct *mm = vma->vm_mm;
++	struct vm_area_struct *next;
++	unsigned long gap_addr;
++	int error = 0;
++	VMA_ITERATOR(vmi, mm, vma->vm_start);
 +
-+	vm_start -= gap;
-+	if (vm_start > vma->vm_start)
-+		vm_start = 0;
-+	return vm_start;
-+}
++	if (!(vma->vm_flags & VM_GROWSUP))
++		return -EFAULT;
 +
-+static inline unsigned long vm_end_gap(struct vm_area_struct *vma)
-+{
-+	unsigned long vm_end = vma->vm_end;
++	mmap_assert_write_locked(mm);
 +
-+	if (vma->vm_flags & VM_GROWSUP) {
-+		vm_end += stack_guard_gap;
-+		if (vm_end < vma->vm_end)
-+			vm_end = -PAGE_SIZE;
++	/* Guard against exceeding limits of the address space. */
++	address &= PAGE_MASK;
++	if (address >= (TASK_SIZE & PAGE_MASK))
++		return -ENOMEM;
++	address += PAGE_SIZE;
++
++	/* Enforce stack_guard_gap */
++	gap_addr = address + stack_guard_gap;
++
++	/* Guard against overflow */
++	if (gap_addr < address || gap_addr > TASK_SIZE)
++		gap_addr = TASK_SIZE;
++
++	next = find_vma_intersection(mm, vma->vm_end, gap_addr);
++	if (next && vma_is_accessible(next)) {
++		if (!(next->vm_flags & VM_GROWSUP))
++			return -ENOMEM;
++		/* Check that both stack segments have the same anon_vma? */
 +	}
-+	return vm_end;
++
++	if (next)
++		vma_iter_prev_range_limit(&vmi, address);
++
++	vma_iter_config(&vmi, vma->vm_start, address);
++	if (vma_iter_prealloc(&vmi, vma))
++		return -ENOMEM;
++
++	/* We must make sure the anon_vma is allocated. */
++	if (unlikely(anon_vma_prepare(vma))) {
++		vma_iter_free(&vmi);
++		return -ENOMEM;
++	}
++
++	/* Lock the VMA before expanding to prevent concurrent page faults */
++	vma_start_write(vma);
++	/* We update the anon VMA tree. */
++	anon_vma_lock_write(vma->anon_vma);
++
++	/* Somebody else might have raced and expanded it already */
++	if (address > vma->vm_end) {
++		unsigned long size, grow;
++
++		size = address - vma->vm_start;
++		grow = (address - vma->vm_end) >> PAGE_SHIFT;
++
++		error = -ENOMEM;
++		if (vma->vm_pgoff + (size >> PAGE_SHIFT) >= vma->vm_pgoff) {
++			error = acct_stack_growth(vma, size, grow);
++			if (!error) {
++				if (vma->vm_flags & VM_LOCKED)
++					mm->locked_vm += grow;
++				vm_stat_account(mm, vma->vm_flags, grow);
++				anon_vma_interval_tree_pre_update_vma(vma);
++				vma->vm_end = address;
++				/* Overwrite old entry in mtree. */
++				vma_iter_store(&vmi, vma);
++				anon_vma_interval_tree_post_update_vma(vma);
++
++				perf_event_mmap(vma);
++			}
++		}
++	}
++	anon_vma_unlock_write(vma->anon_vma);
++	vma_iter_free(&vmi);
++	validate_mm(mm);
++	return error;
 +}
++#endif /* CONFIG_STACK_GROWSUP */
++
++/*
++ * vma is the first one with address < vma->vm_start.  Have to extend vma.
++ * mmap_lock held for writing.
++ */
++int expand_downwards(struct vm_area_struct *vma, unsigned long address)
++{
++	struct mm_struct *mm = vma->vm_mm;
++	struct vm_area_struct *prev;
++	int error = 0;
++	VMA_ITERATOR(vmi, mm, vma->vm_start);
++
++	if (!(vma->vm_flags & VM_GROWSDOWN))
++		return -EFAULT;
++
++	mmap_assert_write_locked(mm);
++
++	address &= PAGE_MASK;
++	if (address < mmap_min_addr || address < FIRST_USER_ADDRESS)
++		return -EPERM;
++
++	/* Enforce stack_guard_gap */
++	prev = vma_prev(&vmi);
++	/* Check that both stack segments have the same anon_vma? */
++	if (prev) {
++		if (!(prev->vm_flags & VM_GROWSDOWN) &&
++		    vma_is_accessible(prev) &&
++		    (address - prev->vm_end < stack_guard_gap))
++			return -ENOMEM;
++	}
++
++	if (prev)
++		vma_iter_next_range_limit(&vmi, vma->vm_start);
++
++	vma_iter_config(&vmi, address, vma->vm_end);
++	if (vma_iter_prealloc(&vmi, vma))
++		return -ENOMEM;
++
++	/* We must make sure the anon_vma is allocated. */
++	if (unlikely(anon_vma_prepare(vma))) {
++		vma_iter_free(&vmi);
++		return -ENOMEM;
++	}
++
++	/* Lock the VMA before expanding to prevent concurrent page faults */
++	vma_start_write(vma);
++	/* We update the anon VMA tree. */
++	anon_vma_lock_write(vma->anon_vma);
++
++	/* Somebody else might have raced and expanded it already */
++	if (address < vma->vm_start) {
++		unsigned long size, grow;
++
++		size = vma->vm_end - address;
++		grow = (vma->vm_start - address) >> PAGE_SHIFT;
++
++		error = -ENOMEM;
++		if (grow <= vma->vm_pgoff) {
++			error = acct_stack_growth(vma, size, grow);
++			if (!error) {
++				if (vma->vm_flags & VM_LOCKED)
++					mm->locked_vm += grow;
++				vm_stat_account(mm, vma->vm_flags, grow);
++				anon_vma_interval_tree_pre_update_vma(vma);
++				vma->vm_start = address;
++				vma->vm_pgoff -= grow;
++				/* Overwrite old entry in mtree. */
++				vma_iter_store(&vmi, vma);
++				anon_vma_interval_tree_post_update_vma(vma);
++
++				perf_event_mmap(vma);
++			}
++		}
++	}
++	anon_vma_unlock_write(vma->anon_vma);
++	vma_iter_free(&vmi);
++	validate_mm(mm);
++	return error;
++}
+diff --git a/mm/vma.h b/mm/vma.h
+index c60f37d89eb1..6c460a120f82 100644
+--- a/mm/vma.h
++++ b/mm/vma.h
+@@ -139,12 +139,6 @@ void validate_mm(struct mm_struct *mm);
+ #define validate_mm(mm) do { } while (0)
+ #endif
+ 
+-/* Required for expand_downwards(). */
+-void anon_vma_interval_tree_pre_update_vma(struct vm_area_struct *vma);
+-
+-/* Required for expand_downwards(). */
+-void anon_vma_interval_tree_post_update_vma(struct vm_area_struct *vma);
+-
+ int vma_expand(struct vma_merge_struct *vmg);
+ int vma_shrink(struct vma_iterator *vmi, struct vm_area_struct *vma,
+ 	       unsigned long start, unsigned long end, pgoff_t pgoff);
+@@ -478,4 +472,10 @@ static inline bool can_modify_vma_madv(struct vm_area_struct *vma, int behavior)
+ 
+ #endif
+ 
++#if defined(CONFIG_STACK_GROWSUP)
++int expand_upwards(struct vm_area_struct *vma, unsigned long address);
++#endif
++
++int expand_downwards(struct vm_area_struct *vma, unsigned long address);
++
+ #endif	/* __MM_VMA_H */
+diff --git a/tools/testing/vma/vma.c b/tools/testing/vma/vma.c
+index 39ee61e55634..891d87a9ad6b 100644
+--- a/tools/testing/vma/vma.c
++++ b/tools/testing/vma/vma.c
+@@ -53,6 +53,11 @@ struct task_struct *get_current(void)
+ 	return &__current;
+ }
+ 
++unsigned long rlimit(unsigned int limit)
++{
++	return (unsigned long)-1;
++}
++
+ /* Helper function to simply allocate a VMA. */
+ static struct vm_area_struct *alloc_vma(struct mm_struct *mm,
+ 					unsigned long start,
+diff --git a/tools/testing/vma/vma_internal.h b/tools/testing/vma/vma_internal.h
+index 6ad8bd8edaad..fab3f3bdf2f0 100644
+--- a/tools/testing/vma/vma_internal.h
++++ b/tools/testing/vma/vma_internal.h
+@@ -79,6 +79,11 @@ extern unsigned long dac_mmap_min_addr;
+ 
+ #define VM_STARTGAP_FLAGS (VM_GROWSDOWN | VM_SHADOW_STACK)
+ 
++#define RLIMIT_STACK		3	/* max stack size */
++#define RLIMIT_MEMLOCK		8	/* max locked-in-memory address space */
++
++#define CAP_IPC_LOCK         14
++
+ #ifdef CONFIG_64BIT
+ /* VM is sealed, in vm_flags */
+ #define VM_SEALED	_BITUL(63)
+@@ -478,6 +483,8 @@ static inline void vma_mark_detached(struct vm_area_struct *vma, bool detached)
+ 
+ extern const struct vm_operations_struct vma_dummy_vm_ops;
+ 
++extern unsigned long rlimit(unsigned int limit);
++
+ static inline void vma_init(struct vm_area_struct *vma, struct mm_struct *mm)
+ {
+ 	memset(vma, 0, sizeof(*vma));
+@@ -1114,4 +1121,59 @@ static inline unsigned long vm_end_gap(struct vm_area_struct *vma)
+ 	return vm_end;
+ }
+ 
++static inline int is_hugepage_only_range(struct mm_struct *mm,
++					unsigned long addr, unsigned long len)
++{
++	return 0;
++}
++
++static inline bool vma_is_accessible(struct vm_area_struct *vma)
++{
++	return vma->vm_flags & VM_ACCESS_FLAGS;
++}
++
++static inline bool capable(int cap)
++{
++	return true;
++}
++
++static inline bool mlock_future_ok(struct mm_struct *mm, unsigned long flags,
++			unsigned long bytes)
++{
++	unsigned long locked_pages, limit_pages;
++
++	if (!(flags & VM_LOCKED) || capable(CAP_IPC_LOCK))
++		return true;
++
++	locked_pages = bytes >> PAGE_SHIFT;
++	locked_pages += mm->locked_vm;
++
++	limit_pages = rlimit(RLIMIT_MEMLOCK);
++	limit_pages >>= PAGE_SHIFT;
++
++	return locked_pages <= limit_pages;
++}
++
++static inline int __anon_vma_prepare(struct vm_area_struct *vma)
++{
++	struct anon_vma *anon_vma = calloc(1, sizeof(struct anon_vma));
++
++	if (!anon_vma)
++		return -ENOMEM;
++
++	anon_vma->root = anon_vma;
++	vma->anon_vma = anon_vma;
++
++	return 0;
++}
++
++static inline int anon_vma_prepare(struct vm_area_struct *vma)
++{
++	if (likely(vma->anon_vma))
++		return 0;
++
++	return __anon_vma_prepare(vma);
++}
++
 +
  #endif	/* __MM_VMA_INTERNAL_H */
 -- 
