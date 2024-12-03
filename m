@@ -1,216 +1,364 @@
-Return-Path: <linux-kernel+bounces-429395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C811F9E1B78
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 12:57:59 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70F1E9E1B7B
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 12:58:41 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 379CB166B4A
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 11:58:38 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CFC21E47C6;
+	Tue,  3 Dec 2024 11:58:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="0rvZcnnB"
+Received: from smtp-8fab.mail.infomaniak.ch (smtp-8fab.mail.infomaniak.ch [83.166.143.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88125284DFD
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 11:57:58 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D7241E47CA;
-	Tue,  3 Dec 2024 11:57:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="c+fZm+EU"
-Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1DAE1E47C4
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 11:57:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACF613398B
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 11:58:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733227072; cv=none; b=YCHiSlSOaGuhasSQDvBWuqgWGGYvjvmqT2ljL8TBnF7zr5JAILYJ9ZCukcWQ6gBntRq7th9EZJ8BsIUJgejnf23/A9tAlehoscOf0d3Exox2ELZUDYB8CcqqAfTHQez60bhJu5BcIuHsco9/1OSI0pTTVARVeXcHAntQB3aW4JI=
+	t=1733227115; cv=none; b=OQIrRsDkldWzvHSvYl4VccyseLus2G1cYG2KwjNjWZ/mBJtnz2M01PuiGr7jDE1p1WQLY92ulRirZot5OGIrRTY6PB5Bk6fO7YEQ5Ks603HPNhm7pJQLoZ3i/10FFhby4vIZQ5+/O4M2BqoTbp8nTaK2GrnmfxDgslPU94NgfS0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733227072; c=relaxed/simple;
-	bh=Q9+AiQ6s0aWeS6kzWsVPhOJmvynbGm/ye7+xXZgGDSc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=a99TA8rqxZ0o0wOSHam47ooPBgqefa4yuxcel7b+yK+DvBSJDHNJjbZetzM/HmKGk4osENOoXE2u+4jbeqY9qROl4fAoJZujC9w2+2OIfDr9bHObxYUUZGYzDyElC/n0qpI/HYTkbPStyiFiWgRI7UEpr2kIm6FpQRLkr5cHPrk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=c+fZm+EU; arc=none smtp.client-ip=209.85.219.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e396e33d47dso4783392276.0
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 03:57:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733227070; x=1733831870; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=BbMpTWPQcQsU0HRaX/c6zM2bDkZbOjiVConTuGe+jZE=;
-        b=c+fZm+EU/RrrAoTPD83ZHxZFQxF30ZORotoDDljCAlRv92VWJGoYrgX6pJ7lFAPl0U
-         /Wx1EmEeOylVASJrEjYSgVqibv/G0iw2CMJApCmvmxM2AGI/z1EpC+urSvb/UkwuBU/6
-         qGDys60o8ZCZVsit2MK+Nb9s4/cHUXCqraw4uL9CG/FgJ2MniMivtYkyO1Rrykvgzstn
-         rJcXku1kYyRJOoN+jIq8Nblr2PRzruaJwXRreBnVnQ1e9nEsfnVIu7NRKHlDFSDZBlxx
-         2ORzaeKw1+lOcH+Qola+3CXbdYMvGTdkxtVPCQqSE/HIMHq8+VThm8teCAH9z8J400Tr
-         5Etw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733227070; x=1733831870;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=BbMpTWPQcQsU0HRaX/c6zM2bDkZbOjiVConTuGe+jZE=;
-        b=vMLE/AlTYehUTx7IBgWbpGYfHojv2PH8Gmh9K/78k/otOjE3xIq5MgSb+GQnk5eiTA
-         0w/Ik6T6uaxCHfl5h8BvIX09qurikfL2Idj++40iXyhIc1hGoxjIM3pA+qWSJ1LOrSZa
-         EYbPrlni8eEPn01Zfpj3UT8kIK7SakzVL3YASk002/qXK568Mido+DRwiYMJRnVZCUro
-         wVzcAtBBv48i1teusJ2VRzq3si6R6iw90N8Ej94rVQ24jKvhpiOq8Rc0gxzF0WwOLhvP
-         MKZUMDp8Qi4pr7sDJx9hLSmX2T5W5G0Mw/c0rv2tws0E76zpG6oPLDLhTo/voGY18wUc
-         YgtA==
-X-Forwarded-Encrypted: i=1; AJvYcCXiOZ35cCt7Op3+sjjHDGXIH+UdqVS81k4gRKDCCAkvWwc9HCyI//lj8NjvR6+CFvnmVoSI3/J8Q1fNVek=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEgL+s2JwjfVb7cOnEWup+I8l+rGcumKxZt7DjjgyFWa1rllpx
-	ecDKwuzUZ5qp4AsYk5i9dTA+/U+5cLfUesfj32ZQYXJVgQaj/QIiDEav5JfEzoXEc9t1NSxoW/K
-	MQtiUaTk+f8iVY8GOvWK999RKw2/Hpq1jJ6ujNZt0UU/9jx8p
-X-Gm-Gg: ASbGncvAen1SlRWNYAtCmUwWLJLtL5+HkYmOOFAVW+jMhemxnMFQWc5Zi4MLQgEDXfE
-	8wmPQrHhdxg+naCzYJudt6tYNcwUWOQ==
-X-Google-Smtp-Source: AGHT+IGQ/9s5DEKVq56LcELRCgbbSUJDxrGME9rneM000XHdp2t+8py1fz0BjAa9e/C+4ixWTgkXDY5JwOAFrvAaJEA=
-X-Received: by 2002:a05:6902:20c9:b0:e39:93ab:dbab with SMTP id
- 3f1490d57ef6-e39d3e39f09mr2319862276.28.1733227069673; Tue, 03 Dec 2024
- 03:57:49 -0800 (PST)
+	s=arc-20240116; t=1733227115; c=relaxed/simple;
+	bh=UUMCAK54vilNWuna+YwLJMxKEe2Eq3QWfp++Cp1M26k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OhVJkwpcaD2PX/BdjKTwFSf9zfdZ0dcQeISz8uzRAnIbC5HgByPoG96H7PRmdNc0CwCl/ADHLzEX784lMwrVfAFTN7h2ROnD/kcbW9bRTZW7q9V311szWZrL0/+5+u1805kImnabFGhG8LfeZuQlj9tNsKHVmm33JsKYd7xa5+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=0rvZcnnB; arc=none smtp.client-ip=83.166.143.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Y2fLR0bX6zrCx;
+	Tue,  3 Dec 2024 12:58:23 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1733227102;
+	bh=ZHN+M1OgAsPjHuTDfmE/sUQa2uwyVUjKo1L/pEgvz4A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=0rvZcnnBMVnOp8YtO+aIpTDhXL6bOyySjJ9L7FDejcCj63I7+vmEXzts9mFL+FKvd
+	 ZQrhqI9vQH7Uz/OvbjDED0kEb0agvSb1GPgCSWu9Tp/o5IByZSCsQ2RfpRB0xNqz8T
+	 GWCSQoNAaN7Amlj9S1owoq2BDYJDwKUvLq+J+jxw=
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4Y2fLQ0xg9zphs;
+	Tue,  3 Dec 2024 12:58:22 +0100 (CET)
+Date: Tue, 3 Dec 2024 12:58:20 +0100
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Fan Wu <wufan@kernel.org>
+Cc: linux-integrity@vger.kernel.org, roberto.sassu@huawei.com, 
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, Mimi Zohar <zohar@linux.ibm.com>, 
+	Jeff Xu <jeffxu@chromium.org>, Kees Cook <kees@kernel.org>, Paul Moore <paul@paul-moore.com>, 
+	audit@vger.kernel.org
+Subject: Re: [PATCH] ima: instantiate the bprm_creds_for_exec() hook
+Message-ID: <20241203.ta8eiziX7kah@digikod.net>
+References: <20241127210234.121546-1-zohar@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241118084046.3201290-1-quic_ekangupt@quicinc.com>
- <20241118084046.3201290-5-quic_ekangupt@quicinc.com> <2024111804-doze-reflected-0feb@gregkh>
- <c3b285b0-33d1-4bfa-b8ab-6783ff5ed78d@quicinc.com> <cn7pqvhw4x4y7s5hbgzjpvyjnw4g6hoyepic4jai7x2fjdenxr@ikr4hkorbuwb>
- <365c4709-b421-4af8-b521-a195630242de@quicinc.com> <nsaq3zungvyhuikz35arvxmle2fovxh422jpyqxuleh57ufqnk@bekeh7qr7y76>
- <697e90db-6ecc-44ac-af86-6c7f910fc902@quicinc.com>
-In-Reply-To: <697e90db-6ecc-44ac-af86-6c7f910fc902@quicinc.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Tue, 3 Dec 2024 13:57:41 +0200
-Message-ID: <CAA8EJppbptPryu_O3G3YAapHT=Ai+MAdA38FtSU=YvWb+mqa1g@mail.gmail.com>
-Subject: Re: [PATCH v1 4/4] misc: fastrpc: Add debugfs support for fastrpc
-To: Ekansh Gupta <quic_ekangupt@quicinc.com>
-Cc: Greg KH <gregkh@linuxfoundation.org>, srinivas.kandagatla@linaro.org, 
-	linux-arm-msm@vger.kernel.org, quic_bkumar@quicinc.com, 
-	linux-kernel@vger.kernel.org, quic_chennak@quicinc.com, 
-	dri-devel@lists.freedesktop.org, arnd@arndb.de
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241127210234.121546-1-zohar@linux.ibm.com>
+X-Infomaniak-Routing: alpha
 
-On Tue, 3 Dec 2024 at 07:22, Ekansh Gupta <quic_ekangupt@quicinc.com> wrote:
->
->
->
-> On 12/2/2024 6:18 PM, Dmitry Baryshkov wrote:
-> > On Mon, Dec 02, 2024 at 03:27:43PM +0530, Ekansh Gupta wrote:
-> >>
-> >> On 11/22/2024 12:23 AM, Dmitry Baryshkov wrote:
-> >>> On Thu, Nov 21, 2024 at 12:12:17PM +0530, Ekansh Gupta wrote:
-> >>>> On 11/18/2024 7:32 PM, Greg KH wrote:
-> >>>>> On Mon, Nov 18, 2024 at 02:10:46PM +0530, Ekansh Gupta wrote:
-> >>>>>> Add changes to support debugfs. The fastrpc directory will be
-> >>>>>> created which will carry debugfs files for all fastrpc processes.
-> >>>>>> The information of fastrpc user and channel contexts are getting
-> >>>>>> captured as part of this change.
-> >>>>>>
-> >>>>>> Signed-off-by: Ekansh Gupta <quic_ekangupt@quicinc.com>
-> >>>>>> ---
-> >>>>>>  drivers/misc/fastrpc/Makefile        |   3 +-
-> >>>>>>  drivers/misc/fastrpc/fastrpc_debug.c | 156 +++++++++++++++++++++++++++
-> >>>>>>  drivers/misc/fastrpc/fastrpc_debug.h |  31 ++++++
-> >>>>>>  drivers/misc/fastrpc/fastrpc_main.c  |  18 +++-
-> >>>>>>  4 files changed, 205 insertions(+), 3 deletions(-)
-> >>>>>>  create mode 100644 drivers/misc/fastrpc/fastrpc_debug.c
-> >>>>>>  create mode 100644 drivers/misc/fastrpc/fastrpc_debug.h
-> >>>>>>
-> >>>>>> diff --git a/drivers/misc/fastrpc/Makefile b/drivers/misc/fastrpc/Makefile
-> >>>>>> index 020d30789a80..4ff6b64166ae 100644
-> >>>>>> --- a/drivers/misc/fastrpc/Makefile
-> >>>>>> +++ b/drivers/misc/fastrpc/Makefile
-> >>>>>> @@ -1,3 +1,4 @@
-> >>>>>>  # SPDX-License-Identifier: GPL-2.0
-> >>>>>>  obj-$(CONFIG_QCOM_FASTRPC)      += fastrpc.o
-> >>>>>> -fastrpc-objs    := fastrpc_main.o
-> >>>>>> \ No newline at end of file
-> >>>>>> +fastrpc-objs    := fastrpc_main.o \
-> >>>>>> +                fastrpc_debug.o
-> >>>>> Only build this file if debugfs is enabled.
-> >>>>>
-> >>>>> And again, "debug.c"?
-> >>>> I'll add change to build this only if debugfs is enabled. Going forward I have plans to add
-> >>>> few more debug specific changes, maybe then I'll need to change the build rules again.
-> >>>>>> diff --git a/drivers/misc/fastrpc/fastrpc_debug.c b/drivers/misc/fastrpc/fastrpc_debug.c
-> >>>>>> new file mode 100644
-> >>>>>> index 000000000000..cdb4fc6845a8
-> >>>>>> --- /dev/null
-> >>>>>> +++ b/drivers/misc/fastrpc/fastrpc_debug.c
-> >>>>>> @@ -0,0 +1,156 @@
-> >>>>>> +// SPDX-License-Identifier: GPL-2.0
-> >>>>>> +// Copyright (c) 2024 Qualcomm Innovation Center.
-> >>>>>> +
-> >>>>>> +#include <linux/debugfs.h>
-> >>>>>> +#include <linux/seq_file.h>
-> >>>>>> +#include "fastrpc_shared.h"
-> >>>>>> +#include "fastrpc_debug.h"
-> >>>>>> +
-> >>>>>> +#ifdef CONFIG_DEBUG_FS
-> >>>>> Please put the #ifdef in the .h file, not in the .c file.
-> >>>> Ack
-> >>>>>> +void fastrpc_create_user_debugfs(struct fastrpc_user *fl)
-> >>>>>> +{
-> >>>>>> +        char cur_comm[TASK_COMM_LEN];
-> >>>>>> +        int domain_id, size;
-> >>>>>> +        char *debugfs_buf;
-> >>>>>> +        struct dentry *debugfs_dir = fl->cctx->debugfs_dir;
-> >>>>>> +
-> >>>>>> +        memcpy(cur_comm, current->comm, TASK_COMM_LEN);
-> >>>>>> +        cur_comm[TASK_COMM_LEN-1] = '\0';
-> >>>>>> +        if (debugfs_dir != NULL) {
-> >>>>>> +                domain_id = fl->cctx->domain_id;
-> >>>>>> +                size = snprintf(NULL, 0, "%.10s_%d_%d_%d", cur_comm,
-> >>>>>> +                                current->pid, fl->tgid, domain_id) + 1;
-> >>>>>> +                debugfs_buf = kzalloc(size, GFP_KERNEL);
-> >>>>>> +                if (debugfs_buf == NULL)
-> >>>>>> +                        return;
-> >>>>>> +                /*
-> >>>>>> +                 * Use HLOS process name, HLOS PID, fastrpc user TGID,
-> >>>>>> +                 * domain_id in debugfs filename to create unique file name
-> >>>>>> +                 */
-> >>>>>> +                snprintf(debugfs_buf, size, "%.10s_%d_%d_%d",
-> >>>>>> +                        cur_comm, current->pid, fl->tgid, domain_id);
-> >>>>>> +                fl->debugfs_file = debugfs_create_file(debugfs_buf, 0644,
-> >>>>>> +                                debugfs_dir, fl, &fastrpc_debugfs_fops);
-> >>>>> Why are you saving the debugfs file?  What do you need to do with it
-> >>>>> that you can't just delete the whole directory, or look up the name
-> >>>>> again in the future when removing it?
-> >>>> fl structure is specific to a process using fastrpc driver. The reason to save
-> >>>> this debugfs file is to delete is when the process releases fastrpc device.
-> >>>> If the file is not deleted, it might flood multiple files in debugfs directory.
-> >>>>
-> >>>> As part of this change, only the file that is getting created by a process is
-> >>>> getting removed when process is releasing device and I don't think we
-> >>>> can clean up the whole directory at this point.
-> >>> My 2c: it might be better to create a single file that conains
-> >>> information for all the processes instead of that. Or use fdinfo data to
-> >>> export process / FD information to userspace.
-> >> Thanks for your review. The reason of not having single file for all processes is that
-> >> I can run 100s of iteration for any process(say calculator) and every time the properties
-> >> of the process can differ(like buffer, session etc.). For this reason, I'm creating and
-> >> deleting the debugfs files for every process run.
-> >>
-> >> Do you see any advantage of using fdinfo over debugfs? I'm not sure if we can add all
-> >> the information(like in debugfs) here.
-> > Which information is actually useful / interesting for application
-> > developers? If not for the fdinfo, I might still vote for a single file
-> > rather than a pile of per-process data.
-> I have tried to capture all the information that could be useful.
->
-> I can try changes to maintain single file for all active processes. Having this file specific
-> to a channel should be fine, right? like fastrpc_adsp, fastrpc_cdsp, etc.? Each file will
-> carry information of all processes using that remoteproc.
+Fan, would IPE need a similar update?
 
-I think it's a better idea, yes.
+See https://lore.kernel.org/r/20241127210234.121546-1-zohar@linux.ibm.com
 
->
-> --ekansh
-> >
-> >> --ekansh
-> >>>
->
-
-
--- 
-With best wishes
-Dmitry
+On Wed, Nov 27, 2024 at 04:02:34PM -0500, Mimi Zohar wrote:
+> Like direct file execution (e.g. ./script.sh), indirect file execution
+> (e.g. sh script.sh) needs to be measured and appraised.  Instantiate
+> the new security_bprm_creds_for_exec() hook to measure and verify the
+> indirect file's integrity.  Unlike direct file execution, indirect file
+> execution integrity is optionally enforced by the interpreter.
+> 
+> Update the audit messages to differentiate between kernel and userspace
+> enforced integrity.
+> 
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+> ---
+>  security/integrity/ima/ima_appraise.c | 84 ++++++++++++++++++++-------
+>  security/integrity/ima/ima_main.c     | 22 +++++++
+>  2 files changed, 86 insertions(+), 20 deletions(-)
+> 
+> diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
+> index 656c709b974f..b5f8e49cde9d 100644
+> --- a/security/integrity/ima/ima_appraise.c
+> +++ b/security/integrity/ima/ima_appraise.c
+> @@ -8,6 +8,7 @@
+>  #include <linux/module.h>
+>  #include <linux/init.h>
+>  #include <linux/file.h>
+> +#include <linux/binfmts.h>
+>  #include <linux/fs.h>
+>  #include <linux/xattr.h>
+>  #include <linux/magic.h>
+> @@ -16,6 +17,7 @@
+>  #include <linux/fsverity.h>
+>  #include <keys/system_keyring.h>
+>  #include <uapi/linux/fsverity.h>
+> +#include <linux/securebits.h>
+>  
+>  #include "ima.h"
+>  
+> @@ -276,7 +278,8 @@ static int calc_file_id_hash(enum evm_ima_xattr_type type,
+>   */
+>  static int xattr_verify(enum ima_hooks func, struct ima_iint_cache *iint,
+>  			struct evm_ima_xattr_data *xattr_value, int xattr_len,
+> -			enum integrity_status *status, const char **cause)
+> +			enum integrity_status *status, const char **cause,
+> +			bool is_check)
+>  {
+>  	struct ima_max_digest_data hash;
+>  	struct signature_v2_hdr *sig;
+> @@ -292,9 +295,11 @@ static int xattr_verify(enum ima_hooks func, struct ima_iint_cache *iint,
+>  		if (*status != INTEGRITY_PASS_IMMUTABLE) {
+>  			if (iint->flags & IMA_DIGSIG_REQUIRED) {
+>  				if (iint->flags & IMA_VERITY_REQUIRED)
+> -					*cause = "verity-signature-required";
+> +					*cause = !is_check ? "verity-signature-required" :
+> +						"verity-signature-required(userspace)";
+>  				else
+> -					*cause = "IMA-signature-required";
+> +					*cause = !is_check ? "IMA-signature-required" :
+> +						"IMA-signature-required(userspace)";
+>  				*status = INTEGRITY_FAIL;
+>  				break;
+>  			}
+> @@ -314,7 +319,8 @@ static int xattr_verify(enum ima_hooks func, struct ima_iint_cache *iint,
+>  		else
+>  			rc = -EINVAL;
+>  		if (rc) {
+> -			*cause = "invalid-hash";
+> +			*cause = !is_check ? "invalid-hash" :
+> +				"invalid-hash(userspace)";
+>  			*status = INTEGRITY_FAIL;
+>  			break;
+>  		}
+> @@ -325,14 +331,16 @@ static int xattr_verify(enum ima_hooks func, struct ima_iint_cache *iint,
+>  
+>  		mask = IMA_DIGSIG_REQUIRED | IMA_VERITY_REQUIRED;
+>  		if ((iint->flags & mask) == mask) {
+> -			*cause = "verity-signature-required";
+> +			*cause = !is_check ? "verity-signature-required" :
+> +				"verity-signature-required(userspace)";
+>  			*status = INTEGRITY_FAIL;
+>  			break;
+>  		}
+>  
+>  		sig = (typeof(sig))xattr_value;
+>  		if (sig->version >= 3) {
+> -			*cause = "invalid-signature-version";
+> +			*cause = !is_check ? "invalid-signature-version" :
+> +				"invalid-signature-version(userspace)";
+>  			*status = INTEGRITY_FAIL;
+>  			break;
+>  		}
+> @@ -353,7 +361,8 @@ static int xattr_verify(enum ima_hooks func, struct ima_iint_cache *iint,
+>  						     iint->ima_hash->digest,
+>  						     iint->ima_hash->length);
+>  		if (rc) {
+> -			*cause = "invalid-signature";
+> +			*cause = !is_check ? "invalid-signature" :
+> +				"invalid-signature(userspace)";
+>  			*status = INTEGRITY_FAIL;
+>  		} else {
+>  			*status = INTEGRITY_PASS;
+> @@ -364,7 +373,8 @@ static int xattr_verify(enum ima_hooks func, struct ima_iint_cache *iint,
+>  
+>  		if (iint->flags & IMA_DIGSIG_REQUIRED) {
+>  			if (!(iint->flags & IMA_VERITY_REQUIRED)) {
+> -				*cause = "IMA-signature-required";
+> +				*cause = !is_check ? "IMA-signature-required" :
+> +					"IMA-signature-required(userspace)";
+>  				*status = INTEGRITY_FAIL;
+>  				break;
+>  			}
+> @@ -372,7 +382,8 @@ static int xattr_verify(enum ima_hooks func, struct ima_iint_cache *iint,
+>  
+>  		sig = (typeof(sig))xattr_value;
+>  		if (sig->version != 3) {
+> -			*cause = "invalid-signature-version";
+> +			*cause = !is_check ? "invalid-signature-version" :
+> +				"invalid-signature-version(userspace)";
+>  			*status = INTEGRITY_FAIL;
+>  			break;
+>  		}
+> @@ -382,7 +393,8 @@ static int xattr_verify(enum ima_hooks func, struct ima_iint_cache *iint,
+>  				       container_of(&hash.hdr,
+>  					       struct ima_digest_data, hdr));
+>  		if (rc) {
+> -			*cause = "sigv3-hashing-error";
+> +			*cause = !is_check ? "sigv3-hashing-error" :
+> +				"sigv3-hashing-error(userspace)";
+>  			*status = INTEGRITY_FAIL;
+>  			break;
+>  		}
+> @@ -392,7 +404,8 @@ static int xattr_verify(enum ima_hooks func, struct ima_iint_cache *iint,
+>  					     xattr_len, hash.digest,
+>  					     hash.hdr.length);
+>  		if (rc) {
+> -			*cause = "invalid-verity-signature";
+> +			*cause = !is_check ? "invalid-verity-signature" :
+> +				"invalid-verify-signature(userspace)";
+>  			*status = INTEGRITY_FAIL;
+>  		} else {
+>  			*status = INTEGRITY_PASS;
+> @@ -401,7 +414,8 @@ static int xattr_verify(enum ima_hooks func, struct ima_iint_cache *iint,
+>  		break;
+>  	default:
+>  		*status = INTEGRITY_UNKNOWN;
+> -		*cause = "unknown-ima-data";
+> +		*cause = !is_check ? "unknown-ima-data" :
+> +			"unknown-ima-data(userspace)";
+>  		break;
+>  	}
+>  
+> @@ -469,6 +483,18 @@ int ima_check_blacklist(struct ima_iint_cache *iint,
+>  	return rc;
+>  }
+>  
+> +static int is_bprm_creds_for_exec(enum ima_hooks func, struct file *file)
+> +{
+> +	struct linux_binprm *bprm = NULL;
+> +
+> +	if (func == BPRM_CHECK) {
+> +		bprm = container_of(&file, struct linux_binprm, file);
+> +		if (bprm->is_check)
+> +			return 1;
+> +	}
+> +	return 0;
+> +}
+> +
+>  /*
+>   * ima_appraise_measurement - appraise file measurement
+>   *
+> @@ -489,11 +515,24 @@ int ima_appraise_measurement(enum ima_hooks func, struct ima_iint_cache *iint,
+>  	enum integrity_status status = INTEGRITY_UNKNOWN;
+>  	int rc = xattr_len;
+>  	bool try_modsig = iint->flags & IMA_MODSIG_ALLOWED && modsig;
+> +	bool is_check = false;
+>  
+>  	/* If not appraising a modsig, we need an xattr. */
+>  	if (!(inode->i_opflags & IOP_XATTR) && !try_modsig)
+>  		return INTEGRITY_UNKNOWN;
+>  
+> +	/*
+> +	 * Unlike any of the other LSM hooks where the kernel enforces file
+> +	 * integrity, enforcing file integrity for the bprm_creds_for_exec()
+> +	 * LSM hook is left up to the discretion of the script interpreter
+> +	 * (userspace).
+> +	 *
+> +	 * Since the SECBIT_EXEC_RESTRICT_FILE flag is just a hint as to
+> +	 * userspace intentions, simply annotate the audit messages indicating
+> +	 * a userspace based query.
+> +	 */
+> +	is_check = is_bprm_creds_for_exec(func, file);
+> +
+>  	/* If reading the xattr failed and there's no modsig, error out. */
+>  	if (rc <= 0 && !try_modsig) {
+>  		if (rc && rc != -ENODATA)
+> @@ -501,11 +540,14 @@ int ima_appraise_measurement(enum ima_hooks func, struct ima_iint_cache *iint,
+>  
+>  		if (iint->flags & IMA_DIGSIG_REQUIRED) {
+>  			if (iint->flags & IMA_VERITY_REQUIRED)
+> -				cause = "verity-signature-required";
+> +				cause = !is_check ? "verity-signature-required" :
+> +					"verity-signature-required(userspace)";
+>  			else
+> -				cause = "IMA-signature-required";
+> +				cause = !is_check ? "IMA-signature-required" :
+> +					"IMA-signature-required(userspace)";
+>  		} else {
+> -			cause = "missing-hash";
+> +			cause = !is_check ? "missing-hash" :
+> +				"missing-hash(userspace)";
+>  		}
+>  
+>  		status = INTEGRITY_NOLABEL;
+> @@ -531,14 +573,15 @@ int ima_appraise_measurement(enum ima_hooks func, struct ima_iint_cache *iint,
+>  			break;
+>  		fallthrough;
+>  	case INTEGRITY_NOLABEL:		/* No security.evm xattr. */
+> -		cause = "missing-HMAC";
+> +		cause = !is_check ? "missing-HMAC" : "missing-HMAC(userspace)";
+>  		goto out;
+>  	case INTEGRITY_FAIL_IMMUTABLE:
+>  		set_bit(IMA_DIGSIG, &iint->atomic_flags);
+> -		cause = "invalid-fail-immutable";
+> +		cause = !is_check ? "invalid-fail-immutable" :
+> +		       "invalid-fail-immutable(userspace)";
+>  		goto out;
+>  	case INTEGRITY_FAIL:		/* Invalid HMAC/signature. */
+> -		cause = "invalid-HMAC";
+> +		cause = !is_check ? "invalid-HMAC" : "invalid-HMAC(userspace)";
+>  		goto out;
+>  	default:
+>  		WARN_ONCE(true, "Unexpected integrity status %d\n", status);
+> @@ -546,7 +589,7 @@ int ima_appraise_measurement(enum ima_hooks func, struct ima_iint_cache *iint,
+>  
+>  	if (xattr_value)
+>  		rc = xattr_verify(func, iint, xattr_value, xattr_len, &status,
+> -				  &cause);
+> +				  &cause, is_check);
+>  
+>  	/*
+>  	 * If we have a modsig and either no imasig or the imasig's key isn't
+> @@ -568,7 +611,8 @@ int ima_appraise_measurement(enum ima_hooks func, struct ima_iint_cache *iint,
+>  	    ((inode->i_sb->s_iflags & SB_I_UNTRUSTED_MOUNTER) ||
+>  	     (iint->flags & IMA_FAIL_UNVERIFIABLE_SIGS))) {
+>  		status = INTEGRITY_FAIL;
+> -		cause = "unverifiable-signature";
+> +		cause = !is_check ? "unverifiable-signature" :
+> +			"unverifiable-signature(userspace)";
+>  		integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode, filename,
+>  				    op, cause, rc, 0);
+>  	} else if (status != INTEGRITY_PASS) {
+> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+> index 06132cf47016..2b5d6bae77a4 100644
+> --- a/security/integrity/ima/ima_main.c
+> +++ b/security/integrity/ima/ima_main.c
+> @@ -554,6 +554,27 @@ static int ima_bprm_check(struct linux_binprm *bprm)
+>  				   MAY_EXEC, CREDS_CHECK);
+>  }
+>  
+> +/**
+> + * ima_bprm_creds_for_exec - based on policy, collect/store/appraise measurement.
+> + * @bprm: contains the linux_binprm structure
+> + *
+> + * Based on the IMA policy and the execvat(2) AT_CHECK flag, measure and
+> + * appraise the integrity of a file to be executed by script interpreters.
+> + * Unlike any of the other LSM hooks where the kernel enforces file integrity,
+> + * enforcing file integrity is left up to the discretion of the script
+> + * interpreter (userspace).
+> + *
+> + * On success return 0.  On integrity appraisal error, assuming the file
+> + * is in policy and IMA-appraisal is in enforcing mode, return -EACCES.
+> + */
+> +static int ima_bprm_creds_for_exec(struct linux_binprm *bprm)
+> +{
+> +	if (!bprm->is_check)
+> +		return 0;
+> +
+> +	return ima_bprm_check(bprm);
+> +}
+> +
+>  /**
+>   * ima_file_check - based on policy, collect/store measurement.
+>   * @file: pointer to the file to be measured
+> @@ -1177,6 +1198,7 @@ static int __init init_ima(void)
+>  
+>  static struct security_hook_list ima_hooks[] __ro_after_init = {
+>  	LSM_HOOK_INIT(bprm_check_security, ima_bprm_check),
+> +	LSM_HOOK_INIT(bprm_creds_for_exec, ima_bprm_creds_for_exec),
+>  	LSM_HOOK_INIT(file_post_open, ima_file_check),
+>  	LSM_HOOK_INIT(inode_post_create_tmpfile, ima_post_create_tmpfile),
+>  	LSM_HOOK_INIT(file_release, ima_file_free),
+> -- 
+> 2.47.0
+> 
+> 
 
