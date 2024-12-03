@@ -1,156 +1,150 @@
-Return-Path: <linux-kernel+bounces-429458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED4159E1EA0
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 15:05:41 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 567FC9E1D8C
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 14:28:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AE6ABB36D9F
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 12:42:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A7314B42074
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 12:43:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DCFF1EE038;
-	Tue,  3 Dec 2024 12:41:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AA141EB9ED;
+	Tue,  3 Dec 2024 12:42:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="1Unb6vnj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="L4OpATY3"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 475011EB9F0;
-	Tue,  3 Dec 2024 12:41:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 246872500BB;
+	Tue,  3 Dec 2024 12:42:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733229675; cv=none; b=fqUWbwLL4gIf1GsLJsID+AYIdQ6AQ0OZIk4C01SmleA9Gco6Rin9a4ZBPZZ07SKRjCf8baKRKTzA5au8anGnukmppcSZdgsRv0v4B86iQQRu+oeb3GZgHv7cpQ/anc/F2b4UljlLu2Wo0ZgI2qRekpKUTVKdMxSZLx5seWmPZgQ=
+	t=1733229763; cv=none; b=CY8IDGt0peyEvyc/1c5P/+FsL+W0cBmlb1SiSGYTroX8DJLrNAeKoR8T+p0XlXYk8mZuQnj2eHka+Ebd9GA+saDceepetCuzYxJsHk65/yev3lWBwnM8OjZdmxdEfW0JCwtdfFXYzF0CAnIQujrNaH25kiCpytPAZMwqyZvGlwU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733229675; c=relaxed/simple;
-	bh=2uEXSo5be+RCYE8wBlDOJXNuB/VT7ARg3i3C+zGOWYQ=;
+	s=arc-20240116; t=1733229763; c=relaxed/simple;
+	bh=GEVDWoXU8EkXt2/Ud0xmX9mi2TRTdqO++Z+8LyxF8Gc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mlgiALEaVTYJdwlQ3ce2Hd+GUHfNwe3ZiCAhKF6n6B6SU3Tyi0963R3QVHbVGlJen2i8VyCF6DO98sGU3X/bXBNG8oupkQIMV0KkOVfn1E0OQokbt2HoFFmqCTY266A8c0VclDaFij8a2F6h1AUOKS3GEewqvjBityvYGWYIN44=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=1Unb6vnj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95C16C4CECF;
-	Tue,  3 Dec 2024 12:41:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1733229675;
-	bh=2uEXSo5be+RCYE8wBlDOJXNuB/VT7ARg3i3C+zGOWYQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=1Unb6vnj0waeqg52vL3tNBxqazZ4YLEkRH6amdDr2bx43L5JPTkkH+pB+L4tMzH0J
-	 SCb6eYmqeMGHbFRdUm9eKf56OQESdHkQFoMknfazShRPcJP62eT8Z3A5bIfaHIyzv7
-	 mcuUv99lpsVEKyYu6Ycjcf2lp80AbgdlAJGG1ZwM=
-Date: Tue, 3 Dec 2024 13:41:10 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Zijun Hu <zijun_hu@icloud.com>
-Cc: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Chun-Kuang Hu <chunkuang.hu@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Martin Tuma <martin.tuma@digiteqautomotive.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Andreas Noever <andreas.noever@gmail.com>,
-	Michael Jamet <michael.jamet@intel.com>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Yehezkel Bernat <YehezkelShB@gmail.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, Andrew Lunn <andrew@lunn.ch>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Dave Jiang <dave.jiang@intel.com>, Ira Weiny <ira.weiny@intel.com>,
-	Takashi Sakamoto <o-takashi@sakamocchi.jp>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Lee Duncan <lduncan@suse.com>, Chris Leech <cleech@redhat.com>,
-	Mike Christie <michael.christie@oracle.com>,
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Nilesh Javali <njavali@marvell.com>,
-	Manish Rangankar <mrangankar@marvell.com>,
-	GR-QLogic-Storage-Upstream@marvell.com,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Andreas Larsson <andreas@gaisler.com>,
-	Stuart Yoder <stuyoder@gmail.com>,
-	Laurentiu Tudor <laurentiu.tudor@nxp.com>,
-	Jens Axboe <axboe@kernel.dk>, Sudeep Holla <sudeep.holla@arm.com>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	linux-mediatek@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-hwmon@vger.kernel.org,
-	linux-media@vger.kernel.org, linux-usb@vger.kernel.org,
-	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
-	linux-pwm@vger.kernel.org, nvdimm@lists.linux.dev,
-	linux1394-devel@lists.sourceforge.net, linux-serial@vger.kernel.org,
-	linux-sound@vger.kernel.org, open-iscsi@googlegroups.com,
-	linux-scsi@vger.kernel.org, linux-cxl@vger.kernel.org,
-	sparclinux@vger.kernel.org, linux-block@vger.kernel.org,
-	arm-scmi@vger.kernel.org, linux-efi@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org,
-	Zijun Hu <quic_zijuhu@quicinc.com>
-Subject: Re: [PATCH v2 00/32] driver core: Constify API device_find_child()
- and adapt for various existing usages
-Message-ID: <2024120320-manual-jockey-dfd1@gregkh>
-References: <20241203-const_dfc_done-v2-0-7436a98c497f@quicinc.com>
- <g32cigmktmj4egkq2tof27el2yss4liccfxgebkgqvkil32mlb@e3ta4ezv7y4m>
- <9d34bd6f-b120-428a-837b-5a5813e14618@icloud.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=C85owkEbnzdz4Xa+ZwWGj5lXRwm+Q0pOyPjib/+dU2jqkeaHb3GCDLq0kWlBCcju/bj7MBBLJ1vH6ZXz04IH8CsVDDwsG01cAIEj0zwq4KYx9YepFqvYcMJ+zXwuXzhRj4HkoyL7GtbaQS22fa2rDiU6AJKxJf5CVwkvyG1oFr4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=L4OpATY3; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733229762; x=1764765762;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=GEVDWoXU8EkXt2/Ud0xmX9mi2TRTdqO++Z+8LyxF8Gc=;
+  b=L4OpATY39k2zAx0zqAEuEJV/RxYeKf1+Bb0zcBPPt4+35+ntAOcyIwlU
+   cbOGldUV3Na7dgn3oGlZc4O0qxp4XjcNHilbfo9jic4qbPjD7ggSQE61h
+   CMJTP4m2RqTxMhiMwBBA1VR6BzY1ntDiP/wA1f7pFxLSefSH0DNhtOhIU
+   w5ZjlnkLpA4sK45FxamohMC2QSGRG8SupfJ2gaKKug6BuLsixJ6N46b+R
+   MClXAxRk1Ga3YJGeWq08RmgQVv0ZFEk0cwZC1aYsnxFFPwA+6XutKnVf9
+   /eW8O2hytnD6ajXUvL9xms02gNzGo7fQmkfN9gvPwIFqTpkl+vN+mOcJo
+   A==;
+X-CSE-ConnectionGUID: caj+rfiXSI+cemIc9nzeMg==
+X-CSE-MsgGUID: K2MP4OWPRF2YarTwMLAfnA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11274"; a="32785675"
+X-IronPort-AV: E=Sophos;i="6.12,205,1728975600"; 
+   d="scan'208";a="32785675"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Dec 2024 04:42:41 -0800
+X-CSE-ConnectionGUID: Cjp9XN5TQnWBwd25pyBIQg==
+X-CSE-MsgGUID: skx+fdfuTdKqJ4NbE8lekQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,205,1728975600"; 
+   d="scan'208";a="93510610"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Dec 2024 04:42:39 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tISEe-00000003RGH-1eT5;
+	Tue, 03 Dec 2024 14:42:36 +0200
+Date: Tue, 3 Dec 2024 14:42:36 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Vasileios Amoiridis <vassilisamir@gmail.com>
+Cc: jic23@kernel.org, lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, u.kleine-koenig@pengutronix.de,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 3/3] iio: chemical: bme680: add power management
+Message-ID: <Z078vIxRoQf_zLsy@smile.fi.intel.com>
+References: <20241202192341.33187-1-vassilisamir@gmail.com>
+ <20241202192341.33187-4-vassilisamir@gmail.com>
+ <Z04N6GUSL2H0zt6_@smile.fi.intel.com>
+ <Z04aJg7eoBR9CYKe@vamoirid-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <9d34bd6f-b120-428a-837b-5a5813e14618@icloud.com>
+In-Reply-To: <Z04aJg7eoBR9CYKe@vamoirid-laptop>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Tue, Dec 03, 2024 at 08:23:45PM +0800, Zijun Hu wrote:
-> On 2024/12/3 20:00, Uwe Kleine-König wrote:
-> > Hello,
+On Mon, Dec 02, 2024 at 09:35:50PM +0100, Vasileios Amoiridis wrote:
+> On Mon, Dec 02, 2024 at 09:43:36PM +0200, Andy Shevchenko wrote:
+> > On Mon, Dec 02, 2024 at 08:23:41PM +0100, Vasileios Amoiridis wrote:
+> > > Add runtime power management to the device.
+
+...
+
+> > > +	ret = pm_runtime_resume_and_get(dev);
+> > > +	if (ret)
+> > > +		return ret;
+> > > +
+> > > +	ret = __bme680_read_raw(indio_dev, chan, val, val2, mask);
+> > > +	pm_runtime_mark_last_busy(dev);
+> > > +	pm_runtime_put_autosuspend(dev);
 > > 
-> > On Tue, Dec 03, 2024 at 08:33:22AM +0800, Zijun Hu wrote:
-> >> This patch series is to constify the following API:
-> >> struct device *device_find_child(struct device *dev, void *data,
-> >> 		int (*match)(struct device *dev, void *data));
-> >> To :
-> >> struct device *device_find_child(struct device *dev, const void *data,
-> >> 				 device_match_t match);
-> >> typedef int (*device_match_t)(struct device *dev, const void *data);
+> > Side note: as long as idle method is not defined (NULL) the above dance is
+> > already taken into account in the regular put.
+
+> Thanks again for the review! Indeed by looking at the code a bit, it
+> looks like the suspend callback is being called if the idle one is not
+> found. But I have seen this dance that you mention much more often in
+> the IIO that's why I used it. We can see what Jonathan has to say as
+> well, I think what you propose, simplifies things.
+
+Yeah, this is cargo cult by many people (including me :-) who missed that
+detail. If any, this can be addressed in a different series.
+
+...
+
+> > > +static int bme680_buffer_preenable(struct iio_dev *indio_dev)
+> > > +{
+> > > +	struct bme680_data *data = iio_priv(indio_dev);
+> > > +	struct device *dev = regmap_get_device(data->regmap);
+> > > +	int ret;
 > > 
-> > This series isn't bisectible. With only the first two patches applied I
-> > hit:
+> > > +	ret = pm_runtime_resume_and_get(dev);
+> > > +	if (ret)
+> > > +		return ret;
+> > > +
+> > > +	return 0;
+> > 
+> > Either this is broken (if the above can return positive codes), or can be
+> > replaced with direct return:
+> > 
+> > 	return pm_...
+> > 
+> > (but I believe it's the former and you wanted something like if (ret < 0)
+> >  there).
+> > 
+> > > +}
 > 
-> yes. such patch series needs to be merge as atomic way.
-> 
-> Hi Greg,
-> 
-> is it possible to ONLY merge such patch series by atomic way into your
-> driver-core tree?
+> Well, pm_runtime_resume_and_get() looks like it returns 0 on success and
+> negative value on error so I think the if (ret) is correct, no? But I
+> agree with you that it can be simplified as you proposed.
 
-Nope!
+Please, go ahead with the simplification!
 
-> or squash such patch series into a single patch ?
-> 
-> various subsystem maintainers may not like squashing way.
+-- 
+With Best Regards,
+Andy Shevchenko
 
-Agreed, so look into either doing it in a bisectable way if at all
-possible.  As I don't see a full series here, I can't suggest how it
-needs to happen :(
 
-thanks,
-
-greg k-h
 
