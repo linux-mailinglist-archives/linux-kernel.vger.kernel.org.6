@@ -1,118 +1,185 @@
-Return-Path: <linux-kernel+bounces-429434-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429436-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A16E49E1D5B
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 14:18:40 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADE339E1D4E
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 14:16:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0CDD0B34F3C
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 12:22:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BC2E9B39879
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 12:24:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E3F01E501B;
-	Tue,  3 Dec 2024 12:21:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 614F81E6310;
+	Tue,  3 Dec 2024 12:24:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BE355tkF"
-Received: from mail-ua1-f54.google.com (mail-ua1-f54.google.com [209.85.222.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="PgY5nn9U"
+Received: from pv50p00im-hyfv10011601.me.com (pv50p00im-hyfv10011601.me.com [17.58.6.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 625834F218;
-	Tue,  3 Dec 2024 12:21:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A7EB1E493C
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 12:24:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733228515; cv=none; b=iqK+/b9j5V3KoGPkIXvD2cqVOzSnKWtGbDQz4/Q0UCT6+SX67/NJxvgBZxBRHGmhSqpogQ7wSVsySxFt94feNwCSIYcBPQGsDNsmYEdWbXGjlujfTnswzdfjTmFmYgNW34LZw82EkwJD7K++mx0rU+UEdTpvFQTm3koWv8IXQRg=
+	t=1733228657; cv=none; b=Ep3l9po4gL80rMZfiPDaaeer0BvnUiGvPsjJ0Iv1oZ+rkdRiYu8baMivpw7nujHNI5fpH1F2Ebo9Fh9P0gn5Z6inXqssAeWRqoxWS7q0dOeoSjIceG20MF7PYr4hn3pnHs3574eeii5lV5+bde+rUg53m1kquy0vcGfCuxA7TaI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733228515; c=relaxed/simple;
-	bh=MpIXVp6qOzjwdqyxitDOtzmLzxJa7XWFAuMvx362IEI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WMD7td/PtxMYf0l1emoAbLv2hfwH4DPqWlSXfKQDDp6GVtjlJ4oxNhqFEFdGw5Dgq0IAsri8bUg0NpoX8TYo2BltNI/8zPiBWU4UtWR/C1NlGxbLH3ayaxjAE/8AvJC+CNF5NimOR/WNJsadilQ/hRLu+cOyq5G+cy1miOESWq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BE355tkF; arc=none smtp.client-ip=209.85.222.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f54.google.com with SMTP id a1e0cc1a2514c-85b988ec4f0so559818241.1;
-        Tue, 03 Dec 2024 04:21:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733228513; x=1733833313; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MpIXVp6qOzjwdqyxitDOtzmLzxJa7XWFAuMvx362IEI=;
-        b=BE355tkFrSSVnuJuQQMWEtC2yOodZU+b7z0fhvFbvXv6q8EFgk/GgJnokwMHFLnMTl
-         z8Ce42MgXxAUz/KIAFejC7wsqaiEA3ZtbnMUl0+C71Puw8Qe6jClqJl/r+U3YG+VdUUB
-         9HrUdy2Ss15Go3Mh0HEDykJHgT9o5Jzn7t+oMI+YiCchwOpVnzU+1AVDsTE3mB+jFuOB
-         fMRxfHpP2f3a3It1ZuA+GprrKB5JHqfhpZ1tvEl0nmN/FJByu+zuBWNkhu6WMWM+aL0p
-         GOnv4B0Wh/oZmBhmymQY3hr3BMnK51glLdaBbxetSTQT6h/axQVtxUwMG1M8bYtjIRax
-         G/Og==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733228513; x=1733833313;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MpIXVp6qOzjwdqyxitDOtzmLzxJa7XWFAuMvx362IEI=;
-        b=dp8psN6VqofIF0Wv4pkdj0Ia963Pv2jp8aKJDu0GOUn6AaqRQdjiSeowNIX1lsGIX8
-         myWM2qOuX5C748ubcRtB1sMEu9SyPovH4E9/q2PQ56LLBWoUdPop/zowGdPtKwTx0+T0
-         Sblh7V7opL8BumjaIPDgTVP/E35dY8HPjxlk5gSAWKeeNVEPGIdd4toB4h3y3BLyH8Ne
-         Fs+c4b9SlG/DXZxTGgqjJxGYa3e3fLYoQQ3rGEkZrvRCkjG0NFf8W3Z3w45ZMBpy/13I
-         dxTcbiJxi9KJ4th6Vy+ws+GLXhgx7oqSi84MM0b0eoEe0xE5NB0A9kidv7b3xKMi/at/
-         B3bQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVKznPFiUQE7aVd3gyBY28Kun8Zm7Ua5Tf2BlJ4lE30BG8Nttzdn/qL0oA0Tqhz/nKGssGOhvCvEZHr@vger.kernel.org, AJvYcCVLsCv6B6JUbKrLcA2lXhaVeX7FPXrf5ptlutTzCYx7r/okvwI8yesylfgpUyJ/F7iwA3Rq9SWY2/m2Nw==@vger.kernel.org, AJvYcCViwbvQHH8nsWF6b32WnGfrve1NOun58cgMFwHfcWdVlKWAHWv6TYuNTxrbxEXk8OQSFH/HWAqBCMK4a6nS@vger.kernel.org, AJvYcCWKNGCjxmhmEymIE9XmwNsEu+Z6sX5L9E20TVAGxJfGsRQxSGymaL1POiNXat1anrQuyoSqIRCyQE8=@vger.kernel.org, AJvYcCXQcA9twTyMGLaRyPfHUNzv+1ynmbCNnLiHTBcwvePYYbxOsFHFtW7x/TqrTvyXschfFwlA2vToM19ie2A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwxE7ygWV5ZBMXwUDH+vGABc7LJaao2jQozeN7l/IcsGsLNxTno
-	xA18u+yfr8uaqBQ977JLaXeFpYjQb1xRZYvnH73nnNxnsARCMaSWI6OLx9yRuWAKORzX67w+IBE
-	b3sS7Dpm3V4255LjIWZ3OXLIdRmY=
-X-Gm-Gg: ASbGncuHLKnOtYJxjQLI+ympqPo4vwBEmjP9LiTPpXJ3FqI0yApalzkjHI2yx66rBx9
-	R5cTflgg9A0bq35qolhlCOS6hjJLk5w==
-X-Google-Smtp-Source: AGHT+IHvSfIxxZEFrMUMf9JkQ6m84tL4tuWoNpHCUoaLftm4kgpv9pueuEl2AvhcVOPltmicw6auZhK0Kuc4LSVYVTI=
-X-Received: by 2002:a05:6102:38d4:b0:4af:48a6:79d4 with SMTP id
- ada2fe7eead31-4af971fc9c4mr2434948137.6.1733228513292; Tue, 03 Dec 2024
- 04:21:53 -0800 (PST)
+	s=arc-20240116; t=1733228657; c=relaxed/simple;
+	bh=mCIHbMTp8TXOIpl1+nubIptrAHWq3pU6doVeMEipNVc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tevQA9ArlRT1+O9NrOf8zJqLVGPaq1sM83SqP0xlR2iQ1CiGjdoac6/k204JiQy6TSdCEQNahc/S5g3/RGng4PnwXoPxE6IIMc+Wr+RbhNuv3ZO6cF8qLjo70Qs90MXm8v1wMmT/8ViLx22RSYkSeRTJjoWoq0M10up3OzHRgkw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=PgY5nn9U; arc=none smtp.client-ip=17.58.6.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
+	s=1a1hai; t=1733228654;
+	bh=CgCScBX/+fgZ0roCuYsgonJhaxWB8rsl1yCC6V0WM+E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:
+	 x-icloud-hme;
+	b=PgY5nn9UjaNQNnW4ZpJ9WuRQx6im5psJe58NOrhuMYaP81TCjCoqg7OOKUTCf/GiQ
+	 U5NzWhh2P25K5ajpXMvRXYX0Q0QlkR8pgL3oTItbqVZutGKevLmlI66ZBGBcrDMdzZ
+	 tMmlV2WZ2o8x16WpoGlJ/JnV1zI3oqt06fGl4I8/qI7wYj0KQ1QQr5n3xLSgizk9fw
+	 TQ9xaKi2nZyOPqodk3YoZL2QcRqFeCLp3CsTqDDtllnMk1q4GHXKVq7SsECnBkg8jm
+	 H9mCDktUr1zn+c+7ek7cGPeMoLhQxufGfyCDPYAJQXskQd4pXIE2C7c2QiBSj9B4RB
+	 vRrMl0+rr+jVw==
+Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
+	by pv50p00im-hyfv10011601.me.com (Postfix) with ESMTPSA id 675CEC8010E;
+	Tue,  3 Dec 2024 12:23:51 +0000 (UTC)
+Message-ID: <9d34bd6f-b120-428a-837b-5a5813e14618@icloud.com>
+Date: Tue, 3 Dec 2024 20:23:45 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241202-starqltechn_integration_upstream-v9-0-a1adc3bae2b8@gmail.com>
- <20241202-starqltechn_integration_upstream-v9-9-a1adc3bae2b8@gmail.com> <b7e4162a-a7f7-462d-9dde-121eeb59d148@kernel.org>
-In-Reply-To: <b7e4162a-a7f7-462d-9dde-121eeb59d148@kernel.org>
-From: Dzmitry Sankouski <dsankouski@gmail.com>
-Date: Tue, 3 Dec 2024 15:21:42 +0300
-Message-ID: <CABTCjFDyoF7g-5tj_dr6k7ScB_313dwEmfdJ+49rwMYfN63x1Q@mail.gmail.com>
-Subject: Re: [PATCH v9 9/9] leds: max77705: Add LEDs support
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Sebastian Reichel <sre@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Lee Jones <lee@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Pavel Machek <pavel@ucw.cz>, 
-	Hans de Goede <hdegoede@redhat.com>, Marek Szyprowski <m.szyprowski@samsung.com>, 
-	Sebastian Krzyszkowiak <sebastian.krzyszkowiak@puri.sm>, Purism Kernel Team <kernel@puri.sm>, 
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-input@vger.kernel.org, 
-	linux-leds@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 00/32] driver core: Constify API device_find_child()
+ and adapt for various existing usages
+To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+ Philipp Zabel <p.zabel@pengutronix.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
+ Martin Tuma <martin.tuma@digiteqautomotive.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Andreas Noever <andreas.noever@gmail.com>,
+ Michael Jamet <michael.jamet@intel.com>,
+ Mika Westerberg <mika.westerberg@linux.intel.com>,
+ Yehezkel Bernat <YehezkelShB@gmail.com>,
+ Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski
+ <brgl@bgdev.pl>, Andrew Lunn <andrew@lunn.ch>,
+ Vladimir Oltean <olteanv@gmail.com>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Simon Horman <horms@kernel.org>, Dan Williams <dan.j.williams@intel.com>,
+ Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>,
+ Ira Weiny <ira.weiny@intel.com>, Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+ Jiri Slaby <jirislaby@kernel.org>,
+ Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+ Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+ Lee Duncan <lduncan@suse.com>, Chris Leech <cleech@redhat.com>,
+ Mike Christie <michael.christie@oracle.com>,
+ "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>,
+ Nilesh Javali <njavali@marvell.com>,
+ Manish Rangankar <mrangankar@marvell.com>,
+ GR-QLogic-Storage-Upstream@marvell.com, Davidlohr Bueso <dave@stgolabs.net>,
+ Jonathan Cameron <jonathan.cameron@huawei.com>,
+ Alison Schofield <alison.schofield@intel.com>,
+ Andreas Larsson <andreas@gaisler.com>, Stuart Yoder <stuyoder@gmail.com>,
+ Laurentiu Tudor <laurentiu.tudor@nxp.com>, Jens Axboe <axboe@kernel.dk>,
+ Sudeep Holla <sudeep.holla@arm.com>,
+ Cristian Marussi <cristian.marussi@arm.com>, Ard Biesheuvel
+ <ardb@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-hwmon@vger.kernel.org,
+ linux-media@vger.kernel.org, linux-usb@vger.kernel.org,
+ linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
+ linux-pwm@vger.kernel.org, nvdimm@lists.linux.dev,
+ linux1394-devel@lists.sourceforge.net, linux-serial@vger.kernel.org,
+ linux-sound@vger.kernel.org, open-iscsi@googlegroups.com,
+ linux-scsi@vger.kernel.org, linux-cxl@vger.kernel.org,
+ sparclinux@vger.kernel.org, linux-block@vger.kernel.org,
+ arm-scmi@vger.kernel.org, linux-efi@vger.kernel.org,
+ linux-remoteproc@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>
+References: <20241203-const_dfc_done-v2-0-7436a98c497f@quicinc.com>
+ <g32cigmktmj4egkq2tof27el2yss4liccfxgebkgqvkil32mlb@e3ta4ezv7y4m>
+Content-Language: en-US
+From: Zijun Hu <zijun_hu@icloud.com>
+In-Reply-To: <g32cigmktmj4egkq2tof27el2yss4liccfxgebkgqvkil32mlb@e3ta4ezv7y4m>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-GUID: HfN3ugOwn0RD4lT0NgRrMbrQZDyUcr0J
+X-Proofpoint-ORIG-GUID: HfN3ugOwn0RD4lT0NgRrMbrQZDyUcr0J
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2024-12-03_01,2024-12-03_03,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 phishscore=0 suspectscore=0
+ clxscore=1015 adultscore=0 malwarescore=0 mlxlogscore=903 mlxscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2308100000 definitions=main-2412030107
 
-=D0=BF=D0=BD, 2 =D0=B4=D0=B5=D0=BA. 2024=E2=80=AF=D0=B3. =D0=B2 13:30, Krzy=
-sztof Kozlowski <krzk@kernel.org>:
->
-> On 02/12/2024 10:48, Dzmitry Sankouski wrote:
-> > This adds basic support for LEDs for the max77705 PMIC.
-> >
-> > Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
-> >
-> > ---
-> > Changes for v8:
-> > - join line where possible to fit in 100 chars
->
->
-> Coding style asks for 80. checkpatch is not a coding style, unless this
-> came from maintainer's review.
->
+On 2024/12/3 20:00, Uwe Kleine-König wrote:
+> Hello,
+> 
+> On Tue, Dec 03, 2024 at 08:33:22AM +0800, Zijun Hu wrote:
+>> This patch series is to constify the following API:
+>> struct device *device_find_child(struct device *dev, void *data,
+>> 		int (*match)(struct device *dev, void *data));
+>> To :
+>> struct device *device_find_child(struct device *dev, const void *data,
+>> 				 device_match_t match);
+>> typedef int (*device_match_t)(struct device *dev, const void *data);
+> 
+> This series isn't bisectible. With only the first two patches applied I
+> hit:
 
-On v6 discussion, Lee Jones stated 'This is old guidance':
-https://patchwork.kernel.org/project/linux-input/patch/20241007-starqltechn=
-_integration_upstream-v6-7-0d38b5090c57@gmail.com/
+yes. such patch series needs to be merge as atomic way.
 
---=20
-Best regards and thanks for review,
-Dzmitry
+Hi Greg,
+
+is it possible to ONLY merge such patch series by atomic way into your
+driver-core tree?
+
+or squash such patch series into a single patch ?
+
+various subsystem maintainers may not like squashing way.
+
+> 
+>   CC      drivers/pwm/core.o
+> drivers/pwm/core.c: In function ‘pwm_unexport_child’:
+> drivers/pwm/core.c:1292:55: error: passing argument 3 of ‘device_find_child’ from incompatible pointer type [-Wincompatible-pointer-types]
+>  1292 |         pwm_dev = device_find_child(pwmchip_dev, pwm, pwm_unexport_match);
+>       |                                                       ^~~~~~~~~~~~~~~~~~
+>       |                                                       |
+>       |                                                       int (*)(struct device *, void *)
+> In file included from include/linux/acpi.h:14,
+>                  from drivers/pwm/core.c:11:
+> include/linux/device.h:1085:49: note: expected ‘device_match_t’ {aka ‘int (*)(struct device *, const void *)’} but argument is of type ‘int (*)(struct device *, void *)’
+>  1085 |                                  device_match_t match);
+>       |                                  ~~~~~~~~~~~~~~~^~~~~
+> drivers/pwm/core.c: In function ‘pwm_class_get_state’:
+> drivers/pwm/core.c:1386:55: error: passing argument 3 of ‘device_find_child’ from incompatible pointer type [-Wincompatible-pointer-types]
+>  1386 |         pwm_dev = device_find_child(pwmchip_dev, pwm, pwm_unexport_match);
+>       |                                                       ^~~~~~~~~~~~~~~~~~
+>       |                                                       |
+>       |                                                       int (*)(struct device *, void *)
+> include/linux/device.h:1085:49: note: expected ‘device_match_t’ {aka ‘int (*)(struct device *, const void *)’} but argument is of type ‘int (*)(struct device *, void *)’
+>  1085 |                                  device_match_t match);
+>       |                                  ~~~~~~~~~~~~~~~^~~~~
+> make[5]: *** [scripts/Makefile.build:194: drivers/pwm/core.o] Error 1
+> make[4]: *** [scripts/Makefile.build:440: drivers/pwm] Error 2
+> make[3]: *** [scripts/Makefile.build:440: drivers] Error 2
+> make[2]: *** [Makefile:1989: .] Error 2
+> make[1]: *** [Makefile:372: __build_one_by_one] Error 2
+> make: *** [Makefile:251: __sub-make] Error 2
+> 
+> Best regards
+> Uwe
+
 
