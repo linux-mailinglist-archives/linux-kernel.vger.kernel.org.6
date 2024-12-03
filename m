@@ -1,111 +1,96 @@
-Return-Path: <linux-kernel+bounces-430208-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430209-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 688209E2DDE
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 22:12:47 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2156016821A
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 21:12:44 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62A7720899C;
-	Tue,  3 Dec 2024 21:12:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Fs8EroUr";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Jts7PM3z"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C494A9E2E83
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 22:57:27 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BB71207A07;
-	Tue,  3 Dec 2024 21:12:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AA8CEB29056
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 21:16:06 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D38D20897E;
+	Tue,  3 Dec 2024 21:15:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=mentallysanemainliners.org header.i=@mentallysanemainliners.org header.b="gVt6NKKZ"
+Received: from out-02.smtp.spacemail.com (out-02.smtp.spacemail.com [63.250.43.87])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E202819F113;
+	Tue,  3 Dec 2024 21:15:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.250.43.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733260360; cv=none; b=aNF8A3ZXjQdOb9RqnALwOFT5OtEXaPBdLUEsNa0GYqXwFUArReq6edWitGTI0MCmo/iz33n5xdX4sIV5aae7tRGFMGn+SEHnr7zlPYrpsLmZ5yzeRPXXu0+RZINUQ5RWA7HKl1H3oO28JmAfqD/9CffgogA/JSrikQ5VN/Usg3Y=
+	t=1733260559; cv=none; b=HPG1EgNlbpSD1d83pmw9wqdBrb8Bk42ifLaZ4ypE3xvXIImm5kloZXE0xNPV9MjNMQG9CS+HIGGUK4v4Not/GxAjV13MW79PiGGhQMgDNxUsmuQJCwfRTl0aM7BZSK2hqWeNoZb6TwpWwIxpip3ZLQi9E1ixQRehVPWgWusAHbI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733260360; c=relaxed/simple;
-	bh=Xp7nItebZYWzIRkQ3dtApJ0l5bX7krb4ovTaP7j/+xY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=FhtXCmQ2/d3owO9+BpRCLa8PW+ga7TeqmHtbahc0ubpS6hBgj/3wO/teQ3yUkPN9NKegLC8TH2abC67gq1NABZ5R6NBcJFNmJ0j/B11cQ6GcG7zUs2Ylz4tGIOyzxvuB0qxZ4msljIcOBGemoIdlQ/QWJpCJYAR4f6iFlm4jxAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Fs8EroUr; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Jts7PM3z; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1733260357;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mnFWEKbSESp9bfgP3xRoSac+D0/KI17M/a5z2PbtZZA=;
-	b=Fs8EroUrJCDqGGVrLBaUJeUXTHen+IpZiPJi1+z2vwK/4ZH8CBmYZf6lVp+N96KKbo/AGq
-	uH67HiWj58jATLxNoLLnQFFpgr8VqzZkfBGzwK8vwsLWKcgtmwISYRXfTF8DoSbfA9JCmX
-	ow3StPdOImtJ4Vp6vO6RvZ9MaGA+vQfao1CqC/l/jjZLrFjA0EKqJYQKL1Ti1R49kDeWgl
-	e96h5+fPKs9pwFoq5jU6oxq6FZFtQs9w37f7DrMqj4HmG+MVdBLsiAYQVPvUDxCFqjM2aR
-	3qWjoYg1ZWnXn6eocu3htVxvM05QwQwzxPe4FZjCq4TEfYXwUGXQNNVS2b2LAA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1733260357;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mnFWEKbSESp9bfgP3xRoSac+D0/KI17M/a5z2PbtZZA=;
-	b=Jts7PM3zpGCNoUhOHZ0AJX0xH/5gVICXAZM/BxKVgFwHi1MY/cc7J4UBAP/wj2tFP92dPN
-	BX+a1criwUkN4NBw==
-To: Frank Li <Frank.Li@nxp.com>, Manivannan Sadhasivam
- <manivannan.sadhasivam@linaro.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?=
- <kw@linux.com>,
- Kishon Vijay Abraham I <kishon@kernel.org>, Bjorn Helgaas
- <bhelgaas@google.com>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
- Anup Patel <apatel@ventanamicro.com>
-Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
- imx@lists.linux.dev, Niklas Cassel <cassel@kernel.org>,
- dlemoal@kernel.org, maz@kernel.org, jdmason@kudzu.us, Frank Li
- <Frank.Li@nxp.com>, stable@kernel.org
-Subject: Re: [PATCH v9 1/6] platform-msi: Add msi_remove_device_irq_domain()
- in platform_device_msi_free_irqs_all()
-In-Reply-To: <20241203-ep-msi-v9-1-a60dbc3f15dd@nxp.com>
-References: <20241203-ep-msi-v9-0-a60dbc3f15dd@nxp.com>
- <20241203-ep-msi-v9-1-a60dbc3f15dd@nxp.com>
-Date: Tue, 03 Dec 2024 22:12:36 +0100
-Message-ID: <87y10wsc6z.ffs@tglx>
+	s=arc-20240116; t=1733260559; c=relaxed/simple;
+	bh=czCvK2U+vJS4fE5syOg2GAFijCOBMLREdLTGdyULWSE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=snYt8wRAc+ztm4sroIti5T/a+XJ2iQnV3xtuTu+uMw8wK4XkUHUesw9a1IO4W5DckFJnxYB3kZe5P1PUJrjEpxbbHB9zq+xZdLxQLxIa/xrJ6Wkvx/bcRA4CncjhGeaaHbXCKSlYEQOAPPTzHqHmyk23Cf7KSTS5Bg7JBFgKSas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org; spf=pass smtp.mailfrom=mentallysanemainliners.org; dkim=pass (2048-bit key) header.d=mentallysanemainliners.org header.i=@mentallysanemainliners.org header.b=gVt6NKKZ; arc=none smtp.client-ip=63.250.43.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mentallysanemainliners.org
+Received: from prod-lbout-phx.jellyfish.systems (unknown [198.177.122.3])
+	by smtp.spacemail.com (Postfix) with ESMTPA id 4Y2tjd5jWzz4wBd;
+	Tue, 03 Dec 2024 21:15:49 +0000 (UTC)
+Received: from localhost.localdomain (83.21.102.241.ipv4.supernova.orange.pl [83.21.102.241])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.spacemail.com (Postfix) with ESMTPSA id 4Y2tjV3S4Jz2x9D;
+	Tue,  3 Dec 2024 21:15:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=mentallysanemainliners.org; s=spacemail; t=1733260544;
+	bh=czCvK2U+vJS4fE5syOg2GAFijCOBMLREdLTGdyULWSE=;
+	h=From:To:Cc:Subject:Date:From;
+	b=gVt6NKKZmVYhwa5qW5pMxeKgC6wcZUy4KNIOSfOZeB3/bMdmmLg0ELGvfSnALollB
+	 ZbChtEy+KCYPhUYB76+hI1dNb/x86bY4F3yDdttd9AnIEWv4n2k64ETJ3yKZA2y6GG
+	 y9/8LrwKJgXXhMOzw6bMbrZVMgB0oO/e9UARld/KFSdxRCMZTS0/XzTmOUeKy21ZjV
+	 QVvBZw+k7X0XjCVaVu/emOmiO31hItiaeYTiXOQ7a3V2/QFnvzMRhJNz8xvd+h1YNk
+	 EvhUMV7iaOIpj2ZIVL1y3RkDN9hBc/8Vezel7bknglA3rBbhiNeQ0HzA16PTzpPMeO
+	 pa3sNVD6L1TUQ==
+From: Igor Belwon <igor.belwon@mentallysanemainliners.org>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>
+Cc: devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v1 0/2] Add pmu and syscon-reboot support to Exynos990
+Date: Tue,  3 Dec 2024 22:13:42 +0100
+Message-ID: <20241203211344.515431-1-igor.belwon@mentallysanemainliners.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-On Tue, Dec 03 2024 at 15:36, Frank Li wrote:
-> The follow steps trigger kernel dump warning and
-> platform_device_msi_init_and_alloc_irqs() return false.
->
-> 1: platform_device_msi_init_and_alloc_irqs();
-> 2: platform_device_msi_free_irqs_all();
-> 3: platform_device_msi_init_and_alloc_irqs();
->
-> Do below two things in platform_device_msi_init_and_alloc_irqs().
-> - msi_create_device_irq_domain()
-> - msi_domain_alloc_irqs_range()
->
-> But only call msi_domain_free_irqs_all() in
-> platform_device_msi_free_irqs_all(), which missed call
-> msi_remove_device_irq_domain().
+Hi all,
 
-It's not a missed call. It's intentional as all existing users remove
-the device afterwards.
+This small series adds support for the pmu, as well as syscon-reboot support to
+the Exynos990 SoC. It has been tested with the reboot command in an initramfs.
 
-> This cause above kernel dump when call
-> platform_device_msi_init_and_alloc_irqs() again.
+Typically, this would be added during the initial SoC bringup, however I was
+unsure as to if the syscon would work correctly until I could test it
+(especially when it comes to reboot), which I just got around to doing.
 
-Sure, but that's not a fix and not required for stable because no
-existing driver is affected by this unless I'm missing something.
+Kind regards,
 
-What's the actual use case for this? You describe in great length what
-fails, which is nice, but I'm missing the larger picture here.
+Igor
 
-Thanks,
+Igor Belwon (2):
+  dt-bindings: soc: samsung: exynos-pmu: Add exynos990-pmu compatible
+  arm64: dts: exynos990: Add pmu and syscon-reboot nodes
 
-        tglx
+ .../bindings/soc/samsung/exynos-pmu.yaml           |  1 +
+ arch/arm64/boot/dts/exynos/exynos990.dtsi          | 14 ++++++++++++++
+ 2 files changed, 15 insertions(+)
+
+-- 
+2.45.2
+
 
