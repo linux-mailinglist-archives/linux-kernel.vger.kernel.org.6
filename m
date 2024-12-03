@@ -1,156 +1,123 @@
-Return-Path: <linux-kernel+bounces-429773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62FC69E23E2
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:43:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D937F9E2731
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 17:22:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DEB88161637
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 15:39:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC44F16850B
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:20:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC01A20ADE1;
-	Tue,  3 Dec 2024 15:34:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9FA01F8AC0;
+	Tue,  3 Dec 2024 16:20:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="cw+tBO6K"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="kOFJsxDv"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D5B81FA27C;
-	Tue,  3 Dec 2024 15:34:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 297C81E25E3;
+	Tue,  3 Dec 2024 16:20:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733240056; cv=none; b=JE0aeA/D50a9gyLOipOT+Wial1t8O3HadrQNwZnvqFYl6VOvUyu9JMTM0z5N4xA/O23CdVZXDlOLPuUbyrF73vL05ff0GAgkpL3WeM0FlFNgwut37hsxtYREmDbF+fPbxLjPAlGYM7j9G5nRVqNGxRq6XvUdLAZRob15+p912/o=
+	t=1733242820; cv=none; b=Nk+2WKH2NqY7+WFfXEKMbEzW/K5cLwanxWLloY2Xim1UyAOBQUhGwHV3NXd/6FV9mvLDQONg3vmeowDas0X2WTyei2v1byn+dRKrgkupfc1+VtWZpJJ9Vfx/utPwu6irXTOcjPaDiGwA3rEICLyS2AftjKvW9PBFVpGiZ9owDEQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733240056; c=relaxed/simple;
-	bh=JkY+5fOV9qIOnxsCxpI9LuFE3gW4OY/AYWWLkZk6dT8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uyGhDYywNgXcVhXiT9iaRIflXP3wrP0nbu/Xs+5gveU+cILHl7BJe8VrxCw6BT0Ed6SsyxZPp2N03gKtGP0YldXovpdorKtO+jl/4pJyVLISHpptUOPCZx8jnSigo+hoE57ZiqW8XDQk79cr4QKVU65DGtu736YHGzzC/qrMEFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=cw+tBO6K; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B548C4CED6;
-	Tue,  3 Dec 2024 15:34:15 +0000 (UTC)
+	s=arc-20240116; t=1733242820; c=relaxed/simple;
+	bh=Qy+BAYcRHE2O6cAvWjZgLj0PVfvbFtLF0E0wQ3KkLmQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=R/aIDDktOsfOc8Fbwj+4q4IfV4fxM48YK9GSqYnDwIf4Y/RMcgMFlILGgaR6/EmB/n6idDkseWJjFnUlbHrSDV6KWWobtdMxEg/U1Z5H5Y9qd/Nca6BZkX6a+pwDsDiZPY/zkTLMx1MyUOg3yh2+Sz5xlemUVTwooCBH8lnBZF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=kOFJsxDv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C58DC4CECF;
+	Tue,  3 Dec 2024 16:20:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1733240056;
-	bh=JkY+5fOV9qIOnxsCxpI9LuFE3gW4OY/AYWWLkZk6dT8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cw+tBO6K4ei6BBayeOiLRkFW07O1fa5MF9AkitxqR9pP9zKAp7HWJ+ED/tGNWCHw6
-	 sCR+Dup7q6Bl/5guOfooulr0VAkud+sL2WAlfgORxiVnDmAyoyhgj4uN5xBUsM8d+y
-	 E8V65kOlexnY0r23jyd5Np5jk1x3b/wAxwJ/ZjuM=
-Date: Tue, 3 Dec 2024 15:48:07 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Dominique Martinet <asmadeus@codewreck.org>
-Cc: Oliver Neukum <oneukum@suse.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Dominique Martinet <dominique.martinet@atmark-techno.com>,
-	netdev@vger.kernel.org, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: usb: usbnet: restore usb%d name exception for local
- mac addresses
-Message-ID: <2024120357-vertebrae-squatted-f670@gregkh>
-References: <20241203130457.904325-1-asmadeus@codewreck.org>
+	s=korg; t=1733242820;
+	bh=Qy+BAYcRHE2O6cAvWjZgLj0PVfvbFtLF0E0wQ3KkLmQ=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=kOFJsxDv/bNxXo+4JozOQECQ3aJAhC5s8mMxYwZGVIwOM3XG2qIaUktictBi1g20l
+	 ik565XTYeqv+yBKbk8jhbKi4RdZPxZ6wz3wEV2w0yQ86agjlrtJFaqPuPUAED9QgLk
+	 lgXASGBM7LEKi+ns2CwTeQMZ7eO9/K7wHnTQ4RF4=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: stable@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	patches@lists.linux.dev,
+	Michael Grzeschik <m.grzeschik@pengutronix.de>,
+	Eric Van Hensbergen <ericvh@kernel.org>,
+	Latchesar Ionkov <lucho@ionkov.net>,
+	Dominique Martinet <asmadeus@codewreck.org>,
+	Christian Schoenebeck <linux_oss@crudebyte.com>,
+	v9fs@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Mirsad Todorovac <mtodorovac69@gmail.com>,
+	Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 6.12 788/826] net/9p/usbg: fix handling of the failed kzalloc() memory allocation
+Date: Tue,  3 Dec 2024 15:48:35 +0100
+Message-ID: <20241203144814.499396037@linuxfoundation.org>
+X-Mailer: git-send-email 2.47.1
+In-Reply-To: <20241203144743.428732212@linuxfoundation.org>
+References: <20241203144743.428732212@linuxfoundation.org>
+User-Agent: quilt/0.67
+X-stable: review
+X-Patchwork-Hint: ignore
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241203130457.904325-1-asmadeus@codewreck.org>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Dec 03, 2024 at 10:04:55PM +0900, Dominique Martinet wrote:
-> From: Dominique Martinet <dominique.martinet@atmark-techno.com>
-> 
-> The previous commit assumed that local addresses always came from the
-> kernel, but some devices hand out local mac addresses so we ended up
-> with point-to-point devices with a mac set by the driver, renaming to
-> eth%d when they used to be named usb%d.
-> 
-> Userspace should not rely on device name, but for the sake of stability
-> restore the local mac address check portion of the naming exception:
-> point to point devices which either have no mac set by the driver or
-> have a local mac handed out by the driver will keep the usb%d name.
-> 
-> Fixes: 8a7d12d674ac ("net: usb: usbnet: fix name regression")
-> Signed-off-by: Dominique Martinet <dominique.martinet@atmark-techno.com>
-> ---
->  drivers/net/usb/usbnet.c | 20 ++++++++++++++------
->  1 file changed, 14 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/net/usb/usbnet.c b/drivers/net/usb/usbnet.c
-> index 44179f4e807f..d044dc7b7622 100644
-> --- a/drivers/net/usb/usbnet.c
-> +++ b/drivers/net/usb/usbnet.c
-> @@ -178,6 +178,17 @@ int usbnet_get_ethernet_addr(struct usbnet *dev, int iMACAddress)
->  }
->  EXPORT_SYMBOL_GPL(usbnet_get_ethernet_addr);
->  
-> +static bool usbnet_needs_usb_name_format(struct usbnet *dev, struct net_device *net)
-> +{
-> +	/* Point to point devices which don't have a real MAC address
-> +	 * (or report a fake local one) have historically used the usb%d
-> +	 * naming. Preserve this..
-> +	 */
-> +	return (dev->driver_info->flags & FLAG_POINTTOPOINT) != 0 &&
-> +		(is_zero_ether_addr(net->dev_addr) ||
-> +		 is_local_ether_addr(net->dev_addr));
-> +}
-> +
->  static void intr_complete (struct urb *urb)
->  {
->  	struct usbnet	*dev = urb->context;
-> @@ -1762,13 +1773,10 @@ usbnet_probe (struct usb_interface *udev, const struct usb_device_id *prod)
->  		if (status < 0)
->  			goto out1;
->  
-> -		// heuristic:  "usb%d" for links we know are two-host,
-> -		// else "eth%d" when there's reasonable doubt.  userspace
-> -		// can rename the link if it knows better.
-> +		/* heuristic: rename to "eth%d" if we are not sure this link
-> +		 * is two-host (these links keep "usb%d") */
->  		if ((dev->driver_info->flags & FLAG_ETHER) != 0 &&
-> -		    ((dev->driver_info->flags & FLAG_POINTTOPOINT) == 0 ||
-> -		     /* somebody touched it*/
-> -		     !is_zero_ether_addr(net->dev_addr)))
-> +		    !usbnet_needs_usb_name_format(dev, net))
->  			strscpy(net->name, "eth%d", sizeof(net->name));
->  		/* WLAN devices should always be named "wlan%d" */
->  		if ((dev->driver_info->flags & FLAG_WLAN) != 0)
-> -- 
-> 2.47.0
-> 
-> 
+6.12-stable review patch.  If anyone has any objections, please let me know.
 
-Hi,
+------------------
 
-This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
-a patch that has triggered this response.  He used to manually respond
-to these common problems, but in order to save his sanity (he kept
-writing the same thing over and over, yet to different people), I was
-created.  Hopefully you will not take offence and will fix the problem
-in your patch and resubmit it so that it can be accepted into the Linux
-kernel tree.
+From: Mirsad Todorovac <mtodorovac69@gmail.com>
 
-You are receiving this message because of the following common error(s)
-as indicated below:
+[ Upstream commit ff1060813d9347e8c45c8b8cff93a4dfdb6726ad ]
 
-- You have marked a patch with a "Fixes:" tag for a commit that is in an
-  older released kernel, yet you do not have a cc: stable line in the
-  signed-off-by area at all, which means that the patch will not be
-  applied to any older kernel releases.  To properly fix this, please
-  follow the documented rules in the
-  Documentation/process/stable-kernel-rules.rst file for how to resolve
-  this.
+On the linux-next, next-20241108 vanilla kernel, the coccinelle tool gave the
+following error report:
 
-If you wish to discuss this problem further, or you have questions about
-how to resolve this issue, please feel free to respond to this email and
-Greg will reply once he has dug out from the pending patches received
-from other developers.
+./net/9p/trans_usbg.c:912:5-11: ERROR: allocation function on line 911 returns
+NULL not ERR_PTR on failure
 
-thanks,
+kzalloc() failure is fixed to handle the NULL return case on the memory exhaustion.
 
-greg k-h's patch email bot
+Fixes: a3be076dc174d ("net/9p/usbg: Add new usb gadget function transport")
+Cc: Michael Grzeschik <m.grzeschik@pengutronix.de>
+Cc: Eric Van Hensbergen <ericvh@kernel.org>
+Cc: Latchesar Ionkov <lucho@ionkov.net>
+Cc: Dominique Martinet <asmadeus@codewreck.org>
+Cc: Christian Schoenebeck <linux_oss@crudebyte.com>
+Cc: v9fs@lists.linux.dev
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Mirsad Todorovac <mtodorovac69@gmail.com>
+Message-ID: <20241109211840.721226-2-mtodorovac69@gmail.com>
+Signed-off-by: Dominique Martinet <asmadeus@codewreck.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ net/9p/trans_usbg.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/net/9p/trans_usbg.c b/net/9p/trans_usbg.c
+index 975b76839dca1..6b694f117aef2 100644
+--- a/net/9p/trans_usbg.c
++++ b/net/9p/trans_usbg.c
+@@ -909,9 +909,9 @@ static struct usb_function_instance *usb9pfs_alloc_instance(void)
+ 	usb9pfs_opts->buflen = DEFAULT_BUFLEN;
+ 
+ 	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
+-	if (IS_ERR(dev)) {
++	if (!dev) {
+ 		kfree(usb9pfs_opts);
+-		return ERR_CAST(dev);
++		return ERR_PTR(-ENOMEM);
+ 	}
+ 
+ 	usb9pfs_opts->dev = dev;
+-- 
+2.43.0
+
+
+
 
