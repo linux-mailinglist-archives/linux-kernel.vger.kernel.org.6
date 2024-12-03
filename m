@@ -1,318 +1,228 @@
-Return-Path: <linux-kernel+bounces-429123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429124-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 087BC9E17A5
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:32:42 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27F889E1857
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:55:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A41DA28440F
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:32:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4A6E5B286CD
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:33:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B89591E009F;
-	Tue,  3 Dec 2024 09:31:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C5B91E0B62;
+	Tue,  3 Dec 2024 09:32:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=coelacanthus.name header.i=@coelacanthus.name header.b="xzlU2rr4";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="zjkgOXnp"
-Received: from flow-b2-smtp.messagingengine.com (flow-b2-smtp.messagingengine.com [202.12.124.137])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="evjMuwzh"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBCFA1DFE2E;
-	Tue,  3 Dec 2024 09:31:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.137
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B61871DFE2E
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 09:32:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733218271; cv=none; b=YDxi05oe9WWOcc7n/xwgz7PMZlc0zU631gDoZfU8OX0ZvS3qWtHRBfVNCrxS5w0rmml2BQjzFpUM92f2dkAzdQvA49WaLFIpX+d0m0VFE0AbC7KBYhOMNfbeRCE528rxTgcOnN6DnO+2QR8jkbsDbk2mj6bHJ8JyJRDFNdChnbE=
+	t=1733218324; cv=none; b=BZ7xNt325aTibFOOwdxw4W2WNSfQQdA3WuVKjy8ULWfe9SzoGCoPebTvA3XY74dUz5DBouy6EfsvFIjIrD9bq7DCe/io36FiIAJb9lSLk3IhJkhScq333BczLbDV3W1asdNZJYTKLG5vrxlNNE0jB9xrfaAUeP02/uYoiNOM1V0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733218271; c=relaxed/simple;
-	bh=ijW1XBZ6BKgXVL8bvx+ZSEL8ENP617QINtcS391/r/8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=oP08mi7BD21EuLTtTqQwSyREvonXYLFUx0+/e0/MbuOfI93y7xQwWQWoaGdxk2iP5/fxYTSzljS5yu6rPspt7C1ZPYuOh5TMWNzW6Xd/7+7oKkCnVYrIx075QOUckZFbbfq9TTxOQAo9hWmRn548ltHb7PDCekszCPLPYfnravY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=coelacanthus.name; spf=pass smtp.mailfrom=coelacanthus.name; dkim=pass (2048-bit key) header.d=coelacanthus.name header.i=@coelacanthus.name header.b=xzlU2rr4; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=zjkgOXnp; arc=none smtp.client-ip=202.12.124.137
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=coelacanthus.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=coelacanthus.name
-Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
-	by mailflow.stl.internal (Postfix) with ESMTP id 3AFBB1D40996;
-	Tue,  3 Dec 2024 04:31:08 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-04.internal (MEProxy); Tue, 03 Dec 2024 04:31:08 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	coelacanthus.name; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm2; t=1733218268; x=1733221868; bh=TH5iUDtcVd
-	8w2RV5/BeTBVj9JapPNqfFOxuzY/m1AcE=; b=xzlU2rr4ohSa6VQcSxOxkMbISJ
-	VqUnzWbMC2LFTIzpVR0w2szczBLATRHV5rCCJazN9RIFuYBcDRASVWcq4xeN3/Pc
-	Ilong4t7YBu5KMLah/22yGCXn5EzpNWc6wDuyl8Xom+ploCaOcNo8xccpfGSynBr
-	pPQRXvdhprvngNIPgq3b/oufCEcjERNwFHVdOoldJCA1BqpSanWWtjWT7vuM2/Rf
-	fl3Eyijrnyc6bLS0EC1Mte2DLG7Yt/RKLGJ28BIMwJpUxSjcGMiwr/9SIwJceanK
-	LR0kxxI6AWLwKF3/owfuagxLcABmE/dFKAMdUX4qs17tq5l1Mse5yFgUFzPg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1733218268; x=
-	1733221868; bh=TH5iUDtcVd8w2RV5/BeTBVj9JapPNqfFOxuzY/m1AcE=; b=z
-	jkgOXnpDfYS+02R02SbuT0WWLpWVlRqUFduyqhIALXWk5meNkCdBpbV0/QE9fOiV
-	nZQJszso81VuWM9c04ZnuseMb44mevydzWFNPtJqikkZ9SP0w76jVS0RCM5/1Zz+
-	DE/V+VBhO9WOQP0GofMo6mIGJxR4Asa8KkBE+oARPadljojA4vEiDoKkfMJCMlm9
-	P/hFel/DtHpk6HcDfZDyvh1FCdWcBEO0I17d1RMFnLjESsRpl5qhnhQrsKThOQqj
-	6oe21Hddj/utXn2kK+qTGjHmSemKTWnYMclt+YxT7FM7GFeQLrMVdDhgycTlDYzH
-	yrRGN2uE9IdQ4N0j98iGA==
-X-ME-Sender: <xms:289OZ6YxUqtZ4nLMEwXh9wmuSeGQxZdyxPx9x1-R5jwMMVW52kgXfw>
-    <xme:289OZ9ZjmMsCNaqy7dQwpKHHo3qzwRtAaAOmjavdeUH5DrkJqkTnxr2_NJ472hG1B
-    jgslR1uaFg2w-5oBsk>
-X-ME-Received: <xmr:289OZ08ePS4DuxbI5LZp9XUXH9JUd4MgzUm4vq03Ym_EZnYzSNIPwolKQYZ0yg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddriedvgddthecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
-    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
-    hsucdlqddutddtmdenucfjughrpefhfffugggtgffkfhgjvfevofesthejredtredtjeen
-    ucfhrhhomhepvegvlhgvshhtvgcunfhiuhcuoehufihusegtohgvlhgrtggrnhhthhhush
-    drnhgrmhgvqeenucggtffrrghtthgvrhhnpeeiteejtdevjeffgfehkeegfeelkeekvdeh
-    tdegleevhfetheejheejiedtjeegteenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
-    grmhepmhgrihhlfhhrohhmpehufihusegtohgvlhgrtggrnhhthhhushdrnhgrmhgvpdhn
-    sggprhgtphhtthhopedvjedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepuhifuh
-    estghovghlrggtrghnthhhuhhsrdhnrghmvgdprhgtphhtthhopehsthgrsghlvgesvhhg
-    vghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehshhhurghhsehkvghrnhgvlhdroh
-    hrghdprhgtphhtthhopehprghulhdrfigrlhhmshhlvgihsehsihhfihhvvgdrtghomhdp
-    rhgtphhtthhopehguhhorhgvnheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhgvvg
-    hssehkvghrnhgvlhdrohhrghdprhgtphhtthhopeiiihihrghoseguihhsrhhoohhtrdho
-    rhhgpdhrtghpthhtoheplhhinhhugidqkhhsvghlfhhtvghsthesvhhgvghrrdhkvghrnh
-    gvlhdrohhrghdprhgtphhtthhopehlughvsehsthhrrggtvgdrihho
-X-ME-Proxy: <xmx:289OZ8pN-FCRZc4sGgaC4WramLJIfgz1njg2B1isPd_4bDaIrqZzaw>
-    <xmx:289OZ1pfGK6C3ziS_3nd33hqP71LwYdnI8k6ZXupekBUlmwADPiF1Q>
-    <xmx:289OZ6QR6nlXZknV4ASVHLZGV3_-jGiWTV_-mqYSPb6KdCKl4Whg2A>
-    <xmx:289OZ1psUCKzgB0eQwNOXu7mR6adV2B4yQz-FAWf_qCpjDwRYT2IgA>
-    <xmx:289OZ_ZTNMCuBG7cgx5WSL06wz1YcKQGWts4VuXZX1ueKnSMGp1Q4ZQ1>
-Feedback-ID: i95c648bc:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 3 Dec 2024 04:31:05 -0500 (EST)
-From: Celeste Liu <uwu@coelacanthus.name>
-Date: Tue, 03 Dec 2024 17:30:05 +0800
-Subject: [PATCH v2 2/2] riscv: selftests: Add a ptrace test to verify
- syscall parameter modification
+	s=arc-20240116; t=1733218324; c=relaxed/simple;
+	bh=Kv/bDXDpLX0h9bWxvgUWTMNx/ULHSEzO6+v37eKmhD8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ebEpJkdI8KMQ/3W/tVnTnOoFJLSiHG/a2aEaSSQaBFtw4V/YzSF/iFFIH69GCT623h1CyAiOjNEYWX7BQKnFcn9zczWmnsTd/WL59ILv7y3yiUSjqgGqWmi6hbQTKSerkfCzpKVDZnnXd4GGvxIb9tMPwOX18vFUdhVBv8Ld7vU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=evjMuwzh; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-434a044dce2so65503555e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 01:32:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733218320; x=1733823120; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Kv/bDXDpLX0h9bWxvgUWTMNx/ULHSEzO6+v37eKmhD8=;
+        b=evjMuwzhEt7HoFurpjNeX2s58kn8cA04jT+tW/P206PuxMD/6NBLA2myHsuxga3ruM
+         +vYB9xlzP2cxs7SSebD/JVak1+ZDni7MdQKLh9W6x6rFlVqaXDIHeJo6fktUKo6vUghb
+         P2D+FBS0D7YCLAo4XYDMi9SR6s0IGfijT9PSVjPFRCr2w6xLv8mMAzfrHNPDZZvVR9oM
+         VmSVvUwB++7x/ji7hx7nTdbWvow2SCnyrjoaSKPlUcv/JnJzZ01tqG3EXNcT2XzMVcIc
+         oDcPPscoZbvgdmKP+zIECzLrLl5HaXwE0QZn8+JYRrP9GLiCcv9P/UhuNNekUFvTFdg2
+         ppFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733218320; x=1733823120;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Kv/bDXDpLX0h9bWxvgUWTMNx/ULHSEzO6+v37eKmhD8=;
+        b=h0EikNQlui0FdOGcejkgV2c+ApqASAzFTQ7zByWSUFC25yhr2wDXRN1pA/+o0IUh+E
+         MjcA4xmfFOZNhs8nWeYRRTVvtZBf/a5KNYTl8512etSyngxE7QoQeMEE0CFW6De67AuM
+         nu7BT5RwxOzN44CMwJSqhmOanKbUeHT0D6ETPOwHh4E4wJ6TAZ1eNcM1D4wdvfw+QLF0
+         pWsPv+p6FsY5B+eU7KPBWs1A7M2Vuyaklo6gBMQQKp42o84wu2lQwrSLkVxpuOa2uoZA
+         Wil7ViU1Qx0bK7RXbISsJdBKyjV78kPbMJadtdffxQL/oA+BfKJFDE6/j/JWqTn7SKjm
+         UUMg==
+X-Forwarded-Encrypted: i=1; AJvYcCUl9zCDTC+BUaJIrAFr+bfsisA9ahrWbln6K/9mlwxGzASkuq4SJXfZclWZZ/oBAADbebQzJ8/dJLYCfSg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxsGi9ACXKnNed5cxYRUc/eW1hECe1jEnUGeZw7hxLzs4ddVBVn
+	JCIyG2V8qn6zJfEoWbOwFoAatheF58kCuuqWMuqvIh0/6yf1t7jGLrEkWMcd/eU=
+X-Gm-Gg: ASbGnct3wDzciWcjULuaC8gJPwCvMVobFx5da5B5Itm2UtKZ4fzi0tfb6e3dABkr1GI
+	35rkhMFAF4xHwoBXJlNBjiDOkoZ6dWf3akivkh9yApdjjiMCmjJZC3MIILyBN2U7EaqoKP3x0ST
+	TbxvtfedaZos4tSkjVGwjvIUIF0Ft7GpCHgNqqM049ZrqHca+cfbx5V1cCM3d5wd7WstR8LMmQk
+	+AQDZylh608/Zv2G9UPlOxRBmiuYjZMvfzWVA92NpFK4SQGQBaTofc=
+X-Google-Smtp-Source: AGHT+IFK/C18Dsfxx4kwzaYYJOtx8zRjw5Mg8Ta/YqGYVWUqOTuIRgGuf9GpFBBUxIcPs2ZZtod4mg==
+X-Received: by 2002:a05:600c:5106:b0:434:a8ef:442e with SMTP id 5b1f17b1804b1-434d0a2864cmr17075505e9.31.1733218320000;
+        Tue, 03 Dec 2024 01:32:00 -0800 (PST)
+Received: from [10.1.1.109] ([80.111.64.44])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434aa7d22d4sm212974605e9.27.2024.12.03.01.31.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Dec 2024 01:31:59 -0800 (PST)
+Message-ID: <2883fb0dd22312d5da9039d4fef869276a0bd430.camel@linaro.org>
+Subject: Re: [PATCH 1/4] power: supply: add support for max77759 fuel gauge
+From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+To: Thomas Antoine <t.antoine@uclouvain.be>, Sebastian Reichel
+ <sre@kernel.org>,  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,  Dimitri Fedrau
+ <dima.fedrau@gmail.com>, Catalin Marinas <catalin.marinas@arm.com>, Will
+ Deacon <will@kernel.org>,  Peter Griffin <peter.griffin@linaro.org>, Alim
+ Akhtar <alim.akhtar@samsung.com>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org
+Date: Tue, 03 Dec 2024 09:31:58 +0000
+In-Reply-To: <9387c0cf-d291-485a-8cd1-1aced7eba14e@uclouvain.be>
+References: <20241202-b4-gs101_max77759_fg-v1-0-98d2fa7bfe30@uclouvain.be>
+	 <20241202-b4-gs101_max77759_fg-v1-1-98d2fa7bfe30@uclouvain.be>
+	 <c377f3302c6c282ad826211c859e2b65bb1222cb.camel@linaro.org>
+	 <9387c0cf-d291-485a-8cd1-1aced7eba14e@uclouvain.be>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.1-4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241203-riscv-new-regset-v2-2-d37da8c0cba6@coelacanthus.name>
-References: <20241203-riscv-new-regset-v2-0-d37da8c0cba6@coelacanthus.name>
-In-Reply-To: <20241203-riscv-new-regset-v2-0-d37da8c0cba6@coelacanthus.name>
-To: Oleg Nesterov <oleg@redhat.com>, 
- Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
- Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>, 
- Shuah Khan <shuah@kernel.org>
-Cc: Alexandre Ghiti <alex@ghiti.fr>, "Dmitry V. Levin" <ldv@strace.io>, 
- Andrea Bolognani <abologna@redhat.com>, 
- =?utf-8?q?Bj=C3=B6rn_T=C3=B6pel?= <bjorn@kernel.org>, 
- Thomas Gleixner <tglx@linutronix.de>, Ron Economos <re@w6rz.net>, 
- Charlie Jenkins <charlie@rivosinc.com>, Quan Zhou <zhouquan@iscas.ac.cn>, 
- Felix Yan <felixonmars@archlinux.org>, Ruizhe Pan <c141028@gmail.com>, 
- Shiqi Zhang <shiqi@isrc.iscas.ac.cn>, Guo Ren <guoren@kernel.org>, 
- Yao Zi <ziyao@disroot.org>, Han Gao <gaohan@iscas.ac.cn>, 
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
- linux-mm@kvack.org, stable@vger.kernel.org, linux-kselftest@vger.kernel.org, 
- Celeste Liu <uwu@coelacanthus.name>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5295; i=uwu@coelacanthus.name;
- h=from:subject:message-id; bh=RyjBj4yqY/cnYg3J7doc5uv1ZKvB6VdgX8fYxV3Chig=;
- b=owJ4nJvAy8zAJeafov85RWVtBeNptSSGdL/zJ9qO8P6x3TXF5oxE8YH8p38CcwSX8i+8s9py0
- fsfT7r3XYnvKGVhEONikBVTZMkrYfnJeels996O7V0wc1iZQIYwcHEKwESO9zH8z768W5XxtXWQ
- Vd3MvL6tb6X6EhZWSzZ/OSGQZm/0+n7LI4Z/umbeB/ZzX/4WulioQH3HUSZFxvjP+l+UCuMusYl
- khdnxAQC3SUvH
-X-Developer-Key: i=uwu@coelacanthus.name; a=openpgp;
- fpr=892EBC7DC392DFF9C9C03F1D15F4180E73787863
 
-From: Charlie Jenkins <charlie@rivosinc.com>
+On Tue, 2024-12-03 at 10:08 +0100, Thomas Antoine wrote:
+> On 12/3/24 07:47, Andr=C3=A9 Draszik wrote:
+> > Hi Thomas,
+> >=20
+> > Thanks for looking into this!
+>=20
+> Hi,
+>=20
+> With pleasure! This is my first time trying to contribute to the kernel
+> so sorry for any beginner mistakes I might do.
 
-This test checks that orig_a0 allows a syscall argument to be modified,
-and that changing a0 does not change the syscall argument.
+No worries :-)
 
-Cc: stable@vger.kernel.org
-Co-developed-by: Quan Zhou <zhouquan@iscas.ac.cn>
-Signed-off-by: Quan Zhou <zhouquan@iscas.ac.cn>
-Co-developed-by: Celeste Liu <uwu@coelacanthus.name>
-Signed-off-by: Celeste Liu <uwu@coelacanthus.name>
-Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
----
- tools/testing/selftests/riscv/abi/.gitignore |   1 +
- tools/testing/selftests/riscv/abi/Makefile   |   5 +-
- tools/testing/selftests/riscv/abi/ptrace.c   | 134 +++++++++++++++++++++++++++
- 3 files changed, 139 insertions(+), 1 deletion(-)
+> =C2=A0
+> > > From: Thomas Antoine <t.antoine@uclouvain.be>
+> > >=20
+> > > The Maxim max77759 fuel gauge has the same interface as the Maxim max=
+1720x
+> > > except for the non-volatile memory slave address which is not availab=
+le.
+> >=20
+> > It is not fully compatible, and it also has a lot more registers.
+> >=20
+> > For example, the voltage now is not in register 0xda as this driver ass=
+umes.
+> > With these changes, POWER_SUPPLY_PROP_VOLTAGE_NOW just reads as 0. 0xda
+> > doesn't exist in max77759
+> >=20
+> > I haven't compared in depth yet, though.
+>=20
+> Is the voltage necessary for the driver? If so, we could just not
+> read the voltage. If it is necessary, I can try to kook into it and try
+> to find in which register it is located (if there is one).
 
-diff --git a/tools/testing/selftests/riscv/abi/.gitignore b/tools/testing/selftests/riscv/abi/.gitignore
-index b38358f91c4d2240ae64892871d9ca98bda1ae58..378c605919a3b3d58eec2701eb7af430cfe315d6 100644
---- a/tools/testing/selftests/riscv/abi/.gitignore
-+++ b/tools/testing/selftests/riscv/abi/.gitignore
-@@ -1 +1,2 @@
- pointer_masking
-+ptrace
-diff --git a/tools/testing/selftests/riscv/abi/Makefile b/tools/testing/selftests/riscv/abi/Makefile
-index ed82ff9c664e7eb3f760cbab81fb957ff72579c5..3f74d059dfdcbce4d45d8ff618781ccea1419061 100644
---- a/tools/testing/selftests/riscv/abi/Makefile
-+++ b/tools/testing/selftests/riscv/abi/Makefile
-@@ -2,9 +2,12 @@
- 
- CFLAGS += -I$(top_srcdir)/tools/include
- 
--TEST_GEN_PROGS := pointer_masking
-+TEST_GEN_PROGS := pointer_masking ptrace
- 
- include ../../lib.mk
- 
- $(OUTPUT)/pointer_masking: pointer_masking.c
- 	$(CC) -static -o$@ $(CFLAGS) $(LDFLAGS) $^
-+
-+$(OUTPUT)/ptrace: ptrace.c
-+	$(CC) -static -o$@ $(CFLAGS) $(LDFLAGS) $^
-diff --git a/tools/testing/selftests/riscv/abi/ptrace.c b/tools/testing/selftests/riscv/abi/ptrace.c
-new file mode 100644
-index 0000000000000000000000000000000000000000..d192764b428d1f1c442f3957c6fedeb01a48d556
---- /dev/null
-+++ b/tools/testing/selftests/riscv/abi/ptrace.c
-@@ -0,0 +1,134 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <unistd.h>
-+#include <fcntl.h>
-+#include <signal.h>
-+#include <errno.h>
-+#include <sys/types.h>
-+#include <sys/ptrace.h>
-+#include <sys/stat.h>
-+#include <sys/user.h>
-+#include <sys/wait.h>
-+#include <sys/uio.h>
-+#include <linux/elf.h>
-+#include <linux/unistd.h>
-+#include <asm/ptrace.h>
-+
-+#include "../../kselftest_harness.h"
-+
-+#define ORIG_A0_MODIFY      0x01
-+#define A0_MODIFY           0x02
-+#define A0_OLD              0x03
-+#define A0_NEW              0x04
-+
-+#define perr_and_exit(fmt, ...)						\
-+	({								\
-+		char buf[256];						\
-+		snprintf(buf, sizeof(buf), "%s:%d:" fmt ": %m\n",	\
-+			__func__, __LINE__, ##__VA_ARGS__);		\
-+		perror(buf);						\
-+		exit(-1);						\
-+	})
-+
-+static inline void resume_and_wait_tracee(pid_t pid, int flag)
-+{
-+	int status;
-+
-+	if (ptrace(flag, pid, 0, 0))
-+		perr_and_exit("failed to resume the tracee %d\n", pid);
-+
-+	if (waitpid(pid, &status, 0) != pid)
-+		perr_and_exit("failed to wait for the tracee %d\n", pid);
-+}
-+
-+static void ptrace_test(int opt, int *result)
-+{
-+	int status;
-+	pid_t pid;
-+	struct user_regs_struct regs;
-+	struct iovec iov = {
-+		.iov_base = &regs,
-+		.iov_len = sizeof(regs),
-+	};
-+
-+	unsigned long orig_a0;
-+	struct iovec a0_iov = {
-+		.iov_base = &orig_a0,
-+		.iov_len = sizeof(orig_a0),
-+	};
-+
-+	pid = fork();
-+	if (pid == 0) {
-+		/* Mark oneself being traced */
-+		long val = ptrace(PTRACE_TRACEME, 0, 0, 0);
-+
-+		if (val)
-+			perr_and_exit("failed to request for tracer to trace me: %ld\n", val);
-+
-+		kill(getpid(), SIGSTOP);
-+
-+		/* Perform exit syscall that will be intercepted */
-+		exit(A0_OLD);
-+	}
-+
-+	if (pid < 0)
-+		exit(1);
-+
-+	if (waitpid(pid, &status, 0) != pid)
-+		perr_and_exit("failed to wait for the tracee %d\n", pid);
-+
-+	/* Stop at the entry point of the syscall */
-+	resume_and_wait_tracee(pid, PTRACE_SYSCALL);
-+
-+	/* Check tracee regs before the syscall */
-+	if (ptrace(PTRACE_GETREGSET, pid, NT_PRSTATUS, &iov))
-+		perr_and_exit("failed to get tracee registers\n");
-+	if (ptrace(PTRACE_GETREGSET, pid, NT_RISCV_ORIG_A0, &a0_iov))
-+		perr_and_exit("failed to get tracee registers\n");
-+	if (orig_a0 != A0_OLD)
-+		perr_and_exit("unexpected orig_a0: 0x%lx\n", orig_a0);
-+
-+	/* Modify a0/orig_a0 for the syscall */
-+	switch (opt) {
-+	case A0_MODIFY:
-+		regs.a0 = A0_NEW;
-+		break;
-+	case ORIG_A0_MODIFY:
-+		orig_a0 = A0_NEW;
-+		break;
-+	}
-+
-+	if (ptrace(PTRACE_SETREGSET, pid, NT_RISCV_ORIG_A0, &a0_iov))
-+		perr_and_exit("failed to set tracee registers\n");
-+
-+	/* Resume the tracee */
-+	ptrace(PTRACE_CONT, pid, 0, 0);
-+	if (waitpid(pid, &status, 0) != pid)
-+		perr_and_exit("failed to wait for the tracee\n");
-+
-+	*result = WEXITSTATUS(status);
-+}
-+
-+TEST(ptrace_modify_a0)
-+{
-+	int result;
-+
-+	ptrace_test(A0_MODIFY, &result);
-+
-+	/* The modification of a0 cannot affect the first argument of the syscall */
-+	EXPECT_EQ(A0_OLD, result);
-+}
-+
-+TEST(ptrace_modify_orig_a0)
-+{
-+	int result;
-+
-+	ptrace_test(ORIG_A0_MODIFY, &result);
-+
-+	/* Only modify orig_a0 to change the first argument of the syscall */
-+	EXPECT_EQ(A0_NEW, result);
-+}
-+
-+TEST_HARNESS_MAIN
+Downstream reports it in
+https://android.googlesource.com/kernel/google-modules/bms/+/refs/heads/and=
+roid-gs-raviole-mainline/max1720x_battery.c#2400
 
--- 
-2.47.0
+so upstream should do, too.
+
+> > > =C2=A0static const char *const max17205_model =3D "MAX17205";
+> > > +static const char *const max77759_model =3D "MAX77759";
+> > >=20
+> > > =C2=A0struct max1720x_device_info {
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct regmap *regmap;
+> > > @@ -54,6 +57,21 @@ struct max1720x_device_info {
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 int rsense;
+> > > =C2=A0};
+> > >=20
+> > > +struct chip_data {
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0 u16 default_nrsense; /* in regs in 10^-5 */
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0 u8 has_nvmem;
+> > > +};
+> > > +
+> > > +static const struct chip_data max1720x_data=C2=A0 =3D {
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0 .default_nrsense =3D 1000,
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0 .has_nvmem =3D 1,
+> > > +};
+> > > +
+> > > +static const struct chip_data max77759_data =3D {
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0 .default_nrsense =3D 500,
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0 .has_nvmem =3D 0,
+> > > +};
+> >=20
+> > This should be made a required devicetree property instead, at least fo=
+r
+> > max77759, as it's completely board dependent, 'shunt-resistor-micro-ohm=
+s'
+> > is widely used.
+> >=20
+> > I also don't think there should be a default. The driver should just fa=
+il
+> > to probe if not specified in DT (for max77759).
+>=20
+> I hesitated to do this but I didn't know what would be better. Will chang=
+e
+> for v2.
+
+Just to clarify, has_nvmem can stay here in the driver, just rsense should
+go into DT is what I mean.
+
+> > > +
+> > > =C2=A0/*
+> > > =C2=A0 * Model Gauge M5 Algorithm output register
+> > > =C2=A0 * Volatile data (must not be cached)
+> > > @@ -369,6 +387,8 @@ static int max1720x_battery_get_property(struct
+> > > power_supply *psy,
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 val->strval =3D m=
+ax17201_model;
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0 else if (reg_val =3D=3D MAX172XX_DEV_NAME_TYPE_MAX17205)
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 val->strval =3D m=
+ax17205_model;
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 else if (reg_val =3D=3D MAX172XX_DEV_NAME_TYPE_MAX77759)
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 val->strval =3D max7=
+7759_model;
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0 else
+> >=20
+> > This is a 16 bit register, and while yes, MAX172XX_DEV_NAME_TYPE_MASK o=
+nly
+> > cares about the bottom 4 bits, the register is described as 'Firmware
+> > Version Information'.
+> >=20
+> > But maybe it's ok to do it like that, at least for now.
+>=20
+> I thought this method would be ok as long as there is no collision on
+> values. I hesitated to change the model evaluation method based on chip
+> model, where the max77759 would thus have an hard-coded value and the
+> max1720x would still evaluate the register value. I did not do it because
+> it led to a lot more changes for no difference.
+
+Downstream uses the upper bits for max77759:
+https://android.googlesource.com/kernel/google-modules/bms/+/refs/heads/and=
+roid-gs-raviole-mainline/max_m5.h#135
+
+I don't know what the original max17201/5 report in this register
+for those bits, though. Given for max77759 this register returns
+the firmware version, I assume the lower bits can change.
+
+Cheers,
+Andre'
 
 
