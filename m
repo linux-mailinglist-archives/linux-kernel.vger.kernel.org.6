@@ -1,124 +1,132 @@
-Return-Path: <linux-kernel+bounces-428619-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 911F69E1171
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 03:47:14 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 625DF1620C0
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 02:47:11 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B091313FD72;
-	Tue,  3 Dec 2024 02:47:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Qpwt6OGM"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F7249E1172
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 03:47:48 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53868364AE
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 02:47:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DCD92824A5
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 02:47:47 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 703C513C67C;
+	Tue,  3 Dec 2024 02:47:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gHV2WSCH"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1343D364AE
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 02:47:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733194029; cv=none; b=s80+UvMYc3CzuuJJhAuB9wFaBJTnoIJKndBmRX4wxJnLgLjF8fwMKXPOI3kKh9PcY9EDc7BYKiRQbmGS/Fyvh7zgZUtoZallM8Eo9TS3pxzjrinREw9GbNjffpsK9MjWOLZj56qhx+uykKR7fjEOwvYJHxgzabF2pooN548TyLs=
+	t=1733194062; cv=none; b=jFEBS4HGkyI5vdYgh+TBEVbxxBJ+KWmCyOJUEjiIkGaxSm1m4eWyycKVlBDFoXuucWJPJON80ogeZYxdIaKT7sUi4gjU6eEM/lKkH2hGF9UpvKTarqgiPQnxF2VOJeAwBBHVNfVK+dWsv5r3skojfOoU220XgsgLhk/INWk+sZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733194029; c=relaxed/simple;
-	bh=/1Hu86galPiO1j46qkPprgYcMn/t3TD7cqWMxQMt5s0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lmHkAjLiUTzXYya/esNOFunPEilx5X6DlyLt8g27tSXmt70dc9kdoTMXDaU8sQvHoKiAxNXac3kLqatKhAddjsd4J45iV9R0/cnD1xE7sr/f5Cd7eDxnKfxjoxYBcIDsQeFxHliOMwoJXRdZyOwrW0bLS5hsVfXQo9mII7zk5/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Qpwt6OGM; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1733194025;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ClTlVFTFurX5oXTNx4i+KqY1w2R5KKrVUj+CsjT5+JI=;
-	b=Qpwt6OGME3Ogfrc+Y3JRQNnOA2E6a1NzBRPLMv0TevI16DXX8wupZzWX6D2kgEeqa5FleP
-	8HrK4IUClO0c/QFc8boxKbblV4y4+SioDakb1MIXzzcS4p+zsH6ye2UnipREmXhx+Z1/pJ
-	9Ta0gz718zqNaWmTPgw25bxWgIdwF3c=
-Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com
- [209.85.215.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-423-gZUZcilfMbO7gl4GFk5hNw-1; Mon, 02 Dec 2024 21:47:04 -0500
-X-MC-Unique: gZUZcilfMbO7gl4GFk5hNw-1
-X-Mimecast-MFC-AGG-ID: gZUZcilfMbO7gl4GFk5hNw
-Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-7fc1becad32so3879428a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 18:47:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733194023; x=1733798823;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ClTlVFTFurX5oXTNx4i+KqY1w2R5KKrVUj+CsjT5+JI=;
-        b=dd9TD92YE0KxtFfx+bfCAnOdNb59NbYg82RQzJrNFprkrf1Xl2e6Yskkb1DS/AtHaK
-         hvK1Ki5Ji621Wh4/PGOGriuG5c/Kai41zhQp9UXCj4UUmH6i18hLLvPpSrqlxAhEZN2p
-         4zFZzTXmNPux67SfN0uMuU80ZlesMYitHQmvAX3b18Vd4RLTXr5eFS1qb3P3m0TEpAHv
-         +se/KnNU71zzp1fVHygp1xP+OlDMUISg6ZfYn2HHB269FzG7DtkocqF0+GGWiFq3GdaM
-         hLuAhECbdaIM/cX/C+tTmZWmJksdAxpi6UoEeZPDVFmPKKsliG4TISHMpZDbqMqit/WK
-         XoSw==
-X-Forwarded-Encrypted: i=1; AJvYcCW8nlADhOFgdlDGBggRZH9wV78BdICAokXyYWA+XP9bECPJaUgGnHu/h1nccE0LD/FKpC1tru2baMNmzGI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGgn2HaE4E3guvDRuOpE1zrzfyEOJOSS4SRx2e6m3ajOSS1Uwm
-	Zoa3Glv9I4297SCXdX9RPTYC0S+qgGfz3FjCjUSLB20IdjVZns6Rv+MasUznRhc0MVx61rLArUi
-	ZRKj3CXjo+iBY4T7BXhxxPn2IkvujCW+7u6wHaa/Nv9r8zaT1sWVNP4QvaqZqsw==
-X-Gm-Gg: ASbGncu9rFql96Qt8YpWYCOBRIbtNNAUw9vihwYERlcHUsUbxn/ov1+85xoVBv7yNW2
-	p7BZRRfMnryVTidxhxK+Jm7YgXsY4A0cam8Z2uYSod1DbpEv/T0kBm+a7VmeLWv5irxhSJDP8Jz
-	oan7gjUHAKY8k5L1tm/Ytwojj3lAzK0fZ3Y6cvA/LmEFGlzBTZ8qXdxFxwX0v3ahjfY9hUjTlX1
-	qUOmY6ArsPUIVLzmr1QCaQe6hTTUYRwvbE7Ft+Rdj84ZiiPaoM=
-X-Received: by 2002:a05:6a21:38d:b0:1e0:e042:59fb with SMTP id adf61e73a8af0-1e1653f6b74mr1564777637.30.1733194023099;
-        Mon, 02 Dec 2024 18:47:03 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IF9eFzD9WG0Hqv5IQOxlc3XDhwP+H9Hs6Mbmnq+pKxPw+93nYH2bBH5+6wJ1GFGp+i1k+N1ug==
-X-Received: by 2002:a05:6a21:38d:b0:1e0:e042:59fb with SMTP id adf61e73a8af0-1e1653f6b74mr1564759637.30.1733194022801;
-        Mon, 02 Dec 2024 18:47:02 -0800 (PST)
-Received: from [10.72.112.107] ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-725417fbf2fsm9271296b3a.112.2024.12.02.18.46.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 Dec 2024 18:47:02 -0800 (PST)
-Message-ID: <498151ad-6fa4-4f16-9044-e0b1f78d161a@redhat.com>
-Date: Tue, 3 Dec 2024 12:46:55 +1000
+	s=arc-20240116; t=1733194062; c=relaxed/simple;
+	bh=WKyDI479E4aDsVyy+KFk9yYInIWD02NKG8DUEFxYmYE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b0RZQj8BVKUMJtbiTbXQRRkbO9OmCP8+eWC4TYkNv+hqG/QKmWP3HWYTqcSQtFXat0z1yTo9dlMpQ0MjlODmFprqrru7fdZNgGfBmjYoN1ZpTegCGPHYs6C1Raf8V8tqv5w6CLi0qtDzlEHqjbH8dp3Jp2DJg9t9ZK/0ovsTbJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gHV2WSCH; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733194061; x=1764730061;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=WKyDI479E4aDsVyy+KFk9yYInIWD02NKG8DUEFxYmYE=;
+  b=gHV2WSCHmY5Z0OrbrDhOOsjIhwzA8zDKTAmkrI51xmAg9ueIZcBDtxky
+   DQ8g2sGt5+eFLh1d1dvFWZMt+FoEaxi+y2aCC+r68jkhKzBQbbQcd9exU
+   bzknusIRnX99x3R70TLCyRNmsUMz7kfdhg73kGdQlwbMQL3F1usCpa3gV
+   oDXWoltAfMWcY+36YVRlHD+DwQQN7u5aKvXpKUFOsD2E/hkR9I8Efbv66
+   HiGMk+pTFHMD7X/UzROU1QjYgZbG8N1Es/kfD8+y4vWU/a/QW/C4d0rWd
+   8h6AsnQk1OTXJQdHoTjKO/9rUmsNGVXJJwjkPmXFONZqkmSdYw28YtSXA
+   w==;
+X-CSE-ConnectionGUID: Oi/vbg0GS7uGlbqQAShjiQ==
+X-CSE-MsgGUID: bPRbbrRwRd6+/j0wkksmEw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11274"; a="33318273"
+X-IronPort-AV: E=Sophos;i="6.12,204,1728975600"; 
+   d="scan'208";a="33318273"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Dec 2024 18:47:40 -0800
+X-CSE-ConnectionGUID: 8kcZYcQ8RNKsXLCIUksW8w==
+X-CSE-MsgGUID: mf8Lio6/SLiwW1gBcF9W4g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,204,1728975600"; 
+   d="scan'208";a="98378730"
+Received: from agluck-desk3.sc.intel.com (HELO agluck-desk3) ([172.25.222.70])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Dec 2024 18:47:40 -0800
+Date: Mon, 2 Dec 2024 18:47:38 -0800
+From: "Luck, Tony" <tony.luck@intel.com>
+To: Reinette Chatre <reinette.chatre@intel.com>,
+	Ming Lei <ming.lei@redhat.com>
+Cc: Fenghua Yu <fenghua.yu@intel.com>,
+	Peter Newman <peternewman@google.com>,
+	Babu Moger <babu.moger@amd.com>, linux-kernel@vger.kernel.org
+Subject: Re: resctrl mount fail on v6.13-rc1
+Message-ID: <Z05xSqIeNeHh19MZ@agluck-desk3>
+References: <Z04pz3AlvI4o0Mr8@agluck-desk3>
+ <868b451a-fdba-4b45-bff1-9ac1023080c8@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64/mm: Replace open encodings with PXD_TABLE_BIT
-To: Anshuman Khandual <anshuman.khandual@arm.com>,
- linux-arm-kernel@lists.infradead.org
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Ard Biesheuvel <ardb@kernel.org>, Ryan Roberts <ryan.roberts@arm.com>,
- Mark Rutland <mark.rutland@arm.com>, linux-kernel@vger.kernel.org
-References: <20241202083850.73207-1-anshuman.khandual@arm.com>
-Content-Language: en-US
-From: Gavin Shan <gshan@redhat.com>
-In-Reply-To: <20241202083850.73207-1-anshuman.khandual@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <868b451a-fdba-4b45-bff1-9ac1023080c8@intel.com>
 
-On 12/2/24 6:38 PM, Anshuman Khandual wrote:
-> [pgd|p4d]_bad() helpers have open encodings for their respective table bits
-> which can be replaced with corresponding macros. This makes things clearer,
-> thus improving their readability as well.
+On Mon, Dec 02, 2024 at 02:26:48PM -0800, Reinette Chatre wrote:
+> Hi Tony,
 > 
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will@kernel.org>
-> Cc: Ard Biesheuvel <ardb@kernel.org>
-> Cc: Ryan Roberts <ryan.roberts@arm.com>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
-> ---
-> This patch applies on v6.13-rc1
+> On 12/2/24 1:42 PM, Luck, Tony wrote:
+> > Anyone better a decoding lockdep dumps then me make sense of this?
+> > 
+> > All I did was build v6.13-rc1 with (among others)
+> > 
+> > CONFIG_PROVE_LOCKING=y
+> > CONFIG_PROVE_RAW_LOCK_NESTING=y
+> > CONFIG_PROVE_RCU=y
+> > 
+> > and then mount the resctrl filesystem:
+> > 
+> > $ sudo mount -t resctrl resctrl /sys/fs/resctrl
+> > 
+> > There are only trivial changes to the resctrl code between
+> > v6.12 (which works) and v6.13-rc1:
+> > 
+> > $ git log --oneline v6.13-rc1 ^v6.12 -- arch/x86/kernel/cpu/resctrl
+> > 5a4b3fbb4849 Merge tag 'x86_cache_for_v6.13' of git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip
+> > 9bce6e94c4b3 x86/resctrl: Support Sub-NUMA cluster mode SNC6
+> > 29eaa7958367 x86/resctrl: Slightly clean-up mbm_config_show()
+> > 
+> > So something in kernfs? Or the way resctrl uses kernfs?
 > 
->   arch/arm64/include/asm/pgtable.h | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
+> I am not seeing this but that may be because I am not testing with
+> selinux enabled. My test kernel has:
+> # CONFIG_SECURITY_SELINUX is not set
 > 
+> I am also not running with any btrfs filesystems. 
+> 
+> Is this your usual setup in which you are seeing this the first time? Is it
+> perhaps possible for you to bisect?
 
-Reviewed-by: Gavin Shan <gshan@redhat.com>
+Bisection says:
 
+$ git bisect bad
+f1be1788a32e8fa63416ad4518bbd1a85a825c9d is the first bad commit
+commit f1be1788a32e8fa63416ad4518bbd1a85a825c9d
+Author: Ming Lei <ming.lei@redhat.com>
+Date:   Fri Oct 25 08:37:20 2024 +0800
+
+    block: model freeze & enter queue as lock for supporting lockdep
+
+> 
+> The subject states "resctrl mount fail" - could you please confirm if
+> resctrl cannot be mounted in addition to the lockdep warning?
+> 
+> Reinette
+> 
 
