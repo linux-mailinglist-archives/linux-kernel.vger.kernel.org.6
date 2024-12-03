@@ -1,170 +1,95 @@
-Return-Path: <linux-kernel+bounces-429308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04FED9E1B70
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 12:55:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AD1E9E1C25
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 13:28:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 81ABCB41818
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 11:02:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0A16EB2B779
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 11:04:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30E631E3DFD;
-	Tue,  3 Dec 2024 11:02:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F11661E376C;
+	Tue,  3 Dec 2024 11:04:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="nKXqKo1g";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="qOtDCDvD"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GPh9J544";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Ug89W9+H"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14CBC1E0E12;
-	Tue,  3 Dec 2024 11:02:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19AE91E04BB
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 11:04:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733223736; cv=none; b=ZP7gNjMYr5lOMNjOx0XF2fkka16Xa2wg7UCSPNz88NV4Nwhvq+3ov6EommvfguGxLiploA1jEfewwgkB7t+ujVIhHCh6gyQ3LZmIloAc5vG6tve432NcOtjKgW1VHHbzNaRJst9wcJ+P/3ADJ+GfVxRBvHF8eRysSUFMnf1Z+dU=
+	t=1733223874; cv=none; b=UwOncP85S4Lo4aYYgfer2TS6tu0nK+5LQhY3fDLrsy0u/BBJqpJ3yrAZ43MnHZvDA7sNXm6KajHc0g0hKqMTyZsylJdGXCt32XsdXP9lykVaQaqaI/7vcdA2kOSA0J9Hj8n54RLt9EtgZ73FBDBBYDJU3HmA0VUkgNziCbsH+mg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733223736; c=relaxed/simple;
-	bh=5yPxr2VZfPis1R02zXstCZw0Uo2xr2AioB/uKcIPVtw=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=C9aAMV1CfX757wJG79F1VarqsaHVMg074R/RQ735h8ZbTjD1VlacylfNItmqxM9r/QmqSd31eBVfCzLH3PHUAq1rT+rY5jz/CQz70FT3pnfocZC6vJElqDu2E+X8pKwbJ25Dya3cqsBPU+Ioh8fyztY5gP7tRqEznUxktt5d8qM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=nKXqKo1g; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=qOtDCDvD; arc=none smtp.client-ip=193.142.43.55
+	s=arc-20240116; t=1733223874; c=relaxed/simple;
+	bh=yqAH9+b+eG1f1jUcSYfScj7x7FqgR3nco6bVYgj7mkg=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=mwWiZKe5c0dpJhR5u2qa1TSV6c1zxlEpbVcDOjcbdTf3zL8JnYnaZDaVKyvJDmjsf3oZRjiP1p96H+6K06ZwGQ1yBpcOdkn4gpZE4Durf7mE4jCliT+hCB8YzzbQLaA2LbMxXzARfKH+WSz0GLQ1qnVrEnUTKZdXPC5Iwvd+v8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GPh9J544; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Ug89W9+H; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 03 Dec 2024 11:02:12 -0000
+From: Thomas Gleixner <tglx@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1733223733;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
+	s=2020; t=1733223871;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Lb0cipFtRfqzHnqJN5acCYX8iY0ekq9Pppx3G0TjpIE=;
-	b=nKXqKo1gZY9G/zyTb7nbGMB8DwGqI2oSedH+8u7wp4vkoZfJzxuB/k1KKZsJvxVDzHMoJB
-	WX56GudtzJlgcc46D62o3I14s5Ubbxnh3hW14fUljWYG4DmTh8+QGKMqR6RFbc62OZfUt4
-	nxdTaM7bxQy+0tT6G5hyobhX0lhegpuS/lZ/8Y6EisGq2J/mgDi9RiY37N4qz+ueZ1ZIQL
-	Itsfken+qB5cSJmsSLMx0R1fN+uM5+ziIuaVQ+zXEYaktlcC2EYBec8jj9NzA0EveXR6Mg
-	4cEYFMkDsjOFfLyzaNqw2/guOs35IE1SDJEQBqHr3OZO6L77btJ5H3Rlt/E4kw==
+	bh=4yYjvF6qVvKzBxYttP8yiTPmOTcqD+VbUaWnU4lSefY=;
+	b=GPh9J544GLpTTHxYmRPEOJGjgakTV87tvrpcFyzmjVfjTgmMlFaRBphYMzd68uKaM8UHBT
+	/8y3ljPi3RMyCAjmib5czRfFtbslBOfcQND2YjCJ8guUjde0/0fHf5JU0GcGoDvWKmVKos
+	HiPzu22BALCLVBnaXHNu8cUp4DGwd7LIi9olPiCZrjtyqBFwzlv3TOFKdEgE0vPjIgrxeW
+	ZMzcUJGih0YwQZOopROfUFc48azjD7w7ql/w92e2WkbH/K3DxcmBxvGHWgWwsBmzo6u3Vk
+	DP0ZtECGev+ymNGFFRj6jQyH2c2+D9uAlTvm0tEGHpf861Nip5oHzES5aNejpg==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1733223733;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
+	s=2020e; t=1733223871;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Lb0cipFtRfqzHnqJN5acCYX8iY0ekq9Pppx3G0TjpIE=;
-	b=qOtDCDvDnYRSqEyQNHgiK0nQtGMOrg+6WQm+/N+cZxgK22NZVA+zZsoWb01sXNAg8hLV1t
-	72ZPwMwLTpENFxAw==
-From: "tip-bot2 for Andy Shevchenko" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/core] genirq: Move irq_thread_fn() further up in the code
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
- linux-kernel@vger.kernel.org, maz@kernel.org
-In-Reply-To: <20241119104339.2112455-2-andriy.shevchenko@linux.intel.com>
-References: <20241119104339.2112455-2-andriy.shevchenko@linux.intel.com>
+	bh=4yYjvF6qVvKzBxYttP8yiTPmOTcqD+VbUaWnU4lSefY=;
+	b=Ug89W9+H4bPUfmR6EL/qwLR3mPtemvy0s7sj/ASkjTx+PzWZ1v4vgS42y6KLbbJDWnoOWj
+	Q/JVO9P0HhGoXGBg==
+To: Eliav Farber <farbere@amazon.com>, linux@armlinux.org.uk,
+ catalin.marinas@arm.com, will@kernel.org, mpe@ellerman.id.au,
+ npiggin@gmail.com, christophe.leroy@csgroup.eu, naveen@kernel.org,
+ maddy@linux.ibm.com, paul.walmsley@sifive.com, palmer@dabbelt.com,
+ aou@eecs.berkeley.edu, akpm@linux-foundation.org, bhe@redhat.com,
+ farbere@amazon.com, hbathini@linux.ibm.com, sourabhjain@linux.ibm.com,
+ adityag@linux.ibm.com, songshuaishuai@tinylab.org, takakura@valinux.co.jp,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org
+Cc: jonnyc@amazon.com
+Subject: Re: [PATCH v5 1/2] kexec: Consolidate
+ machine_kexec_mask_interrupts() implementation
+In-Reply-To: <20241130201143.48808-2-farbere@amazon.com>
+References: <20241130201143.48808-1-farbere@amazon.com>
+ <20241130201143.48808-2-farbere@amazon.com>
+Date: Tue, 03 Dec 2024 12:04:30 +0100
+Message-ID: <87wmght4ch.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <173322373258.412.8440796108563687060.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-The following commit has been merged into the irq/core branch of tip:
+On Sat, Nov 30 2024 at 20:11, Eliav Farber wrote:
+> +
+> +config GENERIC_IRQ_KEXEC_CLEAR_VM_FORWARD
+> +	bool "Clear forwarded VM interrupts during kexec"
 
-Commit-ID:     6f8b79683dfb37ee0661cf4c13a72f024c29f65c
-Gitweb:        https://git.kernel.org/tip/6f8b79683dfb37ee0661cf4c13a72f024c29f65c
-Author:        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-AuthorDate:    Tue, 19 Nov 2024 12:42:34 +02:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Tue, 03 Dec 2024 11:59:10 +01:00
+This should not be user selectable. Just keep it as:
 
-genirq: Move irq_thread_fn() further up in the code
+config GENERIC_IRQ_KEXEC_CLEAR_VM_FORWARD
+	bool
 
-In a preparation to reuse irq_thread_fn() move it further up in the
-code. No functional change intended.
+which defaults to 'n'. Just add a comment what this is about like it's
+done with the other options in that file which are only selectable.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/all/20241119104339.2112455-2-andriy.shevchenko@linux.intel.com
+Thanks,
 
----
- kernel/irq/manage.c | 35 ++++++++++++++++-------------------
- 1 file changed, 16 insertions(+), 19 deletions(-)
-
-diff --git a/kernel/irq/manage.c b/kernel/irq/manage.c
-index f0803d6..230f470 100644
---- a/kernel/irq/manage.c
-+++ b/kernel/irq/manage.c
-@@ -1182,45 +1182,42 @@ out_unlock:
- }
- 
- /*
-- * Interrupts which are not explicitly requested as threaded
-- * interrupts rely on the implicit bh/preempt disable of the hard irq
-- * context. So we need to disable bh here to avoid deadlocks and other
-- * side effects.
-+ * Interrupts explicitly requested as threaded interrupts want to be
-+ * preemptible - many of them need to sleep and wait for slow busses to
-+ * complete.
-  */
--static irqreturn_t
--irq_forced_thread_fn(struct irq_desc *desc, struct irqaction *action)
-+static irqreturn_t irq_thread_fn(struct irq_desc *desc,	struct irqaction *action)
- {
--	irqreturn_t ret;
-+	irqreturn_t ret = action->thread_fn(action->irq, action->dev_id);
- 
--	local_bh_disable();
--	if (!IS_ENABLED(CONFIG_PREEMPT_RT))
--		local_irq_disable();
--	ret = action->thread_fn(action->irq, action->dev_id);
- 	if (ret == IRQ_HANDLED)
- 		atomic_inc(&desc->threads_handled);
- 
- 	irq_finalize_oneshot(desc, action);
--	if (!IS_ENABLED(CONFIG_PREEMPT_RT))
--		local_irq_enable();
--	local_bh_enable();
- 	return ret;
- }
- 
- /*
-- * Interrupts explicitly requested as threaded interrupts want to be
-- * preemptible - many of them need to sleep and wait for slow busses to
-- * complete.
-+ * Interrupts which are not explicitly requested as threaded
-+ * interrupts rely on the implicit bh/preempt disable of the hard irq
-+ * context. So we need to disable bh here to avoid deadlocks and other
-+ * side effects.
-  */
--static irqreturn_t irq_thread_fn(struct irq_desc *desc,
--		struct irqaction *action)
-+static irqreturn_t irq_forced_thread_fn(struct irq_desc *desc, struct irqaction *action)
- {
- 	irqreturn_t ret;
- 
-+	local_bh_disable();
-+	if (!IS_ENABLED(CONFIG_PREEMPT_RT))
-+		local_irq_disable();
- 	ret = action->thread_fn(action->irq, action->dev_id);
- 	if (ret == IRQ_HANDLED)
- 		atomic_inc(&desc->threads_handled);
- 
- 	irq_finalize_oneshot(desc, action);
-+	if (!IS_ENABLED(CONFIG_PREEMPT_RT))
-+		local_irq_enable();
-+	local_bh_enable();
- 	return ret;
- }
- 
+        tglx
 
