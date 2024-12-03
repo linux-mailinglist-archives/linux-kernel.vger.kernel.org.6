@@ -1,120 +1,343 @@
-Return-Path: <linux-kernel+bounces-429404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 071F69E1C51
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 13:40:10 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 529B29E1BB5
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 13:12:19 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1834A1666A7
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 12:12:16 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FB831E492D;
+	Tue,  3 Dec 2024 12:12:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="EhuypSiS"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B70C1B27568
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 12:07:06 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E91DE1E4908;
-	Tue,  3 Dec 2024 12:07:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="R1at3V5p"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 521101E0493
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 12:06:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2346C1E492C;
+	Tue,  3 Dec 2024 12:12:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733227621; cv=none; b=tancT8n/oBaPmtTY/ppEZ57vhhnR82ZW5qxsDy5jHXm9rZWMGuic2NzjHS75ULO/geuc9c5J+JHkHhSQfelSJrbhQr96hLJ46Qzt25azg0k/oIRmcdRF66LHYAYfLRQAdZH5eTn0R2s4w36sBIxkhaqn3RM9UFPfGxo/SROdgg4=
+	t=1733227932; cv=none; b=Ra2xh5ac3OziNh/xP78DWK2qw0phFwIpiPYd4uoGIbXUR1bWpj0iyD3PRfAftLK9LtqMwi+xt6lYza3sz6kqGAV64MT2gy5WGeuuqfTLld8IpIqHgeXjxqNeuxxLvidog8lQdyJPMwEvTxHqPcg6tdcn3RMGIrZFmqNrjTMdA0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733227621; c=relaxed/simple;
-	bh=rcmXn6SmVROxvS3DSftWdwD0oXgbrxkJtwmvwrZoaE4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=adXB+Hjz2ZShsqq0CxffNd8Bc/eBP2N9OQqrzAKMTFEjT3ZcaqnyB+q7sYFY9xGfvxKZE9m7fff4gHoxFhDsh8syInlN3qvlUm2JWXBbyycjoL1JDSXBAz8khWocB5lwFLI9XV/a0e7bqqSlLTmxOoTl3ZMukCbBVU124Y8/QJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=R1at3V5p; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-53dd2fdcebcso6229401e87.0
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 04:06:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1733227617; x=1733832417; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=mFDejC31knt+Dzmuq3kTKhViHy7faZed0f+Vhmx1X8Y=;
-        b=R1at3V5pJ11ec2SBUZOtPUnv6LDQ6/hXR++mBA1ym0gT3PXbzKhF0dK9I55K7h7XG3
-         TedzJxcJp58fkKo2Rm9Uu7tqUQ2JNfGJBzKtS046BIoO/OKOFVJmHRfUklDfKcnOO+Db
-         NUhw+ksIgGBxDKyU/KYLyR3PofqYm55PZqd1C1Kqg019HqpaRcULEe/P7nFRcUIynHpK
-         dimjXfO6mPvdIrjg+EnA6BcDUvFWKHH63OiqwR0xK9tngtrzEyjR/O/mtHhcZMidJN9f
-         NNAWU7SAiJ4qsB2xHeD+7DTRnebrkXhknoT/i8J2EctC907VDZtaWvjwZPmN1JcDN6SW
-         zM/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733227617; x=1733832417;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mFDejC31knt+Dzmuq3kTKhViHy7faZed0f+Vhmx1X8Y=;
-        b=NERAUnqrLBZBvXJn6OrCjl65r7e0n3mNhnn6Z9Vb86HDiA8vXI2u2IM3hnN6rQhTjI
-         gBTZoILuhHZVr1a/TXA/7s8Pnjk5TAWw0fq9CJXp9pNB8+6YqJfRCC/UbtFla6o282Uh
-         Iw7MUXMTHetHs5c2bowTuDLdV09BRuH51R4bTQWRKUq0QNuN6MLRWQiQYofgyB07Of11
-         8Ni02c5tfA02wMtOisVBbWjJ5Ro4m9B+f49AqvdePIzqpePiLh5u1m+H4XMkER9aNC7q
-         r52ZNrhPGA4RYMhZ+rOGmuF6wILHNEMzSzdX0CJxvcyVgMCg6R6IxqD9Sd5uGl8LTh9i
-         abuw==
-X-Forwarded-Encrypted: i=1; AJvYcCUhE3iNqKgny6iAGiV4DXKKm3woO8xxtZVXsFqMH/8YgqaVc0r9JHeVhWq8A0dF7yQN3/oB+erKopuEVQY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8BGgXioTJ6U70YKUbc4MMELdIcDXjp3wWyVdYzn5geGHLRiHA
-	3DTTmMz+7N/hTTWlNr035k5M0V2M6n3qjoufJjGDS+gyfbsagbxsNlF9xJr/GXc=
-X-Gm-Gg: ASbGncvM0Z/X1yX/y7rbRS//aT7B0i+u98KF1d0YhgHa8+2uPII42J2Rb1GMPfqBaur
-	6BooDt4cc8fj/+o6FAPTiap+xbhEvfz12GP5UY4pQGUIFCtHJXZLna4U1467uGyQPXrsfTZkZMu
-	TTw+hDTOh8HWTy68IUyrVlwtmypCMbLLTHkDjRIoYYFyOtxbzohK0yHnAXlduYsPpMfIN9lXisc
-	j4JBwi1ALF1ARDodffBbjN8K1Kb1Ab2H574kw1oOfJRYGb9BCvAKqrH8z4FwlE=
-X-Google-Smtp-Source: AGHT+IHIoxztg06DqW3PS7QUchQ0kxiPBM0kNP7mXYFXxmLJA7F+1P+NWdlACZN3VBVmeFzCdZ9mTw==
-X-Received: by 2002:a05:6512:ba1:b0:53d:f177:51d1 with SMTP id 2adb3069b0e04-53e129f349emr1210846e87.13.1733227617451;
-        Tue, 03 Dec 2024 04:06:57 -0800 (PST)
-Received: from localhost (109-81-88-120.rct.o2.cz. [109.81.88.120])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa5996df797sm615573366b.68.2024.12.03.04.06.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Dec 2024 04:06:57 -0800 (PST)
-Date: Tue, 3 Dec 2024 13:06:56 +0100
-From: Michal Hocko <mhocko@suse.com>
-To: Frank van der Linden <fvdl@google.com>
-Cc: Mateusz Guzik <mjguzik@gmail.com>, linux-mm@kvack.org,
-	akpm@linux-foundation.org, Muchun Song <muchun.song@linux.dev>,
-	Miaohe Lin <linmiaohe@huawei.com>,
-	Oscar Salvador <osalvador@suse.de>,
-	David Hildenbrand <david@redhat.com>, Peter Xu <peterx@redhat.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm/hugetlb: optionally pre-zero hugetlb pages
-Message-ID: <Z070YE81kJ-OnSX8@tiehlicka>
-References: <20241202202058.3249628-1-fvdl@google.com>
- <3tqmyo3qqaykszxmrmkaa3fo5hndc4ok6xrxozjvlmq5qjv4cs@2geqqedyfzcf>
- <CAPTztWbmkFisL7qnmAnre5hv=UD1E60P0hr_kXNyLoQFy9OoTA@mail.gmail.com>
+	s=arc-20240116; t=1733227932; c=relaxed/simple;
+	bh=GDwPr4QyEhVpjwGfXI94ePk9KDZB32MM6IodRBbOegE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WfrDB00lWOYR/1WvIYt4KEsYR/uJOh5qwDzTLu48Kyly4FYUao6woRYFfwCavtE7gMJ5SMKHl1ZAvf+wv76PLcthqAxpT1Hz/CVt9grgmj3ksQWYu5EqB+E8oY5eAzhzDnKdwhD+yaiFgWrZu3TewWSz0LYTY97STJXXQSsdJGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=EhuypSiS; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [192.168.88.20] (91-157-155-49.elisa-laajakaista.fi [91.157.155.49])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 57177E1;
+	Tue,  3 Dec 2024 13:11:38 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1733227899;
+	bh=GDwPr4QyEhVpjwGfXI94ePk9KDZB32MM6IodRBbOegE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=EhuypSiS7ql2Xn5Q089wPUoQSUUfwPanDrw7CAM5AISzigC9L5iI5tC4de3/2x+ZD
+	 jf/j7zi7jldnWsLdc9EZjC5woenOj+F/3+WK873qFwik2HDngeYWbbaMX4UrgMPcYG
+	 gUYYYEdi8DcNWtJ/ed2fIF0z2WE3RwJUhruhhAN8=
+Message-ID: <8b57d6a4-6bc1-4542-abf4-8bc4a3120c25@ideasonboard.com>
+Date: Tue, 3 Dec 2024 14:12:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAPTztWbmkFisL7qnmAnre5hv=UD1E60P0hr_kXNyLoQFy9OoTA@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 0/3] drm/tidss: Add OLDI bridge support
+To: Aradhya Bhatia <aradhya.bhatia@linux.dev>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Nishanth Menon
+ <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+ Devarsh Thakkar <devarsht@ti.com>, Praneeth Bajjuri <praneeth@ti.com>,
+ Udit Kumar <u-kumar1@ti.com>, Jayesh Choudhary <j-choudhary@ti.com>,
+ Francesco Dolcini <francesco@dolcini.it>,
+ Alexander Sverdlin <alexander.sverdlin@siemens.com>,
+ Max Krummenacher <max.oss.09@gmail.com>,
+ DRI Development List <dri-devel@lists.freedesktop.org>,
+ Devicetree List <devicetree@vger.kernel.org>,
+ Linux Kernel List <linux-kernel@vger.kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Jyri Sarha <jyri.sarha@iki.fi>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Thomas Zimmermann <tzimmermann@suse.de>, Maxime Ripard <mripard@kernel.org>,
+ David Airlie <airlied@gmail.com>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Simona Vetter <simona@ffwll.ch>
+References: <20241124143649.686995-1-aradhya.bhatia@linux.dev>
+Content-Language: en-US
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
+ 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
+In-Reply-To: <20241124143649.686995-1-aradhya.bhatia@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon 02-12-24 14:50:49, Frank van der Linden wrote:
-> On Mon, Dec 2, 2024 at 1:58 PM Mateusz Guzik <mjguzik@gmail.com> wrote:
-> > Any games with "background zeroing" are notoriously crappy and I would
-> > argue one should exhaust other avenues before going there -- at the end
-> > of the day the cost of zeroing will have to get paid.
+Hi,
+
+On 24/11/2024 16:36, Aradhya Bhatia wrote:
+> Hello all,
 > 
-> I understand that the concept of background prezeroing has been, and
-> will be, met with some resistance. But, do you have any specific
-> concerns with the patch I posted? It's pretty well isolated from the
-> rest of the code, and optional.
+> This patch series add support for the dual OLDI TXes supported in Texas
+> Instruments' AM62x and AM62Px family of SoCs. The OLDI TXes support single-lvds
+> lvds-clone, and dual-lvds modes. These have now been represented through DRM
+> bridges within TI-DSS.
+> 
+>   - Some history and hardware description for this patch series.
+> 
+> This patch series is a complete re-vamp from the previously posted series[1] and
+> hence, the version index has been reset to v1. The OLDI support from that series
+> was dropped and only the base support for AM62x DSS was kept (and eventually
+> merged)[2].
+> 
+> The OLDI display that the tidss driver today supports, could not be extended for
+> the newer SoCs. The OLDI display in tidss is modelled after the DSS and OLDI
+> hardware in the AM65x SoC. The DSS in AM65x SoC, has two video-ports. Both these
+> video-ports (VP) output DPI video signals. One of the DPI output (from VP1) from
+> the DSS connects to a singular OLDI TX present inside the SoC. There is no other
+> way for the DPI from VP1 to be taken out of the SoC. The other DPI output
+> however - the one from VP2 - is taken out of the SoC as is. Hence we have an
+> OLDI bus output and a DPI bus output from the SoC. Since the VP1 and OLDI are
+> tightly coupled, the tidss driver considers them as a single entity. That is
+> why, any OLDI sink connects directly to the DSS ports in the OF graphs.
+> 
+> The newer SoCs have varying DSS and OLDI integrations.
+> 
+> The AM62x DSS also has 2 VPs. The 2nd VP, VP2, outputs DPI signals which are
+> taken out of the SoC - similar to the AM65x above. For the VP1, there are 2 OLDI
+> TXes. These OLDI TXes can only receive DPI signals from VP1, and don't connect
+> to VP2 at all.
+> 
+> The AM62Px SoC has 2 OLDI TXes like AM62x SoC. However, the AM62Px SoC also has
+> 2 separate DSSes. The 2 OLDI TXes can now be shared between the 2 VPs of the 2
+> DSSes.
+> 
+> The addition of the 2nd OLDI TX (and a 2nd DSS in AM62Px) creates a need for
+> some major changes for a full feature experience.
+> 
+> 1. The OF graph needs to be updated to accurately show the data flow.
+> 2. The tidss and OLDI drivers now need to support the dual-link and the cloned
+>     single-link OLDI video signals.
+> 3. The drivers also need to support the case where 2 OLDI TXes are connected to
+>     2 different VPs - thereby creating 2 independent streams of single-link OLDI
+>     outputs.
+> 
+> Note that the OLDI does not have registers of its own. It is still dependent on
+> the parent VP. The VP that provides the DPI video signals to the OLDI TXes, also
+> gives the OLDI TXes all the config data. That is to say, the hardware doesn't
+> sit on the bus directly - but does so through the DSS.
+> 
+> In light of all of these hardware variations, it was decided to have a separate
+> OLDI driver (unlike AM65x) but not entirely separate so as to be a platform
+> device. The OLDI TXes are now being represented as DRM bridges under the tidss.
+> 
+> Also, since the DRM framework only really supports a linear encoder-bridge
+> chain, the OLDI driver creates a DRM bridge ONLY for the primary OLDI TX in
+> cases of dual-link or cloned single-link OLDI modes. That bridge then attaches
 
-The biggest concern I have is that the overhead is payed by everybody on
-the system - it is considered to be a system overhead regardless only
-part of the workload benefits from hugetlb pages. In other words the
-workload using those pages is not accounted for the use completely.
+How does the clone case work, then? There are two panels, what does the 
+second one connect to?
 
-If the startup latency is a real problem is there a way to workaround
-that in the userspace by preallocating hugetlb pages ahead of time
-before those VMs are launched and hand over already pre-allocated pages?
--- 
-Michal Hocko
-SUSE Labs
+> to the tidss's display core - which consists of a CRTC, an Encoder (dummy) and a
+> bridge (dummy). On the other end, it attaches to OLDI sinks (panels or other
+> bridges).
+> 
+> Since the OLDI TX have a hardware dependency with the VP, the OLDI configuration
+> needs to happen before that VP is enabled for streaming. VP stream enable takes
+> place in tidss_crtc_atomic_enable hook. I have posted a patch allowing DRM
+> bridges to get pre-enabled before the CRTC of that bridge is enabled[0]. Without
+> that patch, some warnings or glitches can be seen.
+> 
+> These patches have been tested on AM625 based Beagleplay[3] platform with a
+> Lincolntech LCD185 dual-lvds panel. The patches with complete support including
+> the expected devicetree configuration of the OLDI TXes can be found in the
+> "next_oldi_v4_tests" branch of my github fork[4]. This branch also has support
+> for Microtips dual-lvds panel (SK-LCD1) which is compatible with the SK-AM625
+> EVM platform.
+> 
+> Due to lack of hardware, I haven't been able to test single-link / cloned
+> single-link OLDI modes. I have only used a sample cloned single-link DTBO and
+> booted the board with it. I didn't see any probe_deferred errors (as seen
+> previously), and the `kmsprint` utility enumerated the display details fine.
+> 
+> Regardless, I'd appreciate it if somebody can test it, and report back if they
+> observe any issues.
+> 
+> Thanks,
+> Aradhya
+> 
+> 
+> Additional Notes:
+> 
+> * Important note about a false positive in dtbs_check *
+> Both the ports, port0 and port1, are required for the OLDI functionality to
+> work. The schema suggests this condition too. Additionally, the OLDI devicetree
+> node is expected to be defined in the soc.dtsi file, and kept as disabled.
+> Over the current platforms (Beagleplay and SK-AM625 EVM), the OLDI panel is not
+> always attached, and hence we use a DT overlay to add panel details - which is
+> where we enable the OLDI nodes. The structure of files is like this -
+> 
+> - soc.dtsi                  (OLDI disabled)
+> - soc-baseboard.dts         (OLDI disabled)
+> - soc-baseboard-panel.dtso  (OLDI enabled)
+> 
+> During dtbs_check runs, it was observed that the check was not able to rule out
+> OLDI issues even when its DT was disabled in the soc-baseboard.dts. It is
+> impractical and impossible to add OLDI ports prior to the panel overlay file.
+> While the dtbs_check usually ignores checking disabled devicetree nodes, it was
+> unable to do so in the OLDI's case.
+
+While there might be something amiss with dtbs_check, what's the problem 
+with adding both port nodes to the soc.dtsi? If you have no endpoints 
+there, it's not connected to anything.
+
+  Tomi
+
+> 
+> 
+> * Important note about the authorship of patches *
+> All the patches in the of this series were authored when I owned a "ti.com"
+> based email id, i.e. <a-bhatia1@ti.com>. This email id is not in use anymore,
+> and all the work done later has been part of my personal work. Since the
+> original patches were authored using TI's email id, I have maintained the
+> original authorships as they are, as well as their sign offs.
+> 
+> I have further added another sign off that uses my current (and personal) email
+> id, the one that is being used to send this revision, i.e.
+> <aradhya.bhatia@linux.dev>.
+> 
+> ---
+> 
+> Change Log:
+> V4:
+>    - Implement fixes suggested by Krzysztof Kozlowski:
+>      - Squash patches v3:2/4 and v3:3/4 to v4:2/3, and add more hardware details
+>        in commit description.
+>      - Change the serial clock name for OLDI, from "s_clk" to "serial".
+>      - Fix the required condition in the OLDI schema.
+>      - Other minor fixes.
+>    - Change "oldi-txes" OLDI DT node name to "oldi-transmitters".
+>    - Update secondary-OLDI property requirements to be more relaxing for AM62P
+>      DSS configuration.
+> 
+> V3:
+>    - Fix the dt_binding_check warning in patch 3/4[5] by adding
+>      "additionalProperties" constraint.
+> 
+> V2:
+>    - Add all the R-b and A-b tags from Laurent Pinchart, Rob Herring, and
+>      Tomi Valkeinen.
+>    - Reword the subject for patch 1/4.
+>    - Reword the commit descriptions to add proper hardware detail.
+>    - Drop the change in schema reference for port@0 in patch 3/4.
+>    - Lots of improvements for patch 4/4.
+>      * Refactor OLDI selection logic in tidss_oldi_tx_power().
+>      * Add "companion_instance" support to identify the OLDI index in
+>        dual-link or cloned sinle-link modes.
+>      * De-initialize tidss_oldi during tidss removal.
+>      * Use dev_err_probe() instead of dev_err().
+>      * Drop OLDI(n) macro.
+>      * Move OLDI Config register bits to tidss_dispc_regs.h.
+>      * Drop oldi bridge atomic_check().
+>      * s/%d/%u for all print instances of "oldi_instance".
+>      * Move OLDI init after DISPC init in tidss_probe.
+>      * Use devm_drm_of_get_bridge() instead of
+>        drm_of_find_panel_or_bridge() to find the next bridge and drop all
+>        the drm_panel support from tidss_oldi.
+> 
+> Previous revisions:
+> V3: https://lore.kernel.org/all/20240716084248.1393666-1-a-bhatia1@ti.com/
+> V2: https://lore.kernel.org/all/20240715200953.1213284-1-a-bhatia1@ti.com/
+> V1: https://lore.kernel.org/all/20240511193055.1686149-1-a-bhatia1@ti.com/
+> 
+> 
+> [0]: Dependency Patch:
+> ("drm/atomic-helper: Re-order bridge chain pre-enable and post-disable")
+> https://lore.kernel.org/all/20240622110929.3115714-11-a-bhatia1@ti.com/
+> 
+> [1]: AM62 OLDI Series - v7
+> https://lore.kernel.org/all/20230125113529.13952-1-a-bhatia1@ti.com/
+> 
+> [2]: AM62 DSS Series - v9
+> https://lore.kernel.org/all/20230616150900.6617-1-a-bhatia1@ti.com/
+> 
+> [3]: TI AM625 SoC based Beagleplay platform
+> https://www.beagleboard.org/boards/beagleplay
+> 
+> [4]: GitHub Fork for OLDI tests
+> https://github.com/aradhya07/linux-ab/tree/next_oldi_v4_tests
+> 
+> [5]: ("ti,am65x-dss.yaml: oldi-txes: Missing additionalProperties/
+>        unevaluatedProperties constraint")
+> https://lore.kernel.org/all/172107979988.1595945.9666141982402158422.robh@kernel.org/
+> 
+> Aradhya Bhatia (3):
+>    dt-bindings: display: ti,am65x-dss: Re-indent the example
+>    dt-bindings: display: ti: Add schema for AM625 OLDI Transmitter
+>    drm/tidss: Add OLDI bridge support
+> 
+>   .../bindings/display/ti/ti,am625-oldi.yaml    | 119 ++++
+>   .../bindings/display/ti/ti,am65x-dss.yaml     | 195 ++++++-
+>   MAINTAINERS                                   |   1 +
+>   drivers/gpu/drm/tidss/Makefile                |   3 +-
+>   drivers/gpu/drm/tidss/tidss_dispc.c           |  20 +-
+>   drivers/gpu/drm/tidss/tidss_dispc.h           |   4 +
+>   drivers/gpu/drm/tidss/tidss_dispc_regs.h      |  14 +
+>   drivers/gpu/drm/tidss/tidss_drv.c             |   9 +
+>   drivers/gpu/drm/tidss/tidss_drv.h             |   5 +
+>   drivers/gpu/drm/tidss/tidss_oldi.c            | 537 ++++++++++++++++++
+>   drivers/gpu/drm/tidss/tidss_oldi.h            |  51 ++
+>   11 files changed, 935 insertions(+), 23 deletions(-)
+>   create mode 100644 Documentation/devicetree/bindings/display/ti/ti,am625-oldi.yaml
+>   create mode 100644 drivers/gpu/drm/tidss/tidss_oldi.c
+>   create mode 100644 drivers/gpu/drm/tidss/tidss_oldi.h
+> 
+> 
+> base-commit: cfba9f07a1d6aeca38f47f1f472cfb0ba133d341
+
 
