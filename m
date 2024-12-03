@@ -1,169 +1,210 @@
-Return-Path: <linux-kernel+bounces-429931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E7199E2918
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 18:25:11 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9EE69E292E
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 18:27:00 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 895411697DE
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 17:25:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA4E7284A2F
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 17:26:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4A0B1FA840;
-	Tue,  3 Dec 2024 17:25:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FC3C1FBCA6;
+	Tue,  3 Dec 2024 17:26:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=networkplumber-org.20230601.gappssmtp.com header.i=@networkplumber-org.20230601.gappssmtp.com header.b="swUKoHjl"
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kvuqWreo"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CEC81F9F7C
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 17:25:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A199D1F8AE1
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 17:26:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733246704; cv=none; b=spjFEWqbLnb7dzB+pZosZdzRn9+/iY1uaGNEEkNyx66fFtuv7z9WIXgibaY6pa6rZxakTNZRIccaiFCkjtxaIBFWrKRDHPUIAyTpBOx3yrHRly3kinlscm3403DDZgIFHID6BcON8Ubls90lRD8i9Zbc18TCJyYv/FjAOs5wCF0=
+	t=1733246810; cv=none; b=I1M7mh2JSV+ihZxdhR6mLur7j4Ds40gFk1l3nfbmTxQ6II6xazNsR5HRYKUfG3JL9PZktRGANWJxqZGYAhAA3ISpgLhRqA+GTKwQBYtMNc8iyA8nWhkzvL5aFq5ty8koOYYU86SX3xqos+2Bsphxpw9tRU4jRgmQMkqijqYDwcE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733246704; c=relaxed/simple;
-	bh=S+DV4vomlAhrWT8NL5FQwF27Xis8NyVEDDUdlUYe3hk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NMtvbSh7Zd9jmvZRRfHwVyFR9wOAl+n/9bAa4DsR3DwPsvFK4uURrlbVyC2gpCOfp3e+0Sh7HY97/+osvFm8gCoC6xLsS2Re527QpBCaLwDKM+ociRPCyfnE5JT2hyCObCL9t/FnHT+DS08nh+nQ8/iTysDxGhv9Wtjzh0VLur4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=networkplumber.org; spf=pass smtp.mailfrom=networkplumber.org; dkim=pass (2048-bit key) header.d=networkplumber-org.20230601.gappssmtp.com header.i=@networkplumber-org.20230601.gappssmtp.com header.b=swUKoHjl; arc=none smtp.client-ip=209.85.215.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=networkplumber.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=networkplumber.org
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-7f4325168c8so2976338a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 09:25:02 -0800 (PST)
+	s=arc-20240116; t=1733246810; c=relaxed/simple;
+	bh=MCDy6HkUfDKHYjRUBvEabLuhWMTUUHI+2O5UXR9PdkA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=bOPRnUZ4aKdTcwlcPxF2fO2GmjT7SZ5V0nbnIPwaJRVXiKhtVIZAeXODP86uOawgRDH35f2uG4Fw8qn+lRma9m7R+Wln6khXOwnRTSaGCBCZBNwBsQXSiiZijco3QRbYnI2BAPwUGF4ne2VirIvhSaCzOerGytevbFsesMhuCm0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kvuqWreo; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-434a9f9a225so55995e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 09:26:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1733246701; x=1733851501; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WDIAp0k+WulLvelBjh0iQOU14uQ0KAvxIWVqAJex2I8=;
-        b=swUKoHjlhCq4CTm29QqyIPDNg0hvTkNZIBSeepo30ryOb/aaE8JvRt6mlMpvGP2iQe
-         I5TQppJdw0IKoeBmELxHPpmNcdP1S8+ooVgGfnSNgfWrYbsBnXK2oeeIkwaKfR95iQOp
-         yX9ob52SML4TIm7biqV8wydOzM08Ez329oTNMTyhQ4/3sF6NQPIgcB6cLNuPC0JhnT2g
-         VHSR98Xrya6Rfn0qOlSqghjB+PwFIVoN7uAFg4ZpTZD7Bqh3jsjSnkKWPeeFeIAunrc5
-         NylRzO/YT1tVHQq6/zYqj/q3hea73bYEPJuInq7/8kd809xMe2peckF6e7jOqixINfEe
-         0sUQ==
+        d=google.com; s=20230601; t=1733246807; x=1733851607; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=esMBl0uOLbGzsFzbKrL9tw7lBRfURdjOWkpYSobO80c=;
+        b=kvuqWreoEPTh05IQgWB1Xv6RDHveXyeGC6mbLxyug6E3zrExlcgZLcS7CX0oXYQZxa
+         FRMqWUSH79q/5HilViq8aYbF4L7698F8x7oj5QUYyChRYt21NgYNCAaieu/PXhsTE0V2
+         IN8XQd7bCDgCYgp7kQ5Lb4RpH5H+uM2/pH+hy5oHcvjHPVvaxXSRR1ziPJlj6y33Ei+e
+         0V/S/U3+LxnCxmDtw4OVdUaJ6g+g17KsQd5sbGwmVHsdmcrJvKTF5nkRWns5pxo7iG6f
+         +80TuNeq1CeJe1koiliq58tCB7GS7MFoam0U+sqBdfzC9VABIH8o3o+xloP4cJcHruUF
+         SMxA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733246701; x=1733851501;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WDIAp0k+WulLvelBjh0iQOU14uQ0KAvxIWVqAJex2I8=;
-        b=h55JA/pocRX5U4lJxg55PURkEXjRdfaaKomYgmNO9zagNbrHq8fR3rHV1/+K9VsYmc
-         PdKdwjuIIlFZAi7WfhwGsaQFbxCIG2jPgq9PqAZLNW6+Q6y1Dpm1PcHsehz07n+rFJ9O
-         nL6hT+lZKht7BrcOxNHXJsa+TbCLMdMtZuwLLm0FNewWiLsnF/4CmUXkgSxVDkoY0mc6
-         ELOyA4159+12oS6Nf0ZLYmMmJyF/GHERW2HzZ8NDHb9l0Jic4dHV0cRK6Ly4TamMjjYD
-         TT9pzRIj0xHZhB0zStfHsym9gTiOFbULNZYv5ncLB4A0+WmC+Jue8Pfsf7GJ7SfxjH7h
-         Zk3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUesRpkzGJjAJNgR23A2qjf/dccWakEM+dKJHB/TDffpX6sKucBrDkZhYdvnbJfaUsGmqtM49WItopfJqo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxaDr1ngxDAoI6CP2MvSQ4PfX8xOT1QeknEuhaC/cKSJ5raiBb2
-	qQrYOcgTLfhYww18a9V3HvUlDuR/KfYrAqV58n8VAIO4hx4be4pFD3ZO9MA0tj0=
-X-Gm-Gg: ASbGncthChv4fSPOSjdZ+qN4Zrut/C8fupgTmWYi3YlicdoDqReNLlwueUTGWLD7aKu
-	ceu/idEDIsgE6Ve1vwfC0hz5YdDm/fINM+fb7tcVZakWWAYwQg2FJnYTb8ZA9jxpIrFf9DHHpEM
-	HSAdG3svS4KZBKFYvvNoWstZhOC5E25hgQ7k2uDJYyMxi/NQsZVmrDnpcqOfsxLqLlOyF1OfJdp
-	1EKJMXzf347KkQ+btKXFwnLNGkA9xc5o7etbWZOH8T5L5mqsbEKYyjldLEugWIWT1IkGw68Q+kj
-	I7JzD0MB3HxkPNrN7cPCg9MzB5I=
-X-Google-Smtp-Source: AGHT+IFVttCytH4uriYlAc5b6vwoVfhSr0LlSgnBO9ywPRQ8142EzJA8hps3tzOfjvW84YqxE5vXHw==
-X-Received: by 2002:a05:6a20:c908:b0:1e0:d240:19c with SMTP id adf61e73a8af0-1e16539f323mr5225858637.6.1733246701595;
-        Tue, 03 Dec 2024 09:25:01 -0800 (PST)
-Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7254176f571sm10707168b3a.58.2024.12.03.09.25.00
+        d=1e100.net; s=20230601; t=1733246807; x=1733851607;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=esMBl0uOLbGzsFzbKrL9tw7lBRfURdjOWkpYSobO80c=;
+        b=oBiHbFI3/kZi5dsx44DSVq76LNzU0CzHawG7Ccy+wxp6NCNsPGFNoRPwqXaKcUHyaB
+         OzjXBZFF3JBL0XcZ0ooJ5WI7EhVEzvqd6GHbCbI0LElbvE5Ho0cx7E0dxtKmRLewqgwe
+         pQz946a88EpIjs6NdB1jL1/P7YhDxKXRvmvDaks+5nxDS1w4W2/voGQ8xIhB70ehDoMW
+         W8/nXxvgHd44a69VwdBRFv1gOeYzPpE2e7UDUvUQN/AZxvroiqCyy1JGniExOqDPAgc8
+         k/ilsLXcZ0ean7lmFGJzKqDvp5p/HOlot6yHPE939GN+W/xjNKrLsyz79IaOQs2T+6cv
+         9FDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWZUbjz4Wz3nLm/MopKPg6YF1IdrQCLfxwtWBEWh0/nGvKliIs3WawQSXmEm8tRouxrXuXeJaF8ylAPsgs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwdyHBhHhr3dV1Hh4iyx5ZHEyW35QTFsA2ay2mlKSSN1rek1NJV
+	s+C9U/lta3HaijL3SC+DO/RJmjsqa3y4JRK6xlCWHDEIyuRS1IiQ6mq287YtWA==
+X-Gm-Gg: ASbGnctHiTRHQ8Tcei9uaMKV9QbBzHEEopElIH+ybmxxQmfySHpOeVAB7kbs/Jxn49G
+	OF/mAYoMBVDm/wyxfUJU3uXKcHYXJVrvo6FicPbGPt4ClDQSpfuzgY3PCkMGklCkADzO0N0zfGn
+	oiXQ1D5MRLxfON5/Y53GREcswWrHW4tzGBsgWR0TdVWiyfqAEzFrgRlFLemJkuD1sdVkYgqlNEc
+	WmxDt2+rKcsD2jnm+JbpM7jVUdOFnHNrrfVirw=
+X-Google-Smtp-Source: AGHT+IHu3tfTAoXvieXaIRaJiRZryx8cWpn3+5PzdcsLUtGUjPoPKMn6gY/KMYeGtkKYB5HV7URZ6Q==
+X-Received: by 2002:a05:600c:2144:b0:434:9d0b:bd7c with SMTP id 5b1f17b1804b1-434d12b8df7mr1213685e9.3.1733246806576;
+        Tue, 03 Dec 2024 09:26:46 -0800 (PST)
+Received: from localhost ([2a00:79e0:9d:4:92ba:3294:39ee:2d61])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385f8448d32sm4515574f8f.96.2024.12.03.09.26.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Dec 2024 09:25:01 -0800 (PST)
-Date: Tue, 3 Dec 2024 09:24:56 -0800
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Leon Romanovsky <leon@kernel.org>
-Cc: Bjorn Helgaas <helgaas@kernel.org>, Leon Romanovsky <leonro@nvidia.com>,
- Krzysztof =?UTF-8?B?V2lsY3p5xYRza2k=?= <kw@linux.com>,
- linux-pci@vger.kernel.org, Ariel Almog <ariela@nvidia.com>, Aditya Prabhune
- <aprabhune@nvidia.com>, Hannes Reinecke <hare@suse.de>, Heiner Kallweit
- <hkallweit1@gmail.com>, Arun Easi <aeasi@marvell.com>, Jonathan Chocron
- <jonnyc@amazon.com>, Bert Kenward <bkenward@solarflare.com>, Matt Carlson
- <mcarlson@broadcom.com>, Kai-Heng Feng <kai.heng.feng@canonical.com>, Jean
- Delvare <jdelvare@suse.de>, Alex Williamson <alex.williamson@redhat.com>,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org, Jakub Kicinski
- <kuba@kernel.org>, Thomas =?UTF-8?B?V2Vpw59zY2h1aA==?=
- <linux@weissschuh.net>
-Subject: Re: [PATCH v3] PCI/sysfs: Change read permissions for VPD
- attributes
-Message-ID: <20241203092456.5dde2476@hermes.local>
-In-Reply-To: <18f36b3cbe2b7e67eed876337f8ba85afbc12e73.1733227737.git.leon@kernel.org>
-References: <18f36b3cbe2b7e67eed876337f8ba85afbc12e73.1733227737.git.leon@kernel.org>
+        Tue, 03 Dec 2024 09:26:45 -0800 (PST)
+From: Jann Horn <jannh@google.com>
+Subject: [PATCH 0/3] fixes for udmabuf (memfd sealing checks and a leak)
+Date: Tue, 03 Dec 2024 18:25:34 +0100
+Message-Id: <20241203-udmabuf-fixes-v1-0-f99281c345aa@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAA4/T2cC/x3LTQqAIBBA4avIrBP8y0VXiRaaY80iC8UIpLsnL
+ T8er0HBTFhgYg0y3lToTB1yYLDuLm3IKXSDEspIJTSv4XC+Rh7pwcKDMHpE77y1GvpzZfxDX+b
+ lfT+rWACQXwAAAA==
+X-Change-ID: 20241203-udmabuf-fixes-d0435ebab663
+To: Gerd Hoffmann <kraxel@redhat.com>, 
+ Vivek Kasireddy <vivek.kasireddy@intel.com>, 
+ Sumit Semwal <sumit.semwal@linaro.org>, 
+ =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+ Simona Vetter <simona.vetter@ffwll.ch>, 
+ John Stultz <john.stultz@linaro.org>, 
+ Andrew Morton <akpm@linux-foundation.org>, 
+ "Joel Fernandes (Google)" <joel@joelfernandes.org>
+Cc: dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org, 
+ linaro-mm-sig@lists.linaro.org, linux-kernel@vger.kernel.org, 
+ Jann Horn <jannh@google.com>, Julian Orth <ju.orth@gmail.com>, 
+ stable@vger.kernel.org
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1733246801; l=2909;
+ i=jannh@google.com; s=20240730; h=from:subject:message-id;
+ bh=MCDy6HkUfDKHYjRUBvEabLuhWMTUUHI+2O5UXR9PdkA=;
+ b=7R1+MVXGDrX8ZjzD+lYpU8vJrqqQZsU/jjVE8x5Xvlp659inhHh4Hs6EU5+zsTLaWSIvHEjrU
+ U58t58Lkh24B4O1A8seSqKkOWQKwCT4vgQTfc8JN9wGpHh4WP31+uUE
+X-Developer-Key: i=jannh@google.com; a=ed25519;
+ pk=AljNtGOzXeF6khBXDJVVvwSEkVDGnnZZYqfWhP1V+C8=
 
-On Tue,  3 Dec 2024 14:15:28 +0200
-Leon Romanovsky <leon@kernel.org> wrote:
+I have tested that patches 2 and 3 work using the following reproducers.
+I did not write a reproducer for the issue described in patch 1.
 
-> The Vital Product Data (VPD) attribute is not readable by regular
-> user without root permissions. Such restriction is not needed at
-> all for Mellanox devices, as data presented in that VPD is not
-> sensitive and access to the HW is safe and well tested.
-> 
-> This change changes the permissions of the VPD attribute to be accessible
-> for read by all users for Mellanox devices, while write continue to be
-> restricted to root only.
-> 
-> The main use case is to remove need to have root/setuid permissions
-> while using monitoring library [1].
-> 
-> [leonro@vm ~]$ lspci |grep nox
-> 00:09.0 Ethernet controller: Mellanox Technologies MT2910 Family [ConnectX-7]
-> 
-> Before:
-> [leonro@vm ~]$ ls -al /sys/bus/pci/devices/0000:00:09.0/vpd
-> -rw------- 1 root root 0 Nov 13 12:30 /sys/bus/pci/devices/0000:00:09.0/vpd
-> After:
-> [leonro@vm ~]$ ls -al /sys/bus/pci/devices/0000:00:09.0/vpd
-> -rw-r--r-- 1 root root 0 Nov 13 12:30 /sys/bus/pci/devices/0000:00:09.0/vpd
-> 
-> [1] https://developer.nvidia.com/management-library-nvml
-> Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
-> ---
-> Changelog:
-> v3:
->  * Used | to change file attributes
->  * Remove WARN_ON
-> v2: https://lore.kernel.org/all/61a0fa74461c15edfae76222522fa445c28bec34.1731502431.git.leon@kernel.org
->  * Another implementation to make sure that user is presented with
->    correct permissions without need for driver intervention.
-> v1: https://lore.kernel.org/all/cover.1731005223.git.leonro@nvidia.com
->  * Changed implementation from open-read-to-everyone to be opt-in
->  * Removed stable and Fixes tags, as it seems like feature now.
-> v0:
-> https://lore.kernel.org/all/65791906154e3e5ea12ea49127cf7c707325ca56.1730102428.git.leonro@nvidia.com/
-> ---
->  drivers/pci/vpd.c | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
-> diff --git a/drivers/pci/vpd.c b/drivers/pci/vpd.c
-> index a469bcbc0da7..a7aa54203321 100644
-> --- a/drivers/pci/vpd.c
-> +++ b/drivers/pci/vpd.c
-> @@ -332,6 +332,13 @@ static umode_t vpd_attr_is_visible(struct kobject *kobj,
->  	if (!pdev->vpd.cap)
->  		return 0;
->  
-> +	/*
-> +	 * Mellanox devices have implementation that allows VPD read by
-> +	 * unprivileged users, so just add needed bits to allow read.
-> +	 */
-> +	if (unlikely(pdev->vendor == PCI_VENDOR_ID_MELLANOX))
-> +		return a->attr.mode | 0044;
-> +
->  	return a->attr.mode;
->  }
->  
+Reproducer for F_SEAL_FUTURE_WRITE not being respected:
+```
+#define _GNU_SOURCE
+#include <err.h>
+#include <fcntl.h>
+#include <stdio.h>
+#include <unistd.h>
+#include <sys/ioctl.h>
+#include <sys/mman.h>
+#include <linux/udmabuf.h>
 
-Could this be with other vendor specific quirks instead?
+#define SYSCHK(x) ({          \
+  typeof(x) __res = (x);      \
+  if (__res == (typeof(x))-1) \
+    err(1, "SYSCHK(" #x ")"); \
+  __res;                      \
+})
 
-Also, the wording of the comment is awkward. Suggest:
-	On Mellanox devices reading VPD is safe for unprivileged users.
+int main(void) {
+  int memfd = SYSCHK(memfd_create("test", MFD_ALLOW_SEALING));
+  SYSCHK(ftruncate(memfd, 0x1000));
+  SYSCHK(fcntl(memfd, F_ADD_SEALS, F_SEAL_SHRINK|F_SEAL_FUTURE_WRITE));
+  int udmabuf_fd = SYSCHK(open("/dev/udmabuf", O_RDWR));
+  struct udmabuf_create create_arg = {
+    .memfd = memfd,
+    .flags = 0,
+    .offset = 0,
+    .size = 0x1000
+  };
+  int buf_fd = SYSCHK(ioctl(udmabuf_fd, UDMABUF_CREATE, &create_arg));
+  printf("created udmabuf buffer fd %d\n", buf_fd);
+  char *map = SYSCHK(mmap(NULL, 0x1000, PROT_READ|PROT_WRITE, MAP_SHARED, buf_fd, 0));
+  *map = 'a';
+}
+```
+
+Reproducer for the memory leak (if you run this for a while, your memory
+usage will steadily go up, and /sys/kernel/debug/dma_buf/bufinfo will
+contain a ton of entries):
+```
+#define _GNU_SOURCE
+#include <err.h>
+#include <errno.h>
+#include <assert.h>
+#include <fcntl.h>
+#include <stdio.h>
+#include <unistd.h>
+#include <sys/ioctl.h>
+#include <sys/mman.h>
+#include <sys/resource.h>
+#include <linux/udmabuf.h>
+
+#define SYSCHK(x) ({          \
+  typeof(x) __res = (x);      \
+  if (__res == (typeof(x))-1) \
+    err(1, "SYSCHK(" #x ")"); \
+  __res;                      \
+})
+
+int main(void) {
+  int memfd = SYSCHK(memfd_create("test", MFD_ALLOW_SEALING));
+  SYSCHK(ftruncate(memfd, 0x1000));
+  SYSCHK(fcntl(memfd, F_ADD_SEALS, F_SEAL_SHRINK));
+  int udmabuf_fd = SYSCHK(open("/dev/udmabuf", O_RDWR));
+
+  // prevent creating new FDs
+  struct rlimit rlim = { .rlim_cur = 1, .rlim_max = 1 };
+  SYSCHK(setrlimit(RLIMIT_NOFILE, &rlim));
+
+  while (1) {
+    struct udmabuf_create create_arg = {
+      .memfd = memfd,
+      .flags = 0,
+      .offset = 0,
+      .size = 0x1000
+    };
+    int buf_fd = ioctl(udmabuf_fd, UDMABUF_CREATE, &create_arg);
+    assert(buf_fd == -1);
+    assert(errno == EMFILE);
+  }
+}
+```
+
+Signed-off-by: Jann Horn <jannh@google.com>
+---
+Jann Horn (3):
+      udmabuf: fix racy memfd sealing check
+      udmabuf: also check for F_SEAL_FUTURE_WRITE
+      udmabuf: fix memory leak on last export_udmabuf() error path
+
+ drivers/dma-buf/udmabuf.c | 36 ++++++++++++++++++++----------------
+ 1 file changed, 20 insertions(+), 16 deletions(-)
+---
+base-commit: b86545e02e8c22fb89218f29d381fa8e8b91d815
+change-id: 20241203-udmabuf-fixes-d0435ebab663
+
+-- 
+Jann Horn <jannh@google.com>
+
 
