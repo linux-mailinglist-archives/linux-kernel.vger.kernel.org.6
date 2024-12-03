@@ -1,155 +1,204 @@
-Return-Path: <linux-kernel+bounces-429800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11EF29E2526
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:57:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD9FB9E253C
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:58:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C683E2842BF
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 15:57:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E32A284A20
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 15:58:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16B421F75BC;
-	Tue,  3 Dec 2024 15:57:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E0401F76DA;
+	Tue,  3 Dec 2024 15:58:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DMr2nK4m"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WMQP/HPy"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAEA71DE8A5
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 15:57:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 937F71DE8A5;
+	Tue,  3 Dec 2024 15:58:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733241447; cv=none; b=F9DWkpIWBlYHBFJfLcXgpesGO4PfdVo5VW1axH0k04W2afyPh0cS1l9jKCWcnVNV1xwQ+gkF0AgdZdHD6KEGgOlM22ENqR8XTQmf4m495u/X/HCOcO/jlb347FBS6mzTP6cJvroPr+tulrhCZ/t123UK/MCBKtMSlvzOX89bKMw=
+	t=1733241496; cv=none; b=Re1u2NuaGXhYYGZX1kZc9NrWBNvREQ4SxZMHOCTvEICcJDgc+l9GnwDQs7K5apUM2WvQqhtlZm6aqcLJklvmNAy7CXg/ZjiqcuaIsyH+fBRzzwm9/7ABfjF58o+FuhS4qfJAqHYaWa+y/Psi0ZFlR2T6udgRZK/Ms/oNmiY3RgM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733241447; c=relaxed/simple;
-	bh=iPlCzvq7qA7SjQOv3uoOyKl2HPUxNOtMX+MKgm7tvBA=;
+	s=arc-20240116; t=1733241496; c=relaxed/simple;
+	bh=UQAYXZTlJVJ80kpIYpUioM7FGTeGoM4MDlESW3IkEWs=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=f1+XopXb6P4Pl5AooWpyaVA4ZAp+jzrxGX9DyE26meZYacVM01NHulzqiFBhUuRjIKfJD11t+VGI0YQ+ablG/ffp+ezCynWJItbwSDcMuXKatty+r/SkN+8+131wFLIUwoZiIzq/mel/00nVCwV7rkuTpLePmc5jS+Otwg2Hnsc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DMr2nK4m; arc=none smtp.client-ip=209.85.218.52
+	 To:Cc:Content-Type; b=jLf5lqxzWPzshziItS7cFnZpg+dGIcEhCSz77elGYFuNK+isGYfen9HjWWhDCWOj1qIGQ3pzhz89SxS7gGdsy1idfXfhx6dVlVB82gV58X5mHpt5SsSOYjkfI55OYeHUg5/EQzf0ggGLgjVTNXhjR8FD/BwOe5Id645xOIkMbpc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WMQP/HPy; arc=none smtp.client-ip=209.85.208.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-aa549d9dffdso914785266b.2
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 07:57:25 -0800 (PST)
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2ffbfee94d7so47507361fa.3;
+        Tue, 03 Dec 2024 07:58:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733241444; x=1733846244; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1733241493; x=1733846293; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=iPlCzvq7qA7SjQOv3uoOyKl2HPUxNOtMX+MKgm7tvBA=;
-        b=DMr2nK4mzNhQIfifcHhzobBX0LUpBWcSHjnf6wvTziszVaxzvjlAHqYSbDRTF5k/kd
-         EWKvVY9VKoGdpeTJ+IT+3qatEYckc0HHpD9CBsIHKv2OMIgLSYXBeQpj4ZU3oWUe+VP7
-         DhRqZWtgcWnfuzrNYW5mZ0ZjXkQzaN1O/hTaccM4S95Y5RH1E5pO0k81f9jgXshS8+xm
-         S9MFXdIpSGX2VH3EM613acoSkRBzewBlXaRWKZHfU5Z6qBWFPXdudS0YX7dxEZPItGQy
-         XFnONsj0GRWhl74uK21iztqHeZF2lXdKpIR9Vodf9MPgx3NC62N4URy4p8cmKmJn8ntp
-         bfgw==
+        bh=XByooqmAZSqUAgwg6BsfAtN4ejjPSt/22HI9qzsaKzk=;
+        b=WMQP/HPyplY5UBR3MCVMXGynlSsqRqVTSe0r8nnNcy5pbKMbVREoCGzFbNZS3sf/D8
+         BiXt5SY9WTiVFyWGscH+4oXrJsHu+1vwYPNry9ii0dxDxiUHQJPkuuo+EB82PvLPAnqs
+         095fs9ezJfYiNnnrNsXarcWKaW7YENR1LAzc3vT71PuKjWHzcIqPpkcM2I7TdfwngTP/
+         NNP/NAhphgnFcKyjRKoeYwatVvLXPrHTVhRjqBmO5tcb2t8ZiIpxH2GuVd/3PCt1aNtn
+         QZO1rWGdKtfGsk+HUdrlp3rA+DZNTQStYR6/b0pJ46G867WPsiLSKsEJjP96NbKnaqf3
+         qe/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733241444; x=1733846244;
+        d=1e100.net; s=20230601; t=1733241493; x=1733846293;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=iPlCzvq7qA7SjQOv3uoOyKl2HPUxNOtMX+MKgm7tvBA=;
-        b=buXQZewgIsFDute0M9ELd5vCz3vJ3AM2azLZC7ZZFIWoBk/dE/xLXlVVassHRcY9/Q
-         olhrYzMFkWR5gycnWC5K1SFMZtNMSl1nwo8fhHVhLXOwx5mihc6RMuOPqjIL/1SSMiBR
-         qAOaMb1EilrQrE4JRbTk+iy8FuX03AbMU/j/FQDDTyf2Uc6Tdtz4knqQ7cAbWOFzebTr
-         Ym13/f+b+5Lq21oKo1ihh8rsyUhV8TiqcTP81p4IK3RH1XTdiM9d1dXB3n9GKS5NtY5L
-         +mO7uDPIlGRCEsJ8GbSYws7dlyDXLCTiJheHh/Gb0CJAaCIqiBEdQtNKqEp+UxS1JpV9
-         cjow==
-X-Forwarded-Encrypted: i=1; AJvYcCUBnZbzrKwLEHZz8JTs3KB0Ha4pmDczfCaGEXbew3jRvL/FDeLS6hWD9k0RPHZma6sbPUuMs/p+Hn/Bc4M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUu2rGdlKAA0FNmMW5z1e6WRgdDv28hd1VWVbuGINWRT+HBQOu
-	o9WxoA9yr9P4QE1VWqHEZL7nmG/wmR3pnj3psaywsVAakWJWwZYzUe7c8TlFpEK8qiaI+lD9L5x
-	yd9EqgtqO41CmFn/DYEWidSUF+S7KzQ==
-X-Gm-Gg: ASbGncs2cQZlPgVE+7XdaZgdgskvb3oQZ7jH5jm0HsqVdi8nz5bULHpp2rZUcvOW1VJ
-	EIXeBy0WvY/aVAtYpSmENzBoRptQB
-X-Google-Smtp-Source: AGHT+IEktfjPAdnGxP6AI0+aCF/E8iIwO2Lqz92yHebx5GuURUqRsvaBvH/X8RbQ7dENd6xTLTmSr5kwTWPgLTKuglc=
-X-Received: by 2002:a17:906:328d:b0:aa5:d96:c57f with SMTP id
- a640c23a62f3a-aa5f7d199f4mr216720566b.20.1733241443902; Tue, 03 Dec 2024
- 07:57:23 -0800 (PST)
+        bh=XByooqmAZSqUAgwg6BsfAtN4ejjPSt/22HI9qzsaKzk=;
+        b=M5orqobEP8qojQlpoQ21vTd4uRnmN2LHiD/Vx4LXqv+83E4xio5mQfHRp4UlABgbmv
+         pY9QssOTRg65GX+Z2etNJQNttZwPXy/psvKrIdjLOSwZOvl/p+QURO55feCN0ajttghm
+         GbXgYy3jq0CLpceRQkwoTMHUhPTON19VqtKSqIN7AkEarOrRZcdDOMltHfekuZEL9a+d
+         UTXRtWNKlU/DdyKvzQcmQQ3V9N4YoOXcHo2n/4eLQCRZsl+ollen6COtTzmMCGoJSRqA
+         alnwo/4byTcIV0Uj1a2WPzjwRGE+sesLLULS9HDj06oAnO4OGV3Xrh330Vd/KdLrXCTp
+         EoKw==
+X-Forwarded-Encrypted: i=1; AJvYcCUzoQnXlA6s1A0N94DXjtdNTpQFA5yDg5btIcOqdEEcF92+3E5TBH+s1QKvqOzD8qtnzR7pJxf6uWpPhE4DkD0=@vger.kernel.org, AJvYcCWmkNfKFf3mMRD03NejGd8WCrEsw4pZg6woI+QnoC6qEmVxQwV7uwMGXjRHEf06IPZ5qnY98asLfsR3Poo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7KuZ+G9nIANrFleiK3ZMH6Vf9MzKt7cych40w1dh997CyzZkZ
+	V79zuKFsaQW6xGQQkop0LGDuF6VU/u//XtIuLFOilCpGfMgYW+oqryVjCceBqDc0zFKR2MxRbAZ
+	ecVTDxKYKb+I58kV6ZxxUcfCEMiQ=
+X-Gm-Gg: ASbGncu6H+G0Jxhl5T39wSKNsxecQwR80gvsA8ttJWhe5ipLQNzg9oqe4VmnyUS/TMi
+	MOfK7yheKVh9xjd4JWqER22hEZGGd/LyIHc5BOsfqjjBsER8=
+X-Google-Smtp-Source: AGHT+IFd2mEOSqhbzbELOwLdOQlAPoc9LwQ8qAEjIE/p75NdBNNzR2juEoM9IRpGpA53+iN4zjbkuQ+i7wO1uHGCQTw=
+X-Received: by 2002:a05:651c:210c:b0:2ff:7a4f:e770 with SMTP id
+ 38308e7fff4ca-30014eaa13cmr2973921fa.31.1733241492469; Tue, 03 Dec 2024
+ 07:58:12 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241202202058.3249628-1-fvdl@google.com> <3tqmyo3qqaykszxmrmkaa3fo5hndc4ok6xrxozjvlmq5qjv4cs@2geqqedyfzcf>
- <CAPTztWbmkFisL7qnmAnre5hv=UD1E60P0hr_kXNyLoQFy9OoTA@mail.gmail.com>
- <Z070YE81kJ-OnSX8@tiehlicka> <d1f224fb-c0fb-47f9-bea8-3c33137be161@oracle.com>
-In-Reply-To: <d1f224fb-c0fb-47f9-bea8-3c33137be161@oracle.com>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Tue, 3 Dec 2024 16:57:11 +0100
-Message-ID: <CAGudoHGY_NEJe6Pp6rv91v8p--phSX32C5Pm55c6jpUAJFLKmA@mail.gmail.com>
-Subject: Re: [PATCH] mm/hugetlb: optionally pre-zero hugetlb pages
-To: Joao Martins <joao.m.martins@oracle.com>
-Cc: Michal Hocko <mhocko@suse.com>, Frank van der Linden <fvdl@google.com>, linux-mm@kvack.org, 
-	akpm@linux-foundation.org, Muchun Song <muchun.song@linux.dev>, 
-	Miaohe Lin <linmiaohe@huawei.com>, Oscar Salvador <osalvador@suse.de>, 
-	David Hildenbrand <david@redhat.com>, Peter Xu <peterx@redhat.com>, linux-kernel@vger.kernel.org
+References: <20241120-rust-xarray-bindings-v10-0-a25b2b0bf582@gmail.com>
+ <20241120-rust-xarray-bindings-v10-2-a25b2b0bf582@gmail.com>
+ <CAH5fLgipntMtu7_pdZDZGerGRO499yxDdz2dP=2Bb5FobcykYg@mail.gmail.com>
+ <CAJ-ks9kwGi+hhsNUC=Ti3CL8iJ4mEN2vSkoFUnz67Usu+-_P6Q@mail.gmail.com> <CAH5fLgiLPkVwgGiTFYbPTnz1EF8wAjopbBpmK6LpkmVRF+kVZw@mail.gmail.com>
+In-Reply-To: <CAH5fLgiLPkVwgGiTFYbPTnz1EF8wAjopbBpmK6LpkmVRF+kVZw@mail.gmail.com>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Tue, 3 Dec 2024 10:57:36 -0500
+Message-ID: <CAJ-ks9=gJ7O63Hv0VYiB=LV+CjA1iTQGs4-xzkaHWayryw-p6Q@mail.gmail.com>
+Subject: Re: [PATCH v10 2/2] rust: xarray: Add an abstraction for XArray
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, =?UTF-8?B?TWHDrXJhIENhbmFs?= <mcanal@igalia.com>, 
+	Asahi Lina <lina@asahilina.net>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Dec 3, 2024 at 3:26=E2=80=AFPM Joao Martins <joao.m.martins@oracle.=
-com> wrote:
+On Tue, Dec 3, 2024 at 10:12=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> w=
+rote:
 >
-> On 03/12/2024 12:06, Michal Hocko wrote:
-> > If the startup latency is a real problem is there a way to workaround
-> > that in the userspace by preallocating hugetlb pages ahead of time
-> > before those VMs are launched and hand over already pre-allocated pages=
-?
+> On Tue, Dec 3, 2024 at 4:00=E2=80=AFPM Tamir Duberstein <tamird@gmail.com=
+> wrote:
+> >
+> > On Tue, Dec 3, 2024 at 7:30=E2=80=AFAM Alice Ryhl <aliceryhl@google.com=
+> wrote:
+> > >
+> > > On Wed, Nov 20, 2024 at 12:48=E2=80=AFPM Tamir Duberstein <tamird@gma=
+il.com> wrote:
+> > > > +use crate::{
+> > > > +    alloc, bindings, build_assert, build_error,
+> > > > +    error::{Error, Result},
+> > > > +    init::PinInit,
+> > > > +    pin_init,
+> > > > +    types::{ForeignOwnable, NotThreadSafe, Opaque},
+> > > > +};
+> > > > +use core::{iter, marker::PhantomData, mem};
+> > > > +use macros::{pin_data, pinned_drop};
+> > >
+> > > I think these are in crate::prelude.
+> >
+> > I prefer to be explicit, unless there's guidance on this somewhere?
 >
-> It should be relatively simple to actually do this. Me and Mike had exper=
-imented
-> ourselves a couple years back but we never had the chance to send it over=
-. IIRC
-> if we:
->
-> - add the PageZeroed tracking bit when a page is zeroed
-> - clear it in the write (fixup/non-fixup) fault-path
->
-> [somewhat similar to this series I suspect]
->
-> Then what's left is to change the lookup of free hugetlb pages
-> (dequeue_hugetlb_folio_node_exact() I think) to search first for non-zero=
-ed
-> pages. Provided we don't track its 'cleared' state, there's no UAPI chang=
-e in
-> behaviour. A daemon can just allocate/mmap+touch/etc them with read-only =
-and
-> free them back 'as zeroed' to implement a userspace scrubber. And in prin=
-ciple
-> existing apps should see no difference. The amount of changes is conseque=
-ntly
-> significantly smaller (or it looked as such in a quick PoC years back).
->
-> Something extra on the top would perhaps be the ability so select a looku=
-p
-> heuristic such that we can pick the search method of
-> non-zero-first/only-nonzero/zeroed pages behind ioctl() (or a better gene=
-ric
-> UAPI) to allow a scrubber to easily coexist with hugepage user (e.g. a VM=
-M, etc)
-> without too much of a dance.
->
+> I don't think I've ever seen anyone do a direct import from macros.
 
-Ye after the qemu prefaulting got pointed out I started thinking about
-a userlevel daemon which would do the work proposed here.
+This exact stanza is also in `rust/kernel/block/mq/tag_set.rs`.
 
-Except I got stuck at a good way to do it. The mmap + load from the
-area + munmap triple does work but also entails more overhead than
-necessary, but I only have some handwaving how to not do it. :)
+> > > > +    fn iter(&self) -> impl Iterator<Item =3D core::ptr::NonNull<T:=
+:PointedTo>> + '_ {
+> > > > +        // TODO: Remove when https://lore.kernel.org/all/202409132=
+13041.395655-5-gary@garyguo.net/ is applied.
+> > > > +        const MIN: core::ffi::c_ulong =3D core::ffi::c_ulong::MIN;
+> > > > +        const MAX: core::ffi::c_ulong =3D core::ffi::c_ulong::MAX;
+> > >
+> > > Isn't MIN just zero?
+> >
+> > I liked the symmetry, but I could change it if you feel strongly.
+>
+> I commented because I thought it was confusing; I spent some time
+> figuring out whether the integer was signed.
 
-Suppose a daemon of the sort exists and there is a machine with 4 or
-more NUMA domains to deal with. Further suppose it spawns at least one
-thread per such domain and tasksets them accordingly.
+Alright, will replace with 0.
 
-Then perhaps an ioctl somewhere on hugetlbfs(?) could take a parameter
-indicating how many pages to zero out (or even just accept one page).
-This would avoid crap on munmap.
+> > > > +    /// Erases an entry from the array.
+> > > > +    ///
+> > > > +    /// Returns the entry which was previously at the given index.
+> > > > +    pub fn remove(&mut self, index: usize) -> Option<T> {
+> > > > +        // SAFETY: `self.xa.xa` is always valid by the type invari=
+ant.
+> > > > +        //
+> > > > +        // SAFETY: The caller holds the lock.
+> > > > +        let ptr =3D unsafe { bindings::__xa_erase(self.xa.xa.get()=
+, to_index(index)) }.cast();
+> > >
+> > > Two safety comments?
+> >
+> > There are two properties that must be upheld. How would you like to
+> > see it formatted?
+>
+> Usually multiple preconditions are listed using a bulleted list:
+>
+> // SAFETY:
+> // - `self.xa.xa` is always valid by the type invariant.
+> // - The caller holds the lock.
 
-This would still need majority of the patch, but all the zeroing
-policy would be taken out. Key point being that whatever specific
-behavior one sees fit, they can implement it in userspace, preventing
-future kernel patches to add more tweaks.
---=20
-Mateusz Guzik <mjguzik gmail.com>
+Thanks for the suggestion, done.
+
+> > > > +        // SAFETY: `ptr` is either NULL or came from `T::into_fore=
+ign`.
+> > > > +        unsafe { T::try_from_foreign(ptr) }
+> > > > +    }
+> > > > +
+> > > > +    /// Stores an entry in the array.
+> > > > +    ///
+> > > > +    /// On success, returns the entry which was previously at the =
+given index.
+> > > > +    ///
+> > > > +    /// On failure, returns the entry which was attempted to be st=
+ored.
+> > >
+> > > I'd like to see documentation about the gfp flags. This may unlock th=
+e
+> > > spinlock temporarily if GFP_KERNEL is used.
+> >
+> > Will add the language from the C documentation: "May drop the lock if
+> > needed to allocate memory, and then reacquire it afterwards."
+>
+> SGTM.
+>
+> > > > +        // SAFETY: `__xa_store` returns the old entry at this inde=
+x on success or `xa_err` if an
+> > > > +        // error happened.
+> > > > +        match unsafe { bindings::xa_err(old) } {
+> > > > +            0 =3D> {
+> > > > +                let old =3D old.cast();
+> > > > +                // SAFETY: `ptr` is either NULL or came from `T::i=
+nto_foreign`.
+> > > > +                Ok(unsafe { T::try_from_foreign(old) })
+> > >
+> > > It can't be XA_ZERO_ENTRY?
+> >
+> > No it can't. XA_ZERO_ENTRY is never returned from the "normal" API.
+> > XA_ZERO_ENTRY presents as NULL.
+>
+> It's probably worth mentioning in the safety comment.
+
+Will do.
 
