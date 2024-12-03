@@ -1,151 +1,156 @@
-Return-Path: <linux-kernel+bounces-429456-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63B019E1E21
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 14:48:07 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED4159E1EA0
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 15:05:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 96E84B3CDC0
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 12:41:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AE6ABB36D9F
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 12:42:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28BD21EE005;
-	Tue,  3 Dec 2024 12:40:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DCFF1EE038;
+	Tue,  3 Dec 2024 12:41:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Zf9mUE6q"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="1Unb6vnj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D958D1E8834
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 12:40:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 475011EB9F0;
+	Tue,  3 Dec 2024 12:41:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733229632; cv=none; b=jFhe9oZBFZxwk+VJm/V0ReZfsELGdKSc6xAdyjCe1ToiIrYVYSvxMZ7TYA0l2jYj42XupoJsv1DkmuAOuCTyRQQhcQthp0lWHMbkga+7gBZCjPVX9PcrIBpIYKFOGX1kGVGIG9gRMkKR9f9puYUPs4ifaYLDARupUiERkCUQeSs=
+	t=1733229675; cv=none; b=fqUWbwLL4gIf1GsLJsID+AYIdQ6AQ0OZIk4C01SmleA9Gco6Rin9a4ZBPZZ07SKRjCf8baKRKTzA5au8anGnukmppcSZdgsRv0v4B86iQQRu+oeb3GZgHv7cpQ/anc/F2b4UljlLu2Wo0ZgI2qRekpKUTVKdMxSZLx5seWmPZgQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733229632; c=relaxed/simple;
-	bh=MeivqaG+kYdxtEaOxl3RjvFIax6Vzjmq5wL7Dtno7yc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=CpPYoH/CKk/iTG2JvVLbCJfHEnW109zF1xHWhR1IBXESp2xg9a0CggxB46ahWzWlvf3aYvAq6SaDDOOTMxFoty7kG4QEWNWlXVhx9lg61GCOQoAIhc7cr5QtEBg9DgI9Vamge0dyVOxxxaeWtRTY2NNR58s518vSi9WvQUzM9L4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Zf9mUE6q; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a9e8522445dso775863166b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 04:40:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733229628; x=1733834428; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=A0SZ3/Zuy8g3IadhgXaPB8LqQDO37Mo3P8H3ntaK+Bw=;
-        b=Zf9mUE6qpPYuvcUjP1R8BFWlRgL+D95iIwQv2hjcHb4X9B2iJ1GULYi+619BqpQ/q5
-         A0rIe1r9Hhzll7OxKFjubaakp21BcLgr/46Xdmid1YxGo54R2AJo4Z2csqJyoSKRndKI
-         fZzgRmtwytM/8//OcjgnyfdH/oHHPmYQY4LWXmAVHjwcWY8dABpKalNy32354fBv2/Wd
-         5kKKkZkM055bXGap3csfFsQNDztMDp4lcUZdWnimcuEWuMr+cdnMg2UhfCkLGiEtUm0n
-         NLI2jtqiIrFZn82EGyC3BcW7spCJ38NJqWnlMVrYn9wCWJ2H4Zv56/N/Cd3BcWhjTdu1
-         ZvxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733229628; x=1733834428;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=A0SZ3/Zuy8g3IadhgXaPB8LqQDO37Mo3P8H3ntaK+Bw=;
-        b=jlIQDaV58vH8iafgCRcpmm9UdTU9CD5Tia+NrFuyfph7DuuH7v2KfSO49g2Rn2UDK/
-         ba5c31YGYc5tAnuH0bamE3HHIRwL2qQ/B/bcaj0s0K5gEE7gZtqrigyiEHxCVZ4+ZFDo
-         UwjN2LyRO0fV2MN2mZjeuUxwRFMxaUmkRJzK1gaxWO/AwhGzko6Nko0Ol54wRsxC8xPX
-         yx/Z1jnUlytKVOm2yNuYW0+Wf2GFQ8FyMDkYjJP/bSQ0UHdw7Ye5udpHVWDegNdutCzO
-         q49WUyclnn/ovRDp3XIy6rAtaPm331RtL/Kktr0Upy0TrNZ3s+gXWg0kXU6IUQGc4diO
-         QMrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXTPgiV+DNMcZATyLVNgn8DUv2ylZh3/TWSJdsWwEkLPc3Zqq947Tsa2CQVT/uXEpcQ6Fxj7vLTvXC0rSg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyrgxkYvSIINBRoTGdsi2xzc9HXWGi8j34NoRGPjrMIfk63vuf1
-	t++SVY7VQqXV+zeg3rydtHFtzZCMNbEcmfMoAnOfRq+GIWoN3Pco2eyyBqKh238=
-X-Gm-Gg: ASbGncv6bB8CyOLTzbgutE1mSrbiVTYMeMMbzdgJefWYUz+HLLJ7clsfsLcE1iSKnPw
-	FpQzEgLaw2arG3YiAuccRrDP7ahyI8Zgm0jZ5v+AqqaSEZXN71AUDQL2MJ2gWXYonzNc01/ZqEV
-	lpolA+zzBGtrtXI8SV5+fA1nKOTUlsmvX8WYSexA4UkmMITYBkuziJEPLaTAvl7+DU37REUucLX
-	Sp8vD7LJBpXriXFBwcQOAZuFvzMOhAizpp3WdbVL9DUR3kwcix6pJaRuqQCR/h/pVHSKfm0HpnY
-	xtVMHLrVWlEMklVbnD9+4nzgYwLSlZvRaA==
-X-Google-Smtp-Source: AGHT+IEtOgF5+Pd8GQXG5yAk2/ZT7iTApOoCMzUviVqMUPCGmvDJSENPWZg/xy3RM4OpVosidZ2alA==
-X-Received: by 2002:a17:906:31c7:b0:aa5:3c28:e0ae with SMTP id a640c23a62f3a-aa5f7d1b599mr200040266b.15.1733229628143;
-        Tue, 03 Dec 2024 04:40:28 -0800 (PST)
-Received: from puffmais.c.googlers.com (64.227.90.34.bc.googleusercontent.com. [34.90.227.64])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa5998e6a4csm616809466b.106.2024.12.03.04.40.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Dec 2024 04:40:27 -0800 (PST)
-From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Date: Tue, 03 Dec 2024 12:40:28 +0000
-Subject: [PATCH v2 5/5] arm64: dts: exynos: gs101-oriole: add pd-disable
- and typec-power-opmode
+	s=arc-20240116; t=1733229675; c=relaxed/simple;
+	bh=2uEXSo5be+RCYE8wBlDOJXNuB/VT7ARg3i3C+zGOWYQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mlgiALEaVTYJdwlQ3ce2Hd+GUHfNwe3ZiCAhKF6n6B6SU3Tyi0963R3QVHbVGlJen2i8VyCF6DO98sGU3X/bXBNG8oupkQIMV0KkOVfn1E0OQokbt2HoFFmqCTY266A8c0VclDaFij8a2F6h1AUOKS3GEewqvjBityvYGWYIN44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=1Unb6vnj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95C16C4CECF;
+	Tue,  3 Dec 2024 12:41:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1733229675;
+	bh=2uEXSo5be+RCYE8wBlDOJXNuB/VT7ARg3i3C+zGOWYQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=1Unb6vnj0waeqg52vL3tNBxqazZ4YLEkRH6amdDr2bx43L5JPTkkH+pB+L4tMzH0J
+	 SCb6eYmqeMGHbFRdUm9eKf56OQESdHkQFoMknfazShRPcJP62eT8Z3A5bIfaHIyzv7
+	 mcuUv99lpsVEKyYu6Ycjcf2lp80AbgdlAJGG1ZwM=
+Date: Tue, 3 Dec 2024 13:41:10 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Zijun Hu <zijun_hu@icloud.com>
+Cc: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Martin Tuma <martin.tuma@digiteqautomotive.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Andreas Noever <andreas.noever@gmail.com>,
+	Michael Jamet <michael.jamet@intel.com>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Yehezkel Bernat <YehezkelShB@gmail.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, Andrew Lunn <andrew@lunn.ch>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Dave Jiang <dave.jiang@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+	Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Lee Duncan <lduncan@suse.com>, Chris Leech <cleech@redhat.com>,
+	Mike Christie <michael.christie@oracle.com>,
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	Nilesh Javali <njavali@marvell.com>,
+	Manish Rangankar <mrangankar@marvell.com>,
+	GR-QLogic-Storage-Upstream@marvell.com,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Alison Schofield <alison.schofield@intel.com>,
+	Andreas Larsson <andreas@gaisler.com>,
+	Stuart Yoder <stuyoder@gmail.com>,
+	Laurentiu Tudor <laurentiu.tudor@nxp.com>,
+	Jens Axboe <axboe@kernel.dk>, Sudeep Holla <sudeep.holla@arm.com>,
+	Cristian Marussi <cristian.marussi@arm.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linux-mediatek@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-hwmon@vger.kernel.org,
+	linux-media@vger.kernel.org, linux-usb@vger.kernel.org,
+	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
+	linux-pwm@vger.kernel.org, nvdimm@lists.linux.dev,
+	linux1394-devel@lists.sourceforge.net, linux-serial@vger.kernel.org,
+	linux-sound@vger.kernel.org, open-iscsi@googlegroups.com,
+	linux-scsi@vger.kernel.org, linux-cxl@vger.kernel.org,
+	sparclinux@vger.kernel.org, linux-block@vger.kernel.org,
+	arm-scmi@vger.kernel.org, linux-efi@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org,
+	Zijun Hu <quic_zijuhu@quicinc.com>
+Subject: Re: [PATCH v2 00/32] driver core: Constify API device_find_child()
+ and adapt for various existing usages
+Message-ID: <2024120320-manual-jockey-dfd1@gregkh>
+References: <20241203-const_dfc_done-v2-0-7436a98c497f@quicinc.com>
+ <g32cigmktmj4egkq2tof27el2yss4liccfxgebkgqvkil32mlb@e3ta4ezv7y4m>
+ <9d34bd6f-b120-428a-837b-5a5813e14618@icloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Message-Id: <20241203-gs101-phy-lanes-orientation-dts-v2-5-1412783a6b01@linaro.org>
-References: <20241203-gs101-phy-lanes-orientation-dts-v2-0-1412783a6b01@linaro.org>
-In-Reply-To: <20241203-gs101-phy-lanes-orientation-dts-v2-0-1412783a6b01@linaro.org>
-To: Catalin Marinas <catalin.marinas@arm.com>, 
- Will Deacon <will@kernel.org>, Peter Griffin <peter.griffin@linaro.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
-Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, 
- Sam Protsenko <semen.protsenko@linaro.org>, 
- Will McVicker <willmcvicker@google.com>, Roy Luo <royluo@google.com>, 
- kernel-team@android.com, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
- devicetree@vger.kernel.org, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-X-Mailer: b4 0.13.0
+In-Reply-To: <9d34bd6f-b120-428a-837b-5a5813e14618@icloud.com>
 
-When the serial console is enabled, we need to disable power delivery
-since serial uses the SBU1/2 pins and appears to confuse the TCPCI,
-resulting in endless interrupts.
+On Tue, Dec 03, 2024 at 08:23:45PM +0800, Zijun Hu wrote:
+> On 2024/12/3 20:00, Uwe Kleine-Kˆnig wrote:
+> > Hello,
+> > 
+> > On Tue, Dec 03, 2024 at 08:33:22AM +0800, Zijun Hu wrote:
+> >> This patch series is to constify the following API:
+> >> struct device *device_find_child(struct device *dev, void *data,
+> >> 		int (*match)(struct device *dev, void *data));
+> >> To :
+> >> struct device *device_find_child(struct device *dev, const void *data,
+> >> 				 device_match_t match);
+> >> typedef int (*device_match_t)(struct device *dev, const void *data);
+> > 
+> > This series isn't bisectible. With only the first two patches applied I
+> > hit:
+> 
+> yes. such patch series needs to be merge as atomic way.
+> 
+> Hi Greg,
+> 
+> is it possible to ONLY merge such patch series by atomic way into your
+> driver-core tree?
 
-For now, change the DT such that the serial console continues working.
+Nope!
 
-Note1: We can not have both typec-power-opmode and
-new-source-frs-typec-current active at the same time, as otherwise DT
-binding checks complain.
+> or squash such patch series into a single patch ?
+> 
+> various subsystem maintainers may not like squashing way.
 
-Note2: When using a downstream DT, the Pixel boot-loader will modify
-the DT accordingly before boot, but for this upstream DT it doesn't
-know where to find the TCPCI node. The intention is for this commit to
-be reverted once an updated Pixel boot-loader becomes available.
+Agreed, so look into either doing it in a bisectable way if at all
+possible.  As I don't see a full series here, I can't suggest how it
+needs to happen :(
 
-Signed-off-by: Andr√© Draszik <andre.draszik@linaro.org>
----
- arch/arm64/boot/dts/exynos/google/gs101-oriole.dts | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+thanks,
 
-diff --git a/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts b/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts
-index a5cbf1e10c7b..e58881c61d53 100644
---- a/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts
-+++ b/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts
-@@ -107,7 +107,6 @@ connector {
- 			self-powered;
- 			try-power-role = "sink";
- 			op-sink-microwatt = <2600000>;
--			new-source-frs-typec-current = <FRS_5V_1P5A>;
- 			slow-charger-loop;
- 			/*
- 			 * max77759 operating in reverse boost mode (0xA) can
-@@ -146,6 +145,12 @@ VDO_DFP(DFP_VDO_VER1_1,
- 						0, 0, 0x18d1)
- 					VDO_CERT(0x0)
- 					VDO_PRODUCT(0x4ee1, 0x0)>;
-+			/*
-+			 * Until bootloader is updated to set those two when
-+			 * console is enabled, we disable PD here.
-+			 */
-+			pd-disable;
-+			typec-power-opmode = "default";
- 
- 			ports {
- 				#address-cells = <1>;
-
--- 
-2.47.0.338.g60cca15819-goog
-
+greg k-h
 
