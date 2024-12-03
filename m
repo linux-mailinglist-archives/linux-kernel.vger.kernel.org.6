@@ -1,115 +1,112 @@
-Return-Path: <linux-kernel+bounces-428624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 153879E117A
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 03:50:06 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AF5B9E117F
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 03:53:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 86CECB247DA
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 02:50:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C5AD6B21CAB
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 02:53:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B60414F104;
-	Tue,  3 Dec 2024 02:49:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15058152196;
+	Tue,  3 Dec 2024 02:53:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R2XshAV+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="hpLHFksj"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1460364AE;
-	Tue,  3 Dec 2024 02:49:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFADB7FBAC;
+	Tue,  3 Dec 2024 02:53:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733194197; cv=none; b=Ic8crv6Yf5f8yCsxina5J6FqQwtZEUAXo12xd+G+YL2oMeO6yer7POUldcFmOZCsPop0mDUn9+iS+OSuvvpIHMFnKrmh6JkIj1/Q4ApWFy6CN6dyIbG4dLfjlGSXSyCTy81TMy8wHUc/45c8P7w+Wllc7Nctt2kN85KcDruSNU4=
+	t=1733194404; cv=none; b=VJKUCfnSHw7oK4sGff1do28EGXjl0HmM52JDKI+TV9EVlJ7dxIuHAh9JPcfGrQ09YoL26VDbZeWGrOqHFI/w7vDRmrbkdkBdZGF2jC/Wp0SE3ERz/xeRY3a7cNWmPPbZmtwHbgtPr66WpfKDpLEfB8kOLQUu+QnWbHBjFaxjlco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733194197; c=relaxed/simple;
-	bh=eDxFHf9TSCQuFWJ4zfQvibZBSMuzLGPxyfHs4io/gPk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ThFzAN5QWTjZriV+UeIHIeYrfah5l9SCWLI6/aNwIygOv/elql12wualM+eYjuh9RKOAsMMU+jy3x7jmalZMcKUTJgSx6LXFR0KzuiISr2tTx52P2L4Gya7uTcqLFGCht+CRPpJsbN2bnwaOBhYtiJ1uF2d9iLXUIdr7P2StunE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R2XshAV+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF00EC4CED2;
-	Tue,  3 Dec 2024 02:49:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733194196;
-	bh=eDxFHf9TSCQuFWJ4zfQvibZBSMuzLGPxyfHs4io/gPk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=R2XshAV+t1lakGhQey2wtEnQMWlpwJHzk0MR0ijYcFL1aUP3TgIRWwq687dS2/hcM
-	 Qyms5M0ywDTXqVrCddy4gwg6geR1fLK3NtNJvuHt185YKm4ox+trfV/i5FBcQx5ucV
-	 vgT/ZgFAKDFlcDn3V/EM7ZpzPLp3AAYZTBzGgQAeTyvMz5b2rStaNeZYZarrPtDICk
-	 CqJQCksTiMyc2kNORtqadu6FlZgiNIMhjdVx73H43Ft447SnTs+oCEkB0ulwBwtu6f
-	 ZB0/Ofh1ivuOMiSS0oqgdsLSHWvPgXvlwBHrklZkyeThLC/sGYjt4hGh2SIvib7c1z
-	 fvxKiFoHUTVNw==
-Date: Mon, 2 Dec 2024 18:49:54 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: Yunsheng Lin <linyunsheng@huawei.com>
-Cc: <davem@davemloft.net>, <pabeni@redhat.com>, <liuyonglong@huawei.com>,
- <fanghaiqing@huawei.com>, <zhangkun09@huawei.com>, Alexander Lobakin
- <aleksander.lobakin@intel.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
- Jesper Dangaard Brouer <hawk@kernel.org>, Ilias Apalodimas
- <ilias.apalodimas@linaro.org>, Eric Dumazet <edumazet@google.com>, Simon
- Horman <horms@kernel.org>, <netdev@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH RFC v4 1/3] page_pool: fix timing for checking and
- disabling napi_local
-Message-ID: <20241202184954.3a4095e3@kernel.org>
-In-Reply-To: <20241120103456.396577-2-linyunsheng@huawei.com>
-References: <20241120103456.396577-1-linyunsheng@huawei.com>
-	<20241120103456.396577-2-linyunsheng@huawei.com>
+	s=arc-20240116; t=1733194404; c=relaxed/simple;
+	bh=gugiWDWJmzX9YBxkSsrk/RV1qVXF7sbUWzXu+Imb71E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=IDK6U5AP3WsXQQ1jwpVlLu8HqJbJiIzpX9VPBREnbYzxR4O8mI1aTFZLsFXNCwTCBJGLPKN2BYbP/FEVtsayCFpgVx7Xd7EMFJkStZlSS1KhElHK5sJFSNMdkGlFqRgk5s3BpOZZBkuIj9tmAKEQ+5WYI/mS1eCtK33jQLuYXmw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=hpLHFksj; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B2IqtQ6012892;
+	Tue, 3 Dec 2024 02:53:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	bDZvvIJWx84Kcm3a88jA2sDh6+Ht6aJ3HkFmZEN1EwY=; b=hpLHFksj97CJZTRm
+	wSxYjnh4aecnTuJ4XR//ua72gouF/Fqs0lEVEq9ZF6XmHXJ7cfhdyF4n0SEmK5y7
+	X9AYyD44IH8gKSVJW8QSQOiD7PURe1+r418oZkn6tuPN2fdRosp0d7XaOP/sWrVV
+	8i2n/fA2XGCvwSoCWAdXkMNX8pTmYAESjpBhj91cPzKDVJpyxRqnQEuCgQ/vdJZ8
+	NDJrsfRVbDxtdTpQ4WBYM//rcDRdhEanCFo77kSe5cN7x5VHjevkYNJOEsJuDEcV
+	YyB27qBIw/ld/Zd5/6ILzoAYnZKwjmKOZMt2KdgltC0N7PjyHNQFX9MaU6LYRLEW
+	ToKtMA==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 437r2mxuqh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 03 Dec 2024 02:53:08 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B32r7Ls011176
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 3 Dec 2024 02:53:07 GMT
+Received: from [10.134.71.247] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 2 Dec 2024
+ 18:53:07 -0800
+Message-ID: <19bef0bf-6dcb-4ffc-851e-eeda2c79a861@quicinc.com>
+Date: Mon, 2 Dec 2024 18:53:06 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/msm/hdmi: simplify code in pll_get_integloop_gain
+To: Rex Nie <rex.nie@jaguarmicro.com>, <robdclark@gmail.com>,
+        <dmitry.baryshkov@linaro.org>, <airlied@gmail.com>, <simona@ffwll.ch>,
+        <avrac@freebox.fr>
+CC: <sean@poorly.run>, <marijn.suijten@somainline.org>,
+        <jani.nikula@intel.com>, <mgonzalez@freebox.fr>,
+        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        <angus.chen@jaguarmicro.com>
+References: <20241112074101.2206-1-rex.nie@jaguarmicro.com>
+Content-Language: en-US
+From: Abhinav Kumar <quic_abhinavk@quicinc.com>
+In-Reply-To: <20241112074101.2206-1-rex.nie@jaguarmicro.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: uxxYULHB1BBzvzvJKI50aK5wrBHbRYml
+X-Proofpoint-GUID: uxxYULHB1BBzvzvJKI50aK5wrBHbRYml
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 impostorscore=0
+ bulkscore=0 priorityscore=1501 suspectscore=0 lowpriorityscore=0
+ phishscore=0 mlxlogscore=777 clxscore=1011 mlxscore=0 adultscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412030023
 
-On Wed, 20 Nov 2024 18:34:53 +0800 Yunsheng Lin wrote:
-> page_pool page may be freed from skb_defer_free_flush() in
-> softirq context without binding to any specific napi, it
-> may cause use-after-free problem due to the below time window,
-> as below, CPU1 may still access napi->list_owner after CPU0
-> free the napi memory:
+
+
+On 11/11/2024 11:41 PM, Rex Nie wrote:
+> In pll_get_integloop_gain(), digclk_divsel=1 or 2, base=63 or 196ULL,
+> so the base may be 63, 126, 196, 392. The condition base <= 2046
+> always true.
 > 
->             CPU 0                           CPU1
->       page_pool_destroy()          skb_defer_free_flush()
->              .                               .
->              .                napi = READ_ONCE(pool->p.napi);
->              .                               .
-> page_pool_disable_direct_recycling()         .
->    driver free napi memory                   .
->              .                               .
->              .       napi && READ_ONCE(napi->list_owner) == cpuid
->              .                               .
+> Fixes: caedbf17c48d ("drm/msm: add msm8998 hdmi phy/pll support")
+> Signed-off-by: Rex Nie <rex.nie@jaguarmicro.com>
+> ---
+>   drivers/gpu/drm/msm/hdmi/hdmi_phy_8998.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> Use rcu mechanism to avoid the above problem.
-> 
-> Note, the above was found during code reviewing on how to fix
-> the problem in [1].
-> 
-> 1. https://lore.kernel.org/lkml/8067f204-1380-4d37-8ffd-007fc6f26738@kernel.org/T/
 
-Please split it from the rest of the series, it's related but not
-really logically connected (dma mappings and NAPI recycling are 
-different features of page pool).
-
-> @@ -1126,6 +1133,12 @@ void page_pool_destroy(struct page_pool *pool)
->  	if (!page_pool_release(pool))
->  		return;
->  
-> +	/* Paired with rcu lock in page_pool_napi_local() to enable clearing
-> +	 * of pool->p.napi in page_pool_disable_direct_recycling() is seen
-> +	 * before returning to driver to free the napi instance.
-> +	 */
-> +	synchronize_rcu();
-
-I don't think this is in the right place.
-Why not inside page_pool_disable_direct_recycling() ?
-
-Hopefully this doesn't cause long stalls during reconfig, normally
-NAPIs and page pools are freed together, and NAPI removal implies
-synchronize_rcu(). That's why it's not really a problem for majority
-of drivers. You should perhaps make a note of this in the commit
-message.
+Reviewed-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
 
