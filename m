@@ -1,143 +1,163 @@
-Return-Path: <linux-kernel+bounces-430066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E43D9E2C27
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 20:36:47 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20F2F9E2C38
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 20:43:03 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 655A11658F7
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 19:36:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE8FC2841B8
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 19:43:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 961992036E9;
-	Tue,  3 Dec 2024 19:36:09 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B0ED1FECC3;
-	Tue,  3 Dec 2024 19:36:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F51F20011E;
+	Tue,  3 Dec 2024 19:42:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="YAJe7iUt"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94A301F9F6C;
+	Tue,  3 Dec 2024 19:42:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733254569; cv=none; b=cxOWnqfM0BEpZA5/yBg4d/1EjzCfLFO2qTQEb9vLL50gv4ZwKoX8vE3hArW9VyhGnjtAInNrs6W07xSbEjlPDBfpajqpPxp3Rjw06oJvU8QtpuAmq8+Jf9NiZBlTbReDVPnPekDw7eN+lESgXlN+2jhqDd+kO0IzTIR0RV6iXQQ=
+	t=1733254976; cv=none; b=OPL92tdGcji2++F0D3mf+sCTP7fvXri8GXO2p3Vt/MM44Xd8lGNWTi9dzrb7NLz5yHWUUplJruthV6xJFfE4cOiq807fJ/e4P5L+PvHYh6cLRdrL0raya+sRkvO8QUNz2uWd+vKTuN/sc4WFQPGbuVewrBXgNMdgITMcSfVi2So=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733254569; c=relaxed/simple;
-	bh=wFSaemFvuGcgSlHagL7sx6SZgmpqWoAgDeGFJAVoAuQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=G+Os9uUyfVPytQ2jHOvAmlhNZz+a7qzpwnHGGkaqA6b2GwzHRK4PX4hdDJ0F6cGb29Q//08t1Nrd6qQBj9sBgdvB+3OVsYmXgRjQYHVvxOLBMaBaNs+iAkqKCY48KwNlU5CFHvI4NKZs5bjydDjsDw272U64Pk0SURDuRq4Ema4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 45573FEC;
-	Tue,  3 Dec 2024 11:36:33 -0800 (PST)
-Received: from pluto.guest.local (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3CC2A3F58B;
-	Tue,  3 Dec 2024 11:36:04 -0800 (PST)
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	arm-scmi@vger.kernel.org
-Cc: sudeep.holla@arm.com,
-	Cristian Marussi <cristian.marussi@arm.com>
-Subject: [PATCH] firmware: arm_scmi: Allow transport properties for multiple instances
-Date: Tue,  3 Dec 2024 19:35:44 +0000
-Message-ID: <20241203193544.3895173-1-cristian.marussi@arm.com>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1733254976; c=relaxed/simple;
+	bh=XPvrZGB6rFhA//poGTIcqJOfXf+IxPuK8vN2qtrT8FY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=KdjrV2sqnjGljNPH3/5uVbOBoSTxN3npaSptjO9l1nm1Q0JHDY+IyWgFDcbmqd0L4yWI2WAXUe+Sq63g0mfwNy5YB7egC5SD0/OR+5fyM+nEBjht2nhrE8oxxq5ARl7aMEY8m+516x9PfcInaW0OD6dgkp6ilj7wsRbyXQRoD5w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=YAJe7iUt; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B3Gi0Mu027853;
+	Tue, 3 Dec 2024 19:42:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	9EPMgjVNLChb8n92Kc2ub47qgMBtVTWQlZoZbDBRsJs=; b=YAJe7iUtIyJ/+L2f
+	tjUYspVQTeKXRpZMXI6qVoJGQdOCn8CigFsag6A4bjGhneu05KggD7zNiSqpLnpc
+	Wt2J5JSEWgQ/JJ4gpv0NfRDkYQ6lxSCq6lIasYucfdwxQBjfS9LkzQkUvkugf5e3
+	5Q3+qsnd5iVz/6nUUxazTd0J/mAovvtvFtZXez5GvdkoEBVwKfocIAwgqnEtfre2
+	3eE1aATImGoVhMqsl1ywtcvVl/qyMtmCGio7WzAmJUq+s/N2wwNJBt1RnH2aILPE
+	//KGLEvRnxPRWVAC3cZzKm6eFd8zVCAE+DqQtSofdoxKWBul6rxnxtPTfcWlO23R
+	tJ9Kuw==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 439vcej41h-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 03 Dec 2024 19:42:44 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B3JgiIA008499
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 3 Dec 2024 19:42:44 GMT
+Received: from [10.134.71.247] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 3 Dec 2024
+ 11:42:43 -0800
+Message-ID: <f8bb9597-c5b3-4dbf-a65e-7bd17cd3ffc5@quicinc.com>
+Date: Tue, 3 Dec 2024 11:42:42 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/3] drm/msm/dp: Fix and utilize TPG with a debugfs
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        "Marijn
+ Suijten" <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Stephen Boyd <swboyd@chromium.org>,
+        "Kuogee
+ Hsieh" <quic_khsieh@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        Jessica Zhang <quic_jesszhan@quicinc.com>
+References: <20241202-tpg-v1-0-0fd6b518b914@quicinc.com>
+ <lpkhftx62hbnrftzoy6zprhvir7dffz5ynwo3kr5j5obc3dcle@73ljnmpdt7ts>
+Content-Language: en-US
+From: Abhinav Kumar <quic_abhinavk@quicinc.com>
+In-Reply-To: <lpkhftx62hbnrftzoy6zprhvir7dffz5ynwo3kr5j5obc3dcle@73ljnmpdt7ts>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: uWTxjPu4I4L3dZ9LsX6b3pNVeN4PKqB9
+X-Proofpoint-ORIG-GUID: uWTxjPu4I4L3dZ9LsX6b3pNVeN4PKqB9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ bulkscore=0 mlxlogscore=832 adultscore=0 suspectscore=0 spamscore=0
+ impostorscore=0 phishscore=0 mlxscore=0 malwarescore=0 clxscore=1015
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412030163
 
-Default SCMI transport properties values can be overridden with devicetree
-provided descriptors; in order to support multiple SCMI instances, make the
-properties-update happen on a per-instance copy of the original transport
-descriptor.
 
-Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
----
- drivers/firmware/arm_scmi/common.h |  4 ++--
- drivers/firmware/arm_scmi/driver.c | 18 +++++++++---------
- 2 files changed, 11 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/firmware/arm_scmi/common.h b/drivers/firmware/arm_scmi/common.h
-index 48b12f81141d..10ea7962323e 100644
---- a/drivers/firmware/arm_scmi/common.h
-+++ b/drivers/firmware/arm_scmi/common.h
-@@ -442,7 +442,7 @@ struct scmi_transport_core_operations {
-  */
- struct scmi_transport {
- 	struct device *supplier;
--	struct scmi_desc *desc;
-+	struct scmi_desc desc;
- 	struct scmi_transport_core_operations **core_ops;
- };
- 
-@@ -468,7 +468,7 @@ static int __tag##_probe(struct platform_device *pdev)			       \
- 	device_set_of_node_from_dev(&spdev->dev, dev);			       \
- 									       \
- 	strans.supplier = dev;						       \
--	strans.desc = &(__desc);					       \
-+	memcpy(&strans.desc, &(__desc), sizeof(strans.desc));		       \
- 	strans.core_ops = &(__core_ops);				       \
- 									       \
- 	ret = platform_device_add_data(spdev, &strans, sizeof(strans));	       \
-diff --git a/drivers/firmware/arm_scmi/driver.c b/drivers/firmware/arm_scmi/driver.c
-index 1b5fb2c4ce86..eeed1689b208 100644
---- a/drivers/firmware/arm_scmi/driver.c
-+++ b/drivers/firmware/arm_scmi/driver.c
-@@ -3028,7 +3028,7 @@ static const struct scmi_desc *scmi_transport_setup(struct device *dev)
- 	int ret;
- 
- 	trans = dev_get_platdata(dev);
--	if (!trans || !trans->desc || !trans->supplier || !trans->core_ops)
-+	if (!trans || !trans->supplier || !trans->core_ops)
- 		return NULL;
- 
- 	if (!device_link_add(dev, trans->supplier, DL_FLAG_AUTOREMOVE_CONSUMER)) {
-@@ -3043,33 +3043,33 @@ static const struct scmi_desc *scmi_transport_setup(struct device *dev)
- 	dev_info(dev, "Using %s\n", dev_driver_string(trans->supplier));
- 
- 	ret = of_property_read_u32(dev->of_node, "arm,max-rx-timeout-ms",
--				   &trans->desc->max_rx_timeout_ms);
-+				   &trans->desc.max_rx_timeout_ms);
- 	if (ret && ret != -EINVAL)
- 		dev_err(dev, "Malformed arm,max-rx-timeout-ms DT property.\n");
- 
- 	ret = of_property_read_u32(dev->of_node, "arm,max-msg-size",
--				   &trans->desc->max_msg_size);
-+				   &trans->desc.max_msg_size);
- 	if (ret && ret != -EINVAL)
- 		dev_err(dev, "Malformed arm,max-msg-size DT property.\n");
- 
- 	ret = of_property_read_u32(dev->of_node, "arm,max-msg",
--				   &trans->desc->max_msg);
-+				   &trans->desc.max_msg);
- 	if (ret && ret != -EINVAL)
- 		dev_err(dev, "Malformed arm,max-msg DT property.\n");
- 
- 	dev_info(dev,
- 		 "SCMI max-rx-timeout: %dms / max-msg-size: %dbytes / max-msg: %d\n",
--		 trans->desc->max_rx_timeout_ms, trans->desc->max_msg_size,
--		 trans->desc->max_msg);
-+		 trans->desc.max_rx_timeout_ms, trans->desc.max_msg_size,
-+		 trans->desc.max_msg);
- 
- 	/* System wide atomic threshold for atomic ops .. if any */
- 	if (!of_property_read_u32(dev->of_node, "atomic-threshold-us",
--				  &trans->desc->atomic_threshold))
-+				  &trans->desc.atomic_threshold))
- 		dev_info(dev,
- 			 "SCMI System wide atomic threshold set to %u us\n",
--			 trans->desc->atomic_threshold);
-+			 trans->desc.atomic_threshold);
- 
--	return trans->desc;
-+	return &trans->desc;
- }
- 
- static int scmi_probe(struct platform_device *pdev)
--- 
-2.47.0
+On 12/3/2024 6:31 AM, Dmitry Baryshkov wrote:
+> On Mon, Dec 02, 2024 at 12:41:57PM -0800, Abhinav Kumar wrote:
+>> DP Test Patten Generator is a very useful tool to debug issues such
+>> as blank screen or corruption seen on the DP monitor by isolating it
+>> to whether the corruption is coming from further upstream such as DPU
+>> OR from the DP controller and below. It was noted in [1] that this API
+>> is unused. Rather than dropping the API, it should be fixed and used.
+>>
+>> Hence, this series fixes the DP Test Patten Generator API and also utilizes
+>> it by adding a debugfs for it.
+>>
+>> [1] : https://patchwork.freedesktop.org/patch/623508/?series=141074&rev=1
+> 
+> I'd prefer for this to be rebased on top of [2]. The series has been
+> posted a month ago.
+> 
+> [2] https://patchwork.freedesktop.org/series/141074/
+> 
 
+Well, the review of that series which tried dropping the tpg led to this 
+one really.
+
+I will review that one within a couple of days. Lets first agree on that 
+series before deciding to rebase.
+
+>>
+>> To: Rob Clark <robdclark@gmail.com>
+>> To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>> To: Sean Paul <sean@poorly.run>
+>> To: Marijn Suijten <marijn.suijten@somainline.org>
+>> To: David Airlie <airlied@gmail.com>
+>> To: Simona Vetter <simona@ffwll.ch>
+>> To: Stephen Boyd <swboyd@chromium.org>
+>> To: Kuogee Hsieh <quic_khsieh@quicinc.com>
+>> Cc: linux-arm-msm@vger.kernel.org
+>> Cc: dri-devel@lists.freedesktop.org
+>> Cc: freedreno@lists.freedesktop.org
+>> Cc: linux-kernel@vger.kernel.org
+>> Cc: Jessica Zhang <quic_jesszhan@quicinc.com>
+>>
+>> Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+>> ---
+>> Abhinav Kumar (3):
+>>        drm/msm/dp: account for widebus in msm_dp_catalog_panel_tpg_enable()
+>>        drm/msm/dp: do not touch the MMSS_DP_INTF_CONFIG for tpg
+>>        drm/msm/dp: add a debugfs node for using tpg
+>>
+>>   drivers/gpu/drm/msm/dp/dp_catalog.c | 15 +++++++--
+>>   drivers/gpu/drm/msm/dp/dp_debug.c   | 61 +++++++++++++++++++++++++++++++++++++
+>>   drivers/gpu/drm/msm/dp/dp_panel.h   |  2 ++
+>>   3 files changed, 76 insertions(+), 2 deletions(-)
+>> ---
+>> base-commit: 798bb342e0416d846cf67f4725a3428f39bfb96b
+>> change-id: 20241202-tpg-3f7543c036ac
+>>
+>> Best regards,
+>> -- 
+>> Abhinav Kumar <quic_abhinavk@quicinc.com>
+>>
+> 
 
