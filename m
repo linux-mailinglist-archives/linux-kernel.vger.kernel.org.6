@@ -1,44 +1,47 @@
-Return-Path: <linux-kernel+bounces-428847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E31A49E1422
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 08:29:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95F279E1427
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 08:30:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A828B285556
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 07:29:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5764D2857D4
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 07:29:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F22961BF81B;
-	Tue,  3 Dec 2024 07:24:42 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B40D1D517B;
+	Tue,  3 Dec 2024 07:25:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oKfUSdsB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0B7B18B494;
-	Tue,  3 Dec 2024 07:24:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95C4418FC90;
+	Tue,  3 Dec 2024 07:25:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733210682; cv=none; b=FNjwy6YFx3yqIGqdTSWy+rsPtkfbQ7/mmLP2Slyx+byMbUynkX6VEB10oPqJKV3+4sVEMgD7Ew5kfYcur8AV5ZHXDUM4f9yx1DxY75UsYAEY4cGAdovQAtw1BXDCq66F6HMqZ5q8No+Oy0piF2KP5Vysll/FQKngO5dOhf6sE8U=
+	t=1733210746; cv=none; b=LvCzCh7lVKue59ZM4RR5ANCsgozPkkVSOtizdN/cHrjlq/id/tMlBJlL+0tEVpvQLI8OUkBZQDPs3evAbSwS85WwqAyEBYehQina7LtCNNS8oyuuLgpyRc/11o2VhWnrrhAr637FtMO2DJG3GMoPIARu2tnReIa+ww6pX/7aIWY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733210682; c=relaxed/simple;
-	bh=wZDhPDXNvUjoFpCisQxrnEojAHLpQWqiRYE+KJYhNYE=;
+	s=arc-20240116; t=1733210746; c=relaxed/simple;
+	bh=Dowwf5vOCbH6Ot1zhsb+tcWHaPLxDB1jAvKz9HFlY4w=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VXUD5FqkVYoME4Jc436SyIapFGXnodx3mFdADuiKKnEbG7L3NyX7X+8e68u5y4Eu0XS0M5/uU1i5EzVQiABp3/jn0s9t0s/bd7/myb6ExP1Mc7dW+qcpZELdDcejxmHORBr0CauIwJL6jQyXaUpPc8vaOVFMCGbRBjFBYkehr+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Y2XG01Xs4z4f3lVb;
-	Tue,  3 Dec 2024 15:24:08 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 2A8031A0359;
-	Tue,  3 Dec 2024 15:24:28 +0800 (CST)
-Received: from [10.174.179.80] (unknown [10.174.179.80])
-	by APP4 (Coremail) with SMTP id gCh0CgCHY4cqsk5ne0saDg--.52485S3;
-	Tue, 03 Dec 2024 15:24:27 +0800 (CST)
-Message-ID: <ab380b0c-9a9b-4f16-a427-7fef8a2ef212@huaweicloud.com>
-Date: Tue, 3 Dec 2024 15:24:26 +0800
+	 In-Reply-To:Content-Type; b=Wc3HNIjspQstTWYFHk+hE1bG3XkUu9gpcZwu32kRZ8UrqbgY+Apsd5FSDZOHdC/ZV70sMk6hnbuKHiBs8wtAa+nrGlA1N/yXXhfVzZ4SrxauF4W90pEVEZDTDRFAD5h3eqv8AShegf0MLPU4S+jt+xQVvCfPHnKQNxE157qo2cM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oKfUSdsB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA524C4CECF;
+	Tue,  3 Dec 2024 07:25:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733210746;
+	bh=Dowwf5vOCbH6Ot1zhsb+tcWHaPLxDB1jAvKz9HFlY4w=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=oKfUSdsBIJwlO6rUdfy6UFCBfTvSJmL/AhzIRHJQpr9YRCJp1kdT4SUuujrHGgfl+
+	 4tNS5JWFvcPNuLraiIuGAqPQOMkYfH624sC4A5fm/I5VC/23cpztI0Y3QGeKQ1hR4b
+	 rYYLPaRuquO6GPkNhWe4kDXn1PIYIcEj1sPzQ+YWL8eSFjA8D4wU8Q9pRlhZOtUo/B
+	 9F+GKEfpDP1zycQ2TiOnoLIhr+UNHw/7V6DYPsLpmGe50LfUQsNvCx1e4zxQWRM6Cp
+	 O1OfolnUfu5AwKFl6Le4czkOInYHXNVvI6cF8q5weXjcyyH/5J5iq89iedwUShzMRl
+	 A+d+MsMQR54AQ==
+Message-ID: <1b5ebd38-1f2c-42fe-b863-e93916252e8c@kernel.org>
+Date: Tue, 3 Dec 2024 08:25:37 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -46,87 +49,121 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] jbd2: flush filesystem device before updating tail
- sequence
-To: Kemeng Shi <shikemeng@huaweicloud.com>, linux-ext4@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- tytso@mit.edu, adilger.kernel@dilger.ca, jack@suse.cz, yi.zhang@huawei.com,
- chengzhihao1@huawei.com, yukuai3@huawei.com, yangerkun@huawei.com
-References: <20241203014407.805916-1-yi.zhang@huaweicloud.com>
- <20241203014407.805916-3-yi.zhang@huaweicloud.com>
- <ca1c680f-f3f4-40b5-13af-f8ee49d99dae@huaweicloud.com>
+Subject: Re: [PATCH v3 1/5] ASoC: dt-bindings: Add bindings for wcd937x static
+ channel mapping
+To: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
+Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+ Bard Liao <yung-chuan.liao@linux.intel.com>, Jaroslav Kysela
+ <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+ Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
+ Sanyog Kale <sanyog.r.kale@intel.com>, linux-arm-msm@vger.kernel.org,
+ linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, quic_rohkumar@quicinc.com, kernel@quicinc.com
+References: <20241126164300.3305903-1-quic_mohs@quicinc.com>
+ <20241126164300.3305903-2-quic_mohs@quicinc.com>
+ <br4vo2iygjc6p5zezss6wccuakodthej4cut3cpw76ltxyxkpb@pjalqvpszxvo>
+ <ab9d5e1c-ffb6-88df-80e6-243bfae8cf59@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-In-Reply-To: <ca1c680f-f3f4-40b5-13af-f8ee49d99dae@huaweicloud.com>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <ab9d5e1c-ffb6-88df-80e6-243bfae8cf59@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:gCh0CgCHY4cqsk5ne0saDg--.52485S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7uF13Zr47Gw4DWw47Aw43Jrb_yoW8Zw45pF
-	y8Ca4jyrWkZF4UCFn7tF48XFW7XFWqya48WFyDCrnagw4qqwn3KFW3trySgr1jyr1F9w48
-	Xr4Iqa4qg34jyaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvK14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4U
-	JVW0owA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kI
-	c2xKxwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbV
-	WUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF
-	67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42
-	IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF
-	0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxh
-	VjvjDU0xZFpf9x0JUd-B_UUUUU=
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-On 2024/12/3 14:53, Kemeng Shi wrote:
+On 03/12/2024 05:52, Mohammad Rafi Shaik wrote:
+> On 11/27/2024 1:35 PM, Krzysztof Kozlowski wrote:
+>> On Tue, Nov 26, 2024 at 10:12:56PM +0530, Mohammad Rafi Shaik wrote:
+>>> Add wcd937x static channel mapping values to avoid
+>>> having to use unclear number indices in device trees.
+>>>
+>>> Signed-off-by: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
+>>> ---
+>>>   include/dt-bindings/sound/qcom,wcd93xx.h | 13 +++++++++++++
+>>>   1 file changed, 13 insertions(+)
+>>>   create mode 100644 include/dt-bindings/sound/qcom,wcd93xx.h
+>>>
+>>> diff --git a/include/dt-bindings/sound/qcom,wcd93xx.h b/include/dt-bindings/sound/qcom,wcd93xx.h
+>>> new file mode 100644
+>>> index 000000000000..45bcc30d0393
+>>> --- /dev/null
+>>> +++ b/include/dt-bindings/sound/qcom,wcd93xx.h
+>>
+>> Filename matching compatible, always.
+>>
+>>> @@ -0,0 +1,13 @@
+>>> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>>> + * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
+>>> + */
+>>> +
+>>> +#ifndef __DT_SOUND_QCOM_WCD93xx_H
+>>> +#define __DT_SOUND_QCOM_WCD93xx_H
+>>> +
+>>> +#define SWRM_CH1 1
+>>> +#define SWRM_CH2 2
+>>> +#define SWRM_CH3 4
+>>> +#define SWRM_CH4 8
+>>
+>> Bindings define interface between driver and DTS. The values are
+>> abstract, so alwys start from 0 or 1 and are incremented by 1, not by
+>> power of 2. Also missing some sort of prefix, w.g. WCD9390_xxx
+>>
+>> Anyway, this does not look like binding.
+>>
 > 
+> Ack,
 > 
-> on 12/3/2024 9:44 AM, Zhang Yi wrote:
->> From: Zhang Yi <yi.zhang@huawei.com>
->>
->> When committing transaction in jbd2_journal_commit_transaction(), the
->> disk caches for the filesystem device should be flushed before updating
->> the journal tail sequence. However, this step is missed if the journal
->> is not located on the filesystem device. As a result, the filesystem may
->> become inconsistent following a power failure or system crash. Fix it by
->> ensuring that the filesystem device is flushed appropriately.
->>
->> Fixes: 3339578f0578 ("jbd2: cleanup journal tail after transaction commit")
->> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
->> ---
->>  fs/jbd2/commit.c | 4 ++--
->>  1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/fs/jbd2/commit.c b/fs/jbd2/commit.c
->> index 4305a1ac808a..f95cf272a1b5 100644
->> --- a/fs/jbd2/commit.c
->> +++ b/fs/jbd2/commit.c
->> @@ -776,9 +776,9 @@ void jbd2_journal_commit_transaction(journal_t *journal)
->>  	/*
->>  	 * If the journal is not located on the file system device,
->>  	 * then we must flush the file system device before we issue
->> -	 * the commit record
->> +	 * the commit record and update the journal tail sequence.
->>  	 */
->> -	if (commit_transaction->t_need_data_flush &&
->> +	if ((commit_transaction->t_need_data_flush || update_tail) &&
->>  	    (journal->j_fs_dev != journal->j_dev) &&
->>  	    (journal->j_flags & JBD2_BARRIER))
->>  		blkdev_issue_flush(journal->j_fs_dev);
->>
-> In journal_submit_commit_record(), we will submit commit block with REQ_PREFLUSH
-> which is supposed to ensure disk cache is flushed before writing commit block.
-> So I think the current code is fine.
-> Please correct me if I miss anything.
-> 
+> Will add the Prefix WCD9370_SWRM_CH1,
 
-The commit I/O with REQ_PREFLUSH only flushes 'journal->j_dev', not
-'journal->j_fs_dev'. We need to flush journal->j_fs_dev to ensure that all
-written metadata has been persisted to the filesystem disk, Until then, we
-cannot update the tail sequence.
 
-Thanks,
-Yi.
+No, this is not a binding, so drop. You skipped my entire reply
+explaining why this is not a binding.
 
+
+Best regards,
+Krzysztof
 
