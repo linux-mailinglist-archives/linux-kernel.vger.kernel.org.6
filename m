@@ -1,133 +1,126 @@
-Return-Path: <linux-kernel+bounces-428801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0F909E13B3
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 08:00:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 824979E13B6
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 08:00:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5FA42828E4
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 06:59:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48CCC282CDA
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 07:00:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81074189913;
-	Tue,  3 Dec 2024 06:59:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5CB118A6D7;
+	Tue,  3 Dec 2024 06:59:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RJrpAiXo"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CpUpWXlF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF6E3188701
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 06:59:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2401B189BB1;
+	Tue,  3 Dec 2024 06:59:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733209196; cv=none; b=rVtFsklIV3CzaK9cNDiMl9fyBIwbYOGrM9iUYuZps81pzhm+r30AnFA2ERBGzoRvR854hYvJfyqYFpjH4CbgINFR/+ulxbzj2aNMa/KCD+r6hWTbVhvt0u/l68hO4FIZV0iJPkqihmaFYouBYOptbgRyEHhoGPkH91Zeh0GnVJs=
+	t=1733209197; cv=none; b=LN2u3ejOwQNhKIuMvMosiiAtxzOxjoguXnaW9FUeDaThdOt0EfL//n0qtRip9uBQwmVzu1+MsZZBP6dNI/p8sLsZ5IYvCqPt31jQOFVZ+o7XABZUQDLTEUMS9e2RE/n1VutH9jCqHcgBOxsK37fivzPDcjHOt4xxkeL0sjhw97U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733209196; c=relaxed/simple;
-	bh=feEAa6key/8aqdzoio/EDcscGiwPJYH+RH753Faj3gU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=amZaZjcz+9EHteZI/Ew695MtfvnDd0F37VWS5x9qbqLUUGBoQ4lG8MqzmbVfJV0elDkEdhgd+x4wEKQUhaAUzgVcvxbSa00oRrAgQZ+6bQvmUQ59gtSmDiPtc7V3pOgK2l4Bb98uEkTyU219qHi3O7+5XSJNMwh00OkHxpH8cAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RJrpAiXo; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733209194; x=1764745194;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=feEAa6key/8aqdzoio/EDcscGiwPJYH+RH753Faj3gU=;
-  b=RJrpAiXo4SDpGHhJk0884Vqe7AnbP40ClH/bxgRX/8ZdPUshUMwTKm1G
-   Nn74W3qr9d6xRh6x8OIcS4logbPpoUtD1NbBeSUm/3yDX80GUHdEruxhF
-   diPm7i1q0ixEHuPqlenBvAxWRblG4Ba2jXcC90rhLqwedv84f30T6mjnY
-   V5UBbc6/5mGNyTXYEvbBJtrBGgaj/Wrr6GbiZG4+ZN8RXbf8YNtoUHJD+
-   b9Cxia8j97Uud67X+gl56jz0BoJ3+ooaE1gkB/FXhI3qkQzRTmK+Eb58a
-   qh5YRRy/OYD/+2R+ocAxCNQaKfk5M3zq3yhR1KqRLFvMCVmzDjYfidX9G
-   Q==;
-X-CSE-ConnectionGUID: t94WhieWRhq5LvgyJswksA==
-X-CSE-MsgGUID: TU7+AzWSQeqFTOQp4mrM4w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11274"; a="33537215"
-X-IronPort-AV: E=Sophos;i="6.12,204,1728975600"; 
-   d="scan'208";a="33537215"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Dec 2024 22:59:53 -0800
-X-CSE-ConnectionGUID: 9l5vDfyMRT6hdCL1KNkioQ==
-X-CSE-MsgGUID: pUmx+9hFQ6ivFjojGG0plA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,204,1728975600"; 
-   d="scan'208";a="93747604"
-Received: from lkp-server01.sh.intel.com (HELO 388c121a226b) ([10.239.97.150])
-  by orviesa007.jf.intel.com with ESMTP; 02 Dec 2024 22:59:52 -0800
-Received: from kbuild by 388c121a226b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tIMsv-0000Fi-2C;
-	Tue, 03 Dec 2024 06:59:49 +0000
-Date: Tue, 3 Dec 2024 14:58:52 +0800
-From: kernel test robot <lkp@intel.com>
-To: Rajat Khandelwal <rajat.khandelwal@linux.intel.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Subject: drivers/usb/typec/mux/intel_pmc_mux.c:664:43: warning: '%d'
- directive output may be truncated writing between 1 and 3 bytes into a
- region of size 2
-Message-ID: <202412031437.vX580pxx-lkp@intel.com>
+	s=arc-20240116; t=1733209197; c=relaxed/simple;
+	bh=fxLpxJ49/62muxJi+PRy6L5Q1LtrGMaZmRWd0CXi+5Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=oVQ828BWWAh7yh7mSWlMZqDNQDAeIn03SHPQHkOBKaQ1gABt90aTfl58DZ312aycdxFXZW6AIDX9cRWZwpenILtmPFI2XuKRlWJ5DSCAkI0TZvzz9Qgpu+pzhlGXMSM5+QlzDdiKB/6Uinv0DFqF+hO+TsEbKaUFr8xSlay0lSg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CpUpWXlF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7E6FC4CECF;
+	Tue,  3 Dec 2024 06:59:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733209196;
+	bh=fxLpxJ49/62muxJi+PRy6L5Q1LtrGMaZmRWd0CXi+5Q=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=CpUpWXlFzjEgxgq2nKhD+oiOXshkmThD3+1a2HZ21yDtBg2zIqfMHuWCmP4Eq8/aq
+	 J7VBn/+sVgF2IUg5YyEovPGzdqj+SPGZhvUA6t56iBQMrywFbT39DfvcH2lZOI/VKB
+	 QDwdRZE5YdNAVqD2azLu7XYKEbnoc2QwhjDesESgwQz1/9rvjME93Y0NcKaRSB4NSZ
+	 mg/RpwHeMZJ64EuzTwgGt7DqS8V22C5r6ptHX3h7K3bmANKtJkEix2zAf2RFfDD6zk
+	 ccoiYhPhcSa3k6V0emWHejnjDNcTHBFh26xQ/q3nFkBWYoJOd+pDlh6DcRWcZVzf6A
+	 ZgqBtIwTvfZyQ==
+Date: Tue, 3 Dec 2024 07:59:51 +0100
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Thorsten Leemhuis <linux@leemhuis.info>
+Cc: Jonathan Corbet <corbet@lwn.net>, workflows@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Laurent Pinchart
+ <laurent.pinchart@ideasonboard.com>, Simona Vetter
+ <simona.vetter@ffwll.ch>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH v3 DONOTMERGE] docs: clarify rules wrt tagging other
+ people
+Message-ID: <20241203075951.3a7021ec@foz.lan>
+In-Reply-To: <bd47620e-d2bd-48f5-8e40-555d6ddf921e@leemhuis.info>
+References: <c29ef5fa12e37c3a289e46d4442b069af94e5b05.1733127212.git.linux@leemhuis.info>
+	<20241202092857.7d197995@foz.lan>
+	<20241202110210.5e56d69e@foz.lan>
+	<d8cae2d3-d855-404b-8991-f81c979486ce@leemhuis.info>
+	<20241202154528.7949e7cb@foz.lan>
+	<6f1bbdf3-22df-415c-b017-de1cf81af57e@leemhuis.info>
+	<20241202171734.2874a9a3@foz.lan>
+	<bd47620e-d2bd-48f5-8e40-555d6ddf921e@leemhuis.info>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Rajat,
+Em Tue, 3 Dec 2024 07:25:43 +0100
+Thorsten Leemhuis <linux@leemhuis.info> escreveu:
 
-FYI, the error/warning still remains.
+> On 02.12.24 17:17, Mauro Carvalho Chehab wrote:
+> > Em Mon, 2 Dec 2024 16:54:49 +0100
+> > Thorsten Leemhuis <linux@leemhuis.info> escreveu:  
+> >> On 02.12.24 15:45, Mauro Carvalho Chehab wrote:  
+> >>> Em Mon, 2 Dec 2024 14:54:56 +0100
+> >>> Thorsten Leemhuis <linux@leemhuis.info> escreveu:  
+> >>>> On 02.12.24 11:02, Mauro Carvalho Chehab wrote:    
+> >>>>> Em Mon, 2 Dec 2024 09:28:57 +0100
+> >>>>> Mauro Carvalho Chehab <mchehab+huawei@kernel.org> escreveu:  
+> >>>>>>> +Tagging people requires permission
+> >>>>>>> +----------------------------------
+> >>>>>>> +
+> >>>>>>> +Be careful in the addition of tags to your patches, as all except for Cc:,
+> >>>>>>> +Reported-by:, and Suggested-by: need explicit permission of the person named.  
+> >>>>>
+> >>>>> Hmm... There is another tag that we use without requiring explicit permissions:
+> >>>>>
+> >>>>> 	Requested-by:
+> >>>>>
+> >>>>> There are currently 376 occurrences on 6.13-rc1.
+> >>>>>
+> >>>>> This is used when a maintainer or reviewer publicly requests some changes to
+> >>>>> be added on a patch series.      
+> >>> [...]
+> >>> You're basically requesting explicit permission for any "non-official"
+> >>> tags as well, including reviewed-by. This is not what it is wanted here.    
+> >>
+> >> I could easily use a slightly modified phrase like "...as all
+> >> mentioned above except...".  
+> > 
+> > It seems a lot better to me.  
+> 
+> I went with this a slightly different variant for readability:
+> 
+> Be careful in the addition of the aforementioned tags to your patches,
+> as all except for Cc:, Reported-by:, and Suggested-by: need explicit
+> permission of the person named.
+> 
+> Hope that's okay. If I don't hear anything, I'll assume your earlier
+> Reviewed-by: is still valid.
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   cdd30ebb1b9f36159d66f088b61aee264e649d7a
-commit: 0a453dc9f260281e3a063e07b526a7e494e496fe usb: typec: intel_pmc_mux: Expose IOM port status to debugfs
-date:   1 year, 6 months ago
-config: x86_64-buildonly-randconfig-002-20240106 (https://download.01.org/0day-ci/archive/20241203/202412031437.vX580pxx-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241203/202412031437.vX580pxx-lkp@intel.com/reproduce)
+It is. Just in case:
+Reviewed-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202412031437.vX580pxx-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   drivers/usb/typec/mux/intel_pmc_mux.c: In function 'pmc_usb_probe':
->> drivers/usb/typec/mux/intel_pmc_mux.c:664:43: warning: '%d' directive output may be truncated writing between 1 and 3 bytes into a region of size 2 [-Wformat-truncation=]
-     664 |         snprintf(name, sizeof(name), "port%d", port->usb3_port - 1);
-         |                                           ^~
-   In function 'pmc_mux_port_debugfs_init',
-       inlined from 'pmc_usb_probe' at drivers/usb/typec/mux/intel_pmc_mux.c:723:3:
-   drivers/usb/typec/mux/intel_pmc_mux.c:664:38: note: directive argument in the range [-1, 254]
-     664 |         snprintf(name, sizeof(name), "port%d", port->usb3_port - 1);
-         |                                      ^~~~~~~~
-   drivers/usb/typec/mux/intel_pmc_mux.c:664:9: note: 'snprintf' output between 6 and 8 bytes into a destination of size 6
-     664 |         snprintf(name, sizeof(name), "port%d", port->usb3_port - 1);
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> 
+> Ciao, Thorsten
 
 
-vim +664 drivers/usb/typec/mux/intel_pmc_mux.c
 
-   658	
-   659	static void pmc_mux_port_debugfs_init(struct pmc_usb_port *port)
-   660	{
-   661		struct dentry *debugfs_dir;
-   662		char name[6];
-   663	
- > 664		snprintf(name, sizeof(name), "port%d", port->usb3_port - 1);
-   665	
-   666		debugfs_dir = debugfs_create_dir(name, port->pmc->dentry);
-   667		debugfs_create_file("iom_status", 0400, debugfs_dir, port,
-   668				    &port_iom_status_fops);
-   669	}
-   670	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Thanks,
+Mauro
 
