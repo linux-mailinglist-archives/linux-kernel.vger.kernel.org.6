@@ -1,51 +1,50 @@
-Return-Path: <linux-kernel+bounces-429698-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429700-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F7A59E2074
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 15:58:28 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 612DA9E2085
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 15:59:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A246165F9D
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 14:57:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD7D116831B
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 14:58:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEDC31F7590;
-	Tue,  3 Dec 2024 14:57:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 346DB1F6698;
+	Tue,  3 Dec 2024 14:58:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="WJoHxyHP"
-Received: from pv50p00im-zteg10011501.me.com (pv50p00im-zteg10011501.me.com [17.58.6.42])
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="P+t19iLL"
+Received: from smtpout.efficios.com (smtpout.efficios.com [158.69.130.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C5921F4709
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 14:57:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 377461F7094
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 14:58:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=158.69.130.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733237855; cv=none; b=dllwoB5M2pTbEZk3OUB01qFDGeGbuUv7PTlq9zwoBiyd6VHyvCN9PmJai09/Qa/BXN2nR3O6tzMfUDTyHUBHs0+k0xxDYgngJjpJ1iSwP8lZGpJ+rhCg+RrC4bjmIkJuaWBUYSvwiBXT5b1/rvrRiHUrR4qFER7PByUJAcaT9Ps=
+	t=1733237887; cv=none; b=SuTNTNo0kA8FS+vWMPqKU5MgWPokEtF8Tp5l1NbUsjDk+b895GPCUkIuBGCHrjs+wOlmi8z7KF/qR+O+bUbdgKQvEv1K/Gq/qtUFG/vcMU+5uyeLzXYKff3qVUmPBCTKawcc+TeDSRNgBuz3sdnu6vPsJ68Kgx0l6yL68FMwTWc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733237855; c=relaxed/simple;
-	bh=I1QE9YqXRd/95EuZ6shU92lVYpx6jSwp7U8UdDQ+eqY=;
+	s=arc-20240116; t=1733237887; c=relaxed/simple;
+	bh=4cjEyZE6HVGSeimBj6FLHI+LLqiVp5XwxzP/YEyqIW8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=A3X1y+hgAQJw9iepjAu/FOidBLXRzIVP6O+jR7ZmkVaddNBMrVu4CqoxueEq60ms2ftXHxvpl7o3RzgBWMIftJNESt6IF7oPK8UVJrbGf2N/2PG9/bh9ckWvQAZy4X0B0wkmx1E6h0bgRnx25yX427CZBOULFu5VyzaNUT4g9lU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=WJoHxyHP; arc=none smtp.client-ip=17.58.6.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-	s=1a1hai; t=1733237853;
-	bh=zPP2M6RHoQlxRDoHnjCsF/MyKgy2Hv/oTH6yXikXqgI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:
-	 x-icloud-hme;
-	b=WJoHxyHPQic0UPYroDs8nCEAWsZm40sH8RhZy74XvLp/u3uVoK8y0NcRam0ip/lrx
-	 bXSlxO0ATLyoBoLBgb1HPjJ6VzOkweGc3d49hUpXLFFHcJz2ky04rRviy7vj4V1Uv0
-	 UrP8xtrDy605sSzzXJfwV92hCnmVSa/In2c5FK+QwsvdkOzwtlVoKR8MfrPuM+OkJ3
-	 kTV9qWoS0uz7z4phORc7Uz1s0gw2Ayri2PFJ13eQLHgrebkECU60pYLHuubiEEJ1y+
-	 pdLr+ixZhVq84c1mKgl9tDNm6hKdk1MRV7Fp8S0cKzjfCmv+0IlvKjaoM5N1+JgTTH
-	 Pur3pBzgfGODA==
-Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
-	by pv50p00im-zteg10011501.me.com (Postfix) with ESMTPSA id 367E14A0413;
-	Tue,  3 Dec 2024 14:56:59 +0000 (UTC)
-Message-ID: <f5ea7e17-5550-4658-8f4c-1c51827c7627@icloud.com>
-Date: Tue, 3 Dec 2024 22:56:54 +0800
+	 In-Reply-To:Content-Type; b=ddIJOPXgRjHrP8qT9dlXN79TpBtFpLIfvFSTIdlyHLeKHGGCDl8C1OhxEHPtkoGtUZFpoLY1G+K5B8IrLlQ0ljaCBuPAYS/5k1dUShXZLlAlLdHHtO3khI4ddDlavyziZHO5TFnk+VMTFI9hcR+E5gDy7qfiKhIfUAQE8i5hHyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=P+t19iLL; arc=none smtp.client-ip=158.69.130.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
+	s=smtpout1; t=1733237876;
+	bh=4cjEyZE6HVGSeimBj6FLHI+LLqiVp5XwxzP/YEyqIW8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=P+t19iLL72hDOrPHeyxh7syweP2E1xdh8/ANKVlXRYRvGO9pbypQBn/wQLfW9pnjd
+	 twCiKbXbvhyBpTjodZTBCvIQqyYC8h8KvY22XVi2TmYHOKpDOimw0nbGIYefr6yRe+
+	 Uc7o5hqhLU6HOISB4OWVJF7pkDQFzg/7nBjx4S4RaBw4PikuW9VzQPkABdHDJjiWaC
+	 f4QE9EPZrlkGzKWowfWRRGMiGGsjxnRAIbxdvzbSDMPPkmlSxn/6EyRqsXgWBSJFTZ
+	 2YHVpbEu7y3icelPYDBKFRcJWmeNyjC+8uV036uRhfZcnMNFXDiWTMVWP86T0ZaYBV
+	 nZaspvdxmpAcw==
+Received: from [172.16.0.134] (96-127-217-162.qc.cable.ebox.net [96.127.217.162])
+	by smtpout.efficios.com (Postfix) with ESMTPSA id 4Y2kKc0ytVzVMN;
+	Tue,  3 Dec 2024 09:57:56 -0500 (EST)
+Message-ID: <5dcb4050-f0f3-43d6-b4b1-42fa305a0fba@efficios.com>
+Date: Tue, 3 Dec 2024 09:57:55 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,149 +52,222 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 00/32] driver core: Constify API device_find_child()
- and adapt for various existing usages
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas@t-8ch.de>,
- James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Chun-Kuang Hu <chunkuang.hu@kernel.org>,
- Philipp Zabel <p.zabel@pengutronix.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
- Martin Tuma <martin.tuma@digiteqautomotive.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Andreas Noever <andreas.noever@gmail.com>,
- Michael Jamet <michael.jamet@intel.com>,
- Mika Westerberg <mika.westerberg@linux.intel.com>,
- Yehezkel Bernat <YehezkelShB@gmail.com>,
- Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski
- <brgl@bgdev.pl>, Andrew Lunn <andrew@lunn.ch>,
- Vladimir Oltean <olteanv@gmail.com>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Simon Horman <horms@kernel.org>, Dan Williams <dan.j.williams@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>,
- Ira Weiny <ira.weiny@intel.com>, Takashi Sakamoto <o-takashi@sakamocchi.jp>,
- Jiri Slaby <jirislaby@kernel.org>,
- Heikki Krogerus <heikki.krogerus@linux.intel.com>,
- Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
- Lee Duncan <lduncan@suse.com>, Chris Leech <cleech@redhat.com>,
- Mike Christie <michael.christie@oracle.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>,
- Nilesh Javali <njavali@marvell.com>,
- Manish Rangankar <mrangankar@marvell.com>,
- GR-QLogic-Storage-Upstream@marvell.com, Davidlohr Bueso <dave@stgolabs.net>,
- Jonathan Cameron <jonathan.cameron@huawei.com>,
- Alison Schofield <alison.schofield@intel.com>,
- Andreas Larsson <andreas@gaisler.com>, Stuart Yoder <stuyoder@gmail.com>,
- Laurentiu Tudor <laurentiu.tudor@nxp.com>, Jens Axboe <axboe@kernel.dk>,
- Sudeep Holla <sudeep.holla@arm.com>,
- Cristian Marussi <cristian.marussi@arm.com>, Ard Biesheuvel
- <ardb@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, linux-hwmon@vger.kernel.org,
- linux-media@vger.kernel.org, linux-usb@vger.kernel.org,
- linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
- linux-pwm@vger.kernel.org, nvdimm@lists.linux.dev,
- linux1394-devel@lists.sourceforge.net, linux-serial@vger.kernel.org,
- linux-sound@vger.kernel.org, open-iscsi@googlegroups.com,
- linux-scsi@vger.kernel.org, linux-cxl@vger.kernel.org,
- sparclinux@vger.kernel.org, linux-block@vger.kernel.org,
- arm-scmi@vger.kernel.org, linux-efi@vger.kernel.org,
- linux-remoteproc@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>
-References: <20241203-const_dfc_done-v2-0-7436a98c497f@quicinc.com>
- <g32cigmktmj4egkq2tof27el2yss4liccfxgebkgqvkil32mlb@e3ta4ezv7y4m>
- <9d34bd6f-b120-428a-837b-5a5813e14618@icloud.com>
- <2024120320-manual-jockey-dfd1@gregkh>
- <b9885785-d4d4-4c72-b425-3dc552651d7e@icloud.com>
- <8eb7c0c54b280b8eb72f82032ede802c001ab087.camel@HansenPartnership.com>
- <8fb887a0-3634-4e07-9f0d-d8d7c72ca802@t-8ch.de>
+Subject: Re: [PATCH -tip] x86,mm: only trim the mm_cpumask once a second
+To: Rik van Riel <riel@surriel.com>, kernel test robot <oliver.sang@intel.com>
+Cc: oe-lkp@lists.linux.dev, lkp@intel.com, linux-kernel@vger.kernel.org,
+ x86@kernel.org, Ingo Molnar <mingo@kernel.org>,
+ Dave Hansen <dave.hansen@intel.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Peter Zijlstra <peterz@infradead.org>, Mel Gorman <mgorman@suse.de>
+References: <202411282207.6bd28eae-lkp@intel.com>
+ <20241202202213.26a79ed6@fangorn>
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 Content-Language: en-US
-From: Zijun Hu <zijun_hu@icloud.com>
-In-Reply-To: <8fb887a0-3634-4e07-9f0d-d8d7c72ca802@t-8ch.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-GUID: JxnDC87bqdECTEQWZZVsnICFx4KSLLiI
-X-Proofpoint-ORIG-GUID: JxnDC87bqdECTEQWZZVsnICFx4KSLLiI
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2024-12-03_04,2024-12-03_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 spamscore=0 mlxlogscore=999
- bulkscore=0 clxscore=1011 malwarescore=0 phishscore=0 suspectscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2308100000 definitions=main-2412030127
+In-Reply-To: <20241202202213.26a79ed6@fangorn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 2024/12/3 22:07, Thomas Weißschuh wrote:
-> On 2024-12-03 08:58:26-0500, James Bottomley wrote:
->> On Tue, 2024-12-03 at 21:02 +0800, Zijun Hu wrote:
->>> On 2024/12/3 20:41, Greg Kroah-Hartman wrote:
->>>> On Tue, Dec 03, 2024 at 08:23:45PM +0800, Zijun Hu wrote:
->> [...]
->>>>> or squash such patch series into a single patch ?
->>>>>
->>>>> various subsystem maintainers may not like squashing way.
->>>>
->>>> Agreed, so look into either doing it in a bisectable way if at all
->>>> possible.  As I don't see a full series here, I can't suggest how
->>>> it needs to happen :(
->>>>
->>>
->>> let me send you a full series later and discuss how to solve this
->>> issue.
+On 2024-12-02 20:22, Rik van Riel wrote:
+> On Thu, 28 Nov 2024 22:57:35 +0800
+> kernel test robot <oliver.sang@intel.com> wrote:
+> 
+>> Hello,
 >>
->> It's only slightly more complex than what we normally do: modify all
->> instances and then change the API.  In this case you have an additional
->> problem because the prototype "const void *" will cause a mismatch if a
->> function has "void *".  The easiest way to solve this is probably to
->> make device_find_child a macro that coerces its function argument to
->> having a non const "void *" and then passes off to the real function. 
->> If you do that in the first patch, then you can constify all the
->> consumers and finally remove the macro coercion in the last patch.
+>> kernel test robot noticed a 13.2% regression of will-it-scale.per_thread_ops on:
+>>
+>>
+>> commit: 209954cbc7d0ce1a190fc725d20ce303d74d2680 ("x86/mm/tlb: Update mm_cpumask lazily")
+>> https://git.kernel.org/cgit/linux/kernel/git/tip/tip.git x86/mm
 > 
-> Casting function pointers like that should be detected and trapped by
-> control flow integrity checking (KCFI).
+> [UGH - of course I mailed out the version I tested with, rather than
+>   the version that I merged into -tip.  Here's the right one.]
 > 
-> Another possibility would be to use a macro and _Generic to dispatch to
-> two different backing functions. See __BIN_ATTR() in
-> include/linux/sysfs.h for an inspiration.
-
-this way may fix building error issue but does not achieve our purpose.
-our purpose is that there are only constified device_find_child().
-
-
-> This also enables an incremental migration.
+> The patch below should fix the will-it-scale performance regression,
+> while still allowing us to keep the lazy mm_cpumask updates that help
+> workloads in other ways.
 > 
+> I do not have the same hardware as the Intel guys have access to, and
+> could only test this on one two socket system, but hopefully this
+> provides a simple (enough) compromise that allows us to keep both
+> the lazier context switch code, and a limited mm_cpumask to keep
+> TLB flushing work bounded.
 > 
+> ---8<---
+> 
+>  From dec4a588077563b86dbfe547737018b881e1f6c2 Mon Sep 17 00:00:00 2001
+> From: Rik van Riel <riel@fb.com>
+> Date: Mon, 2 Dec 2024 09:57:31 -0800
+> Subject: [PATCH] x86,mm: only trim the mm_cpumask once a second
+> 
+> Setting and clearing CPU bits in the mm_cpumask is only ever done
+> by the CPU itself, from the context switch code or the TLB flush
+> code.
+> 
+> Synchronization is handled by switch_mm_irqs_off blocking interrupts.
+> 
+> Sending TLB flush IPIs to CPUs that are in the mm_cpumask, but no
+> longer running the program causes a regression in the will-it-scale
+> tlbflush2 test. This test is contrived, but a large regression here
+> might cause a small regression in some real world workload.
+> 
+> Instead of always sending IPIs to CPUs that are in the mm_cpumask,
+> but no longer running the program, send these IPIs only once a second.
+> 
+> The rest of the time we can skip over CPUs where the loaded_mm is
+> different from the target mm.
+> 
+> Signed-off-by: Rik van Riel <riel@surriel.com>
+> Reported-by: kernel test roboto <oliver.sang@intel.com>
+> Closes: https://lore.kernel.org/oe-lkp/202411282207.6bd28eae-lkp@intel.com/
+> ---
+>   arch/x86/include/asm/mmu.h         |  2 ++
+>   arch/x86/include/asm/mmu_context.h |  1 +
+>   arch/x86/mm/tlb.c                  | 25 ++++++++++++++++++++++---
+>   3 files changed, 25 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/x86/include/asm/mmu.h b/arch/x86/include/asm/mmu.h
+> index ce4677b8b735..2c7e3855b88b 100644
+> --- a/arch/x86/include/asm/mmu.h
+> +++ b/arch/x86/include/asm/mmu.h
+> @@ -37,6 +37,8 @@ typedef struct {
+>   	 */
+>   	atomic64_t tlb_gen;
+>   
+> +	unsigned long last_trimmed_cpumask;
 
-change the API prototype from:
-device_find_child(..., void *data_0, int (*match)(struct device *dev,
-void *data));
+I'd recommend to rename "last_trimmed_cpumask" to "next_trim_cpumask",
+and always update it to "jiffies + HZ". Then we can remove the addition
+from the comparison in the should_flush_tlb() fast-path:
 
-to:
-device_find_child(..., const void *data_0, int (*match)(struct device
-*dev, const void *data));
+     if (time_after(jiffies, READ_ONCE(info->mm->context.next_trim_cpumask)))
+         return true;
 
-For @data_0,  void * -> const void * is okay.
-but for @match, the problem is function pointer type incompatibility.
+> +
+>   #ifdef CONFIG_MODIFY_LDT_SYSCALL
+>   	struct rw_semaphore	ldt_usr_sem;
+>   	struct ldt_struct	*ldt;
+> diff --git a/arch/x86/include/asm/mmu_context.h b/arch/x86/include/asm/mmu_context.h
+> index 2886cb668d7f..086af641d19a 100644
+> --- a/arch/x86/include/asm/mmu_context.h
+> +++ b/arch/x86/include/asm/mmu_context.h
+> @@ -151,6 +151,7 @@ static inline int init_new_context(struct task_struct *tsk,
+>   
+>   	mm->context.ctx_id = atomic64_inc_return(&last_mm_ctx_id);
+>   	atomic64_set(&mm->context.tlb_gen, 0);
+> +	mm->context.last_trimmed_cpumask = jiffies;
 
-there are two solutions base on discussions.
+mm->context.next_trim_cpumask = jiffies + HZ;
 
-1) squashing likewise Greg mentioned.
-   Do all of the "prep work" first, and then
-   do the const change at the very end, all at once.
+>   
+>   #ifdef CONFIG_X86_INTEL_MEMORY_PROTECTION_KEYS
+>   	if (cpu_feature_enabled(X86_FEATURE_OSPKE)) {
+> diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
+> index 1aac4fa90d3d..19ae8ca34cb8 100644
+> --- a/arch/x86/mm/tlb.c
+> +++ b/arch/x86/mm/tlb.c
+> @@ -761,6 +761,7 @@ static void flush_tlb_func(void *info)
+>   		if (f->mm && f->mm != loaded_mm) {
+>   			cpumask_clear_cpu(raw_smp_processor_id(), mm_cpumask(f->mm));
+>   			trace_tlb_flush(TLB_REMOTE_WRONG_CPU, 0);
+> +			f->mm->context.last_trimmed_cpumask = jiffies;
 
-2)  as changing platform_driver's remove() prototype.
-Commit: e70140ba0d2b ("Get rid of 'remove_new' relic from platform
-driver struct")
+mm->context.next_trim_cpumask is stored/loaded without any locks.
+READ_ONCE()/WRITE_ONCE() would be relevant here.
 
- introduce extra device_find_child_new() which is constified  -> use
-*_new() replace ALL device_find_child() instances one by one ->  remove
-device_find_child() -> rename *_new() to device_find_child() once.
+This is likely introducing a burst of mostly useless
+f->mm->context.next_trim_cpumask updates. When reaching the threshold
+where trimming is permitted, IPIs are sent to a set of CPUs which are
+allowed to trim. Each CPU performing the tlb flush for trimming
+will end up updating the f->mm->context.next_trim_cpumask
+concurrently, when in fact we only care about the first update.
 
-> Thomas
+We should change this to
+
+     unsigned long next_jiffies = jiffies + HZ;
+
+     if (time_after(next_jiffies, READ_ONCE(f->mm->context.next_trim_cpumask))
+         WRITE_ONCE(f->mm->context.next_trim_cpumask, next_jiffies);
+
+>   			return;
+>   		}
+>   	}
+> @@ -892,9 +893,27 @@ static void flush_tlb_func(void *info)
+>   			nr_invalidate);
+>   }
+>   
+> -static bool tlb_is_not_lazy(int cpu, void *data)
+> +static bool should_flush_tlb(int cpu, void *data)
+>   {
+> -	return !per_cpu(cpu_tlbstate_shared.is_lazy, cpu);
+> +	struct flush_tlb_info *info = data;
+> +
+> +	/* Lazy TLB will get flushed at the next context switch. */
+> +	if (per_cpu(cpu_tlbstate_shared.is_lazy, cpu))
+> +		return false;
+> +
+> +	/* No mm means kernel memory flush. */
+> +	if (!info->mm)
+> +		return true;
+> +
+> +	/* The target mm is loaded, and the CPU is not lazy. */
+> +	if (per_cpu(cpu_tlbstate.loaded_mm, cpu) == info->mm)
+> +		return true;
+> +
+> +	/* In cpumask, but not the loaded mm? Periodically remove by flushing. */
+> +	if (jiffies > info->mm->context.last_trimmed_cpumask + HZ)
+
+When jiffies overflow on 32-bit architectures, it will go back to a
+near-zero value and chances are that
+
+   info->mm->context.last_trimmed_cpumask + HZ
+
+is a near-overflow large value. Therefore, in that state, the comparison
+will stay false for quite a while, which is unexpected.
+
+This will prevent trimming the mm_cpumask for as long as that state
+persists.
+
+I'd recommend using the following overflow-safe comparison instead:
+
+     if (time_after(jiffies, info->mm->context.next_trim_cpumask)
+         return true;
+
+> +		return true;
+> +
+> +	return false;
+>   }
+>   
+>   DEFINE_PER_CPU_SHARED_ALIGNED(struct tlb_state_shared, cpu_tlbstate_shared);
+> @@ -928,7 +947,7 @@ STATIC_NOPV void native_flush_tlb_multi(const struct cpumask *cpumask,
+>   	if (info->freed_tables)
+>   		on_each_cpu_mask(cpumask, flush_tlb_func, (void *)info, true);
+>   	else
+> -		on_each_cpu_cond_mask(tlb_is_not_lazy, flush_tlb_func,
+> +		on_each_cpu_cond_mask(should_flush_tlb, flush_tlb_func,
+>   				(void *)info, 1, cpumask);
+
+I'm concerned about the following race in smp_call_function_many_cond():
+
+1) cond_func() is called for all remote cpus,
+2) IPIs are sent.
+3) cond_func() is called for the local cpu.
+
+(3) is loading the next_trim_cpumask value after other cpus had a chance to
+trim, and thus bump the next_trim_cpumask. This appears to be unwanted.
+
+I would be tempted to move the evaluation of cond_func() before sending the
+IPIs to other cpus in that function.
+
+Thanks,
+
+Mathieu
+
+>   }
+>   
+
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+https://www.efficios.com
 
 
