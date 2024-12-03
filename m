@@ -1,142 +1,184 @@
-Return-Path: <linux-kernel+bounces-429707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58BBB9E2153
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:11:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 20FAB9E2873
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 18:00:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D6CB8B458ED
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 15:02:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5E5DEB868EE
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 15:04:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE4711F7547;
-	Tue,  3 Dec 2024 15:02:43 +0000 (UTC)
-Received: from michel.telenet-ops.be (michel.telenet-ops.be [195.130.137.88])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAA051F7587;
+	Tue,  3 Dec 2024 15:04:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Y17tl2V0"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 205EA1F7065
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 15:02:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.88
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A13C833FE;
+	Tue,  3 Dec 2024 15:04:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733238163; cv=none; b=TS1n2oZXqwkruMCDKjIsC80CfRhc/GUMX7fsGf26KfTkY/rXfbjoHYSJkd7+Y8SsaEFHxPZFUATR+nOLPUsba02G7Q9diums6+BC7EP/11wRgq6U39b774G4qR4JGpUdE7bm/FFCHdd9wh4JOojyAW+RApo50Ozq35mZfdd9qnc=
+	t=1733238242; cv=none; b=U+Li2Dl+SpnrYPzFCkEAIBNzHHcpX2VpDzWo6IpQfXX5ZF6CbfFC1OR6GrHwI+Sdz0VwuawxapTe9kAo3wtRd5pj1OEKu+2HfK4f3UtwZLwXa+9Mfg3oTHd/DCsLzvZwLASJOYQw/4Syw4NFRSeQ9hozNKl+/zgCF9RFfF+22hU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733238163; c=relaxed/simple;
-	bh=MGNwTxer6Wojlw0jDQ1+rTgbvF66jcgH60ZHbXXFv+o=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=UX5nu2Ooe18mqRhbhrR8OtOMKbIg/qs8qL+0L9J0kV+f8bu6I6oAb9KS56aY6973V6PvtEXZtsJMsqrelGS7/LKAhsaM4VKIXVU6JHmCmkppEf1oQuklO4b6bUULQZAlzAPiu0J2faL6422xwAVjb6WdAYQr0hUw2PWvnI/ogZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.88
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:829d:a1e7:5b32:5d8e])
-	by michel.telenet-ops.be with cmsmtp
-	id kF2Z2D00i3sLyzB06F2ZSS; Tue, 03 Dec 2024 16:02:39 +0100
-Received: from rox.of.borg ([192.168.97.57])
-	by ramsan.of.borg with esmtp (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1tIUQ5-000Cx8-Og;
-	Tue, 03 Dec 2024 16:02:33 +0100
-Received: from geert by rox.of.borg with local (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1tIUQ5-009WLQ-K9;
-	Tue, 03 Dec 2024 16:02:33 +0100
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Naveen N Rao <naveen@kernel.org>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	=?UTF-8?q?Marek=20Beh=C3=BAn?= <kabel@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	David Wang <00107082@163.com>,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] genirq: Remove leading space from .irq_print_chip() callbacks
-Date: Tue,  3 Dec 2024 16:02:31 +0100
-Message-Id: <a779f3f44c24716d783d782c935be9fe4f410bff.1733238060.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1733238242; c=relaxed/simple;
+	bh=oZxcYeeBKfP2Xf+eDmjixDYj1PkvTZRQCoJoWW36lg0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=pIayI8E+qo50JmwpwRte4CaK/3D5UTSYDpqndpCMpoU10oii9gMeznuRk8vjfjKK59XxCJoYKidR/mvDhaUeu+j6E6iJS9NPxYrgYWfZa7Sy5yQ7WFDk+AatXu6J5IWd3j/HB2GzaMVhhxPfNgW5ajPYNElwvXj0de3ZcPxo8zw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Y17tl2V0; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B36NGek024941;
+	Tue, 3 Dec 2024 15:03:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	MY7TDK45v9rxCivZyWPBJNhQjz//IUsfYUZw5ZsKQRY=; b=Y17tl2V0UQ3A5LmA
+	agcuIl0bUonzdbvFF8vltUEadKeYOM3ugkAOYiqd/GP4yKpaoFrVkHUwvEwyIyQ0
+	4Yyf2WLLTxPXQSmWcYi4nMBYcXUdpsiDUga/lcuMTYRZ3TaV4U8q0bcp5Q/Bz8Gl
+	aBZZaUVwj7A4Hov0mIrIWwM2COwK4XDI5SHKfCVv58DETha+fae1Sd6AARC6jVIA
+	BQMSZgfd0SRQCwi9PKhEtoUrIaUs6ibLTgmwlIFCHk7YqhvLOctdapoh/jL5MTZD
+	CDXaElr0VzvQ9sgSX1F1EvTI3LGkoGtNw+D91M+0WNXIHVpLIM6hBNFikPm7aOHq
+	rHQ1RQ==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 439vnys7ud-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 03 Dec 2024 15:03:55 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B3F3r8g025733
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 3 Dec 2024 15:03:53 GMT
+Received: from [10.217.216.47] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 3 Dec 2024
+ 07:03:49 -0800
+Message-ID: <d78e6fc9-2238-4f55-a604-f60df8565166@quicinc.com>
+Date: Tue, 3 Dec 2024 20:33:46 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] arm64: dts: qcom: sa8775p: Add CPU OPP tables to
+ scale DDR/L3
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Dmitry Baryshkov
+	<dmitry.baryshkov@linaro.org>
+CC: Brian Masney <bmasney@redhat.com>, Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Ajit Pandey <quic_ajipan@quicinc.com>,
+        "Imran
+ Shaik" <quic_imrashai@quicinc.com>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        "Satya Priya Kakitapalli" <quic_skakitap@quicinc.com>,
+        Shivnandan Kumar
+	<quic_kshivnan@quicinc.com>
+References: <20241017-sa8775p-cpufreq-l3-ddr-scaling-v1-0-074e0fb80b33@quicinc.com>
+ <20241017-sa8775p-cpufreq-l3-ddr-scaling-v1-2-074e0fb80b33@quicinc.com>
+ <ZxEwVShJuMH4J1Hp@x1> <9179759d-7af1-409f-8130-1136c9ae4ecd@quicinc.com>
+ <daqa3krsp6emdha6h7tlcelsggb6qeilnojgtfxjbp5zw4n6ow@xzwdmu55ygjf>
+ <5c3d91e3-e9d3-4e8d-bd4f-f7cbe765dddc@oss.qualcomm.com>
+Content-Language: en-US
+From: Jagadeesh Kona <quic_jkona@quicinc.com>
+In-Reply-To: <5c3d91e3-e9d3-4e8d-bd4f-f7cbe765dddc@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: A1pciyluYGEhyE04isEvtUXARHh2q3PN
+X-Proofpoint-GUID: A1pciyluYGEhyE04isEvtUXARHh2q3PN
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 adultscore=0
+ mlxlogscore=730 bulkscore=0 impostorscore=0 mlxscore=0 suspectscore=0
+ spamscore=0 priorityscore=1501 lowpriorityscore=0 phishscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412030128
 
-The space separator was factored out from the multiple chip name prints,
-but several irq_chip.irq_print_chip() callbacks still print a leading
-space.  Remove the superfluous double spaces.
 
-Fixes: 9d9f204bdf7243bf ("genirq/proc: Add missing space separator back")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Not even compile-tested...
 
-Feel free to fold this into the original, and fix the spelling
-s/previosuly/previously/ while at it.
----
- arch/powerpc/sysdev/fsl_msi.c          | 2 +-
- drivers/bus/moxtet.c                   | 2 +-
- drivers/irqchip/irq-partition-percpu.c | 2 +-
- drivers/soc/qcom/smp2p.c               | 2 +-
- 4 files changed, 4 insertions(+), 4 deletions(-)
+On 11/30/2024 8:02 PM, Konrad Dybcio wrote:
+> On 14.11.2024 11:48 PM, Dmitry Baryshkov wrote:
+>> On Mon, Nov 11, 2024 at 06:39:48PM +0530, Jagadeesh Kona wrote:
+>>>
+>>>
+>>> On 10/17/2024 9:12 PM, Brian Masney wrote:
+>>>> On Thu, Oct 17, 2024 at 02:58:31PM +0530, Jagadeesh Kona wrote:
+>>>>> +	cpu0_opp_table: opp-table-cpu0 {
+>>>>> +		compatible = "operating-points-v2";
+>>>>> +		opp-shared;
+>>>>> +
+>>>>> +		cpu0_opp_1267mhz: opp-1267200000 {
+>>>>> +			opp-hz = /bits/ 64 <1267200000>;
+>>>>> +			opp-peak-kBps = <6220800 29491200>;
+>>>>> +		};
+>>>>> +
+>>>>> +		cpu0_opp_1363mhz: opp-1363200000 {
+>>>>> +			opp-hz = /bits/ 64 <1363200000>;
+>>>>> +			opp-peak-kBps = <6220800 29491200>;
+>>>>> +		};
+>>>>
+>>>> [snip]
+>>>>
+>>>>> +	cpu4_opp_table: opp-table-cpu4 {
+>>>>> +		compatible = "operating-points-v2";
+>>>>> +		opp-shared;
+>>>>> +
+>>>>> +		cpu4_opp_1267mhz: opp-1267200000 {
+>>>>> +			opp-hz = /bits/ 64 <1267200000>;
+>>>>> +			opp-peak-kBps = <6220800 29491200>;
+>>>>> +		};
+>>>>> +
+>>>>> +		cpu4_opp_1363mhz: opp-1363200000 {
+>>>>> +			opp-hz = /bits/ 64 <1363200000>;
+>>>>> +			opp-peak-kBps = <6220800 29491200>;
+>>>>> +		};
+>>>>
+>>>> There's no functional differences in the cpu0 and cpu4 opp tables. Can
+>>>> a single table be used?
+>>>>
+>>>> This aligns with my recollection that this particular SoC only has the
+>>>> gold cores.
+>>>>
+>>>> Brian
+>>>>
+>>>
+>>> Thanks Brian for your review. Sorry for the delayed response.
+>>>
+>>> We require separate OPP tables for CPU0 and CPU4 to allow independent
+>>> scaling of DDR and L3 frequencies for each CPU domain, with the final
+>>> DDR and L3 frequencies being an aggregate of both.
+>>>
+>>> If we use a single OPP table for both CPU domains, then _allocate_opp_table() [1]
+>>> won't be invoked for CPU4. As a result both CPU devices will end up in sharing
+>>> the same ICC path handle, which could lead to one CPU device overwriting the bandwidth
+>>> votes of other.
+> 
+> Oh that's a fun find.. clocks get the same treatment.. very bad,
+> but may explain some schroedingerbugs.
+> 
+> Taking a peek at some code paths, wouldn't dropping opp-shared
+> solve our issues? dev_pm_opp_set_sharing_cpus() overrides it
+> 
+> Konrad
 
-diff --git a/arch/powerpc/sysdev/fsl_msi.c b/arch/powerpc/sysdev/fsl_msi.c
-index 1aa0cb097c9c9d7c..7b9a5ea9cad9d3c7 100644
---- a/arch/powerpc/sysdev/fsl_msi.c
-+++ b/arch/powerpc/sysdev/fsl_msi.c
-@@ -75,7 +75,7 @@ static void fsl_msi_print_chip(struct irq_data *irqd, struct seq_file *p)
- 	srs = (hwirq >> msi_data->srs_shift) & MSI_SRS_MASK;
- 	cascade_virq = msi_data->cascade_array[srs]->virq;
- 
--	seq_printf(p, " fsl-msi-%d", cascade_virq);
-+	seq_printf(p, "fsl-msi-%d", cascade_virq);
- }
- 
- 
-diff --git a/drivers/bus/moxtet.c b/drivers/bus/moxtet.c
-index 6276551d79680e85..1e57ebfb76229aa0 100644
---- a/drivers/bus/moxtet.c
-+++ b/drivers/bus/moxtet.c
-@@ -657,7 +657,7 @@ static void moxtet_irq_print_chip(struct irq_data *d, struct seq_file *p)
- 
- 	id = moxtet->modules[pos->idx];
- 
--	seq_printf(p, " moxtet-%s.%i#%i", mox_module_name(id), pos->idx,
-+	seq_printf(p, "moxtet-%s.%i#%i", mox_module_name(id), pos->idx,
- 		   pos->bit);
- }
- 
-diff --git a/drivers/irqchip/irq-partition-percpu.c b/drivers/irqchip/irq-partition-percpu.c
-index 8e76d2913e6bebbf..4441ffe149ea0d96 100644
---- a/drivers/irqchip/irq-partition-percpu.c
-+++ b/drivers/irqchip/irq-partition-percpu.c
-@@ -98,7 +98,7 @@ static void partition_irq_print_chip(struct irq_data *d, struct seq_file *p)
- 	struct irq_chip *chip = irq_desc_get_chip(part->chained_desc);
- 	struct irq_data *data = irq_desc_get_irq_data(part->chained_desc);
- 
--	seq_printf(p, " %5s-%lu", chip->name, data->hwirq);
-+	seq_printf(p, "%5s-%lu", chip->name, data->hwirq);
- }
- 
- static struct irq_chip partition_irq_chip = {
-diff --git a/drivers/soc/qcom/smp2p.c b/drivers/soc/qcom/smp2p.c
-index 4783ab1adb8d953b..a3e88ced328a91f1 100644
---- a/drivers/soc/qcom/smp2p.c
-+++ b/drivers/soc/qcom/smp2p.c
-@@ -365,7 +365,7 @@ static void smp2p_irq_print_chip(struct irq_data *irqd, struct seq_file *p)
- {
- 	struct smp2p_entry *entry = irq_data_get_irq_chip_data(irqd);
- 
--	seq_printf(p, " %8s", dev_name(entry->smp2p->dev));
-+	seq_printf(p, "%8s", dev_name(entry->smp2p->dev));
- }
- 
- static struct irq_chip smp2p_irq_chip = {
--- 
-2.34.1
+Thanks Konrad for your review.
+
+Yes, correct. I tried dropping opp-shared but it is again getting set due to
+dev_pm_opp_set_sharing_cpus().
+
+Thanks,
+Jagadeesh
 
 
