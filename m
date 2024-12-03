@@ -1,130 +1,164 @@
-Return-Path: <linux-kernel+bounces-428776-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA3B19E1347
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 07:17:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 05B0F9E134F
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 07:26:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 55566B218B2
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 06:16:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4C862B21F76
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 06:25:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28A22175D39;
-	Tue,  3 Dec 2024 06:16:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 120C5186287;
+	Tue,  3 Dec 2024 06:25:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="k1C3Y38w"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="zOBcy1TA"
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E449A154430
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 06:16:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0415670825;
+	Tue,  3 Dec 2024 06:25:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733206612; cv=none; b=KB/D4pyiiCUQpb1twYbgSOJ5XIcE1b3dIJNxSZ74Y7MpHIo8E1alouecv1ZdCKVvSyzaBgz2mEHYaohdLORVdnkkMWUzs9+/nlH4kO/Vt9B5IjT6R5xr1mDgtXfhuDLshlO7g3ffHW7/EHDP3v/1PHptY4zFWXS+z4C2PO420Bk=
+	t=1733207150; cv=none; b=BNipzyJHS9Amw8MQphxbZV9X1dYq+dt5fHNfm+hHV+m3vlYlBJn9ZpZ9e+dcSDgXqlMytrJJiLdtLWgzcMt2SiLwZ4h8RNxD56WPNN3wx9+yXj5qL0ttA1F1teTkS+UGiCvG3hx4IjRU7TygN5O4WeVEJkAM0fp57lCkwuEslB8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733206612; c=relaxed/simple;
-	bh=oA6ewBaY6R0hItmwM5cpBRuJjIHcJ1qxRSBhvF4GLcs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CPS7EyQHhWUCWa0P/VOtckzGh49hEAWmS1Od6GX73QliidVRqZd7fuetn2W4IgJGTtGgxPpT1dz8zALwijvj+wmxiky1GQXHyutsxqpBab6h4pv0xNZxsktI9xwOnTSIQ8oGpOcrTwkVpFa64Og/hTnONqWyNiuV1LXRANPBUW0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=k1C3Y38w; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733206611; x=1764742611;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=oA6ewBaY6R0hItmwM5cpBRuJjIHcJ1qxRSBhvF4GLcs=;
-  b=k1C3Y38wGK/KcdQ++ONoMbHZhiTKHyBclfMcT9eF7kQGWp51fT5huhRW
-   WgglbG9fhMLuZdQz5Jf4W+JBxXHjUvuEpbu7ZYI+d2k1V7cvTXljd8aPY
-   DZSJpjDA5zh2H7o8P5EgEdPRVO69I3bovwO79tbKNtmFI391/mN1eEzxA
-   XyFbwEj0YjL2K+8Aa2As6kMrErRV3ZfGwtbJ1kXXxa92c6ww7FdfDquA8
-   o7Q2iomrbT8peVuDS8fnGRCwYjPMpK47rf4y5qzX+mGMLjFIQDjG9iHyr
-   SARnrETqV7nPIMrgSUeiuWMgOubLxFKpTtEoIy7feQ3gjNtZxpJeTyTsl
-   g==;
-X-CSE-ConnectionGUID: dxSo6vZHS7eqsFl8kMx7vg==
-X-CSE-MsgGUID: GhwlqI+5S1mVCIQCHWkHfQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11274"; a="33323964"
-X-IronPort-AV: E=Sophos;i="6.12,204,1728975600"; 
-   d="scan'208";a="33323964"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Dec 2024 22:16:50 -0800
-X-CSE-ConnectionGUID: m7bSA4OnTsu/ivmR3USEIg==
-X-CSE-MsgGUID: qJWVHbb8RI6rUa9aO/NjJQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,204,1728975600"; 
-   d="scan'208";a="97396964"
-Received: from lkp-server01.sh.intel.com (HELO 388c121a226b) ([10.239.97.150])
-  by fmviesa003.fm.intel.com with ESMTP; 02 Dec 2024 22:16:47 -0800
-Received: from kbuild by 388c121a226b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tIMDE-0000D5-1f;
-	Tue, 03 Dec 2024 06:16:44 +0000
-Date: Tue, 3 Dec 2024 14:16:29 +0800
-From: kernel test robot <lkp@intel.com>
-To: Jeremy Linton <jeremy.linton@arm.com>,
-	linux-arm-kernel@lists.infradead.org
-Cc: oe-kbuild-all@lists.linux.dev, gshan@redhat.com, steven.price@arm.com,
-	sami.mujawar@arm.com, suzuki.poulose@arm.com, will@kernel.org,
-	catalin.marinas@arm.com, linux-kernel@vger.kernel.org,
-	Jeremy Linton <jeremy.linton@arm.com>
-Subject: Re: [PATCH v2 1/1] arm64: rsi: Add automatic arm-cca-guest module
- loading
-Message-ID: <202412031328.ybzEAJ4U-lkp@intel.com>
-References: <20241203000156.72451-2-jeremy.linton@arm.com>
+	s=arc-20240116; t=1733207150; c=relaxed/simple;
+	bh=2tS5uRgfviO0alrDY5oGTgvmEtChwVf3x3Zow9XJt2Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=phzrH00/moS7P5Ve7Gu8ZgJdkOOhqNeVym9419aRg7nQWB4kRFX7FllelBebMdkPnYxWITN2cViAdEnAbmn+NyubMjJPSDmBawnkTrkYv+AtiZOHCSNbpY/kEiuJa3Kq47h6MyvE9y6kcqtqY7DJLLduScXrb6ic5f7hSmX+vX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=zOBcy1TA; arc=none smtp.client-ip=80.237.130.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:From:
+	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
+	References; bh=6BHMcxNwSOwsG/WMNmwatoWqGupqKJxNbDoKo7/QVjg=; t=1733207148;
+	x=1733639148; b=zOBcy1TAK/MVNz2u4E3DDi/nZpGtKQshwRMhSTDIV7lu/VhHFQZEdY6MA4pZ7
+	3p4Mf8u242R14/jt37NWdXxViXt6NoXFv9Zkdx5uO+XJvsifEzts4Baox2/giI98IubnZ4K1g1twL
+	T8SfQp+jojkQ9On2gylaAmTMOAvklH/JEYrgcyuDc87tnDvcw96g3VqnNVkIim8SF49QQdAptIYim
+	3XLIGk30z6N1bvrzBw7nDulqQgsActy9rlJDfOpDUai5ZgZjZ4CRnfMsnS62UkeV0y6V+/ol3C4uz
+	X+tBVnQh/Ful4K7zyaBnk2NYiKnDMNqLxvaQ1+tGmknxqa3/Yg==;
+Received: from [2a02:8108:8980:2478:87e9:6c79:5f84:367d]; authenticated
+	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128)
+	id 1tIMLv-005qxb-2x;
+	Tue, 03 Dec 2024 07:25:44 +0100
+Message-ID: <bd47620e-d2bd-48f5-8e40-555d6ddf921e@leemhuis.info>
+Date: Tue, 3 Dec 2024 07:25:43 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241203000156.72451-2-jeremy.linton@arm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 DONOTMERGE] docs: clarify rules wrt tagging other
+ people
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: Jonathan Corbet <corbet@lwn.net>, workflows@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Simona Vetter <simona.vetter@ffwll.ch>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+References: <c29ef5fa12e37c3a289e46d4442b069af94e5b05.1733127212.git.linux@leemhuis.info>
+ <20241202092857.7d197995@foz.lan> <20241202110210.5e56d69e@foz.lan>
+ <d8cae2d3-d855-404b-8991-f81c979486ce@leemhuis.info>
+ <20241202154528.7949e7cb@foz.lan>
+ <6f1bbdf3-22df-415c-b017-de1cf81af57e@leemhuis.info>
+ <20241202171734.2874a9a3@foz.lan>
+From: Thorsten Leemhuis <linux@leemhuis.info>
+Content-Language: en-MW
+Autocrypt: addr=linux@leemhuis.info; keydata=
+ xsFNBFJ4AQ0BEADCz16x4kl/YGBegAsYXJMjFRi3QOr2YMmcNuu1fdsi3XnM+xMRaukWby47
+ JcsZYLDKRHTQ/Lalw9L1HI3NRwK+9ayjg31wFdekgsuPbu4x5RGDIfyNpd378Upa8SUmvHik
+ apCnzsxPTEE4Z2KUxBIwTvg+snEjgZ03EIQEi5cKmnlaUynNqv3xaGstx5jMCEnR2X54rH8j
+ QPvo2l5/79Po58f6DhxV2RrOrOjQIQcPZ6kUqwLi6EQOi92NS9Uy6jbZcrMqPIRqJZ/tTKIR
+ OLWsEjNrc3PMcve+NmORiEgLFclN8kHbPl1tLo4M5jN9xmsa0OZv3M0katqW8kC1hzR7mhz+
+ Rv4MgnbkPDDO086HjQBlS6Zzo49fQB2JErs5nZ0mwkqlETu6emhxneAMcc67+ZtTeUj54K2y
+ Iu8kk6ghaUAfgMqkdIzeSfhO8eURMhvwzSpsqhUs7pIj4u0TPN8OFAvxE/3adoUwMaB+/plk
+ sNe9RsHHPV+7LGADZ6OzOWWftk34QLTVTcz02bGyxLNIkhY+vIJpZWX9UrfGdHSiyYThHCIy
+ /dLz95b9EG+1tbCIyNynr9TjIOmtLOk7ssB3kL3XQGgmdQ+rJ3zckJUQapLKP2YfBi+8P1iP
+ rKkYtbWk0u/FmCbxcBA31KqXQZoR4cd1PJ1PDCe7/DxeoYMVuwARAQABzSdUaG9yc3RlbiBM
+ ZWVtaHVpcyA8bGludXhAbGVlbWh1aXMuaW5mbz7CwZQEEwEKAD4CGwMFCwkIBwMFFQoJCAsF
+ FgIDAQACHgECF4AWIQSoq8a+lZZX4oPULXVytubvTFg9LQUCX31PIwUJFmtPkwAKCRBytubv
+ TFg9LWsyD/4t3g4i2YVp8RoKAcOut0AZ7/uLSqlm8Jcbb+LeeuzjY9T3mQ4ZX8cybc1jRlsL
+ JMYL8GD3a53/+bXCDdk2HhQKUwBJ9PUDbfWa2E/pnqeJeX6naLn1LtMJ78G9gPeG81dX5Yq+
+ g/2bLXyWefpejlaefaM0GviCt00kG4R/mJJpHPKIPxPbOPY2REzWPoHXJpi7vTOA2R8HrFg/
+ QJbnA25W55DzoxlRb/nGZYG4iQ+2Eplkweq3s3tN88MxzNpsxZp475RmzgcmQpUtKND7Pw+8
+ zTDPmEzkHcUChMEmrhgWc2OCuAu3/ezsw7RnWV0k9Pl5AGROaDqvARUtopQ3yEDAdV6eil2z
+ TvbrokZQca2808v2rYO3TtvtRMtmW/M/yyR233G/JSNos4lODkCwd16GKjERYj+sJsW4/hoZ
+ RQiJQBxjnYr+p26JEvghLE1BMnTK24i88Oo8v+AngR6JBxwH7wFuEIIuLCB9Aagb+TKsf+0c
+ HbQaHZj+wSY5FwgKi6psJxvMxpRpLqPsgl+awFPHARktdPtMzSa+kWMhXC4rJahBC5eEjNmP
+ i23DaFWm8BE9LNjdG8Yl5hl7Zx0mwtnQas7+z6XymGuhNXCOevXVEqm1E42fptYMNiANmrpA
+ OKRF+BHOreakveezlpOz8OtUhsew9b/BsAHXBCEEOuuUg87BTQRSeAENARAAzu/3satWzly6
+ +Lqi5dTFS9+hKvFMtdRb/vW4o9CQsMqL2BJGoE4uXvy3cancvcyodzTXCUxbesNP779JqeHy
+ s7WkF2mtLVX2lnyXSUBm/ONwasuK7KLz8qusseUssvjJPDdw8mRLAWvjcsYsZ0qgIU6kBbvY
+ ckUWkbJj/0kuQCmmulRMcaQRrRYrk7ZdUOjaYmjKR+UJHljxLgeregyiXulRJxCphP5migoy
+ ioa1eset8iF9fhb+YWY16X1I3TnucVCiXixzxwn3uwiVGg28n+vdfZ5lackCOj6iK4+lfzld
+ z4NfIXK+8/R1wD9yOj1rr3OsjDqOaugoMxgEFOiwhQDiJlRKVaDbfmC1G5N1YfQIn90znEYc
+ M7+Sp8Rc5RUgN5yfuwyicifIJQCtiWgjF8ttcIEuKg0TmGb6HQHAtGaBXKyXGQulD1CmBHIW
+ zg7bGge5R66hdbq1BiMX5Qdk/o3Sr2OLCrxWhqMdreJFLzboEc0S13BCxVglnPqdv5sd7veb
+ 0az5LGS6zyVTdTbuPUu4C1ZbstPbuCBwSwe3ERpvpmdIzHtIK4G9iGIR3Seo0oWOzQvkFn8m
+ 2k6H2/Delz9IcHEefSe5u0GjIA18bZEt7R2k8CMZ84vpyWOchgwXK2DNXAOzq4zwV8W4TiYi
+ FiIVXfSj185vCpuE7j0ugp0AEQEAAcLBfAQYAQoAJgIbDBYhBKirxr6Vllfig9QtdXK25u9M
+ WD0tBQJffU8wBQkWa0+jAAoJEHK25u9MWD0tv+0P/A47x8r+hekpuF2KvPpGi3M6rFpdPfeO
+ RpIGkjQWk5M+oF0YH3vtb0+92J7LKfJwv7GIy2PZO2svVnIeCOvXzEM/7G1n5zmNMYGZkSyf
+ x9dnNCjNl10CmuTYud7zsd3cXDku0T+Ow5Dhnk6l4bbJSYzFEbz3B8zMZGrs9EhqNzTLTZ8S
+ Mznmtkxcbb3f/o5SW9NhH60mQ23bB3bBbX1wUQAmMjaDQ/Nt5oHWHN0/6wLyF4lStBGCKN9a
+ TLp6E3100BuTCUCrQf9F3kB7BC92VHvobqYmvLTCTcbxFS4JNuT+ZyV+xR5JiV+2g2HwhxWW
+ uC88BtriqL4atyvtuybQT+56IiiU2gszQ+oxR/1Aq+VZHdUeC6lijFiQblqV6EjenJu+pR9A
+ 7EElGPPmYdO1WQbBrmuOrFuO6wQrbo0TbUiaxYWyoM9cA7v7eFyaxgwXBSWKbo/bcAAViqLW
+ ysaCIZqWxrlhHWWmJMvowVMkB92uPVkxs5IMhSxHS4c2PfZ6D5kvrs3URvIc6zyOrgIaHNzR
+ 8AF4PXWPAuZu1oaG/XKwzMqN/Y/AoxWrCFZNHE27E1RrMhDgmyzIzWQTffJsVPDMQqDfLBhV
+ ic3b8Yec+Kn+ExIF5IuLfHkUgIUs83kDGGbV+wM8NtlGmCXmatyavUwNCXMsuI24HPl7gV2h n7RI
+In-Reply-To: <20241202171734.2874a9a3@foz.lan>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-bounce-key: webpack.hosteurope.de;linux@leemhuis.info;1733207148;19eb6933;
+X-HE-SMSGID: 1tIMLv-005qxb-2x
 
-Hi Jeremy,
+On 02.12.24 17:17, Mauro Carvalho Chehab wrote:
+> Em Mon, 2 Dec 2024 16:54:49 +0100
+> Thorsten Leemhuis <linux@leemhuis.info> escreveu:
+>> On 02.12.24 15:45, Mauro Carvalho Chehab wrote:
+>>> Em Mon, 2 Dec 2024 14:54:56 +0100
+>>> Thorsten Leemhuis <linux@leemhuis.info> escreveu:
+>>>> On 02.12.24 11:02, Mauro Carvalho Chehab wrote:  
+>>>>> Em Mon, 2 Dec 2024 09:28:57 +0100
+>>>>> Mauro Carvalho Chehab <mchehab+huawei@kernel.org> escreveu:
+>>>>>>> +Tagging people requires permission
+>>>>>>> +----------------------------------
+>>>>>>> +
+>>>>>>> +Be careful in the addition of tags to your patches, as all except for Cc:,
+>>>>>>> +Reported-by:, and Suggested-by: need explicit permission of the person named.
+>>>>>
+>>>>> Hmm... There is another tag that we use without requiring explicit permissions:
+>>>>>
+>>>>> 	Requested-by:
+>>>>>
+>>>>> There are currently 376 occurrences on 6.13-rc1.
+>>>>>
+>>>>> This is used when a maintainer or reviewer publicly requests some changes to
+>>>>> be added on a patch series.    
+>>> [...]
+>>> You're basically requesting explicit permission for any "non-official"
+>>> tags as well, including reviewed-by. This is not what it is wanted here.  
+>>
+>> I could easily use a slightly modified phrase like "...as all
+>> mentioned above except...".
+> 
+> It seems a lot better to me.
 
-kernel test robot noticed the following build warnings:
+I went with this a slightly different variant for readability:
 
-[auto build test WARNING on arm64/for-next/core]
-[also build test WARNING on linus/master v6.13-rc1 next-20241128]
-[cannot apply to kvmarm/next soc/for-next arm/for-next arm/fixes]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Be careful in the addition of the aforementioned tags to your patches,
+as all except for Cc:, Reported-by:, and Suggested-by: need explicit
+permission of the person named.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Jeremy-Linton/arm64-rsi-Add-automatic-arm-cca-guest-module-loading/20241203-080347
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-next/core
-patch link:    https://lore.kernel.org/r/20241203000156.72451-2-jeremy.linton%40arm.com
-patch subject: [PATCH v2 1/1] arm64: rsi: Add automatic arm-cca-guest module loading
-config: arm64-randconfig-001-20241203 (https://download.01.org/0day-ci/archive/20241203/202412031328.ybzEAJ4U-lkp@intel.com/config)
-compiler: aarch64-linux-gcc (GCC) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241203/202412031328.ybzEAJ4U-lkp@intel.com/reproduce)
+Hope that's okay. If I don't hear anything, I'll assume your earlier
+Reviewed-by: is still valid.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202412031328.ybzEAJ4U-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> drivers/virt/coco/arm-cca-guest/arm-cca-guest.c:224:55: warning: 'arm_cca_match' defined but not used [-Wunused-const-variable=]
-     224 | static const struct __maybe_unused platform_device_id arm_cca_match[] = {
-         |                                                       ^~~~~~~~~~~~~
-
-
-vim +/arm_cca_match +224 drivers/virt/coco/arm-cca-guest/arm-cca-guest.c
-
-   222	
-   223	/* modalias, so userspace can autoload this module when RSI is available */
- > 224	static const struct __maybe_unused platform_device_id arm_cca_match[] = {
-   225		{ RSI_PDEV_NAME, 0},
-   226		{ }
-   227	};
-   228	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Ciao, Thorsten
 
