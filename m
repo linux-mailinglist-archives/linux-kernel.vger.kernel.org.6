@@ -1,67 +1,66 @@
-Return-Path: <linux-kernel+bounces-430169-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECE859E2D45
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 21:38:10 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6487165C1F
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 20:38:07 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29CA220A5C6;
-	Tue,  3 Dec 2024 20:37:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="Rbl3AUyT"
-Received: from EUR02-AM0-obe.outbound.protection.outlook.com (mail-am0eur02on2085.outbound.protection.outlook.com [40.107.247.85])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF75E9E2D48
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 21:38:38 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B89D1CEEA8;
-	Tue,  3 Dec 2024 20:37:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.247.85
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F6D628264C
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 20:38:37 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15C1720ADCA;
+	Tue,  3 Dec 2024 20:37:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="mh1EEYqH"
+Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2083.outbound.protection.outlook.com [40.107.20.83])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39F4020A5EE;
+	Tue,  3 Dec 2024 20:37:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.83
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733258247; cv=fail; b=eqhbCeTcU+0irtizxxDvJZH76PRoCAFeMspJwrOcDazbyrLCfalLtwPPtJikRsCja+mWb28vs7rhw2H5gbZNZPQx8/cav/C+WfyPXJNI9ILhzx9WqSqgm0m1kALxwaLgxYEIdPN+p4uDQHBdHD9PjzpAbjXqtdlEaY9XoCXMnAk=
+	t=1733258255; cv=fail; b=aN4SQEQEtBFuqy1HITwfBtoWu5q+pF/7f2OFKWsz+uATTE5fN5wva+v9LdoBHLXXE7ABE7PHkiYs2mwVn7UtYpkfSdkJq+sSiFwgowa9NQ6pf+p7AFpG1QFq/df2VemLEtT5pYJ5z0YgozW2NAGBmODP59PeEGNlEqVSFvFVPR8=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733258247; c=relaxed/simple;
-	bh=BqHEt8m1nlQE+CROgZ5Z9jf9BfRy50ieLQvI2rOkvkU=;
+	s=arc-20240116; t=1733258255; c=relaxed/simple;
+	bh=o5EKIj3vNC7YvPmJEwQfL1pJ0yVh5RKNjyYncOCamTU=;
 	h=From:Date:Subject:Content-Type:Message-Id:References:In-Reply-To:
-	 To:Cc:MIME-Version; b=RzlAM8XjbZ/6ax9rAKwARm9Fi9ScH9xH/xRotgvsdUdfEfO7u0OwoiwQEn/s3KmHZWDTklmWsJinx2MjB02GlS0McIhsFjcxJ+KsGCTcFtF80c6YTon+dhUCWrXmLI2VaqiV4wikL8s1NpAkYIecRBnbeaRPkX1hsv8yoS95UzE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=Rbl3AUyT; arc=fail smtp.client-ip=40.107.247.85
+	 To:Cc:MIME-Version; b=Q/+TGzkOt4UGmGNU6iJ2Qj86QVZj+UqbxdTcqebEAVSx08ig3tJ21PgRecUUZ7jpGMldS8tCNa5DopsAs5/NKle8bROtcEqWxgL2PfQhdM/Bcgx7qmCH6q8Uk5+jLRjDBSIWR9QsXu6o7VIFE+P1LzCyOhYWhvS62c5HexJzTjM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=mh1EEYqH; arc=fail smtp.client-ip=40.107.20.83
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=hsXuTdMnLzx4LveSjw5SPLaABPOHTcGAS2rNFdrgsyGf10T+eZUyjUsbOQ55bvEsrS9A/txaIzJRu9hniaTn8c1ccy4LOfhaXAVY4+Y5YO7S8gL/1WlliFIhNH5Fa6KyZNFQs7yXRM7Hr6a0L8c8WGeH+G6SVWgeJEP69SPdjMz8lu+7o0zcRNeDZKtmlwpIjX8VbjGrNT7n0SD0tDdviR5KcM08PLYR6sUrHFNzzTbKU1Ol+9SdV3kzbXLU17c3yI/yLaYzXrosgYJQ6eTWlaF6kCBI9MN46rQ4IC0YtEnjzY5tGwgfXjvlEqJs0wpNLp0p1TeTgOCpvv8YNkxdzQ==
+ b=rLqgLeAmopfgb7DsouyC/kmPVvHs7DHct6/jogQAjoPkC2D9kqOKEiG8oD5TyYaCpZeFf/uAx1EDiyq81UyFvkqWS8E1Acg1I45WCArC/XLg7xf4xGtA6UbGDXCY/JkumCssA3iBi8/LpBUGgNpHBgrv30R6+rO5W3ASfjn6oqLUDQM/VKzIOL/dsQlROOHmMvmG0X0G8JH/1Hi09K+C3WGMPesMmjNBgVItZu+0Azy6yjWsAEMaGytgic2hT6tqrwYhnTFQRmIS2WHUW9pw9n02Z15VjmXiTAaNXNcIGIUGS9zgiShDdf9UJIiyKqWWBz2s1Vdf+yG3DvdpDWOy0g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=1EtZBap3w8ZIg+WP8zXzWpJT9lQzplQNKYcUxAiAUeY=;
- b=iduKCd7kX5ZzXwVeEV91hLuzc2grdmNL4bhil9mAvnH9OQLE9NmP6KSMpbnS94dAmkV7JOOEP8MnoyTQlxAG7EyLKaudVa+2Klo/7tByDQWrLPorSUX1n+H+1ZDSG8+lLt0U5ZDnwz0i7Szd+HP5M+cK266BJMW+M5hK9K8Q5/ED+H8agayZdOjP5D1+d7MLVvO0xbuxz3oW1nuJ92K5jvtn3w9uJg7aicH4LBeHKECNHEWTn4j4Auj/OdND0WhMiFvy6+LdoMYbIuhN7+GRJgZBVwzu8X0tZYmOnIiP1+uCN78dw1TA6un3/CkpKBbD5AcGlgSdS6DRPNBZbFUPVA==
+ bh=CgVPjIxixay55JQCXGUQeF5Pm0xBX2Gb/KuEgDxzx2k=;
+ b=UBiYigYtytls4KD4whu4cXIhoLBGzeFtiDWnfKBV9ncdghF63tOzJ27E+rrsqitbMWMBAB/BMlMM1xvAoJ/WTxyqr4FB+fAUt49VxWhDnK/elo2biOcf7XA1wI++ICxq8wRRscGe34G7dXYuu0txBSU+w16FTYzaacyMjiKQAtAqVZxyzSNW7+MNiqFujGUG1AnB4TJ0H0yQLrSHj2VJStq51JjQv46L9/l+6aQRs6Za0ppxjWp2lq0k4LN/0fCIVMrQqaPacAW585SwgkWBsND2jkz7jIqefZv3+K/t/k2ns9MPsYU1iWFOu8wlYqHumA/hkXpQrd3d/O647xTh4Q==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
  header.d=nxp.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1EtZBap3w8ZIg+WP8zXzWpJT9lQzplQNKYcUxAiAUeY=;
- b=Rbl3AUyTXFlNQqPzo1OwiHfNwx9+u9DgF2FFT8+SjutU76j5ExbOZo+FlSI5voe5K4K7MkM/5dsjvv9OVU+Kr9xPK2jrkjqErkPf58GriJnCdzVNN1PJHPSqe1uvxuq+4Ig9FL5/EFXQDiTLEvGhIHYVlugocpk4YVHOeWJXQ/BJXPEqbD0wi/ZEHz3FfMnVKxeTavcv1YRi9BrNI78EUMNpyeAa96c+B19awoHe1L+grbKqfxCXlpuKGZ8LtLYFVICEcROFxSAgKaLlDtqxCCBUcWwXsmSc2WsTjjJ4LoDKxLx2QL6t04u+uf+qt6I4HUPTvSQAuUNyAcyYj+hOhg==
+ bh=CgVPjIxixay55JQCXGUQeF5Pm0xBX2Gb/KuEgDxzx2k=;
+ b=mh1EEYqHoOwKhYgrjR8aws8noZDHurZHhqW7KAhRvvqYsdrLPl8ebAN8tsLWmNNeDT/j42FCq3zvukn9xDagv5Ub3drRXs9cqqwS8oGcGRcJsCpgMbsOfBxgnd+tE8fL3wW3GJ/ZFzWQOufZf7iTeEntjPe2k3Q19h8OK3yVtjT3Ae6VAapRPbR800jpUjzML2P/FPcMPdvLLxT6idatBVyMr4fsD6uYJ93HLpe3IU2BH7UGpBD/skZiAZYFZ7qM7PiCwHkKUo5WgpPAd5JsEtxNR9TrA1kz7LHRtm11KdIrTVkOxTmctLSlRwLocZR+Up0l7Z7TZlpAn7m66upSyQ==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nxp.com;
 Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by AM0PR04MB7108.eurprd04.prod.outlook.com (2603:10a6:208:19e::21) with
+ by AM9PR04MB8730.eurprd04.prod.outlook.com (2603:10a6:20b:43d::6) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.17; Tue, 3 Dec
- 2024 20:37:22 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.10; Tue, 3 Dec
+ 2024 20:37:30 +0000
 Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
  ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
  ([fe80::9126:a61e:341d:4b06%5]) with mapi id 15.20.8207.017; Tue, 3 Dec 2024
- 20:37:22 +0000
+ 20:37:30 +0000
 From: Frank Li <Frank.Li@nxp.com>
-Date: Tue, 03 Dec 2024 15:36:52 -0500
-Subject: [PATCH v9 3/6] PCI: endpoint: Add pci_epf_align_inbound_addr()
- helper for address alignment
+Date: Tue, 03 Dec 2024 15:36:54 -0500
+Subject: [PATCH v9 5/6] misc: pci_endpoint_test: Add doorbell test case
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241203-ep-msi-v9-3-a60dbc3f15dd@nxp.com>
+Message-Id: <20241203-ep-msi-v9-5-a60dbc3f15dd@nxp.com>
 References: <20241203-ep-msi-v9-0-a60dbc3f15dd@nxp.com>
 In-Reply-To: <20241203-ep-msi-v9-0-a60dbc3f15dd@nxp.com>
 To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
@@ -75,11 +74,11 @@ Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
  imx@lists.linux.dev, Niklas Cassel <cassel@kernel.org>, dlemoal@kernel.org, 
  maz@kernel.org, jdmason@kudzu.us, Frank Li <Frank.Li@nxp.com>
 X-Mailer: b4 0.13-dev-e586c
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1733258225; l=3362;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1733258225; l=5948;
  i=Frank.Li@nxp.com; s=20240130; h=from:subject:message-id;
- bh=BqHEt8m1nlQE+CROgZ5Z9jf9BfRy50ieLQvI2rOkvkU=;
- b=QQN5g0eQRW0rJT6T5urTDAdXuYXzc5JS03FnK/FaP3Sz8oXcUuwJ5uVfJRcVOJm5kFTecJksZ
- ignF7Y+w9OBBBsuHwFcRA1yWCWjv+bq+HtfFq/Mj/jzSNBJd3IFolH5
+ bh=o5EKIj3vNC7YvPmJEwQfL1pJ0yVh5RKNjyYncOCamTU=;
+ b=1oGpdo808LSKWefQoCYEAZjxj2YrDNBTNO8Z17lkQJYo9T0m3xl48/XXkYKGIYtCv+zxgiwaG
+ /tuFOfBMZWiDzuh797sqg1Pk8N8CuRec3c1gCfVLKh2+bWgI8hFS0J7
 X-Developer-Key: i=Frank.Li@nxp.com; a=ed25519;
  pk=I0L1sDUfPxpAkRvPKy7MdauTuSENRq+DnA+G4qcS94Q=
 X-ClientProxiedBy: BYAPR05CA0013.namprd05.prod.outlook.com
@@ -92,188 +91,280 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|AM0PR04MB7108:EE_
-X-MS-Office365-Filtering-Correlation-Id: 12ab7f54-4cb1-4b13-d987-08dd13da49e3
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|AM9PR04MB8730:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6b8bc1d2-873e-49eb-30f8-08dd13da4ee7
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|52116014|7416014|376014|38350700014;
+	BCL:0;ARA:13230040|1800799024|7416014|376014|52116014|366016|38350700014;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?ekpsU3h1N0x1UHpobnNsNnVmNkYvMTV3YXlrRVBTS3QwdjVVUExib0dTQXZZ?=
- =?utf-8?B?Z2RKVWpYdEF5bGk5eGxLaGRLOWM2QkJNV2UrODJnTjBKMll3dHM2Q296QVVW?=
- =?utf-8?B?OWFKMVBCSll3ZDdJOFlwUjJ6NkRaZUtOcndZNm5vU0M1TnlCdlJKQjd6WnNj?=
- =?utf-8?B?bmM5ZE94VlVYNnE1b2JLNGwyODR2NGlPVnFHSU5XaE1iazBSU1krQkVWcEFu?=
- =?utf-8?B?YWY1Y0o3V3JKekhJZ1kzNEV2TElLSDhqaEdpZG5KcXgrM2FVaHNHTCtLcnJR?=
- =?utf-8?B?UDA0em9pckZ2WDk3SWpnbTA4ZU9qcjhlaVBYZkNod2JxWE1pOXE4QXdtVFV2?=
- =?utf-8?B?cTlWNW5TMFFQWk9OcllHSlgxQmt6UXZTMjRTM012VC9LbzlEbXV2dk80YVd4?=
- =?utf-8?B?bUE5OERBUnlVTGcyeEVxcmM3UmFkSXEwVm5VTFFlSDBwYWNTVDV2VkErV2xQ?=
- =?utf-8?B?NUp5MEdkcGZNOHdzMWplZlByWGc2VFBUdjF3SzJTL1pId0JURUhTNVFHNDhl?=
- =?utf-8?B?UnVaSWNBK0YxZkE0MUFLVWhmVUtRcFhpcjBhRGxNQ0xwSDA1V2lVVm9FN0Zy?=
- =?utf-8?B?d3g3cTNjc013U2ZObDBGVm1ianVBWDRJaUZqVzV6Y3ZkZkRGeCt0empFR3Uv?=
- =?utf-8?B?WXJCRFAyd1J3TEVCOXdCY3NuSG9hT1lCYjRsUzlQRDVLbXY5M3JqTjViRDV1?=
- =?utf-8?B?QW5KOVEwdWl3MDNnTjdiSmpQYW1lWThyQnd6OTc1RTROVmtQbGthNERsWWlU?=
- =?utf-8?B?UEVVUU92MHJ5ekoyeFAzdDRUZ3EwUG1MdjNTN0M2cTUrbHJ3NTd6N2xMaHRR?=
- =?utf-8?B?SlZhUTQzK0ZNZ1FNaHFYWmlDNmVZcjFQcHQ5UUpSNWp3M28zU0d4RisyUHdx?=
- =?utf-8?B?cmhnd0F3Mnl4VXFUSE4xK2lIS1NYejRtUTZvOElRODRvQ0xYVWQwYTNaaEpY?=
- =?utf-8?B?dCtydW8zQzRIcVl5dWY1MGY2ajVyRUpGMmhpSFo2b2pFSVZBSmYvaHZSUXhv?=
- =?utf-8?B?aUQzQU9PbW1jTHZnOG5QczdGOXA2TGtrcGlvVDZDTkdsa3E4UlkvellJcXYx?=
- =?utf-8?B?QWFpYXMzVXBqc2ttb1ZYZ0VMR3MvSDlCRmIyQ0drTHd4R0tEQmlzbndZWU41?=
- =?utf-8?B?eVJHTDFMVUJXY25nbGZadElzdE10QkRsQm9QTUNWN2FrbmlsR04vRkZTeUYz?=
- =?utf-8?B?b0dyd1Y2SHpueC9JVjVYVWozNEgrUUNmNGN1UGRCaHhiTGNSZFNydUlLbGND?=
- =?utf-8?B?OGx0bGRONGRlaGdrUTN1STRjUjNkRlRJeERLRkxuWCtWdXZzSlhZb0F1ZTRh?=
- =?utf-8?B?Si9pNEc4bUdMM0RvSlBIb1pFWVN3WTZQbEhMRE10RHRBRXAzc1JoSzFvdE9I?=
- =?utf-8?B?dWpvTEN2M2kzV2FmWW1oSlBBY2M0WVJqckZhWkt0NTE0U0g3cUIrcVdrSEJi?=
- =?utf-8?B?U3l2anQ4Z21qZHprNmk3cW1WK29rQkZ2QjNvbmozZEhQemM2ZWdXUkpiWHly?=
- =?utf-8?B?U2lXTlpENW1tMVkxM0hWQ0RCcmNuUUZiSUEzbE91TitKTiszdkRCZ2ZVZm1Q?=
- =?utf-8?B?YWFtbmpiZEd1ZjJRQWN2L3JxNjI5elZoMlNHSmF3c0tkanJIZEZtRXJvZXJS?=
- =?utf-8?B?WExSNnI2RE50NGFadFRtaFVxSm5Ca0o4UmYyWDhPZzhQZXNVSDNYL2JsNmw4?=
- =?utf-8?B?blR0eW4xdXBEZGxiSkNuRVZhcHVlaU5rekhMSzY1Um9JZVZ1ZG53SzFyT3NI?=
- =?utf-8?B?Q3BidTJmTnl6Q0tnd1dLTngydTgvekNCMWVBQ3hrMFFFZ21ldk5kTTBVTHd0?=
- =?utf-8?B?S0htN1FCR1BGbTNMamcvYUc1TmpxRkw0V3JPMVJ2UkdwTVl2eFJKd3Q2VFFR?=
- =?utf-8?B?eVBzaWx1MDJUYVliODZxZHBpNDJWdW1wR0dtZDR5THkzTEE9PQ==?=
+	=?utf-8?B?Y0ZReXhaNEEwQm1TNUhxQmxpalk4T2lweE8zb3pNc1U5WForcC9ZT05WZ29W?=
+ =?utf-8?B?bXp2aG82a202aXhMd0dDbEVjalV1T3k5NnNmdTdSME9jT29IbE1NcWp2SWZJ?=
+ =?utf-8?B?bk0ySWY0VE1aMWJyS1FWc0tqQUh1L1U2OVZ0STI5cVNXNk9HWDlYYlQzNVcx?=
+ =?utf-8?B?ajFaUzBVRjZBc0Q0V1RlVHl2SC81TVQxY1lybit0RUY3ZytYZk9KeG80eXIw?=
+ =?utf-8?B?bzg3WG1TV0p5L1BBc25KakNhTm1odU45NmZiSDVxN1BQZFl0SXFpcEhXRkhS?=
+ =?utf-8?B?cG5vT0lLRkJUeGdqREw2Z3FrSWN4V2lEdDVlK29aL1VWRFZPcEFTUUp6eDgw?=
+ =?utf-8?B?WTJEbDR6THczM3dTMHN4L1RvWHE3OWE4d05mZTYwc24rMThuS0VJUGYxdW84?=
+ =?utf-8?B?TWcwblp5aFl3bGR6U2tjVkpFNVNnanNLRjR5aGVVSnRCWmlYc05uTmJQb3Mw?=
+ =?utf-8?B?RWxoNUMxQk1uUUZOV0trYzJkNWhVeVRkUkN0Nk96L0lJd2pSUTQyejJSRVBp?=
+ =?utf-8?B?RktBRGJoRDFkd1p6VkxMeFRGc2hNR1Y1akdCZkR4bXNVYUQvMnNuT0pTWko5?=
+ =?utf-8?B?UVhpRlRWeG9CSUlWbWtYRWFaeVZGSStPSFF2YjJ3cEw2N1d1VzAzNjFLWW9Q?=
+ =?utf-8?B?cVFHNnp5NEZnZjJ4SnAvQjIrU2dkWGUwREc0OGhRQ0JHOXRNZEFSWTNwYWll?=
+ =?utf-8?B?ZktYejlZdUQrd3ErN1BUeVJYeGdWM1NITHI1SE00V3lmMXgza2ZqK2RWSGRY?=
+ =?utf-8?B?Rkp6TmtrNmRLNEZnUmwxb3FNT0QzTHIyT1FEb2xYWmJPa3BzaGJjOWU4VTVv?=
+ =?utf-8?B?N1RQeTdyMmQ3K3ByZ3JCd3lYSWxYVms1cjRKVWZGNHZXblhienRyUzRrVUpl?=
+ =?utf-8?B?NXQzcWNnM213ZGVLZ1g0Nm9JWVZyaGZPS0srb2prZ3dnVnpuVDNDY2pwWHVm?=
+ =?utf-8?B?b1o1b3llNnZJTG9ibXpZNHRydzZhZTNFekdPR1MvN0tiWXBVNjkwNm5zaVY1?=
+ =?utf-8?B?d1dLL1paWmU1aGxDeEZIRXlzc2ozNkpQYWY1Tk1mMTdiWXlFTW9GTEdyYy91?=
+ =?utf-8?B?TlVSWlFnS1plem80bHB6QVB0QWVIc0c1eWRQWGJDUVJBQStyV3MzYXpRN0Fv?=
+ =?utf-8?B?RzNEZDMzclRUTnRsWkJiRkk0elczMFFid0dCN0ZjMXpvbElxdVFLTHBtUVNw?=
+ =?utf-8?B?UndyNmlaY2ZVdlBRK1JyREt6RW1ubHQ1bEd0UmIyNHNLR3IvVVJSZ01uU0pt?=
+ =?utf-8?B?dEM5U3BhMkpQWFYyUjFJbFpUL2xrbVYvY0xXdzFLQkZoVmVFOVE5bk1XaWJy?=
+ =?utf-8?B?ZWxIYmxYNWVSNFBBTUgvWGh4eWQ5dGdPYkVsWTZFbmhhL2tKUE9uOC9rd042?=
+ =?utf-8?B?RlpUQ0p5MENlb04rVjA4Q2FuS0pmM0V4NWRvZkxGbU9sZS9hb3M4VnJRNFJC?=
+ =?utf-8?B?Ty8ySkE4cUZ1WjQ3R2g5eXFVMHA1SmNTQ0JOVGNFOUF6bC96bjdsOVJWQVQ0?=
+ =?utf-8?B?a3RuS0JmUk9KOElkWWFyY25YMm80aHBrU0NsWm5zY1I4R3l0eXZEbzdBb2NE?=
+ =?utf-8?B?a3ZTcmo2c3U2dUtuUG5CNFIvVVYzcVZMNWtrM0FNSEQ2dHg1dWxHdEZNMzlz?=
+ =?utf-8?B?VEh0QkxTZEdpbHpadk5BdXhESGg3S1ZuWmdZdGtkRUJ2QkpOOFIrend3MUhH?=
+ =?utf-8?B?SHEyRjBRcmJRMTNzZ2FXUS9XTjhWUi9mck5tWUp1NjRzeUtqTEhEVUs4YzEw?=
+ =?utf-8?B?REF2YUdsVE4zVy9JaXRGRWZHVm1JTmFnU01VRFc1TkRiejVGc2lwem1hUVVm?=
+ =?utf-8?B?dzlWeG5XUEUwUnJ4TXpZQk5XaS9IdjZ1aXJJSG5jalBNd0dMS3VKNFkwQUNT?=
+ =?utf-8?B?dUFEaGpwY1VURkVMQ3lNcjN3SFFSMU1sV0lyMDBVazRpZ3c9PQ==?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(52116014)(7416014)(376014)(38350700014);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(52116014)(366016)(38350700014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Z1J5ZVFzT1A4c204anU5TEdqb0RMemwrZlA4ZkdEbDN5YWp1QXpPM3hEUGRy?=
- =?utf-8?B?ejZ4YitWVzFTdU9pMFRwYWp2R0wvMTdOU3RRZHJQcThXK3htV0NRR3kzYng2?=
- =?utf-8?B?S2h5QVAyQy9qM3Z0bEZpcjVhaFJ0N09zL25GVXdkdmVhektoZ1doNzhYaDBP?=
- =?utf-8?B?bStxa0ZSZ1NpbUlmLzA5VzNuRER4eEdkS1Z6dE9QME5UaVh6eG5raHhTRWZo?=
- =?utf-8?B?MFJDM0orT05iVmMxaXFMMDhUb1VzL1dxb0NOYysrMTk3VWZtZU9pdEhxZ3Jy?=
- =?utf-8?B?SU1UazRWSy9OZy9Wa0h1V2FHMVBBeGJQTTh3QldNSUhXOTVJd1JIbW0zbE8x?=
- =?utf-8?B?ZlBXR1FGZ2FCem40N2xHdk1kV1ltRmNiKzdldGtFQXg4aW1NaW03bUdaZVh0?=
- =?utf-8?B?bWNPWTk1d01wa01YQ0V4Y2NQOWFvRzlLMTBBeFhiRFpESmFlV1RwSTZzcGxv?=
- =?utf-8?B?d29wbnppSzRZc29uOThLRDNib3dLeUczKzJUdUZqWnlIWlRTRlhlQUtieHNj?=
- =?utf-8?B?K2FBSkNiTjRDV0R6ZFdKUTM3Vi9pWnZHZFlBem1WL0NGVFp5Q2VRN2V3OWZo?=
- =?utf-8?B?WTExcVFhNG1UUkVTZE1ZR1g4TVpJanpBK1lQRXB6Y21wVzE1bjdaeVBaeXJh?=
- =?utf-8?B?OW5EWEl4dWZ5cFJIRGsxSHpraVB3a2h5WUlmL3RrY2Y5S2F6aHZTdVdPYUpJ?=
- =?utf-8?B?R1JrUjdYam9Kb0RLdFZHNC9hZWEzYUlwU3VJS3RpSlNBdFhmOGNvZENCQjRB?=
- =?utf-8?B?eTMydm1oWmV5ZUQyQmswNmNubWxkVloyQ3VBbVdnNXR1TnBrTWhxWk95TW0v?=
- =?utf-8?B?M0s4UTlDZlJUNXNNbUJUb2JVZVQxcS8rMHhIOU04MTVIZTBnYmh1K216aDRm?=
- =?utf-8?B?RWg2a1QxeWFBN1dpUWE1VVdBbHZHUFFnWFI0eko1dkpYSG53TkM0LzNZUmRn?=
- =?utf-8?B?OXcyWTU1R2NXY1ltWWFrMyt2S2NyMGNiNEpkN29pL3U3cXVOSGgzVG92SVJG?=
- =?utf-8?B?Rjd4NmJTOHhFRnZjZ2tqNWdpSmM5Y3cvVVM2VTl3MWxOQlZhZmJGNHdQVERQ?=
- =?utf-8?B?Njd5NWQ4SG5iQjNzM2RSNDQ1N25SMytiTDRwQSszS0c0STB4Wi9MZDdMbWhn?=
- =?utf-8?B?b3BLdTEza0Y4aVl2WVZZNEpnWHlnSWVHM2xKNktXM0lwbmxLaGw4M0pacjc2?=
- =?utf-8?B?b3JrMXM1SnlaOGh2b2R3QSt5QmxMUmo5ZkFRM21kdDlEUmZyaFowWXJsR3dQ?=
- =?utf-8?B?TnJ6Ly8zMC9CTW8vWnoyVFRpaVRVZ1pDVTlMVzZ4azVsdnMyUHpzR3ZvZTZ3?=
- =?utf-8?B?ZXo5YTJYOTNCVlZRVWp6bkhsTUJsaG9SMEErOTNjSXpEcHFoU1JoV1pDZVBD?=
- =?utf-8?B?eWVPejVweUUwMUNWQ1IrVGYvRENWbjVpY05PdEpRWVIzc2RRV1gxeUMyZmRu?=
- =?utf-8?B?NGVnaTBhZzd5Mjd6clBySlNxRmF6d3gxR3ZvL0hOOW83M3F1anF3dnFaUWdM?=
- =?utf-8?B?ZU91VWdlYjJQbXdBSnRORi9wR1doWXhPOTR3VXlUbVEzYjdKMDBXSnZqbEp4?=
- =?utf-8?B?L0NEVWpmOFV4YnIwa3NiSGtjUXV2SGlFbGtEd0lGVkljdjkvK0FFSjR1bk1W?=
- =?utf-8?B?bnBZdGswUER3MFdvc3RUR2dESUtoV3p3dVI0WHVpNkJlQXZQbFduZTdvYXQx?=
- =?utf-8?B?M2IvNEFoV1B4aWV1YStaSkUvZ2lCMXVRamMxNlJJbTRxZHJDY1IvMnpTS3My?=
- =?utf-8?B?anJFV0hRbHNiaElxdWNTWDhVZ2FVczl5eUJld2ZwMnJ1QWpuQzZMeXpRcnpy?=
- =?utf-8?B?dkNXWWRpK2crcEFkRGhWbnY4VHhHdU5lRjFEYVJ1bGtZdEIzQ1pHMGJkai9l?=
- =?utf-8?B?N2E4emZmRnB2WDhBV3BIeEN6UzBGQVZRYnlEcldTNHRRT1J1NnBTVEt4b3lp?=
- =?utf-8?B?ODd0R3E5U21kZFlad3ArQzE2VEk0WkpiL25kR3BWcDRrZEFOMnNaaXZFVjJq?=
- =?utf-8?B?YzZHU2xKbGdNdkxOS0xMeW8yaUVaR0EyVVJMcnNMWHdsSXdFSWsyN2RZNjdJ?=
- =?utf-8?B?VXZ2ZzFncnFwZGJoWXAxZUdBeW1ET2JFZzJTTmxSU05VNktOT2NGOUZoVG5x?=
- =?utf-8?Q?oY9Y=3D?=
+	=?utf-8?B?OGRrakpLbVdBL1hpWG9Ca2pTa2gyMW9ZcFlIK2E4VHhPL1QydWQ3b05aODR1?=
+ =?utf-8?B?eVdOWm11dVpOQXU5OFNSZkFXRmNYaFJZaXRYbjdQUC95SXZidkQ4QjcvbmpX?=
+ =?utf-8?B?LzZhRVpYdExhcm1nY292emk3V0x4YzJQbWR0QUdXVXdOeWN5MklGSFBnZWJJ?=
+ =?utf-8?B?Umt0MmM1aHp3a2thNGphYmp3V1JBdEhaQVZRc2poQTVSRUZFT1B3dGI1enB6?=
+ =?utf-8?B?eVZXZzZJYmQ2anJ3YVI2VWhpdHhVNjBHa0ZzaGhwQXNNd05BS3M4Q29EcGlW?=
+ =?utf-8?B?TlVKWkMwbjZ6TlkzMlVwcFJUMGJBNnBhZktIc3pwREVwN3hqT3dRLy9BaDBD?=
+ =?utf-8?B?SWdjN3FTalNZTWN6NXVGd2ZtNFlSTkxTeWVaZGVEV0ZBblFaUGRCdmM0OHIw?=
+ =?utf-8?B?cFVQZUJRRmpzQWdnRXV2VTF0OVYzeEpnUzR3RnV3UnBqQVhSMnRDQUEweFFX?=
+ =?utf-8?B?Zk9QSndqSWY4YVBkUW91dDBnYWdUS01Qc3llTWphVDFwZGNpdlNRcS9KSmVq?=
+ =?utf-8?B?TkE0bUl4ODZuRzRkZ1I3RnZPcUFydTBQNnRBWC9kOGVnelo4Q2R3MEpYU3Uz?=
+ =?utf-8?B?djVOWDh3OGZ5YjhEL0tacWRTdHJ5SFpFcjhqZlZuQmZtTnR6djNFL29vdFVm?=
+ =?utf-8?B?QTBaMUNHTDBVa0N5cWtVWkpSeFR5MU1zOVJrQkVjSDloQ3dFczRZYkEzc0RG?=
+ =?utf-8?B?d3VqVklZckE2TkNHbnhCOXAxTWpJekNsM0xkVUEzaDdvZmFndDUyaWtmc01R?=
+ =?utf-8?B?WUprclMxOERha2dhZ1NUVzVNTXBPQVo1SjVVRElnUExYWHNBc0RoUngrYnVJ?=
+ =?utf-8?B?VVhJUXBzSDNsb01UdWpEaklIN1RwTDlUNUpWRGZNS01zUW9BY2h3ME5KNGo0?=
+ =?utf-8?B?NTY2MVN2M2dwbGo3ZUNjZzNRSkR2c3J1bTBMT1AvanZHeHZGbVZJSXhZS2xs?=
+ =?utf-8?B?SG5mV0dZOGRFbnhCazJLeUdOaWVLRlk1QVc0OUJQcnRLK2RmNDg2VWY4bnNS?=
+ =?utf-8?B?TWJ6N1h5NjFqTFR3ZW1QVkRqUWFkUzVCbWdIMEUwbmZreFB0b0hWbmpFM1Z5?=
+ =?utf-8?B?YzVpQnJiY1diUzhiOHAvMi9lM1VRaDVtYkJpK2xCajhQZC9uTjRqcHFpaW9r?=
+ =?utf-8?B?YkFUMDJPTlFUWTNDZlBiYnhkOFMwMHZTa2EwaGYvalc4cWNnS3E4NUlvU3lt?=
+ =?utf-8?B?UWdoeEFvT1lkeW5wai8xK2FoK2VJWkVtbm0xREJBeC82c0ZSbHFEN01WaXdG?=
+ =?utf-8?B?R01GTWgxVUdKOUJzMXZGbFVENmpmcmMxa0E2STgrOGhUK1FqSUNZM1VmOE16?=
+ =?utf-8?B?Vk1CeExPV080ZkVXd2o1VTRUeGFteU1MRG1ZYVkxTldGaTZqa2JPS2kyeTFM?=
+ =?utf-8?B?YzBwTG5kMUZtcTlLcjRYek1jYzlXN29JbDlkMnQ1bDAxZEtLRXN2S2FYNisy?=
+ =?utf-8?B?V08zRFcycU1tMWFUZWZ6S3MveVMyNWFORVBHUjI4bFRhVjBSUGtqKy90bkxP?=
+ =?utf-8?B?b0lDMXhONURkOHBKQzJ5T0ZpSlp1Qnp3dElzYTFzekJXbGNiYnlpb1AzcFF4?=
+ =?utf-8?B?OTMwWk1xK3F0MUpKazllM2NxS2RYUldETTJrYUxYM2g4RnpYTHUzMjBqU251?=
+ =?utf-8?B?UGZLSzhCOWo1LzdEeUVTSDQvQWdSYWVKbk1TZWtlcFZ2RDgrbkZuOUFPazAv?=
+ =?utf-8?B?bmIyS3l1ZUlGenp2c0c3UmkyUEpXMUxrZzFnQUFIWVZXdW96ODYraHBTVDgw?=
+ =?utf-8?B?NEorbVpqOFhqTm12NjQwZUlqanhkelBtelBrQWxUaTFzUHFNTFF6VUdtTTFU?=
+ =?utf-8?B?TWh5dmZLNkxqaE1oMkltaFMzV0E1TzVZQ2JaSWYwbWxTTzdCUmo3S2ZpbVhi?=
+ =?utf-8?B?TUg0MjhTK0R6N0J0L3dkdGo1TnlvSGN0bXBHcDlnVlUxK1NaVEJGZ3U5c2M0?=
+ =?utf-8?B?ZzdILzZpMVNtV3NoZXcySm1NQWhXUnFFRjlYVjZlUHNvbnhQQWRkem9aS1pk?=
+ =?utf-8?B?S1ROYWF3Q2ZTdXlkNkNCU2NDTnR4QjdwWnFZOXZlSTA5R3NMSGpWVXNXWVh4?=
+ =?utf-8?B?RndqTVNjdlY1YmVBOGVUQmtFdDlHRXJzd0VSYzZuSTAvRk9LNWVHSWs3VG96?=
+ =?utf-8?Q?Zors=3D?=
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 12ab7f54-4cb1-4b13-d987-08dd13da49e3
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6b8bc1d2-873e-49eb-30f8-08dd13da4ee7
 X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Dec 2024 20:37:22.1031
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Dec 2024 20:37:30.5102
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: reAW98dWL4AB9PC8b9g1xf6w1T6X1P4Hr2h1LadXb2MCbPLzXbFV006RJw63AJrOlZEC7d/UATzbGPNMJYGLIQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB7108
+X-MS-Exchange-CrossTenant-UserPrincipalName: 0DKSDeMt08UFTvMbLpMnRiIIUBZo6F8RhPYCs8SKprjSwnYsnKMSCm1ZcBB8M3Six+D90cjC1ZnVn7AYrvjMiw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR04MB8730
 
-Introduce the helper function pci_epf_align_inbound_addr() to adjust
-addresses according to PCI BAR alignment requirements, converting addresses
-into base and offset values.
+Add three registers: PCIE_ENDPOINT_TEST_DB_BAR, PCIE_ENDPOINT_TEST_DB_ADDR,
+and PCIE_ENDPOINT_TEST_DB_DATA.
 
+Trigger the doorbell by writing data from PCI_ENDPOINT_TEST_DB_DATA to the
+address provided by PCI_ENDPOINT_TEST_DB_OFFSET and wait for endpoint
+feedback.
+
+Add two command to COMMAND_ENABLE_DOORBELL and COMMAND_DISABLE_DOORBELL
+to enable EP side's doorbell support and avoid compatible problem, which
+host side driver miss-match with endpoint side function driver. See below
+table:
+
+		Host side new driver	Host side old driver
+EP: new driver		S			F
+EP: old driver		F			F
+
+S: If EP side support MSI, 'pcitest -B' return success.
+   If EP side doesn't support MSI, the same to 'F'.
+
+F: 'pcitest -B' return failure, other case as usual.
+
+Tested-by: Niklas Cassel <cassel@kernel.org>
 Signed-off-by: Frank Li <Frank.Li@nxp.com>
 ---
-change from v8 to v9
-- pci_epf_align_inbound_addr(), base and off must be not NULL
-- rm pci_epf_align_inbound_addr_lo_hi()
+Change from v8 to v9
+- change PCITEST_DOORBELL to 0xa
 
-change from v7 to v8
-- change name to pci_epf_align_inbound_addr()
-- update comment said only need for memory, which not allocated by
-pci_epf_alloc_space().
+Change form v6 to v8
+- none
 
-change from v6 to v7
-- new patch
+Change from v5 to v6
+- %s/PCI_ENDPOINT_TEST_DB_ADDR/PCI_ENDPOINT_TEST_DB_OFFSET/g
+
+Change from v4 to v5
+- remove unused varible
+- add irq_type at pci_endpoint_test_doorbell();
+
+change from v3 to v4
+- Add COMMAND_ENABLE_DOORBELL and COMMAND_DISABLE_DOORBELL.
+- Remove new DID requirement.
 ---
- drivers/pci/endpoint/pci-epf-core.c | 44 +++++++++++++++++++++++++++++++++++++
- include/linux/pci-epf.h             |  3 +++
- 2 files changed, 47 insertions(+)
+ drivers/misc/pci_endpoint_test.c | 80 ++++++++++++++++++++++++++++++++++++++++
+ include/uapi/linux/pcitest.h     |  1 +
+ 2 files changed, 81 insertions(+)
 
-diff --git a/drivers/pci/endpoint/pci-epf-core.c b/drivers/pci/endpoint/pci-epf-core.c
-index 8fa2797d4169a..d7a80f9c1e661 100644
---- a/drivers/pci/endpoint/pci-epf-core.c
-+++ b/drivers/pci/endpoint/pci-epf-core.c
-@@ -464,6 +464,50 @@ struct pci_epf *pci_epf_create(const char *name)
- }
- EXPORT_SYMBOL_GPL(pci_epf_create);
+diff --git a/drivers/misc/pci_endpoint_test.c b/drivers/misc/pci_endpoint_test.c
+index 3aaaf47fa4ee2..b3f36b6ba8ba2 100644
+--- a/drivers/misc/pci_endpoint_test.c
++++ b/drivers/misc/pci_endpoint_test.c
+@@ -42,6 +42,8 @@
+ #define COMMAND_READ				BIT(3)
+ #define COMMAND_WRITE				BIT(4)
+ #define COMMAND_COPY				BIT(5)
++#define COMMAND_ENABLE_DOORBELL			BIT(6)
++#define COMMAND_DISABLE_DOORBELL		BIT(7)
  
-+/**
-+ * pci_epf_align_inbound_addr() - Get base address and offset that match BAR's
-+ *			  alignment requirement
-+ * @epf: the EPF device
-+ * @addr: the address of the memory
-+ * @bar: the BAR number corresponding to map addr
-+ * @base: return base address, which match BAR's alignment requirement.
-+ * @off: return offset.
-+ *
-+ * Helper function to convert input 'addr' to base and offset, which match
-+ * BAR's alignment requirement.
-+ *
-+ * The pci_epf_alloc_space() function already accounts for alignment. This is
-+ * primarily intended for use with other memory regions not allocated by
-+ * pci_epf_alloc_space(), such as peripheral register spaces or the trigger
-+ * address for a platform MSI controller.
-+ */
-+int pci_epf_align_inbound_addr(struct pci_epf *epf, enum pci_barno bar,
-+			       u64 addr, u64 *base, size_t *off)
+ #define PCI_ENDPOINT_TEST_STATUS		0x8
+ #define STATUS_READ_SUCCESS			BIT(0)
+@@ -53,6 +55,11 @@
+ #define STATUS_IRQ_RAISED			BIT(6)
+ #define STATUS_SRC_ADDR_INVALID			BIT(7)
+ #define STATUS_DST_ADDR_INVALID			BIT(8)
++#define STATUS_DOORBELL_SUCCESS			BIT(9)
++#define STATUS_DOORBELL_ENABLE_SUCCESS		BIT(10)
++#define STATUS_DOORBELL_ENABLE_FAIL		BIT(11)
++#define STATUS_DOORBELL_DISABLE_SUCCESS		BIT(12)
++#define STATUS_DOORBELL_DISABLE_FAIL		BIT(13)
+ 
+ #define PCI_ENDPOINT_TEST_LOWER_SRC_ADDR	0x0c
+ #define PCI_ENDPOINT_TEST_UPPER_SRC_ADDR	0x10
+@@ -67,6 +74,10 @@
+ #define PCI_ENDPOINT_TEST_IRQ_NUMBER		0x28
+ 
+ #define PCI_ENDPOINT_TEST_FLAGS			0x2c
++#define PCI_ENDPOINT_TEST_DB_BAR		0x30
++#define PCI_ENDPOINT_TEST_DB_OFFSET		0x34
++#define PCI_ENDPOINT_TEST_DB_DATA		0x38
++
+ #define FLAG_USE_DMA				BIT(0)
+ 
+ #define PCI_DEVICE_ID_TI_AM654			0xb00c
+@@ -108,6 +119,7 @@ enum pci_barno {
+ 	BAR_3,
+ 	BAR_4,
+ 	BAR_5,
++	NO_BAR = -1,
+ };
+ 
+ struct pci_endpoint_test {
+@@ -746,6 +758,71 @@ static bool pci_endpoint_test_set_irq(struct pci_endpoint_test *test,
+ 	return false;
+ }
+ 
++static bool pci_endpoint_test_doorbell(struct pci_endpoint_test *test)
 +{
-+	const struct pci_epc_features *epc_features;
-+	u64 align;
++	struct pci_dev *pdev = test->pdev;
++	struct device *dev = &pdev->dev;
++	int irq_type = test->irq_type;
++	enum pci_barno bar;
++	u32 data, status;
++	u32 addr;
 +
-+	if (!base || !off)
-+		return -EINVAL;
-+
-+	epc_features = pci_epc_get_features(epf->epc, epf->func_no, epf->vfunc_no);
-+	if (!epc_features) {
-+		dev_err(&epf->dev, "epc_features not implemented\n");
-+		return -EOPNOTSUPP;
++	if (irq_type < IRQ_TYPE_INTX || irq_type > IRQ_TYPE_MSIX) {
++		dev_err(dev, "Invalid IRQ type option\n");
++		return false;
 +	}
 +
-+	align = epc_features->align;
-+	align = align ? align : 128;
-+	if (epc_features->bar[bar].type == BAR_FIXED)
-+		align = max(epc_features->bar[bar].fixed_size, align);
++	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_TYPE, irq_type);
++	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_NUMBER, 1);
++	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_COMMAND,
++				 COMMAND_ENABLE_DOORBELL);
 +
-+	*base = round_down(addr, align);
-+	*off = addr & (align - 1);
++	wait_for_completion_timeout(&test->irq_raised, msecs_to_jiffies(1000));
 +
-+	return 0;
++	status = pci_endpoint_test_readl(test, PCI_ENDPOINT_TEST_STATUS);
++	if (status & STATUS_DOORBELL_ENABLE_FAIL) {
++		dev_err(dev, "Failed to enable doorbell\n");
++		return false;
++	}
++
++	data = pci_endpoint_test_readl(test, PCI_ENDPOINT_TEST_DB_DATA);
++	addr = pci_endpoint_test_readl(test, PCI_ENDPOINT_TEST_DB_OFFSET);
++	bar = pci_endpoint_test_readl(test, PCI_ENDPOINT_TEST_DB_BAR);
++
++	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_TYPE, irq_type);
++	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_NUMBER, 1);
++
++	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_STATUS, 0);
++
++	bar = pci_endpoint_test_readl(test, PCI_ENDPOINT_TEST_DB_BAR);
++
++	writel(data, test->bar[bar] + addr);
++
++	wait_for_completion_timeout(&test->irq_raised, msecs_to_jiffies(1000));
++
++	status = pci_endpoint_test_readl(test, PCI_ENDPOINT_TEST_STATUS);
++
++	if (!(status & STATUS_DOORBELL_SUCCESS))
++		dev_err(dev, "Endpoint have not received Doorbell\n");
++
++	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_COMMAND,
++				 COMMAND_DISABLE_DOORBELL);
++
++	wait_for_completion_timeout(&test->irq_raised, msecs_to_jiffies(1000));
++
++	status |= pci_endpoint_test_readl(test, PCI_ENDPOINT_TEST_STATUS);
++
++	if (status & STATUS_DOORBELL_DISABLE_FAIL) {
++		dev_err(dev, "Failed to disable doorbell\n");
++		return false;
++	}
++
++	if (!(status & STATUS_DOORBELL_SUCCESS))
++		return false;
++
++	return true;
 +}
-+EXPORT_SYMBOL_GPL(pci_epf_align_inbound_addr);
 +
- static void pci_epf_dev_release(struct device *dev)
+ static long pci_endpoint_test_ioctl(struct file *file, unsigned int cmd,
+ 				    unsigned long arg)
  {
- 	struct pci_epf *epf = to_pci_epf(dev);
-diff --git a/include/linux/pci-epf.h b/include/linux/pci-epf.h
-index 5374e6515ffa0..2847d195433bf 100644
---- a/include/linux/pci-epf.h
-+++ b/include/linux/pci-epf.h
-@@ -238,6 +238,9 @@ void *pci_epf_alloc_space(struct pci_epf *epf, size_t size, enum pci_barno bar,
- 			  enum pci_epc_interface_type type);
- void pci_epf_free_space(struct pci_epf *epf, void *addr, enum pci_barno bar,
- 			enum pci_epc_interface_type type);
-+
-+int pci_epf_align_inbound_addr(struct pci_epf *epf, enum pci_barno bar,
-+			       u64 addr, u64 *base, size_t *off);
- int pci_epf_bind(struct pci_epf *epf);
- void pci_epf_unbind(struct pci_epf *epf);
- int pci_epf_add_vepf(struct pci_epf *epf_pf, struct pci_epf *epf_vf);
+@@ -793,6 +870,9 @@ static long pci_endpoint_test_ioctl(struct file *file, unsigned int cmd,
+ 	case PCITEST_CLEAR_IRQ:
+ 		ret = pci_endpoint_test_clear_irq(test);
+ 		break;
++	case PCITEST_DOORBELL:
++		ret = pci_endpoint_test_doorbell(test);
++		break;
+ 	}
+ 
+ ret:
+diff --git a/include/uapi/linux/pcitest.h b/include/uapi/linux/pcitest.h
+index 94b46b043b536..b82e7f2ed937d 100644
+--- a/include/uapi/linux/pcitest.h
++++ b/include/uapi/linux/pcitest.h
+@@ -20,6 +20,7 @@
+ #define PCITEST_MSIX		_IOW('P', 0x7, int)
+ #define PCITEST_SET_IRQTYPE	_IOW('P', 0x8, int)
+ #define PCITEST_GET_IRQTYPE	_IO('P', 0x9)
++#define PCITEST_DOORBELL	_IO('P', 0xa)
+ #define PCITEST_CLEAR_IRQ	_IO('P', 0x10)
+ 
+ #define PCITEST_FLAGS_USE_DMA	0x00000001
 
 -- 
 2.34.1
