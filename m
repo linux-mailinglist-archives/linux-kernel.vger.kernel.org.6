@@ -1,70 +1,80 @@
-Return-Path: <linux-kernel+bounces-429234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C576F9E1941
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 11:29:27 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 701109E1948
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 11:30:58 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8491C287A84
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:29:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 364F9160910
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:30:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9891C1E1C3B;
-	Tue,  3 Dec 2024 10:29:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E98501E1C2E;
+	Tue,  3 Dec 2024 10:30:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GbygLMXz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KJKQCNP2"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFEA51E1C14;
-	Tue,  3 Dec 2024 10:29:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BD8A1DFE1C
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 10:30:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733221760; cv=none; b=Wiz7laHlsGfdBpPv+LrtzcZ4czVUPZhCHuXOqdpCQ+wnQ1o5j0Zk2zCPPqvcmBNni3a7HmpXOo42AjtW71+oKSRyeGV7+2zgDuiQfc1l3e2Syc9pdhm2Ndg6vxzKkaZ9+2bO2QwRN951vurIOICk+yXFJAJJ76zgXxrVXtdRXrs=
+	t=1733221852; cv=none; b=NTEVsZhvL2tBe+6RsKGEVWN2TaYEAwXvmwE/LNX5ujGhmwtKS8Pjje0LXej5kHqjQlogkJwuycuWX7K2sl+zXwQ47VXjnwftu28t+6Oy7WWZ3sZCQazVihB1FCs/O7xWmEYR9e33kx1EMU8+ISw3XATP7zF8+x2YAML1V/yfHao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733221760; c=relaxed/simple;
-	bh=XUuRyTfQ3tYPh31NVuis3MXPsprCUj4fXIe4ghTE6So=;
+	s=arc-20240116; t=1733221852; c=relaxed/simple;
+	bh=agBdfohU6uGT3pRcO1ECFkSQ2EcQqT8N7wKtnv6dwXs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j88wqb+hIDlfTslcgHT87w5zPUW3tbX1EEXTNJ+RqKLJ895TSJwChQ7ZETfvEGZT0Qx2wCybDURVReXvSjXuhaZg/V8oI2PCc8jj/ZPd9iC04cFyoPn2WKLXsYJ507eVe09JJfjK3u5Mpf1Syvu4Sz+jcysL7ZKEKOghi+baQRk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GbygLMXz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D373C4CECF;
-	Tue,  3 Dec 2024 10:29:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733221759;
-	bh=XUuRyTfQ3tYPh31NVuis3MXPsprCUj4fXIe4ghTE6So=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GbygLMXzt9cb60YsDKViS7r1gNVigl/Kx3QUYu5UwTarb4ULm26quG8I4f0MkRjff
-	 6nRFKJq/BG+8IhbhyDc6K7qWgboVadib7eo5IeqbCrMXUDkI6HirEK1DyGM2C31SX+
-	 khqMuHahuG0zH7dH+6hZom80jd1BEuSZC+vYHT9KCkePYHHa46ioaq71ad6MaAhVpj
-	 3gD4Nt6/ZPoYExKYcQ/sASZZd8DaIdHNZEF0cmkFKfKQNq8nwxX/fBzpmW/+Rliuu0
-	 Z28ywNIdJP5MPgUFqhwlc607CJYPKEIqf/93kpzYLcS2s6zLT9e5W4ZyPsbh3FfR0J
-	 ATSXQ4hU9J1qA==
-Date: Tue, 3 Dec 2024 10:29:13 +0000
-From: Simon Horman <horms@kernel.org>
-To: Kory Maincent <kory.maincent@bootlin.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Oleksij Rempel <o.rempel@pengutronix.de>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	Rob Herring <robh@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	linux-doc@vger.kernel.org, Kyle Swenson <kyle.swenson@est.tech>,
-	Dent Project <dentproject@linuxfoundation.org>,
-	kernel@pengutronix.de,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>
-Subject: Re: [PATCH RFC net-next v3 26/27] net: pse-pd: tps23881: Add support
- for static port priority feature
-Message-ID: <20241203102913.GD9361@kernel.org>
-References: <20241121-feature_poe_port_prio-v3-0-83299fa6967c@bootlin.com>
- <20241121-feature_poe_port_prio-v3-26-83299fa6967c@bootlin.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=S1JK2ddfBqkr5k7hO4ynqOl6Gm2Ul6I9lx0J+Hnz9rMH6pbIjTe3HG30Dnfk4wzzaAFqM6CB0FarDOmtvWdOLxMM2EpSIGzMa4QIqy7u3gsu2fFgW3+mLWgNngeBw8dmjJZidQYx0Rbtp6omNJ8wc4H5KAVVJbesIi6Ea8jeFXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KJKQCNP2; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733221849;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xnrtD1CQI4UR1z9IWtbJHJhqD1dW84dYt1dsSz0U8Bw=;
+	b=KJKQCNP2OA8kz6o8IXE8xHqbRy/8zvqmlukWyLJISybobu6Vz5DxtOvn2NO3Nhtx9N5FAn
+	YY6BLgrBc5RMhc8RunKlx2XTc1Wr+eHIMTTRF/9lq2dD3DpOzp8LcJims1FYlHLwk4qObO
+	7pgTpQzDrBwPGCzwj57DAGvb55uee08=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-619-D3Q6V3QqOVefF15VLWutmQ-1; Tue,
+ 03 Dec 2024 05:30:44 -0500
+X-MC-Unique: D3Q6V3QqOVefF15VLWutmQ-1
+X-Mimecast-MFC-AGG-ID: D3Q6V3QqOVefF15VLWutmQ
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C83861955D83;
+	Tue,  3 Dec 2024 10:30:42 +0000 (UTC)
+Received: from localhost (unknown [10.72.113.10])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 208F01956054;
+	Tue,  3 Dec 2024 10:30:40 +0000 (UTC)
+Date: Tue, 3 Dec 2024 18:30:36 +0800
+From: Baoquan He <bhe@redhat.com>
+To: Yan Zhao <yan.y.zhao@intel.com>
+Cc: "Eric W. Biederman" <ebiederm@xmission.com>,
+	"Kirill A. Shutemov" <kirill@shutemov.name>,
+	kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-coco@lists.linux.dev, x86@kernel.org,
+	rick.p.edgecombe@intel.com, kirill.shutemov@linux.intel.com
+Subject: Re: [PATCH] kexec_core: Accept unaccepted kexec destination addresses
+Message-ID: <Z07dzP6ZdW3sNahj@MiWiFi-R3L-srv>
+References: <87frop8r0y.fsf@email.froward.int.ebiederm.org>
+ <tpbcun3d4wrnbtsvx3b3hjpdl47f2zuxvx6zqsjoelazdt3eyv@kgqnedtcejta>
+ <87cyjq7rjo.fsf@email.froward.int.ebiederm.org>
+ <ZxmRkUNmx863Po2U@yzhao56-desk.sh.intel.com>
+ <Z0WzHZ+fNn6WuH/E@MiWiFi-R3L-srv>
+ <Z0bt4HXAKqM3C1ZW@yzhao56-desk.sh.intel.com>
+ <Z0iJ+DTPA2IkVDx7@MiWiFi-R3L-srv>
+ <Z0lWkrsXSpDVfW72@yzhao56-desk.sh.intel.com>
+ <Z03BbH5PgNrE81dz@MiWiFi-R3L-srv>
+ <Z07YJlxK9/piXLhK@yzhao56-desk.sh.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,89 +83,136 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241121-feature_poe_port_prio-v3-26-83299fa6967c@bootlin.com>
+In-Reply-To: <Z07YJlxK9/piXLhK@yzhao56-desk.sh.intel.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-On Thu, Nov 21, 2024 at 03:42:52PM +0100, Kory Maincent wrote:
-> From: Kory Maincent (Dent Project) <kory.maincent@bootlin.com>
+On 12/03/24 at 06:06pm, Yan Zhao wrote:
+> On Mon, Dec 02, 2024 at 10:17:16PM +0800, Baoquan He wrote:
+> > On 11/29/24 at 01:52pm, Yan Zhao wrote:
+> > > On Thu, Nov 28, 2024 at 11:19:20PM +0800, Baoquan He wrote:
+> > > > On 11/27/24 at 06:01pm, Yan Zhao wrote:
+> > > > > On Tue, Nov 26, 2024 at 07:38:05PM +0800, Baoquan He wrote:
+> > > > > > On 10/24/24 at 08:15am, Yan Zhao wrote:
+> > > > > > > On Wed, Oct 23, 2024 at 10:44:11AM -0500, Eric W. Biederman wrote:
+> > > > > > > > "Kirill A. Shutemov" <kirill@shutemov.name> writes:
+> > > > > > > > 
+> > > > > > > > > Waiting minutes to get VM booted to shell is not feasible for most
+> > > > > > > > > deployments. Lazy is sane default to me.
+> > > > > > > > 
+> > > > > > > > Huh?
+> > > > > > > > 
+> > > > > > > > Unless my guesses about what is happening are wrong lazy is hiding
+> > > > > > > > a serious implementation deficiency.  From all hardware I have seen
+> > > > > > > > taking minutes is absolutely ridiculous.
+> > > > > > > > 
+> > > > > > > > Does writing to all of memory at full speed take minutes?  How can such
+> > > > > > > > a system be functional?
+> > > > > > > > 
+> > > > > > > > If you don't actually have to write to the pages and it is just some
+> > > > > > > > accounting function it is even more ridiculous.
+> > > > > > > > 
+> > > > > > > > 
+> > > > > > > > I had previously thought that accept_memory was the firmware call.
+> > > > > > > > Now that I see that it is just a wrapper for some hardware specific
+> > > > > > > > calls I am even more perplexed.
+> > > > > > > > 
+> > > > > > > > 
+> > > > > > > > Quite honestly what this looks like to me is that someone failed to
+> > > > > > > > enable write-combining or write-back caching when writing to memory
+> > > > > > > > when initializing the protected memory.  With the result that everything
+> > > > > > > > is moving dog slow, and people are introducing complexity left and write
+> > > > > > > > to avoid that bad implementation.
+> > > > > > > > 
+> > > > > > > > 
+> > > > > > > > Can someone please explain to me why this accept_memory stuff has to be
+> > > > > > > > slow, why it has to take minutes to do it's job.
+> > > > > > > This kexec patch is a fix to a guest(TD)'s kexce failure.
+> > > > > > > 
+> > > > > > > For a linux guest, the accept_memory() happens before the guest accesses a page.
+> > > > > > > It will (if the guest is a TD)
+> > > > > > > (1) trigger the host to allocate the physical page on host to map the accessed
+> > > > > > >     guest page, which might be slow with wait and sleep involved, depending on
+> > > > > > >     the memory pressure on host.
+> > > > > > > (2) initializing the protected page.
+> > > > > > > 
+> > > > > > > Actually most of guest memory are not accessed by guest during the guest life
+> > > > > > > cycle. accept_memory() may cause the host to commit a never-to-be-used page,
+> > > > > > > with the host physical page not even being able to get swapped out.
+> > > > > > 
+> > > > > > So this sounds to me more like a business requirement on cloud platform,
+> > > > > > e.g if one customer books a guest instance with 60G memory, while the
+> > > > > > customer actually always only cost 20G memory at most. Then the 40G memory
+> > > > > > can be saved to reduce pressure for host.
+> > > > > Yes.
+> > > > 
+> > > > That's very interesting, thanks for confirming.
+> > > > 
+> > > > > 
+> > > > > > I could be shallow, just a wild guess.
+> > > > > > If my guess is right, at least those cloud service providers must like this
+> > > > > > accept_memory feature very much.
+> > > > > > 
+> > > > > > > 
+> > > > > > > That's why we need a lazy accept, which does not accept_memory() until after a
+> > > > > > > page is allocated by the kernel (in alloc_page(s)).
+> > > > > > 
+> > > > > > By the way, I have two questions, maybe very shallow.
+> > > > > > 
+> > > > > > 1) why can't we only find those already accepted memory to put kexec
+> > > > > > kernel/initrd/bootparam/purgatory?
+> > > > > 
+> > > > > Currently, the first kernel only accepts memory during the memory allocation in
+> > > > > a lazy accept mode. Besides reducing boot time, it's also good for memory
+> > > > > over-commitment as you mentioned above.
+> > > > > 
+> > > > > My understanding of why the memory for the kernel/initrd/bootparam/purgatory is
+> > > > > not allocated from the first kernel is that this memory usually needs to be
+> > > > > physically contiguous. Since this memory will not be used by the first kernel,
+> > > > > looking up from free RAM has a lower chance of failure compared to allocating it
+> > > > 
+> > > > Well, there could be misunderstanding here.The final loaded position of
+> > > > kernel/initrd/bootparam/purgatory is not searched from free RAM, it's
+> > > Oh, by free RAM, I mean system RAM that is marked as
+> > > IORESOURCE_SYSTEM_RAM | IORESOURCE_BUSY, but not marked as
+> > > IORESOURCE_SYSRAM_DRIVER_MANAGED.
+> > > 
+> > > 
+> > > > just from RAM on x86. Means it possibly have been allocated and being
+> > > > used by other component of 1st kernel. Not like kdump, the 2nd kernel of
+> > > Yes, it's entirely possible that the destination address being searched out has
+> > > already been allocated and is in use by the 1st kernel. e.g. for
+> > > KEXEC_TYPE_DEFAULT, the source page for each segment is allocated from the 1st
+> > > kernel, and it is allowed to have the same address as its corresponding
+> > > destination address.
+> > > 
+> > > However, it's not guaranteed that the destination address must have been
+> > > allocated by the 1st kernel.
+> > > 
+> > > > kexec reboot doesn't care about 1st kernel's memory usage. We will copy
+> > > > them from intermediat position to the designated location when jumping.
+> > > Right. If it's not guaranteed that the destination address has been accepted
+> > > before this copying, the copying could trigger an error due to accessing an
+> > > unaccepted page, which could be fatal for a linux TDX guest.
+> > 
+> > Oh, I just said the opposite. I meant we could search according to the
+> > current unaccepted->bitmap to make sure the destination area definitely
+> > have been accepted. This is the best if doable, while I know it's not
+> > easy.
+> Well, this sounds like introducing a new constraint in addition to the current
+> checking of !kimage_is_destination_range() in locate_mem_hole_top_down() or
+> locate_mem_hole_bottom_up(). (powerpc also has a different implementation).
 > 
-> This patch enhances PSE callbacks by introducing support for the static
-> port priority feature. It extends interrupt management to handle and report
-> detection, classification, and disconnection events. Additionally, it
-> introduces the pi_get_pw_req() callback, which provides information about
-> the power requested by the Powered Devices.
-> 
-> Interrupt support is essential for the proper functioning of the TPS23881
-> controller. Without it, after a power-on (PWON), the controller will
-> no longer perform detection and classification. This could lead to
-> potential hazards, such as connecting a non-PoE device after a PoE device,
-> which might result in magic smoke.
-> 
-> Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
-> ---
-> 
-> We may need a fix for the interrupt support in old version of Linux.
-> 
-> Change in v3:
-> - New patch
-> ---
->  drivers/net/pse-pd/tps23881.c | 197 ++++++++++++++++++++++++++++++++++++++++--
->  1 file changed, 188 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/net/pse-pd/tps23881.c b/drivers/net/pse-pd/tps23881.c
+> This could make the success unpredictable, depending on how many pages have
+> been accepted by the 1st kernel and the layout of the accepted pages(e.g.,
+> whether they are physically contiguous). The 1st kernel would also have no
+> reliable way to ensure success except by accepting all the guest pages.
 
-...
+Yeah, when I finished reading accept_memory code, this is the first idea
+which come up into my mind. If it can be made, it's the most ideal. When
+I tried to make a draft change, it does introduce a lot of code change and
+add very much complication and I just gave up.
 
-> +static int tps23881_irq_event_detection(struct tps23881_priv *priv,
-> +					u16 reg_val,
-> +					unsigned long *notifs,
-> +					unsigned long *notifs_mask)
-> +{
-> +	enum ethtool_pse_events event;
-> +	int reg, ret, i, val;
-> +	u8 chans;
-> +
-> +	chans = tps23881_it_export_chans_helper(reg_val, 0);
-> +	for_each_set_bit(i, (unsigned long *)&chans, TPS23881_MAX_CHANS) {
+Maybe this can be added to cover-letter too to tell this possible path we
+explored.
 
-Hi Kory,
-
-The storage size of chans is only 1 byte, but here we are pretending that
-it has more space. Which seems to be a bit of a stretch. Perhaps it would
-be better to simply use unsigned long as the type of chans here and in
-tps23881_irq_event_classification().
-
-W=1 build with gcc-14 on x86_64 complains about this line as follows:
-
-In function 'find_next_bit',
-    inlined from 'tps23881_irq_event_detection' at drivers/net/pse-pd/tps23881.c:1281:2,
-    inlined from 'tps23881_irq_event_handler' at drivers/net/pse-pd/tps23881.c:1363:9,
-    inlined from 'tps23881_irq_handler' at drivers/net/pse-pd/tps23881.c:1400:9:
-./include/linux/find.h:65:23: warning: array subscript 'long unsigned int[0]' is partly outside array bounds of 'u8[1]' {aka 'unsigned char[1]'} [-Warray-bounds=]
-   65 |                 val = *addr & GENMASK(size - 1, offset);
-      |                       ^~~~~
-drivers/net/pse-pd/tps23881.c: In function 'tps23881_irq_handler':
-drivers/net/pse-pd/tps23881.c:1278:12: note: object 'chans' of size 1
- 1278 |         u8 chans;
-      |            ^~~~~
-
-> +		reg = TPS23881_REG_DISC + (i % 4);
-> +		ret = i2c_smbus_read_word_data(priv->client, reg);
-> +		if (ret < 0)
-> +			return ret;
-> +
-> +		val = tps23881_calc_val(ret, i, 0, 0xf);
-> +		/* If detection valid */
-> +		if (val == 0x4)
-> +			event = ETHTOOL_C33_PSE_EVENT_DETECTION;
-> +		else
-> +			event = ETHTOOL_C33_PSE_EVENT_DISCONNECTION;
-> +
-> +		tps23881_set_notifs_helper(priv, BIT(i), notifs,
-> +					   notifs_mask, event);
-> +	}
-> +
-> +	return 0;
-> +}
-
-...
 
