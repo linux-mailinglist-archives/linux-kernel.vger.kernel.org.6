@@ -1,109 +1,116 @@
-Return-Path: <linux-kernel+bounces-429805-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94FC29E2ADD
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 19:30:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id AD8D29E2B7D
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 19:58:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 87A83BE46B7
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 15:59:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 04483BE4EB1
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:00:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 920A31F8909;
-	Tue,  3 Dec 2024 15:59:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2445E1F76AD;
+	Tue,  3 Dec 2024 16:00:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="HASqnMMs"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fzTiOEur"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7328D1F76AD;
-	Tue,  3 Dec 2024 15:58:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8022A1F76A4;
+	Tue,  3 Dec 2024 16:00:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733241540; cv=none; b=FuWYv4EHcaEqBXfNjbJ/yR5fSeavOzNkLg+CJs3rjYQKRslW/eqwZD7ogU0hHL6M9rIsCqzQ4e0OQq7S+7FC9QjSSexgYLRVYsG48+5O3YvV4dLUXhMo/C5oaPQQBnI4XBZShaKnf9iS0org4MkXsCo6xCHdeZe/1eifiOoJfAA=
+	t=1733241650; cv=none; b=cEaX++lH7D97Tzy5FBm6S8gGyOk0Qmawi7DehKyoXGxxM3FmSmKpqPUwGr2W+mADFD3nc13GXr+fpAiCP/t7rI+dPcnpqJW5T6aKLyno5S/CDzZqa1Jmjy++nHf83+MDX7yhXL2K7pMXwpB4usXkwUp4AvQtdZr0hw1rwmjtqE8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733241540; c=relaxed/simple;
-	bh=aNIYOm+BmWWU2hBdJEYlLVbxaTdWTBaUP7RaDpWKdts=;
+	s=arc-20240116; t=1733241650; c=relaxed/simple;
+	bh=AoSfdUmW3Qz5Qt+tAkE3FSMWGkGJm0lI7MA7iR7Z2XI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CYOK3l4aaScP9eqKQCFhmzb8lzIR7QaI2kBKLUJZCGsKWHz23qw9ttt/iKeAKXrpBRuGqmnDGSdzYNh0rYX1T17VJ0D2XHGX16aCtOn7OX3RVi5PF4RZrKVBnOAIAobg68ak2pOvb86sJxmS54BwjqWNzD4E0sWqAbKB9r/0Y5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=HASqnMMs; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 0DD324CE;
-	Tue,  3 Dec 2024 16:58:27 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1733241508;
-	bh=aNIYOm+BmWWU2hBdJEYlLVbxaTdWTBaUP7RaDpWKdts=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=Pl4zFG9UXXGbmncXU3rLZJYV7T/cDOZ6cR7HqKMmeaklqud46YGZFLHyRAEWBt29stOt5DUiUNfUFi1HTXPyQexvwnK6nOgD9Sl2AaNI9SZa2ipKipjD1A+jAJ4CqzQiRIbHYE9pHs+JzkZY/7lhUKQpyE/XzSCZckrKZj7M2cY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fzTiOEur; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E4CBC4CECF;
+	Tue,  3 Dec 2024 16:00:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733241650;
+	bh=AoSfdUmW3Qz5Qt+tAkE3FSMWGkGJm0lI7MA7iR7Z2XI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HASqnMMspCV6QhzACwvbRATGG2CxDEtCBg0DPNjfj7VYbJBSpuXN9qkBHh25UfpPa
-	 k6NGQ4AJD8Q1JSKXt3/XRW4yX2rnl+qeUiasiZkiPoObEx6S54anBZaxvFpa6kcs1M
-	 uxWUUtMb7fghXAczjVImTsldDPBj84DEMjNU1JYQ=
-Date: Tue, 3 Dec 2024 17:58:43 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Ricardo Ribalda <ribalda@chromium.org>
-Cc: Hans de Goede <hdegoede@redhat.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Sakari Ailus <sakari.ailus@linux.intel.com>
-Subject: Re: [PATCH v5 2/2] media: uvcvideo: Add more logging to
- uvc_query_ctrl()
-Message-ID: <20241203155843.GD26936@pendragon.ideasonboard.com>
-References: <20241128-uvc-readless-v5-0-cf16ed282af8@chromium.org>
- <20241128-uvc-readless-v5-2-cf16ed282af8@chromium.org>
+	b=fzTiOEurjyVeVI5dFKRU9eRnhBKoYPc9hLs95uUzANDHYMGm0wnLAdMIGbVc7pJU1
+	 513WZCumFL/KcT+McSJuLydoIrU1mwtHGc9Z4pF/Km4XqtEow8ZF49H+WJtMsFU4FJ
+	 RHz8IrQNgttya/E4TBzT4YQARJQf91ZPn/DlJG1DfSzzIhEjMdCvrrpVkmRrWntr9D
+	 FQROKR7Je54MYvOA745ZfZ7f+IAn7InbXkbQd4Mz+h0andR0LtMnEEai5pQmbevFAn
+	 GKfK1ZnJFTQ1B0cFhrjGOZj2xQZnuCqYZ14KK3a1jFcVX13vQNxiyo3saljahpKVs2
+	 nwI52REa3QzJQ==
+Date: Tue, 3 Dec 2024 16:00:45 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Dave Martin <Dave.Martin@arm.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH 1/6] arm64/sme: Flush foreign register state in
+ do_sme_acc()
+Message-ID: <9365be76-8da6-47ce-b88e-dfa244b9e5b7@sirena.org.uk>
+References: <20241203-arm64-sme-reenable-v1-0-d853479d1b77@kernel.org>
+ <20241203-arm64-sme-reenable-v1-1-d853479d1b77@kernel.org>
+ <Z08khk6Mg6+T6VV9@e133380.arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="V8rFlpgqAXwiQFZA"
 Content-Disposition: inline
-In-Reply-To: <20241128-uvc-readless-v5-2-cf16ed282af8@chromium.org>
+In-Reply-To: <Z08khk6Mg6+T6VV9@e133380.arm.com>
+X-Cookie: Alimony is the high cost of leaving.
 
-On Thu, Nov 28, 2024 at 08:53:42PM +0000, Ricardo Ribalda wrote:
-> If we fail to query the ctrl error code there is no information on dmesg
 
-s/ctrl/control/
+--V8rFlpgqAXwiQFZA
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> or in uvc_dbg. This makes difficult to debug the issue.
-> 
-> Print a proper error message when we cannot retrieve the error code from
-> the device.
-> 
-> Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+On Tue, Dec 03, 2024 at 03:32:22PM +0000, Dave Martin wrote:
+> On Tue, Dec 03, 2024 at 12:45:53PM +0000, Mark Brown wrote:
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > @@ -1460,6 +1460,8 @@ void do_sme_acc(unsigned long esr, struct pt_regs=
+ *regs)
+> >  		sme_set_vq(vq_minus_one);
+> > =20
+> >  		fpsimd_bind_task_to_cpu();
+> > +	} else {
+> > +		fpsimd_flush_task_state(current);
 
-I'll update the commit message, no need to resend.
+> TIF_FOREIGN_FPSTATE is (or was) a cache of the task<->CPU binding that
+> you're clobbering here.
 
-> ---
->  drivers/media/usb/uvc/uvc_video.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/usb/uvc/uvc_video.c b/drivers/media/usb/uvc/uvc_video.c
-> index 67f714bca417..a650d886e922 100644
-> --- a/drivers/media/usb/uvc/uvc_video.c
-> +++ b/drivers/media/usb/uvc/uvc_video.c
-> @@ -117,8 +117,12 @@ int uvc_query_ctrl(struct uvc_device *dev, u8 query, u8 unit,
->  	error = *(u8 *)data;
->  	*(u8 *)data = tmp;
->  
-> -	if (ret != 1)
-> +	if (ret != 1) {
-> +		dev_err_ratelimited(&dev->udev->dev,
-> +				    "Failed to query (%s) UVC error code control %u on unit %u: %d (exp. 1).\n",
-> +				    uvc_query_name(query), cs, unit, ret);
->  		return ret < 0 ? ret : -EPIPE;
-> +	}
->  
->  	uvc_dbg(dev, CONTROL, "Control error %u\n", error);
->  
+> So, this fpsimd_flush_task_state() should have no effect unless
+> TIF_FOREIGN_FPSTATE is already wrong?  I'm wondering if the apparent
+> need for this means that there is an undiagnosed bug elsewhere.
 
--- 
-Regards,
+> (My understanding is based on FPSIMD/SVE; I'm less familiar with the
+> SME changes, so I may be missing something important here.)
 
-Laurent Pinchart
+It's to ensure that the last recorded CPU for the current task is
+invalid so that if the state was loaded on another CPU and we switch
+back to that CPU we reload the state from memory, we need to at least
+trigger configuration of the SME VL.
+
+--V8rFlpgqAXwiQFZA
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmdPKy0ACgkQJNaLcl1U
+h9CH2gf/QFro82I1W2CYtFjXn3+fT0ntbUwmrgC4GyyCfObCK/FCTSG8n1F6oA8B
+bFtwo5vwtVL1WnIIrzpO3LZUDRM/JPWIEms7dN9s+90ruai9tA4ckWDlA4Ej06fF
+l/8heEM3xi34XzzNdqDTEWnxp4fWJaxXWA+2DMpR0FFMyxCNlaem5EA2M+6O7mcO
+gjrleyVIoTZk37u8nOpJvdK6UMKl8pkwjCL1S8sPtFYLOmXprCXeNE6IdHf3KNqx
+90n/MEAqqJc/tKXJHKAbZCSGVeClNFzXOLVksv4MCy+vYO2usa2MLDez64z3Q5Z3
+MFjHni48OLHEmbCTivMMycStc4sWMg==
+=Go4M
+-----END PGP SIGNATURE-----
+
+--V8rFlpgqAXwiQFZA--
 
