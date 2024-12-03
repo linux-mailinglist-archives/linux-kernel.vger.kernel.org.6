@@ -1,212 +1,438 @@
-Return-Path: <linux-kernel+bounces-428754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37BFA9E12F3
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 06:36:55 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BDC59E12F5
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 06:37:18 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9D8A8B231E7
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 05:36:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4B6E1622BE
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 05:37:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6B2E170A37;
-	Tue,  3 Dec 2024 05:36:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83092170A1B;
+	Tue,  3 Dec 2024 05:37:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="UhQAd+lL"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="Zp7pi6k/"
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 944A32B9A2;
-	Tue,  3 Dec 2024 05:36:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EBEB25776
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 05:37:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733204204; cv=none; b=ddCKOnd+9Kdc4fFzmznrue7EThgAPuUnIjZS1FInbvtjbbUiN+LCBH6+vt4z6JrdtO/48PUWThYSXFCOJWy/Rch6z9J6YjW+riRpjHUHBlYXd4D49+epfTUY8IUDSKqmEyxofzcBXC41y5iAvaora5S3r8rHwJar9furFY5d/3Y=
+	t=1733204232; cv=none; b=CwNNQ+I3GJmjzfRoybgaBD2WLA67LLYOJxbwfSklP91YHJx+EwUZ6TZAthkcKleftddR+urcPTwS0kVDK8owN19SDo1Axs2t4vp1vSmDIBtYh5qHABTS/nwLTx9KeZZnTP+43Xyb7mqBKRZ7iABxjqy+abvsUdsNOKPKpHNsVDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733204204; c=relaxed/simple;
-	bh=CnWjJp7KuWfu3q7jeM8LsNoRI6q/vr5e32gqQiKKyQk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=pV7RLX7AXGeoDJB83r43XF8ZGECsIRtWshp1rR75wwr5kh0LmGQ6ytS030cErs4Z4vMWrRSDn7xxyE6Sha1HnDBOagN3D/5TSM7ijSW8GbjB10F8WPyc8zQLueEMDCG7nwVdGXOBtvGZlmFzEiOvhM2kL0qckJ9GdF5yz683iZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=UhQAd+lL; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B34BYeT031794;
-	Tue, 3 Dec 2024 05:36:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	iimk/1bW3RQ01BkChxMyVtAt6JPNcrxxZqkbptEgdPk=; b=UhQAd+lLwsPIqqx/
-	r2PWQ6MKBEATqUrVgkDR9RcoMO7FAEyn4jf4bXaoPMX5PLE0WJs4fZDvv5kIVGiL
-	PXjqGjrchc8q0TokKpRgbB1P4q1sWWOPbZDrYy1L278fnLCyxtj0e7l0TuyX1ENQ
-	9wb73B9PEvTf4gf3N5fh43/nhjB+IApG8W4LSOjtva/nsYEEr6TOX7q4KQEhO41q
-	KfVwWFna9e9vYFl6w3Djo92JwlBdp2eQZJZJsEjjzSYDYXaUYDgjsO15oql/o5wU
-	KM7HVCz1n2Ei6KC9eq2jLDmvvmJRhvTsrbi9ejmhQ9navn6zzeZ0AYkQn8rO/NfH
-	BTILUA==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 439trbg6ag-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 03 Dec 2024 05:36:38 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B35abZt013820
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 3 Dec 2024 05:36:37 GMT
-Received: from [10.216.55.7] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 2 Dec 2024
- 21:36:35 -0800
-Message-ID: <59bc14c1-502e-4931-bbce-e1b01ebd53b6@quicinc.com>
-Date: Tue, 3 Dec 2024 11:06:31 +0530
+	s=arc-20240116; t=1733204232; c=relaxed/simple;
+	bh=MJSn5a+CKifSFTK65dpyvc+d/aAjBy19hsiaG/Obk88=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pY4oXqKCb+MaWLciqz3m6xBnpzzfz4X+z+b1GNxpFDRGAGLnyDo/oESrtzRBWixS1oohUHuuD20aK0KZzyX6xQEiF11y6NJVSjY79IIJuZ6ix/2G01YdZHybOHW8TWHWC0htqxTJDlr8qsE74Ns5xZ3qe1uzzT+Qm7G+nLU/QQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=Zp7pi6k/; arc=none smtp.client-ip=209.85.216.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2ee3737d2b5so3241098a91.1
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 21:37:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1733204229; x=1733809029; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=vSXjh3hiBldNNK5MEJhxrZDpPGH+8giPIA6kOty2v+Y=;
+        b=Zp7pi6k/RlqgyFLjv4Y9zeX8FSRjcr9J7+/yPfkgsretim85C9byy7mt4hx6Tsw/OJ
+         pTjGgm9x0AwUWm7DWIG6XwNxWrq/KXmkz8mHUZDJAiPpkpL5kzgjIQQVHoOXM4WaKCIs
+         haPBd/w2wRs9A1SVynkxxW0DsWKIfWQjeuCNEJKkJZyZBq11eSwoBI1qpIDEzJm+S7gi
+         +GCm81O5OrDXU1r3VkZfjt7uzym3MIyaw2/2DvTsr0H0o9mae+V68dBEn7UrjN1ODR5F
+         0x5jfLekbY/7Z5hI7kneQz1LE4Y4NIa9cywN7ejNh9WCBs1HgpK/e6cLqeelINfNo1f2
+         HFug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733204229; x=1733809029;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vSXjh3hiBldNNK5MEJhxrZDpPGH+8giPIA6kOty2v+Y=;
+        b=ez+fcwvMVUKyOZmZcm7iw9cE/bBJnXBzSzjzX6JMY8kGwkdCJLkG1q9g0I5a0ORscD
+         zMzQoPkvUActStEps06g+WVlg8F2ddiwSyCKiGyqlyH977YmzPYidZh1pqGIaMTS17dB
+         kN7SgMVrR9J6x4Ss2CRKar5zUieFh+sYQnBh3SWkNFuaHEROJGzj9dZ52RsmraW6wymT
+         S7GKZzY7PU7xrCBff5UwGkc1CLACg46N/6TMfVNPsfTCusQoe1cseTu2VMaAPxWi9VWH
+         aP12LGokXqAoyIa+WMiOM4BoLPHR8ORfnIeVULzDrh9vWCKhBYS5Zsw5vENBB8W4WvKl
+         gp+A==
+X-Forwarded-Encrypted: i=1; AJvYcCUdkAoyIVrQnLQa8hXCcncpIIKIMKQbPng4iPIFbm8N82WPr3Kn83XwY1tk2Pe3YMspAzdyFX7Uht3Y2sU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMCj/CzTlwp6PZRJapxHgaudvinY8/E2bL91fDGyykAkrrTKMr
+	mUuZ6PrWFEg6zVS5SL6zlZyYL/5jHkHkkT9JFs4lytinA+4epMCWe9EERi5JtsU=
+X-Gm-Gg: ASbGncukw1px0yGaB+nQqW7dS/6pPh664IZg2kM9y4p2wCtUrogG/x4aB835cI3mam/
+	lfLtxAj9YmQupBQ7ew/Dpv4LfQ2lupi80pLwxmltAbvDU1IIWPQwXD0C+xBoh9KCFMhrXi+OPUV
+	U8A3LELFX+ONesi0ypjfcoE7T+uwWV0V7OwgTzoHJqrRAd80hYEaFBnmU24Tgm3F/RfB+AOWN2J
+	c7TOcfQcJC6K+bM46g5sC2IoN7KnCEUBuiK8nZi4EQAVQ==
+X-Google-Smtp-Source: AGHT+IGS9ziRjAIA8V4lsdHNGlH70wznvS7wfFk2e2BDUXAOOqVLzGGRJVECNcRpYwLUrZIk5c8bog==
+X-Received: by 2002:a17:90b:4a4e:b0:2ee:dd9b:e402 with SMTP id 98e67ed59e1d1-2ef011fb97bmr2306174a91.12.1733204228773;
+        Mon, 02 Dec 2024 21:37:08 -0800 (PST)
+Received: from ghost ([2601:647:6700:64d0:4f56:309d:bf87:2589])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2eecd83914csm2806157a91.0.2024.12.02.21.37.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Dec 2024 21:37:07 -0800 (PST)
+Date: Mon, 2 Dec 2024 21:37:04 -0800
+From: Charlie Jenkins <charlie@rivosinc.com>
+To: Celeste Liu <uwu@coelacanthus.name>
+Cc: Oleg Nesterov <oleg@redhat.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>,
+	Alexandre Ghiti <alex@ghiti.fr>, "Dmitry V. Levin" <ldv@strace.io>,
+	Andrea Bolognani <abologna@redhat.com>,
+	=?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>, Ron Economos <re@w6rz.net>,
+	Felix Yan <felixonmars@archlinux.org>,
+	Ruizhe Pan <c141028@gmail.com>,
+	Shiqi Zhang <shiqi@isrc.iscas.ac.cn>, Guo Ren <guoren@kernel.org>,
+	Yao Zi <ziyao@disroot.org>, Han Gao <gaohan@iscas.ac.cn>,
+	Quan Zhou <zhouquan@iscas.ac.cn>, linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] riscv/ptrace: add new regset to get original a0 register
+Message-ID: <Z06ZAP-_4J4-6aK_@ghost>
+References: <20241201-riscv-new-regset-v1-1-c83c58abcc7b@coelacanthus.name>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] usb: gadget: u_serial: Fix the issue that gs_start_io
- crashed due to accessing null pointer
-To: =?UTF-8?B?6IOh6L+e5Yuk?= <hulianqin@vivo.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "quic_jjohnson@quicinc.com" <quic_jjohnson@quicinc.com>,
-        "mwalle@kernel.org"
-	<mwalle@kernel.org>
-CC: "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        opensource.kernel <opensource.kernel@vivo.com>
-References: <TYUPR06MB62170A30651D64EB59F94B88D22F2@TYUPR06MB6217.apcprd06.prod.outlook.com>
-Content-Language: en-US
-From: Prashanth K <quic_prashk@quicinc.com>
-In-Reply-To: <TYUPR06MB62170A30651D64EB59F94B88D22F2@TYUPR06MB6217.apcprd06.prod.outlook.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 7RIV7PRRcxUJHSg0iqN2QJl2L8Rk-Cdf
-X-Proofpoint-ORIG-GUID: 7RIV7PRRcxUJHSg0iqN2QJl2L8Rk-Cdf
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 mlxscore=0
- suspectscore=0 spamscore=0 malwarescore=0 adultscore=0 priorityscore=1501
- clxscore=1015 phishscore=0 lowpriorityscore=0 impostorscore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
- definitions=main-2412030045
+In-Reply-To: <20241201-riscv-new-regset-v1-1-c83c58abcc7b@coelacanthus.name>
+
+On Sun, Dec 01, 2024 at 05:47:13AM +0800, Celeste Liu wrote:
+> The orig_a0 is missing in struct user_regs_struct of riscv, and there is
+> no way to add it without breaking UAPI. (See Link tag below)
+
+We have had a patch sitting on the lists for a very long time to do this
+which I guess didn't get enough attention. I am glad that we have more
+eyes on this problem now so it can actually be fixed :) [1].
+
+However that patch has the problem that it modifies the
+user_regs_struct. It is super unfortunate that riscv didn't have the
+foresight of loongarch to add padding.
+
+There is a nice test case in there that would be great to get added
+alongside this commit with the appropriate changes. [2]
+
+[1] https://lore.kernel.org/linux-riscv/cover.1719408040.git.zhouquan@iscas.ac.cn/
+[2] https://lore.kernel.org/linux-riscv/1e9cbab1b0badc05592fce46717418930076a6ae.1719408040.git.zhouquan@iscas.ac.cn/
 
 
+Since I am familiar with the code I have gone ahead and made the
+appropriate changes. Here is the diff:
 
-On 26-11-24 12:30 pm, 胡连勤 wrote:
-> From: Lianqin Hu <hulianqin@vivo.com>
+From f35184467cc7b319c2a5c5c034d18119c46f54c2 Mon Sep 17 00:00:00 2001
+From: Charlie Jenkins <charlie@rivosinc.com>
+Date: Mon, 2 Dec 2024 21:19:13 -0800
+Subject: [PATCH] riscv: selftests: Add a ptrace test to verify syscall
+ parameter modification
+
+This test checks that orig_a0 allows a syscall argument to be modified,
+and that changing a0 does not change the syscall argument.
+
+Co-developed-by: Quan Zhou <zhouquan@iscas.ac.cn>
+Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
+---
+ arch/riscv/kernel/ptrace.c                   |   2 +-
+ tools/testing/selftests/riscv/abi/.gitignore |   1 +
+ tools/testing/selftests/riscv/abi/Makefile   |   5 +-
+ tools/testing/selftests/riscv/abi/ptrace.c   | 133 +++++++++++++++++++
+ 4 files changed, 139 insertions(+), 2 deletions(-)
+ create mode 100644 tools/testing/selftests/riscv/abi/ptrace.c
+
+diff --git a/arch/riscv/kernel/ptrace.c b/arch/riscv/kernel/ptrace.c
+index faa46de90003..025c22894d32 100644
+--- a/arch/riscv/kernel/ptrace.c
++++ b/arch/riscv/kernel/ptrace.c
+@@ -197,7 +197,7 @@ static int riscv_orig_a0_set(struct task_struct *target,
+ 			     unsigned int pos, unsigned int count,
+ 			     const void *kbuf, const void __user *ubuf)
+ {
+-	int orig_a0 = task_pt_regs(target)->orig_a0;
++	unsigned long orig_a0 = task_pt_regs(target)->orig_a0;
+ 	int ret;
+
+ 	ret = user_regset_copyin(&pos, &count, &kbuf, &ubuf, &orig_a0, 0, -1);
+diff --git a/tools/testing/selftests/riscv/abi/.gitignore b/tools/testing/selftests/riscv/abi/.gitignore
+index b38358f91c4d..378c605919a3 100644
+--- a/tools/testing/selftests/riscv/abi/.gitignore
++++ b/tools/testing/selftests/riscv/abi/.gitignore
+@@ -1 +1,2 @@
+ pointer_masking
++ptrace
+diff --git a/tools/testing/selftests/riscv/abi/Makefile b/tools/testing/selftests/riscv/abi/Makefile
+index ed82ff9c664e..3f74d059dfdc 100644
+--- a/tools/testing/selftests/riscv/abi/Makefile
++++ b/tools/testing/selftests/riscv/abi/Makefile
+@@ -2,9 +2,12 @@
+
+ CFLAGS += -I$(top_srcdir)/tools/include
+
+-TEST_GEN_PROGS := pointer_masking
++TEST_GEN_PROGS := pointer_masking ptrace
+
+ include ../../lib.mk
+
+ $(OUTPUT)/pointer_masking: pointer_masking.c
+ 	$(CC) -static -o$@ $(CFLAGS) $(LDFLAGS) $^
++
++$(OUTPUT)/ptrace: ptrace.c
++	$(CC) -static -o$@ $(CFLAGS) $(LDFLAGS) $^
+diff --git a/tools/testing/selftests/riscv/abi/ptrace.c b/tools/testing/selftests/riscv/abi/ptrace.c
+new file mode 100644
+index 000000000000..1c3ce40d6a34
+--- /dev/null
++++ b/tools/testing/selftests/riscv/abi/ptrace.c
+@@ -0,0 +1,133 @@
++// SPDX-License-Identifier: GPL-2.0-only
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
++#include <unistd.h>
++#include <fcntl.h>
++#include <signal.h>
++#include <errno.h>
++#include <sys/types.h>
++#include <sys/ptrace.h>
++#include <sys/stat.h>
++#include <sys/user.h>
++#include <sys/wait.h>
++#include <sys/uio.h>
++#include <linux/elf.h>
++#include <linux/unistd.h>
++#include <asm/ptrace.h>
++
++#include "../../kselftest_harness.h"
++
++#define ORIG_A0_MODIFY      0x01
++#define A0_MODIFY           0x02
++#define A0_OLD              0x03
++#define A0_NEW              0x04
++
++#define perr_and_exit(fmt, ...)						\
++	({								\
++		char buf[256];						\
++		snprintf(buf, sizeof(buf), "%s:%d:" fmt ": %m\n",	\
++			__func__, __LINE__, ##__VA_ARGS__);		\
++		perror(buf);						\
++		exit(-1);						\
++	})
++
++static inline void resume_and_wait_tracee(pid_t pid, int flag)
++{
++	int status;
++
++	if (ptrace(flag, pid, 0, 0))
++		perr_and_exit("failed to resume the tracee %d\n", pid);
++
++	if (waitpid(pid, &status, 0) != pid)
++		perr_and_exit("failed to wait for the tracee %d\n", pid);
++}
++
++static void ptrace_test(int opt, int *result)
++{
++	int status;
++	pid_t pid;
++	struct user_regs_struct regs;
++	struct iovec iov = {
++		.iov_base = &regs,
++		.iov_len = sizeof(regs),
++	};
++
++	unsigned long orig_a0;
++	struct iovec a0_iov = {
++		.iov_base = &orig_a0,
++		.iov_len = sizeof(orig_a0),
++	};
++
++	pid = fork();
++	if (pid == 0) {
++		/* Mark oneself being traced */
++		long val = ptrace(PTRACE_TRACEME, 0, 0, 0);
++		if (val)
++			perr_and_exit("failed to request for tracer to trace me: %ld\n", val);
++
++		kill(getpid(), SIGSTOP);
++
++		/* Perform exit syscall that will be intercepted */
++		exit(A0_OLD);
++	}
++
++	if (pid < 0)
++		exit(1);
++
++	if (waitpid(pid, &status, 0) != pid)
++		perr_and_exit("failed to wait for the tracee %d\n", pid);
++
++	/* Stop at the entry point of the syscall */
++	resume_and_wait_tracee(pid, PTRACE_SYSCALL);
++
++	/* Check tracee regs before the syscall */
++	if (ptrace(PTRACE_GETREGSET, pid, NT_PRSTATUS, &iov))
++		perr_and_exit("failed to get tracee registers\n");
++	if (ptrace(PTRACE_GETREGSET, pid, NT_RISCV_ORIG_A0, &a0_iov))
++		perr_and_exit("failed to get tracee registers\n");
++	if (orig_a0 != A0_OLD)
++		perr_and_exit("unexpected orig_a0: 0x%lx\n", orig_a0);
++
++	/* Modify a0/orig_a0 for the syscall */
++	switch (opt) {
++	case A0_MODIFY:
++		regs.a0 = A0_NEW;
++		break;
++	case ORIG_A0_MODIFY:
++		orig_a0 = A0_NEW;
++		break;
++	}
++
++	if (ptrace(PTRACE_SETREGSET, pid, NT_RISCV_ORIG_A0, &a0_iov))
++		perr_and_exit("failed to set tracee registers\n");
++
++	/* Resume the tracee */
++	ptrace(PTRACE_CONT, pid, 0, 0);
++	if (waitpid(pid, &status, 0) != pid)
++		perr_and_exit("failed to wait for the tracee\n");
++
++	*result = WEXITSTATUS(status);
++}
++
++TEST(ptrace_modify_a0)
++{
++	int result;
++
++	ptrace_test(A0_MODIFY, &result);
++
++	/* The modification of a0 cannot affect the first argument of the syscall */
++	EXPECT_EQ(A0_OLD, result);
++}
++
++TEST(ptrace_modify_orig_a0)
++{
++	int result;
++
++	ptrace_test(ORIG_A0_MODIFY, &result);
++
++	/* Only modify orig_a0 to change the first argument of the syscall */
++	EXPECT_EQ(A0_NEW, result);
++}
++
++TEST_HARNESS_MAIN
+--
+2.34.1
+
+
 > 
-> Considering that in some extreme cases,
-> when u_serial driver is accessed by multiple threads,
-> Thread A is executing the open operation and calling the gs_open,
-> Thread B is executing the disconnect operation and calling the
-> gserial_disconnect function,The port->port_usb pointer will be set to NULL.
+> Like NT_ARM_SYSTEM_CALL do, we add a new regset name NT_RISCV_ORIG_A0 to
+> access original a0 register from userspace via ptrace API.
 > 
-> E.g.
->     Thread A                                 Thread B
+> Link: https://lore.kernel.org/all/59505464-c84a-403d-972f-d4b2055eeaac@gmail.com/
+> Signed-off-by: Celeste Liu <uwu@coelacanthus.name>
+> ---
+>  arch/riscv/kernel/ptrace.c | 33 +++++++++++++++++++++++++++++++++
+>  include/uapi/linux/elf.h   |  1 +
+>  2 files changed, 34 insertions(+)
 > 
->     gs_open()                                gadget_unbind_driver()
-> 
->     gs_start_io()                            composite_disconnect()
-> 
->     gs_start_rx()                            gserial_disconnect()
->     ...                                      ...
->     spin_unlock(&port->port_lock)
->     status = usb_ep_queue()                  spin_lock(&port->port_lock)
->     spin_lock(&port->port_lock)              port->port_usb = NULL
->     gs_free_requests(port->port_usb->in)     spin_unlock(&port->port_lock)
->     Crash
-> 
-> This causes thread A to access a null pointer (port->port_usb is null)
-> when calling the gs_free_requests function, causing a crash.
-> 
-> If port_usb is NULL, the release request will be skipped as it
-> will be done by gserial_disconnect.
-> 
-> So add a null pointer check to gs_start_io before attempting
-> to access the value of the pointer port->port_usb.
-> 
-> Unable to handle kernel NULL pointer dereference at
-> virtual address 00000000000000e8
-> pc : gs_start_io+0x164/0x25c
-> lr : gs_start_io+0x238/0x25c
-> sp : ffffffc08b75ba00
-> x29: ffffffc08b75ba00 x28: ffffffed8ba01000 x27: 0000000000020902
-> x26: dead000000000100 x25: ffffff899f43a400 x24: ffffff8862325400
-> x23: ffffff88623256a4 x22: ffffff8862325690 x21: ffffff88623255ec
-> x20: ffffff88623255d8 x19: ffffff885e19d700 x18: ffffffed8c45ae40
-> x17: 00000000d48d30ad x16: 00000000d48d30ad x15: 0010000000000001
-> x14: ffffffed8c50fcc0 x13: 0000000040000000 x12: 0000000000000001
-> x11: 0000000080200012 x10: 0000000080200012 x9 : ffffff88623255d8
-> x8 : 0000000000000000 x7 : 0000000000000000 x6 : 000000000000003f
-> x5 : ffffffed8ae0b9a4 x4 : fffffffe267d0ea0 x3 : 0000000080200012
-> x2 : ffffff899f43a400 x1 : 0000000080200013 x0 : ffffff899f43b100
-> Call trace:
->  gs_start_io+0x164/0x25c
->  gs_open+0x108/0x13c
->  tty_open+0x314/0x638
->  chrdev_open+0x1b8/0x258
->  do_dentry_open+0x2c4/0x700
->  vfs_open+0x2c/0x3c
->  path_openat+0xa64/0xc60
->  do_filp_open+0xb8/0x164
->  do_sys_openat2+0x84/0xf0
->  __arm64_sys_openat+0x70/0x9c
->  invoke_syscall+0x58/0x114
->  el0_svc_common+0x80/0xe0
->  do_el0_svc+0x1c/0x28
->  el0_svc+0x38/0x68
->  el0t_64_sync_handler+0x68/0xbc
->  el0t_64_sync+0x1a8/0x1ac
-> Code: f2fbd5ba eb14013f 540004a1 f940e708 (f9407513)
-> ---[ end trace 0000000000000000 ]---
-> 
-> Suggested-by: Prashanth K <quic_prashk@quicinc.com>
-> Signed-off-by: Lianqin Hu <hulianqin@vivo.com>
-> 
-> v3:
->  - Update patch submission description
->  - Link to v2: https://lore.kernel.org/all/TYUPR06MB62178D00DC96CC2702114CF5D2222@TYUPR06MB6217.apcprd06.prod.outlook.com/
-> 
-> v2:
->  - Modify patch content and description according to "v1 suggestion"
->  - Link to v1: https://lore.kernel.org/all/TYUPR06MB621737D16F68B5ABD6CF5772D2272@TYUPR06MB6217.apcprd06.prod.outlook.com/
-> 
->  drivers/usb/gadget/function/u_serial.c | 9 ++++++---
->  1 file changed, 6 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/usb/gadget/function/u_serial.c b/drivers/usb/gadget/function/u_serial.c
-> index 0a8c05b2746b..53d9fc41acc5 100644
-> --- a/drivers/usb/gadget/function/u_serial.c
-> +++ b/drivers/usb/gadget/function/u_serial.c
-> @@ -579,9 +579,12 @@ static int gs_start_io(struct gs_port *port)
->  		 * we didn't in gs_start_tx() */
->  		tty_wakeup(port->port.tty);
->  	} else {
-> -		gs_free_requests(ep, head, &port->read_allocated);
-> -		gs_free_requests(port->port_usb->in, &port->write_pool,
-> -			&port->write_allocated);
-> +		/* Free reqs only if we are still connected */
-> +		if (port->port_usb) {
-> +			gs_free_requests(ep, head, &port->read_allocated);
-> +			gs_free_requests(port->port_usb->in, &port->write_pool,
-> +				&port->write_allocated);
-> +		}
->  		status = -EIO;
->  	}
+> diff --git a/arch/riscv/kernel/ptrace.c b/arch/riscv/kernel/ptrace.c
+> index ea67e9fb7a583683b922fe2c017ea61f3bc848db..faa46de9000376eb445a32d43a40210d7b846844 100644
+> --- a/arch/riscv/kernel/ptrace.c
+> +++ b/arch/riscv/kernel/ptrace.c
+> @@ -31,6 +31,7 @@ enum riscv_regset {
+>  #ifdef CONFIG_RISCV_ISA_SUPM
+>  	REGSET_TAGGED_ADDR_CTRL,
+>  #endif
+> +	REGSET_ORIG_A0,
+>  };
 >  
-Had asked to remove some empty newlines and address list from dumpstack
-from commit text -
-https://lore.kernel.org/all/b0c787ad-55a1-4fb1-b9cd-1f688ea65316@quicinc.com/
+>  static int riscv_gpr_get(struct task_struct *target,
+> @@ -184,6 +185,30 @@ static int tagged_addr_ctrl_set(struct task_struct *target,
+>  }
+>  #endif
+>  
+> +static int riscv_orig_a0_get(struct task_struct *target,
+> +			     const struct user_regset *regset,
+> +			     struct membuf to)
+> +{
+> +	return membuf_store(&to, task_pt_regs(target)->orig_a0);
+> +}
+> +
+> +static int riscv_orig_a0_set(struct task_struct *target,
+> +			     const struct user_regset *regset,
+> +			     unsigned int pos, unsigned int count,
+> +			     const void *kbuf, const void __user *ubuf)
+> +{
+> +	int orig_a0 = task_pt_regs(target)->orig_a0;
 
-And the rest seems fine to me.
+The testcase above highlights that this should be of type "unsigned
+long" instead of int! Otherwise 64-bit systems will only be able to set
+the first 32 bits (as Bj�rn pointed out in the other thread) :)
 
-Acked-by: Prashanth K <quic_prashk@quicinc.com>
+This issue was found because the test case tries to set all 64 bits and
+succeeds, but the extra bits corrupt the stack. Maybe the code here
+should enforce that the count is equal to the size of an unsigned long?
+Fortunately the extra bits ended up in the stack so it was determined to
+be corrupted, but I suppose that will not necessarily always be the case
+depending on kernel compiler optimizations and user_regset_copyin()
+could end up overwritting other data in this function undetected.
 
-Thanks,
-Prashanth K
+- Charlie
+
+> +	int ret;
+> +
+> +	ret = user_regset_copyin(&pos, &count, &kbuf, &ubuf, &orig_a0, 0, -1);
+> +	if (ret)
+> +		return ret;
+> +
+> +	task_pt_regs(target)->orig_a0 = orig_a0;
+> +	return ret;
+> +}
+> +
+> +
+>  static const struct user_regset riscv_user_regset[] = {
+>  	[REGSET_X] = {
+>  		.core_note_type = NT_PRSTATUS,
+> @@ -224,6 +249,14 @@ static const struct user_regset riscv_user_regset[] = {
+>  		.set = tagged_addr_ctrl_set,
+>  	},
+>  #endif
+> +	[REGSET_ORIG_A0] = {
+> +		.core_note_type = NT_RISCV_ORIG_A0,
+> +		.n = 1,
+> +		.size = sizeof(elf_greg_t),
+> +		.align = sizeof(elf_greg_t),
+> +		.regset_get = riscv_orig_a0_get,
+> +		.set = riscv_orig_a0_set,
+> +	},
+>  };
+>  
+>  static const struct user_regset_view riscv_user_native_view = {
+> diff --git a/include/uapi/linux/elf.h b/include/uapi/linux/elf.h
+> index b44069d29cecc0f9de90ee66bfffd2137f4275a8..390060229601631da2fb27030d9fa2142e676c14 100644
+> --- a/include/uapi/linux/elf.h
+> +++ b/include/uapi/linux/elf.h
+> @@ -452,6 +452,7 @@ typedef struct elf64_shdr {
+>  #define NT_RISCV_CSR	0x900		/* RISC-V Control and Status Registers */
+>  #define NT_RISCV_VECTOR	0x901		/* RISC-V vector registers */
+>  #define NT_RISCV_TAGGED_ADDR_CTRL 0x902	/* RISC-V tagged address control (prctl()) */
+> +#define NT_RISCV_ORIG_A0	  0x903	/* RISC-V original a0 register */
+>  #define NT_LOONGARCH_CPUCFG	0xa00	/* LoongArch CPU config registers */
+>  #define NT_LOONGARCH_CSR	0xa01	/* LoongArch control and status registers */
+>  #define NT_LOONGARCH_LSX	0xa02	/* LoongArch Loongson SIMD Extension registers */
+> 
+> ---
+> base-commit: 0e287d31b62bb53ad81d5e59778384a40f8b6f56
+> change-id: 20241201-riscv-new-regset-d529b952ad0d
+> 
+> Best regards,
+> -- 
+> Celeste Liu <uwu@coelacanthus.name>
+> 
+> 
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
