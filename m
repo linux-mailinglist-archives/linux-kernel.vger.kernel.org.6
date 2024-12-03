@@ -1,193 +1,119 @@
-Return-Path: <linux-kernel+bounces-429731-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8272D9E2189
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:15:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1F049E21BB
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:16:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B898285828
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 15:15:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7BC3284D4F
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 15:16:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A145B1FCCE4;
-	Tue,  3 Dec 2024 15:12:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E1481F75AE;
+	Tue,  3 Dec 2024 15:15:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lSCM4Bol"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="qTeCnhTU"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 371471F892A
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 15:12:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E0671F473A;
+	Tue,  3 Dec 2024 15:15:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733238723; cv=none; b=otXg41hHwWlNvlGVit1SAK6UpQsb1H/MzoxUvW9h30SKJM9MpJvbGJLkhxVxrNNA0b2dXY14bowzCV3ITON+ifwJ29znQVcPM8EDbWn+AErigkgUA2axzyyVFEmP+MsZ2wu84Rywwd8oU/uw5242m0uQMXq6XB1F3ln4MYQlJMM=
+	t=1733238950; cv=none; b=P5VMhF7ZNmHvsAq/EqkFQQ+4ZhSdsfPgxMaKjFTI/Qppx2fQIwbVdTIzGTDs602cmmAmxJAbBkZw69RyH6LR5WRXEQ0DTOmW3OFmEvd1JpgqAFgOgkK+SGvaTo7DvzEQg5pn9rGyWqKtCLKtfMsJPsfsJfkaVN6C054szh+t8hs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733238723; c=relaxed/simple;
-	bh=gyvEs1E/4I843Wo9tvfjpqqgLtC7wOGj2Udlrs9XjfU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AjrOws5y1axbzOxXN0W5cfv0YtL3JuOxmn7vUfU82XEoPEuMSS2k9BW7xlWVrvFDOf7FksAVZZiP3DyAYKpLh/uYvC6biH0+OGy4vXslh/quXcGsfO82UshBO48/h9LXKHTBx/PZQ3MAI9if3AWEy5Tubj/JHxoB0BxVWbc0sY8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lSCM4Bol; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-385e2c52c21so2208823f8f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 07:12:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733238719; x=1733843519; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SOKE0NDW2RgCYKsQSYaekUZqPmxVS4wlkRziwc8dWdg=;
-        b=lSCM4Bol4S4c6Nl7tZZRxbdqF1/A8ijDMxuuHKJA5Jx1ATXGoJE3kELXbEl1dPCHf1
-         89TEQAE9Juhqolp6GwoBOicXDkXUosMWYQ9lfo/1wcUqKm5gvrZoBhZKWzT2bpkhjQwL
-         97y1qGODnN2u3gvMBADX0ylfpGyDF8L4Pz+nCwFP6Xvt1z1NEfsZ2CWsc8SEUccaJVLB
-         CVRGLa3U1a+Vu8l13vsHOeSbOrRKrAEnh0mOcygy4WKz21DrvnW8JdXihSp70u7MYkYj
-         Aj2w4fHlU1QfF4L1+t4AE5ydg8x+UCwPwJGZ53Xt3td0Vm1BOB44n8LZaHby6+Hk6ytL
-         E7Yg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733238719; x=1733843519;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SOKE0NDW2RgCYKsQSYaekUZqPmxVS4wlkRziwc8dWdg=;
-        b=DRSmIhA2jyuqT2hq4PoTBesgIMTznqgJEnbrzK1MEfGmmJg6cjb6ycWUqmb88LvC05
-         VNrMSNU9LPllZfZ8GrcEJ4lCTYy5evzVYLhEqmfxpt2G6EdLpMom+eE4ngTC9hC2bco0
-         vtf30c9aY1cW+mcy5kM9xKh+QbkhKvyOjKWs+tK1R4ci3qg7DvZ6+xrShwPgqFTvGBx/
-         vK3ek5+0R5DDlahmS+f5sI+5ZRvBgkclquyd2Fm3bHwmkZEhK2nsunVxXzavpa3uWXut
-         zdFoqp8ZGe86u2jYHZT8ZaEUabUlGjCRlAmJVKE1j8+vn9EESWrlsrP0Xc/PZfEtri4m
-         CaRw==
-X-Forwarded-Encrypted: i=1; AJvYcCWeH0HOPGtaK3zoFZ2sknG9po//NwSg/auUxPjnvWm7Cu6noGYoIVLAqfGQgYyOtn6P0QftpIM8nqsoz+M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YycXgxE3L8oyxMD+6PfSlq3goIEjEFciDFDi8ECAcYZZrWQCVIA
-	K8owvfD6q4HVliyRa+dLGfQOHetcZa2mq+DBI/6ECWIraVsSwWegeccQ0G1xUqUJfAeavQXTR8w
-	BNE/wZSQ5tsIWkd/gc8+gVT4+2lPHeDVil2Av
-X-Gm-Gg: ASbGncskqkMiStZwM6b7DpUf4Ck99hsq2hYkMQwCSVW2slOjVc3sVLq/GQFDYYYukfO
-	mbSo7q9JJWekfeUp+I6yOoCKtxAgZ25OBm0VIUDJ1PDYIWdBF3JTigxKSG0h38Q==
-X-Google-Smtp-Source: AGHT+IH50DVbdbXafEbqkA0ERFhXhngJi7AHiDYU7M9oIqozFLwQkMRE5ghZjzggGcpDX5Mjb2Jr8AK4V72CS9i105M=
-X-Received: by 2002:a5d:47a7:0:b0:385:f60b:da50 with SMTP id
- ffacd0b85a97d-385fd422ea9mr2691336f8f.33.1733238719365; Tue, 03 Dec 2024
- 07:11:59 -0800 (PST)
+	s=arc-20240116; t=1733238950; c=relaxed/simple;
+	bh=MYd0JZSYUJNavZtjrEymN7Y2u2umwlA9KqCO6zvLvFY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Jo8lZ7CUBKnFpSsq8xF4yZjqY3Te7QRgn7LImhRtVCnZHQ+kiLNlc/hIOz46LynnmbAwNU2/VeZWpYSMEaZtXag4mzLZOkzl5QYW30wAgtG9FbXeKEQqVWz3xNXpdpxwBW85kM/s451rywE1Vk3FiGEvy3NYkBJItjbeXqXSZh4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=qTeCnhTU; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=1aJvf1+OXUaBUl6EVRktK5TufbSjl5kHRlSiByPPaFM=; b=qTeCnhTUuJNVGDTh7eB91s2Kvs
+	kNxdWrH0VrYE1Sl0dlYAglT3qeZj1Q1j1Z2wzQwJi+hrg8uA954KdArz1EDNirFkjSnA9col9nMJ6
+	9mceaKkYpGy9yb9rn72e9eeM8gIbBTjKKVWue3eNkI+LV8VHRa/pCTeocMZQEzWBgv1jICVkPtsYh
+	yEopojMQyanQmHAJGhpB5KcyzsVQf5B066SQHjzR4gPtzOu17fKGl8rZuuIYlMRkCgDARy9fBsxIO
+	EnDEAWKjdT3bZSPyN/7NnGokcTSyqToOs/ppEtLPPQHfMSEMuCI1epV1/24OkuBCbjGldEhtoTMWY
+	jfCL/W7g==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:35088)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1tIUcd-00025R-12;
+	Tue, 03 Dec 2024 15:15:31 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1tIUcZ-0004eF-2B;
+	Tue, 03 Dec 2024 15:15:27 +0000
+Date: Tue, 3 Dec 2024 15:15:27 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Michael Dege <michael.dege@renesas.com>,
+	Christian Mardmoeller <christian.mardmoeller@renesas.com>,
+	Dennis Ostermann <dennis.ostermann@renesas.com>
+Subject: Re: [PATCH] net: phy: phy_ethtool_ksettings_set: Allow any supported
+ speed
+Message-ID: <Z08gj2ImILpSALDn@shell.armlinux.org.uk>
+References: <20241202100334.454599a7@fedora.home>
+ <73ca1492-d97b-4120-b662-cc80fc787ffd@cogentembedded.com>
+ <Z02He-kU6jlH-TJb@shell.armlinux.org.uk>
+ <eddde51a-2e0b-48c2-9681-48a95f329f5c@cogentembedded.com>
+ <Z02KoULvRqMQbxR3@shell.armlinux.org.uk>
+ <c1296735-81be-4f7d-a601-bc1a3718a6a2@cogentembedded.com>
+ <Z02oTJgl1Ldw8J6X@shell.armlinux.org.uk>
+ <5cef26d0-b24f-48c6-a5e0-f7c9bd0cefec@cogentembedded.com>
+ <Z03aPw_QgVYn8WyR@shell.armlinux.org.uk>
+ <2836f456-aac4-4925-97d6-25f6613fe998@cogentembedded.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241120-rust-xarray-bindings-v10-0-a25b2b0bf582@gmail.com>
- <20241120-rust-xarray-bindings-v10-2-a25b2b0bf582@gmail.com>
- <CAH5fLgipntMtu7_pdZDZGerGRO499yxDdz2dP=2Bb5FobcykYg@mail.gmail.com> <CAJ-ks9kwGi+hhsNUC=Ti3CL8iJ4mEN2vSkoFUnz67Usu+-_P6Q@mail.gmail.com>
-In-Reply-To: <CAJ-ks9kwGi+hhsNUC=Ti3CL8iJ4mEN2vSkoFUnz67Usu+-_P6Q@mail.gmail.com>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Tue, 3 Dec 2024 16:11:47 +0100
-Message-ID: <CAH5fLgiLPkVwgGiTFYbPTnz1EF8wAjopbBpmK6LpkmVRF+kVZw@mail.gmail.com>
-Subject: Re: [PATCH v10 2/2] rust: xarray: Add an abstraction for XArray
-To: Tamir Duberstein <tamird@gmail.com>
-Cc: Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, =?UTF-8?B?TWHDrXJhIENhbmFs?= <mcanal@igalia.com>, 
-	Asahi Lina <lina@asahilina.net>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2836f456-aac4-4925-97d6-25f6613fe998@cogentembedded.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Tue, Dec 3, 2024 at 4:00=E2=80=AFPM Tamir Duberstein <tamird@gmail.com> =
-wrote:
->
-> On Tue, Dec 3, 2024 at 7:30=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> =
-wrote:
-> >
-> > On Wed, Nov 20, 2024 at 12:48=E2=80=AFPM Tamir Duberstein <tamird@gmail=
-.com> wrote:
-> > > +use crate::{
-> > > +    alloc, bindings, build_assert, build_error,
-> > > +    error::{Error, Result},
-> > > +    init::PinInit,
-> > > +    pin_init,
-> > > +    types::{ForeignOwnable, NotThreadSafe, Opaque},
-> > > +};
-> > > +use core::{iter, marker::PhantomData, mem};
-> > > +use macros::{pin_data, pinned_drop};
-> >
-> > I think these are in crate::prelude.
->
-> I prefer to be explicit, unless there's guidance on this somewhere?
+On Tue, Dec 03, 2024 at 04:01:56PM +0500, Nikita Yushchenko wrote:
+> > As I say, need to see the code. Otherwise... sorry, I'm no longer
+> > interested in your problem.
+> 
+> We already got valuable information.
+> 
+> I agree that the patch I tried to submit is a wrong way to handle the issue
+> we have. Instead, need to improve the PHY driver stub, such that it does not
+> declare no autoneg support for 2.5G Base-T1 PHY.
+> 
+> (creating a real driver for the PHY is not possible at this time due to lack of technical information)
 
-I don't think I've ever seen anyone do a direct import from macros.
+Even seeing the existing code would help, rather than the current
+situation which means we're poking about in total darkness. It doesn't
+need to be "mainline quality". There is nothing worse for a maintainer
+than to have someone trying to fix a problem, but not be able to know
+the full details.
 
-> > > +    fn iter(&self) -> impl Iterator<Item =3D core::ptr::NonNull<T::P=
-ointedTo>> + '_ {
-> > > +        // TODO: Remove when https://lore.kernel.org/all/20240913213=
-041.395655-5-gary@garyguo.net/ is applied.
-> > > +        const MIN: core::ffi::c_ulong =3D core::ffi::c_ulong::MIN;
-> > > +        const MAX: core::ffi::c_ulong =3D core::ffi::c_ulong::MAX;
-> >
-> > Isn't MIN just zero?
->
-> I liked the symmetry, but I could change it if you feel strongly.
+We're not asking for "a real driver", but just _seeing_ what the driver
+is currently doing will help to answer questions such as why
+phydev->duplex is changing.
 
-I commented because I thought it was confusing; I spent some time
-figuring out whether the integer was signed.
+Not being able to see what a driver is doing is very demotivating.
 
-> > > +    /// Erases an entry from the array.
-> > > +    ///
-> > > +    /// Returns the entry which was previously at the given index.
-> > > +    pub fn remove(&mut self, index: usize) -> Option<T> {
-> > > +        // SAFETY: `self.xa.xa` is always valid by the type invarian=
-t.
-> > > +        //
-> > > +        // SAFETY: The caller holds the lock.
-> > > +        let ptr =3D unsafe { bindings::__xa_erase(self.xa.xa.get(), =
-to_index(index)) }.cast();
-> >
-> > Two safety comments?
->
-> There are two properties that must be upheld. How would you like to
-> see it formatted?
-
-Usually multiple preconditions are listed using a bulleted list:
-
-// SAFETY:
-// - `self.xa.xa` is always valid by the type invariant.
-// - The caller holds the lock.
-
-> > > +        // SAFETY: `ptr` is either NULL or came from `T::into_foreig=
-n`.
-> > > +        unsafe { T::try_from_foreign(ptr) }
-> > > +    }
-> > > +
-> > > +    /// Stores an entry in the array.
-> > > +    ///
-> > > +    /// On success, returns the entry which was previously at the gi=
-ven index.
-> > > +    ///
-> > > +    /// On failure, returns the entry which was attempted to be stor=
-ed.
-> >
-> > I'd like to see documentation about the gfp flags. This may unlock the
-> > spinlock temporarily if GFP_KERNEL is used.
->
-> Will add the language from the C documentation: "May drop the lock if
-> needed to allocate memory, and then reacquire it afterwards."
-
-SGTM.
-
-> > > +        // SAFETY: `__xa_store` returns the old entry at this index =
-on success or `xa_err` if an
-> > > +        // error happened.
-> > > +        match unsafe { bindings::xa_err(old) } {
-> > > +            0 =3D> {
-> > > +                let old =3D old.cast();
-> > > +                // SAFETY: `ptr` is either NULL or came from `T::int=
-o_foreign`.
-> > > +                Ok(unsafe { T::try_from_foreign(old) })
-> >
-> > It can't be XA_ZERO_ENTRY?
->
-> No it can't. XA_ZERO_ENTRY is never returned from the "normal" API.
-> XA_ZERO_ENTRY presents as NULL.
-
-It's probably worth mentioning in the safety comment.
-
-Alice
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
