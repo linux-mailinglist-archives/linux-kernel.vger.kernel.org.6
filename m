@@ -1,95 +1,116 @@
-Return-Path: <linux-kernel+bounces-430264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94DB09E2E9A
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 23:05:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C5C09E2E9F
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 23:06:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D896283419
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 22:05:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 491422837A4
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 22:06:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCAA11E1A33;
-	Tue,  3 Dec 2024 22:05:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 177671F7081;
+	Tue,  3 Dec 2024 22:06:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="zW5PY7r4"
-Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ftUS/Wpf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACC7D1A7270;
-	Tue,  3 Dec 2024 22:05:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68F051D79A0;
+	Tue,  3 Dec 2024 22:06:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733263512; cv=none; b=Bj/mU7+Es/uG6tpgkLpxi33lCob0jaUQCK4inokaUbeYfBdk338xuiLPEv9s1WBYxSfqPKj7JqtE7qLOb8HgbuRQjMy1VC050zh3S5jp+n9AnKRT75syhtnux3Az0Yjw25oy9f3qrGRXy1tp1aoDd61FrvfNeK7fO3Ld9o/TKrc=
+	t=1733263569; cv=none; b=hqUMxlkW9GSVLrlCTvl1RFuyqxLmK4jztjiS+hBw7YGwI/QE26xJypN6wehV3x5ptoxUZEcU0r3gV+GZpjYeKV+wq3SvNN5QC1cLDYXw759AfrncPvPjo+7ZWc4at74Pn1DnbrnDprUkZz+baqnvyEKQviG4H9Hw44a15fFa05Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733263512; c=relaxed/simple;
-	bh=bAc2oP9B4rgxmltREiEdFwBZLcwQ4F9LGSQzlJdGHpY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UGV/niBlvziqmty4fT7XtA+7savC4seNBH4bDGgYNb4XafwKgiC4oo1RR0HKmpT+alV2TdJdKOZaNdCqtEbAhk9f6/GjUTNVmtuw+qljRDYbbLjEwqPjjA1l7zLoYmPdNAL0Ilp3Jw2xNh4903HKyc+7dVQBn1q5cmNL/s9GDes=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=zW5PY7r4; arc=none smtp.client-ip=178.238.236.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=0/L6VXGAlKb7mq+RJNJyJiLpYSOLdt7nLJfN1dgJNnU=; b=zW5PY7r47JHfG3w+uv4dCtuH36
-	o+CFHHM9ALeZLThfF9KosbA4bYdvKeIGMiffFMT5PSA3owyzLCLAqg8sWutPcYaDKXaNd6RZ7KW47
-	FfeiFrTm9WrHOdHjFexGtq33g89wQkttJdVyMXf0FqWHML9k6Tq4coGyYcxd9E8DDfZ7Z2LJu2+/R
-	5TWeNy6Osixf58WSTh3xTvSsNTF+zcDtOq9tP+z1fb1c/XkONlS1JPXQd1b2MKf7akQjsLUx/7EsY
-	vt1Rn/+t04iV5TMtog2rQv70wzX/xefV9nsgeH+7BWHNUXZVJ1JaXsFF5lwmzn4XTnMuuHo+VsRO9
-	oIWDm41A==;
-Date: Tue, 3 Dec 2024 23:04:53 +0100
-From: Andreas Kemnade <andreas@kemnade.info>
-To: Dhruv Menon <dhruvmenon1104@gmail.com>
-Cc: "H. Nikolaus Schaller" <hns@goldelico.com>, Aaro Koskinen
- <aaro.koskinen@iki.fi>, "Raghavendra, Vignesh" <vigneshr@ti.com>,
- andi.shyti@kernel.org, Janusz Krzysztofik <jmkrzyszt@gmail.com>, tony
- Lindgren <tony@atomide.com>, Kevin Hilman <khilman@baylibre.com>, Roger
- Quadros <rogerq@kernel.org>, Linux-OMAP <linux-omap@vger.kernel.org>,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] i2c: omap: Cleaned up coding style and parameters
-Message-ID: <20241203230453.1280ed4a@akair>
-In-Reply-To: <Z07QLveHUQlvDfIt@melbuntu>
-References: <Z04CA8fGCC-nyZIY@melbuntu>
-	<Z04faeJUgZTydiMb@darkstar.musicnaut.iki.fi>
-	<Z06zxM3pREgrOvQA@melbuntu>
-	<7B167CB3-EC8E-41C6-8A91-123167579475@goldelico.com>
-	<Z07QLveHUQlvDfIt@melbuntu>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1733263569; c=relaxed/simple;
+	bh=IehJ4AIWWz0772NCAQO8hzMuGVgotMd1OEvMqgvLjO8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bR+b2NDAf/tHNsUn4uOGKHTHFuQWke6UrSkQPU5T78/tm93PfuASE7HnUbzK/lE6rt35hM6oohjt+73kMCue7X/WK5xeL/p+/PSRCEv34Aq2IWefX/uylzbwF7nDMA45cN6HqFz5tp7SCUhOR0bo51dm1zB7lqNluKk5ymiuVoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ftUS/Wpf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 326F6C4CEDC;
+	Tue,  3 Dec 2024 22:06:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733263568;
+	bh=IehJ4AIWWz0772NCAQO8hzMuGVgotMd1OEvMqgvLjO8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ftUS/Wpfzl6rAV6W1Fv9Nj0Z6nP375x3sX3S0EgpAXN8jeJSSHevR7r9/J59WGnn6
+	 dnKlO1CeZ6WUoZPPy5V8p4VlDsak2GM3J8JYiF6GRNs339aHB5OOj7OYFVEsCMKCes
+	 KcDTggAMPlAndWscRzMlHDRP7g3d8Iff+lHx5SR1Qfft59Ao7bw8ipN+xGGDGjWNzG
+	 MDrxHBUGoA5kZzYBC8GnzU6AfcV+nh9AA8/2bpludCpwJQ4vKC9unAx9PYysaWnHRg
+	 UwZao6PW+eaQl3Ng39j7t1kBtsjKdifmmJyi2iL3HB3hx9vax/GzF3HQPIbap/3bdy
+	 2AqNY9CNhRKCA==
+Date: Tue, 3 Dec 2024 22:06:01 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, mcgrof@kernel.org,
+	x86@kernel.org, hpa@zytor.com, petr.pavlu@suse.com,
+	samitolvanen@google.com, da.gomez@samsung.com, masahiroy@kernel.org,
+	nathan@kernel.org, nicolas@fjasle.eu, linux-kernel@vger.kernel.org,
+	linux-modules@vger.kernel.org, linux-kbuild@vger.kernel.org,
+	hch@infradead.org, gregkh@linuxfoundation.org,
+	linux-next@vger.kernel.org
+Subject: Re: [PATCH -v2 1/7] module: Convert symbol namespace to string
+ literal
+Message-ID: <93a900b2-7740-4bfa-bfac-1ec2e5bfa383@sirena.org.uk>
+References: <20241202145946.108093528@infradead.org>
+ <20241202150810.048548103@infradead.org>
+ <20241202151533.GF8562@noisy.programming.kicks-ass.net>
+ <CAHk-=wh7KugYO+R-1DMmkLz4fD_-A9BMyrWTVsH_K0a86Ojn4A@mail.gmail.com>
+ <d707cb3b-1569-45d9-bdc3-dcc98eb88bc4@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="DLVYcvakTOgKySND"
+Content-Disposition: inline
+In-Reply-To: <d707cb3b-1569-45d9-bdc3-dcc98eb88bc4@sirena.org.uk>
+X-Cookie: Alimony is the high cost of leaving.
 
-Am Tue, 3 Dec 2024 15:02:30 +0530
-schrieb Dhruv Menon <dhruvmenon1104@gmail.com>:
 
-> This patch has been splitted into two parts,
-> 
->         1. [PATCH v2 1/2] i2c: omap: Clean up coding style
->         2. [PATCH v2 2/2] i2c: omap: Removed unused parameter
-> 
-> The patchset also removed the changes regarding msleep as the 
-> adjustment was relatively minor which was added earlier. The 
-> change was initially considered based on "Timer's howto" 
-> documentation which recommends to change any msleep(x) < 10ms
-> to usleep_range(x*1000, x*2000) for better precision.
-> 
-> Thank you for the time and review. I look forward to your feedback
-> 
-send the output inline, see
-Documentation/process/submitting-patches.rst:
-No MIME, no links, no compression, no attachments.  Just plain text
+--DLVYcvakTOgKySND
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Also we want imperative mood in the patches.
-There is also a lot of automated processing of these patch emails.
+On Tue, Dec 03, 2024 at 07:20:05PM +0000, Mark Brown wrote:
+> On Mon, Dec 02, 2024 at 11:33:58AM -0800, Linus Torvalds wrote:
 
-Regards,
-Andreas
+> > If we have these kinds of big scripted things, right after the merge
+> > window tends to be the best time to do them. The conflict potential of
+> > leaving it hanging in linux-next can be somewhat annoying. They may be
+> > fairly unlikely, and easy to resolve individually, but it's one of
+> > those "one is trivial to deal with, but even just a handful is
+> > annoying".
+
+> > So I'll run your script and take your commit message, and we'll have
+> > this part over and done with.
+
+> I *think* this is interacting in a fun way with at least the IIO
+> subsystem in -next (Linus' tree is fine, I didn't do too much
+> investigation as I'd quite like the -next build to finish some time
+> today):
+
+Yes, this is breaking ASoC and possibly other things as well.  I guess
+any tree adding a new use of these macros needs to merge mainline to
+avoid a mess here.
+
+--DLVYcvakTOgKySND
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmdPgMgACgkQJNaLcl1U
+h9BV/gf9HfmQ/2rTxmyGvtTJh/xuiW79W2pQGjCcU3r7niEke5B2mPtIAyGIpqSI
+ID4mHsuGkFAxk3XAL636XS3ccDCUIAXpGAVnTr4mqX8EeknHK932vfg0fAua3AUU
+/qANxVOhvIE+NNoat2sDq9WH3EBDdLtG02Wa0EhYr5e5QOO7H4yZSpkAhVTyAbxd
+BXcYq50biFFnQ9z1srulbSUzYJ7ldpKKX3j40noJ9GfRGifKAOIbXjY10uYG1Au7
+1KxhGqxZ/RssMsfrMov1wgd08F73IautuDwJTbVicPCm6Nbucoz85wASWZtkboss
+hLEkq7WkGbChUldcW7TsNbTRrjSquQ==
+=Qf1I
+-----END PGP SIGNATURE-----
+
+--DLVYcvakTOgKySND--
 
