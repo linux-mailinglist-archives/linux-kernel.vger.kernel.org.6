@@ -1,168 +1,193 @@
-Return-Path: <linux-kernel+bounces-429730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429731-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 362A89E21DE
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:18:10 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8272D9E2189
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:15:03 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 59C1B16461A
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 15:14:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B898285828
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 15:15:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 666AF1FBEAB;
-	Tue,  3 Dec 2024 15:11:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A145B1FCCE4;
+	Tue,  3 Dec 2024 15:12:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TTNZgXCU"
-Received: from mail-wm1-f67.google.com (mail-wm1-f67.google.com [209.85.128.67])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lSCM4Bol"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AB261FAC54
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 15:11:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.67
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 371471F892A
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 15:12:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733238691; cv=none; b=QciCSIzm1Z9rt2eGHoD8nJMQVKTBCgJTQ7+2E0rSfmGXk4cUGVQ8viNSXKk3/6Mt3noiRo00twq+5nKy/A//sh2H9oufHxBhgzlezuPU+sBoa3Zc6IY8zCQJywtofa/mbbtmMH/HOPKfb2+q/wsdP+kJDBWAv6aiReH03lrk604=
+	t=1733238723; cv=none; b=otXg41hHwWlNvlGVit1SAK6UpQsb1H/MzoxUvW9h30SKJM9MpJvbGJLkhxVxrNNA0b2dXY14bowzCV3ITON+ifwJ29znQVcPM8EDbWn+AErigkgUA2axzyyVFEmP+MsZ2wu84Rywwd8oU/uw5242m0uQMXq6XB1F3ln4MYQlJMM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733238691; c=relaxed/simple;
-	bh=Uei6j24yL3vgxy4vncTGsY2siuJb0kM1VOXijaR88jw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D+aXlBLzlhG1CeUArKYGGPEmlVzOYLd7yhWDQLWZn0bxDUpkRwHA2aRM0UXM+eYoKE7f5FjRe3L7Z0Mok7wOPEO1CVlBk9RW3Hjvze/m/BY4OoUCuLM6Z/0JR6bd1uOaYyBTPFr2ed1rHHbMxgsrcWX5lx6Po7lzOzWEXf6KqYM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TTNZgXCU; arc=none smtp.client-ip=209.85.128.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f67.google.com with SMTP id 5b1f17b1804b1-4349cc45219so50900295e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 07:11:28 -0800 (PST)
+	s=arc-20240116; t=1733238723; c=relaxed/simple;
+	bh=gyvEs1E/4I843Wo9tvfjpqqgLtC7wOGj2Udlrs9XjfU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AjrOws5y1axbzOxXN0W5cfv0YtL3JuOxmn7vUfU82XEoPEuMSS2k9BW7xlWVrvFDOf7FksAVZZiP3DyAYKpLh/uYvC6biH0+OGy4vXslh/quXcGsfO82UshBO48/h9LXKHTBx/PZQ3MAI9if3AWEy5Tubj/JHxoB0BxVWbc0sY8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lSCM4Bol; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-385e2c52c21so2208823f8f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 07:12:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733238687; x=1733843487; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=zREpKid1FijkM8w3fvUJYYcepCZqPc1/enXnI+QFhQI=;
-        b=TTNZgXCU8vVl158hgBSDkr+Zx0cG0tZLufC86xognLJ6Os3DvGbcuG4ssB2k14dKOv
-         l4yUZDM6ysHGjQNU5QPfapoDS07SEnjfz364PZyazpVkxUtfJLJh1heBO9UcmWMUVNdf
-         dBKB92KSnfVJiWQXDgOTSEc7VFmrF2KiJ21wh7yQTAhr+ReXLBTksV2Jl9l1JJSC20+h
-         4ZBxnZIA1LSaKiK/nTEF/sCjoLEMpgzNfbKiDr61GPfiWssx8EW/zy4aSy3Q+kN8P7aA
-         rr2FmXe1Wl0YLiI6D1smAnXDypdol8MCbuS9ZaUzsvxt0FlG+8AkYDHJcTasoCVZeOAW
-         nusQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733238687; x=1733843487;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1733238719; x=1733843519; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=zREpKid1FijkM8w3fvUJYYcepCZqPc1/enXnI+QFhQI=;
-        b=Iaufd/KkYByuFVwY0dQM4rdDe7L58tGdrmF7Ur4nQnk+xJcSrFBkyVG2uLAf1adhHh
-         qXnFGLgTPuFo/Wqzjq+YRxxLWUAuUuBgAAvEnvlbd39txV4FJFudozVD2IEKxjcb1vrZ
-         GeBojkPEibrzQ1k8i7+NqvWmwBvw0YomcnyIO6IN+ztjeg645x42PEFNtgyLS3JWwyhq
-         GRa10QolniM/V04CFdCiNmJ6iqIqvi1pkeJFYc18+KXj/AbOSt4LZhPvbMg8JBpCetLq
-         hVv+ZWenx0y9CSo0/uMcTfH1Vu4GVhYhFNWJ8P4UTeoAOtWDmDxgmn/tbY7nQujTEe7s
-         LEJA==
-X-Forwarded-Encrypted: i=1; AJvYcCX8KKzbRAZ7A9flgdPJk0VNkJNoqSEHw2iTP3IjhjHHzXs/ApIPuamJhZr9jB2B4+B4+vZ1URBLHT2y9Ns=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwaiBxY/jXtIHaUUqWaoU2O//Urb2UH7b1msTiAzepYAlp7+4fy
-	e6l3BOeAIVbDd5oYXBpIQTQI2FRAoZ3F3WSRCwSCRzeb6GuV7Thpp1LbLjgPOxc=
-X-Gm-Gg: ASbGncs+Mq+0QtFATS42gU3BM1ixeMIlfHLESsXupeVDBFoWVEPbea3h1CvGXbZx9kq
-	7Y6De3itLq7tZJYRmbeH8toGcD4WLOoYOwN0h3XkJdYej0yIW+ayC/jFPwng25G+4pk2Yj9Ychd
-	UJ7uvt854PLItOmwt1qQyt5Etsbc75+1f36WbEMiwA2OOr2ibmWfY0BkiRZEGVKroeEL7BFwREl
-	ZqopgR+4Zu/XeGGxx//xleYw14x9YahlVIk55sgv4RFOpu918Im9QhVXy8h6w==
-X-Google-Smtp-Source: AGHT+IHpG+YYkt5XvDCdFdtRCKt3GJs9wG1S7RmUFMFyXfoO+hh7Lfjm2kqMdLvybUfLqLTQRDejCw==
-X-Received: by 2002:a05:600c:3ca7:b0:431:12a8:7f1a with SMTP id 5b1f17b1804b1-434d09c12bfmr28153625e9.16.1733238687261;
-        Tue, 03 Dec 2024 07:11:27 -0800 (PST)
-Received: from linaro.org ([2a02:2454:ff21:ef80:41ad:5703:2486:8f59])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434b0dc99b3sm191481505e9.24.2024.12.03.07.11.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Dec 2024 07:11:26 -0800 (PST)
-Date: Tue, 3 Dec 2024 16:11:22 +0100
-From: Stephan Gerhold <stephan.gerhold@linaro.org>
-To: Abel Vesa <abel.vesa@linaro.org>, Johan Hovold <johan@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Krishna Kurapati <quic_kriskura@quicinc.com>,
-	Thinh Nguyen <Thinh.Nguyen@synopsys.com>, linux-usb@vger.kernel.org,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Subject: Re: [PATCH 1/2] arm64: dts: qcom: x1e80100-crd: Add USB multiport
- fingerprint readery
-Message-ID: <Z08fmvBEh6dYQimN@linaro.org>
-References: <20241118-x1e80100-crd-fp-v1-0-ec6b553a2e53@linaro.org>
- <20241118-x1e80100-crd-fp-v1-1-ec6b553a2e53@linaro.org>
- <Z07bgH5vVk44zuEH@hovoldconsulting.com>
- <Z07r3Upr50vLluyn@linaro.org>
- <Z07zeVJU3Y1GiSLL@linaro.org>
+        bh=SOKE0NDW2RgCYKsQSYaekUZqPmxVS4wlkRziwc8dWdg=;
+        b=lSCM4Bol4S4c6Nl7tZZRxbdqF1/A8ijDMxuuHKJA5Jx1ATXGoJE3kELXbEl1dPCHf1
+         89TEQAE9Juhqolp6GwoBOicXDkXUosMWYQ9lfo/1wcUqKm5gvrZoBhZKWzT2bpkhjQwL
+         97y1qGODnN2u3gvMBADX0ylfpGyDF8L4Pz+nCwFP6Xvt1z1NEfsZ2CWsc8SEUccaJVLB
+         CVRGLa3U1a+Vu8l13vsHOeSbOrRKrAEnh0mOcygy4WKz21DrvnW8JdXihSp70u7MYkYj
+         Aj2w4fHlU1QfF4L1+t4AE5ydg8x+UCwPwJGZ53Xt3td0Vm1BOB44n8LZaHby6+Hk6ytL
+         E7Yg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733238719; x=1733843519;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SOKE0NDW2RgCYKsQSYaekUZqPmxVS4wlkRziwc8dWdg=;
+        b=DRSmIhA2jyuqT2hq4PoTBesgIMTznqgJEnbrzK1MEfGmmJg6cjb6ycWUqmb88LvC05
+         VNrMSNU9LPllZfZ8GrcEJ4lCTYy5evzVYLhEqmfxpt2G6EdLpMom+eE4ngTC9hC2bco0
+         vtf30c9aY1cW+mcy5kM9xKh+QbkhKvyOjKWs+tK1R4ci3qg7DvZ6+xrShwPgqFTvGBx/
+         vK3ek5+0R5DDlahmS+f5sI+5ZRvBgkclquyd2Fm3bHwmkZEhK2nsunVxXzavpa3uWXut
+         zdFoqp8ZGe86u2jYHZT8ZaEUabUlGjCRlAmJVKE1j8+vn9EESWrlsrP0Xc/PZfEtri4m
+         CaRw==
+X-Forwarded-Encrypted: i=1; AJvYcCWeH0HOPGtaK3zoFZ2sknG9po//NwSg/auUxPjnvWm7Cu6noGYoIVLAqfGQgYyOtn6P0QftpIM8nqsoz+M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YycXgxE3L8oyxMD+6PfSlq3goIEjEFciDFDi8ECAcYZZrWQCVIA
+	K8owvfD6q4HVliyRa+dLGfQOHetcZa2mq+DBI/6ECWIraVsSwWegeccQ0G1xUqUJfAeavQXTR8w
+	BNE/wZSQ5tsIWkd/gc8+gVT4+2lPHeDVil2Av
+X-Gm-Gg: ASbGncskqkMiStZwM6b7DpUf4Ck99hsq2hYkMQwCSVW2slOjVc3sVLq/GQFDYYYukfO
+	mbSo7q9JJWekfeUp+I6yOoCKtxAgZ25OBm0VIUDJ1PDYIWdBF3JTigxKSG0h38Q==
+X-Google-Smtp-Source: AGHT+IH50DVbdbXafEbqkA0ERFhXhngJi7AHiDYU7M9oIqozFLwQkMRE5ghZjzggGcpDX5Mjb2Jr8AK4V72CS9i105M=
+X-Received: by 2002:a5d:47a7:0:b0:385:f60b:da50 with SMTP id
+ ffacd0b85a97d-385fd422ea9mr2691336f8f.33.1733238719365; Tue, 03 Dec 2024
+ 07:11:59 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z07zeVJU3Y1GiSLL@linaro.org>
+References: <20241120-rust-xarray-bindings-v10-0-a25b2b0bf582@gmail.com>
+ <20241120-rust-xarray-bindings-v10-2-a25b2b0bf582@gmail.com>
+ <CAH5fLgipntMtu7_pdZDZGerGRO499yxDdz2dP=2Bb5FobcykYg@mail.gmail.com> <CAJ-ks9kwGi+hhsNUC=Ti3CL8iJ4mEN2vSkoFUnz67Usu+-_P6Q@mail.gmail.com>
+In-Reply-To: <CAJ-ks9kwGi+hhsNUC=Ti3CL8iJ4mEN2vSkoFUnz67Usu+-_P6Q@mail.gmail.com>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Tue, 3 Dec 2024 16:11:47 +0100
+Message-ID: <CAH5fLgiLPkVwgGiTFYbPTnz1EF8wAjopbBpmK6LpkmVRF+kVZw@mail.gmail.com>
+Subject: Re: [PATCH v10 2/2] rust: xarray: Add an abstraction for XArray
+To: Tamir Duberstein <tamird@gmail.com>
+Cc: Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, =?UTF-8?B?TWHDrXJhIENhbmFs?= <mcanal@igalia.com>, 
+	Asahi Lina <lina@asahilina.net>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-+Cc Dmitry
+On Tue, Dec 3, 2024 at 4:00=E2=80=AFPM Tamir Duberstein <tamird@gmail.com> =
+wrote:
+>
+> On Tue, Dec 3, 2024 at 7:30=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> =
+wrote:
+> >
+> > On Wed, Nov 20, 2024 at 12:48=E2=80=AFPM Tamir Duberstein <tamird@gmail=
+.com> wrote:
+> > > +use crate::{
+> > > +    alloc, bindings, build_assert, build_error,
+> > > +    error::{Error, Result},
+> > > +    init::PinInit,
+> > > +    pin_init,
+> > > +    types::{ForeignOwnable, NotThreadSafe, Opaque},
+> > > +};
+> > > +use core::{iter, marker::PhantomData, mem};
+> > > +use macros::{pin_data, pinned_drop};
+> >
+> > I think these are in crate::prelude.
+>
+> I prefer to be explicit, unless there's guidance on this somewhere?
 
-On Tue, Dec 03, 2024 at 02:03:05PM +0200, Abel Vesa wrote:
-> On 24-12-03 12:30:37, Stephan Gerhold wrote:
-> > On Tue, Dec 03, 2024 at 11:20:48AM +0100, Johan Hovold wrote:
-> > > [ +CC: Krishna, Thinh and the USB list ]
-> > > 
-> > > On Mon, Nov 18, 2024 at 11:34:29AM +0100, Stephan Gerhold wrote:
-> > > > The X1E80100 CRD has a Goodix fingerprint reader connected to the USB
-> > > > multiport controller on eUSB6. All other ports (including USB super-speed
-> > > > pins) are unused.
-> > > > 
-> > > > Set it up in the device tree together with the NXP PTN3222 repeater.
-> > > > 
-> > > > Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
-> > > > ---
-> > > >  arch/arm64/boot/dts/qcom/x1e80100-crd.dts | 48 +++++++++++++++++++++++++++++++
-> > > >  1 file changed, 48 insertions(+)
-> > > > 
-> > > > diff --git a/arch/arm64/boot/dts/qcom/x1e80100-crd.dts b/arch/arm64/boot/dts/qcom/x1e80100-crd.dts
-> > > > index 39f9d9cdc10d..44942931c18f 100644
-> > > > --- a/arch/arm64/boot/dts/qcom/x1e80100-crd.dts
-> > > > +++ b/arch/arm64/boot/dts/qcom/x1e80100-crd.dts
-> > > > @@ -735,6 +735,26 @@ keyboard@3a {
-> > > >  	};
-> > > >  };
-> > > >  
-> > > > +&i2c5 {
-> > > > +	clock-frequency = <400000>;
-> > > > +
-> > > > +	status = "okay";
-> > > > +
-> > > > +	eusb6_repeater: redriver@4f {
-> > > > +		compatible = "nxp,ptn3222";
-> > > > +		reg = <0x4f>;
-> > > 
-> > > The driver does not currently check that there's actually anything at
-> > > this address. Did you verify that this is the correct address? 
-> > > 
-> > > (Abel is adding a check to the driver as we speak to catch any such
-> > > mistakes going forward).
-> > > 
-> > 
-> > Yes, I verified this using
-> > https://git.codelinaro.org/stephan.gerhold/linux/-/commit/45d5add498612387f88270ca944ee16e2236fddd
-> > 
-> > (I sent this to Abel back then, so I'm surprised he didn't run that :-))
-> 
-> I don't remember seeing this commit back then. Maybe I didn't look
-> careful enough. Sorry.
-> 
-> Since you already did the work, can you send that on the list?
-> 
+I don't think I've ever seen anyone do a direct import from macros.
 
-Sure, no problem. What exactly do we want for upstream?
+> > > +    fn iter(&self) -> impl Iterator<Item =3D core::ptr::NonNull<T::P=
+ointedTo>> + '_ {
+> > > +        // TODO: Remove when https://lore.kernel.org/all/20240913213=
+041.395655-5-gary@garyguo.net/ is applied.
+> > > +        const MIN: core::ffi::c_ulong =3D core::ffi::c_ulong::MIN;
+> > > +        const MAX: core::ffi::c_ulong =3D core::ffi::c_ulong::MAX;
+> >
+> > Isn't MIN just zero?
+>
+> I liked the symmetry, but I could change it if you feel strongly.
 
-My patch above isn't ideal, because it checks the CHIP_ID on every PHY
-power up. But briefly powering up the PHY during probe() just for
-reading the CHIP_ID is also a bit weird. Not sure what the best approach
-here is.
+I commented because I thought it was confusing; I spent some time
+figuring out whether the integer was signed.
 
-Thanks,
-Stephan
+> > > +    /// Erases an entry from the array.
+> > > +    ///
+> > > +    /// Returns the entry which was previously at the given index.
+> > > +    pub fn remove(&mut self, index: usize) -> Option<T> {
+> > > +        // SAFETY: `self.xa.xa` is always valid by the type invarian=
+t.
+> > > +        //
+> > > +        // SAFETY: The caller holds the lock.
+> > > +        let ptr =3D unsafe { bindings::__xa_erase(self.xa.xa.get(), =
+to_index(index)) }.cast();
+> >
+> > Two safety comments?
+>
+> There are two properties that must be upheld. How would you like to
+> see it formatted?
+
+Usually multiple preconditions are listed using a bulleted list:
+
+// SAFETY:
+// - `self.xa.xa` is always valid by the type invariant.
+// - The caller holds the lock.
+
+> > > +        // SAFETY: `ptr` is either NULL or came from `T::into_foreig=
+n`.
+> > > +        unsafe { T::try_from_foreign(ptr) }
+> > > +    }
+> > > +
+> > > +    /// Stores an entry in the array.
+> > > +    ///
+> > > +    /// On success, returns the entry which was previously at the gi=
+ven index.
+> > > +    ///
+> > > +    /// On failure, returns the entry which was attempted to be stor=
+ed.
+> >
+> > I'd like to see documentation about the gfp flags. This may unlock the
+> > spinlock temporarily if GFP_KERNEL is used.
+>
+> Will add the language from the C documentation: "May drop the lock if
+> needed to allocate memory, and then reacquire it afterwards."
+
+SGTM.
+
+> > > +        // SAFETY: `__xa_store` returns the old entry at this index =
+on success or `xa_err` if an
+> > > +        // error happened.
+> > > +        match unsafe { bindings::xa_err(old) } {
+> > > +            0 =3D> {
+> > > +                let old =3D old.cast();
+> > > +                // SAFETY: `ptr` is either NULL or came from `T::int=
+o_foreign`.
+> > > +                Ok(unsafe { T::try_from_foreign(old) })
+> >
+> > It can't be XA_ZERO_ENTRY?
+>
+> No it can't. XA_ZERO_ENTRY is never returned from the "normal" API.
+> XA_ZERO_ENTRY presents as NULL.
+
+It's probably worth mentioning in the safety comment.
+
+Alice
 
