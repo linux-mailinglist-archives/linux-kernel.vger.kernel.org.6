@@ -1,200 +1,153 @@
-Return-Path: <linux-kernel+bounces-428615-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428616-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1ECE19E1169
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 03:39:30 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C49619E116C
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 03:40:40 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D69E41651E2
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 02:39:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5772AB23EF2
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 02:40:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11CA91537C8;
-	Tue,  3 Dec 2024 02:39:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AF64150997;
+	Tue,  3 Dec 2024 02:40:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="Ah8UhOYM"
-Received: from mail-io1-f45.google.com (mail-io1-f45.google.com [209.85.166.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="hmFtUwse"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 920DC5A7AA
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 02:39:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B8D61EA84;
+	Tue,  3 Dec 2024 02:40:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733193562; cv=none; b=A7MpRDaegpbaqVkQPb9JTsUrTalpL3ouUP+FKR2TeijjnFOYG2sKfVUsfgeJDev0UzrZ4sVNjOUcYKqBuOr8o69q22YzXkyTvSfY5SvBGPeUiVnYGwWvOfQLhqNe+O3mb19UtCscNiNn9LAmbTncQqzPYWCA5VSJOCrRQhpZL0o=
+	t=1733193632; cv=none; b=LmdJtfy6bR2TaQIDbpp/arihmNlYtgtV0EOjUB93HBMTvokssqcrETVVLqDb0ePBVq1NgGNUBJDjvYAwCDEQIg9IF1+DE8ZIsUZn6qtNWgAcBUN4ksOcswA18+kv3UfLcNZbgivQRsAh5gMCfqU/05jbK3AauCN04YdR1tlcnSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733193562; c=relaxed/simple;
-	bh=Wciq+UGMrwPpmcpdk2ePzToy1IWXDCRZbJxlRsomWD0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VlUkmDHoh/1uxN5PGGeO4atWAamwi5eDzkkR1aguxOGjEJCyUSFZMZyc/t4P2zfw63frNyGCHrztd/hSMPfpkbhdHv8alydZtgQFUjQQUGdRLHzO/NRXYdKFhlAYG4HaVSFd/kcJG+oxJVctzMMN4A3Kel9ogkMAQe0/L2rNei8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=Ah8UhOYM; arc=none smtp.client-ip=209.85.166.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-io1-f45.google.com with SMTP id ca18e2360f4ac-8419f5baedcso154720039f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 18:39:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1733193559; x=1733798359; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=807AMPvhV08hQjY+W9FqkSX3XWvObJEHMlCsMJUuV3g=;
-        b=Ah8UhOYMwiuIRzQF2tHtSzwxS+d9Jok1zbzWwepke8U+ziFp3Go1c8s+6Rl6WkwC1C
-         T21oNTPM7zOvVWaLH5GWE+UGdxvmRPo9znPwW6dmPYND0nX2HGUx9lgWUbSF9SYtyDSd
-         NUENg9p8WlyS6yUQ+nW41J7p6+FBVGBztHTeR0md/5TUPCDRDrl3f5nDXKSNxM5nCHyR
-         3USwdRC3mlC9soKdK/TlqA2zh50R/cvWkYu6JBdNsyP3rtrJNl8XpOjsC7JU5zg5JweG
-         yTfB74+umDZyF5nrHuWA4t1cJfHghCagMp6hNgxtvJMxDYISfcvuuGX9RwlfowyPEVCy
-         FshA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733193559; x=1733798359;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=807AMPvhV08hQjY+W9FqkSX3XWvObJEHMlCsMJUuV3g=;
-        b=nIaX3rCgigjIxxG0ly9zM6kz4lF0VDSoUCnIo0A3aWmhNEAG3Qf8vIxNsQH2aPLMrq
-         VmWWkqD/SniJ6XU1xhilv1XoK6gl6dI9ef4bevtMQtBnqJtiOJJ1dwY/yGLOtjxwH0Tz
-         mdMP3kopSaz//S/dGUhVX5l6Pzmut0p39ypnp0DsX/PIh9OUyC8g2o3m+Vxxtj/5e/SP
-         ju5XfrF/B7lM2ZoToTUh5v2aVor+veWZ2OYnSvYXH9T5yVw82xLIJoeUj71A6EFpX0up
-         ksQ4XjHoyMf0lobmfCXy7a2unv4BAsUBG2MjLnNOLWDECP2Njx8awpsLadIlj4fyyAC7
-         jgcg==
-X-Forwarded-Encrypted: i=1; AJvYcCXpCob5WowEJ1Eci0l19RoqTIlUAv1uZvbT1AmoLYZDP1M7Jp1zy+ijJIBIZuYU9kIAO0EiPhJMUErLWLs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxj6I7VhE6TE6iQtdRtya0nuOacWMZpDbLQaEv2j9/5cf/knJQZ
-	8x1VF0/6szj3Y7d8VAgmoLKtrSruXR6ramHbBfZpDfXJujZtD6KF4ZimYgITw0A=
-X-Gm-Gg: ASbGncs3N6jGS2dofs0KzjhahLsVepxMWXy+b7HVlVQrM0IPPravQpkEmSnuLr3Q68B
-	Qn0c2mWy/kySlzqpr39n7qt/MEicyILB14r3/6pUFqMwL44cYxL0JBUoQU+kLmAZ9NvBuQ45mpm
-	+Buqdn8BzTYNkQq4bzc/dj8Bwc8vtQpJZcelc0G5rp6zgUcsIvVFG39ox3KA6/5zbntcqAhHEwj
-	00A8gLfH3Gf4DNPZzz5wmM1ZY/JsW9noxzzpEK0Y0ITsF2wVUrIog2ZFhDkHWE4xx9b9QP4Sjk=
-X-Google-Smtp-Source: AGHT+IHd7BOnDkCqoWQpQn9axYX9LaHCjBDlODl0yRpMhp5QCmkH+d5KKW0iQf5wP+UEGLbQlYkP4Q==
-X-Received: by 2002:a05:6602:3405:b0:841:a1c0:c058 with SMTP id ca18e2360f4ac-8445b577d49mr152097239f.9.1733193559650;
-        Mon, 02 Dec 2024 18:39:19 -0800 (PST)
-Received: from [100.64.0.1] ([147.124.94.167])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4e230da8f03sm2387687173.17.2024.12.02.18.39.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 Dec 2024 18:39:18 -0800 (PST)
-Message-ID: <b48c4319-1fbc-4703-88d2-6f495af9c24e@sifive.com>
-Date: Mon, 2 Dec 2024 20:39:17 -0600
+	s=arc-20240116; t=1733193632; c=relaxed/simple;
+	bh=/6bUNqZkfq0kEP+vXDez6pmz80GSahXbagXwiR0UpBE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=LvCz6x8vvpcWvhgxC0SVEsslW0GvfGqBU+CIdqNZkSTecEAq+58pvG+zoppFo/Kil+0cz6quaK06hwKHl5QnqUmiK9tU8Rfe5WiLriaMuwIH0/jwYiVmWtZck5mf5Xmx2uTgqZUxXTAZW+EhJgrpHOMJzkcfitHa9DJSJnYsSIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=hmFtUwse; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B2I3gQv031568;
+	Tue, 3 Dec 2024 02:40:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=5Zv6y0Vlz7tB46ZdvQZ7xH
+	kef6tLCAr7LDBFRT5UXdw=; b=hmFtUwsecRRiDZpAM7m43K78CpfHqVNhyLnk16
+	Z6r4Wj76kzOyHHwmcnPGvV303Q7Vv0pVI00ncLiIOX7ONkzUGQHs0faMaqD/pmM3
+	NpdACipIqW1fWPic4owwMw8r5+zFzaNr8T1Tjjf5yLE+2eK7IsIrZuoHJyf6Lem+
+	WLxIzI9qOVWNMO/hMDf8l2csqgWZVK8w4fyFX4AJQ3W7KSfxhjetYMWGnodGJNA8
+	GfHunb5pJ1I9/+9a6fOwTfYTQP6mnEDaG5l+ETHQaG2Mc1/4kL+1RSkFWRFtjXcd
+	V8qKqZS9k/wo5z9rpmBKh4IEqFe3u1NjLdgdvPRRaPZ1KQaw==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 437v07pg8e-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 03 Dec 2024 02:40:28 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B32eS3a027880
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 3 Dec 2024 02:40:28 GMT
+Received: from hu-yrangana-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 2 Dec 2024 18:40:25 -0800
+From: Yuvaraj Ranganathan <quic_yrangana@quicinc.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <quic_yrangana@quicinc.com>
+Subject: [PATCH v1] soc: qcom: ice: Prevent UFS probe deferral on ICE probe failure
+Date: Tue, 3 Dec 2024 08:10:05 +0530
+Message-ID: <20241203024005.391654-1-quic_yrangana@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/8] drivers/perf: riscv: Add raw event v2 support
-To: Atish Kumar Patra <atishp@rivosinc.com>
-Cc: Anup Patel <anup@brainfault.org>, Will Deacon <will@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Paul Walmsley
- <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
- Mayuresh Chitale <mchitale@ventanamicro.com>,
- linux-riscv@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, Palmer Dabbelt <palmer@rivosinc.com>,
- kvm@vger.kernel.org, kvm-riscv@lists.infradead.org
-References: <20241119-pmu_event_info-v1-0-a4f9691421f8@rivosinc.com>
- <20241119-pmu_event_info-v1-3-a4f9691421f8@rivosinc.com>
- <e124c532-7a08-4788-843d-345827e35f5f@sifive.com>
- <CAHBxVyEwkPUcut0L7K9eewcmhOOidU16WnGRiPiP3D7-OS7HvQ@mail.gmail.com>
-From: Samuel Holland <samuel.holland@sifive.com>
-Content-Language: en-US
-In-Reply-To: <CAHBxVyEwkPUcut0L7K9eewcmhOOidU16WnGRiPiP3D7-OS7HvQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: nAmIQjHk0Yismr8qgtD1b7QVzCVxMLlt
+X-Proofpoint-GUID: nAmIQjHk0Yismr8qgtD1b7QVzCVxMLlt
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 phishscore=0
+ adultscore=0 mlxlogscore=999 bulkscore=0 suspectscore=0 priorityscore=1501
+ impostorscore=0 lowpriorityscore=0 spamscore=0 mlxscore=0 clxscore=1015
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
+ definitions=main-2412030021
 
-Hi Atish,
+When the ICE key programming interface is unavailable, the ice create
+function fails, causing the probe to set NULL as the driver data. As a 
+result, when the UFS driver reads the ICE driver data and encounters a 
+NULL, leading to the deferral of the UFS probe and preventing the device
+from booting to the shell.
 
-On 2024-12-02 6:15 PM, Atish Kumar Patra wrote:
-> On Mon, Dec 2, 2024 at 2:37 PM Samuel Holland <samuel.holland@sifive.com> wrote:
->> On 2024-11-19 2:29 PM, Atish Patra wrote:
->>> SBI v3.0 introduced a new raw event type that allows wider
->>> mhpmeventX width to be programmed via CFG_MATCH.
->>>
->>> Use the raw event v2 if SBI v3.0 is available.
->>>
->>> Signed-off-by: Atish Patra <atishp@rivosinc.com>
->>> ---
->>>  arch/riscv/include/asm/sbi.h |  4 ++++
->>>  drivers/perf/riscv_pmu_sbi.c | 18 ++++++++++++------
->>>  2 files changed, 16 insertions(+), 6 deletions(-)
->>>
->>> diff --git a/arch/riscv/include/asm/sbi.h b/arch/riscv/include/asm/sbi.h
->>> index 9be38b05f4ad..3ee9bfa5e77c 100644
->>> --- a/arch/riscv/include/asm/sbi.h
->>> +++ b/arch/riscv/include/asm/sbi.h
->>> @@ -159,7 +159,10 @@ struct riscv_pmu_snapshot_data {
->>>
->>>  #define RISCV_PMU_RAW_EVENT_MASK GENMASK_ULL(47, 0)
->>>  #define RISCV_PMU_PLAT_FW_EVENT_MASK GENMASK_ULL(61, 0)
->>> +/* SBI v3.0 allows extended hpmeventX width value */
->>> +#define RISCV_PMU_RAW_EVENT_V2_MASK GENMASK_ULL(55, 0)
->>>  #define RISCV_PMU_RAW_EVENT_IDX 0x20000
->>> +#define RISCV_PMU_RAW_EVENT_V2_IDX 0x30000
->>>  #define RISCV_PLAT_FW_EVENT  0xFFFF
->>>
->>>  /** General pmu event codes specified in SBI PMU extension */
->>> @@ -217,6 +220,7 @@ enum sbi_pmu_event_type {
->>>       SBI_PMU_EVENT_TYPE_HW = 0x0,
->>>       SBI_PMU_EVENT_TYPE_CACHE = 0x1,
->>>       SBI_PMU_EVENT_TYPE_RAW = 0x2,
->>> +     SBI_PMU_EVENT_TYPE_RAW_V2 = 0x3,
->>>       SBI_PMU_EVENT_TYPE_FW = 0xf,
->>>  };
->>>
->>> diff --git a/drivers/perf/riscv_pmu_sbi.c b/drivers/perf/riscv_pmu_sbi.c
->>> index 50cbdbf66bb7..f0e845ff6b79 100644
->>> --- a/drivers/perf/riscv_pmu_sbi.c
->>> +++ b/drivers/perf/riscv_pmu_sbi.c
->>> @@ -59,7 +59,7 @@ asm volatile(ALTERNATIVE(                                           \
->>>  #define PERF_EVENT_FLAG_USER_ACCESS  BIT(SYSCTL_USER_ACCESS)
->>>  #define PERF_EVENT_FLAG_LEGACY               BIT(SYSCTL_LEGACY)
->>>
->>> -PMU_FORMAT_ATTR(event, "config:0-47");
->>> +PMU_FORMAT_ATTR(event, "config:0-55");
->>>  PMU_FORMAT_ATTR(firmware, "config:62-63");
->>>
->>>  static bool sbi_v2_available;
->>> @@ -527,18 +527,24 @@ static int pmu_sbi_event_map(struct perf_event *event, u64 *econfig)
->>>               break;
->>>       case PERF_TYPE_RAW:
->>>               /*
->>> -              * As per SBI specification, the upper 16 bits must be unused
->>> -              * for a hardware raw event.
->>> +              * As per SBI v0.3 specification,
->>> +              *  -- the upper 16 bits must be unused for a hardware raw event.
->>> +              * As per SBI v3.0 specification,
->>> +              *  -- the upper 8 bits must be unused for a hardware raw event.
->>>                * Bits 63:62 are used to distinguish between raw events
->>>                * 00 - Hardware raw event
->>>                * 10 - SBI firmware events
->>>                * 11 - Risc-V platform specific firmware event
->>>                */
->>> -
->>>               switch (config >> 62) {
->>>               case 0:
->>> -                     ret = RISCV_PMU_RAW_EVENT_IDX;
->>> -                     *econfig = config & RISCV_PMU_RAW_EVENT_MASK;
->>> +                     if (sbi_v3_available) {
->>> +                             *econfig = config & RISCV_PMU_RAW_EVENT_V2_MASK;
->>> +                             ret = RISCV_PMU_RAW_EVENT_V2_IDX;
->>> +                     } else {
->>> +                             *econfig = config & RISCV_PMU_RAW_EVENT_MASK;
->>> +                             ret = RISCV_PMU_RAW_EVENT_IDX;
->>
->> Shouldn't we check to see if any of bits 48-55 are set and return an error,
->> instead of silently requesting the wrong event?
->>
-> 
-> We can. I did not add it originally as we can't do much validation for
-> the raw events for anyways.
-> If the encoding is not supported the user will get the error anyways
-> as it can't find a counter.
-> We will just save 1 SBI call if the kernel doesn't allow requesting an
-> event if bits 48-55 are set.
+To address this issue, modify the behavior to return an "operation not
+supported" error when the ICE key programming interface is unavailable.
+Additionally, mark this error in a global variable. When the UFS driver
+attempts to read the ICE driver data, it will check for this error and
+return it, rather than deferring the probe.
 
-The scenario I'm concerned about is where masking off bits 48-55 results in a
-valid, supported encoding for a different event. For example, in the HPM event
-encoding scheme used by Rocket and inherited by SiFive cores, bits 8-55 are a
-bitmap. So masking off some of those bits will exclude some events, but will not
-create an invalid encoding. This could be very confusing for users.
+Signed-off-by: Yuvaraj Ranganathan <quic_yrangana@quicinc.com>
+---
+ drivers/soc/qcom/ice.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
-Regards,
-Samuel
+diff --git a/drivers/soc/qcom/ice.c b/drivers/soc/qcom/ice.c
+index 393d2d1d275f..160916cb8fb0 100644
+--- a/drivers/soc/qcom/ice.c
++++ b/drivers/soc/qcom/ice.c
+@@ -41,6 +41,8 @@
+ #define qcom_ice_readl(engine, reg)	\
+ 	readl((engine)->base + (reg))
+ 
++static bool qcom_ice_create_error;
++
+ struct qcom_ice {
+ 	struct device *dev;
+ 	void __iomem *base;
+@@ -215,7 +217,7 @@ static struct qcom_ice *qcom_ice_create(struct device *dev,
+ 
+ 	if (!qcom_scm_ice_available()) {
+ 		dev_warn(dev, "ICE SCM interface not found\n");
+-		return NULL;
++		return ERR_PTR(-EOPNOTSUPP);
+ 	}
+ 
+ 	engine = devm_kzalloc(dev, sizeof(*engine), GFP_KERNEL);
+@@ -303,6 +305,9 @@ struct qcom_ice *of_qcom_ice_get(struct device *dev)
+ 		return ERR_PTR(-EPROBE_DEFER);
+ 	}
+ 
++	if (qcom_ice_create_error)
++		return ERR_PTR(-EOPNOTSUPP);
++
+ 	ice = platform_get_drvdata(pdev);
+ 	if (!ice) {
+ 		dev_err(dev, "Cannot get ice instance from %s\n",
+@@ -336,8 +341,10 @@ static int qcom_ice_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	engine = qcom_ice_create(&pdev->dev, base);
+-	if (IS_ERR(engine))
++	if (IS_ERR(engine)) {
++		qcom_ice_create_error = true;
+ 		return PTR_ERR(engine);
++	}
+ 
+ 	platform_set_drvdata(pdev, engine);
+ 
+-- 
+2.34.1
 
 
