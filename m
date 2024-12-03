@@ -1,233 +1,112 @@
-Return-Path: <linux-kernel+bounces-430306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12E9F9E2EF9
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 23:22:06 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C2999E2EFA
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 23:22:24 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8060516527C
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 22:22:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5270E283467
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 22:22:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 542071362;
-	Tue,  3 Dec 2024 22:21:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F413205AAF;
+	Tue,  3 Dec 2024 22:22:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qIUn74jP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y+0TLJnD"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E97D1EF0B6;
-	Tue,  3 Dec 2024 22:21:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A03DD1F76AB;
+	Tue,  3 Dec 2024 22:22:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733264517; cv=none; b=RKHD/TggjRP7RUAp+504R9Wry/XSOaBpaSxE851S7dakrXhJXZX34x4IiCvLz5ho1uS0CF4bWDC1RDzpEHTtLQIpjdiL6/3rO/2w/m3/n+uYYHYRQ/J2ZJQ6rgkgFnX3A9zxI31aJWiRQASmphZU9M32HZGC7vaA1y/S3ZceJoc=
+	t=1733264538; cv=none; b=GdRYiJBTGezn4XJ451rvWCRyq/vVEk8AxWIYxKRnVk8Fsq2UMAP44RphrZNSvqiiFaLJwVfV1qJDrCdg/Cx2KK+dNyrIWhd9w9Aor8va0mCnCnbjhdpYFcHQ5X8JlB94/hZFxcWDniOr/k5xMUsIerOJ/ssoRhf0wz0kicB22U8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733264517; c=relaxed/simple;
-	bh=XC87OSbfu1RXvj2aeaUOX48QbWy9oml2/qRKOSs6whU=;
+	s=arc-20240116; t=1733264538; c=relaxed/simple;
+	bh=I4I5URB1VDk2Y1ouDFGGvz2k1B/mzf5I2HU3r9wirFY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tLwZwtMPw9C8LBqBNN1APa/SPTg7yGsMRK9jAvwUttPVfEeGVvoXpv7rIdwKXv4THVZ18aYsD8E3PXyBSYCRGg8Z5kGJLOWwK8DSELjM5E1UbY2EOQEnrmfAg8IRl1nzfjPql+6GyVm/QnIqtDWIiHxJAhaahEj6nU8IA1k91VE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qIUn74jP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02F88C4CEDC;
-	Tue,  3 Dec 2024 22:21:56 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=OrpGp/selQkOXxVMfZvthuN+Do+0gkSa3ij10+DIfZPMUvASyloR+LrSuXBg310cfxLzhPQ9gvdiSx3CMYcKiis1NVkVQwU3dkvzEaprmzumWGDAr+uxgX5KDxwOH1pd6mjoWQz54k3u2j9sDmylFA6K2SAg1PS/N+SOTTmu5yU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y+0TLJnD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6AAE0C4CEDC;
+	Tue,  3 Dec 2024 22:22:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733264517;
-	bh=XC87OSbfu1RXvj2aeaUOX48QbWy9oml2/qRKOSs6whU=;
+	s=k20201202; t=1733264538;
+	bh=I4I5URB1VDk2Y1ouDFGGvz2k1B/mzf5I2HU3r9wirFY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qIUn74jP5JRUJ1+lbOrYIcIvYljZ6zFIOyUNFRlYzLcUbwtI3i8OwB4ACFbm3y0Kf
-	 Amh5p2ns05rgLBrHcSowj861GKntgqKrnEwICnMEAujKNq65fzFQrq9LMiHepyFb/r
-	 QpbANyeimU9ZDiVVkLNCytNZT5rqjkYgtkKGOgjh+bfiE0/UDcpGpJ6ZmxVdJhCQ95
-	 pMlpViE7hYm4aJAlp2iy4cGcrIl37ayThuvb834RkR/5r+NT1T0qo1wNN8NifujDWX
-	 SdpWCoH2ZFv1+ecVj/6TK3qLq7dEiuTZp4SjUsE8R52+uWiM5AWg1w/fulb6Ks/pAL
-	 Dk+dRMLa7aOiw==
-Date: Tue, 3 Dec 2024 12:21:55 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Hillf Danton <hdanton@sina.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Marco Elver <elver@google.com>, Zefan Li <lizefan.x@bytedance.com>,
-	tglx@linutronix.de,
-	syzbot+6ea37e2e6ffccf41a7e6@syzkaller.appspotmail.com
-Subject: Re: [PATCH v3] kernfs: Use RCU for kernfs_node::name and ::parent
- lookup.
-Message-ID: <Z0-Eg0B09JQUZG2N@slm.duckdns.org>
-References: <20241121175250.EJbI7VMb@linutronix.de>
+	b=Y+0TLJnDkKrzWZbina+CPZi6zr4SVit9pG0xtWnrXDk4QmTcFivDkf0wO+2arI3Y7
+	 hoemoVk7ZiDIxpWmfNvPuCMDTxE9z3BlkKXjEN3LdbjiuvdDvEXmYvnRzKU7n1gDod
+	 WoruJ9jAJOYeswjKTqJb1P+DGrfTnDsSjxF2gRgPHlP6ld5A/6OMqhXxDsBFLXD6aW
+	 B2GQ7EE1HlLPNXc68jkF5BpnqmC7C5pxk6ceGo3tiVK7jnFcNp8sYiH4jDo0OFz9LH
+	 hPymnB02MeY+Zni0byi+EcOyd1x/2mbI6hkzioezqcaaSB3eYqSJVbNyV52S4kw6xq
+	 Tj3k6twbaDOKQ==
+Date: Tue, 3 Dec 2024 22:22:04 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Jerome Brunet <jbrunet@baylibre.com>, Arnd Bergmann <arnd@arndb.de>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: amlogic: axg-audio: select RESET_MESON_AUX
+Message-ID: <dbb2de3c-cb29-4384-a00b-4fdedeab1a10@sirena.org.uk>
+References: <f8de4a2a-776f-4c10-b75e-e845bcc38dde@app.fastmail.com>
+ <1j4j3r32ld.fsf@starbuckisacylon.baylibre.com>
+ <306b0b30-5a32-4c7c-86b4-57d50e2307e8@app.fastmail.com>
+ <1jy1131kxz.fsf@starbuckisacylon.baylibre.com>
+ <c06317c6-b2b2-4b6d-96e4-0c2cfc6846de@app.fastmail.com>
+ <1jplmf1jqa.fsf@starbuckisacylon.baylibre.com>
+ <ce67e512-a15b-4482-8194-b917096f4eeb@app.fastmail.com>
+ <df0a53ee859e450d84e81547099f5f36.sboyd@kernel.org>
+ <1jr06pkof6.fsf@starbuckisacylon.baylibre.com>
+ <37b656cc8272552ba07c93c5a9a59641.sboyd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="vfsej6gT1fRj3j9O"
+Content-Disposition: inline
+In-Reply-To: <37b656cc8272552ba07c93c5a9a59641.sboyd@kernel.org>
+X-Cookie: Alimony is the high cost of leaving.
+
+
+--vfsej6gT1fRj3j9O
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241121175250.EJbI7VMb@linutronix.de>
 
-Hello, sorry about the delay.
+On Tue, Dec 03, 2024 at 12:15:48PM -0800, Stephen Boyd wrote:
+> Quoting Jerome Brunet (2024-12-03 03:15:41)
 
-Generally looks good to me but I have some rcu deref accessor related
-comments.
+> > I suspect the the generic path is likely to trigger more discussion.
+> > I'd like to be able to finish this migration, instead of leaving half
+> > finished like it is now.
 
-On Thu, Nov 21, 2024 at 06:52:50PM +0100, Sebastian Andrzej Siewior wrote:
-> diff --git a/arch/x86/kernel/cpu/resctrl/internal.h b/arch/x86/kernel/cpu/resctrl/internal.h
-...
-> @@ -1312,6 +1314,11 @@ int rdtgroup_pseudo_lock_create(struct rdtgroup *rdtgrp)
->  		ret = -EINVAL;
->  		goto out_region;
->  	}
-> +	kn_name = kstrdup(rdt_kn_get_name(rdtgrp->kn), GFP_KERNEL);
+> Is the half finished migration a problem for this cycle? I was intending
+> to send the revert later this week and try again next cycle.
 
-Shouldn't this be freed somewhere?
+Yes, this patch was triggered by me reporting that multiple boards in my
+test farm have completely broken audio with defconfig.  It's already a
+bit frustrating that -rc1 isn't working.
 
-> +	if (!kn_name) {
-> +		ret = -ENOMEM;
-> +		goto out_cstates;
-> +	}
->  
->  	plr->thread_done = 0;
->  
-...
-> diff --git a/fs/kernfs/dir.c b/fs/kernfs/dir.c
-...
-> @@ -533,7 +543,8 @@ static void kernfs_free_rcu(struct rcu_head *rcu)
->  {
->  	struct kernfs_node *kn = container_of(rcu, struct kernfs_node, rcu);
->  
-> -	kfree_const(kn->name);
-> +	/* If the whole node goes away, the name can't be used outside */
-> +	kfree_const(rcu_dereference_check(kn->name, true));
+--vfsej6gT1fRj3j9O
+Content-Type: application/pgp-signature; name="signature.asc"
 
-rcu_access_pointer()?
+-----BEGIN PGP SIGNATURE-----
 
-> @@ -557,16 +568,18 @@ void kernfs_put(struct kernfs_node *kn)
->  	if (!kn || !atomic_dec_and_test(&kn->count))
->  		return;
->  	root = kernfs_root(kn);
-> +	guard(rcu)();
->   repeat:
->  	/*
->  	 * Moving/renaming is always done while holding reference.
->  	 * kn->parent won't change beneath us.
->  	 */
-> -	parent = kn->parent;
-> +	parent = rcu_dereference(kn->parent);
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmdPhIsACgkQJNaLcl1U
+h9D5iwf9Eohzpz2Z+ckFVyYXe/jKUAU36yzwFRoX5x5CT8xFgFF/zSLLbkQWNNgF
+K/DLUkdb79PXfoiVKTM27FkJii1vQ5eUXudtXuOKOtk3s9PEGlZzaES9ieUXT3+H
+rC/OJt/eVnlCSw53POeJUYNatrK6TBzS/7ZrYhYrii4D98vNo/q9R9b1ixjPR+ud
+U5u4fZW3VO++tdYzYJzYgAAcnKcO7AuZbaFthys9MbT5ROAzNmFQV63Uj1BpaV93
+rryPmwII4t9zDAyPAdpxuSduClQxJmlYHAeemw8sZDY8ufD+ot00ZyMakd9jbL0/
+AzeMVkapZCI0kPNbR1lc4bduobU/pw==
+=veKX
+-----END PGP SIGNATURE-----
 
-I wonder whether it'd be better to encode the reference count rule (ie. add
-the condition kn->count == 0 to deref_check) in the kn->parent deref
-accessor. This function doesn't need RCU read lock and holding it makes it
-more confusing.
-
-> diff --git a/fs/kernfs/file.c b/fs/kernfs/file.c
-> index 8502ef68459b9..05f7b30283150 100644
-> --- a/fs/kernfs/file.c
-> +++ b/fs/kernfs/file.c
-> @@ -911,9 +911,11 @@ static void kernfs_notify_workfn(struct work_struct *work)
->  	/* kick fsnotify */
->  
->  	down_read(&root->kernfs_supers_rwsem);
-> +	down_read(&root->kernfs_rwsem);
-
-Why is this addition necessary? Hmm... was the code previously broken w.r.t.
-renaming? Can this be RCU?
-
-> diff --git a/fs/kernfs/mount.c b/fs/kernfs/mount.c
-> index 1358c21837f1a..db71faba3bb53 100644
-> --- a/fs/kernfs/mount.c
-> +++ b/fs/kernfs/mount.c
-> @@ -145,8 +145,10 @@ static struct dentry *kernfs_fh_to_parent(struct super_block *sb,
->  static struct dentry *kernfs_get_parent_dentry(struct dentry *child)
->  {
->  	struct kernfs_node *kn = kernfs_dentry_node(child);
-> +	struct kernfs_root *root = kernfs_root(kn);
->  
-> -	return d_obtain_alias(kernfs_get_inode(child->d_sb, kn->parent));
-> +	guard(rwsem_read)(&root->kernfs_rwsem);
-> +	return d_obtain_alias(kernfs_get_inode(child->d_sb, kernfs_rcu_get_parent(kn)));
-
-Ditto.
-
-> @@ -186,10 +188,10 @@ static struct kernfs_node *find_next_ancestor(struct kernfs_node *child,
->  		return NULL;
->  	}
->  
-> -	while (child->parent != parent) {
-> -		if (!child->parent)
-> +	while (kernfs_rcu_get_parent(child) != parent) {
-> +		child = kernfs_rcu_get_parent(child);
-> +		if (!child)
-
-I think kernfs_rcu_get_parent() name is a bit confusing given that it allows
-derefing without RCU if the rwsem is locked. Maybe just kernfs_get_parent()
-or kernfs_parent()?
-
-> @@ -216,6 +219,9 @@ struct dentry *kernfs_node_dentry(struct kernfs_node *kn,
->  	if (!kn->parent)
->  		return dentry;
->  
-> +	root = kernfs_root(kn);
-> +	guard(rwsem_read)(&root->kernfs_rwsem);
-
-Here too, it's a bit confusing that it's adding new locking. Was the code
-broken before? If so, it'd be clearer if the fixes were in their own patch.
-
-> diff --git a/fs/sysfs/file.c b/fs/sysfs/file.c
-> index d1995e2d6c943..e9bfe3e80809d 100644
-> --- a/fs/sysfs/file.c
-> +++ b/fs/sysfs/file.c
-> @@ -19,13 +19,19 @@
->  
->  #include "sysfs.h"
->  
-> +static struct kobject *sysfs_file_kobj(struct kernfs_node *kn)
-> +{
-> +	guard(rcu)();
-> +	return rcu_dereference(kn->parent)->priv;
-> +}
-
-I wonder whether it'd be better to rename kn->parent to something like
-kn->__parent (or maybe some other suffix) to clarify that the field is not
-to be deref'ed directly and kernfs_parent() helper is made available to the
-users. That way, users can benefit from the additional conditions in
-rcu_dereference_check().
-
-> diff --git a/kernel/cgroup/cgroup-v1.c b/kernel/cgroup/cgroup-v1.c
-> index e28d5f0d20ed0..202e329759b12 100644
-> --- a/kernel/cgroup/cgroup-v1.c
-> +++ b/kernel/cgroup/cgroup-v1.c
-> @@ -844,7 +844,7 @@ static int cgroup1_rename(struct kernfs_node *kn, struct kernfs_node *new_parent
->  
->  	if (kernfs_type(kn) != KERNFS_DIR)
->  		return -ENOTDIR;
-> -	if (kn->parent != new_parent)
-> +	if (rcu_dereference_check(kn->parent, true) != new_parent)
->  		return -EIO;
-
-This isn't being derefed, rcu_access_pointer()?
-
->  	/*
-> diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
-> index 044c7ba1cc482..d11d05a53783c 100644
-> --- a/kernel/cgroup/cgroup.c
-> +++ b/kernel/cgroup/cgroup.c
-> @@ -633,9 +633,15 @@ int cgroup_task_count(const struct cgroup *cgrp)
->  	return count;
->  }
->  
-> +static struct cgroup *cg_get_parent_priv(struct kernfs_node *kn)
-> +{
-> +	/* The parent can not be changed */
-> +	return rcu_dereference_check(kn->parent, true)->priv;
-> +}
-
-e.g. Here, it'd be a lot better if kernfs provided helper can be used so
-that deref condition check can be preserved.
-
-Thanks.
-
--- 
-tejun
+--vfsej6gT1fRj3j9O--
 
