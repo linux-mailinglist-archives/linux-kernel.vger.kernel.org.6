@@ -1,166 +1,408 @@
-Return-Path: <linux-kernel+bounces-428558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F68F9E1096
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 02:03:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CBC1A9E1099
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 02:03:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5326C280F17
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 01:03:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4763B2814E4
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 01:03:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8A0E1EA84;
-	Tue,  3 Dec 2024 01:02:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62297537E9;
+	Tue,  3 Dec 2024 01:03:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="X7io3Y33"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="WzDYDxVD"
+Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D30C2500BE
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 01:02:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B655C38396;
+	Tue,  3 Dec 2024 01:02:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733187777; cv=none; b=X/IA82f22RBEliDPOz49K7gX6rH2UFn1Dv0DEHiVIdfPOsr5zPu5eMb41gLe2LdE/PyzWhbFh/0/RvXCQQsmyPJz6u7FUMok5aNX727KVsdACijlvGGJGg0ZWPHwKEMGPTijxjvDASOihQjyukhTGuKbr5F43y32Xx6oCiQYB2E=
+	t=1733187782; cv=none; b=AGjlvuEtqkDkHT7B1CDbhJnbABefIDEUlwlyfBNMHjKE6x+P4m6CySePKM/X+0o7DTEPr74ZCDBbcyk+3KZ83FuP8e7ppDkt6bdbdUiTjuGBzOCRCHepSK+HLVqlzwxKKR+9vT5TtrNHaYw8C6bm22Tb1rUUOVvhtKIufzHmKJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733187777; c=relaxed/simple;
-	bh=RRZ06k3xf/DjZDjcKtLF27mvVXG8q2fEhu2aYIitcoI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EDu+N+Ynk8e4cp083JoBENkXnoUqlTmqC/3qNMoRgNWr8cdsVMUTe5LzhllIBI0W+aCwjavxks7l2vJhdppJbJOjCQ3FMEDkSkB5NOXownFBn9jWpKwptHPtvRikNHmKYm+v9yfje4I1xSEWwAzevVfl9BVILK6bt/q7hiP3Ciw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=X7io3Y33; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733187776; x=1764723776;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=RRZ06k3xf/DjZDjcKtLF27mvVXG8q2fEhu2aYIitcoI=;
-  b=X7io3Y3313PmEXTC2lGMM43SBRoJK97j6G8zRJLT/si17EjirztOFvaj
-   Pzr92aAo7usNttKgyxc7gEntfxA4nXZwmTTFm9t/i+UdkRr3BSyB7WBVg
-   aOXHBY1+00bEb5AN1pQu5OVxoK4k8D3GO/qI4nYjvT7Xth+S9w1ZnCYnr
-   IKdk5pN6DO907P7kbt2nm9Zdp+RLPgm85qoV0Hj6d9cikQYgZCLdU4NSp
-   z4E22UWS7eOi5V0wGyOIHLzDvkBsJucqX7znXMafFfNmGXf+B1aj17nH3
-   IeIw/geKwIdwEt2OmC/uDlDxelNdEhhlrLWgM/M7JRGzdB2xfXtdfefkr
-   g==;
-X-CSE-ConnectionGUID: BcljcqVOSDSeE/r2KzcOvA==
-X-CSE-MsgGUID: lXIhYTVyRP+JbeIA0hE51Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11274"; a="55871243"
-X-IronPort-AV: E=Sophos;i="6.12,203,1728975600"; 
-   d="scan'208";a="55871243"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Dec 2024 17:02:55 -0800
-X-CSE-ConnectionGUID: so1D1V53SGy36G3A3KnCKQ==
-X-CSE-MsgGUID: RTbc51zATQW9HyBV+Zeknw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,203,1728975600"; 
-   d="scan'208";a="93680023"
-Received: from lkp-server02.sh.intel.com (HELO 36a1563c48ff) ([10.239.97.151])
-  by orviesa007.jf.intel.com with ESMTP; 02 Dec 2024 17:02:51 -0800
-Received: from kbuild by 36a1563c48ff with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tIHJR-000365-1E;
-	Tue, 03 Dec 2024 01:02:49 +0000
-Date: Tue, 3 Dec 2024 09:02:14 +0800
-From: kernel test robot <lkp@intel.com>
-To: Michal Schmidt <mschmidt@redhat.com>,
-	Rodolfo Giometti <giometti@enneenne.com>
-Cc: oe-kbuild-all@lists.linux.dev,
-	Uwe =?unknown-8bit?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	"Dr. David Alan Gilbert" <linux@treblig.org>,
-	Ma Ke <make24@iscas.ac.cn>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	George Spelvin <linux@horizon.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 5/6] pps: embed "dev" in the pps_device
-Message-ID: <202412030824.tmsDhCFT-lkp@intel.com>
-References: <20241202163451.1442566-6-mschmidt@redhat.com>
+	s=arc-20240116; t=1733187782; c=relaxed/simple;
+	bh=SWKp4cWTnHKmKqeYuWeZJRu4Pph/3gVQAGuqSfmNPbg=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=YHm9F5mLBztGUDy60ZZKavGA0Qeme+RBjI3AY6jbwvUBdN3CFvnIVxce1hqsUD7sPtJ9ZzDk4HZmkdbZSR35OCsNikDaga6usiIlqWslhsDPII/VGvT2qvjUF+3xQ4L5cx0Welc5HMozsbOmoCHGpWnezT/D/MLVbir+3VmycUY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=WzDYDxVD; arc=none smtp.client-ip=5.75.144.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
+Received: from localhost (docker-mailserver-web-1.docker-mailserver_default [172.22.0.5])
+	by mail.mainlining.org (Postfix) with ESMTPSA id AA780E44BC;
+	Tue,  3 Dec 2024 01:02:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mainlining.org;
+	s=psm; t=1733187771;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uRJVLem4BRbbf1cbpyiivjxQWTHED49zB/6UD3aQZ+0=;
+	b=WzDYDxVDsGrEG6aXTifz8qbJwBFmZN+/tGQ3rPlArkO8N8X6XwshKy2mWltN6wiZPvDi4b
+	nO49sWVRNWX+WihL8yirDrCgbwYhj7DmUjEMbYCyEgRA35iryGFxSauP/dx0qFw2ZjNjre
+	MArDIFT+LeYiDN5aXKM6YsnW4Xd+ESVczA2nLCusjhDcA4f0O9yLT8lZUn4Jz5aYlLWhc6
+	bRnBkk6L+Nsr24UZYYBnD+3Lse4kXmZ/bbcebjLn4wjTLAsh7e/xpZh3hPvORAlr0S7d/n
+	tYodEQlo+Yr1WFhttTDPS3zVXWIjdF18tXXp5qzQ/SbbRVqruKp7z8aIuTKLGg==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241202163451.1442566-6-mschmidt@redhat.com>
+Date: Tue, 03 Dec 2024 02:02:51 +0100
+From: barnabas.czeman@mainlining.org
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Cc: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, Robert Foss
+ <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, Hans Verkuil
+ <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, Yassine Oudjana
+ <y.oudjana@protonmail.com>
+Subject: Re: [PATCH v2] media: qcom: camss: fix VFE pm domain off
+In-Reply-To: <1d3650f9-fe4d-4972-968a-aaab6fed1044@linaro.org>
+References: <20241128-vfe_pm_domain_off-v2-1-0bcbbe7daaaf@mainlining.org>
+ <3a5fd596-b442-4d3f-aae2-f454d0cd8e5c@linaro.org>
+ <5cccec71-0cc7-492a-9fb9-903970da05c5@linaro.org>
+ <d3a8d38c-9129-4fbd-8bd6-c91131d950ad@linaro.org>
+ <a08e95fc03fce6cb0809a06900982c6c@mainlining.org>
+ <8dfd2ee1-9baf-441f-8eb9-fa11e830334a@linaro.org>
+ <ac765a062e94d549f4c34cf4c8b2c199@mainlining.org>
+ <f4e47953-5a68-4ec5-860b-820b8eff2a2a@linaro.org>
+ <05e91ae70902f0cd9c47bb4197d8fef1@mainlining.org>
+ <93028653-9919-460e-83d3-84bf5ade56d4@linaro.org>
+ <c7a9a43eea8bd1e6302ae4fa2d79dd80@mainlining.org>
+ <c8020803-ecbd-4496-9361-f19352ddf462@linaro.org>
+ <02282c0d493153c633e7eccf5559452a@mainlining.org>
+ <1d3650f9-fe4d-4972-968a-aaab6fed1044@linaro.org>
+Message-ID: <f6c88d78c53f8a14c91677c90bfb0500@mainlining.org>
+X-Sender: barnabas.czeman@mainlining.org
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Michal,
-
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on 7af08b57bcb9ebf78675c50069c54125c0a8b795]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Michal-Schmidt/pps-fix-cdev-use-after-free/20241203-025037
-base:   7af08b57bcb9ebf78675c50069c54125c0a8b795
-patch link:    https://lore.kernel.org/r/20241202163451.1442566-6-mschmidt%40redhat.com
-patch subject: [PATCH 5/6] pps: embed "dev" in the pps_device
-config: arm-randconfig-002-20241203 (https://download.01.org/0day-ci/archive/20241203/202412030824.tmsDhCFT-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241203/202412030824.tmsDhCFT-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202412030824.tmsDhCFT-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from include/linux/device.h:15,
-                    from include/linux/cdev.h:8,
-                    from include/linux/pps_kernel.h:12,
-                    from drivers/pps/clients/pps-ktimer.c:15:
-   drivers/pps/clients/pps-ktimer.c: In function 'pps_ktimer_exit':
->> drivers/pps/clients/pps-ktimer.c:59:21: error: incompatible type for argument 1 of '_dev_info'
-      59 |         dev_info(pps->dev, "ktimer PPS source unregistered\n");
-         |                  ~~~^~~~~
-         |                     |
-         |                     struct device
-   include/linux/dev_printk.h:110:25: note: in definition of macro 'dev_printk_index_wrap'
-     110 |                 _p_func(dev, fmt, ##__VA_ARGS__);                       \
-         |                         ^~~
-   drivers/pps/clients/pps-ktimer.c:59:9: note: in expansion of macro 'dev_info'
-      59 |         dev_info(pps->dev, "ktimer PPS source unregistered\n");
-         |         ^~~~~~~~
-   include/linux/dev_printk.h:95:37: note: expected 'const struct device *' but argument is of type 'struct device'
-      95 | void _dev_info(const struct device *dev, const char *fmt, ...)
-         |                ~~~~~~~~~~~~~~~~~~~~~^~~
-   drivers/pps/clients/pps-ktimer.c: In function 'pps_ktimer_init':
-   drivers/pps/clients/pps-ktimer.c:77:21: error: incompatible type for argument 1 of '_dev_info'
-      77 |         dev_info(pps->dev, "ktimer PPS source registered\n");
-         |                  ~~~^~~~~
-         |                     |
-         |                     struct device
-   include/linux/dev_printk.h:110:25: note: in definition of macro 'dev_printk_index_wrap'
-     110 |                 _p_func(dev, fmt, ##__VA_ARGS__);                       \
-         |                         ^~~
-   drivers/pps/clients/pps-ktimer.c:77:9: note: in expansion of macro 'dev_info'
-      77 |         dev_info(pps->dev, "ktimer PPS source registered\n");
-         |         ^~~~~~~~
-   include/linux/dev_printk.h:95:37: note: expected 'const struct device *' but argument is of type 'struct device'
-      95 | void _dev_info(const struct device *dev, const char *fmt, ...)
-         |                ~~~~~~~~~~~~~~~~~~~~~^~~
-
-
-vim +/_dev_info +59 drivers/pps/clients/pps-ktimer.c
-
-697fb85fcf21b5 Rodolfo Giometti  2010-03-10  52  
-697fb85fcf21b5 Rodolfo Giometti  2010-03-10  53  /*
-697fb85fcf21b5 Rodolfo Giometti  2010-03-10  54   * Module staff
-697fb85fcf21b5 Rodolfo Giometti  2010-03-10  55   */
-697fb85fcf21b5 Rodolfo Giometti  2010-03-10  56  
-697fb85fcf21b5 Rodolfo Giometti  2010-03-10  57  static void __exit pps_ktimer_exit(void)
-697fb85fcf21b5 Rodolfo Giometti  2010-03-10  58  {
-5e196d34a77642 Alexander Gordeev 2011-01-12 @59  	dev_info(pps->dev, "ktimer PPS source unregistered\n");
-697fb85fcf21b5 Rodolfo Giometti  2010-03-10  60  
-5e196d34a77642 Alexander Gordeev 2011-01-12  61  	del_timer_sync(&ktimer);
-5e196d34a77642 Alexander Gordeev 2011-01-12  62  	pps_unregister_source(pps);
-697fb85fcf21b5 Rodolfo Giometti  2010-03-10  63  }
-697fb85fcf21b5 Rodolfo Giometti  2010-03-10  64  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+On 2024-12-03 00:10, Bryan O'Donoghue wrote:
+> On 30/11/2024 22:58, barnabas.czeman@mainlining.org wrote:
+>> On 2024-11-30 22:48, Bryan O'Donoghue wrote:
+>>> On 29/11/2024 23:52, barnabas.czeman@mainlining.org wrote:
+>>>> On 2024-11-30 00:07, Bryan O'Donoghue wrote:
+>>>>> On 29/11/2024 22:45, barnabas.czeman@mainlining.org wrote:
+>>>>>> On 2024-11-29 23:08, Bryan O'Donoghue wrote:
+>>>>>>> On 29/11/2024 13:46, barnabas.czeman@mainlining.org wrote:
+>>>>>>>> On 2024-11-29 13:25, Bryan O'Donoghue wrote:
+>>>>>>>>> On 29/11/2024 11:44, barnabas.czeman@mainlining.org wrote:
+>>>>>>>>>>> The change does not describe how to reproduce the problem, 
+>>>>>>>>>>> which commit
+>>>>>>>>>>> base is tested, which platform is testes, there is no enough 
+>>>>>>>>>>> information,
+>>>>>>>>>>> unfortunately.
+>>>>>>>>>> I can reproduce the problem with megapixels-sensorprofile on 
+>>>>>>>>>> msm8953 and
+>>>>>>>>>> it can be reproduced with megapixels on msm8996.
+>>>>>>>>>> The base is the last commit on next.
+>>>>>>>>> 
+>>>>>>>>> Can you verify if vfe_domain_on has run and if so whether or 
+>>>>>>>>> not genpd_link is NULL when that function exists.
+>>>>>>>>> 
+>>>>>>>> I have added some debug logs it seems pm_domain_on and 
+>>>>>>>> pm_domain_off is called twice on the same object.
+>>>>>>>> [   63.473360] qcom-camss 1b00020.camss: pm_domain_on 19842ce8 
+>>>>>>>> link 42973800
+>>>>>>>> [   63.481524] qcom-camss 1b00020.camss: pm_domain_on 19840080 
+>>>>>>>> link 4e413800
+>>>>>>>> [   63.481555] qcom-camss 1b00020.camss: pm_domain_on 19842ce8 
+>>>>>>>> link 42973800
+>>>>>>>> [   63.481632] qcom-camss 1b00020.camss: pm_domain_off 19840080 
+>>>>>>>> link 4e413800
+>>>>>>>> [   63.481641] qcom-camss 1b00020.camss: pm_domain_off 19842ce8 
+>>>>>>>> link 42973800
+>>>>>>>> [   63.654004] qcom-camss 1b00020.camss: pm_domain_off 19842ce8 
+>>>>>>>> link 0
+>>>>>>>>> That's the question.
+>>>>>>>>> 
+>>>>>>>>> ---
+>>>>>>>>> bod
+>>>>>>> 
+>>>>>>> Could you provide this output ?
+>>>>>>> 
+>>>>>>> index 80a62ba112950..b25b8f6b00be1 100644
+>>>>>>> --- a/drivers/media/platform/qcom/camss/camss-vfe.c
+>>>>>>> +++ b/drivers/media/platform/qcom/camss/camss-vfe.c
+>>>>>>> @@ -595,6 +595,9 @@ void vfe_isr_reset_ack(struct vfe_device 
+>>>>>>> *vfe)
+>>>>>>>   */
+>>>>>>>  void vfe_pm_domain_off(struct vfe_device *vfe)
+>>>>>>>  {
+>>>>>>> +dev_info(camss->dev, "%s VFE %d genpd %pK genpd_link %pK\n",
+>>>>>>> +        __func__, vfe->id, vfe->genpd, vfe->genpd_link);
+>>>>>>> +
+>>>>>>>         if (!vfe->genpd)
+>>>>>>>                 return;
+>>>>>>> 
+>>>>>>> @@ -609,7 +612,8 @@ void vfe_pm_domain_off(struct vfe_device 
+>>>>>>> *vfe)
+>>>>>>>  int vfe_pm_domain_on(struct vfe_device *vfe)
+>>>>>>>  {
+>>>>>>>         struct camss *camss = vfe->camss;
+>>>>>>> -
+>>>>>>> +dev_info(camss->dev, "%s VFE %d genpd %pK genpd_link %pK\n",
+>>>>>>> +        __func__, vfe->id, vfe->genpd, vfe->genpd_link);
+>>>>>>>         if (!vfe->genpd)
+>>>>>>>                 return 0;
+>>>>>>> 
+>>>>>>> ---
+>>>>>>> bod
+>>>>>> I think logging in pm_domain_on should be placed after 
+>>>>>> device_link_add because only NULL
+>>>>>> will be visible.
+>>>>>> [   83.040694] qcom-camss 1b00020.camss: vfe_pm_domain_on VFE 1 
+>>>>>> genpd 000000009bd8355f genpd_link 0000000000000000
+>>>>>> [   83.049293] qcom-camss 1b00020.camss: vfe_pm_domain_on VFE 0 
+>>>>>> genpd 00000000bfb65e7c genpd_link 0000000000000000
+>>>>>> [   83.049353] qcom-camss 1b00020.camss: vfe_pm_domain_on VFE 1 
+>>>>>> genpd 000000009bd8355f genpd_link 00000000ccb0acd9
+>>>>>> [   83.049641] qcom-camss 1b00020.camss: vfe_pm_domain_off VFE 0 
+>>>>>> genpd 00000000bfb65e7c genpd_link 00000000348ac3c1
+>>>>>> [   83.049654] qcom-camss 1b00020.camss: vfe_pm_domain_off VFE 1 
+>>>>>> genpd 000000009bd8355f genpd_link 00000000ccb0acd9
+>>>>>> [   83.241498] qcom-camss 1b00020.camss: vfe_pm_domain_off VFE 1 
+>>>>>> genpd 000000009bd8355f genpd_link 0000000000000000
+>>>>> 
+>>>>> Could you add
+>>>>> 
+>>>>> +++ b/drivers/media/platform/qcom/camss/camss-vfe.c
+>>>>> @@ -786,7 +786,7 @@ int vfe_get(struct vfe_device *vfe)
+>>>>>         int ret;
+>>>>> 
+>>>>>         mutex_lock(&vfe->power_lock);
+>>>>> -
+>>>>> +dev_info(vfe->camss->dev, "%s vfe %d power_count %d\n", __func__, 
+>>>>> vfe->id, vfe->power_count);
+>>>>>         if (vfe->power_count == 0) {
+>>>>>                 ret = vfe->res->hw_ops->pm_domain_on(vfe);
+>>>>>                 if (ret < 0)
+>>>>> @@ -823,6 +823,7 @@ int vfe_get(struct vfe_device *vfe)
+>>>>> 
+>>>>>         mutex_unlock(&vfe->power_lock);
+>>>>> 
+>>>>> +dev_info(camss->vfe->dev, "%s vfe %d err=%d\n", __func__, camss- 
+>>>>> >vfe- >id, 0);
+>>>>>         return 0;
+>>>>> 
+>>>>>  error_reset:
+>>>>> @@ -835,7 +836,7 @@ int vfe_get(struct vfe_device *vfe)
+>>>>> 
+>>>>>  error_pm_domain:
+>>>>>         mutex_unlock(&vfe->power_lock);
+>>>>> -
+>>>>> +dev_info(camss->vfe->dev, "%s vfe %d err=%d\n", __func__, camss- 
+>>>>> >vfe- >id, ret);
+>>>>>         return ret;
+>>>>>  }
+>>>>> 
+>>>>> ?
+>>>>> 
+>>>>> ---
+>>>>> bod
+>>>> I have added little more from the logs because it is only failing in 
+>>>> edge cases megapixels-sensorprofile failing by
+>>>> different reason quickly and trying to release the device.
+>>>> [   54.719030] qcom-camss 1b00020.camss: vfe_get vfe 0 err=0
+>>>> [   54.750124] qcom-camss 1b00020.camss: vfe_get vfe 0 power_count 1
+>>>> [   54.750236] qcom-camss 1b00020.camss: vfe_get vfe 0 err=0
+>>>> [   54.751270] qcom-camss 1b00020.camss: vfe_pm_domain_on VFE 0 
+>>>> genpd 00000000beaef03c genpd_link 00000000251644d9
+>>> 
+>>>> [   54.751433] qcom-camss 1b00020.camss: vfe_pm_domain_on VFE 1 
+>>>> genpd 000000007ce2da53 genpd_link 0000000000000000
+>>>> [   54.755531] qcom-camss 1b00020.camss: vfe_pm_domain_off VFE 1 
+>>>> genpd 000000007ce2da53 genpd_link 0000000058dcd4d6
+>>> 
+>>> that's a bug genpd_link should be NULL unless power_count != 0
+>>> 
+>>>> [  143.922868] qcom-camss 1b00020.camss: vfe_pm_domain_off VFE 1 
+>>>> genpd 000000007ce2da53 genpd_link 00000000d1fcd54b
+>>>> [  144.126535] qcom-camss 1b00020.camss: vfe_pm_domain_off VFE 1 
+>>>> genpd 000000007ce2da53 genpd_link 0000000000000000
+>>> 
+>>> this is the corollary of the bug
+>>> 
+>>> can you provide the output of the attached please ?
+>> [   50.787730] qcom-camss 1b00020.camss: vfe_get/806 vfe 1 power_count 
+>> 0
+>> [   50.794888] qcom-camss 1b00020.camss: vfe_get/811 vfe 1 power_count 
+>> 0
+>> [   50.795040] qcom-camss 1b00020.camss: vfe_get/816 vfe 1 power_count 
+>> 0
+>> [   50.795131] qcom-camss 1b00020.camss: vfe_get/822 vfe 1 power_count 
+>> 0
+>> [   50.795172] qcom-camss 1b00020.camss: vfe_get/827 vfe 1 power_count 
+>> 0
+>> [   50.795180] qcom-camss 1b00020.camss: vfe_get/830 vfe 1 power_count 
+>> 0
+>> [   50.795188] qcom-camss 1b00020.camss: vfe_get/841 vfe 1 power_count 
+>> 1
+>> [   50.795413] qcom-camss 1b00020.camss: vfe_put/868 vfe 1 power_count 
+>> 1
+>> [   50.795422] qcom-camss 1b00020.camss: vfe_put/874 vfe 1 power_count 
+>> 1
+>> [   50.795429] qcom-camss 1b00020.camss: vfe_put/882 vfe 1 power_count 
+>> 1
+>> [   50.795468] qcom-camss 1b00020.camss: vfe_put/884 vfe 1 power_count 
+>> 1
+>> [   50.799936] qcom-camss 1b00020.camss: vfe_put/886 vfe 1 power_count 
+>> 1
+>> [   50.800247] qcom-camss 1b00020.camss: vfe_put/888 vfe 1 power_count 
+>> 1
+>> [   50.800257] qcom-camss 1b00020.camss: vfe_put/891 vfe 1 power_count 
+>> 1
+>> [   50.800263] qcom-camss 1b00020.camss: vfe_put/893 vfe 1 power_count 
+>> 0
+>> [   51.086159] qcom-camss 1b00020.camss: vfe_get/801 vfe 0 power_count 
+>> 0
+>> [   51.088158] qcom-camss 1b00020.camss: vfe_get/806 vfe 0 power_count 
+>> 0
+>> [   51.092782] qcom-camss 1b00020.camss: vfe_get/811 vfe 0 power_count 
+>> 0
+>> [   51.092872] qcom-camss 1b00020.camss: vfe_get/816 vfe 0 power_count 
+>> 0
+>> [   51.092945] qcom-camss 1b00020.camss: vfe_get/822 vfe 0 power_count 
+>> 0
+>> [   51.092980] qcom-camss 1b00020.camss: vfe_get/827 vfe 0 power_count 
+>> 0
+>> [   51.092987] qcom-camss 1b00020.camss: vfe_get/830 vfe 0 power_count 
+>> 0
+>> [   51.092994] qcom-camss 1b00020.camss: vfe_get/841 vfe 0 power_count 
+>> 1
+>> [   51.117104] qcom-camss 1b00020.camss: vfe_get/841 vfe 0 power_count 
+>> 2
+>> [   52.181802] qcom-camss 1b00020.camss: vfe_put/868 vfe 0 power_count 
+>> 2
+>> [   52.181828] qcom-camss 1b00020.camss: vfe_put/891 vfe 0 power_count 
+>> 2
+>> [   52.181834] qcom-camss 1b00020.camss: vfe_put/893 vfe 0 power_count 
+>> 1
+>> [   52.189017] qcom-camss 1b00020.camss: vfe_get/841 vfe 0 power_count 
+>> 2
+>> [   64.920259] qcom-camss 1b00020.camss: vfe_get/841 vfe 0 power_count 
+>> 3
+>> [   64.920337] qcom-camss 1b00020.camss: vfe_get/841 vfe 0 power_count 
+>> 4
+>> [   64.920368] qcom-camss 1b00020.camss: vfe_get/801 vfe 1 power_count 
+>> 0
+>> [   64.920656] qcom-camss 1b00020.camss: vfe_get/806 vfe 1 power_count 
+>> 0
+>> [   64.920667] qcom-camss 1b00020.camss: vfe_get/811 vfe 1 power_count 
+>> 0
+>> [   64.920706] qcom-camss 1b00020.camss: vfe_get/816 vfe 1 power_count 
+>> 0
+>> [   64.920734] qcom-camss 1b00020.camss: vfe_get/822 vfe 1 power_count 
+>> 0
+>> [   64.920868] qcom-camss 1b00020.camss: vfe_get/827 vfe 1 power_count 
+>> 0
+>> [   64.920877] qcom-camss 1b00020.camss: vfe_get/830 vfe 1 power_count 
+>> 0
+>> [   64.920886] qcom-camss 1b00020.camss: vfe_get/841 vfe 1 power_count 
+>> 1
+>> [   64.920963] qcom-camss 1b00020.camss: vfe_get/841 vfe 1 power_count 
+>> 2
+>> [   64.921008] qcom-camss 1b00020.camss: vfe_get/841 vfe 1 power_count 
+>> 3
+>> [   64.921871] qcom-camss 1b00020.camss: vfe_put/868 vfe 0 power_count 
+>> 4
+>> [   64.921896] qcom-camss 1b00020.camss: vfe_put/891 vfe 0 power_count 
+>> 4
+>> [   64.921904] qcom-camss 1b00020.camss: vfe_put/893 vfe 0 power_count 
+>> 3
+>> [   64.927278] qcom-camss 1b00020.camss: vfe_get/841 vfe 0 power_count 
+>> 4
+>> [   65.096857] qcom-camss 1b00020.camss: vfe_put/868 vfe 1 power_count 
+>> 3
+>> [   65.096883] qcom-camss 1b00020.camss: vfe_put/891 vfe 1 power_count 
+>> 3
+>> [   65.096889] qcom-camss 1b00020.camss: vfe_put/893 vfe 1 power_count 
+>> 2
+>> [   65.096903] qcom-camss 1b00020.camss: vfe_put/868 vfe 1 power_count 
+>> 2
+>> [   65.096908] qcom-camss 1b00020.camss: vfe_put/891 vfe 1 power_count 
+>> 2
+>> [   65.096914] qcom-camss 1b00020.camss: vfe_put/893 vfe 1 power_count 
+>> 1
+>> [   65.096927] qcom-camss 1b00020.camss: vfe_put/868 vfe 1 power_count 
+>> 1
+>> [   65.096933] qcom-camss 1b00020.camss: vfe_put/874 vfe 1 power_count 
+>> 1
+>> [   65.096938] qcom-camss 1b00020.camss: vfe_put/882 vfe 1 power_count 
+>> 1
+>> [   65.096958] qcom-camss 1b00020.camss: vfe_put/884 vfe 1 power_count 
+>> 1
+>> [   65.096964] qcom-camss 1b00020.camss: vfe_put/886 vfe 1 power_count 
+>> 1
+> 
+> Ah could you supply this output along with the output from the previous 
+> ?
+[   55.993565] qcom-camss 1b00020.camss: vfe_pm_domain_on VFE 0 genpd 
+0000000003dcc927 genpd_link 00000000b216e0c0
+[   55.993886] qcom-camss 1b00020.camss: vfe_pm_domain_on VFE 1 genpd 
+0000000012d2fc9c genpd_link 00000000e1d78ab3
+[   55.993956] qcom-camss 1b00020.camss: vfe_pm_domain_off VFE 0 genpd 
+0000000003dcc927 genpd_link 00000000b216e0c0
+[   55.993966] qcom-camss 1b00020.camss: vfe_pm_domain_off VFE 1 genpd 
+0000000012d2fc9c genpd_link 00000000e1d78ab3
+[   95.804026] qcom-camss 1b00020.camss: vfe_get vfe 0 power_count 2
+[   95.804092] qcom-camss 1b00020.camss: vfe_get/845 vfe 0 power_count 3
+[   95.804104] qcom-camss 1b00020.camss: vfe_get vfe 0 err=0
+[   95.804138] qcom-camss 1b00020.camss: vfe_get vfe 0 power_count 3
+[   95.804158] qcom-camss 1b00020.camss: vfe_get/845 vfe 0 power_count 4
+[   95.804169] qcom-camss 1b00020.camss: vfe_get vfe 0 err=0
+[   95.804203] qcom-camss 1b00020.camss: vfe_get vfe 1 power_count 0
+[   95.804214] qcom-camss 1b00020.camss: vfe_get/805 vfe 1 power_count 0
+[   95.804526] qcom-camss 1b00020.camss: vfe_pm_domain_on VFE 1 genpd 
+0000000012d2fc9c genpd_link 00000000cf5c896a
+[   95.804543] qcom-camss 1b00020.camss: vfe_get/810 vfe 1 power_count 0
+[   95.804555] qcom-camss 1b00020.camss: vfe_get/815 vfe 1 power_count 0
+[   95.804593] qcom-camss 1b00020.camss: vfe_get/820 vfe 1 power_count 0
+[   95.804629] qcom-camss 1b00020.camss: vfe_get/826 vfe 1 power_count 0
+[   95.804951] qcom-camss 1b00020.camss: vfe_get/831 vfe 1 power_count 0
+[   95.804964] qcom-camss 1b00020.camss: vfe_get/834 vfe 1 power_count 0
+[   95.804976] qcom-camss 1b00020.camss: vfe_get/845 vfe 1 power_count 1
+[   95.804987] qcom-camss 1b00020.camss: vfe_get vfe 1 err=0
+[   95.805028] qcom-camss 1b00020.camss: vfe_get vfe 1 power_count 1
+[   95.805048] qcom-camss 1b00020.camss: vfe_get/845 vfe 1 power_count 2
+[   95.805058] qcom-camss 1b00020.camss: vfe_get vfe 1 err=0
+[   95.805094] qcom-camss 1b00020.camss: vfe_get vfe 1 power_count 2
+[   95.805113] qcom-camss 1b00020.camss: vfe_get/845 vfe 1 power_count 3
+[   95.805123] qcom-camss 1b00020.camss: vfe_get vfe 1 err=0
+[   95.806117] qcom-camss 1b00020.camss: vfe_put/873 vfe 0 power_count 4
+[   95.806131] qcom-camss 1b00020.camss: vfe_put/894 vfe 0 power_count 4
+[   95.806142] qcom-camss 1b00020.camss: vfe_put/896 vfe 0 power_count 3
+[   95.814108] qcom-camss 1b00020.camss: vfe_get vfe 0 power_count 3
+[   95.814134] qcom-camss 1b00020.camss: vfe_get/845 vfe 0 power_count 4
+[   95.814143] qcom-camss 1b00020.camss: vfe_get vfe 0 err=0
+[   95.814886] qcom-camss 1b00020.camss: vfe_pm_domain_on VFE 0 genpd 
+0000000003dcc927 genpd_link 00000000b216e0c0
+[   95.814910] qcom-camss 1b00020.camss: vfe_pm_domain_on VFE 1 genpd 
+0000000012d2fc9c genpd_link 00000000cf5c896a
+[   95.815176] qcom-camss 1b00020.camss: vfe_pm_domain_off VFE 0 genpd 
+0000000003dcc927 genpd_link 00000000b216e0c0
+[   95.815190] qcom-camss 1b00020.camss: vfe_pm_domain_off VFE 1 genpd 
+0000000012d2fc9c genpd_link 00000000cf5c896a
+[   96.025733] qcom-camss 1b00020.camss: vfe_put/873 vfe 1 power_count 3
+[   96.025756] qcom-camss 1b00020.camss: vfe_put/894 vfe 1 power_count 3
+[   96.025762] qcom-camss 1b00020.camss: vfe_put/896 vfe 1 power_count 2
+[   96.025775] qcom-camss 1b00020.camss: vfe_put/873 vfe 1 power_count 2
+[   96.025790] qcom-camss 1b00020.camss: vfe_put/894 vfe 1 power_count 2
+[   96.025806] qcom-camss 1b00020.camss: vfe_put/896 vfe 1 power_count 1
+[   96.025839] qcom-camss 1b00020.camss: vfe_put/873 vfe 1 power_count 1
+[   96.025856] qcom-camss 1b00020.camss: vfe_put/879 vfe 1 power_count 1
+[   96.025907] qcom-camss 1b00020.camss: vfe_put/886 vfe 1 power_count 1
+[   96.025952] qcom-camss 1b00020.camss: vfe_put/888 vfe 1 power_count 1
+[   96.025972] qcom-camss 1b00020.camss: vfe_pm_domain_off VFE 1 genpd 
+0000000012d2fc9c genpd_link 0000000000000000
+> 
+> I'm thinking we are calling get() from inside of get().
+> 
+> ---
+> bod
 
