@@ -1,167 +1,179 @@
-Return-Path: <linux-kernel+bounces-429611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DFFB9E1E8A
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 15:00:28 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 728BA9E200C
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 15:53:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EFB53282F15
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 14:00:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AB1B0B29080
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 14:01:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDD991F12E3;
-	Tue,  3 Dec 2024 14:00:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDAC81F130A;
+	Tue,  3 Dec 2024 14:01:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="dTDMv0Db"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="d2q93GpE"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B027E1E4B0
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 14:00:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC46C1CF8B
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 14:01:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733234424; cv=none; b=Y8TiKH0NA58aBFSrO20Z4K48tPA+X3AXzvdIReiqwS9yUDkSfh/Eoe5yEp1ht61FEf1yl9oAyPKRobaIT37YMfviPwHf4f4p7b1TCDNVhHHWAYgEVHz+7v7lMSa2n/9kK1z2oGX1P23ZZ9qws9L4ywL0od9WH2v0CIF13c/Z0aw=
+	t=1733234481; cv=none; b=UHRm4mEm4lJBa1Kg38/F/LZ1IbuzDJCPG/f99IKrwRgYyFxWF6PyoTa32Cn2pN0S+U+T1LY7I3QKQSn+IVMJOnS3yCB3mTQjCwm6tOk7FUsUqKbLj436Vl8/TKdd/F/cz/LTnuDPuzZTqcHD2anJrGc4NRxlTfAPqHKivut6qEI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733234424; c=relaxed/simple;
-	bh=iOWNxa0FbOCrwv5ucRi+SaoM3dSPL3rELemWPhXouTQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UBBl7sQCut/ajLt9HJKf8YHTWYbW45Z6gpRx/blwVJzt9omOGRNi7fvSVKLLzjFHkQoGJFqYdfpnwbSXRXnZ5Ot4QoTNkiqP/7yxoI/IqVnsfi6DLnufo0SqeHLTR3CweuVrpqnHPxU1jTVtcRwxpouRw0mNMou6ntPuYX69GaI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=dTDMv0Db; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-385d6e36de7so4774360f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 06:00:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google; t=1733234420; x=1733839220; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=O3ogWsoKVLGEepBB9n0gfB3e54+++vjJBGpvcY0eB2A=;
-        b=dTDMv0DbUp3bdv3SogazRxBTLzJAjutKsPEejhA2ZEPiuLH9cUhWaM+6dwtwvppoxF
-         r8TTE/+80Lj7FmTOcu7LHEyygEpAqragjNYJBCSIYPLkfBNhAT6bVIx/8JR8NqMYDN5N
-         5FmdIULWfta0NeG7pyUpxYWVsfdpJptyO0tJopYqJx6k1Sailv1VVtDkt10TkPR/9Qfp
-         sCBBCNiZwIPU9ak3Jxsl9Urh8wDSCH2WS8YZOqa6WG/qtekpXxIofc4Rh37F3is2NFWm
-         FqIDiefizug60atYdJh0Rw8SyJj6sscS6DVc78c2W/6uvG+G1n77lmW9A/pEd9MSEh05
-         5GtA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733234420; x=1733839220;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=O3ogWsoKVLGEepBB9n0gfB3e54+++vjJBGpvcY0eB2A=;
-        b=do2BTAPuN968tx5yeQtcH4w5iHxMnH31eg2x/8y84vz2Uq3YDi6IHvvVo9buhk0v9c
-         L4ODAh2FCzvmadwL5N0Ao9f9rE7eju9cruiYYABaq/cWnkM6Q4RA4DmF+OhOyFozOcdx
-         aMGJjVLK4TcJlzYBvXrFSVTui2SS5OOclrKb84G87zdfLu7eXA/Zc8FJg3Ad9xXDfdYI
-         1jzCRDEMn6FTc1j5MePNm1Ia8IoabH9a1iwW/5Jfs9WUezGJ+QCfK9p+JGiiI0bsTVg3
-         CjoPkukofagBuNX0vI1oRq0a2UsLigi4TFXC9ZG6AtcpmYuCula6Wlsmkr3nwXZb8xFr
-         Lbfw==
-X-Forwarded-Encrypted: i=1; AJvYcCVjbRDsmtSokmjPxWmSA8xBtIDiaRSIKsRvekwphzJkSR7TQnNQQOumudrMW19SFlQwP9GcUo7ZMgjtEDs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yza4rRXmx98D/iYL/WvmqJfDtGMd7zikbnYzuPoNpxLVmxarnfq
-	zKdxgzVx81zi4nKSjhhZgZFCSp1LoKRIO8hwtvVWttv3HwF1VDJ+kt8doyiU9keNZLvJUzBqAiR
-	e5lPWVqz4eGvCXHee1JApztiLknPxvU+OoNJKFXexcqe3RZqcWh9ung==
-X-Gm-Gg: ASbGncvv9FvYupqaEdhc+EXrTi+AJxW+Oi0NQAo64rL5kl4FOb/1wEMo4Bo2KpWhDzN
-	+a7mI9C+j1HNxcTUBy9JEllTOc19kNMWGwAa3bbmj0yXOZnXvd+4KEu5xW4OI
-X-Google-Smtp-Source: AGHT+IHGs1wkYOjPfG6IkJlIa5Him6GjcmHqHXOYUHi3/uFgyDlfRxVXnTdrbUJka9yWUdOJC6wCZGhcBGYTlLj3iUo=
-X-Received: by 2002:a5d:5f8b:0:b0:385:ef2f:9278 with SMTP id
- ffacd0b85a97d-385fd3cd993mr2977493f8f.2.1733234419785; Tue, 03 Dec 2024
- 06:00:19 -0800 (PST)
+	s=arc-20240116; t=1733234481; c=relaxed/simple;
+	bh=VHxdyF1t8Pb4TKUsORZ1LiwBWkN6y3Mi26umP5IcMBE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=H1M51gicJ39hja9eKN1fW04QnTUmlFnPsMxUh3QtxCii0rcc/BOmMpnot0CslLFJgeb3lIm/b+kW72okdND4yaKxfzD2ZABtZq824UL4WqcBF6lWN1obYCxmfMdn68OL65OWltn3o6xhmIq92ZcSWofdHdg6GVsEORae2ClWh1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=d2q93GpE; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B3CpwEX009568;
+	Tue, 3 Dec 2024 14:00:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=IN+RB0
+	zLXbRxgzA2VNRjOvofy5Rv13Wnv4i3uGnWw6s=; b=d2q93GpEj7r3Geu2di6kOw
+	H1ROaQmhYPHZ+6ETk9xXjxvfXnqIxRr5F1DLMp0CP0CTbGguK4A7+8iZgNxy/Vcs
+	2ixba6oY14s0zBFVcbC6WtPnNBk4HGA1Sq/KKHnH4TeF8q9bejBNcmsfl707sfMK
+	Ur58B3gvZpU+YRjEoCKQn3EKo3QcqwcChUlhSJ60pDUoE/bJ8V2YGV7OIcTKS8H/
+	CRgM1zz6bkMx8d66lnQUJBsNwPW0i7wf1tGFShuGe5hZzbjrEJS9hSnmlbmCzPTM
+	iZlwjyROutOW7+x1r0FBfXfjl4fgOaHN9BVgbNRzBaXXa4EMMqs6+zYtwVN9ctwg
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 438kfgpvg0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 03 Dec 2024 14:00:29 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4B3Dq4Yv003383;
+	Tue, 3 Dec 2024 14:00:29 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 438kfgpvft-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 03 Dec 2024 14:00:29 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4B3D9HxY005226;
+	Tue, 3 Dec 2024 14:00:28 GMT
+Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 43a2kxg1d8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 03 Dec 2024 14:00:27 +0000
+Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
+	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4B3E0PDn53281058
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 3 Dec 2024 14:00:26 GMT
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id E1BFF20043;
+	Tue,  3 Dec 2024 14:00:25 +0000 (GMT)
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A49D120040;
+	Tue,  3 Dec 2024 14:00:23 +0000 (GMT)
+Received: from [9.39.25.90] (unknown [9.39.25.90])
+	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Tue,  3 Dec 2024 14:00:23 +0000 (GMT)
+Message-ID: <8715eb95-e142-4b42-83d1-7e4cc2fa8650@linux.ibm.com>
+Date: Tue, 3 Dec 2024 19:30:22 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241127085236.3538334-1-hsiangkao@linux.alibaba.com>
- <CAB=BE-RVudjkHsuff5Tmg2sumjDkPKpQ9Y0XN2gZzPFxUGa+hg@mail.gmail.com>
- <b68945e3-3498-4068-b119-93f9e5aaf3ad@linux.alibaba.com> <CAKPOu+9iDdP9zVnu10dy3mR48Z1D0U1xyCuZa3A6cYEFKD-rUw@mail.gmail.com>
- <0584d334-4e75-4d35-be33-03d6ff7a0aba@linux.alibaba.com> <CAKPOu+_4z4NDG1CmqsBatJVF1rQXHvqHV6fUiHEcnBswa_u8BQ@mail.gmail.com>
-In-Reply-To: <CAKPOu+_4z4NDG1CmqsBatJVF1rQXHvqHV6fUiHEcnBswa_u8BQ@mail.gmail.com>
-From: Max Kellermann <max.kellermann@ionos.com>
-Date: Tue, 3 Dec 2024 15:00:08 +0100
-Message-ID: <CAKPOu+_ZGtCX48bntZQU=nGxqFPon+D_wDPiagtZPKmtYRfpgQ@mail.gmail.com>
-Subject: Re: [PATCH] erofs: fix PSI memstall accounting
-To: Gao Xiang <hsiangkao@linux.alibaba.com>
-Cc: linux-erofs@lists.ozlabs.org, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] powerpc: copy preempt.h into arch/include/asm
+To: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: npiggin@gmail.com, maddy@linux.ibm.com, bigeasy@linutronix.de,
+        ankur.a.arora@oracle.com, linux-kernel@vger.kernel.org,
+        mark.rutland@arm.com, vschneid@redhat.com, peterz@infradead.org,
+        Michael Ellerman <mpe@ellerman.id.au>, linuxppc-dev@lists.ozlabs.org
+References: <20241125042212.1522315-1-sshegde@linux.ibm.com>
+ <20241125042212.1522315-2-sshegde@linux.ibm.com>
+ <b5c152a3-d459-4744-84ec-846153de1652@csgroup.eu>
+ <026ad776-a889-4213-8e0e-1da9065dc5ef@linux.ibm.com>
+ <3de6bf25-fb3c-49a9-b06b-5e2e527ec90c@csgroup.eu>
+From: Shrikanth Hegde <sshegde@linux.ibm.com>
+Content-Language: en-US
+In-Reply-To: <3de6bf25-fb3c-49a9-b06b-5e2e527ec90c@csgroup.eu>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: ATa0YLbNsuUd5vcZRWUJlyZc1ptob-9s
+X-Proofpoint-GUID: HWiY1GPopAyIe0NNbTvOCcW3KikpscZy
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ spamscore=0 clxscore=1015 malwarescore=0 bulkscore=0 adultscore=0
+ priorityscore=1501 mlxlogscore=570 impostorscore=0 phishscore=0 mlxscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412030116
 
-On Tue, Dec 3, 2024 at 2:30=E2=80=AFPM Max Kellermann <max.kellermann@ionos=
-.com> wrote:
-> __builtin_return_address(1) instantly crashes the kernel
 
-I was able to capture the __builtin_return_address crash on a serial
-console (this has nothing to do with the PSI memstall bug):
 
-[16438.331677] BUG: kernel NULL pointer dereference, address: 0000000000000=
-008
-[16438.338693] #PF: supervisor read access in kernel mode
-[16438.343866] #PF: error_code(0x0000) - not-present page
-[16438.349038] PGD 0 P4D 0
-[16438.351588] Oops: Oops: 0000 [#1] SMP PTI
-[16438.355625] CPU: 18 UID: 2147486501 PID: 23486 Comm: less Not
-tainted 6.11.10-cm4all4-hp+ #291
-[16438.364297] Hardware name: HPE ProLiant DL380 Gen10/ProLiant DL380
-Gen10, BIOS U30 09/05/2019
-[16438.372880] RIP: 0010:psi_memstall_enter+0x7f/0xa0
-[16438.377708] Code: 89 df 80 8b 19 05 00 00 01 48 8b 45 08 48 89 83
-c0 08 00 00 48 8b 45 00 48 8b 40 08 48 89 83 c8 08 00 00 48 8b 45 00
-48 8b 00 <48> 8b 40 08 48 89 83 d0 08 00 00 e8 d1 fe ff ff 4c 89 e7 e8
-29 28
-[16438.396609] RSP: 0000:ffff9ee683bc7bd0 EFLAGS: 00010002
-[16438.401869] RAX: 0000000000000000 RBX: ffff90c70c291740 RCX: 00000000000=
-00001
-[16438.409052] RDX: 000000000000000a RSI: 0000000000000000 RDI: ffff90c70c2=
-91740
-[16438.416234] RBP: ffff9ee683bc7be0 R08: 000000000007cec1 R09: 00000000000=
-00007
-[16438.423418] R10: ffff90c727d83678 R11: 0000000000000000 R12: ffff9124bd0=
-ae000
-[16438.430600] R13: 0000000000000014 R14: ffff9ee683bc7ce8 R15: 00000000000=
-00000
-[16438.437785] FS:  00007ff15f1f4740(0000) GS:ffff9124bd080000(0000)
-knlGS:0000000000000000
-[16438.445929] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[16438.451714] CR2: 0000000000000008 CR3: 000000010c54a002 CR4: 00000000007=
-706f0
-[16438.458896] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 00000000000=
-00000
-[16438.466079] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 00000000000=
-00400
-[16438.473263] PKRU: 55555554
-[16438.475984] Call Trace:
-[16438.478446]  <TASK>
-[16438.480557]  ? __die+0x1f/0x60
-[16438.483636]  ? page_fault_oops+0x15c/0x450
-[16438.487761]  ? exc_page_fault+0x5e/0x100
-[16438.491710]  ? asm_exc_page_fault+0x22/0x30
-[16438.495923]  ? psi_memstall_enter+0x7f/0xa0
-[16438.500135]  read_pages+0x205/0x220
-[16438.503647]  ? free_unref_page+0x2c1/0x420
-[16438.507771]  page_cache_ra_order+0x1d3/0x2b0
-[16438.512069]  filemap_fault+0x548/0xba0
-[16438.515845]  __do_fault+0x32/0x90
-[16438.519182]  do_fault+0x2a1/0x4a0
-[16438.522519]  __handle_mm_fault+0x337/0x1ca0
-[16438.526730]  handle_mm_fault+0x128/0x260
-[16438.530677]  do_user_addr_fault+0x1d8/0x5b0
-[16438.534889]  exc_page_fault+0x5e/0x100
-[16438.538663]  asm_exc_page_fault+0x22/0x30
-[16438.542697] RIP: 0033:0x55ebb60829a0
-[16438.546298] Code: Unable to access opcode bytes at 0x55ebb6082976.
-[16438.552519] RSP: 002b:00007fffd2a03658 EFLAGS: 00010246
-[16438.557779] RAX: 0000000000000016 RBX: 000055ebdb88b410 RCX: 000055ebdb8=
-8b410
-[16438.564963] RDX: 0000000000000ee4 RSI: 000055ec5b0b1e30 RDI: 000055ebdb8=
-8b910
-[16438.572147] RBP: 0000000000000010 R08: 00000000ffffffff R09: 00000000000=
-00000
-[16438.579331] R10: 0000000000000000 R11: 0000000000000246 R12: 00000000000=
-00046
-[16438.586514] R13: 000055ebb6099e6c R14: 000055ebb6099c93 R15: 00007fffd2a=
-03706
-[16438.593697]  </TASK>
-[16438.595895] Modules linked in:
-[16438.598970] CR2: 0000000000000008
-[16438.602307] ---[ end trace 0000000000000000 ]---
+On 12/2/24 23:47, Christophe Leroy wrote:
+> 
+> 
+> Le 02/12/2024 à 15:05, Shrikanth Hegde a écrit :
+>>
+>>
+>> On 11/27/24 12:07, Christophe Leroy wrote:
+>>>
+>>>
+>>> Le 25/11/2024 à 05:22, Shrikanth Hegde a écrit :
+>>>> PowerPC uses asm-generic preempt definitions as of now.
+>>>> Copy that into arch/asm so that arch specific changes can be done.
+>>>> This would help the next patch for enabling dynamic preemption.
+>>>
+>>
+>> The reason I want the content instead was to allow future patches 
+>> where I thought of making preempt count per paca for ppc64 atleast. 
+>> generic code assumes it is per thread. If this change is to be done at 
+>> that point, that is fair too. I am okay with it.
+> 
+> I think it is better to keep series minimal and consistent. If you have 
+> a futur plan, no problem, keep it future and do everything at once 
+> unless it is heavy and better done in two steps.
+> 
+> As we say in French, a lot of water will have flowed under the bridge by 
+> then.
+> 
+> I'm sure there will be a lot of discussion when you do that and maybe at 
+> the end you will end up with something completely different than what 
+> you have in mind at the moment.
+> 
+
+ok.
+
+>>
+>>
+>>> Instead of copying all the content of asm-generic version, can you 
+>>> just create a receptacle for your new macros, that will include asm- 
+>>> generic/ preempt.h ?
+>>>
+>>> Look at arch/powerpc/include/asm/percpu.h for exemple.
+>>>
+>>
+>> You mean something like below right?
+>>
+>>
+>> #ifndef __ASM_POWERPC_PREEMPT_H
+>> #define __ASM_POWERPC_PREEMPT_H
+>>
+>> #include <asm-generic/preempt.h>
+>>
+>> #if defined(CONFIG_PREEMPT_DYNAMIC) && 
+>> defined(CONFIG_HAVE_PREEMPT_DYNAMIC_KEY)
+>> DECLARE_STATIC_KEY_TRUE(sk_dynamic_irqentry_exit_cond_resched);
+>> #endif
+>>
+>> #endif /* __ASM_POWERPC_PREEMPT_H */
+> 
+> Yes exactly.
+> 
+> 
+
+Should I send v2 with this and using DYNAMIC_KEY?
 
