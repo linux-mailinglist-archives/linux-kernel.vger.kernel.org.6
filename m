@@ -1,246 +1,156 @@
-Return-Path: <linux-kernel+bounces-429299-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73B8F9E1A17
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 11:58:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B22FD9E1A1B
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 11:59:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33B34284D1A
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:58:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72EB3285C0F
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:59:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEDD81E376B;
-	Tue,  3 Dec 2024 10:58:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89C5A1E3776;
+	Tue,  3 Dec 2024 10:59:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RlAPaW5Z"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="osw5gBZx"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 980AB1E32D4
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 10:58:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A2801E32BE
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 10:59:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733223506; cv=none; b=Z/wd1Bj00JnCXetY5BYX0RwqFegTqOZgMv8yGbk5zCk/OjKyDVNQKEblLVAeYCTIPSL+Oa907fg02v25yGEo/S7YxVHw9q6FJPjkqUXG9IwA73x0KCXRNfAakN+VjYDdGlqzxm7LY+PqC/ltzxFVETZu32UR8OOhhlWGtG4hSh8=
+	t=1733223547; cv=none; b=azlwSX/MKRhgyergVTnycHNHyZC/uNTNpZoNzkA2nES/CMyMRcPjxSPzFcIWGsaXR059epAsDL3iDoa4pSMhcIPYv1lE1K6UzUTbVHoQjiH5aS9cmb8pALWuleGqmTB/LEMgpWNfVNeqCdaJY5VXei6O7V98MKdmHgHWkkl8lsk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733223506; c=relaxed/simple;
-	bh=r5IzcIHpW1yeHzI+cxkcrwgUkSQv1jAL9yBPggXeYEM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=sKDZysgvjHF6FssH4y2+iZBtSnAPHgZ/9KZJnpYrAg80uSiYbxJvoPiBIODiPp1Y5mmSIynHBmzXodttJZKF2J3Po5f+m1dSTXbCk1BeIJGlHFRfY75iFXt1rhN2qf7zhJlxPCBRwb0Ne79oSw867qkEeMcTq329XPKq2VoSuN8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RlAPaW5Z; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733223504; x=1764759504;
-  h=message-id:date:mime-version:subject:to:references:from:
-   in-reply-to:content-transfer-encoding;
-  bh=r5IzcIHpW1yeHzI+cxkcrwgUkSQv1jAL9yBPggXeYEM=;
-  b=RlAPaW5ZBeFZM2GBHL/pwYe6X5/GprtMWPYHL45jfCW5gvGqh4SkoCRW
-   Zr2Ff/o+vtkJmis6QDoaR4uBPFuarfbME5rbmfzU0RLRBO92NiT/TI+O3
-   zq+g4tzuxRmnmoqvcmTiU0zZYSdg4gQ6uubbiqkHUv4rIgYzVDuptD5vX
-   nZ55YelsuKZZL8S3t8RscXf1tl3+eGJBQjsrmEDBW2BqtkzaSr3K3LSHS
-   mqZ3ucZkCtI7sJdDwjcCgnIQY3qakxcRHIzyt6/hBcAgQ8Q179ER7sIza
-   A+WvA2zYXIkovA+SuZCXOqjUBFv2Q0rOITsiQ2l1Xd0skQADJ6kbH6Hww
-   w==;
-X-CSE-ConnectionGUID: wLTPe6MjRv+0eN5XJUm4rQ==
-X-CSE-MsgGUID: FmwGbvV6S4icjPkPRzc4hQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11274"; a="43914257"
-X-IronPort-AV: E=Sophos;i="6.12,205,1728975600"; 
-   d="scan'208";a="43914257"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Dec 2024 02:58:24 -0800
-X-CSE-ConnectionGUID: seQVHymXRPOzYEoDKLagXQ==
-X-CSE-MsgGUID: Tmu1TYCtSvCpZ6NYVzNtUA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,205,1728975600"; 
-   d="scan'208";a="98400962"
-Received: from dhhellew-desk2.ger.corp.intel.com (HELO [10.245.245.10]) ([10.245.245.10])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Dec 2024 02:58:20 -0800
-Message-ID: <4e67e781-df6d-45b8-be52-637ee5926bd7@linux.intel.com>
-Date: Tue, 3 Dec 2024 11:58:50 +0100
+	s=arc-20240116; t=1733223547; c=relaxed/simple;
+	bh=G/uV3VWcCH22zMHivLa7VwR6PtdVxBUv3KTTfYzWtX0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=s+GfqFNCbMKvDXxzcZB6/IdgcCVK5FuOyTHNJv3fJ8LHVrp0r0k7IH1JEVPXMC2u/0oAykyrW/Sk5KHLguPoVTbM48UdVelTwv/qynNT90j6c9A+oZ1eFRQeDamFubtrRq8ov+G+lnUiVu8Fv8bV92KdDAT2aTc7bmqh20WBQdk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=osw5gBZx; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-385ef8b64b3so1865550f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 02:59:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1733223544; x=1733828344; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MvO7oSSSLlyGlXJesd40xkQ3Qx/29E4LxsvtSxRhtqA=;
+        b=osw5gBZxWI3LnzUiNo3qv1ebDJE4tUTSPbISGZVQlM1eQFHvcabLpBlPW0Mca5FQfC
+         A+GvpOyoYPITS4GU+bvXCikPov13wE5czZskvQWeZmqvwgvSmLDFIApvTTNmwRs5ITXe
+         ssDSk18gas8ySG3BsFbHLhhFSxnZIZ7DC5UopBsCggcXu3wCr/Y8CjFkNtLuSSu+VqJJ
+         gGlschKQ3oWShHm17R+Wq4dAwPZ2IJ2OkFK2KLuuMPndB5wV2scc0zOch6G8iNhQpiAV
+         wHI253HFL++ENfkJqhnAPeV5LWIKLTKC0uWfXEv5n/aCgn1I6HIRRuvEwF0SRs+qY02J
+         H9tA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733223544; x=1733828344;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MvO7oSSSLlyGlXJesd40xkQ3Qx/29E4LxsvtSxRhtqA=;
+        b=EddHbbHHTMDMdLXQHLl5DDw76Ex3TMZnbuDr3w05nhKaCUebwEVffuT1oEsKTHMKC8
+         gJLmxeJnFG1qBJxe8Nur+39yt6A4+1btJ10oegEYvtb5QUcgoWXukmqpoEumpp4Og1m3
+         1S33qylSSHb+Ws7Zb+zMmaaRSrYCZfgIepPBMhE6quc5u6OoMILxM8GPXaNmskk4vsOW
+         KcuiFVaruloZfC8AfNITbuffm31/f6TFlUeUef+SzK2LUvhvt1qk6xscqsyOB5qs9O6T
+         432UOCucGQhrIjwucVPDLlelFIykV9vlDr7IYyQHiDHjvuQT/cJQN+MdfLZesSN1s1iK
+         Vjsw==
+X-Forwarded-Encrypted: i=1; AJvYcCVeuJ7kM9LITrfuHfwltSOmm3B31MCi26XjWqiVz+LpavjkRDBkSaEWYbpQimU2lA3tV4MBVBAyi49K904=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTGCsE+ZgnJmrJ/8kJz3g8JCOgXUR8UueDYLcsEhU57v4Ibmtp
+	YSOJlQbFRTpC39OtMZHoyKVfsm/BUHuhH1YCleBKKgVVtdamBqTW5HwteYzYN+UYTPhPX5IUVY+
+	oujqCFR9o9cnLkUXRQ77X64ZdVlKftA2g1JU6
+X-Gm-Gg: ASbGncv42N9CtQCzBufoSxslBV1iLmkR12Yw4/yrsc8OgceTe4Jq+9VrDrgKss6mycF
+	mglxu46j81TzWjiLsf1VLv0ZuQLB6Y6nFNK69ku0Cqt5KRpucuqKNn9HnhnqAcA==
+X-Google-Smtp-Source: AGHT+IHPIHPJrpA1VgFrbn1LGMTDmbjcvUt0wuiaDpJhnhhJZrwW91lOLvnm4gtS/RYy7pFqADxfNSMer6BUmhNavWo=
+X-Received: by 2002:a05:6000:42c7:b0:385:f89a:402e with SMTP id
+ ffacd0b85a97d-385fd3ce04amr1170892f8f.14.1733223544417; Tue, 03 Dec 2024
+ 02:59:04 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 5/5] drm/i915: Add drm_panic support
-To: Jocelyn Falempe <jfalempe@redhat.com>,
- Jani Nikula <jani.nikula@linux.intel.com>,
- Rodrigo Vivi <rodrigo.vivi@intel.com>,
- Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
- Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, intel-gfx@lists.freedesktop.org,
- intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <20241203092836.426422-1-jfalempe@redhat.com>
- <20241203092836.426422-6-jfalempe@redhat.com>
-Content-Language: en-US
-From: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-In-Reply-To: <20241203092836.426422-6-jfalempe@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20241022213221.2383-1-dakr@kernel.org> <20241022213221.2383-8-dakr@kernel.org>
+ <CAH5fLgjcy=DQrCYt-k40D4_NcwgdrykUW9d74srGn5hxxo2Xmw@mail.gmail.com>
+ <a25f7cfe-ef43-4841-ab81-0ecf59b20f15@kernel.org> <CAH5fLgjgvq40mEsFZZLGi1s_OHNBsOXPT1Si6vM2sruM=tibQg@mail.gmail.com>
+ <5f34564a-618e-457c-868b-0a3901b6d69b@kernel.org>
+In-Reply-To: <5f34564a-618e-457c-868b-0a3901b6d69b@kernel.org>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Tue, 3 Dec 2024 11:58:52 +0100
+Message-ID: <CAH5fLgiG31JLL9ce_Wwaz_okg4roxAhmOniDEyw0hQG8vSTtig@mail.gmail.com>
+Subject: Re: [PATCH v3 07/16] rust: add `Revocable` type
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: gregkh@linuxfoundation.org, rafael@kernel.org, bhelgaas@google.com, 
+	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com, 
+	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me, 
+	tmgross@umich.edu, a.hindborg@samsung.com, airlied@gmail.com, 
+	fujita.tomonori@gmail.com, lina@asahilina.net, pstanner@redhat.com, 
+	ajanulgu@redhat.com, lyude@redhat.com, robh@kernel.org, 
+	daniel.almeida@collabora.com, saravanak@google.com, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
+	Wedson Almeida Filho <wedsonaf@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hey,
+On Tue, Dec 3, 2024 at 10:36=E2=80=AFAM Danilo Krummrich <dakr@kernel.org> =
+wrote:
+>
+> On 12/3/24 10:24 AM, Alice Ryhl wrote:
+> > On Tue, Dec 3, 2024 at 10:21=E2=80=AFAM Danilo Krummrich <dakr@kernel.o=
+rg> wrote:
+> >>
+> >> On 10/29/24 2:26 PM, Alice Ryhl wrote:
+> >>> On Tue, Oct 22, 2024 at 11:33=E2=80=AFPM Danilo Krummrich <dakr@kerne=
+l.org> wrote:
+> >>>> +/// A guard that allows access to a revocable object and keeps it a=
+live.
+> >>>> +///
+> >>>> +/// CPUs may not sleep while holding on to [`RevocableGuard`] becau=
+se it's in atomic context
+> >>>> +/// holding the RCU read-side lock.
+> >>>> +///
+> >>>> +/// # Invariants
+> >>>> +///
+> >>>> +/// The RCU read-side lock is held while the guard is alive.
+> >>>> +pub struct RevocableGuard<'a, T> {
+> >>>> +    data_ref: *const T,
+> >>>> +    _rcu_guard: rcu::Guard,
+> >>>> +    _p: PhantomData<&'a ()>,
+> >>>> +}
+> >>>
+> >>> Is this needed? Can't all users just use `try_access_with_guard`?
+> >>
+> >> Without this guard, how to we access `T` with just the `rcu::Guard`?
+> >
+> > I don't think `try_access_with_guard` provides any access that you
+> > can't get by doing `try_access_with_guard`.
+> >
+> > That said, I guess this guard functions as a convenience accessors, so
+> > I don't mind it.
+>
+> What I mean is, how does the following work without `RevocableGuard`?
+>
+> ```
+> struct Foo;
+>
+> impl Foo {
+>     pub fn bar() { ... }
+> }
+>
+> let data: Revocable<Foo> =3D ...;
+> let guard =3D data.try_access()?;
+>
+> guard.bar();
+> ```
 
-Den 2024-12-03 kl. 09:50, skrev Jocelyn Falempe:
-> This adds drm_panic support for a wide range of Intel GPU. I've
-> tested it only on 3 laptops, haswell (with 128MB of eDRAM),
-> cometlake and alderlake.
-> 
->  * DPT: if I disable tiling on a framebuffer using DPT, then it
->    displays some other memory location. As DPT is enabled only for
->    tiled framebuffer, there might be some hardware limitations.
-This is because DPT points to the pagetable, when you disable tiling DPT is no longer used so the DPT is interpreted as a linear FB instead of a lookup table.
+Is there a reason you can do this?
 
-The lookup table is necessarily smaller than the real FB, so you would need to overwrite part of the GGTT and point it to linear FB.
+let guard =3D rcu::Guard::new();
+let value =3D data.try_access_with_guard(&guard);
+value.bar();
 
-I'm not sure what the fix is here as it would require a real GGTT mapping to fix, needing an allocation which might not succeed. Perhaps indicates a limitation to require a real pageflip to fbdev fb?
-
-Have you tested rotated by any chance? Cursor enabled? Overlay?
-
-I also think this may fail if there are flips queued. We should probably bite the bullet, reprogram the entire state into a known state, disable all overlay planes and cursor, reassign all watermarks for the primary and ensure any background work is killed where needed.
-
-Cheers,
-~Maarten
-
->  * fbdev: On my haswell laptop, the fbdev framebuffer is configured
->    with tiling enabled, but really it's linear, because fbcon don't
->    know about tiling, and the panic screen is perfect when it's drawn
->    as linear.
-> Signed-off-by: Jocelyn Falempe <jfalempe@redhat.com>
-> ---
->  .../gpu/drm/i915/display/intel_atomic_plane.c | 85 ++++++++++++++++++-
->  1 file changed, 84 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/i915/display/intel_atomic_plane.c b/drivers/gpu/drm/i915/display/intel_atomic_plane.c
-> index b7e462075ded3..58eb3b4c55fa5 100644
-> --- a/drivers/gpu/drm/i915/display/intel_atomic_plane.c
-> +++ b/drivers/gpu/drm/i915/display/intel_atomic_plane.c
-> @@ -33,16 +33,20 @@
->  
->  #include <linux/dma-fence-chain.h>
->  #include <linux/dma-resv.h>
-> +#include <linux/iosys-map.h>
->  
->  #include <drm/drm_atomic_helper.h>
->  #include <drm/drm_blend.h>
-> +#include <drm/drm_cache.h>
->  #include <drm/drm_fourcc.h>
->  #include <drm/drm_gem.h>
->  #include <drm/drm_gem_atomic_helper.h>
-> +#include <drm/drm_panic.h>
->  
->  #include "i915_config.h"
->  #include "i9xx_plane_regs.h"
->  #include "intel_atomic_plane.h"
-> +#include "intel_bo.h"
->  #include "intel_cdclk.h"
->  #include "intel_cursor.h"
->  #include "intel_display_rps.h"
-> @@ -50,6 +54,7 @@
->  #include "intel_display_types.h"
->  #include "intel_fb.h"
->  #include "intel_fb_pin.h"
-> +#include "intel_fbdev.h"
->  #include "skl_scaler.h"
->  #include "skl_watermark.h"
->  
-> @@ -1198,14 +1203,92 @@ intel_cleanup_plane_fb(struct drm_plane *plane,
->  	intel_plane_unpin_fb(old_plane_state);
->  }
->  
-> +/* Only used by drm_panic get_scanout_buffer() and panic_flush(), so it is
-> + * protected by the drm panic spinlock
-> + */
-> +static struct iosys_map panic_map;
-> +
-> +static void intel_panic_flush(struct drm_plane *plane)
-> +{
-> +	struct intel_plane_state *plane_state = to_intel_plane_state(plane->state);
-> +	struct drm_i915_private *dev_priv = to_i915(plane->dev);
-> +	struct drm_framebuffer *fb = plane_state->hw.fb;
-> +	struct intel_plane *iplane = to_intel_plane(plane);
-> +
-> +	/* Force a cache flush, otherwise the new pixels won't show up */
-> +	drm_clflush_virt_range(panic_map.vaddr, fb->height * fb->pitches[0]);
-> +
-> +	/* Don't disable tiling if it's the fbdev framebuffer.*/
-> +	if (to_intel_framebuffer(fb) == intel_fbdev_framebuffer(dev_priv->display.fbdev.fbdev))
-> +		return;
-> +
-> +	if (fb->modifier && iplane->disable_tiling)
-> +		iplane->disable_tiling(iplane);
-> +}
-> +
-> +static int intel_get_scanout_buffer(struct drm_plane *plane,
-> +				    struct drm_scanout_buffer *sb)
-> +{
-> +	struct intel_plane_state *plane_state;
-> +	struct drm_gem_object *obj;
-> +	struct drm_framebuffer *fb;
-> +	struct drm_i915_private *dev_priv = to_i915(plane->dev);
-> +	void *ptr;
-> +
-> +	if (!plane->state || !plane->state->fb || !plane->state->visible)
-> +		return -ENODEV;
-> +
-> +	plane_state = to_intel_plane_state(plane->state);
-> +	fb = plane_state->hw.fb;
-> +	obj = intel_fb_bo(fb);
-> +	if (!obj)
-> +		return -ENODEV;
-> +
-> +	if (to_intel_framebuffer(fb) == intel_fbdev_framebuffer(dev_priv->display.fbdev.fbdev)) {
-> +		ptr = intel_fbdev_get_vaddr(dev_priv->display.fbdev.fbdev);
-> +	} else {
-> +		/* can't disable tiling if DPT is in use */
-> +		if (intel_bo_is_tiled(obj) && HAS_DPT(dev_priv))
-> +			return -EOPNOTSUPP;
-> +
-> +		ptr = intel_bo_panic_map(obj);
-> +	}
-> +
-> +	if (!ptr)
-> +		return -ENOMEM;
-> +
-> +	if (intel_bo_has_iomem(obj))
-> +		iosys_map_set_vaddr_iomem(&panic_map, ptr);
-> +	else
-> +		iosys_map_set_vaddr(&panic_map, ptr);
-> +
-> +	sb->map[0] = panic_map;
-> +	sb->width = fb->width;
-> +	sb->height = fb->height;
-> +	sb->format = fb->format;
-> +	sb->pitch[0] = fb->pitches[0];
-> +
-> +	return 0;
-> +}
-> +
->  static const struct drm_plane_helper_funcs intel_plane_helper_funcs = {
->  	.prepare_fb = intel_prepare_plane_fb,
->  	.cleanup_fb = intel_cleanup_plane_fb,
->  };
->  
-> +static const struct drm_plane_helper_funcs intel_primary_plane_helper_funcs = {
-> +	.prepare_fb = intel_prepare_plane_fb,
-> +	.cleanup_fb = intel_cleanup_plane_fb,
-> +	.get_scanout_buffer = intel_get_scanout_buffer,
-> +	.panic_flush = intel_panic_flush,
-> +};
-> +
->  void intel_plane_helper_add(struct intel_plane *plane)
->  {
-> -	drm_plane_helper_add(&plane->base, &intel_plane_helper_funcs);
-> +	if (plane->base.type == DRM_PLANE_TYPE_PRIMARY)
-> +		drm_plane_helper_add(&plane->base, &intel_primary_plane_helper_funcs);
-> +	else
-> +		drm_plane_helper_add(&plane->base, &intel_plane_helper_funcs);
->  }
->  
->  void intel_plane_init_cursor_vblank_work(struct intel_plane_state *old_plane_state,
-
+Alice
 
