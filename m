@@ -1,126 +1,123 @@
-Return-Path: <linux-kernel+bounces-429143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3312B9E1A59
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 12:07:02 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74B0E9E17E5
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:39:30 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EC7FAB43B93
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:38:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 48C42160EC1
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:39:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 832461E0DB7;
-	Tue,  3 Dec 2024 09:37:44 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 265BF1E008D;
+	Tue,  3 Dec 2024 09:39:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="y6xBdlZJ"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F5281DFDBB
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 09:37:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB1A2364AE
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 09:39:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733218664; cv=none; b=D83uK6AnT62E9+rzWckFxQu8dujPyyuai2BfU8A8nD4tMqRhTDk99Bn4UL+8/MSEhnuP9IGSd9HQ3sbQuCgq5jC2Lc4rAdSNCslnGAQjK6Yp+Vo7+Esj56OfpPILr+CKTAuR3I2AVqmrr4vn1zXjScLYlDoFQpK5pEU07hOH8n4=
+	t=1733218750; cv=none; b=shpFpWZaLvJfLJT89LdnatV1ZA40GMXEYgIt0rAPOmYwTfCHHFd7alHGeq/TEoeUI90OP/htBSpoxyaiM4SA/D51hSd0FaEPdwz1ArltRHRuVQ/NY90zE+EsGRM78W2iPX7xw0qXn/QNFLYSr5zkRVWB1+APPurJpemNO3LunZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733218664; c=relaxed/simple;
-	bh=4Znxh2vezX6ykUQvILB+ITgVuJR4RNnDtKVTVonUfCM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=RL7WFLmfeC+hAA1EZzecnXNrSey2KgsLvyylmdAzcDoVwJx2s+YWTaTH8+dbKTwIbqe1606XZB8vVpa24Fo2ALheyPLib8CxtRwbPunRgHHWpfJ0+AUbQlXwFsjGgZY28+m2zFir2HO9Gt8ImzXhrzURLlAsTLgddQKJB1qE1VY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
-	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
-	(envelope-from <jre@pengutronix.de>)
-	id 1tIPLZ-0006C6-LP; Tue, 03 Dec 2024 10:37:33 +0100
-From: Jonas Rebmann <jre@pengutronix.de>
-Date: Tue, 03 Dec 2024 10:37:27 +0100
-Subject: [PATCH v2 3/3] mtd: mchp48l640: add support for Fujitsu
- MB85RS128TY FRAM
+	s=arc-20240116; t=1733218750; c=relaxed/simple;
+	bh=f4yo24MCyvcNw5BjdCp4RT4JHWYru/YdElzMFQMZDkg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XszsBSwM+X3bL7N+ODTR/XreJIEjGBw1VRXpbToPLQz5z748GRZuQjWtcUE5/1aAufz3xRk0k8dx+/Wjkk4g4u4ASgJ48NDXKqNzArsq6RHfDKyWkCC4IGRwANyRW7MvkaYRmJmyhOiSHOojOPgQkrePOhkPZaQkqv8bmxyFOao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=y6xBdlZJ; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-434a0fd9778so48727155e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 01:39:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733218747; x=1733823547; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=kAfAbX2jpmVWuMhv4f3fZGpU5CJs4ntFjeUeVvna/QY=;
+        b=y6xBdlZJDIxUvbRYDMQ3a0rvI04pw8wKHjWx+Sn+fwkgPJn9t5rClPcmRiln8vUCev
+         BDTlovrblcX/vAZpPXlOi9ca72C8bCYZDILRjYPZ+OYi1XFOF5UhBnjjxo19D3iIvsyc
+         k8rpKomDLIq1Tt8RqsQ9LF4lNtBfOod5E/M1yfLs+V+jdPZRHiEE7AHSSq8eL4a65RDu
+         oKExQJk5pZRLpNpdp+/Jyl1T4zemAJpHCWFZ+/G9xXL9kl9Ul9vimkviYkZipVlgQVS+
+         ZNN6+YSNsB/S8n8IML5GL9zWM0i0mLHGwjP3+jTjct1gG94M5EAsWfYYlmmHca649/9V
+         JrsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733218747; x=1733823547;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kAfAbX2jpmVWuMhv4f3fZGpU5CJs4ntFjeUeVvna/QY=;
+        b=mzg1BkEfGqc4Mfo31Z13ji7+ws6SGEuzjRcz9ZWeLclPFYH1c+4WHYmcVugIoQDrLg
+         TqdRftU81PfTBIhdZx0AHcJWLzoJIp2Kwp0TRpzr1mN7QBoqvsOBCNjksoHOP64DhbbK
+         LY7ppokRMdEV10Wo8oWXOnd8TrOEyoyQCvdGy4n96+YqTBSFPuy8g7CIhKOrElQSgC9E
+         v6Ee0MRTqMTaHw0FIo7YsJcURArWOq3u9WL5zw380WGXIkFhLWt+26wy6SYfBnSYkPX1
+         B1S1yGGMvqlHmmFW9y7LCBj2JZR0yiwcUbcPGnlgzQje6JseLak65O8KgqWDX51NGIqj
+         I5Rw==
+X-Forwarded-Encrypted: i=1; AJvYcCUxi98n6kZ/+ELhnv/a9xt1o5Ta9scaTpoJjfLo8H6L3+Xkrba0zXx1Hp3M9zYdG038y+zbNF5sNkvCb2U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyrBwp9mtBquFenZdrtMIPQRgEo+WHNE05ukn5ls3B1K+jcn8US
+	QRXus/ahnIihDoc14/dkOmuWGZvi8RqRPVja/PLAPNdBmEapf4v0PZMLFahUgJI=
+X-Gm-Gg: ASbGncv0+S0DsQHJVPnm1hAodnImjNs0t4kbwwOv8vDi+JBCYWP8QCsKIqz/INR6W0q
+	UOcFMZ24vyc5oVygaN1d33uqwVz/qalBlFUiYDRbIexXo0ZuMwujZpcGfF1B3s6OLub8F/t/AoU
+	qgB9ljLtz+CUlQ0JfuB2lMwKhuBm1CBC+XbzFoUpA154wdgWfgqY87hRC6G0v6OTQHDsYf7cuyD
+	lOY00AUzrlrgoHGJf5TnZHGoPmkHySHN15IYokBEygeZnFT6W0fnaA=
+X-Google-Smtp-Source: AGHT+IFuW8hsbnPhok9NFkBE4GSNLWnfGNwEuWOJe5NvY0AGJzwDm00YwQeKFz6uXex+mAAN6s/h6g==
+X-Received: by 2002:a05:600c:138a:b0:431:52da:9d67 with SMTP id 5b1f17b1804b1-434d09b1831mr16625405e9.3.1733218747389;
+        Tue, 03 Dec 2024 01:39:07 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434b0f32589sm186562195e9.28.2024.12.03.01.39.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Dec 2024 01:39:06 -0800 (PST)
+Date: Tue, 3 Dec 2024 12:39:02 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Mateusz Polchlopek <mateusz.polchlopek@intel.com>
+Cc: Yevgeny Kliteynik <kliteyn@nvidia.com>,
+	Saeed Mahameed <saeedm@nvidia.com>,
+	Leon Romanovsky <leon@kernel.org>, Tariq Toukan <tariqt@nvidia.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Muhammad Sammar <muhammads@nvidia.com>, netdev@vger.kernel.org,
+	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH net] net/mlx5: DR, prevent potential error pointer
+ dereference
+Message-ID: <bf47a26a-ec69-433b-9cf9-667f9bccbec1@stanley.mountain>
+References: <aadb7736-c497-43db-a93a-4461d1426de4@stanley.mountain>
+ <ad93dd90-671b-4c0e-8a96-9dab239a5d07@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241203-mb85rs128ty-v2-3-42df3e7ff147@pengutronix.de>
-References: <20241203-mb85rs128ty-v2-0-42df3e7ff147@pengutronix.de>
-In-Reply-To: <20241203-mb85rs128ty-v2-0-42df3e7ff147@pengutronix.de>
-To: Miquel Raynal <miquel.raynal@bootlin.com>, 
- Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Heiko Schocher <hs@denx.de>
-Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, David Jander <david@protonic.nl>, 
- kernel@pengutronix.de, Jonas Rebmann <jre@pengutronix.de>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1626; i=jre@pengutronix.de;
- h=from:subject:message-id; bh=Urh+tFnbGE+nh11saAIXFyyQDAFGEwL1Wkf7BzXgzas=;
- b=owGbwMvMwCF2ZcYT3onnbjcwnlZLYkj3uxiTNfOttAjX5mD/AxUNHJmXL1TNqtnzzML55m2x2
- 6XpZj+aO0pZGMQ4GGTFFFli1eQUhIz9r5tV2sXCzGFlAhnCwMUpABMRL2L4H3DEr8AxpzdJcWmR
- OE97eNFB58rmG85qmSx3j/bbdp/WZPjvcmCJ5dTtYlbeP4+dOc8quW9L062pGpblmecvdZ2MWiL
- GCAA=
-X-Developer-Key: i=jre@pengutronix.de; a=openpgp;
- fpr=0B7B750D5D3CD21B3B130DE8B61515E135CD49B5
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:1101:1d::ac
-X-SA-Exim-Mail-From: jre@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ad93dd90-671b-4c0e-8a96-9dab239a5d07@intel.com>
 
-From: David Jander <david@protonic.nl>
+On Tue, Dec 03, 2024 at 10:32:13AM +0100, Mateusz Polchlopek wrote:
+> 
+> 
+> On 11/30/2024 11:01 AM, Dan Carpenter wrote:
+> > The dr_domain_add_vport_cap() function genereally returns NULL on error
+> 
+> Typo. Should be "generally"
+> 
 
-The Fujitsu FRAM chips use the same command set as Microchip EERAM.
-The only differences are that the Fujitsu FRAM chips don't really have a
-page size limit, nor do they automatically reset the WEL bit.
+Sure.
 
-Signed-off-by: David Jander <david@protonic.nl>
-Signed-off-by: Jonas Rebmann <jre@pengutronix.de>
----
- drivers/mtd/devices/mchp48l640.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+> > but sometimes we want it to return ERR_PTR(-EBUSY) so the caller can
+> > retry.  The problem here is that "ret" can be either -EBUSY or -ENOMEM
+> 
+> Please remove unnecessary space.
+> 
 
-diff --git a/drivers/mtd/devices/mchp48l640.c b/drivers/mtd/devices/mchp48l640.c
-index 4cdd24aaed416fc7e40a8060b5c7eaf6684fc6d5..7584d0ba93969d79ba3d9c7a97bc63bd0e5ef327 100644
---- a/drivers/mtd/devices/mchp48l640.c
-+++ b/drivers/mtd/devices/mchp48l640.c
-@@ -303,6 +303,12 @@ static const struct mchp48_caps mchp48l640_caps = {
- 	.auto_disable_wel = true,
- };
- 
-+static const struct mchp48_caps mb85rs128ty_caps = {
-+	.size = SZ_16K,
-+	.page_size = 256,
-+	.auto_disable_wel = false,
-+};
-+
- static int mchp48l640_probe(struct spi_device *spi)
- {
- 	struct mchp48l640_flash *flash;
-@@ -361,6 +367,10 @@ static const struct of_device_id mchp48l640_of_table[] = {
- 		.compatible = "microchip,48l640",
- 		.data = &mchp48l640_caps,
- 	},
-+	{
-+		.compatible = "fujitsu,mb85rs128ty",
-+		.data = &mb85rs128ty_caps,
-+	},
- 	{}
- };
- MODULE_DEVICE_TABLE(of, mchp48l640_of_table);
-@@ -370,6 +380,10 @@ static const struct spi_device_id mchp48l640_spi_ids[] = {
- 		.name = "48l640",
- 		.driver_data = (kernel_ulong_t)&mchp48l640_caps,
- 	},
-+	{
-+		.name = "mb85rs128ty",
-+		.driver_data = (kernel_ulong_t)&mb85rs128ty_caps,
-+	},
- 	{}
- };
- MODULE_DEVICE_TABLE(spi, mchp48l640_spi_ids);
+What are you talking about?
 
--- 
-2.39.5
+regards,
+dan carpenter
+
 
 
