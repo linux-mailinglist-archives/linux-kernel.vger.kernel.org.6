@@ -1,191 +1,172 @@
-Return-Path: <linux-kernel+bounces-428909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5953B9E14E0
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:01:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E8BF39E14E3
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:01:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5E4B164A13
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 08:01:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 64810160138
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 08:01:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C4F71E0DB6;
-	Tue,  3 Dec 2024 07:58:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 501791E0DFC;
+	Tue,  3 Dec 2024 07:58:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sX8dYvQq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Uu+yYS4S"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DC161DAC95;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A72319CCF9;
 	Tue,  3 Dec 2024 07:58:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733212685; cv=none; b=nXXHvXA6z68TGjt1mV+JbDDsngbgJmWOaoXC+aJUuM0vQ+e/rQGdnOEtDioxTKsTdjdEBxu37xbIaWqXsSQnZxB/mEauCy+iqyHNq0uxizRzDn7JAvpOcaqhHIxnwGZXpInlEpRAVRwcru0QMWGp5vAzFTcRRN/FpTpJqS6TQFc=
+	t=1733212686; cv=none; b=UN0gvC3lYh9SGBmqx0ewBGUimEbAQRUYBTWOn0Tqxw9DW83OigxTMv3/5xgmEKPjUWrW6kdsoHOUSFAlbGpspzym2fsYPWcQgYLKZBAH4WRk3D7YWSP5L/KU+oLr6vSrvseKnsSjVtxMKsepKlE+4AWYZbm4MhEFlmxp7G9rY2U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733212685; c=relaxed/simple;
-	bh=RvXXydv3bH1dUYAfXpdd8pnBNzEBwK7JMCwrpiha4Tc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=k+ipAK6+p7+nKWco0rKHVkiH2gQz5DjSU+wEc1Ft2VcfvzdKE7gq6sGWpQgPGsTebohC1Mhk8CAXn/5ffU+DufJSCYe4zE4zTwSzON9V6hbuiDDo5+G0MRw9o6dTaRsnHnAPdGLlxF5GtvQ6TETHWiBKp9z4COhEb8B3gaZvlLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sX8dYvQq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id BC20EC4CEF5;
-	Tue,  3 Dec 2024 07:58:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733212684;
-	bh=RvXXydv3bH1dUYAfXpdd8pnBNzEBwK7JMCwrpiha4Tc=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=sX8dYvQq8pHI759u9aAWPwkdn4IclAHTwsFuy0zXmEiIWG+SSGDebKpz6OGXKg/LZ
-	 inS8Xs8NkufPAWeosg8oapJ6dPOieKswC/IxkGSL4gthCx0qgwjkh9eLiAqtY2+cXT
-	 /hpso2RjWgGuK74GbjrWczWpBtoHUeeC3Enozt9glFDk0pXJdK8zVs6QXXxM5IG40a
-	 MMm7qyNiN2ZKhLlfoQqszLzl1ykuA6fjAR5N9vRhAAMd3nsjcz0Mn7aTfirqtyt4ID
-	 lSt5Eubtc+/UDGazNZo9eTD1AMBqTrDNjOd9+Zm8oMXJBGw4ZX4w4h+k00x8qKHuef
-	 eVKY6iNcLSDsQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B15D0E6C614;
-	Tue,  3 Dec 2024 07:58:04 +0000 (UTC)
-From: Janne Grunau via B4 Relay <devnull+j.jannau.net@kernel.org>
-Date: Tue, 03 Dec 2024 08:58:01 +0100
-Subject: [PATCH v2 5/5] arm64: dts: apple: Add SPI NOR nvram partition to
- all devices
+	s=arc-20240116; t=1733212686; c=relaxed/simple;
+	bh=QXDy5IjLLk2Mod7vhumHaQqfStgg1w95tN0WENVgpsI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=IHtENlxUD4pGtBwA+U0QMyGZkqKyg7bQFe1kz+G9MOhJ4TtgOknz1MTAExrFnEHeOPIvLI5QboiL7ZJP+03Zrdq7hDrK/tXb4OEQnBUXg8wVs9dS9vgrbjFGyfyy5mHYXQ8jd+Groqn56pVyMrJJP5QHEK4w4ZrZZFT0zP9q9iM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Uu+yYS4S; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733212685; x=1764748685;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=QXDy5IjLLk2Mod7vhumHaQqfStgg1w95tN0WENVgpsI=;
+  b=Uu+yYS4S0oW7iXcgKG2IS3MoefrEc54I5YeclS10NgXVvVRo7/IxWLNm
+   lD/JpZm30hcTYcBCrTywwheuwHR+Ad34zmZWOJtvzHyBMqTwnYTpYBW3I
+   d7tHR33Fzh520iNcjhfdpXjOJ4IDupkLgC1FV3wxA8cbtbhK/yeFo19Aa
+   dIdnVXT/098BFhvzpP/3tjJUOfQIBKS4e4KGV+gCSVnbQIGLNqHzk/QBt
+   rFddAw1QoKeImWsdYrZtFDVBzZUhYhQ4b015LjNLF72SFX9Y9O28zulBv
+   QWOEEncO15o7PcJcLyzXlcN7wPSjIhqmP96IHctrzwEFY3GGd0Y8FcB5A
+   g==;
+X-CSE-ConnectionGUID: 9OSyNrOPQUueSNRp3MRieg==
+X-CSE-MsgGUID: wHFBUcF5QYqd3cJ1aBl4ig==
+X-IronPort-AV: E=McAfee;i="6700,10204,11274"; a="32758209"
+X-IronPort-AV: E=Sophos;i="6.12,204,1728975600"; 
+   d="scan'208";a="32758209"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Dec 2024 23:58:05 -0800
+X-CSE-ConnectionGUID: ynGyqaoJRAe9xXYFdZy6+Q==
+X-CSE-MsgGUID: 6truSVWUR0mYamNP+jgYsA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,204,1728975600"; 
+   d="scan'208";a="93759614"
+Received: from rzhang1-mobl.sh.intel.com ([10.239.158.59])
+  by orviesa007.jf.intel.com with ESMTP; 02 Dec 2024 23:58:03 -0800
+From: Zhang Rui <rui.zhang@intel.com>
+To: rafael.j.wysocki@intel.com
+Cc: linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	srinivas.pandruvada@intel.com
+Subject: [PATCH 3/3] ACPI: DPTF: Support Panther Lake
+Date: Tue,  3 Dec 2024 15:58:02 +0800
+Message-ID: <20241203075802.584741-4-rui.zhang@intel.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20241203075802.584741-1-rui.zhang@intel.com>
+References: <20241203075802.584741-1-rui.zhang@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241203-asahi-spi-dt-v2-5-cd68bfaf0c84@jannau.net>
-References: <20241203-asahi-spi-dt-v2-0-cd68bfaf0c84@jannau.net>
-In-Reply-To: <20241203-asahi-spi-dt-v2-0-cd68bfaf0c84@jannau.net>
-To: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>, 
- Alyssa Rosenzweig <alyssa@rosenzweig.io>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Janne Grunau <j@jannau.net>, Neal Gompa <neal@gompa.dev>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3548; i=j@jannau.net;
- s=yk2024; h=from:subject:message-id;
- bh=goZjmxtaAm4HRqmqPpfUIxijslYo2LoyehKKAI0aD84=;
- b=owGbwMvMwCW2UNrmdq9+ahrjabUkhnS/XVznGWaGH3g0JaF9w6nXjSLmM+ZllfyqPXDlqfZNn
- ceJn2qsOkpZGMS4GGTFFFmStF92MKyuUYypfRAGM4eVCWQIAxenAEzEdifDX4mlF05ka9zblx+d
- 8c+lIVXj46YnRyQ3/WyrM+oy7Cq5epOR4XeZ4Dk53f9K3+9cDnWv+f9UfOFCO1leltAZaz6bnZ1
- ylRcA
-X-Developer-Key: i=j@jannau.net; a=openpgp;
- fpr=8B336A6BE4E5695E89B8532B81E806F586338419
-X-Endpoint-Received: by B4 Relay for j@jannau.net/yk2024 with auth_id=264
-X-Original-From: Janne Grunau <j@jannau.net>
-Reply-To: j@jannau.net
+Content-Transfer-Encoding: 8bit
 
-From: Janne Grunau <j@jannau.net>
+Add Panther Lake ACPI IDs for DPTF devices.
 
-All known M1* and M2* devices use an identical SPI NOR flash
-configuration with a partition containing a non-volatile key:value
-storage. Use a .dtsi and include it for every device.
-The nvram partition parameters itself depend on the version of the
-installed Apple iboot boot loader. m1n1 will fill in the current values
-provided by Apple's iboot.
-
-Reviewed-by: Neal Gompa <neal@gompa.dev>
-Signed-off-by: Janne Grunau <j@jannau.net>
+Signed-off-by: Zhang Rui <rui.zhang@intel.com>
 ---
- arch/arm64/boot/dts/apple/spi1-nvram.dtsi      | 39 ++++++++++++++++++++++++++
- arch/arm64/boot/dts/apple/t600x-j314-j316.dtsi |  2 ++
- arch/arm64/boot/dts/apple/t600x-j375.dtsi      |  2 ++
- arch/arm64/boot/dts/apple/t8103-jxxx.dtsi      |  2 ++
- arch/arm64/boot/dts/apple/t8112-jxxx.dtsi      |  2 ++
- 5 files changed, 47 insertions(+)
+ drivers/acpi/dptf/dptf_pch_fivr.c                       | 1 +
+ drivers/acpi/dptf/dptf_power.c                          | 2 ++
+ drivers/acpi/dptf/int340x_thermal.c                     | 6 ++++++
+ drivers/acpi/fan.h                                      | 1 +
+ drivers/thermal/intel/int340x_thermal/int3400_thermal.c | 1 +
+ drivers/thermal/intel/int340x_thermal/int3403_thermal.c | 1 +
+ 6 files changed, 12 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/apple/spi1-nvram.dtsi b/arch/arm64/boot/dts/apple/spi1-nvram.dtsi
-new file mode 100644
-index 0000000000000000000000000000000000000000..3df2fd3993b52884d7c00b65099c88d830a7a4c3
---- /dev/null
-+++ b/arch/arm64/boot/dts/apple/spi1-nvram.dtsi
-@@ -0,0 +1,39 @@
-+// SPDX-License-Identifier: GPL-2.0+ OR MIT
-+//
-+// Devicetree include for common spi-nor nvram flash.
-+//
-+// Apple uses a consistent configiguration for the nvram on all known M1* and
-+// M2* devices.
-+//
-+// Copyright The Asahi Linux Contributors
-+
-+/ {
-+	aliases {
-+		nvram = &nvram;
-+	};
-+};
-+
-+&spi1 {
-+	status = "okay";
-+
-+	flash@0 {
-+		compatible = "jedec,spi-nor";
-+		reg = <0x0>;
-+		spi-max-frequency = <25000000>;
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+
-+		partitions {
-+			compatible = "fixed-partitions";
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+
-+			nvram: partition@700000 {
-+				label = "nvram";
-+				/* To be filled by the loader */
-+				reg = <0x0 0x0>;
-+				status = "disabled";
-+			};
-+		};
-+	};
-+};
-diff --git a/arch/arm64/boot/dts/apple/t600x-j314-j316.dtsi b/arch/arm64/boot/dts/apple/t600x-j314-j316.dtsi
-index 2e471dfe43cf885c1234d36bf0e0acfdc4904621..22ebc78e120bf8f0f71fd532e9dce4dcd117bbc6 100644
---- a/arch/arm64/boot/dts/apple/t600x-j314-j316.dtsi
-+++ b/arch/arm64/boot/dts/apple/t600x-j314-j316.dtsi
-@@ -119,3 +119,5 @@ sdhci0: mmc@0,0 {
- &fpwm0 {
- 	status = "okay";
+diff --git a/drivers/acpi/dptf/dptf_pch_fivr.c b/drivers/acpi/dptf/dptf_pch_fivr.c
+index 624fce67ce43..952216c67d58 100644
+--- a/drivers/acpi/dptf/dptf_pch_fivr.c
++++ b/drivers/acpi/dptf/dptf_pch_fivr.c
+@@ -152,6 +152,7 @@ static const struct acpi_device_id pch_fivr_device_ids[] = {
+ 	{"INTC1064", 0},
+ 	{"INTC106B", 0},
+ 	{"INTC10A3", 0},
++	{"INTC10D7", 0},
+ 	{"", 0},
  };
-+
-+#include "spi1-nvram.dtsi"
-diff --git a/arch/arm64/boot/dts/apple/t600x-j375.dtsi b/arch/arm64/boot/dts/apple/t600x-j375.dtsi
-index 1e5a19e49b089d4b3c5e12828b682d1993e35e75..d5b985ad567936111ee5cccc9ca9fc23d01d9edf 100644
---- a/arch/arm64/boot/dts/apple/t600x-j375.dtsi
-+++ b/arch/arm64/boot/dts/apple/t600x-j375.dtsi
-@@ -126,3 +126,5 @@ &pcie0_dart_2 {
- &pcie0_dart_3 {
- 	status = "okay";
+ MODULE_DEVICE_TABLE(acpi, pch_fivr_device_ids);
+diff --git a/drivers/acpi/dptf/dptf_power.c b/drivers/acpi/dptf/dptf_power.c
+index 3d3edd81b172..e8caf4106ff9 100644
+--- a/drivers/acpi/dptf/dptf_power.c
++++ b/drivers/acpi/dptf/dptf_power.c
+@@ -236,6 +236,8 @@ static const struct acpi_device_id int3407_device_ids[] = {
+ 	{"INTC106D", 0},
+ 	{"INTC10A4", 0},
+ 	{"INTC10A5", 0},
++	{"INTC10D8", 0},
++	{"INTC10D9", 0},
+ 	{"", 0},
  };
-+
-+#include "spi1-nvram.dtsi"
-diff --git a/arch/arm64/boot/dts/apple/t8103-jxxx.dtsi b/arch/arm64/boot/dts/apple/t8103-jxxx.dtsi
-index 5988a4eb6efaa008c290b1842e0da2aae8052ba4..8e82231acab59ca0bffdcecfb6681f59661fcd96 100644
---- a/arch/arm64/boot/dts/apple/t8103-jxxx.dtsi
-+++ b/arch/arm64/boot/dts/apple/t8103-jxxx.dtsi
-@@ -90,3 +90,5 @@ bluetooth0: bluetooth@0,1 {
- &nco_clkref {
- 	clock-frequency = <900000000>;
+ MODULE_DEVICE_TABLE(acpi, int3407_device_ids);
+diff --git a/drivers/acpi/dptf/int340x_thermal.c b/drivers/acpi/dptf/int340x_thermal.c
+index 014ada759954..aef7aca2161d 100644
+--- a/drivers/acpi/dptf/int340x_thermal.c
++++ b/drivers/acpi/dptf/int340x_thermal.c
+@@ -55,6 +55,12 @@ static const struct acpi_device_id int340x_thermal_device_ids[] = {
+ 	{"INTC10A3"},
+ 	{"INTC10A4"},
+ 	{"INTC10A5"},
++	{"INTC10D4"},
++	{"INTC10D5"},
++	{"INTC10D6"},
++	{"INTC10D7"},
++	{"INTC10D8"},
++	{"INTC10D9"},
+ 	{""},
  };
-+
-+#include "spi1-nvram.dtsi"
-diff --git a/arch/arm64/boot/dts/apple/t8112-jxxx.dtsi b/arch/arm64/boot/dts/apple/t8112-jxxx.dtsi
-index f5edf61113e7aa869613d672b281f7b7e84efb79..6da35496a4c88dbaba125ebbe8c5a4a428c647c3 100644
---- a/arch/arm64/boot/dts/apple/t8112-jxxx.dtsi
-+++ b/arch/arm64/boot/dts/apple/t8112-jxxx.dtsi
-@@ -79,3 +79,5 @@ &i2c3 {
- &nco_clkref {
- 	clock-frequency = <900000000>;
+ 
+diff --git a/drivers/acpi/fan.h b/drivers/acpi/fan.h
+index db25a3898af7..488b51e2cb31 100644
+--- a/drivers/acpi/fan.h
++++ b/drivers/acpi/fan.h
+@@ -19,6 +19,7 @@
+ 	{"INTC1063", }, /* Fan for Meteor Lake generation */ \
+ 	{"INTC106A", }, /* Fan for Lunar Lake generation */ \
+ 	{"INTC10A2", }, /* Fan for Raptor Lake generation */ \
++	{"INTC10D6", }, /* Fan for Panther Lake generation */ \
+ 	{"PNP0C0B", } /* Generic ACPI fan */
+ 
+ #define ACPI_FPS_NAME_LEN	20
+diff --git a/drivers/thermal/intel/int340x_thermal/int3400_thermal.c b/drivers/thermal/intel/int340x_thermal/int3400_thermal.c
+index 8660ef2175be..5805e08d71be 100644
+--- a/drivers/thermal/intel/int340x_thermal/int3400_thermal.c
++++ b/drivers/thermal/intel/int340x_thermal/int3400_thermal.c
+@@ -690,6 +690,7 @@ static const struct acpi_device_id int3400_thermal_match[] = {
+ 	{"INTC1042", 0},
+ 	{"INTC1068", 0},
+ 	{"INTC10A0", 0},
++	{"INTC10D4", 0},
+ 	{}
  };
-+
-+#include "spi1-nvram.dtsi"
-
+ 
+diff --git a/drivers/thermal/intel/int340x_thermal/int3403_thermal.c b/drivers/thermal/intel/int340x_thermal/int3403_thermal.c
+index 04aa0afb3b1d..5a925a8df7b3 100644
+--- a/drivers/thermal/intel/int340x_thermal/int3403_thermal.c
++++ b/drivers/thermal/intel/int340x_thermal/int3403_thermal.c
+@@ -275,6 +275,7 @@ static const struct acpi_device_id int3403_device_ids[] = {
+ 	{"INTC1062", 0},
+ 	{"INTC1069", 0},
+ 	{"INTC10A1", 0},
++	{"INTC10D5", 0},
+ 	{"", 0},
+ };
+ MODULE_DEVICE_TABLE(acpi, int3403_device_ids);
 -- 
-2.47.0
-
+2.43.0
 
 
