@@ -1,244 +1,144 @@
-Return-Path: <linux-kernel+bounces-430162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430164-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DC599E2D39
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 21:36:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5273B9E2D3E
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 21:36:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8EC02163F48
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 20:36:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 932F71660BA
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 20:36:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC767205AA9;
-	Tue,  3 Dec 2024 20:36:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 063151F76AB;
+	Tue,  3 Dec 2024 20:36:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="gTLWXnnR"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="0crTEutL"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3BD21DB34E;
-	Tue,  3 Dec 2024 20:36:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B867C1A01B9
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 20:36:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733258174; cv=none; b=WJEICjFaSumciJuHLNysgZPDScIS9afielHPTvbaBZOXhC1LsB2mCVVR3mltBA1X9zPBQnS3w327dgrfgeoULBQYfdk8AHLQJQWv18KF55ehTwHITISY89mbvzvvFQb2onLSEkGAZ8/a87za5CXb4ZVPQdGznDI1k84aJLbtOb4=
+	t=1733258196; cv=none; b=RhFSWmm3FJB8ox6O/iDFmmWyS3zRF0QN2ZUmtrGXQrAS9mM/nnIDkWnmV14nkgR+tU9lXa91KZejZ4RCkS9ZQLV1xy/ZnjA7M/E949IXECJHq1I4Nj1DEOfNxt1ffYsJYwblIVNem3QrVsAxQNqfZM0E0GMVYpV2MBei3yub44E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733258174; c=relaxed/simple;
-	bh=4Waxk1OrNO6GTFs5DQaMfzgQ3SOLEn10SlKSkxh4Wqw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A1ouv4HwwpJiNwBBtTMd1dxxxwIj/DgSQWnAJkxIoqIaxteAGiktmQDEk5IwNT7uat2411Tla86cs0q7x1/4zHxhbU7U+Ojhb28TCQrMx6T15ZqlFfKZE+J1PhpyPdv1qVWr9tlVBE8WXmZgryi41Rwv50KAWEOZVaxrV2nLYPQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=gTLWXnnR; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 64865670;
-	Tue,  3 Dec 2024 21:35:41 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1733258141;
-	bh=4Waxk1OrNO6GTFs5DQaMfzgQ3SOLEn10SlKSkxh4Wqw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gTLWXnnRHlD/aULJBcJfMgCX1Aiwui4OhNloCG5ZGnfFARmqFxHR5mzxT6hbVfzpH
-	 EYHQ7g3jUTm3SBXv6E2+ToDBIuzzix6Tgx8XzJ+PfyrXFc0rmGvwc+6PR5VdxyWliP
-	 Ybne+jhjC04jfD25h2XPbWrp4bBXafcWw6U5wv40=
-Date: Tue, 3 Dec 2024 22:35:57 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Ricardo Ribalda <ribalda@chromium.org>
-Cc: Hans de Goede <hdegoede@redhat.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Guennadi Liakhovetski <guennadi.liakhovetski@intel.com>,
-	Hans Verkuil <hverkuil@xs4all.nl>,
-	Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v5 2/5] media: uvcvideo: Remove dangling pointers
-Message-ID: <20241203203557.GC5196@pendragon.ideasonboard.com>
-References: <20241202-uvc-fix-async-v5-0-6658c1fe312b@chromium.org>
- <20241202-uvc-fix-async-v5-2-6658c1fe312b@chromium.org>
+	s=arc-20240116; t=1733258196; c=relaxed/simple;
+	bh=QXiY9wlQDTfv2r6SXwdbtfGBrrPbZQtGf2mESKg2h3s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ELXVjJAbwhROTd5r5jpmArfCfk0KJyOBroAQXXHUbVyiTMZj65PXIKRQcKKk81NsLY/yyfyrGk0w2k68nONxCF5DANH7zyjVN0VUCp2AFUQIsSZBG2RdQmWMas/3FJLq66hA7oFfWfw5p8RF3/aSn6+329AtdZbqYLW70v9Dz78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=0crTEutL; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-53ddd4705f8so172581e87.0
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 12:36:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1733258193; x=1733862993; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Pa9RpnKEiAEb345qyNd4ttye0dPD2P0U26CPhxLTwvc=;
+        b=0crTEutLtBqBaWRpl024fndkbwQ+2RODNRscfXx35dXw+oXj/qbjTHjHTNxJNoS4ZO
+         W75kdQM1AHdzASfA709BVQpcXxtuTTIHELWxd0nYsIwUEyIggk/yUEPolRN3+hveL/Jv
+         IGQApW2Z/ES7UORtEWE979mZiFLTDeuIapCe1zma1xhcAWfDZKS+fUGzgbtuwiDgWSdG
+         NKAiT9IEPMY1kyL07N8EJDo4+Z5sgwjmRKE9L8MR/1AaJvneegG6M5lNskNrZGoljF4i
+         qqCnJeqcC3tBYvwdNCHChXVi96DSp26IGVHUavsB0iLywEQdC+oajjsavlG7mtqOopPV
+         N/gQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733258193; x=1733862993;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Pa9RpnKEiAEb345qyNd4ttye0dPD2P0U26CPhxLTwvc=;
+        b=rdTe4CM+yUxClD7cUQxaZF52+ocbHDzHI6TUh96UHsOdpRcldQzU3cAOlXaT0jmaPG
+         u/mrdyrE0RWpnrV3tTsociYaBWjTZ0rNs8x2GGeZ/HIcq0Th6DwW7IXKG0pB7BsZSFMn
+         /m60XCM4lQo8fD8uzD7gumdAJYZcTbu8uCfWElYOLn/hukGtYHo1ECV3tOiLneYW6+XC
+         ELsNJU1xVZBLURKe7WiiSyN9orXqT5DXbJTv4fIHgtNxiWyqzq/SaGINkJoOGHjChYOf
+         /TfZ/+w8zoaoTQunvuSlm8jwLL5YZNxx2Zstm0qCmZOK+AM7Ux9MeDXHx9UqcBsK1bto
+         c8PQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXjBYgNxYY7rDXHcEowa6U64bd7doUutJjtdSroCt/jLqNe0MHykfg+KjPch2YLow/NdubnWEnnWdPxuWM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwMh9p7+PtSB06wzjC+Eu6j77rMGuvhrFxP7ATyVFD5fS8Hjdbi
+	AmdI9TQi8uMx+7/Vx8dsUR9TUbamuGfXKyVkqU3ZWFq+cHjVC/z0qCAQKlbdP+BhlKYOihkiBqP
+	2D9/gierpjvbq97PvUYIchnKhLynhDtY49jX0fA==
+X-Gm-Gg: ASbGncsI7DEHpKkAixRtSz7zOFl7bcZgdpeL3wjxZfbolaP7zN9jxLyn+Sy49FOpOHF
+	Tpcb51NlMFCTLpJ5OenVF0BNe5Nw5ON8=
+X-Google-Smtp-Source: AGHT+IF6YBoTwuBdgOpOWSXBiCbuv39rcLfGYwu6MbkSKePQciRdJZe7vgR4xcYOBqeUDoPaXH34OpbnkcC3pC4LtKo=
+X-Received: by 2002:a05:6512:e8a:b0:53d:f3af:748d with SMTP id
+ 2adb3069b0e04-53e12da8bffmr1452545e87.4.1733258192614; Tue, 03 Dec 2024
+ 12:36:32 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241202-uvc-fix-async-v5-2-6658c1fe312b@chromium.org>
+References: <20241203164143.29852-1-brgl@bgdev.pl> <213de4bc-3706-4bb0-a827-06c63bfe0294@ti.com>
+In-Reply-To: <213de4bc-3706-4bb0-a827-06c63bfe0294@ti.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Tue, 3 Dec 2024 21:36:20 +0100
+Message-ID: <CAMRc=Md_u3YmseW5kV5VH4F99_0P=tc4pWty_fB3dVfv_JDxWQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] gpio: omap: allow building the module with COMPILE_TEST=y
+To: Andrew Davis <afd@ti.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Grygorii Strashko <grygorii.strashko@ti.com>, 
+	Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@kernel.org>, 
+	Alexander Sverdlin <alexander.sverdlin@siemens.com>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Ricardo,
+On Tue, Dec 3, 2024 at 7:41=E2=80=AFPM Andrew Davis <afd@ti.com> wrote:
+>
+> On 12/3/24 10:41 AM, Bartosz Golaszewski wrote:
+> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> >
+> > For better build coverage, allow building the gpio-omap driver with
+> > COMPILE_TEST Kconfig option enabled.
+> >
+> > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> > ---
+> >   drivers/gpio/Kconfig | 2 +-
+> >   1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+> > index 56fee58e281e7..fb923ccd79028 100644
+> > --- a/drivers/gpio/Kconfig
+> > +++ b/drivers/gpio/Kconfig
+> > @@ -530,7 +530,7 @@ config GPIO_OCTEON
+> >   config GPIO_OMAP
+> >       tristate "TI OMAP GPIO support" if ARCH_OMAP2PLUS || COMPILE_TEST
+> >       default y if ARCH_OMAP
+> > -     depends on ARM
+> > +     depends on ARM || COMPILE_TEST
+>
+> Why do we have this depends on ARM at all? It already has that condition
+> above on ARCH_OMAP2PLUS which limits to ARM outside of compile testing.
+>
+> And anything that selects ARCH_OMAP2PLUS also selects ARCH_OMAP, so we
+> could just do this:
+>
 
-Thank you for the patch.
+I agree we can drop that bit.
 
-On Mon, Dec 02, 2024 at 02:24:36PM +0000, Ricardo Ribalda wrote:
-> When an async control is written, we copy a pointer to the file handle
-> that started the operation. That pointer will be used when the device is
-> done. Which could be anytime in the future.
-> 
-> If the user closes that file descriptor, its structure will be freed,
-> and there will be one dangling pointer per pending async control, that
-> the driver will try to use.
-> 
-> Clean all the dangling pointers during release().
-> 
-> To avoid adding a performance penalty in the most common case (no async
-> operation), a counter has been introduced with some logic to make sure
-> that it is properly handled.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: e5225c820c05 ("media: uvcvideo: Send a control event when a Control Change interrupt arrives")
-> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-> ---
->  drivers/media/usb/uvc/uvc_ctrl.c | 52 ++++++++++++++++++++++++++++++++++++++--
->  drivers/media/usb/uvc/uvc_v4l2.c |  2 ++
->  drivers/media/usb/uvc/uvcvideo.h |  9 ++++++-
->  3 files changed, 60 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
-> index 9a80a7d8e73a..af1e38f5c6e9 100644
-> --- a/drivers/media/usb/uvc/uvc_ctrl.c
-> +++ b/drivers/media/usb/uvc/uvc_ctrl.c
-> @@ -1579,6 +1579,37 @@ static void uvc_ctrl_send_slave_event(struct uvc_video_chain *chain,
->  	uvc_ctrl_send_event(chain, handle, ctrl, mapping, val, changes);
->  }
->  
-> +static void uvc_ctrl_get_handle(struct uvc_fh *handle, struct uvc_control *ctrl)
-> +{
-> +	lockdep_assert_held(&handle->chain->ctrl_mutex);
-> +
-> +	if (ctrl->handle)
-> +		dev_warn_ratelimited(&handle->stream->dev->udev->dev,
-> +				     "UVC non compliance: Setting an async control with a pending operation.");
-> +
-> +	if (handle == ctrl->handle)
-> +		return;
-> +
-> +	if (ctrl->handle)
-> +		ctrl->handle->pending_async_ctrls--;
-> +
-> +	ctrl->handle = handle;
-> +	handle->pending_async_ctrls++;
-> +}
-> +
-> +static void uvc_ctrl_put_handle(struct uvc_fh *handle, struct uvc_control *ctrl)
-> +{
-> +	lockdep_assert_held(&handle->chain->ctrl_mutex);
-> +
-> +	if (ctrl->handle != handle) /* Nothing to do here.*/
-> +		return;
-> +
-> +	ctrl->handle = NULL;
-> +	if (WARN_ON(!handle->pending_async_ctrls))
-> +		return;
-> +	handle->pending_async_ctrls--;
-> +}
+> --- a/drivers/gpio/Kconfig
+> +++ b/drivers/gpio/Kconfig
+> @@ -528,9 +528,9 @@ config GPIO_OCTEON
+>            family of SOCs.
+>
+>   config GPIO_OMAP
+> -       tristate "TI OMAP GPIO support" if ARCH_OMAP2PLUS || COMPILE_TEST
+> -       default y if ARCH_OMAP
+> -       depends on ARM
+> +       tristate "TI OMAP GPIO support"
+> +       default y
+> +       depends on ARCH_OMAP2PLUS || COMPILE_TEST
 
-get/put have strong connotations in the kernel, related to acquiring a
-reference to a given object, and releasing it. The usage here is
-different, and I think it makes the usage below confusing. I prefer the
-original single function.
+This would default to y with COMPILE_TEST. We definitely don't want
+that. IMO it should be:
 
-> +
->  void uvc_ctrl_status_event(struct uvc_video_chain *chain,
->  			   struct uvc_control *ctrl, const u8 *data)
->  {
-> @@ -1589,7 +1620,8 @@ void uvc_ctrl_status_event(struct uvc_video_chain *chain,
->  	mutex_lock(&chain->ctrl_mutex);
->  
->  	handle = ctrl->handle;
-> -	ctrl->handle = NULL;
-> +	if (handle)
-> +		uvc_ctrl_put_handle(handle, ctrl);
->  
->  	list_for_each_entry(mapping, &ctrl->info.mappings, list) {
->  		s32 value = __uvc_ctrl_get_value(mapping, data);
-> @@ -1865,7 +1897,7 @@ static int uvc_ctrl_commit_entity(struct uvc_device *dev,
->  
->  		if (!rollback && handle &&
->  		    ctrl->info.flags & UVC_CTRL_FLAG_ASYNCHRONOUS)
-> -			ctrl->handle = handle;
-> +			uvc_ctrl_get_handle(handle, ctrl);
->  	}
->  
->  	return 0;
-> @@ -2774,6 +2806,22 @@ int uvc_ctrl_init_device(struct uvc_device *dev)
->  	return 0;
->  }
->  
-> +void uvc_ctrl_cleanup_fh(struct uvc_fh *handle)
-> +{
-> +	struct uvc_entity *entity;
-> +
-> +	guard(mutex)(&handle->chain->ctrl_mutex);
-> +
-> +	if (!handle->pending_async_ctrls)
-> +		return;
-> +
-> +	list_for_each_entry(entity, &handle->chain->dev->entities, list)
+tristate "TI OMAP GPIO support"
+depends on ARCH_OMAP2PLUS || COMPILE_TEST
+default y if ARCH_OMAP2PLUS
 
-	list_for_each_entry(entity, &handle->chain->dev->entities, list) {
-
-> +		for (unsigned int i = 0; i < entity->ncontrols; ++i)
-> +			uvc_ctrl_put_handle(handle, &entity->controls[i]);
-
-	}
-
-> +
-> +	WARN_ON(handle->pending_async_ctrls);
-> +}
-> +
->  /*
->   * Cleanup device controls.
->   */
-> diff --git a/drivers/media/usb/uvc/uvc_v4l2.c b/drivers/media/usb/uvc/uvc_v4l2.c
-> index 97c5407f6603..b425306a3b8c 100644
-> --- a/drivers/media/usb/uvc/uvc_v4l2.c
-> +++ b/drivers/media/usb/uvc/uvc_v4l2.c
-> @@ -652,6 +652,8 @@ static int uvc_v4l2_release(struct file *file)
->  
->  	uvc_dbg(stream->dev, CALLS, "%s\n", __func__);
->  
-> +	uvc_ctrl_cleanup_fh(handle);
-> +
->  	/* Only free resources if this is a privileged handle. */
->  	if (uvc_has_privileges(handle))
->  		uvc_queue_release(&stream->queue);
-> diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
-> index 07f9921d83f2..92ecdd188587 100644
-> --- a/drivers/media/usb/uvc/uvcvideo.h
-> +++ b/drivers/media/usb/uvc/uvcvideo.h
-> @@ -337,7 +337,11 @@ struct uvc_video_chain {
->  	struct uvc_entity *processing;		/* Processing unit */
->  	struct uvc_entity *selector;		/* Selector unit */
->  
-> -	struct mutex ctrl_mutex;		/* Protects ctrl.info */
-> +	struct mutex ctrl_mutex;		/*
-> +						 * Protects ctrl.info,
-> +						 * ctrl.handle and
-> +						 * uvc_fh.pending_async_ctrls
-> +						 */
->  
->  	struct v4l2_prio_state prio;		/* V4L2 priority state */
->  	u32 caps;				/* V4L2 chain-wide caps */
-> @@ -612,6 +616,7 @@ struct uvc_fh {
->  	struct uvc_video_chain *chain;
->  	struct uvc_streaming *stream;
->  	enum uvc_handle_state state;
-> +	unsigned int pending_async_ctrls;
->  };
->  
->  struct uvc_driver {
-> @@ -797,6 +802,8 @@ int uvc_ctrl_is_accessible(struct uvc_video_chain *chain, u32 v4l2_id,
->  int uvc_xu_ctrl_query(struct uvc_video_chain *chain,
->  		      struct uvc_xu_control_query *xqry);
->  
-> +void uvc_ctrl_cleanup_fh(struct uvc_fh *handle);
-> +
->  /* Utility functions */
->  struct usb_host_endpoint *uvc_find_endpoint(struct usb_host_interface *alts,
->  					    u8 epaddr);
-> 
-
--- 
-Regards,
-
-Laurent Pinchart
+Bartosz
 
