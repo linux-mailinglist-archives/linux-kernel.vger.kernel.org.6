@@ -1,119 +1,94 @@
-Return-Path: <linux-kernel+bounces-429105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429114-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1454C9E176E
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:28:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 79DC19E1792
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:30:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D49411657A6
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:28:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D94716570F
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:30:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3982E1E008C;
-	Tue,  3 Dec 2024 09:27:32 +0000 (UTC)
-Received: from vmicros1.altlinux.org (vmicros1.altlinux.org [194.107.17.57])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB2641DF72C
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 09:27:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.107.17.57
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B295A1DFE0D;
+	Tue,  3 Dec 2024 09:28:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HUOiOw+F"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17294192583;
+	Tue,  3 Dec 2024 09:28:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733218051; cv=none; b=O7AgFU8kkNWU8pp+uOnvvELoYc8s/gTGRjagpvuTvC1ciS1EQAa6OW7ZwSQyqWX0smtBCuweIlnv/A/cRD+HdDZwEIWp2ddhza1TBSkd130X3w1cyviSmPBLm11y45uXNQGIJ1BhOK+EXZogzUQf/j66bhqb9sgVPYgI5p/+u6o=
+	t=1733218130; cv=none; b=U7b+xH/e8BhgY/rdTxcDdmPbF1UTtNo7k3zsn3yybG6bJp9MPN18ERSVFnpBWE0uaLMz1ggHUyhsUw/gpPEA1ANM0ofmPtWkKz7ctV70UrO9MPVeq+ygXEbpuU+81LGrL5O2TSzdtse8iwJ2jkLGzk7GR3Onsg5E1f5pQmRsRRY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733218051; c=relaxed/simple;
-	bh=UsfaS/q85LloFao5nUmEwKFTJE8VC8TF6aylBYu1uLI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y36+Kw6PFqHGsOt9Es0ae2YqaQAb6CBvTGnrgpRw17f10UhktZ8AMER7Ppf7CkFWneAqCeNzXeR92uCh3uvG924gjKjJRr4si2Fj40C22KzwRtAuTgllGWzPfGmjk4D6lRW/cBLuIvJ1Q6L6nL/hAVAVcBzvU5zNm2TIEL3g5iI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org; spf=pass smtp.mailfrom=altlinux.org; arc=none smtp.client-ip=194.107.17.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altlinux.org
-Received: from imap.altlinux.org (imap.altlinux.org [194.107.17.38])
-	by vmicros1.altlinux.org (Postfix) with ESMTP id B607072C90D;
-	Tue,  3 Dec 2024 12:27:21 +0300 (MSK)
-Received: from altlinux.org (sole.flsd.net [185.75.180.6])
-	by imap.altlinux.org (Postfix) with ESMTPSA id A808736D0178;
-	Tue,  3 Dec 2024 12:27:21 +0300 (MSK)
-Date: Tue, 3 Dec 2024 12:27:21 +0300
-From: Vitaly Chikunov <vt@altlinux.org>
-To: Marc Zyngier <maz@kernel.org>
-Cc: Will Deacon <will@kernel.org>, james.morse@arm.com,
-	linux-arm-kernel@lists.infradead.org,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	linux-kernel@vger.kernel.org, oliver.upton@linux.dev,
-	mark.rutland@arm.com
-Subject: Re: v6.13-rc1: Internal error: Oops - Undefined instruction:
- 0000000002000000 [#1] SMP
-Message-ID: <20241203092721.j473dthkbq6wzez7@altlinux.org>
-References: <20241202045830.e4yy3nkvxtzaybxk@altlinux.org>
- <20241202153618.GA6834@willie-the-truck>
- <86ttbmt71k.wl-maz@kernel.org>
- <20241202155940.p267a3tz5ypj4sog@altlinux.org>
- <86ser6t6fs.wl-maz@kernel.org>
- <20241202223119.k3uod4ksnlf7gqh2@altlinux.org>
+	s=arc-20240116; t=1733218130; c=relaxed/simple;
+	bh=hSUTZ+7c2lAqNzwNB66gSvhu3iCfehKaHKcTiRiETzU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=V9VjJOxVfljyj3GD10xCEEj/1rV2YqvxHkSQ66857j09G3FGyXFq4QSvfInNHJM9Y99qBPqPi6oi+Xq0Xh907/Ah0CUhL3zYSskUydCAfhyS3UpZilpPVlz2Fr8POt67aQk3HoSRrSgsjma9ZlZVDmGwKrUYqsJ71F0cH3lncOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HUOiOw+F; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13C73C4CED6;
+	Tue,  3 Dec 2024 09:28:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733218129;
+	bh=hSUTZ+7c2lAqNzwNB66gSvhu3iCfehKaHKcTiRiETzU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=HUOiOw+FRrSqH2cWn+B4dS2L9ciiGipo1T86uNLmYArskZUCCZ1yUGs9xtRxOD2my
+	 4nhl/xNKbV6mAQi4qWOE+DUUv+sPgL3OXP/MRwcAVmVxz7M0pD//JGCR/wmCjp4tml
+	 XPVBfvSIxObsgbwamW7Shy9ErAJ7LmMGDdspklAQfTypUIPDSpTedrtm1GFN8au6+D
+	 0wOI+myWFcKwcdGOHeDT/QcYnl7C0GspUzjj+/lsB6uS0LVKo5yhl1W94Ceb3foS3D
+	 X3RLSqIvIboZJXGX1gKQWQ+E0Ev80BGJ/rPEwPhRCXhYtVIa2bU1WMNAHqfVJ7GqC4
+	 cqzn9S0MpzNpQ==
+Date: Tue, 3 Dec 2024 10:28:46 +0100
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Sakari Ailus <sakari.ailus@iki.fi>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 3/3] docs: media: profile: make it clearer about
+ maintainership duties
+Message-ID: <20241203102846.6fb3ab52@foz.lan>
+In-Reply-To: <Z03I1R0aRylSz742@valkosipuli.retiisi.eu>
+References: <cover.1733131405.git.mchehab+huawei@kernel.org>
+	<f47082a84e0c799dd047525d4bc351eb3a759e83.1733131405.git.mchehab+huawei@kernel.org>
+	<Z03I1R0aRylSz742@valkosipuli.retiisi.eu>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=koi8-r
-Content-Disposition: inline
-In-Reply-To: <20241202223119.k3uod4ksnlf7gqh2@altlinux.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Marc,
+Em Mon, 2 Dec 2024 14:48:53 +0000
+Sakari Ailus <sakari.ailus@iki.fi> escreveu:
 
-On Tue, Dec 03, 2024 at 01:31:19AM +0300, Vitaly Chikunov wrote:
-> On Mon, Dec 02, 2024 at 04:07:03PM +0000, Marc Zyngier wrote:
-> > On Mon, 02 Dec 2024 15:59:40 +0000,
-> > Vitaly Chikunov <vt@altlinux.org> wrote:
-> > > 
-> > > Marc,
-> > > 
-> > > On Mon, Dec 02, 2024 at 03:53:59PM +0000, Marc Zyngier wrote:
-> > > >
-> > > > What the log doesn't say is what the host is. Is it 6.13-rc1 as well?
-> > > 
-> > > No, host is 6.6.60.
-> > 
-> > Right. I wouldn't be surprised if:
-> > 
-> > - this v6.6 kernel doesn't hide the MPAM feature as it should (and
-> >   that's proably something we should backport)
+> Hi Mauro,
 > 
-> How to confirm this? Currently I cannot find any (case-insensitive)
-> "MPAM" files in /sys, nor mpam string in /proc/cpuinfo, nor MPAM strings
-> in `strace -v` (as it decodes some KVM ioctls) of qemu process.
+> On Mon, Dec 02, 2024 at 10:26:21AM +0100, Mauro Carvalho Chehab wrote:
+> > During the review of the media committes profile, it was noticed  
 > 
-> > 
-> > - you get a nastygram in the host log telling you that the guest has
-> >   executed something it shouldn't (you'll get the encoding of the
-> >   instruction)
-> 
-> I requested admins of the box for dmesg output since I don't have root
-> access myself and nowadays dmesg is not accessible for a user.
+> s/committe\K/r/
 
-This is what they reported:
+Addressed this and the other editorial changes.
 
-  kvm [2502822]: Unsupported guest sys_reg access at: ffff80008003e9f0 [000000c5]
-                   { Op0( 3), Op1( 0), CRn(10), CRm( 4), Op2( 4), func_read },
+> Can we expect people listed as maintainers to either send PRs or be media
+> committers? I think this might be eventually the result but I think we're
+> quite far from this currently and I expect things to remain that way in the
+> near future.
+
+Yes, having driver maintainers being committers and sending PRs is what we
+expect to happen first.
+
+For mid/long-term, once driver maintainers get in board, we may also have
+other committers for the drivers whose maintainer is also a committer.
+
+Now, having committers for drivers whose maintainer is not a committer
+doesn't sound a good idea, except if such committer is doing just
+janitorial work and gets A-B/R-B from the driver maintainer on all
+patches he merges.
 
 Thanks,
-
-> 
-> > 
-> > Can you confirm these two things?
-> 
-> Also, I tried to reproduce on another Kunpeng box with slightly
-> different HiSilicon CPU (presenting to the system as Cortex-A72) and the
-> problem is not reproducible there.
-> 
-> While things are not resolved, is it possible to workaround the problem
-> with some QEMU option, kernel command line, config option, or a patch?
-> 
-> Thanks,
-> 
-> > 
-> > 	M.
-> > 
-> > -- 
-> > Without deviation from the norm, progress is not possible.
+Mauro
 
