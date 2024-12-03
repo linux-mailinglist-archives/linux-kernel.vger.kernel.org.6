@@ -1,169 +1,144 @@
-Return-Path: <linux-kernel+bounces-429749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429750-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 963CE9E22CE
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:29:13 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBF139E233E
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:34:07 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 395F516AA82
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 15:29:37 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00AE81F76AE;
+	Tue,  3 Dec 2024 15:29:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BanYC0op"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5BC022867CB
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 15:29:12 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 228E41F76B9;
-	Tue,  3 Dec 2024 15:28:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="XAEk2pKN";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="hL0q6hs9";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="XAEk2pKN";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="hL0q6hs9"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BB2C1F76AD
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 15:28:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C962C1F7557
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 15:29:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733239725; cv=none; b=XLNPko1Cdg6do69kB/RJmMsDM9ejm171IYNh1p9didMhaHoMfXmYcQUBFAQLpIKiBvD3CZzhUN0u3gU/uIK3po2QTQCtqOG6lHCgcRHxfJBD5nDhTLxvRVBvHx4eSPgpgXgfSnlGOu03GcDYDaPvJgTcxPXCcGLxQfdRXDAaaso=
+	t=1733239758; cv=none; b=qiYQ4OjBbUpitYMMa06fza3wvdZv7G4R0OZCEFpKd1nDT06af5LWDXsHeI2nbb2EWHsNjqGBRFe6aD8wIL7IveOH/6TqTBHMhGOCyvD+ks7DLDdvjiTZGM2eyEhdcdQX/asbHLC/u0kIOppzwxFnK9tqrlF7L1qLLdrSHdKIrd0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733239725; c=relaxed/simple;
-	bh=TVuEAODP+azXyWX6un7ZCvhCdc704xWL0Ga4vAX2i3o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PJ7/jMRrKDCK4h0lZ9EDxsjjUNJhICUPFHHP01IO5XUoSj1TG4BfLw2ca9b+e88N/zwv2d98uYZzRAoHZOd0pL7B4ZTWMAqodsqXe9pjNzpOX0E/zdlduHiXpTqner77KtML9VnIFYB2GyFfnhy3b0f9tqL5AR7WNlTTmMMuqdc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=XAEk2pKN; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=hL0q6hs9; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=XAEk2pKN; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=hL0q6hs9; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 932DB1F445;
-	Tue,  3 Dec 2024 15:28:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1733239721; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1733239758; c=relaxed/simple;
+	bh=8mqfvdU74vH9ZSU9MATXgEKnH3/8mW6oJ58BTcHD8cY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=r7K65M0O0seHJfFaCk/GUPTCE7oijrqKEj7saIRGImVYnzKgGsabhuRKUltfFKJBb91nhinVib7d4KK/u7VOBAXYgsazkpnEvFX4JjwGlIPzUR/LDoJzbM6ekcn/a9uW10qklshDNmbNU5N2LgVHleZnLhtronDy0ZcRFkBs5qw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BanYC0op; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733239755;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=DdefS+7y1zYZ+8Ncfrn6ijUx/CqLKtjsV+1aqpjQ8F8=;
-	b=XAEk2pKN78oL/pIhzHC/tYeozuVf3WBPlyYbju1kMtaiGje6htK3jeDDv0VduqEZqGtnkK
-	WU4pNqm43lWkOD/kPV8Ji3t6qC6qgB+G+GhSGP19l+y44w+61KYwbHmIBVJ5lUVoiJrE0+
-	3D5bxer9+AgVyMXO24l+CdqyBdVSXQg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1733239721;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DdefS+7y1zYZ+8Ncfrn6ijUx/CqLKtjsV+1aqpjQ8F8=;
-	b=hL0q6hs9ToGpJ6OcoQBDs2DWj9KKvT9wX1OZaFKOMzwTKnGbfHlCN2FDuc0QDMhie5Yjoy
-	zkt9+5ikgaRNPnDg==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=XAEk2pKN;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=hL0q6hs9
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1733239721; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DdefS+7y1zYZ+8Ncfrn6ijUx/CqLKtjsV+1aqpjQ8F8=;
-	b=XAEk2pKN78oL/pIhzHC/tYeozuVf3WBPlyYbju1kMtaiGje6htK3jeDDv0VduqEZqGtnkK
-	WU4pNqm43lWkOD/kPV8Ji3t6qC6qgB+G+GhSGP19l+y44w+61KYwbHmIBVJ5lUVoiJrE0+
-	3D5bxer9+AgVyMXO24l+CdqyBdVSXQg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1733239721;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DdefS+7y1zYZ+8Ncfrn6ijUx/CqLKtjsV+1aqpjQ8F8=;
-	b=hL0q6hs9ToGpJ6OcoQBDs2DWj9KKvT9wX1OZaFKOMzwTKnGbfHlCN2FDuc0QDMhie5Yjoy
-	zkt9+5ikgaRNPnDg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4558913A15;
-	Tue,  3 Dec 2024 15:28:41 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id gUr8DakjT2cFSAAAD6G6ig
-	(envelope-from <osalvador@suse.de>); Tue, 03 Dec 2024 15:28:41 +0000
-Date: Tue, 3 Dec 2024 16:28:39 +0100
-From: Oscar Salvador <osalvador@suse.de>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH RESEND v1] mm/memory_hotplug: move
- debug_pagealloc_map_pages() into online_pages_range()
-Message-ID: <Z08jp0KSh6Hw_eJt@localhost.localdomain>
-References: <20241203102050.223318-1-david@redhat.com>
+	bh=6QU1EnJ1BaXMVfYiRhAHSxvTRukbAoSNbyni68t4ov0=;
+	b=BanYC0opgLZ9iLVBrlbaSHQRkod1L50e0uJIn4VLfu+0E/sjE+PyzzKlX4cVGYsJFr3MoW
+	bVbFv+kEq6HSQA9hSaYhcDXTHgrp4DyiYq9kgLjw4iznkzFncjvXoREr53wq/aB5EmAk+K
+	dOLi+pM5dnDZlu+slRlYzXTVamhtY3M=
+Received: from mail-ot1-f71.google.com (mail-ot1-f71.google.com
+ [209.85.210.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-612-AKJHnsTUPVWtDHffwYrnHQ-1; Tue, 03 Dec 2024 10:29:14 -0500
+X-MC-Unique: AKJHnsTUPVWtDHffwYrnHQ-1
+X-Mimecast-MFC-AGG-ID: AKJHnsTUPVWtDHffwYrnHQ
+Received: by mail-ot1-f71.google.com with SMTP id 46e09a7af769-71d4babf992so951440a34.2
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 07:29:14 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733239754; x=1733844554;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6QU1EnJ1BaXMVfYiRhAHSxvTRukbAoSNbyni68t4ov0=;
+        b=VlyDwUOGTpabFuBlEaVSCTMcLK1oovZHyIcrZ2n+9WtFq525ZqoMyQ0jfhoozeXafy
+         09kXdEX4MIHqRF4Bwcy4si5MQ8fStCznYLrzYlnBvFzCPVv9D4NeKrrUGNoX9/0RYb0I
+         /XU3a81FQV32fzRE+x17iNtWhDod9LlXdL2+67GGqbFqbKAq2JzZgCbVs4o4hDYdmor8
+         jdc++VKOXBauU+tfB72dYLtv//O4vw5MOxzaPHUzZrwJ4p7KiX/VpWNMDdDrrY2hV6WB
+         ICJlIAHAKeOslMOFQJiSohwYU8BB7Xz/tYV0JO0XlCv2fUcqRygiONifd0f0Wj2eLSvl
+         gNKg==
+X-Forwarded-Encrypted: i=1; AJvYcCVAmRbtvep68BCOicGOQqAlXIhAL3eA6epuRUW9LnLZXQp31nmxE1BJKZYlTMjMfs8rL0MEf55x9Po1N9Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YynPhfcEs8XkLUYxYSdJ2LbpcDbx6RIEJzFHpoG8Is0cCA5kC6Z
+	xj2ivwMEphAvP3skz/yFiQj75JXahyqim+yxHPvaNHiVUe52GKN3G4WGhOQ/rK86x6oKOp88hKq
+	uErSHh1Te4YH2qKlu17pxC1mr3Jcurktznnk/IXXLMDYSyuH5pubLkemy3HevmEBJjDaEJD6gYc
+	n3j3V24i43kI2mq+GMll6vk5XWWkQuHCXeGcOv
+X-Gm-Gg: ASbGnctd10SeKwF+z11ODi9PpsyiKiMOiPWGZk4p7u/JTdjSPbGmROcJcieH2GIzpUe
+	cOloHtyP4YnwVvTskAN46ZP1rW0H7Aw==
+X-Received: by 2002:a05:6830:2aa5:b0:71d:5290:4b0a with SMTP id 46e09a7af769-71dae4057famr723609a34.0.1733239753809;
+        Tue, 03 Dec 2024 07:29:13 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHowgZk/e3MXb1mhieu2vCwR76idfUlz6/II/BUj2dbmWaA1ntB1qRuQmc4QRLODYAXY7IRZgLgXUJnlG7wXdE=
+X-Received: by 2002:a05:6830:2aa5:b0:71d:5290:4b0a with SMTP id
+ 46e09a7af769-71dae4057famr723600a34.0.1733239753522; Tue, 03 Dec 2024
+ 07:29:13 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241203102050.223318-1-david@redhat.com>
-X-Rspamd-Queue-Id: 932DB1F445
-X-Spam-Score: -4.51
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCPT_COUNT_THREE(0.00)[4];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+References: <20241126-am69sk-dt-usb-v1-1-aa55aed7b89e@redhat.com>
+ <2nuncc5rscu6h74ylaiu6yozg34aoigaj5d4uzvdtolt5q7bmv@6hacpxyb2532>
+ <CALE0LRtUN2N_Z05jH_BMSg7yvirSRob0pSErmQxTu8AatmODgw@mail.gmail.com>
+ <CALE0LRu-Sx5oTVNY3hm+Msu-zb04a7_ZD+r3xF1eRfR_WtK0VA@mail.gmail.com> <wbsg3fmco6rwjj7vtiqtqv7trfjor73j7rjx7efnlafo4pz4bc@awixm2iygd55>
+In-Reply-To: <wbsg3fmco6rwjj7vtiqtqv7trfjor73j7rjx7efnlafo4pz4bc@awixm2iygd55>
+From: Enric Balletbo i Serra <eballetb@redhat.com>
+Date: Tue, 3 Dec 2024 16:29:02 +0100
+Message-ID: <CALE0LRvZNnNJ8jBG35bU8Ev5Fvr2400O5qXUsRn0zufkidJeJw@mail.gmail.com>
+Subject: Re: [PATCH] arm64: dts: ti: k3-am69-sk: Add USB SuperSpeed support
+To: s-vadapalli <s-vadapalli@ti.com>
+Cc: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Dasnavis Sabiya <sabiya.d@ti.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Dec 03, 2024 at 11:20:50AM +0100, David Hildenbrand wrote:
-> In the near future, we want to have a single way to handover PageOffline
-> pages to the buddy, whereby they could have:
-> 
-> (a) Never been exposed to the buddy before: kept PageOffline when onlining
->     the memory block.
-> (b) Been allocated from the buddy, for example using
->     alloc_contig_range() to then be set PageOffline,
-> 
-> Let's start by making generic_online_page() less special compared to
+Hi,
 
-This got me confused for a moment. I'd have said "making
-__free_pages_core" less special? As that is where we were calling 
-debug_pagealloc_map_pages() if the context  on the context.
+On Thu, Nov 28, 2024 at 10:58=E2=80=AFAM s-vadapalli <s-vadapalli@ti.com> w=
+rote:
+>
+> On Thu, Nov 28, 2024 at 10:47:42AM +0100, Enric Balletbo i Serra wrote:
+> > Hi,
+>
+> [...]
+>
+> > So I changed the dr_mode to otg instead of host and tried to configure
+> > a usb mass storage gadget but unfortunately didn't work, but this
+> > could be a driver problem, I got the following error
+> >
+> >   UDC core: g1: couldn't find an available UDC
+> >
+> > As the devicetree should describe the hardware, and as far as I can
+> > see it should support the type-c port act as a gadget, I'm fine with
+> > changing the dr_mode, unless anyone have more information about this,
+> > the thing that makes me think a bit more is that, in the TI kernel
+> > this is set to host, so I'm wondering if I'm missing something or is
+> > just that was never tested.
+>
+> Are all interfaces (Type-A and Type-C) functional as Host when the
+> dr_mode is set to "otg"? (Do USB devices connected to the interfaces
+> enumerate on AM69-SK?) If yes, then it could be a DIP Switch setting
+> that is related to OTG mode of operation or a USB-C Mux that needs to be
+> configured.
+>
 
-> ordinary page freeing (e.g., free_contig_range()), and perform the
-> debug_pagealloc_map_pages() call unconditionally, even when the online
-> callback might decide to keep the pages offline.
-> 
-> All pages are already initialized with PageOffline, so nobody touches
-> them either way.
-> 
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Oscar Salvador <osalvador@suse.de>
-> Signed-off-by: David Hildenbrand <david@redhat.com>
+Yes, all interfaces (Type-A and Type-C) are functional as host when
+the dr_mode is set to "otg". Looking at SK-AM69 Processor Start Kit
+User's Guide (Rev. A) [1] I don't see any DIP Switch related to the
+OTG  mode. Looks like the type-c connector connects directly to the
+SoC through a USB HUB (TUSB4041).
 
-Acked-by: Oscar Salvador <osalvador@suse.de>
+[1] https://www.ti.com/lit/ug/spruj70a/spruj70a.pdf?ts=3D1733215039014
 
+Regards,
+  Enric
 
--- 
-Oscar Salvador
-SUSE Labs
+> Regards,
+> Siddharth.
+>
+
 
