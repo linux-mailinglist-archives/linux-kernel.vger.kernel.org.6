@@ -1,179 +1,187 @@
-Return-Path: <linux-kernel+bounces-429108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60AA09E1932
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 11:25:55 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D8A79E18AA
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 11:01:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B585DB3DFAE
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:29:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 09CCDB3E2D5
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:29:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C15101E0DAA;
-	Tue,  3 Dec 2024 09:27:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F61E1E0DFB;
+	Tue,  3 Dec 2024 09:27:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="e/Hz0mpp"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="VoZzCYFp"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23C2D1E0DB1
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 09:27:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CA481E0DB1;
+	Tue,  3 Dec 2024 09:27:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733218064; cv=none; b=KVVHK8oyt3upVS8Gz8uZYLci8YItQbVGzkbn9IENk1+OSAE3xcrvhzXHuHGis0NOTS3ZXsLYRZjbqy/uvzJfQ9HrafPbQmmF8O+RQYMW+gmSaYw02AlkvXelHLz14YHhS9KrHN7SerSZYi9QpEvY91huXzYdMVr0N6u7rFjxIvc=
+	t=1733218069; cv=none; b=La+lzvlCdr4wvjWPog/5mN7+HXwq8Up338O9GtU77cJ/s7kbDCmujzXH76w2UvUijmyGLXfgP49a5cC1kjgWW7sC/Ub6qsJmoCWNM6joyWxuYT13k3gWG5rDJhO+O/Ab//BwKATElplsJNhJK8C1rDNdxPQ+u28GbtCjbxW4yEw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733218064; c=relaxed/simple;
-	bh=LtoeILdsYxQuEuNm5Sq9+1S03A8uKng5c7MwWdMzhJ0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-type; b=r8dtwIEAUM4fpMDCMa3ji9Ftcsmtv3Zj2UrWQ949N54dDL9Qae8jTyH46wNKDeTJ0tmPkrOq7TD4iI5VW1lp79xc73MSjNapyxaY85Ek/6nMw2MJaJxM19Srw4tZJRolusWk7FmTr0uvlvsQuStpNImofj5lLVopabrnLhFhPX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=e/Hz0mpp; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1733218061;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OcfOiDWwi48053cjduhTjVXfsTwP0dn8jUXizpYq9Dc=;
-	b=e/Hz0mpptJjueDzy9t6qm0IIWApJAt8QvW9ZkDlSaP4mb1e/sQ9vr6ubFdmfSw/K7HNqw3
-	5bI395YSJHr9c0oD9CZfNOAdmkJ2FaGJRhp6KB/l7ZhNqtzn0P+HRSU9YyRzmMK7Eop0F3
-	OKeSK02MyaLXhVCiaW5nCZoSwZJWtX0=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-398-hnN35gWDPA6MpsCjWM_Cbg-1; Tue,
- 03 Dec 2024 04:27:36 -0500
-X-MC-Unique: hnN35gWDPA6MpsCjWM_Cbg-1
-X-Mimecast-MFC-AGG-ID: hnN35gWDPA6MpsCjWM_Cbg
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D1AD01945CB2;
-	Tue,  3 Dec 2024 09:27:34 +0000 (UTC)
-Received: from t14s.redhat.com (unknown [10.45.224.51])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id DC9E81956052;
-	Tue,  3 Dec 2024 09:27:31 +0000 (UTC)
-From: Jan Stancek <jstancek@redhat.com>
-To: donald.hunter@gmail.com,
-	kuba@kernel.org
-Cc: pabeni@redhat.com,
-	davem@davemloft.net,
-	edumazet@google.com,
-	horms@kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	jstancek@redhat.com
-Subject: [PATCH 5/5] tools: ynl: add main install target
-Date: Tue,  3 Dec 2024 10:27:04 +0100
-Message-ID: <f8c507624278c9f3f252991760303b5a83c53515.1733216767.git.jstancek@redhat.com>
-In-Reply-To: <cover.1733216767.git.jstancek@redhat.com>
-References: <cover.1733216767.git.jstancek@redhat.com>
+	s=arc-20240116; t=1733218069; c=relaxed/simple;
+	bh=T96BcuoR6g93Ngo3aMuJXGBNQ20OEsJzQg4Jmbm8yA8=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=VIA3+orw0dH8PqNvBjupCg+lI1GlB0voFlDWXgf86Ifj/HlKIhNDhzzjgsWwp3OfZoC84sMmbR5hMBZzWxvNy35NqUmH/ZqIwsMr5q4SHMQC/HrcusamPu6YGbzMRAMEbE4VTfxiQ2RHn/BxjP+cXYDI0rAdDc+miJ/2hLqhePM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=VoZzCYFp; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B362axI027818;
+	Tue, 3 Dec 2024 09:27:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=q2RBkO3nvuxlv2gjSgJxbO
+	Xgxf5FYdpDETzUvFONTeQ=; b=VoZzCYFppgIvu7pYsHDbWVK3NzkyiOO4YEgb5c
+	gRA1mMfulOFXStZ4awltJdmqMdFHjB5NyDyVfBbm45gfJ9+aSwbxMuHXEPIZaQlp
+	rgxU/xP5MhtQ38ANoyK1UGb6bweZO/JeBpjFwfAIJEyKbbsKzkRhM079MrVxWuH6
+	0FsSbbZSaiNRi9CfpA7djGuOWvLbxqiflfiqpDi07czrbuTwbK/gn2+cGVsE3FIX
+	tapaacGrZYZCqoUHI/NjvAjAEuq3wczZyvct25BCpi9UEttxFqDmpklsvQSm9BR1
+	6CkFU0ZVMFAi0iWUivlaaoKgTaYpJRpZqQ/F+DOJ+17Vyjdg==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 439vceghp5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 03 Dec 2024 09:27:40 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B39RdTr014991
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 3 Dec 2024 09:27:39 GMT
+Received: from jingyw-gv.qualcomm.com (10.80.80.8) by
+ nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 3 Dec 2024 01:27:35 -0800
+From: Jingyi Wang <quic_jingyw@quicinc.com>
+Subject: [PATCH v4 0/4] Add initial support for QCS8300 SoC and QCS8300
+ RIDE board
+Date: Tue, 3 Dec 2024 17:27:11 +0800
+Message-ID: <20241203-qcs8300_initial_dtsi-v4-0-d7c953484024@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-type: text/plain
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAO/OTmcC/3XP0U7DMAwF0F+Z8kyQnYQm2RP/gdDkOgmzxFrWl
+ Ao07d/JOgmBYI/Xlo91T6rmSXJV281JTXmRKuPQgrvbKN7T8JK1pJaVAeMQTdBHrsEC7GSQWeh
+ 1l+YqmpItGC1nTF6107cpF/lY2afnlvdS53H6XL8seJmuIERw/4MLatAJMkUqiQH84/FdWAa+5
+ /GgLuRifjDm4QZjGuOiYweFDDnzl7HfzO16i22M6YgCYeciut/M+dp4ym1aZb7WVj3VrNv+IPN
+ 2U1zoOFA77wN6Uzrbp8QeEDsCDtGTL7aAadj5C8dzOc+UAQAA
+To: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Catalin Marinas
+	<catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>
+CC: <quic_tengfan@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Jingyi Wang
+	<quic_jingyw@quicinc.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+X-Mailer: b4 0.15-dev-99b12
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1733218055; l=2910;
+ i=quic_jingyw@quicinc.com; s=20240910; h=from:subject:message-id;
+ bh=T96BcuoR6g93Ngo3aMuJXGBNQ20OEsJzQg4Jmbm8yA8=;
+ b=hpZHCYEtZXoBsGltYPA15q+LLQXi9gwAfMaRJ6Zca9sDD2vtK7F7k6qE/KNDhJJk7YV7vj5gP
+ EKSBfgo/3bkCH0Z7LVGFZXBXWOeJBVQ4TfOx1k8xddT0N/taCSQem5c
+X-Developer-Key: i=quic_jingyw@quicinc.com; a=ed25519;
+ pk=ZRP1KgWMhlXXWlSYLoO7TSfwKgt6ke8hw5xWcSY+wLQ=
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: TuKrq-KOtN24SrnUSjVF73LsKhO6_b3o
+X-Proofpoint-ORIG-GUID: TuKrq-KOtN24SrnUSjVF73LsKhO6_b3o
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ bulkscore=0 mlxlogscore=999 adultscore=0 suspectscore=0 spamscore=0
+ impostorscore=0 phishscore=0 mlxscore=0 malwarescore=0 clxscore=1015
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412030081
 
-This will install C library, specs, rsts and pyynl. The initial
-structure is:
+Introduce the Device Tree for the QCS8300 platform.
 
-	$ mkdir /tmp/myroot
-	$ make DESTDIR=/tmp/myroot install
+Features added and enabled:
+- CPUs with PSCI idle states
+- Interrupt-controller with PDC wakeup support
+- Timers, TCSR Clock Controllers
+- Reserved Shared memory
+- GCC and RPMHCC
+- TLMM
+- Interconnect
+- QuP with uart
+- SMMU
+- QFPROM
+- Rpmhpd power controller
+- UFS
+- Inter-Processor Communication Controller
+- SRAM
+- Remoteprocs including ADSP,CDSP and GPDSP
+- BWMONs
 
-	/usr
-	/usr/lib64
-	/usr/lib64/libynl.a
-	/usr/lib/python3.XX/site-packages/pyynl/*
-	/usr/lib/python3.XX/site-packages/pyynl-0.0.1.dist-info/*
-	/usr/bin
-	/usr/bin/ynl
-	/usr/bin/ynl-ethtool
-	/usr/bin/ynl-gen-c
-	/usr/bin/ynl-gen-rst
-	/usr/share
-	/usr/share/doc
-	/usr/share/doc/ynl
-	/usr/share/doc/ynl/*.rst
-	/usr/share/ynl
-	/usr/share/ynl/genetlink-c.yaml
-	/usr/share/ynl/genetlink-legacy.yaml
-	/usr/share/ynl/genetlink.yaml
-	/usr/share/ynl/netlink-raw.yaml
-	/usr/share/ynl/specs
-	/usr/share/ynl/specs/devlink.yaml
-	/usr/share/ynl/specs/dpll.yaml
-	/usr/share/ynl/specs/ethtool.yaml
-	/usr/share/ynl/specs/fou.yaml
-	/usr/share/ynl/specs/handshake.yaml
-	/usr/share/ynl/specs/mptcp_pm.yaml
-	/usr/share/ynl/specs/netdev.yaml
-	/usr/share/ynl/specs/net_shaper.yaml
-	/usr/share/ynl/specs/nfsd.yaml
-	/usr/share/ynl/specs/nftables.yaml
-	/usr/share/ynl/specs/nlctrl.yaml
-	/usr/share/ynl/specs/ovs_datapath.yaml
-	/usr/share/ynl/specs/ovs_flow.yaml
-	/usr/share/ynl/specs/ovs_vport.yaml
-	/usr/share/ynl/specs/rt_addr.yaml
-	/usr/share/ynl/specs/rt_link.yaml
-	/usr/share/ynl/specs/rt_neigh.yaml
-	/usr/share/ynl/specs/rt_route.yaml
-	/usr/share/ynl/specs/rt_rule.yaml
-	/usr/share/ynl/specs/tcp_metrics.yaml
-	/usr/share/ynl/specs/tc.yaml
-	/usr/share/ynl/specs/team.yaml
+binding dependencies:
+- remoteproc: https://lore.kernel.org/linux-arm-msm/20240925-qcs8300_remoteproc_binding-v3-1-21b0c52b142b@quicinc.com/ - Reviewed
+- qfprom: https://lore.kernel.org/all/20240911-qcs8300_qfprom_binding-v2-1-d39226887493@quicinc.com/ - Reviewed
+- pdc: https://lore.kernel.org/all/20240911-qcs8300_binding-v2-1-de8641b3eaa1@quicinc.com/ - Reviewed
 
-Signed-off-by: Jan Stancek <jstancek@redhat.com>
+Signed-off-by: Jingyi Wang <quic_jingyw@quicinc.com>
 ---
- tools/net/ynl/Makefile | 23 ++++++++++++++++++++++-
- 1 file changed, 22 insertions(+), 1 deletion(-)
+Changes in v4:
+- fixup typo in Makefile(Andrew & Krzysztof)
+- add board name in the commit message of the defconfig change(Dmitry)
+- separate cpus into 2 clusters in cpu-map(Konrad)
+- use QCOM_ICC_TAG_ALWAYS instead of "0" for interconnect nodes(Konrad)
+- Remove unused labels and drop redundant comments(Konrad)
+- Move clocks to the dtsi file(Dmitry)
+- drop reviewed-by tag for dts patch for the code change
+- Link to v3: https://lore.kernel.org/r/20241128-qcs8300_initial_dtsi-v3-0-26aa8a164914@quicinc.com
 
-diff --git a/tools/net/ynl/Makefile b/tools/net/ynl/Makefile
-index 617b405d9ef8..e18a7f68cf5c 100644
---- a/tools/net/ynl/Makefile
-+++ b/tools/net/ynl/Makefile
-@@ -1,5 +1,16 @@
- # SPDX-License-Identifier: GPL-2.0
- 
-+include ../../scripts/Makefile.arch
-+
-+INSTALL	?= install
-+prefix  ?= /usr
-+ifeq ($(LP64), 1)
-+  libdir_relative = lib64
-+else
-+  libdir_relative = lib
-+endif
-+libdir  ?= $(prefix)/$(libdir_relative)
-+
- SUBDIRS = lib generated samples
- 
- all: $(SUBDIRS) libynl.a
-@@ -22,5 +33,15 @@ clean distclean:
- 	done
- 	rm -f libynl.a
- 	rm -rf pyynl/lib/__pycache__
-+	rm -rf pyynl.egg-info
-+	rm -rf build
-+
-+install: libynl.a
-+	@echo -e "\tINSTALL libynl.a"
-+	@$(INSTALL) -d $(DESTDIR)$(libdir)
-+	@$(INSTALL) -m 0644 libynl.a $(DESTDIR)$(libdir)/libynl.a
-+	@echo -e "\tINSTALL pyynl"
-+	@pip install --prefix=$(DESTDIR)$(prefix) .
-+	@make -C generated install
- 
--.PHONY: all clean distclean $(SUBDIRS)
-+.PHONY: all clean distclean install $(SUBDIRS)
+Changes in v3:
+- Update title and cleanup signed-off-by tag(Bjorn)
+- fix the INTID of EL2 non-secure physical timer(Cong)
+- add reviewed-by tag(except for the dtsi patch for the code change)
+- code rebase
+- Link to v2: https://lore.kernel.org/r/20240925-qcs8300_initial_dtsi-v2-0-494c40fa2a42@quicinc.com
+
+Changes in v2:
+- decoupled from the original series
+- Drop compatible for QCS8275
+- fix property order and add line breaks
+- move sleep_clk node to qcs8300-ride.dts
+- move l3-cache nodes out of l2-cache nodes and remove cluster1/cluster2
+- add BWMON nodes
+- commit-msg update
+- Link to v1: https://lore.kernel.org/r/20240904-qcs8300_initial_dtsi-v1-0-d0ea9afdc007@quicinc.com
+
+---
+Jingyi Wang (4):
+      dt-bindings: arm: qcom: document QCS8300 SoC and reference board
+      arm64: defconfig: enable clock controller, interconnect and pinctrl for QCS8300
+      arm64: dts: qcom: add QCS8300 platform
+      arm64: dts: qcom: add base QCS8300 RIDE board
+
+ Documentation/devicetree/bindings/arm/qcom.yaml |    6 +
+ arch/arm64/boot/dts/qcom/Makefile               |    1 +
+ arch/arm64/boot/dts/qcom/qcs8300-ride.dts       |  235 ++++
+ arch/arm64/boot/dts/qcom/qcs8300.dtsi           | 1405 +++++++++++++++++++++++
+ arch/arm64/configs/defconfig                    |    3 +
+ 5 files changed, 1650 insertions(+)
+---
+base-commit: f486c8aa16b8172f63bddc70116a0c897a7f3f02
+change-id: 20241128-qcs8300_initial_dtsi-ad3f193ce1d7
+
+Best regards,
 -- 
-2.43.0
+Jingyi Wang <quic_jingyw@quicinc.com>
 
 
