@@ -1,164 +1,127 @@
-Return-Path: <linux-kernel+bounces-430257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A738C9E2F83
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 00:08:02 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B43909E2E79
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 22:55:26 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4AB9616536B
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 21:55:22 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47931209F4C;
+	Tue,  3 Dec 2024 21:55:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="PlREAQKy"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C3079B3E025
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 21:58:12 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 540D420D4E9;
-	Tue,  3 Dec 2024 21:55:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yKLgLIlo"
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3356620C483
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 21:55:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C76EA1D7E21
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 21:55:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733262937; cv=none; b=hrThPLhtn/M1QzrkwiaAytmfR9XhJ/eofmxxktqNHQQ1asA0NvlTjVXp3UppkQ1TJHIBMLSsAa2/Fgx8qstn8mMgZguQ5uZ1JcloYlmr27POSZxPkmTQjlpM1YYvsAaxCEyeAl3pjMI0mguS/RqmRSvviCJAOyGnHXsFyxkCEms=
+	t=1733262916; cv=none; b=INEh3ixqEme19zTP72PstbLXKDjL1Aa8kaF7cP1UfhInP2c+gdIwjmCrEKL1I8mG4Cj6FnSsE4IBm80dUrBJ6OeEwHbba+p0qyrm8FZhTed+iotgjMyorjTx2+kJ/gp+qTg63hJne66ok5UOGiCg4MKg0n/yTqe+x3NhHKDBwDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733262937; c=relaxed/simple;
-	bh=jIMFjQIvhAgRch+NfQnhZsI2ErhgVUwZ3o5/ejm7D+s=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=iFopj49U0jM94ApNF1uooQ0VpcSmzV67yjnuqjfuHybz5Sw7qh5Y5Gz1F7DE1JZ/+6TnZOH3GOH9XT5XUYO0Uzu57Z7yX2j51AXc7iDPhD63dcaJlabUwweThYFPxtbH1VLH3Kgqj5rY9SAU2+lLLWfG2xY3YlWzK/59g9TBzHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--cmllamas.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yKLgLIlo; arc=none smtp.client-ip=209.85.215.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--cmllamas.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-7eaa7b24162so5784783a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 13:55:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733262935; x=1733867735; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=k/YUxHrv+12gMgYKuvcmKD0rUQxPjfYrLN7M2OuFebg=;
-        b=yKLgLIlokq5V+ufUQICxYupEssXKyMWfzq3lX/4JWLr8DGNWVr+7TijBstvSZzcmlU
-         Odk+eLIoPl1MHpbJBw6ZrXxshs8+OuBeEPSSUtGbt2h6blhLQ/tPrPH+uA0qE8cwGVEF
-         BMoFAb+NDNPrMHGWShYy2t2VCDBAvE0GOfrY3dGh9QIiweB90virZSasmXW38LX1W7eS
-         QlJE/iFtJzJdMJp0ALqZjozt1GN64nJ7SpRJ3b67KiHlVoZu9PRLUM9lT0r6cMVO49yS
-         A1fEBZWWyH4LvEb1bVn0g06QKASwzAoxM553hCszdKdqYtXi/qKMf1y+YgOiBirFlexe
-         1d5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733262935; x=1733867735;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=k/YUxHrv+12gMgYKuvcmKD0rUQxPjfYrLN7M2OuFebg=;
-        b=B6/YUa0xWPtuILOVboxifk1DU81W6+jdmSfyqo0AJGncNSgja0SQsWL6s1QVL8iJxN
-         NY4cHNhZipmyZHnEL8z5o7gBPhIvEpdOvhRbkqdoE8O1I2GuBRc7R4zc5NjwmT6leo7O
-         vsMJItS4PxCBq/kgi7mAG3I6Skp4vuE8ShAd5xSVzFQzPukKwfMbqqUWi/vD1+j+xJ5K
-         wli1WvvizdrRjtgSRIQ7AV+kQs3iWjGLbWoFF9RgVRXCARScdlj3n7dsuo2rQMKzm0a5
-         nFKjvh3P9vne3vbCKQagi5P47hJjCA/UlMJ4OSLR466bFZdS9LR5AL0jnO4zROGL2QYC
-         U0lw==
-X-Gm-Message-State: AOJu0Yx0v5+vWHsa2CXjq77P12hyBW03VsIBd2agclTqsYyYXN75rmpZ
-	bsC/tcz4GoKY3pO8jjjSChJGCjpYOJEogsqCHmBU0swHRsVSvECg8BMGM3FklLF0t023cksSSx/
-	7UOsQBrSQNA==
-X-Google-Smtp-Source: AGHT+IFgwsMtaHHxjbSQxacD0z3q6fPbkuXcnUeDrn4WSoJt5ZuqpkWhaWpRj8qcKcYD7ihEUfE6hGoZoQEPXw==
-X-Received: from pfbbx24.prod.google.com ([2002:a05:6a00:4298:b0:724:f73b:3c65])
- (user=cmllamas job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a20:8403:b0:1e0:be48:177d with SMTP id adf61e73a8af0-1e1653a798dmr6811031637.3.1733262935391;
- Tue, 03 Dec 2024 13:55:35 -0800 (PST)
-Date: Tue,  3 Dec 2024 21:54:43 +0000
-In-Reply-To: <20241203215452.2820071-1-cmllamas@google.com>
+	s=arc-20240116; t=1733262916; c=relaxed/simple;
+	bh=69EWHt5qqGt3tE3DmOdJxW6WjB+k1N5b59mvLspiTXU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cpNkTvzbIxKlIF+81fqMl3LRK7QEMM0XyeEuic6ClEExrZ5VJDLMTN5feTQS40TpBlVyjKX3I3t6TM5X9/WGhuvSWQL6bpHWtiymj1vytPLiOXiyGjXEBVZybQdu59hPfMeMhQ2TvMn+zskqFidow5xKaNOt6a3uz2YnQxNV63s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=PlREAQKy; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 7AE3B40E0277;
+	Tue,  3 Dec 2024 21:55:11 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id Z_lidHZdY1S2; Tue,  3 Dec 2024 21:55:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1733262907; bh=DuGfxudVK+IKNgCsnB0Bnn75mEtxEhzVoRX7+vO1xKg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PlREAQKym3om2Pdkpz6tPp7dGgBQONIGEPlgopJh7vlHzCQplu7vqPQYm+lC/MtlY
+	 RL4pvTtO1/oqfrAS/A69j/nY6Qnl3zQmHHwIMjqZ6OflcfrtDdP24dN0ugHLhmzX1L
+	 ALpocT1gcG3Y7lIhk00Ceqt7zrd3VEZK6Go/RbMtBRlo/PtIhAkanrxpoUHhVLhDjG
+	 8S8KeIe6YaI8qct8aGtPF98BWmLtFmSixyNp13OtAn/5ioleKKWGl6q8vXze4YWjKK
+	 tMUZiFdd8+2t0bd+Q9ODb7pIUgQ8riXl1VOWj0i4vL0FqbHp8RzhjbPYvdEE2J+yrh
+	 rIOU/yNd/f3UARnrii/7j+il/bomyriDvxd1+b21ZbcDH+trNAfHwDkVEP2LrdMPzd
+	 KEDQOvlOsOadEzezF+P4uqdfPbGWDQu1m8qqsmtlAPrUfqnd9ahfvi/K6D7iK+gm1+
+	 9z2sCnTs8SrblOMUaNCExU3UXiVFOhrhrM0DYpV4e1RzAx/suwrApNznBwgzn5dxR7
+	 bNTx/lQ1snUruM/6RfGjupt3zdHeUVFcjN0MhA6OBcsuMUReQx+M1oQL+ydQUoYD+U
+	 sQ4MbKAsWvtQeaFgx2f//P2+EOFeGSrIrZmahpNc3aRVhB7ruD9gG3uxYC8sFNNUWc
+	 CCv5kXtZeoM3w4EfdmFWKjH0=
+Received: from zn.tnic (p200300eA9736a14f329c23FffEa6a903.dip0.t-ipconnect.de [IPv6:2003:ea:9736:a14f:329c:23ff:fea6:a903])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id CD7CF40E016C;
+	Tue,  3 Dec 2024 21:54:59 +0000 (UTC)
+Date: Tue, 3 Dec 2024 22:54:54 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Mario Limonciello <mario.limonciello@amd.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	"open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] x86/cpu: Enable SD_ASYM_PACKING for PKG domain on
+ systems with AMD preferred cores
+Message-ID: <20241203215454.GJZ09-LmEWPZ502B7R@fat_crate.local>
+References: <20241203201129.31957-1-mario.limonciello@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241203215452.2820071-1-cmllamas@google.com>
-X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
-Message-ID: <20241203215452.2820071-10-cmllamas@google.com>
-Subject: [PATCH v6 9/9] binder: use per-vma lock in page reclaiming
-From: Carlos Llamas <cmllamas@google.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"=?UTF-8?q?Arve=20Hj=C3=B8nnev=C3=A5g?=" <arve@android.com>, Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
-	Joel Fernandes <joel@joelfernandes.org>, Christian Brauner <brauner@kernel.org>, 
-	Carlos Llamas <cmllamas@google.com>, Suren Baghdasaryan <surenb@google.com>
-Cc: linux-kernel@vger.kernel.org, kernel-team@android.com, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241203201129.31957-1-mario.limonciello@amd.com>
 
-Use per-vma locking in the shrinker's callback when reclaiming pages,
-similar to the page installation logic. This minimizes contention with
-unrelated vmas improving performance. The mmap_sem is still acquired if
-the per-vma lock cannot be obtained.
+On Tue, Dec 03, 2024 at 02:11:29PM -0600, Mario Limonciello wrote:
+> For the scheduler to use and prefer AMD preferred core rankings set
+> SD_ASYM_PACKING for x86_die_flags().
+> 
+> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+> ---
+> v2:
+>  * Fix c23 compatibility issue reported by LKP
+> ---
+>  arch/x86/kernel/smpboot.c | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
+> 
+> diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
+> index b5a8f0891135b..6a38cf3feb1a9 100644
+> --- a/arch/x86/kernel/smpboot.c
+> +++ b/arch/x86/kernel/smpboot.c
+> @@ -62,6 +62,8 @@
+>  #include <linux/mc146818rtc.h>
+>  #include <linux/acpi.h>
+>  
+> +#include <acpi/cppc_acpi.h>
+> +
+>  #include <asm/acpi.h>
+>  #include <asm/cacheinfo.h>
+>  #include <asm/desc.h>
+> @@ -501,6 +503,15 @@ static int x86_die_flags(void)
+>  	    cpu_feature_enabled(X86_FEATURE_AMD_HETEROGENEOUS_CORES))
+>  		return x86_sched_itmt_flags();
+>  
+> +	if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD ||
+> +	    boot_cpu_data.x86_vendor == X86_VENDOR_HYGON) {
 
-Cc: Suren Baghdasaryan <surenb@google.com>
-Suggested-by: Liam R. Howlett <Liam.Howlett@oracle.com>
-Reviewed-by: Suren Baghdasaryan <surenb@google.com>
-Signed-off-by: Carlos Llamas <cmllamas@google.com>
----
- drivers/android/binder_alloc.c | 29 ++++++++++++++++++++++-------
- 1 file changed, 22 insertions(+), 7 deletions(-)
+You're going to call this on *every* AMD and on Hygon?
 
-diff --git a/drivers/android/binder_alloc.c b/drivers/android/binder_alloc.c
-index 5a221296b30c..b58b54f253e6 100644
---- a/drivers/android/binder_alloc.c
-+++ b/drivers/android/binder_alloc.c
-@@ -1143,19 +1143,28 @@ enum lru_status binder_alloc_free_page(struct list_head *item,
- 	struct vm_area_struct *vma;
- 	struct page *page_to_free;
- 	unsigned long page_addr;
-+	int mm_locked = 0;
- 	size_t index;
- 
- 	if (!mmget_not_zero(mm))
- 		goto err_mmget;
--	if (!mmap_read_trylock(mm))
--		goto err_mmap_read_lock_failed;
--	if (!mutex_trylock(&alloc->mutex))
--		goto err_get_alloc_mutex_failed;
- 
- 	index = mdata->page_index;
- 	page_addr = alloc->vm_start + index * PAGE_SIZE;
- 
--	vma = vma_lookup(mm, page_addr);
-+	/* attempt per-vma lock first */
-+	vma = lock_vma_under_rcu(mm, page_addr);
-+	if (!vma) {
-+		/* fall back to mmap_lock */
-+		if (!mmap_read_trylock(mm))
-+			goto err_mmap_read_lock_failed;
-+		mm_locked = 1;
-+		vma = vma_lookup(mm, page_addr);
-+	}
-+
-+	if (!mutex_trylock(&alloc->mutex))
-+		goto err_get_alloc_mutex_failed;
-+
- 	/*
- 	 * Since a binder_alloc can only be mapped once, we ensure
- 	 * the vma corresponds to this mapping by checking whether
-@@ -1183,7 +1192,10 @@ enum lru_status binder_alloc_free_page(struct list_head *item,
- 	}
- 
- 	mutex_unlock(&alloc->mutex);
--	mmap_read_unlock(mm);
-+	if (mm_locked)
-+		mmap_read_unlock(mm);
-+	else
-+		vma_end_read(vma);
- 	mmput_async(mm);
- 	binder_free_page(page_to_free);
- 
-@@ -1192,7 +1204,10 @@ enum lru_status binder_alloc_free_page(struct list_head *item,
- err_invalid_vma:
- 	mutex_unlock(&alloc->mutex);
- err_get_alloc_mutex_failed:
--	mmap_read_unlock(mm);
-+	if (mm_locked)
-+		mmap_read_unlock(mm);
-+	else
-+		vma_end_read(vma);
- err_mmap_read_lock_failed:
- 	mmput_async(mm);
- err_mmget:
+So that whole effort with X86_FEATURE_s was for nothing?
+
+What's up?
+
 -- 
-2.47.0.338.g60cca15819-goog
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
