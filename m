@@ -1,118 +1,138 @@
-Return-Path: <linux-kernel+bounces-428849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 349319E1429
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 08:30:18 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D9B79E1430
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 08:31:17 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D1A05B2622F
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 07:30:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6CC3F166113
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 07:30:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D76D1D90A4;
-	Tue,  3 Dec 2024 07:28:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BABB619CC26;
+	Tue,  3 Dec 2024 07:30:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="KT81jjQl"
-Received: from out30-110.freemail.mail.aliyun.com (out30-110.freemail.mail.aliyun.com [115.124.30.110])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="M4NJgxHT"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBC0619DF45
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 07:28:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.110
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BBF8189F57;
+	Tue,  3 Dec 2024 07:30:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733210917; cv=none; b=LrkmZQEM1KqbsUXgV65qAuBLwDJRG8DKqVAHfINMHXizLgnsDoC2g0MdPVosXTFTLkcehGXO9DAfWT4HpZLJyHAeLODUE2DockKB72k6gTfagldlCEP+4v4ZJblJj7X9F2BCvMFtAO+RazwLwZr5XnTalH6Y+Qw1tGaUzZdyUtg=
+	t=1733211007; cv=none; b=kA8ESvTHgLG3VuMgSIh7wry+7+T4r9nTvjZA7uCyBsHYe/6GNp18KiZEXttJwStrnHL7rSM9VsDICnjwi7kAkzMPuKqogRvhwvayYiK8cSM5tmTJLgzmU5GJtDozXWYkHwN4uY5Ycr6hoPTK2KAF7FXN3AHgAeam/fGfi6sThCU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733210917; c=relaxed/simple;
-	bh=bBmcMPIMrvWP8/w6Ho+hyiZUG00ncco65Hce9iOdt9c=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=iLoZQVO53FL6b0LVP2q1l7e94DhamVeIWiwblbIeUiogGYZnDt//JcFNCaBP7pyCDlWhlBMbVvWJl+C/TM9/vde96i/J2ZlkEd2fmt79M80HsxLJ2qGnt9sFdWcqqvlxYGHrcjF/jxp0oeP/S06RIddOjPmxOrAy6PDCAQVbWwU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=KT81jjQl; arc=none smtp.client-ip=115.124.30.110
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1733210907; h=From:To:Subject:Date:Message-ID:MIME-Version;
-	bh=ffVwQCplrSSi42sdO0aUOX+pWOHj43NN6iV37ZyGKPo=;
-	b=KT81jjQlOxEj2D8ILyL/6T4Bn3GVkJJL4Fhozd959nvRHjZQ3fBc4jMSNb+iy5KL8xS5NpGQDvdrWx6yjDLg8A1rrJIQqJSAdpd3S0mGHpT4idVgKpj1RR1xTMmx/Zg54JH/2RtSGbbYEvhz104OmK2Vmoskd+vlQoZTngGW7dE=
-Received: from x31i01179.sqa.na131.tbsite.net(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WKlm0CQ_1733210902 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Tue, 03 Dec 2024 15:28:26 +0800
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-To: linux-erofs@lists.ozlabs.org
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Gao Xiang <hsiangkao@linux.alibaba.com>,
-	syzbot+7ff87b095e7ca0c5ac39@syzkaller.appspotmail.com
-Subject: [PATCH] erofs: fix rare pcluster memory leak after unmounting
-Date: Tue,  3 Dec 2024 15:28:21 +0800
-Message-ID: <20241203072821.1885740-1-hsiangkao@linux.alibaba.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <674c1235.050a0220.ad585.0032.GAE@google.com>
-References: <674c1235.050a0220.ad585.0032.GAE@google.com>
+	s=arc-20240116; t=1733211007; c=relaxed/simple;
+	bh=AAcjS64/ySNekWNYL1T6qkiKHfRkY7zzUXpblKqVvoQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RwIgZreyDgnz1BjS0PsMjSEyA1s78wlOtc2B+YFWtwvS4UOnvqwPD15Dc7GhKGDj9/r+TJVzzbcmR5f5Df9T3KndNFegFwn0UKlm85XockoL9ph5sn9KWJAzifds+5kQpBn5FDKDjFM0CJaTEStGy/1UeW2ZmoHFWvK4T1iSpXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=M4NJgxHT; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733211005; x=1764747005;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=AAcjS64/ySNekWNYL1T6qkiKHfRkY7zzUXpblKqVvoQ=;
+  b=M4NJgxHTFAVua/R3WjdtvwSBkodGzOrt6IrbLEJFFhBXAFpZHYtH7ekb
+   Y+nnE+afwE+u/08ghUouy188pLyS+ccQ90GE9a5QG0z/3Hsvg3ugBOFu7
+   J2IcmiA9e/URDrMTjBZSdGPxndDAjUdnnog5/TPM5DM+JGucv7VLyLV2m
+   GD40F7xHL0/RptEGPIK02kwWJBBsLHMrmWL478DYes+0TadLeLmNyglDc
+   /D0sHFAzG8i0WqOBgRWi0kNwu+Xr2HAtd8Wyx+j+cy/eLqwqf+uNtoHU2
+   5qqXwakZmBrBOJAUhgauqqHjSNsgTJLXHgsGya1JlEfKdyxqYIX3y1IsF
+   w==;
+X-CSE-ConnectionGUID: gLpa+iBKQmCO7cW9Q4jJHw==
+X-CSE-MsgGUID: fG/mTz+lQN+orLiYWZgT6g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11274"; a="37182422"
+X-IronPort-AV: E=Sophos;i="6.12,204,1728975600"; 
+   d="scan'208";a="37182422"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Dec 2024 23:30:05 -0800
+X-CSE-ConnectionGUID: PvSlLAjiRK+Bf5ajq71OcQ==
+X-CSE-MsgGUID: 7AOIw34xTg6Yatpa4jJGug==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,204,1728975600"; 
+   d="scan'208";a="97781954"
+Received: from unknown (HELO [10.238.9.154]) ([10.238.9.154])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Dec 2024 23:30:02 -0800
+Message-ID: <49d0669a-251b-48e2-a705-1c8c6ecea342@linux.intel.com>
+Date: Tue, 3 Dec 2024 15:29:59 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/6] KVM: x86: Play nice with protected guests in
+ complete_hypercall_exit()
+To: Sean Christopherson <seanjc@google.com>,
+ Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Tom Lendacky <thomas.lendacky@amd.com>,
+ Isaku Yamahata <isaku.yamahata@intel.com>, Kai Huang <kai.huang@intel.com>,
+ Xiaoyao Li <xiaoyao.li@intel.com>
+References: <20241128004344.4072099-1-seanjc@google.com>
+ <20241128004344.4072099-2-seanjc@google.com>
+Content-Language: en-US
+From: Binbin Wu <binbin.wu@linux.intel.com>
+In-Reply-To: <20241128004344.4072099-2-seanjc@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-There may still exist some pcluster with valid reference counts
-during unmounting.  Instead of introducing another synchronization
-primitive, just try again as unmounting is relatively rare.  This
-approach is similar to z_erofs_cache_invalidate_folio().
 
-It was also reported by syzbot as a UAF due to commit f5ad9f9a603f
-("erofs: free pclusters if no cached folio is attached"):
 
-BUG: KASAN: slab-use-after-free in do_raw_spin_trylock+0x72/0x1f0 kernel/locking/spinlock_debug.c:123
-..
- queued_spin_trylock include/asm-generic/qspinlock.h:92 [inline]
- do_raw_spin_trylock+0x72/0x1f0 kernel/locking/spinlock_debug.c:123
- __raw_spin_trylock include/linux/spinlock_api_smp.h:89 [inline]
- _raw_spin_trylock+0x20/0x80 kernel/locking/spinlock.c:138
- spin_trylock include/linux/spinlock.h:361 [inline]
- z_erofs_put_pcluster fs/erofs/zdata.c:959 [inline]
- z_erofs_decompress_pcluster fs/erofs/zdata.c:1403 [inline]
- z_erofs_decompress_queue+0x3798/0x3ef0 fs/erofs/zdata.c:1425
- z_erofs_decompressqueue_work+0x99/0xe0 fs/erofs/zdata.c:1437
- process_one_work kernel/workqueue.c:3229 [inline]
- process_scheduled_works+0xa68/0x1840 kernel/workqueue.c:3310
- worker_thread+0x870/0xd30 kernel/workqueue.c:3391
- kthread+0x2f2/0x390 kernel/kthread.c:389
- ret_from_fork+0x4d/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
 
-However, it seems a long outstanding memory leak.  Fix it now.
+On 11/28/2024 8:43 AM, Sean Christopherson wrote:
+> Use is_64_bit_hypercall() instead of is_64_bit_mode() to detect a 64-bit
+> hypercall when completing said hypercall.  For guests with protected state,
+> e.g. SEV-ES and SEV-SNP, KVM must assume the hypercall was made in 64-bit
+> mode as the vCPU state needed to detect 64-bit mode is unavailable.
+>
+> Hacking the sev_smoke_test selftest to generate a KVM_HC_MAP_GPA_RANGE
+> hypercall via VMGEXIT trips the WARN:
+>
+>    ------------[ cut here ]------------
+>    WARNING: CPU: 273 PID: 326626 at arch/x86/kvm/x86.h:180 complete_hypercall_exit+0x44/0xe0 [kvm]
+>    Modules linked in: kvm_amd kvm ... [last unloaded: kvm]
+>    CPU: 273 UID: 0 PID: 326626 Comm: sev_smoke_test Not tainted 6.12.0-smp--392e932fa0f3-feat #470
+>    Hardware name: Google Astoria/astoria, BIOS 0.20240617.0-0 06/17/2024
+>    RIP: 0010:complete_hypercall_exit+0x44/0xe0 [kvm]
+>    Call Trace:
+>     <TASK>
+>     kvm_arch_vcpu_ioctl_run+0x2400/0x2720 [kvm]
+>     kvm_vcpu_ioctl+0x54f/0x630 [kvm]
+>     __se_sys_ioctl+0x6b/0xc0
+>     do_syscall_64+0x83/0x160
+>     entry_SYSCALL_64_after_hwframe+0x76/0x7e
+>     </TASK>
+>    ---[ end trace 0000000000000000 ]---
+>
+> Fixes: b5aead0064f3 ("KVM: x86: Assume a 64-bit hypercall for guests with protected state")
+> Cc: stable@vger.kernel.org
+> Cc: Tom Lendacky <thomas.lendacky@amd.com>
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
 
-Fixes: f5ad9f9a603f ("erofs: free pclusters if no cached folio is attached")
-Reported-by: syzbot+7ff87b095e7ca0c5ac39@syzkaller.appspotmail.com
-Closes: https://lore.kernel.org/r/674c1235.050a0220.ad585.0032.GAE@google.com
-Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
----
- fs/erofs/zutil.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
 
-diff --git a/fs/erofs/zutil.c b/fs/erofs/zutil.c
-index 75704f58ecfa..0dd65cefce33 100644
---- a/fs/erofs/zutil.c
-+++ b/fs/erofs/zutil.c
-@@ -230,9 +230,10 @@ void erofs_shrinker_unregister(struct super_block *sb)
- 	struct erofs_sb_info *const sbi = EROFS_SB(sb);
- 
- 	mutex_lock(&sbi->umount_mutex);
--	/* clean up all remaining pclusters in memory */
--	z_erofs_shrink_scan(sbi, ~0UL);
--
-+	while (!xa_empty(&sbi->managed_pslots)) {
-+		z_erofs_shrink_scan(sbi, ~0UL);
-+		cond_resched();
-+	}
- 	spin_lock(&erofs_sb_list_lock);
- 	list_del(&sbi->list);
- 	spin_unlock(&erofs_sb_list_lock);
--- 
-2.43.5
+> ---
+>   arch/x86/kvm/x86.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index 2e713480933a..0b2fe4aa04a2 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -9976,7 +9976,7 @@ static int complete_hypercall_exit(struct kvm_vcpu *vcpu)
+>   {
+>   	u64 ret = vcpu->run->hypercall.ret;
+>   
+> -	if (!is_64_bit_mode(vcpu))
+> +	if (!is_64_bit_hypercall(vcpu))
+>   		ret = (u32)ret;
+>   	kvm_rax_write(vcpu, ret);
+>   	++vcpu->stat.hypercalls;
 
 
