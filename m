@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-428571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A35829E10BA
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 02:20:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B81B79E10BD
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 02:21:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 18B9FB225F4
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 01:20:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82DF8281CC4
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 01:21:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E5F64594C;
-	Tue,  3 Dec 2024 01:20:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EF6C2C697;
+	Tue,  3 Dec 2024 01:21:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p2oZ6GQY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uEQjX+2R"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 828882AEE4;
-	Tue,  3 Dec 2024 01:20:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8286D10F2;
+	Tue,  3 Dec 2024 01:21:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733188809; cv=none; b=N1fEPDj/gQTp0EfZUmYZzGI2KEKpKuvqbMetojGzVMK9gzUaerUFR5UPAqhH9Vgno11HK2typs4PWufwpPpumAzOLSuIa1EmAMbWQPDwhHnfdZIiznT9oXe1a+ZVVpJCn7z4lLvWufRbRMwTW5NBjlrA7MDtCeJNLNjD07uNfvk=
+	t=1733188900; cv=none; b=brkRWQRVkuk7VgUvoxqhn+ZemRmn8sZzzI8QHfMp3C7GU9zne4RRlClCMh/ks8fdE+Ks00DhhmGTWRSPEx8Q5BvAL7JXs7cw+FMlaG0bHav08W+amYpyEmAICT7/S/1U789Su2DU9MH6cHy2Iba4N91Yydd8vPqxJ/w7q/opHik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733188809; c=relaxed/simple;
-	bh=MlLe+tQnKFPxKjr103hSotPdb7+hcXhDgSGjZw8wjYw=;
+	s=arc-20240116; t=1733188900; c=relaxed/simple;
+	bh=1FtcmpRoCr5SeSvMzJ5tPuM2IMPDeMBkNlHhN+GJq3E=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=FzhJB4TB0vbaAciMlsrI14mMkw2+M1KVzoMOFBFNiz8eD/N2GIguasx2Flgg3VyiegZFxV/m8bti0B6x2qUVdxAErnE6iwF+BLlVk4/sapSRqDjudb33p91LR43SzJmRdHz9xZaajMEyR7xQOM+S4HkqZ59I0PMMRk2NAPBsvt8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p2oZ6GQY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF276C4CED1;
-	Tue,  3 Dec 2024 01:20:08 +0000 (UTC)
+	 Subject:From:Cc:To:Date; b=Nch0Bj9bueUz7XNq0+4tIGqGLZ9dLYGQ3uYwOh/Ak8/z79OfTb4bZkGbZgkpyJ2FWX8CjWm0t9kU6KD/+S/cr0IaM3ccIETnsmPlcYDh9Hx3281dz9ZAMBlZcLOc9h7YvL3aCibgc+InbyW51HWgLGNuK2GdiUWF3CWXpiozDiI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uEQjX+2R; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3314C4CED1;
+	Tue,  3 Dec 2024 01:21:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733188809;
-	bh=MlLe+tQnKFPxKjr103hSotPdb7+hcXhDgSGjZw8wjYw=;
+	s=k20201202; t=1733188900;
+	bh=1FtcmpRoCr5SeSvMzJ5tPuM2IMPDeMBkNlHhN+GJq3E=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=p2oZ6GQYhnDuqmez6879D5czXf0H6LNu6J1eW3rs+MvGQWnBsoKGf0BaTXYQ56GFH
-	 WDxPxrlOAZ3B7Wd//3Zaiyjotmz/MVtlFWsB4WQGrYJWORihiDILquwT7mfTNA6P8t
-	 3aAGOVbKNId3LYEiBZ3SVAUJ+U5lo/cDjVRDn91RnE87qZIFXWfCf8PYoK2zHRU/TZ
-	 SpoqmRYpyVNbwUe+qoQc1spQtpOF9Ti46eOJiu/uUA4TcralsI5BA7UgfDHmL4pfoM
-	 qKJ5B5cxUEtKwOD/NP54U5V6GdTv+oripnJjQR1ln4KiOgHASDb0CdwX5CCrzvvOcz
-	 LHjoKZnNbPdOQ==
-Message-ID: <3fd004add188460bf2bdd1a718387c7f.sboyd@kernel.org>
+	b=uEQjX+2RiKj7QLe7Eb5g69v4+Q62pK9d3XnjgEl6erIsn9RLMy1T0NS3Kzc4Cw+Wy
+	 +mXW5JtWKdRQtL+ZNvtybvLi6D8tYePKaE5uIncjeFShWvQJ+VRa9HbttSXJO1nSAZ
+	 GxObU5VYYadbP4e4lCfqWt0KB19/5zKOmr4bmDBtz40qUrQnEfeG4zMuwcUYcSOlxl
+	 pSNfWQy3wGmjTLv6sF6Pu4dFOsAIwC/C1IIq/aeE+zKjuUimKWP+Xzre9V/YfRtyi0
+	 OtoNwSO0zywo63vKJ4/TYcJ7DkYvF0cqkrDWnp8+KxN6oUb+EeYRasm2UineJCFNhs
+	 4hhmeJFT8kTQA==
+Message-ID: <ff51b468ac71f9206d4ca8c6f345f38f.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -49,50 +49,38 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20241202100621.29209-1-johan+linaro@kernel.org>
-References: <20241202100621.29209-1-johan+linaro@kernel.org>
-Subject: Re: [PATCH] Revert "clk: Fix invalid execution of clk_set_rate"
+In-Reply-To: <20241128-clk-audio-fix-rst-missing-v2-1-cf437d1a73da@baylibre.com>
+References: <20241128-clk-audio-fix-rst-missing-v2-1-cf437d1a73da@baylibre.com>
+Subject: Re: [PATCH v2] clk: amlogic: axg-audio: revert reset implementation
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, regressions@lists.linux.dev, Johan Hovold <johan+linaro@kernel.org>, Aishwarya TCV <aishwarya.tcv@arm.com>, Chuan Liu <chuan.liu@amlogic.com>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Johan Hovold <johan+linaro@kernel.org>
-Date: Mon, 02 Dec 2024 17:20:06 -0800
+Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>, Jerome Brunet <jbrunet@baylibre.com>
+To: Arnd Bergmann <arnd@arndb.de>, Jerome Brunet <jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Michael Turquette <mturquette@baylibre.com>, Neil Armstrong <neil.armstrong@linaro.org>
+Date: Mon, 02 Dec 2024 17:21:38 -0800
 User-Agent: alot/0.12.dev1+gaa8c22fdeedb
 
-Quoting Johan Hovold (2024-12-02 02:06:21)
-> This reverts commit 25f1c96a0e841013647d788d4598e364e5c2ebb7.
+Quoting Jerome Brunet (2024-11-28 09:30:42)
+> The audio subsystem of axg based platform is not probing anymore.
+> This is due to the introduction of RESET_MESON_AUX and the config
+> not being enabled with the default arm64 defconfig.
 >=20
-> The offending commit results in errors like
+> This brought another discussion around proper decoupling between
+> the clock and reset part. While this discussion gets sorted out,
+> revert back to the initial implementation.
 >=20
->         cpu cpu0: _opp_config_clk_single: failed to set clock rate: -22
+> This reverts
+>  * commit 681ed497d676 ("clk: amlogic: axg-audio: fix Kconfig dependency =
+on RESET_MESON_AUX")
+>  * commit 664988eb47dd ("clk: amlogic: axg-audio: use the auxiliary reset=
+ driver")
 >=20
-> spamming the logs on the Lenovo ThinkPad X13s and other Qualcomm
-> machines when cpufreq tries to update the CPUFreq HW Engine clocks.
+> Both are reverted with single change to avoid creating more compilation
+> problems.
 >=20
-> As mentioned in commit 4370232c727b ("cpufreq: qcom-hw: Add CPU clock
-> provider support"):
->=20
->         [T]he frequency supplied by the driver is the actual frequency
->         that comes out of the EPSS/OSM block after the DCVS operation.
->         This frequency is not same as what the CPUFreq framework has set
->         but it is the one that gets supplied to the CPUs after
->         throttling by LMh.
->=20
-> which seems to suggest that the driver relies on the previous behaviour
-> of clk_set_rate().
-
-I don't understand why a clk provider is needed there. Is anyone looking
-into the real problem?
-
->=20
-> Since this affects many Qualcomm machines, let's revert for now.
->=20
-> Fixes: 25f1c96a0e84 ("clk: Fix invalid execution of clk_set_rate")
-> Reported-by: Aishwarya TCV <aishwarya.tcv@arm.com>
-> Link: https://lore.kernel.org/all/e2d83e57-ad07-411b-99f6-a4fc3c4534fa@ar=
-m.com/
-> Cc: Chuan Liu <chuan.liu@amlogic.com>
-> Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
+> Fixes: 681ed497d676 ("clk: amlogic: axg-audio: fix Kconfig dependency on =
+RESET_MESON_AUX")
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Reported-by: Mark Brown <broonie@kernel.org>
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 > ---
 
 Applied to clk-fixes
