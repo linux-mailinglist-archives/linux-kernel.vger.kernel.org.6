@@ -1,174 +1,163 @@
-Return-Path: <linux-kernel+bounces-429273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22B559E199F
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 11:44:36 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD4521667CF
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:44:32 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6D751E2856;
-	Tue,  3 Dec 2024 10:42:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IBf3vuai"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A798D9E1A25
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 12:01:19 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 968011E2840
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 10:42:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733222563; cv=none; b=pQ3g9/gUjucchI3sV0zhClJWgqLDhtNa0N8GcM+Yx+yO/1/Wqz6SjkTvkdn2qDS9SwU0q1VUbxwqcd02cbhZ16+u5wzqt1qnQpLfH2hUpVXzmAqRVF/NZuiJUqTNNY3goZ2dNJD/LnsfHENIdXCLcpRhvTDIrllY+Q6XwBxtTeY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733222563; c=relaxed/simple;
-	bh=GClxry7kOfIsY1EQO6Rm5I2oCXDUT6JUC3Wc7LhTng0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dq3c6beFWtO9ZzqelJxz8xRFycfRUvoZsFH3uSm6kiTRItVuVy5ifOXaZ4aSWzPNkUotOggA8CSHtMRilNGCAPkP4eSwyG8hoTJi4s1hr7V+A5Xep4PwUEFIUrXGJ8OG1W4jShxqhfeFsNMZ/T71PXzo2EdSFYLPssFkQgIDSqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IBf3vuai; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1733222560;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=D5AHi0uk+oN+zpkzvh/QNmG2L3UPAKNwXGcHrJAQaZM=;
-	b=IBf3vuaiex7xxuF0Uw9ZzOY9JXxPRGRVWxeBhqeAZEgumQRHc4QDka4xrtoh+gbe7BSNhf
-	Vp5ECnlOkaBRnbXhnxsBg0E9tEyUP3ja5Wyro5lCqMnZR82B0N/ZaCXnuxUFwtOz/HNebt
-	LTlWOBNfgzEgW5M+0QpMmPV8itCPgUM=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-300-P5838zgdOW6m0hg0rLlvbA-1; Tue,
- 03 Dec 2024 05:42:36 -0500
-X-MC-Unique: P5838zgdOW6m0hg0rLlvbA-1
-X-Mimecast-MFC-AGG-ID: P5838zgdOW6m0hg0rLlvbA
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 46498B62F5D
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:44:54 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56BC11E230E;
+	Tue,  3 Dec 2024 10:44:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="FrREfCdS"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DE7BF19560BD;
-	Tue,  3 Dec 2024 10:42:32 +0000 (UTC)
-Received: from localhost (unknown [10.72.113.10])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9A28330000DF;
-	Tue,  3 Dec 2024 10:42:29 +0000 (UTC)
-Date: Tue, 3 Dec 2024 18:42:25 +0800
-From: Baoquan He <bhe@redhat.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	linux-s390@vger.kernel.org, virtualization@lists.linux.dev,
-	kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	kexec@lists.infradead.org, Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
-	Vivek Goyal <vgoyal@redhat.com>, Dave Young <dyoung@redhat.com>,
-	Thomas Huth <thuth@redhat.com>, Cornelia Huck <cohuck@redhat.com>,
-	Janosch Frank <frankja@linux.ibm.com>,
-	Claudio Imbrenda <imbrenda@linux.ibm.com>,
-	Eric Farman <farman@linux.ibm.com>,
-	Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH v1 03/11] fs/proc/vmcore: disallow vmcore modifications
- after the vmcore was opened
-Message-ID: <Z07gkXQDrNfL10hu@MiWiFi-R3L-srv>
-References: <20241025151134.1275575-1-david@redhat.com>
- <20241025151134.1275575-4-david@redhat.com>
- <Z0BL/UopaH5Xg5jS@MiWiFi-R3L-srv>
- <d29d7816-a3e5-4f34-bb0c-dd427931efb4@redhat.com>
- <Z0SMqYX8gMvdiU4T@MiWiFi-R3L-srv>
- <a7ccbd86-2a62-4191-8742-ce45b6e8f73c@redhat.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB6A21E230D
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 10:44:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733222646; cv=none; b=BiSd4z3L0YVK7tAwvI7bOVr+wHB4NE35oFCOWIgLiP+l1Bx8oyJ1hZHA4qde+2MokuWd8YAcHJci3auh9LHlroUh+vJDmdV5O7ir3Or9+sVR/8bnIFWTaz2hOU09oGZ+rz1PIM7crd0qP+/DZH1CRrMvkbX/Vtz5pBHy3C5VdvI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733222646; c=relaxed/simple;
+	bh=iL+OdIGkXYlFltzIJA5/1Zmew0K54VlsMV2aPYAo6UQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XuRtodtD8YDlo5u+fFk7kk+gisXF5D5loEG2i60gKvO/9PQrt4Vhcw8F/ipR4x4MHqrMpBtQUr/ucYmyR94F5lJRL1Df23qinKUTTVqimZD+kscNPwKJDqazqwKgZoCQxUuLfy8yaf5mkpGCE9cLAQN9E5RbK9YY8xH/F2LMuiY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=FrREfCdS; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4349fb56260so46673115e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 02:44:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1733222643; x=1733827443; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=U03OPGQRaXmE1ghscIoxpSXZHQUjfrvCB18PsXKgzhs=;
+        b=FrREfCdSV2/aYsFXHTO5+1VisvRSH3XhkkNnwg2dePJ4vo5G+7A51+Lv69Aq2OccOX
+         CQ8v1u0LbsDbncdeoSWDUj7zq/okhSnr5dmnyR+AabbVY7iVJX+F6896zpBFR/1przUQ
+         y/r7AslBCTRCq+P09s9wizR/5V3sStFKw4yO2LxeFzZAvezUKrY+0iRnAmjCwfwHxHVM
+         MBUxjDnCoxFhNoZg2lA0/xByj7Hv/wS3MhwIkSrQqmMEtiJLhLIMSY6Lnqqi7ZTPsLst
+         cbQsR2qEqSxUC4moFMXwqXsJde74EubSqTPOYdq47Sdf694cX+MFBEqO0Oy5Fx5ML9wG
+         hW0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733222643; x=1733827443;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=U03OPGQRaXmE1ghscIoxpSXZHQUjfrvCB18PsXKgzhs=;
+        b=QtKBsV97phe224ZvQZl07+q2Y/uyyjbz0f1CjOzQr+T/xtho+c6bVCsDaGJe9NVOa+
+         VroXuKYufaje3ns5uw0PEfpn8Xq3RLlVfpoCyFinrIdU5UU0YZqElmN/ATCkC4uaeUkA
+         sknWGhlPuxzLLiiEK8qBxRt7kXUKpX3j3HAlOkpc9tvm+S29+x4vOZC/NKoLOF7FoxNC
+         zrLpsWfMdm6GO1zgYVKccFVqOElHWUlaKi/pR1toZ8JUrjruZtFqZakXiyyU4Fo28HuE
+         30LEidW00u3TiQ/NbFbEd5IPCagC31mMcYqig6bc+fzdP+mTtUQbE6EO8qfMj0iePtyd
+         sFuw==
+X-Forwarded-Encrypted: i=1; AJvYcCVQ13QoLr67FuNWxvnSA9I/+U49oIrnuJ9Kf3z5F52pbvODe2K2t9P7xGzo8Kv9LKeVIrPIEHGTXc7B8+E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxEOH+MCKqC5yKO4wcKIh2ZRFtRm4K832uUPIbUMomsWy8/TX6O
+	c9amiKKiUUeldXaWqPND4hG+YykJzuXegqVmlYF/co2Rh7EDptymbHy0Z7ZSZyycorpW3yhZCE+
+	o
+X-Gm-Gg: ASbGncuxXg23mSwz727BdRKwUjKUuw4tCBbtAS9A1jo1R5oxlHPPD0rvNnJErLxJRfd
+	oY1e8jgXSWY7fxdmkZA0sqU5FwucLEiLLXNnzxnFsg7lzdRtqQclq98VHyPxOfvRzKaivSyy0/f
+	zxNLtfia3oQugrL/gnC/MngfoVv6sL/z2XYLdAeJvUqCPu5kgUujXgECDEOBv1govnIxkr+BYv0
+	Z3lVkRPk3GL1Y1UeoZ76v8CfT/qTim9ugbuhi4I9nTCxvaD4qb1
+X-Google-Smtp-Source: AGHT+IFjjbvEeALxzGnisfRqO1VWpGZ6FOPcBFJVA64KLUcBabiM0AVQuu2EXYMYgxb4LiiFJ5aWzg==
+X-Received: by 2002:a05:600c:3546:b0:434:9fb5:fddd with SMTP id 5b1f17b1804b1-434d0a07350mr13720895e9.23.1733222643100;
+        Tue, 03 Dec 2024 02:44:03 -0800 (PST)
+Received: from blackdock.suse.cz ([193.86.92.181])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434b0f32594sm187382555e9.32.2024.12.03.02.44.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Dec 2024 02:44:02 -0800 (PST)
+Date: Tue, 3 Dec 2024 11:44:00 +0100
+From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
+To: Dave Chinner <david@fromorbit.com>, Alice Ryhl <aliceryhl@google.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, Nhat Pham <nphamcs@gmail.com>, 
+	Qi Zheng <zhengqi.arch@bytedance.com>, Roman Gushchin <roman.gushchin@linux.dev>, 
+	Muchun Song <muchun.song@linux.dev>, Linux Memory Management List <linux-mm@kvack.org>, 
+	Michal Hocko <mhocko@kernel.org>, Shakeel Butt <shakeel.butt@linux.dev>, cgroups@vger.kernel.org, 
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [QUESTION] What memcg lifetime is required by list_lru_add?
+Message-ID: <siexzzafqmgtya5jas4v5pjpartt2h4l2amimjhaaztqidapht@2rexlquzrdsx>
+References: <CAH5fLghFWi=xbTgaG7oFNJo_7B7zoMRLCzeJLXd_U5ODVGaAUA@mail.gmail.com>
+ <Z0eXrllVhRI9Ag5b@dread.disaster.area>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="f7hgwm4vbrllohur"
+Content-Disposition: inline
+In-Reply-To: <Z0eXrllVhRI9Ag5b@dread.disaster.area>
+
+
+--f7hgwm4vbrllohur
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <a7ccbd86-2a62-4191-8742-ce45b6e8f73c@redhat.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+Content-Transfer-Encoding: quoted-printable
 
-On 11/29/24 at 11:38am, David Hildenbrand wrote:
-> On 25.11.24 15:41, Baoquan He wrote:
-> > On 11/22/24 at 10:30am, David Hildenbrand wrote:
-> > > On 22.11.24 10:16, Baoquan He wrote:
-> > > > On 10/25/24 at 05:11pm, David Hildenbrand wrote:
-> > > > ......snip...
-> > > > > @@ -1482,6 +1470,10 @@ int vmcore_add_device_dump(struct vmcoredd_data *data)
-> > > > >    		return -EINVAL;
-> > > > >    	}
-> > > > > +	/* We'll recheck under lock later. */
-> > > > > +	if (data_race(vmcore_opened))
-> > > > > +		return -EBUSY;
-> > > > 
-> > > 
-> > > Hi,
-> > > 
-> > > > As I commented to patch 7, if vmcore is opened and closed after
-> > > > checking, do we need to give up any chance to add device dumping
-> > > > as below?
-> > > > 
-> > > > fd = open(/proc/vmcore);
-> > > > ...do checking;
-> > > > close(fd);
-> > > > 
-> > > > quit any device dump adding;
-> > > > 
-> > > > run makedumpfile on s390;
-> > > >     ->fd = open(/proc/vmcore);
-> > > >       -> try to dump;
-> > > >     ->close(fd);
-> > > 
-> > > The only reasonable case where this could happen (with virtio_mem) would be
-> > > when you hotplug a virtio-mem device into a VM that is currently in the
-> > > kdump kernel. However, in this case, the device would not provide any memory
-> > > we want to dump:
-> > > 
-> > > (1) The memory was not available to the 1st (crashed) kernel, because
-> > >      the device got hotplugged later.
-> > > (2) Hotplugged virtio-mem devices show up with "no plugged memory",
-> > >      meaning there wouldn't be even something to dump.
-> > > 
-> > > Drivers will be loaded (as part of the kernel or as part of the initrd)
-> > > before any kdump action is happening. Similarly, just imagine your NIC
-> > > driver not being loaded when you start dumping to a network share ...
-> > > 
-> > > This should similarly apply to vmcoredd providers.
-> > > 
-> > > There is another concern I had at some point with changing the effective
-> > > /proc/vmcore size after someone already opened it, and might assume the size
-> > > will stay unmodified (IOW, the file was completely static before vmcoredd
-> > > showed up).
-> > > 
-> > > So unless there is a real use case that requires tracking whether the file
-> > > is no longer open, to support modifying the vmcore afterwards, we should
-> > > keep it simple.
-> > > 
-> > > I am not aware of any such cases, and my experiments with virtio_mem showed
-> > > that the driver get loaded extremely early from the initrd, compared to when
-> > > we actually start messing with /proc/vmcore from user space.
+On Thu, Nov 28, 2024 at 09:05:34AM GMT, Dave Chinner <david@fromorbit.com> =
+wrote:
+> It's enforced by the -complex- state machine used to tear down
+> control groups.
 
-It's OK, David, I don't have strong opinion about the current
-implementation. I raised this concern because
+True.
 
-1) I saw the original vmcoredd only warn when doing register if
-vmcore_opened is true;
+> tl;dr: If the memcg gets torn down, it will reparent the objects on
+> the LRU to it's parent memcg during the teardown process.
+>=20
+> This reparenting happens in the cgroup ->css_offline() method, which
+> only happens after the cgroup reference count goes to zero and is
+> waited on via:
 
-2) in patch 1, it says vmcore_mutex is introduced to protect vmcore
-modifications from concurrent opening. If we are confident, the old
-vmcoredd_mutex can guarantee it, I could be wrong here.
+What's waited for is seeing "killing" of the _initial_ reference, the
+refcount may be still non-zero. I.e. ->css_offline() happens with some
+referencs around (e.g. from struct page^W folio) and only
+->css_released() is called after refs drop to zero (and ->css_free()
+even after RCU period given there were any RCU readers who didn't
+css_get()).
 
-Anyway, it's just a tiny concern, I believe it won't cause issue at
-present. So it's up to you. 
+> See the comment above css_free_rwork_fn() for more details about the
+> teardown process:
+>=20
+> /*
+>  * css destruction is four-stage process.
+>  *
+>  * 1. Destruction starts.  Killing of the percpu_ref is initiated.
+>  *    Implemented in kill_css().
+>  *
+>  * 2. When the percpu_ref is confirmed to be visible as killed on all CPUs
+>  *    and thus css_tryget_online() is guaranteed to fail, the css can be
+>  *    offlined by invoking offline_css().  After offlining, the base ref =
+is
+>  *    put.  Implemented in css_killed_work_fn().
+>  *
+>  * 3. When the percpu_ref reaches zero, the only possible remaining
+>  *    accessors are inside RCU read sections.  css_release() schedules the
+>  *    RCU callback.
+>  *
+>  * 4. After the grace period, the css can be freed.  Implemented in
+>  *    css_free_rwork_fn().
 
-Thanks
+This is a useful comment.
 
+HTH,
+Michal
+
+--f7hgwm4vbrllohur
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQTd6mfF2PbEZnpdoAkt3Wney77BSQUCZ07g7gAKCRAt3Wney77B
+SWSLAQDYSjM8dIWjMx78MOe0HwHi7Jr3Zy7NTu/rfkCngqsLhQEAq0eCFBipF6FO
+zr4LRLdBi2pGv+clMNdjT1BSgdjqBQo=
+=UtFx
+-----END PGP SIGNATURE-----
+
+--f7hgwm4vbrllohur--
 
