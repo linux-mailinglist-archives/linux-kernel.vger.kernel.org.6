@@ -1,145 +1,215 @@
-Return-Path: <linux-kernel+bounces-428747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD8A69E12D5
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 06:19:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A5039E12D9
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 06:22:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C4B12826CF
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 05:19:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94BAF28299F
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 05:22:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C80115AAC1;
-	Tue,  3 Dec 2024 05:19:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91324146013;
+	Tue,  3 Dec 2024 05:22:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iecH5QRe"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="dNWypeZU"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 551A26FC3;
-	Tue,  3 Dec 2024 05:19:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED2DA6FC3;
+	Tue,  3 Dec 2024 05:22:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733203160; cv=none; b=guZOutZkRao1oddLgqmE31+JzhVLZX+2UDUfwivv6qP7Z7zXGa0cKrKzElNMpuUVF7RK5DQrerP4EDzc/L+g18PE+rMk0IF4Luuj4p8x0ZzayYbniTWM+PpXhpD3+NSfwLwbah7F09Zptx5mRPpKISDVX3eMhrSwxM9J0+aRqg0=
+	t=1733203332; cv=none; b=VizN0ZeJDL0yChbWLG5sc9wrV4KJGJfCpPzPHQCul9vNogcjtPxgdZTA3309rJ/PsXDjHlnhIVN2mBfNBUzogu5wEDkjsgGD4yE5vxCf0KAI2ltKa5wcgf1xnzYWgP/AuEguiIAZWozp2cZLnc4kovSEJLHiKcRm7MQlgCcRJyc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733203160; c=relaxed/simple;
-	bh=DhhPSHB9fE89Kk23/L85z71d0bKmztN78SWqE3eklfU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZwZ0RkebmIMnwup/0X4nKvCsv3hAIyO1oE/aNI5c4cA3XdgUBPOpDRANRL/vJk2/AKvssWrNCP9BMf/mGOx0OzkBpBRzum+SPqOOeaPWroacXf45gfgUmNM89wAMLSkzlJm4zNAeeOoxTHp6EORsHq/N5PvEofkMnKcKLyEY6cw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iecH5QRe; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-7256a7a3d98so2099539b3a.3;
-        Mon, 02 Dec 2024 21:19:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733203158; x=1733807958; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=hDQRt9CHdpZ9I0oXQCgclITdxLKu1aJE48MT6i5aHRw=;
-        b=iecH5QRerI+0aUsCLxlkNcjq9M3uo1YuVaSq6wOcLUOMZsbbDz+2t/kNTgCI/V/4Ex
-         mdLcqpozlkLqiwSK3p+o9rVARpp45IsYGIsqwX9WvR2qhRMv/uBRT0nRuFrC6knVC/Ux
-         g6+jEBQYcfuqGTNf1fNJEKNMYa4b2hnLHNG2uFAL4NRroJyEfZ7gyQ7eTFIVMuSIlDHn
-         PPp+9lfBYIb/8plCN2zrr3l+07mOW5ClH/nfiNW3oNjPGy2r7cA5rYOGPkWMx5/vaLi0
-         TSoXpH+LNLJ4tcve/hHGIpCuuLREIVN+T6MunWhl7CiUnQSLWv+gugCHaW/jYjz+/JWg
-         6wzA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733203158; x=1733807958;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hDQRt9CHdpZ9I0oXQCgclITdxLKu1aJE48MT6i5aHRw=;
-        b=HL/UaD8vyTvQcetHC6epTvJdPkGGBPZhpPJyPxaydjsBHai6s7UCX1veP7GEbavQ7a
-         N81XDVgKGvw+h8JJSFgt443fQR7uwvdX7hvoiB7LGNlRrSva+Uaf2WxcIcAY9UfxRdHg
-         0BmrHJfFS4wk6lhxTlrdC/rMt9H1M9+KcWbm+pfRWY5HV5TPwmiu5nsKpQPOqaEv8u8x
-         Br2m1uEfJy/5lr05sM4zCqTg1ATINV5yvi0I8zogLkyprCQv4JEIQK2McrRWrDOO5K/h
-         F4p/vzBSrqDeZwPiWD4+c2rqt3b3cR/pC4eZwj1W5ZErvD3HeUdm32uBD9I/LcZ8TYiX
-         E2eA==
-X-Forwarded-Encrypted: i=1; AJvYcCUZPDnQ7Zk0Gjnh3IWEqnC14Oo9OdBYVND+2X9kdtBh23g9Ae6D+ehx+qKy/RB9BRHMrQgSAka5Ib7WWfo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2jYjRwuvoWK2rMXhAR4kvmTedMfFmY5TGewvSROSrlWjBoG4H
-	hHP1KnT+AH5F4nDf/TLBh2aA7TBmgq9L/BeWmx1l/CBUftWi+8bj
-X-Gm-Gg: ASbGncuUU7qBxTVfdZA8QXfYDwBeWeEtu/v2SdWxTs2WJoQJE4eq/XVsOKtKYy+2wHh
-	QLoW4+uuxzs7S6TRp1rWRY6fVIkWhgz1ufh+JERiEl2PreAFcc56kGmHe86/n5A16HZlIqUxkU1
-	DMBjF6qPDcan66WaZood+1DbWMObDn4N8AEU4AY3WXee16Yvi/ZwsUtLvTiK7yxDECTt+m/qRtm
-	CJT7MvomF1zXGW2A9gmrnPpzbJSe9liPq2p+aPWMt1gIsZp2/wN8UK/lekI
-X-Google-Smtp-Source: AGHT+IF8MseDyGUJEDK31r2/QuX21EyDXOW33DCLUI8ET2/oml+vRvK6/33zDgJBj2BP1YSGsCe1+A==
-X-Received: by 2002:a05:6a21:99a7:b0:1e0:cfc0:df34 with SMTP id adf61e73a8af0-1e1653b7b73mr1932049637.16.1733203158513;
-        Mon, 02 Dec 2024 21:19:18 -0800 (PST)
-Received: from lordgoatius.hsd1.or.comcast.net ([2601:1c1:8502:a6c0::ed0e])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-215219c5533sm85926545ad.256.2024.12.02.21.19.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Dec 2024 21:19:18 -0800 (PST)
-From: jtostler1@gmail.com
-To: Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>
-Cc: rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Jimmy Ostler <jtostler1@gmail.com>
-Subject: [PATCH] rust: alloc: Add doctest for `ArrayLayout`
-Date: Mon,  2 Dec 2024 21:18:43 -0800
-Message-ID: <20241203051843.291729-1-jtostler1@gmail.com>
-X-Mailer: git-send-email 2.47.1
+	s=arc-20240116; t=1733203332; c=relaxed/simple;
+	bh=5aObWm27VK9DsjLg/59PkTgIbb6uz5H/SjD3aTqp67w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=AciHO9D/sMYVVipuUiHSjFaJT3OHBFMihIxA9FK3yzAXDltQYYy7UymPvvXtQ5fbbpDN+C0GYs19U+bNK/VVg0/LzqewHOwDy6IYdFKBxx8csCWJkprbIOzjaHfq57aeBAYpJacv2FIKRuc4dGjSQkjnEsGmjSmSa5DptuIXphg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=dNWypeZU; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B2I1wk3021119;
+	Tue, 3 Dec 2024 05:22:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	itMmfIsQVZdPM3Aw1B8M7FOP0dxnomtjsrcBYVfOGPc=; b=dNWypeZUuNTT6AA4
+	Kk5QE3A1yz4TdBu1/OHj3YXxVMmzjUkSn2jYk3iqA2L6BjOwpEUIVoxTa4C1WvME
+	IpRIMPOGAzE+J1/6cN1li+ZmvyBx8ZESkWwCKV5i30wj7e3JqRhz0BMWZzQtvmMn
+	htvyTz7vsIHeQ77cmmqFWHCJjRVDronLgpTUzrfgJ/XuSgC7uOMQUKsXtGBXagD8
+	ey6ayPyuvrDr5+6v6sSwxKWPUTsaDTzPMsDUh/mWgN3Db3W7dBF+RwX3Lep5Ivkn
+	cVLxdcGFnhG3AvXy6enTVUhIBNTqotLdr1cFEWld/VrXC2oxCWuyNuYk/1NummwV
+	ge58VA==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 437u36ey26-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 03 Dec 2024 05:22:05 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B35M42M029176
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 3 Dec 2024 05:22:04 GMT
+Received: from [10.204.65.49] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 2 Dec 2024
+ 21:22:01 -0800
+Message-ID: <697e90db-6ecc-44ac-af86-6c7f910fc902@quicinc.com>
+Date: Tue, 3 Dec 2024 10:51:58 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 4/4] misc: fastrpc: Add debugfs support for fastrpc
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Greg KH <gregkh@linuxfoundation.org>, <srinivas.kandagatla@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <quic_bkumar@quicinc.com>,
+        <linux-kernel@vger.kernel.org>, <quic_chennak@quicinc.com>,
+        <dri-devel@lists.freedesktop.org>, <arnd@arndb.de>
+References: <20241118084046.3201290-1-quic_ekangupt@quicinc.com>
+ <20241118084046.3201290-5-quic_ekangupt@quicinc.com>
+ <2024111804-doze-reflected-0feb@gregkh>
+ <c3b285b0-33d1-4bfa-b8ab-6783ff5ed78d@quicinc.com>
+ <cn7pqvhw4x4y7s5hbgzjpvyjnw4g6hoyepic4jai7x2fjdenxr@ikr4hkorbuwb>
+ <365c4709-b421-4af8-b521-a195630242de@quicinc.com>
+ <nsaq3zungvyhuikz35arvxmle2fovxh422jpyqxuleh57ufqnk@bekeh7qr7y76>
+Content-Language: en-US
+From: Ekansh Gupta <quic_ekangupt@quicinc.com>
+In-Reply-To: <nsaq3zungvyhuikz35arvxmle2fovxh422jpyqxuleh57ufqnk@bekeh7qr7y76>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: l5HzmH8p12SZWCIL6rZZonynQyelXQR9
+X-Proofpoint-ORIG-GUID: l5HzmH8p12SZWCIL6rZZonynQyelXQR9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 mlxscore=0
+ clxscore=1015 bulkscore=0 adultscore=0 lowpriorityscore=0 impostorscore=0
+ mlxlogscore=999 phishscore=0 suspectscore=0 spamscore=0 priorityscore=1501
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
+ definitions=main-2412030043
 
-From: Jimmy Ostler <jtostler1@gmail.com>
 
-Added a rustdoc example and Kunit test to the `ArrayLayout` struct's
-`ArrayLayout::new()` function.
 
-Kunit tests ran using `./tools/testing/kunit/kunit.py run \
---make_options LLVM=1 \
---kconfig_add CONFIG_RUST=y` passed.
+On 12/2/2024 6:18 PM, Dmitry Baryshkov wrote:
+> On Mon, Dec 02, 2024 at 03:27:43PM +0530, Ekansh Gupta wrote:
+>>
+>> On 11/22/2024 12:23 AM, Dmitry Baryshkov wrote:
+>>> On Thu, Nov 21, 2024 at 12:12:17PM +0530, Ekansh Gupta wrote:
+>>>> On 11/18/2024 7:32 PM, Greg KH wrote:
+>>>>> On Mon, Nov 18, 2024 at 02:10:46PM +0530, Ekansh Gupta wrote:
+>>>>>> Add changes to support debugfs. The fastrpc directory will be
+>>>>>> created which will carry debugfs files for all fastrpc processes.
+>>>>>> The information of fastrpc user and channel contexts are getting
+>>>>>> captured as part of this change.
+>>>>>>
+>>>>>> Signed-off-by: Ekansh Gupta <quic_ekangupt@quicinc.com>
+>>>>>> ---
+>>>>>>  drivers/misc/fastrpc/Makefile        |   3 +-
+>>>>>>  drivers/misc/fastrpc/fastrpc_debug.c | 156 +++++++++++++++++++++++++++
+>>>>>>  drivers/misc/fastrpc/fastrpc_debug.h |  31 ++++++
+>>>>>>  drivers/misc/fastrpc/fastrpc_main.c  |  18 +++-
+>>>>>>  4 files changed, 205 insertions(+), 3 deletions(-)
+>>>>>>  create mode 100644 drivers/misc/fastrpc/fastrpc_debug.c
+>>>>>>  create mode 100644 drivers/misc/fastrpc/fastrpc_debug.h
+>>>>>>
+>>>>>> diff --git a/drivers/misc/fastrpc/Makefile b/drivers/misc/fastrpc/Makefile
+>>>>>> index 020d30789a80..4ff6b64166ae 100644
+>>>>>> --- a/drivers/misc/fastrpc/Makefile
+>>>>>> +++ b/drivers/misc/fastrpc/Makefile
+>>>>>> @@ -1,3 +1,4 @@
+>>>>>>  # SPDX-License-Identifier: GPL-2.0
+>>>>>>  obj-$(CONFIG_QCOM_FASTRPC)	+= fastrpc.o
+>>>>>> -fastrpc-objs	:= fastrpc_main.o
+>>>>>> \ No newline at end of file
+>>>>>> +fastrpc-objs	:= fastrpc_main.o \
+>>>>>> +		fastrpc_debug.o
+>>>>> Only build this file if debugfs is enabled.
+>>>>>
+>>>>> And again, "debug.c"?
+>>>> I'll add change to build this only if debugfs is enabled. Going forward I have plans to add
+>>>> few more debug specific changes, maybe then I'll need to change the build rules again.
+>>>>>> diff --git a/drivers/misc/fastrpc/fastrpc_debug.c b/drivers/misc/fastrpc/fastrpc_debug.c
+>>>>>> new file mode 100644
+>>>>>> index 000000000000..cdb4fc6845a8
+>>>>>> --- /dev/null
+>>>>>> +++ b/drivers/misc/fastrpc/fastrpc_debug.c
+>>>>>> @@ -0,0 +1,156 @@
+>>>>>> +// SPDX-License-Identifier: GPL-2.0
+>>>>>> +// Copyright (c) 2024 Qualcomm Innovation Center.
+>>>>>> +
+>>>>>> +#include <linux/debugfs.h>
+>>>>>> +#include <linux/seq_file.h>
+>>>>>> +#include "fastrpc_shared.h"
+>>>>>> +#include "fastrpc_debug.h"
+>>>>>> +
+>>>>>> +#ifdef CONFIG_DEBUG_FS
+>>>>> Please put the #ifdef in the .h file, not in the .c file.
+>>>> Ack
+>>>>>> +void fastrpc_create_user_debugfs(struct fastrpc_user *fl)
+>>>>>> +{
+>>>>>> +	char cur_comm[TASK_COMM_LEN];
+>>>>>> +	int domain_id, size;
+>>>>>> +	char *debugfs_buf;
+>>>>>> +	struct dentry *debugfs_dir = fl->cctx->debugfs_dir;
+>>>>>> +
+>>>>>> +	memcpy(cur_comm, current->comm, TASK_COMM_LEN);
+>>>>>> +	cur_comm[TASK_COMM_LEN-1] = '\0';
+>>>>>> +	if (debugfs_dir != NULL) {
+>>>>>> +		domain_id = fl->cctx->domain_id;
+>>>>>> +		size = snprintf(NULL, 0, "%.10s_%d_%d_%d", cur_comm,
+>>>>>> +				current->pid, fl->tgid, domain_id) + 1;
+>>>>>> +		debugfs_buf = kzalloc(size, GFP_KERNEL);
+>>>>>> +		if (debugfs_buf == NULL)
+>>>>>> +			return;
+>>>>>> +		/*
+>>>>>> +		 * Use HLOS process name, HLOS PID, fastrpc user TGID,
+>>>>>> +		 * domain_id in debugfs filename to create unique file name
+>>>>>> +		 */
+>>>>>> +		snprintf(debugfs_buf, size, "%.10s_%d_%d_%d",
+>>>>>> +			cur_comm, current->pid, fl->tgid, domain_id);
+>>>>>> +		fl->debugfs_file = debugfs_create_file(debugfs_buf, 0644,
+>>>>>> +				debugfs_dir, fl, &fastrpc_debugfs_fops);
+>>>>> Why are you saving the debugfs file?  What do you need to do with it
+>>>>> that you can't just delete the whole directory, or look up the name
+>>>>> again in the future when removing it?
+>>>> fl structure is specific to a process using fastrpc driver. The reason to save
+>>>> this debugfs file is to delete is when the process releases fastrpc device.
+>>>> If the file is not deleted, it might flood multiple files in debugfs directory.
+>>>>
+>>>> As part of this change, only the file that is getting created by a process is
+>>>> getting removed when process is releasing device and I don't think we
+>>>> can clean up the whole directory at this point.
+>>> My 2c: it might be better to create a single file that conains
+>>> information for all the processes instead of that. Or use fdinfo data to
+>>> export process / FD information to userspace.
+>> Thanks for your review. The reason of not having single file for all processes is that
+>> I can run 100s of iteration for any process(say calculator) and every time the properties
+>> of the process can differ(like buffer, session etc.). For this reason, I'm creating and
+>> deleting the debugfs files for every process run.
+>>
+>> Do you see any advantage of using fdinfo over debugfs? I'm not sure if we can add all
+>> the information(like in debugfs) here.
+> Which information is actually useful / interesting for application
+> developers? If not for the fdinfo, I might still vote for a single file
+> rather than a pile of per-process data.
+I have tried to capture all the information that could be useful.
 
-Generated documentation looked as expected.
+I can try changes to maintain single file for all active processes. Having this file specific
+to a channel should be fine, right? like fastrpc_adsp, fastrpc_cdsp, etc.? Each file will
+carry information of all processes using that remoteproc.
 
-Signed-off-by: Jimmy Ostler <jtostler1@gmail.com>
-Suggested-by: Boqun Feng <boqun.feng@gmail.com>
-Link: https://github.com/Rust-for-Linux/linux/issues/1131
----
- rust/kernel/alloc/layout.rs | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
-
-diff --git a/rust/kernel/alloc/layout.rs b/rust/kernel/alloc/layout.rs
-index 4b3cd7fdc816..4265f92f8af0 100644
---- a/rust/kernel/alloc/layout.rs
-+++ b/rust/kernel/alloc/layout.rs
-@@ -7,6 +7,7 @@
- use core::{alloc::Layout, marker::PhantomData};
- 
- /// Error when constructing an [`ArrayLayout`].
-+#[derive(Debug)]
- pub struct LayoutError;
- 
- /// A layout for an array `[T; n]`.
-@@ -43,6 +44,19 @@ pub const fn empty() -> Self {
-     /// # Errors
-     ///
-     /// When `len * size_of::<T>()` overflows or when `len * size_of::<T>() > isize::MAX`.
-+    ///
-+    ///
-+    /// # Examples
-+    ///
-+    /// ```rust
-+    /// use kernel::alloc::layout::ArrayLayout;
-+    ///
-+    /// let layout = ArrayLayout::<i32>::new(15);
-+    /// assert_eq!(layout.expect("len * size_of::<i32>() does not overflow").len(), 15);
-+    ///
-+    /// let layout = ArrayLayout::<i32>::new(isize::MAX as usize);
-+    /// assert!(layout.is_err());
-+    /// ```
-     pub const fn new(len: usize) -> Result<Self, LayoutError> {
-         match len.checked_mul(core::mem::size_of::<T>()) {
-             Some(size) if size <= ISIZE_MAX => {
-
-base-commit: 1dc707e647bc919834eff9636c8d00b78c782545
--- 
-2.47.1
+--ekansh
+>
+>> --ekansh
+>>>
 
 
