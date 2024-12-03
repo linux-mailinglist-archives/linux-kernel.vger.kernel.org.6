@@ -1,106 +1,88 @@
-Return-Path: <linux-kernel+bounces-430007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 053689E2ACB
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 19:27:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16D549E2AD8
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 19:30:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF966286A37
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 18:27:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D173E2843DB
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 18:30:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 415921FCF72;
-	Tue,  3 Dec 2024 18:27:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 775CE1FCD17;
+	Tue,  3 Dec 2024 18:29:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="P7ZbYoAc";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ODByuAMb"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r+wRqACs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D7F21F4733
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 18:27:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D91802500C4
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 18:29:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733250465; cv=none; b=fwzzb7SK8Rl7MQN7V/JObTiWX7uG+b/dDrdJYj2yNTrVP41WByECJeAly4Wb+mqSb7UIBCdpYeq0ZPkedpZi3YJK8yDm+2Wo2hFKuuT2Lp4610cuL9yEiefJE7fiXlWxk0d4l+S2eCp+fAz/FDlxYbrwsT2E53nCrupzrl9S4o8=
+	t=1733250597; cv=none; b=V4eKR+gpB4jQE6hp+MDIuaqk51SIZBomd5AF9+Kt6w9lWhFXc+wPKUqdrvU0Ygl+fSSpRdiTeZk5pu5q6c2Ueb91CBjJozUH6whJZWqBduIqVZBGPCZ3H1Rc8ss5asAmg+RL7YIgCGW4sIN//AXRp4Y7dSc746bWLbXT5CqOen4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733250465; c=relaxed/simple;
-	bh=dO4ndMn3sZMgczB3oNRanGdyZHULJUiSlFaBzeB9zJM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ruB8ermTAPrII02tbVEBLNvVjwNZ0HQZ9gNv5BvlKqVfYM7Q1M4McoCOmFjuimv/twIC2uh91zt1ENLtsByjjS63dPuHkQSV9QkcXAtGGBTdtcC00rap+idDXPZXFXlA8JpJMDKp9cHLsVYaaGaR5+YHvCvy9aeXQm0LY8hlIYU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=P7ZbYoAc; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ODByuAMb; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 3 Dec 2024 19:27:40 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1733250462;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4L6ZYZw1cI/9nLWodUSRVMbOnAoZR2tD6CT00fe1Kvs=;
-	b=P7ZbYoAc5VW9lMu8fx9ykExmQt3RNYCnlcuzTJBxIa7tpwrFwEj+Q0iLumu7ULP6XKfTYd
-	pHOLNenzxo/USE75fUJt3HtNf/tWAKY4nObpXvyYJ+rYsrTjoHbTwZLJPFFWDHmg261idR
-	MaHU8CF3kjF3prjNhgDvqr+IwkiHHxGanN2/Yixwe0+HEJ0By+0yMXcX7l1xF91SocIc2w
-	BivH24t5B9LKeSR/vkcbL81CtqnefRFY8Pw6I6f2lxCx4web8IzljwGIU+curacYA5QeJy
-	Zxu4f7rcsgpJSVEKROFUpwsI2SBO4+OJfrOW3HmEzNdWaaQY+DFrLdHdwqrpOw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1733250462;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4L6ZYZw1cI/9nLWodUSRVMbOnAoZR2tD6CT00fe1Kvs=;
-	b=ODByuAMbqRkTkM8+zPzZ6T3Z5JvQtjUHnHlUM8MmSMChBWe0qSYzOzuEjviAww5mw0lVHF
-	lSH0iYGYLq602OAQ==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Juri Lelli <juri.lelli@redhat.com>
-Cc: linux-kernel@vger.kernel.org,
-	=?utf-8?B?QW5kcsOp?= Almeida <andrealmeid@igalia.com>,
-	Darren Hart <dvhart@infradead.org>,
-	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Waiman Long <longman@redhat.com>
-Subject: Re: [RFC PATCH v3 0/9] futex: Add support task local hash maps.
-Message-ID: <20241203182740.NQdnjPBd@linutronix.de>
-References: <20241115172035.795842-1-bigeasy@linutronix.de>
- <Z0nX2olCQtSciY7-@jlelli-thinkpadt14gen4.remote.csb>
+	s=arc-20240116; t=1733250597; c=relaxed/simple;
+	bh=aIZFyQwG7O5mRix6OI6/uqtKoISduW4JyBE9nZNeWfs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=batMiGCtO9PV0euNMUhH4PkVTLm1lOczq2jq1/v9bw0axPrubu7TPJge79LSov383SYn6vCcE6wNzPB28jfM7d/HBcNhFqeq9vdxmYrNxeYrqdoEMmQJBeS3u4vgR98SCRlbm5RaLaov0WlG/qgjeMBv1dYDwzUBwYhovwKeNic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r+wRqACs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 566D3C4CEDE
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 18:29:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733250597;
+	bh=aIZFyQwG7O5mRix6OI6/uqtKoISduW4JyBE9nZNeWfs=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=r+wRqACsSUGDsIzXlJ29qM2gAwDnhjMp/7CdlSLdaidNvQ428jC1ULPvpusbJOjac
+	 mxuLRq26dOg/9JSRFEjgFg7xC9uWkkJXQia4l42TGUdjUnLkW2nU1sxBge15U5F6pi
+	 nHwck8Jb9xmHl9aH6JFlL45MujGYvughUSxk0Ucp0hecRJM4X9Hyu9r67NRUa6k2N7
+	 V5Eiqd4CD3l0aXOCXT06YImwM3jcEiOds+1wqtx2fFJhNMvJ3CBUVFfArrSSR4qI2j
+	 Wdv/WhMBGVecE0ebDw97bEWV9pQpQUdLxOC3oF9/GscZVXg1z4Gk1ZXuK9+vLmo9kU
+	 +4CCjx1xgMfJg==
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-6ef66fd2183so43745417b3.1
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 10:29:57 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXP0+OgXETbImtmq3FWZP0QKo1Z1S+TBtARI7l1j2N+7TNoNhke1Ddq6Glv9Rme2MqZaE3Zc1SHiYCmfUw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzk3VL4Ga87BeVjq2xZm1xas4JdLuGvn50ZuvXjJK3+kpuywAJ8
+	tl3lLwd+nl1dQAPbEG5Uf+sA1ffKYTXbjZ4NxVurlXakmFluvapW3DdMTWoSPY3fb6A5QqfY6YY
+	oj1zZ0E8HIx4HRZvimD8U9FnzqDBKBNB7JH9qow==
+X-Google-Smtp-Source: AGHT+IHKoZh3gvnEd4yMs915MVbdzl8XMis+4rNRyH94s8XVG/kl6jxPQqejINWwvDXPTz7crCK5uvv3VsK2qD2DtVE=
+X-Received: by 2002:a05:690c:48c4:b0:6ee:7012:d72 with SMTP id
+ 00721157ae682-6efad2f6fe2mr46342217b3.38.1733250596646; Tue, 03 Dec 2024
+ 10:29:56 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <Z0nX2olCQtSciY7-@jlelli-thinkpadt14gen4.remote.csb>
+References: <20241202184154.19321-1-ryncsn@gmail.com> <20241202184154.19321-3-ryncsn@gmail.com>
+In-Reply-To: <20241202184154.19321-3-ryncsn@gmail.com>
+From: Chris Li <chrisl@kernel.org>
+Date: Tue, 3 Dec 2024 10:29:45 -0800
+X-Gmail-Original-Message-ID: <CACePvbWUqjp8VwvNFU-N14+oQ7HCiMoLA_1w1jwY3CBzM7WC2g@mail.gmail.com>
+Message-ID: <CACePvbWUqjp8VwvNFU-N14+oQ7HCiMoLA_1w1jwY3CBzM7WC2g@mail.gmail.com>
+Subject: Re: [PATCH 2/4] mm/swap_cgroup: remove swap_cgroup_cmpxchg
+To: Kairui Song <kasong@tencent.com>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
+	Hugh Dickins <hughd@google.com>, "Huang, Ying" <ying.huang@intel.com>, 
+	Yosry Ahmed <yosryahmed@google.com>, Roman Gushchin <roman.gushchin@linux.dev>, 
+	Shakeel Butt <shakeel.butt@linux.dev>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Barry Song <baohua@kernel.org>, Michal Hocko <mhocko@kernel.org>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2024-11-29 16:03:54 [+0100], Juri Lelli wrote:
-> Hi Sebastian,
-Hi Juri,
+On Mon, Dec 2, 2024 at 10:42=E2=80=AFAM Kairui Song <ryncsn@gmail.com> wrot=
+e:
+>
+> From: Kairui Song <kasong@tencent.com>
+>
+> This function is never used after commit 6b611388b626
+> ("memcg-v1: remove charge move code").
+>
+> Signed-off-by: Kairui Song <kasong@tencent.com>
 
-> On 15/11/24 17:58, Sebastian Andrzej Siewior wrote:
-> > Hi,
-> > 
-> > this is a follow up on
-> > 	https://lore.kernel.org/ZwVOMgBMxrw7BU9A@jlelli-thinkpadt14gen4.remote.csb
-> > 
-> > and adds support for task local futex_hash_bucket. It can be created via
-> > prctl().
-> > 
-> > This version supports resize at runtime. This fun part is limited is to
-> > FUTEX_LOCK_PI which means any other waiter will break.
-> > 
-> > I posted performance numbers of "perf bench futex hash"
-> > 	https://lore.kernel.org/all/20241101110810.R3AnEqdu@linutronix.de/
-> 
-> Performance looks generally good on our side as well. However, while
-> testing the set manually with a debug enabled config (attached) I hit
-> the following BUG (decoded) while booting the machine.
+Acked-by: Chris Li <chrisl@kernel.org>
 
-Thanks. That sounds good. Sorry for getting so late back. I posted v4
-which fixes the bug you reported.  The new version has auto resizing of
-the hash table :)
-
-Sebastian
+Chris
 
