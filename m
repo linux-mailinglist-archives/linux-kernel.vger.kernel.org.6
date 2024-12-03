@@ -1,144 +1,123 @@
-Return-Path: <linux-kernel+bounces-430038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430040-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6152C9E2BB0
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 20:08:56 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EE079E2BBA
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 20:11:33 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37550163BE3
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 19:08:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D80C02847D9
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 19:11:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D45EF1FECCC;
-	Tue,  3 Dec 2024 19:08:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XOlc009e"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26B851FECCC;
+	Tue,  3 Dec 2024 19:11:28 +0000 (UTC)
+Received: from mail.steuer-voss.de (mail.steuer-voss.de [85.183.69.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A72E81DAC83;
-	Tue,  3 Dec 2024 19:08:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16F741F9407
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 19:11:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.183.69.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733252930; cv=none; b=RfTPzz06H2ADK19+cXzBGNXXc0HaXo+JkDn1a6T0+XZL5mSgVQ5LIUexlaz2JABYDovKCIb9LlpW+bK44yA7dncx8xhCiVv5Ego69cm3z5fjZ7MheAkcVNb9L4evPjoNU17D6WUcJkAaOz/tWjfm3KlaRlHT2m9yAgA3UMbcgWU=
+	t=1733253087; cv=none; b=UjTZmGKUCzmd6IWyUy7aNnee4MBjajzXU8HRyGFtlPEpRrMwzd1SUyTtQouUMvk6WfiBHRRDoYORgtPbbVKlhBFCOGmNgoJnQeaJbIjePflkyOPy3Fk33T+SZc0qZOe9uayFwvR+tRBVjhuztLgVRhaZhsJuoslvm5zyeOdqBkA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733252930; c=relaxed/simple;
-	bh=kwHZ2se9ReqzDtQsZK8wHA0Yv67BuPV3qm22GpUmXbI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IuCn1MINTt8ABDURS7NR8nI1X8g239+FDqfqEySV2s+ck2Ve6Xr/SLYO30A/7rPskMWCWWpNrz0uVXMSz7+cn6wGdvrqoTEmU/pIiGbUjP+WHAwBZTMFDgKCqgl3yPWVbIp09oe+ZDTMtTV/fFrz0LbQ8ziUsKf/kuSwG5YhYbA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XOlc009e; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-385e2880606so3889392f8f.3;
-        Tue, 03 Dec 2024 11:08:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733252927; x=1733857727; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=o/GajLuB6VlgxqAV+v6t5stEll6kuPWXr5vRdNegYdM=;
-        b=XOlc009erRaEMkCc4eXnzzzEdXDI/aAWd5lpi4lDvt1JzSCGsXcAHxJvT1YI253/VF
-         WyP+O8ZCsilkg7Vwkd8GDGKSjjdjltkx9L3x3WuVX/LHKlBpqEGN6gIpxXI9bjABPsik
-         /+MasR3ajnaEjC2kkvWVFfcP2tGJFuWjLn3yfSE8Suz71LIAD5CqtQS14ueJqeN/DxDV
-         5bLV5t5y1YbVxDrJJSaFfBT5CIP0aK8CgHgpR3jdbMLIdyyPF+YduVwfWDI0iIikXskE
-         MQTtXl5unc25K6gcHHTj4gcXFab9jYzFTh392EPkV3SqG4FBQZR+O/3AVmJGmVDk8c9Q
-         ej2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733252927; x=1733857727;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=o/GajLuB6VlgxqAV+v6t5stEll6kuPWXr5vRdNegYdM=;
-        b=C3s8hxoa5uauqGk4ieU2/chKS4VS+4HASj488rg76QRmNUanWHCZunyQL4nHTc8xQJ
-         aKkV/On51QVgWs4aBaUySNOVDDL/BwFr/aOP4fF17DVP3NOcK4qWvCld5ASiU+UX6qR/
-         zti1+hWlVhgHlJWEYde15l0PiVidOTO9XtTEzU0oPQj2mtfswT6868uBCaND+EJbAJm2
-         MmxaB+etGDTNPbIYsW+NhnYSPNgRj+/ak4KOHM7Jz+raHez/INygMb/0bE6zYfxX0E2O
-         Ev7u0Vk03tH2Gl41GXK+HoK8b3dSyTIgf5I7grKpt7vAguWJw2pVWDh0bBg+NsG5SgvV
-         +V/A==
-X-Forwarded-Encrypted: i=1; AJvYcCWqqU241A3JvwbSCxK1T+kxW5W6iPrjpDx2M4wE6oIAuHXCCC/BaxLuWvPuAV+MPt8dDtcwfaOIHy/Fcw==@vger.kernel.org, AJvYcCXoj0r2k1gm+m62Pri84yehXm5gbZLj48jTJMy6OPh16ode+CPfsaEfXsxI4m5KaK2umLbMYHrInj/2Xog=@vger.kernel.org
-X-Gm-Message-State: AOJu0YysMEyhARYdvzRGyXWVi3bea5IfMSB1wA72ZINqnjg4tPgQ0E7W
-	jATSUiy0TzprUAeXwHywm3HNs+NXmU4i6XbHLkud84TjlOv4a8HbOOmmh+1m
-X-Gm-Gg: ASbGncuEFdSFZhcZN0nH3iiRoZ8s+TgM54rg8YAgJbn+/lTNhs1zCAR4qK5fhXd9AEw
-	pfO3T70fdyc+9Y/jN66Z5fN959DwKae59SFSh+fmjlvWTZhu3ToRdfA/gO8YcVaTLHPiXJereEv
-	CtJHRGWU6ZUeFoNFnOdYtv8vZHc8bY0pAsuLnAgqFBkmBO6G/fS/+tr9tnSIOcptIfY30s+eqSo
-	IOhIIFmA9pUH6VbWdzKkBWW6/SFVONofiEYe2zaRsF3Z74dSQvR7NR+MbVOaiLEGg==
-X-Google-Smtp-Source: AGHT+IGYc9RPX2NkOZaoDkqmdJqSrOfqdZfo7T0GZELsc6mADLVQJlkMqsaTP6etJMU8486ex+a8zg==
-X-Received: by 2002:a05:6000:4009:b0:385:f909:eb2c with SMTP id ffacd0b85a97d-385fd43556bmr4067289f8f.38.1733252926639;
-        Tue, 03 Dec 2024 11:08:46 -0800 (PST)
-Received: from egonzo (82-64-73-52.subs.proxad.net. [82.64.73.52])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385e4617a61sm10707452f8f.3.2024.12.03.11.08.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Dec 2024 11:08:45 -0800 (PST)
-Date: Tue, 3 Dec 2024 20:08:43 +0100
-From: Dave Penkler <dpenkler@gmail.com>
-To: Greg KH <greg@kroah.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the staging tree
-Message-ID: <Z09XO31jzVdZJzuK@egonzo>
-References: <20241015165538.634707e5@canb.auug.org.au>
- <2024101623-education-buffoon-0988@gregkh>
- <Zw_KjYQ7P2Qd8fDb@egonzo>
+	s=arc-20240116; t=1733253087; c=relaxed/simple;
+	bh=Jnjj7vU+uMzKr6QUhfR2hjgDnzgmd93qAiccXLvATws=;
+	h=From:Date:Subject:To:Cc:Message-Id; b=JLE0YwwRB9ziveboBC1XNy8MuKrtAV9y/IyAUJpQUx+h+1js++KBkOy8kRVC/WgQho+H4j+8i22TKqHgEgaQC2wRIMg8sH5d8hk6f9iU3IdX0OoAg8ha6g/8NkG5chy6kr2zc4tM5/pV0qgMTqEw/sosaf+SCpgvu/4ndG7063Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=vosn.de; spf=pass smtp.mailfrom=vosn.de; arc=none smtp.client-ip=85.183.69.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=vosn.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vosn.de
+X-Virus-Scanned: Debian amavisd-new at mail.steuer-voss.de
+Received: by mail.steuer-voss.de (Postfix, from userid 1000)
+	id 47B56F7; Tue,  3 Dec 2024 20:11:11 +0100 (CET)
+From: Nikolaus Voss <nv@vosn.de>
+Date: Tue, 3 Dec 2024 20:09:52 +0100
+Subject: [PATCH v2] drm: bridge: fsl-ldb: fixup mode on freq mismatch
+To: Alexander Stein <alexander.stein@ew.tq-group.com>, Liu Ying <victor.liu@nxp.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>, Fabio Estevam <festevam@denx.de>, Marek Vasut <marex@denx.de>, Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, miquel.raynal@bootlin.com, nikolaus.voss@haag-streit.com
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Message-Id: <20241203191111.47B56F7@mail.steuer-voss.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zw_KjYQ7P2Qd8fDb@egonzo>
 
-On Wed, Oct 16, 2024 at 04:15:41PM +0200, Dave Penkler wrote:
-> On Wed, Oct 16, 2024 at 09:40:03AM +0200, Greg KH wrote:
-> > On Tue, Oct 15, 2024 at 04:55:38PM +1100, Stephen Rothwell wrote:
-> > > Hi all,
-> > > 
-> > > After merging the staging tree, today's linux-next build (powerpc
-> > > allyesconfig) failed like this:
-> > > 
-> > > ld: warning: discarding dynamic section .glink
-> > > ld: warning: discarding dynamic section .plt
-> > > ld: linkage table error against `nec7210_board_online'
-> > > ld: stubs don't match calculated size
-> > > ld: can not build stubs: bad value
-> [skip]
-> > > 
-> > > Caused by commit
-> > > 
-> > >   8e4841a0888c ("staging: gpib: Add Frank Mori Hess FPGA PCI GPIB driver")
-> > > 
-> > > I have marked that driver as BROKEN for today.
-> > 
-> > Thanks, I'll go take your patch from next and add it to my tree for
-> > this, sorry about the build issues.
-> > 
-> > greg k-h
-> Hi,
-> All declarations and uses of `nec7210_board_online' match.
-> 
-> Could this be a ppc linker problem ?
-> -Dave
+LDB clock has to be a fixed multiple of the pixel clock.
+As LDB and pixel clock are derived from different clock sources
+(at least on imx8mp), this constraint cannot be satisfied for
+any pixel clock, which leads to flickering and incomplete
+lines on the attached display.
 
-This bug report from Red Hat would indicate that there could be a problem with the ppc linker: 
-Bug 1523457 - ghc-8.2.2 build linking error on rawhide ppc64le with binutils-2.29.1
-https://bugzilla.redhat.com/show_bug.cgi?id=1523457
+To overcome this, check this condition in .atomic_check() and
+adapt the pixel clock accordingly.
 
-Quoting from the bug report:
-  The problem appears to be an instability in the code in the PowerPC 
-  linker's backend that computes the call stubs needed to access the PLT.
-  As the linker moves sections around in memory one stub switches from
-  containing a backwards branch to containing a forwards branch, altering
-  its size and confusing the code which had previously allocated space for
-  the stub.
+Cc: <stable@vger.kernel.org>
+Fixes: 463db5c2ed4a ("drm: bridge: ldb: Implement simple Freescale i.MX8MP LDB bridge")
 
-This seems to be the same issue we are having:
- ld: stubs don't match calculated size
+Signed-off-by: Nikolaus Voss <nv@vosn.de>
 
-It is reported to be fixed in the 2.30 FSF binutils sources.
+---
+v2:
+- use .atomic_check() instead of .mode_fixup() (Dmitry Baryshkov)
+- add Fixes tag (Liu Ying)
+- use fsl_ldb_link_frequency() and drop const qualifier for
+  struct fsl_ldb* (Liu Ying)
 
-Could we rather make GPIB_FMH depend on !PPC rather than BROKEN for now ?
--Dave
+ drivers/gpu/drm/bridge/fsl-ldb.c | 33 ++++++++++++++++++++++++++++++++
+ 1 file changed, 33 insertions(+)
+
+diff --git a/drivers/gpu/drm/bridge/fsl-ldb.c b/drivers/gpu/drm/bridge/fsl-ldb.c
+index 0e4bac7dd04ff..5b09529564609 100644
+--- a/drivers/gpu/drm/bridge/fsl-ldb.c
++++ b/drivers/gpu/drm/bridge/fsl-ldb.c
+@@ -121,6 +121,38 @@ static int fsl_ldb_attach(struct drm_bridge *bridge,
+ 				 bridge, flags);
+ }
+ 
++static int fsl_ldb_atomic_check(struct drm_bridge *bridge,
++				struct drm_bridge_state *,
++				struct drm_crtc_state *crtc_state,
++				struct drm_connector_state *)
++{
++	struct fsl_ldb *fsl_ldb = to_fsl_ldb(bridge);
++	const struct drm_display_mode *mode = &crtc_state->mode;
++	unsigned long requested_link_freq =
++		fsl_ldb_link_frequency(fsl_ldb, mode->clock);
++	unsigned long freq = clk_round_rate(fsl_ldb->clk, requested_link_freq);
++
++	if (freq != requested_link_freq) {
++		/*
++		 * this will lead to flicker and incomplete lines on
++		 * the attached display, adjust the CRTC clock
++		 * accordingly.
++		 */
++		struct drm_display_mode *adjusted_mode = &crtc_state->adjusted_mode;
++		int pclk = freq / fsl_ldb_link_frequency(fsl_ldb, 1);
++
++		if (adjusted_mode->clock != pclk) {
++			dev_warn(fsl_ldb->dev, "Adjusted pixel clk to match LDB clk (%d kHz -> %d kHz)!\n",
++				 adjusted_mode->clock, pclk);
++
++			adjusted_mode->clock = pclk;
++			adjusted_mode->crtc_clock = pclk;
++		}
++	}
++
++	return 0;
++}
++
+ static void fsl_ldb_atomic_enable(struct drm_bridge *bridge,
+ 				  struct drm_bridge_state *old_bridge_state)
+ {
+@@ -280,6 +312,7 @@ fsl_ldb_mode_valid(struct drm_bridge *bridge,
+ 
+ static const struct drm_bridge_funcs funcs = {
+ 	.attach = fsl_ldb_attach,
++	.atomic_check = fsl_ldb_atomic_check,
+ 	.atomic_enable = fsl_ldb_atomic_enable,
+ 	.atomic_disable = fsl_ldb_atomic_disable,
+ 	.atomic_duplicate_state = drm_atomic_helper_bridge_duplicate_state,
+-- 
+2.43.0
 
 
