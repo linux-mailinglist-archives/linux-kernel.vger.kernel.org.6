@@ -1,186 +1,113 @@
-Return-Path: <linux-kernel+bounces-428805-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428806-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C92799E13BF
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 08:09:14 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 238439E13C4
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 08:13:00 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D027BB21F88
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 07:09:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EBB931643F5
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 07:12:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAE81189BB1;
-	Tue,  3 Dec 2024 07:09:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FEF418A6B5;
+	Tue,  3 Dec 2024 07:12:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AAI9YJr8"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qDMG7BJ8"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB98142AA3;
-	Tue,  3 Dec 2024 07:09:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38488188701
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 07:12:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733209744; cv=none; b=FVMKbZzUIF0wavv/l5CRdtgICS5ye6pNFu0B+HN1fHOj6DpEehM+b/6aI8uWI6ExRZU5o7vilnv7r8xouHzwTdtBMBtweOcmKRyb2KNaxshMDnYJTOKL1B3ZimmhPo/3iHEu/q+QUKEsNiY4VMTf4Eure80/92FywM31mNvdEQk=
+	t=1733209972; cv=none; b=YQQW3J5iVoPqLXHoTT/tRESt9Tt9VUvt7w+QgYwomxbbQxEXV70sndR4pArkXrXoWkAflN80o3sw71A5EFl1YzVYuV+1AUcfeJE3Oh0DmeWONXY924ec/fCOpvEIF5CLen0gCL/r1GBGyCe9rYX+Ix3QiyY6uPaYFJYldzIRmOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733209744; c=relaxed/simple;
-	bh=LjSURVKP1ndSn064bpc11n7MVWZaepXqpN0kFdE6CEc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=H0Bj29tzTqvNFPLOrs8CF7UqJIbyg8sCTzvmbehsWETfC7EjIph3o3VuUPLq6Fn2Hl36EM+ifYYr/cqupqQ5nb/D+NcLKcPPBGl8MwyBJHZUZ1XcdKNnGqxeYpQPvqQxsePMU9sHM05Ttsod8hT0woiAO9chZTKpVHCOuGdZnDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AAI9YJr8; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2ee86a1a92dso2036300a91.1;
-        Mon, 02 Dec 2024 23:09:02 -0800 (PST)
+	s=arc-20240116; t=1733209972; c=relaxed/simple;
+	bh=EVBM5qoQmU3xuxiwaVTztbikwXOSdVscc5nB635UeFk=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=T1kgusUrfl9l3lFSQCT9pZnlbXSE3oUlqvW5MFgzViswVdlcOiCu/BtrV+lIN40GPYhtwgQyhBF7rTM9qnBM6K/4khZKsfduUzJeMASr1WXZc2dC3DzNrw6RtQmehdYfHmeMM9xNXpQ7i5j62sHeQUWVDBLsRqRacvI0fzBWwxs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qDMG7BJ8; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-434a90fed23so43033895e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 23:12:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733209742; x=1733814542; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tN8RvTSNJ77BxP7aNU9oyJmnuomj8CAUum0N9RHjg6M=;
-        b=AAI9YJr8oNCpAjV2rLZxMXMhuJEHec+RpgRBl2uVzbHwmPDd9zUt7B+qwtKJ7P+zOt
-         S3msk1GGE+R5tkdfOJ/K9g5iae16ohJufITTp6koH+FS19S4gjm/oADiA+Gr3XLRjOKf
-         db149kEgiafrNO2xoatYmAVFNWygb2SP8lhqjf9xpU1kcto2R3ZKJvRouJplW3WA5W+5
-         pzEDwAtZygMf7AlmCy/yED3+w9aTF4QgZlLlU3wXoIiqxajf+PQ5bYoI+LAcTd3qJ96O
-         aeLPMlvg/lgWactstuk8jGYH9rO+/ZFedUH6/aRVd4h1MTiGlVGRPbvWLOulP50q1Opq
-         JkXA==
+        d=linaro.org; s=google; t=1733209968; x=1733814768; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=EVBM5qoQmU3xuxiwaVTztbikwXOSdVscc5nB635UeFk=;
+        b=qDMG7BJ81Lf/g9f1GghHh7MzczQegiRSoRy7y6fp4ppq0iDNaCpXGgIhmJrtUaVfMd
+         QSkx9LYCNcS3+UsmkVo11zXTf6Gm80uofi2ZPSzYg5EmJ47IZ6GzDuBR6rGw1ABVP6Et
+         /biKtlYuoVdh3U0+qfeDt3A7BkX5nkJKF4I1cV84UZAqmFuLmFJLjR9+FUsi5pZNw043
+         cVF50/JTLOqj3kMxI2oTs8VdYXBwzV7DifO6ytf9i9rjjhK1YolfCn+Ym8NDKCwdAYXH
+         NdCvO4RhIXlCtksCcOU4dJ4ozHAMvzVS0SUI6W+JG2n1ZTBjArh8JIU/5pkOL4ZcA8nH
+         NjIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733209742; x=1733814542;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tN8RvTSNJ77BxP7aNU9oyJmnuomj8CAUum0N9RHjg6M=;
-        b=nfnMvDUWIy9IyTuHf1wJSaqM33m8yPzSM+jwqnVoWxBUu2ttmwiCaYxVsqvb9yIAaz
-         Rx2XIgNPB6f1cUIgMy/kivo/9IMmqf/hPHMB+xSLsbBzHQm1bcwCRanou/0RBStdu7+5
-         i1bT5Yymm41hQGjXsKgFUNSrPPKPuxefX1Yh92Lo2dDCdC+r9KSZY2zTeAeUbrC8NLGj
-         T66effaK2hI0fTamXGb/3RQ0E7Qc6gOlT8kcI015ZEA97dD8ghIvKEYHgMEQbvgaSPaU
-         SodUTOeF6tNms7pOBpDn2aXo3295rEu+ZDVjIvjT/J/VKz04qsr+6RmWAeYbjBTvM0z0
-         uATQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUwudYCj4kwUSbRhWl7mHQXOt27w4ArrqSmk/88D+aN7Gxf047/QoyrxShP2Rph1GIm1xjdJfhHpP2e5w==@vger.kernel.org, AJvYcCVaOo9Un4NuEWICIiZPLAYRKVK/JbW6LMqGvwIiknrYXrO5uG+zwugg0Nn8fAy03PjyX8frLmVjiT547Owu@vger.kernel.org
-X-Gm-Message-State: AOJu0YyxYUXedy+hgb6F7d+ZvLn0TQPiKSpwmcvx7wedF2bsDl66jLZb
-	e4caTiy69vDHAE/QXmdS9E84DcE7r9abJ+d7KboFv0l9V3+pgc4ka4VbR624/Gya8lElVLAPlTR
-	0fo4TM/tdCSrtRow5DG0upoG8GYA=
-X-Gm-Gg: ASbGncuX0oa6VNt58j44MB5kLZh8fmQKGDtCOHZBOXsEJHQXtg0DS9wVKdmNUfglykN
-	9eSX06jQSAAaHDoRdgtCj0Etblym00vwF
-X-Google-Smtp-Source: AGHT+IG7iIrgIOozrTQ2WIDeOgwlgF3yEAmk34/z++g6ioXUsRSSTL7EwRCTPGMRwf2mBMybQZY0giWeqJEMfY9BjQU=
-X-Received: by 2002:a17:90b:3949:b0:2ee:5bc9:75c7 with SMTP id
- 98e67ed59e1d1-2ef011e6a98mr2046298a91.5.1733209741921; Mon, 02 Dec 2024
- 23:09:01 -0800 (PST)
+        d=1e100.net; s=20230601; t=1733209968; x=1733814768;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=EVBM5qoQmU3xuxiwaVTztbikwXOSdVscc5nB635UeFk=;
+        b=e2T6+Bu8X6ZKiJq0GSX+iWdxHsybJvU3A8yy2FKKtODg8E0IRWLNxVgURCM9cR49xR
+         dJsolUevW8TlZlksIz1KfLNTDo0+2Qk+p+eKygkEZYdQhw5dX7H4rI9qjZDfprzIg5+3
+         Jqg9HakwFa5sJjAIM5Yq3mzA+uJmpy9V21lPN+lOWNXvDeKjbkDfrKCYXPDNAFHRYa6B
+         /9TPLXW6nX7vwKe+aISx9q4bYRuFPhFoNG0iigT1WBvttZVrsKiKJmxDnjWQ61/SOw8o
+         w2ayWO+WXxFa6ai9s9aba3PWOJyMeSf/K60vTbhECT5LiES7pAoKxqv8lJDI3Tnz9Y11
+         fvUg==
+X-Forwarded-Encrypted: i=1; AJvYcCWIDvcEe6ZfjQeTvJzQZJS55nvvS4o0BUoe0Ok9B5Gmm4dUQP0kesyMZkpbY6HlslGJX5RxflijSkqmAU0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywm2fF+wpAjg2gO1OgkWHba1mLFTd2uLPvcO2v6uUsiVND10xNx
+	7riZAtO4UGywosBarfHudVWWe7qo1mQpbmYKIh1rhbuR7eeavgd9Gzo5kA3w+HY=
+X-Gm-Gg: ASbGncsQvRjvqhb1UrpVf7Me3xLZtnuIz/Ni9Jmo/YlSjugr7TQZJhyrnWOVMwIVjnr
+	2fZsfhybBOvpO/U782YOybKDfVFzt1RhjLTTwKZ++oET+weVT3eZMua+KgWbhStnoCL0uVgWW8a
+	pkvzqpjDzQ0FlRNRdYsEb9e29uSvHPunRjtqbQ1V0/nXdQACT9HzZD1Zsc5FNbZ3CGUvXBIlZBl
+	m7YDTtC7sx/vhIKeNYm2vzgPlkeMFsJelYaVVYoa6vag/1VPD5KA6w=
+X-Google-Smtp-Source: AGHT+IEplB7jYEBVeBsm9qKzYjb6Q/52WlhBD/Tf3x0VCfolLamrC+TuTTucz1KuLRGPu4rrqQllDQ==
+X-Received: by 2002:a05:6000:1fa7:b0:382:51ae:7569 with SMTP id ffacd0b85a97d-385fd3e8f28mr1191117f8f.18.1733209968624;
+        Mon, 02 Dec 2024 23:12:48 -0800 (PST)
+Received: from [10.1.1.109] ([80.111.64.44])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385e2c84d52sm9859752f8f.49.2024.12.02.23.12.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Dec 2024 23:12:48 -0800 (PST)
+Message-ID: <e23721ebd766f410103ddfb8705f3d7d6e5ae3e9.camel@linaro.org>
+Subject: Re: [PATCH 2/4] dt-bindings: power: supply: add max77759-fg flavor
+ and don't require nvme address
+From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+To: t.antoine@uclouvain.be, Sebastian Reichel <sre@kernel.org>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Dimitri Fedrau <dima.fedrau@gmail.com>, Catalin
+ Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Peter
+ Griffin <peter.griffin@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org
+Date: Tue, 03 Dec 2024 07:12:47 +0000
+In-Reply-To: <20241202-b4-gs101_max77759_fg-v1-2-98d2fa7bfe30@uclouvain.be>
+References: <20241202-b4-gs101_max77759_fg-v1-0-98d2fa7bfe30@uclouvain.be>
+	 <20241202-b4-gs101_max77759_fg-v1-2-98d2fa7bfe30@uclouvain.be>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.1-4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAL3q7H5U_88NA2PmyMvtwv1aZ7k+V6v=eetp7Hs2HqDdfVjokw@mail.gmail.com>
- <20241202133515.92286-1-zhenghaoran154@gmail.com> <CAL3q7H7dxA+Y30XbB1nng1duaoT8c9Pf4ZG6+iwikTGvb4cAXA@mail.gmail.com>
-In-Reply-To: <CAL3q7H7dxA+Y30XbB1nng1duaoT8c9Pf4ZG6+iwikTGvb4cAXA@mail.gmail.com>
-From: haoran zheng <zhenghaoran154@gmail.com>
-Date: Tue, 3 Dec 2024 15:08:51 +0800
-Message-ID: <CAKa5YKhbfwWtyBDNyT-9Tudz17=PJawuqLjD10D5VaUdmdbiPw@mail.gmail.com>
-Subject: Re: [PATCH v2] btrfs: fix data race when accessing the inode's
- disk_i_size at btrfs_drop_extents()
-To: Filipe Manana <fdmanana@kernel.org>
-Cc: clm@fb.com, josef@toxicpanda.com, dsterba@suse.com, 
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	baijiaju1990@gmail.com, 21371365@buaa.edu.cn
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Thanks for the advice, I will explain in detail why it's a harmless race.
-And submit patch v3.
+On Mon, 2024-12-02 at 14:07 +0100, Thomas Antoine via B4 Relay wrote:
+> From: Thomas Antoine <t.antoine@uclouvain.be>
+>=20
+> As the Maxim max77759 fuel gauge has no non-volatile memory slave address=
+,
+> make it non-obligatory. Except for this, the max77759 seems to behave the
+> same as the max1720x.
 
-On Mon, Dec 2, 2024 at 10:40=E2=80=AFPM Filipe Manana <fdmanana@kernel.org>=
- wrote:
->
-> On Mon, Dec 2, 2024 at 1:35=E2=80=AFPM Hao-ran Zheng <zhenghaoran154@gmai=
-l.com> wrote:
-> >
-> > A data race occurs when the function `insert_ordered_extent_file_extent=
-()`
-> > and the function `btrfs_inode_safe_disk_i_size_write()` are executed
-> > concurrently. The function `insert_ordered_extent_file_extent()` is not
-> > locked when reading inode->disk_i_size, causing
-> > `btrfs_inode_safe_disk_i_size_write()` to cause data competition when
-> > writing inode->disk_i_size, thus affecting the value of `modify_tree`.
-> >
-> > Since the impact of data race is limited, it is recommended to use the
-> > `data_race` mark judgment.
->
-> This should explain why it's a harmless race.
-> Also it's better to explicitly say harmless race rather than say it
-> has limited impact, because the latter gives the idea of rare problems
-> when we don't have any.
->
-> >
-> > The specific call stack that appears during testing is as follows:
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3DDATA_RACE=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D
-> >  btrfs_drop_extents+0x89a/0xa060 [btrfs]
-> >  insert_reserved_file_extent+0xb54/0x2960 [btrfs]
-> >  insert_ordered_extent_file_extent+0xff5/0x1760 [btrfs]
-> >  btrfs_finish_one_ordered+0x1b85/0x36a0 [btrfs]
-> >  btrfs_finish_ordered_io+0x37/0x60 [btrfs]
-> >  finish_ordered_fn+0x3e/0x50 [btrfs]
-> >  btrfs_work_helper+0x9c9/0x27a0 [btrfs]
-> >  process_scheduled_works+0x716/0xf10
-> >  worker_thread+0xb6a/0x1190
-> >  kthread+0x292/0x330
-> >  ret_from_fork+0x4d/0x80
-> >  ret_from_fork_asm+0x1a/0x30
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3DOTHER_INFO=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D
-> >  btrfs_inode_safe_disk_i_size_write+0x4ec/0x600 [btrfs]
-> >  btrfs_finish_one_ordered+0x24c7/0x36a0 [btrfs]
-> >  btrfs_finish_ordered_io+0x37/0x60 [btrfs]
-> >  finish_ordered_fn+0x3e/0x50 [btrfs]
-> >  btrfs_work_helper+0x9c9/0x27a0 [btrfs]
-> >  process_scheduled_works+0x716/0xf10
-> >  worker_thread+0xb6a/0x1190
-> >  kthread+0x292/0x330
-> >  ret_from_fork+0x4d/0x80
-> >  ret_from_fork_asm+0x1a/0x30
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> >
-> > Signed-off-by: Hao-ran Zheng <zhenghaoran154@gmail.com>
-> > ---
-> > V1->V2: Modify patch description and format
-> > ---
-> >  fs/btrfs/file.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/fs/btrfs/file.c b/fs/btrfs/file.c
-> > index 4fb521d91b06..f9631713f67d 100644
-> > --- a/fs/btrfs/file.c
-> > +++ b/fs/btrfs/file.c
-> > @@ -242,7 +242,7 @@ int btrfs_drop_extents(struct btrfs_trans_handle *t=
-rans,
-> >         if (args->drop_cache)
-> >                 btrfs_drop_extent_map_range(inode, args->start, args->e=
-nd - 1, false);
-> >
-> > -       if (args->start >=3D inode->disk_i_size && !args->replace_exten=
-t)
-> > +       if (data_race(args->start >=3D inode->disk_i_size && !args->rep=
-lace_extent))
->
-> Don't surround the whole condition with data_race().
-> Just put it around the disk_i_size check:
->
-> if (data_race(args->start >=3D inode->disk_i_size) && !args->replace_exte=
-nt))
->
-> This makes it more clear it's about disk_i_size and nothing else.
->
-> Thanks.
->
-> >                 modify_tree =3D 0;
-> >
-> >         update_refs =3D (btrfs_root_id(root) !=3D BTRFS_TREE_LOG_OBJECT=
-ID);
-> > --
-> > 2.34.1
-> >
-> >
+What about the battery characterization tables? Aren't they needed for
+correct reporting?
+
+Cheers,
+Andre'
+
 
