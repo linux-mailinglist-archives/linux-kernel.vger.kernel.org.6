@@ -1,83 +1,113 @@
-Return-Path: <linux-kernel+bounces-430173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 151729E2D4B
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 21:39:04 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F5919E2D4C
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 21:39:26 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CEA4C2821D0
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 20:39:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 161B3166899
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 20:39:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D064E20ADFA;
-	Tue,  3 Dec 2024 20:37:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C75E209681;
+	Tue,  3 Dec 2024 20:38:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="C+YJ36PL"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="RDPr5GFT"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBD9A20ADEC;
-	Tue,  3 Dec 2024 20:37:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F16922AF05;
+	Tue,  3 Dec 2024 20:38:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733258267; cv=none; b=hHr8BXHI5rm7NLcTtfBMXWOztkbGGL0nFpOXobQo3A5al+iR2LMlzCBO6HdSDia60biuNQLR0E8DeueyLYFkJneqFFzYOIe5/RP68b9zJl28iLtdOCtY2UZyhvzWMCAKT/rsfeHCwb78fMqRB92dvqbZ+ZKb0OBZy3Y1Ds3n7Rc=
+	t=1733258283; cv=none; b=ArqfcTlZ686WdHcruL8CmeEvq/zFT+qbGafP25f60mi58fwCHz9jBE0uvIyaxTyaivX63er+d0wj8GodvbomDFVAyIM0ScOawU/b9LQhqNvJiEJ4eBoR1VLw4qzyFveWmRktdDBl3xwwxvAHaaJodbhpcD8Bhd7iT/7Ne2YR55w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733258267; c=relaxed/simple;
-	bh=YHkHvZnzCr5TBpSlsQ8UKtrQ/4QxPTkzSvSv+lE1diM=;
+	s=arc-20240116; t=1733258283; c=relaxed/simple;
+	bh=9/pGNKFbABBpSAD4X4iMIevronyylNVP8uD2jhXdvpw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Lk0djAEnwm78/wGT8Kqwd9GGOyJbNinAAGFufVZASzFcUTqZNckC+9CXKQ5IRxMmv8h88eG0tdRF7mNhrRQP5qCNH6GXyAZFT+4dOQikJ4q7FmO6xNS38z4GVKkpqsGO31NcNh5UhbPgracoWvdTtRuGpBV0EMubfnJGIDHuAfY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=C+YJ36PL; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=sG14fCx6XdzcEIXgviTaIQL3aL3mihrpCYmdqthB7hY=; b=C+YJ36PLfNyZmIdRKAfjkGXDKM
-	TD3iIfUwVmTkkXvl4bqskw3pQfUsGL2kytYbNzkrqestyTD73wVFaePNe2j0p735jSkN+MbTcvWQC
-	tNCjwHQeOOBLIakp3fG+7WUuaOR4n/n6hm/hi2jT1DNoprce5+munp95A96TpCB1ZUgE=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tIZeO-00F8Cj-Al; Tue, 03 Dec 2024 21:37:40 +0100
-Date: Tue, 3 Dec 2024 21:37:40 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Woojung Huh <woojung.huh@microchip.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>, kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	UNGLinuxDriver@microchip.com, Phil Elwell <phil@raspberrypi.org>
-Subject: Re: [PATCH net-next v1 08/21] net: usb: lan78xx: Add error handling
- to set_rx_max_frame_length and set_mtu
-Message-ID: <8467b5b4-e432-445e-b399-cf30aa32d467@lunn.ch>
-References: <20241203072154.2440034-1-o.rempel@pengutronix.de>
- <20241203072154.2440034-9-o.rempel@pengutronix.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=or88+P4KUwQMXq72cxvl7tyNsl/jch/odgkLCqdx0b8e1xk/+wiW/1iEwFDn8iokCndrmQGEiliuWzLc8bZ1KdVixoOdtKdGSCO4nunLrRUNZsI27LPbHq/6xVHNwEdNyJ1xSsso6MPFxcvpZ9NXXBy6Mw560le6ltg8BW5j7Pw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=RDPr5GFT; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id B0547670;
+	Tue,  3 Dec 2024 21:37:32 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1733258252;
+	bh=9/pGNKFbABBpSAD4X4iMIevronyylNVP8uD2jhXdvpw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RDPr5GFTK7aaGwbIBCZNFzGfn0zEQ6wLDhpYK5HgmqB+Hu/j4tb8oYdXVrB0uQoBB
+	 m7l2XhueBzABAeN9Srvth4pQaCNcj9mg3xM5xv27pYkXAygnzgKW316oJnW7HL8sL5
+	 73k2LkWKPeYXBwT1XoS4vRcnE9JeILeVnmhUgiC8=
+Date: Tue, 3 Dec 2024 22:37:48 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: Ricardo Ribalda <ribalda@chromium.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Guennadi Liakhovetski <guennadi.liakhovetski@intel.com>,
+	Hans Verkuil <hverkuil@xs4all.nl>,
+	Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 5/5] media: uvcvideo: Flush the control cache when we
+ get an event
+Message-ID: <20241203203748.GD5196@pendragon.ideasonboard.com>
+References: <20241202-uvc-fix-async-v5-0-6658c1fe312b@chromium.org>
+ <20241202-uvc-fix-async-v5-5-6658c1fe312b@chromium.org>
+ <67f78128-dcc0-4253-a6f7-5905ca375b06@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241203072154.2440034-9-o.rempel@pengutronix.de>
+In-Reply-To: <67f78128-dcc0-4253-a6f7-5905ca375b06@redhat.com>
 
-On Tue, Dec 03, 2024 at 08:21:41AM +0100, Oleksij Rempel wrote:
-> Improve error handling in `lan78xx_set_rx_max_frame_length` by:
-> - Checking return values from register read/write operations and
->   propagating errors.
-> - Exiting immediately on failure to ensure proper error reporting.
+On Mon, Dec 02, 2024 at 03:45:57PM +0100, Hans de Goede wrote:
+> Hi,
 > 
-> In `lan78xx_change_mtu`, log errors when changing MTU fails, using `%pe`
-> for clear error representation.
+> On 2-Dec-24 3:24 PM, Ricardo Ribalda wrote:
+> > Asynchronous controls trigger an event when they have completed their
+> > operation.
+> > 
+> > This can make that the control cached value does not match the value in
+> > the device.
+> > 
+> > Let's flush the cache to be on the safe side.
+> > 
+> > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> > ---
+> >  drivers/media/usb/uvc/uvc_ctrl.c | 3 +++
+> >  1 file changed, 3 insertions(+)
+> > 
+> > diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
+> > index e90bf2aeb5e4..75d534072f50 100644
+> > --- a/drivers/media/usb/uvc/uvc_ctrl.c
+> > +++ b/drivers/media/usb/uvc/uvc_ctrl.c
+> > @@ -1672,6 +1672,9 @@ bool uvc_ctrl_status_event_async(struct urb *urb, struct uvc_video_chain *chain,
+> >  	struct uvc_device *dev = chain->dev;
+> >  	struct uvc_ctrl_work *w = &dev->async_ctrl;
+> >  
+> > +	/* Flush the control cache, the data might have changed. */
+> > +	ctrl->loaded = 0;
+> > +
+> >  	if (list_empty(&ctrl->info.mappings))
+> >  		return false;
+> >  
 > 
-> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> Thank you for the patch.
+> 
+> I'm not familiar enough with UVC yet to really have an opinion on this one,
+> so I'll defer reviewing this one to Laurent.
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Conceptually this change looks fine, but the commit message needs to
+explain why this is safe to do without protecting ctrl->loaded with a
+lock.
 
-    Andrew
+-- 
+Regards,
+
+Laurent Pinchart
 
