@@ -1,145 +1,137 @@
-Return-Path: <linux-kernel+bounces-429930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 562ED9E2C80
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 20:57:37 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A56949E2C8C
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 21:00:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C935DB63E8D
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 17:24:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E92B2B2F047
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 17:28:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 226581FA825;
-	Tue,  3 Dec 2024 17:24:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16CD41FA82C;
+	Tue,  3 Dec 2024 17:28:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G4fWRbkN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="DbKrH6nF"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74EEA1F4731;
-	Tue,  3 Dec 2024 17:24:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 643131F76AE
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 17:28:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733246684; cv=none; b=TPxOAyd8f0kbfrsbq4PlOLn9Wgye7uXEzZ6qaMds+OUDyGNyHW8prOSs/jw+zSQ7wzTmot6+0RzLmqUgoBikQO8fz/GfunEZqjbQ8X6nrGMNz6+OQ5GlfYIHYK6ctknEp7z7m/VseWisBPXfw+Y2hMAz74y0ToQL7HR/x7/JvSM=
+	t=1733246921; cv=none; b=BpLrJQ/bK7vivMoTRkN7msMKlv14NcW7Ps9IrO/nG/ETmWtZYhQYvBRyExWptmQKqgG0YXvP4AekMnGEWqDfqr8lxQkKAH5Q4ahjlwVjDp54udmQwWVqLXCCEAQk724r5w5wj0g+vxLgKtcNKjGkK2ilDXgh4OsSsYgMO4XIqvs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733246684; c=relaxed/simple;
-	bh=LNXxnd+wAtX8yjnWtSQBVcGs5jeF1cYxXYnclU8AnDU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AH/Z3ZLqcyBNVYaPZ9iXv1RjrKlhRaZeYsy2eyTBJ6gsUNJ1MiWEpOXUghSfcxrRShhvHW6MOlxnGh+1xUL6Ilwe62mBgNI0ZYtEWNhyLrJUQ4oZf7mgF/NeZYA2Juo63QURc9tGDC1m/LwC6qgRPs/PNTlk1EOJrf5PE+uGIaY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G4fWRbkN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5597DC4CECF;
-	Tue,  3 Dec 2024 17:24:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733246683;
-	bh=LNXxnd+wAtX8yjnWtSQBVcGs5jeF1cYxXYnclU8AnDU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=G4fWRbkNm3jIkzfpx0pDOYw+KFGofLZR7Wkua0flCruEk9CYgjatRvlLgPHHy1ilD
-	 +WRMYBCdOJKYuHwHcfz4P+AY/FiH5A4c7paI3nsojLe8d1UYXjPFZL+Jieq4TPzKR+
-	 YPT3BdwA8JIKaPoJohyzwnFAjVS28hYvsatDGWDDhC4Q/1A8D+ZDHVquBLJlUBDzBf
-	 5KmDbKd0dGmv32Q3W+TRwteyk0Xw/ATWLjtku9mZw4eUTOYrofbJjNzMySg3fB0o0R
-	 Ic+q6vFVxzRcugP5nf1717ZCRcdX59WvuMK0vU0no9HyLqBGhGi8l5kbrtLsAE7Pw0
-	 fS+HssiZ74Uhg==
-Date: Tue, 3 Dec 2024 17:24:39 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Dave Martin <Dave.Martin@arm.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH 1/6] arm64/sme: Flush foreign register state in
- do_sme_acc()
-Message-ID: <44d67835-1e43-47cc-9a18-c279c885dcec@sirena.org.uk>
-References: <20241203-arm64-sme-reenable-v1-0-d853479d1b77@kernel.org>
- <20241203-arm64-sme-reenable-v1-1-d853479d1b77@kernel.org>
- <Z08khk6Mg6+T6VV9@e133380.arm.com>
- <9365be76-8da6-47ce-b88e-dfa244b9e5b7@sirena.org.uk>
- <Z085GKS8jzEhcZdW@e133380.arm.com>
+	s=arc-20240116; t=1733246921; c=relaxed/simple;
+	bh=/gTNyCXQU03C39326vEnqkA1N6Vo2JlTmY89Tz79xhM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eUu9ukvJd7mwSESR4KV3NZABifWk+Qth06Ar2kXsh1Oqk62FiulGYIDN8y7KXgvg4v3hOoN+sw28M9iS1xWY8y0xpwYQyCEHg91YxE++9qmRdsPXKSnZbHRXn9wiZAwFzqnGR0TPCVHX4ZXZ+d7PZhXeNlGAUEH7CXXJMzYMVI0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=DbKrH6nF; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-385df8815fcso2844834f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 09:28:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1733246918; x=1733851718; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=wZBUj9SMqVIY6pqeS7vZcLy9CSGD7zkKQLE0TkTYaXo=;
+        b=DbKrH6nFm0J3kTYpKYwDT4eAgUR8pF6b6wzWKb7lsBx+wpoo4ERu0sDrEfjeRqWXu5
+         aCc9Y0+xXT0M7hAHobhyVQI8l9YbUPBKE1S+Wcly00KpBrmEc4ZZ4rsmWohRrzxRFXoX
+         Fvk+T2vqdyi4ES02ApVa/KVSl4tvuCxLevUhUYMSbDgnyjZiaayJPqowiWTE3/77PBI4
+         6zitNDV5sUI2KVD3i3K/StNCytcrZ/VjlCV43GGPs4MYsRcRCsfCPVbO9/T8+mGf6WvH
+         D9sw6GAKNStn5zh9NrE/qbaQP7hi48X3/l8OfDpmNVk4Nv5RSFMRIbpvNzg34eHQP0pU
+         jgpg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733246918; x=1733851718;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wZBUj9SMqVIY6pqeS7vZcLy9CSGD7zkKQLE0TkTYaXo=;
+        b=m5vH5v6ibS7j+gn0HbzTb2z1kDDjcsI89Z1jukK8TFOICxxpGKxW0JhAxWKgPW7Uni
+         yGpOVOScL8QWfAzUsDpKO0Etd1zgle9pWZ6IaiydL69diaAgDYA9abUPUFF+DVEPcF1l
+         tQbjup37QLAnLGgAAvu0jNwj13Yt9DRTeBDykOgSIzDmRxUOwShOqUyMWoG+qcBiDJhm
+         CFkoFEwDA0CX0xC/bhBft08kJZXmkvf8d2y46m97vd3nzqXWhSTufYaSSnHv9qTp8jty
+         L0f2AqQ0Fcd/aXQd2pBabpHxO3W8+yvUXFq66GPg2YYpKVkEwz4iVeKffNVyRSLBUiOS
+         7fyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW8w8yWH4GlU8LDx8yD3153LHMqUBFXCt9DNG/d+RGKTWFRNHguHFP3wYSaUrxe2tpjUiwu/9gDMjy9MBo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwCj121Zch6FqOSzrnies9m1/bWg79PjjJvEbSsfVCJYNpavyQk
+	bcHR9u4kJqfxjxcFG31bL45MSk9IsiOoyiYKLZl9n5XttYvXRB0H1f3luyuwado=
+X-Gm-Gg: ASbGncs68Z/Sx7Q7rXJg4e8VuqPYuvDm4FKt3PPZOk65xvgnyPEUK7ew9Qi1XBX6Tnb
+	43jvMTG3v3geIVnNIH8y/qkJmcQhTv0zCew7sS2Y77akRnQDrUeYAeyFW3bFbyRfOMvNwTTEj3H
+	UzGOcc9k9VbldYUFZ2PLzflwjyfas4ArhMB7z+yNw3+M7ie0g2TGJTrR6wpO2yHSp0VoyImcpyb
+	oYp5YJsZkb5jaTBm0YptIaFEjYpwn4L586zeFWQC+Cf5vt3tSIZUZ7AeSEQoJ1J1KFB5m+8jvE=
+X-Google-Smtp-Source: AGHT+IGPNn94J2dpQ5kh5lIK6FeDE5RanphaqK7PW7F/ltFApM1dfvj99MJkhyaY+6+eyweaw/QpUA==
+X-Received: by 2002:a05:600c:5125:b0:430:563a:b20a with SMTP id 5b1f17b1804b1-434d09bf79fmr29233945e9.11.1733246917749;
+        Tue, 03 Dec 2024 09:28:37 -0800 (PST)
+Received: from [192.168.0.20] (nborisov.ddns.nbis.net. [85.187.217.62])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434aa7691b0sm227956775e9.17.2024.12.03.09.28.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 03 Dec 2024 09:28:37 -0800 (PST)
+Message-ID: <4c92909e-cb0f-4917-834c-3425284db808@suse.com>
+Date: Tue, 3 Dec 2024 19:28:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="tHDCWXL5Z30wlzvr"
-Content-Disposition: inline
-In-Reply-To: <Z085GKS8jzEhcZdW@e133380.arm.com>
-X-Cookie: Alimony is the high cost of leaving.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] x86/tdx: Enable #VE reduction feature
+To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, x86@kernel.org,
+ "H. Peter Anvin" <hpa@zytor.com>
+Cc: linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20241202072431.447380-1-kirill.shutemov@linux.intel.com>
+From: Nikolay Borisov <nik.borisov@suse.com>
+Content-Language: en-US
+In-Reply-To: <20241202072431.447380-1-kirill.shutemov@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
 
---tHDCWXL5Z30wlzvr
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-On Tue, Dec 03, 2024 at 05:00:08PM +0000, Dave Martin wrote:
-> On Tue, Dec 03, 2024 at 04:00:45PM +0000, Mark Brown wrote:
+On 2.12.24 г. 9:24 ч., Kirill A. Shutemov wrote:
+> Originally, #VE was defined as the TDX behavior in order to support
+> paravirtualization of x86 features that can’t be virtualized by the TDX
+> module. The intention is that if guest software wishes to use such a
+> feature, it implements some logic to support this. This logic resides in
+> the #VE exception handler it may work in cooperation with the host VMM.
+> 
+> Theoretically, the guest TD’s #VE handler was supposed to act as a "TDX
+> enlightenment agent" inside the TD. However, in practice, the #VE
+> handler is simplistic:
+> 
+>    - #VE on CPUID is handled by returning all-0 to the code which
+>      executed CPUID. In many cases, an all-0 value is not the correct
+>      value, and may cause improper operation.
+> 
+>    - #VE on RDMSR is handled by requesting the MSR value from the host
+>      VMM. This is prone to security issues since the host VMM is
+>      untrusted. It may also be functionally incorrect in case the
+>      expected operation is to paravirtualize some CPU functionality.
+> 
+> Newer TDX module provides REDUCE_VE feature. When enabled, it
+> drastically cuts cases when guests receives #VE on MSR and CPUID
+> accesses. Behaviour of a specific MSR or CPUID leaf/sub-leaf is defined
+> in the TDX spec.
+> 
+> Enable REDUCE_VE. It brings TDX guest behaviour less odd, bring it
+> closer to an architectural.
+> 
+> Note that enabling of the feature doesn't eliminate need in #VE handler
+> for CPUID and MSR accesses. Some MSRs still generate #VE (notably
+> APIC-related) and kernel needs CPUID #VE handler to ask VMM for leafs in
+> hypervisor range.
+> 
+> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 
-> > It's to ensure that the last recorded CPU for the current task is
-> > invalid so that if the state was loaded on another CPU and we switch
-> > back to that CPU we reload the state from memory, we need to at least
-> > trigger configuration of the SME VL.
+Reviewed-by: Nikolay Borisov <nik.borisov@suse.com>
 
-> OK, so the logic here is something like:
 
-> Disregarding SME, the FPSIMD/SVE regs are up to date, which is fine
-> because SME is trapped.
-
-> When we take the SME trap, we suddenly have some work to do in order to
-> make sure that the SME-specific parts of the register state are up to
-> date, so we need to mark the state as stale before setting TIF_SME and
-> returning.
-
-We know that the only bit of register state which is not up to date at
-this point is the SME vector length, we don't configure that for tasks
-that do not have SME.  SVCR is always configured since we have to exit
-streaming mode for FPSIMD and SVE to work properly so we know it's
-already 0, all the other SME specific state is gated by controls in
-SVCR.
-
-> fpsimd_flush_task_state() means that we do the necessary work when re-
-> entering userspace, but is there a problem with simply marking all the
-> FPSIMD/vector state as stale?  If FPSR or FPCR is dirty for example, it
-> now looks like they won't get written back to thread struct if there is
-> a context switch before current re-enters userspace?
-
-> Maybe the other flags distinguish these cases -- I haven't fully got my
-> head around it.
-
-We are doing fpsimd_flush_task_state() in the TIF_FOREIGN_FPSTATE case
-so we know there is no dirty state in the registers.
-
-> (Actually, the ARM ARM says (IMHTLZ) that toggling PSTATE.SM by any
-> means causes FPSR to become 0x800009f.  I'm not sure where that fits in
-> -- do we handle that anywhere?  I guess the "soft" SM toggling via
-
-Urgh, not seen that one - that needs handling in the signal entry path
-and ptrace.  That will have been defined while the feature was being
-implemented.  It's not relevant here though since we are in the SME
-access trap, we might be trapping due to a SMSTART or equivalent
-operation but that SMSTART has not yet run at the point where we return
-to userspace.
-
-> ptrace, signal delivery or maybe exec, ought to set this?  Not sure how
-> that interacts with the expected behaviour of the fenv(3) API...  Hmm.
-> I see no corresponding statement about FPCR.)
-
-Fun.  I'm not sure how the ABI is defined there by libc.
-
---tHDCWXL5Z30wlzvr
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmdPPtYACgkQJNaLcl1U
-h9APOAf/UFW40tTbHb8uLiLKWdPsreOHsimNJmtyKr1ffXaDSWdfVPDpmIkD2Pq0
-IfxTti7phJ0HbaSbSPQE5Q4wAuoWBKPBF1MA//sROlRYOrgRyGnoh4wYPHsKyHsC
-te9Y7m8YRG5BjAWU9AZxXDqrAzAD0Z2FUzPWHoeCfZfMzF39LVeT9fWrXifq//JL
-pukr0jwLO8Cl6h5beYMmvhhV+tUFooMIyswL0ao+U8oR34CtbTO43JsGwvIQ4jtN
-jkLXq4qeAFpbCdfepZcfO0GM3MIFMBu646I3pUVppZj0FAtQzShBrTdEz8IxAr4/
-Ae/GFy0QGUkCC6ZHRyE/6ZC3sp7Vmw==
-=MArm
------END PGP SIGNATURE-----
-
---tHDCWXL5Z30wlzvr--
+<snip>
 
