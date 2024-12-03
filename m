@@ -1,233 +1,217 @@
-Return-Path: <linux-kernel+bounces-429978-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29B0A9E2A19
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 18:56:54 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E2AD8165477
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 17:56:50 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28C2D1FBEAE;
-	Tue,  3 Dec 2024 17:56:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="A3EoAVnq"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AF569E2A22
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 18:58:37 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D628F1E500C
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 17:56:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C583284DE7
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 17:58:36 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76D091FC0E0;
+	Tue,  3 Dec 2024 17:58:32 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6765C1DD0FF
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 17:58:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733248609; cv=none; b=jAI6f8LIYeMzBHYMgCN178EdJGJcBWcvM+m8YvJ2giCzIytPpXWk8PsaZ0smCKCJagcozmSPFl+YUNUvGdOSi4JOTPsPiMrlzjd8yOIseFVA9LRy5vMLpreRzNEFW+QVTEYyvhqNj/VcUvzNdxTjhH3eCRde5ISUokhlGRsHirs=
+	t=1733248712; cv=none; b=sNy/1KoyRA0fAdTIdC9305ekfrUFwzlRJj1eVXUGgaEo6br2qGj20nNwQE2Re11Z5D4EgA2myH8EJ9GWUNWZnAFRyuA24dhjWh/l3dj1BKHcG0gIqu1VnDM9CTFphmuj5e/iT2CxYV54tDH/4to04HTSEYnAWQ7yge1o2OZB4QA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733248609; c=relaxed/simple;
-	bh=YhYh7Vwa6wp3IJgFTdZsSsKPBU9iMnaoQ1W0I0ymQGQ=;
+	s=arc-20240116; t=1733248712; c=relaxed/simple;
+	bh=jtH2fJlVYpWNRRVi1QtuebYfdf2d4OegmjKMmaUCCU8=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ujIjBEn6az+yaZOBHZOKTapmUPxrbq0WerI3QbIBkc640zv/B1jc5Z0q3LhA5ADVnp5FmhIH4tAZoojknMKAy5e+Bcty9vRF0gTC3wnPT394O4NKX8ekk8GTDVE0vKe7yns8Qgyq3QsnjA5CXzpOVKNxMvQcmlBUGei0sa8xbsU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=casper.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=A3EoAVnq; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=casper.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=MIME-Version:Content-Type:References:
-	In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=YhYh7Vwa6wp3IJgFTdZsSsKPBU9iMnaoQ1W0I0ymQGQ=; b=A3EoAVnqrbwVvqyBTapAR5Flbq
-	uWsgxYjDgikT9okBJ7m8KmfwD1+2NnaT3HiG5xZSao5whnsq5Pz8FHNQtjVATgo3ejVwlgca6gOeC
-	fuAZnLI6NNPqJNAw5I3lP/37F9aMmm7m+PIJX8vwHuvqY6Km/WlVLblWX/kEUKDMqMJ6BmhGBhME3
-	wb+eG2XpF7jevyXYPVReotKXZz4UrUcxLR1Zc3dcO5Ucx2Z0JYtnGh1RV9sHQamGD8EOXpSEVUCRx
-	d99giEq3UB3Iki8ewaeXBDAD+RC/Xv/TzUP2JSKXSltR3vQ3OexS3V6mZ3/p3wWfVIWchJGU8YtE5
-	er8ZNDkQ==;
-Received: from 54-240-197-238.amazon.com ([54.240.197.238] helo=edge-m1-r1-104.e-iad16.amazon.com)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tIX8Q-0000000A1lS-3j0l;
-	Tue, 03 Dec 2024 17:56:32 +0000
-Message-ID: <c16ed8f5c960c34f05b88b84a31f28a610f6a3cf.camel@infradead.org>
-Subject: Re: [RFC PATCH v4 05/20] x86/mm: Add _PAGE_NOPTISHADOW bit to avoid
- updating userspace page tables
-From: David Woodhouse <dwmw2@infradead.org>
-To: kexec@lists.infradead.org
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, "Kirill A. Shutemov"
- <kirill.shutemov@linux.intel.com>, Kai Huang <kai.huang@intel.com>, Nikolay
- Borisov <nik.borisov@suse.com>,  linux-kernel@vger.kernel.org, Simon Horman
- <horms@kernel.org>, Dave Young <dyoung@redhat.com>, Peter Zijlstra
- <peterz@infradead.org>, jpoimboe@kernel.org,  bsz@amazon.de
-Date: Tue, 03 Dec 2024 17:56:31 +0000
-In-Reply-To: <20241127190343.44916-6-dwmw2@infradead.org>
-References: <20241127190343.44916-1-dwmw2@infradead.org>
-	 <20241127190343.44916-6-dwmw2@infradead.org>
-Content-Type: multipart/signed; micalg="sha-256"; protocol="application/pkcs7-signature";
-	boundary="=-S93rhy7XAih6PPeHn3if"
-User-Agent: Evolution 3.52.3-0ubuntu1 
+	 Content-Type:MIME-Version; b=Zp2Lyztn3IjtbirDtfK+GJrstBpT+3xgmwM4j71PRQLoiXzIT5afoDaJqratmE+FDO0+MsIma5b/xnjGWgF+23NeguLJhx1D5ZHF784+DHMgnb/z7Io1dm1xuKGj/8l+5VkPJcFEhj+7o/G1vD/b4dKFACMBTLq43SqVF/xd3Xc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[IPv6:::1])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <l.stach@pengutronix.de>)
+	id 1tIXAH-0006Sw-Kh; Tue, 03 Dec 2024 18:58:25 +0100
+Message-ID: <3416531c050e5f6717e478eb7fd8fd6c30c21dd4.camel@pengutronix.de>
+Subject: Re: [PATCH v2] drm/etnaviv: add optional reset support
+From: Lucas Stach <l.stach@pengutronix.de>
+To: LECOINTRE Philippe <philippe.lecointre@thalesgroup.com>, Russell King
+ <linux+etnaviv@armlinux.org.uk>, Christian Gmeiner
+ <christian.gmeiner@gmail.com>
+Cc: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ "etnaviv@lists.freedesktop.org" <etnaviv@lists.freedesktop.org>,
+ "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, LENAIN Simon
+ <simon.lenain@thalesgroup.com>,  BARBEAU Etienne
+ <etienne.barbeau@thalesgroup.com>, LEJEUNE Sebastien
+ <sebastien.lejeune@thalesgroup.com>
+Date: Tue, 03 Dec 2024 18:58:24 +0100
+In-Reply-To: <dc139d10a4184d289c9ffd1d308c0db1@thalesgroup.com>
+References: <dc139d10a4184d289c9ffd1d308c0db1@thalesgroup.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
+X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
+Hi Philippe,
 
---=-S93rhy7XAih6PPeHn3if
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, 2024-11-27 at 19:00 +0000, David Woodhouse wrote:
-> From: David Woodhouse <dwmw@amazon.co.uk>
+Am Freitag, dem 08.11.2024 um 14:00 +0000 schrieb LECOINTRE Philippe:
+> Add optional reset support which is mentioned in vivante,gc.yaml to
+> allow the driver to work on SoCs whose reset signal is asserted by defaul=
+t
+> Avoid enabling the interrupt until everything is ready
 >=20
-> The set_p4d() and set_pgd() functions (in 4-level or 5-level page table s=
-etups
-> respectively) assume that the root page table is actually a 8KiB allocati=
-on,
-> with the userspace root immediately after the kernel root page table (so =
-that
-> the former can enforce NX on on all the subordinate pages, which are actu=
-ally
-> shared).
+> Signed-off-by: Philippe Lecointre <philippe.lecointre@thalesgroup.com>
+> Reviewed-by: Simon Lenain <simon.lenain@thalesgroup.com>
+> ---
+> v2:
+> - Add missing include of irq.h
+> ---
+>  drivers/gpu/drm/etnaviv/etnaviv_gpu.c | 30 +++++++++++++++++++++++++++
+>  drivers/gpu/drm/etnaviv/etnaviv_gpu.h |  2 ++
+>  2 files changed, 32 insertions(+)
 >=20
-> However, users of the kernel_ident_mapping_init() code do not give it an =
-8KiB
-> allocation for its PGD. Both swsusp_arch_resume() and acpi_mp_setup_reset=
-()
-> allocate only a single 4KiB page. The kexec code on x86_64 currently gets
-> away with it purely by chance, because it allocates 8KiB for its "control
-> code page" and then actually uses the first half for the PGD, then copies=
- the
-> actual trampoline code into the second half only after the identmap code =
-has
-> finished scribbling over it.
->=20
-> Fix this by defining a _PAGE_NOPTISHADOW bit (which can use the same bit =
-as
-> _PAGE_SAVED_DIRTY since one is only for the PGD/P4D root and the other is
-> exclusively for leaf PTEs.). This instructs __pti_set_user_pgtbl() not to
-> write to the userspace 'shadow' PGD.
->=20
-> Strictly, the _PAGE_NOPTISHADOW bit doesn't need to be written out to the
-> actual page tables; since __pti_set_user_pgtbl() returns the value to be
-> written to the kernel page table, it could be filtered out. But there see=
-ms
-> to be no benefit to actually doing so.
+> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_gpu.c b/drivers/gpu/drm/etna=
+viv/etnaviv_gpu.c
+> index 7c7f97793ddd..3e0c5dd9f74b 100644
+> --- a/drivers/gpu/drm/etnaviv/etnaviv_gpu.c
+> +++ b/drivers/gpu/drm/etnaviv/etnaviv_gpu.c
+> @@ -1,6 +1,7 @@
+>  // SPDX-License-Identifier: GPL-2.0
+>  /*
+>   * Copyright (C) 2015-2018 Etnaviv Project
+> + * Copyright (C) 2024 Thales
+>   */
+> =20
+>  #include <linux/clk.h>
+> @@ -8,11 +9,13 @@
+>  #include <linux/delay.h>
+>  #include <linux/dma-fence.h>
+>  #include <linux/dma-mapping.h>
+> +#include <linux/irq.h>
+>  #include <linux/mod_devicetable.h>
+>  #include <linux/module.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/pm_runtime.h>
+>  #include <linux/regulator/consumer.h>
+> +#include <linux/reset.h>
+>  #include <linux/thermal.h>
+> =20
+>  #include "etnaviv_cmdbuf.h"
+> @@ -1629,8 +1632,24 @@ static int etnaviv_gpu_clk_enable(struct etnaviv_g=
+pu *gpu)
+>  	if (ret)
+>  		goto disable_clk_core;
+> =20
+> +	/* 32 core clock cycles (slowest clock) required before deassertion. */
+> +	/* 1 microsecond might match all implementations */
+> +	usleep_range(1, 2);
+> +
+> +	ret =3D reset_control_deassert(gpu->rst);
+> +	if (ret)
+> +		goto disable_clk_shader;
+> +
+> +	/* 128 core clock cycles (slowest clock) required before any activity o=
+n AHB. */
+> +	/* 1 microsecond might match all implementations */
+> +	usleep_range(1, 2);
 
-Ping? I think the rest of the kexec-debug series is in fairly good
-shape; this is the only part I'm slightly unsure about.
+Mashing the reset handling into the clock handling is a bad idea. The
+clocks are en-/disabled during runtime PM handling. The etnaviv driver
+is written in a way that the GPU does not necessarily need to be reset
+during a runtime PM transition, which allow for faster startup times.
 
+The reset handling should really be its own separate function and would
+logically go into etnaviv_gpu_init() between the pm_runtime_get_sync()
+and etnaviv_hw_identify().
 
---=-S93rhy7XAih6PPeHn3if
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Transfer-Encoding: base64
+> +
+> +	enable_irq(gpu->irq);
 
-MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCEkQw
-ggYQMIID+KADAgECAhBNlCwQ1DvglAnFgS06KwZPMA0GCSqGSIb3DQEBDAUAMIGIMQswCQYDVQQG
-EwJVUzETMBEGA1UECBMKTmV3IEplcnNleTEUMBIGA1UEBxMLSmVyc2V5IENpdHkxHjAcBgNVBAoT
-FVRoZSBVU0VSVFJVU1QgTmV0d29yazEuMCwGA1UEAxMlVVNFUlRydXN0IFJTQSBDZXJ0aWZpY2F0
-aW9uIEF1dGhvcml0eTAeFw0xODExMDIwMDAwMDBaFw0zMDEyMzEyMzU5NTlaMIGWMQswCQYDVQQG
-EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYD
-VQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMTNVNlY3RpZ28gUlNBIENsaWVudCBBdXRoZW50
-aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKC
-AQEAyjztlApB/975Rrno1jvm2pK/KxBOqhq8gr2+JhwpKirSzZxQgT9tlC7zl6hn1fXjSo5MqXUf
-ItMltrMaXqcESJuK8dtK56NCSrq4iDKaKq9NxOXFmqXX2zN8HHGjQ2b2Xv0v1L5Nk1MQPKA19xeW
-QcpGEGFUUd0kN+oHox+L9aV1rjfNiCj3bJk6kJaOPabPi2503nn/ITX5e8WfPnGw4VuZ79Khj1YB
-rf24k5Ee1sLTHsLtpiK9OjG4iQRBdq6Z/TlVx/hGAez5h36bBJMxqdHLpdwIUkTqT8se3ed0PewD
-ch/8kHPo5fZl5u1B0ecpq/sDN/5sCG52Ds+QU5O5EwIDAQABo4IBZDCCAWAwHwYDVR0jBBgwFoAU
-U3m/WqorSs9UgOHYm8Cd8rIDZsswHQYDVR0OBBYEFAnA8vwL2pTbX/4r36iZQs/J4K0AMA4GA1Ud
-DwEB/wQEAwIBhjASBgNVHRMBAf8ECDAGAQH/AgEAMB0GA1UdJQQWMBQGCCsGAQUFBwMCBggrBgEF
-BQcDBDARBgNVHSAECjAIMAYGBFUdIAAwUAYDVR0fBEkwRzBFoEOgQYY/aHR0cDovL2NybC51c2Vy
-dHJ1c3QuY29tL1VTRVJUcnVzdFJTQUNlcnRpZmljYXRpb25BdXRob3JpdHkuY3JsMHYGCCsGAQUF
-BwEBBGowaDA/BggrBgEFBQcwAoYzaHR0cDovL2NydC51c2VydHJ1c3QuY29tL1VTRVJUcnVzdFJT
-QUFkZFRydXN0Q0EuY3J0MCUGCCsGAQUFBzABhhlodHRwOi8vb2NzcC51c2VydHJ1c3QuY29tMA0G
-CSqGSIb3DQEBDAUAA4ICAQBBRHUAqznCFfXejpVtMnFojADdF9d6HBA4kMjjsb0XMZHztuOCtKF+
-xswhh2GqkW5JQrM8zVlU+A2VP72Ky2nlRA1GwmIPgou74TZ/XTarHG8zdMSgaDrkVYzz1g3nIVO9
-IHk96VwsacIvBF8JfqIs+8aWH2PfSUrNxP6Ys7U0sZYx4rXD6+cqFq/ZW5BUfClN/rhk2ddQXyn7
-kkmka2RQb9d90nmNHdgKrwfQ49mQ2hWQNDkJJIXwKjYA6VUR/fZUFeCUisdDe/0ABLTI+jheXUV1
-eoYV7lNwNBKpeHdNuO6Aacb533JlfeUHxvBz9OfYWUiXu09sMAviM11Q0DuMZ5760CdO2VnpsXP4
-KxaYIhvqPqUMWqRdWyn7crItNkZeroXaecG03i3mM7dkiPaCkgocBg0EBYsbZDZ8bsG3a08LwEsL
-1Ygz3SBsyECa0waq4hOf/Z85F2w2ZpXfP+w8q4ifwO90SGZZV+HR/Jh6rEaVPDRF/CEGVqR1hiuQ
-OZ1YL5ezMTX0ZSLwrymUE0pwi/KDaiYB15uswgeIAcA6JzPFf9pLkAFFWs1QNyN++niFhsM47qod
-x/PL+5jR87myx5uYdBEQkkDc+lKB1Wct6ucXqm2EmsaQ0M95QjTmy+rDWjkDYdw3Ms6mSWE3Bn7i
-5ZgtwCLXgAIe5W8mybM2JzCCBhQwggT8oAMCAQICEQDGvhmWZ0DEAx0oURL6O6l+MA0GCSqGSIb3
-DQEBCwUAMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYD
-VQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMTNVNlY3RpZ28g
-UlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBMB4XDTIyMDEwNzAw
-MDAwMFoXDTI1MDEwNjIzNTk1OVowJDEiMCAGCSqGSIb3DQEJARYTZHdtdzJAaW5mcmFkZWFkLm9y
-ZzCCAiIwDQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBALQ3GpC2bomUqk+91wLYBzDMcCj5C9m6
-oZaHwvmIdXftOgTbCJXADo6G9T7BBAebw2JV38EINgKpy/ZHh7htyAkWYVoFsFPrwHounto8xTsy
-SSePMiPlmIdQ10BcVSXMUJ3Juu16GlWOnAMJY2oYfEzmE7uT9YgcBqKCo65pTFmOnR/VVbjJk4K2
-xE34GC2nAdUQkPFuyaFisicc6HRMOYXPuF0DuwITEKnjxgNjP+qDrh0db7PAjO1D4d5ftfrsf+kd
-RR4gKVGSk8Tz2WwvtLAroJM4nXjNPIBJNT4w/FWWc/5qPHJy2U+eITZ5LLE5s45mX2oPFknWqxBo
-bQZ8a9dsZ3dSPZBvE9ZrmtFLrVrN4eo1jsXgAp1+p7bkfqd3BgBEmfsYWlBXO8rVXfvPgLs32VdV
-NZxb/CDWPqBsiYv0Hv3HPsz07j5b+/cVoWqyHDKzkaVbxfq/7auNVRmPB3v5SWEsH8xi4Bez2V9U
-KxfYCnqsjp8RaC2/khxKt0A552Eaxnz/4ly/2C7wkwTQnBmdlFYhAflWKQ03Ufiu8t3iBE3VJbc2
-5oMrglj7TRZrmKq3CkbFnX0fyulB+kHimrt6PIWn7kgyl9aelIl6vtbhMA+l0nfrsORMa4kobqQ5
-C5rveVgmcIad67EDa+UqEKy/GltUwlSh6xy+TrK1tzDvAgMBAAGjggHMMIIByDAfBgNVHSMEGDAW
-gBQJwPL8C9qU21/+K9+omULPyeCtADAdBgNVHQ4EFgQUzMeDMcimo0oz8o1R1Nver3ZVpSkwDgYD
-VR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwHQYDVR0lBBYwFAYIKwYBBQUHAwQGCCsGAQUFBwMC
-MEAGA1UdIAQ5MDcwNQYMKwYBBAGyMQECAQEBMCUwIwYIKwYBBQUHAgEWF2h0dHBzOi8vc2VjdGln
-by5jb20vQ1BTMFoGA1UdHwRTMFEwT6BNoEuGSWh0dHA6Ly9jcmwuc2VjdGlnby5jb20vU2VjdGln
-b1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5kU2VjdXJlRW1haWxDQS5jcmwwgYoGCCsGAQUFBwEB
-BH4wfDBVBggrBgEFBQcwAoZJaHR0cDovL2NydC5zZWN0aWdvLmNvbS9TZWN0aWdvUlNBQ2xpZW50
-QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNydDAjBggrBgEFBQcwAYYXaHR0cDovL29j
-c3Auc2VjdGlnby5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5mcmFkZWFkLm9yZzANBgkqhkiG9w0B
-AQsFAAOCAQEAyW6MUir5dm495teKqAQjDJwuFCi35h4xgnQvQ/fzPXmtR9t54rpmI2TfyvcKgOXp
-qa7BGXNFfh1JsqexVkIqZP9uWB2J+uVMD+XZEs/KYNNX2PvIlSPrzIB4Z2wyIGQpaPLlYflrrVFK
-v9CjT2zdqvy2maK7HKOQRt3BiJbVG5lRiwbbygldcALEV9ChWFfgSXvrWDZspnU3Gjw/rMHrGnql
-Htlyebp3pf3fSS9kzQ1FVtVIDrL6eqhTwJxe+pXSMMqFiN0whpBtXdyDjzBtQTaZJ7zTT/vlehc/
-tDuqZwGHm/YJy883Ll+GP3NvOkgaRGWEuYWJJ6hFCkXYjyR9IzCCBhQwggT8oAMCAQICEQDGvhmW
-Z0DEAx0oURL6O6l+MA0GCSqGSIb3DQEBCwUAMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3Jl
-YXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0
-ZWQxPjA8BgNVBAMTNVNlY3RpZ28gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJl
-IEVtYWlsIENBMB4XDTIyMDEwNzAwMDAwMFoXDTI1MDEwNjIzNTk1OVowJDEiMCAGCSqGSIb3DQEJ
-ARYTZHdtdzJAaW5mcmFkZWFkLm9yZzCCAiIwDQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBALQ3
-GpC2bomUqk+91wLYBzDMcCj5C9m6oZaHwvmIdXftOgTbCJXADo6G9T7BBAebw2JV38EINgKpy/ZH
-h7htyAkWYVoFsFPrwHounto8xTsySSePMiPlmIdQ10BcVSXMUJ3Juu16GlWOnAMJY2oYfEzmE7uT
-9YgcBqKCo65pTFmOnR/VVbjJk4K2xE34GC2nAdUQkPFuyaFisicc6HRMOYXPuF0DuwITEKnjxgNj
-P+qDrh0db7PAjO1D4d5ftfrsf+kdRR4gKVGSk8Tz2WwvtLAroJM4nXjNPIBJNT4w/FWWc/5qPHJy
-2U+eITZ5LLE5s45mX2oPFknWqxBobQZ8a9dsZ3dSPZBvE9ZrmtFLrVrN4eo1jsXgAp1+p7bkfqd3
-BgBEmfsYWlBXO8rVXfvPgLs32VdVNZxb/CDWPqBsiYv0Hv3HPsz07j5b+/cVoWqyHDKzkaVbxfq/
-7auNVRmPB3v5SWEsH8xi4Bez2V9UKxfYCnqsjp8RaC2/khxKt0A552Eaxnz/4ly/2C7wkwTQnBmd
-lFYhAflWKQ03Ufiu8t3iBE3VJbc25oMrglj7TRZrmKq3CkbFnX0fyulB+kHimrt6PIWn7kgyl9ae
-lIl6vtbhMA+l0nfrsORMa4kobqQ5C5rveVgmcIad67EDa+UqEKy/GltUwlSh6xy+TrK1tzDvAgMB
-AAGjggHMMIIByDAfBgNVHSMEGDAWgBQJwPL8C9qU21/+K9+omULPyeCtADAdBgNVHQ4EFgQUzMeD
-Mcimo0oz8o1R1Nver3ZVpSkwDgYDVR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwHQYDVR0lBBYw
-FAYIKwYBBQUHAwQGCCsGAQUFBwMCMEAGA1UdIAQ5MDcwNQYMKwYBBAGyMQECAQEBMCUwIwYIKwYB
-BQUHAgEWF2h0dHBzOi8vc2VjdGlnby5jb20vQ1BTMFoGA1UdHwRTMFEwT6BNoEuGSWh0dHA6Ly9j
-cmwuc2VjdGlnby5jb20vU2VjdGlnb1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5kU2VjdXJlRW1h
-aWxDQS5jcmwwgYoGCCsGAQUFBwEBBH4wfDBVBggrBgEFBQcwAoZJaHR0cDovL2NydC5zZWN0aWdv
-LmNvbS9TZWN0aWdvUlNBQ2xpZW50QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNydDAj
-BggrBgEFBQcwAYYXaHR0cDovL29jc3Auc2VjdGlnby5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5m
-cmFkZWFkLm9yZzANBgkqhkiG9w0BAQsFAAOCAQEAyW6MUir5dm495teKqAQjDJwuFCi35h4xgnQv
-Q/fzPXmtR9t54rpmI2TfyvcKgOXpqa7BGXNFfh1JsqexVkIqZP9uWB2J+uVMD+XZEs/KYNNX2PvI
-lSPrzIB4Z2wyIGQpaPLlYflrrVFKv9CjT2zdqvy2maK7HKOQRt3BiJbVG5lRiwbbygldcALEV9Ch
-WFfgSXvrWDZspnU3Gjw/rMHrGnqlHtlyebp3pf3fSS9kzQ1FVtVIDrL6eqhTwJxe+pXSMMqFiN0w
-hpBtXdyDjzBtQTaZJ7zTT/vlehc/tDuqZwGHm/YJy883Ll+GP3NvOkgaRGWEuYWJJ6hFCkXYjyR9
-IzGCBMcwggTDAgEBMIGsMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVz
-dGVyMRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMT
-NVNlY3RpZ28gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBAhEA
-xr4ZlmdAxAMdKFES+jupfjANBglghkgBZQMEAgEFAKCCAeswGAYJKoZIhvcNAQkDMQsGCSqGSIb3
-DQEHATAcBgkqhkiG9w0BCQUxDxcNMjQxMjAzMTc1NjMxWjAvBgkqhkiG9w0BCQQxIgQglpwliv5S
-dT5QRge0YvWg0wMo3yys5dbyNmjmcUxABcEwgb0GCSsGAQQBgjcQBDGBrzCBrDCBljELMAkGA1UE
-BhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UEBxMHU2FsZm9yZDEYMBYG
-A1UEChMPU2VjdGlnbyBMaW1pdGVkMT4wPAYDVQQDEzVTZWN0aWdvIFJTQSBDbGllbnQgQXV0aGVu
-dGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQQIRAMa+GZZnQMQDHShREvo7qX4wgb8GCyqGSIb3
-DQEJEAILMYGvoIGsMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVy
-MRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMTNVNl
-Y3RpZ28gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBAhEAxr4Z
-lmdAxAMdKFES+jupfjANBgkqhkiG9w0BAQEFAASCAgBz3Gl7/2uYT80o+AFufhavBSzEJCJIQqnY
-PN2b0EzjAm8sCefRIoJXhzY9cxc7HriLbjGUUBVzKf6KjcM67E6y0b0YXCFNVj5Bl3RjklNpzOBK
-jKQ/+LHMinMvPTQv4NKCh38DyRw1fFYBIG8++rTe8rTdmZv7GK1fMLWPG6rnHgx6xx7lfitLc95R
-/dNIOvFh/Gr4wn0QpPEbVFAThBDCxmK9tVTg51d4HRd8zlFic0Y97imC5nLXQbhUcuRCzj0zX9oG
-FvoJCtmuf2Ue0otOwS1pisujRW+X/MJhNvg/VVge4OngsRxNn8/sxceQDj+Sbk3ZJu34KyKxbsEW
-PI3mP6xyEBkhwoWom5LMmHJJsGHzIGqC+cE9LJh0UPmTCra/TSoi6HpRw0gl/LIjX+ksx75iqbsH
-p/7sy9vGdYpuOS+WR1DNVFGTg4T4xFksY0VDyubP1HNlHCyf/NKMDZzT0gTGr74gwALA4UQnZr78
-kc2U1ahercX8Y6TMm/41QP5SlQo3mDDMrtlhgHD3FHhbPHuMuTARpHUqwHP+x82jDBLOBlp2JdU1
-VjeDL/63OUOYmAItEwmd86fjH9t2FEKwN7eosa/6bW4bn6uxghv3iLTsPQlvYlAP7JRacdfevShX
-atwLTr0kijQ5NOW9iqNDWZCIcydIZ8omFEPHMYAMoAAAAAAAAA==
+Do you see any issues with the IRQ being enabled earlier? A GPU being
+held in reset should not be able to trigger a IRQ.
 
+> +
+>  	return 0;
+> =20
+> +disable_clk_shader:
+> +	clk_disable_unprepare(gpu->clk_shader);
+>  disable_clk_core:
+>  	clk_disable_unprepare(gpu->clk_core);
+>  disable_clk_bus:
+> @@ -1643,6 +1662,8 @@ static int etnaviv_gpu_clk_enable(struct etnaviv_gp=
+u *gpu)
+> =20
+>  static int etnaviv_gpu_clk_disable(struct etnaviv_gpu *gpu)
+>  {
+> +	disable_irq(gpu->irq);
+> +	reset_control_assert(gpu->rst);
+>  	clk_disable_unprepare(gpu->clk_shader);
+>  	clk_disable_unprepare(gpu->clk_core);
+>  	clk_disable_unprepare(gpu->clk_bus);
+> @@ -1876,6 +1897,9 @@ static int etnaviv_gpu_platform_probe(struct platfo=
+rm_device *pdev)
+>  	if (gpu->irq < 0)
+>  		return gpu->irq;
+> =20
+> +	/* Avoid enabling the interrupt until everything is ready */
+> +	irq_set_status_flags(gpu->irq, IRQ_NOAUTOEN);
+> +
+>  	err =3D devm_request_irq(&pdev->dev, gpu->irq, irq_handler, 0,
+>  			       dev_name(gpu->dev), gpu);
+>  	if (err) {
+> @@ -1883,6 +1907,12 @@ static int etnaviv_gpu_platform_probe(struct platf=
+orm_device *pdev)
+>  		return err;
+>  	}
+> =20
+> +	/* Get Reset: */
+> +	gpu->rst =3D devm_reset_control_get_optional(&pdev->dev, NULL);
+> +	if (IS_ERR(gpu->rst))
+> +		return dev_err_probe(dev, PTR_ERR(gpu->rst),
+> +				     "failed to get reset\n");
+> +
+>  	/* Get Clocks: */
+>  	gpu->clk_reg =3D devm_clk_get_optional(&pdev->dev, "reg");
+>  	DBG("clk_reg: %p", gpu->clk_reg);
+> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_gpu.h b/drivers/gpu/drm/etna=
+viv/etnaviv_gpu.h
+> index 31322195b9e4..8c181191755e 100644
+> --- a/drivers/gpu/drm/etnaviv/etnaviv_gpu.h
+> +++ b/drivers/gpu/drm/etnaviv/etnaviv_gpu.h
+> @@ -1,6 +1,7 @@
+>  /* SPDX-License-Identifier: GPL-2.0 */
+>  /*
+>   * Copyright (C) 2015-2018 Etnaviv Project
+> + * Copyright (C) 2024 Thales
 
---=-S93rhy7XAih6PPeHn3if--
+I don't think adding a single member here does warrant a Copyright
+statement, in fact I would prefer them to not be touched at all.
+Authorship of individual changes to the driver a clearly attributable
+via the git history.
+
+Regards,
+Lucas
+>   */
+> =20
+>  #ifndef __ETNAVIV_GPU_H__
+> @@ -157,6 +158,7 @@ struct etnaviv_gpu {
+>  	struct clk *clk_reg;
+>  	struct clk *clk_core;
+>  	struct clk *clk_shader;
+> +	struct reset_control *rst;
+> =20
+>  	unsigned int freq_scale;
+>  	unsigned int fe_waitcycles;
+
 
