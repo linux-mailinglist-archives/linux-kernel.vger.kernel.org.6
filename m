@@ -1,35 +1,56 @@
-Return-Path: <linux-kernel+bounces-428803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85D6D9E13B8
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 08:01:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 03B949E13BD
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 08:08:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52FD1282D4F
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 07:01:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCD1D282B32
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 07:08:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A853189F45;
-	Tue,  3 Dec 2024 07:01:31 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C86E8189F45;
+	Tue,  3 Dec 2024 07:08:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=oldschoolsolutions.biz header.i=jens.glathe@oldschoolsolutions.biz header.b="1WyptBjK"
+Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.17.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D792A4A29;
-	Tue,  3 Dec 2024 07:01:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C97142AA3;
+	Tue,  3 Dec 2024 07:08:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733209290; cv=none; b=tOdfQ8YcHdSbHW33pfV/Kh0CwBmC3lGPtduftzwi/Jrmzi6ipdUzL9i0U5yaghPnqYyo6Ix4Z6R+jSWhr7IYW+XugaQ+LJrdSumZed4kwjU9yF9f/N/vZEmjI10lBGewiI1UNDgCt0JPZ8hxeEgHbiflXTHBrvSay7K5mN07ILw=
+	t=1733209703; cv=none; b=tlkcIAh9VDoHV0gcHn5ukEGfCdA0opbCrJz/PZ8mb+iLyXDboKWWRgRDg7vusDN7Ku1YW+MlJYQv0ZBqJY4yy/0+wTtktQ6chzSrDOweOF8bPTOSqEARmuVuCTLnsx/L4xYIHCWjHGAnCg6XdusIl3DivxC05+2JjEcay90uchU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733209290; c=relaxed/simple;
-	bh=a8m0iZZnSkGyezFsgxGEnCsf3O79sGQ+Wzj4Vv87syc=;
+	s=arc-20240116; t=1733209703; c=relaxed/simple;
+	bh=sv/ZLZNiP+ORYCqKhKoa1tROOZS7hHnvR4oSVaz6GKA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bT+IA3aaQkjDpd79duEZJIQ15qBSHadN/HKIrGkCuoTikJaaP3b5kKGTHZuWNxWqf0i/cXhRfmNDDlW9HmXsokKnDrJjmVmaucoYLEDIc12R93hyDzb6LUjE5TkQ5Bn1Bm0B9uw+XdDvvM68q+2TFMQBWsk8MN2Jj5WRxUXD9AE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B213C4CECF;
-	Tue,  3 Dec 2024 07:01:28 +0000 (UTC)
-Message-ID: <e818a5d3-9df8-460e-8cf9-62adc32836e1@xs4all.nl>
-Date: Tue, 3 Dec 2024 08:01:26 +0100
+	 In-Reply-To:Content-Type; b=NEzONaIig5+ydWNUlkSVI3OvFafyqwz4qFMN9+Z1IceVwSU7+iL4QoypQKR9h3YlsVWDPNr6vHQT5txhXcSYOSqM/n+GPaipYVNIuAypBggPMoSpvtSOceaAdLfj5zmowZksUgQgLlZHD61fXMUTViYMjpqIErcyqe/k5XSu8Y0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=oldschoolsolutions.biz; spf=pass smtp.mailfrom=oldschoolsolutions.biz; dkim=pass (2048-bit key) header.d=oldschoolsolutions.biz header.i=jens.glathe@oldschoolsolutions.biz header.b=1WyptBjK; arc=none smtp.client-ip=212.227.17.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=oldschoolsolutions.biz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oldschoolsolutions.biz
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=oldschoolsolutions.biz; s=s1-ionos; t=1733209676; x=1733814476;
+	i=jens.glathe@oldschoolsolutions.biz;
+	bh=sv/ZLZNiP+ORYCqKhKoa1tROOZS7hHnvR4oSVaz6GKA=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=1WyptBjKNhHiqJNh8cQZueublvUjY6F7C5tt6kytTzW/16O45V1RTDzpY37rc4d3
+	 y9DFHa4zlknelPMcuu4Gxz2F1yJKuGxjKN2E4Ennr79Qi/3lwyl4i2WLKg45N2qcq
+	 C57/Z2msEzrrL+IjjovVquqjwDVe5gYeGTteUCYcVbnnzVQIwmS7XvdtFUHw6rctZ
+	 9rIYfRC814clNGeQc0ztVxgsCsch0FxA3G5f9bWzvZAg2XLBTEsDbc8AKAueXOaRz
+	 oPWbXgwop7r/a+MhSNuIZ8Wp/TH8Jxw8e+jgyvxBlwQYw+BP3AvLr3mV9ni39HJBn
+	 AvDH6tc2Vvv70x3jPw==
+X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
+Received: from [192.168.0.174] ([91.64.229.215]) by mrelayeu.kundenserver.de
+ (mreue109 [212.227.15.183]) with ESMTPSA (Nemesis) id
+ 1MJV9S-1sydCW2ICe-00TY9Z; Tue, 03 Dec 2024 08:07:56 +0100
+Message-ID: <7f5d424d-09a1-46ca-92a6-a1e7f8084bf0@oldschoolsolutions.biz>
+Date: Tue, 3 Dec 2024 08:07:55 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -37,92 +58,73 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] media: remove dead TI wl128x FM radio driver
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Cc: Lukas Bulwahn <lbulwahn@redhat.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org,
- kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
- Lukas Bulwahn <lukas.bulwahn@redhat.com>
-References: <20241028083030.26351-1-lukas.bulwahn@redhat.com>
- <CACMJSeu32-cnn01WoLbv4ffbMt3CfF0MTqbkxZHvu+4HQio=Mw@mail.gmail.com>
- <2024102922-faceplate-recycling-b47b@gregkh>
-Content-Language: en-US, nl
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Autocrypt: addr=hverkuil@xs4all.nl; keydata=
- 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
-In-Reply-To: <2024102922-faceplate-recycling-b47b@gregkh>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH v9 3/3] arm64: dts: qcom: sc8280xp-blackrock: dt
+ definition for WDK2023
+To: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: Kalle Valo <kvalo@kernel.org>, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Rob Herring <robh@kernel.org>, Merck Hung <merckhung@gmail.com>,
+ xlazom00@gmail.com, Conor Dooley <conor+dt@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>
+References: <20241202-jg-blackrock-for-upstream-v9-0-385bb46ca122@oldschoolsolutions.biz>
+ <20241202-jg-blackrock-for-upstream-v9-3-385bb46ca122@oldschoolsolutions.biz>
+ <0352b36d-92fa-42ba-bc20-40cef0f9ea42@oss.qualcomm.com>
+Content-Language: en-US
+From: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+In-Reply-To: <0352b36d-92fa-42ba-bc20-40cef0f9ea42@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:tWOFzcbo+m+ObCOiNlwoCMMFHZX41Levru0sbPKXuhwKAASYWST
+ fyBC0QtCcJoFmuAQ7ET6NKAZHh/jPmRh10gEyGNY4CyCWapsiiiUhHvP1tEcd18RuHXgWZc
+ sXv/rnYuF6uso3VsXPet71gcNVPSzv7qCVBkdd81DGzI+Mz7vc8bmjSGxdY87SObOFkdfxr
+ 9BT55lV2G4CJOOyvVQrlw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:FD4rmPGlEW4=;j2SPBrS/ywcUJ4QmXa8fDkTDkG1
+ cORRp8hCXcarqbGLeHcQfugA68zlus5gxsgB0olmhfe0Qxt0LVLf7mm3ZU2ThaHlXAmCxMCeY
+ oZggykU6Zc/Jvlh6f434yPDG3WmAZa6EvgB4iiYqgzhd74GpkcXo1riOb22WrmnmWILFE/skO
+ 5nzyjVGTmKs87FYY2aRdEM4+qyjs2PNBfz7rBC6pL5CkS92D68JUL8iEtdRqK/siQGlVqlVR4
+ pylB0K4tA8MSXvBtaBc1jEbrQGFK7mNrpb80cGsZz9QTodpLrWHq7LUZBBHgAXAeunky5IA/v
+ CrM7lVmI/2+IfJCwO5pkutexuvyYsaDkb+6PMcnhy80RV3kWHZcEwxTJ5WVKxHQ/n/LMlX08/
+ oolAbqPeWvPuoWOzhkEpGoQ9ovM+mGvvRsLXQAppLze3KItlHICabfJMbnNVQOHV2c2wM34KP
+ f8FJJ4LJ44x8nERG6ztA9BBbmn/GPectVzwWpRbpCTdjQI+0H9e0ksDuOUCy/5GoCj8cuPJK/
+ sdfsmTMuhYipPxpltTM3N7rTTVRWMjtIgHxrGzk/W9IVGnfnpZLCV7Ndp0p6VC6vijGZ0u7K6
+ bgHGTV3gBUgIchiPDytg7YCfRQGqxewLyrBPwh1bmLPny13JGVEpvsbnq+pMhmkvLGly9EpT+
+ isMuQIe/KdSAgTIiRg+ub6ljEgabcMixb/z1e+vv8G/U196BvhsW1ArU8igrsdbZ6aAbzwW17
+ TVXWiBdTBS6P1gqc+Y91xdOfwFi0dJ9bAfyUSSYRh43DcOZS2nmSo6HZSC+Fi09RIeztRJCcV
+ /o0w0yVscx5pieXC3zNhWW14RN4cCOvwZ9AZbeiyb13/NSdeVI6zXEfOI0lofFO6I1hxdYIig
+ gEYkoRGCqGupP3AZzRYKlK+a4V1Iqn0wj5yl0Az0U1+kSmPBi+bxHUm4C1RtNl+/lFqb5uUMY
+ PV0AJnW3+cfFd0NKgTu53K1KVQBHSM2cn7dBlSTvDhb2i9gnZSNqDYPt2unaKbWal3WQ9U17Q
+ NcSUfNnx2G7Str4LrNFTq0B7/7Ua3B5Ifhoq2NV
 
-Hi Greg,
+On 03.12.24 06:08, Krishna Kurapati wrote:
 
-On 29/10/2024 01:30, Greg Kroah-Hartman wrote:
-> On Mon, Oct 28, 2024 at 08:06:52PM +0100, Bartosz Golaszewski wrote:
->> On Mon, 28 Oct 2024 at 09:30, Lukas Bulwahn <lbulwahn@redhat.com> wrote:
->>>
->>> From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
->>>
->>> Commit 78fe66360ed6 ("misc: ti-st: st_kim: remove the driver") deletes the
->>> ti-st driver and its corresponding config option TI_ST.
->>>
->>> With that deletion, the Texas Instruments WL128x FM Radio driver is now
->>> dead as well. Delete this obsolete driver.
->>>
->>> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
->>
->> Amen!
->>
->> Acked-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> 
-> Should I take this through the same tree that the misc driver was
-> removed in?  If so, please let me know.
+[...]
+>
+> Although functionally unused, there is one more connector node that
+> runs between QMPPHY and DWC3 node. For example in [1], please check
+> "usb_dp_qmpphy_usb_ss_in" and "usb_1_dwc3_ss"
+>
+> Would be good to check why it is missing and add it further.
+>
+> [1]:
+> https://github.com/torvalds/linux/blob/master/arch/arm64/boot/dts/qcom/q=
+cs6490-rb3gen2.dts
+>
+>
+I checked, there's an extra endpoint for usb_?_qmpphy_usb_ss_in and
+usb_?_qmpphy_dp_in.=C2=A0 usb_?_qmpphy_usb_ss_in=C2=A0 are defined (and "w=
+ired")
+between port@1 of usb_?_qmpphy and port@1 of usb_?_dwc3, in
+sc8280xp.dtsi. On port@2 of the qmpphy is usb_?_qmpphy_dp_in as
+endpoint, which is further defined in sc8280xp-microsoft-blackrock.dts
+as connecting to mdss0_dp?_out. Maybe that's wrong, it's the same as in
+sc8280xp-lenvo-thinkpad-x13s.dts.
 
-Sorry for the late reply, I missed your email. In any case, I'll take
-this patch.
+with best regards
 
-Regards,
+Jens
 
-	Hans
+
 
