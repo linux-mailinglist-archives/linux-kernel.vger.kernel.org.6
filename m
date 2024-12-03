@@ -1,112 +1,192 @@
-Return-Path: <linux-kernel+bounces-429814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56F329E26BC
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 17:16:50 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 594AF9E264E
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 17:11:50 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 814A2BE6249
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:05:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44EC0164968
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:06:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A2BC1F890A;
-	Tue,  3 Dec 2024 16:05:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDAFE1F890B;
+	Tue,  3 Dec 2024 16:06:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="UeWAMygi"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="lHnQZbqT";
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="lHnQZbqT"
+Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [96.44.175.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B42723CE
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 16:05:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9348D23CE;
+	Tue,  3 Dec 2024 16:06:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.44.175.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733241927; cv=none; b=pw+dcFPMINlmpz19HLICmewzlXfkpaJfvbXpJYZiYEI/1Sp2zq6KXI0Di3Xo5ODDdw8mFowfgouofh5qoghmrBnqrbQhDg5QihCzMwJvBRob+0APULe4R1iZUghGhQCSwf+N6ViQN/6WVt8hhUjRP2+AYN9hZzPxUaEx8Ty+B+0=
+	t=1733241986; cv=none; b=t2ArUL1Vqd5F0TF/J6aaAK7jtX5pdSH9BsIPJboeTMKoT9om6ymygIpmVUT55zgj6mJ2VI+/X2c9dY99kpQLaVvZxLt+inkp0M1kJhEHRcLMnpLWF+4ClZXB4GEFG38PpzN8yVj3U5ZuH5beNtW4Mq7mZyuiVftLw2OVPs4Dhjs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733241927; c=relaxed/simple;
-	bh=zdcBbw8pyWJO38aQJ9QzdBb4RDftmfOhmk0cyKHJBOw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T37LwksxULaij7VT4K+OZcyVp/qZ4bu3haniSdoIFzP9kBwG5VV6hq80LTL1YDamZpOe/LLpH2htJnJkqt12zN/V1bcLOy5hcke5bKvjY+J3tvBYxPzHKDB3LUGWdNAWdBctdG7Ghcrt1BQDJ6CreuRemYkmug2kA9bmG2Xo6Tw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=UeWAMygi; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=K599nb0UBNyArmt9tsmw1Nfk4bzClgOmVJA8qOoeeWM=; b=UeWAMygiIMWGOGgOS737sWTHn/
-	Pq1kGx5TdU24ZOqQH8K1GZMJDJfosOM7wX6K17Z2Gq6u0ufgBeqic4jdPFaGXtA+KQupGs+Br1sNj
-	3oELATykgT0DONyERJu+gR0Fv7TULMZF0BGwjSB7S2Sxb4R97bom61QAiZ7QvP6SIpXcqkIcV/MI4
-	i88H8Om72Mngs3ZBeE/Pdyk789J6dBacOLamhHP8FypGTwGfp44taKB1+KRAInpE06w4aKXKsDtHb
-	0EN2sr81E0MKRkRd/Bp2+MbMQswKyxw/Sb0hAMnRJMJdXg+892IK4eEd2BNA+N13FuTWPDNQznpe/
-	LzlOfGuw==;
-Received: from 77-249-17-89.cable.dynamic.v4.ziggo.nl ([77.249.17.89] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tIVOk-00000002PwD-339J;
-	Tue, 03 Dec 2024 16:05:15 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 515C330031E; Tue,  3 Dec 2024 17:05:14 +0100 (CET)
-Date: Tue, 3 Dec 2024 17:05:14 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: K Prateek Nayak <kprateek.nayak@amd.com>
-Cc: Adam Li <adamli@os.amperecomputing.com>, mingo@redhat.com,
-	juri.lelli@redhat.com, vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-	mgorman@suse.de, vschneid@redhat.com, linux-kernel@vger.kernel.org,
-	patches@amperecomputing.com, cl@linux.com, christian.loehle@arm.com,
-	vineethr@linux.ibm.com
-Subject: Re: [PATCH v2 1/3] sched/fair: Fix warning if NEXT_BUDDY enabled
-Message-ID: <20241203160514.GI35539@noisy.programming.kicks-ass.net>
-References: <20241127055610.7076-1-adamli@os.amperecomputing.com>
- <20241127055610.7076-2-adamli@os.amperecomputing.com>
- <670a0d54-e398-4b1f-8a6e-90784e2fdf89@amd.com>
+	s=arc-20240116; t=1733241986; c=relaxed/simple;
+	bh=VBBfv3eA4AsVsLgBF8VnP+EajJe1ALpu2GW7YHfiN/w=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:Content-Type:
+	 MIME-Version; b=aSska/9XUZi/HDIAlWMYGLLfha+/jMpzUV+2UxHmbM0vwdGlbiMPugXQjLbqx5wst36vVzpCE6t0q1gUrQb0XTzG1dzTROIOLb77IOYc3iLkZBumAeJjFauN0dU1EXkFt2CqErS6QmRhiegBIGxzM+p59FGIQQg7ngjwRzfwKxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=lHnQZbqT; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=lHnQZbqT; arc=none smtp.client-ip=96.44.175.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1733241982;
+	bh=VBBfv3eA4AsVsLgBF8VnP+EajJe1ALpu2GW7YHfiN/w=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:From;
+	b=lHnQZbqTPw8lccD9LZoQTnjENuqFmq3M4qdXn9YwdcXuh8kaYOH60UbGnuArtEJoE
+	 Px4kL7hmZa2/uxmjqmqHUiq2gnIFhqP/9JNM4Zxjm340Kjh3IenF17vJPycyc5doEz
+	 9qzMTvJH2/Dq+wqAj7McqxgXVZICR0uf3Mza6cXQ=
+Received: from localhost (localhost [127.0.0.1])
+	by bedivere.hansenpartnership.com (Postfix) with ESMTP id A277A128793E;
+	Tue, 03 Dec 2024 11:06:22 -0500 (EST)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+ by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
+ with ESMTP id Kttl9qoRVbVg; Tue,  3 Dec 2024 11:06:22 -0500 (EST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1733241982;
+	bh=VBBfv3eA4AsVsLgBF8VnP+EajJe1ALpu2GW7YHfiN/w=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:From;
+	b=lHnQZbqTPw8lccD9LZoQTnjENuqFmq3M4qdXn9YwdcXuh8kaYOH60UbGnuArtEJoE
+	 Px4kL7hmZa2/uxmjqmqHUiq2gnIFhqP/9JNM4Zxjm340Kjh3IenF17vJPycyc5doEz
+	 9qzMTvJH2/Dq+wqAj7McqxgXVZICR0uf3Mza6cXQ=
+Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits))
+	(Client did not present a certificate)
+	by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 1133D128718C;
+	Tue, 03 Dec 2024 11:06:17 -0500 (EST)
+Message-ID: <7ed3b713f8901398f52d7485d59613c19ea0e752.camel@HansenPartnership.com>
+Subject: Re: [PATCH v2 09/10] sysfs: bin_attribute: add const read/write
+ callback variants
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: linux@weissschuh.net
+Cc: James.Bottomley@HansenPartnership.com, Xinhui.Pan@amd.com, 
+ airlied@gmail.com, ajd@linux.ibm.com, alexander.deucher@amd.com, 
+ alison.schofield@intel.com, amd-gfx@lists.freedesktop.org, arnd@arndb.de, 
+ bhelgaas@google.com, carlos.bilbao.osdev@gmail.com,
+ christian.koenig@amd.com,  dan.j.williams@intel.com, dave.jiang@intel.com,
+ dave@stgolabs.net,  david.e.box@linux.intel.com, decui@microsoft.com, 
+ dennis.dalessandro@cornelisnetworks.com, dri-devel@lists.freedesktop.org, 
+ fbarrat@linux.ibm.com, gregkh@linuxfoundation.org, haiyangz@microsoft.com, 
+ hdegoede@redhat.com, ilpo.jarvinen@linux.intel.com, ira.weiny@intel.com, 
+ jgg@ziepe.ca, jonathan.cameron@huawei.com, kys@microsoft.com,
+ leon@kernel.org,  linux-alpha@vger.kernel.org, linux-cxl@vger.kernel.org, 
+ linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-mtd@lists.infradead.org, linux-pci@vger.kernel.org, 
+ linux-rdma@vger.kernel.org, linux-scsi@vger.kernel.org, 
+ linux-usb@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ logang@deltatee.com,  martin.petersen@oracle.com, mattst88@gmail.com,
+ miquel.raynal@bootlin.com,  mwalle@kernel.org,
+ naveenkrishna.chatradhi@amd.com,  platform-driver-x86@vger.kernel.org,
+ pratyush@kernel.org, rafael@kernel.org,  richard.henderson@linaro.org,
+ richard@nod.at, simona@ffwll.ch,  srinivas.kandagatla@linaro.org,
+ tudor.ambarus@linaro.org, vigneshr@ti.com,  vishal.l.verma@intel.com,
+ wei.liu@kernel.org
+Date: Tue, 03 Dec 2024 11:06:16 -0500
+In-Reply-To: <20241103-sysfs-const-bin_attr-v2-9-71110628844c@weissschuh.net>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.42.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <670a0d54-e398-4b1f-8a6e-90784e2fdf89@amd.com>
+Content-Transfer-Encoding: 7bit
 
-On Thu, Nov 28, 2024 at 12:59:54PM +0530, K Prateek Nayak wrote:
+> diff --git a/include/linux/sysfs.h b/include/linux/sysfs.h
+> index
+> d17c473c1ef292875475bf3bdf62d07241c13882..d713a6445a6267145a7014f308d
+> f3bb25b8c3287 100644
+> --- a/include/linux/sysfs.h
+> +++ b/include/linux/sysfs.h
+> @@ -305,8 +305,12 @@ struct bin_attribute {
+>  	struct address_space *(*f_mapping)(void);
+>  	ssize_t (*read)(struct file *, struct kobject *, struct
+> bin_attribute *,
+>  			char *, loff_t, size_t);
+> +	ssize_t (*read_new)(struct file *, struct kobject *, const
+> struct bin_attribute *,
+> +			    char *, loff_t, size_t);
+>  	ssize_t (*write)(struct file *, struct kobject *, struct
+> bin_attribute *,
+>  			 char *, loff_t, size_t);
+> +	ssize_t (*write_new)(struct file *, struct kobject *,
+> +			     const struct bin_attribute *, char *,
+> loff_t, size_t);
+>  	loff_t (*llseek)(struct file *, struct kobject *, const
+> struct bin_attribute *,
+>  			 loff_t, int);
+>  	int (*mmap)(struct file *, struct kobject *, const struct
+> bin_attribute *attr,
+> @@ -325,11 +329,28 @@ struct bin_attribute {
+>   */
+>  #define sysfs_bin_attr_init(bin_attr) sysfs_attr_init(&(bin_attr)-
+> >attr)
+>  
+> +typedef ssize_t __sysfs_bin_rw_handler_new(struct file *, struct
+> kobject *,
+> +					   const struct
+> bin_attribute *, char *, loff_t, size_t);
+> +
+>  /* macros to create static binary attributes easier */
+>  #define __BIN_ATTR(_name, _mode, _read, _write, _size)
+> {		\
+>  	.attr = { .name = __stringify(_name), .mode = _mode
+> },		\
+> -	.read	=
+> _read,						\
+> -	.write	=
+> _write,						\
+> +	.read =
+> _Generic(_read,						\
+> +		__sysfs_bin_rw_handler_new * :
+> NULL,			\
+> +		default :
+> _read						\
+> +	),							
+> 	\
+> +	.read_new =
+> _Generic(_read,					\
+> +		__sysfs_bin_rw_handler_new * :
+> _read,			\
+> +		default :
+> NULL						\
+> +	),							
+> 	\
+> +	.write =
+> _Generic(_write,					\
+> +		__sysfs_bin_rw_handler_new * :
+> NULL,			\
+> +		default :
+> _write					\
+> +	),							
+> 	\
+> +	.write_new =
+> _Generic(_write,					\
+> +		__sysfs_bin_rw_handler_new * :
+> _write,			\
+> +		default :
+> NULL						\
+> +	),							
+> 	\
+>  	.size	=
+> _size,						\
+>  }
 
-> Can you please try the following diff instead of the first two patches
-> and see if you still hit these warnings, stalls, and pick_eevdf()
-> returning NULL?
-> 
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index ff7cae9274c5..61e74eb5af22 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -5478,6 +5478,7 @@ dequeue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
->  	bool sleep = flags & DEQUEUE_SLEEP;
->  	update_curr(cfs_rq);
-> +	clear_buddies(cfs_rq, se);
->  	if (flags & DEQUEUE_DELAYED) {
->  		SCHED_WARN_ON(!se->sched_delayed);
-> @@ -5520,8 +5521,6 @@ dequeue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
->  	update_stats_dequeue_fair(cfs_rq, se, flags);
-> -	clear_buddies(cfs_rq, se);
-> -
->  	update_entity_lag(cfs_rq, se);
->  	if (sched_feat(PLACE_REL_DEADLINE) && !sleep) {
->  		se->deadline -= se->vruntime;
-> @@ -8767,7 +8766,7 @@ static void check_preempt_wakeup_fair(struct rq *rq, struct task_struct *p, int
->  	if (unlikely(throttled_hierarchy(cfs_rq_of(pse))))
->  		return;
-> -	if (sched_feat(NEXT_BUDDY) && !(wake_flags & WF_FORK)) {
-> +	if (sched_feat(NEXT_BUDDY) && !(wake_flags & WF_FORK) && !pse->sched_delayed) {
->  		set_next_buddy(pse);
->  	}
+It's probably a bit late now, but you've done this the wrong way
+around.  What you should have done is added the const to .read/.write
+then added a .read_old/.write_old with the original function prototype
+and used _Generic() to switch between them.  Then when there are no
+more non const left, you can simply remove .read_old and .write_old
+without getting Linus annoyed by having to do something like this:
 
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=e70140ba0d2b1a30467d4af6bcfe761327b9ec95
 
-Prateek, I've presumed your SoB on this change:
+Regards,
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/peterz/queue.git/commit/?h=sched/urgent&id=d1139307fe97ffefcf90212772f7516732a11034
+James
 
-Holler if you want it modified.
-
-Thanks!
 
