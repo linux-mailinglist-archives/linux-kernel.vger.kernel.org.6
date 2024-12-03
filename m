@@ -1,245 +1,147 @@
-Return-Path: <linux-kernel+bounces-429206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 100C49E18BA
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 11:03:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 709CA9E18C3
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 11:04:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA269165AD8
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:03:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 36D7B1665D1
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:04:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB7C11E0B89;
-	Tue,  3 Dec 2024 10:03:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C89721E0DB6;
+	Tue,  3 Dec 2024 10:04:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b="n8ffWfRR"
-Received: from lahtoruutu.iki.fi (lahtoruutu.iki.fi [185.185.170.37])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Uflgpnjr"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F317813D890;
-	Tue,  3 Dec 2024 10:03:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=185.185.170.37
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733220212; cv=pass; b=a3YNnf1B0b7ZaOZNxqn8b0hJZat6UDpnNa0oJoG4uNoHhE267dbdAdvRJjivcxhe3+sdN0n7Q43asL0omF4igzvJ7VfqJ9BUtEkN+T+hi2NUEv4GrKs8IcFjfdmFjG3QGZlYCEC+O/1Iqv/xO+MViAx94796RPTsyXp3ym1UCJI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733220212; c=relaxed/simple;
-	bh=7JpRyPUnNfuTEpfwoJb8MzSzIUfy+wB/PWtcu4sT2Xk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cEiM2xs41l0T0oUTxKgrY3bdRmmqMlewaZcaHXHAc2pCcDVrg6l+jSbrGrKqxcA+YwlJ4dEK1It/ACPbvNrE3+Fgxoe7+TDNxQxrWIAEKNlqdvcMO3nVh8WT9c3ydkTXGRuxQ6ayN7dwZtufoqHbSYFBxH4Ol105x/E9fl9C6A0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi; spf=pass smtp.mailfrom=iki.fi; dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b=n8ffWfRR; arc=pass smtp.client-ip=185.185.170.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iki.fi
-Received: from hillosipuli.retiisi.eu (2a00-1190-d1dd-0-c641-1eff-feae-163c.v6.cust.suomicom.net [IPv6:2a00:1190:d1dd:0:c641:1eff:feae:163c])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: sailus)
-	by lahtoruutu.iki.fi (Postfix) with ESMTPSA id 4Y2bnn2bNjz49Q5b;
-	Tue,  3 Dec 2024 12:03:24 +0200 (EET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=lahtoruutu;
-	t=1733220207;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 400BA1E0B6F
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 10:04:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733220265; cv=none; b=sPuT5pPHcMdollkzO6X/3Qs2BDfpR1J74SfQQrbHzl9GI9hOoJoVkWX85aV2KYngqdNtR7MnNNB5t+TvO7bPCl6RhBaE2TfJZH7Pb9M7ZEJwKowT6GzFIwtYd/fRTGfmNFhW+En2agwMo+fe10pvwmgOug39+bCkSuicokgjbyc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733220265; c=relaxed/simple;
+	bh=HQ44SPqVqENJTbQrYY2kZjK603Ln//DhUNKAfXJorFc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=E1MyP/6cFSkLPlq7R2RfeNlojVR1YJZodt+3LMbKMnZjvAHKtA6lIMaxzcgKglRv4coKcL9n9+QvqkbmuY/kKxdW1kSX4WHq/adJLn0fkNU1S4AJVFnVoj8HhvmLw01Kx03C0jILywLPG1A+wcJoxepP9F5h5fIQ3SrjncZbujo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Uflgpnjr; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733220262;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=8vDu/zLIwB79Ur5c+5zOhVcRD15ca/NXI1us4RVANQM=;
-	b=n8ffWfRRnA9/XL0KQAesGa+LlZ4dyhd6Y6MasEwNMfnk2vMdDroHhyuBlhh6+W39JwIEKH
-	wxFzJw23EJkr7xRJrr7fPW39YK8ecGM4W1aG8l2uVz+u1mj5HSV7zHFcw3PRHg9XFkkmRA
-	n2nFpdgEigKh1UkdI6AtPv7PbZFqubxS0VFUNpSxNjESZiEhljYHqvi16L1xjnx9e3R0IX
-	WsrUcsGfHHe0pFy/9D3yh9qyO4lILNLnwRt6g4g84mowXVnUn5+nvoN23j/l3U/L2tzJEW
-	epfSwdmSVXe5DJFRcabn2xYSjf47Rdo0e1K/Plr9pFseiaoMZ1rz0bPv+u2W/g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
-	s=lahtoruutu; t=1733220207;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8vDu/zLIwB79Ur5c+5zOhVcRD15ca/NXI1us4RVANQM=;
-	b=Ml0gbQunrlhrRZ/BGZDY+QR6PTQHirTqGnHoB+aPneXvg4umBVDoNApPDB9K3HN9pvpsOr
-	FYqV4c/d1adXi/sD1NfF0uUE1mC6qFIU4sceVTCfpYGJY22C6ToTjbCENxL8re3dJTmL7B
-	7s++rtzs6T9GiuiSe9g4KJUxsMQ8SuCqivKE8hi2MiEYZhr9FRk9Jn6k5R7k2ditwBBvb9
-	PX3bVqnvUux1Ogr3ty3/88qyFNkROyobbBYqre4smocqCLXgIVpcy8mg+5SDIHHfNMWqJ+
-	F46dafynqCsFtug2PseGy7/Np+4rlcci1GeIvGr1oDPoSjd8Wr84UO6Qld0aKw==
-ARC-Authentication-Results: i=1;
-	ORIGINATING;
-	auth=pass smtp.auth=sailus smtp.mailfrom=sakari.ailus@iki.fi
-ARC-Seal: i=1; s=lahtoruutu; d=iki.fi; t=1733220207; a=rsa-sha256;
-	cv=none;
-	b=qF8+9tm+8eAiLVSVyJ4cLUiDAmsSrX091OcAdhtPvyxMUWJm0bM4DSoGMs5bBNKmo3+A+2
-	dX2VCiYEqvZFtK1Tb+yjXpXoc5AexLnw9X9RkhuLBjql/GXIOHFnOKCylEOyzL+QvSM/1H
-	mxFTT3wVi6LeD6jjGaVewm1BGa5CCE2bFSGk9xNpJXZtG2FJx9OJTEcgDZ6kK+zMVtCMDb
-	MEL4pLPVpF22WF8Z27njn1RjyEE2ulDdvHF/pjHgjSE6g9TJsYy4rQWZ1ODnnkHbfuRijY
-	V73UJ9bCV8fSujXMPVwf4KLQ8jGJeXcoYgVLPIR94/en1YwQUi8a+1PQ7xW1WQ==
-Received: from valkosipuli.retiisi.eu (valkosipuli.localdomain [192.168.4.2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by hillosipuli.retiisi.eu (Postfix) with ESMTPS id 686F7634C94;
-	Tue,  3 Dec 2024 12:03:23 +0200 (EET)
-Date: Tue, 3 Dec 2024 10:03:23 +0000
-From: Sakari Ailus <sakari.ailus@iki.fi>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: linux-media@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	workflows@vger.kernel.org, Hans Verkuil <hverkuil@xs4ll.nl>,
-	Ricardo Ribalda <ribalda@chromium.org>
-Subject: Re: [PATCH v3 2/3] docs: media: document media multi-committers
- rules and process
-Message-ID: <Z07Xawtb_JpH_upp@valkosipuli.retiisi.eu>
-References: <cover.1733131405.git.mchehab+huawei@kernel.org>
- <49cdca2d2b3b5422c34506bfe2c91173e847ea1f.1733131405.git.mchehab+huawei@kernel.org>
- <Z03Alg5lNTTDiFcF@valkosipuli.retiisi.eu>
- <20241203092613.4e7b3a21@foz.lan>
+	bh=W6Yz/wh2DDx3kpOempfoxxI4Bvmg2kZ7VVay1dulTJk=;
+	b=Uflgpnjr2EI17bH3TFgQx3OaKrSpMfeVr+1GQp2onAL3Z2LM7xGPyyrClUrMRJ5+bjtI+M
+	rE5qQym3FsHVTJrwT4o9QDau03G8jVSEJld03G5qQAx52hZVkxVrxJBJz6pwtDE1ToKork
+	6+fB9HvyrZFknmHGlTnfuHdcaA4pGI8=
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
+ [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-112-xCKULXAWME6JiQD0xjZRNA-1; Tue, 03 Dec 2024 05:04:20 -0500
+X-MC-Unique: xCKULXAWME6JiQD0xjZRNA-1
+X-Mimecast-MFC-AGG-ID: xCKULXAWME6JiQD0xjZRNA
+Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6d88e7976e3so51917286d6.1
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 02:04:20 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733220259; x=1733825059;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=W6Yz/wh2DDx3kpOempfoxxI4Bvmg2kZ7VVay1dulTJk=;
+        b=KEEP5WewL573MeD5U/S3qpJqQ0ooOuWi1DwoMPGSlk9v6m2BfkptdrKIuwvUricXls
+         mm53XN2PNpjejHfQp3FEq72cVpUISMHAsRAvR9r2K/vldnSyTPr+jLOXRs6PffXqQ7fS
+         WWJC7AtZXGXeq8O/KZdWJNAzRNVPwVeRf+Q52LZ8BqWQeBnTc6S5mzfxcBkmU7IoK1GW
+         W3Mzco4INylkbEB5Zwt4V3Km4+onMh/9L2KElfx9aLccEbMUyOUW5wByyqU4czjHQd6B
+         7j51J3yRkpuKikCvkIS6pwiUUYVuGohZj5RkZCzlVnW4Sx5vVf1iLJYH/BMMT5bV6MI4
+         Z8UQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV47Pemcap3mc+We1gcpJDo7WVTlgOEmWBPOYYBrDlzrJZbeFNvHGiq+6M4LCiRgQ/ispZwHITS/go6T98=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyXvkOVwqWmsYJVcj4wQsHK7NKQYEdiAZ6/oRbtVm4ZTK4Z2D78
+	NnLdwhVL7KcKivNU80V5HIsi2EEo5pvBBDIUFLkSSTb39sdifmv5nDQDY6mlDQM0t+w9qxXDen/
+	aBnx4OPi1bFfANntV5m8tdQgnHSd7jLQqs3I7NiiCOnR26YhBSj2N8LDka+0v5Q==
+X-Gm-Gg: ASbGncuBytdYrf62VWOv/OW7lmaJK3XYVqlh6FlzRyPZA8Ux4iB30GFUT2bbbCB8JaE
+	fhl7BWedjgPBEORv0cumYVFsYdwxAJkiOwiBIJrrvYNckAeigGuADMox3svlN8/YcVSA9Sb6fcx
+	PfQ2vYQToJnWUf7XujFuNGAg8gpmUFpTwcvK3DFGPoNUmfXM9wLjftSa/4Q2WLFJU7sQjcGArng
+	8rZZl/tMhrZz7KDOlP5oSJN6PEub3YIMBY2wWRXtZqPdxjT/gR/520m6CT5rCq7xAlB4oRThgLf
+X-Received: by 2002:ad4:5dc2:0:b0:6d8:a39e:32a4 with SMTP id 6a1803df08f44-6d8b7389459mr32032336d6.25.1733220259675;
+        Tue, 03 Dec 2024 02:04:19 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IG1K5nqkk2YWvJZ36M/30xTQ0u4uphAR9Xza3eEbd6ZgDvKckxS8QXJ6vo2298noBcWsm6LJA==
+X-Received: by 2002:ad4:5dc2:0:b0:6d8:a39e:32a4 with SMTP id 6a1803df08f44-6d8b7389459mr32032066d6.25.1733220259408;
+        Tue, 03 Dec 2024 02:04:19 -0800 (PST)
+Received: from [192.168.88.24] (146-241-38-31.dyn.eolo.it. [146.241.38.31])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b6849c35efsm496606685a.118.2024.12.03.02.04.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 03 Dec 2024 02:04:19 -0800 (PST)
+Message-ID: <62cd6d62-b233-4906-af4a-72127fc4c0f4@redhat.com>
+Date: Tue, 3 Dec 2024 11:04:15 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241203092613.4e7b3a21@foz.lan>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net 2/6] net/smc: set SOCK_NOSPACE when send_remaining but
+ no sndbuf_space left
+To: Guangguan Wang <guangguan.wang@linux.alibaba.com>, wenjia@linux.ibm.com,
+ jaka@linux.ibm.com, alibuda@linux.alibaba.com, tonylu@linux.alibaba.com,
+ guwen@linux.alibaba.com, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, horms@kernel.org
+Cc: linux-rdma@vger.kernel.org, linux-s390@vger.kernel.org,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241128121435.73071-1-guangguan.wang@linux.alibaba.com>
+ <20241128121435.73071-3-guangguan.wang@linux.alibaba.com>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20241128121435.73071-3-guangguan.wang@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Mauro,
 
-On Tue, Dec 03, 2024 at 09:26:13AM +0100, Mauro Carvalho Chehab wrote:
-> > > +is also based on a trust relationship between the rest of the committers,  
-> > 
-> > s/also//
-> > s/between the rest of/among/
-> > 
-> > I wonder if we should add here some expectation on being reachable on
-> > #linux-media.
-> 
-> I'll add it at the note about linuxtv.org:
-> 
-> 	These commit rights are granted with expectation of responsibility:
-> 	committers are people who care about the Linux Kernel as a whole and
-> 	about the Linux media subsystem and want to advance its development. It
-> 	is also based on a trust relationship among other committers, maintainers
-> 	and the Linux Media community[1].
-> 
-> 	...
-> 
-> 
-> 	[1] The Linux Media Community, also called LinuxTV Community, has its primary
-> 	    site at https://linuxtv.org.
-> 	
-> 	    Media committers and developers are reachable via the #linux-media
-> 	    IRC channel at OFTC.
 
-Looks good, thanks!
+On 11/28/24 13:14, Guangguan Wang wrote:
+> When application sending data more than sndbuf_space, there have chances
+> application will sleep in epoll_wait, and will never be wakeup again. This
+> is caused by a race between smc_poll and smc_cdc_tx_handler.
+> 
+> application                                      tasklet
+> smc_tx_sendmsg(len > sndbuf_space)   |
+> epoll_wait for EPOLL_OUT,timeout=0   |
+>   smc_poll                           |
+>     if (!smc->conn.sndbuf_space)     |
+>                                      |  smc_cdc_tx_handler
+>                                      |    atomic_add sndbuf_space
+>                                      |    smc_tx_sndbuf_nonfull
+>                                      |      if (!test_bit SOCK_NOSPACE)
+>                                      |        do not sk_write_space;
+>       set_bit SOCK_NOSPACE;          |
+>     return mask=0;                   |
+> 
+> Application will sleep in epoll_wait as smc_poll returns 0. And
+> smc_cdc_tx_handler will not call sk_write_space because the SOCK_NOSPACE
+> has not be set. If there is no inflight cdc msg, sk_write_space will not be
+> called any more, and application will sleep in epoll_wait forever.
+> So set SOCK_NOSPACE when send_remaining but no sndbuf_space left in
+> smc_tx_sendmsg, to ensure call sk_write_space in smc_cdc_tx_handler
+> even when the above race happens.
 
-> 
-> > > +maintainers and the Linux Media community[1].
-> > > +
-> > > +As such, a media committer is not just someone who is capable of creating
-> > > +code, but someone who has demonstrated their ability to collaborate
-> > > +with the team, get the most knowledgeable people to review code,
-> > > +contribute high-quality code, and follow through to fix issues (in code
-> > > +or tests).
-> > > +
-> > > +.. Note::
-> > > +
-> > > +   1. If a patch introduces a regression, then it is the media committer's
-> > > +      responsibility to correct that as soon as possible. Typically the
-> > > +      patch is either reverted, or an additional patch is committed that
-> > > +      fixes the regression;  
-> > 
-> > s/that fixes/to fix/
-> 
-> Ok.
-> 
-> > 
-> > > +   2. if patches are fixing bugs against already released Kernels, including
-> > > +      the reverts above mentioned, the media committer shall add the needed
-> > > +      tags. Please see :ref:`Media development workflow` for more details.  
-> > 
-> > Does this reference work?
-> 
-> Yes. Tested on Sphinx 6.2.0.
-> 
-> > > +[1] The Linux Media community, also called LinuxTV community, has its primary
-> > > +    site at https://linuxtv.org.
-> > > +
-> > > +Becoming a media committer
-> > > +--------------------------
-> > > +
-> > > +The most important aspect of volunteering to be a committer is that you have
-> > > +demonstrated the ability to give good code reviews. So we are looking for  
-> > 
-> > I wonder if we should add some kind of an expectation of demonstrating
-> > common sense? :-)
-> 
-> Could you propose some text for that?
+I think it should be preferable to address the mentioned race the same
+way as tcp_poll(). i.e. checking again smc->conn.sndbuf_space after
+setting the NOSPACE bit with appropriate barrier, see:
 
-How about:
+https://elixir.bootlin.com/linux/v6.12.1/source/net/ipv4/tcp.c#L590
 
-The most important aspects of volunteering to be a committer are that you
-have demonstrated the ability to give good code reviews, interacting with
-others in the community as well as common sense. These are what we're
-looking for when we're judging whether you'd be a good Media committer.
+that will avoid additional, possibly unneeded atomic operation in the tx
+path (the application could do the next sendmsg()/poll() call after that
+the send buf has been freed) and will avoid some code duplication.
 
-> 
-> > > +whether or not we think you will be good at doing that.
-> > > +
-> > > +As such, potential committers must earn enough credibility and trust from the
-> > > +LinuxTV community. To do that, developers shall be familiar with the open
-> > > +source model and have been active in the Linux Kernel community for some time,
-> > > +and, in particular, in the media subsystem.
-> > > +
-> > > +So, in addition to actually making the code changes, you are basically
-> > > +demonstrating your:
-> > > +
-> > > +- commitment to the project;
-> > > +- ability to collaborate with the team and communicate well;
-> > > +- understand of how upstream and the LinuxTV community work
-> > > +  (policies, processes for testing, code review, ...)
-> > > +- reasonable knowledge about:
-> > > +
-> > > +  - the Kernel development process:
-> > > +    Documentation/process/index.rst  
-> > 
-> > :ref:`the Kernel development process <process_index>`
-> 
-> No need. a Sphinx converts all *.rst into references automatically.
-> 
-> Better to use RST files at the text, as makes easier for people
-> reading the text file directly.
+Cheers,
 
-Ack.
+Paolo
 
-> 
-> > > +
-> > > +  - the Media development profile:
-> > > +    Documentation/driver-api/media/maintainer-entry-profile.rst  
-> > 
-> > Could you add a label to the title and refer to it directly?
-> 
-> Same as above.
-> 
-> > > +
-> > > +- understanding of the projects' code base and coding style;
-> > > +- ability to provide feedback to the patch authors;
-> > > +- ability to judge when a patch might be ready for review and to submit;
-> > > +- ability to write good code (last but certainly not least).
-> > > +
-> > > +Developers that intend to become committers are encouraged to participate  
-> > 
-> > s/intend/yearn/
-> 
-> Heh, I had to go to the dictionary to seek for "yearn" meaning ;-)
-> 
-> Let's use a simpler language, as most developers are not native-English
-> speakers. I did:
-> 
-> 	s/intend/desire/
-> 
-> which is a synonym.
-
-Works for me.
-
--- 
-Kind regards,
-
-Sakari Ailus
 
