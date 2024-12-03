@@ -1,165 +1,120 @@
-Return-Path: <linux-kernel+bounces-429920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429921-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49DF19E28F6
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 18:19:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id AFA889E28FC
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 18:20:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20BEF169859
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 17:19:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7FC86169835
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 17:20:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADFFA1FA251;
-	Tue,  3 Dec 2024 17:19:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC1D21FA270;
+	Tue,  3 Dec 2024 17:20:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="SsM3N+IC"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OwVM1pPT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67DE41F8EE3;
-	Tue,  3 Dec 2024 17:19:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E3611F8AD2;
+	Tue,  3 Dec 2024 17:20:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733246386; cv=none; b=ifDDxHGrVwXil4RgOmG//Tmxdan67xsbWWDh66xVkt6bGtSwaUgPaXqyUPH8NcQkK+nE3bd6JX7XZQ5nNIcNFHuds8iYgt+b5gprv5lftKiAKMCRqiapeH5WwxiCX33fGpZqZsZ5WgUV+xT30COdDY1SrjDCM4umxBST7/MF0CM=
+	t=1733246429; cv=none; b=EZZpof9NDrvtAVz6O2/0pHMS8LfaRKPhiZaFVFU12+nglkwmL31yD2NVK9daP6aXoBHNKu0FFh+7hvceMWC0gFSKTVIOywHzdlK8eWp6Xztqteh36r2VThkdzRal6JJWOqmS6n9DUawz8wn0kwkF873bjA3F++ZzlTMiRQf+it4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733246386; c=relaxed/simple;
-	bh=vI2Y41B4eSxt4ShVp6IB70gQDts0zC7SctHdFa3iT9c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=WZxE6p9yoenSKUOvCvINcI4iJ9X4hX5CIXAWwXH/dTVQpuSWZMJmv2X59CABicCcnAu6XfQ/wSDCenV6dod9x7fsw1gG4PpAm6iEl+0YPrBAW8wHTz+TgGXf8nmRYx8GdFRVAIveIZwBMlbWizsINRlLmbHP9gbvSf61x0iCr10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=SsM3N+IC; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B39qiVd026044;
-	Tue, 3 Dec 2024 17:19:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	XX0dL3F2Ta8HItYyJqeOeTw3Nm6TpiJq8N8Zg6ju370=; b=SsM3N+IC3fzdp2MC
-	3VPv7r8AWh6We/DwZIxDwXz99XJuFOgvm3Syv+YA0X02uiwuh3qC+agAViFwnGoI
-	PNynbi7UkHowCORYajrPhp3kH65/vXhSS3uzqdgy1daap5UFMrCHjFyfPX/91i/v
-	SnSAuDVt07eS/BO4XBSS8Irrfa07ym8+KWRPtPt8WtdTyKlUYkdLGEjOOa4T6fDU
-	KtkRzkLKCl/QmhdQbjQE+XbbGT864qc04eqv6zF3BgtfkOeUv4L2Nn1djTnM16wc
-	idchoN1WS3wDOSjsa1xA9R+te/HuprHUBRzYGFqooVmx4eJUvULvvdqyXipyQP+0
-	QQjsmw==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 439yr9h3xe-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 03 Dec 2024 17:19:38 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B3HJbu4001092
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 3 Dec 2024 17:19:37 GMT
-Received: from [10.253.11.68] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 3 Dec 2024
- 09:19:34 -0800
-Message-ID: <8107a53f-5967-461b-8c89-773096a316d1@quicinc.com>
-Date: Wed, 4 Dec 2024 01:19:31 +0800
+	s=arc-20240116; t=1733246429; c=relaxed/simple;
+	bh=eu8MFWETCzi5mUkFpsHp3K6rE1uqUbw4E2pfuGZED5M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q4+vfU8rbQ5Vc8Wt0t+bNm0GVKS1N2G2uRnclvtuVFVqHzlDL3UxZg/1CupEa8h7fYjoFQT58J0s6nLPu/ZcHtCxrWRWPnXPiQdft7nTiux9b/zDRTkxHYx3n344woMpGMvJ/WL/+xcWQnz4WgZ23fWRa2+4nvHWReKpUvJRVCs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OwVM1pPT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A538C4CECF;
+	Tue,  3 Dec 2024 17:20:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733246428;
+	bh=eu8MFWETCzi5mUkFpsHp3K6rE1uqUbw4E2pfuGZED5M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OwVM1pPTEPLNeSSEZQiHBH6Z4pCfskBgJS15+lqTzDaERICXmEXFijOJ+39t1WkDh
+	 Mmlt3qH1R2/J7kbNEBBNa8OGc8uG848l+SDnviF7uZqXjdG+6gomChXIEF/PNj4fCq
+	 5GCeweIH8jxGsQK2s4SgMyNMbL37kuMMLvFouyNks8GYnNWLHtFcvB3C2M1Utm+Pqo
+	 wGYr9QK1ZMAted2QhGKiI8EVFxEmwMJ32HyX2UToWc2UDLugOmTOsf6zIFiDXXjOLj
+	 mLANce+Qac3pq3ovswLVEsrczQCAZWTae2lEaiVvyOEdDjQTENw5PNhGigRUDjdGSs
+	 vfE8MJ/J/hVCg==
+Date: Tue, 3 Dec 2024 11:20:26 -0600
+From: Rob Herring <robh@kernel.org>
+To: Chen-Yu Tsai <wenst@chromium.org>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linuxppc-dev@lists.ozlabs.org,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Frank Li <Frank.Li@nxp.com>,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: soc: fsl: cpm_qe: Limit matching to nodes
+ with "fsl,qe"
+Message-ID: <20241203172026.GA1988559-robh@kernel.org>
+References: <20241202045757.39244-1-wenst@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] Bluetooth: hci_sync: clear cmd_sync_work_list when
- power off
-To: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-CC: Marcel Holtmann <marcel@holtmann.org>,
-        Johan Hedberg
-	<johan.hedberg@gmail.com>,
-        <linux-bluetooth@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <quic_chejiang@quicinc.com>
-References: <20241125175111.8598-1-quic_jiaymao@quicinc.com>
- <CABBYNZLY_PAA0jPiHwGKUmdd3SKqwViLSHAkNHH0=trdqrDRnQ@mail.gmail.com>
-Content-Language: en-US
-From: Jiayang Mao <quic_jiaymao@quicinc.com>
-In-Reply-To: <CABBYNZLY_PAA0jPiHwGKUmdd3SKqwViLSHAkNHH0=trdqrDRnQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: Y8hNViYTvLfTvg8naBHcDqiRRXqurFbe
-X-Proofpoint-GUID: Y8hNViYTvLfTvg8naBHcDqiRRXqurFbe
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 impostorscore=0
- clxscore=1015 priorityscore=1501 mlxlogscore=999 phishscore=0
- lowpriorityscore=0 malwarescore=0 mlxscore=0 suspectscore=0 adultscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412030145
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241202045757.39244-1-wenst@chromium.org>
 
-Hi Luiz,
+On Mon, Dec 02, 2024 at 12:57:55PM +0800, Chen-Yu Tsai wrote:
+> Otherwise the binding matches against random nodes with "simple-bus"
+> giving out all kinds of invalid warnings:
+> 
+>     $ make CHECK_DTBS=y mediatek/mt8188-evb.dtb
+>       SYNC    include/config/auto.conf.cmd
+>       UPD     include/config/kernel.release
+>       SCHEMA  Documentation/devicetree/bindings/processed-schema.json
+>       DTC [C] arch/arm64/boot/dts/mediatek/mt8188-evb.dtb
+>     arch/arm64/boot/dts/mediatek/mt8188-evb.dtb: soc: compatible:0: 'fsl,qe' was expected
+> 	    from schema $id: http://devicetree.org/schemas/soc/fsl/cpm_qe/fsl,qe.yaml#
+>     arch/arm64/boot/dts/mediatek/mt8188-evb.dtb: soc: compatible: ['simple-bus'] is too short
+> 	    from schema $id: http://devicetree.org/schemas/soc/fsl/cpm_qe/fsl,qe.yaml#
+>     arch/arm64/boot/dts/mediatek/mt8188-evb.dtb: soc: interrupt-controller@c000000:compatible:0: 'fsl,qe-ic' was expected
+> 	    from schema $id: http://devicetree.org/schemas/soc/fsl/cpm_qe/fsl,qe.yaml#
+>     arch/arm64/boot/dts/mediatek/mt8188-evb.dtb: soc: interrupt-controller@c000000:reg: [[0, 201326592, 0, 262144], [0, 201588736, 0, 2097152]] is too long
+> 	    from schema $id: http://devicetree.org/schemas/soc/fsl/cpm_qe/fsl,qe.yaml#
+>     arch/arm64/boot/dts/mediatek/mt8188-evb.dtb: soc: interrupt-controller@c000000:#interrupt-cells:0:0: 1 was expected
+> 	    from schema $id: http://devicetree.org/schemas/soc/fsl/cpm_qe/fsl,qe.yaml#
+>     arch/arm64/boot/dts/mediatek/mt8188-evb.dtb: soc: interrupt-controller@c000000: '#redistributor-regions', 'ppi-partitions' do not match any of the regexes: 'pinctrl-[0-9]+'
+> 	    from schema $id: http://devicetree.org/schemas/soc/fsl/cpm_qe/fsl,qe.yaml#
+>     arch/arm64/boot/dts/mediatek/mt8188-evb.dtb: soc: 'reg' is a required property
+> 	    from schema $id: http://devicetree.org/schemas/soc/fsl/cpm_qe/fsl,qe.yaml#
+>     arch/arm64/boot/dts/mediatek/mt8188-evb.dtb: soc: 'bus-frequency' is a required property
+> 	    from schema $id: http://devicetree.org/schemas/soc/fsl/cpm_qe/fsl,qe.yaml#
+> 
+> Fixes: ecbfc6ff94a2 ("dt-bindings: soc: fsl: cpm_qe: convert to yaml format")
+> Cc: Frank Li <Frank.Li@nxp.com>
+> Cc: <stable@vger.kernel.org> # v6.11+
+> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+> ---
+>  .../devicetree/bindings/soc/fsl/cpm_qe/fsl,qe.yaml        | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,qe.yaml b/Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,qe.yaml
+> index 89cdf5e1d0a8..9e07a2c4d05b 100644
+> --- a/Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,qe.yaml
+> +++ b/Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,qe.yaml
+> @@ -21,6 +21,14 @@ description: |
+>    The description below applies to the qe of MPC8360 and
+>    more nodes and properties would be extended in the future.
+>  
+> +select:
+> +  properties:
+> +    compatible:
+> +      contains:
+> +        const: fsl,qe
+> +  required:
+> +    - compatible
 
-On 2024/12/3 4:41, Luiz Augusto von Dentz wrote:
-> Hi Jiayang,
-> 
-> On Mon, Nov 25, 2024 at 12:51 PM Jiayang Mao <quic_jiaymao@quicinc.com> wrote:
->>
->> Clear the remaining command in cmd_sync_work_list when BT is
->> performing power off. In some cases, this list is not empty after
->> power off. BT host will try to send more HCI commands.
->> This can cause unexpected results.
-> 
-> What commands are in the queue?
+Update your dtschema. The select is no longer necessary. dtbs_check will 
+also run 5x faster.
 
-If turning off BT during pairing, "hci_acl_create_conn_sync" has chances
-to be left in the queue. Then the driver will try to send the HCI
-command of creating connection but failed.
-> 
->> Signed-off-by: Jiayang Mao <quic_jiaymao@quicinc.com>
->> ---
->>   net/bluetooth/hci_sync.c | 6 ++++++
->>   1 file changed, 6 insertions(+)
->>
->> diff --git a/net/bluetooth/hci_sync.c b/net/bluetooth/hci_sync.c
->> index c86f4e42e..bc622d074 100644
->> --- a/net/bluetooth/hci_sync.c
->> +++ b/net/bluetooth/hci_sync.c
->> @@ -5139,6 +5139,7 @@ int hci_dev_close_sync(struct hci_dev *hdev)
->>   {
->>          bool auto_off;
->>          int err = 0;
->> +       struct hci_cmd_sync_work_entry *entry, *tmp;
->>
->>          bt_dev_dbg(hdev, "");
->>
->> @@ -5258,6 +5259,11 @@ int hci_dev_close_sync(struct hci_dev *hdev)
->>          clear_bit(HCI_RUNNING, &hdev->flags);
->>          hci_sock_dev_event(hdev, HCI_DEV_CLOSE);
->>
->> +       mutex_lock(&hdev->cmd_sync_work_lock);
->> +       list_for_each_entry_safe(entry, tmp, &hdev->cmd_sync_work_list, list)
->> +               _hci_cmd_sync_cancel_entry(hdev, entry, -ECANCELED);
->> +       mutex_unlock(&hdev->cmd_sync_work_lock);
-> 
-> Seems equivalent to hci_cmd_sync_clear, that said we should have been
-> running with that lock already, also if there is a sequence like
-> close/open the close may cancel the subsequent open, so I don't think
-> we should be canceling every subsequent callback like this.
-
-In hci_cmd_sync_clear, the work cmd_sync_work and reenable_adv_work are
-canceled. hci_cmd_sync_clear is not directly called because these two
-works should not be canceled during power off.
-Do you mean the added code should be moved to other functions to avoid
-the risk of lock?
-
-Yes. This change lacks considering sequence of close/open. I will update
-the implementation to ensure it does not remove the opening and the
-operations after re-opening.
-> 
->>          /* After this point our queues are empty and no tasks are scheduled. */
->>          hdev->close(hdev);
->>
->> --
->> 2.25.1
->>
-> 
-> 
-
+Rob
 
