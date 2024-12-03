@@ -1,363 +1,166 @@
-Return-Path: <linux-kernel+bounces-429237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BCA09E1955
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 11:32:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 069A89E195D
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 11:34:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5F4216426F
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:32:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C06311643AC
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:34:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB83F1E2304;
-	Tue,  3 Dec 2024 10:32:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 764F21E22FC;
+	Tue,  3 Dec 2024 10:34:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="HpEGOBzG"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JEox6NxT"
+Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADA961E0DEB;
-	Tue,  3 Dec 2024 10:32:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 280B31E00B5
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 10:34:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733221960; cv=none; b=e6n7b8KNw12JEKL7lA4ULZ+UEdiwSX/mm1jilNu7QmIRk4Lk09CDEis1avtUgjmMNbhWLSZrj0TFmS73xckM9u0CZYoqEGkhnkBq7kwaw6dQL0ynKikLkqmHJUAZT04O3EfgsGCRPSjzdxhyGH3dnk3JmnYmgerWtBttT1QmEc8=
+	t=1733222046; cv=none; b=ZFqMGtPX9C2tVqiGd4Jem8qFs4rynMXmrOzLOYqeqgjMzNCJ4DsNpXuCsCd/SJJKmnrCIa1Esbvr3dj+8WE6qu7mIj8illyYEgQeLT5Wb6h5TfW8ndO0atLTiJhr1bm71xwhdFpDsBVQV7lS5sGvmtf4PUnenf669TQVx/LF9I0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733221960; c=relaxed/simple;
-	bh=ltmbwVX/n9FyqKX/c5vjoYda1D0xDLXSfc7Ojl7sHbc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=vDiL/0ZdT/cm56kkcoucwtDsgtxu34lIALIDCWulSQAgw9GmpGQpkwyumCaXO0j3cY8HvUYhNnVjdtEnrhLAPJVyMCkYDeW2JIU3fNehTaUKoyFeQ/4neDDngINym4VOALNUQ7qLxn0EYFzDpoSs09ca1cWOhxjsJ6suZUCmDtk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=HpEGOBzG; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B39rQ7H026623;
-	Tue, 3 Dec 2024 10:32:29 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	l4+cv8orIyPkyAH9ls8ZLAJpwbajmhDrPNRAhlU2Vpk=; b=HpEGOBzG2f+YTH3y
-	uyhOivmDdNB5TAEIt/5Iw290cs2gm/qlNPqTDfh1G/W0cFjYvFkA1l100FHRgIi9
-	p5VQIgKcMqgb3VrKI+30ghRhPa9Yc40YTvd5y/C5+p8j601JQ3UmvgYmzr+jV8x3
-	RHrgWoasG2QDyA+Ek0tG1H4L6HveTiOgo6uIBv9tpCWLtRxdMSPMXLdxaRPyPQtE
-	XCfLTLrDAauQesSSVyCW2S4w+NQQ8YXi9u9vzOlj9q5O4bKr7qYAM/1t4uGdC64b
-	m0vh9rgUJq5oAGWLSSaPTX+TGR4UbRruOjVNz7IVV95GlnsjCxH/zEOBDg1crt2h
-	T6Q5NA==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 439yr9g2xy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 03 Dec 2024 10:32:29 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B3AWSmj002546
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 3 Dec 2024 10:32:28 GMT
-Received: from [10.217.219.62] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 3 Dec 2024
- 02:32:23 -0800
-Message-ID: <2ebf69b4-8daf-44be-8bd9-bdbfefe66bc1@quicinc.com>
-Date: Tue, 3 Dec 2024 16:02:20 +0530
+	s=arc-20240116; t=1733222046; c=relaxed/simple;
+	bh=oiqw8XoND2FmbU2/4SsQo7fLmzHerYiYCF+7G5GlT3A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NaMELJ3u5FB0xGCoh6QbBZMGpykeqSfLhDfCZ8edYO70Yu4hqUaqupfWIBMSPl3JiKYBktPNY2Pd7qm1m0t5gB4fS2FAji0jNvWOeABrxFzIKQxFQ8c9MyoCxqQKMSEv6m9YhOCP3tsNP1ldB1g4n9niip0sQsJfJFnNRfU32oM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JEox6NxT; arc=none smtp.client-ip=209.85.219.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-e382589e8fdso3611456276.0
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 02:34:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733222044; x=1733826844; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=jQK7ar67JKwYglynwKxJGbvJNteSxjk5U1jE75IemO4=;
+        b=JEox6NxTHnYjaLK+eOr9J+k2YtFECZ+G33+qyikQV0sVsLqC1wDtKEbrsmsy0Jvtrb
+         d/ZKmXpCC4iIzS//ApZBBKY4vGp611ogWZR8iEKXyEIs3qZUNcP1suErdsAmQOT9aohS
+         RQhp0337oXp8CUlU0nxPRcBOubcKHeWzqfKuRlxpv9eHN/jLTv8nppa/NSurnFOWkMqc
+         ZR1j/5k7bdb0yG+eO3+YJKTd+FrqMzbCx395bexF0wiOVU330FbMlYPKVzZbr2wuWrU7
+         cvPRA+Q6isbW0SBcPsEQpiTVuuFrKzUS+O/SQuttIE/EOjbL59VQXbQ6+vz73JR2nwpX
+         fKEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733222044; x=1733826844;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jQK7ar67JKwYglynwKxJGbvJNteSxjk5U1jE75IemO4=;
+        b=i92+uUkk/bFScnMNBCKYL0cfalhc+fLCv+O2fVyDP73aq4yybh8oXUCEeg+vLV3tcr
+         u1CZyFIJmRjKdvIcb7v4dvdqN+Z2wZScF03xF8R4Qga3Dju8BqY7tIEpzo/Ks8JuGRDn
+         UCQ/Ho2PTwXNjiIJlQQcK+CMpHVH54BgH1vd3mCloz5+CLpNQhfrjbIf6kYJruOi2Bhx
+         3mCbjOzrrCcAUcpfSteAkLaPTcczmTAqq4BxvUUAO5cooQ7nkaMcMKuWJOjOO0CPJE2O
+         Zor5uJuNi60FpHttxT/un85t0RZT1OvinqCH30Qih099/swiJUpqjRBc6+oUXBqJCaTQ
+         X7Pw==
+X-Forwarded-Encrypted: i=1; AJvYcCWR+7wh5uDIEySIjHQVahXkplU6n7WB9LvcdaftnqK3avjPd2o/84sltKcaRNN64tqEg43W24W4KwxIRyI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxRuSVkCmGL7INffRauQEsQRjR57JWYBw4tTLgBRLiMsIsmAxs7
+	NYqZHsx7eNHGm97mRF3ZSkvrd9deBo7l0222uX09TvQHjbL/BTFoHKzMVyTXzuPpp5dQpPDq8Lv
+	3cW5ybkSMUOb0JUBJ4/3b4478WDECcTaFlOgNYwQy8Qy71wURRhw=
+X-Gm-Gg: ASbGncsvkWapDtUvLldvQ/IJyNBiZZForwvwQ6ql9RIz+Eb6xsR30yVOSEOkDHR5tFV
+	1HUVPrGQUA5jCP3+kwR7tuuO1Cer9h4pj
+X-Google-Smtp-Source: AGHT+IGJ789O8/cpiMDOtqTDu0XCjDmHvNriEyJZhkhHYK5mnMb8D1j8jF1kXltIWk7q4f/dmnhwdEP46Xk2IGin9MI=
+X-Received: by 2002:a05:6902:1023:b0:e33:1492:cd63 with SMTP id
+ 3f1490d57ef6-e39d39e657bmr1297740276.8.1733222044243; Tue, 03 Dec 2024
+ 02:34:04 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/3] dmaengine: qcom: gpi: Add GPI Block event
- interrupt support
-To: Vinod Koul <vkoul@kernel.org>
-CC: Andi Shyti <andi.shyti@kernel.org>,
-        Sumit Semwal
-	<sumit.semwal@linaro.org>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?=
-	<christian.koenig@amd.com>,
-        <linux-arm-msm@vger.kernel.org>, <dmaengine@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-i2c@vger.kernel.org>,
-        <linux-media@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <linaro-mm-sig@lists.linaro.org>, <quic_msavaliy@quicinc.com>,
-        <quic_vtanuku@quicinc.com>
-References: <20241121130134.29408-1-quic_jseerapu@quicinc.com>
- <20241121130134.29408-2-quic_jseerapu@quicinc.com> <Z01f5sfeiSwThu02@vaman>
-Content-Language: en-US
-From: Jyothi Kumar Seerapu <quic_jseerapu@quicinc.com>
-In-Reply-To: <Z01f5sfeiSwThu02@vaman>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: Srp7jKX2SQYQ-lv0rUCAkBpFK0tz8wVa
-X-Proofpoint-GUID: Srp7jKX2SQYQ-lv0rUCAkBpFK0tz8wVa
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 impostorscore=0
- clxscore=1015 priorityscore=1501 mlxlogscore=999 phishscore=0
- lowpriorityscore=0 malwarescore=0 mlxscore=0 suspectscore=0 adultscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412030090
+References: <20241202151228.32609-1-ansuelsmth@gmail.com> <CAPDyKFqrY7uLD8ATqH0LghmkHgApQSsGtvGkOTd8UVazGu0_uA@mail.gmail.com>
+ <674dd60f.7b0a0220.2ba255.7b7a@mx.google.com> <20241202205738.GA3149730-robh@kernel.org>
+In-Reply-To: <20241202205738.GA3149730-robh@kernel.org>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Tue, 3 Dec 2024 11:33:28 +0100
+Message-ID: <CAPDyKFo6j__CoReyAbeLJkA8JJQhJVc=umNesQRZKm-RxFHCwA@mail.gmail.com>
+Subject: Re: [PATCH v4 1/2] dt-bindings: cpufreq: Document support for Airoha
+ EN7581 CPUFreq
+To: Rob Herring <robh@kernel.org>
+Cc: Christian Marangi <ansuelsmth@gmail.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Viresh Kumar <viresh.kumar@linaro.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, upstream@airoha.com
+Content-Type: text/plain; charset="UTF-8"
 
+On Mon, 2 Dec 2024 at 21:57, Rob Herring <robh@kernel.org> wrote:
+>
+> On Mon, Dec 02, 2024 at 04:45:17PM +0100, Christian Marangi wrote:
+> > On Mon, Dec 02, 2024 at 04:42:33PM +0100, Ulf Hansson wrote:
+> > > On Mon, 2 Dec 2024 at 16:20, Christian Marangi <ansuelsmth@gmail.com> wrote:
+> > > >
+> > > > Document required property for Airoha EN7581 CPUFreq .
+> > > >
+> > > > On newer Airoha SoC, CPU Frequency is scaled indirectly with SMCCC commands
+> > > > to ATF and no clocks are exposed to the OS.
+> > > >
+> > > > The SoC have performance state described by ID for each OPP, for this a
+> > > > Power Domain is used that sets the performance state ID according to the
+> > > > required OPPs defined in the CPU OPP tables.
+> > > >
+> > > > Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> > > > ---
+> > > > Changes v4:
+> > > > - Add this patch
+> > > >
+> > > >  .../cpufreq/airoha,en7581-cpufreq.yaml        | 259 ++++++++++++++++++
+> > > >  1 file changed, 259 insertions(+)
+> > > >  create mode 100644 Documentation/devicetree/bindings/cpufreq/airoha,en7581-cpufreq.yaml
+> > > >
+> > > > diff --git a/Documentation/devicetree/bindings/cpufreq/airoha,en7581-cpufreq.yaml b/Documentation/devicetree/bindings/cpufreq/airoha,en7581-cpufreq.yaml
+> > > > new file mode 100644
+> > > > index 000000000000..a5bdea7f34b5
+> > > > --- /dev/null
+> > > > +++ b/Documentation/devicetree/bindings/cpufreq/airoha,en7581-cpufreq.yaml
+> > >
+> > > [...]
+> > >
+> > > > +examples:
+> > > > +  - |
+> > > > +    / {
+> > > > +        #address-cells = <2>;
+> > > > +       #size-cells = <2>;
+> > > > +
+> > > > +        cpus {
+> > > > +            #address-cells = <1>;
+> > > > +            #size-cells = <0>;
+> > > > +
+> > > > +            cpu0: cpu@0 {
+> > > > +                device_type = "cpu";
+> > > > +                compatible = "arm,cortex-a53";
+> > > > +                reg = <0x0>;
+> > > > +                operating-points-v2 = <&cpu_opp_table>;
+> > > > +                enable-method = "psci";
+> > > > +                clocks = <&cpufreq>;
+> > > > +                clock-names = "cpu";
+> > > > +                power-domains = <&cpufreq>;
+> > > > +                power-domain-names = "cpu_pd";
+> > >
+> > > Nitpick: Perhaps clarify the name to be "perf" or "cpu_perf", to
+> > > indicate it's a power-domain with performance scaling support.
+> > >
+> >
+> > Will change to cpu_perf. Thanks a lot for the review!
+>
+> Is that defined in arm/cpus.yaml? No.
+>
+> The current choices are perf or psci though those aren't enforced (yet).
+> Or nothing which is my preference if there is only 1 power domain.
 
+Right. It's not really clear in arm/cpus.yaml what name to use for a
+perf domain, except for "perf" for SCMI.
 
-On 12/2/2024 12:51 PM, Vinod Koul wrote:
-> On 21-11-24, 18:31, Jyothi Kumar Seerapu wrote:
->> GSI hardware generates an interrupt for each transfer completion.
->> For multiple messages within a single transfer, this results in
->> N interrupts for N messages, leading to significant software
->> interrupt latency.
->>
->> To mitigate this latency, utilize Block Event Interrupt (BEI) mechanism.
->> Enabling BEI instructs the GSI hardware to prevent interrupt generation
->> and BEI is disabled when an interrupt is necessary.
->>
->> When using BEI, consider splitting a single multi-message transfer into
->> chunks of 8 internally. Interrupts are not expected for the first 7 message
->> completions, only the last message triggers an interrupt,indicating
->> the completion of 8 messages.
->>
->> This BEI mechanism enhances overall transfer efficiency.
->>
->> Signed-off-by: Jyothi Kumar Seerapu <quic_jseerapu@quicinc.com>
->> ---
->>
->> v2-> v3:
->>     - Renamed gpi_multi_desc_process to gpi_multi_xfer_timeout_handler
->>     - MIN_NUM_OF_MSGS_MULTI_DESC changed from 4 to 2
->>     - Added documentation for newly added changes in "qcom-gpi-dma.h" file
->>     - Updated commit description.
->>
->> v1 -> v2:
->>     - Changed dma_addr type from array of pointers to array.
->>     - To support BEI functionality with the TRE size of 64 defined in GPI driver,
->>       updated QCOM_GPI_MAX_NUM_MSGS to 16 and NUM_MSGS_PER_IRQ to 4.
->>   
->>   drivers/dma/qcom/gpi.c           | 48 ++++++++++++++++++++
->>   include/linux/dma/qcom-gpi-dma.h | 76 ++++++++++++++++++++++++++++++++
->>   2 files changed, 124 insertions(+)
->>
->> diff --git a/drivers/dma/qcom/gpi.c b/drivers/dma/qcom/gpi.c
->> index 52a7c8f2498f..5442b65b1638 100644
->> --- a/drivers/dma/qcom/gpi.c
->> +++ b/drivers/dma/qcom/gpi.c
->> @@ -1693,6 +1693,9 @@ static int gpi_create_i2c_tre(struct gchan *chan, struct gpi_desc *desc,
->>   
->>   		tre->dword[3] = u32_encode_bits(TRE_TYPE_DMA, TRE_FLAGS_TYPE);
->>   		tre->dword[3] |= u32_encode_bits(1, TRE_FLAGS_IEOT);
->> +
->> +		if (i2c->flags & QCOM_GPI_BLOCK_EVENT_IRQ)
->> +			tre->dword[3] |= u32_encode_bits(1, TRE_FLAGS_BEI);
->>   	}
->>   
->>   	for (i = 0; i < tre_idx; i++)
->> @@ -2098,6 +2101,51 @@ static int gpi_find_avail_gpii(struct gpi_dev *gpi_dev, u32 seid)
->>   	return -EIO;
->>   }
->>   
->> +/**
->> + * gpi_multi_xfer_timeout_handler() - Handle multi message transfer timeout
->> + * @dev: pointer to the corresponding dev node
->> + * @multi_xfer: pointer to the gpi_multi_xfer
->> + * @num_xfers: total number of transfers
->> + * @transfer_timeout_msecs: transfer timeout value
->> + * @transfer_comp: completion object of the transfer
->> + *
->> + * This function is used to wait for the processed transfers based on
->> + * the interrupts generated upon transfer completion.
->> + * Return: On success returns 0, otherwise return error code (-ETIMEDOUT)
->> + */
->> +int gpi_multi_xfer_timeout_handler(struct device *dev, struct gpi_multi_xfer *multi_xfer,
->> +				   u32 num_xfers, u32 transfer_timeout_msecs,
->> +				   struct completion *transfer_comp)
->> +{
->> +	int i;
->> +	u32 max_irq_cnt, time_left;
->> +
->> +	max_irq_cnt = num_xfers / NUM_MSGS_PER_IRQ;
->> +	if (num_xfers % NUM_MSGS_PER_IRQ)
->> +		max_irq_cnt++;
->> +
->> +	/*
->> +	 * Wait for the interrupts of the processed transfers in multiple
->> +	 * of 8 and for the last transfer. If the hardware is fast and
->> +	 * already processed all the transfers then no need to wait.
->> +	 */
->> +	for (i = 0; i < max_irq_cnt; i++) {
->> +		reinit_completion(transfer_comp);
->> +		if (max_irq_cnt != multi_xfer->irq_cnt) {
->> +			time_left = wait_for_completion_timeout(transfer_comp,
->> +								transfer_timeout_msecs);
->> +			if (!time_left) {
->> +				dev_err(dev, "%s: Transfer timeout\n", __func__);
->> +				return -ETIMEDOUT;
->> +			}
->> +		}
->> +		if (num_xfers > multi_xfer->msg_idx_cnt)
->> +			return 0;
->> +	}
->> +	return 0;
->> +}
->> +EXPORT_SYMBOL_GPL(gpi_multi_xfer_timeout_handler);
->> +
->>   /* gpi_of_dma_xlate: open client requested channel */
->>   static struct dma_chan *gpi_of_dma_xlate(struct of_phandle_args *args,
->>   					 struct of_dma *of_dma)
->> diff --git a/include/linux/dma/qcom-gpi-dma.h b/include/linux/dma/qcom-gpi-dma.h
->> index 6680dd1a43c6..f001a8ac1887 100644
->> --- a/include/linux/dma/qcom-gpi-dma.h
->> +++ b/include/linux/dma/qcom-gpi-dma.h
->> @@ -15,6 +15,38 @@ enum spi_transfer_cmd {
->>   	SPI_DUPLEX,
->>   };
->>   
->> +/**
->> + * define QCOM_GPI_BLOCK_EVENT_IRQ - Block event interrupt support
->> + *
->> + * This is used to enable/disable the Block event interrupt mechanism.
->> + */
->> +#define QCOM_GPI_BLOCK_EVENT_IRQ	BIT(0)
->> +
->> +/**
->> + * define QCOM_GPI_MAX_NUM_MSGS	- maximum number of messages support
->> + *
->> + * This indicates maximum number of messages can allocate and
->> + * submit to hardware. To handle more messages beyond this,
->> + * need to unmap the processed messages.
->> + */
->> +#define QCOM_GPI_MAX_NUM_MSGS		16
->> +
->> +/**
->> + * define NUM_MSGS_PER_IRQ - interrupt per messages completion
->> + *
->> + * This indicates that trigger an interrupt, after the completion of 8 messages.
->> + */
->> +#define NUM_MSGS_PER_IRQ		8
->> +
->> +/**
->> + * define MIN_NUM_OF_MSGS_MULTI_DESC - \
->> + *	minimum number of messages to support Block evenet interrupt
->> + *
->> + * This indicates minimum number of messages in a trenafer required to
->> + * process it using block event interrupt mechanism.
->> + */
->> +#define MIN_NUM_OF_MSGS_MULTI_DESC	2
->> +
->>   /**
->>    * struct gpi_spi_config - spi config for peripheral
->>    *
->> @@ -51,6 +83,29 @@ enum i2c_op {
->>   	I2C_READ,
->>   };
-> 
-> why should these be exposed to user?
-This (struct gpi_multi_xfer) has been added in this file to provide 
-common support for other protocols which uses the Block event interrupt 
-mechanism.
+If we want to move towards some alignment, perhaps we should update
+the DT doc to make "perf" the common suggestion? I can send a patch if
+you think it makes sense?
 
-Please let me know instead of GPI, if these need to handle in I2C driver 
-itself.
-> 
->>   
->> +/**
->> + * struct gpi_multi_xfer - Used for multi transfer support
->> + *
->> + * @msg_idx_cnt: message index for the transfer
->> + * @buf_idx: dma buffer index
->> + * @unmap_msg_cnt: unmapped transfer index
->> + * @freed_msg_cnt: freed transfer index
->> + * @irq_cnt: received interrupt count
->> + * @irq_msg_cnt: transfer message count for the received irqs
->> + * @dma_buf: virtual addresses of the buffers
->> + * @dma_addr: dma addresses of the buffers
->> + */
->> +struct gpi_multi_xfer {
->> +	u32 msg_idx_cnt;
->> +	u32 buf_idx;
->> +	u32 unmap_msg_cnt;
->> +	u32 freed_msg_cnt;
->> +	u32 irq_cnt;
->> +	u32 irq_msg_cnt;
->> +	void *dma_buf[QCOM_GPI_MAX_NUM_MSGS];
->> +	dma_addr_t dma_addr[QCOM_GPI_MAX_NUM_MSGS];
->> +};
-> 
-> DMAengine API can do multiple transfers and we already have flags for
-> interrupts, pls use that instead of usual behaviour of defining custom
-> interfaces to handle everything. That is not recommended
-> 
-Hi Vinod, if i understand correctly you are referring to DMA with device 
-to memory transfers and scatter-gather transfers and "DMA_INTERRUPT" for 
-interrupts. Please correct me if this is not the case.
+Even if there is only 1 power-domain at this point, we never know if
+another one turns up later, for whatever reasons. That said, isn't it
+better to be specific about a name, already at this point?
 
-The plan for these changes to use the Qualcomm GPI DMA hardware feature, 
-specifically the Block Event Interrupt (BEI). This feature instructs the 
-GSI hardware to prevent interrupt generation with BEI being disabled and 
-enable BEI when an interrupt is required.
-
-For example, if an I2C transfer is initiated with 100 messages, we would 
-typically expect 100 interrupts for the completion of these messages. 
-However, with the Block Event Interrupt mechanism, we will only receive 
-13 interrupts.
-
-Additionally, to handle I2C transfer with 100 or more messages using the 
-existing channel TRE size of 64, we can have possiblity of utilize 16 
-I2C messages (16 messages can fit with channel TRE size of 64 for config 
-TRE, go TRE, and DMA TRE), and so use an array of 16 DMA buffers. After 
-the completion of the 16 I2C messages, we can unmap the processed 
-messages based on the interrupt count (unmapping 8 messages for each 
-interrupt count). This process helps to handle all messages in a large 
-I2C transfer, improving throughput and overall transfer efficiency.
-
-Please let me know if you have any other comments.
-> 
->> +
->>   /**
->>    * struct gpi_i2c_config - i2c config for peripheral
->>    *
->> @@ -65,6 +120,8 @@ enum i2c_op {
->>    * @rx_len: receive length for buffer
->>    * @op: i2c cmd
->>    * @muli-msg: is part of multi i2c r-w msgs
->> + * @flags: true for block event interrupt support
->> + * @multi_xfer: indicates transfer has multi messages
->>    */
->>   struct gpi_i2c_config {
->>   	u8 set_config;
->> @@ -78,6 +135,25 @@ struct gpi_i2c_config {
->>   	u32 rx_len;
->>   	enum i2c_op op;
->>   	bool multi_msg;
->> +	u8 flags;
->> +	struct gpi_multi_xfer multi_xfer;
->>   };
->>   
->> +/**
->> + * gpi_multi_timeout_handler() - Handle multi message transfer timeout
->> + * @dev: pointer to the corresponding dev node
->> + * @multi_xfer: pointer to the gpi_multi_xfer
->> + * @num_xfers: total number of transfers
->> + * @transfer_timeout_msecs: transfer timeout value
->> + * @transfer_comp: completion object of the transfer
->> + *
->> + * This function is used to wait for the processed transfers based on
->> + * the interrupts generated upon transfer completion.
->> + *
->> + * Return: On success returns 0, otherwise return error code (-ETIMEDOUT)
->> + */
->> +int gpi_multi_xfer_timeout_handler(struct device *dev, struct gpi_multi_xfer *multi_xfer,
->> +			   u32 num_xfers, u32 tranfer_timeout_msecs,
->> +			   struct completion *transfer_comp);
-> 
-> Why should a handler be here?
-
-I intended to use this function as a common utility to support other 
-protocols, so I included it in the GPI module. However, I got to know 
-that GPI functions cannot be invoked directly and must be called through 
-an existing DMA engine API. Unfortunately, this function does not fit 
-into any DMA engine API.
-
-Therefore, I am considering moving this function to the I2C driver. 
-Please let me know if this is acceptable or if you have any suggestions.
-> 
+Kind regards
+Uffe
 
