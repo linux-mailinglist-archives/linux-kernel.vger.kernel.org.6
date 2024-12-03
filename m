@@ -1,126 +1,128 @@
-Return-Path: <linux-kernel+bounces-428802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 824979E13B6
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 08:00:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 85D6D9E13B8
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 08:01:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48CCC282CDA
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 07:00:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52FD1282D4F
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 07:01:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5CB118A6D7;
-	Tue,  3 Dec 2024 06:59:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CpUpWXlF"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A853189F45;
+	Tue,  3 Dec 2024 07:01:31 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2401B189BB1;
-	Tue,  3 Dec 2024 06:59:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D792A4A29;
+	Tue,  3 Dec 2024 07:01:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733209197; cv=none; b=LN2u3ejOwQNhKIuMvMosiiAtxzOxjoguXnaW9FUeDaThdOt0EfL//n0qtRip9uBQwmVzu1+MsZZBP6dNI/p8sLsZ5IYvCqPt31jQOFVZ+o7XABZUQDLTEUMS9e2RE/n1VutH9jCqHcgBOxsK37fivzPDcjHOt4xxkeL0sjhw97U=
+	t=1733209290; cv=none; b=tOdfQ8YcHdSbHW33pfV/Kh0CwBmC3lGPtduftzwi/Jrmzi6ipdUzL9i0U5yaghPnqYyo6Ix4Z6R+jSWhr7IYW+XugaQ+LJrdSumZed4kwjU9yF9f/N/vZEmjI10lBGewiI1UNDgCt0JPZ8hxeEgHbiflXTHBrvSay7K5mN07ILw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733209197; c=relaxed/simple;
-	bh=fxLpxJ49/62muxJi+PRy6L5Q1LtrGMaZmRWd0CXi+5Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oVQ828BWWAh7yh7mSWlMZqDNQDAeIn03SHPQHkOBKaQ1gABt90aTfl58DZ312aycdxFXZW6AIDX9cRWZwpenILtmPFI2XuKRlWJ5DSCAkI0TZvzz9Qgpu+pzhlGXMSM5+QlzDdiKB/6Uinv0DFqF+hO+TsEbKaUFr8xSlay0lSg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CpUpWXlF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7E6FC4CECF;
-	Tue,  3 Dec 2024 06:59:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733209196;
-	bh=fxLpxJ49/62muxJi+PRy6L5Q1LtrGMaZmRWd0CXi+5Q=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=CpUpWXlFzjEgxgq2nKhD+oiOXshkmThD3+1a2HZ21yDtBg2zIqfMHuWCmP4Eq8/aq
-	 J7VBn/+sVgF2IUg5YyEovPGzdqj+SPGZhvUA6t56iBQMrywFbT39DfvcH2lZOI/VKB
-	 QDwdRZE5YdNAVqD2azLu7XYKEbnoc2QwhjDesESgwQz1/9rvjME93Y0NcKaRSB4NSZ
-	 mg/RpwHeMZJ64EuzTwgGt7DqS8V22C5r6ptHX3h7K3bmANKtJkEix2zAf2RFfDD6zk
-	 ccoiYhPhcSa3k6V0emWHejnjDNcTHBFh26xQ/q3nFkBWYoJOd+pDlh6DcRWcZVzf6A
-	 ZgqBtIwTvfZyQ==
-Date: Tue, 3 Dec 2024 07:59:51 +0100
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Thorsten Leemhuis <linux@leemhuis.info>
-Cc: Jonathan Corbet <corbet@lwn.net>, workflows@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Laurent Pinchart
- <laurent.pinchart@ideasonboard.com>, Simona Vetter
- <simona.vetter@ffwll.ch>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH v3 DONOTMERGE] docs: clarify rules wrt tagging other
- people
-Message-ID: <20241203075951.3a7021ec@foz.lan>
-In-Reply-To: <bd47620e-d2bd-48f5-8e40-555d6ddf921e@leemhuis.info>
-References: <c29ef5fa12e37c3a289e46d4442b069af94e5b05.1733127212.git.linux@leemhuis.info>
-	<20241202092857.7d197995@foz.lan>
-	<20241202110210.5e56d69e@foz.lan>
-	<d8cae2d3-d855-404b-8991-f81c979486ce@leemhuis.info>
-	<20241202154528.7949e7cb@foz.lan>
-	<6f1bbdf3-22df-415c-b017-de1cf81af57e@leemhuis.info>
-	<20241202171734.2874a9a3@foz.lan>
-	<bd47620e-d2bd-48f5-8e40-555d6ddf921e@leemhuis.info>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1733209290; c=relaxed/simple;
+	bh=a8m0iZZnSkGyezFsgxGEnCsf3O79sGQ+Wzj4Vv87syc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bT+IA3aaQkjDpd79duEZJIQ15qBSHadN/HKIrGkCuoTikJaaP3b5kKGTHZuWNxWqf0i/cXhRfmNDDlW9HmXsokKnDrJjmVmaucoYLEDIc12R93hyDzb6LUjE5TkQ5Bn1Bm0B9uw+XdDvvM68q+2TFMQBWsk8MN2Jj5WRxUXD9AE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B213C4CECF;
+	Tue,  3 Dec 2024 07:01:28 +0000 (UTC)
+Message-ID: <e818a5d3-9df8-460e-8cf9-62adc32836e1@xs4all.nl>
+Date: Tue, 3 Dec 2024 08:01:26 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] media: remove dead TI wl128x FM radio driver
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Cc: Lukas Bulwahn <lbulwahn@redhat.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Lukas Bulwahn <lukas.bulwahn@redhat.com>
+References: <20241028083030.26351-1-lukas.bulwahn@redhat.com>
+ <CACMJSeu32-cnn01WoLbv4ffbMt3CfF0MTqbkxZHvu+4HQio=Mw@mail.gmail.com>
+ <2024102922-faceplate-recycling-b47b@gregkh>
+Content-Language: en-US, nl
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Autocrypt: addr=hverkuil@xs4all.nl; keydata=
+ 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
+In-Reply-To: <2024102922-faceplate-recycling-b47b@gregkh>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Em Tue, 3 Dec 2024 07:25:43 +0100
-Thorsten Leemhuis <linux@leemhuis.info> escreveu:
+Hi Greg,
 
-> On 02.12.24 17:17, Mauro Carvalho Chehab wrote:
-> > Em Mon, 2 Dec 2024 16:54:49 +0100
-> > Thorsten Leemhuis <linux@leemhuis.info> escreveu:  
-> >> On 02.12.24 15:45, Mauro Carvalho Chehab wrote:  
-> >>> Em Mon, 2 Dec 2024 14:54:56 +0100
-> >>> Thorsten Leemhuis <linux@leemhuis.info> escreveu:  
-> >>>> On 02.12.24 11:02, Mauro Carvalho Chehab wrote:    
-> >>>>> Em Mon, 2 Dec 2024 09:28:57 +0100
-> >>>>> Mauro Carvalho Chehab <mchehab+huawei@kernel.org> escreveu:  
-> >>>>>>> +Tagging people requires permission
-> >>>>>>> +----------------------------------
-> >>>>>>> +
-> >>>>>>> +Be careful in the addition of tags to your patches, as all except for Cc:,
-> >>>>>>> +Reported-by:, and Suggested-by: need explicit permission of the person named.  
-> >>>>>
-> >>>>> Hmm... There is another tag that we use without requiring explicit permissions:
-> >>>>>
-> >>>>> 	Requested-by:
-> >>>>>
-> >>>>> There are currently 376 occurrences on 6.13-rc1.
-> >>>>>
-> >>>>> This is used when a maintainer or reviewer publicly requests some changes to
-> >>>>> be added on a patch series.      
-> >>> [...]
-> >>> You're basically requesting explicit permission for any "non-official"
-> >>> tags as well, including reviewed-by. This is not what it is wanted here.    
-> >>
-> >> I could easily use a slightly modified phrase like "...as all
-> >> mentioned above except...".  
-> > 
-> > It seems a lot better to me.  
+On 29/10/2024 01:30, Greg Kroah-Hartman wrote:
+> On Mon, Oct 28, 2024 at 08:06:52PM +0100, Bartosz Golaszewski wrote:
+>> On Mon, 28 Oct 2024 at 09:30, Lukas Bulwahn <lbulwahn@redhat.com> wrote:
+>>>
+>>> From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+>>>
+>>> Commit 78fe66360ed6 ("misc: ti-st: st_kim: remove the driver") deletes the
+>>> ti-st driver and its corresponding config option TI_ST.
+>>>
+>>> With that deletion, the Texas Instruments WL128x FM Radio driver is now
+>>> dead as well. Delete this obsolete driver.
+>>>
+>>> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+>>
+>> Amen!
+>>
+>> Acked-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 > 
-> I went with this a slightly different variant for readability:
-> 
-> Be careful in the addition of the aforementioned tags to your patches,
-> as all except for Cc:, Reported-by:, and Suggested-by: need explicit
-> permission of the person named.
-> 
-> Hope that's okay. If I don't hear anything, I'll assume your earlier
-> Reviewed-by: is still valid.
+> Should I take this through the same tree that the misc driver was
+> removed in?  If so, please let me know.
 
-It is. Just in case:
-Reviewed-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Sorry for the late reply, I missed your email. In any case, I'll take
+this patch.
 
-> 
-> Ciao, Thorsten
+Regards,
 
-
-
-Thanks,
-Mauro
+	Hans
 
