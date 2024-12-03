@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-429349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429350-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D848E9E1AD7
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 12:26:05 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DC209E1AD9
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 12:26:17 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9CF1B1670AB
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 11:26:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D970289775
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 11:26:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1782B1E3DD1;
-	Tue,  3 Dec 2024 11:25:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07EEA1E47C8;
+	Tue,  3 Dec 2024 11:25:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S5GfogGW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AxWRnJKo"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78EA32E3EE
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 11:25:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 551A41E3DE6
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 11:25:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733225146; cv=none; b=j4aABlkURwn7lESAvzJzzmpq/JZj7OF0byHPvaZUuO/rxOHVrw2DLnHi8432y9WD8eCYzIG0IsB3ZM7pWSZJ8pxM4uEsP7Rlbk6g41aJPNuaxngNF3+a62HHWYb8i13E7aGNun72YT7pIPfMuWR/OhvXLWcrk7cyG0KAgIlDjAw=
+	t=1733225150; cv=none; b=NGPcrwkMFmUCj4v6Unf5IEZqWs/Aqh1cX96TKKb7ytqLZMvYegFAp+gVgkYpfADNqpbBfOZpN5GBH/b0mLludSgGWRO6obYcRn17SfFRGZg2qqk5G7baCWvar+nbu9Xya5Ga1vJMGkH8+RekD1VT6YZzl+y+P7EADU8YV2tpadE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733225146; c=relaxed/simple;
-	bh=3brcZlN/EtB22P7W8O0IwuXGJUL7oNC1W0BKB52By/4=;
+	s=arc-20240116; t=1733225150; c=relaxed/simple;
+	bh=V7KwPGMF2A4L+k/hHX6Isufb0CaGHYqFaBE25j7xymA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=R3K5WjVk5gVlPn++TkvV+RlOlRIut2qMSyQIJWbX8cOdIctAQmkxcLM78nzhjl/huvfizW/kpJIZQMFBpYtQcjDulMhcHPPgewSEWHgWGhp6eGdIdY7IxQ233vKTKpIgYnWyUYVcDrScq71jHoTRqLW+/lUHjt1QsE/fLfUrDYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S5GfogGW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3749C4CED6;
-	Tue,  3 Dec 2024 11:25:42 +0000 (UTC)
+	 MIME-Version; b=Eaf3bwGPFrXEO+5GrB08pXMSJ2JIbB5IWx+TBm8H67p/ZTiAqsSciASXXhkY+ld5F6I0RlE3l/ShCkSof233BiCSCUJZuXioUGFHy1tr9cHOPejyUsAMYuO2NKXwLugfJxmfEBLKPSXn6MLUqPK+F+7U3jZX3GQCfEkHA9WxIpw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AxWRnJKo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 916C8C4CECF;
+	Tue,  3 Dec 2024 11:25:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733225146;
-	bh=3brcZlN/EtB22P7W8O0IwuXGJUL7oNC1W0BKB52By/4=;
+	s=k20201202; t=1733225149;
+	bh=V7KwPGMF2A4L+k/hHX6Isufb0CaGHYqFaBE25j7xymA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=S5GfogGWhCZPHYq13El1AEJ5HDv15Aycf1xsynvjR4ldQpkMkx+IFP1YJqZZrusnT
-	 3uwjoF5tRyoa/S2wesrD8J1HQrvSa1/GViwuLFvts4lR+ZM8q/9UqQLRpdw52gg0ry
-	 eckRioLRwBkLOPhbY664bjZxZ9oMUxGhM/jbpoTK4JMz0+mn6zBXEkej1eNl2soUi6
-	 NEhFOKYfXglEp/8bgkg9ti3UclTy9BBIYsp60GlvnC8dCuwZ7v6FwPzFiHDgQ8l127
-	 CnwQoA6MlEh9FHmmWY6aG2OPBtWlB84g8lUGW+4XHT3Jn18vsySOFOsnpesjXfLB/j
-	 swGXpOV6m1YOw==
+	b=AxWRnJKok2oVK9+07pQzfb+QFG4fI+UKTBNVqlZ/6lNZFUQWUIiG+yczVLSAoSiD5
+	 4WBoOpF0VJu/7V3g8fsXnlPBzL2wsaZL73x1EbXCgO3Nrksrt0k96F8WRcHkO01oAg
+	 ocr5zEg6CbZ2GJkZn32D1LAlGfqiU+cmsOF6G5FIII1jFRFhHNihZKHWGROsJxIdts
+	 lS5CLxXcW/FCrJ29AMgvhJNoksILWyjRYoVRLYtS8ep/hL2n+iPqdYkmquJqU4AfNh
+	 1T/jg71MIGO+hc4ywUzwpJbScs78moyWgFlP5CxKxWJsT2a62tJofAlFFmdeCwgMO2
+	 gWHhvu5jto2pw==
 From: Mike Rapoport <rppt@kernel.org>
 To: x86@kernel.org
 Cc: Andy Lutomirski <luto@kernel.org>,
@@ -53,9 +53,9 @@ Cc: Andy Lutomirski <luto@kernel.org>,
 	Thomas Gleixner <tglx@linutronix.de>,
 	linux-kernel@vger.kernel.org,
 	tboot-devel@lists.sourceforge.net
-Subject: [PATCH 2/4] x86/boot: split kernel resources setup into a helper function
-Date: Tue,  3 Dec 2024 13:25:23 +0200
-Message-ID: <20241203112525.591496-3-rppt@kernel.org>
+Subject: [PATCH 3/4] x86/boot: split parsing of boot_params into a helper function
+Date: Tue,  3 Dec 2024 13:25:24 +0200
+Message-ID: <20241203112525.591496-4-rppt@kernel.org>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20241203112525.591496-1-rppt@kernel.org>
 References: <20241203112525.591496-1-rppt@kernel.org>
@@ -75,70 +75,106 @@ No functional changes.
 
 Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
 ---
- arch/x86/kernel/setup.c | 36 ++++++++++++++++++++++--------------
- 1 file changed, 22 insertions(+), 14 deletions(-)
+ arch/x86/kernel/setup.c | 72 +++++++++++++++++++++++------------------
+ 1 file changed, 41 insertions(+), 31 deletions(-)
 
 diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
-index 2383e73fc140..d299fe5bda25 100644
+index d299fe5bda25..d4bb9a2e8f15 100644
 --- a/arch/x86/kernel/setup.c
 +++ b/arch/x86/kernel/setup.c
-@@ -524,6 +524,23 @@ void __init reserve_standard_io_resources(void)
- 
+@@ -426,6 +426,42 @@ static void __init parse_setup_data(void)
+ 	}
  }
  
-+static void __init setup_kernel_resources(void)
++static void __init parse_boot_params(void)
 +{
-+	code_resource.start = __pa_symbol(_text);
-+	code_resource.end = __pa_symbol(_etext)-1;
-+	rodata_resource.start = __pa_symbol(__start_rodata);
-+	rodata_resource.end = __pa_symbol(__end_rodata)-1;
-+	data_resource.start = __pa_symbol(_sdata);
-+	data_resource.end = __pa_symbol(_edata)-1;
-+	bss_resource.start = __pa_symbol(__bss_start);
-+	bss_resource.end = __pa_symbol(__bss_stop)-1;
++	ROOT_DEV = old_decode_dev(boot_params.hdr.root_dev);
++	screen_info = boot_params.screen_info;
++	edid_info = boot_params.edid_info;
++#ifdef CONFIG_X86_32
++	apm_info.bios = boot_params.apm_bios_info;
++	ist_info = boot_params.ist_info;
++#endif
++	saved_video_mode = boot_params.hdr.vid_mode;
++	bootloader_type = boot_params.hdr.type_of_loader;
++	if ((bootloader_type >> 4) == 0xe) {
++		bootloader_type &= 0xf;
++		bootloader_type |= (boot_params.hdr.ext_loader_type+0x10) << 4;
++	}
++	bootloader_version  = bootloader_type & 0xf;
++	bootloader_version |= boot_params.hdr.ext_loader_ver << 4;
 +
-+	insert_resource(&iomem_resource, &code_resource);
-+	insert_resource(&iomem_resource, &rodata_resource);
-+	insert_resource(&iomem_resource, &data_resource);
-+	insert_resource(&iomem_resource, &bss_resource);
++#ifdef CONFIG_BLK_DEV_RAM
++	rd_image_start = boot_params.hdr.ram_size & RAMDISK_IMAGE_START_MASK;
++#endif
++#ifdef CONFIG_EFI
++	if (!strncmp((char *)&boot_params.efi_info.efi_loader_signature,
++		     EFI32_LOADER_SIGNATURE, 4)) {
++		set_bit(EFI_BOOT, &efi.flags);
++	} else if (!strncmp((char *)&boot_params.efi_info.efi_loader_signature,
++		     EFI64_LOADER_SIGNATURE, 4)) {
++		set_bit(EFI_BOOT, &efi.flags);
++		set_bit(EFI_64BIT, &efi.flags);
++	}
++#endif
++
++	if (!boot_params.hdr.root_flags)
++		root_mountflags &= ~MS_RDONLY;
 +}
 +
- static bool __init snb_gfx_workaround_needed(void)
+ static void __init memblock_x86_reserve_range_setup_data(void)
  {
- #ifdef CONFIG_PCI
-@@ -842,15 +859,6 @@ void __init setup_arch(char **cmdline_p)
- 		root_mountflags &= ~MS_RDONLY;
+ 	struct setup_indirect *indirect;
+@@ -803,35 +839,11 @@ void __init setup_arch(char **cmdline_p)
+ 
+ 	setup_olpc_ofw_pgd();
+ 
+-	ROOT_DEV = old_decode_dev(boot_params.hdr.root_dev);
+-	screen_info = boot_params.screen_info;
+-	edid_info = boot_params.edid_info;
+-#ifdef CONFIG_X86_32
+-	apm_info.bios = boot_params.apm_bios_info;
+-	ist_info = boot_params.ist_info;
+-#endif
+-	saved_video_mode = boot_params.hdr.vid_mode;
+-	bootloader_type = boot_params.hdr.type_of_loader;
+-	if ((bootloader_type >> 4) == 0xe) {
+-		bootloader_type &= 0xf;
+-		bootloader_type |= (boot_params.hdr.ext_loader_type+0x10) << 4;
+-	}
+-	bootloader_version  = bootloader_type & 0xf;
+-	bootloader_version |= boot_params.hdr.ext_loader_ver << 4;
+-
+-#ifdef CONFIG_BLK_DEV_RAM
+-	rd_image_start = boot_params.hdr.ram_size & RAMDISK_IMAGE_START_MASK;
+-#endif
+-#ifdef CONFIG_EFI
+-	if (!strncmp((char *)&boot_params.efi_info.efi_loader_signature,
+-		     EFI32_LOADER_SIGNATURE, 4)) {
+-		set_bit(EFI_BOOT, &efi.flags);
+-	} else if (!strncmp((char *)&boot_params.efi_info.efi_loader_signature,
+-		     EFI64_LOADER_SIGNATURE, 4)) {
+-		set_bit(EFI_BOOT, &efi.flags);
+-		set_bit(EFI_64BIT, &efi.flags);
+-	}
+-#endif
++	/*
++	 * Translate the fields of struct boot_param into global variables
++	 * represting these parameters.
++	 */
++	parse_boot_params();
+ 
+ 	x86_init.oem.arch_setup();
+ 
+@@ -855,8 +867,6 @@ void __init setup_arch(char **cmdline_p)
+ 
+ 	copy_edd();
+ 
+-	if (!boot_params.hdr.root_flags)
+-		root_mountflags &= ~MS_RDONLY;
  	setup_initial_init_mm(_text, _etext, _edata, (void *)_brk_end);
  
--	code_resource.start = __pa_symbol(_text);
--	code_resource.end = __pa_symbol(_etext)-1;
--	rodata_resource.start = __pa_symbol(__start_rodata);
--	rodata_resource.end = __pa_symbol(__end_rodata)-1;
--	data_resource.start = __pa_symbol(_sdata);
--	data_resource.end = __pa_symbol(_edata)-1;
--	bss_resource.start = __pa_symbol(__bss_start);
--	bss_resource.end = __pa_symbol(__bss_stop)-1;
--
  	/*
- 	 * x86_configure_nx() is called before parse_early_param() to detect
- 	 * whether hardware doesn't support NX (so that the early EHCI debug
-@@ -894,11 +902,11 @@ void __init setup_arch(char **cmdline_p)
- 	tsc_early_init();
- 	x86_init.resources.probe_roms();
- 
--	/* after parse_early_param, so could debug it */
--	insert_resource(&iomem_resource, &code_resource);
--	insert_resource(&iomem_resource, &rodata_resource);
--	insert_resource(&iomem_resource, &data_resource);
--	insert_resource(&iomem_resource, &bss_resource);
-+	/*
-+	 * Add resources for kernel text and data to the iomem_resource
-+	 * Do it eafter parse_early_param, so could debug it
-+	 */
-+	setup_kernel_resources();
- 
- 	e820_add_kernel_range();
- 	trim_bios_range();
 -- 
 2.45.2
 
