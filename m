@@ -1,131 +1,290 @@
-Return-Path: <linux-kernel+bounces-429996-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C29919E2AF0
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 19:32:41 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26B4B9E2A93
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 19:15:39 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 66CE5B3DC5F
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 18:14:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBD25163C9C
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 18:15:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 166961FC7EF;
-	Tue,  3 Dec 2024 18:14:01 +0000 (UTC)
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1D341FC115;
+	Tue,  3 Dec 2024 18:15:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="V9qoUSjI"
+Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 916131FA840;
-	Tue,  3 Dec 2024 18:13:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 960DB1E283C
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 18:15:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733249640; cv=none; b=IEhnqZOKG4cq66xRcSXBbDq5sKZMxaKD0D7LvRm336C0HQd8EI/I0yguD46ElEjEa3UKYy+eHvv0kY8MFIFtWka6MpyzZo3/Mgssh9hjiPN2XRQm/Hdjaj9RP7OTkLUnVxApcVHypf7smJx1ijjb51Afv83o1loYXRA7if98hCU=
+	t=1733249732; cv=none; b=NExdAl7kj/miBnz/ei+wk3quAtK2Euc1igxE0WLUbO/sGafnfenjHgXsIVe+jX9MKcV/oIH23ZrT4c6dz5E9UkWTJLdCX4kIO+brRnYP6jOY65vT850A+XNkW8EuSPyaPUJCGvzCOkeM/u7VS357rNVYLRKV5MouW2siDdhVTa0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733249640; c=relaxed/simple;
-	bh=goNbn9LHti/OQqu0NtqUuzDIMzdSZPos2x6hTQxj6QY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VduThITVyL7SFGvb8Uj35cRf8IhiCyEYHp1h73NdMBCOTrDB7QP3uSfsKB78AbFySI6079wPN1s+TJgIPjuRA5AOOw7ZzWFDhDOYQUlcaDcUO2sz7Y7kG5HWibtucY0C9cokrDivGn2H0bwEmv9d7liV/dhyILYNM79yU04VHDo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de; spf=fail smtp.mailfrom=denx.de; arc=none smtp.client-ip=46.255.230.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=denx.de
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id 1935C1C00A0; Tue,  3 Dec 2024 19:13:51 +0100 (CET)
-Date: Tue, 3 Dec 2024 19:13:50 +0100
-From: Pavel Machek <pavel@denx.de>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
-Subject: Re: [PATCH 4.19 000/138] 4.19.325-rc1 review
-Message-ID: <Z09KXnGlTJZBpA90@duo.ucw.cz>
-References: <20241203141923.524658091@linuxfoundation.org>
+	s=arc-20240116; t=1733249732; c=relaxed/simple;
+	bh=ts6/amOxa0dJ1j4L7dg7bZ63rmuGs6CM+DqRX/TLxSM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aaWiYUCuLfhTjxXSqv+eA5TIMRCW459XavYrsy3yQjCAu6lSAtL7fzO6ZidFrmi3l7nHuOa7P2ZMeQCTU/Ju+A2WQUfNG+ICn0sen5eN+OBoX/cii6aG15SESbEtYSEd8hl1MpQAZ+XWTGasU573xUIUjm1gBDLOWZENWoN/bs8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=V9qoUSjI; arc=none smtp.client-ip=91.218.175.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <b8bde033-13a8-4726-a9ff-2fa4eff898e1@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1733249727;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/d6d21lYDvEFZiQrySVvNDh1sU8fuz6MdG1q72i45IU=;
+	b=V9qoUSjI7EsoODFNlUsz+6kzYDm+vLmfMrzU58PdFBqKNq4K6EbSDCZpEzrvtvsDleq6X/
+	lvYlX2Vpf1PANTfSnRQ7vUc/O8yBYK+NDtT0axw/iAUMFx54f/MT7ojgOI9gGpXDNfMMzs
+	m62ISwNM0CUjQeFHObWvuIDyWidawdg=
+Date: Tue, 3 Dec 2024 23:44:27 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="9dKgCbh+6g0xCEEa"
-Content-Disposition: inline
-In-Reply-To: <20241203141923.524658091@linuxfoundation.org>
+Subject: Re: [PATCH v4 0/3] drm/tidss: Add OLDI bridge support
+To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Nishanth Menon
+ <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+ Devarsh Thakkar <devarsht@ti.com>, Praneeth Bajjuri <praneeth@ti.com>,
+ Udit Kumar <u-kumar1@ti.com>, Jayesh Choudhary <j-choudhary@ti.com>,
+ Francesco Dolcini <francesco@dolcini.it>,
+ Alexander Sverdlin <alexander.sverdlin@siemens.com>,
+ Max Krummenacher <max.oss.09@gmail.com>,
+ DRI Development List <dri-devel@lists.freedesktop.org>,
+ Devicetree List <devicetree@vger.kernel.org>,
+ Linux Kernel List <linux-kernel@vger.kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Jyri Sarha <jyri.sarha@iki.fi>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Thomas Zimmermann <tzimmermann@suse.de>, Maxime Ripard <mripard@kernel.org>,
+ David Airlie <airlied@gmail.com>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Simona Vetter <simona@ffwll.ch>
+References: <20241124143649.686995-1-aradhya.bhatia@linux.dev>
+ <8b57d6a4-6bc1-4542-abf4-8bc4a3120c25@ideasonboard.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Aradhya Bhatia <aradhya.bhatia@linux.dev>
+In-Reply-To: <8b57d6a4-6bc1-4542-abf4-8bc4a3120c25@ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
+Hi,
 
---9dKgCbh+6g0xCEEa
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 03/12/24 17:42, Tomi Valkeinen wrote:
+> Hi,
+> 
+> On 24/11/2024 16:36, Aradhya Bhatia wrote:
+>> Hello all,
+>>
+>> This patch series add support for the dual OLDI TXes supported in Texas
+>> Instruments' AM62x and AM62Px family of SoCs. The OLDI TXes support
+>> single-lvds
+>> lvds-clone, and dual-lvds modes. These have now been represented
+>> through DRM
+>> bridges within TI-DSS.
+>>
+>>   - Some history and hardware description for this patch series.
+>>
+>> This patch series is a complete re-vamp from the previously posted
+>> series[1] and
+>> hence, the version index has been reset to v1. The OLDI support from
+>> that series
+>> was dropped and only the base support for AM62x DSS was kept (and
+>> eventually
+>> merged)[2].
+>>
+>> The OLDI display that the tidss driver today supports, could not be
+>> extended for
+>> the newer SoCs. The OLDI display in tidss is modelled after the DSS
+>> and OLDI
+>> hardware in the AM65x SoC. The DSS in AM65x SoC, has two video-ports.
+>> Both these
+>> video-ports (VP) output DPI video signals. One of the DPI output (from
+>> VP1) from
+>> the DSS connects to a singular OLDI TX present inside the SoC. There
+>> is no other
+>> way for the DPI from VP1 to be taken out of the SoC. The other DPI output
+>> however - the one from VP2 - is taken out of the SoC as is. Hence we
+>> have an
+>> OLDI bus output and a DPI bus output from the SoC. Since the VP1 and
+>> OLDI are
+>> tightly coupled, the tidss driver considers them as a single entity.
+>> That is
+>> why, any OLDI sink connects directly to the DSS ports in the OF graphs.
+>>
+>> The newer SoCs have varying DSS and OLDI integrations.
+>>
+>> The AM62x DSS also has 2 VPs. The 2nd VP, VP2, outputs DPI signals
+>> which are
+>> taken out of the SoC - similar to the AM65x above. For the VP1, there
+>> are 2 OLDI
+>> TXes. These OLDI TXes can only receive DPI signals from VP1, and don't
+>> connect
+>> to VP2 at all.
+>>
+>> The AM62Px SoC has 2 OLDI TXes like AM62x SoC. However, the AM62Px SoC
+>> also has
+>> 2 separate DSSes. The 2 OLDI TXes can now be shared between the 2 VPs
+>> of the 2
+>> DSSes.
+>>
+>> The addition of the 2nd OLDI TX (and a 2nd DSS in AM62Px) creates a
+>> need for
+>> some major changes for a full feature experience.
+>>
+>> 1. The OF graph needs to be updated to accurately show the data flow.
+>> 2. The tidss and OLDI drivers now need to support the dual-link and
+>> the cloned
+>>     single-link OLDI video signals.
+>> 3. The drivers also need to support the case where 2 OLDI TXes are
+>> connected to
+>>     2 different VPs - thereby creating 2 independent streams of
+>> single-link OLDI
+>>     outputs.
+>>
+>> Note that the OLDI does not have registers of its own. It is still
+>> dependent on
+>> the parent VP. The VP that provides the DPI video signals to the OLDI
+>> TXes, also
+>> gives the OLDI TXes all the config data. That is to say, the hardware
+>> doesn't
+>> sit on the bus directly - but does so through the DSS.
+>>
+>> In light of all of these hardware variations, it was decided to have a
+>> separate
+>> OLDI driver (unlike AM65x) but not entirely separate so as to be a
+>> platform
+>> device. The OLDI TXes are now being represented as DRM bridges under
+>> the tidss.
+>>
+>> Also, since the DRM framework only really supports a linear encoder-
+>> bridge
+>> chain, the OLDI driver creates a DRM bridge ONLY for the primary OLDI
+>> TX in
+>> cases of dual-link or cloned single-link OLDI modes. That bridge then
+>> attaches
+> 
+> How does the clone case work, then? There are two panels, what does the
+> second one connect to?
 
-Hi!
+For the clone case, the devicetree will show the true connections - as
+they are in the hardware.
 
-> ------------------
-> Note, this is the LAST 4.19.y kernel to be released.  After this one, it
-> is end-of-life.  It's been 6 years, everyone should have moved off of it
-> by now.
-> ------------------
+2 endpoints from a single DSS VP devicetree port will be connected to 2
+OLDIs, OLDI0 and OLDI1. The outputs of these OLDIs will be connected to
+2 distinct single-link panels.
 
-Releasing 130 patches as end-of-life kernel is not good idea. There
-may be regression hiding between them...
+The driver and DRM side of things do not show the same picture, however.
+The tidss_oldi code creates and registers a drm_bridge only for the
+primary OLDI. The driver is capable of detecting the expected OLDI mode,
+and if a companion OLDI is present, then the primary OLDI drm_bridge
+keeps a note of that.
 
-> This is the start of the stable review cycle for the 4.19.325 release.
-> There are 138 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+The clock and config resources are shared between the primary and
+companion OLDI hardware. So configuring the primary OLDI takes care of
+the companion too.
+The only case where it is not shared is the OLDI IO bit in the Control
+MMR (ctrl_mmr) region. But, since the primary OLDI drm_bridge remains
+aware about the presence of companion OLDI, it makes sure to enable /
+disable the comapnion OLDI IO when required.
 
-Build fails:
+> 
+>> to the tidss's display core - which consists of a CRTC, an Encoder
+>> (dummy) and a
+>> bridge (dummy). On the other end, it attaches to OLDI sinks (panels or
+>> other
+>> bridges).
+>>
+>> Since the OLDI TX have a hardware dependency with the VP, the OLDI
+>> configuration
+>> needs to happen before that VP is enabled for streaming. VP stream
+>> enable takes
+>> place in tidss_crtc_atomic_enable hook. I have posted a patch allowing
+>> DRM
+>> bridges to get pre-enabled before the CRTC of that bridge is
+>> enabled[0]. Without
+>> that patch, some warnings or glitches can be seen.
+>>
+>> These patches have been tested on AM625 based Beagleplay[3] platform
+>> with a
+>> Lincolntech LCD185 dual-lvds panel. The patches with complete support
+>> including
+>> the expected devicetree configuration of the OLDI TXes can be found in
+>> the
+>> "next_oldi_v4_tests" branch of my github fork[4]. This branch also has
+>> support
+>> for Microtips dual-lvds panel (SK-LCD1) which is compatible with the
+>> SK-AM625
+>> EVM platform.
+>>
+>> Due to lack of hardware, I haven't been able to test single-link / cloned
+>> single-link OLDI modes. I have only used a sample cloned single-link
+>> DTBO and
+>> booted the board with it. I didn't see any probe_deferred errors (as seen
+>> previously), and the `kmsprint` utility enumerated the display details
+>> fine.
+>>
+>> Regardless, I'd appreciate it if somebody can test it, and report back
+>> if they
+>> observe any issues.
+>>
+>> Thanks,
+>> Aradhya
+>>
+>>
+>> Additional Notes:
+>>
+>> * Important note about a false positive in dtbs_check *
+>> Both the ports, port0 and port1, are required for the OLDI
+>> functionality to
+>> work. The schema suggests this condition too. Additionally, the OLDI
+>> devicetree
+>> node is expected to be defined in the soc.dtsi file, and kept as
+>> disabled.
+>> Over the current platforms (Beagleplay and SK-AM625 EVM), the OLDI
+>> panel is not
+>> always attached, and hence we use a DT overlay to add panel details -
+>> which is
+>> where we enable the OLDI nodes. The structure of files is like this -
+>>
+>> - soc.dtsi                  (OLDI disabled)
+>> - soc-baseboard.dts         (OLDI disabled)
+>> - soc-baseboard-panel.dtso  (OLDI enabled)
+>>
+>> During dtbs_check runs, it was observed that the check was not able to
+>> rule out
+>> OLDI issues even when its DT was disabled in the soc-baseboard.dts. It is
+>> impractical and impossible to add OLDI ports prior to the panel
+>> overlay file.
+>> While the dtbs_check usually ignores checking disabled devicetree
+>> nodes, it was
+>> unable to do so in the OLDI's case.
+> 
+> While there might be something amiss with dtbs_check, what's the problem
+> with adding both port nodes to the soc.dtsi? If you have no endpoints
+> there, it's not connected to anything.
+>
 
-https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/jobs/853242=
-3815
+Ran dtbs_check with this. The errors are silenced indeed. I didn't
+really like having empty ports in an already long DSS devicetree node,
+but this way the checks remain clean. I will use this for DT patches.
+Thank you! =)
 
-  CC      drivers/pinctrl/uniphier/pinctrl-uniphier-pro4.o
-3895
-  CC      drivers/pci/of.o
-3896
-drivers/rtc/rtc-st-lpc.c: In function 'st_rtc_probe':
-3897
-drivers/rtc/rtc-st-lpc.c:233:11: error: 'IRQF_NO_AUTOEN' undeclared (first =
-use in this function); did you mean 'IRQ_NOAUTOEN'?
-3898
-           IRQF_NO_AUTOEN, pdev->name, rtc);
-3899
-           ^~~~~~~~~~~~~~
-3900
-           IRQ_NOAUTOEN
-3901
-drivers/rtc/rtc-st-lpc.c:233:11: note: each undeclared identifier is report=
-ed only once for each function it appears in
-3902
-  CC      drivers/pci/quirks.o
-3903
-make[2]: *** [scripts/Makefile.build:303: drivers/rtc/rtc-st-lpc.o] Error 1
-3904
-make[1]: *** [scripts/Makefile.build:544: drivers/rtc] Error 2
-3905
-make[1]: *** Waiting for unfinished jobs....
-3906
-  CC      drivers/pinctrl/uniphier/pinctrl-uniphier-sld8.o
-3907
-  CC      drivers/soc/renesas/r8a7743-sysc.o
+> 
+[...]
+> 
 
-Best regards,
-								Pavel
---=20
-DENX Software Engineering GmbH,        Managing Director: Erika Unter
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+-- 
+Regards
+Aradhya
 
---9dKgCbh+6g0xCEEa
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZ09KXgAKCRAw5/Bqldv6
-8igyAKC2pyBC6fWNiQh0OKW85uIIN0WbqACgwLulzTAF14u09GS4SkD6suO2gvs=
-=6DTu
------END PGP SIGNATURE-----
-
---9dKgCbh+6g0xCEEa--
 
