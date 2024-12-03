@@ -1,155 +1,101 @@
-Return-Path: <linux-kernel+bounces-429895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 932629E2850
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 17:56:27 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EE929E2855
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 17:57:04 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57C362894C8
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:56:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1869169808
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:56:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ECC51F9F7C;
-	Tue,  3 Dec 2024 16:56:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A79FF1FA178;
+	Tue,  3 Dec 2024 16:56:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XfUzrpgX"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sl4nkRz1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A0C81F7577
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 16:56:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F27B1F76CF;
+	Tue,  3 Dec 2024 16:56:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733244966; cv=none; b=iPAaOF4kmPf4tA7aNL8T3RJDBFaGtGAywEVG66U+5325CuYq+ATTWand3gODGremp1uKbOQD+MGPyLaXywAjwpWgGJ+7ACbBACjifpMKcU4hY2fE3r9TTfmvZI3fG8/OnlUbfIhQFNFX0C+k0feHHzlAty8LKjHzxRDFA8SQWX0=
+	t=1733245002; cv=none; b=abginoK5osj5dy/hVXKF/e9Z/ALqENQkJFMaSYhIuhRn7KicpCOe7RpVUiKmu9r4DYXkKbKOjEXLB1rqFaRCrN6o5ANGeuPNbr7S1loep1gz7SZiwnRtYrf1EqBRo1wzM7s5FIGW8NrEw6vDc1cb8fLfYsrHxAkwGwpMX5sPwSw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733244966; c=relaxed/simple;
-	bh=7Gx75QDlyoDonl8gsJEr0X4zw3xiB1g1IW3hMV6K+3U=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=jipRR8XzyL7Gj5pSb1wEFhfd+9m35syTo8NouDa+mdJIu2WilfOcN0AEuL3DIxVEnnpugE87dZaKhIoiV+1lfpLXjlc/6shi/OHNvJUxeAgfvXKQFarObXVklpy202duTAceu4J4WVvowa0iBIaG8o5K04xCrmG3nH54LMdY2SU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XfUzrpgX; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1733244963;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DV9CirJEkNvuIp9vIxKxT+t7dtJcsduQ7RHNpTrXiWQ=;
-	b=XfUzrpgXAFrp8v+COGbXJEpk633ve9MDE8tIUrhJkdcOaNXxHIDPmADZWTQC/RGy0Cmk7D
-	GQEqNFar91q7MS52fry5+xhlLdQV4iPgcrDwmPqHoFT4n6m5PRuuM5pmkNzCOETti1Q6V2
-	BF5p2/km76zHznN+Fdt9IW+dgJFYfJU=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-423-BLyc-I2_PU6o9ocECVBXbg-1; Tue,
- 03 Dec 2024 11:56:00 -0500
-X-MC-Unique: BLyc-I2_PU6o9ocECVBXbg-1
-X-Mimecast-MFC-AGG-ID: BLyc-I2_PU6o9ocECVBXbg
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 377AF1955D96;
-	Tue,  3 Dec 2024 16:55:59 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.48])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id BAACA19560A3;
-	Tue,  3 Dec 2024 16:55:56 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <CA+G9fYuLXDh8GDmgdhmA1NAhsma3=FoH1n93gmkHAGGFKbNGeQ@mail.gmail.com>
-References: <CA+G9fYuLXDh8GDmgdhmA1NAhsma3=FoH1n93gmkHAGGFKbNGeQ@mail.gmail.com>
-To: Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc: dhowells@redhat.com, netfs@lists.linux.dev,
-    linux-fsdevel@vger.kernel.org,
-    open list <linux-kernel@vger.kernel.org>,
-    lkft-triage@lists.linaro.org, Jeff Layton <jlayton@kernel.org>,
-    Dan Carpenter <dan.carpenter@linaro.org>,
-    Anders Roxell <anders.roxell@linaro.org>,
-    Arnd Bergmann <arnd@arndb.de>
-Subject: Re: fs/netfs/read_retry.c:235:20: error: variable 'subreq' is uninitialized when used here [-Werror,-Wuninitialized]
+	s=arc-20240116; t=1733245002; c=relaxed/simple;
+	bh=5qlOCX3NRndsJ1AfUpcbpR7q1IvZ0cncYwXCKI1Y+ds=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=jUZK+PheOE/JVBiCbtHm5ldQy3j069fmyFIaagksn9f4PW7zVoEKQp323ETXu4qbW4nhQTfRJYX2UGEumUnRG79l+vyyC1tqYa5OLqtqWev3SRzPasJd3kncHZAOeojupfLYhvHol7nc8grKEMUZMG57sETj0oSHLzSQ+w4FegA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sl4nkRz1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 457DCC4CED6;
+	Tue,  3 Dec 2024 16:56:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733245000;
+	bh=5qlOCX3NRndsJ1AfUpcbpR7q1IvZ0cncYwXCKI1Y+ds=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=sl4nkRz1sJq33HeOKbgQcqbU1atoBz5tpEW3RG3gjdzceDRNlqhNsXnRD3o3zxVDr
+	 zdoed0PqeAHejH3Nbyan5qRlf3OMvUnvdIJZhun46CRwF1cDg0XQnWfEb1amLV+p99
+	 4MDLf3rQHNq0qS7A99L8xCeR0KVca7x860lN+KBOuSp5JbdqmvTJLDkthmyeg7jHr8
+	 EB3QpJqMR1c9VU67c4EtFDirv1tmmFjG3p8uFS2gCaZ1iR58W7VXJKfcCUpgKOzXB+
+	 q3hfaIEUuJZGa/P0qIbL8R39SgLDrk2o39FmHU/J4nHR2ukw+pJAqzLROPVPWk7R9R
+	 KNIrSirfITqHA==
+From: Mark Brown <broonie@kernel.org>
+To: Vijendar Mukunda <Vijendar.Mukunda@amd.com>
+Cc: alsa-devel@alsa-project.org, lgirdwood@gmail.com, perex@perex.cz, 
+ tiwai@suse.com, Basavaraj.Hiregoudar@amd.com, Sunil-kumar.Dommati@amd.com, 
+ venkataprasad.potturu@amd.com, Mario.Limonciello@amd.com, 
+ linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20241203081940.3390281-1-Vijendar.Mukunda@amd.com>
+References: <20241203081940.3390281-1-Vijendar.Mukunda@amd.com>
+Subject: Re: [PATCH 1/2] ASoC: amd: ps: update mach params subsystem_rev
+ variable
+Message-Id: <173324499801.445589.12273018696416224205.b4-ty@kernel.org>
+Date: Tue, 03 Dec 2024 16:56:38 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <589334.1733244955.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Tue, 03 Dec 2024 16:55:55 +0000
-Message-ID: <589335.1733244955@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-9b746
 
-Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
+On Tue, 03 Dec 2024 13:49:39 +0530, Vijendar Mukunda wrote:
+> Update mach_params subsystem_rev with acp_rev variable for ACP6.3
+> platform.
+> 
+> 
 
-> Build error:
-> ---------
-> fs/netfs/read_retry.c:235:20: error: variable 'subreq' is
-> uninitialized when used here [-Werror,-Wuninitialized]
->   235 |         if (list_is_last(&subreq->rreq_link, &stream->subrequest=
-s))
->       |                           ^~~~~~
-> fs/netfs/read_retry.c:28:36: note: initialize the variable 'subreq' to
-> silence this warning
->    28 |         struct netfs_io_subrequest *subreq;
->       |                                           ^
->       |                                            =3D NULL
-> 1 error generated.
-> make[5]: *** [scripts/Makefile.build:194: fs/netfs/read_retry.o] Error 1
-> =
+Applied to
 
-> Build image:
-> -----------
-> - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-202411=
-26/testrun/26060810/suite/build/test/clang-19-lkftconfig/log
-> - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-202411=
-26/testrun/26060810/suite/build/test/clang-19-lkftconfig/details/
-> - https://storage.tuxsuite.com/public/linaro/lkft/builds/2pNKzjvChfT6aOW=
-plZaZeQzbYCX/
-> =
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
-> Steps to reproduce:
-> ------------
-> - tuxmake --runtime podman --target-arch x86_64 --toolchain clang-19
-> --kconfig https://storage.tuxsuite.com/public/linaro/lkft/builds/2pNKzjv=
-ChfT6aOWplZaZeQzbYCX/config
-> LLVM=3D1 LLVM_IAS=3D1
-> =
+Thanks!
 
-> The git log shows
-> $ git log --oneline  next-20241122..next-20241125 -- fs/netfs/read_retry=
-.c
-> 1bd9011ee163e netfs: Change the read result collector to only use one wo=
-rk item
-> 5c962f9982cd9 netfs: Don't use bh spinlock
-> 3c8a83f74e0ea netfs: Drop the was_async arg from netfs_read_subreq_termi=
-nated()
-> 2029a747a14d2 netfs: Abstract out a rolling folio buffer implementation
-> =
+[1/2] ASoC: amd: ps: update mach params subsystem_rev variable
+      commit: bcbf421d2190bc4f7d3fd2cc61caf748779ee69e
+[2/2] ASoC: amd: ps: add ZSC control register programming sequence
+      commit: 25cd677636d316669871947639430615ff564890
 
-> metadata:
-> ----
->   git describe: next-20241125 and next-20241126
->   git repo: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-n=
-ext.git
->   git sha: ed9a4ad6e5bd3a443e81446476718abebee47e82
->   kernel config:
-> https://storage.tuxsuite.com/public/linaro/lkft/builds/2pNKzjvChfT6aOWpl=
-ZaZeQzbYCX/config
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
-That should be fixed on my branch now:
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/l=
-og/?h=3Dnetfs-writeback
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-I'm just moving the branch to v6.13-rc1 and fixing reported issues before
-asking Christian to repull it.
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
-David
+Thanks,
+Mark
 
 
