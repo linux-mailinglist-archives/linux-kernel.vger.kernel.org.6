@@ -1,155 +1,150 @@
-Return-Path: <linux-kernel+bounces-429751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73D1E9E22F8
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:30:58 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D589B9E2358
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:35:45 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39399283F31
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 15:30:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4E1A16D035
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 15:31:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 459241F7540;
-	Tue,  3 Dec 2024 15:30:52 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 994501F756A
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 15:30:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E94461F76CE;
+	Tue,  3 Dec 2024 15:30:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="PS54EpbB";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="P2746Q0s";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="PS54EpbB";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="P2746Q0s"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6D201F76C7
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 15:30:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733239851; cv=none; b=BmEMKycP2jE/oFpwPn8dpc2T/zVgBKLKcho2eQrunPEULK3GysR5PKTDmlYmFjqmeQqRd/Dlz54gZTqoU/wCl2LImUoD1OR0rqbxX2Y3A+cDoz4yJ/F4DOfGoduXT8K7BOh5c0tOh2wTw646V80H4STWA9A3ZxCi1Pt5WHzVHf0=
+	t=1733239856; cv=none; b=YP+09jUIb5aM6zRZEcNMbB/ddlJbyXQAFvBUDRxeOP7Yb69hI2EeJPcFeCgYOBBrNxT721wlsuwh02r2NDejL52iG0JYQ8ulkG0npuG0nV3DrUB+i7qJGWfJTKZI61QqjsAHE16a4h7c+fJBd4bEWrqHR26JF+9RvsN8bx7X/WU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733239851; c=relaxed/simple;
-	bh=sWHs7nX7SOc89lcoKsFsoe9Ki9Vx7/l7ucI/NQ4jw1Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mmQtg0DZEMStCw02h38Am16/5VoXiJKdJfQjAvy+u0Lv9XJbgvc+GM+913ZQgzu/2DuUp8KM14SjI45KIHrSuJZnpKXTKRUIjnX8+f4L6ry15XkJB1yII3vEDye9kZM7SHQ5Wdz6HxMAtuKliXr8OHOARNkoKd5sGTFLeH23quc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DB204FEC;
-	Tue,  3 Dec 2024 07:31:15 -0800 (PST)
-Received: from [192.168.20.16] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 26B2B3F71E;
-	Tue,  3 Dec 2024 07:30:44 -0800 (PST)
-Message-ID: <a64a21cc-6d10-4e8f-9ab9-87aca44ca858@arm.com>
-Date: Tue, 3 Dec 2024 09:30:43 -0600
+	s=arc-20240116; t=1733239856; c=relaxed/simple;
+	bh=zWQgHYpyRQa2VA+Oolvik8QyyEbMbRXlJpcJNxb0ics=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QbEL0WYUQnVbkideEk0U5oTikXMKlpWWqsrG3b0j5dJFIimFF8GgMv/y97OYCgr/t/m5tKvSeeLA1YIBEVbJPftQCvR+884bchLwc3NIGAP/zkkpRwJmV8tcpB9cnzAtSp8jCoY4uyno0jLgOT/X+hZFNitYN1VC5Aj9Imm79jM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=PS54EpbB; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=P2746Q0s; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=PS54EpbB; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=P2746Q0s; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 066B51F445;
+	Tue,  3 Dec 2024 15:30:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1733239853; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RHb8MOnWhrezL6xDBmamy+BIYbJwg/hcDSsuLIyNMKs=;
+	b=PS54EpbB3GsItM2TlmOBy9MwWXLh+ZtKNQPY9jKbgSYxnD4ODh6WKWO3wsJZyeMMcy8/8X
+	THqYM/gYTMue0PF5FRt0pJlGPtmRtJLM9II/2lz+YV9kPSpIhWmgIbiJTaLlvZSzGhjCoS
+	n4GKvQM7lOgDD/FJPPQZK1nJ40j5yjA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1733239853;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RHb8MOnWhrezL6xDBmamy+BIYbJwg/hcDSsuLIyNMKs=;
+	b=P2746Q0sIH/p8zHpc4SmyGUCWw1dQg+5ZsOLHETYVmbjcKXVxMeQxS39gv92jzbWEGeFMv
+	PUSuHL2OuzgR3IDw==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1733239853; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RHb8MOnWhrezL6xDBmamy+BIYbJwg/hcDSsuLIyNMKs=;
+	b=PS54EpbB3GsItM2TlmOBy9MwWXLh+ZtKNQPY9jKbgSYxnD4ODh6WKWO3wsJZyeMMcy8/8X
+	THqYM/gYTMue0PF5FRt0pJlGPtmRtJLM9II/2lz+YV9kPSpIhWmgIbiJTaLlvZSzGhjCoS
+	n4GKvQM7lOgDD/FJPPQZK1nJ40j5yjA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1733239853;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RHb8MOnWhrezL6xDBmamy+BIYbJwg/hcDSsuLIyNMKs=;
+	b=P2746Q0sIH/p8zHpc4SmyGUCWw1dQg+5ZsOLHETYVmbjcKXVxMeQxS39gv92jzbWEGeFMv
+	PUSuHL2OuzgR3IDw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5739913A15;
+	Tue,  3 Dec 2024 15:30:52 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id ZBpaEiwkT2ffSAAAD6G6ig
+	(envelope-from <osalvador@suse.de>); Tue, 03 Dec 2024 15:30:52 +0000
+Date: Tue, 3 Dec 2024 16:30:50 +0100
+From: Oscar Salvador <osalvador@suse.de>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	linuxppc-dev@lists.ozlabs.org,
+	Andrew Morton <akpm@linux-foundation.org>, Zi Yan <ziy@nvidia.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Naveen N Rao <naveen@kernel.org>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>
+Subject: Re: [PATCH RESEND v2 1/6] mm/page_isolation: don't pass gfp flags to
+ isolate_single_pageblock()
+Message-ID: <Z08kKtfC0F41WscX@localhost.localdomain>
+References: <20241203094732.200195-1-david@redhat.com>
+ <20241203094732.200195-2-david@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/1] arm64: rsi: Add automatic arm-cca-guest module
- loading
-To: Gavin Shan <gshan@redhat.com>, kernel test robot <lkp@intel.com>,
- linux-arm-kernel@lists.infradead.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
- steven.price@arm.com, sami.mujawar@arm.com, suzuki.poulose@arm.com,
- will@kernel.org, catalin.marinas@arm.com, linux-kernel@vger.kernel.org
-References: <20241203000156.72451-2-jeremy.linton@arm.com>
- <202412031348.bp5i3ws2-lkp@intel.com>
- <b1923d68-726a-4864-8661-54588a634d95@redhat.com>
-Content-Language: en-US
-From: Jeremy Linton <jeremy.linton@arm.com>
-In-Reply-To: <b1923d68-726a-4864-8661-54588a634d95@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241203094732.200195-2-david@redhat.com>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-8.30 / 50.00];
+	REPLY(-4.00)[];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	MISSING_XM_UA(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[vger.kernel.org,kvack.org,lists.ozlabs.org,linux-foundation.org,nvidia.com,ellerman.id.au,gmail.com,csgroup.eu,kernel.org,linux.ibm.com];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[nvidia.com:email,imap1.dmz-prg2.suse.org:helo,suse.de:email]
+X-Spam-Score: -8.30
+X-Spam-Flag: NO
 
-On 12/3/24 2:56 AM, Gavin Shan wrote:
+On Tue, Dec 03, 2024 at 10:47:27AM +0100, David Hildenbrand wrote:
+> The flags are no longer used, we can stop passing them to
+> isolate_single_pageblock().
 > 
-> 
-> On 12/3/24 4:03 PM, kernel test robot wrote:
->> Hi Jeremy,
->>
->> kernel test robot noticed the following build warnings:
->>
->> [auto build test WARNING on arm64/for-next/core]
->> [also build test WARNING on linus/master v6.13-rc1 next-20241128]
->> [cannot apply to kvmarm/next soc/for-next arm/for-next arm/fixes]
->> [If your patch is applied to the wrong git tree, kindly drop us a note.
->> And when submitting patch, we suggest to use '--base' as documented in
->> https://git-scm.com/docs/git-format-patch#_base_tree_information]
->>
->> url:    https://github.com/intel-lab-lkp/linux/commits/Jeremy-Linton/ 
->> arm64-rsi-Add-automatic-arm-cca-guest-module-loading/20241203-080347
->> base:   https://git.kernel.org/pub/scm/linux/kernel/git/arm64/ 
->> linux.git for-next/core
->> patch link:    https://lore.kernel.org/r/20241203000156.72451-2- 
->> jeremy.linton%40arm.com
->> patch subject: [PATCH v2 1/1] arm64: rsi: Add automatic arm-cca-guest 
->> module loading
->> config: arm64-randconfig-004-20241203 (https://download.01.org/0day- 
->> ci/archive/20241203/202412031348.bp5i3ws2-lkp@intel.com/config)
->> compiler: clang version 20.0.0git (https://github.com/llvm/llvm- 
->> project 592c0fe55f6d9a811028b5f3507be91458ab2713)
->> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/ 
->> archive/20241203/202412031348.bp5i3ws2-lkp@intel.com/reproduce)
->>
->> If you fix the issue in a separate patch/commit (i.e. not just a new 
->> version of
->> the same patch/commit), kindly add following tags
->> | Reported-by: kernel test robot <lkp@intel.com>
->> | Closes: https://lore.kernel.org/oe-kbuild-all/202412031348.bp5i3ws2- 
->> lkp@intel.com/
->>
->> All warnings (new ones prefixed by >>):
->>
->>>> drivers/virt/coco/arm-cca-guest/arm-cca-guest.c:224:21: warning: 
->>>> attribute declaration must precede definition [-Wignored-attributes]
->>       224 | static const struct __maybe_unused platform_device_id 
->> arm_cca_match[] = {
->>           |                     ^
->>     include/linux/compiler_attributes.h:356:56: note: expanded from 
->> macro '__maybe_unused'
->>       356 | #define __maybe_unused                  
->> __attribute__((__unused__))
->>           |                                                        ^
->>     include/linux/mod_devicetable.h:607:8: note: previous definition 
->> is here
->>       607 | struct platform_device_id {
->>           |        ^
->>>> drivers/virt/coco/arm-cca-guest/arm-cca-guest.c:224:55: warning: 
->>>> unused variable 'arm_cca_match' [-Wunused-const-variable]
->>       224 | static const struct __maybe_unused platform_device_id 
->> arm_cca_match[] = {
->>           |                                                       
->> ^~~~~~~~~~~~~
->>     2 warnings generated.
->>
->>
->> vim +224 drivers/virt/coco/arm-cca-guest/arm-cca-guest.c
->>
->>     222
->>     223    /* modalias, so userspace can autoload this module when RSI 
->> is available */
->>   > 224    static const struct __maybe_unused platform_device_id 
->> arm_cca_match[] = {
->>     225        { RSI_PDEV_NAME, 0},
->>     226        { }
->>     227    };
->>     228
->>
-> 
-> The definition may have to be something like below, to avoid the 
-> compiling warning.
-> 
-> static const struct platform_device_id __maybe_unused arm_cca_match[] = {
+> Reviewed-by: Zi Yan <ziy@nvidia.com>
+> Signed-off-by: David Hildenbrand <david@redhat.com>
 
-I should have tested this with clang rather than copy/pasting the 
-utilization from somewhere else! It looks like a number of other kernel 
-users are putting it before the '=', but its sorta annoying because it 
-seems like the kind of warning that should be suppressed globally for 
-this case (module device description in module that can be built in).
+Reviewed-by: Oscar Salvador <osalvador@suse.de>
 
 
-
->         ...
-> };
-> 
-> Thanks,
-> Gavin
-> 
-
+-- 
+Oscar Salvador
+SUSE Labs
 
