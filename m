@@ -1,81 +1,104 @@
-Return-Path: <linux-kernel+bounces-428601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428623-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8712B9E1127
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 03:14:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87A7A9E1177
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 03:49:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0BE10B22362
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 02:14:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C652282073
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 02:49:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D93C13BADF;
-	Tue,  3 Dec 2024 02:14:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A093145B14;
+	Tue,  3 Dec 2024 02:49:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EEz+fq96"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iDvPNwPH"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDCCD17555;
-	Tue,  3 Dec 2024 02:14:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D69E364AE;
+	Tue,  3 Dec 2024 02:49:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733192087; cv=none; b=eEDk7zltUWyDsKAN4rla+Z8JQX0rrN6PZR8FQVECBeBL1YTxU1M2VpJ+1pRxrU8IAY94gYfP3sYWWorxIoY/+3+iTokuOsl0EALIpkFNpyysaDKWETeh/gd+FfqCNNtVty9TpkGeJN0g1bzAlvjdL+YdobKpMSj/AY5NV5pLzsQ=
+	t=1733194167; cv=none; b=cO4AnFEOBpzXipdsxNZXkFaySnZ30lAm8rcLEKf7SVyV4ckCecxjFqR41CGIPrNP8+UtlQxSFT1nqBMZswdFB9042YXxmkySoMC0lazxxdbgO20RFxoM7ZcK0EJLUF9u+iX6X5s2xyNhUq4cozMA2CHE229z17CC7U41FsAR+14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733192087; c=relaxed/simple;
-	bh=qgAqukm3lu8OrdWEasFNywW+NrV2YcDLOcq2wJiovf4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bAT6kmduAfXX6gU2pHCsxxkp/60Uy+kB9fBHa1CB78WN+rNKQx0VdDMLrK5yUZRK5Fw5LgJCdmLTc/OHVVRekbhvj0+6JMw9OWHJni0tRuithtlMnTRazTxe+yeUwQc0gSuV8nZ1EHdyfXPuujQeRh4T36/0HK9IgKC5JqRM+EE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EEz+fq96; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D6AAC4CED1;
-	Tue,  3 Dec 2024 02:14:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733192087;
-	bh=qgAqukm3lu8OrdWEasFNywW+NrV2YcDLOcq2wJiovf4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=EEz+fq964EOVNbd6Fb3AN/6rRy6Z3kwlhZtfoi3o1bdjkvPISqDZjucCQG6lI7kZw
-	 WeQ/OQVeI/AJxxJLiw96qOvlil/atm4JGQO8sSCnGGjwKyQ4X8y3gm5A7D1FNSbf7q
-	 8nzB3RqbBKIYFTOAqjokXVRIEmGBD7vFg/vdcpiwGM+HdQQZCHL9vxwrSpEXTGcgXk
-	 6TBCoDADoaavXZOQ0b94I4noV70w6uhDJ2SA2XAMgpA2DyX4RW+hHA1JWbNK7BVQdE
-	 PIXFZMh8aasIH76K5qu5kz7nggac9eRQE9PJa7p/1I8hD9KftURBN48RVq7L+yTKUo
-	 FauxnDNC8FPNw==
-Date: Mon, 2 Dec 2024 18:14:45 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: Jason Wang <jasowang@redhat.com>
-Cc: Koichiro Den <koichiro.den@canonical.com>,
- virtualization@lists.linux.dev, mst@redhat.com, xuanzhuo@linux.alibaba.com,
- eperezma@redhat.com, andrew+netdev@lunn.ch, davem@davemloft.net,
- edumazet@google.com, pabeni@redhat.com, jiri@resnulli.us,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-Subject: Re: [PATCH net-next] virtio_net: drop netdev_tx_reset_queue() from
- virtnet_enable_queue_pair()
-Message-ID: <20241202181445.0da50076@kernel.org>
-In-Reply-To: <CACGkMEtmH9ukthh+DGCP5cJDrR=o9ML_1tF8nfS-rFa+NrijdA@mail.gmail.com>
-References: <20241130181744.3772632-1-koichiro.den@canonical.com>
-	<CACGkMEtmH9ukthh+DGCP5cJDrR=o9ML_1tF8nfS-rFa+NrijdA@mail.gmail.com>
+	s=arc-20240116; t=1733194167; c=relaxed/simple;
+	bh=GFIxusrONwQkldKNOO0nMkmdmgBy06iFX7XnlPYW2CA=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=c+GW4K536pKAzDYINlBWG3SfGkA+atrUUi8QF1eeF5GOybCyqqv6Gx23aCM7XpyOueGmi3CMlEOi6YvPER5iBCjew+DfHecG/HQBjvmxiwIP4zLQJNXwdO0LUU6cCckpC2VG/21mqTUWoDgemlzi+KFrISfYsnr+SiSQ3NGXzCw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iDvPNwPH; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733194167; x=1764730167;
+  h=from:to:cc:subject:date:message-id;
+  bh=GFIxusrONwQkldKNOO0nMkmdmgBy06iFX7XnlPYW2CA=;
+  b=iDvPNwPHwzrvsqNEgQd+Hvce3tAyEhvyCMpmcMM/D/qnV7x+x2cIGJeD
+   iNCjVKg5lE+P0Vul0iE+NUXZtDDLc2/6zJ5Kk33ilrfjwbGe2MMa0UuSW
+   2QmXriRwmHdhBJCyjuZSx3X7v/oecHGB275uUoTNFM3VeL/WY8VM4pSn8
+   rLvOwturoaR5k6ZuWWTPuqQC14lVC80JqdKmZMFGx1zRzzGHNBpW6BQRt
+   hBRJufFpIPzl2eY6AwG89TQLCBBMFYlF7lZyujAEfKs+DlAuAgWfrj75d
+   QUx9DMVx1XQvjir6GEFdcRJhb+Nm7OoGJSgNH7demHQuWtqHZouvSmxMQ
+   A==;
+X-CSE-ConnectionGUID: b4q+FFvKTVSt1uYtZhag9A==
+X-CSE-MsgGUID: q2fsNAuSQZmnqJqZUWAaKg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11274"; a="44423413"
+X-IronPort-AV: E=Sophos;i="6.12,204,1728975600"; 
+   d="scan'208";a="44423413"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Dec 2024 18:49:26 -0800
+X-CSE-ConnectionGUID: /kpo08aXRHGEOo/HE2btyQ==
+X-CSE-MsgGUID: QLEKQXMNSBeKQG2WvURcQw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,204,1728975600"; 
+   d="scan'208";a="93378911"
+Received: from qiuxu-clx.sh.intel.com ([10.239.53.109])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Dec 2024 18:49:23 -0800
+From: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
+To: Tony Luck <tony.luck@intel.com>
+Cc: Qiuxu Zhuo <qiuxu.zhuo@intel.com>,
+	Borislav Petkov <bp@alien8.de>,
+	James Morse <james.morse@arm.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Robert Richter <rric@kernel.org>,
+	Yi Lai <yi1.lai@intel.com>,
+	linux-edac@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/1] EDAC/i10nm: Add Intel Clearwater Forest server support
+Date: Tue,  3 Dec 2024 10:20:38 +0800
+Message-Id: <20241203022038.72873-1-qiuxu.zhuo@intel.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 
-On Mon, 2 Dec 2024 12:22:53 +0800 Jason Wang wrote:
-> > Fixes: c8bd1f7f3e61 ("virtio_net: add support for Byte Queue Limits")
-> > Cc: <stable@vger.kernel.org> # v6.11+
-> > Signed-off-by: Koichiro Den <koichiro.den@canonical.com>  
-> 
-> Acked-by: Jason Wang <jasowang@redhat.com>
+Clearwater Forest is the successor to Sierra Forest. Add Clearwater
+Forest CPU model ID for EDAC support.
 
-I see Tx skb flush in:
+Tested-by: Yi Lai <yi1.lai@intel.com>
+Signed-off-by: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
+---
+ drivers/edac/i10nm_base.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-virtnet_freeze() -> remove_vq_common() -> free_unused_bufs() -> virtnet_sq_free_unused_buf()
+diff --git a/drivers/edac/i10nm_base.c b/drivers/edac/i10nm_base.c
+index 51556c72a967..5e18ddbbb8a5 100644
+--- a/drivers/edac/i10nm_base.c
++++ b/drivers/edac/i10nm_base.c
+@@ -948,6 +948,7 @@ static const struct x86_cpu_id i10nm_cpuids[] = {
+ 	X86_MATCH_VFM_STEPPINGS(INTEL_GRANITERAPIDS_X,	X86_STEPPINGS(0x0, 0xf), &gnr_cfg),
+ 	X86_MATCH_VFM_STEPPINGS(INTEL_ATOM_CRESTMONT_X,	X86_STEPPINGS(0x0, 0xf), &gnr_cfg),
+ 	X86_MATCH_VFM_STEPPINGS(INTEL_ATOM_CRESTMONT,	X86_STEPPINGS(0x0, 0xf), &gnr_cfg),
++	X86_MATCH_VFM_STEPPINGS(INTEL_ATOM_DARKMONT_X,	X86_STEPPINGS(0x0, 0xf), &gnr_cfg),
+ 	{}
+ };
+ MODULE_DEVICE_TABLE(x86cpu, i10nm_cpuids);
 
-do we need to reset the BQL state in that case?
-Rule of thumb is netdev_tx_reset_queue() should follow any flush
-(IOW skb freeing not followed by netdev_tx_completed_queue()).
+base-commit: 40384c840ea1944d7c5a392e8975ed088ecf0b37
+-- 
+2.17.1
+
 
