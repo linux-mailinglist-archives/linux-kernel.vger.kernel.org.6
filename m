@@ -1,61 +1,61 @@
-Return-Path: <linux-kernel+bounces-430117-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B6019E2CA1
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 21:04:39 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72C85164F1D
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 20:04:31 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05A5220D4E2;
-	Tue,  3 Dec 2024 20:00:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="kmCIJATe"
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BEAD9E2C9B
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 21:03:07 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A075D20C00F;
-	Tue,  3 Dec 2024 20:00:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D58B6287486
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 20:03:05 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5D6520B7FD;
+	Tue,  3 Dec 2024 20:00:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="cbBmXjvE"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D8AD20ADCC;
+	Tue,  3 Dec 2024 20:00:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733256047; cv=none; b=Yk5qMmGdL1DC6VVM+uloBTs1cRNA/6ijFoE4fo8c+a2QTaap0ZKv2uY+DiktgLH71ieZBdfFqKhi9ZimtViSgy3GKLfxcGV215q+zN99+K+SE/Y617a/LmN0XDE9Jtb8RhBRsP8C1jwnebjD4h0jk5UFoj1Qv5KpPWASGky7Aww=
+	t=1733256043; cv=none; b=alpmboisCBC0FqVrJH4W34k0usuPBr62v4VlNrVHmiRSXEDwLAXgYfzjiv23s0OzQT6ktD+AMg/yeAMQth7BrZPDASIYBpS9cZlTpTvBHZ7RmlxgM4lOSYRaEbIa5h1k76svHC0aO980CC0SmHol+vqyCZvfeWWB70RG3QKNGlA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733256047; c=relaxed/simple;
-	bh=wpmkO7KYouUIorXZORPjHUHr4D4SGVkwMfMf6qZ59aM=;
+	s=arc-20240116; t=1733256043; c=relaxed/simple;
+	bh=/reGmiVcoFoW+iOFVg5yUIZlQjoQQ0kLTcAdMkhWZ60=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fPBZ2XtA3XR1J9h093QsnUNjsRYWx4O9dHtaB5hhzhsGkSBwWhzW+hVizBCLOAOTKlsFHIrhgLz84GtlhDlz5w274l4aDenXGUOuNg3qPRZ0VdExlHsj4yC85E0nKrprOQ7lduFbakCOkn8mracAPLKgqOCO3EVOaL3mVXscSLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=kmCIJATe; arc=none smtp.client-ip=198.47.19.245
+	 MIME-Version:Content-Type; b=erCA1b3brHW7ouU4jqBK2CzPYtblDHlNWk8QQCVHxFND7EE0C/0j3f7GFab7NVcuoqplXjS9JVZ08Sock0FAuqZaYyowpF1Hm/2Yx29oPrPjbznXKjuvc5PZ5F8adf57HfwTE6/qyjOic8YjY8WrZagVX+3IQic3IejjQz1Tkss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=cbBmXjvE; arc=none smtp.client-ip=198.47.19.246
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 4B3K08W11495079
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 4B3K08Of1663523
 	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
 	Tue, 3 Dec 2024 14:00:08 -0600
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
 	s=ti-com-17Q1; t=1733256008;
-	bh=96I7rxAMRRbMfkQkrInudpFR8oS/gJ4EZ6PrVdIxWtE=;
+	bh=jMIIPCjH7YfqmRfUtf4RCBtjYbT4tmILPs6bVaWPSXA=;
 	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=kmCIJATec9Wd9PyKZZSySCIiLtAK4jM71NLqw7OV3I99jif83tzSFubpjIa0yqDYo
-	 0Cwo7khNeEg7uNhrT6T5zwnz4J6Bjwa+ONqfmUzcfASf67FPGT9h9K9q1ND+A0xK0v
-	 2znvOuAToM5AbuP6MdNAuwyZziPXPT6HiNGSDL7E=
+	b=cbBmXjvEIsU5Zz/oVJlEDAMoTYTxi5D9I1g/zn7hrb+NKaZse5sNPb/XMfxDDDP/H
+	 DebaTnhnsUqte5BdmA7ywfv57TvY6VOdumBWiS11fJ2F5VdQgJGP/3ELFOgLXFyk6D
+	 UcOgvY/32afH6gLCDyI01ZPYDcrGsuATqWbZo8Rg=
 Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4B3K08Bv046020
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4B3K08tM035218
 	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
 	Tue, 3 Dec 2024 14:00:08 -0600
-Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE115.ent.ti.com
+Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE115.ent.ti.com
  (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 3
  Dec 2024 14:00:08 -0600
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
  Frontend Transport; Tue, 3 Dec 2024 14:00:08 -0600
 Received: from lelvsmtp6.itg.ti.com ([10.249.42.149])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4B3K02Jj122616;
-	Tue, 3 Dec 2024 14:00:07 -0600
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4B3K02Jk122616;
+	Tue, 3 Dec 2024 14:00:08 -0600
 From: Andrew Davis <afd@ti.com>
 To: Lars-Peter Clausen <lars@metafoo.de>,
         =?UTF-8?q?Nuno=20S=C3=A1?=
@@ -65,9 +65,9 @@ To: Lars-Peter Clausen <lars@metafoo.de>,
         Marek Vasut <marex@denx.de>
 CC: <patches@opensource.cirrus.com>, <linux-sound@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, Andrew Davis <afd@ti.com>
-Subject: [PATCH 15/21] ASoC: tas5720: Remove use of i2c_match_id()
-Date: Tue, 3 Dec 2024 13:59:55 -0600
-Message-ID: <20241203200001.197295-15-afd@ti.com>
+Subject: [PATCH 16/21] ASoC: tlv320adc3xxx: Remove use of i2c_match_id()
+Date: Tue, 3 Dec 2024 13:59:56 -0600
+Message-ID: <20241203200001.197295-16-afd@ti.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20241203200001.197295-1-afd@ti.com>
 References: <20241203200001.197295-1-afd@ti.com>
@@ -97,52 +97,31 @@ This helper has a couple other benefits:
 
 Signed-off-by: Andrew Davis <afd@ti.com>
 ---
- sound/soc/codecs/tas5720.c | 10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
+ sound/soc/codecs/tlv320adc3xxx.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/sound/soc/codecs/tas5720.c b/sound/soc/codecs/tas5720.c
-index 6dd6c0896efff..f0361822061fd 100644
---- a/sound/soc/codecs/tas5720.c
-+++ b/sound/soc/codecs/tas5720.c
-@@ -43,7 +43,6 @@ static const char * const tas5720_supply_names[] = {
- struct tas5720_data {
- 	struct snd_soc_component *component;
- 	struct regmap *regmap;
--	struct i2c_client *tas5720_client;
- 	enum tas572x_type devtype;
- 	struct regulator_bulk_data supplies[TAS5720_NUM_SUPPLIES];
- 	struct delayed_work fault_check_work;
-@@ -729,7 +728,6 @@ static int tas5720_probe(struct i2c_client *client)
- 	struct device *dev = &client->dev;
- 	struct tas5720_data *data;
- 	const struct regmap_config *regmap_config;
+diff --git a/sound/soc/codecs/tlv320adc3xxx.c b/sound/soc/codecs/tlv320adc3xxx.c
+index 868e8a91e05b3..1a50ff6752441 100644
+--- a/sound/soc/codecs/tlv320adc3xxx.c
++++ b/sound/soc/codecs/tlv320adc3xxx.c
+@@ -1401,7 +1401,6 @@ static int adc3xxx_i2c_probe(struct i2c_client *i2c)
+ {
+ 	struct device *dev = &i2c->dev;
+ 	struct adc3xxx *adc3xxx = NULL;
 -	const struct i2c_device_id *id;
  	int ret;
- 	int i;
  
-@@ -737,11 +735,9 @@ static int tas5720_probe(struct i2c_client *client)
- 	if (!data)
- 		return -ENOMEM;
+ 	adc3xxx = devm_kzalloc(dev, sizeof(struct adc3xxx), GFP_KERNEL);
+@@ -1466,8 +1465,7 @@ static int adc3xxx_i2c_probe(struct i2c_client *i2c)
  
--	id = i2c_match_id(tas5720_id, client);
--	data->tas5720_client = client;
--	data->devtype = id->driver_data;
-+	data->devtype = (uintptr_t)i2c_get_match_data(client);
+ 	i2c_set_clientdata(i2c, adc3xxx);
  
--	switch (id->driver_data) {
-+	switch (data->devtype) {
- 	case TAS5720:
- 		regmap_config = &tas5720_regmap_config;
- 		break;
-@@ -774,7 +770,7 @@ static int tas5720_probe(struct i2c_client *client)
+-	id = i2c_match_id(adc3xxx_i2c_id, i2c);
+-	adc3xxx->type = id->driver_data;
++	adc3xxx->type = (uintptr_t)i2c_get_match_data(i2c);
  
- 	dev_set_drvdata(dev, data);
- 
--	switch (id->driver_data) {
-+	switch (data->devtype) {
- 	case TAS5720:
- 		ret = devm_snd_soc_register_component(&client->dev,
- 					&soc_component_dev_tas5720,
+ 	/* Reset codec chip */
+ 	gpiod_set_value_cansleep(adc3xxx->rst_pin, 1);
 -- 
 2.39.2
 
