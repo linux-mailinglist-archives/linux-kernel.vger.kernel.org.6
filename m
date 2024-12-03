@@ -1,118 +1,119 @@
-Return-Path: <linux-kernel+bounces-430368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 239389E3001
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 00:43:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6650D9E3004
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 00:43:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DF826B25412
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 23:43:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B35C283525
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 23:43:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABA0120ADD3;
-	Tue,  3 Dec 2024 23:43:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95FBB20ADCA;
+	Tue,  3 Dec 2024 23:43:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="D6GHsOy8"
-Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com [209.85.217.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="MEdCVjdM"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0689208983
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 23:43:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58CCC20A5C8;
+	Tue,  3 Dec 2024 23:43:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733269388; cv=none; b=XKQe02MJcgbQihEe2Q2rei76QjZB55GkuTmQ8CLd1PiwIQjnrjrJYqOEfPCEjpYSwOrF0k4aAT8niH/0MrdjcNCroEahjgdLSZ4XijnA8hKfyFIWfLy4VommQKNBAlTOCZBhynPfLT6il0SU3s/w1+3YnuN/n3OmkvL10q1TjGo=
+	t=1733269413; cv=none; b=CYyZv/cOPjUkPqJ8VX9DjE4JpGdoW4Vd5mN2ttl9CdD+ENey9oyzCpPYmkOu5O8pYrzbGvSZSdCtfw7f1THByczD9YtCIg1l+cljaGnlXVfh8RF2TcOC887RXwKDsNFXE4GQD75RD8aELjr0WoF5FanhrmPyOvOrdxNnW8tLZAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733269388; c=relaxed/simple;
-	bh=/CZ2yNFlNF/WOHHJXMK+Nyg+piMw6SzQPGnPsKv0u+c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BmSfTL3FgEAZCSuWfl3gS1PNUOeaFBHZQyHdoMtHIZ7P25TTbX0W9viycEmHOHxGJtU9mYW4v+UN7i3+jIHVqKvWs5cwsBVGAcBN5CDozPg9BcE0qryB4KzBzVk6gyM/kUwfP1AKSUbE8Ear/TsxyuG7rfGVsbQo/ZxZF39quPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=D6GHsOy8; arc=none smtp.client-ip=209.85.217.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-vs1-f49.google.com with SMTP id ada2fe7eead31-4afa4094708so179153137.0
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 15:43:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733269385; x=1733874185; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=efxAKMGIsYtsJH1TfFadrRu53b/jP4XGduoqdQKfUDs=;
-        b=D6GHsOy8YGm1W+pxxz9XTuNI24U+7ECkrmNetaIqMTpybghBkKEp9eLPz6u7fqBR5H
-         Cc+YL05qQjSDB4MAGxv6f+Ozz6rFg71zhsTbmSFO6tRsrfVJEYHEovmc0cKncu62xByO
-         eJpXVMjtLYw0/MxeFSqFOkgft5DyY3Bd+jCFieNcRnScMoI93VAYORD3abwqUYaUBsEZ
-         kMQ8DbLKNmHsvrP+H1/NQ5PfOYUH/3SJEYn35g+JGBYhq1joOfUc+KO7T1UfieTb4ABz
-         9EeslIU+YiGq5nZq3n9JKu3bTXqdwSnU5IPdk8WpzeYxM8UyLtRJ/W6pZr4UXX21ygXM
-         IKCg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733269385; x=1733874185;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=efxAKMGIsYtsJH1TfFadrRu53b/jP4XGduoqdQKfUDs=;
-        b=Eu2aR49z5sOaA9Rr+BqBSRLEgDW5756XPWe+TOg8YMUFPmrFps5bBbTaoY65YzVqnj
-         GvpizWsnZpdj3gvtjdHDYtQh2OLVn/gjp49tn/jCiptxggYeogjdgEf5b/fxa/lqje2Y
-         6jDwzq73h8yysN3TqB5OuLzgzRlVaWsewJlSgBoCkFWBDwy2+LlOBAfV6r4WTeLg3KCB
-         BYAyZSIwpGsvZpT61CwJGbaWNpSFX5l52vIhZA4EhGg6bSF2odl8KIixbR8d90/xltaD
-         iHTLV6vVWbqtmsdSuehr1AaIH+pH6HXi3BglQRBRmgnKLuY19XCyg13JXQNSYKIH3+o8
-         AHDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWbvF9gateBr/IvUxYUALXiHFgnFATygIhAAIJBG5WGr9+Zo6hODOUGmjJiRty9meXVX2ECgXBYOuPMTPM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmFKBZscW3fRq2Z9FoApxlNiT/+HsEHYPydr6JJFDaBpFXsbo9
-	ropRWkV+43UI8IAmmgHcZ59ur3TJI07sp8mhXO+Bnd3b/tZg6hyuhvp8TROWkbDlnSxPVrfeTd4
-	f6nEXfKOEmHSsdLOPHyR3QLbbmeoLCHUpLfmB
-X-Gm-Gg: ASbGnct3fm/ipNcMN0KdzqCAR2k9+2BbWeUKu00lBm/tQzCzucA6k29GIjHsv7d35om
-	YfvWSbUWTybMIcwqrBRQB81xE+/m9bDalodirfLyPxq0yvBkyVjRl7NMGjNmq
-X-Google-Smtp-Source: AGHT+IFnoxNObCnxOJ19RTHQOfy3IS0mP97qq1D+ZXM9Cr4w6i9KeiYqycIxeXsC6V041VYgYczgtjNRhEyAzhN1RZQ=
-X-Received: by 2002:a05:6102:548e:b0:4af:ab78:f383 with SMTP id
- ada2fe7eead31-4afab78f4b5mr933855137.24.1733269384628; Tue, 03 Dec 2024
- 15:43:04 -0800 (PST)
+	s=arc-20240116; t=1733269413; c=relaxed/simple;
+	bh=LyFhfcGDDp3iiYe/wE2NO59JldwCNkV+RWAKPRQ7Li0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mXijwFVExE4AaXxbtwDG+5T38HtSHfnI6A3zbswV6qLOS3z74DI2clvSiDTwPwosn1mBYj+tL0L4QIGg8CPtHE+z9XtzMIrOFWIT16gX3Ey5GMtOSUsci5RpnAqVcU1qNOMWWhKean0HULq5hGdV2PZ4Q6usJBLLWoFPLIACetE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=MEdCVjdM; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
+	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
+	In-Reply-To:References; bh=V8QHq4a9upy6xV6oH7z/GpPKpi3TAWM6aw8hyiRiWdk=; b=ME
+	dCVjdMWyQ5j42ILX0uD8yK4dyVMMq0aU0p76M+HA8VapHjuCN0ituCjqZeFp4dUTG1eRpUD+rqR09
+	A7F8NnRQuZ70kuworHookiBvDRh81sZ00KDNBJuBZngoIw5fa3ObQGzhXBQIbbgvEJvsBl/SXdjs/
+	+WZd1Vc+6SFmowI=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tIcXx-00F95B-2j; Wed, 04 Dec 2024 00:43:13 +0100
+Date: Wed, 4 Dec 2024 00:43:13 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+Cc: Rosen Penev <rosenp@gmail.com>, netdev@vger.kernel.org,
+	Kurt Kanzenbach <kurt@linutronix.de>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Chris Snook <chris.snook@gmail.com>,
+	Marcin Wojtas <marcin.s.wojtas@gmail.com>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	Niklas =?iso-8859-1?Q?S=F6derlund?= <niklas.soderlund@ragnatech.se>,
+	Richard Cochran <richardcochran@gmail.com>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:RENESAS ETHERNET SWITCH DRIVER" <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCHv4 net-next] net: modernize ioremap in probe
+Message-ID: <09215f37-883b-4627-8f37-04a2a5ef8ae2@lunn.ch>
+References: <20241203222750.153272-1-rosenp@gmail.com>
+ <Z0-LgWETqKZe2uyV@shell.armlinux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241203005921.1119116-1-kevinloughlin@google.com>
- <20241203005921.1119116-2-kevinloughlin@google.com> <a9560e97-478d-4e03-b936-cf6f663279a4@citrix.com>
- <CAGdbjmLRA5g+Rgiq-fRbWaNqXK51+naNBi0b3goKxsN-79wpaw@mail.gmail.com>
- <bc4a4095-d8bd-4d97-a623-be35ef81aad0@zytor.com> <24b80006-dcea-4a76-b5c8-e147d9191ed2@suse.com>
- <25fa8746-3b36-4d43-86cd-37aadaacdf2e@zytor.com>
-In-Reply-To: <25fa8746-3b36-4d43-86cd-37aadaacdf2e@zytor.com>
-From: Kevin Loughlin <kevinloughlin@google.com>
-Date: Tue, 3 Dec 2024 15:42:53 -0800
-Message-ID: <CAGdbjmKwMrioAq1b1v_UhhOxU6R2xPztZ9Q3ZizC9iMA84s+ag@mail.gmail.com>
-Subject: Re: [RFC PATCH 1/2] x86, lib, xenpv: Add WBNOINVD helper functions
-To: Xin Li <xin@zytor.com>
-Cc: Juergen Gross <jgross@suse.com>, Andrew Cooper <andrew.cooper3@citrix.com>, 
-	linux-kernel@vger.kernel.org, seanjc@google.com, pbonzini@redhat.com, 
-	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
-	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
-	kvm@vger.kernel.org, thomas.lendacky@amd.com, pgonda@google.com, 
-	sidtelang@google.com, mizhang@google.com, virtualization@lists.linux.dev, 
-	xen-devel@lists.xenproject.org, bcm-kernel-feedback-list@broadcom.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Z0-LgWETqKZe2uyV@shell.armlinux.org.uk>
 
-On Tue, Dec 3, 2024 at 12:11=E2=80=AFAM Xin Li <xin@zytor.com> wrote:
->
-> On 12/2/2024 10:47 PM, Juergen Gross wrote:
-> > P.S.: As the paravirt maintainer I would have preferred to be Cc-ed in =
-the
-> >        initial patch mail.
->
-> Looks that Kevin didn't run './scripts/get_maintainer.pl'?
+> This is not equivalent. This means if ioremap() fails inside
+> devm_platform_ioremap_resource(), we end up printing a message that
+> blames the firmware, which is wrong.
+> 
+> It also changes a "resource missing, proceed anyway" situation into
+> a failure situation.
+> 
+> Please drop this change, "cleaning" this up is introducing bugs.
 
-Woops, my bad. I somehow ended up with the full maintainer list for
-patch 2/2 from the script but not this one (1/2). Apologies and thanks
-for the heads up.
+https://www.kernel.org/doc/html/latest/process/maintainer-netdev.html
+says:
 
-I saw Juergen's patch [0] ("x86/paravirt: remove the wbinvd hook") to
-remove the WBINVD hook, so I'll do the same for WBNOINVD in the next
-version (meaning I shouldn't need to update xenpv code anymore).
+  1.6.5. Using device-managed and cleanup.h constructs
 
-[0] https://lore.kernel.org/lkml/20241203071550.26487-1-jgross@suse.com/
+  Netdev remains skeptical about promises of all “auto-cleanup” APIs,
+  including even devm_ helpers, historically. They are not the
+  preferred style of implementation, merely an acceptable one.
 
-Thanks!
+  1.6.6. Clean-up patches
 
-Kevin
+  Netdev discourages patches which perform simple clean-ups, which are
+  not in the context of other work. For example:
+
+  Addressing checkpatch.pl warnings
+
+  Addressing Local variable ordering issues
+
+  Conversions to device-managed APIs (devm_ helpers)
+
+  This is because it is felt that the churn that such changes produce
+  comes at a greater cost than the value of such clean-ups.
+
+As Russell points out, you are breaking things which probably worked
+before. "If its not broken, don't fix it". These changes cost reviewer
+time trying to find what you have broken, when it would be better
+spent other places.
+
+If you have the hardware, and wont to work on the driver to add new
+features, then yes, you can do this sort of conversion, because you
+should find your own bugs via testing. If you don't have the hardware,
+please just leave it alone.
+
+	Andrew
 
