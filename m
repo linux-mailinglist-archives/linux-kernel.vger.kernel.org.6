@@ -1,138 +1,93 @@
-Return-Path: <linux-kernel+bounces-429316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E3829E1B79
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 12:58:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EABD9E1A66
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 12:10:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DE7E0B29874
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 11:09:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E79F4284FB3
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 11:10:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5D681E3789;
-	Tue,  3 Dec 2024 11:09:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F0D91E379F;
+	Tue,  3 Dec 2024 11:10:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u8ll8iTf"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eu/RPfgA"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B5E51E2306;
-	Tue,  3 Dec 2024 11:09:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAD441E2306;
+	Tue,  3 Dec 2024 11:10:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733224194; cv=none; b=CpTZdBWciP3LuoFWCBrNeifNIwL121Bpb/q5cqpG4PR5rn9vEyIR1u6tofs+KSS8XTOsSoHiW0aIYYBxGWLZIV2fOk4YsM9pldA9ggxTGT+BAOe4bhHRATbpTpTvsGylnr+UHY0GLC488H2YAzbjxAmGjMMb7d7NSiBGXVBWvlE=
+	t=1733224221; cv=none; b=PZROCV2Bx4Xdb/eIONP2fAa9/+Dz/fiC3sxsiCVmNn4NwUNt5CVkg8Ow0BPrWfKDshwmTM2JXNbPew9Bg8orR/s0ZHze8IlGqaY20yfNlFPf0YxCIF/bz5T0XjELyrt4RTuCdeJs9V6iD1+Ce+5Qu2et9c3BFqdoOXjVKR48vP4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733224194; c=relaxed/simple;
-	bh=/vLW0bP5wDLhIh1dpy97QQHaNRuSaKOu4d15CBULTl0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LYSfDdxmrFjtYBylzLsDuOQa2rrGlekubQqD0gpphuhUz5MQXHnmtGhZx97gD4v67+qGFJ3++b21PW0wX1a9Jx+r0Z8yegMm5gOjI+BCba9u3inxiF/sG0OFCtWs0+oxfwsERu7OLfDT6ImQH6v81SZTbZ7OCkpzp1Bh5ZaXfwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u8ll8iTf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C578CC4AF09;
-	Tue,  3 Dec 2024 11:09:53 +0000 (UTC)
+	s=arc-20240116; t=1733224221; c=relaxed/simple;
+	bh=qvTC4AocM4Quomex+L8jcyEBNAkqvLqThpuiWvfPR+Y=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=cf3k5qcUYAFgs30rH3BPEpqdcUd7g3PtLZR2JPfdXo6pSU61stml3Ep3yp+XJ8Yn74LuINJ+8dncDNjIbjmRKwVcvXFEbdpPBVGt/RpMjeq2Ry7/bcge0m18zAnmOJskW+y3Rw99gUnRuD02sfaZD1AQGfDHPt8QCLHWxkLIlzU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eu/RPfgA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FD82C4CECF;
+	Tue,  3 Dec 2024 11:10:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733224193;
-	bh=/vLW0bP5wDLhIh1dpy97QQHaNRuSaKOu4d15CBULTl0=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=u8ll8iTftHDeRNQDfYBF2E8yt9t+PWRxlaCE87rg2+w+CuHZF9AbB3/qUXu/sgSXL
-	 Y/ej9e5j086/BweR/iDMdasmxSqQW92dXwTCx5o3HUI3V6IqL7MsqUGBel4/9gA5Q2
-	 IimMKgNP/nEU73aVJBcHPanLzIeTaKdPLY9b0adoBirPCzZCvvgT2Ecv2obGlzaFUM
-	 5n8OT0JCWo07X7tjYCN0Ex5Cyc9v8C1rgbXzhsodXv9i15WYwRDuYC0qiffHtsgYxd
-	 OwVwd3Y+X8UIJLPvDyo+RbZTRdFjl08a4JRP4Nm35w8rQEzyWyxsfYOPsJT9squ+Ld
-	 cYKXdXL9zTb8Q==
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-53ddd4705f8so5069772e87.0;
-        Tue, 03 Dec 2024 03:09:53 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUEUehR/pQIRvEUcr5kyWUL0+LzaMA7TR6FvDu2k/2o4tGXqRDa7Eriq7Nv8SLem2tm7LCuX1Rm3uOvhIbG@vger.kernel.org, AJvYcCUgIwG4ZQQqUmUKtyyqLY2OMnq7qS7CFCGv2J0VfqgPmYbMGhspCdpghr5Mh2g94NULU5FYeXvPqXk/DWE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx92AIzJ07E+xp2WnZC8nH42jJsLxMKPTPxdBvrnHVw2vKGJdj3
-	y7qTPrjL9Q3hOVBYBl+TGdRDhdKT7lkvXO1hWwfejrd6xRV4l6zJFSlcikdqy4kVtgRXQTw99u8
-	fmSWRjSyksytEab8N/Za3PBLIxQ4=
-X-Google-Smtp-Source: AGHT+IF1sKwCv8EeMZpMTKxMELTCmYpVHvJzZlR8uT+oSgAEZ0p4zfuj9NIZQ9Uq0qgR03OboGqjVnO5KJacg48LUIQ=
-X-Received: by 2002:a05:6512:159b:b0:53d:ed29:43ac with SMTP id
- 2adb3069b0e04-53e12df00a2mr583542e87.28.1733224192324; Tue, 03 Dec 2024
- 03:09:52 -0800 (PST)
+	s=k20201202; t=1733224220;
+	bh=qvTC4AocM4Quomex+L8jcyEBNAkqvLqThpuiWvfPR+Y=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=eu/RPfgAEPXz0DosbjuPC5XahsFjkf9YnHuMzazmWKzCremlZB2wqWgvZaFDi32bn
+	 uyCKZQkE+DTGiVTZLl3mtb4xK/acgKjiaq7sHtyMIYLS2H2B9+gqrXYqHghlxrC2Yu
+	 RXO6QnsuzoA8R8YwdMcGuisXa6oUeEoZAjbGQ9L8FMSCBEYHEuHAtqSGUig6tjdXF7
+	 mQigtopbHcdQwIwg4Pk9ytzoGqoYLtG4p4iRAxRnossGizhiIacKa0fqnlNNv8othy
+	 nZFElsUagEmQCv7E6FnvJT9S1h7pJYd3vUFgLe3fyU2ErDRJDtMAzOHUUsP26dtx+Z
+	 RgA08jRPa8ssw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EDEEF3806656;
+	Tue,  3 Dec 2024 11:10:35 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241203102124.3147478-1-masahiroy@kernel.org>
-In-Reply-To: <20241203102124.3147478-1-masahiroy@kernel.org>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Tue, 3 Dec 2024 20:09:16 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQ8MKTWWzLNYDBMCcRzWGVhX-kUyFM=BwK8-maKtqZj3Q@mail.gmail.com>
-Message-ID: <CAK7LNAQ8MKTWWzLNYDBMCcRzWGVhX-kUyFM=BwK8-maKtqZj3Q@mail.gmail.com>
-Subject: Re: [PATCH 0/3] module: fixups after module namespace conversion
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Matthias Maennich <maennich@google.com>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] mctp i2c: drop check because i2c_unregister_device() is NULL
+ safe
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <173322423477.21908.12510880029615292263.git-patchwork-notify@kernel.org>
+Date: Tue, 03 Dec 2024 11:10:34 +0000
+References: <20241202082713.9719-1-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20241202082713.9719-1-wsa+renesas@sang-engineering.com>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-kernel@vger.kernel.org, jk@codeconstruct.com.au,
+ matt@codeconstruct.com.au, andrew+netdev@lunn.ch, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ netdev@vger.kernel.org
 
-Hi Linus,
+Hello:
 
+This patch was applied to netdev/net-next.git (main)
+by Paolo Abeni <pabeni@redhat.com>:
 
-I submitted this patch set to you, hoping you can merge it.
-Please let me know if you would prefer a different course.
+On Mon,  2 Dec 2024 09:27:13 +0100 you wrote:
+> No need to check the argument of i2c_unregister_device() because the
+> function itself does it.
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
+> Build tested only. Please apply to your tree.
+> 
+> [...]
 
+Here is the summary with links:
+  - mctp i2c: drop check because i2c_unregister_device() is NULL safe
+    https://git.kernel.org/netdev/net-next/c/e8e7be7d212d
 
-
-On Tue, Dec 3, 2024 at 7:21=E2=80=AFPM Masahiro Yamada <masahiroy@kernel.or=
-g> wrote:
->
->
-> [1/3]
-> Commit cdd30ebb1b9f added double-quotes to enclose the variable in the
-> semantic patch, scripts/coccinelle/misc/add_namespace.cocci.
-> Since then, 'make nsdepds' always changes the missing import to silly cod=
-e:
->    MODULE_IMPORT_NS("ns");
->
-> [2/3]
-> MODULE_IMPORT_NS("") is misleading in the context of documentation
-> about MODULE_IMPORT_NS() tags in general.
->
-> [3/3]
-> Convert DEFAULT_SYMBOL_NAMESPACE from a macro expansion to a string
-> literal. There is no good reason to keep inconsistency in the default
-> case.
->
->
->
-> Masahiro Yamada (3):
->   scripts/nsdeps: get 'make nsdeps' working again
->   doc: module: revert misconversions for MODULE_IMPORT_NS()
->   module: Convert default symbol namespace to string literal
->
->  Documentation/core-api/symbol-namespaces.rst              | 8 ++++----
->  .../translations/it_IT/core-api/symbol-namespaces.rst     | 8 ++++----
->  .../translations/zh_CN/core-api/symbol-namespaces.rst     | 8 ++++----
->  drivers/cdx/Makefile                                      | 2 +-
->  drivers/crypto/intel/iaa/Makefile                         | 2 +-
->  drivers/crypto/intel/qat/qat_common/Makefile              | 2 +-
->  drivers/dma/idxd/Makefile                                 | 2 +-
->  drivers/gpio/gpio-idio-16.c                               | 2 +-
->  drivers/hwmon/nct6775-core.c                              | 2 +-
->  drivers/i2c/busses/i2c-designware-common.c                | 2 +-
->  drivers/i2c/busses/i2c-designware-master.c                | 2 +-
->  drivers/i2c/busses/i2c-designware-slave.c                 | 2 +-
->  drivers/pwm/core.c                                        | 2 +-
->  drivers/pwm/pwm-dwc-core.c                                | 2 +-
->  drivers/pwm/pwm-lpss.c                                    | 2 +-
->  drivers/tty/serial/sc16is7xx.c                            | 2 +-
->  drivers/usb/storage/Makefile                              | 2 +-
->  include/linux/export.h                                    | 2 +-
->  scripts/coccinelle/misc/add_namespace.cocci               | 4 ++--
->  scripts/nsdeps                                            | 2 +-
->  20 files changed, 30 insertions(+), 30 deletions(-)
->
-> --
-> 2.43.0
->
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
 
---=20
-Best Regards
-Masahiro Yamada
 
