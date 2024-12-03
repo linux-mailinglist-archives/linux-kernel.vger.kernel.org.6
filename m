@@ -1,100 +1,140 @@
-Return-Path: <linux-kernel+bounces-429682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 390999E1FE5
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 15:45:37 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6653F16450F
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 14:45:32 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 726571F429C;
-	Tue,  3 Dec 2024 14:45:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="TIai6xz0"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E26C9E1FEB
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 15:47:36 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 836ED13B5B6;
-	Tue,  3 Dec 2024 14:45:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02B61287A31
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 14:47:35 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE7951F6696;
+	Tue,  3 Dec 2024 14:47:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ysTKvBey"
+Received: from mail-oo1-f52.google.com (mail-oo1-f52.google.com [209.85.161.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20E911F12E0
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 14:47:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733237129; cv=none; b=GZtwZrGSOX2DRtTvij0T6mX541guiekVFqH+g0KXHxL7Dhk5BInWQQ0izKjlR6CNosR84NJMZkFwaInBZEHeXuaKcXuxprA4e+7TA/FFlV+MBMhHdBXUn9wSHPXeRLtm0kLG+L9/gL0h3pFIvbRpC+Z7P6Qv2JYMXdaCUESVzAc=
+	t=1733237250; cv=none; b=J+FPFb/CySTTq6sSRKHTPT8NvInEHgvKUHsLGQb/WqEFPpoJHTrK1Cuknpeh6iPzPxVw7Y+cSsJHJUefH7JeGvF2CoZJuYKKKwbo4I5Yuj7PCTlp771eUGrFggfgkDLKHxc+ysPVK+/XLBndcS79dTmQU/EuZSluNMp3DsY06hs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733237129; c=relaxed/simple;
-	bh=s70dZjnxOR/Viyl1o26MHuhoRyjT/UuPusJ74A47LWY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NVmA5EiiduElLih9WITxOvCf9axDuiUHm2ouC+C0IdgcJJQyeKJkyq4ANIGveKsjjHdXybpP4L90VvOIGeQr8iOeIPXMcXoz7UmT7+nOWM/0ROF0H9zaZgyhFiWMccLJGldmMZXGAMbRorOt1jdeahesrjavRDoamarod28Px9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=TIai6xz0; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=blBteVWpp5GLG/dhaZyUrh1QEumbYVjnKpfdzoL1dHA=; b=TIai6xz0RoigsftCvxKZudV4Gs
-	xHClZ1bIABhmxUH6PW5XnL17GBgRUWxe+APZC9DoFk8GNBy/d3+1j1nUAkt7a5vSioM+kyUC/cjCK
-	+k5g4REntOz2A8+fYP2QjR0Pao182QLDCSNI7uhgQVc+a6YxQzuONmZpkTsQuqoL/VlQ=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tIU9F-00F6Hp-OL; Tue, 03 Dec 2024 15:45:09 +0100
-Date: Tue, 3 Dec 2024 15:45:09 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Dennis Ostermann <dennis.ostermann@renesas.com>
-Cc: Russell King <linux@armlinux.org.uk>,
-	"nikita.yoush" <nikita.yoush@cogentembedded.com>,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Michael Dege <michael.dege@renesas.com>,
-	Christian Mardmoeller <christian.mardmoeller@renesas.com>
-Subject: Re: [PATCH] net: phy: phy_ethtool_ksettings_set: Allow any supported
- speed
-Message-ID: <1ff52755-ef24-4e4b-a671-803db37b58fc@lunn.ch>
-References: <20241202100334.454599a7@fedora.home>
- <73ca1492-d97b-4120-b662-cc80fc787ffd@cogentembedded.com>
- <Z02He-kU6jlH-TJb@shell.armlinux.org.uk>
- <eddde51a-2e0b-48c2-9681-48a95f329f5c@cogentembedded.com>
- <Z02KoULvRqMQbxR3@shell.armlinux.org.uk>
- <c1296735-81be-4f7d-a601-bc1a3718a6a2@cogentembedded.com>
- <Z02oTJgl1Ldw8J6X@shell.armlinux.org.uk>
- <5cef26d0-b24f-48c6-a5e0-f7c9bd0cefec@cogentembedded.com>
- <Z03aPw_QgVYn8WyR@shell.armlinux.org.uk>
- <TYCPR01MB1047854DA050E52CADB04393A8E362@TYCPR01MB10478.jpnprd01.prod.outlook.com>
+	s=arc-20240116; t=1733237250; c=relaxed/simple;
+	bh=88ogFTJY+WVyaXYeQRUUQYXOcq9qFAHKf+T0txnkxSg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PqjSeGwpbk62qh9TWJ5B+EYQ/7bSBNTL5yi0EBHoG5KqEbE5ewyX8u2kanDgWMPn3XUMO0VDDSUzaEBySMs2jkMETdc/Vi8HCGEsfVKL2S+N0PHyp7fUQ+FOFyMohjP22rNFcBWqYuYeUt6YMZr4xZ+X2/eepJxaZ65tHuFnU/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ysTKvBey; arc=none smtp.client-ip=209.85.161.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-oo1-f52.google.com with SMTP id 006d021491bc7-5f1e560d973so2767140eaf.0
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 06:47:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733237247; x=1733842047; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VgM8+c6QyalF7cc/76yT7fGDgmWP/O2VdbCIDqU+xlI=;
+        b=ysTKvBeyHEc8p5/6Z6YLQ1+96Bm2m9VR7cR1H2ZGitg4eJgPD1qgk+7/hpQTKysuib
+         p2QoQxucpSqcQ/J7T2Cywp9ApM7tTEHWz7X6gRVztjjv2XZM4WEHxXtpJsAbKy24aTVD
+         drbpkY73hgW47K3Oms8bA6tYjPN8Wsdda8JLlA27crNsX/ArQu9K6WjNiha7pdQk64u7
+         jnBxAkQYOj9oBq2Ipn/0gMIQ22KtlvxwosEShUEc7zIvEWg6tyxnR1pC6Vdm+7ca3wov
+         bwOq8suUzUgmM4pMlp4A6icHyR8CKDkFgf+oqHq/p2sRNYw5Yd/COx1RKrZwXNBg9iBk
+         nCow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733237247; x=1733842047;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VgM8+c6QyalF7cc/76yT7fGDgmWP/O2VdbCIDqU+xlI=;
+        b=ZQoytPwhSHEz3ZMowH4Qeua/YyWn5uYgU9d+GRfNjc2yngoAgpCsQ5aFgr83Djs2HW
+         15y8PMYxnBVi5nhMrrY89biLE55L1VjH6+U+40ldsf6FGYm3WVJ3vFhj9cMn/4vK98/+
+         Pd7UaamANTOrgi2cIjcY3kUB3uhswE0Jr1hqrGepWWOgL5iRQDzE/bAi9rX3uWR8RTuZ
+         xwN+L6rkGFw6/lciJJc/StWr+dN3er6MGj/eLg9dXkZbRFEjbB2NaQY6JyNED1JpXKmE
+         4dG/eD0bIRdd3bN2qh2svsHIlaOXHrvQqvLQkTOPN7XqVHY9W1xLgZwIYNkzdnToy5I3
+         kHQg==
+X-Forwarded-Encrypted: i=1; AJvYcCUTT6LAH6t4E2Db87hNTsiRCupEdm/W4lLqjcx6QDrr/scmPKJ8VcDj3qu4TXmYtKWSwTEVR8mclEDtEZY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGmloK/2BVxqQFzJ7LUeP74eqbvKycddNy+xfOleWCvcMi3OQh
+	JQhEAsDhlh8SwLku+7FBCV/ZoA8dG7lkd16Wlrcx2YvreqL+mFiQuldBIK9ZO20EEE408sgCpS0
+	k7Mv+qqcJh+z5b8MY7kaGY4mBIYsR/QT0b6VNDfoaqlVVR6+91gw=
+X-Gm-Gg: ASbGnctmMX2UG+EZmSrZiqeBc5YIpEPsr0N5zyG7/xscMuaW5ML8OzXVCcNS3hkUlGb
+	W9V3as+eE/ethxlJDlqcwSeE75zI2bxyCcw==
+X-Google-Smtp-Source: AGHT+IENhzKf3J+XAqUzX24pS41sfMggDYWVmlBRkpteJm5vDK7SpgO5QphskG20CDt+MT2o+rMDEXThjllUSYU+Bt0=
+X-Received: by 2002:a05:6820:408d:b0:5eb:5eff:afbb with SMTP id
+ 006d021491bc7-5f2178caf33mr13278379eaf.1.1733237247113; Tue, 03 Dec 2024
+ 06:47:27 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <TYCPR01MB1047854DA050E52CADB04393A8E362@TYCPR01MB10478.jpnprd01.prod.outlook.com>
+References: <20241203-gs101-maintainers-v1-1-f287036dbde5@linaro.org>
+In-Reply-To: <20241203-gs101-maintainers-v1-1-f287036dbde5@linaro.org>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Tue, 3 Dec 2024 14:47:16 +0000
+Message-ID: <CADrjBPrYvz6yNdvZUmTGVAvOtP53kHBLVt6A7zCcRwK3rDg2FQ@mail.gmail.com>
+Subject: Re: [PATCH] MAINTAINERS: add myself and Tudor as reviewers for Google
+ Tensor SoC
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+	Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Dec 03, 2024 at 02:05:07PM +0000, Dennis Ostermann wrote:
-> Hi,
-> 
-> according to IEE 802.3-2022, ch. 125.2.4.3, Auto-Negotiation is optional for 2.5GBASE-T1
-> 
-> > 125.2.4.3 Auto-Negotiation, type single differential-pair media
-> > Auto-Negotiation (Clause 98) may be used by 2.5GBASE-T1 and 5GBASE-T1 devices to detect the
-> > abilities (modes of operation) supported by the device at the other end of a link segment, determine common
-> > abilities, and configure for joint operation. Auto-Negotiation is performed upon link startup through the use
-> > of half-duplex differential Manchester encoding.
-> > The use of Clause 98 Auto-Negotiation is optional for 2.5GBASE-T1 and 5GBASE-T1 PHYs
-> 
-> So, purposed change could make sense for T1 PHYs.
+Hi Andr=C3=A9 and Krzysztof,
 
-The proposed change it too liberal. We need the PHY to say it supports
-2.5GBASE-T1, not 2.5GBASE-T. We can then allow 2.5GBASE-T1 to not use
-autoneg, but 2.5GBASE-T has to use autoneg.
+On Tue, 3 Dec 2024 at 13:03, Andr=C3=A9 Draszik <andre.draszik@linaro.org> =
+wrote:
+>
+> Add myself and Tudor as reviewers for the Google Tensor SoC alongside
+> Peter.
+>
+> While at it, also add our IRC channel.
+>
+> Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+> ---
 
-	Andrew
+Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
+
+@Krzysztof could you take this via the Samsung Exynos tree?
+
+Thanks,
+
+Peter
+
+>  MAINTAINERS | 3 +++
+>  1 file changed, 3 insertions(+)
+>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index cf1d81bd04a7..2039cc57d8a7 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -9754,9 +9754,12 @@ F:       drivers/firmware/google/
+>
+>  GOOGLE TENSOR SoC SUPPORT
+>  M:     Peter Griffin <peter.griffin@linaro.org>
+> +R:     Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+> +R:     Tudor Ambarus <tudor.ambarus@linaro.org>
+>  L:     linux-arm-kernel@lists.infradead.org (moderated for non-subscribe=
+rs)
+>  L:     linux-samsung-soc@vger.kernel.org
+>  S:     Maintained
+> +C:     irc://irc.oftc.net/pixel6-kernel-dev
+>  F:     Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
+>  F:     arch/arm64/boot/dts/exynos/google/
+>  F:     drivers/clk/samsung/clk-gs101.c
+>
+> ---
+> base-commit: ed9a4ad6e5bd3a443e81446476718abebee47e82
+> change-id: 20241203-gs101-maintainers-9a24c8b220e3
+>
+> Best regards,
+> --
+> Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+>
 
