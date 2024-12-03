@@ -1,262 +1,128 @@
-Return-Path: <linux-kernel+bounces-429011-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 189E49E1825
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:47:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0402D9E18BC
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 11:04:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3780AB27702
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 08:50:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 55282B3EFD4
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:30:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79A741DB375;
-	Tue,  3 Dec 2024 08:50:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBAA41DFDAA;
+	Tue,  3 Dec 2024 09:29:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="pelGDcAb";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="uWum2Cy0";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="pelGDcAb";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="uWum2Cy0"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GtAncijK"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2CE48C11
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 08:50:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF2241DF738
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 09:29:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733215820; cv=none; b=I3GYz6V3kllPs0CNHIhtH53zhLZoNswt+JlsBnPrC1RpkhVHSDk7d4uYcnTWAq/luBorHmiOGyvF2ORFpH58jjhDxZ1cRnVJMOtjUQdDiEGGEazONj8NNlD4TXR1Nx77UXIb7R1odF3XQuliDip3iVyoMGWyKY4Cj4Ko2P40pOg=
+	t=1733218146; cv=none; b=Bxk2ptPv7P0NS4Orf/Kdkw6Hnn1l+HBWYUZgj6ANqP3D4BxmEcCnIAuqKAQVOBRW7TvWeLOUSeQOvIAfshkSFJSMJvnEcR1E0ltt5tdGzbEBItZiYKch3l708a33A7FHdcUoKLioiNNFbJeS4hLxJ4h8g4Gr/ZDwhKRH8pN++GU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733215820; c=relaxed/simple;
-	bh=tEm6NJA+SrxjqWOR6TSUmbVK/M6hMb9d8BGz9sKQfsY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=Mrp0LybTBlvstTexurRsJ6lI3UuWHMJeuf37cz8ccb7FVtAn5Tf0dO1o+5riLP03sUnUf0ctqOt6zv+wjBzJ9USqBkw0caQV/xxMnwTYSqQvJjtoICGMeDBGBiA/HhFizb7hE2C8RHXMrgk3WlI36QgoMD+YnW3O3Rw4wMMTHlQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=pelGDcAb; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=uWum2Cy0; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=pelGDcAb; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=uWum2Cy0; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	s=arc-20240116; t=1733218146; c=relaxed/simple;
+	bh=+rkj49IT5OG8C/5f/fvi9Pk1afBX4kgCKtvAzmknLy0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Gmb5ynhQTZ3amIfEeyVMaT01uPFlnwUfPnxJZpr9JLYpJKPzbmdgx5Eda88GKMP0Oc2gRdA61bnS74p9YkdrR5phAu+HD1Tn47stmWMzMlPRkT7zMS3WEefUd+A3Qaegdj5gdJxv1SEhIcAXobCQmNpYw9HJZ27VxWQaLsn+FLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GtAncijK; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733218143;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=F2f8WGdinxkKeIjuZL8rVRbdkdX4e9z6nxeN+NAj5Jo=;
+	b=GtAncijKbW4vICqCkJKpFb8c6qx9NV1qhezjN5NJ5B89v7HVcm30OWLBAsbQZOVtnO9el4
+	3/VSX3uTB7EAn6GVMLVi2W0RzaJ6QCHq7O9Z6xVjO+nCW30kKpnLpRABIDwvTqITggRZqV
+	8il/8v/krlZ1nnrArG8P/jee5EJmqNQ=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-387-EyGH7FZuNKyc-0mETd87KA-1; Tue,
+ 03 Dec 2024 04:28:58 -0500
+X-MC-Unique: EyGH7FZuNKyc-0mETd87KA-1
+X-Mimecast-MFC-AGG-ID: EyGH7FZuNKyc-0mETd87KA
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id B60D71F445;
-	Tue,  3 Dec 2024 08:50:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1733215815; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=mBT5IV89AGbz0aQsqk0A7Zq59D46Jh1euDz8NBbLLj8=;
-	b=pelGDcAb/Cs2RdjeL8ajcG9lS53We/7px13J9kBakISk2ynBPneUn6ZgzrEjNcledsz88u
-	7WUTxJAg6Rwpkw3vxGp33CT07GDJ2DeIlAZ77jvT4PNMT7Te/UvsnhEXyRIvWpLZmpI6ea
-	HG16W5Ii7ry0NMhLLOycp3goDPxOGpc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1733215815;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=mBT5IV89AGbz0aQsqk0A7Zq59D46Jh1euDz8NBbLLj8=;
-	b=uWum2Cy0J1w2DXFabttWRg83tIfc5EZjLADcXH7enVisqWJOIQ5uGEG9Y6EjDqwpbvS8Qu
-	0a3zG/wdNk90bXCg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1733215815; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=mBT5IV89AGbz0aQsqk0A7Zq59D46Jh1euDz8NBbLLj8=;
-	b=pelGDcAb/Cs2RdjeL8ajcG9lS53We/7px13J9kBakISk2ynBPneUn6ZgzrEjNcledsz88u
-	7WUTxJAg6Rwpkw3vxGp33CT07GDJ2DeIlAZ77jvT4PNMT7Te/UvsnhEXyRIvWpLZmpI6ea
-	HG16W5Ii7ry0NMhLLOycp3goDPxOGpc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1733215815;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=mBT5IV89AGbz0aQsqk0A7Zq59D46Jh1euDz8NBbLLj8=;
-	b=uWum2Cy0J1w2DXFabttWRg83tIfc5EZjLADcXH7enVisqWJOIQ5uGEG9Y6EjDqwpbvS8Qu
-	0a3zG/wdNk90bXCg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 59E62139C2;
-	Tue,  3 Dec 2024 08:50:15 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 6IGEFEfGTmdPQwAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Tue, 03 Dec 2024 08:50:15 +0000
-Message-ID: <05521cf8-0ac2-412e-873d-6e25eac5f53c@suse.de>
-Date: Tue, 3 Dec 2024 09:50:14 +0100
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9F47C19560A2;
+	Tue,  3 Dec 2024 09:28:56 +0000 (UTC)
+Received: from hydra.redhat.com (unknown [10.39.193.255])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id E05AE1955D45;
+	Tue,  3 Dec 2024 09:28:52 +0000 (UTC)
+From: Jocelyn Falempe <jfalempe@redhat.com>
+To: Jani Nikula <jani.nikula@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	intel-gfx@lists.freedesktop.org,
+	intel-xe@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Cc: Jocelyn Falempe <jfalempe@redhat.com>
+Subject: [RFC PATCH v2 0/5] drm/i915: Add drm_panic support
+Date: Tue,  3 Dec 2024 09:50:17 +0100
+Message-ID: <20241203092836.426422-1-jfalempe@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 0/6] drm/log: Introduce a new boot logger to draw the
- kmsg on the screen
-To: Jocelyn Falempe <jfalempe@redhat.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, David Airlie <airlied@gmail.com>,
- Daniel Vetter <daniel@ffwll.ch>, John Ogness <john.ogness@linutronix.de>,
- Javier Martinez Canillas <javierm@redhat.com>,
- "Guilherme G . Piccoli" <gpiccoli@igalia.com>,
- bluescreen_avenger@verizon.net, Caleb Connolly <caleb.connolly@linaro.org>,
- Petr Mladek <pmladek@suse.com>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <20241115142950.1758007-1-jfalempe@redhat.com>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <20241115142950.1758007-1-jfalempe@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_TO(0.00)[redhat.com,linux.intel.com,kernel.org,gmail.com,ffwll.ch,linutronix.de,igalia.com,verizon.net,linaro.org,suse.com,lists.freedesktop.org,vger.kernel.org];
-	RCPT_COUNT_TWELVE(0.00)[13];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com,verizon.net];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:email,suse.de:mid]
-X-Spam-Score: -4.30
-X-Spam-Flag: NO
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-Hi
+This is a first draft of drm_panic support for i915.
+
+I've tested it on the 3 intel laptops I have at my disposal.
+one Haswell with 128MB of eDRAM, one Cometlake and one Alderlake.
+
+I tested panic in both fbdev console and gnome desktop.
+
+I still have an issue with Alderlake, and it doesn't work when in gnome desktop.
+If I disable tiling on a framebuffer using DPT, then it displays some other memory location.
+As DPT is enabled only for tiled framebuffer, there might be some hardware limitations?
+I think it can be worked around by drawing the image tiled, (like what I've done on nouveau https://patchwork.freedesktop.org/series/133963/), but maybe there is another way?
+
+Best regards,
+
+v2:
+ * Add the proper abstractions to build also for Xe.
+ * Fix dim checkpatch issues.
+
+Jocelyn Falempe (5):
+  drm/i915/fbdev: Add intel_fbdev_get_vaddr()
+  drm/i915/display/i9xx: Add a disable_tiling() for i9xx planes
+  drm/i915/display: Add a disable_tiling() for skl planes
+  drm/i915/gem: Add i915_gem_object_panic_map()
+  drm/i915: Add drm_panic support
+
+ drivers/gpu/drm/i915/display/i9xx_plane.c     | 23 +++++
+ .../gpu/drm/i915/display/intel_atomic_plane.c | 85 ++++++++++++++++++-
+ drivers/gpu/drm/i915/display/intel_bo.c       | 10 +++
+ drivers/gpu/drm/i915/display/intel_bo.h       |  2 +
+ .../drm/i915/display/intel_display_types.h    |  2 +
+ drivers/gpu/drm/i915/display/intel_fb_pin.c   |  5 ++
+ drivers/gpu/drm/i915/display/intel_fb_pin.h   |  1 +
+ drivers/gpu/drm/i915/display/intel_fbdev.c    |  5 ++
+ drivers/gpu/drm/i915/display/intel_fbdev.h    |  6 ++
+ .../drm/i915/display/skl_universal_plane.c    | 20 +++++
+ drivers/gpu/drm/i915/gem/i915_gem_object.h    |  2 +
+ drivers/gpu/drm/i915/gem/i915_gem_pages.c     | 25 ++++++
+ drivers/gpu/drm/i915/i915_vma.h               |  5 ++
+ drivers/gpu/drm/xe/display/intel_bo.c         | 11 +++
+ drivers/gpu/drm/xe/display/xe_fb_pin.c        |  5 ++
+ 15 files changed, 206 insertions(+), 1 deletion(-)
 
 
-Am 15.11.24 um 14:40 schrieb Jocelyn Falempe:
-> drm_log is a simple logger that uses the drm_client API to print the kmsg boot log on the screen.
-> This is not a full replacement to fbcon, as it will only print the kmsg.
-> It will never handle user input, or a terminal because this is better done in userspace.
->
-> If you're curious on how it looks like, I've put a small demo here:
-> https://people.redhat.com/jfalempe/drm_log/drm_log_draft_boot_v2.mp4
->
-> Design decisions:
->    * It uses the drm_client API, so it should work on all drm drivers from the start.
->    * It doesn't scroll the message, that way it doesn't need to redraw the whole screen for each new message.
->      It also means it doesn't have to keep drawn messages in memory, to redraw them when scrolling.
->    * It uses the new non-blocking console API, so it should work well with PREEMPT_RT
->   
-> v2:
->   * Use vmap_local() api, with that change, I've tested it successfully on simpledrm, virtio-gpu, amdgpu, and nouveau.
->   * Stop drawing when the drm_master is taken. This avoid wasting CPU cycle if the buffer is not visible.
->   * Use deferred probe. Only do the probe the first time there is a log to draw. With this, if you boot with quiet, drm_log won't do any modeset.
->   * Add color support for the timestamp prefix, like what dmesg does.
->   * Add build dependency on  disabling the fbdev emulation, as they are both drm_client, and there is no way to choose which one gets the focus.
->
-> v3:
->   * Remove the work thread and circular buffer, and use the new write_thread() console API.
->   * Register a console for each drm driver.
->
-> v4:
->   * Can be built as a module, even if that's not really useful.
->   * Rebased on top of "drm: Introduce DRM client library" series from Thomas Zimmermann.
->   * Add a Kconfig menu to choose between drm client.
->   * Add suspend/resume callbacks.
->   * Add integer scaling support.
->   
-> v5:
->   * Build drm_log in drm_client_lib module, to avoid circular dependency.
->   * Export drm_draw symbols, so they can be used if drm_client_lib is built as module.
->   * Change scale parameter to unsigned int (Jani Nikula)
->
-> v6:
->   * Use console_stop() and console_start() in the suspend/resume callback (Petr Mladek).
->   * rebase and solve conflict with "drm/panic: Add ABGR2101010 support"
->
-> v7:
->   * Add a patch fix a build issue due to missing DRM_CLIENT_LIB, reported by kernel test bot.
->
-> v8:
->   * Rebased after drm client moved to drivers/gpu/drm/clients/
->   * Rename DRM_LOG to DRM_CLIENT_LOG (Thomas Zimmermann)
->   * Drop "Always select DRM_CLIENT_LIB", and select only if DRM_CLIENT_LOG is set
->   * Add an info message if no clients are initialized in drm_client_setup()
->
-> Jocelyn Falempe (6):
->    drm/panic: Move drawing functions to drm_draw
->    drm/log: Introduce a new boot logger to draw the kmsg on the screen
-
-I have a number of minor comments on this patch. For the rest of the series:
-
-Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
-
-
-Best regards
-Thomas
-
->    drm/log: Do not draw if drm_master is taken
->    drm/log: Color the timestamp, to improve readability
->    drm/log: Implement suspend/resume
->    drm/log: Add integer scaling support
->
->   drivers/gpu/drm/Kconfig                       |   5 +
->   drivers/gpu/drm/Makefile                      |   1 +
->   drivers/gpu/drm/clients/Kconfig               |  48 ++
->   drivers/gpu/drm/clients/Makefile              |   1 +
->   drivers/gpu/drm/clients/drm_client_internal.h |   6 +
->   drivers/gpu/drm/clients/drm_client_setup.c    |  29 +-
->   drivers/gpu/drm/clients/drm_log.c             | 420 ++++++++++++++++++
->   drivers/gpu/drm/drm_draw.c                    | 233 ++++++++++
->   drivers/gpu/drm/drm_draw.h                    |  56 +++
->   drivers/gpu/drm/drm_panic.c                   | 257 +----------
->   10 files changed, 818 insertions(+), 238 deletions(-)
->   create mode 100644 drivers/gpu/drm/clients/drm_log.c
->   create mode 100644 drivers/gpu/drm/drm_draw.c
->   create mode 100644 drivers/gpu/drm/drm_draw.h
->
->
-> base-commit: 7d2faa8dbb7055a115fe0cd6068d7090094a573d
-
+base-commit: 44cff6c5b0b17a78bc0b30372bcd816cf6dd282a
 -- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
+2.47.1
 
 
