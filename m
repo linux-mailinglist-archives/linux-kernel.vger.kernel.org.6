@@ -1,120 +1,88 @@
-Return-Path: <linux-kernel+bounces-428901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECA5C9E14CC
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 08:59:43 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DF539E15FC
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:39:08 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0309164571
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 07:59:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D45ADB24C8F
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 08:02:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8651B1CDA17;
-	Tue,  3 Dec 2024 07:57:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54C6F1E0DE9;
+	Tue,  3 Dec 2024 07:58:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Bp9cDtKY"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="AtfNY+IE"
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42D911BE251
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 07:57:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0B841E0E11;
+	Tue,  3 Dec 2024 07:58:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733212629; cv=none; b=R0Jc2IYA/h+UgjhL2BcqpVQX2jaf3l4dkoFMrZ9XJVkT0Q9bHVpU8ltTf9HoYnb0rUJovG4Rd8Yp/eDq2Db4zbEg3Ypb3/KtjZyJTM+M2jZcFrdQaxE+hKyiE5gwov0hHjS6q7+m6yVJTP6y00MxyMDLyI9QGLsdjDwsAfirglw=
+	t=1733212693; cv=none; b=PxWq8oDbqYmlIATtqk8lsetheJ+fn7+Ib1WBkLdk7cL8CCTRAzV1DD0r3HVwTlARgL2eloz6q4yNwwameQDUnlBhMSSPTPNDChSPSQhH3+yIAyz+ldTKtvBTj0R317FL/Ve+6a4XzJnD11ox1fkvQtQvqTMCBzkT4laDgg8oohI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733212629; c=relaxed/simple;
-	bh=BN9oqBHKXYcufRO+eCasqfzBY8zLc9V3aSmv0W/2EC4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UgtbKW4FsarRpH6wyRhMKc16b/LDsI56/5rndqEmbc1CrURvOHrChpJ2m+mwDoHBFvUZjQSZ68VIwiDAxda76/kUV3iyZEIwyf5r1pzITgpDnYGmRpnYCNljZRaOalf7VZIylp8diaud5Sv9FtggWLLtS/eDBiU2pw+eCtv/UPo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Bp9cDtKY; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-53de852a287so5844729e87.2
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 23:57:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1733212626; x=1733817426; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7WSM6TGpmmItz1uM+DrPz33P+iBBhPav9/6+0hNpzfY=;
-        b=Bp9cDtKYIulZYLJVsMyF4pbX80JXp7spNIRLp4Z3kZZEjnIn3jlZ0HMyVF3kMzayq2
-         wOF3k7XrBBw1vjbeOOLaTynL7BI+r352g7ZouMhhK7bn6DdBX3rsFNRC2VQuHwgkVk/O
-         USaav2g7eV97nFYkw7/gDAHYL0EKww5/Xk1Yk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733212626; x=1733817426;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7WSM6TGpmmItz1uM+DrPz33P+iBBhPav9/6+0hNpzfY=;
-        b=ALUW8WquJxInSM8w1RFd/IgrOlJskNTxHnTZ3jVXjTC8yRTsQPOUxMkK9QjrcGNEfv
-         GtVqxlFq+Ax+NkHMmAv7WHYfgtRKm19HJcFZT5xHph4EojsD2aUzP8J/S56CkEZcapVc
-         OUM0JTQ6A+g6UHA3axN08+KcGNGD7o4MNFPFIBjBk8JrhN+7Hd8JWdXo8UOCi4nsLQqa
-         hO2WFFvpRjMHedset1ZNwmGWeguh+MIZtAFkgwNd174gjQFvMg4MSQcjm7CrB6J/TTZy
-         gQUxL8/P/pS7P8vkx3Lo8ZiuUeU/twu88/SoviHyAtevARzljokGZqmgo6uR3yXDiCy+
-         V1iw==
-X-Forwarded-Encrypted: i=1; AJvYcCV6/mzsbSftt9qguCZ6QzEnLLm5GTZ90oehYfGQVusK/wk+KEs4Z8SNome5on4W0M84VQlHAxNZoPF2Oy4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3ndF4KSRfYm8Nat6/pHUucVDntII8DUvu5ucXAPU8dLqTJStE
-	gy2lw41wJkEpituzZqMi2lJ0aT2VHvcWiMXirnpbX84Ouc5rF2MnO+xoMHxv8q1ivI19090/r2Z
-	yRP3gOgjlpbHCDx6BBNJ+bzf8+llLezCOinac
-X-Gm-Gg: ASbGncsaIjbwGx/v+hcwlmansUWnps06v2AmW5RE9sifmJ2SdEpJYMbDRBg7W4bZbUE
-	s4raI0UkLKcNGhshLHH8UnEFUZmUxrp/+93zok3PC8LvgBjVSvdy+ly5suBg=
-X-Google-Smtp-Source: AGHT+IGpQFfklgML0v0C4LtaU2v74NIo4jtxn8wZdpHFLuloc5xneMzv1C9DI4bftKit5brhjQgwO+p7wVaG2CY8JIk=
-X-Received: by 2002:a05:6512:138c:b0:53d:e5f0:32bb with SMTP id
- 2adb3069b0e04-53e12a3929bmr524178e87.51.1733212626459; Mon, 02 Dec 2024
- 23:57:06 -0800 (PST)
+	s=arc-20240116; t=1733212693; c=relaxed/simple;
+	bh=h4HcZnyipoIhXRRvbKerBOWLgD0F6tgbQj7OpZYlnAk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=meMbpBPHEFaRDuQJx7tb9+dNKTajGWzCXAnjGIcybSF7xM8UGIRsf0Rw0+nuB/HzcXEb/tDCXmHXU5l+uhQWhZkATIYH5Lekb8fobUJdXU660SLq5bwV2l5NhoZ1wXYYdRe8a9spf6bp9JwOloxn2wxUZbF14SUnXUJ0Vgv6jgI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=AtfNY+IE; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=GHXWrVfiD4gfitt7A6+cck4e1YWEVGJKkcPfpxGTlm4=; b=AtfNY+IEK9koEsP1f9tSP1PTEb
+	EDO8eY0wIZAX0hyBvNZeI4owe0Z3JhjSJ88mNhttEpfQheEoZyjzy3Q6FOV7UelQWaDEIRbQjnO+H
+	ppU4FB4FcTkO8uUMGjfpn3LSUai6+NpBBp2d9Kpa3zMUh+hFTbhPUEoFOf9qKmTjYD77IkpT0uiDL
+	e35VhFjC1zbPw/CrNFRZmHSBMzlGfGI5U84qtF9iYnuIp8XHyhaVtkHaWuf+8SjvlK78A9jkFFaI7
+	7ngaAhx8pcS3NaHObJ4szIlZO4Z1hI6JgYkm0KMJFSDXmk8ll9Wl96FaRoHWoxytoPZEvy9xJUajn
+	LXoKuXHg==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1tINn8-0037dM-3C;
+	Tue, 03 Dec 2024 15:57:56 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Tue, 03 Dec 2024 15:57:54 +0800
+Date: Tue, 3 Dec 2024 15:57:54 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Lukas Wunner <lukas@wunner.de>
+Cc: Zorro Lang <zlang@redhat.com>, linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH] crypto: rsassa-pkcs1 - Copy source data for SG list
+Message-ID: <Z066Aqy3kipGicnw@gondor.apana.org.au>
+References: <20241122045106.tzhvm2wrqvttub6k@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
+ <Z0mPDA31r_LEYzNq@gondor.apana.org.au>
+ <Z0rPxCGdD7r8HFKb@wunner.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241202032035.29045-1-xiazhengqiao@huaqin.corp-partner.google.com>
- <20241202032035.29045-5-xiazhengqiao@huaqin.corp-partner.google.com>
-In-Reply-To: <20241202032035.29045-5-xiazhengqiao@huaqin.corp-partner.google.com>
-From: Chen-Yu Tsai <wenst@chromium.org>
-Date: Tue, 3 Dec 2024 15:56:55 +0800
-Message-ID: <CAGXv+5Hp030iiCXDYHYX6F1mD5WnsL=EziHPfM7Hm4kMxnhgXw@mail.gmail.com>
-Subject: Re: [PATCH v4 4/4] arm64: dts: mediatek: Modify audio codec name for pmic
-To: Zhengqiao Xia <xiazhengqiao@huaqin.corp-partner.google.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com, 
-	hsinyi@chromium.org, sean.wang@mediatek.com, dianders@google.com, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z0rPxCGdD7r8HFKb@wunner.de>
 
-On Mon, Dec 2, 2024 at 11:21=E2=80=AFAM Zhengqiao Xia
-<xiazhengqiao@huaqin.corp-partner.google.com> wrote:
+On Sat, Nov 30, 2024 at 09:41:40AM +0100, Lukas Wunner wrote:
 >
-> change `codec` in pmic (in mt8186-corsola.dtsi) to `audio-codec`
->
-> Signed-off-by: Zhengqiao Xia <xiazhengqiao@huaqin.corp-partner.google.com=
->
+> Just a heads-up, this won't work for use cases when the src buffer
+> isn't accessible by the kernel.  E.g. if the virtual address pointed to
+> by src is in TEE restricted memory which was mapped into virtual address
+> space by dma_buf_vmap():
+> 
+> https://lore.kernel.org/all/20241128150927.1377981-1-jens.wiklander@linaro.org/
 
-Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
+If it's not accessible by the kernel, why would you map into the
+kernel page table? That just makes no sense.
 
-> ---
->  arch/arm64/boot/dts/mediatek/mt8186-corsola.dtsi | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/arch/arm64/boot/dts/mediatek/mt8186-corsola.dtsi b/arch/arm6=
-4/boot/dts/mediatek/mt8186-corsola.dtsi
-> index e324e3fd347e..cebb134331fb 100644
-> --- a/arch/arm64/boot/dts/mediatek/mt8186-corsola.dtsi
-> +++ b/arch/arm64/boot/dts/mediatek/mt8186-corsola.dtsi
-> @@ -1276,7 +1276,7 @@
->                 interrupts-extended =3D <&pio 201 IRQ_TYPE_LEVEL_HIGH>;
->                 #interrupt-cells =3D <2>;
->
-> -               mt6366codec: codec {
-> +               mt6366codec: audio-codec {
->                         compatible =3D "mediatek,mt6366-sound", "mediatek=
-,mt6358-sound";
->                         Avdd-supply =3D <&mt6366_vaud28_reg>;
->                         mediatek,dmic-mode =3D <1>; /* one-wire */
-> --
-> 2.17.1
->
+Cheers,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
