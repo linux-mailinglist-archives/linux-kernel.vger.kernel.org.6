@@ -1,192 +1,109 @@
-Return-Path: <linux-kernel+bounces-430237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55E1A9E2EB7
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 23:10:25 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8458B9E2E56
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 22:44:16 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 22203B3985A
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 21:44:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 57914164415
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 21:44:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1905220125D;
-	Tue,  3 Dec 2024 21:44:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8D7720898C;
+	Tue,  3 Dec 2024 21:44:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="w0hLgnPM"
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d9QomB6g"
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B67591F75A5
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 21:44:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D41DA1AF0AA
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 21:44:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733262279; cv=none; b=YGRfJfo/KYjTWiMu+0wCN9TG04Jli21DFo0XgRCOzod0H9VhfSnnmNLMpvc4xO1GLz14tQahmq+AytlaJyZVT7Id6wTlAXtsaZrwFDTk4LBKcIiWurSIDE/RZoW+bGsqIu1nzcZ86WvIBOdIZc4WUvzbFvoYl8wm2gguppOqLnI=
+	t=1733262251; cv=none; b=Hi5CHbOXdO4OkBGDc/FvIN3WceYauf6UU878qqFL6QwWNWFITAI9UXvnrGPsuUYlYBSsY+69hzWYrLCyYxisp3r01B1q0LQ42Ql/P0X2RYh5FHID3+KPoREbwVkpdkJKLQgn2SWjef1XOoc/J19s5Nb6PCxT1MTI7jvfMLF6Knc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733262279; c=relaxed/simple;
-	bh=P3yEmkWYGA79algR4tDOhbLBkOs5sl45A0XdKdNUM3w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=n96cy+B9SKuebtyaIE5o+5WsUy+gN34cEILQbA0tnQXnR+cBtJmHRo829e8p+jur4N3NkS4V3eZmdrcpbh/tYeKKqfZsUmom/1wse6Fty1qIPDRrbFFu2kyL8B7qopWKYOiq1poPJCF8SA9N73N/anvx8XZaZQd6kNSwcb/K88Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=w0hLgnPM; arc=none smtp.client-ip=209.85.160.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-46695dd02e8so63611381cf.2
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 13:44:37 -0800 (PST)
+	s=arc-20240116; t=1733262251; c=relaxed/simple;
+	bh=M8lK+1HPlaJ9pqYHbJSSDIlCis0xxz6cf5zhCZhoRnI=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=t8omSkXlRnJFE02wohHjj25MRIqf9SlGQeqz6GtvsyCn6G12UQ5AoOilm2C9IthaaVdZWunAgSGzTDXXh7v7gDUfC4/6j7uiwpV1TG/Y+hk5fGO6S7tWK4+S4Yh0owJmkPXLrCbcJxhVeo/LhhSX1zNd8vakFDI2dkecp7OTMvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d9QomB6g; arc=none smtp.client-ip=209.85.215.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-7fbd9be84bdso4692672a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 13:44:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733262276; x=1733867076; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vm0D9iLih6NVgJOSSK56eoyE8s/0Ie0xteOxyeVsYIs=;
-        b=w0hLgnPMsycx391yugiXm+7C04OWI/TKubbjT1ialJhIZnc0aQlsFmkwGWA9ipOsDd
-         9zeXX+7i9ku3f9yhxajfRQEzkBqoQMiYafmkV9831SkT1X7H5CsTCQSpPBYY16lfqktg
-         aQbvOct1GuITGfELAM3VEApnFAcCZVLV/76xXl/NvY+jyc/j3ISncnW0VF0eFREVpbaC
-         7GdGMOHHhlMJWFGInZo1+HO0xNWmK6pdaezrnZfD/VyJN/asXxHb0xbgVDPpiVW9LmcD
-         9AOE++5CwB9dZrRK0UKwYOTiFGFPlhRK4KFqAruolC2UY/H3RY9lxN6lodeSlko3qdoE
-         ZQwQ==
+        d=gmail.com; s=20230601; t=1733262249; x=1733867049; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=ljDKfb9sr4GSKbj8U3a57Eoz3AQHjiB8wr4Im39gx8U=;
+        b=d9QomB6gLEVIyTh7UsRKqEworP+ts7kz9gJUKa8IgObEQz4Z44hLXxe/fLptVqBtxf
+         fUd9YrS5LUpjf6PTLjIUatWAVFpawCwBrhSi7rF7y9Zse67xNsem4O76ueNpgdJZCxdt
+         Vag/uFEQS7g0X96zKU934gkVGQAQ9OMCScqSTmK/I53a2doXLqvTii6tHW44LV+P6R80
+         ML65MwIsU3rJH946aAkfXWDKTTSDwN0L/UARXO2Nh5T/jOEgi97SPH2tYNgp/xdgpA4z
+         EDklkMtzdV6gScBJbj9EtwV0grogG+wQz3tq2mggEjILcPkMAVndbeZHN0Bt/+503GkI
+         L77g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733262276; x=1733867076;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vm0D9iLih6NVgJOSSK56eoyE8s/0Ie0xteOxyeVsYIs=;
-        b=MPvo/P2lcyTF7RvpDK5ckWLHH/eVqaPJebPBB/c80JuTJg6VAjH/BLb/W4gpc2XHXL
-         B5bMPjTErZoi0qdXe3F/+JE4tB4kX5JBRmwNweA7MmIVWzble9eb7ajAGKrldlNB8v3Q
-         UbFeua5Jzww0/Q2WWYpzHlCTxPceMnfljWQuaMsM5tGj37/Yap7h2fhi+nqS8K6WTNJx
-         V3cb8aGjNaqq6zgLFBPPG/tS0y1YhTD3EhRzZidsxV2I4KVi/Xso4lMl1NU3pnR4BH4u
-         c6RV8vzwWPuqQbUYzJl5i9JLDB+ohFEHl1CEUM61ddsuRAvhyo7MOzYLF+lWGSZ4m+JH
-         wF8w==
-X-Forwarded-Encrypted: i=1; AJvYcCUl39dh6X9Vfuyv4CFB2mLvt+Kjh6jB6Z/wJzd5MHKrsTNrU4QEqdlrsg61LaGq4BgexOvOEt70ZUxKEIc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0CxEps/Br5cD72WVfVBYA6Bmp3K3Jn3N9/WmskVFCopbvRT9i
-	wUEzIsyEMMy0EyOmFGTZQduHGjuFdfBYwZby79ue3HXHAr6jKf7x+oj3z+PlTSRLksgFBjN5pvm
-	80C2JWojVCSPHrtni8fPfu23+a+6jEwoYwl9HJdiO78zqnbAldQC8
-X-Gm-Gg: ASbGncv+WzMdXceGmPhyHnPkkxc1DaZu1/OherKhKDdySkI8WiSJySN+5gVowcLf1rk
-	OwO9U8oUiOeVAqwrsSZBtwv0z/ic4
-X-Google-Smtp-Source: AGHT+IElgjsMKzyb8pB6S2q5z1oqGiduDeQK5SqLnhC4d+BQTcWkNixPgmGxlQy2kLoTb/AFWhq1uk9LZWaoSMS148s=
-X-Received: by 2002:a05:6214:5183:b0:6d8:a84b:b50d with SMTP id
- 6a1803df08f44-6d8c46bd285mr28938446d6.33.1733262276441; Tue, 03 Dec 2024
- 13:44:36 -0800 (PST)
+        d=1e100.net; s=20230601; t=1733262249; x=1733867049;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ljDKfb9sr4GSKbj8U3a57Eoz3AQHjiB8wr4Im39gx8U=;
+        b=N9rwFYDM6ehJodDt4SCWPYh5duzsPNSRDyCiKhJUUwkzVq9nj+PYVXq2EnWQ/boqIJ
+         evVxOADdGTaO61OSFjuozeJIalWcb2k7swm0mE+d9orV/R4JBTPnN4nzpYS59s+X+CXo
+         g/vEccwKZ8ArfgDt3F8hfDp3LggD8G4W/Ydc57fqmqDs6Ghp65u2c3JPivf0GE2lA4X2
+         m+EAFSQmtfxRUywEickKPTFkoi9qFZ3RTZ/OLiDcpmfF9cEYI05gkkq/nT/XdLlTYl9N
+         41Y8yElNdNQyIngLAFJsFRroyAZUY035oQmGeHGZr9bVuJnTgROCEiG/aG/C8xT+B6Cy
+         ETow==
+X-Gm-Message-State: AOJu0YzZ7DGWUcyYzFc8ms4GfQZpTnm/Jm+M2zLk880Hzeg7ve0pOyL5
+	5l7Nu63xZ+evrtTmqPf3ooGh5w79s1zQ+toJiRQfGUMrK5+DqIjhbu4OHw==
+X-Gm-Gg: ASbGnctmm3T4Vdgp6Rz7H8kfAbCloM1K6PgWGnMe/oOIZ6A91oW1P9NdvycGdra1Y0+
+	ffen8Z/eeXA/E8rO6plbrxKpiG1Qhom0hy62iwdw6kAchSEr0xCftE7EB/C2yr7xGcPFxB/1HgR
+	sTRPlBImRXkKPL2PEXJpcxRqwPsSZR53+ISZ7kbenAN8va5J76bc3DwbzAmqysVtZhWi52o2uQ0
+	JeyEdqdreshzLao8rxhTTcBIYNnUh9ySPv/SdTgzzJVQF6HmhQevIaSdoJzHX9uP2V0Dmld4xZJ
+	Oof6U2Fuw98900r6KrU=
+X-Google-Smtp-Source: AGHT+IFkKVXpKdDqU1JOiYLT32y8HzR+6JWjbD0D1VlZfsvz/CBhh4C9EWoH2N5Ta4jbvXC4ggE9WA==
+X-Received: by 2002:a05:6a20:748e:b0:1e0:d380:fe61 with SMTP id adf61e73a8af0-1e165413554mr6036490637.45.1733262249004;
+        Tue, 03 Dec 2024 13:44:09 -0800 (PST)
+Received: from DESKTOP-DUKSS9G. (c-67-164-59-41.hsd1.ca.comcast.net. [67.164.59.41])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fc9c2d3e28sm10242226a12.17.2024.12.03.13.44.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Dec 2024 13:44:08 -0800 (PST)
+Message-ID: <674f7ba8.630a0220.3641c.1437@mx.google.com>
+X-Google-Original-Message-ID: <Z097peujUb-WhU8f@DESKTOP-DUKSS9G.>
+Date: Tue, 3 Dec 2024 13:44:05 -0800
+From: Vishal Moola <vishal.moola@gmail.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	linuxppc-dev@lists.ozlabs.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Oscar Salvador <osalvador@suse.de>, Zi Yan <ziy@nvidia.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Naveen N Rao <naveen@kernel.org>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>
+Subject: Re: [PATCH RESEND v2 1/6] mm/page_isolation: don't pass gfp flags to
+ isolate_single_pageblock()
+References: <20241203094732.200195-1-david@redhat.com>
+ <20241203094732.200195-2-david@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241123070127.332773-1-kanchana.p.sridhar@intel.com>
- <20241123070127.332773-10-kanchana.p.sridhar@intel.com> <CAKEwX=PmKWH4Z4Py9Jti9fcD6qCYJBBRrDF48qdmo8-i+LzzfA@mail.gmail.com>
- <SJ0PR11MB56783454B5985ACD48744772C9362@SJ0PR11MB5678.namprd11.prod.outlook.com>
- <Z066p53LoISwqkmX@gondor.apana.org.au> <SJ0PR11MB5678AAEF4F62773847E6307FC9362@SJ0PR11MB5678.namprd11.prod.outlook.com>
-In-Reply-To: <SJ0PR11MB5678AAEF4F62773847E6307FC9362@SJ0PR11MB5678.namprd11.prod.outlook.com>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Tue, 3 Dec 2024 13:44:00 -0800
-Message-ID: <CAJD7tkbui2MTkkGA6_+RDA0oZW2m3rMnUTKp1Fp6tPqp2QLgKw@mail.gmail.com>
-Subject: Re: [PATCH v4 09/10] mm: zswap: Allocate pool batching resources if
- the crypto_alg supports batching.
-To: "Sridhar, Kanchana P" <kanchana.p.sridhar@intel.com>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>, Nhat Pham <nphamcs@gmail.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, 
-	"hannes@cmpxchg.org" <hannes@cmpxchg.org>, "chengming.zhou@linux.dev" <chengming.zhou@linux.dev>, 
-	"usamaarif642@gmail.com" <usamaarif642@gmail.com>, "ryan.roberts@arm.com" <ryan.roberts@arm.com>, 
-	"ying.huang@intel.com" <ying.huang@intel.com>, "21cnbao@gmail.com" <21cnbao@gmail.com>, 
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>, 
-	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>, "davem@davemloft.net" <davem@davemloft.net>, 
-	"clabbe@baylibre.com" <clabbe@baylibre.com>, "ardb@kernel.org" <ardb@kernel.org>, 
-	"ebiggers@google.com" <ebiggers@google.com>, "surenb@google.com" <surenb@google.com>, 
-	"Accardi, Kristen C" <kristen.c.accardi@intel.com>, 
-	"Feghali, Wajdi K" <wajdi.k.feghali@intel.com>, "Gopal, Vinodh" <vinodh.gopal@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241203094732.200195-2-david@redhat.com>
 
-On Tue, Dec 3, 2024 at 1:37=E2=80=AFPM Sridhar, Kanchana P
-<kanchana.p.sridhar@intel.com> wrote:
->
->
-> > -----Original Message-----
-> > From: Herbert Xu <herbert@gondor.apana.org.au>
-> > Sent: Tuesday, December 3, 2024 12:01 AM
-> > To: Sridhar, Kanchana P <kanchana.p.sridhar@intel.com>
-> > Cc: Nhat Pham <nphamcs@gmail.com>; linux-kernel@vger.kernel.org; linux-
-> > mm@kvack.org; hannes@cmpxchg.org; yosryahmed@google.com;
-> > chengming.zhou@linux.dev; usamaarif642@gmail.com;
-> > ryan.roberts@arm.com; ying.huang@intel.com; 21cnbao@gmail.com;
-> > akpm@linux-foundation.org; linux-crypto@vger.kernel.org;
-> > davem@davemloft.net; clabbe@baylibre.com; ardb@kernel.org;
-> > ebiggers@google.com; surenb@google.com; Accardi, Kristen C
-> > <kristen.c.accardi@intel.com>; Feghali, Wajdi K <wajdi.k.feghali@intel.=
-com>;
-> > Gopal, Vinodh <vinodh.gopal@intel.com>
-> > Subject: Re: [PATCH v4 09/10] mm: zswap: Allocate pool batching resourc=
-es if
-> > the crypto_alg supports batching.
-> >
-> > On Tue, Dec 03, 2024 at 12:30:30AM +0000, Sridhar, Kanchana P wrote:
-> > >
-> > > > Why do we need this "can_batch" field? IIUC, this can be determined
-> > > > from the compressor internal fields itself, no?
-> > > >
-> > > > acomp_has_async_batching(acomp);
-> > > >
-> > > > Is this just for convenience, or is this actually an expensive thin=
-g to
-> > compute?
-> > >
-> > > Thanks for your comments. This is a good question. I tried not to imp=
-ly that
-> > > batching resources have been allocated for the cpu based only on what
-> > > acomp_has_async_batching() returns. It is possible that the cpu onlin=
-ing
-> > > code ran into an -ENOMEM error on any particular cpu. In this case, I=
- set
-> > > the pool->can_batch to "false", mainly for convenience, so that zswap
-> > > can be somewhat insulated from migration. I agree that this may not b=
-e
-> > > the best solution; and whether or not batching is enabled can be dire=
-ctly
-> > > determined just before the call to crypto_acomp_batch_compress()
-> > > based on:
-> > >
-> > > acomp_ctx->nr_reqs =3D=3D SWAP_CRYPTO_BATCH_SIZE;
-> >
-> > With ahash request chaining, the idea is to accumulate as much
-> > data as you can before you provide it to the Crypto API.  The
-> > API is responsible for dividing it up if the underlying driver
-> > is only able to handle one request at a time.
-> >
-> > So that would be the ideal model to use for compression as well.
-> > Provide as much data as you can and let the API handle the case
-> > where the data needs to be divided up.
->
-> Thanks for this suggestion! This sounds like a clean way to handle the
-> batching/sequential compress/decompress within the crypto API as long
-> as it can be contained in the crypto acompress layer.
-> If the zswap maintainers don't have any objections, I can look into the
-> feasibility of doing this.
+On Tue, Dec 03, 2024 at 10:47:27AM +0100, David Hildenbrand wrote:
+> The flags are no longer used, we can stop passing them to
+> isolate_single_pageblock().
+> 
+> Reviewed-by: Zi Yan <ziy@nvidia.com>
+> Signed-off-by: David Hildenbrand <david@redhat.com>
+> ---
 
-Does this mean that instead of zswap breaking down the folio into
-SWAP_CRYPTO_BATCH_SIZE -sized batches, we pass all the pages to the
-crypto layer and let it do the batching as it pleases?
-
-It sounds nice on the surface, but this implies that we have to
-allocate folio_nr_pages() buffers in zswap, essentially as the
-allocation is the same size as the folio itself. While the allocation
-does not need to be contiguous, making a large number of allocations
-in the reclaim path is definitely not something we want. For a 2M THP,
-we'd need to allocate 2M in zswap_store().
-
-If we choose to keep preallocating, assuming the maximum THP size is
-2M, we need to allocate 2M * nr_cpus worth of buffers. That's a lot of
-memory.
-
-I feel like I am missing something.
-
->
-> Thanks,
-> Kanchana
->
-> >
-> > Cheers,
-> > --
-> > Email: Herbert Xu <herbert@gondor.apana.org.au>
-> > Home Page: http://gondor.apana.org.au/~herbert/
-> > PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Reviewed-by: Vishal Moola (Oracle) <vishal.moola@gmail.com>
 
