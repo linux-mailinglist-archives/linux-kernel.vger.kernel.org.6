@@ -1,127 +1,102 @@
-Return-Path: <linux-kernel+bounces-429453-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429457-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B4969E1C57
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 13:40:48 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEA589E1C60
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 13:41:59 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 217152847E5
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 12:40:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C3CFB1671B8
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 12:41:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07D581EB9E0;
-	Tue,  3 Dec 2024 12:40:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yFaBUlMN"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4B501E884E;
+	Tue,  3 Dec 2024 12:41:05 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59F7D1E767C
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 12:40:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00D131E7655
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 12:41:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733229630; cv=none; b=OvHDLBKyOdKc28AP6yomssHLWft0XFR2eHe58NAD5TCsa+5dI6O2fSeAMjPSdIh6gKojeBLoBtyfHs0G+8Nbhe8OeXcFeJ/vklXMxO/eO1vezp2zq6vP6S2EUrm1gX1wLS01zlF3FwKcFHXxAHKj7sn7Fn3TfrrbLl5p2C66RmQ=
+	t=1733229665; cv=none; b=e6HoCQHE49YP3cTkCmEIbu87uWqX/JdFz7iPrrPjU0p2YOnkDEp2S5Dqb1gm6cX/uGNvUDaG65appYbC9GGUZNztu3+EwG+Wo7bPP4j7GrqWEk/nLG0KG779ecdxqf9LSxHPUiv4jLmJpQ4ns4spDLU3P8D6fdaszaYIjj1asf8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733229630; c=relaxed/simple;
-	bh=wuW9dlmQHK3i/Jcfb0eJR/IK57A7oEJMFzUPWXw07Qg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=gyw2dvaj5BQ9lSF+N8Mt8Nzz0+JP8aSILPZGBRuRcpwkd4j2NLmf2u/5dfs6AegzClp9vN8BT7mzHofgE18eETExqFQNl7fnl3YaVrMLhMwSXf0AqHairdDexPWFRmLe2lSpWb9oDkyNuWhlVgjmQHIL37Yn0js+FqxW9t9Qz8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yFaBUlMN; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5d0b922a637so5287105a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 04:40:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733229626; x=1733834426; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=sFCCGNoly/ihHw+f0V0Z4F6JNgdV9f0RgxXs1v/pmwo=;
-        b=yFaBUlMNnZAAoJ7AVCC17HlfrbiVEJSN4sYdHxbO5CkloLRsoAgm5cD4RrEG5wFuWH
-         LjsNolr7AiFOX01F1+/vyUtKayG4+eYeA9nr78j5xNb94SaNahNWyNi7Hdw5pD1TmTu0
-         q17eTpcj/Yc2EeK2G5b/QJdsGmjXpND3H3rheMy0YN2bKUHNrbCCRarKmBPr8ltJR0q9
-         V1za+CemA03lO0wnTvOa/N5awDnvHFhJIdnZshU1GykHbtRLjHT0VtvkLrOYGJaUvY69
-         e1F8SNtk1tDwrsMW5/hUOpmsuOVlWWOmoZh0PuMQr5ntLvkP2CyMnVp2ZntjD9fSold1
-         LOTw==
+	s=arc-20240116; t=1733229665; c=relaxed/simple;
+	bh=Zmr8/cfdoFR6s598ZNBNEHPHMSZYSotA4MpdGs++SxU=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=uj9zROC/HvcWy112AXmSOz6BCigpMQUbxB5wPEJrS56ZjG4QuMXmJyUsnVf/u72FejB4WAJXO3CDG9kQqGVSOBdpA0j1fOkee+hwquNlmQLIsV2HnbsmWNMAlnUfmWjWtY/82O+IMXx1xMUqgJp4rdHRyzaGBIjUP5fPpNpzKmA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-83e5dd390bfso483251039f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 04:41:03 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733229626; x=1733834426;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sFCCGNoly/ihHw+f0V0Z4F6JNgdV9f0RgxXs1v/pmwo=;
-        b=IcgIIBZ9NXWRI8cDoid2tlJolM1ii1/A8bkF9LRcLciTdjTGi3OmAdUOs6fwBES8/R
-         AtrJkOOSHhzdpLO3SFaILbUF/00dAM5FzY/zjOyMfLapy0GMuGNlHPEiW+C1w8MmIIY7
-         6VsrIxzIRgmgrrbUrC37FGzHY25fho/r2fs7twzoxUwbrGDGPiI3HTjoq3uwMdn7L5dk
-         iQYsjZTGGW9JVUsZwffCUrOhdyFH7iyQQ4kue/m6Z0gBewKqC3hZKBKaJYMyfVQJqRns
-         8K/1SM8sDK6RYMmfg+orTbEfnduQdNPjA56ILAwL+COzHGdEAj9i6nC7hPM6xUrub9uz
-         cOgw==
-X-Forwarded-Encrypted: i=1; AJvYcCW7zfLejuCEPf6RlDLHh0CWnRJRGlZbvvTUSxLlbJXnf4SKi73IiBODDjf7Be/v1ItUnv8xDdtSjTQE7EQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUtGCTr5Uqlm/HdbHePC/D3F+gbXK5IysCcDVQG9q0tXmZH2c2
-	P1YgAjtCpkJiE5jvSc7Zc0fd90GZLWrOzo+5jKZL3nFcdaASfJRmVS/UE9ZcgeU=
-X-Gm-Gg: ASbGncvTBw4xouL3/H1MM7XP96WaFHqaj9u7Xbvqt5BvJzkd8kgy0QMoKM19ILDptPF
-	VfM0X1zb1EGCB5nOEisOCztLUYfJVsRbYMEqwbgstcVib0Jj6OcyCboune4eTiOLW3CZpfn3+sq
-	OYWKGUEvKUzZMGOnFQhu71TMXEYJOxsCONgRbmDxD7Wa2Qr/vpjBxOesozAJZGMJV9J2YcAjlFq
-	9iV+j66rxWKiNcyU3aG3ZtOt5dAR7XnCbOLsjkKa5Drjgp9+BdFgPKe2gJbIo74vex0J5XFwZmi
-	3D0BR+4j/v1YJaaKzAL3MqqFXm5Vhc1BhQ==
-X-Google-Smtp-Source: AGHT+IHeM2tS5DyKwmkwrU7i8UC/H8zcEneFmZTgM0O6tCH1VZOWSZmfl7YcO9+J0m0pG/15uh5zHQ==
-X-Received: by 2002:a17:906:2932:b0:aa5:1ef5:261e with SMTP id a640c23a62f3a-aa5f7d4ed45mr162940566b.17.1733229626589;
-        Tue, 03 Dec 2024 04:40:26 -0800 (PST)
-Received: from puffmais.c.googlers.com (64.227.90.34.bc.googleusercontent.com. [34.90.227.64])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa5998e6a4csm616809466b.106.2024.12.03.04.40.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Dec 2024 04:40:26 -0800 (PST)
-From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Date: Tue, 03 Dec 2024 12:40:25 +0000
-Subject: [PATCH v2 2/5] arm64: dts: exynos: gs101: phy region for
- exynos5-usbdrd is larger
+        d=1e100.net; s=20230601; t=1733229663; x=1733834463;
+        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
+         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5n8YF5NvNalSwrD6x2PmWq6RsR8zybKcrW8AQOYgGns=;
+        b=Cfoh70hlPlN72JAVcdLOvzRI/IhGkwnHXw12gBmojJNbu41ekkqY0p19fxrlqo4LuQ
+         Olx53Hg5WqW3wOlMO7XOWbkoJW41Lq5Fx34jVjSprO9eUSz9HTfJXPvpBJPIj0U1jlLj
+         8Jd0I/S5C3upcOrpkn0vgpFtpQGt9iDSx/gEAQD2XzdvsdWY+AAmoGTdATeCnqcFPJyB
+         M1WMgM7jCCcvs1IpRmIB0vjvACbjAjJfLV+ybIqm6Ltq4zgmZbomxSctOkIqHcdC/fJd
+         8M800e4RCVg50UaPMEz1U7cYVI+ymR6PqGY9M89uCjxI8M2eeFFvLraCNz9nm4mRTQ5f
+         guSw==
+X-Forwarded-Encrypted: i=1; AJvYcCU/6rN37VgcV1MzM7ZtMY3pdTPefccUAEnaQechgve7wlBhzHKU2r8T72sT/8iCCq33fw63sdmDTSGLFl8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPxvPap05anm3q9TO8Dak8SDs3hF0b4bwJN1Zwkk+r83niocj1
+	E8b9dIevcF/NPC7PU2XtEqMqIwfL5cCoFWxVHH9Nv0rPEUrTW9qUNROCGrcKCvnWnJvdXFFvvlC
+	6Otx+9FmPtD2MZwqIes8sNHW38n34L293nEfHpY4j/sW9aGTDvw9EqOg=
+X-Google-Smtp-Source: AGHT+IGQTDrVeBuhOpmkfXsjwxhSwb5WK3jaq663KbPnJdDeKO/I/swTqMrthl+HrUsn0b0GArxBQiLEJVYwhgP9nkiNN66DeZa6
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20241203-gs101-phy-lanes-orientation-dts-v2-2-1412783a6b01@linaro.org>
-References: <20241203-gs101-phy-lanes-orientation-dts-v2-0-1412783a6b01@linaro.org>
-In-Reply-To: <20241203-gs101-phy-lanes-orientation-dts-v2-0-1412783a6b01@linaro.org>
-To: Catalin Marinas <catalin.marinas@arm.com>, 
- Will Deacon <will@kernel.org>, Peter Griffin <peter.griffin@linaro.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
-Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, 
- Sam Protsenko <semen.protsenko@linaro.org>, 
- Will McVicker <willmcvicker@google.com>, Roy Luo <royluo@google.com>, 
- kernel-team@android.com, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
- devicetree@vger.kernel.org, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-X-Mailer: b4 0.13.0
+X-Received: by 2002:a05:6e02:218a:b0:3a7:e956:13fc with SMTP id
+ e9e14a558f8ab-3a7f9c18983mr20819735ab.5.1733229663146; Tue, 03 Dec 2024
+ 04:41:03 -0800 (PST)
+Date: Tue, 03 Dec 2024 04:41:03 -0800
+In-Reply-To: <67290b04.050a0220.2edce.14f8.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <674efc5f.050a0220.48a03.0035.GAE@google.com>
+Subject: Re: [syzbot] [udf?] possible deadlock in udf_free_blocks
+From: syzbot <syzbot+d472c32c5dd4cd2fb5c5@syzkaller.appspotmail.com>
+To: daniel.vetter@ffwll.ch, jack@suse.com, linux-kernel@vger.kernel.org, 
+	mairacanal@riseup.net, mcanal@igalia.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Turns out there are some additional registers in the phy region, update
-the DT accordingly.
+syzbot has bisected this issue to:
 
-Signed-off-by: André Draszik <andre.draszik@linaro.org>
----
- arch/arm64/boot/dts/exynos/google/gs101.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+commit 7908632f2927b65f7486ae6b67c24071666ba43f
+Author: Ma=C3=ADra Canal <mcanal@igalia.com>
+Date:   Thu Sep 14 10:19:02 2023 +0000
 
-diff --git a/arch/arm64/boot/dts/exynos/google/gs101.dtsi b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-index 302c5beb224a..18d4e7852a1a 100644
---- a/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-+++ b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-@@ -1267,7 +1267,7 @@ cmu_hsi0: clock-controller@11000000 {
- 
- 		usbdrd31_phy: phy@11100000 {
- 			compatible = "google,gs101-usb31drd-phy";
--			reg = <0x11100000 0x0100>,
-+			reg = <0x11100000 0x0200>,
- 			      <0x110f0000 0x0800>,
- 			      <0x110e0000 0x2800>;
- 			reg-names = "phy", "pcs", "pma";
+    Revert "drm/vkms: Fix race-condition between the hrtimer and the atomic=
+ commit"
 
--- 
-2.47.0.338.g60cca15819-goog
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=3D13dbe80f9800=
+00
+start commit:   cdd30ebb1b9f module: Convert symbol namespace to string li.=
+.
+git tree:       upstream
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=3D103be80f9800=
+00
+console output: https://syzkaller.appspot.com/x/log.txt?x=3D17dbe80f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3D91c852e3d1d7c1a=
+6
+dashboard link: https://syzkaller.appspot.com/bug?extid=3Dd472c32c5dd4cd2fb=
+5c5
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D117440f858000=
+0
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D1659b5e8580000
 
+Reported-by: syzbot+d472c32c5dd4cd2fb5c5@syzkaller.appspotmail.com
+Fixes: 7908632f2927 ("Revert "drm/vkms: Fix race-condition between the hrti=
+mer and the atomic commit"")
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisectio=
+n
 
