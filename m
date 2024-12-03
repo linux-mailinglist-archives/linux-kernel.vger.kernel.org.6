@@ -1,319 +1,177 @@
-Return-Path: <linux-kernel+bounces-429351-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFC8C9E1ADC
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 12:26:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79DB69E1ADF
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 12:27:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95747289AA2
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 11:26:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A49028A2D1
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 11:27:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B86F1E3DFA;
-	Tue,  3 Dec 2024 11:25:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lhLKEHeL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D16E1E3DD1;
+	Tue,  3 Dec 2024 11:26:48 +0000 (UTC)
+Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [63.216.63.40])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32CDA1E3DE6
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 11:25:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 394CB2E3EE;
+	Tue,  3 Dec 2024 11:26:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.216.63.40
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733225154; cv=none; b=kUivNked0yIIyR0AAb1ZvNv4q4El1/UYrIn+eArZjIy3MOOXtKjpjTDB6UJKfwK4gG4qFPh/pygAdx4IyG6WL1XI8+TvQkwpG/d/g7zatu47zt5HOHZ1uMI8GNHrS9vfM1gkU9xZEJoLQS1iApSnb0QIfwF/VwTrmvImxrEBSco=
+	t=1733225208; cv=none; b=gKVJjIZUnJuLhKGb4fXR2C/2xmPSztkyTnHwi3d3q9ZyXF+K2TQAS6lv0zI48ZSWNJe+wp4x+aX9FSVusoMO9FTOxLrxSVF5TxJ/r5Uu1ywAuP9nerf126OthoAanLB5oy27oHPlMn4NV3h2LeEdd0do0+8LPcTL+MxB/qg1i/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733225154; c=relaxed/simple;
-	bh=Wmax/v9arvi8VdKYEHgDhy3V72ZFevBduy0UnKJ9vaA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=OaSKynnMKAxfWT47qG7Y/OYDnWvsLjAyp1cCnxr+bTn9gmyuVsnlCKk5SgMcIP+WCAaCYaIZYYeohr3JHciCM0IbS/oG/vMfiLINyDo8W1n4rWgy19Eixngev5tpEe87EvY4NvTxy6buCp69EZPGtAdXS3ryjNQGidTyukuZQN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lhLKEHeL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 711A4C4CED6;
-	Tue,  3 Dec 2024 11:25:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733225153;
-	bh=Wmax/v9arvi8VdKYEHgDhy3V72ZFevBduy0UnKJ9vaA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=lhLKEHeLXzJSFv050LsrCJ0oGV7xCa16l1zlVUNk5VYTXCeBsiUhzV6RvxwLkDrPb
-	 u7QH0vO40Xx0pmQ+tWEE9OOruAamzOteAKnQUuvTmxdQlT8aO1hgKEnsLnZqGF+JN/
-	 /witafbsSXk4yJcJueAapkwX574N9nQwjbZ563qjA854TFM4F8aF2wNNDd1aChsMrn
-	 sOcqVgOm6TZ2Si3kdge2mXvQJw8L7wShVGIY1EEzt7pHt5kq2U5uxKasnoOPj7GK6S
-	 FyAqERPiOnShBF+kcHMZhRaaGZgbTMe/Ot1UsSzADDKSmc4KV5qttPMoCcOoySQXk1
-	 qt2sy+FLDgCjQ==
-From: Mike Rapoport <rppt@kernel.org>
-To: x86@kernel.org
-Cc: Andy Lutomirski <luto@kernel.org>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Mike Rapoport <rppt@kernel.org>,
-	Ning Sun <ning.sun@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	linux-kernel@vger.kernel.org,
-	tboot-devel@lists.sourceforge.net
-Subject: [PATCH 4/4] x86/e820: drop E820_TYPE_RESERVED_KERN and related code
-Date: Tue,  3 Dec 2024 13:25:25 +0200
-Message-ID: <20241203112525.591496-5-rppt@kernel.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241203112525.591496-1-rppt@kernel.org>
-References: <20241203112525.591496-1-rppt@kernel.org>
+	s=arc-20240116; t=1733225208; c=relaxed/simple;
+	bh=v2cCA4SkHBFossPNjsuI3dIhlyDjd2P1Q/6P1WUpY1M=;
+	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=IREnG6PUEKZVF/kRnY+uIw20aNd0ANk4tx2pWh9/No4f82kUDR7VVgRc5Ri4QmRl2rXCrdx6jFCMxOnSFru6pgmeX6H9Jy3/KmagOUj2wiJM069uoUUD/qwgnE/uiTiBD7SkqNO1ysQcH3uPI17Lt+KcNeRuklMe44cSz4K2fSM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=63.216.63.40
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
+Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4Y2ddp0qMKz8R040;
+	Tue,  3 Dec 2024 19:26:38 +0800 (CST)
+Received: from xaxapp01.zte.com.cn ([10.88.99.176])
+	by mse-fl2.zte.com.cn with SMTP id 4B3BQUho000945;
+	Tue, 3 Dec 2024 19:26:31 +0800 (+08)
+	(envelope-from xu.xin16@zte.com.cn)
+Received: from mapi (xaxapp04[null])
+	by mapi (Zmail) with MAPI id mid32;
+	Tue, 3 Dec 2024 19:26:33 +0800 (CST)
+Date: Tue, 3 Dec 2024 19:26:33 +0800 (CST)
+X-Zmail-TransId: 2afb674eeae972d-c1081
+X-Mailer: Zmail v1.0
+Message-ID: <20241203192633836RVHhkoK1Amnqjt84D4Ryd@zte.com.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+From: <xu.xin16@zte.com.cn>
+To: <david@redhat.com>, <akpm@linux-foundation.org>
+Cc: <linux-kernel@vger.kernel.org>, <wang.yaxin@zte.com.cn>,
+        <linux-mm@kvack.org>, <linux-fsdevel@vger.kernel.org>
+Subject: =?UTF-8?B?W1BBVENIIGxpbnV4LW5leHQgdjRdIGtzbTogYWRkIGtzbSBpbnZvbHZlbWVudCBpbmZvcm1hdGlvbiBmb3IgZWFjaCBwcm9jZXNz?=
+Content-Type: text/plain;
+	charset="UTF-8"
+X-MAIL:mse-fl2.zte.com.cn 4B3BQUho000945
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 674EEAEE.000/4Y2ddp0qMKz8R040
 
-From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
+From: xu xin <xu.xin16@zte.com.cn>
 
-E820_TYPE_RESERVED_KERN is a relict from the ancient history that was used
-to early reserve setup_data (see commit 28bb22379513 ("x86: move
-reserve_setup_data to setup.c")).
+In /proc/<pid>/ksm_stat, Add two extra ksm involvement items including
+KSM_mergeable and KSM_merge_any. It helps administrators to
+better know the system's KSM behavior at process level.
 
-Nowadays setup_data is anyway reserved in memblock and there is no point in
-carrying E820_TYPE_RESERVED_KERN that behaves exactly like E820_TYPE_RAM
-but only complicates the code.
+KSM_mergeable: yes/no
+	whether any VMAs of the process'mm are currently applicable to KSM.
 
-A bonus for removing E820_TYPE_RESERVED_KERN is a small but measurable
-speedup of 20 microseconds in init_mem_mappings() on a VM with 32GB or RAM.
+KSM_merge_any: yes/no
+	whether the process'mm is added by prctl() into the candidate list
+	of KSM or not, and fully enabled at process level.
 
-Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+Changelog
+=========
+v3 -> v4:
+    1. Keep the name of ksm items consistent in /proc/pid/ksm_stat.
+	   * KSM_mergeable -> ksm_mergeable
+	   * KSM_merge_any -> ksm_merge_any
+    2. Hold the read lock of mmap while calling ksm_process_mergeable()
+    Suggested-by:
+    https://lore.kernel.org/all/cec0ed06-b5d0-45aa-ad2b-eaca6dd7bacb@redhat.com/
+
+v2 -> v3:
+        Update the KSM_mergeable getting method: loop up if any vma is
+        mergeable to KSM.
+		https://lore.kernel.org/all/bc0e1cdd-2d9d-437c-8fc9-4df0e13c48c0@redhat.com/
+
+v1 -> v2:
+        replace the internal flag names with straightforward strings.
+        * MMF_VM_MERGEABLE -> KSM_mergeable
+        * MMF_VM_MERGE_ANY -> KSM_merge_any
+
+Signed-off-by: xu xin <xu.xin16@zte.com.cn>
+Cc: Wang Yaxin <wang.yaxin@zte.com.cn>
 ---
- arch/x86/include/asm/e820/api.h   |  1 -
- arch/x86/include/asm/e820/types.h |  9 -----
- arch/x86/kernel/e820.c            | 65 ++-----------------------------
- arch/x86/kernel/setup.c           |  1 -
- arch/x86/kernel/tboot.c           |  3 +-
- arch/x86/mm/init_64.c             |  8 ----
- 6 files changed, 4 insertions(+), 83 deletions(-)
+ fs/proc/base.c      | 11 +++++++++++
+ include/linux/ksm.h |  1 +
+ mm/ksm.c            | 19 +++++++++++++++++++
+ 3 files changed, 31 insertions(+)
 
-diff --git a/arch/x86/include/asm/e820/api.h b/arch/x86/include/asm/e820/api.h
-index 2e74a7f0e935..c83645d5b2a8 100644
---- a/arch/x86/include/asm/e820/api.h
-+++ b/arch/x86/include/asm/e820/api.h
-@@ -29,7 +29,6 @@ extern unsigned long e820__end_of_low_ram_pfn(void);
- extern u64  e820__memblock_alloc_reserved(u64 size, u64 align);
- extern void e820__memblock_setup(void);
- 
--extern void e820__reserve_setup_data(void);
- extern void e820__finish_early_params(void);
- extern void e820__reserve_resources(void);
- extern void e820__reserve_resources_late(void);
-diff --git a/arch/x86/include/asm/e820/types.h b/arch/x86/include/asm/e820/types.h
-index 314f75d886d0..80c4a7266629 100644
---- a/arch/x86/include/asm/e820/types.h
-+++ b/arch/x86/include/asm/e820/types.h
-@@ -35,15 +35,6 @@ enum e820_type {
- 	 * marking it with the IORES_DESC_SOFT_RESERVED designation.
- 	 */
- 	E820_TYPE_SOFT_RESERVED	= 0xefffffff,
--
--	/*
--	 * Reserved RAM used by the kernel itself if
--	 * CONFIG_INTEL_TXT=y is enabled, memory of this type
--	 * will be included in the S3 integrity calculation
--	 * and so should not include any memory that the BIOS
--	 * might alter over the S3 transition:
--	 */
--	E820_TYPE_RESERVED_KERN	= 128,
- };
- 
- /*
-diff --git a/arch/x86/kernel/e820.c b/arch/x86/kernel/e820.c
-index cb9985fd3881..625766e255be 100644
---- a/arch/x86/kernel/e820.c
-+++ b/arch/x86/kernel/e820.c
-@@ -187,8 +187,7 @@ void __init e820__range_add(u64 start, u64 size, enum e820_type type)
- static void __init e820_print_type(enum e820_type type)
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index 0edf14a9840e..a50b222a5917 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -3269,6 +3269,7 @@ static int proc_pid_ksm_stat(struct seq_file *m, struct pid_namespace *ns,
+ 				struct pid *pid, struct task_struct *task)
  {
- 	switch (type) {
--	case E820_TYPE_RAM:		/* Fall through: */
--	case E820_TYPE_RESERVED_KERN:	pr_cont("usable");			break;
-+	case E820_TYPE_RAM:		pr_cont("usable");			break;
- 	case E820_TYPE_RESERVED:	pr_cont("reserved");			break;
- 	case E820_TYPE_SOFT_RESERVED:	pr_cont("soft reserved");		break;
- 	case E820_TYPE_ACPI:		pr_cont("ACPI data");			break;
-@@ -764,7 +763,7 @@ void __init e820__register_nosave_regions(unsigned long limit_pfn)
- 
- 		pfn = PFN_DOWN(entry->addr + entry->size);
- 
--		if (entry->type != E820_TYPE_RAM && entry->type != E820_TYPE_RESERVED_KERN)
-+		if (entry->type != E820_TYPE_RAM)
- 			register_nosave_region(PFN_UP(entry->addr), pfn);
- 
- 		if (pfn >= limit_pfn)
-@@ -990,60 +989,6 @@ static int __init parse_memmap_opt(char *str)
- }
- early_param("memmap", parse_memmap_opt);
- 
--/*
-- * Reserve all entries from the bootloader's extensible data nodes list,
-- * because if present we are going to use it later on to fetch e820
-- * entries from it:
-- */
--void __init e820__reserve_setup_data(void)
--{
--	struct setup_indirect *indirect;
--	struct setup_data *data;
--	u64 pa_data, pa_next;
--	u32 len;
--
--	pa_data = boot_params.hdr.setup_data;
--	if (!pa_data)
--		return;
--
--	while (pa_data) {
--		data = early_memremap(pa_data, sizeof(*data));
--		if (!data) {
--			pr_warn("e820: failed to memremap setup_data entry\n");
--			return;
--		}
--
--		len = sizeof(*data);
--		pa_next = data->next;
--
--		e820__range_update(pa_data, sizeof(*data)+data->len, E820_TYPE_RAM, E820_TYPE_RESERVED_KERN);
--
--		if (data->type == SETUP_INDIRECT) {
--			len += data->len;
--			early_memunmap(data, sizeof(*data));
--			data = early_memremap(pa_data, len);
--			if (!data) {
--				pr_warn("e820: failed to memremap indirect setup_data\n");
--				return;
--			}
--
--			indirect = (struct setup_indirect *)data->data;
--
--			if (indirect->type != SETUP_INDIRECT)
--				e820__range_update(indirect->addr, indirect->len,
--						   E820_TYPE_RAM, E820_TYPE_RESERVED_KERN);
--		}
--
--		pa_data = pa_next;
--		early_memunmap(data, len);
--	}
--
--	e820__update_table(e820_table);
--
--	pr_info("extended physical RAM map:\n");
--	e820__print_table("reserve setup_data");
--}
--
- /*
-  * Called after parse_early_param(), after early parameters (such as mem=)
-  * have been processed, in which case we already have an E820 table filled in
-@@ -1063,7 +1008,6 @@ void __init e820__finish_early_params(void)
- static const char *__init e820_type_to_string(struct e820_entry *entry)
- {
- 	switch (entry->type) {
--	case E820_TYPE_RESERVED_KERN:	/* Fall-through: */
- 	case E820_TYPE_RAM:		return "System RAM";
- 	case E820_TYPE_ACPI:		return "ACPI Tables";
- 	case E820_TYPE_NVS:		return "ACPI Non-volatile Storage";
-@@ -1079,7 +1023,6 @@ static const char *__init e820_type_to_string(struct e820_entry *entry)
- static unsigned long __init e820_type_to_iomem_type(struct e820_entry *entry)
- {
- 	switch (entry->type) {
--	case E820_TYPE_RESERVED_KERN:	/* Fall-through: */
- 	case E820_TYPE_RAM:		return IORESOURCE_SYSTEM_RAM;
- 	case E820_TYPE_ACPI:		/* Fall-through: */
- 	case E820_TYPE_NVS:		/* Fall-through: */
-@@ -1101,7 +1044,6 @@ static unsigned long __init e820_type_to_iores_desc(struct e820_entry *entry)
- 	case E820_TYPE_PRAM:		return IORES_DESC_PERSISTENT_MEMORY_LEGACY;
- 	case E820_TYPE_RESERVED:	return IORES_DESC_RESERVED;
- 	case E820_TYPE_SOFT_RESERVED:	return IORES_DESC_SOFT_RESERVED;
--	case E820_TYPE_RESERVED_KERN:	/* Fall-through: */
- 	case E820_TYPE_RAM:		/* Fall-through: */
- 	case E820_TYPE_UNUSABLE:	/* Fall-through: */
- 	default:			return IORES_DESC_NONE;
-@@ -1124,7 +1066,6 @@ static bool __init do_mark_busy(enum e820_type type, struct resource *res)
- 	case E820_TYPE_PRAM:
- 	case E820_TYPE_PMEM:
- 		return false;
--	case E820_TYPE_RESERVED_KERN:
- 	case E820_TYPE_RAM:
- 	case E820_TYPE_ACPI:
- 	case E820_TYPE_NVS:
-@@ -1356,7 +1297,7 @@ void __init e820__memblock_setup(void)
- 		if (entry->type == E820_TYPE_SOFT_RESERVED)
- 			memblock_reserve(entry->addr, entry->size);
- 
--		if (entry->type != E820_TYPE_RAM && entry->type != E820_TYPE_RESERVED_KERN)
-+		if (entry->type != E820_TYPE_RAM)
- 			continue;
- 
- 		memblock_add(entry->addr, entry->size);
-diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
-index d4bb9a2e8f15..0700508cc454 100644
---- a/arch/x86/kernel/setup.c
-+++ b/arch/x86/kernel/setup.c
-@@ -892,7 +892,6 @@ void __init setup_arch(char **cmdline_p)
- 		setup_clear_cpu_cap(X86_FEATURE_APIC);
+ 	struct mm_struct *mm;
++	int ret = 0;
+
+ 	mm = get_task_mm(task);
+ 	if (mm) {
+@@ -3276,6 +3277,16 @@ static int proc_pid_ksm_stat(struct seq_file *m, struct pid_namespace *ns,
+ 		seq_printf(m, "ksm_zero_pages %ld\n", mm_ksm_zero_pages(mm));
+ 		seq_printf(m, "ksm_merging_pages %lu\n", mm->ksm_merging_pages);
+ 		seq_printf(m, "ksm_process_profit %ld\n", ksm_process_profit(mm));
++		seq_printf(m, "ksm_merge_any: %s\n",
++				test_bit(MMF_VM_MERGE_ANY, &mm->flags) ? "yes" : "no");
++		ret = mmap_read_lock_killable(mm);
++		if (ret) {
++			mmput(mm);
++			return ret;
++		}
++		seq_printf(m, "ksm_mergeable: %s\n",
++				ksm_process_mergeable(mm) ? "yes" : "no");
++		mmap_read_unlock(mm);
+ 		mmput(mm);
  	}
- 
--	e820__reserve_setup_data();
- 	e820__finish_early_params();
- 
- 	if (efi_enabled(EFI_BOOT))
-diff --git a/arch/x86/kernel/tboot.c b/arch/x86/kernel/tboot.c
-index 4c1bcb6053fc..46b8f1f16676 100644
---- a/arch/x86/kernel/tboot.c
-+++ b/arch/x86/kernel/tboot.c
-@@ -200,8 +200,7 @@ static int tboot_setup_sleep(void)
- 	tboot->num_mac_regions = 0;
- 
- 	for (i = 0; i < e820_table->nr_entries; i++) {
--		if ((e820_table->entries[i].type != E820_TYPE_RAM)
--		 && (e820_table->entries[i].type != E820_TYPE_RESERVED_KERN))
-+		if (e820_table->entries[i].type != E820_TYPE_RAM)
- 			continue;
- 
- 		add_mac_region(e820_table->entries[i].addr, e820_table->entries[i].size);
-diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
-index 01ea7c6df303..519aa53114fa 100644
---- a/arch/x86/mm/init_64.c
-+++ b/arch/x86/mm/init_64.c
-@@ -468,8 +468,6 @@ phys_pte_init(pte_t *pte_page, unsigned long paddr, unsigned long paddr_end,
- 			if (!after_bootmem &&
- 			    !e820__mapped_any(paddr & PAGE_MASK, paddr_next,
- 					     E820_TYPE_RAM) &&
--			    !e820__mapped_any(paddr & PAGE_MASK, paddr_next,
--					     E820_TYPE_RESERVED_KERN) &&
- 			    !e820__mapped_any(paddr & PAGE_MASK, paddr_next,
- 					     E820_TYPE_ACPI))
- 				set_pte_init(pte, __pte(0), init);
-@@ -525,8 +523,6 @@ phys_pmd_init(pmd_t *pmd_page, unsigned long paddr, unsigned long paddr_end,
- 			if (!after_bootmem &&
- 			    !e820__mapped_any(paddr & PMD_MASK, paddr_next,
- 					     E820_TYPE_RAM) &&
--			    !e820__mapped_any(paddr & PMD_MASK, paddr_next,
--					     E820_TYPE_RESERVED_KERN) &&
- 			    !e820__mapped_any(paddr & PMD_MASK, paddr_next,
- 					     E820_TYPE_ACPI))
- 				set_pmd_init(pmd, __pmd(0), init);
-@@ -614,8 +610,6 @@ phys_pud_init(pud_t *pud_page, unsigned long paddr, unsigned long paddr_end,
- 			if (!after_bootmem &&
- 			    !e820__mapped_any(paddr & PUD_MASK, paddr_next,
- 					     E820_TYPE_RAM) &&
--			    !e820__mapped_any(paddr & PUD_MASK, paddr_next,
--					     E820_TYPE_RESERVED_KERN) &&
- 			    !e820__mapped_any(paddr & PUD_MASK, paddr_next,
- 					     E820_TYPE_ACPI))
- 				set_pud_init(pud, __pud(0), init);
-@@ -703,8 +697,6 @@ phys_p4d_init(p4d_t *p4d_page, unsigned long paddr, unsigned long paddr_end,
- 			if (!after_bootmem &&
- 			    !e820__mapped_any(paddr & P4D_MASK, paddr_next,
- 					     E820_TYPE_RAM) &&
--			    !e820__mapped_any(paddr & P4D_MASK, paddr_next,
--					     E820_TYPE_RESERVED_KERN) &&
- 			    !e820__mapped_any(paddr & P4D_MASK, paddr_next,
- 					     E820_TYPE_ACPI))
- 				set_p4d_init(p4d, __p4d(0), init);
--- 
-2.45.2
 
+diff --git a/include/linux/ksm.h b/include/linux/ksm.h
+index 6a53ac4885bb..d73095b5cd96 100644
+--- a/include/linux/ksm.h
++++ b/include/linux/ksm.h
+@@ -93,6 +93,7 @@ void folio_migrate_ksm(struct folio *newfolio, struct folio *folio);
+ void collect_procs_ksm(const struct folio *folio, const struct page *page,
+ 		struct list_head *to_kill, int force_early);
+ long ksm_process_profit(struct mm_struct *);
++bool ksm_process_mergeable(struct mm_struct *mm);
+
+ #else  /* !CONFIG_KSM */
+
+diff --git a/mm/ksm.c b/mm/ksm.c
+index 7ac59cde626c..e87af149d5ee 100644
+--- a/mm/ksm.c
++++ b/mm/ksm.c
+@@ -3263,6 +3263,25 @@ static void wait_while_offlining(void)
+ #endif /* CONFIG_MEMORY_HOTREMOVE */
+
+ #ifdef CONFIG_PROC_FS
++/*
++ * The process is mergeable only if any VMA (and which) is currently
++ * applicable to KSM.
++ *
++ * The mmap lock must be held in read mode.
++ */
++bool ksm_process_mergeable(struct mm_struct *mm)
++{
++	struct vm_area_struct *vma;
++
++	mmap_assert_locked(mm);
++	VMA_ITERATOR(vmi, mm, 0);
++	for_each_vma(vmi, vma)
++		if (vma->vm_flags & VM_MERGEABLE)
++			return true;
++
++	return false;
++}
++
+ long ksm_process_profit(struct mm_struct *mm)
+ {
+ 	return (long)(mm->ksm_merging_pages + mm_ksm_zero_pages(mm)) * PAGE_SIZE -
+-- 
+2.15.2
 
