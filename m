@@ -1,81 +1,62 @@
-Return-Path: <linux-kernel+bounces-430079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98EA29E2C60
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 20:51:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 20DD39E2C64
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 20:52:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C7D9282F68
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 19:51:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8076282B5D
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 19:52:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0530205AA5;
-	Tue,  3 Dec 2024 19:51:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E405204F62;
+	Tue,  3 Dec 2024 19:51:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kdHUPFTE"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kEd3yKzO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 615FF13DDAA;
-	Tue,  3 Dec 2024 19:51:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBEB22040BB;
+	Tue,  3 Dec 2024 19:51:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733255495; cv=none; b=hrTRLyBeS3MYvmZQt9WP5G1wlsfdFO+Fn8C52h0dduGlcmtUZhtlsguIElrqxOmtX9mhxF3Zs6DvRdHtoTijnc7dAR5XAYHOu9uDP8Dglu9rxvtHgy7BqoEV0VM6dWtZM+6QbRXfFpeEaHsqy4qQHw/hY8oQ0w/rSzIKe6nwZ4M=
+	t=1733255497; cv=none; b=Mf0bHv9kDotkZhKV2yBIvLHbNqWLm2l7NchGPvp9dkXp/CS9PMBa5VALQCVM9VHvRV3rDgtButBOjW81P+Es+IGpA86pQjwNxUJPHdGQp+95GUPNYRblKurjSFSWoRN9yuMz9Yf3NLbskE9jkxMnies+RY+qFPrK/xbQMa+nIb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733255495; c=relaxed/simple;
-	bh=QrBi+Qjjq5QmYzI3/WYIsd64PH32ZpRt/mgF/DYihjE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=UQ/1r2pjStKpFnfh4CQeSjGlVwmvxvXTjwaPFZeKioTQRtESITaeS/O3sONxNlgfJlNpBdc5deyboy/L+SFSCHmnL2XZXK0Wi3LT1J+5WeQ1MrkLFRHlY8LKA5ZMNgKMr5ZbEa9ZVL3e0P0qMHpyzZ1LjXoU2hhanOJRU4WuUZg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kdHUPFTE; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-53de5ec22adso7534818e87.3;
-        Tue, 03 Dec 2024 11:51:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733255491; x=1733860291; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:subject:cc:to
-         :from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=j1tz9xwJu94HYXO75bGMc1Hev6Bo3gyDist3jGFCO6U=;
-        b=kdHUPFTE7LldBkUzZuJ4e/f23uh3ULgq7yPfVug65wOd1NZxSjxUC7sDMW8XIYGIy6
-         wwEQ+fA0QXt1uQLwlzCKb5iS4MGsSZOptkz3EzI8I464/OYPopNyS1/uLRLN9Yi58cgb
-         ciiAopbgIPYd7fNqpDDycAqDa57xgsNrF4bSK4VrItm3fQTj0YeiFBWm48bt12w+hEeX
-         cnn4M34mD92VnhHNNS41FU4PNtzIQNGcuNjrI+RXxVohhx5ofwFy4ihe5b/deXMGXxoN
-         CH8/KrR80KW80iz9fj2+e5yF3AaEVyQIJPjrTnrWkOIY4WPh1UG7LVJkLnZrhpHv9JyJ
-         1ceg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733255491; x=1733860291;
-        h=content-transfer-encoding:mime-version:message-id:subject:cc:to
-         :from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=j1tz9xwJu94HYXO75bGMc1Hev6Bo3gyDist3jGFCO6U=;
-        b=PDonCGJDljByf2X/KvfVxwqnDE2S3mSCTC1MEB7GxALH2rBMut1zgSfDO97wOBZ6aZ
-         recAjpjeuntT6iBeJuJwMCKpD3qJXBitMh42UF5JgC5SZNhEFZuSpSPCAqK5GN6he9Bi
-         Dgc1tW+JBAYplH+uAgtHao8n3sXltrY2uLOnNVY817hQ5hG+Vt+/BTmdkYVbIbBR8KYC
-         OW7ZKpnJk6TgmVHatiasr++59dyCvUDZ1/6cVoq4CX+KgQr5uMVVY4197EQ0kzvpKoqK
-         cQjCwSMqgMoS1JdQb/8/8JUTikQGbfN3Ks+y5i0K12j8wt3eSMSB2Yr7FNmBVfkxWIvc
-         0B7w==
-X-Forwarded-Encrypted: i=1; AJvYcCVk6DWA60p2lx1GJ5IBmUmqMEDXkN7nbyg6VyxoEazgXkRkbL/K57QshPajtkvcjxeAXr+Pnhs1w2OPESA=@vger.kernel.org, AJvYcCW1Nhckg18wTn+z/+Nq6otVHA3ehGg2VIVijMq376YVRy0rsXm9CZ/RCBRV52V7ZMprQQIAkwbQr+KF@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1GUeJgWO85UmS4TTFj46oSZvUfC5258UgxaatY6/JGe/3KBm+
-	AJP1ofyjDWxB4heC9vI/H/nWqN6+xAwSbrN3UKyk4SddviOp3OmBE//oqA==
-X-Gm-Gg: ASbGncuHw5sx8sAXp2XlBoT12Jw+e3+myUG7RZBEVSBWVyzERr2D9rBYV/KN4DKiN7E
-	PhrV/OFm9HHIkO8jpROEyOqQD7CDTUoa311Y+y3ISCngtEr7Amu8fN7fP2bBT4DbG6oBuKnVrpE
-	WQ3CD+/wBsCcENeikYKs4HtuxZnwoy/SUZrL7EtW9oBgycBedVvDA/VOaRa+WapvXP/hktbPWXA
-	MpW3jtjIPZVES4hUNxxc2GU7qQTH8WAYHMcwPhrdW/djQ3oEXzesFqu2qKgs6Ex
-X-Google-Smtp-Source: AGHT+IHMaOrrNi7FwkbZbHQBdyhwM7aZkDVKbAZxVHhUhz8knBqwtIHuWu3nnENcYhidTQkUa9mo6g==
-X-Received: by 2002:ac2:4c47:0:b0:539:fed8:321 with SMTP id 2adb3069b0e04-53e12a283b3mr2605148e87.51.1733255491100;
-        Tue, 03 Dec 2024 11:51:31 -0800 (PST)
-Received: from foxbook (adqz95.neoplus.adsl.tpnet.pl. [79.185.159.95])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53e1bab1146sm111994e87.123.2024.12.03.11.51.27
-        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
-        Tue, 03 Dec 2024 11:51:29 -0800 (PST)
-Date: Tue, 3 Dec 2024 20:51:23 +0100
-From: Michal Pecio <michal.pecio@gmail.com>
-To: Mathias Nyman <mathias.nyman@intel.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 0/1]  usb: xhci: Fix NULL pointer dereference on certain
- command aborts
-Message-ID: <20241203205123.05b32413@foxbook>
+	s=arc-20240116; t=1733255497; c=relaxed/simple;
+	bh=mV7LLrltgDkaVfXGQHRmcEnjN0pqK4N33xm9mgi5Lp4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZkR6nsUGtj6zCK260/FPzC2wGSZ06XmXUNgwqdr+LrhrfPbtOyWfXgrbx+0JIw2YJrDbOei6rNSK6vXyn4Z5Ye7odW+3qMGRFD5B2ZzZxl/U2LsmQYqBU0bEqsPcd72SYV25UD8H0GVfQ+UNR6DNMaAI7ZrJhyQ8AWVn1rgbvXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kEd3yKzO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1690C4CED8;
+	Tue,  3 Dec 2024 19:51:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733255497;
+	bh=mV7LLrltgDkaVfXGQHRmcEnjN0pqK4N33xm9mgi5Lp4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=kEd3yKzOnjt6LF6f8itwYdPhZXgHtKqKbpdh3EhIeEMrLyew3h4asNosGxjGNYgVh
+	 pnDjgIdWRrTAyPmHmtmTcChKK7k5Jgn6TqjWWvLWP5+aVUf0FoEJWhAzan8aRKhhrB
+	 PIpI+9aRHXIyk9wSwzU0QBU5J68CTO68EdHC6n8N4AsJFGXSJ8mUVsVhfcIhoBpvr/
+	 Rbeo6etK/CaHF3BoGi/r81xdOvk90TQDXNTelLRS8ywg5PrNbk6mV5+47i4RyavVf+
+	 dT/ZOHHKsf7aJHKO/tx2Q8gpoMXW+U3t137u1ow7PUh1wkqR3U24Rj0Uwv1XAVG2Q4
+	 XyQdG3+VaUnJg==
+Date: Tue, 3 Dec 2024 19:51:27 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: prabhakar.mahadev-lad.rj@bp.renesas.com, lars@metafoo.de,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ geert+renesas@glider.be, magnus.damm@gmail.com, mturquette@baylibre.com,
+ sboyd@kernel.org, p.zabel@pengutronix.de, linux-iio@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, Claudiu Beznea
+ <claudiu.beznea.uj@bp.renesas.com>
+Subject: Re: [PATCH 02/14] iio: adc: rzg2l_adc: Use devres helpers to
+ request pre-deasserted reset controls
+Message-ID: <20241203195127.294245f6@jic23-huawei>
+In-Reply-To: <20241203111314.2420473-3-claudiu.beznea.uj@bp.renesas.com>
+References: <20241203111314.2420473-1-claudiu.beznea.uj@bp.renesas.com>
+	<20241203111314.2420473-3-claudiu.beznea.uj@bp.renesas.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,41 +66,104 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-Hi,
+On Tue,  3 Dec 2024 13:13:02 +0200
+Claudiu <claudiu.beznea@tuxon.dev> wrote:
 
-This fixes an issue discovered by code review prompted by this crash:
-https://bugzilla.kernel.org/show_bug.cgi?id=219532
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> 
+> Starting with commit d872bed85036 ("reset: Add devres helpers to request
+> pre-deasserted reset controls"), devres helpers are available to simplify
+> the process of requesting pre-deasserted reset controls. Update the
+> rzg2l_adc driver to utilize these helpers, reducing complexity in this
+> way.
+> 
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Hi Claudia,
 
-It has not been confirmed by the reporter and doesn't agree with some
-of his own analysis, but:
+Minor comments below.
 
-1. it is consistent with logs provided by the reporter
-2. it looks like a real bug in its own right anyway
-3. it is rare enough that it may not happen again soon
+Thanks
 
+Jonathan
 
-I tried to minimize this patch and only address the potential crash.
-The code looks like it could use more cleanup, though. Any comments
-regarding the following suggestions?
+> ---
+>  drivers/iio/adc/rzg2l_adc.c | 37 ++-----------------------------------
+>  1 file changed, 2 insertions(+), 35 deletions(-)
+> 
+> diff --git a/drivers/iio/adc/rzg2l_adc.c b/drivers/iio/adc/rzg2l_adc.c
+> index cd3a7e46ea53..7039949a7554 100644
+> --- a/drivers/iio/adc/rzg2l_adc.c
+> +++ b/drivers/iio/adc/rzg2l_adc.c
+> @@ -415,11 +415,6 @@ static void rzg2l_adc_pm_runtime_set_suspended(void *data)
+>  	pm_runtime_set_suspended(dev->parent);
+>  }
+>  
+> -static void rzg2l_adc_reset_assert(void *data)
+> -{
+> -	reset_control_assert(data);
+> -}
+> -
+>  static int rzg2l_adc_probe(struct platform_device *pdev)
+>  {
+>  	struct device *dev = &pdev->dev;
+> @@ -456,46 +451,18 @@ static int rzg2l_adc_probe(struct platform_device *pdev)
+>  		return PTR_ERR(adc->adclk);
+>  	}
+>  
+> -	adc->adrstn = devm_reset_control_get_exclusive(dev, "adrst-n");
+> +	adc->adrstn = devm_reset_control_get_exclusive_deasserted(dev, "adrst-n");
+>  	if (IS_ERR(adc->adrstn)) {
+>  		dev_err(dev, "failed to get adrstn\n");
+I'd be tempted to keep the error message from below rather than this one.
+As we can only conclude the deassert failed to happen, not whether it was the
+get step or the deassert itself.
 
-1. It looks like we don't really need to ring the doorbell if cmd_list
-   and cur_cmd are empty. Even if commands were no-oped, they are still
-   on the list. And if there is anything between enqueue and dequeue
-   which is not a link TRB and not on the list, we will have no idea
-   how to handle the resulting event. IOW, it's not supposed to happen
-   and probably never happening, or we would hear about it.
+Also, use dev_err_probe() throughout and definitely for anything you are touching
+in this series. Ideally add a patch converting all the other places where it
+is useful in things only called from probe.
+	return dev_err_probe(dev, PTR_ERR(adc->adrstn),
+			     "failed to deassert adrstn pin\n");
 
-2. The whole business about turning commands into no-ops doesn't seem
-   to happen in mainline today. Only the pending command gets aborted
-   and it is removed from the list before the no-op loop runs.
+>  		return PTR_ERR(adc->adrstn);
+>  	}
+>  
+> -	adc->presetn = devm_reset_control_get_exclusive(dev, "presetn");
+> +	adc->presetn = devm_reset_control_get_exclusive_deasserted(dev, "presetn");
+>  	if (IS_ERR(adc->presetn)) {
+>  		dev_err(dev, "failed to get presetn\n");
+>  		return PTR_ERR(adc->presetn);
+>  	}
+>  
+> -	ret = reset_control_deassert(adc->adrstn);
+> -	if (ret) {
+> -		dev_err(&pdev->dev, "failed to deassert adrstn pin, %d\n", ret);
+> -		return ret;
+> -	}
+> -
+> -	ret = devm_add_action_or_reset(&pdev->dev,
+> -				       rzg2l_adc_reset_assert, adc->adrstn);
+> -	if (ret) {
+> -		dev_err(&pdev->dev, "failed to register adrstn assert devm action, %d\n",
+> -			ret);
+> -		return ret;
+> -	}
+> -
+> -	ret = reset_control_deassert(adc->presetn);
+> -	if (ret) {
+> -		dev_err(&pdev->dev, "failed to deassert presetn pin, %d\n", ret);
+> -		return ret;
+> -	}
+> -
+> -	ret = devm_add_action_or_reset(&pdev->dev,
+> -				       rzg2l_adc_reset_assert, adc->presetn);
+> -	if (ret) {
+> -		dev_err(&pdev->dev, "failed to register presetn assert devm action, %d\n",
+> -			ret);
+> -		return ret;
+> -	}
+> -
+>  	ret = rzg2l_adc_hw_init(adc);
+>  	if (ret) {
+>  		dev_err(&pdev->dev, "failed to initialize ADC HW, %d\n", ret);
 
-3. xhci->current_cmd seems redundant - is there ever a valid reason for
-   it being anything other than xhci->cmd_list first element?
-
-   I find it suspicious that handle_cmd_completion() complains if the
-   completed command isn't the first on cmd_list, but not if it doesn't
-   match current_cmd and that current_cmd is then left unchanged.
-
-Regards,
-Michal
 
