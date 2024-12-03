@@ -1,62 +1,45 @@
-Return-Path: <linux-kernel+bounces-428977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 066279E15C7
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:29:07 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1E69161983
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 08:29:03 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 752601D63F3;
-	Tue,  3 Dec 2024 08:29:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="hBGiVZPb"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 213379E1609
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:42:22 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 627EF1CEADD;
-	Tue,  3 Dec 2024 08:28:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9A963B298C6
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 08:29:48 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B0901D7989;
+	Tue,  3 Dec 2024 08:29:40 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2540D1BD50C;
+	Tue,  3 Dec 2024 08:29:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733214539; cv=none; b=kskk8HQ2cyd3Ecwe/vKhBD1ozJnNkv3oM3dxA1RqY+xLKFqLRDTx4v1VB9PNZdtVavdFFGBYTV9kQK7EYcnnKsbH8KQJDGfciD42YKbhnrDsieJmdzl14Jte6Yz0Ne2ctUZovVv0UeLuuc6RZKgFJK+o/D5kJ5LD9rzLad9iYx4=
+	t=1733214579; cv=none; b=s3w5GJQs6WpyNwMjJLTddJ8bvLjFruwk/q22JCZx34w8P4qBECi0SS2PQCkmy1lxsmiyK6CrSUXM4bmAoAGefkrvKYbzxxBh0IYUqyD9CF6h2LkW8j9d+eNBn1TC6nuwDLevKOD/5jbZuumNYK1p4ApMJiIcqyf3zgbimBW5J/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733214539; c=relaxed/simple;
-	bh=Xq5ghKrS6nkEZzS+1k8Gfr6kU2WuaJCFrshdevSI2BE=;
+	s=arc-20240116; t=1733214579; c=relaxed/simple;
+	bh=sPKy8bm3yUTC0HZtHiV+Cvibp3LmuP/kWLgsBwu6c2c=;
 	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=UXmgR5/IFwSxc6NhLdsJ1yEIhowBpz8bnsr2AQAIB6D1WnvfYzChmmTb32plRRH/7N8LH0cQ9r1zWC/3mHwpVtyu5h9hbA/BRN7XlPyNDx6+3qZZsnQHxTiSySX0CEFgdBOHTmNyLslzniM4MsiCfFhf1Vo6LRbPRvQbA6me8KI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=hBGiVZPb; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B36N3Zv024524;
-	Tue, 3 Dec 2024 08:28:51 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	PoxayZ/Ep75tbDRlcroT8T9ljKtekUwd8MzgGdd+9u0=; b=hBGiVZPboZVEnVFT
-	yxe8bJpA2pUXW9qve7Dwdg2OgzcIRmuxiAqW7QJGPaOW5LyZozbISL5EteC2gV7U
-	htPY0ERvwnMnIAAq95lLzdDCvBU/SRCtc35JLRV6OnXCI9AZ1rnc9eHQLPTZoBJn
-	3zda3tgjJwT4zmOQZWrUHwbQ//gXbzP20pQcoee+bK24POVU/zMYYZsZGUGuk/Sa
-	UWaMLHso+0DPwCUBa1ugzZozHCaXNAI4aANhd9fqf4h9zz8V6rIZBK9ZZw7R0Nw3
-	h65AJp7pM/oR1huRFKYhSPLw7AXwGL/peLLvsYZ762o5zDV0v4cGIGyVlvoP/S/G
-	WqcmGg==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 439vnyrabb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 03 Dec 2024 08:28:51 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B38SoE7012996
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 3 Dec 2024 08:28:50 GMT
-Received: from [10.231.194.79] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 3 Dec 2024
- 00:28:48 -0800
-Message-ID: <20bf2693-ce53-48e9-8b54-7e3273815033@quicinc.com>
-Date: Tue, 3 Dec 2024 16:28:45 +0800
+	 In-Reply-To:Content-Type; b=FbAJRXb9Vju15G/J7AdW2YnZaOEhGB3m4TArbUUmAL3v/sZI6nvOpV3UoESAaSh/JEbrkn6Ayp058Xabr2wAQCvpAf9x5SBNcJJGvRLvPeLlVCu3FI+mPZLqo6G6R7vvsW/dYEIzUrafhiR+XrbBNuL3xcPi910gSu0Nf/AsOa8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.163])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4Y2Yfs69TQz1k19C;
+	Tue,  3 Dec 2024 16:27:17 +0800 (CST)
+Received: from kwepemg500008.china.huawei.com (unknown [7.202.181.45])
+	by mail.maildlp.com (Postfix) with ESMTPS id 214F718001B;
+	Tue,  3 Dec 2024 16:29:33 +0800 (CST)
+Received: from [127.0.0.1] (10.174.177.71) by kwepemg500008.china.huawei.com
+ (7.202.181.45) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 3 Dec
+ 2024 16:29:32 +0800
+Message-ID: <8885691f-b977-409f-90f8-b24c41a49de0@huawei.com>
+Date: Tue, 3 Dec 2024 16:29:31 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,90 +47,106 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] wifi: ath11k: allow APs combination when dual stations
- are supported
-To: Jose Ignacio Tornos Martinez <jtornosm@redhat.com>
-CC: <ath11k@lists.infradead.org>, <jjohnson@kernel.org>, <kvalo@kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-wireless@vger.kernel.org>,
-        <quic_cjhuang@quicinc.com>, <vbenes@redhat.com>
-References: <7ccd4b98-9557-4a8b-b493-e01b157c71e2@quicinc.com>
- <20241203080407.100913-1-jtornosm@redhat.com>
+Subject: Re: [PATCH v2 2/2] ext4: protect ext4_release_dquot against freezing
+To: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+CC: <linux-ext4@vger.kernel.org>, Jan Kara <jack@suse.com>, Ritesh Harjani
+	<ritesh.list@gmail.com>, <linux-kernel@vger.kernel.org>,
+	<linux-fsdevel@vger.kernel.org>, Jan Kara <jack@suse.cz>, Yang Erkun
+	<yangerkun@huawei.com>
+References: <20241121123855.645335-1-ojaswin@linux.ibm.com>
+ <20241121123855.645335-3-ojaswin@linux.ibm.com>
+ <cc2fcc33-9024-4ce8-bd52-cdcd23f6b455@huawei.com>
+ <Z0a1x7yksOE4Jsha@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
 Content-Language: en-US
-From: "Yu Zhang (Yuriy)" <quic_yuzha@quicinc.com>
-In-Reply-To: <20241203080407.100913-1-jtornosm@redhat.com>
+From: Baokun Li <libaokun1@huawei.com>
+In-Reply-To: <Z0a1x7yksOE4Jsha@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: h59Aat92eRQXnNWi4cuVL5_TvCZWWJhC
-X-Proofpoint-GUID: h59Aat92eRQXnNWi4cuVL5_TvCZWWJhC
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 adultscore=0
- mlxlogscore=813 bulkscore=0 impostorscore=0 mlxscore=0 suspectscore=0
- spamscore=0 priorityscore=1501 lowpriorityscore=0 phishscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412030072
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemg500008.china.huawei.com (7.202.181.45)
+
+On 2024/11/27 14:01, Ojaswin Mujoo wrote:
+> On Tue, Nov 26, 2024 at 10:49:14PM +0800, Baokun Li wrote:
+>> On 2024/11/21 20:38, Ojaswin Mujoo wrote:
+>>> Protect ext4_release_dquot against freezing so that we
+>>> don't try to start a transaction when FS is frozen, leading
+>>> to warnings.
+>>>
+>>> Further, avoid taking the freeze protection if a transaction
+>>> is already running so that we don't need end up in a deadlock
+>>> as described in
+>>>
+>>>     46e294efc355 ext4: fix deadlock with fs freezing and EA inodes
+>>>
+>>> Suggested-by: Jan Kara <jack@suse.cz>
+>>> Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+>>> ---
+>>>    fs/ext4/super.c | 17 +++++++++++++++++
+>>>    1 file changed, 17 insertions(+)
+>>>
+>>> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+>>> index 16a4ce704460..f7437a592359 100644
+>>> --- a/fs/ext4/super.c
+>>> +++ b/fs/ext4/super.c
+>>> @@ -6887,12 +6887,25 @@ static int ext4_release_dquot(struct dquot *dquot)
+>>>    {
+>>>    	int ret, err;
+>>>    	handle_t *handle;
+>>> +	bool freeze_protected = false;
+>>> +
+>>> +	/*
+>>> +	 * Trying to sb_start_intwrite() in a running transaction
+>>> +	 * can result in a deadlock. Further, running transactions
+>>> +	 * are already protected from freezing.
+>>> +	 */
+>>> +	if (!ext4_journal_current_handle()) {
+>>> +		sb_start_intwrite(dquot->dq_sb);
+>>> +		freeze_protected = true;
+>>> +	}
+>>>    	handle = ext4_journal_start(dquot_to_inode(dquot), EXT4_HT_QUOTA,
+>>>    				    EXT4_QUOTA_DEL_BLOCKS(dquot->dq_sb));
+>>>    	if (IS_ERR(handle)) {
+>>>    		/* Release dquot anyway to avoid endless cycle in dqput() */
+>>>    		dquot_release(dquot);
+>>> +		if (freeze_protected)
+>>> +			sb_end_intwrite(dquot->dq_sb);
+>>>    		return PTR_ERR(handle);
+>>>    	}
+>>>    	ret = dquot_release(dquot);
+>>> @@ -6903,6 +6916,10 @@ static int ext4_release_dquot(struct dquot *dquot)
+>> The `git am` command looks for the following context code from line 6903
+>> to apply the changes. But there are many functions in fs/ext4/super.c that
+>> have similar code, such as ext4_write_dquot() and ext4_acquire_dquot().
+> Oh that's strange, shouldn't it match the complete line like:
+A rough look at the `git am` source code looks like it only focuses on
+line numbers between two ‘@@’.
+
+am_run
+  run_apply
+   apply_all_patches
+    apply_patch
+     parse_chunk
+      find_header
+       parse_fragment_header
+     check_patch_list
+      check_patch
+       apply_data
+        load_preimage
+        apply_fragments
+         apply_one_fragment
+          find_pos
+           match_fragment
+>>> @@ -6903,6 +6916,10 @@ static int ext4_release_dquot(struct dquot *dquot)
+> That should only have one occurence around line 6903? Or does it try to
+> fuzzy match which ends up matching ext4_write_dquot etc?
+In find_pos(), start from line 6903, compare the hash value of each line
+of code line by line in forward direction, if it can't match, then match
+the hash value of each line of code line by line in reverse direction from
+line 6903. Fuzzy matching is used if some whitespace characters should be
+ignored.
 
 
+Regards,
+Baokun
 
-On 12/3/2024 4:04 PM, Jose Ignacio Tornos Martinez wrote:
-> Sorry, but your solution is not working for me.
-> We need to be able to setup 2 APs, as it was possible before, and with your
-> interface combinations it is not possible either.
-> I was trying to create a second interface combination to recover the old
-> scenario as well, but I couldn't, that is the reason why I have implemented
-> this parameter.
-> 
-> Thanks
-> 
-> Best regards
-> Jose Ignacio
-> 
-Which chip do you use?
-
-I can't be sure about your scenario, but based on your description, I 
-tried it on the 6855 and it works:
-sh-5.1# iw dev
-phy#0
-         Interface wlan2
-                 ifindex 6
-                 wdev 0x3
-                 addr 12:03:7f:21:84:11
-                 ssid QSoftAP2
-                 type AP
-                 channel 149 (5745 MHz), width: 20 MHz, center1: 5745 MHz
-                 txpower 18.00 dBm
-                 multicast TXQ:
-                         qsz-byt qsz-pkt flows   drops   marks   overlmt 
-hashcol tx-bytes        tx-packets
-                         0       0       0       0       0       0 
-0       0               0
-         Interface wlan1
-                 ifindex 5
-                 wdev 0x2
-                 addr 02:03:7f:21:84:11
-                 ssid QSoftAP1
-                 type AP
-                 channel 36 (5180 MHz), width: 20 MHz, center1: 5180 MHz
-                 txpower 5.00 dBm
-                 multicast TXQ:
-                         qsz-byt qsz-pkt flows   drops   marks   overlmt 
-hashcol tx-bytes        tx-packets
-                         0       0       0       0       0       0 
-0       0               0
-         Interface wlan0
-                 ifindex 4
-                 wdev 0x1
-                 addr 00:03:7f:21:84:11
-                 type managed
-                 txpower 18.00 dBm
-                 multicast TXQ:
-                         qsz-byt qsz-pkt flows   drops   marks   overlmt 
-hashcol tx-bytes        tx-packets
-                         0       0       0       0       0       0 
-0       0               0
 
