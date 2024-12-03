@@ -1,84 +1,120 @@
-Return-Path: <linux-kernel+bounces-429737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAC1D9E227E
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:25:19 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75EC216BF9C
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 15:20:57 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B1851F757A;
-	Tue,  3 Dec 2024 15:20:49 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26A6C9E2227
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:21:24 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 017E61EF0AE;
-	Tue,  3 Dec 2024 15:20:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E17A1285182
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 15:21:22 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA8941F75A6;
+	Tue,  3 Dec 2024 15:21:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Leqn7NoZ"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC9821F7550;
+	Tue,  3 Dec 2024 15:21:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733239249; cv=none; b=sz9linUGOGOzC/s7qS0uz5TJagjW2o+DpaifOFbozxO3oQjHeCvn+ykXeYB/FpalN+VvbnalFPwP08GIuKPIpXimvm3cp2x2FbnsENmlC1FC9QqQPzuyIApFPeC6AiWnqNAkdvQZPL22bqXXAxSVcZW3w2WoDk2MU33Ca55ybQ0=
+	t=1733239266; cv=none; b=bXAHLGjT5LQCSkjqKqHlSnLHWeceRDNHL1UVbXZqaP7kiKx2jjzvi2clMUp1fKA8i+ILt5ZISsxer3mfBksOVmPoAEOsw4X2pd6VUKkVu6MSsdIhEXAjHU66KrbKnJ+A9xQ5XFfzI/quslh/0FhUHetn1u+UTBjx8dtBiysdmZ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733239249; c=relaxed/simple;
-	bh=/ME4+gce8iu1KzBrtgcT3UdQE85kbfEIoKsxbQ1NQs4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PhRC2J+Ha31CfDTjckjPTR/YyNgrGKK/5BYzKlwn30QVkqLyD42KKApKz2yePJB072hzVDP0xXRobXj0RlIh6aItIZHjfXOYXoUasYTxIBf/2QYzy9ltChOexrA1V9WQhLTRRNxdbEV7uRUIv/GAsf/Hzdyef+oV9KzYX7mUHYo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F0E1C4CECF;
-	Tue,  3 Dec 2024 15:20:47 +0000 (UTC)
-Date: Tue, 3 Dec 2024 10:20:47 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Yeo Reum Yun <YeoReum.Yun@arm.com>
-Cc: Suzuki Poulose <Suzuki.Poulose@arm.com>, "mike.leach@linaro.org"
- <mike.leach@linaro.org>, "james.clark@linaro.org" <james.clark@linaro.org>,
- "alexander.shishkin@linux.intel.com" <alexander.shishkin@linux.intel.com>,
- "bigeasy@linutronix.de" <bigeasy@linutronix.de>, "clrkwllms@kernel.org"
- <clrkwllms@kernel.org>, "coresight@lists.linaro.org"
- <coresight@lists.linaro.org>, "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>, "linux-rt-devel@lists.linux.dev"
- <linux-rt-devel@lists.linux.dev>, nd <nd@arm.com>
-Subject: Re: [PATCH 1/9] coresight: change coresight_device lock type to
- raw_spinlock_t
-Message-ID: <20241203102047.5844de81@gandalf.local.home>
-In-Reply-To: <GV1PR08MB105212FEF9251CA2B3AAF7FFFFB362@GV1PR08MB10521.eurprd08.prod.outlook.com>
-References: <20241125094816.365472-1-yeoreum.yun@arm.com>
-	<20241125094816.365472-2-yeoreum.yun@arm.com>
-	<20241127120954.0facd34f@gandalf.local.home>
-	<GV1PR08MB10521520ABD7B72D92FD60DE9FB292@GV1PR08MB10521.eurprd08.prod.outlook.com>
-	<20241202103853.26db0c13@gandalf.local.home>
-	<GV1PR08MB105212FEF9251CA2B3AAF7FFFFB362@GV1PR08MB10521.eurprd08.prod.outlook.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1733239266; c=relaxed/simple;
+	bh=ZOVJrKZpqP/qN6d0VanJ/N+xrDibb3SB3TcMyv/HC0A=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Cgb+hieTMvAKvIyZoyVqydRShB5wr2By3XjXqD0GNZ+dkNMOlstwR0/SpL0q9TlRLNmPn7IRO5npnG7Q+4PJvr3MankLf8wiGydZTGM1ECPq/RknP7vAzV1Qsg5H4e+y4AHQ70lrr+lbM4Pu1f2IQ8hMmXJ2kT6Vu45urmcQIIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Leqn7NoZ; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-215c54e5f24so6687065ad.2;
+        Tue, 03 Dec 2024 07:21:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733239264; x=1733844064; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=QxUB0u3+R5bx7OygSfFY/wa3IquwZ32J6yrPPJN5bDg=;
+        b=Leqn7NoZrhfSJGfxheWVyNDc7DBCW5dpOyuVVS2CsCDv7qdtRLuJvC9xwPZ/z0EDlN
+         3qxM6b8PwjAseWiKyETAqJhimaZOuUVMHDBbOS+2Gcr/Jcg1GdNLZnN6f814FFqJtyvP
+         /lZtQEazQmD52T5HNqUaK04upSyrAkxbnsqYZsBSsFG5dKNbdpEiN65mZgrPd8Nyr0kY
+         Ghgq1gl6hLDbxWeBZp8DL5dldMmNWMZKIVC2B3thfv5kRpytIYdn0DEcmaizImpYbdne
+         RBVD6Uc2eW2lHxiRnMxVFUWv9iLwAq2GO8Y/h9rZoSqW16bxZtc99RBSYfxjJ76h6TAL
+         LGKw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733239264; x=1733844064;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QxUB0u3+R5bx7OygSfFY/wa3IquwZ32J6yrPPJN5bDg=;
+        b=lBdcNLZtq3n5zx3ACknvw4DbXkIu27ynsyLLCuOi4ErJnOeZRNaCyyWmuq/d7qpriu
+         6FKqM2Bw2oE9YmjpRnPv3BFKFiDwL4KTGcVeXHXeSPGsvBjKKoBQFG7AGuVHYUKi4ZhL
+         0W7vucvhJ4D30hE5cSry1MdygAKHUvHIwkFrx5xalxaXFVhqKxxGBWVnaG/sBWTR4339
+         ivY5bQTGfjryAkfTHjYXfoCkvWBaYtNpiPgtaOUOwaFCxVzzSVtvQsXyhkHavpO8WvSB
+         4rIFptSM14H0Ok7TfXSL1Zlj/yPa9GVCmG1crRAARxdpOW1lM9AIRPRZh/2NHkkyQV7x
+         kKlA==
+X-Forwarded-Encrypted: i=1; AJvYcCVJVzPHGMTtHnqLLbCv2YzQxFYnXKhJP169LcNuHVY2AcJFGLL439behu2xGVHr6VX5pDFON199@vger.kernel.org, AJvYcCWLR6UjNZo1GjUtkd2+Ocw2wF1CDV+LPCJjcxArqb++ubYasCAOAWMwDPXHmoQY7Ba5avVB8cVVZAIRUIo2@vger.kernel.org, AJvYcCWdJ8SqqEFWo5NaCzs5HQsBdS3RCWW7O9bB0RVsTzfMTRGsl5eMw8QHiFhoikVw73KDmYKwNeLNeNwFXiC/Z44=@vger.kernel.org, AJvYcCXTAGSidZD15qz5UNKcOKvZqbkjrJxUx2EgnSJOXV/d32V45m61e1uyfaleGMn79GJSxQFW7eEzWJKOPB6zmVA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwRhRWxJxfUd1mqrKbs7JEgGiTgc+UzvLu+Hn+8ypB0TOJZJHV0
+	zTSrsb1MnqVUNzyYYA7trQu8+aEo1aN4lpteyqgNVOo2JSaLBema
+X-Gm-Gg: ASbGnctj4miFdNRyW1UV5Gb46Knbdj/83dkHBBmdAtBnyYm79MYA8piOBgORtwVaWtl
+	4luoKwRhWoraYkW3m4uwojb0cMRy3gHcBQlquo10oJt7rmlWItHz8pV7vj59m2+4Lw3TIZAH2dw
+	Wk9En55yNPOxzpNUHc0+rrr18vpLVUqT9jAo+BWuyEEVu7ITGeRbBLOJZ30I1yj/KDBXxsuX1y3
+	k/9DXEsLeXWJUPXfTXvf405GTC5CfBOL9oW/js7hnvAFlEEADKE6w==
+X-Google-Smtp-Source: AGHT+IFP28tEUaXc+jsg6TNlhSwrUvGZ1LuMMkn2qz87wLbIGrbxwtznFrY+h1Z0IdtybAtEFt8roQ==
+X-Received: by 2002:a17:902:e5ca:b0:215:9f5a:a236 with SMTP id d9443c01a7336-215bcfbcebbmr37415365ad.6.1733239263473;
+        Tue, 03 Dec 2024 07:21:03 -0800 (PST)
+Received: from ubuntuxuelab.. ([58.246.183.50])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21561b30f26sm60095605ad.274.2024.12.03.07.20.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Dec 2024 07:21:03 -0800 (PST)
+From: Haoyu Li <lihaoyu499@gmail.com>
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: Kees Cook <kees@kernel.org>,
+	"Gustavo A . R . Silva" <gustavoars@kernel.org>,
+	Jeff Johnson <quic_jjohnson@quicinc.com>,
+	linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org,
+	stable@vger.kernel.org,
+	Haoyu Li <lihaoyu499@gmail.com>
+Subject: [PATCH] net: wireless: sme: Initialize n_channels before accessing channels in cfg80211_conn_scan
+Date: Tue,  3 Dec 2024 23:20:49 +0800
+Message-Id: <20241203152049.348806-1-lihaoyu499@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Tue, 3 Dec 2024 08:31:54 +0000
-Yeo Reum Yun <YeoReum.Yun@arm.com> wrote:
+With the new __counted_by annocation in cfg80211_scan_request struct,
+the "n_channels" struct member must be set before accessing the
+"channels" array. Failing to do so will trigger a runtime warning
+when enabling CONFIG_UBSAN_BOUNDS and CONFIG_FORTIFY_SOURCE.
 
-> Hi Steve,
-> 
-> > Still should be documented somewhere. It should describe the maximum number
-> > of feats that will ever be loaded. If there's a max, it makes it back to
-> > O(1). With a 'k' of how long it takes to process the max number of feats.  
-> 
-> But with other patchset seems better
-> since not only this function, but also for other functions too.
+Fixes: e3eac9f32ec0 ("wifi: cfg80211: Annotate struct cfg80211_scan_request with __counted_by")
 
-Which other patchset?
+Signed-off-by: Haoyu Li <lihaoyu499@gmail.com>
+---
+ net/wireless/sme.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-> 
-> BTW, is there any example describing this I can refer? 
+diff --git a/net/wireless/sme.c b/net/wireless/sme.c
+index 431da30817a6..268171600087 100644
+--- a/net/wireless/sme.c
++++ b/net/wireless/sme.c
+@@ -83,6 +83,7 @@ static int cfg80211_conn_scan(struct wireless_dev *wdev)
+ 	if (!request)
+ 		return -ENOMEM;
+ 
++	request->n_channels = n_channels;
+ 	if (wdev->conn->params.channel) {
+ 		enum nl80211_band band = wdev->conn->params.channel->band;
+ 		struct ieee80211_supported_band *sband =
+-- 
+2.34.1
 
-No, it's on our todo list for RT. To document the RT behavior of the
-kernel. This is just one location.
-
--- Steve
 
