@@ -1,290 +1,162 @@
-Return-Path: <linux-kernel+bounces-429997-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26B4B9E2A93
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 19:15:39 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98BF79E2AA1
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 19:18:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBD25163C9C
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 18:15:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 43BF1163E53
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 18:18:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1D341FC115;
-	Tue,  3 Dec 2024 18:15:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="V9qoUSjI"
-Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBE871FCD14;
+	Tue,  3 Dec 2024 18:18:29 +0000 (UTC)
+Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 960DB1E283C
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 18:15:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD8981FBEA5
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 18:18:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733249732; cv=none; b=NExdAl7kj/miBnz/ei+wk3quAtK2Euc1igxE0WLUbO/sGafnfenjHgXsIVe+jX9MKcV/oIH23ZrT4c6dz5E9UkWTJLdCX4kIO+brRnYP6jOY65vT850A+XNkW8EuSPyaPUJCGvzCOkeM/u7VS357rNVYLRKV5MouW2siDdhVTa0=
+	t=1733249909; cv=none; b=qeG9PtstLW+VkWj38WMVxQys/3V8wbG/sKWN2jZZxh0ecAm3Z9ho6KxNoQGqwfiA8RncbX/4bhS8FM6/ujkn8Pu/LjYCcrJC3G7325ZwevRpnaHY6IerexgVswTNq8iCppduSDCRyjJaR7jRrv00RDYQyg9onJ5+nc5moFlqKkU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733249732; c=relaxed/simple;
-	bh=ts6/amOxa0dJ1j4L7dg7bZ63rmuGs6CM+DqRX/TLxSM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aaWiYUCuLfhTjxXSqv+eA5TIMRCW459XavYrsy3yQjCAu6lSAtL7fzO6ZidFrmi3l7nHuOa7P2ZMeQCTU/Ju+A2WQUfNG+ICn0sen5eN+OBoX/cii6aG15SESbEtYSEd8hl1MpQAZ+XWTGasU573xUIUjm1gBDLOWZENWoN/bs8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=V9qoUSjI; arc=none smtp.client-ip=91.218.175.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <b8bde033-13a8-4726-a9ff-2fa4eff898e1@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1733249727;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/d6d21lYDvEFZiQrySVvNDh1sU8fuz6MdG1q72i45IU=;
-	b=V9qoUSjI7EsoODFNlUsz+6kzYDm+vLmfMrzU58PdFBqKNq4K6EbSDCZpEzrvtvsDleq6X/
-	lvYlX2Vpf1PANTfSnRQ7vUc/O8yBYK+NDtT0axw/iAUMFx54f/MT7ojgOI9gGpXDNfMMzs
-	m62ISwNM0CUjQeFHObWvuIDyWidawdg=
-Date: Tue, 3 Dec 2024 23:44:27 +0530
+	s=arc-20240116; t=1733249909; c=relaxed/simple;
+	bh=Y/LATXzbXBs1wuBH8LCeQx8wtNBrawUJlxEPBbZRTgU=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=BIkE8aovWem2A3N+R4mRvsXTZExqEgntst5GxcKh7vLCfIxl+oWatCdMPM9fnllgQsaVfSOMeER+uynB4Lv2MTUpGixsDetxT7GKL0yetRwGP1kAIyFz4q8xhMF88+VckpCzSx2v/NFlLrNK/05+d2TpYc6OG1WDZbfgL9RcWkE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3a7cf41b54eso115366115ab.2
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 10:18:27 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733249907; x=1733854707;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=H8RBZ0U7YFVbawuroNmqKmJopoxRovlVXxs2fuXsgOQ=;
+        b=YwMIW9M8r0J0Aw5HHWe2wXWDvEEnJwtZ1HvNfZgBG7zQ66c0T/g+oK3EBmdya0i2Wb
+         scDqpcLpfqdhW9Y2p4cjTNtNuWdOu7Lqg1CymUj/7OuIOMy6yRlrQtJC07pt2MJaNmK2
+         PUUq0LcrNLwKyEOajWmXRrppKjIOu9f9eqr1z8Hk+od4KPr/2tUBQri7JIpsILooijSf
+         WoR2vmgem2gUtbmuWNflc9mGSLnHJEuFJNc1OAwQfIncddMKxDgbg3xEV/GTq/6FnObV
+         3LZc0tV20o34SsaLQGJlK0N9nlWHdkVTM6FOm0fBNr/KPQGXPYq9d9r12vX2RNCLgDre
+         gI1w==
+X-Forwarded-Encrypted: i=1; AJvYcCU56/qMBDAG6J937BA5ay+JYUsAkGn/6rPBP7DvViGmta8TQPARGdQV9YsSHzeejqoPk6KsMd+Rhy/zQmM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTatbOvb+saFxhtvbjCc+wd8b+LUMerUvhrns4OOUtspAcNYrH
+	Iom6PkyxeMi/49wH/U8/mAquJYxvxu8UmChZ8e8QJsrWNkwDGTjJbmlJYesKdJbdt/7MzTZp4B3
+	w9v7Jhb89kR4VIsufbvMtnCf3Tn2QrpxugYIRJu1jnfy8s4GLKwiiWf4=
+X-Google-Smtp-Source: AGHT+IE4Hbak9jaVQvKtwxtOhqhG4SJFknf1eSnld1wtG3nbW0JHuSbM2fVwB1KsKRd7SDcinMCufy5c4+ZW7alz19YQCaw6QjC4
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v4 0/3] drm/tidss: Add OLDI bridge support
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Nishanth Menon
- <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
- Devarsh Thakkar <devarsht@ti.com>, Praneeth Bajjuri <praneeth@ti.com>,
- Udit Kumar <u-kumar1@ti.com>, Jayesh Choudhary <j-choudhary@ti.com>,
- Francesco Dolcini <francesco@dolcini.it>,
- Alexander Sverdlin <alexander.sverdlin@siemens.com>,
- Max Krummenacher <max.oss.09@gmail.com>,
- DRI Development List <dri-devel@lists.freedesktop.org>,
- Devicetree List <devicetree@vger.kernel.org>,
- Linux Kernel List <linux-kernel@vger.kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Jyri Sarha <jyri.sarha@iki.fi>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Thomas Zimmermann <tzimmermann@suse.de>, Maxime Ripard <mripard@kernel.org>,
- David Airlie <airlied@gmail.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Simona Vetter <simona@ffwll.ch>
-References: <20241124143649.686995-1-aradhya.bhatia@linux.dev>
- <8b57d6a4-6bc1-4542-abf4-8bc4a3120c25@ideasonboard.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Aradhya Bhatia <aradhya.bhatia@linux.dev>
-In-Reply-To: <8b57d6a4-6bc1-4542-abf4-8bc4a3120c25@ideasonboard.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+X-Received: by 2002:a05:6e02:184b:b0:3a7:4826:b057 with SMTP id
+ e9e14a558f8ab-3a7fedb4c6fmr16352255ab.21.1733249906967; Tue, 03 Dec 2024
+ 10:18:26 -0800 (PST)
+Date: Tue, 03 Dec 2024 10:18:26 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <674f4b72.050a0220.17bd51.004a.GAE@google.com>
+Subject: [syzbot] [net?] WARNING in geneve_xmit (2)
+From: syzbot <syzbot+3ec5271486d7cb2d242a@syzkaller.appspotmail.com>
+To: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com, 
+	kuba@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	pabeni@redhat.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi,
+Hello,
 
-On 03/12/24 17:42, Tomi Valkeinen wrote:
-> Hi,
-> 
-> On 24/11/2024 16:36, Aradhya Bhatia wrote:
->> Hello all,
->>
->> This patch series add support for the dual OLDI TXes supported in Texas
->> Instruments' AM62x and AM62Px family of SoCs. The OLDI TXes support
->> single-lvds
->> lvds-clone, and dual-lvds modes. These have now been represented
->> through DRM
->> bridges within TI-DSS.
->>
->>   - Some history and hardware description for this patch series.
->>
->> This patch series is a complete re-vamp from the previously posted
->> series[1] and
->> hence, the version index has been reset to v1. The OLDI support from
->> that series
->> was dropped and only the base support for AM62x DSS was kept (and
->> eventually
->> merged)[2].
->>
->> The OLDI display that the tidss driver today supports, could not be
->> extended for
->> the newer SoCs. The OLDI display in tidss is modelled after the DSS
->> and OLDI
->> hardware in the AM65x SoC. The DSS in AM65x SoC, has two video-ports.
->> Both these
->> video-ports (VP) output DPI video signals. One of the DPI output (from
->> VP1) from
->> the DSS connects to a singular OLDI TX present inside the SoC. There
->> is no other
->> way for the DPI from VP1 to be taken out of the SoC. The other DPI output
->> however - the one from VP2 - is taken out of the SoC as is. Hence we
->> have an
->> OLDI bus output and a DPI bus output from the SoC. Since the VP1 and
->> OLDI are
->> tightly coupled, the tidss driver considers them as a single entity.
->> That is
->> why, any OLDI sink connects directly to the DSS ports in the OF graphs.
->>
->> The newer SoCs have varying DSS and OLDI integrations.
->>
->> The AM62x DSS also has 2 VPs. The 2nd VP, VP2, outputs DPI signals
->> which are
->> taken out of the SoC - similar to the AM65x above. For the VP1, there
->> are 2 OLDI
->> TXes. These OLDI TXes can only receive DPI signals from VP1, and don't
->> connect
->> to VP2 at all.
->>
->> The AM62Px SoC has 2 OLDI TXes like AM62x SoC. However, the AM62Px SoC
->> also has
->> 2 separate DSSes. The 2 OLDI TXes can now be shared between the 2 VPs
->> of the 2
->> DSSes.
->>
->> The addition of the 2nd OLDI TX (and a 2nd DSS in AM62Px) creates a
->> need for
->> some major changes for a full feature experience.
->>
->> 1. The OF graph needs to be updated to accurately show the data flow.
->> 2. The tidss and OLDI drivers now need to support the dual-link and
->> the cloned
->>     single-link OLDI video signals.
->> 3. The drivers also need to support the case where 2 OLDI TXes are
->> connected to
->>     2 different VPs - thereby creating 2 independent streams of
->> single-link OLDI
->>     outputs.
->>
->> Note that the OLDI does not have registers of its own. It is still
->> dependent on
->> the parent VP. The VP that provides the DPI video signals to the OLDI
->> TXes, also
->> gives the OLDI TXes all the config data. That is to say, the hardware
->> doesn't
->> sit on the bus directly - but does so through the DSS.
->>
->> In light of all of these hardware variations, it was decided to have a
->> separate
->> OLDI driver (unlike AM65x) but not entirely separate so as to be a
->> platform
->> device. The OLDI TXes are now being represented as DRM bridges under
->> the tidss.
->>
->> Also, since the DRM framework only really supports a linear encoder-
->> bridge
->> chain, the OLDI driver creates a DRM bridge ONLY for the primary OLDI
->> TX in
->> cases of dual-link or cloned single-link OLDI modes. That bridge then
->> attaches
-> 
-> How does the clone case work, then? There are two panels, what does the
-> second one connect to?
+syzbot found the following issue on:
 
-For the clone case, the devicetree will show the true connections - as
-they are in the hardware.
+HEAD commit:    aaf20f870da0 Merge tag 'rpmsg-v6.13' of git://git.kernel.o..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=167d0f78580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=a51a585c6e636e05
+dashboard link: https://syzkaller.appspot.com/bug?extid=3ec5271486d7cb2d242a
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
 
-2 endpoints from a single DSS VP devicetree port will be connected to 2
-OLDIs, OLDI0 and OLDI1. The outputs of these OLDIs will be connected to
-2 distinct single-link panels.
+Unfortunately, I don't have any reproducer for this issue yet.
 
-The driver and DRM side of things do not show the same picture, however.
-The tidss_oldi code creates and registers a drm_bridge only for the
-primary OLDI. The driver is capable of detecting the expected OLDI mode,
-and if a companion OLDI is present, then the primary OLDI drm_bridge
-keeps a note of that.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/a124d816c6b8/disk-aaf20f87.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/72ab15012016/vmlinux-aaf20f87.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/70a3dde18fe5/bzImage-aaf20f87.xz
 
-The clock and config resources are shared between the primary and
-companion OLDI hardware. So configuring the primary OLDI takes care of
-the companion too.
-The only case where it is not shared is the OLDI IO bit in the Control
-MMR (ctrl_mmr) region. But, since the primary OLDI drm_bridge remains
-aware about the presence of companion OLDI, it makes sure to enable /
-disable the comapnion OLDI IO when required.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+3ec5271486d7cb2d242a@syzkaller.appspotmail.com
 
-> 
->> to the tidss's display core - which consists of a CRTC, an Encoder
->> (dummy) and a
->> bridge (dummy). On the other end, it attaches to OLDI sinks (panels or
->> other
->> bridges).
->>
->> Since the OLDI TX have a hardware dependency with the VP, the OLDI
->> configuration
->> needs to happen before that VP is enabled for streaming. VP stream
->> enable takes
->> place in tidss_crtc_atomic_enable hook. I have posted a patch allowing
->> DRM
->> bridges to get pre-enabled before the CRTC of that bridge is
->> enabled[0]. Without
->> that patch, some warnings or glitches can be seen.
->>
->> These patches have been tested on AM625 based Beagleplay[3] platform
->> with a
->> Lincolntech LCD185 dual-lvds panel. The patches with complete support
->> including
->> the expected devicetree configuration of the OLDI TXes can be found in
->> the
->> "next_oldi_v4_tests" branch of my github fork[4]. This branch also has
->> support
->> for Microtips dual-lvds panel (SK-LCD1) which is compatible with the
->> SK-AM625
->> EVM platform.
->>
->> Due to lack of hardware, I haven't been able to test single-link / cloned
->> single-link OLDI modes. I have only used a sample cloned single-link
->> DTBO and
->> booted the board with it. I didn't see any probe_deferred errors (as seen
->> previously), and the `kmsprint` utility enumerated the display details
->> fine.
->>
->> Regardless, I'd appreciate it if somebody can test it, and report back
->> if they
->> observe any issues.
->>
->> Thanks,
->> Aradhya
->>
->>
->> Additional Notes:
->>
->> * Important note about a false positive in dtbs_check *
->> Both the ports, port0 and port1, are required for the OLDI
->> functionality to
->> work. The schema suggests this condition too. Additionally, the OLDI
->> devicetree
->> node is expected to be defined in the soc.dtsi file, and kept as
->> disabled.
->> Over the current platforms (Beagleplay and SK-AM625 EVM), the OLDI
->> panel is not
->> always attached, and hence we use a DT overlay to add panel details -
->> which is
->> where we enable the OLDI nodes. The structure of files is like this -
->>
->> - soc.dtsi                  (OLDI disabled)
->> - soc-baseboard.dts         (OLDI disabled)
->> - soc-baseboard-panel.dtso  (OLDI enabled)
->>
->> During dtbs_check runs, it was observed that the check was not able to
->> rule out
->> OLDI issues even when its DT was disabled in the soc-baseboard.dts. It is
->> impractical and impossible to add OLDI ports prior to the panel
->> overlay file.
->> While the dtbs_check usually ignores checking disabled devicetree
->> nodes, it was
->> unable to do so in the OLDI's case.
-> 
-> While there might be something amiss with dtbs_check, what's the problem
-> with adding both port nodes to the soc.dtsi? If you have no endpoints
-> there, it's not connected to anything.
->
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 11635 at include/linux/skbuff.h:3052 skb_mac_header include/linux/skbuff.h:3052 [inline]
+WARNING: CPU: 0 PID: 11635 at include/linux/skbuff.h:3052 eth_hdr include/linux/if_ether.h:24 [inline]
+WARNING: CPU: 0 PID: 11635 at include/linux/skbuff.h:3052 geneve_xmit_skb drivers/net/geneve.c:898 [inline]
+WARNING: CPU: 0 PID: 11635 at include/linux/skbuff.h:3052 geneve_xmit+0x4c38/0x5730 drivers/net/geneve.c:1039
+Modules linked in:
+CPU: 0 UID: 0 PID: 11635 Comm: syz.4.1423 Not tainted 6.12.0-syzkaller-10296-gaaf20f870da0 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+RIP: 0010:skb_mac_header include/linux/skbuff.h:3052 [inline]
+RIP: 0010:eth_hdr include/linux/if_ether.h:24 [inline]
+RIP: 0010:geneve_xmit_skb drivers/net/geneve.c:898 [inline]
+RIP: 0010:geneve_xmit+0x4c38/0x5730 drivers/net/geneve.c:1039
+Code: 21 c6 02 e9 35 d4 ff ff e8 a5 48 4c fb 90 0f 0b 90 e9 fd f5 ff ff e8 97 48 4c fb 90 0f 0b 90 e9 d8 f5 ff ff e8 89 48 4c fb 90 <0f> 0b 90 e9 41 e4 ff ff e8 7b 48 4c fb 90 0f 0b 90 e9 cd e7 ff ff
+RSP: 0018:ffffc90003b2f870 EFLAGS: 00010283
+RAX: 000000000000037a RBX: 000000000000ffff RCX: ffffc9000dc3d000
+RDX: 0000000000080000 RSI: ffffffff86428417 RDI: 0000000000000003
+RBP: ffffc90003b2f9f0 R08: 0000000000000003 R09: 000000000000ffff
+R10: 000000000000ffff R11: 0000000000000002 R12: ffff88806603c000
+R13: 0000000000000000 R14: ffff8880685b2780 R15: 0000000000000e23
+FS:  00007fdc2deed6c0(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000001b30a1dff8 CR3: 0000000056b8c000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ __netdev_start_xmit include/linux/netdevice.h:5002 [inline]
+ netdev_start_xmit include/linux/netdevice.h:5011 [inline]
+ __dev_direct_xmit+0x58a/0x720 net/core/dev.c:4490
+ dev_direct_xmit include/linux/netdevice.h:3181 [inline]
+ packet_xmit+0x1e4/0x360 net/packet/af_packet.c:285
+ packet_snd net/packet/af_packet.c:3146 [inline]
+ packet_sendmsg+0x2700/0x5660 net/packet/af_packet.c:3178
+ sock_sendmsg_nosec net/socket.c:711 [inline]
+ __sock_sendmsg net/socket.c:726 [inline]
+ __sys_sendto+0x488/0x4f0 net/socket.c:2197
+ __do_sys_sendto net/socket.c:2204 [inline]
+ __se_sys_sendto net/socket.c:2200 [inline]
+ __x64_sys_sendto+0xe0/0x1c0 net/socket.c:2200
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fdc2d180809
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fdc2deed058 EFLAGS: 00000246 ORIG_RAX: 000000000000002c
+RAX: ffffffffffffffda RBX: 00007fdc2d345fa0 RCX: 00007fdc2d180809
+RDX: 000000000000000e RSI: 0000000020000340 RDI: 0000000000000003
+RBP: 00007fdc2d1f393e R08: 0000000020000140 R09: 0000000000000014
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007fdc2d345fa0 R15: 00007ffff90ca148
+ </TASK>
 
-Ran dtbs_check with this. The errors are silenced indeed. I didn't
-really like having empty ports in an already long DSS devicetree node,
-but this way the checks remain clean. I will use this for DT patches.
-Thank you! =)
 
-> 
-[...]
-> 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
--- 
-Regards
-Aradhya
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
