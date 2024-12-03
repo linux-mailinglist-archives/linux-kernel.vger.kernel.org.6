@@ -1,119 +1,153 @@
-Return-Path: <linux-kernel+bounces-428588-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 842E19E10F1
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 02:47:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C1A649E10E6
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 02:45:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 040D62828E4
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 01:47:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C1D6280BDB
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 01:45:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3028714EC7E;
-	Tue,  3 Dec 2024 01:46:47 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A86B3BB21;
+	Tue,  3 Dec 2024 01:45:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gammGrEF"
+Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com [209.85.221.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E30F17555;
-	Tue,  3 Dec 2024 01:46:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDBE27CF16
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 01:45:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733190406; cv=none; b=Cwp4oIVZidqGTWxgwCu3/cRAfw6m1JBKhAzprpJnAQob4gB6ftCJUD90G7fF8Lz0gHPTvxf0143oI7L3mp4qopM/QcmklrZsqPM+xd+6Pn4b+pidtj8ZDsHwuj2suPHIj8vx8nE1O2FaSZOwSVXacIb52cL7n5imo3TbtGou4RA=
+	t=1733190307; cv=none; b=L2h20q74Ay+kdIzUTkV/NIV/QCv6LHaLAaX2Jk4UmEIPMuiXkxN+xquOfGTMjhTArCtWrIAQnTyhw/qPAev2J/f6Q6DgEZ4myHOhYCpLMkVdDNo/HqHLmxgK8mMYoHI5i3KxH31ZWOX++QDOOnIM4sX6ZMGWfTsaATNU458iJ/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733190406; c=relaxed/simple;
-	bh=d+D3m06N+vCRhsLBvE6+zrOUn6PBZHagyKoLe6KTMzg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Ftdy7ObGzNcce70JEisXf8tYZlCHIlwioVRJenp7YbYRswGV/UxCqA4+9SM1kumBwfXdoT3RVMmfcSwS8nJDWZiJ7mNjbIXSrf1c/JSyfKdaxffuKr+PvwgVfY2tTzwP+COVB4XB12yhvmQHd1nqzg+sTlaP3sZUSt8w/mQMdJE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Y2NmL6NHLz4f3jkk;
-	Tue,  3 Dec 2024 09:46:26 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id C56C81A0196;
-	Tue,  3 Dec 2024 09:46:40 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.112.188])
-	by APP4 (Coremail) with SMTP id gCh0CgCHY4fyYk5ng34DDg--.44162S6;
-	Tue, 03 Dec 2024 09:46:40 +0800 (CST)
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-To: linux-ext4@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	tytso@mit.edu,
-	adilger.kernel@dilger.ca,
-	jack@suse.cz,
-	yi.zhang@huawei.com,
-	yi.zhang@huaweicloud.com,
-	chengzhihao1@huawei.com,
-	yukuai3@huawei.com,
-	yangerkun@huawei.com
-Subject: [PATCH 2/2] jbd2: flush filesystem device before updating tail sequence
-Date: Tue,  3 Dec 2024 09:44:07 +0800
-Message-ID: <20241203014407.805916-3-yi.zhang@huaweicloud.com>
-X-Mailer: git-send-email 2.46.1
-In-Reply-To: <20241203014407.805916-1-yi.zhang@huaweicloud.com>
-References: <20241203014407.805916-1-yi.zhang@huaweicloud.com>
+	s=arc-20240116; t=1733190307; c=relaxed/simple;
+	bh=HbuFI/riZulpFH9oeFjnjmTcBp+J3kMI3l1dSbEdv+8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nzt0rDj4IDYHKMKf39OJNT82tRUsN+Rm+DfYpQSAA4gfrjGWA87f6S/jztXMZAyW2tOkDLhKGJZ4yXq5zTi1nVtaKNN2U9rBFXc/LIwm9SArWzHhrO9NPvBkeAasaW4XVN7SyVxlM7FgoOI0eN0SFmflmY5Dkyz4MUyynSRQhp8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gammGrEF; arc=none smtp.client-ip=209.85.221.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-vk1-f170.google.com with SMTP id 71dfb90a1353d-51526b9e341so1274875e0c.0
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 17:45:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1733190305; x=1733795105; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wscqKrTwFb9sgoc/UfAh+DpARa9frP273Npy3sEJYN8=;
+        b=gammGrEFMqVu53ULwAZUDC4NzMOr+sqjMgaeTg626yFrwlHXVCEHQ6hgv4uPkfwRA8
+         2piOnABchhi1iIBxRJaRcx+3LYtaHB9lf2WbFRFlOlEHWVK3lQ6bwxY3ZWrE/4GWfm0K
+         VTdu264Sj9GjnS3XUvDrqblEc6SauRU/J1nUjjOW5BvJeIO36aiQXxvgTOtj1INTfzT2
+         IBkHnR1g7O7smg1Ws/unIpYS2OraU1rYj4yJwoZFqsRB+95WshFMWJ7PS6HpP4w2jVGn
+         v3XC6Ge9mMblziHTFYlQSoX+3CXbZ0VcCtI5V6vtPjRAPPLliNqgPyg5c6ISJl8vi5D3
+         TQLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733190305; x=1733795105;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wscqKrTwFb9sgoc/UfAh+DpARa9frP273Npy3sEJYN8=;
+        b=J1x29TCn0ZFe9nVUX+JDpCdKyAdsgLLQgWdCvuPGs7sR+C5cX7+IxUFerCvRsKgX4B
+         x8shOBPfvtN8gnrSLBdYw+e5iPjMvqoVMKn3nrML7+99ZqxFRiDoJyR7Nub1muD3GdK9
+         jgfjHiuuC/nMT4AvgZB5kdaG/usyMwZNMeaXiCUTm0wZim8B6VkR6o//FaYibj1WMxmH
+         7iIy1gTR6DgbKqkrvwYdN4M8nyzVNCyLkrxWnhgeRlIqAiUgkPVgM2coHoUlgXC2NHjA
+         WVXcsiVw3DGuBpSjsZxRLWX8zPmUcwgoOMOV2ZyJiltDf9aJbt4V2f6Ns6b8so+bIE+E
+         JAaA==
+X-Gm-Message-State: AOJu0Ywr3o81MGJ43HnRwsQfgnptAzAYbH91RVq9pWU7i0aSyDaE3gJj
+	QSfFSfveVjD/ZaXR6hPQlg1KeSzQTZh0bO823d4NPRGbWEHgMrb2OqaG1pT/A2eg73ShHOhy5UA
+	9eRkSV84i91uuRRAtb57fROIHmFVj5KrBJcmY
+X-Gm-Gg: ASbGncuYa1X/Qel7Hc8MDRNHcUo9rzagx3jSZEgfF6K2YOT5EvBBXZny2o2mAs5FuZI
+	0kUHVVwgVK6Uscabjkj6YGFcHpcdJYQyt
+X-Google-Smtp-Source: AGHT+IEp0cLLV0HS2GVNv35k+CB8WVNUZpet9fwmVxa/fQluHk3o8PZV+wDlJqqbk9+pA1JRUyjCGBWE6ek73EZak9c=
+X-Received: by 2002:a05:6122:169a:b0:515:4fab:2e53 with SMTP id
+ 71dfb90a1353d-515bf56cea7mr1114649e0c.7.1733190304632; Mon, 02 Dec 2024
+ 17:45:04 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgCHY4fyYk5ng34DDg--.44162S6
-X-Coremail-Antispam: 1UD129KBjvJXoW7CFyfJF18AF4fJrWkWrW8tFb_yoW8GF15pF
-	yUC3WjyrWkCa18CF18XF4xXFW7XFWvka4UWFyqkFn3Wa1UXwnakrW3t34Sgr90yr4Fkw4r
-	Xr10g34qg34jvaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUQq14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_Jryl82xGYIkIc2
-	x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2z4x0
-	Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr1j6rxdM2
-	8EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s0DM2AI
-	xVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20x
-	vE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xv
-	r2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E8cxan2IY04
-	v7MxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAKI48JMxAqzxv26xkF7I0En4kS14v2
-	6r1q6r43MxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxV
-	Cjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY
-	6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6x
-	AIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY
-	1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VU1c18PUUUUU==
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+References: <20241203005921.1119116-1-kevinloughlin@google.com>
+ <20241203005921.1119116-2-kevinloughlin@google.com> <a9560e97-478d-4e03-b936-cf6f663279a4@citrix.com>
+In-Reply-To: <a9560e97-478d-4e03-b936-cf6f663279a4@citrix.com>
+From: Kevin Loughlin <kevinloughlin@google.com>
+Date: Mon, 2 Dec 2024 17:44:53 -0800
+Message-ID: <CAGdbjmLRA5g+Rgiq-fRbWaNqXK51+naNBi0b3goKxsN-79wpaw@mail.gmail.com>
+Subject: Re: [RFC PATCH 1/2] x86, lib, xenpv: Add WBNOINVD helper functions
+To: Andrew Cooper <andrew.cooper3@citrix.com>
+Cc: linux-kernel@vger.kernel.org, seanjc@google.com, pbonzini@redhat.com, 
+	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
+	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
+	kvm@vger.kernel.org, thomas.lendacky@amd.com, pgonda@google.com, 
+	sidtelang@google.com, mizhang@google.com, virtualization@lists.linux.dev, 
+	xen-devel@lists.xenproject.org, bcm-kernel-feedback-list@broadcom.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Zhang Yi <yi.zhang@huawei.com>
+On Mon, Dec 2, 2024 at 5:28=E2=80=AFPM Andrew Cooper <andrew.cooper3@citrix=
+.com> wrote:
+>
+> On 03/12/2024 12:59 am, Kevin Loughlin wrote:
+> > diff --git a/arch/x86/include/asm/paravirt.h b/arch/x86/include/asm/par=
+avirt.h
+> > index d4eb9e1d61b8..c040af2d8eff 100644
+> > --- a/arch/x86/include/asm/paravirt.h
+> > +++ b/arch/x86/include/asm/paravirt.h
+> > @@ -187,6 +187,13 @@ static __always_inline void wbinvd(void)
+> >       PVOP_ALT_VCALL0(cpu.wbinvd, "wbinvd", ALT_NOT_XEN);
+> >  }
+> >
+> > +extern noinstr void pv_native_wbnoinvd(void);
+> > +
+> > +static __always_inline void wbnoinvd(void)
+> > +{
+> > +     PVOP_ALT_VCALL0(cpu.wbnoinvd, "wbnoinvd", ALT_NOT_XEN);
+> > +}
+>
+> Given this, ...
+>
+> > diff --git a/arch/x86/kernel/paravirt.c b/arch/x86/kernel/paravirt.c
+> > index fec381533555..a66b708d8a1e 100644
+> > --- a/arch/x86/kernel/paravirt.c
+> > +++ b/arch/x86/kernel/paravirt.c
+> > @@ -149,6 +154,7 @@ struct paravirt_patch_template pv_ops =3D {
+> >       .cpu.write_cr0          =3D native_write_cr0,
+> >       .cpu.write_cr4          =3D native_write_cr4,
+> >       .cpu.wbinvd             =3D pv_native_wbinvd,
+> > +     .cpu.wbnoinvd           =3D pv_native_wbnoinvd,
+> >       .cpu.read_msr           =3D native_read_msr,
+> >       .cpu.write_msr          =3D native_write_msr,
+> >       .cpu.read_msr_safe      =3D native_read_msr_safe,
+>
+> this, and ...
+>
+> > diff --git a/arch/x86/xen/enlighten_pv.c b/arch/x86/xen/enlighten_pv.c
+> > index d6818c6cafda..a5c76a6f8976 100644
+> > --- a/arch/x86/xen/enlighten_pv.c
+> > +++ b/arch/x86/xen/enlighten_pv.c
+> > @@ -1162,6 +1162,7 @@ static const typeof(pv_ops) xen_cpu_ops __initcon=
+st =3D {
+> >               .write_cr4 =3D xen_write_cr4,
+> >
+> >               .wbinvd =3D pv_native_wbinvd,
+> > +             .wbnoinvd =3D pv_native_wbnoinvd,
+> >
+> >               .read_msr =3D xen_read_msr,
+> >               .write_msr =3D xen_write_msr,
+>
+> this, what is the point having a paravirt hook which is wired to
+> native_wbnoinvd() in all cases?
+>
+> That just seems like overhead for overhead sake.
 
-When committing transaction in jbd2_journal_commit_transaction(), the
-disk caches for the filesystem device should be flushed before updating
-the journal tail sequence. However, this step is missed if the journal
-is not located on the filesystem device. As a result, the filesystem may
-become inconsistent following a power failure or system crash. Fix it by
-ensuring that the filesystem device is flushed appropriately.
-
-Fixes: 3339578f0578 ("jbd2: cleanup journal tail after transaction commit")
-Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
----
- fs/jbd2/commit.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/fs/jbd2/commit.c b/fs/jbd2/commit.c
-index 4305a1ac808a..f95cf272a1b5 100644
---- a/fs/jbd2/commit.c
-+++ b/fs/jbd2/commit.c
-@@ -776,9 +776,9 @@ void jbd2_journal_commit_transaction(journal_t *journal)
- 	/*
- 	 * If the journal is not located on the file system device,
- 	 * then we must flush the file system device before we issue
--	 * the commit record
-+	 * the commit record and update the journal tail sequence.
- 	 */
--	if (commit_transaction->t_need_data_flush &&
-+	if ((commit_transaction->t_need_data_flush || update_tail) &&
- 	    (journal->j_fs_dev != journal->j_dev) &&
- 	    (journal->j_flags & JBD2_BARRIER))
- 		blkdev_issue_flush(journal->j_fs_dev);
--- 
-2.46.1
-
+I'm mirroring what's done for WBINVD here, which was changed to a
+paravirt hook in 10a099405fdf ("cpuidle, xenpv: Make more PARAVIRT_XXL
+noinstr clean") in order to avoid calls out to instrumented code as
+described in the commit message in more detail. I believe a hook is
+similarly required for WBNOINVD, but please let me know if you
+disagree. Thanks!
 
