@@ -1,97 +1,81 @@
-Return-Path: <linux-kernel+bounces-429089-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429090-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99D569E17EA
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:40:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1108A9E184F
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:53:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DC2D8B38B85
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:22:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 45883B3BD5B
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:23:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D818A1DF272;
-	Tue,  3 Dec 2024 09:21:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I613wnmC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27C951CD204;
-	Tue,  3 Dec 2024 09:21:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 202E91DFD8D;
+	Tue,  3 Dec 2024 09:21:31 +0000 (UTC)
+Received: from cmccmta2.chinamobile.com (cmccmta2.chinamobile.com [111.22.67.135])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7759A1CD204;
+	Tue,  3 Dec 2024 09:21:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.135
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733217675; cv=none; b=P4AQUV3W4c+/IGl+tgSZWH8qafCqsrzXNA2llwxs6MlZqMIEJB5g+B5p27X+CAnGTLI2x2g/2yCZt07Y07tmAztrYieMZNKC3yXaFrtMrHjx5Y/2nFvfIrvcfBHrpwCTq+w4grTojfJAWZXgmXFyFTDfT8Y/nM1ULDYNEOzZOMk=
+	t=1733217690; cv=none; b=QxEe/YcffKmWlIJEeNJG4xHTBWfwm71rqoiTzeIFLt32ClkI1y47yWp3NfCeO7yUzP7m+UWSYHotx5ggtRsu1PxW+CvYJBTswhJ8XtM+OrGuVAEo6nHmkKMbpabpbw/49mSGvQl2YIM+bxUZ7dtEX26agOOg1h6wwplXRynEnr4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733217675; c=relaxed/simple;
-	bh=cPYxrvjdP6SGqJbH8TZQtoM+u/6iqcvQ/yJ8kNSftb0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=T7gb8RJbA5KmKDzeNyRr7m1gKKEZKoambeG77th9g3yNwX3mUFEy+CQUXCRY+bmsGGq6BI2LAi0fdfTiXB6VmXxn7uZ24gjeKaohIJtaH968/ofKGzngMB0Ls8YDZLwYg3wLlYvNjgDWCOqq+he/3/ZOGLkTQYTpOUPGoPhmVH4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I613wnmC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DB9DC4CECF;
-	Tue,  3 Dec 2024 09:21:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733217673;
-	bh=cPYxrvjdP6SGqJbH8TZQtoM+u/6iqcvQ/yJ8kNSftb0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=I613wnmCIOKB15gqKYn613rxiX9OCD+ZyVVZ0fdR2WDw3y6R35QUap4YmrOQl9G4M
-	 mwvfoBCKYaj3bg9pw9wXeBlHZyiOqHDdh4EEYkf1/0fabi+WFZemOAbDBDkxT062uG
-	 Zb2Jztog5RsBdsYi7054ut+oKquO1QmbE5qnnjv9vYdiK08WqHzptNQFVToLqikPW+
-	 o/YTkv07I/vOagqwWeIvVbj99ZQ27uOuKUbaiPKIazE/xHYUI+khDZ3WwyvWUZCMf5
-	 zMOlxWKsZSfS2lUslV2y0Q15OmM+m5hgl5FNHW1eigyW3w61e/BEpzP7+rBaJIeDZi
-	 RIzt/9q5DKWbw==
-Message-ID: <a25f7cfe-ef43-4841-ab81-0ecf59b20f15@kernel.org>
-Date: Tue, 3 Dec 2024 10:21:06 +0100
+	s=arc-20240116; t=1733217690; c=relaxed/simple;
+	bh=kBl9PceVCM+x29s5XWwbdQpNT0KY8ECBwJiaj3MWn1w=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=QaQxHVfkgiBF13koMlKnPs8P5dmjXOim9wcQ9xppK6AJ7j7JSWJA3zfCEvstS2CIHigRaBBSbpxaWLVX50EQVbxurWrT3h+l0Xm6yatF4FWpt6pijSX2o+u3d+D55UqgjbVKGiIxC+LWPtVaTgqKTTOj+KpXkMtcZGB+XiHNiRQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.135
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
+	by rmmx-syy-dmz-app07-12007 (RichMail) with SMTP id 2ee7674ecd8eda8-c1dc7;
+	Tue, 03 Dec 2024 17:21:18 +0800 (CST)
+X-RM-TRANSID:2ee7674ecd8eda8-c1dc7
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from ubuntu.localdomain (unknown[10.55.1.70])
+	by rmsmtp-syy-appsvr08-12008 (RichMail) with SMTP id 2ee8674ecd8cf08-25831;
+	Tue, 03 Dec 2024 17:21:18 +0800 (CST)
+X-RM-TRANSID:2ee8674ecd8cf08-25831
+From: Zhu Jun <zhujun2@cmss.chinamobile.com>
+To: martin.petersen@oracle.com
+Cc: James.Bottomley@HansenPartnership.com,
+	zhujun2@cmss.chinamobile.com,
+	linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [RESEND] bfa: Fix typo in bfi.h
+Date: Tue,  3 Dec 2024 01:21:15 -0800
+Message-Id: <20241203092115.7496-1-zhujun2@cmss.chinamobile.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 07/16] rust: add `Revocable` type
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: gregkh@linuxfoundation.org, rafael@kernel.org, bhelgaas@google.com,
- ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com,
- gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
- tmgross@umich.edu, a.hindborg@samsung.com, airlied@gmail.com,
- fujita.tomonori@gmail.com, lina@asahilina.net, pstanner@redhat.com,
- ajanulgu@redhat.com, lyude@redhat.com, robh@kernel.org,
- daniel.almeida@collabora.com, saravanak@google.com,
- rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
- Wedson Almeida Filho <wedsonaf@gmail.com>
-References: <20241022213221.2383-1-dakr@kernel.org>
- <20241022213221.2383-8-dakr@kernel.org>
- <CAH5fLgjcy=DQrCYt-k40D4_NcwgdrykUW9d74srGn5hxxo2Xmw@mail.gmail.com>
-From: Danilo Krummrich <dakr@kernel.org>
-Content-Language: en-US
-In-Reply-To: <CAH5fLgjcy=DQrCYt-k40D4_NcwgdrykUW9d74srGn5hxxo2Xmw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
 
-On 10/29/24 2:26 PM, Alice Ryhl wrote:
-> On Tue, Oct 22, 2024 at 11:33 PM Danilo Krummrich <dakr@kernel.org> wrote:
->> +/// A guard that allows access to a revocable object and keeps it alive.
->> +///
->> +/// CPUs may not sleep while holding on to [`RevocableGuard`] because it's in atomic context
->> +/// holding the RCU read-side lock.
->> +///
->> +/// # Invariants
->> +///
->> +/// The RCU read-side lock is held while the guard is alive.
->> +pub struct RevocableGuard<'a, T> {
->> +    data_ref: *const T,
->> +    _rcu_guard: rcu::Guard,
->> +    _p: PhantomData<&'a ()>,
->> +}
-> 
-> Is this needed? Can't all users just use `try_access_with_guard`?
+The word 'swtich' is wrong, so fix it.
 
-Without this guard, how to we access `T` with just the `rcu::Guard`?
+Signed-off-by: Zhu Jun <zhujun2@cmss.chinamobile.com>
+---
+ drivers/scsi/bfa/bfi.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> 
-> Alice
-> 
+diff --git a/drivers/scsi/bfa/bfi.h b/drivers/scsi/bfa/bfi.h
+index 41e6b4dac056..e1e0e967bcc3 100644
+--- a/drivers/scsi/bfa/bfi.h
++++ b/drivers/scsi/bfa/bfi.h
+@@ -1148,7 +1148,7 @@ struct bfi_diag_dport_scn_testcomp_s {
+ 	u16	numbuffer; /* from switch  */
+ 	u8	subtest_status[DPORT_TEST_MAX];  /* 4 bytes */
+ 	u32	latency;   /* from switch  */
+-	u32	distance;  /* from swtich unit in meters  */
++	u32	distance;  /* from switch unit in meters  */
+ 			/* Buffers required to saturate the link */
+ 	u16	frm_sz;	/* from switch for buf_reqd */
+ 	u8	rsvd[2];
+-- 
+2.17.1
+
+
 
 
