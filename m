@@ -1,84 +1,84 @@
-Return-Path: <linux-kernel+bounces-428854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7FE89E144A
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 08:33:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB2EB9E1442
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 08:32:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C086B16693D
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 07:32:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D82FE1672D5
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 07:32:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01DE91D517B;
-	Tue,  3 Dec 2024 07:31:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B2A31D79BE;
+	Tue,  3 Dec 2024 07:31:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="og5pTrpR"
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="LKpRDxmZ"
 Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8FC71C0DE2
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 07:31:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8B8B1B85EB
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 07:31:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733211069; cv=none; b=W90vic5Gq5FrzXqJpL46/yagZhTE6woDcp6tdinZoQPtpcXeR8KsjE84WuTYPCOli16rQpeQy6WBuxhaguI7SMDe2oRWHFMfMsYehAGAWtQuU2GtsEdhXf+Ky66bAG4dICQkMShfVC0715ldXqeRsPpIeC73tPKssE/JDmIRerg=
+	t=1733211071; cv=none; b=HU9wJVNEy2bQPjh4f13FesmY8JHBbYJtJDVAJzMna/plh6NB768pR5GeXV34k/Rr5WE2urV4wQ+Rpf+YSp2k6/xLQjpYFLI7UllUcajZ6iLATSta+YpMyjlCCj4B6n12hjvhSwZqZkEX6O3wSmlLTV66FfwJEUs17yxxH/Ujz+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733211069; c=relaxed/simple;
-	bh=ONGQeGV/Lo+dvZaz/MxmBnTpy+k0yha3gjPk1y+HOIY=;
+	s=arc-20240116; t=1733211071; c=relaxed/simple;
+	bh=B35FJqtVrA6/g3cRJDtf6i8TWPwah/QahNofj7yw7FU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=rfNG7tcXU9/XBu0IscT6lNMoeOnwzuqesTIs/iEFM3eefc1AuSr0GPOuXElxgnCNtuw98aAleV2z8haXjraDMbvruNVJu4wiXmOh6iFVmmmpcUErCL7M1WdxZClFwwbc0/auTW8DF25+1KzdPFV+vfg4XNI1Lx6QtoQ62VWg8RY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=og5pTrpR; arc=none smtp.client-ip=185.125.188.123
+	 MIME-Version; b=tIj1V2JZSuRwkfB8HjtOnY+I1VkH5FWcs9yL2fOdLPZoYRW4gV88kTWz848FvMZ/oB+mq149/toT2RfpC8PRIQTwSwggF5vR3OwZyDj3E9PFUACMLd3ZjVhy/akMUoGKVLtwOIkDdzSeol8dLZArtMRJffk3GroJZ0reH50M0g8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=LKpRDxmZ; arc=none smtp.client-ip=185.125.188.123
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 8F7A03F626
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 07:31:05 +0000 (UTC)
+	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 6D692402C7
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 07:31:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1733211065;
-	bh=5NLMnu2Z46KkDgOBwjL355ay2S58qzCZBNzBIFOkdbw=;
+	s=20210705; t=1733211068;
+	bh=0tIoR4M/e1hC8XWEPJavp463x0u2oxmCDdWZ8pN4UWM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
 	 MIME-Version;
-	b=og5pTrpRvLJr0XSW2GAPqyptSvzFiPq9P25nRwiD6RklmYc4qDy4rvVU9T3KAfj/x
-	 Kof18ZoRu2x9ict/CHI2zJFFgFlnisNZJDC5EBmFIvzAp3IyH/I6AnGj6wQFPR8q1w
-	 zbXemcHYEdDkJS1yXV2fTgikPPjukJndYPlIPy866fkR8/bemteoziajT0nGS1brC+
-	 Ih4il8+C72+0fyb+YPTyc5qnsfMHHI4OkkyFX3QeTY3HbQ1wShBkEjDA58NiYyloHw
-	 ng8xxkWAkYp3nJ7RNl8RLA7S/ixHNBID+0F0F7RXLwqWJMomQZt58oZk2zSkT7n41Y
-	 fhH5R9zpnNlbA==
-Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-21567f825d2so25688985ad.3
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 23:31:05 -0800 (PST)
+	b=LKpRDxmZRdRR+v13SSCn6JGZ2d/jh0meD7tb5qxZtwWBP8TX39Hi2RMvdSPIerkDq
+	 eU9epCYO46m5JaKvRktGXooROdY+o2ukLXNSQYO/F8294xVruHxUotb8PpUjseYv+/
+	 azkjBbBKVv1emvQRnH+xYOQzvZx/Qey0auKjDplpXwjjJ6d9ac6UkeHCAbrulYW+6Q
+	 lluCdy/HCT8YfXWwV4rN2u1rwRPxK1jIOjnrUoom8hbYDRXVVClswsiI7yI6D4l3gA
+	 NkiUnEys5eh2T1cloHRdz1cPuqboVTZMP5tpIkA31MVSFNKkHBuNFFTTYdl0bLrdbN
+	 NhI6jbJJ+UNQw==
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-2157b83f656so29821605ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 23:31:08 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733211063; x=1733815863;
+        d=1e100.net; s=20230601; t=1733211067; x=1733815867;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=5NLMnu2Z46KkDgOBwjL355ay2S58qzCZBNzBIFOkdbw=;
-        b=sBa0psNaPKrryzWRgoQXNwOQphAI331ibS1Hs0cwBj3KjEV5jxjJgauNCQUM9VsYk4
-         MOKO8HZyI5AvpsSI7wD6Le5ifn6mUt5F3V1735aXdoCWSURXVW73wLKy4tRR/Z2LiPLK
-         T4mvHUIG3CoKipWv6pplNGNyELU0kRaho48/wjD8TyOsDb+aeE4KoTdTHpMjX/6niZ72
-         DUvzjvkTPOa8X4rpg+MqXZe1Y2m8W5hpTTT5JebQi6Ii+1s8l9s8gdMA+dAENz7DZo8D
-         JAbrvaIOIx9KgIpxezKGzHdzti5TYxzh073TTGV5jnCMJJvcvbEvuwEpMeeTo+F81qtU
-         NHBA==
-X-Forwarded-Encrypted: i=1; AJvYcCUSrg59e71+7V0RyMzkJa+V1h0if8lnpyyOSvrKE9C7vLsuPmQDHxoPRPlX+lv8xZGk6JRIU7p2ZQMt47k=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx58zl68c+32E2OgIvjuKYAAmxv/nEnvWwwpb+FU9JTbzdGgI+h
-	BGxTkcT1Ipo0v9Ugns60dFPHEh5x+PTQDrVtucI44QJTChpBOXCXFE3o6DkRsVUlYQXCUIAn/AI
-	GYZujg+lRTVECNf64KGwhpmMk/VQYTvlCP/TdyFCl7cXt7j+bsM2xhAuY+3Of8u11WiypRd24CB
-	JU4w==
-X-Gm-Gg: ASbGnctemJwdrEmYzRNdP+EpZB3vFPuvs5C1TicWGjHFYyirg+aipnv0g+DGvUYqwZz
-	0ES55/HvoSksk/hWtg5J+Kx1PuNatGN6kXphY3YEBimuehbMpwnKWW4cvIRmmm1RxdcsziU0y6w
-	S3SPx7r0OVcJKKV99ku9LhBDiPd9wX0p9YBcavmj38uJKw29wdGosVvYqxJV3QSrxX0ezyXWgm5
-	wzAixv2yhjDzVPQmSKA/GuhhzBpp09qk9VXPeh7RnlYHmwBhoF3slTnESRsWsGG0t4R
-X-Received: by 2002:a17:903:32cc:b0:215:6e07:e0c9 with SMTP id d9443c01a7336-215bd25580bmr20893725ad.53.1733211063425;
-        Mon, 02 Dec 2024 23:31:03 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEeKLM2ys5e0Q3udqn6af/fNUMQYdUmFkZT/mCzd4RS2FR0h2mYZFsi+zEkr90jaY94M2UwGw==
-X-Received: by 2002:a17:903:32cc:b0:215:6e07:e0c9 with SMTP id d9443c01a7336-215bd25580bmr20893465ad.53.1733211063136;
-        Mon, 02 Dec 2024 23:31:03 -0800 (PST)
+        bh=0tIoR4M/e1hC8XWEPJavp463x0u2oxmCDdWZ8pN4UWM=;
+        b=BWExP2EVEZ2JT94YAZHFIxro44XkYOooffnFfP85Lmz6rLwh+18nb7tC2XcR9dycxa
+         HqN0InAO47UmxZs47UDUIP3yadkFIbrilmvDRudbmKMsY/3qI1E3YC+/BfpF2FnFZ7hW
+         +xhBa65YPLndzTSPZWfEqiC4vY36LEpDxEw+HtK5BKsCVrtzrmQuFETi2o2rZ+1I5L29
+         NsmBb0FZR4HHhlbE1Wl8PXPgyJgEqXj3oJifx73HHugGCR6mbJf7B4bZ/kbu0wEf2U6x
+         aNUs2T9ti5XYKSsEFOuy2DrgwwWnGxLND3Qp0Sdq6YPY7lz1xzNXUV6MknMSZ4j158WH
+         D3zg==
+X-Forwarded-Encrypted: i=1; AJvYcCWwlw8RUlb2W50tOvusoZMBnTPH1/XmbfjtEEUabcIHGkohnZ0FL6YGQkiRzHxDY7uCMoIL9ELteawfHp4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxw2bFAYVt5KbZRQH2HdMg9VRAWy9Ps/ffP05GVNF2KVkFzxU3+
+	NmblateEctY3uJeO/XAG42RI9dLlt1afMKxcJ/OpO48Me8oS4HbdiHrhWQiUqb4kfRzP5WmrR/C
+	jdvtcFQaY9mrnM9YYZ4dkv4DsozlsY1d185MqGyPGW8qiAx+56DZmoFB3sUYUtDJsB0q+asHlCP
+	ieRQ==
+X-Gm-Gg: ASbGnctKYf7n7hsMhpHdNHCErDXbFwh3N/+q1EfW5+9/7K1DZcoxq5NAu5iP+Su/i7A
+	BdZ+AGo8x+VuYJLtKP2oDigG3ByPmepu+Anw6/elHUL0Vm87JhVxXSBOfpk0yOIA5Ra/jXqOKYm
+	swLmCtp7pGZ8yR6rN58NeIHVZgIOmAcel1mU7xW0m4QFh6qcQgeOydXcX5AIU0DYSOEIFxO8PZ6
+	bp1yQju8nEQWMbAuI9LEmowygTWvCzhw4wBmp6K4mdz14B7KTpnlm4tHlxSDwmWxbG9
+X-Received: by 2002:a17:902:c945:b0:215:a57e:88e7 with SMTP id d9443c01a7336-215bd1b46b0mr13127545ad.3.1733211067088;
+        Mon, 02 Dec 2024 23:31:07 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHP4XjzXdT7YSH9p2iSEiXeF4vQERCA9UmM9iKOMdbRsv+ACtukLlabl71vKcQSJKNxhflm3g==
+X-Received: by 2002:a17:902:c945:b0:215:a57e:88e7 with SMTP id d9443c01a7336-215bd1b46b0mr13127345ad.3.1733211066776;
+        Mon, 02 Dec 2024 23:31:06 -0800 (PST)
 Received: from localhost.localdomain ([240f:74:7be:1:b2b6:e8c2:50d0:c558])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21586d40afasm35735165ad.270.2024.12.02.23.31.00
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21586d40afasm35735165ad.270.2024.12.02.23.31.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Dec 2024 23:31:02 -0800 (PST)
+        Mon, 02 Dec 2024 23:31:06 -0800 (PST)
 From: Koichiro Den <koichiro.den@canonical.com>
 To: virtualization@lists.linux.dev
 Cc: mst@redhat.com,
@@ -94,9 +94,9 @@ Cc: mst@redhat.com,
 	netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Subject: [PATCH net-next v2 3/5] virtio_net: add missing netdev_tx_reset_queue() to virtnet_tx_resize()
-Date: Tue,  3 Dec 2024 16:30:23 +0900
-Message-ID: <20241203073025.67065-4-koichiro.den@canonical.com>
+Subject: [PATCH net-next v2 4/5] virtio_ring: add 'flushed' as an argument to virtqueue_reset()
+Date: Tue,  3 Dec 2024 16:30:24 +0900
+Message-ID: <20241203073025.67065-5-koichiro.den@canonical.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20241203073025.67065-1-koichiro.den@canonical.com>
 References: <20241203073025.67065-1-koichiro.den@canonical.com>
@@ -108,29 +108,99 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-virtnet_tx_resize() flushes remaining tx skbs, so DQL counters need to
-be reset.
+When virtqueue_reset() has actually recycled all unused buffers,
+additional work may be required in some cases. Relying solely on its
+return status is fragile, so introduce a new argument 'flushed' to
+explicitly indicate whether it has really occurred.
 
-Fixes: c8bd1f7f3e61 ("virtio_net: add support for Byte Queue Limits")
-Cc: <stable@vger.kernel.org> # v6.11+
 Signed-off-by: Koichiro Den <koichiro.den@canonical.com>
 ---
- drivers/net/virtio_net.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/net/virtio_net.c     | 6 ++++--
+ drivers/virtio/virtio_ring.c | 6 +++++-
+ include/linux/virtio.h       | 3 ++-
+ 3 files changed, 11 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
-index df9bfe31aa6d..0103d7990e44 100644
+index 0103d7990e44..d5240a03b7d6 100644
 --- a/drivers/net/virtio_net.c
 +++ b/drivers/net/virtio_net.c
-@@ -3399,6 +3399,8 @@ static int virtnet_tx_resize(struct virtnet_info *vi, struct send_queue *sq,
- 	err = virtqueue_resize(sq->vq, ring_num, virtnet_sq_free_unused_buf, &flushed);
+@@ -5695,6 +5695,7 @@ static int virtnet_rq_bind_xsk_pool(struct virtnet_info *vi, struct receive_queu
+ 				    struct xsk_buff_pool *pool)
+ {
+ 	int err, qindex;
++	bool flushed;
+ 
+ 	qindex = rq - vi->rq;
+ 
+@@ -5713,7 +5714,7 @@ static int virtnet_rq_bind_xsk_pool(struct virtnet_info *vi, struct receive_queu
+ 
+ 	virtnet_rx_pause(vi, rq);
+ 
+-	err = virtqueue_reset(rq->vq, virtnet_rq_unmap_free_buf);
++	err = virtqueue_reset(rq->vq, virtnet_rq_unmap_free_buf, &flushed);
+ 	if (err) {
+ 		netdev_err(vi->dev, "reset rx fail: rx queue index: %d err: %d\n", qindex, err);
+ 
+@@ -5737,12 +5738,13 @@ static int virtnet_sq_bind_xsk_pool(struct virtnet_info *vi,
+ 				    struct xsk_buff_pool *pool)
+ {
+ 	int err, qindex;
++	bool flushed;
+ 
+ 	qindex = sq - vi->sq;
+ 
+ 	virtnet_tx_pause(vi, sq);
+ 
+-	err = virtqueue_reset(sq->vq, virtnet_sq_free_unused_buf);
++	err = virtqueue_reset(sq->vq, virtnet_sq_free_unused_buf, &flushed);
+ 	if (err) {
+ 		netdev_err(vi->dev, "reset tx fail: tx queue index: %d err: %d\n", qindex, err);
+ 		pool = NULL;
+diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
+index 34a068d401ec..b522ef798946 100644
+--- a/drivers/virtio/virtio_ring.c
++++ b/drivers/virtio/virtio_ring.c
+@@ -2828,6 +2828,7 @@ EXPORT_SYMBOL_GPL(virtqueue_resize);
+  * virtqueue_reset - detach and recycle all unused buffers
+  * @_vq: the struct virtqueue we're talking about.
+  * @recycle: callback to recycle unused buffers
++ * @flushed: whether or not unused buffers are all flushed
+  *
+  * Caller must ensure we don't call this with other virtqueue operations
+  * at the same time (except where noted).
+@@ -2839,14 +2840,17 @@ EXPORT_SYMBOL_GPL(virtqueue_resize);
+  * -EPERM: Operation not permitted
+  */
+ int virtqueue_reset(struct virtqueue *_vq,
+-		    void (*recycle)(struct virtqueue *vq, void *buf))
++		    void (*recycle)(struct virtqueue *vq, void *buf),
++		    bool *flushed)
+ {
+ 	struct vring_virtqueue *vq = to_vvq(_vq);
+ 	int err;
+ 
++	*flushed = false;
+ 	err = virtqueue_disable_and_recycle(_vq, recycle);
  	if (err)
- 		netdev_err(vi->dev, "resize tx fail: tx queue index: %d err: %d\n", qindex, err);
-+	if (flushed)
-+		netdev_tx_reset_queue(netdev_get_tx_queue(vi->dev, qindex));
+ 		return err;
++	*flushed = true;
  
- 	virtnet_tx_resume(vi, sq);
+ 	if (vq->packed_ring)
+ 		virtqueue_reinit_packed(vq);
+diff --git a/include/linux/virtio.h b/include/linux/virtio.h
+index 878feda08af9..e5072d64a364 100644
+--- a/include/linux/virtio.h
++++ b/include/linux/virtio.h
+@@ -112,7 +112,8 @@ int virtqueue_resize(struct virtqueue *vq, u32 num,
+ 		     void (*recycle)(struct virtqueue *vq, void *buf),
+ 		     bool *flushed);
+ int virtqueue_reset(struct virtqueue *vq,
+-		    void (*recycle)(struct virtqueue *vq, void *buf));
++		    void (*recycle)(struct virtqueue *vq, void *buf),
++		    bool *flushed);
  
+ struct virtio_admin_cmd {
+ 	__le16 opcode;
 -- 
 2.43.0
 
