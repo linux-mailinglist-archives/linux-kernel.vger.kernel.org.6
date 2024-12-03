@@ -1,51 +1,64 @@
-Return-Path: <linux-kernel+bounces-430039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430041-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1C959E2BB6
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 20:10:33 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 235B19E2CF9
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 21:23:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 610E3286610
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 19:10:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 86E96B2A6B7
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 19:17:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 711C81FECDC;
-	Tue,  3 Dec 2024 19:10:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04F98202F86;
+	Tue,  3 Dec 2024 19:17:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yoseli.org header.i=@yoseli.org header.b="bVUvrE8s"
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Uus+1SCG"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D9B91B6D1C;
-	Tue,  3 Dec 2024 19:10:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F12831FDE05;
+	Tue,  3 Dec 2024 19:17:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733253028; cv=none; b=e5x41Fy/s6iOHMLDR22zCmPC4b/WyGz2R+zHAiMC1l6PfT2xy22icJW6Ch9PmwhOypyEKYHp4TstICzPAUMp5IYpv4XkBnlZVASw37cWyLtMoDGgsi1iZkVVj/r/cmlZMtwMoi3k7OXUBC48/VrP6MYuW14D14dYNG/NgOjiNEg=
+	t=1733253441; cv=none; b=jOvE6yahPkuZi3KdZFc/vu5dyVjyyqa8YlC+L+ppOF04zyL/A4kefrgnKHIaOe7DEqUrBNOhTUwsXdfyIFsOWfQk4RsA9+O4XGBtGfiE1054U1xrAHGXi0GoCfSyRmUoVdYsP9c1MfmuuW+xhCTunFIMBkcH/LwyNr4FonwI8ZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733253028; c=relaxed/simple;
-	bh=equwymxagylTfOKiMukh6cgxz/x44zH9uK9iEFLU9rk=;
+	s=arc-20240116; t=1733253441; c=relaxed/simple;
+	bh=Gj9U8gjOLgwmXWzIPYtQE17POzTSo+8rK0HOW9AYUaI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=O5MMwgK+v0AQr9kMwwQTwc1yF1I7Ukm3EA0ieITS/g5EYD0Cj4/OlSQzCMoSUdEQ2SNqLgi1gCyD/GlplOHp5Ieb1eUO1yMzFehacsCUZep8FWJwvHWzwrL3J6TRPe7PAHKDXLhqFPfBMDHpcNGi5Ts/FQpUlHb71+Lgspan2Y0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=yoseli.org; spf=none smtp.mailfrom=yoseli.org; dkim=pass (2048-bit key) header.d=yoseli.org header.i=@yoseli.org header.b=bVUvrE8s; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=yoseli.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=yoseli.org
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 86BB6FF803;
-	Tue,  3 Dec 2024 19:10:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yoseli.org; s=gm1;
-	t=1733253023;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sJ141NfXLLsQBayhvUmDGESh4xTXpdSDAsmwypM8tp8=;
-	b=bVUvrE8sNyeaKUQxMs3EQwd7lDUEjCSDwyMRyC8xa/EWV1oXgcFnokk5MZ9LdsY9pyCxED
-	EXHeFoyo8pJ7MzRrGlJH+m+RxQPD9qS145/4JDCid90n0Ja0UCPHO3cEto7ZYyXztw/Py1
-	LUIb3sTIulF3zhhoOtcQxBz49qq/+0hnzVKysf+roGrLvkgSCmRLjQ2MwD7yncXKY2zzZE
-	f47DMn/68IKuZ9WgQOneYydI3tHqfX/sbMAYScqZM7nwTaqRFx/bJSCIMah6M6Xp2hpmKi
-	lFEB7NOXzOwUoR/rMPWm0Mxw3MoAizA0xoZXlf5H3lLZvxIWD+ruue9eh7TIzw==
-Message-ID: <b20a80d4-2539-4771-897e-f8339a09545b@yoseli.org>
-Date: Tue, 3 Dec 2024 20:10:21 +0100
+	 In-Reply-To:Content-Type; b=j5d3knKP0bdde5yO6PuESheC8KUT8MErWysNnf9qh666bOt+8z98Oex77SAo83xOblPvHlEa9xpQ3cwWkQgAMuRRKvRgU7UOf8Y9DY2+Dsey/9QHFUeupbAF9/p1j9eKypVUx49+xMGGT+7gN2jLgJy3H0e8sRv2LSUPdot5oE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Uus+1SCG; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733253439; x=1764789439;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=Gj9U8gjOLgwmXWzIPYtQE17POzTSo+8rK0HOW9AYUaI=;
+  b=Uus+1SCG7IvnQ59LbLpWeIFtcDK/laKeaB04JhraEGMAisN22gjO/8AB
+   UtP9f8jT+48ji6/6pa8gSqVRV8B1gVXf5UU67bxr/eitgLqAmEJtQBNIl
+   a813sRi+d10FMZJdKPn5Dv4pa0LkwVe7vVXpYZKYCDV24NO8a88pAj6ia
+   Gbq8wrWl+xD5jXVBXQNEEn7DLCNW6CgG6ZFsDaJLHcwo4+nfPPZ+v76m7
+   WgcISUeSaNmr7CYFyTcVfvxIvbTpksbngrgQgZhQa1hEUxlB7sC3ic9TD
+   Ih08f5D5xJ+scCN1EQokVkfYtCMM+GYvsjBeT+q+NzFDSArSuWFkHXDBK
+   Q==;
+X-CSE-ConnectionGUID: QZkUJ56ATfSVmJw309eBcQ==
+X-CSE-MsgGUID: ZgqupyhcQdCOiYciTJO6og==
+X-IronPort-AV: E=McAfee;i="6700,10204,11275"; a="43968944"
+X-IronPort-AV: E=Sophos;i="6.12,206,1728975600"; 
+   d="scan'208";a="43968944"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Dec 2024 11:17:17 -0800
+X-CSE-ConnectionGUID: 8o3ozbdOQ5S7JUs7VlJJaA==
+X-CSE-MsgGUID: kH3OH0VXSq6ekEmu491NXA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,206,1728975600"; 
+   d="scan'208";a="93379486"
+Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.246.0.178])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Dec 2024 11:17:12 -0800
+Message-ID: <9beb9e92-b98c-42a2-a2d3-35c5b681ad03@intel.com>
+Date: Tue, 3 Dec 2024 21:17:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,173 +66,189 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] arch: m68k: Add STACKTRACE support
-To: Michael Schmitz <schmitzmic@gmail.com>,
- Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, rostedt@goodmis.org
-References: <20241203-add-m68k-tracing-support-v2-0-77302097a9f4@yoseli.org>
- <20241203-add-m68k-tracing-support-v2-2-77302097a9f4@yoseli.org>
- <eb313fe1-f586-4613-acb6-63b12859da71@gmail.com>
+Subject: Re: [PATCH 7/7] KVM: TDX: Add TSX_CTRL msr into uret_msrs list
+To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
+ "seanjc@google.com" <seanjc@google.com>
+Cc: "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+ "Li, Xiaoyao" <xiaoyao.li@intel.com>, "Huang, Kai" <kai.huang@intel.com>,
+ "Zhao, Yan Y" <yan.y.zhao@intel.com>,
+ "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "Yang, Weijiang" <weijiang.yang@intel.com>,
+ "binbin.wu@linux.intel.com" <binbin.wu@linux.intel.com>,
+ "dmatlack@google.com" <dmatlack@google.com>,
+ "pbonzini@redhat.com" <pbonzini@redhat.com>,
+ "Yamahata, Isaku" <isaku.yamahata@intel.com>,
+ "tony.lindgren@linux.intel.com" <tony.lindgren@linux.intel.com>,
+ "nik.borisov@suse.com" <nik.borisov@suse.com>,
+ "Chatre, Reinette" <reinette.chatre@intel.com>,
+ "Gao, Chao" <chao.gao@intel.com>, "x86@kernel.org" <x86@kernel.org>
+References: <20241121201448.36170-1-adrian.hunter@intel.com>
+ <20241121201448.36170-8-adrian.hunter@intel.com> <Zz/6NBmZIcRUFvLQ@intel.com>
+ <Z0cmEd5ehnYT8uc-@google.com>
+ <b36dd125-ad80-4572-8258-7eea3a899bf9@intel.com>
+ <Z04Ffd7Lqxr4Wwua@google.com>
+ <c98556099074f52af1c81ec1e82f89bec92cb7cd.camel@intel.com>
+ <Z05SK2OxASuznmPq@google.com>
+ <60e2ed472e03834c13a48e774dc9f006eda92bf5.camel@intel.com>
 Content-Language: en-US
-From: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
-In-Reply-To: <eb313fe1-f586-4613-acb6-63b12859da71@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: jeanmichel.hautbois@yoseli.org
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+In-Reply-To: <60e2ed472e03834c13a48e774dc9f006eda92bf5.camel@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Michael,
-
-On 03/12/2024 19:21, Michael Schmitz wrote:
-> Jean-Michel,
-> 
-> good work on adding
-
-Thanks ^_^
-
-> On 4/12/24 06:21, Jean-Michel Hautbois wrote:
->> In order to use tracing, implement a basic arch_stack_walk() based on
->> the one in PowerPC.
->> Tested on a M54418 coldfire.
+On 3/12/24 19:34, Edgecombe, Rick P wrote:
+> On Mon, 2024-12-02 at 16:34 -0800, Sean Christopherson wrote:
+>>> Small point - the last conversation[0] we had on this was to let *userspace*
+>>> ensure consistency between KVM's CPUID (i.e. KVM_SET_CPUID2) and the TDX
+>>> Module's view.
 >>
->> Signed-off-by: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
->> ---
->>   arch/m68k/Kconfig             |  6 ++++
->>   arch/m68k/kernel/Makefile     |  1 +
->>   arch/m68k/kernel/stacktrace.c | 70 +++++++++++++++++++++++++++++++++ 
->> ++++++++++
->>   3 files changed, 77 insertions(+)
+>> I'm all for that, right up until KVM needs to protect itself again userspace
+>> and
+>> flawed TDX architecture.  A relevant comment I made in that thread:
 >>
->> diff --git a/arch/m68k/Kconfig b/arch/m68k/Kconfig
->> index 
->> 793ab1e2762609725bbf793f6dffecfa3ecfff0f..6ba3238ba2c68acaf5974396739e629b09eee3ca 100644
->> --- a/arch/m68k/Kconfig
->> +++ b/arch/m68k/Kconfig
->> @@ -40,6 +40,8 @@ config M68K
->>       select UACCESS_MEMCPY if !MMU
->>       select ZONE_DMA
->>       select TRACE_IRQFLAGS_SUPPORT
->> +    select ARCH_STACKWALK
->> +    select ARCH_WANT_FRAME_POINTERS
-> 
-> How much does that add to kernel size? It's only needed for debugging so 
-> some folks may prefer to save a little on code size (not to mention the 
-> extra frame pointer save on each call) ...
-
-Oh yeah, I have such a fast (ah ah) cpu that I forget others may not.
-I have not measure the size it adds.
-
-> 
-> Cheers,
-> 
->      Michael
-> 
-> 
->>   config CPU_BIG_ENDIAN
->>       def_bool y
->> @@ -106,6 +108,10 @@ config BOOTINFO_PROC
->>         Say Y to export the bootinfo used to boot the kernel in a
->>         "bootinfo" file in procfs.  This is useful with kexec.
->> +config STACKTRACE_SUPPORT
->> +    bool
->> +    default y
->> +
-> Any reason why you can't place the two 'select' statements in this 
-> conditional?
-
-Absolutely not, I will add those here and condition the stacktrace to 
-coldfire (or even M5441x ?) ?
-
->>   menu "Platform setup"
->>   source "arch/m68k/Kconfig.cpu"
->> diff --git a/arch/m68k/kernel/Makefile b/arch/m68k/kernel/Makefile
->> index 
->> 6c732ed3998b714a4842ee29c977550a61979779..cb02bcfe04c6b265fa97db9237395a262e649989 100644
->> --- a/arch/m68k/kernel/Makefile
->> +++ b/arch/m68k/kernel/Makefile
->> @@ -23,3 +23,4 @@ obj-$(CONFIG_UBOOT)        += uboot.o
->>   obj-$(CONFIG_EARLY_PRINTK)    += early_printk.o
->> +obj-y    += stacktrace.o
->> diff --git a/arch/m68k/kernel/stacktrace.c b/arch/m68k/kernel/ 
->> stacktrace.c
->> new file mode 100644
->> index 
->> 0000000000000000000000000000000000000000..4c2fb6b0cf675ee5a3a21393a50603fea98a1b03
->> --- /dev/null
->> +++ b/arch/m68k/kernel/stacktrace.c
->> @@ -0,0 +1,70 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +
->> +/*
->> + * Stack trace utility functions etc.
->> + *
->> + * Copyright 2024 Jean-Michel Hautbois, Yoseli SAS.
->> + */
->> +
->> +#include <asm/current.h>
->> +#include <asm/ptrace.h>
->> +#include <linux/sched.h>
->> +#include <linux/sched/task_stack.h>
->> +#include <linux/stacktrace.h>
->> +
->> +static inline unsigned long current_stack_frame(void)
->> +{
->> +    unsigned long sp;
->> +
->> +    asm volatile("movl %%fp, %0" : "=r"(sp));
->> +    return sp;
->> +}
->> +
->> +static inline int validate_sp(unsigned long sp, struct task_struct 
->> *task)
->> +{
->> +    unsigned long stack_start, stack_end;
->> +
->> +    if (task == current)
->> +        stack_start = (unsigned long)task_stack_page(task);
->> +    else
->> +        stack_start = (unsigned long)task->thread.esp0;
->> +
->> +    stack_end = stack_start + THREAD_SIZE;
->> +
->> +    if (sp < stack_start || sp >= stack_end)
->> +        return 0;
->> +
->> +    return 1;
->> +}
->> +
->> +void __no_sanitize_address arch_stack_walk(stack_trace_consume_fn 
->> consume_entry, void *cookie,
->> +                       struct task_struct *task, struct pt_regs *regs)
->> +{
->> +    unsigned long sp;
->> +
->> +    if (regs && !consume_entry(cookie, regs->pc))
->> +        return;
->> +
->> +    if (regs)
->> +        sp = (unsigned long) regs;
->> +    else if (task == current)
->> +        sp = current_stack_frame();
->> +    else
->> +        sp = task->thread.ksp;
->> +
->> +    for (;;) {
->> +        unsigned long *stack = (unsigned long *) sp;
->> +        unsigned long newsp, ip;
->> +
->> +        if (!validate_sp(sp, task))
->> +            return;
->> +
->> +        newsp = stack[0];
->> +        ip = stack[1];
->> +
->> +        if (!consume_entry(cookie, ip))
->> +            return;
->> +
->> +        sp = newsp;
->> +    }
->> +}
+>>  : If the upgrade breaks a setup because it confuses _KVM_, then I'll care
 >>
+>> As it applies here, letting vCPU CPUID and actual guest functionality diverge
+>> for
+>> features that KVM cares about _will_ cause problems.
+> 
+> Right, just wanted to make sure we don't need to re-open the major design.
+> 
+>>
+>> This will be less ugly to handle once kvm_vcpu_arch.cpu_caps is a thing.  KVM
+>> can simply force set/clear bits to match the actual guest functionality that's
+>> hardcoded by the TDX Module or defined by TDPARAMS.
+>>
+>>> So the configuration goes:
+>>> 1. Userspace configures per-VM CPU features
+>>> 2. Userspace gets TDX Module's final per-vCPU version of CPUID configuration
+>>> via
+>>> KVM API
+>>> 3. Userspace calls KVM_SET_CPUID2 with the merge of TDX Module's version,
+>>> and
+>>> userspace's desired values for KVM "owned" CPUID leads (pv features, etc)
+>>>
+>>> But KVM's knowledge of CPUID bits still remains per-vcpu for TDX in any
+>>> case.
+>>>
+>>>>
+>>>>  - Don't hardcode fixed/required CPUID values in KVM, use available
+>>>> metadata
+>>>>    from TDX Module to reject "bad" guest CPUID (or let the TDX module
+>>>> reject?).
+>>>>    I.e. don't let a guest silently run with a CPUID that diverges from
+>>>> what
+>>>>    userspace provided.
+>>>
+>>> The latest QEMU patches have this fixed bit data hardcoded in QEMU. Then the
+>>> long term solution is to make the TDX module return this data. Xiaoyao will
+>>> post
+>>> a proposal on how the TDX module should expose this soon.
+>>
+>> Punting the "merge" to userspace is fine, but KVM still needs to ensure it
+>> doesn't
+>> have holes where userspace can attack the kernel by lying about what features
+>> the
+>> guest has access to.  And that means forcing bits in kvm_vcpu_arch.cpu_caps;
+>> anything else is just asking for problems.
+> 
+> Ok, then for now let's just address them on a case-by-case basis for logic that
+> protects KVM. I'll add to look at using kvm_vcpu_arch.cpu_caps to our future-
+> things todo list.
+> 
+> I think Adrian is going post a proposal for how to handle this case better.
+
+Perhaps just do without TSX support to start with e.g. drop
+this "KVM: TDX: Add TSX_CTRL msr into uret_msrs list" patch
+and instead add the following:
+
+
+From: Adrian Hunter <adrian.hunter@intel.com>
+Date: Tue, 3 Dec 2024 08:20:03 +0200
+Subject: [PATCH] KVM: TDX: Disable support for TSX and WAITPKG
+
+Support for restoring IA32_TSX_CTRL MSR and IA32_UMWAIT_CONTROL MSR is not
+yet implemented, so disable support for TSX and WAITPKG for now.  Clear the
+associated CPUID bits returned by KVM_TDX_CAPABILITIES, and return an error
+if those bits are set in KVM_TDX_INIT_VM.
+
+Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+---
+ arch/x86/kvm/vmx/tdx.c | 43 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 43 insertions(+)
+
+diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
+index 69bb3136076d..947f78dc3429 100644
+--- a/arch/x86/kvm/vmx/tdx.c
++++ b/arch/x86/kvm/vmx/tdx.c
+@@ -105,6 +105,44 @@ static u32 tdx_set_guest_phys_addr_bits(const u32 eax, int addr_bits)
+ 	return (eax & ~GENMASK(23, 16)) | (addr_bits & 0xff) << 16;
+ }
+ 
++#define TDX_FEATURE_TSX (__feature_bit(X86_FEATURE_HLE) | __feature_bit(X86_FEATURE_RTM))
++
++static bool has_tsx(const struct kvm_cpuid_entry2 *entry)
++{
++	return entry->function == 7 && entry->index == 0 &&
++	       (entry->ebx & TDX_FEATURE_TSX);
++}
++
++static void clear_tsx(struct kvm_cpuid_entry2 *entry)
++{
++	entry->ebx &= ~TDX_FEATURE_TSX;
++}
++
++static bool has_waitpkg(const struct kvm_cpuid_entry2 *entry)
++{
++	return entry->function == 7 && entry->index == 0 &&
++	       (entry->ecx & __feature_bit(X86_FEATURE_WAITPKG));
++}
++
++static void clear_waitpkg(struct kvm_cpuid_entry2 *entry)
++{
++	entry->ecx &= ~__feature_bit(X86_FEATURE_WAITPKG);
++}
++
++static void tdx_clear_unsupported_cpuid(struct kvm_cpuid_entry2 *entry)
++{
++	if (has_tsx(entry))
++		clear_tsx(entry);
++
++	if (has_waitpkg(entry))
++		clear_waitpkg(entry);
++}
++
++static bool tdx_unsupported_cpuid(const struct kvm_cpuid_entry2 *entry)
++{
++	return has_tsx(entry) || has_waitpkg(entry);
++}
++
+ #define KVM_TDX_CPUID_NO_SUBLEAF	((__u32)-1)
+ 
+ static void td_init_cpuid_entry2(struct kvm_cpuid_entry2 *entry, unsigned char idx)
+@@ -124,6 +162,8 @@ static void td_init_cpuid_entry2(struct kvm_cpuid_entry2 *entry, unsigned char i
+ 	/* Work around missing support on old TDX modules */
+ 	if (entry->function == 0x80000008)
+ 		entry->eax = tdx_set_guest_phys_addr_bits(entry->eax, 0xff);
++
++	tdx_clear_unsupported_cpuid(entry);
+ }
+ 
+ static int init_kvm_tdx_caps(const struct tdx_sys_info_td_conf *td_conf,
+@@ -1235,6 +1275,9 @@ static int setup_tdparams_cpuids(struct kvm_cpuid2 *cpuid,
+ 		if (!entry)
+ 			continue;
+ 
++		if (tdx_unsupported_cpuid(entry))
++			return -EINVAL;
++
+ 		copy_cnt++;
+ 
+ 		value = &td_params->cpuid_values[i];
+-- 
+2.43.0
 
 
