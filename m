@@ -1,113 +1,171 @@
-Return-Path: <linux-kernel+bounces-429279-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABCBD9E19AA
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 11:45:57 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 025CE9E19A6
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 11:45:21 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7080D286BD7
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:45:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA2B416686A
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:45:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7D8B1E25F8;
-	Tue,  3 Dec 2024 10:44:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B92401E2603;
+	Tue,  3 Dec 2024 10:44:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="iLdB6GjU"
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="CWxyYlbK";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="N7Tt4VXQ"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B6761E283C;
-	Tue,  3 Dec 2024 10:44:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83D6A1E25F8;
+	Tue,  3 Dec 2024 10:44:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733222686; cv=none; b=dvghF/RHcZta1JIKm0RWaaerlf/DXs4Wr3qsNmpxf0W2KobIiT5vlgC1jLMIRdyHw2cbVXNfhJqo322wRb0i/po5XAlgX9rRISi4etHcoxB+A66nW5fGgaEBJ+Fuf3dpDC8KIq1Z+mjVJJ9QMsbkyy9hfRu4DsLXgwTk5+AZjzQ=
+	t=1733222683; cv=none; b=sCHWdOrzrGLimgECGxo5O6DtURQpNDMSaJyWJaON64f089O0RP0TKZtSFTLXfuv+eiZ3Xhtb0Fu97CgH/0dqWbJeDVUPgN1k0rAjkAbxvKFHHaBUjGufDU0rqAlWu8kYbt1jsEJaKLrWD6AZOn8lK4Ga+Xuay7Yenx+RPvqQ2Uk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733222686; c=relaxed/simple;
-	bh=2cf97DStc8SXFvwZ64aN4xBO2VdeZbTFsTd5rBywIxw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TQ5XDpsWm6R1Xp/3ugpxVm/KGTCfOxqKTaiEDaaivBtQRUkJ3volyPZlBQno7MkAovql5NlnOp2fjdkgCwLdI0YaVz3pYBAQrlS0L03fBryiUBaBiEIW8+9IIlFofHJjdLGxvHJ+wThA5sVTHkUJ5ncDEcEWmsJZUsilHGJ0TXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=iLdB6GjU; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 5A9CAC0008;
-	Tue,  3 Dec 2024 10:44:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1733222681;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1733222683; c=relaxed/simple;
+	bh=C97x5hh/hTMOEYwTxhCMiL3W+rAgq57Xcqc9r4edV7c=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=NCmUoFh/n6s29o3qGmD9VYDcaFks3ARtzFOXGYf+OnkbyZ6fPMBKgOO7+f6GQ+CvmKVSOLcOQyRpfvl75ORd1LflnavzD3Zq9NwzdxSmyfechMRN/LrbLDuoUkDlFAx0mzQVzB3DA79gVCJfX2zXkpODyJQFcUUaaCYQUWWmbio=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=CWxyYlbK; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=N7Tt4VXQ; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 03 Dec 2024 10:44:39 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1733222679;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=unHsDZc/1OE8HKcVN8mWXwEJ0vAKQ8TWz8xbclpBxHc=;
-	b=iLdB6GjUhUagX3VUOAGI0cppokeRj3G2mikcZFPSPQ/IAmHHFFo+ppIQxlc+ADQ2VnouQ8
-	yuqC9skT/femZbIR2erDLsU1Z87gESz+k0jI7NxUeFsoxgHSc3gVYHUqlj8ummM+iOMBAl
-	cPxO22wmLlyqCNHR5lFmiSnfMd1aHcq4yj0du9C6OrM6g3Cp3pnPbIkuFBMI4QLlMS7qDo
-	wlCGjTw0bxy/7487JgtVfE4sWKcbY5qRcT391fnXvOuRvUzxFxuR2bcWy5ypgvPsng715p
-	OJPptZicX6jaClf4IhbBNg07ciN9bHXgBf95NUgZbVrUZuZa1ZuZNbZQvGD7rQ==
-Date: Tue, 3 Dec 2024 11:44:38 +0100
-From: Kory Maincent <kory.maincent@bootlin.com>
-To: Simon Horman <horms@kernel.org>
-Cc: Andrew Lunn <andrew@lunn.ch>, Oleksij Rempel <o.rempel@pengutronix.de>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
- <pabeni@redhat.com>, Jonathan Corbet <corbet@lwn.net>, Donald Hunter
- <donald.hunter@gmail.com>, Rob Herring <robh@kernel.org>, Andrew Lunn
- <andrew+netdev@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, Russell
- King <linux@armlinux.org.uk>, Liam Girdwood <lgirdwood@gmail.com>, Mark
- Brown <broonie@kernel.org>, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org, linux-doc@vger.kernel.org, Kyle Swenson
- <kyle.swenson@est.tech>, Dent Project <dentproject@linuxfoundation.org>,
- kernel@pengutronix.de, Maxime Chevallier <maxime.chevallier@bootlin.com>
-Subject: Re: [PATCH RFC net-next v3 26/27] net: pse-pd: tps23881: Add
- support for static port priority feature
-Message-ID: <20241203114438.4f6d4c36@kmaincent-XPS-13-7390>
-In-Reply-To: <20241203102913.GD9361@kernel.org>
-References: <20241121-feature_poe_port_prio-v3-0-83299fa6967c@bootlin.com>
-	<20241121-feature_poe_port_prio-v3-26-83299fa6967c@bootlin.com>
-	<20241203102913.GD9361@kernel.org>
-Organization: bootlin
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+	bh=IIJdmTm5Vp2lnu1fjfqPc+F6L/CofxHMN8vvBx3sE3c=;
+	b=CWxyYlbKEA7lwtuFfqAZwqZv1fkebaFFZCTSHzINgZQa+ggfnU8Lc2QLXVWeQLDH0h5c7U
+	R/bmMTOg2Vow56YRERhpOsNQG8KGVKCBC8n/SiZJHtxyNIUOWz7u/d+n4QcYzlO01ZMidJ
+	f2bNNd/82sMomI6Q/k7cRun+ckVsZHEAXl0FM+EyKz2Ee1aalkhhEfr+G/AYy5tWsr4m7T
+	aGzZoPwv+RMazdWez3YOpqHw8eyBECOhi8gvFfL5O45gHQHxPaHSvfpT29Z+l4rkeBBFeX
+	gp6V/ujhqnHfwewx3B6w55gbxTS/kV4pEn7oGGvKxPdqJraG4vGVti6bkoUxaQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1733222679;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IIJdmTm5Vp2lnu1fjfqPc+F6L/CofxHMN8vvBx3sE3c=;
+	b=N7Tt4VXQJ6Ng1wlMNEmrmy1J3Ts6U7Xuk0MPcusZzFvgjfsRC/femv2GAV07pjBcdFcN5c
+	Xiy15z0D69IVrZBQ==
+From: "tip-bot2 for Waiman Long" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: sched/core] sched/core: Remove HK_TYPE_SCHED
+Cc: Waiman Long <longman@redhat.com>,
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+ Frederic Weisbecker <frederic@kernel.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20241030175253.125248-2-longman@redhat.com>
+References: <20241030175253.125248-2-longman@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: kory.maincent@bootlin.com
+Message-ID: <173322267900.412.7469424556416462990.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-Hello Simon,
+The following commit has been merged into the sched/core branch of tip:
 
-On Tue, 3 Dec 2024 10:29:13 +0000
-Simon Horman <horms@kernel.org> wrote:
->=20
-> > +static int tps23881_irq_event_detection(struct tps23881_priv *priv,
-> > +					u16 reg_val,
-> > +					unsigned long *notifs,
-> > +					unsigned long *notifs_mask)
-> > +{
-> > +	enum ethtool_pse_events event;
-> > +	int reg, ret, i, val;
-> > +	u8 chans;
-> > +
-> > +	chans =3D tps23881_it_export_chans_helper(reg_val, 0);
-> > +	for_each_set_bit(i, (unsigned long *)&chans, TPS23881_MAX_CHANS) {
-> > =20
->=20
-> Hi Kory,
->=20
-> The storage size of chans is only 1 byte, but here we are pretending that
-> it has more space. Which seems to be a bit of a stretch. Perhaps it would
-> be better to simply use unsigned long as the type of chans here and in
-> tps23881_irq_event_classification().
+Commit-ID:     ae5c677729e99b8cb3e6252aaa9b72a92985d203
+Gitweb:        https://git.kernel.org/tip/ae5c677729e99b8cb3e6252aaa9b72a92985d203
+Author:        Waiman Long <longman@redhat.com>
+AuthorDate:    Wed, 30 Oct 2024 13:52:50 -04:00
+Committer:     Peter Zijlstra <peterz@infradead.org>
+CommitterDate: Mon, 02 Dec 2024 12:24:27 +01:00
 
-Yes indeed. Thanks for the report.
+sched/core: Remove HK_TYPE_SCHED
 
-Regards,
---=20
-K=C3=B6ry Maincent, Bootlin
-Embedded Linux and kernel engineering
-https://bootlin.com
+The HK_TYPE_SCHED housekeeping type is defined but not set anywhere. So
+any code that try to use HK_TYPE_SCHED are essentially dead code. So
+remove HK_TYPE_SCHED and any code that use it.
+
+Signed-off-by: Waiman Long <longman@redhat.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Acked-by: Frederic Weisbecker <frederic@kernel.org>
+Link: https://lore.kernel.org/r/20241030175253.125248-2-longman@redhat.com
+---
+ include/linux/sched/isolation.h |  1 -
+ kernel/sched/fair.c             | 14 --------------
+ kernel/sched/isolation.c        |  1 -
+ 3 files changed, 16 deletions(-)
+
+diff --git a/include/linux/sched/isolation.h b/include/linux/sched/isolation.h
+index 2b46112..499d5e4 100644
+--- a/include/linux/sched/isolation.h
++++ b/include/linux/sched/isolation.h
+@@ -10,7 +10,6 @@ enum hk_type {
+ 	HK_TYPE_TIMER,
+ 	HK_TYPE_RCU,
+ 	HK_TYPE_MISC,
+-	HK_TYPE_SCHED,
+ 	HK_TYPE_TICK,
+ 	HK_TYPE_DOMAIN,
+ 	HK_TYPE_WQ,
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 4283c81..ef30226 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -12197,9 +12197,6 @@ static inline int on_null_domain(struct rq *rq)
+  * - When one of the busy CPUs notices that there may be an idle rebalancing
+  *   needed, they will kick the idle load balancer, which then does idle
+  *   load balancing for all the idle CPUs.
+- *
+- * - HK_TYPE_MISC CPUs are used for this task, because HK_TYPE_SCHED is not set
+- *   anywhere yet.
+  */
+ static inline int find_new_ilb(void)
+ {
+@@ -12444,10 +12441,6 @@ void nohz_balance_enter_idle(int cpu)
+ 	if (!cpu_active(cpu))
+ 		return;
+ 
+-	/* Spare idle load balancing on CPUs that don't want to be disturbed: */
+-	if (!housekeeping_cpu(cpu, HK_TYPE_SCHED))
+-		return;
+-
+ 	/*
+ 	 * Can be set safely without rq->lock held
+ 	 * If a clear happens, it will have evaluated last additions because
+@@ -12667,13 +12660,6 @@ static void nohz_newidle_balance(struct rq *this_rq)
+ {
+ 	int this_cpu = this_rq->cpu;
+ 
+-	/*
+-	 * This CPU doesn't want to be disturbed by scheduler
+-	 * housekeeping
+-	 */
+-	if (!housekeeping_cpu(this_cpu, HK_TYPE_SCHED))
+-		return;
+-
+ 	/* Will wake up very soon. No time for doing anything else*/
+ 	if (this_rq->avg_idle < sysctl_sched_migration_cost)
+ 		return;
+diff --git a/kernel/sched/isolation.c b/kernel/sched/isolation.c
+index 5891e71..5345e11 100644
+--- a/kernel/sched/isolation.c
++++ b/kernel/sched/isolation.c
+@@ -12,7 +12,6 @@ enum hk_flags {
+ 	HK_FLAG_TIMER		= BIT(HK_TYPE_TIMER),
+ 	HK_FLAG_RCU		= BIT(HK_TYPE_RCU),
+ 	HK_FLAG_MISC		= BIT(HK_TYPE_MISC),
+-	HK_FLAG_SCHED		= BIT(HK_TYPE_SCHED),
+ 	HK_FLAG_TICK		= BIT(HK_TYPE_TICK),
+ 	HK_FLAG_DOMAIN		= BIT(HK_TYPE_DOMAIN),
+ 	HK_FLAG_WQ		= BIT(HK_TYPE_WQ),
 
