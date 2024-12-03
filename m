@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-430062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430063-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C09A29E2C23
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 20:35:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A1A499E2C24
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 20:36:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 831872844EC
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 19:35:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66A8B28447E
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 19:36:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FDA220B216;
-	Tue,  3 Dec 2024 19:33:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B084C20B21F;
+	Tue,  3 Dec 2024 19:33:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ABfJj9lO"
-Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="cJXK4INL"
+Received: from out-170.mta1.migadu.com (out-170.mta1.migadu.com [95.215.58.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F279420B1EC
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 19:33:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62FB820B217
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 19:33:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733254407; cv=none; b=RkNAYRlgjdJifD0/TV6GpPIM06KqKuhhcKF5fgXvUXitPZz+GelgVgKihJYQjoqbNnVoDo2HZLaBea1vAxEE3l9Ite2nZ1/j1ihc0xmdMx5W5kMEbIz+8vPDeN4Oy6I3pwpXEwe0v8+5VFHbtbqRiVaSVdwNKJ5uu8PphbbE45A=
+	t=1733254410; cv=none; b=FwcgwLpjM3VEBnMHi4r3gxulxkiTik/DXaqC/mFAGwkkBq/TNdTJVFSHpoeog+LgPN1Pjlv6kN/tIYsTgfhUTLYbNjvusy+rQeIQLUAzhl139RUbww75jyJkdQbIcC7m1Xaxlwo6kB575bhzZVaj5C7IdCX+gfV8VVtoAy5WJGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733254407; c=relaxed/simple;
-	bh=+PCEKzJasw8AkjeutmkmAB6tX4dV1GuYLClM918Nj6g=;
+	s=arc-20240116; t=1733254410; c=relaxed/simple;
+	bh=zApNaI6tojKCcUw3gPguulWlel1yi3ixAh3M2UgEB0g=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=OCSh2xMrAwLB7T0QP+sHSLoulZdDJTyO32C83+NArDCLOsX4NYG6ycP0xGG0Ap/STgcrmesOoPYctAclX2/nmw7aKlkvCuQ/+Jv7Hxfzt/xwGVroPmeneOTluqbPYYatYKe7QC0sFL7Pb8i7BMME+RuR4MXVFCdpdL1tv65ojg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ABfJj9lO; arc=none smtp.client-ip=95.215.58.176
+	 MIME-Version; b=ZNJHIEIoKtLyaEHBqlZozH/Az1L8hNfy5suTPbENOX2Cn5S04bKfqf+LS7pldcBwDXKyKY6vYVzi9azTh8ojS/F1+z0bKcKEbuN9Trk7Q88PH4nb5/b5k5LjGmI0uwq56NLJdx4pP9zKlW8jWNU7lJfga7/I2tspCvU48TUMlW0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=cJXK4INL; arc=none smtp.client-ip=95.215.58.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1733254404;
+	t=1733254406;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=jMkV/pqTTQ4xGbpkYJlRc+3Uzn+DOzgWu1oY5Quf894=;
-	b=ABfJj9lOUFa4QL4SfDh/jffUv3QARMw9/qmSXApo0zcKjvYQ1rRQd+3TngiKXbuDemxIZX
-	kim99oIrleFv7LnfgqRboKU6JwQ6ve1ragyhaEG0B1ydXQS5E8W5MGudukU1XcsV4neKw7
-	Cbv0I4ov+FGLPOjwUgp/MCzn05hnkgc=
+	bh=GjObVzSUPGyiRyx8ZPD/sAgeVRJoiPetpoC5aOxqHj0=;
+	b=cJXK4INL5jtoZAsVKaT4wMa0IFT2vyHXw/V60yqBYaCbLzzagsQo2oxhgaGZBMFaxdA7xO
+	uTM//NBSf6MXu/swHUQrOPQ3U0GI4KKCT/QYoSi7B97s9ihPnJVkaXM8HKQgP0edrmEz9a
+	6fyyV66ig91+6AszbHOSrlwLio0eemo=
 From: Oliver Upton <oliver.upton@linux.dev>
 To: kvmarm@lists.linux.dev
 Cc: Marc Zyngier <maz@kernel.org>,
@@ -56,9 +56,9 @@ Cc: Marc Zyngier <maz@kernel.org>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	Oliver Upton <oliver.upton@linux.dev>
-Subject: [RFC PATCH 11/14] KVM: arm64: Compute synthetic sysreg ESR for Apple PMUv3 traps
-Date: Tue,  3 Dec 2024 11:32:17 -0800
-Message-Id: <20241203193220.1070811-12-oliver.upton@linux.dev>
+Subject: [RFC PATCH 12/14] KVM: arm64: Advertise PMUv3 if IMPDEF traps are present
+Date: Tue,  3 Dec 2024 11:32:18 -0800
+Message-Id: <20241203193220.1070811-13-oliver.upton@linux.dev>
 In-Reply-To: <20241203193220.1070811-1-oliver.upton@linux.dev>
 References: <20241203193220.1070811-1-oliver.upton@linux.dev>
 Precedence: bulk
@@ -70,71 +70,37 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Migadu-Flow: FLOW_OUT
 
-Apple M* CPUs provide an IMPDEF trap for PMUv3 sysregs, where ESR_EL2.EC
-is a reserved value (0x3F) and a sysreg-like ISS is reported in
-AFSR1_EL2.
-
-Compute a synthetic ESR for these PMUv3 traps, giving the illusion of
-something architectural to the rest of KVM.
+Advertise a baseline PMUv3 implementation when running on hardware with
+IMPDEF traps of the PMUv3 sysregs.
 
 Signed-off-by: Oliver Upton <oliver.upton@linux.dev>
 ---
- arch/arm64/kvm/hyp/vhe/switch.c | 22 ++++++++++++++++++++++
- arch/arm64/tools/cpucaps        |  1 +
- 2 files changed, 23 insertions(+)
+ arch/arm64/kvm/pmu-emul.c | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/kvm/hyp/vhe/switch.c b/arch/arm64/kvm/hyp/vhe/switch.c
-index 80581b1c3995..da2ccaefaf6f 100644
---- a/arch/arm64/kvm/hyp/vhe/switch.c
-+++ b/arch/arm64/kvm/hyp/vhe/switch.c
-@@ -418,6 +418,25 @@ static bool kvm_hyp_handle_sysreg_vhe(struct kvm_vcpu *vcpu, u64 *exit_code)
- 	return kvm_hyp_handle_sysreg(vcpu, exit_code);
- }
+diff --git a/arch/arm64/kvm/pmu-emul.c b/arch/arm64/kvm/pmu-emul.c
+index 8a565817a814..34d9c08af209 100644
+--- a/arch/arm64/kvm/pmu-emul.c
++++ b/arch/arm64/kvm/pmu-emul.c
+@@ -1260,7 +1260,17 @@ u8 kvm_arm_pmu_get_pmuver_limit(void)
+ 	pmuver = SYS_FIELD_GET(ID_AA64DFR0_EL1, PMUVer,
+ 			       read_sanitised_ftr_reg(SYS_ID_AA64DFR0_EL1));
  
-+static bool kvm_hyp_handle_impdef(struct kvm_vcpu *vcpu, u64 *exit_code)
-+{
-+	u64 iss;
-+
-+	if (!cpus_have_final_cap(ARM64_WORKAROUND_PMUV3_IMPDEF_TRAPS))
-+		return false;
+-	/* Treat IMPLEMENTATION DEFINED functionality as unimplemented */
++	/*
++	 * Spoof a barebones PMUv3 implementation if the system supports IMPDEF
++	 * traps of the PMUv3 sysregs
++	 */
++	if (cpus_have_final_cap(ARM64_WORKAROUND_PMUV3_IMPDEF_TRAPS))
++		return ID_AA64DFR0_EL1_PMUVer_IMP;
 +
 +	/*
-+	 * Compute a synthetic ESR for a sysreg trap. Conveniently, AFSR1_EL2
-+	 * is populated with a correct ISS for a sysreg trap. These fruity
-+	 * parts are 64bit only, so unconditionally set IL.
++	 * Otherwise, treat IMPLEMENTATION DEFINED functionality as
++	 * unimplemented
 +	 */
-+	iss = ESR_ELx_ISS(read_sysreg_s(SYS_AFSR1_EL2));
-+	vcpu->arch.fault.esr_el2 = FIELD_PREP(ESR_ELx_EC_MASK, ESR_ELx_EC_SYS64) |
-+				   FIELD_PREP(ESR_ELx_ISS_MASK, iss) |
-+				   ESR_ELx_IL;
-+	return false;
-+}
-+
- static const exit_handler_fn hyp_exit_handlers[] = {
- 	[0 ... ESR_ELx_EC_MAX]		= NULL,
- 	[ESR_ELx_EC_CP15_32]		= kvm_hyp_handle_cp15_32,
-@@ -429,6 +448,9 @@ static const exit_handler_fn hyp_exit_handlers[] = {
- 	[ESR_ELx_EC_WATCHPT_LOW]	= kvm_hyp_handle_watchpt_low,
- 	[ESR_ELx_EC_ERET]		= kvm_hyp_handle_eret,
- 	[ESR_ELx_EC_MOPS]		= kvm_hyp_handle_mops,
-+
-+	/* Apple shenanigans */
-+	[0x3F]				= kvm_hyp_handle_impdef,
- };
+ 	if (pmuver == ID_AA64DFR0_EL1_PMUVer_IMP_DEF)
+ 		return 0;
  
- static const exit_handler_fn *kvm_get_exit_handler_array(struct kvm_vcpu *vcpu)
-diff --git a/arch/arm64/tools/cpucaps b/arch/arm64/tools/cpucaps
-index b291eb73f5e0..a9c7111b831e 100644
---- a/arch/arm64/tools/cpucaps
-+++ b/arch/arm64/tools/cpucaps
-@@ -105,6 +105,7 @@ WORKAROUND_CAVIUM_TX2_219_TVM
- WORKAROUND_CLEAN_CACHE
- WORKAROUND_DEVICE_LOAD_ACQUIRE
- WORKAROUND_NVIDIA_CARMEL_CNP
-+WORKAROUND_PMUV3_IMPDEF_TRAPS
- WORKAROUND_QCOM_FALKOR_E1003
- WORKAROUND_REPEAT_TLBI
- WORKAROUND_SPECULATIVE_AT
 -- 
 2.39.5
 
