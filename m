@@ -1,120 +1,156 @@
-Return-Path: <linux-kernel+bounces-429738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26A6C9E2227
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:21:24 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1C949E2535
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:58:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E17A1285182
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 15:21:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DF9A4BA5BA3
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 15:21:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA8941F75A6;
-	Tue,  3 Dec 2024 15:21:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1F891F76C2;
+	Tue,  3 Dec 2024 15:21:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Leqn7NoZ"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l041LLGt"
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC9821F7550;
-	Tue,  3 Dec 2024 15:21:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C083D1EF0AE;
+	Tue,  3 Dec 2024 15:21:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733239266; cv=none; b=bXAHLGjT5LQCSkjqKqHlSnLHWeceRDNHL1UVbXZqaP7kiKx2jjzvi2clMUp1fKA8i+ILt5ZISsxer3mfBksOVmPoAEOsw4X2pd6VUKkVu6MSsdIhEXAjHU66KrbKnJ+A9xQ5XFfzI/quslh/0FhUHetn1u+UTBjx8dtBiysdmZ0=
+	t=1733239283; cv=none; b=gjl9YOos7gQQ0ULCgjDXPr7gRJUN9nbLMjCJTndQNGq41x+Ess0tUj5ZLQ6fkNmjQ/6X6rrmdCFCd1G5117QnqevJmLpOV3EVMApnEhN3NNFNrPMyH1voMgHvQchGaT7xFa0CVfebB5KlbiuhBH1r5Qhxdk3wnUNXcm8OyDkc7c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733239266; c=relaxed/simple;
-	bh=ZOVJrKZpqP/qN6d0VanJ/N+xrDibb3SB3TcMyv/HC0A=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Cgb+hieTMvAKvIyZoyVqydRShB5wr2By3XjXqD0GNZ+dkNMOlstwR0/SpL0q9TlRLNmPn7IRO5npnG7Q+4PJvr3MankLf8wiGydZTGM1ECPq/RknP7vAzV1Qsg5H4e+y4AHQ70lrr+lbM4Pu1f2IQ8hMmXJ2kT6Vu45urmcQIIA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Leqn7NoZ; arc=none smtp.client-ip=209.85.214.176
+	s=arc-20240116; t=1733239283; c=relaxed/simple;
+	bh=t8yscXsYjfpe/1tcoMvCTfOcyi3GhvMr0P2NT0AZHzk=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 Mime-Version:Content-Type; b=NDOTvpYXolAMvRnkODBz9ftwwnokmEUXpBuxvbS6IPchbs0U0sR4z9KRDZh/rmdwxf/ZXpmwy8Y8dJmgBcQh6PItk6N1sWvXmKL05ECSuivB7CmsRwJsKfORn82a+b655/pAmfOrRttyoy0MOtUPi0bQ6xNSa5vpkxJjDaG56TY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l041LLGt; arc=none smtp.client-ip=209.85.160.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-215c54e5f24so6687065ad.2;
-        Tue, 03 Dec 2024 07:21:04 -0800 (PST)
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-466966d8dbaso45712501cf.3;
+        Tue, 03 Dec 2024 07:21:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733239264; x=1733844064; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=QxUB0u3+R5bx7OygSfFY/wa3IquwZ32J6yrPPJN5bDg=;
-        b=Leqn7NoZrhfSJGfxheWVyNDc7DBCW5dpOyuVVS2CsCDv7qdtRLuJvC9xwPZ/z0EDlN
-         3qxM6b8PwjAseWiKyETAqJhimaZOuUVMHDBbOS+2Gcr/Jcg1GdNLZnN6f814FFqJtyvP
-         /lZtQEazQmD52T5HNqUaK04upSyrAkxbnsqYZsBSsFG5dKNbdpEiN65mZgrPd8Nyr0kY
-         Ghgq1gl6hLDbxWeBZp8DL5dldMmNWMZKIVC2B3thfv5kRpytIYdn0DEcmaizImpYbdne
-         RBVD6Uc2eW2lHxiRnMxVFUWv9iLwAq2GO8Y/h9rZoSqW16bxZtc99RBSYfxjJ76h6TAL
-         LGKw==
+        d=gmail.com; s=20230601; t=1733239280; x=1733844080; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VqsVHmCOaWiBo6waU1R1vraLU/LK0vRFjavrsVUjZLY=;
+        b=l041LLGtQ09D5k9YVBUQuBVvQ8Q6hMoDvDvrGkEdSwkOK8gnKxMD+RTAhmJ8ioGzNS
+         5Iyt9SRcV/JXbqOP96OJGr/UmP5yyTMfsTcJ4Y2xhovpEDW0UErs1gfmgOJC8iUQulan
+         46EP+dxFoM6ZxrL4s5ILxNK/q4tkEUMXTwI7a3K8qhPo6Tzwbmyy8vaKHgPRwI/P3yT/
+         wJXLQulArcn+0E7DskiJCzgdBidYcFVBlA4Py9q2t9ecekhde5Tmy2GVu5wjJ024984M
+         aExkXDxAYhlVvLN06Mzn4H6Jx6YXZHh2I4H0ORIOrkq3IqW3xOgb8BcSjQhD5Qspx4ww
+         ZWOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733239264; x=1733844064;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QxUB0u3+R5bx7OygSfFY/wa3IquwZ32J6yrPPJN5bDg=;
-        b=lBdcNLZtq3n5zx3ACknvw4DbXkIu27ynsyLLCuOi4ErJnOeZRNaCyyWmuq/d7qpriu
-         6FKqM2Bw2oE9YmjpRnPv3BFKFiDwL4KTGcVeXHXeSPGsvBjKKoBQFG7AGuVHYUKi4ZhL
-         0W7vucvhJ4D30hE5cSry1MdygAKHUvHIwkFrx5xalxaXFVhqKxxGBWVnaG/sBWTR4339
-         ivY5bQTGfjryAkfTHjYXfoCkvWBaYtNpiPgtaOUOwaFCxVzzSVtvQsXyhkHavpO8WvSB
-         4rIFptSM14H0Ok7TfXSL1Zlj/yPa9GVCmG1crRAARxdpOW1lM9AIRPRZh/2NHkkyQV7x
-         kKlA==
-X-Forwarded-Encrypted: i=1; AJvYcCVJVzPHGMTtHnqLLbCv2YzQxFYnXKhJP169LcNuHVY2AcJFGLL439behu2xGVHr6VX5pDFON199@vger.kernel.org, AJvYcCWLR6UjNZo1GjUtkd2+Ocw2wF1CDV+LPCJjcxArqb++ubYasCAOAWMwDPXHmoQY7Ba5avVB8cVVZAIRUIo2@vger.kernel.org, AJvYcCWdJ8SqqEFWo5NaCzs5HQsBdS3RCWW7O9bB0RVsTzfMTRGsl5eMw8QHiFhoikVw73KDmYKwNeLNeNwFXiC/Z44=@vger.kernel.org, AJvYcCXTAGSidZD15qz5UNKcOKvZqbkjrJxUx2EgnSJOXV/d32V45m61e1uyfaleGMn79GJSxQFW7eEzWJKOPB6zmVA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwRhRWxJxfUd1mqrKbs7JEgGiTgc+UzvLu+Hn+8ypB0TOJZJHV0
-	zTSrsb1MnqVUNzyYYA7trQu8+aEo1aN4lpteyqgNVOo2JSaLBema
-X-Gm-Gg: ASbGnctj4miFdNRyW1UV5Gb46Knbdj/83dkHBBmdAtBnyYm79MYA8piOBgORtwVaWtl
-	4luoKwRhWoraYkW3m4uwojb0cMRy3gHcBQlquo10oJt7rmlWItHz8pV7vj59m2+4Lw3TIZAH2dw
-	Wk9En55yNPOxzpNUHc0+rrr18vpLVUqT9jAo+BWuyEEVu7ITGeRbBLOJZ30I1yj/KDBXxsuX1y3
-	k/9DXEsLeXWJUPXfTXvf405GTC5CfBOL9oW/js7hnvAFlEEADKE6w==
-X-Google-Smtp-Source: AGHT+IFP28tEUaXc+jsg6TNlhSwrUvGZ1LuMMkn2qz87wLbIGrbxwtznFrY+h1Z0IdtybAtEFt8roQ==
-X-Received: by 2002:a17:902:e5ca:b0:215:9f5a:a236 with SMTP id d9443c01a7336-215bcfbcebbmr37415365ad.6.1733239263473;
-        Tue, 03 Dec 2024 07:21:03 -0800 (PST)
-Received: from ubuntuxuelab.. ([58.246.183.50])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21561b30f26sm60095605ad.274.2024.12.03.07.20.57
+        d=1e100.net; s=20230601; t=1733239280; x=1733844080;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=VqsVHmCOaWiBo6waU1R1vraLU/LK0vRFjavrsVUjZLY=;
+        b=Mexig+DofDUwVTNGN5G8TKshCoajvQvlzcTIFdpDoEbN33+Wpg18Vo4EjbuGXBgIPT
+         3vjRi5E+nnChK9BxdD/WPn6Vlhi/l+YS/cysywCoOF7B3eewDxrcZ4AFhOYaqYXsDgmn
+         aDnIJC7DVrjca0+ooIBQBHLcQr3+maPSI6mPsz1QKeDM/A0YrHAGF3Shps5x7kTOhyUS
+         PFEzmLCLYTURr1lWz7Mr9ZBs47aJjJS/zLdU2NFI+MuUYpFnwJ888vseEkUXy2qO/qeT
+         6oh1ulpQBG84l1gtynB1YVpgigHv/vJCS+1ahx6JI3uZeSt1MseiOy885khYFjYoInLU
+         E83A==
+X-Forwarded-Encrypted: i=1; AJvYcCU5/P+d2WqQgIndwYFoJ8P7ueJ3gqAsO4EYkOgUZIiBgGkAz3rIoipftKar3dD6vhir9iWKTA89@vger.kernel.org, AJvYcCU80hH145bh54fJjVz7ibwQjl/A3ljRFZUdpc5Um6lKDU6LmKFhHmgNGaU5PJSvy2QtfBZtEXAPvAHR5C0O@vger.kernel.org, AJvYcCUKttrQNS2eaPFdJms1IDmY383EE8A1oYSfiAYiiBPTo2mk/LUlfNK3I3/4WRQI9kelh0lM6bs1AUPU@vger.kernel.org, AJvYcCXVNEr2WK+l//1EZ3cnMT2kdAOyvXOClKQwSqHr1HVU3xrwI5Tri7yuYU7vmdpDiBav72p3B0pp7It5+W8m2PIo@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJXIx7Lac+uUo0BHx1Y7QYQU+cyKJqzhpLoFTtuRJEHGDia/HD
+	7grfsPBoHcpBQKHvoxL5aZu0f/tzA9KcxeVHA8H+tofJm/8mylx0
+X-Gm-Gg: ASbGnctU6OSh2uWgz/+vqPFd/lfrqgFGKwu1qQCcyQBAt/qwSUS1rY1T38X/WL55aAj
+	NTxAV4AkeHFbwxuf4KQFdNbldy4lUcIFd0MUHHRqpXoUCtm0IDiLqvsg+ImbOHB1EnO0LAkQfs2
+	D4Bf1p66L5BKUn2gf2wMuYtcc7XPFj6Zc61wRLs4iIP3zYHzccBIAci5QPvuSQVzGFdHavXQ9Px
+	7iyMuNjSta+9Xdoru903ZmR8lL6saX76ZI89RD9MYRx9JenK3jjOtkuNTUUiwKgYLhrQRF+u1Y7
+	tGFft1DxPj6jQkfvJOGf1w==
+X-Google-Smtp-Source: AGHT+IGPHit5+V6UhQpAx4/BlJFXSsgH9I6LPVgBePoc1CSG05dOym+Yqu7WxRzxJcebBY0CylhigA==
+X-Received: by 2002:ad4:5b8f:0:b0:6d8:99cf:d2e3 with SMTP id 6a1803df08f44-6d8b737d8d2mr41162076d6.22.1733239280369;
+        Tue, 03 Dec 2024 07:21:20 -0800 (PST)
+Received: from localhost (250.4.48.34.bc.googleusercontent.com. [34.48.4.250])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d875195da6sm61747786d6.57.2024.12.03.07.21.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Dec 2024 07:21:03 -0800 (PST)
-From: Haoyu Li <lihaoyu499@gmail.com>
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: Kees Cook <kees@kernel.org>,
-	"Gustavo A . R . Silva" <gustavoars@kernel.org>,
-	Jeff Johnson <quic_jjohnson@quicinc.com>,
-	linux-wireless@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org,
-	stable@vger.kernel.org,
-	Haoyu Li <lihaoyu499@gmail.com>
-Subject: [PATCH] net: wireless: sme: Initialize n_channels before accessing channels in cfg80211_conn_scan
-Date: Tue,  3 Dec 2024 23:20:49 +0800
-Message-Id: <20241203152049.348806-1-lihaoyu499@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        Tue, 03 Dec 2024 07:21:19 -0800 (PST)
+Date: Tue, 03 Dec 2024 10:21:19 -0500
+From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+To: Kenjiro Nakayama <nakayamakenjiro@gmail.com>, 
+ Pablo Neira Ayuso <pablo@netfilter.org>, 
+ Jozsef Kadlecsik <kadlec@netfilter.org>, 
+ "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, 
+ Simon Horman <horms@kernel.org>, 
+ Alan Stern <stern@rowland.harvard.edu>, 
+ Andrea Parri <parri.andrea@gmail.com>, 
+ Will Deacon <will@kernel.org>, 
+ Peter Zijlstra <peterz@infradead.org>, 
+ Boqun Feng <boqun.feng@gmail.com>, 
+ Nicholas Piggin <npiggin@gmail.com>, 
+ David Howells <dhowells@redhat.com>, 
+ Jade Alglave <j.alglave@ucl.ac.uk>, 
+ Luc Maranget <luc.maranget@inria.fr>, 
+ "Paul E. McKenney" <paulmck@kernel.org>, 
+ Akira Yokosawa <akiyks@gmail.com>, 
+ Daniel Lustig <dlustig@nvidia.com>, 
+ Joel Fernandes <joel@joelfernandes.org>, 
+ Shuah Khan <shuah@kernel.org>
+Cc: netfilter-devel@vger.kernel.org, 
+ coreteam@netfilter.org, 
+ linux-kernel@vger.kernel.org, 
+ netdev@vger.kernel.org, 
+ linux-arch@vger.kernel.org, 
+ lkmm@lists.linux.dev, 
+ linux-kselftest@vger.kernel.org, 
+ Kenjiro Nakayama <nakayamakenjiro@gmail.com>
+Message-ID: <674f21ef3048c_19a62294c6@willemb.c.googlers.com.notmuch>
+In-Reply-To: <20241202232129.7139-1-nakayamakenjiro@gmail.com>
+References: <20241202232129.7139-1-nakayamakenjiro@gmail.com>
+Subject: Re: [PATCH] selftests/net: call sendmmsg via udpgso_bench.sh
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 7bit
 
-With the new __counted_by annocation in cfg80211_scan_request struct,
-the "n_channels" struct member must be set before accessing the
-"channels" array. Failing to do so will trigger a runtime warning
-when enabling CONFIG_UBSAN_BOUNDS and CONFIG_FORTIFY_SOURCE.
+Kenjiro Nakayama wrote:
+> Currently, sendmmsg is implemented in udpgso_bench_tx.c,
+> but it is not called by any test script.
+> 
+> This patch adds a test for sendmmsg in udpgso_bench.sh.
+> This allows for basic API testing and benchmarking
+> comparisons with GSO.
 
-Fixes: e3eac9f32ec0 ("wifi: cfg80211: Annotate struct cfg80211_scan_request with __counted_by")
+The change looks fine to me, but the commit is missing your
+Signed-off-by.
 
-Signed-off-by: Haoyu Li <lihaoyu499@gmail.com>
----
- net/wireless/sme.c | 1 +
- 1 file changed, 1 insertion(+)
+Also, if resubmitting, please mark [PATCH net-next v2].
 
-diff --git a/net/wireless/sme.c b/net/wireless/sme.c
-index 431da30817a6..268171600087 100644
---- a/net/wireless/sme.c
-+++ b/net/wireless/sme.c
-@@ -83,6 +83,7 @@ static int cfg80211_conn_scan(struct wireless_dev *wdev)
- 	if (!request)
- 		return -ENOMEM;
- 
-+	request->n_channels = n_channels;
- 	if (wdev->conn->params.channel) {
- 		enum nl80211_band band = wdev->conn->params.channel->band;
- 		struct ieee80211_supported_band *sband =
--- 
-2.34.1
+> ---
+>  tools/testing/selftests/net/udpgso_bench.sh | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/tools/testing/selftests/net/udpgso_bench.sh b/tools/testing/selftests/net/udpgso_bench.sh
+> index 640bc43452fa..88fa1d53ba2b 100755
+> --- a/tools/testing/selftests/net/udpgso_bench.sh
+> +++ b/tools/testing/selftests/net/udpgso_bench.sh
+> @@ -92,6 +92,9 @@ run_udp() {
+>  	echo "udp"
+>  	run_in_netns ${args}
+>  
+> +	echo "udp sendmmsg"
+> +	run_in_netns ${args} -m
+> +
+>  	echo "udp gso"
+>  	run_in_netns ${args} -S 0
+>  
+> -- 
+> 2.39.3 (Apple Git-146)
+> 
+
 
 
