@@ -1,83 +1,72 @@
-Return-Path: <linux-kernel+bounces-429715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C31BB9E2742
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 17:23:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A93B9E2133
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:09:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C100BB443E7
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 15:08:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF859286517
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 15:09:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CCCF1F8906;
-	Tue,  3 Dec 2024 15:07:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4F911F76BF;
+	Tue,  3 Dec 2024 15:08:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="XwFPms/j"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VD0KFiHA"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8C5E1F7547;
-	Tue,  3 Dec 2024 15:07:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B7C51F76B7
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 15:08:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733238448; cv=none; b=mAsgVs0SMF67gaMd4SkoclgiSDfbos3wBB2mf6SiEnPCjSlrk4F3bh7K44EJI1ZTullRxf2uS7Cxak9in8346iptEfaa7xJKSeZwHHr9hc8A/hwjQa5gLDF86TJlbTqZR5Wboohvh6FA+krpFN2Vw1Z7nXnD/LB7gh8u+PaCOd4=
+	t=1733238489; cv=none; b=s9SF5lQ+0BwPN/XF1mlUPPgGu0zNOVSvXAN7NUWLUwqqEutrR6MW64674O1GjNPIWciHocQJXVxOigsMQNZ+Mk77c1mLQmrfkMHebJWXpf/icEpQ06LfzNcftwYDQyGBvb3Otdp0WK+EdKp/oU8OGSBj9yFCkq6msPzhBtzSucs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733238448; c=relaxed/simple;
-	bh=dtJ7cfDiG4eABWJmL/KBwWznHCVrybOriHvdqQiOjN8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=JK5FP6IXfiWbiPntnH21daocHcxiohAZWiBAScnXu4zVOi3n/MVDGDJmx+M+l323V8UrLGalAC7I2YBfwcyoTsH/cKm5AGYabeXq3DQ0uB2JdtpVEBKXk1uuYAKKohzVWD7A2zNifUWwYVtVxLAztxIx3FfDLUAkbjV+dZIZfTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=XwFPms/j; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B3CpRTa009471;
-	Tue, 3 Dec 2024 15:07:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=pp1; bh=5r0m4UT7hi3BU/x/g
-	P+I04UMTCAYd5LoMcTRFF0H6c8=; b=XwFPms/je8FoxJmebc4pBPcH4u+L06bhs
-	RLWOciHHzpSqBGitYVcSZh3V9VsDZ5I+iQao40gius89+1o2syORtVsgPVmKW1Rp
-	+l9rGeGlIS2zFQnp/kLqERgo5H9xEYJa4hWZDq+zaTL8YFLy11Ks9+wceYJgSGzR
-	wcW5IQmerxXemxsYrzaI+5GGMTLMDevpyE6hFzsi4surAA5DezLQtmtsrlxs6DkM
-	oXOqJe92xg7UQYMK4YAyf/zGGZERFvn3DdxqrR3+49WoJdA34nHteUVatf0qWzSR
-	pSaJbf3p8pJ+j7Yy4y2sutZBZC5KIdPefIKlB/gAak1ffwFCqmA4Q==
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 438kfgq7xb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 03 Dec 2024 15:07:18 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4B3D5ARm020366;
-	Tue, 3 Dec 2024 15:07:17 GMT
-Received: from smtprelay03.wdc07v.mail.ibm.com ([172.16.1.70])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 438d1s9dyb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 03 Dec 2024 15:07:17 +0000
-Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
-	by smtprelay03.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4B3F7F5x4522544
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 3 Dec 2024 15:07:15 GMT
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 416E358055;
-	Tue,  3 Dec 2024 15:07:15 +0000 (GMT)
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id ECEFB58043;
-	Tue,  3 Dec 2024 15:07:14 +0000 (GMT)
-Received: from WIN-DU0DFC9G5VV.austin.ibm.com (unknown [9.41.105.143])
-	by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Tue,  3 Dec 2024 15:07:14 +0000 (GMT)
-From: Konstantin Shkolnyy <kshk@linux.ibm.com>
-To: sgarzare@redhat.com
-Cc: virtualization@lists.linux.dev, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mjrosato@linux.ibm.com,
-        pabeni@redhat.com, AVKrasnov@sberdevices.ru, mst@redhat.com,
-        Konstantin Shkolnyy <kshk@linux.ibm.com>
-Subject: [PATCH net v8 3/3] vsock/test: verify socket options after setting them
-Date: Tue,  3 Dec 2024 09:06:56 -0600
-Message-Id: <20241203150656.287028-4-kshk@linux.ibm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241203150656.287028-1-kshk@linux.ibm.com>
-References: <20241203150656.287028-1-kshk@linux.ibm.com>
+	s=arc-20240116; t=1733238489; c=relaxed/simple;
+	bh=Q1ktawck32uSPedZRE7jVvjq8cNEHCOqcblu1NfPF1U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nUw8i383MOWBbEW6hP//Hb7h5n8tOm0T6a7BKaEt8UlxKS/11lUaBzGaQsyuZ0LnMCmqgGVs6p8rilPbCjJ+SCv05fNY4bxD6hx1a8BivbadiNS0bZovph5VcfbllPzpoY4RZitSX0iIrXn3mBgkZocr6cLXE4wrnDUxrqp7ISA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VD0KFiHA; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733238485;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=CtMCDurGwRoeWF6CpqiSRY67gb09X/3dzd+TMhMfkKM=;
+	b=VD0KFiHAlGrxOOEhMG6n8kSj2iLpjfkG10rHGV1t4nhSfTOcD+ZHp5+5PL6n7SjywPnBoo
+	atV7vuq9tHLvac5lJOzCeR4dlp8fC9M9pbNXaGsIbFnKEM078NN5JBysmxqSKDaCff7gz7
+	kSHDMzWEdtvgTed4NwpAWwI5sUgbdVA=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-279-T81WEZWSObKQMnEuXFbNbg-1; Tue,
+ 03 Dec 2024 10:08:02 -0500
+X-MC-Unique: T81WEZWSObKQMnEuXFbNbg-1
+X-Mimecast-MFC-AGG-ID: T81WEZWSObKQMnEuXFbNbg
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 10A271955EB3;
+	Tue,  3 Dec 2024 15:08:01 +0000 (UTC)
+Received: from llong-thinkpadp16vgen1.westford.csb (unknown [10.22.66.12])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 783321956089;
+	Tue,  3 Dec 2024 15:07:58 +0000 (UTC)
+From: Waiman Long <longman@redhat.com>
+To: Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Peter Zijlstra <peterz@infradead.org>
+Cc: x86@kernel.org,
+	linux-kernel@vger.kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Waiman Long <longman@redhat.com>
+Subject: [PATCH v2] x86/nmi: Add an emergency handler in nmi_desc & use it in nmi_shootdown_cpus()
+Date: Tue,  3 Dec 2024 10:07:32 -0500
+Message-ID: <20241203150732.182065-1-longman@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,415 +74,183 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: N4gJpOd84CFcoEetg8Elbf6z19N6fOhK
-X-Proofpoint-GUID: N4gJpOd84CFcoEetg8Elbf6z19N6fOhK
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- spamscore=0 clxscore=1015 malwarescore=0 bulkscore=0 adultscore=0
- priorityscore=1501 mlxlogscore=999 impostorscore=0 phishscore=0 mlxscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412030127
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-Replace setsockopt() calls with calls to functions that follow
-setsockopt() with getsockopt() and check that the returned value and its
-size are the same as have been set. (Except in vsock_perf.)
+Depending on the type of panics, it was found that the
+__register_nmi_handler() function can be called in NMI context from
+nmi_shootdown_cpus() leading to a lockdep splat like the following.
 
-Signed-off-by: Konstantin Shkolnyy <kshk@linux.ibm.com>
-Reviewed-by: Stefano Garzarella <sgarzare@redhat.com>
+[ 1123.133573] ================================
+[ 1123.137845] WARNING: inconsistent lock state
+[ 1123.142118] 6.12.0-31.el10.x86_64+debug #1 Not tainted
+[ 1123.147257] --------------------------------
+[ 1123.151529] inconsistent {INITIAL USE} -> {IN-NMI} usage.
+  :
+[ 1123.261544]  Possible unsafe locking scenario:
+[ 1123.261544]
+[ 1123.267463]        CPU0
+[ 1123.269915]        ----
+[ 1123.272368]   lock(&nmi_desc[0].lock);
+[ 1123.276122]   <Interrupt>
+[ 1123.278746]     lock(&nmi_desc[0].lock);
+[ 1123.282671]
+[ 1123.282671]  *** DEADLOCK ***
+  :
+[ 1123.314088] Call Trace:
+[ 1123.316542]  <NMI>
+[ 1123.318562]  dump_stack_lvl+0x6f/0xb0
+[ 1123.322230]  print_usage_bug.part.0+0x3d3/0x610
+[ 1123.330618]  lock_acquire.part.0+0x2e6/0x360
+[ 1123.357217]  _raw_spin_lock_irqsave+0x46/0x90
+[ 1123.366193]  __register_nmi_handler+0x8f/0x3a0
+[ 1123.374401]  nmi_shootdown_cpus+0x95/0x120
+[ 1123.378509]  kdump_nmi_shootdown_cpus+0x15/0x20
+[ 1123.383040]  native_machine_crash_shutdown+0x54/0x160
+[ 1123.388095]  __crash_kexec+0x10f/0x1f0
+[ 1123.421465]  ? __ghes_panic.cold+0x4f/0x5d
+[ 1123.482648]  </NMI>
+
+In this particular case, the following panic message was printed before.
+
+[ 1122.808188] Kernel panic - not syncing: Fatal hardware error!
+
+This message seemed to be given out from __ghes_panic() running in
+NMI context.
+
+The __register_nmi_handler() function which takes the nmi_desc lock
+with irq disabled shouldn't be called from NMI context as this can
+lead to deadlock.
+
+The nmi_shootdown_cpus() function can only be invoked once. After the
+first invocation, all other CPUs should be stuck in the newly added
+crash_nmi_callback() and cannot respond to a second NMI.
+
+One way to address this problem is to remove all the panic() calls from
+NMI context, but that can be too restrictive.
+
+Another way to fix this problem while allowing panic() calls from
+NMI context is by adding a new emergency NMI handler to the nmi_desc
+structure and provide a new set_emergency_nmi_handler() helper to
+atomically set crash_nmi_callback() in any context. The new emergency
+handler will be invoked first before other handlers in the linked
+list. That will eliminate the need to take any lock and serve the panic
+in NMI use case.
+
+Signed-off-by: Waiman Long <longman@redhat.com>
 ---
- tools/testing/vsock/control.c             |   9 +-
- tools/testing/vsock/msg_zerocopy_common.c |  10 --
- tools/testing/vsock/msg_zerocopy_common.h |   1 -
- tools/testing/vsock/util.c                | 142 ++++++++++++++++++++++
- tools/testing/vsock/util.h                |   7 ++
- tools/testing/vsock/vsock_perf.c          |  10 ++
- tools/testing/vsock/vsock_test.c          |  51 +++-----
- tools/testing/vsock/vsock_test_zerocopy.c |   2 +-
- tools/testing/vsock/vsock_uring_test.c    |   2 +-
- 9 files changed, 181 insertions(+), 53 deletions(-)
+ arch/x86/include/asm/nmi.h |  2 ++
+ arch/x86/kernel/nmi.c      | 40 ++++++++++++++++++++++++++++++++++++++
+ arch/x86/kernel/reboot.c   | 11 ++++-------
+ 3 files changed, 46 insertions(+), 7 deletions(-)
 
-diff --git a/tools/testing/vsock/control.c b/tools/testing/vsock/control.c
-index d2deb4b15b94..0066e0324d35 100644
---- a/tools/testing/vsock/control.c
-+++ b/tools/testing/vsock/control.c
-@@ -27,6 +27,7 @@
+diff --git a/arch/x86/include/asm/nmi.h b/arch/x86/include/asm/nmi.h
+index 41a0ebb699ec..6715c123eff4 100644
+--- a/arch/x86/include/asm/nmi.h
++++ b/arch/x86/include/asm/nmi.h
+@@ -56,6 +56,8 @@ int __register_nmi_handler(unsigned int, struct nmiaction *);
  
- #include "timeout.h"
- #include "control.h"
-+#include "util.h"
+ void unregister_nmi_handler(unsigned int, const char *);
  
- static int control_fd = -1;
++int set_emergency_nmi_handler(unsigned int type, nmi_handler_t handler);
++
+ void stop_nmi(void);
+ void restart_nmi(void);
+ void local_touch_nmi(void);
+diff --git a/arch/x86/kernel/nmi.c b/arch/x86/kernel/nmi.c
+index ed163c8c8604..d551f2814cf2 100644
+--- a/arch/x86/kernel/nmi.c
++++ b/arch/x86/kernel/nmi.c
+@@ -40,8 +40,12 @@
+ #define CREATE_TRACE_POINTS
+ #include <trace/events/nmi.h>
  
-@@ -50,7 +51,6 @@ void control_init(const char *control_host,
++/*
++ * An emergency handler can be set in any context
++ */
+ struct nmi_desc {
+ 	raw_spinlock_t lock;
++	nmi_handler_t emerg_handler;	/* Emergency handler */
+ 	struct list_head head;
+ };
  
- 	for (ai = result; ai; ai = ai->ai_next) {
- 		int fd;
--		int val = 1;
- 
- 		fd = socket(ai->ai_family, ai->ai_socktype, ai->ai_protocol);
- 		if (fd < 0)
-@@ -65,11 +65,8 @@ void control_init(const char *control_host,
- 			break;
- 		}
- 
--		if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR,
--			       &val, sizeof(val)) < 0) {
--			perror("setsockopt");
--			exit(EXIT_FAILURE);
--		}
-+		setsockopt_int_check(fd, SOL_SOCKET, SO_REUSEADDR, 1,
-+				     "setsockopt SO_REUSEADDR");
- 
- 		if (bind(fd, ai->ai_addr, ai->ai_addrlen) < 0)
- 			goto next;
-diff --git a/tools/testing/vsock/msg_zerocopy_common.c b/tools/testing/vsock/msg_zerocopy_common.c
-index 5a4bdf7b5132..8622e5a0f8b7 100644
---- a/tools/testing/vsock/msg_zerocopy_common.c
-+++ b/tools/testing/vsock/msg_zerocopy_common.c
-@@ -14,16 +14,6 @@
- 
- #include "msg_zerocopy_common.h"
- 
--void enable_so_zerocopy(int fd)
--{
--	int val = 1;
--
--	if (setsockopt(fd, SOL_SOCKET, SO_ZEROCOPY, &val, sizeof(val))) {
--		perror("setsockopt");
--		exit(EXIT_FAILURE);
--	}
--}
--
- void vsock_recv_completion(int fd, const bool *zerocopied)
+@@ -132,9 +136,18 @@ static void nmi_check_duration(struct nmiaction *action, u64 duration)
+ static int nmi_handle(unsigned int type, struct pt_regs *regs)
  {
- 	struct sock_extended_err *serr;
-diff --git a/tools/testing/vsock/msg_zerocopy_common.h b/tools/testing/vsock/msg_zerocopy_common.h
-index 3763c5ccedb9..ad14139e93ca 100644
---- a/tools/testing/vsock/msg_zerocopy_common.h
-+++ b/tools/testing/vsock/msg_zerocopy_common.h
-@@ -12,7 +12,6 @@
- #define VSOCK_RECVERR	1
- #endif
+ 	struct nmi_desc *desc = nmi_to_desc(type);
++	nmi_handler_t ehandler;
+ 	struct nmiaction *a;
+ 	int handled=0;
  
--void enable_so_zerocopy(int fd);
- void vsock_recv_completion(int fd, const bool *zerocopied);
++	/*
++	 * Call the emergency handler first, if set
++	 * Emergency handler is not traced or checked by nmi_check_duration().
++	 */
++	ehandler = READ_ONCE(desc->emerg_handler);
++	if (ehandler)
++		handled = ehandler(type, regs);
++
+ 	rcu_read_lock();
  
- #endif /* MSG_ZEROCOPY_COMMON_H */
-diff --git a/tools/testing/vsock/util.c b/tools/testing/vsock/util.c
-index a3d448a075e3..34e9dac0a105 100644
---- a/tools/testing/vsock/util.c
-+++ b/tools/testing/vsock/util.c
-@@ -651,3 +651,145 @@ void free_test_iovec(const struct iovec *test_iovec,
- 
- 	free(iovec);
+ 	/*
+@@ -224,6 +237,33 @@ void unregister_nmi_handler(unsigned int type, const char *name)
  }
-+
-+/* Set "unsigned long long" socket option and check that it's indeed set */
-+void setsockopt_ull_check(int fd, int level, int optname,
-+			  unsigned long long val, char const *errmsg)
-+{
-+	unsigned long long chkval;
-+	socklen_t chklen;
-+	int err;
-+
-+	err = setsockopt(fd, level, optname, &val, sizeof(val));
-+	if (err) {
-+		fprintf(stderr, "setsockopt err: %s (%d)\n",
-+			strerror(errno), errno);
-+		goto fail;
-+	}
-+
-+	chkval = ~val; /* just make storage != val */
-+	chklen = sizeof(chkval);
-+
-+	err = getsockopt(fd, level, optname, &chkval, &chklen);
-+	if (err) {
-+		fprintf(stderr, "getsockopt err: %s (%d)\n",
-+			strerror(errno), errno);
-+		goto fail;
-+	}
-+
-+	if (chklen != sizeof(chkval)) {
-+		fprintf(stderr, "size mismatch: set %zu got %d\n", sizeof(val),
-+			chklen);
-+		goto fail;
-+	}
-+
-+	if (chkval != val) {
-+		fprintf(stderr, "value mismatch: set %llu got %llu\n", val,
-+			chkval);
-+		goto fail;
-+	}
-+	return;
-+fail:
-+	fprintf(stderr, "%s  val %llu\n", errmsg, val);
-+	exit(EXIT_FAILURE);
-+;
-+}
-+
-+/* Set "int" socket option and check that it's indeed set */
-+void setsockopt_int_check(int fd, int level, int optname, int val,
-+			  char const *errmsg)
-+{
-+	int chkval;
-+	socklen_t chklen;
-+	int err;
-+
-+	err = setsockopt(fd, level, optname, &val, sizeof(val));
-+	if (err) {
-+		fprintf(stderr, "setsockopt err: %s (%d)\n",
-+			strerror(errno), errno);
-+		goto fail;
-+	}
-+
-+	chkval = ~val; /* just make storage != val */
-+	chklen = sizeof(chkval);
-+
-+	err = getsockopt(fd, level, optname, &chkval, &chklen);
-+	if (err) {
-+		fprintf(stderr, "getsockopt err: %s (%d)\n",
-+			strerror(errno), errno);
-+		goto fail;
-+	}
-+
-+	if (chklen != sizeof(chkval)) {
-+		fprintf(stderr, "size mismatch: set %zu got %d\n", sizeof(val),
-+			chklen);
-+		goto fail;
-+	}
-+
-+	if (chkval != val) {
-+		fprintf(stderr, "value mismatch: set %d got %d\n", val, chkval);
-+		goto fail;
-+	}
-+	return;
-+fail:
-+	fprintf(stderr, "%s val %d\n", errmsg, val);
-+	exit(EXIT_FAILURE);
-+}
-+
-+static void mem_invert(unsigned char *mem, size_t size)
-+{
-+	size_t i;
-+
-+	for (i = 0; i < size; i++)
-+		mem[i] = ~mem[i];
-+}
-+
-+/* Set "timeval" socket option and check that it's indeed set */
-+void setsockopt_timeval_check(int fd, int level, int optname,
-+			      struct timeval val, char const *errmsg)
-+{
-+	struct timeval chkval;
-+	socklen_t chklen;
-+	int err;
-+
-+	err = setsockopt(fd, level, optname, &val, sizeof(val));
-+	if (err) {
-+		fprintf(stderr, "setsockopt err: %s (%d)\n",
-+			strerror(errno), errno);
-+		goto fail;
-+	}
-+
-+	 /* just make storage != val */
-+	chkval = val;
-+	mem_invert((unsigned char *)&chkval, sizeof(chkval));
-+	chklen = sizeof(chkval);
-+
-+	err = getsockopt(fd, level, optname, &chkval, &chklen);
-+	if (err) {
-+		fprintf(stderr, "getsockopt err: %s (%d)\n",
-+			strerror(errno), errno);
-+		goto fail;
-+	}
-+
-+	if (chklen != sizeof(chkval)) {
-+		fprintf(stderr, "size mismatch: set %zu got %d\n", sizeof(val),
-+			chklen);
-+		goto fail;
-+	}
-+
-+	if (memcmp(&chkval, &val, sizeof(val)) != 0) {
-+		fprintf(stderr, "value mismatch: set %ld:%ld got %ld:%ld\n",
-+			val.tv_sec, val.tv_usec, chkval.tv_sec, chkval.tv_usec);
-+		goto fail;
-+	}
-+	return;
-+fail:
-+	fprintf(stderr, "%s val %ld:%ld\n", errmsg, val.tv_sec, val.tv_usec);
-+	exit(EXIT_FAILURE);
-+}
-+
-+void enable_so_zerocopy_check(int fd)
-+{
-+	setsockopt_int_check(fd, SOL_SOCKET, SO_ZEROCOPY, 1,
-+			     "setsockopt SO_ZEROCOPY");
-+}
-diff --git a/tools/testing/vsock/util.h b/tools/testing/vsock/util.h
-index fff22d4a14c0..ba84d296d8b7 100644
---- a/tools/testing/vsock/util.h
-+++ b/tools/testing/vsock/util.h
-@@ -68,4 +68,11 @@ unsigned long iovec_hash_djb2(const struct iovec *iov, size_t iovnum);
- struct iovec *alloc_test_iovec(const struct iovec *test_iovec, int iovnum);
- void free_test_iovec(const struct iovec *test_iovec,
- 		     struct iovec *iovec, int iovnum);
-+void setsockopt_ull_check(int fd, int level, int optname,
-+			  unsigned long long val, char const *errmsg);
-+void setsockopt_int_check(int fd, int level, int optname, int val,
-+			  char const *errmsg);
-+void setsockopt_timeval_check(int fd, int level, int optname,
-+			      struct timeval val, char const *errmsg);
-+void enable_so_zerocopy_check(int fd);
- #endif /* UTIL_H */
-diff --git a/tools/testing/vsock/vsock_perf.c b/tools/testing/vsock/vsock_perf.c
-index 8e0a6c0770d3..75971ac708c9 100644
---- a/tools/testing/vsock/vsock_perf.c
-+++ b/tools/testing/vsock/vsock_perf.c
-@@ -251,6 +251,16 @@ static void run_receiver(int rcvlowat_bytes)
- 	close(fd);
- }
+ EXPORT_SYMBOL_GPL(unregister_nmi_handler);
  
-+static void enable_so_zerocopy(int fd)
++/**
++ * set_emergency_nmi_handler - Set emergency handler
++ * @handler - the emergency handler to be stored
++ * Return: 0 if success, -EEXIST if a handler had been stored
++ *
++ * Atomically set an emergency NMI handler which, if set, will be invoked
++ * before all the other handlers in the linked list. If a NULL handler is
++ * passed in, it will clear it.
++ */
++int set_emergency_nmi_handler(unsigned int type, nmi_handler_t handler)
 +{
-+	int val = 1;
++	struct nmi_desc *desc = nmi_to_desc(type);
++	nmi_handler_t orig = NULL;
 +
-+	if (setsockopt(fd, SOL_SOCKET, SO_ZEROCOPY, &val, sizeof(val))) {
-+		perror("setsockopt");
-+		exit(EXIT_FAILURE);
++	if (!handler) {
++		orig = READ_ONCE(desc->emerg_handler);
++		WARN_ON_ONCE(!orig);
 +	}
++
++	if (try_cmpxchg(&desc->emerg_handler, &orig, handler))
++		return 0;
++	if (WARN_ON_ONCE(orig == handler))
++		return 0;
++	WARN_ONCE(1, "%s: failed to set emergency NMI handler!\n", __func__);
++	return -EEXIST;
 +}
 +
- static void run_sender(int peer_cid, unsigned long to_send_bytes)
+ static void
+ pci_serr_error(unsigned char reason, struct pt_regs *regs)
  {
- 	time_t tx_begin_ns;
-diff --git a/tools/testing/vsock/vsock_test.c b/tools/testing/vsock/vsock_test.c
-index 0b7f5bf546da..48f17641ca50 100644
---- a/tools/testing/vsock/vsock_test.c
-+++ b/tools/testing/vsock/vsock_test.c
-@@ -444,17 +444,13 @@ static void test_seqpacket_msg_bounds_server(const struct test_opts *opts)
+diff --git a/arch/x86/kernel/reboot.c b/arch/x86/kernel/reboot.c
+index 615922838c51..c1c8e1334343 100644
+--- a/arch/x86/kernel/reboot.c
++++ b/arch/x86/kernel/reboot.c
+@@ -926,15 +926,12 @@ void nmi_shootdown_cpus(nmi_shootdown_cb callback)
+ 	shootdown_callback = callback;
  
- 	sock_buf_size = SOCK_BUF_SIZE;
+ 	atomic_set(&waiting_for_crash_ipi, num_online_cpus() - 1);
+-	/* Would it be better to replace the trap vector here? */
+-	if (register_nmi_handler(NMI_LOCAL, crash_nmi_callback,
+-				 NMI_FLAG_FIRST, "crash"))
+-		return;		/* Return what? */
++
+ 	/*
+-	 * Ensure the new callback function is set before sending
+-	 * out the NMI
++	 * Atomically set emergency handler to be invoked first before other
++	 * handlers. The action shouldn't fail or a warning will be printed.
+ 	 */
+-	wmb();
++	set_emergency_nmi_handler(NMI_LOCAL, crash_nmi_callback);
  
--	if (setsockopt(fd, AF_VSOCK, SO_VM_SOCKETS_BUFFER_MAX_SIZE,
--		       &sock_buf_size, sizeof(sock_buf_size))) {
--		perror("setsockopt(SO_VM_SOCKETS_BUFFER_MAX_SIZE)");
--		exit(EXIT_FAILURE);
--	}
-+	setsockopt_ull_check(fd, AF_VSOCK, SO_VM_SOCKETS_BUFFER_MAX_SIZE,
-+			     sock_buf_size,
-+			     "setsockopt(SO_VM_SOCKETS_BUFFER_MAX_SIZE)");
- 
--	if (setsockopt(fd, AF_VSOCK, SO_VM_SOCKETS_BUFFER_SIZE,
--		       &sock_buf_size, sizeof(sock_buf_size))) {
--		perror("setsockopt(SO_VM_SOCKETS_BUFFER_SIZE)");
--		exit(EXIT_FAILURE);
--	}
-+	setsockopt_ull_check(fd, AF_VSOCK, SO_VM_SOCKETS_BUFFER_SIZE,
-+			     sock_buf_size,
-+			     "setsockopt(SO_VM_SOCKETS_BUFFER_SIZE)");
- 
- 	/* Ready to receive data. */
- 	control_writeln("SRVREADY");
-@@ -586,10 +582,8 @@ static void test_seqpacket_timeout_client(const struct test_opts *opts)
- 	tv.tv_sec = RCVTIMEO_TIMEOUT_SEC;
- 	tv.tv_usec = 0;
- 
--	if (setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO, (void *)&tv, sizeof(tv)) == -1) {
--		perror("setsockopt(SO_RCVTIMEO)");
--		exit(EXIT_FAILURE);
--	}
-+	setsockopt_timeval_check(fd, SOL_SOCKET, SO_RCVTIMEO, tv,
-+				 "setsockopt(SO_RCVTIMEO)");
- 
- 	read_enter_ns = current_nsec();
- 
-@@ -855,11 +849,8 @@ static void test_stream_poll_rcvlowat_client(const struct test_opts *opts)
- 		exit(EXIT_FAILURE);
- 	}
- 
--	if (setsockopt(fd, SOL_SOCKET, SO_RCVLOWAT,
--		       &lowat_val, sizeof(lowat_val))) {
--		perror("setsockopt(SO_RCVLOWAT)");
--		exit(EXIT_FAILURE);
--	}
-+	setsockopt_int_check(fd, SOL_SOCKET, SO_RCVLOWAT,
-+			     lowat_val, "setsockopt(SO_RCVLOWAT)");
- 
- 	control_expectln("SRVSENT");
- 
-@@ -1383,11 +1374,9 @@ static void test_stream_credit_update_test(const struct test_opts *opts,
- 	/* size_t can be < unsigned long long */
- 	sock_buf_size = buf_size;
- 
--	if (setsockopt(fd, AF_VSOCK, SO_VM_SOCKETS_BUFFER_SIZE,
--		       &sock_buf_size, sizeof(sock_buf_size))) {
--		perror("setsockopt(SO_VM_SOCKETS_BUFFER_SIZE)");
--		exit(EXIT_FAILURE);
--	}
-+	setsockopt_ull_check(fd, AF_VSOCK, SO_VM_SOCKETS_BUFFER_SIZE,
-+			     sock_buf_size,
-+			     "setsockopt(SO_VM_SOCKETS_BUFFER_SIZE)");
- 
- 	if (low_rx_bytes_test) {
- 		/* Set new SO_RCVLOWAT here. This enables sending credit
-@@ -1396,11 +1385,8 @@ static void test_stream_credit_update_test(const struct test_opts *opts,
- 		 */
- 		recv_buf_size = 1 + VIRTIO_VSOCK_MAX_PKT_BUF_SIZE;
- 
--		if (setsockopt(fd, SOL_SOCKET, SO_RCVLOWAT,
--			       &recv_buf_size, sizeof(recv_buf_size))) {
--			perror("setsockopt(SO_RCVLOWAT)");
--			exit(EXIT_FAILURE);
--		}
-+		setsockopt_int_check(fd, SOL_SOCKET, SO_RCVLOWAT,
-+				     recv_buf_size, "setsockopt(SO_RCVLOWAT)");
- 	}
- 
- 	/* Send one dummy byte here, because 'setsockopt()' above also
-@@ -1442,11 +1428,8 @@ static void test_stream_credit_update_test(const struct test_opts *opts,
- 		recv_buf_size++;
- 
- 		/* Updating SO_RCVLOWAT will send credit update. */
--		if (setsockopt(fd, SOL_SOCKET, SO_RCVLOWAT,
--			       &recv_buf_size, sizeof(recv_buf_size))) {
--			perror("setsockopt(SO_RCVLOWAT)");
--			exit(EXIT_FAILURE);
--		}
-+		setsockopt_int_check(fd, SOL_SOCKET, SO_RCVLOWAT,
-+				     recv_buf_size, "setsockopt(SO_RCVLOWAT)");
- 	}
- 
- 	fds.fd = fd;
-diff --git a/tools/testing/vsock/vsock_test_zerocopy.c b/tools/testing/vsock/vsock_test_zerocopy.c
-index 04c376b6937f..9d9a6cb9614a 100644
---- a/tools/testing/vsock/vsock_test_zerocopy.c
-+++ b/tools/testing/vsock/vsock_test_zerocopy.c
-@@ -162,7 +162,7 @@ static void test_client(const struct test_opts *opts,
- 	}
- 
- 	if (test_data->so_zerocopy)
--		enable_so_zerocopy(fd);
-+		enable_so_zerocopy_check(fd);
- 
- 	iovec = alloc_test_iovec(test_data->vecs, test_data->vecs_cnt);
- 
-diff --git a/tools/testing/vsock/vsock_uring_test.c b/tools/testing/vsock/vsock_uring_test.c
-index 6c3e6f70c457..5c3078969659 100644
---- a/tools/testing/vsock/vsock_uring_test.c
-+++ b/tools/testing/vsock/vsock_uring_test.c
-@@ -73,7 +73,7 @@ static void vsock_io_uring_client(const struct test_opts *opts,
- 	}
- 
- 	if (msg_zerocopy)
--		enable_so_zerocopy(fd);
-+		enable_so_zerocopy_check(fd);
- 
- 	iovec = alloc_test_iovec(test_data->vecs, test_data->vecs_cnt);
+ 	apic_send_IPI_allbutself(NMI_VECTOR);
  
 -- 
-2.34.1
+2.47.0
 
 
