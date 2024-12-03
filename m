@@ -1,163 +1,144 @@
-Return-Path: <linux-kernel+bounces-430037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9BFA9E2D13
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 21:29:58 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6152C9E2BB0
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 20:08:56 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D45B8B3570D
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 19:08:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37550163BE3
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 19:08:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 149EC20409D;
-	Tue,  3 Dec 2024 19:07:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D45EF1FECCC;
+	Tue,  3 Dec 2024 19:08:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pWv0hY6H"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XOlc009e"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBFFD20010B
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 19:07:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A72E81DAC83;
+	Tue,  3 Dec 2024 19:08:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733252871; cv=none; b=fwMnMnqGIUtVxe8vdfQQOPW21mlhxtRQ6M1swsA7ZeDYexz44kZAR8jGBO1TiipxwXP1G4b4QMQwIJaJ8bixhiXWQwwBJ3YRYMeQ8uv5kOEISpDAKFNBbALl9mbz4wQCKG56/t/xHvTzh/GPughwgyUduryZ6NEZYyyDKFWeobg=
+	t=1733252930; cv=none; b=RfTPzz06H2ADK19+cXzBGNXXc0HaXo+JkDn1a6T0+XZL5mSgVQ5LIUexlaz2JABYDovKCIb9LlpW+bK44yA7dncx8xhCiVv5Ego69cm3z5fjZ7MheAkcVNb9L4evPjoNU17D6WUcJkAaOz/tWjfm3KlaRlHT2m9yAgA3UMbcgWU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733252871; c=relaxed/simple;
-	bh=MJR7wMKmDqS5aFmAfPznb4O85+40BOjFkprVenAI+OE=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=fw1IOuNzMrtw4vfNLBC09dN2VAb3+uUHw4wCTSHZZ8+A5YQ3aw+FhCa0S/fOPi5cs+dX68rmAiqgQ4rweH8K/CgN6kmt8Bi6ZdvVtNUGK1VoHPTSY5zzaNwqRjHpJVCGqDAbKD0FFgDjqkVo3HkBVd+hcXNWpZwVBQavmRaMmio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pWv0hY6H; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2ee36569f4cso4987139a91.2
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 11:07:49 -0800 (PST)
+	s=arc-20240116; t=1733252930; c=relaxed/simple;
+	bh=kwHZ2se9ReqzDtQsZK8wHA0Yv67BuPV3qm22GpUmXbI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IuCn1MINTt8ABDURS7NR8nI1X8g239+FDqfqEySV2s+ck2Ve6Xr/SLYO30A/7rPskMWCWWpNrz0uVXMSz7+cn6wGdvrqoTEmU/pIiGbUjP+WHAwBZTMFDgKCqgl3yPWVbIp09oe+ZDTMtTV/fFrz0LbQ8ziUsKf/kuSwG5YhYbA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XOlc009e; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-385e2880606so3889392f8f.3;
+        Tue, 03 Dec 2024 11:08:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733252869; x=1733857669; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=PaCdFtyuZCc6AtbaS5uMRjDy7Mq8Hk8zYjV/jOWuGVc=;
-        b=pWv0hY6H1ZbDJXZq8K56SPd9d/5CdYLTRtI5I8rRnhH8VXQWtc6OIeTsO5lYUQeUhk
-         ToQDUxS5JHRFw5tsmgB8GozyH7+ddc2Mmx2UnFLZ+TsaJf4hIAxPHq9LscBjb2ij7ll6
-         z3HO3YY/IEHQcn5q1sCOfe4/LU0RTQmAa00CUrZ6QcT0aUZBVx0xpVNGcYMs9/nhROPW
-         E6u9Uq/2zA4epZaKnYpPT7HUbQZkyIVtKcyWJPyIfO1imtEW0KwKwmdqOQZHSI3sZvta
-         WZOcq9Jq/7Q+LWj0f1tA3heaiJsy2sghzmTfUCWOwL8RAJp2q+Nlna2TzDUkssngaovM
-         Fteg==
+        d=gmail.com; s=20230601; t=1733252927; x=1733857727; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=o/GajLuB6VlgxqAV+v6t5stEll6kuPWXr5vRdNegYdM=;
+        b=XOlc009erRaEMkCc4eXnzzzEdXDI/aAWd5lpi4lDvt1JzSCGsXcAHxJvT1YI253/VF
+         WyP+O8ZCsilkg7Vwkd8GDGKSjjdjltkx9L3x3WuVX/LHKlBpqEGN6gIpxXI9bjABPsik
+         /+MasR3ajnaEjC2kkvWVFfcP2tGJFuWjLn3yfSE8Suz71LIAD5CqtQS14ueJqeN/DxDV
+         5bLV5t5y1YbVxDrJJSaFfBT5CIP0aK8CgHgpR3jdbMLIdyyPF+YduVwfWDI0iIikXskE
+         MQTtXl5unc25K6gcHHTj4gcXFab9jYzFTh392EPkV3SqG4FBQZR+O/3AVmJGmVDk8c9Q
+         ej2w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733252869; x=1733857669;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PaCdFtyuZCc6AtbaS5uMRjDy7Mq8Hk8zYjV/jOWuGVc=;
-        b=gbsIPZDli5pG8tZ7hD/I/j3BFf3/eCiHKmrkXvz8ojLOOk6JYCIXX+BaaAaXBi11WD
-         tCxmnsT5bYBfjuuxKidDluG4gOl0NYlAdAyoWqEk+9jV/8vg6AJyK2xoYda3Zkcv/k8E
-         /lwTCPpK7YW7hST6PS07EmrPu64p8uIqKKhmUm6/G6iA51PKM4ZOIgXcc0uzsFWB6ICW
-         c9qOTiPj8iRTYfaLvO9R/6ewBeItWFDMC/4JM8pN4CrE9no5i9a/iOE3itxMGbLQ8TWz
-         z+NBn9bHgLRFgBXUGnW0CnyrCky3lIMPRNfQvTsrdgku50zEszs9RqrAkdD/3v6AXEpA
-         nldg==
-X-Forwarded-Encrypted: i=1; AJvYcCVq81HhpsQuVk36VCeBQp6Z0DvvCbvqX8DnBDuJ0Fv0fEcPzEz6XYXRY4xuiHUcijvKcWubSc5guDNBZwo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YywKrP2A6gqRzd5xqVfiAwbuwHMn+g2tTYuBScF1hyToeZkyDPQ
-	LtH3kL+F6uwn9Mib0HIznqh75PcihIlS6f78Vktxh2phVbXhRbuW1KwXIrCog/O0HMTh1j0dqfC
-	wyA==
-X-Google-Smtp-Source: AGHT+IHjoirwBfWtmi9PaYx/CFYut1Vj6FLcEXqUtE33259R8PXsBNLecTER6HtXRPmwtYfrA0AIIAqHdZ4=
-X-Received: from pjbsb14.prod.google.com ([2002:a17:90b:50ce:b0:2ee:3882:175b])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3c4a:b0:2ee:e18b:c1fa
- with SMTP id 98e67ed59e1d1-2ef0125b2e5mr4090519a91.28.1733252869223; Tue, 03
- Dec 2024 11:07:49 -0800 (PST)
-Date: Tue, 3 Dec 2024 11:07:47 -0800
-In-Reply-To: <20241121185315.3416855-7-mizhang@google.com>
+        d=1e100.net; s=20230601; t=1733252927; x=1733857727;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=o/GajLuB6VlgxqAV+v6t5stEll6kuPWXr5vRdNegYdM=;
+        b=C3s8hxoa5uauqGk4ieU2/chKS4VS+4HASj488rg76QRmNUanWHCZunyQL4nHTc8xQJ
+         aKkV/On51QVgWs4aBaUySNOVDDL/BwFr/aOP4fF17DVP3NOcK4qWvCld5ASiU+UX6qR/
+         zti1+hWlVhgHlJWEYde15l0PiVidOTO9XtTEzU0oPQj2mtfswT6868uBCaND+EJbAJm2
+         MmxaB+etGDTNPbIYsW+NhnYSPNgRj+/ak4KOHM7Jz+raHez/INygMb/0bE6zYfxX0E2O
+         Ev7u0Vk03tH2Gl41GXK+HoK8b3dSyTIgf5I7grKpt7vAguWJw2pVWDh0bBg+NsG5SgvV
+         +V/A==
+X-Forwarded-Encrypted: i=1; AJvYcCWqqU241A3JvwbSCxK1T+kxW5W6iPrjpDx2M4wE6oIAuHXCCC/BaxLuWvPuAV+MPt8dDtcwfaOIHy/Fcw==@vger.kernel.org, AJvYcCXoj0r2k1gm+m62Pri84yehXm5gbZLj48jTJMy6OPh16ode+CPfsaEfXsxI4m5KaK2umLbMYHrInj/2Xog=@vger.kernel.org
+X-Gm-Message-State: AOJu0YysMEyhARYdvzRGyXWVi3bea5IfMSB1wA72ZINqnjg4tPgQ0E7W
+	jATSUiy0TzprUAeXwHywm3HNs+NXmU4i6XbHLkud84TjlOv4a8HbOOmmh+1m
+X-Gm-Gg: ASbGncuEFdSFZhcZN0nH3iiRoZ8s+TgM54rg8YAgJbn+/lTNhs1zCAR4qK5fhXd9AEw
+	pfO3T70fdyc+9Y/jN66Z5fN959DwKae59SFSh+fmjlvWTZhu3ToRdfA/gO8YcVaTLHPiXJereEv
+	CtJHRGWU6ZUeFoNFnOdYtv8vZHc8bY0pAsuLnAgqFBkmBO6G/fS/+tr9tnSIOcptIfY30s+eqSo
+	IOhIIFmA9pUH6VbWdzKkBWW6/SFVONofiEYe2zaRsF3Z74dSQvR7NR+MbVOaiLEGg==
+X-Google-Smtp-Source: AGHT+IGYc9RPX2NkOZaoDkqmdJqSrOfqdZfo7T0GZELsc6mADLVQJlkMqsaTP6etJMU8486ex+a8zg==
+X-Received: by 2002:a05:6000:4009:b0:385:f909:eb2c with SMTP id ffacd0b85a97d-385fd43556bmr4067289f8f.38.1733252926639;
+        Tue, 03 Dec 2024 11:08:46 -0800 (PST)
+Received: from egonzo (82-64-73-52.subs.proxad.net. [82.64.73.52])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385e4617a61sm10707452f8f.3.2024.12.03.11.08.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Dec 2024 11:08:45 -0800 (PST)
+Date: Tue, 3 Dec 2024 20:08:43 +0100
+From: Dave Penkler <dpenkler@gmail.com>
+To: Greg KH <greg@kroah.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the staging tree
+Message-ID: <Z09XO31jzVdZJzuK@egonzo>
+References: <20241015165538.634707e5@canb.auug.org.au>
+ <2024101623-education-buffoon-0988@gregkh>
+ <Zw_KjYQ7P2Qd8fDb@egonzo>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241121185315.3416855-1-mizhang@google.com> <20241121185315.3416855-7-mizhang@google.com>
-Message-ID: <Z09XA-2ao5CbXhV5@google.com>
-Subject: Re: [RFC PATCH 06/22] KVM: x86: INIT may transition from HALTED to RUNNABLE
-From: Sean Christopherson <seanjc@google.com>
-To: Mingwei Zhang <mizhang@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Huang Rui <ray.huang@amd.com>, 
-	"Gautham R. Shenoy" <gautham.shenoy@amd.com>, Mario Limonciello <mario.limonciello@amd.com>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Len Brown <lenb@kernel.org>, 
-	"H. Peter Anvin" <hpa@zytor.com>, Perry Yuan <perry.yuan@amd.com>, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
-	Jim Mattson <jmattson@google.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zw_KjYQ7P2Qd8fDb@egonzo>
 
-The shortlog is an observation, not a proper summary of the change.
-
-  KVM: x86: Handle side effects of receiving INIT while vCPU is HALTED
-
-On Thu, Nov 21, 2024, Mingwei Zhang wrote:
-> From: Jim Mattson <jmattson@google.com>
+On Wed, Oct 16, 2024 at 04:15:41PM +0200, Dave Penkler wrote:
+> On Wed, Oct 16, 2024 at 09:40:03AM +0200, Greg KH wrote:
+> > On Tue, Oct 15, 2024 at 04:55:38PM +1100, Stephen Rothwell wrote:
+> > > Hi all,
+> > > 
+> > > After merging the staging tree, today's linux-next build (powerpc
+> > > allyesconfig) failed like this:
+> > > 
+> > > ld: warning: discarding dynamic section .glink
+> > > ld: warning: discarding dynamic section .plt
+> > > ld: linkage table error against `nec7210_board_online'
+> > > ld: stubs don't match calculated size
+> > > ld: can not build stubs: bad value
+> [skip]
+> > > 
+> > > Caused by commit
+> > > 
+> > >   8e4841a0888c ("staging: gpib: Add Frank Mori Hess FPGA PCI GPIB driver")
+> > > 
+> > > I have marked that driver as BROKEN for today.
+> > 
+> > Thanks, I'll go take your patch from next and add it to my tree for
+> > this, sorry about the build issues.
+> > 
+> > greg k-h
+> Hi,
+> All declarations and uses of `nec7210_board_online' match.
 > 
-> When a halted vCPU is awakened by an INIT signal, it might have been
-> the target of a previous KVM_HC_KICK_CPU hypercall, in which case
-> pv_unhalted would be set. This flag should be cleared before the next
-> HLT instruction, as kvm_vcpu_has_events() would otherwise return true
-> and prevent the vCPU from entering the halt state.
-> 
-> Use kvm_vcpu_make_runnable() to ensure consistent handling of the
-> HALTED to RUNNABLE state transition.
-> 
-> Fixes: 6aef266c6e17 ("kvm hypervisor : Add a hypercall to KVM hypervisor to support pv-ticketlocks")
-> Signed-off-by: Jim Mattson <jmattson@google.com>
+> Could this be a ppc linker problem ?
+> -Dave
 
-Mingwei's SoB is missing.
+This bug report from Red Hat would indicate that there could be a problem with the ppc linker: 
+Bug 1523457 - ghc-8.2.2 build linking error on rawhide ppc64le with binutils-2.29.1
+https://bugzilla.redhat.com/show_bug.cgi?id=1523457
 
-> ---
->  arch/x86/kvm/lapic.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
-> 
-> diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
-> index 95c6beb8ce279..97aa634505306 100644
-> --- a/arch/x86/kvm/lapic.c
-> +++ b/arch/x86/kvm/lapic.c
-> @@ -3372,9 +3372,8 @@ int kvm_apic_accept_events(struct kvm_vcpu *vcpu)
->  
->  	if (test_and_clear_bit(KVM_APIC_INIT, &apic->pending_events)) {
->  		kvm_vcpu_reset(vcpu, true);
-> -		if (kvm_vcpu_is_bsp(apic->vcpu))
-> -			vcpu->arch.mp_state = KVM_MP_STATE_RUNNABLE;
-> -		else
-> +		kvm_vcpu_make_runnable(vcpu);
+Quoting from the bug report:
+  The problem appears to be an instability in the code in the PowerPC 
+  linker's backend that computes the call stubs needed to access the PLT.
+  As the linker moves sections around in memory one stub switches from
+  containing a backwards branch to containing a forwards branch, altering
+  its size and confusing the code which had previously allocated space for
+  the stub.
 
-This is arguably wrong.  APs are never runnable after receiving.  Nothing should
-ever be able to observe the "bad" state, but that doesn't make it any less
-confusing.
+This seems to be the same issue we are having:
+ ld: stubs don't match calculated size
 
-This series also fails to address the majority cases where KVM transitions to RUNNABLE:
+It is reported to be fixed in the 2.30 FSF binutils sources.
 
-  __set_sregs_common()
-  __sev_snp_update_protected_guest_state()
-  kvm_arch_vcpu_ioctl_set_mpstate()
-  kvm_xen_schedop_poll()
-  kvm_arch_async_page_present()
-  kvm_arch_vcpu_ioctl_get_mpstate()
-  kvm_apic_accept_events() (SIPI path)
+Could we rather make GPIB_FMH depend on !PPC rather than BROKEN for now ?
+-Dave
 
-Yeah, some of those don't _need_ to be converted, and the existing behavior of
-pv_unhalted is all kinds of sketchy, but fixing a few select paths just so that
-APERF/MPERF virtualization does what y'all want it to do does not leave KVM in a
-better place.
-
-I also think we should add a generic setter, e.g. kvm_set_mp_state(), and take
-this opportunity to sanitize pv_unhalted.  Specifically, I think pv_unhalted
-should be clear on _any_ state transition, and unconditionally cleared when KVM
-enters the guest.  The PV kick should only wake a vCPU that is currently halted.
-Unfortunately, the cross-vCPU nature means KVM can't easily handle that when
-delivering APIC_DM_REMRD.
-
-Please also send these fixes as a separate series.  My crystal ball says APERF/MPERF
-virtualization isn't going to land in the near future, and I would like to get
-the mp_state handling cleaned up soonish.
-
-> +		if (!kvm_vcpu_is_bsp(apic->vcpu))
->  			vcpu->arch.mp_state = KVM_MP_STATE_INIT_RECEIVED;
->  	}
->  	if (test_and_clear_bit(KVM_APIC_SIPI, &apic->pending_events)) {
-> -- 
-> 2.47.0.371.ga323438b13-goog
-> 
 
