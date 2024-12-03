@@ -1,117 +1,120 @@
-Return-Path: <linux-kernel+bounces-428694-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428693-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 872679E122C
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 05:04:10 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 536B89E122B
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 05:04:00 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD1FA163680
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 04:04:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A066282E1D
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 04:03:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AE18156C7B;
-	Tue,  3 Dec 2024 04:04:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FHqUe7ii"
-Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 353C6224F0;
-	Tue,  3 Dec 2024 04:04:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 455DC148FED;
+	Tue,  3 Dec 2024 04:03:55 +0000 (UTC)
+Received: from vmicros1.altlinux.org (vmicros1.altlinux.org [194.107.17.57])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FCEE224F0
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 04:03:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.107.17.57
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733198642; cv=none; b=sxAZBizlBhMd56HGmEgWnJRHVvGNcEsODXUah6STcy3i542vn4ieHQGEJDFZcyX1RGkoFtn1FdtbRpzL6+EjDFID2UoKESG6tNmQqTc9j1Ji0yo9EPl8/Tv8mOEKVNS6HEX5XeKdck4bHIDJ0OlFTC5Q+ZU9a+c03waXQ5sbnok=
+	t=1733198634; cv=none; b=fxn3nsTa1/E2/n4VY5vzeBFdnT50wmuW2C3xTiNa95KG0m1bJVBKxljWk/IndDs3a0Bt87UfiwqR/dfOL0e+fOuA+7mr3QTLedZhYupxMWoj4KC6wylJcjnRub378q3HTmM+jydwdIdUviFPR3HRFoGE8jPoq+wb/sV6BPvQknI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733198642; c=relaxed/simple;
-	bh=irN2mDb4DxV5lPd68poaTr/FFEji/3swiAZceNn9oj8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NHlMbpyWusdcN1Xnjrv8TWmQJ5zT5n67mxyI7lEy55ECwrtetktdwx5X9mNQKmZZpMqzI7B0cN7ZmDI9FROhtM0diVyzjB4ZPQc3nXcRXmSXo+4EIPsHT8eRqvg/jwXuC8q3PFZPqQ9ZbUK5LBck+gMf+3y6L3485zacXS7dohE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FHqUe7ii; arc=none smtp.client-ip=209.85.219.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-6d8843c44cfso32626186d6.3;
-        Mon, 02 Dec 2024 20:04:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733198640; x=1733803440; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=x7bUwi0TttiL+apQ7VoSfHS8nkT7Ms37eJEkRC/4J0U=;
-        b=FHqUe7iiu/D5ltHd+SaTR1HC90uWm9LL1w8u4Gndp8TB1svNx39qQe8LNyQ2u5WGgq
-         ZXrM/ux7/CPMT8WFnmT5g2dXHxfPtaYUn6t2x2geTF1dc1bByceYH4BXtQT+TkR5oqTB
-         C7PTrsRiHLPjmnCydu41bVcQYKwXKCO2FnnQQao8ywUHvvCnAjJGXWZalmVDdL8Lvo8I
-         TfCaipTW3iqjl0hOPorjysZ5rDBaUSmkQJQqiDHoiaDfYgzpisxusfvcDS2Thrl0w/ju
-         XJHlrN1Z+gL9VuxJs2miBaNWTbgkstMxx4r/9nIIbVuqEOmQWnYkcDvPg9l1IsyejrW7
-         b7Lg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733198640; x=1733803440;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=x7bUwi0TttiL+apQ7VoSfHS8nkT7Ms37eJEkRC/4J0U=;
-        b=di/Xc0f5kKibsybdWjNGOeMCIAQOJEVe2HSBvb3Yva7RNx5d76Kl62i2kfm16vBYXn
-         PZEWX03gJkGvK3GW/LvepXkXbabxL8XI9pdqxznQm1T5eywprHv/bklrsqHbCJMxkRhO
-         tNElwyo9yJgO/HvE2DGbNuTdt/NKH609oT4Qp9l7foA5Ae/iiNaghzUItKeS9Iga65Up
-         Lw7T0TuOCURJcN86hw1FI4Xl+eE6pwtt0HYFvU2us9SD8UcvohK21Me3xgFzqBiO4HFT
-         xHXKADSt3Sa4L2t+6K+L72GRP8sec1uzjr/0XEXC6gNEYIxXj+7RfxK/bP0mOHpsWfXB
-         5CZg==
-X-Forwarded-Encrypted: i=1; AJvYcCUhjtyF39pVZOLFAjoUZUKStdYI1mtr8aa9ypITPdGvp+W4gd0tUJXcmeKupaVG+zwPXSvSZ03kz/tIO1TM62l/@vger.kernel.org, AJvYcCVuj3yps8SELHNaKh4kiDw6jEaCqwMt/qIHovwmYdePYS4qbiHlY7JAlohX1zTEJMSFL4cDE1PGv4Wgsl4B@vger.kernel.org, AJvYcCWUJfhTB/KaZVsEGC6yo7vjqCFQLkG16xXq+xh8lvJwTkx3CZlqEnXRiwDamYoiC0IQp2JhsA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzV5vbCcgGruytclDREAX0/IvUAhxyrS8oKInkst7g06efYyRQL
-	m9NXymAhnrWwI238SpxenSwjtjBbFfqQVsr/sKEHs+L9W1xF5yu96nUJIsNp5fGFV0wgKthJZb1
-	LAmLWihe591QOkBMX2FVb3ACNh4I=
-X-Gm-Gg: ASbGncuTQOahAIcXMeFCn+IrotYodb+kjTDzUF9GDnmNxuPNGdsih6TQiqQ7hT86tHa
-	uPlGwH2fKMBo15I2sqAzBBcecKjtklLo89g==
-X-Google-Smtp-Source: AGHT+IF27TuPPXjjFmy32fsLtg/YixfsUo7fDoj7bds6GLocP9vjpQesILvwjCmKlDjIl6dNP5TWJMJN6XEWHJ6Yfjw=
-X-Received: by 2002:ad4:5ae2:0:b0:6d8:86c8:c29a with SMTP id
- 6a1803df08f44-6d8b72e08femr23550396d6.10.1733198640226; Mon, 02 Dec 2024
- 20:04:00 -0800 (PST)
+	s=arc-20240116; t=1733198634; c=relaxed/simple;
+	bh=rDiizQUE/yXLb41PumDxioqw5EGCdPok7nuTx80yqPs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=elOJn/K0IW7PU/J/hqfdk4iNrdJXFeYon8pZo22B5ZndSoPBSo8zpU2o9+s8E9HKoAXgHN7ajAu8oOXboOBXHEGsQVpC1qn0Ne5QvdYq9XPKpys7LIasNmXu18RxQevvQw9fspZl0K8WtSsp7FHygF5UPoW3AZWJSqR3YIXY7D8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org; spf=pass smtp.mailfrom=altlinux.org; arc=none smtp.client-ip=194.107.17.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altlinux.org
+Received: from imap.altlinux.org (imap.altlinux.org [194.107.17.38])
+	by vmicros1.altlinux.org (Postfix) with ESMTP id 8F63272C90B;
+	Tue,  3 Dec 2024 07:03:50 +0300 (MSK)
+Received: from altlinux.org (sole.flsd.net [185.75.180.6])
+	by imap.altlinux.org (Postfix) with ESMTPSA id 810EE36D0178;
+	Tue,  3 Dec 2024 07:03:50 +0300 (MSK)
+Date: Tue, 3 Dec 2024 07:03:50 +0300
+From: Vitaly Chikunov <vt@altlinux.org>
+To: Oliver Upton <oliver.upton@linux.dev>
+Cc: Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
+	james.morse@arm.com, linux-arm-kernel@lists.infradead.org,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	linux-kernel@vger.kernel.org, mark.rutland@arm.com
+Subject: Re: v6.13-rc1: Internal error: Oops - Undefined instruction:
+ 0000000002000000 [#1] SMP
+Message-ID: <20241203040350.4soyvaeqs75kjqoj@altlinux.org>
+References: <20241202045830.e4yy3nkvxtzaybxk@altlinux.org>
+ <20241202153618.GA6834@willie-the-truck>
+ <86ttbmt71k.wl-maz@kernel.org>
+ <20241202155940.p267a3tz5ypj4sog@altlinux.org>
+ <86ser6t6fs.wl-maz@kernel.org>
+ <20241202223119.k3uod4ksnlf7gqh2@altlinux.org>
+ <Z05cuuMMurzp1jx5@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CY8PR11MB713438072B901F890913803F89362@CY8PR11MB7134.namprd11.prod.outlook.com>
- <CAHC9VhR6t_LLB5nc=kqqE5FpN4ftxZYidQ8F5x1Lzowf1H9juw@mail.gmail.com>
-In-Reply-To: <CAHC9VhR6t_LLB5nc=kqqE5FpN4ftxZYidQ8F5x1Lzowf1H9juw@mail.gmail.com>
-From: Yafang Shao <laoar.shao@gmail.com>
-Date: Tue, 3 Dec 2024 12:03:24 +0800
-Message-ID: <CALOAHbCz7mpxv3Dt9jJtJJ2g=A6Nf_rn687BHgOmrzQt3Udv_w@mail.gmail.com>
-Subject: Re: v6.13-rc1 build errors from kernel/auditsc.c
-To: Paul Moore <paul@paul-moore.com>
-Cc: "Zhuo, Qiuxu" <qiuxu.zhuo@intel.com>, Kees Cook <keescook@chromium.org>, 
-	Eric Paris <eparis@redhat.com>, "audit@vger.kernel.org" <audit@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-hardening@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=koi8-r
+Content-Disposition: inline
+In-Reply-To: <Z05cuuMMurzp1jx5@linux.dev>
 
-On Tue, Dec 3, 2024 at 11:35=E2=80=AFAM Paul Moore <paul@paul-moore.com> wr=
-ote:
->
-> On Mon, Dec 2, 2024 at 10:19=E2=80=AFPM Zhuo, Qiuxu <qiuxu.zhuo@intel.com=
-> wrote:
-> >
-> > Hi,
-> >
-> > I got the following build errors from kernel/auditsc.c file.
-> >
-> > The GCC version      : 7.5.0
-> > Kernel version         : v6.13-rc1
-> > The bisect commit : 286d7a54c8a2 ("auditsc: replace memcpy() with strsc=
-py()")
->
-> Unfortunately this is a known GCC bug, see the lore link below.  Kees,
-> Yafang, do you have any more information or compiler-based workarounds
-> for this bug?
->
-> https://lore.kernel.org/all/CALOAHbBB-__eyERw82QnS3Wmgi7_BpPaacY2urVmpWX3=
-ZkVtvQ@mail.gmail.com/
+Oliver, Marc,
 
-I'll prepare a patch based on Kees's changes soon. For now, let's
-implement a workaround.
+On Mon, Dec 02, 2024 at 05:19:54PM -0800, Oliver Upton wrote:
+> On Tue, Dec 03, 2024 at 01:31:19AM +0300, Vitaly Chikunov wrote:
+> > Marc,
+> > 
+> > On Mon, Dec 02, 2024 at 04:07:03PM +0000, Marc Zyngier wrote:
+> > > On Mon, 02 Dec 2024 15:59:40 +0000,
+> > > Vitaly Chikunov <vt@altlinux.org> wrote:
+> > > > 
+> > > > Marc,
+> > > > 
+> > > > On Mon, Dec 02, 2024 at 03:53:59PM +0000, Marc Zyngier wrote:
+> > > > >
+> > > > > What the log doesn't say is what the host is. Is it 6.13-rc1 as well?
+> > > > 
+> > > > No, host is 6.6.60.
+> > > 
+> > > Right. I wouldn't be surprised if:
+> > > 
+> > > - this v6.6 kernel doesn't hide the MPAM feature as it should (and
+> > >   that's proably something we should backport)
+> > 
+> > How to confirm this? Currently I cannot find any (case-insensitive)
+> > "MPAM" files in /sys, nor mpam string in /proc/cpuinfo, nor MPAM strings
+> > in `strace -v` (as it decodes some KVM ioctls) of qemu process.
+> 
+> If you can attach to the QEMU gdbstub of the VM, info registers will
+> dump ~everything.
+> 
+> If the value of ID_AA64PFR0_EL1.MPAM (bits 43:40) is nonzero then the
+> host KVM is erroneously advertising MPAM to the guest.
 
---=20
-Regards
-Yafang
+I don't find such register. There is what I get:
+
+  (gdb) target remote :1234
+  Remote debugging using :1234
+  0x0000000040000000 in ?? ()
+
+  (gdb) pipe i r | grep ID_AA64PFR
+
+  ID_AA64PFR1_EL1 0x0                0
+  ID_AA64PFR2_EL1_RESERVED 0x0       0
+  ID_AA64PFR3_EL1_RESERVED 0x0       0
+  ID_AA64PFR6_EL1_RESERVED 0x0       0
+  ID_AA64PFR7_EL1_RESERVED 0x0       0
+  (gdb)
+
+This seems to be MPAM_frac, and it's 0, so "MPAM Extension not implemented"[1].
+
+Thanks,
+
+[1] https://developer.arm.com/documentation/ddi0595/2021-06/AArch64-Registers/ID-AA64PFR1-EL1--AArch64-Processor-Feature-Register-1?lang=en#fieldset_0-19_16
+
+> 
+> -- 
+> Thanks,
+> Oliver
 
