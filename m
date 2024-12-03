@@ -1,87 +1,96 @@
-Return-Path: <linux-kernel+bounces-429230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B05D9E192A
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 11:24:10 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F38F9E1935
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 11:26:15 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 32437162353
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:24:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 548D828799D
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:26:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41E281E1C04;
-	Tue,  3 Dec 2024 10:24:05 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E6751E1C22;
+	Tue,  3 Dec 2024 10:26:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Cl7oLBQc"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7565C2A1B8
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 10:24:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02E251E1A3C;
+	Tue,  3 Dec 2024 10:26:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733221444; cv=none; b=nxI/6QfLJZQXKQaD6xcWRRXNEi1sST3Bf+UCeIJjtWRmpYxsjXl1o+5vvWEshA3i1f/ZpZ1dT3quMWkZTbh0Ti90IYBfwN6sNBeRn9GjcbM+exy3tq+qucdE4cGgz1juIO+15ggW4RrD05MlmFoftbuB0PRj9NGinfa6jUXKMEE=
+	t=1733221570; cv=none; b=o+ZPSDLVIZ2UkSmBBB4OpaWMbc8BlJKh3rxI/ySo5xwVULG6duwwO+hfeBbhOSqPiCXYn5NfP6lf/bdsSQmhIejj3705UPADlbnxCjl/oYwNGSaalGib0ROlAY3WpjfNB6v/wxYCYFp9y+nNhHxWwxcSDiqtYPNTJDcTEeR1O8I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733221444; c=relaxed/simple;
-	bh=Xs2mbSOrRuLsod25ObonO027T0kX77dvwHQtUUoXdUA=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=KsrnJX4ODpe80r628B+vjr9HYwYPtTwUXE62GgXPjWUGSn1e0tlGp5sxAtiEgFg3dfI6tJ9ycwoa1Haq8bQexuFKmRh4jlaKg8e/gcpIj+1IMoKhWxftZj2s54YsmJSEqFeSzL8nSlBp5o+RVofeFV4hmNmTvrN84vvtzTg1WE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a7e0d7b804so40391345ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 02:24:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733221442; x=1733826242;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RSrCnTK4gpc74uP23a5NcOis3BRMNDyXkyMY1zX3xVM=;
-        b=TSpO2x8qVJhe0hBrZbaZZd8AInABRWE+BFxPfxyPn8YdCDCtNGnSzIVN94IEahhq2s
-         qft8XsJFcsNTUNybb4XB8ffPTFY+tWGnYxkN7PEyLHCR5gv/prP5haCGYzqFP0u8lpXx
-         LLY273ZG7LNyRXU60sMTTA6JVZTk7UoeOghebP4+fli3OO8d9SxrylBk8pvjpKvOjhOi
-         qC2rtBIbyY85cFqRtSqIVHFUFeMkTlwDU5XXBEfU+bPaTObWiqUMvG4dKHdEoGl/qd4F
-         f54lYPKVdg7/OEfMscVgu4vhs9Gyc+NhP0vNxtMUXIlnnvHU5OHxs20lJ528SiI56GCC
-         CmdA==
-X-Forwarded-Encrypted: i=1; AJvYcCXjbQD5wTlppWdcjIJMId0UEDbMQa7CJVrYFoJbuN9pWGj1ZwD0t6IvdT2bSkcylqOAak7wros1uRj2ufo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxumKhH+rwwgHOUkIZSrLFtgUrhNLV8wVazqwcjvv56do/dwiKu
-	65ebVt/Ua7/G3vLXZfbK4eCMzqTF5qfTrIybaD9qHd/1ZT4rJFmVsXvKeQdBDQnrADRSVUpbq14
-	aL5csMQG5DWzjQqBe5fRsP+PTrfTkYHuyxqKVfFl9Y6/SRa8y6gegwbQ=
-X-Google-Smtp-Source: AGHT+IGN2LsBQRfkUFR2Bv7jSkN1ZdBJ4hypW2nPRSe9IVBhLHRXmQQZG11Kk1yLJTJFu9+/ikgM/EGt2ujj71q8CofUnSoC1TiM
+	s=arc-20240116; t=1733221570; c=relaxed/simple;
+	bh=GFXzxmgfMzrffUuzfdw957QLDTkqoGbHpAkSrRuRskQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RFynRUnz3UwWSPgLLABrcLGxXC65M2LmtT1E6AZ095T4ASwtzxv5LeqSB6fGs9khUH3AoMtbXkcnANhqVdgHKWt1SeaGjg/OeLyQ4HJ2nrYbpJfQ0OyWegnlo2bhaArWUSanNCJUNE3HWBS2VmQZZqmzyghb6DCmE9u1V/Hzw48=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Cl7oLBQc; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=oXIkTz9ciWzlnuusWnuTBKkcKYQOv3mwjxPCUoX333M=; b=Cl7oLBQcArpZJcoYncilMyfQvy
+	cBzLxKiI6Gc7mlnAbr10Mvs7ZCRSiZnRFVEvTezPZQ9k7AqoRDB82/L4HM554Z/EZ94b7b++ixbYM
+	EmqB4U6HS7Heypr05Yo07eGEWDE49Na2xSuyriSltCN7bTXGRV8GJ4ZJgREU8zN+hqs/fswTyKana
+	OWVvbgZQ506gH9wFkSuAPmuaBvuTFpsqwgd4F+VbsTHxknMgs+IITeCI0m9JyS/pEUyL25+yP3ZwM
+	theNQwLTJI/H7MpCutkapFLqfJelvQ8Lzj5VyggUss4boNTZ/5NmMXDemY/KyOMpxgXsbXJiNKo70
+	IYMrrGpw==;
+Received: from 77-249-17-89.cable.dynamic.v4.ziggo.nl ([77.249.17.89] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tIQ6V-00000002Lnd-3giu;
+	Tue, 03 Dec 2024 10:26:04 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 5FB243004AF; Tue,  3 Dec 2024 11:26:03 +0100 (CET)
+Date: Tue, 3 Dec 2024 11:26:03 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Matthias Maennich <maennich@google.com>,
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/3] module: fixups after module namespace conversion
+Message-ID: <20241203102603.GA21636@noisy.programming.kicks-ass.net>
+References: <20241203102124.3147478-1-masahiroy@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a81:b0:3a7:e67f:3c58 with SMTP id
- e9e14a558f8ab-3a7f9a2fb3emr28239895ab.3.1733221442598; Tue, 03 Dec 2024
- 02:24:02 -0800 (PST)
-Date: Tue, 03 Dec 2024 02:24:02 -0800
-In-Reply-To: <tencent_DF670373896E43A6E4491760F77BA6CBB305@qq.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <674edc42.050a0220.48a03.0033.GAE@google.com>
-Subject: Re: [syzbot] [jfs?] divide error in dbAllocAG
-From: syzbot <syzbot+7c808908291a569281a9@syzkaller.appspotmail.com>
-To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241203102124.3147478-1-masahiroy@kernel.org>
 
-Hello,
+On Tue, Dec 03, 2024 at 07:21:04PM +0900, Masahiro Yamada wrote:
+> 
+> [1/3]
+> Commit cdd30ebb1b9f added double-quotes to enclose the variable in the
+> semantic patch, scripts/coccinelle/misc/add_namespace.cocci.
+> Since then, 'make nsdepds' always changes the missing import to silly code:
+>    MODULE_IMPORT_NS("ns");
+> 
+> [2/3]
+> MODULE_IMPORT_NS("") is misleading in the context of documentation
+> about MODULE_IMPORT_NS() tags in general.
+> 
+> [3/3]
+> Convert DEFAULT_SYMBOL_NAMESPACE from a macro expansion to a string
+> literal. There is no good reason to keep inconsistency in the default
+> case.
+> 
+> 
+> 
+> Masahiro Yamada (3):
+>   scripts/nsdeps: get 'make nsdeps' working again
+>   doc: module: revert misconversions for MODULE_IMPORT_NS()
+>   module: Convert default symbol namespace to string literal
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Thanks, I totally missed the DEFAULT_SYMBOL_NAMESPACE thing.
 
-Reported-by: syzbot+7c808908291a569281a9@syzkaller.appspotmail.com
-Tested-by: syzbot+7c808908291a569281a9@syzkaller.appspotmail.com
-
-Tested on:
-
-commit:         842f896c jfs: check agwidth before calculating the con..
-git tree:       https://github.com/ea1davis/linux jfs/syzv3
-console output: https://syzkaller.appspot.com/x/log.txt?x=17ee75e8580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=18d90fa8ec96d8b0
-dashboard link: https://syzkaller.appspot.com/bug?extid=7c808908291a569281a9
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-
-Note: no patches were applied.
-Note: testing is done by a robot and is best-effort only.
+And my coccinelle foo is non-existent, I would've never spotted that.
 
