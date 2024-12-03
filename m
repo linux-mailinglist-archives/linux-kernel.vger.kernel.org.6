@@ -1,93 +1,137 @@
-Return-Path: <linux-kernel+bounces-429422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A74A19E1BE9
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 13:18:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 76A089E1BEA
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 13:18:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F358167598
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 12:17:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A2EAD1668A3
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 12:18:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D85541F12EB;
-	Tue,  3 Dec 2024 12:14:48 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D75BE1EF0B2
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 12:14:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 204BC1E5728;
+	Tue,  3 Dec 2024 12:15:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ipPyB05b"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D1E11D88C7;
+	Tue,  3 Dec 2024 12:15:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733228088; cv=none; b=Yp5m+IGDj/kaPd5hhZwFFk5rynLxGys5trOGHcZiz6//2YMFyGJlXSKQcJFHMec8ItGpV4pKMDRz8tTF6mdRdGTnFWtKYBbbEc6rjgVnRkLUj6anEv0UeCBDZbRAMH/RmQv6tT3yr1QZLg+PR2630jUqtAHwlIoLw80lyuiOMqc=
+	t=1733228148; cv=none; b=brTXxX48PgODJOfXnUTanntRTmdVw6GLsDGOe6m7yl/SP/NbXUpRz49QrcROTKXCPqFyDAo7Uip4azScylnYVOXFVK/SFQmxFMs+v6TTda4MpzUo8MRi7kp9yxW+Z8wDKxK3prUJ9OruBEAggplWhqqb0n7OM8Q2GLB9MlrsTWk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733228088; c=relaxed/simple;
-	bh=oqZd/P3Fn1E9WzKcqeErAYO0bnFhHVIb5g6I9XtABuA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aTC/YNT1OG+LlzxUVEVu9a2dMduoyKCNk4nHu+sSItY7ZYT6NSrvAkRIz7t2nfg2jB7ZbST3+/Zlm5wzYz+q3eSFwnx2bvmdz6hKpZXZu8rXiL8m8LxuCb3L/YaV9DvfAyZvf4Mv1Ln7dqIgo9RVC8fxW28B+p3/5XIAb/A6kwQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3B3C8FEC;
-	Tue,  3 Dec 2024 04:15:14 -0800 (PST)
-Received: from bogus (e133711.arm.com [10.1.196.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 801D43F58B;
-	Tue,  3 Dec 2024 04:14:45 -0800 (PST)
-Date: Tue, 3 Dec 2024 12:14:42 +0000
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Yeoreum Yun <yeoreum.yun@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Sudeep Holla <sudeep.holla@arm.com>
-Subject: Re: [PATCH 3/3] firmware/arm_ffa: remove __le64_to_cpu() when set
- uuid for direct msg v2
-Message-ID: <Z072Mm61eE_Twx1B@bogus>
-References: <20241125095251.366866-1-yeoreum.yun@arm.com>
- <20241125095251.366866-4-yeoreum.yun@arm.com>
+	s=arc-20240116; t=1733228148; c=relaxed/simple;
+	bh=6IqNQTlTwVoxcL6WdHE1SoX7Ox5UCYXcPTe4ITJD53s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HruutaOQJ5eJcSd+LQYUFyscxUxO+A2FwKK+mjJ80x2ebKAmsCM0FHNHfWcIVvNbE7Z3zROtpEMi2YUuoLCnKZoIMEhycw+e6kGLallyLNtPV+NOKNnFkRBsaHlv7/j1Hbx/63NvIjlS3nRaJlu8WaNnxB+H5H0nLUbVMiJdzI8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ipPyB05b; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5884CC4CECF;
+	Tue,  3 Dec 2024 12:15:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733228148;
+	bh=6IqNQTlTwVoxcL6WdHE1SoX7Ox5UCYXcPTe4ITJD53s=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ipPyB05b+8RBatEPutLb4AUgYMD8vZ9HfqJfzgQbR/4HDLwid3bTC67d4RHxe7TpB
+	 EWExgZRmk4DKxfKZGW4kFBGFeYDFaibNqJeBpAQ2sanIO852zW0FVS/JKDB/SQugYG
+	 Zrtzy13t2oARfQ7DeS8rnsvs+bAIim9vzNOT1E3e2eUSfOLoK/QTe0v57QQpiNBlVl
+	 p4SDxX3kt1McvSwXUU1/QbsB0V8T1sOuZ4sUAVOF7FmTtv285Pge26NsLojh08Toeh
+	 bGbqFPVJozydldQk0LJEj0il4AUNNWBnxwNMrBomy7rCOURZiXQtNIqL3SqUdAI6cw
+	 dLQWu4P8gzdGw==
+From: Leon Romanovsky <leon@kernel.org>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Leon Romanovsky <leonro@nvidia.com>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
+	linux-pci@vger.kernel.org,
+	Ariel Almog <ariela@nvidia.com>,
+	Aditya Prabhune <aprabhune@nvidia.com>,
+	Hannes Reinecke <hare@suse.de>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Arun Easi <aeasi@marvell.com>,
+	Jonathan Chocron <jonnyc@amazon.com>,
+	Bert Kenward <bkenward@solarflare.com>,
+	Matt Carlson <mcarlson@broadcom.com>,
+	Kai-Heng Feng <kai.heng.feng@canonical.com>,
+	Jean Delvare <jdelvare@suse.de>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	Jakub Kicinski <kuba@kernel.org>,
+	=?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <linux@weissschuh.net>,
+	Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH v3] PCI/sysfs: Change read permissions for VPD attributes
+Date: Tue,  3 Dec 2024 14:15:28 +0200
+Message-ID: <18f36b3cbe2b7e67eed876337f8ba85afbc12e73.1733227737.git.leon@kernel.org>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241125095251.366866-4-yeoreum.yun@arm.com>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Nov 25, 2024 at 09:52:51AM +0000, Yeoreum Yun wrote:
-> From: Levi Yun <yeoreum.yun@arm.com>
-> 
-> UUID is saved in big endian format.
-> i.e) For uuid "378daedc-f06b-4446-8314-40ab933c87a3",
-> 
-> It should be saved in memory like:
->     37 8d ae dc
->     f0 6b 44 46
->     83 14 40 ab
->     93 3c 87 a3
-> 
-> Accoding to FF-A specification[0] 15.4 FFA_MSG_SEND_DRIECT_REQ2,
-> then UUID is saved in register:
->     UUID Lo  x2  Bytes[0...7] of UUID with byte 0 in the low-order bits.
->     UUID Hi  x3  Bytes[8...15] of UUID with byte 8 in the low-order bits.
-> 
-> That means, we don't need to swap the uuid when it send via direct
-> message request version 2, just send it as saved in memory.
-> 
-> Remove le64_to_cpu() for uuid in direct message request version 2,
-> and change uuid_regs' type to __be64 because UUID is saved in network
-> byte order.
->
+The Vital Product Data (VPD) attribute is not readable by regular
+user without root permissions. Such restriction is not needed at
+all for Mellanox devices, as data presented in that VPD is not
+sensitive and access to the HW is safe and well tested.
 
-  |   warning: incorrect type in initializer (different base types)
-  |      expected unsigned long a2
-  |      got restricted __be64
-  |   warning: incorrect type in initializer (different base types)
-  |      expected unsigned long a3
-  |      got restricted __be64
+This change changes the permissions of the VPD attribute to be accessible
+for read by all users for Mellanox devices, while write continue to be
+restricted to root only.
 
-We will get this warning back with this change, wondering if we can take
-up BE support separately.
+The main use case is to remove need to have root/setuid permissions
+while using monitoring library [1].
 
---
-Regards,
-Sudeep
+[leonro@vm ~]$ lspci |grep nox
+00:09.0 Ethernet controller: Mellanox Technologies MT2910 Family [ConnectX-7]
+
+Before:
+[leonro@vm ~]$ ls -al /sys/bus/pci/devices/0000:00:09.0/vpd
+-rw------- 1 root root 0 Nov 13 12:30 /sys/bus/pci/devices/0000:00:09.0/vpd
+After:
+[leonro@vm ~]$ ls -al /sys/bus/pci/devices/0000:00:09.0/vpd
+-rw-r--r-- 1 root root 0 Nov 13 12:30 /sys/bus/pci/devices/0000:00:09.0/vpd
+
+[1] https://developer.nvidia.com/management-library-nvml
+Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
+---
+Changelog:
+v3:
+ * Used | to change file attributes
+ * Remove WARN_ON
+v2: https://lore.kernel.org/all/61a0fa74461c15edfae76222522fa445c28bec34.1731502431.git.leon@kernel.org
+ * Another implementation to make sure that user is presented with
+   correct permissions without need for driver intervention.
+v1: https://lore.kernel.org/all/cover.1731005223.git.leonro@nvidia.com
+ * Changed implementation from open-read-to-everyone to be opt-in
+ * Removed stable and Fixes tags, as it seems like feature now.
+v0:
+https://lore.kernel.org/all/65791906154e3e5ea12ea49127cf7c707325ca56.1730102428.git.leonro@nvidia.com/
+---
+ drivers/pci/vpd.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/drivers/pci/vpd.c b/drivers/pci/vpd.c
+index a469bcbc0da7..a7aa54203321 100644
+--- a/drivers/pci/vpd.c
++++ b/drivers/pci/vpd.c
+@@ -332,6 +332,13 @@ static umode_t vpd_attr_is_visible(struct kobject *kobj,
+ 	if (!pdev->vpd.cap)
+ 		return 0;
+ 
++	/*
++	 * Mellanox devices have implementation that allows VPD read by
++	 * unprivileged users, so just add needed bits to allow read.
++	 */
++	if (unlikely(pdev->vendor == PCI_VENDOR_ID_MELLANOX))
++		return a->attr.mode | 0044;
++
+ 	return a->attr.mode;
+ }
+ 
+-- 
+2.47.0
+
 
