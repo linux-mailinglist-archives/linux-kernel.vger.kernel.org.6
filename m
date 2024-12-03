@@ -1,108 +1,167 @@
-Return-Path: <linux-kernel+bounces-429421-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429428-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F7729E1E36
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 14:51:10 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A6DC9E1E2D
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 14:50:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ED399B3ED65
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 12:17:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C707CB45BD3
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 12:19:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B9A71EF0BB;
-	Tue,  3 Dec 2024 12:14:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C5B41E7658;
+	Tue,  3 Dec 2024 12:17:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="rAAKCrdO"
-Received: from out30-99.freemail.mail.aliyun.com (out30-99.freemail.mail.aliyun.com [115.124.30.99])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ES/XGxI1"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE1391EF0A7;
-	Tue,  3 Dec 2024 12:14:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.99
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF64A1E5005
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 12:17:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733228086; cv=none; b=FeobCaoGLsp/oOErCg7J0p4tnjiO1YwsaQgFynoTicOybvA+z1ggKKHUcyIlXAGwYiCM3v1UHTHs4VNW+l8XaV7hSP3Ye8p8wjMKsMulbHH+vFaOyHKjh9sxlVUMJUAqs5lQs5fadyUi1NegNZdhgQJQFXumf9cCH+VE6D+4m1M=
+	t=1733228267; cv=none; b=TATkGItKeC+zY0VufGlFfgAWImxmK1LJBR9DbXbsQPZiUmoYFprXU5cM5Lwx5tVR3SegzUSAy8OZ9dKsmHkLDyY4vrUGSZ6w43laLJvcbxv+3TJPhBw7fsvinTrHJDhc5Ka3V9RGqTK9a4k7zmBgD3v2PnFdgNF1+vlMiwya2wg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733228086; c=relaxed/simple;
-	bh=hmgTYvyKwTUsLw4N96/c501UhYL9t4E16VnIBneOYok=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=hfLtqAL4UxhaQwgTy+We+Pwwkp9wTACCWrg9Uo+O8Ss7JNq7HRIB2nWLEEgcKCAOKBQGqzz0u7QdwBhIm2jkCMwQLcjmVy628ks76e0wU9rjpqlLEmqEfelcBkvyKgnCIpFUqkJyqUQYVLXjH/PrIuVBoPBW2upvTBMYW8vWaV0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=rAAKCrdO; arc=none smtp.client-ip=115.124.30.99
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1733228075; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=7qI5Tpti/q7G+Vv+zck9DF1myBpIVdZteXJ2iz09tI4=;
-	b=rAAKCrdOe5Pq504FkpldHyMq8folfVOrypXM4urq8NKC5RYzCArQXzTZ6+k3sTvVw2xNHkTEljQb6nszjJkRYCWJyGgjETCKU1luoe/HqKAinIihpfDHYffBHp2OPARN9qvuV253Vv4G4MSA0pf2NBmHojHQ5OTxXfjj5f4tPI0=
-Received: from j66c13357.sqa.eu95.tbsite.net(mailfrom:mengferry@linux.alibaba.com fp:SMTPD_---0WKmboUw_1733228074 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Tue, 03 Dec 2024 20:14:34 +0800
-From: Ferry Meng <mengferry@linux.alibaba.com>
-To: "Michael S . Tsirkin" <mst@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
-	linux-block@vger.kernel.org,
-	Jens Axboe <axboe@kernel.dk>,
-	virtualization@lists.linux.dev
-Cc: linux-kernel@vger.kernel.org,
-	io-uring@vger.kernel.org,
-	Joseph Qi <joseph.qi@linux.alibaba.com>,
-	Jeffle Xu <jefflexu@linux.alibaba.com>,
-	Ferry Meng <mengferry@linux.alibaba.com>
-Subject: [PATCH 3/3] virtio-blk: add uring_cmd iopoll support.
-Date: Tue,  3 Dec 2024 20:14:24 +0800
-Message-Id: <20241203121424.19887-4-mengferry@linux.alibaba.com>
-X-Mailer: git-send-email 2.32.0.3.g01195cf9f
-In-Reply-To: <20241203121424.19887-1-mengferry@linux.alibaba.com>
-References: <20241203121424.19887-1-mengferry@linux.alibaba.com>
+	s=arc-20240116; t=1733228267; c=relaxed/simple;
+	bh=M49V6RgMFX9yBEfjwwyJSmpJ/ZrX7Mn6P9h37XiEDzE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=XD9UZGxugps0KXtb9AErHyv88nqFDnETg5qLSqWTezL8AaifcJ2jsD2pZbdkWQv+SOZ0mA3b8/FeEdvuOFgM0JzZlg27rPX65SlIdzeaY0WJ1hGG/OGfi2xhcTo8LemiuoJFMhCPfAVfr7xkR4AfQuOgb1kcRYbCR80yikGvR4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ES/XGxI1; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-aa539d2b4b2so977279766b.1
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 04:17:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733228264; x=1733833064; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=W2UfI3tNP6hp450YILSsuMQQhfugKH625KrlazXf/FU=;
+        b=ES/XGxI1RowTnEOgPR+/WKiEZbwzok4NLJKXaySo/A+4ClcFYBftjJ2Tt202iJ5Mhk
+         ZnEBcxwSkCVXK9JU6geyaPSXkyVOLWBEDlMPLy4M8KtfQ0EVekcaXQ5K22vyZKHxBVBp
+         +LevHQo9x7gvfNTvIGcCgpty7BfWYpEsSAqc1Mn2FmzDNJ4jriDk3h7WRqsFunqLnYYq
+         Daqfi6BTo2zZwJ2QclL8QL7gk/C8Suy7NST2KAIs37RI5xYXaDh2wWCC5q47tAKloykI
+         HTjNLy5EYahad7klgH0wpl5qT+ds7MxtvyZRiOYFE31WIh0RNEjkGU65m/xF4I3ebbo5
+         FVEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733228264; x=1733833064;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=W2UfI3tNP6hp450YILSsuMQQhfugKH625KrlazXf/FU=;
+        b=O94peSX/3Nb5AMkrHOiUxPz+ZcTmC3o+hSB/N60wyBEjG/KkOFmrGGUmdWz//e6Vi5
+         +eWfJRMFstHu7vjXHbdqdtt0XH+36GDJMw1adyyAIsbPjRkWGfvgfBAOmL51Oiji0T3p
+         pDELlIZTpz2/zZGzGn7N5QCiZw16/+U/KHC69+NucJ/8AgotZh/mdHDMFV7uQ1hzDKfI
+         UtUfSMfShOIM1mSKkv20ek7zr/KXDGI2rwCSbWvRQHjcZSl1kpLPhAp65W6ARIPsV4n/
+         QnvsB5SpSGtnXjz0vGplL3fmhbA/9HP/qzWcJBi1S2aUj2jdqrOCIVVuaoEirPSPH0Vq
+         91WQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVUbJNJAM68YaDAr/4FFra4x7b7pg3uebz9ohKeOpzaSejHp5No6DeaLXfIWvEzb4IS8tQWS2gw/KQ8MFQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzpH4b0aXplyTBYhNp80amnstcw7ixkIkGiGetStvjVHfa67PPS
+	r+laoU5OooWgfrn7Znozn9jeLO47tNKZT87Jx2uOFqatSrLA8I35Fy/KbTJuVFiXwUPOGaYK4Rs
+	wlbc=
+X-Gm-Gg: ASbGncu39P0Yh2pvHK1JXkx9O8Bk9JEfrIAYV5PxOPheasu4Y/Mv0cuW+C0Kn+mBI4/
+	zMk92bR76aAFOeSD15j0vMY2imowLAOio5T1ErSrGkG2qgc8IlxUYpA6wIyvdThpjOXuYVCf4Xu
+	QmNNRD5SNFWjMJfHvZhZyibvVR52GX55OcA7JoLkVFvCc+VnOR3R1hqCLprtSZqvMrzqv8tcXNl
+	4fRR77f+tONvEDlyi6uTRvh3+ONJSfzxpXJ5HaCgyIxCGAUq+xM26hHr8c20cvsDs5GkZH0fQmn
+	hEyP5h+bqe4MWg9+XMOXyzqqYuJw4ttY2Q==
+X-Google-Smtp-Source: AGHT+IFuDfNoLsR+aGkqAxGMjkMHHCufm2JdaFXPMbn11SwOi0SEY0sCF5NfPxV3s0eUPciCzqcP2Q==
+X-Received: by 2002:a17:906:3d2a:b0:a9a:616c:459e with SMTP id a640c23a62f3a-aa5f742699amr195441766b.27.1733228264338;
+        Tue, 03 Dec 2024 04:17:44 -0800 (PST)
+Received: from puffmais.c.googlers.com (64.227.90.34.bc.googleusercontent.com. [34.90.227.64])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa5996df797sm616652266b.68.2024.12.03.04.17.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Dec 2024 04:17:44 -0800 (PST)
+From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Date: Tue, 03 Dec 2024 12:17:35 +0000
+Subject: [PATCH v3] dt-bindings: usb: max33359: add max77759-tcpci flavor
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+Message-Id: <20241203-dtbinding-max77759-v3-1-e1a1d86aca8e@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAN72TmcC/6XNQQ7CIBCF4as0sxZTBirVlfcwLqBgO4mCgYbUN
+ Nxd2gO4cfm/ZL5ZIblILsGlWSG6TImCryEODQyT9qNjZGsDtig5x57Z2ZC35Ef20otSqjszI6w
+ 1Fk+ykxLq4Tu6By07ervXnijNIX72H5lv608uc8aZEmJwKIe2b/H6JK9jOIY4wuZl/NMopXwBt
+ mcw5fkAAAA=
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Jagan Sridharan <badhri@google.com>
+Cc: Peter Griffin <peter.griffin@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
+ linux-usb@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+X-Mailer: b4 0.13.0
 
-Add polling support for uring_cmd polling support for virtblk, which
-will be called during completion-polling.
+Maxim's MAX77759 is a companion PMIC for USB Type-C applications. It
+comprises the following in one package:
+* top (including GPIO)
+* charger
+* fuel gauge
+* TCPCi
 
-Signed-off-by: Ferry Meng <mengferry@linux.alibaba.com>
+While in the same package, TCPCi and Fuel Gauge have separate I2C
+addresses, interrupt lines and interrupt status registers and can be
+treated independently.
+
+While the TCPCi part appears identical to max33359 on the surface, it
+should still have a dedicated compatible, though, as it is a different
+implementation. This will allow for handling differences in case they
+are discovered in the future.
+
+max77759 is used on Google Pixel 6 and Pixel 6 Pro.
+
+Add a dedicated compatible, maxim,max77759-tcpci, to allow for
+potential differences in the future.
+
+Signed-off-by: André Draszik <andre.draszik@linaro.org>
 ---
- drivers/block/virtio_blk.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+Changes in v3:
+- change compatible from maxim,max77759 to maxim,max77759-tcpci - the
+  former should be reserved for a top-level MFD device for the
+  remaining components
+- drop Acked-by tags due to compatible change
+- Link to v2: https://lore.kernel.org/r/20241128-dtbinding-max77759-v1-1-733ce24c0802@linaro.org
 
-diff --git a/drivers/block/virtio_blk.c b/drivers/block/virtio_blk.c
-index 1a4bac3dc044..7888789a3eb8 100644
---- a/drivers/block/virtio_blk.c
-+++ b/drivers/block/virtio_blk.c
-@@ -1469,6 +1469,18 @@ static int virtblk_chr_uring_cmd(struct io_uring_cmd *ioucmd, unsigned int issue
- 	return virtblk_uring_cmd(vblk, ioucmd, issue_flags);
- }
+Changes in v2:
+- collect tags
+- split out from original series (Krzysztof)
+- link to original series:
+  https://lore.kernel.org/all/20241127-gs101-phy-lanes-orientation-dts-v1-2-5222d8508b71@linaro.org/
+---
+ Documentation/devicetree/bindings/usb/maxim,max33359.yaml | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/usb/maxim,max33359.yaml b/Documentation/devicetree/bindings/usb/maxim,max33359.yaml
+index 20b62228371b..a31e00e6b967 100644
+--- a/Documentation/devicetree/bindings/usb/maxim,max33359.yaml
++++ b/Documentation/devicetree/bindings/usb/maxim,max33359.yaml
+@@ -13,8 +13,12 @@ description: Maxim TCPCI Type-C PD controller
  
-+static int virtblk_chr_uring_cmd_iopoll(struct io_uring_cmd *ioucmd,
-+				 struct io_comp_batch *iob,
-+				 unsigned int poll_flags)
-+{
-+	struct virtblk_uring_cmd_pdu *pdu = virtblk_get_uring_cmd_pdu(ioucmd);
-+	struct request *req = pdu->req;
-+
-+	if (req && blk_rq_is_poll(req))
-+		return blk_rq_poll(req, iob, poll_flags);
-+	return 0;
-+}
-+
- static void virtblk_cdev_rel(struct device *dev)
- {
- 	ida_free(&vd_chr_minor_ida, MINOR(dev->devt));
-@@ -1517,6 +1529,7 @@ static int virtblk_cdev_add(struct virtio_blk *vblk,
- static const struct file_operations virtblk_chr_fops = {
- 	.owner		= THIS_MODULE,
- 	.uring_cmd	= virtblk_chr_uring_cmd,
-+	.uring_cmd_iopoll = virtblk_chr_uring_cmd_iopoll,
- };
+ properties:
+   compatible:
+-    enum:
+-      - maxim,max33359
++    oneOf:
++      - enum:
++          - maxim,max33359
++      - items:
++          - const: maxim,max77759-tcpci
++          - const: maxim,max33359
  
- static unsigned int virtblk_queue_depth;
+   reg:
+     maxItems: 1
+
+---
+base-commit: ed9a4ad6e5bd3a443e81446476718abebee47e82
+change-id: 20241128-dtbinding-max77759-b3ddbd264544
+
+Best regards,
 -- 
-2.43.5
+André Draszik <andre.draszik@linaro.org>
 
 
