@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-429644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91B1D9E2314
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:32:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D30D19E2826
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 17:51:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AF218B42C7A
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 14:25:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6558FB44EC4
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 14:25:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 971501F6679;
-	Tue,  3 Dec 2024 14:25:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94B671F7076;
+	Tue,  3 Dec 2024 14:25:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P1QUk00R"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ViPykzP+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2ECC1F4738;
-	Tue,  3 Dec 2024 14:25:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCE461F6696;
+	Tue,  3 Dec 2024 14:25:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733235901; cv=none; b=Symm11e81z0Ig2TqXL4O8DkV3xP2ct3iNkAXLVzFPHQQCu4vPwLGTyGg4hexZ4sNf0JfD0FzEOcSVe7teiVI5rBWes8OPu3EapTw7Wt/4gs2JWkWJ6+4hIQD2bopLWw8Rb7LnqB6QXVIXhWHedOUS1zSwzwsF3/Xn5XYskaxw8U=
+	t=1733235903; cv=none; b=HFgpiU7BWXUuP+T5mJUTgArc4gyYCAnXevyEFyqOx1VJiHYpG35xR8Xv70MR896luDMGsA0LaNB2TBNLuDFIjKnddgmGAXnG8/Q42ODwDSrmjJibTZw7h8Pd+LAJ4Xtd2Jtyu2cGMGcpsKO9AyX0HAeN91RFxAXCmP0oW7wnkQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733235901; c=relaxed/simple;
-	bh=2YzBw+E/SaxJ/Xhevrp8m+nYUF9iMZkfbG7PMPw8nWI=;
+	s=arc-20240116; t=1733235903; c=relaxed/simple;
+	bh=3TKmXmpGABry9oSTFFXvSq6pX10XyahRQRIHFkooJ9U=;
 	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=O9C4R1cAjJbUFOTZtLm07WlNbDkuyRES+ZA4Eo26SJcZXyIApHAMbf5ilP1ax6JaHLDwZSIB5S29SqUNpVLSF2WagLwhedZTy4blhKSJJqgGf1r15RzNtkiiyXOb765KOqybEpCZwfrv7K4+AC8k9zOo9S29c6AaOjdncQr5vqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P1QUk00R; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74ECAC4CECF;
-	Tue,  3 Dec 2024 14:25:00 +0000 (UTC)
+	 Message-Id:Subject; b=JCZFdekgyyWaTGgHBbMVRP4b9ttrvxwuEAbKTmRgzzMU3wdmLlGRRSLkBdhILZ0X8V/6+RCiadylftYiMPvYvQ2eqbDQW666TJNV4GSe0c6dafWxmqXnSDBq9nIrG3hWmo2L+VzxY3ydASF68+rpZtDMKz//8JY8ZRfcJNjZCEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ViPykzP+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82C3FC4CED8;
+	Tue,  3 Dec 2024 14:25:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733235900;
-	bh=2YzBw+E/SaxJ/Xhevrp8m+nYUF9iMZkfbG7PMPw8nWI=;
+	s=k20201202; t=1733235902;
+	bh=3TKmXmpGABry9oSTFFXvSq6pX10XyahRQRIHFkooJ9U=;
 	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=P1QUk00RJ2PQq+Qud5Wj6Mzq39OAz31Fl9JSjIedmjs2mJ5LYOEWDr9s8NMXluet/
-	 SS/ffNdlXggtzaImkIfGRdUEWBUUpQDQZP/g/a37xT8spsdDDvWreHJHAdROhfznQM
-	 nVCIfbP+cvg2lAud0q8TOme+5AzThCyB6tr3k1+0akaLGEPOdMr+FXUBc67yNp49+M
-	 1MCOAP/YHePnW+FLTlivfy7VPudy/TpYmHlo0YbMwK6Q0NnwQu/auewyxZT0LWN3F/
-	 Jm2Mc62VpmD/14mm30U5n0xjHkbldkxTaQgc3g9swouxv/61KjDqFLTsEVYEul4DFz
-	 jJvsOi0VhCcYg==
-Date: Tue, 03 Dec 2024 08:24:59 -0600
+	b=ViPykzP+sBvHyHt7Xd0oRVDSF+xonpAPnOrijJ+0Pbp26DGv0Cdvrht8+TIpc2sWE
+	 kJPD2rafQfO3kcF4UuE4GtuYKOBXphzyGjrTTwcTXAmzC3ez56j+n4MDHUjiRbWSTf
+	 96usMdwPzLVCKTZq9txbogysHjFofNHPuVnJ2Sknt4qwn1kbHYr5WqRPrDI6Pdqqap
+	 yRkFb5eMkdEvzsZMUdKUxD7ExbAkQ5KaFqhtfpAyH2PjJjxPeldOyIfhRbJEkI0ms0
+	 b/FWkBWN6+yyPWtmW3TD2UAYGwaHNxr8r8j/dGsRMFF1dS/O3IbqfkMSn0Md3+C9WO
+	 PHgCOkz0SFcsQ==
+Date: Tue, 03 Dec 2024 08:25:00 -0600
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,41 +50,43 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: maarten.lankhorst@linux.intel.com, aou@eecs.berkeley.edu, 
- wefu@redhat.com, jassisinghbrar@gmail.com, jszhang@kernel.org, 
- mturquette@baylibre.com, dri-devel@lists.freedesktop.org, 
- devicetree@vger.kernel.org, ulf.hansson@linaro.org, mripard@kernel.org, 
- linux-kernel@vger.kernel.org, frank.binns@imgtec.com, 
- matt.coster@imgtec.com, linux-riscv@lists.infradead.org, 
- linux-pm@vger.kernel.org, guoren@kernel.org, sboyd@kernel.org, 
- linux-clk@vger.kernel.org, m.szyprowski@samsung.com, drew@pdp7.com, 
- krzk+dt@kernel.org, palmer@dabbelt.com, paul.walmsley@sifive.com, 
- airlied@gmail.com, simona@ffwll.ch, tzimmermann@suse.de, 
- conor+dt@kernel.org
+Cc: mripard@kernel.org, frank.binns@imgtec.com, aou@eecs.berkeley.edu, 
+ jszhang@kernel.org, sboyd@kernel.org, guoren@kernel.org, 
+ m.szyprowski@samsung.com, dri-devel@lists.freedesktop.org, 
+ maarten.lankhorst@linux.intel.com, wefu@redhat.com, 
+ jassisinghbrar@gmail.com, simona@ffwll.ch, conor+dt@kernel.org, 
+ devicetree@vger.kernel.org, mturquette@baylibre.com, 
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, krzk+dt@kernel.org, 
+ ulf.hansson@linaro.org, palmer@dabbelt.com, paul.walmsley@sifive.com, 
+ linux-riscv@lists.infradead.org, tzimmermann@suse.de, drew@pdp7.com, 
+ airlied@gmail.com, matt.coster@imgtec.com, linux-pm@vger.kernel.org
 To: Michal Wilczynski <m.wilczynski@samsung.com>
-In-Reply-To: <20241203134137.2114847-6-m.wilczynski@samsung.com>
+In-Reply-To: <20241203134137.2114847-7-m.wilczynski@samsung.com>
 References: <20241203134137.2114847-1-m.wilczynski@samsung.com>
- <CGME20241203134155eucas1p1e90c71c4f8eb5da41d2cc8a500f54dc7@eucas1p1.samsung.com>
- <20241203134137.2114847-6-m.wilczynski@samsung.com>
-Message-Id: <173323589655.1743530.2406812042403623910.robh@kernel.org>
-Subject: Re: [RFC PATCH v1 05/14] dt-bindings: clock: thead,th1520: Add
- support for Video Output subsystem
+ <CGME20241203134156eucas1p2326d84fcef2ee0914586122520b18dcc@eucas1p2.samsung.com>
+ <20241203134137.2114847-7-m.wilczynski@samsung.com>
+Message-Id: <173323589751.1743555.13494050245769190862.robh@kernel.org>
+Subject: Re: [RFC PATCH v1 06/14] dt-bindings: clock: thead,th1520: Rename
+ YAML schema file
 
 
-On Tue, 03 Dec 2024 14:41:28 +0100, Michal Wilczynski wrote:
-> The device tree bindings for the T-Head TH1520 SoC clocks currently
-> support only the Application Processor (AP) subsystem. This commit
-> extends the bindings to include the Video Output (VO) subsystem clocks.
+On Tue, 03 Dec 2024 14:41:29 +0100, Michal Wilczynski wrote:
+> As support for clocks from new subsystems is being added to the T-Head
+> TH1520 SoC, the Device Tree binding YAML schema file name should reflect
+> this broader scope.  The existing schema file 'thead,th1520-clk-ap.yaml'
+> includes the '-ap' suffix, indicating it's specific to the Application
+> Processor (AP) subsystem.
 > 
-> Update the YAML schema to define the VO subsystem clocks, allowing the
-> clock driver to configure and manage these clocks appropriately. This
-> addition is necessary to enable the proper operation of the video output
-> features on the TH1520 SoC.
+> Rename the YAML schema file to 'thead,th1520-clk.yaml' to generalize it
+> for all subsystems. Update all references to this schema file
+> accordingly.
 > 
 > Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
 > ---
->  .../bindings/clock/thead,th1520-clk-ap.yaml   | 31 +++++++++++++++----
->  1 file changed, 25 insertions(+), 6 deletions(-)
+>  .../clock/{thead,th1520-clk-ap.yaml => thead,th1520-clk.yaml}   | 2 +-
+>  MAINTAINERS                                                     | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+>  rename Documentation/devicetree/bindings/clock/{thead,th1520-clk-ap.yaml => thead,th1520-clk.yaml} (96%)
 > 
 
 My bot found errors running 'make dt_binding_check' on your patch:
@@ -96,7 +98,7 @@ dtschema/dtc warnings/errors:
 
 doc reference errors (make refcheckdocs):
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20241203134137.2114847-6-m.wilczynski@samsung.com
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20241203134137.2114847-7-m.wilczynski@samsung.com
 
 The base for the series is generally the latest rc1. A different dependency
 should be noted in *this* patch.
