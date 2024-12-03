@@ -1,114 +1,126 @@
-Return-Path: <linux-kernel+bounces-428768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D165A9E1328
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 07:06:37 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDA8E9E132D
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 07:06:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9CCAB164758
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 06:06:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6AA01647DA
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 06:06:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28CF5184523;
-	Tue,  3 Dec 2024 06:06:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8565E17D366;
+	Tue,  3 Dec 2024 06:06:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HKGUFfQk"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Pz8eVPpe"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB2055336E;
-	Tue,  3 Dec 2024 06:06:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A6D75336E;
+	Tue,  3 Dec 2024 06:06:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733205990; cv=none; b=TmnjzQhlSs+Ld7O2YEfkgQwFTFlOxjUGgtRF3jWtpEuVuGJRdjgk1D0hxdzoIQA5DGCvTXX5wKOQDaEobcwYYsYTYG4jnrreXU53XG8rom9zyJ5uLtas1gYqzkmE5i7TPDUsM0nvftfEpM25JZQ6Aupwmbn8wlQwBPLcSrtfQU4=
+	t=1733205995; cv=none; b=uR4cbBqwsoKMMBWvQ1jNGDwf6Y7w7ZUVR2+yoBQ57uYj9ggjC0psk37KSQ0Vk17qXBoCdDi55n+CHTjwfYlXbV39BEzc9pzn1KbhVmzUje3SuQPLpUXuhaqxa8tTtraY8HneoB2B9MofwXaRl31FaJ/nYZYVM/+/PakfrVqK+8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733205990; c=relaxed/simple;
-	bh=IKE7WEmLR/std3Xt311uNoU+Py06JqC4zCsAOuEIpFs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Po8UqH7CSTmr1rflrjRWJ1FIkkETA4zbBMIDkdcQvDGwQvcnJS0zCxx8BBEiDOUgKAjGqCbDNJ7MFzfdAFyR4Oxbtfh0i0QRhSKpTABCampiZlsiWt+NC/HGzdBCuEYqD588AJ/y3r8kszy/GOJRPkAB0ImYgSEiQcJxbZ/R08U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HKGUFfQk; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2154e3af730so27868925ad.3;
-        Mon, 02 Dec 2024 22:06:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733205988; x=1733810788; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=sL0YxSEUm6Opbm4xSsuB5iPBh/P+qfIzBr6X/6z6Qks=;
-        b=HKGUFfQkl7OebTht7QWCZzQj/pvBGt13IFa5dtCt307Z6cvPzBlNEcXBVFg19AYlYO
-         b9yj6RgSHDFjVHiB+rhtnqA6bc6GBI+5D0v/jUP2ATRwYMtnMDnncBgbHOVQPRbpLtab
-         gYWt7c53hZubtYriAk+OYS9npFsEBmInv1kGEeykb0J9TDo4/w2wX7wME1iDLXLLLdS/
-         HV6uV0W5yzWI3WrQGetX1S9UEQYbkXK87RzPJS/6Ib1kvOmfkYVivxfMT47DQZpCTlNm
-         Cj8nzmJFKOkkGRAEDjDo8YjEbS2JZy5Idnk+p5hDErmaUoN+ojfMnMHRhkKeBnqUbPsI
-         54zg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733205988; x=1733810788;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sL0YxSEUm6Opbm4xSsuB5iPBh/P+qfIzBr6X/6z6Qks=;
-        b=gRH5P9hsjIstqsLMSQsy6xVHYthK2HrQIMHvQNY6j//CP+DNVXBkgxLfi3/EpC/Xws
-         KclKsVj7ki5YO+DMcho2n64dL+W8PriQsPRqbjMr++WwHRl5JImlNHyTwaS+j0LCHvUH
-         EhxKCkra3w036mqjgpKCwxSb7kenaOVB87OoyKz5YvnT6DxksGv5wDBRFv+cgUndczww
-         A3Y16OqR9wFYuuKgKCiNkiUwySsN4E7oS64kvstj9GTQnTHcW+60gha0iZHxvNvaNVkq
-         1T2Iylf0lFJYXMfmk6KSQ8nAEsFkr/Y2ijka3pGgwItY3CO7rReqzZoPo2+dYGcRaihR
-         tV3A==
-X-Forwarded-Encrypted: i=1; AJvYcCVDJmCiCkACUP7ljuU11BcGkB1GgOu06YcvnEH/CL38zrIv4XfnIw1CHWi4tsYnPyWzyx7Yt46Isq9xai8=@vger.kernel.org, AJvYcCVGS6TqTFpAa9Kd2EHQhSYdvloVumTYZy5cDsUNC9ZHZKVdom1+ZFF5wtg71dDarvbvVdNgCjywX2c=@vger.kernel.org, AJvYcCWJwQi/R+g2WW1pvmkh67iMtBzwXHlsuSOMQrreoj9FNENMrAaLhAKFEEKthbFoF409egPvElCiotOq@vger.kernel.org, AJvYcCWYZMhPS0istIQVeNpZqsnG0pBNCzOe5/hohhxF1zp9WwHERlUC/izZrmU08OLnvCrnpG52PEf5C4CPon4g@vger.kernel.org
-X-Gm-Message-State: AOJu0YzP2WhTEyXQ8CI4StLDIEb3hMEMPTGRGDDTcXXhJR0a2M+uwfHa
-	5u8ao4966w+gq0UJxlDq/kVW7/dvc8Imn6LdlouMWEmMZmVKNkHb
-X-Gm-Gg: ASbGncvHZuanEQA2eBJW0jxcxKj69hOOArhbC++uBeFtfB4ACCafVS2LHwzZVp2nBhm
-	E4WdbwlBhWjPxJHBnM78fi3GQ9iZzVNGxgBc2MMGJOitb8D9nOMO+Me7gi9r6pRaOOTqMgV5zQG
-	mmiv9ApHlDlTCFaVJQl0AAvOG4wUNFSqAH+ZAIyOlEgNpTg4xOpToKjBWejtAPbFOQ62UTSX5DM
-	8vmXP7Wzq+AI7RCpzAo+uXZU70JO/mXIBTm/ufrswaCJBte6eJn8eLJl+mXP2Y=
-X-Google-Smtp-Source: AGHT+IEQ3CPPR3vs0e7VtyCFMP8+bHfS3Vm7VRd2d/PKApx0+wyxoqYE9Ev/tOG1vt1SHVZqGXUVeQ==
-X-Received: by 2002:a17:903:2447:b0:215:bb7b:b8a3 with SMTP id d9443c01a7336-215bd0c299dmr23513665ad.33.1733205988194;
-        Mon, 02 Dec 2024 22:06:28 -0800 (PST)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-215692e535bsm48060025ad.216.2024.12.02.22.06.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Dec 2024 22:06:27 -0800 (PST)
-Sender: Guenter Roeck <groeck7@gmail.com>
+	s=arc-20240116; t=1733205995; c=relaxed/simple;
+	bh=Nrw7iUWHIpL+/DqE3emd4bt8QkxSVXXzBcU+V9WQbfw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=O+haKdUC44v2TRRq2L0ZfB//Uwy3JKuvSrhC+d12vZEJd5l8kdt/KzDTguy7rqB5Va+/0JuexULQ8aufJB9sCFWrWBNZZRMxGiWB/eIwagA8nim5E4GAoT+rf1GMDKszwxhr9UiLL5sIhAJp/sBbYB8jI3GBUSN3sPkLPSrPqZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Pz8eVPpe; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B2HdwG2011455;
+	Tue, 3 Dec 2024 06:06:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	KNKyC2eH49WBGrt9/0h9HC/KBJgu6BTqFfJJDNXMLt4=; b=Pz8eVPpeIQr8RAYN
+	d1mF39h0PRmEAF1+v1VFfB0LDYMLCC52Yl+L4fREFmSnRZYGv8j4/yrm1XL/a6pp
+	+LJNj4K0ZLL2hy1YXCa/15AEhRPSP6jKxFHGSKHRHM+I67fTvtYNKI/eoeQP3n5F
+	Yb07B+zZ1wuzGcOCdR4nFx2DHC0Gt9NKi1HzTjg7koGJfERGlpiZZgeX96QJEJLl
+	9i8ZPtgX6Sy1aXsr6BzkjkA7LQKZwcFkGwuYWEv+BdqqbTxd6BaFvU0aMEJE5uoB
+	KqHWGAafxDUiGEJnr8jEIeyjvyszNLfgnHbbS/IVkQsGf17SNnLu4z6EB239Yub5
+	cjzfBw==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 437tstf2vh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 03 Dec 2024 06:06:29 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B366SYY018214
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 3 Dec 2024 06:06:28 GMT
+Received: from [10.110.67.80] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 2 Dec 2024
+ 22:06:27 -0800
+Message-ID: <518ee3f1-b871-4349-ba85-3b3fc835a4ca@quicinc.com>
 Date: Mon, 2 Dec 2024 22:06:26 -0800
-From: Guenter Roeck <linux@roeck-us.net>
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Jean Delvare <jdelvare@suse.com>, Jonathan Corbet <corbet@lwn.net>,
-	Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>,
-	linux-hwmon@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
-Subject: Re: [PATCH v4 1/3] hwmon: (pmbus/core) improve handling of write
- protected regulators
-Message-ID: <0afdcb04-5ada-4bd0-b1e1-c28663f952f0@roeck-us.net>
-References: <20241202-tps25990-v4-0-bb50a99e0a03@baylibre.com>
- <20241202-tps25990-v4-1-bb50a99e0a03@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241202-tps25990-v4-1-bb50a99e0a03@baylibre.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 00/10] Trusted Execution Environment (TEE) driver for
+ Qualcomm TEE (QTEE)
+To: Amirreza Zarrabi <quic_azarrabi@quicinc.com>,
+        Jens Wiklander
+	<jens.wiklander@linaro.org>,
+        Sumit Garg <sumit.garg@linaro.org>,
+        "Bjorn
+ Andersson" <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        "Rob Herring" <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        "Conor Dooley" <conor+dt@kernel.org>,
+        Bartosz Golaszewski
+	<bartosz.golaszewski@linaro.org>,
+        Srinivas Kandagatla
+	<srinivas.kandagatla@linaro.org>
+CC: <linux-arm-msm@vger.kernel.org>, <op-tee@lists.trustedfirmware.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-doc@vger.kernel.org>
+References: <20241202-qcom-tee-using-tee-ss-without-mem-obj-v1-0-f502ef01e016@quicinc.com>
+Content-Language: en-US
+From: Trilok Soni <quic_tsoni@quicinc.com>
+In-Reply-To: <20241202-qcom-tee-using-tee-ss-without-mem-obj-v1-0-f502ef01e016@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: ERESMQkKch3DWCEq2trZTBGAaxgbPwhX
+X-Proofpoint-GUID: ERESMQkKch3DWCEq2trZTBGAaxgbPwhX
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ malwarescore=0 spamscore=0 impostorscore=0 mlxlogscore=788 mlxscore=0
+ priorityscore=1501 suspectscore=0 phishscore=0 adultscore=0 clxscore=1011
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412030050
 
-On Mon, Dec 02, 2024 at 11:28:00AM +0100, Jerome Brunet wrote:
-> Writing PMBus protected registers does succeed from the smbus perspective,
-> even if the write is ignored by the device and a communication fault is
-> raised. This fault will silently be caught and cleared by pmbus irq if one
-> has been registered.
-> 
-> This means that the regulator call may return succeed although the
-> operation was ignored.
-> 
-> With this change, the operation which are not supported will be properly
-> flagged as such and the regulator framework won't even try to execute them.
-> 
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+On 12/2/2024 8:19 PM, Amirreza Zarrabi wrote:
+> This patch series introduces a Trusted Execution Environment (TEE)
+> driver for Qualcomm TEE (QTEE). QTEE enables Trusted Applications (TAs)
+> and services to run securely. It uses an object-based interface, where
+> each service is an object with sets of operations. Clients can invoke
+> these operations on objects, which can generate results, including other
+> objects. For example, an object can load a TA and return another object
+> that represents the loaded TA, allowing access to its services.
 
-Applied.
+The first patch series was RFC and now you had removed the RFC. Can you please
+provide the reasons?
 
-Thanks,
-Guenter
+https://lwn.net/ml/all/20240702-qcom-tee-object-and-ioctls-v1-0-633c3ddf57ee@quicinc.com/
+
+I understand that you have now changed to tee framework but I want to check
+if we should continue with the version and increment here or start from [00]?
+
+-- 
+---Trilok Soni
 
