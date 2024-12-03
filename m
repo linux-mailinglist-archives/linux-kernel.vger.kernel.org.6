@@ -1,87 +1,93 @@
-Return-Path: <linux-kernel+bounces-429345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B0A89E1ACB
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 12:22:56 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 946AD9E1CD9
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 13:58:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0FEE1289034
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 11:22:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EF54CB25B66
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 11:25:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 442BC1E3793;
-	Tue,  3 Dec 2024 11:22:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19EC51E3799;
+	Tue,  3 Dec 2024 11:25:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1R2Jt7SF";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="xmV9CodI"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ju48PFzp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D28E2E3EE
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 11:22:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A40A2E3EE
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 11:25:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733224970; cv=none; b=Rha2xMEEGczM5wZyPTD6WWIcVLAqg9xBuKgvvre5epFyN2sPGD7FYTMgwmFbq4KNYHT+gEWQ14wHZYk2CZqgTAK7jwn/BCuJ3fmj78TmFbEyokrRFGtvp1Gkd1/diY46seaVRDEMlBACvTNjDLC7KKW5z8tq3N+4PjhAgCWgrKw=
+	t=1733225138; cv=none; b=fkrQrxrfoz+cXcKMqhXixN8x8gNtiGYgh50QwEm4sfceEVlkfC3lCY683Do35CuFQ4gwBxNbbWbxmNVPLMQ/pGpIj7dIshOK9ensGV6cmzkcutL2Lnvxqm5/QtTAer4ieYARlw0934ptQIILEo3RAtPCNHyNydbvBstIF+ubxIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733224970; c=relaxed/simple;
-	bh=m7+SsmWTMYhI96mxQv2S+Cnq7FNz1L3la58tx/wlJII=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=SDHGOc6tjZ6+a69GvR2HyTB0N5DEFSYhxZpPZfG+Y8dMSeHVSzP9Wuq/yOgeQC2S40V01vtlIvmLTRRDNQBNHQb/wARvzzl3SRqzqaiK5MKXrCFo5sPI8sqdtRoMbLg/+fYNEhF7DPQ1gJwVZ7zRtyKBM9b2jVjV+JrZ1El446I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1R2Jt7SF; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=xmV9CodI; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1733224967;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ddVrsvoXgezLdPPTSfhSS8cKJDYGxl8v9jN0fTWuItg=;
-	b=1R2Jt7SFgNG67qWKnWCbCaeg81nQ8IFRJTbIBN1LFpht7gmH6mphSR/pG/L7yPoyPrsPam
-	jU81pSRyPm45wfy5kGxWCVEwznv8z+N6VGL0pM0at//fMTy3sPfP7e/9sWr1hPiL8XJwYK
-	qkAAGQHZ255ZsDlcZ2EDVHhuEAeudIye3vtA3JJfTOWuEkGZ9Tswa1s4fu+tV1fbEdou+H
-	S+TXdRbqbkgqxROjPKk/dpQ3PiIDxJCtouyjXn64Won0p9oBA7GXFlt1TVosOkYJ+rHAmc
-	6KMV2eBU8mnVr7bIrkcuAO93gs2n+QooF6vkZZd/DBdxfTJ71SlwuflOSHJwhA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1733224967;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ddVrsvoXgezLdPPTSfhSS8cKJDYGxl8v9jN0fTWuItg=;
-	b=xmV9CodI0GhKQzqa33+CopR6HDzOmeVsbrfGIzaSK0OY8/9MM38pD5QD7af8crsIU8e0Qi
-	1nuDAT/KDPct/1DQ==
-To: David Wang <00107082@163.com>
-Cc: kees@kernel.org, linux-kernel@vger.kernel.org, geert@linux-m68k.org,
- David Wang <00107082@163.com>
-Subject: Re: [PATCH 2/3] irqchip: Fix a potential abuse of seq_printf()
- format string
-In-Reply-To: <762e88c3e940bd6087c35b599f2c88baff775c6b.1732093745.git.00107082@163.com>
-References: <505e5950dd2d76e6c3a8af57bc0cd1e0fbf2b637.1732093745.git.00107082@163.com>
- <762e88c3e940bd6087c35b599f2c88baff775c6b.1732093745.git.00107082@163.com>
-Date: Tue, 03 Dec 2024 12:22:46 +0100
-Message-ID: <87ttblt3i1.ffs@tglx>
+	s=arc-20240116; t=1733225138; c=relaxed/simple;
+	bh=2Jrgv3mWyD9qBHNIHYWgGa2ngT9anFHYmDBdik+Nk58=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=B2KStSg2fCHRPbBaQqH8DXSPpLgpWbaxPEfKrM4nmk7y1EjneqZmxyrhagxy4DHcya9xW4TQImwa4S0FTVRRXdAvOO6+QktoMHPepbn6ER/cyfHnmmEjeNT0hfYV6zK29gz1xCE89V9lu2s/prlGPEwVcmTG8N6q2YZ1biagd+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ju48PFzp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0222DC4CECF;
+	Tue,  3 Dec 2024 11:25:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733225138;
+	bh=2Jrgv3mWyD9qBHNIHYWgGa2ngT9anFHYmDBdik+Nk58=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ju48PFzpSAkdW+CSkw36U8FLvVo4P0s181OqHtSG/oIqXnDsso+aMPLeIvGY0Cx+F
+	 mx0LNsXXcztUJLHDVdPqHF8shuOVTs3qMR+lbiPQpXpR7PZLTt9+Ty2iH8+0vXHoux
+	 JdP74AfdAcf5qL8OmbS702dNeDyqMqZCUX8MdERCGuQaA//YZ7GZs9H1+d4wnykFk4
+	 7e1qahm4ahkGCL8Ey4t9lO4WO08pDFc44XbOeiWdIhy4bNNe9qcxOZbT+0QQKR8lfl
+	 w/YuC6x/7NdZMgLvnF09MJiMxedwqcpvJILcHJQ8LaOcGloMKosytbt6h94PZrt2Y5
+	 7TFqTMbxI0Mdg==
+From: Mike Rapoport <rppt@kernel.org>
+To: x86@kernel.org
+Cc: Andy Lutomirski <luto@kernel.org>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Mike Rapoport <rppt@kernel.org>,
+	Ning Sun <ning.sun@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	linux-kernel@vger.kernel.org,
+	tboot-devel@lists.sourceforge.net
+Subject: [PATCH 0/4] x86/boot: a few cleanups
+Date: Tue,  3 Dec 2024 13:25:21 +0200
+Message-ID: <20241203112525.591496-1-rppt@kernel.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-On Wed, Nov 20 2024 at 17:17, David Wang wrote:
-> Using device name as format string of seq_printf() is prone to
-> "Format string attack", opens possibility for exploitation.
-> Seq_puts() is safer and more efficient.
+From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
 
-I agree that seq_puts() is more efficient, but this whole handwaving
-about format string attacks is far fetched.
+Hi,
 
-These strings originate from device tree or generated device/domain
-names. If they contain format strings, then that's either a plain bug in
-the kernel or the device tree, but far from a 'format string attack'.
+These patches cleanup x86::setup_arch() e820.c.
+No functional changes intended.
 
-Thanks,
+Mike Rapoport (Microsoft) (4):
+  x86/boot: move setting of memblock parameters to e820__memblock_setup()
+  x86/boot: split kernel resources setup into a helper function
+  x86/boot: split parsing of boot_params into a helper function
+  x86/e820: drop E820_TYPE_RESERVED_KERN and related code
 
-        tglx
+ arch/x86/include/asm/e820/api.h   |   1 -
+ arch/x86/include/asm/e820/types.h |   9 --
+ arch/x86/kernel/e820.c            |  95 ++++++++-------------
+ arch/x86/kernel/setup.c           | 134 ++++++++++++++----------------
+ arch/x86/kernel/tboot.c           |   3 +-
+ arch/x86/mm/init_64.c             |   8 --
+ 6 files changed, 97 insertions(+), 153 deletions(-)
+
+
+base-commit: 40384c840ea1944d7c5a392e8975ed088ecf0b37
+-- 
+2.45.2
+
 
