@@ -1,107 +1,102 @@
-Return-Path: <linux-kernel+bounces-430227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430228-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D1E89E2E1E
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 22:32:20 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E24479E2E1F
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 22:32:29 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D90D11620BC
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 21:32:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7D54283E1E
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 21:32:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 671241F8930;
-	Tue,  3 Dec 2024 21:32:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1260B20A5C5;
+	Tue,  3 Dec 2024 21:32:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BQChVggg"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gitIX0AS"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEC8A1885A0;
-	Tue,  3 Dec 2024 21:32:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65B91209678;
+	Tue,  3 Dec 2024 21:32:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733261533; cv=none; b=IZy9mcxu75XZIMMWzrQq/bIl7awb9DTpCZ7DuH9TTJ/svDAqHEW42CG5Eg4SftYwhIEPn83I7ChVNTydJQhDlQA5apft2tNPwuha7HzESgkdCeI6Sfooa8nWVb7ZivzqJ+K2Atpou5ks+1zczv8BP5NXgm7PG1cyN90tdQsrGYI=
+	t=1733261535; cv=none; b=hegd0JWXfDBjvnUTOBQzEABSgGMmT9DHa79EPJ/8VdCvQRKfE5ocsMa4b77FvK+u4QfbT+PKzm1I7mC3vOOGS0zVafbma0boGLuhsRKaO6aJIK7m1IMJD0pGeB7OS1QXlJyLnk6w4LSNTKC32bAU7cJBVVAM/u/8xDkcpR5LKm8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733261533; c=relaxed/simple;
-	bh=BOg48Ob9/NVzqkpxLrxQQVqMKoA0kVXfOH8VOSVCmp0=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iqDsZW5+WdZ/qxBIWdBLTDTLZlxGeR2rYcKQ/lum2IYZndIXxHdu8X3xVvOBDka/xOrPBVbAbtAkGiCiIL4UiFB8lkt7pvob04ip9IoBTzZY/cOeRCip7ar9G7PYj9qNS2vrMrRXTuLLUKMOSFeiYh7LHqK7wUHrwb4qrzsA6K0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BQChVggg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 498E7C4CED8;
-	Tue,  3 Dec 2024 21:32:13 +0000 (UTC)
+	s=arc-20240116; t=1733261535; c=relaxed/simple;
+	bh=DhgiLvL+m2Tn8uWHAPtO3YZr1lqo8Pn2CqNnVLXGezo=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=E1XPocgiWrS50TvdQu9HMUGK8EjLob8sH5QI3gNab2RnkE6Iuk/gctj4s9bYM4oziQqoXYx7xFKK/29MyJllINFLOq1/HiiqeythSN3PmZ02i5LoSsAo9+8ZADlZobCKOA6lLczMyBECRpqE4OCRpPvydgrnQbQkOs0uulW8ya8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gitIX0AS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1FC5C4CED8;
+	Tue,  3 Dec 2024 21:32:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733261533;
-	bh=BOg48Ob9/NVzqkpxLrxQQVqMKoA0kVXfOH8VOSVCmp0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=BQChVgggT/bBeKHZ8u8dvoyJoHoBlz9+KD0dYqf7fyD45vOJGfMo0S7WkoUP8Vl8W
-	 ziJNnSxLXVJr/YwOo9BOglDutV4ejT1qz/qCrjysPT8FVGB0njHXQhhtUYqqeQV97a
-	 YX11HDV2c3KepOLCh5LoNsW7yCk/TZ15gxW/5oSZA/ZhSlhz/Va04JD2xEP1vYZHWI
-	 +3hv13473VvVtkKiuBdK8C8Afo167/LLjFPjfgfoGeD297Jc7mNlOn+H6btyGm4D9j
-	 9JSxRiQPjgv92f7BZlzDKxyYk3QGZtYgrxJ7kGToFqQKaJVH9zGTsPrcmBXt7WJ0rU
-	 emXujeUxfEE5Q==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=wait-a-minute.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1tIaV8-000EuJ-Rd;
-	Tue, 03 Dec 2024 21:32:10 +0000
-Date: Tue, 03 Dec 2024 21:32:10 +0000
-Message-ID: <87ldwwsbad.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Oliver Upton <oliver.upton@linux.dev>
-Cc: kvmarm@lists.linux.dev,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Mingwei Zhang <mizhang@google.com>,
-	Colton Lewis <coltonlewis@google.com>,
-	Raghavendra Rao Ananta <rananta@google.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 05/14] KVM: arm64: Always allow fixed cycle counter
-In-Reply-To: <20241203193220.1070811-6-oliver.upton@linux.dev>
-References: <20241203193220.1070811-1-oliver.upton@linux.dev>
-	<20241203193220.1070811-6-oliver.upton@linux.dev>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=k20201202; t=1733261535;
+	bh=DhgiLvL+m2Tn8uWHAPtO3YZr1lqo8Pn2CqNnVLXGezo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=gitIX0ASrfazwTlGTVTkgLagyLqVELlLQtQiyC3aU8MXV9pjLuCSwvIbzDGT9/hi/
+	 4EDY4cMwfPDvSARii4qbITxZ8oZEhpZhrmwSdCigp7Wgd1T78uFhGdPbvWeR3A44rk
+	 TvCmfTR6GsxL5Ax2ZdjVF5NIk4cSmPHQCHjgxKYnOpAuY467WcRPsBnFoLqW2rmRx9
+	 0xTJL27kdVK+i0J5501uyKMo/Jf08P7gteoRJO0HKuSlrPSNU1yU2sFDrIEju9Ob23
+	 Q+WG0KwrlS7lkHiUjdhFk2FXOLYDm233WMp+XC6Xhz2H2vaOm6nf18Q9kApz1BrXD8
+	 NBu7eKTkLENuA==
+Date: Tue, 3 Dec 2024 15:32:13 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+	Logan Gunthorpe <logang@deltatee.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org
+Subject: Re: [PATCH 0/4] PCI: Constify 'struct bin_attribute'
+Message-ID: <20241203213213.GA2965613@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: oliver.upton@linux.dev, kvmarm@lists.linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, mizhang@google.com, coltonlewis@google.com, rananta@google.com, catalin.marinas@arm.com, will@kernel.org, mark.rutland@arm.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241202-sysfs-const-bin_attr-pci-v1-0-c32360f495a7@weissschuh.net>
 
-On Tue, 03 Dec 2024 19:32:11 +0000,
-Oliver Upton <oliver.upton@linux.dev> wrote:
+On Mon, Dec 02, 2024 at 08:02:56PM +0100, Thomas Weißschuh wrote:
+> The sysfs core now allows instances of 'struct bin_attribute' to be
+> moved into read-only memory. Make use of that to protect them against
+> accidental or malicious modifications.
 > 
-> The fixed CPU cycle counter is mandatory for PMUv3, so it doesn't make a
-> lot of sense allowing userspace to filter it. Only apply the PMU event
-> filter to *programmed* event counters.
+> The usage of read_new/write_new/bin_attrs_new is a transition mechanism
+> and will be reverted after the transition is complete.
+> 
+> Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
 
-But that's a change in ABI, isn't it? We explicitly say in the
-documentation that the cycle counter can be filtered by specifying
-event 0x11.
+Applied to pci/constify for v6.14, thanks.
 
-More importantly, the current filtering works in terms of events, and
-not in terms of counters.
+Logan, I converted your response at
+https://lore.kernel.org/all/003d2d13-13be-4f05-80f8-61e14ddb9c83@deltatee.com/
+to include "Reviewed-by".
 
-Instead of changing the ABI, how about simply not supporting filtering
-on such non-compliant HW? Surely that would simplify a few things.
+Let me know if that's not what you intended.
 
-Thanks,
-
-	M.
-
--- 
-Without deviation from the norm, progress is not possible.
+> ---
+> Thomas Weißschuh (4):
+>       PCI/sysfs: Constify 'struct bin_attribute'
+>       PCI/VPD: Constify 'struct bin_attribute'
+>       PCI/P2PDMA: Constify 'struct bin_attribute'
+>       PCI/ACPI: Constify 'struct bin_attribute'
+> 
+>  drivers/pci/hotplug/acpiphp_ibm.c |  6 +++---
+>  drivers/pci/p2pdma.c              |  6 +++---
+>  drivers/pci/pci-sysfs.c           | 42 +++++++++++++++++++--------------------
+>  drivers/pci/vpd.c                 | 14 ++++++-------
+>  4 files changed, 34 insertions(+), 34 deletions(-)
+> ---
+> base-commit: e70140ba0d2b1a30467d4af6bcfe761327b9ec95
+> change-id: 20241201-sysfs-const-bin_attr-pci-be2425e1a856
+> 
+> Best regards,
+> -- 
+> Thomas Weißschuh <linux@weissschuh.net>
+> 
 
