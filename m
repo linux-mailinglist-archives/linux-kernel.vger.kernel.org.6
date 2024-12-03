@@ -1,117 +1,139 @@
-Return-Path: <linux-kernel+bounces-429342-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78B779E1AC3
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 12:21:09 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A78C89E1ABF
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 12:20:42 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DF4C288F2A
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 11:21:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B815166C93
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 11:20:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 773381E3799;
-	Tue,  3 Dec 2024 11:21:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDD8E1E3DC2;
+	Tue,  3 Dec 2024 11:20:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="DUyN4d9x"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GXXDAkNX";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="38XtkRoD"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6342F1E379C;
-	Tue,  3 Dec 2024 11:20:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF7A51E0E12;
+	Tue,  3 Dec 2024 11:20:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733224863; cv=none; b=pH0D6vDV344LZTCoQq4AO6smspvT313MxKCpR2KnmYCBH/fdXGdluAKvmCVShG3XLUPTAgC78IxWJP0iTlBH9dLqjN8BxMMngeMhd8nc4SHa30p0wlMiaJmJk2tdbWMuIsriIitB1QMtzezdQEdW0cRBSATRDz2M6Vz8vN1wkwI=
+	t=1733224835; cv=none; b=cKIjrqWNX1SRL3mRSdvqGU1m+/vERfml8oTOt8uBuuTTILntfhBUNyoOaiS6IKDd0Nn3r51rvsluRgb+ouk+Z61+scbBXlZP83HBn56tgYTkdizA9LfpkmRUp8EjmELNRCGeqq26/vrvU3vNzJzh9RdHkmn7AkEaLr7osMCGHRw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733224863; c=relaxed/simple;
-	bh=dPN0mOwb0Y/fLKb/1YRJK0Ydqw49XUMXrfGIrQO+Few=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UuxX63TQ6aVvl6yAcw5r56Mxom/21CHfk4Kd5NZlCdSpetOQ7jcyBEXoiuv01MXBIDmTUfQm4XWaL3+gpPxjN02beZYMzMBJcci8nlxnkj8ozktwYc9wd/DM3OPJ5eHbQzzE3nLBD09uuGr5YpyBCQ41OaWVsl53b5Yg4kM5+nY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=DUyN4d9x; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id C3EFA40E0163;
-	Tue,  3 Dec 2024 11:20:50 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id uMG_m2PsBUlh; Tue,  3 Dec 2024 11:20:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1733224846; bh=Akon8FqpbaMPcNlbRM6MS0M3aNDuYE2kNIRRuTA0OXc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DUyN4d9x5YaGBirWqfwjWdw30hAamdERt5ajKdoJqgUa93dFIsiBdhOBcjfJGELUh
-	 uJL1qDFGgQ7QrF6v9kokfA4/+bM9Jo02D45XB/7ts7/GsoIliiSdoBvsZetodwrHMZ
-	 ITTdx6RZe83449DC6Qk4/zGcTCJmzsJcQJxEkLPuN0/O+O609Kf7xD28Vfl+GYggU3
-	 pScNT+JfjHNYMINMJL3A5eVaBhSmX2UuCjuwfMYrawYQBzsKP4n7vPM3BvC8lSg/+s
-	 dFnxjxoWmCkYIClGLnb82G+ebiSWa3u6AyCIp40lEupykzOHo2O3CVKlWW+iMHncf+
-	 TqO/UX8gH2gLCvOkSHmTMmcfqcPXpAEV0eCAijE5OPTL0taaaps2aMaLmLmJbrUFbL
-	 JSe6MG1faTht374SQ8veYE49Z7T7ocDUDCde0r2dwh/P8CPcZm2nrHmV5d4V4UdmsG
-	 aH3phwPpfFgXuZ4R4IhhcXekJy0MGWKzJtqxJGBdf75R1qP1Ys7EnW2LH1077mTlkB
-	 /Jmdc62/FEseo3XzsoowWFshlMnTIHerxniTigsZDDHMkSXGXx1KNpjiH4ZQm1a3Jj
-	 6cNQWtRD7pkG/bpe1aR+uAmh6QSub2QGkpRg2+1vbFIVBwg+WNf2y99UQHNVDIGA9Z
-	 pJnamu/GJb6jnw1HFeM9CYec=
-Received: from zn.tnic (pd9530b86.dip0.t-ipconnect.de [217.83.11.134])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 67D3640E0269;
-	Tue,  3 Dec 2024 11:20:22 +0000 (UTC)
-Date: Tue, 3 Dec 2024 12:20:15 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-Cc: Josh Poimboeuf <jpoimboe@kernel.org>, x86@kernel.org,
-	linux-kernel@vger.kernel.org, amit@kernel.org, kvm@vger.kernel.org,
-	amit.shah@amd.com, thomas.lendacky@amd.com, tglx@linutronix.de,
-	peterz@infradead.org, corbet@lwn.net, mingo@redhat.com,
-	dave.hansen@linux.intel.com, hpa@zytor.com, seanjc@google.com,
-	pbonzini@redhat.com, daniel.sneddon@linux.intel.com,
-	kai.huang@intel.com, sandipan.das@amd.com,
-	boris.ostrovsky@oracle.com, Babu.Moger@amd.com,
-	david.kaplan@amd.com, dwmw@amazon.co.uk, andrew.cooper3@citrix.com
-Subject: Re: [PATCH v2 1/2] x86/bugs: Don't fill RSB on VMEXIT with
- eIBRS+retpoline
-Message-ID: <20241203112015.GBZ07pb74AGR-TDWt7@fat_crate.local>
-References: <cover.1732219175.git.jpoimboe@kernel.org>
- <9bd7809697fc6e53c7c52c6c324697b99a894013.1732219175.git.jpoimboe@kernel.org>
- <20241130153125.GBZ0svzaVIMOHBOBS2@fat_crate.local>
- <20241202233521.u2bygrjg5toyziba@desk>
+	s=arc-20240116; t=1733224835; c=relaxed/simple;
+	bh=j4bKtx7hzCLylzhawaimKevDbk5AAVA2ASEi0UQi2tM=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=mPuD70BbLNivb8Cz+TDa8n72zB3vuScNX8t78D13tSzuYHFmX2J7zbZcv/oYmcIpbFbN+/roNWZfZrNWDzQv2POQ47Ki/+fMDOH/HnufZPEKP3x8gq93LivvOKl8nICWs/b6jtG0CqCvY/lR9xDoYqsb7sL7EKTfUloGSc72peU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GXXDAkNX; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=38XtkRoD; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 03 Dec 2024 11:20:29 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1733224830;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WcywyoQ3lz2rMkuzxcfI6HPMyMvSngMAeHCWGrcoWgU=;
+	b=GXXDAkNXuZ/fg/Cs7JH9bp4aAzi1rrGwMl5qzvThwS6gln3AKO/aDKM+8VsY7eWKjEmVkF
+	JOgqVfIrQwvek33oRQhtxJ1Fq4FxjcsKMsuacRg7nUBZfK5vHViqVvFwcAvOi7OdTCk9Gc
+	at5wUX1Hn1/Fh4B/HH0OO4wqWCQB5TSkprZS2f5tA3HCCL5x8ef9X41xJqdO3YhB4ah0xX
+	n4V/8fuaQcHP37UGhYmKBRrnInxwG++S940L0AHhgCA3s4HOVB/mFQ8k7MpeGsWP49JaxN
+	gXKTA2zdn/xu1PPQoJevdglZ3KQSzi8Dyb4MVQJZ7YkDB2ROx0tNsPXdygH2EA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1733224830;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WcywyoQ3lz2rMkuzxcfI6HPMyMvSngMAeHCWGrcoWgU=;
+	b=38XtkRoDwgL9Bs0Lt/YPpanAX2V4/mVp+X+4wa40CIobOifSTAwegTC9hDQl9oOsI0OK9+
+	mHkwiRLftc2v+DBA==
+From: "tip-bot2 for Stefan Wahren" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject:
+ [tip: irq/urgent] irqchip/bcm2836: Enable SKIP_SET_WAKE and MASK_ON_SUSPEND
+Cc: Stefan Wahren <wahrenst@gmx.net>, Thomas Gleixner <tglx@linutronix.de>,
+ Florian Fainelli <florian.fainelli@broadcom.com>, x86@kernel.org,
+ linux-kernel@vger.kernel.org, maz@kernel.org
+In-Reply-To: <20241202115437.33552-1-wahrenst@gmx.net>
+References: <20241202115437.33552-1-wahrenst@gmx.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241202233521.u2bygrjg5toyziba@desk>
+Message-ID: <173322482945.412.10685677629877028916.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Mon, Dec 02, 2024 at 03:35:21PM -0800, Pawan Gupta wrote:
-> It is in this doc:
-> 
->   https://www.intel.com/content/www/us/en/developer/articles/technical/software-security-guidance/technical-documentation/indirect-branch-restricted-speculation.html
-> 
+The following commit has been merged into the irq/urgent branch of tip:
 
-I hope those URLs remain more stable than past experience shows.
+Commit-ID:     ee3878b84cc27ee62cdf78d2842830f4dcdab117
+Gitweb:        https://git.kernel.org/tip/ee3878b84cc27ee62cdf78d2842830f4dcdab117
+Author:        Stefan Wahren <wahrenst@gmx.net>
+AuthorDate:    Mon, 02 Dec 2024 12:54:37 +01:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Tue, 03 Dec 2024 12:15:42 +01:00
 
->   "Processors with enhanced IBRS still support the usage model where IBRS is
->   set only in the OS/VMM for OSes that enable SMEP. To do this, such
->   processors will ensure that guest behavior cannot control the RSB after a
->   VM exit once IBRS is set, even if IBRS was not set at the time of the VM
->   exit."
+irqchip/bcm2836: Enable SKIP_SET_WAKE and MASK_ON_SUSPEND
 
-ACK, thanks.
+The BCM2836 interrupt controller doesn't provide any facility to configure
+the wakeup sources. That's the reason why the driver lacks the
+irq_set_wake() callback for the interrupt chip.
 
-Now, can we pls add those excerpts to Documentation/ and point to them from
-the code so that it is crystal clear why it is ok?
+Enable the flags IRQCHIP_SKIP_SET_WAKE and IRQCHIP_MASK_ON_SUSPEND so the
+interrupt suspend logic can handle the chip correctly equivalently to the
+corresponding bcm2835 change (9a58480e5e53 ("irqchip/bcm2835: Enable
+SKIP_SET_WAKE and MASK_ON_SUSPEND").
 
-Thx.
+Signed-off-by: Stefan Wahren <wahrenst@gmx.net>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Florian Fainelli <florian.fainelli@broadcom.com>
+Link: https://lore.kernel.org/all/20241202115437.33552-1-wahrenst@gmx.net
+---
+ drivers/irqchip/irq-bcm2836.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+diff --git a/drivers/irqchip/irq-bcm2836.c b/drivers/irqchip/irq-bcm2836.c
+index e5f1059..e366257 100644
+--- a/drivers/irqchip/irq-bcm2836.c
++++ b/drivers/irqchip/irq-bcm2836.c
+@@ -58,6 +58,7 @@ static struct irq_chip bcm2836_arm_irqchip_timer = {
+ 	.name		= "bcm2836-timer",
+ 	.irq_mask	= bcm2836_arm_irqchip_mask_timer_irq,
+ 	.irq_unmask	= bcm2836_arm_irqchip_unmask_timer_irq,
++	.flags		= IRQCHIP_MASK_ON_SUSPEND | IRQCHIP_SKIP_SET_WAKE,
+ };
+ 
+ static void bcm2836_arm_irqchip_mask_pmu_irq(struct irq_data *d)
+@@ -74,6 +75,7 @@ static struct irq_chip bcm2836_arm_irqchip_pmu = {
+ 	.name		= "bcm2836-pmu",
+ 	.irq_mask	= bcm2836_arm_irqchip_mask_pmu_irq,
+ 	.irq_unmask	= bcm2836_arm_irqchip_unmask_pmu_irq,
++	.flags		= IRQCHIP_MASK_ON_SUSPEND | IRQCHIP_SKIP_SET_WAKE,
+ };
+ 
+ static void bcm2836_arm_irqchip_mask_gpu_irq(struct irq_data *d)
+@@ -88,6 +90,7 @@ static struct irq_chip bcm2836_arm_irqchip_gpu = {
+ 	.name		= "bcm2836-gpu",
+ 	.irq_mask	= bcm2836_arm_irqchip_mask_gpu_irq,
+ 	.irq_unmask	= bcm2836_arm_irqchip_unmask_gpu_irq,
++	.flags		= IRQCHIP_MASK_ON_SUSPEND | IRQCHIP_SKIP_SET_WAKE,
+ };
+ 
+ static void bcm2836_arm_irqchip_dummy_op(struct irq_data *d)
 
