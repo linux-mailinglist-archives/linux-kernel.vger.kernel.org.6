@@ -1,105 +1,106 @@
-Return-Path: <linux-kernel+bounces-430006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 838EF9E2ACA
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 19:27:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 053689E2ACB
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 19:27:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43D5C285586
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 18:27:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF966286A37
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 18:27:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9CC11FCF41;
-	Tue,  3 Dec 2024 18:27:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 415921FCF72;
+	Tue,  3 Dec 2024 18:27:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UHnLK8hx"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="P7ZbYoAc";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ODByuAMb"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 768361F4733
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 18:27:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D7F21F4733
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 18:27:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733250457; cv=none; b=ZWolqGNE56QjHNPBwNHIBpCLEjvbMxDd5134s3elvUuBgyMdY2KjA7bHASesL0mnAQcBPt2L5n84hvbUNP8ufzE8VLZSpoKeOvNzejnmoHXpYqpykB1QmEykEMoxL2AtZZY0FJpqGBKMkIhsQ2z1+WnCdlE65xYkg3WbyTtXsnc=
+	t=1733250465; cv=none; b=fwzzb7SK8Rl7MQN7V/JObTiWX7uG+b/dDrdJYj2yNTrVP41WByECJeAly4Wb+mqSb7UIBCdpYeq0ZPkedpZi3YJK8yDm+2Wo2hFKuuT2Lp4610cuL9yEiefJE7fiXlWxk0d4l+S2eCp+fAz/FDlxYbrwsT2E53nCrupzrl9S4o8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733250457; c=relaxed/simple;
-	bh=5HGdaZ9Ra1+ZAPqqe+CxmybP2bWJqT5uZHVEzA2wfJc=;
-	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=KiVbJUyubQWQBy1ehsaJHyZXgF+I31AJZAOjrgW8j0cAL6+vuSZns59BLb9nfFzza11hPzq6yTpz6eVb4EotpR+wyKzowtrMa3TU+zhhI1PI0083Ur4bUENSyKc5WJ5yUJal0cgYhUkeJ7yQuIZArIjs3POHk6VOY12pSk4rrhU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UHnLK8hx; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1733250454;
+	s=arc-20240116; t=1733250465; c=relaxed/simple;
+	bh=dO4ndMn3sZMgczB3oNRanGdyZHULJUiSlFaBzeB9zJM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ruB8ermTAPrII02tbVEBLNvVjwNZ0HQZ9gNv5BvlKqVfYM7Q1M4McoCOmFjuimv/twIC2uh91zt1ENLtsByjjS63dPuHkQSV9QkcXAtGGBTdtcC00rap+idDXPZXFXlA8JpJMDKp9cHLsVYaaGaR5+YHvCvy9aeXQm0LY8hlIYU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=P7ZbYoAc; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ODByuAMb; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 3 Dec 2024 19:27:40 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1733250462;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=EmiuDFB8f/vAqkLlrCN9e4fPptaLGdfl54A6B37sFKM=;
-	b=UHnLK8hxfs04psOx3HKc5aoO509eyl41CuXxkx6UIU6VrG5UjQQZM49Ky/JYdaOsM56aSo
-	KqmlN6MBannbT2jWKIgQ6arRi3MutvWvqVcF9chhA4NgJGPzkMQNXm8PvpDsw3tZqLkQ9g
-	OiJpHs3A6ISMlDo14OcCQBj+pZz5WDQ=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-452-mzsYFnhBNECzURDzQL9YUw-1; Tue,
- 03 Dec 2024 13:27:31 -0500
-X-MC-Unique: mzsYFnhBNECzURDzQL9YUw-1
-X-Mimecast-MFC-AGG-ID: mzsYFnhBNECzURDzQL9YUw
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3777B195FD1A;
-	Tue,  3 Dec 2024 18:27:29 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.48])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id CC7D01956052;
-	Tue,  3 Dec 2024 18:27:27 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-To: Andy Whitcroft <apw@canonical.com>, Joe Perches <joe@perches.com>
-cc: dhowells@redhat.com, linux-kernel@vger.kernel.org
-Subject: Checkpatch miscomplaint about macro parentheses enclosure in traces
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4L6ZYZw1cI/9nLWodUSRVMbOnAoZR2tD6CT00fe1Kvs=;
+	b=P7ZbYoAc5VW9lMu8fx9ykExmQt3RNYCnlcuzTJBxIa7tpwrFwEj+Q0iLumu7ULP6XKfTYd
+	pHOLNenzxo/USE75fUJt3HtNf/tWAKY4nObpXvyYJ+rYsrTjoHbTwZLJPFFWDHmg261idR
+	MaHU8CF3kjF3prjNhgDvqr+IwkiHHxGanN2/Yixwe0+HEJ0By+0yMXcX7l1xF91SocIc2w
+	BivH24t5B9LKeSR/vkcbL81CtqnefRFY8Pw6I6f2lxCx4web8IzljwGIU+curacYA5QeJy
+	Zxu4f7rcsgpJSVEKROFUpwsI2SBO4+OJfrOW3HmEzNdWaaQY+DFrLdHdwqrpOw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1733250462;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4L6ZYZw1cI/9nLWodUSRVMbOnAoZR2tD6CT00fe1Kvs=;
+	b=ODByuAMbqRkTkM8+zPzZ6T3Z5JvQtjUHnHlUM8MmSMChBWe0qSYzOzuEjviAww5mw0lVHF
+	lSH0iYGYLq602OAQ==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Juri Lelli <juri.lelli@redhat.com>
+Cc: linux-kernel@vger.kernel.org,
+	=?utf-8?B?QW5kcsOp?= Almeida <andrealmeid@igalia.com>,
+	Darren Hart <dvhart@infradead.org>,
+	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Waiman Long <longman@redhat.com>
+Subject: Re: [RFC PATCH v3 0/9] futex: Add support task local hash maps.
+Message-ID: <20241203182740.NQdnjPBd@linutronix.de>
+References: <20241115172035.795842-1-bigeasy@linutronix.de>
+ <Z0nX2olCQtSciY7-@jlelli-thinkpadt14gen4.remote.csb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <676595.1733250446.1@warthog.procyon.org.uk>
-Date: Tue, 03 Dec 2024 18:27:26 +0000
-Message-ID: <676596.1733250446@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <Z0nX2olCQtSciY7-@jlelli-thinkpadt14gen4.remote.csb>
 
-Hi,
+On 2024-11-29 16:03:54 [+0100], Juri Lelli wrote:
+> Hi Sebastian,
+Hi Juri,
 
-I'm seeing:
+> On 15/11/24 17:58, Sebastian Andrzej Siewior wrote:
+> > Hi,
+> > 
+> > this is a follow up on
+> > 	https://lore.kernel.org/ZwVOMgBMxrw7BU9A@jlelli-thinkpadt14gen4.remote.csb
+> > 
+> > and adds support for task local futex_hash_bucket. It can be created via
+> > prctl().
+> > 
+> > This version supports resize at runtime. This fun part is limited is to
+> > FUTEX_LOCK_PI which means any other waiter will break.
+> > 
+> > I posted performance numbers of "perf bench futex hash"
+> > 	https://lore.kernel.org/all/20241101110810.R3AnEqdu@linutronix.de/
+> 
+> Performance looks generally good on our side as well. However, while
+> testing the set manually with a debug enabled config (attached) I hit
+> the following BUG (decoded) while booting the machine.
 
-	ERROR: Macros with complex values should be enclosed in parentheses
-	#61: FILE: include/trace/events/rxrpc.h:484:
-	+#define rxrpc_tq_traces \
-	+       EM(rxrpc_tq_alloc,                      "ALLOC") \
-	+       EM(rxrpc_tq_cleaned,                    "CLEAN") \
-	+       EM(rxrpc_tq_decant,                     "DCNT ") \
-	+       EM(rxrpc_tq_decant_advance,             "DCNT>") \
-	+       EM(rxrpc_tq_queue,                      "QUEUE") \
-	+       EM(rxrpc_tq_queue_dup,                  "QUE!!") \
-	+       EM(rxrpc_tq_rotate,                     "ROT  ") \
-	+       EM(rxrpc_tq_rotate_and_free,            "ROT-F") \
-	+       EM(rxrpc_tq_rotate_and_keep,            "ROT-K") \
-	+       EM(rxrpc_tq_transmit,                   "XMIT ") \
-	+       E_(rxrpc_tq_transmit_advance,           "XMIT>")
+Thanks. That sounds good. Sorry for getting so late back. I posted v4
+which fixes the bug you reported.  The new version has auto resizing of
+the hash table :)
 
-in the trace headers.  However, this cannot be parenthesised as one of the
-things it is being used for is to generate an enum, thereby reducing the
-number of times the list of symbols is given.
-
-Can this be at least downgraded to a warning, if not waived altogether, if the
-file is in the include/trace/events/ directory?  Possibly the "EM"/"E_"/"EMe"
-prefix could be checked for.
-
-David
-
+Sebastian
 
