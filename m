@@ -1,274 +1,191 @@
-Return-Path: <linux-kernel+bounces-428575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A9EB9E10C5
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 02:29:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C32C9E10C8
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 02:29:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 835ADB21372
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 01:29:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ACE9EB23464
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 01:29:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61CCE537FF;
-	Tue,  3 Dec 2024 01:28:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 598A97DA67;
+	Tue,  3 Dec 2024 01:29:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="arW77eKu"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b="ck2HxuP/"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17A1F2AEE4
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 01:28:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72B5A38DE5
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 01:28:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733189333; cv=none; b=sj+BB8kmqU+MWOTKdjBwzX/43i1E/J/8z1b0Mb6bs8M9dNqjZG5KP/+aA5JLXagmxqJQRxBAlqR3k0kdDk4x1t2y/SS1jeeyZxVZOf0CKvMMEucAFf10c+Zu4xRjt1jZSOoy5zRmYUcf55MbQP2Ijao6xCmhQPqXZyChgJ1VS2c=
+	t=1733189340; cv=none; b=tTXuFIzuPewBRf2kMn8zJA49iXW60d9YGPxT5UCTF5lOxFHAM8NQVHZC3RBWPR8bEQWV87uKKA8SQ6YVPj2NPbyHufO9klpbIvqpQkTEk1CKU4ZtnkXOPOIXNEzwuKsVrIRTP6z2D/Z6RXE8LlSu1hEKbEb/Fo5kPiokDDMFhBI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733189333; c=relaxed/simple;
-	bh=8iV3hNlKi9ZAJH64zDJz1j35OcXaCtTfWFhvtZPXAEc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=dFMRYKNJMglPysAZYntfA9XNqdgnRjnKSWq6lt4KB4wS/4re4T3YqxvRbegiaQyz2LcbozCZscGScNhLBpqou74RRVRqXHzWptooxKP88RHIrfy/rlMvA2oapOiL9lHS9T/xAD0QMm1uo1l3VrkJaC/I7BRAbYdzIDfTH1WcnhE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=arW77eKu; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-7251ace8bc0so4135657b3a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 17:28:50 -0800 (PST)
+	s=arc-20240116; t=1733189340; c=relaxed/simple;
+	bh=WDixq/MIa40Q47q+L2Fe0gz1ziSNqRoxkhPQvLpZWTA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sUXOCkrkzLzkn0tX2OdWf/oCh0frhxhJJOIBoO5z/3PPhXe9oGCJxpVX731MoEX9K/PRrn9Z7zm13Jq7zj4sLKjUxavVFaBr/Yy2hRG+EX7BZdZMr2i0GbkAy+rDgbX1VxEDPk82akbI7jQOClyWpSq0Gz962x60ZVwFcBwo5CM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com; spf=pass smtp.mailfrom=cloud.com; dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b=ck2HxuP/; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloud.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-aa51bf95ce1so163468566b.3
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 17:28:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1733189330; x=1733794130; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=zWNYXKMiPapz1Mt6v6Pm3WNUSi3yE7uDCRcmv8yYg64=;
-        b=arW77eKuP0QYvhkv7Jp7RqsaMZT+qE/T7r7FgRsIbR82tcgmJkyAc27+O1cRxuWoLh
-         1XodkzKGabGzyusrQ01HyOKlr5mhZxN3NgRpdJzu8S+705FBdiB8tM1xcwMgFT5+kT01
-         iXcaSw7S/JiB7IAOgJZllLRstwyMpOVeX+sDE=
+        d=citrix.com; s=google; t=1733189336; x=1733794136; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=uq0J8rWPM2r7OFPHUCmfWJUZ2yRsTZhEnzsRvPF/O2A=;
+        b=ck2HxuP/sJI0XiRTWsgDrSwghG+gmL0x86/BKLfgXjPXhHXTWQpwqwaQUjOZ/teC7e
+         vKxbsuGXeXvdoGKg/S+jnmWo5/s4zaEXbFP1T2tmi47XelhLW+GimLKsRry/f61tpgbR
+         OaJlu98yim3ikC1HaFhytbUOcg9L5MIdJrchI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733189330; x=1733794130;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zWNYXKMiPapz1Mt6v6Pm3WNUSi3yE7uDCRcmv8yYg64=;
-        b=ehRifRe5wvpR/0jyg+YHgHVC7nyyXL0N72XdCZkd2VajDfZRc50I8DotEXogHX3DNX
-         obkh8SGmCqqN1+E6CgSz4I4Mf3r64Sf/kpSqJhXddkmXevFhStakAeYJhFcT+dcFhG9O
-         Qwbk7I5KGlY1DOq9vGLskqWiVtibu62WAkQBh+T+ZSSZnCR63UsP2t9onapMKM10yHWV
-         OeDyvxyHANEC98GYYOTcbE2Kf4l8nQLk8OYanpLoBDHVgi/rMTi7cdja2K+eTTIey4rn
-         Am9YHT7UbnFoX2ngtISQd77/N3pP/Wg12TO/Rh3ep0oeS/FZhXE1O8o8lElGrF8YrTj9
-         6//g==
-X-Forwarded-Encrypted: i=1; AJvYcCVjLxdmaFF5MAUoMi1ES5MsnrR0GdgfnTrRmgxz+fk7FpvES/4MVkkksp1nL202kIoqUVaUQvXWH0ecDNE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3oa5Mep849Zw4gRFmnQnWeniQGNSFYN5XEq535ShbgS80AtY6
-	D35muuYZeJyDVmK05YacUFnzPzW4vClxzBojhHGLwv+E59wARh/U48bH2viEQyo=
-X-Gm-Gg: ASbGncstrxVjd+ShxlMGJjPL7hXuba1oV/r9/dJTFU5cYTCfOj8cDe1la3a1OcFR7Nq
-	QtQirYnc8OXX8UesTrtUtj/xnn4Ase/aqDbK5mhV5l/AOZn78hnDOvXJ2CotLb5MJMkU33p4hhA
-	L5BEJe+6F4OKrD9kfZt6MG99boLw/w0hD6zjD4OY+B/bsGGWaifMKxk/7HHHf9YIzll4sq0teK3
-	Uj7mVyYkcUa0gor8YdmolwcCAS8NkWgyzHEbYrkP5tlZMOSxEzRWll1eA==
-X-Google-Smtp-Source: AGHT+IGt5WbOAM0L8F7DeypmXThouFU45yqNTHy92A7JuVHfqSlriRd2Dnq7v8Tti+0NfHckZUsSXw==
-X-Received: by 2002:a17:902:c943:b0:215:58be:3349 with SMTP id d9443c01a7336-215bdf0784bmr8410745ad.14.1733189330379;
-        Mon, 02 Dec 2024 17:28:50 -0800 (PST)
-Received: from localhost.localdomain ([2620:11a:c019:0:65e:3115:2f58:c5fd])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-215b08965b4sm8846065ad.180.2024.12.02.17.28.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Dec 2024 17:28:49 -0800 (PST)
-From: Joe Damato <jdamato@fastly.com>
-To: netdev@vger.kernel.org
-Cc: pabeni@redhat.com,
-	edumazet@google.com,
-	kuba@kernel.org,
-	mkarsten@uwaterloo.ca,
-	Joe Damato <jdamato@fastly.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Simon Horman <horms@kernel.org>,
-	Shuah Khan <shuah@kernel.org>,
-	linux-kselftest@vger.kernel.org (open list:KERNEL SELFTEST FRAMEWORK),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH net-next] selftests: net: cleanup busy_poller.c
-Date: Tue,  3 Dec 2024 01:28:38 +0000
-Message-Id: <20241203012838.182522-1-jdamato@fastly.com>
-X-Mailer: git-send-email 2.25.1
+        d=1e100.net; s=20230601; t=1733189336; x=1733794136;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uq0J8rWPM2r7OFPHUCmfWJUZ2yRsTZhEnzsRvPF/O2A=;
+        b=AlMCF6/SEondsGozydEhOLRLiOT7l+IZqhrEPo9sWIuCO75QREq/ye1oG0XhZ5l/Hu
+         +U1y+kCl90RjbFGOeAqNAhg9GMt4wXHyqvHsQueNVDtMXcNmuy+Wq4rVUEyIbilF3Uw9
+         Nd10HqvZ7eoFJWjENGJemK3NcSXy0drV+5oHDKuwRiUrK4XiLLqTevKdqbhDs48pkYbv
+         6rEfNZDSKJ6KX88c2TXUv//c0w0iPb2cACLIFhiTReeBq0Y4/txr9bRgEs5lOIAROafF
+         1/JQFDnlPpHv74ugMTfbaIISOIv8p8NwNeUqEJdwzV7Rv3JbgFMp9R0qgHTTX/ILL3K5
+         Hjbg==
+X-Forwarded-Encrypted: i=1; AJvYcCWhOXexKXBAJ1w+wj0n4Qol7TZ57JsXP9jCeIbyFxTgoVuqounHJ5uWKt9zFe/A1FyWWzIl66Ib78FH5lg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWTBRqvTUwZvmyCcf3/5U7HgMsBoJApZIVZ1/h4vr0waV5WoaI
+	0ZIJ4gU7XVaDx+0EMgIW01S9Lt5LNZ3EjrvjPjANxq9jPCkYwo1MU738iI8c14g=
+X-Gm-Gg: ASbGncsUZoNeBqQHMli6N+b1i5eFZeblssA5wol7yLGN6XAwT/OAdyPzVfDF0RSJ/RS
+	4GuE0V19T5oA3YuMWqehaQRblnfMsMuj/YeFr7cGRRHc27MRGmGrj+otLil9ST2Ek0/cHQn9keb
+	8tEM8PMdDfthx9IMYQoCM2d0c14RmDPOSNh9uE1z3W9Rh0eHMH5FrYLrugK6jelqOpKdWPh1B/L
+	cgcYx4A0/VkkXWb8NpvK6cxKHAOeaE5+7bsiiS7Fu4IgJwLsa1pFfEFFbGrokI=
+X-Google-Smtp-Source: AGHT+IGU7jxH5mfvqjUzNNO+cJvYRC6zia50akRFOhFPYVPqR473ZqGd/ljEGbus5kELxvRnJrn/Pw==
+X-Received: by 2002:a17:907:3f96:b0:aa5:4ea6:fcae with SMTP id a640c23a62f3a-aa5f7daba68mr38700666b.28.1733189335776;
+        Mon, 02 Dec 2024 17:28:55 -0800 (PST)
+Received: from [192.168.86.29] ([90.240.255.120])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa5997d560asm563452966b.61.2024.12.02.17.28.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 02 Dec 2024 17:28:55 -0800 (PST)
+Message-ID: <a9560e97-478d-4e03-b936-cf6f663279a4@citrix.com>
+Date: Tue, 3 Dec 2024 01:28:54 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 1/2] x86, lib, xenpv: Add WBNOINVD helper functions
+To: Kevin Loughlin <kevinloughlin@google.com>, linux-kernel@vger.kernel.org
+Cc: seanjc@google.com, pbonzini@redhat.com, tglx@linutronix.de,
+ mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org,
+ hpa@zytor.com, kvm@vger.kernel.org, thomas.lendacky@amd.com,
+ pgonda@google.com, sidtelang@google.com, mizhang@google.com,
+ virtualization@lists.linux.dev, xen-devel@lists.xenproject.org,
+ bcm-kernel-feedback-list@broadcom.com
+References: <20241203005921.1119116-1-kevinloughlin@google.com>
+ <20241203005921.1119116-2-kevinloughlin@google.com>
+Content-Language: en-GB
+From: Andrew Cooper <andrew.cooper3@citrix.com>
+Autocrypt: addr=andrew.cooper3@citrix.com; keydata=
+ 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
+ 6+ahAA==
+In-Reply-To: <20241203005921.1119116-2-kevinloughlin@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Fix various integer type conversions by using strtoull and a temporary
-variable which is bounds checked before being casted into the
-appropriate cfg_* variable for use by the test program.
+On 03/12/2024 12:59 am, Kevin Loughlin wrote:
+> diff --git a/arch/x86/include/asm/paravirt.h b/arch/x86/include/asm/paravirt.h
+> index d4eb9e1d61b8..c040af2d8eff 100644
+> --- a/arch/x86/include/asm/paravirt.h
+> +++ b/arch/x86/include/asm/paravirt.h
+> @@ -187,6 +187,13 @@ static __always_inline void wbinvd(void)
+>  	PVOP_ALT_VCALL0(cpu.wbinvd, "wbinvd", ALT_NOT_XEN);
+>  }
+>  
+> +extern noinstr void pv_native_wbnoinvd(void);
+> +
+> +static __always_inline void wbnoinvd(void)
+> +{
+> +	PVOP_ALT_VCALL0(cpu.wbnoinvd, "wbnoinvd", ALT_NOT_XEN);
+> +}
 
-While here, free the strdup'd cfg string for overall hygenie.
+Given this, ...
 
-Signed-off-by: Joe Damato <jdamato@fastly.com>
----
- tools/testing/selftests/net/busy_poller.c | 86 +++++++++++++----------
- 1 file changed, 49 insertions(+), 37 deletions(-)
+> diff --git a/arch/x86/kernel/paravirt.c b/arch/x86/kernel/paravirt.c
+> index fec381533555..a66b708d8a1e 100644
+> --- a/arch/x86/kernel/paravirt.c
+> +++ b/arch/x86/kernel/paravirt.c
+> @@ -149,6 +154,7 @@ struct paravirt_patch_template pv_ops = {
+>  	.cpu.write_cr0		= native_write_cr0,
+>  	.cpu.write_cr4		= native_write_cr4,
+>  	.cpu.wbinvd		= pv_native_wbinvd,
+> +	.cpu.wbnoinvd		= pv_native_wbnoinvd,
+>  	.cpu.read_msr		= native_read_msr,
+>  	.cpu.write_msr		= native_write_msr,
+>  	.cpu.read_msr_safe	= native_read_msr_safe,
 
-diff --git a/tools/testing/selftests/net/busy_poller.c b/tools/testing/selftests/net/busy_poller.c
-index 99b0e8c17fca..ef62d7145598 100644
---- a/tools/testing/selftests/net/busy_poller.c
-+++ b/tools/testing/selftests/net/busy_poller.c
-@@ -54,16 +54,16 @@ struct epoll_params {
- #define EPIOCGPARAMS _IOR(EPOLL_IOC_TYPE, 0x02, struct epoll_params)
- #endif
- 
--static uint32_t cfg_port = 8000;
-+static uint16_t cfg_port = 8000;
- static struct in_addr cfg_bind_addr = { .s_addr = INADDR_ANY };
- static char *cfg_outfile;
- static int cfg_max_events = 8;
--static int cfg_ifindex;
-+static uint32_t cfg_ifindex;
- 
- /* busy poll params */
- static uint32_t cfg_busy_poll_usecs;
--static uint32_t cfg_busy_poll_budget;
--static uint32_t cfg_prefer_busy_poll;
-+static uint16_t cfg_busy_poll_budget;
-+static uint8_t cfg_prefer_busy_poll;
- 
- /* IRQ params */
- static uint32_t cfg_defer_hard_irqs;
-@@ -79,6 +79,7 @@ static void usage(const char *filepath)
- 
- static void parse_opts(int argc, char **argv)
- {
-+	unsigned long long tmp;
- 	int ret;
- 	int c;
- 
-@@ -86,31 +87,40 @@ static void parse_opts(int argc, char **argv)
- 		usage(argv[0]);
- 
- 	while ((c = getopt(argc, argv, "p:m:b:u:P:g:o:d:r:s:i:")) != -1) {
-+		/* most options take integer values, except o and b, so reduce
-+		 * code duplication a bit for the common case by calling
-+		 * strtoull here and leave bounds checking and casting per
-+		 * option below.
-+		 */
-+		if (c != 'o' && c != 'b')
-+			tmp = strtoull(optarg, NULL, 0);
-+
- 		switch (c) {
- 		case 'u':
--			cfg_busy_poll_usecs = strtoul(optarg, NULL, 0);
--			if (cfg_busy_poll_usecs == ULONG_MAX ||
--			    cfg_busy_poll_usecs > UINT32_MAX)
-+			if (tmp == ULLONG_MAX || tmp > UINT32_MAX)
- 				error(1, ERANGE, "busy_poll_usecs too large");
-+
-+			cfg_busy_poll_usecs = (uint32_t)tmp;
- 			break;
- 		case 'P':
--			cfg_prefer_busy_poll = strtoul(optarg, NULL, 0);
--			if (cfg_prefer_busy_poll == ULONG_MAX ||
--			    cfg_prefer_busy_poll > 1)
-+			if (tmp == ULLONG_MAX || tmp > 1)
- 				error(1, ERANGE,
- 				      "prefer busy poll should be 0 or 1");
-+
-+			cfg_prefer_busy_poll = (uint8_t)tmp;
- 			break;
- 		case 'g':
--			cfg_busy_poll_budget = strtoul(optarg, NULL, 0);
--			if (cfg_busy_poll_budget == ULONG_MAX ||
--			    cfg_busy_poll_budget > UINT16_MAX)
-+			if (tmp == ULLONG_MAX || tmp > UINT16_MAX)
- 				error(1, ERANGE,
- 				      "busy poll budget must be [0, UINT16_MAX]");
-+
-+			cfg_busy_poll_budget = (uint16_t)tmp;
- 			break;
- 		case 'p':
--			cfg_port = strtoul(optarg, NULL, 0);
--			if (cfg_port > UINT16_MAX)
-+			if (tmp == ULLONG_MAX || tmp > UINT16_MAX)
- 				error(1, ERANGE, "port must be <= 65535");
-+
-+			cfg_port = (uint16_t)tmp;
- 			break;
- 		case 'b':
- 			ret = inet_aton(optarg, &cfg_bind_addr);
-@@ -124,41 +134,39 @@ static void parse_opts(int argc, char **argv)
- 				error(1, 0, "outfile invalid");
- 			break;
- 		case 'm':
--			cfg_max_events = strtol(optarg, NULL, 0);
--
--			if (cfg_max_events == LONG_MIN ||
--			    cfg_max_events == LONG_MAX ||
--			    cfg_max_events <= 0)
-+			if (tmp == ULLONG_MAX || tmp > INT_MAX)
- 				error(1, ERANGE,
--				      "max events must be > 0 and < LONG_MAX");
-+				      "max events must be > 0 and <= INT_MAX");
-+
-+			cfg_max_events = (int)tmp;
- 			break;
- 		case 'd':
--			cfg_defer_hard_irqs = strtoul(optarg, NULL, 0);
--
--			if (cfg_defer_hard_irqs == ULONG_MAX ||
--			    cfg_defer_hard_irqs > INT32_MAX)
-+			if (tmp == ULLONG_MAX || tmp > INT32_MAX)
- 				error(1, ERANGE,
- 				      "defer_hard_irqs must be <= INT32_MAX");
-+
-+			cfg_defer_hard_irqs = (uint32_t)tmp;
- 			break;
- 		case 'r':
--			cfg_gro_flush_timeout = strtoull(optarg, NULL, 0);
--
--			if (cfg_gro_flush_timeout == ULLONG_MAX)
-+			if (tmp == ULLONG_MAX || tmp > UINT64_MAX)
- 				error(1, ERANGE,
--				      "gro_flush_timeout must be < ULLONG_MAX");
-+				      "gro_flush_timeout must be < UINT64_MAX");
-+
-+			cfg_gro_flush_timeout = (uint64_t)tmp;
- 			break;
- 		case 's':
--			cfg_irq_suspend_timeout = strtoull(optarg, NULL, 0);
--
--			if (cfg_irq_suspend_timeout == ULLONG_MAX)
-+			if (tmp == ULLONG_MAX || tmp > UINT64_MAX)
- 				error(1, ERANGE,
- 				      "irq_suspend_timeout must be < ULLONG_MAX");
-+
-+			cfg_irq_suspend_timeout = (uint64_t)tmp;
- 			break;
- 		case 'i':
--			cfg_ifindex = strtoul(optarg, NULL, 0);
--			if (cfg_ifindex == ULONG_MAX)
-+			if (tmp == ULLONG_MAX || tmp > INT_MAX)
- 				error(1, ERANGE,
--				      "ifindex must be < ULONG_MAX");
-+				      "ifindex must be <= INT_MAX");
-+
-+			cfg_ifindex = (int)tmp;
- 			break;
- 		}
- 	}
-@@ -277,8 +285,8 @@ static void run_poller(void)
- 	 * here
- 	 */
- 	epoll_params.busy_poll_usecs = cfg_busy_poll_usecs;
--	epoll_params.busy_poll_budget = (uint16_t)cfg_busy_poll_budget;
--	epoll_params.prefer_busy_poll = (uint8_t)cfg_prefer_busy_poll;
-+	epoll_params.busy_poll_budget = cfg_busy_poll_budget;
-+	epoll_params.prefer_busy_poll = cfg_prefer_busy_poll;
- 	epoll_params.__pad = 0;
- 
- 	val = 1;
-@@ -342,5 +350,9 @@ int main(int argc, char *argv[])
- 	parse_opts(argc, argv);
- 	setup_queue();
- 	run_poller();
-+
-+	if (cfg_outfile)
-+		free(cfg_outfile);
-+
- 	return 0;
- }
+this, and ...
 
-base-commit: 65ae975e97d5aab3ee9dc5ec701b12090572ed43
--- 
-2.25.1
+> diff --git a/arch/x86/xen/enlighten_pv.c b/arch/x86/xen/enlighten_pv.c
+> index d6818c6cafda..a5c76a6f8976 100644
+> --- a/arch/x86/xen/enlighten_pv.c
+> +++ b/arch/x86/xen/enlighten_pv.c
+> @@ -1162,6 +1162,7 @@ static const typeof(pv_ops) xen_cpu_ops __initconst = {
+>  		.write_cr4 = xen_write_cr4,
+>  
+>  		.wbinvd = pv_native_wbinvd,
+> +		.wbnoinvd = pv_native_wbnoinvd,
+>  
+>  		.read_msr = xen_read_msr,
+>  		.write_msr = xen_write_msr,
 
+this, what is the point having a paravirt hook which is wired to
+native_wbnoinvd() in all cases?
+
+That just seems like overhead for overhead sake.
+
+~Andrew
 
