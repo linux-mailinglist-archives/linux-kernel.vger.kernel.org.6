@@ -1,468 +1,1272 @@
-Return-Path: <linux-kernel+bounces-429881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 574DE9E2A9F
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 19:18:31 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA7C59E2BA5
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 20:05:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 370D8B36C8C
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:50:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8515FB337D9
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:56:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 939FF1FAC54;
-	Tue,  3 Dec 2024 16:49:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55FE61FBC9F;
+	Tue,  3 Dec 2024 16:55:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cfiq3Hbj"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="NqbcZl3j"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAFBD1F8EEE
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 16:49:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE2AA1F8F04;
+	Tue,  3 Dec 2024 16:55:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733244596; cv=none; b=Lr3Aqert4hthTh+YBcLuGYzPdOAdF8j2W5NPPVS+ezYBUJXyA++vNwhNzlRYhpcHZLSjWMUPlI8xg3lHNWwwir7G31yBmKP5iir02Mhu14t0draXEhGL2PYu8vWR+bv7feTBwaIxFhA1++TwY8c8xJQmFzRBqlPyPA3N/yKkE84=
+	t=1733244934; cv=none; b=jBQjx9rxZsj3MIDdd9cmw+xAe2FOjFLGs7/l5o8LrKKOyL288eM/N4WQ/PG0KDIVkUIQza6rbEw6KH5JXlNPlH9jtu7V2OY2dySU5+Q57iOe/ZQeonwqN/dXzVjzhfw503XrzTSJrhTFDImy7u2D+J3IquA+qtjWdusXLTuquTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733244596; c=relaxed/simple;
-	bh=7DpNYavETN2GjTvatWXWYBF1KoMu2GdCiT4meUFxbWY=;
-	h=Content-Type:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To; b=avTrmAL9KMTp1cWHZbWNVQLpiiguIQjswb2n2Pn09mSvKmQ20yIUfGZt7el2Wtt/uuP5Nk0w/7gjHAocCKTwjzy+3jsy2pce3TNJl74A17tZkSLGjjAD9lGgF53wDdxUKpDsJm4ekpHf0wx/nNM+tbkQcY9eDXv4j+TrcnNA1ks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cfiq3Hbj; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-aa51d32fa69so877873666b.2
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 08:49:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733244591; x=1733849391; darn=vger.kernel.org;
-        h=in-reply-to:from:content-language:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zMfCcuMn564j015FqFPplbnrfdjiJRXe3+6HwWrf1v8=;
-        b=cfiq3Hbj5+qHBIFNANSkEy7/oB2p2B1DHE8NqcGSfEYBFdIv/N0E1ID02pM3L+9Akc
-         xmnHXmdiyy0Y14QNwv1OerUeanE3oodHeZ5565Zoya+RX/NjR1WZvJth2oKOGnCSuMpT
-         n86LbsbDM+1wSXVgtI+tGXVIiFbaYpOcEqDnpl+qFzL2iobmKrjjvAaErsNtqVPQKAL7
-         d1xIJAU5CTOeceAla4DJdueF6aRbqi3v+0NUkqPx/l5wbE/XoSMNR0F/9jXYQlv+gWNg
-         /5utM74jDtD+a+qz2IACW8oSYs1bBx4SGHVQX0BntSNcaw1cXYf8/1bX/FgHtZoGzaGA
-         CIXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733244591; x=1733849391;
-        h=in-reply-to:from:content-language:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=zMfCcuMn564j015FqFPplbnrfdjiJRXe3+6HwWrf1v8=;
-        b=UAmspaku6gTF0ZSK6P5UM7rG4YBXVTVRi7NRvI+sW/n/Q57kxH+Qi+Vkxa52RxUvLp
-         eX3ulBySRKdfHQn5SFdSdTaEPFh/kePA3dYCRoeqqqcIUkAiYO2BKnG70gHMWU75AM8S
-         DXxCEZicnsjbJakqz1CGo1uE32Hqk+DuqzfY1HQ7kpb46zxxxfwIIJ/Bq23fTNtGtO34
-         LAJzgXE5Ui7vtrkxLzMHZz60n1uXfoCe184IR7H6Ema7umvO8C2spLLlseqMqN91RTnx
-         xAR4d7thJTnMP2mDTddrVSqi3b5dbndl1BK89vCwYwU7+y06ILWQ7uRKZdYNoGOBrX74
-         3EsA==
-X-Forwarded-Encrypted: i=1; AJvYcCVhZroGo5WVan1ohqfBsXQ+dl8RL+9tuBrHYcBhH9xbQwTTVgmxUNfmvjFsBqDxL0fdHOeor/SnDL5utMc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJkpEUsKQo5vxaIIx4lskyQk425S9iK2SJ0HzRGKej85UTCCDN
-	nWYS41FdHYm6QHwawV7U0FMMWXljGtzmhB3kp7WCsKcSTtc5VGNQgPOlm78im7o=
-X-Gm-Gg: ASbGncvf4LC2zqoqN7RUD+vOVD6f3gAdEEYAsdn81iW0jigSFyOQoWcKzZb0N0xPRVt
-	01X8IGo7Abo0RIrXIMjy9jAHpIrwwun5g7EDi85mUM7Ymd3rwu2gkDy6Wsy8YyL76mBaxDPaGPu
-	j8s5aEj8c2CrGC7d99GYByT2pNAxbFN8RXBzRT98sHTQFTmgHfABUDAfTtP1UjReEUvFIOP6n4Y
-	r2Kd28BfsbZPDavG8e/KEb4gBp0bbEuwSW4Bf7nUxF0V3NbO0jiTKsHf4JwLK0=
-X-Google-Smtp-Source: AGHT+IFD3Arl8AmcgUDQ3Lj1pQpvjiOwhhih1TjlphLpshL3+0cadHOB7alLC91/6k1J8o0UCXIAKg==
-X-Received: by 2002:a17:906:1db2:b0:aa5:d7c:2ad0 with SMTP id a640c23a62f3a-aa5f7d4f3camr198086466b.23.1733244590828;
-        Tue, 03 Dec 2024 08:49:50 -0800 (PST)
-Received: from [192.168.0.40] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa5998e6a1asm633188366b.98.2024.12.03.08.49.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Dec 2024 08:49:50 -0800 (PST)
-Content-Type: multipart/mixed; boundary="------------a0xltVuvLhEkCIBL8XCdaP1F"
-Message-ID: <13fc0174-8d47-4863-8a5f-5f6f7a0f7a2f@linaro.org>
-Date: Tue, 3 Dec 2024 16:49:49 +0000
+	s=arc-20240116; t=1733244934; c=relaxed/simple;
+	bh=qPQnr0cbDvMYQ8kb5102vgtAKGLg7QUvbFo9rQXSa0I=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=jyka1LX1l+TkZ1AVkuoYoRHgNZ03VOJr6vgzc1NO95/BjbUvgj76acEAvm4Ea93YOibXMprvhs/AmJSMCZFo/fnyroXRkXNywSV0BVRmiEew/Y4PKATTczMzsUDkC37QR1celFCZQGugVGa6VrU4gY29e1VNc/xTnm+dNh3sg9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=NqbcZl3j; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Transfer-Encoding:MIME-Version:References:
+	In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=LXZLyv/TaK4M9yV1RGTBskl5YofJDTPk8fsXzH33vy8=; b=NqbcZl3jdHAlwg7tUmlCs0Adlz
+	kWNwO/6vdT1CtAfAYzoNwg1c+k2f/eGHB0RwqC/onGXrIK6FtJZ/sT3OweWhoJQLBSq0dUFMXPrEd
+	9NLAwSieWxXK7AvTCj8DrqPNNec5ZZtSys9KGLFSqj9PUeq1yzMsDKGX4TGICRQPJ2LSr8kCMh8Mv
+	cV/H1yJ+ead9lmARK9P0DBPYpQSahs+fk/3X7WpLbWaHtUtKqdum46/j5NpHGqZPYRhlaEdR4IouT
+	ZlOXN4u9Bv91KH1L3fEBETdfoJZGJibYUB4BGs23Abn0s8H2j2IHfh2Esthsmm661cjRZ8mgz7R1s
+	d37DlC+g==;
+Received: from i53875bc4.versanet.de ([83.135.91.196] helo=localhost.localdomain)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1tIWAu-0003jl-9w; Tue, 03 Dec 2024 17:55:00 +0100
+From: Heiko Stuebner <heiko@sntech.de>
+To: heiko@sntech.de
+Cc: andy.yan@rock-chips.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	andrzej.hajda@intel.com,
+	neil.armstrong@linaro.org,
+	rfoss@kernel.org,
+	Laurent.pinchart@ideasonboard.com,
+	jonas@kwiboo.se,
+	jernej.skrabec@gmail.com,
+	dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	quentin.schulz@cherry.de,
+	Heiko Stuebner <heiko.stuebner@cherry.de>,
+	Daniel Semkowicz <dse@thaumatec.com>
+Subject: [PATCH v3 1/3] drm/bridge/synopsys: Add MIPI DSI2 host controller bridge
+Date: Tue,  3 Dec 2024 17:54:47 +0100
+Message-ID: <20241203165450.1501219-2-heiko@sntech.de>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20241203165450.1501219-1-heiko@sntech.de>
+References: <20241203165450.1501219-1-heiko@sntech.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] media: qcom: camss: fix VFE pm domain off
-To: barnabas.czeman@mainlining.org
-Cc: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
- Robert Foss <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Hans Verkuil <hverkuil@xs4all.nl>,
- linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-kernel@vger.kernel.org, Yassine Oudjana <y.oudjana@protonmail.com>
-References: <20241128-vfe_pm_domain_off-v2-1-0bcbbe7daaaf@mainlining.org>
- <3a5fd596-b442-4d3f-aae2-f454d0cd8e5c@linaro.org>
- <5cccec71-0cc7-492a-9fb9-903970da05c5@linaro.org>
- <d3a8d38c-9129-4fbd-8bd6-c91131d950ad@linaro.org>
- <a08e95fc03fce6cb0809a06900982c6c@mainlining.org>
- <8dfd2ee1-9baf-441f-8eb9-fa11e830334a@linaro.org>
- <ac765a062e94d549f4c34cf4c8b2c199@mainlining.org>
- <f4e47953-5a68-4ec5-860b-820b8eff2a2a@linaro.org>
- <05e91ae70902f0cd9c47bb4197d8fef1@mainlining.org>
- <93028653-9919-460e-83d3-84bf5ade56d4@linaro.org>
- <c7a9a43eea8bd1e6302ae4fa2d79dd80@mainlining.org>
- <c8020803-ecbd-4496-9361-f19352ddf462@linaro.org>
- <02282c0d493153c633e7eccf5559452a@mainlining.org>
- <1d3650f9-fe4d-4972-968a-aaab6fed1044@linaro.org>
- <f6c88d78c53f8a14c91677c90bfb0500@mainlining.org>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <f6c88d78c53f8a14c91677c90bfb0500@mainlining.org>
-
-This is a multi-part message in MIME format.
---------------a0xltVuvLhEkCIBL8XCdaP1F
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 03/12/2024 01:02, barnabas.czeman@mainlining.org wrote:
-> On 2024-12-03 00:10, Bryan O'Donoghue wrote:
->> On 30/11/2024 22:58, barnabas.czeman@mainlining.org wrote:
->>> On 2024-11-30 22:48, Bryan O'Donoghue wrote:
->>>> On 29/11/2024 23:52, barnabas.czeman@mainlining.org wrote:
->>>>> On 2024-11-30 00:07, Bryan O'Donoghue wrote:
->>>>>> On 29/11/2024 22:45, barnabas.czeman@mainlining.org wrote:
->>>>>>> On 2024-11-29 23:08, Bryan O'Donoghue wrote:
->>>>>>>> On 29/11/2024 13:46, barnabas.czeman@mainlining.org wrote:
->>>>>>>>> On 2024-11-29 13:25, Bryan O'Donoghue wrote:
->>>>>>>>>> On 29/11/2024 11:44, barnabas.czeman@mainlining.org wrote:
->>>>>>>>>>>> The change does not describe how to reproduce the problem, 
->>>>>>>>>>>> which commit
->>>>>>>>>>>> base is tested, which platform is testes, there is no enough 
->>>>>>>>>>>> information,
->>>>>>>>>>>> unfortunately.
->>>>>>>>>>> I can reproduce the problem with megapixels-sensorprofile on 
->>>>>>>>>>> msm8953 and
->>>>>>>>>>> it can be reproduced with megapixels on msm8996.
->>>>>>>>>>> The base is the last commit on next.
->>>>>>>>>>
->>>>>>>>>> Can you verify if vfe_domain_on has run and if so whether or 
->>>>>>>>>> not genpd_link is NULL when that function exists.
->>>>>>>>>>
->>>>>>>>> I have added some debug logs it seems pm_domain_on and 
->>>>>>>>> pm_domain_off is called twice on the same object.
->>>>>>>>> [   63.473360] qcom-camss 1b00020.camss: pm_domain_on 19842ce8 
->>>>>>>>> link 42973800
->>>>>>>>> [   63.481524] qcom-camss 1b00020.camss: pm_domain_on 19840080 
->>>>>>>>> link 4e413800
->>>>>>>>> [   63.481555] qcom-camss 1b00020.camss: pm_domain_on 19842ce8 
->>>>>>>>> link 42973800
->>>>>>>>> [   63.481632] qcom-camss 1b00020.camss: pm_domain_off 19840080 
->>>>>>>>> link 4e413800
->>>>>>>>> [   63.481641] qcom-camss 1b00020.camss: pm_domain_off 19842ce8 
->>>>>>>>> link 42973800
->>>>>>>>> [   63.654004] qcom-camss 1b00020.camss: pm_domain_off 19842ce8 
->>>>>>>>> link 0
->>>>>>>>>> That's the question.
->>>>>>>>>>
->>>>>>>>>> ---
->>>>>>>>>> bod
->>>>>>>>
->>>>>>>> Could you provide this output ?
->>>>>>>>
->>>>>>>> index 80a62ba112950..b25b8f6b00be1 100644
->>>>>>>> --- a/drivers/media/platform/qcom/camss/camss-vfe.c
->>>>>>>> +++ b/drivers/media/platform/qcom/camss/camss-vfe.c
->>>>>>>> @@ -595,6 +595,9 @@ void vfe_isr_reset_ack(struct vfe_device *vfe)
->>>>>>>>   */
->>>>>>>>  void vfe_pm_domain_off(struct vfe_device *vfe)
->>>>>>>>  {
->>>>>>>> +dev_info(camss->dev, "%s VFE %d genpd %pK genpd_link %pK\n",
->>>>>>>> +        __func__, vfe->id, vfe->genpd, vfe->genpd_link);
->>>>>>>> +
->>>>>>>>         if (!vfe->genpd)
->>>>>>>>                 return;
->>>>>>>>
->>>>>>>> @@ -609,7 +612,8 @@ void vfe_pm_domain_off(struct vfe_device *vfe)
->>>>>>>>  int vfe_pm_domain_on(struct vfe_device *vfe)
->>>>>>>>  {
->>>>>>>>         struct camss *camss = vfe->camss;
->>>>>>>> -
->>>>>>>> +dev_info(camss->dev, "%s VFE %d genpd %pK genpd_link %pK\n",
->>>>>>>> +        __func__, vfe->id, vfe->genpd, vfe->genpd_link);
->>>>>>>>         if (!vfe->genpd)
->>>>>>>>                 return 0;
->>>>>>>>
->>>>>>>> ---
->>>>>>>> bod
->>>>>>> I think logging in pm_domain_on should be placed after 
->>>>>>> device_link_add because only NULL
->>>>>>> will be visible.
->>>>>>> [   83.040694] qcom-camss 1b00020.camss: vfe_pm_domain_on VFE 1 
->>>>>>> genpd 000000009bd8355f genpd_link 0000000000000000
->>>>>>> [   83.049293] qcom-camss 1b00020.camss: vfe_pm_domain_on VFE 0 
->>>>>>> genpd 00000000bfb65e7c genpd_link 0000000000000000
->>>>>>> [   83.049353] qcom-camss 1b00020.camss: vfe_pm_domain_on VFE 1 
->>>>>>> genpd 000000009bd8355f genpd_link 00000000ccb0acd9
->>>>>>> [   83.049641] qcom-camss 1b00020.camss: vfe_pm_domain_off VFE 0 
->>>>>>> genpd 00000000bfb65e7c genpd_link 00000000348ac3c1
->>>>>>> [   83.049654] qcom-camss 1b00020.camss: vfe_pm_domain_off VFE 1 
->>>>>>> genpd 000000009bd8355f genpd_link 00000000ccb0acd9
->>>>>>> [   83.241498] qcom-camss 1b00020.camss: vfe_pm_domain_off VFE 1 
->>>>>>> genpd 000000009bd8355f genpd_link 0000000000000000
->>>>>>
->>>>>> Could you add
->>>>>>
->>>>>> +++ b/drivers/media/platform/qcom/camss/camss-vfe.c
->>>>>> @@ -786,7 +786,7 @@ int vfe_get(struct vfe_device *vfe)
->>>>>>         int ret;
->>>>>>
->>>>>>         mutex_lock(&vfe->power_lock);
->>>>>> -
->>>>>> +dev_info(vfe->camss->dev, "%s vfe %d power_count %d\n", __func__, 
->>>>>> vfe->id, vfe->power_count);
->>>>>>         if (vfe->power_count == 0) {
->>>>>>                 ret = vfe->res->hw_ops->pm_domain_on(vfe);
->>>>>>                 if (ret < 0)
->>>>>> @@ -823,6 +823,7 @@ int vfe_get(struct vfe_device *vfe)
->>>>>>
->>>>>>         mutex_unlock(&vfe->power_lock);
->>>>>>
->>>>>> +dev_info(camss->vfe->dev, "%s vfe %d err=%d\n", __func__, camss- 
->>>>>> >vfe- >id, 0);
->>>>>>         return 0;
->>>>>>
->>>>>>  error_reset:
->>>>>> @@ -835,7 +836,7 @@ int vfe_get(struct vfe_device *vfe)
->>>>>>
->>>>>>  error_pm_domain:
->>>>>>         mutex_unlock(&vfe->power_lock);
->>>>>> -
->>>>>> +dev_info(camss->vfe->dev, "%s vfe %d err=%d\n", __func__, camss- 
->>>>>> >vfe- >id, ret);
->>>>>>         return ret;
->>>>>>  }
->>>>>>
->>>>>> ?
->>>>>>
->>>>>> ---
->>>>>> bod
->>>>> I have added little more from the logs because it is only failing 
->>>>> in edge cases megapixels-sensorprofile failing by
->>>>> different reason quickly and trying to release the device.
->>>>> [   54.719030] qcom-camss 1b00020.camss: vfe_get vfe 0 err=0
->>>>> [   54.750124] qcom-camss 1b00020.camss: vfe_get vfe 0 power_count 1
->>>>> [   54.750236] qcom-camss 1b00020.camss: vfe_get vfe 0 err=0
->>>>> [   54.751270] qcom-camss 1b00020.camss: vfe_pm_domain_on VFE 0 
->>>>> genpd 00000000beaef03c genpd_link 00000000251644d9
->>>>
->>>>> [   54.751433] qcom-camss 1b00020.camss: vfe_pm_domain_on VFE 1 
->>>>> genpd 000000007ce2da53 genpd_link 0000000000000000
->>>>> [   54.755531] qcom-camss 1b00020.camss: vfe_pm_domain_off VFE 1 
->>>>> genpd 000000007ce2da53 genpd_link 0000000058dcd4d6
->>>>
->>>> that's a bug genpd_link should be NULL unless power_count != 0
->>>>
->>>>> [  143.922868] qcom-camss 1b00020.camss: vfe_pm_domain_off VFE 1 
->>>>> genpd 000000007ce2da53 genpd_link 00000000d1fcd54b
->>>>> [  144.126535] qcom-camss 1b00020.camss: vfe_pm_domain_off VFE 1 
->>>>> genpd 000000007ce2da53 genpd_link 0000000000000000
->>>>
->>>> this is the corollary of the bug
->>>>
->>>> can you provide the output of the attached please ?
->>> [   50.787730] qcom-camss 1b00020.camss: vfe_get/806 vfe 1 power_count 0
->>> [   50.794888] qcom-camss 1b00020.camss: vfe_get/811 vfe 1 power_count 0
->>> [   50.795040] qcom-camss 1b00020.camss: vfe_get/816 vfe 1 power_count 0
->>> [   50.795131] qcom-camss 1b00020.camss: vfe_get/822 vfe 1 power_count 0
->>> [   50.795172] qcom-camss 1b00020.camss: vfe_get/827 vfe 1 power_count 0
->>> [   50.795180] qcom-camss 1b00020.camss: vfe_get/830 vfe 1 power_count 0
->>> [   50.795188] qcom-camss 1b00020.camss: vfe_get/841 vfe 1 power_count 1
->>> [   50.795413] qcom-camss 1b00020.camss: vfe_put/868 vfe 1 power_count 1
->>> [   50.795422] qcom-camss 1b00020.camss: vfe_put/874 vfe 1 power_count 1
->>> [   50.795429] qcom-camss 1b00020.camss: vfe_put/882 vfe 1 power_count 1
->>> [   50.795468] qcom-camss 1b00020.camss: vfe_put/884 vfe 1 power_count 1
->>> [   50.799936] qcom-camss 1b00020.camss: vfe_put/886 vfe 1 power_count 1
->>> [   50.800247] qcom-camss 1b00020.camss: vfe_put/888 vfe 1 power_count 1
->>> [   50.800257] qcom-camss 1b00020.camss: vfe_put/891 vfe 1 power_count 1
->>> [   50.800263] qcom-camss 1b00020.camss: vfe_put/893 vfe 1 power_count 0
->>> [   51.086159] qcom-camss 1b00020.camss: vfe_get/801 vfe 0 power_count 0
->>> [   51.088158] qcom-camss 1b00020.camss: vfe_get/806 vfe 0 power_count 0
->>> [   51.092782] qcom-camss 1b00020.camss: vfe_get/811 vfe 0 power_count 0
->>> [   51.092872] qcom-camss 1b00020.camss: vfe_get/816 vfe 0 power_count 0
->>> [   51.092945] qcom-camss 1b00020.camss: vfe_get/822 vfe 0 power_count 0
->>> [   51.092980] qcom-camss 1b00020.camss: vfe_get/827 vfe 0 power_count 0
->>> [   51.092987] qcom-camss 1b00020.camss: vfe_get/830 vfe 0 power_count 0
->>> [   51.092994] qcom-camss 1b00020.camss: vfe_get/841 vfe 0 power_count 1
->>> [   51.117104] qcom-camss 1b00020.camss: vfe_get/841 vfe 0 power_count 2
->>> [   52.181802] qcom-camss 1b00020.camss: vfe_put/868 vfe 0 power_count 2
->>> [   52.181828] qcom-camss 1b00020.camss: vfe_put/891 vfe 0 power_count 2
->>> [   52.181834] qcom-camss 1b00020.camss: vfe_put/893 vfe 0 power_count 1
->>> [   52.189017] qcom-camss 1b00020.camss: vfe_get/841 vfe 0 power_count 2
->>> [   64.920259] qcom-camss 1b00020.camss: vfe_get/841 vfe 0 power_count 3
->>> [   64.920337] qcom-camss 1b00020.camss: vfe_get/841 vfe 0 power_count 4
->>> [   64.920368] qcom-camss 1b00020.camss: vfe_get/801 vfe 1 power_count 0
->>> [   64.920656] qcom-camss 1b00020.camss: vfe_get/806 vfe 1 power_count 0
->>> [   64.920667] qcom-camss 1b00020.camss: vfe_get/811 vfe 1 power_count 0
->>> [   64.920706] qcom-camss 1b00020.camss: vfe_get/816 vfe 1 power_count 0
->>> [   64.920734] qcom-camss 1b00020.camss: vfe_get/822 vfe 1 power_count 0
->>> [   64.920868] qcom-camss 1b00020.camss: vfe_get/827 vfe 1 power_count 0
->>> [   64.920877] qcom-camss 1b00020.camss: vfe_get/830 vfe 1 power_count 0
->>> [   64.920886] qcom-camss 1b00020.camss: vfe_get/841 vfe 1 power_count 1
->>> [   64.920963] qcom-camss 1b00020.camss: vfe_get/841 vfe 1 power_count 2
->>> [   64.921008] qcom-camss 1b00020.camss: vfe_get/841 vfe 1 power_count 3
->>> [   64.921871] qcom-camss 1b00020.camss: vfe_put/868 vfe 0 power_count 4
->>> [   64.921896] qcom-camss 1b00020.camss: vfe_put/891 vfe 0 power_count 4
->>> [   64.921904] qcom-camss 1b00020.camss: vfe_put/893 vfe 0 power_count 3
->>> [   64.927278] qcom-camss 1b00020.camss: vfe_get/841 vfe 0 power_count 4
->>> [   65.096857] qcom-camss 1b00020.camss: vfe_put/868 vfe 1 power_count 3
->>> [   65.096883] qcom-camss 1b00020.camss: vfe_put/891 vfe 1 power_count 3
->>> [   65.096889] qcom-camss 1b00020.camss: vfe_put/893 vfe 1 power_count 2
->>> [   65.096903] qcom-camss 1b00020.camss: vfe_put/868 vfe 1 power_count 2
->>> [   65.096908] qcom-camss 1b00020.camss: vfe_put/891 vfe 1 power_count 2
->>> [   65.096914] qcom-camss 1b00020.camss: vfe_put/893 vfe 1 power_count 1
->>> [   65.096927] qcom-camss 1b00020.camss: vfe_put/868 vfe 1 power_count 1
->>> [   65.096933] qcom-camss 1b00020.camss: vfe_put/874 vfe 1 power_count 1
->>> [   65.096938] qcom-camss 1b00020.camss: vfe_put/882 vfe 1 power_count 1
->>> [   65.096958] qcom-camss 1b00020.camss: vfe_put/884 vfe 1 power_count 1
->>> [   65.096964] qcom-camss 1b00020.camss: vfe_put/886 vfe 1 power_count 1
->>
->> Ah could you supply this output along with the output from the previous ?
-> [   55.993565] qcom-camss 1b00020.camss: vfe_pm_domain_on VFE 0 genpd 
-> 0000000003dcc927 genpd_link 00000000b216e0c0
-> [   55.993886] qcom-camss 1b00020.camss: vfe_pm_domain_on VFE 1 genpd 
-> 0000000012d2fc9c genpd_link 00000000e1d78ab3
-> [   55.993956] qcom-camss 1b00020.camss: vfe_pm_domain_off VFE 0 genpd 
-> 0000000003dcc927 genpd_link 00000000b216e0c0
-> [   55.993966] qcom-camss 1b00020.camss: vfe_pm_domain_off VFE 1 genpd 
-> 0000000012d2fc9c genpd_link 00000000e1d78ab3
-> [   95.804026] qcom-camss 1b00020.camss: vfe_get vfe 0 power_count 2
-> [   95.804092] qcom-camss 1b00020.camss: vfe_get/845 vfe 0 power_count 3
-> [   95.804104] qcom-camss 1b00020.camss: vfe_get vfe 0 err=0
-> [   95.804138] qcom-camss 1b00020.camss: vfe_get vfe 0 power_count 3
-> [   95.804158] qcom-camss 1b00020.camss: vfe_get/845 vfe 0 power_count 4
-> [   95.804169] qcom-camss 1b00020.camss: vfe_get vfe 0 err=0
-> [   95.804203] qcom-camss 1b00020.camss: vfe_get vfe 1 power_count 0
-> [   95.804214] qcom-camss 1b00020.camss: vfe_get/805 vfe 1 power_count 0
-> [   95.804526] qcom-camss 1b00020.camss: vfe_pm_domain_on VFE 1 genpd 
-> 0000000012d2fc9c genpd_link 00000000cf5c896a
-> [   95.804543] qcom-camss 1b00020.camss: vfe_get/810 vfe 1 power_count 0
-> [   95.804555] qcom-camss 1b00020.camss: vfe_get/815 vfe 1 power_count 0
-> [   95.804593] qcom-camss 1b00020.camss: vfe_get/820 vfe 1 power_count 0
-> [   95.804629] qcom-camss 1b00020.camss: vfe_get/826 vfe 1 power_count 0
-> [   95.804951] qcom-camss 1b00020.camss: vfe_get/831 vfe 1 power_count 0
-> [   95.804964] qcom-camss 1b00020.camss: vfe_get/834 vfe 1 power_count 0
-> [   95.804976] qcom-camss 1b00020.camss: vfe_get/845 vfe 1 power_count 1
-> [   95.804987] qcom-camss 1b00020.camss: vfe_get vfe 1 err=0
-> [   95.805028] qcom-camss 1b00020.camss: vfe_get vfe 1 power_count 1
-> [   95.805048] qcom-camss 1b00020.camss: vfe_get/845 vfe 1 power_count 2
-> [   95.805058] qcom-camss 1b00020.camss: vfe_get vfe 1 err=0
-> [   95.805094] qcom-camss 1b00020.camss: vfe_get vfe 1 power_count 2
-> [   95.805113] qcom-camss 1b00020.camss: vfe_get/845 vfe 1 power_count 3
-> [   95.805123] qcom-camss 1b00020.camss: vfe_get vfe 1 err=0
-> [   95.806117] qcom-camss 1b00020.camss: vfe_put/873 vfe 0 power_count 4
-> [   95.806131] qcom-camss 1b00020.camss: vfe_put/894 vfe 0 power_count 4
-> [   95.806142] qcom-camss 1b00020.camss: vfe_put/896 vfe 0 power_count 3
-> [   95.814108] qcom-camss 1b00020.camss: vfe_get vfe 0 power_count 3
-> [   95.814134] qcom-camss 1b00020.camss: vfe_get/845 vfe 0 power_count 4
-> [   95.814143] qcom-camss 1b00020.camss: vfe_get vfe 0 err=0
-> [   95.814886] qcom-camss 1b00020.camss: vfe_pm_domain_on VFE 0 genpd 
-> 0000000003dcc927 genpd_link 00000000b216e0c0
-> [   95.814910] qcom-camss 1b00020.camss: vfe_pm_domain_on VFE 1 genpd 
-> 0000000012d2fc9c genpd_link 00000000cf5c896a
-> [   95.815176] qcom-camss 1b00020.camss: vfe_pm_domain_off VFE 0 genpd 
-> 0000000003dcc927 genpd_link 00000000b216e0c0
-> [   95.815190] qcom-camss 1b00020.camss: vfe_pm_domain_off VFE 1 genpd 
-> 0000000012d2fc9c genpd_link 00000000cf5c896a
-> [   96.025733] qcom-camss 1b00020.camss: vfe_put/873 vfe 1 power_count 3
-> [   96.025756] qcom-camss 1b00020.camss: vfe_put/894 vfe 1 power_count 3
-> [   96.025762] qcom-camss 1b00020.camss: vfe_put/896 vfe 1 power_count 2
-> [   96.025775] qcom-camss 1b00020.camss: vfe_put/873 vfe 1 power_count 2
-> [   96.025790] qcom-camss 1b00020.camss: vfe_put/894 vfe 1 power_count 2
-> [   96.025806] qcom-camss 1b00020.camss: vfe_put/896 vfe 1 power_count 1
-> [   96.025839] qcom-camss 1b00020.camss: vfe_put/873 vfe 1 power_count 1
-> [   96.025856] qcom-camss 1b00020.camss: vfe_put/879 vfe 1 power_count 1
-> [   96.025907] qcom-camss 1b00020.camss: vfe_put/886 vfe 1 power_count 1
-> [   96.025952] qcom-camss 1b00020.camss: vfe_put/888 vfe 1 power_count 1
-> [   96.025972] qcom-camss 1b00020.camss: vfe_pm_domain_off VFE 1 genpd 
-> 0000000012d2fc9c genpd_link 0000000000000000
->>
->> I'm thinking we are calling get() from inside of get().
->>
->> ---
->> bod
+From: Heiko Stuebner <heiko.stuebner@cherry.de>
 
-Pardon me and once more - your full demsg this time.
+Add a Synopsys Designware MIPI DSI host DRM bridge driver for their
+DSI2 host controller, based on the Rockchip version from the driver
+rockchip/dw-mipi-dsi2.c in their vendor-kernel with phy & bridge APIs.
 
+While the driver is heavily modelled after the previous IP, the register
+set of this DSI2 controller is completely different and there are also
+additional properties like the variable-width phy interface.
 
---------------a0xltVuvLhEkCIBL8XCdaP1F
-Content-Type: text/x-patch; charset=UTF-8; name="debug.diff"
-Content-Disposition: attachment; filename="debug.diff"
-Content-Transfer-Encoding: base64
+Tested-by: Daniel Semkowicz <dse@thaumatec.com>
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+Signed-off-by: Heiko Stuebner <heiko.stuebner@cherry.de>
+---
+ drivers/gpu/drm/bridge/synopsys/Kconfig       |    6 +
+ drivers/gpu/drm/bridge/synopsys/Makefile      |    1 +
+ .../gpu/drm/bridge/synopsys/dw-mipi-dsi2.c    | 1030 +++++++++++++++++
+ include/drm/bridge/dw_mipi_dsi2.h             |   95 ++
+ 4 files changed, 1132 insertions(+)
+ create mode 100644 drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi2.c
+ create mode 100644 include/drm/bridge/dw_mipi_dsi2.h
 
-ZGlmZiAtLWdpdCBhL2RyaXZlcnMvbWVkaWEvcGxhdGZvcm0vcWNvbS9jYW1zcy9jYW1zcy12
-ZmUuYyBiL2RyaXZlcnMvbWVkaWEvcGxhdGZvcm0vcWNvbS9jYW1zcy9jYW1zcy12ZmUuYwpp
-bmRleCA4MGE2MmJhMTEyOTUwLi5mYTVkYTA1ZDAyY2YxIDEwMDY0NAotLS0gYS9kcml2ZXJz
-L21lZGlhL3BsYXRmb3JtL3Fjb20vY2Ftc3MvY2Ftc3MtdmZlLmMKKysrIGIvZHJpdmVycy9t
-ZWRpYS9wbGF0Zm9ybS9xY29tL2NhbXNzL2NhbXNzLXZmZS5jCkBAIC01OTUsOSArNTk1LDEy
-IEBAIHZvaWQgdmZlX2lzcl9yZXNldF9hY2soc3RydWN0IHZmZV9kZXZpY2UgKnZmZSkKICAq
-Lwogdm9pZCB2ZmVfcG1fZG9tYWluX29mZihzdHJ1Y3QgdmZlX2RldmljZSAqdmZlKQogewor
-CVdBUk4oMSwgIm9mZiIpOworZGV2X2luZm8odmZlLT5jYW1zcy0+ZGV2LCAiJXMvJWQgdmZl
-ICVkIHZmZS0+Z2VucGQgJXBLIGdlbnBkX2xpbmsgJXBLIHBvd2VyLWNvdW50ICVkXG4iLCBf
-X2Z1bmNfXywgX19MSU5FX18sIHZmZS0+aWQsIHZmZS0+Z2VucGQsIHZmZS0+Z2VucGRfbGlu
-aywgdmZlLT5wb3dlcl9jb3VudCk7CiAJaWYgKCF2ZmUtPmdlbnBkKQogCQlyZXR1cm47CiAK
-K2Rldl9pbmZvKHZmZS0+Y2Ftc3MtPmRldiwgIiVzLyVkIHZmZSAlZCB2ZmUtPmdlbnBkICVw
-SyBnZW5wZF9saW5rICVwSyBwb3dlci1jb3VudCAlZFxuIiwgX19mdW5jX18sIF9fTElORV9f
-LCB2ZmUtPmlkLCB2ZmUtPmdlbnBkLCB2ZmUtPmdlbnBkX2xpbmssIHZmZS0+cG93ZXJfY291
-bnQpOwogCWRldmljZV9saW5rX2RlbCh2ZmUtPmdlbnBkX2xpbmspOwogCXZmZS0+Z2VucGRf
-bGluayA9IE5VTEw7CiB9CkBAIC02MDksMTQgKzYxMiwxNyBAQCB2b2lkIHZmZV9wbV9kb21h
-aW5fb2ZmKHN0cnVjdCB2ZmVfZGV2aWNlICp2ZmUpCiBpbnQgdmZlX3BtX2RvbWFpbl9vbihz
-dHJ1Y3QgdmZlX2RldmljZSAqdmZlKQogewogCXN0cnVjdCBjYW1zcyAqY2Ftc3MgPSB2ZmUt
-PmNhbXNzOwotCisJV0FSTigxLCAib24iKTsKK2Rldl9pbmZvKHZmZS0+Y2Ftc3MtPmRldiwg
-IiVzLyVkIHZmZSAlZCB2ZmUtPmdlbnBkICVwSyBnZW5wZF9saW5rICVwSyBwb3dlci1jb3Vu
-dCAlZFxuIiwgX19mdW5jX18sIF9fTElORV9fLCB2ZmUtPmlkLCB2ZmUtPmdlbnBkLCB2ZmUt
-PmdlbnBkX2xpbmssIHZmZS0+cG93ZXJfY291bnQpOwogCWlmICghdmZlLT5nZW5wZCkKIAkJ
-cmV0dXJuIDA7CiAKK2Rldl9pbmZvKHZmZS0+Y2Ftc3MtPmRldiwgIiVzLyVkIHZmZSAlZCB2
-ZmUtPmdlbnBkICVwSyBnZW5wZF9saW5rICVwSyBwb3dlci1jb3VudCAlZFxuIiwgX19mdW5j
-X18sIF9fTElORV9fLCB2ZmUtPmlkLCB2ZmUtPmdlbnBkLCB2ZmUtPmdlbnBkX2xpbmssIHZm
-ZS0+cG93ZXJfY291bnQpOwogCXZmZS0+Z2VucGRfbGluayA9IGRldmljZV9saW5rX2FkZChj
-YW1zcy0+ZGV2LCB2ZmUtPmdlbnBkLAogCQkJCQkgIERMX0ZMQUdfU1RBVEVMRVNTIHwKIAkJ
-CQkJICBETF9GTEFHX1BNX1JVTlRJTUUgfAogCQkJCQkgIERMX0ZMQUdfUlBNX0FDVElWRSk7
-CitkZXZfaW5mbyh2ZmUtPmNhbXNzLT5kZXYsICIlcy8lZCB2ZmUgJWQgdmZlLT5nZW5wZCAl
-cEsgZ2VucGRfbGluayAlcEsgcG93ZXItY291bnQgJWRcbiIsIF9fZnVuY19fLCBfX0xJTkVf
-XywgdmZlLT5pZCwgdmZlLT5nZW5wZCwgdmZlLT5nZW5wZF9saW5rLCB2ZmUtPnBvd2VyX2Nv
-dW50KTsKIAlpZiAoIXZmZS0+Z2VucGRfbGluaykKIAkJcmV0dXJuIC1FSU5WQUw7CiAKQEAg
-LTc3NCw2ICs3ODAsNyBAQCBzdGF0aWMgaW50IHZmZV9jaGVja19jbG9ja19yYXRlcyhzdHJ1
-Y3QgdmZlX2RldmljZSAqdmZlKQogCiAJcmV0dXJuIDA7CiB9CisjZGVmaW5lIHZmZV9idWdf
-dHJhY2UodmZlKSBkZXZfaW5mbyh2ZmUtPmNhbXNzLT5kZXYsICIlcy8lZCB2ZmUgJWQgcG93
-ZXJfY291bnQgJWRcbiIsIF9fZnVuY19fLCBfX0xJTkVfXywgdmZlLT5pZCwgdmZlLT5wb3dl
-cl9jb3VudCk7CiAKIC8qCiAgKiB2ZmVfZ2V0IC0gUG93ZXIgdXAgYW5kIHJlc2V0IFZGRSBt
-b2R1bGUKQEAgLTc4NiwzMSArNzkzLDM3IEBAIGludCB2ZmVfZ2V0KHN0cnVjdCB2ZmVfZGV2
-aWNlICp2ZmUpCiAJaW50IHJldDsKIAogCW11dGV4X2xvY2soJnZmZS0+cG93ZXJfbG9jayk7
-Ci0KIAlpZiAodmZlLT5wb3dlcl9jb3VudCA9PSAwKSB7CisJCXZmZV9idWdfdHJhY2UodmZl
-KTsKIAkJcmV0ID0gdmZlLT5yZXMtPmh3X29wcy0+cG1fZG9tYWluX29uKHZmZSk7CiAJCWlm
-IChyZXQgPCAwKQogCQkJZ290byBlcnJvcl9wbV9kb21haW47CiAKKwkJdmZlX2J1Z190cmFj
-ZSh2ZmUpOwogCQlyZXQgPSBwbV9ydW50aW1lX3Jlc3VtZV9hbmRfZ2V0KHZmZS0+Y2Ftc3Mt
-PmRldik7CiAJCWlmIChyZXQgPCAwKQogCQkJZ290byBlcnJvcl9kb21haW5fb2ZmOwogCisJ
-CXZmZV9idWdfdHJhY2UodmZlKTsKIAkJcmV0ID0gdmZlX3NldF9jbG9ja19yYXRlcyh2ZmUp
-OwogCQlpZiAocmV0IDwgMCkKIAkJCWdvdG8gZXJyb3JfcG1fcnVudGltZV9nZXQ7CiAKKwkJ
-dmZlX2J1Z190cmFjZSh2ZmUpOwogCQlyZXQgPSBjYW1zc19lbmFibGVfY2xvY2tzKHZmZS0+
-bmNsb2NrcywgdmZlLT5jbG9jaywKIAkJCQkJICB2ZmUtPmNhbXNzLT5kZXYpOwogCQlpZiAo
-cmV0IDwgMCkKIAkJCWdvdG8gZXJyb3JfcG1fcnVudGltZV9nZXQ7CiAKKwkJdmZlX2J1Z190
-cmFjZSh2ZmUpOwogCQlyZXQgPSB2ZmVfcmVzZXQodmZlKTsKIAkJaWYgKHJldCA8IDApCiAJ
-CQlnb3RvIGVycm9yX3Jlc2V0OwogCisJCXZmZV9idWdfdHJhY2UodmZlKTsKIAkJdmZlX3Jl
-c2V0X291dHB1dF9tYXBzKHZmZSk7CiAKKwkJdmZlX2J1Z190cmFjZSh2ZmUpOwogCQl2ZmVf
-aW5pdF9vdXRwdXRzKHZmZSk7CiAKIAkJdmZlLT5yZXMtPmh3X29wcy0+aHdfdmVyc2lvbih2
-ZmUpOwpAQCAtODIxLDYgKzgzNCw3IEBAIGludCB2ZmVfZ2V0KHN0cnVjdCB2ZmVfZGV2aWNl
-ICp2ZmUpCiAJfQogCXZmZS0+cG93ZXJfY291bnQrKzsKIAorCXZmZV9idWdfdHJhY2UodmZl
-KTsKIAltdXRleF91bmxvY2soJnZmZS0+cG93ZXJfbG9jayk7CiAKIAlyZXR1cm4gMDsKQEAg
-LTgzNSw3ICs4NDksNyBAQCBpbnQgdmZlX2dldChzdHJ1Y3QgdmZlX2RldmljZSAqdmZlKQog
-CiBlcnJvcl9wbV9kb21haW46CiAJbXV0ZXhfdW5sb2NrKCZ2ZmUtPnBvd2VyX2xvY2spOwot
-CitkZXZfaW5mbyh2ZmUtPmNhbXNzLT5kZXYsICIlcyB2ZmUgJWQgZXJyPSVkXG4iLCBfX2Z1
-bmNfXywgdmZlLT5pZCwgcmV0KTsKIAlyZXR1cm4gcmV0OwogfQogCkBAIC04NDcsMjAgKzg2
-MSwzMiBAQCB2b2lkIHZmZV9wdXQoc3RydWN0IHZmZV9kZXZpY2UgKnZmZSkKIHsKIAltdXRl
-eF9sb2NrKCZ2ZmUtPnBvd2VyX2xvY2spOwogCisJdmZlX2J1Z190cmFjZSh2ZmUpOwogCWlm
-ICh2ZmUtPnBvd2VyX2NvdW50ID09IDApIHsKKwkJdmZlX2J1Z190cmFjZSh2ZmUpOwogCQlk
-ZXZfZXJyKHZmZS0+Y2Ftc3MtPmRldiwgInZmZSBwb3dlciBvZmYgb24gcG93ZXJfY291bnQg
-PT0gMFxuIik7CiAJCWdvdG8gZXhpdDsKIAl9IGVsc2UgaWYgKHZmZS0+cG93ZXJfY291bnQg
-PT0gMSkgeworCQl2ZmVfYnVnX3RyYWNlKHZmZSk7CiAJCWlmICh2ZmUtPndhc19zdHJlYW1p
-bmcpIHsKKwkJCXZmZV9idWdfdHJhY2UodmZlKTsKIAkJCXZmZS0+d2FzX3N0cmVhbWluZyA9
-IDA7CisJCQl2ZmVfYnVnX3RyYWNlKHZmZSk7CiAJCQl2ZmUtPnJlcy0+aHdfb3BzLT52ZmVf
-aGFsdCh2ZmUpOworCQkJdmZlX2J1Z190cmFjZSh2ZmUpOwogCQl9CisJCXZmZV9idWdfdHJh
-Y2UodmZlKTsKIAkJY2Ftc3NfZGlzYWJsZV9jbG9ja3ModmZlLT5uY2xvY2tzLCB2ZmUtPmNs
-b2NrKTsKKwkJdmZlX2J1Z190cmFjZSh2ZmUpOwogCQlwbV9ydW50aW1lX3B1dF9zeW5jKHZm
-ZS0+Y2Ftc3MtPmRldik7CisJCXZmZV9idWdfdHJhY2UodmZlKTsKIAkJdmZlLT5yZXMtPmh3
-X29wcy0+cG1fZG9tYWluX29mZih2ZmUpOworCQl2ZmVfYnVnX3RyYWNlKHZmZSk7CiAJfQog
-CisJdmZlX2J1Z190cmFjZSh2ZmUpOwogCXZmZS0+cG93ZXJfY291bnQtLTsKKwl2ZmVfYnVn
-X3RyYWNlKHZmZSk7CiAKIGV4aXQ6CiAJbXV0ZXhfdW5sb2NrKCZ2ZmUtPnBvd2VyX2xvY2sp
-Owo=
+diff --git a/drivers/gpu/drm/bridge/synopsys/Kconfig b/drivers/gpu/drm/bridge/synopsys/Kconfig
+index ca416dab156d..f3ab2f985f8c 100644
+--- a/drivers/gpu/drm/bridge/synopsys/Kconfig
++++ b/drivers/gpu/drm/bridge/synopsys/Kconfig
+@@ -59,3 +59,9 @@ config DRM_DW_MIPI_DSI
+ 	select DRM_KMS_HELPER
+ 	select DRM_MIPI_DSI
+ 	select DRM_PANEL_BRIDGE
++
++config DRM_DW_MIPI_DSI2
++	tristate
++	select DRM_KMS_HELPER
++	select DRM_MIPI_DSI
++	select DRM_PANEL_BRIDGE
+diff --git a/drivers/gpu/drm/bridge/synopsys/Makefile b/drivers/gpu/drm/bridge/synopsys/Makefile
+index 9869d9651ed1..9dc376d220ad 100644
+--- a/drivers/gpu/drm/bridge/synopsys/Makefile
++++ b/drivers/gpu/drm/bridge/synopsys/Makefile
+@@ -8,3 +8,4 @@ obj-$(CONFIG_DRM_DW_HDMI_CEC) += dw-hdmi-cec.o
+ obj-$(CONFIG_DRM_DW_HDMI_QP) += dw-hdmi-qp.o
+ 
+ obj-$(CONFIG_DRM_DW_MIPI_DSI) += dw-mipi-dsi.o
++obj-$(CONFIG_DRM_DW_MIPI_DSI2) += dw-mipi-dsi2.o
+diff --git a/drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi2.c b/drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi2.c
+new file mode 100644
+index 000000000000..e143a083f423
+--- /dev/null
++++ b/drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi2.c
+@@ -0,0 +1,1030 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * Copyright (c) 2024, Fuzhou Rockchip Electronics Co., Ltd
++ *
++ * Modified by Heiko Stuebner <heiko.stuebner@cherry.de>
++ * This generic Synopsys DesignWare MIPI DSI2 host driver is based on the
++ * Rockchip version from rockchip/dw-mipi-dsi2.c converted to use bridge APIs.
++ */
++
++#include <linux/bitfield.h>
++#include <linux/clk.h>
++#include <linux/iopoll.h>
++#include <linux/media-bus-format.h>
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/pm_runtime.h>
++#include <linux/reset.h>
++
++#include <video/mipi_display.h>
++
++#include <drm/bridge/dw_mipi_dsi2.h>
++#include <drm/drm_atomic_helper.h>
++#include <drm/drm_bridge.h>
++#include <drm/drm_mipi_dsi.h>
++#include <drm/drm_of.h>
++#include <drm/drm_print.h>
++
++#define DSI2_PWR_UP			0x000c
++#define RESET				0
++#define POWER_UP			BIT(0)
++#define CMD_TX_MODE(x)			FIELD_PREP(BIT(24), x)
++#define DSI2_SOFT_RESET			0x0010
++#define SYS_RSTN			BIT(2)
++#define PHY_RSTN			BIT(1)
++#define IPI_RSTN			BIT(0)
++#define INT_ST_MAIN			0x0014
++#define DSI2_MODE_CTRL			0x0018
++#define DSI2_MODE_STATUS		0x001c
++#define DSI2_CORE_STATUS		0x0020
++#define PRI_RD_DATA_AVAIL		BIT(26)
++#define PRI_FIFOS_NOT_EMPTY		BIT(25)
++#define PRI_BUSY			BIT(24)
++#define CRI_RD_DATA_AVAIL		BIT(18)
++#define CRT_FIFOS_NOT_EMPTY		BIT(17)
++#define CRI_BUSY			BIT(16)
++#define IPI_FIFOS_NOT_EMPTY		BIT(9)
++#define IPI_BUSY			BIT(8)
++#define CORE_FIFOS_NOT_EMPTY		BIT(1)
++#define CORE_BUSY			BIT(0)
++#define MANUAL_MODE_CFG			0x0024
++#define MANUAL_MODE_EN			BIT(0)
++#define DSI2_TIMEOUT_HSTX_CFG		0x0048
++#define TO_HSTX(x)			FIELD_PREP(GENMASK(15, 0), x)
++#define DSI2_TIMEOUT_HSTXRDY_CFG	0x004c
++#define TO_HSTXRDY(x)			FIELD_PREP(GENMASK(15, 0), x)
++#define DSI2_TIMEOUT_LPRX_CFG		0x0050
++#define TO_LPRXRDY(x)			FIELD_PREP(GENMASK(15, 0), x)
++#define DSI2_TIMEOUT_LPTXRDY_CFG	0x0054
++#define TO_LPTXRDY(x)			FIELD_PREP(GENMASK(15, 0), x)
++#define DSI2_TIMEOUT_LPTXTRIG_CFG	0x0058
++#define TO_LPTXTRIG(x)			FIELD_PREP(GENMASK(15, 0), x)
++#define DSI2_TIMEOUT_LPTXULPS_CFG	0x005c
++#define TO_LPTXULPS(x)			FIELD_PREP(GENMASK(15, 0), x)
++#define DSI2_TIMEOUT_BTA_CFG		0x60
++#define TO_BTA(x)			FIELD_PREP(GENMASK(15, 0), x)
++
++#define DSI2_PHY_MODE_CFG		0x0100
++#define PPI_WIDTH(x)			FIELD_PREP(GENMASK(9, 8), x)
++#define PHY_LANES(x)			FIELD_PREP(GENMASK(5, 4), (x) - 1)
++#define PHY_TYPE(x)			FIELD_PREP(BIT(0), x)
++#define DSI2_PHY_CLK_CFG		0X0104
++#define PHY_LPTX_CLK_DIV(x)		FIELD_PREP(GENMASK(12, 8), x)
++#define CLK_TYPE_MASK			BIT(0)
++#define NON_CONTINUOUS_CLK		BIT(0)
++#define CONTINUOUS_CLK			0
++#define DSI2_PHY_LP2HS_MAN_CFG		0x010c
++#define PHY_LP2HS_TIME(x)		FIELD_PREP(GENMASK(28, 0), x)
++#define DSI2_PHY_HS2LP_MAN_CFG		0x0114
++#define PHY_HS2LP_TIME(x)		FIELD_PREP(GENMASK(28, 0), x)
++#define DSI2_PHY_MAX_RD_T_MAN_CFG	0x011c
++#define PHY_MAX_RD_TIME(x)		FIELD_PREP(GENMASK(26, 0), x)
++#define DSI2_PHY_ESC_CMD_T_MAN_CFG	0x0124
++#define PHY_ESC_CMD_TIME(x)		FIELD_PREP(GENMASK(28, 0), x)
++#define DSI2_PHY_ESC_BYTE_T_MAN_CFG	0x012c
++#define PHY_ESC_BYTE_TIME(x)		FIELD_PREP(GENMASK(28, 0), x)
++
++#define DSI2_PHY_IPI_RATIO_MAN_CFG	0x0134
++#define PHY_IPI_RATIO(x)		FIELD_PREP(GENMASK(21, 0), x)
++#define DSI2_PHY_SYS_RATIO_MAN_CFG	0x013C
++#define PHY_SYS_RATIO(x)		FIELD_PREP(GENMASK(16, 0), x)
++
++#define DSI2_DSI_GENERAL_CFG		0x0200
++#define BTA_EN				BIT(1)
++#define EOTP_TX_EN			BIT(0)
++#define DSI2_DSI_VCID_CFG		0x0204
++#define TX_VCID(x)			FIELD_PREP(GENMASK(1, 0), x)
++#define DSI2_DSI_SCRAMBLING_CFG		0x0208
++#define SCRAMBLING_SEED(x)		FIELD_PREP(GENMASK(31, 16), x)
++#define SCRAMBLING_EN			BIT(0)
++#define DSI2_DSI_VID_TX_CFG		0x020c
++#define LPDT_DISPLAY_CMD_EN		BIT(20)
++#define BLK_VFP_HS_EN			BIT(14)
++#define BLK_VBP_HS_EN			BIT(13)
++#define BLK_VSA_HS_EN			BIT(12)
++#define BLK_HFP_HS_EN			BIT(6)
++#define BLK_HBP_HS_EN			BIT(5)
++#define BLK_HSA_HS_EN			BIT(4)
++#define VID_MODE_TYPE(x)		FIELD_PREP(GENMASK(1, 0), x)
++#define DSI2_CRI_TX_HDR			0x02c0
++#define CMD_TX_MODE(x)			FIELD_PREP(BIT(24), x)
++#define DSI2_CRI_TX_PLD			0x02c4
++#define DSI2_CRI_RX_HDR			0x02c8
++#define DSI2_CRI_RX_PLD			0x02cc
++
++#define DSI2_IPI_COLOR_MAN_CFG		0x0300
++#define IPI_DEPTH(x)			FIELD_PREP(GENMASK(7, 4), x)
++#define IPI_DEPTH_5_6_5_BITS		0x02
++#define IPI_DEPTH_6_BITS		0x03
++#define IPI_DEPTH_8_BITS		0x05
++#define IPI_DEPTH_10_BITS		0x06
++#define IPI_FORMAT(x)			FIELD_PREP(GENMASK(3, 0), x)
++#define IPI_FORMAT_RGB			0x0
++#define IPI_FORMAT_DSC			0x0b
++#define DSI2_IPI_VID_HSA_MAN_CFG	0x0304
++#define VID_HSA_TIME(x)			FIELD_PREP(GENMASK(29, 0), x)
++#define DSI2_IPI_VID_HBP_MAN_CFG	0x030c
++#define VID_HBP_TIME(x)			FIELD_PREP(GENMASK(29, 0), x)
++#define DSI2_IPI_VID_HACT_MAN_CFG	0x0314
++#define VID_HACT_TIME(x)		FIELD_PREP(GENMASK(29, 0), x)
++#define DSI2_IPI_VID_HLINE_MAN_CFG	0x031c
++#define VID_HLINE_TIME(x)		FIELD_PREP(GENMASK(29, 0), x)
++#define DSI2_IPI_VID_VSA_MAN_CFG	0x0324
++#define VID_VSA_LINES(x)		FIELD_PREP(GENMASK(9, 0), x)
++#define DSI2_IPI_VID_VBP_MAN_CFG	0X032C
++#define VID_VBP_LINES(x)		FIELD_PREP(GENMASK(9, 0), x)
++#define DSI2_IPI_VID_VACT_MAN_CFG	0X0334
++#define VID_VACT_LINES(x)		FIELD_PREP(GENMASK(13, 0), x)
++#define DSI2_IPI_VID_VFP_MAN_CFG	0X033C
++#define VID_VFP_LINES(x)		FIELD_PREP(GENMASK(9, 0), x)
++#define DSI2_IPI_PIX_PKT_CFG		0x0344
++#define MAX_PIX_PKT(x)			FIELD_PREP(GENMASK(15, 0), x)
++
++#define DSI2_INT_ST_PHY			0x0400
++#define DSI2_INT_MASK_PHY		0x0404
++#define DSI2_INT_ST_TO			0x0410
++#define DSI2_INT_MASK_TO		0x0414
++#define DSI2_INT_ST_ACK			0x0420
++#define DSI2_INT_MASK_ACK		0x0424
++#define DSI2_INT_ST_IPI			0x0430
++#define DSI2_INT_MASK_IPI		0x0434
++#define DSI2_INT_ST_FIFO		0x0440
++#define DSI2_INT_MASK_FIFO		0x0444
++#define DSI2_INT_ST_PRI			0x0450
++#define DSI2_INT_MASK_PRI		0x0454
++#define DSI2_INT_ST_CRI			0x0460
++#define DSI2_INT_MASK_CRI		0x0464
++#define DSI2_INT_FORCE_CRI		0x0468
++#define DSI2_MAX_REGISGER		DSI2_INT_FORCE_CRI
++
++#define MODE_STATUS_TIMEOUT_US		10000
++#define CMD_PKT_STATUS_TIMEOUT_US	20000
++
++enum vid_mode_type {
++	VID_MODE_TYPE_NON_BURST_SYNC_PULSES,
++	VID_MODE_TYPE_NON_BURST_SYNC_EVENTS,
++	VID_MODE_TYPE_BURST,
++};
++
++enum mode_ctrl {
++	IDLE_MODE,
++	AUTOCALC_MODE,
++	COMMAND_MODE,
++	VIDEO_MODE,
++	DATA_STREAM_MODE,
++	VIDEO_TEST_MODE,
++	DATA_STREAM_TEST_MODE,
++};
++
++enum ppi_width {
++	PPI_WIDTH_8_BITS,
++	PPI_WIDTH_16_BITS,
++	PPI_WIDTH_32_BITS,
++};
++
++struct cmd_header {
++	u8 cmd_type;
++	u8 delay;
++	u8 payload_length;
++};
++
++struct dw_mipi_dsi2 {
++	struct drm_bridge bridge;
++	struct mipi_dsi_host dsi_host;
++	struct drm_bridge *panel_bridge;
++	struct device *dev;
++	struct regmap *regmap;
++	struct clk *pclk;
++	struct clk *sys_clk;
++
++	unsigned int lane_mbps; /* per lane */
++	u32 channel;
++	u32 lanes;
++	u32 format;
++	unsigned long mode_flags;
++
++	struct drm_display_mode mode;
++	const struct dw_mipi_dsi2_plat_data *plat_data;
++};
++
++static inline struct dw_mipi_dsi2 *host_to_dsi2(struct mipi_dsi_host *host)
++{
++	return container_of(host, struct dw_mipi_dsi2, dsi_host);
++}
++
++static inline struct dw_mipi_dsi2 *bridge_to_dsi2(struct drm_bridge *bridge)
++{
++	return container_of(bridge, struct dw_mipi_dsi2, bridge);
++}
++
++static int cri_fifos_wait_avail(struct dw_mipi_dsi2 *dsi2)
++{
++	u32 sts, mask;
++	int ret;
++
++	mask = CRI_BUSY | CRT_FIFOS_NOT_EMPTY;
++	ret = regmap_read_poll_timeout(dsi2->regmap, DSI2_CORE_STATUS, sts,
++				       !(sts & mask), 0, CMD_PKT_STATUS_TIMEOUT_US);
++	if (ret < 0) {
++		dev_err(dsi2->dev, "command interface is busy\n");
++		return ret;
++	}
++
++	return 0;
++}
++
++static void dw_mipi_dsi2_set_vid_mode(struct dw_mipi_dsi2 *dsi2)
++{
++	u32 val = 0, mode;
++	int ret;
++
++	if (dsi2->mode_flags & MIPI_DSI_MODE_VIDEO_NO_HFP)
++		val |= BLK_HFP_HS_EN;
++
++	if (dsi2->mode_flags & MIPI_DSI_MODE_VIDEO_NO_HBP)
++		val |= BLK_HBP_HS_EN;
++
++	if (dsi2->mode_flags & MIPI_DSI_MODE_VIDEO_NO_HSA)
++		val |= BLK_HSA_HS_EN;
++
++	if (dsi2->mode_flags & MIPI_DSI_MODE_VIDEO_BURST)
++		val |= VID_MODE_TYPE_BURST;
++	else if (dsi2->mode_flags & MIPI_DSI_MODE_VIDEO_SYNC_PULSE)
++		val |= VID_MODE_TYPE_NON_BURST_SYNC_PULSES;
++	else
++		val |= VID_MODE_TYPE_NON_BURST_SYNC_EVENTS;
++
++	regmap_write(dsi2->regmap, DSI2_DSI_VID_TX_CFG, val);
++
++	regmap_write(dsi2->regmap, DSI2_MODE_CTRL, VIDEO_MODE);
++	ret = regmap_read_poll_timeout(dsi2->regmap, DSI2_MODE_STATUS,
++				       mode, mode & VIDEO_MODE,
++				       1000, MODE_STATUS_TIMEOUT_US);
++	if (ret < 0)
++		dev_err(dsi2->dev, "failed to enter video mode\n");
++}
++
++static void dw_mipi_dsi2_set_data_stream_mode(struct dw_mipi_dsi2 *dsi2)
++{
++	u32 mode;
++	int ret;
++
++	regmap_write(dsi2->regmap, DSI2_MODE_CTRL, DATA_STREAM_MODE);
++	ret = regmap_read_poll_timeout(dsi2->regmap, DSI2_MODE_STATUS,
++				       mode, mode & DATA_STREAM_MODE,
++				       1000, MODE_STATUS_TIMEOUT_US);
++	if (ret < 0)
++		dev_err(dsi2->dev, "failed to enter data stream mode\n");
++}
++
++static void dw_mipi_dsi2_set_cmd_mode(struct dw_mipi_dsi2 *dsi2)
++{
++	u32 mode;
++	int ret;
++
++	regmap_write(dsi2->regmap, DSI2_MODE_CTRL, COMMAND_MODE);
++	ret = regmap_read_poll_timeout(dsi2->regmap, DSI2_MODE_STATUS,
++				       mode, mode & COMMAND_MODE,
++				       1000, MODE_STATUS_TIMEOUT_US);
++	if (ret < 0)
++		dev_err(dsi2->dev, "failed to enter data stream mode\n");
++}
++
++static void dw_mipi_dsi2_host_softrst(struct dw_mipi_dsi2 *dsi2)
++{
++	regmap_write(dsi2->regmap, DSI2_SOFT_RESET, 0x0);
++	usleep_range(50, 100);
++	regmap_write(dsi2->regmap, DSI2_SOFT_RESET,
++		   SYS_RSTN | PHY_RSTN | IPI_RSTN);
++}
++
++static void dw_mipi_dsi2_phy_clk_mode_cfg(struct dw_mipi_dsi2 *dsi2)
++{
++	u32 sys_clk, esc_clk_div;
++	u32 val = 0;
++
++	/*
++	 * clk_type should be NON_CONTINUOUS_CLK before
++	 * initial deskew calibration be sent.
++	 */
++	val |= NON_CONTINUOUS_CLK;
++
++	/* The maximum value of the escape clock frequency is 20MHz */
++	sys_clk = clk_get_rate(dsi2->sys_clk) / USEC_PER_SEC;
++	esc_clk_div = DIV_ROUND_UP(sys_clk, 20 * 2);
++	val |= PHY_LPTX_CLK_DIV(esc_clk_div);
++
++	regmap_write(dsi2->regmap, DSI2_PHY_CLK_CFG, val);
++}
++
++static void dw_mipi_dsi2_phy_ratio_cfg(struct dw_mipi_dsi2 *dsi2)
++{
++	struct drm_display_mode *mode = &dsi2->mode;
++	u64 sys_clk = clk_get_rate(dsi2->sys_clk);
++	u64 pixel_clk, ipi_clk, phy_hsclk;
++	u64 tmp;
++
++	/*
++	 * in DPHY mode, the phy_hstx_clk is exactly 1/16 the Lane high-speed
++	 * data rate; In CPHY mode, the phy_hstx_clk is exactly 1/7 the trio
++	 * high speed symbol rate.
++	 */
++	phy_hsclk = DIV_ROUND_CLOSEST_ULL(dsi2->lane_mbps * USEC_PER_SEC, 16);
++
++	/* IPI_RATIO_MAN_CFG = PHY_HSTX_CLK / IPI_CLK */
++	pixel_clk = mode->crtc_clock * MSEC_PER_SEC;
++	ipi_clk = pixel_clk / 4;
++
++	tmp = DIV_ROUND_CLOSEST_ULL(phy_hsclk << 16, ipi_clk);
++	regmap_write(dsi2->regmap, DSI2_PHY_IPI_RATIO_MAN_CFG,
++		   PHY_IPI_RATIO(tmp));
++
++	/*
++	 * SYS_RATIO_MAN_CFG = MIPI_DCPHY_HSCLK_Freq / MIPI_DCPHY_HSCLK_Freq
++	 */
++	tmp = DIV_ROUND_CLOSEST_ULL(phy_hsclk << 16, sys_clk);
++	regmap_write(dsi2->regmap, DSI2_PHY_SYS_RATIO_MAN_CFG,
++		   PHY_SYS_RATIO(tmp));
++}
++
++static void dw_mipi_dsi2_lp2hs_or_hs2lp_cfg(struct dw_mipi_dsi2 *dsi2)
++{
++	const struct dw_mipi_dsi2_phy_ops *phy_ops = dsi2->plat_data->phy_ops;
++	struct dw_mipi_dsi2_phy_timing timing;
++	int ret;
++
++	ret = phy_ops->get_timing(dsi2->plat_data->priv_data,
++				  dsi2->lane_mbps, &timing);
++	if (ret)
++		dev_err(dsi2->dev, "Retrieving phy timings failed\n");
++
++	regmap_write(dsi2->regmap, DSI2_PHY_LP2HS_MAN_CFG, PHY_LP2HS_TIME(timing.data_lp2hs));
++	regmap_write(dsi2->regmap, DSI2_PHY_HS2LP_MAN_CFG, PHY_HS2LP_TIME(timing.data_hs2lp));
++}
++
++static void dw_mipi_dsi2_phy_init(struct dw_mipi_dsi2 *dsi2)
++{
++	const struct dw_mipi_dsi2_phy_ops *phy_ops = dsi2->plat_data->phy_ops;
++	struct dw_mipi_dsi2_phy_iface iface;
++	u32 val = 0;
++
++	phy_ops->get_interface(dsi2->plat_data->priv_data, &iface);
++
++	switch (iface.ppi_width) {
++	case 8:
++		val |= PPI_WIDTH(PPI_WIDTH_8_BITS);
++		break;
++	case 16:
++		val |= PPI_WIDTH(PPI_WIDTH_16_BITS);
++		break;
++	case 32:
++		val |= PPI_WIDTH(PPI_WIDTH_32_BITS);
++		break;
++	default:
++		/* Caught in probe */
++		break;
++	}
++
++	val |= PHY_LANES(dsi2->lanes);
++	val |= PHY_TYPE(DW_MIPI_DSI2_DPHY);
++	regmap_write(dsi2->regmap, DSI2_PHY_MODE_CFG, val);
++
++	dw_mipi_dsi2_phy_clk_mode_cfg(dsi2);
++	dw_mipi_dsi2_phy_ratio_cfg(dsi2);
++	dw_mipi_dsi2_lp2hs_or_hs2lp_cfg(dsi2);
++
++	/* phy configuration 8 - 10 */
++}
++
++static void dw_mipi_dsi2_tx_option_set(struct dw_mipi_dsi2 *dsi2)
++{
++	u32 val;
++
++	val = BTA_EN | EOTP_TX_EN;
++
++	if (dsi2->mode_flags & MIPI_DSI_MODE_NO_EOT_PACKET)
++		val &= ~EOTP_TX_EN;
++
++	regmap_write(dsi2->regmap, DSI2_DSI_GENERAL_CFG, val);
++	regmap_write(dsi2->regmap, DSI2_DSI_VCID_CFG, TX_VCID(dsi2->channel));
++}
++
++static void dw_mipi_dsi2_ipi_color_coding_cfg(struct dw_mipi_dsi2 *dsi2)
++{
++	u32 val, color_depth;
++
++	switch (dsi2->format) {
++	case MIPI_DSI_FMT_RGB666:
++	case MIPI_DSI_FMT_RGB666_PACKED:
++		color_depth = IPI_DEPTH_6_BITS;
++		break;
++	case MIPI_DSI_FMT_RGB565:
++		color_depth = IPI_DEPTH_5_6_5_BITS;
++		break;
++	case MIPI_DSI_FMT_RGB888:
++	default:
++		color_depth = IPI_DEPTH_8_BITS;
++		break;
++	}
++
++	val = IPI_DEPTH(color_depth) |
++	      IPI_FORMAT(IPI_FORMAT_RGB);
++	regmap_write(dsi2->regmap, DSI2_IPI_COLOR_MAN_CFG, val);
++}
++
++static void dw_mipi_dsi2_vertical_timing_config(struct dw_mipi_dsi2 *dsi2,
++						const struct drm_display_mode *mode)
++{
++	u32 vactive, vsa, vfp, vbp;
++
++	vactive = mode->vdisplay;
++	vsa = mode->vsync_end - mode->vsync_start;
++	vfp = mode->vsync_start - mode->vdisplay;
++	vbp = mode->vtotal - mode->vsync_end;
++
++	regmap_write(dsi2->regmap, DSI2_IPI_VID_VSA_MAN_CFG, VID_VSA_LINES(vsa));
++	regmap_write(dsi2->regmap, DSI2_IPI_VID_VBP_MAN_CFG, VID_VBP_LINES(vbp));
++	regmap_write(dsi2->regmap, DSI2_IPI_VID_VACT_MAN_CFG, VID_VACT_LINES(vactive));
++	regmap_write(dsi2->regmap, DSI2_IPI_VID_VFP_MAN_CFG, VID_VFP_LINES(vfp));
++}
++
++static void dw_mipi_dsi2_ipi_set(struct dw_mipi_dsi2 *dsi2)
++{
++	struct drm_display_mode *mode = &dsi2->mode;
++	u32 hline, hsa, hbp, hact;
++	u64 hline_time, hsa_time, hbp_time, hact_time, tmp;
++	u64 pixel_clk, phy_hs_clk;
++	u16 val;
++
++	val = mode->hdisplay;
++
++	regmap_write(dsi2->regmap, DSI2_IPI_PIX_PKT_CFG, MAX_PIX_PKT(val));
++
++	dw_mipi_dsi2_ipi_color_coding_cfg(dsi2);
++
++	/*
++	 * if the controller is intended to operate in data stream mode,
++	 * no more steps are required.
++	 */
++	if (!(dsi2->mode_flags & MIPI_DSI_MODE_VIDEO))
++		return;
++
++	hact = mode->hdisplay;
++	hsa = mode->hsync_end - mode->hsync_start;
++	hbp = mode->htotal - mode->hsync_end;
++	hline = mode->htotal;
++
++	pixel_clk = mode->crtc_clock * MSEC_PER_SEC;
++
++	phy_hs_clk = DIV_ROUND_CLOSEST_ULL(dsi2->lane_mbps * USEC_PER_SEC, 16);
++
++	tmp = hsa * phy_hs_clk;
++	hsa_time = DIV_ROUND_CLOSEST_ULL(tmp << 16, pixel_clk);
++	regmap_write(dsi2->regmap, DSI2_IPI_VID_HSA_MAN_CFG, VID_HSA_TIME(hsa_time));
++
++	tmp = hbp * phy_hs_clk;
++	hbp_time = DIV_ROUND_CLOSEST_ULL(tmp << 16, pixel_clk);
++	regmap_write(dsi2->regmap, DSI2_IPI_VID_HBP_MAN_CFG, VID_HBP_TIME(hbp_time));
++
++	tmp = hact * phy_hs_clk;
++	hact_time = DIV_ROUND_CLOSEST_ULL(tmp << 16, pixel_clk);
++	regmap_write(dsi2->regmap, DSI2_IPI_VID_HACT_MAN_CFG, VID_HACT_TIME(hact_time));
++
++	tmp = hline * phy_hs_clk;
++	hline_time = DIV_ROUND_CLOSEST_ULL(tmp << 16, pixel_clk);
++	regmap_write(dsi2->regmap, DSI2_IPI_VID_HLINE_MAN_CFG, VID_HLINE_TIME(hline_time));
++
++	dw_mipi_dsi2_vertical_timing_config(dsi2, mode);
++}
++
++static void
++dw_mipi_dsi2_work_mode(struct dw_mipi_dsi2 *dsi2, u32 mode)
++{
++	/*
++	 * select controller work in Manual mode
++	 * Manual: MANUAL_MODE_EN
++	 * Automatic: 0
++	 */
++	regmap_write(dsi2->regmap, MANUAL_MODE_CFG, mode);
++}
++
++static int dw_mipi_dsi2_host_attach(struct mipi_dsi_host *host,
++				    struct mipi_dsi_device *device)
++{
++	struct dw_mipi_dsi2 *dsi2 = host_to_dsi2(host);
++	const struct dw_mipi_dsi2_plat_data *pdata = dsi2->plat_data;
++	struct drm_bridge *bridge;
++	int ret;
++
++	if (device->lanes > dsi2->plat_data->max_data_lanes) {
++		dev_err(dsi2->dev, "the number of data lanes(%u) is too many\n",
++			device->lanes);
++		return -EINVAL;
++	}
++
++	dsi2->lanes = device->lanes;
++	dsi2->channel = device->channel;
++	dsi2->format = device->format;
++	dsi2->mode_flags = device->mode_flags;
++
++	bridge = devm_drm_of_get_bridge(dsi2->dev, dsi2->dev->of_node, 1, 0);
++	if (IS_ERR(bridge))
++		return PTR_ERR(bridge);
++
++	bridge->pre_enable_prev_first = true;
++	dsi2->panel_bridge = bridge;
++
++	drm_bridge_add(&dsi2->bridge);
++
++	if (pdata->host_ops && pdata->host_ops->attach) {
++		ret = pdata->host_ops->attach(pdata->priv_data, device);
++		if (ret < 0)
++			return ret;
++	}
++
++	return 0;
++}
++
++static int dw_mipi_dsi2_host_detach(struct mipi_dsi_host *host,
++				    struct mipi_dsi_device *device)
++{
++	struct dw_mipi_dsi2 *dsi2 = host_to_dsi2(host);
++	const struct dw_mipi_dsi2_plat_data *pdata = dsi2->plat_data;
++	int ret;
++
++	if (pdata->host_ops && pdata->host_ops->detach) {
++		ret = pdata->host_ops->detach(pdata->priv_data, device);
++		if (ret < 0)
++			return ret;
++	}
++
++	drm_bridge_remove(&dsi2->bridge);
++
++	drm_of_panel_bridge_remove(host->dev->of_node, 1, 0);
++
++	return 0;
++}
++
++static int dw_mipi_dsi2_gen_pkt_hdr_write(struct dw_mipi_dsi2 *dsi2,
++					  u32 hdr_val, bool lpm)
++{
++	int ret;
++
++	regmap_write(dsi2->regmap, DSI2_CRI_TX_HDR, hdr_val | CMD_TX_MODE(lpm));
++
++	ret = cri_fifos_wait_avail(dsi2);
++	if (ret) {
++		dev_err(dsi2->dev, "failed to write command header\n");
++		return ret;
++	}
++
++	return 0;
++}
++
++static int dw_mipi_dsi2_write(struct dw_mipi_dsi2 *dsi2,
++			      const struct mipi_dsi_packet *packet, bool lpm)
++{
++	const u8 *tx_buf = packet->payload;
++	int len = packet->payload_length, pld_data_bytes = sizeof(u32);
++	__le32 word;
++
++	/* Send payload */
++	while (len) {
++		if (len < pld_data_bytes) {
++			word = 0;
++			memcpy(&word, tx_buf, len);
++			regmap_write(dsi2->regmap, DSI2_CRI_TX_PLD, le32_to_cpu(word));
++			len = 0;
++		} else {
++			memcpy(&word, tx_buf, pld_data_bytes);
++			regmap_write(dsi2->regmap, DSI2_CRI_TX_PLD, le32_to_cpu(word));
++			tx_buf += pld_data_bytes;
++			len -= pld_data_bytes;
++		}
++	}
++
++	word = 0;
++	memcpy(&word, packet->header, sizeof(packet->header));
++	return dw_mipi_dsi2_gen_pkt_hdr_write(dsi2, le32_to_cpu(word), lpm);
++}
++
++static int dw_mipi_dsi2_read(struct dw_mipi_dsi2 *dsi2,
++			     const struct mipi_dsi_msg *msg)
++{
++	u8 *payload = msg->rx_buf;
++	int i, j, ret, len = msg->rx_len;
++	u8 data_type;
++	u16 wc;
++	u32 val;
++
++	ret = regmap_read_poll_timeout(dsi2->regmap, DSI2_CORE_STATUS,
++				       val, val & CRI_RD_DATA_AVAIL,
++				       100, CMD_PKT_STATUS_TIMEOUT_US);
++	if (ret) {
++		dev_err(dsi2->dev, "CRI has no available read data\n");
++		return ret;
++	}
++
++	regmap_read(dsi2->regmap, DSI2_CRI_RX_HDR, &val);
++	data_type = val & 0x3f;
++
++	if (mipi_dsi_packet_format_is_short(data_type)) {
++		for (i = 0; i < len && i < 2; i++)
++			payload[i] = (val >> (8 * (i + 1))) & 0xff;
++
++		return 0;
++	}
++
++	wc = (val >> 8) & 0xffff;
++	/* Receive payload */
++	for (i = 0; i < len && i < wc; i += 4) {
++		regmap_read(dsi2->regmap, DSI2_CRI_RX_PLD, &val);
++		for (j = 0; j < 4 && j + i < len && j + i < wc; j++)
++			payload[i + j] = val >> (8 * j);
++	}
++
++	return 0;
++}
++
++static ssize_t dw_mipi_dsi2_host_transfer(struct mipi_dsi_host *host,
++					  const struct mipi_dsi_msg *msg)
++{
++	struct dw_mipi_dsi2 *dsi2 = host_to_dsi2(host);
++	bool lpm = msg->flags & MIPI_DSI_MSG_USE_LPM;
++	struct mipi_dsi_packet packet;
++	int ret, nb_bytes;
++
++	regmap_update_bits(dsi2->regmap, DSI2_DSI_VID_TX_CFG,
++			   LPDT_DISPLAY_CMD_EN,
++			   lpm ? LPDT_DISPLAY_CMD_EN : 0);
++
++	/* create a packet to the DSI protocol */
++	ret = mipi_dsi_create_packet(&packet, msg);
++	if (ret) {
++		dev_err(dsi2->dev, "failed to create packet: %d\n", ret);
++		return ret;
++	}
++
++	ret = cri_fifos_wait_avail(dsi2);
++	if (ret)
++		return ret;
++
++	ret = dw_mipi_dsi2_write(dsi2, &packet, lpm);
++	if (ret)
++		return ret;
++
++	if (msg->rx_buf && msg->rx_len) {
++		ret = dw_mipi_dsi2_read(dsi2, msg);
++		if (ret < 0)
++			return ret;
++		nb_bytes = msg->rx_len;
++	} else {
++		nb_bytes = packet.size;
++	}
++
++	return nb_bytes;
++}
++
++static const struct mipi_dsi_host_ops dw_mipi_dsi2_host_ops = {
++	.attach = dw_mipi_dsi2_host_attach,
++	.detach = dw_mipi_dsi2_host_detach,
++	.transfer = dw_mipi_dsi2_host_transfer,
++};
++
++static u32 *
++dw_mipi_dsi2_bridge_atomic_get_input_bus_fmts(struct drm_bridge *bridge,
++					      struct drm_bridge_state *bridge_state,
++					      struct drm_crtc_state *crtc_state,
++					      struct drm_connector_state *conn_state,
++					      u32 output_fmt,
++					      unsigned int *num_input_fmts)
++{
++	struct dw_mipi_dsi2 *dsi2 = bridge_to_dsi2(bridge);
++	const struct dw_mipi_dsi2_plat_data *pdata = dsi2->plat_data;
++	u32 *input_fmts;
++
++	if (pdata->get_input_bus_fmts)
++		return pdata->get_input_bus_fmts(pdata->priv_data,
++						 bridge, bridge_state,
++						 crtc_state, conn_state,
++						 output_fmt, num_input_fmts);
++
++	/* Fall back to MEDIA_BUS_FMT_FIXED as the only input format. */
++	input_fmts = kmalloc(sizeof(*input_fmts), GFP_KERNEL);
++	if (!input_fmts)
++		return NULL;
++	input_fmts[0] = MEDIA_BUS_FMT_FIXED;
++	*num_input_fmts = 1;
++
++	return input_fmts;
++}
++
++static int dw_mipi_dsi2_bridge_atomic_check(struct drm_bridge *bridge,
++					    struct drm_bridge_state *bridge_state,
++					    struct drm_crtc_state *crtc_state,
++					    struct drm_connector_state *conn_state)
++{
++	struct dw_mipi_dsi2 *dsi2 = bridge_to_dsi2(bridge);
++	const struct dw_mipi_dsi2_plat_data *pdata = dsi2->plat_data;
++	bool ret;
++
++	bridge_state->input_bus_cfg.flags =
++		DRM_BUS_FLAG_DE_HIGH | DRM_BUS_FLAG_PIXDATA_SAMPLE_NEGEDGE;
++
++	if (pdata->mode_fixup) {
++		ret = pdata->mode_fixup(pdata->priv_data, &crtc_state->mode,
++					&crtc_state->adjusted_mode);
++		if (!ret) {
++			DRM_DEBUG_DRIVER("failed to fixup mode " DRM_MODE_FMT "\n",
++					 DRM_MODE_ARG(&crtc_state->mode));
++			return -EINVAL;
++		}
++	}
++
++	return 0;
++}
++
++static void dw_mipi_dsi2_bridge_post_atomic_disable(struct drm_bridge *bridge,
++						    struct drm_bridge_state *old_bridge_state)
++{
++	struct dw_mipi_dsi2 *dsi2 = bridge_to_dsi2(bridge);
++	const struct dw_mipi_dsi2_phy_ops *phy_ops = dsi2->plat_data->phy_ops;
++
++	regmap_write(dsi2->regmap, DSI2_IPI_PIX_PKT_CFG, 0);
++
++	/*
++	 * Switch to command mode before panel-bridge post_disable &
++	 * panel unprepare.
++	 * Note: panel-bridge disable & panel disable has been called
++	 * before by the drm framework.
++	 */
++	dw_mipi_dsi2_set_cmd_mode(dsi2);
++
++	regmap_write(dsi2->regmap, DSI2_PWR_UP, RESET);
++
++	if (phy_ops->power_off)
++		phy_ops->power_off(dsi2->plat_data->priv_data);
++
++	clk_disable_unprepare(dsi2->pclk);
++	pm_runtime_put(dsi2->dev);
++}
++
++static unsigned int dw_mipi_dsi2_get_lanes(struct dw_mipi_dsi2 *dsi2)
++{
++	/* single-dsi, so no other instance to consider */
++	return dsi2->lanes;
++}
++
++static void dw_mipi_dsi2_mode_set(struct dw_mipi_dsi2 *dsi2,
++				  const struct drm_display_mode *adjusted_mode)
++{
++	const struct dw_mipi_dsi2_phy_ops *phy_ops = dsi2->plat_data->phy_ops;
++	void *priv_data = dsi2->plat_data->priv_data;
++	u32 lanes = dw_mipi_dsi2_get_lanes(dsi2);
++	int ret;
++
++	clk_prepare_enable(dsi2->pclk);
++
++	ret = phy_ops->get_lane_mbps(priv_data, adjusted_mode, dsi2->mode_flags,
++				     lanes, dsi2->format, &dsi2->lane_mbps);
++	if (ret)
++		DRM_DEBUG_DRIVER("Phy get_lane_mbps() failed\n");
++
++	pm_runtime_get_sync(dsi2->dev);
++
++	dw_mipi_dsi2_host_softrst(dsi2);
++	regmap_write(dsi2->regmap, DSI2_PWR_UP, RESET);
++
++	dw_mipi_dsi2_work_mode(dsi2, MANUAL_MODE_EN);
++	dw_mipi_dsi2_phy_init(dsi2);
++
++	if (phy_ops->power_on)
++		phy_ops->power_on(dsi2->plat_data->priv_data);
++
++	dw_mipi_dsi2_tx_option_set(dsi2);
++
++	/*
++	 * initial deskew calibration is send after phy_power_on,
++	 * then we can configure clk_type.
++	 */
++
++	regmap_update_bits(dsi2->regmap, DSI2_PHY_CLK_CFG, CLK_TYPE_MASK,
++			   dsi2->mode_flags & MIPI_DSI_CLOCK_NON_CONTINUOUS ? NON_CONTINUOUS_CLK :
++									      CONTINUOUS_CLK);
++
++	regmap_write(dsi2->regmap, DSI2_PWR_UP, POWER_UP);
++	dw_mipi_dsi2_set_cmd_mode(dsi2);
++
++	dw_mipi_dsi2_ipi_set(dsi2);
++}
++
++static void dw_mipi_dsi2_bridge_atomic_pre_enable(struct drm_bridge *bridge,
++						  struct drm_bridge_state *old_bridge_state)
++{
++	struct dw_mipi_dsi2 *dsi2 = bridge_to_dsi2(bridge);
++
++	/* Power up the dsi ctl into a command mode */
++	dw_mipi_dsi2_mode_set(dsi2, &dsi2->mode);
++}
++
++static void dw_mipi_dsi2_bridge_mode_set(struct drm_bridge *bridge,
++					 const struct drm_display_mode *mode,
++					 const struct drm_display_mode *adjusted_mode)
++{
++	struct dw_mipi_dsi2 *dsi2 = bridge_to_dsi2(bridge);
++
++	/* Store the display mode for later use in pre_enable callback */
++	drm_mode_copy(&dsi2->mode, adjusted_mode);
++}
++
++static void dw_mipi_dsi2_bridge_atomic_enable(struct drm_bridge *bridge,
++					      struct drm_bridge_state *old_bridge_state)
++{
++	struct dw_mipi_dsi2 *dsi2 = bridge_to_dsi2(bridge);
++
++	/* Switch to video mode for panel-bridge enable & panel enable */
++	if (dsi2->mode_flags & MIPI_DSI_MODE_VIDEO)
++		dw_mipi_dsi2_set_vid_mode(dsi2);
++	else
++		dw_mipi_dsi2_set_data_stream_mode(dsi2);
++}
++
++static enum drm_mode_status
++dw_mipi_dsi2_bridge_mode_valid(struct drm_bridge *bridge,
++			       const struct drm_display_info *info,
++			       const struct drm_display_mode *mode)
++{
++	struct dw_mipi_dsi2 *dsi2 = bridge_to_dsi2(bridge);
++	const struct dw_mipi_dsi2_plat_data *pdata = dsi2->plat_data;
++	enum drm_mode_status mode_status = MODE_OK;
++
++	if (pdata->mode_valid)
++		mode_status = pdata->mode_valid(pdata->priv_data, mode,
++						dsi2->mode_flags,
++						dw_mipi_dsi2_get_lanes(dsi2),
++						dsi2->format);
++
++	return mode_status;
++}
++
++static int dw_mipi_dsi2_bridge_attach(struct drm_bridge *bridge,
++				      enum drm_bridge_attach_flags flags)
++{
++	struct dw_mipi_dsi2 *dsi2 = bridge_to_dsi2(bridge);
++
++	/* Set the encoder type as caller does not know it */
++	bridge->encoder->encoder_type = DRM_MODE_ENCODER_DSI;
++
++	/* Attach the panel-bridge to the dsi bridge */
++	return drm_bridge_attach(bridge->encoder, dsi2->panel_bridge, bridge,
++				 flags);
++}
++
++static const struct drm_bridge_funcs dw_mipi_dsi2_bridge_funcs = {
++	.atomic_duplicate_state	= drm_atomic_helper_bridge_duplicate_state,
++	.atomic_destroy_state	= drm_atomic_helper_bridge_destroy_state,
++	.atomic_get_input_bus_fmts = dw_mipi_dsi2_bridge_atomic_get_input_bus_fmts,
++	.atomic_check		= dw_mipi_dsi2_bridge_atomic_check,
++	.atomic_reset		= drm_atomic_helper_bridge_reset,
++	.atomic_pre_enable	= dw_mipi_dsi2_bridge_atomic_pre_enable,
++	.atomic_enable		= dw_mipi_dsi2_bridge_atomic_enable,
++	.atomic_post_disable	= dw_mipi_dsi2_bridge_post_atomic_disable,
++	.mode_set		= dw_mipi_dsi2_bridge_mode_set,
++	.mode_valid		= dw_mipi_dsi2_bridge_mode_valid,
++	.attach			= dw_mipi_dsi2_bridge_attach,
++};
++
++static const struct regmap_config dw_mipi_dsi2_regmap_config = {
++	.name = "dsi2-host",
++	.reg_bits = 32,
++	.val_bits = 32,
++	.reg_stride = 4,
++	.fast_io = true,
++};
++
++static struct dw_mipi_dsi2 *
++__dw_mipi_dsi2_probe(struct platform_device *pdev,
++		     const struct dw_mipi_dsi2_plat_data *plat_data)
++{
++	struct device *dev = &pdev->dev;
++	struct reset_control *apb_rst;
++	struct dw_mipi_dsi2 *dsi2;
++	int ret;
++
++	dsi2 = devm_kzalloc(dev, sizeof(*dsi2), GFP_KERNEL);
++	if (!dsi2)
++		return ERR_PTR(-ENOMEM);
++
++	dsi2->dev = dev;
++	dsi2->plat_data = plat_data;
++
++	if (!plat_data->phy_ops->init || !plat_data->phy_ops->get_lane_mbps ||
++	    !plat_data->phy_ops->get_timing)
++		return dev_err_ptr_probe(dev, -ENODEV, "Phy not properly configured\n");
++
++	if (!plat_data->regmap) {
++		void __iomem *base = devm_platform_ioremap_resource(pdev, 0);
++
++		if (IS_ERR(base))
++			return dev_err_cast_probe(dev, base, "failed to registers\n");
++
++		dsi2->regmap = devm_regmap_init_mmio(dev, base,
++						     &dw_mipi_dsi2_regmap_config);
++		if (IS_ERR(dsi2->regmap))
++			return dev_err_cast_probe(dev, dsi2->regmap, "failed to init regmap\n");
++	} else {
++		dsi2->regmap = plat_data->regmap;
++	}
++
++	dsi2->pclk = devm_clk_get(dev, "pclk");
++	if (IS_ERR(dsi2->pclk))
++		return dev_err_cast_probe(dev, dsi2->pclk, "Unable to get pclk\n");
++
++	dsi2->sys_clk = devm_clk_get(dev, "sys");
++	if (IS_ERR(dsi2->sys_clk))
++		return dev_err_cast_probe(dev, dsi2->sys_clk, "Unable to get sys_clk\n");
++
++	/*
++	 * Note that the reset was not defined in the initial device tree, so
++	 * we have to be prepared for it not being found.
++	 */
++	apb_rst = devm_reset_control_get_optional_exclusive(dev, "apb");
++	if (IS_ERR(apb_rst))
++		return dev_err_cast_probe(dev, apb_rst, "Unable to get reset control\n");
++
++	if (apb_rst) {
++		ret = clk_prepare_enable(dsi2->pclk);
++		if (ret) {
++			dev_err(dev, "%s: Failed to enable pclk\n", __func__);
++			return ERR_PTR(ret);
++		}
++
++		reset_control_assert(apb_rst);
++		usleep_range(10, 20);
++		reset_control_deassert(apb_rst);
++
++		clk_disable_unprepare(dsi2->pclk);
++	}
++
++	pm_runtime_enable(dev);
++
++	dsi2->dsi_host.ops = &dw_mipi_dsi2_host_ops;
++	dsi2->dsi_host.dev = dev;
++	ret = mipi_dsi_host_register(&dsi2->dsi_host);
++	if (ret) {
++		dev_err(dev, "Failed to register MIPI host: %d\n", ret);
++		pm_runtime_disable(dev);
++		return ERR_PTR(ret);
++	}
++
++	dsi2->bridge.driver_private = dsi2;
++	dsi2->bridge.funcs = &dw_mipi_dsi2_bridge_funcs;
++	dsi2->bridge.of_node = pdev->dev.of_node;
++
++	return dsi2;
++}
++
++static void __dw_mipi_dsi2_remove(struct dw_mipi_dsi2 *dsi2)
++{
++	mipi_dsi_host_unregister(&dsi2->dsi_host);
++
++	pm_runtime_disable(dsi2->dev);
++}
++
++/*
++ * Probe/remove API, used to create the bridge instance.
++ */
++struct dw_mipi_dsi2 *
++dw_mipi_dsi2_probe(struct platform_device *pdev,
++		   const struct dw_mipi_dsi2_plat_data *plat_data)
++{
++	return __dw_mipi_dsi2_probe(pdev, plat_data);
++}
++EXPORT_SYMBOL_GPL(dw_mipi_dsi2_probe);
++
++void dw_mipi_dsi2_remove(struct dw_mipi_dsi2 *dsi2)
++{
++	__dw_mipi_dsi2_remove(dsi2);
++}
++EXPORT_SYMBOL_GPL(dw_mipi_dsi2_remove);
++
++/*
++ * Bind/unbind API, used from platforms based on the component framework
++ * to attach the bridge to an encoder.
++ */
++int dw_mipi_dsi2_bind(struct dw_mipi_dsi2 *dsi2, struct drm_encoder *encoder)
++{
++	return drm_bridge_attach(encoder, &dsi2->bridge, NULL, 0);
++}
++EXPORT_SYMBOL_GPL(dw_mipi_dsi2_bind);
++
++void dw_mipi_dsi2_unbind(struct dw_mipi_dsi2 *dsi2)
++{
++}
++EXPORT_SYMBOL_GPL(dw_mipi_dsi2_unbind);
++
++MODULE_AUTHOR("Guochun Huang <hero.huang@rock-chips.com>");
++MODULE_AUTHOR("Heiko Stuebner <heiko.stuebner@cherry.de>");
++MODULE_DESCRIPTION("DW MIPI DSI2 host controller driver");
++MODULE_LICENSE("GPL");
++MODULE_ALIAS("platform:dw-mipi-dsi2");
+diff --git a/include/drm/bridge/dw_mipi_dsi2.h b/include/drm/bridge/dw_mipi_dsi2.h
+new file mode 100644
+index 000000000000..c18c49379247
+--- /dev/null
++++ b/include/drm/bridge/dw_mipi_dsi2.h
+@@ -0,0 +1,95 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++/*
++ * Copyright (c) 2024, Fuzhou Rockchip Electronics Co., Ltd
++ *
++ * Authors: Guochun Huang <hero.huang@rock-chips.com>
++ *          Heiko Stuebner <heiko.stuebner@cherry.de>
++ */
++
++#ifndef __DW_MIPI_DSI2__
++#define __DW_MIPI_DSI2__
++
++#include <linux/regmap.h>
++#include <linux/types.h>
++
++#include <drm/drm_atomic.h>
++#include <drm/drm_bridge.h>
++#include <drm/drm_connector.h>
++#include <drm/drm_crtc.h>
++#include <drm/drm_modes.h>
++
++struct drm_display_mode;
++struct drm_encoder;
++struct dw_mipi_dsi2;
++struct mipi_dsi_device;
++struct platform_device;
++
++enum dw_mipi_dsi2_phy_type {
++	DW_MIPI_DSI2_DPHY,
++	DW_MIPI_DSI2_CPHY,
++};
++
++struct dw_mipi_dsi2_phy_iface {
++	int ppi_width;
++	enum dw_mipi_dsi2_phy_type phy_type;
++};
++
++struct dw_mipi_dsi2_phy_timing {
++	u32 data_hs2lp;
++	u32 data_lp2hs;
++};
++
++struct dw_mipi_dsi2_phy_ops {
++	int (*init)(void *priv_data);
++	void (*power_on)(void *priv_data);
++	void (*power_off)(void *priv_data);
++	void (*get_interface)(void *priv_data, struct dw_mipi_dsi2_phy_iface *iface);
++	int (*get_lane_mbps)(void *priv_data,
++			     const struct drm_display_mode *mode,
++			     unsigned long mode_flags, u32 lanes, u32 format,
++			     unsigned int *lane_mbps);
++	int (*get_timing)(void *priv_data, unsigned int lane_mbps,
++			  struct dw_mipi_dsi2_phy_timing *timing);
++	int (*get_esc_clk_rate)(void *priv_data, unsigned int *esc_clk_rate);
++};
++
++struct dw_mipi_dsi2_host_ops {
++	int (*attach)(void *priv_data,
++		      struct mipi_dsi_device *dsi);
++	int (*detach)(void *priv_data,
++		      struct mipi_dsi_device *dsi);
++};
++
++struct dw_mipi_dsi2_plat_data {
++	struct regmap *regmap;
++	unsigned int max_data_lanes;
++
++	enum drm_mode_status (*mode_valid)(void *priv_data,
++					   const struct drm_display_mode *mode,
++					   unsigned long mode_flags,
++					   u32 lanes, u32 format);
++
++	bool (*mode_fixup)(void *priv_data, const struct drm_display_mode *mode,
++			   struct drm_display_mode *adjusted_mode);
++
++	u32 *(*get_input_bus_fmts)(void *priv_data,
++				   struct drm_bridge *bridge,
++				   struct drm_bridge_state *bridge_state,
++				   struct drm_crtc_state *crtc_state,
++				   struct drm_connector_state *conn_state,
++				   u32 output_fmt,
++				   unsigned int *num_input_fmts);
++
++	const struct dw_mipi_dsi2_phy_ops *phy_ops;
++	const struct dw_mipi_dsi2_host_ops *host_ops;
++
++	void *priv_data;
++};
++
++struct dw_mipi_dsi2 *dw_mipi_dsi2_probe(struct platform_device *pdev,
++					const struct dw_mipi_dsi2_plat_data *plat_data);
++void dw_mipi_dsi2_remove(struct dw_mipi_dsi2 *dsi2);
++int dw_mipi_dsi2_bind(struct dw_mipi_dsi2 *dsi2, struct drm_encoder *encoder);
++void dw_mipi_dsi2_unbind(struct dw_mipi_dsi2 *dsi2);
++
++#endif /* __DW_MIPI_DSI2__ */
+-- 
+2.45.2
 
---------------a0xltVuvLhEkCIBL8XCdaP1F--
 
