@@ -1,139 +1,128 @@
-Return-Path: <linux-kernel+bounces-429009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2BF49E1636
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:49:17 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F3376163920
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 08:49:13 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 100BF1DE2A7;
-	Tue,  3 Dec 2024 08:49:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="cflINFwW"
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F28149E163F
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:50:38 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 595621BDA99;
-	Tue,  3 Dec 2024 08:49:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8DE6281E78
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 08:50:37 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D64AB1DDA33;
+	Tue,  3 Dec 2024 08:50:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="uDcOTWZs"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C38D38C11;
+	Tue,  3 Dec 2024 08:50:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733215747; cv=none; b=Bb6lAS5gzWR4jnGmKgPxoMyZFRZd3rQ6rXjUTzXvXYoUD1UnjyTXkbAEuyrAtg/Dd3GVCR2gZaLUrQP/KzawsP2IgPyHIDUwi8yhLmxL5SKHgzyYaOQNJvv7WzqTJPV0+oiq+inoAp7ndwZajpIJOxu6luDy39ardHaqxCw0eUE=
+	t=1733215829; cv=none; b=qnLyOdjVIXQeZ1t29N3W3C4MKWXUq3A3IAxW2HY6EGIogKJeaMOHa2WxxfKzZ0EPyA6zJUi/IDJZO9i+KkBHh9S3XmUk/OugSbeUMVMrySkEO9fngE++X6CqrtovRs24bkXl2wXiw3j5SXwi7iQK5z0zBMuPKbApc02HUeQ9YW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733215747; c=relaxed/simple;
-	bh=3bzQITP8wYOAiSafwbZaz1gTBad8OZaf6a8/RS+29uo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=J1+ULZWPlzuDCxGl3rKHj9EVGIIoVUd/f/6J1E/1NjmxW1NeJsqXROoDu6GHM4y5KubEpAHcnV5ZFTlDAvRpEGdcmg5majs1tkATzMWqNkDjRTAKWodn/wZWz3FAxCkNx2qyj/MOkHcwZlJsG3OmMDwhA9Pz7DVYMmY8U59Fhu8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=cflINFwW; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 75CA62000B;
-	Tue,  3 Dec 2024 08:48:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1733215739;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rAgbolLsw7T+gfcrbOkYE875TKvCH6FbdBvBw99vNsY=;
-	b=cflINFwWl3sup/5iJau58w8SSeo4uXZI9UPYFbsDRVyKfHrSh3gjofqEfW/p1fgZDbQgJ9
-	MO6O+ISo/42lwVExLaAE/9K0UlNRWgEUtW3fJvR1Vwdgs2IzxWRt6UlqVKEiRVKnRt4/Ta
-	R8djTkoSxOETGsU0gEGbL6UAcp6WLIz2mB3CG8tufJJQnK+kXuPM6R65FTBl9bzsMuYjrJ
-	SW+uznXe+isPf0X54WO5kSUqe47pFMQiFbhrTg8javj6pNWOdP1jJ+bN3veB82BqkN5Uyp
-	KRpZm3915rRCNYhIRHuPBnRJIS8fOp58jTn8qC/v0fFb+wFdr5IAesSv/pAUfA==
-From: Romain Gantois <romain.gantois@bootlin.com>
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- Kory Maincent <kory.maincent@bootlin.com>, linux-i2c@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-media@vger.kernel.org, linux-gpio@vger.kernel.org,
- Wolfram Sang <wsa+renesas@sang-engineering.com>,
- Luca Ceresoli <luca.ceresoli@bootlin.com>,
- Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Derek Kiernan <derek.kiernan@amd.com>, Dragan Cvetic <dragan.cvetic@amd.com>,
- Arnd Bergmann <arnd@arndb.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>
-Subject:
- Re: [PATCH v3 2/9] media: i2c: ds90ub960: Replace aliased clients list with
- bitmap
-Date: Tue, 03 Dec 2024 09:48:57 +0100
-Message-ID: <1743994.6779kEWLuL@fw-rgant>
-In-Reply-To: <92f06c2a-84be-4e89-adf5-9fa58d0806e6@ideasonboard.com>
-References:
- <20241125-fpc202-v3-0-34e86bcb5b56@bootlin.com>
- <20241125-fpc202-v3-2-34e86bcb5b56@bootlin.com>
- <92f06c2a-84be-4e89-adf5-9fa58d0806e6@ideasonboard.com>
+	s=arc-20240116; t=1733215829; c=relaxed/simple;
+	bh=Rb+1LimEOg2KyRvb49TqiGJHO6i5lsezJr9VXtmZ3YQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=M8Qk4g23tPiNzNO9L/3Rhgs+pMNMl8M0nofTSEHI+wTe8iZamgjcg1m19wb953h21P5B2AsBbcChfOtT39K2Kq9oLK8RFtO0HRw5oU7bFfeNRko+RtUtSeAlcTrl/TinCncnrIzemeQvn/STxfcmBo9MGFulg7+Bypugq4R3AsA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=uDcOTWZs; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id DEC408DB;
+	Tue,  3 Dec 2024 09:49:57 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1733215798;
+	bh=Rb+1LimEOg2KyRvb49TqiGJHO6i5lsezJr9VXtmZ3YQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uDcOTWZsHL72Z+kjzinta4X89IEUrGtYEZxJWqRYQX3K70mrr9SGDhn7CU3Mi7tN6
+	 WU4hOKrBxpPahgl/NICv7pMAaORwnERsCy6nJsjvAdXcp11MNv1bcsSzE02WV2YDse
+	 zZJLnTiDh3bVOOP0OQSTfTEqLG/aG97coDylyK3E=
+Date: Tue, 3 Dec 2024 10:50:13 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>, Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, LUU HOAI <hoai.luu.ub@renesas.com>,
+	Jagan Teki <jagan@amarulasolutions.com>,
+	Sam Ravnborg <sam@ravnborg.org>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+Subject: Re: [PATCH 2/9] dt-bindings: display: renesas,du: Add r8a779h0
+Message-ID: <20241203085013.GH10736@pendragon.ideasonboard.com>
+References: <20241203-rcar-gh-dsi-v1-0-738ae1a95d2a@ideasonboard.com>
+ <20241203-rcar-gh-dsi-v1-2-738ae1a95d2a@ideasonboard.com>
+ <20241203081935.GE10736@pendragon.ideasonboard.com>
+ <CAMuHMdVZui9c4X0FQ3Xke4gzxa9gvs6Nsp0eh5avzr_G3wd=ig@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
-X-GND-Sasl: romain.gantois@bootlin.com
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMuHMdVZui9c4X0FQ3Xke4gzxa9gvs6Nsp0eh5avzr_G3wd=ig@mail.gmail.com>
 
-Hi,
+On Tue, Dec 03, 2024 at 09:38:44AM +0100, Geert Uytterhoeven wrote:
+> Hi Laurent,
+> 
+> On Tue, Dec 3, 2024 at 9:19 AM Laurent Pinchart
+> <laurent.pinchart@ideasonboard.com> wrote:
+> > On Tue, Dec 03, 2024 at 10:01:36AM +0200, Tomi Valkeinen wrote:
+> > > From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+> > >
+> > > Extend the Renesas DU display bindings to support the r8a779h0 V4M.
+> > >
+> > > Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+> > > ---
+> > >  Documentation/devicetree/bindings/display/renesas,du.yaml | 1 +
+> > >  1 file changed, 1 insertion(+)
+> > >
+> > > diff --git a/Documentation/devicetree/bindings/display/renesas,du.yaml b/Documentation/devicetree/bindings/display/renesas,du.yaml
+> > > index c5b9e6812bce..d369953f16f7 100644
+> > > --- a/Documentation/devicetree/bindings/display/renesas,du.yaml
+> > > +++ b/Documentation/devicetree/bindings/display/renesas,du.yaml
+> > > @@ -41,6 +41,7 @@ properties:
+> > >        - renesas,du-r8a77995 # for R-Car D3 compatible DU
+> > >        - renesas,du-r8a779a0 # for R-Car V3U compatible DU
+> > >        - renesas,du-r8a779g0 # for R-Car V4H compatible DU
+> > > +      - renesas,du-r8a779h0 # for R-Car V4M compatible DU
+> > >
+> > >    reg:
+> > >      maxItems: 1
+> >
+> > You also need to add h0 to the g0 block in the conditional properties
+> > below. With that,
+> 
+> Which is not sufficient, as the DU on R-Car V4M has only a single channel,
+> unlike on R-Car V3U and V4H.
 
-On vendredi 29 novembre 2024 14:46:38 heure normale d=E2=80=99Europe centra=
-le Tomi=20
-Valkeinen wrote:
-> Hi,
->=20
-> On 25/11/2024 10:45, Romain Gantois wrote:
-> > The ds90ub960 driver currently uses a list of i2c_client structs to keep
-> > track of used I2C address translator (ATR) alias slots for each RX port.
-=2E..
-> >   		dev_err(dev, "rx%u: alias pool exhausted\n", rxport->nport);
-> >   		return -EADDRNOTAVAIL;
-> >   =09
-> >   	}
-> >=20
-> > -	rxport->aliased_clients[reg_idx] =3D client;
-> > +	set_bit(reg_idx, rxport->alias_use_mask);
-> >=20
-> >   	ub960_rxport_write(priv, chan_id, UB960_RR_SLAVE_ID(reg_idx),
-> >   =09
-> >   			   client->addr << 1);
-> >=20
-> > @@ -1063,18 +1059,15 @@ static void ub960_atr_detach_client(struct i2c_=
-atr
-> > *atr, u32 chan_id,>=20
-> >   	struct device *dev =3D &priv->client->dev;
-> >   	unsigned int reg_idx;
-> >=20
-> > -	for (reg_idx =3D 0; reg_idx < ARRAY_SIZE(rxport->aliased_clients);
-> > reg_idx++) { -		if (rxport->aliased_clients[reg_idx] =3D=3D client)
-> > -			break;
-> > -	}
-> > +	reg_idx =3D find_first_zero_bit(rxport->alias_use_mask,
-> > UB960_MAX_PORT_ALIASES);
-> The old code went through the alias table to find the matching client,
-> so that it can be removed. The new code... Tries to find the first
-> unused entry in the mask, to... free it?
->=20
-> I'm not sure how this is supposed to work, or how the driver even could
-> manage with just a bit mask. The driver needs to remove the one that was
-> assigned in ub960_atr_attach_addr(), so it somehow has to find the same
-> entry using the address or the alias.
+Ah, indeed, in that case the DT bindings also need to take that into
+account :-)
 
-Indeed, there is an issue here. Tracking client addresses is still required=
-,=20
-so the correct change would be to convert aliased_clients to aliased_addrs.
+-- 
+Regards,
 
-Thanks,
-
-=2D-=20
-Romain Gantois, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
-
-
+Laurent Pinchart
 
