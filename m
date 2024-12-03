@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-429565-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429574-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCD589E24A6
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:51:25 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 540C59E228A
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:25:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2C289B3EC8C
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 13:43:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2C75BB44963
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 13:44:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C2C71F1306;
-	Tue,  3 Dec 2024 13:42:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40BC01F76C1;
+	Tue,  3 Dec 2024 13:42:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="U5d1BHZK"
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="buQaAvFV"
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C848E1F1308
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 13:42:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C99C31F7079
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 13:42:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733233325; cv=none; b=t5IcRI7u9GrTpoEUODAzowGYjpfZ8mJlPnhWLQK7S/oDUtOBP2CwMhURkCPMAd1lm899FhXhdStIwq1b9YmshMOsnZT4VpWc2tgmG2iQGYQzKAM7kw2dF+DN0neGoxCAiElHk/dHL7IXGLuKF1tXWhz3zldDtDF1IgDSH+YRaOw=
+	t=1733233332; cv=none; b=hzmJcyJb7DVCuF27FyvMKpK25WkJqXapo1lB1ViM7L0yB8Od7x+jDvmEhwdU6AHcIvFoG7nVW/syP7B1JRqHL4hUK0JhHUIt5hTVHvs6sMwfYFJN28dVHABT/h6oqfwi3ZWZD/MTscQjsljTyqrwz76marQhOIJ+z8XYmofBWCw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733233325; c=relaxed/simple;
-	bh=ezUoqy9EyI7rlqtGoj2nKxRNVdz0UudgIDnN7YVZeeg=;
+	s=arc-20240116; t=1733233332; c=relaxed/simple;
+	bh=8am2sNNGYymVLoCZUo4DyJ1RjPVHV0dlNov/PfNPXAQ=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=js8o1wAZMAhPcZYbAUHtUVROFC5inix4ET8AbhBg5H15NV9PBZ/mR+zGq2yFLQrfdweVvtxONANJKLYOImTn8jj95aAf3Zkyxs5M4S6Z01N8PAkEEDzb0Q/9TLbJ4JyN70AGI+vSG8x0yHIKC6sLlLyz3ATZ/o4hAG0HBr5/MpI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=U5d1BHZK; arc=none smtp.client-ip=210.118.77.12
+	 Content-Type:References; b=By0ijle9yz3OL/4NK4TLfMfrtpo9WYf6hVNessHGpMLb9uTL4AJVcTm5jlWUDsid3CT0z3ASYi6hlGlaXjhMWtVEh67xfUroFT3VTLlGCyEg8q2TX9D+GVviPNtBRjnuks9vs5cHLiOfTPxl1FZP2A1gcQFCNjHgaMuGqKimf+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=buQaAvFV; arc=none smtp.client-ip=210.118.77.11
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20241203134153euoutp02d2fed17166fe04085dfb23dc2a1c16ef~NroQFZ8LB3029430294euoutp02X
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 13:41:53 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20241203134153euoutp02d2fed17166fe04085dfb23dc2a1c16ef~NroQFZ8LB3029430294euoutp02X
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20241203134207euoutp01928612688727074bb302aaf53d5c5820~Nrocl9KU12559325593euoutp01f
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 13:42:07 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20241203134207euoutp01928612688727074bb302aaf53d5c5820~Nrocl9KU12559325593euoutp01f
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1733233313;
-	bh=a88yTuKc0U8ya5XZYE8bq3AQdSOHV1kDfujITRvdz+U=;
+	s=mail20170921; t=1733233327;
+	bh=ZqpyrIT86+Z8L3YqwKLe85srHGtjvwzJ0vOwcnFYImg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=U5d1BHZKJNrxvWKS37T6NyxZKQgiKL7c/D4nIHzWwwfTeEixx4fJhYbYQe+Yr6i7l
-	 Mgys5OHwUwhA2Y2L4zDf+T243G4AV7QZhQNTjNnrX0222n6PGjB4FQSr/N7mCs8QDk
-	 DtnaxxDqXklpHnERC6wtUdNxKQuWvhoDxklNvUeY=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+	b=buQaAvFVRA7WSxR8+9UA4nqe6ICxaPlEI7B7IHMTEbKf0AD4e52JDxyZInd6tXB0W
+	 0aaTky6JVwQZd0LZIABsegi9WA1uVPWfSCuiHBCA9cmirTVBpNSBnLeLFYLHRpwYEz
+	 s9w/JDHWvqplqFB1gBEXwmzs6dt/Fno9t8TyVK48=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
 	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-	20241203134153eucas1p2eb472062c8d3c2e55fd6c337a04d3931~NroPq-ZAP2017220172eucas1p24;
-	Tue,  3 Dec 2024 13:41:53 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-	eusmges1new.samsung.com (EUCPMTA) with SMTP id B1.CA.20821.1AA0F476; Tue,  3
-	Dec 2024 13:41:53 +0000 (GMT)
+	20241203134206eucas1p2a0fb21d525d99d2d325e76361f1aaf57~NrocJH4B91761117611eucas1p2Z;
+	Tue,  3 Dec 2024 13:42:06 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+	eusmges3new.samsung.com (EUCPMTA) with SMTP id E8.61.20397.EAA0F476; Tue,  3
+	Dec 2024 13:42:06 +0000 (GMT)
 Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
 	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20241203134152eucas1p1ed480afaf4d7de3a4a706477e709b6fd~NroPMLKEF1743017430eucas1p1Z;
-	Tue,  3 Dec 2024 13:41:52 +0000 (GMT)
+	20241203134206eucas1p10ca2d7bb12afbd082d5f8a9ad85f94bd~NroblO0rD3124331243eucas1p1M;
+	Tue,  3 Dec 2024 13:42:06 +0000 (GMT)
 Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
 	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20241203134152eusmtrp1e7991a53db793011b255982f7216e896~NroPLY6vw0888908889eusmtrp1-;
-	Tue,  3 Dec 2024 13:41:52 +0000 (GMT)
-X-AuditID: cbfec7f2-b11c470000005155-63-674f0aa166ca
+	20241203134205eusmtrp19989158973803a352ab1e40187820453~NrobkLLd_0888908889eusmtrp1d;
+	Tue,  3 Dec 2024 13:42:05 +0000 (GMT)
+X-AuditID: cbfec7f5-ed1d670000004fad-5b-674f0aae148c
 Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-	eusmgms2.samsung.com (EUCPMTA) with SMTP id A7.F6.19654.0AA0F476; Tue,  3
-	Dec 2024 13:41:52 +0000 (GMT)
+	eusmgms2.samsung.com (EUCPMTA) with SMTP id F8.07.19654.DAA0F476; Tue,  3
+	Dec 2024 13:42:05 +0000 (GMT)
 Received: from AMDC4942.home (unknown [106.210.136.40]) by
 	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20241203134151eusmtip27b7ed05ed073adc14202b77624744963~NroN5kQhD2454624546eusmtip2J;
-	Tue,  3 Dec 2024 13:41:51 +0000 (GMT)
+	20241203134204eusmtip28aa0d75a1ff497816e13d85995da3d09~NroaPqseC0866008660eusmtip2F;
+	Tue,  3 Dec 2024 13:42:04 +0000 (GMT)
 From: Michal Wilczynski <m.wilczynski@samsung.com>
 To: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
 	krzk+dt@kernel.org, conor+dt@kernel.org, drew@pdp7.com, guoren@kernel.org,
@@ -76,9 +76,10 @@ Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
 	dri-devel@lists.freedesktop.org, linux-pm@vger.kernel.org, Michal Wilczynski
 	<m.wilczynski@samsung.com>
-Subject: [RFC PATCH v1 03/14] clk: thead: Enable clock gates with regmaps
-Date: Tue,  3 Dec 2024 14:41:26 +0100
-Message-Id: <20241203134137.2114847-4-m.wilczynski@samsung.com>
+Subject: [RFC PATCH v1 13/14] riscv: dts: Introduce power domain node with
+ simple-bus compatible
+Date: Tue,  3 Dec 2024 14:41:36 +0100
+Message-Id: <20241203134137.2114847-14-m.wilczynski@samsung.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20241203134137.2114847-1-m.wilczynski@samsung.com>
 Precedence: bulk
@@ -88,126 +89,100 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA01SfUxbVRz19r2+9+goe5QBN/vItHGLm5GBQb3TukFEfcwlMBOjMyyzgWcB
-	+djasaFiYHwVunbZwII8mB0LgQ7GiAMaYDAGEkqtNNIhoJYPl46vMZGxjs4hCn1M99/5nd85
-	95xfcilM0khsphJSTrDKFHmSlBDhpt5HtpcqRVGK4IUKCvUNXxKg5sccia502ATI0GMTojF7
-	kwANuuYJdPXOTySa7jiNoyHjBRLl9DYQaIYbI9CCdkyIbrVVEGhR1wOQaTGXQPU9oyRqcBkE
-	qHKhGUdVLW0A5RdWC9HAD2+jmVtaDOVzG9E/7S0kWhn6Dkflf3SSqGnuvBCZ6z9EuZ1f42Hb
-	mPmRPJKZm5nBme8LHpBMx8OLONPKjZKMtvVHwFyrLSQYx1A7wXxrOcSMnzELmMaqTCa3vlfA
-	zN/4mWDONtUCxp4zTDKN1i+jfT8WyeLYpISTrHLPvk9E8ct1Y+Sxe/7pRc6zeBb41VcDvChI
-	h8Kp8/OkBogoCW0EsH7iDsEPDwB0j3M4PywC2FHiAE8s5Wo9xi9qALRWmwE/zAG45C7G1lQE
-	/TKcqDEI1xab6LsYHHH94nkYo6cANDkriDWVHx0Jzbc78TWM0ztg9k2Dxy2m98PrY2oBn7cd
-	dnb1e3gvOgze1WuEvMYXWsqcHi+2qslpLvd0gvRlEfx7anLdHAFHr+sJHvvBWXMTyeOt0Fqs
-	xXmcCiea72M8zoCtWvM6fgM6bH+teqnVgF2woW0PT4fD5RWdh4a0Dxy558tX8IFFplKMp8Ww
-	IF/Cq3dCvVb3X6jNaFovxkCjaQWcA89xTx3DPXUM93/uRYDVgkA2TZWsYFUhKeypIJU8WZWW
-	ogiKTU2+Blb/tXXFfL8FXJhdCOoGAgp0A0hh0k3imob3FBJxnPzzL1hl6lFlWhKr6gZbKFwa
-	KN4Rt52V0Ar5CfYzlj3GKp9sBZTX5ixBesCGug3905FH9C57b3/sufqlYPt+H82WjzTp3MBl
-	Q5gutrw048/qaCedod6aFyTJVhmeeStzr4WKnq5YlG2McIZO2s90Hbzttxzjiq/MrDMe97aV
-	uaNlXUfKuq68EuM+8Glf1tW5x3vVrpNGf0thuk7WGnHwcEHA4abEosTTD2XZR8eHh7x/35mQ
-	ePwbqrqmLJJbuETcbGgf9I8wv4qV1Bz6rff5d194c9SRosiS5nUGB/o79O+HlHi7l2ILP/Dh
-	1AeyvSfzrX2hrHhK/FXmLHWjCs2p9oVXWyrxXe+YTrW8GFW72/bsYPu2kWJTTH54qvO10vFH
-	lihn/ECA3+uhfUYproqXh+zGlCr5vypymldGBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrEKsWRmVeSWpSXmKPExsVy+t/xe7oLuPzTDY4cUbE4cX0Rk8XW37PY
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0xTZxjHfc85PefQrHhaEN+BTKzRXeLQFU3ebcIkcclJdBsSLxsfJnUc
+	ixkU1oqDbYk6GANs2bR2aLlZ0nCLeKK9DBiXCQ3lImwoFDCALOJmlUm41GUqsJbDNr/9nuf5
+	P5f/m5fGZVfJUPqY+jinUStT5KSYcHT8/cvrV8QfqLZ1dwejzqEKDNmfmih0ubkPQ+XOPhEa
+	v2nD0IB3mkRX7v1KofvNpwnkri6lUHYHTyKPaZxEM7pxEbrVWEKiOb0TIMdcDonqnGMU4r3l
+	GDLP2AlkqW8EKDe/UoT6u99Fnls6HOWaVqOlpnoKLbqvEqj4USuFbFNnRchVdwjltJ4ndoWz
+	08PfUOyUx0Ow7XnzFNv8+BLBNpjGKFbXcAOw12rzSXbU3USyZV372DtnXBhrtZxkc+o6MHa6
+	ZZBkC221gL2ZPUSx1p4v46QJ4p1JXMqxE5xma0yiONltKsTT51/I/L1Mcgr0iwtAAA2Z7dDx
+	2CUqAGJaxlQDyLvshBDMA3jasQSEYA7AudJZX4VeblkqDRTyVQB29HZSQjDl62gfwfxzSUYB
+	J6rKl+cGMw9xOOwdIf0BzvwBoGOyhPSrgpgjkNePLjPBbILV1oZlljC74KzLhQkXroet13tx
+	Pwf48g+NBSJBI4VdFycJP+M+Tba9GPcvgEydGJY1nwdC827Y26MnBQ6CD1w2SuB1sMegIwRO
+	gxP2WVzgr2CDzrXCb8PRviek3zPOvAr5xq1COha2DUzgwlMEwuE/pcIJgfCco2glLYF5uTJB
+	vRkadfr/lvZVO1ZcsdCwmA++BxtMz5kxPWfG9P/eSwCvBWu5DG2qitNGqbnPI7XKVG2GWhX5
+	SVrqNeD71T2LLm89qH4wE9kGMBq0AUjj8mBJFb9HJZMkKbO+4DRphzUZKZy2DYTRhHytZFPS
+	ek7GqJTHuU85Lp3T/FvF6IDQU1hJf3TNYFbYlvu/SV8xh9mjVe/9+FFIaETL2aQbbxkqX6qP
+	+frZ4tO6prE1cRN/lQQNrIt6R3Hi4lDORrJiYUEauhHnupI7DfJZS33XIYVBj4r4ws6yy59Z
+	T/LtHvNuW1pLf82QI5/+0OhWbLmQ/nK47eOaN6vU2Zk2SfZO6cGF/e9HLlDyveqx+ejBFxOK
+	nqTckxUXBfDjIc6fLEZn/Gpx1JrMozsqIwqeHR39uTvaYiAKZFnbW24fTIxI/05hBjQfviq3
+	PC4h8duQCnJH47693VXxGm/8D7Wxk4qcu7Y7klW51gMb1IfzNhuj8kCS+QweeCF2z/XbRx6d
+	G/Fuc9+N4eWENln5xmu4Rqv8B2fHr1lEBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprPKsWRmVeSWpSXmKPExsVy+t/xe7prufzTDZ5fMbM4cX0Rk8XW37PY
 	LdbsPcdkMf/IOVaLe5e2MFlc+fqezWLd0wvsFi/2NrJYXFsxl92i+dh6NouXs+6xWXzsucdq
 	cXnXHDaLz71HGC22fW5hs1h75C67xfqv85ksFn7cymKxZMcuRou2zmWsFhdPuVq8vNzDbNE2
 	i9/i/54d7Bb/rm1ksZj9bj+7xZY3E1ktjq8Nt2jZP4XFQdbj/Y1Wdo83L1+yeBzu+MLusffb
 	AhaPnbPusnv07DzD6LFpVSebx51re9g85p0M9LjffZzJY/OSeo+WtceYPN7vu8rm0bdlFaPH
 	pebr7B6bT1cHCEbp2RTll5akKmTkF5fYKkUbWhjpGVpa6BmZWOoZGpvHWhmZKunb2aSk5mSW
-	pRbp2yXoZfxZfY+94K1oxaQnfSwNjLcEuxg5OSQETCRmt09l7mLk4hASWMoosXr3JXaIhIzE
-	te6XLBC2sMSfa11sEEWvGCU+7uxnBkmwCRhJPFg+nxUkISLQySLxdvNaRhCHWeAto8T1mRvB
-	2oUFPCWOP9oPZrMIqEo0HZgP1s0rYC+x+147E8QKeYn9B8+CxTkFHCReT+1iBbGFgGp2/D3M
-	ClEvKHFy5hOwOcxA9c1bZzNPYBSYhSQ1C0lqASPTKkaR1NLi3PTcYiO94sTc4tK8dL3k/NxN
-	jMDEsu3Yzy07GFe++qh3iJGJg/EQowQHs5II7/L13ulCvCmJlVWpRfnxRaU5qcWHGE2B7p7I
-	LCWanA9MbXkl8YZmBqaGJmaWBqaWZsZK4rxsV86nCQmkJ5akZqemFqQWwfQxcXBKNTDVhLqy
-	PnWujjyx5UH0qmP3/z9clHzo2d37klkPy82alIWPK+85Mp9JfY1+zZScSyxm8r5MR2VY5gmX
-	zuyvX/5T5I+Zs9qrDY/cM7W8DvB5WJ3+mfRV6dSiV6Iul48V8D34JmZ48nzczBexGx74Ti/4
-	vmn1ZEbm30cvb1/DUTrx1Repexml13izD06cPikuK8/+Xlql8UbJlQxrjBnTAk5snrXozjXf
-	qKeRFtcbOfSuKjlpz1f+wGkX18sWL77043P+TNMU+UlNDxZPCHKI3CPBKrDLqPL27CML+FIU
-	jITW/KpJN+tZXccssOG5akkFs1hJUtmfRvctay3zvH/EbpgtqpsRkcRT/tvmY1xLbIkSS3FG
-	oqEWc1FxIgBpGSjwtQMAAA==
-X-CMS-MailID: 20241203134152eucas1p1ed480afaf4d7de3a4a706477e709b6fd
+	pRbp2yXoZVyb1cdc8IWn4tk83gbGi1xdjBwcEgImEv/n8nUxcnEICSxllPixr4exi5ETKC4j
+	ca37JQuELSzx51oXG0TRK0aJF4v3MIMk2ASMJB4sn88KkhAR6GSReLt5LSOIwyzwllHi+syN
+	LCArhAUSJFom+4A0sAioSqzYvJMNxOYVcJD4dPw4E8QGeYn9B8+CDeUEir+e2sUKYgsJ2Evs
+	+HuYFaJeUOLkzCdgFzED1Tdvnc08gVFgFpLULCSpBYxMqxhFUkuLc9Nzi430ihNzi0vz0vWS
+	83M3MQJTyrZjP7fsYFz56qPeIUYmDsZDjBIczEoivMvXe6cL8aYkVlalFuXHF5XmpBYfYjQF
+	unsis5Rocj4wqeWVxBuaGZgamphZGphamhkrifOyXTmfJiSQnliSmp2aWpBaBNPHxMEp1cBU
+	vD+7do6LvtfUbxtmzCx57tVYPVdLy+8gz/JiZ0HDtZPLbkfVJV9IeZHRH9AuHRI5Sfe+Z+zC
+	+wucGdI7sv4Et8ve9d3xX25C6qOLUQ++fLvxcqrqpdD9E9ZunB0QO6ma9+GGVxWW/qf9Xkb7
+	SQq6z/zNYP/ZO9muOOjG8iU/1a6mKrsZ2krYPLMSDKi6vD4nun7Nw3yDwjmnGcq52YW21Xec
+	Dlus/cDIc5a58Sfj9k9CEQy23JGGjmt+Hi1S+yX66Pnj2xKmJ4qnHG4zzGXTdn1uohVybnZq
+	1a3FrT6ndracu7tue4GLfNLvC3daReLln3NcO9Tx8I3R5zVli7c8e7wxabZIV6Cf7vWFVkxK
+	LMUZiYZazEXFiQCORnAisgMAAA==
+X-CMS-MailID: 20241203134206eucas1p10ca2d7bb12afbd082d5f8a9ad85f94bd
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20241203134152eucas1p1ed480afaf4d7de3a4a706477e709b6fd
+X-RootMTR: 20241203134206eucas1p10ca2d7bb12afbd082d5f8a9ad85f94bd
 X-EPHeader: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20241203134152eucas1p1ed480afaf4d7de3a4a706477e709b6fd
+X-CMS-RootMailID: 20241203134206eucas1p10ca2d7bb12afbd082d5f8a9ad85f94bd
 References: <20241203134137.2114847-1-m.wilczynski@samsung.com>
-	<CGME20241203134152eucas1p1ed480afaf4d7de3a4a706477e709b6fd@eucas1p1.samsung.com>
+	<CGME20241203134206eucas1p10ca2d7bb12afbd082d5f8a9ad85f94bd@eucas1p1.samsung.com>
 
-The current implementation of the CCU_GATE macro assumes direct access
-to memory-mapped registers, which isn't suitable when using regmaps for
-register access. In the TH1520 SoC, the address space for the VO (Video
-Output) subsystem clocks is shared with other control registers, such as
-those used for resetting the GPU. To prevent conflicts and ensure
-synchronized access, it's important to access these registers via a
-regmap.
+The DRM Imagination GPU requires a power-domain driver, but the driver
+for "thead,th1520-aon" is not yet available. To ensure that the 'aon'
+node and its child 'pd' node are properly recognized and probed by the
+kernel, add "simple-bus" to the compatible property of the 'aon' node.
 
-This patch updates the CCU_GATE macro to support regmap-based access by
-reusing the clk_ops from the divider clocks (ccu_div_ops). This change
-allows the clock gates to be controlled through regmap, enabling proper
-synchronization when multiple components interact with the shared
-address space.
+This change allows the kernel to treat the 'aon' node as a simple bus,
+enabling the child nodes to be probed and initialized independently. It
+ensures that the power domain can be managed appropriately until the
+specific AON driver is developed.
+
+This commit introduces some errors while running dtbs_check, as the aon
+doesn't have the dt-bindings yet.
 
 Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
 ---
- drivers/clk/thead/clk-th1520.c | 10 ++++++++--
- drivers/clk/thead/clk-th1520.h | 15 +++++++++++++++
- 2 files changed, 23 insertions(+), 2 deletions(-)
+ arch/riscv/boot/dts/thead/th1520.dtsi | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-diff --git a/drivers/clk/thead/clk-th1520.c b/drivers/clk/thead/clk-th1520.c
-index e2bfe56de9af..3ada8b98bd8e 100644
---- a/drivers/clk/thead/clk-th1520.c
-+++ b/drivers/clk/thead/clk-th1520.c
-@@ -120,8 +120,14 @@ const struct clk_ops ccu_div_ops = {
- 	.determine_rate = clk_hw_determine_rate_no_reparent,
- };
+diff --git a/arch/riscv/boot/dts/thead/th1520.dtsi b/arch/riscv/boot/dts/thead/th1520.dtsi
+index 39d39059160d..58f93ad3eb6e 100644
+--- a/arch/riscv/boot/dts/thead/th1520.dtsi
++++ b/arch/riscv/boot/dts/thead/th1520.dtsi
+@@ -6,6 +6,7 @@
  
--static unsigned long th1520_pll_vco_recalc_rate(struct clk_hw *hw,
--						unsigned long parent_rate)
-+const struct clk_ops ccu_gate_ops = {
-+	.disable = ccu_div_disable,
-+	.enable = ccu_div_enable,
-+	.is_enabled = ccu_div_is_enabled,
-+};
+ #include <dt-bindings/interrupt-controller/irq.h>
+ #include <dt-bindings/clock/thead,th1520-clk.h>
++#include <dt-bindings/power/thead,th1520-power.h>
+ 
+ / {
+ 	compatible = "thead,th1520";
+@@ -229,6 +230,16 @@ stmmac_axi_config: stmmac-axi-config {
+ 		snps,blen = <0 0 64 32 0 0 0>;
+ 	};
+ 
++	aon {
++		compatible = "thead,th1520-aon", "simple-bus";
 +
-+unsigned long th1520_pll_vco_recalc_rate(struct clk_hw *hw,
-+					 unsigned long parent_rate)
- {
- 	struct ccu_pll *pll = hw_to_ccu_pll(hw);
- 	unsigned long div, mul, frac;
-diff --git a/drivers/clk/thead/clk-th1520.h b/drivers/clk/thead/clk-th1520.h
-index 5d30f55e88a1..532afbbfea01 100644
---- a/drivers/clk/thead/clk-th1520.h
-+++ b/drivers/clk/thead/clk-th1520.h
-@@ -94,6 +94,20 @@ struct ccu_pll {
- 		}							\
- 	}
- 
-+#define CCU_GATE_REGMAP(_clkid, _struct, _name, _parent, _reg, _gate, _flags)	\
-+	struct ccu_gate _struct = {						\
-+		.enable	= _gate,						\
-+		.common	= {							\
-+			.clkid		= _clkid,				\
-+			.cfg0		= _reg,					\
-+			.hw.init	= CLK_HW_INIT_PARENTS_DATA(		\
-+						_name,				\
-+						_parent,			\
-+						&ccu_gate_ops,			\
-+						_flags),			\
-+		}								\
-+	}
++		pd: power-domain {
++			compatible = "thead,th1520-pd";
++			thead,vosys-regmap = <&vosys_reg>;
++			#power-domain-cells = <1>;
++		};
++	};
 +
- static inline struct ccu_common *hw_to_ccu_common(struct clk_hw *hw)
- {
- 	return container_of(hw, struct ccu_common, hw);
-@@ -130,5 +144,6 @@ static inline struct ccu_gate *hw_to_ccu_gate(struct clk_hw *hw)
- extern const struct clk_ops ccu_div_ops;
- extern const struct clk_ops clk_pll_ops;
- extern const struct regmap_config th1520_clk_regmap_config;
-+extern const struct clk_ops ccu_gate_ops;
- 
- #endif /* CLK_TH1520_H */
+ 	soc {
+ 		compatible = "simple-bus";
+ 		interrupt-parent = <&plic>;
 -- 
 2.34.1
 
