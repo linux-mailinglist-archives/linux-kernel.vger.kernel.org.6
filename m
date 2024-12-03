@@ -1,167 +1,207 @@
-Return-Path: <linux-kernel+bounces-429379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429385-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE9469E1B4E
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 12:51:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6609D9E1B5D
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 12:53:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 486C11650B4
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 11:51:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C2D11679D0
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 11:52:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6011A1E6DEE;
-	Tue,  3 Dec 2024 11:50:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82B241E5027;
+	Tue,  3 Dec 2024 11:51:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="jTTDxWzA"
-Received: from mail-wm1-f67.google.com (mail-wm1-f67.google.com [209.85.128.67])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="X0Bu4nmo"
+Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37E8C1E47BF
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 11:50:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.67
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E767F1E501B
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 11:51:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733226602; cv=none; b=FRYLLAvvuiyXZK0Ep3YrnvspfEXY8UWPXEmCZiHzvtjNG5K6NpI2DPyZ1VqJk0AiWwk68r8+BrScafZ/WhRXbg0AIyixR60gBpv1BL8UxWDPT9hI4uDo4nMijAwIM9paRCIjqLAHGvVGOYssH+EYevKw+gg9YFWyRnFayNfOz5w=
+	t=1733226717; cv=none; b=JhjZ53K/4DA02VULesRmtkkh2LN4Q7dR9hWfv13IA/Nh6s6O0LpK2Wk4AhpkaC43MknCzjgEEKfKl613OXhRCFWEtwAOe47HLcUMMgJeyYtjzXj0klaEam6Z6kEt77AFpciImkO/njXy8p5swO8IBf5ol7AbINwJGrO6+Byeaew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733226602; c=relaxed/simple;
-	bh=qpNNCsPIgITiLdoRQfCJAiK5prJ5MmKbaYwoDG9Z54A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UglS6KGYqJzp+09vbIzBQEU4udX3xyYn/gUMUDGAr0DCFSEauq5+rnJZ04DkPMlXFu5fzHHU0ZjZCmEv1etVExO0Q1AlEGg1OKojes4MruRQcs/UNwtNwGjpbNaSp09Gmrbuq+R/ypfKWj9s8v93jacZI+LRMHXSNPsMlVaVt3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=jTTDxWzA; arc=none smtp.client-ip=209.85.128.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f67.google.com with SMTP id 5b1f17b1804b1-43497839b80so34861825e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 03:49:59 -0800 (PST)
+	s=arc-20240116; t=1733226717; c=relaxed/simple;
+	bh=xODsXxgFfNZd8MjPBZGqmi3sIBbEKRslq024Q4XA774=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eZ2HNfuXa7RWvgT/Jt7+mDdc43fAar2R6P5ts0pl8Q2peKnpCz5krouMZ655pVeW4MiCG7ULeInjeUt29M509H9NWUVGPRGxOjfuK4HS6usxkE99aOIY6PP6zSV7CCRpMBp4XdhMUsGB3HmCgDKxXgGD1c4JpzyzzPAKrwWcxg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=X0Bu4nmo; arc=none smtp.client-ip=209.85.128.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-6efa08f91c8so19181007b3.1
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 03:51:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1733226598; x=1733831398; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=t1eGTuoIcul4oTlM0V2VgbBHVZmBmDWQofZqgaFw1zw=;
-        b=jTTDxWzAOUE2BTaTv3FDSUia/mcKKlE/IC5o3NjyTRAJV9ZyjRQuBi088868SIjmIR
-         lyIrOg5CfLcIbDfMOI73atdC8r68iDNyS/rtTnIIdW206kulByKYZLOrbbtTW003LcVc
-         pYXK28lG4dc1Btk87wHKx/kRT80njm0WsQmJCH3021e+GntMXgXNHUC3gUqL06uhCmdl
-         yHlacz4LYv95v3mP44UnahV6yYdvLppFJPlWgpI3JjjP/jT+ZT/frL5mqo4pz9IOqfWL
-         Grk8U7T/uFy1z7TGDcg9WkKNomEKyDVaETWlFUpQkx0PiTvOhRKJyNrp816LYltl0fpz
-         /7rQ==
+        d=linaro.org; s=google; t=1733226715; x=1733831515; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=jJmN9vm0KKdkbgYJY1kJ2PT7vRHayhKSRB17RM5kC5E=;
+        b=X0Bu4nmocEtYnkYNZV3jm3+ODoDpXf7OFUSD4BK/eNEAnGS92mxk0QKcWlfWaqd/t0
+         bKan83juUuc5txilEUJnJKr266BkeuwZs11HmnfIIFId0bUZK942UkyzZjafisK9doDa
+         5uB31FoFPQSAcVIMtrd3oHZZEFpZAdOUXNu46lVNiBlb2B8OF9ub7va69WFNwxtQmIaU
+         vTMyZCyG3++mj5oF+xqTNthMlYM4Untn1TvWhS/s5z0QjaD1NKuD8Vwz6cCO6E/OTwRr
+         pVI3kW668KSehmrYZZye/FIFtvSjCLqF5ROYDf4byEq7/hFVlyROhu7oO+AjQ7lkRd4G
+         MJBQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733226598; x=1733831398;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=t1eGTuoIcul4oTlM0V2VgbBHVZmBmDWQofZqgaFw1zw=;
-        b=lg/+dUyigm56BTXu2FKzKIxjPVYvhDmHJ+253CACc9sbKo6Q1NKt02dh4OJKzeHBWO
-         hns0ZtQI9RsN71TEXkEYsvQyznKWeqVjwzdj2XhdktLioBFfyvxTJUb/Va4q0gkDzh+E
-         QtkKU+uEq96LfRmCO/n9Hvqyv3f8BIRkVtuknR6w7ms0sr3l+ZTIoxSjxcdz0xO+SBHL
-         HdxxRRsA3TKOCK8amnTH2P4slOkyontpPoLMZgksGbwVaQVBI0djkK7Z3EwgwAI9vy+Q
-         +azvrlRAcqCfuwzTGzisCI1RPe4ygYMja3TbQ883SpHb6YbzBkaekjd9A1RjcsehUbNo
-         81MQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUpftxoZSQ+LL4EmpxuBUQywr3K+TYpU3sULiBdTaY/be3p5bEa/UhkCpOxUf1LEj9qZewp5IgdMAQ320E=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yynx0aoK6gDctBv/Jg4BNkFhz4ANiackpqSf5Lg+wsHKO3JtN/9
-	Vwe5MUsIwJ4PRzfOxrWSxbfn+zYkATjpjLK9C1Lu4OWFl7/LsWmivEf6RqsErWoWJAnLpc3Snhv
-	UhuNeCw==
-X-Gm-Gg: ASbGnctGtS2hXyOlecWQhpP+/oL5sEpCdnfoeVyEVLJM6uzSR8gIlE+WFfSr9swTXZ/
-	NByAYjqb+kXxXY/YJFs9niLGd+Ubg1791Sv9fj5KNM6rBwjSA9XWrgU84A9/bVbHzJ+y9YT6FLp
-	jBzJenwpp00vfUyPLuVicPKEE7zFHj/Y7FcH4ydN6dZ5EZ/noCr1afhH4CKtdF5InKj6Lug2R21
-	na5N1tgGGApV/ngI++ruHgwBlOAP2oVjgSkBqFJfWIY7bIu7MmCoQatXRMvCSk7tywRNSJAOsIT
-	NetMjIkmc/Qgsl9jToa6lMUk8YWcwaxhXfCcU8Q=
-X-Google-Smtp-Source: AGHT+IFsnaahKV4dsatLKWcqYS7Ec/1sg7wL73iHar/F358cxfbXSRjS1/ttRnI5KGYWJY45r+/TUA==
-X-Received: by 2002:a05:600c:4690:b0:434:a929:42bb with SMTP id 5b1f17b1804b1-434d09cd002mr20521795e9.18.1733226598426;
-        Tue, 03 Dec 2024 03:49:58 -0800 (PST)
-Received: from localhost (p200300f65f242d005bbc9b581c6b9666.dip0.t-ipconnect.de. [2003:f6:5f24:2d00:5bbc:9b58:1c6b:9666])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434b0f7dccasm185521965e9.43.2024.12.03.03.49.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Dec 2024 03:49:57 -0800 (PST)
-Date: Tue, 3 Dec 2024 12:49:54 +0100
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Jakub Kicinski <kuba@kernel.org>, richardcochran@gmail.com, 
-	yangbo.lu@nxp.com, dwmw2@infradead.org, 
-	Linus Torvalds <torvalds@linux-foundation.org>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Linux-Next <linux-next@vger.kernel.org>
-Subject: Re: [PATCH] ptp: Switch back to struct platform_driver::remove()
-Message-ID: <5qiehbnmzufzqjgn2l4jcghebdx7llr52lgl7hi2jizpg7gfnd@c73bpxxxdeiv>
-References: <20241130145349.899477-2-u.kleine-koenig@baylibre.com>
- <173318582905.3964978.17617943251785066504.git-patchwork-notify@kernel.org>
- <CAMuHMdV3J=o2x9G=1t_y97iv9eLsPfiej108vU6JHnn=AR-Nvw@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1733226715; x=1733831515;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jJmN9vm0KKdkbgYJY1kJ2PT7vRHayhKSRB17RM5kC5E=;
+        b=qxd0AW07sh0Nrt3tdOJCL+Xww0RVJp5NMGUysKmevlJbEdyMgzgkem5nSeXEcPdcp5
+         NglL1xbGXdITM+P//hMDyY7KcprtlbtqjXNR1ITEpOAUtt9hYrlH6hoydAuFE2oKPD63
+         m3hT4tdCo1PPASdtKraKXgiF5vU2WetYa/0tFqnidCHbcpr7FybSEdWZpYN/tRJ1SCcC
+         QyPuSDNls6inZxu0LxLSTc9cIjcEprz+vM3R3ifCIX6Yf0hMDAd8Yrdzq4w46Osc4xNM
+         WTA43DeXeiWxWKvpeSBzs3v0TBq0I3enInfAjAgWnPGk0oFuOWXPbvL4FGQ4L7szI+aY
+         G2pg==
+X-Forwarded-Encrypted: i=1; AJvYcCVbMGJtpGVzNlNn0jaerjDU/cpsuUQ+tvGaY6ENbTDBbFFRqVv8/Fli+VK/3RHPIFLA4kIF9b59/HFQLLI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwGvCyzGKAHmElAUK0VEIzrrQdbPTG57PmvvCwcPt/9dyp1ucQa
+	4NgcpCta//GrbKQwEIPQXFAfj1mE00re5S4GqvU2gw66JoZGA+Wh5x44DPlmo6toxYVsZHmgb4i
+	XLQsZVB4OLiQljvBFjtLhpy77ekch54HPluUtLw==
+X-Gm-Gg: ASbGncv17PglYg4I8kBX/xcALrnqgTpUNEWGgRMEkfK59IJqX/OqsYCh+Z+3WZiKyjS
+	1hmNCW3Xht714kN3OXLDyoiMfKbVcJw==
+X-Google-Smtp-Source: AGHT+IEjsHAYwArBu8zqyJKRiaq0r1rzH6TwAontXOXbJw7jEjz6js3BPKBbGiqM6LVavcAfeIYgmun7BtLOfMgwhmU=
+X-Received: by 2002:a05:6902:150d:b0:e39:772b:4bae with SMTP id
+ 3f1490d57ef6-e39d39ee384mr1903823276.6.1733226714940; Tue, 03 Dec 2024
+ 03:51:54 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="jpb65nidl5tvnz4e"
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdV3J=o2x9G=1t_y97iv9eLsPfiej108vU6JHnn=AR-Nvw@mail.gmail.com>
+References: <20241112003017.2805670-1-quic_molvera@quicinc.com>
+ <20241112003017.2805670-3-quic_molvera@quicinc.com> <em4vkg4totsg435s4usu7kqn45vfqfot2j7sikzmnof2kkyidi@26b6kkpz7z4c>
+ <0ca812e7-bf5b-463a-83dc-9195aee14589@quicinc.com> <828dbdb1-d987-43e6-8cd1-7ba267da9e67@quicinc.com>
+In-Reply-To: <828dbdb1-d987-43e6-8cd1-7ba267da9e67@quicinc.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Tue, 3 Dec 2024 13:51:46 +0200
+Message-ID: <CAA8EJpqPRpV_aGH_LHoG8EWkaQ_tCR3u0jM3C_jXKowCAUEqPQ@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] interconnect: qcom: Add interconnect provider
+ driver for SM8750
+To: Melody Olvera <quic_molvera@quicinc.com>
+Cc: Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Adam Skladowski <a39.skl@gmail.com>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Sibi Sankar <quic_sibis@quicinc.com>, =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
+	Vladimir Lypak <vladimir.lypak@gmail.com>, Danila Tikhonov <danila@jiaxyga.com>, 
+	Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Rajendra Nayak <quic_rjendra@quicinc.com>, Mike Tipton <quic_mdtipton@quicinc.com>, 
+	Abel Vesa <abel.vesa@linaro.org>, Trilok Soni <quic_tsoni@quicinc.com>, 
+	Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>, linux-arm-msm@vger.kernel.org, 
+	linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-
---jpb65nidl5tvnz4e
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] ptp: Switch back to struct platform_driver::remove()
-MIME-Version: 1.0
-
-Hello Geert,
-
-thanks for pointing out this conflict.
-
-On Tue, Dec 03, 2024 at 10:48:36AM +0100, Geert Uytterhoeven wrote:
-> On Tue, Dec 3, 2024 at 1:30=E2=80=AFAM <patchwork-bot+netdevbpf@kernel.or=
-g> wrote:
-> > This patch was applied to netdev/net-next.git (main)
-> > by Jakub Kicinski <kuba@kernel.org>:
+On Tue, 3 Dec 2024 at 00:04, Melody Olvera <quic_molvera@quicinc.com> wrote:
+>
+>
+>
+> On 11/18/2024 10:01 AM, Melody Olvera wrote:
 > >
-> > On Sat, 30 Nov 2024 15:53:49 +0100 you wrote:
-> > > After commit 0edb555a65d1 ("platform: Make platform_driver::remove()
-> > > return void") .remove() is (again) the right callback to implement for
-> > > platform drivers.
-> > >
-> > > Convert all platform drivers below drivers/ptp to use .remove(), with
-> > > the eventual goal to drop struct platform_driver::remove_new(). As
-> > > .remove() and .remove_new() have the same prototypes, conversion is d=
-one
-> > > by just changing the structure member name in the driver initializer.
-> > >
-> > > [...]
 > >
-> > Here is the summary with links:
-> >   - ptp: Switch back to struct platform_driver::remove()
-> >     https://git.kernel.org/netdev/net-next/c/b32913a5609a
->=20
-> Note that this now conflicts with commit e70140ba0d2b1a30 ("Get rid of
-> 'remove_new' relic from platform driver struct") upstream.
+> > On 11/15/2024 7:27 AM, Dmitry Baryshkov wrote:
+> >> On Mon, Nov 11, 2024 at 04:30:17PM -0800, Melody Olvera wrote:
+> >>> From: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
+> >>>
+> >>> Introduce SM8750 interconnect provider driver using the interconnect
+> >>> framework.
+> >>>
+> >>> Signed-off-by: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
+> >>> Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
+> >>> ---
+> >>>   drivers/interconnect/qcom/Kconfig  |    9 +
+> >>>   drivers/interconnect/qcom/Makefile |    2 +
+> >>>   drivers/interconnect/qcom/sm8750.c | 1585
+> >>> ++++++++++++++++++++++++++++
+> >>>   drivers/interconnect/qcom/sm8750.h |  132 +++
+> >>>   4 files changed, 1728 insertions(+)
+> >>>   create mode 100644 drivers/interconnect/qcom/sm8750.c
+> >>>   create mode 100644 drivers/interconnect/qcom/sm8750.h
+> >>>
+> >>> diff --git a/drivers/interconnect/qcom/Kconfig
+> >>> b/drivers/interconnect/qcom/Kconfig
+> >>> index 362fb9b0a198..1219f4f23d40 100644
+> >>> --- a/drivers/interconnect/qcom/Kconfig
+> >>> +++ b/drivers/interconnect/qcom/Kconfig
+> >>> @@ -337,6 +337,15 @@ config INTERCONNECT_QCOM_SM8650
+> >>>         This is a driver for the Qualcomm Network-on-Chip on
+> >>> SM8650-based
+> >>>         platforms.
+> >>>   +config INTERCONNECT_QCOM_SM8750
+> >>> +    tristate "Qualcomm SM8750 interconnect driver"
+> >>> +    depends on INTERCONNECT_QCOM_RPMH_POSSIBLE
+> >>> +    select INTERCONNECT_QCOM_RPMH
+> >>> +    select INTERCONNECT_QCOM_BCM_VOTER
+> >>> +    help
+> >>> +      This is a driver for the Qualcomm Network-on-Chip on
+> >>> SM8750-based
+> >>> +      platforms.
+> >>> +
+> >>>   config INTERCONNECT_QCOM_X1E80100
+> >>>       tristate "Qualcomm X1E80100 interconnect driver"
+> >>>       depends on INTERCONNECT_QCOM_RPMH_POSSIBLE
+> >>> diff --git a/drivers/interconnect/qcom/Makefile
+> >>> b/drivers/interconnect/qcom/Makefile
+> >>> index 9997728c02bf..7887b1e8d69b 100644
+> >>> --- a/drivers/interconnect/qcom/Makefile
+> >>> +++ b/drivers/interconnect/qcom/Makefile
+> >>> @@ -40,6 +40,7 @@ qnoc-sm8350-objs            := sm8350.o
+> >>>   qnoc-sm8450-objs            := sm8450.o
+> >>>   qnoc-sm8550-objs            := sm8550.o
+> >>>   qnoc-sm8650-objs            := sm8650.o
+> >>> +qnoc-sm8750-objs            := sm8750.o
+> >>>   qnoc-x1e80100-objs            := x1e80100.o
+> >>>   icc-smd-rpm-objs            := smd-rpm.o icc-rpm.o icc-rpm-clocks.o
+> >>>   @@ -80,5 +81,6 @@ obj-$(CONFIG_INTERCONNECT_QCOM_SM8350) +=
+> >>> qnoc-sm8350.o
+> >>>   obj-$(CONFIG_INTERCONNECT_QCOM_SM8450) += qnoc-sm8450.o
+> >>>   obj-$(CONFIG_INTERCONNECT_QCOM_SM8550) += qnoc-sm8550.o
+> >>>   obj-$(CONFIG_INTERCONNECT_QCOM_SM8650) += qnoc-sm8650.o
+> >>> +obj-$(CONFIG_INTERCONNECT_QCOM_SM8750) += qnoc-sm8750.o
+> >>>   obj-$(CONFIG_INTERCONNECT_QCOM_X1E80100) += qnoc-x1e80100.o
+> >>>   obj-$(CONFIG_INTERCONNECT_QCOM_SMD_RPM) += icc-smd-rpm.o
+> >>> diff --git a/drivers/interconnect/qcom/sm8750.c
+> >>> b/drivers/interconnect/qcom/sm8750.c
+> >>> new file mode 100644
+> >>> index 000000000000..bc72954d54ff
+> >>> --- /dev/null
+> >>> +++ b/drivers/interconnect/qcom/sm8750.c
+> >>> @@ -0,0 +1,1585 @@
+> >>> +// SPDX-License-Identifier: GPL-2.0-only
+> >>> +/*
+> >>> + * Copyright (c) 2024, Qualcomm Innovation Center, Inc. All rights
+> >>> reserved.
+> >>> + *
+> >>> + */
+> >>> +
+> >>> +#include <linux/device.h>
+> >>> +#include <linux/interconnect.h>
+> >>> +#include <linux/interconnect-provider.h>
+> >>> +#include <linux/module.h>
+> >>> +#include <linux/of_platform.h>
+> >>> +#include <dt-bindings/interconnect/qcom,sm8750-rpmh.h>
+> >>> +
+> >>> +#include "bcm-voter.h"
+> >>> +#include "icc-rpmh.h"
+> >>> +#include "sm8750.h"
+> >> Nit: please merge sm8750.h here, there is no need to have a separate
+> >> header, there are no other users.
+> >
+> > Ack.
+> >
+> >>
+> >> Also, is there QoS support? I see no qcom_icc_qosbox entries.
+> >
+> > Unsure; will let Raviteja comment.
+> >
+>
+> Spoke w Raviteja; looks like he wants to do this later.
 
-Indeed. The differences are only about whitespace.
+Will that cause bindings changes?
 
-> Resolution: just take the version from upstream.
-
-But IMHO my variant is better than Linus's. After Linus' change the =3D
-for .probe and .remove are aligned in the conflicting files. However the
-other members initialized there are only using a single space before the
-=3D. My change used the single space variant consistently for the whole
-initializer.
-
-So I suggest to either drop my change, or in the conflict resolution
-take my variant and not Linus's.
-
-Best regards
-Uwe
-
---jpb65nidl5tvnz4e
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmdO8F8ACgkQj4D7WH0S
-/k6KEAf9F+5sS9kn27evKyDBVLtmYthIzlL6RVq3+pB4aw882KLlwsIKZEZaG6sW
-h4CUtJwrjOm62GfBaKL54529/j8wJ23voQX99z8W+JBYIBaPqwRs7gTHNYXAaQC8
-nbke+jKVEgm3BOxK3tfoOfWYyJbar8FkCWWbVTKbrM04bkO2XeLYK88qCHDx47mp
-q6hyI0EgLoxE9OlGJVbCx4SInXXDyeQD7I96G5VccSaxxmoSp5Zx82sXGn6CfzVr
-RKCNPJ+oqpnBi4muJ9S9SHhxXxGfyBm5ZASzxOFcuEzMmufUXsrfVUsm1m7R6I5w
-cKSWIjE8MZEFpl9kZ9kUZTn26f1Tyw==
-=hFOS
------END PGP SIGNATURE-----
-
---jpb65nidl5tvnz4e--
+-- 
+With best wishes
+Dmitry
 
