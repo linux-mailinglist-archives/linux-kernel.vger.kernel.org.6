@@ -1,90 +1,109 @@
-Return-Path: <linux-kernel+bounces-429803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 211B69E28D8
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 18:13:32 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94FC29E2ADD
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 19:30:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4C206BA24CA
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 15:58:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 87A83BE46B7
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 15:59:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DE511F76D1;
-	Tue,  3 Dec 2024 15:58:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 920A31F8909;
+	Tue,  3 Dec 2024 15:59:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="rvYg7v4/"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="HASqnMMs"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00DA91DE8A5;
-	Tue,  3 Dec 2024 15:58:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7328D1F76AD;
+	Tue,  3 Dec 2024 15:58:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733241523; cv=none; b=nVT8XBtz7DH+LqwZthOy6rJAA4I91fgrxK42CJvjcpsXdcvvA0HJ2ZIesm5P8gulIiO1sck4/2mNnK4/P4FFK8uxaNHGhFNVJok3tk8dYcKCLyKa8gGqykp6Znfpx8SpwdawLaQGUdJv0BCRGKUcTdh5+rJB60jOg6LXhv9k6d0=
+	t=1733241540; cv=none; b=FuWYv4EHcaEqBXfNjbJ/yR5fSeavOzNkLg+CJs3rjYQKRslW/eqwZD7ogU0hHL6M9rIsCqzQ4e0OQq7S+7FC9QjSSexgYLRVYsG48+5O3YvV4dLUXhMo/C5oaPQQBnI4XBZShaKnf9iS0org4MkXsCo6xCHdeZe/1eifiOoJfAA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733241523; c=relaxed/simple;
-	bh=NM8TA0/pb67xBzCofCt+hOtL7skTGdFReHuV+5zTAW0=;
+	s=arc-20240116; t=1733241540; c=relaxed/simple;
+	bh=aNIYOm+BmWWU2hBdJEYlLVbxaTdWTBaUP7RaDpWKdts=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qYeoE+N2++SWZ6kJvrZsZ6de0I0z3mHTTuOOh9lgMu3MKByVYuhPLYoSicAiI5AJxTtwlBRlAyWEAQv/AGVsDKwdue/AACSgwEXciik7L5z1874fbSFTxYAvpjlc0E99fsVdIdvfnAZmJrz0WNKlmUZ387ljLtRpe7wN8EjLhec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=rvYg7v4/; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=IjTAi+b2E3tsHEA0DYxeQRPX8JxIkk3HtLsAP3IxeP0=; b=rvYg7v4/R57gJMqn01dtxQiv2V
-	sMfUnXu0vItdI1zjzKwHMPIJ6kWGj3hV1qAW2uYnUsL/Ino2UEtvyZySjHHiMDIjsrmPoqdnYBU6n
-	InWTKI6Gy6KqM/S4NkJfN2ZneAgwPiv3+PKf7yb5omBTrNOyj+tJXxA4UrQjxrI6lgYs4UsQMb5Ul
-	WYfJN7oCEjS8/qjEGlu5MNWHEJbxB/J2jsaHLLMoSYX+xFlFFGHPUL5bUEiYpVdCdFDKHwzr6ee4w
-	4YICcToAqMxsoCyBUejeJF7TD/53NkASEu5JWGRj3vg3PV4nsTJbJSGyZ6z4j2jPQAT8KlEhQDJMv
-	zd+qUiQA==;
-Received: from 77-249-17-89.cable.dynamic.v4.ziggo.nl ([77.249.17.89] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tIVIK-00000009pS3-39EK;
-	Tue, 03 Dec 2024 15:58:38 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 568D530031E; Tue,  3 Dec 2024 16:58:37 +0100 (CET)
-Date: Tue, 3 Dec 2024 16:58:37 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Tiezhu Yang <yangtiezhu@loongson.cn>
-Cc: Josh Poimboeuf <jpoimboe@kernel.org>,
-	Huacai Chen <chenhuacai@kernel.org>, loongarch@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 06/10] objtool: Handle unsorted table offset of rodata
-Message-ID: <20241203155837.GD21636@noisy.programming.kicks-ass.net>
-References: <20241122045005.14617-1-yangtiezhu@loongson.cn>
- <20241122045005.14617-7-yangtiezhu@loongson.cn>
- <8cb35ab7-56d0-8e8d-5e18-1bc2b94aeeeb@loongson.cn>
- <20241127012042.by4g34m4twlfmove@jpoimboe>
- <53677c5f-2ea5-a227-66f7-b27c27665f6b@loongson.cn>
- <20241128001011.sjedpn2zhrhy6y6i@jpoimboe>
- <20241128001627.5czdlst5rd76qwsd@jpoimboe>
- <20241128010034.u3b7gkh4wqgb7d2s@jpoimboe>
- <19af5a40-9bf7-bab6-2a69-02fba652a7df@loongson.cn>
+	 Content-Type:Content-Disposition:In-Reply-To; b=CYOK3l4aaScP9eqKQCFhmzb8lzIR7QaI2kBKLUJZCGsKWHz23qw9ttt/iKeAKXrpBRuGqmnDGSdzYNh0rYX1T17VJ0D2XHGX16aCtOn7OX3RVi5PF4RZrKVBnOAIAobg68ak2pOvb86sJxmS54BwjqWNzD4E0sWqAbKB9r/0Y5A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=HASqnMMs; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 0DD324CE;
+	Tue,  3 Dec 2024 16:58:27 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1733241508;
+	bh=aNIYOm+BmWWU2hBdJEYlLVbxaTdWTBaUP7RaDpWKdts=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HASqnMMspCV6QhzACwvbRATGG2CxDEtCBg0DPNjfj7VYbJBSpuXN9qkBHh25UfpPa
+	 k6NGQ4AJD8Q1JSKXt3/XRW4yX2rnl+qeUiasiZkiPoObEx6S54anBZaxvFpa6kcs1M
+	 uxWUUtMb7fghXAczjVImTsldDPBj84DEMjNU1JYQ=
+Date: Tue, 3 Dec 2024 17:58:43 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Ricardo Ribalda <ribalda@chromium.org>
+Cc: Hans de Goede <hdegoede@redhat.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Sakari Ailus <sakari.ailus@linux.intel.com>
+Subject: Re: [PATCH v5 2/2] media: uvcvideo: Add more logging to
+ uvc_query_ctrl()
+Message-ID: <20241203155843.GD26936@pendragon.ideasonboard.com>
+References: <20241128-uvc-readless-v5-0-cf16ed282af8@chromium.org>
+ <20241128-uvc-readless-v5-2-cf16ed282af8@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <19af5a40-9bf7-bab6-2a69-02fba652a7df@loongson.cn>
+In-Reply-To: <20241128-uvc-readless-v5-2-cf16ed282af8@chromium.org>
 
-On Thu, Nov 28, 2024 at 10:28:01AM +0800, Tiezhu Yang wrote:
-> On 11/28/2024 09:00 AM, Josh Poimboeuf wrote:
+On Thu, Nov 28, 2024 at 08:53:42PM +0000, Ricardo Ribalda wrote:
+> If we fail to query the ctrl error code there is no information on dmesg
 
-> > Still talking to myself here, I think we'll only merge the above patch,
-> > since we don't know what the generic annotations are going to look like
-> > yet.
+s/ctrl/control/
+
+> or in uvc_dbg. This makes difficult to debug the issue.
 > 
-> OK, my next version will be based on tip/objtool/core after
-> the merge window, by that time, hope the tree include Ard's
-> and Peter's patches to avoid conflicts.
+> Print a proper error message when we cannot retrieve the error code from
+> the device.
+> 
+> Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
 
-Should now all be pushed out and visible in tip/objtool/core.
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-Thanks!
+I'll update the commit message, no need to resend.
+
+> ---
+>  drivers/media/usb/uvc/uvc_video.c | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/media/usb/uvc/uvc_video.c b/drivers/media/usb/uvc/uvc_video.c
+> index 67f714bca417..a650d886e922 100644
+> --- a/drivers/media/usb/uvc/uvc_video.c
+> +++ b/drivers/media/usb/uvc/uvc_video.c
+> @@ -117,8 +117,12 @@ int uvc_query_ctrl(struct uvc_device *dev, u8 query, u8 unit,
+>  	error = *(u8 *)data;
+>  	*(u8 *)data = tmp;
+>  
+> -	if (ret != 1)
+> +	if (ret != 1) {
+> +		dev_err_ratelimited(&dev->udev->dev,
+> +				    "Failed to query (%s) UVC error code control %u on unit %u: %d (exp. 1).\n",
+> +				    uvc_query_name(query), cs, unit, ret);
+>  		return ret < 0 ? ret : -EPIPE;
+> +	}
+>  
+>  	uvc_dbg(dev, CONTROL, "Control error %u\n", error);
+>  
+
+-- 
+Regards,
+
+Laurent Pinchart
 
