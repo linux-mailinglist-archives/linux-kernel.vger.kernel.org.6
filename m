@@ -1,130 +1,107 @@
-Return-Path: <linux-kernel+bounces-430225-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA83B9E2E18
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 22:29:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D1E89E2E1E
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 22:32:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 919C3161863
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 21:29:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D90D11620BC
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 21:32:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3502209F3E;
-	Tue,  3 Dec 2024 21:29:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 671241F8930;
+	Tue,  3 Dec 2024 21:32:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R8XDxj0K"
-Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BQChVggg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4D9D189F56;
-	Tue,  3 Dec 2024 21:29:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEC8A1885A0;
+	Tue,  3 Dec 2024 21:32:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733261347; cv=none; b=T0Px+/YALznOtVnG330Y1lkSH04tv67cCzIYdE/xBdL7xPMwdSceL0sqkA5agNYO3dGFRZV9yWnDmoHrkZL/TDJ5jYtZ0LehIbNubeG0Vj2NGCN1GYPnPjPw6gi3kj8Am0KJyqODi6CntqK6jWUsCEwcZVXjzME7NDPuCgBqUQk=
+	t=1733261533; cv=none; b=IZy9mcxu75XZIMMWzrQq/bIl7awb9DTpCZ7DuH9TTJ/svDAqHEW42CG5Eg4SftYwhIEPn83I7ChVNTydJQhDlQA5apft2tNPwuha7HzESgkdCeI6Sfooa8nWVb7ZivzqJ+K2Atpou5ks+1zczv8BP5NXgm7PG1cyN90tdQsrGYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733261347; c=relaxed/simple;
-	bh=e/iMXErW/iZMIekKWnZKp8xRj8/rK/L+kixlsBNqhwI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=r9ERJEv0u4DW4zipIOnryV9idvR0itfSmBztItSNMm04D/ucdqKrMgItYCFxhgzCCwSmt7JISiUH7d0Fo0f2Yv7anQ70qee0FXcSuVmGLHD8dL3OL+B5lprnwYhyFIFfvG7MugABBqwJfAx3KIC1OWW8iSDHJV0mj4wyLIVLLpQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R8XDxj0K; arc=none smtp.client-ip=209.85.222.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-7b673cb2708so403245385a.2;
-        Tue, 03 Dec 2024 13:29:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733261344; x=1733866144; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=yzaU9WbXWKSmehPViJwiD8qzEdE+I7D038C8G0+WbuQ=;
-        b=R8XDxj0K4UMGQM91gSXBIrT3XRWjkAcgLhdH1zEUL4MVk1NpoGsA6DiQK23TbYMWxi
-         aCnQZ562o6g7TCYNUzmCz+14GQSV3ixhNsqhQJQAN5xt/9rWxyARgQzwjLAKKLoi3Frz
-         IhG26iTZL7nt0w0O6scekvgKyV7irRTVxf4eDWellFHWk7EEjLF3CiDeL9z5IO7sKCxS
-         9pyf5okuaP3BL3mLTEsiUc+KPQVcaC5vgfWDe3w4GFTHjIqjVJMkt80sUiSOlqIz3WE4
-         i9h3qE+p7UmtQ4pu2qSXCjixhdeC5AwmMHJg4BViK0fsjDIYGYqf5Twp2FXlFdC9PjaM
-         djsg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733261344; x=1733866144;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yzaU9WbXWKSmehPViJwiD8qzEdE+I7D038C8G0+WbuQ=;
-        b=OrxggKyf4c5CZXBwWVmmM0vI72k7UpsW1syZZlExHvC39QpHD9ts5LFE+OnHTJ+aVc
-         FX1Kx9lp8u7WtsbaxbCRUd/+qtYvbnOlRgl6sbHffF7UAnvRzXDeREYIIBTyA/11HZZS
-         6hFS7TSSEyeoelY5BV0jq4lL4tgysuWDWt8Cmqyzx8tFvr7DRiZWk4iw6wkp32/S9opK
-         8rjFk8qnXVixmNN5pW9Ht4q8zPjIzMhkp9SGqRbI3zO+XUYt6AvCqZWc2cPU9bQuFYK5
-         okWS19T1WxqI1ex3J3d+/J8y0isqY9VOFYQMqMQ+u8GCLAiCEuIP2REjELWXd/k+yp+q
-         Bzlg==
-X-Forwarded-Encrypted: i=1; AJvYcCVer+ZgKzXYw+4m4Vv8EGEqbQPLZW6yTH9PF1hlft8ai0JBwbCtSaFZthWcto079VTTGfYSmLNWBXKxwCo=@vger.kernel.org, AJvYcCX2vqOoXqe9RhFxQs/8A4dHyYwZrI0Qo0Q0IAZXdFyAJtd5g6LTRU5azt4g1ZfH7nWHo+OKPfKPO20Dk9E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzA1DkydLbS/y5l7p9r8ux+1ML6ZQiVn+bWEi7QIlDzZv5zyGxC
-	LRTLnX3lO7r7JMXi66POW6T7MPAnAvjpvNkrsZS3Tqm9wo1bBXAp
-X-Gm-Gg: ASbGncuii9gN7qxNdZBwflvjS4iIcgCWfIZZuzLqvHrn4tU4/WDeBmEDWXTYcVtDLOF
-	7MHLss0grEdkC2YbjHC7ABnkPP4Z0nUhcJ6W9y1ld1mD6iDzsGE23Pv0WaG1piTDZ+KW/Y5caPy
-	kk1nlKZSGd7yEp2aZeh0bKwsokhCccBVNi7bpQwhuu3s/2wrkeL+jt7ch1h+JzlgDuK37kTi9dE
-	3BvMN4e+YE6zOQg7K3Jrf898bF0fxmu0Lp67zLvfM6OfsVwebMeV+VpDRGqLax7I13uMx8O
-X-Google-Smtp-Source: AGHT+IEVedl7M7CWEEciMUVASAAqqGWxX9IbmEr5YJtEzctnTGC0cfsxZ41ZYPdpvgVXmNIpVgbB3g==
-X-Received: by 2002:a05:6214:212b:b0:6d3:b636:eccc with SMTP id 6a1803df08f44-6d8b732cd14mr53760666d6.21.1733261344623;
-        Tue, 03 Dec 2024 13:29:04 -0800 (PST)
-Received: from newman.cs.purdue.edu ([128.10.127.250])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d88cca0e06sm49942396d6.105.2024.12.03.13.29.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Dec 2024 13:29:04 -0800 (PST)
-From: Jiasheng Jiang <jiashengjiangcool@gmail.com>
-To: hverkuil@xs4all.nl
-Cc: mchehab@kernel.org,
-	andrzejtp2010@gmail.com,
-	allen.lkml@gmail.com,
-	neil.armstrong@linaro.org,
-	quic_jjohnson@quicinc.com,
-	lkundrak@v3.sk,
-	sakari.ailus@linux.intel.com,
-	linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Jiasheng Jiang <jiashengjiangcool@gmail.com>
-Subject: [PATCH v2] media: marvell: Add check for clk_enable()
-Date: Tue,  3 Dec 2024 21:29:02 +0000
-Message-Id: <20241203212902.38116-1-jiashengjiangcool@gmail.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1733261533; c=relaxed/simple;
+	bh=BOg48Ob9/NVzqkpxLrxQQVqMKoA0kVXfOH8VOSVCmp0=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=iqDsZW5+WdZ/qxBIWdBLTDTLZlxGeR2rYcKQ/lum2IYZndIXxHdu8X3xVvOBDka/xOrPBVbAbtAkGiCiIL4UiFB8lkt7pvob04ip9IoBTzZY/cOeRCip7ar9G7PYj9qNS2vrMrRXTuLLUKMOSFeiYh7LHqK7wUHrwb4qrzsA6K0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BQChVggg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 498E7C4CED8;
+	Tue,  3 Dec 2024 21:32:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733261533;
+	bh=BOg48Ob9/NVzqkpxLrxQQVqMKoA0kVXfOH8VOSVCmp0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=BQChVgggT/bBeKHZ8u8dvoyJoHoBlz9+KD0dYqf7fyD45vOJGfMo0S7WkoUP8Vl8W
+	 ziJNnSxLXVJr/YwOo9BOglDutV4ejT1qz/qCrjysPT8FVGB0njHXQhhtUYqqeQV97a
+	 YX11HDV2c3KepOLCh5LoNsW7yCk/TZ15gxW/5oSZA/ZhSlhz/Va04JD2xEP1vYZHWI
+	 +3hv13473VvVtkKiuBdK8C8Afo167/LLjFPjfgfoGeD297Jc7mNlOn+H6btyGm4D9j
+	 9JSxRiQPjgv92f7BZlzDKxyYk3QGZtYgrxJ7kGToFqQKaJVH9zGTsPrcmBXt7WJ0rU
+	 emXujeUxfEE5Q==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=wait-a-minute.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1tIaV8-000EuJ-Rd;
+	Tue, 03 Dec 2024 21:32:10 +0000
+Date: Tue, 03 Dec 2024 21:32:10 +0000
+Message-ID: <87ldwwsbad.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Oliver Upton <oliver.upton@linux.dev>
+Cc: kvmarm@lists.linux.dev,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Mingwei Zhang <mizhang@google.com>,
+	Colton Lewis <coltonlewis@google.com>,
+	Raghavendra Rao Ananta <rananta@google.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 05/14] KVM: arm64: Always allow fixed cycle counter
+In-Reply-To: <20241203193220.1070811-6-oliver.upton@linux.dev>
+References: <20241203193220.1070811-1-oliver.upton@linux.dev>
+	<20241203193220.1070811-6-oliver.upton@linux.dev>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: oliver.upton@linux.dev, kvmarm@lists.linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, mizhang@google.com, coltonlewis@google.com, rananta@google.com, catalin.marinas@arm.com, will@kernel.org, mark.rutland@arm.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-Add check for the return value of clk_enable() to gurantee the success.
+On Tue, 03 Dec 2024 19:32:11 +0000,
+Oliver Upton <oliver.upton@linux.dev> wrote:
+> 
+> The fixed CPU cycle counter is mandatory for PMUv3, so it doesn't make a
+> lot of sense allowing userspace to filter it. Only apply the PMU event
+> filter to *programmed* event counters.
 
-Fixes: 81a409bfd551 ("media: marvell-ccic: provide a clock for the sensor")
-Signed-off-by: Jiasheng Jiang <jiashengjiangcool@gmail.com>
----
-Changelog:
+But that's a change in ABI, isn't it? We explicitly say in the
+documentation that the cycle counter can be filtered by specifying
+event 0x11.
 
-v1 -> v2:
+More importantly, the current filtering works in terms of events, and
+not in terms of counters.
 
-1. Add pm_runtime_put().
----
- drivers/media/platform/marvell/mcam-core.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+Instead of changing the ABI, how about simply not supporting filtering
+on such non-compliant HW? Surely that would simplify a few things.
 
-diff --git a/drivers/media/platform/marvell/mcam-core.c b/drivers/media/platform/marvell/mcam-core.c
-index 9ec01228f907..b8360d37000a 100644
---- a/drivers/media/platform/marvell/mcam-core.c
-+++ b/drivers/media/platform/marvell/mcam-core.c
-@@ -935,7 +935,12 @@ static int mclk_enable(struct clk_hw *hw)
- 	ret = pm_runtime_resume_and_get(cam->dev);
- 	if (ret < 0)
- 		return ret;
--	clk_enable(cam->clk[0]);
-+	ret = clk_enable(cam->clk[0]);
-+	if (ret) {
-+		pm_runtime_put(cam->dev);
-+		return ret;
-+	}
-+
- 	mcam_reg_write(cam, REG_CLKCTRL, (mclk_src << 29) | mclk_div);
- 	mcam_ctlr_power_up(cam);
- 
+Thanks,
+
+	M.
+
 -- 
-2.25.1
-
+Without deviation from the norm, progress is not possible.
 
