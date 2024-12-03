@@ -1,126 +1,112 @@
-Return-Path: <linux-kernel+bounces-429973-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429974-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1755C9E2BC7
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 20:15:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D71F9E2CF6
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 21:23:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0C935BA8375
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 17:48:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6B18CB32A6C
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 17:51:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9638F1FCFF5;
-	Tue,  3 Dec 2024 17:47:36 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46B9E1FBEAE;
+	Tue,  3 Dec 2024 17:50:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qQj1QnVa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA94A1FAC51
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 17:47:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D8F01F891C;
+	Tue,  3 Dec 2024 17:50:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733248056; cv=none; b=ZW/NQWtdL9XLFyvMo4AIeIGIXvKohS9n2VgW3af2cSIAnbCvyz9w1tn7OnCLkslGezK8HQpNPIrfGDHQ1l5b3m9BW/mHeYFGmEfeJDrgVWIPJNIZEOdUIr5KCpps7ZYGMNAzngZZI6+nSoHfQdwqnuhuJjq7VLjBBhI9tLN2S+0=
+	t=1733248258; cv=none; b=PsF7pjqAhNSbkJlcqEEWwKTasbrHje5aTWBruD1zL6F0omV2rowsWQNG2+rgO+8Oi3yS29ptDy9soZ/HaEq5Y/gNWJM/wV9y9urZP/JXxFTcp+Oj/eaYwZMtSz5hXxAof7uu9qDfUL9IFMZ5CrS6tT7seRZyGvJBSLlC/2Amvhk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733248056; c=relaxed/simple;
-	bh=Pnpk+LFPtPGDf8HcHyRlieS6pDvYfmta+c68oAQy++c=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=S1QgGaAMOkHxa2rtEpeUdJmYCdKw/JMuKmSJrbCvfjK1xAhMGUSm51LRb1me6boT4+n1BS43JGPvVp4HlnByzImCk+XaWRiTCjHiCHh21gkGJ+srpLPH4+RfXxLHz7LIvu0THwEbcYQEUBvyjvr7fSwXy4xM9kuT7jtKNDfuRzw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[IPv6:::1])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <l.stach@pengutronix.de>)
-	id 1tIWzf-0004K2-Jw; Tue, 03 Dec 2024 18:47:27 +0100
-Message-ID: <14b8f44c080aff186898ace67b636568a91bd7d3.camel@pengutronix.de>
-Subject: Re: [PATCH v16] drm/etnaviv: Fix page property being used for non
- writecombine buffers
-From: Lucas Stach <l.stach@pengutronix.de>
-To: Sui Jingfeng <sui.jingfeng@linux.dev>, Russell King
- <linux+etnaviv@armlinux.org.uk>, Christian Gmeiner
- <christian.gmeiner@gmail.com>
-Cc: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	etnaviv@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Date: Tue, 03 Dec 2024 18:47:27 +0100
-In-Reply-To: <20241104004156.8635-1-sui.jingfeng@linux.dev>
-References: <20241104004156.8635-1-sui.jingfeng@linux.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+	s=arc-20240116; t=1733248258; c=relaxed/simple;
+	bh=OSrO/elSn5qIF+zISWp/GORkYyBZhWFrJkT400xtaug=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=HQgYJyZqfFyR6MkcrfAKh4yio6gtuwMaLiod0E7KfYCg83+ceLQ7e8Xiu8MoWVA9iLhFemv8v6XkQgtL76O5/t+AihDNDcolo+Og4ssT2p8QZzESbfrvoP9+UBAPKORZb4PWEXvK8XD01d139sPBmPt6sn6XccFi0ew3U9BzO7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qQj1QnVa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2826AC4CECF;
+	Tue,  3 Dec 2024 17:50:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733248257;
+	bh=OSrO/elSn5qIF+zISWp/GORkYyBZhWFrJkT400xtaug=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=qQj1QnVapS8uBGnl89xNEjYNhkPYsYeAz7sgRrEIqcUwbU2NWG8gcPe6OVlzWb8V9
+	 cY3jARPjtO/dFw9hnJpa8XHGtPQaJAzBTj7ecfwaCE2f+Pw/EH8jd6o9K8z/p2Xq1h
+	 XEPWwWPfodOOZLq4i2wGlJSsAw030tB+0yC398aO76SskILKk2oRv/ZPfl6rHPE4KT
+	 dMfRmqrUEU61RL2jbb8yp8n4FNq09qpoDb+7ujD/I7S6QeurnIBfNBXlsXHR1LSeeW
+	 uDJTmlzsZW68yujhGWIS30PWg/DBaUEdqjr/az7SmHheZiV1pn4Kk2Vn2oYkRNOSmd
+	 iMrOoHevVofLA==
+From: Mark Brown <broonie@kernel.org>
+To: linux-sound@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Cs=C3=B3k=C3=A1s=2C_Bence?= <csokas.bence@prolan.hu>
+Cc: Mesih Kilinc <mesihkilinc@gmail.com>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
+ Takashi Iwai <tiwai@suse.com>, Chen-Yu Tsai <wens@csie.org>, 
+ Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Samuel Holland <samuel@sholland.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Maxime Ripard <mripard@kernel.org>
+In-Reply-To: <20241102125712.2647325-1-csokas.bence@prolan.hu>
+References: <20241102125712.2647325-1-csokas.bence@prolan.hu>
+Subject: Re: [PATCH v5 0/3] Add support for codec of F1C100s
+Message-Id: <173324825387.459040.17438717506518048504.b4-ty@kernel.org>
+Date: Tue, 03 Dec 2024 17:50:53 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
-X-SA-Exim-Mail-From: l.stach@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.15-dev-9b746
 
-Am Montag, dem 04.11.2024 um 08:41 +0800 schrieb Sui Jingfeng:
-> In the etnaviv_gem_vmap_impl() function, the driver vmap whatever buffers
-> with write combine(WC) page property, this is incorrect. Cached buffers
-> should be mapped with the cached page property and uncached buffers shoul=
-d
-> be mapped with the uncached page property.
->=20
-Thanks, applied to etnaviv/next.
+On Sat, 02 Nov 2024 13:57:09 +0100, Csókás, Bence wrote:
+> Support for Allwinner F1C100s/200s series audio was
+> submitted in 2018 as an RFC series, but was not merged,
+> despite having only minor errors. However, this is
+> essential for having audio on these SoCs.
+> This series was forward-ported/rebased to the best of
+> my abilities, on top of Linus' tree as of now:
+> commit c2ee9f594da8 ("KVM: selftests: Fix build on on non-x86 architectures")
+> 
+> [...]
 
-Regards,
-Lucas
+Applied to
 
-> Fixes: a0a5ab3e99b8 ("drm/etnaviv: call correct function when trying to v=
-map a DMABUF")
-> Signed-off-by: Sui Jingfeng <sui.jingfeng@linux.dev>
-> ---
-> Split from my PCIe device driver wrapper support series, since this proba=
-bly
-> should be resend as a standalone patch.
->=20
-> v15: Use `obj->flags & ETNA_BO_CACHE_MASK` (Lucas)
-> ---
->  drivers/gpu/drm/etnaviv/etnaviv_gem.c | 16 ++++++++++++++--
->  1 file changed, 14 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_gem.c b/drivers/gpu/drm/etna=
-viv/etnaviv_gem.c
-> index d51843d9a476..d2cb9dded051 100644
-> --- a/drivers/gpu/drm/etnaviv/etnaviv_gem.c
-> +++ b/drivers/gpu/drm/etnaviv/etnaviv_gem.c
-> @@ -362,6 +362,7 @@ static void etnaviv_gem_object_vunmap(struct drm_gem_=
-object *obj,
->  static void *etnaviv_gem_vmap_impl(struct etnaviv_gem_object *obj)
->  {
->  	struct page **pages;
-> +	pgprot_t prot;
-> =20
->  	lockdep_assert_held(&obj->lock);
-> =20
-> @@ -369,8 +370,19 @@ static void *etnaviv_gem_vmap_impl(struct etnaviv_ge=
-m_object *obj)
->  	if (IS_ERR(pages))
->  		return NULL;
-> =20
-> -	return vmap(pages, obj->base.size >> PAGE_SHIFT,
-> -			VM_MAP, pgprot_writecombine(PAGE_KERNEL));
-> +	switch (obj->flags & ETNA_BO_CACHE_MASK) {
-> +	case ETNA_BO_CACHED:
-> +		prot =3D PAGE_KERNEL;
-> +		break;
-> +	case ETNA_BO_UNCACHED:
-> +		prot =3D pgprot_noncached(PAGE_KERNEL);
-> +		break;
-> +	case ETNA_BO_WC:
-> +	default:
-> +		prot =3D pgprot_writecombine(PAGE_KERNEL);
-> +	}
-> +
-> +	return vmap(pages, obj->base.size >> PAGE_SHIFT, VM_MAP, prot);
->  }
-> =20
->  static inline enum dma_data_direction etnaviv_op_to_dma_dir(u32 op)
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+
+Thanks!
+
+[1/3] ASoC: sun4i-codec: Add DMA Max Burst field
+      commit: cabd4ac290a6ceb87c8dbfb5a3251750e24529e7
+[2/3] dt-bindings: sound: Add Allwinner suniv F1C100s Audio Codec
+      (no commit info)
+[3/3] ASoC: sun4i-codec: Add support for Allwinner suniv F1C100s
+      commit: 2198deb823a6ebe110b737614421a4687d3327f4
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
 
 
