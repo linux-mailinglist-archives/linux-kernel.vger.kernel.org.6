@@ -1,316 +1,124 @@
-Return-Path: <linux-kernel+bounces-429495-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429496-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 641BC9E1CD3
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 13:55:19 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09BD39E1CD6
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 13:56:04 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B4A4160672
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 12:55:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A78C7282361
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 12:56:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 314E71EC012;
-	Tue,  3 Dec 2024 12:55:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75B0B1EC009;
+	Tue,  3 Dec 2024 12:55:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="T3Ayc+wD"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="RFCjKLmc"
+Received: from smtp-fw-80007.amazon.com (smtp-fw-80007.amazon.com [99.78.197.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5641A1EBFFC
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 12:55:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 960C92BD1D
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 12:55:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733230512; cv=none; b=perfD/Itgwo/sn/9I3L2AylqeYlDAaDIyXQ2IPc589MC4QKYreEFk0c0Sy664vdyHMpG90+QU0C3RvOl89+EEfHR3NLdR+pa0SwxJunJ6zL0dW7U6FzNf1o1v2zZ4SRXfJylSYd7Uvh3OMVDK976TfqhHNy7KS3bFa0tvsq80tQ=
+	t=1733230558; cv=none; b=juMyledjYeNt5Qn96TFtJv2K152q6CLRs4t2JaidG7E6kFpw+Ru0Edye6V/rLb4UDpZHmcOB4sxh774k82Ma0bN1i6FxhgCh3R5EpYo+NlihqoJu/y1Fum8CU1ElWyK3m5R8jcERwXyM/R3bDmHay5LPtflPPN5UuUIKSgt/AeI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733230512; c=relaxed/simple;
-	bh=xJ4R0fDe5PkCqV7jZ4w+az2L3kxVQVOPc8NpcoJPooE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WSYIsvK3xsLZA5evULoUpmbn/O/jR1H8D1U3wqyOGnVvpwfJH2ONuoeq/eKo2EcbSIbtlHSHZWUuxqB7RO8kEeZIf+Y3MDNlCCWAV+4qIFexBgfEopcsDJrnMMuH6KUuKdxVifb6dmwI8V3aKCEAZFS4/r9RWL9I8Fbqz0fIUD0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=T3Ayc+wD; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-aa1e6ecd353so384331266b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 04:55:10 -0800 (PST)
+	s=arc-20240116; t=1733230558; c=relaxed/simple;
+	bh=B5ftrZueJZtaVda0Ke11fKcz3ceJLnjy+MBzoc7WB+0=;
+	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=TDymPhCMOPXa2WlROGDR3Y771zaktAMySZZacHMzQ2Rv3+D+pRG22UUftjzQ5M6o8bW2aQftyho32CRfd+yjq82DU70IT/6IogParQ8BaA1J/uVoPyMGnTBi7Aw/0+kgAUGhsR4pGQIPBDXK3cdvFAacZZJtzylmfpizTWCBXU8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=RFCjKLmc; arc=none smtp.client-ip=99.78.197.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1733230509; x=1733835309; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=aHILDQFXZNWmnBoZHrlTEDnKUcbN4skUfD9kORV0Rxw=;
-        b=T3Ayc+wDHS8oXy2w2Ix62gBmm55RUj95/VHf/dcl6SjjWw6dbmafJZnFjyYWZORaIN
-         U3GNhwf72Ib6NDbZDrqQ1qTIznBapOXnb44hXS2mCA41MyoBpmyalR97nCLXxxBCH11f
-         7ylKB8sEqufYJPBlvte5+Y5culi/LSQ7B/81s1W0wQHX4AjDBh9EDGGuaGbGavu4ju+o
-         jBvOXTeAobYBUJLGjefp+Aoy0va7/EZgtchmkMhwoITnRNWgMSDBw3eoaDUOkFAJAUWQ
-         QNDtuEEsS3M7zeEAL/kDRW6FfbNmonApp2Ss0BMw0Owyh0FF4EvJY9KlmF97h3jx28yN
-         yxRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733230509; x=1733835309;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aHILDQFXZNWmnBoZHrlTEDnKUcbN4skUfD9kORV0Rxw=;
-        b=uGDwlYrbc3gT9gj+VVZZ6vb1pHK2/UCMvD6fukXwP4wg5ZPIxTl7Hj1WBdVFF01wvd
-         90ZXGUWzGuq0ScF8TezNbERD5oEz48SY1xP+4G3sKeuiVXmDwZPSHXhufA8bh4Wr+V6U
-         ZZ+lO/O0EG7Dztb8cVZ6DYn+yK/dnau6kYBZqCv8WhWEq7Sitg+cD+AUwOBJqAMaRPv4
-         Lka9G/riSC2cbMDak1uoz2AW5XFA6Z3F+XO3YijqveqirUsrS5Gem+Wp76fyMmhbLcMZ
-         e6u9/2GQL4qUhUcan029eF73udvRc1js/0KInh84u2OR9RISGG35LT9diCxOd3PQm/TH
-         zJjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUFxNDsfnuNZH5YyNSNGuY3JsyZujc6Z5qOu06jXVbI1bYo8IBQWT/wgYINO7qQImWdFnapTMKtpaU7J+o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzMrXaAUxzruZ2RlASjsJsCgJ8b5mEsDOEAXY68oqPL0IvrWDP1
-	UMk1Z9i4S0o7icJ+aNOjH3KzS2JiSx4SJiI57lMcQURe3+Z4MMrtGefTQGy8qN4=
-X-Gm-Gg: ASbGnctZ04M0fHpSbSX24lUpPfiJ43AAe2oG+M0PvFJ18O3HacKpBo4jWPG8QH3bAp4
-	zyUce7GV4ow48qhL9rGDMu6i7kjfrM429HAWC6b2NhwmPkcSrbTe1CJuZmCj9OmZfoRj9jq2khf
-	bh6128MvaszFv6hk5zeBIiZnDC22DxLyP7OQgV8OMWj8kgSBS0ksiRaRkKjiXPvgwBEqtSuM8WB
-	JezOSEbufS+qZ2Zr4gf6/yezBveOhMfthxQxN9/rxmGtcHYUw0Rho8jmNwk0/BJhH0T0fwcCHpO
-	nd3HiYCNjiWHN0ksgnTbqt5UZfCKY5tUDss=
-X-Google-Smtp-Source: AGHT+IGekZlGXSXB9uvq/WKox/qwoGRSQFTd/XXdhj+W5cxmME+Tkf15rQ0BhZmI5BozveUjcxzWTA==
-X-Received: by 2002:a05:6402:234a:b0:5d0:ed92:cdf6 with SMTP id 4fb4d7f45d1cf-5d10cb5c778mr2754267a12.19.1733230508565;
-        Tue, 03 Dec 2024 04:55:08 -0800 (PST)
-Received: from localhost (2001-1ae9-1c2-4c00-20f-c6b4-1e57-7965.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:20f:c6b4:1e57:7965])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa5997d55fdsm607288366b.55.2024.12.03.04.55.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Dec 2024 04:55:08 -0800 (PST)
-Date: Tue, 3 Dec 2024 13:55:07 +0100
-From: Andrew Jones <ajones@ventanamicro.com>
-To: Celeste Liu <uwu@coelacanthus.name>
-Cc: Oleg Nesterov <oleg@redhat.com>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Eric Biederman <ebiederm@xmission.com>, 
-	Kees Cook <kees@kernel.org>, Shuah Khan <shuah@kernel.org>, Alexandre Ghiti <alex@ghiti.fr>, 
-	"Dmitry V. Levin" <ldv@strace.io>, Andrea Bolognani <abologna@redhat.com>, 
-	=?utf-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ron Economos <re@w6rz.net>, 
-	Charlie Jenkins <charlie@rivosinc.com>, Quan Zhou <zhouquan@iscas.ac.cn>, 
-	Felix Yan <felixonmars@archlinux.org>, Ruizhe Pan <c141028@gmail.com>, 
-	Shiqi Zhang <shiqi@isrc.iscas.ac.cn>, Guo Ren <guoren@kernel.org>, Yao Zi <ziyao@disroot.org>, 
-	Han Gao <gaohan@iscas.ac.cn>, linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, stable@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] riscv: selftests: Add a ptrace test to verify
- syscall parameter modification
-Message-ID: <20241203-55c76715e16422ddaf8d7edf@orel>
-References: <20241203-riscv-new-regset-v2-0-d37da8c0cba6@coelacanthus.name>
- <20241203-riscv-new-regset-v2-2-d37da8c0cba6@coelacanthus.name>
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1733230558; x=1764766558;
+  h=from:to:cc:subject:date:message-id:
+   content-transfer-encoding:mime-version;
+  bh=zHt8L2Z6dJwqzsWV71weChOsU9eMWPerfPu1DOoxdJ8=;
+  b=RFCjKLmc/KCXO9Hugakk2be49ggZAjBUINj5zLL0dbik12l96M/KRtWa
+   QH6ogNiVZY/fe3Nxe/5qvfcLO+rOqQZu6lcOwty09felquxvUqlPvOfMq
+   4QPC+aoXw0ljt2kzlSoEtpKwiAkNcRNcXCFBOhYTqgQp8XivVho42H+zJ
+   c=;
+X-IronPort-AV: E=Sophos;i="6.12,205,1728950400"; 
+   d="scan'208";a="357635905"
+Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.25.36.210])
+  by smtp-border-fw-80007.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Dec 2024 12:55:55 +0000
+Received: from EX19MTAEUB001.ant.amazon.com [10.0.17.79:25389]
+ by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.32.206:2525] with esmtp (Farcaster)
+ id 321ae853-bb47-4473-a697-0a3ceab94d46; Tue, 3 Dec 2024 12:55:53 +0000 (UTC)
+X-Farcaster-Flow-ID: 321ae853-bb47-4473-a697-0a3ceab94d46
+Received: from EX19D018EUA004.ant.amazon.com (10.252.50.85) by
+ EX19MTAEUB001.ant.amazon.com (10.252.51.26) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Tue, 3 Dec 2024 12:55:53 +0000
+Received: from EX19D018EUA004.ant.amazon.com (10.252.50.85) by
+ EX19D018EUA004.ant.amazon.com (10.252.50.85) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Tue, 3 Dec 2024 12:55:53 +0000
+Received: from EX19D018EUA004.ant.amazon.com ([fe80::e53:84f8:3456:a97d]) by
+ EX19D018EUA004.ant.amazon.com ([fe80::e53:84f8:3456:a97d%3]) with mapi id
+ 15.02.1258.034; Tue, 3 Dec 2024 12:55:53 +0000
+From: "Farber, Eliav" <farbere@amazon.com>
+To: Thomas Gleixner <tglx@linutronix.de>, "linux@armlinux.org.uk"
+	<linux@armlinux.org.uk>, "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+	"will@kernel.org" <will@kernel.org>, "mpe@ellerman.id.au"
+	<mpe@ellerman.id.au>, "npiggin@gmail.com" <npiggin@gmail.com>,
+	"christophe.leroy@csgroup.eu" <christophe.leroy@csgroup.eu>,
+	"naveen@kernel.org" <naveen@kernel.org>, "maddy@linux.ibm.com"
+	<maddy@linux.ibm.com>, "paul.walmsley@sifive.com" <paul.walmsley@sifive.com>,
+	"palmer@dabbelt.com" <palmer@dabbelt.com>, "aou@eecs.berkeley.edu"
+	<aou@eecs.berkeley.edu>, "akpm@linux-foundation.org"
+	<akpm@linux-foundation.org>, "bhe@redhat.com" <bhe@redhat.com>,
+	"hbathini@linux.ibm.com" <hbathini@linux.ibm.com>,
+	"sourabhjain@linux.ibm.com" <sourabhjain@linux.ibm.com>,
+	"adityag@linux.ibm.com" <adityag@linux.ibm.com>, "songshuaishuai@tinylab.org"
+	<songshuaishuai@tinylab.org>, "takakura@valinux.co.jp"
+	<takakura@valinux.co.jp>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linuxppc-dev@lists.ozlabs.org"
+	<linuxppc-dev@lists.ozlabs.org>, "linux-riscv@lists.infradead.org"
+	<linux-riscv@lists.infradead.org>
+CC: "Chocron, Jonathan" <jonnyc@amazon.com>
+Subject: RE: [PATCH v5 1/2] kexec: Consolidate machine_kexec_mask_interrupts()
+ implementation
+Thread-Topic: [PATCH v5 1/2] kexec: Consolidate
+ machine_kexec_mask_interrupts() implementation
+Thread-Index: AdtFgq6lXwncie71LkSE+iBNpljfQg==
+Date: Tue, 3 Dec 2024 12:55:52 +0000
+Message-ID: <077908c5f02545f0a9e02ae77cbd771c@amazon.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241203-riscv-new-regset-v2-2-d37da8c0cba6@coelacanthus.name>
 
-On Tue, Dec 03, 2024 at 05:30:05PM +0800, Celeste Liu wrote:
-> From: Charlie Jenkins <charlie@rivosinc.com>
-> 
-> This test checks that orig_a0 allows a syscall argument to be modified,
-> and that changing a0 does not change the syscall argument.
-> 
-> Cc: stable@vger.kernel.org
-> Co-developed-by: Quan Zhou <zhouquan@iscas.ac.cn>
-> Signed-off-by: Quan Zhou <zhouquan@iscas.ac.cn>
-> Co-developed-by: Celeste Liu <uwu@coelacanthus.name>
-> Signed-off-by: Celeste Liu <uwu@coelacanthus.name>
-> Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
-> ---
->  tools/testing/selftests/riscv/abi/.gitignore |   1 +
->  tools/testing/selftests/riscv/abi/Makefile   |   5 +-
->  tools/testing/selftests/riscv/abi/ptrace.c   | 134 +++++++++++++++++++++++++++
->  3 files changed, 139 insertions(+), 1 deletion(-)
-> 
-> diff --git a/tools/testing/selftests/riscv/abi/.gitignore b/tools/testing/selftests/riscv/abi/.gitignore
-> index b38358f91c4d2240ae64892871d9ca98bda1ae58..378c605919a3b3d58eec2701eb7af430cfe315d6 100644
-> --- a/tools/testing/selftests/riscv/abi/.gitignore
-> +++ b/tools/testing/selftests/riscv/abi/.gitignore
-> @@ -1 +1,2 @@
->  pointer_masking
-> +ptrace
-> diff --git a/tools/testing/selftests/riscv/abi/Makefile b/tools/testing/selftests/riscv/abi/Makefile
-> index ed82ff9c664e7eb3f760cbab81fb957ff72579c5..3f74d059dfdcbce4d45d8ff618781ccea1419061 100644
-> --- a/tools/testing/selftests/riscv/abi/Makefile
-> +++ b/tools/testing/selftests/riscv/abi/Makefile
-> @@ -2,9 +2,12 @@
->  
->  CFLAGS += -I$(top_srcdir)/tools/include
->  
-> -TEST_GEN_PROGS := pointer_masking
-> +TEST_GEN_PROGS := pointer_masking ptrace
->  
->  include ../../lib.mk
->  
->  $(OUTPUT)/pointer_masking: pointer_masking.c
->  	$(CC) -static -o$@ $(CFLAGS) $(LDFLAGS) $^
-> +
-> +$(OUTPUT)/ptrace: ptrace.c
-> +	$(CC) -static -o$@ $(CFLAGS) $(LDFLAGS) $^
-> diff --git a/tools/testing/selftests/riscv/abi/ptrace.c b/tools/testing/selftests/riscv/abi/ptrace.c
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..d192764b428d1f1c442f3957c6fedeb01a48d556
-> --- /dev/null
-> +++ b/tools/testing/selftests/riscv/abi/ptrace.c
-> @@ -0,0 +1,134 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +#include <stdio.h>
-> +#include <stdlib.h>
-> +#include <string.h>
-> +#include <unistd.h>
-> +#include <fcntl.h>
-> +#include <signal.h>
-> +#include <errno.h>
-> +#include <sys/types.h>
-> +#include <sys/ptrace.h>
-> +#include <sys/stat.h>
-> +#include <sys/user.h>
-> +#include <sys/wait.h>
-> +#include <sys/uio.h>
-> +#include <linux/elf.h>
-> +#include <linux/unistd.h>
-> +#include <asm/ptrace.h>
-> +
-> +#include "../../kselftest_harness.h"
-> +
-> +#define ORIG_A0_MODIFY      0x01
-> +#define A0_MODIFY           0x02
-> +#define A0_OLD              0x03
-> +#define A0_NEW              0x04
-
-Shouldn't A0_OLD and A0_NEW set more bits, since 3 and 4 aren't very
-unique (we could have those values by accident)? And should we include
-setting bits over 31 for 64-bit targets?
-
-> +
-> +#define perr_and_exit(fmt, ...)						\
-> +	({								\
-> +		char buf[256];						\
-> +		snprintf(buf, sizeof(buf), "%s:%d:" fmt ": %m\n",	\
-> +			__func__, __LINE__, ##__VA_ARGS__);		\
-> +		perror(buf);						\
-> +		exit(-1);						\
-> +	})
-
-Can we use e.g. ksft_exit_fail_perror() instead? I'd prefer we try to
-consolidate testing/selftests/riscv/* tests on a common format for
-errors and exit codes and we're already using other kselftest stuff.
-
-> +
-> +static inline void resume_and_wait_tracee(pid_t pid, int flag)
-> +{
-> +	int status;
-> +
-> +	if (ptrace(flag, pid, 0, 0))
-> +		perr_and_exit("failed to resume the tracee %d\n", pid);
-> +
-> +	if (waitpid(pid, &status, 0) != pid)
-> +		perr_and_exit("failed to wait for the tracee %d\n", pid);
-> +}
-> +
-> +static void ptrace_test(int opt, int *result)
-> +{
-> +	int status;
-> +	pid_t pid;
-> +	struct user_regs_struct regs;
-> +	struct iovec iov = {
-> +		.iov_base = &regs,
-> +		.iov_len = sizeof(regs),
-> +	};
-> +
-> +	unsigned long orig_a0;
-> +	struct iovec a0_iov = {
-> +		.iov_base = &orig_a0,
-> +		.iov_len = sizeof(orig_a0),
-> +	};
-> +
-> +	pid = fork();
-> +	if (pid == 0) {
-> +		/* Mark oneself being traced */
-> +		long val = ptrace(PTRACE_TRACEME, 0, 0, 0);
-> +
-> +		if (val)
-> +			perr_and_exit("failed to request for tracer to trace me: %ld\n", val);
-> +
-> +		kill(getpid(), SIGSTOP);
-> +
-> +		/* Perform exit syscall that will be intercepted */
-> +		exit(A0_OLD);
-> +	}
-> +
-> +	if (pid < 0)
-> +		exit(1);
-
-This unexpected error condition deserves a message, so I'd use
-ksft_exit_fail_perror() here.
-
-> +
-> +	if (waitpid(pid, &status, 0) != pid)
-> +		perr_and_exit("failed to wait for the tracee %d\n", pid);
-> +
-> +	/* Stop at the entry point of the syscall */
-> +	resume_and_wait_tracee(pid, PTRACE_SYSCALL);
-> +
-> +	/* Check tracee regs before the syscall */
-> +	if (ptrace(PTRACE_GETREGSET, pid, NT_PRSTATUS, &iov))
-> +		perr_and_exit("failed to get tracee registers\n");
-> +	if (ptrace(PTRACE_GETREGSET, pid, NT_RISCV_ORIG_A0, &a0_iov))
-> +		perr_and_exit("failed to get tracee registers\n");
-> +	if (orig_a0 != A0_OLD)
-> +		perr_and_exit("unexpected orig_a0: 0x%lx\n", orig_a0);
-> +
-> +	/* Modify a0/orig_a0 for the syscall */
-> +	switch (opt) {
-> +	case A0_MODIFY:
-> +		regs.a0 = A0_NEW;
-> +		break;
-> +	case ORIG_A0_MODIFY:
-> +		orig_a0 = A0_NEW;
-> +		break;
-> +	}
-> +
-> +	if (ptrace(PTRACE_SETREGSET, pid, NT_RISCV_ORIG_A0, &a0_iov))
-> +		perr_and_exit("failed to set tracee registers\n");
-> +
-> +	/* Resume the tracee */
-> +	ptrace(PTRACE_CONT, pid, 0, 0);
-> +	if (waitpid(pid, &status, 0) != pid)
-> +		perr_and_exit("failed to wait for the tracee\n");
-> +
-> +	*result = WEXITSTATUS(status);
-> +}
-> +
-> +TEST(ptrace_modify_a0)
-> +{
-> +	int result;
-> +
-> +	ptrace_test(A0_MODIFY, &result);
-> +
-> +	/* The modification of a0 cannot affect the first argument of the syscall */
-> +	EXPECT_EQ(A0_OLD, result);
-
-What about checking that we actually set regs.a0 to A0_NEW? We'd need
-A0_NEW to be more unique than 4, though.
-
-> +}
-> +
-> +TEST(ptrace_modify_orig_a0)
-> +{
-> +	int result;
-> +
-> +	ptrace_test(ORIG_A0_MODIFY, &result);
-> +
-> +	/* Only modify orig_a0 to change the first argument of the syscall */
-
-If we run ptrace_modify_a0 first then we've already set regs.a0 to A0_NEW
-and can't check with this test that we don't set it to A0_NEW. We should
-probably have two different test values, one for regs.a0 and one for
-orig_a0 and ensure on both tests that we aren't writing both.
-
-> +	EXPECT_EQ(A0_NEW, result);
-> +}
-> +
-> +TEST_HARNESS_MAIN
-> 
-> -- 
-> 2.47.0
+On 12/3/2024 1:04 PM, Thomas Gleixner wrote:
+>> +
+>> +config GENERIC_IRQ_KEXEC_CLEAR_VM_FORWARD
+>> +     bool "Clear forwarded VM interrupts during kexec"
 >
+> This should not be user selectable. Just keep it as:
+>
+> config GENERIC_IRQ_KEXEC_CLEAR_VM_FORWARD
+>         bool
+>
+> which defaults to 'n'. Just add a comment what this is about like it's
+> done with the other options in that file which are only selectable.
+Question: Should this new configuration option be placed inside or
+outside the following section:
+```
+menu "IRQ subsystem"
 
-Thanks,
-drew
+
+endmenu
+```
+In my patch, I have added the new configuration option at the end of
+the file, outside the "IRQ subsystem" section.
 
