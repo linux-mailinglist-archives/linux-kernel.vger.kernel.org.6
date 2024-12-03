@@ -1,133 +1,141 @@
-Return-Path: <linux-kernel+bounces-429027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB6E39E1860
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:56:24 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34C779E1877
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:57:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3219FB299D6
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 08:59:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6276BB34AAD
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:00:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B66711DE4C4;
-	Tue,  3 Dec 2024 08:59:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AA5E1DFE04;
+	Tue,  3 Dec 2024 08:59:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=norik.com header.i=@norik.com header.b="IohL/7cH"
-Received: from cpanel.siel.si (cpanel.siel.si [46.19.9.99])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="K/1+7Yd1"
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BE2E1DDC3D;
-	Tue,  3 Dec 2024 08:58:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.19.9.99
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 939D71DE3B9;
+	Tue,  3 Dec 2024 08:59:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733216340; cv=none; b=OPMg5Gw5rymLjrH8kaZ+8tsoVV+GLz2jATxsMMZMStZ2SK2qRib6n+g14BXUA6Rdynw/KFv/pxgAbso7U+j7uljvrIfp86QkbfS3MfQSL0n0FZrTrCjKCwkgrtDXrX+tnPofDLj0FiQulgN6yBPAq9KFzBf/Iz6/rlmrRyMEqr8=
+	t=1733216349; cv=none; b=qFAqQu61N6niAeUYW3ks6/kaVj+1EtpA/w1Cjaq08KkXT304Vw6V/ih4P/8PUoXFEWZQkkXobxakdnK5+qcc1vvC/RXbuLmPli6PdEA/V/mnjbtuMPEC6d9ITR9kwQV4pD2sGWKUaMhM/trSKDyshFde66R7q/16JCuu63+shrY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733216340; c=relaxed/simple;
-	bh=jpVkQG4ut9qf/pljgv0GIyKYTYR+HbX906dK5JPbMGQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=sXaByZThJefM+pSWg7eA39h+fA7MooGRnauL0z/QVsmz5LwR3mOkq78nk5xYsW/VfmpI7c5OIiV7ZJWp96CBi2z8C6M3vHLnQWlE3qmIKVVAfijnGL2bmgPIBRjBJeDN6UKkURp8UqveWb8BRfG1547KXO3l+NL1HHKIj5A2IjY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com; spf=pass smtp.mailfrom=norik.com; dkim=pass (2048-bit key) header.d=norik.com header.i=@norik.com header.b=IohL/7cH; arc=none smtp.client-ip=46.19.9.99
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=norik.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=norik.com;
-	s=default; h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:
-	Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
-	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=X412GLjVjNgho4d5BU2d+RZdrHHdZR4eFJmgPaiIEUM=; b=IohL/7cHd6PBHWtvYAg8G8g2Z4
-	dandx4NF3wie961zgDH7zBPPol2b3nSNRVE9FZijFqx7ChLAJ/gNe57kL4tlrfgLLDEBg/D1Q6KDl
-	sEUrS8nAw2oqW15U2/OrTXssRcTG5ICUHgu69+IfwRnFLKNqEUdYKCVIungVWb8dk31T+T6yA6XwG
-	Wgb8azFG13W1asAMyQoiCU/IzWqLilF8sfHWsxzMeX6iHLxZWzkCqIYXC9uBMVVErqUNuoari40SS
-	ybZa69aEktxNAF2dA50uzPt867fTHJbEvFv9gpT6tMiyxbQyMBeDVM045FVQ0+HjPqN10kQ4ECBuD
-	LacpYQig==;
-Received: from [89.212.21.243] (port=47386 helo=and-HP-Z4..)
-	by cpanel.siel.si with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96.2)
-	(envelope-from <andrej.picej@norik.com>)
-	id 1tIOk7-00BGOq-0Y;
-	Tue, 03 Dec 2024 09:58:50 +0100
-From: Andrej Picej <andrej.picej@norik.com>
-To: andrzej.hajda@intel.com,
-	neil.armstrong@linaro.org,
-	rfoss@kernel.org,
-	Laurent.pinchart@ideasonboard.com,
-	jonas@kwiboo.se,
-	jernej.skrabec@gmail.com,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	shawnguo@kernel.org,
-	s.hauer@pengutronix.de,
-	kernel@pengutronix.de,
-	festevam@gmail.com,
-	marex@denx.de
-Cc: dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	upstream@lists.phytec.de
-Subject: [PATCH v2 0/3] SN65DSI83/4 lvds_vod_swing properties
-Date: Tue,  3 Dec 2024 09:58:19 +0100
-Message-Id: <20241203085822.2475138-1-andrej.picej@norik.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1733216349; c=relaxed/simple;
+	bh=AXohgFBDfSQ80DP0PaKhMEukCXRSu69hXmxjxJQKr2w=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jR7n2nNm2E/4k5iKsCJQeqqD9kKOX7nxktdk8ncA8Ys8164ijSUBjVgE5dugKfEjEfZG3r/ECm4oltgwEForOtaLKp723swJSy/9wWfhnuMYbWLEQh8+swBfRQ+PUNzubW/AnjUAVrfnkLK4kKXUWOrnj+ui+bYp/yhtuLJj220=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=K/1+7Yd1; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 7DE924000C;
+	Tue,  3 Dec 2024 08:59:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1733216344;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ipAWjKWXEBKTkDDGzjyfQHhzJCH217f8pclyvAEW6h8=;
+	b=K/1+7Yd1DLpLGHd0KB+FNn/0V8VphLlsBeWugnSPlrTb0Fy2mqkkkbtu0+A/UqmpJvYidi
+	s/scVc4ktaMe6ApyWwYNDb4qQRwFa4DtnVo5XIzEfUL85dAVnGFDc9re2jC7hGElZJom06
+	m5cbX7JbPnkCkDXDiT2M6fD0zjjB6580mXX1hLgJAle4t9ZtbPrMVE1PwtibvdBmDNfv5d
+	yqH3/1oCRpuR5jOscqenNCxTS9rhG4MhNjeGaXAr0/9nT/gC3Bo664C2AVx0Gy5AaxGrAk
+	S8XnXBgxSqiCeyJ6qMYRUeF2GHLIqnxPaXK9h0Q7GVkP9bVkcE541CFpuxpvvg==
+From: Romain Gantois <romain.gantois@bootlin.com>
+To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ Kory Maincent <kory.maincent@bootlin.com>, linux-i2c@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-media@vger.kernel.org, linux-gpio@vger.kernel.org,
+ Wolfram Sang <wsa+renesas@sang-engineering.com>,
+ Luca Ceresoli <luca.ceresoli@bootlin.com>,
+ Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Derek Kiernan <derek.kiernan@amd.com>, Dragan Cvetic <dragan.cvetic@amd.com>,
+ Arnd Bergmann <arnd@arndb.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Linus Walleij <linus.walleij@linaro.org>,
+ Bartosz Golaszewski <brgl@bgdev.pl>, Cosmin Tanislav <demonsingur@gmail.com>
+Subject: Re: [PATCH v3 8/9] i2c: Support dynamic address translation
+Date: Tue, 03 Dec 2024 09:59:03 +0100
+Message-ID: <21399801.1it9Cbg30u@fw-rgant>
+In-Reply-To: <141bbac1-5289-4335-a566-387721439bef@ideasonboard.com>
+References:
+ <20241125-fpc202-v3-0-34e86bcb5b56@bootlin.com>
+ <20241125-fpc202-v3-8-34e86bcb5b56@bootlin.com>
+ <141bbac1-5289-4335-a566-387721439bef@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - cpanel.siel.si
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - norik.com
-X-Get-Message-Sender-Via: cpanel.siel.si: authenticated_id: andrej.picej@norik.com
-X-Authenticated-Sender: cpanel.siel.si: andrej.picej@norik.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-GND-Sasl: romain.gantois@bootlin.com
 
-Hi all,
+Hi,
 
-this is a v2, which is quite different than the v1. The LVDS differential
-voltage swing is now specified as arrays of min, max in microvolts. Two
-arrays, one for data-lanes and one for clock-lane can be specified.
-Additionally, because LVDS voltage swing depends on near-end termination
-this can now also be specified with separate property.
+On vendredi 29 novembre 2024 10:54:35 heure normale d=E2=80=99Europe centra=
+le Tomi Valkeinen wrote:
+> Hi Romain,
+>=20
+=2E..
+> > ATR channel's translation table whenever an I2C transaction with unmapp=
+ed
+> > clients is requested.
+> >=20
+> > Add a mutex to protect alias_list. This prevents
+> > i2c_atr_dynamic_attach/detach_addr from racing with the bus notifier
+> > handler to modify alias_list.
+> >=20
+> > Signed-off-by: Romain Gantois <romain.gantois@bootlin.com>
+> > ---
+> >=20
+> >   drivers/i2c/i2c-atr.c         | 244
+> >   ++++++++++++++++++++++++++++++++----------
+> >   drivers/media/i2c/ds90ub960.c |   2 +-
+> >   include/linux/i2c-atr.h       |  13 ++-
+> >   3 files changed, 202 insertions(+), 57 deletions(-)
+>=20
+> This fails with:
+>=20
+> WARNING: CPU: 1 PID: 360 at lib/list_debug.c:35
+> __list_add_valid_or_report+0xe4/0x100
+>=20
+> as the i2c_atr_create_c2a() calls list_add(), but i2c_atr_attach_addr(),
+> which is changed to use i2c_atr_create_c2a(), also calls list_add().
+>=20
+> Also, if you add i2c_atr_create_c2a() which hides the allocation and
+> list_add, I think it makes sense to add a i2c_atr_destroy_c2a() to
+> revert that.
+>=20
 
-Driver goes through the tables, taken from datasheet [1] and selects the
-appropriate configuration. If appropriate configuration can not be found
-the probe fails. If these properties are not defined default values are
-used as before.
+Sure, I just thought that it was safer to have an explicit "kfree" in the
+code, as it would be clear that the c2a pointer shouldn't be used after thi=
+s.
+But setting the pointer to NULL after calling i2c_atr_destroy_c2a() would
+essentially achieve the same thing, so I'll be going with your suggestion.
 
-v1 is at: https://lore.kernel.org/all/20241127103031.1007893-1-andrej.picej@norik.com/
-v2 changes are described in corresponding patches.
+> There's also a memory error "BUG: KASAN: slab-use-after-free in
+> __lock_acquire+0xc4/0x375c" (see below) when unloading the ub960 or
+> ub953 driver. I haven't looked at that yet.
+>=20
 
-[1] https://www.ti.com/lit/ds/symlink/sn65dsi83.pdf?ts=1732738773429&ref_url=https%253A%252F%252Fwww.mouser.co.uk%252F
+I don't have the hardware to actually reproduce this but I'll see if I can
+find out what the problem is by reading the code.
 
-Best regards,
-Andrej
+Thanks,
 
-Andrej Picej (3):
-  dt-bindings: drm/bridge: ti-sn65dsi83: Add properties for
-    ti,lvds-vod-swing
-  drm/bridge: ti-sn65dsi83: Add ti,lvds-vod-swing optional properties
-  arm64: dts: imx8mm-phyboard-polis-peb-av-10: Set lvds-vod-swing
+=2D-=20
+Romain Gantois, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
- .../bindings/display/bridge/ti,sn65dsi83.yaml |  36 ++++-
- .../imx8mm-phyboard-polis-peb-av-10.dtso      |   2 +
- drivers/gpu/drm/bridge/ti-sn65dsi83.c         | 144 +++++++++++++++++-
- 3 files changed, 176 insertions(+), 6 deletions(-)
 
--- 
-2.34.1
 
 
