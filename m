@@ -1,187 +1,362 @@
-Return-Path: <linux-kernel+bounces-429801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429806-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95E779E25AD
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 17:03:29 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08BAE9E26DC
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 17:18:02 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B576C1604CC
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 15:58:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3AB4ABE4B67
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:00:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 116EF1F76AC;
-	Tue,  3 Dec 2024 15:58:06 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17E511F76AE;
+	Tue,  3 Dec 2024 16:00:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="iPBy0Cxg";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Qm0bVau7"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDF3F1F76AA
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 15:58:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD3B31E009A;
+	Tue,  3 Dec 2024 16:00:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733241485; cv=none; b=Ous7jk75QDw4i3cPvpA/1PRattV6C+Gi0nherJEkKXbRK/qwiI5rFmiE5utHrId+Hk9zGpofbpsLT6+1tbAW2Qh3eLuiog8zfiQ8LpUCWH6vOgl6ZfqzUHxegoRPbRODSuOsZqKlAX1k0LdsbP6/7JqVsSx2jTJEq8FsrRTz83c=
+	t=1733241631; cv=none; b=gqI9JVle5rIb8VBrV+fVK68OKtUVCipW263u+sJHLGlu1CXO+aU5t2BvNBguQhPTv9wz4aoW1VpwXRzF3UAxag88CD1guHLkXxjmS2kVgwLU6aVkybESnlyw01W3O1q+Jf0EzRRYEbV5WCpTPj4gs2q4Smrt4LkYh7drupBoMlI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733241485; c=relaxed/simple;
-	bh=Bq2N3wTRYd+jba+incS8JMqehLWkbZClmloZZc4NU9E=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=A1wSiojywxilVFJ5WyVxQMHw27OwLVpQyGKwsGqIDD2W0hX8eTXtZhGZNaYbe/kJE2ZtHtcEx15O4BXAjo7WhVeUiRLHBbBngEWh1Ls5z8ZOoyyNkkjcjHfywlUo/iThh//vWT2R0yAZp429i8taYIRQpW7hhU2T7V4hBscsvY0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a7de3ab182so61721585ab.1
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 07:58:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733241483; x=1733846283;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=AaG8YugceXIEOIvkveTaeBEJAokrs9rUT7WfrD18L5w=;
-        b=FtbsA2QsbA5iqmsBEHGDTMOc/p6IKUFAzvmJMp/phaY9G1PBJpvpTvJ/dsb+oXWajL
-         T+dxwpFbMzVgeLDaHssToCWePPOkh+X5VldG01y4LTfaiU5gd5OyYkvWpixtuhkqaou4
-         rC+YRNeQMJeLIGHh/ZoczDfA0zUyfHKvKufiJFlMG+k0GFCqjhBLWXpoe30xPQGRVBbI
-         ehY1y5D/hX0AFkZrTqnEIxKIrzZEGGmg5MNHxqhVC9AhtdpGo5FWnmmnPmfhwuEAilY4
-         mQsTf/DYYSVKzq59THv5WIAIkNeSPMRL3NwYeHNnRsCtUn6S4PilOl4F3KZHKQV1jgmO
-         f70Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWESTZKxMlVKlCOcbqXZbSvoFjE19OX6aE56+5fgnffkSuWdnjLVAPHuXGu4sSWPRU8YX8w0xhvXsmpnv8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhnvZcJ8JZWcUA6EIQM/1zEGrB6BzYAkvGpBs9hZs76J6fJ5oG
-	8pctYZM0cOxpT8GeFwnZR/Dg4HQ7QY52fsNh2aISL7rO3h1RrM66wPTkk69SDvrzfYO1uJE/oV1
-	mXpGdDkvd/0TyhyCK2c/GRbea3CEZbZMdmC4fVQTUGEVnG+O1ZVXxW3U=
-X-Google-Smtp-Source: AGHT+IFprb7v7LlezJWusw++daBvSFJWY8cOQ8lUtyW9Q7e8VY/Dj75ZRogcYikS3HQY5ndDSpjVv8hKDAhIsnASycxHc5RsjtrQ
+	s=arc-20240116; t=1733241631; c=relaxed/simple;
+	bh=60WGLZMKSHbqBWl/mKnshvJZqGmbMEmezg+PMBw84So=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=TbsWQbgkYqxkjMn9fBsLD2SW43gn7tKqpwXBTEq+39S4NL2B7S2LZVhK9vLdNET7TTldON+N7pvmE0n4EVFoS48iwW9+sH+UJ9E83dJ8Q8ABeNxwa/3mTKnJK040KSgR6VegK3+LI6UM3N5g6o04x8Nu3ke/Tj0icUn+vaDmxWA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=iPBy0Cxg; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Qm0bVau7; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 03 Dec 2024 16:00:25 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1733241626;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vtZees0dsa0LLJZAZpwLTkebghj1mimhgQBhbtRSPmk=;
+	b=iPBy0CxgnctBGUrn1Wlbk/h9qp/S1PeXMbtA2bFi8P1fE3cSu5mM/U8isQWBHCbNL+55X1
+	CLHD/dPerYhPD84eEl45EivuGGgBMv9t/C/RU5rADU7Lb9h10HxZPHwogUfd8w2Zzes6Y+
+	WjOTiQLWdCZKe1TxL0DpDYqNIWO18Av7hv6ZApAnd/4eck77LqoYJVGpFJv128wCijsHfU
+	xwCGxB8vb4+YgX8xPOEMkIy+YviJ8k+Iv/HQyvcSi3c0/R50yqpVORqbpO+GZnwtQeCZpP
+	jeWy5yHDVEYqrfqTRUwhVMJVwTqmE3dgcCifepCAl+pKPnByPo412IBFqBUnjA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1733241626;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vtZees0dsa0LLJZAZpwLTkebghj1mimhgQBhbtRSPmk=;
+	b=Qm0bVau7Bom5dPb7/m3CFY4dkYxtcchim2BF7kJ3h/GpTwsIxzwSVrgi4TfDP38WBo+Mb1
+	RxJ8VpOymWOwcfCQ==
+From: "tip-bot2 for Lorenzo Stoakes" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: perf/core] perf: Map pages in advance
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20241129153134.82755-1-lorenzo.stoakes@oracle.com>
+References: <20241129153134.82755-1-lorenzo.stoakes@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1aa5:b0:3a7:81a4:a557 with SMTP id
- e9e14a558f8ab-3a7f9ab2850mr35202435ab.24.1733241483101; Tue, 03 Dec 2024
- 07:58:03 -0800 (PST)
-Date: Tue, 03 Dec 2024 07:58:03 -0800
-In-Reply-To: <20241203152813.9_NZw%dmantipov@yandex.ru>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <674f2a8b.050a0220.48a03.003d.GAE@google.com>
-Subject: Re: [syzbot] [netfilter?] KMSAN: uninit-value in ip6table_mangle_hook (3)
-From: syzbot <syzbot+6023ea32e206eef7920a@syzkaller.appspotmail.com>
-To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Message-ID: <173324162538.412.1598661678492162187.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-Hello,
+The following commit has been merged into the perf/core branch of tip:
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-KMSAN: uninit-value in ip6table_mangle_hook
+Commit-ID:     eca51ce01d4956ab4b8f06bb55c031f4913fffcb
+Gitweb:        https://git.kernel.org/tip/eca51ce01d4956ab4b8f06bb55c031f4913fffcb
+Author:        Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+AuthorDate:    Fri, 29 Nov 2024 15:31:34 
+Committer:     Peter Zijlstra <peterz@infradead.org>
+CommitterDate: Tue, 03 Dec 2024 16:49:59 +01:00
 
-=====================================================
-BUG: KMSAN: uninit-value in ip6t_mangle_out net/ipv6/netfilter/ip6table_mangle.c:56 [inline]
-BUG: KMSAN: uninit-value in ip6table_mangle_hook+0x97d/0x9c0 net/ipv6/netfilter/ip6table_mangle.c:72
- ip6t_mangle_out net/ipv6/netfilter/ip6table_mangle.c:56 [inline]
- ip6table_mangle_hook+0x97d/0x9c0 net/ipv6/netfilter/ip6table_mangle.c:72
- nf_hook_entry_hookfn include/linux/netfilter.h:154 [inline]
- nf_hook_slow+0xf4/0x400 net/netfilter/core.c:626
- nf_hook include/linux/netfilter.h:269 [inline]
- __ip6_local_out+0x5ac/0x640 net/ipv6/output_core.c:143
- ip6_local_out+0x4c/0x210 net/ipv6/output_core.c:153
- ip6tunnel_xmit+0x129/0x460 include/net/ip6_tunnel.h:161
- ip6_tnl_xmit+0x345d/0x3900 net/ipv6/ip6_tunnel.c:1281
- __gre6_xmit+0x14b9/0x1550 net/ipv6/ip6_gre.c:815
- ip6gre_xmit_ipv4 net/ipv6/ip6_gre.c:839 [inline]
- ip6gre_tunnel_xmit+0x18f7/0x2030 net/ipv6/ip6_gre.c:922
- __netdev_start_xmit include/linux/netdevice.h:5002 [inline]
- netdev_start_xmit include/linux/netdevice.h:5011 [inline]
- xmit_one net/core/dev.c:3590 [inline]
- dev_hard_start_xmit+0x247/0xa20 net/core/dev.c:3606
- sch_direct_xmit+0x399/0xd40 net/sched/sch_generic.c:343
- __dev_xmit_skb net/core/dev.c:3827 [inline]
- __dev_queue_xmit+0x30b9/0x57d0 net/core/dev.c:4400
- dev_queue_xmit include/linux/netdevice.h:3168 [inline]
- packet_xmit+0x9c/0x6c0 net/packet/af_packet.c:276
- packet_snd net/packet/af_packet.c:3146 [inline]
- packet_sendmsg+0x91ae/0xa6f0 net/packet/af_packet.c:3178
- sock_sendmsg_nosec net/socket.c:711 [inline]
- __sock_sendmsg+0x30f/0x380 net/socket.c:726
- __sys_sendto+0x594/0x750 net/socket.c:2197
- __do_sys_sendto net/socket.c:2204 [inline]
- __se_sys_sendto net/socket.c:2200 [inline]
- __x64_sys_sendto+0x125/0x1d0 net/socket.c:2200
- x64_sys_call+0x346a/0x3c30 arch/x86/include/generated/asm/syscalls_64.h:45
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+perf: Map pages in advance
 
-Uninit was stored to memory at:
- ip6_tnl_xmit+0x3584/0x3900 net/ipv6/ip6_tunnel.c:1277
- __gre6_xmit+0x14b9/0x1550 net/ipv6/ip6_gre.c:815
- ip6gre_xmit_ipv4 net/ipv6/ip6_gre.c:839 [inline]
- ip6gre_tunnel_xmit+0x18f7/0x2030 net/ipv6/ip6_gre.c:922
- __netdev_start_xmit include/linux/netdevice.h:5002 [inline]
- netdev_start_xmit include/linux/netdevice.h:5011 [inline]
- xmit_one net/core/dev.c:3590 [inline]
- dev_hard_start_xmit+0x247/0xa20 net/core/dev.c:3606
- sch_direct_xmit+0x399/0xd40 net/sched/sch_generic.c:343
- __dev_xmit_skb net/core/dev.c:3827 [inline]
- __dev_queue_xmit+0x30b9/0x57d0 net/core/dev.c:4400
- dev_queue_xmit include/linux/netdevice.h:3168 [inline]
- packet_xmit+0x9c/0x6c0 net/packet/af_packet.c:276
- packet_snd net/packet/af_packet.c:3146 [inline]
- packet_sendmsg+0x91ae/0xa6f0 net/packet/af_packet.c:3178
- sock_sendmsg_nosec net/socket.c:711 [inline]
- __sock_sendmsg+0x30f/0x380 net/socket.c:726
- __sys_sendto+0x594/0x750 net/socket.c:2197
- __do_sys_sendto net/socket.c:2204 [inline]
- __se_sys_sendto net/socket.c:2200 [inline]
- __x64_sys_sendto+0x125/0x1d0 net/socket.c:2200
- x64_sys_call+0x346a/0x3c30 arch/x86/include/generated/asm/syscalls_64.h:45
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+We are current refactoring struct page to make it smaller, removing
+unneeded fields that correctly belong to struct folio.
 
-Uninit was created at:
- slab_post_alloc_hook mm/slub.c:4110 [inline]
- slab_alloc_node mm/slub.c:4153 [inline]
- __do_kmalloc_node mm/slub.c:4282 [inline]
- __kmalloc_node_track_caller_noprof+0x945/0x1240 mm/slub.c:4302
- kmalloc_reserve+0x23e/0x4a0 net/core/skbuff.c:609
- pskb_expand_head+0x226/0x1a60 net/core/skbuff.c:2275
- skb_realloc_headroom+0x140/0x2b0 net/core/skbuff.c:2355
- ip6_tnl_xmit+0x2106/0x3900 net/ipv6/ip6_tunnel.c:1227
- __gre6_xmit+0x14b9/0x1550 net/ipv6/ip6_gre.c:815
- ip6gre_xmit_ipv4 net/ipv6/ip6_gre.c:839 [inline]
- ip6gre_tunnel_xmit+0x18f7/0x2030 net/ipv6/ip6_gre.c:922
- __netdev_start_xmit include/linux/netdevice.h:5002 [inline]
- netdev_start_xmit include/linux/netdevice.h:5011 [inline]
- xmit_one net/core/dev.c:3590 [inline]
- dev_hard_start_xmit+0x247/0xa20 net/core/dev.c:3606
- sch_direct_xmit+0x399/0xd40 net/sched/sch_generic.c:343
- __dev_xmit_skb net/core/dev.c:3827 [inline]
- __dev_queue_xmit+0x30b9/0x57d0 net/core/dev.c:4400
- dev_queue_xmit include/linux/netdevice.h:3168 [inline]
- packet_xmit+0x9c/0x6c0 net/packet/af_packet.c:276
- packet_snd net/packet/af_packet.c:3146 [inline]
- packet_sendmsg+0x91ae/0xa6f0 net/packet/af_packet.c:3178
- sock_sendmsg_nosec net/socket.c:711 [inline]
- __sock_sendmsg+0x30f/0x380 net/socket.c:726
- __sys_sendto+0x594/0x750 net/socket.c:2197
- __do_sys_sendto net/socket.c:2204 [inline]
- __se_sys_sendto net/socket.c:2200 [inline]
- __x64_sys_sendto+0x125/0x1d0 net/socket.c:2200
- x64_sys_call+0x346a/0x3c30 arch/x86/include/generated/asm/syscalls_64.h:45
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+Two of those fields are page->index and page->mapping. Perf is currently
+making use of both of these, so this patch removes this usage as it turns
+out it is unnecessary.
 
-CPU: 0 UID: 0 PID: 6621 Comm: syz.0.15 Not tainted 6.13.0-rc1-syzkaller-00002-gcdd30ebb1b9f-dirty #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-=====================================================
+Perf establishes its own internally controlled memory-mapped pages using
+vm_ops hooks. The first page in the mapping is the read/write user control
+page, and the rest of the mapping consists of read-only pages.
 
+The VMA is backed by kernel memory either from the buddy allocator or
+vmalloc depending on configuration. It is intended to be mapped read/write,
+but because it has a page_mkwrite() hook, vma_wants_writenotify() indicaets
+that it should be mapped read-only.
 
-Tested on:
+When a write fault occurs, the provided page_mkwrite() hook,
+perf_mmap_fault() (doing double duty handing faults as well) uses the
+vmf->pgoff field to determine if this is the first page, allowing for the
+desired read/write first page, read-only rest mapping.
 
-commit:         cdd30ebb module: Convert symbol namespace to string li..
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=15bcf0df980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=46e22a9795a5542
-dashboard link: https://syzkaller.appspot.com/bug?extid=6023ea32e206eef7920a
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=16eb6fc0580000
+For this to work the implementation has to carefully work around faulting
+logic. When a page is write-faulted, the fault() hook is called first, then
+its page_mkwrite() hook is called (to allow for dirty tracking in file
+systems).
 
+On fault we set the folio's mapping in perf_mmap_fault(), this is because
+when do_page_mkwrite() is subsequently invoked, it treats a missing mapping
+as an indicator that the fault should be retried.
+
+We also set the folio's index so, given the folio is being treated as faux
+user memory, it correctly references its offset within the VMA.
+
+This explains why the mapping and index fields are used - but it's not
+necessary.
+
+We preallocate pages when perf_mmap() is called for the first time via
+rb_alloc(), and further allocate auxiliary pages via rb_aux_alloc() as
+needed if the mapping requires it.
+
+This allocation is done in the f_ops->mmap() hook provided in perf_mmap(),
+and so we can instead simply map all the memory right away here - there's
+no point in handling (read) page faults when we don't demand page nor need
+to be notified about them (perf does not).
+
+This patch therefore changes this logic to map everything when the mmap()
+hook is called, establishing a PFN map. It implements vm_ops->pfn_mkwrite()
+to provide the required read/write vs. read-only behaviour, which does not
+require the previously implemented workarounds.
+
+While it is not ideal to use a VM_PFNMAP here, doing anything else will
+result in the page_mkwrite() hook need to be provided, which requires the
+same page->mapping hack this patch seeks to undo.
+
+It will also result in the pages being treated as folios and placed on the
+rmap, which really does not make sense for these mappings.
+
+Semantically it makes sense to establish this as some kind of special
+mapping, as the pages are managed by perf and are not strictly user pages,
+but currently the only means by which we can do so functionally while
+maintaining the required R/W and R/O bheaviour is a PFN map.
+
+There should be no change to actual functionality as a result of this
+change.
+
+Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Link: https://lkml.kernel.org/r/20241129153134.82755-1-lorenzo.stoakes@oracle.com
+---
+ kernel/events/core.c        | 116 +++++++++++++++++++++++------------
+ kernel/events/ring_buffer.c |  19 +------
+ 2 files changed, 80 insertions(+), 55 deletions(-)
+
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index e9f698c..4c6f6c2 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -6277,41 +6277,6 @@ unlock:
+ }
+ EXPORT_SYMBOL_GPL(perf_event_update_userpage);
+ 
+-static vm_fault_t perf_mmap_fault(struct vm_fault *vmf)
+-{
+-	struct perf_event *event = vmf->vma->vm_file->private_data;
+-	struct perf_buffer *rb;
+-	vm_fault_t ret = VM_FAULT_SIGBUS;
+-
+-	if (vmf->flags & FAULT_FLAG_MKWRITE) {
+-		if (vmf->pgoff == 0)
+-			ret = 0;
+-		return ret;
+-	}
+-
+-	rcu_read_lock();
+-	rb = rcu_dereference(event->rb);
+-	if (!rb)
+-		goto unlock;
+-
+-	if (vmf->pgoff && (vmf->flags & FAULT_FLAG_WRITE))
+-		goto unlock;
+-
+-	vmf->page = perf_mmap_to_page(rb, vmf->pgoff);
+-	if (!vmf->page)
+-		goto unlock;
+-
+-	get_page(vmf->page);
+-	vmf->page->mapping = vmf->vma->vm_file->f_mapping;
+-	vmf->page->index   = vmf->pgoff;
+-
+-	ret = 0;
+-unlock:
+-	rcu_read_unlock();
+-
+-	return ret;
+-}
+-
+ static void ring_buffer_attach(struct perf_event *event,
+ 			       struct perf_buffer *rb)
+ {
+@@ -6551,13 +6516,87 @@ out_put:
+ 	ring_buffer_put(rb); /* could be last */
+ }
+ 
++static vm_fault_t perf_mmap_pfn_mkwrite(struct vm_fault *vmf)
++{
++	/* The first page is the user control page, others are read-only. */
++	return vmf->pgoff == 0 ? 0 : VM_FAULT_SIGBUS;
++}
++
+ static const struct vm_operations_struct perf_mmap_vmops = {
+ 	.open		= perf_mmap_open,
+ 	.close		= perf_mmap_close, /* non mergeable */
+-	.fault		= perf_mmap_fault,
+-	.page_mkwrite	= perf_mmap_fault,
++	.pfn_mkwrite	= perf_mmap_pfn_mkwrite,
+ };
+ 
++static int map_range(struct perf_buffer *rb, struct vm_area_struct *vma)
++{
++	unsigned long nr_pages = vma_pages(vma);
++	int err = 0;
++	unsigned long pgoff;
++
++	/*
++	 * We map this as a VM_PFNMAP VMA.
++	 *
++	 * This is not ideal as this is designed broadly for mappings of PFNs
++	 * referencing memory-mapped I/O ranges or non-system RAM i.e. for which
++	 * !pfn_valid(pfn).
++	 *
++	 * We are mapping kernel-allocated memory (memory we manage ourselves)
++	 * which would more ideally be mapped using vm_insert_page() or a
++	 * similar mechanism, that is as a VM_MIXEDMAP mapping.
++	 *
++	 * However this won't work here, because:
++	 *
++	 * 1. It uses vma->vm_page_prot, but this field has not been completely
++	 *    setup at the point of the f_op->mmp() hook, so we are unable to
++	 *    indicate that this should be mapped CoW in order that the
++	 *    mkwrite() hook can be invoked to make the first page R/W and the
++	 *    rest R/O as desired.
++	 *
++	 * 2. Anything other than a VM_PFNMAP of valid PFNs will result in
++	 *    vm_normal_page() returning a struct page * pointer, which means
++	 *    vm_ops->page_mkwrite() will be invoked rather than
++	 *    vm_ops->pfn_mkwrite(), and this means we have to set page->mapping
++	 *    to work around retry logic in the fault handler, however this
++	 *    field is no longer allowed to be used within struct page.
++	 *
++	 * 3. Having a struct page * made available in the fault logic also
++	 *    means that the page gets put on the rmap and becomes
++	 *    inappropriately accessible and subject to map and ref counting.
++	 *
++	 * Ideally we would have a mechanism that could explicitly express our
++	 * desires, but this is not currently the case, so we instead use
++	 * VM_PFNMAP.
++	 *
++	 * We manage the lifetime of these mappings with internal refcounts (see
++	 * perf_mmap_open() and perf_mmap_close()) so we ensure the lifetime of
++	 * this mapping is maintained correctly.
++	 */
++	for (pgoff = 0; pgoff < nr_pages; pgoff++) {
++		unsigned long va = vma->vm_start + PAGE_SIZE * pgoff;
++		struct page *page = perf_mmap_to_page(rb, pgoff);
++
++		if (page == NULL) {
++			err = -EINVAL;
++			break;
++		}
++
++		/* Map readonly, perf_mmap_pfn_mkwrite() called on write fault. */
++		err = remap_pfn_range(vma, va, page_to_pfn(page), PAGE_SIZE,
++				      vm_get_page_prot(vma->vm_flags & ~VM_SHARED));
++		if (err)
++			break;
++	}
++
++#ifdef CONFIG_MMU
++	/* Clear any partial mappings on error. */
++	if (err)
++		zap_page_range_single(vma, vma->vm_start, nr_pages * PAGE_SIZE, NULL);
++#endif
++
++	return err;
++}
++
+ static int perf_mmap(struct file *file, struct vm_area_struct *vma)
+ {
+ 	struct perf_event *event = file->private_data;
+@@ -6776,6 +6815,9 @@ aux_unlock:
+ 	vm_flags_set(vma, VM_DONTCOPY | VM_DONTEXPAND | VM_DONTDUMP);
+ 	vma->vm_ops = &perf_mmap_vmops;
+ 
++	if (!ret)
++		ret = map_range(rb, vma);
++
+ 	if (event->pmu->event_mapped)
+ 		event->pmu->event_mapped(event, vma->vm_mm);
+ 
+diff --git a/kernel/events/ring_buffer.c b/kernel/events/ring_buffer.c
+index 4f46f68..1805091 100644
+--- a/kernel/events/ring_buffer.c
++++ b/kernel/events/ring_buffer.c
+@@ -643,7 +643,6 @@ static void rb_free_aux_page(struct perf_buffer *rb, int idx)
+ 	struct page *page = virt_to_page(rb->aux_pages[idx]);
+ 
+ 	ClearPagePrivate(page);
+-	page->mapping = NULL;
+ 	__free_page(page);
+ }
+ 
+@@ -819,7 +818,6 @@ static void perf_mmap_free_page(void *addr)
+ {
+ 	struct page *page = virt_to_page(addr);
+ 
+-	page->mapping = NULL;
+ 	__free_page(page);
+ }
+ 
+@@ -890,28 +888,13 @@ __perf_mmap_to_page(struct perf_buffer *rb, unsigned long pgoff)
+ 	return vmalloc_to_page((void *)rb->user_page + pgoff * PAGE_SIZE);
+ }
+ 
+-static void perf_mmap_unmark_page(void *addr)
+-{
+-	struct page *page = vmalloc_to_page(addr);
+-
+-	page->mapping = NULL;
+-}
+-
+ static void rb_free_work(struct work_struct *work)
+ {
+ 	struct perf_buffer *rb;
+-	void *base;
+-	int i, nr;
+ 
+ 	rb = container_of(work, struct perf_buffer, work);
+-	nr = data_page_nr(rb);
+-
+-	base = rb->user_page;
+-	/* The '<=' counts in the user page. */
+-	for (i = 0; i <= nr; i++)
+-		perf_mmap_unmark_page(base + (i * PAGE_SIZE));
+ 
+-	vfree(base);
++	vfree(rb->user_page);
+ 	kfree(rb);
+ }
+ 
 
