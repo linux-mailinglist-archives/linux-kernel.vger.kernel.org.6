@@ -1,66 +1,65 @@
-Return-Path: <linux-kernel+bounces-428980-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428981-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74D719E1605
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:42:04 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F18649E15D1
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:31:34 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B1CFDB29F5E
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 08:30:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5828162670
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 08:31:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ECAF1A4F2F;
-	Tue,  3 Dec 2024 08:30:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58D721D90B6;
+	Tue,  3 Dec 2024 08:31:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ApT+Kb6p"
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t42RLmlH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 422043F8F7;
-	Tue,  3 Dec 2024 08:30:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A44493F8F7;
+	Tue,  3 Dec 2024 08:31:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733214636; cv=none; b=X44rpxUqZtq4dkle7X4h3RJpav5bYKjlmYVtnLvCoahNuE1uqeWkjAl/+0hxDwSBe/YoS9ibpRPyWmsQVbSWrm/cLxKf/azLZ6yUsLM8ILPaiTj3eP72UPh1+xquGalTBDzTADaow3+Zi0FCc7j26BWjmX+hRU8/v14kbRsxEh0=
+	t=1733214687; cv=none; b=dZYPzyAHJ4FWR3wCZeRpkQrBPqR1nOXT8WKoobanIrWjNopblw1x8T1WbPPIcLTyaKk+n08sxo+29CayJP1oNmUJyQFOtbhujvkvUTL1xBAcDKEB3lfnXaMNhLRZIlkxgFIrxYGpVa0S+fsAWbaH7FvUpAbEB3m1DFZbjsy8BiI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733214636; c=relaxed/simple;
-	bh=lLJWoGA5mgYfeIf4wHZFTqCgIgZq+Y5pKhmZrIUvxi8=;
+	s=arc-20240116; t=1733214687; c=relaxed/simple;
+	bh=x3znFn98rErh2FCBpaz9WvVdlFADMKizJofigQdXDp4=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=q4hGtjdQx8nrwGLWcMWh+0R2yW9qln6I3tAkz/nSvAJI6jVE27XwuQYUbRqdu/5LGtbXfpia3etompkLOpxt7Dbqr20iYwYSDT94dTk8IJmptkhkVnjb+QxiBu6G/ISXDBnSUoJeXplKqcmr9kdpe466tg6zSYNrWexQXV9Z54A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ApT+Kb6p; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 12D08FF805;
-	Tue,  3 Dec 2024 08:30:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1733214631;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wuM3/oVKujOATxnTbh+v+qkfvawpHs2T6Z0xs87aRjs=;
-	b=ApT+Kb6pBSoGn6KFGsCfFuN1b/F+Nn3onYhsoClioTIM9NVAs/80dl5zTMYeuLWB1vaZyv
-	hdUuwEyQ2Tfd3n1gaY0ixl/qSUSJM+eC7tgc+kc1Pd59Xqc5w+TsLGqkKdTvjjwgYURjAH
-	okKd/TddEU2aHnubDBKtL8epjIZlqOrF4x/LSrS7DEIFQFSRqF1eHb9FIz2g+ap6RXMmO/
-	vCC4JeGQwrMJuSrO/drXnvlqwS6OliPBrsEvv3TdQ16vt5AEZdoIR4FkOvVqEjfcDLF/AX
-	cScS0y2kx9z3rqjq7H/0CVPsQ6kaTmwk6WmNy3tL9v6CMeqUCMlD6/5XSbEmpA==
-Date: Tue, 3 Dec 2024 09:30:29 +0100
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
- <pabeni@redhat.com>, Andrew Lunn <andrew+netdev@lunn.ch>, Heiner Kallweit
- <hkallweit1@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
- kernel@pengutronix.de, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org, Simon Horman <horms@kernel.org>, Russell King
- <linux@armlinux.org.uk>, linux-doc@vger.kernel.org
-Subject: Re: [PATCH net-next v1 1/7] net: ethtool: plumb PHY stats to PHY
- drivers
-Message-ID: <20241203093029.60c8b94b@fedora.home>
-In-Reply-To: <20241203075622.2452169-2-o.rempel@pengutronix.de>
-References: <20241203075622.2452169-1-o.rempel@pengutronix.de>
-	<20241203075622.2452169-2-o.rempel@pengutronix.de>
-Organization: Bootlin
+	 MIME-Version:Content-Type; b=l3kLVX/U9xiYckieQtGNch/NDntMhEZliBmTUKbL0Q5k46C8QTC2kod7jwwn2RBOcAWNvqKqDfyxA8bW436BoAPxqltiUcYNjXkR0PdhlsueZGSyumG0G63rKld3/Zhh9EjygzT/xUqJ/ku0kwSJ+CkkdeneToXvtLOI5cSl+/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t42RLmlH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45D21C4CECF;
+	Tue,  3 Dec 2024 08:31:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733214687;
+	bh=x3znFn98rErh2FCBpaz9WvVdlFADMKizJofigQdXDp4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=t42RLmlHAIcnhWWs3lUH+Bz88axkSdXYA8oFKDhpTWmLJHGdOlM3M1LManNS0sdvT
+	 YyxMTDDBXmLm3kC1Yw5PE7dyA6cSk5+RZIQxCcK4nWi0SbYwcTeZyzfi1GRftNKStm
+	 HcI8vkNtiQ8vl60KrSkfL5kKNxd7VGn93wDeV5NnnmFqXPBBLN7lmBfTRJzkQlJCvV
+	 jCxUI33Qq3dZ/VJqyzHbe0sbLXuZyuimDzJ3kzaPYEBZfv9XwwfRg/hs0gNjqfCFGV
+	 n2opd19xlVIJFgdwMd7/IXO1V80184HNi1YJSli5Yk7HGx59K4q8kagHj+mWlZjxvP
+	 KCjGBGozwZpKw==
+Date: Tue, 3 Dec 2024 09:31:20 +0100
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Ricardo Ribalda <ribalda@chromium.org>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Nathan Chancellor
+ <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, Bill
+ Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, Hans de
+ Goede <hdegoede@redhat.com>, Sakari Ailus <sakari.ailus@linux.intel.com>,
+ Andy Shevchenko <andy@kernel.org>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, Tiffany Lin <tiffany.lin@mediatek.com>,
+ Andrew-CT Chen <andrew-ct.chen@mediatek.com>, Yunfei Dong
+ <yunfei.dong@mediatek.com>, Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+ llvm@lists.linux.dev, linux-staging@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH 1/3] media: cx231xx: Convert enum into a define
+Message-ID: <20241203093114.0ca49c01@foz.lan>
+In-Reply-To: <20241202-fix-llvm9-v1-1-2a50f5acfd0b@chromium.org>
+References: <20241202-fix-llvm9-v1-0-2a50f5acfd0b@chromium.org>
+	<20241202-fix-llvm9-v1-1-2a50f5acfd0b@chromium.org>
 X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -70,124 +69,81 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-GND-Sasl: maxime.chevallier@bootlin.com
 
-Hi Oleksij,
+Em Mon, 02 Dec 2024 15:47:15 +0000
+Ricardo Ribalda <ribalda@chromium.org> escreveu:
 
-On Tue,  3 Dec 2024 08:56:15 +0100
-Oleksij Rempel <o.rempel@pengutronix.de> wrote:
-
-> From: Jakub Kicinski <kuba@kernel.org>
+> The code is running arithmentics with the enum, which when not done with
+> care makes the compiler a bit nervous.
 > 
-> Feed the existing IEEE PHY counter struct (which currently
-> only has one entry) and link stats into the PHY driver.
-> The MAC driver can override the value if it somehow has a better
-> idea of PHY stats. Since the stats are "undefined" at input
-> the drivers can't += the values, so we should be safe from
-> double-counting.
+> Because those enums are only used as defines (no argument or variable
+> from that enumeration type), convert it into a define and move on.
 > 
-> Signed-off-by: Jakub Kicinski <kuba@kernel.org>
-> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
-
-[...] 
-
-> +static void
-> +ethtool_get_phydev_stats(struct net_device *dev,
-> +			 struct linkstate_reply_data *data)
-> +{
-> +	struct phy_device *phydev = dev->phydev;
-> +
-> +	if (!phydev)
-> +		return;
-> +
-> +	if (dev->phydev)
-> +		data->link_stats.link_down_events =
-> +			READ_ONCE(dev->phydev->link_down_events);
-> +
-> +	if (!phydev->drv || !phydev->drv->get_link_stats)
-> +		return;
-> +
-> +	mutex_lock(&phydev->lock);
-> +	phydev->drv->get_link_stats(phydev, &data->link_stats);
-> +	mutex_unlock(&phydev->lock);
-> +}
-> +
->  static int linkstate_prepare_data(const struct ethnl_req_info *req_base,
->  				  struct ethnl_reply_data *reply_base,
->  				  const struct genl_info *info)
-> @@ -127,9 +148,7 @@ static int linkstate_prepare_data(const struct ethnl_req_info *req_base,
->  			   sizeof(data->link_stats) / 8);
+> It is required to build with llvm 9 without these warnings:
+> drivers/media/usb/cx231xx/cx231xx-pcb-cfg.c:673:17: warning: bitwise operation between different enumeration types ('enum TS_PORT' and 'enum POWE_TYPE') [-Wenum-enum-conversion]
+> drivers/media/usb/cx231xx/cx231xx-pcb-cfg.c:680:21: warning: bitwise operation between different enumeration types ('enum AVDEC_STATUS' and 'enum POWE_TYPE') [-Wenum-enum-conversion]
+> drivers/media/usb/cx231xx/cx231xx-pcb-cfg.c:687:21: warning: bitwise operation between different enumeration types ('enum AVDEC_STATUS' and 'enum POWE_TYPE') [-Wenum-enum-conversion]
+> drivers/media/usb/cx231xx/cx231xx-pcb-cfg.c:702:17: warning: bitwise operation between different enumeration types ('enum TS_PORT' and 'enum POWE_TYPE') [-Wenum-enum-conversion]
+> drivers/media/usb/cx231xx/cx231xx-pcb-cfg.c:709:21: warning: bitwise operation between different enumeration types ('enum TS_PORT' and 'enum POWE_TYPE') [-Wenum-enum-conversion]
+> drivers/media/usb/cx231xx/cx231xx-pcb-cfg.c:718:21: warning: bitwise operation between different enumeration types ('enum AVDEC_STATUS' and 'enum POWE_TYPE') [-Wenum-enum-conversion]
+> drivers/media/usb/cx231xx/cx231xx-pcb-cfg.c:727:21: warning: bitwise operation between different enumeration types ('enum AVDEC_STATUS' and 'enum TS_PORT') [-Wenum-enum-conversion]
+> drivers/media/usb/cx231xx/cx231xx-pcb-cfg.c:737:21: warning: bitwise operation between different enumeration types ('enum AVDEC_STATUS' and 'enum TS_PORT') [-Wenum-enum-conversion]
+> drivers/media/usb/cx231xx/cx231xx-pcb-cfg.c:749:21: warning: bitwise operation between different enumeration types ('enum AVDEC_STATUS' and 'enum TS_PORT') [-Wenum-enum-conversion]
+> 
+> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> ---
+>  drivers/media/usb/cx231xx/cx231xx-pcb-cfg.h | 18 +++++++-----------
+>  1 file changed, 7 insertions(+), 11 deletions(-)
+> 
+> diff --git a/drivers/media/usb/cx231xx/cx231xx-pcb-cfg.h b/drivers/media/usb/cx231xx/cx231xx-pcb-cfg.h
+> index 5bc44f194d0a..62ffa16bb82c 100644
+> --- a/drivers/media/usb/cx231xx/cx231xx-pcb-cfg.h
+> +++ b/drivers/media/usb/cx231xx/cx231xx-pcb-cfg.h
+> @@ -57,19 +57,17 @@ enum USB_SPEED{
+>  };
 >  
->  	if (req_base->flags & ETHTOOL_FLAG_STATS) {
-> -		if (dev->phydev)
-> -			data->link_stats.link_down_events =
-> -				READ_ONCE(dev->phydev->link_down_events);
-> +		ethtool_get_phydev_stats(dev, data);
-
-I'm sorry to bother you with my multi-phy stuff, but I'd like to avoid
-directly accessing netdev->phydev at least in the netlink code.
-
-Could it be possible for you to pass a phydev directly to the
-ethtool_get_phydev_stats() helper you're creating ? That way, you could
-get the stats from other phydevs on the link if userspace passed a phy
-index in the netlink header. You'd get the phydev that way :
-
-phydev = ethnl_req_get_phydev(req_base, tb[ETHTOOL_A_LINKSTATE_HEADER,], info->extack);
-
-This is what's done in the pse-pd, plca and cabletest netlink code that
-deals with phydevs.
-
-Note that this helper will fallback to netdev->phydev if user didn't
-pass any PHY index, which I expect to be what people do most of the
-time. However should the netdev have more than 1 PHY, we would be able
-to get the far-away PHY's stats :)
-
+>  #define TS_MASK         0x6
+> -enum TS_PORT{
+> -	NO_TS_PORT = 0x0,	/* 2'b00: Neither port used. PCB not a Hybrid,
+> +#define NO_TS_PORT	0x0	/* 2'b00: Neither port used. PCB not a Hybrid,
+>  				   only offers Analog TV or Video */
+> -	TS1_PORT = 0x4,		/* 2'b10: TS1 Input (Hybrid mode :
+> +#define TS1_PORT	0x4	/* 2'b10: TS1 Input (Hybrid mode :
+>  				Digital or External Analog/Compressed source) */
+> -	TS1_TS2_PORT = 0x6,	/* 2'b11: TS1 & TS2 Inputs
+> +#define TS1_TS2_PORT	0x6	/* 2'b11: TS1 & TS2 Inputs
+>  				(Dual inputs from Digital and/or
+>  				External Analog/Compressed sources) */
+> -	TS1_EXT_CLOCK = 0x6,	/* 2'b11: TS1 & TS2 as selector
+> +#define TS1_EXT_CLOCK	0x6	/* 2'b11: TS1 & TS2 as selector
+>  						to external clock */
+> -	TS1VIP_TS2_PORT = 0x2	/* 2'b01: TS1 used as 656/VIP Output,
+> +#define TS1VIP_TS2_PORT 0x2	/* 2'b01: TS1 used as 656/VIP Output,
+>  				   TS2 Input (from Compressor) */
+> -};
 >  
->  		if (dev->ethtool_ops->get_link_ext_stats)
->  			dev->ethtool_ops->get_link_ext_stats(dev,
-> diff --git a/net/ethtool/stats.c b/net/ethtool/stats.c
-> index 912f0c4fff2f..cf802b1cda6f 100644
-> --- a/net/ethtool/stats.c
-> +++ b/net/ethtool/stats.c
-> @@ -1,5 +1,7 @@
->  // SPDX-License-Identifier: GPL-2.0-only
+>  #define EAVP_MASK       0x8
+>  enum EAV_PRESENT{
+> @@ -89,10 +87,8 @@ enum AT_MODE{
+>  };
 >  
-> +#include <linux/phy.h>
-> +
->  #include "netlink.h"
->  #include "common.h"
->  #include "bitset.h"
-> @@ -112,6 +114,19 @@ static int stats_parse_request(struct ethnl_req_info *req_base,
->  	return 0;
->  }
+>  #define PWR_SEL_MASK    0x40
+> -enum POWE_TYPE{
+> -	SELF_POWER = 0x0,	/* 0: self power */
+> -	BUS_POWER = 0x40	/* 1: bus power */
+> -};
+> +#define SELF_POWER	0x0	/* 0: self power */
+> +#define BUS_POWER	0x40	/* 1: bus power */
 >  
-> +static void
-> +ethtool_get_phydev_stats(struct net_device *dev, struct stats_reply_data *data)
-> +{
-> +	struct phy_device *phydev = dev->phydev;
-> +
-> +	if (!phydev || !phydev->drv || !phydev->drv->get_phy_stats)
-> +		return;
-> +
-> +	mutex_lock(&phydev->lock);
-> +	phydev->drv->get_phy_stats(phydev, &data->phy_stats);
-> +	mutex_unlock(&phydev->lock);
-> +}
-> +
->  static int stats_prepare_data(const struct ethnl_req_info *req_base,
->  			      struct ethnl_reply_data *reply_base,
->  			      const struct genl_info *info)
-> @@ -145,6 +160,10 @@ static int stats_prepare_data(const struct ethnl_req_info *req_base,
->  	data->ctrl_stats.src = src;
->  	data->rmon_stats.src = src;
->  
-> +	if (test_bit(ETHTOOL_STATS_ETH_PHY, req_info->stat_mask) &&
-> +	    src == ETHTOOL_MAC_STATS_SRC_AGGREGATE)
-> +		ethtool_get_phydev_stats(dev, data);
+>  enum USB_POWE_TYPE{
+>  	USB_SELF_POWER = 0,
+> 
 
-Same here :)
+IMO keeping them into enums are a lot better than defines.
+
+Perhaps the right thing would be to join both enums here.
+
 
 Thanks,
-
-Maxime
+Mauro
 
