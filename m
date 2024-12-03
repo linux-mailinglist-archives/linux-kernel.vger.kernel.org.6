@@ -1,209 +1,493 @@
-Return-Path: <linux-kernel+bounces-429521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429536-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3710E9E1D60
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 14:19:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AAB09E1D73
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 14:23:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14E281650D0
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 13:18:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 166C9167018
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 13:22:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB7B31F130C;
-	Tue,  3 Dec 2024 13:18:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 158B81E5721;
+	Tue,  3 Dec 2024 13:22:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hWcR3p7h"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="i6QV27cx"
+Received: from smtpbgbr2.qq.com (smtpbgbr2.qq.com [54.207.22.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45CD81EE024;
-	Tue,  3 Dec 2024 13:18:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60E9E1EF080;
+	Tue,  3 Dec 2024 13:21:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.22.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733231913; cv=none; b=Op8MJhbAJiEwzR8Xt7xO2U8wiOZa6Y5JF4ULyER28PM563Rso53ldMaOR+9AAWuTgkmEzDa2WBOKOZBERXiPxBAPh1VSdCMXiwESjLIBlWjrsk858HzeElyhlVYC0I3NvHiikkRXoN9qViPcRCe+2yED3zkwXTaKaesfyu9yRXs=
+	t=1733232128; cv=none; b=vFUrfW7aQgeRkLaTqo5t/LQdujwH8JZm7eoIMIrsdck/6FJIVqh5uzcSlc2MURNsG1XC3yBlPNsGXOVb+cPgFNiBtI9YeG54K1K4fHmHwhw9KbpdbPTA1FF4+js/PBjiFLaK0kjEOambfdGzqBwt97nwriKSK7zFPd10rmbgaZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733231913; c=relaxed/simple;
-	bh=pB2tSdh0U/0VXXziJXUn/gHy7SlMJOCjqWYTQIuIgv4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Oo5wvYwT0TOr+cEKTyRvxYM8EA1WWw+kpidjr8qd8+uKXXAca4Yidwyo/Njhk5BxWSS3Cv+VH868DCuxBpw/dNEyVTuM7GkhjprEPQ9kAapKpo081tAlTSE15aGhw7DdBshg2deXSmTLeW/mKay+JKzPwhnjKT4yhrg9kbkvVGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hWcR3p7h; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5d0ca0f67b6so4510653a12.3;
-        Tue, 03 Dec 2024 05:18:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733231909; x=1733836709; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=kxxus/9zcyh9wO8mCV8u9f3SmaylmS2FWV0Zg+5ddhk=;
-        b=hWcR3p7hBEmo5E2+q0g634Iin4/guSEXxeI71JjgNE2o3tiozFZsRoMcEoEflljj2W
-         ZsHBhAqsUowRkxzvHWT0EjGQo+9U6OLmpHPo7z3PhS3G27WQ3amHsckxz6dGmgEK1D5t
-         QCvseOpl1G/Zzw1t3U1c3Cdhf2A6teQ/nLorMQnCMpvmvVL6qSv0qXU3DfEMjAIFoWEt
-         +VK2+ljwgxKNIrP9BEDxqWAwLybjtuSogDcjpq7ykGIoAgUci32S0zVUqD0OH8yB0OyG
-         mY+r2O9tMNRrkR63LrwR1YPaRy1DbX/hbVEqzEk6ZMIPbnU1KVtb0I/eBLjx/NQ8cqxX
-         4+Jg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733231909; x=1733836709;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kxxus/9zcyh9wO8mCV8u9f3SmaylmS2FWV0Zg+5ddhk=;
-        b=YzrydXxSW67Xa57xJClGYqExC2pzyueCnjg5yuV5jMZmNO9ewg/ket3xPWOvCrf0Jg
-         Ut+g2Y2z5brIcU4D+y0np+7ppKJ91CpvAObs+xjLSqXAySEeWhIL1nLpk9N21yjYuhjR
-         YPDFAX/SXIMo8eC7ocuQnghq2ZX8aEKy/JR0hZdZzExbd2X7srxKO8ZD16RmViSzbdS/
-         EX9p/51+0vAYAz778XrR3yp8e/lhZIvijLWfLgiOdslelWtEVo1mNWwQQzhWwy3Ap0+T
-         U5SnN27IsklbbznNyJ9xx4r4IeyWh5dsdj4yO06PbIs5LHhqO+2dK3BBtAPMmIt+B6gJ
-         urOA==
-X-Forwarded-Encrypted: i=1; AJvYcCUZpRaVL7xMmg15441nzNUjrD/g9I6Iuq4xOGUc2MTZEYHzfYN8PZUtgpP+SxWIN8f2xliFeuNg@vger.kernel.org, AJvYcCXQrLkF2VEVqLMaQdVEoVfgoKv0Xsnkswc+o4v584ZeV+dvK3Vliqm+1gbdkjadSnjmEyEMZ1hPMXQrjuo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YypAEfXTPEZrVJhxKzd+gIuiPa+J1S1Ufm9MplAVMfpbQjYtBY3
-	CFIZ0EyzBjPruOHhX7bhcC2LZMJocD4ZkU9zxiLj+vNDFPxHeP95
-X-Gm-Gg: ASbGnctAQystSJOaOj/Y2RjizYhWzmzr8og2zolIp209i3TWPcUoG1dgMg/VwPv4dua
-	cdS5m8oZLW44bFDAYyowGckDGJQTKyrCFUavFcq3FpCzizgwRHS3xqqJRoZYlP3l4X5U1M0YVCu
-	fAtSaT+u9p+aYZEOIWPEgm/7xBFfw/oomp7M41FNjb6KQ++jxjFsjuR2DcBJ+EUX+eDeiVuFmnD
-	KHTNF10TdhOFYE70NSgfHEwg1t82P8y6bSN9pbPzt9bfs1wE4GOjPHMOi/rarCaGyMhDN395iVJ
-	sDGca+RMzCZQG+uWWotIc9aHde3mNLjL1b7OQRKbDxnBYyUKn2MctfFtrhIBY4GTwsw+h+xC6uW
-	HBckrFn/XdLb+ju6INbcK/C+LCppjSRgQSw4FcFY=
-X-Google-Smtp-Source: AGHT+IFqEXyfy1iYnOBg1KXteFyEXlQWI0qjDLUV/+OHtxn/qkOcNSB/b1jlBBm5jy5iqgr4SOBG5w==
-X-Received: by 2002:a05:6402:35d5:b0:5d0:c67e:e263 with SMTP id 4fb4d7f45d1cf-5d10cb565femr1845494a12.8.1733231909285;
-        Tue, 03 Dec 2024 05:18:29 -0800 (PST)
-Received: from ?IPV6:2a02:3100:9d09:7500:5db0:402d:a91:cf1f? (dynamic-2a02-3100-9d09-7500-5db0-402d-0a91-cf1f.310.pool.telefonica.de. [2a02:3100:9d09:7500:5db0:402d:a91:cf1f])
-        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-aa5996de557sm619677366b.69.2024.12.03.05.18.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Dec 2024 05:18:28 -0800 (PST)
-Message-ID: <af9e2342-be01-41a8-9099-aeee6cbed258@gmail.com>
-Date: Tue, 3 Dec 2024 14:18:27 +0100
+	s=arc-20240116; t=1733232128; c=relaxed/simple;
+	bh=XM2Qs5TVTvF5KLbCiIfxoBDNY+HnAHHBk0Uu1C29jes=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=SmdE0u18FsLwKbeiPgKig/oJA/Y/WEy5ocYkAqwSUzIYscqEfyLQHdXeiCc81S3xUUUW1H8hkV3R9vDB+/lwkkTKb2jNKUOhXtfZiXIEaM1AiT7yy0POnU8krh5eGNz6oaKuosgu7+VCNYD6d3BesAktHtri0Mc2BvkV4z7Wqoo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=i6QV27cx; arc=none smtp.client-ip=54.207.22.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1733232074;
+	bh=OZDtcsYK/4OHIGXsF+xDQ8aQrKNgOb4/eEDszbzsfXA=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version;
+	b=i6QV27cx/oy8KBr0lyxai90nAyml9Fo+rnCEGNjLbJQXLcriN6wBY1+MaxjMtLmAB
+	 9YHMy1TKq9NFivjigXwGbggTbvebkJOXX+Tw/U3E4UVcfiaV8bKlakJE3hRya61Axm
+	 fsLTiBlkTqgzr1XP38niV5j8/NhAXskfAeBJxSQk=
+X-QQ-mid: bizesmtpip2t1733232066tz0rzuq
+X-QQ-Originating-IP: YMnLzejeA0yt3dDOaMmJSPjvXwQGD45FbwaGTeqPPL4=
+Received: from john-PC ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Tue, 03 Dec 2024 21:21:05 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 10701980929126009326
+Date: Tue, 3 Dec 2024 21:21:04 +0800
+From: Qiang Ma <maqianga@uniontech.com>
+To: Ming Lei <ming.lei@redhat.com>
+Cc: James.Bottomley@hansenpartnership.com, martin.petersen@oracle.com,
+ axboe@kernel.dk, dwagner@suse.de, hare@suse.de, linux-scsi@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] scsi: Don't wait for completion of in-flight requests
+Message-ID: <F991D40F7D096653+20241203211857.0291ab1b@john-PC>
+In-Reply-To: <Z0c4vPLnwicI6T9J@fedora>
+References: <20241126115008.31272-1-maqianga@uniontech.com>
+	<Z0XX5ts2yTO7Frl8@fedora>
+	<2100C70C0D4CA64E+20241127220437.65ae99dd@john-PC>
+	<Z0c4vPLnwicI6T9J@fedora>
+Organization: UOS
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next] net: phy: realtek: disable broadcast address
- feature of rtl8211f
-To: Zhiyuan Wan <kmlinuxm@gmail.com>, andrew@lunn.ch
-Cc: linux@armlinux.org.uk, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, willy.liu@realtek.com
-References: <20241203125430.2078090-1-kmlinuxm@gmail.com>
-Content-Language: en-US
-From: Heiner Kallweit <hkallweit1@gmail.com>
-Autocrypt: addr=hkallweit1@gmail.com; keydata=
- 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
-In-Reply-To: <20241203125430.2078090-1-kmlinuxm@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtpip:uniontech.com:qybglogicsvrsz:qybglogicsvrsz4a-0
+X-QQ-XMAILINFO: NtjtdWiRcLBFRGxgk/qOWC04lgPf/8Z2VE3vJcW04103Nox5BxKZrCZ2
+	G/sio4IURh+bGac+wlV7Vxb0EMcKhLyttgfUnclGmt1J9SXDCXnGi9M34eGcnZDgyafBUTI
+	1zZ63UN3+XL15Bf/xjHq4MVboviU+XmeNzrVqGUP7mKRsHyUm6nBPqiiyvywpdUSJ7Mkc9p
+	qVGNbaJWQQzr7jG5iocPh3w3rIh+bFOfboarNbEaGxBluXiMSxWnGqCIjnm1PdNiWrn3lm3
+	BhrP57joivnAQQQFX+SFj9EtsSm70AP0jzw0PNDlc/mfePoThgEaXUknQzSWRONV6Ibheyb
+	ad9k/ybaAJavxraZGQw6+6CE0+sZLKTx2wrjSOngKDSr0rVQp66trzTsreruoGb0PPw//Ll
+	LFsDBhwJ3BeDc0Zri0+5HlIwW+JOrScPj9nFJqji6QEuxvjjaTFgY/dAZjaBeM1YCwWC8BI
+	KwU0PBvhpAnxyIyq4p+fVgJCJNwH89uGS41sMQjpfnpDoWZNZySntvUXLlSGCijAPkoi87B
+	+tGMPJJ6DWRK9m5PNz+EaWLVcamsktBiJo9b8gUsTl3n4H/wIMR7XI2E/TY11cJyFv7jC+H
+	Z0HmIDNUPDjM+ooHmt/INqKomp7fJnLldjopQ0wjlzCcPifBTn6FXtNvfhl13pcLhWxKjbK
+	ImoR9L6vt8oYPCfyAnGcAl9aNTSdxNhBcDKU3au8bBZDcyGXNgMnWFXhPsf3JDn8+bfoVnQ
+	aiMG3tBbWdH+Z2S2e9HH6K/ywKCOvdc6pZtzOqRSyANtTIpWdCd+8klGvj78QcwFpdSd+v0
+	v4NR3NzX/0MN4h5dr+64MBq/gPUA7TYPU2fbtR3lKUs9DsM6uwL51zQq38pg0aHVJlkqyCD
+	JAdcJMZ3xAR4gpECsP8Ew9XdhAuDCcRAtjrPTU01cdIB4TTGkaEids5/oIIWVmzum627n77
+	dB/s=
+X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
+X-QQ-RECHKSPAM: 0
 
-On 03.12.2024 13:54, Zhiyuan Wan wrote:
-> This feature is automatically enabled after a reset of this
-> transceiver. When this feature is enabled, the phy not only
-> responds to the configured PHY address by pin states on board,
-> but also responds to address 0, the optional broadcast address
-> of the MDIO bus.
-> 
-> But some MDIO device like mt7530 switch chip (integrated in mt7621
-> SoC), also use address 0 to configure a specific port, when use
-> mt7530 and rtl8211f together, it usually causes address conflict,
-> leads to the port of rtl8211f stops working.
-> 
-> This patch disables broadcast address feature of rtl8211f, and
-> returns -ENODEV if using broadcast address (0) as phy address.
-> 
-> Hardware design hint:
-> This PHY only support address 1-7, and DO NOT tie all PHYAD pins
-> ground when you connect more than one PHY on a MDIO bus.
-> If you do that, this PHY will automatically take the first address
-> appeared on the MDIO bus as it's address, causing address conflict.
-> 
-> Signed-off-by: Zhiyuan Wan <kmlinuxm@gmail.com>
-> ---
->  drivers/net/phy/realtek.c | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
-> 
-> diff --git a/drivers/net/phy/realtek.c b/drivers/net/phy/realtek.c
-> index f65d7f1f3..0ef636d7b 100644
-> --- a/drivers/net/phy/realtek.c
-> +++ b/drivers/net/phy/realtek.c
-> @@ -31,6 +31,7 @@
->  #define RTL8211F_PHYCR1				0x18
->  #define RTL8211F_PHYCR2				0x19
->  #define RTL8211F_INSR				0x1d
-> +#define RTL8211F_PHYAD0_EN			BIT(13)
->  
->  #define RTL8211F_LEDCR				0x10
->  #define RTL8211F_LEDCR_MODE			BIT(15)
-> @@ -139,6 +140,17 @@ static int rtl821x_probe(struct phy_device *phydev)
->  		return dev_err_probe(dev, PTR_ERR(priv->clk),
->  				     "failed to get phy clock\n");
->  
-> +	dev_dbg(dev, "disabling MDIO address 0 for this phy");
-> +	ret = phy_modify_paged(phydev, 0xa43, RTL8211F_PHYCR1,
-> +				       RTL8211F_PHYAD0_EN, 0);
-> +	if (ret < 0) {
-> +		return dev_err_probe(dev, PTR_ERR(ret),
+On Wed, 27 Nov 2024 23:20:28 +0800
+Ming Lei <ming.lei@redhat.com> wrote:
 
-Why PTR_ERR()? Did you even compile-test?
+> On Wed, Nov 27, 2024 at 10:04:37PM +0800, Qiang Ma wrote:
+> > On Tue, 26 Nov 2024 22:15:02 +0800
+> > Ming Lei <ming.lei@redhat.com> wrote:
+> >   
+> > > On Tue, Nov 26, 2024 at 07:50:08PM +0800, Qiang Ma wrote:  
+> > > > Problem:
+> > > > When the system disk uses the scsi disk bus, The main
+> > > > qemu command line includes:
+> > > > ...
+> > > > -device virtio-scsi-pci,id=scsi0 \
+> > > > -device scsi-hd,scsi-id=1,drive=drive-virtio-disk
+> > > > -drive id=drive-virtio-disk,if=none,file=/home/kvm/test.qcow2
+> > > > ...
+> > > > 
+> > > > The dmesg log is as follows::
+> > > > 
+> > > > [   50.304591][ T4382] sd 0:0:0:0: [sda] Synchronizing SCSI
+> > > > cache [   50.377002][ T4382] kexec_core: Starting new kernel  
+> 
+> Why is one new kernel started? what event triggers kernel_kexec()?
+> 
+> machine_shutdown() follows, probably the scsi controller is dead.
+> 
 
-> +				     "disabling MDIO address 0 failed\n");
-> +	}
-> +	/* Deny broadcast address as PHY address */
-> +	if (phydev->mdio.addr == 0)
-> +		return -ENODEV;
-> +
->  	ret = phy_read_paged(phydev, 0xa43, RTL8211F_PHYCR1);
->  	if (ret < 0)
->  		return ret;
+Yes, triggered by kexec, manually execute the following command:
+kexec -l /boot/vmlinuz-6.6.0+ --reuse-cmdline
+--initrd=/boot/initramfs-6.6.0+.img kexec -e
 
-And more formal hints:
-- If you send a new version of a patch, annotate it accordingly.
-- Allow 24h before sending a new version
-- Include a change log
+> > > > [   50.669775][  T194] psci: CPU1 killed (polled 0 ms)
+> > > > [   50.849665][  T194] psci: CPU2 killed (polled 0 ms)
+> > > > [   51.109625][  T194] psci: CPU3 killed (polled 0 ms)
+> > > > [   51.319594][  T194] psci: CPU4 killed (polled 0 ms)
+> > > > [   51.489667][  T194] psci: CPU5 killed (polled 0 ms)
+> > > > [   51.709582][  T194] psci: CPU6 killed (polled 0 ms)
+> > > > [   51.949508][   T10] psci: CPU7 killed (polled 0 ms)
+> > > > [   52.139499][   T10] psci: CPU8 killed (polled 0 ms)
+> > > > [   52.289426][   T10] psci: CPU9 killed (polled 0 ms)
+> > > > [   52.439552][   T10] psci: CPU10 killed (polled 0 ms)
+> > > > [   52.579525][   T10] psci: CPU11 killed (polled 0 ms)
+> > > > [   52.709501][   T10] psci: CPU12 killed (polled 0 ms)
+> > > > [   52.819509][  T194] psci: CPU13 killed (polled 0 ms)
+> > > > [   52.919509][  T194] psci: CPU14 killed (polled 0 ms)
+> > > > [  243.214009][  T115] INFO: task kworker/0:1:10 blocked for
+> > > > more than 122 seconds. [  243.214810][  T115]       Not tainted
+> > > > 6.6.0+ #1 [  243.215517][  T115] "echo 0  
+> > > > > /proc/sys/kernel/hung_task_timeout_secs" disables this
+> > > > > message. [  243.216390][  T115] task:kworker/0:1     state:D
+> > > > > stack:0 pid:10    ppid:2      flags:0x00000008  
+> > > > [  243.217299][  T115] Workqueue: events vmstat_shepherd
+> > > > [  243.217816][  T115] Call trace:
+> > > > [  243.218133][  T115]  __switch_to+0x130/0x1e8
+> > > > [  243.218568][  T115]  __schedule+0x660/0xcf8
+> > > > [  243.219013][  T115]  schedule+0x58/0xf0
+> > > > [  243.219402][  T115]  percpu_rwsem_wait+0xb0/0x1d0
+> > > > [  243.219880][  T115]  __percpu_down_read+0x40/0xe0
+> > > > [  243.220353][  T115]  cpus_read_lock+0x5c/0x70
+> > > > [  243.220795][  T115]  vmstat_shepherd+0x40/0x140
+> > > > [  243.221250][  T115]  process_one_work+0x170/0x3c0
+> > > > [  243.221726][  T115]  worker_thread+0x234/0x3b8
+> > > > [  243.222176][  T115]  kthread+0xf0/0x108
+> > > > [  243.222564][  T115]  ret_from_fork+0x10/0x20
+> > > > ...
+> > > > [  243.254080][  T115] INFO: task kworker/0:2:194 blocked for
+> > > > more than 122 seconds. [  243.254834][  T115]       Not tainted
+> > > > 6.6.0+ #1 [  243.255529][  T115] "echo 0  
+> > > > > /proc/sys/kernel/hung_task_timeout_secs" disables this
+> > > > > message. [  243.256378][  T115] task:kworker/0:2     state:D
+> > > > > stack:0 pid:194   ppid:2      flags:0x00000008  
+> > > > [  243.257284][  T115] Workqueue: events work_for_cpu_fn
+> > > > [  243.257793][  T115] Call trace:
+> > > > [  243.258111][  T115]  __switch_to+0x130/0x1e8
+> > > > [  243.258541][  T115]  __schedule+0x660/0xcf8
+> > > > [  243.258971][  T115]  schedule+0x58/0xf0
+> > > > [  243.259360][  T115]  schedule_timeout+0x280/0x2f0
+> > > > [  243.259832][  T115]  wait_for_common+0xcc/0x2d8
+> > > > [  243.260287][  T115]  wait_for_completion+0x20/0x38
+> > > > [  243.260767][  T115]  cpuhp_kick_ap+0xe8/0x278
+> > > > [  243.261207][  T115]  cpuhp_kick_ap_work+0x5c/0x188
+> > > > [  243.261688][  T115]  _cpu_down+0x120/0x378
+> > > > [  243.262103][  T115]  __cpu_down_maps_locked+0x20/0x38
+> > > > [  243.262609][  T115]  work_for_cpu_fn+0x24/0x40
+> > > > [  243.263059][  T115]  process_one_work+0x170/0x3c0
+> > > > [  243.263533][  T115]  worker_thread+0x234/0x3b8
+> > > > [  243.263981][  T115]  kthread+0xf0/0x108
+> > > > [  243.264405][  T115]  ret_from_fork+0x10/0x20
+> > > > [  243.264846][  T115] INFO: task kworker/15:2:639 blocked for
+> > > > more than 122 seconds. [  243.265602][  T115]       Not tainted
+> > > > 6.6.0+ #1 [  243.266296][  T115] "echo 0  
+> > > > > /proc/sys/kernel/hung_task_timeout_secs" disables this
+> > > > > message. [  243.267143][  T115] task:kworker/15:2    state:D
+> > > > > stack:0 pid:639   ppid:2      flags:0x00000008  
+> > > > [  243.268044][  T115] Workqueue: events_freezable_power_
+> > > > disk_events_workfn [  243.268727][  T115] Call trace:
+> > > > [  243.269051][  T115]  __switch_to+0x130/0x1e8
+> > > > [  243.269481][  T115]  __schedule+0x660/0xcf8
+> > > > [  243.269903][  T115]  schedule+0x58/0xf0
+> > > > [  243.270293][  T115]  schedule_timeout+0x280/0x2f0
+> > > > [  243.270763][  T115]  io_schedule_timeout+0x50/0x70
+> > > > [  243.271245][  T115]
+> > > > wait_for_common_io.constprop.0+0xb0/0x298
+> > > > [  243.271830][  T115]  wait_for_completion_io+0x1c/0x30
+> > > > [  243.272335][  T115]  blk_execute_rq+0x1d8/0x278
+> > > > [  243.272793][  T115]  scsi_execute_cmd+0x114/0x238
+> > > > [  243.273267][  T115]  sr_check_events+0xc8/0x310 [sr_mod]
+> > > > [  243.273808][  T115]  cdrom_check_events+0x2c/0x50 [cdrom]
+> > > > [  243.274408][  T115]  sr_block_check_events+0x34/0x48
+> > > > [sr_mod] [  243.274994][  T115]  disk_check_events+0x44/0x1b0
+> > > > [  243.275468][  T115]  disk_events_workfn+0x20/0x38
+> > > > [  243.275939][  T115]  process_one_work+0x170/0x3c0
+> > > > [  243.276410][  T115]  worker_thread+0x234/0x3b8
+> > > > [  243.276855][  T115]  kthread+0xf0/0x108
+> > > > [  243.277241][  T115]  ret_from_fork+0x10/0x20    
+> > > 
+> > > Question is why this scsi command can't be completed?
+> > > 
+> > > When blk_mq_hctx_notify_offline() is called, the CPU isn't
+> > > shutdown yet, and it still can handle interrupt of this SCSI
+> > > command.
+> > > 
+> > > 
+> > > Thanks,
+> > > Ming
+> > > 
+> > >   
+> > Sorry, at the moment I don't know why it can't be finished,
+> > just provides a solution like loop and dm-rq.
+> > 
+> > Currently see the call stack:  
+> >  => blk_mq_run_hw_queue
+> >  =>__blk_mq_sched_restart
+> >  => blk_mq_run_hw_queue
+> >  => __blk_mq_sched_restart
+> >  => __blk_mq_free_request
+> >  => blk_mq_free_request
+> >  => blk_mq_end_request
+> >  => blk_flush_complete_seq
+> >  => flush_end_io
+> >  => __blk_mq_end_request
+> >  => scsi_end_request
+> >  => scsi_io_completion
+> >  => scsi_finish_command
+> >  => scsi_complete
+> >  => blk_mq_complete_request
+> >  => scsi_done_internal
+> >  => scsi_done
+> >  => virtscsi_complete_cmd
+> >  => virtscsi_req_done
+> >  => vring_interrupt  
+> > 
+> > In finction blk_mq_run_hw_queue():
+> > __blk_mq_run_dispatch_ops(hctx->queue, false,
+> > 	need_run = !blk_queue_quiesced(hctx->queue) &&
+> > 	blk_mq_hctx_has_pending(hctx));
+> > 	
+> > 	if (!need_run)
+> > 		return;
+> > 
+> > Come here and return directly.  
+> 
+> Does blk_queue_quiesced() return true?
+> 
 
-https://docs.kernel.org/process/submitting-patches.html
-https://www.kernel.org/doc/html/v6.1/process/maintainer-netdev.html
+blk_queue_quiesced() return false
+
+Sorry, the calltrace above is not the one that is stuck this time.
+The hang is caused by the wait_for_completion_io(), in blk_execute_rq():
+
+blk_status_t blk_execute_rq(struct request *rq, bool at_head)
+{
+	...
+	rq->end_io_data = &wait;
+	rq->end_io = blk_end_sync_rq;
+	...
+	blk_account_io_start(rq);
+	blk_mq_insert_request(rq, at_head ? BLK_MQ_INSERT_AT_HEAD : 0);
+	blk_mq_run_hw_queue(hctx, false);
+
+	if (blk_rq_is_poll(rq)) {
+		blk_rq_poll_completion(rq, &wait.done);
+	} else {
+		...
+		wait_for_completion_io(&wait.done);
+	}
+}
+
+In this case, end_io is blk_end_sync_rq, which is not executed.
+
+The process for sending scsi commands is as follows:
+
+     kworker/7:1-134     [007] .....    32.772727: vp_notify
+     <-virtqueue_notify kworker/7:1-134     [007] .....    32.772729:
+     <stack trace> => vp_notify
+ => virtqueue_notify
+ => virtscsi_add_cmd
+ => virtscsi_queuecommand
+ => scsi_dispatch_cmd
+ => scsi_queue_rq
+ => blk_mq_dispatch_rq_list
+ => __blk_mq_sched_dispatch_requests
+ => blk_mq_sched_dispatch_requests
+ => blk_mq_run_hw_queue
+ => blk_execute_rq
+ => scsi_execute_cmd
+ => sr_check_events
+ => cdrom_check_events
+ => sr_block_check_events
+ => disk_check_events
+ => disk_events_workfn
+ => process_one_work
+ => worker_thread
+ => kthread
+ => ret_from_fork
+
+In qemu:
+static void virtio_scsi_handle_cmd_vq(VirtIOSCSI *s, VirtQueue *vq)
+{
+	...
+	do {
+        	if (suppress_notifications) {
+			virtio_queue_set_notification(vq, 0);
+		}
+		...
+	} while (ret != -EINVAL && !virtio_queue_empty(vq));
+	...
+	QTAILQ_FOREACH_SAFE(req, &reqs, next, next) {
+		virtio_scsi_handle_cmd_req_submit(s, req);
+	}
+}
+
+virtio_queue_empty() always return true.
+
+As a result, the virtio_scsi_handle_cmd_req_submit() was not
+executed, and the io command was never submitted.
+
+The reason is that virtio_device_disabled returns true in
+virtio_queue_split_empty, the code is as follows:
+
+int virtio_queue_empty(VirtQueue *vq)
+{   
+	if (virtio_vdev_has_feature(vq->vdev, VIRTIO_F_RING_PACKED)) {
+		return virtio_queue_packed_empty(vq);
+	} else {
+		return virtio_queue_split_empty(vq);
+	}
+}
+
+static int virtio_queue_split_empty(VirtQueue *vq)
+{
+	bool empty;
+            
+	if (virtio_device_disabled(vq->vdev)) {
+		return 1;
+	...
+}
+
+This function was introduced in the following patch:
+
+commit 9d7bd0826f2d19f88631ad7078662668148f7b5f
+Author: Michael Roth <mdroth@linux.vnet.ibm.com>
+Date:   Tue Nov 19 18:50:03 2019 -0600
+
+    virtio-pci: disable vring processing when bus-mastering is disabled
+    
+    Currently the SLOF firmware for pseries guests will
+    disable/re-enable a PCI device multiple times via IO/MEM/MASTER
+    bits of PCI_COMMAND register after the initial probe/feature
+    negotiation, as it tends to work with a single device at a time at
+    various stages like probing and running block/network bootloaders
+    without doing a full reset in-between.
+    
+    In QEMU, when PCI_COMMAND_MASTER is disabled we disable the
+    corresponding IOMMU memory region, so DMA accesses (including to
+    vring fields like idx/flags) will no longer undergo the necessary
+    translation. Normally we wouldn't expect this to happen since it
+    would be misbehavior on the driver side to continue driving DMA
+    requests. 
+    However, in the case of pseries, with iommu_platform=on, we trigger
+    the following sequence when tearing down the virtio-blk dataplane
+    ioeventfd in response to the guest unsetting PCI_COMMAND_MASTER:
+    
+      #2  0x0000555555922651 in virtqueue_map_desc
+    (vdev=vdev@entry=0x555556dbcfb0,
+    p_num_sg=p_num_sg@entry=0x7fffe657e1a8,
+    addr=addr@entry=0x7fffe657e240, iov=iov@entry=0x7fffe6580240,
+    max_num_sg=max_num_sg@entry=1024, is_write=is_write@entry=false,
+    pa=0, sz=0) at /home/mdroth/w/qemu.git/hw/virtio/virtio.c:757 #3
+    0x0000555555922a89 in virtqueue_pop (vq=vq@entry=0x555556dc8660,
+    sz=sz@entry=184) at /home/mdroth/w/qemu.git/hw/virtio/virtio.c:950
+    #4  0x00005555558d3eca in virtio_blk_get_request
+    (vq=0x555556dc8660, s=0x555556dbcfb0)
+    at /home/mdroth/w/qemu.git/hw/block/virtio-blk.c:255 #5
+    0x00005555558d3eca in virtio_blk_handle_vq (s=0x555556dbcfb0,
+    vq=0x555556dc8660)
+    at /home/mdroth/w/qemu.git/hw/block/virtio-blk.c:776 #6
+    0x000055555591dd66 in virtio_queue_notify_aio_vq
+    (vq=vq@entry=0x555556dc8660)
+    at /home/mdroth/w/qemu.git/hw/virtio/virtio.c:1550 #7
+    0x000055555591ecef in virtio_queue_notify_aio_vq
+    (vq=0x555556dc8660)
+    at /home/mdroth/w/qemu.git/hw/virtio/virtio.c:1546 #8
+    0x000055555591ecef in virtio_queue_host_notifier_aio_poll
+    (opaque=0x555556dc86c8)
+    at /home/mdroth/w/qemu.git/hw/virtio/virtio.c:2527 #9
+    0x0000555555d02164 in run_poll_handlers_once
+    (ctx=ctx@entry=0x55555688bfc0,
+    timeout=timeout@entry=0x7fffe65844a8)
+    at /home/mdroth/w/qemu.git/util/aio-posix.c:520 #10
+    0x0000555555d02d1b in try_poll_mode (timeout=0x7fffe65844a8,
+    ctx=0x55555688bfc0) at /home/mdroth/w/qemu.git/util/aio-posix.c:607
+    #11 0x0000555555d02d1b in aio_poll (ctx=ctx@entry=0x55555688bfc0,
+    blocking=blocking@entry=true)
+    at /home/mdroth/w/qemu.git/util/aio-posix.c:639 #12
+    0x0000555555d0004d in aio_wait_bh_oneshot (ctx=0x55555688bfc0,
+    cb=cb@entry=0x5555558d5130 <virtio_blk_data_plane_stop_bh>,
+    opaque=opaque@entry=0x555556de86f0)
+    at /home/mdroth/w/qemu.git/util/aio-wait.c:71 #13
+    0x00005555558d59bf in virtio_blk_data_plane_stop (vdev=<optimized
+    out>)
+    at /home/mdroth/w/qemu.git/hw/block/dataplane/virtio-blk.c:288 #14
+    0x0000555555b906a1 in virtio_bus_stop_ioeventfd
+    (bus=bus@entry=0x555556dbcf38)
+    at /home/mdroth/w/qemu.git/hw/virtio/virtio-bus.c:245 #15
+    0x0000555555b90dbb in virtio_bus_stop_ioeventfd
+    (bus=bus@entry=0x555556dbcf38)
+    at /home/mdroth/w/qemu.git/hw/virtio/virtio-bus.c:237 #16
+    0x0000555555b92a8e in virtio_pci_stop_ioeventfd
+    (proxy=0x555556db4e40)
+    at /home/mdroth/w/qemu.git/hw/virtio/virtio-pci.c:292 #17
+    0x0000555555b92a8e in virtio_write_config (pci_dev=0x555556db4e40,
+    address=<optimized out>, val=1048832, len=<optimized out>)
+    at /home/mdroth/w/qemu.git/hw/virtio/virtio-pci.c:613 I.e. the
+    calling code is only scheduling a one-shot BH for
+    virtio_blk_data_plane_stop_bh, but somehow we end up trying to
+    process an additional virtqueue entry before we get there. This is
+    likely due to the following check in
+    virtio_queue_host_notifier_aio_poll: static bool
+    virtio_queue_host_notifier_aio_poll(void *opaque) { EventNotifier
+    *n = opaque; VirtQueue *vq = container_of(n, VirtQueue,
+    host_notifier); bool progress; if (!vq->vring.desc ||
+    virtio_queue_empty(vq)) { return false; } progress =
+    virtio_queue_notify_aio_vq(vq); namely the call to
+    virtio_queue_empty(). In this case, since no new requests have
+    actually been issued, shadow_avail_idx == last_avail_idx, so we
+    actually try to access the vring via vring_avail_idx() to get the
+    latest non-shadowed idx: int virtio_queue_empty(VirtQueue *vq)
+    { bool empty; ... if (vq->shadow_avail_idx != vq->last_avail_idx)
+    { return 0; } rcu_read_lock(); empty = vring_avail_idx(vq) ==
+    vq->last_avail_idx; rcu_read_unlock(); return empty;
+    
+    but since the IOMMU region has been disabled we get a bogus value (0
+    usually), which causes virtio_queue_empty() to falsely report that
+    there are entries to be processed, which causes errors such as:
+    
+      "virtio: zero sized buffers are not allowed"
+    
+    or
+    
+      "virtio-blk missing headers"
+    
+    and puts the device in an error state.
+    
+    This patch works around the issue by introducing
+    virtio_set_disabled(), which sets a 'disabled' flag to bypass
+    checks like virtio_queue_empty() when bus-mastering is disabled.
+    Since we'd check this flag at all the same sites as vdev->broken,
+    we replace those checks with an inline function which checks for
+    either vdev->broken or vdev->disabled. 
+    The 'disabled' flag is only migrated when set, which should be
+    fairly rare, but to maintain migration compatibility we disable
+    it's use for older machine types. Users requiring the use of the
+    flag in conjunction with older machine types can set it explicitly
+    as a virtio-device option.
+    
+    NOTES:
+    
+     - This leaves some other oddities in play, like the fact that
+       DRIVER_OK also gets unset in response to bus-mastering being
+       disabled, but not restored (however the device seems to continue
+       working)
+     - Similarly, we disable the host notifier via
+       virtio_bus_stop_ioeventfd(), which seems to move the handling out
+       of virtio-blk dataplane and back into the main IO thread, and it
+       ends up staying there till a reset (but otherwise continues
+    working normally)
+    
+    Cc: David Gibson <david@gibson.dropbear.id.au>,
+    Cc: Alexey Kardashevskiy <aik@ozlabs.ru>
+    Cc: "Michael S. Tsirkin" <mst@redhat.com>
+    Signed-off-by: Michael Roth <mdroth@linux.vnet.ibm.com>
+    Message-Id: <20191120005003.27035-1-mdroth@linux.vnet.ibm.com>
+    Reviewed-by: Michael S. Tsirkin <mst@redhat.com>
+    Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+
+
+> Thanks,
+> Ming
+> 
+> 
 
 
