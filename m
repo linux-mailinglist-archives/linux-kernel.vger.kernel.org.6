@@ -1,85 +1,130 @@
-Return-Path: <linux-kernel+bounces-429101-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15EFF9E1765
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:27:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3A4C9E176A
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:27:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFA8B284F45
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:27:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9BCA28310B
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:27:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A5541DF26C;
-	Tue,  3 Dec 2024 09:26:58 +0000 (UTC)
-Received: from cmccmta2.chinamobile.com (cmccmta8.chinamobile.com [111.22.67.151])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDB653F8F7
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 09:26:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 561F81DF27E;
+	Tue,  3 Dec 2024 09:27:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PHFGmCEu"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22FC91DEFEA
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 09:27:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733218017; cv=none; b=XdYsqqnl4+h/tMKU2FVMsPTp1+XE//ANK7MmV81/EX3xiDUONXpD35dRsXwkNcHEjB2bftUvd+5ZkPDljITGPZoLLD4/E1iq0hEk5xrw/WtwbIS3T1YQYZ3sSZ86n68OpzV7ZPxTxWK3il9U7MeBFcf4pbdRufmwt1Nu+sQ1LoI=
+	t=1733218042; cv=none; b=hIEv0VDoX1AtpCdCZNNOQrnyK0qGiEG7AbSHhjZK+MVybDx7UnD/EsARtHpg2xPPDQ5ztuQmS03q4u5vMvY3FocnrR8qLUAlsX8OdF+PWNFNXvu78SpmiQewxSRiKWahs5rzbcV/pAOav+PrgYt/3YKCxnnlOaWAD8qTBLcw5E0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733218017; c=relaxed/simple;
-	bh=6ByCyMOMgJx8D+jmwctbBGWt3ri3RV66FIe/7mkoPLo=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=Ym3IbCVxU5QjpUptFFh6cdKu0UDxD8f/p99N2Es1zAzjPHwPv84qVu4jsyRCpVIYPckEUTx5VYNlDaMrqEl175FtHPumHK6EqW3IO8DG8J9j728LAwodbM8LkFNMG8l1o5NsEeiNnD/DE1v7yNxu6pgmZTLqnvIB0xZa+ejlkOI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
-	by rmmx-syy-dmz-app06-12006 (RichMail) with SMTP id 2ee6674eced5367-90c38;
-	Tue, 03 Dec 2024 17:26:46 +0800 (CST)
-X-RM-TRANSID:2ee6674eced5367-90c38
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from ubuntu.localdomain (unknown[10.55.1.70])
-	by rmsmtp-syy-appsvr07-12007 (RichMail) with SMTP id 2ee7674eced4fa8-26986;
-	Tue, 03 Dec 2024 17:26:45 +0800 (CST)
-X-RM-TRANSID:2ee7674eced4fa8-26986
-From: Zhu Jun <zhujun2@cmss.chinamobile.com>
-To: arnd@arndb.de
-Cc: gregkh@linuxfoundation.org,
+	s=arc-20240116; t=1733218042; c=relaxed/simple;
+	bh=Ince3mWEv75RuKdJa0lCInd/VfuFqee8x2RBuI/adjs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-type; b=Nt1o+BHwU10p/kqPXkMkAFH2/Yu5L8koUfuCouadg/M2DxvswBk3w7UQs9teScq7U9b2blf2+I8C1spE3grcicurOCFbE6JsREed9GU9Q9qzw4hi7oM01ciGo9DjooNbXvXP/U5f0VOVXbF/yWl43dxom+PLDrPna0Z93smqM70=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PHFGmCEu; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733218040;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=0EK26W2r8agytXtW5C5i2nqLQK7qOjfnw0z/ar6mvxw=;
+	b=PHFGmCEuI7fVFW9iyHKQo7hHAOvkhWolhCkIKlQ8IWZIh70OplaE5YlU4K31bXz/697PzJ
+	vsOkI4fkLyuG4VK6dFcksWmkHQnydRCPdHyxNjmdbYl8AJVzZVF6T6VtUn16zOP86PSXUR
+	8uCVrLajjtqWSLy2wuymcOATxWwlpPg=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-255-xpmqXa0IMDepN6lfWQz1cg-1; Tue,
+ 03 Dec 2024 04:27:17 -0500
+X-MC-Unique: xpmqXa0IMDepN6lfWQz1cg-1
+X-Mimecast-MFC-AGG-ID: xpmqXa0IMDepN6lfWQz1cg
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C75C0192538D;
+	Tue,  3 Dec 2024 09:27:14 +0000 (UTC)
+Received: from t14s.redhat.com (unknown [10.45.224.51])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 7D59D1956052;
+	Tue,  3 Dec 2024 09:27:08 +0000 (UTC)
+From: Jan Stancek <jstancek@redhat.com>
+To: donald.hunter@gmail.com,
+	kuba@kernel.org
+Cc: pabeni@redhat.com,
+	davem@davemloft.net,
+	edumazet@google.com,
+	horms@kernel.org,
+	netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	zhujun2@cmss.chinamobile.com
-Subject: [RESEND] eeprom: Fix the cacography in Kconfig
-Date: Tue,  3 Dec 2024 01:26:44 -0800
-Message-Id: <20241203092644.7718-1-zhujun2@cmss.chinamobile.com>
-X-Mailer: git-send-email 2.17.1
+	jstancek@redhat.com
+Subject: [PATCH 0/5] tools: ynl: add install target
+Date: Tue,  3 Dec 2024 10:26:59 +0100
+Message-ID: <cover.1733216767.git.jstancek@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-type: text/plain
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-The word 'swtich' is wrong, so fix it.
+This series adds an install target for ynl. The python code
+is moved to a subdirectory, so it can be used as a package
+with flat layout, as well as directly from the tree.
 
-Signed-off-by: Zhu Jun <zhujun2@cmss.chinamobile.com>
----
- drivers/misc/eeprom/Kconfig | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+To try the install as a non-root user you can run:
+  $ mkdir /tmp/myroot
+  $ make DESTDIR=/tmp/myroot install
 
-diff --git a/drivers/misc/eeprom/Kconfig b/drivers/misc/eeprom/Kconfig
-index 9df12399bda3..cb1c4b8e7fd3 100644
---- a/drivers/misc/eeprom/Kconfig
-+++ b/drivers/misc/eeprom/Kconfig
-@@ -97,11 +97,11 @@ config EEPROM_DIGSY_MTC_CFG
- 	  If unsure, say N.
- 
- config EEPROM_IDT_89HPESX
--	tristate "IDT 89HPESx PCIe-swtiches EEPROM / CSR support"
-+	tristate "IDT 89HPESx PCIe-switches EEPROM / CSR support"
- 	depends on I2C && SYSFS
- 	help
- 	  Enable this driver to get read/write access to EEPROM / CSRs
--	  over IDT PCIe-swtich i2c-slave interface.
-+	  over IDT PCIe-switch i2c-slave interface.
- 
- 	  This driver can also be built as a module. If so, the module
- 	  will be called idt_89hpesx.
+  $ PATH="/tmp/myroot/usr/bin:$PATH" PYTHONPATH="$(ls -1d /tmp/myroot/usr/lib/python*/site-packages)" ynl --help
+
+Proposed install layout is described in last patch.
+
+Jan Stancek (5):
+  tools: ynl: move python code to separate sub-directory
+  tools: ynl: rename ynl-gen-[c|rst] to ynl_gen_[c|rst]
+  tools: ynl: add initial pyproject.toml for packaging
+  tools: ynl: add install target for specs and docs
+  tools: ynl: add main install target
+
+ tools/net/ynl/Makefile                        | 24 ++++++++++++-
+ tools/net/ynl/generated/.gitignore            |  1 +
+ tools/net/ynl/generated/Makefile              | 36 ++++++++++++++++---
+ tools/net/ynl/lib/.gitignore                  |  1 -
+ tools/net/ynl/lib/Makefile                    |  1 -
+ tools/net/ynl/pyproject.toml                  | 26 ++++++++++++++
+ tools/net/ynl/pyynl/__init__.py               |  0
+ tools/net/ynl/{ => pyynl}/cli.py              |  0
+ tools/net/ynl/{ => pyynl}/ethtool.py          |  0
+ tools/net/ynl/pyynl/lib/.gitignore            |  1 +
+ tools/net/ynl/{ => pyynl}/lib/__init__.py     |  0
+ tools/net/ynl/{ => pyynl}/lib/nlspec.py       |  0
+ tools/net/ynl/{ => pyynl}/lib/ynl.py          |  0
+ .../ynl/{ynl-gen-c.py => pyynl/ynl_gen_c.py}  |  0
+ .../{ynl-gen-rst.py => pyynl/ynl_gen_rst.py}  |  0
+ tools/net/ynl/ynl-regen.sh                    |  2 +-
+ 16 files changed, 84 insertions(+), 8 deletions(-)
+ create mode 100644 tools/net/ynl/pyproject.toml
+ create mode 100644 tools/net/ynl/pyynl/__init__.py
+ rename tools/net/ynl/{ => pyynl}/cli.py (100%)
+ rename tools/net/ynl/{ => pyynl}/ethtool.py (100%)
+ create mode 100644 tools/net/ynl/pyynl/lib/.gitignore
+ rename tools/net/ynl/{ => pyynl}/lib/__init__.py (100%)
+ rename tools/net/ynl/{ => pyynl}/lib/nlspec.py (100%)
+ rename tools/net/ynl/{ => pyynl}/lib/ynl.py (100%)
+ rename tools/net/ynl/{ynl-gen-c.py => pyynl/ynl_gen_c.py} (100%)
+ rename tools/net/ynl/{ynl-gen-rst.py => pyynl/ynl_gen_rst.py} (100%)
+
 -- 
-2.17.1
-
-
+2.43.0
 
 
