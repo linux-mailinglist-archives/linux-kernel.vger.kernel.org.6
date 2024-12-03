@@ -1,138 +1,216 @@
-Return-Path: <linux-kernel+bounces-429394-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429395-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F9F59E1B76
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 12:57:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C811F9E1B78
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 12:57:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0027D28498B
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 11:57:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88125284DFD
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 11:57:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 821241E47C6;
-	Tue,  3 Dec 2024 11:57:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D7241E47CA;
+	Tue,  3 Dec 2024 11:57:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WzmmbIgF"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="c+fZm+EU"
+Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F4BA3398B
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 11:57:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1DAE1E47C4
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 11:57:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733227062; cv=none; b=Xax5NVXTIrJjIt3SiXhq3dp7SzC2TAEL7g2fSgIlegQPXph15Gin6hDbG7vLlVw+nPK8zMXJDITkV/sZqHy2bpQrGWLXcr/lArGIshOAR+fEOpwQbpEKeFIpB8HRLwjlUNCr53JC+s7GIi7134y3hhLpsQ6En3I6cJVp2N7Pcp4=
+	t=1733227072; cv=none; b=YCHiSlSOaGuhasSQDvBWuqgWGGYvjvmqT2ljL8TBnF7zr5JAILYJ9ZCukcWQ6gBntRq7th9EZJ8BsIUJgejnf23/A9tAlehoscOf0d3Exox2ELZUDYB8CcqqAfTHQez60bhJu5BcIuHsco9/1OSI0pTTVARVeXcHAntQB3aW4JI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733227062; c=relaxed/simple;
-	bh=oa7CXms/GKV1T8t5geonI6cFVukCSbJ2eR6wh9IzpCg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=DKhwpqyh4PENnug1dUWTYL5bN9GKTEByHHdHQlC4y2K35qJrfHp65aTRdr22hQQba4tmCvz5IukM/q/cPntlzOGCyPWf/FZDRHV1kohmhab6lnZblNNghJ60/qGi1yGArFZ/ZtWQofNcii5DDwvwLFtlTK2F0Hy3pe7mSaAHKM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WzmmbIgF; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733227061; x=1764763061;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=oa7CXms/GKV1T8t5geonI6cFVukCSbJ2eR6wh9IzpCg=;
-  b=WzmmbIgFMj8KZQ2IUnOgKfpHJAji9djlEHVOGCBTRZ8ochzpsqUOGgg+
-   w3p0njuEBjTCj7AtO6T/u8bv0N7NiXH/lZSuF8ncSxErlTvw3TORE0NDU
-   OknHceWlqDAZJJEhA9hnvyZHizVzu7fd5XsvP85q4rEu1koLEqDddiTbF
-   WOJ2SMmMzIFIZc986dONTG4ju3+ad8Y/JrkPl6UbQq2FcB1ek31tGm2rq
-   jjVI9kLkpE+qiCmC0KBMW6SYdkyGfJ1Arn0n5dl589vKeguCykPXPPpzL
-   VVMISh5XKuvzTCWAFVEQrtm+aMxE5rErSEbzqtUN4p+eTs+8ENy3Jz3Qu
-   w==;
-X-CSE-ConnectionGUID: iU1rMEIpQgiyFC5dgpbWsA==
-X-CSE-MsgGUID: lqCV6T1OSmmwNET7wC5Qlg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11274"; a="33359529"
-X-IronPort-AV: E=Sophos;i="6.12,205,1728975600"; 
-   d="scan'208";a="33359529"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Dec 2024 03:57:40 -0800
-X-CSE-ConnectionGUID: uO7NnBIvQvGRA6rM/vXAPg==
-X-CSE-MsgGUID: PoP9TxhKRp6CQ9QgVRqKqQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,205,1728975600"; 
-   d="scan'208";a="97488314"
-Received: from lkp-server01.sh.intel.com (HELO 388c121a226b) ([10.239.97.150])
-  by fmviesa003.fm.intel.com with ESMTP; 03 Dec 2024 03:57:39 -0800
-Received: from kbuild by 388c121a226b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tIRX7-0000cl-05;
-	Tue, 03 Dec 2024 11:57:37 +0000
-Date: Tue, 3 Dec 2024 19:57:20 +0800
-From: kernel test robot <lkp@intel.com>
-To: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Lee Jones <lee@kernel.org>, Gwendal Grignou <gwendal@chromium.org>
-Subject: drivers/power/supply/cros_usbpd-charger.c:15:49: warning: '%d'
- directive writing between 1 and 11 bytes into a region of size 5
-Message-ID: <202412031910.gddwrzU5-lkp@intel.com>
+	s=arc-20240116; t=1733227072; c=relaxed/simple;
+	bh=Q9+AiQ6s0aWeS6kzWsVPhOJmvynbGm/ye7+xXZgGDSc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=a99TA8rqxZ0o0wOSHam47ooPBgqefa4yuxcel7b+yK+DvBSJDHNJjbZetzM/HmKGk4osENOoXE2u+4jbeqY9qROl4fAoJZujC9w2+2OIfDr9bHObxYUUZGYzDyElC/n0qpI/HYTkbPStyiFiWgRI7UEpr2kIm6FpQRLkr5cHPrk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=c+fZm+EU; arc=none smtp.client-ip=209.85.219.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e396e33d47dso4783392276.0
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 03:57:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733227070; x=1733831870; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=BbMpTWPQcQsU0HRaX/c6zM2bDkZbOjiVConTuGe+jZE=;
+        b=c+fZm+EU/RrrAoTPD83ZHxZFQxF30ZORotoDDljCAlRv92VWJGoYrgX6pJ7lFAPl0U
+         /Wx1EmEeOylVASJrEjYSgVqibv/G0iw2CMJApCmvmxM2AGI/z1EpC+urSvb/UkwuBU/6
+         qGDys60o8ZCZVsit2MK+Nb9s4/cHUXCqraw4uL9CG/FgJ2MniMivtYkyO1Rrykvgzstn
+         rJcXku1kYyRJOoN+jIq8Nblr2PRzruaJwXRreBnVnQ1e9nEsfnVIu7NRKHlDFSDZBlxx
+         2ORzaeKw1+lOcH+Qola+3CXbdYMvGTdkxtVPCQqSE/HIMHq8+VThm8teCAH9z8J400Tr
+         5Etw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733227070; x=1733831870;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=BbMpTWPQcQsU0HRaX/c6zM2bDkZbOjiVConTuGe+jZE=;
+        b=vMLE/AlTYehUTx7IBgWbpGYfHojv2PH8Gmh9K/78k/otOjE3xIq5MgSb+GQnk5eiTA
+         0w/Ik6T6uaxCHfl5h8BvIX09qurikfL2Idj++40iXyhIc1hGoxjIM3pA+qWSJ1LOrSZa
+         EYbPrlni8eEPn01Zfpj3UT8kIK7SakzVL3YASk002/qXK568Mido+DRwiYMJRnVZCUro
+         wVzcAtBBv48i1teusJ2VRzq3si6R6iw90N8Ej94rVQ24jKvhpiOq8Rc0gxzF0WwOLhvP
+         MKZUMDp8Qi4pr7sDJx9hLSmX2T5W5G0Mw/c0rv2tws0E76zpG6oPLDLhTo/voGY18wUc
+         YgtA==
+X-Forwarded-Encrypted: i=1; AJvYcCXiOZ35cCt7Op3+sjjHDGXIH+UdqVS81k4gRKDCCAkvWwc9HCyI//lj8NjvR6+CFvnmVoSI3/J8Q1fNVek=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwEgL+s2JwjfVb7cOnEWup+I8l+rGcumKxZt7DjjgyFWa1rllpx
+	ecDKwuzUZ5qp4AsYk5i9dTA+/U+5cLfUesfj32ZQYXJVgQaj/QIiDEav5JfEzoXEc9t1NSxoW/K
+	MQtiUaTk+f8iVY8GOvWK999RKw2/Hpq1jJ6ujNZt0UU/9jx8p
+X-Gm-Gg: ASbGncvAen1SlRWNYAtCmUwWLJLtL5+HkYmOOFAVW+jMhemxnMFQWc5Zi4MLQgEDXfE
+	8wmPQrHhdxg+naCzYJudt6tYNcwUWOQ==
+X-Google-Smtp-Source: AGHT+IGQ/9s5DEKVq56LcELRCgbbSUJDxrGME9rneM000XHdp2t+8py1fz0BjAa9e/C+4ixWTgkXDY5JwOAFrvAaJEA=
+X-Received: by 2002:a05:6902:20c9:b0:e39:93ab:dbab with SMTP id
+ 3f1490d57ef6-e39d3e39f09mr2319862276.28.1733227069673; Tue, 03 Dec 2024
+ 03:57:49 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20241118084046.3201290-1-quic_ekangupt@quicinc.com>
+ <20241118084046.3201290-5-quic_ekangupt@quicinc.com> <2024111804-doze-reflected-0feb@gregkh>
+ <c3b285b0-33d1-4bfa-b8ab-6783ff5ed78d@quicinc.com> <cn7pqvhw4x4y7s5hbgzjpvyjnw4g6hoyepic4jai7x2fjdenxr@ikr4hkorbuwb>
+ <365c4709-b421-4af8-b521-a195630242de@quicinc.com> <nsaq3zungvyhuikz35arvxmle2fovxh422jpyqxuleh57ufqnk@bekeh7qr7y76>
+ <697e90db-6ecc-44ac-af86-6c7f910fc902@quicinc.com>
+In-Reply-To: <697e90db-6ecc-44ac-af86-6c7f910fc902@quicinc.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Tue, 3 Dec 2024 13:57:41 +0200
+Message-ID: <CAA8EJppbptPryu_O3G3YAapHT=Ai+MAdA38FtSU=YvWb+mqa1g@mail.gmail.com>
+Subject: Re: [PATCH v1 4/4] misc: fastrpc: Add debugfs support for fastrpc
+To: Ekansh Gupta <quic_ekangupt@quicinc.com>
+Cc: Greg KH <gregkh@linuxfoundation.org>, srinivas.kandagatla@linaro.org, 
+	linux-arm-msm@vger.kernel.org, quic_bkumar@quicinc.com, 
+	linux-kernel@vger.kernel.org, quic_chennak@quicinc.com, 
+	dri-devel@lists.freedesktop.org, arnd@arndb.de
+Content-Type: text/plain; charset="UTF-8"
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   cdd30ebb1b9f36159d66f088b61aee264e649d7a
-commit: 47f11e0b40e97f373da4efbacee0a9526c816ed5 mfd / platform: cros_ec: Move cros-ec core driver out from MFD
-date:   5 years ago
-config: arm64-randconfig-004-20240106 (https://download.01.org/0day-ci/archive/20241203/202412031910.gddwrzU5-lkp@intel.com/config)
-compiler: aarch64-linux-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241203/202412031910.gddwrzU5-lkp@intel.com/reproduce)
+On Tue, 3 Dec 2024 at 07:22, Ekansh Gupta <quic_ekangupt@quicinc.com> wrote:
+>
+>
+>
+> On 12/2/2024 6:18 PM, Dmitry Baryshkov wrote:
+> > On Mon, Dec 02, 2024 at 03:27:43PM +0530, Ekansh Gupta wrote:
+> >>
+> >> On 11/22/2024 12:23 AM, Dmitry Baryshkov wrote:
+> >>> On Thu, Nov 21, 2024 at 12:12:17PM +0530, Ekansh Gupta wrote:
+> >>>> On 11/18/2024 7:32 PM, Greg KH wrote:
+> >>>>> On Mon, Nov 18, 2024 at 02:10:46PM +0530, Ekansh Gupta wrote:
+> >>>>>> Add changes to support debugfs. The fastrpc directory will be
+> >>>>>> created which will carry debugfs files for all fastrpc processes.
+> >>>>>> The information of fastrpc user and channel contexts are getting
+> >>>>>> captured as part of this change.
+> >>>>>>
+> >>>>>> Signed-off-by: Ekansh Gupta <quic_ekangupt@quicinc.com>
+> >>>>>> ---
+> >>>>>>  drivers/misc/fastrpc/Makefile        |   3 +-
+> >>>>>>  drivers/misc/fastrpc/fastrpc_debug.c | 156 +++++++++++++++++++++++++++
+> >>>>>>  drivers/misc/fastrpc/fastrpc_debug.h |  31 ++++++
+> >>>>>>  drivers/misc/fastrpc/fastrpc_main.c  |  18 +++-
+> >>>>>>  4 files changed, 205 insertions(+), 3 deletions(-)
+> >>>>>>  create mode 100644 drivers/misc/fastrpc/fastrpc_debug.c
+> >>>>>>  create mode 100644 drivers/misc/fastrpc/fastrpc_debug.h
+> >>>>>>
+> >>>>>> diff --git a/drivers/misc/fastrpc/Makefile b/drivers/misc/fastrpc/Makefile
+> >>>>>> index 020d30789a80..4ff6b64166ae 100644
+> >>>>>> --- a/drivers/misc/fastrpc/Makefile
+> >>>>>> +++ b/drivers/misc/fastrpc/Makefile
+> >>>>>> @@ -1,3 +1,4 @@
+> >>>>>>  # SPDX-License-Identifier: GPL-2.0
+> >>>>>>  obj-$(CONFIG_QCOM_FASTRPC)      += fastrpc.o
+> >>>>>> -fastrpc-objs    := fastrpc_main.o
+> >>>>>> \ No newline at end of file
+> >>>>>> +fastrpc-objs    := fastrpc_main.o \
+> >>>>>> +                fastrpc_debug.o
+> >>>>> Only build this file if debugfs is enabled.
+> >>>>>
+> >>>>> And again, "debug.c"?
+> >>>> I'll add change to build this only if debugfs is enabled. Going forward I have plans to add
+> >>>> few more debug specific changes, maybe then I'll need to change the build rules again.
+> >>>>>> diff --git a/drivers/misc/fastrpc/fastrpc_debug.c b/drivers/misc/fastrpc/fastrpc_debug.c
+> >>>>>> new file mode 100644
+> >>>>>> index 000000000000..cdb4fc6845a8
+> >>>>>> --- /dev/null
+> >>>>>> +++ b/drivers/misc/fastrpc/fastrpc_debug.c
+> >>>>>> @@ -0,0 +1,156 @@
+> >>>>>> +// SPDX-License-Identifier: GPL-2.0
+> >>>>>> +// Copyright (c) 2024 Qualcomm Innovation Center.
+> >>>>>> +
+> >>>>>> +#include <linux/debugfs.h>
+> >>>>>> +#include <linux/seq_file.h>
+> >>>>>> +#include "fastrpc_shared.h"
+> >>>>>> +#include "fastrpc_debug.h"
+> >>>>>> +
+> >>>>>> +#ifdef CONFIG_DEBUG_FS
+> >>>>> Please put the #ifdef in the .h file, not in the .c file.
+> >>>> Ack
+> >>>>>> +void fastrpc_create_user_debugfs(struct fastrpc_user *fl)
+> >>>>>> +{
+> >>>>>> +        char cur_comm[TASK_COMM_LEN];
+> >>>>>> +        int domain_id, size;
+> >>>>>> +        char *debugfs_buf;
+> >>>>>> +        struct dentry *debugfs_dir = fl->cctx->debugfs_dir;
+> >>>>>> +
+> >>>>>> +        memcpy(cur_comm, current->comm, TASK_COMM_LEN);
+> >>>>>> +        cur_comm[TASK_COMM_LEN-1] = '\0';
+> >>>>>> +        if (debugfs_dir != NULL) {
+> >>>>>> +                domain_id = fl->cctx->domain_id;
+> >>>>>> +                size = snprintf(NULL, 0, "%.10s_%d_%d_%d", cur_comm,
+> >>>>>> +                                current->pid, fl->tgid, domain_id) + 1;
+> >>>>>> +                debugfs_buf = kzalloc(size, GFP_KERNEL);
+> >>>>>> +                if (debugfs_buf == NULL)
+> >>>>>> +                        return;
+> >>>>>> +                /*
+> >>>>>> +                 * Use HLOS process name, HLOS PID, fastrpc user TGID,
+> >>>>>> +                 * domain_id in debugfs filename to create unique file name
+> >>>>>> +                 */
+> >>>>>> +                snprintf(debugfs_buf, size, "%.10s_%d_%d_%d",
+> >>>>>> +                        cur_comm, current->pid, fl->tgid, domain_id);
+> >>>>>> +                fl->debugfs_file = debugfs_create_file(debugfs_buf, 0644,
+> >>>>>> +                                debugfs_dir, fl, &fastrpc_debugfs_fops);
+> >>>>> Why are you saving the debugfs file?  What do you need to do with it
+> >>>>> that you can't just delete the whole directory, or look up the name
+> >>>>> again in the future when removing it?
+> >>>> fl structure is specific to a process using fastrpc driver. The reason to save
+> >>>> this debugfs file is to delete is when the process releases fastrpc device.
+> >>>> If the file is not deleted, it might flood multiple files in debugfs directory.
+> >>>>
+> >>>> As part of this change, only the file that is getting created by a process is
+> >>>> getting removed when process is releasing device and I don't think we
+> >>>> can clean up the whole directory at this point.
+> >>> My 2c: it might be better to create a single file that conains
+> >>> information for all the processes instead of that. Or use fdinfo data to
+> >>> export process / FD information to userspace.
+> >> Thanks for your review. The reason of not having single file for all processes is that
+> >> I can run 100s of iteration for any process(say calculator) and every time the properties
+> >> of the process can differ(like buffer, session etc.). For this reason, I'm creating and
+> >> deleting the debugfs files for every process run.
+> >>
+> >> Do you see any advantage of using fdinfo over debugfs? I'm not sure if we can add all
+> >> the information(like in debugfs) here.
+> > Which information is actually useful / interesting for application
+> > developers? If not for the fdinfo, I might still vote for a single file
+> > rather than a pile of per-process data.
+> I have tried to capture all the information that could be useful.
+>
+> I can try changes to maintain single file for all active processes. Having this file specific
+> to a channel should be fine, right? like fastrpc_adsp, fastrpc_cdsp, etc.? Each file will
+> carry information of all processes using that remoteproc.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202412031910.gddwrzU5-lkp@intel.com/
+I think it's a better idea, yes.
 
-All warnings (new ones prefixed by >>):
+>
+> --ekansh
+> >
+> >> --ekansh
+> >>>
+>
 
-   drivers/power/supply/cros_usbpd-charger.c: In function 'cros_usbpd_charger_probe':
->> drivers/power/supply/cros_usbpd-charger.c:15:49: warning: '%d' directive writing between 1 and 11 bytes into a region of size 5 [-Wformat-overflow=]
-      15 | #define CHARGER_USBPD_DIR_NAME                  "CROS_USBPD_CHARGER%d"
-         |                                                 ^~~~~~~~~~~~~~~~~~~~~~
-   drivers/power/supply/cros_usbpd-charger.c:656:45: note: in expansion of macro 'CHARGER_USBPD_DIR_NAME'
-     656 |                         sprintf(port->name, CHARGER_USBPD_DIR_NAME, i);
-         |                                             ^~~~~~~~~~~~~~~~~~~~~~
-   drivers/power/supply/cros_usbpd-charger.c:15:68: note: format string is defined here
-      15 | #define CHARGER_USBPD_DIR_NAME                  "CROS_USBPD_CHARGER%d"
-         |                                                                    ^~
-   drivers/power/supply/cros_usbpd-charger.c:15:49: note: directive argument in the range [-2147483641, 2147483646]
-      15 | #define CHARGER_USBPD_DIR_NAME                  "CROS_USBPD_CHARGER%d"
-         |                                                 ^~~~~~~~~~~~~~~~~~~~~~
-   drivers/power/supply/cros_usbpd-charger.c:656:45: note: in expansion of macro 'CHARGER_USBPD_DIR_NAME'
-     656 |                         sprintf(port->name, CHARGER_USBPD_DIR_NAME, i);
-         |                                             ^~~~~~~~~~~~~~~~~~~~~~
-   drivers/power/supply/cros_usbpd-charger.c:656:25: note: 'sprintf' output between 20 and 30 bytes into a destination of size 23
-     656 |                         sprintf(port->name, CHARGER_USBPD_DIR_NAME, i);
-         |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-vim +15 drivers/power/supply/cros_usbpd-charger.c
-
-f68b883e8fad23 Sameer Nanda  2018-05-02  14  
-3af15cfacd1eef Fabien Parent 2018-08-10 @15  #define CHARGER_USBPD_DIR_NAME			"CROS_USBPD_CHARGER%d"
-3af15cfacd1eef Fabien Parent 2018-08-10  16  #define CHARGER_DEDICATED_DIR_NAME		"CROS_DEDICATED_CHARGER"
-3af15cfacd1eef Fabien Parent 2018-08-10  17  #define CHARGER_DIR_NAME_LENGTH		(sizeof(CHARGER_USBPD_DIR_NAME) >= \
-3af15cfacd1eef Fabien Parent 2018-08-10  18  					 sizeof(CHARGER_DEDICATED_DIR_NAME) ? \
-3af15cfacd1eef Fabien Parent 2018-08-10  19  					 sizeof(CHARGER_USBPD_DIR_NAME) : \
-3af15cfacd1eef Fabien Parent 2018-08-10  20  					 sizeof(CHARGER_DEDICATED_DIR_NAME))
-f68b883e8fad23 Sameer Nanda  2018-05-02  21  #define CHARGER_CACHE_UPDATE_DELAY		msecs_to_jiffies(500)
-f68b883e8fad23 Sameer Nanda  2018-05-02  22  #define CHARGER_MANUFACTURER_MODEL_LENGTH	32
-f68b883e8fad23 Sameer Nanda  2018-05-02  23  
-
-:::::: The code at line 15 was first introduced by commit
-:::::: 3af15cfacd1eef7f223802d49a88cae23c509183 power: supply: cros: add support for dedicated port
-
-:::::: TO: Fabien Parent <fparent@baylibre.com>
-:::::: CC: Sebastian Reichel <sre@kernel.org>
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+With best wishes
+Dmitry
 
