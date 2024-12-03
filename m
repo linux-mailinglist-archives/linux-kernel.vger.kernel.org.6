@@ -1,172 +1,124 @@
-Return-Path: <linux-kernel+bounces-429309-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429311-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1118A9E1A3D
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 12:03:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E8A79E1A4E
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 12:05:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9564A16735B
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 11:03:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D9694160536
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 11:05:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A0E41E3766;
-	Tue,  3 Dec 2024 11:02:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 081121E3793;
+	Tue,  3 Dec 2024 11:05:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ceAdjcHw"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="W3qUl5Wt"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3DB71E3765
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 11:02:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04B541E0E13;
+	Tue,  3 Dec 2024 11:05:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733223745; cv=none; b=jETZ0cDsApMW9dYXneC22CjIf9TguAp1rVVbuXr/2TtrL60so/J5BchbR4zkKLYwSd73Vqx4l6ql+d2s0Ss7RgDnZF4CbVY2uMxVdy7GIaVrnYdNeA67/HriOyGSVz8hY0AbzRv6Z0C4NGr5nSIh5E7hMQN8uvyKuK71ijAli5Q=
+	t=1733223904; cv=none; b=P78GUynB/RcsXq52JX58SlJ3SNlyzXxSj4kqr5jvYAgRD6p27PFjY3PILCx108oHKnvS+lx+oVhcEPml4HiHKMc58Lb0rMPzYhC5qnkDFJ5wfgE5QJMBUhdgr9oKDcYNsltJyuXlpU2TF21NeGWvH+fx1wyO6EI93VST71Ixkcs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733223745; c=relaxed/simple;
-	bh=S7MzIWIrLWAbVF89l+Uf6tn+k9bQS3/RiimZVSw8N/c=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=b9hbOkSGHZity91O1QVzpyiNHlxlGaufKLf816KVtF1LvXg6lGlCvwDu8qJ3ImQvpZULsR1x5XF2lhOiZHErk2hPUfEe7TldZdwozerdRaH1m+5z6M793+ln1/O3JHJiJ9/GNLZ/0ucM43qkPP1XkBD5bb3XsgR8LVcKERrhfEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ceAdjcHw; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-385de59c1a0so3933956f8f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 03:02:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733223742; x=1733828542; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=S7MzIWIrLWAbVF89l+Uf6tn+k9bQS3/RiimZVSw8N/c=;
-        b=ceAdjcHwfjffVfcCZsVMRK/A1cVsLHxzmwTaVEQvw66v0uswrpr9oaf2I4o/cjr5Nf
-         ny7PKInr0DxKITyZU2vSr2UpDjORLu1neNrjy/2DeXJpx/fAMW/hlqgswAw3uA0d9HYp
-         VWh+APDkJrVy/b3VkrihZbQs7YL/X+bk2o5h4RulgLhC35O93d8eoj/Kby1cJSo0LIAk
-         +40QlpqnLY+D+cfCJDcV3HI/teTKhQd4BoPfrtSST3B+BA4vK7N9aBKPjU69xZRtPgP4
-         rwvqirbD6g09anoF4Jvn5cHm7GNCXjq3BpIwmN8o2VqbRpPbbLapQRak1jxpJk89dAF0
-         8SzA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733223742; x=1733828542;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=S7MzIWIrLWAbVF89l+Uf6tn+k9bQS3/RiimZVSw8N/c=;
-        b=km6oMoyl8R4fry9Ya856ZV4QRaPg4kC98vtWx3ULdY38xvz9zki9vnC4pXp6tMyFv+
-         dQCdwzasvYJ5td5X/7VSALCufGTeerwwtY/BSXt4TyD+2jcm6endd3XRQ3qpmznmTpI/
-         x1bzF8hdxfzCBUWn/ipBgBasoDKg54WRu/xKfz91UhkSIMXpHZmK4HHj0uQoyMsfo4if
-         n+1ofqqN6SA0DMMU56y8po+ZroT1P5j391SP3Nwzl2BI9Kbj/xWqD78Qc9okrBYCGucH
-         YJ/o1qpmYLfobVtWTgseLJgANjGboEz9y/CBQIDGsIPD6firI/QbfpLjsUXPuGbEk1Q7
-         Q3Fw==
-X-Forwarded-Encrypted: i=1; AJvYcCWadfeq8ho+eqNdnVsXcu4lLlR+joB41YX5OdPc1ZjC1KC919TdqyoRPppr7jEoFN8nVbnEaMAcvwBpR3M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYxuTPA3jb4pBcm80xpkKZkGm+VpxKVaZQ6pmc80Csz+bsZO76
-	pGBuokeiTlEPFeg2MU2TSGiGIIM0vu2yMMVHIGaEMssMijaLiwyNOVz1gEaKqjU=
-X-Gm-Gg: ASbGnctDW56hxNCAPQ7gnqWctKEMq5awRZQHyLe+qDTDIXAjFDi70M6uW9FPEpDaz58
-	ZzMkJEiKSRlsXA+8WCLKiuxogOnhXkQssEUFZD3vG/+f7Ajuenuicy92TillTRHICJwA/n1vIZP
-	Df5VE7Cy0P8ockr5QOsC2qY+ufFfVM/f+Gy5z6V0HssgPFMew9H13MDf2cg66p12DHaYeRp+A5z
-	L6tUhPZF84GcnVj56TzvsCDo5LF54eaioD604mBhTpZNzm3my770bk=
-X-Google-Smtp-Source: AGHT+IE4z37Or9yADOv+O39FGI70uwdrH1eoqOGhO/GGECRsdGCnHKNhwdQTcxVdHXzjgp6xkbp4Tg==
-X-Received: by 2002:a05:6000:23c2:b0:385:e1e8:40db with SMTP id ffacd0b85a97d-385fd3e9195mr1279542f8f.24.1733223741934;
-        Tue, 03 Dec 2024 03:02:21 -0800 (PST)
-Received: from [10.1.1.109] ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385e49cd788sm9516997f8f.6.2024.12.03.03.02.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Dec 2024 03:02:21 -0800 (PST)
-Message-ID: <16f9b5f8aed79e9313b4638512896743fa5a8d6d.camel@linaro.org>
-Subject: Re: [PATCH 1/4] power: supply: add support for max77759 fuel gauge
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Thomas Antoine <t.antoine@uclouvain.be>, Sebastian Reichel
- <sre@kernel.org>,  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,  Dimitri Fedrau
- <dima.fedrau@gmail.com>, Catalin Marinas <catalin.marinas@arm.com>, Will
- Deacon <will@kernel.org>,  Peter Griffin <peter.griffin@linaro.org>, Alim
- Akhtar <alim.akhtar@samsung.com>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org
-Date: Tue, 03 Dec 2024 11:02:20 +0000
-In-Reply-To: <bce22ca8-aed2-41ae-b2ef-fdc71266709a@uclouvain.be>
-References: <20241202-b4-gs101_max77759_fg-v1-0-98d2fa7bfe30@uclouvain.be>
-	 <20241202-b4-gs101_max77759_fg-v1-1-98d2fa7bfe30@uclouvain.be>
-	 <c377f3302c6c282ad826211c859e2b65bb1222cb.camel@linaro.org>
-	 <9387c0cf-d291-485a-8cd1-1aced7eba14e@uclouvain.be>
-	 <2883fb0dd22312d5da9039d4fef869276a0bd430.camel@linaro.org>
-	 <bce22ca8-aed2-41ae-b2ef-fdc71266709a@uclouvain.be>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.1-4 
+	s=arc-20240116; t=1733223904; c=relaxed/simple;
+	bh=UXqhP6SUgW2/ozvu0lhett25qlygR77ER7pLs3VvEIM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=m4q62X7ESbXRojMMuwRWMxurS7buWaAJCktie2rjc0e5CD5WM3fOUmMVim/MYtPjroArl8hfakPQKu1NlzCw+4vq00OmRebpOPTVEQT9s9vB93VNFq3MWsgRyWaK+rKaG25WLUJ+rbwAfqufAB6bBc3zjBoAs6wAogzYqPPoYts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=W3qUl5Wt; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B38tmMU010851;
+	Tue, 3 Dec 2024 11:04:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	9KhuAO45BpGUJQh6ai96J1rGFDAPsljoRBrp3z4py8Q=; b=W3qUl5Wt9kYDTdvA
+	qciAg6ePv0EDGxkuOFckIdSLXkFi7fiGfo7Mbyg5HNdAzt24EK4eio0MFXECT4jM
+	KUDFNSZyRP4pQ76AKTplz/QpxpW6UMXpm6KsOufrRY+T+cie98C9t8OKW8wu3YG5
+	Fk+8QLaL4gq23vnWFR8naci+2no+q+WeragMDrLS6gvpOMyqLfoC4tBZto9RjFUw
+	7mJO10mr9sfmtzvPESwGDAsUuRthUykQrismf1ZisZWbIr80s0ZSm7rBt/rQsdz5
+	4qflIW+MZvCaykTCtkHODYU371sEO6lPiRC9bXtSD2dPdcocml1UhRat5XmxE7kN
+	zPsCIw==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4393mpcs38-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 03 Dec 2024 11:04:44 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B3B4iVv004429
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 3 Dec 2024 11:04:44 GMT
+Received: from [10.151.36.201] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 3 Dec 2024
+ 03:04:39 -0800
+Message-ID: <11ed6654-5362-4529-88a0-801e770e164b@quicinc.com>
+Date: Tue, 3 Dec 2024 16:34:35 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v14 0/8] Add QPIC SPI NAND driver
+To: Miquel Raynal <miquel.raynal@bootlin.com>
+CC: <broonie@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <andersson@kernel.org>,
+        <konradybcio@kernel.org>, <richard@nod.at>, <vigneshr@ti.com>,
+        <manivannan.sadhasivam@linaro.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-spi@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-mtd@lists.infradead.org>,
+        <quic_srichara@quicinc.com>, <quic_varada@quicinc.com>
+References: <20241120091507.1404368-1-quic_mdalam@quicinc.com>
+ <87mshe58gq.fsf@bootlin.com>
+Content-Language: en-US
+From: Md Sadre Alam <quic_mdalam@quicinc.com>
+In-Reply-To: <87mshe58gq.fsf@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: HMFqzdjarEFsMZ_sJpFyTTzJmtl81YBi
+X-Proofpoint-GUID: HMFqzdjarEFsMZ_sJpFyTTzJmtl81YBi
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=999
+ impostorscore=0 mlxscore=0 malwarescore=0 suspectscore=0
+ lowpriorityscore=0 adultscore=0 spamscore=0 priorityscore=1501
+ clxscore=1015 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412030094
 
-On Tue, 2024-12-03 at 11:11 +0100, Thomas Antoine wrote:
-> On 12/3/24 10:31, Andr=C3=A9 Draszik wrote:
-> > On Tue, 2024-12-03 at 10:08 +0100, Thomas Antoine wrote:
-> > > On 12/3/24 07:47, Andr=C3=A9 Draszik wrote:
-> > > > > From: Thomas Antoine <t.antoine@uclouvain.be>
-> > > > >=20
-[...]
 
-> > > > > =C2=A0/*
-> > > > > =C2=A0 * Model Gauge M5 Algorithm output register
-> > > > > =C2=A0 * Volatile data (must not be cached)
-> > > > > @@ -369,6 +387,8 @@ static int max1720x_battery_get_property(stru=
-ct
-> > > > > power_supply *psy,
-> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 val->strval=
- =3D max17201_model;
-> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 else if (reg_val =3D=3D MAX172XX_DEV_NAME_TYPE_MAX17205)
-> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 val->strval=
- =3D max17205_model;
-> > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 else if (reg_val =3D=3D MAX172XX_DEV_NAME_TYPE_MAX77759)
-> > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 val->strval =3D m=
-ax77759_model;
-> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 else
-> > > >=20
-> > > > This is a 16 bit register, and while yes, MAX172XX_DEV_NAME_TYPE_MA=
-SK only
-> > > > cares about the bottom 4 bits, the register is described as 'Firmwa=
-re
-> > > > Version Information'.
-> > > >=20
-> > > > But maybe it's ok to do it like that, at least for now.
-> > >=20
-> > > I thought this method would be ok as long as there is no collision on
-> > > values. I hesitated to change the model evaluation method based on ch=
-ip
-> > > model, where the max77759 would thus have an hard-coded value and the
-> > > max1720x would still evaluate the register value. I did not do it bec=
-ause
-> > > it led to a lot more changes for no difference.
-> >=20
-> > Downstream uses the upper bits for max77759:
-> > https://android.googlesource.com/kernel/google-modules/bms/+/refs/heads=
-/android-gs-raviole-mainline/max_m5.h#135
-> >=20
-> > I don't know what the original max17201/5 report in this register
-> > for those bits, though. Given for max77759 this register returns
-> > the firmware version, I assume the lower bits can change.
->=20
-> Based on this datasheet of the max1720x, the upper bits are the revision
-> and the four lower bits are device. So it could change.
-> https://www.analog.com/media/en/technical-documentation/data-sheets/MAX17=
-201-MAX17215.pdf#MAX17201%20DS.indd%3A.213504%3A15892
->=20
-> If the four lower bits are not always 0 for the max77759 then I guess it
-> is necessary to change this as it wouldn't work with all max77759.
 
-Maybe the best way forward is to go by the compatible (from DT), and
-if max77759 to then print a warning if the upper bits are !=3D 0x62 and
-!=3D 0x63. And maybe even refuse to load in that case.
-
-Cheers,
-Andre'
+On 12/2/2024 10:27 PM, Miquel Raynal wrote:
+> Hi Marc,
+> 
+> On 20/11/2024 at 14:44:58 +0530, Md Sadre Alam <quic_mdalam@quicinc.com> wrote:
+> 
+>> v14:
+>>   * Updated commit message
+>>   * Fix spelling mistake
+>>   * Remove "inline" from multiple APIs from qcom_nandc.c file
+>>   * Move '|' in qcom_param_page_type_exec() APIs at the end of line
+> 
+> I guess it is now time to move on, I can apply patches 2-5 and share an
+> immutable tag. However, due to the frequent inconsistencies observed
+> during the lifetime of this patchset, we might be slightly more
+> conservative than usual and split the patches over two kernel
+> releases. I fear there might be annoying fixes on the mtd side needed
+> because of some side effects. Without these, the spi tree might have
+> broken qcom support for several weeks. What do you think?
+Sorry for the delayed response. I'm fine with merging patches 2 to 5. I 
+tested them on today's linux-next, and the driver performed as expected.
+> 
+> Cheers,
+> Miquèl
 
 
