@@ -1,215 +1,140 @@
-Return-Path: <linux-kernel+bounces-429300-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFF7E9E1C0C
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 13:23:39 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 445389E1A6E
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 12:13:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0864BB2DD09
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:59:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3F1C1B2B1FE
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 11:01:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1385F1E32C8;
-	Tue,  3 Dec 2024 10:59:07 +0000 (UTC)
-Received: from leonov.paulk.fr (leonov.paulk.fr [185.233.101.22])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F1ED1E3768;
+	Tue,  3 Dec 2024 11:01:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=norik.com header.i=@norik.com header.b="PyBlv3iJ"
+Received: from cpanel.siel.si (cpanel.siel.si [46.19.9.99])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64E301E32BD
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 10:59:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.233.101.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9253C55C29;
+	Tue,  3 Dec 2024 11:01:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.19.9.99
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733223546; cv=none; b=BDHaH2sAPwk+3MoEq5zPXGLID2QKWclUjPBcUyVG+nVa+fpJKW4+7OcTmBUGX7h3jbrWPBXvRcF6V89PaqrNhFjc2+q6TkaNUU8X0zMO1F1EVs4IDNx+6SBxGJjrvhEqHN18rhd9fKLLxJ31AagCkhx34cDMNLMoeAZhDS+F58Q=
+	t=1733223671; cv=none; b=jfaNJJDzaMFRmZZ1Y6SExN6592rmkvuac1mav/5rtB8+M7mEq4YLBcODOHUGxucq4EZZZ9//cFD9Y/I/A6VdtGarrcCxTEHBto2g6bBT/8MvtUXQjavHL4zDafx/wJ5DVrAYPv22v0UXOPHvzlcu7GBWCFKVAfNF5YVqV8h4b3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733223546; c=relaxed/simple;
-	bh=TrK7uZHP64ILuJuDvtktXX5sjSsNufOK42wokACcQmw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uKZsY91qg15AqEZzY6PqnVe4DT+NcpktzQFCrozSyG7jNiE0wQ+bFlobqTNi4sKr2vwrIFkq6JDYYa5+KqMlPkka/6En6Mz6cQFDdkEaKEdzHCc02v9ioH5XKlTH78Q/4PIs0MmndD+bzYjsxc+q1Jbat4fl4IKWrq/TVRfzVbk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sys-base.io; spf=pass smtp.mailfrom=sys-base.io; arc=none smtp.client-ip=185.233.101.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sys-base.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sys-base.io
-Received: from laika.paulk.fr (12.234.24.109.rev.sfr.net [109.24.234.12])
-	by leonov.paulk.fr (Postfix) with ESMTPS id 995A11F00053
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 10:58:43 +0000 (UTC)
-Received: by laika.paulk.fr (Postfix, from userid 65534)
-	id 95B97A6702A; Tue,  3 Dec 2024 10:58:41 +0000 (UTC)
-X-Spam-Level: 
-Received: from collins (unknown [192.168.1.1])
-	by laika.paulk.fr (Postfix) with ESMTPSA id 7392EA6701F;
-	Tue,  3 Dec 2024 10:58:39 +0000 (UTC)
-Date: Tue, 3 Dec 2024 11:58:37 +0100
-From: Paul Kocialkowski <paulk@sys-base.io>
-To: Maxime Ripard <mripard@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+	s=arc-20240116; t=1733223671; c=relaxed/simple;
+	bh=2iiyH6FfFZvtW0Gttz9MS8U6yL1ExDsA78zLtDG23tg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pESTix/ToxClMiJKPL6rlvL/DlT0x44s9hdZcUAFdTYEHo8ncbVo8/BGBO/3IQwqydlZAVWDOt+zuJsz6TJMJ/6UzOb815mex7kVj7eU8l7cZU19a3O/7ZXj/puYAKLHRaH7OxkEsODCjGwzSl+OxbSLIOhoaDHut8QoVgj4lmQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com; spf=pass smtp.mailfrom=norik.com; dkim=pass (2048-bit key) header.d=norik.com header.i=@norik.com header.b=PyBlv3iJ; arc=none smtp.client-ip=46.19.9.99
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=norik.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=norik.com;
+	s=default; h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:
+	Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=UIdVnNJSlrdN/ogBMzjqJdURidk/0O2I0Sqfpx7mr7k=; b=PyBlv3iJrSscFR4dBdCULuy/v3
+	HXc0CADvC4HzyWuCelZMrRis5Ub8/wU2gWFjZlDKrZxT6DMgOtkDlyzwLlW0LdAk2sy+0+wrZ2mMV
+	vfpNF9X2YwfuY7w3YdRM9g44+vJIsbs12GsOi8UB0g9U/57o3aKID5W5zUGwXIAqGNtNpuy4rDYrp
+	UwivnJgEZre0hUL9f0L6L6kyeXxKcGio9jon/bxuvJyYbUJ5qVw5ZR0M78YhXkDInHXqVi3n/yFf4
+	ilEksGwnNsieNDe7TOLAI4rtqDiCCvVWbncYQRERGX4MiFNastbRWn75dZw2BYwYnHmOMd1Orc09w
+	8wZttabw==;
+Received: from [89.212.21.243] (port=52296 helo=and-HP-Z4..)
+	by cpanel.siel.si with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96.2)
+	(envelope-from <andrej.picej@norik.com>)
+	id 1tIQeR-00Bd83-2F;
+	Tue, 03 Dec 2024 12:01:07 +0100
+From: Andrej Picej <andrej.picej@norik.com>
+To: andrzej.hajda@intel.com,
+	neil.armstrong@linaro.org,
+	rfoss@kernel.org,
+	Laurent.pinchart@ideasonboard.com,
+	jonas@kwiboo.se,
+	jernej.skrabec@gmail.com,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	shawnguo@kernel.org,
+	s.hauer@pengutronix.de,
+	kernel@pengutronix.de,
+	festevam@gmail.com,
+	marex@denx.de
+Cc: dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Paul Kocialkowski <contact@paulk.fr>
-Subject: Re: [PATCH] pinctrl: sunxi: Use minimal debouncing period as default
-Message-ID: <Z07kXSstqc2eJ_Y9@collins>
-References: <20241119140805.3345412-1-paulk@sys-base.io>
- <20241119-prudent-jasmine-lizard-195cef@houat>
- <ZzyoIABRArkGoZBn@collins>
- <20241119-vivacious-optimistic-squirrel-a2f3c5@houat>
- <ZzzdT0wr0u1ApVgV@collins>
- <20241120-wild-stimulating-prawn-ffefb7@houat>
- <Zz20dquzl5_2_3TQ@collins>
- <20241129-amazing-whale-of-proficiency-ee6fd2@houat>
- <Z0rqILFESdje9qUn@collins>
- <20241202-magnetic-curious-bear-1cc48e@houat>
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	upstream@lists.phytec.de
+Subject: [PATCH v3 0/3] SN65DSI83/4 lvds_vod_swing properties
+Date: Tue,  3 Dec 2024 12:00:51 +0100
+Message-Id: <20241203110054.2506123-1-andrej.picej@norik.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="Ztuv53CEuwU4pnus"
-Content-Disposition: inline
-In-Reply-To: <20241202-magnetic-curious-bear-1cc48e@houat>
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - cpanel.siel.si
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - norik.com
+X-Get-Message-Sender-Via: cpanel.siel.si: authenticated_id: andrej.picej@norik.com
+X-Authenticated-Sender: cpanel.siel.si: andrej.picej@norik.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 
+Hi all,
 
---Ztuv53CEuwU4pnus
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+this is a v3, which has only a minor change in a second patch.
 
-Hi,
+The LVDS differential voltage swing can be specified as arrays of min, max
+in microvolts. Two arrays, one for data-lanes and one for clock-lane can
+be specified. Additionally, because LVDS voltage swing depends on near-end
+termination this can now also be specified with separate property.
 
-Le Mon 02 Dec 24, 12:03, Maxime Ripard a =C3=A9crit :
-> On Sat, Nov 30, 2024 at 11:34:08AM +0100, Paul Kocialkowski wrote:
-> > Well I'm an electrical engineer and the first thing we were told about
-> > buttons and connectors is to include hardware debouncing. The second th=
-ing
-> > is that it can be done in software (which again is done in a number of =
-drivers)
-> > by just disabling the interrupt for a while if it happens too often.
-> >=20
-> > So I'm quite affirmative that taking none of these into account is cons=
-titutive
-> > of a broken hardware design. No electrical engineer is told that they s=
-houldn't
-> > care about this because the SoC will filter interrupts for them.
->=20
-> The SoC provides the hardware debouncing. There's no reason not to use
-> it, or to choose something redundant. Some might, but it's also
-> perfectly valid to just rely on the SoC there.
->=20
-> > Of course it's fine to use this mechanism when it exists, but it's not a
-> > reasonable expectation to just assume it will always be there. This is =
-why
-> > I think it's not a legitimate reason to make it a default.
->=20
-> Nobody ever designed a board without considering the SoC features but
-> rather by adhering to a dogma. The SoC features, components chosen and
-> their price, etc. all play a role.
+Driver goes through the tables, taken from datasheet [1] and selects the
+appropriate configuration. If appropriate configuration can not be found
+the probe fails. If these properties are not defined default values are
+used as before.
 
-Okay that's fair enough. I guess what I had in mind was that it would be
-unusual and unlikely. I don't think it disqualifies the fact that it would
-be sensible to enable this behavior with the property and not the other way
-round though.
+This patch series depends on the patch
+"[PATCH v2 11/15] arm64: dts: imx8mm-phyboard-polis: Add support for PEB-AV-10"
+(https://lore.kernel.org/all/20241202072052.2195283-12-andrej.picej@norik.com/)
+which is currently under review. Please apply the dependent series first before
+applying this one.
 
-> > > But let me rephrase if my main objection wasn't clear enough: you want
-> > > to introduce an ABI breaking change. With the possibility of breaking
-> > > devices that have worked fine so far. That's not ok.
-> >=20
-> > I believe it is highly questionable that this constitutes ABI breakage.
-> > To me there was no defined behavior in the first place, since the debou=
-ncing
-> > configuration is inherited either from the reset value or the boot stag=
-e.
-> > There is also no formal indication of what the default is, anywhere.
->=20
-> Depending on the interpretation, it either means that you change the
-> default, or add a default, to a device-tree property. That constitutes
-> an ABI breakage on its own right. And then we can introduce regressions
-> for boards, which is another breakage.
+v1 is at: https://lore.kernel.org/all/20241127103031.1007893-1-andrej.picej@norik.com/
+v2 is at: https://lore.kernel.org/all/20241203085822.2475138-1-andrej.picej@norik.com/
 
-It feels very questionable that adding a default over undefined behavior
-constitutes an ABI breakage.
+[1] https://www.ti.com/lit/ds/symlink/sn65dsi83.pdf?ts=1732738773429&ref_url=https%253A%252F%252Fwww.mouser.co.uk%252F
 
-> > Changing the default configuration of hardware is commonplace. One might
-> > for example introduce a reset to a driver to get a clean state because =
-it
-> > happened that some boot software would mess it up and it went unnoticed=
- for
-> > a while. Would you also call that ABI breakage?
->=20
-> No, because it doesn't require a change in the default state Linux
-> expects when it boots, or changing anything in the device tree. It's a
-> self-contained change, and thus there's no interface to break.
+Best regards,
+Andrej
 
-It could definitely result in changes in behavior though. One could imagine
-the case of a sensor that was configured with 4x gain by the boot software,
-which wasn't reset by the driver. Now when the driver is updated to include=
- a
-reset the sensor will fall back to 1x gain, with a direct result on the val=
-ues
-that are read with default configuration.
+Andrej Picej (3):
+  dt-bindings: drm/bridge: ti-sn65dsi83: Add properties for
+    ti,lvds-vod-swing
+  drm/bridge: ti-sn65dsi83: Add ti,lvds-vod-swing optional properties
+  arm64: dts: imx8mm-phyboard-polis-peb-av-10: Set lvds-vod-swing
 
-This would however be perfectly fine since it wasn't specified anywhere tha=
-t the
-sensor should report values with 4x gain in its default state. It's a behav=
-ior
-change that has direct effect, but doesn't break any ABI at all.
+ .../bindings/display/bridge/ti,sn65dsi83.yaml |  36 ++++-
+ .../imx8mm-phyboard-polis-peb-av-10.dtso      |   2 +
+ drivers/gpu/drm/bridge/ti-sn65dsi83.c         | 144 +++++++++++++++++-
+ 3 files changed, 176 insertions(+), 6 deletions(-)
 
-> > I think there's a number of situations where it's much more sensible to=
- change
-> > a default state to avoid very visible and practical issues. And it does=
- happen.
-> >=20
-> > Also my understanding of the "ABI breakage" rule in the kernel is that =
-no
-> > userspace program should stop working when it was implemented to (corre=
-ctly)
-> > follow some kernel-related ABI. It doesn't mean that we cannot change a=
-ny
-> > default state
->=20
-> If applications rely on that default one way or another, it's absolutely
-> what it means. The only criteria is whether this will create a
-> regression for any application.
+-- 
+2.34.1
 
-For any application *that uses the ABI correctly*. Any example of defaults =
-that
-are inherited from the boot phase clearly shows that it is not a reasonable
-expectation to rely on them and doing so is not correct use of the ABI.
-It is rather very clearly relying on undefined behavior.
-
-Cheers,
-
-Paul
-
---=20
-Paul Kocialkowski,
-
-Independent contractor - sys-base - https://www.sys-base.io/
-Free software developer - https://www.paulk.fr/
-
-Expert in multimedia, graphics and embedded hardware support with Linux.
-
---Ztuv53CEuwU4pnus
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEAbcMXZQMtj1fphLChP3B6o/ulQwFAmdO5F0ACgkQhP3B6o/u
-lQyUwg/+Nml2dRtQHolbNr+qDMaG5j23m3wnyJzAs7oAVbOiozJpGTW9obXHhBnI
-NODHxTaaXmzBce+aNqQUwGWX1W5kl9LQ1od/mOQ81k2tSwOj+DpB7sus+NXGCUCs
-xszVBDQMLM2ejXsyQauTdjFUsnfq6Q91Qo0aLoWpKJI5y7vdds2Vri6eJCm2I2bW
-An0ztEcJpMAPs2Bf2ubzBriStkFhPQ31qb4A5XdNKLjkwwJAAaNZ7EfvlcYDWKS0
-D/2DAtIwDkmYt5wdxObQc+qP+eyv/mxdvHsybOGX2bWkjA28LiHlO+7eP65ruLbB
-/9DRLMXH1fn4AqeodQGKRHVXml3EtI1kwLiRQ70IA8Ma7oFFc6KMuqwT9iS3s8sU
-RK9Z85u8jUeF+8CA6o9rmJdhkjmj5wzz0ScdUMQf0lU5Agib8O1RoWdtcBIfAUjh
-qNv+kbQtst87YRiy6jGX6orQjdpL8jNHzL87zNffxPXc/zZ6UTABERdExMpQira5
-QtNV41U0bdT9dMfoIFoCeREGVUSziS2aXE6UZlxQIfl0I60FEBbu3uOILzpe0fLa
-ErnVXnTTzmGXCK0v6alU/KxSJ96CSd8/86cLbVfuBBeUAyDztfWmsk1dTeaa2ulv
-YN9witZEvaqwqV2t7LLtDYvUMtRXq6IWUI8KJMzu6y0ElGh1+Sc=
-=bvwb
------END PGP SIGNATURE-----
-
---Ztuv53CEuwU4pnus--
 
