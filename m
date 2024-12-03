@@ -1,200 +1,176 @@
-Return-Path: <linux-kernel+bounces-430266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFC989E2EA2
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 23:06:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 115B59E2EA4
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 23:07:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8EBC0282EF6
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 22:06:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C59FB2832AA
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 22:07:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D169A20898C;
-	Tue,  3 Dec 2024 22:06:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E86C1E3DED;
+	Tue,  3 Dec 2024 22:07:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bqc7qY9M"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Db93qrQ5"
+Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53C491DFE32
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 22:06:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6FEF1DFE32
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 22:06:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733263589; cv=none; b=orETG2SIg56i3WD6kCQHKdHJ+5GhrFvmiUf43xWBSmR8GvGGh96l7AE9fhPJV88iPr43biH804boMdLDZhILymr2bZwFE06xQ6djsGvn3TDRILIHiLTV850/PW9rUcVfyXyuZJ8SbeFrSxWiuAvLG7wxCNPU2spFVQYOdmyFb9M=
+	t=1733263621; cv=none; b=Dp6BgT/zXo1emG4t/AJypbZc1eFFKlOEfrhtwa8hdRvbjNn+wrt5fxzu3Lf+tunBYTXdfbsMCCb0PPgHxbl6iMPUaUfydLC8GczXolBz3EkZFTgyqp2IchPQhcOhrWOdn5uISt4rYwetqV6RkOavyJs7Y12b0emjBqBFb+MRp08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733263589; c=relaxed/simple;
-	bh=AD9m5l1akbuPM1ybWrq29tq8zaQy3+HM6xJLensm4Qg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=odcmvoqzBZHHNSvRdg8p1/ikLBt1WJQa24vzFpXKKKNbeH187qr6oNwv//ZZYyuP9NID58Ufk7ZGTUubznJO+ULyyr4TxT6F4Tm77474l/K4LzqH3JuKL7ylpn+d8ACfLRi69DiWeLO5hhJl5+pjjsdJIKevq5nKLY6NGs4clPQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bqc7qY9M; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1733263586;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WIePSw9erBGB0EkQKOgbCaIeXQNXPbcij9sycEa1gJw=;
-	b=bqc7qY9M13k/fi+/eIXlGtXlprb+CXf1VHQJYi8cz74ZjHWY3tsF3MKiX09BHDZ1pjCAvQ
-	NhQCqfPtarVJD0TtRoFfqOn84USLCHGUSE+4Dz9cyd6YTcsqIOX5CtKy0NRVVsAYPFXcgy
-	vMFQo0sIUaP/GEjloQa+aQ6PjLjeFW8=
-Received: from mail-ot1-f72.google.com (mail-ot1-f72.google.com
- [209.85.210.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-248-hpxoMhC9NySqn7nr6SgjJQ-1; Tue, 03 Dec 2024 17:06:25 -0500
-X-MC-Unique: hpxoMhC9NySqn7nr6SgjJQ-1
-X-Mimecast-MFC-AGG-ID: hpxoMhC9NySqn7nr6SgjJQ
-Received: by mail-ot1-f72.google.com with SMTP id 46e09a7af769-71d57d0f847so977909a34.3
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 14:06:25 -0800 (PST)
+	s=arc-20240116; t=1733263621; c=relaxed/simple;
+	bh=h+BQKIpXE4PFsE+g1hGX/fGHcZIR8qmk9HgPMyMc0G8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aVRCBNqR9unbpW1zIM11YzByttVtaBNmmanrvjJGa2itfmFhP7SnYKnwv3ObwN0pmqeRzhMkNlPsnlVNZwTWCAfl6agW7hgBYNECZOdHWOA+HyjIazwSrnrjGri7t/fupLSn6SJ6OlVhAEXCEsCjDlyBvOj49Bc89r3VmT/rdec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=Db93qrQ5; arc=none smtp.client-ip=209.85.219.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-e399e904940so2690486276.2
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 14:06:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1733263618; x=1733868418; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dt6tgIhfEE2uF6kBtPnvdXe7p45YNZugHzIBc4FfBbQ=;
+        b=Db93qrQ5EYM7aXfrgjgPcalpYxuZKA5C0yeoICRGCveWBKNzMxkvgIFwavOGV9v5Fg
+         F0JZSznECFdLSo56xN/6RpSfQAS62Ngt2tHiJn/fEsfLHZiIQC5MZTYmtI+lA9jS+8V9
+         XujLSt6dOM2xiWsi1xDD2dPtD7AxqtHZYUR9xv39v8tYR+1GvSH3/2LIjfIJ6ko09C85
+         i6dp18I4ywTTFSDSe3vikUZXJutKF1+YvnbGgK0xYXZRz6KKQ3WIfaJM9aRYPxol9qad
+         lxq6G9hNSPqYt970tdGEsFwJjfPmW+pimfrbot1yEKmK17hC1foYQ+RUxZU7STNxDHtc
+         6Qyw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733263584; x=1733868384;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1733263618; x=1733868418;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=WIePSw9erBGB0EkQKOgbCaIeXQNXPbcij9sycEa1gJw=;
-        b=KD4rYr4G0BuK2xXtxCQg0/2N8ij29nwDVp+U3P/0kp4ZOilDLMHJimXplZoytctnN8
-         2iMeokAE/BCoivRLmUPJmvcYGROo7tRMmYQJ8Z95CCcBIsH0WNJQAGpUrqexNEnetUJH
-         l8OWCzdxkoUOWwvL476/522+6Mf7t2UVQswi3g5qZtQq+oxY2EVw6r2E29wVNEXj8JNl
-         a7et2OHYKvX/j26Fx95FeWGkuF9ykF2usJ0EnjD/WVnOJ5QOTc8z4z/5S5HuPJbb78w3
-         8/kOmveHwWefey4Wnl1RA4wSDvw5zsjWoij0ZsgKpeJ2XbdZeFKYViJq2qvoFgY/53Wt
-         oDsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWIrRk9YxABEHe9kyWR+knYFeKGsgn1zXEk2n7aPkw5965+9aRQ+O8bWxr2//TDCgWkN1O6/LhuRl9wpn0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw00RrzS0a29LBlWfY21HKd7EzTJdvF7QGrcT4W8UsjaIPgKsl8
-	kyTGNM3AEv3EFEgbalN3XFvxBOTjj0+kTOqVSTiC/I3PU6PuDMhvLLsq4Ltx70jm5m6x4hyvpwh
-	Xzgv2JlId5CQBWXFGFPF/+gOMm+dv3OZbSfNP0H2TNLNOJuhgYiDRFgTt7v/FE8Wb3JxxSg==
-X-Gm-Gg: ASbGncvkHILaEVSIKY+oNJCsSnmezLh6hwK4RgRjYAJlzhBANkxaSQPHaChGWkLD6xJ
-	nM2MuzOlFVOPYtNHybLKZrkjH1q2H74k+DxBLm3S8DLT8P22/ACISpOS9gfbD5z31FRyc9cU4++
-	1Fy/R6NqVExD6HgKAcA0gn2wx6O98a1mMTneYISF6lJDrHbwtYFDa/6sRUQB6kGYvn1XmMQDV96
-	Ejy0pAm/nEUDbDzkhMl8hjzWaCqavon7BlfSb6HFZpwrO4UDweTvw==
-X-Received: by 2002:a05:6870:82a0:b0:29e:723c:8e9d with SMTP id 586e51a60fabf-29e8864ab96mr932471fac.4.1733263584304;
-        Tue, 03 Dec 2024 14:06:24 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IH7jGvGfB3Me4o3Jd6sSOMboIoUa4ByGG2+wC0X4ZrR+2bwV76NNF/fqntlqJRNv1VOTSapnA==
-X-Received: by 2002:a05:6870:82a0:b0:29e:723c:8e9d with SMTP id 586e51a60fabf-29e8864ab96mr932465fac.4.1733263583944;
-        Tue, 03 Dec 2024 14:06:23 -0800 (PST)
-Received: from redhat.com ([38.15.36.11])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-29de9945bc7sm4029719fac.43.2024.12.03.14.06.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Dec 2024 14:06:23 -0800 (PST)
-Date: Tue, 3 Dec 2024 15:06:20 -0700
-From: Alex Williamson <alex.williamson@redhat.com>
-To: Mitchell Augustin <mitchell.augustin@canonical.com>
-Cc: linux-pci@vger.kernel.org, kvm@vger.kernel.org, Bjorn Helgaas
- <bhelgaas@google.com>, linux-kernel@vger.kernel.org
-Subject: Re: drivers/pci: (and/or KVM): Slow PCI initialization during VM
- boot with passthrough of large BAR Nvidia GPUs on DGX H100
-Message-ID: <20241203150620.15431c5c.alex.williamson@redhat.com>
-In-Reply-To: <CAHTA-uZWGmoLr0R4L608xzvBAxnr7zQPMDbX0U4MTfN3BAsfTQ@mail.gmail.com>
-References: <CAHTA-uYp07FgM6T1OZQKqAdSA5JrZo0ReNEyZgQZub4mDRrV5w@mail.gmail.com>
-	<20241126103427.42d21193.alex.williamson@redhat.com>
-	<CAHTA-ubXiDePmfgTdPbg144tHmRZR8=2cNshcL5tMkoMXdyn_Q@mail.gmail.com>
-	<20241126154145.638dba46.alex.williamson@redhat.com>
-	<CAHTA-uZp-bk5HeE7uhsR1frtj9dU+HrXxFZTAVeAwFhPen87wA@mail.gmail.com>
-	<20241126170214.5717003f.alex.williamson@redhat.com>
-	<CAHTA-uY3pyDLH9-hy1RjOqrRR+OU=Ko6hJ4xWmMTyoLwHhgTOQ@mail.gmail.com>
-	<20241127102243.57cddb78.alex.williamson@redhat.com>
-	<CAHTA-uaGZkQ6rEMcRq6JiZn8v9nZPn80NyucuSTEXuPfy+0ccw@mail.gmail.com>
-	<20241203122023.21171712.alex.williamson@redhat.com>
-	<CAHTA-uZWGmoLr0R4L608xzvBAxnr7zQPMDbX0U4MTfN3BAsfTQ@mail.gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+        bh=dt6tgIhfEE2uF6kBtPnvdXe7p45YNZugHzIBc4FfBbQ=;
+        b=OSw9df9SRspMwJPYEZlK7gIhvjm2Y19nvGWafoT7/YV92u9AzQ4LX6RXswe9HnnZz2
+         r0998dAwJ1u7+fFT70R5K6awICASdCztqeDRuA9Dqh4/SPScSZfShL00GGcCIr3MnyhT
+         mqfGqnNID/T5LFhOlnXzpYSO0zcODWrqReNDxCXi5WPFV39pTYI0Aaiq4shiKGyx/tOl
+         qlfa4Jb7k07Ln2ZnboVYQmChcc65+eoxUMJbFBpTvHsEtHxsLuUQY0MVjxIaxDXVMghY
+         IO7jtER6GTv4/APd62XPoN1eE5nik86tRS+na8OxXlrGbQrBG5+vCS0x286QTctE24mE
+         20HQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX5EJcJwCNNc4tD87UbKRJgtwAwR3KfpA+b407mCU30BWW26dYXBwXMR6W8t8VEAgII0QFvNce0UTnXylc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwypbmhuzA+p1Wz98gV8yjA0tqI0Jn/IYjSACLO2U75rLq9zHwt
+	fxw0HBUpO5WhWS6tow1Bc6cRvFaiM0AMk3LY41loAm4aJ5H5o//R0JJ4/9YGe4vwejtPOejtRmd
+	MuUyZQnG9sGXTxS8RkNxypqrHCI51mJE+0IX4d8zm5RkWocY=
+X-Gm-Gg: ASbGncvTe1jUg7sYocSAAkAhfloCYe1+0jdX7NCgON5WTdja7eWs/NswQ+FGrScpFlW
+	vRL+zU6vNA2f3qq0EmVGLo33+YOe34w==
+X-Google-Smtp-Source: AGHT+IFcDIYh0s6VN6UUlT7OSsptdYbkjMKXFFp/bpJc9hg8XcEtPBjjWR1dCJHKcOpGDI4z6ka+Kba83P/F1EPrKao=
+X-Received: by 2002:a05:6902:18ce:b0:e2b:c7a7:7a3e with SMTP id
+ 3f1490d57ef6-e39de1e88a8mr2399999276.3.1733263618691; Tue, 03 Dec 2024
+ 14:06:58 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20241203060350.69472-1-laoar.shao@gmail.com>
+In-Reply-To: <20241203060350.69472-1-laoar.shao@gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Tue, 3 Dec 2024 17:06:48 -0500
+Message-ID: <CAHC9VhTRaX02x+KFpsxmguze3R=AAF9yjTtDxf_ghVpQ3XdU2A@mail.gmail.com>
+Subject: Re: [PATCH] auditsc: Implement a workaround for a GCC bug triggered
+ by task comm changes
+To: Yafang Shao <laoar.shao@gmail.com>
+Cc: keescook@chromium.org, qiuxu.zhuo@intel.com, rostedt@goodmis.org, 
+	lkp@intel.com, audit@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Kees Cook <kees@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 3 Dec 2024 14:33:10 -0600
-Mitchell Augustin <mitchell.augustin@canonical.com> wrote:
+On Tue, Dec 3, 2024 at 1:04=E2=80=AFAM Yafang Shao <laoar.shao@gmail.com> w=
+rote:
+>
+> From: Yafang shao <laoar.shao@gmail.com>
+>
+> A build failure has been reported with the following details:
+>
+>    In file included from include/linux/string.h:390,
+>                     from include/linux/bitmap.h:13,
+>                     from include/linux/cpumask.h:12,
+>                     from include/linux/smp.h:13,
+>                     from include/linux/lockdep.h:14,
+>                     from include/linux/spinlock.h:63,
+>                     from include/linux/wait.h:9,
+>                     from include/linux/wait_bit.h:8,
+>                     from include/linux/fs.h:6,
+>                     from kernel/auditsc.c:37:
+>    In function 'sized_strscpy',
+>        inlined from '__audit_ptrace' at kernel/auditsc.c:2732:2:
+> >> include/linux/fortify-string.h:293:17: error: call to '__write_overflo=
+w' declared with attribute error: detected write beyond size of object (1st=
+ parameter)
+>      293 |                 __write_overflow();
+>          |                 ^~~~~~~~~~~~~~~~~~
+>    In function 'sized_strscpy',
+>        inlined from 'audit_signal_info_syscall' at kernel/auditsc.c:2759:=
+3:
+> >> include/linux/fortify-string.h:293:17: error: call to '__write_overflo=
+w' declared with attribute error: detected write beyond size of object (1st=
+ parameter)
+>      293 |                 __write_overflow();
+>          |                 ^~~~~~~~~~~~~~~~~~
+>
+> The issue appears to be a GCC bug, though the root cause remains
+> unclear at this time. For now, let's implement a workaround.
+>
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202410171420.1V00ICVG-lkp@i=
+ntel.com/
+> Reported-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+> Closes: https://lore.kernel.org/all/20241128182435.57a1ea6f@gandalf.local=
+.home/
+> Reported-by: "Zhuo, Qiuxu" <qiuxu.zhuo@intel.com>
+> Closes: https://lore.kernel.org/all/CY8PR11MB71348E568DBDA576F17DAFF38936=
+2@CY8PR11MB7134.namprd11.prod.outlook.com/
+> Originally-by: Kees Cook <kees@kernel.org>
+> Link: https://lore.kernel.org/linux-hardening/202410171059.C2C395030@kees=
+cook/
+> Signed-off-by: Yafang shao <laoar.shao@gmail.com>
+> Tested-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+> ---
+>  kernel/auditsc.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
-> Thanks.
-> 
-> I'm thinking about the cleanest way to accomplish this:
-> 
-> 1. I'm wondering if replacing the pci_info() calls with equivalent
-> printk_deferred() calls might be sufficient here. This works in my
-> initial test, but I'm not sure if this is definitive proof that we
-> wouldn't have any issues in all deployments, or if my configuration is
-> just not impacted by this kind of deadlock.
+Thanks, does anyone have a link to the GCC bug report?  We really
+should mention that in the commit description and/or metadata.
 
-Just switching to printk_deferred() alone seems like wishful thinking,
-but if you were also to wrap the code in console_{un}lock(), that might
-be a possible low-impact solution.
+> diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+> index 279ba5c420a4..561d96affe9f 100644
+> --- a/kernel/auditsc.c
+> +++ b/kernel/auditsc.c
+> @@ -2728,8 +2728,8 @@ void __audit_ptrace(struct task_struct *t)
+>         context->target_auid =3D audit_get_loginuid(t);
+>         context->target_uid =3D task_uid(t);
+>         context->target_sessionid =3D audit_get_sessionid(t);
+> -       security_task_getlsmprop_obj(t, &context->target_ref);
+>         strscpy(context->target_comm, t->comm);
+> +       security_task_getlsmprop_obj(t, &context->target_ref);
+>  }
+>
+>  /**
+> @@ -2755,8 +2755,8 @@ int audit_signal_info_syscall(struct task_struct *t=
+)
+>                 ctx->target_auid =3D audit_get_loginuid(t);
+>                 ctx->target_uid =3D t_uid;
+>                 ctx->target_sessionid =3D audit_get_sessionid(t);
+> -               security_task_getlsmprop_obj(t, &ctx->target_ref);
+>                 strscpy(ctx->target_comm, t->comm);
+> +               security_task_getlsmprop_obj(t, &ctx->target_ref);
+>                 return 0;
+>         }
+>
+> --
+> 2.43.5
 
-> 2. I did also draft a patch that would just eliminate the redundancy
-> and disable the impacted logs by default, and allow them to be
-> re-enabled with a new kernel command line option
-> "pci=bar_logging_enabled" (at the cost of the performance gains due to
-> reduced redundancy). This works well in all of my tests.
-
-I suspect Bjorn would prefer not to add yet another pci command line
-option and as we've seen here, the logs are useful by default.
- 
-> Do you think either of those approaches would work / be appropriate?
-> Ultimately I am trying to avoid messy changes that would require
-> actually propagating all of the info needed for these logs back up to
-> pci_read_bases(), if at all possible, since there seems like no
-> obvious way to do that without changing the signature of
-> __pci_read_base() or tracking additional state.
-
-The calling convention of __pci_read_base() is already changing if
-we're having the caller disable decoding and it doesn't have a lot of
-callers, so I don't think I'd worry about changing the signature.
-
-I think maybe another alternative that doesn't hold off the console
-would be to split the BAR sizing and resource processing into separate
-steps.  For example pci_read_bases() might pass arrays like:
-
-        u32 bars[PCI_STD_NUM_BARS] = { 0 };
-        u32 romsz = 0;
-
-To a function like:
-
-void __pci_read_bars(struct pci_dev *dev, u32 *bars, u32 *romsz,
-                     int num_bars, int rom)
-{
-        u16 orig_cmd;
-        u32 tmp;
-        int i;
-
-        if (!dev->mmio_always_on) {
-                pci_read_config_word(dev, PCI_COMMAND, &orig_cmd);
-                if (orig_cmd & PCI_COMMAND_DECODE_ENABLE) {
-                        pci_write_config_word(dev, PCI_COMMAND,
-                                orig_cmd & ~PCI_COMMAND_DECODE_ENABLE);
-                }
-        }
-
-        for (i = 0; i < num_bars; i++) {
-                unsigned int pos = PCI_BASE_ADDRESS_0 + (i << 2);
-
-                pci_read_config_dword(dev, pos, &tmp);
-                pci_write_config_dword(dev, pos, ~0);
-                pci_read_config_dword(dev, pos, &bars[i]);
-                pci_write_config_dword(dev, pos, tmp);
-        }
-                
-        if (rom) {
-                pci_read_config_dword(dev, rom, &tmp);
-                pci_write_config_dword(dev, rom, PCI_ROM_ADDRESS_MASK);
-                pci_read_config_dword(dev, rom, romsz);
-                pci_write_config_dword(dev, rom, tmp);
-        }
-
-        if (!dev->mmio_always_on && (orig_cmd & PCI_COMMAND_DECODE_ENABLE))
-                pci_write_config_word(dev, PCI_COMMAND, orig_cmd);
-}
-
-pci_read_bases() would then iterate in a similar way that it does now,
-passing pointers to the stashed data to __pci_read_base(), which would
-then only do the resource processing and could freely print.
-
-To me that seems better than blocking the console... Maybe there are
-other ideas on the list.  Thanks,
-
-Alex
-
+--=20
+paul-moore.com
 
