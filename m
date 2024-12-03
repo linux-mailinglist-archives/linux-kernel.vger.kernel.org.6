@@ -1,231 +1,242 @@
-Return-Path: <linux-kernel+bounces-429290-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429291-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02B5D9E19C4
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 11:48:31 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1239B9E19CD
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 11:49:23 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF8D2289588
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:48:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC524162096
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:49:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9865E1E0E06;
-	Tue,  3 Dec 2024 10:48:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2D6E1E25EE;
+	Tue,  3 Dec 2024 10:49:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="AJ4QnhJF"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="RR4ARQhm"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 209B41DF739;
-	Tue,  3 Dec 2024 10:48:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95ACC1E0E06;
+	Tue,  3 Dec 2024 10:49:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733222902; cv=none; b=s/LBr3ZBdQ+H6aOdtCOZ/UKegkValxcRKfJ8sCGDcsH+GPjYVe6kUx5emxzZ3RAUmLvrnaVd26FwjQ0PDLjBLINEiGf2ITTd20rfJOrC1UnaFJik4YU4SAH4PFCwO+PuIl5OLhsD81g9zW/ntxwetAwxntMuEK3uo4pKLAg+hEg=
+	t=1733222955; cv=none; b=B67m03DfJzTk597ARjPSqzU9hOSmfb3BzUgCgpW8ArtrXMvbzM9SAOWvvINXusoppkIO/3vAPBlD1OHhZkBXeRGWDAL+uyT4TwjqSvsRCaIsXx8byNu5uau1dp9Nx6asdrZivVeH0tUplb2548mj+FskAYNqwGRafp1asrjcH2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733222902; c=relaxed/simple;
-	bh=dJFQEv4Xxhh02RxjGMUH5vLtFgBKBRerslEin2vZrbU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CHlReZlPQKCG56JD9YsSQCBGk4hSwkc23Ki5z2bG6IEKiTOkMCko9vZYTeuN/F9rCuJ2F4YJjMmGQuCyKbxjl/RDq9a5gEMOvJ2NynKJKL1L8TeX4BOggEU8bWT/+s0xcM8nlVMSgMhwmabFfuzHdY/Jdqohfn96o4RFRKrCUUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=AJ4QnhJF; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 1E022E1;
-	Tue,  3 Dec 2024 11:47:50 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1733222870;
-	bh=dJFQEv4Xxhh02RxjGMUH5vLtFgBKBRerslEin2vZrbU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AJ4QnhJFmQYcexbMFey5y33sjiXDv4uCgfQrrQExkguUzzHT+hC5aWBsOlL6wpfaI
-	 xmU7o/WRG2ab23rcPtuX+a+XDKenJng/v2aJeW+NSW74dtaNnMuYyhgSkzpSW+3eGW
-	 kcARFRlFRWjc6Bnw+BG2R1rArLiky0pEXDoOwD/A=
-Date: Tue, 3 Dec 2024 12:48:06 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>, Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, LUU HOAI <hoai.luu.ub@renesas.com>,
-	Jagan Teki <jagan@amarulasolutions.com>,
-	Sam Ravnborg <sam@ravnborg.org>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-Subject: Re: [PATCH 6/9] drm/rcar-du: Add support for r8a779h0
-Message-ID: <20241203104806.GN10736@pendragon.ideasonboard.com>
-References: <20241203-rcar-gh-dsi-v1-0-738ae1a95d2a@ideasonboard.com>
- <20241203-rcar-gh-dsi-v1-6-738ae1a95d2a@ideasonboard.com>
- <20241203085654.GJ10736@pendragon.ideasonboard.com>
- <e155c9b1-a43f-4be3-9825-2639ac3bb61d@ideasonboard.com>
+	s=arc-20240116; t=1733222955; c=relaxed/simple;
+	bh=5Z4X0EAWcr5p4VVQqtsIZbtRervKtcuPtRuQeOBrjfM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=OUabxql2ZMYAcS2lhFIfwCwbsh8Q2FHXM7gD8110XRfQKZ8TAtKv75gseu3XELFQhj4HLcKbiUO6fIuESKe2VSyGHr8MLHWvE3C5tHdl8to3eQ0FbVrgpNlJghzv6jzdVDM5qwpSDYIknlc4OeXeqfNcJJmLojniSowM3WwATUE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=RR4ARQhm; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B39qtDA026206;
+	Tue, 3 Dec 2024 10:49:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	gg4Lw6AUq6SV1FhaAaFneT1sAjYVNu0Q1HHTBk/S4b8=; b=RR4ARQhmjaixtGDB
+	msaXKXL+Cv19LWozbVadj3UmSavjDy0rHqwFvimMvw+GQC3EDsHmBRXgdZW4baZi
+	DL/P26LXh7kUspmS5Wdm1BxOcETfWE8eRbxQKD/fCnjaBjy0YgXG2c/3gST9wJVw
+	ZIGKkPQLbiSmGWST+Nxts/l9jQt/mHbULXKtYaGPNuuzePPn4tBrH+26x20xU+rC
+	ZOzAgcLDx0gviKr+PAcaP8iGnrF4dEZedthJInfi/56/NmBJDEN4oXnkFvMdFZHI
+	0ay0c64/6InvyFbpZCnVhBTc1pdhYvGUBOv8QISNf6itPp4GBJxpc9OheJ3qdRJR
+	kMwa4g==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 439yr9g42p-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 03 Dec 2024 10:49:05 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B3An4Bk019314
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 3 Dec 2024 10:49:04 GMT
+Received: from [10.231.194.79] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 3 Dec 2024
+ 02:49:01 -0800
+Message-ID: <99359cc4-2279-4a8a-80a1-d5475fd5208d@quicinc.com>
+Date: Tue, 3 Dec 2024 18:48:58 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <e155c9b1-a43f-4be3-9825-2639ac3bb61d@ideasonboard.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] wifi: ath11k: allow APs combination when dual stations
+ are supported
+To: Jose Ignacio Tornos Martinez <jtornosm@redhat.com>
+CC: <ath11k@lists.infradead.org>, <jjohnson@kernel.org>, <kvalo@kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-wireless@vger.kernel.org>,
+        <quic_cjhuang@quicinc.com>, <vbenes@redhat.com>
+References: <20bf2693-ce53-48e9-8b54-7e3273815033@quicinc.com>
+ <20241203094820.106225-1-jtornosm@redhat.com>
+Content-Language: en-US
+From: "Yu Zhang (Yuriy)" <quic_yuzha@quicinc.com>
+In-Reply-To: <20241203094820.106225-1-jtornosm@redhat.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: czjW776TEvtDxPyjodd6NLP1DK-ddMHT
+X-Proofpoint-GUID: czjW776TEvtDxPyjodd6NLP1DK-ddMHT
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 impostorscore=0
+ clxscore=1015 priorityscore=1501 mlxlogscore=999 phishscore=0
+ lowpriorityscore=0 malwarescore=0 mlxscore=0 suspectscore=0 adultscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412030093
 
-On Tue, Dec 03, 2024 at 11:22:15AM +0200, Tomi Valkeinen wrote:
-> On 03/12/2024 10:56, Laurent Pinchart wrote:
-> > On Tue, Dec 03, 2024 at 10:01:40AM +0200, Tomi Valkeinen wrote:
-> >> From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-> >>
-> >> Add support for r8a779h0. It is very similar to r8a779g0, but has only
-> >> one output.
-> >>
-> >> Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-> >> ---
-> >>   drivers/gpu/drm/renesas/rcar-du/rcar_du_drv.c   | 19 +++++++++++++++++++
-> >>   drivers/gpu/drm/renesas/rcar-du/rcar_du_drv.h   |  1 +
-> >>   drivers/gpu/drm/renesas/rcar-du/rcar_du_group.c | 16 ++++++++++------
-> >>   3 files changed, 30 insertions(+), 6 deletions(-)
-> >>
-> >> diff --git a/drivers/gpu/drm/renesas/rcar-du/rcar_du_drv.c b/drivers/gpu/drm/renesas/rcar-du/rcar_du_drv.c
-> >> index fb719d9aff10..afbc74e18cce 100644
-> >> --- a/drivers/gpu/drm/renesas/rcar-du/rcar_du_drv.c
-> >> +++ b/drivers/gpu/drm/renesas/rcar-du/rcar_du_drv.c
-> >> @@ -545,6 +545,24 @@ static const struct rcar_du_device_info rcar_du_r8a779g0_info = {
-> >>   	.dsi_clk_mask =  BIT(1) | BIT(0),
-> >>   };
-> >>   
-> >> +static const struct rcar_du_device_info rcar_du_r8a779h0_info = {
-> >> +	.gen = 4,
-> >> +	.features = RCAR_DU_FEATURE_CRTC_IRQ
-> >> +		  | RCAR_DU_FEATURE_VSP1_SOURCE
-> >> +		  | RCAR_DU_FEATURE_NO_BLENDING
-> >> +		  | RCAR_DU_FEATURE_NO_DPTSR,
-> >> +	.channels_mask = BIT(0),
-> >> +	.routes = {
-> >> +		/* R8A779H0 has one MIPI DSI output. */
-> >> +		[RCAR_DU_OUTPUT_DSI0] = {
-> >> +			.possible_crtcs = BIT(0),
-> >> +			.port = 0,
-> >> +		},
-> >> +	},
-> >> +	.num_rpf = 5,
-> >> +	.dsi_clk_mask = BIT(0),
-> >> +};
-> >> +
-> >>   static const struct of_device_id rcar_du_of_table[] = {
-> >>   	{ .compatible = "renesas,du-r8a7742", .data = &rcar_du_r8a7790_info },
-> >>   	{ .compatible = "renesas,du-r8a7743", .data = &rzg1_du_r8a7743_info },
-> >> @@ -571,6 +589,7 @@ static const struct of_device_id rcar_du_of_table[] = {
-> >>   	{ .compatible = "renesas,du-r8a77995", .data = &rcar_du_r8a7799x_info },
-> >>   	{ .compatible = "renesas,du-r8a779a0", .data = &rcar_du_r8a779a0_info },
-> >>   	{ .compatible = "renesas,du-r8a779g0", .data = &rcar_du_r8a779g0_info },
-> >> +	{ .compatible = "renesas,du-r8a779h0", .data = &rcar_du_r8a779h0_info },
-> >>   	{ }
-> >>   };
-> >>   
-> >> diff --git a/drivers/gpu/drm/renesas/rcar-du/rcar_du_drv.h b/drivers/gpu/drm/renesas/rcar-du/rcar_du_drv.h
-> >> index 5cfa2bb7ad93..d7004f76f735 100644
-> >> --- a/drivers/gpu/drm/renesas/rcar-du/rcar_du_drv.h
-> >> +++ b/drivers/gpu/drm/renesas/rcar-du/rcar_du_drv.h
-> >> @@ -32,6 +32,7 @@ struct rcar_du_device;
-> >>   #define RCAR_DU_FEATURE_INTERLACED	BIT(3)	/* HW supports interlaced */
-> >>   #define RCAR_DU_FEATURE_TVM_SYNC	BIT(4)	/* Has TV switch/sync modes */
-> >>   #define RCAR_DU_FEATURE_NO_BLENDING	BIT(5)	/* PnMR.SPIM does not have ALP nor EOR bits */
-> >> +#define RCAR_DU_FEATURE_NO_DPTSR	BIT(6)  /* V4M does not have DPTSR */
-> > 
-> > Do we need a quirk ? At first glance it seems the DPTSR register is only
-> > used for DU instances that have two channels, so a check on the number
-> > of channels should be enough ?
+
+
+On 12/3/2024 5:48 PM, Jose Ignacio Tornos Martinez wrote:
+>> Which chip do you use?
+> Since I am not totally sure about the useful information, let me show you
+> the kernel logs:
+> $ dmesg | grep ath11k
+> [    3.659388] ath11k_pci 0000:01:00.0: BAR 0 [mem 0x84200000-0x843fffff 64bit]: assigned
+> [    3.659405] ath11k_pci 0000:01:00.0: enabling device (0000 -> 0002)
+> [    3.659649] ath11k_pci 0000:01:00.0: MSI vectors: 32
+> [    3.659653] ath11k_pci 0000:01:00.0: wcn6855 hw2.1
+> [    4.871571] ath11k_pci 0000:01:00.0: chip_id 0x2 chip_family 0xb board_id 0xff soc_id 0x400c0210
+> [    4.871586] ath11k_pci 0000:01:00.0: fw_version 0x11088c35 fw_build_timestamp 2024-04-17 08:34 fw_build_id WLAN.HSP.1.1-03125-QCAHSPSWPL_V1_V2_SILICONZ_LITE-3.6510.41
+> [    5.241485] ath11k_pci 0000:01:00.0 wlp1s0: renamed from wlan0
 > 
-> What do you mean with "DPTSR register is only used for DU instances that 
-> have two channels"? The upstream code sets it for all SoCs, doesn't it, 
-> without any checks?
-
-DPTSR is one of those registers that controls features shared between
-channels, in this specific case plane assignment to DU channels. The
-default register value (i.e. all 0's) splits resources between the
-channels. For DU groups with a single channel, there's no need for
-resource assignment. Logically speaking, the all 0's register value as
-documented in instances that have two channels would assign all the
-resources that exist in the single-channel group to the single channel.
-When computing the DPTSR value, the driver will (or at least should)
-therefore always come up with 0x00000000. Writing that to the register
-should be a no-op.
-
-It's not clear if the register is present or not when the group has a
-single channel. Some datasheets document the register is not being
-applicable. Writing to it has never caused issues, so we may be dealing
-with the hardware just ignoring writes to a non-implemented register, or
-the register may be there, with only 0x00000000 being a meaningful
-value. This being said, some people are concerned about writes to
-registers that are not documented as present, as they could possibly
-cause issues. Safety certification of the driver could be impacted.
-We've updated the DU driver over the past few years to avoid those
-writes for this reason.
-
-TL;DR: yes, the DU driver writes to DPTSR for DU groups with a single
-channel, but that seem it could be wrong, and we could fix it for all
-single-channel groups in one go without introducing this feature bit. I
-can test a patch on a M3 board that has a single channel in the second
-group.
-
-> Most of the SoCs seem to have two channels, but r8a77970 has one. 
-> However, I don't have docs for that one. It could be that it does not 
-> have DPTSR register, and indeed we could use the num_crtcs > 1 check there.
+yes, you also use wcn6855 hw2.1.
+> If I try to setup 2 APs with your interface combination I get this:
+> # iw list | grep -A6 "valid interface combinations:"
+> 	valid interface combinations:
+> 		 * #{ managed } <= 2, #{ AP, P2P-client, P2P-GO } <= 16, #{ P2P-device } <= 1,
+> 		   total <= 16, #channels <= 1, STA/AP BI must match, radar detect widths: { 20 MHz (no HT), 20 MHz, 40 MHz, 80 MHz, 80+80 MHz, 160 MHz }
 > 
-> >>   #define RCAR_DU_QUIRK_ALIGN_128B	BIT(0)	/* Align pitches to 128 bytes */
-> >>   
-> >> diff --git a/drivers/gpu/drm/renesas/rcar-du/rcar_du_group.c b/drivers/gpu/drm/renesas/rcar-du/rcar_du_group.c
-> >> index 2ccd2581f544..132d930670eb 100644
-> >> --- a/drivers/gpu/drm/renesas/rcar-du/rcar_du_group.c
-> >> +++ b/drivers/gpu/drm/renesas/rcar-du/rcar_du_group.c
-> >> @@ -107,10 +107,12 @@ static void rcar_du_group_setup_didsr(struct rcar_du_group *rgrp)
-> >>   		 */
-> >>   		rcrtc = rcdu->crtcs;
-> >>   		num_crtcs = rcdu->num_crtcs;
-> >> -	} else if (rcdu->info->gen >= 3 && rgrp->num_crtcs > 1) {
-> >> +	} else if ((rcdu->info->gen == 3 && rgrp->num_crtcs > 1) ||
-> >> +		   rcdu->info->gen == 4) {
-> >>   		/*
-> >>   		 * On Gen3 dot clocks are setup through per-group registers,
-> >>   		 * only available when the group has two channels.
-> >> +		 * On Gen4 the registers are there for single channel too.
-> >>   		 */
-> >>   		rcrtc = &rcdu->crtcs[rgrp->index * 2];
-> >>   		num_crtcs = rgrp->num_crtcs;
-> >> @@ -185,11 +187,13 @@ static void rcar_du_group_setup(struct rcar_du_group *rgrp)
-> >>   		dorcr |= DORCR_PG1T | DORCR_DK1S | DORCR_PG1D_DS1;
-> >>   	rcar_du_group_write(rgrp, DORCR, dorcr);
-> >>   
-> >> -	/* Apply planes to CRTCs association. */
-> >> -	mutex_lock(&rgrp->lock);
-> >> -	rcar_du_group_write(rgrp, DPTSR, (rgrp->dptsr_planes << 16) |
-> >> -			    rgrp->dptsr_planes);
-> >> -	mutex_unlock(&rgrp->lock);
-> >> +	if (!rcar_du_has(rcdu, RCAR_DU_FEATURE_NO_DPTSR)) {
-> >> +		/* Apply planes to CRTCs association. */
-> >> +		mutex_lock(&rgrp->lock);
-> >> +		rcar_du_group_write(rgrp, DPTSR, (rgrp->dptsr_planes << 16) |
-> >> +				    rgrp->dptsr_planes);
-> >> +		mutex_unlock(&rgrp->lock);
-> >> +	}
-> >>   }
-> >>   
-> >>   /*
+> 		 * #{ managed } <= 2, #{ AP, P2P-client, P2P-GO } <= 16, #{ P2P-device } <= 1,
+> 		   total <= 3, #channels <= 2, STA/AP BI must match
+> 	HT Capability overrides:
+2 combinations are to support DBS and DFS.
+Combinations is correct. channels=2, max interfaces=3.
 
--- 
-Regards,
+And you want setup sta + sap + sap, right?
+When up the second sap will meet error? Could you pls share the error logs?
 
-Laurent Pinchart
+I'm not very sure if you add all interface with managed type, and do 
+"ifconfig xxx up" before running hostapd.
+
+You can try add second and third interface with
+"iw dev xx interface add xx type __ap".
+
+
+> # iw dev
+> phy#0
+> 	Interface wlp1s0_1
+> 		ifindex 6
+> 		wdev 0x4
+> 		addr a2:42:d2:1e:89:a3
+> 		type managed
+> 		txpower 16.00 dBm
+> 		multicast TXQ:
+> 			qsz-byt	qsz-pkt	flows	drops	marks	overlmt	hashcol	tx-bytes	tx-packets
+> 			0	0	0	0	0	0	0	0		0
+> 	Interface wlp1s0_0
+> 		ifindex 5
+> 		wdev 0x3
+> 		addr 52:e9:be:33:6a:61
+> 		ssid test-qe-wpa2-psk
+> 		type AP
+> 		channel 13 (2472 MHz), width: 20 MHz, center1: 2472 MHz
+> 		txpower 14.00 dBm
+> 		multicast TXQ:
+> 			qsz-byt	qsz-pkt	flows	drops	marks	overlmt	hashcol	tx-bytes	tx-packets
+> 			0	0	0	0	0	0	0	0		0
+> 	Interface wlp1s0
+> 		ifindex 3
+> 		wdev 0x1
+> 		addr c8:94:02:b5:fe:fb
+> 		type managed
+> 		txpower 16.00 dBm
+> 		multicast TXQ:
+> 			qsz-byt	qsz-pkt	flows	drops	marks	overlmt	hashcol	tx-bytes	tx-packets
+> 			0	0	0	0	0	0	0	0		0
+> Or even this with no AP up:
+> # iw dev
+> phy#0
+> 	Interface wlp1s0_1
+> 		ifindex 6
+> 		wdev 0x4
+> 		addr ca:e5:84:22:10:ec
+> 		type managed
+> 		txpower 16.00 dBm
+> 		multicast TXQ:
+> 			qsz-byt	qsz-pkt	flows	drops	marks	overlmt	hashcol	tx-bytes	tx-packets
+> 			0	0	0	0	0	0	0	0		0
+> 	Interface wlp1s0_0
+> 		ifindex 5
+> 		wdev 0x3
+> 		addr 9e:4e:c5:ea:4c:e9
+> 		type AP
+> 		txpower 16.00 dBm
+> 		multicast TXQ:
+> 			qsz-byt	qsz-pkt	flows	drops	marks	overlmt	hashcol	tx-bytes	tx-packets
+> 			0	0	0	0	0	0	0	0		0
+> 	Interface wlp1s0
+> 		ifindex 3
+> 		wdev 0x1
+> 		addr c8:94:02:b5:fe:fb
+> 		type managed
+> 		txpower 16.00 dBm
+> 		multicast TXQ:
+> 			qsz-byt	qsz-pkt	flows	drops	marks	overlmt	hashcol	tx-bytes	tx-packets
+> 			0	0	0	0	0	0	0	0		0
+> 
+> If I use the parameter to ignore the feature and configure the interface combination as before:
+> # iw list | grep -A4 "valid interface combinations:"
+> 	valid interface combinations:
+> 		 * #{ managed } <= 1, #{ AP, P2P-client, P2P-GO } <= 16, #{ P2P-device } <= 1,
+> 		   total <= 16, #channels <= 1, STA/AP BI must match, radar detect widths: { 20 MHz (no HT), 20 MHz, 40 MHz, 80 MHz }
+> 
+> 	HT Capability overrides:
+> # iw dev
+> phy#1
+> 	Interface wlp1s0_1
+> 		ifindex 7
+> 		wdev 0x100000004
+> 		addr 82:90:89:90:c1:37
+> 		ssid test-qe-wpa3-psk
+> 		type AP
+> 		channel 13 (2472 MHz), width: 20 MHz, center1: 2472 MHz
+> 		txpower 16.00 dBm
+> 		multicast TXQ:
+> 			qsz-byt	qsz-pkt	flows	drops	marks	overlmt	hashcol	tx-bytes	tx-packets
+> 			0	0	0	0	0	0	0	0		0
+> 	Interface wlp1s0_0
+> 		ifindex 6
+> 		wdev 0x100000003
+> 		addr 6a:ef:d0:db:10:f0
+> 		ssid test-qe-wpa2-psk
+> 		type AP
+> 		channel 13 (2472 MHz), width: 20 MHz, center1: 2472 MHz
+> 		txpower 16.00 dBm
+> 		multicast TXQ:
+> 			qsz-byt	qsz-pkt	flows	drops	marks	overlmt	hashcol	tx-bytes	tx-packets
+> 			0	0	0	0	0	0	0	0		0
+> 	Interface wlp1s0
+> 		ifindex 4
+> 		wdev 0x100000001
+> 		addr c8:94:02:b5:fe:fb
+> 		type managed
+> 		txpower 16.00 dBm
+> 		multicast TXQ:
+> 			qsz-byt	qsz-pkt	flows	drops	marks	overlmt	hashcol	tx-bytes	tx-packets
+> 			0	0	0	0	0	0	0	0		0
+> 
+> Thanks
+> 
+> Best regards
+> Jose Ignacio
+> 
+
 
