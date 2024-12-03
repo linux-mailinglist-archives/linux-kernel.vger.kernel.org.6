@@ -1,146 +1,179 @@
-Return-Path: <linux-kernel+bounces-429706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D73A59E20D0
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:03:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D84B89E20FE
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:06:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE996169312
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 15:01:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67F681698A5
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 15:03:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C1FC1F75B3;
-	Tue,  3 Dec 2024 15:01:33 +0000 (UTC)
-Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22A941F75AE;
+	Tue,  3 Dec 2024 15:03:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="YEPhEVrF"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26B4C1F7576
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 15:01:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D933533FE;
+	Tue,  3 Dec 2024 15:03:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733238092; cv=none; b=KrbmM2Xabttf/6d872uPT4k7hKdtW5uzosaIRowx0jHXiWjgytD1uIRuUrX9UP88sHHxgsGop4RS1rdN8nQPJWe5y6oGsRzjapawmtQY5zPrbg5HM+2dJEa6JAlcuC7730K5bxIcwXP0ZQD0KpHOHGaJAovKNLLhqajIyPk+eXc=
+	t=1733238219; cv=none; b=akZ7gbOCRE9IsSoC7hGLVWsgDvV5rj8lT7u9LAYBrnxPXnisB0q3crksDzw+pS9m/NMf0pKLPukXVkkQ13q1kx3SOHMTtTNgA/4avepW72+h4TXjHWTlrLGErnUV4Yj12pJqt6TukVzRrzrXSkxwD+xl3c06ets6i+YQfDN1kzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733238092; c=relaxed/simple;
-	bh=epfXPtQQGV/4eFzs7XpCiT2I2Fk+Ddf8QWi9zuNcTjE=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=GW//2dEBwltZ1Kjls+83NcNfDTVUuA/oqMalnTK0QYrzTMfGl16Gza4hTcmCraqJQI+R6/yP5UjDrvuyDOc46H4YgdM34zqHgUJvYRIOiJUz3hNmIVZyl/8BHUB7u5YcXaeofJ/XKPSDWPaMjKIvdVsdT+/aR3TXGRbxwXFtUpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-84188ac27bdso503805539f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 07:01:30 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733238090; x=1733842890;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=htusEmkyDY/hbdcduVlcNhrCjMOkDBfuFuzKEt3oxJ0=;
-        b=LgDa+Xn14PFk+qLcORGeLTMVNqhvoHRB7vlSFl4jx79JTWOWxk/Wjtwk/ZLJEDp+b3
-         f4b68zMGiIGgdQRc+eojT/MM3IUKP7BcL1uEAecBRh9IZiJa6IHkDows1S9qvEP6KuIs
-         vctz+xaLvH1Egj65128ge/zV4vnIN6oUH3dBCe7GuMLiB2lJ3WlLPPPvZmzRmNXJDPYD
-         MXfpJ+KBHAu49g/D9EMHnAwT4T0fZttYVCbeKCnhmdwdawdotS3zZD0l0M9COJjbhuFk
-         HhkeBx0gIGUyidOh486mmDPbrrpa28eZep1NH1KqNk0xT1T8EnthE48J/UnI4gSdjHbQ
-         jM0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUwnTSGhKT3ujwc7dF1IKTLS6sjqwLtsJ2r2IRInXBO3vRonOsvdY4TQxTPWVjNeczwtVHxYa/r31DWbrI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywt1xYHvgWtneFIx40ykXNyq0IETteyE3AMWUYdl+QKurOzyaRw
-	gj2Ew24mSwq+aOlVEfjV5A0X8eFz/HfeYk24YUNO3oKfGXo4na98FsROTvTrndtYzjfbrwnGO2F
-	ty55nigLVFspOXlqfkUta236qYDZaQjiI3ovFXf591zQ94jfIbypE6TY=
-X-Google-Smtp-Source: AGHT+IEbjGX4zYdW+eNsISIwwcOpV6m4rCfsdUDuP40rWLKfNrY/QCJxUommigDOdl5Hxs2Y7WIN81pSYj8Q7Uiy77OOs2aChOdb
+	s=arc-20240116; t=1733238219; c=relaxed/simple;
+	bh=mBYRXw2fAY2rADsGqfrX/V45Ur3RlgA4Uz9jGwAr0RY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=PWLdiuoVhqQ5FoYg/OVe5Qc5V+/2FErhzlfweqxs+U7TwXoCRElgLRuvTMWeU/sxsGZrlHCNOjdq/bFBDAV/56JzwkVFmHlkqybG/y1vzGYAuE1/REZCGuFOT9l+A942mjCJPIVi3UzfDJs1/hwZiLtd6Blf4EU/RDPwQa9H4zg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=YEPhEVrF; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B39qfIw025869;
+	Tue, 3 Dec 2024 15:03:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	FH9erZS96n4ZTw/Bg76WPXMK3nYn4CXdCAOmD6/eekg=; b=YEPhEVrFL6T4SVhI
+	DUoppbbjIktJbGeAkMT2Ykl2Im6fG5vNqd244mYkpPbBQkBRtg6TToOM3s8wBn2u
+	ficbEWdWDrVWixKIiJAo69H3Bxr6UIxRjAH/AhYkojKvxGlmGHj460Cjp3RQ3y3K
+	0ziyAmQxn2zMX49owUQllr2LegF4c87ArVzmeFxDm8Xto0dlP1nwaZcqsgCsOGSN
+	ZC8FhLvm5AwonAhIgSRB1P5l29+UR8RFY2/mGXpnnpet9hY/ui+JhK351z6/5qVj
+	RJOCOEsXYo2oFBBDUhwg5d5SXU5FgoXpxjaa/WhNWzyf8GlC4kBJ+mt6PyTLL73G
+	//b62A==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 439yr9gqew-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 03 Dec 2024 15:03:30 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B3F3T6U026257
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 3 Dec 2024 15:03:29 GMT
+Received: from [10.217.216.47] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 3 Dec 2024
+ 07:03:24 -0800
+Message-ID: <e6c17b91-e771-480e-b46d-f11c167a96bf@quicinc.com>
+Date: Tue, 3 Dec 2024 20:33:21 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c265:0:b0:3a7:e8df:3fde with SMTP id
- e9e14a558f8ab-3a7f9a46252mr27511935ab.9.1733238089926; Tue, 03 Dec 2024
- 07:01:29 -0800 (PST)
-Date: Tue, 03 Dec 2024 07:01:29 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <674f1d49.050a0220.48a03.003b.GAE@google.com>
-Subject: [syzbot] [f2fs?] KMSAN: uninit-value in f2fs_new_node_page
-From: syzbot <syzbot+5141f6db57a2f7614352@syzkaller.appspotmail.com>
-To: chao@kernel.org, jaegeuk@kernel.org, 
-	linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] arm64: dts: qcom: sa8775p: Add CPU OPP tables to
+ scale DDR/L3
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Brian Masney <bmasney@redhat.com>, Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Ajit Pandey <quic_ajipan@quicinc.com>,
+        "Imran
+ Shaik" <quic_imrashai@quicinc.com>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        "Satya Priya Kakitapalli" <quic_skakitap@quicinc.com>,
+        Shivnandan Kumar
+	<quic_kshivnan@quicinc.com>
+References: <20241017-sa8775p-cpufreq-l3-ddr-scaling-v1-0-074e0fb80b33@quicinc.com>
+ <20241017-sa8775p-cpufreq-l3-ddr-scaling-v1-2-074e0fb80b33@quicinc.com>
+ <ZxEwVShJuMH4J1Hp@x1> <9179759d-7af1-409f-8130-1136c9ae4ecd@quicinc.com>
+ <daqa3krsp6emdha6h7tlcelsggb6qeilnojgtfxjbp5zw4n6ow@xzwdmu55ygjf>
+Content-Language: en-US
+From: Jagadeesh Kona <quic_jkona@quicinc.com>
+In-Reply-To: <daqa3krsp6emdha6h7tlcelsggb6qeilnojgtfxjbp5zw4n6ow@xzwdmu55ygjf>
 Content-Type: text/plain; charset="UTF-8"
-
-Hello,
-
-syzbot found the following issue on:
-
-HEAD commit:    0e287d31b62b Merge tag 'rtc-6.13' of git://git.kernel.org/..
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=117ddf78580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b131ba4658863ffa
-dashboard link: https://syzkaller.appspot.com/bug?extid=5141f6db57a2f7614352
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=145a65e8580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=157ddf78580000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/19a3d9ed3459/disk-0e287d31.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/3473a586f547/vmlinux-0e287d31.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/bfd02e5a5157/bzImage-0e287d31.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/f9968897b785/mount_0.gz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+5141f6db57a2f7614352@syzkaller.appspotmail.com
-
-F2FS-fs (loop0): Mounted with checkpoint version = 48b305e5
-F2FS-fs (loop0): f2fs_check_nid_range: out-of-range nid=1, run fsck to fix.
-F2FS-fs (loop0): f2fs_check_nid_range: out-of-range nid=2, run fsck to fix.
-=====================================================
-BUG: KMSAN: uninit-value in f2fs_new_node_page+0x14c5/0x1690 fs/f2fs/node.c:1341
- f2fs_new_node_page+0x14c5/0x1690 fs/f2fs/node.c:1341
- f2fs_new_inode_page+0xb6/0x100 fs/f2fs/node.c:1311
- f2fs_init_inode_metadata+0x18b/0x1e40 fs/f2fs/dir.c:501
- f2fs_add_inline_entry+0x5f5/0xbe0 fs/f2fs/inline.c:665
- f2fs_add_dentry fs/f2fs/dir.c:742 [inline]
- f2fs_do_add_link+0x4b0/0xad0 fs/f2fs/dir.c:785
- f2fs_add_link fs/f2fs/f2fs.h:3628 [inline]
- f2fs_symlink+0x6d5/0xf80 fs/f2fs/namei.c:641
- vfs_symlink+0x1ed/0x460 fs/namei.c:4669
- do_symlinkat+0x253/0x8b0 fs/namei.c:4695
- __do_sys_symlink fs/namei.c:4716 [inline]
- __se_sys_symlink fs/namei.c:4714 [inline]
- __x64_sys_symlink+0xe0/0x140 fs/namei.c:4714
- x64_sys_call+0x31ca/0x3c30 arch/x86/include/generated/asm/syscalls_64.h:89
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Local variable new_ni created at:
- f2fs_new_node_page+0xa4/0x1690 fs/f2fs/node.c:1317
- f2fs_new_inode_page+0xb6/0x100 fs/f2fs/node.c:1311
-
-CPU: 0 UID: 0 PID: 5782 Comm: syz-executor986 Not tainted 6.12.0-syzkaller-11930-g0e287d31b62b #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-=====================================================
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: pLAoaY0_fsUXMsB6E8PTMqaMDhOArjt_
+X-Proofpoint-GUID: pLAoaY0_fsUXMsB6E8PTMqaMDhOArjt_
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 impostorscore=0
+ clxscore=1015 priorityscore=1501 mlxlogscore=960 phishscore=0
+ lowpriorityscore=0 malwarescore=0 mlxscore=0 suspectscore=0 adultscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412030127
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+On 11/15/2024 4:18 AM, Dmitry Baryshkov wrote:
+> On Mon, Nov 11, 2024 at 06:39:48PM +0530, Jagadeesh Kona wrote:
+>>
+>>
+>> On 10/17/2024 9:12 PM, Brian Masney wrote:
+>>> On Thu, Oct 17, 2024 at 02:58:31PM +0530, Jagadeesh Kona wrote:
+>>>> +	cpu0_opp_table: opp-table-cpu0 {
+>>>> +		compatible = "operating-points-v2";
+>>>> +		opp-shared;
+>>>> +
+>>>> +		cpu0_opp_1267mhz: opp-1267200000 {
+>>>> +			opp-hz = /bits/ 64 <1267200000>;
+>>>> +			opp-peak-kBps = <6220800 29491200>;
+>>>> +		};
+>>>> +
+>>>> +		cpu0_opp_1363mhz: opp-1363200000 {
+>>>> +			opp-hz = /bits/ 64 <1363200000>;
+>>>> +			opp-peak-kBps = <6220800 29491200>;
+>>>> +		};
+>>>
+>>> [snip]
+>>>
+>>>> +	cpu4_opp_table: opp-table-cpu4 {
+>>>> +		compatible = "operating-points-v2";
+>>>> +		opp-shared;
+>>>> +
+>>>> +		cpu4_opp_1267mhz: opp-1267200000 {
+>>>> +			opp-hz = /bits/ 64 <1267200000>;
+>>>> +			opp-peak-kBps = <6220800 29491200>;
+>>>> +		};
+>>>> +
+>>>> +		cpu4_opp_1363mhz: opp-1363200000 {
+>>>> +			opp-hz = /bits/ 64 <1363200000>;
+>>>> +			opp-peak-kBps = <6220800 29491200>;
+>>>> +		};
+>>>
+>>> There's no functional differences in the cpu0 and cpu4 opp tables. Can
+>>> a single table be used?
+>>>
+>>> This aligns with my recollection that this particular SoC only has the
+>>> gold cores.
+>>>
+>>> Brian
+>>>
+>>
+>> Thanks Brian for your review. Sorry for the delayed response.
+>>
+>> We require separate OPP tables for CPU0 and CPU4 to allow independent
+>> scaling of DDR and L3 frequencies for each CPU domain, with the final
+>> DDR and L3 frequencies being an aggregate of both.
+>>
+>> If we use a single OPP table for both CPU domains, then _allocate_opp_table() [1]
+>> won't be invoked for CPU4. As a result both CPU devices will end up in sharing
+>> the same ICC path handle, which could lead to one CPU device overwriting the bandwidth
+>> votes of other.
+> 
+> All of this should be a part of the commit message.
+> 
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+Thanks Dmitry for your review. Will include this in commit text while posting the next series.
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+Thanks,
+Jagadeesh
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+>>
+>> [1] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/drivers/opp/core.c#n1588
+>>
+>> Thanks,
+>> Jagadeesh
+>>  
+> 
 
