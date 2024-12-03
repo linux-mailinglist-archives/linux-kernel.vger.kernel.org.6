@@ -1,81 +1,124 @@
-Return-Path: <linux-kernel+bounces-430187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CEF39E2D8D
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 21:50:26 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48D7C9E2D9A
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 21:53:19 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B8AF283EDC
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 20:50:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F161165E73
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 20:53:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD346207A31;
-	Tue,  3 Dec 2024 20:50:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19D1C20899C;
+	Tue,  3 Dec 2024 20:53:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="cOT0v3jQ"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mID2fzOG"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACA5B2500D3;
-	Tue,  3 Dec 2024 20:50:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDBF62500DF;
+	Tue,  3 Dec 2024 20:53:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733259019; cv=none; b=XJLap6wLviL6KyrJL+BMU8WKQPt8tBF20mmlrYUxOec01lU59Pm1H7xb2d8yzLHYSQQlQr/81RJGwy9w3mjwktDLoajfngXMKq2qKB8aCJ8t23mRX3qlQPHTffPD2DJTssy6eieGl1p1NIJI5WSqZT0e6VGEJnchuGdpEaw2QTM=
+	t=1733259187; cv=none; b=OXvtc81vB4IGfGPkOzOKoMpUadNLBOhM3rgrO9y4F+6sbpxclj8qrsaSgIfZSA1mLzuZ38iYYEnfW2Pi8x1TV1POcthfGa/mHbReYiRDMV2bn/MUrEnwr/gVO5YW1sARdepWYSQ6y7IiF/WSIix34NKBUKGrY2VlNcodCiw8p/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733259019; c=relaxed/simple;
-	bh=7+j9DnxUn70DjqRYTpQY7FOv8r8Y8PsV/D9Pa6QJk64=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LyCtvhNG4C9anyna7qDAjOfDxncg6TMuym+OyoHKFF+ARJF8unarJLYooW1FTD3jBh+uQ9Nhu8E22GA/3pOl9FIvpRaQRUYrQN9CsM8igBKRYITeC/wkz8KjKRlcZ0pHVDeOwbz6+6jkq5BakhSrnaRGQZtcE+d0HoOfh9aPHjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=cOT0v3jQ; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=8CtVo84DNVMA9mDCGRA2D9tpJTeTMoet2o2LaezMPZw=; b=cOT0v3jQ2qHR0hdaQjzATRtOwa
-	3koVRXGHJ78hiE9Ehp4CKi4rF8afZrR9HqkTtXrUL70OnF9MHO8hNYPkvHzl+70lNcWQjboCVrM4N
-	RtR4FzPtrLfW1e1ORWEsIvhafwWl40rOIxFSQaS1wqgre1dKLqOh5fvcX4qWyRjCtnik=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tIZqT-00F8JK-Tz; Tue, 03 Dec 2024 21:50:09 +0100
-Date: Tue, 3 Dec 2024 21:50:09 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Jijie Shao <shaojijie@huawei.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, andrew+netdev@lunn.ch, horms@kernel.org,
-	shenjian15@huawei.com, wangpeiyang1@huawei.com,
-	liuyonglong@huawei.com, chenhao418@huawei.com,
-	sudongming1@huawei.com, xujunsheng@huawei.com,
-	shiyongbang@huawei.com, libaihan@huawei.com,
-	jonathan.cameron@huawei.com, shameerali.kolothum.thodi@huawei.com,
-	salil.mehta@huawei.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, hkelam@marvell.com
-Subject: Re: [PATCH V4 RESEND net-next 5/7] net: hibmcge: Add pauseparam
- supported in this module
-Message-ID: <ec478652-0400-403c-bac5-308809f840fa@lunn.ch>
-References: <20241203150131.3139399-1-shaojijie@huawei.com>
- <20241203150131.3139399-6-shaojijie@huawei.com>
+	s=arc-20240116; t=1733259187; c=relaxed/simple;
+	bh=7vOYvY5TbPZmGbexNGwjy2JQ7ZwrhWQ6zfBBqyni0HA=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=fhPyfWawy9cmwP9A0pANQ6ivKfHmvu3nOtqSs23J+yo9dKHqISUN1+qOiryok6XGyw98vWJx327DaMUpkAZ1Vrcgqbq4/e/XujFjvoEgxffdWPmVCi6HJRLGjCqCIVm0+qQeKFydvS7o1Hdlc9vNDMGlPlCzuqocZ8b4OMLR8UA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mID2fzOG; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-385e971a2a0so195374f8f.1;
+        Tue, 03 Dec 2024 12:53:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733259184; x=1733863984; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nlNuitTZFZCo2sl0s4Qjh5ZaAlabXpVfXzg958L8UNc=;
+        b=mID2fzOGZZYvzMHCau65MIhrmnfVP8hZ9KkH02BmsbjJCLLWSOA9vnTggffvQTqqsl
+         nEUAUv0IRi83YZKKbltU3RH6p1Yp2lQDAeaSpqPDvkTUVoWdb4eAkOzXKNQou/vh1mcd
+         ZP+K5HV0szpo41KnhChgftzz7VkplUF3QyQC7FADObM0L12a6wbst3d2mVHel75RawjN
+         2i1KBMGd6yEnMlYts40muPWeuPL147Y665FldMOFVbn7kklgApsnb6ZVZmdP7FQtf1Bs
+         bf2u7lC2Wljt9nputg55zKXEzKgWPHDMTi/cQpUUaI/z/GJjvrhdO4C1juwB3/1zdTDI
+         puvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733259184; x=1733863984;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nlNuitTZFZCo2sl0s4Qjh5ZaAlabXpVfXzg958L8UNc=;
+        b=dcCN/I/8t0S9S5b1nyhz1yrfkNGmNT6Mk0EpaUAj3zlS/CNP9IZk0Cqc9gaNKLT5Tv
+         c+7vyIf7tEiQE0VNjy0fNf4G3QhoEc/2NNiBoCUi5o4j6EkWXtWibwGrGKo4wpCC/cgV
+         /Z+DSR4zs2F3i/FgWI0j9bh6fe59MWR96nz+tF4HxEOBcw60UmFaLVCknkVvYo3mOcgS
+         NU5Pwj85qVZgXZfLulInStkOu7MCaKD9Oef168Obw04uhr3dQc09C9ZnnrUFTF0mrDhZ
+         Aj6z5VgBDsbB23zMifMf4YdSLqEpoKQJfZLKuX9PEwpwoyoSEBLEX1AOzdxbWAKR8tPA
+         ky4g==
+X-Forwarded-Encrypted: i=1; AJvYcCVkhWCU1irR9wOxAgcubchprDqnMKdqx7O3QHXhLdAxWVJQxksBCxAWuF99xgCdfqyuxn38QT1CDf92AMjl@vger.kernel.org, AJvYcCXTaNakvtcri5qtRAPbZj3SQjrVS1tGDkSXsLFX7r9wkuL7TlhN+kpqmkO6PNx543Hw9KGIxxzuCNU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy68UWYP57FP9aREIH/hadCRJhUj4a5t32CJH3jTB2b2udvOFbS
+	aUKgaJ7uss2Y1QepqUwUWs7U3tZIej9zUixZLZMlKGnO3Vf0Udiu
+X-Gm-Gg: ASbGncu6DTWy99KwX1TsP9EOvk8CP5nnZgxe0+LaTJyx4Yq3k8Qnhxup/DLoYfHyrPM
+	nyqrVv5ANKgG70o9S37phpOiM2UHWWyfsW8/ntPasRnzwEu1M5p7BOVVgOgeKFRsWfHhSc5Yp4s
+	EQ+Nk9JtLgtV7JPfcjBAqWIUiCgWV+roL0ULIdcnRetbB8wtU11VBZ6vGR58uvkLlGIeMQmz6Lx
+	gtSc5zaXKlr8SM+jPnR+1L3LAjIAo/R32tuvytOD0v+7mc9ty4ivsbELBEAoxIazSg9dBzf9JB2
+	7R95VknW0yuBhXssACFI9N79r5Ie
+X-Google-Smtp-Source: AGHT+IFyDkmUF3rc6sE3VH83woRWDaACftxSHJ1QZYWXQFmOur5Gk92I5nHz/okccLD6kp2HiQPeEQ==
+X-Received: by 2002:a05:600c:138a:b0:430:52ec:1e2a with SMTP id 5b1f17b1804b1-434d22fb82amr11161225e9.7.1733259183955;
+        Tue, 03 Dec 2024 12:53:03 -0800 (PST)
+Received: from 7b58d44c4ff6.v.cablecom.net (84-72-156-211.dclient.hispeed.ch. [84.72.156.211])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385ebaf3bccsm9042750f8f.68.2024.12.03.12.53.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Dec 2024 12:53:03 -0800 (PST)
+From: Lothar Rubusch <l.rubusch@gmail.com>
+To: lars@metafoo.de,
+	Michael.Hennerich@analog.com,
+	jic23@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org
+Cc: devicetree@vger.kernel.org,
+	linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	eraretuya@gmail.com,
+	l.rubusch@gmail.com
+Subject: [PATCH v3 01/10] iio: accel: adxl345: fix comment on probe
+Date: Tue,  3 Dec 2024 20:52:32 +0000
+Message-Id: <20241203205241.48077-2-l.rubusch@gmail.com>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20241203205241.48077-1-l.rubusch@gmail.com>
+References: <20241203205241.48077-1-l.rubusch@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241203150131.3139399-6-shaojijie@huawei.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Dec 03, 2024 at 11:01:29PM +0800, Jijie Shao wrote:
-> The MAC can automatically send or respond to pause frames.
-> This patch supports the function of enabling pause frames
-> by using ethtool.
-> 
-> Signed-off-by: Jijie Shao <shaojijie@huawei.com>
+Fix comment on the probe function. Add covered sensors and fix typo.
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
+---
+ drivers/iio/accel/adxl345_core.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-    Andrew
+diff --git a/drivers/iio/accel/adxl345_core.c b/drivers/iio/accel/adxl345_core.c
+index b1efab0f640..cf73d7052e9 100644
+--- a/drivers/iio/accel/adxl345_core.c
++++ b/drivers/iio/accel/adxl345_core.c
+@@ -169,8 +169,7 @@ static void adxl345_powerdown(void *regmap)
+ }
+ 
+ /**
+- * adxl345_core_probe() - probe and setup for the adxl345 accelerometer,
+- *                        also covers the adlx375 accelerometer
++ * adxl345_core_probe() - Probe and setup for the accelerometer.
+  * @dev:	Driver model representation of the device
+  * @regmap:	Regmap instance for the device
+  * @setup:	Setup routine to be executed right before the standard device
+-- 
+2.39.5
+
 
