@@ -1,127 +1,142 @@
-Return-Path: <linux-kernel+bounces-428745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D0C69E12D1
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 06:15:10 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DED649E12D3
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 06:16:31 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9AEC164E1D
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 05:15:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 86016B2270E
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 05:16:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C65F175D39;
-	Tue,  3 Dec 2024 05:15:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41576148FED;
+	Tue,  3 Dec 2024 05:16:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="do+0H8dL"
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="S0WbgNkI"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73FA8817;
-	Tue,  3 Dec 2024 05:15:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5B126FC3
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 05:16:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733202901; cv=none; b=kSnzObOUAxY0qjLJfydt0MqiBkcSl4c+A7nIGK4aVdKbQmTSrsBifqYDH3PFko2A07qOJgdr1j2AItAjuyv0UvfqSqlbi6o+a9+AIlI1sU6NLgSdtszQci0KsL3z6Tuec39rZ77NrFwxH1ZHNl9q6jbq4QRQoFBW/C+6psex12g=
+	t=1733202984; cv=none; b=iU7IibM2bzv992StqHk7H4JWuQ0TW0oWtGFOSeO9oYzmjkS347ZDVs++2iCxu3w8Cxq25wEkHyJ3/WFLJqynsSfMWw636+0Sq0mSZEqjvJr1I8QKCLLoikUXYFn6KdpJTcY9bzdtsAu0JEPDgWnniJbHrOgJmpXFEe3Mr2vWlIs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733202901; c=relaxed/simple;
-	bh=xIaJa+NSbdE2QEly+jxjzNZXQhp1uMHwhx7F7u4wmrM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hYiST5tP23VW18C7+gs7n2dQuFhxkwPAYOcQa6piSRsl5fWRrlXWlLq3izUfZ/c92y48E4K+2MqeN3JD0hccxi97Sdxk/ZokruaBIztYsBeEHOhy1J7nvM9E4OX4Fz5GeGVndD2PdKvm7n7LcvPWUJ9qtBq4hpCdkxtCGZVKkRs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=do+0H8dL; arc=none smtp.client-ip=209.85.215.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-7fc8f0598cdso4295020a12.1;
-        Mon, 02 Dec 2024 21:15:00 -0800 (PST)
+	s=arc-20240116; t=1733202984; c=relaxed/simple;
+	bh=xCfEF98Wdb4WOiXtAKRVRdCxsHYHhkis1jPrw4TcuxE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eYbmSXaIBeG0udaUgZ7hTvRiFqRxLZG3Y9Azz/lBlag1kwjLVQrwE/XV7tXxoCAY/1jpTpbZxQxpzy7omx/fbLVQnyjbF5qFxf8u7hf+42JONJXY4KJk5sKDfAC66lNxdidqKPMV7hByOlAW+kcsV4vwkcYP/hycj1pJyo/+nM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=S0WbgNkI; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-53ded167ae3so5549581e87.0
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 21:16:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733202900; x=1733807700; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=OplFaKW8tTlpx6QNBTj6KxzPZVnj+b3RXvlOwwHvJEI=;
-        b=do+0H8dLTeUnWtLOvW/X8/hV/D+SCLsy6X0l813Z1G32Hd7JwIixpxeZgDlD5sGnMN
-         OjHjGZ++0ZbObw+UvGpiZuJZPF2WQrRQ8Sb3S14QdrPeZ9CwXNDam+30ETvtu/W9hWhH
-         r7GgoEF6aJ+Fo4iQMQzWwSYY/rIkodZqQ9lua2ZlJ3LNWYolo/p5NFkxBNJ7VfPehA6+
-         /OCPF1lA46DOiWzVkI5SUKYMI+p90UkkBfgfM79dQChaqBWUPvQvwmijDnjP8wCWMcAg
-         98wyeGxO0RJCdxRjeWk5xX0PR2SLbLRREM2CUZ1UvfWH7XowmqjLpFpjYLpuyIartwjC
-         ghRA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733202900; x=1733807700;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=chromium.org; s=google; t=1733202981; x=1733807781; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=OplFaKW8tTlpx6QNBTj6KxzPZVnj+b3RXvlOwwHvJEI=;
-        b=AdVosX5Bt0wT7ll9AYPZg1387P1UUimof8Um6MtRI6EhcyJ3+OkdDWypj4vDbC78zE
-         LMh6v8eK55vDn49dBd2yIf0jqO10XBl5qNCECCS1ZyLI32WR32oAf+nQQr6LR8vLNa0Q
-         VmCuiBvBIrB+SxAU9Ufi+wjuVKEFb+jU9tW3ikSx2eDixICsn17+64FpvoUQkc0sn3w8
-         JHdr99AkrwbLbrKRo29+d76b1Xv9ci7hSpfhT809ZHHaYA/UoHWwVd/ImY3VDFcCn4tI
-         QImcWR7d4izlY825bnZ0Z/YRKEsuMkjSbwWUr5pPo7d7NyXhA7Mwd6tBELfgpgh4pnzr
-         0+bA==
-X-Forwarded-Encrypted: i=1; AJvYcCUY0pWXoy++LWIaNg0SCHSLNlsE3JYfKMCX0Zk/jqarSBulBN6Idxi+dXTdMuv36m2skEzFafYk26lKE4c=@vger.kernel.org, AJvYcCWUHDm8jfvg751ispxqQvs149RIbxh/dDFqfovvmpTMFPr8ZgIbi9iSfAhHbZ+4KCmA4GqYNNUCUgjyeggHvK1y@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVg+zVH5KZgEZzaDwfdHC2rXMpo+9dHw3IHDesC/7bO/J5zT6M
-	fvf+dwEXgBdDe5/l7GxHd31LXRFIWWWcdH0fTuB6FqUyUZd5vGc=
-X-Gm-Gg: ASbGncsq5Sr6a+/EMJEMMe2Ea6gIs7BelOBUigqWTs54NhReCElgI1+wXANXPOnikVH
-	43hIARogZHZUTuj9g6R24F9FGvlotgJkH/uPnEioJs0dSk6fBz7WtScNfcRVhiGyJ7ufuLSAavp
-	ZUuyPa/isfW8prQW7SeZ+U4imUBiSV5U5HznWK9EFWhSgd5C7ccxsoeSjrgw5eIkf0CUmwr4dbk
-	NFZQeW//qqmn+aKUubmGauvg7TEuw43fmJojKheLXk/ZjQ76Q==
-X-Google-Smtp-Source: AGHT+IE8SPLOiZpehFcsI6ZUD/w0ZxU5jUM5kP/XXZGKiuAIC2vpPfqTldbVHT7F4YhHODI05c2wMA==
-X-Received: by 2002:a05:6a20:2583:b0:1d9:3747:fb51 with SMTP id adf61e73a8af0-1e0ec800265mr31292059637.8.1733202899598;
-        Mon, 02 Dec 2024 21:14:59 -0800 (PST)
-Received: from localhost ([2601:646:9e00:f56e:123b:cea3:439a:b3e3])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fc9c38585csm8825146a12.61.2024.12.02.21.14.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Dec 2024 21:14:59 -0800 (PST)
-Date: Mon, 2 Dec 2024 21:14:58 -0800
-From: Stanislav Fomichev <stfomichev@gmail.com>
-To: Joe Damato <jdamato@fastly.com>
-Cc: netdev@vger.kernel.org, pabeni@redhat.com, edumazet@google.com,
-	kuba@kernel.org, mkarsten@uwaterloo.ca,
-	"David S. Miller" <davem@davemloft.net>,
-	Simon Horman <horms@kernel.org>, Shuah Khan <shuah@kernel.org>,
-	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net-next] selftests: net: cleanup busy_poller.c
-Message-ID: <Z06T0uZ6422arNue@mini-arch>
-References: <20241203012838.182522-1-jdamato@fastly.com>
+        bh=3UD667MqVjs2PSeQOCIMQ6RaQb2wmVHS4BrEZxWWZe4=;
+        b=S0WbgNkIZvI8g7CF+3oTZsAe8XlEHJbjmEt9qOue/m6jxs+tvQGl+bXcMC48nN3tJo
+         A31icko5TznVQCsOfaoMH01GKTDvqC3tfYxN4vwI4lUrWQ9uEIfU+m1F1K+jZbVIZDg1
+         WfeaGJRbgXCuno4rjX9RC7noMewr2M4U/dd3k=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733202981; x=1733807781;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3UD667MqVjs2PSeQOCIMQ6RaQb2wmVHS4BrEZxWWZe4=;
+        b=RrnHJWwVOfYMJDj/VQlbPm8e/v4m7rp5iqnna+dRSrCW8R36UVsGw7cUFLw4ivf650
+         f8LudoF+wuvr/+jJpOsiLTm3YOj+jLtLSLddlnNPUB01YHiO+y5yXufYIUyuaMCDl7ns
+         xK96BXNz8oLKwCN0v5t50yU5N7tFHZ1qMIO873AvaMbQg/1PxT67dVs6xgbWM4x2WaBa
+         QSGCCsEkmOghPWQgQlgtQBgMepbwt/15plVDWeZwuQHtoVA8UPVCSoPc1E92J45Ok2aR
+         mAmJRrFMHEAjqNKrXh+ZCkmHY8k5mF7GnBECgxZK+ime5x6OPOypJW5kFuBN8y82ARZH
+         5MCw==
+X-Forwarded-Encrypted: i=1; AJvYcCU2uXGbiPfKIAIf5UEKLUS0O39eXS1YCXagUXbeRcH4/uLTZSsuWvR+vfgYQS4ar/1y4rbVBIA1aRIW7wQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YziQ+gF6CXc+0x/KYPo2zY4JMQc7DdqUWL+/gqnQH8IH8mS4dAD
+	zgBp39kVP//keD7BhKzKPVJkumcMXB5b115tIAEjPsbUTnDaY36evBnJ8OoxPvJK4dGgK4tUEPm
+	edfdMzLINTAB/YwhwEI8WeKb34nzGMWPawJ2+
+X-Gm-Gg: ASbGncvbv2LcUlzbt7c1FAiHN0HCvV+Mtu+E6gK9qYNTSWoD2/2InjhAttWzKUEU2TD
+	WiKKdVEjw7pBx0f8rH5HYdJ6gsx3WM5G4Bzlu6U4Ir25iAo29gLal3HwTip4=
+X-Google-Smtp-Source: AGHT+IGm4FRj4d2L71/JkcWnh0KmpdTxb3WeZOy2aVhsku87ZrddGzpbk9L+0MSqJj7VAyzY1Vded+GyvFJFBZY/vh4=
+X-Received: by 2002:a05:6512:2208:b0:53d:a292:92c with SMTP id
+ 2adb3069b0e04-53e12a264damr551253e87.43.1733202980809; Mon, 02 Dec 2024
+ 21:16:20 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241203012838.182522-1-jdamato@fastly.com>
+References: <20241202062449.65593-1-wenst@chromium.org> <h4nkbvwohp2izu4mzyv6nih42nqb4yspyxxqwyhojcgxvn5mj2@frar3tof42ds>
+In-Reply-To: <h4nkbvwohp2izu4mzyv6nih42nqb4yspyxxqwyhojcgxvn5mj2@frar3tof42ds>
+From: Chen-Yu Tsai <wenst@chromium.org>
+Date: Tue, 3 Dec 2024 13:16:09 +0800
+Message-ID: <CAGXv+5HNzr_aRLEei_O-XgixKUYDeCpZiymqLOa8ZwROY2gTyw@mail.gmail.com>
+Subject: Re: [PATCH] drm/panel: visionox-rm69299: Remove redundant assignments
+ of panel fields
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 12/03, Joe Damato wrote:
-> Fix various integer type conversions by using strtoull and a temporary
-> variable which is bounds checked before being casted into the
-> appropriate cfg_* variable for use by the test program.
-> 
-> While here, free the strdup'd cfg string for overall hygenie.
+On Mon, Dec 2, 2024 at 8:50=E2=80=AFPM Dmitry Baryshkov
+<dmitry.baryshkov@linaro.org> wrote:
+>
+> On Mon, Dec 02, 2024 at 02:24:48PM +0800, Chen-Yu Tsai wrote:
+> > drm_panel_init() was made to initialize the fields in |struct drm_panel=
+|.
+> > There is no need to separately initialize them again.
+> >
+> > Drop the separate assignments that are redundant.
+> >
+> > Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+> > ---
+> >  drivers/gpu/drm/panel/panel-visionox-rm69299.c | 3 ---
+> >  1 file changed, 3 deletions(-)
+> >
+> > diff --git a/drivers/gpu/drm/panel/panel-visionox-rm69299.c b/drivers/g=
+pu/drm/panel/panel-visionox-rm69299.c
+> > index 272490b9565b..1df5303eb57c 100644
+> > --- a/drivers/gpu/drm/panel/panel-visionox-rm69299.c
+> > +++ b/drivers/gpu/drm/panel/panel-visionox-rm69299.c
+> > @@ -193,7 +193,6 @@ static int visionox_rm69299_probe(struct mipi_dsi_d=
+evice *dsi)
+> >
+> >       mipi_dsi_set_drvdata(dsi, ctx);
+> >
+> > -     ctx->panel.dev =3D dev;
+>
+> No, this will break one of the following function calls. Please refactor
+> them too.
 
-Thank you for fixing this! I also saw them this morning after a net-next
-pull and was about to post... I also see the following (LLVM=1):
+You're right. And it mixes usage of `ctx->panel.dev` and `dev`.
+I'll send v2 getting rid of `ctx->panel.dev`.
 
-busy_poller.c:237:6: warning: variable 'napi_id' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
-  237 |         if (napi_list->obj._present.id)
-      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~
-busy_poller.c:243:38: note: uninitialized use occurs here
-  243 |         netdev_napi_set_req_set_id(set_req, napi_id);
-      |                                             ^~~~~~~
-busy_poller.c:237:2: note: remove the 'if' if its condition is always true
-  237 |         if (napi_list->obj._present.id)
-      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  238 |                 napi_id = napi_list->obj.id;
-      |                                            ~
-  239 |         else
-      |         ~~~~
-  240 |                 error(1, 0, "napi ID not present?");
-      |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-busy_poller.c:226:18: note: initialize the variable 'napi_id' to silence this warning
-  226 |         uint32_t napi_id;
-      |                         ^
-      |                          = 0
-1 warning generated.
+ChenYu
 
-Presumably the compiler can't connect that fact that (!preset.id) ->
-error. So maybe initialize napi_id to 0 to suppress it as well?
+> >       ctx->dsi =3D dsi;
+> >
+> >       ctx->supplies[0].supply =3D "vdda";
+> > @@ -215,8 +214,6 @@ static int visionox_rm69299_probe(struct mipi_dsi_d=
+evice *dsi)
+> >
+> >       drm_panel_init(&ctx->panel, dev, &visionox_rm69299_drm_funcs,
+> >                      DRM_MODE_CONNECTOR_DSI);
+> > -     ctx->panel.dev =3D dev;
+> > -     ctx->panel.funcs =3D &visionox_rm69299_drm_funcs;
+> >       drm_panel_add(&ctx->panel);
+> >
+> >       dsi->lanes =3D 4;
+> > --
+> > 2.47.0.338.g60cca15819-goog
+> >
+>
+> --
+> With best wishes
+> Dmitry
 
