@@ -1,161 +1,87 @@
-Return-Path: <linux-kernel+bounces-428967-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 788C29E1685
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:00:48 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0FB29E1630
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:48:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D46E6B2F51F
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 08:21:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 84468B3298A
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 08:21:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5CEF1C0DE2;
-	Tue,  3 Dec 2024 08:21:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="jCc12JLi"
-Received: from out-187.mta0.migadu.com (out-187.mta0.migadu.com [91.218.175.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 853341D31B2;
+	Tue,  3 Dec 2024 08:21:06 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C01F156F45
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 08:21:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EDB01CCEE0
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 08:21:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733214086; cv=none; b=lbZBgr9YJaY88TZYh/1OGf6tX1ADsL1KRoA5v1hnVqLwjaWS+6DNR574t1NiZENtXRQ+YBfAD32x5BkkVagS4NBD8jCfQs9koegCJwNjWzxl5mZR2W4YWmov5EjkQ4XW/gvpJFXxSi69tb1R/SF8l3gwOqUbkbANBIXP2VHqeAk=
+	t=1733214066; cv=none; b=mhB+5o/MQ7WL2a7WkJvnhju9CSyplVWxVqq7XbE8iooRNywCjMkWcxxOpw2mqKV8xOXXWT3p79mBNhUhRaDNITlJ4f+2EZ6JA4iZ1o4OtIanw1s7/zEOcPUbRaBf7SxvTaHsWhWYgOUx2pluEzB9t5dlnsrALVeOs+nfoofARfo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733214086; c=relaxed/simple;
-	bh=uUbbwkJKS1ShWdWJZHzz5FVjh/063SZkcFvSReB1H6I=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=hOpWG5tNH1D1Q18NS3GnStsTDRkuEzIr0bhzT0IwPfH6I77rOaxI783az9P/Acti1g1WEEfDXno/RyNIqeyrkow/65JZ43StnhELQxVGV3dt8ayBlLGc1rO4Rw0GVVQ09HjaZPM9BAiCeDwLnaNySKmgxtXHQUZG9rHTqGULn80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=jCc12JLi; arc=none smtp.client-ip=91.218.175.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Content-Type: text/plain;
-	charset=us-ascii
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1733214076;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MyB1FtEs1wS782QrJMZLEc0bIHq1bVJJUh447GB5OD4=;
-	b=jCc12JLi+cyX3ScPSdCjHHorUnaPzxF1KYMZQ7lxBAdosoxtkV6LAfSzXKwpY1T6H+p4u+
-	ra/OLW5BZuWxjg+TFrv2JlpRcU/SQHkOmw/CCALDB3WT3cDbbULK/R+iEtQtoalziuxwBF
-	neV3uQKwRFbswdmhH8e8bfrZPcXe3Bo=
+	s=arc-20240116; t=1733214066; c=relaxed/simple;
+	bh=ml2uHO4t7V8hBUvlBvRDiwQbbJ+06fLcl4INsm12114=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=fkY9BXLvS4yRZdSuo5ZNUEiqXY6zNvVlbo8U4kfR7ot+4I+x7OcU2Ewn7COBYTcUw74m3sVfQTZ6SyFbh5vTkB8nSInI1/ykI9DrYYpvvIkbwLwDwE3OB8mDy0OKY3itQNltbBLqhyaxgwHxsz6MBE+CqG92UpS7cQoQOelnwgI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a743d76ed9so45917395ab.0
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 00:21:04 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733214064; x=1733818864;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pD9qz2IHK2pBeuWVDCIQigNJXeea/L4R4zID3bimFek=;
+        b=om/X61AIayQ7sb7JagwO4Rrf0OsfIqQYpBNDAdHFInWybOKsGZT26vBPHCvcof7bFZ
+         kc80giD7E9Bga+dE0gPOJitmFrD22BjPxaaGxALsbeoQUwIC08ncULWTE0aRM++72TOk
+         iKHEt2tgRjWnZe9TzXWsAIWyUif2JMfZQpxoCIRAFcFLdbZXJzfdkEpxN/fWsXRTWlgj
+         7Bc/t/LMIWOyiseR+YeCOGXiV8Lx5jsyXVa9lEifRYo88ObzvA1ntjs4rPSYivszDqZc
+         6IG+5AIXram3gDcL1QTp8l4miBbutjq0/tY2e56bPem8aOpUhLX3L07jLZB+CWS/P7Mw
+         oDSg==
+X-Forwarded-Encrypted: i=1; AJvYcCUL6SOap2U7Z4KaA63J+4Eor+bTyrRWiB7VERGKOOC3cC33YZ4QQskp4EiI4bQNPgkanzyIoXhfJLG4vMk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwkU7leGnL3Pe3e5bWK6RBZJY43iVgyZ6Au8acGaTeQMjY2m27L
+	KEX6H1ALub7gIPJZnsy4bGA7ybSoo7F3tqxtaVJukOrpL+ojWf1Ju3D27Tj0HWUp6QZjWu6IKhH
+	UNZpI6Vc0HRufn/GXWk5z3jQh7AzhDNb1xa6k6tEdy/YV4nmu33nW6jI=
+X-Google-Smtp-Source: AGHT+IGf3eXoW0FMZB8US2fmFDnTRnZk6yDeMgC9hHQkkGTqUFo0lSBIRrVisiICdJf3u3jpqfNagT9kiDO49iANQ9iA9s/+xJBe
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.200.121\))
-Subject: Re: [PATCH V2] mm/hugetlb: Make __NR_USED_SUBPAGE check conditional
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Muchun Song <muchun.song@linux.dev>
-In-Reply-To: <3733d1e8-6e9d-4337-aeda-a6d5366d4a4c@arm.com>
-Date: Tue, 3 Dec 2024 16:20:38 +0800
-Cc: linux-mm@kvack.org,
- Andrew Morton <akpm@linux-foundation.org>,
- Oscar Salvador <osalvador@suse.de>,
- linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <9C1A9184-7432-45CB-89E4-D0A62C992C76@linux.dev>
-References: <20241203023207.123416-1-anshuman.khandual@arm.com>
- <A9973D39-9840-40F2-91DA-1CA8ADC06AA1@linux.dev>
- <3733d1e8-6e9d-4337-aeda-a6d5366d4a4c@arm.com>
-To: Anshuman Khandual <anshuman.khandual@arm.com>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+X-Received: by 2002:a05:6e02:1b01:b0:3a7:9b16:7b6c with SMTP id
+ e9e14a558f8ab-3a7cbd45e72mr221625365ab.9.1733214063882; Tue, 03 Dec 2024
+ 00:21:03 -0800 (PST)
+Date: Tue, 03 Dec 2024 00:21:03 -0800
+In-Reply-To: <tencent_A26C496423B3445C97605771C6C67369C305@qq.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <674ebf6f.050a0220.17bd51.0042.GAE@google.com>
+Subject: Re: [syzbot] [jfs?] divide error in dbAllocAG
+From: syzbot <syzbot+7c808908291a569281a9@syzkaller.appspotmail.com>
+To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
+Hello,
 
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-> On Dec 3, 2024, at 15:46, Anshuman Khandual =
-<anshuman.khandual@arm.com> wrote:
->=20
->=20
-> On 12/3/24 08:59, Muchun Song wrote:
->>=20
->>=20
->>> On Dec 3, 2024, at 10:32, Anshuman Khandual =
-<anshuman.khandual@arm.com> wrote:
->>>=20
->>> The HugeTLB order check against __NR_USED_SUBPAGE is required only =
-when
->>> HUGETLB_PAGE_OPTIMIZE_VMEMMAP is enabled. Hence BUG_ON() trigger =
-should
->>> happen only when applicable.
->>>=20
->>> Cc: Muchun Song <muchun.song@linux.dev>
->>> Cc: Andrew Morton <akpm@linux-foundation.org>
->>> Cc: Oscar Salvador <osalvador@suse.de>
->>> Cc: linux-mm@kvack.org
->>> Cc: linux-kernel@vger.kernel.org
->>> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
->>> ---
->>> This patch applies on v6.13-rc1
->>>=20
->>> Changes in V2:
->>>=20
->>> - Fixed #ifdef with CONFIG_HUGETLB_PAGE_OPTIMIZE_VMEMMAP per Oscar
->>>=20
->>> Changes in V1:
->>>=20
->>> =
-https://lore.kernel.org/all/20241202090728.78935-1-anshuman.khandual@arm.c=
-om/
->>>=20
->>> mm/hugetlb.c | 6 ++++--
->>> 1 file changed, 4 insertions(+), 2 deletions(-)
->>>=20
->>> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
->>> index ea2ed8e301ef..e6a5b21e3578 100644
->>> --- a/mm/hugetlb.c
->>> +++ b/mm/hugetlb.c
->>> @@ -4513,11 +4513,13 @@ void __init hugetlb_add_hstate(unsigned int =
-order)
->>> 	struct hstate *h;
->>> 	unsigned long i;
->>>=20
->>> - 	if (size_to_hstate(PAGE_SIZE << order)) {
->>> + 	if (size_to_hstate(PAGE_SIZE << order))
->>> 		return;
->>> - 	}
->>> +
->>> 	BUG_ON(hugetlb_max_hstate >=3D HUGE_MAX_HSTATE);
->>> +#ifdef CONFIG_HUGETLB_PAGE_OPTIMIZE_VMEMMAP
->>> 	BUG_ON(order < order_base_2(__NR_USED_SUBPAGE));
->>=20
->> Hi Anshuman,
->>=20
->> __NR_USED_SUBPAGE indicates how many struct pages are used to store
->> extra metadata for a HugeTLB page. So we need to make sure the order
->> of a HugeTLB page should be bigger than or equal to =
-order_base_2(__NR_USED_SUBPAGE).
->> So It is not related to HVO. I don't think the changes make sense.
->=20
-> I did think about that but order_base_2(__NR_USED_SUBPAGE) actually
-> turns out to be just 2 as __NR_USED_SUBPAGE is 3. Would not HugeTLB
-> size be always greater than four base pages in reality, thus making
-> this BUG_ON() check just redundant ?
+Reported-by: syzbot+7c808908291a569281a9@syzkaller.appspotmail.com
+Tested-by: syzbot+7c808908291a569281a9@syzkaller.appspotmail.com
 
-Currently, there is no architectures supporting hugetlb page smaller
-than 4 base pages. I think the smallest size is 64KB in arm64, but who
-knows whether if certain architectures supports 8KB in the future or
-we want to uses more struct pages to store metadata for increasing
-__NR_USED_SUBPAGE (e.g. change it to 17). So I tend to keep this
-BUG_ON remain to catch unexpected bugs.
+Tested on:
 
-Thanks.
+commit:         62cc82b7 jfs: check agwidth and agheight before alloca..
+git tree:       https://github.com/ea1davis/linux jfs/syz
+console output: https://syzkaller.appspot.com/x/log.txt?x=11a7afc0580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=18d90fa8ec96d8b0
+dashboard link: https://syzkaller.appspot.com/bug?extid=7c808908291a569281a9
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
 
->=20
->>=20
->> Thanks.
->>=20
->>> +#endif
->>> h =3D &hstates[hugetlb_max_hstate++];
->>> __mutex_init(&h->resize_lock, "resize mutex", &h->resize_key);
->>> h->order =3D order;
->>> --=20
->>> 2.30.2
->>>=20
->>=20
-
+Note: no patches were applied.
+Note: testing is done by a robot and is best-effort only.
 
