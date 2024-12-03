@@ -1,167 +1,122 @@
-Return-Path: <linux-kernel+bounces-428548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D10F9E1075
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 01:41:30 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 702E51657F2
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 00:41:06 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 866D7188722;
-	Tue,  3 Dec 2024 00:38:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="cNZheBgV"
-Received: from pv50p00im-zteg10011501.me.com (pv50p00im-zteg10011501.me.com [17.58.6.42])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E7619E0FC5
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 01:34:28 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90CC514F104
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 00:38:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.42
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB06F2821E1
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 00:34:26 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 346A6847C;
+	Tue,  3 Dec 2024 00:34:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="y9pHzKgP"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E79FA5684
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 00:34:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733186337; cv=none; b=YIMzqH05uaECZcEwBMbxAS4MZxn/M9ssn3rpk6+/dxrCWW9tBU5WpZrGzknv1vwu5vhTgYrWbFUiyDezveM1eHmAOWSVPJRYcECX0Wh4DBxQKlo81urrZLLLt+TenlauOQUJ4zQ4MGEWLJDQdoCugkWj0ASrce1HNnSl8Gi9GiM=
+	t=1733186061; cv=none; b=RW1iz0wLQa8u5Oivaql+uczKKwXp0z2b8WSYYp/m075y308yugRMLi3kVwt+VLXrJWjjQho3t6eyZIby/nDd7+cCywCYN+Va0A8XW2DT4l1Z8Wpzoi28I004mhYfbqbFl1OGjn41CzdDSWzkdGn+gNmUBfDxPEmvylmXPkm5HuI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733186337; c=relaxed/simple;
-	bh=bVxN+FZOfleQVmg6RLp1YA7VWhpbCqAopfI4NI1NFnA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=dhggOYgc6i1AcT/pcCq7cZnhy1TU3Kcqk2jvSAtpMHTDga6OLYOaUcSK+M6N88pByUcmn4neMI7fxRWGIQ6G8cMScdi7Hp8S2qgWyH8308IK3C8ifDz0d1sBziN5z9/nt+U2BEnGp4UhC76AeeJ2LSYYTK4+sclGTc2SwY/3T6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=cNZheBgV; arc=none smtp.client-ip=17.58.6.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-	s=1a1hai; t=1733186335;
-	bh=DunB/Cza6j0J9yIEJF1/KVIA9ohiToydy/mrGuBe+NA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:
-	 x-icloud-hme;
-	b=cNZheBgVFQmN8bDOAgA1O/6ilvMdUYLWH2rCw2sbVyV42b9UfWahOMUwO6MA2D3wu
-	 PS9ynWuFaT87rd3PD4MocTwkv2r4XCW+znolqO/soTSf67giOwZyPuElgZCsDCGjPD
-	 tlxClv/tibYTlDeYlsonl81S7tf7SmWu6omQ3zz/xG2MhX/msIxPaL9v0oyTyFR9Fw
-	 r7B4k0/vLKdn1SsAxgw6R0/+MQJFM4NioFAG0GKYfjVBsizaRIrVhJ2s4itJxOhsB5
-	 Gigjpj8kjdQqUw86WbyZHXCyybV4R7w7adERzs4Ufil2RPDqc7KxPNEscKwkReaaGX
-	 7Wkla79Wkq4hw==
-Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
-	by pv50p00im-zteg10011501.me.com (Postfix) with ESMTPSA id DD3E54A00A7;
-	Tue,  3 Dec 2024 00:38:34 +0000 (UTC)
-From: Zijun Hu <zijun_hu@icloud.com>
-Date: Tue, 03 Dec 2024 08:33:33 +0800
-Subject: [PATCH v2 11/32] libnvdimm: Simplify nd_namespace_store()
- implementation
+	s=arc-20240116; t=1733186061; c=relaxed/simple;
+	bh=aioJPEYLjwl6mmsj92gk2rm4OkZIBzOu8hP6/IXGIa8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Wtq44wS8Oe56ObOSiOKYbm7kLVTYybAd1yGGlooh7z+389Bm2qH/daUaj73IdvFNbi79sHxehUjndm760s1Qko7CfbEWMrNmwGhX8fDgF8DFtq9n7+1QJO4KDnHcN6licRCZvdRzCQQ5v6TVHvZDr2rgRwzZU3zX39f01W6aWko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=y9pHzKgP; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-53ddad86f4dso244e87.0
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 16:34:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1733186058; x=1733790858; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pGe6JsrNW4kBQuJtoX36qYbTj+oa7xQA2wBCWSf91Yc=;
+        b=y9pHzKgPrb3YV0lrKg+Wu/OBD7ZkqY8nyVfT7AypFD0W+E5wMogm1eiB2V3VK2ELBi
+         DjEeiJqC6bt8Rda8RyDEmlpU9IDTGyVbciXarNZmsfzdudy8wS2al9EiZ3gnD5eHlImx
+         2DkPT/xAOv+MDFiQqSTK1xgkTIuUu4fJQiIPZV4TPUdM6FgEQP+IsUkvCOqQPCpZnS51
+         8cEOSkRH+2CyKwrM5K5KDSWOfLHMEbGOK2cyCR004RGjSmJBLmAF9WpBfVFVlwGWcbHb
+         w361YTw9Tt8bACeLJxTVo4zPoYS7GBbB8VC+Ysj5vvAbPGmBD/v9COsjfN7J35H5yyEh
+         4HLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733186058; x=1733790858;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pGe6JsrNW4kBQuJtoX36qYbTj+oa7xQA2wBCWSf91Yc=;
+        b=BPSOpYMPogXE6VSWJfTGtCuz6JqShxBSMOoqm9VLvWrBs3dJDe3TfJtWpYHl91tQo5
+         cb0EW8vQ8iN+5eSopULjCvX4lh9y9l9XDx7+U15gcjIeYCX+LlsYQHxD6+RyNZsIRdfB
+         HapZKHAuriCq6U2IGduZHkeSVzxn6zw+LpHyJtOz2tLm+lCmi+ANqhId+igBaYlBuSxF
+         7qbSiyUApXOVojsPkifU8Fc4E9UrN/xanCWgtwY32B4qowH4SwCzfU8hXlyQrEJztWjd
+         eyF5w42YRgAp4HP0lc5x5D1vdKNfueiuN3jXXxpgkjsa7MrdGzgqfRJ6aHryltYgLken
+         H2JA==
+X-Forwarded-Encrypted: i=1; AJvYcCX3z5Mo+YsJRfCfsSehm9/j5uEGUSyiuRCoaK4rlyII4USO3k/dFfAyFZirMjWyw22CHkbTQxJqfA5rwac=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxhU+gAJSoMp8PVvHhhQWpGi/RtkCsyU/1f2EwIVj4NioFG/ZCt
+	XQWqF2LRamhdWjM0A3tLSxS9fEVRoAPiHT1WKT8Pa0acO1sKnoZIBsBADAug7iSkMNYu7o0gfBG
+	Pr44sGRsD7ZOWlOhfQdvu7bQwsEAqfOoEHvzM
+X-Gm-Gg: ASbGncuFhkIj1EooYDtFQF/phlamKJ/EgyC6oJ3gexGfyxhwstNRSNj1tsbpEfGjBbu
+	STE1ZDtaz6jokh0Tl/mEND8MDFDz2wvo=
+X-Google-Smtp-Source: AGHT+IGp9kTv0UwIBC5JRertTcn5PoqyN0fW9eFxxkLHz+7H9YP08c+Ns6nFaHhliVf/0mBt8IgohcWr3iQBt1ih/cY=
+X-Received: by 2002:a05:6512:641a:b0:53d:be19:45a9 with SMTP id
+ 2adb3069b0e04-53e134ad4bcmr21671e87.1.1733186057903; Mon, 02 Dec 2024
+ 16:34:17 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241203-const_dfc_done-v2-11-7436a98c497f@quicinc.com>
-References: <20241203-const_dfc_done-v2-0-7436a98c497f@quicinc.com>
-In-Reply-To: <20241203-const_dfc_done-v2-0-7436a98c497f@quicinc.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, 
- Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
- Philipp Zabel <p.zabel@pengutronix.de>, David Airlie <airlied@gmail.com>, 
- Simona Vetter <simona@ffwll.ch>, Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, 
- Martin Tuma <martin.tuma@digiteqautomotive.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Andreas Noever <andreas.noever@gmail.com>, 
- Michael Jamet <michael.jamet@intel.com>, 
- Mika Westerberg <mika.westerberg@linux.intel.com>, 
- Yehezkel Bernat <YehezkelShB@gmail.com>, 
- Linus Walleij <linus.walleij@linaro.org>, 
- Bartosz Golaszewski <brgl@bgdev.pl>, Andrew Lunn <andrew@lunn.ch>, 
- Vladimir Oltean <olteanv@gmail.com>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Simon Horman <horms@kernel.org>, 
- =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
- Dan Williams <dan.j.williams@intel.com>, 
- Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>, 
- Ira Weiny <ira.weiny@intel.com>, Takashi Sakamoto <o-takashi@sakamocchi.jp>, 
- Jiri Slaby <jirislaby@kernel.org>, 
- Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
- Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
- Lee Duncan <lduncan@suse.com>, Chris Leech <cleech@redhat.com>, 
- Mike Christie <michael.christie@oracle.com>, 
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, 
- "Martin K. Petersen" <martin.petersen@oracle.com>, 
- Nilesh Javali <njavali@marvell.com>, 
- Manish Rangankar <mrangankar@marvell.com>, 
- GR-QLogic-Storage-Upstream@marvell.com, Davidlohr Bueso <dave@stgolabs.net>, 
- Jonathan Cameron <jonathan.cameron@huawei.com>, 
- Alison Schofield <alison.schofield@intel.com>, 
- Andreas Larsson <andreas@gaisler.com>, Stuart Yoder <stuyoder@gmail.com>, 
- Laurentiu Tudor <laurentiu.tudor@nxp.com>, Jens Axboe <axboe@kernel.dk>, 
- Sudeep Holla <sudeep.holla@arm.com>, 
- Cristian Marussi <cristian.marussi@arm.com>, 
- Ard Biesheuvel <ardb@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
- Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Zijun Hu <zijun_hu@icloud.com>, linux-kernel@vger.kernel.org, 
- dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org, 
- linux-arm-kernel@lists.infradead.org, linux-hwmon@vger.kernel.org, 
- linux-media@vger.kernel.org, linux-usb@vger.kernel.org, 
- linux-gpio@vger.kernel.org, netdev@vger.kernel.org, 
- linux-pwm@vger.kernel.org, nvdimm@lists.linux.dev, 
- linux1394-devel@lists.sourceforge.net, linux-serial@vger.kernel.org, 
- linux-sound@vger.kernel.org, open-iscsi@googlegroups.com, 
- linux-scsi@vger.kernel.org, linux-cxl@vger.kernel.org, 
- sparclinux@vger.kernel.org, linux-block@vger.kernel.org, 
- arm-scmi@vger.kernel.org, linux-efi@vger.kernel.org, 
- linux-remoteproc@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>
-X-Mailer: b4 0.14.2
-X-Proofpoint-GUID: Mwb4WO2zvDF-UK70QCmcJRU4qe8f8eTp
-X-Proofpoint-ORIG-GUID: Mwb4WO2zvDF-UK70QCmcJRU4qe8f8eTp
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2024-12-02_14,2024-12-02_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 bulkscore=0
- mlxlogscore=999 mlxscore=0 spamscore=0 suspectscore=0 malwarescore=0
- clxscore=1015 adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2308100000 definitions=main-2412030002
-X-Apple-Remote-Links: v=1;h=KCk=;charset=UTF-8
+References: <20241115133619.114393-1-cgoettsche@seltendoof.de> <20241115133619.114393-11-cgoettsche@seltendoof.de>
+In-Reply-To: <20241115133619.114393-11-cgoettsche@seltendoof.de>
+From: =?UTF-8?Q?Thi=C3=A9baud_Weksteen?= <tweek@google.com>
+Date: Tue, 3 Dec 2024 11:34:00 +1100
+Message-ID: <CA+zpnLdkeMnakS_pP_F1xLd45BOmWfQqUGqqJT34OB4E+kkE9w@mail.gmail.com>
+Subject: Re: [RFC PATCH 11/22] selinux: more strict policy parsing
+To: cgzones@googlemail.com
+Cc: selinux@vger.kernel.org, Paul Moore <paul@paul-moore.com>, 
+	Stephen Smalley <stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>, 
+	Jacob Satterfield <jsatterfield.linux@gmail.com>, Eric Suen <ericsu@linux.microsoft.com>, 
+	=?UTF-8?Q?Bram_Bonn=C3=A9?= <brambonne@google.com>, 
+	Canfeng Guo <guocanfeng@uniontech.com>, Casey Schaufler <casey@schaufler-ca.com>, 
+	GUO Zihua <guozihua@huawei.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Zijun Hu <quic_zijuhu@quicinc.com>
+On Sat, Nov 16, 2024 at 12:37=E2=80=AFAM Christian G=C3=B6ttsche
+<cgoettsche@seltendoof.de> wrote:
+>
+> From: Christian G=C3=B6ttsche <cgzones@googlemail.com>
+>
+> Be more strict during parsing of policies and reject invalid values.
+>
+> Add some error messages in the case of policy parse failures, to
+> enhance debugging, either on a malformed policy or a too strict check.
+>
+> Signed-off-by: Christian G=C3=B6ttsche <cgzones@googlemail.com>
+> ---
 
-Simplify nd_namespace_store() implementation by device_find_child_by_name()
+Thanks for the patch.
 
-Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
----
- drivers/nvdimm/claim.c | 9 +--------
- 1 file changed, 1 insertion(+), 8 deletions(-)
+> +               switch (xperms.specified) {
+> +               case AVTAB_XPERMS_IOCTLFUNCTION:
+> +               case AVTAB_XPERMS_IOCTLDRIVER:
+> +               case AVTAB_XPERMS_NLMSG:
+> +                       break;
+> +               default:
+> +                       pr_err("SELinux: avtab: invalid xperm specifier %=
+#x\n", xperms.specified);
+> +                       return -EINVAL;
+> +               }
+>                 rc =3D next_entry(&xperms.driver, fp, sizeof(u8));
 
-diff --git a/drivers/nvdimm/claim.c b/drivers/nvdimm/claim.c
-index 030dbde6b0882050c90fb8db106ec15b1baef7ca..9e84ab411564f9d5e7ceb687c6491562564552e3 100644
---- a/drivers/nvdimm/claim.c
-+++ b/drivers/nvdimm/claim.c
-@@ -67,13 +67,6 @@ bool nd_attach_ndns(struct device *dev, struct nd_namespace_common *attach,
- 	return claimed;
- }
- 
--static int namespace_match(struct device *dev, void *data)
--{
--	char *name = data;
--
--	return strcmp(name, dev_name(dev)) == 0;
--}
--
- static bool is_idle(struct device *dev, struct nd_namespace_common *ndns)
- {
- 	struct nd_region *nd_region = to_nd_region(dev->parent);
-@@ -168,7 +161,7 @@ ssize_t nd_namespace_store(struct device *dev,
- 		goto out;
- 	}
- 
--	found = device_find_child(dev->parent, name, namespace_match);
-+	found = device_find_child_by_name(dev->parent, name);
- 	if (!found) {
- 		dev_dbg(dev, "'%s' not found under %s\n", name,
- 				dev_name(dev->parent));
-
--- 
-2.34.1
-
+I think this is too restrictive. We should be able to add extended
+permissions in a future policy and this should be gracefully handled
+by the kernel. You could use a pr_info instead, similarly to what is
+done in selinux_set_mapping for unknown permissions.
 
