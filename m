@@ -1,309 +1,164 @@
-Return-Path: <linux-kernel+bounces-429059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D449B9E1813
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:44:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25C3C9E16CF
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:11:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4FC9FB233E9
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:10:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9F192849A9
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:11:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45D391DF72C;
-	Tue,  3 Dec 2024 09:10:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8209A1DE4FA;
+	Tue,  3 Dec 2024 09:10:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k8fQ7KNW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="lx3Fv9N5"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2049.outbound.protection.outlook.com [40.107.243.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5771E1DEFC7;
-	Tue,  3 Dec 2024 09:10:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733217008; cv=none; b=n79FdX3IiJoU38GhOU3NQa1WLGC8p/mekuWxBBLgksjidEJiiWW1mzUqvGo0rOJ25sYy8+MQB6wj104nvLXJsT5RrDF/IktQmTTzVuIWqJ6akAbOq0z8kLf49jNOQy6AmD6a6JbXhuHC82GqzZcy2hz9eNaa0666kjoYoz66KME=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733217008; c=relaxed/simple;
-	bh=UzE4vPo4BUY7d8LgQQ6hVOdG+ZDuviyLVjKjvrd0CLU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PXA99HvieixgNxzgqpim1UzDPcaI2vqc+uj9hso82LpPx/E41DHTpGic+DZoTNFuIQay0KAN+YiMydwOeNNog4NzJfryJh+Exxn3APn8Nyl2CcYCvBu2NDaSiML4uToUH7AsJ+6WfoT7dORjj4SW6EGk8Zwg+S/Daoyct4S35Ag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k8fQ7KNW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3671BC4CED6;
-	Tue,  3 Dec 2024 09:10:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733217008;
-	bh=UzE4vPo4BUY7d8LgQQ6hVOdG+ZDuviyLVjKjvrd0CLU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=k8fQ7KNWcYXjpzrr3rJsEPJeU/9VRghXulAnZrEfIgBsDiA9Roz0UhFM9D485pZfF
-	 daqw4OnaPc8yZ+heugmFLOyHNQnVqZIvNH1vOeNZHsOv9jpxVKzzQZiQZURFGODYlZ
-	 UcRckZsAgDFDGvRVzivxJccLb6QQoRNBdt1GIRtA1BeLgaqGrkLGnTSVHDaYXUoqKv
-	 EyYnR2E+ghe9+03pc0hDjQ7yXlNZgoqf68KSGCtXw8nflOXy7kiNPbFtb0mGuGXulC
-	 1D04aNEvAR08rLTNYQ6ZUhahY9bjt1Vs2ecWDHHBkesSWhFlY53ZaKt5hLKEJ8qfNl
-	 TFUgHSoK/R8pg==
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-aa53a971480so788231666b.1;
-        Tue, 03 Dec 2024 01:10:08 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVYYhPtX/mq1Rlc3zOa3lEGVtm+5qP6hbOSWoHqn9w9so9kDKiSa6SFXX+xEbmh+Xmt8CfgDn/t@vger.kernel.org, AJvYcCX4QRNp2vuy2t95+AIDOGozQfeElzcdLI8t/IJIP7TKBt1SISHdz9jGe2KXZpb05PmYJMQ=@vger.kernel.org, AJvYcCXHAvhjLyMClafukovxoSO819ZamZ0szKFBM3eWckqPlU5uni+/aWfNCNJ1KBBrOuVdBzTMpXhWVnyUmVEI@vger.kernel.org
-X-Gm-Message-State: AOJu0YykvRgO+Nb/hbcbMUBYWgig+B3f12NkWf0jEzxCSsEwGLFWmlqo
-	sS/rLHxQBrauiQZAQWUwS/AsZZLDwwGCZSha7uiwdIis+aHeeSeK2bNTI/R/YvHW/tB0XIAOBB9
-	KfW2w4J3bmMm9yugWGOOTsoXgF0k=
-X-Google-Smtp-Source: AGHT+IFL8bKet6y3ANM013drJivZ4d5VcROR7rTZM7FjW9rJD/k7XCQdSsgqxfrhjaqQLvg3NxDPhywgeHlouzX6qTw=
-X-Received: by 2002:a17:907:7815:b0:a9e:43d9:401a with SMTP id
- a640c23a62f3a-aa5f7d15961mr128812766b.14.1733217006734; Tue, 03 Dec 2024
- 01:10:06 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E4481DE4E3;
+	Tue,  3 Dec 2024 09:10:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.49
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733217030; cv=fail; b=ScfNM+wvqzgoiFiDv32iyYXbezxo+TJFqIORGLu9DXYV2we9rKgDy4emBPpOrwEmNqRZLNnn8gGXITRPukPe0gCt1XTttXG+cbmNPW2NRt2AC/TmcK0GADWkdiRegtKUS/QAbH47SfJrdOOiotu9+aS31qcodjRcde2sSU5ZHDE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733217030; c=relaxed/simple;
+	bh=JCArq2paes462V82FvolIinFT9U/GeOLXOi2cG53vD4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=uvL/bB9989gMy2BhB091JUUj2I6KE/ISlCL10Af3Xntmt+nRWyZCYsQnRrNp6/7SqrrFOidQrOvIkomx4b3Ox6JpYn+R6G1Ipzly4rT20aizsvV1Z8JafM7xUHz/XPqGZo1XTr6RSnoJz8GbMgwrIdoyZP+Gbp5aI0O9Sk5vFMk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=lx3Fv9N5; arc=fail smtp.client-ip=40.107.243.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=QJk19gHjTfCZENOu5adI62XAtORpT4NRxxVxF/EEZ+bpIaYIemDvUaWRqGwnIIjEdWGTeYC1h7PAqiOasmwIZ2n/y6vokX5h4wDzCM/dWlkE+XTE9V1p7Xhat/hV0WAu2QXvCWoFTA3A0PS6dDE9izSrZgqQsSbWTPqIZbiogwoqoJzWE8lmXQuGKfPCp6yCCmd7Vi74xMm0SLw/oJ3s/fbZ9DuO3wut+4PxXT54pWlOrBBLxHFHiSiSHVHg9s4IJ9v6iiz370C6WpCrGaGZUbRs1qjZQmtSvdGp+kMriJ4jvbB7DFpybE5YgtQ7XqKzkfc0jfzzlCKwS43p9VxPJg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=/tB/zHa4I0nkrecKYF8loAUxBra6/AwysO5/gHTQRL4=;
+ b=hyJL3pWlsDHTVmDNTyFtlbAoM/EgcwG4rBBOt8amp5sCWXHPGgGWtQh6PoZrdrGMq4utnaW1gKsg46aahcYfO48tXNtb4JzRq/9Jb5f3xDOEH/+aHwypRD14pBr3xWFPlGmegozfxocmj4Y3xG79CNwVKX3g1Q5ZKNCYXQEXNYEdr5dRL3M0+gquyPWyE8OdWcgeBPLlqDJZjopHlXDo9vZfFnoL1SuHSykMKQGyUX/TF2TToN3SelQzebC9agtWAwLXjK/jU7EU1RkfGY8f4Rfq6M01yunOLf581Yvi5NbOK1tnigc+Y5VE6sRFFNCqXuiTforzEodRoMfpWe10pg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/tB/zHa4I0nkrecKYF8loAUxBra6/AwysO5/gHTQRL4=;
+ b=lx3Fv9N5YcRus0EXi9vWE1kTAjh5NfghAwPSa+dvJ3yqf01MITliSxIThgqvfR6XXxWgHWMhIUZRW6HRZMLxDyomR5xB8xdP4+X6TB33Mu+PPD27cVTQORV75GeUkyNBgyPEE+f+IhYEoep7i0Rh9NCcWV29b2yKNEwQm0BFYs0=
+Received: from CH2PR14CA0002.namprd14.prod.outlook.com (2603:10b6:610:60::12)
+ by MW5PR12MB5684.namprd12.prod.outlook.com (2603:10b6:303:1a1::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.18; Tue, 3 Dec
+ 2024 09:10:23 +0000
+Received: from DS3PEPF000099D5.namprd04.prod.outlook.com
+ (2603:10b6:610:60:cafe::68) by CH2PR14CA0002.outlook.office365.com
+ (2603:10b6:610:60::12) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8207.19 via Frontend Transport; Tue,
+ 3 Dec 2024 09:10:23 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ DS3PEPF000099D5.mail.protection.outlook.com (10.167.17.6) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8230.7 via Frontend Transport; Tue, 3 Dec 2024 09:10:23 +0000
+Received: from vijendar-X570-GAMING-X.amd.com (10.180.168.240) by
+ SATLEXMB04.amd.com (10.181.40.145) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 3 Dec 2024 03:10:19 -0600
+From: Vijendar Mukunda <Vijendar.Mukunda@amd.com>
+To: <vkoul@kernel.org>
+CC: <yung-chuan.liao@linux.intel.com>, <pierre-louis.bossart@linux.dev>,
+	<sanyog.r.kale@intel.com>, <Basavaraj.Hiregoudar@amd.com>,
+	<Sunil-kumar.Dommati@amd.com>, <venkataprasad.potturu@amd.com>,
+	<Mario.Limonciello@amd.com>, <linux-sound@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <alsa-devel@alsa-project.org>, "Vijendar
+ Mukunda" <Vijendar.Mukunda@amd.com>
+Subject: [PATCH RESEND] soundwire: amd: clear wake enable register for 
+Date: Tue, 3 Dec 2024 14:40:06 +0530
+Message-ID: <20241203091006.4096890-1-Vijendar.Mukunda@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241203065058.4164631-1-chenhuacai@loongson.cn>
- <20241203065058.4164631-2-chenhuacai@loongson.cn> <99ccaf01-9176-20c3-2463-148cb5cafcea@loongson.cn>
-In-Reply-To: <99ccaf01-9176-20c3-2463-148cb5cafcea@loongson.cn>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Tue, 3 Dec 2024 17:09:55 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H7eJ3FP4wnOb4XBv_FFCu3SkBu60URzWid2oXj-3bmXBA@mail.gmail.com>
-Message-ID: <CAAhV-H7eJ3FP4wnOb4XBv_FFCu3SkBu60URzWid2oXj-3bmXBA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] LoongArch: KVM: Protect kvm_io_bus_{read,write}()
- with SRCU
-To: bibo mao <maobibo@loongson.cn>
-Cc: Huacai Chen <chenhuacai@loongson.cn>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Tianrui Zhao <zhaotianrui@loongson.cn>, kvm@vger.kernel.org, loongarch@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, Xuerui Wang <kernel@xen0n.name>, 
-	Jiaxun Yang <jiaxun.yang@flygoat.com>, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS3PEPF000099D5:EE_|MW5PR12MB5684:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7491883e-82a6-4e38-0a96-08dd137a51a6
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|36860700013|82310400026|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?MwRYSoXh+yF6LJLQS4xVI/4uT5AxdDlBje+CDFUM6BHmYO8XBJzD1Quf+zyF?=
+ =?us-ascii?Q?y9pbAJ4X+wrJQnCkOD4tBp46oNTFwG+0ZjNQ3jQiklyVTuyePW1m34FaUXe5?=
+ =?us-ascii?Q?fh1voJMHeEh9Kljdlo0REh2oGrNPUiPP0MjK3kUnZA6IhSJyc8PrvizfuuGy?=
+ =?us-ascii?Q?QecvzhyndJUpgzGOZ68DMe0mS835FJyB2+eoAaYhBOWmno6Bg+tLE31aqZtA?=
+ =?us-ascii?Q?uBTEMc+oaWMxN5hzE6yxUDotdt1ge+YBs3cJbckAgJBrAyv+SGejaefilhS6?=
+ =?us-ascii?Q?NLLx3PPB1OjCVd3IDq+OeNgr6R5AhWURuy/ByEQBrDqgmQmkORcft2kdhY9h?=
+ =?us-ascii?Q?AJki2YcPW1kC2oJPfA9AAxX1iUvLvOs8vtsytqu2vOo0x65AY/36SmsiZuor?=
+ =?us-ascii?Q?BKPXL1+zP+6XWSSBsLGoAhOOhfG+dKkBJJ1lK+o51KYblz1H68CB3BIzODLq?=
+ =?us-ascii?Q?uz47+ijcR3bsavElWlNkesrr6uO0BmenKdnGTGfZVtLOhZWO3yXaqideOhnQ?=
+ =?us-ascii?Q?Z+EPAsGaVYSHIUpvEXr1L76xupbxImZD9whf6374y/4dyAOZESk6dW0FrZ0F?=
+ =?us-ascii?Q?MKjPDdhnviiOUSuP/zO04Vnyv+4B2v0S+GAFJKIME6so0xKBl+vHrMlkzI/T?=
+ =?us-ascii?Q?hbKTlZIv8Vi2cVACV5q1fI9j821MPlYhlzJ23oeh/Sq+8xPtcnd2RwxoBhe9?=
+ =?us-ascii?Q?oIZkw3NqG6TRjHorFaAmOAzhmbS6e192f6TS2RstKivRuMs0p9oqk8LOOuDy?=
+ =?us-ascii?Q?tmF9u22EiAUGgfn9jDpql3WEH0BT8cii/aD6w4VsDmuaONSXI5DalMZXmYgS?=
+ =?us-ascii?Q?2jl89nvQfxtNDh4TKxUy3wDaz97yinDjP3ZG+27NRiKJHdDhbQeGJakP3rei?=
+ =?us-ascii?Q?TZISItyCydr7mqZablTdwFlYjVnm79RImgl2CDeCMc3BsOf2vvTqnKnnt+TC?=
+ =?us-ascii?Q?W/8d3xk9ex2cOWHhSLEcwSGGc+QYMSrTN5BpPKmDUNBhL7UBvxWYZh+KQYr8?=
+ =?us-ascii?Q?k/MtpoL+XDwTmdiC3L9rx9D94YA/5dzTMTWFzFQflQrBBRSeLJ58ZYPVYQpR?=
+ =?us-ascii?Q?h62tcbBtRKbw4j3QUJL6G5pHTtIoPOvtlNo9CkeuCV8xA5ISM/sPfUkwt/xb?=
+ =?us-ascii?Q?LF0VhL3Zsk/0juGUI2tnSKhh+bfBLOhHkxH49AsR4NHTXwr5NAevNC1Zg6Ep?=
+ =?us-ascii?Q?SZCqstmbvkbf/A0lay8QOoKTmi4pcdG4QQM+q8z+UfH+whlib6MD/6fXNG5C?=
+ =?us-ascii?Q?21tiWP7+8tdq6ukY5AR0iOvB/IpUqJjHtprqbdQ0/DQSql43TEnaGJBjWS2a?=
+ =?us-ascii?Q?vEGeZyd1X5AUsHYRaqPuN1yDbMWcnQpxlmP5/KhZBHZrQ4iqifljxqX1aReL?=
+ =?us-ascii?Q?AGnSjzwpUOnsUDRnuck1xkm94gynUsNle8vF7Lp+1n5kVieuseAFFJ1In3wd?=
+ =?us-ascii?Q?LEdb2WxZ5ehYuz2Eek4duLa9wCK5nTF8?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(82310400026)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Dec 2024 09:10:23.2158
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7491883e-82a6-4e38-0a96-08dd137a51a6
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DS3PEPF000099D5.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW5PR12MB5684
 
-On Tue, Dec 3, 2024 at 4:51=E2=80=AFPM bibo mao <maobibo@loongson.cn> wrote=
-:
->
->
->
-> On 2024/12/3 =E4=B8=8B=E5=8D=882:50, Huacai Chen wrote:
-> > When we enable lockdep we get such a warning:
-> >
-> >   =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D
-> >   WARNING: suspicious RCU usage
-> >   6.12.0-rc7+ #1891 Tainted: G        W
-> >   -----------------------------
-> >   arch/loongarch/kvm/../../../virt/kvm/kvm_main.c:5945 suspicious rcu_d=
-ereference_check() usage!
-> >   other info that might help us debug this:
-> >   rcu_scheduler_active =3D 2, debug_locks =3D 1
-> >   1 lock held by qemu-system-loo/948:
-> >    #0: 90000001184a00a8 (&vcpu->mutex){+.+.}-{4:4}, at: kvm_vcpu_ioctl+=
-0xf4/0xe20 [kvm]
-> >   stack backtrace:
-> >   CPU: 2 UID: 0 PID: 948 Comm: qemu-system-loo Tainted: G        W     =
-     6.12.0-rc7+ #1891
-> >   Tainted: [W]=3DWARN
-> >   Hardware name: Loongson Loongson-3A5000-7A1000-1w-CRB/Loongson-LS3A50=
-00-7A1000-1w-CRB, BIOS vUDK2018-LoongArch-V2.0.0-prebeta9 10/21/2022
-> >   Stack : 0000000000000089 9000000005a0db9c 90000000071519c8 900000012c=
-578000
-> >           900000012c57b940 0000000000000000 900000012c57b948 9000000007=
-e53788
-> >           900000000815bcc8 900000000815bcc0 900000012c57b7b0 0000000000=
-000001
-> >           0000000000000001 4b031894b9d6b725 0000000005dec000 9000000100=
-427b00
-> >           00000000000003d2 0000000000000001 000000000000002d 0000000000=
-000003
-> >           0000000000000030 00000000000003b4 0000000005dec000 0000000000=
-000000
-> >           900000000806d000 9000000007e53788 00000000000000b4 0000000000=
-000004
-> >           0000000000000004 0000000000000000 0000000000000000 9000000107=
-baf600
-> >           9000000008916000 9000000007e53788 9000000005924778 000000001f=
-e001e5
-> >           00000000000000b0 0000000000000007 0000000000000000 0000000000=
-071c1d
-> >           ...
-> >   Call Trace:
-> >   [<9000000005924778>] show_stack+0x38/0x180
-> >   [<90000000071519c4>] dump_stack_lvl+0x94/0xe4
-> >   [<90000000059eb754>] lockdep_rcu_suspicious+0x194/0x240
-> >   [<ffff80000221f47c>] kvm_io_bus_read+0x19c/0x1e0 [kvm]
-> >   [<ffff800002225118>] kvm_emu_mmio_read+0xd8/0x440 [kvm]
-> >   [<ffff8000022254bc>] kvm_handle_read_fault+0x3c/0xe0 [kvm]
-> >   [<ffff80000222b3c8>] kvm_handle_exit+0x228/0x480 [kvm]
-> >
-> > Fix it by protecting kvm_io_bus_{read,write}() with SRCU.
-> >
-> > Cc: stable@vger.kernel.org
-> > Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
-> > ---
-> >   arch/loongarch/kvm/exit.c     | 31 +++++++++++++++++++++----------
-> >   arch/loongarch/kvm/intc/ipi.c |  6 +++++-
-> >   2 files changed, 26 insertions(+), 11 deletions(-)
-> >
-> > diff --git a/arch/loongarch/kvm/exit.c b/arch/loongarch/kvm/exit.c
-> > index 69f3e3782cc9..a7893bd01e73 100644
-> > --- a/arch/loongarch/kvm/exit.c
-> > +++ b/arch/loongarch/kvm/exit.c
-> > @@ -156,7 +156,7 @@ static int kvm_handle_csr(struct kvm_vcpu *vcpu, la=
-rch_inst inst)
-> >
-> >   int kvm_emu_iocsr(larch_inst inst, struct kvm_run *run, struct kvm_vc=
-pu *vcpu)
-> >   {
-> > -     int ret;
-> > +     int idx, ret;
-> >       unsigned long *val;
-> >       u32 addr, rd, rj, opcode;
-> >
-> > @@ -167,7 +167,6 @@ int kvm_emu_iocsr(larch_inst inst, struct kvm_run *=
-run, struct kvm_vcpu *vcpu)
-> >       rj =3D inst.reg2_format.rj;
-> >       opcode =3D inst.reg2_format.opcode;
-> >       addr =3D vcpu->arch.gprs[rj];
-> > -     ret =3D EMULATE_DO_IOCSR;
-> >       run->iocsr_io.phys_addr =3D addr;
-> >       run->iocsr_io.is_write =3D 0;
-> >       val =3D &vcpu->arch.gprs[rd];
-> > @@ -207,20 +206,28 @@ int kvm_emu_iocsr(larch_inst inst, struct kvm_run=
- *run, struct kvm_vcpu *vcpu)
-> >       }
-> >
-> >       if (run->iocsr_io.is_write) {
-> > -             if (!kvm_io_bus_write(vcpu, KVM_IOCSR_BUS, addr, run->ioc=
-sr_io.len, val))
-> > +             idx =3D srcu_read_lock(&vcpu->kvm->srcu);
-> > +             ret =3D kvm_io_bus_write(vcpu, KVM_IOCSR_BUS, addr, run->=
-iocsr_io.len, val);
-> > +             srcu_read_unlock(&vcpu->kvm->srcu, idx);
-> > +             if (ret =3D=3D 0)
-> >                       ret =3D EMULATE_DONE;
-> > -             else
-> > +             else {
-> > +                     ret =3D EMULATE_DO_IOCSR;
-> >                       /* Save data and let user space to write it */
-> >                       memcpy(run->iocsr_io.data, val, run->iocsr_io.len=
-);
-> > -
-> > +             }
-> >               trace_kvm_iocsr(KVM_TRACE_IOCSR_WRITE, run->iocsr_io.len,=
- addr, val);
-> >       } else {
-> > -             if (!kvm_io_bus_read(vcpu, KVM_IOCSR_BUS, addr, run->iocs=
-r_io.len, val))
-> > +             idx =3D srcu_read_lock(&vcpu->kvm->srcu);
-> > +             ret =3D kvm_io_bus_read(vcpu, KVM_IOCSR_BUS, addr, run->i=
-ocsr_io.len, val);
-> > +             srcu_read_unlock(&vcpu->kvm->srcu, idx);
-> > +             if (ret =3D=3D 0)
-> >                       ret =3D EMULATE_DONE;
-> > -             else
-> > +             else {
-> > +                     ret =3D EMULATE_DO_IOCSR;
-> >                       /* Save register id for iocsr read completion */
-> >                       vcpu->arch.io_gpr =3D rd;
-> > -
-> > +             }
-> >               trace_kvm_iocsr(KVM_TRACE_IOCSR_READ, run->iocsr_io.len, =
-addr, NULL);
-> >       }
-> >
-> > @@ -359,7 +366,7 @@ static int kvm_handle_gspr(struct kvm_vcpu *vcpu)
-> >
-> >   int kvm_emu_mmio_read(struct kvm_vcpu *vcpu, larch_inst inst)
-> >   {
-> > -     int ret;
-> > +     int idx, ret;
-> >       unsigned int op8, opcode, rd;
-> >       struct kvm_run *run =3D vcpu->run;
-> >
-> > @@ -464,8 +471,10 @@ int kvm_emu_mmio_read(struct kvm_vcpu *vcpu, larch=
-_inst inst)
-> >                * it need not return to user space to handle the mmio
-> >                * exception.
-> >                */
-> > +             idx =3D srcu_read_lock(&vcpu->kvm->srcu);
-> >               ret =3D kvm_io_bus_read(vcpu, KVM_MMIO_BUS, vcpu->arch.ba=
-dv,
-> >                                     run->mmio.len, &vcpu->arch.gprs[rd]=
-);
-> > +             srcu_read_unlock(&vcpu->kvm->srcu, idx);
-> >               if (!ret) {
-> >                       update_pc(&vcpu->arch);
-> >                       vcpu->mmio_needed =3D 0;
-> > @@ -531,7 +540,7 @@ int kvm_complete_mmio_read(struct kvm_vcpu *vcpu, s=
-truct kvm_run *run)
-> >
-> >   int kvm_emu_mmio_write(struct kvm_vcpu *vcpu, larch_inst inst)
-> >   {
-> > -     int ret;
-> > +     int idx, ret;
-> >       unsigned int rd, op8, opcode;
-> >       unsigned long curr_pc, rd_val =3D 0;
-> >       struct kvm_run *run =3D vcpu->run;
-> > @@ -631,7 +640,9 @@ int kvm_emu_mmio_write(struct kvm_vcpu *vcpu, larch=
-_inst inst)
-> >                * it need not return to user space to handle the mmio
-> >                * exception.
-> >                */
-> > +             idx =3D srcu_read_lock(&vcpu->kvm->srcu);
-> >               ret =3D kvm_io_bus_write(vcpu, KVM_MMIO_BUS, vcpu->arch.b=
-adv, run->mmio.len, data);
-> > +             srcu_read_unlock(&vcpu->kvm->srcu, idx);
-> >               if (!ret)
-> >                       return EMULATE_DONE;
-> >
-> > diff --git a/arch/loongarch/kvm/intc/ipi.c b/arch/loongarch/kvm/intc/ip=
-i.c
-> > index a233a323e295..4b7ff20ed438 100644
-> > --- a/arch/loongarch/kvm/intc/ipi.c
-> > +++ b/arch/loongarch/kvm/intc/ipi.c
-> > @@ -98,7 +98,7 @@ static void write_mailbox(struct kvm_vcpu *vcpu, int =
-offset, uint64_t data, int
-> >
-> >   static int send_ipi_data(struct kvm_vcpu *vcpu, gpa_t addr, uint64_t =
-data)
-> >   {
-> > -     int i, ret;
-> > +     int i, idx, ret;
-> >       uint32_t val =3D 0, mask =3D 0;
-> >
-> >       /*
-> > @@ -107,7 +107,9 @@ static int send_ipi_data(struct kvm_vcpu *vcpu, gpa=
-_t addr, uint64_t data)
-> >        */
-> >       if ((data >> 27) & 0xf) {
-> >               /* Read the old val */
-> > +             srcu_read_unlock(&vcpu->kvm->srcu, idx);
-> here should be idx =3D srcu_read_lock(&vcpu->kvm->srcu) ?
->
-> >               ret =3D kvm_io_bus_read(vcpu, KVM_IOCSR_BUS, addr, sizeof=
-(val), &val);
-> > +             srcu_read_unlock(&vcpu->kvm->srcu, idx);
-> >               if (unlikely(ret)) {
-> >                       kvm_err("%s: : read date from addr %llx failed\n"=
-, __func__, addr);
-> >                       return ret;
-> > @@ -121,7 +123,9 @@ static int send_ipi_data(struct kvm_vcpu *vcpu, gpa=
-_t addr, uint64_t data)
-> >               val &=3D mask;
-> >       }
-> >       val |=3D ((uint32_t)(data >> 32) & ~mask);
-> > +     srcu_read_unlock(&vcpu->kvm->srcu, idx);
-> here should be idx =3D srcu_read_lock(&vcpu->kvm->srcu)
-Yes, this is my mistake, thank you.
+As per design for power off mode, clear the wake enable register during
+resume sequence.
 
-Huacai
+Signed-off-by: Vijendar Mukunda <Vijendar.Mukunda@amd.com>
+---
+ drivers/soundwire/amd_manager.c | 1 +
+ 1 file changed, 1 insertion(+)
 
->
-> >       ret =3D kvm_io_bus_write(vcpu, KVM_IOCSR_BUS, addr, sizeof(val), =
-&val);
-> > +     srcu_read_unlock(&vcpu->kvm->srcu, idx);
-> >       if (unlikely(ret))
-> >               kvm_err("%s: : write date to addr %llx failed\n", __func_=
-_, addr);
-> >
-> >
-> otherwise looks good to me.
->
-> Reviewed-by: Bibo Mao <maobibo@loongson.cn>
->
->
+diff --git a/drivers/soundwire/amd_manager.c b/drivers/soundwire/amd_manager.c
+index 5a4bfaef65fb..96a3aa6da711 100644
+--- a/drivers/soundwire/amd_manager.c
++++ b/drivers/soundwire/amd_manager.c
+@@ -1190,6 +1190,7 @@ static int __maybe_unused amd_resume_runtime(struct device *dev)
+ 	if (amd_manager->power_mode_mask & AMD_SDW_CLK_STOP_MODE) {
+ 		return amd_sdw_clock_stop_exit(amd_manager);
+ 	} else if (amd_manager->power_mode_mask & AMD_SDW_POWER_OFF_MODE) {
++		writel(0x00, amd_manager->acp_mmio + ACP_SW_WAKE_EN(amd_manager->instance));
+ 		val = readl(amd_manager->mmio + ACP_SW_CLK_RESUME_CTRL);
+ 		if (val) {
+ 			val |= AMD_SDW_CLK_RESUME_REQ;
+-- 
+2.34.1
+
 
