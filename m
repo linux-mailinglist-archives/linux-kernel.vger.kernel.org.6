@@ -1,111 +1,111 @@
-Return-Path: <linux-kernel+bounces-429679-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A29E9E1FD6
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 15:43:34 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA89F1686EB
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 14:42:01 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E5581F4725;
-	Tue,  3 Dec 2024 14:41:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dTSADOOh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD3539E1FCA
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 15:42:39 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E87841E4A9;
-	Tue,  3 Dec 2024 14:41:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7429B284C77
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 14:42:38 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 262991F4735;
+	Tue,  3 Dec 2024 14:42:33 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F6FE1E25E4;
+	Tue,  3 Dec 2024 14:42:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733236919; cv=none; b=SuG+r88yqxF4df0kXbsUGdN8ieN4qyrzhDW+5854Dn6+dDEN7EywVUfzcGj77zxjblLIhPlS5RCt6fSqZ+JEgSWm1Dzcx9ypvL+s6UD0uEqmYCdqOeYG8NMiF82vup7kZZsQ3dxWQtF0pb7xWSm2jM4QFjUEc8nQ8VMO4CuJVs4=
+	t=1733236952; cv=none; b=RDtpN74qb1B7SxxnlIYJuJTZWAXLEF5+QZRv/P14K6hAKNf+EEQy+PePhHx/1Hb7QSd7qaq9JwBpya7rDKk/HjyDV4DcSwCUJ3FVWSu20KRAFzou3CSbX3x+2CNv/MIPu1vqi4ILzCJ9W2hWmmc+vLftoKQ18CnPZRU0dTojKAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733236919; c=relaxed/simple;
-	bh=3s2rLqVFzkG/7hsZLgSm+vZhQcwjwFq4j/0oY+CmA0g=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=V+94lrKxhg9FhDx6xr2c+wO/D0E2vfMCYqZj/eJZE2hToKBNtO9EHQWCc57dpppd1ZPtBgZs0IK36r8yKdCgTssw4wIdstizf+NQohtWL4emBUmWTu5Scaekjc6csYI7TZRdFoasyb2X8QhUy6zHVyammhK1Yt4zS/6gFWYAYN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dTSADOOh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A97BC4CECF;
-	Tue,  3 Dec 2024 14:41:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733236918;
-	bh=3s2rLqVFzkG/7hsZLgSm+vZhQcwjwFq4j/0oY+CmA0g=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=dTSADOOhLCmWUTN5/YFlhk5W6YBLSUq8FWrJ2+kOvr6Ij6EcEyEkd92CkOpKJrJqZ
-	 15V5Wv53fySH1hW7Qm0lst6kxxrPDs9fp4e3D/TETsi8iAH9WdV9HGVcB21pyCMwpa
-	 bFOy1/zfosWmXXCi1M0tdLbfrzDSiX2pgbdT2cW1kRMlmXF3qMpCi1nzT6GA4vIdSO
-	 URgxKgfJhxLOuc1uEU0PzL3BSxFthai0PN6fegUzqhxe7FCcAS0HfjyiflMFyAmwxL
-	 DTGQDNDpO57ybDsXOZaPA6nIaKGLaevgAr8ZurFcGUjQyFWsvh+caEhuYIeMD4/tNA
-	 a0x5hK+8Gw54w==
-From: Mark Brown <broonie@kernel.org>
-To: Liam Girdwood <lgirdwood@gmail.com>, 
- =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-Cc: David Rhodes <david.rhodes@cirrus.com>, 
- Richard Fitzgerald <rf@opensource.cirrus.com>, 
- =?utf-8?q?Martin_Povi=C5=A1er?= <povik+lin@cutebit.org>, 
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
- Kiseok Jo <kiseok.jo@irondevice.com>, Binbin Zhou <zhoubinbin@loongson.cn>, 
- Tang Bin <tangbin@cmss.chinamobile.com>, 
- Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>, 
- Yang Li <yang.lee@linux.alibaba.com>, 
- Igor Prusov <ivprusov@salutedevices.com>, linux-sound@vger.kernel.org, 
- patches@opensource.cirrus.com, asahi@lists.linux.dev, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20241202113641.1003836-2-u.kleine-koenig@baylibre.com>
-References: <20241202113641.1003836-2-u.kleine-koenig@baylibre.com>
-Subject: Re: [PATCH] ASoC: Drop explicit initialization of struct
- i2c_device_id::driver_data to 0
-Message-Id: <173323691528.75840.3593450234330035704.b4-ty@kernel.org>
-Date: Tue, 03 Dec 2024 14:41:55 +0000
+	s=arc-20240116; t=1733236952; c=relaxed/simple;
+	bh=a1sv7yNgLfruuxtj7ruwGgaD5fU0gF2JQ7MMM+qelH8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=PmLz7h0hh9Mj0/FvGTm97EApSp2q6FZyZ51uPNcSsgIsT8rddhtaAhDdWDj9jXRZyCyxGC2J2D5vAyMGaGiurE+F9eAWEx35PlpMQHjXjeG1e4FSe3WlGReKixRlo1j5W4L1PyQX4oyHXb3A/BT7L9Ie7E+X4hWe+wjAh+bl7wk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A46D2FEC;
+	Tue,  3 Dec 2024 06:42:57 -0800 (PST)
+Received: from [10.57.90.133] (unknown [10.57.90.133])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 64AD63F71E;
+	Tue,  3 Dec 2024 06:42:27 -0800 (PST)
+Message-ID: <f2d58d57-df38-42eb-a00c-a993ca7299ba@arm.com>
+Date: Tue, 3 Dec 2024 14:42:25 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] smaps: count large pages smaller than PMD size to
+ anonymous_thp
+Content-Language: en-GB
+To: David Hildenbrand <david@redhat.com>, Wenchao Hao
+ <haowenchao22@gmail.com>, Andrew Morton <akpm@linux-foundation.org>,
+ Matthew Wilcox <willy@infradead.org>, Oscar Salvador <osalvador@suse.de>,
+ Muhammad Usama Anjum <usama.anjum@collabora.com>,
+ Andrii Nakryiko <andrii@kernel.org>, Peter Xu <peterx@redhat.com>,
+ Barry Song <21cnbao@gmail.com>, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+References: <20241203134949.2588947-1-haowenchao22@gmail.com>
+ <926c6f86-82c6-41bb-a24d-5418163d5c5e@redhat.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <926c6f86-82c6-41bb-a24d-5418163d5c5e@redhat.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.15-dev-9b746
 
-On Mon, 02 Dec 2024 12:36:41 +0100, Uwe Kleine-König wrote:
-> These drivers don't use the driver_data member of struct i2c_device_id,
-> so don't explicitly initialize this member.
+On 03/12/2024 14:17, David Hildenbrand wrote:
+> On 03.12.24 14:49, Wenchao Hao wrote:
+>> Currently, /proc/xxx/smaps reports the size of anonymous huge pages for
+>> each VMA, but it does not include large pages smaller than PMD size.
+>>
+>> This patch adds the statistics of anonymous huge pages allocated by
+>> mTHP which is smaller than PMD size to AnonHugePages field in smaps.
+>>
+>> Signed-off-by: Wenchao Hao <haowenchao22@gmail.com>
+>> ---
+>>   fs/proc/task_mmu.c | 6 ++++++
+>>   1 file changed, 6 insertions(+)
+>>
+>> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+>> index 38a5a3e9cba2..b655011627d8 100644
+>> --- a/fs/proc/task_mmu.c
+>> +++ b/fs/proc/task_mmu.c
+>> @@ -717,6 +717,12 @@ static void smaps_account(struct mem_size_stats *mss,
+>> struct page *page,
+>>           if (!folio_test_swapbacked(folio) && !dirty &&
+>>               !folio_test_dirty(folio))
+>>               mss->lazyfree += size;
+>> +
+>> +        /*
+>> +         * Count large pages smaller than PMD size to anonymous_thp
+>> +         */
+>> +        if (!compound && PageHead(page) && folio_order(folio))
+>> +            mss->anonymous_thp += folio_size(folio);
+>>       }
+>>         if (folio_test_ksm(folio))
 > 
-> This prepares putting driver_data in an anonymous union which requires
-> either no initialization or named designators. But it's also a nice
-> cleanup on its own.
 > 
-> [...]
+> I think we decided to leave this (and /proc/meminfo) be one of the last
+> interfaces where this is only concerned with PMD-sized ones:
+> 
+> Documentation/admin-guide/mm/transhuge.rst:
+> 
+> The number of PMD-sized anonymous transparent huge pages currently used by the
+> system is available by reading the AnonHugePages field in ``/proc/meminfo``.
+> To identify what applications are using PMD-sized anonymous transparent huge
+> pages, it is necessary to read ``/proc/PID/smaps`` and count the AnonHugePages
+> fields for each mapping. (Note that AnonHugePages only applies to traditional
+> PMD-sized THP for historical reasons and should have been called
+> AnonHugePmdMapped).
+> 
 
-Applied to
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
-
-Thanks!
-
-[1/1] ASoC: Drop explicit initialization of struct i2c_device_id::driver_data to 0
-      commit: 8359ea9c119570fb5971379655661f77a3aafb1d
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+Agreed. If you need per-process metrics for mTHP, we have a python script at
+tools/mm/thpmaps which does a fairly good job of parsing pagemap. --help gives
+you all the options.
 
 
