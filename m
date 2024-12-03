@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-430186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430187-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2A899E2D84
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 21:48:15 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CEF39E2D8D
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 21:50:26 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 953ED165CCD
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 20:48:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B8AF283EDC
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 20:50:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E5B3207A03;
-	Tue,  3 Dec 2024 20:48:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD346207A31;
+	Tue,  3 Dec 2024 20:50:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="QxB75xax"
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="cOT0v3jQ"
 Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAC042500D3;
-	Tue,  3 Dec 2024 20:48:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACA5B2500D3;
+	Tue,  3 Dec 2024 20:50:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733258887; cv=none; b=Ud70/BXk27BtQkAHoyTrVoXQ+l/Pa2UGmCmX2s9wEgrj560GPQB5gjXIqxcKY+JDOFDWYs3/MMJo33C8/K91fq1GayH/pX/AwsjFfQib8/p4hBsg0vU1mH4sdyUssqK+5Gnj3wPowcuTLnr68eBZBomd6Eev6F3f0bo3tyC+qGs=
+	t=1733259019; cv=none; b=XJLap6wLviL6KyrJL+BMU8WKQPt8tBF20mmlrYUxOec01lU59Pm1H7xb2d8yzLHYSQQlQr/81RJGwy9w3mjwktDLoajfngXMKq2qKB8aCJ8t23mRX3qlQPHTffPD2DJTssy6eieGl1p1NIJI5WSqZT0e6VGEJnchuGdpEaw2QTM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733258887; c=relaxed/simple;
-	bh=I7+uLqqDmjKbqNKNJ/aU4yAUbwyeGsCFnSOZnY9uO5o=;
+	s=arc-20240116; t=1733259019; c=relaxed/simple;
+	bh=7+j9DnxUn70DjqRYTpQY7FOv8r8Y8PsV/D9Pa6QJk64=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O7cbJ+jxeI+L8HcqkwMpaPBSDjU00ZKMI2OZJMezNQouCfFcIZPxBEanyQyCV5encldtnxwcTjzBYpxfMHD1DtC0q0OD1UYpfqizhd3ZlPYq4LoCEtd1nJheH69NYwrF/GUsVZmhtd0jD673GGC9E9+wuhHOUExZE9K6ivsaXlc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=QxB75xax; arc=none smtp.client-ip=156.67.10.101
+	 Content-Type:Content-Disposition:In-Reply-To; b=LyCtvhNG4C9anyna7qDAjOfDxncg6TMuym+OyoHKFF+ARJF8unarJLYooW1FTD3jBh+uQ9Nhu8E22GA/3pOl9FIvpRaQRUYrQN9CsM8igBKRYITeC/wkz8KjKRlcZ0pHVDeOwbz6+6jkq5BakhSrnaRGQZtcE+d0HoOfh9aPHjA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=cOT0v3jQ; arc=none smtp.client-ip=156.67.10.101
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
@@ -35,26 +35,29 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
 	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
 	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
 	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=Mln7YYQ79Z8h+U1bfKcco3serkkHm5TE+RqjCLA4eA8=; b=QxB75xaxywChnsCbjLOnaohz6a
-	WEMWy43TKwdPIEoaZ6Yttac5tvcDmuJvMBTyOHfjtRMLwlHln1+q8+n4u0s9FygE/ofn1O8xeMPTe
-	zGkyzPKAyir9o6IHZxy9X5VGhKG4g/XvfDkIQU5R88uddQI2NB/+/Ji6WKabc79pChL0=;
+	bh=8CtVo84DNVMA9mDCGRA2D9tpJTeTMoet2o2LaezMPZw=; b=cOT0v3jQ2qHR0hdaQjzATRtOwa
+	3koVRXGHJ78hiE9Ehp4CKi4rF8afZrR9HqkTtXrUL70OnF9MHO8hNYPkvHzl+70lNcWQjboCVrM4N
+	RtR4FzPtrLfW1e1ORWEsIvhafwWl40rOIxFSQaS1wqgre1dKLqOh5fvcX4qWyRjCtnik=;
 Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
 	(envelope-from <andrew@lunn.ch>)
-	id 1tIZoL-00F8Hh-KC; Tue, 03 Dec 2024 21:47:57 +0100
-Date: Tue, 3 Dec 2024 21:47:57 +0100
+	id 1tIZqT-00F8JK-Tz; Tue, 03 Dec 2024 21:50:09 +0100
+Date: Tue, 3 Dec 2024 21:50:09 +0100
 From: Andrew Lunn <andrew@lunn.ch>
-To: Dominique Martinet <asmadeus@codewreck.org>
-Cc: Oliver Neukum <oneukum@suse.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Dominique Martinet <dominique.martinet@atmark-techno.com>,
-	netdev@vger.kernel.org, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: usb: usbnet: restore usb%d name exception for local
- mac addresses
-Message-ID: <5b93b521-4cc8-47d3-844a-33cf6477a016@lunn.ch>
-References: <20241203130457.904325-1-asmadeus@codewreck.org>
+To: Jijie Shao <shaojijie@huawei.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, andrew+netdev@lunn.ch, horms@kernel.org,
+	shenjian15@huawei.com, wangpeiyang1@huawei.com,
+	liuyonglong@huawei.com, chenhao418@huawei.com,
+	sudongming1@huawei.com, xujunsheng@huawei.com,
+	shiyongbang@huawei.com, libaihan@huawei.com,
+	jonathan.cameron@huawei.com, shameerali.kolothum.thodi@huawei.com,
+	salil.mehta@huawei.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, hkelam@marvell.com
+Subject: Re: [PATCH V4 RESEND net-next 5/7] net: hibmcge: Add pauseparam
+ supported in this module
+Message-ID: <ec478652-0400-403c-bac5-308809f840fa@lunn.ch>
+References: <20241203150131.3139399-1-shaojijie@huawei.com>
+ <20241203150131.3139399-6-shaojijie@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,25 +66,16 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241203130457.904325-1-asmadeus@codewreck.org>
+In-Reply-To: <20241203150131.3139399-6-shaojijie@huawei.com>
 
-On Tue, Dec 03, 2024 at 10:04:55PM +0900, Dominique Martinet wrote:
-> From: Dominique Martinet <dominique.martinet@atmark-techno.com>
+On Tue, Dec 03, 2024 at 11:01:29PM +0800, Jijie Shao wrote:
+> The MAC can automatically send or respond to pause frames.
+> This patch supports the function of enabling pause frames
+> by using ethtool.
 > 
-> The previous commit assumed that local addresses always came from the
-> kernel, but some devices hand out local mac addresses so we ended up
-> with point-to-point devices with a mac set by the driver, renaming to
-> eth%d when they used to be named usb%d.
-> 
-> Userspace should not rely on device name, but for the sake of stability
-> restore the local mac address check portion of the naming exception:
-> point to point devices which either have no mac set by the driver or
-> have a local mac handed out by the driver will keep the usb%d name.
+> Signed-off-by: Jijie Shao <shaojijie@huawei.com>
 
-Are you saying the OTP or NVMEM has a locally administered MAC address
-stored in it? Is there a mechanism to change it? The point about
-locally administered MAC addresses is that they are locally
-administered.
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-	Andrew
+    Andrew
 
