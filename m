@@ -1,124 +1,125 @@
-Return-Path: <linux-kernel+bounces-429496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09BD39E1CD6
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 13:56:04 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C7029E1CDE
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 13:59:09 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A78C7282361
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 12:56:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 513A0163E46
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 12:59:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75B0B1EC009;
-	Tue,  3 Dec 2024 12:55:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="RFCjKLmc"
-Received: from smtp-fw-80007.amazon.com (smtp-fw-80007.amazon.com [99.78.197.218])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65FD41EE001;
+	Tue,  3 Dec 2024 12:59:02 +0000 (UTC)
+Received: from relay08.th.seeweb.it (relay08.th.seeweb.it [5.144.164.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 960C92BD1D
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 12:55:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA99916BE17
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 12:58:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.144.164.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733230558; cv=none; b=juMyledjYeNt5Qn96TFtJv2K152q6CLRs4t2JaidG7E6kFpw+Ru0Edye6V/rLb4UDpZHmcOB4sxh774k82Ma0bN1i6FxhgCh3R5EpYo+NlihqoJu/y1Fum8CU1ElWyK3m5R8jcERwXyM/R3bDmHay5LPtflPPN5UuUIKSgt/AeI=
+	t=1733230742; cv=none; b=h+JfzAumlssubqtpj0cUwU/J0AMSaUjWVGEv718G1oE9djJQwOF0KO1RfqyWcnCSTuwntewtc4ef92DFgWAs9B43lXMBsfdsoKa4JxtIAyFXH/SQSgmZo+WsbYG0LG6B2tyUqrCMJ8E4YS3IulRnkIP6vnHlriEnHmkGSa9dFYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733230558; c=relaxed/simple;
-	bh=B5ftrZueJZtaVda0Ke11fKcz3ceJLnjy+MBzoc7WB+0=;
-	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=TDymPhCMOPXa2WlROGDR3Y771zaktAMySZZacHMzQ2Rv3+D+pRG22UUftjzQ5M6o8bW2aQftyho32CRfd+yjq82DU70IT/6IogParQ8BaA1J/uVoPyMGnTBi7Aw/0+kgAUGhsR4pGQIPBDXK3cdvFAacZZJtzylmfpizTWCBXU8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=RFCjKLmc; arc=none smtp.client-ip=99.78.197.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1733230558; x=1764766558;
-  h=from:to:cc:subject:date:message-id:
-   content-transfer-encoding:mime-version;
-  bh=zHt8L2Z6dJwqzsWV71weChOsU9eMWPerfPu1DOoxdJ8=;
-  b=RFCjKLmc/KCXO9Hugakk2be49ggZAjBUINj5zLL0dbik12l96M/KRtWa
-   QH6ogNiVZY/fe3Nxe/5qvfcLO+rOqQZu6lcOwty09felquxvUqlPvOfMq
-   4QPC+aoXw0ljt2kzlSoEtpKwiAkNcRNcXCFBOhYTqgQp8XivVho42H+zJ
-   c=;
-X-IronPort-AV: E=Sophos;i="6.12,205,1728950400"; 
-   d="scan'208";a="357635905"
-Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.25.36.210])
-  by smtp-border-fw-80007.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Dec 2024 12:55:55 +0000
-Received: from EX19MTAEUB001.ant.amazon.com [10.0.17.79:25389]
- by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.32.206:2525] with esmtp (Farcaster)
- id 321ae853-bb47-4473-a697-0a3ceab94d46; Tue, 3 Dec 2024 12:55:53 +0000 (UTC)
-X-Farcaster-Flow-ID: 321ae853-bb47-4473-a697-0a3ceab94d46
-Received: from EX19D018EUA004.ant.amazon.com (10.252.50.85) by
- EX19MTAEUB001.ant.amazon.com (10.252.51.26) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Tue, 3 Dec 2024 12:55:53 +0000
-Received: from EX19D018EUA004.ant.amazon.com (10.252.50.85) by
- EX19D018EUA004.ant.amazon.com (10.252.50.85) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Tue, 3 Dec 2024 12:55:53 +0000
-Received: from EX19D018EUA004.ant.amazon.com ([fe80::e53:84f8:3456:a97d]) by
- EX19D018EUA004.ant.amazon.com ([fe80::e53:84f8:3456:a97d%3]) with mapi id
- 15.02.1258.034; Tue, 3 Dec 2024 12:55:53 +0000
-From: "Farber, Eliav" <farbere@amazon.com>
-To: Thomas Gleixner <tglx@linutronix.de>, "linux@armlinux.org.uk"
-	<linux@armlinux.org.uk>, "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-	"will@kernel.org" <will@kernel.org>, "mpe@ellerman.id.au"
-	<mpe@ellerman.id.au>, "npiggin@gmail.com" <npiggin@gmail.com>,
-	"christophe.leroy@csgroup.eu" <christophe.leroy@csgroup.eu>,
-	"naveen@kernel.org" <naveen@kernel.org>, "maddy@linux.ibm.com"
-	<maddy@linux.ibm.com>, "paul.walmsley@sifive.com" <paul.walmsley@sifive.com>,
-	"palmer@dabbelt.com" <palmer@dabbelt.com>, "aou@eecs.berkeley.edu"
-	<aou@eecs.berkeley.edu>, "akpm@linux-foundation.org"
-	<akpm@linux-foundation.org>, "bhe@redhat.com" <bhe@redhat.com>,
-	"hbathini@linux.ibm.com" <hbathini@linux.ibm.com>,
-	"sourabhjain@linux.ibm.com" <sourabhjain@linux.ibm.com>,
-	"adityag@linux.ibm.com" <adityag@linux.ibm.com>, "songshuaishuai@tinylab.org"
-	<songshuaishuai@tinylab.org>, "takakura@valinux.co.jp"
-	<takakura@valinux.co.jp>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linuxppc-dev@lists.ozlabs.org"
-	<linuxppc-dev@lists.ozlabs.org>, "linux-riscv@lists.infradead.org"
-	<linux-riscv@lists.infradead.org>
-CC: "Chocron, Jonathan" <jonnyc@amazon.com>
-Subject: RE: [PATCH v5 1/2] kexec: Consolidate machine_kexec_mask_interrupts()
- implementation
-Thread-Topic: [PATCH v5 1/2] kexec: Consolidate
- machine_kexec_mask_interrupts() implementation
-Thread-Index: AdtFgq6lXwncie71LkSE+iBNpljfQg==
-Date: Tue, 3 Dec 2024 12:55:52 +0000
-Message-ID: <077908c5f02545f0a9e02ae77cbd771c@amazon.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1733230742; c=relaxed/simple;
+	bh=gbyrzLHaaP8vNy3gYuCqPffQEaN2dfO6mj1VA8VUbsk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=N1RhTJntRSgAtmWQO5wlsPz49qYdlM+bg8EdiRhUAZ3i10HaDPuEjahseH8SqGeId2a3ry1xg45or+blBl7FjVn6jKbGoit3Hgc7hDxkbFjwI+H0W45DXUeP8Zpp3xDuRhvc2dpAP2zCQf9/rUPWO0/GwgxCPUfSlqHeQ7JJkjU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=somainline.org; spf=pass smtp.mailfrom=somainline.org; arc=none smtp.client-ip=5.144.164.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=somainline.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=somainline.org
+Received: from SoMainline.org (94-211-6-86.cable.dynamic.v4.ziggo.nl [94.211.6.86])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by m-r2.th.seeweb.it (Postfix) with ESMTPSA id 026083EA59;
+	Tue,  3 Dec 2024 13:58:50 +0100 (CET)
+Date: Tue, 3 Dec 2024 13:58:49 +0100
+From: Marijn Suijten <marijn.suijten@somainline.org>
+To: Luca Weiss <luca.weiss@fairphone.com>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, ~postmarketos/upstreaming@lists.sr.ht, 
+	phone-devel@vger.kernel.org, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: power: rpmpd: Fix comment for SM6375
+Message-ID: <eovguha2tvc3rxd72yfqxgcg37waokoyqs377kvwmtdgssi4no@ii3i2bvl675i>
+Mail-Followup-To: Marijn Suijten <marijn.suijten@somainline.org>, 
+	Luca Weiss <luca.weiss@fairphone.com>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, ~postmarketos/upstreaming@lists.sr.ht, 
+	phone-devel@vger.kernel.org, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+References: <20241202-rpmpd-sm6375-v1-1-12a4f0182133@fairphone.com>
+ <yo5cc3cvvwwdrqrrgwlquztj52sijip3ffyyqag55jrnztxi2m@hn75ylkhnxie>
+ <D61WIF2XWKL8.MWU6PK2XGX4F@fairphone.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <D61WIF2XWKL8.MWU6PK2XGX4F@fairphone.com>
 
-On 12/3/2024 1:04 PM, Thomas Gleixner wrote:
->> +
->> +config GENERIC_IRQ_KEXEC_CLEAR_VM_FORWARD
->> +     bool "Clear forwarded VM interrupts during kexec"
->
-> This should not be user selectable. Just keep it as:
->
-> config GENERIC_IRQ_KEXEC_CLEAR_VM_FORWARD
->         bool
->
-> which defaults to 'n'. Just add a comment what this is about like it's
-> done with the other options in that file which are only selectable.
-Question: Should this new configuration option be placed inside or
-outside the following section:
-```
-menu "IRQ subsystem"
+On 2024-12-03 08:52:59, Luca Weiss wrote:
+> On Mon Dec 2, 2024 at 9:00 PM CET, Dmitry Baryshkov wrote:
+> > On Mon, Dec 02, 2024 at 04:45:02PM +0100, Luca Weiss wrote:
+> > > During an earlier commit, the comment from SM6350 was copied without
+> > > modifying. Adjust the comment to reflect the defines.
+> > > 
+> > > Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+> >
+> > Fixes tag, please.
+> 
+> I thought for just a comment fix it's not necessary / desired.
 
+Makes one wonder why the SoC name is repeated in a comment in the first place,
+when it is already in every named constant and the containing filename too.
+That's only prone to errors as you've demonstrated here, requiring a separate
+commit and discussion (and automatic backporting via Fixes:) to patch up, while
+it already wasn't relevant/useful for anyone.
 
-endmenu
-```
-In my patch, I have added the new configuration option at the end of
-the file, outside the "IRQ subsystem" section.
+Less is more.
+
+- Marijn
+
+PS: That's a suggestion to see if we can perhaps remove these from all header
+files instead to save the copy-paste burden in the future?
+
+> 
+> Anyways:
+> 
+> Fixes: 2d48e6ea3080 ("dt-bindings: power: rpmpd: Add SM6375 power domains")
+> 
+> 
+> >
+> > > ---
+> > >  include/dt-bindings/power/qcom-rpmpd.h | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > 
+> > > diff --git a/include/dt-bindings/power/qcom-rpmpd.h b/include/dt-bindings/power/qcom-rpmpd.h
+> > > index df599bf462207267a412eac8e01634189a696a59..d9b7bac309537cbfd2488e7d4fe21d195c919ef5 100644
+> > > --- a/include/dt-bindings/power/qcom-rpmpd.h
+> > > +++ b/include/dt-bindings/power/qcom-rpmpd.h
+> > > @@ -65,7 +65,7 @@
+> > >  #define SM6350_MSS	4
+> > >  #define SM6350_MX	5
+> > >  
+> > > -/* SM6350 Power Domain Indexes */
+> > > +/* SM6375 Power Domain Indexes */
+> > >  #define SM6375_VDDCX		0
+> > >  #define SM6375_VDDCX_AO	1
+> > >  #define SM6375_VDDCX_VFL	2
+> > > 
+> > > ---
+> > > base-commit: 40384c840ea1944d7c5a392e8975ed088ecf0b37
+> > > change-id: 20241202-rpmpd-sm6375-06582e126d7f
+> > > 
+> > > Best regards,
+> > > -- 
+> > > Luca Weiss <luca.weiss@fairphone.com>
+> > > 
+> 
 
