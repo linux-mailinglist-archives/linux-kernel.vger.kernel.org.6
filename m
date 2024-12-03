@@ -1,219 +1,189 @@
-Return-Path: <linux-kernel+bounces-429288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA9E79E19BE
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 11:48:00 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 104459E19C0
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 11:48:16 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B215288DDC
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:47:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C98DE165457
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:48:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B7151E378C;
-	Tue,  3 Dec 2024 10:46:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 288D11E2600;
+	Tue,  3 Dec 2024 10:48:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="UKnCqHRr"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H0CCYRTl"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1B3A1E25EC;
-	Tue,  3 Dec 2024 10:46:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A19861E048F;
+	Tue,  3 Dec 2024 10:47:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733222773; cv=none; b=VIL4YlgycEx2yQI1fGEHkIJmdk696v06oX7F4zrBOivzUxt0MN9ZbApIZJbsZH96w6ymU+6hIWsv6RC9sgC+ETq0hehzt6ED3WKj3voKBLxv2pIVLg0b0XZFr6b6Y7MgDrZMfqZIfVw38Mk2Qsw5W7qysxyIRJ/p6HM5QChJn/c=
+	t=1733222880; cv=none; b=gMffWFx/5+LI7zYRRhblpO7I1nc8PSLVj9Twty+SeirwEKoVBKH4zSDY4GeiQZdOM/Fs8uxbSFBgqzBvAFHj70DLivlWLkfuxhryLYIjm4FjSNWupE8HhfcZiWbJLwAOp4bq5RJkX5Zv/0kSRXhCTYknierpFlgL9TuAw4ErBik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733222773; c=relaxed/simple;
-	bh=P51bhc3HZ3o911SSeg8+stkV+cAHvwFIJ068zwsw+4A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=AzwRkmni5Te1EBZ/R5u3W8R0YUH76RMBB9AOeo3K7PT8iKKc34VIID2ARdj9lFpYtR9z0zrLm3t4qZ4JwSNxNh4fCzJd0RRT/JxESlFu/qes1PeZlpWhSmx2tlErrxKxAAPjpqSS+zbgcqENGxbf5dRws/hLN1a+b7IrdL5l/1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=UKnCqHRr; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B362c2m027841;
-	Tue, 3 Dec 2024 10:45:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	UN0XSC5qycfF5izJMc2/kTr5aNMxSwmq9lk/LJNJHAE=; b=UKnCqHRr6h7c9L+G
-	SOUED9IjML+F6Wq4l6MVo+/n63ONsACHcyNcKpfdwX+DOuhJYPM4inCAazjGwrTM
-	UrcLm9UbC5vyB60B481/9B4Sr6PxifDtM+Joiah0cviayC3ka41Sxh28rrYkZZUG
-	yWxWdH6ZKGs66aUuZPkSu5LusPAOeuhx6dsIYMVBGLdu2kRfniujuHLWs23w3gBM
-	sGw5MhkxrFDuzR2V2IiW+Ffm7fEhJrxwxnmG8zyJWJL8FF8r7RVwLdCwZegVUhvQ
-	80Ol5DE4OqUOZTapI4HIeYJ8JLey107dMHwIF44EBEL+IA2X1f567YNZcByhX5be
-	DWTXzw==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 439vcegqwy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 03 Dec 2024 10:45:52 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B3AjpEI023835
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 3 Dec 2024 10:45:51 GMT
-Received: from [10.239.133.66] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 3 Dec 2024
- 02:45:47 -0800
-Message-ID: <de297c20-8a91-48b5-96bd-e59019a780ef@quicinc.com>
-Date: Tue, 3 Dec 2024 18:45:45 +0800
+	s=arc-20240116; t=1733222880; c=relaxed/simple;
+	bh=BcOsH/YOUd0qjb+lCoHLHHXm+hf++DGpsNwgIINzoIM=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ezUp/atxGbH9dg6cSycNe4vsYKKvjuNtHbFdxUaGrzmOEuyIH6peAdbAAlSNo1fnkedPfQY+3lBp/xPMBa71gcVBKMsSOnCwoy2rC3RsLj2JO/gJPsWHHNF7ydb7/PlS5pnabAr+VTvkfLkQsTjqENr3lZCpwM3NhjocTxWUwi0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H0CCYRTl; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-434aa472617so45724115e9.3;
+        Tue, 03 Dec 2024 02:47:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733222877; x=1733827677; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=LpUnABsULWmGSRfspOn9ot1oEJsbuvsgUg5VbDOLzbU=;
+        b=H0CCYRTlkiKkUf2CQKSXOXHJHNpc9c5J2XCjKPkNrASzyPlLfPRJ1M4KiLvWXU75fQ
+         I38SGsh3zinNSpMCyEUP52AfQbDe2EDiUPfL/O8pE8dXB5OG5DW4f4a9Sg38JCfE4U1E
+         R77G5e7s5TWNcn++1/Di3PbhPKXHZgR9Xl0mPposBA1b4oJY4AKWOZBiqDB7VKcu9H8Z
+         tYIndiF+E1rni5ChcI1TmuONpJT+b5QB9moo8EtTVGZLFpjIDHhngVOO9JrSWmYZ+xCJ
+         uknfLUS8dLpCIsponglkp6dzKt+VMNKebYUQabe8wfRPaQbx03hWqQXZ3vDoqRVLrMhn
+         4klw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733222877; x=1733827677;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LpUnABsULWmGSRfspOn9ot1oEJsbuvsgUg5VbDOLzbU=;
+        b=SrWsz2KBVWOxe9mWa+l9soxspwWSQC2zLmT4LzmqXgGx+Q+YHXqlepPY5EZJ7nBFce
+         ALHC8ukzllx89BxY2IkKm+RiGxHiJtH/83k4D3ixrGM6/iXh0+wREN1FFhLbTT/yjgrM
+         9VtdIEqeN2L4xa26qPNphZinQh75HVNUMFA7jYaNlW/xmNm2dfPC+i3J+1JW+YFcqrYr
+         PR1okAbmQiuubfPr8T/xrgDbuOYKSe60+UgbRBry0QTOVDxzUl2Ay9MXoM5J/Nqrc3Fv
+         aJHrXQtTVVipH++EOKhXOX+xS31Xyo21WAFA2PVTTEsDy75sAm0zoWhY7xTQ1qAC8LQZ
+         ysDg==
+X-Forwarded-Encrypted: i=1; AJvYcCU7A5N9X1vFQF6GOduoN1FPa6Udb4DR3VN+3uZwMDSCNNstcuPO7TrVXepb7o0cJh3mSkx3R8ET9j+8RiaL@vger.kernel.org, AJvYcCWDWPd2RsvTjPWLyKhyRWLIpuVaRuN0TpBNqLce9hljMr6JfKSxEMYO1wiFXoq/wp88CehkMNbaTpI=@vger.kernel.org, AJvYcCXs/w+19NNcAXYVOAetEfFaEulL04TQINoldBMM6PY7PU/DlSiSaXS/kaiIrHOVg20T5jDPvVOCaveN@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQv7JMxCW5N9t7FzhRsN9iIvPJ+TYgr4hC5muMz97EMCs18bDY
+	b0AiSktyhoKFtuzohjMdYGlVa02dNzMONVkyWPkealjshNjupp76dnUB7g==
+X-Gm-Gg: ASbGncvC325jb3wwwccG3Rnr5uAyqL5yGnTxctn09B5KZEbWcKziz9nLTZ9CYCeTR9Q
+	Vf5JN42bud9cabhYxdAvaS4oKY5VtUQcDBG6+yXO4luve1z6WDRg4yKPR1tDDvwlG4GuVy3TMVa
+	LBBMJmEmIx7nNMjR9wVEMIG6kMVMNzwBEixlJee+X9wNA2uCrSsts8waYAV26Jy2LL3kK+S/yOc
+	4l8IeX657FvLYLt+QKL37Iu9LWrHGLr0lFtCAbwY38ChRpX8NDN9d7SRFZ+4zlqHdNFgVKUE7z+
+	OCGBwQ==
+X-Google-Smtp-Source: AGHT+IEcvxKULQvZ0AGJeUaKLgigFDpZIVKxIZtM+IyAs3cN7nNgaLZ1L2XXIEIKTNKA7XHEZt80WQ==
+X-Received: by 2002:a05:600c:3b8c:b0:434:a4bc:535b with SMTP id 5b1f17b1804b1-434d09bf66dmr16319695e9.11.1733222876642;
+        Tue, 03 Dec 2024 02:47:56 -0800 (PST)
+Received: from Ansuel-XPS. (93-34-91-161.ip49.fastwebnet.it. [93.34.91.161])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434aa7d1a90sm215537385e9.32.2024.12.03.02.47.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Dec 2024 02:47:56 -0800 (PST)
+Message-ID: <674ee1dc.050a0220.13fa34.f758@mx.google.com>
+X-Google-Original-Message-ID: <Z07h11mY06p03YdQ@Ansuel-XPS.>
+Date: Tue, 3 Dec 2024 11:47:51 +0100
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Rob Herring <robh@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-pm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	upstream@airoha.com
+Subject: Re: [PATCH v4 1/2] dt-bindings: cpufreq: Document support for Airoha
+ EN7581 CPUFreq
+References: <20241202151228.32609-1-ansuelsmth@gmail.com>
+ <CAPDyKFqrY7uLD8ATqH0LghmkHgApQSsGtvGkOTd8UVazGu0_uA@mail.gmail.com>
+ <674dd60f.7b0a0220.2ba255.7b7a@mx.google.com>
+ <20241202205738.GA3149730-robh@kernel.org>
+ <CAPDyKFo6j__CoReyAbeLJkA8JJQhJVc=umNesQRZKm-RxFHCwA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] perf bpf: Fix two memory leakages when calling
- perf_env__insert_bpf_prog_info()
-To: Namhyung Kim <namhyung@kernel.org>
-CC: <peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
-        <mark.rutland@arm.com>, <alexander.shishkin@linux.intel.com>,
-        <jolsa@kernel.org>, <irogers@google.com>, <adrian.hunter@intel.com>,
-        <kan.liang@linux.intel.com>, <james.clark@linaro.org>,
-        <yangyicong@hisilicon.com>, <song@kernel.org>,
-        <linux-perf-users@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <bpf@vger.kernel.org>
-References: <20241128125432.2748981-1-quic_zhonhan@quicinc.com>
- <20241128125432.2748981-4-quic_zhonhan@quicinc.com>
- <Z04uaWQxI3LXfAtg@google.com>
-Content-Language: en-US
-From: Zhongqiu Han <quic_zhonhan@quicinc.com>
-In-Reply-To: <Z04uaWQxI3LXfAtg@google.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: sw8Ejl0PTIlAF3LzMLtkVf2tQuYRTu8e
-X-Proofpoint-ORIG-GUID: sw8Ejl0PTIlAF3LzMLtkVf2tQuYRTu8e
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- bulkscore=0 mlxlogscore=999 adultscore=0 suspectscore=0 spamscore=0
- impostorscore=0 phishscore=0 mlxscore=0 malwarescore=0 clxscore=1011
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412030092
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPDyKFo6j__CoReyAbeLJkA8JJQhJVc=umNesQRZKm-RxFHCwA@mail.gmail.com>
 
-On 12/3/2024 6:02 AM, Namhyung Kim wrote:
-> Hello,
+On Tue, Dec 03, 2024 at 11:33:28AM +0100, Ulf Hansson wrote:
+> On Mon, 2 Dec 2024 at 21:57, Rob Herring <robh@kernel.org> wrote:
+> >
+> > On Mon, Dec 02, 2024 at 04:45:17PM +0100, Christian Marangi wrote:
+> > > On Mon, Dec 02, 2024 at 04:42:33PM +0100, Ulf Hansson wrote:
+> > > > On Mon, 2 Dec 2024 at 16:20, Christian Marangi <ansuelsmth@gmail.com> wrote:
+> > > > >
+> > > > > Document required property for Airoha EN7581 CPUFreq .
+> > > > >
+> > > > > On newer Airoha SoC, CPU Frequency is scaled indirectly with SMCCC commands
+> > > > > to ATF and no clocks are exposed to the OS.
+> > > > >
+> > > > > The SoC have performance state described by ID for each OPP, for this a
+> > > > > Power Domain is used that sets the performance state ID according to the
+> > > > > required OPPs defined in the CPU OPP tables.
+> > > > >
+> > > > > Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> > > > > ---
+> > > > > Changes v4:
+> > > > > - Add this patch
+> > > > >
+> > > > >  .../cpufreq/airoha,en7581-cpufreq.yaml        | 259 ++++++++++++++++++
+> > > > >  1 file changed, 259 insertions(+)
+> > > > >  create mode 100644 Documentation/devicetree/bindings/cpufreq/airoha,en7581-cpufreq.yaml
+> > > > >
+> > > > > diff --git a/Documentation/devicetree/bindings/cpufreq/airoha,en7581-cpufreq.yaml b/Documentation/devicetree/bindings/cpufreq/airoha,en7581-cpufreq.yaml
+> > > > > new file mode 100644
+> > > > > index 000000000000..a5bdea7f34b5
+> > > > > --- /dev/null
+> > > > > +++ b/Documentation/devicetree/bindings/cpufreq/airoha,en7581-cpufreq.yaml
+> > > >
+> > > > [...]
+> > > >
+> > > > > +examples:
+> > > > > +  - |
+> > > > > +    / {
+> > > > > +        #address-cells = <2>;
+> > > > > +       #size-cells = <2>;
+> > > > > +
+> > > > > +        cpus {
+> > > > > +            #address-cells = <1>;
+> > > > > +            #size-cells = <0>;
+> > > > > +
+> > > > > +            cpu0: cpu@0 {
+> > > > > +                device_type = "cpu";
+> > > > > +                compatible = "arm,cortex-a53";
+> > > > > +                reg = <0x0>;
+> > > > > +                operating-points-v2 = <&cpu_opp_table>;
+> > > > > +                enable-method = "psci";
+> > > > > +                clocks = <&cpufreq>;
+> > > > > +                clock-names = "cpu";
+> > > > > +                power-domains = <&cpufreq>;
+> > > > > +                power-domain-names = "cpu_pd";
+> > > >
+> > > > Nitpick: Perhaps clarify the name to be "perf" or "cpu_perf", to
+> > > > indicate it's a power-domain with performance scaling support.
+> > > >
+> > >
+> > > Will change to cpu_perf. Thanks a lot for the review!
+> >
+> > Is that defined in arm/cpus.yaml? No.
+> >
+> > The current choices are perf or psci though those aren't enforced (yet).
+> > Or nothing which is my preference if there is only 1 power domain.
 > 
-> On Thu, Nov 28, 2024 at 08:54:32PM +0800, Zhongqiu Han wrote:
->> If perf_env__insert_bpf_prog_info() returns false due to a duplicate bpf
->> prog info node insertion, the temporary info_node and info_linear memory
->> will leak. Add a check to ensure the memory is freed if the function
->> returns false.
->>
->> Fixes: 9c51f8788b5d ("perf env: Avoid recursively taking env->bpf_progs.lock")
->> Signed-off-by: Zhongqiu Han <quic_zhonhan@quicinc.com>
->> ---
->>   tools/perf/util/bpf-event.c | 10 ++++++++--
->>   tools/perf/util/env.c       |  7 +++++--
->>   tools/perf/util/env.h       |  2 +-
->>   3 files changed, 14 insertions(+), 5 deletions(-)
->>
->> diff --git a/tools/perf/util/bpf-event.c b/tools/perf/util/bpf-event.c
->> index 13608237c50e..c81444059ad0 100644
->> --- a/tools/perf/util/bpf-event.c
->> +++ b/tools/perf/util/bpf-event.c
->> @@ -289,7 +289,10 @@ static int perf_event__synthesize_one_bpf_prog(struct perf_session *session,
->>   		}
->>   
->>   		info_node->info_linear = info_linear;
->> -		perf_env__insert_bpf_prog_info(env, info_node);
->> +		if (!perf_env__insert_bpf_prog_info(env, info_node)) {
->> +			free(info_linear);
->> +			free(info_node);
->> +		}
->>   		info_linear = NULL;
->>   
->>   		/*
->> @@ -480,7 +483,10 @@ static void perf_env__add_bpf_info(struct perf_env *env, u32 id)
->>   	info_node = malloc(sizeof(struct bpf_prog_info_node));
->>   	if (info_node) {
->>   		info_node->info_linear = info_linear;
->> -		perf_env__insert_bpf_prog_info(env, info_node);
->> +		if (!perf_env__insert_bpf_prog_info(env, info_node)) {
->> +			free(info_linear);
->> +			free(info_node);
->> +		}
->>   	} else
->>   		free(info_linear);
->>   
->> diff --git a/tools/perf/util/env.c b/tools/perf/util/env.c
->> index d7865ae5f8f5..38401a289c24 100644
->> --- a/tools/perf/util/env.c
->> +++ b/tools/perf/util/env.c
->> @@ -24,12 +24,15 @@ struct perf_env perf_env;
->>   #include "bpf-utils.h"
->>   #include <bpf/libbpf.h>
->>   
->> -void perf_env__insert_bpf_prog_info(struct perf_env *env,
->> +bool perf_env__insert_bpf_prog_info(struct perf_env *env,
->>   				    struct bpf_prog_info_node *info_node)
->>   {
->> +	bool ret = true;
+> Right. It's not really clear in arm/cpus.yaml what name to use for a
+> perf domain, except for "perf" for SCMI.
 > 
-> Please add a blank line between declaration and the other statements.
-> Also I think you can just use the return value of the internal function
-> instead of initializaing it to true.
+> If we want to move towards some alignment, perhaps we should update
+> the DT doc to make "perf" the common suggestion? I can send a patch if
+> you think it makes sense?
 > 
-> Thanks,
-> Namhyung
-> 
-> 
+> Even if there is only 1 power-domain at this point, we never know if
+> another one turns up later, for whatever reasons. That said, isn't it
+> better to be specific about a name, already at this point?
+>
 
-Hi Namhyung,
-Thanks for your review~
+Ok to summarize
 
-I will add a blank line between the declaration and the other
-statements, and optimize it as below:
+- cpu node: use perf for PD
+- cpufreq node change node name to power-domain
+- Fix OPP format (already done)
 
-
-+bool perf_env__insert_bpf_prog_info(struct perf_env *env,
-  				    struct bpf_prog_info_node
-*info_node)
-  {
-+	bool ret;
-+
-  	down_write(&env->bpf_progs.lock);
--	__perf_env__insert_bpf_prog_info(env, info_node);
-+	ret = __perf_env__insert_bpf_prog_info(env, info_node);
-  	up_write(&env->bpf_progs.lock);
-+	return ret;
-  }
-
-
->>   	down_write(&env->bpf_progs.lock);
->> -	__perf_env__insert_bpf_prog_info(env, info_node);
->> +	if (!__perf_env__insert_bpf_prog_info(env, info_node))
->> +		ret = false;
->>   	up_write(&env->bpf_progs.lock);
->> +	return ret;
->>   }
->>   
->>   bool __perf_env__insert_bpf_prog_info(struct perf_env *env, struct bpf_prog_info_node *info_node)
->> diff --git a/tools/perf/util/env.h b/tools/perf/util/env.h
->> index 9db2e5a625ed..da11add761d0 100644
->> --- a/tools/perf/util/env.h
->> +++ b/tools/perf/util/env.h
->> @@ -178,7 +178,7 @@ int perf_env__nr_cpus_avail(struct perf_env *env);
->>   void perf_env__init(struct perf_env *env);
->>   bool __perf_env__insert_bpf_prog_info(struct perf_env *env,
->>   				      struct bpf_prog_info_node *info_node);
->> -void perf_env__insert_bpf_prog_info(struct perf_env *env,
->> +bool perf_env__insert_bpf_prog_info(struct perf_env *env,
->>   				    struct bpf_prog_info_node *info_node);
->>   struct bpf_prog_info_node *perf_env__find_bpf_prog_info(struct perf_env *env,
->>   							__u32 prog_id);
->> -- 
->> 2.25.1
->>
-
+Did I miss anything? It's strange these case weren't catch by
+dt_binding_check. Sorry, wasn't aware of all these common name.
 
 -- 
-Thx and BRs,
-Zhongqiu Han
+	Ansuel
 
