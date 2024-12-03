@@ -1,83 +1,129 @@
-Return-Path: <linux-kernel+bounces-429883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 674989E2BFE
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 20:26:41 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D89B69E2C4D
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 20:48:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 43300BC17E9
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:50:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C23ACB813FD
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:53:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BB541FBCB5;
-	Tue,  3 Dec 2024 16:50:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DF7A1F9F77;
+	Tue,  3 Dec 2024 16:52:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kyW7aAvf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZFulI6l3"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CD4D1F9F5C;
-	Tue,  3 Dec 2024 16:50:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CF821F756E;
+	Tue,  3 Dec 2024 16:52:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733244610; cv=none; b=cmzxEnJAditD9S6Cu58+hGrzkbXH94KVNjXue7fKVqp7n4F2jeeO6qcr2hNWSttWbFK9Gv4riBy9BYANnJ0jNZrpIGn42I/j1A1vfvP49n7dnW7NWlJyYkgWWC4geAyidsv7+E1lL/2YnRkdB8OOjbN26/uX0uujEgj8mM3WrfQ=
+	t=1733244772; cv=none; b=kewhMoHAbaAvAHMsB22zT6/R4glVtC7vMSk9CkcpwuBiEN6tZZ9d1/KJs1fH2paFlZUGIKdpY7fCJq9/2W8bRsN+hqIhirB6r9ojEfV30PnD8XVjHFEKY2OfT2FyOq4bThkS71cLRkFOjvTJ0vZwfTbHTyN8Jq+wfLANSWXTbyQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733244610; c=relaxed/simple;
-	bh=hl4qjq6wBEq5/6rBW02XlLyDQNXhu4x9H//HnoHXZC0=;
+	s=arc-20240116; t=1733244772; c=relaxed/simple;
+	bh=KMoQysWKuRuCQztw6raSWjQ+IF192GVyXNDygjqp45k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nI00WfWQCmml1u8T6wsSfNMX8/Lj+4uj1A6BPF67MR7cwl2BTLE7gX4Vc/8WCUPLxI/7/ndZACJsYrAxRV+ZFqTTUb7zDXriScUKrkz5Bul4dzJsPVIi4Jve0TGdRBOVROzCNUVlrcDsX4/FwomQ5DXaJItULCJO3ZimX/V1dGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kyW7aAvf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE083C4CECF;
-	Tue,  3 Dec 2024 16:50:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733244609;
-	bh=hl4qjq6wBEq5/6rBW02XlLyDQNXhu4x9H//HnoHXZC0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kyW7aAvfsRsd+goXqPtxbrF2GZ9SUIgO8a/u1AJ8BIEnmbS5M3rvY8PwauYRqY69E
-	 wMH5EFRYngFm5G+VV1tipxqdIFc41sJlBO0qh3qPCzE4sbfpkOA5o2Vyiy1qWqgIFB
-	 tDM8h/jaa0EONYCKZBgvbq7BzhmLostW8/EjWPzgZMtsAzVQxFUDMqN0NCdgm9ZDLg
-	 4fb6XRDcTbDHRJQdleIIvXoILAqO8mFQ9vF1/QKq2tdmUJNpeYz4vXfsC5H4pgkF5H
-	 yXF+ZFN/xAJAxY7eBbV6DIDQiMKdXO9IDBGv7yUgvqUy0TKwnw3Vi60mUCL2qMjhMk
-	 nZROfofiKrMYw==
-Date: Tue, 3 Dec 2024 10:50:07 -0600
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: chunkuang.hu@kernel.org, p.zabel@pengutronix.de,
-	linux-mediatek@lists.infradead.org, matthias.bgg@gmail.com,
-	linux-arm-kernel@lists.infradead.org, conor+dt@kernel.org,
-	airlied@gmail.com, mripard@kernel.org, devicetree@vger.kernel.org,
-	ck.hu@mediatek.com, linux-kernel@vger.kernel.org,
-	maarten.lankhorst@linux.intel.com, simona@ffwll.ch,
-	dri-devel@lists.freedesktop.org, kernel@collabora.com,
-	tzimmermann@suse.de, krzk+dt@kernel.org
-Subject: Re: [PATCH v1 1/7] dt-bindings: display: mediatek: Add binding for
- HDMIv2 DDC
-Message-ID: <173324460711.1946104.15731375026648249870.robh@kernel.org>
-References: <20241120124512.134278-1-angelogioacchino.delregno@collabora.com>
- <20241120124512.134278-2-angelogioacchino.delregno@collabora.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=G+GoT6bf9o4CMO/L9tsVhjspA3Qv2owd/0vsqqHnMowTF1FGBjDqJXBQ3XicAEbQCC4PVJGQbNj35r9Wliynqb2hjSd3cHfkVmzJmPbwsl5NpmnLwQQdDN81lFZ5R4p4D497Pl01fYU1gKM3PqbycIUfpjixESTgRSi+VVrIe+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZFulI6l3; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-7253bc4d25eso3891813b3a.0;
+        Tue, 03 Dec 2024 08:52:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733244770; x=1733849570; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=zV785WNUhq1gA/Wn6AqbiBGMdzVMW4esqYjkrkDGUc4=;
+        b=ZFulI6l37pigAxh596FkMuqk2PWpI2k0IcBXyUjWlR89R2CvKhUBqIohai99ElL75U
+         wIiwu0kd7ao+R6SKIpj/pgPI6bsvjllQF/negBmXWoNx223rWl0fAAZdPloLKGZp/Z+W
+         EUlg5iS4h19gHKE4uaKi5gvgbDBKlXWITWl/lK6mcsZ8x6cCurAXZWwQsz9nW5nfq4DZ
+         1qtfnZ7DOSxCKp2q1ipAg20552VsBjxAGtaAf5oTxIlQe2B3iGXfNX/wSWPum+pJXpJt
+         OZtKQCObfHKj+Tj6tSLWxq8h3U8ZodIsN0yvACPE5Fbk0mlB7HPJ4fne9lwJbyCdR+rn
+         jJAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733244770; x=1733849570;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zV785WNUhq1gA/Wn6AqbiBGMdzVMW4esqYjkrkDGUc4=;
+        b=cMO79I640XH39qdVeQEl5+xtnywfOjQiMNLNB2qQfdCyCpMdDlQXPjZ+t6GxQPysnL
+         tx5mqwJ69BO1uxaKXEVEkHcmMNCydTziWu+n8r4xrNr4lSPMczbhLN4fR9NtagUodKeT
+         Lf6xOtzWEGEe0OwXDMu/SyuWfGIIfI5WrIG7M6uZhOVVgNAx7tdG1RIwAED0enA4EdXb
+         L+0wG93QuvwUQzOlWd8AR0lBGzzMwpE1+/xn2ReOvZvBrr/9OnJz+NnY4irsxClt35zM
+         d/cCs93jbRZwegLTs6viRPDx2y1H2NVTSBTDamtIlhFtlHv0Qjb8rAKDduFZqGsHF6cN
+         TrBA==
+X-Forwarded-Encrypted: i=1; AJvYcCUystuy9RZ5HzAzhg4sVnYCxzXBOMO0SL4l2NC5AbB4D0N0a5iJ3wic1W3tcnD0i2vuo8CNfA2mc6XXaeA=@vger.kernel.org, AJvYcCXEH6ltGqXpSDyR2frZYTfBO9TMoNDUjdBEeXVw3B+uWp9G7YJ0XuKoBF3l0GQeu95E9HXImjDD@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMWN2xy5nEW55n/WGLfOeT6bEW59WA2p6frStPuTugyD34Fe1X
+	d8DDR/fNJDB3/+8n/5OV4cFTyLXQyexdp6q1Lbo2//sDI/j1igQ=
+X-Gm-Gg: ASbGncuYQPgTY6B+Ho86s4L585sf6fPLroHKexeJPKzxEQWQ75cwnJ+6B9orKTq6Vel
+	PfvilxF5d5XP1sodb1JOk/fVIhf3t109PZsXcTOlmQL8pJoKWu2geSWLGbIDwPWFhvisRqSpW7x
+	eQ3RO3XEOPWHupfnaYkXOx1Q6uhcY7l8wUErNvQhDTURDKa87DKVMb2w181FIO9p1GVD3uSFpkD
+	kl1JSx+f/Qgujc8T4E2jaZ5zxx3NX4FCvRKNtfJe4KHQB5aww==
+X-Google-Smtp-Source: AGHT+IGuAh/HD5NoVevDHBywonmxKblpUpfCSIwU15PIfQGiZ/NQeI+/BOrCPWeRdL/ZNbgaf2qL/g==
+X-Received: by 2002:a05:6a00:3bd2:b0:725:4518:9906 with SMTP id d2e1a72fcca58-7254518992dmr27567479b3a.8.1733244770237;
+        Tue, 03 Dec 2024 08:52:50 -0800 (PST)
+Received: from localhost ([2601:646:9e00:f56e:123b:cea3:439a:b3e3])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72541813aeasm10994775b3a.140.2024.12.03.08.52.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Dec 2024 08:52:49 -0800 (PST)
+Date: Tue, 3 Dec 2024 08:52:49 -0800
+From: Stanislav Fomichev <stfomichev@gmail.com>
+To: Jan Stancek <jstancek@redhat.com>
+Cc: donald.hunter@gmail.com, kuba@kernel.org, pabeni@redhat.com,
+	davem@davemloft.net, edumazet@google.com, horms@kernel.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/5] tools: ynl: move python code to separate
+ sub-directory
+Message-ID: <Z083YZoAQEn9zrjM@mini-arch>
+References: <cover.1733216767.git.jstancek@redhat.com>
+ <20b2bdfe94fed5b9694e22c79c79858502f5e014.1733216767.git.jstancek@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241120124512.134278-2-angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20b2bdfe94fed5b9694e22c79c79858502f5e014.1733216767.git.jstancek@redhat.com>
 
+On 12/03, Jan Stancek wrote:
+> Move python code to a separate directory so it can be
+> packaged as a python module.
 
-On Wed, 20 Nov 2024 13:45:06 +0100, AngeloGioacchino Del Regno wrote:
-> Add a binding for the Display Data Channel (DDC) IP in MediaTek
-> SoCs with version 2 HDMI TX IP.
-> 
-> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-> ---
->  .../mediatek/mediatek,mt8195-hdmi-ddc.yaml    | 41 +++++++++++++++++++
->  1 file changed, 41 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/display/mediatek/mediatek,mt8195-hdmi-ddc.yaml
-> 
+There is a bunch of selftests that depend on this location:
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+make -C tools/testing/selftests TARGETS="drivers/net" TEST_PROGS=ping.py TTEST_GEN_PROGS="" run_tests
+make: Entering directory '/home/virtme/testing-18/tools/testing/selftests'
+make[1]: Entering directory '/home/virtme/testing-18/tools/testing/selftests/drivers/net'
+make[1]: Nothing to be done for 'all'.
+make[1]: Leaving directory '/home/virtme/testing-18/tools/testing/selftests/drivers/net'
+make[1]: Entering directory '/home/virtme/testing-18/tools/testing/selftests/drivers/net'
+TAP version 13
+1..1
+# overriding timeout to 90
+# selftests: drivers/net: ping.py
+# Traceback (most recent call last):
+#   File "/home/virtme/testing-18/tools/testing/selftests/drivers/net/./ping.py", line 4, in <module>
+#     from lib.py import ksft_run, ksft_exit
+#   File "/home/virtme/testing-18/tools/testing/selftests/drivers/net/lib/py/__init__.py", line 10, in <module>
+#     from net.lib.py import *
+#   File "/home/virtme/testing-18/tools/testing/selftests/net/lib/py/__init__.py", line 8, in <module>
+#     from .ynl import NlError, YnlFamily, EthtoolFamily, NetdevFamily, RtnlFamily
+#   File "/home/virtme/testing-18/tools/testing/selftests/net/lib/py/ynl.py", line 23, in <module>
+#     from net.ynl.lib import YnlFamily, NlError
+# ImportError: cannot import name 'YnlFamily' from 'net.ynl.lib' (unknown location)
+not ok 1 selftests: drivers/net: ping.py # exit=1
+make[1]: Leaving directory '/home/virtme/testing-18/tools/testing/selftests/drivers/net'
+make: Leaving directory '/home/virtme/testing-18/tools/testing/selftests'
+xx__-> echo $?
+0
+xx__-> echo scan > /sys/kernel/debug/kmemleak && cat /sys/kernel/debug/kmemleak
+xx__-> 
 
+---
+pw-bot: cr
 
