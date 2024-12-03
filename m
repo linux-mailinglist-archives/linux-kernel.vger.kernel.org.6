@@ -1,104 +1,120 @@
-Return-Path: <linux-kernel+bounces-428623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87A7A9E1177
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 03:49:33 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBF359E1134
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 03:21:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C652282073
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 02:49:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3316BB21EB1
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 02:21:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A093145B14;
-	Tue,  3 Dec 2024 02:49:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49960558BB;
+	Tue,  3 Dec 2024 02:21:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iDvPNwPH"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="E0UJnLfZ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D69E364AE;
-	Tue,  3 Dec 2024 02:49:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E30C48460;
+	Tue,  3 Dec 2024 02:21:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733194167; cv=none; b=cO4AnFEOBpzXipdsxNZXkFaySnZ30lAm8rcLEKf7SVyV4ckCecxjFqR41CGIPrNP8+UtlQxSFT1nqBMZswdFB9042YXxmkySoMC0lazxxdbgO20RFxoM7ZcK0EJLUF9u+iX6X5s2xyNhUq4cozMA2CHE229z17CC7U41FsAR+14=
+	t=1733192465; cv=none; b=VaGDzvLJKkww7zzNlKLH0hO71fyxWITY/AIx0BAAhjaaqquAGWV8rsYxfomsX9x9QFGnOLPHfzw3ZWBlf0enBoS6jovE37ZbtsctNTGfQc0OlVuMmUUyd1N0HhxuMJJbAoDQ5HAPkKD1sgVultjs/6CHdLoOlwklWrDFZWW1Lrs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733194167; c=relaxed/simple;
-	bh=GFIxusrONwQkldKNOO0nMkmdmgBy06iFX7XnlPYW2CA=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=c+GW4K536pKAzDYINlBWG3SfGkA+atrUUi8QF1eeF5GOybCyqqv6Gx23aCM7XpyOueGmi3CMlEOi6YvPER5iBCjew+DfHecG/HQBjvmxiwIP4zLQJNXwdO0LUU6cCckpC2VG/21mqTUWoDgemlzi+KFrISfYsnr+SiSQ3NGXzCw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iDvPNwPH; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1733192465; c=relaxed/simple;
+	bh=6QLhNDCJd+Mbglo2M7lsrD4c4BimFb0EtNIzwqBf3NM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AQhY5BbHGo6Zq37SQHcNJs9goRp+Mhn2HT4/Yng5vQeQ5bZOHuUJfdAmtM1RiTorl7x9OWcgp8ksciorlkMwHQJMShHTP+Xze83Wtl+rQ9JLkd+JjDog1j8aU70hWp9AJ8lO4eicleVcVpR1dQhbz7KZ3FPBBN+uo2lsdIbylDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=E0UJnLfZ; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733194167; x=1764730167;
-  h=from:to:cc:subject:date:message-id;
-  bh=GFIxusrONwQkldKNOO0nMkmdmgBy06iFX7XnlPYW2CA=;
-  b=iDvPNwPHwzrvsqNEgQd+Hvce3tAyEhvyCMpmcMM/D/qnV7x+x2cIGJeD
-   iNCjVKg5lE+P0Vul0iE+NUXZtDDLc2/6zJ5Kk33ilrfjwbGe2MMa0UuSW
-   2QmXriRwmHdhBJCyjuZSx3X7v/oecHGB275uUoTNFM3VeL/WY8VM4pSn8
-   rLvOwturoaR5k6ZuWWTPuqQC14lVC80JqdKmZMFGx1zRzzGHNBpW6BQRt
-   hBRJufFpIPzl2eY6AwG89TQLCBBMFYlF7lZyujAEfKs+DlAuAgWfrj75d
-   QUx9DMVx1XQvjir6GEFdcRJhb+Nm7OoGJSgNH7demHQuWtqHZouvSmxMQ
-   A==;
-X-CSE-ConnectionGUID: b4q+FFvKTVSt1uYtZhag9A==
-X-CSE-MsgGUID: q2fsNAuSQZmnqJqZUWAaKg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11274"; a="44423413"
+  t=1733192462; x=1764728462;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=6QLhNDCJd+Mbglo2M7lsrD4c4BimFb0EtNIzwqBf3NM=;
+  b=E0UJnLfZtxfpzR4KdewOzX5ztox+zMj2keromx1eFYwh6+XyFSM/+cbQ
+   h5UOKEeloqKN2unJjSAgcCQoNqTTGJIKU1xAvycAL8HHDJrYg9epY+zLU
+   T1OT3Ynb0+BxgmyU1j5BBJnD8kln9oKsbI89XvGSGyrVO/lbehuNpf+fV
+   6XDhnx6/tc4RjUXhGzh8Bu3FuIqeySPNu50ScBhXtHKTgjXCLu99ZziJK
+   ybGm7VWrosdwhs/qHi1x7cu+a4EOacJCuj6vNlal35NDEbm6eZNP9Io9a
+   /yUQ9TgsHb4uFpXw/mmtAQPcX9y/ChIULwKYP9LutDSr+gyoJ6OuDxVSD
+   w==;
+X-CSE-ConnectionGUID: Dw/cLI2eQrOeIoNcmi3mwA==
+X-CSE-MsgGUID: F6sB0xsxRLKkGOGzY+rS2A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11274"; a="37324603"
 X-IronPort-AV: E=Sophos;i="6.12,204,1728975600"; 
-   d="scan'208";a="44423413"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Dec 2024 18:49:26 -0800
-X-CSE-ConnectionGUID: /kpo08aXRHGEOo/HE2btyQ==
-X-CSE-MsgGUID: QLEKQXMNSBeKQG2WvURcQw==
+   d="scan'208";a="37324603"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Dec 2024 18:21:01 -0800
+X-CSE-ConnectionGUID: tDGkM0k0R/iQdfQ0e2U7aA==
+X-CSE-MsgGUID: Az8dXULyTU6E6BF3qMBJGg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.12,204,1728975600"; 
-   d="scan'208";a="93378911"
-Received: from qiuxu-clx.sh.intel.com ([10.239.53.109])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Dec 2024 18:49:23 -0800
-From: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
-To: Tony Luck <tony.luck@intel.com>
-Cc: Qiuxu Zhuo <qiuxu.zhuo@intel.com>,
-	Borislav Petkov <bp@alien8.de>,
-	James Morse <james.morse@arm.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Robert Richter <rric@kernel.org>,
-	Yi Lai <yi1.lai@intel.com>,
-	linux-edac@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/1] EDAC/i10nm: Add Intel Clearwater Forest server support
-Date: Tue,  3 Dec 2024 10:20:38 +0800
-Message-Id: <20241203022038.72873-1-qiuxu.zhuo@intel.com>
-X-Mailer: git-send-email 2.17.1
+   d="scan'208";a="98061415"
+Received: from unknown (HELO [10.238.9.154]) ([10.238.9.154])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Dec 2024 18:20:58 -0800
+Message-ID: <2863f94b-c01b-45f8-90fd-b237997d76ec@linux.intel.com>
+Date: Tue, 3 Dec 2024 10:20:55 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v2 2/6] x86/virt/tdx: Add SEAMCALL wrappers for TDX TD
+ creation
+To: Rick Edgecombe <rick.p.edgecombe@intel.com>
+Cc: kvm@vger.kernel.org, pbonzini@redhat.com, seanjc@google.com,
+ dave.hansen@intel.com, isaku.yamahata@gmail.com, kai.huang@intel.com,
+ linux-kernel@vger.kernel.org, tony.lindgren@linux.intel.com,
+ xiaoyao.li@intel.com, yan.y.zhao@intel.com, x86@kernel.org,
+ adrian.hunter@intel.com, Isaku Yamahata <isaku.yamahata@intel.com>,
+ Yuan Yao <yuan.yao@intel.com>
+References: <20241203010317.827803-1-rick.p.edgecombe@intel.com>
+ <20241203010317.827803-3-rick.p.edgecombe@intel.com>
+Content-Language: en-US
+From: Binbin Wu <binbin.wu@linux.intel.com>
+In-Reply-To: <20241203010317.827803-3-rick.p.edgecombe@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Clearwater Forest is the successor to Sierra Forest. Add Clearwater
-Forest CPU model ID for EDAC support.
 
-Tested-by: Yi Lai <yi1.lai@intel.com>
-Signed-off-by: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
----
- drivers/edac/i10nm_base.c | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/edac/i10nm_base.c b/drivers/edac/i10nm_base.c
-index 51556c72a967..5e18ddbbb8a5 100644
---- a/drivers/edac/i10nm_base.c
-+++ b/drivers/edac/i10nm_base.c
-@@ -948,6 +948,7 @@ static const struct x86_cpu_id i10nm_cpuids[] = {
- 	X86_MATCH_VFM_STEPPINGS(INTEL_GRANITERAPIDS_X,	X86_STEPPINGS(0x0, 0xf), &gnr_cfg),
- 	X86_MATCH_VFM_STEPPINGS(INTEL_ATOM_CRESTMONT_X,	X86_STEPPINGS(0x0, 0xf), &gnr_cfg),
- 	X86_MATCH_VFM_STEPPINGS(INTEL_ATOM_CRESTMONT,	X86_STEPPINGS(0x0, 0xf), &gnr_cfg),
-+	X86_MATCH_VFM_STEPPINGS(INTEL_ATOM_DARKMONT_X,	X86_STEPPINGS(0x0, 0xf), &gnr_cfg),
- 	{}
- };
- MODULE_DEVICE_TABLE(x86cpu, i10nm_cpuids);
 
-base-commit: 40384c840ea1944d7c5a392e8975ed088ecf0b37
--- 
-2.17.1
+On 12/3/2024 9:03 AM, Rick Edgecombe wrote:
+[...]
+>   
+> +/*
+> + * The TDX module exposes a CLFLUSH_BEFORE_ALLOC bit to specify whether
+> + * a CLFLUSH of pages is required before handing them to the TDX module.
+> + * Be conservative and make the code simpler by doing the CLFLUSH
+> + * unconditionally.
+> + */
+> +static void tdx_clflush_page(struct page *tdr)
+The argument should have a generic name instead of tdr, because it's not
+limited to TDR.
+
+> +{
+> +	clflush_cache_range(page_to_virt(tdr), PAGE_SIZE);
+> +}
+> +
+> +u64 tdh_mng_addcx(struct tdx_td *td, struct page *tdcs_page)
+> +{
+> +	struct tdx_module_args args = {
+> +		.rcx = page_to_pfn(tdcs_page) << PAGE_SHIFT,
+> +		.rdx = tdx_tdr_pa(td),
+> +	};
+> +
+> +	tdx_clflush_page(tdcs_page);
+> +	return seamcall(TDH_MNG_ADDCX, &args);
+> +}
+> +EXPORT_SYMBOL_GPL(tdh_mng_addcx);
+> +
+[...]
 
 
