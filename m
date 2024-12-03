@@ -1,343 +1,194 @@
-Return-Path: <linux-kernel+bounces-430315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9E979E2F33
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 23:45:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4DA69E2F1A
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 23:31:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6E7B7B329AC
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 22:30:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 318CA28382F
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 22:31:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13AE41DF977;
-	Tue,  3 Dec 2024 22:30:16 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DEED1E200F;
+	Tue,  3 Dec 2024 22:31:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ij4tpw7G"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A614816DC28
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 22:30:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 497BE16DC28;
+	Tue,  3 Dec 2024 22:31:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733265015; cv=none; b=XV/FbTzUiAXroqhRzLM76+x5ERWpnQJP8mqvK4ckfxBpsNgc/iaCemxrfatMA6wVozNGWJvTU2Bgn6pRXH9VBUnk8ZMPLtOYt9RwHj7kJ0I38eg+9Tqsv8dRN7EPn88Vr0ckLqmFmbbAU44AxkaqMgwlCRU2DQqbx7aLbAOdKng=
+	t=1733265075; cv=none; b=D6zBp1WtFnH4aAvNi/e6lduIUjOU5Y8PUFdYykOj1rkuz5GO19ZKxTKpqScqsUohJ/oHn0f31fIp2G0JG2UWkNHUynH2Ou8RySHht0Tk1eOpfH/O8pvlv5MuUo+WUGarrn3r/Wamgoyzo2ugOtyFS/Zaa1zANJ0sgA1e+7yMLJk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733265015; c=relaxed/simple;
-	bh=BbgH2NS+w0yEdRlYqJGcBx/jKI+0Vvjzw4riivYAeMY=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=q8pKPqzE81eqTlSYW0QzCOi4VUtveBTcc1+8HFJoPdtGlmKK9Vt4cXEjk3vJKtZGCcHs/El5v+J1QZ6hpUyThP57zpRnw/RLxjvg1jmxywUqlhaa6Toviao1T7bMjJS8H9vkzhx9zIV+9x1nWd8IcvTqV+SaQ36pgAP+zybksTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a77d56e862so48117245ab.3
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 14:30:13 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733265013; x=1733869813;
-        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
-         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
+	s=arc-20240116; t=1733265075; c=relaxed/simple;
+	bh=c5MRTgEpXTs5X0a7m0YrEMmIZmXQBFn35xi7Ua6hrNE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=spEMXJBQlu4a8X3WSchsPRcArWOEolDxd5cvOMzjHgB7RzvDxRmIe7k1FHZXArX+i3fRAUISGnLz63QVQa9yzagktrqmNuPIC5CwPUFVuh4Jg4cqY7zxD1uOez+XS4TBFxkyHzZ45KYp82HnubZP7u4Yyc75kbvwcXzHfWe6VLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ij4tpw7G; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2eeb64f3588so2372198a91.2;
+        Tue, 03 Dec 2024 14:31:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733265073; x=1733869873; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=646ZGERFPosedWCXH6z+TWU7u2NKYzyKj0f3ZaoELns=;
-        b=LT3gYtP34bpN430X0PTW49u5t7KmrRiZ7scUZp/5M7fLZz3aTGw1sGMMbDgIoAA4hs
-         CWjNbdf8qdqCXdUP74CB/se54Gl76ukxBHe1F2O7JINjjz61pmTGXMn9O242bj3zlYe8
-         Zd0Zx2c1bNrQkT7EOm5yKa2JxPHl/1kKzQQPW4DsWnL/ZoLIf0cd85tTltL2VZSeMRQB
-         +MggQx1Y/zuN3Y8YpBB2tiPy9R7LdyQ0ezwAtYDHB9X22awWuw9rgFbdap/yTkVT+2Po
-         ZlWb378pbvCYHCoE0+5Y1aCLUOxrVyu/zGo6JjFZkaJDUaXxgoP90e1YyFvN4NMG6CnK
-         SzNA==
-X-Gm-Message-State: AOJu0YxB0YVUxIvj/4rPUQw+y9d4J7HS0nLE8WlhP1dI9pGK/SF7fiu8
-	OTYZF0JNx48a+c4U7USn+W25T14BW8Vd/78NXYq1bsCiuRwKxqg8rpEbxSztxolpTmPZfZPNwEo
-	GMyjDPpu3x4Wb/sXkTrIKfE/EeW7mwbyPVKrXZslpSOixK2z44eldERY=
-X-Google-Smtp-Source: AGHT+IGvZRRWMvOJsuHd7581wzKezUh324s8wx1n2KnXu7PRRqOUThdcX2RiG/toaW60Nf46rMvBlSdkaa83c7Zx1lPyWZ93eR4D
+        bh=q9SJqAaxmorD+9qw36Zw9nCmhZEpy3S2qNX5DSfjjVQ=;
+        b=ij4tpw7GOr6MsQjumkELyINnAmT5PcRMe6pIQTtOSl2woO9OGMCyRPXwhBuL+TLUo3
+         0SM0Jm/aICvgua3xu4/5aRAFPabYp9/sFW31iJ19T0fBRTat+E13M1S5BNIwEoBUjasQ
+         P7YH1omuypXz4ScnUYN7vIKXjL9oTq1XYjsSn8x/wlmS798BbN8tRcWaZqTgM4qLSiGA
+         03svFHmNsgEZyb5Hfleld29ikYOSmOpJKVQR3d3crB4UbW0c6n2NGdfiotdAes3TzAq0
+         eRUQxxNk3A9rZbplidGg/sHauF/hMXMVXllfWlhFBLumYZHbIoKN2eQGkLevw3cFq404
+         AyBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733265073; x=1733869873;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=q9SJqAaxmorD+9qw36Zw9nCmhZEpy3S2qNX5DSfjjVQ=;
+        b=I/2u1YXuGvKLqcCqnlQ5ub7SDmLAHmp7CURjujUcTkKZETR/OFG85jJP5E25EsYBhY
+         f8P5Nte39RT7LtVmfFo1mRm3v3rtc49MsGTJHt1c83uk8QMmlWgo8KY6UirKBHGuA/Ce
+         8qGgXXGGyqC9CEJt/l6FFwQVFLwkFxK3DgeESSzxktjGXx9zRJXz6UNP8iQXAYZZ9+0U
+         D/Vvv2Qf7a95fYp9jgfsTX32zhyZXje8EV2B1z4E6CvmH1OuaR+ZMAOBW1ONdGCK43UP
+         orEqXhSMeL8+WGKwOOReInejLuwxBZF6X0OHK1AzQVPsgRDimL6GDm/ciW7gqIoW0AAP
+         qtEg==
+X-Forwarded-Encrypted: i=1; AJvYcCUlKqfDC6YDLHJRfP5S3YaY/8fTor2Vsu7vZb8DhKrxtHk0RvaLgdPGYn5Fyf6zuXegLJw7kSXgxTyjPU3x@vger.kernel.org, AJvYcCVhUQLGricL6SBSooR8M63+GdMj3vjVbojmbBErsr/z8AHg+SQ2kX4dmp7xX7qGIpsN2JViHwQSj7dZhuJ2@vger.kernel.org, AJvYcCX+RFgP+Cf+5hUHJoxBvNQIxLuTM5z2p1Wdsuct4yDu0rqEV5Fg8JuhDK3+X1Ef7Tri+jY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxps5zm23RYD4zXPArCQqaoemV1dJGSYoos54jWSjlc4yLygwBw
+	IxkOysSI7WnBkufu2GGb3DyMVCv0oFYajXtdtwj8yKTVikzNCopifnzXO/pDbJteJnnnxYKMO8/
+	BWZE8rbCsrMU1I3vrMlEPEcatgdVWf2HX
+X-Gm-Gg: ASbGncsq37yFR3kbG9raGsjWM045p1gt+SFpnR7ik3KqCQ96OmUXVzTqNu+ZTrCRWLf
+	wKCuolp1ykIZy3X6FdJPNd9d9QSLymIEGbYV6aE4Sw79LL94=
+X-Google-Smtp-Source: AGHT+IH4TwTjv29KSdNXPNZihG7gXMAt+LNB/0BY05BIIhdDOd1xQNu07M3/SWh/BlrWTKhZF/fp9Vdgn1rwdwDbn+s=
+X-Received: by 2002:a17:90b:3ecb:b0:2ee:44ec:e524 with SMTP id
+ 98e67ed59e1d1-2ef012701camr5846182a91.35.1733265073437; Tue, 03 Dec 2024
+ 14:31:13 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a8a:b0:3a7:81dd:d0ad with SMTP id
- e9e14a558f8ab-3a7f9a46b5bmr43851655ab.7.1733265012837; Tue, 03 Dec 2024
- 14:30:12 -0800 (PST)
-Date: Tue, 03 Dec 2024 14:30:12 -0800
-In-Reply-To: <000000000000dd84650615800e67@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <674f8674.050a0220.17bd51.0053.GAE@google.com>
-Subject: Re: [syzbot] Re: [PATCH v1] Bluetooth: hci_core: Fix sleeping
- function called from invalid context
-From: syzbot <syzbot+2fb0835e0c9cefc34614@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+References: <20241126-resolve_btfids-v2-0-288c37cb89ee@weissschuh.net> <20241126-resolve_btfids-v2-1-288c37cb89ee@weissschuh.net>
+In-Reply-To: <20241126-resolve_btfids-v2-1-288c37cb89ee@weissschuh.net>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Tue, 3 Dec 2024 14:31:01 -0800
+Message-ID: <CAEf4BzahMQWVH0Gaub-tWjH9GweG8Kt7OBU-f+PBhmmRDCKfrA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] tools/resolve_btfids: Add --fatal-warnings option
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Cc: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nicolas@fjasle.eu>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
-
-***
-
-Subject: Re: [PATCH v1] Bluetooth: hci_core: Fix sleeping function called f=
-rom invalid context
-Author: luiz.dentz@gmail.com
-
-#syz test
-
-On Tue, Dec 3, 2024 at 4:15=E2=80=AFPM Luiz Augusto von Dentz
-<luiz.dentz@gmail.com> wrote:
+On Tue, Nov 26, 2024 at 1:17=E2=80=AFPM Thomas Wei=C3=9Fschuh <linux@weisss=
+chuh.net> wrote:
 >
-> From: Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
+> Currently warnings emitted by resolve_btfids are buried in the build log
+> and are slipping into mainline frequently.
+> Add an option to elevate warnings to hard errors so the CI bots can
+> catch any new warnings.
 >
-> This reworks hci_cb_list to not use mutex hci_cb_list_lock to avoid bugs
-> like the bellow:
->
-> BUG: sleeping function called from invalid context at kernel/locking/mute=
-x.c:585
-> in_atomic(): 0, irqs_disabled(): 0, non_block: 0, pid: 5070, name: kworke=
-r/u9:2
-> preempt_count: 0, expected: 0
-> RCU nest depth: 1, expected: 0
-> 4 locks held by kworker/u9:2/5070:
->  #0: ffff888015be3948 ((wq_completion)hci0#2){+.+.}-{0:0}, at: process_on=
-e_work kernel/workqueue.c:3229 [inline]
->  #0: ffff888015be3948 ((wq_completion)hci0#2){+.+.}-{0:0}, at: process_sc=
-heduled_works+0x8e0/0x1770 kernel/workqueue.c:3335
->  #1: ffffc90003b6fd00 ((work_completion)(&hdev->rx_work)){+.+.}-{0:0}, at=
-: process_one_work kernel/workqueue.c:3230 [inline]
->  #1: ffffc90003b6fd00 ((work_completion)(&hdev->rx_work)){+.+.}-{0:0}, at=
-: process_scheduled_works+0x91b/0x1770 kernel/workqueue.c:3335
->  #2: ffff8880665d0078 (&hdev->lock){+.+.}-{3:3}, at: hci_le_create_big_co=
-mplete_evt+0xcf/0xae0 net/bluetooth/hci_event.c:6914
->  #3: ffffffff8e132020 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire i=
-nclude/linux/rcupdate.h:298 [inline]
->  #3: ffffffff8e132020 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock incl=
-ude/linux/rcupdate.h:750 [inline]
->  #3: ffffffff8e132020 (rcu_read_lock){....}-{1:2}, at: hci_le_create_big_=
-complete_evt+0xdb/0xae0 net/bluetooth/hci_event.c:6915
-> CPU: 0 PID: 5070 Comm: kworker/u9:2 Not tainted 6.8.0-syzkaller-08073-g48=
-0e035fc4c7 #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS G=
-oogle 03/27/2024
-> Workqueue: hci0 hci_rx_work
-> Call Trace:
->  <TASK>
->  __dump_stack lib/dump_stack.c:88 [inline]
->  dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
->  __might_resched+0x5d4/0x780 kernel/sched/core.c:10187
->  __mutex_lock_common kernel/locking/mutex.c:585 [inline]
->  __mutex_lock+0xc1/0xd70 kernel/locking/mutex.c:752
->  hci_connect_cfm include/net/bluetooth/hci_core.h:2004 [inline]
->  hci_le_create_big_complete_evt+0x3d9/0xae0 net/bluetooth/hci_event.c:693=
-9
->  hci_event_func net/bluetooth/hci_event.c:7514 [inline]
->  hci_event_packet+0xa53/0x1540 net/bluetooth/hci_event.c:7569
->  hci_rx_work+0x3e8/0xca0 net/bluetooth/hci_core.c:4171
->  process_one_work kernel/workqueue.c:3254 [inline]
->  process_scheduled_works+0xa00/0x1770 kernel/workqueue.c:3335
->  worker_thread+0x86d/0xd70 kernel/workqueue.c:3416
->  kthread+0x2f0/0x390 kernel/kthread.c:388
->  ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
->  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:243
->  </TASK>
->
-> Reported-by: syzbot+2fb0835e0c9cefc34614@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=3D2fb0835e0c9cefc34614
-> Signed-off-by: Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
+> Signed-off-by: Thomas Wei=C3=9Fschuh <linux@weissschuh.net>
+> Acked-by: Jiri Olsa <jolsa@kernel.org>
 > ---
->  include/net/bluetooth/hci_core.h | 89 ++++++++++++++++++++++----------
->  net/bluetooth/hci_core.c         |  9 ++--
->  2 files changed, 65 insertions(+), 33 deletions(-)
+>  tools/bpf/resolve_btfids/main.c | 12 ++++++++++--
+>  1 file changed, 10 insertions(+), 2 deletions(-)
 >
-> diff --git a/include/net/bluetooth/hci_core.h b/include/net/bluetooth/hci=
-_core.h
-> index ea798f07c5a2..95f11f04e24a 100644
-> --- a/include/net/bluetooth/hci_core.h
-> +++ b/include/net/bluetooth/hci_core.h
-> @@ -804,7 +804,6 @@ struct hci_conn_params {
->  extern struct list_head hci_dev_list;
->  extern struct list_head hci_cb_list;
->  extern rwlock_t hci_dev_list_lock;
-> -extern struct mutex hci_cb_list_lock;
+> diff --git a/tools/bpf/resolve_btfids/main.c b/tools/bpf/resolve_btfids/m=
+ain.c
+> index bd9f960bce3d5b74dc34159b35af1e0b33524d2d..571d29d2da97fea75e5f9c544=
+a95b9ac65f9e579 100644
+> --- a/tools/bpf/resolve_btfids/main.c
+> +++ b/tools/bpf/resolve_btfids/main.c
+> @@ -141,6 +141,7 @@ struct object {
+>  };
 >
->  #define hci_dev_set_flag(hdev, nr)             set_bit((nr), (hdev)->dev=
-_flags)
->  #define hci_dev_clear_flag(hdev, nr)           clear_bit((nr), (hdev)->d=
-ev_flags)
-> @@ -2029,12 +2028,18 @@ static inline void hci_connect_cfm(struct hci_con=
-n *conn, __u8 status)
+>  static int verbose;
+> +static int warnings;
+>
+>  static int eprintf(int level, int var, const char *fmt, ...)
 >  {
->         struct hci_cb *cb;
+> @@ -604,6 +605,7 @@ static int symbols_resolve(struct object *obj)
+>                         if (id->id) {
+>                                 pr_info("WARN: multiple IDs found for '%s=
+': %d, %d - using %d\n",
+>                                         str, id->id, type_id, id->id);
+> +                               warnings++;
+>                         } else {
+>                                 id->id =3D type_id;
+>                                 (*nr)--;
+> @@ -625,8 +627,10 @@ static int id_patch(struct object *obj, struct btf_i=
+d *id)
+>         int i;
 >
-> -       mutex_lock(&hci_cb_list_lock);
-> -       list_for_each_entry(cb, &hci_cb_list, list) {
-> -               if (cb->connect_cfm)
-> -                       cb->connect_cfm(conn, status);
-> +       rcu_read_lock();
-> +       list_for_each_entry_rcu(cb, &hci_cb_list, list) {
-> +               if (cb->connect_cfm) {
-> +                       struct hci_cb cpy =3D *cb;
-> +
-> +                       /* Callback may block so release RCU read lock */
-> +                       rcu_read_unlock();
-> +                       cpy.connect_cfm(conn, status);
-> +                       rcu_read_lock();
-> +               }
->         }
-> -       mutex_unlock(&hci_cb_list_lock);
-> +       rcu_read_unlock();
+>         /* For set, set8, id->id may be 0 */
+> -       if (!id->id && !id->is_set && !id->is_set8)
+> +       if (!id->id && !id->is_set && !id->is_set8) {
+>                 pr_err("WARN: resolve_btfids: unresolved symbol %s\n", id=
+->name);
+> +               warnings++;
+> +       }
 >
->         if (conn->connect_cfm_cb)
->                 conn->connect_cfm_cb(conn, status);
-> @@ -2044,12 +2049,18 @@ static inline void hci_disconn_cfm(struct hci_con=
-n *conn, __u8 reason)
->  {
->         struct hci_cb *cb;
+>         for (i =3D 0; i < id->addr_cnt; i++) {
+>                 unsigned long addr =3D id->addr[i];
+> @@ -782,6 +786,7 @@ int main(int argc, const char **argv)
+>                 .funcs    =3D RB_ROOT,
+>                 .sets     =3D RB_ROOT,
+>         };
+> +       bool fatal_warnings =3D false;
+>         struct option btfid_options[] =3D {
+>                 OPT_INCR('v', "verbose", &verbose,
+>                          "be more verbose (show errors, etc)"),
+> @@ -789,6 +794,8 @@ int main(int argc, const char **argv)
+>                            "BTF data"),
+>                 OPT_STRING('b', "btf_base", &obj.base_btf_path, "file",
+>                            "path of file providing base BTF"),
+> +               OPT_BOOLEAN(0, "fatal-warnings", &fatal_warnings,
+> +                           "turn warnings into errors"),
+
+We are mixing naming styles here: we have "btf_base" with underscore
+separator, and you are adding "fatal-warnings" with dash separator. I
+personally like dashes, but whichever way we should stay consistent.
+So let's fix it, otherwise it looks a bit sloppy.
+
+Please also use [PATCH bpf-next v3] subject prefix to make it explicit
+that this should go through bpf-next tree.
+
+pw-bot: cr
+
+>                 OPT_END()
+>         };
+>         int err =3D -1;
+> @@ -823,7 +830,8 @@ int main(int argc, const char **argv)
+>         if (symbols_patch(&obj))
+>                 goto out;
 >
-> -       mutex_lock(&hci_cb_list_lock);
-> +       rcu_read_lock();
->         list_for_each_entry(cb, &hci_cb_list, list) {
-> -               if (cb->disconn_cfm)
-> -                       cb->disconn_cfm(conn, reason);
-> +               if (cb->disconn_cfm) {
-> +                       struct hci_cb cpy =3D *cb;
-> +
-> +                       /* Callback may block so release RCU read lock */
-> +                       rcu_read_unlock();
-> +                       cpy.disconn_cfm(conn, reason);
-> +                       rcu_read_lock();
-> +               }
->         }
-> -       mutex_unlock(&hci_cb_list_lock);
-> +       rcu_read_unlock();
+> -       err =3D 0;
+> +       if (!(fatal_warnings && warnings))
+> +               err =3D 0;
+
+nit: just
+
+if (!fatal_warnings)
+    err =3D 0;
+
+?
+
+>  out:
+>         if (obj.efile.elf) {
+>                 elf_end(obj.efile.elf);
 >
->         if (conn->disconn_cfm_cb)
->                 conn->disconn_cfm_cb(conn, reason);
-> @@ -2065,12 +2076,18 @@ static inline void hci_auth_cfm(struct hci_conn *=
-conn, __u8 status)
->
->         encrypt =3D test_bit(HCI_CONN_ENCRYPT, &conn->flags) ? 0x01 : 0x0=
-0;
->
-> -       mutex_lock(&hci_cb_list_lock);
-> +       rcu_read_lock();
->         list_for_each_entry(cb, &hci_cb_list, list) {
-> -               if (cb->security_cfm)
-> -                       cb->security_cfm(conn, status, encrypt);
-> +               if (cb->security_cfm) {
-> +                       struct hci_cb cpy =3D *cb;
-> +
-> +                       /* Callback may block so release RCU read lock */
-> +                       rcu_read_unlock();
-> +                       cpy.security_cfm(conn, status, encrypt);
-> +                       rcu_read_lock();
-> +               }
->         }
-> -       mutex_unlock(&hci_cb_list_lock);
-> +       rcu_read_unlock();
->
->         if (conn->security_cfm_cb)
->                 conn->security_cfm_cb(conn, status);
-> @@ -2105,12 +2122,18 @@ static inline void hci_encrypt_cfm(struct hci_con=
-n *conn, __u8 status)
->                         conn->sec_level =3D conn->pending_sec_level;
->         }
->
-> -       mutex_lock(&hci_cb_list_lock);
-> +       rcu_read_lock();
->         list_for_each_entry(cb, &hci_cb_list, list) {
-> -               if (cb->security_cfm)
-> -                       cb->security_cfm(conn, status, encrypt);
-> +               if (cb->security_cfm) {
-> +                       struct hci_cb cpy =3D *cb;
-> +
-> +                       /* Callback may block so release RCU read lock */
-> +                       rcu_read_unlock();
-> +                       cpy.security_cfm(conn, status, encrypt);
-> +                       rcu_read_lock();
-> +               }
->         }
-> -       mutex_unlock(&hci_cb_list_lock);
-> +       rcu_read_unlock();
->
->         if (conn->security_cfm_cb)
->                 conn->security_cfm_cb(conn, status);
-> @@ -2120,12 +2143,18 @@ static inline void hci_key_change_cfm(struct hci_=
-conn *conn, __u8 status)
->  {
->         struct hci_cb *cb;
->
-> -       mutex_lock(&hci_cb_list_lock);
-> +       rcu_read_lock();
->         list_for_each_entry(cb, &hci_cb_list, list) {
-> -               if (cb->key_change_cfm)
-> -                       cb->key_change_cfm(conn, status);
-> +               if (cb->key_change_cfm) {
-> +                       struct hci_cb cpy =3D *cb;
-> +
-> +                       /* Callback may block so release RCU read lock */
-> +                       rcu_read_unlock();
-> +                       cpy.key_change_cfm(conn, status);
-> +                       rcu_read_lock();
-> +               }
->         }
-> -       mutex_unlock(&hci_cb_list_lock);
-> +       rcu_read_unlock();
->  }
->
->  static inline void hci_role_switch_cfm(struct hci_conn *conn, __u8 statu=
-s,
-> @@ -2133,12 +2162,18 @@ static inline void hci_role_switch_cfm(struct hci=
-_conn *conn, __u8 status,
->  {
->         struct hci_cb *cb;
->
-> -       mutex_lock(&hci_cb_list_lock);
-> -       list_for_each_entry(cb, &hci_cb_list, list) {
-> -               if (cb->role_switch_cfm)
-> -                       cb->role_switch_cfm(conn, status, role);
-> +       rcu_read_lock();
-> +       list_for_each_entry_rcu(cb, &hci_cb_list, list) {
-> +               if (cb->role_switch_cfm) {
-> +                       struct hci_cb cpy =3D *cb;
-> +
-> +                       /* Callback may block so release RCU read lock */
-> +                       rcu_read_unlock();
-> +                       cpy.role_switch_cfm(conn, status, role);
-> +                       rcu_read_lock();
-> +               }
->         }
-> -       mutex_unlock(&hci_cb_list_lock);
-> +       rcu_read_unlock();
->  }
->
->  static inline bool hci_bdaddr_is_rpa(bdaddr_t *bdaddr, u8 addr_type)
-> diff --git a/net/bluetooth/hci_core.c b/net/bluetooth/hci_core.c
-> index f9e19f9cb5a3..25d180d225c1 100644
-> --- a/net/bluetooth/hci_core.c
-> +++ b/net/bluetooth/hci_core.c
-> @@ -2993,9 +2993,7 @@ int hci_register_cb(struct hci_cb *cb)
->  {
->         BT_DBG("%p name %s", cb, cb->name);
->
-> -       mutex_lock(&hci_cb_list_lock);
-> -       list_add_tail(&cb->list, &hci_cb_list);
-> -       mutex_unlock(&hci_cb_list_lock);
-> +       list_add_tail_rcu(&cb->list, &hci_cb_list);
->
->         return 0;
->  }
-> @@ -3005,9 +3003,8 @@ int hci_unregister_cb(struct hci_cb *cb)
->  {
->         BT_DBG("%p name %s", cb, cb->name);
->
-> -       mutex_lock(&hci_cb_list_lock);
-> -       list_del(&cb->list);
-> -       mutex_unlock(&hci_cb_list_lock);
-> +       list_del_rcu(&cb->list);
-> +       synchronize_rcu();
->
->         return 0;
->  }
 > --
 > 2.47.1
 >
-
-
---=20
-Luiz Augusto von Dentz
 
