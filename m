@@ -1,121 +1,88 @@
-Return-Path: <linux-kernel+bounces-429214-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9E3B9E1A80
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 12:14:22 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76BD99E1B55
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 12:52:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3A623B2736E
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:09:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4D16FB2EB4B
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:12:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D6431E0DFF;
-	Tue,  3 Dec 2024 10:09:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D86151E102E;
+	Tue,  3 Dec 2024 10:12:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BXsODuKs"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (2048-bit key) header.d=uclouvain.be header.i=@uclouvain.be header.b="U/KazvYA"
+Received: from EUR02-VI1-obe.outbound.protection.outlook.com (mail-vi1eur02on2114.outbound.protection.outlook.com [40.107.241.114])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1430E1E0DD3
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 10:09:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BFDC1E0DE9;
+	Tue,  3 Dec 2024 10:12:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.241.114
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733220563; cv=fail; b=C4nyEwHJB1t9xzSEJlgC+rrLoGmI/sPrvvLaGiUIW11qA0mIPDGp/7TF/t79fHjBJkQSvNjUmO3DMcU2RARA4M498fu3MxJuY35dPqdPdwlqU4OK84XkfJBGaLor2tvfBZTszbFURLpeVqaLr8mONh5nuy/USCW3KD31Gy1fi2Q=
+	t=1733220725; cv=fail; b=B9AQsPbIZY8nytL6QB68DnJHULu6Sfw5FxFytCd1OnINd5dnRP99Cn/So/xjTGuRwPecjoPP967UG4THzbvXxr+ntkB091n8p41dK+wEbNIbhhQtLsAVCDzXtSnW6bDPyui7AD1zR/5zZkGZs2KX6wIHP0caJIesEqIqxQnIW4A=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733220563; c=relaxed/simple;
-	bh=i5OxSxtlb2gJH4dvB3iLHAdnMLjn9VvumzDk3AKrWbY=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=cseCyQh6JWRz8o66xvwdGqaQvEALqGyWUHrtCG5dmAYMhd1VauevW1qULJzDqGHn9zyZAf9F4vPQqwx1D0TgGmxf0prxncpw1HZ7jzQ6Y3ckHs0Wu/OfpjUD1IXFHRoUuivc80bQ8t5akpylbxtoHf1fvb25Y+2tKZgqRaTGY3s=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BXsODuKs; arc=fail smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733220561; x=1764756561;
-  h=date:from:to:cc:subject:message-id:reply-to:references:
-   in-reply-to:mime-version;
-  bh=i5OxSxtlb2gJH4dvB3iLHAdnMLjn9VvumzDk3AKrWbY=;
-  b=BXsODuKsggG1J+M5cYXoDp4W3zwOwKQD4lscQZ3MpNYsga1ZTHlZZI2T
-   4tRGorj3QspnTsSBAaLfjzlTF3dglz6BH07WCFQ5QUNazgVozPF+nL0ce
-   3kIbtUaxmVbLBQph01KF3Mu3LbQrDhMg+QDqtluOmPt7LekfZcQ0lGHcM
-   zii8BcWdjl/O+IOrC5GwE0gXvqjzI01uEKw3tLYn7o9FzrmxcI09wDZvO
-   UVFlSYYsUAKmSpPLHbkyGcbqHbcFrbjNU5Yad9Ar+Gr8Bvr1R+yJvG+N1
-   WWF9uUcdMIfZqvbfaiH5pSgHUM+ClNat9pAHFIIz2CzaRsxaXc2ptRNT5
-   w==;
-X-CSE-ConnectionGUID: NSQH1QReTCCh+B4l+vtSXA==
-X-CSE-MsgGUID: W3C9PfgcR9qCABSSm6bGMA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11274"; a="44036001"
-X-IronPort-AV: E=Sophos;i="6.12,204,1728975600"; 
-   d="scan'208";a="44036001"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Dec 2024 02:09:20 -0800
-X-CSE-ConnectionGUID: HOsD5ql7QJ28ApUHcGuurQ==
-X-CSE-MsgGUID: 53Fk0f8lQtuflyYcmmHoKw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,204,1728975600"; 
-   d="scan'208";a="93848104"
-Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
-  by fmviesa009.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 03 Dec 2024 02:09:20 -0800
-Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
- ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 3 Dec 2024 02:09:19 -0800
-Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
- orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Tue, 3 Dec 2024 02:09:19 -0800
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (104.47.55.44) by
- edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 3 Dec 2024 02:09:19 -0800
+	s=arc-20240116; t=1733220725; c=relaxed/simple;
+	bh=ab7FWO+9TVuPGmJTsFPOtUYiDYAS+X/h1GInV2A6Ilo=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=PntqrZsm6hGvgqJZFwY7/7FOmJJUgeFH+1nKz/EjBL8Eu3aoCif5dg0V7LKJATWqrWSppKO6eBTCJu+ex4CNFSQ+MGoL8DwOnrAZubYuVAPzHBxL2naYsYc0cxcVZ9xAa0GrDdyt4Cp3wyti1WYRRKGt/R4v5mhtXHkk7To2m94=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=uclouvain.be; spf=pass smtp.mailfrom=uclouvain.be; dkim=pass (2048-bit key) header.d=uclouvain.be header.i=@uclouvain.be header.b=U/KazvYA; arc=fail smtp.client-ip=40.107.241.114
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=uclouvain.be
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uclouvain.be
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=djSsYDdO4k8hCb5T8hm+/6Jiyr/d/oA8IEs58H27rCtR9uEnlLOKolIs2UeZW+p85Gkdc2aYsUS1aiVqTH831VqCxBPHIA6YxUpwbp0R6yQk9fLIaVsi28lzpJXmSEZfFENQ9lgBEXZuR/+R9cxE6Qo1qe3jk6McTIR0oANzMq3qFKbnAgPKicshdYU+cx3SCna5Mk2QpTJUNqSpPOQSG+cvPj7f6my8KN36XPhZ5x12o14qyIOyYg82H0NvCoQf16Y3EXFDoIBsdrT9UKqewCpdtQ4HkLDEwkqVFkEQGzH9okhzgHFzPOr3nXxV28MTTZku7SiTw4bDUtVzjNpvZA==
+ b=WJwXCd7WJKteERkfpuaa1wVi2DmD2xC7fgztIa/+4Gf5O/AaWSMVWtyrDaMhrJVpq5Lv0vKa2qsN6JYQEs58iCrEUJWyY+rgeCf8wmMhD8T2OuJEZGxoztpY5980RK7dBslidJAUZ5x0zlkwbNhI+sGKe9uCUEQksjurwH0Qidz9ncZ0cvbgDvv8ELruNI4Vf8nrJpz0d8cBr3HuVb6bIbMjsKF/LRYD/04etVEHIAs/xS0QsIYBVY4OOv8hmHZdkj9rHaaWlCjKo2ozPpJzR+pbDeKEqWrct2+yAmLTZDCNMSzJaaFLNb0WGP1t+jG2WjqwLkC27UdHzReC03nrOg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=EdiU+5k0CRTkXPq+pS7QVMPDTiqJM8Dkdl0sWBxXrNw=;
- b=xo1z7+PtHTEV3/mRdEU0CFBhWw2iIftA+eqTL72Q1ZoKrEKdWCj37qZxiM+YhWPvdkNUGZLBtMjgW92xD8wdAT+J8rK7B5h17nB9Fm93jb6dlGCgPrBWQeeRS1CSwtQ7+/P1lTwgJdaKXcHLm2p8tSfZmsuslvvOe8u2fDCIcnav/fHoNLqXfvCpbNi44stSDtTR3bmZcno4JG1tIh/+5gNVyIRKTCaD1zpetD/V+PtyQQAmA5rWg4ga7r1z7dTRck7nypVP+xMSAD2eNynlohXt/nl48CUWB7+uGPPKOZS2+9/r/vKJZT+FdHqGIY42XzbiQG8glxN+JCHp7xc4Cw==
+ bh=jItZPVFxCk2giPMXionZZIUvsaqSVulFYvSoEHHQ0nw=;
+ b=P+F5g0Ef3w+QqLI4gtfIPEskiVxZ6jzc68BhhfDzfQbASp1zJ9mU8c5j7WFXseOfIWYBNlglhcz8xj3lbNdd/2PgZK7s2br5/mJMGtwrhHujHLCriPHiV8w6eqMD+JNL6AgxOnuZOnOfisos0ojX3GwuRGEJYzPCDnE0g55A4NkSJ/XKC6WdQPdH4ojg7GW6az6r8Yu23J2GQ+jd7Vy7XQx4bLpM5qBXFCRJvHAkv9dhVLhvFg0Jzng0zvHz3oHaPiaFRC2D4YSkFdzSWsxqzYx/Ri+IF6jZXZ6iqsHsSfnPvGBqXV6aQSHG8dykHk4jRqZJHs3oHPQ3N8dvNVM/Iw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
+ smtp.mailfrom=uclouvain.be; dmarc=pass action=none header.from=uclouvain.be;
+ dkim=pass header.d=uclouvain.be; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uclouvain.be;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=jItZPVFxCk2giPMXionZZIUvsaqSVulFYvSoEHHQ0nw=;
+ b=U/KazvYAHo7r7vo01QJ/yB6pEkRO7hZob8KIfFhh993ndEERd1wGewP0ue0BKB4snw/WGYWRyBDzxg91ClKjS/bBC2p41arbqhQ4fs/kw7LLjgLvvMw2OKMtoEqbJe2FXHakz3jASXSEXIwbjF6GFIB8T/R4G8TzJr3Ta2IjFTOjyGq60VoZ2al7zGRlgfou/LJ3Ay0uJaR59FSMVdXtjO+RDWFAINfDpymSDlulbW28OgISrNcnS5Xcp4NCkP3UxU697L7BwkBVyrh7eqKnHl5zWM/upOIHx2CEOap1Jc1usJetmxZNeSE/ZyAaNY/N2Z5RuhfarimeQzDceHC9Ng==
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS7PR11MB5966.namprd11.prod.outlook.com (2603:10b6:8:71::6) by
- CY8PR11MB6892.namprd11.prod.outlook.com (2603:10b6:930:5b::8) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8207.15; Tue, 3 Dec 2024 10:09:17 +0000
-Received: from DS7PR11MB5966.namprd11.prod.outlook.com
- ([fe80::e971:d8f4:66c4:12ca]) by DS7PR11MB5966.namprd11.prod.outlook.com
- ([fe80::e971:d8f4:66c4:12ca%5]) with mapi id 15.20.8207.017; Tue, 3 Dec 2024
- 10:09:17 +0000
-Date: Tue, 3 Dec 2024 18:06:30 +0800
-From: Yan Zhao <yan.y.zhao@intel.com>
-To: Baoquan He <bhe@redhat.com>
-CC: "Eric W. Biederman" <ebiederm@xmission.com>, "Kirill A. Shutemov"
-	<kirill@shutemov.name>, <kexec@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-coco@lists.linux.dev>,
-	<x86@kernel.org>, <rick.p.edgecombe@intel.com>,
-	<kirill.shutemov@linux.intel.com>
-Subject: Re: [PATCH] kexec_core: Accept unaccepted kexec destination addresses
-Message-ID: <Z07YJlxK9/piXLhK@yzhao56-desk.sh.intel.com>
-Reply-To: Yan Zhao <yan.y.zhao@intel.com>
-References: <20241021034553.18824-1-yan.y.zhao@intel.com>
- <87frop8r0y.fsf@email.froward.int.ebiederm.org>
- <tpbcun3d4wrnbtsvx3b3hjpdl47f2zuxvx6zqsjoelazdt3eyv@kgqnedtcejta>
- <87cyjq7rjo.fsf@email.froward.int.ebiederm.org>
- <ZxmRkUNmx863Po2U@yzhao56-desk.sh.intel.com>
- <Z0WzHZ+fNn6WuH/E@MiWiFi-R3L-srv>
- <Z0bt4HXAKqM3C1ZW@yzhao56-desk.sh.intel.com>
- <Z0iJ+DTPA2IkVDx7@MiWiFi-R3L-srv>
- <Z0lWkrsXSpDVfW72@yzhao56-desk.sh.intel.com>
- <Z03BbH5PgNrE81dz@MiWiFi-R3L-srv>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <Z03BbH5PgNrE81dz@MiWiFi-R3L-srv>
-X-ClientProxiedBy: SI2PR01CA0053.apcprd01.prod.exchangelabs.com
- (2603:1096:4:193::7) To DS7PR11MB5966.namprd11.prod.outlook.com
- (2603:10b6:8:71::6)
+ header.d=none;dmarc=none action=none header.from=uclouvain.be;
+Received: from AS8PR03MB9047.eurprd03.prod.outlook.com (2603:10a6:20b:5b6::13)
+ by AS2PR03MB9561.eurprd03.prod.outlook.com (2603:10a6:20b:59a::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.18; Tue, 3 Dec
+ 2024 10:11:58 +0000
+Received: from AS8PR03MB9047.eurprd03.prod.outlook.com
+ ([fe80::c90e:deef:6dcf:538c]) by AS8PR03MB9047.eurprd03.prod.outlook.com
+ ([fe80::c90e:deef:6dcf:538c%6]) with mapi id 15.20.8207.017; Tue, 3 Dec 2024
+ 10:11:58 +0000
+Message-ID: <bce22ca8-aed2-41ae-b2ef-fdc71266709a@uclouvain.be>
+Date: Tue, 3 Dec 2024 11:11:15 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/4] power: supply: add support for max77759 fuel gauge
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Dimitri Fedrau <dima.fedrau@gmail.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Peter Griffin <peter.griffin@linaro.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org
+References: <20241202-b4-gs101_max77759_fg-v1-0-98d2fa7bfe30@uclouvain.be>
+ <20241202-b4-gs101_max77759_fg-v1-1-98d2fa7bfe30@uclouvain.be>
+ <c377f3302c6c282ad826211c859e2b65bb1222cb.camel@linaro.org>
+ <9387c0cf-d291-485a-8cd1-1aced7eba14e@uclouvain.be>
+ <2883fb0dd22312d5da9039d4fef869276a0bd430.camel@linaro.org>
+Content-Language: en-US
+From: Thomas Antoine <t.antoine@uclouvain.be>
+In-Reply-To: <2883fb0dd22312d5da9039d4fef869276a0bd430.camel@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: MI0P293CA0015.ITAP293.PROD.OUTLOOK.COM
+ (2603:10a6:290:44::8) To AS8PR03MB9047.eurprd03.prod.outlook.com
+ (2603:10a6:20b:5b6::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -123,306 +90,208 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR11MB5966:EE_|CY8PR11MB6892:EE_
-X-MS-Office365-Filtering-Correlation-Id: 32772069-c170-4058-0eb8-08dd13828c18
+X-MS-TrafficTypeDiagnostic: AS8PR03MB9047:EE_|AS2PR03MB9561:EE_
+X-MS-Office365-Filtering-Correlation-Id: a0e2c8a0-64b2-4a60-4fd3-08dd1382ec1e
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?NV7XjDBphue9w/t8zrEt/VIlz0D1Oz2WUO6UEn7dC8FW5cYj7UldYlFLWomb?=
- =?us-ascii?Q?WXTkWikCR+Ww7nVzCFeXq9XgU9LkxydBG6G94+fiYfV3hAHYghTto5E1y0Fc?=
- =?us-ascii?Q?Fp//5nXSlgvXl38k1Sss9/frwdKNB03oltYMBW6/BOYm/eJZXwsQBQ0AKudP?=
- =?us-ascii?Q?5CjRVesU/tEjK2+KrUllCB4xMOaocQvJRRXD+WXOs0jHtlA6QvhIwWuIYxnw?=
- =?us-ascii?Q?kWG1xvqZk0sbRoDYrVWZWWaidkDGExVL4iRWUoZOuyg2rqaQDvKcATJZ1ZZ3?=
- =?us-ascii?Q?dgZSk/Dvxul/twibUiPLFMsuRgsyr0irmXO0zAqYqyegDBZF5CN1/Vo3ICR3?=
- =?us-ascii?Q?d98vUTW5buwRli49t/wvnWYixwFiz2fqOROcNivVckrkwCqW3Ah7SJhlN8AQ?=
- =?us-ascii?Q?61sVH6gActHKrUfQJHcXtTUsXNr6xxdf+k5LeZyEgFqvN3IZuClCnmgLqSWN?=
- =?us-ascii?Q?xfEYrf3ykCet25D7LQNwtbBY6FeOFng43vZX2HBp4/tq61XsJwj1dq2OUNv8?=
- =?us-ascii?Q?TPX5hJOlqD4Sfxcqiz2mWJTkrvnDDyY6PxL7KviGQny9rB3jKqOAHv3zYt32?=
- =?us-ascii?Q?xsYhe9Ty2iriLpaJVAs+CqO1/YfoW+HWrhGnAp1igwJINDbYfHWEja6OiAY8?=
- =?us-ascii?Q?eiYhYLeDIKssFIe2xnXiV8NDPbuAhTnxG4InRmNk++iqOCD6HwkLGcqHfyWA?=
- =?us-ascii?Q?pKc0np32vhR4CwiFIv4LUGIraqdBzrX30/kxahicJLsJsIvtW4k6NSTzif/H?=
- =?us-ascii?Q?dOoCweHOPtwrFWkT26LPZ2iY7joM7wkGWjPlL8d5cy21Goymg4Mujsbdvlfl?=
- =?us-ascii?Q?5kFq6LiqBXv7OYUHGOOAOmrPi5Jc1ItaP3DtBw9LNRl6JwN/X19UvA/cpKx9?=
- =?us-ascii?Q?QEc+Rk8URjzyqU06MvPM9xDFA7p6oKkxEgyG2xrP21Fex2bPDswWFueKvsKP?=
- =?us-ascii?Q?H0ErJMv9+ovXJiqmgDyCQ/hVdIh2gLmQUYWTjn3ReX+/H3weiwKbcPZvK1DW?=
- =?us-ascii?Q?xjLxubpUALc8pB2i6oOz7xm8eQIZ81JSBP9w8inihSA7+aXW2/BOsNVGGGdr?=
- =?us-ascii?Q?OenyzYqIHtoUgFTMLB+zlwiNrfbMP55wMLKrUx3RBCmPGhE21c/xEVrurf81?=
- =?us-ascii?Q?xUntCdl+ILIJL04t3jsLJHogk9xJLNKHbhZszbR5ciZtmxnOde+eDHgwk5If?=
- =?us-ascii?Q?Mn/OkDcwJABOM0nZxXDQbqFbyOaZIegBLtDrbBqz+8YmRBCqSGKkWYyL9pgs?=
- =?us-ascii?Q?H9gJDYZkGOEOhLulJQUkV6Ddcl4SF+lJ9sRDLkyiuGvK7/NHfoBXm69BT0Ac?=
- =?us-ascii?Q?hEQ3sSRDwWuy7dAaOrzVDZ5BLurxW0JfaU6pN3tGjG6g1w=3D=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR11MB5966.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|10070799003|7416014|376014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?T3pUZzJTSmJxN2lUSENCSUlTQlJRYXFhdVRUc1RkZHkyWjVvNW5FRG1wRHF4?=
+ =?utf-8?B?SDFLQmhqWnFGUkMrZ1kvbGt4LzUvUm1maXpZVEhZQzBGSWc4aVp6UXRHMnB3?=
+ =?utf-8?B?SHJNRmFlUzd2dnBGYlRlMXdqZkJvdXBOTW5UcXdhUndka0VvMGZRMnVUaDg0?=
+ =?utf-8?B?M3l0VXBSanhGK3hMRDNMNXFWYzdGdHFaY0xwUWthZTBlTVVpYXVFVTVydkR1?=
+ =?utf-8?B?VnpvM0dUbXlSSy9Da3ZMWDJ2Z0oySFVIU1BXdzNVNnJzcWNTKzNCdUUybTgr?=
+ =?utf-8?B?dXZ0d2tjeEVtcmZEcVRLZTNTbUFYYlR0V21SSFh4ejVnMEtuYjJEYXRCVjlp?=
+ =?utf-8?B?YncvaHJrNjdHKy9sVVJPNFRHbFJUZjM4Wk8wbGFxSE94ZnQzZ2ZuMDJ5eEtn?=
+ =?utf-8?B?MndjSjlzUFRYaEpJd3NGNVVXRUNJMlZsUmZ3SC9GRXNBUlN6T2had1VKN1Z6?=
+ =?utf-8?B?djhRK3F4TlkvOUVUTmx4YmdUWXBHcTlNVTAyZnRUUklFYVZTU2tSN2ZIZ1kr?=
+ =?utf-8?B?UXBtMWJuZWRkRXFUTDRReEF5WFV2THlqZERWTFUwdzRoRENGMk1QQjVIM1Zx?=
+ =?utf-8?B?WlZaYU92c3lRSU5kNzVieGJBWGwyZTZhRVBLVW96a3NZanFScUh4UGFLeGov?=
+ =?utf-8?B?aE9FWmFWQ1pzcm1GTC9sb2RDWnJldWRiMFNlelhHYkFIdkZ1YjJWc1B1OVJD?=
+ =?utf-8?B?S2JxcTUvYkFUelJtNTZWcFFtM0plWHBoUVF4cUdPWTIyNVdnYjErNzRoVnEw?=
+ =?utf-8?B?ekJTMHlRR2tVYlNUSzlkbisvOHMwbVMvWTJCT2NYcFJBTklQeGJJQVBPT0Y5?=
+ =?utf-8?B?dnJqeWk2YkNWZ3l3QStrOUpoSkdEczY0K0VkS3pHNXVvVFhDNVRJUVpHNm5Z?=
+ =?utf-8?B?ZHRuMmIzYnlHUDVxQXdmNmJGTmgwaGw5YjlIR2I1OWpIRDErQ0UzcUZkTHhy?=
+ =?utf-8?B?T3dZYjVLRGV0RW52TDlJUGJoUElSSE9CZCtJM2pDYnVtZWpPK1A5R0xpS2sx?=
+ =?utf-8?B?OGNCYitZMnNEb1FjYlVyTm5zUHo0L3RMRHRBL0I3VkR4b3BhTXM3WWI3cWZ4?=
+ =?utf-8?B?NUJyamU0OGxqZzg5dTFPYW9uZEpsQ3phUTlPcG1GVDJVaGlHYmFNNWNxR3No?=
+ =?utf-8?B?czVWMXQvTzAwYmxoNUx4clhpZ2xmeUpHT0pTNVZKbEtnUEpEekhmZ3gzZ2U3?=
+ =?utf-8?B?OUVCenlLSE84K3hGT3ZOWDNuaFlVeEVGbVNvUkNPbnBFMFVIcGV2VGJSME5X?=
+ =?utf-8?B?ZEVaOHh3YUJIVEJCb0JCSkdVY1FKZUZENzlUN05EUHZqV1p5YnJVMkgrdi9F?=
+ =?utf-8?B?M0RxRG9pdncwWFhhckRYbzBKSHhrU2dkejlkazZEeTZUdi9VUjR3SG83Kzl5?=
+ =?utf-8?B?RFZJWDdXRy9UWnNjelN0MnY1M0hscjVybGtDUnJwNE9XejN0VGkyQTNnQTNn?=
+ =?utf-8?B?Wm5MemRuUXRmLzV5M2FMNkoxdnVZeW05SHNZM05TTTNhZDlUSHJCeDRhblpQ?=
+ =?utf-8?B?TjVMRGxKbGJxSXpiZkVldEs3K1NtU1FtZ3BoMzk3TlJ4ZUxQWHNPMU9rbTRY?=
+ =?utf-8?B?dXZaZk0rb1BvZkt4em9ZaFQ4bGhKTTVWdUFhb04vSElkdDVUdEVkTVEwanpq?=
+ =?utf-8?B?MmhPanRsZ1ZKVktVcXhHVHZndWZ4K0kvb2k3U2tha1NMK3gxSno1RnFoLzJG?=
+ =?utf-8?B?WjNuM0FPVTdvaWZLL0lOR3pOUVVyS093VFBWci9XVkNCVlR3OG5LUy9yZlpM?=
+ =?utf-8?B?TENEMHdmQldMZDA5eGdRbWM4azJ5OXJLb2w0Y3llNWZaMnZPLzRRenoyNTBP?=
+ =?utf-8?B?ZCtzQy81RTR0aFZRUFZldz09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR03MB9047.eurprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(10070799003)(7416014)(376014)(921020);DIR:OUT;SFP:1102;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?mPZ23bwbhPdZ1/18eMqgAMiWe7BV78yMRdF1z2un4p+pfLh4ycBhuBPIxTBE?=
- =?us-ascii?Q?oaNZ6t4gxGjKeWB3D3uM9TVgXJq6urGR4K4BqS61fA2qb88uJGNPoEPFo7Hn?=
- =?us-ascii?Q?sUohiEPUbslKLQS/qTyIhFwhSlAXNuGiDgyb7nPsLN+xUkoC7w9EzjpvYXwF?=
- =?us-ascii?Q?EVVTdn4MYX/4XjeMi9mTZYdVNs77KH27ITNRfhzlgom8TN0hu/HxdQzEZfH/?=
- =?us-ascii?Q?RKfkM+49i1WNVwv3T6QOEXADCrurLWhuWAEdAP9/Fe4aR+vpDfmNE1QyAzOa?=
- =?us-ascii?Q?6/4UTNOVdgWkQGnaMS6/ZZ9pqf1gxog2QcC/pY6xtMjAA+ifbOCH2NvAlSya?=
- =?us-ascii?Q?m5ULDTsadjhEpYH7EI945i0LLZSUN+yBUr3TJCQAoyFstYEvLY2Sas+2yKVW?=
- =?us-ascii?Q?VsQ9c79eGoefaQXxSVENpUQ29/7z7PlENhGj5b4sPKNoneIRMi99ZGkAR5Z7?=
- =?us-ascii?Q?mr773DM+KlwxsgPfcU30WEuEP3ieJlRPPF9dn98hOnCBmkOqrJjTac7ONt6i?=
- =?us-ascii?Q?k/IoYx5l8YQMxbmh465SEDQRjdgSEv+xjDWjSUDZ/FJh/4nP/RWeEWbAMbXi?=
- =?us-ascii?Q?dBa5jvtzvm6VNJ2b0cyi8LL6bM3T1z/WKKq+YuW/uvs4F89/TIQJz52zh7EM?=
- =?us-ascii?Q?Ig3+KO1depqZNm4d+vwuScS0nW6U1tt8w3pSE28tIqHb6dYD/ELKUjLM+cTX?=
- =?us-ascii?Q?oJFma2y6kwdMujxxyJiBs5XmiVNZIVVLpHHVJGVu+C81njSoejS7GvQTmf/+?=
- =?us-ascii?Q?/rsD0I5wdtOOiO8XmmMS499c5MnloAZEC3ewH59X4lN8UhUakSkIRsCkmYSk?=
- =?us-ascii?Q?HloUU71G+aLNceb/2boRi7ZOA7K/FcZ3qrtLnyq0EwQK5ZOSxmwxTdsPRmpi?=
- =?us-ascii?Q?+1iyz0ZwA35mHjOvGgPNkyKOoRwX4LS0RBM0mACazA8jN92/BYVIvVWpEaWC?=
- =?us-ascii?Q?79bEYD1bA3DorL9Fk8uZzpqfdJ9EjGBpoRxnrTAGJ2PN6t471x6fTWS/NK+9?=
- =?us-ascii?Q?JFgSr1lgjUYwljItqVsl2SckfOHCZ0ZLJ8dMgISmDzmtc/MhALW5txTBaol9?=
- =?us-ascii?Q?tMIcxmNPUJ91LnxfTORn7qH1PntIaB/00yxMXqRH8rEAVAGMQTwfmxOTI/pe?=
- =?us-ascii?Q?59aV2KBJOeF+az1SbjuG4yC/++3reGvGGGP1Zn/kLS0ZdNNJATg3avSZvEwa?=
- =?us-ascii?Q?Fc0hPn0Q0NoE7E5UccjYMo54KdvpvVbK7oRXzzyS8Jr6QcxHHuiVEyTYP+xM?=
- =?us-ascii?Q?le12t0Q8eICnA1nQKn2CiVNPIQLvxS++W3o9C1Wv543KSHSCd7UFQhF6DIAy?=
- =?us-ascii?Q?qAdbN0ouN9WIzxNA4iyC221RIJ7fgI7L9Gru/h6aYBGlCS2VcjCZYdIBA6Wz?=
- =?us-ascii?Q?V84DMFk0wyjPGsJ1cw8fwyDw8C18e5i/intXn7lz7etlYjWU5FcU35YBFQUE?=
- =?us-ascii?Q?71nfFc3I9i55sGQbiNmr8z3jOiOYk1wklMr7+SXmnuHmRJGhRlIjky/nZxqH?=
- =?us-ascii?Q?Tq/JXTrlcur/MQ7tt7dIyS/EO9yv7rNxRDIDkln9cONtwDMAlRYu2iftGsa+?=
- =?us-ascii?Q?pMCv7Aj/5UpligIKbsCPQJUlnaJSx7MtKtj+CQe2?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 32772069-c170-4058-0eb8-08dd13828c18
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR11MB5966.namprd11.prod.outlook.com
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?b3p1RjBaQkVqOFZtTFZ2dXkxU0l2TTl6NWRPUW15UkRtUk5JZ3VTZTZrUUdq?=
+ =?utf-8?B?UWlnamlid200TFpwblJ5M25tQmUxZE9yMmZsZjkyOG12Tkt2Mm80My9JZ3Y5?=
+ =?utf-8?B?WUVRQjZ6OXpienJJTjFKYXNrbWYzWTVnNXVHVXM3NFdVVksxckkydXFScFZx?=
+ =?utf-8?B?NDVSTHc1YmNWR3NvVDhDNFJXYklURmNyRkgwbjU2dE1zcXd6MHJCaThkVEJ6?=
+ =?utf-8?B?Vm9US1p3QzRnbGtldmN4eVY2SkIzUW1sWFgwZGdQQklrWmlIVmZXaUVGMkRX?=
+ =?utf-8?B?dnl2d25PRWpvbDlRZW9yYkNxb0J4R2lJTlBTbWlJd1BDUndQd1AvS0MxYXlm?=
+ =?utf-8?B?b1JoWkV6dVprQXFxT3dYN1djUFJYazJsME1pS0VnTlNMNUYxdGprV2prbFdF?=
+ =?utf-8?B?SDI1UmdUWEFjL1RIaGRPV0g2OGhJbktkcXhTQUNPK01KVXBGTHJwMFJjN0J2?=
+ =?utf-8?B?cjY3TnFTZnZqT0dKbUVuL2YwRCtoYTd0OHhKSlZyZXc0Z05TZnBhRUZBU2Fv?=
+ =?utf-8?B?OHFVckU4VWQ1d01EL0ErbjhFRUhreDkxUTd2WE53bnU5T3kwalVtSXJkK0g4?=
+ =?utf-8?B?NkFtRHllRlhBYndJRkw3bkRSUE5uOVBHazgzT0VPQStJQTlONFlUcThYOFlX?=
+ =?utf-8?B?b3Z5cm4yZXhvNWFPU2RXMXNFWEYwYlNsWHd0NUQ3cHVsMUhjTU9MMUtrbytC?=
+ =?utf-8?B?VlFzcVpPbzZmcTM5R2VHRlYzY2NYZ1g3cC80azBKalVjZi94WWZkVmJYQ2la?=
+ =?utf-8?B?M3VwTDNoeFVTdlJBT2lxQmhrQktaZXpzQVkrZWFnQ2RubDlxL2x2V1FHRnE1?=
+ =?utf-8?B?V1JjeHJQTTBsZkhWa1NXTno4Mit3a05yMndDdkRQaXBpaWt2YjV1VzdXVTZK?=
+ =?utf-8?B?R2xYU200ejFqbE13bUZLOG5yZU5OQU9ReHc2ZmFXcnMyL2tTcTBWQkZvMWdS?=
+ =?utf-8?B?VjFkNVN2Z1dKMGk2ZUZXR0VGYlBiWHJ0RlAzMXRvSStkMXY0YkUwdHhBdG4y?=
+ =?utf-8?B?dWx2MVQ1Rmh0UzBqWXFzTnZCYTB2eENhUDEwL1pTV2d2aFN1dVgvS2JpSUpD?=
+ =?utf-8?B?VVI0RFlEcEExVGpUVU5PTUVvZ25BQXBxY29DYndRRDJDNVVGampBUmU0NnEr?=
+ =?utf-8?B?K0hrTHJaM0NydDBUbEdwc1Y1dHd6UVpXSHFrMTdETHZmVndOSWp3RGZtUnJi?=
+ =?utf-8?B?dGFRVHV0R3p4RFBPWElmcnU2Y0poVUgzeGRLNyt5OFFQc1B3eS9EMzR4S2JE?=
+ =?utf-8?B?MFBWT3VoUG0yMFJ1cEt6QUM0NHhYZkFBVVZzZlNEcllGYzcvZUNlRWRFc0NZ?=
+ =?utf-8?B?M1U2MEJuOEhTQVdDZHA3amNSSXd2blJRak5PQk51QnJEQ0NDb3ZRREVtSXo0?=
+ =?utf-8?B?S2xHVjdpMW5GdncveGkxdjhtcGZSTFJ5RFF4YmgxMmFsbjBxc0g0UUpKeVlK?=
+ =?utf-8?B?ZHJIL3VsYVVyTVFabVZwbVVTMnF0ckIrbm50bzdnY2s4MnNnWVJCYk90WExj?=
+ =?utf-8?B?UzdjRUJKaEFvekdyaHhOM2hqeVRnWFBVNHRVSGZMeTl4UFAyK1o1dktwSGpy?=
+ =?utf-8?B?di9QUk95WmoyRXdYZUhOVnRHSlM2alU3eU9yeFlFaWdRYjFQbEhFNGVzaVNX?=
+ =?utf-8?B?ZXhNNkprcVhHTnhwLzI1NWhaN2Y4UzdmRjg5WnV1eXYzamZ5RWVrVU0xc3U4?=
+ =?utf-8?B?cUx0UitkN01JUjdUK3d6UjJ3dTM1dkt5c0U2NHgxT1VGcmxNKzhqaHd2bUVJ?=
+ =?utf-8?B?NmJBL1Y1SzhETmpFVitucE9Tc3BhYjViekhhUmlOeFpHVm51dGE0MkNiM0Vj?=
+ =?utf-8?B?K1EydXVqL2owQ1FBVWxreUtNemVJb3VJUy9xSnBybHovM3praGFVU3N6KzJz?=
+ =?utf-8?B?cUFmc3RRQ3VGYjQ2eFZtNzhQTmcvbEpJcEtBK25DM2Jha09tbUh1V2owUzFv?=
+ =?utf-8?B?VDNRSzZYV1NXdlpsczFQZ21jeGRiZVlrVnl3TW92bUNKNjc0T3NFd2RxT01t?=
+ =?utf-8?B?UmdWdG9heXVUWTU1c2hIcFh4eTRDajNNQWdmSE1xNVdpeVM3M1Q5d3pqUHRy?=
+ =?utf-8?B?NDk5a3NOWFVDSHk0enFHRFlsYmVYNk9DL1E5T2pPaVpFYTdUamYwVEdSREVp?=
+ =?utf-8?B?NDNkZ25PSTBjeHM2eUdaM1J1cGNrUXpPK3BydVJVelI1aDNXNCs2NHUwc1ds?=
+ =?utf-8?Q?YqJ8jfdzpAjMhfRaciuX/iAy/sSP1nDgV7EQthS10G1Y?=
+X-OriginatorOrg: uclouvain.be
+X-MS-Exchange-CrossTenant-Network-Message-Id: a0e2c8a0-64b2-4a60-4fd3-08dd1382ec1e
+X-MS-Exchange-CrossTenant-AuthSource: AS8PR03MB9047.eurprd03.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Dec 2024 10:09:17.4963
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Dec 2024 10:11:58.6199
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-Id: 7ab090d4-fa2e-4ecf-bc7c-4127b4d582ec
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: fxyi/0MS4252vEWa97FrI6VkNoUgfjEXqbV07zdECqKaWMqu1WVs1z5JmDx/mYuocjg9wBAwBnTHUacfpxS+fQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR11MB6892
-X-OriginatorOrg: intel.com
+X-MS-Exchange-CrossTenant-UserPrincipalName: HMsfuIjpAUZ9GVaTJKvl4+QOWP9tBtNVrhSd1XW7T+fxv5wJZI40NGa/wKTkTgkDAeCO0DnY8Yh2hwv2kuGLZw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS2PR03MB9561
 
-On Mon, Dec 02, 2024 at 10:17:16PM +0800, Baoquan He wrote:
-> On 11/29/24 at 01:52pm, Yan Zhao wrote:
-> > On Thu, Nov 28, 2024 at 11:19:20PM +0800, Baoquan He wrote:
-> > > On 11/27/24 at 06:01pm, Yan Zhao wrote:
-> > > > On Tue, Nov 26, 2024 at 07:38:05PM +0800, Baoquan He wrote:
-> > > > > On 10/24/24 at 08:15am, Yan Zhao wrote:
-> > > > > > On Wed, Oct 23, 2024 at 10:44:11AM -0500, Eric W. Biederman wrote:
-> > > > > > > "Kirill A. Shutemov" <kirill@shutemov.name> writes:
-> > > > > > > 
-> > > > > > > > Waiting minutes to get VM booted to shell is not feasible for most
-> > > > > > > > deployments. Lazy is sane default to me.
-> > > > > > > 
-> > > > > > > Huh?
-> > > > > > > 
-> > > > > > > Unless my guesses about what is happening are wrong lazy is hiding
-> > > > > > > a serious implementation deficiency.  From all hardware I have seen
-> > > > > > > taking minutes is absolutely ridiculous.
-> > > > > > > 
-> > > > > > > Does writing to all of memory at full speed take minutes?  How can such
-> > > > > > > a system be functional?
-> > > > > > > 
-> > > > > > > If you don't actually have to write to the pages and it is just some
-> > > > > > > accounting function it is even more ridiculous.
-> > > > > > > 
-> > > > > > > 
-> > > > > > > I had previously thought that accept_memory was the firmware call.
-> > > > > > > Now that I see that it is just a wrapper for some hardware specific
-> > > > > > > calls I am even more perplexed.
-> > > > > > > 
-> > > > > > > 
-> > > > > > > Quite honestly what this looks like to me is that someone failed to
-> > > > > > > enable write-combining or write-back caching when writing to memory
-> > > > > > > when initializing the protected memory.  With the result that everything
-> > > > > > > is moving dog slow, and people are introducing complexity left and write
-> > > > > > > to avoid that bad implementation.
-> > > > > > > 
-> > > > > > > 
-> > > > > > > Can someone please explain to me why this accept_memory stuff has to be
-> > > > > > > slow, why it has to take minutes to do it's job.
-> > > > > > This kexec patch is a fix to a guest(TD)'s kexce failure.
-> > > > > > 
-> > > > > > For a linux guest, the accept_memory() happens before the guest accesses a page.
-> > > > > > It will (if the guest is a TD)
-> > > > > > (1) trigger the host to allocate the physical page on host to map the accessed
-> > > > > >     guest page, which might be slow with wait and sleep involved, depending on
-> > > > > >     the memory pressure on host.
-> > > > > > (2) initializing the protected page.
-> > > > > > 
-> > > > > > Actually most of guest memory are not accessed by guest during the guest life
-> > > > > > cycle. accept_memory() may cause the host to commit a never-to-be-used page,
-> > > > > > with the host physical page not even being able to get swapped out.
-> > > > > 
-> > > > > So this sounds to me more like a business requirement on cloud platform,
-> > > > > e.g if one customer books a guest instance with 60G memory, while the
-> > > > > customer actually always only cost 20G memory at most. Then the 40G memory
-> > > > > can be saved to reduce pressure for host.
-> > > > Yes.
-> > > 
-> > > That's very interesting, thanks for confirming.
-> > > 
-> > > > 
-> > > > > I could be shallow, just a wild guess.
-> > > > > If my guess is right, at least those cloud service providers must like this
-> > > > > accept_memory feature very much.
-> > > > > 
-> > > > > > 
-> > > > > > That's why we need a lazy accept, which does not accept_memory() until after a
-> > > > > > page is allocated by the kernel (in alloc_page(s)).
-> > > > > 
-> > > > > By the way, I have two questions, maybe very shallow.
-> > > > > 
-> > > > > 1) why can't we only find those already accepted memory to put kexec
-> > > > > kernel/initrd/bootparam/purgatory?
-> > > > 
-> > > > Currently, the first kernel only accepts memory during the memory allocation in
-> > > > a lazy accept mode. Besides reducing boot time, it's also good for memory
-> > > > over-commitment as you mentioned above.
-> > > > 
-> > > > My understanding of why the memory for the kernel/initrd/bootparam/purgatory is
-> > > > not allocated from the first kernel is that this memory usually needs to be
-> > > > physically contiguous. Since this memory will not be used by the first kernel,
-> > > > looking up from free RAM has a lower chance of failure compared to allocating it
-> > > 
-> > > Well, there could be misunderstanding here.The final loaded position of
-> > > kernel/initrd/bootparam/purgatory is not searched from free RAM, it's
-> > Oh, by free RAM, I mean system RAM that is marked as
-> > IORESOURCE_SYSTEM_RAM | IORESOURCE_BUSY, but not marked as
-> > IORESOURCE_SYSRAM_DRIVER_MANAGED.
-> > 
-> > 
-> > > just from RAM on x86. Means it possibly have been allocated and being
-> > > used by other component of 1st kernel. Not like kdump, the 2nd kernel of
-> > Yes, it's entirely possible that the destination address being searched out has
-> > already been allocated and is in use by the 1st kernel. e.g. for
-> > KEXEC_TYPE_DEFAULT, the source page for each segment is allocated from the 1st
-> > kernel, and it is allowed to have the same address as its corresponding
-> > destination address.
-> > 
-> > However, it's not guaranteed that the destination address must have been
-> > allocated by the 1st kernel.
-> > 
-> > > kexec reboot doesn't care about 1st kernel's memory usage. We will copy
-> > > them from intermediat position to the designated location when jumping.
-> > Right. If it's not guaranteed that the destination address has been accepted
-> > before this copying, the copying could trigger an error due to accessing an
-> > unaccepted page, which could be fatal for a linux TDX guest.
+On 12/3/24 10:31, André Draszik wrote:
+> On Tue, 2024-12-03 at 10:08 +0100, Thomas Antoine wrote:
+>> On 12/3/24 07:47, André Draszik wrote:
+>>>> From: Thomas Antoine <t.antoine@uclouvain.be>
+>>>>
+>>>> The Maxim max77759 fuel gauge has the same interface as the Maxim max1720x
+>>>> except for the non-volatile memory slave address which is not available.
+>>>
+>>> It is not fully compatible, and it also has a lot more registers.
+>>>
+>>> For example, the voltage now is not in register 0xda as this driver assumes.
+>>> With these changes, POWER_SUPPLY_PROP_VOLTAGE_NOW just reads as 0. 0xda
+>>> doesn't exist in max77759
+>>>
+>>> I haven't compared in depth yet, though.
+>>
+>> Is the voltage necessary for the driver? If so, we could just not
+>> read the voltage. If it is necessary, I can try to kook into it and try
+>> to find in which register it is located (if there is one).
 > 
-> Oh, I just said the opposite. I meant we could search according to the
-> current unaccepted->bitmap to make sure the destination area definitely
-> have been accepted. This is the best if doable, while I know it's not
-> easy.
-Well, this sounds like introducing a new constraint in addition to the current
-checking of !kimage_is_destination_range() in locate_mem_hole_top_down() or
-locate_mem_hole_bottom_up(). (powerpc also has a different implementation).
+> Downstream reports it in
+> https://android.googlesource.com/kernel/google-modules/bms/+/refs/heads/android-gs-raviole-mainline/max1720x_battery.c#2400
+> 
+> so upstream should do, too.
 
-This could make the success unpredictable, depending on how many pages have
-been accepted by the 1st kernel and the layout of the accepted pages(e.g.,
-whether they are physically contiguous). The 1st kernel would also have no
-reliable way to ensure success except by accepting all the guest pages.
-
-> > 
-> > > If we take this way, we need search unaccepted->bitmap top down or
-> > > bottom up, according to setting. Then another suit of functions need
-> > > be provided. That looks a little complicated.
-> > Do you mean searching only accepted pages as destination addresses?
-> > That might increase the chance of failure compared to accepting the addressed
-> > being searched out.
-> > 
-> > > kexec_add_buffer()
-> > > -->arch_kexec_locate_mem_hole()
-> > >    -->kexec_locate_mem_hole()
-> > >       -->kexec_walk_memblock(kbuf, locate_mem_hole_callback) -- on arm64
-> > >       -->kexec_walk_resources(kbuf, locate_mem_hole_callback) -- on x86
-> > >          -->walk_system_ram_res_rev()
-> > 
-> > Yes.
-> > 
-> > 
-> > > Besides, the change in your patch has one issue. Usually we do kexec load to
-> > > read in the kernel/initrd/bootparam/purgatory, while they are loaded to
-> > > the destinations till kexec jumping. We could do kexec loading while 
-> > > never trigger the jumping, your change have done the accept_memory().
-> > > But this doesn't impact much because it always searched and found the
-> > > same location on one system.
-> > Right.
-> > Do you think it's good to move the accept to machine_kexec()?
-> > The machine_kexec() is platform specific though.
-> 
-> I am not sure if it's appropriate to accept in machine_kexec(). 
-> 
-> > 
-> > > > from the first kernel, especially when memory pressure is high in the first
-> > > > kernel.
-> > > > 
-> > > >  
-> > > > > 2) why can't we accept memory for (kernel, boot params/cmdline/initrd)
-> > > > > in 2nd kernel? Surely this purgatory still need be accepted in 1st kernel.
-> > > > > Sorry, I just read accept_memory() code, haven't gone through x86 boot
-> > > > > code flow.
-> > > > If a page is not already accepted, invoking accept_memory() will trigger a
-> > > > memory accept to zero-out the page content. So, for the pages passed to the
-> > > > second kernel, they must have been accepted before page content is copied in.
-> > > > 
-> > > > For boot params/cmdline/initrd, perhaps we could make those pages in shared
-> > > > memory initially and have the second kernel to accept private memory for copy.
-> > > > However, that would be very complex and IMHO not ideal.
-> > > 
-> > > I asked this because I saw your reply to Eric in another thread, quote
-> > > your saying at below. I am wondering why kernel can accept itself, why
-> > > other parts can't do it similarly.
-> > > =====
-> > > Yes, the kernel actually will accept initial memory used by itself in
-> > > extract_kernel(), as in arch/x86/boot/compressed/misc.c.
-> > > 
-> > > But the target kernel may not be able to accept memory for purgatory.
-> > > And it's currently does not accept memory for boot params/cmdline,
-> > > and initrd .
-> > > ====
-> > Thanks for pointing this out.
-> > I also found that my previous reply was confusing and misleading.
-> > 
-> > The 2nd kernel will accept the addresses before it decompresses itself there.
-> > Since these addresses are somewhere "random", the 2nd kernel (and for the 1st
-> > kernel for itself) needs to call accept_memory() in case that they might not
-> > have been accepted.
-> > 
-> > So, previously, I thought a workable approach might be for kexec to map the
-> > destination addresses in shared memory, perform the copy/jump, and then have the
-> > 2nd kernel accept the addresses for decompressing and other parts.
-> > However, aside from the complications and security concerns, this approach is
-> > problematic because the 2nd kernel may clear the pages by accepting them if the
-> > addresses for decompressing overlap with the ones before decompressing.
-> > 
-> > That said, would it be acceptable if I update the patch log and maybe also move
-> > the accept call to machine_kexec()?
-> 
-> Hmm, I think a repost seems necessary, even though this patch looks good
-> to me. If I do, I would add a cover letter to present with several sections:
-> 
-> 1) background information: to explain what scenario the accept memory is
-> used for. And why accept all memory in kexec reboot case is not
-> expected.
-> 2) the current problem: a brief description of the problem and itsroot cause;
-> 3) How to fix it: here we can list all possible solutions we can thin of
-> and what drawbacks they have so that they are not chosen. Then we can
-> come to the final sotution that your current patch has to resort to
-> take.
-Thanks for this suggestion!
+I should have checked before answering. Indeed, I will try to see the
+best way to choose the register based on the chip. From what I see, it
+will also be necessary to change the translation of the reg value to microvolt
+as downstream does *78125/1000 when it is currently *1250 in mainline:
+https://android.googlesource.com/kernel/google-modules/bms/+/refs/heads/android-gs-raviole-mainline/max1720x_battery.h#49
  
-> As kexec maintainer, Eric's concerns are very important and need be resolved 
-> with as much information as possible to let him be happy with the
-> change, at least let him not hate it. This is my personal suggestion as a
-> reviewer. You can put them into cover letter if you think it's not good to add
-> them all in a standalone patch.
-My apologies. I will first repost a new version with the current implementation,
-including more background and explanations to address Eric's concerns.
-
-Thank you!
-
+>>>>  static const char *const max17205_model = "MAX17205";
+>>>> +static const char *const max77759_model = "MAX77759";
+>>>>
+>>>>  struct max1720x_device_info {
+>>>>       struct regmap *regmap;
+>>>> @@ -54,6 +57,21 @@ struct max1720x_device_info {
+>>>>       int rsense;
+>>>>  };
+>>>>
+>>>> +struct chip_data {
+>>>> +     u16 default_nrsense; /* in regs in 10^-5 */
+>>>> +     u8 has_nvmem;
+>>>> +};
+>>>> +
+>>>> +static const struct chip_data max1720x_data  = {
+>>>> +     .default_nrsense = 1000,
+>>>> +     .has_nvmem = 1,
+>>>> +};
+>>>> +
+>>>> +static const struct chip_data max77759_data = {
+>>>> +     .default_nrsense = 500,
+>>>> +     .has_nvmem = 0,
+>>>> +};
+>>>
+>>> This should be made a required devicetree property instead, at least for
+>>> max77759, as it's completely board dependent, 'shunt-resistor-micro-ohms'
+>>> is widely used.
+>>>
+>>> I also don't think there should be a default. The driver should just fail
+>>> to probe if not specified in DT (for max77759).
+>>
+>> I hesitated to do this but I didn't know what would be better. Will change
+>> for v2.
 > 
-> > 
-> > New patch log:
-> > The kexec segments's destination addresses are searched from the memblock
-> > or RAM resources. They are not allocated by the first kernel, though they
-> > may overlap with the memory in used by the first kernel. So, it is not
-> > guaranteed that they are accepted before kexec relocates to the second
-> > kernel.
-> > 
-> > Accept the destination addresses before kexec relocates to the second
-> > kernel, since kexec would access them by swapping content of source and
-> > destination pages.
-> > 
+> Just to clarify, has_nvmem can stay here in the driver, just rsense should
+> go into DT is what I mean.
+
+It was clear don't worry. This answer is related to the same subject:
+https://lore.kernel.org/linux-devicetree/20241202-b4-gs101_max77759_fg-v1-0-98d2fa7bfe30@uclouvain.be/T/#ma55f41d42bf39be826d6cbf8987138bcc4eb52e3
+
+>>>> +
+>>>>  /*
+>>>>   * Model Gauge M5 Algorithm output register
+>>>>   * Volatile data (must not be cached)
+>>>> @@ -369,6 +387,8 @@ static int max1720x_battery_get_property(struct
+>>>> power_supply *psy,
+>>>>                       val->strval = max17201_model;
+>>>>               else if (reg_val == MAX172XX_DEV_NAME_TYPE_MAX17205)
+>>>>                       val->strval = max17205_model;
+>>>> +             else if (reg_val == MAX172XX_DEV_NAME_TYPE_MAX77759)
+>>>> +                     val->strval = max77759_model;
+>>>>               else
+>>>
+>>> This is a 16 bit register, and while yes, MAX172XX_DEV_NAME_TYPE_MASK only
+>>> cares about the bottom 4 bits, the register is described as 'Firmware
+>>> Version Information'.
+>>>
+>>> But maybe it's ok to do it like that, at least for now.
+>>
+>> I thought this method would be ok as long as there is no collision on
+>> values. I hesitated to change the model evaluation method based on chip
+>> model, where the max77759 would thus have an hard-coded value and the
+>> max1720x would still evaluate the register value. I did not do it because
+>> it led to a lot more changes for no difference.
 > 
+> Downstream uses the upper bits for max77759:
+> https://android.googlesource.com/kernel/google-modules/bms/+/refs/heads/android-gs-raviole-mainline/max_m5.h#135
+> 
+> I don't know what the original max17201/5 report in this register
+> for those bits, though. Given for max77759 this register returns
+> the firmware version, I assume the lower bits can change.
+
+Based on this datasheet of the max1720x, the upper bits are the revision
+and the four lower bits are device. So it could change.
+https://www.analog.com/media/en/technical-documentation/data-sheets/MAX17201-MAX17215.pdf#MAX17201%20DS.indd%3A.213504%3A15892
+
+If the four lower bits are not always 0 for the max77759 then I guess it
+is necessary to change this as it wouldn't work with all max77759.
+
+
+Best regards,
+Thomas
 
