@@ -1,49 +1,49 @@
-Return-Path: <linux-kernel+bounces-429469-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429470-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F2D19E1C94
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 13:46:26 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CC4E9E1C93
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 13:46:21 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F6EC1676A1
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 12:46:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F3B5281213
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 12:46:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4A161F472F;
-	Tue,  3 Dec 2024 12:43:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A051A1F666A;
+	Tue,  3 Dec 2024 12:43:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="NWEUoUA5"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Xhnea8KK"
 Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF0111F130D;
-	Tue,  3 Dec 2024 12:43:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECD181F4286;
+	Tue,  3 Dec 2024 12:43:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733229819; cv=none; b=fs/LeYJPlgthD77k9X53AAkpj6bdA5cGeg49Sf1vTPbaXm0TMBw/EPAKZYDV/pH1CjvPCiMWHWAy4vsD26z5WKbJ3+d6v92HkEGpegNvwGoYLc6uqbiRnxi5kzxNYapVeLJ+Q1GC2iUZ+wRAAbsfwOwWSkH5aUhGaxvbUDKjV5k=
+	t=1733229820; cv=none; b=pgLM0t+1m9qmFKAALEL2Sq+/xTHZhCuk8DyMkCXzZQj6Khnef1LMqHw8FpPDhS3dOpi7r3w/4Ya0T9C7NW6Fy3MpAhJlphvWaHM6XaEA1O9ZDV+9UeHt77mMBi0xz2dUKB9j2ALUcr7SrGAwkpE75O+Y1GPyrMC9x5z8juYBrbg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733229819; c=relaxed/simple;
-	bh=UcbVoZHAlJYm+CdnABP2AfaMA7c5zjeZ8lX7ghuxZv8=;
+	s=arc-20240116; t=1733229820; c=relaxed/simple;
+	bh=fOuju07Dr2ECyKzUnp3Nxa80qrfiCTrYTU7omb5m2ME=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Vz92U+GA6b5UruuggaQ1r/XysFBhjPEcnHm4Lq5iOkQKHxGXC1oh/E4OUVpzhmMHDdh3Ly7F3J7biXeSvM6qCCC6GqjOXMW1DlJnnbRuVapAR3KAmk/FAnftwBkpqYM1r641etHQvRkVCBDPVxeRcEB0Rp8C4eXqFVIHDeeH6t8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=NWEUoUA5; arc=none smtp.client-ip=217.70.183.196
+	 MIME-Version; b=P8W74OE2mQYz9MeskK3uikoudLVfs3fTXehraKUdEGfQB4awl9VmvpxgY5G03wSyRnWokdSxh2Lg9XKDcYNnhlWS6+aijWrR/0ewjF4OGebBqj7EbH8Vzn9rzSjf/rY+lX0Nw294ELYh4f/0HtgcDc0/Es5DAopPOI6s5eUKm8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Xhnea8KK; arc=none smtp.client-ip=217.70.183.196
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 27420E0014;
-	Tue,  3 Dec 2024 12:43:34 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 3FCB4E0015;
+	Tue,  3 Dec 2024 12:43:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1733229815;
+	t=1733229816;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=WBCqYYv3YXd5ENSbBD2+uchIXFYD+CKhJvuWxfPM7Xk=;
-	b=NWEUoUA5RouWcr1xNFFyfJa84MrnUceEEs7jv6Dz3Mc72h3Vf0I2h4+H/uMA94Uqv7RtdS
-	eUq8zTe/FZfiA0ZPe35qpSKqW7WH2G/LCFR9dazxkxdB+UiwtV/9nZmmPoN8Gs52fnBRhF
-	KZFT2Q68jau98Q0k0Je3LF1MhiXV12e3s25Rn/arQtsffRLZqi4s5q0mYGMx6D83IriZ4S
-	68Vb3x+cxsUfXg+fDz8TpFJU6qvKFamyDz40mqo93h3p14geaz6Yo6LaA6EOUcbD1dPaJR
-	vY7VSsqUZDM67/hSP2oqSzHxvrqs50ZHbS+lGSoMaMhDGkHC68syLhyASj9teA==
+	bh=youLhIgqVVWm97WdCjhC+2nlqSD1XPFSr1JMUVJC8KQ=;
+	b=Xhnea8KKsAYC9LqskJbsGK9P5/cBO/Sx3DuSFKSJvSbUVrZ3raABIqPBmfg6tvXeVlkgeN
+	db33qTDcapDqez8YWMuCBOiU8gPr8Pw+b/AX1HCGlHN4yay/SkFCU9evAgWme1UC7H0Mk5
+	y0v+iQgO7aZwHgjUEaAWhSQi9sVccRQgwAPUivaHGQ7EQZRM+V52LZ4zEuPZna5JlDIbQL
+	yK0+K51mAMHJb1rLzEfn7s/DPygEGqQGNfsD66G6xJ3ZPPbGecdHXt2QI3DSdUTPm5ERwb
+	GGwoVWDHF2xleX4TXx7nZvhULg6RdHKulWAEvDBTJzFlQebKf/EZa72KklVu2A==
 From: Maxime Chevallier <maxime.chevallier@bootlin.com>
 To: davem@davemloft.net,
 	Andrew Lunn <andrew@lunn.ch>,
@@ -61,9 +61,9 @@ Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>,
 	Herve Codina <herve.codina@bootlin.com>,
 	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
 	linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH net-next v3 08/10] net: freescale: ucc_geth: Move the serdes configuration around
-Date: Tue,  3 Dec 2024 13:43:19 +0100
-Message-ID: <20241203124323.155866-9-maxime.chevallier@bootlin.com>
+Subject: [PATCH net-next v3 09/10] net: freescale: ucc_geth: Introduce a helper to check Reduced modes
+Date: Tue,  3 Dec 2024 13:43:20 +0100
+Message-ID: <20241203124323.155866-10-maxime.chevallier@bootlin.com>
 X-Mailer: git-send-email 2.47.0
 In-Reply-To: <20241203124323.155866-1-maxime.chevallier@bootlin.com>
 References: <20241203124323.155866-1-maxime.chevallier@bootlin.com>
@@ -76,130 +76,66 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-GND-Sasl: maxime.chevallier@bootlin.com
 
-The uec_configure_serdes() function deals with serialized linkmodes
-settings. It's used during the link bringup sequence. It is planned to
-be used during the phylink conversion for mac configuration, but it
-needs to me moved around in the process. To make the phylink port
-clearer, this commit moves the function without any feature change.
+A number of parallel MII interfaces also exist in a "Reduced" mode,
+usually with higher clock rates and fewer data lines, to ease the
+hardware design. This is what the 'R' stands for in RGMII, RMII, RTBI,
+RXAUI, etc.
+
+The UCC Geth controller has a special configuration bit that needs to be
+set when the MII mode is one of the supported reduced modes.
+
+Add a local helper for that.
 
 Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
 ---
 V3: No changes
 
- drivers/net/ethernet/freescale/ucc_geth.c | 93 +++++++++++------------
- 1 file changed, 46 insertions(+), 47 deletions(-)
+ drivers/net/ethernet/freescale/ucc_geth.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
 diff --git a/drivers/net/ethernet/freescale/ucc_geth.c b/drivers/net/ethernet/freescale/ucc_geth.c
-index 81aefe291d80..f6dd36dc03fe 100644
+index f6dd36dc03fe..57debcba124c 100644
 --- a/drivers/net/ethernet/freescale/ucc_geth.c
 +++ b/drivers/net/ethernet/freescale/ucc_geth.c
-@@ -1512,6 +1512,52 @@ static void ugeth_activate(struct ucc_geth_private *ugeth)
- 	__netdev_watchdog_up(ugeth->ndev);
+@@ -1258,6 +1258,13 @@ static int init_min_frame_len(u16 min_frame_length,
+ 	return 0;
  }
  
-+/* Initialize TBI PHY interface for communicating with the
-+ * SERDES lynx PHY on the chip.  We communicate with this PHY
-+ * through the MDIO bus on each controller, treating it as a
-+ * "normal" PHY at the address found in the UTBIPA register.  We assume
-+ * that the UTBIPA register is valid.  Either the MDIO bus code will set
-+ * it to a value that doesn't conflict with other PHYs on the bus, or the
-+ * value doesn't matter, as there are no other PHYs on the bus.
-+ */
-+static void uec_configure_serdes(struct net_device *dev)
++static bool phy_interface_mode_is_reduced(phy_interface_t interface)
 +{
-+	struct ucc_geth_private *ugeth = netdev_priv(dev);
-+	struct ucc_geth_info *ug_info = ugeth->ug_info;
-+	struct phy_device *tbiphy;
-+
-+	if (!ug_info->tbi_node) {
-+		dev_warn(&dev->dev, "SGMII mode requires that the device tree specify a tbi-handle\n");
-+		return;
-+	}
-+
-+	tbiphy = of_phy_find_device(ug_info->tbi_node);
-+	if (!tbiphy) {
-+		dev_err(&dev->dev, "error: Could not get TBI device\n");
-+		return;
-+	}
-+
-+	/*
-+	 * If the link is already up, we must already be ok, and don't need to
-+	 * configure and reset the TBI<->SerDes link.  Maybe U-Boot configured
-+	 * everything for us?  Resetting it takes the link down and requires
-+	 * several seconds for it to come back.
-+	 */
-+	if (phy_read(tbiphy, ENET_TBI_MII_SR) & TBISR_LSTATUS) {
-+		put_device(&tbiphy->mdio.dev);
-+		return;
-+	}
-+
-+	/* Single clk mode, mii mode off(for serdes communication) */
-+	phy_write(tbiphy, ENET_TBI_MII_ANA, TBIANA_SETTINGS);
-+
-+	phy_write(tbiphy, ENET_TBI_MII_TBICON, TBICON_CLK_SELECT);
-+
-+	phy_write(tbiphy, ENET_TBI_MII_CR, TBICR_SETTINGS);
-+
-+	put_device(&tbiphy->mdio.dev);
++	return phy_interface_mode_is_rgmii(interface) ||
++	       interface == PHY_INTERFACE_MODE_RMII ||
++	       interface == PHY_INTERFACE_MODE_RTBI;
 +}
 +
- static void ugeth_link_up(struct ucc_geth_private *ugeth,
- 			  struct phy_device *phy,
- 			  phy_interface_t interface, int speed, int duplex)
-@@ -1619,53 +1665,6 @@ static void adjust_link(struct net_device *dev)
- 		ugeth_link_down(ugeth);
- }
- 
--/* Initialize TBI PHY interface for communicating with the
-- * SERDES lynx PHY on the chip.  We communicate with this PHY
-- * through the MDIO bus on each controller, treating it as a
-- * "normal" PHY at the address found in the UTBIPA register.  We assume
-- * that the UTBIPA register is valid.  Either the MDIO bus code will set
-- * it to a value that doesn't conflict with other PHYs on the bus, or the
-- * value doesn't matter, as there are no other PHYs on the bus.
-- */
--static void uec_configure_serdes(struct net_device *dev)
--{
--	struct ucc_geth_private *ugeth = netdev_priv(dev);
--	struct ucc_geth_info *ug_info = ugeth->ug_info;
--	struct phy_device *tbiphy;
--
--	if (!ug_info->tbi_node) {
--		dev_warn(&dev->dev, "SGMII mode requires that the device "
--			"tree specify a tbi-handle\n");
--		return;
--	}
--
--	tbiphy = of_phy_find_device(ug_info->tbi_node);
--	if (!tbiphy) {
--		dev_err(&dev->dev, "error: Could not get TBI device\n");
--		return;
--	}
--
--	/*
--	 * If the link is already up, we must already be ok, and don't need to
--	 * configure and reset the TBI<->SerDes link.  Maybe U-Boot configured
--	 * everything for us?  Resetting it takes the link down and requires
--	 * several seconds for it to come back.
--	 */
--	if (phy_read(tbiphy, ENET_TBI_MII_SR) & TBISR_LSTATUS) {
--		put_device(&tbiphy->mdio.dev);
--		return;
--	}
--
--	/* Single clk mode, mii mode off(for serdes communication) */
--	phy_write(tbiphy, ENET_TBI_MII_ANA, TBIANA_SETTINGS);
--
--	phy_write(tbiphy, ENET_TBI_MII_TBICON, TBICON_CLK_SELECT);
--
--	phy_write(tbiphy, ENET_TBI_MII_CR, TBICR_SETTINGS);
--
--	put_device(&tbiphy->mdio.dev);
--}
--
- /* Configure the PHY for dev.
-  * returns 0 if success.  -1 if failure
-  */
+ static int adjust_enet_interface(struct ucc_geth_private *ugeth)
+ {
+ 	struct ucc_geth_info *ug_info;
+@@ -1290,12 +1297,7 @@ static int adjust_enet_interface(struct ucc_geth_private *ugeth)
+ 	upsmr = in_be32(&uf_regs->upsmr);
+ 	upsmr &= ~(UCC_GETH_UPSMR_RPM | UCC_GETH_UPSMR_R10M |
+ 		   UCC_GETH_UPSMR_TBIM | UCC_GETH_UPSMR_RMM);
+-	if ((ugeth->phy_interface == PHY_INTERFACE_MODE_RMII) ||
+-	    (ugeth->phy_interface == PHY_INTERFACE_MODE_RGMII) ||
+-	    (ugeth->phy_interface == PHY_INTERFACE_MODE_RGMII_ID) ||
+-	    (ugeth->phy_interface == PHY_INTERFACE_MODE_RGMII_RXID) ||
+-	    (ugeth->phy_interface == PHY_INTERFACE_MODE_RGMII_TXID) ||
+-	    (ugeth->phy_interface == PHY_INTERFACE_MODE_RTBI)) {
++	if (phy_interface_mode_is_reduced(ugeth->phy_interface)) {
+ 		if (ugeth->phy_interface != PHY_INTERFACE_MODE_RMII)
+ 			upsmr |= UCC_GETH_UPSMR_RPM;
+ 		switch (ugeth->max_speed) {
+@@ -1594,9 +1596,7 @@ static void ugeth_link_up(struct ucc_geth_private *ugeth,
+ 				    ~(MACCFG2_INTERFACE_MODE_MASK)) |
+ 				    MACCFG2_INTERFACE_MODE_NIBBLE);
+ 			/* if reduced mode, re-set UPSMR.R10M */
+-			if (interface == PHY_INTERFACE_MODE_RMII ||
+-			    phy_interface_mode_is_rgmii(interface) ||
+-			    interface == PHY_INTERFACE_MODE_RTBI) {
++			if (phy_interface_mode_is_reduced(interface)) {
+ 				if (speed == SPEED_10)
+ 					upsmr |= UCC_GETH_UPSMR_R10M;
+ 				else
 -- 
 2.47.0
 
