@@ -1,499 +1,537 @@
-Return-Path: <linux-kernel+bounces-429439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9F2C9E1C2A
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 13:29:34 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B0532164C57
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 12:29:31 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55A4D1E5704;
-	Tue,  3 Dec 2024 12:29:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Oafo0XJ/"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B656C9E1C2F
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 13:30:58 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A03B33398B;
-	Tue,  3 Dec 2024 12:29:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7720F2835A9
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 12:30:57 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12A471E47D1;
+	Tue,  3 Dec 2024 12:30:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NJwTgqh3"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C40EB1DF982
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 12:30:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733228966; cv=none; b=MySzmsoHPXMIIBm4Kq4yvHxwqpd0uqqgH5oEENVLm333GOdJJkO+/+86goRSSgiHJ7Rmkm4+hqa6nv2TC+Tc20y+1BTa8liA86nUezd2Ovj5pAloZPsNjVE3GziSw0yKUwLAK+klmBNW2asPKe7nx/mju/YQ3l/fw7Jy9j2Jj9Q=
+	t=1733229051; cv=none; b=oidbi7jASoQCRCptMCigXhjP0g5zLOWfBbNkSmwtnihkQBJFyhY0KYLltj3hEqZ4IAKfl+mynmRhMhHSLKeK6CKgLOv+CPt6eXajS1l+gGKdTNjHqB9GqtJPv2feoECIm7xzJAk1/tzkaB6nYdDzdJULDh9MBH2LnDXWK1TwcUo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733228966; c=relaxed/simple;
-	bh=JuTct5KR1CcFYr4w+jW2pHOcBTUC4XM9PvwyQrCpgIk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OvE5HNTEx8QInufPgr3QPIZeOjThnRdfVD4i+0hO0hwJ2IBFXj/5WyjFdgtW4Z6a2c8hGvOKvg1jpFSoXUWLJvpsT8XxtajMJ/34uZtnDhE9U2Iu8sxEGP+zqWP1YlgOntQr/XpcRmUe3BBPcn0rqNtz/OlU8vLfiM5/7WCQMI0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=Oafo0XJ/; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 8A7C3E1;
-	Tue,  3 Dec 2024 13:28:54 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1733228934;
-	bh=JuTct5KR1CcFYr4w+jW2pHOcBTUC4XM9PvwyQrCpgIk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Oafo0XJ/Kto0/MqBTn+5M7LrB+p2f6r91xJBIk5CqKsyuOmU+JtbWP066aCfjU6NL
-	 42wGcRSMl3JZG5hm8GS7nJmcBH7ijaNey96r9YLslDNwHj+cdOOD9K3zIMlsNG2FRO
-	 zZwqzPRBNiejeRjz2nt338KmKvDQsiJiD0B5leaA=
-Date: Tue, 3 Dec 2024 14:29:10 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-	Hans Verkuil <hverkuil@xs4all.nl>,
-	Ricardo Ribalda <ribalda@chromium.org>
-Subject: Re: [PATCH v4 4/5] docs: media: document media multi-committers
- rules and process
-Message-ID: <20241203122910.GT10736@pendragon.ideasonboard.com>
-References: <cover.1733218348.git.mchehab+huawei@kernel.org>
- <01acc93fd8780265ea55772ba793f3f09a43ffa7.1733218348.git.mchehab+huawei@kernel.org>
+	s=arc-20240116; t=1733229051; c=relaxed/simple;
+	bh=UcO8ZYL7qbbdz/ImP/+lAtmzv28xaiGQ5At/6Xt+xoU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UnJKsdesaTwmhe2nxMH74KTqI3tu5kUIGYyRAIXggRUc2DDnsTes77lUAONAIo8Ug3CXVSRCAhcPlZuHswc2Dx8tfwzlDRm3b14YBidYVpvt1wD7HSH3u8oM6xMKYCnomnesPmSPBD6KH9SIO6J6vzBor1lfQBbhCHMD2PbprWo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NJwTgqh3; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-434a45f05feso67540535e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 04:30:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1733229047; x=1733833847; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FdOD1pghQiXd9Gj0pHnZhVE4QHkGcohUPtvCTKMFtH8=;
+        b=NJwTgqh3jaIeapT6gSiO1RwVA+flZRNDAdIH5h74hRlUrzb0SkqHgzDH1t5NapIYpG
+         j4CWuFCYrhRNfRel01pAvhMUknW3T26sBJXijy3FMCY2QOGLbFZChKFGi71Csd4jsBa2
+         DCPUV2SjhUi/Kh73eknOR96gxug07wcn5TcgbUeFTrb1M4dAmLV6x9Cd5K1hKBdCxb6z
+         IrxyugHcHotiM7eQqZiJ8XCUeIz9jkSvfaGCyQLr2egXDTXLfoBdVmcEWul63elmd5ND
+         kXr90thErE4+GbeMlvdgd1wvC8ZClJrmZ/gyN+SczcalVSYdrLbCYpsbeeaNnqw7Ye43
+         9Mxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733229047; x=1733833847;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FdOD1pghQiXd9Gj0pHnZhVE4QHkGcohUPtvCTKMFtH8=;
+        b=KTK8RibRGNxD4IZb8ZnJdG7Pi4pXc55bzAp2ptij5URAX0qQs58Vz7JX/iUKTOiw4S
+         EqcDc/JLTsNfexlWADTksJBk7YG+o6sHen8Yx1Ep5ndn2hN2plkOLUGsUqlmT1FyAuEP
+         GLiGnZxaKwUWLp8ZpzvtBtGamHP0HenL04rjOz8xkr9Ez55qBhhFfdzXOaHL8ax//Btk
+         4bn/XGBgkfuRZJ8MUDgBaMf5/gdMNbhBd/sfkh1hb2P6H7Fq3Big3QY6GJarcnOddHCK
+         P2yy1OQUGX53irn1IcfkY2VA72jM7bXhwMymtDEPoQoF9N21M5i7rAwdKkGdrxQJ7DSQ
+         qyiA==
+X-Forwarded-Encrypted: i=1; AJvYcCU/gw2Pbqu/0RmjOFnnnk29+fdN6GbHqVLIJsEnS1IWMmY/ZDUQakp+d+ZaN+ijZ0lxEb/9RVwpWWonjjM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxyvG9omFukg2tfo4LRJ1mgeBxBlS9F4JHRmPJd5jg1etgednKT
+	+VL6R4/tUB1P+gF2Oq1K0bocDUkFBb0GiWHIKSaUd8505poLNaM2/KaGsoXVBGzMcKPn7vldpEB
+	oLH98f22ANWkspgT/OqpQS/7dj4aiGZUJGmAh
+X-Gm-Gg: ASbGncv+DQYW3psZuWFePBmCAPq5NOORcJQV6+WqahId7/XUrX2/QEDKfDAlWXIBpc8
+	BaAVeLYyiolhTs1UbO0aJ0KMP6t4O13YMBhLeWUKuWa0KqFUqvaKLsFomLVAlWw==
+X-Google-Smtp-Source: AGHT+IHIdBim0FEGmGHLEgqoqMHccUi+r6eVOeRGTpmw6QbUq/HmfLGVkF34Bza6IVIaV4ClobgJvxCz4xAJakdzUgg=
+X-Received: by 2002:a5d:64e6:0:b0:385:e176:43e8 with SMTP id
+ ffacd0b85a97d-385fd3f38b0mr2265391f8f.33.1733229046778; Tue, 03 Dec 2024
+ 04:30:46 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <01acc93fd8780265ea55772ba793f3f09a43ffa7.1733218348.git.mchehab+huawei@kernel.org>
+References: <20241120-rust-xarray-bindings-v10-0-a25b2b0bf582@gmail.com> <20241120-rust-xarray-bindings-v10-2-a25b2b0bf582@gmail.com>
+In-Reply-To: <20241120-rust-xarray-bindings-v10-2-a25b2b0bf582@gmail.com>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Tue, 3 Dec 2024 13:30:34 +0100
+Message-ID: <CAH5fLgipntMtu7_pdZDZGerGRO499yxDdz2dP=2Bb5FobcykYg@mail.gmail.com>
+Subject: Re: [PATCH v10 2/2] rust: xarray: Add an abstraction for XArray
+To: Tamir Duberstein <tamird@gmail.com>
+Cc: Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, =?UTF-8?B?TWHDrXJhIENhbmFs?= <mcanal@igalia.com>, 
+	Asahi Lina <lina@asahilina.net>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Mauro,
-
-Thank you for the patch.
-
-On Tue, Dec 03, 2024 at 10:35:48AM +0100, Mauro Carvalho Chehab wrote:
-> As the media subsystem will experiment with a multi-committers model,
-> update the Maintainer's entry profile to the new rules, and add a file
-> documenting the process to become a committer and to maintain such
-> rights.
-> 
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-> Signed-off-by: Hans Verkuil <hverkuil@xs4all.nl>
-> Reviewed-by: Ricardo Ribalda <ribalda@chromium.org>
+On Wed, Nov 20, 2024 at 12:48=E2=80=AFPM Tamir Duberstein <tamird@gmail.com=
+> wrote:
+>
+> `XArray` is an efficient sparse array of pointers. Add a Rust
+> abstraction for this type.
+>
+> This implementation bounds the element type on `ForeignOwnable` and
+> requires explicit locking for all operations. Future work may leverage
+> RCU to enable lockless operation.
+>
+> Inspired-by: Ma=C3=ADra Canal <mcanal@igalia.com>
+> Inspired-by: Asahi Lina <lina@asahilina.net>
+> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
 > ---
->  Documentation/driver-api/media/index.rst      |   1 +
->  .../media/maintainer-entry-profile.rst        |   8 +
->  .../driver-api/media/media-committer.rst      | 280 ++++++++++++++++++
->  3 files changed, 289 insertions(+)
->  create mode 100644 Documentation/driver-api/media/media-committer.rst
-> 
-> diff --git a/Documentation/driver-api/media/index.rst b/Documentation/driver-api/media/index.rst
-> index d5593182a3f9..d0c725fcbc67 100644
-> --- a/Documentation/driver-api/media/index.rst
-> +++ b/Documentation/driver-api/media/index.rst
-> @@ -26,6 +26,7 @@ Documentation/userspace-api/media/index.rst
->      :numbered:
->  
->      maintainer-entry-profile
-> +    media-committer
->  
->      v4l2-core
->      dtv-core
-> diff --git a/Documentation/driver-api/media/maintainer-entry-profile.rst b/Documentation/driver-api/media/maintainer-entry-profile.rst
-> index 101f6df6374f..fa28059f7b3f 100644
-> --- a/Documentation/driver-api/media/maintainer-entry-profile.rst
-> +++ b/Documentation/driver-api/media/maintainer-entry-profile.rst
-> @@ -69,6 +69,9 @@ as described at Documentation/process/index.rst and to the Kernel
->  development rules inside the Kernel documentation, including its code of
->  conduct.
->  
-> +More details about media commiters' roles and responsibilities can be
-> +found here: Documentation/driver-api/media/media-committer.rst.
+>  rust/bindings/bindings_helper.h |   6 +
+>  rust/helpers/helpers.c          |   1 +
+>  rust/helpers/xarray.c           |  28 +++++
+>  rust/kernel/alloc.rs            |   5 +
+>  rust/kernel/lib.rs              |   1 +
+>  rust/kernel/xarray.rs           | 266 ++++++++++++++++++++++++++++++++++=
+++++++
+>  6 files changed, 307 insertions(+)
+>
+> diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_hel=
+per.h
+> index 5c4dfe22f41a5a106330e8c43ffbd342c69c4e0b..9f39d673b240281aed2759b5b=
+d076aa43fb54951 100644
+> --- a/rust/bindings/bindings_helper.h
+> +++ b/rust/bindings/bindings_helper.h
+> @@ -30,6 +30,7 @@
+>  #include <linux/tracepoint.h>
+>  #include <linux/wait.h>
+>  #include <linux/workqueue.h>
+> +#include <linux/xarray.h>
+>  #include <trace/events/rust_sample.h>
+>
+>  /* `bindgen` gets confused at certain things. */
+> @@ -43,3 +44,8 @@ const gfp_t RUST_CONST_HELPER___GFP_ZERO =3D __GFP_ZERO=
+;
+>  const gfp_t RUST_CONST_HELPER___GFP_HIGHMEM =3D ___GFP_HIGHMEM;
+>  const gfp_t RUST_CONST_HELPER___GFP_NOWARN =3D ___GFP_NOWARN;
+>  const blk_features_t RUST_CONST_HELPER_BLK_FEAT_ROTATIONAL =3D BLK_FEAT_=
+ROTATIONAL;
 > +
->  .. [2] Everything that would break backward compatibility with existing
->         non-kernel code are API/ABI changes. This includes ioctl and sysfs
->         interfaces, v4l2 controls, and their behaviors.
-> @@ -221,6 +224,11 @@ See: :ref:`kernel_org_trust_repository`.
->  
->  With the pull request workflow, pull requests shall use PGP-signed tags.
->  
-> +With the committers' workflow, this is ensured at the time merge request
-> +rights will be granted to the gitlab instance used by the media-committers.git
-> +tree, after receiving the e-mail documented in
-> +:ref:`media-committer-agreement`.
+> +const xa_mark_t RUST_CONST_HELPER_XA_PRESENT =3D XA_PRESENT;
 > +
->  For more details about PGP sign, please read
->  Documentation/process/maintainer-pgp-guide.rst.
->  
-> diff --git a/Documentation/driver-api/media/media-committer.rst b/Documentation/driver-api/media/media-committer.rst
+> +const gfp_t RUST_CONST_HELPER_XA_FLAGS_ALLOC =3D XA_FLAGS_ALLOC;
+> +const gfp_t RUST_CONST_HELPER_XA_FLAGS_ALLOC1 =3D XA_FLAGS_ALLOC1;
+> diff --git a/rust/helpers/helpers.c b/rust/helpers/helpers.c
+> index dcf827a61b52e71e46fd5378878602eef5e538b6..ff28340e78c53c79baf18e292=
+7cc90350d8ab513 100644
+> --- a/rust/helpers/helpers.c
+> +++ b/rust/helpers/helpers.c
+> @@ -30,3 +30,4 @@
+>  #include "vmalloc.c"
+>  #include "wait.c"
+>  #include "workqueue.c"
+> +#include "xarray.c"
+> diff --git a/rust/helpers/xarray.c b/rust/helpers/xarray.c
 > new file mode 100644
-> index 000000000000..3d0987a8a93b
+> index 0000000000000000000000000000000000000000..60b299f11451d2c4a75e50e25=
+dec4dac13f143f4
 > --- /dev/null
-> +++ b/Documentation/driver-api/media/media-committer.rst
-> @@ -0,0 +1,280 @@
-> +Media committers
-> +================
+> +++ b/rust/helpers/xarray.c
+> @@ -0,0 +1,28 @@
+> +// SPDX-License-Identifier: GPL-2.0
 > +
-> +Who is a media committer?
-> +-------------------------
+> +#include <linux/xarray.h>
 > +
-> +A media committer is a developer who has been granted commit access to push
-> +patches from other developers and their own patches to the
-> +`media-committers <https://gitlab.freedesktop.org/linux-media/media-committers>`_
-> +tree.
+> +int rust_helper_xa_err(void *entry)
+> +{
+> +       return xa_err(entry);
+> +}
+> +
+> +void rust_helper_xa_init_flags(struct xarray *xa, gfp_t flags)
+> +{
+> +       return xa_init_flags(xa, flags);
+> +}
+> +
+> +int rust_helper_xa_trylock(struct xarray *xa)
+> +{
+> +       return xa_trylock(xa);
+> +}
+> +
+> +void rust_helper_xa_lock(struct xarray *xa)
+> +{
+> +       return xa_lock(xa);
+> +}
+> +
+> +void rust_helper_xa_unlock(struct xarray *xa)
+> +{
+> +       return xa_unlock(xa);
+> +}
+> diff --git a/rust/kernel/alloc.rs b/rust/kernel/alloc.rs
+> index f2f7f3a53d298cf899e062346202ba3285ce3676..be9f164ece2e0fe71143e0201=
+247d2b70c193c51 100644
+> --- a/rust/kernel/alloc.rs
+> +++ b/rust/kernel/alloc.rs
+> @@ -39,6 +39,11 @@
+>  pub struct Flags(u32);
+>
+>  impl Flags {
+> +    /// Get a flags value with all bits unset.
+> +    pub fn empty() -> Self {
+> +        Self(0)
+> +    }
 
-This is a much better definition than in v1, I do like this.
+Is this used anywhere?
 
+> diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
+> index e1065a7551a39e68d6379031d80d4be336e652a3..9ca524b15920c525c7db419e6=
+0dec4c43522751d 100644
+> --- a/rust/kernel/lib.rs
+> +++ b/rust/kernel/lib.rs
+> @@ -68,6 +68,7 @@
+>  pub mod types;
+>  pub mod uaccess;
+>  pub mod workqueue;
+> +pub mod xarray;
+>
+>  #[doc(hidden)]
+>  pub use bindings;
+> diff --git a/rust/kernel/xarray.rs b/rust/kernel/xarray.rs
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..acbac787dc9a38684538697d5=
+3f590880fa9903a
+> --- /dev/null
+> +++ b/rust/kernel/xarray.rs
+> @@ -0,0 +1,266 @@
+> +// SPDX-License-Identifier: GPL-2.0
 > +
-> +It is a media committer's duty to ensure that their entries in the MAINTAINERS
-> +file are kept up-to-date, and that submitted patches for files for which
-> +they are listed as maintainers are timely reviewed on the mailing list,
-> +ideally not waiting in patchwork as ``New`` for more than one Kernel merge
-> +cycle, and, if accepted, applying them at the media committer's tree.
+> +//! XArray abstraction.
+> +//!
+> +//! C header: [`include/linux/xarray.h`](srctree/include/linux/xarray.h)
+> +
+> +use core::pin::Pin;
 
-This is not a committer's duty. This is related to maintainers, not
-committers, and doesn't belong to this document.
+Could be merged with the imports below.
 
-> +
-> +These commit rights are granted with expectation of responsibility:
-> +committers are people who care about the Linux Kernel as a whole and
-> +about the Linux media subsystem and want to advance its development. It
+> +use crate::{
+> +    alloc, bindings, build_assert, build_error,
+> +    error::{Error, Result},
+> +    init::PinInit,
+> +    pin_init,
+> +    types::{ForeignOwnable, NotThreadSafe, Opaque},
+> +};
+> +use core::{iter, marker::PhantomData, mem};
+> +use macros::{pin_data, pinned_drop};
 
-Responsibility, yes, but not as described. The committer's
-responsibility is to adhere to the process we define, to minimize the
-risk of breakages. It's a committer's responsibility to not push patches
-that have not received consensus, and to not bypass CI. It isn't a
-committer's responsibility to "advance the Linux media subsystem
-development" (especially given that there are often very opposite views
-in the community about what this means in practice).
+I think these are in crate::prelude.
 
-> +is also based on a trust relationship among other committers, maintainers
-> +and the Linux Media community[1].
+> +/// An array which efficiently maps sparse integer indices to owned obje=
+cts.
+> +///
+> +/// This is similar to a [`crate::alloc::kvec::Vec<Option<T>>`], but mor=
+e efficient when there are
+> +/// holes in the index space, and can be efficiently grown.
+> +///
+> +/// # Invariants
+> +///
+> +/// `self.xa` is always an initialized and valid [`bindings::xarray`] wh=
+ose entries are either
+> +/// `XA_ZERO_ENTRY` or came from `T::into_foreign`.
+> +///
+> +/// # Examples
+> +///
+> +/// ```rust
+> +/// use kernel::alloc::KBox;
+> +/// use kernel::xarray::{AllocKind, XArray};
+> +///
+> +/// let xa =3D KBox::pin_init(XArray::new(AllocKind::Alloc1), GFP_KERNEL=
+)?;
+> +///
+> +/// let dead =3D KBox::new(0xdead, GFP_KERNEL)?;
+> +/// let beef =3D KBox::new(0xbeef, GFP_KERNEL)?;
+> +///
+> +/// let mut guard =3D xa.lock();
+> +///
+> +/// assert_eq!(guard.get(0), None);
+> +///
+> +/// assert_eq!(guard.store(0, dead, GFP_KERNEL).unwrap().as_deref(), Non=
+e);
+> +/// assert_eq!(guard.get(0).copied(), Some(0xdead));
+> +///
+> +/// *guard.get_mut(0).unwrap() =3D 0xffff;
+> +/// assert_eq!(guard.get(0).copied(), Some(0xffff));
+> +///
+> +/// assert_eq!(guard.store(0, beef, GFP_KERNEL).unwrap().as_deref().copi=
+ed(), Some(0xffff));
+> +/// assert_eq!(guard.get(0).copied(), Some(0xbeef));
+> +///
+> +/// guard.remove(0);
+> +/// assert_eq!(guard.get(0), None);
+> +///
+> +/// # Ok::<(), Error>(())
+> +/// ```
+> +#[pin_data(PinnedDrop)]
+> +pub struct XArray<T: ForeignOwnable> {
+> +    #[pin]
+> +    xa: Opaque<bindings::xarray>,
+> +    _p: PhantomData<T>,
+> +}
 > +
-> +As such, a media committer is not just someone who is capable of creating
-> +code, but someone who has demonstrated their ability to collaborate
-> +with the team, get the most knowledgeable people to review code,
-> +contribute high-quality code, and follow through to fix issues (in code
-> +or tests).
+> +#[pinned_drop]
+> +impl<T: ForeignOwnable> PinnedDrop for XArray<T> {
+> +    fn drop(self: Pin<&mut Self>) {
+> +        self.iter().for_each(|ptr| {
+> +            let ptr =3D ptr.as_ptr();
+> +            // SAFETY: `ptr` came from `T::into_foreign`.
+> +            //
+> +            // INVARIANT: we own the only reference to the array which i=
+s being dropped so the
+> +            // broken invariant is not observable on function exit.
+> +            drop(unsafe { T::from_foreign(ptr) })
+> +        });
 > +
-> +.. Note::
+> +        // SAFETY: `self.xa` is always valid by the type invariant.
+> +        unsafe { bindings::xa_destroy(self.xa.get()) };
+> +    }
+> +}
 > +
-> +   1. If a patch introduces a regression, then it is the media committer's
-> +      responsibility to correct that as soon as possible. Typically the
-> +      patch is either reverted, or an additional patch is committed to
-> +      fix the regression;
-> +   2. if patches are fixing bugs against already released Kernels, including
-> +      the reverts above mentioned, the media committer shall add the needed
+> +/// Flags passed to [`XArray::new`] to configure the array's allocation =
+tracking behavior.
+> +pub enum AllocKind {
+> +    /// Consider the first element to be at index 0.
+> +    Alloc,
+> +    /// Consider the first element to be at index 1.
+> +    Alloc1,
+> +}
+> +
+> +impl<T: ForeignOwnable> XArray<T> {
+> +    /// Creates a new [`XArray`].
+> +    pub fn new(kind: AllocKind) -> impl PinInit<Self> {
+> +        let flags =3D match kind {
+> +            AllocKind::Alloc =3D> bindings::XA_FLAGS_ALLOC,
+> +            AllocKind::Alloc1 =3D> bindings::XA_FLAGS_ALLOC1,
+> +        };
+> +        pin_init!(Self {
+> +            // SAFETY: `xa` is valid while the closure is called.
+> +            xa <- Opaque::ffi_init(|xa| unsafe {
+> +                bindings::xa_init_flags(xa, flags)
+> +            }),
+> +            _p: PhantomData,
+> +        })
+> +    }
+> +
+> +    fn iter(&self) -> impl Iterator<Item =3D core::ptr::NonNull<T::Point=
+edTo>> + '_ {
+> +        // TODO: Remove when https://lore.kernel.org/all/20240913213041.=
+395655-5-gary@garyguo.net/ is applied.
+> +        const MIN: core::ffi::c_ulong =3D core::ffi::c_ulong::MIN;
+> +        const MAX: core::ffi::c_ulong =3D core::ffi::c_ulong::MAX;
 
-s/above mentioned/mentioned above/
+Isn't MIN just zero?
 
-> +      tags. Please see :ref:`Media development workflow` for more details.
+> +        let mut index =3D MIN;
 > +
-> +[1] The Linux Media Community, also called LinuxTV Community, has its primary
-> +    site at https://linuxtv.org.
+> +        // SAFETY: `self.xa` is always valid by the type invariant.
+> +        iter::once(unsafe {
+> +            bindings::xa_find(self.xa.get(), &mut index, MAX, bindings::=
+XA_PRESENT)
+> +        })
+> +        .chain(iter::from_fn(move || {
+> +            // SAFETY: `self.xa` is always valid by the type invariant.
+> +            Some(unsafe {
+> +                bindings::xa_find_after(self.xa.get(), &mut index, MAX, =
+bindings::XA_PRESENT)
+> +            })
+> +        }))
+> +        .map_while(|ptr| core::ptr::NonNull::new(ptr.cast()))
+> +    }
 > +
-> +    Media committers and developers are reachable via the #linux-media
-> +    IRC channel at OFTC.
+> +    /// Attempts to lock the [`XArray`] for exclusive access.
+> +    pub fn try_lock(&self) -> Option<Guard<'_, T>> {
+> +        // SAFETY: `self.xa` is always valid by the type invariant.
+> +        (unsafe { bindings::xa_trylock(self.xa.get()) } !=3D 0).then(|| =
+Guard {
+> +            xa: self,
+> +            _not_send: NotThreadSafe,
+> +        })
+> +    }
+> +
+> +    /// Locks the [`XArray`] for exclusive access.
+> +    pub fn lock(&self) -> Guard<'_, T> {
+> +        // SAFETY: `self.xa` is always valid by the type invariant.
+> +        unsafe { bindings::xa_lock(self.xa.get()) };
+> +
+> +        Guard {
+> +            xa: self,
+> +            _not_send: NotThreadSafe,
+> +        }
+> +    }
+> +}
+> +
+> +/// A lock guard.
+> +///
+> +/// The lock is unlocked when the guard goes out of scope.
+> +#[must_use =3D "the lock unlocks immediately when the guard is unused"]
+> +pub struct Guard<'a, T: ForeignOwnable> {
+> +    xa: &'a XArray<T>,
+> +    _not_send: NotThreadSafe,
+> +}
+> +
+> +impl<T: ForeignOwnable> Drop for Guard<'_, T> {
+> +    fn drop(&mut self) {
+> +        // SAFETY: `self.xa.xa` is always valid by the type invariant.
+> +        //
+> +        // SAFETY: The caller holds the lock, so it is safe to unlock it=
+.
+> +        unsafe { bindings::xa_unlock(self.xa.xa.get()) };
+> +    }
+> +}
+> +
+> +// TODO: Remove when https://lore.kernel.org/all/20240913213041.395655-5=
+-gary@garyguo.net/ is applied.
+> +fn to_index(i: usize) -> core::ffi::c_ulong {
+> +    i.try_into()
+> +        .unwrap_or_else(|_| build_error!("cannot convert usize to c_ulon=
+g"))
+> +}
+> +
+> +impl<'a, T: ForeignOwnable> Guard<'a, T> {
+> +    fn load<F, U>(&self, index: usize, f: F) -> Option<U>
+> +    where
+> +        F: FnOnce(core::ptr::NonNull<T::PointedTo>) -> U,
+> +    {
+> +        // SAFETY: `self.xa.xa` is always valid by the type invariant.
+> +        let ptr =3D unsafe { bindings::xa_load(self.xa.xa.get(), to_inde=
+x(index)) };
+> +        let ptr =3D core::ptr::NonNull::new(ptr.cast())?;
+> +        Some(f(ptr))
+> +    }
+> +
+> +    /// Loads an entry from the array.
+> +    ///
+> +    /// Returns the entry at the given index.
+> +    pub fn get(&self, index: usize) -> Option<T::Borrowed<'_>> {
+> +        self.load(index, |ptr| {
+> +            // SAFETY: `ptr` came from `T::into_foreign`.
+> +            unsafe { T::borrow(ptr.as_ptr()) }
+> +        })
+> +    }
+> +
+> +    /// Loads an entry from the array.
+> +    ///
+> +    /// Returns the entry at the given index.
+> +    pub fn get_mut(&mut self, index: usize) -> Option<T::BorrowedMut<'_>=
+> {
+> +        self.load(index, |ptr| {
+> +            // SAFETY: `ptr` came from `T::into_foreign`.
+> +            unsafe { T::borrow_mut(ptr.as_ptr()) }
+> +        })
+> +    }
+> +
+> +    /// Erases an entry from the array.
+> +    ///
+> +    /// Returns the entry which was previously at the given index.
+> +    pub fn remove(&mut self, index: usize) -> Option<T> {
+> +        // SAFETY: `self.xa.xa` is always valid by the type invariant.
+> +        //
+> +        // SAFETY: The caller holds the lock.
+> +        let ptr =3D unsafe { bindings::__xa_erase(self.xa.xa.get(), to_i=
+ndex(index)) }.cast();
 
-s/at/on/
+Two safety comments?
 
+> +        // SAFETY: `ptr` is either NULL or came from `T::into_foreign`.
+> +        unsafe { T::try_from_foreign(ptr) }
+> +    }
 > +
-> +Becoming a media committer
-> +--------------------------
-> +
-> +The most important aspect of volunteering to be a committer is that you have
-> +demonstrated the ability to give good code reviews. So we are looking for
+> +    /// Stores an entry in the array.
+> +    ///
+> +    /// On success, returns the entry which was previously at the given =
+index.
+> +    ///
+> +    /// On failure, returns the entry which was attempted to be stored.
 
-Again, that's not what a committer is about. Committer, as the name
-strongly implies, is about committing patches.
+I'd like to see documentation about the gfp flags. This may unlock the
+spinlock temporarily if GFP_KERNEL is used.
 
-> +whether or not we think you will be good at doing that.
+> +    pub fn store(
+> +        &mut self,
+> +        index: usize,
+> +        value: T,
+> +        gfp: alloc::Flags,
+> +    ) -> Result<Option<T>, (T, Error)> {
+> +        build_assert!(
+> +            mem::align_of::<T::PointedTo>() >=3D 4,
+> +            "pointers stored in XArray must be 4-byte aligned"
+> +        );
+> +        let new =3D value.into_foreign();
 > +
-> +As such, potential committers must earn enough credibility and trust from the
-> +Linux Media Community. To do that, developers shall be familiar with the open
-> +source model and have been active in the Linux Kernel community for some time,
-> +and, in particular, in the media subsystem.
+> +        let old =3D {
+> +            let new =3D new.cast();
+> +            // SAFETY: `self.xa.xa` is always valid by the type invarian=
+t.
+> +            //
+> +            // SAFETY: The caller holds the lock.
+> +            //
+> +            // INVARIANT: `new` came from `T::into_foreign`.
+> +            unsafe { bindings::__xa_store(self.xa.xa.get(), to_index(ind=
+ex), new, gfp.as_raw()) }
+> +        };
 > +
-> +So, in addition to actually making the code changes, you are basically
-> +demonstrating your:
-> +
-> +- commitment to the project;
+> +        // SAFETY: `__xa_store` returns the old entry at this index on s=
+uccess or `xa_err` if an
+> +        // error happened.
+> +        match unsafe { bindings::xa_err(old) } {
+> +            0 =3D> {
+> +                let old =3D old.cast();
+> +                // SAFETY: `ptr` is either NULL or came from `T::into_fo=
+reign`.
+> +                Ok(unsafe { T::try_from_foreign(old) })
 
-What does that mean ?
+It can't be XA_ZERO_ENTRY?
 
-> +- ability to collaborate with the team and communicate well;
-> +- understand of how upstream and the Linux Media Community work
-> +  (policies, processes for testing, code review, ...)
-> +- reasonable knowledge about:
+> +            }
+> +            errno =3D> {
+> +                // SAFETY: `new` came from `T::into_foreign` and `__xa_s=
+tore` does not take
+> +                // ownership of the value on error.
+> +                let value =3D unsafe { T::from_foreign(new) };
+> +                Err((value, Error::from_errno(errno)))
+> +            }
+> +        }
+> +    }
+> +}
 > +
-> +  - the Kernel development process:
-> +    Documentation/process/index.rst
+> +// SAFETY: It is safe to send `XArray<T>` to another thread when the und=
+erlying `T` is `Send`
+> +// because XArray is thread-safe and all mutation operations are synchro=
+nized.
+> +unsafe impl<T: ForeignOwnable + Send> Send for XArray<T> {}
 > +
-> +  - the Media development profile:
-> +    Documentation/driver-api/media/maintainer-entry-profile.rst
-> +
-> +- understanding of the projects' code base and coding style;
-> +- ability to provide feedback to the patch authors;
-> +- ability to judge when a patch might be ready for review and to submit;
-> +- ability to write good code (last but certainly not least).
-> +
-> +Developers that desire to become committers are encouraged to participate
-
-s/that/who/
-
-> +at the yearly Linux Media Summit, typically co-located with a Linux related
-> +conference.
-> +
-> +If you are doing such tasks and have become a valued developer, an
-> +existing committer can nominate you to the media subsystem maintainers.
-
-All of this sounds so horrible from a community building point of view.
-As a newcomer, reading this document, I would be really tempted to run
-away from a community that seems very unwelcoming (not to use stronger
-words).
-
-> +
-> +The ultimate responsibility for accepting a nominated committer is up to
-> +the subsystem's maintainers. The committers must earn a trust relationship
-> +with all subsystem maintainers, as, by granting you commit rights, they will
-> +be a part of their maintenance tasks.
-
-I don't understand the last part of the sentence.
-
-> +
-> +Due to that, to become a committer or a core committer, a consensus between
-> +all subsystem maintainers is required, as they all need to trust a developer
-> +well enough to be delegated the responsibility to maintain part of the code
-> +and to properly review patches from third parties, in a timely manner and
-> +keeping the status of the reviewed code at https://patchwork.linuxtv.org
-> +updated.
-> +
-> +.. Note::
-> +
-> +   In order to preserve/protect the developers that could have their commit
-
-s/protect/protect the privacy of/
-s/that/who/
-
-> +   rights granted, denied or removed as well as the subsystem maintainers who
-> +   have the task to accept or deny commit rights, all communication related to
-> +   changing commit rights should happen in private as much as possible.
-
-Unless you plan a system that puts gag orders in place, people who get
-their commit rights denied or removed against their will will be vocal
-about it.  The privacy of maintainers is a pipe dream here. A more
-transparent process would likely benefit everybody.
-
-> +
-> +.. _media-committer-agreement:
-> +
-> +Media committer's agreement
-> +---------------------------
-> +
-> +Once a nominated committer is accepted by all subsystem maintainers,
-> +they will ask if the developer is interested in the nomination and discuss
-> +what area(s) of the media subsystem the committer will be responsible for.
-
-Being "responsible for an area" of the subsystem is maintainership
-duties, it's not about committers.
-
-> +
-> +Once the developer accepts being a committer, the new committer shall
-> +explicitly accept the Kernel development policies described under its
-> +Documentation/, and, in particular to the rules on this document, by writing
-> +an e-mail to media-committers@linuxtv.org, with a declaration of intent
-> +following the model below::
-> +
-> +   I, John Doe, would like to change my status to: Committer
-> +
-> +   I intend to actively develop the XYZ driver, send fixes to drivers
-> +   that I can test, optionally reviewing patches and merging trivial
-> +   fixes in other areas of the subsystem, ...
-> +
-> +   For the purpose of committing patches to the media-committer's tree,
-> +   I'll be using my user https://gitlab.freedesktop.org/users/<username>.
-> +
-> +Followed by a formal declaration of agreement with the Kernel development
-> +rules::
-> +
-> +   I hereby declare that I agree with the Kernel development rules described at:
-
-Dropping "hereby " would make it sound a bit less like a forced
-confession obtained by torture.
-
-> +
-> +   https://www.kernel.org/doc/html/latest/driver-api/media/media-committer.rst
-> +
-> +   and to the Linux Kernel development process rules.
-> +
-> +   I agree to the Code of Conduct as documented in:
-> +   https://www.kernel.org/doc/html/latest/process/code-of-conduct.rst
-> +
-> +   I am aware that I can, at any point of time, retire. In that case, I will
-> +   send an e-mail to notify the subsystem maintainers for them to revoke my
-> +   commit rights.
-> +
-> +   I am aware that the Kernel development rules change over time.
-> +   By doing a new push to media-committer tree, I understand that I agree
-> +   with the rules in effect at the time of the commit.
-> +
-> +That e-mail shall be signed with a PGP key cross signed by other Kernel and
-> +media developers. As described at :ref:`media-developers-gpg`, the PGP
-> +signature, together with the gitlab user security are fundamental components
-> +that ensure the authenticity of the merge requests that will happen at the
-> +media-committer.git tree.
-> +
-> +In case the kernel development process changes, by merging new commits
-> +to the
-> +`media-committer tree <https://gitlab.freedesktop.org/linux-media/media-committers>`_,
-> +the media committer implicitly declares their agreement with the latest
-> +version of the documented process including the contents of this file.
-> +
-> +If a media committer decides to retire, it is the committer's duty to
-> +notify the subsystem maintainers about that decision.
-> +
-> +.. note::
-> +
-> +   1. Changes to the kernel media development process shall be announced in
-> +      the media-committers mailinglist with a reasonable review period. All
-> +      committers are automatically subscribed to that mailinglist;
-
-Make this more than a note, it's fundamental to agreeing implicitly to
-process changes as listed above.
-
-> +   2. Due to the distributed nature of the Kernel development, it is
-> +      possible that kernel development process changes may end being
-> +      reviewed/merged at the linux-docs mailing list, specially for the
-
-s/specially/especially/
-
-> +      contents under Documentation/process and for trivial typo fixes.
-> +
-> +Core committers
-> +---------------
-> +
-> +As described in Documentation/driver-api/media/maintainer-entry-profile.rst
-> +a committer may be granted with additional rights to also be able to
-> +change a core file and/or media subsystem's Kernel API. The extent of
-> +the core committer's grants will be detailed by the subsystem maintainers
-> +when they nominate a core committer.
-> +
-> +Existing committers may become core committers and vice versa. Such
-> +decisions will be taken in consensus between the subsystem maintainers.
-> +
-> +Media committers rules
-> +----------------------
-> +
-> +Media committers shall do their best efforts to avoid merged patches that
-
-s/merged/merging/
-
-> +would break any existing drivers. If it breaks, fixup or revert patches
-> +shall be merged as soon as possible, aiming to be merged at the same Kernel
-> +cycle the bug is reported.
-> +
-> +Media committers shall behave accordingly to the rights granted by
-> +the subsystem maintainers, specially with regards of the scope of changes
-> +they may apply directly at the media-committers tree. Such scope can
-> +change over time on a mutual agreement between media committers and
-> +maintainers.
-> +
-> +As described at :ref:`Media development workflow`, there are workflows.
-> +For the committers' workflow, the following rules apply:
-> +
-> +- Each merged patch shall pass CI tests;
-> +
-> +- Media committers shall request reviews from other committers and
-> +  developers where applicable, i.e. because those developers have more
-> +  knowledge about some areas that are changed by a patch;
-> +
-> +- There shall be no open issues or unresolved or conflicting feedback
-> +  from anyone. Clear them up first. Defer to subsystem maintainers as needed.
-> +
-> +Patches that do not fall under the committer's workflow criteria will follow
-> +the pull request workflow as described at :ref:`Media development workflow`.
-> +
-> +Only a subsystem maintainer can override such rules.
-> +
-> +All media committers shall ensure that patchwork will reflect the current
-> +status, e.g. patches shall be delegated to the media committer who is
-> +handling them and the patch status shall be updated according to these rules:
-> +
-> +- ``Under review``: Used if the patch requires a second opinion
-> +  or when it is part of a pull request;
-> +- ``Accepted``: Once a patch is merged in the multi-committer tree.
-
-Not something to address here, but I've always found it confusing that
-patches that are accepted but not merged in your tree yet are supposed
-to be marked as "Under review". "Accepted" would be a more natural state
-of them, and we could introduce a "Merged" state for patches that are
-merged.
-
-> +- ``Superseded``: There is a newer version of the patch posted to the
-> +  mailing list.
-> +- ``Duplicated``: There was another patch doing the same thing from someone
-> +  else that was accepted.
-> +- ``Not Applicable``: Use for patch series that are not merged at media.git
-> +  tree (e.g. drm, dmabuf, upstream merge, etc.) but were cross-posted to the
-> +  linux-media mailing list.
-
-- ``Not Applicable``: Used for patch series that are not meant to be
-  merged through the media.git tree. This is mostly used for patches
-  that are cross-posted to the linux-media mailing list and meant to be
-  merged through another tree (e.g. DRM, dmabuf, device tree sources,
-  ...).
-
-> +
-> +If the committer decides not to merge it, then reply by email to patch
-> +authors, explaining why it is not merged, and patchwork shall be updated
-> +accordingly with either:
-> +
-> +- ``Changes Requested``: if a new revision was requested;
-> +- ``Rejected``: if the proposed change won't be merged upstream.
-> +
-> +.. Note::
-> +
-> +   Patchwork supports a couple of clients to help semi-automating
-> +   status updates via its REST interface:
-> +
-> +   https://patchwork.readthedocs.io/en/latest/usage/clients/
-> +
-> +Maintaining media committer status
-> +----------------------------------
-> +
-> +A community of committers working together to move the Linux Kernel
-> +forward is essential to creating successful projects that are rewarding
-> +to work on. If there are problems or disagreements within the community,
-> +they can usually be solved through healthy discussion and debate.
-> +
-> +In the unhappy event that a media committer continues to disregard good
-> +citizenship (or actively disrupts the project), we may need to revoke
-> +that person's status. In such cases, if someone suggests the revocation
-> +with a good reason, then after discussing this among the media committers,
-> +the final decision is taken by the subsystem maintainers. As the decision
-> +to become a media committer comes from a consensus between subsystem
-> +maintainers, a single subsystem maintainer not trusting the media committer
-> +anymore is enough to revoke the commit rights.
-> +
-> +If a committer is inactive for more than a couple of Kernel cycles,
-> +maintainers will try to reach you via e-mail. If not possible, they may
-> +revoke your committer rights and update MAINTAINERS file entries
-> +accordingly. If you wish to resume contributing later on, then contact
-> +the subsystem maintainers to ask if your commit rights can be restored.
-> +
-> +A previous committer that had their commit rights revoked can keep
-
-s/that/who/
-
-> +contributing to the subsystem via the pull request workflow as documented
-> +at the :ref:`Media development workflow`.
-> +
-> +References
-> +----------
-> +
-> +Much of this was inspired by/copied from the committer policies of:
-> +
-> +- `Chromium <https://chromium.googlesource.com/chromium/src/+/main/docs/contributing.md>`_;
-> +- `WebKit <https://webkit.org/commit-and-review-policy/>`_;
-> +- `Mozilla <https://www.mozilla.org/hacking/committer/>`_.
-> +
-
--- 
-Regards,
-
-Laurent Pinchart
+> +// SAFETY: It is safe to send `&XArray<T>` to another thread when the un=
+derlying `T` is `Sync`
+> +// because it effectively means sharing `&T` (which is safe because `T` =
+is `Sync`). Additionally,
+> +// `T` is `Send` because XArray is thread-safe and all mutation operatio=
+ns are internally locked.
+> +unsafe impl<T: ForeignOwnable + Send + Sync> Sync for XArray<T> {}
+>
+> --
+> 2.47.0
+>
 
