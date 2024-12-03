@@ -1,125 +1,78 @@
-Return-Path: <linux-kernel+bounces-429174-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 160879E1823
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:47:04 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C6549E184D
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:52:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B3329165D70
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:47:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0050E165CA7
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:52:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 436CF1E1C2A;
-	Tue,  3 Dec 2024 09:45:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2064D1DFE3D;
+	Tue,  3 Dec 2024 09:52:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uV4ME+gR"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="eARyjVy8"
+Received: from out203-205-221-210.mail.qq.com (out203-205-221-210.mail.qq.com [203.205.221.210])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 013141E048C
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 09:45:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AE001DFD9E
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 09:52:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.210
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733219122; cv=none; b=ff7EQdWYzLXg2J6FTd8O3lmarTbkhJDfyjPwb+5UFSAA+p56D+/ob6932g+f/KLqtvoJ8j+QlRewHDSg+nxwH/RHM5xqf8qgMc15LIg3DkIq9CjApA0YrNRaMOVQyNN0jRtpa1WwG8namJSi7rtw//Ju5JhbMHGiYwsr3ElWMFQ=
+	t=1733219547; cv=none; b=OXW4mwTgvTbcWdVHrlhIXUwIvpsdrvvpC1av2j+aOiZThOLDkUSQehnDVf8oOM6b8CFF6ajdObHQVchRxDZDoB+USi+uFHt2JbeUWFYcNuedIqByTwfhpTpklCS9a8mH7gvpmraxWqRjUIfgFYLfXwqgxlnPggsq3TjVc9zgWgY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733219122; c=relaxed/simple;
-	bh=RJ4dlBGD3salju0V5qaXj8Hlpmx2bDBn5RHAXBda2Hw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=FCLpWOj9PtGbdv9msLhc2gt7SptcJoXIIREUsmyPB9wFZUGcrKERU2CML3G75hAhT8VYrgKuwrK8QifHsTlBIfj1KWgEA9Z046AZXFk1/ENDb6J+2f7w+VKa0eVagtSLoKYnKqaxRnWo0blBZX7hG9suWr7/zTOLRM+PFvhEGL4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uV4ME+gR; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-434a852bb6eso48625115e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 01:45:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733219119; x=1733823919; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=6I1Ptmv2KxZJwio/UIsOX+BhzfGwkhQGEzNHEKVRFKU=;
-        b=uV4ME+gRVBtdJasDf2fMwONsoRGQM5JE1tp3+s+c5xfAVh5yqwY3NGe0x9w1ch8Xsk
-         wQZZYyiZiqi/WOgXQiv8X8W7Y4hn13uZRQaHX0fOmwg94V+jIA4llTy5fA8LXnSFDuSw
-         JKvDa0Ttcqn91PKjU6UNi8az4afbfH9bUyq0/Yw1MNUNugheMzK8Y4a3t8TCJswHZZg6
-         RdRxxAZ86ILTnfJm3nhGg6nsjDAfDP1zMahUaEwnBtbGIJ78jz1WdLnGVrJIKosfsE6J
-         yqDpErgO+YhsHYSaNcyuqgcTrqYuVLKvBJTHo7vLPmKkXO2weeqSnHSd9mwL+F4BqB/P
-         dHyw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733219119; x=1733823919;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6I1Ptmv2KxZJwio/UIsOX+BhzfGwkhQGEzNHEKVRFKU=;
-        b=CKq8wMSQWWnxbOyL8GAn97+tFd0UrAZ9mYqmeyMC9yi8DOas6IZv57Fhe2oTiHhNoW
-         LBBC41p+JSaZ4PFK1SEATtL9IsgHoodUlbGEZmnorKa/EGUedIcbX2zeFvDgFereRyJl
-         M1ypvX6lXZWTRTKvWmuLtZOT5zXWFm6+u3aURI6qzst2kWhGMEid7bssPh3i4LkXMTqe
-         SL8vuqEsaWyfyD3IucZh1mNRvi34d2a8/WJAvKK4BSVdYnk0FrCPzZw49NS0H6hU2L5S
-         KsMC1wkIGsKf5V4QzkgLT+u2nfg9quqX8Jtjw4+l1d+lTsjq+1SikOyZXDLEeEYElGdg
-         cmlw==
-X-Forwarded-Encrypted: i=1; AJvYcCUAu5AaHx0tZPinIY5rWuM2Pp0yCmiIXMmo0+r8aId5C4EKCSInBXv0248k6qXMUI7Sozncxo8Sm5on8TY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKvhEWys1KgtfwM+DrmChew4rbmL30W3GhdQxw2CmIThhwt760
-	KK63U8YrJlQmnJssDwLyCsI5C9Y6kH5Bdb6mzzlkH/dn/oKlS0QzH1cVBtFqEPU=
-X-Gm-Gg: ASbGncsxI6SlmpFHqlMTLEqaABSBQ/FsNUhly1vM/793qv9ty0kqH0YzUd6updMvXa1
-	DBA5GbViuw7UXo0rrA+Y3a+JeSNxOo6WP0P7Q3GDB0TMsZprz4hp8unXDEL6ScUq7WGw4Sy4tm2
-	Yeo8IShVpvCqJiDUpaK7WaU8EBioEF3e87RGwXBi042AOZagQs9Ccm5WEEJUJroiXmXfj5UW1wY
-	o3gJ5it1ANOEBfbZ2h/QWxv6Pil4pcM/vc5SEjqfp0vwvFbtnfkOVc=
-X-Google-Smtp-Source: AGHT+IFdpiCjCQ4owJdmqakSIReYwoM3vo6fpku4tNVal18DsXpYtsSKHcj3Ceq2fZLtSh1NDS08JA==
-X-Received: by 2002:a05:600c:19d3:b0:431:58cd:b259 with SMTP id 5b1f17b1804b1-434d0a23b36mr15900425e9.31.1733219119326;
-        Tue, 03 Dec 2024 01:45:19 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434aa78007dsm211772455e9.19.2024.12.03.01.45.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Dec 2024 01:45:18 -0800 (PST)
-Date: Tue, 3 Dec 2024 12:45:14 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Yevgeny Kliteynik <kliteyn@nvidia.com>
-Cc: Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
-	Tariq Toukan <tariqt@nvidia.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Muhammad Sammar <muhammads@nvidia.com>, netdev@vger.kernel.org,
-	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH v2 net] net/mlx5: DR, prevent potential error pointer
- dereference
-Message-ID: <Z07TKoNepxLApF49@stanley.mountain>
+	s=arc-20240116; t=1733219547; c=relaxed/simple;
+	bh=AaA57oEFW2rBavuziENezGbvMs6+ns0l0CTlILca9rM=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=m1/D9m61DWwhX+mD4Bxt7OpY3L0evLPOtfsTxzr+LTcSksWyCNHIjjFp16A5RRrLNH30YAfvO1EhPwMOvWtvfMU2nsTK1oMm4OcSHGtU/G1UkM+rRDIm+U0oWEUNx2m1igJF7M+ICMCXvlxYvWjOq5i57U8FoMmq47EiDRV4RyI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=eARyjVy8; arc=none smtp.client-ip=203.205.221.210
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1733219234; bh=AaA57oEFW2rBavuziENezGbvMs6+ns0l0CTlILca9rM=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=eARyjVy8mEHkfwOOMXIVHdjMwHDQfdfVr0xs9uBk0Ni31q6nz7CEp/0LDpMnT94Q7
+	 Uzn02xlyCDPPTaR9mrUxU03rDBygCKum88vVOO6/JGWPG3cfUANhIzeMPgxJTRIxOV
+	 LoMY4BQhEXctRSFSTFKaMJS1ENBF3csHt8ep9XSU=
+Received: from pek-lxu-l1.wrs.com ([114.244.57.34])
+	by newxmesmtplogicsvrsza36-0.qq.com (NewEsmtp) with SMTP
+	id BCCADA56; Tue, 03 Dec 2024 17:47:12 +0800
+X-QQ-mid: xmsmtpt1733219232t6xrn7gii
+Message-ID: <tencent_DF670373896E43A6E4491760F77BA6CBB305@qq.com>
+X-QQ-XMAILINFO: MmpliBmRb3iCA+ZJZEDV4LFTNvv5VEjgufhy7I5evWa5DE+T6cze0futQAIE9G
+	 R3oCpZQyo9/kGMkmSGekRceBtDAnfFFa77mFWq7ZK3PxB9dcp6X7lwuWWjid9D+Yb54aDf5G/Fet
+	 Buc9pRdcX9Ia0qWHSA/lkXz2g+WNTqAjPjpzXdOKMHXQNRK3eY1xA/86HtocGUBIRiWG50uYr1u/
+	 bXivSSp1cnie4N3RhXB0RM798neaEIS2dqQvAecPEKZt43ejDycSrgi7grCoqSEQDptV3PrlRZaO
+	 5LBaO+4E7Ct8VMVs13Gk7tIWBBJoG6Ew0UjJMdHzsPtlQMTC6CnnU1pxkO8WI79HQSrPPPGwucKv
+	 OPJzuacYD+WRoI8lJPbwY3brztmwdFG5yJRqdbs2Sdj5VacUSoRMumRnAvEZ/xJYqHg+GGxNR/Vb
+	 U8hDqi0cbwgw3Ph68bzIQTbJjwXgjwIBkkYD8/1kMJAf403YAXmCBOfLoEfxd2FpMCyvjtfAzlN7
+	 u6qTFvpoMCoPJE3cMP+9jklaqN0WSANHY7gia2AgywLON1YNBhM+DpqVRCW/lqrsg59H36lHo9nA
+	 IZDfdTrk6VAvrHeJmcIK8S1U7DsA4/vwEK7HWivh+oRwRLc9OZUSEwBdHcDgrLMyLJTMaG7R6MN+
+	 LaMQTqkoS+sMD/KO1SzTaeaEOXn+fypKrzP4e9f4lu7MJv3MvPZgLPye33B9etnfHN+fzh8JWbiW
+	 IucUuIZ9prVDg+GfzJf7cLXerdHV4JRtS12fGAtDzn80vlF8LqjAGzGvgyhgafxdGIDT9kVEiMi6
+	 wKjeQ81nrekoasfeb4hnyVpiKbv1Isj23X0I8F0M+s+GUPeTDoh7P6dbWw03KCT9pf526UEAqrZu
+	 kjo6Gq6bbLsqXvyMuNrGHzLyU/0uReuA==
+X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+7c808908291a569281a9@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [jfs?] divide error in dbAllocAG
+Date: Tue,  3 Dec 2024 17:47:13 +0800
+X-OQ-MSGID: <20241203094712.564975-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <674e82ce.050a0220.17bd51.0040.GAE@google.com>
+References: <674e82ce.050a0220.17bd51.0040.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-The dr_domain_add_vport_cap() function generally returns NULL on error
-but sometimes we want it to return ERR_PTR(-EBUSY) so the caller can
-retry.  The problem here is that "ret" can be either -EBUSY or -ENOMEM
-and if it's and -ENOMEM then the error pointer is propogated back and
-eventually dereferenced in dr_ste_v0_build_src_gvmi_qpn_tag().
+#syz test: https://github.com/ea1davis/linux jfs/syzv3
 
-Fixes: 11a45def2e19 ("net/mlx5: DR, Add support for SF vports")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-Reviewed-by: Yevgeny Kliteynik <kliteyn@nvidia.com>
----
-v2: Fix a typo in the commit message.  "generally".
-
- .../net/ethernet/mellanox/mlx5/core/steering/sws/dr_domain.c    | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/steering/sws/dr_domain.c b/drivers/net/ethernet/mellanox/mlx5/core/steering/sws/dr_domain.c
-index 3d74109f8230..a379e8358f82 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/steering/sws/dr_domain.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/steering/sws/dr_domain.c
-@@ -297,6 +297,8 @@ dr_domain_add_vport_cap(struct mlx5dr_domain *dmn, u16 vport)
- 	if (ret) {
- 		mlx5dr_dbg(dmn, "Couldn't insert new vport into xarray (%d)\n", ret);
- 		kvfree(vport_caps);
-+		if (ret != -EBUSY)
-+			return NULL;
- 		return ERR_PTR(ret);
- 	}
- 
--- 
-2.45.2
 
