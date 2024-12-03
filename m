@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-428983-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428984-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 509D29E15DE
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:35:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B2E09E15E8
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:37:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2360E161FB9
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 08:35:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2972F163AFA
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 08:37:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABEBD1D9337;
-	Tue,  3 Dec 2024 08:35:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EF701D5AC0;
+	Tue,  3 Dec 2024 08:37:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VwS9jaYw"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="COjp9zXG"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE5451BDA99;
-	Tue,  3 Dec 2024 08:35:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD6641BDA99
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 08:37:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733214917; cv=none; b=TEiN2lTTJsAh1Hhklso8ox0Ds9KFQLfRTDLi9bk021KoFhu185KFQeArJXtvbAYVuNsGF1iczzRHEingZafTqplMskSGOUyxKUdcLyXi2YH0mL7m2GLg1J/EcvVC9h6tOTuK3R+VqwY2JE6f1Gpv3xt7/fhO0F1i/Trb/Tm57PE=
+	t=1733215063; cv=none; b=Y5NUs6JSPoigC+TioaEIQpAgAbPx6ZFeZWC9BHW4FQts8H/kSsUvLHKiyzyqsZZft4/sW2nZZvZaB2PFyvIlzwUFtRk4Iem7rDg96QZ2pUujNabJmaScsx1e1Hk9Xv75OLl2ejxc5bEOHr7scapsYy5AJJNTSJfSntnO+ZCrKwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733214917; c=relaxed/simple;
-	bh=uZc7L7ep3NbmsWUxJIlU5jpt4fDLkO4yvxvBwenDTc8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ec7dSdA3JztAMM64/Gxvrq0h8bMck73laaRJNaLwB6A9ujcFxp0e/rgBHY3J5XpA09nzOJsAtrQn/Tp5SXjnJvaOyjG74TwlNT+/vaDrw3ZsvYQksBp8L0fb5d7UAMQEzK7Up8lop45dvlNnlD1cKBbwMLEzDNFwX2nPrhTqln4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VwS9jaYw; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-724d5e309dfso358630b3a.2;
-        Tue, 03 Dec 2024 00:35:15 -0800 (PST)
+	s=arc-20240116; t=1733215063; c=relaxed/simple;
+	bh=eQXk4fAin6gkXYY9ucaSAgsUJyLa8K7nn85rI/niWEM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=XkUj7rQyeAF+zIt2Pww/pvk18ISMeaHpRFqHrZbcEdkDtBqq7wmIaxsVehoqpPXBMqp6e7jmotem1WHEBrC6Ssy23Cqc5DbJj+G/O1RUNj8gX3Pb19XQ4K5XxH5ihU7puhWiZ+7bmpPi8Bz8FOdE4/wj6WzOF4INGz7/9N16nes=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=COjp9zXG; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4349e4e252dso48807375e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 00:37:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733214915; x=1733819715; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qoysy7ExY2zCGFO4vPz0GcjfXx6pttZhUm7NeZ7P5/w=;
-        b=VwS9jaYwnfD0flJ1RINiWTsMIEF8jbZgz/SZDopqmFcEIX2skkjQyLhTnL1hVka+oI
-         rJkQNFYwVjzcHTBgzFHRV6/uF3OEbsd1PobbUpvTR5BNOeiGgZBWtoOnbvJm2dhx2+Fr
-         bhbyXzJMowmx++q1dzZVN+ynsYAlhkwT1AysAgyQ4UJKvNvG11fz807sTgEdk0/HB0A/
-         o1bko72TVSzVAZFNLc5s8DtwDLos9s8z3Z85+Ck9jHxdFZX4DSBHPUiQX8qOzOmWb7a2
-         Xu7VuGil+2vdrFfg9s9sBVRFcENgGopWD6tOAwlbcwyu1kG3hXC79EGd61dm98YcNtsU
-         NZuw==
+        d=tuxon.dev; s=google; t=1733215060; x=1733819860; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=BfKWy1F7pYEgwpS+G6giCP7uqJsq7NFXHIZFcYCqRdo=;
+        b=COjp9zXGEXFrjzMMlTH8iQrHcH7+v+4XoGBJt3JXaD+U+xoTDTnUToE13rYxruHw5p
+         AjpegoZ6SKJAen2i2F61Tut05Qk/HhHUA73h573bmeivT70k/Dtwug3ptpp409XXJTgK
+         knwcbnJmAuet12FbugngeF9okQGU+eXc/G96NAe27yLG9oNB11ldqlGGPIwcYla0BMna
+         6T20xCASD7WygyyGRgWZmOmJp4/Zdngm4ytOyKfvpR05vwL+Szum13i9Qao6YUSJHcCe
+         0aLTwyNNzR8Rw7Ao58Pq7FDkw9XAgG+IdAN9qRFJmiaDqGkN90tGY6I1rxt3GkA6paR3
+         i0zw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733214915; x=1733819715;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=qoysy7ExY2zCGFO4vPz0GcjfXx6pttZhUm7NeZ7P5/w=;
-        b=kN23pdDZ+6qrKHnd5IRpgqH8JMqOqE1EIGH1OfysGxQiY65uSUckRmGepHJkbti9Y+
-         1j1WL4hLi4+6RDTSc0MI/R+D96kP7VlGbrV9Nc6hsIX2b5YGuUnLiPdgWd9nPO9C5CL2
-         bJcVTsY55SkoE9Jm5P0kA4tf8/a9Hpq+mw8XQWsT/MBU4BduaYIIKl3hiGo50KU/+Ygi
-         WZB5tg53kpzi419MSSxtXyQbk9tMMvriR/dOQVxvXDU1jEsL2/yzJo9WC1gtOXTVRDSU
-         RFEuZhkLersq46RAl3Z/zr8o9P2+ZCtJX/stK81qQqGIdA3b18zBHTvk8b+qX2dd4g8S
-         hs6w==
-X-Forwarded-Encrypted: i=1; AJvYcCVlo0x1GYkp7A9LmXAm14KvzErGTVZrIutM8LV7pZXHixRRZPx+vgl+HmItSaUrZWWhAY6b7hQo@vger.kernel.org, AJvYcCXw8IEcKcyveYMpgREbCznaL2Vtf67XzZwZ7GzmTbhaGE9P7G6Mnq/GZu9yheCjbskiTLGF5Lxv0+HKFtA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwfO73kpn7p51pVhKhrAlT7o0zOjnwuNpy/GRaP4ZXo/zFnAqvU
-	RzH2drZl3+U5wdogiQswwoDPi6SjzyJMd7K0ZZc88gzSn7mpbcHW
-X-Gm-Gg: ASbGncsb1paPcEGMT0FVe2RviqaLknJNHnW9Yoh6EFc2ZzkQsT48x+BcsL5g7gXzNFX
-	n0I5NL0QAxZhXRI5DCDJJsVV6KfQZnl2QzpoHeDhoQ+BiAdFykcQbf28C2P8ALLHbAcbYmm0b3L
-	mJSyGDLISSyMAvaXBIVVWENybfMzClxQdRQ0F1jG1JF7BxopW6ctVVE7AlWMCMBpHBzcf2eQQaP
-	aX0kxyEA8lUx84tTLjeJUqg/VZp44Ei7RDLsVqmutkOt/4x
-X-Google-Smtp-Source: AGHT+IH1zwTWafOZvLWv10ywkeAMr9jVubxriQ5H1aFGuJsGF2S54NKi8mJKq6I7Y4zgGy3JA8PjOQ==
-X-Received: by 2002:a05:6a00:3a12:b0:71e:5b2b:9927 with SMTP id d2e1a72fcca58-7257fa42635mr997870b3a.1.1733214914821;
-        Tue, 03 Dec 2024 00:35:14 -0800 (PST)
-Received: from [10.96.3.69] ([23.225.64.250])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72541770786sm9874099b3a.79.2024.12.03.00.35.11
+        d=1e100.net; s=20230601; t=1733215060; x=1733819860;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=BfKWy1F7pYEgwpS+G6giCP7uqJsq7NFXHIZFcYCqRdo=;
+        b=WKZteURpYruu9Lym2pYlxQm8AMT4MgpMbp1L2RI8hsMwzA+mcqkidfIBIiU30nADHo
+         xZzVo50ZFCYg8FIoIEMew6/dN2zViiEYUb4kWauFB8bZd3QZDa9Eri0pyLZouZsBJ2v5
+         TObfr73aCtS616MKSUBLRk1F0bMHx76Utu6B/d6PjZIO7pr8ITz+nTBhA+nbSAFzLxSC
+         bbZztS0cGoSWSKk/YMjPhLf/sVzcaoa3eyR06aysNRuf5VLDYRwzVF+CvTgKabQ+0K7z
+         Nhl1ROHdswT3VG82D4p/+TTysl+a8w+OX0SI6KigWse69mlQgY3WOGfPTOMVgFT+HobR
+         +VcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWSCZsXypwQNnDbMKrrrzwisEMDdszZh+PUvWuP7ZyulMj46RJ6NlEzXpnitrvZ1NUB2rv5ffi4RAKXiQU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxgM4Ninbe2/SbEg1Sp/WyviOC7kUFfMQtNqvQ1plZbBP/D9oUm
+	fVKALa4fPsUPplzMpLBu4ZbvbFTcnbbke70M1LmQMuelXJ65iPEQrNanU3aWox8=
+X-Gm-Gg: ASbGnctgrtvKFYbUfNN81ueMN9wLC1x6wtafx5giaP2RlOsGN6BPc764Fxtqr28hkjR
+	aYssMNszH/IH69KuxrBofSzBp88V9/cTEtb1+unupG3uJIGD7Y4tEJtqRh/K+K3wPgn+o7bxDSU
+	BlN3RKzlNEckXmOyIDTksfjAwSak/WlNfUzeSQuDrFr9lxv9YKRtRR+ztJwq1X1E5r77cnjj+KL
+	flFAmKNjmy3IVceFPGg301Fh96Svzq53LMOiBzXkQnzJsP9cp3O2FwhzNw=
+X-Google-Smtp-Source: AGHT+IE3H3bcSinK5Q3eRdpnA47MzQBNmGfvbe9r3ouVy8hLnAWthl84xXpTMD1MB7r7vaAGmTp6AQ==
+X-Received: by 2002:a5d:598c:0:b0:385:ea2b:12cc with SMTP id ffacd0b85a97d-385fd3e779bmr1474754f8f.13.1733215059572;
+        Tue, 03 Dec 2024 00:37:39 -0800 (PST)
+Received: from [192.168.50.4] ([82.78.167.161])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434b0f32837sm184681645e9.33.2024.12.03.00.37.38
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Dec 2024 00:35:14 -0800 (PST)
-Message-ID: <e707044d-a1d3-40c4-aeef-fad68c6a1785@gmail.com>
-Date: Tue, 3 Dec 2024 16:35:09 +0800
+        Tue, 03 Dec 2024 00:37:39 -0800 (PST)
+Message-ID: <b1e053da-04dd-4b66-86c4-60e1d6b5a5a2@tuxon.dev>
+Date: Tue, 3 Dec 2024 10:37:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,84 +79,55 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next 1/2] net: phy: realtek: disable broadcast address
- feature of rtl8211f
-To: Heiner Kallweit <hkallweit1@gmail.com>
-Cc: linux@armlinux.org.uk, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, willy.liu@realtek.com,
- Yuki Lee <febrieac@outlook.com>, andrew@lunn.ch
-References: <7a322deb-e20e-4b32-9fef-d4a48bf0c128@gmail.com>
- <20241203071853.2067014-1-kmlinuxm@gmail.com>
- <d2490036-418e-4ed9-99f6-2c4134fece7b@gmail.com>
-From: Zhiyuan Wan <kmlinuxm@gmail.com>
-In-Reply-To: <d2490036-418e-4ed9-99f6-2c4134fece7b@gmail.com>
+Subject: Re: [PATCH 2/2] ARM: dts: microchip: sam9x75_curiosity: Add power
+ monitor support
+Content-Language: en-US
+To: Mihai.Sain@microchip.com, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, Nicolas.Ferre@microchip.com,
+ alexandre.belloni@bootlin.com, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20241122080523.3941-1-mihai.sain@microchip.com>
+ <20241122080523.3941-3-mihai.sain@microchip.com>
+ <2d8dd1c8-fd4b-4dc1-ba62-312ac86335a6@tuxon.dev>
+ <PH8PR11MB68043702680864433060E9B482352@PH8PR11MB6804.namprd11.prod.outlook.com>
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <PH8PR11MB68043702680864433060E9B482352@PH8PR11MB6804.namprd11.prod.outlook.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 2024/12/3 15:38, Heiner Kallweit wrote:
+Hi, Mihai,
+
+On 02.12.2024 10:32, Mihai.Sain@microchip.com wrote:
+> Hi Claudiu,
 > 
-> Take care to remove the Rb tag if you make changes to the patch.
+>>> +             channel@2 {
+>>> +                     reg = <0x2>;
+>>> +                     shunt-resistor-micro-ohms = <10000>;
+>>> +                     label = "VDDOUT4";
+>>
+>> On the schematics at [1] this seems to be named DCDC4. Is there a mistake on
+>> [1] or this patch needs adjustments? If so, I can do it while applying.
 > 
-Roger that.
-> 
-> This still uses the _changed version even if not needed.
-> 
-I'm not sure is it okay to directly write PHYCR1 register, because not
-only it controls ALDPS and broadcast PHY address, but also controls
-MDI mode/Jabber detection.
+> I just wanted to use a more friendly name for buck4, since this regulator is not used.
 
-I'm afraid that maybe it causes problem if I don't use RMW to clear
-the PHYAD_EN bit. Because the following code in `rtl8211f_config_init`
-also utilizes `phy_modify_paged_changed` to change ALDPS setting
-without touching anything else.
+For consistency with the rest of the channel names and the fact that we
+describe the HW though device tree, I would keep the schematics naming
+("DCDC4" in this case). No need to re-send, I can adjust while applying.
+Just let me know if all good with you, too.
 
-But if you insist, I can modify code to this if you like:
-
-
-	ret = phy_read_paged(phydev, 0xa43, RTL8211F_PHYCR1);
-	if (ret < 0)
-		return ret;
-
-	dev_dbg(dev, "disabling MDIO address 0 for this phy");
-	priv->phycr1 = ret & (u16)~RTL8211F_PHYAD0_EN;
-	ret = phy_write_paged(phydev, 0xa43, RTL8211F_PHYCR1,
-			      priv->phycr1);
-	if (ret < 0) {
-		return dev_err_probe(dev, ret,
-			             "disabling MDIO address 0 failed\n");
-	}
-	/* Don't allow using broadcast address as PHY address */
-	if (phydev->mdio.addr == 0)
-		return -ENODEV;
-
- 	priv->phycr1 &= (RTL8211F_ALDPS_PLL_OFF | RTL8211F_ALDPS_ENABLE | RTL8211F_ALDPS_XTAL_OFF);
-...
-
-
-
->> +	if (ret < 0) {
->> +		dev_err(dev, "disabling MDIO address 0 failed: %pe\n",
->> +			ERR_PTR(ret));
-> 
-> You may want to use dev_err_probe() here. And is it by intent that
-> the error is ignored and you go on?
-> 
-
-I'm sorry that I made a mistake.
+Thank you,
+Claudiu
 
 > 
-> And one more formal issue:
-> You annotated the patch as 1/2, but submit it as single patch.
+>>
+>> Thank you,
+>> Claudiu
+>>
+>> [1]
+>> https://ww1.microchip.com/downloads/aemDocuments/documents/MPU32/ProductDocumen
+>> ts/UserGuides/SAM9X75-Curiosity-User-Guide-DS60001859.pdf
+>>
 > 
-I have another patch to enable support optical/copper combo support
-of RTL8211FS PHY in this mail thread, but since Andrew said that patch
-(migrated from Rockchip SDK) is low quality and I'm too busy with my
-job, don't have much time to read and improve it, so I decided to
-suspend that patch's submission and I'll resume to submit that patch
-when I'm free. Could you please give me some advice or recommends on it?
-
-Sincerely,
-
-Zhiyuan Wan
+> Regards,
+> Mihai
 
