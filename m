@@ -1,203 +1,150 @@
-Return-Path: <linux-kernel+bounces-429650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429660-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1FC19E2803
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 17:48:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C9669E2835
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 17:53:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4538DB3B141
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 14:28:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 12B2EB654FD
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 14:31:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E96E1F4738;
-	Tue,  3 Dec 2024 14:28:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C26C1F707D;
+	Tue,  3 Dec 2024 14:31:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eQuQtKD4"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wjbbINYo"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 541D51F4733
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 14:28:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C99931F707F
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 14:31:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733236103; cv=none; b=C7NBeae/YEbwhkLDva7QNrO62xYrApIE5J6/s+MeTOu8Is15t6XqvWuvpaPwAtqCEyVKrfqnnjb8lp9OONvyxfteiOz0pJO+a7W2AM76j6JwwSH2o5GsKZmN/6UcSjupg5b3zWc/ScJs+4WZbpzGR051dzGaZVWTmD79QJneIhg=
+	t=1733236280; cv=none; b=Rb9GQbozxzrVMcGLrbh3s9JoqcpIT6v3BNznls7bAJiAHfPCp9+kGBCgdNFPgwOrBfdW+rNRHszspKm30p/DAJG5ji6ITtyTiU/6/1SF1C6XWm2o8Y01/zsaF9ApyJPWwJkFio0J090FW1rbmg9F0CauNDLvCDm0wVyQWpnHHvQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733236103; c=relaxed/simple;
-	bh=vQrVciJTDoDS5vnYIk1yX6n6NAutqvNy1gYAuXSRH5Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qZft4nvRQKLTUA2tMwCCKiPSbb53FAua09sl345O9Lvjlbi++mZm0fEKSgd+i6SXwv2KlH0naZgG/sldiS1mLzltl8wcVFtGukhaO+Niz4wIshZ5eXLppSb7JylGNQtHWQwGX6Ve5bRQs34ZelyuPddusEdz81N2oDgn+RLzrZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eQuQtKD4; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2155157c31fso30057515ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 06:28:22 -0800 (PST)
+	s=arc-20240116; t=1733236280; c=relaxed/simple;
+	bh=IdfdE4oGe59ktpRAQkGYROtaYHi9zupa6uXfpEHHnPE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iowwExSBLMSOiOHJUvnZrPH3vLUHVA8UWwAfMI/QG7TGeQec+iOtZgxJzH6LZ2H42gcuQjcoCLUwYz6rUSWDR8imd7io0JhkILBheCPInSKrBqpBTh6De+3Kczr6mhaFFw3JXS3KI7fAmXv/ObH7CTR57p4K3DqPLnizU+vT+gU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wjbbINYo; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-53df1d1b726so6732476e87.0
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 06:31:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733236101; x=1733840901; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UN9R12v3ErwGCI7mcp2L+jL7PAoJVHL8ztjnEIA4Wlc=;
-        b=eQuQtKD4eHVJEdypcSFlHk1MmhZnh6WYX/eVH6kHwomhivOFt9GpNIgUUVilWEGP33
-         jfYR8BQtn/g16U6DtILxMBOfVe8WOY7FO0NUbmUuVGp5ccX2KvuIEI32HPzWSY1ah/sB
-         dXVGAoAdtosMIdcIy64qyAibnJAD+mQ9ooflJWJ5U22Perf9+olqk0Hm4bid08csCId0
-         GHfeaq6+hPzqtHvTSXKHg7EUeAbotzQZ5o+sAdMu2dLlCS5J5RJhHtYIMWiGOq/Y34np
-         1UAHQpPxrJVxwrPGLExCv5FtRLEA2ppwMK2MG6A7tswzj8ZzJc/RdEeSbmkdYz/PMk/i
-         NmIw==
+        d=linaro.org; s=google; t=1733236276; x=1733841076; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=0ppjUCx+akaTFnajbfVQ++O9bxKq4WYvR9tllyJseno=;
+        b=wjbbINYoKhwn6gzEjckSSf05gxJrHGtLpegFphu4wAPo10at+F3kvMdBQg1nfkNBIV
+         6QhlzKVDTgl1an09B7XIv+9ntyeslTjxXaMylM3lQHwjLzj3FJQrlBvdgJhohqFevEZl
+         iFWVF9MhuiHkhS4GVhFLd0qJHY45p8iT1NF4DWuhWa4VzKlzTRrzQrHDmHF8AarbAkYT
+         GUDKIVlu8vNRwRfMXXKK2ZDEQwct9B0nOAS6DD2pwLwabpIzOXLnAj/WMpqwWH2rUuKE
+         Qf6deASxq7HjU4DvHbhe9jxXBd/zVVdD1ca5f1O8Rq6tGZIQ6wOyoZfvEYKW/bcu8RAq
+         KLmA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733236102; x=1733840902;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UN9R12v3ErwGCI7mcp2L+jL7PAoJVHL8ztjnEIA4Wlc=;
-        b=mE//+XLuQWR2MUaUhyuhGqJBeY9HAJI+v1sg4WducPxoOGKsVWJOOgewzChzUqSz7g
-         aOnOE1IXSEbfgoQ3OQtuTRS6UobtfEqP7+vWTa6OuUkaZnJQkBuCooTwcYVHprar6o7W
-         +OHFIfXOu32OMPEuUjOe2hgtqZaZRC8z5iEIni/s1Nx1i3ShcDiOLMjSebrBib8xGDix
-         m+hKV3j7LyY2UTgg/8yHdqEZ2ELdGhEYDx3Dzo+/hFO55hQ6RpKHh0W/iIlgGvqQfTMa
-         tPYAzkXOZoGEKymL2TawkgUN6bQ437X1yl6B+rUwguOeFVwtd4IoRALgaRDcZdyDuSQb
-         30bg==
-X-Forwarded-Encrypted: i=1; AJvYcCX8OHiRfGI7vPq5NkYdGjkOQL2TiaBxhHaRLm9+QY+WnavoGuIqMlpCNeDS7VH+ruXwuzruw980h2WcS40=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6CA8kXH4TAeR/JlKUM1dkXHksd1q0g9I94yhbEkmoZKcWO+Bj
-	bQ8Mil9c/uz8rN9XuX1I8Fp/Zg3HpN8UkTjSmqI6yOcPiljcY5VA
-X-Gm-Gg: ASbGncvQvdLnfQgjqCcZUQKEoBCRAYsG8dx7D0wSspSxw4Dx4KHJ+e3lZvu82yZ9C9a
-	Syd5fCzgGJTjJca5BMgw3CQ/YSHHSd26yrduMGmFtoVrkqPqPs610C3i1/2AY47iU57wJEcPXt8
-	J2s9UVz48iMwhe1W4s3gXhAwK7iQ1dqqeKwO/J2C5OYqIVgl6rJoEQi/KLC0DbX93DQzsm0r17l
-	221kbFySUoETs6YP0yfdsqbP7zGvmaS7bYzWrWZmnL22+HiyEloRzWTYZV0sgrL0a86N78pTFb5
-	IsE0DQ==
-X-Google-Smtp-Source: AGHT+IGJY117emqiWiaAw7hJR2jgJXypH9JAa5pixPdjNfoRKlDOxchalfXCK9aU3kL1dpwjft0wjQ==
-X-Received: by 2002:a17:903:1744:b0:215:3998:189f with SMTP id d9443c01a7336-215bd45d400mr38752025ad.6.1733236101460;
-        Tue, 03 Dec 2024 06:28:21 -0800 (PST)
-Received: from localhost ([58.29.143.236])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21589aa5478sm41391925ad.59.2024.12.03.06.28.20
+        d=1e100.net; s=20230601; t=1733236276; x=1733841076;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0ppjUCx+akaTFnajbfVQ++O9bxKq4WYvR9tllyJseno=;
+        b=OLHXtMzBYPYuAWVVZ+RlBGju/48bC/daMx4kMfdt+5vPPQEh/ufYybQV4OYj3MTsv6
+         hhrvc/tsh9g7T41+388B0jjQrWaUPgeUa0p33PBAKcQiTA4akDxOzYdKgIIo+tu0CP8z
+         J0C4p51nC7nf5jXUfSiaMaKUEmXMteEeAppUHUBHH3/xFsVM7Fcr6JUZ9amU4fOfVa3e
+         HJ9K+mk+Gm0gwmQxa2aNj8GRcopoJzQaqjVx+/PBbm6V1rhRDyT6slvCGGoqsqtJOQkd
+         +vLxEUqPtWBxTxebd9rMaNtBVyBDnaIUahqA/HqxzZHrOtSIsZOcLbiqzY3IZlSTgU60
+         24gg==
+X-Forwarded-Encrypted: i=1; AJvYcCWdCqwXN9QhXU6zsulgou3fspk/BYlnf8pEA9SnusUpLzL3Ouv8BbXvcAUT0IxLV1D/vJ/7XYwjE6jawVs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw77KUJ0bQhXfeWYlSw3VyytTslIBnD6W+16dXW8LJK24BD/8OS
+	UNNRs8XzGTts26h/ClqXlMLAtIwHJ+ztvH/kdPOElZsGip0eg1+W3lX9Q9dFmjs=
+X-Gm-Gg: ASbGnctTHrSnRXSiceFTkZYOFweZVoFZINCtN2UKdWUjy6NjH0Kkixe1XhA/f6GqBw5
+	Fy6Bs46sH4dWlTFdYORK1JVw/PhgwJMihVvoK87I8rJDcGZTM31TgnJyTYSY+xwhC1k1mEcSVUU
+	/Lr7J+iDyRF7CRv8NNyI3bFuOBPZViUtL5WBUJZEYps7N1OQ6Y+QgCBl4Gt1PPAoHxFSQpM24j6
+	0RG8BVjA1Ls5AQ4bfEjpUssf/ARA/h04FjxaHVLMv2SLk5h4VavvgiTQvgfPkEWlgv3y2yfARAe
+	YbqSEK4bqN1p9UfItqETlihNpntTHA==
+X-Google-Smtp-Source: AGHT+IH+C+nsRz5D3FTagtbct/svuhNvAQpqymCZAx0WUlFs66GBL4uvVcP+kOsYG099fP8ZE7IRGQ==
+X-Received: by 2002:a05:6512:3a93:b0:53d:e5fd:a44a with SMTP id 2adb3069b0e04-53e12a281f8mr1564355e87.54.1733236275798;
+        Tue, 03 Dec 2024 06:31:15 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53df64968cbsm1829701e87.212.2024.12.03.06.31.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Dec 2024 06:28:21 -0800 (PST)
-From: Changwoo Min <multics69@gmail.com>
-X-Google-Original-From: Changwoo Min <changwoo@igalia.com>
-To: tj@kernel.org,
-	void@manifault.com,
-	mingo@redhat.com,
-	peterz@infradead.org
-Cc: changwoo@igalia.com,
-	kernel-dev@igalia.com,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 2/5] sched_ext: Manage the validity of scx_rq_clock
-Date: Tue,  3 Dec 2024 23:27:59 +0900
-Message-ID: <20241203142802.36305-3-changwoo@igalia.com>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20241203142802.36305-1-changwoo@igalia.com>
-References: <20241203142802.36305-1-changwoo@igalia.com>
+        Tue, 03 Dec 2024 06:31:14 -0800 (PST)
+Date: Tue, 3 Dec 2024 16:31:11 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Abhinav Kumar <quic_abhinavk@quicinc.com>
+Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Stephen Boyd <swboyd@chromium.org>, 
+	Kuogee Hsieh <quic_khsieh@quicinc.com>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	Jessica Zhang <quic_jesszhan@quicinc.com>
+Subject: Re: [PATCH 0/3] drm/msm/dp: Fix and utilize TPG with a debugfs
+Message-ID: <lpkhftx62hbnrftzoy6zprhvir7dffz5ynwo3kr5j5obc3dcle@73ljnmpdt7ts>
+References: <20241202-tpg-v1-0-0fd6b518b914@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241202-tpg-v1-0-0fd6b518b914@quicinc.com>
 
-An rq clock becomes valid when it is updated using update_rq_clock()
-and invalidated when the rq is unlocked using rq_unpin_lock(). Also,
-after long-running operations -- ops.running() and ops.update_idle() --
-in a BPF scheduler, the sched_ext core invalidates the rq clock.
+On Mon, Dec 02, 2024 at 12:41:57PM -0800, Abhinav Kumar wrote:
+> DP Test Patten Generator is a very useful tool to debug issues such
+> as blank screen or corruption seen on the DP monitor by isolating it
+> to whether the corruption is coming from further upstream such as DPU
+> OR from the DP controller and below. It was noted in [1] that this API
+> is unused. Rather than dropping the API, it should be fixed and used.
+> 
+> Hence, this series fixes the DP Test Patten Generator API and also utilizes
+> it by adding a debugfs for it.
+> 
+> [1] : https://patchwork.freedesktop.org/patch/623508/?series=141074&rev=1
 
-Let's suppose the following timeline in the scheduler core:
+I'd prefer for this to be rebased on top of [2]. The series has been
+posted a month ago.
 
-   T1. rq_lock(rq)
-   T2. update_rq_clock(rq)
-   T3. a sched_ext BPF operation
-   T4. rq_unlock(rq)
-   T5. a sched_ext BPF operation
-   T6. rq_lock(rq)
-   T7. update_rq_clock(rq)
+[2] https://patchwork.freedesktop.org/series/141074/
 
-For [T2, T4), we consider that rq clock is valid (SCX_RQ_CLK_VALID is
-set), so scx_bpf_clock_get_ns() calls during [T2, T4) (including T3)
-will return the rq clock updated at T2. For duration [T4, T7),
-when a BPF scheduler can still call scx_bpf_clock_get_ns() (T5), we
-consider the rq clock is invalid (SCX_RQ_CLK_VALID is unset at T4). So
-when calling scx_bpf_clock_get_ns() at T5, we will return a fresh clock
-value by calling sched_clock() internally.
+> 
+> To: Rob Clark <robdclark@gmail.com>
+> To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> To: Sean Paul <sean@poorly.run>
+> To: Marijn Suijten <marijn.suijten@somainline.org>
+> To: David Airlie <airlied@gmail.com>
+> To: Simona Vetter <simona@ffwll.ch>
+> To: Stephen Boyd <swboyd@chromium.org>
+> To: Kuogee Hsieh <quic_khsieh@quicinc.com>
+> Cc: linux-arm-msm@vger.kernel.org
+> Cc: dri-devel@lists.freedesktop.org
+> Cc: freedreno@lists.freedesktop.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: Jessica Zhang <quic_jesszhan@quicinc.com>
+> 
+> Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+> ---
+> Abhinav Kumar (3):
+>       drm/msm/dp: account for widebus in msm_dp_catalog_panel_tpg_enable()
+>       drm/msm/dp: do not touch the MMSS_DP_INTF_CONFIG for tpg
+>       drm/msm/dp: add a debugfs node for using tpg
+> 
+>  drivers/gpu/drm/msm/dp/dp_catalog.c | 15 +++++++--
+>  drivers/gpu/drm/msm/dp/dp_debug.c   | 61 +++++++++++++++++++++++++++++++++++++
+>  drivers/gpu/drm/msm/dp/dp_panel.h   |  2 ++
+>  3 files changed, 76 insertions(+), 2 deletions(-)
+> ---
+> base-commit: 798bb342e0416d846cf67f4725a3428f39bfb96b
+> change-id: 20241202-tpg-3f7543c036ac
+> 
+> Best regards,
+> -- 
+> Abhinav Kumar <quic_abhinavk@quicinc.com>
+> 
 
-One example of calling scx_bpf_clock_get_ns(), when the rq clock is
-invalid (like T5), is in scx_central [1]. The scx_central scheduler uses
-a BPF timer for preemptive scheduling. In every msec, the timer callback
-checks if the currently running tasks exceed their timeslice. At the
-beginning of the BPF timer callback (central_timerfn in scx_central.bpf.c),
-scx_central gets the current time. When the BPF timer callback runs, the rq
-clock could be invalid, the same as T5. In this case, scx_bpf_clock_get_ns()
-returns a fresh clock value rather than returning the old one (T2).
-
-[1] https://github.com/sched-ext/scx/blob/main/scheds/c/scx_central.bpf.c
-
-Signed-off-by: Changwoo Min <changwoo@igalia.com>
----
- kernel/sched/core.c  | 6 +++++-
- kernel/sched/ext.c   | 3 +++
- kernel/sched/sched.h | 2 +-
- 3 files changed, 9 insertions(+), 2 deletions(-)
-
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 95e40895a519..ab8015c8cab4 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -789,6 +789,7 @@ static void update_rq_clock_task(struct rq *rq, s64 delta)
- void update_rq_clock(struct rq *rq)
- {
- 	s64 delta;
-+	u64 clock;
- 
- 	lockdep_assert_rq_held(rq);
- 
-@@ -800,11 +801,14 @@ void update_rq_clock(struct rq *rq)
- 		SCHED_WARN_ON(rq->clock_update_flags & RQCF_UPDATED);
- 	rq->clock_update_flags |= RQCF_UPDATED;
- #endif
-+	clock = sched_clock_cpu(cpu_of(rq));
-+	scx_rq_clock_update(rq, clock);
- 
--	delta = sched_clock_cpu(cpu_of(rq)) - rq->clock;
-+	delta = clock - rq->clock;
- 	if (delta < 0)
- 		return;
- 	rq->clock += delta;
-+
- 	update_rq_clock_task(rq, delta);
- }
- 
-diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
-index 7fff1d045477..ac279a657d50 100644
---- a/kernel/sched/ext.c
-+++ b/kernel/sched/ext.c
-@@ -2928,6 +2928,8 @@ static void set_next_task_scx(struct rq *rq, struct task_struct *p, bool first)
- 	if (SCX_HAS_OP(running) && (p->scx.flags & SCX_TASK_QUEUED))
- 		SCX_CALL_OP_TASK(SCX_KF_REST, running, p);
- 
-+	scx_rq_clock_stale(rq);
-+
- 	clr_task_runnable(p, true);
- 
- 	/*
-@@ -3590,6 +3592,7 @@ void __scx_update_idle(struct rq *rq, bool idle)
- {
- 	int cpu = cpu_of(rq);
- 
-+	scx_rq_clock_stale(rq);
- 	if (SCX_HAS_OP(update_idle) && !scx_rq_bypassing(rq)) {
- 		SCX_CALL_OP(SCX_KF_REST, update_idle, cpu_of(rq), idle);
- 		if (!static_branch_unlikely(&scx_builtin_idle_enabled))
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index da55b39c9e58..7d26731c350f 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -1779,7 +1779,7 @@ static inline void rq_unpin_lock(struct rq *rq, struct rq_flags *rf)
- 	if (rq->clock_update_flags > RQCF_ACT_SKIP)
- 		rf->clock_update_flags = RQCF_UPDATED;
- #endif
--
-+	scx_rq_clock_stale(rq);
- 	lockdep_unpin_lock(__rq_lockp(rq), rf->cookie);
- }
- 
 -- 
-2.47.1
-
+With best wishes
+Dmitry
 
