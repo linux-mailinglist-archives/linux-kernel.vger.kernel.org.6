@@ -1,138 +1,133 @@
-Return-Path: <linux-kernel+bounces-429785-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2141E9E25D9
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 17:05:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43FAC9E244B
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:48:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CC2B3BE0D6F
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 15:47:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09E2628798B
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 15:48:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25D4D1FA143;
-	Tue,  3 Dec 2024 15:46:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dHMpibXa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6512D1F9EAC;
-	Tue,  3 Dec 2024 15:46:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D4CC1F76AF;
+	Tue,  3 Dec 2024 15:46:49 +0000 (UTC)
+Received: from cmccmta2.chinamobile.com (cmccmta2.chinamobile.com [111.22.67.135])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 323A181ADA;
+	Tue,  3 Dec 2024 15:46:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.135
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733240770; cv=none; b=Xs5Fqkj9CfcjNFoMBMKu7Q1sdVhQm/DPChh0zUzMa2SwQKR7Pi9hjzouto8DkNTJoybMz+RahqhBGLVFLV7Ddr4stl9MwsxRNMs+EIH6HiQwZWtLugVIDYtJqKpRa//gI5v7clgUbF+iukM0OVcliW/Cv3SZheTBygMruvDpG0g=
+	t=1733240809; cv=none; b=b4CLHu2hisc9xIbE3c/dp4vxTTuVZMTVlBF4frXmWIpa03c+hoO1ulLADDQP1z3x3wZy1vGvJw7+TsOKq+Fu9OZ5/Sg3isieoCg9TQCNumcNqBj2DGHCClnj6ckZiIlbBdJuGbZeIUObQKD8q7Dq6m+2sqIoBmq8MuO+UMKQYHQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733240770; c=relaxed/simple;
-	bh=dn8LjBbhrt8WWvRtmZ7EWYAwQ3mVvCiOwBxFtAvZTX4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GuwfGT2TUQoYLUtRlCfoVJwu+b1VuBvMqDNOhk03jyo4jPlK/idUUTtGKx8VpFMIGMPks9S3R9XZsbis1WMY0u+ZmU+ZMmRLIzGr7CtEJ4U1t6LxN6O5PQYOf4EzN2z4GrtS2vw9ON8Udh6aAqDcgxpLWfyXvleM02Pa8bRNUqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dHMpibXa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 960D9C4CECF;
-	Tue,  3 Dec 2024 15:46:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733240770;
-	bh=dn8LjBbhrt8WWvRtmZ7EWYAwQ3mVvCiOwBxFtAvZTX4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=dHMpibXaqK0yq9OaoKSg9V16Zdq1zQ3wAMLefrf1cYqT7huFlQ+U3kiz/5KoJl1eU
-	 Go9vBhDJxi8arAFFrZG4QTojSLxGFvuB8Jh/JlFLTjZki6ZKgPYq+v879eAyePbtVT
-	 DXuQ1gq+ljCtJsUnlbNF6syZeE3Qe+feqpLSykxk5dIjE6WyIV92mD6d1Hmicj+FUv
-	 e8DZWuXUAidrrrIZuPrhTWZLAG6s4oM5IzYpU5K09GhcYBMwgbczGPBYSg9pBKUOmD
-	 rU5+cnxz/NpbjS+Uyu+M8goAFRk+wHN2U8mKljZT+BUYsxoOtTQMM4DByPsG6yMfaI
-	 GOH6bl1gm7bcg==
-Message-ID: <7d09f311-b9a2-4c40-9fca-4b5d0acc112d@kernel.org>
-Date: Tue, 3 Dec 2024 16:45:59 +0100
+	s=arc-20240116; t=1733240809; c=relaxed/simple;
+	bh=fNJQGCTKbol4fTSpgRRQmJ/M2VyJW5hTHZ3s71zsNy4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Fy0f+N0dSIzof6VH9nCbA+YKqSkIMfpI2o/0TdDlAuHTPB0eS6ayxRSBHqsg/L1OoNjvu7e1+29W1O6z5WvITvIdlUr3OroFYtxT85U4fFA+j/dIcIwWl0aVMGGzzglc0SDEjzm2kpKj5EYa7G4OVWWgTzJrTUKBMrbqzIs4t6k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.135
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
+	by rmmx-syy-dmz-app07-12007 (RichMail) with SMTP id 2ee7674f27dc2ff-c431e;
+	Tue, 03 Dec 2024 23:46:37 +0800 (CST)
+X-RM-TRANSID:2ee7674f27dc2ff-c431e
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from 192.168.28.197 (unknown[10.55.1.72])
+	by rmsmtp-syy-appsvr08-12008 (RichMail) with SMTP id 2ee8674f27dc84b-351fb;
+	Tue, 03 Dec 2024 23:46:36 +0800 (CST)
+X-RM-TRANSID:2ee8674f27dc84b-351fb
+From: liujing <liujing@cmss.chinamobile.com>
+To: perex@perex.cz,
+	tiwai@suse.com
+Cc: linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	liujing <liujing@cmss.chinamobile.com>
+Subject: [PATCH] ALSA: asihpi: Delete redundant judgments
+Date: Tue,  3 Dec 2024 23:46:35 +0800
+Message-Id: <20241203154635.2512-1-liujing@cmss.chinamobile.com>
+X-Mailer: git-send-email 2.27.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v1 06/14] dt-bindings: clock: thead,th1520: Rename
- YAML schema file
-To: Michal Wilczynski <m.wilczynski@samsung.com>, mturquette@baylibre.com,
- sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- drew@pdp7.com, guoren@kernel.org, wefu@redhat.com, jassisinghbrar@gmail.com,
- paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
- frank.binns@imgtec.com, matt.coster@imgtec.com,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
- airlied@gmail.com, simona@ffwll.ch, ulf.hansson@linaro.org,
- jszhang@kernel.org, m.szyprowski@samsung.com
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
- dri-devel@lists.freedesktop.org, linux-pm@vger.kernel.org
-References: <20241203134137.2114847-1-m.wilczynski@samsung.com>
- <CGME20241203134156eucas1p2326d84fcef2ee0914586122520b18dcc@eucas1p2.samsung.com>
- <20241203134137.2114847-7-m.wilczynski@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241203134137.2114847-7-m.wilczynski@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 03/12/2024 14:41, Michal Wilczynski wrote:
-> As support for clocks from new subsystems is being added to the T-Head
-> TH1520 SoC, the Device Tree binding YAML schema file name should reflect
-> this broader scope.  The existing schema file 'thead,th1520-clk-ap.yaml'
-> includes the '-ap' suffix, indicating it's specific to the Application
-> Processor (AP) subsystem.
-> 
-> Rename the YAML schema file to 'thead,th1520-clk.yaml' to generalize it
-> for all subsystems. Update all references to this schema file
-> accordingly.
-> 
-> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
-> ---
->  .../clock/{thead,th1520-clk-ap.yaml => thead,th1520-clk.yaml}   | 2 +-
->  MAINTAINERS                                                     | 2 +-
+Since HPI6205_TIMEOUT is a constant, time_out is always true,
+so unneeded judgments are removed.
 
-NAK, don't rename just because you added one more compatible (and anyway
-never a separate patch).
+Signed-off-by: liujing <liujing@cmss.chinamobile.com>
 
-Best regards,
-Krzysztof
+diff --git a/sound/pci/asihpi/hpi6205.c b/sound/pci/asihpi/hpi6205.c
+index c7d7eff86727..391cce428a11 100644
+--- a/sound/pci/asihpi/hpi6205.c
++++ b/sound/pci/asihpi/hpi6205.c
+@@ -2127,22 +2127,20 @@ static u16 message_response_sequence(struct hpi_adapter_obj *pao,
+ 	time_out = HPI6205_TIMEOUT;
+ 
+ 	/* read the result */
+-	if (time_out) {
+-		if (interface->u.response_buffer.response.size <= phr->size)
+-			memcpy(phr, &interface->u.response_buffer,
+-				interface->u.response_buffer.response.size);
+-		else {
+-			HPI_DEBUG_LOG(ERROR,
++	if (interface->u.response_buffer.response.size <= phr->size)
++		memcpy(phr, &interface->u.response_buffer,
++			interface->u.response_buffer.response.size);
++	else {
++		HPI_DEBUG_LOG(ERROR,
+ 				"response len %d too big for buffer %d\n",
+ 				interface->u.response_buffer.response.size,
+ 				phr->size);
+-			memcpy(phr, &interface->u.response_buffer,
++		memcpy(phr, &interface->u.response_buffer,
+ 				sizeof(struct hpi_response_header));
+-			phr->error = HPI_ERROR_RESPONSE_BUFFER_TOO_SMALL;
+-			phr->specific_error =
+-				interface->u.response_buffer.response.size;
+-			phr->size = sizeof(struct hpi_response_header);
+-		}
++		phr->error = HPI_ERROR_RESPONSE_BUFFER_TOO_SMALL;
++		phr->specific_error =
++			interface->u.response_buffer.response.size;
++		phr->size = sizeof(struct hpi_response_header);
+ 	}
+ 	/* set interface back to idle */
+ 	send_dsp_command(phw, H620_HIF_IDLE);
+diff --git a/sound/pci/mixart/mixart.c b/sound/pci/mixart/mixart.c
+index 7ceaf6a7a77e..cac5fcaef08b 100644
+--- a/sound/pci/mixart/mixart.c
++++ b/sound/pci/mixart/mixart.c
+@@ -1320,12 +1320,12 @@ static int snd_mixart_probe(struct pci_dev *pci,
+ 			idx = index[dev];
+ 		else
+ 			idx = index[dev] + i;
+-		snprintf(tmpid, sizeof(tmpid), "%s-%d", id[dev] ? id[dev] : "MIXART", i);
++		snprintf(tmpid, sizeof(tmpid), "%s-%u", id[dev] ? id[dev] : "MIXART", i);
+ 		err = snd_card_new(&pci->dev, idx, tmpid, THIS_MODULE,
+ 				   0, &card);
+ 
+ 		if (err < 0) {
+-			dev_err(&pci->dev, "cannot allocate the card %d\n", i);
++			dev_err(&pci->dev, "cannot allocate the card %u\n", i);
+ 			snd_mixart_free(mgr);
+ 			return err;
+ 		}
+@@ -1334,7 +1334,7 @@ static int snd_mixart_probe(struct pci_dev *pci,
+ 		snprintf(card->shortname, sizeof(card->shortname),
+ 			 "Digigram miXart [PCM #%d]", i);
+ 		snprintf(card->longname, sizeof(card->longname),
+-			"Digigram miXart at 0x%lx & 0x%lx, irq %i [PCM #%d]",
++			"Digigram miXart at 0x%lx & 0x%lx, irq %i [PCM #%u]",
+ 			mgr->mem[0].phys, mgr->mem[1].phys, mgr->irq, i);
+ 
+ 		err = snd_mixart_create(mgr, card, i);
+-- 
+2.27.0
+
+
+
 
