@@ -1,163 +1,174 @@
-Return-Path: <linux-kernel+bounces-429272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429273-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B1AD9E199D
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 11:44:16 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22B559E199F
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 11:44:36 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 338F5280E8D
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:44:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD4521667CF
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:44:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 890411E2614;
-	Tue,  3 Dec 2024 10:42:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6D751E2856;
+	Tue,  3 Dec 2024 10:42:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="haOnfxa0"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IBf3vuai"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62A651E22E9;
-	Tue,  3 Dec 2024 10:42:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 968011E2840
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 10:42:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733222548; cv=none; b=KICGQUblVElLZwIBwKoK0yF+CB1KQ0CNOwMUhuJJDwj7KJwfp+o4HmMN6b/CaDJWI+oaLE2DbXebuRU6AqlJ3uM6svOuoaIulXCVhdEXXBleaDEo2YzGuC9iEmFcjwunVgzRlQUN1cEteFnzYkG0OoYZTlSpiv7DXZAXmFsYBsQ=
+	t=1733222563; cv=none; b=pQ3g9/gUjucchI3sV0zhClJWgqLDhtNa0N8GcM+Yx+yO/1/Wqz6SjkTvkdn2qDS9SwU0q1VUbxwqcd02cbhZ16+u5wzqt1qnQpLfH2hUpVXzmAqRVF/NZuiJUqTNNY3goZ2dNJD/LnsfHENIdXCLcpRhvTDIrllY+Q6XwBxtTeY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733222548; c=relaxed/simple;
-	bh=huDWne30J5ob4zsS1bNSlBR9Y1rYCh2kjshpdpHvoIs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=oj+DbM9J7sNWzCpHyAuzJWReYWezhCSyHCy4uIqKMSWhGLPRWK7TWV7SkAPjfLS2BjoJ2YHDb1E6w+ok49xSCEBZXiV6WLxv3HcExTVcTEhW2TL7rLmfT13POX5I8KvZDwZsFsPcTfHVPTBnP3ZrjxRPFZ788cr0fLvmI2LFlqo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=haOnfxa0; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B38JfKY027880;
-	Tue, 3 Dec 2024 10:42:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	eCQE5jN00zJcuauOCTLwZrT7GsJeMG7eyAEO1hGFE8Y=; b=haOnfxa0PVsqapGn
-	v0iAlk29s23mXpU918TYooJmvQrUr5pQwlgPYXO1q1pr/yDe3MIfLU2ebvYBn1pw
-	FEI0E3AWv6xE0AE+bhwCS/dnxkEk6o3Y5yfFrGS5tFa8w8ZZC3ob/KB+BRPfXas+
-	tOhhSimPXV2QvgzbArCEKwyRYPNlllHBzyxWQmx0dOfS65XwfiCdFEg9MN5a3jHz
-	J7sRr+rizZp2D1vBRoN3ZFcEBN4++mJyeplqDXNYOSMUa8EV9Ryyb+0Yr5WDW8Cp
-	9v495IZ7EJxFiyAedBCtJPkh6ztreZ35L41cUYY117+rdAKgpisAuBHkoR4K11ct
-	YzzgWg==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 437tstfsk5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 03 Dec 2024 10:42:05 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B3Ag4RW013842
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 3 Dec 2024 10:42:04 GMT
-Received: from [10.239.133.66] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 3 Dec 2024
- 02:42:00 -0800
-Message-ID: <577fb7ea-f540-4ca0-9569-3bd5bee87df8@quicinc.com>
-Date: Tue, 3 Dec 2024 18:41:58 +0800
+	s=arc-20240116; t=1733222563; c=relaxed/simple;
+	bh=GClxry7kOfIsY1EQO6Rm5I2oCXDUT6JUC3Wc7LhTng0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dq3c6beFWtO9ZzqelJxz8xRFycfRUvoZsFH3uSm6kiTRItVuVy5ifOXaZ4aSWzPNkUotOggA8CSHtMRilNGCAPkP4eSwyG8hoTJi4s1hr7V+A5Xep4PwUEFIUrXGJ8OG1W4jShxqhfeFsNMZ/T71PXzo2EdSFYLPssFkQgIDSqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IBf3vuai; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733222560;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=D5AHi0uk+oN+zpkzvh/QNmG2L3UPAKNwXGcHrJAQaZM=;
+	b=IBf3vuaiex7xxuF0Uw9ZzOY9JXxPRGRVWxeBhqeAZEgumQRHc4QDka4xrtoh+gbe7BSNhf
+	Vp5ECnlOkaBRnbXhnxsBg0E9tEyUP3ja5Wyro5lCqMnZR82B0N/ZaCXnuxUFwtOz/HNebt
+	LTlWOBNfgzEgW5M+0QpMmPV8itCPgUM=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-300-P5838zgdOW6m0hg0rLlvbA-1; Tue,
+ 03 Dec 2024 05:42:36 -0500
+X-MC-Unique: P5838zgdOW6m0hg0rLlvbA-1
+X-Mimecast-MFC-AGG-ID: P5838zgdOW6m0hg0rLlvbA
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DE7BF19560BD;
+	Tue,  3 Dec 2024 10:42:32 +0000 (UTC)
+Received: from localhost (unknown [10.72.113.10])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9A28330000DF;
+	Tue,  3 Dec 2024 10:42:29 +0000 (UTC)
+Date: Tue, 3 Dec 2024 18:42:25 +0800
+From: Baoquan He <bhe@redhat.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	linux-s390@vger.kernel.org, virtualization@lists.linux.dev,
+	kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	kexec@lists.infradead.org, Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
+	Vivek Goyal <vgoyal@redhat.com>, Dave Young <dyoung@redhat.com>,
+	Thomas Huth <thuth@redhat.com>, Cornelia Huck <cohuck@redhat.com>,
+	Janosch Frank <frankja@linux.ibm.com>,
+	Claudio Imbrenda <imbrenda@linux.ibm.com>,
+	Eric Farman <farman@linux.ibm.com>,
+	Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH v1 03/11] fs/proc/vmcore: disallow vmcore modifications
+ after the vmcore was opened
+Message-ID: <Z07gkXQDrNfL10hu@MiWiFi-R3L-srv>
+References: <20241025151134.1275575-1-david@redhat.com>
+ <20241025151134.1275575-4-david@redhat.com>
+ <Z0BL/UopaH5Xg5jS@MiWiFi-R3L-srv>
+ <d29d7816-a3e5-4f34-bb0c-dd427931efb4@redhat.com>
+ <Z0SMqYX8gMvdiU4T@MiWiFi-R3L-srv>
+ <a7ccbd86-2a62-4191-8742-ce45b6e8f73c@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/3] perf tool: Fix multiple memory leakages
-To: Namhyung Kim <namhyung@kernel.org>
-CC: <peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
-        <mark.rutland@arm.com>, <alexander.shishkin@linux.intel.com>,
-        <jolsa@kernel.org>, <irogers@google.com>, <adrian.hunter@intel.com>,
-        <kan.liang@linux.intel.com>, <james.clark@linaro.org>,
-        <yangyicong@hisilicon.com>, <song@kernel.org>,
-        <linux-perf-users@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <bpf@vger.kernel.org>
-References: <20241128125432.2748981-1-quic_zhonhan@quicinc.com>
- <Z04u-7DQr5w9daS5@google.com>
-Content-Language: en-US
-From: Zhongqiu Han <quic_zhonhan@quicinc.com>
-In-Reply-To: <Z04u-7DQr5w9daS5@google.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: djibvdknjQX8f7VbEhxQnJS14VM8ZfqT
-X-Proofpoint-GUID: djibvdknjQX8f7VbEhxQnJS14VM8ZfqT
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- malwarescore=0 spamscore=0 impostorscore=0 mlxlogscore=999 mlxscore=0
- priorityscore=1501 suspectscore=0 phishscore=0 adultscore=0 clxscore=1011
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412030091
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a7ccbd86-2a62-4191-8742-ce45b6e8f73c@redhat.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On 12/3/2024 6:04 AM, Namhyung Kim wrote:
-> On Thu, Nov 28, 2024 at 08:54:29PM +0800, Zhongqiu Han wrote:
->> Fix memory leakages when btf_node or bpf_prog_info_node is duplicated
->> during insertion into perf_env.
->>
->> Signed-off-by: Zhongqiu Han <quic_zhonhan@quicinc.com>
->> ---
->> Zhongqiu Han (3):
->>    perf header: Fix one memory leakage in process_bpf_btf()
->>    perf header: Fix one memory leakage in process_bpf_prog_info()
->>    perf bpf: Fix two memory leakages when calling
->>      perf_env__insert_bpf_prog_info()
-> 
-> Although I have a nitpick in the patch 3, it looks good otherwise.
-> 
-> Reviewed-by: Namhyung Kim <namhyung@kernel.org>
-> 
-Hi Namhyung,
-Thanks for your review~
-I will arise the V2 to optimize patch 3.
+On 11/29/24 at 11:38am, David Hildenbrand wrote:
+> On 25.11.24 15:41, Baoquan He wrote:
+> > On 11/22/24 at 10:30am, David Hildenbrand wrote:
+> > > On 22.11.24 10:16, Baoquan He wrote:
+> > > > On 10/25/24 at 05:11pm, David Hildenbrand wrote:
+> > > > ......snip...
+> > > > > @@ -1482,6 +1470,10 @@ int vmcore_add_device_dump(struct vmcoredd_data *data)
+> > > > >    		return -EINVAL;
+> > > > >    	}
+> > > > > +	/* We'll recheck under lock later. */
+> > > > > +	if (data_race(vmcore_opened))
+> > > > > +		return -EBUSY;
+> > > > 
+> > > 
+> > > Hi,
+> > > 
+> > > > As I commented to patch 7, if vmcore is opened and closed after
+> > > > checking, do we need to give up any chance to add device dumping
+> > > > as below?
+> > > > 
+> > > > fd = open(/proc/vmcore);
+> > > > ...do checking;
+> > > > close(fd);
+> > > > 
+> > > > quit any device dump adding;
+> > > > 
+> > > > run makedumpfile on s390;
+> > > >     ->fd = open(/proc/vmcore);
+> > > >       -> try to dump;
+> > > >     ->close(fd);
+> > > 
+> > > The only reasonable case where this could happen (with virtio_mem) would be
+> > > when you hotplug a virtio-mem device into a VM that is currently in the
+> > > kdump kernel. However, in this case, the device would not provide any memory
+> > > we want to dump:
+> > > 
+> > > (1) The memory was not available to the 1st (crashed) kernel, because
+> > >      the device got hotplugged later.
+> > > (2) Hotplugged virtio-mem devices show up with "no plugged memory",
+> > >      meaning there wouldn't be even something to dump.
+> > > 
+> > > Drivers will be loaded (as part of the kernel or as part of the initrd)
+> > > before any kdump action is happening. Similarly, just imagine your NIC
+> > > driver not being loaded when you start dumping to a network share ...
+> > > 
+> > > This should similarly apply to vmcoredd providers.
+> > > 
+> > > There is another concern I had at some point with changing the effective
+> > > /proc/vmcore size after someone already opened it, and might assume the size
+> > > will stay unmodified (IOW, the file was completely static before vmcoredd
+> > > showed up).
+> > > 
+> > > So unless there is a real use case that requires tracking whether the file
+> > > is no longer open, to support modifying the vmcore afterwards, we should
+> > > keep it simple.
+> > > 
+> > > I am not aware of any such cases, and my experiments with virtio_mem showed
+> > > that the driver get loaded extremely early from the initrd, compared to when
+> > > we actually start messing with /proc/vmcore from user space.
 
-> And I don't think the Fixes tags are correct, but it won't apply before
-> the change it points to.  So for practical reason, I'm ok with that.
-> 
-> Thanks,
-> Namhyung
-> 
+It's OK, David, I don't have strong opinion about the current
+implementation. I raised this concern because
 
-I will fix the Fixes tag as follows on V2:
+1) I saw the original vmcoredd only warn when doing register if
+vmcore_opened is true;
 
-[PATCH 1/3] perf header: Fix one memory leakage in process_bpf_btf()
-Fixes: a70a1123174a ("perf bpf: Save BTF information as headers to
-perf.data")
+2) in patch 1, it says vmcore_mutex is introduced to protect vmcore
+modifications from concurrent opening. If we are confident, the old
+vmcoredd_mutex can guarantee it, I could be wrong here.
 
-[PATCH 2/3] perf header: Fix one memory leakage in
-process_bpf_prog_info()
-Fixes: 606f972b1361 ("perf bpf: Save bpf_prog_info information as
-headers to perf.data")
+Anyway, it's just a tiny concern, I believe it won't cause issue at
+present. So it's up to you. 
 
+Thanks
 
-[PATCH 3/3] perf bpf: Fix two memory leakages when calling
-perf_env__insert_bpf_prog_info()
-Fixes: e4378f0cb90b ("perf bpf: Save bpf_prog_info in a rbtree in
-perf_env")
-Fixes: d56354dc4909 ("perf tools: Save bpf_prog_info and BTF of new BPF
-programs")
-
-
->>
->>   tools/perf/util/bpf-event.c | 10 ++++++++--
->>   tools/perf/util/env.c       | 12 ++++++++----
->>   tools/perf/util/env.h       |  4 ++--
->>   tools/perf/util/header.c    |  8 ++++++--
->>   4 files changed, 24 insertions(+), 10 deletions(-)
->>
->>
->> base-commit: f486c8aa16b8172f63bddc70116a0c897a7f3f02
->> -- 
->> 2.25.1
->>
-
-
--- 
-Thx and BRs,
-Zhongqiu Han
 
