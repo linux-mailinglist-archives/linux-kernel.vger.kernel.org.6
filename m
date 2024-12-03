@@ -1,136 +1,142 @@
-Return-Path: <linux-kernel+bounces-429727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00E199E216B
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:13:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A2A879E2174
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:13:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9A2E282394
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 15:12:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63FD8285AAA
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 15:13:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19FA8204087;
-	Tue,  3 Dec 2024 15:09:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9F0E1F9EC0;
+	Tue,  3 Dec 2024 15:10:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b="llHi3zmx";
-	dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b="m5S6eSbu"
-Received: from mta-03.yadro.com (mta-03.yadro.com [89.207.88.253])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="SouZNHzi"
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA6351F75B1
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 15:09:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.207.88.253
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDADF1F8F09
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 15:10:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733238570; cv=none; b=W9e9OpfM6axCa9dhRm/NZdgtdr6BiBZ5g8EasPSnmdBt5rA96zDC2vW/0SycoVSQPWRkg0w2IuuCGdjiKWgeFNhNifBOtSjuQyV2E7I6hIJFeC/bS0rqor0ksLNf4Zg3umnXf/fZdhJrjMp/G8L2XL4sQe69nJdR4lehzM8NXlY=
+	t=1733238619; cv=none; b=FWfdC0Obp90RpghBWOHmSlziJapk87h7N8aKDHdUJQ99qO20opn1fCS/7y7CqywTRoujzucTVA7UsRqE7mtzZEYhkBh+KO7N8rW1MdSTOTew517pKrE3MFS/DnVMIryHVCgFOClIwbUfsSYNNar9sLc6X6lIdq/8vQL9jfTZ1AA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733238570; c=relaxed/simple;
-	bh=sB7bGshRXluI0jR7pLuSjiwGvmpeRBcbuL6zGU+klIA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=dJM0Q7VaIZvH4X/+c/URwCT56+o9zIEHYCxrmkT/+/MZ8rzXi4hbJxDAPj4RIUcN3250leSqoJj9ZI8ZCD2WCHCVb2RWlD0iY8pLDJ6PZSDCc+MHCE7tUAOwKxhcIyjBkpJ9l2TOZHWzmMfPNbyT/SvYcApN/qayFoqUyGVlkv4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yadro.com; spf=pass smtp.mailfrom=yadro.com; dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b=llHi3zmx; dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b=m5S6eSbu; arc=none smtp.client-ip=89.207.88.253
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yadro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yadro.com
-DKIM-Filter: OpenDKIM Filter v2.11.0 mta-03.yadro.com 557CDE000C
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yadro.com; s=mta-04;
-	t=1733238564; bh=KVf8hUXjuSbpowAqOIXHXS+rzS1wgLVqN7lbHQj+6/k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:From;
-	b=llHi3zmx7xcvhjyT89cZ2koxmci/3H0mU5tImgKXosoBVk7NUx1KTsYI1ab1FsxTt
-	 DT+foFkWPf2/WYAzP2bbUy2zxZOqZ1oYjHg/IvEu2gfNYKk/uVkdThv2ZIi5HcS9us
-	 ucAtBJRRMQrajTP9grIZfw2tDXHOmIYT6iRuQPpJaqSxLT7idu1BKB++/JxwwkkacN
-	 7Ribugnj+ALzHJCQMgjWR0okLR4Y1I/rVJ0VHDpLEIqllJD0veIIp6ExCXv+ynkOHR
-	 LwPaPa0YbiuJBNGm/m9GCe1OcnUFoDvaZ8LfQhv9X0qCg/QN/VqQkdhlsaxq54NMav
-	 bKvk0r1BFOvbg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yadro.com; s=mta-03;
-	t=1733238564; bh=KVf8hUXjuSbpowAqOIXHXS+rzS1wgLVqN7lbHQj+6/k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:From;
-	b=m5S6eSbuDOMCFjzdM3z0oVwZE6BnHmcMVD0V+Aky94CumetunpIgGS8DuW61OO+6s
-	 EyFiQsejo+6bFTCTuZMqnisJezak/5+TPqxROaP/qfKLQYZ8gCdNLk6HZlzHbGrlmB
-	 EoN31rvuM4IP2Gs+M1/WErfcLKqCKHsr/JTHSJZ7TaSHy/J7Tv0iaCyn1/3XLKEXhj
-	 IkMkZKpbVRi8PxsDaV7QFocUFJy22wo/u5TrkdTO5Yizk3GXfuJywA4RvIahwG+7r2
-	 MczUiRj9Lgnn0+aImev/go4OcZipcyP1WMZJZ/y0RH8vXmlK6aqytl8tQLXMh0t/9h
-	 etVYJbKG1XYQA==
-Message-ID: <990b942d-fe91-4bda-a38e-1eb47f2f6086@yadro.com>
-Date: Tue, 3 Dec 2024 18:09:22 +0300
+	s=arc-20240116; t=1733238619; c=relaxed/simple;
+	bh=U/OoOzXsIi2r7sSP/cLR0FzyZqfuU3DiHqvIkCvcvj8=;
+	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DtN5cBCpeBQpqz0inmGJKWo3s21rZA2+DLI6zLHFkkBoynvSTovLjR1gUwwXlUZTKSDpPzt9C/NZEYFcKNy4qJRXG7/1XACelWmlftF1ydfgWGaWKUey5+687V+GGdZ7Azn0ljKeFaK5R9RO8ArCT9KaWT9hiSu+SN7zfOJpyL0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=SouZNHzi; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-7fc22a88bcbso4225778a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 07:10:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1733238616; x=1733843416; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:references:mime-version:in-reply-to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=p0ezAqCKNWBAiuxAl3Y2kJKU1te23QxF0JI4IxEegt0=;
+        b=SouZNHzingFWow5COB5W5tgVUhP/qi8eFeiHs4lESYZtkRSF2bGbFC1c5NmE97OfZq
+         DKb5APHfqw8Q9OIT2nSClQ6gAWzIuHc9ZI7DwsPmX+taeYs9kSVKyg9TYLDFDZud5Up8
+         vfIrWcXGdfk+U4eZ3f5Cs4hGQrNpbNSR/6XywidzeuDOqN0XHoeu3S090pUaGOxse7z2
+         whcN4x8YlDM5yRkqrvy7vJmnVOG5z+LL73ozPlsYYWCIaDm2UkyvFJ+l84/7oLnpR2rO
+         JUDy4k6+sDFzL9DHoY3k537qGV+rFV8pDRZm3dr96hIr9XE4ZHQYw+/zrac1Sxg44i3h
+         wU7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733238616; x=1733843416;
+        h=cc:to:subject:message-id:date:references:mime-version:in-reply-to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=p0ezAqCKNWBAiuxAl3Y2kJKU1te23QxF0JI4IxEegt0=;
+        b=qupVT+x1Xn/JM+Sx54+MfaqOS9rAqj4R931uejS+ArjIP3a7WYKFxNUZaEfU7gMb6f
+         HYyMdaEqCozNhKwI9LALvVuc/kWd01TqSCKAqT8t3ZyNnARbXGvD2Je5tbBGci2kjBIK
+         YbsSjt46tWvUSv+1QpUoO+d1J53TYWXY6PqDBvHVpb6Na5LoHsRwA2pPZVzedZ0TO92R
+         u05w9e/O2xs3icHprPaG2EfWi0X1zW4oGAw/FUyRXfyFDGvUU2u2GCDiVnRfllgEHXbk
+         2eUI5yCzqHzzBeS76IJTx+bmKhM+Ao1SRNO7Sycq+JV6vlqTK7wjflc6aTb0ygwie+5H
+         oWoQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUZy8ZeA1j53QKX3C8Q/z41fVdT4nO91pSnh1Mcejif8sgcAJE2pIADanI9aeeb5dqobYtJizq85TcVLz8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyyx7jujspK7FSuVEoX82QHvijjE0KZ3edBokqz2g5RzvOyNVci
+	clnd5jar3aIYrfTZXgDIt4OjD1Whxz1vm2C0v41zcjLMgu4zujaXQnjjnoxr5QxO/R/cCgksodX
+	JDCXFBRl8cUMfAQqxGd8zubCg1FIAU54EfvhyrA==
+X-Gm-Gg: ASbGncvBZ0wzpKU6x3Dd1c/urd/P9MaKZDyFNByY8d7N8JAmRKCo4ezyRFbqQOr25uX
+	aZon8sWMVCLayA8aIP1r1apld4xbGV9o=
+X-Google-Smtp-Source: AGHT+IGIUqVE82b+dvpoCo08vBA9hrCj+aCzVv5qZgUaQJourUSn2MQUzu2S39lm+R0r8d/vqoADCueK4RgwsGjH9Bk=
+X-Received: by 2002:a05:6a21:38b:b0:1e0:d9e9:a2c7 with SMTP id
+ adf61e73a8af0-1e1653b9c06mr3889882637.15.1733238616139; Tue, 03 Dec 2024
+ 07:10:16 -0800 (PST)
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Tue, 3 Dec 2024 10:10:13 -0500
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+In-Reply-To: <d6220576-eaf5-4415-b25f-b5984255ab78@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/7] riscv: ftrace: atmoic patching and preempt
- improvements
-To: =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>, Andy Chiu
-	<andybnac@gmail.com>
-CC: Palmer Dabbelt <palmer@dabbelt.com>, Nathan Chancellor
-	<nathan@kernel.org>, Justin Stitt <justinstitt@google.com>, Bill Wendling
-	<morbo@google.com>, Nick Desaulniers <ndesaulniers@google.com>, Albert Ou
-	<aou@eecs.berkeley.edu>, Paul Walmsley <paul.walmsley@sifive.com>,
-	<linux-kernel@vger.kernel.org>, <linux-riscv@lists.infradead.org>,
-	<llvm@lists.linux.dev>, <bjorn@rivosinc.com>, <puranjay12@gmail.com>,
-	<alexghiti@rivosinc.com>, <yongxuan.wang@sifive.com>,
-	<greentime.hu@sifive.com>, <nick.hu@sifive.com>, <nylon.chen@sifive.com>,
-	<tommy.wu@sifive.com>, <eric.lin@sifive.com>, <viccent.chen@sifive.com>,
-	<zong.li@sifive.com>, <samuel.holland@sifive.com>
-References: <20241127172908.17149-1-andybnac@gmail.com>
- <87ldwxot7i.fsf@all.your.base.are.belong.to.us>
-Content-Language: en-US
-From: Evgenii Shatokhin <e.shatokhin@yadro.com>
-In-Reply-To: <87ldwxot7i.fsf@all.your.base.are.belong.to.us>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: T-EXCH-10.corp.yadro.com (172.17.11.60) To
- T-EXCH-10.corp.yadro.com (172.17.11.60)
+References: <20241203-crypto-qce-refactor-v1-0-c5901d2dd45c@linaro.org>
+ <20241203-crypto-qce-refactor-v1-9-c5901d2dd45c@linaro.org> <d6220576-eaf5-4415-b25f-b5984255ab78@linaro.org>
+Date: Tue, 3 Dec 2024 10:10:13 -0500
+Message-ID: <CAMRc=MevaM4tUNQUs_LjFYaUtDH=YqE-t2gBponGqtK5xE9Gpw@mail.gmail.com>
+Subject: Re: [PATCH 9/9] crypto: qce - switch to using a mutex
+To: neil.armstrong@linaro.org
+Cc: linux-crypto@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	Thara Gopinath <thara.gopinath@gmail.com>, Herbert Xu <herbert@gondor.apana.org.au>, 
+	"David S. Miller" <davem@davemloft.net>, Stanimir Varbanov <svarbanov@mm-sol.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On 03.12.2024 15:18, Björn Töpel wrote:
-> Andy!
-> 
-> "atomic" spelling in the Subject line.
-> 
-> Andy Chiu <andybnac@gmail.com> writes:
-> 
->> Changes in v3:
->> - Add a fix tag for patch 1
->> - Add a data fence before sending out remote fence.i (6)
->> - Link to v2: https://lore.kernel.org/all/20240628-dev-andyc-dyn-ftrace-v4-v2-0-1e5f4cb1f049@sifive.com/
-> 
-> Hmm, the fixes tag was not included.
-> 
-> Also, there was a lot of comments from v2 that was not addressed:
-> 
->   * Minor spelling nits
->   * Breaking DIRECT_CALL, and include Puranjay's CALL_OPS work in the
->     same series for DIRECT_CALL, to avoid breakage.
+On Tue, 3 Dec 2024 14:53:21 +0100, neil.armstrong@linaro.org said:
+> On 03/12/2024 10:19, Bartosz Golaszewski wrote:
+>> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>>
+>> Having switched to workqueue from tasklet, we are no longer limited to
+>> atomic APIs and can now convert the spinlock to a mutex. This, along
+>> with the conversion from tasklet to workqueue grants us ~15% improvement
+>> in cryptsetup benchmarks for AES encryption.
+>
+> Can you share on which platforms you did the tests and the results you got ?
+>
 
-Yes, FTRACE_WITH_DIRECT_CALLS is currently broken. If I try to insmod 
-samples/ftrace/ftrace-direct.ko, it reports a failure:
+Sure, I tested on sm8650 with the following results (they vary from
+one run to other but are more or less in this range):
 
+With this series:
 
-[  179.531472] ------------[ ftrace bug ]------------
-[  179.531761] ftrace failed to modify
-[  179.531786] [<ffffffff8005f9ac>] wake_up_process+0x0/0x24
-[  179.532577]  actual:   97:e2:fa:ff:13:00:00:00
-[  179.533211] Setting ftrace call site to call ftrace function
-[  179.534409] ftrace record flags: 99980001
-[  179.534692]  (1)     tramp: ftrace_caller+0x0/0x34 
-(call_direct_funcs+0x0/0x14)
-[  179.534692]  expected tramp: ffffffff01b0d000
-...
+#     Algorithm |       Key |      Encryption |      Decryption
+        aes-cbc        128b        94.1 MiB/s       138.6 MiB/s
+    serpent-cbc        128b               N/A               N/A
+    twofish-cbc        128b               N/A               N/A
+        aes-cbc        256b        94.8 MiB/s       128.5 MiB/s
+    serpent-cbc        256b               N/A               N/A
+    twofish-cbc        256b               N/A               N/A
+        aes-xts        256b       132.9 MiB/s       131.8 MiB/s
+    serpent-xts        256b               N/A               N/A
+    twofish-xts        256b               N/A               N/A
+        aes-xts        512b       122.6 MiB/s       122.4 MiB/s
+    serpent-xts        512b               N/A               N/A
+    twofish-xts        512b               N/A               N/A
 
-> 
-> I'll have a look at the barriers (which came up at plumbers)!
+Without it:
 
-Thank you!
-After this series and the CALL_OPS work are done, dynamic Ftrace for 
-RISC-V will be even more valuable in production use cases.
+#     Algorithm |       Key |      Encryption |      Decryption
+        aes-cbc        128b        96.4 MiB/s       141.0 MiB/s
+    serpent-cbc        128b               N/A               N/A
+    twofish-cbc        128b               N/A               N/A
+        aes-cbc        256b        67.0 MiB/s        97.8 MiB/s
+    serpent-cbc        256b               N/A               N/A
+    twofish-cbc        256b               N/A               N/A
+        aes-xts        256b       131.7 MiB/s       132.0 MiB/s
+    serpent-xts        256b               N/A               N/A
+    twofish-xts        256b               N/A               N/A
+        aes-xts        512b        93.9 MiB/s        96.8 MiB/s
+    serpent-xts        512b               N/A               N/A
+    twofish-xts        512b               N/A               N/A
 
-> 
-> 
-> Cheers,
-> Björn
-> 
+AES-CBC and AES-XTS with shorter keys remain pretty much the same. I'm not
+sure why that is. I also tested on sa8775p but there are no visible
+improvements there. :(
 
-Regards,
-Evgenii
+Bart
 
