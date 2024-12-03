@@ -1,99 +1,170 @@
-Return-Path: <linux-kernel+bounces-429513-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 944F29E1F3B
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 15:32:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D045C9E1DFE
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 14:44:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C7AC6B28448
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 13:09:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 448C4B35F24
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 13:13:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CD3E1EE01F;
-	Tue,  3 Dec 2024 13:09:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E6711EE01F;
+	Tue,  3 Dec 2024 13:12:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FugLlNpf"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="R2gpCFAy"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E72F1E7648
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 13:09:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6BE819A297
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 13:12:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733231365; cv=none; b=CY75X9zJPbs+cQtTeIshsnFsvCbyOTDTCf1eAawrBj1SgbxNSE88o8eh7AlqJUXzzPO9vOnbBlGv2XLic+e4el+9sP1jnwHk390kBA8D4vWAxSTGNfp/vaOAt4kWLkwccCz0IImUXP2MhaWaMbOwRN41iAh+MAZQldqfxk/JAKI=
+	t=1733231577; cv=none; b=f42Cva7mBQDiTYt8cxhTB3u+/sdlSmxuPoohEjIKUO3/L4LJdeafXEkufc64XKcmDHFR4HJVCoNYYJ5StaiXv0MvR2XLtApu+J2ektpPUnMFxW2Zl2qJWee19uMtu3OqTatXkFPLDTdqUHp/zjEvwcnBA6q0qR5YfvSdHvmasvU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733231365; c=relaxed/simple;
-	bh=YDR0YWnLKGpWYxX3gsPfp6VDfdpjHUDFZy8cOfRDBUk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KG3RVFhMnyodmmgLlxOAqaWWGaQ48Ftnofwfy/5czROcV1fNy5A+7Ou4m2pcHGEQgrM1iY9wJEuZ6H7p4PtPmSa5m6tMg8ZArDI+uX9A/HCCVNg6tRPIGBUq5sI0WAf525b51ZMDdPUxutJPIjLyPVpy3gg2g4emeQe+BhUo7gg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FugLlNpf; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-434acf1f9abso50713305e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 05:09:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733231362; x=1733836162; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=YDR0YWnLKGpWYxX3gsPfp6VDfdpjHUDFZy8cOfRDBUk=;
-        b=FugLlNpf94Emlvnc5inyluRDnT9mo36guXpwbXFve/LZJGA2yJMsZFpdHVw95AAwQ/
-         PuD6DrQRfLq5mMsElkn/snh1OsE7hEcKJMHbXmdUtViZJBRgehZz8nrUq5+ec9tTeEu3
-         iGHUC6BZT4p+Uea7Gx8w57UsN88UuIaC+XUQItlvwq9Rp9c0MC2dmLYj3c51Vh39YvQE
-         bSQl36K9/JTxqLmZYmQ5LrfrcFaTlOqWC6G6ShzQYpKf3hh1OCT2DM3v9Cp+1HFmh+AH
-         xs3MSyP5swocQIcl0WI600vISb58q0B++zPk2VwOyMFYTNn/3imPUW/F8gZQkeSF5OFF
-         /SnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733231362; x=1733836162;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YDR0YWnLKGpWYxX3gsPfp6VDfdpjHUDFZy8cOfRDBUk=;
-        b=F0d+I2EKU8QrwSt0DvWuYtxNgkb/l9JQ85XAP+m9Ft3LB6ieI4cdjtAgLTEnxnOfGs
-         a5yQvZ7cPiVgrMinNlBbigCBc33ScCq21/vIOGUVkVrzHtsb2JIr/ZhOs0w+rcpp2v3U
-         I2VOpEtKMcB2f778jAtWsOc2tC6y+jYaPV2e3HzTHKgScHiiHwap6w9zdWZMa4qnJnbG
-         c5LHcsReLo2beb53XxE6KthZiGX8KIzqfAZsfKgyYjjqlZk7FJYwQzReN5QdM+gk/hdC
-         ixZ9wZjFVsmoZR8QaY3/hxybipuMkms54RzvYWxVrmoe6v3UzVS2YVZSejVFtskw9JzW
-         hNRQ==
-X-Gm-Message-State: AOJu0YwZENd85k14RF3DtnUBKNzSNsSWmW1H8DgEXXx/4NTWOMmjhH2o
-	r6gomDG1x0oO/vZ7t/2G8g9ox7E3ZrsJ6z8bGZ/crlQUFff61CO+G8p0FmFGR4Y=
-X-Gm-Gg: ASbGncuELdMoU+cJzvgaBouzIsY0rhwIZIt6+R4+GftrEy/6zx3dC/J5LazgLD31AtS
-	Ya1gLi9dRIeODtm2yEh/TSMy7EySaBZsH0lPAV7XtCdNll8xDXHn9ysXjCfi7xIV/tb97UhX8WV
-	gc3tuNk8pH33ojdbHMS5WD9hCGdneq+jS+SgFMi2TesH4BX5qWBGT8Ti/zUXuZUWHyQzWwAaysK
-	diYJHwLPK+oCwt0GTB8crhl2yn1kgbqpPl1rsSP9LeH5+993y2a5UQsQw==
-X-Google-Smtp-Source: AGHT+IEgjZh4TC8j5dPhQityM39qffPlfEhObsWPGXvaJj36DpzimRcwsGyIcCWZhT//1+YJClpZ4Q==
-X-Received: by 2002:a05:600c:4f87:b0:42c:b5f1:44ff with SMTP id 5b1f17b1804b1-434d0a07e55mr21049565e9.24.1733231362310;
-        Tue, 03 Dec 2024 05:09:22 -0800 (PST)
-Received: from [192.168.0.14] ([79.115.63.27])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434b0f32589sm193447135e9.28.2024.12.03.05.09.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Dec 2024 05:09:21 -0800 (PST)
-Message-ID: <dad1bbd4-0eee-480a-8a2a-08157dd609d8@linaro.org>
-Date: Tue, 3 Dec 2024 13:09:20 +0000
+	s=arc-20240116; t=1733231577; c=relaxed/simple;
+	bh=MV9KIEDca/ZonJjDTNlYavudz+Qex36ZiDAyMFgD2HA=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=Bg81V36hdUjVtEOJByYqbn9klHHC3RgktTGUDU0bDRoHdEtL/vrmMvY32v2Jyi8EZxuX3weA6Fv9+sww/ywbf1FhZyVSJJA7tbZZxQ3R2KNypMnjcEc+RFP6rWXZZlxGVFnGQlqFr9t2+R3Gw3RafO9Mjqd/BqY6F1bKHq7UKAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=R2gpCFAy; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733231575; x=1764767575;
+  h=date:from:to:cc:subject:message-id;
+  bh=MV9KIEDca/ZonJjDTNlYavudz+Qex36ZiDAyMFgD2HA=;
+  b=R2gpCFAyku51MQwekaJZCWFYn8ZuIpxItGbCIKOILWilvtMJx3Y8dBkf
+   7un20iw88mpJy7rEsnBd1Ec1xtVgcSmgAJzBWNR3s+IXAZkZK3JaG7D1l
+   0DdBGJvx/6mTJ8BxHxJH5T3CwhhI2EPEGBcPNUry+DNMSWJ432lqF/vXU
+   mavCivVb0KO2kdK6h6AilhQR+1XqHACEpWL1irV7KP7dIojzGZcwAGyV1
+   u6XLfwPeyOS2NQeoVYMBdVE0PYcWDnpgwh1bK7rhUOeEpFReOBmsIZ+VU
+   3pUcaYycsH6rkXItsapwjrirQsLOR55362pvbpxqv57FXNUmibRMaSBNg
+   A==;
+X-CSE-ConnectionGUID: rNmlmiUNQQKrhlmZ2KHdHw==
+X-CSE-MsgGUID: DF2eymT3TB6+zHrjhTCJaQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11274"; a="33500275"
+X-IronPort-AV: E=Sophos;i="6.12,205,1728975600"; 
+   d="scan'208";a="33500275"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Dec 2024 05:12:55 -0800
+X-CSE-ConnectionGUID: /9GPbROYT/Gi2qa4FtvnBw==
+X-CSE-MsgGUID: 523smwjMQ/ejuHOZsy0i/A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,205,1728975600"; 
+   d="scan'208";a="93517231"
+Received: from lkp-server01.sh.intel.com (HELO 388c121a226b) ([10.239.97.150])
+  by orviesa006.jf.intel.com with ESMTP; 03 Dec 2024 05:12:55 -0800
+Received: from kbuild by 388c121a226b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tIShw-0000hG-0M;
+	Tue, 03 Dec 2024 13:12:52 +0000
+Date: Tue, 03 Dec 2024 21:10:24 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:x86/urgent] BUILD SUCCESS
+ ae6012d72fa60c9ff92de5bac7a8021a47458e5b
+Message-ID: <202412032114.JypYidtS-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] MAINTAINERS: add myself and Tudor as reviewers for Google
- Tensor SoC
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Peter Griffin <peter.griffin@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org
-References: <20241203-gs101-maintainers-v1-1-f287036dbde5@linaro.org>
-Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <20241203-gs101-maintainers-v1-1-f287036dbde5@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/urgent
+branch HEAD: ae6012d72fa60c9ff92de5bac7a8021a47458e5b  x86/pkeys: Ensure updated PKRU value is XRSTOR'd
 
-On 12/3/24 1:03 PM, André Draszik wrote:
-> Add myself and Tudor as reviewers for the Google Tensor SoC alongside
+elapsed time: 720m
 
-Acked-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+configs tested: 78
+configs skipped: 98
+
+The following configs have been built successfully.
+More configs may be tested in the coming days.
+
+tested configs:
+alpha                             allnoconfig    gcc-14.2.0
+alpha                            allyesconfig    clang-20
+arc                              allmodconfig    clang-20
+arc                               allnoconfig    gcc-14.2.0
+arc                              allyesconfig    clang-20
+arc                   randconfig-001-20241203    clang-20
+arc                   randconfig-002-20241203    clang-20
+arm                              allmodconfig    clang-20
+arm                               allnoconfig    gcc-14.2.0
+arm                              allyesconfig    clang-20
+arm                   randconfig-001-20241203    clang-20
+arm                   randconfig-002-20241203    clang-20
+arm                   randconfig-003-20241203    clang-20
+arm                   randconfig-004-20241203    clang-20
+arm64                            allmodconfig    clang-20
+arm64                             allnoconfig    gcc-14.2.0
+arm64                 randconfig-001-20241203    clang-20
+arm64                 randconfig-002-20241203    clang-20
+arm64                 randconfig-003-20241203    clang-20
+arm64                 randconfig-004-20241203    clang-20
+csky                              allnoconfig    gcc-14.2.0
+hexagon                          allmodconfig    clang-20
+hexagon                           allnoconfig    gcc-14.2.0
+hexagon                          allyesconfig    clang-20
+i386        buildonly-randconfig-001-20241203    clang-19
+i386        buildonly-randconfig-001-20241203    gcc-12
+i386        buildonly-randconfig-002-20241203    clang-19
+i386        buildonly-randconfig-002-20241203    gcc-12
+i386        buildonly-randconfig-003-20241203    clang-19
+i386        buildonly-randconfig-004-20241203    clang-19
+i386        buildonly-randconfig-005-20241203    clang-19
+i386        buildonly-randconfig-006-20241203    clang-19
+i386        buildonly-randconfig-006-20241203    gcc-12
+loongarch                         allnoconfig    gcc-14.2.0
+loongarch                 loongson3_defconfig    gcc-14.2.0
+m68k                              allnoconfig    gcc-14.2.0
+m68k                          hp300_defconfig    gcc-14.2.0
+m68k                       m5275evb_defconfig    gcc-14.2.0
+microblaze                        allnoconfig    gcc-14.2.0
+mips                              allnoconfig    gcc-14.2.0
+nios2                         3c120_defconfig    gcc-14.2.0
+nios2                             allnoconfig    gcc-14.2.0
+openrisc                          allnoconfig    clang-20
+openrisc                         allyesconfig    gcc-14.2.0
+parisc                           allmodconfig    gcc-14.2.0
+parisc                            allnoconfig    clang-20
+parisc                           allyesconfig    gcc-14.2.0
+powerpc                          allmodconfig    gcc-14.2.0
+powerpc                           allnoconfig    clang-20
+powerpc                          allyesconfig    gcc-14.2.0
+powerpc                      arches_defconfig    gcc-14.2.0
+powerpc                    ge_imp3a_defconfig    gcc-14.2.0
+powerpc                 mpc8315_rdb_defconfig    gcc-14.2.0
+powerpc                     tqm8541_defconfig    gcc-14.2.0
+riscv                            allmodconfig    gcc-14.2.0
+riscv                             allnoconfig    clang-20
+riscv                            allyesconfig    gcc-14.2.0
+s390                              allnoconfig    clang-20
+sh                                allnoconfig    gcc-14.2.0
+sh                        edosk7760_defconfig    gcc-14.2.0
+sh                          kfr2r09_defconfig    gcc-14.2.0
+sh                           se7722_defconfig    gcc-14.2.0
+sparc                             allnoconfig    gcc-14.2.0
+um                               allmodconfig    clang-20
+um                                allnoconfig    clang-20
+um                               allyesconfig    clang-20
+x86_64      buildonly-randconfig-001-20241203    clang-19
+x86_64      buildonly-randconfig-001-20241203    gcc-11
+x86_64      buildonly-randconfig-002-20241203    clang-19
+x86_64      buildonly-randconfig-002-20241203    gcc-11
+x86_64      buildonly-randconfig-003-20241203    clang-19
+x86_64      buildonly-randconfig-003-20241203    gcc-11
+x86_64      buildonly-randconfig-004-20241203    gcc-11
+x86_64      buildonly-randconfig-005-20241203    gcc-11
+x86_64      buildonly-randconfig-005-20241203    gcc-12
+x86_64      buildonly-randconfig-006-20241203    clang-19
+x86_64      buildonly-randconfig-006-20241203    gcc-11
+xtensa                            allnoconfig    gcc-14.2.0
+
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
