@@ -1,168 +1,200 @@
-Return-Path: <linux-kernel+bounces-430294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEC159E2EE8
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 23:16:35 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54AB79E2EE9
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 23:16:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7370E168C74
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 22:15:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D7ECF168D6C
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 22:15:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 271C920A5E7;
-	Tue,  3 Dec 2024 22:14:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ISLacKa7"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C20501FA84F;
-	Tue,  3 Dec 2024 22:14:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AEA920A5C6;
+	Tue,  3 Dec 2024 22:14:59 +0000 (UTC)
+Received: from vmicros1.altlinux.org (vmicros1.altlinux.org [194.107.17.57])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B1761DF27E
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 22:14:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.107.17.57
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733264073; cv=none; b=PSLkPkPg+mx0NzlpMO6noygDb1ecrdg314IT0Vtikg/nLwzMAzJB1wNt8zG+GfGUWEhRsfbBKXrW0HYAJEu+jL/Aa0fkIUS2uoQ9XXLYb1vwqjvHpBpdDqp2weA+lLqVix6F91I64Lpe7FZan3b8h/ZMmEdORy1mSZKIYeaVvgw=
+	t=1733264098; cv=none; b=bs6231JLUAceZTJZClhwJFbxQlP6QeugPUTXkwWkoSD5hq+VcyOlGkFO8fIzTXmDnT7W6I4U3AO0insjr4FVtI89PuoDIEE9g1WZ0r0hgNgCNbyjJQiKKwqGfnQ0vTPnpURU7Q5QBrCkgLzKYgScL5t/ObPm2I/ODN4g9pQy6CQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733264073; c=relaxed/simple;
-	bh=uPJe1PLra4CQK5SdJPdBzE3oonO1F1+GBrCkrCvazcs=;
+	s=arc-20240116; t=1733264098; c=relaxed/simple;
+	bh=o1b5u9VTECOlNRkmVE8N6WkwAQCWcP9LJ/X1fsdZg7A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jMb2vF9bV5lR591OWTfBGYnGW/sUTa7PjzbKbGH4Vyfu1QMYG9L+J6jSI6vvF0k/djQRfrSzofBO2/7y+i/rB0WfV4FOYe/Coc0WVA/HBaAhuJsy9utY8tg8wsJ2ZrE9ZRCSlsxLZAYg4hunomXa8rgArvp1DYqPRIJCW1AC3Aw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ISLacKa7; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-385ea29eee1so2418225f8f.3;
-        Tue, 03 Dec 2024 14:14:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733264070; x=1733868870; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZEKd2KtRYUftLCzklvlf03oHPrrEzWAjMeO8mfAXl9E=;
-        b=ISLacKa72TUs/OWZDGhhBiUuCiU/icvYe04bbmars6jqOnlZVS1N7Jj1aOtILSgwjw
-         O01CltVx6Bn+hnd7DCBcDeyk7Xfqy7xRdf/RYJZBr3WXpvFwHeS06Dyif9lbR/kSC3eU
-         MVvRcs8/jSE21N3bnmFhN3WYD5l3lAg6ja5cv5+eASoMi739alyhkB275zlVavITRbwb
-         72KbTiy7L1MmDWpLzb426Mh4itfDMIWQq9Np2WgTGWa2k8RG8Mp0fh4R2h9aZjofEEq/
-         1itnIKtOxnAn0ddNKbezZcz9vYULgGzlD8IoWvadccF+KVpyh347vWysgbKgAdr85pGM
-         NxuQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733264070; x=1733868870;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZEKd2KtRYUftLCzklvlf03oHPrrEzWAjMeO8mfAXl9E=;
-        b=bhs1I6vw6PUisPYppLa81dDVgC1+cnS+1qzQEoG8QsN6nKz+OAnt8VEQwj9KmcYbvx
-         r4OAJLM/xkk5FAQj47urNBvXHYayDE2kBHZJKarDIbYc6yU6ry0ot2PFQUNYsprbn0hX
-         vKx82KXJ9ZLqrH0urf+H+D37J5woFqJY2X37cZuK/dfBPIArWnYiLYPGyTKde5LGIRGV
-         g6xNVq21HcthQK+lBY5RY5E7CkPeNaR8qLZPJC1+Bwaph1mQFoWTfZEvKtR+PhK8oFMb
-         TNSFPQ8RnjTRV1GM99DxyL9WvLlE2SEqYlBgRvu5zZmf9J6FWD9JF6PycaJ5RlG8xGDJ
-         ASzw==
-X-Forwarded-Encrypted: i=1; AJvYcCVRRNE3qLSZsDDJ1NoAhQb5pEzuvpRTsHLN35IN5B/KElQmZCg/6d7ZOst89ArCkxvfqSryVfKzu0E=@vger.kernel.org, AJvYcCVzVFVr/Qxxs0UjP79gL0xGGkxjVvXCH4Kfz2R/cGT6TDaPyO2Brg444L636aZtXkf66dSG5yrrxInwWuRh@vger.kernel.org
-X-Gm-Message-State: AOJu0YwhogheUKe6RRUrPAKpZLODPSTcfnNfdUeD+85Y3meNIZ4rKjKd
-	Gz/xmQWAiOPiqwfibR9dMMo4MlnrF88AA7ss0Pknn/R3/Ko9csbz
-X-Gm-Gg: ASbGncvzHRus5GcjLrEun/fDyVRH7yox24l3JlaG4SJ2zYn9NhpLBoLBxUOTzmZt9zv
-	fS/yDatKqyf039xDwPyKu4nAdhWKwbwVbzBnw/cqehAyGuaKvfsq/6hRztsRqlrDEXSq39Ygpo9
-	NecTBN1HzzslRq/Jbcnb2x3wRckwHD7dTHbRoZr1uHYiJTTEEnrRGYq5OIqarGNgr9ITc5uYSE+
-	cvx6dqz3xGqbXkUUSkMCfo2x0JvquPzeo/qqHQhk62gMsOQqPii7QpjW8aG
-X-Google-Smtp-Source: AGHT+IHLYgaBrFFuZ+yssHooipIVuaZYQnPn8gMyCZL9dYlY/sI/RHSvvFitPKH0IUHhbiTNKOqCbw==
-X-Received: by 2002:a5d:5f8b:0:b0:385:f1f2:13ee with SMTP id ffacd0b85a97d-385fd53ed92mr3844314f8f.46.1733264069916;
-        Tue, 03 Dec 2024 14:14:29 -0800 (PST)
-Received: from vamoirid-laptop ([2a04:ee41:82:7577:56d9:cf1e:faf4:54e1])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385e5e3629fsm10599846f8f.93.2024.12.03.14.14.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Dec 2024 14:14:29 -0800 (PST)
-Date: Tue, 3 Dec 2024 23:14:27 +0100
-From: Vasileios Amoiridis <vassilisamir@gmail.com>
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: lars@metafoo.de, krzysztof.kozlowski@linaro.org, nuno.sa@analog.com,
-	u.kleine-koenig@baylibre.com, abhashkumarjha123@gmail.com,
-	jstephan@baylibre.com, dlechner@baylibre.com,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC 6/6] iio: core: mark scan_timestamp as __private
-Message-ID: <Z0-Cw-R1FJZCpnPY@vamoirid-laptop>
-References: <20241130002710.18615-1-vassilisamir@gmail.com>
- <20241130002710.18615-7-vassilisamir@gmail.com>
- <20241130141954.07423793@jic23-huawei>
+	 Content-Type:Content-Disposition:In-Reply-To; b=oy/9tvAJVaCRe2O99wPa19QmaOUF2ox/Lkthe5o88neWr7q9RagGAJyYmim3UMVt5ud5rb5qCcjJSU7JgGYSHQyjUF83sJL/i9ZKlYzGVAy3ULzu5mSxzC9TMeMU08kVv6+J9V3hpRiJKzBO4KsOyqQnzzdybbbrg7YopZyRgrM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org; spf=pass smtp.mailfrom=altlinux.org; arc=none smtp.client-ip=194.107.17.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altlinux.org
+Received: from imap.altlinux.org (imap.altlinux.org [194.107.17.38])
+	by vmicros1.altlinux.org (Postfix) with ESMTP id E12D172C97D;
+	Wed,  4 Dec 2024 01:14:53 +0300 (MSK)
+Received: from altlinux.org (sole.flsd.net [185.75.180.6])
+	by imap.altlinux.org (Postfix) with ESMTPSA id CFD1636D0178;
+	Wed,  4 Dec 2024 01:14:53 +0300 (MSK)
+Date: Wed, 4 Dec 2024 01:14:53 +0300
+From: Vitaly Chikunov <vt@altlinux.org>
+To: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
+Cc: Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
+	"james.morse@arm.com" <james.morse@arm.com>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"oliver.upton@linux.dev" <oliver.upton@linux.dev>,
+	"mark.rutland@arm.com" <mark.rutland@arm.com>,
+	"Wangzhou (B)" <wangzhou1@hisilicon.com>,
+	"Dmitry V. Levin" <ldv@altlinux.org>
+Subject: Re: v6.13-rc1: Internal error: Oops - Undefined instruction:
+ 0000000002000000 [#1] SMP
+Message-ID: <20241203221453.mwh6sozyczi4ec2k@altlinux.org>
+References: <20241202045830.e4yy3nkvxtzaybxk@altlinux.org>
+ <20241202153618.GA6834@willie-the-truck>
+ <86ttbmt71k.wl-maz@kernel.org>
+ <20241202155940.p267a3tz5ypj4sog@altlinux.org>
+ <86ser6t6fs.wl-maz@kernel.org>
+ <20241202223119.k3uod4ksnlf7gqh2@altlinux.org>
+ <20241203092721.j473dthkbq6wzez7@altlinux.org>
+ <1847e34fa7724d28aeb22d93752f64f2@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=koi8-r
 Content-Disposition: inline
-In-Reply-To: <20241130141954.07423793@jic23-huawei>
+In-Reply-To: <1847e34fa7724d28aeb22d93752f64f2@huawei.com>
 
-On Sat, Nov 30, 2024 at 02:19:54PM +0000, Jonathan Cameron wrote:
-> On Sat, 30 Nov 2024 01:27:10 +0100
-> Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
-> 
-> > Since there are no more direct accesses to the indio_dev->scan_timestamp
-> > value, it can be marked as __private and use the macro ACCESS_PRIVATE()
-> > in order to access it. Like this, static checkers will be able to inform
-> > in case someone tries to either write to the value, or read its value
-> > directly.
+Shameer, Marc, Oliver, Will,
+
+On Tue, Dec 03, 2024 at 10:03:11AM +0000, Shameerali Kolothum Thodi wrote:
+> > -----Original Message-----
+> > From: linux-arm-kernel <linux-arm-kernel-bounces@lists.infradead.org> On
+> > Behalf Of Vitaly Chikunov
+> > Sent: Tuesday, December 3, 2024 9:27 AM
+> > To: Marc Zyngier <maz@kernel.org>
+> > Cc: Will Deacon <will@kernel.org>; james.morse@arm.com; linux-arm-
+> > kernel@lists.infradead.org; Catalin Marinas <catalin.marinas@arm.com>;
+> > linux-kernel@vger.kernel.org; oliver.upton@linux.dev;
+> > mark.rutland@arm.com
+> > Subject: Re: v6.13-rc1: Internal error: Oops - Undefined instruction:
+> > 0000000002000000 [#1] SMP
 > > 
-> > Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
-> > ---
-> >  drivers/iio/industrialio-buffer.c | 2 +-
-> >  include/linux/iio/iio.h           | 4 ++--
-> >  2 files changed, 3 insertions(+), 3 deletions(-)
+> > Marc,
 > > 
-> > diff --git a/drivers/iio/industrialio-buffer.c b/drivers/iio/industrialio-buffer.c
-> > index 8104696cd475..c332741f3cf4 100644
-> > --- a/drivers/iio/industrialio-buffer.c
-> > +++ b/drivers/iio/industrialio-buffer.c
-> > @@ -1137,7 +1137,7 @@ static int iio_enable_buffers(struct iio_dev *indio_dev,
-> >  	int ret;
-> >  
-> >  	indio_dev->active_scan_mask = config->scan_mask;
-> > -	indio_dev->scan_timestamp = config->scan_timestamp;
-> > +	ACCESS_PRIVATE(indio_dev, scan_timestamp) = config->scan_timestamp;
-> >  	indio_dev->scan_bytes = config->scan_bytes;
-> >  	iio_dev_opaque->currentmode = config->mode;
-> >  
-> > diff --git a/include/linux/iio/iio.h b/include/linux/iio/iio.h
-> > index 5661794d1127..669b4ef1280d 100644
-> > --- a/include/linux/iio/iio.h
-> > +++ b/include/linux/iio/iio.h
-> > @@ -611,7 +611,7 @@ struct iio_dev {
-> >  	const unsigned long		*available_scan_masks;
-> >  	unsigned int			__private masklength;
-> >  	const unsigned long		*active_scan_mask;
-> > -	bool				scan_timestamp;
-> > +	bool				__private scan_timestamp;
-> >  	struct iio_trigger		*trig;
-> >  	struct iio_poll_func		*pollfunc;
-> >  	struct iio_poll_func		*pollfunc_event;
-> > @@ -908,7 +908,7 @@ int iio_active_scan_mask_index(struct iio_dev *indio_dev);
-> >   */
-> >  static inline bool iio_is_soft_ts_enabled(const struct iio_dev *indio_dev)
-> >  {
-> > -	return indio_dev->scan_timestamp;
-> > +	return ACCESS_PRIVATE(indio_dev, scan_timestamp);
-> If we only end up with one use of this (based on feedback on other drivers)
-> I'd tempted to deliberately not provide this convenience function and instead
-> just use ACCESS_PRIVATE() directly in iio_push_to_buffers_with_timestamp()
+> > On Tue, Dec 03, 2024 at 01:31:19AM +0300, Vitaly Chikunov wrote:
+> > > On Mon, Dec 02, 2024 at 04:07:03PM +0000, Marc Zyngier wrote:
+> > > > On Mon, 02 Dec 2024 15:59:40 +0000,
+> > > > Vitaly Chikunov <vt@altlinux.org> wrote:
+> > > > >
+> > > > > Marc,
+> > > > >
+> > > > > On Mon, Dec 02, 2024 at 03:53:59PM +0000, Marc Zyngier wrote:
+> > > > > >
+> > > > > > What the log doesn't say is what the host is. Is it 6.13-rc1 as well?
+> > > > >
+> > > > > No, host is 6.6.60.
+> > > >
+> > > > Right. I wouldn't be surprised if:
+> > > >
+> > > > - this v6.6 kernel doesn't hide the MPAM feature as it should (and
+> > > >   that's proably something we should backport)
+> > >
+> > > How to confirm this? Currently I cannot find any (case-insensitive)
+> > > "MPAM" files in /sys, nor mpam string in /proc/cpuinfo, nor MPAM
+> > > strings in `strace -v` (as it decodes some KVM ioctls) of qemu process.
+> > >
+> > > >
+> > > > - you get a nastygram in the host log telling you that the guest has
+> > > >   executed something it shouldn't (you'll get the encoding of the
+> > > >   instruction)
+> > >
+> > > I requested admins of the box for dmesg output since I don't have root
+> > > access myself and nowadays dmesg is not accessible for a user.
+> > 
+> > This is what they reported:
+> > 
+> >   kvm [2502822]: Unsupported guest sys_reg access at: ffff80008003e9f0
+> > [000000c5]
+> >                    { Op0( 3), Op1( 0), CRn(10), CRm( 4), Op2( 4), func_read },
+> > 
 > 
-> Nice work. Particularly by highlighting some 'odd corners' in drivers that
-> probably make no real sense to keep ;)
+> As Will pointed out I think this is access to MPAMIDR_EL1 and is from this
+> code here,
 > 
-> Jonathan
+> +++ b/arch/arm64/kernel/cpuinfo.c
+> @@ -478,6 +478,9 @@ static void __cpuinfo_store_cpu(struct cpuinfo_arm64 *info)
+>  	if (id_aa64pfr0_32bit_el0(info->reg_id_aa64pfr0))
+>  		__cpuinfo_store_cpu_32bit(&info->aarch32);
+>  
+> +	if (id_aa64pfr0_mpam(info->reg_id_aa64pfr0))
+> +		info->reg_mpamidr = read_cpuid(MPAMIDR_EL1);
+> +
+>  	cpuinfo_detect_icache_policy(info);
+>  }
 > 
+> I did manage to boot my setup in 6.6 and this is what happens,
 > 
-> >  }
-> >  
-> >  ssize_t iio_format_value(char *buf, unsigned int type, int size, int *vals);
->
+> Host kernel 6.6
+> Guest Kernel 6.13-rc1
+> 
+> [    0.195392] smp: Brought up 1 node, 8 CPUs
+> [    0.219000] SMP: Total of 8 processors activated.
+> [    0.219629] CPU: All CPU(s) started at EL1
+> ...
+> [    0.223212] CPU features: detected: RAS Extension Support
+> [    0.223927] CPU features: detected: Memory Partitioning And Monitoring
+> [    0.224796] CPU features: detected: Memory Partitioning And Monitoring Virtualisation
+> [    0.225961] alternatives: applying system-wide alternatives
+> ...
+> 
+> Guest detects MPAM and boots fine.
+> 
+> Host kernel 6.13-rc1
+> Guest Kernel 6.13-rc1
+> 
+> [    0.196625] smp: Brought up 1 node, 8 CPUs
+> [    0.222093] SMP: Total of 8 processors activated.
+> [    0.222769] CPU: All CPU(s) started at EL1
+> ...
+> [    0.226620] CPU features: detected: RAS Extension Support
+> [    0.227453] alternatives: applying system-wide alternatives
+> 
+> MPAM is not visible to Guest in this case.
+> 
+> So as I pointed out earlier could it be a case where the ID register reports MPAM support
+> but the firmware has not enabled MPAM?
+> 
+> James seems to be mentioning that case here,
+> 
+> " (If you have a boot failure that bisects here its likely your CPUs
+> advertise MPAM in the id registers, but firmware failed to either enable
+> or MPAM, or emulate the trap as if it were disabled)"
 
-Hi Jonathan,
+I tried to verify that MPAM is advertised with qemu+gdb method, as
+suggested by Oliver, but ID_AA64PFR0_EL1 register is not there.
 
-Indeed, if it is only one case that this is being used, it wouldn't make
-sense to provide an accessor. I wouldn't think of going directly to
-touch the drivers without sending this RFC first, so it's good that you
-like the solution of optimizing the drivers themselves. I might find
-some time before the weekend to spin a v2 to discuss. Thanks for your
-time, your comments are always of great help!
+  (gdb) i r ID_AA64PFR0_EL1
+  Invalid register `ID_AA64PFR0_EL1'
 
-Cheers,
-Vasilis
+Are there other suggestions?
+
+> 
+> https://lore.kernel.org/all/20241030160317.2528209-4-joey.gouly@arm.com/
+> 
+> Is there a way you can find out the BIOS version on that board?
+
+Unfortunately, admins of the server do not provide me with this info.
+
+For such cases, when MPAM is incorrectly advertised, can we have kernel
+command line parameter like mpam=0 to override it's detection?
+
+I think with "If you have a boot failure that bisects here" it's
+acknowledged possibility and it's confirmed by our server.
+
+Thanks,
+
+> 
+> Thanks,
+> Shameer
 
