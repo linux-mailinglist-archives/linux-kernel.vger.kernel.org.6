@@ -1,215 +1,201 @@
-Return-Path: <linux-kernel+bounces-428748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A5039E12D9
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 06:22:20 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AF2F9E12DA
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 06:22:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94BAF28299F
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 05:22:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F2F0FB21F91
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 05:22:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91324146013;
-	Tue,  3 Dec 2024 05:22:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21301148FED;
+	Tue,  3 Dec 2024 05:22:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="dNWypeZU"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TXLDIn8J"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED2DA6FC3;
-	Tue,  3 Dec 2024 05:22:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29A46154BEE
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 05:22:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733203332; cv=none; b=VizN0ZeJDL0yChbWLG5sc9wrV4KJGJfCpPzPHQCul9vNogcjtPxgdZTA3309rJ/PsXDjHlnhIVN2mBfNBUzogu5wEDkjsgGD4yE5vxCf0KAI2ltKa5wcgf1xnzYWgP/AuEguiIAZWozp2cZLnc4kovSEJLHiKcRm7MQlgCcRJyc=
+	t=1733203364; cv=none; b=daL6vw9WWsrWQuU0j0L07LkiycfDY1YeNj8/FhTQjRAmR1ptxqtw6wd/JLRqiFS1212W3+mh/WRMkIDwBXHPmrm15DNws1xGW1c4vkT9pmYgm3N9RLhrDsfsm/bB0eLDrrQgjt/wWc2J6w+UDOcJOWo8s8a0h/8MJpyQ414V+yA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733203332; c=relaxed/simple;
-	bh=5aObWm27VK9DsjLg/59PkTgIbb6uz5H/SjD3aTqp67w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=AciHO9D/sMYVVipuUiHSjFaJT3OHBFMihIxA9FK3yzAXDltQYYy7UymPvvXtQ5fbbpDN+C0GYs19U+bNK/VVg0/LzqewHOwDy6IYdFKBxx8csCWJkprbIOzjaHfq57aeBAYpJacv2FIKRuc4dGjSQkjnEsGmjSmSa5DptuIXphg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=dNWypeZU; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B2I1wk3021119;
-	Tue, 3 Dec 2024 05:22:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	itMmfIsQVZdPM3Aw1B8M7FOP0dxnomtjsrcBYVfOGPc=; b=dNWypeZUuNTT6AA4
-	Kk5QE3A1yz4TdBu1/OHj3YXxVMmzjUkSn2jYk3iqA2L6BjOwpEUIVoxTa4C1WvME
-	IpRIMPOGAzE+J1/6cN1li+ZmvyBx8ZESkWwCKV5i30wj7e3JqRhz0BMWZzQtvmMn
-	htvyTz7vsIHeQ77cmmqFWHCJjRVDronLgpTUzrfgJ/XuSgC7uOMQUKsXtGBXagD8
-	ey6ayPyuvrDr5+6v6sSwxKWPUTsaDTzPMsDUh/mWgN3Db3W7dBF+RwX3Lep5Ivkn
-	cVLxdcGFnhG3AvXy6enTVUhIBNTqotLdr1cFEWld/VrXC2oxCWuyNuYk/1NummwV
-	ge58VA==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 437u36ey26-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 03 Dec 2024 05:22:05 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B35M42M029176
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 3 Dec 2024 05:22:04 GMT
-Received: from [10.204.65.49] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 2 Dec 2024
- 21:22:01 -0800
-Message-ID: <697e90db-6ecc-44ac-af86-6c7f910fc902@quicinc.com>
-Date: Tue, 3 Dec 2024 10:51:58 +0530
+	s=arc-20240116; t=1733203364; c=relaxed/simple;
+	bh=6vWpKqNsGvSzwH6oVd3clguAZEyXEAHWtEsXD1LRbK0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=M8z/thv80PFrURYk2z6loJCJ1HBA4Ya9O6VqKjimTTd9PLqCbRFOojuCgHxnXl36jAjhxxO+cKNwpy5rzmCaxlhQWbuy5KPVRyoROnulV1XtJVYPOtK9yVVnpoXMc0TBeSx/l68W4Gcjb7tqnZD8IAuITUYNwuiHMKffAYJ2M+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TXLDIn8J; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733203361; x=1764739361;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=6vWpKqNsGvSzwH6oVd3clguAZEyXEAHWtEsXD1LRbK0=;
+  b=TXLDIn8JMbdJXKqWikimWtCzc3h5JnIvRBJYU7C2qJd8+fs3PwTAzqKS
+   xZs7nQdHr3MT6lSbFxA7aoNtOpGyrzjryPThOjuhUs2nLKXo38IrucpTq
+   64VtUjrN+zFfGZJG15MUp20JbUehpJZ0WP7RIrShWBLW2GxB8teV/xtlo
+   29oMKwV6TSwcD2BKQXkDOJKSZjBdWeLuNd+m0LEzszJ75eHSO90pNTFIi
+   0ZzTWKz7G0N+2gvl3EPNc01Qx+272twtO3IMoiIqynqzWl4sgPB7SFgIc
+   chTvz7QD/cvERKDn3x9+9Qdm6lpFFGsSuxi+z17PXWPCo6+K29QzvvhNj
+   w==;
+X-CSE-ConnectionGUID: QfB9Da0mR3q3umK/gDHrwg==
+X-CSE-MsgGUID: 9VS4zPScQpaKzgTs/DBPaA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11274"; a="44786175"
+X-IronPort-AV: E=Sophos;i="6.12,204,1728975600"; 
+   d="scan'208";a="44786175"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Dec 2024 21:22:40 -0800
+X-CSE-ConnectionGUID: Uui82iBjS+KxSDv9sXYmLw==
+X-CSE-MsgGUID: bHMenobVRvis53qf7w1xLQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,204,1728975600"; 
+   d="scan'208";a="93517758"
+Received: from lkp-server01.sh.intel.com (HELO 388c121a226b) ([10.239.97.150])
+  by fmviesa008.fm.intel.com with ESMTP; 02 Dec 2024 21:22:40 -0800
+Received: from kbuild by 388c121a226b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tILMr-00009o-0L;
+	Tue, 03 Dec 2024 05:22:37 +0000
+Date: Tue, 3 Dec 2024 13:22:12 +0800
+From: kernel test robot <lkp@intel.com>
+To: Petlozu Pravareshwar <petlozup@nvidia.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Thierry Reding <treding@nvidia.com>,
+	Stefan Kristiansson <stefank@nvidia.com>
+Subject: drivers/soc/tegra/pmc.c:467: warning: Function parameter or member
+ 'syscore' not described in 'tegra_pmc'
+Message-ID: <202412031356.AHySUdDO-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 4/4] misc: fastrpc: Add debugfs support for fastrpc
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Greg KH <gregkh@linuxfoundation.org>, <srinivas.kandagatla@linaro.org>,
-        <linux-arm-msm@vger.kernel.org>, <quic_bkumar@quicinc.com>,
-        <linux-kernel@vger.kernel.org>, <quic_chennak@quicinc.com>,
-        <dri-devel@lists.freedesktop.org>, <arnd@arndb.de>
-References: <20241118084046.3201290-1-quic_ekangupt@quicinc.com>
- <20241118084046.3201290-5-quic_ekangupt@quicinc.com>
- <2024111804-doze-reflected-0feb@gregkh>
- <c3b285b0-33d1-4bfa-b8ab-6783ff5ed78d@quicinc.com>
- <cn7pqvhw4x4y7s5hbgzjpvyjnw4g6hoyepic4jai7x2fjdenxr@ikr4hkorbuwb>
- <365c4709-b421-4af8-b521-a195630242de@quicinc.com>
- <nsaq3zungvyhuikz35arvxmle2fovxh422jpyqxuleh57ufqnk@bekeh7qr7y76>
-Content-Language: en-US
-From: Ekansh Gupta <quic_ekangupt@quicinc.com>
-In-Reply-To: <nsaq3zungvyhuikz35arvxmle2fovxh422jpyqxuleh57ufqnk@bekeh7qr7y76>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: l5HzmH8p12SZWCIL6rZZonynQyelXQR9
-X-Proofpoint-ORIG-GUID: l5HzmH8p12SZWCIL6rZZonynQyelXQR9
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 mlxscore=0
- clxscore=1015 bulkscore=0 adultscore=0 lowpriorityscore=0 impostorscore=0
- mlxlogscore=999 phishscore=0 suspectscore=0 spamscore=0 priorityscore=1501
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
- definitions=main-2412030043
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+Hi Petlozu,
+
+FYI, the error/warning still remains.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   cdd30ebb1b9f36159d66f088b61aee264e649d7a
+commit: 1ddb8f6d44ff482c9953a06f800453bc372cfead soc/tegra: pmc: Fix dual edge triggered wakes
+date:   2 years, 1 month ago
+config: arm64-randconfig-001-20240106 (https://download.01.org/0day-ci/archive/20241203/202412031356.AHySUdDO-lkp@intel.com/config)
+compiler: aarch64-linux-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241203/202412031356.AHySUdDO-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202412031356.AHySUdDO-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/soc/tegra/pmc.c:467: warning: Function parameter or member 'syscore' not described in 'tegra_pmc'
 
 
+vim +467 drivers/soc/tegra/pmc.c
 
-On 12/2/2024 6:18 PM, Dmitry Baryshkov wrote:
-> On Mon, Dec 02, 2024 at 03:27:43PM +0530, Ekansh Gupta wrote:
->>
->> On 11/22/2024 12:23 AM, Dmitry Baryshkov wrote:
->>> On Thu, Nov 21, 2024 at 12:12:17PM +0530, Ekansh Gupta wrote:
->>>> On 11/18/2024 7:32 PM, Greg KH wrote:
->>>>> On Mon, Nov 18, 2024 at 02:10:46PM +0530, Ekansh Gupta wrote:
->>>>>> Add changes to support debugfs. The fastrpc directory will be
->>>>>> created which will carry debugfs files for all fastrpc processes.
->>>>>> The information of fastrpc user and channel contexts are getting
->>>>>> captured as part of this change.
->>>>>>
->>>>>> Signed-off-by: Ekansh Gupta <quic_ekangupt@quicinc.com>
->>>>>> ---
->>>>>>  drivers/misc/fastrpc/Makefile        |   3 +-
->>>>>>  drivers/misc/fastrpc/fastrpc_debug.c | 156 +++++++++++++++++++++++++++
->>>>>>  drivers/misc/fastrpc/fastrpc_debug.h |  31 ++++++
->>>>>>  drivers/misc/fastrpc/fastrpc_main.c  |  18 +++-
->>>>>>  4 files changed, 205 insertions(+), 3 deletions(-)
->>>>>>  create mode 100644 drivers/misc/fastrpc/fastrpc_debug.c
->>>>>>  create mode 100644 drivers/misc/fastrpc/fastrpc_debug.h
->>>>>>
->>>>>> diff --git a/drivers/misc/fastrpc/Makefile b/drivers/misc/fastrpc/Makefile
->>>>>> index 020d30789a80..4ff6b64166ae 100644
->>>>>> --- a/drivers/misc/fastrpc/Makefile
->>>>>> +++ b/drivers/misc/fastrpc/Makefile
->>>>>> @@ -1,3 +1,4 @@
->>>>>>  # SPDX-License-Identifier: GPL-2.0
->>>>>>  obj-$(CONFIG_QCOM_FASTRPC)	+= fastrpc.o
->>>>>> -fastrpc-objs	:= fastrpc_main.o
->>>>>> \ No newline at end of file
->>>>>> +fastrpc-objs	:= fastrpc_main.o \
->>>>>> +		fastrpc_debug.o
->>>>> Only build this file if debugfs is enabled.
->>>>>
->>>>> And again, "debug.c"?
->>>> I'll add change to build this only if debugfs is enabled. Going forward I have plans to add
->>>> few more debug specific changes, maybe then I'll need to change the build rules again.
->>>>>> diff --git a/drivers/misc/fastrpc/fastrpc_debug.c b/drivers/misc/fastrpc/fastrpc_debug.c
->>>>>> new file mode 100644
->>>>>> index 000000000000..cdb4fc6845a8
->>>>>> --- /dev/null
->>>>>> +++ b/drivers/misc/fastrpc/fastrpc_debug.c
->>>>>> @@ -0,0 +1,156 @@
->>>>>> +// SPDX-License-Identifier: GPL-2.0
->>>>>> +// Copyright (c) 2024 Qualcomm Innovation Center.
->>>>>> +
->>>>>> +#include <linux/debugfs.h>
->>>>>> +#include <linux/seq_file.h>
->>>>>> +#include "fastrpc_shared.h"
->>>>>> +#include "fastrpc_debug.h"
->>>>>> +
->>>>>> +#ifdef CONFIG_DEBUG_FS
->>>>> Please put the #ifdef in the .h file, not in the .c file.
->>>> Ack
->>>>>> +void fastrpc_create_user_debugfs(struct fastrpc_user *fl)
->>>>>> +{
->>>>>> +	char cur_comm[TASK_COMM_LEN];
->>>>>> +	int domain_id, size;
->>>>>> +	char *debugfs_buf;
->>>>>> +	struct dentry *debugfs_dir = fl->cctx->debugfs_dir;
->>>>>> +
->>>>>> +	memcpy(cur_comm, current->comm, TASK_COMM_LEN);
->>>>>> +	cur_comm[TASK_COMM_LEN-1] = '\0';
->>>>>> +	if (debugfs_dir != NULL) {
->>>>>> +		domain_id = fl->cctx->domain_id;
->>>>>> +		size = snprintf(NULL, 0, "%.10s_%d_%d_%d", cur_comm,
->>>>>> +				current->pid, fl->tgid, domain_id) + 1;
->>>>>> +		debugfs_buf = kzalloc(size, GFP_KERNEL);
->>>>>> +		if (debugfs_buf == NULL)
->>>>>> +			return;
->>>>>> +		/*
->>>>>> +		 * Use HLOS process name, HLOS PID, fastrpc user TGID,
->>>>>> +		 * domain_id in debugfs filename to create unique file name
->>>>>> +		 */
->>>>>> +		snprintf(debugfs_buf, size, "%.10s_%d_%d_%d",
->>>>>> +			cur_comm, current->pid, fl->tgid, domain_id);
->>>>>> +		fl->debugfs_file = debugfs_create_file(debugfs_buf, 0644,
->>>>>> +				debugfs_dir, fl, &fastrpc_debugfs_fops);
->>>>> Why are you saving the debugfs file?  What do you need to do with it
->>>>> that you can't just delete the whole directory, or look up the name
->>>>> again in the future when removing it?
->>>> fl structure is specific to a process using fastrpc driver. The reason to save
->>>> this debugfs file is to delete is when the process releases fastrpc device.
->>>> If the file is not deleted, it might flood multiple files in debugfs directory.
->>>>
->>>> As part of this change, only the file that is getting created by a process is
->>>> getting removed when process is releasing device and I don't think we
->>>> can clean up the whole directory at this point.
->>> My 2c: it might be better to create a single file that conains
->>> information for all the processes instead of that. Or use fdinfo data to
->>> export process / FD information to userspace.
->> Thanks for your review. The reason of not having single file for all processes is that
->> I can run 100s of iteration for any process(say calculator) and every time the properties
->> of the process can differ(like buffer, session etc.). For this reason, I'm creating and
->> deleting the debugfs files for every process run.
->>
->> Do you see any advantage of using fdinfo over debugfs? I'm not sure if we can add all
->> the information(like in debugfs) here.
-> Which information is actually useful / interesting for application
-> developers? If not for the fdinfo, I might still vote for a single file
-> rather than a pile of per-process data.
-I have tried to capture all the information that could be useful.
+5f84bb1a4099e2 Sandipan Patra       2018-10-24  383  
+7232398abc6a71 Thierry Reding       2014-07-11  384  /**
+7232398abc6a71 Thierry Reding       2014-07-11  385   * struct tegra_pmc - NVIDIA Tegra PMC
+35b67291b4a85d Jon Hunter           2015-12-04  386   * @dev: pointer to PMC device structure
+7232398abc6a71 Thierry Reding       2014-07-11  387   * @base: pointer to I/O remapped register region
+bbe5af60041cae Thierry Reding       2019-01-25  388   * @wake: pointer to I/O remapped region for WAKE registers
+bbe5af60041cae Thierry Reding       2019-01-25  389   * @aotag: pointer to I/O remapped region for AOTAG registers
+bbe5af60041cae Thierry Reding       2019-01-25  390   * @scratch: pointer to I/O remapped region for scratch registers
+7232398abc6a71 Thierry Reding       2014-07-11  391   * @clk: pointer to pclk clock
+35b67291b4a85d Jon Hunter           2015-12-04  392   * @soc: pointer to SoC data structure
+e247deae1a5508 Mikko Perttunen      2019-01-25  393   * @tz_only: flag specifying if the PMC can only be accessed via TrustZone
+3195ac6d9cbeef Jon Hunter           2015-12-04  394   * @debugfs: pointer to debugfs entry
+7232398abc6a71 Thierry Reding       2014-07-11  395   * @rate: currently configured rate of pclk
+7232398abc6a71 Thierry Reding       2014-07-11  396   * @suspend_mode: lowest suspend mode available
+7232398abc6a71 Thierry Reding       2014-07-11  397   * @cpu_good_time: CPU power good time (in microseconds)
+7232398abc6a71 Thierry Reding       2014-07-11  398   * @cpu_off_time: CPU power off time (in microsecends)
+7232398abc6a71 Thierry Reding       2014-07-11  399   * @core_osc_time: core power good OSC time (in microseconds)
+7232398abc6a71 Thierry Reding       2014-07-11  400   * @core_pmu_time: core power good PMU time (in microseconds)
+7232398abc6a71 Thierry Reding       2014-07-11  401   * @core_off_time: core power off time (in microseconds)
+7232398abc6a71 Thierry Reding       2014-07-11  402   * @corereq_high: core power request is active-high
+7232398abc6a71 Thierry Reding       2014-07-11  403   * @sysclkreq_high: system clock request is active-high
+7232398abc6a71 Thierry Reding       2014-07-11  404   * @combined_req: combined power request for CPU & core
+7232398abc6a71 Thierry Reding       2014-07-11  405   * @cpu_pwr_good_en: CPU power good signal is enabled
+7232398abc6a71 Thierry Reding       2014-07-11  406   * @lp0_vec_phys: physical base address of the LP0 warm boot code
+7232398abc6a71 Thierry Reding       2014-07-11  407   * @lp0_vec_size: size of the LP0 warm boot code
+a38045121bf421 Jon Hunter           2016-03-30  408   * @powergates_available: Bitmap of available power gates
+7232398abc6a71 Thierry Reding       2014-07-11  409   * @powergates_lock: mutex for power gate register access
+bbe5af60041cae Thierry Reding       2019-01-25  410   * @pctl_dev: pin controller exposed by the PMC
+bbe5af60041cae Thierry Reding       2019-01-25  411   * @domain: IRQ domain provided by the PMC
+bbe5af60041cae Thierry Reding       2019-01-25  412   * @irq: chip implementation for the IRQ domain
+e57a243f5d896f Dmitry Osipenko      2019-09-26  413   * @clk_nb: pclk clock changes handler
+d3a20dcbca4880 Thierry Reding       2022-05-06  414   * @core_domain_state_synced: flag marking the core domain's state as synced
+d3a20dcbca4880 Thierry Reding       2022-05-06  415   * @core_domain_registered: flag marking the core domain as registered
+1ddb8f6d44ff48 Petlozu Pravareshwar 2022-09-30  416   * @wake_type_level_map: Bitmap indicating level type for non-dual edge wakes
+1ddb8f6d44ff48 Petlozu Pravareshwar 2022-09-30  417   * @wake_type_dual_edge_map: Bitmap indicating if a wake is dual-edge or not
+1ddb8f6d44ff48 Petlozu Pravareshwar 2022-09-30  418   * @wake_sw_status_map: Bitmap to hold raw status of wakes without mask
+1ddb8f6d44ff48 Petlozu Pravareshwar 2022-09-30  419   * @wake_cntrl_level_map: Bitmap to hold wake levels to be programmed in
+1ddb8f6d44ff48 Petlozu Pravareshwar 2022-09-30  420   *     cntrl register associated with each wake during system suspend.
+7232398abc6a71 Thierry Reding       2014-07-11  421   */
+7232398abc6a71 Thierry Reding       2014-07-11  422  struct tegra_pmc {
+3568df3d31d62b Mikko Perttunen      2015-01-06  423  	struct device *dev;
+7232398abc6a71 Thierry Reding       2014-07-11  424  	void __iomem *base;
+c641ec6eab8587 Thierry Reding       2017-08-30  425  	void __iomem *wake;
+c641ec6eab8587 Thierry Reding       2017-08-30  426  	void __iomem *aotag;
+5be2255676bf2b Thierry Reding       2017-08-30  427  	void __iomem *scratch;
+7232398abc6a71 Thierry Reding       2014-07-11  428  	struct clk *clk;
+3195ac6d9cbeef Jon Hunter           2015-12-04  429  	struct dentry *debugfs;
+7232398abc6a71 Thierry Reding       2014-07-11  430  
+7232398abc6a71 Thierry Reding       2014-07-11  431  	const struct tegra_pmc_soc *soc;
+e247deae1a5508 Mikko Perttunen      2019-01-25  432  	bool tz_only;
+7232398abc6a71 Thierry Reding       2014-07-11  433  
+7232398abc6a71 Thierry Reding       2014-07-11  434  	unsigned long rate;
+7232398abc6a71 Thierry Reding       2014-07-11  435  
+7232398abc6a71 Thierry Reding       2014-07-11  436  	enum tegra_suspend_mode suspend_mode;
+7232398abc6a71 Thierry Reding       2014-07-11  437  	u32 cpu_good_time;
+7232398abc6a71 Thierry Reding       2014-07-11  438  	u32 cpu_off_time;
+7232398abc6a71 Thierry Reding       2014-07-11  439  	u32 core_osc_time;
+7232398abc6a71 Thierry Reding       2014-07-11  440  	u32 core_pmu_time;
+7232398abc6a71 Thierry Reding       2014-07-11  441  	u32 core_off_time;
+7232398abc6a71 Thierry Reding       2014-07-11  442  	bool corereq_high;
+7232398abc6a71 Thierry Reding       2014-07-11  443  	bool sysclkreq_high;
+7232398abc6a71 Thierry Reding       2014-07-11  444  	bool combined_req;
+7232398abc6a71 Thierry Reding       2014-07-11  445  	bool cpu_pwr_good_en;
+7232398abc6a71 Thierry Reding       2014-07-11  446  	u32 lp0_vec_phys;
+7232398abc6a71 Thierry Reding       2014-07-11  447  	u32 lp0_vec_size;
+a38045121bf421 Jon Hunter           2016-03-30  448  	DECLARE_BITMAP(powergates_available, TEGRA_POWERGATE_MAX);
+7232398abc6a71 Thierry Reding       2014-07-11  449  
+7232398abc6a71 Thierry Reding       2014-07-11  450  	struct mutex powergates_lock;
+4a37f11c8f57ff Aapo Vienamo         2018-08-10  451  
+4a37f11c8f57ff Aapo Vienamo         2018-08-10  452  	struct pinctrl_dev *pctl_dev;
+19906e6b166721 Thierry Reding       2018-09-17  453  
+19906e6b166721 Thierry Reding       2018-09-17  454  	struct irq_domain *domain;
+19906e6b166721 Thierry Reding       2018-09-17  455  	struct irq_chip irq;
+e57a243f5d896f Dmitry Osipenko      2019-09-26  456  
+e57a243f5d896f Dmitry Osipenko      2019-09-26  457  	struct notifier_block clk_nb;
+41bafa698ddd07 Dmitry Osipenko      2021-06-01  458  
+41bafa698ddd07 Dmitry Osipenko      2021-06-01  459  	bool core_domain_state_synced;
+41bafa698ddd07 Dmitry Osipenko      2021-06-01  460  	bool core_domain_registered;
+1ddb8f6d44ff48 Petlozu Pravareshwar 2022-09-30  461  
+1ddb8f6d44ff48 Petlozu Pravareshwar 2022-09-30  462  	unsigned long *wake_type_level_map;
+1ddb8f6d44ff48 Petlozu Pravareshwar 2022-09-30  463  	unsigned long *wake_type_dual_edge_map;
+1ddb8f6d44ff48 Petlozu Pravareshwar 2022-09-30  464  	unsigned long *wake_sw_status_map;
+1ddb8f6d44ff48 Petlozu Pravareshwar 2022-09-30  465  	unsigned long *wake_cntrl_level_map;
+1ddb8f6d44ff48 Petlozu Pravareshwar 2022-09-30  466  	struct syscore_ops syscore;
+7232398abc6a71 Thierry Reding       2014-07-11 @467  };
+7232398abc6a71 Thierry Reding       2014-07-11  468  
 
-I can try changes to maintain single file for all active processes. Having this file specific
-to a channel should be fine, right? like fastrpc_adsp, fastrpc_cdsp, etc.? Each file will
-carry information of all processes using that remoteproc.
+:::::: The code at line 467 was first introduced by commit
+:::::: 7232398abc6a7186e315425638c367d50c674718 ARM: tegra: Convert PMC to a driver
 
---ekansh
->
->> --ekansh
->>>
+:::::: TO: Thierry Reding <treding@nvidia.com>
+:::::: CC: Thierry Reding <treding@nvidia.com>
 
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
