@@ -1,121 +1,198 @@
-Return-Path: <linux-kernel+bounces-429808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 293EA9E2790
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 17:34:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B72149E2593
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 17:02:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0FE5CB284AF
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:02:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A9FA287EAA
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:02:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9520A1F76CD;
-	Tue,  3 Dec 2024 16:01:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A8341F76D9;
+	Tue,  3 Dec 2024 16:02:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AQqzOTRF"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="g0oLlUba"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 768E71F7561;
-	Tue,  3 Dec 2024 16:01:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42A5714A088
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 16:02:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733241714; cv=none; b=LIpLKVRIac7J6cMvnHAwJHTGZMmMkle7s0b5C3CDi8iggg5SYt1bHBIBf0l2h3kEJwN/qTJVIdsnMrtHHMolNgjOnXCxCIHh764wUqx+YyREqjZF9cl98v/U/bHlIfK5SOvkhrT+msW2JfKMduafTdAv4hYFVmef+G0cOB4e258=
+	t=1733241732; cv=none; b=XgmT5mVURGw6AY7RVNSMMV8UXawsu+5Nuys4m1svNYVo7OpcqXfIxS5bk2QoR5hSWKxlliDR4Qd1vXNIz1s45ymYfodGSaZw/XdiZARBs7snZ856dBOXE0e25hPcRHGYa85wLUXtGCd2wOwAYu0DJKm+DK6UljAgAwBgI/ZGBQA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733241714; c=relaxed/simple;
-	bh=HElT2R9P9ig84rKSVqEPmPesnPqPUxhHyF6xTeixoHs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=chLkYBmaPkQUgM50CuZtJAa/3lu95X0RKdUt2E4BvypcHN3MbS3ZCwNw72tqwKOm5hCmWp/etz2b4ZJXcSdTd9IwBzT7VguDwBd4VgdEPIfnXQW8kueMJleFmhpaTQ79SWe019fQRHCzBDF0bi/uent72fcYYLQ1fsL/pchN71g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AQqzOTRF; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-3001490ba93so4100521fa.0;
-        Tue, 03 Dec 2024 08:01:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733241711; x=1733846511; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HElT2R9P9ig84rKSVqEPmPesnPqPUxhHyF6xTeixoHs=;
-        b=AQqzOTRF482TEXwtG3zKSAL1tPYuV3SfhURUqFGIN/OtfcPSSYqwYQ9l+QGIrGWxqt
-         cYWBjKi3ebIc1Yxg/Og9hLy3uf5UV3I3CIY1xOE6lSugLsga60kh+4Gge6MLwq4oZxjz
-         U8iedNDXHlmxHh6TvzxfZ8N7XDSEC+DuAtgXE5HJWOvrx8nN6cGwVQzRIk1M8eyhaErg
-         WFAGSimfTb/c3/Pnvdxhbx9eY3acvloVYjAgNSigZZi+TAYUEGhPlMjymnnd+X9C/dbo
-         VOLksKQeA2E6Zd0BWqCd1KckRkVWEyY0CAJb7PK7c5dhn4UrWr3tsE6FmiimD/unaBel
-         ycsg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733241711; x=1733846511;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HElT2R9P9ig84rKSVqEPmPesnPqPUxhHyF6xTeixoHs=;
-        b=r+BZGgkf89FfEZ7gKOWVNFBT4bpfsLRlNKf8Dsnclp/dw6AytW4AmjOhqlnQRFVu6M
-         KwN+uA434ySj3cqcIq6NvVmM/w14hn+dQAQIi8McE2XyUFs94AC8pkKADYb4ESN469B6
-         hYjiKggQ7Y++/xbPUqa8jsTCV0xbBB2446+CfjekgoZ78awAjSO8jBnPR1I+BOdm2CAs
-         tu5oSQxFZncWE2IgzHw0cWCD0Taw1Kx/4C1K5D1Tpt1Np8p2Bj5EJmcIYKBINbzrOn0L
-         fGi3lruf+lwCfqTSKAKG79fiFTI3gL+/TzptHZTG+71dt28GPPBZ6NAzAcBMxRmc6tjB
-         zZ6A==
-X-Forwarded-Encrypted: i=1; AJvYcCU7rmx060p2hctmuw6KU/NWDLRh/oQu+2wZ16p1BYpnZkdjt/AvnKfV7JclbWZQDdl07VOa6oN45Q6MO64=@vger.kernel.org, AJvYcCUioEqQjEpalsCXvZOiaFJ20U9mgCNeOQ0bzxmlPlCoGq4B4vhD6Ba1319kXUlbqmdN1dKQVJr7juIKNO76uR0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyjvOZ+AVSwJXe5xfCIderKIK9UIZAbqRzPnDq2DykjRSCc+A1c
-	QYqC2GT83PsJsopCmqMK7CNGFvwGXwThZOGG0ejeF8dP/RpCrjp157M05uQPEED0bm+T18UGr9/
-	TXODEXI5qN7fcmL7up+n8v5B/MyQ=
-X-Gm-Gg: ASbGncvX6Tpx7jPyfJtoR4LOKHiW5bg8N49abRPdcPCXnTZadfqK0Ie5ZrEzN+xfzOh
-	L1k8J4Q1GalaAXaaBT0kc8aEMF9/WncDu/fTgpPX2bZFkGAE=
-X-Google-Smtp-Source: AGHT+IGZfuPFNffxbLr0xy9VP/0yB1MDOKC+PdAQaAXMR4/7SWNPzO+I8xLTJRMP06lQFnCuMgClits/4WkjTZviTb8=
-X-Received: by 2002:a2e:be8d:0:b0:2ff:cc65:68aa with SMTP id
- 38308e7fff4ca-30009d07fc6mr20356311fa.31.1733241710177; Tue, 03 Dec 2024
- 08:01:50 -0800 (PST)
+	s=arc-20240116; t=1733241732; c=relaxed/simple;
+	bh=+4mrmWyTZWE7aCCuD7WX0ogXyiBhmTYam64FyTss/OU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=joyWKb0vivxexiSEvGQXCaicxeQ/syWV/zgKzPxtBAWVwPk+56fPxEwn1MhAJ+bulhWbYKjzI2I1GD3t1/BB082D+LGgDth1UnOW6lSIZY+Q/G0VOAie9oLfJss0dfDXHhQoKjup+FzYSRX4vhi4CiQiIMXpYWhgA5PsxCVkudE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=g0oLlUba; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 3649C40E0269;
+	Tue,  3 Dec 2024 16:02:08 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id qi4ltd9liB1p; Tue,  3 Dec 2024 16:02:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1733241722; bh=Da8ztEBd6tGjshSL+53XVwoH2c/TWIrC04L/xA+dUgw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=g0oLlUbaqNLUnuo3ZNjSyxsQVC9stpguSVBqOpeQs5YROxl88pHuNKjbqtKII2119
+	 x78XVnLQJ4QbrKLAn5LF9NDQwsg+8MeyPz7ppd1cYI2qw62WWDUQrlGxs964+HwuVs
+	 A2CTbLAmFVdtDL78fPkf6zmYD4TZ53Be4jmO77fdMjkufHUGxPfEviXIRt2VJdxOiF
+	 KouD5UD1Vxq4lGK+WuCj4gVqFCQJh4lrMcDDMoyWbqHOrmV1udFLt4skRt88uVyyPL
+	 XvLIcV8Y5wecay7zkeKQNU25eStQ5JRrYT/pO4eVMR5/F8I2SzMKKzt/o0ZS54yaNZ
+	 asQXq+BWar2W2DBJVpdfw6T3uPf/jQm99dT3iqMmvx++A/VHxOmMkrttn/KngEdnzO
+	 fMer96uY+bheqQpDeJ3qfqYWJ2ofbTWOIm7G8i9pH8Gr/aUR6o9346p2f8VbjabxBi
+	 BSF50Kl7SM391pHQyMmgPWmPD4C96Y96v1H5xQBCk78G9tYUg+IA/QmO4yvgZVFERF
+	 SLcuQ6K34GJbxQFcF+QAinzBKaKSdFzXl8pG7e6AVxUQE5WyL+/pgi5F5y3DIxf9Ri
+	 gm+kQRJlDAJxdmK40ZuIyoIDD4EQVjCPK3QZHBmxG7V/sesWxsxIJzAYfrwA991hrS
+	 WfTGDUiaSOXfkhFTbGw5dgfw=
+Received: from zn.tnic (pd9530b86.dip0.t-ipconnect.de [217.83.11.134])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id A161F40E0163;
+	Tue,  3 Dec 2024 16:01:52 +0000 (UTC)
+Date: Tue, 3 Dec 2024 17:01:46 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Michael Roth <michael.roth@amd.com>,
+	Ashish Kalra <ashish.kalra@amd.com>,
+	Nikunj A Dadhania <nikunj@amd.com>,
+	Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+Subject: Re: [PATCH v6 1/8] x86/sev: Prepare for using the RMPREAD
+ instruction to access the RMP
+Message-ID: <20241203160146.GDZ08rahZMYc3vyoxq@fat_crate.local>
+References: <cover.1733172653.git.thomas.lendacky@amd.com>
+ <da49d5af1eb7f9039f35f14a32ca091efb2dd818.1733172653.git.thomas.lendacky@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241120-rust-xarray-bindings-v10-0-a25b2b0bf582@gmail.com>
- <20241120-rust-xarray-bindings-v10-2-a25b2b0bf582@gmail.com>
- <CAH5fLgipntMtu7_pdZDZGerGRO499yxDdz2dP=2Bb5FobcykYg@mail.gmail.com>
- <CAJ-ks9kwGi+hhsNUC=Ti3CL8iJ4mEN2vSkoFUnz67Usu+-_P6Q@mail.gmail.com> <CANiq72=8kyfRomVijZO-5tW-Ckuf5KshCTYnHt96CSi6PbDkqA@mail.gmail.com>
-In-Reply-To: <CANiq72=8kyfRomVijZO-5tW-Ckuf5KshCTYnHt96CSi6PbDkqA@mail.gmail.com>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Tue, 3 Dec 2024 11:01:13 -0500
-Message-ID: <CAJ-ks9kxkd5bgbDuSwEru7RAmxp5D4HXrJNe-m=2EFm+_Ep9Ag@mail.gmail.com>
-Subject: Re: [PATCH v10 2/2] rust: xarray: Add an abstraction for XArray
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Alice Ryhl <aliceryhl@google.com>, Danilo Krummrich <dakr@kernel.org>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, =?UTF-8?B?TWHDrXJhIENhbmFs?= <mcanal@igalia.com>, 
-	Asahi Lina <lina@asahilina.net>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <da49d5af1eb7f9039f35f14a32ca091efb2dd818.1733172653.git.thomas.lendacky@amd.com>
 
-On Tue, Dec 3, 2024 at 10:22=E2=80=AFAM Miguel Ojeda
-<miguel.ojeda.sandonis@gmail.com> wrote:
->
-> On Tue, Dec 3, 2024 at 4:00=E2=80=AFPM Tamir Duberstein <tamird@gmail.com=
-> wrote:
-> >
-> > I prefer to be explicit, unless there's guidance on this somewhere?
->
-> I like explicitness in general, but do you think there is an advantage
-> for things in the prelude?
->
-> I am asking because I am considering adding more things there, e.g. I
-> have a series to be sent to add the `ffi::c_*` types -- having things
-> like those in the prelude reduces the noise in imports that everyone
-> knows about (and that nobody should be tempted to alias anyway), makes
-> things more consistent (because then every use is unqualified vs. the
-> mix we have now) and generally the code looks easier to read to focus
-> on the other things that may be less common.
+On Mon, Dec 02, 2024 at 02:50:46PM -0600, Tom Lendacky wrote:
+> +static int __snp_lookup_rmpentry(u64 pfn, struct rmpentry *e, int *level)
+> +{
+> +	struct rmpentry e_large;
+> +	int ret;
+> +
+> +	if (!cc_platform_has(CC_ATTR_HOST_SEV_SNP))
 
-I agree with these goals, but I personally disprefer the prelude
-approach. Probably the most common misuse involves traits in the
-prelude, where importing them can change function call resolution.
-It's very likely that this isn't a problem with the prelude currently,
-but it also doesn't seem to be used consistently everywhere. I don't
-feel very strongly, so if there's a mandate to use it then I'll do so.
+Btw, just a side note: this is AMD-specific and x86 code so we probably should
+use:
+
+	if (!cpu_feature_enabled(X86_FEATURE_SEV_SNP))
+
+For another series.
+
+> +		return -ENODEV;
+> +
+> +	ret = get_rmpentry(pfn, e);
+> +	if (ret)
+> +		return ret;
+>  
+>  	/*
+>  	 * Find the authoritative RMP entry for a PFN. This can be either a 4K
+>  	 * RMP entry or a special large RMP entry that is authoritative for a
+>  	 * whole 2M area.
+>  	 */
+> -	large_entry = get_rmpentry(pfn & PFN_PMD_MASK);
+> -	if (IS_ERR(large_entry))
+> -		return large_entry;
+> +	ret = get_rmpentry(pfn & PFN_PMD_MASK, &e_large);
+> +	if (ret)
+> +		return ret;
+>  
+> -	*level = RMP_TO_PG_LEVEL(large_entry->pagesize);
+> +	*level = RMP_TO_PG_LEVEL(e_large.pagesize);
+>  
+> -	return entry;
+> +	return 0;
+>  }
+
+...
+
+>  static void dump_rmpentry(u64 pfn)
+>  {
+> +	struct rmpentry_raw *e_raw;
+>  	u64 pfn_i, pfn_end;
+> -	struct rmpentry *e;
+> -	int level;
+> +	struct rmpentry e;
+> +	int level, ret;
+>  
+> -	e = __snp_lookup_rmpentry(pfn, &level);
+> -	if (IS_ERR(e)) {
+> -		pr_err("Failed to read RMP entry for PFN 0x%llx, error %ld\n",
+> -		       pfn, PTR_ERR(e));
+> +	ret = __snp_lookup_rmpentry(pfn, &e, &level);
+> +	if (ret) {
+> +		pr_err("Failed to read RMP entry for PFN 0x%llx, error %d\n",
+> +		       pfn, ret);
+>  		return;
+>  	}
+>  
+> -	if (e->assigned) {
+> +	if (e.assigned) {
+> +		e_raw = get_raw_rmpentry(pfn);
+> +		if (IS_ERR(e_raw)) {
+> +			pr_err("Failed to read RMP contents for PFN 0x%llx, error %ld\n",
+> +			       pfn, PTR_ERR(e_raw));
+> +			return;
+> +		}
+> +
+>  		pr_info("PFN 0x%llx, RMP entry: [0x%016llx - 0x%016llx]\n",
+> -			pfn, e->lo, e->hi);
+> +			pfn, e_raw->lo, e_raw->hi);
+>  		return;
+>  	}
+
+Do I see it correctly that we don't really need to call that
+get_raw_rmpentry() again for that @pfn because __snp_lookup_rmpentry()
+returned the whole thing in @e already?
+
+IOW:
+
+diff --git a/arch/x86/virt/svm/sev.c b/arch/x86/virt/svm/sev.c
+index cf64e9384ea0..2e1833426b08 100644
+--- a/arch/x86/virt/svm/sev.c
++++ b/arch/x86/virt/svm/sev.c
+@@ -387,15 +387,8 @@ static void dump_rmpentry(u64 pfn)
+ 	}
+ 
+ 	if (e.assigned) {
+-		e_raw = get_raw_rmpentry(pfn);
+-		if (IS_ERR(e_raw)) {
+-			pr_err("Failed to read RMP contents for PFN 0x%llx, error %ld\n",
+-			       pfn, PTR_ERR(e_raw));
+-			return;
+-		}
+-
+-		pr_info("PFN 0x%llx, RMP entry: [0x%016llx - 0x%016llx]\n",
+-			pfn, e_raw->lo, e_raw->hi);
++		pr_info("PFN 0x%llx, RMP entry: [ASID: 0x%x, pagesize: 0x%x, immutable: %d]\n",
++			e.gpa, e.asid, e.pagesize, e.immutable);
+ 		return;
+ 	}
+ 
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
