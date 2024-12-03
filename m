@@ -1,127 +1,138 @@
-Return-Path: <linux-kernel+bounces-430219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 825C09E2EF6
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 23:21:05 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD7939E2DF1
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 22:20:30 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5D7E163255
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 21:20:27 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47C1120A5C1;
+	Tue,  3 Dec 2024 21:20:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jxLnzLW7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 653C5B34CB4
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 21:22:02 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26BAC20C012;
-	Tue,  3 Dec 2024 21:20:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="LyCfcK68"
-Received: from mail-oo1-f41.google.com (mail-oo1-f41.google.com [209.85.161.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C42F20B80B
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 21:20:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FB2E1F75AB;
+	Tue,  3 Dec 2024 21:20:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733260831; cv=none; b=X5An4prvND62JS+qbwvdGLlSFjn02qNFnQWByxlG3MN7nbxGXRzW97oInF/EcYEdG+kg1WCf8GPJr4JcWxI1St2pS/aNtp667t9iM9EXyIN/7W7aKQRiVg8HZXtAvdx60BWf3Aok1GZSdtHKTo9VDwZd0ymazEQznm6IZbjk5lo=
+	t=1733260818; cv=none; b=p7/BrShKT1OCV5W/EGq3f9WiBEXhzQeErrcnhgpaqq7hjTKLazTuocqdH8XlQI43NBiJuWmvRJSzP2ikNqhGJ3XkZntbfXLECGEliyhXfKmujDDX2Ap0ik8uxtmL/BDTi8nIvJ8lDW9pL6l6bd2xFcJvcVE5GEjulF0l9TY/r+I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733260831; c=relaxed/simple;
-	bh=jFTBG9LprJIjbHQlM1I0RJN2j3CUZpzoB8yyx/zxbSw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=fEjuKvMGwLXiiZhvrCJKoNa0jAfVmzNVaKzqFJgmyorEIdO6gIIMgASq3lAWEfKw7ssLfFLIyT7zAf9r0rrSRpzT+TCZwe6xpt1rgPWKZRoqeugqnOQFUAnFTVs2ciSPrypHMaH+w10bvMn2o634FGbKhJIuUS9udbZ2dg+SCwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=LyCfcK68; arc=none smtp.client-ip=209.85.161.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-oo1-f41.google.com with SMTP id 006d021491bc7-5f1cec20a77so2095132eaf.1
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 13:20:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1733260829; x=1733865629; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zLLkfyeupXOCJEsbtIiRnjf9v6qN6z82wPD/jzcKBAs=;
-        b=LyCfcK68f5N6DK8XS3wwSUe+nlKahIqetZ+9qL/+vkDYLNgYksRTzeJvB2aNRsYtko
-         4dvZu9OcRJhgIUngglhimUfE2S6HpL2qRnQG3de59EpLklP/DcTyNcJpnkNRH2VPYDfz
-         GrJiJreNnCvDuXZ9iuCo8GlHhGX1oQFHHxHK4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733260829; x=1733865629;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zLLkfyeupXOCJEsbtIiRnjf9v6qN6z82wPD/jzcKBAs=;
-        b=i7vCGSV7QGXDj44rUKkUuPUFFRKbJXB0B/jJm57d4mdx7CCKe9qWPBY5hznVk430qZ
-         j5B7bJa7HQBtVNyKizyyBegw15TslIYnZ99RG9lK+h5SV985WpZl+PtOtDzS+QCNqA4X
-         63n8u8Nc4KYJGBLHy5vqd2JdDX1m8T7DJxD69Cs5xLXnD15dmB1sS1mreHdsZ/SUNKLk
-         KuHz28toMDxb4aVUC+HGd76yoF5Q57VBxG2MJTksIlzjl4A9PI2b15nO+O3c8zRduMgK
-         xzm+xCfTpsAlRUrcNhPIptQh/CZuPYbjJ2ujox1Ublf6a4/tP6wzfdr+DyoHQObtiYx9
-         vdXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUQ98xslOEhFqWFSxH2C7vLY+308CQg0i+Y30MTB9EdBrt12EEezwOLSxBEIwq/4JMPIIf0yk9FNfFOxuY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxAfB8EP/KWswT1jfwqfPAfQj4eC19AlS5ERZiMcG3jJvjVNcXH
-	7yBJ24aiPbdh/5DloPXALO91YBN4IAevVWlyuMkX7iUhNT9IZ5ZS1TeFfaEyaw==
-X-Gm-Gg: ASbGncvsNFG9y3/vCVMYalGuJiK5Kcp3zXep4S9OF0IF2WxiiwZTlHDfnYkiJfplzSS
-	iSDxuDQMfA7CgUO4clduL1dY0JExVUlpyVTnTtf2zYXwz9Uon8+Y24ANCKnv/RbYrQDTxkG+Zvo
-	/FV/YrGRLl+rxTAA8zDBUabt+fhBntrD3Vz57srh01tzIVkk96BYbXq8/8Sq7/aQS9pZ67/d0Z8
-	e8bAV+uv6Z1AcmpKwBgftnR65bSGDXNKJ4CxGnUlkS6BotxaUpX0/P9YxA0wto6pICaKNzls8bd
-	ArWeswMRBmm8RnU+WEcrHh0p
-X-Google-Smtp-Source: AGHT+IHXPcyq+8B+KJ1dPXvdy3NU/VpWuqhFh2jcwyvKYbPbXmP0jy2dIclUy4Dce3/3CyVeNJ8Jdg==
-X-Received: by 2002:a05:6358:5bcc:b0:1ca:9660:67db with SMTP id e5c5f4694b2df-1caeabd17d0mr509285255d.23.1733260829162;
-        Tue, 03 Dec 2024 13:20:29 -0800 (PST)
-Received: from denia.c.googlers.com (5.236.236.35.bc.googleusercontent.com. [35.236.236.5])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-85b82a89d5csm2140364241.8.2024.12.03.13.20.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Dec 2024 13:20:27 -0800 (PST)
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Tue, 03 Dec 2024 21:20:12 +0000
-Subject: [PATCH v6 5/5] media: uvcvideo: Flush the control cache when we
- get an event
+	s=arc-20240116; t=1733260818; c=relaxed/simple;
+	bh=cPMvh73fw4oUAnM1Wq+H1USVK8TY/X6SMWmynwXaBOs=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=ZFrV7tuWkffUwwTMQLeUU8mn4YVHRjoXCMEH4KCwY39zFslBRMNv0GqO+fZpntcj4E3OB6EiV3NhwT5GN7mMVUBGBftEhXDKyRNRZI/9QKEW78vg4To1y3g8bcOya61EoZ7R800o6496VDt6aGg75dlvKAbWEK4/U/RDnZ9/eAg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jxLnzLW7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC84BC4CED6;
+	Tue,  3 Dec 2024 21:20:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733260818;
+	bh=cPMvh73fw4oUAnM1Wq+H1USVK8TY/X6SMWmynwXaBOs=;
+	h=Date:From:To:Cc:Subject:From;
+	b=jxLnzLW7XynIWEPw3g5CrlrLVAQB9SoUm+2eskatKdG8jIjDwX0OX/XzhhFwFXvVF
+	 QVrMht1NYZGGvAhwKGHyW6e8JjsFg/F7y0k/ZswnyxTQePrfeVxXYaPAm1inCw/mem
+	 I5eWi4j3glKpufK36cZDgqHfNs4MtZeJ/4MAXZxYjV9+sy3QNwaO/Nt9OpUqgntY5t
+	 15j7X3uYRxDkpxtIg5OAcOdMQxPxYuLpO7X5rmNmftO8qQusopa7EeD7/584cXqKzo
+	 OCctSxtROby+F3D1oqCg9UcI7bsICP/0ykpP0SrdCX/PR1Ug6gEj7mh54QhegWKlJD
+	 zfmAsoc6q0/SQ==
+Date: Tue, 3 Dec 2024 18:20:15 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc: Francesco Nigro <fnigro@redhat.com>, Ilan Green <igreen@redhat.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Ian Rogers <irogers@google.com>,
+	James Clark <james.clark@linaro.org>, Jiri Olsa <jolsa@kernel.org>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Stephane Eranian <eranian@google.com>,
+	Yonatan Goldschmidt <yonatan.goldschmidt@granulate.io>,
+	linux-perf-users@vger.kernel.org
+Subject: [PATCH 1/1 perf-tools-next] perf disasm: Return a proper error when
+ not determining the file type
+Message-ID: <Z092D9-r_iOgwIWM@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241203-uvc-fix-async-v6-5-26c867231118@chromium.org>
-References: <20241203-uvc-fix-async-v6-0-26c867231118@chromium.org>
-In-Reply-To: <20241203-uvc-fix-async-v6-0-26c867231118@chromium.org>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Hans de Goede <hdegoede@redhat.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Guennadi Liakhovetski <guennadi.liakhovetski@intel.com>
-Cc: Hans Verkuil <hverkuil@xs4all.nl>, 
- Mauro Carvalho Chehab <mchehab+samsung@kernel.org>, 
- linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Ricardo Ribalda <ribalda@chromium.org>
-X-Mailer: b4 0.13.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-Asynchronous controls trigger an event when they have completed their
-operation.
+Before:
 
-This can make that the control cached value does not match the value in
-the device.
+  ⬢ [acme@toolbox a]$ perf annotate --stdio2 -i acme-perf-injected.data 'java.lang.String com.fasterxml.jackson.core.sym.CharsToNameCanonicalizer.findSymbol(char[], int, int, int)'
+  Error:
+  Couldn't annotate java.lang.String com.fasterxml.jackson.core.sym.CharsToNameCanonicalizer.findSymbol(char[], int, int, int):
+  Internal error: Invalid -1 error code
+  ⬢ [acme@toolbox a]$
 
-Let's flush the cache to be on the safe side.
+After:
 
-Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+  ⬢ [acme@toolbox a]$ perf annotate --stdio2 -i acme-perf-injected.data 'java.lang.String com.fasterxml.jackson.core.sym.CharsToNameCanonicalizer.findSymbol(char[], int, int, int)'
+  Error:
+  Couldn't annotate java.lang.String com.fasterxml.jackson.core.sym.CharsToNameCanonicalizer.findSymbol(char[], int, int, int):
+  Couldn't determine the file /tmp/perf-3308868.map type.
+  ⬢ [acme@toolbox a]$
+
+Reported-by: Francesco Nigro <fnigro@redhat.com>
+Reported-by: Ilan Green <igreen@redhat.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Ian Rogers <irogers@google.com>
+Cc: James Clark <james.clark@linaro.org>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Kan Liang <kan.liang@linux.intel.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Stephane Eranian <eranian@google.com>
+Cc: Yonatan Goldschmidt <yonatan.goldschmidt@granulate.io>
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- drivers/media/usb/uvc/uvc_ctrl.c | 3 +++
- 1 file changed, 3 insertions(+)
+ tools/perf/util/annotate.h | 1 +
+ tools/perf/util/disasm.c   | 5 ++++-
+ 2 files changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
-index 3dc9b7a49f64..db29e0e8bfd4 100644
---- a/drivers/media/usb/uvc/uvc_ctrl.c
-+++ b/drivers/media/usb/uvc/uvc_ctrl.c
-@@ -1622,6 +1622,9 @@ void uvc_ctrl_status_event(struct uvc_video_chain *chain,
+diff --git a/tools/perf/util/annotate.h b/tools/perf/util/annotate.h
+index 194a05cbc506e4da..c6a59aaefdb8b3a1 100644
+--- a/tools/perf/util/annotate.h
++++ b/tools/perf/util/annotate.h
+@@ -441,6 +441,7 @@ enum symbol_disassemble_errno {
+ 	SYMBOL_ANNOTATE_ERRNO__ARCH_INIT_REGEXP,
+ 	SYMBOL_ANNOTATE_ERRNO__BPF_INVALID_FILE,
+ 	SYMBOL_ANNOTATE_ERRNO__BPF_MISSING_BTF,
++	SYMBOL_ANNOTATE_ERRNO__COULDNT_DETERMINE_FILE_TYPE,
  
- 	mutex_lock(&chain->ctrl_mutex);
- 
-+	/* Flush the control cache, the data might have changed. */
-+	ctrl->loaded = 0;
-+
- 	handle = ctrl->handle;
- 	if (handle)
- 		uvc_ctrl_set_handle(handle, ctrl, NULL);
-
+ 	__SYMBOL_ANNOTATE_ERRNO__END,
+ };
+diff --git a/tools/perf/util/disasm.c b/tools/perf/util/disasm.c
+index 41a2b08670dc5b0e..b7de4d9fd0045d71 100644
+--- a/tools/perf/util/disasm.c
++++ b/tools/perf/util/disasm.c
+@@ -1245,6 +1245,9 @@ int symbol__strerror_disassemble(struct map_symbol *ms, int errnum, char *buf, s
+ 		scnprintf(buf, buflen, "The %s BPF file has no BTF section, compile with -g or use pahole -J.",
+ 			  dso__long_name(dso));
+ 		break;
++	case SYMBOL_ANNOTATE_ERRNO__COULDNT_DETERMINE_FILE_TYPE:
++		scnprintf(buf, buflen, "Couldn't determine the file %s type.", dso__long_name(dso));
++		break;
+ 	default:
+ 		scnprintf(buf, buflen, "Internal error: Invalid %d error code\n", errnum);
+ 		break;
+@@ -2289,7 +2292,7 @@ int symbol__disassemble(struct symbol *sym, struct annotate_args *args)
+ 	} else if (dso__binary_type(dso) == DSO_BINARY_TYPE__BPF_IMAGE) {
+ 		return symbol__disassemble_bpf_image(sym, args);
+ 	} else if (dso__binary_type(dso) == DSO_BINARY_TYPE__NOT_FOUND) {
+-		return -1;
++		return SYMBOL_ANNOTATE_ERRNO__COULDNT_DETERMINE_FILE_TYPE;
+ 	} else if (dso__is_kcore(dso)) {
+ 		kce.addr = map__rip_2objdump(map, sym->start);
+ 		kce.kcore_filename = symfs_filename;
 -- 
-2.47.0.338.g60cca15819-goog
+2.47.0
 
 
