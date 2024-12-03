@@ -1,173 +1,106 @@
-Return-Path: <linux-kernel+bounces-429193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5925A9E1994
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 11:43:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C52669E1899
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:58:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CFF01B2C668
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:55:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89DF32879CE
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:58:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDCAC1E0488;
-	Tue,  3 Dec 2024 09:55:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 672B21E048F;
+	Tue,  3 Dec 2024 09:58:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VWLvoIrQ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="vX2G9rAJ"
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C411185B48
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 09:55:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 235CD185B48;
+	Tue,  3 Dec 2024 09:58:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733219728; cv=none; b=AWqPIzFq4cVDA2gNrDn6pHpd5fsY4A96+TTfHT2WUfyuwTVwlcL3lJ6L36zPxvIFzwwM+7f5Y5oDrp1IKh5ZSwpaUwQy7bpPQljEUQNYn4CJOa8V9lC8tceHEdx3XeVeBjYQi3sro5hmVoPzJ1jxuJBENO1hYqv6V/7cq7qK1lI=
+	t=1733219887; cv=none; b=c/OqqVUJWKVtHpCmNPiurnbNGXTpfyzr1KVm5b7c0lLeWvCvkYhfjyNTdZi+87BJyEHlsgQ9UGbtwWQQ5ggtczODLwbIfmvqsLvZI+ToPTvM3GSVYdtp9SAMXXT3t0WDK324YlluhgGk4iP5zy1U3vHPmUJdHupf966Jdz7Brds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733219728; c=relaxed/simple;
-	bh=7sqVKYvTrtgl99aCAEkkYZ0UGGHMyaOrJdFLgExAFYU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=p26kiFPO19Fw8heCQmcZ4uxmaa6XupSq20l12PPW57UeGhsHhQcJlAiT3iqKjk7b83Cmdu8jBXvAN53PtG4nOmigl6M8/TYxOe8Qzav3bv0r4KQa3cDgW573Z7d3ndj68FHfJqs0j8a/xHEJHM4DR6JVTvVfg+s84wWuSl+9sd4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VWLvoIrQ; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733219727; x=1764755727;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=7sqVKYvTrtgl99aCAEkkYZ0UGGHMyaOrJdFLgExAFYU=;
-  b=VWLvoIrQAU+WRB3gzgSPf3TvJW5Wym02qos2UoLeGrU+e2g+yvwBmaA0
-   n8a0Xs0WRiFu9XabhdsbkqpXDs8t9HTPhMrIrJ/nMiOF1iH8iAOh7wytd
-   /4iwI84zT4Udj4Kz5y1bOyqA53WHZONNZN1AD4SsC0j/ADsrqWEBrWKUB
-   KF7tQubBMmVBciBVMTLjvwr/CrAYfzNttlF73aUS7PCcqaU6/DlPA9ieV
-   WLWFzIxmgl7O+KoqdCFHP1Dle5qVPZxKewV0SO036wTZl6N15x/n/9kKc
-   42wkxaiq7Q8KCxqRaVch5lafdng3OKGqiyVaqbabwg+AxcYUr/iKEb2oL
-   w==;
-X-CSE-ConnectionGUID: 2bPSu+AuSY6HY/PmcgFi7g==
-X-CSE-MsgGUID: WN51r+zoQT6F0zHkNuDQAQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11274"; a="44034163"
-X-IronPort-AV: E=Sophos;i="6.12,204,1728975600"; 
-   d="scan'208";a="44034163"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Dec 2024 01:55:26 -0800
-X-CSE-ConnectionGUID: Fx1k/0SpTouLmP2mdt/DxQ==
-X-CSE-MsgGUID: YRyN5NWSQlyS+o6CsisqrA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,204,1728975600"; 
-   d="scan'208";a="93046602"
-Received: from lkp-server01.sh.intel.com (HELO 388c121a226b) ([10.239.97.150])
-  by fmviesa006.fm.intel.com with ESMTP; 03 Dec 2024 01:55:24 -0800
-Received: from kbuild by 388c121a226b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tIPcn-0000Vb-2S;
-	Tue, 03 Dec 2024 09:55:21 +0000
-Date: Tue, 3 Dec 2024 17:54:52 +0800
-From: kernel test robot <lkp@intel.com>
-To: WANG Xuerui <git@xen0n.name>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Huacai Chen <chenhuacai@kernel.org>
-Subject: drivers/vdpa/pds/debugfs.c:266:49: warning: '%02d' directive output
- may be truncated writing between 2 and 11 bytes into a region of size 6
-Message-ID: <202412031726.c8OLuPOm-lkp@intel.com>
+	s=arc-20240116; t=1733219887; c=relaxed/simple;
+	bh=82sC32BBk3DWOy6v3ntFAlsx4Y118DDNrQnhZ6MMxPo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YWMGbDznYkc8E5U3z1+AMnNOZBYjPx4XDi4sOA/zj+jhuwcISWK4srAZGwFeuMZTtPXFfWhlhx/m5pHCfNPBmDTpbth9s9VSYEe0fkgwrwPHW9QKol5HPRFJ1B4XhElHIUyhLUyp5v5XwqPyplJ8Q8WXxu8qXc8NKOFQY75RtYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=vX2G9rAJ; arc=none smtp.client-ip=85.214.62.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from [192.168.1.107] (87-97-106-140.pool.digikabel.hu [87.97.106.140])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
+	(No client certificate requested)
+	(Authenticated sender: hs@denx.de)
+	by phobos.denx.de (Postfix) with ESMTPSA id EBA9588FED;
+	Tue,  3 Dec 2024 10:58:02 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+	s=phobos-20191101; t=1733219884;
+	bh=6+kB5Wl7gjZPdI2OI0HIygHEI3G3GMS7nXK/Vezw7xo=;
+	h=Date:Subject:To:Cc:References:Reply-To:From:In-Reply-To:From;
+	b=vX2G9rAJ9adCKPoap+Xcp4Uo/S1Z96k4xEvEe0teFmng5ZVSvEGp/fTr/Yh8wqo5F
+	 bki/oa7qOjg+nikw2aPWTYLhisdmtInvjSx9e6ecTS1oVBZhnXQ9VvtsggKs/jgFSn
+	 Bh1IElZ3Vmja4OzXmu6PFdiI+2fZukaHYW4Foiqrmnb+P7qVP3E8BsFiBEYLhtLXl2
+	 GtBLrUkyg/80/1+p87v3XVnvYlxMKBZadEaBnBvNz/eKeFbuRHlnXKwwMWE1FEIqn/
+	 BuLwzx2PbepI/qUE/7qFMFecap5TBykU8vCFHU0WvdfwYb6txowtTtk/QeWjWr8DHB
+	 NbKtwUvmcM6vQ==
+Message-ID: <71e330ff-c5bb-fcd3-1ebf-630cef8fc626@denx.de>
+Date: Tue, 3 Dec 2024 10:55:16 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.2.0
+Subject: Re: [PATCH v2 1/3] mtd: mchp48l640: make WEL behaviour configurable
+Content-Language: en-US
+To: Jonas Rebmann <jre@pengutronix.de>,
+ Miquel Raynal <miquel.raynal@bootlin.com>,
+ Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, David Jander <david@protonic.nl>,
+ kernel@pengutronix.de
+References: <20241203-mb85rs128ty-v2-0-42df3e7ff147@pengutronix.de>
+ <20241203-mb85rs128ty-v2-1-42df3e7ff147@pengutronix.de>
+Reply-To: hs@denx.de
+From: Heiko Schocher <hs@denx.de>
+In-Reply-To: <20241203-mb85rs128ty-v2-1-42df3e7ff147@pengutronix.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
+X-Virus-Status: Clean
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   cdd30ebb1b9f36159d66f088b61aee264e649d7a
-commit: 3f301dc292eb122eff61b8b2906e519154b0327f LoongArch: Replace -ffreestanding with finer-grained -fno-builtin's
-date:   1 year, 3 months ago
-config: loongarch-allmodconfig (https://download.01.org/0day-ci/archive/20241203/202412031726.c8OLuPOm-lkp@intel.com/config)
-compiler: loongarch64-linux-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241203/202412031726.c8OLuPOm-lkp@intel.com/reproduce)
+Hello Jonas,
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202412031726.c8OLuPOm-lkp@intel.com/
+On 03.12.24 10:37, Jonas Rebmann wrote:
+> From: David Jander <david@protonic.nl>
+> 
+> The 48L640 resets the WEL bit (the Write Enable Latch bit in the status
+> register) to zero on the completion of write operations. In preparation
+> to support chips behaving differently, introduce .auto_disable_wel
+> capability, and, if it's missing, explicitly reset the WEL bit after
+> writes.
+> 
+> Signed-off-by: David Jander <david@protonic.nl>
+> Signed-off-by: Jonas Rebmann <jre@pengutronix.de>
+> ---
+>   drivers/mtd/devices/mchp48l640.c | 14 +++++++++++---
+>   1 file changed, 11 insertions(+), 3 deletions(-)
 
-All warnings (new ones prefixed by >>):
+Reviewed-by: Heiko Schocher <hs@denx.de>
 
-   drivers/vdpa/pds/debugfs.c: In function 'pds_vdpa_debugfs_add_vdpadev':
->> drivers/vdpa/pds/debugfs.c:266:49: warning: '%02d' directive output may be truncated writing between 2 and 11 bytes into a region of size 6 [-Wformat-truncation=]
-     266 |                 snprintf(name, sizeof(name), "vq%02d", i);
-         |                                                 ^~~~
-   drivers/vdpa/pds/debugfs.c:266:46: note: directive argument in the range [-2147483641, 254]
-     266 |                 snprintf(name, sizeof(name), "vq%02d", i);
-         |                                              ^~~~~~~~
-   drivers/vdpa/pds/debugfs.c:266:17: note: 'snprintf' output between 5 and 14 bytes into a destination of size 8
-     266 |                 snprintf(name, sizeof(name), "vq%02d", i);
-         |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
---
-   drivers/net/wireless/intersil/p54/fwio.c: In function 'p54_parse_firmware':
->> drivers/net/wireless/intersil/p54/fwio.c:128:34: warning: '%s' directive output may be truncated writing up to 39 bytes into a region of size 32 [-Wformat-truncation=]
-     128 |                                 "%s - %x.%x", fw_version,
-         |                                  ^~
-   drivers/net/wireless/intersil/p54/fwio.c:128:33: note: directive argument in the range [0, 16777215]
-     128 |                                 "%s - %x.%x", fw_version,
-         |                                 ^~~~~~~~~~~~
-   drivers/net/wireless/intersil/p54/fwio.c:128:33: note: directive argument in the range [0, 255]
-   drivers/net/wireless/intersil/p54/fwio.c:127:17: note: 'snprintf' output between 7 and 52 bytes into a destination of size 32
-     127 |                 snprintf(dev->wiphy->fw_version, sizeof(dev->wiphy->fw_version),
-         |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     128 |                                 "%s - %x.%x", fw_version,
-         |                                 ~~~~~~~~~~~~~~~~~~~~~~~~~
-     129 |                                 priv->fw_var >> 8, priv->fw_var & 0xff);
-         |                                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
---
-   drivers/net/ethernet/marvell/octeontx2/af/cgx.c: In function 'cgx_lmac_init':
->> drivers/net/ethernet/marvell/octeontx2/af/cgx.c:1662:49: warning: '%d' directive writing between 1 and 11 bytes into a region of size between 4 and 6 [-Wformat-overflow=]
-    1662 |                 sprintf(lmac->name, "cgx_fwi_%d_%d", cgx->cgx_id, i);
-         |                                                 ^~
-   drivers/net/ethernet/marvell/octeontx2/af/cgx.c:1662:37: note: directive argument in the range [-2147483641, 254]
-    1662 |                 sprintf(lmac->name, "cgx_fwi_%d_%d", cgx->cgx_id, i);
-         |                                     ^~~~~~~~~~~~~~~
-   drivers/net/ethernet/marvell/octeontx2/af/cgx.c:1662:17: note: 'sprintf' output between 12 and 24 bytes into a destination of size 16
-    1662 |                 sprintf(lmac->name, "cgx_fwi_%d_%d", cgx->cgx_id, i);
-         |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
---
-   drivers/net/ethernet/marvell/octeontx2/af/rvu_debugfs.c: In function 'rvu_dbg_mcs_init':
->> drivers/net/ethernet/marvell/octeontx2/af/rvu_debugfs.c:533:36: warning: '%d' directive writing between 1 and 11 bytes into a region of size 7 [-Wformat-overflow=]
-     533 |                 sprintf(dname, "mcs%d", i);
-         |                                    ^~
-   drivers/net/ethernet/marvell/octeontx2/af/rvu_debugfs.c:533:32: note: directive argument in the range [-2147483641, 2147483646]
-     533 |                 sprintf(dname, "mcs%d", i);
-         |                                ^~~~~~~
-   drivers/net/ethernet/marvell/octeontx2/af/rvu_debugfs.c:533:17: note: 'sprintf' output between 5 and 15 bytes into a destination of size 10
-     533 |                 sprintf(dname, "mcs%d", i);
-         |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~
+Thanks!
 
-
-vim +266 drivers/vdpa/pds/debugfs.c
-
-151cc834f3ddaf Shannon Nelson 2023-05-19  256  
-151cc834f3ddaf Shannon Nelson 2023-05-19  257  void pds_vdpa_debugfs_add_vdpadev(struct pds_vdpa_aux *vdpa_aux)
-151cc834f3ddaf Shannon Nelson 2023-05-19  258  {
-151cc834f3ddaf Shannon Nelson 2023-05-19  259  	int i;
-151cc834f3ddaf Shannon Nelson 2023-05-19  260  
-151cc834f3ddaf Shannon Nelson 2023-05-19  261  	debugfs_create_file("config", 0400, vdpa_aux->dentry, vdpa_aux->pdsv, &config_fops);
-151cc834f3ddaf Shannon Nelson 2023-05-19  262  
-151cc834f3ddaf Shannon Nelson 2023-05-19  263  	for (i = 0; i < vdpa_aux->pdsv->num_vqs; i++) {
-151cc834f3ddaf Shannon Nelson 2023-05-19  264  		char name[8];
-151cc834f3ddaf Shannon Nelson 2023-05-19  265  
-151cc834f3ddaf Shannon Nelson 2023-05-19 @266  		snprintf(name, sizeof(name), "vq%02d", i);
-151cc834f3ddaf Shannon Nelson 2023-05-19  267  		debugfs_create_file(name, 0400, vdpa_aux->dentry,
-151cc834f3ddaf Shannon Nelson 2023-05-19  268  				    &vdpa_aux->pdsv->vqs[i], &vq_fops);
-151cc834f3ddaf Shannon Nelson 2023-05-19  269  	}
-151cc834f3ddaf Shannon Nelson 2023-05-19  270  }
-151cc834f3ddaf Shannon Nelson 2023-05-19  271  
-
-:::::: The code at line 266 was first introduced by commit
-:::::: 151cc834f3ddafec869269fe48036460d920d08a pds_vdpa: add support for vdpa and vdpamgmt interfaces
-
-:::::: TO: Shannon Nelson <shannon.nelson@amd.com>
-:::::: CC: Michael S. Tsirkin <mst@redhat.com>
-
+bye,
+Heiko
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+DENX Software Engineering GmbH,      Managing Director: Erika Unter
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+Phone: +49-8142-66989-52   Fax: +49-8142-66989-80   Email: hs@denx.de
 
