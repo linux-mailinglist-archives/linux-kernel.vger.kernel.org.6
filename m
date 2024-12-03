@@ -1,122 +1,97 @@
-Return-Path: <linux-kernel+bounces-429543-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429544-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40FDD9E1D91
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 14:30:00 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15BEE165F2E
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 13:29:57 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0118B1EF0B0;
-	Tue,  3 Dec 2024 13:29:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SWTH7MBu"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9D759E1E22
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 14:48:09 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C223F1EF0A9
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 13:29:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 85DBCB2A1F2
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 13:30:47 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 387871EC019;
+	Tue,  3 Dec 2024 13:30:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="AdYh+9Ni"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D4571E531
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 13:30:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733232595; cv=none; b=soI+xA/x4G94WzVh0jJZw4tYyoIaKtK5TyJ618/ulDrq7MuvyM0daDiJbpHvCg70ryBXmmKDvoAbzW/fySTEbzMUaN8DBmdMMYCajwfDEJ3Y3gFgedhkQKqfSamER5jJRhp8wqWgAhj2DrQ25glbcgXbyzQ5nMRK0UPDnMTFhpQ=
+	t=1733232642; cv=none; b=lmTRvxdYzsR1CMKgSoRWRkUb0VzEBaXCeX6oEblNY53V4svwSEqs8enRkNePZZMbhMkm79rJwaj20NU+66ZMLFDF2s9TaB+2ciEknEEyunmBnb8R+kzHVkJpQ4suQ3x/ufvD+GkoCQ461a4y57OOdprJihR9PFeIxZvM48GKCLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733232595; c=relaxed/simple;
-	bh=n7Ct1wtWEdEx1EUVVxKWgSFrezyal9HC05HiJZkOymU=;
+	s=arc-20240116; t=1733232642; c=relaxed/simple;
+	bh=SoD83N5vsPrQJ5mpXPuIPGHfj4z6qq1j0ga6s1cMERQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rWr0fmPju1Lr6F34c+1BkIbmJtBHW6NnJ+YktuEDnT3AZGwpfMfBy7MpE/mEC6U3AmZAmtp67bSRgtfi5ctQiXg78jVsCuOwXt3F8QpO5y0LfUb6MJQ5b/2o74tOOJ/xZdWCXJU3ZpeE9AGrUMmTqvnO+uF+5bkZjtnj/W3798k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SWTH7MBu; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1733232592;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=n7Ct1wtWEdEx1EUVVxKWgSFrezyal9HC05HiJZkOymU=;
-	b=SWTH7MBud0kKOpbBCAw1kQyqHJ8LDJheapxI3SrY1rxI8NWyIxIv8ALoIFGyOpjaDnFTcp
-	nrulfLnvbTYb2u0Rn4tK5kfJCSvmR+Nj8MB2ib6gcB95J53c4kU4BNYKmMQ3Dy/+cFOrC0
-	WDgrqQ3vUJ9cuW/srwoRM5AyerJdyp4=
-Received: from mail-oa1-f70.google.com (mail-oa1-f70.google.com
- [209.85.160.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-581-cSrcgpCqNAq3-Bu6KvhHpA-1; Tue, 03 Dec 2024 08:29:49 -0500
-X-MC-Unique: cSrcgpCqNAq3-Bu6KvhHpA-1
-X-Mimecast-MFC-AGG-ID: cSrcgpCqNAq3-Bu6KvhHpA
-Received: by mail-oa1-f70.google.com with SMTP id 586e51a60fabf-29690f78d57so3459119fac.2
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 05:29:49 -0800 (PST)
+	 To:Cc:Content-Type; b=XkqiHmSF9B9YsZpYY1MXkVl0++ww8wiU2J7BIu1aoJrap/6elGKBWkXc/h2QncXGZtD6LFXuHDvoWu0uK2+g2zBqDqJl1sSGTVAVztPZU2HYFzIxvdJ/OFAuil6VJHPRFPJ+xbK5ecP++PSziSPZvcSvYRtio8Up56zSX6mraIg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=AdYh+9Ni; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-53df67d6659so8647723e87.3
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 05:30:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ionos.com; s=google; t=1733232638; x=1733837438; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SoD83N5vsPrQJ5mpXPuIPGHfj4z6qq1j0ga6s1cMERQ=;
+        b=AdYh+9NiDI8cfmm130jb20dVzfG3AsS0mcGPy/AEZRypwmBID9FtPe/AXdhZzl+UyT
+         0Vx1KxUvnc4RfmzdkgwoRxXKJng/+DLs8bEM1cf6fFrWgl/UZZVtrg4nyvYrEgdsJCKZ
+         zeMnkTau0vGvF0ziMBBfAvGKQfeZ4msipzqAWwfjHsPd+wOpuFen+pEcH4U0upDeWgDZ
+         Wr+5jyKbjjQSHRu+7HbMF0uYuA1D5MhBMLen60pfju6pzRDHvt2LbWEvQsEamAy0QGii
+         IQQ9by8bFx8Jlpl3+pjxbjHYVCY2Rir7CNAbUaFzjfoKqO8g6EuENl3fQ5jIGBfqs7Hh
+         u6Sw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733232589; x=1733837389;
+        d=1e100.net; s=20230601; t=1733232638; x=1733837438;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=n7Ct1wtWEdEx1EUVVxKWgSFrezyal9HC05HiJZkOymU=;
-        b=IvhMBbdaZKjzJ5FnntsKMu119RhqLUR/wjDTK35UseDGU9CokgDajLGwQRRjc7o5B3
-         IB2RMRWlNSAkJ07Q87xAuG/JU8peeXUwsXSdwtGb4NRFpGSiuhHP1z//e9teijHIw+qa
-         y1VwCHekRgBAhtsZC3QDpTAF25wfNzNqRG3B25ZLLea5a8j/awnytN7FTRXP666gatwA
-         JmLIx36wGV9tUGAQKwVVjsIHyA/RUKCLK2HvwyIKLIVv8t+Bg2yCBvhrLqi6+RI0RiHK
-         uTDOapyS0ak7oerkdfWB95IdEjuFIt1rnIn3OwW4sybpHGJsv9LZVnaNU/zI19NpCVKn
-         9Ipg==
-X-Forwarded-Encrypted: i=1; AJvYcCXpEPw79o2xUJ7wAMsOQhd+MCZjMlnNLEqhaaCbBuC4iMHH3T4+rMit7iGh+K8MX5ZdNm+ppymn9YuHKQk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVjW5K3kFBorWWdS7DnWDF87Nd/Xu9yY6D+slDtY6jRwUsQuni
-	ZLjUNf/FXp/9l4cLTpSBHcVmqWGfUmPjvm5ydgaMqvSzzF2KNJ90U04qWR3+fBEPYIMMVwpnz4l
-	d3C/eyXpQVvv8lTBP5WY1uKdPc16vp6G9q5z9act2KLnHsj891vaYR6CznA2nGuNysOdRraOxu9
-	lFoX+Wcjnq6GjL0UHE3z/1hATSorGf/a2rTfXu
-X-Gm-Gg: ASbGnctOjkC4Y/90C2yoPmwo4fhC9aUuHePISwe/c50w75A1nOXfXZ3UulxeADuJxlk
-	/hDOcgc1FN5JbUzleK5hDqetE0x7VPxWhRSpnQDpdhqaWSXHgaE1B6vdRVhGM8kMc3g==
-X-Received: by 2002:a05:6870:3b85:b0:29e:684d:2739 with SMTP id 586e51a60fabf-29e888946f7mr2186263fac.32.1733232588877;
-        Tue, 03 Dec 2024 05:29:48 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFExfH2VrDltV7oN8LmeRawcdQojOLEdyX09vyUx2aadwBxD8ckIt1qPwPw8S0zuZPWUmzatJonWZ74bxlmRJM=
-X-Received: by 2002:a05:6870:3b85:b0:29e:684d:2739 with SMTP id
- 586e51a60fabf-29e888946f7mr2186242fac.32.1733232588658; Tue, 03 Dec 2024
- 05:29:48 -0800 (PST)
+        bh=SoD83N5vsPrQJ5mpXPuIPGHfj4z6qq1j0ga6s1cMERQ=;
+        b=j2Xj0RaIB0x0sk5ZXkDCy6SLu3vAsim3Yaj2tu+6DfSQ1s0smYoctfpFaIzOzE7OB+
+         NmtbeWyhWqvIj+GsDvjY5gH0aFLrAbt9MCGJTKitPu3sSsYzwiB8JokbE/CPAmmudd26
+         VO1g1Uw78dGJwaKHS+V/vYpskLhB2blVW7Iw/5zhwNipxqF4f22Iv4dPqd+tZbW+FPTW
+         G4P/Qf3fWINSEO5dvAqZQC3PBMGUw/59cZeo+9SB+X6KHAh3lP3Wqn8n/GXEQJ74TOvv
+         rrG1b+CyFtJ1o0xiCuL3eDo1ZFTctaUWiP/nj/9xyKI7BjK7kRQnmLNYNVj0pndrkdve
+         pvKA==
+X-Forwarded-Encrypted: i=1; AJvYcCVYt3xmGnB9F/OaG3rvfGxmvKu4K5SVLzKzQMremMsGxrGaLKVcXVm2Lhq9VMIE5EQVVMrQbCChMYuj6VM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxl6i4HJIaoM+CQ2z62g/WZjFBD6aVWwqf+CVyF1E7Ey6cs0lc4
+	OIRpskHTH1311XeMxynfXPDcPntTn+ri6ssjp7eHJeedEJtNfsw6KXvX4d4At8Y8Or3p9AJmbfW
+	YrVrWxqfTHJbYJ2n5JqicpZobdOdvMg6ZzUhbtWF5ZQhbhGXYbvA=
+X-Gm-Gg: ASbGncvh0In6PmEaOJnorSCH9rONOaf3VYhtDrZya+u3UWleFiCgIB8T3CXaoMU3r4w
+	8ZtJk/12mOPeVUkZxcoohy8zto2FDe8TBw6iCkErbD5KQSA8Qzb07OY7X/UJG
+X-Google-Smtp-Source: AGHT+IHzwV0F7K3HmoKIVDx1sWgIm6ncPAPpcRzITTdImU1h90E9EN7eYmf68pN5DyC5EBDpfb0WlM0hv99UTrwJveE=
+X-Received: by 2002:a05:6512:108c:b0:53d:e83e:a23d with SMTP id
+ 2adb3069b0e04-53e12a06988mr2179465e87.27.1733232637809; Tue, 03 Dec 2024
+ 05:30:37 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241203095414.164750-2-costa.shul@redhat.com> <6scvm7d7pcwtgo3gqu6jxf6ht6qcr2rnmmdwnhpopkd44gayej@ussah6oaxssn>
-In-Reply-To: <6scvm7d7pcwtgo3gqu6jxf6ht6qcr2rnmmdwnhpopkd44gayej@ussah6oaxssn>
-From: Costa Shulyupin <costa.shul@redhat.com>
-Date: Tue, 3 Dec 2024 15:29:12 +0200
-Message-ID: <CADDUTFzfgrA3tjmkedxd+JWrK_rMLiuOZMH9p5-+5rmW1TcS3w@mail.gmail.com>
-Subject: Re: [PATCH] cgroup/cpuset: Remove stale text
-To: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>
-Cc: Waiman Long <longman@redhat.com>, Tejun Heo <tj@kernel.org>, 
-	Johannes Weiner <hannes@cmpxchg.org>, cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241127085236.3538334-1-hsiangkao@linux.alibaba.com>
+ <CAB=BE-RVudjkHsuff5Tmg2sumjDkPKpQ9Y0XN2gZzPFxUGa+hg@mail.gmail.com>
+ <b68945e3-3498-4068-b119-93f9e5aaf3ad@linux.alibaba.com> <CAKPOu+9iDdP9zVnu10dy3mR48Z1D0U1xyCuZa3A6cYEFKD-rUw@mail.gmail.com>
+ <0584d334-4e75-4d35-be33-03d6ff7a0aba@linux.alibaba.com>
+In-Reply-To: <0584d334-4e75-4d35-be33-03d6ff7a0aba@linux.alibaba.com>
+From: Max Kellermann <max.kellermann@ionos.com>
+Date: Tue, 3 Dec 2024 14:30:27 +0100
+Message-ID: <CAKPOu+_4z4NDG1CmqsBatJVF1rQXHvqHV6fUiHEcnBswa_u8BQ@mail.gmail.com>
+Subject: Re: [PATCH] erofs: fix PSI memstall accounting
+To: Gao Xiang <hsiangkao@linux.alibaba.com>
+Cc: linux-erofs@lists.ozlabs.org, LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Does
-"Accessing a task's cpuset should be done in accordance with the
-guidelines for accessing subsystem state in kernel/cgroup.c"
-means `css_set_lock` defined in kernel/cgroup/cpuset.c (moved from
-kernel/cgroup.c)
+On Tue, Dec 3, 2024 at 9:15=E2=80=AFAM Gao Xiang <hsiangkao@linux.alibaba.c=
+om> wrote:
+> But I guess you could record more frame addresses to get the caller
+> of readahead_expand()? e.g. __builtin_return_address(1)?
 
-Are mentioned guidelines now in include/linux/cgroup-defs.h?
-
-Thanks
-Costa
-
-On Tue, 3 Dec 2024 at 14:31, Michal Koutn=C3=BD <mkoutny@suse.com> wrote:
->
-> Hello.
->
-> On Tue, Dec 03, 2024 at 11:54:13AM GMT, Costa Shulyupin <costa.shul@redha=
-t.com> wrote:
-> > Remove stale text:
-> > 'See "The task_lock() exception", at the end of this comment.'
-> > and reformat.
->
-> It seems you've read through the comments recently.
-> Do you have more up your sleeve? (It could be lumped together.)
-> Unless it was an accidental catch.
->
-> Thanks,
-> Michal
-
+This turned out to be a big disaster. __builtin_return_address(1)
+instantly crashes the kernel, causing the whole (production) cluster
+to go down.
 
