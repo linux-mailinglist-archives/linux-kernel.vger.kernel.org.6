@@ -1,121 +1,710 @@
-Return-Path: <linux-kernel+bounces-429627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF5559E2276
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:24:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A5E79E2690
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 17:14:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E0D62B31D41
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 14:13:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 723DAB2AB9C
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 14:15:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CE331F4283;
-	Tue,  3 Dec 2024 14:13:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B2EA1F427E;
+	Tue,  3 Dec 2024 14:15:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="ioZjjVtK"
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=helen.koike@collabora.com header.b="FQPWzx5l"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E5401CF8B
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 14:13:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733235188; cv=none; b=hByjQDQzPyTJCiGilzuZeYoSqL+KR0JDCeDcaqR3sL9wTkFIVh8L92R6TP1ElNGfmwvIbKi80iFZ4pZYouW6aWV/ehLyH0jSU8CyifZBr/V+xtjm9LMDtSw14HIW2T4M3Dexx8kBJzqUy7r/CGPdL4sfdwQlCGOq56RJA1UOkWg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733235188; c=relaxed/simple;
-	bh=0bxsI4AI0INR0NHt3W9lttgxcRuou29i0QWVno7TzYM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rshghc3nDK+YD8MUsJyWoJaLL7NAwLsjKLnYx63tBFXFVw863r9l4FYDPiohf4Cu33XPsyDX0nPGwh0b2GUmzj/hZwKdS/5LVNcsJ5ksJ+/CDdPxICONxhyl6CTEKrmSfinLsEU8iZ4Ey3LWXcC+YcbRQCQM1TPWwXuxt84LgJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=ioZjjVtK; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2f75c56f16aso53321381fa.0
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 06:13:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1733235184; x=1733839984; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=TRfctHU36B//m/17IuCPJ4O8WijMI9yeHi6VQvqDOh4=;
-        b=ioZjjVtKXfgJ4lLOUluY+kKIM26dAJuZBpoxy4tQb8NdApDs36Sv4iDIPAkEZOEFAJ
-         3oOau/dPnn2XK4VKL/lg2bGM7VBoqWFM4mktr5OKAOTNGxrS4pRP4MhcC22y0hJF+pBX
-         gwdpNTcmv6nROzfisbjKg2NwuvSiTsOCEpvpIToRmd/fvfpJb/3are+3Bk8nBOEHBXyO
-         l7UpjGJBYM3pjKweMWGK5LbxoeGWtQFrYR49D0ivmMRpCqxCdySOq15WlgZak4JB9IIm
-         uM/PaS2HMqwNLDi7+rrMA2Dw4lUC3gDoSPjT5y1vYllzqZcDvNnThhs97NG1UbCnhMgU
-         gWbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733235184; x=1733839984;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TRfctHU36B//m/17IuCPJ4O8WijMI9yeHi6VQvqDOh4=;
-        b=uq8x6L89gW1lQm9bHGN0I4i4qYfa0FEjReeVBPgszxEyInQz5PkfFnFhu0kT3dlttM
-         m5OzDuJxpu3K4UX1Uea7uJBFNkSwDnTyK8XC/wbS4nYcgfCRF+9pjDtkUkZzSZoNdB07
-         0YwbjxM2g8jz1Kxqu8rKHdVa7XwovfI34cinjbr1+Fw1s0i6zbSe9Lb5gaP5oz2X05qb
-         jgx/3mPFjCSYj5Fb3SGJ5r1d49ricDfn+xRjUHXR6VY276DXNBLofHL0Zqv3RIDozMgM
-         fJqoGnk/LPw0mh7S/wTxWjiV1uhlkyFuMrEqz8Cy2mJoOpedhIpA8QQNH3HYUDzg0pmf
-         d3FA==
-X-Forwarded-Encrypted: i=1; AJvYcCUO5yJniOfGZZJ/X4Be83rx2a60UuD8V3P5WsQnXZ9udC6BJEeAJ8IQMTL9AP4XIlymty+2dQ96zmMfs30=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxtBSuXfiIBr69dUM//zxllElmasR1/azJY4FxAtx0e7iAOaVAR
-	SC2sHHPCVHp0RJQzIMi8DygvV5G68hDeg/coDwmpY1faW7smhHeWlwX3mjfL+Uc=
-X-Gm-Gg: ASbGncvosscItM7KLXU0nfG16IQVsNo5u4MNnwzQyhIOV9tn1bxT5x3VbiipvNBH2Ik
-	MiJvd/t7LqjsyXMVRGK1lpyE64NIdgx00QMfaR7DtIGbxJqCGCM2GnmSKtC4vDrQXVNvMgww/X1
-	8x6BdWCiLZDC73me/ZWAeF73Hd5X/hI1LhxPEKmom2gJK1AWK1XLp7WRbBxo2xQwSHCob4YPGBD
-	v7nyqdKiC+QtVeFvvq4xTYBbRCcWwhRqVeImiH9ocELgAtQ1hLSJrJIBGP7oIkH2kMVXDvvHr5s
-	g3tiB7J2/bmgeQ==
-X-Google-Smtp-Source: AGHT+IGYkErt1vzCnl/QEMxSdD5HS1d3h+rMe7TWGlIe+ZMd9qjpsDjoipmrdzvNvya4uf+aC0BgJg==
-X-Received: by 2002:a05:6512:81:b0:53e:12c3:a29 with SMTP id 2adb3069b0e04-53e12c30a8fmr899530e87.19.1733235183565;
-        Tue, 03 Dec 2024 06:13:03 -0800 (PST)
-Received: from brgl-uxlite.home (217.97.33.231.ipv4.supernova.orange.pl. [217.97.33.231])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53df6431229sm1860857e87.7.2024.12.03.06.13.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Dec 2024 06:13:03 -0800 (PST)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Stephan Gerhold <stephan.gerhold@linaro.org>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Bjorn Helgaas <bhelgaas@google.com>
-Cc: linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [RFT PATCH] Revert "power: sequencing: request the WLAN enable GPIO as-is"
-Date: Tue,  3 Dec 2024 15:12:51 +0100
-Message-ID: <20241203141251.11735-1-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.45.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1BF51CF8B
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 14:14:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733235300; cv=pass; b=oyGvM1agF6KL6ZDzedEb3OHz3DnPFZ8JCIVhtTb5FcNcTo8Op8LtdYPvOZY0nLe46IfGSECStv84f2y4g/AVEXnzVr/sZ2I3bJnkjKrfGE0vDbwkxAr/OzeBHq+JMxXmMQTrNMGDla8NzgjgPMZkDzpz/YDp2NmuOoT8TxeG8yM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733235300; c=relaxed/simple;
+	bh=rJzbOh/ot7JVgq+ReGrpX2/UFDGsjuKvvmqMT1opMxY=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=VTRTJdEw/92RRoL3x4A1RJMWsegpleOazsD+DH19UVrep9XLUhEEnbh2tdcKiWXZLWwUZniGDctSOhouOtI+P4dj802g+t/dcVzTfkz2XW2Y+T3nVLaEE4uwG9AGKEQr1u/GFItHvh98DEWBybenFuSEwHNyMGJ/85z1XbGY4mA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=helen.koike@collabora.com header.b=FQPWzx5l; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1733235283; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=BAz8uT1Wcxy5XFTkhXla+2rFmn6gReE986+S1jw+67jKLvRt94QVuGOKGh1DffwnHsNgJqRMy9NoCvGPbw6mK8rDyAqU2h75dPyHu5vIplsBXLv1TPREMs9gBkO5mz73LBXw/t8Q5cPXYy5PxVAVkpYZnqseJsQTUfF6ovZO/f4=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1733235283; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=Kt3Ag60okb753bLD5IzOxr7HnHKlyKy8guyIUs2/ek8=; 
+	b=E5J2zM9HmtNQL5gxke/s3cG9bg2LKmyF3RZsNbEuDPIP1KNxErE48W/bLYdoErxkjNWyoOeFOe/1O+KanjC3b5g2hskeu1Xh/i0eTQVYKvQlg+x8Yngx3UiJop34y2sJh3gWz2izwZwcgaADoVY85sjm8wF2jIVIP8/nfLeWHIk=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=helen.koike@collabora.com;
+	dmarc=pass header.from=<helen.koike@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1733235283;
+	s=zohomail; d=collabora.com; i=helen.koike@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=Kt3Ag60okb753bLD5IzOxr7HnHKlyKy8guyIUs2/ek8=;
+	b=FQPWzx5li6JIG30N66Fg6lDxsLRYDmqUTjNBnVQKY6R74GPWIEsJ1q3vPPc2022p
+	rQmMmPPMc7LRdj4hc1TtFfwXcvHgtwHXRfhloZVN46d8y4+/QkUNB6T/4EW5W9km+hK
+	wyIjLlnlm6d3I3cWG6kAqd6irCdIrE9TgQP/+rg4=
+Received: from mail.zoho.com by mx.zohomail.com
+	with SMTP id 1733235281622162.0283050184795; Tue, 3 Dec 2024 06:14:41 -0800 (PST)
+Date: Tue, 03 Dec 2024 11:14:41 -0300
+From: Helen Mae Koike Fornazier <helen.koike@collabora.com>
+To: "Vignesh Raman" <vignesh.raman@collabora.com>
+Cc: "dri-devel" <dri-devel@lists.freedesktop.org>,
+	"daniels" <daniels@collabora.com>, "airlied" <airlied@gmail.com>,
+	"daniel" <daniel@ffwll.ch>, "robdclark" <robdclark@gmail.com>,
+	"guilherme.gallo" <guilherme.gallo@collabora.com>,
+	"sergi.blanch.torne" <sergi.blanch.torne@collabora.com>,
+	"jani.nikula" <jani.nikula@linux.intel.com>,
+	"dmitry.baryshkov" <dmitry.baryshkov@linaro.org>,
+	"mripard" <mripard@kernel.org>,
+	"linux-kernel" <linux-kernel@vger.kernel.org>
+Message-ID: <1938cdf8eb3.e3b1897e528875.7861453509738681864@collabora.com>
+In-Reply-To: <20241128042025.611659-2-vignesh.raman@collabora.com>
+References: <20241128042025.611659-1-vignesh.raman@collabora.com> <20241128042025.611659-2-vignesh.raman@collabora.com>
+Subject: Re: [PATCH v1 1/2] drm/ci: uprev mesa
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Importance: Medium
+User-Agent: Zoho Mail
+X-Mailer: Zoho Mail
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-This reverts commit a9aaf1ff88a8cb99a1335c9eb76de637f0cf8c10.
 
-With the changes recently merged into the PCI/pwrctrl/ we now have
-correct ordering between the pwrseq provider and the PCI-pwrctrl
-consumers. With that, the pwrseq WCN driver no longer needs to leave the
-GPIO state as-is and we can remove the workaround.
 
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
- drivers/power/sequencing/pwrseq-qcom-wcn.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/power/sequencing/pwrseq-qcom-wcn.c b/drivers/power/sequencing/pwrseq-qcom-wcn.c
-index 682a9beac69eb..bb8c47280b7bc 100644
---- a/drivers/power/sequencing/pwrseq-qcom-wcn.c
-+++ b/drivers/power/sequencing/pwrseq-qcom-wcn.c
-@@ -379,7 +379,7 @@ static int pwrseq_qcom_wcn_probe(struct platform_device *pdev)
- 				     "Failed to get the Bluetooth enable GPIO\n");
- 
- 	ctx->wlan_gpio = devm_gpiod_get_optional(dev, "wlan-enable",
--						 GPIOD_ASIS);
-+						 GPIOD_OUT_LOW);
- 	if (IS_ERR(ctx->wlan_gpio))
- 		return dev_err_probe(dev, PTR_ERR(ctx->wlan_gpio),
- 				     "Failed to get the WLAN enable GPIO\n");
--- 
-2.30.2
+---- On Thu, 28 Nov 2024 01:20:20 -0300 Vignesh Raman  wrote ---
+
+ > Uprev mesa to adapt to the latest changes in mesa ci=20
+ > which includes new container jobs and stages. Also update=20
+ > lava-submit script to adapt to the recent changes in mesa=20
+ > to use LAVA rootfs overlays.=20
+ > =20
+ > Signed-off-by: Vignesh Raman vignesh.raman@collabora.com>=20
+ > ---=20
+ >  drivers/gpu/drm/ci/build.sh       |   2 +-=20
+ >  drivers/gpu/drm/ci/build.yml      | 103 +++++++++++++++++++++++++++++-=
+=20
+ >  drivers/gpu/drm/ci/container.yml  |  22 +++----=20
+ >  drivers/gpu/drm/ci/gitlab-ci.yml  |  71 ++++++++++++++------=20
+ >  drivers/gpu/drm/ci/image-tags.yml |  11 +++-=20
+ >  drivers/gpu/drm/ci/lava-submit.sh |  99 ++++++++++++++++++++--------=20
+ >  drivers/gpu/drm/ci/test.yml       |  13 ++--=20
+ >  7 files changed, 255 insertions(+), 66 deletions(-)=20
+ > =20
+ > diff --git a/drivers/gpu/drm/ci/build.sh b/drivers/gpu/drm/ci/build.sh=
+=20
+ > index 139b81db6312..19fe01257ab9 100644=20
+ > --- a/drivers/gpu/drm/ci/build.sh=20
+ > +++ b/drivers/gpu/drm/ci/build.sh=20
+ > @@ -132,7 +132,7 @@ fi=20
+ >  # Pass needed files to the test stage=20
+ >  mkdir -p install=20
+ >  cp -rfv .gitlab-ci/* install/.=20
+ > -cp -rfv ci/*  install/.=20
+ > +cp -rfv bin/ci/*  install/.=20
+ >  cp -rfv install/common install/ci-common=20
+ >  cp -rfv drivers/gpu/drm/ci/* install/.=20
+ > =20
+ > diff --git a/drivers/gpu/drm/ci/build.yml b/drivers/gpu/drm/ci/build.yml=
+=20
+ > index 9c198239033d..771ecfc5008d 100644=20
+ > --- a/drivers/gpu/drm/ci/build.yml=20
+ > +++ b/drivers/gpu/drm/ci/build.yml=20
+ > @@ -2,7 +2,7 @@=20
+ >  extends:=20
+ >  - .build-rules=20
+ >  - .container+build-rules=20
+ > -  stage: build=20
+ > +  stage: build-only=20
+ >  artifacts:=20
+ >  paths:=20
+ >  - artifacts=20
+ > @@ -110,3 +110,104 @@ build-nodebugfs:arm64:=20
+ > =20
+ >  build:x86_64:=20
+ >  extends: .build:x86_64=20
+ > +=20
+ > +# Disable build jobs that we won't use=20
+ > +alpine-build-testing:=20
+ > +  rules:=20
+ > +    - when: never=20
+ > +=20
+ > +debian-android:=20
+ > +  rules:=20
+ > +    - when: never=20
+ > +=20
+ > +debian-arm32:=20
+ > +  rules:=20
+ > +    - when: never=20
+ > +=20
+ > +debian-arm32-asan:=20
+ > +  rules:=20
+ > +    - when: never=20
+ > +=20
+ > +debian-arm64:=20
+ > +  rules:=20
+ > +    - when: never=20
+ > +=20
+ > +debian-arm64-asan:=20
+ > +  rules:=20
+ > +    - when: never=20
+ > +=20
+ > +debian-arm64-build-test:=20
+ > +  rules:=20
+ > +    - when: never=20
+ > +=20
+ > +debian-arm64-release:=20
+ > +  rules:=20
+ > +    - when: never=20
+ > +=20
+ > +debian-build-testing:=20
+ > +  rules:=20
+ > +    - when: never=20
+ > +=20
+ > +debian-clang:=20
+ > +  rules:=20
+ > +    - when: never=20
+ > +=20
+ > +debian-clang-release:=20
+ > +  rules:=20
+ > +    - when: never=20
+ > +=20
+ > +debian-no-libdrm:=20
+ > +  rules:=20
+ > +    - when: never=20
+ > +=20
+ > +debian-ppc64el:=20
+ > +  rules:=20
+ > +    - when: never=20
+ > +=20
+ > +debian-release:=20
+ > +  rules:=20
+ > +    - when: never=20
+ > +=20
+ > +debian-s390x:=20
+ > +  rules:=20
+ > +    - when: never=20
+ > +=20
+ > +debian-testing:=20
+ > +  rules:=20
+ > +    - when: never=20
+ > +=20
+ > +debian-testing-asan:=20
+ > +  rules:=20
+ > +    - when: never=20
+ > +=20
+ > +debian-testing-msan:=20
+ > +  rules:=20
+ > +    - when: never=20
+ > +=20
+ > +debian-vulkan:=20
+ > +  rules:=20
+ > +    - when: never=20
+ > +=20
+ > +debian-x86_32:=20
+ > +  rules:=20
+ > +    - when: never=20
+ > +=20
+ > +fedora-release:=20
+ > +  rules:=20
+ > +    - when: never=20
+ > +=20
+ > +rustfmt:=20
+ > +  rules:=20
+ > +    - when: never=20
+ > +=20
+ > +shader-db:=20
+ > +  rules:=20
+ > +    - when: never=20
+ > +=20
+ > +windows-msvc:=20
+ > +  rules:=20
+ > +    - when: never=20
+ > +=20
+ > +yaml-toml-shell-test:=20
+ > +  rules:=20
+ > +    - when: never=20
+
+Well, I don't really like this list, but I guess we don't have a choice for=
+ now...
+
+ > diff --git a/drivers/gpu/drm/ci/container.yml b/drivers/gpu/drm/ci/conta=
+iner.yml=20
+ > index 2a94f54ce4cf..07dc13ff865d 100644=20
+ > --- a/drivers/gpu/drm/ci/container.yml=20
+ > +++ b/drivers/gpu/drm/ci/container.yml=20
+ > @@ -24,7 +24,7 @@ alpine/x86_64_build:=20
+ >  rules:=20
+ >  - when: never=20
+ > =20
+ > -debian/x86_64_test-vk:=20
+ > +debian/arm64_test-gl:=20
+ >  rules:=20
+ >  - when: never=20
+ > =20
+ > @@ -32,7 +32,15 @@ debian/arm64_test-vk:=20
+ >  rules:=20
+ >  - when: never=20
+ > =20
+ > -debian/arm64_test-gl:=20
+ > +debian/ppc64el_build:=20
+ > +  rules:=20
+ > +    - when: never=20
+ > +=20
+ > +debian/s390x_build:=20
+ > +  rules:=20
+ > +    - when: never=20
+ > +=20
+ > +debian/x86_64_test-vk:=20
+ >  rules:=20
+ >  - when: never=20
+ > =20
+ > @@ -56,14 +64,6 @@ windows_test_msvc:=20
+ >  rules:=20
+ >  - when: never=20
+ > =20
+ > -.debian/x86_64_build-mingw:=20
+ > -   rules:=20
+ > -    - when: never=20
+ > -=20
+ > -rustfmt:=20
+ > -   rules:=20
+ > -    - when: never=20
+ > -=20
+ >  windows_msvc:=20
+ >  rules:=20
+ > -    - when: never=20
+ > \ No newline at end of file=20
+ > +    - when: never=20
+ > diff --git a/drivers/gpu/drm/ci/gitlab-ci.yml b/drivers/gpu/drm/ci/gitla=
+b-ci.yml=20
+ > index 90bde9f00cc3..86d8c5d8ce3b 100644=20
+ > --- a/drivers/gpu/drm/ci/gitlab-ci.yml=20
+ > +++ b/drivers/gpu/drm/ci/gitlab-ci.yml=20
+ > @@ -1,6 +1,6 @@=20
+ >  variables:=20
+ >  DRM_CI_PROJECT_PATH: &drm-ci-project-path mesa/mesa=20
+ > -  DRM_CI_COMMIT_SHA: &drm-ci-commit-sha c6a9a9c3bce90923f7700219354e0b6=
+e5a3c9ba6=20
+ > +  DRM_CI_COMMIT_SHA: &drm-ci-commit-sha e1a8fd80d411a5ff8fa19ffcf09516a=
+c5099a25c=20
+ > =20
+ >  UPSTREAM_REPO: https://gitlab.freedesktop.org/drm/kernel.git=20
+ >  TARGET_BRANCH: drm-next=20
+ > @@ -31,11 +31,7 @@ variables:=20
+ >  PIPELINE_ARTIFACTS_BASE: ${S3_HOST}/${S3_ARTIFACTS_BUCKET}/${CI_PROJECT=
+_PATH}/${CI_PIPELINE_ID}=20
+ >  # per-job artifact storage on MinIO=20
+ >  JOB_ARTIFACTS_BASE: ${PIPELINE_ARTIFACTS_BASE}/${CI_JOB_ID}=20
+ > -  # default kernel for rootfs before injecting the current kernel tree=
+=20
+ > -  KERNEL_REPO: "gfx-ci/linux"=20
+ > -  KERNEL_TAG: "v6.6.21-mesa-f8ea"=20
+ >  KERNEL_IMAGE_BASE: https://${S3_HOST}/${S3_KERNEL_BUCKET}/${KERNEL_REPO=
+}/${KERNEL_TAG}=20
+ > -  PKG_REPO_REV: "3cc12a2a"=20
+ >  LAVA_TAGS: subset-1-gfx=20
+ >  LAVA_JOB_PRIORITY: 30=20
+ >  ARTIFACTS_BASE_URL: https://${CI_PROJECT_ROOT_NAMESPACE}.${CI_PAGES_DOM=
+AIN}/-/${CI_PROJECT_NAME}/-/jobs/${CI_JOB_ID}/artifacts=20
+ > @@ -59,7 +55,7 @@ default:=20
+ >  - cd $CI_PROJECT_DIR=20
+ >  - curl --output - $DRM_CI_PROJECT_URL/-/archive/$DRM_CI_COMMIT_SHA/mesa=
+-$DRM_CI_COMMIT_SHA.tar.gz | tar -xz=20
+ >  - mv mesa-$DRM_CI_COMMIT_SHA/.gitlab-ci* .=20
+ > -    - mv mesa-$DRM_CI_COMMIT_SHA/bin/ci .=20
+ > +    - mv mesa-$DRM_CI_COMMIT_SHA/bin .=20
+ >  - rm -rf mesa-$DRM_CI_COMMIT_SHA/=20
+ >  - echo -e "\e[0Ksection_end:$(date +%s):drm_ci_download_section\r\e[0K"=
+=20
+ > =20
+ > @@ -85,6 +81,7 @@ include:=20
+ >  - project: *drm-ci-project-path=20
+ >  ref: *drm-ci-commit-sha=20
+ >  file:=20
+ > +      - '/.gitlab-ci/build/gitlab-ci.yml'=20
+ >  - '/.gitlab-ci/container/gitlab-ci.yml'=20
+ >  - '/.gitlab-ci/farm-rules.yml'=20
+ >  - '/.gitlab-ci/lava/lava-gitlab-ci.yml'=20
+ > @@ -115,9 +112,10 @@ include:=20
+ >  stages:=20
+ >  - sanity=20
+ >  - container=20
+ > -  - code-validation=20
+ >  - git-archive=20
+ > -  - build=20
+ > +  - build-for-tests=20
+ > +  - build-only=20
+ > +  - code-validation=20
+ >  - amdgpu=20
+ >  - i915=20
+ >  - mediatek=20
+ > @@ -264,30 +262,63 @@ sanity:=20
+ >  rules:=20
+ >  - if: *is-pre-merge=20
+ >  when: on_success=20
+ > -    # Other cases default to never=20
+ > +    - when: never=20
+ >  variables:=20
+ >  GIT_STRATEGY: none=20
+ >  script:=20
+ >  # ci-fairy check-commits --junit-xml=3Dcheck-commits.xml=20
+ >  - ci-fairy check-merge-request --require-allow-collaboration --junit-xm=
+l=3Dcheck-merge-request.xml=20
+ > +    - |=20
+ > +      set -eu=20
+ > +      image_tags=3D(=20
+ > +        ALPINE_X86_64_LAVA_SSH_TAG=20
+ > +        CONTAINER_TAG=20
+ > +        DEBIAN_BASE_TAG=20
+ > +        DEBIAN_BUILD_TAG=20
+ > +        DEBIAN_PYUTILS_TAG=20
+ > +        DEBIAN_TEST_GL_TAG=20
+ > +        KERNEL_ROOTFS_TAG=20
+ > +        KERNEL_TAG=20
+ > +        PKG_REPO_REV=20
+ > +      )=20
+ > +      for var in "${image_tags[@]}"=20
+ > +      do=20
+ > +        if [ "$(echo -n "${!var}" | wc -c)" -gt 20 ]=20
+ > +        then=20
+ > +          echo "$var is too long; please make sure it is at most 20 cha=
+rs."=20
+ > +          exit 1=20
+ > +        fi=20
+ > +      done=20
+ >  artifacts:=20
+ >  when: on_failure=20
+ >  reports:=20
+ >  junit: check-*.xml=20
+ > +  tags:=20
+ > +    - placeholder-job=20
+ > =20
+ > -# Rules for tests that should not block merging, but should be availabl=
+e to=20
+ > -# optionally run with the "play" button in the UI in pre-merge non-marg=
+e=20
+ > -# pipelines.  This should appear in "extends:" after any includes of=20
+ > -# test-source-dep.yml rules, so that these rules replace those.=20
+ > -.test-manual-mr:=20
+ > +=20
+ > +mr-label-maker-test:=20
+ > +  extends:=20
+ > +    - .fdo.ci-fairy=20
+ > +  stage: sanity=20
+ >  rules:=20
+ > -    - !reference [.no_scheduled_pipelines-rules, rules]=20
+ > -    - if: *is-forked-branch-or-pre-merge-not-for-marge=20
+ > -      when: manual=20
+ > +    - !reference [.mr-label-maker-rules, rules]=20
+ >  variables:=20
+ > -    JOB_TIMEOUT: 80=20
+ > -=20
+ > +    GIT_STRATEGY: fetch=20
+ > +  timeout: 10m=20
+ > +  script:=20
+ > +    - set -eu=20
+ > +    - python3 -m venv .venv=20
+ > +    - source .venv/bin/activate=20
+ > +    - pip install git+https://gitlab.freedesktop.org/freedesktop/mr-lab=
+el-maker=20
+ > +    - mr-label-maker --dry-run --mr $CI_MERGE_REQUEST_IID=20
+ > =20
+ >  # Jobs that need to pass before spending hardware resources on further =
+testing=20
+ >  .required-for-hardware-jobs:=20
+ > -  needs: []=20
+ > +  needs:=20
+ > +    - job: clang-format=20
+ > +      optional: true=20
+ > +    - job: rustfmt=20
+ > +      optional: true=20
+ > +    - job: toml-lint=20
+ > +      optional: true=20
+ > diff --git a/drivers/gpu/drm/ci/image-tags.yml b/drivers/gpu/drm/ci/imag=
+e-tags.yml=20
+ > index 8d8b9e71852e..528ef44285bb 100644=20
+ > --- a/drivers/gpu/drm/ci/image-tags.yml=20
+ > +++ b/drivers/gpu/drm/ci/image-tags.yml=20
+ > @@ -1,5 +1,5 @@=20
+ >  variables:=20
+ > -   CONTAINER_TAG: "2024-09-09-uprevs"=20
+ > +   CONTAINER_TAG: "20241127-mesa-uprev"=20
+ >  DEBIAN_X86_64_BUILD_BASE_IMAGE: "debian/x86_64_build-base"=20
+ >  DEBIAN_BASE_TAG: "${CONTAINER_TAG}"=20
+ > =20
+ > @@ -7,9 +7,16 @@ variables:=20
+ >  DEBIAN_BUILD_TAG: "${CONTAINER_TAG}"=20
+ > =20
+ >  KERNEL_ROOTFS_TAG: "${CONTAINER_TAG}"=20
+ > +   # default kernel for rootfs before injecting the current kernel tree=
+=20
+ > +   KERNEL_TAG: "v6.6.21-mesa-f8ea"=20
+ > +   KERNEL_REPO: "gfx-ci/linux"=20
+ > +   PKG_REPO_REV: "bca9635d"=20
+ > =20
+ >  DEBIAN_X86_64_TEST_BASE_IMAGE: "debian/x86_64_test-base"=20
+ >  DEBIAN_X86_64_TEST_IMAGE_GL_PATH: "debian/x86_64_test-gl"=20
+ >  DEBIAN_TEST_GL_TAG: "${CONTAINER_TAG}"=20
+ > =20
+ > -   ALPINE_X86_64_LAVA_SSH_TAG: "${CONTAINER_TAG}"=20
+ > \ No newline at end of file=20
+ > +   DEBIAN_PYUTILS_IMAGE: "debian/x86_64_pyutils"=20
+ > +   DEBIAN_PYUTILS_TAG: "${CONTAINER_TAG}"=20
+ > +=20
+ > +   ALPINE_X86_64_LAVA_SSH_TAG: "${CONTAINER_TAG}"=20
+ > diff --git a/drivers/gpu/drm/ci/lava-submit.sh b/drivers/gpu/drm/ci/lava=
+-submit.sh=20
+ > index 6add15083c78..a1404a2d8cee 100755=20
+ > --- a/drivers/gpu/drm/ci/lava-submit.sh=20
+ > +++ b/drivers/gpu/drm/ci/lava-submit.sh=20
+ > @@ -1,58 +1,105 @@=20
+ > -#!/bin/bash=20
+ > +#!/usr/bin/env bash=20
+ >  # SPDX-License-Identifier: MIT=20
+ > +# shellcheck disable=3DSC2086 # we want word splitting=20
+ > +# shellcheck disable=3DSC1091 # paths only become valid at runtime=20
+ > =20
+ > -set -e=20
+ > -set -x=20
+ > +# If we run in the fork (not from mesa or Marge-bot), reuse mainline ke=
+rnel and rootfs, if exist.=20
+ > +_check_artifact_path() {=20
+ > +=C2=A0=C2=A0=C2=A0=C2=A0_url=3D"https://${1}/${2}"=20
+ > +=C2=A0=C2=A0=C2=A0=C2=A0if curl -s -o /dev/null -I -L -f --retry 4 --re=
+try-delay 15 "${_url}"; then=20
+ > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0echo -n "${_url}"=20
+ > +=C2=A0=C2=A0=C2=A0=C2=A0fi=20
+ > +}=20
+ > =20
+ > -# Try to use the kernel and rootfs built in mainline first, so we're mo=
+re=20
+ > -# likely to hit cache=20
+ > -if curl -L --retry 4 -f --retry-all-errors --retry-delay 60 -s "https:/=
+/${BASE_SYSTEM_MAINLINE_HOST_PATH}/done"; then=20
+ > -=C2=A0=C2=A0=C2=A0=C2=A0BASE_SYSTEM_HOST_PATH=3D"${BASE_SYSTEM_MAINLINE=
+_HOST_PATH}"=20
+ > -else=20
+ > -=C2=A0=C2=A0=C2=A0=C2=A0BASE_SYSTEM_HOST_PATH=3D"${BASE_SYSTEM_FORK_HOS=
+T_PATH}"=20
+ > -fi=20
+ > +get_path_to_artifact() {=20
+ > +=C2=A0=C2=A0=C2=A0=C2=A0_mainline_artifact=3D"$(_check_artifact_path ${=
+BASE_SYSTEM_MAINLINE_HOST_PATH} ${1})"=20
+ > +=C2=A0=C2=A0=C2=A0=C2=A0if [ -n "${_mainline_artifact}" ]; then=20
+ > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0echo -n "${_mainline_ar=
+tifact}"=20
+ > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0return=20
+ > +=C2=A0=C2=A0=C2=A0=C2=A0fi=20
+ > +=C2=A0=C2=A0=C2=A0=C2=A0_fork_artifact=3D"$(_check_artifact_path ${BASE=
+_SYSTEM_FORK_HOST_PATH} ${1})"=20
+ > +=C2=A0=C2=A0=C2=A0=C2=A0if [ -n "${_fork_artifact}" ]; then=20
+ > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0echo -n "${_fork_artifa=
+ct}"=20
+ > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0return=20
+ > +=C2=A0=C2=A0=C2=A0=C2=A0fi=20
+ > +=C2=A0=C2=A0=C2=A0=C2=A0set +x=20
+ > +=C2=A0=C2=A0=C2=A0=C2=A0error "Sorry, I couldn't find a viable built pa=
+th for ${1} in either mainline or a fork." >&2=20
+ > +=C2=A0=C2=A0=C2=A0=C2=A0echo "" >&2=20
+ > +=C2=A0=C2=A0=C2=A0=C2=A0echo "If you're working on CI, this probably me=
+ans that you're missing a dependency:" >&2=20
+ > +=C2=A0=C2=A0=C2=A0=C2=A0echo "this job ran ahead of the job which was s=
+upposed to upload that artifact." >&2=20
+ > +=C2=A0=C2=A0=C2=A0=C2=A0echo "" >&2=20
+ > +=C2=A0=C2=A0=C2=A0=C2=A0echo "If you aren't working on CI, please ping =
+@mesa/ci-helpers to see if we can help." >&2=20
+ > +=C2=A0=C2=A0=C2=A0=C2=A0echo "" >&2=20
+ > +=C2=A0=C2=A0=C2=A0=C2=A0echo "This job is going to fail, because I can'=
+t find the resources I need. Sorry." >&2=20
+ > +=C2=A0=C2=A0=C2=A0=C2=A0set -x=20
+ > +=C2=A0=C2=A0=C2=A0=C2=A0exit 1=20
+ > +}=20
+ > +=20
+ > +. "${SCRIPTS_DIR}/setup-test-env.sh"=20
+ > +=20
+ > +section_start prepare_rootfs "Preparing root filesystem"=20
+ > +=20
+ > +set -ex=20
+ > +=20
+ > +section_switch rootfs "Assembling root filesystem"=20
+ > +ROOTFS_URL=3D"$(get_path_to_artifact lava-rootfs.tar.zst)"=20
+ > +[ $? !=3D 1 ] || exit 1=20
+ > =20
+ >  rm -rf results=20
+ >  mkdir -p results/job-rootfs-overlay/=20
+ > =20
+ > +artifacts/ci-common/generate-env.sh > results/job-rootfs-overlay/set-jo=
+b-env-vars.sh=20
+ >  cp artifacts/ci-common/capture-devcoredump.sh results/job-rootfs-overla=
+y/=20
+ >  cp artifacts/ci-common/init-*.sh results/job-rootfs-overlay/=20
+ >  cp artifacts/ci-common/intel-gpu-freq.sh results/job-rootfs-overlay/=20
+ > +cp artifacts/ci-common/kdl.sh results/job-rootfs-overlay/=20
+ >  cp "$SCRIPTS_DIR"/setup-test-env.sh results/job-rootfs-overlay/=20
+ > =20
+ > -# Prepare env vars for upload.=20
+ > -section_start variables "Variables passed through:"=20
+ > -KERNEL_IMAGE_BASE=3D"https://${BASE_SYSTEM_HOST_PATH}" \=20
+ > -=C2=A0=C2=A0=C2=A0=C2=A0artifacts/ci-common/generate-env.sh | tee resul=
+ts/job-rootfs-overlay/set-job-env-vars.sh=20
+ > -section_end variables=20
+ > -=20
+ >  tar zcf job-rootfs-overlay.tar.gz -C results/job-rootfs-overlay/ .=20
+ >  ci-fairy s3cp --token-file "${S3_JWT_FILE}" job-rootfs-overlay.tar.gz "=
+https://${JOB_ROOTFS_OVERLAY_PATH}"=20
+ > =20
+ > +# Prepare env vars for upload.=20
+ > +section_switch variables "Environment variables passed through to devic=
+e:"=20
+ > +cat results/job-rootfs-overlay/set-job-env-vars.sh=20
+ > +=20
+ > +section_switch lava_submit "Submitting job for scheduling"=20
+ > +=20
+ >  touch results/lava.log=20
+ >  tail -f results/lava.log &=20
+ > -=20
+ >  PYTHONPATH=3Dartifacts/ artifacts/lava/lava_job_submitter.py \=20
+ > -=C2=A0=C2=A0=C2=A0=C2=A0submit \=20
+ > +=C2=A0=C2=A0=C2=A0=C2=A0--farm "${FARM}" \=20
+ > +=C2=A0=C2=A0=C2=A0=C2=A0--device-type "${DEVICE_TYPE}" \=20
+ > +=C2=A0=C2=A0=C2=A0=C2=A0--boot-method "${BOOT_METHOD}" \=20
+ > +=C2=A0=C2=A0=C2=A0=C2=A0--job-timeout-min ${JOB_TIMEOUT:-30} \=20
+ >  =C2=A0=C2=A0=C2=A0=C2=A0--dump-yaml \=20
+ >  =C2=A0=C2=A0=C2=A0=C2=A0--pipeline-info "$CI_JOB_NAME: $CI_PIPELINE_URL=
+ on $CI_COMMIT_REF_NAME ${CI_NODE_INDEX}/${CI_NODE_TOTAL}" \=20
+ > -=C2=A0=C2=A0=C2=A0=C2=A0--rootfs-url-prefix "https://${BASE_SYSTEM_HOST=
+_PATH}" \=20
+ > +=C2=A0=C2=A0=C2=A0=C2=A0--rootfs-url "${ROOTFS_URL}" \=20
+ >  =C2=A0=C2=A0=C2=A0=C2=A0--kernel-url-prefix "https://${PIPELINE_ARTIFAC=
+TS_BASE}/${DEBIAN_ARCH}" \=20
+ > -=C2=A0=C2=A0=C2=A0=C2=A0--build-url "${FDO_HTTP_CACHE_URI:-}https://${P=
+IPELINE_ARTIFACTS_BASE}/${DEBIAN_ARCH}/kernel-files.tar.zst" \=20
+ > -=C2=A0=C2=A0=C2=A0=C2=A0--job-rootfs-overlay-url "${FDO_HTTP_CACHE_URI:=
+-}https://${JOB_ROOTFS_OVERLAY_PATH}" \=20
+ > -=C2=A0=C2=A0=C2=A0=C2=A0--job-timeout-min ${JOB_TIMEOUT:-80} \=20
+ > +=C2=A0=C2=A0=C2=A0=C2=A0--kernel-external "${EXTERNAL_KERNEL_TAG}" \=20
+ >  =C2=A0=C2=A0=C2=A0=C2=A0--first-stage-init artifacts/ci-common/init-sta=
+ge1.sh \=20
+ > -=C2=A0=C2=A0=C2=A0=C2=A0--ci-project-dir "${CI_PROJECT_DIR}" \=20
+ > -=C2=A0=C2=A0=C2=A0=C2=A0--device-type "${DEVICE_TYPE}" \=20
+ > -=C2=A0=C2=A0=C2=A0=C2=A0--farm "${FARM}" \=20
+ >  =C2=A0=C2=A0=C2=A0=C2=A0--dtb-filename "${DTB}" \=20
+ >  =C2=A0=C2=A0=C2=A0=C2=A0--jwt-file "${S3_JWT_FILE}" \=20
+ >  =C2=A0=C2=A0=C2=A0=C2=A0--kernel-image-name "${KERNEL_IMAGE_NAME}" \=20
+ >  =C2=A0=C2=A0=C2=A0=C2=A0--kernel-image-type "${KERNEL_IMAGE_TYPE}" \=20
+ > -=C2=A0=C2=A0=C2=A0=C2=A0--boot-method "${BOOT_METHOD}" \=20
+ >  =C2=A0=C2=A0=C2=A0=C2=A0--visibility-group "${VISIBILITY_GROUP}" \=20
+ >  =C2=A0=C2=A0=C2=A0=C2=A0--lava-tags "${LAVA_TAGS}" \=20
+ >  =C2=A0=C2=A0=C2=A0=C2=A0--mesa-job-name "$CI_JOB_NAME" \=20
+ >  =C2=A0=C2=A0=C2=A0=C2=A0--structured-log-file "results/lava_job_detail.=
+json" \=20
+ >  =C2=A0=C2=A0=C2=A0=C2=A0--ssh-client-image "${LAVA_SSH_CLIENT_IMAGE}" \=
+=20
+ > +=C2=A0=C2=A0=C2=A0=C2=A0--project-name "${CI_PROJECT_NAME}" \=20
+ > +=C2=A0=C2=A0=C2=A0=C2=A0--starting-section "${CURRENT_SECTION}" \=20
+ > +=C2=A0=C2=A0=C2=A0=C2=A0--job-submitted-at "${CI_JOB_STARTED_AT}" \=20
+ > +=C2=A0=C2=A0=C2=A0=C2=A0- append-overlay \=20
+ > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0--name=3Dkernel-build \=
+=20
+ > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0--url=3D"${FDO_HTTP_CAC=
+HE_URI:-}https://${PIPELINE_ARTIFACTS_BASE}/${DEBIAN_ARCH}/kernel-files.tar=
+.zst" \=20
+ > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0--compression=3Dzstd \=
+=20
+ > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0--path=3D"${CI_PROJECT_=
+DIR}" \=20
+ > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0--format=3Dtar \=20
+ > +=C2=A0=C2=A0=C2=A0=C2=A0- append-overlay \=20
+ > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0--name=3Djob-overlay \=
+=20
+ > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0--url=3D"https://${JOB_=
+ROOTFS_OVERLAY_PATH}" \=20
+ > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0--compression=3Dgz \=20
+ > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0--path=3D"/" \=20
+ > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0--format=3Dtar \=20
+ > +=C2=A0=C2=A0=C2=A0=C2=A0- submit \=20
+ >  =C2=A0=C2=A0=C2=A0=C2=A0>> results/lava.log=20
+ > diff --git a/drivers/gpu/drm/ci/test.yml b/drivers/gpu/drm/ci/test.yml=
+=20
+ > index f0ef60c8f56d..42a8e7f93714 100644=20
+ > --- a/drivers/gpu/drm/ci/test.yml=20
+ > +++ b/drivers/gpu/drm/ci/test.yml=20
+ > @@ -1,21 +1,21 @@=20
+ >  .test-rules:=20
+ >  rules:=20
+ > -    - if: '$FD_FARM =3D=3D "offline" && $RUNNER_TAG =3D~ /^google-freed=
+reno-/'=20
+ > -      when: never=20
+ > -    - if: '$COLLABORA_FARM =3D=3D "offline" && $RUNNER_TAG =3D~ /^mesa-=
+ci-x86-64-lava-/'=20
+ > -      when: never=20
+ >  - !reference [.no_scheduled_pipelines-rules, rules]=20
+ > +    - !reference [.collabora-farm-rules, rules]=20
+ > +    - !reference [.google-freedreno-farm-rules, rules]=20
+ >  - when: on_success=20
+ > =20
+ >  .lava-test:=20
+ >  extends:=20
+ >  - .test-rules=20
+ > +    - .build-rules=20
+ > +    - .container+build-rules=20
+ >  timeout: "1h30m"=20
+ >  script:=20
+ >  # Note: Build dir (and thus install) may be dirty due to GIT_STRATEGY=
+=20
+ >  - rm -rf install=20
+ >  - tar -xf artifacts/install.tar=20
+ > -    - mv install/* artifacts/.=20
+ > +    - mv -n install/* artifacts/.=20
+ >  # Override it with our lava-submit.sh script=20
+ >  - ./artifacts/lava-submit.sh=20
+ > =20
+ > @@ -32,6 +32,7 @@=20
+ >  - alpine/x86_64_lava_ssh_client=20
+ >  - kernel+rootfs_arm32=20
+ >  - debian/x86_64_build=20
+ > +    - python-test=20
+ >  - testing:arm32=20
+ >  - igt:arm32=20
+ > =20
+ > @@ -48,6 +49,7 @@=20
+ >  - alpine/x86_64_lava_ssh_client=20
+ >  - kernel+rootfs_arm64=20
+ >  - debian/x86_64_build=20
+ > +    - python-test=20
+ >  - testing:arm64=20
+ >  - igt:arm64=20
+ > =20
+ > @@ -64,6 +66,7 @@=20
+ >  - alpine/x86_64_lava_ssh_client=20
+ >  - kernel+rootfs_x86_64=20
+ >  - debian/x86_64_build=20
+ > +    - python-test=20
+ >  - testing:x86_64=20
+ >  - igt:x86_64=20
+ > =20
+ > --=20
+ > 2.43.0=20
+ > =20
+ >=20
+
+lgtm
+Acked-by: Helen Koike <helen.koike@collabora.com>
+
+Thanks
+Helen
+
+
 
 
