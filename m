@@ -1,175 +1,128 @@
-Return-Path: <linux-kernel+bounces-429182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DC479E1B28
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 12:40:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 505299E1B36
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 12:44:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 65908B272DF
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:49:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DE609B39CCD
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:02:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29C6C1E1A32;
-	Tue,  3 Dec 2024 09:47:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC4021E0DD3;
+	Tue,  3 Dec 2024 10:01:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Gkn0129V"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="W+NKn6nr"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3F0F1E00A6
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 09:47:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D00D01E0B87
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 10:01:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733219275; cv=none; b=lzzuv+1TplL3MZ4jPmIEpJ4GJf/ll9kIOt9qXW6pDGWWKo/wRwuymx//gmrzCJVpGxO4GdKLNunnJgbBDPiRrMcpzHe1qdYiVBN3w4WKJSbWOnChQ+DiTItKJdVFcKQqtPZm3q7PVIu8+gpNKAqdawYQLqJfnhoFtoidtFhX8Iw=
+	t=1733220105; cv=none; b=V2/ap37IEVS61wS9UhfZDrnnwe8f28JxLOxRRu1fguyVrj/pNb1eY7BA3JDX4hX96/wWpbcW1482Jp4Uv3PuiUnY8l/C2Dom1OCXTgZHgDxBye+YSGK2llN37JjXa6DhMQDyryUgXmxDNtStun1vp0MtCRdwhzZN4/Eax69xFHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733219275; c=relaxed/simple;
-	bh=BE95e1zGPFXvVOiSFQar6b+X36e2g4Vn8nTd7MPy5DY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=t5so+hhxp2Hmsq+i4VM/a2wmhRFNKZy8BBMF53S1vLBENC4lcqEBXMr5vtwpo4YLOw3s8FrdckIKah+HBmTAoSJ3d14vry6b5hZ/Vfp9xqhQ5Lvcd3wGgcbgzhgxgHJ2C4KdpCQjiKQMP0/xBg6iB7XNpDpDrPMVgcuP2EqltfY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Gkn0129V; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1733219272;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0fQppTuvH7gihnzA0jS0S7Nrs9VtQXSbfqTsq5GHr48=;
-	b=Gkn0129VODbU39zjK+uz4tHao4A3+YIIjrQ0ziVuwXxhJTaWKb3PGOcY4D/wQNBNdzV7ox
-	Nw5xoRezhkMjXxCi9zl4tynRsg5CVZ0BugF8zoj61F5p2Ca3a+9AvVqzBVlgK4QZLzErO6
-	ovdzj/pSdUxuqS1EkbE1ZjSjbzdesFI=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-582-LT-lDAZQPm6aqPv1ACtzFA-1; Tue, 03 Dec 2024 04:47:51 -0500
-X-MC-Unique: LT-lDAZQPm6aqPv1ACtzFA-1
-X-Mimecast-MFC-AGG-ID: LT-lDAZQPm6aqPv1ACtzFA
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-434941aa9c2so29955525e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 01:47:51 -0800 (PST)
+	s=arc-20240116; t=1733220105; c=relaxed/simple;
+	bh=jmyk4L0m1uD/d3yvbMqa3Zr0W6i+w63Tb+z5ZXdzQKY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LzZX3eP5mv4rFIo5QJyxu4luGYZOAkYVYjr6DEBT/4XRg+tMY8QJQztE9eOM6W4bS4QQjN3kMOHAqca2wK9fUP+zAut5EcFhEnH4YVpPfpz2Gcd1z/z9qV8qKbN1jKGWZb8Yz7HlHKfa5lhaVFr1iJnBnKhd+VHEgz82YulVWIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=W+NKn6nr; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-385e06af753so2187708f8f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 02:01:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1733220101; x=1733824901; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=uoH0g6mcc/lLOBtNOVK7uWKZqQJ0zcF2m3HC5PqElU4=;
+        b=W+NKn6nr4ErxTU63vJZ0WcNB206dyWDK7UhChjvDt3QsMzq0fbFhKzkkrB4zhGbgMg
+         PHJiE02C+6xRCG9vtNGYRkIhhECgPLtyY8H4fZzvN7/GWrcMR1qDuiLBW+Pm0pIT/03w
+         caCe7gFFFjC42SjRQcBrB+fRJXPDK0WDXkuqCHb2IQjHPcQWQzJQZXxhcbgPJgdarN3E
+         IkIXgiK0cfQ7QTrruD+Aq8k6wLRKQ1ck/Se0Eoq/zqAil7+Q8MHbPnghMeY4mpaPEmbR
+         cyWYm7dr+Dn0xflFOjdgwleB/3pMsVK0OuEyCEFP8WdiJpGx0tkcyplj/pMLwNgx1fHN
+         c8FA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733219270; x=1733824070;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0fQppTuvH7gihnzA0jS0S7Nrs9VtQXSbfqTsq5GHr48=;
-        b=gWjvrfSST875HpI88+OCZSGdfuvWoPSZTwDXEqv2c73HJQK0Uxyg45LzYdrTUFvgZs
-         diEDf9cd5RM/M145TNFpUVNTZQ/HK0O1WYhcVfiLZ881PWxp0hm8wRKwCDF2kAAEb2Yl
-         qRE8E8t7SqeB3IB+qinMxup8JD55r0kQNgDUrk6VJh0jnBmpcXx+WU8Jmp9IeeGP0UOi
-         q8KLNl5KpoXawwVM7YGcZyUUe8jgiVwg7bAbhhorXWWpz3ahFGnitNT0V/Mvpc07/b07
-         3PHf8CB7v6WZLIy5bcfsKh5vnAeBkgZjsPw3zcZQPVCzmDET8T4IwAwzWaNUcQdP12r6
-         27CQ==
-X-Gm-Message-State: AOJu0YxtbsTVqIf0djchNB8SxWf+USY7mhTHxtRUSUyEgqOplY9IcS/9
-	0OKUnzk4wtAzAXoo8z0fxTVUGjUY7lOrMRYZNpFyTxmTouYOsJ8T5tQU4IQkWVDeJszsUd0hj03
-	pxT/cLdznY6AGage9d0LkNGwnDXQ5vZ+1myV5XOVMkmKZzQXzAKvY+piQRZ8mgSIy7vniUJfCiO
-	h3iLkSHGgmbe0Tc2FZYPrv3vCZeZ7CF9kq7TsWPizndZcR
-X-Gm-Gg: ASbGnct1KomCZK3NHIt/vVOzcOt+s2YuAwWoMmKwF3Km/Jm89Gmue1378ngiKTas74n
-	gVFERlV7nNWDrDiljwNs7gdxhnIwYwS3kRvcRKfDciQYk/NHWZhgdCjVlaWXGuYtFb9nGzJbMAw
-	7AjwtWByF39sTjh7POztoVs/luWoulZns3xUfXByoC5OOgsl/rdXwFxL17jGEgY+B0dEa97LSYR
-	pUew9AeYf+VBV0uoHP4kUVxcZrnfOH1nGPcpZtcYsV1SBwQEEPCXUsIbgzQno3yHy77z/Msryi3
-	z+0L0bNfykW3WliiJMVdRiieczC2sVLhatw=
-X-Received: by 2002:a05:600c:4fc9:b0:431:6153:a258 with SMTP id 5b1f17b1804b1-434d09bf4b7mr16320915e9.13.1733219270433;
-        Tue, 03 Dec 2024 01:47:50 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGScK9nYDBCgbazhX5KZLpi1/ltXaWURuwLWZA1yYPBlDObPA+UiToZ3Fi0RuyRTQ0aGN5NvQ==
-X-Received: by 2002:a05:600c:4fc9:b0:431:6153:a258 with SMTP id 5b1f17b1804b1-434d09bf4b7mr16320445e9.13.1733219269891;
-        Tue, 03 Dec 2024 01:47:49 -0800 (PST)
-Received: from localhost (p200300cbc7461b00fd9ec26cc5521de7.dip0.t-ipconnect.de. [2003:cb:c746:1b00:fd9e:c26c:c552:1de7])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-434b0dbe2e7sm183147395e9.11.2024.12.03.01.47.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Dec 2024 01:47:48 -0800 (PST)
-From: David Hildenbrand <david@redhat.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-mm@kvack.org,
-	linuxppc-dev@lists.ozlabs.org,
-	David Hildenbrand <david@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Oscar Salvador <osalvador@suse.de>,
-	Zi Yan <ziy@nvidia.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Naveen N Rao <naveen@kernel.org>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>
-Subject: [PATCH RESEND v2 5/6] mm/page_alloc: forward the gfp flags from alloc_contig_range() to post_alloc_hook()
-Date: Tue,  3 Dec 2024 10:47:31 +0100
-Message-ID: <20241203094732.200195-6-david@redhat.com>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20241203094732.200195-1-david@redhat.com>
-References: <20241203094732.200195-1-david@redhat.com>
+        d=1e100.net; s=20230601; t=1733220101; x=1733824901;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uoH0g6mcc/lLOBtNOVK7uWKZqQJ0zcF2m3HC5PqElU4=;
+        b=qb+9gYXS7kKWquHOGDbpsL8jZ0XauMA/6A4sgN3erBDovJe/FhX67+ylM4pI92D4gA
+         wC2srSMoFDVfaudSnOzjq6VCCp5FhtnVsIzT3wWkmOI3FDLXmJQpvh4dk0EsbAU8v86R
+         AkR8OtrsoZ5Auz7B/B0XGGvl3nVxg+eoHyUw/UJHUjvuM4FZp3VLzm60TuJs3YpRJegP
+         vtVfKlj/nBnOcNssme0aCn3Xa+6IFO/QYe2nGgtkvmlS1D/z7UmefG5GgDZSDNjQjAnI
+         eij0tS+P71zYc7y0sckGHFPAR6daQ7pghypXB/qgj5wd9xp8ZXpdtSbns8D80saoFNzD
+         GCLg==
+X-Forwarded-Encrypted: i=1; AJvYcCWoJBH1lm+nNjC4xaUiZk3fgNyzdMDXez3lBOHjNVfq/PTg9VJR2dSGZatjJxSWjy6E/ewfePGVzBWaia8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzrDYsaVJ3eQhqJzP0mEMusoq35teRYFOZfevd1Xy/uSbJm0Jcb
+	ar2stos7wDQaAOe9CS8w8BdmRjDNRs+iBkIUYhZ1Qzm8EpBpkwsi3mfWFINNekk=
+X-Gm-Gg: ASbGncvCyWv6kcQteh0/6iKcDjxGdZFwXnBQPNtNbjFRNnRQ2JXOR1l2jU/o9AI6jCx
+	Gcr1FiM3ckBz0/zUaUezezptJkeD13UnpAjh/vXyXFU759USxrDVsqNbwIXcQRGoicQByO+t9Y1
+	oVtdY987uJ4PV+g08KAF+FdYsJNdk2robEIY4exyHlVu0jtXEWSUSKJSjcZdqhfVtcFrECwaGks
+	mnmP+W70DX3iAAS+NVK3FmhsyCvhuVbht+n9AlsuuOXpSdadpSc
+X-Google-Smtp-Source: AGHT+IFKtsKOx5nwraYeu49MJVp7ip+d12LFtsoXKro4umRgrI++BPEuQZ0k/TOeYwHKW5dnR/TmDw==
+X-Received: by 2002:a5d:47a7:0:b0:385:e2d6:8942 with SMTP id ffacd0b85a97d-385fd429c62mr1515845f8f.54.1733220101043;
+        Tue, 03 Dec 2024 02:01:41 -0800 (PST)
+Received: from blackdock.suse.cz ([193.86.92.181])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385e391656csm9736738f8f.47.2024.12.03.02.01.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Dec 2024 02:01:40 -0800 (PST)
+Date: Tue, 3 Dec 2024 11:01:39 +0100
+From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
+To: Yafang Shao <laoar.shao@gmail.com>
+Cc: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com, 
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com, rostedt@goodmis.org, 
+	bsegall@google.com, mgorman@suse.de, vschneid@redhat.com, hannes@cmpxchg.org, 
+	surenb@google.com, cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 3/4] sched, psi: Don't account irq time if
+ sched_clock_irqtime is disabled
+Message-ID: <7pad3qmmmy2hgr5yqwwytj3wyjm3d5ebbqy4ix6boxkd34fc7c@ebdjg75tfgiq>
+References: <20241108132904.6932-1-laoar.shao@gmail.com>
+ <20241108132904.6932-4-laoar.shao@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="juoy3qq5zk2bma6x"
+Content-Disposition: inline
+In-Reply-To: <20241108132904.6932-4-laoar.shao@gmail.com>
 
-In the __GFP_COMP case, we already pass the gfp_flags to
-prep_new_page()->post_alloc_hook(). However, in the !__GFP_COMP case, we
-essentially pass only hardcoded __GFP_MOVABLE to post_alloc_hook(),
-preventing some action modifiers from being effective..
 
-Let's pass our now properly adjusted gfp flags there as well.
+--juoy3qq5zk2bma6x
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This way, we can now support __GFP_ZERO for alloc_contig_*().
+On Fri, Nov 08, 2024 at 09:29:03PM GMT, Yafang Shao <laoar.shao@gmail.com> =
+wrote:
+> sched_clock_irqtime may be disabled due to the clock source. When disable=
+d,
+> irq_time_read() won't change over time, so there is nothing to account. We
+> can save iterating the whole hierarchy on every tick and context switch.
+>=20
+> Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+> Acked-by: Johannes Weiner <hannes@cmpxchg.org>
+> ---
+>  kernel/sched/psi.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-As a side effect, we now also support __GFP_SKIP_ZERO and__GFP_ZEROTAGS;
-but we'll keep the more special stuff (KASAN, NOLOCKDEP) disabled for
-now.
+Reviewed-by: Michal Koutn=FD <mkoutny@suse.com>
 
-It's worth noting that with __GFP_ZERO, we might unnecessarily zero pages
-when we have to release part of our range using free_contig_range() again.
-This can be optimized in the future, if ever required; the caller we'll
-be converting (powernv/memtrace) next won't trigger this.
+--juoy3qq5zk2bma6x
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Signed-off-by: David Hildenbrand <david@redhat.com>
----
- mm/page_alloc.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+-----BEGIN PGP SIGNATURE-----
 
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 54594cc4f650..71d70bc0ad79 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -6364,7 +6364,7 @@ static int __alloc_contig_migrate_range(struct compact_control *cc,
- 	return (ret < 0) ? ret : 0;
- }
- 
--static void split_free_pages(struct list_head *list)
-+static void split_free_pages(struct list_head *list, gfp_t gfp_mask)
- {
- 	int order;
- 
-@@ -6375,7 +6375,7 @@ static void split_free_pages(struct list_head *list)
- 		list_for_each_entry_safe(page, next, &list[order], lru) {
- 			int i;
- 
--			post_alloc_hook(page, order, __GFP_MOVABLE);
-+			post_alloc_hook(page, order, gfp_mask);
- 			set_page_refcounted(page);
- 			if (!order)
- 				continue;
-@@ -6393,7 +6393,8 @@ static void split_free_pages(struct list_head *list)
- static int __alloc_contig_verify_gfp_mask(gfp_t gfp_mask, gfp_t *gfp_cc_mask)
- {
- 	const gfp_t reclaim_mask = __GFP_IO | __GFP_FS | __GFP_RECLAIM;
--	const gfp_t action_mask = __GFP_COMP | __GFP_RETRY_MAYFAIL | __GFP_NOWARN;
-+	const gfp_t action_mask = __GFP_COMP | __GFP_RETRY_MAYFAIL | __GFP_NOWARN |
-+				  __GFP_ZERO | __GFP_ZEROTAGS | __GFP_SKIP_ZERO;
- 	const gfp_t cc_action_mask = __GFP_RETRY_MAYFAIL | __GFP_NOWARN;
- 
- 	/*
-@@ -6541,7 +6542,7 @@ int alloc_contig_range_noprof(unsigned long start, unsigned long end,
- 	}
- 
- 	if (!(gfp_mask & __GFP_COMP)) {
--		split_free_pages(cc.freepages);
-+		split_free_pages(cc.freepages, gfp_mask);
- 
- 		/* Free head and tail (if any) */
- 		if (start != outer_start)
--- 
-2.47.1
+iHUEABYKAB0WIQTd6mfF2PbEZnpdoAkt3Wney77BSQUCZ07XAQAKCRAt3Wney77B
+Sf0eAP9apEDJBM5MtREkfBDzMCJWEux2oGXMiraWvAokGB47zAEAgHwiwvw5k5rg
+UMlIohbr5pdL+q0G4NEdOeSIYAYQ1QQ=
+=ISUS
+-----END PGP SIGNATURE-----
 
+--juoy3qq5zk2bma6x--
 
