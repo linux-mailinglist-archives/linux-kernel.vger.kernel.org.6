@@ -1,89 +1,98 @@
-Return-Path: <linux-kernel+bounces-429318-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3E3E9E1A6D
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 12:12:47 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3A999E1B7A
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 12:58:12 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA97716548E
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 11:12:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BBA4FB2EC3A
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 11:13:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C10151E3DC3;
-	Tue,  3 Dec 2024 11:12:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C90BE1E3791;
+	Tue,  3 Dec 2024 11:13:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="u/3b56oh"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="T1Mansl/"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D74B1E32BE
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 11:12:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD7BA1E32BE
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 11:13:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733224360; cv=none; b=B75hN3xh1Y/3/uBzlOXfK5wJthWOlx9kZ/v3i9g0hEp6iqAtcroa6Uverqgggjp+8A2veqs9v6lOWRcAzAAalAshzFsL279Gf5ZKRxlv3VdwtnYfYWTN/9Nj80dCY7/+ZF2orqnYqD/6R1ZJPHMqrvEaUZPLxN+rwh0BHDQZdhw=
+	t=1733224414; cv=none; b=dzbliYggVqB8bO1ay104fAh/MjtL0BhAAjlIgv+/AcoUVlDHjvGJYWSGPk2v4FXsS6iTG3TY7vot/se3jp42+xLXbO6D4SAoi8O1RYDNu7U8zQ2dBh3IGBxywdfj/bJ+LPki8t43GfllEaqDUnSb7EZPiFF2dXJ7HTUxsNno8ys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733224360; c=relaxed/simple;
-	bh=EqMT1lpbEY5/Che+UX6Bncb4AL1x5DYytCF5K+qiu2c=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WjIfIV7EUg/NiWO2gL8E3f/Bk6Xx+Og58EagIP8jbcOk8fkyLMfPyekBpdURalHcefeg9K467EZL8/jkz6Af7R5VrPupisKKp5WKkFm+nuNQpMvD87nY3AvFTTHrkJ6jB+e8doIQ+g5vhVZUdp/+V6MCYS4mFIJbqIYE7b0POMg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=u/3b56oh; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-434a12d106dso5246345e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 03:12:37 -0800 (PST)
+	s=arc-20240116; t=1733224414; c=relaxed/simple;
+	bh=oGSk6hVxW1wYB/QI1mVV80YFrcUPoJqrE8+x2OzhEEI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PmKPr0Mk5yaaIVga5PNCNiSVHnuSPOROK/a9aP2kZdmgb5dhTvjo7k8asyWC0/qA+rNp2sYEvWCtwrGRNhG7VAh1Lji0ojwsRfDMpTi7Cubc1XLZWqsuBsGZ9joQ2UhLIWFRtIs9GoXlVJ6/p67TK+dcIZNiJm/qcoux/64UvZk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=T1Mansl/; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4349e4e252dso50164095e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 03:13:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733224356; x=1733829156; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1733224410; x=1733829210; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=g6kGDnTLAfubcmw4OwqnnlfFoodRzVFFUo0D9f7Dre4=;
-        b=u/3b56ohB59V7WSPv7Yc+k/ITb/sqs9PvMHunBnLemxoO8w6UzU3ss3/rvIWaz1Bz5
-         rVJTDWBnzbQH2p0GHS7PJdCYggAAP6CSKzv/xfMkL6RJScBupHWLekkK+ADszeBRRJyG
-         oqAoUlrB2vdUXkYT7lguY+uw2234PriOkjgm5gCmYjWj+EBIRZ1LD+pgE+c/SzJQEGPB
-         8itqFdInJVDNjcy98Th40s+h8ux4f8C5/ZwXfxfe0sA8dkLdtzX//B4O4/mBbhhcDrz5
-         Xt3Hu7FNYL2gyGq8nmx/kPZ/uCE9Gsw4765BSGVcmty8+xF8EGQ2idCmYCg+C778W+qw
-         oG3g==
+        bh=ZHAew+5pIUtNZ469Ay/e6iOZX+tKVuk7Y65o+7qMTAc=;
+        b=T1Mansl/VVrNqeYSnHiYEZTqakQvk/nx49YN3fgp8Rg+KuMxAhUWAZabiOdqYyOZsp
+         8k5c0nH36NbZidcxPKY7IDdM3v/Ht8fzXEWFd0fiX3XvQhv4IieC7aCDgc8I/YHqNtv9
+         svkoribsIoW7pcoCaZUykqDrB82Mu3Bam8E+jfgHavADowlFG2YMYeUQ+fCL+CTeo2Sx
+         BniANs0Tr9sKS/rlgLv7q5QYW/UIwREHeuDPis1TeMDf5vLbPpfqMjBJRz+MBQVVN1XX
+         LAsAqjQWVXK+FnMDXUCUK7Im5di9D0MLb6sgx9Ymh5XDKu1wDlx0naTRBVsLe/0lheSC
+         bNOQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733224356; x=1733829156;
+        d=1e100.net; s=20230601; t=1733224410; x=1733829210;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=g6kGDnTLAfubcmw4OwqnnlfFoodRzVFFUo0D9f7Dre4=;
-        b=rytCJUEiaHtIZwlVcQxplC7d9fXwYGFKCNthTt1RnUrKO8TK/HtYfAONKyIlmYHZQn
-         OohkLTCNVDt+wmKxW3U5BqYDYczslBbLulwJvlh3SJZYsE75o7ztEe7Lx0ejDS6cO1a0
-         S6FeKdje0nEVF5H2+WwJddgipuJCM/kzUgiRZcZXOQEuZkJ9VDlcQ9QtHu24Y3AnDp/e
-         66AjpS4OZ8pMztVXXi2hwz3K1/gHzz7JnD/7gqqN64z5LetOGrEz+ErRJ6GYzYnKhtVM
-         +XFAg80Z7hYMWCGRVDdykbbBJZGAO+UgYiPF9vZdoI0dP3KPMpaWjBhcUxW+XfTtyGsW
-         cmtA==
-X-Forwarded-Encrypted: i=1; AJvYcCU8l7eYR+FsJtk1ioo4K7nmYIqkNV9ftgvqAP3vqvxwVynL9TmLQeiUxCDvkNq0uqeW2n3FnS/XfPSeTDk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyilm0/pq46IEZvugLySKolU9xh80yS3+oVB9RxDXjaWEk+0GpU
-	xA9MxOkQa8zOR/bCha1wXSoUkMT9M1MeSPkwvgf54ImU45qHbB8gbTPIgGJdOjY=
-X-Gm-Gg: ASbGncvi50cY2TcUDMtIDXitHjQLaMNqGYHVIyxSbom92fuUxSsezaev1JCuTrQHmFK
-	q6ftIsDKJUpxCkrD20TD6psL2Ru36QR1NMruoUBWcfq4Xj3F5smcEUivm134XSjpgWRvJkNXpLA
-	0lpex+qpc9l4RTQFAEgldQBNgP/fE1SP4ej2/pSAa1lRKF0eOBS8Vutv91wcb3WPQHYCcxzSAvp
-	pPHHa+9jKPmdJzbujPiVJxqNkwZB5AdA4hLFco7sRumFltNlHS1Qo1FlGhrfvw=
-X-Google-Smtp-Source: AGHT+IF2uKiqbnRf8oPSGgAbSOfSre2/+2HTW+tki4BL9CRri386VoZIy2wTzWLIDJ68hlU91fsw9g==
-X-Received: by 2002:a05:6000:1fa3:b0:385:eb17:cd3c with SMTP id ffacd0b85a97d-385fd42bcebmr628032f8f.13.1733224355836;
-        Tue, 03 Dec 2024 03:12:35 -0800 (PST)
-Received: from krzk-bin.. ([178.197.218.23])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385e3896b76sm9683819f8f.33.2024.12.03.03.12.34
+        bh=ZHAew+5pIUtNZ469Ay/e6iOZX+tKVuk7Y65o+7qMTAc=;
+        b=mMaZWP+llNlVPryKDDIFYOhxzRgzLYVGIrchtPSa2ysm5QHhzaFiF97vN7cDc0wL3z
+         1IZe4oWfye2+2XTi00LdpqcUZd7sXJ8QZwVGe4zR0c5Mt62VaSpjgbU2UNQdgW1TORsD
+         BfsQEVLHtQCIvQgRi85V+YPEFtUeAZUnpJuiwU7M2FAxBi5ptjLSsLeDGlZarsmrZlpW
+         r2w52GRwTHISpi5eJ2V5qt2bnbt9g49rQvo170Vuo42jgs0RbSE8z9/Se6QjJS3QjmfW
+         bqTUilZ79KLbnw04s866K0aB62hvjgFHZzpyK5VjuTLG9PrH4Jr0J7Fa554YCD2ESROJ
+         n5Xg==
+X-Forwarded-Encrypted: i=1; AJvYcCW7Z2nm9cNxZP+nZZDTh6CElzf31n4KxdNje3REBQFkwrf0PQUAAxDMyg1EBvle+WbxJMP4rqohmuRHXRo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTHcxJc1z5Pa51DjsXnYtrLyVKgE8SuiQcxMre7wIekOSd7fkE
+	HSOqyVQqweuBlkk9on3bC278Em5BAHzVURx7A7ochyl5kK10m3afzgZI4+aX2wk=
+X-Gm-Gg: ASbGncsI6SMr7iBefU6P8MfgLgPv417LEbul2/MDUwNMAaZIN47KKUAfBm2H4usTt4X
+	dsl1TsvuXiz6GCe/ZrWBQl9lxcsWR6FuESagogly9Rsk6IqRsje0khESIC7t5qHMAFjgDGlqyKc
+	bYavbiDF27wh0IzBnu1xfzF2/ez76u5SGkkHerS4vji+F7mdACd5LP8fFpVxm1DLOKXYYH18hA9
+	4STwnB6KkTbG8+yzAlWXu3uyYaTXTxtQ3F3v2sDoZKMEfZZH7lD7nLrP7PtaWorMVdHv1gib/2g
+	M3dk
+X-Google-Smtp-Source: AGHT+IErtKnY0Pv3GfVcIJwifhLrCQ99HAQ814LD/e3xtS/wVzvpDdVQw8u6DVBzuWDInXQU6dGy3Q==
+X-Received: by 2002:a05:600c:1f91:b0:42c:de34:34be with SMTP id 5b1f17b1804b1-434d09acf48mr20434705e9.3.1733224409944;
+        Tue, 03 Dec 2024 03:13:29 -0800 (PST)
+Received: from claudiu-X670E-Pro-RS.. ([82.78.167.161])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385e0117069sm11794315f8f.60.2024.12.03.03.13.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Dec 2024 03:12:35 -0800 (PST)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-arm-msm@vger.kernel.org,
+        Tue, 03 Dec 2024 03:13:29 -0800 (PST)
+From: Claudiu <claudiu.beznea@tuxon.dev>
+X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
+To: prabhakar.mahadev-lad.rj@bp.renesas.com,
+	jic23@kernel.org,
+	lars@metafoo.de,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	geert+renesas@glider.be,
+	magnus.damm@gmail.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	p.zabel@pengutronix.de
+Cc: claudiu.beznea@tuxon.dev,
+	linux-iio@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
 	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v2] arm64: dts: qcom: x1e78100-t14s: add sound support
-Date: Tue,  3 Dec 2024 12:12:29 +0100
-Message-ID: <20241203111229.48967-1-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.43.0
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 00/14] iio: adc: rzg2l_adc: Add support for RZ/G3S
+Date: Tue,  3 Dec 2024 13:13:00 +0200
+Message-Id: <20241203111314.2420473-1-claudiu.beznea.uj@bp.renesas.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,261 +101,57 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Add support for audio on Lenovo T14s laptop, coming with two speakers,
-audio jack and two digital microphones.
+Hi,
 
-This is very early work, not yet complete:
-1. 2x speakers: work OK.
-2. 2x digital microphones: work OK.
-3. Headset (audio jack) recording: does not work.
-4. Headphones playback (audio jack): channels are intermixed.
+This series adds ADC support for the Renesas RZ/G3S SoC.
 
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-[krzysztof: correct DMIC routing and vamacro pinctrl, re-order nodes,
- add commit msg]
-Co-developed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Series is organized as follows:
+- patch 01/14:		adds clocks, reset and power domain support
+			for ADC
+- patches 02-06/14:	cleanup patches to ease the addition of RZ/G3S
+			support
+- patches 07/14:	enables runtime PM autosuspend support
+- patches 08-12/14:	add RZ/G3S support, including suspend-to-RAM
+			functionality
+- patches 13-14/14:	add device tree support
 
----
+Merge strategy, if any:
+- patch 01/14 can go through the Renesas tree
+- patches 02-12/14 can go through the IIO tree
+- patch 13-14/14 can go through the Renesas tree
 
-Changes in v2:
-1. Flip pinctrl-0 and names (Konrad)
-2. Add Rb tag.
+Thank you,
+Claudiu Beznea
 
-1. Audioreach topology was already pushed to main branch:
-https://github.com/linux-msm/audioreach-topology
+Claudiu Beznea (14):
+  clk: renesas: r9a08g045: Add clocks, resets and power domain support
+    for the ADC IP
+  iio: adc: rzg2l_adc: Use devres helpers to request pre-deasserted
+    reset controls
+  iio: adc: rzg2l_adc: Simplify the runtime PM code
+  iio: adc: rzg2l_adc: Switch to RUNTIME_PM_OPS() and pm_ptr()
+  iio: adc: rzg2l_adc: Use read_poll_timeout()
+  iio: adc: rzg2l_adc: Simplify the locking scheme in
+    rzg2l_adc_read_raw()
+  iio: adc: rzg2l_adc: Enable runtime PM autosuspend support
+  iio: adc: rzg2l_adc: Prepare for the addition of RZ/G3S support
+  iio: adc: rzg2l_adc: Add support for channel 8
+  iio: adc: rzg2l_adc: Add suspend/resume support
+  dt-bindings: iio: adc: renesas,rzg2l-adc: Document RZ/G3S SoC
+  iio: adc: rzg2l_adc: Add support for Renesas RZ/G3S
+  arm64: dts: renesas: r9a08g045: Add ADC node
+  arm64: dts: renesas: rzg3s-smarc-som: Enable ADC
 
-2. ALSA UCM files are ready and soon will be pushed by Srini.
----
- .../qcom/x1e78100-lenovo-thinkpad-t14s.dts    | 183 ++++++++++++++++++
- 1 file changed, 183 insertions(+)
+ .../bindings/iio/adc/renesas,rzg2l-adc.yaml   |  37 +-
+ arch/arm64/boot/dts/renesas/r9a08g045.dtsi    |  53 +++
+ .../boot/dts/renesas/rzg3s-smarc-som.dtsi     |   4 +
+ drivers/clk/renesas/r9a08g045-cpg.c           |   7 +
+ drivers/iio/adc/rzg2l_adc.c                   | 414 ++++++++++--------
+ 5 files changed, 323 insertions(+), 192 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dts b/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dts
-index 975550139e10..386dee8c0412 100644
---- a/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dts
-+++ b/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dts
-@@ -19,6 +19,32 @@ / {
- 	compatible = "lenovo,thinkpad-t14s", "qcom,x1e78100", "qcom,x1e80100";
- 	chassis-type = "laptop";
- 
-+	wcd938x: audio-codec {
-+		compatible = "qcom,wcd9385-codec";
-+
-+		pinctrl-0 = <&wcd_default>;
-+		pinctrl-names = "default";
-+
-+		qcom,micbias1-microvolt = <1800000>;
-+		qcom,micbias2-microvolt = <1800000>;
-+		qcom,micbias3-microvolt = <1800000>;
-+		qcom,micbias4-microvolt = <1800000>;
-+		qcom,mbhc-buttons-vthreshold-microvolt = <75000 150000 237000 500000 500000 500000 500000 500000>;
-+		qcom,mbhc-headset-vthreshold-microvolt = <1700000>;
-+		qcom,mbhc-headphone-vthreshold-microvolt = <50000>;
-+		qcom,rx-device = <&wcd_rx>;
-+		qcom,tx-device = <&wcd_tx>;
-+
-+		reset-gpios = <&tlmm 191 GPIO_ACTIVE_LOW>;
-+
-+		vdd-buck-supply = <&vreg_l15b_1p8>;
-+		vdd-rxtx-supply = <&vreg_l15b_1p8>;
-+		vdd-io-supply = <&vreg_l15b_1p8>;
-+		vdd-mic-bias-supply = <&vreg_bob1>;
-+
-+		#sound-dai-cells = <1>;
-+	};
-+
- 	gpio-keys {
- 		compatible = "gpio-keys";
- 
-@@ -153,6 +179,85 @@ vph_pwr: regulator-vph-pwr {
- 		regulator-always-on;
- 		regulator-boot-on;
- 	};
-+
-+	sound {
-+		compatible = "qcom,x1e80100-sndcard";
-+		model = "X1E80100-LENOVO-Thinkpad-T14s";
-+		audio-routing = "SpkrLeft IN", "WSA WSA_SPK1 OUT",
-+				"SpkrRight IN", "WSA WSA_SPK2 OUT",
-+				"IN1_HPHL", "HPHL_OUT",
-+				"IN2_HPHR", "HPHR_OUT",
-+				"AMIC2", "MIC BIAS2",
-+				"VA DMIC0", "MIC BIAS1",
-+				"VA DMIC1", "MIC BIAS1",
-+				"VA DMIC0", "VA MIC BIAS1",
-+				"VA DMIC1", "VA MIC BIAS1",
-+				"TX SWR_INPUT1", "ADC2_OUTPUT";
-+
-+		wcd-playback-dai-link {
-+			link-name = "WCD Playback";
-+
-+			cpu {
-+				sound-dai = <&q6apmbedai RX_CODEC_DMA_RX_0>;
-+			};
-+
-+			codec {
-+				sound-dai = <&wcd938x 0>, <&swr1 0>, <&lpass_rxmacro 0>;
-+			};
-+
-+			platform {
-+				sound-dai = <&q6apm>;
-+			};
-+		};
-+
-+		wcd-capture-dai-link {
-+			link-name = "WCD Capture";
-+
-+			cpu {
-+				sound-dai = <&q6apmbedai TX_CODEC_DMA_TX_3>;
-+			};
-+
-+			codec {
-+				sound-dai = <&wcd938x 1>, <&swr2 1>, <&lpass_txmacro 0>;
-+			};
-+
-+			platform {
-+				sound-dai = <&q6apm>;
-+			};
-+		};
-+
-+		wsa-dai-link {
-+			link-name = "WSA Playback";
-+
-+			cpu {
-+				sound-dai = <&q6apmbedai WSA_CODEC_DMA_RX_0>;
-+			};
-+
-+			codec {
-+				sound-dai = <&left_spkr>, <&right_spkr>, <&swr0 0>, <&lpass_wsamacro 0>;
-+			};
-+
-+			platform {
-+				sound-dai = <&q6apm>;
-+			};
-+		};
-+
-+		va-dai-link {
-+			link-name = "VA Capture";
-+
-+			cpu {
-+				sound-dai = <&q6apmbedai VA_CODEC_DMA_TX_0>;
-+			};
-+
-+			codec {
-+				sound-dai = <&lpass_vamacro 0>;
-+			};
-+
-+			platform {
-+				sound-dai = <&q6apm>;
-+			};
-+		};
-+	};
- };
- 
- &apps_rsc {
-@@ -185,6 +290,13 @@ vreg_bob2: bob2 {
- 			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
- 		};
- 
-+		vreg_l1b_1p8: ldo1 {
-+			regulator-name = "vreg_l1b_1p8";
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
- 		vreg_l2b_3p0: ldo2 {
- 			regulator-name = "vreg_l2b_3p0";
- 			regulator-min-microvolt = <3072000>;
-@@ -515,6 +627,24 @@ touchscreen@10 {
- 	/* TODO: second-sourced touchscreen @ 0x41 */
- };
- 
-+&lpass_tlmm {
-+	spkr_01_sd_n_active: spkr-01-sd-n-active-state {
-+		pins = "gpio12";
-+		function = "gpio";
-+		drive-strength = <16>;
-+		bias-disable;
-+		output-low;
-+	};
-+};
-+
-+&lpass_vamacro {
-+	pinctrl-0 = <&dmic01_default>;
-+	pinctrl-names = "default";
-+
-+	vdd-micb-supply = <&vreg_l1b_1p8>;
-+	qcom,dmic-sample-rate = <4800000>;
-+};
-+
- &mdss {
- 	status = "okay";
- };
-@@ -645,6 +775,59 @@ &smb2360_1_eusb2_repeater {
- 	vdd3-supply = <&vreg_l14b_3p0>;
- };
- 
-+&swr0 {
-+	status = "okay";
-+
-+	pinctrl-0 = <&wsa_swr_active>, <&spkr_01_sd_n_active>;
-+	pinctrl-names = "default";
-+
-+	/* WSA8845, Left Speaker */
-+	left_spkr: speaker@0,0 {
-+		compatible = "sdw20217020400";
-+		reg = <0 0>;
-+		reset-gpios = <&lpass_tlmm 12 GPIO_ACTIVE_LOW>;
-+		#sound-dai-cells = <0>;
-+		sound-name-prefix = "SpkrLeft";
-+		vdd-1p8-supply = <&vreg_l15b_1p8>;
-+		vdd-io-supply = <&vreg_l12b_1p2>;
-+		qcom,port-mapping = <1 2 3 7 10 13>;
-+	};
-+
-+	/* WSA8845, Right Speaker */
-+	right_spkr: speaker@0,1 {
-+		compatible = "sdw20217020400";
-+		reg = <0 1>;
-+		reset-gpios = <&lpass_tlmm 12 GPIO_ACTIVE_LOW>;
-+		#sound-dai-cells = <0>;
-+		sound-name-prefix = "SpkrRight";
-+		vdd-1p8-supply = <&vreg_l15b_1p8>;
-+		vdd-io-supply = <&vreg_l12b_1p2>;
-+		qcom,port-mapping = <4 5 6 7 11 13>;
-+	};
-+};
-+
-+&swr1 {
-+	status = "okay";
-+
-+	/* WCD9385 RX */
-+	wcd_rx: codec@0,4 {
-+		compatible = "sdw20217010d00";
-+		reg = <0 4>;
-+		qcom,rx-port-mapping = <1 2 3 4 5>;
-+	};
-+};
-+
-+&swr2 {
-+	status = "okay";
-+
-+	/* WCD9385 TX */
-+	wcd_tx: codec@0,3 {
-+		compatible = "sdw20217010d00";
-+		reg = <0 3>;
-+		qcom,tx-port-mapping = <2 2 3 4>;
-+	};
-+};
-+
- &tlmm {
- 	gpio-reserved-ranges = <34 2>, /* Unused */
- 			       <44 4>, /* SPI (TPM) */
 -- 
-2.43.0
+2.39.2
 
 
