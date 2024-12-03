@@ -1,137 +1,176 @@
-Return-Path: <linux-kernel+bounces-429490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3C869E1EC5
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 15:15:11 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CC4A9E1DD1
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 14:41:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E0132B60669
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 12:51:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 30AD3B33570
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 13:00:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 965351EE008;
-	Tue,  3 Dec 2024 12:49:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A10A1EF093;
+	Tue,  3 Dec 2024 12:59:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b="LvClLpfW"
-Received: from lahtoruutu.iki.fi (lahtoruutu.iki.fi [185.185.170.37])
+	dkim=pass (2048-bit key) header.d=uliege.be header.i=@uliege.be header.b="jSOeyWJ4"
+Received: from serv108.segi.ulg.ac.be (serv108.segi.ulg.ac.be [139.165.32.111])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49F101EB9F5;
-	Tue,  3 Dec 2024 12:49:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=185.185.170.37
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733230163; cv=pass; b=nSLoPgPyPCcuLvXY/3v+LtEP3hEuwSiX432xg/hkZ+2Q3g/C8VEnr2y4o19qcEsALpAzmNydRVXOjgb8bjpBqd3jovFCSSMxNEpyS8ADUAKBpwE/TuWXmB8wN0sHxdGOBqVm6Zuop1ybA9VIRBexOqIpX7QSdjYdUVRsdW4Lmf0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733230163; c=relaxed/simple;
-	bh=llCJg+6iwamFsMSC5QoUCtBBqrC/JC/0L2wyOK51458=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t5LKh3kScbvuZSEnH0j2lT3OmokVCR7oBMHRqwMZdH8NK6xNy3Jk52qT7x9scKCn1cUJNMlXK2zj5N22/TiiTzH7WGdevwWCJSAKEbEE7x1VO2i+yf5pZX0SH7KWiDYf5EDKN+yUBFuQjsOlvudjcakvJm7vvFqRJE0Vx9n+MNA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi; spf=pass smtp.mailfrom=iki.fi; dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b=LvClLpfW; arc=pass smtp.client-ip=185.185.170.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iki.fi
-Received: from hillosipuli.retiisi.eu (2a00-1190-d1dd-0-c641-1eff-feae-163c.v6.cust.suomicom.net [IPv6:2a00:1190:d1dd:0:c641:1eff:feae:163c])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8716A16BE17;
+	Tue,  3 Dec 2024 12:59:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=139.165.32.111
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733230794; cv=none; b=BT/lF7HZCk+r6n/fC3dpQFYx5kseQvxdOhbHbQOlEaPdxMfKJgN/HFXs0jOb93uP0ik63uLs/UxNMbe75n3I2czmTVDxukaveX/TiCYUrIgGakIYru9TbRNZfL6wGQNfROPGYbBb1V1LHX59Mgq34lrpQpQewy9WKOTe/g1NxUI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733230794; c=relaxed/simple;
+	bh=i+diJin/f6M+owInzpyMhzzCOqFN5N9bv5THE6/VmwI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=UxO/hY5oVkd4fa/Y7E95/gcTCSMwVrt0kahuzh0LyD4R78d5S5ofp7E0PFz1VZawjsZvz5I4zcln7qT+8GnZQ7+IoBXBi2pDBy++85+I7JB9tVQPk5HRu9XmBBXzCj/jmh1qdKrhyq0MlRTWn9xjOczQpbTXh3JEIzYV9sgfuVk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uliege.be; spf=pass smtp.mailfrom=uliege.be; dkim=pass (2048-bit key) header.d=uliege.be header.i=@uliege.be header.b=jSOeyWJ4; arc=none smtp.client-ip=139.165.32.111
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uliege.be
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uliege.be
+Received: from ubuntu.home (220.24-245-81.adsl-dyn.isp.belgacom.be [81.245.24.220])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	(Authenticated sender: sailus)
-	by lahtoruutu.iki.fi (Postfix) with ESMTPSA id 4Y2gT33Rv5z49Q5b;
-	Tue,  3 Dec 2024 14:49:11 +0200 (EET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=lahtoruutu;
-	t=1733230152;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OfMk9vNntr7QdB8/M6TU8TGsJ0uA0HM/++BT/P8ndo8=;
-	b=LvClLpfW7SFqnsChxCuZSCeY9zLrueSxradhai84PJGmxeGz41qfrQI5EZFyD4ETYtY9vu
-	YlNAI53ryBoxQcUx4ZP9fYu2XMWUt+HOFbUcFxCD26LmaOffe6aPmwY79ZUzJXvIJgJ9ti
-	80YN69re+91N3KuEOaqVeVwCgtOORsFtV8k9cf531xM72aBVHgqudqF5i/RQNTLJUZ+MTi
-	4zG8mHSN8Xeey27Usww2HiCCxHkHBZ48CoYsEwgUCRquTDi9n664Du2Yf4VEGlz+P1QB73
-	lWUEl8tKZMGaPUv0UWFYlaGTgomwuq1tk6Dwa+6uEvHmX/kOr8FIgPNlaYrlQg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
-	s=lahtoruutu; t=1733230152;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OfMk9vNntr7QdB8/M6TU8TGsJ0uA0HM/++BT/P8ndo8=;
-	b=EXpul9TukK+eBIkriKuKgBUt1ZqXBn9InPjPx3RbsbDZfkZqK7c5zKbCfoQ203if/D4u+e
-	GblwDKPSEMXZfZGkQhKfSuKZOeXY4A3iimVnyGuB1IclFwQQXc8R3wbo10Xxrgg01TNsin
-	iz3TTUcjNeErhzV6oSSlmVOGVrfld5kDZMc7WoPnZ8xmBYDEGAatoFlLzN8nvOuFTwDJfJ
-	UaMsxKWXKFZ1MwtJ26xXcU/j8TKW3ktypb2BmL0V1F6mEFWngMcPKQOdxVN/x6DNAypn3t
-	LZkPrfe04fKsYXiM9VfI3jX9/NjM6KwpRi6bb8DPiCBcPKa1Q9ubNDsgDnLDRA==
-ARC-Authentication-Results: i=1;
-	ORIGINATING;
-	auth=pass smtp.auth=sailus smtp.mailfrom=sakari.ailus@iki.fi
-ARC-Seal: i=1; s=lahtoruutu; d=iki.fi; t=1733230152; a=rsa-sha256;
-	cv=none;
-	b=p6Fi5TloU/vLha7BarifTbJ1UTMRMnZhNxAcjrHfZoEatXPt0xw29w+ByXlX3zw4iMvSDw
-	G5hBgfwXFTM85Vtb5TTYNswAf6Qn/Pc5cmHQLb1Hxj6C5n9PiaPavu6Gb0Zw2O/GXq0F0j
-	YT/jqODQCkB4dxey2kv6S6RGqh1Al92s1OzhMPiLEFc70bqZ5Od3YVDDtIen97y7KcRvym
-	yiHPxJYIZQJWWKg7B9NmLgYeuGQKtjfCyG/yxHusFnx7v2GhjJGJ/knlgPcgKdsL78FX5k
-	BPwxDaqvs9WxIzobnKmXcMdxynLkPEkFB3nHoe8CldyEG6MPDmPuGEHaGtiuBQ==
-Received: from valkosipuli.retiisi.eu (valkosipuli.localdomain [192.168.4.2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by hillosipuli.retiisi.eu (Postfix) with ESMTPS id 57C9B634C94;
-	Tue,  3 Dec 2024 14:49:10 +0200 (EET)
-Date: Tue, 3 Dec 2024 12:49:10 +0000
-From: Sakari Ailus <sakari.ailus@iki.fi>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 3/3] docs: media: profile: make it clearer about
- maintainership duties
-Message-ID: <Z07-RklaMXOy3C2g@valkosipuli.retiisi.eu>
-References: <cover.1733131405.git.mchehab+huawei@kernel.org>
- <f47082a84e0c799dd047525d4bc351eb3a759e83.1733131405.git.mchehab+huawei@kernel.org>
- <Z03I1R0aRylSz742@valkosipuli.retiisi.eu>
- <20241203102846.6fb3ab52@foz.lan>
+	by serv108.segi.ulg.ac.be (Postfix) with ESMTPSA id C11B9200DFB8;
+	Tue,  3 Dec 2024 13:49:53 +0100 (CET)
+DKIM-Filter: OpenDKIM Filter v2.11.0 serv108.segi.ulg.ac.be C11B9200DFB8
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uliege.be;
+	s=ulg20190529; t=1733230194;
+	bh=m6S30J8S1J9kzN+p+8RyUdx8tHnIv1+plLh+2cuChWk=;
+	h=From:To:Cc:Subject:Date:From;
+	b=jSOeyWJ4XoT8CdsZavA2lIhHmnzkVXEEN0APy5hWcXYXbmcMr0yNCgeEPhA+O8t52
+	 TW/ThoAE5XjQNt5AJ/p+ORDTqP/0w19qhWiohEQvzkfUER2pwUAU+JebG6XQ2o1oi6
+	 JJtAzXLXY9EbPpXxczwapzzf8biVeTV5HF2JWuhSqBjP3Urftfm5mtkyDTRhKN2ZVR
+	 Lb1fNlMlYB1XnSJsVOYNIyyd1Q2GkYsHOgG51jgc8ksotkP5oXzUKPZ5eVAEqBrKyD
+	 fj8AGbCVJoplqYSec6tpYob88bZFpfd8OSENRW7QVi2QbEZApRP0omM4k1hHvKsJj9
+	 slB7aZUNRse+g==
+From: Justin Iurman <justin.iurman@uliege.be>
+To: netdev@vger.kernel.org
+Cc: davem@davemloft.net,
+	dsahern@kernel.org,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	horms@kernel.org,
+	linux-kernel@vger.kernel.org,
+	justin.iurman@uliege.be
+Subject: [RESEND PATCH net-next v5 0/4] Mitigate the two-reallocations issue for iptunnels
+Date: Tue,  3 Dec 2024 13:49:41 +0100
+Message-Id: <20241203124945.22508-1-justin.iurman@uliege.be>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241203102846.6fb3ab52@foz.lan>
+Content-Transfer-Encoding: 8bit
 
-Hi Mauro,
+RESEND v5:
+- v5 was sent just when net-next closed
+v5:
+- address Paolo's comments
+- s/int dst_dev_overhead()/unsigned int dst_dev_overhead()/
+v4:
+- move static inline function to include/net/dst.h
+v3:
+- fix compilation error in seg6_iptunnel
+v2:
+- add missing "static" keywords in seg6_iptunnel
+- use a static-inline function to return the dev overhead (as suggested
+  by Olek, thanks)
 
-On Tue, Dec 03, 2024 at 10:28:46AM +0100, Mauro Carvalho Chehab wrote:
-> Em Mon, 2 Dec 2024 14:48:53 +0000
-> Sakari Ailus <sakari.ailus@iki.fi> escreveu:
-> 
-> > Hi Mauro,
-> > 
-> > On Mon, Dec 02, 2024 at 10:26:21AM +0100, Mauro Carvalho Chehab wrote:
-> > > During the review of the media committes profile, it was noticed  
-> > 
-> > s/committe\K/r/
-> 
-> Addressed this and the other editorial changes.
-> 
-> > Can we expect people listed as maintainers to either send PRs or be media
-> > committers? I think this might be eventually the result but I think we're
-> > quite far from this currently and I expect things to remain that way in the
-> > near future.
-> 
-> Yes, having driver maintainers being committers and sending PRs is what we
-> expect to happen first.
-> 
-> For mid/long-term, once driver maintainers get in board, we may also have
-> other committers for the drivers whose maintainer is also a committer.
-> 
-> Now, having committers for drivers whose maintainer is not a committer
-> doesn't sound a good idea, except if such committer is doing just
-> janitorial work and gets A-B/R-B from the driver maintainer on all
-> patches he merges.
+The same pattern is found in ioam6, rpl6, and seg6. Basically, it first
+makes sure there is enough room for inserting a new header:
 
-I meant primarily people listed in MAINTAINERS but who are at least not
-yet Media committers.
+(1) err = skb_cow_head(skb, len + skb->mac_len);
+
+Then, when the insertion (encap or inline) is performed, the input and
+output handlers respectively make sure there is enough room for layer 2:
+
+(2) err = skb_cow_head(skb, LL_RESERVED_SPACE(dst->dev));
+
+skb_cow_head() does nothing when there is enough room. Otherwise, it
+reallocates more room, which depends on the architecture. Briefly,
+skb_cow_head() calls __skb_cow() which then calls pskb_expand_head() as
+follows:
+
+pskb_expand_head(skb, ALIGN(delta, NET_SKB_PAD), 0, GFP_ATOMIC);
+
+"delta" represents the number of bytes to be added. This value is
+aligned with NET_SKB_PAD, which is defined as follows:
+
+NET_SKB_PAD = max(32, L1_CACHE_BYTES)
+
+... where L1_CACHE_BYTES also depends on the architecture. In our case
+(x86), it is defined as follows:
+
+L1_CACHE_BYTES = (1 << CONFIG_X86_L1_CACHE_SHIFT)
+
+... where (again, in our case) CONFIG_X86_L1_CACHE_SHIFT equals 6
+(=X86_GENERIC).
+
+All this to say, skb_cow_head() would reallocate to the next multiple of
+NET_SKB_PAD (in our case a 64-byte multiple) when there is not enough
+room.
+
+Back to the main issue with the pattern: in some cases, two
+reallocations are triggered, resulting in a performance drop (i.e.,
+lines (1) and (2) would both trigger an implicit reallocation). How's
+that possible? Well, this is kind of bad luck as we hit an exact
+NET_SKB_PAD boundary and when skb->mac_len (=14) is smaller than
+LL_RESERVED_SPACE(dst->dev) (=16 in our case). For an x86 arch, it
+happens in the following cases (with the default needed_headroom):
+
+- ioam6:
+ - (inline mode) pre-allocated data trace of 236 or 240 bytes
+ - (encap mode) pre-allocated data trace of 196 or 200 bytes
+- seg6:
+ - (encap mode) for 13, 17, 21, 25, 29, 33, ...(+4)... prefixes
+
+Let's illustrate the problem, i.e., when we fall on the exact
+NET_SKB_PAD boundary. In the case of ioam6, for the above problematic
+values, the total overhead is 256 bytes for both modes. Based on line
+(1), skb->mac_len (=14) is added, therefore passing 270 bytes to
+skb_cow_head(). At that moment, the headroom has 206 bytes available (in
+our case). Since 270 > 206, skb_cow_head() performs a reallocation and
+the new headroom is now 206 + 64 (NET_SKB_PAD) = 270. Which is exactly
+the room we needed. After the insertion, the headroom has 0 byte
+available. But, there's line (2) where 16 bytes are still needed. Which,
+again, triggers another reallocation.
+
+The same logic is applied to seg6 (although it does not happen with the
+inline mode, i.e., -40 bytes). It happens with other L1 cache shifts too
+(the larger the cache shift, the less often it happens). For example,
+with a +32 cache shift (instead of +64), the following number of
+segments would trigger two reallocations: 11, 15, 19, ... With a +128
+cache shift, the following number of segments would trigger two
+reallocations: 17, 25, 33, ... And so on and so forth. Note that it is
+the same for both the "encap" and "l2encap" modes. For the "encap.red"
+and "l2encap.red" modes, it is the same logic but with "segs+1" (e.g.,
+14, 18, 22, 26, etc for a +64 cache shift). Note also that it may happen
+with rpl6 (based on some calculations), although it did not in our case.
+
+This series provides a solution to mitigate the aforementioned issue for
+ioam6, seg6, and rpl6. It provides the dst_entry (in the cache) to
+skb_cow_head() **before** the insertion (line (1)). As a result, the
+very first iteration would still trigger two reallocations (i.e., empty
+cache), while next iterations would only trigger a single reallocation.
+
+Justin Iurman (4):
+  include: net: add static inline dst_dev_overhead() to dst.h
+  net: ipv6: ioam6_iptunnel: mitigate 2-realloc issue
+  net: ipv6: seg6_iptunnel: mitigate 2-realloc issue
+  net: ipv6: rpl_iptunnel: mitigate 2-realloc issue
+
+ include/net/dst.h         |  9 +++++
+ net/ipv6/ioam6_iptunnel.c | 73 ++++++++++++++++-----------------
+ net/ipv6/rpl_iptunnel.c   | 46 +++++++++++----------
+ net/ipv6/seg6_iptunnel.c  | 85 ++++++++++++++++++++++++---------------
+ 4 files changed, 123 insertions(+), 90 deletions(-)
 
 -- 
-Kind regards,
+2.34.1
 
-Sakari Ailus
 
