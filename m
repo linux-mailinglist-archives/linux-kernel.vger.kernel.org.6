@@ -1,143 +1,73 @@
-Return-Path: <linux-kernel+bounces-430277-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E9589E2EBC
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 23:11:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A3A1C9E2EDB
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 23:14:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D08552838FA
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 22:11:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69AAF2839DF
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 22:14:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 519041FA84F;
-	Tue,  3 Dec 2024 22:10:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6460920ADD8;
+	Tue,  3 Dec 2024 22:11:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WhJ51gTR"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pRdKaUCv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B87C1DF27E;
-	Tue,  3 Dec 2024 22:10:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1C4E205AAF;
+	Tue,  3 Dec 2024 22:11:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733263856; cv=none; b=pUjtzW3IEkndXOPn2vC+kDT7Z6zJp5IIStic7qaMxAfCfDjqDp1NtqTEBW4L10DIkDkk/Vu0G2m41ea16+3VZY3lgeRSQp9ZB+GNCJdkW8RXWeURzHGemxE0Z3NyOVn9ReG5orUxBQfe1Qv3omvjtSTf1C3/w2oM2wvKb4QSVls=
+	t=1733263910; cv=none; b=JfMAO0raxb/xAmyDpcn7nq9J6sOB9b5pJUlUBro+lC6AWKoyzQb4CRrMXwXWtjJmFYpZcOeHJbGQIzhcM5Vu4g7E2d2zznd5vMao06eRqXvzYbteCoiF4nIxigkOMcrS30qnH+IvxCHgbrvcEAHQ00BqQBr9WmWJ9pIHojIDS5w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733263856; c=relaxed/simple;
-	bh=wHlfAX2kRe9xsBlG4P9w6ycxPVwnqJJwCaiaCCTWBwk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bTg3dUEGt3wVzYKz1tQOF6mvCIkpodkgw/4mCCcmTYxc98rXxrLAJUOOA0v82jEVa3Eu1RGYkK7ZdJJsdPVG7swk/zuQ23BDuA79PTVaLCLvhFTS4PyFCN3WZ6/HKuLSjTaTdfoF7O9z4dIllltz0X3GUSLQ0U5Z6DEwZuPV3rk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WhJ51gTR; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-434a044dce2so74621635e9.2;
-        Tue, 03 Dec 2024 14:10:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733263853; x=1733868653; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=RGagANSepA+VInMMlnbrVfr6Y2VJf15ZTPExwn0QgXo=;
-        b=WhJ51gTRoB+tajsogmd3rJO/LZoKIYpWAZdAC9FpiwCbcUwzXPxwHq9gZ85AwUIYb+
-         DIu7PmwlonjyUzLwpJFfBqaNR7SIhGD4qWRIQsyXhdwSdigoKGJ4KRV0meJMrhWQP3hW
-         l24LFPsqY4eFWb66ShcQdjNcwqOKHkRUu9aaBkEnP5MVAH2XSBoVrm310pCl9HP0RYAS
-         m+pnOxt+InfDzxDMc5jM9DHuUfUT3NknD7PVsR7NXDBh7bsjkHefLb+1hUepk+dyyC7R
-         67jTbgxusykvJbw/hS/dR24H03uQkj8qdKb3AQ0lMPpIph6y9psl9qGsijxVHp6XO0TQ
-         OTGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733263853; x=1733868653;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RGagANSepA+VInMMlnbrVfr6Y2VJf15ZTPExwn0QgXo=;
-        b=qUEkF0RFdCqLwngHnKB+GAhxBJ5tfdF8yoNZDubeLRUR7mZ6AqjwyPCerJK0aYpeRY
-         RLpKkby6EsTd6GJIg0Urb4vWRx3B6Tq06s+/TfiFEUaJL/4M1I/5OMfhI+xyB/YCDiaa
-         pAWDvab6KPno4jyVDzttH/lMqut5gsPQ7C+h9y4PQN/ScgRTyG0nqLgIGikeUTYlgmvM
-         tpBEYGUl+qhXweWHOezoDuGCVBhH8wu5xcpmIsvb1uu67zwArrnJfPLfdbjrZofurCwo
-         kCKpd/HtLwgTHoKxaD3UQ2D2/N78aj6PT+yHyxIClhnDvPAOaSyFzAaJkZC0veXpmmFw
-         khJg==
-X-Forwarded-Encrypted: i=1; AJvYcCUsXgjLkYDHZi/agcKUPV3vmfvrPUmatQ2NFRwP5R3+pSmoqWbosZBjbnJ3ADhACXHFXoKZL1pkLOXyg9Xt@vger.kernel.org, AJvYcCWiZvCAZu2sGLy8vdRuai/eJOYWMzv0yAwgbRyBM3EK9hT4KAzp9Xb0XSVXq7Y4KDmVcAEAWPDAHjg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQt1oHTolG0IA4uzkvYes2ENe6nF7Rfm9My4/5wWzhgMoZXmGU
-	Nu1OPGxGoqMt/cbOLIlJt9bSnAVK1j5SaMQqkyuKHznWKVG78WkhA9vhAn5l
-X-Gm-Gg: ASbGncszfN+qAXg3SaIv5qcpdwjosGLFunOjnQdsnCFxbQwS31uKaq7xfwta52FJ80n
-	/uYyz9QY7bLrrWaNGh5S/c1Nn81RGOkXcn31G6kpiT+R2HaRn17FSNmNzeSytt9J82XYJbgduEi
-	ZVo61NYQhkHtHX0wKDpq0N5BJsSoM3zzE+I6re+R1eT7vityb9wPGJFNji7URIbChX9g1zEwhc/
-	mjO4yIvZC/VrSrdStpqlwA4xSBJ8iPeHa1i3TztAOwZtSUkmK2RXY3yvNKi
-X-Google-Smtp-Source: AGHT+IE0ivTvyR1qJTzo67DIetzblhnkwh+Pkoln/fF3+NBaLbuYwSdwrZ0Sx9AGwLYmxpVupQ+sxw==
-X-Received: by 2002:a05:600c:3502:b0:431:24c3:dbaa with SMTP id 5b1f17b1804b1-434d09b2e2cmr39774155e9.2.1733263853383;
-        Tue, 03 Dec 2024 14:10:53 -0800 (PST)
-Received: from vamoirid-laptop ([2a04:ee41:82:7577:56d9:cf1e:faf4:54e1])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434d52c12a4sm1462315e9.30.2024.12.03.14.10.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Dec 2024 14:10:52 -0800 (PST)
-Date: Tue, 3 Dec 2024 23:10:50 +0100
-From: Vasileios Amoiridis <vassilisamir@gmail.com>
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: lars@metafoo.de, krzysztof.kozlowski@linaro.org, nuno.sa@analog.com,
-	u.kleine-koenig@baylibre.com, abhashkumarjha123@gmail.com,
-	jstephan@baylibre.com, dlechner@baylibre.com,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC 5/6] iio: common: ssp_sensors: make use of
- iio_is_soft_ts_enabled()
-Message-ID: <Z0-B6q_CKcQ9gtlE@vamoirid-laptop>
-References: <20241130002710.18615-1-vassilisamir@gmail.com>
- <20241130002710.18615-6-vassilisamir@gmail.com>
- <20241130141714.7ef99a77@jic23-huawei>
+	s=arc-20240116; t=1733263910; c=relaxed/simple;
+	bh=6h6lY5dhctPXg8GEk7u+mmIkbNWk3nfxv+MJY28mXFA=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=cXu6lwAF4oe77gU1BV8ofmbbzDNtacLCUN4rDkVMJdNz2PyHJ/6mLytjQs2MDaBMZ4Win287Z3oV9aFh5+mzEdaSyqYNOs8D7EWNxZoRYP+6mF+R9nGqkDZnkw0ttkuOzK46m40DjXLZfSBQd9BZZbOSk4XSmaeEVe4acc1UcJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pRdKaUCv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35079C4CEDC;
+	Tue,  3 Dec 2024 22:11:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733263910;
+	bh=6h6lY5dhctPXg8GEk7u+mmIkbNWk3nfxv+MJY28mXFA=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=pRdKaUCvZQrV/C0+mEaQcZLGiOY9mWaoVbTHA4ni1ETTkNxmidhbG9QNMYlTeJsFs
+	 9in5Hw1feqfoMXUsNCXgXV9ySpZ/H507DFnvWHvnRx4G0KhHDssrgTAdogotqf2t5u
+	 1qBWAqMcDsQuZuvJmraE54ONtns5tikARkCfsAnFIYgH+//J5XFtADc3QwYbwD4Fnm
+	 vxXZMcKgG9D/y0b21On/3AOillF1lVu3Uq3RGPnJnM3aNWtdKxTPF+l7OMd59P3JCJ
+	 GYtKsYHopRdPFPfuRHDXztrfE3OdlBNypdA9tKalh51GWzwQ38PlLbmNCxUA9UpQAO
+	 yLpYUpWe1K3mA==
+Message-ID: <f59843385d8e491eb1695741141b8a2b.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241130141714.7ef99a77@jic23-huawei>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20241118192526.44180-2-ziyao@disroot.org>
+References: <20241118192526.44180-2-ziyao@disroot.org>
+Subject: Re: [PATCH] docs: clk: describe userspace debugging facilities
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: Yao Zi <ziyao@disroot.org>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jonathan Corbet <corbet@lwn.net>, Michael Turquette <mturquette@baylibre.com>, Yao Zi <ziyao@disroot.org>
+Date: Tue, 03 Dec 2024 14:11:48 -0800
+User-Agent: alot/0.12.dev1+gaa8c22fdeedb
 
-On Sat, Nov 30, 2024 at 02:17:14PM +0000, Jonathan Cameron wrote:
-> On Sat, 30 Nov 2024 01:27:09 +0100
-> Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
-> 
-> > Use the iio_is_soft_ts_enabled() accessor to access the value of the
-> > scan_timestamp. This way, it can be marked as __private when there
-> > are no direct accessors of it.
-> > 
-> > Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
-> 
-> > ---
-> >  drivers/iio/common/ssp_sensors/ssp_iio.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/iio/common/ssp_sensors/ssp_iio.c b/drivers/iio/common/ssp_sensors/ssp_iio.c
-> > index 88b8b56bfa51..c38bf1dfb7bd 100644
-> > --- a/drivers/iio/common/ssp_sensors/ssp_iio.c
-> > +++ b/drivers/iio/common/ssp_sensors/ssp_iio.c
-> > @@ -82,7 +82,7 @@ int ssp_common_process_data(struct iio_dev *indio_dev, void *buf,
-> >  	 */
-> >  	memcpy(spd->buffer, buf, len);
-> >  
-> > -	if (indio_dev->scan_timestamp) {
-> > +	if (iio_is_soft_ts_enabled(indio_dev)) {
-> 
-> It might be simpler to just drop this conditional in favour of always computing the
-> value.
-> 
-> 
-> 
-> >  		memcpy(&time, &((char *)buf)[len], SSP_TIME_SIZE);
-> >  		calculated_time =
-> >  			timestamp + (int64_t)le32_to_cpu(time) * 1000000;
-> 
-> Good to replace this with something more modern like.
-> 
-> 		calculated_time =
-> 			timestamp + get_unaligned_le32(buf + len) * MEGA;
-> 
-> Jonathan
->
+Quoting Yao Zi (2024-11-18 11:25:27)
+> Starting from commit
+> 03111b1088f1 ("clk: Add support for enabling/disabling clocks from debugf=
+s"),
+> it's possible to operate clocks from userspace through debugfs for
+> testing purpose. This feature isn't provided as a Kconfig but rather a
+> macro in source for security consideration, thus is hard to find.
+>=20
+> Let's document the macro to ease everyone's life of clock debugging.
 
-Hi Jonathan,
-
-I could definitely do this, thanks!
-
-Cheers,
-Vasilis
+Thanks for the patch. I don't want to advertise this anymore than it
+already is though so let's skip this patch.
 
