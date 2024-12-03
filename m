@@ -1,204 +1,121 @@
-Return-Path: <linux-kernel+bounces-428573-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428574-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E1E99E10BE
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 02:22:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id F34D39E10BF
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 02:22:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C41C4B22463
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 01:22:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 813BFB229AC
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 01:22:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D7492E3EE;
-	Tue,  3 Dec 2024 01:22:29 +0000 (UTC)
-Received: from shelob.surriel.com (shelob.surriel.com [96.67.55.147])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C521D6BFC0;
+	Tue,  3 Dec 2024 01:22:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Qbxa4vWV"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77B3A847C;
-	Tue,  3 Dec 2024 01:22:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.67.55.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A1B141746
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 01:22:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733188949; cv=none; b=cWosSYFwHFl0WQvuB8M+S4C68eXeHRydk9IIUUyz5+s4ed1TQGgxEzKksXs1HBbtoaEubi/N3+d+P2XnX6SGZYM4UqWkIv85VbfnsFTYainqm1LVzu6aDzn5bgXAlu71yJ8yFn8I6Fti+XXTerbedNeW7DlsT+evcGgf1rN18/s=
+	t=1733188952; cv=none; b=A+wLZgJJI5CRXmoJknkDesp52WTiqcH0TCLmP13rjxlMK3J1EnTg36y/5MBU1ZTofYZubcaG+FihWc1kHuBbGcDkhqPy97x7QWS3sAX0GZQ7ysp15vAE/elOFWP+2RLIe5sEHs/C1EBngcSHC2l8xpCAo5b88sjwH69LiMNkl3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733188949; c=relaxed/simple;
-	bh=HG57F1AVWojYH/0lsXkb4gTU/N6SAx33MLEyiYRlRgs=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=H++u8qo9QupiBpb02LBQ0oBg5RxEf2oOztEUPfbahApk1x0qCDNCzR4a8ER7bP4qsnYYQXNb01Oi0QrUqM2Py8K626xRIanXBOXuGECVVxh/Wwz7hqjhhTn9MVoz4iW80TLi7Jq7SKhaKJrj3rVLXWlaijTxFMoEwnsVC19csdw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com; spf=pass smtp.mailfrom=shelob.surriel.com; arc=none smtp.client-ip=96.67.55.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shelob.surriel.com
-Received: from [2601:18c:9101:a8b6:82e7:cf5d:dfd9:50ef] (helo=fangorn)
-	by shelob.surriel.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.97.1)
-	(envelope-from <riel@shelob.surriel.com>)
-	id 1tIHcF-000000002wl-1fYw;
-	Mon, 02 Dec 2024 20:22:15 -0500
-Date: Mon, 2 Dec 2024 20:22:13 -0500
-From: Rik van Riel <riel@surriel.com>
-To: kernel test robot <oliver.sang@intel.com>
-Cc: <oe-lkp@lists.linux.dev>, <lkp@intel.com>,
- <linux-kernel@vger.kernel.org>, <x86@kernel.org>, Ingo Molnar
- <mingo@kernel.org>, Dave Hansen <dave.hansen@intel.com>, Linus Torvalds
- <torvalds@linux-foundation.org>, Peter Zijlstra <peterz@infradead.org>, Mel
- Gorman <mgorman@suse.de>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>
-Subject: [PATCH -tip] x86,mm: only trim the mm_cpumask once a second
-Message-ID: <20241202202213.26a79ed6@fangorn>
-In-Reply-To: <202411282207.6bd28eae-lkp@intel.com>
-References: <202411282207.6bd28eae-lkp@intel.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1733188952; c=relaxed/simple;
+	bh=m/fx1J/8tVqA2oNszfbUC0kJgBMJu1/cuMuZpoY0b6I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mQw0eT2efCz3RsaqipHQTzVTvmeEQLubGq7VlMei4G5Z9qrbsPuY9Tkz7MNPbt+N80igkdrEnMX4lP+/U4xQWKMWXYWvSPj18MPDPN8HmP6KdGUNSJ5zXymZu0VySyhOHatuaiZYxsLw5czrGjBAXJqVtD+D7wTOpWlQtScJdRs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Qbxa4vWV; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733188948;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cPUytPs4xOuYgB/EnXxQxcKY3Ggm37SPyVhQ2/dO7hk=;
+	b=Qbxa4vWVNSRrafeK2poN2RlKiF56mtPdSbSXq5wUnLSFIqYvzZyUWFjunvQ5wIU4+PxNoQ
+	VqghlrIsLufrpim60GS+7XgndNaqnUV2pIsKqWkN90S2tAC2sRdHottTED81hy6LJ/Wv5N
+	2vCkcOGku6IzXCA/VUuBtWZurslEiqk=
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com
+ [209.85.214.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-119-3n7uMwmUPwehQ4DyfMdNhw-1; Mon, 02 Dec 2024 20:22:27 -0500
+X-MC-Unique: 3n7uMwmUPwehQ4DyfMdNhw-1
+X-Mimecast-MFC-AGG-ID: 3n7uMwmUPwehQ4DyfMdNhw
+Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-2156b4c8bbeso28871565ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 17:22:27 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733188946; x=1733793746;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=cPUytPs4xOuYgB/EnXxQxcKY3Ggm37SPyVhQ2/dO7hk=;
+        b=Gz3PEpeFsg0C7NvQRX9hTEVYXoX8p2W3Q9/s0RwQK/9fCMS+9lHrhJweXrcoZUuV4h
+         HiSLqV6Bmawxqx4rV2dxT4SQueI00gkUi8vC2xr6smF/qQJzvt120raqJoqLMKvoQwVU
+         +fXhdrsqXMHMeImrvEiSXTGuTzcow3v8lSEClmCERiebLfDR4ifw3y+XaTQbh7KO59J3
+         Buu1dw1Rf5aPnXHRTatKvm3ZbOUvf1J8glikoAU/mVj9zPkvPdXkCILy6V6lX4OsB1AW
+         sPyk2GEcMuv6gGPOd+I6EzKxuRb+9XoCM7/ggiCwzdO/jgLfnmGEiCfAwCO6Du4pkDYn
+         04JA==
+X-Forwarded-Encrypted: i=1; AJvYcCWCRvryo9k9eWTxzxj3SBuh1mvMAvTvTEuSBet8mx6nqLXl3duPQDQpY29qNp3JX/vPsZ+JJBHXkXw2g24=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzkuu1SYvsKzI2/keLSvnWxlyGp56b3pwpYOTxG/k7d1Yv9s9ey
+	Muj3edNXVvZwTSX4XYZdShV4V70Y7q3LVNdrwmPqAlSIiHpqoAPW0EHyOz0MYRX3DFr8jRdDdOr
+	JxL5rLqtrbwO+buptCJA6tfB+6nS7xUXz8fBkVxu9r4ozQ7GBfZ77+xX25vCw0+zv9eONQw==
+X-Gm-Gg: ASbGnctM09PaIwtzLEakjJp2c/qK2/zA7mYr/Cmbcgw7VreWQt5asq+/V9P5satS6yC
+	J/Z2oHT9s3I2IIQwkLtipVLE0m1clJ6kABAgpvh4DyrtqCPq/zkU9JtoDeBi+leMTupaAW+RpH+
+	Ba1LfocHyIHFDvRP2MbFVypR+UbAlvrooXRcezhaUHiCxsj/qKh4Jy9iBrGSXXzijfRYDIZzb2h
+	RLbiL9iFIg7h1i2eXWtP4JW5CZ0fCk6Kr0C/F37CJBOQ3lEfV8=
+X-Received: by 2002:a17:902:ecca:b0:215:63a0:b58c with SMTP id d9443c01a7336-215bd24bb6fmr8484125ad.46.1733188946357;
+        Mon, 02 Dec 2024 17:22:26 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHBV6VFt7DuoJL3pKgqlDpBzWxmRBzOP6uqWUIOrzw83q0XzALRysgqcdQWq3lT5Z+Y++WC7A==
+X-Received: by 2002:a17:902:ecca:b0:215:63a0:b58c with SMTP id d9443c01a7336-215bd24bb6fmr8483965ad.46.1733188946066;
+        Mon, 02 Dec 2024 17:22:26 -0800 (PST)
+Received: from [10.72.112.107] ([43.228.180.230])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21538ecb0e8sm71320085ad.63.2024.12.02.17.22.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 02 Dec 2024 17:22:25 -0800 (PST)
+Message-ID: <2285bc57-bd9a-4696-ac29-73bb233c9b3e@redhat.com>
+Date: Tue, 3 Dec 2024 11:22:19 +1000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-Sender: riel@surriel.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/1] arm64: rsi: Add automatic arm-cca-guest module
+ loading
+To: Jeremy Linton <jeremy.linton@arm.com>,
+ linux-arm-kernel@lists.infradead.org
+Cc: steven.price@arm.com, sami.mujawar@arm.com, suzuki.poulose@arm.com,
+ will@kernel.org, catalin.marinas@arm.com, linux-kernel@vger.kernel.org
+References: <20241203000156.72451-1-jeremy.linton@arm.com>
+ <20241203000156.72451-2-jeremy.linton@arm.com>
+Content-Language: en-US
+From: Gavin Shan <gshan@redhat.com>
+In-Reply-To: <20241203000156.72451-2-jeremy.linton@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, 28 Nov 2024 22:57:35 +0800
-kernel test robot <oliver.sang@intel.com> wrote:
+On 12/3/24 10:01 AM, Jeremy Linton wrote:
+> The TSM module provides both guest identification as well as
+> attestation when a guest is run in CCA mode. Lets assure by creating a
+> dummy platform device that the module is automatically loaded during
+> boot.  The TSM module will be loaded by udev daemon after it receives
+> the device addition event. Once it is in place it can be used earlier
+> in the boot process to say decrypt a LUKS rootfs.
+> 
+> Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
+> ---
+>   arch/arm64/include/asm/rsi.h                    |  2 ++
+>   arch/arm64/kernel/rsi.c                         | 15 +++++++++++++++
+>   drivers/virt/coco/arm-cca-guest/arm-cca-guest.c |  8 ++++++++
+>   3 files changed, 25 insertions(+)
+> 
 
-> Hello,
->=20
-> kernel test robot noticed a 13.2% regression of will-it-scale.per_thread_=
-ops on:
->=20
->=20
-> commit: 209954cbc7d0ce1a190fc725d20ce303d74d2680 ("x86/mm/tlb: Update mm_=
-cpumask lazily")
-> https://git.kernel.org/cgit/linux/kernel/git/tip/tip.git x86/mm
-
-[UGH - of course I mailed out the version I tested with, rather than
- the version that I merged into -tip.  Here's the right one.]
-
-The patch below should fix the will-it-scale performance regression,
-while still allowing us to keep the lazy mm_cpumask updates that help
-workloads in other ways.
-
-I do not have the same hardware as the Intel guys have access to, and
-could only test this on one two socket system, but hopefully this
-provides a simple (enough) compromise that allows us to keep both
-the lazier context switch code, and a limited mm_cpumask to keep
-TLB flushing work bounded.
-
----8<---
-
-=46rom dec4a588077563b86dbfe547737018b881e1f6c2 Mon Sep 17 00:00:00 2001
-From: Rik van Riel <riel@fb.com>
-Date: Mon, 2 Dec 2024 09:57:31 -0800
-Subject: [PATCH] x86,mm: only trim the mm_cpumask once a second
-
-Setting and clearing CPU bits in the mm_cpumask is only ever done
-by the CPU itself, from the context switch code or the TLB flush
-code.
-
-Synchronization is handled by switch_mm_irqs_off blocking interrupts.
-
-Sending TLB flush IPIs to CPUs that are in the mm_cpumask, but no
-longer running the program causes a regression in the will-it-scale
-tlbflush2 test. This test is contrived, but a large regression here
-might cause a small regression in some real world workload.
-
-Instead of always sending IPIs to CPUs that are in the mm_cpumask,
-but no longer running the program, send these IPIs only once a second.
-
-The rest of the time we can skip over CPUs where the loaded_mm is
-different from the target mm.
-
-Signed-off-by: Rik van Riel <riel@surriel.com>
-Reported-by: kernel test roboto <oliver.sang@intel.com>
-Closes: https://lore.kernel.org/oe-lkp/202411282207.6bd28eae-lkp@intel.com/
----
- arch/x86/include/asm/mmu.h         |  2 ++
- arch/x86/include/asm/mmu_context.h |  1 +
- arch/x86/mm/tlb.c                  | 25 ++++++++++++++++++++++---
- 3 files changed, 25 insertions(+), 3 deletions(-)
-
-diff --git a/arch/x86/include/asm/mmu.h b/arch/x86/include/asm/mmu.h
-index ce4677b8b735..2c7e3855b88b 100644
---- a/arch/x86/include/asm/mmu.h
-+++ b/arch/x86/include/asm/mmu.h
-@@ -37,6 +37,8 @@ typedef struct {
- 	 */
- 	atomic64_t tlb_gen;
-=20
-+	unsigned long last_trimmed_cpumask;
-+
- #ifdef CONFIG_MODIFY_LDT_SYSCALL
- 	struct rw_semaphore	ldt_usr_sem;
- 	struct ldt_struct	*ldt;
-diff --git a/arch/x86/include/asm/mmu_context.h b/arch/x86/include/asm/mmu_=
-context.h
-index 2886cb668d7f..086af641d19a 100644
---- a/arch/x86/include/asm/mmu_context.h
-+++ b/arch/x86/include/asm/mmu_context.h
-@@ -151,6 +151,7 @@ static inline int init_new_context(struct task_struct *=
-tsk,
-=20
- 	mm->context.ctx_id =3D atomic64_inc_return(&last_mm_ctx_id);
- 	atomic64_set(&mm->context.tlb_gen, 0);
-+	mm->context.last_trimmed_cpumask =3D jiffies;
-=20
- #ifdef CONFIG_X86_INTEL_MEMORY_PROTECTION_KEYS
- 	if (cpu_feature_enabled(X86_FEATURE_OSPKE)) {
-diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
-index 1aac4fa90d3d..19ae8ca34cb8 100644
---- a/arch/x86/mm/tlb.c
-+++ b/arch/x86/mm/tlb.c
-@@ -761,6 +761,7 @@ static void flush_tlb_func(void *info)
- 		if (f->mm && f->mm !=3D loaded_mm) {
- 			cpumask_clear_cpu(raw_smp_processor_id(), mm_cpumask(f->mm));
- 			trace_tlb_flush(TLB_REMOTE_WRONG_CPU, 0);
-+			f->mm->context.last_trimmed_cpumask =3D jiffies;
- 			return;
- 		}
- 	}
-@@ -892,9 +893,27 @@ static void flush_tlb_func(void *info)
- 			nr_invalidate);
- }
-=20
--static bool tlb_is_not_lazy(int cpu, void *data)
-+static bool should_flush_tlb(int cpu, void *data)
- {
--	return !per_cpu(cpu_tlbstate_shared.is_lazy, cpu);
-+	struct flush_tlb_info *info =3D data;
-+
-+	/* Lazy TLB will get flushed at the next context switch. */
-+	if (per_cpu(cpu_tlbstate_shared.is_lazy, cpu))
-+		return false;
-+
-+	/* No mm means kernel memory flush. */
-+	if (!info->mm)
-+		return true;
-+
-+	/* The target mm is loaded, and the CPU is not lazy. */
-+	if (per_cpu(cpu_tlbstate.loaded_mm, cpu) =3D=3D info->mm)
-+		return true;
-+
-+	/* In cpumask, but not the loaded mm? Periodically remove by flushing. */
-+	if (jiffies > info->mm->context.last_trimmed_cpumask + HZ)
-+		return true;
-+
-+	return false;
- }
-=20
- DEFINE_PER_CPU_SHARED_ALIGNED(struct tlb_state_shared, cpu_tlbstate_shared=
-);
-@@ -928,7 +947,7 @@ STATIC_NOPV void native_flush_tlb_multi(const struct cp=
-umask *cpumask,
- 	if (info->freed_tables)
- 		on_each_cpu_mask(cpumask, flush_tlb_func, (void *)info, true);
- 	else
--		on_each_cpu_cond_mask(tlb_is_not_lazy, flush_tlb_func,
-+		on_each_cpu_cond_mask(should_flush_tlb, flush_tlb_func,
- 				(void *)info, 1, cpumask);
- }
-=20
---=20
-2.47.0
-
+Reviewed-by: Gavin Shan <gshan@redhat.com>
 
 
