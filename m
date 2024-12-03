@@ -1,100 +1,162 @@
-Return-Path: <linux-kernel+bounces-428608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99B839E1153
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 03:32:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DEBB39E1157
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 03:33:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 08A3EB23E2E
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 02:32:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 45821B2432D
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 02:33:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 860E452F9E;
-	Tue,  3 Dec 2024 02:32:23 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B3A538DDB
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 02:32:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA4FA14F136;
+	Tue,  3 Dec 2024 02:33:01 +0000 (UTC)
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D563E38DDB;
+	Tue,  3 Dec 2024 02:32:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733193143; cv=none; b=nTMVwxiCdP/aqzK794WVz3fD/MBt9gGaDEq9UlVcU/QC0LLh2DgkfTHXoBH0qPfynjS9BYtRwwK5e1OE8D3vaK6nmlX+iIL65dVpPgtiW4LUmEHUk97JmIAtYI4zS2PlX75wAObsZtaeGh+b4a4e+v23/SbaKFrnwl3LWXlraDY=
+	t=1733193181; cv=none; b=cZL+9xpIfd/IesgKN1gFsayFf+Syq+jaCi6EcDyo4UtUAsl2afoqAx8y9l1Gf4ODBsdrxcInB+UjTwU0lHxkmR2SKka/OCfUWmXsnf1AxGmI6fXgaaKhcxlN3nAC1fUiP0xEiLFO20y04XRH3lDfN405c+mfiloKgQjioaS01KI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733193143; c=relaxed/simple;
-	bh=eir4lIbfKpbWRO9ZHD+STWyrYC0r1WzM1Sjaj8Mrx6U=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=W5w2g6oarL1pKXcPdAtH1skBPfh/l3hdhbwqvd0j/ADqfk1SqZidonxdTNbmHGGyJY5lfM4QK2YEecMzIIzP0s4H7Mt8eI6b3OkwRHDK4PiHlXrWai1tuMdYtc/9ayTZi+ifdjNlT8vbKOIc7Zk0o6IQW/wzX7qm9omX2eYmq+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 63C1FFEC;
-	Mon,  2 Dec 2024 18:32:46 -0800 (PST)
-Received: from a077893.arm.com (unknown [10.163.48.101])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 4C1B13F71E;
-	Mon,  2 Dec 2024 18:32:15 -0800 (PST)
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-To: linux-mm@kvack.org
-Cc: Anshuman Khandual <anshuman.khandual@arm.com>,
-	Muchun Song <muchun.song@linux.dev>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Oscar Salvador <osalvador@suse.de>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH V2] mm/hugetlb: Make __NR_USED_SUBPAGE check conditional
-Date: Tue,  3 Dec 2024 08:02:07 +0530
-Message-Id: <20241203023207.123416-1-anshuman.khandual@arm.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1733193181; c=relaxed/simple;
+	bh=+9LVcEwIo6QDQUbVZLllWmynl+/S10V4KlESp46uoOk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=pkFLU3GqxctG0RBNwtZmLlcN+bMC8UpNC2Gvt/qa/uKGtf/V5nf01/K1cYfvrqavpkZqH3h0tGxk5oWUqkSU9yI73AFS1RYSQ2zB1PCergWSO6LXo2VIeZlQ8Q4h6XxKNU6fT7R8WQ1wJ0ZPm3jaHY7BeOXNDU/q6Y5cn+Riepg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4Y2Pkd45qsz1V5Sx;
+	Tue,  3 Dec 2024 10:30:01 +0800 (CST)
+Received: from kwepemg500017.china.huawei.com (unknown [7.202.181.81])
+	by mail.maildlp.com (Postfix) with ESMTPS id 510BD1802D0;
+	Tue,  3 Dec 2024 10:32:56 +0800 (CST)
+Received: from [10.174.179.155] (10.174.179.155) by
+ kwepemg500017.china.huawei.com (7.202.181.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 3 Dec 2024 10:32:55 +0800
+Message-ID: <88a5ad9b-03c0-43e3-8297-e30cd2b5d713@huawei.com>
+Date: Tue, 3 Dec 2024 10:32:54 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: =?UTF-8?B?TW96aWxsYSBUaHVuZGVyYmlyZCDmtYvor5XniYg=?=
+Subject: Re: [bug report] deploying both NFS client and server on the same
+ machine triggle hungtask
+To: Chuck Lever III <chuck.lever@oracle.com>
+CC: Dai Ngo <dai.ngo@oracle.com>, Jeff Layton <jlayton@kernel.org>, Neil Brown
+	<neilb@suse.de>, Olga Kornievskaia <okorniev@redhat.com>, Tom Talpey
+	<tom@talpey.com>, Trond Myklebust <trond.myklebust@hammerspace.com>, Linux
+ NFS Mailing List <linux-nfs@vger.kernel.org>, Linux Kernel Mailing List
+	<linux-kernel@vger.kernel.org>, Yu Kuai <yukuai1@huaweicloud.com>, Hou Tao
+	<houtao1@huawei.com>, "zhangyi (F)" <yi.zhang@huawei.com>, yangerkun
+	<yangerkun@huawei.com>, "chengzhihao1@huawei.com" <chengzhihao1@huawei.com>,
+	Li Lingfeng <lilingfeng@huaweicloud.com>
+References: <887cd8f6-3e49-410c-8b36-9e617c34ca6f@huawei.com>
+ <8b155d3c-62b4-4f16-ab00-e3d030148d29@huawei.com>
+ <D4E120A4-D877-48CC-AE40-D55DBB6265D0@oracle.com>
+From: Li Lingfeng <lilingfeng3@huawei.com>
+In-Reply-To: <D4E120A4-D877-48CC-AE40-D55DBB6265D0@oracle.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemg500017.china.huawei.com (7.202.181.81)
 
-The HugeTLB order check against __NR_USED_SUBPAGE is required only when
-HUGETLB_PAGE_OPTIMIZE_VMEMMAP is enabled. Hence BUG_ON() trigger should
-happen only when applicable.
 
-Cc: Muchun Song <muchun.song@linux.dev>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Oscar Salvador <osalvador@suse.de>
-Cc: linux-mm@kvack.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
----
-This patch applies on v6.13-rc1
+在 2024/12/3 0:05, Chuck Lever III 写道:
+>
+>> On Nov 28, 2024, at 2:22 AM, Li Lingfeng <lilingfeng3@huawei.com> wrote:
+>>
+>> Besides nfsd_file_shrinker, the nfsd_client_shrinker added by commit
+>> 7746b32f467b ("NFSD: add shrinker to reap courtesy clients on low memory
+>> condition") in 2022 and the nfsd_reply_cache_shrinker added by commit
+>> 3ba75830ce17 ("nfsd4: drc containerization") in 2019 may also trigger such
+>> an issue.
+>> Was this scenario not considered when designing the shrinkers for NFSD, or
+>> was it deemed unreasonable and not worth considering?
+> I'm speculating, but it is possible that the issue was
+> introduced by another patch in an area related to the
+> rwsem. Seems like there is a testing gap in this area.
+>
+> Can you file a bugzilla report on bugzilla.kernel.org <http://bugzilla.kernel.org/>
+> under Filesystems/NFSD ?
 
-Changes in V2:
+Hi Chuck,
 
-- Fixed #ifdef with CONFIG_HUGETLB_PAGE_OPTIMIZE_VMEMMAP per Oscar
+I have uploaded the dmesg log and some information from the vmcore here:
+https://bugzilla.kernel.org/show_bug.cgi?id=219550
 
-Changes in V1:
+Thanks,
 
-https://lore.kernel.org/all/20241202090728.78935-1-anshuman.khandual@arm.com/
+Li
 
- mm/hugetlb.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index ea2ed8e301ef..e6a5b21e3578 100644
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -4513,11 +4513,13 @@ void __init hugetlb_add_hstate(unsigned int order)
- 	struct hstate *h;
- 	unsigned long i;
- 
--	if (size_to_hstate(PAGE_SIZE << order)) {
-+	if (size_to_hstate(PAGE_SIZE << order))
- 		return;
--	}
-+
- 	BUG_ON(hugetlb_max_hstate >= HUGE_MAX_HSTATE);
-+#ifdef CONFIG_HUGETLB_PAGE_OPTIMIZE_VMEMMAP
- 	BUG_ON(order < order_base_2(__NR_USED_SUBPAGE));
-+#endif
- 	h = &hstates[hugetlb_max_hstate++];
- 	__mutex_init(&h->resize_lock, "resize mutex", &h->resize_key);
- 	h->order = order;
--- 
-2.30.2
-
+>
+>> 在 2024/11/25 19:17, Li Lingfeng 写道:
+>>> Hi, we have found a hungtask issue recently.
+>>>
+>>> Commit 7746b32f467b ("NFSD: add shrinker to reap courtesy clients on low
+>>> memory condition") adds a shrinker to NFSD, which causes NFSD to try to
+>>> obtain shrinker_rwsem when starting and stopping services.
+>>>
+>>> Deploying both NFS client and server on the same machine may lead to the
+>>> following issue, since they will share the global shrinker_rwsem.
+>>>
+>>>      nfsd                            nfs
+>>>                              drop_cache // hold shrinker_rwsem
+>>>                              write back, wait for rpc_task to exit
+>>> // stop nfsd threads
+>>> svc_set_num_threads
+>>> // clean up xprts
+>>> svc_xprt_destroy_all
+>>>                              rpc_check_timeout
+>>>                               rpc_check_connected
+>>>                               // wait for the connection to be disconnected
+>>> unregister_shrinker
+>>> // wait for shrinker_rwsem
+>>>
+>>> Normally, the client's rpc_task will exit after the server's nfsd thread
+>>> has processed the request.
+>>> When all the server's nfsd threads exit, the client’s rpc_task is expected
+>>> to detect the network connection being disconnected and exit.
+>>> However, although the server has executed svc_xprt_destroy_all before
+>>> waiting for shrinker_rwsem, the network connection is not actually
+>>> disconnected. Instead, the operation to close the socket is simply added
+>>> to the task_works queue.
+>>>
+>>> svc_xprt_destroy_all
+>>>   ...
+>>>   svc_sock_free
+>>>    sockfd_put
+>>>     fput_many
+>>>      init_task_work // ____fput
+>>>      task_work_add // add to task->task_works
+>>>
+>>> The actual disconnection of the network connection will only occur after
+>>> the current process finishes.
+>>> do_exit
+>>>   exit_task_work
+>>>    task_work_run
+>>>    ...
+>>>     ____fput // close sock
+>>>
+>>> Although it is not a common practice to deploy NFS client and server on
+>>> the same machine, I think this issue still needs to be addressed,
+>>> otherwise it will cause all processes trying to acquire the shrinker_rwsem
+>>> to hang.
+>>>
+>>> I don't have any ideas yet on how to solve this problem, does anyone have
+>>> any suggestions?
+>>>
+>>> Thanks.
+>>>
+> --
+> Chuck Lever
+>
+>
 
