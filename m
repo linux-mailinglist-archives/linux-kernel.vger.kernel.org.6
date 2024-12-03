@@ -1,132 +1,141 @@
-Return-Path: <linux-kernel+bounces-428969-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CFCC9E1592
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:25:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C8449E159E
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:26:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC34B161466
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 08:25:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40F4E161DD8
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 08:26:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F9AE1CEEA8;
-	Tue,  3 Dec 2024 08:25:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFD0D1D6193;
+	Tue,  3 Dec 2024 08:26:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ckxK2dTU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="fRpGUxc9";
+	dkim=permerror (0-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="mVDS3y3M"
+Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [85.215.255.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FA641BD9EB;
-	Tue,  3 Dec 2024 08:25:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733214307; cv=none; b=U1GDNIJM4l4a9a62akNAyzt8vAjRU0wkTnZY+ATfz8fX5r6D54uNNwE5YlGSHE4vFBGMd9sqJH4exxlfBUWg6XM2b03gBRDXcXo1FUpOPzI1G9hSnP0fXgr9J4ctT3PAmWNvXloZ2UY3Ui5VM4tFj/bLWFoJ6iok2yQz+4U5Ug0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733214307; c=relaxed/simple;
-	bh=BTa+wgiNyFIm2OTLgqY7mmgwN8DZyO7pNyzVFgh+TMg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Gnufi+d/LAcR06WHRwA08R+abQCjqjxoWtL3lv/EhCb8L+hGpvu/6Bd1tl3PNbURxNPSX01kvoFVi14UYcsKSVoQpaNA1f1nb8SVWtNNznEGJvHWtxWbrsAcztXzbjCJhRuuJ5lbwrqggVOATYVasUPZj5d6Br8YhUyygbJ9ZFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ckxK2dTU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18C84C4CECF;
-	Tue,  3 Dec 2024 08:25:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733214307;
-	bh=BTa+wgiNyFIm2OTLgqY7mmgwN8DZyO7pNyzVFgh+TMg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ckxK2dTUgLzQ2DQRimHhuFTZClvmg9v2v6qZS5ZW0HEZnEHX0Z9eN6C5SXg8A9DTz
-	 RwVg/W0dCHB+K9d5zC0zxTHlRp+jrc3LBuUREF8+/+7ZCaR0IqJMITxwZKu9AxPUBq
-	 juo6vTmP4pnjcH40huRrykLqxdvwUNlm0JrL0O0s7+dXX1aCrImZzWUCC7HwXFMvH+
-	 l8cqYI570GOD5Unw6DhAgn4RuuRPddA7Z5b7Yd9L+CEirC3AxjpL/hJ906pLS2HJGv
-	 uoGxRgeknk0X+D0bw6c5aoFF7bFixA/20M4dG/5SzmujY6Qqw8uwUPdgZuubr+T4yD
-	 gWv8VrbCKXxAA==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1tIODN-0000000082S-3VtQ;
-	Tue, 03 Dec 2024 09:25:02 +0100
-Date: Tue, 3 Dec 2024 09:25:01 +0100
-From: Johan Hovold <johan@kernel.org>
-To: Stephen Boyd <sboyd@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: Johan Hovold <johan+linaro@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	regressions@lists.linux.dev, Aishwarya TCV <aishwarya.tcv@arm.com>,
-	Chuan Liu <chuan.liu@amlogic.com>,
-	Sudeep Holla <sudeep.holla@arm.com>, linux-pm@vger.kernel.org
-Subject: Re: [PATCH] Revert "clk: Fix invalid execution of clk_set_rate"
-Message-ID: <Z07AXbQvvZwI8Ki6@hovoldconsulting.com>
-References: <20241202100621.29209-1-johan+linaro@kernel.org>
- <3fd004add188460bf2bdd1a718387c7f.sboyd@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A12AB1BF37;
+	Tue,  3 Dec 2024 08:26:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=85.215.255.53
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733214375; cv=pass; b=rrebHcT5BgcoFSQz+i7kQRNGviBYfSQfKHXgLHzZ+2NhctBGhdVN+hygor1p5GWFctXEalpTC3jcqvaw1lyDf+y0nvJV5wR7on2dHSxizYj8KnJR/N97esT7gQgJvlxhBihm+/HGb/4znB6RA/GazeEVDVPzrF7eroCqzbJgCsA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733214375; c=relaxed/simple;
+	bh=7vN8l4edstpV5RzHSdRN5fx4Jcl4tlzQ0oQDgnVYIaw=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=jmrWJAPp16t1J1oC7DEo9fVhQBmbJqxqc8Gw2GO24/hfSZiD0XgaNpYS4KE5CPcRItFXShgHR03P2khzYmhu/I4uoCxtjrdwf7s8Oo4FXXkW2ltPtLhYtNBmIme6oX8vCYsooCmyViuqRgnTmawvKsYTVQR80jvtr4rEwjVzU5w=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=goldelico.com; spf=pass smtp.mailfrom=goldelico.com; dkim=pass (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b=fRpGUxc9; dkim=permerror (0-bit key) header.d=goldelico.com header.i=@goldelico.com header.b=mVDS3y3M; arc=pass smtp.client-ip=85.215.255.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=goldelico.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goldelico.com
+ARC-Seal: i=1; a=rsa-sha256; t=1733214355; cv=none;
+    d=strato.com; s=strato-dkim-0002;
+    b=DGkPLkUVduoNlvgnBhAd/xOGpZ+IX/8+KPn9k5d6u5V/Rs3m6wWLS622SWd9Cq7Mg9
+    M3OLps/p4A/8mYcm2gP6s4G/rpHbV2XqTr3KEb8MLVLfn3aGDsrobYtLOc797z49wGRd
+    k0G4dVJ9udrFcgF20cAY8TsAfCthETJCUbcCjYv5L8UaTMmOSWWFoLfT60Uj263kdQbe
+    EjycmRKRYpzAoNOTDb+bw930vR3YZD+PsEvx35UFTtvYytXq9Mk7qtMIZcVa9AtLcnwB
+    6BoRGHgtDS7O/FdfXOw7vSZkr74F8jiDOVUOwzn3FxYiq06tvrd2vRf+FuRdtYfNKJBL
+    g09A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1733214355;
+    s=strato-dkim-0002; d=strato.com;
+    h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:Cc:Date:
+    From:Subject:Sender;
+    bh=DCa5qKli0andoxvIvdZequyVK0KYQyS17ykqq5CaiJk=;
+    b=tHhYf2YAxjA5zWUVTzYu4yo8vOGRlRQ0+VcGHJrkJTVTqjaGTbdnebD/gT8sZTgRHk
+    9RDCiGOzWFhvfGNMhHBc5q3WARkxeBCPcrriwZq66pBjeW9QAL2AgUSCMiW4KlRYMo4U
+    6QvkKUx2Yb+EGOhOM7zL4nWDfnmJJd5JGFJyeQuFD1/s1rn7AVNMHTL0GXzlhrb1wx7B
+    7ILqXCvfk+550xFd+BFdt4vsh6e8qH7/nfTDGe3n/QPoOBuOv7zEqharv6N54ywcBR7R
+    epZEzuxRZSZJw8wDfDEhIDmoJCx7+NdaWfGcOZO8XNHHZ4FSHvHACbeRY6Qf8k4EGO2R
+    angw==
+ARC-Authentication-Results: i=1; strato.com;
+    arc=none;
+    dkim=none
+X-RZG-CLASS-ID: mo01
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1733214355;
+    s=strato-dkim-0002; d=goldelico.com;
+    h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:Cc:Date:
+    From:Subject:Sender;
+    bh=DCa5qKli0andoxvIvdZequyVK0KYQyS17ykqq5CaiJk=;
+    b=fRpGUxc9RCoN1tAwl3lhMgEZ4ET7zrCSFBVGi7ikcsDlclKDsNknCbtqpZyPndInxI
+    rZXXAI0LCq7NZ0u9kYm/ByDiWxf+HcwxsKOKHNYYib8dB8q6Ccgd5yOoR3YUdr7itQrm
+    hwwaMl6jyRdJ7VHYVBcGHBThPoF03lUdNZQgyDN5atAg7nUzWzoIO/iHwSVonh9fMCqs
+    IOerpyM+MRP6zuDR4+mmLLd22FXnp7L4OLbiZZcdR8z8uqXK58bEKIpwLGwTO6J5HNk1
+    +1wWoeUeEONU6//YONEf9aZgTIeJblyuA5KRIFd0GBWYVOatVwBkKuhBqXAN7Uubcrgx
+    wqAA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1733214355;
+    s=strato-dkim-0003; d=goldelico.com;
+    h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:Cc:Date:
+    From:Subject:Sender;
+    bh=DCa5qKli0andoxvIvdZequyVK0KYQyS17ykqq5CaiJk=;
+    b=mVDS3y3MVpOoPFvrl+NCYTncEhHVlv0IwKtVaLV+/RM44oVHfBKu/40/vl04evfs86
+    GrZiFlQTYuS7SPxQ1UBw==
+X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9qVpwcQVkPW4I1HrT25oMmciNwTZVQsFwoTCsf66pt09L8Xu393o="
+Received: from smtpclient.apple
+    by smtp.strato.de (RZmta 51.2.11 AUTH)
+    with ESMTPSA id Qb7e400B38PsmqP
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve X9_62_prime256v1 with 256 ECDH bits, eq. 3072 bits RSA))
+	(Client did not present a certificate);
+    Tue, 3 Dec 2024 09:25:54 +0100 (CET)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3fd004add188460bf2bdd1a718387c7f.sboyd@kernel.org>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51.11.1\))
+Subject: Re: [PATCH v2] i2c: omap: Cleaned up coding style and parameters
+From: "H. Nikolaus Schaller" <hns@goldelico.com>
+In-Reply-To: <Z06zxM3pREgrOvQA@melbuntu>
+Date: Tue, 3 Dec 2024 09:25:43 +0100
+Cc: Aaro Koskinen <aaro.koskinen@iki.fi>,
+ "Raghavendra, Vignesh" <vigneshr@ti.com>,
+ andi.shyti@kernel.org,
+ Janusz Krzysztofik <jmkrzyszt@gmail.com>,
+ tony Lindgren <tony@atomide.com>,
+ Andreas Kemnade <andreas@kemnade.info>,
+ Kevin Hilman <khilman@baylibre.com>,
+ Roger Quadros <rogerq@kernel.org>,
+ Linux-OMAP <linux-omap@vger.kernel.org>,
+ linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Message-Id: <7B167CB3-EC8E-41C6-8A91-123167579475@goldelico.com>
+References: <Z04CA8fGCC-nyZIY@melbuntu>
+ <Z04faeJUgZTydiMb@darkstar.musicnaut.iki.fi> <Z06zxM3pREgrOvQA@melbuntu>
+To: Dhruv Menon <dhruvmenon1104@gmail.com>
+X-Mailer: Apple Mail (2.3776.700.51.11.1)
 
-[ +CC: Viresh and Sudeep ]
+Just a minor nit:
 
-On Mon, Dec 02, 2024 at 05:20:06PM -0800, Stephen Boyd wrote:
-> Quoting Johan Hovold (2024-12-02 02:06:21)
-> > This reverts commit 25f1c96a0e841013647d788d4598e364e5c2ebb7.
-> > 
-> > The offending commit results in errors like
-> > 
-> >         cpu cpu0: _opp_config_clk_single: failed to set clock rate: -22
-> > 
-> > spamming the logs on the Lenovo ThinkPad X13s and other Qualcomm
-> > machines when cpufreq tries to update the CPUFreq HW Engine clocks.
-> > 
-> > As mentioned in commit 4370232c727b ("cpufreq: qcom-hw: Add CPU clock
-> > provider support"):
-> > 
-> >         [T]he frequency supplied by the driver is the actual frequency
-> >         that comes out of the EPSS/OSM block after the DCVS operation.
-> >         This frequency is not same as what the CPUFreq framework has set
-> >         but it is the one that gets supplied to the CPUs after
-> >         throttling by LMh.
-> > 
-> > which seems to suggest that the driver relies on the previous behaviour
-> > of clk_set_rate().
+> Am 03.12.2024 um 08:31 schrieb Dhruv Menon <dhruvmenon1104@gmail.com>:
 > 
-> I don't understand why a clk provider is needed there. Is anyone looking
-> into the real problem?
-
-I mentioned this to Mani yesterday, but I'm not sure if he has had time
-to look into it yet. And I forgot to CC Viresh who was involved in
-implementing this. There is comment of his in the thread where this
-feature was added:
-
-	Most likely no one will ever do clk_set_rate() on this new
-	clock, which is fine, though OPP core will likely do
-	clk_get_rate() here.
-
-which may suggest that some underlying assumption has changed. [1]
-
-There are some more details in that thread that should explain why
-things were implemented the way they were:
-
-	https://lore.kernel.org/linux-arm-msm/20221117053145.10409-1-manivannan.sadhasivam@linaro.org/
-
-> > Since this affects many Qualcomm machines, let's revert for now.
-> > 
-> > Fixes: 25f1c96a0e84 ("clk: Fix invalid execution of clk_set_rate")
-> > Reported-by: Aishwarya TCV <aishwarya.tcv@arm.com>
-> > Link: https://lore.kernel.org/all/e2d83e57-ad07-411b-99f6-a4fc3c4534fa@arm.com/
-> > Cc: Chuan Liu <chuan.liu@amlogic.com>
-> > Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> > Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
-> > ---
+> Hello Aaro, 
 > 
-> Applied to clk-fixes
+> I have updated the patch as requiested, splitting it two parts,
+> 
+> 1. [PATCH v2 1/2] i2c: omap: Cleaned up coding style
+> 2. [PATCH v2 2/2] i2c: omap: Removed unsed parameter
 
-Thanks.
+use "this patch will do" point of view, not "I have done"
 
-Johan
+=> Cleaned -> Clean
 
-[1] https://lore.kernel.org/linux-arm-msm/20221118055730.yrzpuih3zfko5c2q@vireshk-i7/
+And there is a typo in "unsed".
+
+> 
+> I have also removed the changes regarding msleep as the adjustment
+> was relatively minor. The change was initially considered based 
+> on "Timer's howto" documentation which recommends to change any
+> msleep(x) < 10ms to usleep_range(x*1000, x*2000) for better 
+> precision.
+> 
+> Thank you for the time and review. I look forward to your feedback
+> 
+> Regards
+> Dhruv Menon
+> 
+
 
