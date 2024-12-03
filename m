@@ -1,429 +1,188 @@
-Return-Path: <linux-kernel+bounces-430030-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B9589E2B4A
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 19:46:02 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90F359E2B4C
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 19:46:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4449C168452
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 18:45:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A12C1684DC
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 18:46:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 410A520899C;
-	Tue,  3 Dec 2024 18:44:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 749B31F7545;
+	Tue,  3 Dec 2024 18:45:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cRtRONcq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="vfkAQD+Q"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E0D01FECA4;
-	Tue,  3 Dec 2024 18:44:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B1F242A8C
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 18:45:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733251485; cv=none; b=ZYzWE/0QTkLj8M8WtDjQ0DA7PxLiI8T1cd9532Iff7FzoBG3V9KPVnmNIKrYT9C1kTq0FmtEUVyNQm1SbwB4DdCFFPfS4w7jvVA1NNb1HJO7/bWNxqYtUIPjBra+gdgSMsfkaZxoBFxEWNQpZQdsQkMuEHwIrQ12s8nCfneBfVM=
+	t=1733251513; cv=none; b=H5AJppmUD5i9QFuNdsFFaITc4vaS++2qyOkwBN8FcXgfepkytdKOLhuyzeXkpOxpr9McX3ISqpwQ/BnMlR9i5xyB8u/yhteIfP+XYfxZSeBcv+i5RAD2bENYnZvkDMtBj+TFN3CcHwBYDQWM/SH0RM9k5VUMiCwtLkhRjKtgdMo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733251485; c=relaxed/simple;
-	bh=p3DzkDVZP2SFkK3VI5qaeiKq62xeJDdDTo+pXAW1T3g=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=fcIaKhEDxELNnY8mNIWbcx2s3JoszeOmMFymhQ4ftDtyxdhdIKBqbeusPeqcfqoTTiPww5MPnH4wuygAv9YY2wiJZqxGni/0sFqZU9PtMUTN17jmFHH9MgWIrbLr/9okueMNOC2CH1ts5A8fxrf7kAvjrPLJuo8uXicnSbhjME0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cRtRONcq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F909C4CED8;
-	Tue,  3 Dec 2024 18:44:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733251484;
-	bh=p3DzkDVZP2SFkK3VI5qaeiKq62xeJDdDTo+pXAW1T3g=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=cRtRONcqr0q+YLq6k7S3xnLtANTRzDq+Vu7NYJO+CZEJLliTqMiOKRw+HosgNiSib
-	 QTFk502s6voIVCzaeCWSSzDLXVUEujFScsUKKF10x1qTVSkSf3ATEhGSu7uoWkKGKQ
-	 XT6KKuz8gEBRJ0RvTsVSZXZEyuCUz0ZgWznGCsU6/51I+lryRsFBAFZB1VJw/xRdgv
-	 OnlSGSdvRGRPAidcP8PrPRbPVgvAMwx1GZHyEeRXPoIg0bqYYG43VQ1aNTI+WzZLbY
-	 zEKEKHIkffhMJ4teVSd/SZwKdrpDu1Dr5FR0fXkX1TLNLiFC9rQS92In5VhJEoz6/t
-	 GZR9ks4xGp5nw==
-From: Mark Brown <broonie@kernel.org>
-Date: Tue, 03 Dec 2024 18:43:42 +0000
-Subject: [PATCH RFT v13 8/8] selftests/clone3: Test shadow stack support
+	s=arc-20240116; t=1733251513; c=relaxed/simple;
+	bh=WvMXf785DTq8wWZPy65DDlcFTq0jfzfzrHuiSDOxcyM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VanW/ytyEr/68Fv7ol4C0TXN/rByCYaVyGaf4vg33gkHQWVP1iwXCjfi0ynPa2s4K1fkPhWpb6OVJENNVlXorETn89/iClqJlrAkLz9WYFaY5N5dE1Yk3nYDz3zy1aYT/g68SVtYuMuTTCkvIQGijqYIJS9hosroacZvcEjRjis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=vfkAQD+Q; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2ee86a1a92dso2638464a91.1
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 10:45:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1733251511; x=1733856311; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=DX1q4LbNfnO54nY1P9OjyEL2atntmm2otrVNiRk5aiw=;
+        b=vfkAQD+QARJ1TK+c8tnEZZwuVTtm53SRydL6wF4LDacETUoKrV8Qc4jBDUFKKqKfNC
+         e3GSWvJpDOa/1LjoCVNUkWe6vyXKrNjcgISQFhpmjjKeO6XSUzSewZx5TlJndtz2ppun
+         /HwrPTrObXJs9U29S2pdpJLt0VLISSvAUUcgTFFTfFZco7s9EMUYOY5s97SjwDfnASfm
+         L+vV9bKEttKmb/QVfATbY5G8JfLJGI8bnDqv3v42U8PimYMApGvhYUicm1/j7sR/xRYt
+         v9ZRS+ocIonBoo2r9lDLeieWbyDz1Wc4qTxC3FZaViyT5tTvWVFs1dwZZYqlK5QtTBIE
+         thyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733251511; x=1733856311;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DX1q4LbNfnO54nY1P9OjyEL2atntmm2otrVNiRk5aiw=;
+        b=PdQDuYerPK9FA4fb9q3ZOn4jsEJqctRpkmFsVkCJ6ukTZ3+2F/19PNAo3/Py8zcZkG
+         REl3Hz3mgU5jxPNhJkogNt7XGGltCZ50RT/FgzAzdYgXmVQEf+29TeXDQdIZBiDGS6+G
+         LFAwat93pBaSVywIEMgQypTVOlhQVH60IES2s3O5oNumJ3BNzbEhAlaVvMZrcyi0gfjs
+         J7a0ftkEzw4/4IfdY56E+QuWKyqgjZhJ/GrnfCP4/8RL2HGJvOPNbc0oRLc6F9FPGwCJ
+         zGaAgkUUV7VC7tGc6C8ZXW7T8lLtT6twlxeItm28y3H5cwcEdl+xoUMVLVfraGzo/MDJ
+         8JLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWFfV+uXl89tViJ21Zehcg8XNpjK7FdcpVhLXwuz8TrktPYgsVfWk5bYw2V+KGjh+c2E0UfmhzmcrQhLzg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywde5Rvpj4Cv1l+K4DPvDtitYbf+G6PLErEg8a05zsDi3FLSRGc
+	922vi5OyUVLnY45obqxokjJAdoy9Zxp6dOPaWSifbPTCt4GOWmGUTMklfEt0VME=
+X-Gm-Gg: ASbGncuvM2/9xZx6oI4SwzizDbssuHXY55gwKHFl8A253BNSRMVEm5XGciXjeKEl88t
+	U9w+VUFRdC0g4HUMWf1dkZDxUU1bWL68DHfXItl/xPR913iq+B8PdipMSPqOvn5zdsCAv72h7YQ
+	PvVgKTCwZpcKcStmMngZL1dttOW8kINisRQ8yRAPL+KG80nu68acxnQF+eWUHiDc+zg6PeamJXH
+	mnRaYMMSxrscoyvU2lTuInZMr2iTaeTTOJvgj25gC/7og==
+X-Google-Smtp-Source: AGHT+IEhsEsYF/DSzp4oikyjn6fRzE2euETCh9znl9SEgHM1n6BH2uIgHofOP2OdcmmDuTYZp1vciQ==
+X-Received: by 2002:a17:90b:4b06:b0:2ee:bf84:4fe8 with SMTP id 98e67ed59e1d1-2ef01262060mr4728642a91.30.1733251511178;
+        Tue, 03 Dec 2024 10:45:11 -0800 (PST)
+Received: from ghost ([2601:647:6700:64d0:eb46:d11e:11bc:ffc5])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ee488af41dsm9151463a91.28.2024.12.03.10.45.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Dec 2024 10:45:10 -0800 (PST)
+Date: Tue, 3 Dec 2024 10:45:06 -0800
+From: Charlie Jenkins <charlie@rivosinc.com>
+To: "Dmitry V. Levin" <ldv@strace.io>
+Cc: Celeste Liu <uwu@coelacanthus.name>, Oleg Nesterov <oleg@redhat.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>,
+	Alexandre Ghiti <alex@ghiti.fr>,
+	Andrea Bolognani <abologna@redhat.com>,
+	=?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>, Ron Economos <re@w6rz.net>,
+	Felix Yan <felixonmars@archlinux.org>,
+	Ruizhe Pan <c141028@gmail.com>,
+	Shiqi Zhang <shiqi@isrc.iscas.ac.cn>, Guo Ren <guoren@kernel.org>,
+	Yao Zi <ziyao@disroot.org>, Han Gao <gaohan@iscas.ac.cn>,
+	Quan Zhou <zhouquan@iscas.ac.cn>, linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH] riscv/ptrace: add new regset to get original a0 register
+Message-ID: <Z09RshGMxW3q6JpA@ghost>
+References: <20241201-riscv-new-regset-v1-1-c83c58abcc7b@coelacanthus.name>
+ <Z06ZAP-_4J4-6aK_@ghost>
+ <20241203121948.GA18179@strace.io>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241203-clone3-shadow-stack-v13-8-93b89a81a5ed@kernel.org>
-References: <20241203-clone3-shadow-stack-v13-0-93b89a81a5ed@kernel.org>
-In-Reply-To: <20241203-clone3-shadow-stack-v13-0-93b89a81a5ed@kernel.org>
-To: "Rick P. Edgecombe" <rick.p.edgecombe@intel.com>, 
- Deepak Gupta <debug@rivosinc.com>, Szabolcs Nagy <Szabolcs.Nagy@arm.com>, 
- "H.J. Lu" <hjl.tools@gmail.com>, Florian Weimer <fweimer@redhat.com>, 
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
- x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
- Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
- Vincent Guittot <vincent.guittot@linaro.org>, 
- Dietmar Eggemann <dietmar.eggemann@arm.com>, 
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, 
- Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>, 
- Christian Brauner <brauner@kernel.org>, Shuah Khan <shuah@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>, 
- Will Deacon <will@kernel.org>, jannh@google.com, bsegall@google.com, 
- Yury Khrustalev <yury.khrustalev@arm.com>, 
- Wilco Dijkstra <wilco.dijkstra@arm.com>, linux-kselftest@vger.kernel.org, 
- linux-api@vger.kernel.org, Mark Brown <broonie@kernel.org>, 
- Kees Cook <kees@kernel.org>, Shuah Khan <skhan@linuxfoundation.org>
-X-Mailer: b4 0.15-dev-9b746
-X-Developer-Signature: v=1; a=openpgp-sha256; l=10296; i=broonie@kernel.org;
- h=from:subject:message-id; bh=p3DzkDVZP2SFkK3VI5qaeiKq62xeJDdDTo+pXAW1T3g=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBnT1FkefVjlQJeh4HGx4nCsNJ0Kz6k0tMk3rQC8PZL
- 4DwRewyJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZ09RZAAKCRAk1otyXVSH0HXxB/
- 97+gFJ4ckAXVv6ZbGYmi4WtUfmtVwvv9u2nql5u+ctKhoFvtDLt9b9TpnUXooA7fq6fgec/mE/9PzF
- wN+T65o3R0pywMoyVHMvVsqBx2XJlo22uCiqjy5Dz+xW5fvqKCrIsjgYvclboFzD5JUVLP/6v+LRBt
- NBldj4eNGiEDZX0fQLA2cbNsa3GKOKKQRpJH0u8bSxQcU9ufJUL51J3JA17s/1Z9wTa3udiZZ5ISJn
- 0MCqmWRrsSMcx86teMHu0zWV6vozmEg2QPOgGaukKCpJFim42H+c2JNvop2HiAvNs59DyboUOCukJo
- yJraeQObRUI5yFTh1jpR4371QZ5r9L
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241203121948.GA18179@strace.io>
 
-Add basic test coverage for specifying the shadow stack for a newly
-created thread via clone3(), including coverage of the newly extended
-argument structure.  We check that a user specified shadow stack can be
-provided, and that invalid combinations of parameters are rejected.
+On Tue, Dec 03, 2024 at 02:19:48PM +0200, Dmitry V. Levin wrote:
+> On Mon, Dec 02, 2024 at 09:37:04PM -0800, Charlie Jenkins wrote:
+> [...]
+> > +static void ptrace_test(int opt, int *result)
+> > +{
+> > +	int status;
+> > +	pid_t pid;
+> > +	struct user_regs_struct regs;
+> > +	struct iovec iov = {
+> > +		.iov_base = &regs,
+> > +		.iov_len = sizeof(regs),
+> > +	};
+> > +
+> > +	unsigned long orig_a0;
+> > +	struct iovec a0_iov = {
+> > +		.iov_base = &orig_a0,
+> > +		.iov_len = sizeof(orig_a0),
+> > +	};
+> > +
+> > +	pid = fork();
+> > +	if (pid == 0) {
+> > +		/* Mark oneself being traced */
+> > +		long val = ptrace(PTRACE_TRACEME, 0, 0, 0);
+> > +		if (val)
+> > +			perr_and_exit("failed to request for tracer to trace me: %ld\n", val);
+> > +
+> > +		kill(getpid(), SIGSTOP);
+> > +
+> > +		/* Perform exit syscall that will be intercepted */
+> > +		exit(A0_OLD);
+> > +	}
+> > +
+> > +	if (pid < 0)
+> > +		exit(1);
+> > +
+> > +	if (waitpid(pid, &status, 0) != pid)
+> > +		perr_and_exit("failed to wait for the tracee %d\n", pid);
+> > +
+> > +	/* Stop at the entry point of the syscall */
+> > +	resume_and_wait_tracee(pid, PTRACE_SYSCALL);
+> > +
+> > +	/* Check tracee regs before the syscall */
+> > +	if (ptrace(PTRACE_GETREGSET, pid, NT_PRSTATUS, &iov))
+> > +		perr_and_exit("failed to get tracee registers\n");
+> > +	if (ptrace(PTRACE_GETREGSET, pid, NT_RISCV_ORIG_A0, &a0_iov))
+> > +		perr_and_exit("failed to get tracee registers\n");
+> > +	if (orig_a0 != A0_OLD)
+> > +		perr_and_exit("unexpected orig_a0: 0x%lx\n", orig_a0);
+> > +
+> > +	/* Modify a0/orig_a0 for the syscall */
+> > +	switch (opt) {
+> > +	case A0_MODIFY:
+> > +		regs.a0 = A0_NEW;
+> > +		break;
+> 
+> Did you mean applying the modified user_regs_struct using PTRACE_SETREGSET?
+> If yes, then there should be an appropriate PTRACE_SETREGSET NT_PRSTATUS call.
+> If no, then regs is ignored, so why would you change it in the first place?
+> 
 
-In order to facilitate testing on systems without userspace shadow stack
-support we manually enable shadow stacks on startup, this is architecture
-specific due to the use of an arch_prctl() on x86. Due to interactions with
-potential userspace locking of features we actually detect support for
-shadow stacks on the running system by attempting to allocate a shadow
-stack page during initialisation using map_shadow_stack(), warning if this
-succeeds when the enable failed.
+Yes you are correct, there should be another PTRACE_SETREGSET. That was
+a mistake in modifying the previous test case for this new patch.
 
-In order to allow testing of user configured shadow stacks on
-architectures with that feature we need to ensure that we do not return
-from the function where the clone3() syscall is called in the child
-process, doing so would trigger a shadow stack underflow.  To do this we
-use inline assembly rather than the standard syscall wrapper to call
-clone3().  In order to avoid surprises we also use a syscall rather than
-the libc exit() function., this should be overly cautious.
+- Charlie
 
-Acked-by: Shuah Khan <skhan@linuxfoundation.org>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- tools/testing/selftests/clone3/clone3.c           | 143 +++++++++++++++++++++-
- tools/testing/selftests/clone3/clone3_selftests.h |  63 ++++++++++
- 2 files changed, 205 insertions(+), 1 deletion(-)
-
-diff --git a/tools/testing/selftests/clone3/clone3.c b/tools/testing/selftests/clone3/clone3.c
-index 5b8b7d640e70132242fc6939450669acd0c534f9..b0378d7418cc8b00caebc6f92f58280bc04b0f80 100644
---- a/tools/testing/selftests/clone3/clone3.c
-+++ b/tools/testing/selftests/clone3/clone3.c
-@@ -3,6 +3,7 @@
- /* Based on Christian Brauner's clone3() example */
- 
- #define _GNU_SOURCE
-+#include <asm/mman.h>
- #include <errno.h>
- #include <inttypes.h>
- #include <linux/types.h>
-@@ -11,6 +12,7 @@
- #include <stdint.h>
- #include <stdio.h>
- #include <stdlib.h>
-+#include <sys/mman.h>
- #include <sys/syscall.h>
- #include <sys/types.h>
- #include <sys/un.h>
-@@ -19,8 +21,12 @@
- #include <sched.h>
- 
- #include "../kselftest.h"
-+#include "../ksft_shstk.h"
- #include "clone3_selftests.h"
- 
-+static bool shadow_stack_supported;
-+static size_t max_supported_args_size;
-+
- enum test_mode {
- 	CLONE3_ARGS_NO_TEST,
- 	CLONE3_ARGS_ALL_0,
-@@ -28,6 +34,10 @@ enum test_mode {
- 	CLONE3_ARGS_INVAL_EXIT_SIGNAL_NEG,
- 	CLONE3_ARGS_INVAL_EXIT_SIGNAL_CSIG,
- 	CLONE3_ARGS_INVAL_EXIT_SIGNAL_NSIG,
-+	CLONE3_ARGS_SHADOW_STACK,
-+	CLONE3_ARGS_SHADOW_STACK_MISALIGNED,
-+	CLONE3_ARGS_SHADOW_STACK_NO_TOKEN,
-+	CLONE3_ARGS_SHADOW_STACK_NORMAL_MEMORY,
- };
- 
- typedef bool (*filter_function)(void);
-@@ -44,6 +54,44 @@ struct test {
- 	filter_function filter;
- };
- 
-+
-+/*
-+ * We check for shadow stack support by attempting to use
-+ * map_shadow_stack() since features may have been locked by the
-+ * dynamic linker resulting in spurious errors when we attempt to
-+ * enable on startup.  We warn if the enable failed.
-+ */
-+static void test_shadow_stack_supported(void)
-+{
-+	long ret;
-+
-+	ret = syscall(__NR_map_shadow_stack, 0, getpagesize(), 0);
-+	if (ret == -1) {
-+		ksft_print_msg("map_shadow_stack() not supported\n");
-+	} else if ((void *)ret == MAP_FAILED) {
-+		ksft_print_msg("Failed to map shadow stack\n");
-+	} else {
-+		ksft_print_msg("Shadow stack supportd\n");
-+		shadow_stack_supported = true;
-+
-+		if (!shadow_stack_enabled)
-+			ksft_print_msg("Mapped but did not enable shadow stack\n");
-+	}
-+}
-+
-+static void *get_shadow_stack_page(unsigned long flags)
-+{
-+	unsigned long long page;
-+
-+	page = syscall(__NR_map_shadow_stack, 0, getpagesize(), flags);
-+	if ((void *)page == MAP_FAILED) {
-+		ksft_print_msg("map_shadow_stack() failed: %d\n", errno);
-+		return 0;
-+	}
-+
-+	return (void *)page;
-+}
-+
- static int call_clone3(uint64_t flags, size_t size, enum test_mode test_mode)
- {
- 	struct __clone_args args = {
-@@ -57,6 +105,7 @@ static int call_clone3(uint64_t flags, size_t size, enum test_mode test_mode)
- 	} args_ext;
- 
- 	pid_t pid = -1;
-+	void *p;
- 	int status;
- 
- 	memset(&args_ext, 0, sizeof(args_ext));
-@@ -89,6 +138,26 @@ static int call_clone3(uint64_t flags, size_t size, enum test_mode test_mode)
- 	case CLONE3_ARGS_INVAL_EXIT_SIGNAL_NSIG:
- 		args.exit_signal = 0x00000000000000f0ULL;
- 		break;
-+	case CLONE3_ARGS_SHADOW_STACK:
-+		p = get_shadow_stack_page(SHADOW_STACK_SET_TOKEN);
-+		p += getpagesize() - sizeof(void *);
-+		args.shadow_stack_pointer = (unsigned long long)p;
-+		break;
-+	case CLONE3_ARGS_SHADOW_STACK_MISALIGNED:
-+		p = get_shadow_stack_page(SHADOW_STACK_SET_TOKEN);
-+		p += getpagesize() - sizeof(void *) - 1;
-+		args.shadow_stack_pointer = (unsigned long long)p;
-+		break;
-+	case CLONE3_ARGS_SHADOW_STACK_NORMAL_MEMORY:
-+		p = malloc(getpagesize());
-+		p += getpagesize() - sizeof(void *);
-+		args.shadow_stack_pointer = (unsigned long long)p;
-+		break;
-+	case CLONE3_ARGS_SHADOW_STACK_NO_TOKEN:
-+		p = get_shadow_stack_page(0);
-+		p += getpagesize() - sizeof(void *);
-+		args.shadow_stack_pointer = (unsigned long long)p;
-+		break;
- 	}
- 
- 	memcpy(&args_ext.args, &args, sizeof(struct __clone_args));
-@@ -102,7 +171,12 @@ static int call_clone3(uint64_t flags, size_t size, enum test_mode test_mode)
- 
- 	if (pid == 0) {
- 		ksft_print_msg("I am the child, my PID is %d\n", getpid());
--		_exit(EXIT_SUCCESS);
-+		/*
-+		 * Use a raw syscall to ensure we don't get issues
-+		 * with manually specified shadow stack and exit handlers.
-+		 */
-+		syscall(__NR_exit, EXIT_SUCCESS);
-+		ksft_print_msg("CHILD FAILED TO EXIT PID is %d\n", getpid());
- 	}
- 
- 	ksft_print_msg("I am the parent (%d). My child's pid is %d\n",
-@@ -184,6 +258,26 @@ static bool no_timenamespace(void)
- 	return true;
- }
- 
-+static bool have_shadow_stack(void)
-+{
-+	if (shadow_stack_supported) {
-+		ksft_print_msg("Shadow stack supported\n");
-+		return true;
-+	}
-+
-+	return false;
-+}
-+
-+static bool no_shadow_stack(void)
-+{
-+	if (!shadow_stack_supported) {
-+		ksft_print_msg("Shadow stack not supported\n");
-+		return true;
-+	}
-+
-+	return false;
-+}
-+
- static size_t page_size_plus_8(void)
- {
- 	return getpagesize() + 8;
-@@ -327,6 +421,50 @@ static const struct test tests[] = {
- 		.expected = -EINVAL,
- 		.test_mode = CLONE3_ARGS_NO_TEST,
- 	},
-+	{
-+		.name = "Shadow stack on system with shadow stack",
-+		.size = 0,
-+		.expected = 0,
-+		.e2big_valid = true,
-+		.test_mode = CLONE3_ARGS_SHADOW_STACK,
-+		.filter = no_shadow_stack,
-+	},
-+	{
-+		.name = "Shadow stack with misaligned address",
-+		.flags = CLONE_VM,
-+		.size = 0,
-+		.expected = -EINVAL,
-+		.e2big_valid = true,
-+		.test_mode = CLONE3_ARGS_SHADOW_STACK_MISALIGNED,
-+		.filter = no_shadow_stack,
-+	},
-+	{
-+		.name = "Shadow stack with normal memory",
-+		.flags = CLONE_VM,
-+		.size = 0,
-+		.expected = -EFAULT,
-+		.e2big_valid = true,
-+		.test_mode = CLONE3_ARGS_SHADOW_STACK_NORMAL_MEMORY,
-+		.filter = no_shadow_stack,
-+	},
-+	{
-+		.name = "Shadow stack with no token",
-+		.flags = CLONE_VM,
-+		.size = 0,
-+		.expected = -EINVAL,
-+		.e2big_valid = true,
-+		.test_mode = CLONE3_ARGS_SHADOW_STACK_NO_TOKEN,
-+		.filter = no_shadow_stack,
-+	},
-+	{
-+		.name = "Shadow stack on system without shadow stack",
-+		.flags = CLONE_VM,
-+		.size = 0,
-+		.expected = -EINVAL,
-+		.e2big_valid = true,
-+		.test_mode = CLONE3_ARGS_SHADOW_STACK,
-+		.filter = have_shadow_stack,
-+	},
- };
- 
- int main(int argc, char *argv[])
-@@ -334,9 +472,12 @@ int main(int argc, char *argv[])
- 	size_t size;
- 	int i;
- 
-+	enable_shadow_stack();
-+
- 	ksft_print_header();
- 	ksft_set_plan(ARRAY_SIZE(tests));
- 	test_clone3_supported();
-+	test_shadow_stack_supported();
- 
- 	for (i = 0; i < ARRAY_SIZE(tests); i++)
- 		test_clone3(&tests[i]);
-diff --git a/tools/testing/selftests/clone3/clone3_selftests.h b/tools/testing/selftests/clone3/clone3_selftests.h
-index 39b5dcba663c30b9fc2542d9a0d2686105ce5761..26ff1554408a59af26bd708dc9c852210e370828 100644
---- a/tools/testing/selftests/clone3/clone3_selftests.h
-+++ b/tools/testing/selftests/clone3/clone3_selftests.h
-@@ -31,12 +31,75 @@ struct __clone_args {
- 	__aligned_u64 set_tid;
- 	__aligned_u64 set_tid_size;
- 	__aligned_u64 cgroup;
-+#ifndef CLONE_ARGS_SIZE_VER2
-+#define CLONE_ARGS_SIZE_VER2 88	/* sizeof third published struct */
-+#endif
-+	__aligned_u64 shadow_stack_pointer;
-+#ifndef CLONE_ARGS_SIZE_VER3
-+#define CLONE_ARGS_SIZE_VER3 96 /* sizeof fourth published struct */
-+#endif
- };
- 
-+/*
-+ * For architectures with shadow stack support we need to be
-+ * absolutely sure that the clone3() syscall will be inline and not a
-+ * function call so we open code.
-+ */
-+#ifdef __x86_64__
-+static pid_t __always_inline sys_clone3(struct __clone_args *args, size_t size)
-+{
-+	long ret;
-+	register long _num  __asm__ ("rax") = __NR_clone3;
-+	register long _args __asm__ ("rdi") = (long)(args);
-+	register long _size __asm__ ("rsi") = (long)(size);
-+
-+	__asm__ volatile (
-+		"syscall\n"
-+		: "=a"(ret)
-+		: "r"(_args), "r"(_size),
-+		  "0"(_num)
-+		: "rcx", "r11", "memory", "cc"
-+	);
-+
-+	if (ret < 0) {
-+		errno = -ret;
-+		return -1;
-+	}
-+
-+	return ret;
-+}
-+#elif defined(__aarch64__)
-+static pid_t __always_inline sys_clone3(struct __clone_args *args, size_t size)
-+{
-+	register long _num  __asm__ ("x8") = __NR_clone3;
-+	register long _args __asm__ ("x0") = (long)(args);
-+	register long _size __asm__ ("x1") = (long)(size);
-+	register long arg2 __asm__ ("x2") = 0;
-+	register long arg3 __asm__ ("x3") = 0;
-+	register long arg4 __asm__ ("x4") = 0;
-+
-+	__asm__ volatile (
-+		"svc #0\n"
-+		: "=r"(_args)
-+		: "r"(_args), "r"(_size),
-+		  "r"(_num), "r"(arg2),
-+		  "r"(arg3), "r"(arg4)
-+		: "memory", "cc"
-+	);
-+
-+	if ((int)_args < 0) {
-+		errno = -((int)_args);
-+		return -1;
-+	}
-+
-+	return _args;
-+}
-+#else
- static pid_t sys_clone3(struct __clone_args *args, size_t size)
- {
- 	return syscall(__NR_clone3, args, size);
- }
-+#endif
- 
- static inline void test_clone3_supported(void)
- {
-
--- 
-2.39.5
-
+> > +	case ORIG_A0_MODIFY:
+> > +		orig_a0 = A0_NEW;
+> > +		break;
+> > +	}
+> > +
+> > +	if (ptrace(PTRACE_SETREGSET, pid, NT_RISCV_ORIG_A0, &a0_iov))
+> > +		perr_and_exit("failed to set tracee registers\n");
+> > +
+> > +	/* Resume the tracee */
+> > +	ptrace(PTRACE_CONT, pid, 0, 0);
+> > +	if (waitpid(pid, &status, 0) != pid)
+> > +		perr_and_exit("failed to wait for the tracee\n");
+> > +
+> > +	*result = WEXITSTATUS(status);
+> > +}
+> 
+> -- 
+> ldv
 
