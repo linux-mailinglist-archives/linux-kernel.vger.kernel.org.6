@@ -1,155 +1,99 @@
-Return-Path: <linux-kernel+bounces-429015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D93FB9E164E
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:52:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D35399E1655
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:53:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0107281F7A
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 08:52:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99512281E9C
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 08:53:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C58AC1DE2AE;
-	Tue,  3 Dec 2024 08:52:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD68B1DE3D6;
+	Tue,  3 Dec 2024 08:53:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kBHLegiJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="2Wgv/+Qe"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 220F91DB527;
-	Tue,  3 Dec 2024 08:52:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C10761DDC0B;
+	Tue,  3 Dec 2024 08:53:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733215953; cv=none; b=iva4yhzsboaywfkALCBOJ9FOZf1W//GVeSUK1ELNcU/NxxezBvNoyvY1zilRbuK/Ke/Gqq2CxYERcdAEXU3zIEkGg/P53S5giL+8O9mo2AB/QFbhEv1HyUiV3BoQtQEF8LinwRzXQbcOwsI0a2ppKznVeoLiW5+20P1HA710sBE=
+	t=1733216004; cv=none; b=n3beAaG58tX0RZPC3TWEjRhWpgCDiTzMupvKYOZeUzPc/deRgE2xZ19QF7Cgw1q4YTkpTa8V9zhdzrGQNpXJY2c6k/0/nxxXJnqg1O3d+vROXGmWOkzC+tbQaW4AfLHPTlFGWIsexP+LdsaPRhSNrlRVWhZifs+PPqNuRxb78pQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733215953; c=relaxed/simple;
-	bh=X1Xzk01NBeV8Yhr3oboL9gGlhpV3s6C8B5gNfJERTZ4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pCFlH8FoRNjMTriTEFu+hFTIeMLn7z3NAG3Ut/1g8xavWmTDzhWch8iHPCcrzlxEXhgXzA0tpb39pf0Qm8RxwRYtGsV9knUQAzHh6ENMHwEh8GjXy5SPmS6HLXiRYES91twavR/MIRfnIzFP60CSLfNh/E+tMUxosX6EJczStoQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kBHLegiJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA283C4CECF;
-	Tue,  3 Dec 2024 08:52:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733215952;
-	bh=X1Xzk01NBeV8Yhr3oboL9gGlhpV3s6C8B5gNfJERTZ4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kBHLegiJMLqkmlNu8eveIFvVxI7+hlxsCCM9flPKv5lXT407b2+7+4b6l2C+MoL+y
-	 /zlovuHOITV6E3nGSye5k3h5sQcXvWlqda5sQE84F7DMnux83hplmP7prNK6Lee5mZ
-	 K+Gx+/P0xhMxNS0CdB45MO0qHIt52E2RF6P+cvalXDK2R4P3TQzHb5mVKWNJy08rV/
-	 BKy1sOsmAe857cCMsH9rsLWQzOoX91XuwB8Rj5GCs2gUInrdv8mNrGtSIILya4XDWw
-	 4cJ+8gfjalBAcr7G/0kJZTbT+Ihke97Q0bfSHxC6YDNXjLiuDd+HzjUl5+mpgVghFK
-	 LKO79+W5gYOag==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1tIOdw-000000000Cf-2JRx;
-	Tue, 03 Dec 2024 09:52:28 +0100
-Date: Tue, 3 Dec 2024 09:52:28 +0100
-From: Johan Hovold <johan@kernel.org>
-To: maud_spierings@hotmail.com
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Stephan Gerhold <stephan.gerhold@linaro.org>
-Subject: Re: [PATCH v5 3/3] arm64: dts: qcom: x1e80100-vivobook-s15: Add
- bluetooth
-Message-ID: <Z07GzL3suEjGlnwF@hovoldconsulting.com>
-References: <20241202-asus_qcom_display-v5-0-e0d3752ff71f@hotmail.com>
- <20241202-asus_qcom_display-v5-3-e0d3752ff71f@hotmail.com>
+	s=arc-20240116; t=1733216004; c=relaxed/simple;
+	bh=1+Oht9w0/FE5QsO5SJj/3YQM87Ar4+UOgH2AsGDK5/4=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=d6kGOrO2/PNvO4KixgZeH80WH4hHhc6h0H+2ynh6MzdFUx1wIOdKpfx1BUo+kqIAZhQod4N6i1CL5YpQM6QyKs1xMy2bUK0+GTq+vd2XWHGUodjyPPsvtksYJY4bCcRSJiH0Nj3chJ0NBDJT/DTfv9aoEBIuIBXPxI9MZrqx37k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=2Wgv/+Qe; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1733216002; x=1764752002;
+  h=from:to:subject:date:message-id:mime-version;
+  bh=1+Oht9w0/FE5QsO5SJj/3YQM87Ar4+UOgH2AsGDK5/4=;
+  b=2Wgv/+QeBL1tIb3WYCAEYCNoJtd77o4bSqkouGO7bm31LO1+pGlMuOOr
+   /Zl6GJUbetfYbZAqWJVMZ56DnNI6JxIOeP0VTZSiNURwyystePt2BXLO2
+   KRmNe/ExvW7wZy4DAmzZBagO4UX1afmpJfQ/raW4KU6p8IqNLajb9lPJ1
+   BxxdLzx6LbzcgzxShZOCS5+5jaC40asdpMF1Bp53uQfNdBJ/PWvketfSN
+   jaHpWjQFkGBvhQmLylHZV4x/ZmNuNHCyhy2/O52r0F5d0sKEEtURUjYHw
+   HgVcPr8THtZe4UEW94Wn2HHeVIn69A/D9xiK7C5mf/gm3DhXVcgiOiVsg
+   A==;
+X-CSE-ConnectionGUID: PYHc5D2VTXmCViyiEXibzQ==
+X-CSE-MsgGUID: +Wojx63rTc2DPE++qwSo3Q==
+X-IronPort-AV: E=Sophos;i="6.12,204,1728975600"; 
+   d="scan'208";a="38706049"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa1.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 03 Dec 2024 01:53:20 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Tue, 3 Dec 2024 01:52:50 -0700
+Received: from training-HP-280-G1-MT-PC.microchip.com (10.10.85.11) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
+ 15.1.2507.35 via Frontend Transport; Tue, 3 Dec 2024 01:52:46 -0700
+From: Divya Koppera <divya.koppera@microchip.com>
+To: <andrew@lunn.ch>, <arun.ramadoss@microchip.com>,
+	<UNGLinuxDriver@microchip.com>, <hkallweit1@gmail.com>,
+	<linux@armlinux.org.uk>, <davem@davemloft.net>, <edumazet@google.com>,
+	<kuba@kernel.org>, <pabeni@redhat.com>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <richardcochran@gmail.com>,
+	<vadim.fedorenko@linux.dev>
+Subject: [PATCH net-next v5 0/5] Add ptp library for Microchip phys
+Date: Tue, 3 Dec 2024 14:22:43 +0530
+Message-ID: <20241203085248.14575-1-divya.koppera@microchip.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241202-asus_qcom_display-v5-3-e0d3752ff71f@hotmail.com>
+Content-Type: text/plain
 
-On Mon, Dec 02, 2024 at 07:18:13PM +0100, Maud Spierings via B4 Relay wrote:
-> From: Maud Spierings <maud_spierings@hotmail.com>
-> 
-> Add bluetooth for the asus vivobook s15
-> Describe wlan configuration
+Adds support of ptp library in Microchip phys
 
-I assume you copied most of these (effectively boilerplate) definitions
-from somewhere so perhaps you can mention that here (e.g. if it was
-copied from Stephan's patches [1]).
+Divya Koppera (5):
+  net: phy: microchip_ptp : Add header file for Microchip ptp library
+  net: phy: microchip_ptp : Add ptp library for Microchip phys
+  net: phy: Kconfig: Add ptp library support and 1588 optional flag in
+    Microchip phys
+  net: phy: Makefile: Add makefile support for ptp in Microchip phys
+  net: phy: microchip_t1 : Add initialization of ptp for lan887x
 
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> Signed-off-by: Maud Spierings <maud_spierings@hotmail.com>
-> ---
->  .../boot/dts/qcom/x1e80100-asus-vivobook-s15.dts   | 163 +++++++++++++++++++++
->  1 file changed, 163 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dts b/arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dts
-> index 7269f8e7709988657b363004875163a69142f16c..0774bd65ae8cddab81b98e27a116fd5adbe1363c 100644
-> --- a/arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dts
-> +++ b/arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dts
-> @@ -18,6 +18,11 @@ / {
->  	compatible = "asus,vivobook-s15", "qcom,x1e80100";
->  	chassis-type = "laptop";
->  
-> +	aliases {
-> +		serial0 = &uart21;
+ drivers/net/phy/Kconfig         |   9 +-
+ drivers/net/phy/Makefile        |   1 +
+ drivers/net/phy/microchip_ptp.c | 997 ++++++++++++++++++++++++++++++++
+ drivers/net/phy/microchip_ptp.h | 216 +++++++
+ drivers/net/phy/microchip_t1.c  |  40 +-
+ 5 files changed, 1259 insertions(+), 4 deletions(-)
+ create mode 100644 drivers/net/phy/microchip_ptp.c
+ create mode 100644 drivers/net/phy/microchip_ptp.h
 
-No need to add an alias for the console port which is likely not
-accessible on this device (without some tinkering).
+-- 
+2.17.1
 
-> +		serial1 = &uart14;
-> +	};
-> +
->  	gpio-keys {
->  		compatible = "gpio-keys";
->  		pinctrl-0 = <&hall_int_n_default>;
-
-> +	wcn_bt_en: bt-en-state {
-
-Looks like you want a "wcn-" prefix on the node name here too.
-
-> +		pins = "gpio116";
-> +		function = "gpio";
-> +		drive-strength = <16>;
-
-Is this the drive-strength the firmware uses? The default 2 should be
-enough, but you can leave it as-is if it matches the fw settings if you
-prefer.
-
-> +		output-low;
-
-I don't think you should be setting the pin state already in the pin
-configuration as this should be left up to the driver to control.
-
-> +		bias-pull-down;
-
-A pull-down should not be needed for this output either.
-
-> +	};
-> +
-> +	wcn_sw_en: wcn-sw-en-state {
-> +		pins = "gpio214";
-> +		function = "gpio";
-> +		drive-strength = <16>;
-> +		bias-disable;
-> +	};
-> +
-> +	wcn_wlan_en: wlan-en-state {
-> +		pins = "gpio117";
-> +		function = "gpio";
-> +		drive-strength = <16>;
-> +		bias-disable;
-> +	};
-
-Same question about the drive strength applies to these two.
-
-> +};
-
-Johan
-
-
-[1] https://lore.kernel.org/all/20241007-x1e80100-pwrseq-qcp-v1-0-f7166510ab17@linaro.org/
 
