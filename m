@@ -1,134 +1,121 @@
-Return-Path: <linux-kernel+bounces-429620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429621-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0BCA9E1EAE
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B51099E1EAD
 	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 15:08:31 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00CFF1638E1
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 14:08:22 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 505171F4734;
-	Tue,  3 Dec 2024 14:08:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=t-8ch.de header.i=@t-8ch.de header.b="L1SEFC6C"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1859E1F427E;
-	Tue,  3 Dec 2024 14:07:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BBEB283FF0
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 14:08:30 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B32131F6667;
+	Tue,  3 Dec 2024 14:08:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="i8Ao7fen"
+Received: from mail-ed1-f73.google.com (mail-ed1-f73.google.com [209.85.208.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54A501F426E
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 14:08:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733234883; cv=none; b=C+f64HY3PmDEcway7F4Ow/a9HNBcn7G0l8bbB3UIqPWZ/N0zlP7uDmT/rKFBHtcYNHTKpZcxrn0c46GZcp3hQZ3QYfUx7lGqA12WgQneV+RwzealkcIvPOs9YRoZeCF7iNCZBEw6dtylFkJPytVo+Zhe3PiQiQs8C+jr1kFuBkY=
+	t=1733234884; cv=none; b=U+ZTqJAJqi4VUjhNU92lgMa5auq4LCTdtgSMt1NgfxHCTKdf6V5Xk/74BJBgxP5lM8/oLHYy5xrTj7474MroQnXkVkTSBTvXWx8VglmdZGCRrKI7Std4Juirsnbq8ODWqYNk/yJLy4to+b+436yV2SyfM8Pj7YCyT7r4a9ZKwEw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733234883; c=relaxed/simple;
-	bh=fHTskvsLjld8Oq3wof1WoW/ro1iLNuhMDVshgcSrpsQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FaQofOoCigMRMKDsMAcTtZnSKYAnF9JdmD9LKSwjdD9iTopG88TjPRnGkTesBUyzWCTZM8JXNob0bMFp4HCxS2pc2zSY1vHi6LdhYRy3HTafthKOStozkpByTpSLcY+q9QsqCexNn3jCW4O80KwEDG0wtGQ0bz8cVhacy2wOc6Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=t-8ch.de; spf=pass smtp.mailfrom=t-8ch.de; dkim=pass (1024-bit key) header.d=t-8ch.de header.i=@t-8ch.de header.b=L1SEFC6C; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=t-8ch.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=t-8ch.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=t-8ch.de; s=mail;
-	t=1733234875; bh=fHTskvsLjld8Oq3wof1WoW/ro1iLNuhMDVshgcSrpsQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=L1SEFC6CwLYUTcqqqze527r7IWIE4XsyoMQ1CGzSu2Lo7wpen1OO065Nb6zA+snIr
-	 s3/fB4myqry70R09PnBsloM8UYaMMYtq2RVACVaLKZRaHFcnQ6Cg6M23NYb/aG/4oS
-	 rGquyCmF69KPSlVFe8JS1cvEe5EsWFKP+TSwl24Y=
-Date: Tue, 3 Dec 2024 15:07:55 +0100
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas@t-8ch.de>
-To: James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc: Zijun Hu <zijun_hu@icloud.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Jean Delvare <jdelvare@suse.com>, 
-	Guenter Roeck <linux@roeck-us.net>, Martin Tuma <martin.tuma@digiteqautomotive.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Andreas Noever <andreas.noever@gmail.com>, 
-	Michael Jamet <michael.jamet@intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, 
-	Yehezkel Bernat <YehezkelShB@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, Andrew Lunn <andrew@lunn.ch>, 
-	Vladimir Oltean <olteanv@gmail.com>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	Dan Williams <dan.j.williams@intel.com>, Vishal Verma <vishal.l.verma@intel.com>, 
-	Dave Jiang <dave.jiang@intel.com>, Ira Weiny <ira.weiny@intel.com>, 
-	Takashi Sakamoto <o-takashi@sakamocchi.jp>, Jiri Slaby <jirislaby@kernel.org>, 
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
-	Lee Duncan <lduncan@suse.com>, Chris Leech <cleech@redhat.com>, 
-	Mike Christie <michael.christie@oracle.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, 
-	Nilesh Javali <njavali@marvell.com>, Manish Rangankar <mrangankar@marvell.com>, 
-	GR-QLogic-Storage-Upstream@marvell.com, Davidlohr Bueso <dave@stgolabs.net>, 
-	Jonathan Cameron <jonathan.cameron@huawei.com>, Alison Schofield <alison.schofield@intel.com>, 
-	Andreas Larsson <andreas@gaisler.com>, Stuart Yoder <stuyoder@gmail.com>, 
-	Laurentiu Tudor <laurentiu.tudor@nxp.com>, Jens Axboe <axboe@kernel.dk>, 
-	Sudeep Holla <sudeep.holla@arm.com>, Cristian Marussi <cristian.marussi@arm.com>, 
-	Ard Biesheuvel <ardb@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Mathieu Poirier <mathieu.poirier@linaro.org>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
-	linux-hwmon@vger.kernel.org, linux-media@vger.kernel.org, linux-usb@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, netdev@vger.kernel.org, linux-pwm@vger.kernel.org, 
-	nvdimm@lists.linux.dev, linux1394-devel@lists.sourceforge.net, 
-	linux-serial@vger.kernel.org, linux-sound@vger.kernel.org, open-iscsi@googlegroups.com, 
-	linux-scsi@vger.kernel.org, linux-cxl@vger.kernel.org, sparclinux@vger.kernel.org, 
-	linux-block@vger.kernel.org, arm-scmi@vger.kernel.org, linux-efi@vger.kernel.org, 
-	linux-remoteproc@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>
-Subject: Re: [PATCH v2 00/32] driver core: Constify API device_find_child()
- and adapt for various existing usages
-Message-ID: <8fb887a0-3634-4e07-9f0d-d8d7c72ca802@t-8ch.de>
-References: <20241203-const_dfc_done-v2-0-7436a98c497f@quicinc.com>
- <g32cigmktmj4egkq2tof27el2yss4liccfxgebkgqvkil32mlb@e3ta4ezv7y4m>
- <9d34bd6f-b120-428a-837b-5a5813e14618@icloud.com>
- <2024120320-manual-jockey-dfd1@gregkh>
- <b9885785-d4d4-4c72-b425-3dc552651d7e@icloud.com>
- <8eb7c0c54b280b8eb72f82032ede802c001ab087.camel@HansenPartnership.com>
+	s=arc-20240116; t=1733234884; c=relaxed/simple;
+	bh=dkRPz5hCP91YP+K/ZzeXcVdSbccaZFfQZLPNFXn+Ooc=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=oVjXeEU1XcLhvFkLKRjFXCTHjvNVEzmMhHuR3BMdqntT50OVRJ0HKtPx7i3x1QIMRclypWEyf9aawE5UsGlAD/jhBq0MjeK1tX9KBEiS+/vPrXbX0kS0lQOg9zoplsZWe0zShQmi7oBuiMaR6YWlM3XUQtQtqUP/ec7xnj3oMEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=i8Ao7fen; arc=none smtp.client-ip=209.85.208.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
+Received: by mail-ed1-f73.google.com with SMTP id 4fb4d7f45d1cf-5cfad454c02so3530757a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 06:08:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1733234881; x=1733839681; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kgJ5Ld604A5Q3ZbtbqRhmhZWPfDB0owJn+W381THr6w=;
+        b=i8Ao7fenx6CZkLIhelDjr0ehgwqB26BuWvAOoXEDkM2FGa54kDsEG2U0bayGLE5ZHO
+         xe2nl4lpgy9repW2nMNOa2Q4yJXXGN6zJLf0MI9syKCNTV0W72V21l2EzW/ZYLW0qQqJ
+         T8HfrHjybt/rmKXE0Bb0kDiQXnxRkXJcvRu2m09ybL+TKaBbbrjXPISQqYbduLJRpx1x
+         nok1jQQX/LvWg9a/G4Nr4bgOpIT+zo3vlsC5h40R8r6Dxk61L/5m7b68rHwg5bJTHE5B
+         SgF9lUqPmREvFTCy9gY1VpILalxQ14xA4gFKmALRzpJ91MQQnslsIjeQlKnpwb9eUZ18
+         52nw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733234881; x=1733839681;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=kgJ5Ld604A5Q3ZbtbqRhmhZWPfDB0owJn+W381THr6w=;
+        b=o8yG+f+ZX9FgTCWN3ueqQGWfTBx+/N54wtibvvFGl6rOavAWfnFMeajmZJvbIojGPy
+         5QJAQQ6ehm3Zoec5zWx+jsUxe0vJyjS9r6YV5IRf/sRnYxABliQ8B4FszpbgIAN/r9cP
+         y0pCj1QaKCi9jrZ3mtakXuIkZsaUo5ThRk4MGj9279BmcY1iQ3kVOhpLIwNxECaDcKRS
+         7BBwrAMV2qUgpFdwN/A2Hmq6KbA6H+0wBfA6cI22cErawVVj04q/SbDgyMAdQhcu3cOi
+         ZaL5Y/BWvj17VMtTcfgpKN7p4AwBz/21Ty57cVbAl3saW7LTS5bXxowOjDA4Q72VGJ4t
+         W8bw==
+X-Forwarded-Encrypted: i=1; AJvYcCUjB/mfVs3b4QdJjfEfSh9HoGlIiNjFPelwa/hM5S2FJJjMqQKcYK3vAmBo3ny5RskEfwC7OyDpFxfXKSg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwxrR8nUibQch4OlSfmuRSTQjOkRnkKzij6eksRyPQeckUlQrFA
+	aCljaAkoTXCTcovTMLojNmfrBCmc2EyHDCyWOGvriIWOz+fnyLayTCBYtAqHnfV+/FlEUQGR1uT
+	LKQ==
+X-Google-Smtp-Source: AGHT+IEaY8KyMwf/CJRU3fMSCPPQTKC0ZN/MBI985OtghEJefG+CwM21x0l4ouja8k3Nx433ZCD451zKp0s=
+X-Received: from edxi12.prod.google.com ([2002:a05:6402:54c:b0:5cf:d3d9:308])
+ (user=gnoack job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6402:13d1:b0:5d0:b2c8:8d04
+ with SMTP id 4fb4d7f45d1cf-5d10cb5cc5amr2112502a12.18.1733234880753; Tue, 03
+ Dec 2024 06:08:00 -0800 (PST)
+Date: Tue, 3 Dec 2024 15:07:58 +0100
+In-Reply-To: <Z08NV4Z-L0anDxGk@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <8eb7c0c54b280b8eb72f82032ede802c001ab087.camel@HansenPartnership.com>
+Mime-Version: 1.0
+References: <ee3ec63269b43b34e1c90dd8c9743bf8@finder.org> <CAG48ez0vg9W=oatvEqxvTSYNUx7htY23LxPrYCiuLZhZQuaGjg@mail.gmail.com>
+ <Z08NV4Z-L0anDxGk@google.com>
+Message-ID: <Z08QvvfLSWGIDfBD@google.com>
+Subject: Re: GPM & Emacs broken in Linux 6.7 -- ok to relax check?
+From: "=?utf-8?Q?G=C3=BCnther?= Noack" <gnoack@google.com>
+To: Jann Horn <jannh@google.com>
+Cc: Jared Finder <jared@finder.org>, "Hanno =?utf-8?B?QsO2Y2s=?=" <hanno@hboeck.de>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
+	linux-hardening@vger.kernel.org, regressions@lists.linux.dev, 
+	kernel list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2024-12-03 08:58:26-0500, James Bottomley wrote:
-> On Tue, 2024-12-03 at 21:02 +0800, Zijun Hu wrote:
-> > On 2024/12/3 20:41, Greg Kroah-Hartman wrote:
-> > > On Tue, Dec 03, 2024 at 08:23:45PM +0800, Zijun Hu wrote:
-> [...]
-> > > > or squash such patch series into a single patch ?
-> > > > 
-> > > > various subsystem maintainers may not like squashing way.
-> > > 
-> > > Agreed, so look into either doing it in a bisectable way if at all
-> > > possible.  As I don't see a full series here, I can't suggest how
-> > > it needs to happen :(
-> > > 
-> > 
-> > let me send you a full series later and discuss how to solve this
-> > issue.
-> 
-> It's only slightly more complex than what we normally do: modify all
-> instances and then change the API.  In this case you have an additional
-> problem because the prototype "const void *" will cause a mismatch if a
-> function has "void *".  The easiest way to solve this is probably to
-> make device_find_child a macro that coerces its function argument to
-> having a non const "void *" and then passes off to the real function. 
-> If you do that in the first patch, then you can constify all the
-> consumers and finally remove the macro coercion in the last patch.
+On Tue, Dec 03, 2024 at 02:53:27PM +0100, G=C3=BCnther Noack wrote:
+> Hanno, you are the original author of this patch and you have done a more
+> detailed analysis on the TIOCLINUX problems than me -- do you agree that =
+this
+> weakened check would still be sufficient to protect against the TIOCLINUX
+> problems?  (Or in other words, if we permitted TIOCL_SELPOINTER, TIOCL_SE=
+LCLEAR
+> and TIOCL_SELMOUSEREPORT for non-CAP_SYS_ADMIN processes, would you still=
+ see a
+> way to misuse that functionality?)
 
-Casting function pointers like that should be detected and trapped by
-control flow integrity checking (KCFI).
+P.S.: For reference, some more detailed reasoning why I think that that pro=
+posal
+would be OK:
 
-Another possibility would be to use a macro and _Generic to dispatch to
-two different backing functions. See __BIN_ATTR() in
-include/linux/sysfs.h for an inspiration.
-This also enables an incremental migration.
+It would protect at least against the "minittyjack.c" example that was atta=
+ched
+to https://www.openwall.com/lists/oss-security/2023/03/14/3
 
+The trick used there was:
 
-Thomas
+* ioctl() with TIOCLINUX with TIOCL_SETSEL with TIOCL_SELLINE,
+  to make a selection (a.k.a. changing the contents of vc_sel)
+* ioctl() with TIOCLINUX and TIOCL_PASTESEL to paste the selection.
+  (The implementation for that is in selection.c/paste_selection()
+  and is just copying from vc_sel.)
+
+So as long as we are protecting the change to vc_sel, that should be OK in =
+my
+mind.
+
+=E2=80=94G=C3=BCnther
 
