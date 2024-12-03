@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-429527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AD179E1D67
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 14:20:18 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 881339E1D6B
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 14:20:44 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D55E3283FF5
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 13:20:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 558E31657D1
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 13:20:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99F3E1F6684;
-	Tue,  3 Dec 2024 13:18:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA8441EF08F;
+	Tue,  3 Dec 2024 13:18:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="i2lCq84x"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hUDVfkqK"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 898051F473B;
-	Tue,  3 Dec 2024 13:18:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8D0B1EF0B6;
+	Tue,  3 Dec 2024 13:18:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733231921; cv=none; b=sTmAH5B+7MOS5xBEeZc0qbzzMp4eQ0gd5uhbe4O5+LXwtks3z+oeMGcF8hHvgtVrkncJz6F9sLz/hKetz/Q1/ksSDq2t8oy+5sAG1/Aechd5r1zKSg9GPozUYzxkmSutgdyxCm6kBs0RZECVjKfyq2v54+OHyDlk1FT9XJeYXkg=
+	t=1733231922; cv=none; b=bPfedX9xI9bskDjw88tLXVjdt0ZI5RP54KpfhdO3XoUOnfhGI7YMQxbybdyscSlc3gzbZ3munZziZ45ROCpWE4MpfE11yTfN5SjeZ1wNXDfa9AgJcw6wipWaYgVaaZtf0a/ogl0i2XG/QeYDUfsBxbAe0oeAWC6TAgz7ttlt0+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733231921; c=relaxed/simple;
-	bh=xyLayPC8ouR6SZFaJI2R04VDoa3Jzyg2QvEs0O5LSm4=;
+	s=arc-20240116; t=1733231922; c=relaxed/simple;
+	bh=ApjkdRYwQ2ORFr53CDMbK49sgSkAU2vxCx5m+FcoCxI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=PS8CmFSPQ99VztbX2mQwPhlus/dnZgXheVDgvyE5gyM9K5ZX7zU/ImMGatIEbp4ojklwTMXNiMaFKW2cokHaVwErb9kiDTb9BL45HBJfoARRDr75qblq5aZg92RKCNTupjSE2IiDhJ9lY3qlOMF8TcOpF3yI3XWiNwxH+EpWSos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=i2lCq84x; arc=none smtp.client-ip=198.175.65.17
+	 MIME-Version; b=Y/iRGi1YhoJBvM618ZiHkevybG9QWmGV+MTasN7y7W6FzZc23bpA7Xmg5QCBiN80q6hA4kQ6a54zEHKWSsrmLrvdFQAdMOQITkcuyFQXD1E/RmNMW2Y1GaH/b+S1eMRhdJ1O7xfS6DU+CSHNCGykWTfURTTSOvmi40QX9DQA7SQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hUDVfkqK; arc=none smtp.client-ip=198.175.65.17
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733231919; x=1764767919;
+  t=1733231921; x=1764767921;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=xyLayPC8ouR6SZFaJI2R04VDoa3Jzyg2QvEs0O5LSm4=;
-  b=i2lCq84xkrddqpCrLEZwrWtG79uiilVwPo5JwYT5jnlDOqgtKuW8MiFN
-   JJB0NjNUTPF857sy/clIRAaWQ+YbvbLH2PRtjrfUF1cOTBGV/j63ix0a1
-   fmFBaO5W3Rw917ON5/TWb+ogGLSKZ6+8DA3sgIqo5ZWIquHX/o74/o5Vr
-   N4KUVRAwEl+o6Z31f1QfJl/hyrmeye2zNpGmHpRaJsXMxvQR0VyQs9rvr
-   w0fKt3XJB4l4FW+FsdLdztcfTVKLw8bK47wENWxjK82m9T/aYKkGi0hhH
-   Ma3Hg0WVGKYf5DmW+OmZXu+0GjJPgKluYsL9irfUgBE8sQrPwW5xHS2A2
-   g==;
-X-CSE-ConnectionGUID: y1YIvYGaSra59uH8FWvJ8Q==
-X-CSE-MsgGUID: WFRiKcfDTNmsyUtowvycog==
-X-IronPort-AV: E=McAfee;i="6700,10204,11274"; a="33500747"
+  bh=ApjkdRYwQ2ORFr53CDMbK49sgSkAU2vxCx5m+FcoCxI=;
+  b=hUDVfkqKjjukytgHZIDihYP1i69WrznMFvyCgO6yMYkAf2L9kuXFgOsN
+   5/ln3aQ1W2llxufMVJoyH86c5joA7ehI0cG5XX2YmzCVHfrKDmctamYY6
+   PUkniogz8sSEGJ2/oKzyfisD0tXFAkS8k17YvR363OyHfrMQr/KDlplkY
+   aBtA1f6Y1mYkF3iADlLmJehoaKOC2PapRy0PBlxoEq+O8Icvs2eygV9TU
+   n747Tb7DDhaUfsnLrZe2bqXnJIyc3hqozNEBUhIVuyW9hsskunOH++gRO
+   JvwgJ0wMuBWSHJr8QX851UkJy2Wiw07tffVgdil64eJPD2l1e9RCe/GsR
+   w==;
+X-CSE-ConnectionGUID: u0HRHHy6TgSgdc8Eo46PXA==
+X-CSE-MsgGUID: VTEkZykeRrGUQuR2KJHIGg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11274"; a="33500753"
 X-IronPort-AV: E=Sophos;i="6.12,205,1728975600"; 
-   d="scan'208";a="33500747"
+   d="scan'208";a="33500753"
 Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Dec 2024 05:18:39 -0800
-X-CSE-ConnectionGUID: 5OE0PTAqQhiHdGO7fOPmIA==
-X-CSE-MsgGUID: MMKjeOBoSlqLL8hUNr+BYw==
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Dec 2024 05:18:40 -0800
+X-CSE-ConnectionGUID: 4jIowKB8QqaMK/cdWVeRLA==
+X-CSE-MsgGUID: cEs68dm9TcmXhzcLm8qgsg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.12,205,1728975600"; 
-   d="scan'208";a="130896103"
+   d="scan'208";a="130896109"
 Received: from ccbilbre-mobl3.amr.corp.intel.com (HELO yungchua-desk.intel.com) ([10.124.223.75])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Dec 2024 05:18:37 -0800
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Dec 2024 05:18:39 -0800
 From: Bard Liao <yung-chuan.liao@linux.intel.com>
 To: linux-sound@vger.kernel.org,
 	vkoul@kernel.org
@@ -64,9 +64,9 @@ Cc: vinod.koul@linaro.org,
 	linux-kernel@vger.kernel.org,
 	pierre-louis.bossart@linux.dev,
 	bard.liao@intel.com
-Subject: [PATCH v2 07/14] Soundwire: stream: program BUSCLOCK_SCALE
-Date: Tue,  3 Dec 2024 21:18:06 +0800
-Message-ID: <20241203131813.58454-8-yung-chuan.liao@linux.intel.com>
+Subject: [PATCH v2 08/14] Soundwire: generic_bandwidth_allocation: set frame shape on fly
+Date: Tue,  3 Dec 2024 21:18:07 +0800
+Message-ID: <20241203131813.58454-9-yung-chuan.liao@linux.intel.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20241203131813.58454-1-yung-chuan.liao@linux.intel.com>
 References: <20241203131813.58454-1-yung-chuan.liao@linux.intel.com>
@@ -78,95 +78,64 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-We need to program bus clock scale to adjust the bus clock if current
-bus clock doesn't fit the bandwidth.
+We need to recalculate frame shape when sdw bus clock is changed.
+And need to make sure all Peripherals connected to the Manager support
+dynamic clock change.
 
 Signed-off-by: Bard Liao <yung-chuan.liao@linux.intel.com>
 Reviewed-by: Ranjani Sridharan <ranjani.sridharan@linux.intel.com>
 ---
- drivers/soundwire/bus.c       | 10 ++++++++++
- drivers/soundwire/stream.c    | 32 ++++++++++++++++++++++++++++++++
- include/linux/soundwire/sdw.h |  1 +
- 3 files changed, 43 insertions(+)
+ .../soundwire/generic_bandwidth_allocation.c  | 23 +++++++++++++++++++
+ 1 file changed, 23 insertions(+)
 
-diff --git a/drivers/soundwire/bus.c b/drivers/soundwire/bus.c
-index 215630d602ad..9b295fc9acd5 100644
---- a/drivers/soundwire/bus.c
-+++ b/drivers/soundwire/bus.c
-@@ -813,6 +813,16 @@ void sdw_extract_slave_id(struct sdw_bus *bus,
+diff --git a/drivers/soundwire/generic_bandwidth_allocation.c b/drivers/soundwire/generic_bandwidth_allocation.c
+index 2950a3d002ce..d847413141d3 100644
+--- a/drivers/soundwire/generic_bandwidth_allocation.c
++++ b/drivers/soundwire/generic_bandwidth_allocation.c
+@@ -327,6 +327,19 @@ static int sdw_select_row_col(struct sdw_bus *bus, int clk_freq)
+ 	return -EINVAL;
  }
- EXPORT_SYMBOL(sdw_extract_slave_id);
  
-+bool is_clock_scaling_supported_by_slave(struct sdw_slave *slave)
++static bool is_clock_scaling_supported(struct sdw_bus *bus)
 +{
-+	/*
-+	 * Dynamic scaling is a defined by SDCA. However, some devices expose the class ID but
-+	 * can't support dynamic scaling. We might need a quirk to handle such devices.
-+	 */
-+	return slave->id.class_id;
++	struct sdw_master_runtime *m_rt;
++	struct sdw_slave_runtime *s_rt;
++
++	list_for_each_entry(m_rt, &bus->m_rt_list, bus_node)
++		list_for_each_entry(s_rt, &m_rt->slave_rt_list, m_rt_node)
++			if (!is_clock_scaling_supported_by_slave(s_rt->slave))
++				return false;
++
++	return true;
 +}
-+EXPORT_SYMBOL(is_clock_scaling_supported_by_slave);
 +
- static int sdw_program_device_num(struct sdw_bus *bus, bool *programmed)
- {
- 	u8 buf[SDW_NUM_DEV_ID_REGISTERS] = {0};
-diff --git a/drivers/soundwire/stream.c b/drivers/soundwire/stream.c
-index 795017c8081a..a4a668135d16 100644
---- a/drivers/soundwire/stream.c
-+++ b/drivers/soundwire/stream.c
-@@ -629,8 +629,40 @@ static int sdw_notify_config(struct sdw_master_runtime *m_rt)
- static int sdw_program_params(struct sdw_bus *bus, bool prepare)
- {
- 	struct sdw_master_runtime *m_rt;
-+	struct sdw_slave *slave;
- 	int ret = 0;
-+	u32 addr1;
+ /**
+  * sdw_compute_bus_params: Compute bus parameters
+  *
+@@ -352,6 +365,10 @@ static int sdw_compute_bus_params(struct sdw_bus *bus)
+ 		clk_buf = NULL;
+ 	}
  
-+	/* Check if all Peripherals comply with SDCA */
-+	list_for_each_entry(slave, &bus->slaves, node) {
-+		if (!is_clock_scaling_supported_by_slave(slave)) {
-+			dev_dbg(&slave->dev, "The Peripheral doesn't comply with SDCA\n");
-+			goto manager_runtime;
-+		}
-+	}
++	/* If dynamic scaling is not supported, don't try higher freq */
++	if (!is_clock_scaling_supported(bus))
++		clk_values = 1;
 +
-+	if (bus->params.next_bank)
-+		addr1 = SDW_SCP_BUSCLOCK_SCALE_B1;
-+	else
-+		addr1 = SDW_SCP_BUSCLOCK_SCALE_B0;
-+
-+	/* Program SDW_SCP_BUSCLOCK_SCALE if all Peripherals comply with SDCA */
-+	list_for_each_entry(slave, &bus->slaves, node) {
-+		int scale_index;
-+		u8 base;
-+
-+		scale_index = sdw_slave_get_scale_index(slave, &base);
-+		if (scale_index < 0)
-+			return scale_index;
-+
-+		ret = sdw_write_no_pm(slave, addr1, scale_index);
-+		if (ret < 0) {
-+			dev_err(&slave->dev, "SDW_SCP_BUSCLOCK_SCALE register write failed\n");
-+			return ret;
-+		}
-+	}
-+
-+manager_runtime:
- 	list_for_each_entry(m_rt, &bus->m_rt_list, bus_node) {
+ 	for (i = 0; i < clk_values; i++) {
+ 		if (!clk_buf)
+ 			curr_dr_freq = bus->params.max_dr_freq;
+@@ -378,6 +395,12 @@ static int sdw_compute_bus_params(struct sdw_bus *bus)
+ 		return -EINVAL;
+ 	}
  
- 		/*
-diff --git a/include/linux/soundwire/sdw.h b/include/linux/soundwire/sdw.h
-index 05a85e2bd96d..fc0a203c3ae0 100644
---- a/include/linux/soundwire/sdw.h
-+++ b/include/linux/soundwire/sdw.h
-@@ -1041,6 +1041,7 @@ int sdw_bus_exit_clk_stop(struct sdw_bus *bus);
- 
- int sdw_compare_devid(struct sdw_slave *slave, struct sdw_slave_id id);
- void sdw_extract_slave_id(struct sdw_bus *bus, u64 addr, struct sdw_slave_id *id);
-+bool is_clock_scaling_supported_by_slave(struct sdw_slave *slave);
- 
- #if IS_ENABLED(CONFIG_SOUNDWIRE)
- 
++	if (!mstr_prop->default_frame_rate || !mstr_prop->default_row)
++		return -EINVAL;
++
++	mstr_prop->default_col = curr_dr_freq / mstr_prop->default_frame_rate /
++				 mstr_prop->default_row;
++
+ 	ret = sdw_select_row_col(bus, curr_dr_freq);
+ 	if (ret < 0) {
+ 		dev_err(bus->dev, "%s: could not find frame configuration for bus dr_freq %d\n",
 -- 
 2.43.0
 
