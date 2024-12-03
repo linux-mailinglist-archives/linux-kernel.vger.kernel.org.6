@@ -1,295 +1,168 @@
-Return-Path: <linux-kernel+bounces-430206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430207-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CE7A9E2DD1
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 22:08:39 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE43A9E2DD9
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 22:11:11 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0787028341A
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 21:08:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A720C1660C0
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 21:11:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F34D520898C;
-	Tue,  3 Dec 2024 21:08:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C005208978;
+	Tue,  3 Dec 2024 21:11:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MlMepYra"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="MGzwxPOF"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E8101FF7CF;
-	Tue,  3 Dec 2024 21:08:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 403A4208997
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 21:11:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733260115; cv=none; b=p3BO08I1peTb0J61gW/CmAxiVoR9eJsVvQjz52opKg1RGBMgBlbsoktxqgv/5NG9dW7J6tnq0AaHz1qrpZ5m6SLq8oNvY/GbgOfo5Es7regoTphC6pTYmbH8AJpQzfCvntN5miBihHkTI10R+bXH7zqbRpPZYjaUV5J8e+u/wHc=
+	t=1733260267; cv=none; b=jseP2ciKupfF/p0qzF812+mq5c8gIHRk5Hw263mhip2It2yekvW1rZSZ0OxZK4H4ZNIqaKABdwFZ/FmzZRkb3oIlAw4ciFKPSu+j6GfQ5jrpzc9+FbcwJJbfvPH5pt8WVAYaMCNqD/LEz04swp0vjEu9joWu7/SBMICl0HXLSE0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733260115; c=relaxed/simple;
-	bh=4fxsKITTX+Rs/Yqy21qGGSmQwsfRopyu1pynG7Pre7s=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=pa3ctXTY1XmAc/+eSNpl1KnbbJJW2qTuMb71ENOQjG5tYdTgCgVDKJ8nWbXjRX8E/6ZW+C8xov+pfn8ir6wBa/ye72y56RQDZvuEs9kOKE/vafwd5Je4FVLhOxf+TFRkO8BQvgEpUf5wDqcXgB6HznqAy8BbO3Ak4zlCZZ0sn4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MlMepYra; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 230FAC4CECF;
-	Tue,  3 Dec 2024 21:08:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733260114;
-	bh=4fxsKITTX+Rs/Yqy21qGGSmQwsfRopyu1pynG7Pre7s=;
-	h=Date:From:To:Cc:Subject:From;
-	b=MlMepYrazVueV581SKGBYMlGSLbQLbidhR9aw3p59N0xzu8n86Nsj2s2lt5+u7PGm
-	 bND1MnpFeZSNSAvgRFnk9krlr1Um6FJ2TBGUctxRynT5TwtqkaAOyHPix/D8Oewqy1
-	 y2V3uHFch1jahajBUBnacKlYueY/lbM6PKdLx9eSHO+L6sA5cgBnndYEd3IloUkUwB
-	 tnBfDJiX0cMhmfxz29LEZCuABPxspjTkALIYozvLU8w+ABZ5tFXRO7xlYL6aqFwlcF
-	 twRMgxgPYa0y2FkCeSaY1qOuONVxwwVl+S63HjlwaG5g+fON/y5C3XNe9f8jWmCCe3
-	 FXH1EoukIkG4Q==
-Date: Tue, 3 Dec 2024 18:08:31 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Cc: Adrian Hunter <adrian.hunter@intel.com>,
-	Ian Rogers <irogers@google.com>,
-	James Clark <james.clark@linaro.org>, Jiri Olsa <jolsa@kernel.org>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	linux-perf-users@vger.kernel.org
-Subject: [PATCH 1/1 perf-tools-next] tools features: Don't check for
- libunwind devel files by default
-Message-ID: <Z09zTztD8X8qIWCX@x1>
+	s=arc-20240116; t=1733260267; c=relaxed/simple;
+	bh=mldf0Wu7ZhdNc39LmyRnpOOAa3Bd2fL7/nfxKBLLYZg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hFNqfCPJ0KT6aZA2vTlcXUWxWKAxZaVBn0wBfXjcIXUgnq8BY31YN2izTh8o7QVtOqDR5dDJ08Aa1TWLrH9SugQ8kxbmIXEQOg/x3jl56Uk5zTtTrrGkCjFd4jlIxEu6BawbvMUgOLO8CN7NkDUTrCdbP6QIDsmVpJv4Fn8Gklo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=MGzwxPOF; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-724f41d520cso3609998b3a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 13:11:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1733260265; x=1733865065; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Q/i3jPBDipLqisE7gTwvhfw99QUxA4cWmIpareouCiQ=;
+        b=MGzwxPOFJnhu3jthE4LNhYXZHh/Te7V87r44JQnR8/jQnbQxTxUiek+B44iQGDsclH
+         iWZdJnWnBmrb2TlYB17MOuEXY73+ehXz6lvdvRfhyZXc22VE8pSFSBJJLmdMiyy+cI6b
+         vdUiwvX7Lv5edDpIKCDj9ZQWgly7mtRt5uZIE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733260265; x=1733865065;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Q/i3jPBDipLqisE7gTwvhfw99QUxA4cWmIpareouCiQ=;
+        b=GUokeeRmL9jjP9rNOR2i+Tiq4r8IyATf7uHaEaPARUWD0l/5mFwO7IhNQNwcQfwV1z
+         6ZF5eQzEr009xoaK/F1HnbccuGsfoDQSGfqvTVqU/FXgG1xHW2prISNFuXZBcMbLopmq
+         DpjjIS402EvLTF+LvxewAE9VZyWoBUac4EwjRrI2gOagPysGBbY+e5DYJs8mMauSRIdO
+         hiPti2JVp+2jxwrOjI3tdlc1XKovsOWudm/aZq+PD0T8it0Rgi8o/xsgzzRmVfIfFii4
+         lT48xdk8Cz/IiVmyr4BhefBzC7rMxFySNQoR6//jnMUmpExKOjF3M/G+N7NfxTLe8WBE
+         1akg==
+X-Forwarded-Encrypted: i=1; AJvYcCVmaTN93GNTktwcVqJRA2PvUh3jxW1DRZWNDH6zBEoOdwU0P/bNm5RT1fv1fTmmEz3o7wMwkKim7xsddHo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXgofRA4OIsCUewxHihYnkg9fAsjEwd9zSfd8RARrms6FHXELr
+	o+wfSp9amSeqHKvSfp9J+HgS+kjxuRJOSdCyBRbYGO993sRE19yx6DITq7RBXhlWhccIp5oXbRA
+	=
+X-Gm-Gg: ASbGncvG27YiqxVSCwAUhCf2zLZD3yMWzH64g9BC/107qkNpJKasAUJ1+VkxZYQ4bKX
+	9PUB64uS/iKrG9ydm0NMuZbrdmr/h7ziTYhk6OsEIM3zmGC3qlYu0Z0AzREbm8Qs40PsbXQHgcf
+	8g1HieKyIOa1bDQhAG1nULPNwPGg1fTb0tsayZsgv9cGxXTHuERYgrdZDAmUx7ulGE+b/c1ZEBa
+	H1aoWk2MQFNhogyXJNzHxZ9IukP7Hg12NCTmlEp7TgadyNDcmDC1dYCDlIBJupWrT4IjydOL55X
+	+Y3bjuDQsiggJQI3
+X-Google-Smtp-Source: AGHT+IH+/nZskQo8d7tD2lXfvku7HufPJnu1HNcgboBwlkuQQ8hw9MPcsoeKVkdsRdgcCCdRzKMpnQ==
+X-Received: by 2002:a17:903:22cf:b0:215:742e:5d05 with SMTP id d9443c01a7336-215bd1cc3demr50214075ad.20.1733260263831;
+        Tue, 03 Dec 2024 13:11:03 -0800 (PST)
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com. [209.85.215.181])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-215219c31a0sm99464305ad.249.2024.12.03.13.11.02
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 03 Dec 2024 13:11:02 -0800 (PST)
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-7f71f2b136eso4342374a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 13:11:02 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXP4hpV050rFu3SNJAawMyv0OWmlBBzGhc7qNDQme+mIDw1eBC60NU4bOL5AP5Par8vjxGOhewFbayKwgo=@vger.kernel.org
+X-Received: by 2002:a17:90b:1c10:b0:2ee:94d1:7a89 with SMTP id
+ 98e67ed59e1d1-2ef011dedcemr5013685a91.1.1733260262121; Tue, 03 Dec 2024
+ 13:11:02 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20241202-uvc-fix-async-v5-0-6658c1fe312b@chromium.org>
+ <20241202-uvc-fix-async-v5-5-6658c1fe312b@chromium.org> <67f78128-dcc0-4253-a6f7-5905ca375b06@redhat.com>
+ <20241203203748.GD5196@pendragon.ideasonboard.com>
+In-Reply-To: <20241203203748.GD5196@pendragon.ideasonboard.com>
+From: Ricardo Ribalda <ribalda@chromium.org>
+Date: Tue, 3 Dec 2024 22:10:50 +0100
+X-Gmail-Original-Message-ID: <CANiDSCs2VXdM5pekzEHTqddR=1G5U2wa+zdkRgDKvVhfxw73Mw@mail.gmail.com>
+Message-ID: <CANiDSCs2VXdM5pekzEHTqddR=1G5U2wa+zdkRgDKvVhfxw73Mw@mail.gmail.com>
+Subject: Re: [PATCH v5 5/5] media: uvcvideo: Flush the control cache when we
+ get an event
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Hans de Goede <hdegoede@redhat.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Guennadi Liakhovetski <guennadi.liakhovetski@intel.com>, Hans Verkuil <hverkuil@xs4all.nl>, 
+	Mauro Carvalho Chehab <mchehab+samsung@kernel.org>, linux-media@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Since 13e17c9ff49119aa ("perf build: Make libunwind opt-in rather than
-opt-out"), so we shouldn't by default be testing for its availability at
-build time in tools/build/features/test-all.c.
+On Tue, 3 Dec 2024 at 21:38, Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+>
+> On Mon, Dec 02, 2024 at 03:45:57PM +0100, Hans de Goede wrote:
+> > Hi,
+> >
+> > On 2-Dec-24 3:24 PM, Ricardo Ribalda wrote:
+> > > Asynchronous controls trigger an event when they have completed their
+> > > operation.
+> > >
+> > > This can make that the control cached value does not match the value in
+> > > the device.
+> > >
+> > > Let's flush the cache to be on the safe side.
 
-That test was designed to test the features we expect to be the most
-common ones in most builds, so if we test build just that file, then we
-assume the features there are present and will not test one by one.
 
-Removing it from test-all.c gets rid of the first impediment for
-test-all.c to build successfully:
 
-  $ cat /tmp/build/perf-tools-next/feature/test-all.make.output
-  In file included from test-all.c:62:
-  test-libunwind.c:2:10: fatal error: libunwind.h: No such file or directory
-      2 | #include <libunwind.h>
-        |          ^~~~~~~~~~~~~
-  compilation terminated.
-  $
+> > >
+> > > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> > > ---
+> > >  drivers/media/usb/uvc/uvc_ctrl.c | 3 +++
+> > >  1 file changed, 3 insertions(+)
+> > >
+> > > diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
+> > > index e90bf2aeb5e4..75d534072f50 100644
+> > > --- a/drivers/media/usb/uvc/uvc_ctrl.c
+> > > +++ b/drivers/media/usb/uvc/uvc_ctrl.c
+> > > @@ -1672,6 +1672,9 @@ bool uvc_ctrl_status_event_async(struct urb *urb, struct uvc_video_chain *chain,
+> > >     struct uvc_device *dev = chain->dev;
+> > >     struct uvc_ctrl_work *w = &dev->async_ctrl;
+> > >
+> > > +   /* Flush the control cache, the data might have changed. */
+> > > +   ctrl->loaded = 0;
+> > > +
+> > >     if (list_empty(&ctrl->info.mappings))
+> > >             return false;
+> > >
+> >
+> > Thank you for the patch.
+> >
+> > I'm not familiar enough with UVC yet to really have an opinion on this one,
+> > so I'll defer reviewing this one to Laurent.
+>
+> Conceptually this change looks fine, but the commit message needs to
+> explain why this is safe to do without protecting ctrl->loaded with a
+> lock.
 
-We then get to:
+Just realised that loaded is a bit field... and we shall not be
+creative with lockless writes with those.
 
-  $ cat /tmp/build/perf-tools-next/feature/test-all.make.output
-  /usr/bin/ld: cannot find -lunwind-x86_64: No such file or directory
-  /usr/bin/ld: cannot find -lunwind: No such file or directory
-  collect2: error: ld returned 1 exit status
-  $
+I am going to move it to uvc_ctrl_status_event(). It will not work
+with controls without mappings... but I guess we do not care about the
+cache for those.
 
-So make all the logic related to setting CFLAGS, LDFLAGS, etc for
-libunwind to be conditional on NO_LIBWUNWIND=1, which is now the
-default, now we get a faster build:
+Feel free to land the whole series without this patch if we need
+further discussion or changes.
 
-  $ cat /tmp/build/perf-tools-next/feature/test-all.make.output
-  $ ldd /tmp/build/perf-tools-next/feature/test-all.bin
-  	linux-vdso.so.1 (0x00007fef04cde000)
-  	libdw.so.1 => /lib64/libdw.so.1 (0x00007fef04a49000)
-  	libpython3.12.so.1.0 => /lib64/libpython3.12.so.1.0 (0x00007fef04478000)
-  	libm.so.6 => /lib64/libm.so.6 (0x00007fef04394000)
-  	libtraceevent.so.1 => /lib64/libtraceevent.so.1 (0x00007fef0436c000)
-  	libtracefs.so.1 => /lib64/libtracefs.so.1 (0x00007fef04345000)
-  	libcrypto.so.3 => /lib64/libcrypto.so.3 (0x00007fef03e95000)
-  	libz.so.1 => /lib64/libz.so.1 (0x00007fef03e72000)
-  	libelf.so.1 => /lib64/libelf.so.1 (0x00007fef03e56000)
-  	libnuma.so.1 => /lib64/libnuma.so.1 (0x00007fef03e48000)
-  	libslang.so.2 => /lib64/libslang.so.2 (0x00007fef03b65000)
-  	libperl.so.5.38 => /lib64/libperl.so.5.38 (0x00007fef037c6000)
-  	libc.so.6 => /lib64/libc.so.6 (0x00007fef035d5000)
-  	liblzma.so.5 => /lib64/liblzma.so.5 (0x00007fef035a0000)
-  	libzstd.so.1 => /lib64/libzstd.so.1 (0x00007fef034e1000)
-  	libbz2.so.1 => /lib64/libbz2.so.1 (0x00007fef034cd000)
-  	/lib64/ld-linux-x86-64.so.2 (0x00007fef04ce0000)
-  	libcrypt.so.2 => /lib64/libcrypt.so.2 (0x00007fef03495000)
-  $
+>
+> --
+> Regards,
+>
+> Laurent Pinchart
 
-Fixes: 13e17c9ff49119aa ("perf build: Make libunwind opt-in rather than opt-out")
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Ian Rogers <irogers@google.com>
-Cc: James Clark <james.clark@linaro.org>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Kan Liang <kan.liang@linux.intel.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/build/feature/test-all.c |  5 --
- tools/perf/Makefile.config     | 83 ++++++++++++++++++++--------------
- 2 files changed, 49 insertions(+), 39 deletions(-)
 
-diff --git a/tools/build/feature/test-all.c b/tools/build/feature/test-all.c
-index 59ef3d7fe6a4e771..80ac297f81967171 100644
---- a/tools/build/feature/test-all.c
-+++ b/tools/build/feature/test-all.c
-@@ -58,10 +58,6 @@
- # include "test-libelf-getshdrstrndx.c"
- #undef main
- 
--#define main main_test_libunwind
--# include "test-libunwind.c"
--#undef main
--
- #define main main_test_libslang
- # include "test-libslang.c"
- #undef main
-@@ -184,7 +180,6 @@ int main(int argc, char *argv[])
- 	main_test_libelf_getphdrnum();
- 	main_test_libelf_gelf_getnote();
- 	main_test_libelf_getshdrstrndx();
--	main_test_libunwind();
- 	main_test_libslang();
- 	main_test_libbfd();
- 	main_test_libbfd_buildid();
-diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
-index 2916d59c88cd08b2..0e4f6a860ae25339 100644
---- a/tools/perf/Makefile.config
-+++ b/tools/perf/Makefile.config
-@@ -43,7 +43,9 @@ endif
- # Additional ARCH settings for ppc
- ifeq ($(SRCARCH),powerpc)
-   CFLAGS += -I$(OUTPUT)arch/powerpc/include/generated
--  LIBUNWIND_LIBS := -lunwind -lunwind-ppc64
-+  ifndef NO_LIBUNWIND
-+    LIBUNWIND_LIBS := -lunwind -lunwind-ppc64
-+  endif
- endif
- 
- # Additional ARCH settings for x86
-@@ -53,25 +55,35 @@ ifeq ($(SRCARCH),x86)
-   ifeq (${IS_64_BIT}, 1)
-     CFLAGS += -DHAVE_ARCH_X86_64_SUPPORT
-     ARCH_INCLUDE = ../../arch/x86/lib/memcpy_64.S ../../arch/x86/lib/memset_64.S
--    LIBUNWIND_LIBS = -lunwind-x86_64 -lunwind -llzma
-+    ifndef NO_LIBUNWIND
-+      LIBUNWIND_LIBS = -lunwind-x86_64 -lunwind -llzma
-+    endif
-     $(call detected,CONFIG_X86_64)
-   else
--    LIBUNWIND_LIBS = -lunwind-x86 -llzma -lunwind
-+    ifndef NO_LIBUNWIND
-+      LIBUNWIND_LIBS = -lunwind-x86 -llzma -lunwind
-+    endif
-   endif
- endif
- 
- ifeq ($(SRCARCH),arm)
--  LIBUNWIND_LIBS = -lunwind -lunwind-arm
-+  ifndef NO_LIBUNWIND
-+    LIBUNWIND_LIBS = -lunwind -lunwind-arm
-+  endif
- endif
- 
- ifeq ($(SRCARCH),arm64)
-   CFLAGS += -I$(OUTPUT)arch/arm64/include/generated
--  LIBUNWIND_LIBS = -lunwind -lunwind-aarch64
-+  ifndef NO_LIBUNWIND
-+    LIBUNWIND_LIBS = -lunwind -lunwind-aarch64
-+  endif
- endif
- 
- ifeq ($(SRCARCH),loongarch)
-   CFLAGS += -I$(OUTPUT)arch/loongarch/include/generated
--  LIBUNWIND_LIBS = -lunwind -lunwind-loongarch64
-+  ifndef NO_LIBUNWIND
-+    LIBUNWIND_LIBS = -lunwind -lunwind-loongarch64
-+  endif
- endif
- 
- ifeq ($(ARCH),s390)
-@@ -80,7 +92,9 @@ endif
- 
- ifeq ($(ARCH),mips)
-   CFLAGS += -I$(OUTPUT)arch/mips/include/generated
--  LIBUNWIND_LIBS = -lunwind -lunwind-mips
-+  ifndef NO_LIBUNWIND
-+    LIBUNWIND_LIBS = -lunwind -lunwind-mips
-+  endif
- endif
- 
- ifeq ($(ARCH),riscv)
-@@ -121,16 +135,18 @@ ifdef LIBUNWIND_DIR
-   $(foreach libunwind_arch,$(LIBUNWIND_ARCHS),$(call libunwind_arch_set_flags,$(libunwind_arch)))
- endif
- 
--# Set per-feature check compilation flags
--FEATURE_CHECK_CFLAGS-libunwind = $(LIBUNWIND_CFLAGS)
--FEATURE_CHECK_LDFLAGS-libunwind = $(LIBUNWIND_LDFLAGS) $(LIBUNWIND_LIBS)
--FEATURE_CHECK_CFLAGS-libunwind-debug-frame = $(LIBUNWIND_CFLAGS)
--FEATURE_CHECK_LDFLAGS-libunwind-debug-frame = $(LIBUNWIND_LDFLAGS) $(LIBUNWIND_LIBS)
--
--FEATURE_CHECK_LDFLAGS-libunwind-arm += -lunwind -lunwind-arm
--FEATURE_CHECK_LDFLAGS-libunwind-aarch64 += -lunwind -lunwind-aarch64
--FEATURE_CHECK_LDFLAGS-libunwind-x86 += -lunwind -llzma -lunwind-x86
--FEATURE_CHECK_LDFLAGS-libunwind-x86_64 += -lunwind -llzma -lunwind-x86_64
-+ifndef NO_LIBUNWIND
-+  # Set per-feature check compilation flags
-+  FEATURE_CHECK_CFLAGS-libunwind = $(LIBUNWIND_CFLAGS)
-+  FEATURE_CHECK_LDFLAGS-libunwind = $(LIBUNWIND_LDFLAGS) $(LIBUNWIND_LIBS)
-+  FEATURE_CHECK_CFLAGS-libunwind-debug-frame = $(LIBUNWIND_CFLAGS)
-+  FEATURE_CHECK_LDFLAGS-libunwind-debug-frame = $(LIBUNWIND_LDFLAGS) $(LIBUNWIND_LIBS)
-+  
-+  FEATURE_CHECK_LDFLAGS-libunwind-arm += -lunwind -lunwind-arm
-+  FEATURE_CHECK_LDFLAGS-libunwind-aarch64 += -lunwind -lunwind-aarch64
-+  FEATURE_CHECK_LDFLAGS-libunwind-x86 += -lunwind -llzma -lunwind-x86
-+  FEATURE_CHECK_LDFLAGS-libunwind-x86_64 += -lunwind -llzma -lunwind-x86_64
-+endif
- 
- FEATURE_CHECK_LDFLAGS-libcrypto = -lcrypto
- 
-@@ -734,26 +750,25 @@ ifeq ($(dwarf-post-unwind),1)
-   $(call detected,CONFIG_DWARF_UNWIND)
- endif
- 
--ifndef NO_LOCAL_LIBUNWIND
--  ifeq ($(SRCARCH),$(filter $(SRCARCH),arm arm64))
--    $(call feature_check,libunwind-debug-frame)
--    ifneq ($(feature-libunwind-debug-frame), 1)
--      $(warning No debug_frame support found in libunwind)
-+ifndef NO_LIBUNWIND
-+  ifndef NO_LOCAL_LIBUNWIND
-+    ifeq ($(SRCARCH),$(filter $(SRCARCH),arm arm64))
-+      $(call feature_check,libunwind-debug-frame)
-+      ifneq ($(feature-libunwind-debug-frame), 1)
-+        $(warning No debug_frame support found in libunwind)
-+        CFLAGS += -DNO_LIBUNWIND_DEBUG_FRAME
-+      endif
-+    else
-+      # non-ARM has no dwarf_find_debug_frame() function:
-       CFLAGS += -DNO_LIBUNWIND_DEBUG_FRAME
-     endif
--  else
--    # non-ARM has no dwarf_find_debug_frame() function:
--    CFLAGS += -DNO_LIBUNWIND_DEBUG_FRAME
-+    EXTLIBS += $(LIBUNWIND_LIBS)
-+    LDFLAGS += $(LIBUNWIND_LIBS)
-+  endif
-+  ifeq ($(findstring -static,${LDFLAGS}),-static)
-+    # gcc -static links libgcc_eh which contans piece of libunwind
-+    LIBUNWIND_LDFLAGS += -Wl,--allow-multiple-definition
-   endif
--  EXTLIBS += $(LIBUNWIND_LIBS)
--  LDFLAGS += $(LIBUNWIND_LIBS)
--endif
--ifeq ($(findstring -static,${LDFLAGS}),-static)
--  # gcc -static links libgcc_eh which contans piece of libunwind
--  LIBUNWIND_LDFLAGS += -Wl,--allow-multiple-definition
--endif
--
--ifndef NO_LIBUNWIND
-   CFLAGS  += -DHAVE_LIBUNWIND_SUPPORT
-   CFLAGS  += $(LIBUNWIND_CFLAGS)
-   LDFLAGS += $(LIBUNWIND_LDFLAGS)
+
 -- 
-2.47.0
-
+Ricardo Ribalda
 
