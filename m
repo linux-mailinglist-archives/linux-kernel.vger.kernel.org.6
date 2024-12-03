@@ -1,135 +1,96 @@
-Return-Path: <linux-kernel+bounces-428645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428646-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B36CA9E11BA
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 04:30:06 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 84A98164C72
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 03:30:03 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64A8C16BE17;
-	Tue,  3 Dec 2024 03:30:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="LAT8xmvO"
-Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD3449E11BD
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 04:30:27 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 143AA15B0FE
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 03:29:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 736532834FE
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 03:30:26 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D655216DEA9;
+	Tue,  3 Dec 2024 03:30:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YYty1Hip"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3848F381B1;
+	Tue,  3 Dec 2024 03:30:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733196601; cv=none; b=iS91I3THTMEwxs/hobSfjCOusxNyVOTqYHSqSfcDxuJtKp7VGnA8vxF1LcmknOzjwBhDICunnL7OUmWeUMaIXiqddo3xRpJC8iKWkvevydCz6cv8GH575JJXo1lxRrFtZ/YI/CKJYr7HMB2UjLSQx1C9LjD4oXAAXgzP5CGmDG4=
+	t=1733196619; cv=none; b=rVavPUJBW8OgpyIZH0wV2DNWiX33ZNxE7pqDf0l2VvezZL2ewF4nELLLXStL4XSnTC9NlXjs/imLhX2VUp+9Br56DgRGTEBuZPUHeeT4Hcu8H3xQo5c9ilaJBK/vMss9wCGBUicWkIfUliy2gj0JQ4r6D1UvzPYPZZ93XZU2+ls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733196601; c=relaxed/simple;
-	bh=m57D73ksIeQHhZd6mW5dGC5oBwnwWtii0I+5F84Bgkg=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=LC3y73ftuKH1S//ZQsSwKW7hjA9xbvPY9l71+mOwjdXRs05ENr1Kesblo506NW+0YXM1ham1weBonQaEt120huqojBfFt1RAPt36w8/gtUFiQ4R+4I0EIL7IYD4d4lMlSDLhiK7QTuvXjAb5TfqzshfTvxAFQfqsubarFyXgYbQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=LAT8xmvO; arc=none smtp.client-ip=95.215.58.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Content-Type: text/plain;
-	charset=us-ascii
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1733196597;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iMgSJ91ORzybZ/bsKAB2UtN/3yvFAjfo18ipsdZKQm8=;
-	b=LAT8xmvOwCkGv14e2zGAcT75jRE4HmVN8ge+5NwURYf6iEk1qlZlyQaGvN3+qkxFQjS2nK
-	k2MqM8LGkEFb5K76tirZCHOhcv1gMaFoivHWTVjSlUcFuOI+wl4ZVnXUaAWWuxmZyiLs4d
-	O0GtW+f0wxRtG9aBjsZMLUrWhjr8Fqc=
+	s=arc-20240116; t=1733196619; c=relaxed/simple;
+	bh=JW22FuElbaOOlzX9B0W54QnBsobFrQ6eyTb48QLL1Aw=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=tC/ZKVjpVrQyyR60oGBrUIzRUgRaw/21EfreJG8TnsggOc1i0q+u2wYW89ZLjaZQ5eaSNwW3txP3hmkMNSFiKsyuRE1awAYmmMdEFaBcqU9jWJUJ7ZV3XXtZLeMK9I1VnrmuIwvf5EwE3QiRUJKQVVXeXRN+8Wdht0ml4XeJU7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YYty1Hip; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55A35C4CECF;
+	Tue,  3 Dec 2024 03:30:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733196617;
+	bh=JW22FuElbaOOlzX9B0W54QnBsobFrQ6eyTb48QLL1Aw=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=YYty1HipZkIzDAi7tOsYnt5Vg/ZALHW0t82sKXfvwTYtHssqnz0iSZ0xRzYTyD8Ss
+	 G5ynarRkjtk+mG9WT/SD+aPI91UVDT/CBALYJZknrRdmJZRbnY/CC+XhTx6Fb/NS9Y
+	 eHiPaPqN6i2+jZNaTmzxtDEnlrKEUltjLygMJMEgOD3Ev4tmBh9WOEvKVLe6i9jd4W
+	 9mm4oJpv1noMmeyyVaCe0QrpXci5UhaKYlUX2jX39uZaCCtyMHtph6dwlIROzOEkAT
+	 xJDt3gu06KgOv0Ezx5YKxD9Uqhv/yfBHjs3bqIAj7gpx+94eHf7GxeyT0XWnmdDZxx
+	 fqhPJwdz9blQg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE2B43806656;
+	Tue,  3 Dec 2024 03:30:32 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.200.121\))
-Subject: Re: [PATCH V2] mm/hugetlb: Make __NR_USED_SUBPAGE check conditional
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Muchun Song <muchun.song@linux.dev>
-In-Reply-To: <20241203023207.123416-1-anshuman.khandual@arm.com>
-Date: Tue, 3 Dec 2024 11:29:18 +0800
-Cc: linux-mm@kvack.org,
- Andrew Morton <akpm@linux-foundation.org>,
- Oscar Salvador <osalvador@suse.de>,
- linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <A9973D39-9840-40F2-91DA-1CA8ADC06AA1@linux.dev>
-References: <20241203023207.123416-1-anshuman.khandual@arm.com>
-To: Anshuman Khandual <anshuman.khandual@arm.com>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net v2 1/1] net: phy: microchip: Reset LAN88xx PHY to ensure
+ clean link state on LAN7800/7850
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <173319663152.4008208.4968769521828302061.git-patchwork-notify@kernel.org>
+Date: Tue, 03 Dec 2024 03:30:31 +0000
+References: <20241125084050.414352-1-o.rempel@pengutronix.de>
+In-Reply-To: <20241125084050.414352-1-o.rempel@pengutronix.de>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: davem@davemloft.net, andrew@lunn.ch, edumazet@google.com,
+ f.fainelli@gmail.com, kuba@kernel.org, pabeni@redhat.com,
+ woojung.huh@microchip.com, arun.ramadoss@microchip.com, hkallweit1@gmail.com,
+ linux@armlinux.org.uk, yuiko.oshino@microchip.com, kernel@pengutronix.de,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ UNGLinuxDriver@microchip.com, phil@raspberrypi.org
 
+Hello:
 
+This patch was applied to netdev/net.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-> On Dec 3, 2024, at 10:32, Anshuman Khandual =
-<anshuman.khandual@arm.com> wrote:
->=20
-> The HugeTLB order check against __NR_USED_SUBPAGE is required only =
-when
-> HUGETLB_PAGE_OPTIMIZE_VMEMMAP is enabled. Hence BUG_ON() trigger =
-should
-> happen only when applicable.
->=20
-> Cc: Muchun Song <muchun.song@linux.dev>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Oscar Salvador <osalvador@suse.de>
-> Cc: linux-mm@kvack.org
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
-> ---
-> This patch applies on v6.13-rc1
->=20
-> Changes in V2:
->=20
-> - Fixed #ifdef with CONFIG_HUGETLB_PAGE_OPTIMIZE_VMEMMAP per Oscar
->=20
-> Changes in V1:
->=20
-> =
-https://lore.kernel.org/all/20241202090728.78935-1-anshuman.khandual@arm.c=
-om/
->=20
-> mm/hugetlb.c | 6 ++++--
-> 1 file changed, 4 insertions(+), 2 deletions(-)
->=20
-> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-> index ea2ed8e301ef..e6a5b21e3578 100644
-> --- a/mm/hugetlb.c
-> +++ b/mm/hugetlb.c
-> @@ -4513,11 +4513,13 @@ void __init hugetlb_add_hstate(unsigned int =
-order)
-> 	struct hstate *h;
-> 	unsigned long i;
->=20
-> - 	if (size_to_hstate(PAGE_SIZE << order)) {
-> + 	if (size_to_hstate(PAGE_SIZE << order))
-> 		return;
-> - 	}
-> +
-> 	BUG_ON(hugetlb_max_hstate >=3D HUGE_MAX_HSTATE);
-> +#ifdef CONFIG_HUGETLB_PAGE_OPTIMIZE_VMEMMAP
-> 	BUG_ON(order < order_base_2(__NR_USED_SUBPAGE));
+On Mon, 25 Nov 2024 09:40:50 +0100 you wrote:
+> Fix outdated MII_LPA data in the LAN88xx PHY, which is used in LAN7800
+> and LAN7850 USB Ethernet controllers. Due to a hardware limitation, the
+> PHY cannot reliably update link status after parallel detection when the
+> link partner does not support auto-negotiation. To mitigate this, add a
+> PHY reset in `lan88xx_link_change_notify()` when `phydev->state` is
+> `PHY_NOLINK`, ensuring the PHY starts in a clean state and reports
+> accurate fixed link parallel detection results.
+> 
+> [...]
 
-Hi Anshuman,
+Here is the summary with links:
+  - [net,v2,1/1] net: phy: microchip: Reset LAN88xx PHY to ensure clean link state on LAN7800/7850
+    https://git.kernel.org/netdev/net/c/ccb989e4d1ef
 
-__NR_USED_SUBPAGE indicates how many struct pages are used to store
-extra metadata for a HugeTLB page. So we need to make sure the order
-of a HugeTLB page should be bigger than or equal to =
-order_base_2(__NR_USED_SUBPAGE).
-So It is not related to HVO. I don't think the changes make sense.
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-Thanks.
-
-> +#endif
-> 	h =3D &hstates[hugetlb_max_hstate++];
-> 	__mutex_init(&h->resize_lock, "resize mutex", &h->resize_key);
-> 	h->order =3D order;
-> --=20
-> 2.30.2
->=20
 
 
