@@ -1,110 +1,146 @@
-Return-Path: <linux-kernel+bounces-429848-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D54BF9E2792
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 17:34:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4890B9E27A2
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 17:36:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB2591670B0
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:34:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF14E167143
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:36:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50D111F8AE4;
-	Tue,  3 Dec 2024 16:34:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A71B1F8AF8;
+	Tue,  3 Dec 2024 16:35:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="O5exyY0p"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="tpqNiy4n"
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E22541EF0AC
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 16:34:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28FC91EF0AC
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 16:35:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733243653; cv=none; b=kAh9oZZ5MpC+F/xLu42xxAuo6kdeLPj1ghWSg88iPy+yCgrGiiSYhYMw6U96uiikLt281SoepO9nB791MLLvDe9I+4+0k8mfjDs8rH9lyHZh+hvy+EUlUVsWnkg5jmYfXoFDALdcCcLVW0eOCAc3A3lvccxeP7b0BVsvztVfdDk=
+	t=1733243758; cv=none; b=Bj9FcJGwF0XJf/PwXgspYDDqjKjK5hRu2+2DpvB/A26+JK5hz7PTiIX7H6UcsoB9Kv4XMLvxctVqE2k0XUBmv7+OM5z3oQThXXEiZ1X0k90gjLD6YkvhSViURNqWJ11UeEtTo6FA2qZqIwsEYAP0J8e+Af6/bD0T98G9cV6kU90=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733243653; c=relaxed/simple;
-	bh=myVDv30I2SCONJYjABsPOWsgsgA2VSl9rzh6uno/CuM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=an2Wt6/PErflCTheLauP6s8oKsBGZbN7oahppFa3h0smftKqTL2K2Eq/ttCQZffJzxrY8cg+zIzH9189Df66zWaHGDvIHJPIf3l+YJO4KjBWsWmi2iYGIKRBS/SqX3MhAwRhmqBG1FcUEHri4V3Wvkv6k/R/yKaTy5u7fQPO5FE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=O5exyY0p; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1733243650;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5mYdcOoxeqZZGRp6kvkCtVM0EbJxxztYUGd4BIrXpSc=;
-	b=O5exyY0p54q8fLNTyYcpMoCJhCqRYDO/v/uEIYX/lWNTwlYp7MCa1+tQiUgu57O7ESo0ai
-	V+u1Jz5BPlZW98TDbPZ/B9hSqbM2k+/pF1r42qkXraKEcCywslxiHZu49XPZZgDkhP9tkg
-	pN6DHEGxNZqhb7q+CIQ3nghMto353dg=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-561-Jk__6YEwMoOD-Q4DlTyP-Q-1; Tue,
- 03 Dec 2024 11:34:05 -0500
-X-MC-Unique: Jk__6YEwMoOD-Q4DlTyP-Q-1
-X-Mimecast-MFC-AGG-ID: Jk__6YEwMoOD-Q4DlTyP-Q
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 35A7A1958B0D;
-	Tue,  3 Dec 2024 16:34:04 +0000 (UTC)
-Received: from fedora.redhat.com (unknown [10.39.192.136])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id B4F161956054;
-	Tue,  3 Dec 2024 16:34:00 +0000 (UTC)
-From: Jose Ignacio Tornos Martinez <jtornosm@redhat.com>
-To: quic_yuzha@quicinc.com
-Cc: ath11k@lists.infradead.org,
-	jjohnson@kernel.org,
-	jtornosm@redhat.com,
-	kvalo@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-wireless@vger.kernel.org,
-	quic_cjhuang@quicinc.com,
-	vbenes@redhat.com
-Subject: Re: [PATCH] wifi: ath11k: allow APs combination when dual stations are supported
-Date: Tue,  3 Dec 2024 17:33:59 +0100
-Message-ID: <20241203163359.129185-1-jtornosm@redhat.com>
-In-Reply-To: <99359cc4-2279-4a8a-80a1-d5475fd5208d@quicinc.com>
-References: <99359cc4-2279-4a8a-80a1-d5475fd5208d@quicinc.com>
+	s=arc-20240116; t=1733243758; c=relaxed/simple;
+	bh=dFp98OfpMWvwW3ghj5pq33xsKpu2POJ7V9Uyc2h8Ccs=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=btrYpqYLXjMxMuW0Rsqqp+XHcNtmj8ZAzVxNfQniPNJ5U7nAzlDjDIkXZPkF6r9mcRZNerPx/UwP/DPoJQ8Jbxcus+fyVIdmXT8WhFq0WEkZ/BMwSizuNf22LOQmpTmCfjVsmaLy95tB5O+n63FPhA5ifxUGngvyuL9Eu87uMFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=tpqNiy4n; arc=none smtp.client-ip=209.85.215.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-7f71f2b136eso4133713a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 08:35:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fastly.com; s=google; t=1733243756; x=1733848556; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=eMCO3hjmaxXEHEZCxPuR/pj5UkTYrp53NHnVS+id1qE=;
+        b=tpqNiy4n1N83HIzfzrwhGvz7EHfRKidzO+353+iAZX+6ctCLzZpTQuEcYVsBKU7lFp
+         8gj6YD5Vhw4Pl7MhHjpsXl9LYzm5vw29ggsJXuP3B1dY7MTa4k8ltUjfw6l+naaetFlU
+         /OE5h0JLPzPM6AS30/iPhxGsO0EGtmgbQaQbA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733243756; x=1733848556;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:to:from:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=eMCO3hjmaxXEHEZCxPuR/pj5UkTYrp53NHnVS+id1qE=;
+        b=V/yPM3pr6t6Ujuf5b5a0RS+swYnsvEVighXUL/b1OHTp8gw/PwobH65d/AnyQAfUxn
+         3oHxwIgAZ7ktOQRjN0w1Oo8mlKIEs8qGykB3lHVY5GLMJUT8qMG+tucuRo51WC8azQqX
+         pBGfoT37UJUQm+zCCDd6NfwYaionjdm9I/h2eVaheCUADOfVFAn7FhSCcWNLqmnqku2z
+         es3ke6QTSkUmeZCci18iJ2oX1tbC5TUUxQUjzq7PFZIbvoP5iNOTAfpcTzyGE8+cu2kI
+         TjsqbOnvyv+HfABg+HyRIcnFhxHvyEiw1nX5PiyZsX8XIL2UHzgq4chksK3lZJr1jjkn
+         3ZXg==
+X-Forwarded-Encrypted: i=1; AJvYcCX1De46sLzQVwEdNUFJLp2CatoG93RWSFdR7hc/P+NqxYg8x4GzlDD6GYH1Ef3Z2h8TrO6vC4frhX9zfhY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxlzGUlv4s3vj/XtbbMR46N9aSAaZrQ5V5C+HTZDr2vAQHVLZk+
+	yokRVtR72T/7szHsBmVUMuKW0EXsdp/snDn8ea5hMPaunuGsZBYobdgkijPXejg=
+X-Gm-Gg: ASbGncvyPECDWv8+N7uxc+/guIuWWGmuYGdhWaCjY7vFJBvUKO/UfTmAw/1/kB6TyKF
+	O8/fSrT30viW8mI4nLb/nCrGOWLsKcWJwgGCRuvX9F/HXbXybguu152VKnT0AfEjP0tplazH1tO
+	LQoc9FHHqwqTbfI3avrKU1+PSWjdg/qJ0ClwM59c7EZ7ILdQM4qddtVvjhrqUnsrjSs+HV6S3i9
+	NeRY6jvbrLpNYXv4aOMdfqnBkb3WAhlyOzpIN+COouPMJgR1pC6h/wVToUWHSA9RXxwiHZaPZNI
+	AJLfdu3rBG13DUrQ
+X-Google-Smtp-Source: AGHT+IFVZBDfisb7ERSwPZ6gx3N4o5KaG91v/EEN/NxN3XFwgoF7+a4ZZdAGwJeFgfqV/IJSPkMgPA==
+X-Received: by 2002:a05:6a21:3398:b0:1e0:c751:2723 with SMTP id adf61e73a8af0-1e1653f23cbmr4665291637.30.1733243756361;
+        Tue, 03 Dec 2024 08:35:56 -0800 (PST)
+Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fc9c3a2cb9sm9893644a12.74.2024.12.03.08.35.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Dec 2024 08:35:55 -0800 (PST)
+Date: Tue, 3 Dec 2024 08:35:53 -0800
+From: Joe Damato <jdamato@fastly.com>
+To: Stanislav Fomichev <stfomichev@gmail.com>, netdev@vger.kernel.org,
+	pabeni@redhat.com, edumazet@google.com, kuba@kernel.org,
+	mkarsten@uwaterloo.ca, "David S. Miller" <davem@davemloft.net>,
+	Simon Horman <horms@kernel.org>, Shuah Khan <shuah@kernel.org>,
+	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net-next] selftests: net: cleanup busy_poller.c
+Message-ID: <Z08zacl_IhADP0FZ@LQ3V64L9R2>
+Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
+	Stanislav Fomichev <stfomichev@gmail.com>, netdev@vger.kernel.org,
+	pabeni@redhat.com, edumazet@google.com, kuba@kernel.org,
+	mkarsten@uwaterloo.ca, "David S. Miller" <davem@davemloft.net>,
+	Simon Horman <horms@kernel.org>, Shuah Khan <shuah@kernel.org>,
+	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+References: <20241203012838.182522-1-jdamato@fastly.com>
+ <Z06T0uZ6422arNue@mini-arch>
+ <Z08xIyc7OcRoEE-C@LQ3V64L9R2>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z08xIyc7OcRoEE-C@LQ3V64L9R2>
 
-> And you want setup sta + sap + sap, right?
-Your proposed interface combination fails as well for me if I am just
-setting 2APs.
-> When up the second sap will meet error? Could you pls share the error
-> logs?
-This is the log that is appearing:
-[   61.909165] 8021q: 802.1Q VLAN Support v1.8
-[   62.227530] ath11k_pci 0000:01:00.0: failed to create vdev 3, reached max vdev limit 3
-It is appearing after configuring both APs when only one AP is up and when
-both are down (see my previous 'iw dev' outputs).
+On Tue, Dec 03, 2024 at 08:26:11AM -0800, Joe Damato wrote:
+> On Mon, Dec 02, 2024 at 09:14:58PM -0800, Stanislav Fomichev wrote:
+> > On 12/03, Joe Damato wrote:
+> > > Fix various integer type conversions by using strtoull and a temporary
+> > > variable which is bounds checked before being casted into the
+> > > appropriate cfg_* variable for use by the test program.
+> > > 
+> > > While here, free the strdup'd cfg string for overall hygenie.
+> > 
+> > Thank you for fixing this! I also saw them this morning after a net-next
+> > pull and was about to post... I also see the following (LLVM=1):
+> > 
+> > busy_poller.c:237:6: warning: variable 'napi_id' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+> >   237 |         if (napi_list->obj._present.id)
+> >       |             ^~~~~~~~~~~~~~~~~~~~~~~~~~
+> > busy_poller.c:243:38: note: uninitialized use occurs here
+> >   243 |         netdev_napi_set_req_set_id(set_req, napi_id);
+> >       |                                             ^~~~~~~
+> > busy_poller.c:237:2: note: remove the 'if' if its condition is always true
+> >   237 |         if (napi_list->obj._present.id)
+> >       |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> >   238 |                 napi_id = napi_list->obj.id;
+> >       |                                            ~
+> >   239 |         else
+> >       |         ~~~~
+> >   240 |                 error(1, 0, "napi ID not present?");
+> >       |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> > busy_poller.c:226:18: note: initialize the variable 'napi_id' to silence this warning
+> >   226 |         uint32_t napi_id;
+> >       |                         ^
+> >       |                          = 0
+> > 1 warning generated.
+> > 
+> > Presumably the compiler can't connect that fact that (!preset.id) ->
+> > error. So maybe initialize napi_id to 0 to suppress it as well?
+> 
+> Thanks for the report! Can I ask what compiler and version you are
+> using so that I can test before reposting?
 
-> I'm not very sure if you add all interface with managed type, and do
-> "ifconfig xxx up" before running hostapd.
-Yes, I am setting the link up before running hostapd.
->You can try add second and third interface with
-> "iw dev xx interface add xx type __ap".
-And yes, I am doing like that for both APs.
-Please, take into account that everything is working with the old interface
-configuration and when it is set with the parameter (no error log), but it
-is not working for me with your interface combination.
-Have you tried with 2.4GHz band?
+Err, sorry. Haven't had coffee yet. I see you mentioned LLVM=1
+above. When I use that I also get the same error.
 
-Thanks
-
-Best regards
-Jose Ignacio
-
+FWIW: I'm using clang version 10.0.0-4ubuntu1 (which as far as I
+can tell is pretty old). I'll see if I can get a newer version just
+to make sure no other warnings appear.
 
