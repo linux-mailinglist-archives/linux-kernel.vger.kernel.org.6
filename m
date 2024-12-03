@@ -1,173 +1,375 @@
-Return-Path: <linux-kernel+bounces-429821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E55799E2647
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 17:11:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D47189E2652
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 17:12:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9CDE288939
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:11:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94AC5288F37
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:12:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D6F11F8936;
-	Tue,  3 Dec 2024 16:11:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F07F1F8924;
+	Tue,  3 Dec 2024 16:11:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="sizE5QoI"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="AJEjxDAO"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF7291F76D5;
-	Tue,  3 Dec 2024 16:11:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D767B1F76D5;
+	Tue,  3 Dec 2024 16:11:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733242274; cv=none; b=H00SFwAIGMzxML6BoK05PVrh+axHGzN5LGC4FKvMTVC0SjhDbhgh+FVW0wnEsToUt/MhmBWMo9O5ajlXXHhwPyMC3PG6FKVIi5C6sXTQEPdmGHKQPzzR1KltOTe+MBGjqw7LETxv+FqX9Fid6yL7+C262aFQIhDV5c25s0YMG0U=
+	t=1733242315; cv=none; b=M5nQnWzZaY5IJ8BKmWOplcxrunfnOyMJK3CIWRUngpK4eKD90nk5UIftjiOVFm42PQLVqSw41nGUwepkJVHqjXQd+NMGMyhvkrScZoWShpg6n3BVPpJqRHd9d5PngwzP+3UAr7ABwb/3LBB+A0Eu/nesrtMpwF4+540hVPPG5HU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733242274; c=relaxed/simple;
-	bh=277NQChdWnV4HacrcegFUWzVRwOH48nxQcs2AvUWU/M=;
+	s=arc-20240116; t=1733242315; c=relaxed/simple;
+	bh=vlJZ/XCZBJlrX/3/6i0NmK2WmJAlLxIdiUYeF2r0x38=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lGXaFk9hK96JaCeFodjWvUoSRcALoVvacJpLSwcJVZJQQa9WcT4ayy/THVgawXHlMrzGptCbKlwU9RxEyfdPP0br0rY/Aoz2PWe163A81Z5xIrn+yOJwPFAsEUVRk8X5nLmXsTKfM6oCCvPIQFG8InDrEUUyNC1JDYR7Fdil3ts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=sizE5QoI; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1733242270;
-	bh=277NQChdWnV4HacrcegFUWzVRwOH48nxQcs2AvUWU/M=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=FpgzBQS4WowrL6rNYFP+ejypeznSqCTaN2ezhdVSM0ExdlS5KbyOd0IR6xMhl5hFxv7FQoE6pQMq5//ALWg1Eo8EsBWKFs4G8mzsSDtA2xgCP7vwTLRm/mpQX/Xt3On8/w+sb2vlQ50aCWtbD2nHiv4Vf/X6MVSWigHLoieZceI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=AJEjxDAO; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 98247670;
+	Tue,  3 Dec 2024 17:11:24 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1733242284;
+	bh=vlJZ/XCZBJlrX/3/6i0NmK2WmJAlLxIdiUYeF2r0x38=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sizE5QoIfdIYrqxRdwX94ZC/agXw0pa0PTSsY+EhiaHK9ZyNdezGC3st3dTpS0o5y
-	 8J4Rum3nNJJc9R7oV79zFn2aPNNgOgAo2+kTKS3uiDI40pDCkYOi6LivymYIQUOLVi
-	 Vh/4iUKA2LVrdrQMyxIcCg+a3+hHswgOA9DOmlgg=
-Date: Tue, 3 Dec 2024 17:11:10 +0100
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc: Xinhui.Pan@amd.com, airlied@gmail.com, ajd@linux.ibm.com, 
-	alexander.deucher@amd.com, alison.schofield@intel.com, amd-gfx@lists.freedesktop.org, 
-	arnd@arndb.de, bhelgaas@google.com, carlos.bilbao.osdev@gmail.com, 
-	christian.koenig@amd.com, dan.j.williams@intel.com, dave.jiang@intel.com, 
-	dave@stgolabs.net, david.e.box@linux.intel.com, decui@microsoft.com, 
-	dennis.dalessandro@cornelisnetworks.com, dri-devel@lists.freedesktop.org, fbarrat@linux.ibm.com, 
-	gregkh@linuxfoundation.org, haiyangz@microsoft.com, hdegoede@redhat.com, 
-	ilpo.jarvinen@linux.intel.com, ira.weiny@intel.com, jgg@ziepe.ca, jonathan.cameron@huawei.com, 
-	kys@microsoft.com, leon@kernel.org, linux-alpha@vger.kernel.org, 
-	linux-cxl@vger.kernel.org, linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mtd@lists.infradead.org, linux-pci@vger.kernel.org, linux-rdma@vger.kernel.org, 
-	linux-scsi@vger.kernel.org, linux-usb@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
-	logang@deltatee.com, martin.petersen@oracle.com, mattst88@gmail.com, 
-	miquel.raynal@bootlin.com, mwalle@kernel.org, naveenkrishna.chatradhi@amd.com, 
-	platform-driver-x86@vger.kernel.org, pratyush@kernel.org, rafael@kernel.org, 
-	richard.henderson@linaro.org, richard@nod.at, simona@ffwll.ch, srinivas.kandagatla@linaro.org, 
-	tudor.ambarus@linaro.org, vigneshr@ti.com, vishal.l.verma@intel.com, wei.liu@kernel.org
-Subject: Re: [PATCH v2 09/10] sysfs: bin_attribute: add const read/write
- callback variants
-Message-ID: <5b589ddb-e3c9-40e1-987f-30ba81dc8ace@t-8ch.de>
-References: <20241103-sysfs-const-bin_attr-v2-9-71110628844c@weissschuh.net>
- <7ed3b713f8901398f52d7485d59613c19ea0e752.camel@HansenPartnership.com>
+	b=AJEjxDAOEd1WoBUOszvvA1p6O28iRa6+ievypUde+x2QWF+DZKXlRg0lYMpJ4yxkZ
+	 X/rmLauRN68aR59E9bciPaR5aKg9n/zQ4kZZsjGLnxoMnlmZRWUs5VJwzy3s5xUoS/
+	 CgiCvqkUj+D6/u4CtOzrfByk8E9PCMp46s3Xxgo4=
+Date: Tue, 3 Dec 2024 18:11:40 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Ricardo Ribalda <ribalda@chromium.org>
+Cc: Hans de Goede <hdegoede@redhat.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] media: uvcvideo: Remove duplicated cap/out code
+Message-ID: <20241203161140.GW10736@pendragon.ideasonboard.com>
+References: <20241202-uvc-dup-cap-out-v3-1-d40b11bb74b7@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <7ed3b713f8901398f52d7485d59613c19ea0e752.camel@HansenPartnership.com>
+In-Reply-To: <20241202-uvc-dup-cap-out-v3-1-d40b11bb74b7@chromium.org>
 
-On 2024-12-03 11:06:16-0500, James Bottomley wrote:
-> > diff --git a/include/linux/sysfs.h b/include/linux/sysfs.h
-> > index
-> > d17c473c1ef292875475bf3bdf62d07241c13882..d713a6445a6267145a7014f308d
-> > f3bb25b8c3287 100644
-> > --- a/include/linux/sysfs.h
-> > +++ b/include/linux/sysfs.h
-> > @@ -305,8 +305,12 @@ struct bin_attribute {
-> >  	struct address_space *(*f_mapping)(void);
-> >  	ssize_t (*read)(struct file *, struct kobject *, struct
-> > bin_attribute *,
-> >  			char *, loff_t, size_t);
-> > +	ssize_t (*read_new)(struct file *, struct kobject *, const
-> > struct bin_attribute *,
-> > +			    char *, loff_t, size_t);
-> >  	ssize_t (*write)(struct file *, struct kobject *, struct
-> > bin_attribute *,
-> >  			 char *, loff_t, size_t);
-> > +	ssize_t (*write_new)(struct file *, struct kobject *,
-> > +			     const struct bin_attribute *, char *,
-> > loff_t, size_t);
-> >  	loff_t (*llseek)(struct file *, struct kobject *, const
-> > struct bin_attribute *,
-> >  			 loff_t, int);
-> >  	int (*mmap)(struct file *, struct kobject *, const struct
-> > bin_attribute *attr,
-> > @@ -325,11 +329,28 @@ struct bin_attribute {
-> >   */
-> >  #define sysfs_bin_attr_init(bin_attr) sysfs_attr_init(&(bin_attr)-
-> > >attr)
-> >  
-> > +typedef ssize_t __sysfs_bin_rw_handler_new(struct file *, struct
-> > kobject *,
-> > +					   const struct
-> > bin_attribute *, char *, loff_t, size_t);
-> > +
-> >  /* macros to create static binary attributes easier */
-> >  #define __BIN_ATTR(_name, _mode, _read, _write, _size)
-> > {		\
-> >  	.attr = { .name = __stringify(_name), .mode = _mode
-> > },		\
-> > -	.read	=
-> > _read,						\
-> > -	.write	=
-> > _write,						\
-> > +	.read =
-> > _Generic(_read,						\
-> > +		__sysfs_bin_rw_handler_new * :
-> > NULL,			\
-> > +		default :
-> > _read						\
-> > +	),							
-> > 	\
-> > +	.read_new =
-> > _Generic(_read,					\
-> > +		__sysfs_bin_rw_handler_new * :
-> > _read,			\
-> > +		default :
-> > NULL						\
-> > +	),							
-> > 	\
-> > +	.write =
-> > _Generic(_write,					\
-> > +		__sysfs_bin_rw_handler_new * :
-> > NULL,			\
-> > +		default :
-> > _write					\
-> > +	),							
-> > 	\
-> > +	.write_new =
-> > _Generic(_write,					\
-> > +		__sysfs_bin_rw_handler_new * :
-> > _write,			\
-> > +		default :
-> > NULL						\
-> > +	),							
-> > 	\
-> >  	.size	=
-> > _size,						\
-> >  }
+Hi Ricardo,
+
+Thank you for the patch.
+
+On Mon, Dec 02, 2024 at 01:37:35PM +0000, Ricardo Ribalda wrote:
+> The *_vid_cap and *_vid_out helpers seem to be identical:
+> - Remove all the cap/out duplicated code.
+> - Remove s/g_parm helpers
+> - Reorder uvc_ioctl_ops
 > 
-> It's probably a bit late now, but you've done this the wrong way
-> around.  What you should have done is added the const to .read/.write
-> then added a .read_old/.write_old with the original function prototype
-> and used _Generic() to switch between them.  Then when there are no
-> more non const left, you can simply remove .read_old and .write_old
-> without getting Linus annoyed by having to do something like this:
+> And now that we are at it, fix a comment for uvc_acquire_privileges()
 > 
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=e70140ba0d2b1a30467d4af6bcfe761327b9ec95
+> Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> ---
+> Unless I miss something, cap and out helpers are identical. So there is
+> no need to duplicate code
+> ---
+> Changes in v3:
+> - if (ret < 0)
+> - Link to v2: https://lore.kernel.org/r/20241129-uvc-dup-cap-out-v2-1-596cb9bdd5e8@chromium.org
+> 
+> Changes in v2:
+> - Add missing acquire_privileges.
+> - Also remove helper for s/g_parm.
+> - Reorder callbacks.
+> - Link to v1: https://lore.kernel.org/r/20241127-uvc-dup-cap-out-v1-1-1bdcad2dabb0@chromium.org
+> ---
+>  drivers/media/usb/uvc/uvc_v4l2.c | 162 +++++++++++----------------------------
+>  1 file changed, 43 insertions(+), 119 deletions(-)
+> 
+> diff --git a/drivers/media/usb/uvc/uvc_v4l2.c b/drivers/media/usb/uvc/uvc_v4l2.c
+> index 97c5407f6603..dee6feeba274 100644
+> --- a/drivers/media/usb/uvc/uvc_v4l2.c
+> +++ b/drivers/media/usb/uvc/uvc_v4l2.c
+> @@ -26,6 +26,8 @@
+>  
+>  #include "uvcvideo.h"
+>  
+> +static int uvc_acquire_privileges(struct uvc_fh *handle);
+> +
 
-Not all users are using the macros to define their attributes.
-(Nor do they want to)
+I don't like forward declarations, they're often a sign of bad code
+design. In most cases they can be avoided just by moving functions
+around. I'll send a patch to reshuffle functions in this file, as Hans
+has already merged this patch and it will be easier to get the result
+I'd like by doing it myself instead of asking you to do it for me.
 
-These users would break with your suggestion.
-Otherwise I agree.
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
+>  static int uvc_control_add_xu_mapping(struct uvc_video_chain *chain,
+>  				      struct uvc_control_mapping *map,
+>  				      const struct uvc_xu_control_mapping *xmap)
+> @@ -361,9 +363,11 @@ static int uvc_v4l2_try_format(struct uvc_streaming *stream,
+>  	return ret;
+>  }
+>  
+> -static int uvc_v4l2_get_format(struct uvc_streaming *stream,
+> -	struct v4l2_format *fmt)
+> +static int uvc_ioctl_g_fmt(struct file *file, void *fh,
+> +			   struct v4l2_format *fmt)
+>  {
+> +	struct uvc_fh *handle = fh;
+> +	struct uvc_streaming *stream = handle->stream;
+>  	const struct uvc_format *format;
+>  	const struct uvc_frame *frame;
+>  	int ret = 0;
+> @@ -395,14 +399,20 @@ static int uvc_v4l2_get_format(struct uvc_streaming *stream,
+>  	return ret;
+>  }
+>  
+> -static int uvc_v4l2_set_format(struct uvc_streaming *stream,
+> -	struct v4l2_format *fmt)
+> +static int uvc_ioctl_s_fmt(struct file *file, void *fh,
+> +			   struct v4l2_format *fmt)
+>  {
+> +	struct uvc_fh *handle = fh;
+> +	struct uvc_streaming *stream = handle->stream;
+>  	struct uvc_streaming_control probe;
+>  	const struct uvc_format *format;
+>  	const struct uvc_frame *frame;
+>  	int ret;
+>  
+> +	ret = uvc_acquire_privileges(handle);
+> +	if (ret < 0)
+> +		return ret;
+> +
+>  	if (fmt->type != stream->type)
+>  		return -EINVAL;
+>  
+> @@ -426,10 +436,12 @@ static int uvc_v4l2_set_format(struct uvc_streaming *stream,
+>  	return ret;
+>  }
+>  
+> -static int uvc_v4l2_get_streamparm(struct uvc_streaming *stream,
+> -		struct v4l2_streamparm *parm)
+> +static int uvc_ioctl_g_parm(struct file *file, void *fh,
+> +			    struct v4l2_streamparm *parm)
+>  {
+>  	u32 numerator, denominator;
+> +	struct uvc_fh *handle = fh;
+> +	struct uvc_streaming *stream = handle->stream;
+>  
+>  	if (parm->type != stream->type)
+>  		return -EINVAL;
+> @@ -461,9 +473,11 @@ static int uvc_v4l2_get_streamparm(struct uvc_streaming *stream,
+>  	return 0;
+>  }
+>  
+> -static int uvc_v4l2_set_streamparm(struct uvc_streaming *stream,
+> -		struct v4l2_streamparm *parm)
+> +static int uvc_ioctl_s_parm(struct file *file, void *fh,
+> +			    struct v4l2_streamparm *parm)
+>  {
+> +	struct uvc_fh *handle = fh;
+> +	struct uvc_streaming *stream = handle->stream;
+>  	struct uvc_streaming_control probe;
+>  	struct v4l2_fract timeperframe;
+>  	const struct uvc_format *format;
+> @@ -472,6 +486,10 @@ static int uvc_v4l2_set_streamparm(struct uvc_streaming *stream,
+>  	unsigned int i;
+>  	int ret;
+>  
+> +	ret = uvc_acquire_privileges(handle);
+> +	if (ret < 0)
+> +		return ret;
+> +
+>  	if (parm->type != stream->type)
+>  		return -EINVAL;
+>  
+> @@ -573,6 +591,7 @@ static int uvc_v4l2_set_streamparm(struct uvc_streaming *stream,
+>   * - VIDIOC_S_INPUT
+>   * - VIDIOC_S_PARM
+>   * - VIDIOC_S_FMT
+> + * - VIDIOC_CREATE_BUFS
+>   * - VIDIOC_REQBUFS
+>   */
+>  static int uvc_acquire_privileges(struct uvc_fh *handle)
+> @@ -685,11 +704,13 @@ static int uvc_ioctl_querycap(struct file *file, void *fh,
+>  	return 0;
+>  }
+>  
+> -static int uvc_ioctl_enum_fmt(struct uvc_streaming *stream,
+> +static int uvc_ioctl_enum_fmt(struct file *file, void *fh,
+>  			      struct v4l2_fmtdesc *fmt)
+>  {
+> -	const struct uvc_format *format;
+> +	struct uvc_fh *handle = fh;
+> +	struct uvc_streaming *stream = handle->stream;
+>  	enum v4l2_buf_type type = fmt->type;
+> +	const struct uvc_format *format;
+>  	u32 index = fmt->index;
+>  
+>  	if (fmt->type != stream->type || fmt->index >= stream->nformats)
+> @@ -707,82 +728,8 @@ static int uvc_ioctl_enum_fmt(struct uvc_streaming *stream,
+>  	return 0;
+>  }
+>  
+> -static int uvc_ioctl_enum_fmt_vid_cap(struct file *file, void *fh,
+> -				      struct v4l2_fmtdesc *fmt)
+> -{
+> -	struct uvc_fh *handle = fh;
+> -	struct uvc_streaming *stream = handle->stream;
+> -
+> -	return uvc_ioctl_enum_fmt(stream, fmt);
+> -}
+> -
+> -static int uvc_ioctl_enum_fmt_vid_out(struct file *file, void *fh,
+> -				      struct v4l2_fmtdesc *fmt)
+> -{
+> -	struct uvc_fh *handle = fh;
+> -	struct uvc_streaming *stream = handle->stream;
+> -
+> -	return uvc_ioctl_enum_fmt(stream, fmt);
+> -}
+> -
+> -static int uvc_ioctl_g_fmt_vid_cap(struct file *file, void *fh,
+> -				   struct v4l2_format *fmt)
+> -{
+> -	struct uvc_fh *handle = fh;
+> -	struct uvc_streaming *stream = handle->stream;
+> -
+> -	return uvc_v4l2_get_format(stream, fmt);
+> -}
+> -
+> -static int uvc_ioctl_g_fmt_vid_out(struct file *file, void *fh,
+> -				   struct v4l2_format *fmt)
+> -{
+> -	struct uvc_fh *handle = fh;
+> -	struct uvc_streaming *stream = handle->stream;
+> -
+> -	return uvc_v4l2_get_format(stream, fmt);
+> -}
+> -
+> -static int uvc_ioctl_s_fmt_vid_cap(struct file *file, void *fh,
+> -				   struct v4l2_format *fmt)
+> -{
+> -	struct uvc_fh *handle = fh;
+> -	struct uvc_streaming *stream = handle->stream;
+> -	int ret;
+> -
+> -	ret = uvc_acquire_privileges(handle);
+> -	if (ret < 0)
+> -		return ret;
+> -
+> -	return uvc_v4l2_set_format(stream, fmt);
+> -}
+> -
+> -static int uvc_ioctl_s_fmt_vid_out(struct file *file, void *fh,
+> -				   struct v4l2_format *fmt)
+> -{
+> -	struct uvc_fh *handle = fh;
+> -	struct uvc_streaming *stream = handle->stream;
+> -	int ret;
+> -
+> -	ret = uvc_acquire_privileges(handle);
+> -	if (ret < 0)
+> -		return ret;
+> -
+> -	return uvc_v4l2_set_format(stream, fmt);
+> -}
+> -
+> -static int uvc_ioctl_try_fmt_vid_cap(struct file *file, void *fh,
+> -				     struct v4l2_format *fmt)
+> -{
+> -	struct uvc_fh *handle = fh;
+> -	struct uvc_streaming *stream = handle->stream;
+> -	struct uvc_streaming_control probe;
+> -
+> -	return uvc_v4l2_try_format(stream, fmt, &probe, NULL, NULL);
+> -}
+> -
+> -static int uvc_ioctl_try_fmt_vid_out(struct file *file, void *fh,
+> -				     struct v4l2_format *fmt)
+> +static int uvc_ioctl_try_fmt(struct file *file, void *fh,
+> +			     struct v4l2_format *fmt)
+>  {
+>  	struct uvc_fh *handle = fh;
+>  	struct uvc_streaming *stream = handle->stream;
+> @@ -1212,29 +1159,6 @@ static int uvc_ioctl_g_selection(struct file *file, void *fh,
+>  	return 0;
+>  }
+>  
+> -static int uvc_ioctl_g_parm(struct file *file, void *fh,
+> -			    struct v4l2_streamparm *parm)
+> -{
+> -	struct uvc_fh *handle = fh;
+> -	struct uvc_streaming *stream = handle->stream;
+> -
+> -	return uvc_v4l2_get_streamparm(stream, parm);
+> -}
+> -
+> -static int uvc_ioctl_s_parm(struct file *file, void *fh,
+> -			    struct v4l2_streamparm *parm)
+> -{
+> -	struct uvc_fh *handle = fh;
+> -	struct uvc_streaming *stream = handle->stream;
+> -	int ret;
+> -
+> -	ret = uvc_acquire_privileges(handle);
+> -	if (ret < 0)
+> -		return ret;
+> -
+> -	return uvc_v4l2_set_streamparm(stream, parm);
+> -}
+> -
+>  static int uvc_ioctl_enum_framesizes(struct file *file, void *fh,
+>  				     struct v4l2_frmsizeenum *fsize)
+>  {
+> @@ -1543,15 +1467,17 @@ static unsigned long uvc_v4l2_get_unmapped_area(struct file *file,
+>  #endif
+>  
+>  const struct v4l2_ioctl_ops uvc_ioctl_ops = {
+> +	.vidioc_g_fmt_vid_cap = uvc_ioctl_g_fmt,
+> +	.vidioc_g_fmt_vid_out = uvc_ioctl_g_fmt,
+> +	.vidioc_s_fmt_vid_cap = uvc_ioctl_s_fmt,
+> +	.vidioc_s_fmt_vid_out = uvc_ioctl_s_fmt,
+> +	.vidioc_g_parm = uvc_ioctl_g_parm,
+> +	.vidioc_s_parm = uvc_ioctl_s_parm,
+>  	.vidioc_querycap = uvc_ioctl_querycap,
+> -	.vidioc_enum_fmt_vid_cap = uvc_ioctl_enum_fmt_vid_cap,
+> -	.vidioc_enum_fmt_vid_out = uvc_ioctl_enum_fmt_vid_out,
+> -	.vidioc_g_fmt_vid_cap = uvc_ioctl_g_fmt_vid_cap,
+> -	.vidioc_g_fmt_vid_out = uvc_ioctl_g_fmt_vid_out,
+> -	.vidioc_s_fmt_vid_cap = uvc_ioctl_s_fmt_vid_cap,
+> -	.vidioc_s_fmt_vid_out = uvc_ioctl_s_fmt_vid_out,
+> -	.vidioc_try_fmt_vid_cap = uvc_ioctl_try_fmt_vid_cap,
+> -	.vidioc_try_fmt_vid_out = uvc_ioctl_try_fmt_vid_out,
+> +	.vidioc_enum_fmt_vid_cap = uvc_ioctl_enum_fmt,
+> +	.vidioc_enum_fmt_vid_out = uvc_ioctl_enum_fmt,
+> +	.vidioc_try_fmt_vid_cap = uvc_ioctl_try_fmt,
+> +	.vidioc_try_fmt_vid_out = uvc_ioctl_try_fmt,
+>  	.vidioc_reqbufs = uvc_ioctl_reqbufs,
+>  	.vidioc_querybuf = uvc_ioctl_querybuf,
+>  	.vidioc_qbuf = uvc_ioctl_qbuf,
+> @@ -1570,8 +1496,6 @@ const struct v4l2_ioctl_ops uvc_ioctl_ops = {
+>  	.vidioc_try_ext_ctrls = uvc_ioctl_try_ext_ctrls,
+>  	.vidioc_querymenu = uvc_ioctl_querymenu,
+>  	.vidioc_g_selection = uvc_ioctl_g_selection,
+> -	.vidioc_g_parm = uvc_ioctl_g_parm,
+> -	.vidioc_s_parm = uvc_ioctl_s_parm,
+>  	.vidioc_enum_framesizes = uvc_ioctl_enum_framesizes,
+>  	.vidioc_enum_frameintervals = uvc_ioctl_enum_frameintervals,
+>  	.vidioc_subscribe_event = uvc_ioctl_subscribe_event,
+> 
+> ---
+> base-commit: 72ad4ff638047bbbdf3232178fea4bec1f429319
+> change-id: 20241127-uvc-dup-cap-out-6a03c01e30a3
 
-Thomas
+-- 
+Regards,
+
+Laurent Pinchart
 
