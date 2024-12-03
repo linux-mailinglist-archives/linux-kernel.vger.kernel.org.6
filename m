@@ -1,108 +1,198 @@
-Return-Path: <linux-kernel+bounces-430373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A5D89E3012
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 00:49:44 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42568167802
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 23:49:41 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0434120A5E5;
-	Tue,  3 Dec 2024 23:49:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PdM8Mhbm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79C949E3016
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 00:51:10 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 563831E0E16;
-	Tue,  3 Dec 2024 23:49:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16567283B1A
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 23:51:09 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A9A620ADDA;
+	Tue,  3 Dec 2024 23:51:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="RDOBMIxV"
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB6EB1E4110
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 23:50:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733269776; cv=none; b=lo3yD3zfrg3lR0s4Gg6O+YMX3fqA/XggUMkBpmT6g6XnDUTiAB7WRPgZYVC5cB5D0RBCbTRb/GsZoCCZ+3p56hloE0iDJv+J0LdTEqRHULepBG4/cMIPTJft7j4dAiORNSza/yEwZV0ZCZMVu8iH2lLbeKMPocpqdj3pDqTujeE=
+	t=1733269861; cv=none; b=Q3wyGqplaMa2YPYyQ/DC/DgXPFUI098I6xlu/bjhJnx02BKRMU7KzyIJV2ffl9O1/JM+RVzFRdubptKcUrYaFaWfX99zMR/W5cEU1WppF7vgLCmw39VFUiUVZYevAL3OGZZOikjYBYv8+ahGPAr0B93o2jSFJQZtF44NyfohswM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733269776; c=relaxed/simple;
-	bh=oBGSdGwFKttJK94EcGcr1B9zaIvf7CVE1OQjRO4AzTU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=scHtZSHYeBeTPqH0B2GG2LF+4t60TGaSV9AFy7IB0BxJhdcWmigv7TRbpLPVXdAcZfXdYaJZEoOVBsOm7XRtUiZ4aEkCYdL0RaYYqp8nYb6JYT9Feux3TgCCDmFpB5oky1fwMLGw5TN0mr+EIXW7hKU+pLb3Ojn98/Zj73lStdw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PdM8Mhbm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCAEDC4CEDF;
-	Tue,  3 Dec 2024 23:49:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733269775;
-	bh=oBGSdGwFKttJK94EcGcr1B9zaIvf7CVE1OQjRO4AzTU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=PdM8MhbmgEc4KUnnH7l2Lyu99zwl7Z5OebgXLkLRbHHl3nlJBc943qLs2XN8Z47qO
-	 QkDetjG0XTWQXSuAYjMyhISoerkUS+BC0ZyxlHW+jkIesqe0EuWzYa0+lxnbXGOz+i
-	 y/iRwTcEB7kGl/XBI7vIncHFTXbYKk+EBje3v+16pez04w6sOZCYUc9NAs71+k4s+W
-	 7tPLkwJY7GT/1WxvGvcjsKKfqwLcApQDr+Wl6K1uZv6vDyqt/QAMZ/8NGz9WZVgkaV
-	 /3b3IdVB/KHADOtS9Ok2rUxKPdMq6KmUoDhJUS3MAUVfCsb0zeAnq/l1QakdVlOHkF
-	 8aiauNIXH3AiQ==
-Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e3995f1fe30so3640481276.3;
-        Tue, 03 Dec 2024 15:49:35 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUYDQM3o/P75+D8bl3cl/Ldpr0ercUnBZnN/5NpKnJU6f3wGO+JsrNcsr/g9sBBC67x8EOjB0y3cl/d@vger.kernel.org, AJvYcCVoV0Vps80yFHkUjeiGU5tcQ2rzFzYNuKSvgC74rYDOOld0egh3SK/y4fKGNYEAehjQ5MwFFQ2/vowdb9OF@vger.kernel.org, AJvYcCVxdMLrjgsD8Q3p3kUu9Xn1eXj9ITIDcXCQmPA1HSAnnZVD/lxN6xPVJnAzpME8UJTqKpLMA3MsXU0b@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzw6a1paug2nYiRi70PAO8zuE2CTU5cotS923QB5FrQBghLzu0j
-	TYjSJm6420Sp/loUHsy5Q3aIlHM94fJu37jKSTWOneNphw8ivZJm9Z/OsGc1v565NPYspcExpdz
-	voVQeRUW+VGfGdkNFpvcYDFHPvg==
-X-Google-Smtp-Source: AGHT+IEHwiS/Hv3MtPo4+oC2+2cXOibwYBmxjiIn4+KhsVq2OjzCoLHYn29mTnBeut5dsub41r+sQbgZVD6lI1xuV3Q=
-X-Received: by 2002:a05:6902:f87:b0:e39:a780:d110 with SMTP id
- 3f1490d57ef6-e39d438956emr4652958276.46.1733269774980; Tue, 03 Dec 2024
- 15:49:34 -0800 (PST)
+	s=arc-20240116; t=1733269861; c=relaxed/simple;
+	bh=R45xxkijHNvo3KBLPSidEKjRiqPbaArVtuFKk4DrS9Y=;
+	h=MIME-Version:In-Reply-To:References:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CrJcfIDRmPaAgjGT4okZa641d0+/iQ6WNfePiUp4fd76s0eB21Z8QcF7df+6pYEdqPwvTTT7Yq+8XVJmzwpoVe6CEbR3vD57xaFVSl4sIaRrs/ElSC+Oteykyr8RgKZZewh0MkHzhJpLoVPuk0Vm+mptmIjjdOKvYwEyxKHMcZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=RDOBMIxV; arc=none smtp.client-ip=209.85.222.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7b66a740de4so453225885a.3
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 15:50:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1733269859; x=1733874659; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:user-agent:from:references
+         :in-reply-to:mime-version:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=EnjgP+/pVl9iI2xT3/J2oBRnCck1VdgzOQo4g6wMy/Y=;
+        b=RDOBMIxVRl0oMVWC0oFXwAUz5pK8kv+l9guJQGcjiTgsnnpPeNr5WM1vDRAxsYE1A7
+         ktEOxVW9cWLA8rEolAtqDCcyagdjmJy1Nkr3JwKpfF/OiS9S5jk6gds9nKiBfDTL6wiD
+         XYed4aOP/d4VVmblYx/wPcztTz5X7fsp9e374=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733269859; x=1733874659;
+        h=cc:to:subject:message-id:date:user-agent:from:references
+         :in-reply-to:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EnjgP+/pVl9iI2xT3/J2oBRnCck1VdgzOQo4g6wMy/Y=;
+        b=rnO8SdBVdpyANWTbB669FDu84Q5vwdOuS5K9oaP+85vWFhRSjnXQuIx89IZFG67NQH
+         8YcEGWmeYNh2C1Lp76wqY6ynbY5J4tk6WUQSNw8Y8TXSmCw/IdZzXaimeDj45E4H71r9
+         Ypp03qkzMt1EZFGtpzIRZAAcxN57rvFbnURmB/exS0bvQT4jbEwhCMpdqEB44aPy4hcG
+         av/IBpun9H+Q7fWtLJX09ZZkCMDb1f4OXZHZ0w4+p9Ndqp4BV0h4/Pzk417EdDA78x0B
+         48grg8DAmeqPiFrQjQNYTp91T8IOvOk5DcROO60LANtYfIJJApBzIUQ442odPmwQey0e
+         FWxA==
+X-Forwarded-Encrypted: i=1; AJvYcCUKKOOKFWVA/PuqAGadQf6R3OeplrsWENk4MXZAE+uKIVjoI9k4OVgdOIH+/CQDkhKd+v8M8dy48UQO/vU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YySNQ1Ue+zJh6QjomTyadeQE9v9NyVmZ1XWqVgiKDBV67R5iQP3
+	r8ZwOF7X4baU0ELtQpo6dBMDeyJLdkHHf6fPWK4u8JmFHBMgJ/muyGqABugfMmRjYa95Zn3dW/7
+	dkMXfdKn0GWcJO2BaQjWualckfRXiOzKriLEd
+X-Gm-Gg: ASbGnctmQOZM5IBVwSkpreNlZGyLbXLiL8qsxSPXp7Qfsg6P3ZBZNO0OgJixCqFIo/d
+	zRwGToEsJPqo/UwG9mrmX2JXMWAxBRYpGcmrTWGdI9r5CyHMY5EJYcvJBrYo=
+X-Google-Smtp-Source: AGHT+IHEgBXWoi8BJHO3jSXOG7m1oHxpYBSZUKMhC1usrxD/ibe1QmfujCFJzYfILghK3QdcAVLyYpr9Sv5mqRngbJA=
+X-Received: by 2002:a05:6214:2029:b0:6d3:7a47:2034 with SMTP id
+ 6a1803df08f44-6d8c443cefdmr40855326d6.3.1733269858918; Tue, 03 Dec 2024
+ 15:50:58 -0800 (PST)
+Received: from 753933720722 named unknown by gmailapi.google.com with
+ HTTPREST; Tue, 3 Dec 2024 15:50:58 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241121094020.3679787-1-wenst@chromium.org> <20241121164648.GA2387727@bhelgaas>
-In-Reply-To: <20241121164648.GA2387727@bhelgaas>
-From: Rob Herring <robh@kernel.org>
-Date: Tue, 3 Dec 2024 17:49:24 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqL7w4BBOqb=NaOh7Xewe5QXrSF+7SYoFtay0O5hw1QnTw@mail.gmail.com>
-Message-ID: <CAL_JsqL7w4BBOqb=NaOh7Xewe5QXrSF+7SYoFtay0O5hw1QnTw@mail.gmail.com>
-Subject: Re: [PATCH] PCI/pwrctl: Do not assume device node presence
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Chen-Yu Tsai <wenst@chromium.org>, Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Klara Modin <klarasmodin@gmail.com>, 
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
-	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, stable+noautosel@kernel.org, 
-	Saravana Kannan <saravanak@google.com>, devicetree@vger.kernel.org
+In-Reply-To: <cartdeijkv6z23dgm7uif4lti3lahfqmuyxcmruzqbefhsp6yk@m6ocjhncs2ko>
+References: <lf7y7wpuca6kzqcglgs5d443iusf7xjocum4adi7t3npfavccx@zgsp37oyztme>
+ <yk3xidaisbd56yndaucax7otijjauqmm7lqm6q4q633kdawlqo@qaq27lwxmvwd>
+ <CAE-0n501j+8bMnMKabFyZjn+MLUy3Z68Hiv1PsfW0APy5ggN8g@mail.gmail.com>
+ <gstohhcdnmnkszk4l2ikd5xiewtotgo5okia62paauj6zpaw7y@4wchyvoynm2p>
+ <CAE-0n50z6MNa7WOsg-NU7k8BpFeJJyYfHX3ov6DsthLWauSNpA@mail.gmail.com>
+ <hqmx7jtkvrwvb27n56hw7rpefhp37lhr3a5fawz7gsl76uuj5s@h7m6wpdhibkk>
+ <CAE-0n50y1O2C47zOGJPmMjKXK_m6a=jhpEAP4nW+RymZbo2xyg@mail.gmail.com>
+ <5kisfv22tgqwzjpxqrbx56ywr7l4r7pny3pl2r7crv4rijqbwk@azricdasttg7>
+ <CAE-0n50Bxi2GfnxOmMwe-F+k5jMSiyAVPDb6K8pYm-i6hpJTOA@mail.gmail.com> <cartdeijkv6z23dgm7uif4lti3lahfqmuyxcmruzqbefhsp6yk@m6ocjhncs2ko>
+From: Stephen Boyd <swboyd@chromium.org>
+User-Agent: alot/0.12.dev1+gaa8c22fdeedb
+Date: Tue, 3 Dec 2024 15:50:58 -0800
+Message-ID: <CAE-0n51-QLLje0f7T4p3xK6Q-FRk4K0NUrVVm4cxkKoevuzktw@mail.gmail.com>
+Subject: Re: [PATCH v4 15/18] dt-bindings: usb: Add ports to
+ google,cros-ec-typec for DP altmode
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	patches@lists.linux.dev, devicetree@vger.kernel.org, 
+	Douglas Anderson <dianders@chromium.org>, Pin-yen Lin <treapking@chromium.org>, 
+	Andrzej Hajda <andrzej.hajda@intel.com>, Benson Leung <bleung@chromium.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@gmail.com>, 
+	dri-devel@lists.freedesktop.org, Guenter Roeck <groeck@chromium.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Lee Jones <lee@kernel.org>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Prashant Malani <pmalani@chromium.org>, 
+	Robert Foss <rfoss@kernel.org>, Rob Herring <robh+dt@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, Tzung-Bi Shih <tzungbi@kernel.org>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Daniel Scally <djrscally@gmail.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>, Ivan Orlov <ivan.orlov0322@gmail.com>, 
+	linux-acpi@vger.kernel.org, linux-usb@vger.kernel.org, 
+	Mika Westerberg <mika.westerberg@linux.intel.com>, 
+	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Vinod Koul <vkoul@kernel.org>, Rob Herring <robh@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 21, 2024 at 10:46=E2=80=AFAM Bjorn Helgaas <helgaas@kernel.org>=
- wrote:
+Quoting Dmitry Baryshkov (2024-11-21 14:59:42)
+> On Tue, Nov 19, 2024 at 08:09:31PM -0500, Stephen Boyd wrote:
+> >
+> > It sounds like we're debating how to handle lane assignment in the
+> > kernel. Either way, the code is going to be implemented in the bridge
+> > driver because it's the one that has to change what physical lane a
+> > logical lane is assigned to. The question is if it should be some sort
+> > of bridge_funcs callback, or should bridge drivers hook into the typec
+> > framework to expose an orientation switch, or something else?
 >
-> [+cc OF folks]
+> I was assuming that orientation switch is such kind of a hook.
 >
-> On Thu, Nov 21, 2024 at 05:40:19PM +0800, Chen-Yu Tsai wrote:
-> > A PCI device normally does not have a device node, since the bus is
-> > fully enumerable. Assuming that a device node is presence is likely
-> > bad.
+> >
+> > I'm thinking we should introduce some sort of bridge_funcs callback that
+> > can be called from the DP altmode driver, either parallel to the
+> > drm_connector_oob_hotplug_event() function or from it directly. If we
+> > can pass the fwnode for the usb-c-connector to the oob_hotplug_event
+> > callback, maybe that's all we need to figure out which lanes go where.
+> > And then in the 2 DP connector muxing world we can call
+> > drm_connector_oob_hotplug_event() with one or the other DP connector
+> > node, which will likely be children nodes of the "HPD redriver" device.
 >
-> > The newly added pwrctl code assumes such and crashes with a NULL
-> > pointer dereference.
+> If you call it from drm_bridge_connector's oob_hotplug_event handler,
+> this should fly. Does it cover your 3-DP or 4-DP usecases?
 >
-> > Besides that, of_find_device_by_node(NULL)
-> > is likely going to return some random device.
->
-> I thought this sounded implausible, but after looking at the code, I
-> think you're right, because bus_find_device() will use
-> device_match_of_node(), which decides the device matches if
-> "dev->of_node =3D=3D np" (where "np" is NULL in this case).
->
-> I'm sure many devices will have "dev->of_node =3D=3D NULL", so it does
-> seem like of_find_device_by_node(NULL) will return the first one it
-> finds.
->
-> This seems ... pretty janky and unexpected to me, but it's been this
-> way for years, so maybe it's safe?  Cc'ing the OF folks just in case.
 
-This is a surprise to me, too. I think ACPI matching is broken in this
-way too. I'm sending out a fix.
+I think it will work as long as we're able to add some sort of property
+to the usb-c-connector node to indicate that the DP lanes are flipped.
+It feels like that should be in the displayport altmode node to keep
+things tidy because the SuperSpeed port is overloaded. Maybe the drm
+framework can have some API that can take the fwnode from the
+oob_hotplug_event handler and tell the bridge driver which way the
+orientation is.
 
-Rob
+ connector {
+   compatible = "usb-c-connector";
+
+   altmodes {
+     displayport {
+       orientation-reversed;
+     }
+   };
+
+   ports {
+     ...
+   };
+ };
+
+
+ int drm_dp_typec_orientation_flipped(struct fwnode_handle *fwnode)
+ {
+   struct fwnode_handle *altmodes;
+   struct fwnode_handle *dp;
+
+   altmodes = fwnode_get_named_child_node(fwnode, "altmodes");
+   if (!altmodes)
+     return -EINVAL;
+
+   dp = fwnode_get_named_child_node(altmodes, "displayport");
+   if (!dp)
+     return -EINVAL;
+
+   if (fwnode_property_read_bool(dp, "orientation-reversed"))
+     return 1;
+
+   return 0;
+ }
+
+There's another wrinkle on some Corsola devices where the EC says
+there's a usb-c-connector on the board, but in reality the DP lanes are
+connected to a DP-to-HDMI bridge that is controlled by the EC which goes
+to an HDMI connector on the side of the laptop. The EC does the
+arbitration as usual because there's only one DP source and one or two
+usb type-c connectors physically on the laptop in addition to the HDMI
+connector.
+
+The easiest way to imagine this is that we took the usb-c-connector and
+jammed an HDMI dongle in there with some glue so that it can never be
+removed. There isn't any USB going there either because it can't be
+used. I suppose we can continue to describe this with an
+altmodes/displayport node but then add some compatible like
+"usb-c-hdmi-connector" or another property to the altmodes/displayport
+node like "type = hdmi" that signifies this is a connector that only
+outputs HDMI.
 
