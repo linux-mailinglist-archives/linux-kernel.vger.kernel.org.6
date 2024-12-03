@@ -1,62 +1,54 @@
-Return-Path: <linux-kernel+bounces-429065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E61BB9E16E4
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:12:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 516909E16D6
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:11:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 102E916469B
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:12:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF06B160E9B
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:11:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B9B81DFE3D;
-	Tue,  3 Dec 2024 09:11:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09ED81DE4E3;
+	Tue,  3 Dec 2024 09:11:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="koAbj0f4"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="TrHsJBIr"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B6601DE4F9;
-	Tue,  3 Dec 2024 09:11:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C765416EBE9;
+	Tue,  3 Dec 2024 09:11:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733217096; cv=none; b=dVaj9dyrM00WfWPjKwdfB+WKS0BU6FhDipU54sFcwRg+aFLru8Nn2p3xCSEqZxPkSVTgcvPKHJ5++1tiA/GT510812MVVJtWD/RuUvsJLn0gpj91JmdAkCUuvdT5ymjsviRI2VA1jN3GDNP4bhyEpIOrQgsyuP4xe5NniG3zpjI=
+	t=1733217085; cv=none; b=EOFn0J5zsqQumIp/HkiSpMsF8a6B1+Yeopp9UWrTfRVOA4LhQUhgrtBoAJ1pb8Q8xO7oWQ9UnQYadkHqFcS0X53hhXOR9tcSoZwv/cRdRGC9Sn3unPxxTZS5NyqdxxrCuBOa26ZPRlNWDgtlST7QsBu0hztRTxK8UQ9WTOiX+FM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733217096; c=relaxed/simple;
-	bh=qF9YUHHzjI+TFOQqjmHgICH1Kzh6UMZSIsno+wEDAzE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=GYu22z9qSmQBWsurvu5oglqyQpZtOQOlOAvyj9LxYUALvHGFjfNxwr78+E3jy9dOpDzB+YjGtsfHF28KmzMatCSYVPITPuq9pq9XoX/hkc5WOLNYCFFJVM6ZCkIwC6GYQ+MUZzUEIQplH9gH95YLqgkh32RyU/NOTLAuF2pRkfY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=koAbj0f4; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B37Pr4p017944;
-	Tue, 3 Dec 2024 09:11:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	YOU1gNRtbLcjg5yJztx/++hV82MOGeBAmpzpBhJX20k=; b=koAbj0f4n6KxgUSo
-	V0DnJ0XbIP3QRyjE3oHzHMmv66XyiniZW7r4UwV/pBgLk/w0SqGHxCmgBVPa3Vi9
-	4Lrv9FuBuJ6Mh4JV9kgq+6E9YZvjnn3sYB7fxryK9j1LN8BKy/rZajEWOROX6bXQ
-	7nasYKfBBr9NV0t0gpuulVNVHcc+QFmFjBoJmr/Wfb4dQFdZRUsSdIj2HLcxSDFh
-	YnMMfjVEYxz4gvFE3ILiMJ08tFnFdOKvs6Vs2YGQOAQPeJOIgacuq3CvRILp6ji7
-	2/z9aOhcuGL1DvhqDXlqcg2IKmGSmW8VqAUOfBca6TpAEo1rOUXxvoY13oe/7PYU
-	W3ijFg==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 437tstfjhs-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 03 Dec 2024 09:11:28 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B39BCCF019589
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 3 Dec 2024 09:11:12 GMT
-Received: from [10.151.41.184] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 3 Dec 2024
- 01:11:07 -0800
-Message-ID: <231fae33-4d3b-47f9-a824-ea752f8a23ae@quicinc.com>
-Date: Tue, 3 Dec 2024 14:41:04 +0530
+	s=arc-20240116; t=1733217085; c=relaxed/simple;
+	bh=4z9wjMw37079j2r6buoMpzHyFC0KucYZv+vs9hrEA/E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=k+WDWMd+YSP0/Mz/dmCWHpPqrDI4bXrG52kwzRxP5ivC3PnsSlfse1WRYplX2CRzEdtpMRYtHRpcywsvyWRTIi1cqU9I8Rwewm9j7qFHaBK1MmEKvFqGuCO0cMQYVThktIEwqDsDONwCrGaE+F96XwLEgVX3kcMXJvSEA9FEt7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=TrHsJBIr; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1733217081;
+	bh=4z9wjMw37079j2r6buoMpzHyFC0KucYZv+vs9hrEA/E=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=TrHsJBIrhKoyAXs2t27PWe6JrA4sJubI0VZ+lfObSmLFwW/otfwIiCH/fgoy8dXZ3
+	 2E85Vyg+ilRC0a40QiXQD2beli51yd8OtB5jy7vrdbSVmKaC4/I745iWJRYlJoGlcw
+	 tj/rxrCUneW7twPwuqKmGTlcCFMdqOzv/h+TaHPxtuMihU2Nz/tVcSKGdkDFiqrg1k
+	 iPypeQta1oGG+AjXVZB5okA74vyKCXcJiy5RSZxHImbWyi2xImRcSeJdPw0rgpSwOW
+	 SgbRVmtqthdAxZkroxMu19GOyGO3aAQ9n7gtkkL538F5xCS3YRacoE93aYt6R84D88
+	 5t92VNze4Etiw==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 7601117E14D7;
+	Tue,  3 Dec 2024 10:11:21 +0100 (CET)
+Message-ID: <a06f1b59-7f50-41c0-94b4-9c7ebefdc58f@collabora.com>
+Date: Tue, 3 Dec 2024 10:11:20 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,85 +56,43 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 09/22] wifi: ath12k: avoid m3 firmware download in AHB
- device IPQ5332
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        <ath12k@lists.infradead.org>
-CC: <linux-wireless@vger.kernel.org>, Kalle Valo <kvalo@kernel.org>,
-        "Rob
- Herring" <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        "Conor
- Dooley" <conor+dt@kernel.org>,
-        Jeff Johnson <jjohnson@kernel.org>,
-        "Bjorn
- Andersson" <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        Balamurugan S <quic_bselvara@quicinc.com>,
-        "P Praneesh" <quic_ppranees@quicinc.com>
-References: <20241015182637.955753-1-quic_rajkbhag@quicinc.com>
- <20241015182637.955753-10-quic_rajkbhag@quicinc.com>
- <4961d425-b660-4dac-8744-36d69993d1e1@oss.qualcomm.com>
+Subject: Re: [PATCH 6.1 2/2] arm64: dts: mediatek: mt8195-cherry: Mark USB 3.0
+ on xhci1 as disabled
+To: Chen-Yu Tsai <wenst@chromium.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Sasha Levin <sashal@kernel.org>
+Cc: stable@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Matthias Brugger <matthias.bgg@gmail.com>, devicetree@vger.kernel.org,
+ linux-mediatek@lists.infradead.org, Koichiro Den
+ <koichiro.den@canonical.com>,
+ =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>
+References: <20241202081624.156285-1-wenst@chromium.org>
+ <20241202081624.156285-2-wenst@chromium.org>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Content-Language: en-US
-From: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>
-In-Reply-To: <4961d425-b660-4dac-8744-36d69993d1e1@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: AJpQOBUnE02lFidt4Tm3e0hN9ya97Oe9
-X-Proofpoint-GUID: AJpQOBUnE02lFidt4Tm3e0hN9ya97Oe9
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- malwarescore=0 spamscore=0 impostorscore=0 mlxlogscore=999 mlxscore=0
- priorityscore=1501 suspectscore=0 phishscore=0 adultscore=0 clxscore=1015
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412030079
+In-Reply-To: <20241202081624.156285-2-wenst@chromium.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 10/19/2024 1:30 AM, Konrad Dybcio wrote:
-> On 15.10.2024 8:26 PM, Raj Kumar Bhagat wrote:
->> From: Balamurugan S <quic_bselvara@quicinc.com>
->>
->> Current ath12k devices, QCN9274 and WCN7850, supports m3.bin firmware
->> download through ath12k driver. The new ath12k AHB based device
->> IPQ5332 supports m3 firmware download through remoteproc driver.
->>
->> Hence, add new parameter (m3_fw_support) in ath12k_hw_params to avoid
->> m3 firmware download in IPQ5332.
->>
->> Tested-on: IPQ5332 hw1.0 AHB WLAN.WBE.1.3.1-00130-QCAHKSWPL_SILICONZ-1
->> Tested-on: QCN9274 hw2.0 PCI WLAN.WBE.1.1.1-00210-QCAHKSWPL_SILICONZ-1
->>
->> Signed-off-by: Balamurugan S <quic_bselvara@quicinc.com>
->> Co-developed-by: P Praneesh <quic_ppranees@quicinc.com>
->> Signed-off-by: P Praneesh <quic_ppranees@quicinc.com>
->> Signed-off-by: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>
->> ---
->>  drivers/net/wireless/ath/ath12k/hw.c  |  8 ++++++++
->>  drivers/net/wireless/ath/ath12k/hw.h  |  2 ++
->>  drivers/net/wireless/ath/ath12k/qmi.c | 28 ++++++++++++++++-----------
->>  3 files changed, 27 insertions(+), 11 deletions(-)
->>
->> diff --git a/drivers/net/wireless/ath/ath12k/hw.c b/drivers/net/wireless/ath/ath12k/hw.c
->> index e5e2164c27d2..a4e0c21ac4b7 100644
->> --- a/drivers/net/wireless/ath/ath12k/hw.c
->> +++ b/drivers/net/wireless/ath/ath12k/hw.c
->> @@ -1299,6 +1299,8 @@ static const struct ath12k_hw_params ath12k_hw_params[] = {
->>  		.iova_mask = 0,
->>  
->>  		.supports_aspm = false,
->> +
->> +		.m3_fw_support = true,
+Il 02/12/24 09:16, Chen-Yu Tsai ha scritto:
+> [ Upstream commit 09d385679487c58f0859c1ad4f404ba3df2f8830 ]
 > 
-> 'support for m3 firmware' is not a fitting term.. maybe "needs_m3_fw"?
+> USB 3.0 on xhci1 is not used, as the controller shares the same PHY as
+> pcie1. The latter is enabled to support the M.2 PCIe WLAN card on this
+> design.
 > 
+> Mark USB 3.0 as disabled on this controller using the
+> "mediatek,u3p-dis-msk" property.
+> 
+> Reported-by: Nícolas F. R. A. Prado <nfraprado@collabora.com> #KernelCI
+> Closes: https://lore.kernel.org/all/9fce9838-ef87-4d1b-b3df-63e1ddb0ec51@notapiano/
+> Fixes: b6267a396e1c ("arm64: dts: mediatek: cherry: Enable T-PHYs and USB XHCI controllers")
+> Cc: stable@vger.kernel.org
+> Link: https://lore.kernel.org/r/20240731034411.371178-2-wenst@chromium.org
+> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
 
-The name "m3_fw_support" is inherited from ath11k, for ath12k we could
-change it to "needs_m3_fw".
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+
 
 
