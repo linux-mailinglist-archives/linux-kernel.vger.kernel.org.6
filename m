@@ -1,151 +1,218 @@
-Return-Path: <linux-kernel+bounces-430365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 772C19E2FF5
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 00:38:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 385569E2FF6
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 00:38:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3C2F8B2CDC6
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 23:37:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E338BB28415
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 23:38:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0D21209F51;
-	Tue,  3 Dec 2024 23:37:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35ECF209F51;
+	Tue,  3 Dec 2024 23:38:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RmCN8XN/"
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oDPxV6H8"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B72F5202F84;
-	Tue,  3 Dec 2024 23:37:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 635D7205AD6
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 23:38:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733269043; cv=none; b=dOzrX1Tmjfakg6JWHYBtghQDq+vitPzyE7cQFN5I8cjjRIAuDjt0cGQgjO47eh2DcdrMo5523AFQm4vRjOugNJy7jJhVN1tnW6w+5hOp9Igx65f6e6yp8Wl8oOvnhGjgiG1YPX/JDED1kz5+3FNWIoCKPQN/Cn2kDIiqdPXZahQ=
+	t=1733269098; cv=none; b=jPU7H1RwTgjHiUG9abEsiKlt1+3oCywK6gc4BxuphlQPze26wkBFdoy3a0QIrnC9f+aXkPTrv1ggcWZw/qcJpIXb0bEhdQLslLPz33vaSFSlG7HZUZz82TUK1nFanZAIpgEfGGR6pJ9RVOBwBUYPw/vxNvdbL7aBRpUOF2W1VZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733269043; c=relaxed/simple;
-	bh=q1u93VWbmhkuangUi+34Ds4LKF42kWp+h/JOuvnQvnc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=H3O9rirY3VweitKbDZgQ0tEnz7QDhGjNEeMIRpaCAmB9skBSHHS3poqdWIJqF+hAbPhEcdg8ojWpoM53W50DxhSeA46KT7nif9LYNfsXEUbJbK+DtFymi0E0f0b7NOqaNwCiuL0s03rt0QeKn0VCEIreKrxywYKPvnvWx/DKfiM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RmCN8XN/; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2eed82ca5b4so2083035a91.2;
-        Tue, 03 Dec 2024 15:37:20 -0800 (PST)
+	s=arc-20240116; t=1733269098; c=relaxed/simple;
+	bh=7HPRDhBmNX229it5gZJpFg3uexTNN2BzNHQC2yu+IS0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BBlgrQU0Os4IPjhOCqYGNedKtXNElJiPRvUw5ApP4OLqDdl+PQXcxGEzM0FuenKorjWqxXbD/by+eKGhoFYRys0bwwmC63XwxhUeRjrSFikQRzQAVnx67nmLROccEIqGsqbD7KtlwUjQ7B2ZAmIDdSJRXFoTYqmdBNfFlm7jeps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oDPxV6H8; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-53e1c3dfbb0so362986e87.3
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 15:38:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733269040; x=1733873840; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Q5qEW4jJfic/KmqYMW2G0FOLqVypcgVgmsP5xVbecKw=;
-        b=RmCN8XN/kbXo9gooOIn8547zZtyJZ6RDYRbhTjVDlG+3nMe1TF1bft7m+0S5goJTrn
-         j4tv7S/hsrDDDYB/A0W8kUlRTJQ9wOvwsGRVvAb08DXZKHswQsXdkQb9CKnAjsaoJuy9
-         GDmN/AlMlDzvtj3K8ccMvD0McZLO7krKkJaFvO0qOXmA56xPiz7nhMiFQ9+J70lSMI7I
-         remrm6J3+mwJkswPbMoWBdL0z8ttYbAPZuYZqHf0O0e8bUljEgBjW+lrKzX3BBApgMYD
-         bSuGZ2CydjhjaQJEhv+XCP1CEYmfJFIIVg/n+k3Mdx7ggNFc1nNaJmQrIV+eJ2T6IIM6
-         3hNw==
+        d=linaro.org; s=google; t=1733269094; x=1733873894; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=PvIkRrq0tXitj5MQqLQ3oqy5bggdWAmTtXbggggiuHU=;
+        b=oDPxV6H8xIYc2tK/rpEa/CmuCJ6dY56vdJx8foBvsyawW483k5QolaXacWIdFpXLGL
+         C3dvpoNhGGywbcHYg0QJwOgSxlP9wVb1dvFDuMpTM9jRmrip7VgBjGMbOo+CbFpQR2Eo
+         9XN5d+PQAxneala9O9k4My7ZA/HqMtrTio+kFBax78lQ+SYoS08XxSd1doQLf3he3av0
+         HXbbWnhfem3WktBW7S/4OiWjLYwlLSMJiKmP96kaDi1s69HvcRcr6WTyKfUaV67JlkSY
+         WqjXPAmlz/j1TaMVEvVxP4DqdPfex8NFJsl66h0/LGFt8WH96Srcx9jGStwAjiNRE7+Z
+         8s5w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733269040; x=1733873840;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Q5qEW4jJfic/KmqYMW2G0FOLqVypcgVgmsP5xVbecKw=;
-        b=Fe1tjp8IEXvsUn9E6O9i0eTXvWxSxsmAHMLKo66Uncv87rKMRYdFCquw+GPntieHsy
-         fszPCMsdoLUTNu2B0mvS1zGFIlPK+34l+msC8xlGnfgZSyYCt0MeaptIXzTON3CZ5nGW
-         37hQzG83zQjRI65RnsQWdp030knfFe9hndD2i6bGCV8cxH9H6uRtnCuXCzWq43aMWneo
-         HJjri/aLoRMdpoP3DZgYvDxOiRO2k8SP2Bl+Zt6d06LcId4nB7tUpX6NKr/xZ7RzAXIJ
-         Fkdsi0n1197GHW7BN0/3ItHuHQURrol4zGOh0VgpNPXrsN4YF+oFgjlic9OINwe9CDm7
-         k2xg==
-X-Forwarded-Encrypted: i=1; AJvYcCW3S/YQ897C4ZEh4WydpNEckA/qHxsk4UxCuBs4oyN6OFO7DNNw7ZVfZ2GcZRVE6JoZqNUmHM/4XeGC@vger.kernel.org, AJvYcCWGaVq17EVZe/v1EWJjinQq49pFT2gRNJwwxJ70qGE+njCI7i2pfqRe+QcNdlPh/Qj8Aai+3y/vt8WKiCg2@vger.kernel.org
-X-Gm-Message-State: AOJu0YzkBm0yu5a/+elI4nTmMcBYYmtF3vKgyPbnl4qAN6rCJdDnk+oZ
-	FkzT3JudiVzQE6aWhBEiqp5sUNgSnga/vHIPc51aGQf/D8WkMHNE
-X-Gm-Gg: ASbGnctF4dumt62tuXSxPxuO6UYxEx/9KwPgZQWfKzejzTznWJj3X4qZbCOlwBRTuck
-	apsOUOouj/e5vQv9rrgnLGAK8GMkus1MW3Wkx4T9D41K34EaQdDCCBg/qUfGadGmZledNM+3Y51
-	wp1URDsU2QFq5XdQ5Vwq18FWSmlMSV0mgwmJNZCcn+AcfEyzEVgPmPgLtxV/hx01R8GnZOENdg9
-	zf7PHBppKdEFrklFWke0sm47A==
-X-Google-Smtp-Source: AGHT+IGmUB8QfjA0RY2ydXBICshKM7ronJUqIxAE4e7WvnlpNAzxGCSvOX9ygh9d1aeEy5n49zRLvQ==
-X-Received: by 2002:a17:90b:3a85:b0:2ee:d024:e4fc with SMTP id 98e67ed59e1d1-2ef012748a3mr6764344a91.33.1733269039866;
-        Tue, 03 Dec 2024 15:37:19 -0800 (PST)
-Received: from ryzen.lan ([2601:644:8200:dab8::a86])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ef270352c2sm119187a91.33.2024.12.03.15.37.18
+        d=1e100.net; s=20230601; t=1733269094; x=1733873894;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PvIkRrq0tXitj5MQqLQ3oqy5bggdWAmTtXbggggiuHU=;
+        b=adh2r48amDVJMC9jaHUykSGon9E9bpy0HvhmY8SVSaAwohqxcdUfOjLNp0RA3taGGu
+         HDuVytyC9uk88QtWGdWxoN9q3k9jcRDGcNxX4XLlvGHlgiZ22dbrILeOtFSvFp3c8nD4
+         SI62xWFC17xPJ/CDfUfhigCpBtIlfY0DPlWP1+rD7J6009f8NhljXUENbgq9Nz33oRZT
+         Ca/zTqRZQy2EppLuFk6ngWBw+QcXnFIMo9eg4g+pgHx+K0fNboOIBsLyAyh7G9uVEN88
+         swXwjloSHaiMAQcAQWknebmYIzn2gR3h3L/XjZmaS2tO26HaDQyitMKBcF+4la7aGauH
+         /55A==
+X-Forwarded-Encrypted: i=1; AJvYcCU0Tc5qZ00MhzkhbYjoAC2wM+Q7OntokGNUU2t6tpScBt8eVYAapddWnIKK8SewlCOtoLAtMx1g3s70pfA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxATjHdCtlCA4HtNwwK/i1tE+Ogb0NzqXpwi8sMAjvTotv/sMY6
+	lB3xFE15zPn/cNk1uk361OSCWafGdxKyFfnomGer1Tac20e+TfSJlYuipqVmVQ4=
+X-Gm-Gg: ASbGncu+BcE+FzpreYWOHGOopa02gXnkCsE8upSw5Q4yDqMeHMwoNd0GWYDShP7zhGd
+	0KXINxDOFc1xEaGgbYcOlPQTM6Kg00idmpk4mz4ZU2AdHV3psxftbA/snjpvpKGvQ8QKO4jXkQE
+	ZjsWQkXqnDEDt5fSKLYoWkDXY59bV4YIqlVtkfkCfpGLqhS20/TRnLRSMdtM7CPK7vLc5trp96q
+	p89pLgoaaCnfpaQI9RQYNNOxKIpKTOjvvcJt9z2IgNBtsgjGc6mnn1gXoka5JjqWXJ2bXH6JXlX
+	oxDyD6sMJctE4TQlu9KCQxCH+XKBtQ==
+X-Google-Smtp-Source: AGHT+IFEAY3DxNqKHxw8mhGMitDTHIqwhcTfqELsGsjzfMmTb1zcKOW4rDkr5UYxAPj+4eEnCeVPww==
+X-Received: by 2002:a05:6512:10c5:b0:53e:1c3d:d1ae with SMTP id 2adb3069b0e04-53e1c3dd2c2mr500865e87.29.1733269094445;
+        Tue, 03 Dec 2024 15:38:14 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53df6496903sm1980271e87.210.2024.12.03.15.38.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Dec 2024 15:37:19 -0800 (PST)
-From: Rosen Penev <rosenp@gmail.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: Andrew Lunn <andrew@lunn.ch>,
-	Gregory Clement <gregory.clement@bootlin.com>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] arm64: dts: armada-3720-gl-mv1000: use nvmem-layout
-Date: Tue,  3 Dec 2024 15:37:17 -0800
-Message-ID: <20241203233717.185016-1-rosenp@gmail.com>
-X-Mailer: git-send-email 2.47.0
+        Tue, 03 Dec 2024 15:38:13 -0800 (PST)
+Date: Wed, 4 Dec 2024 01:38:10 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Abhinav Kumar <quic_abhinavk@quicinc.com>
+Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Stephen Boyd <swboyd@chromium.org>, 
+	Kuogee Hsieh <quic_khsieh@quicinc.com>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	Jessica Zhang <quic_jesszhan@quicinc.com>
+Subject: Re: [PATCH 3/3] drm/msm/dp: add a debugfs node for using tpg
+Message-ID: <uv2phgi72mmw5c462ijsqlqedeiv4gahrwi26i2luqkhgwmfxc@ycj7jrujdj6w>
+References: <20241202-tpg-v1-0-0fd6b518b914@quicinc.com>
+ <20241202-tpg-v1-3-0fd6b518b914@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241202-tpg-v1-3-0fd6b518b914@quicinc.com>
 
-nvmem-layout is a more flexible replacement for nvmem-cells.
+On Mon, Dec 02, 2024 at 12:42:00PM -0800, Abhinav Kumar wrote:
+> DP test pattern generator is a very useful tool to debug issues
+> where monitor is showing incorrect output as it helps to isolate
+> whether the issue is due to rest of DPU pipeline or in the DP
+> controller itself. Expose a debugfs to use the TPG configuration
+> to help debug DP issues.
+> 
+> Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+> ---
+>  drivers/gpu/drm/msm/dp/dp_debug.c | 61 +++++++++++++++++++++++++++++++++++++++
+>  drivers/gpu/drm/msm/dp/dp_panel.h |  2 ++
+>  2 files changed, 63 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/msm/dp/dp_debug.c b/drivers/gpu/drm/msm/dp/dp_debug.c
+> index 22fd946ee201..843fe77268f8 100644
+> --- a/drivers/gpu/drm/msm/dp/dp_debug.c
+> +++ b/drivers/gpu/drm/msm/dp/dp_debug.c
+> @@ -197,6 +197,65 @@ static const struct file_operations test_active_fops = {
+>  	.write = msm_dp_test_active_write
+>  };
+>  
+> +static ssize_t msm_dp_tpg_write(struct file *file, const char __user *ubuf,
+> +				size_t len, loff_t *offp)
+> +{
+> +	const struct msm_dp_debug_private *debug;
+> +	char *input_buffer;
+> +	int val;
+> +	int status = 0;
+> +	struct msm_dp_panel *dp_panel;
+> +
+> +	debug = ((struct seq_file *)file->private_data)->private;
+> +	dp_panel = debug->panel;
+> +
+> +	input_buffer = memdup_user_nul(ubuf, len);
+> +	if (IS_ERR(input_buffer))
+> +		return PTR_ERR(input_buffer);
+> +
+> +	status = kstrtoint(input_buffer, 10, &val);
+> +	if (status < 0) {
+> +		kfree(input_buffer);
+> +		return status;
+> +	}
+> +
+> +	msm_dp_panel_tpg_config(dp_panel, val);
+> +
+> +	dp_panel->tpg_enabled = val;
 
-Signed-off-by: Rosen Penev <rosenp@gmail.com>
----
- .../dts/marvell/armada-3720-gl-mv1000.dts     | 30 +++++++++----------
- 1 file changed, 15 insertions(+), 15 deletions(-)
+Does this need any kind of locking? The driver performs some actions,
+then we write the global state. What if the user in parallel writes
+different values to the file?
 
-diff --git a/arch/arm64/boot/dts/marvell/armada-3720-gl-mv1000.dts b/arch/arm64/boot/dts/marvell/armada-3720-gl-mv1000.dts
-index 56930f2ce481..7b801b60862d 100644
---- a/arch/arm64/boot/dts/marvell/armada-3720-gl-mv1000.dts
-+++ b/arch/arm64/boot/dts/marvell/armada-3720-gl-mv1000.dts
-@@ -98,10 +98,24 @@ partition@f0000 {
- 				reg = <0xf0000 0x8000>;
- 			};
- 
--			factory: partition@f8000 {
-+			partition@f8000 {
- 				label = "factory";
- 				reg = <0xf8000 0x8000>;
- 				read-only;
-+
-+				nvmem-layout {
-+					compatible = "fixed-layout";
-+					#address-cells = <1>;
-+					#size-cells = <1>;
-+
-+					macaddr_factory_0: macaddr@0 {
-+						reg = <0x0 0x6>;
-+					};
-+
-+					macaddr_factory_6: macaddr@6 {
-+						reg = <0x6 0x6>;
-+					};
-+				};
- 			};
- 
- 			partition@100000 {
-@@ -221,17 +235,3 @@ fixed-link {
- 		full-duplex;
- 	};
- };
--
--&factory {
--	compatible = "nvmem-cells";
--	#address-cells = <1>;
--	#size-cells = <1>;
--
--	macaddr_factory_0: macaddr@0 {
--		reg = <0x0 0x6>;
--	};
--
--	macaddr_factory_6: macaddr@6 {
--		reg = <0x6 0x6>;
--	};
--};
+> +
+> +	kfree(input_buffer);
+> +
+> +	*offp += len;
+> +	return len;
+> +}
+> +
+> +static int msm_dp_tpg_show(struct seq_file *f, void *data)
+> +{
+> +	struct msm_dp_debug_private *debug = f->private;
+> +	struct msm_dp_panel *dp_panel = debug->panel;
+> +
+> +	if (dp_panel->tpg_enabled)
+> +		seq_puts(f, "1");
+> +	else
+> +		seq_puts(f, "0");
+> +
+> +	return 0;
+> +}
+> +
+> +static int msm_dp_tpg_open(struct inode *inode, struct file *file)
+> +{
+> +	return single_open(file, msm_dp_tpg_show, inode->i_private);
+> +}
+> +
+> +static const struct file_operations msm_dp_tpg_fops = {
+> +	.owner = THIS_MODULE,
+> +	.open = msm_dp_tpg_open,
+> +	.read = seq_read,
+> +	.llseek = seq_lseek,
+> +	.release = single_release,
+> +	.write = msm_dp_tpg_write
+> +};
+> +
+>  int msm_dp_debug_init(struct device *dev, struct msm_dp_panel *panel,
+>  		  struct msm_dp_link *link,
+>  		  struct drm_connector *connector,
+> @@ -231,6 +290,8 @@ int msm_dp_debug_init(struct device *dev, struct msm_dp_panel *panel,
+>  		debugfs_create_file("dp_test_type", 0444,
+>  				    root,
+>  				    debug, &msm_dp_test_type_fops);
+> +
+> +		debugfs_create_file("dp_tpg", 0444, root, debug, &msm_dp_tpg_fops);
+
+I'd say, skip the dp_ part of the name, everything in that dir is
+DP-related.
+
+>  	}
+>  
+>  	return 0;
+> diff --git a/drivers/gpu/drm/msm/dp/dp_panel.h b/drivers/gpu/drm/msm/dp/dp_panel.h
+> index 0e944db3adf2..7910b11fd685 100644
+> --- a/drivers/gpu/drm/msm/dp/dp_panel.h
+> +++ b/drivers/gpu/drm/msm/dp/dp_panel.h
+> @@ -50,6 +50,8 @@ struct msm_dp_panel {
+>  	u32 max_dp_link_rate;
+>  
+>  	u32 max_bw_code;
+> +
+> +	bool tpg_enabled;
+>  };
+>  
+>  int msm_dp_panel_init_panel_info(struct msm_dp_panel *msm_dp_panel);
+> 
+> -- 
+> 2.34.1
+> 
+
 -- 
-2.47.0
-
+With best wishes
+Dmitry
 
