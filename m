@@ -1,141 +1,139 @@
-Return-Path: <linux-kernel+bounces-428972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C8449E159E
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:26:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A9AC9E159F
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:26:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40F4E161DD8
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 08:26:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 48A56163C94
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 08:26:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFD0D1D6193;
-	Tue,  3 Dec 2024 08:26:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C3521D90A1;
+	Tue,  3 Dec 2024 08:26:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="fRpGUxc9";
-	dkim=permerror (0-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="mVDS3y3M"
-Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [85.215.255.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AYfmyWsL"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A12AB1BF37;
-	Tue,  3 Dec 2024 08:26:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=85.215.255.53
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733214375; cv=pass; b=rrebHcT5BgcoFSQz+i7kQRNGviBYfSQfKHXgLHzZ+2NhctBGhdVN+hygor1p5GWFctXEalpTC3jcqvaw1lyDf+y0nvJV5wR7on2dHSxizYj8KnJR/N97esT7gQgJvlxhBihm+/HGb/4znB6RA/GazeEVDVPzrF7eroCqzbJgCsA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733214375; c=relaxed/simple;
-	bh=7vN8l4edstpV5RzHSdRN5fx4Jcl4tlzQ0oQDgnVYIaw=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=jmrWJAPp16t1J1oC7DEo9fVhQBmbJqxqc8Gw2GO24/hfSZiD0XgaNpYS4KE5CPcRItFXShgHR03P2khzYmhu/I4uoCxtjrdwf7s8Oo4FXXkW2ltPtLhYtNBmIme6oX8vCYsooCmyViuqRgnTmawvKsYTVQR80jvtr4rEwjVzU5w=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=goldelico.com; spf=pass smtp.mailfrom=goldelico.com; dkim=pass (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b=fRpGUxc9; dkim=permerror (0-bit key) header.d=goldelico.com header.i=@goldelico.com header.b=mVDS3y3M; arc=pass smtp.client-ip=85.215.255.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=goldelico.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goldelico.com
-ARC-Seal: i=1; a=rsa-sha256; t=1733214355; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=DGkPLkUVduoNlvgnBhAd/xOGpZ+IX/8+KPn9k5d6u5V/Rs3m6wWLS622SWd9Cq7Mg9
-    M3OLps/p4A/8mYcm2gP6s4G/rpHbV2XqTr3KEb8MLVLfn3aGDsrobYtLOc797z49wGRd
-    k0G4dVJ9udrFcgF20cAY8TsAfCthETJCUbcCjYv5L8UaTMmOSWWFoLfT60Uj263kdQbe
-    EjycmRKRYpzAoNOTDb+bw930vR3YZD+PsEvx35UFTtvYytXq9Mk7qtMIZcVa9AtLcnwB
-    6BoRGHgtDS7O/FdfXOw7vSZkr74F8jiDOVUOwzn3FxYiq06tvrd2vRf+FuRdtYfNKJBL
-    g09A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1733214355;
-    s=strato-dkim-0002; d=strato.com;
-    h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:Cc:Date:
-    From:Subject:Sender;
-    bh=DCa5qKli0andoxvIvdZequyVK0KYQyS17ykqq5CaiJk=;
-    b=tHhYf2YAxjA5zWUVTzYu4yo8vOGRlRQ0+VcGHJrkJTVTqjaGTbdnebD/gT8sZTgRHk
-    9RDCiGOzWFhvfGNMhHBc5q3WARkxeBCPcrriwZq66pBjeW9QAL2AgUSCMiW4KlRYMo4U
-    6QvkKUx2Yb+EGOhOM7zL4nWDfnmJJd5JGFJyeQuFD1/s1rn7AVNMHTL0GXzlhrb1wx7B
-    7ILqXCvfk+550xFd+BFdt4vsh6e8qH7/nfTDGe3n/QPoOBuOv7zEqharv6N54ywcBR7R
-    epZEzuxRZSZJw8wDfDEhIDmoJCx7+NdaWfGcOZO8XNHHZ4FSHvHACbeRY6Qf8k4EGO2R
-    angw==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo01
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1733214355;
-    s=strato-dkim-0002; d=goldelico.com;
-    h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:Cc:Date:
-    From:Subject:Sender;
-    bh=DCa5qKli0andoxvIvdZequyVK0KYQyS17ykqq5CaiJk=;
-    b=fRpGUxc9RCoN1tAwl3lhMgEZ4ET7zrCSFBVGi7ikcsDlclKDsNknCbtqpZyPndInxI
-    rZXXAI0LCq7NZ0u9kYm/ByDiWxf+HcwxsKOKHNYYib8dB8q6Ccgd5yOoR3YUdr7itQrm
-    hwwaMl6jyRdJ7VHYVBcGHBThPoF03lUdNZQgyDN5atAg7nUzWzoIO/iHwSVonh9fMCqs
-    IOerpyM+MRP6zuDR4+mmLLd22FXnp7L4OLbiZZcdR8z8uqXK58bEKIpwLGwTO6J5HNk1
-    +1wWoeUeEONU6//YONEf9aZgTIeJblyuA5KRIFd0GBWYVOatVwBkKuhBqXAN7Uubcrgx
-    wqAA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1733214355;
-    s=strato-dkim-0003; d=goldelico.com;
-    h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:Cc:Date:
-    From:Subject:Sender;
-    bh=DCa5qKli0andoxvIvdZequyVK0KYQyS17ykqq5CaiJk=;
-    b=mVDS3y3MVpOoPFvrl+NCYTncEhHVlv0IwKtVaLV+/RM44oVHfBKu/40/vl04evfs86
-    GrZiFlQTYuS7SPxQ1UBw==
-X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9qVpwcQVkPW4I1HrT25oMmciNwTZVQsFwoTCsf66pt09L8Xu393o="
-Received: from smtpclient.apple
-    by smtp.strato.de (RZmta 51.2.11 AUTH)
-    with ESMTPSA id Qb7e400B38PsmqP
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve X9_62_prime256v1 with 256 ECDH bits, eq. 3072 bits RSA))
-	(Client did not present a certificate);
-    Tue, 3 Dec 2024 09:25:54 +0100 (CET)
-Content-Type: text/plain;
-	charset=us-ascii
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 669A81D47BC
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 08:26:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733214377; cv=none; b=JyI6qDMCTN/ZkF+PAxKpnE6csCwOFsh48MEmqLDPH/l5ORzlLrYj/SX2arP10BoR7ijeAsaf/kK+2FpXTP2rtZ6RgHVC5008nxAOkDn5Z2IP35VdbsFRs2jXx7epz7sxHaKUcqTXPmb0VEcVLrq+pipu+V4/JYX9PzWWOgEeSc0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733214377; c=relaxed/simple;
+	bh=a21GzhU/IcEVKODw1iA3Sw21iLkE6eTaO6jTTA4AJAk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FzAKlHcJoNDZCn8uwGqRVoJmYQZRXem81Nxf9rkOWpXOvUJoVnfM0mZo3hc6weGynSNfzTMhnG/vU4yiGsVy+4TRfvUYTLau9cjfI3OLLk792jNu/UcwYePmRH59iNFXW/aoBPn3iibIdYuOU4tb9JbBFalwG84PxOMuybp0tAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AYfmyWsL; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2ffb0bbe9c8so59955191fa.0
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 00:26:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733214373; x=1733819173; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jf5I3RuoC20RN0IsV/jbFVx4wBkXAmSkQkbAnkDREIg=;
+        b=AYfmyWsLErc3r+CCpX8MCBbsHVF88NYYx6o2vZvsn07EBMNU6Mh0W/o7P151S1ZJaa
+         I8wOcr507qpUBCd6qZD++J5tN0F1a2otv0fYVgpkZgccamgDPFmeMoMqF7LLzqLQo2Sb
+         s5mulXirqyBkiAbl3UPuYu9BzahJ+erDl925b5LghQC1lgv8TXb4Drm9aui1Uo1QLw/V
+         zJG/qkOMZvByNRrPGUllFaaw/b/08uzH2tjLjaXYLsaPEOygdvH3gvPWidEwrLYkJa2K
+         g1IhcbQUjc+NOzxeiMH5C6/q0ab1+5ngNBqNlTkosIGcd6GYJrhIqVrpV+ZYBycBhfAm
+         FoYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733214373; x=1733819173;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jf5I3RuoC20RN0IsV/jbFVx4wBkXAmSkQkbAnkDREIg=;
+        b=g9q89wvFN/j30le8z5mOefLkLQVMvSrnNI2walWYmCLJVJEzaSba7fsMppctvHydA4
+         6xswxXRZ/B6ygPtNlao4eSvvdo5jsUFyFR6rEhKHlE2ySS/dQfxn3m/CDhuvNfJPWIDf
+         JZDEN6vhtRgzZQjrAu/l+9vF4KPNjOv5siZPaNEsbW6dsix7Y0LT/zNwBgYtcrkpytIk
+         gjs1+m7FhbhbL4/855IRhNQLXXYIZ7J+J1OyMS8f5Kl/kOZYhDMm+yZqWJ4W4rNNw4PG
+         lG46gD2ZMxVw/ERybz68GJxbTqhfs+i6pEuVjhgfNU1w6y0Mceb8Ya6wdEar7m1rHtG0
+         lw4A==
+X-Forwarded-Encrypted: i=1; AJvYcCWixEKDFKwYV+NFL+hFAvXWD5ZRmTZSsJuuxbdffkYqSmKqyXDt47U69ABeQFVSJtzrCDcXg9axna9F6ck=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+IQqsapmb+sGKJOR45rQaS59am1cHOjre12RdZnp6ArdqseTW
+	/7SO2EYojM4+Ant4AnNJ3OFJ81bExuMZn/FoFyjD1wSVUq6Mi+uWW9teclQmx/Li1pzG1tumTIK
+	SxCggtgart2i/XlyjtEB32FvdI9Eoe5LRsE/icw==
+X-Gm-Gg: ASbGncs/8Mf6GB7tVzp2TcNaSrUc5p0DMGpkA9nYGrMgr6gPLBpRXeXfj6Zh0UX+Lw+
+	k5tIexyGo3/GToqGFlJUfpbOMRNZGkg==
+X-Google-Smtp-Source: AGHT+IGfKFlAAQWGLPjwb8FCHA8+RmFCdqsvJQTdi78qnXBU0bxqK3oOGEt9JI24RUBM5MWP2/YI2cLbecsls+P9cCc=
+X-Received: by 2002:a2e:bd12:0:b0:2ff:a7c1:8c31 with SMTP id
+ 38308e7fff4ca-30009c6e485mr11387831fa.26.1733214373311; Tue, 03 Dec 2024
+ 00:26:13 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51.11.1\))
-Subject: Re: [PATCH v2] i2c: omap: Cleaned up coding style and parameters
-From: "H. Nikolaus Schaller" <hns@goldelico.com>
-In-Reply-To: <Z06zxM3pREgrOvQA@melbuntu>
-Date: Tue, 3 Dec 2024 09:25:43 +0100
-Cc: Aaro Koskinen <aaro.koskinen@iki.fi>,
- "Raghavendra, Vignesh" <vigneshr@ti.com>,
- andi.shyti@kernel.org,
- Janusz Krzysztofik <jmkrzyszt@gmail.com>,
- tony Lindgren <tony@atomide.com>,
- Andreas Kemnade <andreas@kemnade.info>,
- Kevin Hilman <khilman@baylibre.com>,
- Roger Quadros <rogerq@kernel.org>,
- Linux-OMAP <linux-omap@vger.kernel.org>,
- linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 7bit
-Message-Id: <7B167CB3-EC8E-41C6-8A91-123167579475@goldelico.com>
-References: <Z04CA8fGCC-nyZIY@melbuntu>
- <Z04faeJUgZTydiMb@darkstar.musicnaut.iki.fi> <Z06zxM3pREgrOvQA@melbuntu>
-To: Dhruv Menon <dhruvmenon1104@gmail.com>
-X-Mailer: Apple Mail (2.3776.700.51.11.1)
+MIME-Version: 1.0
+References: <20241202184154.19321-1-ryncsn@gmail.com> <20241202184154.19321-2-ryncsn@gmail.com>
+ <CAJD7tkYemGu0iqt+ZW9t5zr21PbHkFBRnc=EixiwoNbq0xq5Ew@mail.gmail.com>
+In-Reply-To: <CAJD7tkYemGu0iqt+ZW9t5zr21PbHkFBRnc=EixiwoNbq0xq5Ew@mail.gmail.com>
+From: Kairui Song <ryncsn@gmail.com>
+Date: Tue, 3 Dec 2024 16:25:57 +0800
+Message-ID: <CAMgjq7Aeh9LCtSkG_RMrZjO_tvGryYA-QuvU9k1ahOzEv8LkgQ@mail.gmail.com>
+Subject: Re: [PATCH 1/4] mm, memcontrol: avoid duplicated memcg enable check
+To: Yosry Ahmed <yosryahmed@google.com>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
+	Chris Li <chrisl@kernel.org>, Hugh Dickins <hughd@google.com>, 
+	"Huang, Ying" <ying.huang@intel.com>, Roman Gushchin <roman.gushchin@linux.dev>, 
+	Shakeel Butt <shakeel.butt@linux.dev>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Barry Song <baohua@kernel.org>, Michal Hocko <mhocko@kernel.org>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Just a minor nit:
+On Tue, Dec 3, 2024 at 3:11=E2=80=AFAM Yosry Ahmed <yosryahmed@google.com> =
+wrote:
+>
+> On Mon, Dec 2, 2024 at 10:42=E2=80=AFAM Kairui Song <ryncsn@gmail.com> wr=
+ote:
+> >
+> > From: Kairui Song <kasong@tencent.com>
+> >
+> > mem_cgroup_uncharge_swap() implies a mem_cgroup_disabled() check,
+> > which is already checked by the caller here. Skip it by calling
+> > __mem_cgroup_uncharge_swap() directly.
+> >
+> > Signed-off-by: Kairui Song <kasong@tencent.com>
+> > ---
+> >  mm/memcontrol.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> > index 7b3503d12aaf..d3d1eb506eee 100644
+> > --- a/mm/memcontrol.c
+> > +++ b/mm/memcontrol.c
+> > @@ -4615,7 +4615,7 @@ void mem_cgroup_swapin_uncharge_swap(swp_entry_t =
+entry, unsigned int nr_pages)
+> >                  * let's not wait for it.  The page already received a
+> >                  * memory+swap charge, drop the swap entry duplicate.
+> >                  */
+> > -               mem_cgroup_uncharge_swap(entry, nr_pages);
+> > +               __mem_cgroup_uncharge_swap(entry, nr_pages);
+>
+> Would it be better to instead remove the mem_cgroup_disabled() check
+> here and have a single check in this path?
 
-> Am 03.12.2024 um 08:31 schrieb Dhruv Menon <dhruvmenon1104@gmail.com>:
-> 
-> Hello Aaro, 
-> 
-> I have updated the patch as requiested, splitting it two parts,
-> 
-> 1. [PATCH v2 1/2] i2c: omap: Cleaned up coding style
-> 2. [PATCH v2 2/2] i2c: omap: Removed unsed parameter
+Good suggestion, and the kernel test bot just reported
+__mem_cgroup_uncharge_swap is undefined with !CONFIG_SWAP, so better
+to fix it by removing the check instead.
 
-use "this patch will do" point of view, not "I have done"
-
-=> Cleaned -> Clean
-
-And there is a typo in "unsed".
-
-> 
-> I have also removed the changes regarding msleep as the adjustment
-> was relatively minor. The change was initially considered based 
-> on "Timer's howto" documentation which recommends to change any
-> msleep(x) < 10ms to usleep_range(x*1000, x*2000) for better 
-> precision.
-> 
-> Thank you for the time and review. I look forward to your feedback
-> 
-> Regards
-> Dhruv Menon
-> 
-
+>
+> Anyway, FWIW:
+>
+> Reviewed-by: Yosry Ahmed <yosryahmed@google.com>
+>
+> >         }
+> >  }
+> >
+> > --
+> > 2.47.0
+> >
+>
 
