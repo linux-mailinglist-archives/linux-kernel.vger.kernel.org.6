@@ -1,76 +1,76 @@
-Return-Path: <linux-kernel+bounces-430190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48D7C9E2D9A
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 21:53:19 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FA919E2DC2
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 22:01:31 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F161165E73
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 20:53:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 02275B3B5F8
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 20:53:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19D1C20899C;
-	Tue,  3 Dec 2024 20:53:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2C2C20ADCE;
+	Tue,  3 Dec 2024 20:53:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mID2fzOG"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hj+xJgEp"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDBF62500DF;
-	Tue,  3 Dec 2024 20:53:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EF5220A5CA;
+	Tue,  3 Dec 2024 20:53:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733259187; cv=none; b=OXvtc81vB4IGfGPkOzOKoMpUadNLBOhM3rgrO9y4F+6sbpxclj8qrsaSgIfZSA1mLzuZ38iYYEnfW2Pi8x1TV1POcthfGa/mHbReYiRDMV2bn/MUrEnwr/gVO5YW1sARdepWYSQ6y7IiF/WSIix34NKBUKGrY2VlNcodCiw8p/Y=
+	t=1733259191; cv=none; b=OJVT6R9ZXsGpJFjYTzYykCJNsbvLODK1O+wa4ZLhOIa1QdhJAfZuhtMMhOpBuuEfVY8tok3ApYOyAdTUT1JIogvjzuIbrNl+58UdLltxQPY7Q2xSjXqQz5tl+gQ/SdVk37CoNARrpnKGY60LoGalM5IsuxEfoI6AhBadWWmarp8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733259187; c=relaxed/simple;
-	bh=7vOYvY5TbPZmGbexNGwjy2JQ7ZwrhWQ6zfBBqyni0HA=;
+	s=arc-20240116; t=1733259191; c=relaxed/simple;
+	bh=PjjSMoBAaP8xREw/NXNd5PdGomIPOnLYq3NdM0KeA24=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=fhPyfWawy9cmwP9A0pANQ6ivKfHmvu3nOtqSs23J+yo9dKHqISUN1+qOiryok6XGyw98vWJx327DaMUpkAZ1Vrcgqbq4/e/XujFjvoEgxffdWPmVCi6HJRLGjCqCIVm0+qQeKFydvS7o1Hdlc9vNDMGlPlCzuqocZ8b4OMLR8UA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mID2fzOG; arc=none smtp.client-ip=209.85.221.48
+	 MIME-Version; b=Z567kI4R5UMa/0GT8ph5hEo9oa5Rg+YLArx5zDIhXx/56amhQnDGGR4fflNrLj35sJxKIdw4gkcss/Bkbz7wo2XdXaBqtyxY2vlhWLgOUyaswbR0OZFi4gb8YQIvMGtUx787cUEq4NTNpWMyVhE/ECUztps28VZFbiJYtWOyuJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Hj+xJgEp; arc=none smtp.client-ip=209.85.128.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-385e971a2a0so195374f8f.1;
-        Tue, 03 Dec 2024 12:53:05 -0800 (PST)
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4349d25eb5bso5220375e9.0;
+        Tue, 03 Dec 2024 12:53:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733259184; x=1733863984; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1733259188; x=1733863988; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=nlNuitTZFZCo2sl0s4Qjh5ZaAlabXpVfXzg958L8UNc=;
-        b=mID2fzOGZZYvzMHCau65MIhrmnfVP8hZ9KkH02BmsbjJCLLWSOA9vnTggffvQTqqsl
-         nEUAUv0IRi83YZKKbltU3RH6p1Yp2lQDAeaSpqPDvkTUVoWdb4eAkOzXKNQou/vh1mcd
-         ZP+K5HV0szpo41KnhChgftzz7VkplUF3QyQC7FADObM0L12a6wbst3d2mVHel75RawjN
-         2i1KBMGd6yEnMlYts40muPWeuPL147Y665FldMOFVbn7kklgApsnb6ZVZmdP7FQtf1Bs
-         bf2u7lC2Wljt9nputg55zKXEzKgWPHDMTi/cQpUUaI/z/GJjvrhdO4C1juwB3/1zdTDI
-         puvw==
+        bh=xcYkZV2v/0D/b0Rbyi2m87m91Wb0IUp9ItaugSAHWxk=;
+        b=Hj+xJgEpt1jquLdWncxd9kZrE6k5TXmOOFRcs1saTnTkmvDeUXfRhqCQ7VDwhQj6AY
+         Fz7rYk8GTb7yYpWvmSLOh9Nhf0DPQ6aKT/7X7gh3bCwVtt+sxkM1S+99Q4CL6T73ihxm
+         dBizYWOT+Ea16AQQ6Oh5N7St+PZ++4jRBHO2/x5yo0y/Aq3sfzwcQpTwxtR/H56z80ro
+         TpwUR1aLhj61Ub3cNiqsaYKzf9tIM2yE3+wAE6C4LDxhwRtaA+4WbAOcsTxmfhRE9p4z
+         xEsvGeo1VfEIpp7K4WHuO7SZK7h5/4LbZwjph1ObzeftP94lAPm2FtN5SrAcmlK3RsDh
+         Ik4g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733259184; x=1733863984;
+        d=1e100.net; s=20230601; t=1733259188; x=1733863988;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=nlNuitTZFZCo2sl0s4Qjh5ZaAlabXpVfXzg958L8UNc=;
-        b=dcCN/I/8t0S9S5b1nyhz1yrfkNGmNT6Mk0EpaUAj3zlS/CNP9IZk0Cqc9gaNKLT5Tv
-         c+7vyIf7tEiQE0VNjy0fNf4G3QhoEc/2NNiBoCUi5o4j6EkWXtWibwGrGKo4wpCC/cgV
-         /Z+DSR4zs2F3i/FgWI0j9bh6fe59MWR96nz+tF4HxEOBcw60UmFaLVCknkVvYo3mOcgS
-         NU5Pwj85qVZgXZfLulInStkOu7MCaKD9Oef168Obw04uhr3dQc09C9ZnnrUFTF0mrDhZ
-         Aj6z5VgBDsbB23zMifMf4YdSLqEpoKQJfZLKuX9PEwpwoyoSEBLEX1AOzdxbWAKR8tPA
-         ky4g==
-X-Forwarded-Encrypted: i=1; AJvYcCVkhWCU1irR9wOxAgcubchprDqnMKdqx7O3QHXhLdAxWVJQxksBCxAWuF99xgCdfqyuxn38QT1CDf92AMjl@vger.kernel.org, AJvYcCXTaNakvtcri5qtRAPbZj3SQjrVS1tGDkSXsLFX7r9wkuL7TlhN+kpqmkO6PNx543Hw9KGIxxzuCNU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy68UWYP57FP9aREIH/hadCRJhUj4a5t32CJH3jTB2b2udvOFbS
-	aUKgaJ7uss2Y1QepqUwUWs7U3tZIej9zUixZLZMlKGnO3Vf0Udiu
-X-Gm-Gg: ASbGncu6DTWy99KwX1TsP9EOvk8CP5nnZgxe0+LaTJyx4Yq3k8Qnhxup/DLoYfHyrPM
-	nyqrVv5ANKgG70o9S37phpOiM2UHWWyfsW8/ntPasRnzwEu1M5p7BOVVgOgeKFRsWfHhSc5Yp4s
-	EQ+Nk9JtLgtV7JPfcjBAqWIUiCgWV+roL0ULIdcnRetbB8wtU11VBZ6vGR58uvkLlGIeMQmz6Lx
-	gtSc5zaXKlr8SM+jPnR+1L3LAjIAo/R32tuvytOD0v+7mc9ty4ivsbELBEAoxIazSg9dBzf9JB2
-	7R95VknW0yuBhXssACFI9N79r5Ie
-X-Google-Smtp-Source: AGHT+IFyDkmUF3rc6sE3VH83woRWDaACftxSHJ1QZYWXQFmOur5Gk92I5nHz/okccLD6kp2HiQPeEQ==
-X-Received: by 2002:a05:600c:138a:b0:430:52ec:1e2a with SMTP id 5b1f17b1804b1-434d22fb82amr11161225e9.7.1733259183955;
-        Tue, 03 Dec 2024 12:53:03 -0800 (PST)
+        bh=xcYkZV2v/0D/b0Rbyi2m87m91Wb0IUp9ItaugSAHWxk=;
+        b=uKckJZOyXnB4HSVC8Xgqs4KqCRQwSURtnOuoOv29dN8QE39GpALsB3fdM69ATGdVT/
+         RSJQzq335J+Q4LJ20Z4zSk/ZGLBomhSJMufwfmaMz4s36KLfhEJ7QeU3z3iNsxu2OWiu
+         wH53tublYkCX5ENDd7z/2/PLQfx7gHrNVnlnqah+nCRXY6C4zwYFk3ytRDVBCXJqPQCg
+         WgGjoBLlspucEcVtWaN0kyo4LzkFedBWxqXKp0oogTKS/uM+CfbgSqIofAkAiiEpQIDS
+         vj+vs4pWXo8NhUWTgv5d23c1nOGr5YJPHrd2fp8P1rTnwV+DzzkwyS2hsgw5gDVjkdKd
+         Uucw==
+X-Forwarded-Encrypted: i=1; AJvYcCUrV3znYpIfaR0BvHxAQro1YDZMbMW9NX+mOYb62poHKt1IuiaVcMtWR842XLl2kMD0xhsNL+W1vig=@vger.kernel.org, AJvYcCWg4vOjn7kUDqjt1vbBtIeBjmym+1yya1/VOEzQ6olpuh3z9sGYTmXQX7oMLC8O+1hKWbE9Yi29mVOH1XWg@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIDgdnDWhjEYrbydB9lUACPqF/bfuv5VZxIxxt42ECpaf90I8U
+	LKWyEP/Y5TPUFPFxP3PbHlQyfON2WgS9jpzSbWs8OasAZ1wv/JRu
+X-Gm-Gg: ASbGncv0OJFXLjA85G+UkWmJPLdMZLPbC6xmEREEnNpRmkjATvXEj2zG2mdK+Rf854v
+	avQOZDf0f5NBFgJCnl8zpNgcq1am1ZKXwXKf3uQW3kFxB2cL1qwYYDIzsNGWjzBc4zelidHt/gT
+	J5zDCRGx3Rs4BKKWOZJFNltkvkgn+V+3zfFd7gxXrS4/OTlUkgsGyYRW4viuZDGyfZeSRw3mdmy
+	K20bjF7XBOsuzmxWh1z6EG7i7aH0rpR5KRyQpL0wP3kLp+DzRfzqZhokj8M9TjwNB7VCSW/Z1V/
+	m/ocV3B68LJekVsli79F0+eG8/da
+X-Google-Smtp-Source: AGHT+IEK9CvgdgDUFk83v1wV+AV+MO2pq7Dzf7qbT7cfmnId8BTzI/AHIpClzwr7dJhgMR191s8mYA==
+X-Received: by 2002:a05:6000:1a8b:b0:385:e16b:72be with SMTP id ffacd0b85a97d-385fde34e60mr1107170f8f.14.1733259187746;
+        Tue, 03 Dec 2024 12:53:07 -0800 (PST)
 Received: from 7b58d44c4ff6.v.cablecom.net (84-72-156-211.dclient.hispeed.ch. [84.72.156.211])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385ebaf3bccsm9042750f8f.68.2024.12.03.12.53.02
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385ebaf3bccsm9042750f8f.68.2024.12.03.12.53.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Dec 2024 12:53:03 -0800 (PST)
+        Tue, 03 Dec 2024 12:53:07 -0800 (PST)
 From: Lothar Rubusch <l.rubusch@gmail.com>
 To: lars@metafoo.de,
 	Michael.Hennerich@analog.com,
@@ -83,9 +83,9 @@ Cc: devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	eraretuya@gmail.com,
 	l.rubusch@gmail.com
-Subject: [PATCH v3 01/10] iio: accel: adxl345: fix comment on probe
-Date: Tue,  3 Dec 2024 20:52:32 +0000
-Message-Id: <20241203205241.48077-2-l.rubusch@gmail.com>
+Subject: [PATCH v3 03/10] iio: accel: adxl345: measure right-justified
+Date: Tue,  3 Dec 2024 20:52:34 +0000
+Message-Id: <20241203205241.48077-4-l.rubusch@gmail.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20241203205241.48077-1-l.rubusch@gmail.com>
 References: <20241203205241.48077-1-l.rubusch@gmail.com>
@@ -97,27 +97,29 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Fix comment on the probe function. Add covered sensors and fix typo.
+Make measurements right-justified, since it is the default for the
+driver and sensor. By not setting the ADXL345_DATA_FORMAT_JUSTIFY bit,
+the data becomes right-judstified. This was the original setting, there
+is no reason to change it to left-justified, where right-justified
+simplifies working on the registers.
 
 Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
 ---
- drivers/iio/accel/adxl345_core.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/iio/accel/adxl345_core.c | 1 -
+ 1 file changed, 1 deletion(-)
 
 diff --git a/drivers/iio/accel/adxl345_core.c b/drivers/iio/accel/adxl345_core.c
-index b1efab0f640..cf73d7052e9 100644
+index 0b613f5652e..11eb0ceef39 100644
 --- a/drivers/iio/accel/adxl345_core.c
 +++ b/drivers/iio/accel/adxl345_core.c
-@@ -169,8 +169,7 @@ static void adxl345_powerdown(void *regmap)
- }
- 
- /**
-- * adxl345_core_probe() - probe and setup for the adxl345 accelerometer,
-- *                        also covers the adlx375 accelerometer
-+ * adxl345_core_probe() - Probe and setup for the accelerometer.
-  * @dev:	Driver model representation of the device
-  * @regmap:	Regmap instance for the device
-  * @setup:	Setup routine to be executed right before the standard device
+@@ -184,7 +184,6 @@ int adxl345_core_probe(struct device *dev, struct regmap *regmap,
+ 	struct iio_dev *indio_dev;
+ 	u32 regval;
+ 	unsigned int data_format_mask = (ADXL345_DATA_FORMAT_RANGE |
+-					 ADXL345_DATA_FORMAT_JUSTIFY |
+ 					 ADXL345_DATA_FORMAT_FULL_RES |
+ 					 ADXL345_DATA_FORMAT_SELF_TEST);
+ 	int ret;
 -- 
 2.39.5
 
