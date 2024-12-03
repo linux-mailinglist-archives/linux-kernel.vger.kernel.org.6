@@ -1,175 +1,183 @@
-Return-Path: <linux-kernel+bounces-429040-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A0859E17FF
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:42:18 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48CE09E16AE
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:07:12 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C96F5B34521
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:03:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1CB4B16074C
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:07:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A92A1E0DD2;
-	Tue,  3 Dec 2024 09:01:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A7D71DE4C3;
+	Tue,  3 Dec 2024 09:07:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Pe9WpBoV"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2057.outbound.protection.outlook.com [40.107.223.57])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Ju/IGsBx"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4D341BD9EB;
-	Tue,  3 Dec 2024 09:01:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.57
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733216504; cv=fail; b=PPQdCnpgC8ts//X93jr76zkbOgn829LbcDKWwuIwcS6KiTH73p5rr0ee8Fg3kCJ1/hEvdp4K0wIB5ydvl6mAYL0Eq4/obc7QXJbMsuWGEOAWCtb4sbHbvzSISvmePgeRuFtJihhAL/bJFSMzgBtbEp5HisKD2Qi00HSWZfG8zo0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733216504; c=relaxed/simple;
-	bh=pSEt+x5pK7qLR8kzWGpKtymdDI3tYGaJc3XCrr4HDZo=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JPZD5NWI8tqZAAjGyZpEjw/M0CENYEKC9mCVVyZmF49pmnfRfBRiOWaPsSkdhkqUqNaZ3HGHt6P//9+gKarEwbsO+v2/+S5E+fHfjVB2iy5dCn/PCj6OLI4VdXbUUQpC/0hPS3o10gN5ALHs0MCLSv06Okv3yuR9QEHw4IDZ1z0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Pe9WpBoV; arc=fail smtp.client-ip=40.107.223.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=hUsahnoa++wQmtIL6r8amaNEAGuTxbolAy+8Nv261ag6vZeKIhf+2M5qwc9F5SQBc+jXTtKrCD/M0999VtlLZM302ScKZPEXbdSAtRbez5jsVlIPywqI9+UovU573h3OoYb7X6VkR3Kg40a+6iCNF3bIQ/jyF+7mXKBiNN2aaxZstxMdR/gTPg1hUBg4cH2qzEovSMmH54yQ5rOZgY54H4OT86ew3fkDQeiBZMRDhM6eki9qmD7K/McA/920/CQccHNK6YHrJaDfn8OjpnH/bYPam4RwQ8605yDHvEUzHNZwMgQbrSxcQNPftNO77NNuzgj+60NWV/wYisq4bT6/6g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=gRCKVDfmEN69C8vV943le0g8cl+S2x3eSRUWNJEc5Xc=;
- b=TwqqdG13io8D0/Kw9RP0vBORVxHvr7XqNo5spJum7HwUkvmOwMsqAspbaW+hB24T/fnXaRRLdUZIwdrY9/YOdwe7nva8Af1R7QOFSJm1l++r3yp8vRR7V1iQWC/aVFCVxsLP9UIxu/u7f6Su154itkynqqsUtL5ItnLQtwA6rL79v6R0L96h2ezLenYTgJopoBXuA3dRYy3eHFvNvBu8S/wfxI9ccozm9KwJ3NItJZIzVSlYxCxhCyVzIbAKgpHv6KTnJykSHa5YP10jHaI7oAOgo0SzsqD7cKkrREYQS9BHexoNqzw+JIfkC1Y4ijHzRz6yS6oTNJ70PiWx58lIRA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gRCKVDfmEN69C8vV943le0g8cl+S2x3eSRUWNJEc5Xc=;
- b=Pe9WpBoVV1n4vwPH+TMCWgvcAvxyMVDTdub6vtWQVfoLwRYFF3AAtS/2GqbfzjrGuIxAQkjU1PsIalif/xrjFRtNeQ4IlGEyb3XIhbp1iUSN7M53xBPhx+cA0JHgHBbLUFDfcUW9u+PrZpd4n3HOnAKWYF9rz7uU+XPewoQUBAk=
-Received: from CH0PR04CA0044.namprd04.prod.outlook.com (2603:10b6:610:77::19)
- by PH7PR12MB7916.namprd12.prod.outlook.com (2603:10b6:510:26a::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.18; Tue, 3 Dec
- 2024 09:01:37 +0000
-Received: from CH1PEPF0000A345.namprd04.prod.outlook.com
- (2603:10b6:610:77:cafe::f1) by CH0PR04CA0044.outlook.office365.com
- (2603:10b6:610:77::19) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8207.18 via Frontend Transport; Tue,
- 3 Dec 2024 09:01:37 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- CH1PEPF0000A345.mail.protection.outlook.com (10.167.244.8) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8230.7 via Frontend Transport; Tue, 3 Dec 2024 09:01:37 +0000
-Received: from gomati.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 3 Dec
- 2024 03:01:33 -0600
-From: Nikunj A Dadhania <nikunj@amd.com>
-To: <linux-kernel@vger.kernel.org>, <thomas.lendacky@amd.com>, <bp@alien8.de>,
-	<x86@kernel.org>, <kvm@vger.kernel.org>
-CC: <mingo@redhat.com>, <tglx@linutronix.de>, <dave.hansen@linux.intel.com>,
-	<pgonda@google.com>, <seanjc@google.com>, <pbonzini@redhat.com>,
-	<nikunj@amd.com>
-Subject: [PATCH v15 08/13] x86/cpu/amd: Do not print FW_BUG for Secure TSC
-Date: Tue, 3 Dec 2024 14:30:40 +0530
-Message-ID: <20241203090045.942078-9-nikunj@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241203090045.942078-1-nikunj@amd.com>
-References: <20241203090045.942078-1-nikunj@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B584D1CD204;
+	Tue,  3 Dec 2024 09:06:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733216819; cv=none; b=bhebBRmEVK/d/vPD6yi16CxXgJ/VDfTGOTNbxP6C4Rs2XE/NgI2/KRRxH/ZRriH3d8LpUMCz4C8L0rD6eMMH8s0EN+X+LXlkj2NoAxYRAiEOyuGV1QEHZ+WRDfkvsNxhJwvIblPMeSqayN7357RBMOhUoU0OdpRHIkQVFa3dda4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733216819; c=relaxed/simple;
+	bh=PJl1OgSeGWONAc1bo6522cBNnTp+AUlrw7gcEnM0UxE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=G0HBGMTgdC55vzr8HHmiSTpPrtWdKAHF9oB+P9has6pJw3G9FtpOwNDnCPGXTLnpK7AnQP82pgJUqdeeA+20oZcXVfQWmwUcMktxFri/xWqGlCct5Pa6XEpyG5S9iE1HW9tfZe/MAV0J6fJ4ey8dFfku0OAWraGxNq+v2lpLF4I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Ju/IGsBx; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B37qYeu003625;
+	Tue, 3 Dec 2024 09:06:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Zd6w5KfpEFKkHZqYYkf6lZZEdZ0dZ46dhuKoHtYHBfA=; b=Ju/IGsBxn9HPhQW6
+	VuY2PPoxuCNIhEUTVDzdmaxhU4KbEsSzhpwSg6gt6nJ1UQYercNOXc9crYYudt1V
+	DWpMaez+AF+FvLmqapTleP1MmuQvL7TcMRZ8GcU3ylz+tcJAOptWRT5VJPOgmfS3
+	sZkdbQ2mJ8xQpzNHeH8741P+edvO8NduW6egvD5M+Fg+JLixhRIsuXwE0z8AydeD
+	mnQ+1UyF+eBHRmVQp99KBfpZwZGJ7XK8ei2yuhPXkP8fGm4ErEk9kh7646B3mUZo
+	UUUprnS2um3nlXubj3xWQU24/gm0hlZ4gDtNP5gwc4FnzrC+OeIy7UcgtHctosNe
+	QiTdrQ==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 437sq67j0y-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 03 Dec 2024 09:06:45 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B396i7u022822
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 3 Dec 2024 09:06:44 GMT
+Received: from [10.216.45.237] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 3 Dec 2024
+ 01:06:38 -0800
+Message-ID: <ef4a0373-2ad0-a669-1e52-e6e81105fded@quicinc.com>
+Date: Tue, 3 Dec 2024 14:36:35 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH v3 1/6] dt-bindings: PCI: Add binding for qps615
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Manivannan Sadhasivam
+	<manivannan.sadhasivam@linaro.org>
+CC: Krzysztof Kozlowski <krzk@kernel.org>, <andersson@kernel.org>,
+        "Bjorn
+ Helgaas" <bhelgaas@google.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        =?UTF-8?Q?Krzysztof_Wilczy=c5=84ski?= <kw@linux.com>,
+        Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        <cros-qcom-dts-watchers@chromium.org>,
+        Jingoo Han <jingoohan1@gmail.com>, Bartosz Golaszewski <brgl@bgdev.pl>,
+        <quic_vbadigan@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20241112-qps615_pwr-v3-0-29a1e98aa2b0@quicinc.com>
+ <20241112-qps615_pwr-v3-1-29a1e98aa2b0@quicinc.com>
+ <poruhxgxnkhvqij5q7z4toxzcsk2gvkyj6ewicsfxj6xl3i3un@msgyeeyb6hsf>
+ <42425b92-6e0d-a77b-8733-e50614bcb3a8@quicinc.com>
+ <b203d90d-91bc-437b-9b91-1085034ed716@kernel.org>
+ <cce7507f-a2c4-6f96-f993-b9a7e9217ffa@quicinc.com>
+ <c81b89ff-6eb5-4a01-af84-636aa2a02a34@kernel.org>
+ <20241128132432.fxvmjeluagignbph@thinkpad>
+ <dtr62oy4lcdqtyvh6ffr3c7rjz65h6bj4fkknf3rmgm65zhnpo@caqdpy7xi4ue>
+Content-Language: en-US
+From: Krishna Chaitanya Chundru <quic_krichai@quicinc.com>
+In-Reply-To: <dtr62oy4lcdqtyvh6ffr3c7rjz65h6bj4fkknf3rmgm65zhnpo@caqdpy7xi4ue>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH1PEPF0000A345:EE_|PH7PR12MB7916:EE_
-X-MS-Office365-Filtering-Correlation-Id: 714e3424-fde9-421b-f8a1-08dd1379185b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|7416014|376014|1800799024|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?O7gm1yuRtIG2wNCN/FdxkqTEXWhiabPr31jExJRLRSlFn93q1npqMVBBevlT?=
- =?us-ascii?Q?dAbND6WhE0oZBcINUICX6xJ1vPfMZloIjr6mmUzPzbpKTQiUpG3bW4wXUrcZ?=
- =?us-ascii?Q?HQjlqUFzhlf4Jjoo0VAnR8sW/huXhjpB/WHhGTvtE7dzrXMaFv1N5Cc0WWaf?=
- =?us-ascii?Q?czc3BclWr4gopj2mUbjdHzfwNHs75GIH3ieMHmzR5ywFM9IcuO70uuQT4c/e?=
- =?us-ascii?Q?SZisJfNr4TF+nsajEemL8W+JoBP6WYnO+ghIaMl8+aBUAH08OYdob/j3ylhU?=
- =?us-ascii?Q?P46v4141+Gvu9CE1I40hp7GhRst9/cbgYbf+zJicKiOw4NbHs/mUpWeFZjfM?=
- =?us-ascii?Q?mjQQnNja3+h+DzcuF5YQj6Iw5Nsmqfb+rdUjZefjlyOkFFZTPdktoSTvITPt?=
- =?us-ascii?Q?zYg0eiXqp19CnYdwgInwgylnk/qEGE40g0B9S25LacEoBJ1zbs7ztVx6NP36?=
- =?us-ascii?Q?UrTxN2RpFhcKSep1NttXCsjr/Wc4wNGSiD+h9WcxK1f2WwuWcifFgCfzngaM?=
- =?us-ascii?Q?dVhovyyVi9HWkj5cdusGMoDX240Oi2N8MJgGdHJI8CePi4Q6qMkaDtZwi0hn?=
- =?us-ascii?Q?m4+NOFwGt69ZZ5WTCbMgXxUFAx7oVgZo9/aJwzP34HFS/HTKSBneVYaq2nn4?=
- =?us-ascii?Q?G2xpAfQqmbigm55JnfXZW48ZT6v++CycwSd/5Q8t1zD0aE/9gstsyBj84pTE?=
- =?us-ascii?Q?egE0kOIO3nEMpERy43ErsH+LoCALIq5lDnE5S6t18HhVn3Rv45SUAbncWXF/?=
- =?us-ascii?Q?vo2RQNS+MzEIk0hR2fcf37a3RjJ/e5yhEGU2XNabgkV0jbDnPDoTHeYkTa3l?=
- =?us-ascii?Q?bnC/lH3rBTAH/cogXDsceWjOni0Okj8vsvlnoVJrGtXmpVndpCLPBdK2R2je?=
- =?us-ascii?Q?bQ1CX6w1i025u6elfJHabgk7EAFd4tBFPi05N6IcS3MUy9vFudAifuDZy2vG?=
- =?us-ascii?Q?nmxkOzDZ6/Sx83AzqKo6VtIHk0QroJMI+ptqwCr98cZ/U/BRZrZ/ZstZL5ma?=
- =?us-ascii?Q?YnkSiLfwB8ftNCHi2UUXc4BYjJ8Fge4zJnUDgIrWIK2IJpY+MrM+k4VxJo+n?=
- =?us-ascii?Q?RxZdSd3XzqxlcSp9hzYk/IEo+xJgCtEr+yGIcNWPtjIAGC6Vf72UoBqTRx+L?=
- =?us-ascii?Q?bxdRxl8OVJtD3zAzC+lNNiOrKiZ5UYBViF61ZH43kpN58JOw7o3fxiA8GkO9?=
- =?us-ascii?Q?K7JSdP1X0N6lyxtcZ7EJvWfpUVJJ3LvTsgK21a+SjXNjV01YBR4/zJMjjSfJ?=
- =?us-ascii?Q?VcBsn+VAw013SdFG0A0k9F5RYqhXy2Lm0hcx3R7ZbZDterudNnE5QMEHuSZr?=
- =?us-ascii?Q?nHUfGyFt4N35zvofpezx4RRnnRh6z5fNO+4OMxa5df+Lr/p5PtTjE5UlSYnI?=
- =?us-ascii?Q?e2S/k09ev4TvvaIT5/F2fp5EpdkJpJjJk4s4PL6RCLkVsyw4gXKLvWFUY1PH?=
- =?us-ascii?Q?svJlG2mfxpiqOd5kWFJEzKK1T6w60TT1?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(7416014)(376014)(1800799024)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Dec 2024 09:01:37.6348
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 714e3424-fde9-421b-f8a1-08dd1379185b
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CH1PEPF0000A345.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7916
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: cAVDdmet4GDfh2W6IcOqJKLzWQblj0EB
+X-Proofpoint-ORIG-GUID: cAVDdmet4GDfh2W6IcOqJKLzWQblj0EB
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
+ priorityscore=1501 mlxscore=0 clxscore=1015 lowpriorityscore=0
+ suspectscore=0 adultscore=0 spamscore=0 impostorscore=0 mlxlogscore=931
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412030078
 
-When Secure TSC is enabled and TscInvariant (bit 8) in CPUID_8000_0007_edx
-is set, the kernel complains with the below firmware bug:
 
-[Firmware Bug]: TSC doesn't count with P0 frequency!
 
-Secure TSC does not need to run at P0 frequency; the TSC frequency is set
-by the VMM as part of the SNP_LAUNCH_START command. Skip this check when
-Secure TSC is enabled
+On 11/28/2024 7:38 PM, Dmitry Baryshkov wrote:
+> On Thu, Nov 28, 2024 at 06:54:32PM +0530, Manivannan Sadhasivam wrote:
+>> On Tue, Nov 26, 2024 at 07:58:16AM +0100, Krzysztof Kozlowski wrote:
+>>> On 26/11/2024 07:50, Krishna Chaitanya Chundru wrote:
+>>>>
+>>>>
+>>>> On 11/25/2024 1:10 PM, Krzysztof Kozlowski wrote:
+>>>>> On 24/11/2024 02:41, Krishna Chaitanya Chundru wrote:
+>>>>>>> ...
+>>>>>>>
+>>>>>>>> +  qps615,axi-clk-freq-hz:
+>>>>>>>
+>>>>>>> That's a downstream code you send us.
+>>>>>>>
+>>>>>>> Anyway, why assigned clock rates do not work for you? You are
+>>>>>>> re-implementing legacy property now under different name :/
+>>>>>>>
+>>>>>>> The assigned clock rates comes in to the picture when we are
+>>>>>>> using clock
+>>>>>> framework to control the clocks. For this switch there are no
+>>>>>> clocks needs to be control, the moment we power on the switch
+>>>>>> clocks are enabled by default. This switch provides a mechanism to
+>>>>>> control the frequency using i2c. And switch supports only two
+>>>>>> frequencies i.e
+>>>>>
+>>>>>
+>>>>> frequency of what, since there are no clocks?
+>>>>>
+>>>> The axi clock frequency internal to the switch, host can't control
+>>>> the enablement of the clocks it can control only the frequency.
+>>>>
+>>>> we already had a discussion on this on v2[1], and we taught you agreed
+>>>> on this property.
+>>>>
+>>>> [1]
+>>>> https://lore.kernel.org/netdev/d1af1eac-f9bd-7a8e-586b-5c2a76445145@codeaurora.org/T/#m3d5864c758f2e05fa15ba522aad6a37e3417bd9f
+>>>>
+>>>
+>>> This points something else. I diged v2 and found many unanswered
+>>> questions and unfinished discussion:
+>>>
+>>
+>> The conversation is here:
+>> https://lore.kernel.org/linux-arm-msm/20240823094028.7xul4eoiexey5xjm@thinkpad/
+>>
+>> But there was no explicit agreement on the usage of 'qps615,axi-clk-freq-hz'.
+>>
+>> If describing the PCI device's internal clock frequency is not applicable, then
+>> I'd recommend to change the clock rate in the driver itself based on the number
+>> of DSPs enabled (or based on other configuration).
+> 
+> Sounds like the best approach. Otherwise it's not obvious, what is the
+> criteria for selecting this or that clock value.
+> 
+I will remove this property in next patch and driver code to set this 
+frequency in the next patch, we will try to come up with some logic later.
 
-Signed-off-by: Nikunj A Dadhania <nikunj@amd.com>
-Tested-by: Peter Gonda <pgonda@google.com>
-Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
----
- arch/x86/kernel/cpu/amd.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/kernel/cpu/amd.c b/arch/x86/kernel/cpu/amd.c
-index d8408aafeed9..af9dd545f0ec 100644
---- a/arch/x86/kernel/cpu/amd.c
-+++ b/arch/x86/kernel/cpu/amd.c
-@@ -370,7 +370,8 @@ static void bsp_determine_snp(struct cpuinfo_x86 *c)
- 
- static void bsp_init_amd(struct cpuinfo_x86 *c)
- {
--	if (cpu_has(c, X86_FEATURE_CONSTANT_TSC)) {
-+	if (cpu_has(c, X86_FEATURE_CONSTANT_TSC) &&
-+	    !cc_platform_has(CC_ATTR_GUEST_SNP_SECURE_TSC)) {
- 
- 		if (c->x86 > 0x10 ||
- 		    (c->x86 == 0x10 && c->x86_model >= 0x2)) {
--- 
-2.34.1
-
+- Krishna chaitanya.
+>>
+>> - Mani
+>>
+>> -- 
+>> மணிவண்ணன் சதாசிவம்
+> 
 
