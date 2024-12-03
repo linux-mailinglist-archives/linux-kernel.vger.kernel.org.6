@@ -1,115 +1,151 @@
-Return-Path: <linux-kernel+bounces-430046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED77C9E2CFE
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 21:25:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 971A39E2C06
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 20:30:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 264A8B362C3
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 19:21:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 555AD283D6E
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 19:30:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43AE01FF7CF;
-	Tue,  3 Dec 2024 19:21:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A54A1F8AFA;
+	Tue,  3 Dec 2024 19:30:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="T+cfWrQH"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rEOSSMAw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92BEC13B2B8;
-	Tue,  3 Dec 2024 19:21:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B705F1F8910;
+	Tue,  3 Dec 2024 19:30:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733253669; cv=none; b=QcJde5GKQk/6BZaSDt5NOYGoSIOEHOd0LDK9VtaZ4k3ovXcRKWDOHXYtPmUL4/8+I0xaq42w7myDdx0kas31KIwGZf5u6wsHDsCO2exe5F9/vUtDIzZsfKgGfgjiuNznPKDR37rHM+5iQ0uLWylIvzdys9j+K00f/DSKIJ4M7ak=
+	t=1733254210; cv=none; b=dRwIZKPPemSgMvPXrsk98QcH+TtqxGI2YgLCb9u4UwMkx1O2QQmeE+F5C3XAuIanWJk5CPKPfWmHsz1gU/Yw981po7wyn9OUN+Fzfg3GbeWYgymbxw+8G/bty9nR+IlFr75DZ/uwP5w2eY7FAKk6s/nDHU7LBQV1F97d0VUygsk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733253669; c=relaxed/simple;
-	bh=me674ysn4T+xkyXkjVxxdq0efYr8UjvgzBFk7LZAd70=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=QhaHMFksUu8vcmZEGrHH2+s3NncHmny/ob8pL9AzHN99G1aswk+FQTxiltvZj9uX4Uea9A7hTMIE8fBSRJkajWHgFFiblFlUW+3wT6uRF3Q/s6It3lgIclRZzsW6YgmUqHkPWHhRyjpUpqHR4fCj2bc43AiWHaqq9N6Lm/hIyFM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=T+cfWrQH; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1733253665;
-	bh=me674ysn4T+xkyXkjVxxdq0efYr8UjvgzBFk7LZAd70=;
-	h=From:Date:Subject:To:Cc:From;
-	b=T+cfWrQHcK7y+GOW+utyX+YR65qTl5gxPICvVGkewfy97+N38ZlGuIA4ujurN7R71
-	 vQNewctBhMLcDCSitu9XlfMOWf+qP1lPnWN3N43bBdR9JN9kIRsM6h2sCJWucMstJ3
-	 kgg4HNgVn6xVIOGnxsfu1pU8MpIkY6gYEpsgf6wn1SX319Gh5rU3k+0M3ligHz61Z2
-	 ikr28pZMIlHc6V5ZmvzrrrkBwXLUmVUcuBfNPRghHORCiH/oZrmyZqNDyyEANJ8+p6
-	 fVVAB9jGZlr2ZmdS0dVRp+ecmlUiZ/m6yPpKAw+uvO70ya74rcawN1VzqWRYLRhvc2
-	 nO9AwAN/JcSaQ==
-Received: from [192.168.0.47] (unknown [IPv6:2804:14c:1a9:53ee::1005])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: nfraprado)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id A715017E1036;
-	Tue,  3 Dec 2024 20:21:02 +0100 (CET)
-From: =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
-Date: Tue, 03 Dec 2024 16:20:58 -0300
-Subject: [PATCH] ASoC: mediatek: mt8188-mt6359: Remove hardcoded dmic codec
+	s=arc-20240116; t=1733254210; c=relaxed/simple;
+	bh=2K+i1S/3sf74gdv4NXTCEB0ZkasLUdboMLKU7Q6QF+A=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=ekvC1lDLFht7kGFWCUwNNBr+fTwPH7mC10Z1a91jafKpMCo5Vi5WjykIdiMs+6ocoPSNoOTDHNtNUIRn4M/iOCKZeYIYkJzg3+FfdL65JwigSalijp+LqJmzqIBeamNXjOYbO0wmzbLKwKkh7G/nUTw73VQauYIpOCMVOJ4R7gI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rEOSSMAw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15598C4CECF;
+	Tue,  3 Dec 2024 19:30:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733254210;
+	bh=2K+i1S/3sf74gdv4NXTCEB0ZkasLUdboMLKU7Q6QF+A=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=rEOSSMAw4aRVIFfjkZ/b9s5WQsVAdJl8UqHu4CEvzDgMSq+RMuqTHTq8lEghwGUKz
+	 bO/TpYbMyqWPDII5AOo6Y+XjPIF4RAWz7fHDNUjOirbOKvSIMZ/jKH5esQ+11WelbV
+	 UnYzdUOIDRvWH/Gqhmb9IPBkGk5/VTlkc9794+uD/RzQ5I2HZTDWg/WQJTIiZl/UJb
+	 yuOJf+zJOreYn2LK12Fh9NTPEhONJdWfdERUoESArOvdsDoJg7vLwjt5hQXygmHvLI
+	 2zVSBEvJ3JpWm0xgNVM+25l7YjenhetnbxAs0bpmGBFsirgmULEBQvbGItgCnGVxY6
+	 wihVM8k+X4Uhw==
+Message-ID: <afa086b0b30ab5b810178f92fac96837.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20241203-mt8188-6359-unhardcode-dmic-v1-1-346e3e5cbe6d@collabora.com>
-X-B4-Tracking: v=1; b=H4sIABlaT2cC/x3MSw5AMBAA0KvIrE2irU+5ilhUO5iFkhaRiLtrL
- N/mPRApMEXosgcCXRx58wkiz8Auxs+E7JJBFrIUslC4HlpojbWqWjz9YoKzmyN0K1scTVOX7aR
- NI0dIwx5o4vvf++F9P0HiRgRtAAAA
-X-Change-ID: 20241203-mt8188-6359-unhardcode-dmic-ba7649f8a72b
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Trevor Wu <trevor.wu@mediatek.com>
-Cc: kernel@collabora.com, linux-sound@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-mediatek@lists.infradead.org, 
- =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
-X-Mailer: b4 0.14.2
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20241203092151.izcsgzqep4imbcwe@thinkpad>
+References: <20241202100621.29209-1-johan+linaro@kernel.org> <3fd004add188460bf2bdd1a718387c7f.sboyd@kernel.org> <Z07AXbQvvZwI8Ki6@hovoldconsulting.com> <20241203092151.izcsgzqep4imbcwe@thinkpad>
+Subject: Re: [PATCH] Revert "clk: Fix invalid execution of clk_set_rate"
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>, Johan Hovold <johan+linaro@kernel.org>, Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, regressions@lists.linux.dev, Aishwarya TCV <aishwarya.tcv@arm.com>, Chuan Liu <chuan.liu@amlogic.com>, Sudeep Holla <sudeep.holla@arm.com>, linux-pm@vger.kernel.org
+To: Johan Hovold <johan@kernel.org>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Date: Tue, 03 Dec 2024 11:30:07 -0800
+User-Agent: alot/0.12.dev1+gaa8c22fdeedb
 
-Remove hardcoded dmic codec from the UL_SRC dai link to avoid requiring
-a dmic codec to be present for the driver to probe, as not every
-MT8188-based platform might need a dmic codec. The codec can be assigned
-to the dai link through the dai-link property in Devicetree on the
-platforms where it is needed.
+Quoting Manivannan Sadhasivam (2024-12-03 01:21:51)
+> On Tue, Dec 03, 2024 at 09:25:01AM +0100, Johan Hovold wrote:
+> > [ +CC: Viresh and Sudeep ]
+> >=20
+> > On Mon, Dec 02, 2024 at 05:20:06PM -0800, Stephen Boyd wrote:
+> > > Quoting Johan Hovold (2024-12-02 02:06:21)
+> > > > This reverts commit 25f1c96a0e841013647d788d4598e364e5c2ebb7.
+> > > >=20
+> > > > The offending commit results in errors like
+> > > >=20
+> > > >         cpu cpu0: _opp_config_clk_single: failed to set clock rate:=
+ -22
+> > > >=20
+> > > > spamming the logs on the Lenovo ThinkPad X13s and other Qualcomm
+> > > > machines when cpufreq tries to update the CPUFreq HW Engine clocks.
+> > > >=20
+> > > > As mentioned in commit 4370232c727b ("cpufreq: qcom-hw: Add CPU clo=
+ck
+> > > > provider support"):
+> > > >=20
+> > > >         [T]he frequency supplied by the driver is the actual freque=
+ncy
+> > > >         that comes out of the EPSS/OSM block after the DCVS operati=
+on.
+> > > >         This frequency is not same as what the CPUFreq framework ha=
+s set
+> > > >         but it is the one that gets supplied to the CPUs after
+> > > >         throttling by LMh.
+> > > >=20
+> > > > which seems to suggest that the driver relies on the previous behav=
+iour
+> > > > of clk_set_rate().
+> > >=20
+> > > I don't understand why a clk provider is needed there. Is anyone look=
+ing
+> > > into the real problem?
+> >=20
+> > I mentioned this to Mani yesterday, but I'm not sure if he has had time
+> > to look into it yet. And I forgot to CC Viresh who was involved in
+> > implementing this. There is comment of his in the thread where this
+> > feature was added:
+> >=20
+> >       Most likely no one will ever do clk_set_rate() on this new
+> >       clock, which is fine, though OPP core will likely do
+> >       clk_get_rate() here.
+> >=20
+> > which may suggest that some underlying assumption has changed. [1]
+> >=20
 
-No Devicetree currently relies on it so it is safe to remove without
-worrying about backward compatibility.
+Yikes.
 
-Fixes: 9f08dcbddeb3 ("ASoC: mediatek: mt8188-mt6359: support new board with nau88255")
-Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
----
- sound/soc/mediatek/mt8188/mt8188-mt6359.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+>=20
+> I just looked into the issue this morning. The commit that triggered the =
+errors
+> seem to be doing the right thing (although the commit message was a bit h=
+ard to
+> understand), but the problem is this check which gets triggered now:
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/d=
+rivers/clk/clk.c?h=3Dv6.13-rc1#n2319
+>=20
+> Since the qcom-cpufreq* clocks doesn't have parents now (they should've b=
+een
+> defined anyway) and there is no CLK_SET_RATE_PARENT flag set, the check r=
+eturns
+> NULL for the 'top' clock. Then clk_core_set_rate_nolock() returns -EINVAL,
+> causing the reported error.
+>=20
+> But I don't quite understand why clk_core_set_rate_nolock() fails if ther=
+e is no
+> parent or CLK_SET_RATE_PARENT is not set. The API is supposed to set the =
+rate of
+> the passed clock irrespective of the parent. Propagating the rate change =
+to
+> parent is not strictly needed and doesn't make sense if the parent is a f=
+ixed
+> clock like XO.
 
-diff --git a/sound/soc/mediatek/mt8188/mt8188-mt6359.c b/sound/soc/mediatek/mt8188/mt8188-mt6359.c
-index 08ae962afeb92965109b303439419bc6e7c2a896..1550e56ab57d54b179ebe5cbd60db1660bb0bd2c 100644
---- a/sound/soc/mediatek/mt8188/mt8188-mt6359.c
-+++ b/sound/soc/mediatek/mt8188/mt8188-mt6359.c
-@@ -188,9 +188,7 @@ SND_SOC_DAILINK_DEFS(pcm1,
- SND_SOC_DAILINK_DEFS(ul_src,
- 		     DAILINK_COMP_ARRAY(COMP_CPU("UL_SRC")),
- 		     DAILINK_COMP_ARRAY(COMP_CODEC("mt6359-sound",
--						   "mt6359-snd-codec-aif1"),
--					COMP_CODEC("dmic-codec",
--						   "dmic-hifi")),
-+						   "mt6359-snd-codec-aif1")),
- 		     DAILINK_COMP_ARRAY(COMP_EMPTY()));
- 
- SND_SOC_DAILINK_DEFS(AFE_SOF_DL2,
+The recalc_rate clk_op is telling the framework that the clk is at a
+different rate than is requested by the clk consumer _and_ than what the
+framework thinks the clk is currently running at. The clk_set_rate()
+call is going to attempt to satisfy that request, and because there
+isn't a determine_rate/round_rate clk_op it assumes the clk can't change
+rate so it looks to see if there's a parent that can be changed to
+satisfy the rate. There isn't a parent either, so the clk_set_rate()
+call fails because the rate can't be achieved on this clk.
 
----
-base-commit: b852e1e7a0389ed6168ef1d38eb0bad71a6b11e8
-change-id: 20241203-mt8188-6359-unhardcode-dmic-ba7649f8a72b
-
-Best regards,
--- 
-Nícolas F. R. A. Prado <nfraprado@collabora.com>
-
+It may work to have a determine_rate clk_op that is like the recalc_rate
+one that says "this rate you requested is going to turn into whatever
+the hardware is running at" by simply returning the rate that the clk is
+running at.
 
