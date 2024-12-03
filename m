@@ -1,81 +1,89 @@
-Return-Path: <linux-kernel+bounces-430362-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430363-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 352F79E2FEE
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 00:35:15 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53FA69E2FF0
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 00:36:40 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E164161BF3
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 23:35:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E427D283473
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 23:36:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 871D61FA177;
-	Tue,  3 Dec 2024 23:35:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF61F205AD5;
+	Tue,  3 Dec 2024 23:36:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HXCi/ww/"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DyQrCnB2"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D38C1FA84F;
-	Tue,  3 Dec 2024 23:35:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E89801DD0FF;
+	Tue,  3 Dec 2024 23:36:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733268910; cv=none; b=Ll/4T/Gg5O6k3Q/yEeScrPXBucHVQXFaqJaEevnaHNjaGNWKHw/267nHswWFsMw2uxiSDn4PnaoR7b4/hKCnPlPvas147V+uiQM09yfIMu/wWcPio3UKvX7fqIe+WWZWsrf54TpmsGobJdkzBwLs0pil5qvxvmfSULPHAWNOS3E=
+	t=1733268996; cv=none; b=T/LnYBI+hJx4myPxlH7pm76KX+BIHMCz4jA0Cd9RcQmQkIvF7e1L8qLwcd/UoGFhwZVYAJ9UiJC22I7omDRZHGZnzXl2EsAchmRPUu7I/pd1tHVqlkmJN4pSZf0pYiQYZaAchBbjrvv7okEXFVPVzCG4zf+nKeWlYG4kKNMzAsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733268910; c=relaxed/simple;
-	bh=Is58uFdXkqEN8yblmrKf5YgZlnLeIDtbd3AgrLB1FNg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Eh3vMP6mB8Oy15u6ctQS3u33HBqN3/TF5gzAo4C2tdEF9MY47OBL4XORqITNCgsowUKtpgJdaLnLkSZq7Vh/HtoP8fOY8MOSI3NKFYYjOfw3L3SX4Mg2SqXgLGerIaWtyApDB4HttirFqYl74T2qIGLq3C6ucZq7QBaru8RxSu8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HXCi/ww/; arc=none smtp.client-ip=209.85.210.175
+	s=arc-20240116; t=1733268996; c=relaxed/simple;
+	bh=O9DB98ly00EVi5jqCLscYDWCYJVerIKnNbLNJ0XJlv0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KuLTnIB63aEjfSkWTaGJUpU3H4SmQPoot2Z58Ktl4AaFNpVwdumZpzMcY+IWekwbDnXHz/6xVy1zMrVtTXwRVh9zZyGzQsW8oVMB6unHi5UaECwHyBbiaOlVweTxpJZ3uoM2cJ8DX/UXkUQw7/6gPNMwLhbqNDYmlBWUQc0WnGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DyQrCnB2; arc=none smtp.client-ip=209.85.214.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-7252fba4de1so5393039b3a.0;
-        Tue, 03 Dec 2024 15:35:08 -0800 (PST)
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2156e078563so27201845ad.2;
+        Tue, 03 Dec 2024 15:36:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733268907; x=1733873707; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1733268994; x=1733873794; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=RN+w/AnDTOQLBmTcQCYhikmp2ylyG0FJde4LA4/pRHI=;
-        b=HXCi/ww/PoMi7X1homutYXHE+oFtAsTdRTaNRCX3BQCGgh7u+lkD44gaYQo2S5XprV
-         Q0V6+wcXiQVKAnXFA78jsxpMYfJktnw7bPzzy+fqwCletbammZBMBqmkXdsvLdrGeo3L
-         fJk2XYcVf4Dorz7Su8XuW00DtWuSMdJpGqKFjvWu1CFqY71MsmbZvFYu+hwo6GfCo24v
-         MzoZpKBwhA4ja/RyINBZ5BnVsKbfIOX5pqOSqxfhL92LTacee3E1QOkrsQCGCIb/dsf6
-         G3SZe93C0jmay8Qp6Am2gM15wMK0P9EPn3LuvlKHXo7X9awePGPYJMsd609NsH5GyK3a
-         vWFw==
+        bh=Pc5TgHTZwt6LxhA2uVCI7tpp7Tqag/4j85Yn1WwfR0E=;
+        b=DyQrCnB2AQ+TvYI2QxiatN6TQxs1y1F3Zhbr9z8IOGwsVXWVug3oUm4pXSEpf76D0x
+         We+RSOo2Of7emjtiqSGkoxCKSpZW9oK9g/vVyW4rJACSIQmW2NPMBZrzxx56ivSUz1JW
+         /8VgfX9JX/WWv77LeO0oog/0RiYocQvPPerLFJYerG61pOd8/uBt7dgv+DFRv5cayX/8
+         nMbpxNloqNI1/gGJmV6nZs9e72h8s5cwptb6f1UAkHUDmq4DVSmum9QuD23eXJt1zZvT
+         +s8gu/3gU7fKVBBehES7h/HrT+KfdbpHVmdjdS1TbejaSXCzYZ7SKYQ0Fj+rT6h1+lEd
+         S43A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733268907; x=1733873707;
+        d=1e100.net; s=20230601; t=1733268994; x=1733873794;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=RN+w/AnDTOQLBmTcQCYhikmp2ylyG0FJde4LA4/pRHI=;
-        b=skJSpXr8WteB1uZ8+I7RYXCzZ9MIpZOyBETTXzDgeLSNrQErXbe6YWmlEt6slSYlZ4
-         /Mp7epH1T5s0ToUVwaeQysFQM5BTczq80DzELDuVF2CnxMnSuwgKioVTHmkDfh3hiSnC
-         uDDYmPmoygd3FxBN1loZ419A4FwwkVFxsTuED7uoVhdmbfnuIYQsqAJNb5WFHg1qWebf
-         ZG3qU+HrLyhkUxGuojlQxTL/fFmrHBX1iRSYb+AnHG3BtsgE/Qb/gMASRNKaux2uyY0B
-         R0lC70GzCxYofpQCwVjyhUkElmRJZUZQ53yXFbmX9BZYPOuJl3anyJoxxbe/aFL4RGac
-         o0gQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVmimrKg0VNBhW3Y0buSSuagDDFpWqhPXTtXxFbQHYw5Egf7iv/UpkQNg7RS9mJH1SG74WD/wNt9cQ4epU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7tSgJu6x550n9l1ujoCWCCJSTOepCu7Xsbvu/3glZzh0k/rZq
-	IodHOYMxiH/CbnIdccjlB6zDVSkYdCD6jMP+lnkNzuLeeM7/Nwa6PFHLQmy610M=
-X-Gm-Gg: ASbGncs96DQ9uAB+OBLYo9nzelEWG0VRGFHFczXBX0tC5+KiDqWgzmtOmccU9fpNR0q
-	D9WBqKmNAvDfz+d50MXXpb8eT3+/UPscg4+rmH0Ungozhg8fVPsH/e0QNzP7XuuddrAkIj6h6YK
-	1z1zJHvmf0QXxV694lwoFPD5vQLrlJGNrfZzTowx8u/m4tP+yB87+QyJENbiVxmp8H73olWYDt2
-	lggxY0RaLGX5bbVv3/rvJkMmg==
-X-Google-Smtp-Source: AGHT+IH+aJe+KPtnseRrJSzCmkLhHWXBX93CUUQahnewy6Lp+NI8jS9q7JKCkwv0dstq61zgAXoJlA==
-X-Received: by 2002:aa7:88d3:0:b0:725:4615:a778 with SMTP id d2e1a72fcca58-7257fa5f065mr6201964b3a.7.1733268907521;
-        Tue, 03 Dec 2024 15:35:07 -0800 (PST)
+        bh=Pc5TgHTZwt6LxhA2uVCI7tpp7Tqag/4j85Yn1WwfR0E=;
+        b=Ti8WOQOVU0o5AfWWj6bRzMAMmWAZmEK3BySH3pBLPKt3AzRg1Oa8fhKJn8QvQxQRUI
+         BX1rQYKM02vsPVglHnfRYOgjT42yVUWdi3lIJQNjqLpzmvMWRMCCTtOqK5OQh05O30zm
+         kdhexzh5+97ulV94awMgHJtUBeYNKCEJJ4lpRLXcMiIhsBWAk1gbiAszq/9iBWpa5k4X
+         FWhKzULTTl7E5tZqZ2qa7MfRwZitpxBX0+fuRrJLBoOUrFlyue2hrcYIyXe9eG70Xa7L
+         3GcEbmOKYk4UwsubSgoMlQlpD+n65TedX5Z3HxqTzNH/fPmDfwb1p1Vt/ZCOJo6LQQ7U
+         PgbA==
+X-Forwarded-Encrypted: i=1; AJvYcCU28PgmqWsnNSVQ76K85Y9H4O3uOwcQCnnzEdNleddxbU2iQLmY6pi92DM65HSgEkzSZj1sk9MpaCZl@vger.kernel.org, AJvYcCXkd8bX+mlaLr7uSMV5PIB+Kx9xdHpIExxSynE6PS2yl6BZNE7rUjsG678MOOlttN971kXXdv8kMYCpo4MH@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWiPaJ12F6SVzVCDgt3/1mJEEU2CMoiTPwYOOgN+pJaJF2S1bH
+	CUOsX5zINZTYcktaXnCN5cXlEcENtdHBI+VqRF3WKdFrocS7uOKo
+X-Gm-Gg: ASbGnctjj0y5QiXa4jKJlVGKWewKuzxfbM+JZNvPEqmlE8HU6dLidMC8J4Ni1FWfINt
+	i5baMsqqAl/gtQ8uEx/eMNxdenywif9KWiwLLhqA2HWHC/3ZdXX0m+1r3jFxTinRMQ+tgtdwxqD
+	5XQqjpOtvEjlCE3aH7cV09ABWojEood3W3IXr/7LqIYjeXTh8qnVgL/zLPrAlcciCmvdbBymL7s
+	JJUxTU8yQSRC0Mhwjrxv0r9XQ==
+X-Google-Smtp-Source: AGHT+IHf1rNluLIVYS/a49eRccOObI5iM0YG6/dTrhTZp7oNxYqcMIrUbYetBc5idn9jC/IMI8gNOg==
+X-Received: by 2002:a17:902:dac5:b0:215:772c:fa6b with SMTP id d9443c01a7336-215bd241a4amr48023815ad.40.1733268994177;
+        Tue, 03 Dec 2024 15:36:34 -0800 (PST)
 Received: from ryzen.lan ([2601:644:8200:dab8::a86])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7254184ad5csm11035838b3a.199.2024.12.03.15.35.06
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-215964b6b76sm40401725ad.191.2024.12.03.15.36.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Dec 2024 15:35:07 -0800 (PST)
+        Tue, 03 Dec 2024 15:36:33 -0800 (PST)
 From: Rosen Penev <rosenp@gmail.com>
-To: platform-driver-x86@vger.kernel.org
-Cc: Hans de Goede <hdegoede@redhat.com>,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+To: linux-arm-kernel@lists.infradead.org
+Cc: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	William Zhang <william.zhang@broadcom.com>,
+	Anand Gore <anand.gore@broadcom.com>,
+	Kursad Oney <kursad.oney@broadcom.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	=?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
 	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] platform/x86: intel: int0002_vgpio: use gpiochip_get_data
-Date: Tue,  3 Dec 2024 15:35:05 -0800
-Message-ID: <20241203233505.184612-1-rosenp@gmail.com>
+Subject: [PATCH] arm64: dts: bcm4908: nvmem-layout conversion
+Date: Tue,  3 Dec 2024 15:36:32 -0800
+Message-ID: <20241203233632.184861-1-rosenp@gmail.com>
 X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -85,36 +93,42 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Instead of using container_of, we can pass the pointer to
-gpiochip_add_data and use it.
+nvmem-layout is a more flexible replacement for nvmem-cells.
 
 Signed-off-by: Rosen Penev <rosenp@gmail.com>
 ---
- drivers/platform/x86/intel/int0002_vgpio.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ .../dts/broadcom/bcmbca/bcm4906-netgear-r8000p.dts   | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/platform/x86/intel/int0002_vgpio.c b/drivers/platform/x86/intel/int0002_vgpio.c
-index 0cc80603a8a9..7ce0774b3896 100644
---- a/drivers/platform/x86/intel/int0002_vgpio.c
-+++ b/drivers/platform/x86/intel/int0002_vgpio.c
-@@ -102,7 +102,7 @@ static void int0002_irq_mask(struct irq_data *data)
- static int int0002_irq_set_wake(struct irq_data *data, unsigned int on)
- {
- 	struct gpio_chip *chip = irq_data_get_irq_chip_data(data);
--	struct int0002_data *int0002 = container_of(chip, struct int0002_data, chip);
-+	struct int0002_data *int0002 = gpiochip_get_data(chip);
+diff --git a/arch/arm64/boot/dts/broadcom/bcmbca/bcm4906-netgear-r8000p.dts b/arch/arm64/boot/dts/broadcom/bcmbca/bcm4906-netgear-r8000p.dts
+index 999d93730240..a5f9ec92bd5e 100644
+--- a/arch/arm64/boot/dts/broadcom/bcmbca/bcm4906-netgear-r8000p.dts
++++ b/arch/arm64/boot/dts/broadcom/bcmbca/bcm4906-netgear-r8000p.dts
+@@ -144,16 +144,20 @@ partitions {
+ 		#size-cells = <1>;
  
- 	/*
- 	 * Applying of the wakeup flag to our parent IRQ is delayed till system
-@@ -211,7 +211,7 @@ static int int0002_probe(struct platform_device *pdev)
- 	girq->default_type = IRQ_TYPE_NONE;
- 	girq->handler = handle_edge_irq;
+ 		partition@0 {
+-			compatible = "nvmem-cells";
+ 			label = "cferom";
+ 			reg = <0x0 0x100000>;
+-
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
+ 			ranges = <0 0x0 0x100000>;
  
--	ret = devm_gpiochip_add_data(dev, chip, NULL);
-+	ret = devm_gpiochip_add_data(dev, chip, int0002);
- 	if (ret) {
- 		dev_err(dev, "Error adding gpio chip: %d\n", ret);
- 		return ret;
+-			base_mac_addr: mac@106a0 {
+-				reg = <0x106a0 0x6>;
++			nvmem-layout {
++				compatible = "fixed-layout";
++				#address-cells = <1>;
++				#size-cells = <1>;
++
++				base_mac_addr: mac@106a0 {
++					reg = <0x106a0 0x6>;
++				};
+ 			};
+ 		};
+ 
 -- 
 2.47.0
 
