@@ -1,131 +1,96 @@
-Return-Path: <linux-kernel+bounces-430077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCA009E2DCA
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 22:06:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 403F19E2C5D
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 20:51:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 397FAB2BE9A
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 19:50:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05B9D282ABE
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 19:51:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8DEB202F8C;
-	Tue,  3 Dec 2024 19:50:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE577204087;
+	Tue,  3 Dec 2024 19:51:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dPimEKq5"
-Received: from mail-ot1-f44.google.com (mail-ot1-f44.google.com [209.85.210.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ErvReudg"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B20084A29;
-	Tue,  3 Dec 2024 19:50:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A39E913DDAA;
+	Tue,  3 Dec 2024 19:51:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733255439; cv=none; b=UnMRRE/ahIfOFt8kqf3+qe6DDrIB1k2nnfoDbo/iP9qZcEl0efywo8mH/uLmYaIv5EHbo+T7VFVRusi4jLHwPL6NwDWe7egrjELJ44eonozpPmr7SmF8TRnaFaJohBgSZuKE7aQ8ED2ux4M77rgAySh5pwRknUfbzv29YlVbwGE=
+	t=1733255488; cv=none; b=MEfwRJ44ZWpi/YznfpGX1fQdCeBnpNkA+hR/ZnBvrVEZR0YlE7X26TssZcQgiQo5PK6t8Tzxv7s+FxQ2iBTGvY4mXrULb9Rn35KBc/ih/4cxokhCbHAQgKSgucCPnpybMszX7gviqdewrO4wsTmhM6X+FjOc4Yj1fxQT0LkwBdU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733255439; c=relaxed/simple;
-	bh=kFlYwn6ayP5qqBDY6UmZrLnFtOzph21tXcwoPje9qE0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KuxOlJOH1q/J3TPoM6Tko9VXzDeey01Xl2dOBDVzAXws2b596N3R+sR2osgYAjteMJsVLMndMk8q5UfUWRpg46sPXY457+REGAZ6070TSEeJKiJ40xnak0MEG8iRpv7YN1CZDOvx9Xmqys1J2hCw/juxcwsmNOHC93dbRE9Zyuo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dPimEKq5; arc=none smtp.client-ip=209.85.210.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f44.google.com with SMTP id 46e09a7af769-71d4994dfbaso87912a34.0;
-        Tue, 03 Dec 2024 11:50:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733255437; x=1733860237; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ifgqa+vTgRi8G8JNmUoN0vZKwQw99/lv6G+n2Nugids=;
-        b=dPimEKq56111BDbvLE+MGdK3GwdK9p0l+SZ52TmorOfxISqLFzDygFXA3HFZLgra9e
-         dI791q9qQFzrTFmZ/4sZ3Uoqkxnt9hrVwxw/XpDz5BTxC2eieIqUuVi7s/Iw+9OwFLUV
-         e5Hasbc/iYv3GArgxqzWVDKHqfm+HMzzaMk3b2z40H37yd0mEK5oOybkxBYwQqa/52q+
-         DRCaNeRp96ENLWNz3ybA4mUe95hrAQEDDzNFbnI/5WZ4UqWoEH07vN5b7gqpCdxlCvE+
-         2dOFQR9rr3DGMNi4/qtfB/HNeU3KtHnOeh33GLZLXlfprX8X97RbnvukXrJ+WfZ6aQ3v
-         Kdkg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733255437; x=1733860237;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Ifgqa+vTgRi8G8JNmUoN0vZKwQw99/lv6G+n2Nugids=;
-        b=hY0GC3CdI8CSKjIgG0T8f0q8tFX5zelRoJJZzoTpegGAQhCmCuBFM/1bPok3mBtd4l
-         eAp9GdpPl49sQ1CP1jXgXhl/uE+FcJw7ZU21Adatz7gf6k610GhWVUWWCsccmZVvDHl2
-         JBP4aKB4Mo79QcIPaYW2jWGf7DZzRg6MyvC2QzucAyiTeK1CgSdgZvDGjHeyPN8e0Cso
-         2NDkWkwBu70lCZHcGM7Qxk/ozAHXjD0pmJuNlJiIsdL361o/N2WSUeVbP4RwFehLy0sM
-         9hQwmFaI10T59u5lhKGpQwv2mYSYs9kXb9pk0xztY2qBQ4olXwxqViOtv4Ws6f3bIqkX
-         KsUg==
-X-Forwarded-Encrypted: i=1; AJvYcCWDEIHCCxG3mrMODS/Hb5yCZcDRgj9+t6jjQnWTTd0k1iVJiY4vFQ3Vzdk5B5neh+xV3Pk0VaPm1ZYIEhI=@vger.kernel.org, AJvYcCXdSSmrTM3kWOfEycKWBQ9pydWlMd+NlxE8BsMAxEPN8B85emwB65IxWOzRY6H8hnG7hTqOPqer@vger.kernel.org
-X-Gm-Message-State: AOJu0YzujOLiapAseSQZ38enFzMkrFY5i4NlMpkjz5XjAAjoai6/z+dU
-	uKbDLnyPTIRxBz5z8ETuxSHdHA7S/ExQk4awmNFaRbvv7mhvu2vtBlBUELTBAzxK70/RDTP3VhQ
-	FS4NjfUTU6fFOhG6mA71viK9k1LW7Irzn
-X-Gm-Gg: ASbGncsdggmJDqZstQ0zE2FaKe16z2Lov31igIuPGpgRbcbAyxqt7WyCuy/MfFoepwi
-	DF09NBZlnSBTb1Tl+T6xPij5REe9t8DORM83zVXhkxOgSZSAcKugVa17f9XvR
-X-Google-Smtp-Source: AGHT+IHChxvWasxRatX3dpdatcYjYbz8GgvAB9LdIpIWz9KT8LLHO03VZpXRHfyCW77TBTi98NMNt2Aclsjno0yFydA=
-X-Received: by 2002:a05:6830:630d:b0:71d:4d35:313b with SMTP id
- 46e09a7af769-71daddab700mr2628814a34.1.1733255436713; Tue, 03 Dec 2024
- 11:50:36 -0800 (PST)
+	s=arc-20240116; t=1733255488; c=relaxed/simple;
+	bh=jhDHHtOwTo80jIZU+Onb0RlkAEK7W9fBks6zoN161z4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=l07DpX6pXPIloIDDHAslCnFWaJ3McQi8HsXkQ+mMu0SpO2SXmkv18lck1KRDuhzY71nNFoxqzbhZDZe+zqjVHVETraDsQFe38aoccTXa3JiTepAd6pVWDk8bwSzZq0quwmcvIjXQPMoeibqoPZQpHyIeGBfaG+qe95F91bvP6Lg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ErvReudg; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=Content-Type:MIME-Version:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:In-Reply-To:References;
+	bh=jH4yBcVS3NQ7YkkW1qJk55K1usaBZKjmOXquBiHvrjw=; b=ErvReudgtvG3n8VmPJznERacAO
+	gk4Pf7scNBorVKH+1cqmdv4JTXWzGWn6Z7UR3F+AKQQdw5sW9CvvuH/qyFrioEEHA9EXYAkTIpFlQ
+	4WwWrH5W42VQ9qww9hisV7KI/8I3kNMbEaIQ12EtZV1tXER59AzgH9QeQfKzG1jPWWvSGwNHrkhy+
+	jqL9McfbrBzW114zT7FxBIpz7GluKjAaN93e/oqUNJKo71VCXXzMQiSsU3aNx/CW9v8HgxwgesSiP
+	NGnPSE6o75ToxpjENiORz5dboTDi0j4hnCTHJ0gawMr82M86Twip69sZ+Wpt2o10YUCyVFDXRsfdc
+	dil90xNw==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tIYvb-0000000A9oE-25ro;
+	Tue, 03 Dec 2024 19:51:23 +0000
+Date: Tue, 3 Dec 2024 19:51:23 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org
+Cc: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linux-s390@vger.kernel.org
+Subject: Removing page->index
+Message-ID: <Z09hOy-UY9KC8WMb@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1733216767.git.jstancek@redhat.com> <20b2bdfe94fed5b9694e22c79c79858502f5e014.1733216767.git.jstancek@redhat.com>
-In-Reply-To: <20b2bdfe94fed5b9694e22c79c79858502f5e014.1733216767.git.jstancek@redhat.com>
-From: Donald Hunter <donald.hunter@gmail.com>
-Date: Tue, 3 Dec 2024 19:50:25 +0000
-Message-ID: <CAD4GDZzY8YXY0Oszb0NP_=AwSEa-nEKxDwVKY3T7eqoo9uLkaA@mail.gmail.com>
-Subject: Re: [PATCH 1/5] tools: ynl: move python code to separate sub-directory
-To: Jan Stancek <jstancek@redhat.com>
-Cc: kuba@kernel.org, pabeni@redhat.com, davem@davemloft.net, 
-	edumazet@google.com, horms@kernel.org, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Tue, 3 Dec 2024 at 09:27, Jan Stancek <jstancek@redhat.com> wrote:
->
-> Move python code to a separate directory so it can be
-> packaged as a python module.
->
-> Signed-off-by: Jan Stancek <jstancek@redhat.com>
-> ---
->  tools/net/ynl/Makefile                    | 1 +
->  tools/net/ynl/generated/Makefile          | 2 +-
->  tools/net/ynl/lib/.gitignore              | 1 -
->  tools/net/ynl/lib/Makefile                | 1 -
->  tools/net/ynl/pyynl/__init__.py           | 0
->  tools/net/ynl/{ => pyynl}/cli.py          | 0
+I've pushed out a new tree to
+git://git.infradead.org/users/willy/pagecache.git shrunk-page
+aka
+http://git.infradead.org/?p=users/willy/pagecache.git;a=shortlog;h=refs/heads/shrunk-page
 
-Perhaps we could have a symlink to cli.py from the original location
-for compatibility with existing in-place usage. Same for ethtool.py
-and other user-facing scripts.
+The observant will notice that it doesn't actually shrink struct page
+yet.  However, we're getting close.  What it does do is rename
+page->index to page->__folio_index to prevent new users of page->index
+from showing up.
 
->  tools/net/ynl/{ => pyynl}/ethtool.py      | 0
->  tools/net/ynl/pyynl/lib/.gitignore        | 1 +
->  tools/net/ynl/{ => pyynl}/lib/__init__.py | 0
->  tools/net/ynl/{ => pyynl}/lib/nlspec.py   | 0
->  tools/net/ynl/{ => pyynl}/lib/ynl.py      | 0
->  tools/net/ynl/{ => pyynl}/ynl-gen-c.py    | 0
->  tools/net/ynl/{ => pyynl}/ynl-gen-rst.py  | 0
+There are (I believe) three build failures in that tree:
 
-The documentation build depends on this location. This patch is
-required to fix it:
+ - fb_defio
+ - fbtft
+ - s390's gmap (and vsie?  is that the same thing?)
 
-diff --git a/Documentation/Makefile b/Documentation/Makefile
-index fa71602ec961..52c6c5a3efa9 100644
---- a/Documentation/Makefile
-+++ b/Documentation/Makefile
-@@ -104,7 +104,7 @@ quiet_cmd_sphinx = SPHINX  $@ --> file://$(abspath
-$(BUILDDIR)/$3/$4)
- YNL_INDEX:=$(srctree)/Documentation/networking/netlink_spec/index.rst
- YNL_RST_DIR:=$(srctree)/Documentation/networking/netlink_spec
- YNL_YAML_DIR:=$(srctree)/Documentation/netlink/specs
--YNL_TOOL:=$(srctree)/tools/net/ynl/ynl-gen-rst.py
-+YNL_TOOL:=$(srctree)/tools/net/ynl/pyynl/ynl_gen_rst.py
+Other than that, allmodconfig builds on x86 and I'm convinced the build
+bots will tell me about anything else I missed.
 
- YNL_RST_FILES_TMP := $(patsubst %.yaml,%.rst,$(wildcard
-$(YNL_YAML_DIR)/*.yaml))
- YNL_RST_FILES := $(patsubst $(YNL_YAML_DIR)%,$(YNL_RST_DIR)%,
-$(YNL_RST_FILES_TMP))
+Lorenzo is working on fb_defio and fbtft will come along for the ride
+(it's a debug printk, so could just be deleted).
+
+s390 is complicated.  I'd really appreciate some help.
+
+The next step is to feed most of the patches through the appropriate
+subsystems.  Some have already gone into various maintainer trees
+(thanks!)
+
+
+There are still many more steps to go after this; eliminating memcg_data
+is closest to complete, and after that will come (in some order)
+eliminating ->lru, ->mapping, ->refcount and ->mapcount.  We also need
+to move page_pool out into its own structure.
 
