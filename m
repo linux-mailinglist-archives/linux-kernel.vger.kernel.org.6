@@ -1,177 +1,92 @@
-Return-Path: <linux-kernel+bounces-430345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDE189E2FBB
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 00:19:35 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3FBB9E2FC4
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 00:23:13 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B5D371650D1
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 23:19:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84C532831D1
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 23:23:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B107620ADC6;
-	Tue,  3 Dec 2024 23:19:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B66C1208983;
+	Tue,  3 Dec 2024 23:23:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WNw9x4KO"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XtOQHxoP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 709F7208983
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 23:19:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2031A1DE2B2
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 23:23:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733267967; cv=none; b=bolFOpJR68maevZeNlHxMZhqVZqgkY+Xjt5FFe5X4bStB2ZTB18M0DL2+IrbvQ9yFAagXcb5YYUfDSEMwnYT3md+kC1WjHUQfhhzleKWT/Vu+dw6IfFtF7MtCZ60LEVjL+6OfmTs09FKSQ/Yf89pJKsMd7BANCWOkBcevZmsnBo=
+	t=1733268188; cv=none; b=cJExur9KzO8wqqwPKlqsQ6pu+AjHFYRrCUDu2gAZNzyIP+6AMHtCJygCi6jpn7Bk8T6E6iBDxuHge+ogg0ugXqP1qlLLuGll9p2pY7ImH+RZwFSKzMo54pf0/o4NzQztJnr41Z1BhT8zV9IsqtHPTmhEI1DKHUBVl7DKJzdb98U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733267967; c=relaxed/simple;
-	bh=6LoedgRoxKbLS6I0Jr2Y+fFTtC2cwrXs4o1BOPkflQE=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=pLLAXtKjx1x/1xn+9pthjVD+9tntQQTExgHqcdE505eHtdqcmxXMNiEHrUBSx8tyaLZzKykkWhq7oiE0YhDdk1bB6h92fR1iSNGF4MFhzlmtZFmZP11L0J6VlEUMpICmLvMg3OKfHhYVickeRx2kO6wCB6kE+kBhCYHRG/RmRcA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WNw9x4KO; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2ee6b027a90so5751822a91.1
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 15:19:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733267965; x=1733872765; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=OHr8G/o42AeDVOD1/MrSjm2WXYW40d8E8bqJA870ZHc=;
-        b=WNw9x4KOOKLlbM1w+liabvzdQfaQY88QLYql3Oji8v5UTyQmTS0OK2K2VRwJtvrxix
-         NtxRVYHOGiVGwcrjwXWucBGX/GJASS6uGVU677/64bPUDEhMu7Jsfo/wH5Oqd4788SQ7
-         xaOxfMgWXRZDRdln/ALDU1EWfAvhDPdyamoigFggd/OG7QM+o9MEBbBXrfS1DE+EJcBu
-         PYlvOZ20lqaE+thQSu2cqvkr37fpx3iNrOLRt7J0JtV0ZRvu5C3xayFF4518wdkwqf4m
-         /2tnGe7aQ8Lij7NwqLE84cBCzLZPcCN4/jbZwAMO53A8mtAgBFnlUUmZVXng62bLIr5t
-         a9GQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733267965; x=1733872765;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OHr8G/o42AeDVOD1/MrSjm2WXYW40d8E8bqJA870ZHc=;
-        b=BwpMYfCKaPC2I385K0edueXdV5yY35F7o2BvHWrtULaoFwVAWi5vw75pnHq4Mdlhgq
-         3VsnoUzUJvoBAzvJJH7EIYfCqFcR1BtC6pBy0uNJIJjIv3w3/+GrA/z8gDh3jPCe10bJ
-         B032UlYX2nFE/KloT54HpLKtK5sbFLu6zNV4MFrMtyK+tNFi8T0Kr321srbp2tFcof8l
-         U7ykOfKPoxd1DQYq1aoSNnAn39Sn92gefzrhcrr1hgkXyglvVEAk4bQbqbHC5vO4zw57
-         2COt4IXhRpCYbn//zn9NU6oIBE3bBKhGKbkKGd660AASOhn2gC7Fkzvaf5y+wvmNFNQ0
-         6LVg==
-X-Forwarded-Encrypted: i=1; AJvYcCUnxxeOjTX21XS57jvwZYJWn2sadJMKaaLFK/EcCUV7mAiQZ6tU3sjrkUEDG7WZGxk3vH2ov7zmmUgVST0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUUIPeFoDvaDB0DyH1wFQyxz9x/KxsbcBRgsF5fhGrF43QR4wL
-	iPgWPIkKNgkFwqum73aMW8KKCp3W8hS8W7Si1/6/wCXyNfS8vvdLs44dcnDQtXQjPRVGlcKlZDL
-	LIw==
-X-Google-Smtp-Source: AGHT+IEWC65x0FRBHA/jPbLxpwMAa/0mA0vx1CB4p5bkmbcIagVt0ag62+9DkfkKAECyWflC0sTE+7wlNR0=
-X-Received: from pjyd15.prod.google.com ([2002:a17:90a:dfcf:b0:2ea:5dea:eafa])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:224a:b0:2ee:fdf3:38ea
- with SMTP id 98e67ed59e1d1-2ef0125b2a3mr5714195a91.23.1733267964831; Tue, 03
- Dec 2024 15:19:24 -0800 (PST)
-Date: Tue, 3 Dec 2024 15:19:23 -0800
-In-Reply-To: <20241121185315.3416855-1-mizhang@google.com>
+	s=arc-20240116; t=1733268188; c=relaxed/simple;
+	bh=h0ExklUhCNLmdVoamLwWKMNar8UM8nhZLfksrgksxEE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YVqa7cwXSX704LNw0kS30dLhd9X3272w6V6XL5Bh3lAxchxHFyY61jpZH1Gh6ccljOlcYJmIA+rYVE9j0fEJO3nvm6OeKpBr4dYu83Mlnp8c223z6/VhBrANKFaxXNr+NAgId3iX87M5lBik+jT4X+IhHELD/v5+kDVBjVO+QNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XtOQHxoP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71BC3C4CEDC;
+	Tue,  3 Dec 2024 23:23:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733268187;
+	bh=h0ExklUhCNLmdVoamLwWKMNar8UM8nhZLfksrgksxEE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XtOQHxoPF5q0OjK1bU4HH1dO5hTU4IldGn3m+5BLGTOlCvfNI4bjYsycpUGMgrdTp
+	 SMooGMasmh5JL3a3v18lkdJfmJjQlpIdDGBCJ42sMGbpK8bcr+lafvOV5T6p4PDWzI
+	 aM2xk81nDXfHaCUu7AuC09ElTNT+jsT5Q53W1peXMooCcEsfpgh0pALUAI4A6geYNj
+	 BiinHKej5jn8J1NEiYecEy0E63LjTz9a2t0PdhM1DPQk6Jg2oIjoI7naARaGeyKpSV
+	 2QqWf11A9UiZTYnrykJ+75Iobs9FszX8wtoNXcP/kGSYTkUj+VqpAqYP0CObfQSBEQ
+	 Kh1Z3x/4cS9xg==
+Date: Tue, 3 Dec 2024 13:23:06 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Changwoo Min <multics69@gmail.com>
+Cc: void@manifault.com, mingo@redhat.com, peterz@infradead.org,
+	changwoo@igalia.com, kernel-dev@igalia.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/5] sched_ext: Implement scx_rq_clock_update/stale()
+Message-ID: <Z0-S2vvHF0kiEKHi@slm.duckdns.org>
+References: <20241203142802.36305-1-changwoo@igalia.com>
+ <20241203142802.36305-2-changwoo@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241121185315.3416855-1-mizhang@google.com>
-Message-ID: <Z0-R-_GPWu-iVAYM@google.com>
-Subject: Re: [RFC PATCH 00/22] KVM: x86: Virtualize IA32_APERF and IA32_MPERF MSRs
-From: Sean Christopherson <seanjc@google.com>
-To: Mingwei Zhang <mizhang@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Huang Rui <ray.huang@amd.com>, 
-	"Gautham R. Shenoy" <gautham.shenoy@amd.com>, Mario Limonciello <mario.limonciello@amd.com>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Len Brown <lenb@kernel.org>, 
-	"H. Peter Anvin" <hpa@zytor.com>, Perry Yuan <perry.yuan@amd.com>, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
-	Jim Mattson <jmattson@google.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241203142802.36305-2-changwoo@igalia.com>
 
-On Thu, Nov 21, 2024, Mingwei Zhang wrote:
-> Linux guests read IA32_APERF and IA32_MPERF on every scheduler tick
-> (250 Hz by default) to measure their effective CPU frequency. To avoid
-> the overhead of intercepting these frequent MSR reads, allow the guest
-> to read them directly by loading guest values into the hardware MSRs.
-> 
-> These MSRs are continuously running counters whose values must be
-> carefully tracked during all vCPU state transitions:
-> - Guest IA32_APERF advances only during guest execution
+Hello,
 
-That's not what this series does though.  Guest APERF advances while the vCPU is
-loaded by KVM_RUN, which is *very* different than letting APERF run freely only
-while the vCPU is actively executing in the guest.
-
-E.g. a vCPU that is memory oversubscribed via zswap will account a significant
-amount of CPU time in APERF when faulting in swapped memory, whereas traditional
-file-backed swap will not due to the task being scheduled out while waiting on I/O.
-
-In general, the "why" of this series is missing.  What are the use cases you are
-targeting?  What are the exact semantics you want to define?  *Why* did are you
-proposed those exact semantics?
-
-E.g. emulated I/O that is handled in KVM will be accounted to APERF, but I/O that
-requires userspace exits will not.  It's not necessarily wrong for heavy userspace
-I/O to cause observed frequency to drop, but it's not obviously correct either.
-
-The use cases matter a lot for APERF/MPERF, because trying to reason about what's
-desirable for an oversubscribed setup requires a lot more work than defining
-semantics for setups where all vCPUs are hard pinned 1:1 and memory is more or
-less just partitioned.  Not to mention the complexity for trying to support all
-potential use cases is likely quite a bit higher.
-
-And if the use case is specifically for slice-of-hardware, hard pinned/partitioned
-VMs, does it matter if the host's view of APERF/MPERF is not accurately captured
-at all times?  Outside of maybe a few CPUs running bookkeeping tasks, the only
-workloads running on CPUs should be vCPUs.  It's not clear to me that observing
-the guest utilization is outright wrong in that case.
-
-One idea for supporting APERF/MPERF in KVM would be to add a kernel param to
-disable/hide APERF/MPERF from the host, and then let KVM virtualize/passthrough
-APERF/MPERF if and only if the feature is supported in hardware, but hidden from
-the kernel.  I.e. let the system admin gift APERF/MPERF to KVM.
-
-> - Guest IA32_MPERF advances at the TSC frequency whenever the vCPU is
->   in C0 state, even when not actively running
-> - Host kernel access is redirected through get_host_[am]perf() which
->   adds per-CPU offsets to the hardware MSR values
-> - Remote MSR reads through /dev/cpu/*/msr also account for these
->   offsets
-> 
-> Guest values persist in hardware while the vCPU is loaded and
-> running. Host MSR values are restored on vcpu_put (either at KVM_RUN
-> completion or when preempted) and when transitioning to halt state.
-> 
-> Note that guest TSC scaling via KVM_SET_TSC_KHZ is not supported, as
-> it would require either intercepting MPERF reads on Intel (where MPERF
-> ticks at host rate regardless of guest TSC scaling) or significantly
-> complicating the cycle accounting on AMD.
-> 
-> The host must have both CONSTANT_TSC and NONSTOP_TSC capabilities
-> since these ensure stable TSC frequency across C-states and P-states,
-> which is required for accurate background MPERF accounting.
-
+On Tue, Dec 03, 2024 at 11:27:58PM +0900, Changwoo Min wrote:
 ...
+> @@ -2505,19 +2538,6 @@ extern const struct sched_class rt_sched_class;
+>  extern const struct sched_class fair_sched_class;
+>  extern const struct sched_class idle_sched_class;
+>  
+> -#ifdef CONFIG_SCHED_CLASS_EXT
+> -extern const struct sched_class ext_sched_class;
+> -
+> -DECLARE_STATIC_KEY_FALSE(__scx_ops_enabled);	/* SCX BPF scheduler loaded */
+> -DECLARE_STATIC_KEY_FALSE(__scx_switched_all);	/* all fair class tasks on SCX */
+> -
+> -#define scx_enabled()		static_branch_unlikely(&__scx_ops_enabled)
+> -#define scx_switched_all()	static_branch_unlikely(&__scx_switched_all)
+> -#else /* !CONFIG_SCHED_CLASS_EXT */
+> -#define scx_enabled()		false
+> -#define scx_switched_all()	false
+> -#endif /* !CONFIG_SCHED_CLASS_EXT */
 
->  arch/x86/include/asm/kvm_host.h  |  11 ++
->  arch/x86/include/asm/topology.h  |  10 ++
->  arch/x86/kernel/cpu/aperfmperf.c |  65 +++++++++++-
->  arch/x86/kvm/cpuid.c             |  12 ++-
->  arch/x86/kvm/governed_features.h |   1 +
->  arch/x86/kvm/lapic.c             |   5 +-
->  arch/x86/kvm/reverse_cpuid.h     |   6 ++
->  arch/x86/kvm/svm/nested.c        |   2 +-
->  arch/x86/kvm/svm/svm.c           |   7 ++
->  arch/x86/kvm/svm/svm.h           |   2 +-
->  arch/x86/kvm/vmx/nested.c        |   2 +-
->  arch/x86/kvm/vmx/vmx.c           |   7 ++
->  arch/x86/kvm/vmx/vmx.h           |   2 +-
->  arch/x86/kvm/x86.c               | 171 ++++++++++++++++++++++++++++---
->  arch/x86/lib/msr-smp.c           |  11 ++
->  drivers/cpufreq/amd-pstate.c     |   4 +-
->  drivers/cpufreq/intel_pstate.c   |   5 +-
->  17 files changed, 295 insertions(+), 28 deletions(-)
-> 
-> 
-> base-commit: 0a9b9d17f3a781dea03baca01c835deaa07f7cc3
-> -- 
-> 2.47.0.371.ga323438b13-goog
-> 
+Can you please separate out code relocations into a separate patch? Here,
+it's on the smaller side but patches are difficult to read when they're
+mixed up.
+
+Thanks.
+
+-- 
+tejun
 
