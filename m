@@ -1,76 +1,76 @@
-Return-Path: <linux-kernel+bounces-429333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D98B19E1AAC
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 12:17:15 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46AF39E1C06
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 13:22:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F63E286CE6
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 11:17:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B70A6B60F8C
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 11:17:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA2F61EB9F5;
-	Tue,  3 Dec 2024 11:13:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A02111EE01C;
+	Tue,  3 Dec 2024 11:14:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="Nx4o1wDE"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="It1J3/+s"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30A431EBA1D
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 11:13:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DABE1E47AC
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 11:13:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733224438; cv=none; b=l23Uow/J5/qiYExkzWXkkUmlcnxV2S3xvl2FSwHrhAxQW8CW3I37rC6rIzlO60QlEeUhCy8TyogxWlBZB7ON+Zp8JEdJMQW9ziResCEM2C7IuRVQs3rnKsl/4HM9zPWdxdCvvZYGFdrQXSI/mRhGNd3cr9Of9JqGXLaDCyVK/GY=
+	t=1733224440; cv=none; b=Vx5b3xfLPbD8QDbw5Aex50R2j93mOs789JmQ3vL08BGjh5X91/83h5Jnk0ostfJP9/KWY0bBaaJ7sVKXNQs8/CW4MbUrir4bMoyTKLDpi/2mzKDgVxQRhtDQ8e4i7KJovqSM5m4r6PILdW3kKciy4V9n2BZX0Pxhgcfy6mgQss8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733224438; c=relaxed/simple;
-	bh=0RWKxWCQeAUkrUJFrLhqBUBh6lxnKv7/MFVIEYtMO+U=;
+	s=arc-20240116; t=1733224440; c=relaxed/simple;
+	bh=hPzvAQBya4lMaHbeDMGEHEu0Sst46VpHxejcDLV1/YY=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=p0i/DMXWk3ZGTVbUZArJ+TXwni4RNuKFRG8/zRWdQRNega70WzvOt7iuQm7/tM5iBifnz86DraPFP1LPCd81Jf0feK15G/agR69FcQZMxADJ+gvl8NbR/nRlumr+Ca4TWDpvRUIps2jHp/6NQmUn3+YTuH3JLnCP1+qkFqDtjIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=Nx4o1wDE; arc=none smtp.client-ip=209.85.221.53
+	 MIME-Version; b=cT5AkmhHFdFbXR7i9DyXsEk+mlY825y0mqQgy4LaBU1oU557xHtYBD2E2knjOmXALa/w8R7GQDgYOavmEGXCrPD4hirNdt12WZL54yQw2bYl1iOdyXbDd4PAK54v0gF4Tb3ANJ/LO67Ku5PwcbcaU8pc2rSqEQstmgaLhdbInhA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=It1J3/+s; arc=none smtp.client-ip=209.85.128.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-385f4a4093eso1350491f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 03:13:55 -0800 (PST)
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-434a852bb6eso49489545e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 03:13:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1733224433; x=1733829233; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1733224437; x=1733829237; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=i9XAExanV+siqAAbgBdWw0e9Y1JvqrWgK8obB5pD8Sk=;
-        b=Nx4o1wDEcbhoSNmdPZiE7P7pEV4ju2GlNxz2KiS3SctIYgmE0C6CMSk3o1pCSsrj7m
-         clZXwyFZTxyBUh3sxNU1E7V+mr9LakWIZhyXa6dH4TNtRBqmFk/WEsEaooBqKmg52Qv+
-         63Zc0cZLAvGxTdRGpUHqYU0hsjpXHG3aMSmTdSzFhohpWjbMMU1tU7EiDi1u04sHQ49U
-         OC99MbMon+jRgN1dZte3iW2Ij+Za1WToExy7gs/l74FxFCLnChd6sODFPuWR7OXuxyMC
-         8fkfS7AfrwgNA5EeY9T4sreKlSzQd3VqsW/zArNHbIzNZ3Te2NUA3vvau/kgzHFhMLs3
-         b7wA==
+        bh=vuYmwt2mwWEd+Tu2KpQNpDTdmewly+5/W4Kvuhh8MtU=;
+        b=It1J3/+s9eSfgOa8xL59iWVGv+bPplYPchi3wNeRX2rnrYbTkBFFvQtNbDfm1r41OG
+         qgBVYtaUStEnB5rBO3lZRE2JNiqq/BrOXom1WDnToiQxwuP+th0L+oEeaEuz6BZtxlWQ
+         GAqrdY74ufxHua152q5gx1h0V/u2yPDuoCozhjPXuFj5YxlLGafPWd1XrJyX7U3nezW5
+         CTHDPFT1pdavJiWU2Khk+m6t02EbH9zCCuTWuAmUz4d7Zpo7VwRze2UVDrr6odo25X7T
+         GnlaqtR4KRk7r2WiViqaEkG8rJDo49sD7BFGDvlsLGyOUvyr7SOnUSvF/zgT017NrMi5
+         avig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733224433; x=1733829233;
+        d=1e100.net; s=20230601; t=1733224437; x=1733829237;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=i9XAExanV+siqAAbgBdWw0e9Y1JvqrWgK8obB5pD8Sk=;
-        b=IUCa/FAntCW3p7CS0cVHo58iCrdLgmdTyTnyt67vBUzq7WbGR5kFcUdwjidydiVxB/
-         CDNY5CnPBgQDVIeYxIwygAmdkHCvMSBu9hUxf+JEtwFDKkyqox/pke/DMgwHLSH1vr1Y
-         35AU29LNmirYTYqXekukH5kZQhTN281TLjpxqmOTmP929O3gnvS71UtkRRqhjI2TkePP
-         pYEnPHiJh4gZ+AG/wq/yZ4HmmMX6xN+fUOXQIkpxI1cigrF2eVF1lKnKYKeMwNUxyNC3
-         eUNbY9rcNC6AWfn/R3CFFbYqrxzKKLEh4AmPWG0e0pHVXjKhblGwAbh9NQkhKKSg+Mk2
-         R/6w==
-X-Forwarded-Encrypted: i=1; AJvYcCWJuOJRM9qeuQUMlg6Y/iTv14ci7lpwokdXmuKVgX7ClXHcAIFt9kHrsxUcF9FoALPry74Qt/SoZ7UkyLA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzI8TtTBYDWWW0njoJxFIXWE8iEb4YSJ+HVbYtrwYBVlKSMPY/s
-	nl9O3gSIRjBTb19i5mHwT5hiERcEg0X/RgrERDufMUqzYBV3WxHj9dVIQaHLZZM=
-X-Gm-Gg: ASbGncswo6WpjK/kTZ2fwLA7s37O2becKzGiSG5/0xUvhevTECBC835KbZPiISXirQF
-	BYZ+Wkzwsi9ZoKWP8vzUsUPugqyWnuktLqfub4JkaY+8Dn0gl7l+unAHC231OeUMrYfQ2v9uXVx
-	PpgoxTDorSLIXwlE08mmxThsLNpd6SJtvtbHbIYcx/ZpZb/3yzBHrJfi7NfyZ7WvcYcZ1QYZSmg
-	QC8rc2RxC1qWMS4lknL7D5iWSTKTbM4H8QTCncn9rilUiq9E/tR995K3nCINClsvvO7xwfSTlFL
-	tpbr
-X-Google-Smtp-Source: AGHT+IEKmVs+/nwio7D/PxwN9jwAmSI02uLtYHs9PSiGSHR3pj+ROWkZ8tyKGP6cC6ABLIzTcqNnGA==
-X-Received: by 2002:a5d:6dae:0:b0:385:f560:7924 with SMTP id ffacd0b85a97d-385fd3c696dmr1336591f8f.4.1733224433588;
-        Tue, 03 Dec 2024 03:13:53 -0800 (PST)
+        bh=vuYmwt2mwWEd+Tu2KpQNpDTdmewly+5/W4Kvuhh8MtU=;
+        b=tb+LYa8KIyVTyslL67FnVHhGPiOhYsIDDBv9r/X1/n5AL8H6djz4sO9S7TsBG3XN9B
+         lKLvHrc+Mve0XjnjuhWup2uVw72NmQhQCoD9QRY0r7o9FdrtOrJViKV7sz9/BKcD5m6f
+         7ziT3wwMR+liL9dI9EldeNMtJhMclgjuJTMx0xyqE145I9xf5UxOWsZTqHuxj4Mgj2kq
+         RXeaHRBUkozK1N22OobrDxzMjhSUatbws9CSlDAQy+fUBRBtRDokshg7jrcVADDG3YTG
+         rp8HCg5vqkxjebO4qfFlWOFpAKSrZphBr/BKYFqciWBQStJdQtgoJJCxcrzFZsyDH1Wh
+         bOlQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVd/iDpNWI5JXuJOcRjONL9A5t2ciIcvDmL1yqnJuH2pCg7ucO4xAqjPR0CUqcbgA2VQW41iGq7qIhGye8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/x+OBVp5OtEQsm0msMq6UeEMkitrAz9P3NUZSa4S8S45w009a
+	C4PzcTu+2hwpw1L5/TYzxsDxXCEDVq88tz2hFKRmbeRF7ZdIGcb1KHAc9DiwqIE=
+X-Gm-Gg: ASbGncu3qajtOKY+Ntq5ZT1ZhU88eS4+eLaenQSWg+GWnLf+wSSJQJQDzEJasfOsUw8
+	3g64JT7ptlOTtLjTGHaRHfqMYrQcIgMrEvqiyj8uluB8ValIMFHUKIQsMQ1T290XUQ7V/0Ip9bW
+	/P+FwgiyNmQh79k2nd7wuP9AHhtJPyDkq+ZHQnJn5er4TW4LLsvL5/GC7sPtUNm+Phouqfa0tCq
+	IyHmWXad8s0YCgYNfGOf/y+2bNG2/cFIbu9MxnIzR7ID/M5DxT6YaZ5z4IHNWQEe/BoiZq9Qqne
+	3sJj
+X-Google-Smtp-Source: AGHT+IHOuquR0Z2Y/9RwvEymwXXAAW6Jm4OPLCo5DQNmdYBocmhFqjdVsjkAP+GiCZweMjILCABwxQ==
+X-Received: by 2002:a05:600c:4710:b0:434:a30b:5455 with SMTP id 5b1f17b1804b1-434d0a239c3mr16423245e9.27.1733224435487;
+        Tue, 03 Dec 2024 03:13:55 -0800 (PST)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.161])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385e0117069sm11794315f8f.60.2024.12.03.03.13.51
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385e0117069sm11794315f8f.60.2024.12.03.03.13.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Dec 2024 03:13:53 -0800 (PST)
+        Tue, 03 Dec 2024 03:13:55 -0800 (PST)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: prabhakar.mahadev-lad.rj@bp.renesas.com,
@@ -91,9 +91,9 @@ Cc: claudiu.beznea@tuxon.dev,
 	linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org,
 	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH 13/14] arm64: dts: renesas: r9a08g045: Add ADC node
-Date: Tue,  3 Dec 2024 13:13:13 +0200
-Message-Id: <20241203111314.2420473-14-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 14/14] arm64: dts: renesas: rzg3s-smarc-som: Enable ADC
+Date: Tue,  3 Dec 2024 13:13:14 +0200
+Message-Id: <20241203111314.2420473-15-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20241203111314.2420473-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20241203111314.2420473-1-claudiu.beznea.uj@bp.renesas.com>
@@ -107,78 +107,28 @@ Content-Transfer-Encoding: 8bit
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Add the device tree node for the ADC IP available on the Renesas RZ/G3S
-SoC.
+Enable ADC.
 
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- arch/arm64/boot/dts/renesas/r9a08g045.dtsi | 53 ++++++++++++++++++++++
- 1 file changed, 53 insertions(+)
+ arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a08g045.dtsi b/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
-index be8a0a768c65..eb57a52d2086 100644
---- a/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
-@@ -87,6 +87,59 @@ rtc: rtc@1004ec00 {
- 			status = "disabled";
- 		};
+diff --git a/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi b/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
+index 2ed01d391554..57ebdfc858eb 100644
+--- a/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
++++ b/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
+@@ -94,6 +94,10 @@ vcc_sdhi2: regulator2 {
+ 	};
+ };
  
-+		adc: adc@10058000 {
-+			compatible = "renesas,r9a08g045-adc";
-+			reg = <0 0x10058000 0 0x400>;
-+			interrupts = <GIC_SPI 312 IRQ_TYPE_EDGE_RISING>;
-+			clocks = <&cpg CPG_MOD R9A08G045_ADC_ADCLK>,
-+				 <&cpg CPG_MOD R9A08G045_ADC_PCLK>;
-+			clock-names = "adclk", "pclk";
-+			resets = <&cpg R9A08G045_ADC_PRESETN>,
-+				 <&cpg R9A08G045_ADC_ADRST_N>;
-+			reset-names = "presetn", "adrst-n";
-+			power-domains = <&cpg>;
-+			#io-channel-cells = <1>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
++&adc {
++	status = "okay";
++};
 +
-+			channel@0 {
-+				reg = <0>;
-+			};
-+
-+			channel@1 {
-+				reg = <1>;
-+			};
-+
-+			channel@2 {
-+				reg = <2>;
-+			};
-+
-+			channel@3 {
-+				reg = <3>;
-+			};
-+
-+			channel@4 {
-+				reg = <4>;
-+			};
-+
-+			channel@5 {
-+				reg = <5>;
-+			};
-+
-+			channel@6 {
-+				reg = <6>;
-+			};
-+
-+			channel@7 {
-+				reg = <7>;
-+			};
-+
-+			channel@8 {
-+				reg = <8>;
-+			};
-+		};
-+
- 		vbattb: clock-controller@1005c000 {
- 			compatible = "renesas,r9a08g045-vbattb";
- 			reg = <0 0x1005c000 0 0x1000>;
+ #if SW_CONFIG3 == SW_ON
+ &eth0 {
+ 	pinctrl-0 = <&eth0_pins>;
 -- 
 2.39.2
 
