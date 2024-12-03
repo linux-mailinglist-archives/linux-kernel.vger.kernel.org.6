@@ -1,101 +1,131 @@
-Return-Path: <linux-kernel+bounces-429771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A08CE9E237D
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:38:28 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 323CE9E23EE
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:44:25 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6797C286E52
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 15:38:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6350B16B946
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 15:39:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1D8D1F76C6;
-	Tue,  3 Dec 2024 15:33:37 +0000 (UTC)
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12F2D1F754A
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 15:33:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 590251F9EAB;
+	Tue,  3 Dec 2024 15:34:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="BuAmIfQp"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 287B01F9427;
+	Tue,  3 Dec 2024 15:34:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733240017; cv=none; b=JgJWL3GYYK8nVar7qTnH/z0CZTez7R1jnnt7NgDSqsoliv9/PD9+Lmr6uSnCRVumgfVFKT28p2Alr45urDaM+F2QohIKR4qW4RpUcmg6k91xnjwz8MVnWMgociE4BFOj585jZ6WXxtdIRda/XSXfqBvSSybjgOwgx+QNsxCNgwY=
+	t=1733240084; cv=none; b=YyJ5HiRwVYb8o39ZMCam7cqKc1MOvkSBAPj4GymcGUmgfiUFgI6RcnPsaOfdcTNpfiWlaiK7/LYM4RlVGE/GkU+Uo1B29x5iqzfyXEbYhLP38pkjM5VWrdJoStmHBYRMZhm7eXZoaS11OJyVO3DlLtyynLf3XZJ7BVenfeqDl5w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733240017; c=relaxed/simple;
-	bh=+qtaAUOBdNs3xMS9i+FT+dqi0qqto28BFBwhxmbhwi4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jEFO1SgGNVSSujG/fzuJuM5W6QcYo0qY8yhIZX3iu2CqarT4tAjwFzcBB03V1q26xJZCVjvbyT+vA/u6yfJ0hhFDNVZdWuowMr3U5TQZbEzEMomuScQYFqvaL1K/dLbbht8vRtkNCSFuJcLQw7sViKLGmG1xlZYZ+VMw6qP8qBY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 491FB1F44F;
-	Tue,  3 Dec 2024 15:33:33 +0000 (UTC)
-Authentication-Results: smtp-out2.suse.de;
-	none
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9CC4E13A15;
-	Tue,  3 Dec 2024 15:33:32 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id gkVrI8wkT2esSQAAD6G6ig
-	(envelope-from <osalvador@suse.de>); Tue, 03 Dec 2024 15:33:32 +0000
-Date: Tue, 3 Dec 2024 16:33:31 +0100
-From: Oscar Salvador <osalvador@suse.de>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	linuxppc-dev@lists.ozlabs.org,
-	Andrew Morton <akpm@linux-foundation.org>, Zi Yan <ziy@nvidia.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Naveen N Rao <naveen@kernel.org>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>
-Subject: Re: [PATCH RESEND v2 3/6] mm/page_alloc: make
- __alloc_contig_migrate_range() static
-Message-ID: <Z08ky0_nzCbXVbgM@localhost.localdomain>
-References: <20241203094732.200195-1-david@redhat.com>
- <20241203094732.200195-4-david@redhat.com>
+	s=arc-20240116; t=1733240084; c=relaxed/simple;
+	bh=rvNUSBrexrgvn6qC5F5NGhEbMHkIN1b9AQXKqKFKjcM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=e2Ms8Z2GwHTjgsM0QJFhItjl3KP9HmJ7B72vCDDUTOy9cOVU/6obznx8bzTBoPjbNaOEdYo5+8VaIbL7GCV/r7qA4/yIiZJsVp5sZUjl1wHd9KZUHOjqLZ1PgSs5WeuDtpmEK4jiht8Q5S3jUoxwVIvQjcrFacm/xPMsYeCQwnM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=BuAmIfQp reason="signature verification failed"; arc=none smtp.client-ip=117.135.210.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=wjZN+HxTPKuwwQ6Fd9vf5fIHwqabYcyUg3ydJhnu5jw=; b=B
+	uAmIfQp3ND6qF26J3ebVN7ErDckCFUm8PXMX7+I5QFjM2WvYkd4lNcoJraoBkLGJ
+	Qdeq05gYs+wAwIbtXVjX1kGRynoQhsdt1/ZYAaI/sCTdf1WpcoZ9qu4Xb1+Syyek
+	17kxq0vuLRSm0So8yoVYjpEBLkXnvdLTh4YBtuq7JE=
+Received: from 00107082$163.com ( [111.35.188.140] ) by
+ ajax-webmail-wmsvr-40-129 (Coremail) ; Tue, 3 Dec 2024 23:33:45 +0800 (CST)
+Date: Tue, 3 Dec 2024 23:33:45 +0800 (CST)
+From: "David Wang" <00107082@163.com>
+To: "Geert Uytterhoeven" <geert+renesas@glider.be>
+Cc: "Thomas Gleixner" <tglx@linutronix.de>, 
+	"Michael Ellerman" <mpe@ellerman.id.au>, 
+	"Nicholas Piggin" <npiggin@gmail.com>, 
+	"Christophe Leroy" <christophe.leroy@csgroup.eu>, 
+	"Naveen N Rao" <naveen@kernel.org>, 
+	"Madhavan Srinivasan" <maddy@linux.ibm.com>, 
+	=?GBK?Q?Marek_Beh=A8=B2n?= <kabel@kernel.org>, 
+	"Bjorn Andersson" <andersson@kernel.org>, 
+	"Konrad Dybcio" <konradybcio@kernel.org>, 
+	linuxppc-dev@lists.ozlabs.org, linux-arm-msm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re:[PATCH] genirq: Remove leading space from .irq_print_chip()
+ callbacks
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20240801(9da12a7b)
+ Copyright (c) 2002-2024 www.mailtech.cn 163com
+In-Reply-To: <a779f3f44c24716d783d782c935be9fe4f410bff.1733238060.git.geert+renesas@glider.be>
+References: <a779f3f44c24716d783d782c935be9fe4f410bff.1733238060.git.geert+renesas@glider.be>
+X-NTES-SC: AL_Qu2YAf6fv0gp4ymRZukZnEYQheY4XMKyuPkg1YJXOp80mCT8/CAnbG5PJ0TM/PmyMBCmoQmQYj1Eyv51WqJ0Wrq3/ixk5Y2YjnuPGeDTokBU
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=GBK
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241203094732.200195-4-david@redhat.com>
-X-Rspamd-Pre-Result: action=no action;
-	module=replies;
-	Message is reply to one we originated
-X-Spamd-Result: default: False [-4.00 / 50.00];
-	REPLY(-4.00)[]
-X-Spam-Flag: NO
-X-Spam-Score: -4.00
-X-Rspamd-Queue-Id: 491FB1F44F
-X-Rspamd-Pre-Result: action=no action;
-	module=replies;
-	Message is reply to one we originated
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Level: 
+Message-ID: <6392704d.c158.1938d27f38e.Coremail.00107082@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:gSgvCgD3vwzbJE9nqmU2AA--.1844W
+X-CM-SenderInfo: qqqrilqqysqiywtou0bp/1tbiqR+qqmdPHZAA7gACs-
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
-On Tue, Dec 03, 2024 at 10:47:29AM +0100, David Hildenbrand wrote:
-> The single user is in page_alloc.c.
-> 
-> Reviewed-by: Zi Yan <ziy@nvidia.com>
-> Signed-off-by: David Hildenbrand <david@redhat.com>
-
-Reviewed-by: Oscar Salvador <osalvador@suse.de>
-
-
--- 
-Oscar Salvador
-SUSE Labs
+SEksIApBdCAyMDI0LTEyLTAzIDIzOjAyOjMxLCAiR2VlcnQgVXl0dGVyaG9ldmVuIiA8Z2VlcnQr
+cmVuZXNhc0BnbGlkZXIuYmU+IHdyb3RlOgo+VGhlIHNwYWNlIHNlcGFyYXRvciB3YXMgZmFjdG9y
+ZWQgb3V0IGZyb20gdGhlIG11bHRpcGxlIGNoaXAgbmFtZSBwcmludHMsCj5idXQgc2V2ZXJhbCBp
+cnFfY2hpcC5pcnFfcHJpbnRfY2hpcCgpIGNhbGxiYWNrcyBzdGlsbCBwcmludCBhIGxlYWRpbmcK
+PnNwYWNlLiAgUmVtb3ZlIHRoZSBzdXBlcmZsdW91cyBkb3VibGUgc3BhY2VzLgo+Cj5GaXhlczog
+OWQ5ZjIwNGJkZjcyNDNiZiAoImdlbmlycS9wcm9jOiBBZGQgbWlzc2luZyBzcGFjZSBzZXBhcmF0
+b3IgYmFjayIpCj5TaWduZWQtb2ZmLWJ5OiBHZWVydCBVeXR0ZXJob2V2ZW4gPGdlZXJ0K3JlbmVz
+YXNAZ2xpZGVyLmJlPgo+LS0tCj5Ob3QgZXZlbiBjb21waWxlLXRlc3RlZC4uLgo+Cj5GZWVsIGZy
+ZWUgdG8gZm9sZCB0aGlzIGludG8gdGhlIG9yaWdpbmFsLCBhbmQgZml4IHRoZSBzcGVsbGluZwo+
+cy9wcmV2aW9zdWx5L3ByZXZpb3VzbHkvIHdoaWxlIGF0IGl0Lgo+LS0tCj4gYXJjaC9wb3dlcnBj
+L3N5c2Rldi9mc2xfbXNpLmMgICAgICAgICAgfCAyICstCj4gZHJpdmVycy9idXMvbW94dGV0LmMg
+ICAgICAgICAgICAgICAgICAgfCAyICstCj4gZHJpdmVycy9pcnFjaGlwL2lycS1wYXJ0aXRpb24t
+cGVyY3B1LmMgfCAyICstCj4gZHJpdmVycy9zb2MvcWNvbS9zbXAycC5jICAgICAgICAgICAgICAg
+fCAyICstCj4gNCBmaWxlcyBjaGFuZ2VkLCA0IGluc2VydGlvbnMoKyksIDQgZGVsZXRpb25zKC0p
+Cj4KPmRpZmYgLS1naXQgYS9hcmNoL3Bvd2VycGMvc3lzZGV2L2ZzbF9tc2kuYyBiL2FyY2gvcG93
+ZXJwYy9zeXNkZXYvZnNsX21zaS5jCj5pbmRleCAxYWEwY2IwOTdjOWM5ZDdjLi43YjlhNWVhOWNh
+ZDlkM2M3IDEwMDY0NAo+LS0tIGEvYXJjaC9wb3dlcnBjL3N5c2Rldi9mc2xfbXNpLmMKPisrKyBi
+L2FyY2gvcG93ZXJwYy9zeXNkZXYvZnNsX21zaS5jCj5AQCAtNzUsNyArNzUsNyBAQCBzdGF0aWMg
+dm9pZCBmc2xfbXNpX3ByaW50X2NoaXAoc3RydWN0IGlycV9kYXRhICppcnFkLCBzdHJ1Y3Qgc2Vx
+X2ZpbGUgKnApCj4gCXNycyA9IChod2lycSA+PiBtc2lfZGF0YS0+c3JzX3NoaWZ0KSAmIE1TSV9T
+UlNfTUFTSzsKPiAJY2FzY2FkZV92aXJxID0gbXNpX2RhdGEtPmNhc2NhZGVfYXJyYXlbc3JzXS0+
+dmlycTsKPiAKPi0Jc2VxX3ByaW50ZihwLCAiIGZzbC1tc2ktJWQiLCBjYXNjYWRlX3ZpcnEpOwo+
+KwlzZXFfcHJpbnRmKHAsICJmc2wtbXNpLSVkIiwgY2FzY2FkZV92aXJxKTsKPiB9Cj4gCj4gCj5k
+aWZmIC0tZ2l0IGEvZHJpdmVycy9idXMvbW94dGV0LmMgYi9kcml2ZXJzL2J1cy9tb3h0ZXQuYwo+
+aW5kZXggNjI3NjU1MWQ3OTY4MGU4NS4uMWU1N2ViZmI3NjIyOWFhMCAxMDA2NDQKPi0tLSBhL2Ry
+aXZlcnMvYnVzL21veHRldC5jCj4rKysgYi9kcml2ZXJzL2J1cy9tb3h0ZXQuYwo+QEAgLTY1Nyw3
+ICs2NTcsNyBAQCBzdGF0aWMgdm9pZCBtb3h0ZXRfaXJxX3ByaW50X2NoaXAoc3RydWN0IGlycV9k
+YXRhICpkLCBzdHJ1Y3Qgc2VxX2ZpbGUgKnApCj4gCj4gCWlkID0gbW94dGV0LT5tb2R1bGVzW3Bv
+cy0+aWR4XTsKPiAKPi0Jc2VxX3ByaW50ZihwLCAiIG1veHRldC0lcy4laSMlaSIsIG1veF9tb2R1
+bGVfbmFtZShpZCksIHBvcy0+aWR4LAo+KwlzZXFfcHJpbnRmKHAsICJtb3h0ZXQtJXMuJWkjJWki
+LCBtb3hfbW9kdWxlX25hbWUoaWQpLCBwb3MtPmlkeCwKPiAJCSAgIHBvcy0+Yml0KTsKPiB9Cj4g
+Cj5kaWZmIC0tZ2l0IGEvZHJpdmVycy9pcnFjaGlwL2lycS1wYXJ0aXRpb24tcGVyY3B1LmMgYi9k
+cml2ZXJzL2lycWNoaXAvaXJxLXBhcnRpdGlvbi1wZXJjcHUuYwo+aW5kZXggOGU3NmQyOTEzZTZi
+ZWJiZi4uNDQ0MWZmZTE0OWVhMGQ5NiAxMDA2NDQKPi0tLSBhL2RyaXZlcnMvaXJxY2hpcC9pcnEt
+cGFydGl0aW9uLXBlcmNwdS5jCj4rKysgYi9kcml2ZXJzL2lycWNoaXAvaXJxLXBhcnRpdGlvbi1w
+ZXJjcHUuYwo+QEAgLTk4LDcgKzk4LDcgQEAgc3RhdGljIHZvaWQgcGFydGl0aW9uX2lycV9wcmlu
+dF9jaGlwKHN0cnVjdCBpcnFfZGF0YSAqZCwgc3RydWN0IHNlcV9maWxlICpwKQo+IAlzdHJ1Y3Qg
+aXJxX2NoaXAgKmNoaXAgPSBpcnFfZGVzY19nZXRfY2hpcChwYXJ0LT5jaGFpbmVkX2Rlc2MpOwo+
+IAlzdHJ1Y3QgaXJxX2RhdGEgKmRhdGEgPSBpcnFfZGVzY19nZXRfaXJxX2RhdGEocGFydC0+Y2hh
+aW5lZF9kZXNjKTsKPiAKPi0Jc2VxX3ByaW50ZihwLCAiICU1cy0lbHUiLCBjaGlwLT5uYW1lLCBk
+YXRhLT5od2lycSk7Cj4rCXNlcV9wcmludGYocCwgIiU1cy0lbHUiLCBjaGlwLT5uYW1lLCBkYXRh
+LT5od2lycSk7Cj4gfQo+IAo+IHN0YXRpYyBzdHJ1Y3QgaXJxX2NoaXAgcGFydGl0aW9uX2lycV9j
+aGlwID0gewo+ZGlmZiAtLWdpdCBhL2RyaXZlcnMvc29jL3Fjb20vc21wMnAuYyBiL2RyaXZlcnMv
+c29jL3Fjb20vc21wMnAuYwo+aW5kZXggNDc4M2FiMWFkYjhkOTUzYi4uYTNlODhjZWQzMjhhOTFm
+MSAxMDA2NDQKPi0tLSBhL2RyaXZlcnMvc29jL3Fjb20vc21wMnAuYwo+KysrIGIvZHJpdmVycy9z
+b2MvcWNvbS9zbXAycC5jCj5AQCAtMzY1LDcgKzM2NSw3IEBAIHN0YXRpYyB2b2lkIHNtcDJwX2ly
+cV9wcmludF9jaGlwKHN0cnVjdCBpcnFfZGF0YSAqaXJxZCwgc3RydWN0IHNlcV9maWxlICpwKQo+
+IHsKPiAJc3RydWN0IHNtcDJwX2VudHJ5ICplbnRyeSA9IGlycV9kYXRhX2dldF9pcnFfY2hpcF9k
+YXRhKGlycWQpOwo+IAo+LQlzZXFfcHJpbnRmKHAsICIgJThzIiwgZGV2X25hbWUoZW50cnktPnNt
+cDJwLT5kZXYpKTsKPisJc2VxX3ByaW50ZihwLCAiJThzIiwgZGV2X25hbWUoZW50cnktPnNtcDJw
+LT5kZXYpKTsKPiB9Cj4gCj4gc3RhdGljIHN0cnVjdCBpcnFfY2hpcCBzbXAycF9pcnFfY2hpcCA9
+IHsKPi0tIAo+Mi4zNC4xCgpNYXRjaCB3aXRoIG15IGNoZWNrIHJlc3VsdCBhZ2FpbnN0IC5pcnFf
+cHJpbnRfY2hpcCBpbXBsZW1lbnRhdGlvbiB1bmRlciBkcml2ZXJzLgpCdXQgSSB0aGluayAiJThz
+IiBhbmQgIiU1cy0lbHUiIHNob3VsZCBiZSAiJXMiIGFuZCAiJXMtJWx1Iiwgb3RoZXJ3aXNlIHRo
+ZXJlIHdvdWxkIHN0aWxsCmJlIGxlYWRpbmcgc3BhY2VzIHdoZW4gdGhlIGRldmljZSBuYW1lIHN0
+cmluZyBpcyBzaG9ydC4KCgpUaGFua3MKRGF2aWQK
 
