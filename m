@@ -1,141 +1,127 @@
-Return-Path: <linux-kernel+bounces-430302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 538E69E2F3F
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 23:49:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A46A29E2EF1
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 23:18:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 34FE0B607CC
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 22:18:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C283281030
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 22:18:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FABC1F472F;
-	Tue,  3 Dec 2024 22:17:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 739AA20A5CA;
+	Tue,  3 Dec 2024 22:18:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HIBEiE8k"
-Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="g780/tbD"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F19191DDA3D;
-	Tue,  3 Dec 2024 22:17:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4D3D20ADC4
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 22:18:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733264262; cv=none; b=oZ+Lz3OPmUYEagLtOIzRVCwlnVX9MWWfKzOaXBj5GO4Ib/okrUrrpy9ehahld4ISzi2oOvr2C8O3ZkG1nrAKI0gQEFs9PGcJcEVemK97yogJvY66GgaYMt9E6J7ESmhkUFUaa5YbeO/wZcZbtIC0bpmMcxUqhv3fFr1yjkBL6Bk=
+	t=1733264290; cv=none; b=ffQDrTORkD/RxkGkZheilcNIMhCicEcNYWaSKh/FRdp6Rf1OYgh3GLZYHP3piUATk0g9/UJJ2nCh3E5rYYhTqt2329SKVyDWu/uRMPqFafI7ymSIRxTfDguL1g4iktm8SRLmWOc2+VYSLWGKmlsK1tmw2n/XMU/NA36keldnRhI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733264262; c=relaxed/simple;
-	bh=83ZFVAL6rI26mNFtdBIhNwOZiIQYVo3JP+Cf9wzBjEY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fURn8yyCaYI0UieY099xrlAEbHrUD97nMxPBU+tsbJSlQyGFXjOYmSyHsVCywFRiCq/tQxuPRd7ACn5w86nPRxDazRI0cSqAaTAhO+/1lGXrIGdz+wke6+3O4CdjA9hYToeSqWZBjw0CIqyfZ78XvxKz5Xwj0WNFDCktP01sVSs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HIBEiE8k; arc=none smtp.client-ip=209.85.222.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-7b673cb2708so405378585a.2;
-        Tue, 03 Dec 2024 14:17:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733264260; x=1733869060; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=zx6S/CQb0tqcpFEmYEJYTrZg4ruix/9Kcwctkpw9FSA=;
-        b=HIBEiE8kiBeyqXpNMk+fJC4L0tzsFeK+znuCtdFWH/U8zPrSGGr5DdfmAdlR0siJs/
-         cM9L6M8F3HfgH+XUfoaVYQ0du3IL56dxef4fDK/8Id5YkKFg5CNnnqPEbOr0JFRlbFX4
-         uZA0foA2tSGTQJZQYLeQ1HtjqTKsnzl3ZqFzWN5jDPV9W4C6v/BanHB2rZPZHp34EMdJ
-         lOQerFYafbJk02R6HQvfQBvNh0abrBfFiegpAibOw1t0xAc2CVRC7mPiF/aaV5Oe/QqQ
-         NMGogwN91b9xcrH0YBQYFWJ/hciJj7Men9s/NfQzq/okekIaIDcm8qLOgrB6shwbwxC3
-         hkrw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733264260; x=1733869060;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zx6S/CQb0tqcpFEmYEJYTrZg4ruix/9Kcwctkpw9FSA=;
-        b=Xadc2ZhxoHWvvMHZAzdiesZEUfn6meaUrjLYk6yqGXkvubyPBMncJ4Rh/YIEEiDnKQ
-         VAzZqpjUm6lDHimgnwKBQLqaYsNNO0rdTn3p5ldY3XNy8WMonwY0//FLNTtoMsdyt1h8
-         ZCa+cMgRNdD6NuqNaUnk88Rrtj72cPPA3b4r3cQaJQ8atkfTKWrqFLQyVvmN8OdyPd5B
-         kCcS6phpT/yBL+y0zdTM/3Lp46aLgu6sTkx83UHo98/s1SUZ+5qDXzWhFMVSTKxgob6Z
-         f9E341pavo9yb41vuxE3rQ8EY7RtG4pXB2yPF8tRF/Pa2G0G6hKI6k2/SwdO8MjT8weu
-         baXw==
-X-Forwarded-Encrypted: i=1; AJvYcCWhdjIMq7Jt1ngTgbH94mezwndYaj6y+DmecPVKr5sG/iyCz9bOvgIQDr/6CiQ7DV9ZholRhJbvA70YvFg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKmXzwwjh5D9cx3L71DK6ESGGJiPUGy32z1zwqouwnoPtaYrP/
-	NnbCU1lU1cN00zJU/j1SoaZqfvNSLPEc72W38yqc9Ur3G0UuGuAaxrTQTA==
-X-Gm-Gg: ASbGncs3oZodrz+XUHmh1u8AvQNI+qZ2H1c6TX1fnSaYi3fAeYvEnYtmMmvVMkl3Kv+
-	FyLCe5yviEBF0BZzQbyewZeb7fsLw/b6Mw0E0IvlenJEot4uqDvf11BuPygzdPpVRUXHx/ARAt+
-	bGnWwVKbEK+JfG0MBXvfNIxTIlluzocZs6yj2hGzSuZzHOGisnQMolWazPsY9GI86uWjuzcBzee
-	/Rx82TeXcJbY02HmOWznzOun0Flz/pbrBs3Z41WI5FKTI4dRYN1cjRbCXvrVsn8SWKpwBMvdt5b
-	Z+0eX+Tm3DNcAvxOhjrjJzDee7NvMhpiVbIaNHvdbhjP
-X-Google-Smtp-Source: AGHT+IGeCAxgKWes426gFVAzXXMZbzwEVVnZXx8PQ542h2Kmit/6Mex1h0PEefAqKA9aQrmXmE/oAQ==
-X-Received: by 2002:a05:620a:4486:b0:7b1:11f4:d0af with SMTP id af79cd13be357-7b6a5d7bb10mr384571885a.29.1733264259850;
-        Tue, 03 Dec 2024 14:17:39 -0800 (PST)
-Received: from willemb.c.googlers.com.com (250.4.48.34.bc.googleusercontent.com. [34.48.4.250])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b6849aac1asm552035185a.85.2024.12.03.14.17.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Dec 2024 14:17:39 -0800 (PST)
-From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-To: linux-hexagon@vger.kernel.org
-Cc: bcain@quicinc.com,
-	linux-kernel@vger.kernel.org,
-	dhowells@redhat.com,
-	edumazet@google.com,
-	Willem de Bruijn <willemb@google.com>,
-	kernel test robot <lkp@intel.com>
-Subject: [PATCH] hexagon: fix using plain integer as NULL pointer warning in cmpxchg
-Date: Tue,  3 Dec 2024 17:17:34 -0500
-Message-ID: <20241203221736.282020-1-willemdebruijn.kernel@gmail.com>
-X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
+	s=arc-20240116; t=1733264290; c=relaxed/simple;
+	bh=7ZEXrym58pDO7lZ3/DNmYLVamN4Zz6AL31EusfBuSBM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BBbNgQWDjnNg5vJcxtjXqnp82DGr77jvscDMQaTDT982oBkxaASpRbEbp2rQODXHpaxShOsPRAV7HxD+4vzvyhledqSmlaZCcHjUjKdjc04hW4JXz0H8HLgPA0sgflzAZJUqkD9YBu3OJtXhFhBeH8cxZV4OQamZ2qrvWfWjtsc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=g780/tbD; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 4647640E015F;
+	Tue,  3 Dec 2024 22:18:05 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id labHc4lhvDP7; Tue,  3 Dec 2024 22:18:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1733264282; bh=Xdm4dwQaeQ9a6wfiwBG9wxmuN3UGLe1LCBvvp6v2BC8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=g780/tbDn13O4wL0179QWolrmCcUMLUoO/7uiNXJ9lvLrw+rb0w4qlm5TFj6JByE1
+	 gxgDAgYrA9o1ktY2RlS5RrWUpTWPjfNt6SRfdPfubDk/j+nbIQ8VPU//5H7vdOadpO
+	 0FnRkHHPrRqkyxgtvDbN9v5IREcYVDHI0oJheyKzOtPPeAFfM6/nXgZDtC3CQYxbft
+	 DznSaHMp0uHYQelP2zFi+SUvEMVf7VHqiOvmuS9QCzJiwWbGURrN3Uh6TJS87iUY30
+	 kv+e9oqpslRPS9p0fdCC3/XJHYJIqT14GcOcPY6djQCZfFgLcKQ3HOHqrdPUiNx2wT
+	 QzBdQ7xoa3heu7jhWQCFIvrXE7mjIfKBt2Nyvx6Gjpsn/6FSMSg8i53kWx5ngBtkuh
+	 hsQMXHiZJZVGaHFSgDAsJWc9dHLCaGwh9wZqXpuLVqS4RyEaBSS8ccZbrgw9ISVbO5
+	 wcLUHL2neUS6OPD0oTqBVveqSCsxwFUe62CXr4MQR3qEU/TtS3ygr7fVN+fuWsGyh1
+	 etbNM9kkufu2bN1gIa2wRyhLvkDmtoS+utrrP8oY00YHFB6xXYTgb1uK5McEIAH/4d
+	 Dhl+Hk/76nS9ragEZXbHCSnuCHim9b85R6oEurBCYqSlXfbxrOhY3tuIWq7QSOFKrT
+	 6bJfSfEBXaOAMWfpP7AaZYw4=
+Received: from zn.tnic (p200300ea9736A14f329c23fffEA6A903.dip0.t-ipconnect.de [IPv6:2003:ea:9736:a14f:329c:23ff:fea6:a903])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id C918240E0277;
+	Tue,  3 Dec 2024 22:17:52 +0000 (UTC)
+Date: Tue, 3 Dec 2024 23:17:46 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Mario Limonciello <mario.limonciello@amd.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	"open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <linux-kernel@vger.kernel.org>,
+	Perry Yuan <Perry.Yuan@amd.com>,
+	Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
+Subject: Re: [PATCH v2] x86/cpu: Enable SD_ASYM_PACKING for PKG domain on
+ systems with AMD preferred cores
+Message-ID: <20241203221746.GKZ0-Dii5rnZppkM_e@fat_crate.local>
+References: <20241203201129.31957-1-mario.limonciello@amd.com>
+ <20241203215454.GJZ09-LmEWPZ502B7R@fat_crate.local>
+ <f71aff95-3aea-4681-9d35-9847b086cc8e@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <f71aff95-3aea-4681-9d35-9847b086cc8e@amd.com>
 
-From: Willem de Bruijn <willemb@google.com>
+On Tue, Dec 03, 2024 at 04:02:29PM -0600, Mario Limonciello wrote:
+> Preferred core classifications are available on "non-heterogenous" designs
+> for a few generations.  There isn't an indication they're supported which is
+> why amd_detect_prefcore() was made.
 
-Sparse reports
+Not surprised.
 
-    net/ipv4/inet_diag.c:1511:17: sparse: sparse: Using plain integer as NULL pointer
+> That's already called during the boot either way because that is used
+> to identify the boost numerator.  The boolean value it finds is cached, and
+> the next call will use the cached value.  So I don't expect this change
+> affects boot speed.
 
-Due to this code calling cmpxchg on a non-integer type
-struct inet_diag_handler *
+So with this addition, amd_detect_prefcore() would get called *three* times
+where you need to call it exactly and only once. And all it gives you a one
+bit of information which states that the system has preferred cores.
 
-    return !cmpxchg((const struct inet_diag_handler**)&inet_diag_table[type],
-                    NULL, h) ? 0 : -EEXIST;
+So why don't you define a synthetic X86_FEATURE:
 
-While hexagon's cmpxchg assigns an integer value to a variable of this
-type.
+	X86_FEATURE_AMD_PREFERRED_CORES
 
-    __typeof__(*(ptr)) __oldval = 0;
+run this code *once* and *early* enough so that every user can have the result
+ready, if you have preferred cores, do
 
-Update this assignment to cast 0 to the correct type.
+	setup_force_cpu_cap(X86_FEATURE_AMD_PREFERRED_CORES)
 
-The original issue is easily reproduced at head with the below block,
-and is absent after this change.
+(it needs to run before alternatives) and then in each user, you do
 
-    make LLVM=1 ARCH=hexagon defconfig
-    make C=1 LLVM=1 ARCH=hexagon net/ipv4/inet_diag.o
+	if (cpu_feature_enabled(X86_FEATURE_AMD_PREFERRED_CORES))
+		/* do things */
 
-Fixes: 99a70aa051d2 ("Hexagon: Add processor and system headers")
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202411091538.PGSTqUBi-lkp@intel.com/
-Signed-off-by: Willem de Bruijn <willemb@google.com>
----
- arch/hexagon/include/asm/cmpxchg.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+instead of what you have now?
 
-diff --git a/arch/hexagon/include/asm/cmpxchg.h b/arch/hexagon/include/asm/cmpxchg.h
-index bf6cf5579cf4..9c58fb81f7fd 100644
---- a/arch/hexagon/include/asm/cmpxchg.h
-+++ b/arch/hexagon/include/asm/cmpxchg.h
-@@ -56,7 +56,7 @@ __arch_xchg(unsigned long x, volatile void *ptr, int size)
- 	__typeof__(ptr) __ptr = (ptr);				\
- 	__typeof__(*(ptr)) __old = (old);			\
- 	__typeof__(*(ptr)) __new = (new);			\
--	__typeof__(*(ptr)) __oldval = 0;			\
-+	__typeof__(*(ptr)) __oldval = (__typeof__(*(ptr))) 0;	\
- 								\
- 	asm volatile(						\
- 		"1:	%0 = memw_locked(%1);\n"		\
+Thx.
+
 -- 
-2.47.0.338.g60cca15819-goog
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
