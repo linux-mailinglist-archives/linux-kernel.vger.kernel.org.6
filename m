@@ -1,109 +1,178 @@
-Return-Path: <linux-kernel+bounces-430310-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6670D9E2F04
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 23:25:24 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3EED41659BF
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 22:25:21 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C74D7209F41;
-	Tue,  3 Dec 2024 22:25:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qhLj8p8e"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8CFF9E2F0A
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 23:27:34 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28E571DF268;
-	Tue,  3 Dec 2024 22:25:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37DF32834F2
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 22:27:33 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 720E5209F4F;
+	Tue,  3 Dec 2024 22:27:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EAj0nRjH"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 194861DDA3D;
+	Tue,  3 Dec 2024 22:27:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733264717; cv=none; b=tzJeEgcP3lHJN/Xl9//CHpCxg9ndNukWTTAwkoJVdk62xtvXCyiODw4zhfmT0W7ncRb7IoF61lxFMgFfg3QAgfRkCHDx6PEcH9g+80Dg3uWrsQCBWj3hft/9r53IIPIFFN799bpOMkRkHfF4i+RBSJ17+lWdWY7FupLCh/rK7dU=
+	t=1733264846; cv=none; b=NR/DNFRe8C+awboreAePBPx0CbqTOEe9YrEObLeIWCG+zeTTF4hKRxl9drvcZWZR4Dey20RjdZDTJ3VvzTOiV7d3Rq1+QEZVZLhLN5oSgYow2QzKQjUrlx6iv5OjReT+weikr5B5mbTqw9biUg0plFAD1oeQyQMrK/GqocTk6Fg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733264717; c=relaxed/simple;
-	bh=Z15C0mt3XM7YpivR1T5/W0M5swvKfGcdZ7nyxNwhLoQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=ZJ7TnyYwh3UlC9ONx6cJnCtV85XQSOGX6ZtzUwtgF64Ta2a5LA4ww2yjHJEadBznIYPEP61WacyMPI5bDTMclzkFSvYc8wMYHC/giJnaLeP5ILO0N7Qq0syxNv1npTsGiNLrm11qjIyad0JJu5DdX5zu3Vk/R3ieul2L+4k5PV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qhLj8p8e; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81806C4CEDC;
-	Tue,  3 Dec 2024 22:25:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733264716;
-	bh=Z15C0mt3XM7YpivR1T5/W0M5swvKfGcdZ7nyxNwhLoQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=qhLj8p8eyWJXXP2R4fcik2XxZ1g4PpArVVeC4x2S0kXCH2O24HAt7vH4EuYcRZa9U
-	 agS0BM2aYhGkfRoh8AXjL7O1WEuoUtSxGq8aIPSUqUqT7p5kfpOKmj6WTOkNfWb6ae
-	 gesaNcOwa2CvKG0o081fcGYQyV1Aiw4aQQ57Md9Ffuda70Vw/Z/TP0AI/31q1JMnlr
-	 R4TnoXjduLP3en1w119e6ZYjMoLmpmNHSCdjvW4PMO4Sika9XCgkDNvThTj90uvqnI
-	 HFrNGoNAfsgTkVZtdnf4kK7COX0g/5hcp3ydpoWWf+O0KZ2vGTem5n36fzY7c/FExp
-	 rrf6y623PwJTQ==
-Date: Tue, 3 Dec 2024 16:25:15 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Christian Bruel <christian.bruel@foss.st.com>,
-	Rob Herring <robh+dt@kernel.org>
-Cc: lpieralisi@kernel.org, kw@linux.com, manivannan.sadhasivam@linaro.org,
-	bhelgaas@google.com, krzk+dt@kernel.org, conor+dt@kernel.org,
-	mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com,
-	p.zabel@pengutronix.de, cassel@kernel.org,
-	quic_schintav@quicinc.com, fabrice.gasnier@foss.st.com,
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/5] dt-bindings: PCI: Add STM32MP25 PCIe root complex
- bindings
-Message-ID: <20241203222515.GA2967814@bhelgaas>
+	s=arc-20240116; t=1733264846; c=relaxed/simple;
+	bh=t3U48xN9VjmKqQz4yVAbhOlS0eyYwqFA+BW9Dq6Whmo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ITmxsR6/Mugdm8kSb+MGsrm6kW1vmWfLt8u7ebaAqlaXFNWhv75vQLMemRb4xswk4ubNy9sbor38FgIkIxcCOw5tifzF7Bs3/Sa4ALuSdfMpw/BEps9iZriLA4IPIZbfH7fvuDSA2FfyW8i6mIBEMOI1IXQyxG5GPYlfxvXaQTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EAj0nRjH; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a9a977d6cc7so361974866b.3;
+        Tue, 03 Dec 2024 14:27:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733264843; x=1733869643; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=q3wH2fBMSYuu3/Wq89m04+97w1m208obilMzwfiw49o=;
+        b=EAj0nRjHTjGPyhFLElUqf2FvDIvUm7oN2bni6mKO1puk0iBxyVtMNcG1KcXLxjoYhD
+         etSu/7FEGniTqQAXp8TP5AYzDu4LsJ2y1xOsKwOIxDgHTumB+hAzCIQ4du2deNsLlaT1
+         acgoB8OyjKClOq8uHaxoY0Cpjp2zZjtCs0klF5w8fWJvo9wjHa+ApXPbypYkJ9+BzPiy
+         0pA9hAifrUzDSATmtt1SL76ocr5A4HZX2Fd8LuyvpgnlOxVjpTkei4DAYPOjIYSXcTZ2
+         f5rXCYrglYmqB9L29jtIkCsbtkCSMrle0N1WIUysDQSQ1BhFWHPGfqc7TsSHnLAOoLGR
+         g5dw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733264843; x=1733869643;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=q3wH2fBMSYuu3/Wq89m04+97w1m208obilMzwfiw49o=;
+        b=htUn7KmUgQyaKhSnQifLngDY4gukCsgbPMUIIWYUGtGQyvSQH9yWcAWSrWzliRl1Qr
+         pHVNocdE1BPI6wIIC7dbZgZaSZNr8d8KHRTZFiKV/hY5g7hPp+/4d9TQos3VxLhu2CQg
+         yH/H9nswq1USRRIL4eNHEqxlL0AjbIrx/6VrEHhSzUUt/E+pb7ZYsH34nPTU4UF5utJq
+         are8lGvG83vC+4caTQcse+3J+rDiZ54t0OAacynPiNsOao0UOraPu/RVIndB51lUAjSl
+         wHx23jOedWYUowMpKXMudiS4d3NeJkNkvCJNNEmUqO+WA50QTL9UehVHNAmU/STCedTt
+         a//w==
+X-Forwarded-Encrypted: i=1; AJvYcCVqzX4HtPEIlXwnaRTajQLuClsyf+ohnxoPJ0c454dpZNNlKeKWSrMYEYEXr2sSLF5Jt/YaG87B@vger.kernel.org, AJvYcCXh9D71PXeoffF1q4rqCjA8iOjdWC1VWp2YOmfIVtIcPmbaV/p5Ks/tJGZgUIgSt6STxJ7NW3P3NenIcQM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy57Owsk2O/QdAWMTQDvWh0So+ECYhHL19Qaq4yUY3sh1NjJStR
+	jlf3WnUymxOrn3CoIBPl13SBlH+K+1Nrr8nJ+3RQ7jfu+8akeMF4
+X-Gm-Gg: ASbGncvcSVrRZFQtWTVslSgAL0if4HpRpkAcbSVVXvyD0g9MQo19OZ8ZABHu3ekG53d
+	8T5YT75FRtPQDxMhUxv2+6qT6dj+FkcfPXEz0CBSYGldkZgapAz9uSmIzlHrxUYFrs74MjjCzLF
+	CKPlViFLaQ5q0amYMMSnay3SZLPb0Vlog4aeN5e/4lLquOiafFv2JS+0ZCgRB+M8pUKH25HB80C
+	J/78HG+BE9bmevJRc2WdHMSAZuJEFPzcYTIG+yOhKQL1gYnyhwMbCp/0Z4vxSJ238ZGL6iP+ZjT
+	f9/pnv0lSWqFNgZZHGKsrX4bku2oRkFoPXwatbtA+9D0X+THZ85UXwjwYDlipL8N2RTiQbPyvKu
+	lCWadxuW/jNRQwos7fIPkfsr6f48wvF7JxHZB/IqCag==
+X-Google-Smtp-Source: AGHT+IHh3mK6eq3ZEnPiOEuSCTTBJfxkdjdJBUwnmmPxhBcK/VMSM4Mgl8aNfgkCQ2DTTlus8Vp7eQ==
+X-Received: by 2002:a05:6402:1ecf:b0:5d0:d91d:c197 with SMTP id 4fb4d7f45d1cf-5d10cb801a1mr5205712a12.27.1733264843080;
+        Tue, 03 Dec 2024 14:27:23 -0800 (PST)
+Received: from ?IPV6:2a02:3100:9d09:7500:8175:4ab5:e6ba:110b? (dynamic-2a02-3100-9d09-7500-8175-4ab5-e6ba-110b.310.pool.telefonica.de. [2a02:3100:9d09:7500:8175:4ab5:e6ba:110b])
+        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-aa5996c11d0sm654105366b.16.2024.12.03.14.27.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 03 Dec 2024 14:27:21 -0800 (PST)
+Message-ID: <50e1ec4d-818c-45a8-875b-40f74cca1514@gmail.com>
+Date: Tue, 3 Dec 2024 23:27:20 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241126155119.1574564-2-christian.bruel@foss.st.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next 1/2] net: mdio-ipq8064: use platform_get_resource
+To: Rosen Penev <rosenp@gmail.com>, netdev@vger.kernel.org
+Cc: Andrew Lunn <andrew@lunn.ch>, ansuelsmth@gmail.com,
+ Russell King <linux@armlinux.org.uk>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ open list <linux-kernel@vger.kernel.org>
+References: <20241203221644.136104-1-rosenp@gmail.com>
+ <20241203221644.136104-2-rosenp@gmail.com>
+Content-Language: en-US
+From: Heiner Kallweit <hkallweit1@gmail.com>
+Autocrypt: addr=hkallweit1@gmail.com; keydata=
+ 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
+In-Reply-To: <20241203221644.136104-2-rosenp@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Nov 26, 2024 at 04:51:15PM +0100, Christian Bruel wrote:
-> Document the bindings for STM32MP25 PCIe Controller configured in
-> root complex mode.
+On 03.12.2024 23:16, Rosen Penev wrote:
+> There's no need to get the of_node explicitly. platform_get_resource
+> already does this.
 > 
-> Supports 4 legacy interrupts and MSI interrupts from the ARM
-> GICv2m controller.
-
-s/legacy/INTx/
-
-> STM32 PCIe may be in a power domain which is the case for the STM32MP25
-> based boards.
+> Signed-off-by: Rosen Penev <rosenp@gmail.com>
+> ---
+>  drivers/net/mdio/mdio-ipq8064.c | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
 > 
-> Supports wake# from wake-gpios
+> diff --git a/drivers/net/mdio/mdio-ipq8064.c b/drivers/net/mdio/mdio-ipq8064.c
+> index 6253a9ab8b69..e3d311ce3810 100644
+> --- a/drivers/net/mdio/mdio-ipq8064.c
+> +++ b/drivers/net/mdio/mdio-ipq8064.c
+> @@ -111,15 +111,16 @@ ipq8064_mdio_probe(struct platform_device *pdev)
+>  {
+>  	struct device_node *np = pdev->dev.of_node;
+>  	struct ipq8064_mdio *priv;
+> -	struct resource res;
+> +	struct resource *res;
+>  	struct mii_bus *bus;
+>  	void __iomem *base;
+>  	int ret;
+>  
+> -	if (of_address_to_resource(np, 0, &res))
+> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +	if (!res)
+>  		return -ENOMEM;
+>  
+> -	base = devm_ioremap(&pdev->dev, res.start, resource_size(&res));
+> +	base = devm_ioremap(&pdev->dev, res->start, resource_size(res));
+>  	if (!base)
+>  		return -ENOMEM;
+>  
 
-s/wake#/WAKE#/
-
-> +  wake-gpios:
-> +    description: GPIO controlled connection to WAKE# input signal
-
-I'm not a hardware guy, but this sounds like a GPIO that *reads*
-WAKE#, not controls it.
-
-> +    pcie@48400000 {
-> +        compatible = "st,stm32mp25-pcie-rc";
-> +        device_type = "pci";
-> +        num-lanes = <1>;
-
-num-lanes applies to a Root Port, not to a Root Complex.  I know most
-bindings conflate Root Ports with the Root Complex, maybe because many
-of these controllers only support a single Root Port?
-
-But are we ever going to separate these out?  I assume someday
-controllers will support multiple Root Ports and/or additional devices
-on the root bus, like RCiEPs, RCECs, etc., and we'll need per-RP phys,
-max-link-speed, num-lanes, reset-gpios, etc.
-
-Seems like it would be to our benefit to split out the Root Ports when
-we can, even if the current hardware only supports one, so we can
-start untangling the code and data structures.
-
-Bjorn
+Why not directly switching to devm_platform_get_and_ioremap_resource()?
 
