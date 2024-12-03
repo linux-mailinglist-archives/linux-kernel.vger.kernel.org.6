@@ -1,73 +1,132 @@
-Return-Path: <linux-kernel+bounces-430292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3A1C9E2EDB
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 23:14:41 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6A629E2F80
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 00:07:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69AAF2839DF
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 22:14:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 63522B468E0
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 22:14:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6460920ADD8;
-	Tue,  3 Dec 2024 22:11:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FE7620ADD1;
+	Tue,  3 Dec 2024 22:13:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pRdKaUCv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Za/D1pmU"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1C4E205AAF;
-	Tue,  3 Dec 2024 22:11:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE4D7207A20;
+	Tue,  3 Dec 2024 22:13:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733263910; cv=none; b=JfMAO0raxb/xAmyDpcn7nq9J6sOB9b5pJUlUBro+lC6AWKoyzQb4CRrMXwXWtjJmFYpZcOeHJbGQIzhcM5Vu4g7E2d2zznd5vMao06eRqXvzYbteCoiF4nIxigkOMcrS30qnH+IvxCHgbrvcEAHQ00BqQBr9WmWJ9pIHojIDS5w=
+	t=1733264036; cv=none; b=VDdChSRr5HPgXhRkVpUJwRvl17X6WPQxLdJLY8Z7V8NHtH6s8ARM67lcfaPxflDn64OBwcUmZYyqlZcnxFzdcB8RK+GWZeoSjlxMhdUtyWKdq1QJZlQH0Pk6ImUo6buIcWPjZHm9rE9AC39Y+HOGu4T32CPhQLyi0JRL0Aqzlpo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733263910; c=relaxed/simple;
-	bh=6h6lY5dhctPXg8GEk7u+mmIkbNWk3nfxv+MJY28mXFA=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=cXu6lwAF4oe77gU1BV8ofmbbzDNtacLCUN4rDkVMJdNz2PyHJ/6mLytjQs2MDaBMZ4Win287Z3oV9aFh5+mzEdaSyqYNOs8D7EWNxZoRYP+6mF+R9nGqkDZnkw0ttkuOzK46m40DjXLZfSBQd9BZZbOSk4XSmaeEVe4acc1UcJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pRdKaUCv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35079C4CEDC;
-	Tue,  3 Dec 2024 22:11:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733263910;
-	bh=6h6lY5dhctPXg8GEk7u+mmIkbNWk3nfxv+MJY28mXFA=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=pRdKaUCvZQrV/C0+mEaQcZLGiOY9mWaoVbTHA4ni1ETTkNxmidhbG9QNMYlTeJsFs
-	 9in5Hw1feqfoMXUsNCXgXV9ySpZ/H507DFnvWHvnRx4G0KhHDssrgTAdogotqf2t5u
-	 1qBWAqMcDsQuZuvJmraE54ONtns5tikARkCfsAnFIYgH+//J5XFtADc3QwYbwD4Fnm
-	 vxXZMcKgG9D/y0b21On/3AOillF1lVu3Uq3RGPnJnM3aNWtdKxTPF+l7OMd59P3JCJ
-	 GYtKsYHopRdPFPfuRHDXztrfE3OdlBNypdA9tKalh51GWzwQ38PlLbmNCxUA9UpQAO
-	 yLpYUpWe1K3mA==
-Message-ID: <f59843385d8e491eb1695741141b8a2b.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1733264036; c=relaxed/simple;
+	bh=BkbrVzdOiRECikibD4L1YGd8E6iWdSVVwdyBf+AYo/s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=GySMKxeNBzD6JMwisolXmmodaIb6gtwHKAUhcPDmq3nUzX33aoyS2ye48nlhOK8wZttnPuEyRGxSNtE6AkAZ7v02/olTnXHzNLtBM2suYa92klmjRc9TTLOcnuE8O5EzgiGRo9ZBA5FxUOjH1fYSOryXXSM+9z/mFQQVY3qfuIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Za/D1pmU; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B3DX5RW031984;
+	Tue, 3 Dec 2024 22:13:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	o638fS9a+Kgl6sSSM4E5PIbTqYncs25H9BZwPzS/vgQ=; b=Za/D1pmU1C0oej/1
+	l5hAliFZZxo+iTJmfoXovUIf8RFNArDJ6bkxojpH4AJYtmjEM2+5t8iuzeuPoDQK
+	U7zhYkQVtbmEIU+SUdIZJTV6Lmg0EcHYto2j7d3I/ha4u8psVNylov139DPuJ7gw
+	AS+ULkrpJWbGBJNZgeZ6tqLhFBLniG9koWAiRqIG8uJaNgU34o67qifBdzhZNhrA
+	Izr+2Khc6c6EXXm7BM/Qu8MeMUEGNGy0UeOatUfWVsD2t4q5ULmKPuCmEd5+nR7V
+	bYp/1zh6nIvWgj8+n6uoMSO4hhrgB8RrI7afqpn8U2J81jo75tOEjnuT7OcWLiFF
+	fvaePQ==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 439trbjpym-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 03 Dec 2024 22:13:49 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B3MDmdc030640
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 3 Dec 2024 22:13:48 GMT
+Received: from [10.4.85.39] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 3 Dec 2024
+ 14:13:45 -0800
+Message-ID: <0df58435-94e7-4b81-b688-ec0e1c49c0e0@quicinc.com>
+Date: Wed, 4 Dec 2024 09:13:43 +1100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20241118192526.44180-2-ziyao@disroot.org>
-References: <20241118192526.44180-2-ziyao@disroot.org>
-Subject: Re: [PATCH] docs: clk: describe userspace debugging facilities
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: Yao Zi <ziyao@disroot.org>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-To: Jonathan Corbet <corbet@lwn.net>, Michael Turquette <mturquette@baylibre.com>, Yao Zi <ziyao@disroot.org>
-Date: Tue, 03 Dec 2024 14:11:48 -0800
-User-Agent: alot/0.12.dev1+gaa8c22fdeedb
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 00/10] Trusted Execution Environment (TEE) driver for
+ Qualcomm TEE (QTEE)
+To: Trilok Soni <quic_tsoni@quicinc.com>,
+        Jens Wiklander
+	<jens.wiklander@linaro.org>,
+        Sumit Garg <sumit.garg@linaro.org>,
+        "Bjorn
+ Andersson" <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        "Rob Herring" <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        "Conor Dooley" <conor+dt@kernel.org>,
+        Bartosz Golaszewski
+	<bartosz.golaszewski@linaro.org>,
+        Srinivas Kandagatla
+	<srinivas.kandagatla@linaro.org>
+CC: <linux-arm-msm@vger.kernel.org>, <op-tee@lists.trustedfirmware.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-doc@vger.kernel.org>
+References: <20241202-qcom-tee-using-tee-ss-without-mem-obj-v1-0-f502ef01e016@quicinc.com>
+ <518ee3f1-b871-4349-ba85-3b3fc835a4ca@quicinc.com>
+Content-Language: en-US
+From: Amirreza Zarrabi <quic_azarrabi@quicinc.com>
+In-Reply-To: <518ee3f1-b871-4349-ba85-3b3fc835a4ca@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: ul74uRlLCFN8ibDVqsxhKq7DcVbsTQSq
+X-Proofpoint-ORIG-GUID: ul74uRlLCFN8ibDVqsxhKq7DcVbsTQSq
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=891 mlxscore=0
+ suspectscore=0 spamscore=0 malwarescore=0 adultscore=0 priorityscore=1501
+ clxscore=1015 phishscore=0 lowpriorityscore=0 impostorscore=0 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
+ definitions=main-2412030184
 
-Quoting Yao Zi (2024-11-18 11:25:27)
-> Starting from commit
-> 03111b1088f1 ("clk: Add support for enabling/disabling clocks from debugf=
-s"),
-> it's possible to operate clocks from userspace through debugfs for
-> testing purpose. This feature isn't provided as a Kconfig but rather a
-> macro in source for security consideration, thus is hard to find.
->=20
-> Let's document the macro to ease everyone's life of clock debugging.
+Based on our discussions, we implemented significant changes. We essentially
+rewrote most of the files and altered the overall direction, except for a
+couple of files. The changelog entry would have been extensive.
 
-Thanks for the patch. I don't want to advertise this anymore than it
-already is though so let's skip this patch.
+- Amir
+
+On 12/3/2024 5:06 PM, Trilok Soni wrote:
+> On 12/2/2024 8:19 PM, Amirreza Zarrabi wrote:
+>> This patch series introduces a Trusted Execution Environment (TEE)
+>> driver for Qualcomm TEE (QTEE). QTEE enables Trusted Applications (TAs)
+>> and services to run securely. It uses an object-based interface, where
+>> each service is an object with sets of operations. Clients can invoke
+>> these operations on objects, which can generate results, including other
+>> objects. For example, an object can load a TA and return another object
+>> that represents the loaded TA, allowing access to its services.
+> 
+> The first patch series was RFC and now you had removed the RFC. Can you please
+> provide the reasons?
+> 
+> https://lwn.net/ml/all/20240702-qcom-tee-object-and-ioctls-v1-0-633c3ddf57ee@quicinc.com/
+> 
+> I understand that you have now changed to tee framework but I want to check
+> if we should continue with the version and increment here or start from [00]?
+> 
 
