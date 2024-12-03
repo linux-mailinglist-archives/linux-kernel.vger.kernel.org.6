@@ -1,117 +1,156 @@
-Return-Path: <linux-kernel+bounces-429850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BF3E9E27A4
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 17:36:31 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D5561618D5
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:36:18 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6276D1F8AD4;
-	Tue,  3 Dec 2024 16:36:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="p3dMMQkd"
-Received: from smtpout.efficios.com (smtpout.efficios.com [158.69.130.18])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02BE39E27AB
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 17:37:35 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D427C2BD1D
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 16:36:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=158.69.130.18
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD09B286BA8
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:37:33 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 717C11F8AED;
+	Tue,  3 Dec 2024 16:37:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="ftom6kRc"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7259C1F76BC;
+	Tue,  3 Dec 2024 16:37:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733243778; cv=none; b=S1oA8Qe/r0jtx41MtyiqBvz5GP4SDDVvgSpNv1mpUGiaAfRYCCBGlQMjSDZpUCneDSGZd/rUUOrQg6B99MLb/MtuWwSnhtoeERsMGrwgSkmPxjCke10IrjC3dn7dpZL6eWufZunXcJw5DIftJK40l+n7xKgPb+dzKdrHg9iwAG4=
+	t=1733243847; cv=none; b=Muw6qKKPdOjZ6t1L6tAye/y6/rQW91F7tmqpL1cVLahdw1A8Jqx57bQmtyvToXKf8I97ezwgn50y2dvDYndymzlIHEcsj8eGrI2zCeZC/KtiXqu9L29WBlJ9PqgswY89bHsc0kRKEZWariznQSrxvgh6q1KmjuFDRedAtS0sIuo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733243778; c=relaxed/simple;
-	bh=tmo9AAA6kt3XzX9tU+vZGSa3qOh7lMibgecPzC2J+EE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=RgDllqJvz2wvm6h8yHqRk18DyvtxPK2ygZMDxFRHBGRCZVgvF8PToxoRNW9iodpZvoEWY3Bj6s0jfx4s/cMU8i95P5F7sU8dkkH9okQ8yfPBVKIIFIAOE4kR4fCmzHPHB3MM/GqNwQX+n7KabU3MQJh2Z+DZYxaaplpxDQWmcao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=p3dMMQkd; arc=none smtp.client-ip=158.69.130.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
-	s=smtpout1; t=1733243775;
-	bh=tmo9AAA6kt3XzX9tU+vZGSa3qOh7lMibgecPzC2J+EE=;
-	h=From:To:Cc:Subject:Date:From;
-	b=p3dMMQkdsss9ny2ZTrzW815KyzQMqerq+5slZOnznX7vlWqbUF0877Yw/R0rrZuxV
-	 mswNZZc8lZk2gfLAfE5b8IdC6JgfsOEEhuLaTcsHYfWtRq/Lyij27mBqlRSIOKgYr4
-	 yi0IHyfasRzbIz4aY+zkRxwXHGVU2mkB8QwsocBJfTKphUqDbhCqiMyk9nl2PdppsX
-	 RB8fEIyknlS0l8PEu1d9y/J2BYo23cdM50BOQ3p+piN6SEFem5Iy+6SElmY8Ud8aCt
-	 pWDtcbGNI1gHUa2XR0vhUMsdhXrXMy+bOxQZUe6EaexhXtOULThRF0EBRhsewmyE7e
-	 PD8goAJDw/RuA==
-Received: from thinkos.internal.efficios.com (96-127-217-162.qc.cable.ebox.net [96.127.217.162])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4Y2mW33sGWzTbr;
-	Tue,  3 Dec 2024 11:36:15 -0500 (EST)
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To: Rik van Riel <riel@surriel.com>
-Cc: linux-kernel@vger.kernel.org,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	Dave Hansen <dave.hansen@intel.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Mel Gorman <mgorman@suse.de>,
-	x86@kernel.org
-Subject: [RFC PATCH] smp: Evaluate local cond_func() before IPI side-effects
-Date: Tue,  3 Dec 2024 11:35:58 -0500
-Message-Id: <20241203163558.3455535-1-mathieu.desnoyers@efficios.com>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1733243847; c=relaxed/simple;
+	bh=G7HyrFe72+oitC4q4Te/YLaHT49oETpwcd2VcnKylhY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Wbf4f4jpGFQjVhAAODvmnD2zwXKSx5NIx7nDSyFOC8wdGhmqY4yU7CezF7tyEDwvtF2akHlfsUtJAJwcQwj+JDSYFKliWWHjWOcTvNE1YpPiJvOgSB8zy/Ymhe7DUieH8soK5ahVWJJG92v3G9AN8U8nRWodVZZtN/66GxrKKDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=ftom6kRc; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=vtg5kgR3ORav6GpvoI4HJZs080IrHQwvmLbc1RQ21fQ=; b=ftom6kRcfoNNnL7M3OobZtc2wW
+	IL6jehD17o658D1VERtVxcVeJaVpojtp0qxgdUGm8PFI2NMw/+uZ1ewKSM9DKzJE5RP4sarkT16J8
+	zV5TjMJhphX+KKLqSrSehiv6St1X79/44h45k5zOzlSbzapyBfodQkeAPUznNdsHwtmtyJYkzTYVx
+	eAi4E8f4SqfYkwsWiEA0QyuOA4xm91LnyP0MpbpEs69PJ/cSxkwCPWniu+EW+pwi+iL9WExlB949B
+	LpwhqTen0RKe8c1rFixbZFcid6L9TICWPFHsNVTBvB+YMsEeZSE3zYwt2p4wNwQcaYbUU8+j59mwN
+	y8jqHFAg==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:49004)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1tIVtj-0002E3-08;
+	Tue, 03 Dec 2024 16:37:15 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1tIVte-0004h5-2z;
+	Tue, 03 Dec 2024 16:37:11 +0000
+Date: Tue, 3 Dec 2024 16:37:10 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Cc: Andrew Lunn <andrew@lunn.ch>,
+	Dennis Ostermann <dennis.ostermann@renesas.com>,
+	"nikita.yoush" <nikita.yoush@cogentembedded.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Michael Dege <michael.dege@renesas.com>,
+	Christian Mardmoeller <christian.mardmoeller@renesas.com>
+Subject: Re: [PATCH] net: phy: phy_ethtool_ksettings_set: Allow any supported
+ speed
+Message-ID: <Z08ztsAG8x8uqCwJ@shell.armlinux.org.uk>
+References: <eddde51a-2e0b-48c2-9681-48a95f329f5c@cogentembedded.com>
+ <Z02KoULvRqMQbxR3@shell.armlinux.org.uk>
+ <c1296735-81be-4f7d-a601-bc1a3718a6a2@cogentembedded.com>
+ <Z02oTJgl1Ldw8J6X@shell.armlinux.org.uk>
+ <5cef26d0-b24f-48c6-a5e0-f7c9bd0cefec@cogentembedded.com>
+ <Z03aPw_QgVYn8WyR@shell.armlinux.org.uk>
+ <TYCPR01MB1047854DA050E52CADB04393A8E362@TYCPR01MB10478.jpnprd01.prod.outlook.com>
+ <1ff52755-ef24-4e4b-a671-803db37b58fc@lunn.ch>
+ <Z08h95dUlS7zacTY@shell.armlinux.org.uk>
+ <20241203165147.4706cc3b@fedora.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241203165147.4706cc3b@fedora.home>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-In smp_call_function_many_cond(), the local cond_func() is evaluated
-after triggering the remote CPU IPIs.
+On Tue, Dec 03, 2024 at 04:51:47PM +0100, Maxime Chevallier wrote:
+> Hi Andrew,
+> 
+> On Tue, 3 Dec 2024 15:21:27 +0000
+> "Russell King (Oracle)" <linux@armlinux.org.uk> wrote:
+> 
+> > On Tue, Dec 03, 2024 at 03:45:09PM +0100, Andrew Lunn wrote:
+> > > On Tue, Dec 03, 2024 at 02:05:07PM +0000, Dennis Ostermann wrote:  
+> > > > Hi,
+> > > > 
+> > > > according to IEE 802.3-2022, ch. 125.2.4.3, Auto-Negotiation is optional for 2.5GBASE-T1
+> > > >   
+> > > > > 125.2.4.3 Auto-Negotiation, type single differential-pair media
+> > > > > Auto-Negotiation (Clause 98) may be used by 2.5GBASE-T1 and 5GBASE-T1 devices to detect the
+> > > > > abilities (modes of operation) supported by the device at the other end of a link segment, determine common
+> > > > > abilities, and configure for joint operation. Auto-Negotiation is performed upon link startup through the use
+> > > > > of half-duplex differential Manchester encoding.
+> > > > > The use of Clause 98 Auto-Negotiation is optional for 2.5GBASE-T1 and 5GBASE-T1 PHYs  
+> > > > 
+> > > > So, purposed change could make sense for T1 PHYs.  
+> > > 
+> > > The proposed change it too liberal. We need the PHY to say it supports
+> > > 2.5GBASE-T1, not 2.5GBASE-T. We can then allow 2.5GBASE-T1 to not use
+> > > autoneg, but 2.5GBASE-T has to use autoneg.  
+> > 
+> > I'm wondering whether we should add:
+> > 
+> > 	__ETHTOOL_DECLARE_LINK_MODE_MASK(requires_an);
+> > 
+> > to struct phy_device, and have phylib populate that by default with all
+> > base-T link modes > 1G (which would be the default case as it is now.)
+> > Then, PHY drivers can change this bitmap as they need for their device.
+> > After the PHY features have been discovered, this should then get
+> > AND-ed with the supported bitmap.
+> 
+> If the standards says that BaseT4 >1G needs aneg, and that we can't
+> have it for baseT1, couldn't we just have some lookup table for each
+> mode indicating if they need or support aneg ?
 
-If cond_func() depends on loading shared state updated by other CPU's
-IPI handlers func(), then triggering execution of remote CPUs IPI before
-evaluating cond_func() may have unexpected consequences.
+When operating in !AN mode, all that the ethtool API passes is the
+speed and duplex, with a guess at the advertising mask (which doesn't
+take account of the PHY's supported ethtool link modes.)
 
-One example scenario is evaluating a jiffies delay in cond_func(), which
-is updated by func() in the IPI handlers. This situation can prevent
-execution of periodic cleanup code on the local CPU.
+If e.g. we have a PHY that supports 1000base-T and 1000base-X, and the
+user attempts to disable AN specifying speed 1000 duplex full, we don't
+know whether the user means 1000base-T (which actually requires AN, but
+we work around that *) or 1000base-X without AN.
 
-Link: https://lore.kernel.org/lkml/20241202202213.26a79ed6@fangorn/
-Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Rik van Riel <riel@surriel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Mel Gorman <mgorman@suse.de>
-Cc: x86@kernel.org
----
- kernel/smp.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+Specifying speed + duplex for !AN is nice for humans, but ambiguous
+for computers.
 
-diff --git a/kernel/smp.c b/kernel/smp.c
-index 27dc31a146a3..f104c8e83fc4 100644
---- a/kernel/smp.c
-+++ b/kernel/smp.c
-@@ -815,7 +815,8 @@ static void smp_call_function_many_cond(const struct cpumask *mask,
- 	WARN_ON_ONCE(!in_task());
- 
- 	/* Check if we need local execution. */
--	if ((scf_flags & SCF_RUN_LOCAL) && cpumask_test_cpu(this_cpu, mask))
-+	if ((scf_flags & SCF_RUN_LOCAL) && cpumask_test_cpu(this_cpu, mask) &&
-+	    (!cond_func || cond_func(this_cpu, info)))
- 		run_local = true;
- 
- 	/* Check if we need remote execution, i.e., any CPU excluding this one. */
-@@ -868,7 +869,7 @@ static void smp_call_function_many_cond(const struct cpumask *mask,
- 			send_call_function_ipi_mask(cfd->cpumask_ipi);
- 	}
- 
--	if (run_local && (!cond_func || cond_func(this_cpu, info))) {
-+	if (run_local) {
- 		unsigned long flags;
- 
- 		local_irq_save(flags);
+* - the workaround adopted is to do what Marvell PHYs internally do but
+in phylib code, which is to accept the request to disable AN and
+operate at the specified speed, but actually program AN to be enabled
+with only a single speed/duplex that can be negotiated. Without this,
+we end up with hacks in MAC drivers because the PHY they're paired with
+doesn't support AN being disabled at 1G speed. See
+__genphy_config_aneg(). Note: this is probably going to interact badly
+with the baseT1 case.
+
 -- 
-2.39.5
-
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
