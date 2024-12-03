@@ -1,53 +1,83 @@
-Return-Path: <linux-kernel+bounces-429151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429158-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 815259E17F8
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:41:20 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 55E27165DA7
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:41:17 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32C5A1E0B8A;
-	Tue,  3 Dec 2024 09:40:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="GBbKJqd7"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BFCE9E1818
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:45:36 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDD4A1E008C;
-	Tue,  3 Dec 2024 09:40:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733218844; cv=none; b=U0UvNhzm2sBIaoVBsyrGiMTlD/46uSV+mQby7XOdsZ8veWalN0C2q1/KU4vQs8rkhkjsee588hD31XDwUeIgJviiZXeqc4nQzpQyt8z8AgdsY/wB6IJcDsA45BfptYLp4AR1ltGviXGtKKvHdJz+R1y44B3v2HqWwPe4+ecSdks=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733218844; c=relaxed/simple;
-	bh=4U78tOYVlkvReGUrkFFLBc03ZsaBKxkITzu5sB+X0/E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=R1KA+ooobw0JCUW4fV3gOOYORlLcBJIsRphmWLuNdGLje5g1C8ggRPaDEqRwNtGk2djSMv3QLPmqFuGf8nvAPtrHQuPfZzjsbFRXP1fWG1OY/hh/nAJnggQjzApoyvJZ5AMa0qlCUs2u+wHIu4Zb900DDbS8M7sYy1oqKUSCofA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=GBbKJqd7; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1733218838;
-	bh=4U78tOYVlkvReGUrkFFLBc03ZsaBKxkITzu5sB+X0/E=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=GBbKJqd75SXOHbhBIXgpv7G/ordaTaQWCayZr0n/29MzJ/jBFsC170PBOehPX15E1
-	 k5cCRQHcpuuGmxR+Qm0VwJ/St4ewkjHa/lcZ15jd5nR8K12IN0zyqyzyZM+plfVPYp
-	 5FNS+ynuZ75bOlVLh2w/eqd4/xcGXLhol0Vt9UxUQXR1ETLFNU4zDfIshmjEtOBHul
-	 cunmGXBta/nM0KF6B8QAf2EDGk1acy85lVwMw00+/tH7hbmbrk5YPB/a9S6C7yWOx8
-	 5xydQiyj7ik1siDUFrTXdL/UQPPCM5h51H/0kgYdZ9EGkbxqYox8rV7f3DEoPk6e03
-	 JosJMhHcxSU6w==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 31446B37AD8
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:42:54 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 499D81E22E9;
+	Tue,  3 Dec 2024 09:40:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IQzpSESY"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 22E5117E35EF;
-	Tue,  3 Dec 2024 10:40:38 +0100 (CET)
-Message-ID: <1ad355df-3f2a-4257-9374-1d125e138791@collabora.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61FB31E0DA1
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 09:40:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733218848; cv=none; b=IR0FCh4+7wRGNQ5W+xSzXJLYeFQwn+6VH4wzoqIUc3F61w1eRQz7CivJn1eOnpVptytIFTmLYpM841R4I0/dXllbp72IsGujPYgpDgq8PsK+kZ6vWjx4tmC7u4CDT7ny2F7d81ZrJwrJ0RJ16tK/L69WPhzXA9mm/SDSDMpU1U0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733218848; c=relaxed/simple;
+	bh=/jz3ugyvl3+mRbslHfzgJQkWC8Bn2VbuAFAAXgr+R4A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eYiH8J+TTdtUZnomLuZvFT7OT+JDsTM7YHnO0wXman2wC1DQ69N3Fkh/vDIqu7do2WbJT6Uy83Ayyfqwhp6kvwOByuoPdK3tHG0J2Fyy3o+OpSU0rJrxJ7PjWiqpk/hSCLtGi8mQVvzieGq0R4D2N2efM7NmpMkJa+RC7nRuYyE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IQzpSESY; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733218844;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OfpgMux8ECyhFr0Gd9nm/Ka0QyflmmO41wuknGXI9mQ=;
+	b=IQzpSESYqUDU3vpHH3i9pgRquW04XIumaHSp4wmKI+Bn18OAAbjSnwNtgtIe7/yPlC4IwK
+	jHqDNYLkc7p/JvUvGQVsDd8JRJL1ZMX6TbvGmmSm9Udg6ZYKHRwz2TuowyV47TjHrlqAQT
+	1JSqGnJH3GitFIH7MEihTUel4/kcjsI=
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
+ [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-615-EBtU5Vi2NxC_H4NoP0aqEA-1; Tue, 03 Dec 2024 04:40:43 -0500
+X-MC-Unique: EBtU5Vi2NxC_H4NoP0aqEA-1
+X-Mimecast-MFC-AGG-ID: EBtU5Vi2NxC_H4NoP0aqEA
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6d8881bd39fso56486566d6.3
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 01:40:43 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733218842; x=1733823642;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OfpgMux8ECyhFr0Gd9nm/Ka0QyflmmO41wuknGXI9mQ=;
+        b=tfxYVbx97v6uhb7LhOhPM+BI0Q4+A8qoG959TfkfrYG1uPBp+7rXzIBh8xXQOHwSdQ
+         SYOtBkkuIZ8zNR2+TpL4hf97J5F5Fc9skd2XEz59sp52X86ZUXDapH/GAJkzb+BFn3pe
+         PleNrlJ6RYjJm3BIR/xJAXIN8BXUCAypYlKVGy9ZJk3V1wVbHMuDqt77wtix3ArGYCgg
+         PViIuOQE7eLIclwK3hnBN4I/QAOLYRNJVX9Seky4cSfAMQ0yskDNBm48VZ0Nkgxtb0lQ
+         dWFsIITC48NBvoYUpW3ynj9dMnS/TSEje3pTxqTNhvnCXEW7Tlp5OwHJ6skyWtrHvkrU
+         2MRg==
+X-Forwarded-Encrypted: i=1; AJvYcCW+Cc03Di1Thix8n+mz4xFxyTpasP5XOuIhROmMSSdQQo/SzX2i1+acZHk8K7ZKGkyErUfvDb0qdFIxSJc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUCF3wAWOEbVcEFeuc9AFdRSGvp8+UydwrTG1i1QeP8UFl68ym
+	jjAjF6y/XkTGZkxoObHPv889b23SkkQi5+cMT0bTcj7ZuLaayh6f9OA0cpY3xhTXA8D1p0+2D2d
+	uXDkp6Et7kGkGWpRofPnvURWHHHTb3LxJt8JF/YEKjzzBMmcCmM2EA9Uq7uPb8g==
+X-Gm-Gg: ASbGncvXZUCIsVm7HTYJzKZw0iHc+ywGUMBsIBfzVdKYKeruMLr4wUD654Qnibhzd9d
+	mbaeyWXcvQoDB/XHDUY+lEqlI9Gd2DG1BAHw4qwBNyYeKdIFKZXXBZ2HeNCctIhQK7fIvO/2JRY
+	zrKZ+pmhO7nUoccr0H5puYF3kNDdAk3m/cEYy30zOMpMC+GF3ChHFZdMbAVRU91pTZA+5sdC52f
+	gu23ABj/8/uCBbzA53kuoglAyYpA3Ihu3VKs1j8boPuj3CtaNmD0NPok/PZ6Dva4aMLRj0S6OHa
+X-Received: by 2002:ad4:5b8f:0:b0:6d8:7d63:f424 with SMTP id 6a1803df08f44-6d8b7317487mr30754576d6.12.1733218842747;
+        Tue, 03 Dec 2024 01:40:42 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEFJKe8gYVOPoz1stB/4vivQ+4YFVkTPEy9VAY6XLYvVEvdF0MJBe+Y0neETndfuzsQtUI/OQ==
+X-Received: by 2002:ad4:5b8f:0:b0:6d8:7d63:f424 with SMTP id 6a1803df08f44-6d8b7317487mr30754466d6.12.1733218842494;
+        Tue, 03 Dec 2024 01:40:42 -0800 (PST)
+Received: from [192.168.88.24] (146-241-38-31.dyn.eolo.it. [146.241.38.31])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d896a2a706sm35947496d6.112.2024.12.03.01.40.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 03 Dec 2024 01:40:42 -0800 (PST)
+Message-ID: <96747b28-1548-4503-838b-e7a994be4647@redhat.com>
 Date: Tue, 3 Dec 2024 10:40:38 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -56,37 +86,59 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 13/18] arm64: dts: mediatek: mt7988: add i2c to bpi-r4
- board
-To: Frank Wunderlich <linux@fw-web.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>
-Cc: Frank Wunderlich <frank-w@public-files.de>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org
-References: <20241202122602.30734-1-linux@fw-web.de>
- <20241202122602.30734-14-linux@fw-web.de>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Subject: Re: [net PATCH] octeontx2-af: Fix installation of PF multicast rules
+To: Geetha sowjanya <gakula@marvell.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: kuba@kernel.org, davem@davemloft.net, horms@kernel.org,
+ andrew+netdev@lunn.ch, edumazet@google.com, sgoutham@marvell.com,
+ sbhatta@marvell.com, hkelam@marvell.com
+References: <20241127114857.11279-1-gakula@marvell.com>
 Content-Language: en-US
-In-Reply-To: <20241202122602.30734-14-linux@fw-web.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20241127114857.11279-1-gakula@marvell.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Il 02/12/24 13:25, Frank Wunderlich ha scritto:
-> From: Frank Wunderlich <frank-w@public-files.de>
+On 11/27/24 12:48, Geetha sowjanya wrote:
+> Due to target variable is being reassigned in npc_install_flow()
+> function, PF multicast rules are not getting installed.
+> This patch addresses the issue by fixing the "IF" condition
+> checks when rules are installed by AF.
 > 
-> Add basic i2c nodes to bananapi R4 board.
+> Fixes: 6c40ca957fe5 ("octeontx2-pf: Adds TC offload support").
+> Signed-off-by: Geetha sowjanya <gakula@marvell.com>
+> ---
+>  drivers/net/ethernet/marvell/octeontx2/af/rvu_npc_fs.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
+> diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu_npc_fs.c b/drivers/net/ethernet/marvell/octeontx2/af/rvu_npc_fs.c
+> index da69e454662a..8a2444a8b7d3 100644
+> --- a/drivers/net/ethernet/marvell/octeontx2/af/rvu_npc_fs.c
+> +++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu_npc_fs.c
+> @@ -1457,14 +1457,14 @@ int rvu_mbox_handler_npc_install_flow(struct rvu *rvu,
+>  		target = req->vf;
+>  
+>  	/* PF installing for its VF */
+> -	if (!from_vf && req->vf && !from_rep_dev) {
+> +	else if (!from_vf && req->vf && !from_rep_dev) {
 
-arm64: dts: mediatek: mt7988a-bpi-r4: Enable I2C controllers
+This IMHO makes the code quite unreadable and error-prone, as the else
+branches are quite separate from the 'if' statement and easy to miss.
 
-Enable the I2C0, I2C2 controllers found on the BananaPi R4 board; these
-controllers are accessible at ... I don't know, a header on the board?
+It also breaks the kernel style, as you must apply the curly brackets on
+all the branches, if one of them is using them.
 
-After which,
+Please restructure the code a bit:
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+	if (!req->hdr.pcifunc) {
+		/* AF installing for a PF/VF */
+		target = req->vf;
+	} else if (!from_vf && req->vf && !from_rep_dev) {
+		/* PF installing for its VF */
+		...
 
+Thanks,
+
+Paolo
 
 
