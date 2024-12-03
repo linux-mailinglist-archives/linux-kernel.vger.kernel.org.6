@@ -1,114 +1,141 @@
-Return-Path: <linux-kernel+bounces-428814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A69EF9E13DE
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 08:20:24 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73BD69E1458
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 08:35:33 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 269F0B22CAA
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 07:20:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 474211644B6
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 07:35:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0C34189F36;
-	Tue,  3 Dec 2024 07:20:15 +0000 (UTC)
-Received: from mail.steuer-voss.de (mail.steuer-voss.de [85.183.69.95])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C55A018BBB0;
+	Tue,  3 Dec 2024 07:35:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="Hmcrf63s"
+Received: from www530.your-server.de (www530.your-server.de [188.40.30.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50DEF185B76
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 07:20:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.183.69.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F8EB2500BD;
+	Tue,  3 Dec 2024 07:35:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.30.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733210415; cv=none; b=Xs6DKYQpw18U8ll5hr45oox0xrjCIQUF3WyP5fjV3K3Vq5zFEHScT/ddxnPePTHuWf9IBQUH74O+j8B0pIHVQl98OTyp61C6xFOm5M0QuT/X65TAaW9WM9tjOlpSyagrsQoqOQQ+2qUYWFJddGRHIwf3WbKNFtSwaoLHonRAvTY=
+	t=1733211327; cv=none; b=gSa98diNYXBAEWNiTBLiot8khTk/rYtijK/CUjv6GLNskxZuMLJnsW9v53td0tWeKCnJJiHGxoMT0U71sfDtzTtN/yeo4coorCOTJZrkWhU5w3rb9j6YpNZ8qDrRuAtSy1y/mvLEcvwnqEm4yST8aCNLT6HpXQuQachfkRrqXiQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733210415; c=relaxed/simple;
-	bh=bStHylu43FbXoC8+cIz28JnD6jgxk+4X3/rXGSLNARk=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=PXGMusMrCH05EsBzzClT5ml8wmeuG/ijPvXJ24vr6GMEsuD2Y6STZcdf5tHErJXgPsQIFhwUuxGuK8kbmSmU6NsJsqUnvUTGabYZsHyhmVnv2Ruet1d+qXhEkvaO+PhciS2rHVc/TMa1r0u5cOL7rix3W18KM9liP4n1PRUg49g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=vosn.de; spf=pass smtp.mailfrom=vosn.de; arc=none smtp.client-ip=85.183.69.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=vosn.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vosn.de
-X-Virus-Scanned: Debian amavisd-new at mail.steuer-voss.de
-Received: from mail.steuer-voss.de (localhost [127.0.0.1])
-	by mail.steuer-voss.de (Postfix) with ESMTP id B8F162CF;
-	Tue,  3 Dec 2024 08:20:05 +0100 (CET)
+	s=arc-20240116; t=1733211327; c=relaxed/simple;
+	bh=rVywOE0gRgGqCEDA/wgT1A60I07fUyj/DjFLWSig95E=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=X1j7rxxFra964YSK1o/fvM2kHfJgRecgITQ5T3bVGOG6sKxePabJhdrs3OlM2G/99ggMvUqwVq7SGRfg8A1h7YhoRCpS9/r3MjjesIWidWUl5nJuNwcZELqY371J8tE/exAHwF1ZMjGowNEPeu7pvvSHnHOlBYYCJIciF+VteHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=Hmcrf63s; arc=none smtp.client-ip=188.40.30.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=geanix.com;
+	s=default2211; h=Cc:To:Message-Id:Content-Transfer-Encoding:Content-Type:
+	MIME-Version:Subject:Date:From:Sender:Reply-To:Content-ID:Content-Description
+	:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References; bh=VBzRnmrC8jmWZvvyhpj/asxRV9aBhj2F5LFhdxtLcfU=; b=Hm
+	crf63sNEleBGJxoSxu2E34jJ3jVc7qvsugD/cmHZW3mpa+e7TaS0WDUtEisEYaGEK+5uYJcPw/xfs
+	J8qjO8PYBfBK28v3u0849Q8em9J/Iuc3J6iCm7i7HfeGGSftSHlReY36eiNH7J6wnxP78guPdRyAR
+	ohQB1rdTP5nyLrUNJTR2/YxEnVTWvHyngnUrybzG4j420qTAvrWQvqyc0vZN4QvO9DgCzlKpBkUiX
+	srhQVALwVIzw5y6IAYdGkD37COwwSm2GTeN5w8mDMzy9+yneyWUEtiAteLq0AVmeEmVGMsxEvK0o2
+	ESXzp91MsBAMEeR/Kr+AyW5HozHCelmw==;
+Received: from sslproxy04.your-server.de ([78.46.152.42])
+	by www530.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <sean@geanix.com>)
+	id 1tINCu-000FNH-4C; Tue, 03 Dec 2024 08:20:28 +0100
+Received: from [185.17.218.86] (helo=zen.localdomain)
+	by sslproxy04.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <sean@geanix.com>)
+	id 1tINCt-000Bol-2Q;
+	Tue, 03 Dec 2024 08:20:27 +0100
+From: Sean Nyekjaer <sean@geanix.com>
+Date: Tue, 03 Dec 2024 08:20:17 +0100
+Subject: [PATCH] iio: imu: st_lsm6dsx: don't always auto-enable I2C, I3C
+ and SPI interface drivers
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Tue, 03 Dec 2024 08:20:05 +0100
-From: Nikolaus Voss <nv@vosn.de>
-To: Marek Vasut <marex@denx.de>
-Cc: Liu Ying <victor.liu@oss.nxp.com>, Alexander Stein
- <alexander.stein@ew.tq-group.com>, Liu Ying <victor.liu@nxp.com>, Luca
- Ceresoli <luca.ceresoli@bootlin.com>, Fabio Estevam <festevam@denx.de>,
- Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong
- <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, Laurent
- Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman
- <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, David Airlie
- <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- nikolaus.voss@haag-streit.com, miquel.raynal@bootlin.com
-Subject: Re: [PATCH] drm: bridge: fsl-ldb: fixup mode on freq mismatch
-In-Reply-To: <12a1b86e-8f25-4875-8503-1de98f125a62@denx.de>
-References: <20241126172610.AD8B51622C@mail.steuer-voss.de>
- <1f0a307a-666f-4647-9f73-e9bddd6c7eff@oss.nxp.com>
- <000b34cdd1591c82265ce1f9848828d1@vosn.de>
- <2c950130-84b4-4a81-84a2-b5e08af43616@oss.nxp.com>
- <12a1b86e-8f25-4875-8503-1de98f125a62@denx.de>
-User-Agent: Roundcube Webmail/1.5.0
-Message-ID: <808d4092a9e97b95480d47c1bd84d930@vosn.de>
-X-Sender: nv@vosn.de
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20241203-lsm6dsx-v1-1-6d7893443bc8@geanix.com>
+X-B4-Tracking: v=1; b=H4sIADGxTmcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxNDIKGbU5xrllJcoWtqYWpoYWRgYQIUVAKqLihKTcusAJsUHVtbCwBFrqq
+ 4WQAAAA==
+X-Change-ID: 20241202-lsm6dsx-585182084202
+To: Lorenzo Bianconi <lorenzo@kernel.org>, 
+ Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Sean Nyekjaer <sean@geanix.com>
+X-Mailer: b4 0.14.2
+X-Authenticated-Sender: sean@geanix.com
+X-Virus-Scanned: Clear (ClamAV 0.103.10/27475/Mon Dec  2 10:41:11 2024)
 
-On 03.12.2024 04:12, Marek Vasut wrote:
-> On 12/3/24 3:22 AM, Liu Ying wrote:
-> 
-> [...]
-> 
->>>> I doubt that pixel clock tree cannot find appropriate division 
->>>> ratios
->>>> for some pixel clock rates, especially for dual-link LVDS on i.MX8MP
->>>> and i.MX93 platforms, because PLL clock rate should be 7x faster 
->>>> than
->>>> pixel clock rate and 2x faster than "ldb" clock rate so that the 3.5
->>>> folder between "ldb" clock and pixel clock can be met. That means 
->>>> the
->>>> PLL clock rate needs to be explicitly set first for this case.
->>>> 
->>>> Can you assign the PLL clock rate in DT to satisfy the "ldb" and 
->>>> pixel
->>>> clock rates like the below commit does, if you use a LVDS panel?
->>>> 
->>>> 4fbb73416b10 ("arm64: dts: imx8mp-phyboard-pollux: Set Video PLL1
->>>> frequency to 506.8 MHz")
->>> 
->>> I probably could. The point of my patch is you don't have to know in
->>> advance which LVDS panel is connected, and you don't have to 
->>> calculate
->>> the base PLL clock by hand and store it in the device tree.
->>> 
->>> In my test system, I have three different LVDS panels with EDID 
->>> EEPROM,
->>> none of which worked with the stock driver, but all work with this
->>> patch.
->>> With slightly adapted pixel clocks though.
->> 
->> If each of the three LVDS panels has only one display mode, you may
->> assign the PLL clock rates in DT overlays for the panels.
-> I temporarily agree.
-> 
-> I also currently use DTOs for various panels including their PLL
-> setting, but in the end, I think/hope the work of Miquel and co. is
-> going to make that PLL setting part unnecessary.
+This patch makes I2C, I3C and SPI interface drivers for ST lsm6dsx
+individually selectable via Kconfig.
 
-That is exactly what my patch is about. I want to use one DT for all
-panels and store the panel's timing in EDID EEPROM.
+The default is kept unchanged - I2C, I3C and SPI interface drivers are
+still selected by default if the corresponding bus support is available.
 
+However, the patch makes it possible to explicitly disable drivers
+that are not needed for a particular target.
+
+Signed-off-by: Sean Nyekjaer <sean@geanix.com>
+---
+ drivers/iio/imu/st_lsm6dsx/Kconfig | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/iio/imu/st_lsm6dsx/Kconfig b/drivers/iio/imu/st_lsm6dsx/Kconfig
+index 89d687ec3099cc3ecb848e44f610c5cd64c80ad1..3cabec3b152d21403b40668a20ca7d175109a79e 100644
+--- a/drivers/iio/imu/st_lsm6dsx/Kconfig
++++ b/drivers/iio/imu/st_lsm6dsx/Kconfig
+@@ -6,9 +6,6 @@ config IIO_ST_LSM6DSX
+ 	select IIO_BUFFER
+ 	select IIO_TRIGGERED_BUFFER
+ 	select IIO_KFIFO_BUF
+-	select IIO_ST_LSM6DSX_I2C if (I2C)
+-	select IIO_ST_LSM6DSX_SPI if (SPI_MASTER)
+-	select IIO_ST_LSM6DSX_I3C if (I3C)
+ 	help
+ 	  Say yes here to build support for STMicroelectronics LSM6DSx imu
+ 	  sensor.
+@@ -42,16 +39,19 @@ config IIO_ST_LSM6DSX
+ 	  will be called st_lsm6dsx.
+ 
+ config IIO_ST_LSM6DSX_I2C
+-	tristate
+-	depends on IIO_ST_LSM6DSX
++	tristate "ST_LSM6DSx driver for STM 6-axis IMU MEMS sensors I2C Interface"
++	depends on I2C && IIO_ST_LSM6DSX
++	default I2C && IIO_ST_LSM6DSX
+ 	select REGMAP_I2C
+ 
+ config IIO_ST_LSM6DSX_SPI
+-	tristate
+-	depends on IIO_ST_LSM6DSX
++	tristate "ST_LSM6DSx driver for STM 6-axis IMU MEMS sensors SPI Interface"
++	depends on SPI_MASTER && IIO_ST_LSM6DSX
++	default SPI_MASTER && IIO_ST_LSM6DSX
+ 	select REGMAP_SPI
+ 
+ config IIO_ST_LSM6DSX_I3C
+-	tristate
+-	depends on IIO_ST_LSM6DSX
++	tristate "ST_LSM6DSx driver for STM 6-axis IMU MEMS sensors I3C Interface"
++	depends on I3C && IIO_ST_LSM6DSX
++	default I3C && IIO_ST_LSM6DSX
+ 	select REGMAP_I3C
+
+---
+base-commit: 4ecd1edf4994bc5385609c6ea9e599b4ee958706
+change-id: 20241202-lsm6dsx-585182084202
+
+Best regards,
 -- 
-Nikolaus Voss
+Sean Nyekjaer <sean@geanix.com>
+
 
