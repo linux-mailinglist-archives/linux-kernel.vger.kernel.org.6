@@ -1,74 +1,144 @@
-Return-Path: <linux-kernel+bounces-430334-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9A1B9E2F4F
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 23:53:55 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B53D9E2F5B
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 23:59:29 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57FBF282164
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 22:53:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33ADF163BFA
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 22:59:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83DA320A5EA;
-	Tue,  3 Dec 2024 22:53:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7848C20A5EA;
+	Tue,  3 Dec 2024 22:59:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KPVurdUY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="uUpHwAst";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="c+FJ40Es"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D88B020A5C8;
-	Tue,  3 Dec 2024 22:53:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 155901E2009;
+	Tue,  3 Dec 2024 22:59:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733266427; cv=none; b=O5+n+7ev2tmJwYsHtmBm8ISOrdopwwcEXFhdZMDKTi7zVupybCUfLibijHJa5iu+uNSWLwDPH+ijUOXkwwtwDjYba4IfW1st7PaTWN4Rw/mrv8d4GyPOdGwrp5/N+xzepowCVTP4mspPcZRl9kTYrOeJuypfzJsD5V4UwYC/66U=
+	t=1733266761; cv=none; b=ZRx0C/o7oQ8GMlCKeUtX8sECejFZ/YiA719jPu9SKNZ+Q5JHFqt9GuK5qGcGZFyGrSwkEoka4RmARMyJNPcgKYS+z7lRAjY8MxHOhN5B9s2yjZvW6CHpI/Li2Tu/Ai9iV4fiiMABbitMVf0eodMHEvq57afxRmLFOWcYuvQIs+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733266427; c=relaxed/simple;
-	bh=hxJM0uX66rDrdmeB4lH8XrQkCJxJlOGvl0CFbwZ7dXI=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=Y+YCYVr1lb/HiMDU1DDOzDZYqFFlQrrB1f0ASRkTa+lRhWtpXMjJhaFJlUC2aCs0VXhX5SPbZD8goAt3WEnBeHoLcHdnu5dTsymFJKR1FqdogL8Fp8hGZVFdWDhCPAsLqIDDmLDNVc7V+6R030TeWYUbmrKm6lXhg2Seu5rETGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KPVurdUY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 380FEC4CEDC;
-	Tue,  3 Dec 2024 22:53:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733266426;
-	bh=hxJM0uX66rDrdmeB4lH8XrQkCJxJlOGvl0CFbwZ7dXI=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=KPVurdUY+AxlcDq/kWJ170VjyO9jjmU7KlqD7y5yWINwP1V2gpmvcznd2WWVeE0j7
-	 SQObpKE/PNyRRq+fbY3oJl1mcOPiH8kS0vNDCrTbSrsqXRD1UQ/vVTvozKEk+5iGfv
-	 pSeuwqn7L6BNF3x36181A1b+BS8UlEQCPjIFFEoJccqhBzk9zVF1BbJEv7MXe8Gr3U
-	 oBL+f+eJN0+KiOVo2a4lQhjhHfV/HKGY2mfdKjTUK8VFXzX2gPtNNmeucE1W2BT1nD
-	 0uv0EXdLKkaG4yVU09PWJhJmjtZeIR62mZcnW8T601V0vXaJB+5c0VWROkIEpbtXI5
-	 PXNx/UidhA+ZQ==
-Message-ID: <a83b9497295bd8efd6260dadf37c5a77.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1733266761; c=relaxed/simple;
+	bh=Ts5twGI5WLXGCgWxTjs5dJLKgs4RCUcQq24XWrHPHPg=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=oJrvl76CmSe4J9z06UtVmJKCRMIJuyGqRJC8+yx0KU9dEaFF71GbBzLju9DHhw4Zq4pDUPifvKZBBjaYobOvClplEO7t3GRFTblWlTxUMr2l6PNkJkxb0ph+m1Sjy3XXDW6NdwObfqPOT5xnGMhyhE3NDihUTf+iqLas3q4Ps5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=uUpHwAst; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=c+FJ40Es; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1733266758;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/xkyLKWpUVdm6mfEZQQyS1yp6VoP0OWawZ5KoEQBw98=;
+	b=uUpHwAstAvPIPqurwVOkG4Z+xsuHUFtZ1THMwPD1xXJxmU3itDeHHaJi+jhl8lLBJ7eZ/4
+	rikeyL9y6/r0ZR071XOgksOdUYZ/PQCe+hGK2BvzyddYsmst8WpxFVe+UJVJzQGrdhxgcV
+	HLNq7f9LeqLepzH7RGzXJqq5B5jJnr9J9t79clawHMUjQb2mmGKapYpb+SK2DhA2lakxq8
+	iBadArbE9YJ0ZSq/71hfYpbAAi3BpT0+6GSmKjPazSH/yyLgWTtVB1F0ADpZ6/xF9oAxLK
+	SGrYIEc+XE/odY9cufIHKNqH/CkVZlI3It65iNeu/FplcxvHLpJdwfka9aOq7Q==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1733266758;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/xkyLKWpUVdm6mfEZQQyS1yp6VoP0OWawZ5KoEQBw98=;
+	b=c+FJ40EsursGL5c6ZmSdluV0Hszl6xqc8ugVFc+JqAg5TyAq0eyEU7V2yrjQR13ZoVbsYq
+	CKD1ARZ8ojo9HDCA==
+To: Anup Patel <anup@brainfault.org>
+Cc: Andrew Jones <ajones@ventanamicro.com>, iommu@lists.linux.dev,
+ kvm-riscv@lists.infradead.org, kvm@vger.kernel.org,
+ linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+ tjeznach@rivosinc.com, zong.li@sifive.com, joro@8bytes.org,
+ will@kernel.org, robin.murphy@arm.com, atishp@atishpatra.org,
+ alex.williamson@redhat.com, paul.walmsley@sifive.com, palmer@dabbelt.com,
+ aou@eecs.berkeley.edu
+Subject: Re: [RFC PATCH 01/15] irqchip/riscv-imsic: Use hierarchy to reach
+ irq_set_affinity
+In-Reply-To: <874j3ktrjv.ffs@tglx>
+References: <20241114161845.502027-17-ajones@ventanamicro.com>
+ <20241114161845.502027-18-ajones@ventanamicro.com> <87mshcub2u.ffs@tglx>
+ <CAAhSdy08gi998HsTkGpaV+bTWczVSL6D8c7EmuTQqovo63oXDw@mail.gmail.com>
+ <874j3ktrjv.ffs@tglx>
+Date: Tue, 03 Dec 2024 23:59:17 +0100
+Message-ID: <87ser4s796.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20241203142915.345523-1-lihaoyu499@gmail.com>
-References: <20241203142915.345523-1-lihaoyu499@gmail.com>
-Subject: Re: [PATCH] drivers: clk: clk-en7523.c: Initialize num before accessing hws in en7523_register_clocks
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: stable@vger.kernel.org, Haoyu Li <lihaoyu499@gmail.com>
-To: Gustavo A . R . Silva <gustavoars@kernel.org>, Haoyu Li <lihaoyu499@gmail.com>, Kees Cook <kees@kernel.org>, Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org, linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Tue, 03 Dec 2024 14:53:44 -0800
-User-Agent: alot/0.12.dev1+gaa8c22fdeedb
 
-Quoting Haoyu Li (2024-12-03 06:29:15)
-> With the new __counted_by annocation in clk_hw_onecell_data, the "num"
-> struct member must be set before accessing the "hws" array. Failing to
-> do so will trigger a runtime warning when enabling CONFIG_UBSAN_BOUNDS
-> and CONFIG_FORTIFY_SOURCE.
->=20
-> Fixes: f316cdff8d67 ("clk: Annotate struct clk_hw_onecell_data with __cou=
-nted_by")
->=20
-> Signed-off-by: Haoyu Li <lihaoyu499@gmail.com>
-> ---
+On Tue, Dec 03 2024 at 21:55, Thomas Gleixner wrote:
+> On Tue, Dec 03 2024 at 22:07, Anup Patel wrote:
+>> On Tue, Dec 3, 2024 at 7:23=E2=80=AFPM Thomas Gleixner <tglx@linutronix.=
+de> wrote:
+>>> Sorry, I missed that when reviewing the original IMSIC MSI support.
+>>>
+>>> The whole IMSIC MSI support can be moved over to MSI LIB which makes all
+>>> of this indirection go away and your intermediate domain will just fit
+>>> in.
+>>>
+>>> Uncompiled patch below. If that works, it needs to be split up properly.
+>>>
+>>> Note, this removes the setup of the irq_retrigger callback, but that's
+>>> fine because on hierarchical domains irq_chip_retrigger_hierarchy() is
+>>> invoked anyway. See try_retrigger().
+>>
+>> The IMSIC driver was merged one kernel release before common
+>> MSI LIB was merged.
+>
+> Ah indeed.
+>
+>> We should definitely update the IMSIC driver to use MSI LIB, I will
+>> try your suggested changes (below) and post a separate series.
+>
+> Pick up the delta patch I gave Andrew...
 
-Applied to clk-fixes
+As I was looking at something else MSI related I had a look at
+imsic_irq_set_affinity() again.
+
+It's actually required to have the message write in that function and
+not afterwards as you invoke imsic_vector_move() from that function.
+
+That's obviously not true for the remap case as that will not change the
+message address/data pair because the remap table entry is immutable -
+at least I assume so for my mental sanity sake :)
+
+But that brings me to a related question. How is this supposed to work
+with non-atomic message updates? PCI/MSI does not necessarily provide
+masking, and the write of the address/data pair is done in bits and
+pieces. So you can end up with an intermediate state seen by the device
+which ends up somewhere in interrupt nirvana space.
+
+See the dance in msi_set_affinity() and commit 6f1a4891a592
+("x86/apic/msi: Plug non-maskable MSI affinity race") for further
+explanation.
+
+The way how the IMSIC driver works seems to be pretty much the same as
+the x86 APIC mess:
+
+        @address is the physical address of the per CPU MSI target
+        address and @data is the vector ID on that CPU.
+
+So the non-atomic update in case of non-maskable MSI suffers from the
+same problem. It works most of the time, but if it doesn't you might
+stare at the occasionally lost interrupt and the stale device in
+disbelief for quite a while :)
+
+I might be missing something which magically prevent that though :)
+
+Thanks,
+
+        tglx
 
