@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-430241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C30519E2E8B
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 22:59:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A2699E2E6A
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 22:50:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 569D6B2B5BB
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 21:50:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C85B4281B59
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 21:50:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99AC8207A0F;
-	Tue,  3 Dec 2024 21:50:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFC1A207A20;
+	Tue,  3 Dec 2024 21:50:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="SD64SAqH"
-Received: from mail-io1-f49.google.com (mail-io1-f49.google.com [209.85.166.49])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="THG2c1gZ"
+Received: from mail-il1-f182.google.com (mail-il1-f182.google.com [209.85.166.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3210E1E47C6
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 21:50:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 789E5205AB4
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 21:50:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733262605; cv=none; b=oVsTElngylmj85vfgRzJ+R4RZxUWrumcNy7BXrUwl54uja/0Wx4hk80oF+1xIiJkLiwxjAeymC8+PCSJ/PnZKGeWSPc5UMPnx0GWSmu+V7s0IlZhlmjU0t+WKBnkT0DxPwWBOoYxbA5aPc0nMoFTxHajDqlow5HqkY03ms99seM=
+	t=1733262621; cv=none; b=NB57AyDY3dsw8+AajYA6oBXmEemV1Qp7vh8WLIL5o9/jmoTqCMbMpsjUVMdR2E8gAsewrfjAqkCXsTq2AZJNQSRGSi6Gd3ARIJLA+mRS9FUo1Q+FrkkTFSuB7/vbKqCFtFOnWW0ltfAfrQjxE4vGhRLOKlHoAfJrdeclPHbSCKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733262605; c=relaxed/simple;
-	bh=S52DfKwMNGc5EiRkh/HfsI5lbDqe35eUnjhynS4EPyU=;
+	s=arc-20240116; t=1733262621; c=relaxed/simple;
+	bh=ECPBHbiegD8JbXydWk2OBAJymkl00PiX260yQZspDVc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qaq0Z7eWk/re8zw0Mi0j0EegaWmY1T+BYaibWkqAKc1HCkWUU7fEhlT9+zQ8pa0PynQ6yUf631abkNSlHRYk5+1MQHsgZ8jj3Xy9WxcXRTTSfbj/Rszz5wbXjaatjY29OZFgM/kTUQo4pETwl/aqt8XJdttaeG1XcZwKBGKTehM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=SD64SAqH; arc=none smtp.client-ip=209.85.166.49
+	 In-Reply-To:Content-Type; b=XOQi4ZhHef3S+r/buwrhecxTiooXEIdDXttHeSxFuB/Skkt4y2C4mJK7YS6IW9GjoHgsbt1HpCASkxsUrgvo8BGRpAct+zVoSloNDbt/KDAOj7qUrTrl78XV/2SvOZW/1VcuhOOpA3upuSo9RczXMPOco3NVXv7UUjuPZAEObLc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=THG2c1gZ; arc=none smtp.client-ip=209.85.166.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f49.google.com with SMTP id ca18e2360f4ac-84198253281so212594539f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 13:50:03 -0800 (PST)
+Received: by mail-il1-f182.google.com with SMTP id e9e14a558f8ab-3a75c24f447so22820835ab.0
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 13:50:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1733262603; x=1733867403; darn=vger.kernel.org;
+        d=linuxfoundation.org; s=google; t=1733262618; x=1733867418; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=hl74QNFi9+204dN29m57Rrn4d5enBoTw7nPdzuHs9Rc=;
-        b=SD64SAqH2EJs7zCx6T0WmaYsT5T2MyVRVCqGflvyos9aSjXqEjh6lJp/393L6n8S8J
-         ciBWzZRUyP9NgSCo6HEe+sx9kr4kKZyZOpb3uaKYLgo9DMQrAHw/Dy0HS27BDbiplqt0
-         rFoUlyz1tKn+v7RwS5410Pj5mgjAcmVE99fsI=
+        bh=zhF1TSIpiDnDO1ss7QPfLqqIBrxMtPOq9kWp98JCdA8=;
+        b=THG2c1gZtrh7Nt4TfPcpCor1NDNBhsLiNPuNJYSwJ2+5jtk6Ucck9MZv/9+0SjHsFI
+         cIHzxp2l7UtVCzH0JckIWCymc7Ywq4YhdCUcHAf+z+D9K2Di9kGx/9loIzfuf2T4+XoP
+         PnUNF30xhKEL18/1hc/dsOMHSg0Yx2zc71fB4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733262603; x=1733867403;
+        d=1e100.net; s=20230601; t=1733262618; x=1733867418;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hl74QNFi9+204dN29m57Rrn4d5enBoTw7nPdzuHs9Rc=;
-        b=n6AZZPK2Ojn/cH+jrTg2i7ahOOSterpxr001XJFBOLYoPANVrecie4oltsVqBzbS0Q
-         wYFiMKSxazufGgZrf3pcOxXSeyC3e/IQ2IqL69eONwVu8/knhNnttOwV6bwTmIHvTYSs
-         mLxqwIpc5tXu/cSkwLWKl0Fi93x314ewr4+mMXzAFZ1WBe6oVMIPy2frF80azKyYltgo
-         fEtb4Qw9BvhvolnTQUTP2c+6TSJ6kBM2N8mz3GCLmwGm6pq8EZ7DblAgmN0LeKXFeClk
-         Mrbt3FqIrpOFUqSpO0haw0AsUkOT6sDUFQmrcfq4PhiYpaQFWdw58OAhOB1FpD1DQHNW
-         CWDw==
-X-Forwarded-Encrypted: i=1; AJvYcCVNgzJU8NMIDLoWC7IxsMw8HRGxyzIp7fquobyc0hZjICUUX0ZkINyTGFd2B19hrcV3nTZ9c4FpCXx9gZw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxT0+PfUS7h5m3bLhqltzamvAxwzuj/Lr4ZPuZkXquSKMGcRNg8
-	wSsADo1SRKrapWLUiR13dsnGrT/iRI0MKpkFJTbbXG7PCk3oVkPwjJD5uk/zGro=
-X-Gm-Gg: ASbGncs9V5go52ybaE3oVTseYvBGUGHG5iNaUfGOTJhY0Cp08dVh7d48wt7f0LEmGCz
-	95B0vAjfULQes0ndIAaKnk8X+g6TGUJH4czz0Se13UVzFJFK3Q7BMxBIPOpp6v6p4BoFbTY33bk
-	+a3ErNwcxy6tN+E/EntU6hGu/xteCvucRMMEI7mdYupbjhesY4XVdHhz75TXNOoVeOaM3t2HE1z
-	FIOrp/DrjwJsOyl+oLJ0IXEVF1WImtUg0JoB42kVPqN931xtOh/eNEjXk8Wgg==
-X-Google-Smtp-Source: AGHT+IG7nNwe7zA9gJvUkLM02efBSPZHgWiV5Pu/3sPNlc7wpYvQ76+GXzXV+MXJxcQdj+NfN1jKOQ==
-X-Received: by 2002:a05:6602:2cd4:b0:843:e8d0:a728 with SMTP id ca18e2360f4ac-8445b54e8b3mr575381539f.4.1733262603303;
-        Tue, 03 Dec 2024 13:50:03 -0800 (PST)
+        bh=zhF1TSIpiDnDO1ss7QPfLqqIBrxMtPOq9kWp98JCdA8=;
+        b=X1ifNbdMUSHcD0HC1svOaOCVF90ikiu59zoyymIylOVOhpE/9xJGa80aoNs9j2UEKf
+         TvnMcSieJga9bkK1hQ5DibnJh1zx4t8mpTwyKfkdg2kgYg2HbMyYtPdgTPRXbyoK8uLO
+         Lo66c9d7068PY4T6sfS51K/bzROqwcEKfTlUpKP2meXY1ePuZgF/Z6X/CwcL1CauK6tt
+         Z/JkuvR0qva4G6UBPeUe+rEHbX/PR9q2PMunKMsOpO5ixusSedGGv2NdK5YrrMEPp1qp
+         H4PQTKAtp8rR1hqqhnP7lxm3Z3m8T/o7zsURyqZvFTFDPcF8VNsM1WR+r6fw40vIiR/G
+         DBQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUf+zHm6yAK+mJN4Q8oKg/W5eygq9YxmKAFNo7ikrS1m+MgLFOriiyWHqL3U0/eAaC+KoBetImGhkgj4jA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzmOMZaRoQltxQpwg3xHk1LtFpBG+ZjxaMCMbHgO+8hFJuBqAA6
+	rT6SZEovhDU9gYHuwJnYZJXxG8hkvSXpmiDzIQFQtnyidEZjbQJLcszgNFmmLMQ=
+X-Gm-Gg: ASbGncseDMTNdUeNIVYqjoOi/qlJrzQvbQ/WcOO0nJhl7UHDn3thm48vK1q5siUD41n
+	vABWuLV6Yb9BXiG+89ktKfLrElp5c+T8dHJs2aZcb4r1nbZaiZYrFYtSmBWmusxNsKVLeQS9u/k
+	ZpmN2QTUSFkj+Kh3qPDJkRIRGJNh69CYQflqBnmZQfmswXci6m+iILlpXv65MlU5+DibwaEw8ry
+	cmZdnI8rZtdK6CxwMi52Tgr6VAa10H/XPxVwnqCHG9DpQkcApD58cPWRSL0ig==
+X-Google-Smtp-Source: AGHT+IE4KQboi9ErKWinbYCH6Z/vNSaAcEIyRgGgfhFgXJKVUu3tOxpqb4sddr38iHqq+kfIPDfBZQ==
+X-Received: by 2002:a05:6e02:178d:b0:3a7:7124:bd2c with SMTP id e9e14a558f8ab-3a7f9a97fc8mr49953145ab.19.1733262618667;
+        Tue, 03 Dec 2024 13:50:18 -0800 (PST)
 Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-84405ec8d88sm269933739f.19.2024.12.03.13.50.02
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4e230e908b4sm2688367173.158.2024.12.03.13.50.18
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Dec 2024 13:50:02 -0800 (PST)
-Message-ID: <c74c8f0c-f8f0-4005-821d-c0897e5c3f4b@linuxfoundation.org>
-Date: Tue, 3 Dec 2024 14:50:01 -0700
+        Tue, 03 Dec 2024 13:50:18 -0800 (PST)
+Message-ID: <35238cbe-7f4e-4486-915e-ab13ca0120de@linuxfoundation.org>
+Date: Tue, 3 Dec 2024 14:50:17 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,83 +76,80 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/2] selftests: tmpfs: Add Test-fail if not run as root
+Subject: Re: [PATCH v5 0/2] kselftest: tmpfs: Add ksft macros and skip if no
+ root
 To: Shivam Chaudhary <cvam0000@gmail.com>, shuah@kernel.org
 Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
  Shuah Khan <skhan@linuxfoundation.org>
 References: <20241112143056.565122-1-cvam0000@gmail.com>
- <20241112143056.565122-2-cvam0000@gmail.com>
 Content-Language: en-US
 From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20241112143056.565122-2-cvam0000@gmail.com>
+In-Reply-To: <20241112143056.565122-1-cvam0000@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 On 11/12/24 07:30, Shivam Chaudhary wrote:
-> Add 'ksft_exit_fail_msg()', if  not run as root, with an appropriate
-> Warning.
+> This version 5 patch series replace direct error handling methods with ksft
+> macros, which provide better reporting.Currently, when the tmpfs test runs,
+> it does not display any output if it passes,and if it fails
+> (particularly when not run as root),it simply exits without any warning or
+> message.
+> 
+> This series of patch adds:
+> 
+> 1. Add 'ksft_print_header()' and 'ksft_set_plan()'
+>     to structure test outputs more effectively.
+> 
+> 2. Error if not run as root.
 
 This should be a skip - not a fail.
 
 > 
-> Add 'ksft_print_header()' and 'ksft_set_plan()' to structure test
-> outputs more effectively.
-> 
-> Test logs:
-> 
-> Before Change:
-> - Without root
->   error: unshare, errno 1
-> 
-> - With root
->   No, output
-> 
-> After Change:
-> - Without root
-> TAP version 13
-> 1..1
-> Bail out! Error : Need to run as root# Planned tests != run tests (1 != 0)
-> 
-> - With root
-> TAP version 13
-> 1..1
-> 
-> Signed-off-by: Shivam Chaudhary <cvam0000@gmail.com>
-> ---
->   tools/testing/selftests/tmpfs/bug-link-o-tmpfile.c | 11 +++++++++++
->   1 file changed, 11 insertions(+)
-> 
-> diff --git a/tools/testing/selftests/tmpfs/bug-link-o-tmpfile.c b/tools/testing/selftests/tmpfs/bug-link-o-tmpfile.c
-> index b5c3ddb90942..f0b36e7a152e 100644
-> --- a/tools/testing/selftests/tmpfs/bug-link-o-tmpfile.c
-> +++ b/tools/testing/selftests/tmpfs/bug-link-o-tmpfile.c
-> @@ -23,10 +23,21 @@
->   #include <sys/mount.h>
->   #include <unistd.h>
->   
-> +#include "../kselftest.h"
-> +
->   int main(void)
->   {
->   	int fd;
->   
-> +	/* Setting up kselftest framework */
-> +	ksft_print_header();
-> +	ksft_set_plan(1);
-> +
-> +	/* Check if test is run as root */
-> +	if (geteuid()) {
-> +		ksft_exit_fail_msg("Error : Need to run as root");
+> 3. Replace direct error handling with 'ksft_test_result_*',
+>     'ksft_exit_fail_msg' macros for better reporting.
 
-Use ksft_skip call.
 
-> +	}
-> +
->   	if (unshare(CLONE_NEWNS) == -1) {
->   		if (errno == ENOSYS || errno == EPERM) {
->   			fprintf(stderr, "error: unshare, errno %d\n", errno);
+> 
+> v4->v5:
+>           - Remove unnecessary pass messages.
+>           - Remove unnecessary use of KSFT_SKIP.
+>           - Add appropriate use of ksft_exit_fail_msg.
+> 
+> v4 1/2: https://lore.kernel.org/all/20241105202639.1977356-2-cvam0000@gmail.com/
+> v4 2/2: https://lore.kernel.org/all/20241105202639.1977356-3-cvam0000@gmail.com/
+> 
+> v3->v4:
+>           - Start a patchset
+>           - Split patch into smaller patches to make it easy to review.
+>    Patch1 Replace  'ksft_test_result_skip' with 'KSFT_SKIP' during root run check.
+>    Patch2 Replace  'ksft_test_result_fail' with 'KSFT_SKIP' where fail does not make sense,
+>           or failure could be due to not unsupported APIs with appropriate warnings.
+> 
+> 
+> v3: https://lore.kernel.org/all/20241028185756.111832-1-cvam0000@gmail.com/
+> 
+> v2->v3:
+>          - Remove extra ksft_set_plan()
+>          - Remove function for unshare()
+>          - Fix the comment style
+> v2: https://lore.kernel.org/all/20241026191621.2860376-1-cvam0000@gmail.com/
+> 
+> v1->v2:
+>          - Make the commit message more clear.
+> v1: https://lore.kernel.org/all/20241024200228.1075840-1-cvam0000@gmail.com/T/#u
+> 
+> 
+> thanks
+> Shivam
+> 
+> Shivam Chaudhary (2):
+>    selftests: tmpfs: Add Test-fail if not run as root
+>    selftests: tmpfs: Add kselftest support to tmpfs
+> 
+>   .../selftests/tmpfs/bug-link-o-tmpfile.c      | 60 ++++++++++++-------
+>   1 file changed, 37 insertions(+), 23 deletions(-)
+> 
 
 thanks,
 -- Shuah
-
 
