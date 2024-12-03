@@ -1,263 +1,140 @@
-Return-Path: <linux-kernel+bounces-429218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E3709E1A61
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 12:09:07 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 613739E18FB
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 11:15:37 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1BD8BB2CBA1
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:13:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 18ACF166DF8
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:15:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16CF91E0E16;
-	Tue,  3 Dec 2024 10:13:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B7A71E0E1E;
+	Tue,  3 Dec 2024 10:15:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VQyMNd24"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="YiyPPPMi"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0CBC1E0E1C
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 10:13:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C81FE1B395E
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 10:15:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733220831; cv=none; b=lodwGpaG6S1EvoSgo60vKLNwfnEFW004Kg2g9Vphq+WfTSwgdfwMk+JPeSXZ1nBn9EFCBctHg0B3/0xacZmdp7UdxhkU1OMe46hc2TrrsAFlB42k9OM/vpRRXcEcxXijPFwP/THK/sdWDMbqH05E9ay3fPJdJ9AjdLXMlTJ5sOw=
+	t=1733220930; cv=none; b=uALD4IV3rJdkH21MZCKaA1l4ORCJqPbUAUK0hwPDwzgMSdvXERRG9NyMb1HIEv+aal33Yq9VHjrnN8uAd3CVOLn18izVlgxKGQr5Ox7QC4g2XNgoGg2CSvXtRaM/CVwqW2TZReqtVnibs03PFDQxBqlmlySVMo4LHae+hmipq4c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733220831; c=relaxed/simple;
-	bh=MbiUR/ecPE3TxOcuSPOUivoOgwv1lpxDKtA5OUkYnFc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aV50Ahlhi3cZIzu+v+uaWuNVSSnsW7E4LL6NpfeZpelZRqW/yjNxapCBrr0lE1lZg6V2xEP9obPKBcqAYgHL/4XAUltcjBWEP2gwUrBCwsVEBHZSS0a0cpjFOEFXhX4D+V1U3fM40K3fOflBpPAcCrBFa6eSk8i9fjcoa4t4FMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VQyMNd24; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1733220825;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8gD5FYt1/eddOzn+zXb0esVob8V7beW2eiojXtAtmws=;
-	b=VQyMNd24vrdB7A9K+WVEpQPncmjhImFIi+JsYQ22UOyrVYJCTiKx5gjk6UFiAExUnf8xo6
-	ZUdfegQCG36UkFWB03vjv88ku+YZSiPehuvGDwdp5kLACMm/W2Qbdov4uU54YcFO4ZvLUd
-	JM6fUV79Hw+YSU90BZ3VZK0Jemj0n9s=
-Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
- [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-376-f5kbEBrcNK-evAUKfNcePA-1; Tue, 03 Dec 2024 05:13:43 -0500
-X-MC-Unique: f5kbEBrcNK-evAUKfNcePA-1
-X-Mimecast-MFC-AGG-ID: f5kbEBrcNK-evAUKfNcePA
-Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-aa52bfbdfebso355385866b.3
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 02:13:42 -0800 (PST)
+	s=arc-20240116; t=1733220930; c=relaxed/simple;
+	bh=G0sj8PY6ADW3aET+hb+E7GMb/SqAJl8FiJH7t0gVTnE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=P8ghP8IZ857RcCPMgrC4MjKOTt6hEGHKYjvV9OIzIQO0J2vmmg5MXNfCB5/K01qM+qUj/8AvMU54XbIYymRPMGviFwomSpn9XXHYv93oUmDwdPYUMPx04vB+92hX/L07aMRIR+lPPxXF0rCr6qKii7f/1VZixOTxJoB3bqlk76Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=YiyPPPMi; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-385e5db74d3so2222545f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 02:15:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1733220927; x=1733825727; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=1oL/Eu1oFnM7Lq/a9MADW9dd1D0ZuUMkh3bz7/dA41Y=;
+        b=YiyPPPMiYl2teojVGTnN3euHxVo3Ei0VTzhwP3CJBRoS/pvHiMPwEbS9NzToxJ5cjG
+         286vxWQmQUffhxvIpOQrpNbgAQ1QUFVh409diZRUfyRfVdYPrTSS6Ok6ML+TyxDgwjn9
+         456fT9A+d6UYdGXo8Wy6zV1SYxoQxnbtntZShuiNrcVtOAFBlF2iut0IXT7mGvHztPCU
+         ZIhdgKmlP8jHb+UoSMvzP+bhRYXoNlIz+SzGoJzgYLjZLnyVwXcHFyRT2iRMWsGkt45x
+         JslA1LiRvzNWaK7l4iWDn9tcjnEruJS0W1beRmAfuH214LvcSTFj08wM+RpvjFUXQpyz
+         ulDA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733220821; x=1733825621;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8gD5FYt1/eddOzn+zXb0esVob8V7beW2eiojXtAtmws=;
-        b=XjPewf3E6Yk6Js2aso5RrBRatZcL3aBYl14IZcCMZIap7sjEANG9jYc9Mh0sSuKgfx
-         SyDiLB4tM4istZxnuOSJzo5ALuXYF1ULZ62q0cRLcQlz6ih6um2RRhZYXKvJ2fYeSSz1
-         Y84hnZq4sDgb7HOFF6lhewonSslWw6N+0QOjBOlOc+aiCVL0tcifzGRbzs5LV0KBqFAJ
-         W+Sfv6TfuyH5rZziDE2GBkoHZcnomEhzj/8iYMLeV7FHHRN3jtaWAjZSQf7IajJjwZO0
-         p5cWRHqFv43hOiiRSolEhAXhFts4yeNzR990m+v5JgAy/zCjFhujPnb/ed0BBBbn/vnp
-         D3bg==
-X-Forwarded-Encrypted: i=1; AJvYcCWh8jWf6sziRacqlfaLrSIH5vL2ia/6yLvcg03M0rsnu27Nn892mWNyJ5KXz1r8ZBe3NXDRhl89XJM+uVs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyo6MunvCX7Kh5dUzDJA7enZmBMR0YDknQa+KVzwCGFvRG+8f3n
-	9AFdMVehubQhGefbx1MVPV+pFySuoqu8VylWP6x+Qv6WdK291AaBl95+HowCtOa86pIsP7zca4L
-	yuzvHFH2qFjALnTVsJYU5VaB7M5UcVGAZe9kvwTk4ZseE6NMQwb9SRlZ9I9bS3A==
-X-Gm-Gg: ASbGncsKG/lLZOso10UKtXaf3sQvXoxYKZNvhGSXxlngutGnXva5tzQCBoyzef5omh0
-	edwxZyhD/YUSzuBzQ4LMCHbc3XkmcoZYVvWCrnaIxX8QJNTETL9cPdvPd4aeHbBnaMG3BybeawK
-	z6925/lCsOYjmazXO0I1xaodNod4r+SWA/AzkzJVtJjdd2HqCmaGh1AO7Sp9x10mFB4J1YogkDY
-	Sk2UzbsDPhxjp00AJ+2RqQkwjmOKtXAcq77XnvdEcgpvkbgFXJ3r420lKUIqtWf3zz4o59sHFGc
-	l13e0G1hX+egAQzsn/pvxf6cIZs7Q3KbHB/WG3pQ2bhDmJgEO0exqnzxRkvaTlcvHTzSvUpFaYM
-	CmC8Jtah1vIEZ0zdCXE0aBlUV
-X-Received: by 2002:a17:907:7841:b0:a9f:4f7:f064 with SMTP id a640c23a62f3a-aa5f7cc2a04mr137747066b.3.1733220820833;
-        Tue, 03 Dec 2024 02:13:40 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFJjBemiZA1JA6td7ZtEW4FdLaoA9XqQ/Yo0vCezDXhxc2MCbJKB4nnkSo7NdapACzQPwkwww==
-X-Received: by 2002:a17:907:7841:b0:a9f:4f7:f064 with SMTP id a640c23a62f3a-aa5f7cc2a04mr137745266b.3.1733220820482;
-        Tue, 03 Dec 2024 02:13:40 -0800 (PST)
-Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa5996df78csm602815466b.67.2024.12.03.02.13.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Dec 2024 02:13:40 -0800 (PST)
-Message-ID: <81a63f9d-afe4-4a29-ae98-5c5837bcd7cb@redhat.com>
-Date: Tue, 3 Dec 2024 11:13:39 +0100
+        d=1e100.net; s=20230601; t=1733220927; x=1733825727;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1oL/Eu1oFnM7Lq/a9MADW9dd1D0ZuUMkh3bz7/dA41Y=;
+        b=t6afUf4HVtnYwmhGfq2BqMKx3F79haP7D+F8xhqPM1dKrACVCAe1g0ugoXTJmyhCJu
+         WqXxpXtFypan7A+idpatRpkWhRQRrf81breD4GlcwkuN5dSirND+lio/ClbmX3nW2r++
+         la//SWo1d9msoG43kqQZkm5eLkn3VVJXSTGXd8W5rXBbmbZjTKGLY7snSSXHXEw9zj5v
+         zxVnj0t/dcnkpJB6B+cC05l2HGEU75HKUsLd0HSoJuRKRaqArDiSIDxGzZYYFl9gu810
+         EjLqRkUlAdxiAfap8a1f1+q0x3gpHjPnX3JAhaq0RriHUoIDmPlXbtLeclKVUtMVneSB
+         1OpA==
+X-Forwarded-Encrypted: i=1; AJvYcCXjHlOrPfQMgYCMPxzrBHwsDb0v4XohlSJV2Waoev3b4tK9YWeg1+Er5qqxzgf4E4ToWaN8uK2kBUo4dkk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwPuLdQXISg8d8pLXbc88y7BFTuJMjd2aX94VsM/4CiUJfmGDkr
+	6BXvy9FGuuBt892Nsd+aWPqWlu1K3Niq/Tq51ParLTDWpfPwolzAWt/AYcR/pyU=
+X-Gm-Gg: ASbGnctadknKw0lkbypU/POr79dKzXkyUqQa5mqsGv3ECwYq3bBCP6udVJ1OqWBz4ua
+	ELFw4YTYJRkTf4Hti06sLi+9Uvpup8lVacLioyADXl8gnKPAQapc9fTG0pLNtVEdtkhWhRXYxzZ
+	F7NDtVqmxneno/RfY4v7uK3VvaXNLPBSENP0z7ICSwmaNAzWhfeAp7iNVVu21aY+1JAgb2dcIE9
+	p4z+AVuKPhu3be5MRUJOjKC5n7KpsrnBTL4+8w00pKB3muKRM7T
+X-Google-Smtp-Source: AGHT+IGP+wf/uT+o8vDXMwC1hvUzbUJpXqnj3ziNpYlS/jQFsv7zchrVLXRh0KKHa1usVlCFg2O3Cw==
+X-Received: by 2002:a05:6000:78d:b0:385:fd26:f6e0 with SMTP id ffacd0b85a97d-385fd3cd5c6mr1704607f8f.18.1733220927155;
+        Tue, 03 Dec 2024 02:15:27 -0800 (PST)
+Received: from blackdock.suse.cz ([193.86.92.181])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434aa7d25c5sm214564325e9.28.2024.12.03.02.15.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Dec 2024 02:15:26 -0800 (PST)
+Date: Tue, 3 Dec 2024 11:15:24 +0100
+From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
+To: Yafang Shao <laoar.shao@gmail.com>
+Cc: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com, 
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com, rostedt@goodmis.org, 
+	bsegall@google.com, mgorman@suse.de, vschneid@redhat.com, hannes@cmpxchg.org, 
+	surenb@google.com, cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 3/4] sched, psi: Don't account irq time if
+ sched_clock_irqtime is disabled
+Message-ID: <ghu7irmizgbyso5hjemwsgscfoigdtzufpfckxkvdqibeo63uo@kvzncpy2rlit>
+References: <20241108132904.6932-1-laoar.shao@gmail.com>
+ <20241108132904.6932-4-laoar.shao@gmail.com>
+ <7pad3qmmmy2hgr5yqwwytj3wyjm3d5ebbqy4ix6boxkd34fc7c@ebdjg75tfgiq>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drivers/staging/media/atomisp: replace legacy GPIO APIs
- in atomisp_gmin_platform
-To: Song Chen <chensong_2000@189.cn>, andy@kernel.org, mchehab@kernel.org,
- sakari.ailus@linux.intel.com, gregkh@linuxfoundation.org,
- bergh.jonathan@gmail.com
-Cc: arnd@arndb.de, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- linux-staging@lists.linux.dev
-References: <20241203091436.203745-1-chensong_2000@189.cn>
-Content-Language: en-US, nl
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <20241203091436.203745-1-chensong_2000@189.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-
-Hi,
-
-On 3-Dec-24 10:14 AM, Song Chen wrote:
-> In atomisp_gmin_platform, gpio0 and gpio1 have moved to descriptor-based
-> GPIO APIs, but v1p8_gpio and v2p8_gpio still remain calling legacy ones,
-> such as gpio_request.
-> 
-> This patch replaces old with new, also removes including gpio.h.
-> 
-> Signed-off-by: Song Chen <chensong_2000@189.cn>
-
-Thank you for your patch, this is already addresses by this patch
-which I plan to merge soon:
-
-https://lore.kernel.org/linux-media/20241107221134.596149-1-hdegoede@redhat.com/
-
-Regards,
-
-Hans
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="efb3qc5jht7fzdid"
+Content-Disposition: inline
+In-Reply-To: <7pad3qmmmy2hgr5yqwwytj3wyjm3d5ebbqy4ix6boxkd34fc7c@ebdjg75tfgiq>
 
 
-> ---
->  .../media/atomisp/pci/atomisp_gmin_platform.c | 63 ++++++++-----------
->  1 file changed, 25 insertions(+), 38 deletions(-)
-> 
-> diff --git a/drivers/staging/media/atomisp/pci/atomisp_gmin_platform.c b/drivers/staging/media/atomisp/pci/atomisp_gmin_platform.c
-> index e176483df301..7ff548ac3171 100644
-> --- a/drivers/staging/media/atomisp/pci/atomisp_gmin_platform.c
-> +++ b/drivers/staging/media/atomisp/pci/atomisp_gmin_platform.c
-> @@ -11,7 +11,6 @@
->  #include <linux/mfd/intel_soc_pmic.h>
->  #include <linux/regulator/consumer.h>
->  #include <linux/gpio/consumer.h>
-> -#include <linux/gpio.h>
->  #include <linux/platform_device.h>
->  #include "../../include/linux/atomisp_platform.h"
->  #include "../../include/linux/atomisp_gmin_platform.h"
-> @@ -85,8 +84,8 @@ struct gmin_subdev {
->  	bool v2p8_on;
->  	bool v1p2_on;
->  
-> -	int v1p8_gpio;
-> -	int v2p8_gpio;
-> +	struct gpio_desc *v1p8_gpiod;
-> +	struct gpio_desc *v2p8_gpiod;
->  
->  	u8 pwm_i2c_addr;
->  
-> @@ -548,23 +547,6 @@ static int gmin_subdev_add(struct gmin_subdev *gs)
->  	else
->  		dev_info(dev, "will handle gpio1 via ACPI\n");
->  
-> -	/*
-> -	 * Those are used only when there is an external regulator apart
-> -	 * from the PMIC that would be providing power supply, like on the
-> -	 * two cases below:
-> -	 *
-> -	 * The ECS E7 board drives camera 2.8v from an external regulator
-> -	 * instead of the PMIC.  There's a gmin_CamV2P8 config variable
-> -	 * that specifies the GPIO to handle this particular case,
-> -	 * but this needs a broader architecture for handling camera power.
-> -	 *
-> -	 * The CHT RVP board drives camera 1.8v from an* external regulator
-> -	 * instead of the PMIC just like ECS E7 board.
-> -	 */
-> -
-> -	gs->v1p8_gpio = gmin_get_var_int(dev, true, "V1P8GPIO", -1);
-> -	gs->v2p8_gpio = gmin_get_var_int(dev, true, "V2P8GPIO", -1);
-> -
->  	/*
->  	 * FIXME:
->  	 *
-> @@ -830,21 +812,23 @@ static int gmin_v1p2_ctrl(struct v4l2_subdev *subdev, int on)
->  static int gmin_v1p8_ctrl(struct v4l2_subdev *subdev, int on)
->  {
->  	struct gmin_subdev *gs = find_gmin_subdev(subdev);
-> +	struct i2c_client *client = v4l2_get_subdevdata(gs->subdev);
-> +	struct device *dev = &client->dev;
->  	int ret;
->  	int value;
->  	int reg;
-> +	int v1p8_gpio;
->  
->  	if (!gs || gs->v1p8_on == on)
->  		return 0;
->  
-> -	if (gs->v1p8_gpio >= 0) {
-> -		pr_info("atomisp_gmin_platform: 1.8v power on GPIO %d\n",
-> -			gs->v1p8_gpio);
-> -		ret = gpio_request(gs->v1p8_gpio, "camera_v1p8_en");
-> -		if (!ret)
-> -			ret = gpio_direction_output(gs->v1p8_gpio, 0);
-> -		if (ret)
-> +	v1p8_gpio = gmin_get_var_int(dev, true, "V1P8GPIO", -1);
-> +	if (v1p8_gpio >= 0) {
-> +		gs->v1p8_gpiod = gpiod_get_index(dev, "camera_v1p8", v1p8_gpio, GPIOD_ASIS);
-> +		if (IS_ERR(gs->v1p8_gpiod))
->  			pr_err("V1P8 GPIO initialization failed\n");
-> +		else
-> +			gpiod_direction_output(gs->v1p8_gpiod, 0);
->  	}
->  
->  	gs->v1p8_on = on;
-> @@ -861,8 +845,8 @@ static int gmin_v1p8_ctrl(struct v4l2_subdev *subdev, int on)
->  			goto out; /* Still needed */
->  	}
->  
-> -	if (gs->v1p8_gpio >= 0)
-> -		gpio_set_value(gs->v1p8_gpio, on);
-> +	if (v1p8_gpio >= 0)
-> +		gpiod_set_value(gs->v1p8_gpiod, on);
->  
->  	if (gs->v1p8_reg) {
->  		regulator_set_voltage(gs->v1p8_reg, 1800000, 1800000);
-> @@ -911,21 +895,24 @@ static int gmin_v1p8_ctrl(struct v4l2_subdev *subdev, int on)
->  static int gmin_v2p8_ctrl(struct v4l2_subdev *subdev, int on)
->  {
->  	struct gmin_subdev *gs = find_gmin_subdev(subdev);
-> +	struct i2c_client *client = v4l2_get_subdevdata(gs->subdev);
-> +	struct device *dev = &client->dev;
->  	int ret;
->  	int value;
->  	int reg;
-> +	int v2p8_gpio;
->  
->  	if (WARN_ON(!gs))
->  		return -ENODEV;
->  
-> -	if (gs->v2p8_gpio >= 0) {
-> -		pr_info("atomisp_gmin_platform: 2.8v power on GPIO %d\n",
-> -			gs->v2p8_gpio);
-> -		ret = gpio_request(gs->v2p8_gpio, "camera_v2p8");
-> -		if (!ret)
-> -			ret = gpio_direction_output(gs->v2p8_gpio, 0);
-> -		if (ret)
-> +	v2p8_gpio = gmin_get_var_int(dev, true, "V2P8GPIO", -1);
-> +	if (v2p8_gpio >= 0) {
-> +		pr_info("atomisp_gmin_platform: 2.8v power on GPIO %d\n", v2p8_gpio);
-> +		gs->v2p8_gpiod = gpiod_get_index(dev, "camera_v2p8", v2p8_gpio, GPIOD_ASIS);
-> +		if (IS_ERR(gs->v2p8_gpiod))
->  			pr_err("V2P8 GPIO initialization failed\n");
-> +		else
-> +			gpiod_direction_output(gs->v2p8_gpiod, 0);
->  	}
->  
->  	if (gs->v2p8_on == on)
-> @@ -944,8 +931,8 @@ static int gmin_v2p8_ctrl(struct v4l2_subdev *subdev, int on)
->  			goto out; /* Still needed */
->  	}
->  
-> -	if (gs->v2p8_gpio >= 0)
-> -		gpio_set_value(gs->v2p8_gpio, on);
-> +	if (v2p8_gpio >= 0)
-> +		gpiod_set_value(gs->v2p8_gpiod, on);
->  
->  	if (gs->v2p8_reg) {
->  		regulator_set_voltage(gs->v2p8_reg, 2900000, 2900000);
+--efb3qc5jht7fzdid
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, Dec 03, 2024 at 11:01:41AM GMT, Michal Koutn=FD <mkoutny@suse.com> =
+wrote:
+> On Fri, Nov 08, 2024 at 09:29:03PM GMT, Yafang Shao <laoar.shao@gmail.com=
+> wrote:
+> > sched_clock_irqtime may be disabled due to the clock source. When disab=
+led,
+> > irq_time_read() won't change over time, so there is nothing to account.=
+ We
+> > can save iterating the whole hierarchy on every tick and context switch.
+> >=20
+> > Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+> > Acked-by: Johannes Weiner <hannes@cmpxchg.org>
+> > ---
+> >  kernel/sched/psi.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> Reviewed-by: Michal Koutn=FD <mkoutny@suse.com>
+
+On second thought, similar guard may be useful in psi_show() too. Since
+there's a difference between zero pressure and unmeasured pressure (it'd
+fail with EOPNOTSUPP).
+
+(How common is it actually that tsc_init fails?)
+
+Michal
+
+--efb3qc5jht7fzdid
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQTd6mfF2PbEZnpdoAkt3Wney77BSQUCZ07aOgAKCRAt3Wney77B
+SQp6AQDCofeL+RYVr6OoZ5Ku/ryrsGjAU/xUYeRLREz6RNOLswD+Mqy1fxDBv3bL
+jyX2QbOi3rrBurYl8eDsySO0VMuwIwk=
+=B8Jh
+-----END PGP SIGNATURE-----
+
+--efb3qc5jht7fzdid--
 
