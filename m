@@ -1,94 +1,161 @@
-Return-Path: <linux-kernel+bounces-429745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 279719E2288
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:25:43 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 824E09E2321
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:32:45 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE6E1285B7F
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 15:25:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC619166BE7
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 15:28:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4976F1F76B2;
-	Tue,  3 Dec 2024 15:25:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD1011F7554;
+	Tue,  3 Dec 2024 15:28:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="OGKq0dUt"
-Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kWl6IF+P"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 228CE1F75A4;
-	Tue,  3 Dec 2024 15:25:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 143071F7557;
+	Tue,  3 Dec 2024 15:28:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733239523; cv=none; b=T0909a2FXQuB9uDjh4whCtREWhSFvwjomZgLjBS0MYHTuo0jPSY0aucgSm0uHBDWGdN7OpN16LdYMPLcReeiWOVuB2HnQTGhdS/nnboF7MFBVoDdTgKRWDbgaF4qmcLdE7pEMb1P+4KB7UGlmvsUpf75P8irgNeMRJXOVJC/Oeo=
+	t=1733239695; cv=none; b=lbvj0p3GwI3J0fdl9Vv5QvVdTsBX0kI20RwkgvBF1kzPqfrPNhm1z43LVxsqPYxw2upmoR1kY6STJNuM+cMZa73XNC6h63AmDTWG+dZuxmg+iOwB828p7I5OoC0UuSPnmq/XpXClhU+/1+q4W5Uk4dE4sX4ZSTVKq3TVSp6/99g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733239523; c=relaxed/simple;
-	bh=fWNeeQROkHmrEG9lJBRTC9Irz8hGQ5YkTUuprEV0bQU=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=HqTwOvugLuvpe/IBTaoG28bci9ENAhOkanuU9MrAPN/okSc0KrzNQTm07KuqyG6UqwLMBaXIF8CSRizxHZwTMJF4cu2klIJoKnX05oxFENKWES9ORr+h5AkRrxp0jnzBu3gNb8xZX6kV+vgtLNl+IZen7jZe2wbBs+NIJv8pZlQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=OGKq0dUt; arc=none smtp.client-ip=168.119.38.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=fWNeeQROkHmrEG9lJBRTC9Irz8hGQ5YkTUuprEV0bQU=;
-	t=1733239522; x=1734449122; b=OGKq0dUtz3vEtUCR7unmYV0E9Yr6SPOyc/+p4U/gf9j5Hz1
-	HC8Z4F3AGMs94RKEjmBJMa2rrHY66UT6ciFpnB10oa+c8An8tYFhSjRxsyTqoOA9IWNNPl/Ynv/na
-	4bNoeSB363ndezRVfj3otDFVUJJtRZP0M0QNCfRwTagRdBi88BHTcm3HM5ScpsmkCrnRSnwOQcYBR
-	RDoqrQ6MC6FJjGPlP6SIaN4O/tYsdomouWxDK8jIQNyJd03BeDoMwfnozYighQB3MZEbOevxCRCP8
-	dyYo4KYVZu4N3tgXtr0y+1UpZiZdObpLkPu4HZc9R8ehFC1lUQE5MbiVVRl+h7Ww==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.98)
-	(envelope-from <johannes@sipsolutions.net>)
-	id 1tIUm6-00000002qIH-2vrF;
-	Tue, 03 Dec 2024 16:25:18 +0100
-Message-ID: <fa9ef37903db0f81654451104b1407f60f85ce5d.camel@sipsolutions.net>
-Subject: Re: [PATCH] net: wireless: sme: Initialize n_channels before
- accessing channels in cfg80211_conn_scan
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Haoyu Li <lihaoyu499@gmail.com>
-Cc: Kees Cook <kees@kernel.org>, "Gustavo A . R . Silva"
- <gustavoars@kernel.org>,  Jeff Johnson <quic_jjohnson@quicinc.com>,
- linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-hardening@vger.kernel.org, stable@vger.kernel.org
-Date: Tue, 03 Dec 2024 16:25:17 +0100
-In-Reply-To: <20241203152049.348806-1-lihaoyu499@gmail.com>
-References: <20241203152049.348806-1-lihaoyu499@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+	s=arc-20240116; t=1733239695; c=relaxed/simple;
+	bh=N0BkY/ggH+tuVrewwwmwKP9Nf+Iv3TX+3MCwcoLII/4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gPPFvi5GdKIHomyy2kE0qlid+LhydfD6PmLezrXycZ/mjCa039heGOQoFC/mQOVP1QKd8ypoMTQOeWHRittlpfjumc4NQLGmfQKINdmODLRzd60jvL23SW0MmXOSyGrVBZPKSnB1p60tLJF3GGzXv9Mj87uPlLK0XBGudwOKYik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kWl6IF+P; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C65CFC4CED8;
+	Tue,  3 Dec 2024 15:28:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733239694;
+	bh=N0BkY/ggH+tuVrewwwmwKP9Nf+Iv3TX+3MCwcoLII/4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=kWl6IF+PL/jW5gtC87aDjIqfmBIOq8mAVxVdB75oYAgao14c3KJmVPuAQsFCY7nCF
+	 Sj82YOBr1WLj9MoH0kwg8uMS4SggJAH74i4LLk8R8qA1aQwLgjduXPNdFbp1ZYGlEe
+	 692Tb1GdDXLLvXoowEQmJxhjjz0HSf0aLXHey4v6N2k5tXzSCZ4HUgb8mml2ZeNnvF
+	 pTjM/UjBeyuc162YLyE1Eet69iTtumlyCtzWHkv0fdH2XB96sHqFRynQMXRwhoY8Jb
+	 r7Er3eSyU3O992lF0Kup6xaEcnRq1zwgKmWADWLlQu8HJBNhoKPWn9fMqKmswInZ0i
+	 hDnDXxWNmiRzw==
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-53df19bf6a9so6525641e87.1;
+        Tue, 03 Dec 2024 07:28:14 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCW1pKz22fCcHWkH64z9gc/LXUl73TwN7Yv/7dmBF8l2j353Y5LZV+Oi5X5kMYNztUg2/48875r8@vger.kernel.org, AJvYcCWoQ2TY7rhJuL7kFWTqPp/WnGl90XoMY7yMTR0KOPTCONdCS1NCyU4LWUauQmLQLqgBa6C7VlxZHlw=@vger.kernel.org, AJvYcCX3P/n50Uc68le8rjdLMT4Aazct0IFvFpsmKJ1OT7y3E9RrwVjEwd8lNpM3YCNVdLozIH3tEfS6rZtoqtNd@vger.kernel.org, AJvYcCX3Vu+1xewLIBhoLoHN6tpcMpncmR0Ox5U+rRJxsb16mRx1DeJBsWOqLOq2Ft8YGXmjXZlGRdmXrn4Pr34=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGwTK01D/9VWKaQcshE3kiM09M2tfMVHqb99CQi4eu+IU8ONKS
+	8C2bk7bnCMnAEWdNgeI+4c6ZgpXSSL0rH7PFtUh/ckL0JINtZ3qUg7dJPasupJ67AODv0YsU10C
+	UPM8Od0a46NZofEbxPTm9lQHs/QY=
+X-Google-Smtp-Source: AGHT+IFbGc7Z55XjDY3dxgfRXS7E3uMfxtXjokd26/r3+Qtpz7UwIcGh3l41gXthpLrPGRCJfCAoo5M2nf1TrArtITU=
+X-Received: by 2002:a05:6512:3b12:b0:53d:a86e:42d7 with SMTP id
+ 2adb3069b0e04-53e12a2e9dfmr1948992e87.49.1733239693443; Tue, 03 Dec 2024
+ 07:28:13 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-malware-bazaar: not-scanned
+References: <20241128111844.GE10431@google.com> <87o71xvuf3.ffs@tglx>
+ <20241130114549.GI10431@google.com> <87iks3wt2t.ffs@tglx> <CAK7LNARWpcbVsJFYCDN28vuuLfEibZmT+m5=qMEJcKD9Abzv4Q@mail.gmail.com>
+ <87iks1vlu5.ffs@tglx>
+In-Reply-To: <87iks1vlu5.ffs@tglx>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Wed, 4 Dec 2024 00:27:36 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARufW5wc=qBt5R=RJ9BkFirLKAgRgg_t=OmTTGbjLfsAg@mail.gmail.com>
+Message-ID: <CAK7LNARufW5wc=qBt5R=RJ9BkFirLKAgRgg_t=OmTTGbjLfsAg@mail.gmail.com>
+Subject: Re: [PATCH] modpost: Add .irqentry.text to OTHER_SECTIONS
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>, 20241015061522.25288-1-rui.zhang@intel.com, 
+	Zhang Rui <rui.zhang@intel.com>, hpa@zytor.com, peterz@infradead.org, 
+	thorsten.blum@toblux.com, yuntao.wang@linux.dev, tony.luck@intel.com, 
+	len.brown@intel.com, srinivas.pandruvada@intel.com, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org, mingo@redhat.com, 
+	bp@alien8.de, dave.hansen@linux.intel.com, rafael.j.wysocki@intel.com, 
+	x86@kernel.org, linux-pm@vger.kernel.org, 
+	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, linux-kbuild@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 2024-12-03 at 23:20 +0800, Haoyu Li wrote:
-> With the new __counted_by annocation in cfg80211_scan_request struct,
-> the "n_channels" struct member must be set before accessing the
-> "channels" array. Failing to do so will trigger a runtime warning
-> when enabling CONFIG_UBSAN_BOUNDS and CONFIG_FORTIFY_SOURCE.
->=20
-> Fixes: e3eac9f32ec0 ("wifi: cfg80211: Annotate struct cfg80211_scan_reque=
-st with __counted_by")
->=20
-> Signed-off-by: Haoyu Li <lihaoyu499@gmail.com>
+On Tue, Dec 3, 2024 at 6:03=E2=80=AFAM Thomas Gleixner <tglx@linutronix.de>=
+ wrote:
+>
+> On Mon, Dec 02 2024 at 11:02, Masahiro Yamada wrote:
+> > On Sun, Dec 1, 2024 at 8:17=E2=80=AFPM Thomas Gleixner <tglx@linutronix=
+.de> wrote:
+> >>
+> >> The compiler can fully inline the actual handler function of an interr=
+upt
+> >> entry into the .irqentry.text entry point. If such a function contains=
+ an
+> >> access which has an exception table entry, modpost complains about a
+> >> section mismatch:
+> >>
+> >>   WARNING: vmlinux.o(__ex_table+0x447c): Section mismatch in reference=
+ ...
+> >>
+> >>   The relocation at __ex_table+0x447c references section ".irqentry.te=
+xt"
+> >>   which is not in the list of authorized sections.
+> >>
+> >> Add .irqentry.text to OTHER_SECTIONS to cure the issue.
+> >>
+> >> Reported-by: Sergey Senozhatsky <senozhatsky@chromium.org>
+> >
+> > I found the context in LKML.
+> > Closes: https://lore.kernel.org/all/20241128111844.GE10431@google.com/
+> >
+> > However, is this still relevant to the mainline kernel?
+> >
+> > In Linux 5.4.y, I agree this because smp_apic_timer_interrupt()
+> > is annotated as __irq_entry:
+>
+> Correct.
+>
+> > In this mainline kernel, DEFINE_IDTENTRY_SYSVEC()
+> > expands to a normal .text function which is explicitly
+> > annotated 'noinline'.
+>
+> It's not annotated noinline, it's annotated 'noinstr', which puts the
+> code into the .noinstr.text section. That one is indeed covered.
 
-nit: there should be no newline between these
 
-My tolerance for this is going WAY down, it seems it's all just busy-
-work, and then everyone complains and I need to handle "urgent fixes"
-because of it etc.
+The callsite of local_apic_timer_interrupt() is annotated 'noinline'
+if I correctly understand this line:
+  https://github.com/torvalds/linux/blob/v6.13-rc1/arch/x86/include/asm/idt=
+entry.h#L272
 
-I'm having severe second thoughts about ever having accepted the
-__counted_by annotations, I think we should just revert it. Experiment
-failed, we found ... that the code is fine but constantly needs changes
-to make the checkers happy.
 
-johannes
+It expands to:
+
+static noinline void __sysvec_apic_timer_interrupt(struct pt_regs *regs)
+{
+       [snip]
+       local_apic_timer_interrupt();
+       [snip]
+}
+
+
+
+> So yes, the fix is only required for pre 5.8 kernels.
+
+This never occurs on x86 after commit f0178fc01fe46,
+but theoretically this may occur for other architectures.
+
+Now applied to linux-kbuild.
+Thanks.
+
+
+
+
+>
+> Thanks,
+>
+>         tglx
+
+
+
+--=20
+Best Regards
+Masahiro Yamada
 
