@@ -1,138 +1,131 @@
-Return-Path: <linux-kernel+bounces-429992-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429996-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73CFC9E2A67
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 19:07:46 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C29919E2AF0
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 19:32:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39ECE284A3E
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 18:07:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 66CE5B3DC5F
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 18:14:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB3761FC7EC;
-	Tue,  3 Dec 2024 18:07:40 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 166961FC7EF;
+	Tue,  3 Dec 2024 18:14:01 +0000 (UTC)
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A9A31E868;
-	Tue,  3 Dec 2024 18:07:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 916131FA840;
+	Tue,  3 Dec 2024 18:13:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733249260; cv=none; b=rfYZZk+CgQLa6ars5mZW9yoS+TrIqkeWV9IKsXWHXst1qfl5WU+36DWYFQ3Rq5j8dmNDZAM/yuzmuZN5NRiKCAr0jBKUZJdlb7Y3+9aejoPArk+8GdKKWkmQL+drmBgQeambvgbsGeRTYk1mcxvmoZsvpVuBnKmGBb4G7XWmRjw=
+	t=1733249640; cv=none; b=IEhnqZOKG4cq66xRcSXBbDq5sKZMxaKD0D7LvRm336C0HQd8EI/I0yguD46ElEjEa3UKYy+eHvv0kY8MFIFtWka6MpyzZo3/Mgssh9hjiPN2XRQm/Hdjaj9RP7OTkLUnVxApcVHypf7smJx1ijjb51Afv83o1loYXRA7if98hCU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733249260; c=relaxed/simple;
-	bh=dqztknOIkm8ntS9wy+GQNN8ohu1VudzQqaeaZ2cvWb4=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=i/nkJ0re27qWWXI8a3nA+wfSjtn3tZ1H7D07A0Xerp94J6nPisPT4YsiJ4ABAJY3I4t0lyC5KBFcBNK9q75c9nLIjCPyXCNtIFzaMtv2kZQQI1TAPXQE98Uh7O869qHDCjz0w1ZFZP7drIsDjTckoLxRYKYm7dw0AqD4C1EXfFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Y2pR80KFJz6K6XW;
-	Wed,  4 Dec 2024 02:03:00 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id D7E5F140B63;
-	Wed,  4 Dec 2024 02:07:12 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 3 Dec
- 2024 19:07:12 +0100
-Date: Tue, 3 Dec 2024 18:07:10 +0000
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Paul Barker <paul.barker.ct@bp.renesas.com>
-CC: Claudiu <claudiu.beznea@tuxon.dev>,
-	<prabhakar.mahadev-lad.rj@bp.renesas.com>, <jic23@kernel.org>,
-	<lars@metafoo.de>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-	<conor+dt@kernel.org>, <geert+renesas@glider.be>, <magnus.damm@gmail.com>,
-	<mturquette@baylibre.com>, <sboyd@kernel.org>, <p.zabel@pengutronix.de>,
-	<linux-iio@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-clk@vger.kernel.org>, Claudiu Beznea
-	<claudiu.beznea.uj@bp.renesas.com>
-Subject: Re: [PATCH 06/14] iio: adc: rzg2l_adc: Simplify the locking scheme
- in rzg2l_adc_read_raw()
-Message-ID: <20241203180710.0000204d@huawei.com>
-In-Reply-To: <6f627195-6c55-4687-b6b6-7fb791d13819@bp.renesas.com>
-References: <20241203111314.2420473-1-claudiu.beznea.uj@bp.renesas.com>
-	<20241203111314.2420473-7-claudiu.beznea.uj@bp.renesas.com>
-	<6f627195-6c55-4687-b6b6-7fb791d13819@bp.renesas.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1733249640; c=relaxed/simple;
+	bh=goNbn9LHti/OQqu0NtqUuzDIMzdSZPos2x6hTQxj6QY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VduThITVyL7SFGvb8Uj35cRf8IhiCyEYHp1h73NdMBCOTrDB7QP3uSfsKB78AbFySI6079wPN1s+TJgIPjuRA5AOOw7ZzWFDhDOYQUlcaDcUO2sz7Y7kG5HWibtucY0C9cokrDivGn2H0bwEmv9d7liV/dhyILYNM79yU04VHDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de; spf=fail smtp.mailfrom=denx.de; arc=none smtp.client-ip=46.255.230.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=denx.de
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id 1935C1C00A0; Tue,  3 Dec 2024 19:13:51 +0100 (CET)
+Date: Tue, 3 Dec 2024 19:13:50 +0100
+From: Pavel Machek <pavel@denx.de>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
+Subject: Re: [PATCH 4.19 000/138] 4.19.325-rc1 review
+Message-ID: <Z09KXnGlTJZBpA90@duo.ucw.cz>
+References: <20241203141923.524658091@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500009.china.huawei.com (7.191.174.84) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="9dKgCbh+6g0xCEEa"
+Content-Disposition: inline
+In-Reply-To: <20241203141923.524658091@linuxfoundation.org>
 
-On Tue, 3 Dec 2024 13:03:29 +0000
-Paul Barker <paul.barker.ct@bp.renesas.com> wrote:
 
-> Hi Claudiu,
-> 
-> On 03/12/2024 11:13, Claudiu wrote:
-> > From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> > 
-> > Simplify the locking scheme in rzg2l_adc_read_raw() by saving the converted
-> > value only if the rzg2l_adc_conversion() returns success. The approach
-> > simplifies the addition of thermal sensor support (that will be done in the
-> > next commits). The downside is that the ret variable need to be checked
-> > twice.
-> > 
-> > Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> > ---
-> >  drivers/iio/adc/rzg2l_adc.c | 9 +++------
-> >  1 file changed, 3 insertions(+), 6 deletions(-)
-> > 
-> > diff --git a/drivers/iio/adc/rzg2l_adc.c b/drivers/iio/adc/rzg2l_adc.c
-> > index 62932f9295b6..eed2944bd98d 100644
-> > --- a/drivers/iio/adc/rzg2l_adc.c
-> > +++ b/drivers/iio/adc/rzg2l_adc.c
-> > @@ -227,14 +227,11 @@ static int rzg2l_adc_read_raw(struct iio_dev *indio_dev,
-> >  		mutex_lock(&adc->lock);
-> >  		ch = chan->channel & RZG2L_ADC_CHN_MASK;
-> >  		ret = rzg2l_adc_conversion(indio_dev, adc, ch);
-> > -		if (ret) {
-> > -			mutex_unlock(&adc->lock);
-> > -			return ret;
-> > -		}
-> > -		*val = adc->last_val[ch];
-> > +		if (!ret)
-> > +			*val = adc->last_val[ch];
-> >  		mutex_unlock(&adc->lock);
-> >  
-> > -		return IIO_VAL_INT;
-> > +		return ret ? ret : IIO_VAL_INT;  
-> 
-> It would be maybe slightly neater to use:
-> 
-> 	if (!ret) {
-> 		*val = adc->last_val[ch];
-> 		ret = IIO_VAL_INT;
-> 	}
-> 	mutex_unlock(&adc->lock);
-> 
-> 	return ret;
-> 
-Better I think to use {} for scope and
-guard(mutex)()
-...
-if (ret)
-	return ret;
+--9dKgCbh+6g0xCEEa
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-*val = adc->last_val[ch];
+Hi!
 
-Where possible keeping the error path as the out of line element is
-easier to follow on basis that is most common pattern so what a reviewers
-eye is 'trained' to see.
+> ------------------
+> Note, this is the LAST 4.19.y kernel to be released.  After this one, it
+> is end-of-life.  It's been 6 years, everyone should have moved off of it
+> by now.
+> ------------------
 
-Jonathan
+Releasing 130 patches as end-of-life kernel is not good idea. There
+may be regression hiding between them...
 
-> Thanks,
-> 
+> This is the start of the stable review cycle for the 4.19.325 release.
+> There are 138 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
+Build fails:
+
+https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/jobs/853242=
+3815
+
+  CC      drivers/pinctrl/uniphier/pinctrl-uniphier-pro4.o
+3895
+  CC      drivers/pci/of.o
+3896
+drivers/rtc/rtc-st-lpc.c: In function 'st_rtc_probe':
+3897
+drivers/rtc/rtc-st-lpc.c:233:11: error: 'IRQF_NO_AUTOEN' undeclared (first =
+use in this function); did you mean 'IRQ_NOAUTOEN'?
+3898
+           IRQF_NO_AUTOEN, pdev->name, rtc);
+3899
+           ^~~~~~~~~~~~~~
+3900
+           IRQ_NOAUTOEN
+3901
+drivers/rtc/rtc-st-lpc.c:233:11: note: each undeclared identifier is report=
+ed only once for each function it appears in
+3902
+  CC      drivers/pci/quirks.o
+3903
+make[2]: *** [scripts/Makefile.build:303: drivers/rtc/rtc-st-lpc.o] Error 1
+3904
+make[1]: *** [scripts/Makefile.build:544: drivers/rtc] Error 2
+3905
+make[1]: *** Waiting for unfinished jobs....
+3906
+  CC      drivers/pinctrl/uniphier/pinctrl-uniphier-sld8.o
+3907
+  CC      drivers/soc/renesas/r8a7743-sysc.o
+
+Best regards,
+								Pavel
+--=20
+DENX Software Engineering GmbH,        Managing Director: Erika Unter
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+
+--9dKgCbh+6g0xCEEa
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZ09KXgAKCRAw5/Bqldv6
+8igyAKC2pyBC6fWNiQh0OKW85uIIN0WbqACgwLulzTAF14u09GS4SkD6suO2gvs=
+=6DTu
+-----END PGP SIGNATURE-----
+
+--9dKgCbh+6g0xCEEa--
 
