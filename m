@@ -1,70 +1,70 @@
-Return-Path: <linux-kernel+bounces-428555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428556-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 875589E108F
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 02:00:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 016A19E1091
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 02:00:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B428282715
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 01:00:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE8D7281148
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 01:00:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A81F2C697;
-	Tue,  3 Dec 2024 01:00:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AA0F4C60B;
+	Tue,  3 Dec 2024 01:00:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GW9eVGZT"
-Received: from mail-io1-f74.google.com (mail-io1-f74.google.com [209.85.166.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bGNGE+sy"
+Received: from mail-io1-f73.google.com (mail-io1-f73.google.com [209.85.166.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 196E01CABA
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 01:00:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BB1D28366
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 01:00:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733187629; cv=none; b=nP4knmin3It2KRo23rz7gGEkzZx8os0xQEecSEDsVdSx2EnX+umrjgB4IZ0IrG7JRcRNyvgWWC+SmdSx8Cv3nR0oEPoZrHSWlsyCS1HRJg4zOSpmSZ4eu95X5NK9Mn5HSdTPmmQdebN5oufTGfidIyn3hqljmtI4vhhD4Zx7lKE=
+	t=1733187631; cv=none; b=dNfCfX0MgSunQnrW2wAmxDZDavmHRcKQJNftcBECc02ODOeLXYjKXjgnH+x/xFAVIGZu2idNE8/G7zENDp/avECD8uL6erpvP2iHGnKdSyoymAAw9rG6u+AU+ALhGJOqkDBT7Yiwjdl2Dv0puQKCCu669YBjZW/QwJIVF7N1gQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733187629; c=relaxed/simple;
-	bh=ST360jAFSalxvsspokUYZryLYZwouzKdgllkKmYC1PE=;
+	s=arc-20240116; t=1733187631; c=relaxed/simple;
+	bh=xMS1uH7AFuF+2czM41v55mFLwPP1FGhTkUrAHqIpFLQ=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=jI0oodd/g2m1VqqWgDpGH2hcUEcXfgTLWrVdVebTB+I1q8QEhO+dDYAktduQ49WLAEy0jgEoGo19Oizs1EdDdhwLsQ0GN5ovhgbf+mxxSAdVhnzc41reOMUOLXCh25h/Y5LzLsW1AO19zaAWsObkQnEYg1jCx0vC7MExV67TbkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--kevinloughlin.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=GW9eVGZT; arc=none smtp.client-ip=209.85.166.74
+	 To:Cc:Content-Type; b=SFti2vd2KgkuOxpLWCL7h8f2Sjf6XujIeMcYjkFSrpYoxn/6ac574Yir34jlVx087386Xd52ksvSPanjE74EkwocFj9VRDPXo+Zf7VsIHLX4YsuIITxwB0nB0PhJol9kNA+MwpbFhnrasVUuEatlHw2hj/2QyD7a3REIp2vMX8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--kevinloughlin.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bGNGE+sy; arc=none smtp.client-ip=209.85.166.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--kevinloughlin.bounces.google.com
-Received: by mail-io1-f74.google.com with SMTP id ca18e2360f4ac-843eb4505e7so805278239f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 17:00:25 -0800 (PST)
+Received: by mail-io1-f73.google.com with SMTP id ca18e2360f4ac-84181aad98aso517754339f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 17:00:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733187625; x=1733792425; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1733187629; x=1733792429; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=d+a3eBnHKvD8AQod1gMB/LKTW1oN3to08D39Docv/eQ=;
-        b=GW9eVGZTeipjdM+eGq+l/HLsrsZZShlivMxOaVKVKh8ltJ1caFtTHRVHQVCx3rUk44
-         aY8y33zvHfKEEzhg5n/N5dyyz3Nz8OcGL5vMXyJiqEQ64J3SD3w31piw/Cafj8Efze05
-         Dtn82qaknKCWBc7hFQzkIKZXPqwBRPDYHogCCNS5rn+TB4bZYdP4KOMTHOUsPuJHW6KJ
-         x77Tn8GlY4cyPi2v4uf0jRCKLM/FEp0VtDO8DnKZP73QYVwcEc1P1QlX1vItGt8O8DzC
-         AzKCpTYngn4fkgz4+OrNGkNs5P9UpDJANpWeRRf054qpe0qtslj1AI2sUPbrZ54FRorJ
-         0hSg==
+        bh=HXZpw0j64Kx8pQRMw/cVhgPa64V3XlxKoRy53BFPQ2Y=;
+        b=bGNGE+syU6EU8nH8CsTHcbpa3ZrmXan1SGoQgctp1qlcRbPKbhG3WjQ7cUxCSVPfxw
+         xA3iDmmjKYLGEJAOKuAUGPtFQcSDLUeRU0Rw0Mcf+O0yiwA694dp0zT6bVqWqZ8Vjohu
+         Xfyf2FmD0KVbshy3NyEBFzjFAGIt3pqzuzKlTre2THpvP+7RXV62OXMtBBtaT13NOh6y
+         6kyxOh/s0RFS83XPdzZXzUx6DHMQWWouqXhjHc7CgGuVhxR+2JZstufGZ+5j1Q95fhwf
+         f/AXpdLwBlab1JMNXv267CFWsUYJTCh8ZfmQflWpLNZdAhrTRF4GHuz9Xq0AlLoo7O9c
+         6DYw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733187625; x=1733792425;
+        d=1e100.net; s=20230601; t=1733187629; x=1733792429;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=d+a3eBnHKvD8AQod1gMB/LKTW1oN3to08D39Docv/eQ=;
-        b=VzEM9Nvg8g5Xhea5tzVCVCqtfCCKFA/vfx8oyHiXSuolDDbhR6TCY1g472jXSR0m5Q
-         VtH7zpEa5QOUSFV0JDXva0r844F+PWnLz8/m0vcOXhMQVhdbguwEnYi/mja31tjeX9OV
-         myHcmoSQIa/nB71M1KL4SYWgMxT+gh2f1wx75MtEPZYEs/ZLyZ0gn1QU5G/BLhGmXbuq
-         frGmg6qE7ui0gKiLoXUVnYmRDhGSZjCTwAs5PsYDeZWCsevg4te9TtC1v6+EI2nvUy7x
-         Z4alHaSkvOaEu9MTbc3w9lWiCow+D4IIwtyEAJn9yIJW3GSVk4B4oLVV225h3Hdxc5dJ
-         R4Vw==
-X-Gm-Message-State: AOJu0YzotkOiK2Md2emYYOCeDkmhet4scdPdCxOlhX/gpiPQG6+NfvKZ
-	e2tM05XMzDSVBRVzKoSpK4OQa2hyjNU7Sr8q+3TYUW0CpA+ewnJ7QiRGAehwEyVyht0UOD6I9nV
-	qKyYhYtEF0PBI/3jP7SiIKnD9DpQe261jVKars48umSOL8IRIhar55mtM3hc/tjGrN4n+PAX5ut
-	Pu43xbW19VSrQ8NYby5EOyNJ12jais5Fog3TsszoA6Hb9/8WSOPucbhFRfLrQ5VF9gpKcjuvlOm
-	uG6wQ==
-X-Google-Smtp-Source: AGHT+IHlAWUl/6xhfzZLqge5+mtkzOWOXTSZQKntjfye63eE/1sMNIDsJdEGUh7DCOLnVMK90ja1kBMWTjMKXb6+Bxua
-X-Received: from ioay19.prod.google.com ([2002:a6b:c413:0:b0:841:802b:8e24])
+        bh=HXZpw0j64Kx8pQRMw/cVhgPa64V3XlxKoRy53BFPQ2Y=;
+        b=ukEk7v99lSxHBtdCqOgJccpF7zM+naTf/wfdnbnrzmk+wrxSE/ORmRZ5ll24KbofWA
+         jAxAFlvAht7aL4s6pe/OHFoSoDq4pUcpA5/zb86abtWMyzBe8UGY+THr+jaN+83QmRLL
+         6wiNLElPnXrIR4bvk3MrA0UTo32VIlwo1rNOot38I0eHkXkKU+xSeE2UF/aeRLRFt3xl
+         mr0rVVUdaKp2+H3M8PSuPW1ZVk/hLbQMRn+I0z4FDApoIf1nj6SRT9+kgXGQ6jsuvsQ6
+         1SBR4fkDnZCAbHCO6GTLiCecpMqYSCypdFgskTdnevBQ2FfZRNY3h44X9VG6qn/HvIf2
+         yFWw==
+X-Gm-Message-State: AOJu0Yz1OLNHHwO7gqsGC/ReXOxUsdA7BeMVTtucRm5Q8a20ygSA5p3q
+	4fUE8Im0kBtdOoqYs9+WZB590IYYAbWCuSXhnaTk8Q0CpkUSJH4fkVOMgmxL6oPh+qecJ2Kkcg/
+	ju0uuimLq/obXbMmhSo6xwy/aNL05uXmzzPwvudriBPMFjE+T4B7H+tI+HfF6KRm1DABn/+3e2o
+	+gs+EzRkhYCzLLDyS2+gh/ZMdlPp6odR1C1fsuZpMIl4WPddCx7aa8ywHS9BOfCZH8zzgRu59Bl
+	D1yzw==
+X-Google-Smtp-Source: AGHT+IEZmspYrC4umegddmCrbePNuN6PHswfr1n3f4QWHFbbvkBj0Jxf86Z77+97glx5zKlFrBkgAIn3Vka01mS0VDUG
+X-Received: from iotr20.prod.google.com ([2002:a05:6602:2354:b0:841:8ee4:fc23])
  (user=kevinloughlin job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6602:2b85:b0:83a:872f:4b98 with SMTP id ca18e2360f4ac-8445b53e7d6mr104251439f.2.1733187625111;
- Mon, 02 Dec 2024 17:00:25 -0800 (PST)
-Date: Tue,  3 Dec 2024 00:59:20 +0000
+ 2002:a05:6602:6422:b0:83a:db84:41a8 with SMTP id ca18e2360f4ac-8445b5ccdddmr90500239f.10.1733187629246;
+ Mon, 02 Dec 2024 17:00:29 -0800 (PST)
+Date: Tue,  3 Dec 2024 00:59:21 +0000
 In-Reply-To: <20241203005921.1119116-1-kevinloughlin@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -74,8 +74,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20241203005921.1119116-1-kevinloughlin@google.com>
 X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
-Message-ID: <20241203005921.1119116-2-kevinloughlin@google.com>
-Subject: [RFC PATCH 1/2] x86, lib, xenpv: Add WBNOINVD helper functions
+Message-ID: <20241203005921.1119116-3-kevinloughlin@google.com>
+Subject: [RFC PATCH 2/2] KVM: SEV: Prefer WBNOINVD over WBINVD for cache
+ maintenance efficiency
 From: Kevin Loughlin <kevinloughlin@google.com>
 To: linux-kernel@vger.kernel.org
 Cc: seanjc@google.com, pbonzini@redhat.com, tglx@linutronix.de, 
@@ -87,161 +88,122 @@ Cc: seanjc@google.com, pbonzini@redhat.com, tglx@linutronix.de,
 	Kevin Loughlin <kevinloughlin@google.com>
 Content-Type: text/plain; charset="UTF-8"
 
-In line with WBINVD usage, add WBONINVD helper functions, accounting
-for kernels built with and without CONFIG_PARAVIRT_XXL.
+AMD CPUs currently execute WBINVD in the host when unregistering SEV
+guest memory or when deactivating SEV guests. Such cache maintenance is
+performed to prevent data corruption, wherein the encrypted (C=1)
+version of a dirty cache line might otherwise only be written back
+after the memory is written in a different context (ex: C=0), yielding
+corruption. However, WBINVD is performance-costly, especially because
+it invalidates processor caches.
+
+Strictly-speaking, unless the SEV ASID is being recycled (meaning all
+existing cache lines with the recycled ASID must be flushed), the
+cache invalidation triggered by WBINVD is unnecessary; only the
+writeback is needed to prevent data corruption in remaining scenarios.
+
+To improve performance in these scenarios, use WBNOINVD when available
+instead of WBINVD. WBNOINVD still writes back all dirty lines
+(preventing host data corruption by SEV guests) but does *not*
+invalidate processor caches.
 
 Signed-off-by: Kevin Loughlin <kevinloughlin@google.com>
 ---
- arch/x86/include/asm/paravirt.h       |  7 +++++++
- arch/x86/include/asm/paravirt_types.h |  1 +
- arch/x86/include/asm/smp.h            |  7 +++++++
- arch/x86/include/asm/special_insns.h  | 12 +++++++++++-
- arch/x86/kernel/paravirt.c            |  6 ++++++
- arch/x86/lib/cache-smp.c              | 12 ++++++++++++
- arch/x86/xen/enlighten_pv.c           |  1 +
- 7 files changed, 45 insertions(+), 1 deletion(-)
+ arch/x86/kvm/svm/sev.c | 35 ++++++++++++++++++++++-------------
+ 1 file changed, 22 insertions(+), 13 deletions(-)
 
-diff --git a/arch/x86/include/asm/paravirt.h b/arch/x86/include/asm/paravirt.h
-index d4eb9e1d61b8..c040af2d8eff 100644
---- a/arch/x86/include/asm/paravirt.h
-+++ b/arch/x86/include/asm/paravirt.h
-@@ -187,6 +187,13 @@ static __always_inline void wbinvd(void)
- 	PVOP_ALT_VCALL0(cpu.wbinvd, "wbinvd", ALT_NOT_XEN);
+diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
+index 943bd074a5d3..dbe40f728c4b 100644
+--- a/arch/x86/kvm/svm/sev.c
++++ b/arch/x86/kvm/svm/sev.c
+@@ -116,6 +116,7 @@ static int sev_flush_asids(unsigned int min_asid, unsigned int max_asid)
+ 	 */
+ 	down_write(&sev_deactivate_lock);
+ 
++	/* SNP firmware expects WBINVD before SNP_DF_FLUSH, so do *not* use WBNOINVD */
+ 	wbinvd_on_all_cpus();
+ 
+ 	if (sev_snp_enabled)
+@@ -710,6 +711,14 @@ static void sev_clflush_pages(struct page *pages[], unsigned long npages)
+ 	}
  }
  
-+extern noinstr void pv_native_wbnoinvd(void);
-+
-+static __always_inline void wbnoinvd(void)
++static void sev_wb_on_all_cpus(void)
 +{
-+	PVOP_ALT_VCALL0(cpu.wbnoinvd, "wbnoinvd", ALT_NOT_XEN);
++	if (boot_cpu_has(X86_FEATURE_WBNOINVD))
++		wbnoinvd_on_all_cpus();
++	else
++		wbinvd_on_all_cpus();
 +}
 +
- static inline u64 paravirt_read_msr(unsigned msr)
+ static unsigned long get_num_contig_pages(unsigned long idx,
+ 				struct page **inpages, unsigned long npages)
  {
- 	return PVOP_CALL1(u64, cpu.read_msr, msr);
-diff --git a/arch/x86/include/asm/paravirt_types.h b/arch/x86/include/asm/paravirt_types.h
-index 8d4fbe1be489..9a3f38ad1958 100644
---- a/arch/x86/include/asm/paravirt_types.h
-+++ b/arch/x86/include/asm/paravirt_types.h
-@@ -87,6 +87,7 @@ struct pv_cpu_ops {
- #endif
+@@ -2774,11 +2783,11 @@ int sev_mem_enc_unregister_region(struct kvm *kvm,
+ 	}
  
- 	void (*wbinvd)(void);
-+	void (*wbnoinvd)(void);
+ 	/*
+-	 * Ensure that all guest tagged cache entries are flushed before
+-	 * releasing the pages back to the system for use. CLFLUSH will
+-	 * not do this, so issue a WBINVD.
++	 * Ensure that all dirty guest tagged cache entries are written back
++	 * before releasing the pages back to the system for use. CLFLUSH will
++	 * not do this without SME_COHERENT, so issue a WB[NO]INVD.
+ 	 */
+-	wbinvd_on_all_cpus();
++	sev_wb_on_all_cpus();
  
- 	/* cpuid emulation, mostly so that caps bits can be disabled */
- 	void (*cpuid)(unsigned int *eax, unsigned int *ebx,
-diff --git a/arch/x86/include/asm/smp.h b/arch/x86/include/asm/smp.h
-index ca073f40698f..ecf93a243b83 100644
---- a/arch/x86/include/asm/smp.h
-+++ b/arch/x86/include/asm/smp.h
-@@ -112,6 +112,7 @@ void native_play_dead(void);
- void play_dead_common(void);
- void wbinvd_on_cpu(int cpu);
- int wbinvd_on_all_cpus(void);
-+int wbnoinvd_on_all_cpus(void);
+ 	__unregister_enc_region_locked(kvm, region);
  
- void smp_kick_mwait_play_dead(void);
+@@ -2900,11 +2909,11 @@ void sev_vm_destroy(struct kvm *kvm)
+ 	}
  
-@@ -160,6 +161,12 @@ static inline int wbinvd_on_all_cpus(void)
- 	return 0;
+ 	/*
+-	 * Ensure that all guest tagged cache entries are flushed before
+-	 * releasing the pages back to the system for use. CLFLUSH will
+-	 * not do this, so issue a WBINVD.
++	 * Ensure that all dirty guest tagged cache entries are written back
++	 * before releasing the pages back to the system for use. CLFLUSH will
++	 * not do this without SME_COHERENT, so issue a WB[NO]INVD.
+ 	 */
+-	wbinvd_on_all_cpus();
++	sev_wb_on_all_cpus();
+ 
+ 	/*
+ 	 * if userspace was terminated before unregistering the memory regions
+@@ -3130,12 +3139,12 @@ static void sev_flush_encrypted_page(struct kvm_vcpu *vcpu, void *va)
+ 	 * by leaving stale encrypted data in the cache.
+ 	 */
+ 	if (WARN_ON_ONCE(wrmsrl_safe(MSR_AMD64_VM_PAGE_FLUSH, addr | asid)))
+-		goto do_wbinvd;
++		goto do_wb_on_all_cpus;
+ 
+ 	return;
+ 
+-do_wbinvd:
+-	wbinvd_on_all_cpus();
++do_wb_on_all_cpus:
++	sev_wb_on_all_cpus();
  }
  
-+static inline int wbnoinvd_on_all_cpus(void)
-+{
-+	wbnoinvd();
-+	return 0;
-+}
-+
- static inline struct cpumask *cpu_llc_shared_mask(int cpu)
- {
- 	return (struct cpumask *)cpumask_of(0);
-diff --git a/arch/x86/include/asm/special_insns.h b/arch/x86/include/asm/special_insns.h
-index aec6e2d3aa1d..c2d16ddcd79b 100644
---- a/arch/x86/include/asm/special_insns.h
-+++ b/arch/x86/include/asm/special_insns.h
-@@ -117,7 +117,12 @@ static inline void wrpkru(u32 pkru)
+ void sev_guest_memory_reclaimed(struct kvm *kvm)
+@@ -3149,7 +3158,7 @@ void sev_guest_memory_reclaimed(struct kvm *kvm)
+ 	if (!sev_guest(kvm) || sev_snp_guest(kvm))
+ 		return;
  
- static __always_inline void native_wbinvd(void)
- {
--	asm volatile("wbinvd": : :"memory");
-+	asm volatile("wbinvd" : : : "memory");
-+}
-+
-+static __always_inline void native_wbnoinvd(void)
-+{
-+	asm volatile("wbnoinvd" : : : "memory");
+-	wbinvd_on_all_cpus();
++	sev_wb_on_all_cpus();
  }
  
- static inline unsigned long __read_cr4(void)
-@@ -173,6 +178,11 @@ static __always_inline void wbinvd(void)
- 	native_wbinvd();
- }
- 
-+static __always_inline void wbnoinvd(void)
-+{
-+	native_wbnoinvd();
-+}
-+
- #endif /* CONFIG_PARAVIRT_XXL */
- 
- static __always_inline void clflush(volatile void *__p)
-diff --git a/arch/x86/kernel/paravirt.c b/arch/x86/kernel/paravirt.c
-index fec381533555..a66b708d8a1e 100644
---- a/arch/x86/kernel/paravirt.c
-+++ b/arch/x86/kernel/paravirt.c
-@@ -121,6 +121,11 @@ noinstr void pv_native_wbinvd(void)
- 	native_wbinvd();
- }
- 
-+noinstr void pv_native_wbnoinvd(void)
-+{
-+	native_wbnoinvd();
-+}
-+
- static noinstr void pv_native_safe_halt(void)
- {
- 	native_safe_halt();
-@@ -149,6 +154,7 @@ struct paravirt_patch_template pv_ops = {
- 	.cpu.write_cr0		= native_write_cr0,
- 	.cpu.write_cr4		= native_write_cr4,
- 	.cpu.wbinvd		= pv_native_wbinvd,
-+	.cpu.wbnoinvd		= pv_native_wbnoinvd,
- 	.cpu.read_msr		= native_read_msr,
- 	.cpu.write_msr		= native_write_msr,
- 	.cpu.read_msr_safe	= native_read_msr_safe,
-diff --git a/arch/x86/lib/cache-smp.c b/arch/x86/lib/cache-smp.c
-index 7af743bd3b13..7ac5cca53031 100644
---- a/arch/x86/lib/cache-smp.c
-+++ b/arch/x86/lib/cache-smp.c
-@@ -20,3 +20,15 @@ int wbinvd_on_all_cpus(void)
- 	return 0;
- }
- EXPORT_SYMBOL(wbinvd_on_all_cpus);
-+
-+static void __wbnoinvd(void *dummy)
-+{
-+	wbnoinvd();
-+}
-+
-+int wbnoinvd_on_all_cpus(void)
-+{
-+	on_each_cpu(__wbnoinvd, NULL, 1);
-+	return 0;
-+}
-+EXPORT_SYMBOL(wbnoinvd_on_all_cpus);
-diff --git a/arch/x86/xen/enlighten_pv.c b/arch/x86/xen/enlighten_pv.c
-index d6818c6cafda..a5c76a6f8976 100644
---- a/arch/x86/xen/enlighten_pv.c
-+++ b/arch/x86/xen/enlighten_pv.c
-@@ -1162,6 +1162,7 @@ static const typeof(pv_ops) xen_cpu_ops __initconst = {
- 		.write_cr4 = xen_write_cr4,
- 
- 		.wbinvd = pv_native_wbinvd,
-+		.wbnoinvd = pv_native_wbnoinvd,
- 
- 		.read_msr = xen_read_msr,
- 		.write_msr = xen_write_msr,
+ void sev_free_vcpu(struct kvm_vcpu *vcpu)
+@@ -3858,7 +3867,7 @@ static int __sev_snp_update_protected_guest_state(struct kvm_vcpu *vcpu)
+ 		 * guest-mapped page rather than the initial one allocated
+ 		 * by KVM in svm->sev_es.vmsa. In theory, svm->sev_es.vmsa
+ 		 * could be free'd and cleaned up here, but that involves
+-		 * cleanups like wbinvd_on_all_cpus() which would ideally
++		 * cleanups like sev_wb_on_all_cpus() which would ideally
+ 		 * be handled during teardown rather than guest boot.
+ 		 * Deferring that also allows the existing logic for SEV-ES
+ 		 * VMSAs to be re-used with minimal SNP-specific changes.
 -- 
 2.47.0.338.g60cca15819-goog
 
