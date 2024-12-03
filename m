@@ -1,118 +1,122 @@
-Return-Path: <linux-kernel+bounces-429075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D75519E1706
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:18:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 035BA9E170F
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:19:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C3A21610DD
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:18:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB46F160FE0
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:19:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 579661DED6A;
-	Tue,  3 Dec 2024 09:18:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E52A01DEFCF;
+	Tue,  3 Dec 2024 09:19:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IuKU9OEi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="j/ZyoZ3w"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB4351DE4DF;
-	Tue,  3 Dec 2024 09:18:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E29B33F8F7;
+	Tue,  3 Dec 2024 09:19:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733217505; cv=none; b=Ymw6KtWgmcR6h/mU81Xk0mSdIxXXy13VCnwwcDvWrdEb0VhqqvgrCcBzfpBOLVdt0gLlOG5CzKTQe6o01Kt8MH7YvgKvoUGSwaGy75s2CSfAdBSfCD76jFr8dt/yt64T/fDP7KgrAjpp1cIFzGLKUtWPxzsHTwBSYjCCBkmpNiM=
+	t=1733217556; cv=none; b=aWmJ+8aX5gmnacIGel2NSD2523HVCW5UN/7BlZ5i7U+wr+HtcWu4NZ6Z18ZQyOh+sNQRWv0FCmZaCNrisDecuz1S8ENaYK38FsieBn3L0g6TJwzmbMkgDi++FcS2IEvmLMNC+5lR3rrlKsSeWaxEm0QswaaCIM+ZvsTYt5GCe80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733217505; c=relaxed/simple;
-	bh=9yXkUDZMfz4sHLAIVhrP4SvQobY74YVeNzCfgQ8/5Yk=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=Hmv+sXOpqa6VrDSO0Nq9WPgXgRHT1Txvc19NJHENfPt2VsdtzbWlQpnUCE3lFkdsDtJHx/qRLdpaDb6QSsvPst6b1al9zMsKQSZ8a7aPjuAMFaXygfgvA7AyYpEIhmN3sXPo1QjPJEv7LlykBZ0OG3nS6yzzdw3dj3ChiGnB868=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IuKU9OEi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79E02C4CED6;
-	Tue,  3 Dec 2024 09:18:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733217505;
-	bh=9yXkUDZMfz4sHLAIVhrP4SvQobY74YVeNzCfgQ8/5Yk=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=IuKU9OEi6YOyfP4tt28au5BelFnO2QY4JyZ4WnZy32qQQ0a9SkoD+MhXW2wrTJ8ZK
-	 SzMfLFjBaMr56rIbGZSj1kFtD86aHi2bLjW2V5WFKTMS35616rf3Qj/g9O7QmZPRRs
-	 c+qnVXiSjTpBM2C+Ufcagq49wVqAZwDyTUN8g2Nqj1upw9IgLaIRU4gXn6J/7sRiyy
-	 6o7dInSwV3jWdhC7mUbC/ryZYYcVDCg9qOw3wnMCVM+yeR33FpbScQFQmHx37n7Yvz
-	 TU59CldolnyyzDnmvsv++DGcuzyt3FUo7IXLxB7ROg4sA00daH1AT5IiI2S5ycvPGX
-	 EYz9tqWydiJlw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB1A53806656;
-	Tue,  3 Dec 2024 09:18:40 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1733217556; c=relaxed/simple;
+	bh=x2vsnah+FQn6F5RImqP2xAcLMZpjRl3druEdJIaaO14=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=fKrtNyn/44tVU7hCa5/BYretO2Z8YCeCmo2P9Fh1k7R2CNR/Q6ES0JwUwCY6xBCV/vnGh8jxahFwVZQhWcpsZdYxZvhUB+lrBMwMDuEwDFJTD2TBsZg+mz6XoURqdDrvM4gClreRtIA3Cr5IofB1MWgPDIpzI4AawBMHyslRt10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=j/ZyoZ3w; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B38O3YD028930;
+	Tue, 3 Dec 2024 09:19:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	4FmtQeza1CzHNqrTW/NmGRcEE/2b9bklTjsRtN7+/ds=; b=j/ZyoZ3wwk69T1oX
+	I+VmYIq1lpIxXpbAuFsg+MPHzSgrKr/lfrpS+ubkueH66xhY8WFt+b/Vv7UuXsbj
+	g0G4q8MI1Sef1BhtPuNKZ3BkmYgYbQvBNdsjxoEat/ftcNpELSEuYgaao3PYGsvq
+	pjzTCmOa6HmXWHeyjhP6r7kmrowC2VX7lDfOd1uUQbpKVIdHdG3EaaSnMU3Yw7d8
+	EdNvAFXp1v6ra5JqfwJ6U2nbP0zhL4Gy4tZtoTbP21wUM2nDBkiRd8ZDTlAxgEEd
+	KJd7TWCi1tJUOT6bWD34URQ7UGcRWjN7N/33BmKymETbbd9hF0hV53SwKJ7VAqqD
+	smkpvg==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 437tstfk69-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 03 Dec 2024 09:19:06 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B39J5Ze021551
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 3 Dec 2024 09:19:05 GMT
+Received: from [10.151.41.184] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 3 Dec 2024
+ 01:19:01 -0800
+Message-ID: <0796510c-20bd-4a81-bd60-40aacbcf61c0@quicinc.com>
+Date: Tue, 3 Dec 2024 14:48:58 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net] dccp: Fix memory leak in dccp_feat_change_recv
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <173321751975.4083494.12180230037136307201.git-patchwork-notify@kernel.org>
-Date: Tue, 03 Dec 2024 09:18:39 +0000
-References: <20241126143902.190853-1-solodovnikov.ia@phystech.edu>
-In-Reply-To: <20241126143902.190853-1-solodovnikov.ia@phystech.edu>
-To: Ivan Solodovnikov <solodovnikov.ia@phystech.edu>
-Cc: gerrit@erg.abdn.ac.uk, davem@davemloft.net, kuba@kernel.org,
- dccp@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- lvc-project@linuxtesting.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 15/22] wifi: ath12k: add BDF address in hardware
+ parameter
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        <ath12k@lists.infradead.org>
+CC: <linux-wireless@vger.kernel.org>, Kalle Valo <kvalo@kernel.org>,
+        "Rob
+ Herring" <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        "Conor
+ Dooley" <conor+dt@kernel.org>,
+        Jeff Johnson <jjohnson@kernel.org>,
+        "Bjorn
+ Andersson" <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>
+References: <20241015182637.955753-1-quic_rajkbhag@quicinc.com>
+ <20241015182637.955753-16-quic_rajkbhag@quicinc.com>
+ <142f92d7-72e1-433b-948d-2c7e7d37ecfc@oss.qualcomm.com>
+Content-Language: en-US
+From: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>
+In-Reply-To: <142f92d7-72e1-433b-948d-2c7e7d37ecfc@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 2sj9l3bAucBR50kKxPni91PBON0uv-o0
+X-Proofpoint-GUID: 2sj9l3bAucBR50kKxPni91PBON0uv-o0
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ malwarescore=0 spamscore=0 impostorscore=0 mlxlogscore=999 mlxscore=0
+ priorityscore=1501 suspectscore=0 phishscore=0 adultscore=0 clxscore=1015
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412030079
 
-Hello:
-
-This patch was applied to netdev/net.git (main)
-by Paolo Abeni <pabeni@redhat.com>:
-
-On Tue, 26 Nov 2024 17:39:02 +0300 you wrote:
-> If dccp_feat_push_confirm() fails after new value for SP feature was accepted
-> without reconciliation ('entry == NULL' branch), memory allocated for that value
-> with dccp_feat_clone_sp_val() is never freed.
+On 11/4/2024 7:46 PM, Konrad Dybcio wrote:
+> On 15.10.2024 8:26 PM, Raj Kumar Bhagat wrote:
+>> The Ath2k AHB device (IPQ5332) firmware requests BDF_MEM_REGION_TYPE
+>> memory during QMI memory requests. This memory is part of the
+>> HOST_DDR_REGION_TYPE. Therefore, add the BDF memory address to the
+>> hardware parameter and provide this memory address to the firmware
+>> during QMI memory requests.
 > 
-> Here is the kmemleak stack for this:
+> Sounds like something to put in the device tree, no?
 > 
-> unreferenced object 0xffff88801d4ab488 (size 8):
->   comm "syz-executor310", pid 1127, jiffies 4295085598 (age 41.666s)
->   hex dump (first 8 bytes):
->     01 b4 4a 1d 80 88 ff ff                          ..J.....
->   backtrace:
->     [<00000000db7cabfe>] kmemdup+0x23/0x50 mm/util.c:128
->     [<0000000019b38405>] kmemdup include/linux/string.h:465 [inline]
->     [<0000000019b38405>] dccp_feat_clone_sp_val net/dccp/feat.c:371 [inline]
->     [<0000000019b38405>] dccp_feat_clone_sp_val net/dccp/feat.c:367 [inline]
->     [<0000000019b38405>] dccp_feat_change_recv net/dccp/feat.c:1145 [inline]
->     [<0000000019b38405>] dccp_feat_parse_options+0x1196/0x2180 net/dccp/feat.c:1416
->     [<00000000b1f6d94a>] dccp_parse_options+0xa2a/0x1260 net/dccp/options.c:125
->     [<0000000030d7b621>] dccp_rcv_state_process+0x197/0x13d0 net/dccp/input.c:650
->     [<000000001f74c72e>] dccp_v4_do_rcv+0xf9/0x1a0 net/dccp/ipv4.c:688
->     [<00000000a6c24128>] sk_backlog_rcv include/net/sock.h:1041 [inline]
->     [<00000000a6c24128>] __release_sock+0x139/0x3b0 net/core/sock.c:2570
->     [<00000000cf1f3a53>] release_sock+0x54/0x1b0 net/core/sock.c:3111
->     [<000000008422fa23>] inet_wait_for_connect net/ipv4/af_inet.c:603 [inline]
->     [<000000008422fa23>] __inet_stream_connect+0x5d0/0xf70 net/ipv4/af_inet.c:696
->     [<0000000015b6f64d>] inet_stream_connect+0x53/0xa0 net/ipv4/af_inet.c:735
->     [<0000000010122488>] __sys_connect_file+0x15c/0x1a0 net/socket.c:1865
->     [<00000000b4b70023>] __sys_connect+0x165/0x1a0 net/socket.c:1882
->     [<00000000f4cb3815>] __do_sys_connect net/socket.c:1892 [inline]
->     [<00000000f4cb3815>] __se_sys_connect net/socket.c:1889 [inline]
->     [<00000000f4cb3815>] __x64_sys_connect+0x6e/0xb0 net/socket.c:1889
->     [<00000000e7b1e839>] do_syscall_64+0x33/0x40 arch/x86/entry/common.c:46
->     [<0000000055e91434>] entry_SYSCALL_64_after_hwframe+0x67/0xd1
-> 
-> [...]
 
-Here is the summary with links:
-  - [net] dccp: Fix memory leak in dccp_feat_change_recv
-    https://git.kernel.org/netdev/net/c/22be4727a8f8
+This BDF memory address is the RAM offset. We did add this in device tree in
+version 1. This is removed from device tree in v2 based on the review comment that
+DT should not store RAM offset.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+refer below link:
+Link: https://lore.kernel.org/all/f8cd9c3d-47e1-4709-9334-78e4790acef0@kernel.org/
 
