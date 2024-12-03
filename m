@@ -1,116 +1,95 @@
-Return-Path: <linux-kernel+bounces-429605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A6149E2709
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 17:20:27 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6795A9E2251
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:23:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C60CDB62788
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 13:58:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C3936B46DDD
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 13:59:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CE2D1F4716;
-	Tue,  3 Dec 2024 13:57:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 587AE1EE019;
+	Tue,  3 Dec 2024 13:59:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Fl+HyxFY"
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="emF1J0GU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC6941EE006
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 13:57:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B49871E32CB;
+	Tue,  3 Dec 2024 13:59:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733234268; cv=none; b=Gj69PyHohky7/9vLlARYVzsGZFTapNZgCip2UWLWRubhOIMCGjSotZNShqnceo2wuhfPM1dwDecaG+Aizkgy0UNfRciAB5fH2CJtNoKQlVmFTJ+Baat2UEwSkecisAvzqcd9qzfJWsUlOIelBWKG+Kcgh98YBUipr04QRDeRjx0=
+	t=1733234386; cv=none; b=tbgrLP5J0XV1RhTI6r0mYdoS7FQDcrq3GZXhS9Dqsn2I2bZ0rfdp0g45xdcDnIen9BNNbY7tFHwv0lnxeLzAfqPflacw2sItN4eZqOmzcGdtyIx3KGJ/X26CEcde24y0XVqTkY/ljTIOs1xEFNrhM1D43UKO7gRD7gPOwelYS6U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733234268; c=relaxed/simple;
-	bh=rYvvBdg8fi4Xr/3R+nVFs7fW312NlcNLWvE6GK67uZk=;
+	s=arc-20240116; t=1733234386; c=relaxed/simple;
+	bh=LjPcE93nS8srOepOdWDgsIrsPff/dVPGSA7vrvWl9Q8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MynMegf+wnM7amjF258RCGrNY/bgP9qQdwtd/Ef/VmO48MTi0YZbplwtyTlbOI9C1pvyi+z+0aovWPu1YTRhYwBC5eqT95aLiAEta+PICkhBo9RWn0yhPQsRQCE5A7MD2OU3ssjm+qN5CNiIEHgmGu6Dnjul9oPwV0KQhkUeR7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Fl+HyxFY; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2ffc81cee68so57038681fa.0
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 05:57:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733234265; x=1733839065; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=vma/aVgOijobBlFAdjamC8x1tA3Lu2jI5+iEG7pb/Rs=;
-        b=Fl+HyxFYW+x4I5aqYjjuCRfwZjrlx5AD52TR86fq15vcJGuthMvY0T5nbjIxdgek32
-         xqQXEEOi9YZte0gnhnDQGK7EUPruhor8bp4WZpX3+3Ib5bDTo9s7jC1xmnN5eQr2QPlq
-         bNZeCdmTyJKycEofHFFGuqnN2XcmTrVKGZq8kf7lTZYpsfCPKt/LdOx1sgjri/QsyirK
-         Z+R7NFqjgNoBFUDRJV8tb13T8z2ignlBD2r4FytBTiHTpjgcFfGKytV75jweJ3+Hq0T5
-         3ZlGFx0f5R7RiJskcxFrIFeAJQnpniQpgBPl3bUdrzXcFdzzYmpsiYwFi1LPa1bPIA3j
-         lEUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733234265; x=1733839065;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vma/aVgOijobBlFAdjamC8x1tA3Lu2jI5+iEG7pb/Rs=;
-        b=t07xINaMFFdqYa9o6CGOIYX8l3ShOf4Y7bV+bhf3IF4loq1+l2kfP4m8Jx7z90iRQn
-         EcUB0Kaxx9VKtJam+r7iGTCPfJWLUFtgksjiLN1IJlbutx9yt2fsAsen7bKqFCBSxs+S
-         coqTpjPX4FRi7gldiObNFfNBk4rekDzhRNQs0ATM4Cscbo0gCI43WlBHF3bZQ88ucfYa
-         LCNem/mT165SDMCbv0pxjvcaKowpdneeSLJza/E7ysnLr/L6m6CMHe88m14gAPtFgHP6
-         qtnm7mbCAv6Y39h8HX0FIRNsZlmYg0GLYHW9QBO2maWamAhFL0eqNOll36so67BcuHAd
-         lw8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXU8Yrlv5TDpol747ox19+CY2c7vl8MrO5o0sMg46wFq9Y2eeiUntzCpbUJiUSHKFwyVaRm4O4+FMrcOKs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJTXdBR4VqecLFz1epu9gEPS45o7vff8C8CPr4sofIJ/qWjSr1
-	TDKzs1jKi0C0wgfyI1meQEdkGLSRsD4gEcUYO4OxDWjiBOsj96lt2bPmxR3Ry7U=
-X-Gm-Gg: ASbGncs7+jnLR2Why3R25R/4r9aWyAOFVyB+gGYbsYWpQywdnALY3oq57JAwbB0P7jF
-	LlDHPekVGrJo/8/fdbyFZVtnrgu0m2rGDaQIe5CWLpwmTIDkt6AUpw+ry2bJr+10vsgZLxnJUNV
-	+u1p+DYLovRpnwuB0IDzKLnEhp9XIvdWb5SuhFdzHiGc5bf8I5QQdTCvNA8DuiLlDti4FC3MwvJ
-	BYzgezFR59qpF/CCEDTlfrC2SSahed7tTzhg4XTfKCzu+FJWLdZeNbKcNbhv9rVKjazTF3swGrY
-	mkPSHnmR2RzNyFaxpt0IMg0AMH7ntA==
-X-Google-Smtp-Source: AGHT+IEWu4ApKaC7Ta4KrqQTWekPko59agvuRUFXVxJooAszNQZ064G9g5fn/NzI3dsNUT1RD2yGnA==
-X-Received: by 2002:a05:6512:3b2c:b0:53d:ef6a:17f4 with SMTP id 2adb3069b0e04-53e129cc3d9mr1370082e87.1.1733234265135;
-        Tue, 03 Dec 2024 05:57:45 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53df64432b8sm1845404e87.90.2024.12.03.05.57.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Dec 2024 05:57:43 -0800 (PST)
-Date: Tue, 3 Dec 2024 15:57:41 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Luca Weiss <luca.weiss@fairphone.com>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: power: rpmpd: Fix comment for SM6375
-Message-ID: <rcoo6p56lowzbkgci5umhg3xd2hnp6ledk74ys3hw2t2il22nw@bcbs4zmcbzgn>
-References: <20241202-rpmpd-sm6375-v1-1-12a4f0182133@fairphone.com>
- <yo5cc3cvvwwdrqrrgwlquztj52sijip3ffyyqag55jrnztxi2m@hn75ylkhnxie>
- <D61WIF2XWKL8.MWU6PK2XGX4F@fairphone.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Wy3ciy603JSopCN0p1RTlU0COqZHrm4mb/M8in3/qKpIgc5rxtVdPdOe/6ne3oyQ0WzmHMZ1E8snHMklkWY8m9sEOqZFFZmb1eBHYEm/rsLUE1/Dtf60yGBVYmrfe0uHV5CWvchDa30WgNahZr79WIU+uQsQp8wvx+d4poQVsbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=emF1J0GU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8342DC4CECF;
+	Tue,  3 Dec 2024 13:59:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733234386;
+	bh=LjPcE93nS8srOepOdWDgsIrsPff/dVPGSA7vrvWl9Q8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=emF1J0GUUTMvYbvn1TcEoRcqh1xSD6oX+9ZkCoOuzraz0njX5h9Syg5DtTzyulbKk
+	 DIX9974JfCV/V0VufxON3dIrBSnv4Imgc5hHZY6gmlm8NbFu4NBOUnx3T2uRomiyDe
+	 Mdn/aHA42fo9Gb4lGg8cV543u56daWql0d7exPLgHuo4qkDOFkUHFLR24sx6hBGbhH
+	 Hl85yDOWrNE6ZgCNGvK3WGoBmc8PF1LH2jXPDBE/MVELmtt9XRpWXK9kyXz7yj6icc
+	 IxbHJiwi44RSUzDhMdtj6TR+kT8lXwpvZ1mmv2ZOla0WQWFC6p2JE4A4cyF7uWtyzd
+	 8WqTCZVjAv0AQ==
+Date: Tue, 3 Dec 2024 15:59:41 +0200
+From: Leon Romanovsky <leon@kernel.org>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH rdma-next] kbuild: Respect request to silent output when
+ merging configs
+Message-ID: <20241203135941.GJ1245331@unreal>
+References: <e534ce33b0e1060eb85ece8429810f087b034c88.1733234008.git.leonro@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <D61WIF2XWKL8.MWU6PK2XGX4F@fairphone.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <e534ce33b0e1060eb85ece8429810f087b034c88.1733234008.git.leonro@nvidia.com>
 
-On Tue, Dec 03, 2024 at 08:52:59AM +0100, Luca Weiss wrote:
-> On Mon Dec 2, 2024 at 9:00 PM CET, Dmitry Baryshkov wrote:
-> > On Mon, Dec 02, 2024 at 04:45:02PM +0100, Luca Weiss wrote:
-> > > During an earlier commit, the comment from SM6350 was copied without
-> > > modifying. Adjust the comment to reflect the defines.
-> > > 
-> > > Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
-> >
-> > Fixes tag, please.
+On Tue, Dec 03, 2024 at 03:55:18PM +0200, Leon Romanovsky wrote:
+> From: Leon Romanovsky <leonro@nvidia.com>
 > 
-> I thought for just a comment fix it's not necessary / desired.
+> Builds with -s option (silent) are supposed to silence all output
+> which is not an error. It is the case for target builds but not
+> for configs. These builds generate prints like this:
 > 
-> Anyways:
+> ➜  kernel git:(rdma-next) make -s defconfig debug.config
+>  Using .config as base
+>  Merging ./kernel/configs/debug.config
+>  #
+>  # merged configuration written to .config (needs make)
+>  #
+>  ...
+>  Value of CONFIG_FUNCTION_TRACER is redefined by fragment ./kernel/configs/debug.config:
+>  Previous value: # CONFIG_FUNCTION_TRACER is not set
+>  New value: CONFIG_FUNCTION_TRACER=y
+>  ----
 > 
-> Fixes: 2d48e6ea3080 ("dt-bindings: power: rpmpd: Add SM6375 power domains")
+> Let's honor -s option and hide all non-error output.
+> 
+> Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
+> ---
+>  scripts/kconfig/Makefile        |  3 ++-
+>  scripts/kconfig/merge_config.sh | 18 +++++++++++++-----
+>  2 files changed, 15 insertions(+), 6 deletions(-)
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Masahiro,
 
--- 
-With best wishes
-Dmitry
+I hope that you don't mind that I put "rdma-next" as a target. It wasn't
+intentionally, and bug in my submission scripts.
+
+Thanks
 
