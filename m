@@ -1,147 +1,135 @@
-Return-Path: <linux-kernel+bounces-429146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D176E9E17E9
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:39:48 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C56A9E17EC
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:40:17 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 980342813B0
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:39:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2FB431606D4
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:40:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD0DC1DE882;
-	Tue,  3 Dec 2024 09:39:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99D321DFDAA;
+	Tue,  3 Dec 2024 09:40:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="kKZ19qM6"
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jkHyWEza"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80570181B8F;
-	Tue,  3 Dec 2024 09:39:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25CDE4317C;
+	Tue,  3 Dec 2024 09:40:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733218779; cv=none; b=I154X9iIHTZrewRjRwW9/wXh53ATXqVBAR27HAJJIypr6YA1iaiP2HGLaFffAsGiY6u0mRcVRALiyHSJJyl9Ew+9qLaZq04ntngrA+Kg1NI4VKK9DwBDzzYRNNc69Sv+wUFUeMj37i9N7FlIGt0hIekkfAAsRK86Nvdyn4dvnpM=
+	t=1733218811; cv=none; b=T4nLRZiVQCJLNTQo9EFBC+k1RY8RaHAlphT0/JZQYz5V6g8SF/x6L5Cwj9aAHw0jvpWCnq/SQqn5JqmffG5O2Cn9q4nFoSLC+xAxlHTf5kRBYk5KQy2tKrr4hPMKD/Mhui36FN5HzT+/q+2QIXhLr91YZqZA0ida92NnP1e2sp0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733218779; c=relaxed/simple;
-	bh=OnRvcO9ff5GeDassvmP1g8WmIJjTqDGNnMD3/SIR0aM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Tyst08vOGnE91HoqF7nop6jcxUNrS/cP1mkSlYK6BAHzpZC1m+/qZVpCmXTRBEweFpngpUgPjiYh8NbJsMVRJO2ztWwCNKw1PzSBHF+Wz9T6x2uCIUXSuyB+8u2VXlSlX6k1C84V3k8LZ4cBELMP1Q9w1dBJGGnpDxotWA//+KI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=kKZ19qM6; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 79C2BC0007;
-	Tue,  3 Dec 2024 09:39:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1733218774;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=v6zNT53T8ioxvldB3XPoiSk/CN07S+/FHZ5EB5jmDQo=;
-	b=kKZ19qM6wVfiFSOLJbEfceZEnoTZipZnYd5ErrkqxCG0c2zp/yF993MZr2OFZKVUpiM0q9
-	nr1RfMnpryAfh9nZ/DA4JmiNL/rDcowKiKxzx/cu4LZ1lPrf0PgKiEv57MuUXNPInLxYer
-	cmOoSccBYLoFlTvOpaE/4T0nLH1qNM+nR4w+UCHbCalB0Kf2DWulFjnhFnZdiyfWxK45r5
-	3648YkooaJMMlpXX9oSq+bxc9jTJU6h5AsTBGFDDaOsqdbbpKti9JlD3lBHbAdyc6J7PRE
-	YSa5cfqL5XMm4Fce1PYyZUB7DiH5FfHioX6cIB9wTemR0PrfkBAa75wlb36mNA==
-Date: Tue, 3 Dec 2024 10:39:32 +0100
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, Andy Shevchenko
- <andriy.shevchenko@linux.intel.com>, Sakari Ailus
- <sakari.ailus@linux.intel.com>, linux-i2c@vger.kernel.org,
- linux-kernel@vger.kernel.org, Wolfram Sang <wsa@kernel.org>, Mauro Carvalho
- Chehab <mchehab@kernel.org>, Cosmin Tanislav <demonsingur@gmail.com>, Tomi
- Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, Romain Gantois
- <romain.gantois@bootlin.com>, Matti Vaittinen
- <Matti.Vaittinen@fi.rohmeurope.com>
-Subject: Re: [PATCH v2 2/3] i2c: atr: Allow unmapped addresses from nested
- ATRs
-Message-ID: <20241203103932.3cd412bc@booty>
-In-Reply-To: <9bae963f-037a-46e1-abf6-f2ec464c4cf8@ideasonboard.com>
-References: <20241122-i2c-atr-fixes-v2-0-0acd325b6916@ideasonboard.com>
-	<20241122-i2c-atr-fixes-v2-2-0acd325b6916@ideasonboard.com>
-	<20241126091610.05e2d7c7@booty>
-	<b954c7b7-1094-48f9-afd9-00e386cd2443@ideasonboard.com>
-	<20241127131931.19af84c2@booty>
-	<30732dbb-21e6-4075-84b1-544fc6e6abce@ideasonboard.com>
-	<20241129125340.0e2c57d9@booty>
-	<9bae963f-037a-46e1-abf6-f2ec464c4cf8@ideasonboard.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1733218811; c=relaxed/simple;
+	bh=VyrUYMa578zw6pEH8jSCJqFz/bzLSDHZBN9Dus5sMxE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CSnpz3k+5Piw48uG2bqH5iLCHdod+Q0dGJx/Vdluumm6T/OhPdSc4C9PWQKN3fWuipBPhJSdFG73kWqV2E1PRQvHrO6Ka6Vq6EGnU2UiwtCupHaNe2ESGWynvQPJ+Qg/j4aCawPEE5Xxv3CFDs7tAUQwesOWCyXH7BoHcWMravI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jkHyWEza; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733218809; x=1764754809;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=VyrUYMa578zw6pEH8jSCJqFz/bzLSDHZBN9Dus5sMxE=;
+  b=jkHyWEzaa7XvUO8BZqUJWnqdcipVUu1LWcBFdToa++LqUBJAxJRtxecN
+   0UGzQCO71U11U3qOYnHFNjsEU01GFUAcsZ/1RcHhNBnau8WJlDnQUlJ+L
+   rzYWr04Xd5KoOEJrlxMc+jNNqIs3dG1gqbBAdBT3z42gWr54UvwmD+H0y
+   PqYcGMk3we1Ri8bmXGSepSaCZ7zga1Wh1O4LTo//ZvHtL0puNL3RrWf/s
+   qAIaq7Az2TPhXiiN59R08+JkknVZvIu2RSQrtzuubmwHRD9BNb/+uIpLw
+   2/XqgaGAPlclx5PInbebccjfPG3hAr/9fgY1abw+L/TZjT6GUpibf2r/4
+   Q==;
+X-CSE-ConnectionGUID: tPouXByPTH6GPBF8qCzl5w==
+X-CSE-MsgGUID: KbKmgBhqRdaKChCBMuCA0A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11274"; a="44810356"
+X-IronPort-AV: E=Sophos;i="6.12,204,1728975600"; 
+   d="scan'208";a="44810356"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Dec 2024 01:40:08 -0800
+X-CSE-ConnectionGUID: robPXPqQSzygKe5cbd/zyQ==
+X-CSE-MsgGUID: 1MrU5W2mTTKHIw/dZ+geWA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,204,1728975600"; 
+   d="scan'208";a="94216522"
+Received: from ncintean-mobl1.ger.corp.intel.com (HELO mdjait-mobl) ([10.245.244.238])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Dec 2024 01:40:07 -0800
+Date: Tue, 3 Dec 2024 10:39:58 +0100
+From: Mehdi Djait <mehdi.djait@linux.intel.com>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, 
+	Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, linux-iio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iio: kx022a: document new chip_info structure members
+Message-ID: <y6intisaqsyfvyvmkgzmeyojc3punimy3uhtp6a25gm4tn77yc@oikj64bmtebt>
+References: <Z02eXtrrO8U5-ffo@mva-rohm>
+ <hv7kqspym5qkcwbw4r6ogi362sbooohijplxbkro5qdmndvhr6@t2cftbs4n7rz>
+ <4004fafd-7596-4def-bf78-e91685f0c934@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-GND-Sasl: luca.ceresoli@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4004fafd-7596-4def-bf78-e91685f0c934@gmail.com>
 
-Hello Tomi,
+Hi Matti,
 
-On Fri, 29 Nov 2024 15:31:45 +0200
-Tomi Valkeinen <tomi.valkeinen@ideasonboard.com> wrote:
-
-> On 29/11/2024 13:53, Luca Ceresoli wrote:
-> 
-> >> So strictly speaking it's not an ATR, but this achieves the same.  
+> > >   drivers/iio/accel/kionix-kx022a.h | 5 +++++
+> > >   1 file changed, 5 insertions(+)
+> > > 
+> > > diff --git a/drivers/iio/accel/kionix-kx022a.h b/drivers/iio/accel/kionix-kx022a.h
+> > > index 142652ff4b22..82c4ced7426d 100644
+> > > --- a/drivers/iio/accel/kionix-kx022a.h
+> > > +++ b/drivers/iio/accel/kionix-kx022a.h
+> > > @@ -137,6 +137,11 @@ struct kx022a_data;
+> > >    *
+> > >    * @name:			name of the device
+> > >    * @regmap_config:		pointer to register map configuration
+> > > + * scale_table:			Array of two integer tables containing
+> > > + *				supported scales. Each scale is represented
+> > > + *				a 2 value array. First value being full
+> > > + *				integers, second being NANOs.
 > > 
-> > Thanks for the extensive and very useful explanation. I had completely
-> > missed the GMSL serder and their different I2C handling, apologies.
+> > How about:
 > > 
-> > So, the "parent ATR" is the GMSL deser, which is not an ATR but
-> > implementing it using i2c-atr makes the implementation cleaner. That
-> > makes sense.  
+> > Array of tables containing two scaling factors for the supported
+> > acceleration measurement ranges. First value is the integer part and
+> > second value is the fractional part in nano units.
+> > 
 > 
-> Right.
+> Hi Mehdi. Thanks for the input. I definitely prefer your wording over what I
+> wrote. Except maybe the note about each table containing two scaling
+> factors. I think a table contains two integers, but only one scaling factor
+> which is composed of those integers.
 > 
-> But, honestly, I can't make my mind if I like the use of ATR here or not =).
 
-Hehe, indeed, hardware designers use a lot of fantasy in stretching the
-I2C standard to its limits, perhaps more than actually needed.
+that is true, it is just one scaling factor.
 
-> So it's not an ATR, but I'm not quite sure what it is. It's not just 
-> that we need to change the addresses of the serializers, we need to do 
-> that in particular way, enabling one port at a time to do the change.
+> I am also still wondering if ppb (or even fully written "parts per billion")
+> should be used instead of nano. In my ears the "nano" needs units, but I
+> suppose the scale does not have any.
 > 
-> If we forget about the init time hurdles, and consider the situation 
-> after the serializers are been set up and all ports have been enabled, 
-> we have:
-> 
-> There's the main i2c bus, on which we have the deserializer. The 
-> deserializer acts as a i2c repeater (for any transaction that's not 
-> directed to the deser), sending the messages to all serializers. The 
-> serializers catch transactions directed at the ser, and everything else 
-> goes through ATR and to the remote bus.
-> 
-> Do we have something that represents such a "i2c repeater"? I guess we 
-> could just have an i2c bus, created by the deser, and all the sers would 
-> be on that bus. So we'd somehow do the initial address change first, 
-> then set up the i2c bus, and the serializer i2c clients would be added 
-> to that bus.
 
-So you think about another thing, like i2c-repeater, in addition to
-i2c-mux and i2c-atr?
+So how about:
+Array of tables containing a scaling factor for the supported
+acceleration measurement range. First value is the integer part and
+second value is the nano fractional part.
 
-Well, I think it would make sense, as it would generalize a feature
-that might be used by other chips. However at the moment we do have a
-working driver for the GMSL deser, and so I don't see the benefit of
-extracting the i2c-repeater functionality to a separate file, unless
-there are drivers for other chips being implemented: this would motivate
-extracting common features to a shared file. IOW, I'd not generalize
-something with a single user.
+or:
+Array of tables containing a scaling factor for the supported
+acceleration measurement range. First value is the integer part and
+second value is the nano/ppb (parts per billion) fractional part.
 
-[Interesting side note: the i2c-atr has been implemented with a single
-user, violating the above principle O:-) but I think that was due to the
-similarity with i2c-mux or something like that. Out of luck, another
-ATR user appeared after some time.]
+> Yours,
+> 	-- Matti
 
-Luca
-
--- 
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+--
+Kind Regards
+Mehdi Djait
 
