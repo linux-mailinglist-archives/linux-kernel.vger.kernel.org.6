@@ -1,128 +1,264 @@
-Return-Path: <linux-kernel+bounces-429012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F28149E163F
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:50:38 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E12849E1683
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:00:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8DE6281E78
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 08:50:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0C0C0B28A91
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 08:52:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D64AB1DDA33;
-	Tue,  3 Dec 2024 08:50:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="uDcOTWZs"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C38D38C11;
-	Tue,  3 Dec 2024 08:50:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 864461DE2AD;
+	Tue,  3 Dec 2024 08:51:55 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F2808C11;
+	Tue,  3 Dec 2024 08:51:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733215829; cv=none; b=qnLyOdjVIXQeZ1t29N3W3C4MKWXUq3A3IAxW2HY6EGIogKJeaMOHa2WxxfKzZ0EPyA6zJUi/IDJZO9i+KkBHh9S3XmUk/OugSbeUMVMrySkEO9fngE++X6CqrtovRs24bkXl2wXiw3j5SXwi7iQK5z0zBMuPKbApc02HUeQ9YW8=
+	t=1733215915; cv=none; b=bFrx7YU9emfJrD0Opxb/2tPErb9Zn2m78DFrVmwNNwr/DHBJ2IiqlaXgxeorjeOv0XHoZScVYZ7OqeD7dYeg4qM56Kjd1eTMum89VTTQ3XfSpyR1sMq4UqTBCm1m+0z3BB7zZ07KZyipbjKlzTWTk5jakFDs+Jyv4DWN5oADaWY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733215829; c=relaxed/simple;
-	bh=Rb+1LimEOg2KyRvb49TqiGJHO6i5lsezJr9VXtmZ3YQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M8Qk4g23tPiNzNO9L/3Rhgs+pMNMl8M0nofTSEHI+wTe8iZamgjcg1m19wb953h21P5B2AsBbcChfOtT39K2Kq9oLK8RFtO0HRw5oU7bFfeNRko+RtUtSeAlcTrl/TinCncnrIzemeQvn/STxfcmBo9MGFulg7+Bypugq4R3AsA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=uDcOTWZs; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id DEC408DB;
-	Tue,  3 Dec 2024 09:49:57 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1733215798;
-	bh=Rb+1LimEOg2KyRvb49TqiGJHO6i5lsezJr9VXtmZ3YQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uDcOTWZsHL72Z+kjzinta4X89IEUrGtYEZxJWqRYQX3K70mrr9SGDhn7CU3Mi7tN6
-	 WU4hOKrBxpPahgl/NICv7pMAaORwnERsCy6nJsjvAdXcp11MNv1bcsSzE02WV2YDse
-	 zZJLnTiDh3bVOOP0OQSTfTEqLG/aG97coDylyK3E=
-Date: Tue, 3 Dec 2024 10:50:13 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>, Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, LUU HOAI <hoai.luu.ub@renesas.com>,
-	Jagan Teki <jagan@amarulasolutions.com>,
-	Sam Ravnborg <sam@ravnborg.org>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-Subject: Re: [PATCH 2/9] dt-bindings: display: renesas,du: Add r8a779h0
-Message-ID: <20241203085013.GH10736@pendragon.ideasonboard.com>
-References: <20241203-rcar-gh-dsi-v1-0-738ae1a95d2a@ideasonboard.com>
- <20241203-rcar-gh-dsi-v1-2-738ae1a95d2a@ideasonboard.com>
- <20241203081935.GE10736@pendragon.ideasonboard.com>
- <CAMuHMdVZui9c4X0FQ3Xke4gzxa9gvs6Nsp0eh5avzr_G3wd=ig@mail.gmail.com>
+	s=arc-20240116; t=1733215915; c=relaxed/simple;
+	bh=9a4HS1lGr3UMK6mdUPo5Xx1GNq7+BWdWa6MBtV1k8f4=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=joCVuNrfdpZlkWbz7xUwu8kSqNVKTjIGr/jwtn7oqYKxMZLhlWdMIi82s7Xz9x8Zl6rbVgwIO2k8sKeipYuE2yfHGUx1Hw8KVyMMYmSWI82ReqbXCSyOhnj+PxiXLslIMDqbH/U/5RlgQioxqGt72Niieu7tAVrSmj3iNomOxk4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.20.42.62])
+	by gateway (Coremail) with SMTP id _____8Bx366ixk5n8I9PAA--.49532S3;
+	Tue, 03 Dec 2024 16:51:46 +0800 (CST)
+Received: from [10.20.42.62] (unknown [10.20.42.62])
+	by front1 (Coremail) with SMTP id qMiowMBxP+Gexk5ntqFzAA--.34411S3;
+	Tue, 03 Dec 2024 16:51:45 +0800 (CST)
+Subject: Re: [PATCH 2/2] LoongArch: KVM: Protect kvm_io_bus_{read,write}()
+ with SRCU
+To: Huacai Chen <chenhuacai@loongson.cn>, Paolo Bonzini
+ <pbonzini@redhat.com>, Huacai Chen <chenhuacai@kernel.org>,
+ Tianrui Zhao <zhaotianrui@loongson.cn>
+Cc: kvm@vger.kernel.org, loongarch@lists.linux.dev,
+ linux-kernel@vger.kernel.org, Xuerui Wang <kernel@xen0n.name>,
+ Jiaxun Yang <jiaxun.yang@flygoat.com>, stable@vger.kernel.org
+References: <20241203065058.4164631-1-chenhuacai@loongson.cn>
+ <20241203065058.4164631-2-chenhuacai@loongson.cn>
+From: bibo mao <maobibo@loongson.cn>
+Message-ID: <99ccaf01-9176-20c3-2463-148cb5cafcea@loongson.cn>
+Date: Tue, 3 Dec 2024 16:51:05 +0800
+User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+In-Reply-To: <20241203065058.4164631-2-chenhuacai@loongson.cn>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMuHMdVZui9c4X0FQ3Xke4gzxa9gvs6Nsp0eh5avzr_G3wd=ig@mail.gmail.com>
+X-CM-TRANSID:qMiowMBxP+Gexk5ntqFzAA--.34411S3
+X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
+X-Coremail-Antispam: 1Uk129KBj93XoW3Ar1rCFWkCr47Jr43CF48AFc_yoW3JF1rpr
+	yruay3uw4rJr97ZwnrAr1qvr1Yq3yv9F1UJrykJFWrGr1jvrn8JF48trW7ZFy5Kw1rCa1x
+	XF1fJr1Ykr1jywcCm3ZEXasCq-sJn29KB7ZKAUJUUUUr529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUB2b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
+	xVW8Jr0_Cr1UM2kKe7AKxVWUXVWUAwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07
+	AIYIkI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWU
+	XVWUAwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI4
+	8JMxk0xIA0c2IEe2xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_
+	Jr0_Gr1l4IxYO2xFxVAFwI0_Jrv_JF1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8Gjc
+	xK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0
+	cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8V
+	AvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E
+	14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxU4s2-UUUUU
 
-On Tue, Dec 03, 2024 at 09:38:44AM +0100, Geert Uytterhoeven wrote:
-> Hi Laurent,
+
+
+On 2024/12/3 下午2:50, Huacai Chen wrote:
+> When we enable lockdep we get such a warning:
 > 
-> On Tue, Dec 3, 2024 at 9:19 AM Laurent Pinchart
-> <laurent.pinchart@ideasonboard.com> wrote:
-> > On Tue, Dec 03, 2024 at 10:01:36AM +0200, Tomi Valkeinen wrote:
-> > > From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-> > >
-> > > Extend the Renesas DU display bindings to support the r8a779h0 V4M.
-> > >
-> > > Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-> > > ---
-> > >  Documentation/devicetree/bindings/display/renesas,du.yaml | 1 +
-> > >  1 file changed, 1 insertion(+)
-> > >
-> > > diff --git a/Documentation/devicetree/bindings/display/renesas,du.yaml b/Documentation/devicetree/bindings/display/renesas,du.yaml
-> > > index c5b9e6812bce..d369953f16f7 100644
-> > > --- a/Documentation/devicetree/bindings/display/renesas,du.yaml
-> > > +++ b/Documentation/devicetree/bindings/display/renesas,du.yaml
-> > > @@ -41,6 +41,7 @@ properties:
-> > >        - renesas,du-r8a77995 # for R-Car D3 compatible DU
-> > >        - renesas,du-r8a779a0 # for R-Car V3U compatible DU
-> > >        - renesas,du-r8a779g0 # for R-Car V4H compatible DU
-> > > +      - renesas,du-r8a779h0 # for R-Car V4M compatible DU
-> > >
-> > >    reg:
-> > >      maxItems: 1
-> >
-> > You also need to add h0 to the g0 block in the conditional properties
-> > below. With that,
+>   =============================
+>   WARNING: suspicious RCU usage
+>   6.12.0-rc7+ #1891 Tainted: G        W
+>   -----------------------------
+>   arch/loongarch/kvm/../../../virt/kvm/kvm_main.c:5945 suspicious rcu_dereference_check() usage!
+>   other info that might help us debug this:
+>   rcu_scheduler_active = 2, debug_locks = 1
+>   1 lock held by qemu-system-loo/948:
+>    #0: 90000001184a00a8 (&vcpu->mutex){+.+.}-{4:4}, at: kvm_vcpu_ioctl+0xf4/0xe20 [kvm]
+>   stack backtrace:
+>   CPU: 2 UID: 0 PID: 948 Comm: qemu-system-loo Tainted: G        W          6.12.0-rc7+ #1891
+>   Tainted: [W]=WARN
+>   Hardware name: Loongson Loongson-3A5000-7A1000-1w-CRB/Loongson-LS3A5000-7A1000-1w-CRB, BIOS vUDK2018-LoongArch-V2.0.0-prebeta9 10/21/2022
+>   Stack : 0000000000000089 9000000005a0db9c 90000000071519c8 900000012c578000
+>           900000012c57b940 0000000000000000 900000012c57b948 9000000007e53788
+>           900000000815bcc8 900000000815bcc0 900000012c57b7b0 0000000000000001
+>           0000000000000001 4b031894b9d6b725 0000000005dec000 9000000100427b00
+>           00000000000003d2 0000000000000001 000000000000002d 0000000000000003
+>           0000000000000030 00000000000003b4 0000000005dec000 0000000000000000
+>           900000000806d000 9000000007e53788 00000000000000b4 0000000000000004
+>           0000000000000004 0000000000000000 0000000000000000 9000000107baf600
+>           9000000008916000 9000000007e53788 9000000005924778 000000001fe001e5
+>           00000000000000b0 0000000000000007 0000000000000000 0000000000071c1d
+>           ...
+>   Call Trace:
+>   [<9000000005924778>] show_stack+0x38/0x180
+>   [<90000000071519c4>] dump_stack_lvl+0x94/0xe4
+>   [<90000000059eb754>] lockdep_rcu_suspicious+0x194/0x240
+>   [<ffff80000221f47c>] kvm_io_bus_read+0x19c/0x1e0 [kvm]
+>   [<ffff800002225118>] kvm_emu_mmio_read+0xd8/0x440 [kvm]
+>   [<ffff8000022254bc>] kvm_handle_read_fault+0x3c/0xe0 [kvm]
+>   [<ffff80000222b3c8>] kvm_handle_exit+0x228/0x480 [kvm]
 > 
-> Which is not sufficient, as the DU on R-Car V4M has only a single channel,
-> unlike on R-Car V3U and V4H.
+> Fix it by protecting kvm_io_bus_{read,write}() with SRCU.
+> 
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
+> ---
+>   arch/loongarch/kvm/exit.c     | 31 +++++++++++++++++++++----------
+>   arch/loongarch/kvm/intc/ipi.c |  6 +++++-
+>   2 files changed, 26 insertions(+), 11 deletions(-)
+> 
+> diff --git a/arch/loongarch/kvm/exit.c b/arch/loongarch/kvm/exit.c
+> index 69f3e3782cc9..a7893bd01e73 100644
+> --- a/arch/loongarch/kvm/exit.c
+> +++ b/arch/loongarch/kvm/exit.c
+> @@ -156,7 +156,7 @@ static int kvm_handle_csr(struct kvm_vcpu *vcpu, larch_inst inst)
+>   
+>   int kvm_emu_iocsr(larch_inst inst, struct kvm_run *run, struct kvm_vcpu *vcpu)
+>   {
+> -	int ret;
+> +	int idx, ret;
+>   	unsigned long *val;
+>   	u32 addr, rd, rj, opcode;
+>   
+> @@ -167,7 +167,6 @@ int kvm_emu_iocsr(larch_inst inst, struct kvm_run *run, struct kvm_vcpu *vcpu)
+>   	rj = inst.reg2_format.rj;
+>   	opcode = inst.reg2_format.opcode;
+>   	addr = vcpu->arch.gprs[rj];
+> -	ret = EMULATE_DO_IOCSR;
+>   	run->iocsr_io.phys_addr = addr;
+>   	run->iocsr_io.is_write = 0;
+>   	val = &vcpu->arch.gprs[rd];
+> @@ -207,20 +206,28 @@ int kvm_emu_iocsr(larch_inst inst, struct kvm_run *run, struct kvm_vcpu *vcpu)
+>   	}
+>   
+>   	if (run->iocsr_io.is_write) {
+> -		if (!kvm_io_bus_write(vcpu, KVM_IOCSR_BUS, addr, run->iocsr_io.len, val))
+> +		idx = srcu_read_lock(&vcpu->kvm->srcu);
+> +		ret = kvm_io_bus_write(vcpu, KVM_IOCSR_BUS, addr, run->iocsr_io.len, val);
+> +		srcu_read_unlock(&vcpu->kvm->srcu, idx);
+> +		if (ret == 0)
+>   			ret = EMULATE_DONE;
+> -		else
+> +		else {
+> +			ret = EMULATE_DO_IOCSR;
+>   			/* Save data and let user space to write it */
+>   			memcpy(run->iocsr_io.data, val, run->iocsr_io.len);
+> -
+> +		}
+>   		trace_kvm_iocsr(KVM_TRACE_IOCSR_WRITE, run->iocsr_io.len, addr, val);
+>   	} else {
+> -		if (!kvm_io_bus_read(vcpu, KVM_IOCSR_BUS, addr, run->iocsr_io.len, val))
+> +		idx = srcu_read_lock(&vcpu->kvm->srcu);
+> +		ret = kvm_io_bus_read(vcpu, KVM_IOCSR_BUS, addr, run->iocsr_io.len, val);
+> +		srcu_read_unlock(&vcpu->kvm->srcu, idx);
+> +		if (ret == 0)
+>   			ret = EMULATE_DONE;
+> -		else
+> +		else {
+> +			ret = EMULATE_DO_IOCSR;
+>   			/* Save register id for iocsr read completion */
+>   			vcpu->arch.io_gpr = rd;
+> -
+> +		}
+>   		trace_kvm_iocsr(KVM_TRACE_IOCSR_READ, run->iocsr_io.len, addr, NULL);
+>   	}
+>   
+> @@ -359,7 +366,7 @@ static int kvm_handle_gspr(struct kvm_vcpu *vcpu)
+>   
+>   int kvm_emu_mmio_read(struct kvm_vcpu *vcpu, larch_inst inst)
+>   {
+> -	int ret;
+> +	int idx, ret;
+>   	unsigned int op8, opcode, rd;
+>   	struct kvm_run *run = vcpu->run;
+>   
+> @@ -464,8 +471,10 @@ int kvm_emu_mmio_read(struct kvm_vcpu *vcpu, larch_inst inst)
+>   		 * it need not return to user space to handle the mmio
+>   		 * exception.
+>   		 */
+> +		idx = srcu_read_lock(&vcpu->kvm->srcu);
+>   		ret = kvm_io_bus_read(vcpu, KVM_MMIO_BUS, vcpu->arch.badv,
+>   				      run->mmio.len, &vcpu->arch.gprs[rd]);
+> +		srcu_read_unlock(&vcpu->kvm->srcu, idx);
+>   		if (!ret) {
+>   			update_pc(&vcpu->arch);
+>   			vcpu->mmio_needed = 0;
+> @@ -531,7 +540,7 @@ int kvm_complete_mmio_read(struct kvm_vcpu *vcpu, struct kvm_run *run)
+>   
+>   int kvm_emu_mmio_write(struct kvm_vcpu *vcpu, larch_inst inst)
+>   {
+> -	int ret;
+> +	int idx, ret;
+>   	unsigned int rd, op8, opcode;
+>   	unsigned long curr_pc, rd_val = 0;
+>   	struct kvm_run *run = vcpu->run;
+> @@ -631,7 +640,9 @@ int kvm_emu_mmio_write(struct kvm_vcpu *vcpu, larch_inst inst)
+>   		 * it need not return to user space to handle the mmio
+>   		 * exception.
+>   		 */
+> +		idx = srcu_read_lock(&vcpu->kvm->srcu);
+>   		ret = kvm_io_bus_write(vcpu, KVM_MMIO_BUS, vcpu->arch.badv, run->mmio.len, data);
+> +		srcu_read_unlock(&vcpu->kvm->srcu, idx);
+>   		if (!ret)
+>   			return EMULATE_DONE;
+>   
+> diff --git a/arch/loongarch/kvm/intc/ipi.c b/arch/loongarch/kvm/intc/ipi.c
+> index a233a323e295..4b7ff20ed438 100644
+> --- a/arch/loongarch/kvm/intc/ipi.c
+> +++ b/arch/loongarch/kvm/intc/ipi.c
+> @@ -98,7 +98,7 @@ static void write_mailbox(struct kvm_vcpu *vcpu, int offset, uint64_t data, int
+>   
+>   static int send_ipi_data(struct kvm_vcpu *vcpu, gpa_t addr, uint64_t data)
+>   {
+> -	int i, ret;
+> +	int i, idx, ret;
+>   	uint32_t val = 0, mask = 0;
+>   
+>   	/*
+> @@ -107,7 +107,9 @@ static int send_ipi_data(struct kvm_vcpu *vcpu, gpa_t addr, uint64_t data)
+>   	 */
+>   	if ((data >> 27) & 0xf) {
+>   		/* Read the old val */
+> +		srcu_read_unlock(&vcpu->kvm->srcu, idx);
+here should be idx = srcu_read_lock(&vcpu->kvm->srcu) ?
 
-Ah, indeed, in that case the DT bindings also need to take that into
-account :-)
+>   		ret = kvm_io_bus_read(vcpu, KVM_IOCSR_BUS, addr, sizeof(val), &val);
+> +		srcu_read_unlock(&vcpu->kvm->srcu, idx);
+>   		if (unlikely(ret)) {
+>   			kvm_err("%s: : read date from addr %llx failed\n", __func__, addr);
+>   			return ret;
+> @@ -121,7 +123,9 @@ static int send_ipi_data(struct kvm_vcpu *vcpu, gpa_t addr, uint64_t data)
+>   		val &= mask;
+>   	}
+>   	val |= ((uint32_t)(data >> 32) & ~mask);
+> +	srcu_read_unlock(&vcpu->kvm->srcu, idx);
+here should be idx = srcu_read_lock(&vcpu->kvm->srcu)
 
--- 
-Regards,
+>   	ret = kvm_io_bus_write(vcpu, KVM_IOCSR_BUS, addr, sizeof(val), &val);
+> +	srcu_read_unlock(&vcpu->kvm->srcu, idx);
+>   	if (unlikely(ret))
+>   		kvm_err("%s: : write date to addr %llx failed\n", __func__, addr);
+>   
+> 
+otherwise looks good to me.
 
-Laurent Pinchart
+Reviewed-by: Bibo Mao <maobibo@loongson.cn>
+
 
