@@ -1,106 +1,102 @@
-Return-Path: <linux-kernel+bounces-428577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428582-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5831F9E10CA
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 02:33:36 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A28C16245C
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 01:33:33 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6588538DE5;
-	Tue,  3 Dec 2024 01:33:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fb8YYhoZ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 337929E10DA
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 02:40:42 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19DAD2500C3
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 01:33:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E650A28268D
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 01:40:40 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45FF642A8C;
+	Tue,  3 Dec 2024 01:40:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="jfakQW/D"
+Received: from mail-m21470.qiye.163.com (mail-m21470.qiye.163.com [117.135.214.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA42615E8B;
+	Tue,  3 Dec 2024 01:40:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.214.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733189610; cv=none; b=FgZJvXXR26At6WD2V3/DZkODslHXno0TBtdcqL/EVS+u6Tu6OQ7mrivmHlskgmtspdzVYfWGAlSYb5L8+YBvzQcigx5TPWzFkrNjb4BZdJ6sOEd2vmHye34BqUfKqThQvh0Zt2KMmqXSZ/4KXTPS0Ad3FXVieUCsiGVehl5WypA=
+	t=1733190036; cv=none; b=GJLHDwq6LJPepXcBTzoUzkov4DxKz5yUwgTt7QuuIlXnP0Avd6JIS1vqqUwWD0bsOjmz2tccZu5Gdh8ayFglbiWPAOnE0iKSHM1DzEuNV/Ha2lYaR0ofNKBaQ4mhdM1zJonWsE/KYILEJqdn7X1B8mN5X9D9rIDeWfJ8ioaVZ7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733189610; c=relaxed/simple;
-	bh=dKmlHlkb7WbW+4b8/pXx9raRh/cUFXpHa9D93jn+wv0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Jq11l0QvxomdKTsu3PZdtjZ1P2nCWwhUSXzOOlMxtrE3CMc0aNomXXK+wWwasmPxrfiwUzPLcg1whzrbW8GhSgW/KHCFdNRN4NQtEimvVy33Q457iAkKhWFH4Yjk5fLVkSMn1axKfQVM4g6J7Jt1kXZKbr+FY6kMKXzhna4yivU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fb8YYhoZ; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733189608; x=1764725608;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=dKmlHlkb7WbW+4b8/pXx9raRh/cUFXpHa9D93jn+wv0=;
-  b=fb8YYhoZmB4it0vHrbMTktE41J6z7HoOyF3EHELN8ms2MLTU/vsXix8L
-   hacVS+E613FyMMIlZDaIm4bSM55dB1/QHQ91tja/Scu5XfkeoERKeWCD7
-   SQnyZCaJnP58IOekdOuuIjiGUhYzWtTOQw5W120HxYawP85AKF9mqcK1l
-   6W7X5VlstpL88e2VPkL6UxsmqTOrdD34lbZyEkcyuY4bFA4S/QKoJFJtJ
-   CV7MdA7kx4XPf8uMpudZcNUgToEGIIxUV6cn8XORFi2Bf7n2IDDm0wEex
-   F8QcKPTPgc41M7/FDYp1LKN7tfPAGY5k0fz3sRzHFCZUiYKCLTFPq1rUF
-   w==;
-X-CSE-ConnectionGUID: 4TNrmjrkRaWaXLQtT2EQhw==
-X-CSE-MsgGUID: DMfNnewURjKjbAzMfp9BSg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11274"; a="33634797"
-X-IronPort-AV: E=Sophos;i="6.12,204,1728975600"; 
-   d="scan'208";a="33634797"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Dec 2024 17:33:27 -0800
-X-CSE-ConnectionGUID: 6zTRF/TrT9CYE1yJpqRsvw==
-X-CSE-MsgGUID: 0g4FHChITwaaxuin/nIZPg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,204,1728975600"; 
-   d="scan'208";a="93112331"
-Received: from lkp-server02.sh.intel.com (HELO 36a1563c48ff) ([10.239.97.151])
-  by fmviesa007.fm.intel.com with ESMTP; 02 Dec 2024 17:33:27 -0800
-Received: from kbuild by 36a1563c48ff with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tIHmz-00037x-34;
-	Tue, 03 Dec 2024 01:33:22 +0000
-Date: Tue, 3 Dec 2024 09:33:15 +0800
-From: kernel test robot <lkp@intel.com>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: WARNING: modpost: vmlinux: section mismatch in reference:
- __trace_event_discard_commit+0x160 (section: .text.unlikely) ->
- initcall_level_names (section: .init.data)
-Message-ID: <202412030913.OTV5Qxsz-lkp@intel.com>
+	s=arc-20240116; t=1733190036; c=relaxed/simple;
+	bh=ETXhdS9fvXnJlfXHPLtikH7l7BD4FcrqgztckfLBXPo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=CNV6eEor2ZuTpsuqmqLDXzXrRhdk9n4cwRoyfC44A8HFvLDjI8i/9G9uPaVVR89Npq+cPVufw0qAOdgJ9h4HZpFwh4FCmEUHUM1hC68S7SXeGgh55NobJm1J9hUGlrC3oWDgwlIgoQwKcDKaGPB/JqyfgZxVicAJvk5YHTe5dVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=jfakQW/D; arc=none smtp.client-ip=117.135.214.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Received: from rockchip.. (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 47ff938a;
+	Tue, 3 Dec 2024 09:35:15 +0800 (GMT+08:00)
+From: Jon Lin <jon.lin@rock-chips.com>
+To: broonie@kernel.org
+Cc: linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	heiko@sntech.de,
+	jon.lin@rock-chips.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-spi@vger.kernel.org
+Subject: [PATCH] spi: rockchip-sfc: Optimize the judgment mechanism completed by the controller
+Date: Tue,  3 Dec 2024 09:35:13 +0800
+Message-Id: <20241203013513.2628810-1-jon.lin@rock-chips.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQh9KQ1YZTUtLS0NDSkJLGk9WFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
+	hVSktLVUpCS0tZBg++
+X-HM-Tid: 0a938a28453909d9kunm47ff938a
+X-HM-MType: 1
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6NT46Mjo6KDIaThAMMzYuCQoX
+	URMaCUpVSlVKTEhISkNCTEpNSEpMVTMWGhIXVREUFVUXEhU7CRQYEFYYExILCFUYFBZFWVdZEgtZ
+	QVlOQ1VJSVVMVUpKT1lXWQgBWUFKS0xNNwY+
+DKIM-Signature:a=rsa-sha256;
+	b=jfakQW/DxzWDCeZTFJ2qwv2/HsVuQYqgzlaPYegq/OXq4isHh+F6aAHyLpNRSw4WLNvJsq4pAnNrWnXWq7n8ufzjxVUWIVUEycO5veT9MxLfRRv4/UZQgLvROOjRtjTeXvX1MbmYZKf4Bjjzb3JdKB6hEGWulwKbSrPtO7vWLfg=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=hywco0EOZS8UPtB5JNfLuOnac/kvQFRPXPjTcGdkjTc=;
+	h=date:mime-version:subject:message-id:from;
 
-Hi Masahiro,
+There is very little data left in fifo, and the controller will
+complete the transmission in a short period of time, so
+use readl_poll_timeout() for busy wait 10us to accelerate response.
 
-FYI, the error/warning still remains.
+Signed-off-by: Jon Lin <jon.lin@rock-chips.com>
+---
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   e70140ba0d2b1a30467d4af6bcfe761327b9ec95
-commit: 481461f5109919babbb393d6f68002936b8e2493 linux/export.h: make <linux/export.h> independent of CONFIG_MODULES
-date:   1 year, 4 months ago
-config: xtensa-randconfig-r121-20241114 (https://download.01.org/0day-ci/archive/20241203/202412030913.OTV5Qxsz-lkp@intel.com/config)
-compiler: xtensa-linux-gcc (GCC) 14.2.0
-reproduce: (https://download.01.org/0day-ci/archive/20241203/202412030913.OTV5Qxsz-lkp@intel.com/reproduce)
+ drivers/spi/spi-rockchip-sfc.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202412030913.OTV5Qxsz-lkp@intel.com/
-
-All warnings (new ones prefixed by >>, old ones prefixed by <<):
-
-WARNING: modpost: missing MODULE_DESCRIPTION() in vmlinux.o
-WARNING: modpost: vmlinux: section mismatch in reference: trace_initcall_level+0x94 (section: .text.unlikely) -> initcall_level_names (section: .init.data)
->> WARNING: modpost: vmlinux: section mismatch in reference: __trace_event_discard_commit+0x160 (section: .text.unlikely) -> initcall_level_names (section: .init.data)
-
+diff --git a/drivers/spi/spi-rockchip-sfc.c b/drivers/spi/spi-rockchip-sfc.c
+index 138508d2c736..14f5b9346050 100644
+--- a/drivers/spi/spi-rockchip-sfc.c
++++ b/drivers/spi/spi-rockchip-sfc.c
+@@ -472,6 +472,16 @@ static int rockchip_sfc_xfer_done(struct rockchip_sfc *sfc, u32 timeout_us)
+ 	int ret = 0;
+ 	u32 status;
+ 
++	/*
++	 * There is very little data left in fifo, and the controller will
++	 * complete the transmission in a short period of time.
++	 */
++	ret = readl_poll_timeout(sfc->regbase + SFC_SR, status,
++				 !(status & SFC_SR_IS_BUSY),
++				 0, 10);
++	if (!ret)
++		return 0;
++
+ 	ret = readl_poll_timeout(sfc->regbase + SFC_SR, status,
+ 				 !(status & SFC_SR_IS_BUSY),
+ 				 20, timeout_us);
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.34.1
+
 
