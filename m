@@ -1,54 +1,62 @@
-Return-Path: <linux-kernel+bounces-429064-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429067-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CC669E16DD
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:12:09 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B0279E1916
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 11:21:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F334285DCF
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:12:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A447DB3A127
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:13:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C78901DE4D7;
-	Tue,  3 Dec 2024 09:11:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A37951DE4FA;
+	Tue,  3 Dec 2024 09:13:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="bu9xPqeT"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="BfWf3ptW"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FC861DED71;
-	Tue,  3 Dec 2024 09:11:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADAFC1DB922;
+	Tue,  3 Dec 2024 09:13:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733217090; cv=none; b=gJ+xT0VqxQ5BNHljB+ED5OwyDR2qiiTgmsxpKWLkQjwNAQrDT0nc+d4N4BEYeZBVxAG/kYMB3tTUXX5a7ycxXGBM3wkM0NR2N31gYbA8RFO+ca59MDwPxngpCLThKupJavV1y4HG/5g+H/tXzN1cAkzX6AZ2DCw8fbz4JCuwTJM=
+	t=1733217190; cv=none; b=hpIcfLtF4FD6Unw54xy+hUBatHwog+KP6I5wdEQOBS9GFhQHB0rgVNii+yYl3jJrR2+GwVjqK5vbdc3/UG02+gP2nLYlkNB9WIKeyjs2MYRLXqQW4AdAZa2KJ8RO8MESEsF8U3DrEnm8H6Ea/FkhRtLUDiM6w4XnF4eP+byrKfs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733217090; c=relaxed/simple;
-	bh=76A10C0+a+1sqcPCvHskNVyiLtHtVGvnW0mmH/vp9SM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ov3coZKtFj+Wi0p74vIxFa3Uw6oO6aoQJByk++z/747WpZ//8jigNVMdMcaDuChFu5u8cfu+G0obAXtOhZrl4dc08VP5paivv8ValuAe0uwq5fcKeLQAse4ZzchvGevqHkhRDRNMGKO/xetghm8OEHV040DGTVO/cTRXkqBcJ7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=bu9xPqeT; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1733217084;
-	bh=76A10C0+a+1sqcPCvHskNVyiLtHtVGvnW0mmH/vp9SM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=bu9xPqeTxO4dscqc9VgQViTib7TqSFnpanUdnKfQWyGwm1YIjpZZbkWCLJI/L6Gho
-	 xIITRDYl00sLEe0ifC7Fook7juoWG/ODjQkdnGUNN00bI3dGMDqCgghpzrKk68hJp9
-	 xX6wOJwBPZW3qGvGDHUneeop5CSm2M14Pb2A2CkSn7/QATtEY/Y2Wyb65zDqYTqtsO
-	 SQxiUPSjzfQOhD9s8G+tFopQkS0Q+rSrPxCA08m0T2X2WWOtUaPXjyFQBzi14otJJo
-	 8/xmH/jLex+EDqhuUP7vT/46s3HWc0B5ccihTj9h0DFtZmOPJxGBk37RcBryYWicWO
-	 5Unk3i9eKLjHQ==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 1BF9617E14FB;
-	Tue,  3 Dec 2024 10:11:24 +0100 (CET)
-Message-ID: <4fd73e67-1f39-4f5e-87d7-31e9c355b049@collabora.com>
-Date: Tue, 3 Dec 2024 10:11:24 +0100
+	s=arc-20240116; t=1733217190; c=relaxed/simple;
+	bh=XUH84e0egI5Kfw9FWhQHXx6YArW4ac5yEmTH0laDN8Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ZPIQilNJ3lR9mh975Bkqx4rYbt7pbKGkeg0Dtr0dDGYUIgBkRautH9UD8RN2ZqCedNNGSoomSiGDrR5vDZiRihIQ627ZxPKKkiJRzI118G0tpS0LOpVAqjx40zoI2Xh6eHpus5yhFIExHqxUzvPYduuhL7vOIrZipRT39Mb4qiE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=BfWf3ptW; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B383AQs025674;
+	Tue, 3 Dec 2024 09:13:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	0KaoB5KjyuO+cWvVZwhloozjQT1ZeYOQtXDf2eB62T0=; b=BfWf3ptWqtx3B0+8
+	6Lv8xQ5gtjOpbgGOpFtG2mR3mUIl9HsLy/dDjZ/a43A3zfiDBjfVJIBJmk1rs9An
+	XojXd0wIabhRjVUVMUNMrL2IDW6AZr1on3lHhmPwUaDQBGmsgHi3+qO9zFjI6I8D
+	hzMQtDwvv+kTxGWeOth8qzZoW7ZlLom6jYDJq5M4NbLovLlw5uh/mulzMj2WEBoj
+	+6IGUjYbAgYTac2C/Msr9GOm95oLwSWZ+c7R3rtrzfYWPjZQEQIt0DtKgI+4wJ41
+	Ba9PvExvyhiB8KedJKU129fV0Pso9ha8ZYdJ+KlZiYR4ityi+KinM1mLQaN9Frdd
+	tATO4w==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 437uvjyd2s-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 03 Dec 2024 09:13:04 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B39D4UQ028352
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 3 Dec 2024 09:13:04 GMT
+Received: from [10.151.41.184] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 3 Dec 2024
+ 01:12:59 -0800
+Message-ID: <d7a001aa-f203-4e2d-8d39-615066e12969@quicinc.com>
+Date: Tue, 3 Dec 2024 14:42:56 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,44 +64,67 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.6 2/2] arm64: dts: mediatek: mt8195-cherry: Mark USB 3.0
- on xhci1 as disabled
-To: Chen-Yu Tsai <wenst@chromium.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Sasha Levin <sashal@kernel.org>
-Cc: stable@vger.kernel.org, linux-kernel@vger.kernel.org,
- Matthias Brugger <matthias.bgg@gmail.com>, devicetree@vger.kernel.org,
- linux-mediatek@lists.infradead.org, Koichiro Den
- <koichiro.den@canonical.com>,
- =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>
-References: <20241202081552.156183-1-wenst@chromium.org>
- <20241202081552.156183-2-wenst@chromium.org>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Subject: Re: [PATCH v2 12/22] wifi: ath12k: fix incorrect CE addresses
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        <ath12k@lists.infradead.org>
+CC: <linux-wireless@vger.kernel.org>, Kalle Valo <kvalo@kernel.org>,
+        "Rob
+ Herring" <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        "Conor
+ Dooley" <conor+dt@kernel.org>,
+        Jeff Johnson <jjohnson@kernel.org>,
+        "Bjorn
+ Andersson" <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        Balamurugan S <quic_bselvara@quicinc.com>
+References: <20241015182637.955753-1-quic_rajkbhag@quicinc.com>
+ <20241015182637.955753-13-quic_rajkbhag@quicinc.com>
+ <af289022-218f-46fc-99c2-3ccf027bc8fe@oss.qualcomm.com>
 Content-Language: en-US
-In-Reply-To: <20241202081552.156183-2-wenst@chromium.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+From: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>
+In-Reply-To: <af289022-218f-46fc-99c2-3ccf027bc8fe@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: F8grdtWab1wLU11PK20TeYLn5fXgllGg
+X-Proofpoint-ORIG-GUID: F8grdtWab1wLU11PK20TeYLn5fXgllGg
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
+ suspectscore=0 mlxlogscore=949 impostorscore=0 adultscore=0 phishscore=0
+ bulkscore=0 priorityscore=1501 clxscore=1015 spamscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412030079
 
-Il 02/12/24 09:15, Chen-Yu Tsai ha scritto:
-> [ Upstream commit 09d385679487c58f0859c1ad4f404ba3df2f8830 ]
+On 10/19/2024 1:32 AM, Konrad Dybcio wrote:
+> On 15.10.2024 8:26 PM, Raj Kumar Bhagat wrote:
+>> From: Balamurugan S <quic_bselvara@quicinc.com>
+>>
+>> In the current ath12k implementation, the CE addresses
+>> CE_HOST_IE_ADDRESS and CE_HOST_IE_2_ADDRESS are incorrect. These
+>> values were inherited from ath11k, but ath12k does not currently use
+>> them.
+>>
+>> However, the Ath12k AHB support relies on these addresses. Therefore,
+>> corrects the CE addresses for ath12k.
+>>
+>> Tested-on: IPQ5332 hw1.0 AHB WLAN.WBE.1.3.1-00130-QCAHKSWPL_SILICONZ-1
+>> Tested-on: QCN9274 hw2.0 PCI WLAN.WBE.1.1.1-00210-QCAHKSWPL_SILICONZ-1
+>>
+>> Signed-off-by: Balamurugan S <quic_bselvara@quicinc.com>
+>> Signed-off-by: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>
+>> ---
 > 
-> USB 3.0 on xhci1 is not used, as the controller shares the same PHY as
-> pcie1. The latter is enabled to support the M.2 PCIe WLAN card on this
-> design.
+> This can be picked up independently of other patches in this patchset,
+> please try to position such changes at the beginning of series.
 > 
-> Mark USB 3.0 as disabled on this controller using the
-> "mediatek,u3p-dis-msk" property.
-> 
-> Reported-by: Nícolas F. R. A. Prado <nfraprado@collabora.com> #KernelCI
-> Closes: https://lore.kernel.org/all/9fce9838-ef87-4d1b-b3df-63e1ddb0ec51@notapiano/
-> Fixes: b6267a396e1c ("arm64: dts: mediatek: cherry: Enable T-PHYs and USB XHCI controllers")
-> Cc: stable@vger.kernel.org
-> Link: https://lore.kernel.org/r/20240731034411.371178-2-wenst@chromium.org
-> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
 
-
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-
+Sure, will have this patch in start of the series in the next version.
 
 
