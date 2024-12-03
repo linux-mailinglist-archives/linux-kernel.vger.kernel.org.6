@@ -1,157 +1,125 @@
-Return-Path: <linux-kernel+bounces-429173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EF069E18E7
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 11:10:49 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 160879E1823
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:47:04 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 78CD8B291F7
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:46:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B3329165D70
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:47:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 580EA1E1C08;
-	Tue,  3 Dec 2024 09:45:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 436CF1E1C2A;
+	Tue,  3 Dec 2024 09:45:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xnZl65/I"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uV4ME+gR"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D81571E1A3B
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 09:45:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 013141E048C
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 09:45:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733219107; cv=none; b=LWRcX6h8U+4oZZFjwjtNcGFsLcNN2cHH5R7YWiXrIikOpzhjs0Wq/xZ+LlpsAL1goKlNYhEID5RYd9LDnA5/LLNoxS/lQOHX8Ka2rMm0rlMwdzRJTGd6Hfa3UOh1a/i1OPSTTlCU+8bwS76OD/leho2fG26Nkm8T1kiDquw2PZg=
+	t=1733219122; cv=none; b=ff7EQdWYzLXg2J6FTd8O3lmarTbkhJDfyjPwb+5UFSAA+p56D+/ob6932g+f/KLqtvoJ8j+QlRewHDSg+nxwH/RHM5xqf8qgMc15LIg3DkIq9CjApA0YrNRaMOVQyNN0jRtpa1WwG8namJSi7rtw//Ju5JhbMHGiYwsr3ElWMFQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733219107; c=relaxed/simple;
-	bh=hbOn365bs5yETVST5WjLlAm0HzV2j1n+Xuu8Puz7x0s=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=GZ12T1rNXMzqG29yrTVXyRjVhTBWXnmTEg/9D7UlKLTBhRbvfEbVf9T5jcVnCZk4hm2kfvPYVhNLt1sDd7sAyzB4pQPqceo/3QUVjfu4c2lktMHur/YATMMi2qvOZqFfyi5+3XJ0k4QiiIMDjPsOWA9oJamTOau25MhRJLnvw2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xnZl65/I; arc=none smtp.client-ip=209.85.128.45
+	s=arc-20240116; t=1733219122; c=relaxed/simple;
+	bh=RJ4dlBGD3salju0V5qaXj8Hlpmx2bDBn5RHAXBda2Hw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=FCLpWOj9PtGbdv9msLhc2gt7SptcJoXIIREUsmyPB9wFZUGcrKERU2CML3G75hAhT8VYrgKuwrK8QifHsTlBIfj1KWgEA9Z046AZXFk1/ENDb6J+2f7w+VKa0eVagtSLoKYnKqaxRnWo0blBZX7hG9suWr7/zTOLRM+PFvhEGL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uV4ME+gR; arc=none smtp.client-ip=209.85.128.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-434acf1f9abso48634495e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 01:45:05 -0800 (PST)
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-434a852bb6eso48625115e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 01:45:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733219104; x=1733823904; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=5PWEsu+fpHnvhGCoqgtGpn1xa8q98K4tuJDqTm0nOwI=;
-        b=xnZl65/ImMnYWxdhg14cs26lbqM0mCf2zh2SJxVC+DOuBUd3h5nNChTdPgU+i7CXcU
-         XN58mMttUm0ZFG83QkI+cEDc+Y0ZrZIVUQH73nYfUK1WLuJKZIHiu5stqNrz2fbGwrFo
-         1YyWEnPZTc4lJdDTbdNeN6irljsEUlW7YtgVc16RBq82tRvBh7Z3K5xB0Vr61TwY4fpK
-         s0Et8SSpEpG+JJF5MtiYv7MLA0e/vrF2IH/1RyS52lXD010U9/kryMOBdc1GLrAOh+4E
-         c0rEmIILig22Esl0oM/qnOXfXQfqdYt2ocu+eEvJe9P8ui2aKo2uoWhN8dOuFbeNM3dI
-         ZaFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733219104; x=1733823904;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+        d=linaro.org; s=google; t=1733219119; x=1733823919; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=5PWEsu+fpHnvhGCoqgtGpn1xa8q98K4tuJDqTm0nOwI=;
-        b=GmzBwe1mkdIsmc5L+Wf2ekhSL8zx2qVnIYHH2rfJ7Mmq3wyP2JCgXKX6MVHS5dLUsG
-         FyVsNVHjvNRWN+6CeMLzpY9Y6IoZMhFXmOT/m2foOayrEo7Oa/Q+nYw8aOHjuD6UKb85
-         jnJ4Pi5v215yUhP0wkLrKb0UkiyH/C8SA3AjGSbkHYgPCmDr5djr0ANWT6lgHrx6hje/
-         20j5I8i7yGLcJIsyU0Y0XSGDvx30IwWj7VNT90Ei5kqMeSsLsNj05q3BMkuFQj/mBrfI
-         5d4ORXcBVpPukmHEcCDR4tdZLTu/VzOicNSBPg5t9kmkuY8P+FmLVnnrqnc45I63NStF
-         unEA==
-X-Forwarded-Encrypted: i=1; AJvYcCWWIVuYb/yc9zre67IASE2/MimPMVI0nCFSpjdUmPmRTx7ypUhaWiB6ONWcU+aQdo7JNYHr6JP3J5irYG0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxH0fHz9tODaN25grF8tiYJoNADE65ZuzlPjdWP/b5wY9kDA8Tm
-	0tj/WSJ52XfZWkUoGm4/jeSGLql2+PSUQBYpug3W0Su2+91/ZU6Opkr1W2n0tPk=
-X-Gm-Gg: ASbGnctZvgNaP0KwDEdckFDPtj2KXwMqdENL6X2WU7eouWIOw/+3ucjsd2+AwW9DYxk
-	ln24ZNkVZXI+NesRvsBOInnPaxRz0JHcyakagFuUqjEt+ziwJ+NttLOgIpD/s6+TK18TzDjhaue
-	JUrcefgV7RelgUeXWzwjVTKoit3Ifcp+LmBQYJ22uTVZgjlTUqFBhtOtcGTQpeIFzx43MYnzT5z
-	Hq8TYi10qIk00ZRLpA2kjhHmLgeTCSsYWgCITbBzJ9TQLo9tlU0XGk=
-X-Google-Smtp-Source: AGHT+IEwrGlccw2Q5NJeLCrjOJfzlF1e1ATvEELN9LKQRaP3CAlsVnOMmTkjoN9Q1iKRn0Rh/ruRRA==
-X-Received: by 2002:a05:600c:46d0:b0:434:a160:3647 with SMTP id 5b1f17b1804b1-434d09c0babmr15386255e9.12.1733219104223;
-        Tue, 03 Dec 2024 01:45:04 -0800 (PST)
-Received: from [10.1.1.109] ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434aa78c202sm213466555e9.26.2024.12.03.01.45.03
+        bh=6I1Ptmv2KxZJwio/UIsOX+BhzfGwkhQGEzNHEKVRFKU=;
+        b=uV4ME+gRVBtdJasDf2fMwONsoRGQM5JE1tp3+s+c5xfAVh5yqwY3NGe0x9w1ch8Xsk
+         wQZZYyiZiqi/WOgXQiv8X8W7Y4hn13uZRQaHX0fOmwg94V+jIA4llTy5fA8LXnSFDuSw
+         JKvDa0Ttcqn91PKjU6UNi8az4afbfH9bUyq0/Yw1MNUNugheMzK8Y4a3t8TCJswHZZg6
+         RdRxxAZ86ILTnfJm3nhGg6nsjDAfDP1zMahUaEwnBtbGIJ78jz1WdLnGVrJIKosfsE6J
+         yqDpErgO+YhsHYSaNcyuqgcTrqYuVLKvBJTHo7vLPmKkXO2weeqSnHSd9mwL+F4BqB/P
+         dHyw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733219119; x=1733823919;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6I1Ptmv2KxZJwio/UIsOX+BhzfGwkhQGEzNHEKVRFKU=;
+        b=CKq8wMSQWWnxbOyL8GAn97+tFd0UrAZ9mYqmeyMC9yi8DOas6IZv57Fhe2oTiHhNoW
+         LBBC41p+JSaZ4PFK1SEATtL9IsgHoodUlbGEZmnorKa/EGUedIcbX2zeFvDgFereRyJl
+         M1ypvX6lXZWTRTKvWmuLtZOT5zXWFm6+u3aURI6qzst2kWhGMEid7bssPh3i4LkXMTqe
+         SL8vuqEsaWyfyD3IucZh1mNRvi34d2a8/WJAvKK4BSVdYnk0FrCPzZw49NS0H6hU2L5S
+         KsMC1wkIGsKf5V4QzkgLT+u2nfg9quqX8Jtjw4+l1d+lTsjq+1SikOyZXDLEeEYElGdg
+         cmlw==
+X-Forwarded-Encrypted: i=1; AJvYcCUAu5AaHx0tZPinIY5rWuM2Pp0yCmiIXMmo0+r8aId5C4EKCSInBXv0248k6qXMUI7Sozncxo8Sm5on8TY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxKvhEWys1KgtfwM+DrmChew4rbmL30W3GhdQxw2CmIThhwt760
+	KK63U8YrJlQmnJssDwLyCsI5C9Y6kH5Bdb6mzzlkH/dn/oKlS0QzH1cVBtFqEPU=
+X-Gm-Gg: ASbGncsxI6SlmpFHqlMTLEqaABSBQ/FsNUhly1vM/793qv9ty0kqH0YzUd6updMvXa1
+	DBA5GbViuw7UXo0rrA+Y3a+JeSNxOo6WP0P7Q3GDB0TMsZprz4hp8unXDEL6ScUq7WGw4Sy4tm2
+	Yeo8IShVpvCqJiDUpaK7WaU8EBioEF3e87RGwXBi042AOZagQs9Ccm5WEEJUJroiXmXfj5UW1wY
+	o3gJ5it1ANOEBfbZ2h/QWxv6Pil4pcM/vc5SEjqfp0vwvFbtnfkOVc=
+X-Google-Smtp-Source: AGHT+IFdpiCjCQ4owJdmqakSIReYwoM3vo6fpku4tNVal18DsXpYtsSKHcj3Ceq2fZLtSh1NDS08JA==
+X-Received: by 2002:a05:600c:19d3:b0:431:58cd:b259 with SMTP id 5b1f17b1804b1-434d0a23b36mr15900425e9.31.1733219119326;
+        Tue, 03 Dec 2024 01:45:19 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434aa78007dsm211772455e9.19.2024.12.03.01.45.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Dec 2024 01:45:03 -0800 (PST)
-Message-ID: <18629c9edd295a524a1c9764f013a0e97e0b275f.camel@linaro.org>
-Subject: Re: [PATCH 1/4] power: supply: add support for max77759 fuel gauge
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: t.antoine@uclouvain.be, Sebastian Reichel <sre@kernel.org>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Dimitri Fedrau <dima.fedrau@gmail.com>, Catalin
- Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Peter
- Griffin <peter.griffin@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org
-Date: Tue, 03 Dec 2024 09:45:02 +0000
-In-Reply-To: <8f585460a1bc52f78a6d0867aed87398bde30152.camel@linaro.org>
-References: <20241202-b4-gs101_max77759_fg-v1-0-98d2fa7bfe30@uclouvain.be>
-	 <20241202-b4-gs101_max77759_fg-v1-1-98d2fa7bfe30@uclouvain.be>
-	 <c377f3302c6c282ad826211c859e2b65bb1222cb.camel@linaro.org>
-	 <8f585460a1bc52f78a6d0867aed87398bde30152.camel@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.1-4 
+        Tue, 03 Dec 2024 01:45:18 -0800 (PST)
+Date: Tue, 3 Dec 2024 12:45:14 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Yevgeny Kliteynik <kliteyn@nvidia.com>
+Cc: Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
+	Tariq Toukan <tariqt@nvidia.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Muhammad Sammar <muhammads@nvidia.com>, netdev@vger.kernel.org,
+	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH v2 net] net/mlx5: DR, prevent potential error pointer
+ dereference
+Message-ID: <Z07TKoNepxLApF49@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Tue, 2024-12-03 at 07:23 +0000, Andr=C3=A9 Draszik wrote:
-> On Tue, 2024-12-03 at 06:47 +0000, Andr=C3=A9 Draszik wrote:
-> > Hi Thomas,
-> >=20
-> > Thanks for looking into this!
-> >=20
-> > > From: Thomas Antoine <t.antoine@uclouvain.be>
-> > >=20
-> > > The Maxim max77759 fuel gauge has the same interface as the Maxim max=
-1720x
-> > > except for the non-volatile memory slave address which is not availab=
-le.
-> >=20
-> > It is not fully compatible, and it also has a lot more registers.
-> >=20
-> > For example, the voltage now is not in register 0xda as this driver ass=
-umes.
-> > With these changes, POWER_SUPPLY_PROP_VOLTAGE_NOW just reads as 0. 0xda
-> > doesn't exist in max77759
-> >=20
-> > I haven't compared in depth yet, though.
->=20
-> Regarding the regmap in this driver, please see below comparison I had
-> collected some time ago:
->=20
-> 	regmap_reg_range(0x24, 0x26), // exists
-> 	regmap_reg_range(0x30, 0x31), // exists
-> 	regmap_reg_range(0x33, 0x34), // exists
-> 	regmap_reg_range(0x37, 0x37), // exists
-> 	regmap_reg_range(0x3B, 0x3C), // exists
-> 	regmap_reg_range(0x40, 0x41), // exists
-> 	regmap_reg_range(0x43, 0x44), // exists
-> 	regmap_reg_range(0x47, 0x49), // exists
-> 	regmap_reg_range(0x4B, 0x4C), // exists
-> 	regmap_reg_range(0x4E, 0xAF), // 0x4e 0x4f exists
-> 	regmap_reg_range(0xB1, 0xB3), // exists
-> 	regmap_reg_range(0xB5, 0xB7), // exists
-> 	regmap_reg_range(0xBF, 0xD0), // 0xd0 exists
-> 	0xd1 .. 0xdb don't exist
-> 	regmap_reg_range(0xDB, 0xDB),
-> 	regmap_reg_range(0xE0, 0xFF), // 0xfb 0xff exist
->=20
-> the comments refer to whether or not the register exists in max77759
+The dr_domain_add_vport_cap() function generally returns NULL on error
+but sometimes we want it to return ERR_PTR(-EBUSY) so the caller can
+retry.  The problem here is that "ret" can be either -EBUSY or -ENOMEM
+and if it's and -ENOMEM then the error pointer is propogated back and
+eventually dereferenced in dr_ste_v0_build_src_gvmi_qpn_tag().
 
-I think this should make it more clear:
-allow:
-	regmap_reg_range(0x00, 0xff),
-deny:
-	regmap_reg_range(0x50, 0xaf),
-	regmap_reg_range(0xc0, 0xcf),
-	regmap_reg_range(0xd1, 0xdb),
-	regmap_reg_range(0xe0, 0xfa),
-	regmap_reg_range(0xfc, 0xfe),
+Fixes: 11a45def2e19 ("net/mlx5: DR, Add support for SF vports")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+Reviewed-by: Yevgeny Kliteynik <kliteyn@nvidia.com>
+---
+v2: Fix a typo in the commit message.  "generally".
 
-Cheers,
-Andre'
+ .../net/ethernet/mellanox/mlx5/core/steering/sws/dr_domain.c    | 2 ++
+ 1 file changed, 2 insertions(+)
 
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/steering/sws/dr_domain.c b/drivers/net/ethernet/mellanox/mlx5/core/steering/sws/dr_domain.c
+index 3d74109f8230..a379e8358f82 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/steering/sws/dr_domain.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/steering/sws/dr_domain.c
+@@ -297,6 +297,8 @@ dr_domain_add_vport_cap(struct mlx5dr_domain *dmn, u16 vport)
+ 	if (ret) {
+ 		mlx5dr_dbg(dmn, "Couldn't insert new vport into xarray (%d)\n", ret);
+ 		kvfree(vport_caps);
++		if (ret != -EBUSY)
++			return NULL;
+ 		return ERR_PTR(ret);
+ 	}
+ 
+-- 
+2.45.2
 
