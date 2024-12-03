@@ -1,143 +1,177 @@
-Return-Path: <linux-kernel+bounces-430344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D36FF9E2FA1
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 00:15:58 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDE189E2FBB
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 00:19:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ABEB4164BC9
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 23:15:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B5D371650D1
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 23:19:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94B8520ADD3;
-	Tue,  3 Dec 2024 23:15:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B107620ADC6;
+	Tue,  3 Dec 2024 23:19:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="eR+qloIo"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WNw9x4KO"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E71C8460;
-	Tue,  3 Dec 2024 23:15:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 709F7208983
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 23:19:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733267748; cv=none; b=Wj0277Ubfp92cCbas3NNjwhlfqF/ypLl9HjROnas0ADtV7rVCyAl45G1Kz1Eh/2KVoHdL2GKMnxNAy5II36qCm04DVmvGjCl2R8zTxByWXUJ7e1HdhaRXfnMCdGsTuiczf3Srh5hBLVkzLbUER5ukMet0WJT5lCIW9VH7Ua0A2I=
+	t=1733267967; cv=none; b=bolFOpJR68maevZeNlHxMZhqVZqgkY+Xjt5FFe5X4bStB2ZTB18M0DL2+IrbvQ9yFAagXcb5YYUfDSEMwnYT3md+kC1WjHUQfhhzleKWT/Vu+dw6IfFtF7MtCZ60LEVjL+6OfmTs09FKSQ/Yf89pJKsMd7BANCWOkBcevZmsnBo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733267748; c=relaxed/simple;
-	bh=YkZAsANfAmRYtI/Mt+2RDqFV4yBRm6bxvA1qhI5AL7s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=u8nmnksC9KFvaRTk2rCge+BSJPk8HtYF0BCsaKCwajQvMerIuXetZVbslltpwYoVS+R48yVYSDllae0ZY1f9sHMrTus1mjZSaP4Ujp9lPMaiQz1AYH1PCW5KDqitgINl48oBwBUt5v8gArN5EoOP9g1ITtyMmPixhkPL3pLdfT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=eR+qloIo; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B3HoXEb030978;
-	Tue, 3 Dec 2024 23:15:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	YkZAsANfAmRYtI/Mt+2RDqFV4yBRm6bxvA1qhI5AL7s=; b=eR+qloIoJOhXZhC3
-	+GWiiJaVz2i49lUqyAj6fCUrb9PgOUliB6bWQccpZaGU7P93SrpaGtY8kEJUIjIb
-	W9z5tEKDGINKGUU+XBLRhXY62FlwSMfe/FNsKjPr9B0Kcz/Nwj4OOzynEPAMMTwO
-	bXIrTZZkm4fDBk5+S/Qr54JN0+6zp5xJ0fKsKTqF7aZgZiRYD8RXIPIzwQPSCvgJ
-	CR45+vroSXgspmZXj9cLOj47Llb6i8HJr2TdX/G5SfE2QEbm+X5k+KPE2krE1axX
-	Kvz36WzMH4+93BgHFa37ZdPjfIRnsc33wR+f1a2+5s+CzN3dc928N5JS+D+fh8zO
-	jNHveA==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 439w90tdtb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 03 Dec 2024 23:15:26 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B3NFOQc010563
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 3 Dec 2024 23:15:24 GMT
-Received: from [10.110.57.23] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 3 Dec 2024
- 15:15:23 -0800
-Message-ID: <28023a83-04a5-4c62-85a9-ca41be0ba9e1@quicinc.com>
-Date: Tue, 3 Dec 2024 15:15:23 -0800
+	s=arc-20240116; t=1733267967; c=relaxed/simple;
+	bh=6LoedgRoxKbLS6I0Jr2Y+fFTtC2cwrXs4o1BOPkflQE=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=pLLAXtKjx1x/1xn+9pthjVD+9tntQQTExgHqcdE505eHtdqcmxXMNiEHrUBSx8tyaLZzKykkWhq7oiE0YhDdk1bB6h92fR1iSNGF4MFhzlmtZFmZP11L0J6VlEUMpICmLvMg3OKfHhYVickeRx2kO6wCB6kE+kBhCYHRG/RmRcA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WNw9x4KO; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2ee6b027a90so5751822a91.1
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 15:19:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1733267965; x=1733872765; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=OHr8G/o42AeDVOD1/MrSjm2WXYW40d8E8bqJA870ZHc=;
+        b=WNw9x4KOOKLlbM1w+liabvzdQfaQY88QLYql3Oji8v5UTyQmTS0OK2K2VRwJtvrxix
+         NtxRVYHOGiVGwcrjwXWucBGX/GJASS6uGVU677/64bPUDEhMu7Jsfo/wH5Oqd4788SQ7
+         xaOxfMgWXRZDRdln/ALDU1EWfAvhDPdyamoigFggd/OG7QM+o9MEBbBXrfS1DE+EJcBu
+         PYlvOZ20lqaE+thQSu2cqvkr37fpx3iNrOLRt7J0JtV0ZRvu5C3xayFF4518wdkwqf4m
+         /2tnGe7aQ8Lij7NwqLE84cBCzLZPcCN4/jbZwAMO53A8mtAgBFnlUUmZVXng62bLIr5t
+         a9GQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733267965; x=1733872765;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OHr8G/o42AeDVOD1/MrSjm2WXYW40d8E8bqJA870ZHc=;
+        b=BwpMYfCKaPC2I385K0edueXdV5yY35F7o2BvHWrtULaoFwVAWi5vw75pnHq4Mdlhgq
+         3VsnoUzUJvoBAzvJJH7EIYfCqFcR1BtC6pBy0uNJIJjIv3w3/+GrA/z8gDh3jPCe10bJ
+         B032UlYX2nFE/KloT54HpLKtK5sbFLu6zNV4MFrMtyK+tNFi8T0Kr321srbp2tFcof8l
+         U7ykOfKPoxd1DQYq1aoSNnAn39Sn92gefzrhcrr1hgkXyglvVEAk4bQbqbHC5vO4zw57
+         2COt4IXhRpCYbn//zn9NU6oIBE3bBKhGKbkKGd660AASOhn2gC7Fkzvaf5y+wvmNFNQ0
+         6LVg==
+X-Forwarded-Encrypted: i=1; AJvYcCUnxxeOjTX21XS57jvwZYJWn2sadJMKaaLFK/EcCUV7mAiQZ6tU3sjrkUEDG7WZGxk3vH2ov7zmmUgVST0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzUUIPeFoDvaDB0DyH1wFQyxz9x/KxsbcBRgsF5fhGrF43QR4wL
+	iPgWPIkKNgkFwqum73aMW8KKCp3W8hS8W7Si1/6/wCXyNfS8vvdLs44dcnDQtXQjPRVGlcKlZDL
+	LIw==
+X-Google-Smtp-Source: AGHT+IEWC65x0FRBHA/jPbLxpwMAa/0mA0vx1CB4p5bkmbcIagVt0ag62+9DkfkKAECyWflC0sTE+7wlNR0=
+X-Received: from pjyd15.prod.google.com ([2002:a17:90a:dfcf:b0:2ea:5dea:eafa])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:224a:b0:2ee:fdf3:38ea
+ with SMTP id 98e67ed59e1d1-2ef0125b2a3mr5714195a91.23.1733267964831; Tue, 03
+ Dec 2024 15:19:24 -0800 (PST)
+Date: Tue, 3 Dec 2024 15:19:23 -0800
+In-Reply-To: <20241121185315.3416855-1-mizhang@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v30 28/30] ALSA: usb-audio: Add USB offload route kcontrol
-To: Cezary Rojewski <cezary.rojewski@intel.com>
-CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-sound@vger.kernel.org>, <linux-usb@vger.kernel.org>,
-        <linux-input@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-doc@vger.kernel.org>, <srinivas.kandagatla@linaro.org>,
-        <mathias.nyman@intel.com>, <perex@perex.cz>, <conor+dt@kernel.org>,
-        <dmitry.torokhov@gmail.com>, <corbet@lwn.net>, <broonie@kernel.org>,
-        <lgirdwood@gmail.com>, <krzk+dt@kernel.org>,
-        <pierre-louis.bossart@linux.intel.com>, <Thinh.Nguyen@synopsys.com>,
-        <tiwai@suse.com>, <robh@kernel.org>, <gregkh@linuxfoundation.org>
-References: <20241106193413.1730413-1-quic_wcheng@quicinc.com>
- <20241106193413.1730413-29-quic_wcheng@quicinc.com>
- <1a361446-7a18-4f49-9eeb-d60d1adaa088@intel.com>
-Content-Language: en-US
-From: Wesley Cheng <quic_wcheng@quicinc.com>
-In-Reply-To: <1a361446-7a18-4f49-9eeb-d60d1adaa088@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: IBwKgWcd3KUzuxMkopp3EOItLDqwSWCj
-X-Proofpoint-GUID: IBwKgWcd3KUzuxMkopp3EOItLDqwSWCj
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=709 bulkscore=0
- impostorscore=0 phishscore=0 suspectscore=0 adultscore=0 mlxscore=0
- spamscore=0 clxscore=1011 priorityscore=1501 malwarescore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412030192
+Mime-Version: 1.0
+References: <20241121185315.3416855-1-mizhang@google.com>
+Message-ID: <Z0-R-_GPWu-iVAYM@google.com>
+Subject: Re: [RFC PATCH 00/22] KVM: x86: Virtualize IA32_APERF and IA32_MPERF MSRs
+From: Sean Christopherson <seanjc@google.com>
+To: Mingwei Zhang <mizhang@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Huang Rui <ray.huang@amd.com>, 
+	"Gautham R. Shenoy" <gautham.shenoy@amd.com>, Mario Limonciello <mario.limonciello@amd.com>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Len Brown <lenb@kernel.org>, 
+	"H. Peter Anvin" <hpa@zytor.com>, Perry Yuan <perry.yuan@amd.com>, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
+	Jim Mattson <jmattson@google.com>
+Content-Type: text/plain; charset="us-ascii"
 
+On Thu, Nov 21, 2024, Mingwei Zhang wrote:
+> Linux guests read IA32_APERF and IA32_MPERF on every scheduler tick
+> (250 Hz by default) to measure their effective CPU frequency. To avoid
+> the overhead of intercepting these frequent MSR reads, allow the guest
+> to read them directly by loading guest values into the hardware MSRs.
+> 
+> These MSRs are continuously running counters whose values must be
+> carefully tracked during all vCPU state transitions:
+> - Guest IA32_APERF advances only during guest execution
 
-On 12/3/2024 8:13 AM, Cezary Rojewski wrote:
-> On 2024-11-06 8:34 PM, Wesley Cheng wrote:
->> In order to allow userspace/applications know about USB offloading status,
->> expose a sound kcontrol that fetches information about which sound card
->> and PCM index the USB device is mapped to for supporting offloading.  In
->> the USB audio offloading framework, the ASoC BE DAI link is the entity
->> responsible for registering to the SOC USB layer.
->
-> ...
->
-> R) += mixer_usb_offload.o
->> diff --git a/sound/usb/mixer_usb_offload.c b/sound/usb/mixer_usb_offload.c
->> new file mode 100644
->> index 000000000000..e0689a3b9b86
->> --- /dev/null
->> +++ b/sound/usb/mixer_usb_offload.c
->> @@ -0,0 +1,102 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +/*
->> + * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
->> + */
->> +
->> +#include <linux/usb.h>
->> +
->> +#include <sound/core.h>
->> +#include <sound/control.h>
->> +#include <sound/soc-usb.h>
->
-> ALSA-components should not be dependent on ASoC ones. It should be done the other way around: ALSA <- ASoC.
->
+That's not what this series does though.  Guest APERF advances while the vCPU is
+loaded by KVM_RUN, which is *very* different than letting APERF run freely only
+while the vCPU is actively executing in the guest.
 
-At least for this kcontrol, we need to know the status of the ASoC state, so that we can communicate the proper path to userspace.  If the ASoC path is not probed or ready, then this module isn't blocked.  It will just communicate that there isn't a valid offload path.
+E.g. a vCPU that is memory oversubscribed via zswap will account a significant
+amount of CPU time in APERF when faulting in swapped memory, whereas traditional
+file-backed swap will not due to the task being scheduled out while waiting on I/O.
 
+In general, the "why" of this series is missing.  What are the use cases you are
+targeting?  What are the exact semantics you want to define?  *Why* did are you
+proposed those exact semantics?
 
->> +
->> +#include "usbaudio.h"
->> +#include "card.h"
->> +#include "helper.h"
->> +#include "mixer.h"
->> +
->> +#include "mixer_usb_offload.h"
+E.g. emulated I/O that is handled in KVM will be accounted to APERF, but I/O that
+requires userspace exits will not.  It's not necessarily wrong for heavy userspace
+I/O to cause observed frequency to drop, but it's not obviously correct either.
+
+The use cases matter a lot for APERF/MPERF, because trying to reason about what's
+desirable for an oversubscribed setup requires a lot more work than defining
+semantics for setups where all vCPUs are hard pinned 1:1 and memory is more or
+less just partitioned.  Not to mention the complexity for trying to support all
+potential use cases is likely quite a bit higher.
+
+And if the use case is specifically for slice-of-hardware, hard pinned/partitioned
+VMs, does it matter if the host's view of APERF/MPERF is not accurately captured
+at all times?  Outside of maybe a few CPUs running bookkeeping tasks, the only
+workloads running on CPUs should be vCPUs.  It's not clear to me that observing
+the guest utilization is outright wrong in that case.
+
+One idea for supporting APERF/MPERF in KVM would be to add a kernel param to
+disable/hide APERF/MPERF from the host, and then let KVM virtualize/passthrough
+APERF/MPERF if and only if the feature is supported in hardware, but hidden from
+the kernel.  I.e. let the system admin gift APERF/MPERF to KVM.
+
+> - Guest IA32_MPERF advances at the TSC frequency whenever the vCPU is
+>   in C0 state, even when not actively running
+> - Host kernel access is redirected through get_host_[am]perf() which
+>   adds per-CPU offsets to the hardware MSR values
+> - Remote MSR reads through /dev/cpu/*/msr also account for these
+>   offsets
+> 
+> Guest values persist in hardware while the vCPU is loaded and
+> running. Host MSR values are restored on vcpu_put (either at KVM_RUN
+> completion or when preempted) and when transitioning to halt state.
+> 
+> Note that guest TSC scaling via KVM_SET_TSC_KHZ is not supported, as
+> it would require either intercepting MPERF reads on Intel (where MPERF
+> ticks at host rate regardless of guest TSC scaling) or significantly
+> complicating the cycle accounting on AMD.
+> 
+> The host must have both CONSTANT_TSC and NONSTOP_TSC capabilities
+> since these ensure stable TSC frequency across C-states and P-states,
+> which is required for accurate background MPERF accounting.
+
+...
+
+>  arch/x86/include/asm/kvm_host.h  |  11 ++
+>  arch/x86/include/asm/topology.h  |  10 ++
+>  arch/x86/kernel/cpu/aperfmperf.c |  65 +++++++++++-
+>  arch/x86/kvm/cpuid.c             |  12 ++-
+>  arch/x86/kvm/governed_features.h |   1 +
+>  arch/x86/kvm/lapic.c             |   5 +-
+>  arch/x86/kvm/reverse_cpuid.h     |   6 ++
+>  arch/x86/kvm/svm/nested.c        |   2 +-
+>  arch/x86/kvm/svm/svm.c           |   7 ++
+>  arch/x86/kvm/svm/svm.h           |   2 +-
+>  arch/x86/kvm/vmx/nested.c        |   2 +-
+>  arch/x86/kvm/vmx/vmx.c           |   7 ++
+>  arch/x86/kvm/vmx/vmx.h           |   2 +-
+>  arch/x86/kvm/x86.c               | 171 ++++++++++++++++++++++++++++---
+>  arch/x86/lib/msr-smp.c           |  11 ++
+>  drivers/cpufreq/amd-pstate.c     |   4 +-
+>  drivers/cpufreq/intel_pstate.c   |   5 +-
+>  17 files changed, 295 insertions(+), 28 deletions(-)
+> 
+> 
+> base-commit: 0a9b9d17f3a781dea03baca01c835deaa07f7cc3
+> -- 
+> 2.47.0.371.ga323438b13-goog
+> 
 
