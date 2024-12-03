@@ -1,168 +1,172 @@
-Return-Path: <linux-kernel+bounces-429243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FE2A9E1978
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 11:37:43 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45EEB9E197A
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 11:37:56 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51F01282288
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:37:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0BF1B161AE4
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:37:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 975801E25E4;
-	Tue,  3 Dec 2024 10:37:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA64A1E1C05;
+	Tue,  3 Dec 2024 10:37:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OiQ4EYKB"
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jGDLFwzj"
+Received: from mail-ed1-f73.google.com (mail-ed1-f73.google.com [209.85.208.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ADA21E0493
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 10:37:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6A541E25F0
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 10:37:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733222256; cv=none; b=Ux3G6IB9qyDISoMFoGyiW+WLfr3ZoHUTExSBYbsUah5FeRdabtk+fIqm2iUg+ACF/30JLKKdzdyYOeoMZu/jqqhUfX5Zc3+qENyE2RQZaMyrirsJgm9lRdF8Zdf7/DZ82XNCCsHdZfOhr4t7b3t79NP1rm5YRM9bkBf1LNDOsVU=
+	t=1733222262; cv=none; b=WuuQwQZxexzYvPRl4bgdDYeoaqAUN36Vx0uqP1eAI4sNpv+1V1c/DMoMt4lKJmxLYwalKDYPlMojeCpsQBBloLwS7Ya4ScqGXvnCU+CLyaSpn+HUxopaTOKK6grbCWI1MT4f1EnXMK0LcT0xsI/bYVuooZQOm5QGZGkVSoeAZPk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733222256; c=relaxed/simple;
-	bh=+R7vJwnPN7TZBrcDtH1Pjz7Gzm8FFyIULIy2HXvkRK4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jNa6vk6P56ZVmRJqyyPiicw4lk+LJ7uIWqgQ6qTCObVNqfoOK/6kbZsJSvufCpHs9f0XGeDyMd5f9dJ11vmxHxh70DQhJzBgQWBY9MCaSK7rbFpVOXMKBNbyYKWTmeuq0/6XBjr31dH9l5zKLMnN1PfLnQZV9dPkHdR0MwQC+VA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OiQ4EYKB; arc=none smtp.client-ip=209.85.219.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e38df4166c7so4423581276.0
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 02:37:35 -0800 (PST)
+	s=arc-20240116; t=1733222262; c=relaxed/simple;
+	bh=q3+FxbCcBkiskXSn831XHlgU64Eqo1nUx21JojjeJx4=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=mi/KrMm/ZGFc/oCzjFu4HWAOVLyvxXFtJvVFXZMHam+PIOo5Wy3/RKfB9OVDPv+3uktc4h1psMTFObQmXahfgD6GAT3Q5I7y1TIB+OAn/DwUACo8I7og52NAsitSYbpMeA2wlGMsq9DLKe55/5Rv9hFK/6x0z5gunNBLbQT/orw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--qperret.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jGDLFwzj; arc=none smtp.client-ip=209.85.208.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--qperret.bounces.google.com
+Received: by mail-ed1-f73.google.com with SMTP id 4fb4d7f45d1cf-5d0b5036394so2854878a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 02:37:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733222254; x=1733827054; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=sPnwihfdsbfkm/uP14UR3jKNdvWL6NNpvOvZqmBYmGo=;
-        b=OiQ4EYKBO06/1lE8xEkyaSRHsU5flCyEJToxmD7p2iClLZPHLvQjuARFuFEs+Q1KMz
-         +NOSrnN9my4RbXhDsiiScwm2ynQ4uptLHz59T+5TF4g9NaUCgfFDaOVLamULxXEOjZ2t
-         XhqrFqpF/fi8It823oV8jrg4iHmVE5PJnEnrKc+CuJ/IkfSx+CbL6iM+g8DFm5wJXA+x
-         Y1EunYXL9ZCcdMSuXLnh2Rj+JhaEfz1zDZOtjlclIwseVI1qIrCuT4YoWNIUfJzfDhjp
-         bAjRh42xpQBdO23QoagJrBO2FtcD680ojhX0qeanPTnbY8xwBezO57OPaIGPfnce7K9s
-         JR0w==
+        d=google.com; s=20230601; t=1733222257; x=1733827057; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=bhVcEYzfRw8eAXsIDOKtTfeOpA28Wa0JxjqlOgFYMJ0=;
+        b=jGDLFwzjX0Kdua4EheEbK7ToyVEoXKCLwkNYNXUojA+VzO3dokFOVevperfzjvuj05
+         WkWuojN68hISg+LuNwJMUWEM0mN7XGcdtLj+IlB2rTBWGsTDi5ZvLNgk6r3p/YTKsusG
+         GvbxiJlB6s2iOo9U4yPRjGMHbfvIxJrL5T8kWX55zV6uJh+WB7njWBCYgnzuuVUrI7Lm
+         rceheWCWVUl7YSzm1HnPdaUtOxcH0/8aqaMUteLtbrDUT4i1DEA5AUJImlc/XyV5DaMA
+         DXzdYL1hAfV7A0yPi/1dR4KTembK4117B+Klx0l9FsfR+bjkstSQWbcNZV6s2JKd4+NZ
+         Pb3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733222254; x=1733827054;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=sPnwihfdsbfkm/uP14UR3jKNdvWL6NNpvOvZqmBYmGo=;
-        b=AvDdt2+5DPJWwQim57JAE4oJtVN6QHTa5ZjZhxJ5ZF1thsrDbwsLbqqx0GVpT4kDXd
-         08hW7IBsoKo3WxO3YPDG4NrQ7i/9ZnO3uxfuyxiHk+6w8Vct6cLRVmZ8AY46mxArzKyH
-         EQn96FGOM388Ml/j38lZMQ2eoE4cBFlEkCIHP0dg6V+m7u9vn7IquZw6OnC+6lhcfOFU
-         OIPc4GeC2c1stBd0skfTrZHA8pBP2Waj6HTfDzUDWVUZMuGXhy34kzGlDBEcnVs+yYim
-         ChD3RpH+6xh79kpkWbT4YCwYDTRr+MYqm4NLFAH7nr9IBx7poMjhP55QwVUq6s2RJ5Hd
-         IKuw==
-X-Forwarded-Encrypted: i=1; AJvYcCUUJRuvIWdJJZggMo/wAvzwpgkIjJG+8vjYYWmP0dI2Wo2E4IXO3VbZRc8M10z8EloncCm9xGaMg4HzSMM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyRGfU/ClRP7B+gCevjoXhLgu8CYliyLhkj0APAs9yw+zmGoGeQ
-	y9WV7mhyFM8eXm8RCNrGjr4Lq7QT44OmVDscOS9cNP3G6hIXuxg0EOjEhDgrZLrZEa7g6JNmrut
-	4aGx00HYyiLpauomd0M/ZU5SDDaNEAJN5VJw19A==
-X-Gm-Gg: ASbGnctq46WvPCFs6AqFAxoGo5JM4szRfEc+UmSTPXONXHzqJc0dWqkwZ/nT+jcKunU
-	di6nzSCg4I8/ID2hmDodKoaRHbyXvtWNw
-X-Google-Smtp-Source: AGHT+IGsG8YQ1ggZzCdJnuPl8QhAuveUqLW8ajO21T6RKY94XRehmhGe1lb+y5bziuBa+IeNh+8txdT/gnk+MIJW+FM=
-X-Received: by 2002:a05:6902:2d45:b0:e39:9749:bb2b with SMTP id
- 3f1490d57ef6-e39d3e1c5f4mr1383026276.29.1733222254485; Tue, 03 Dec 2024
- 02:37:34 -0800 (PST)
+        d=1e100.net; s=20230601; t=1733222257; x=1733827057;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=bhVcEYzfRw8eAXsIDOKtTfeOpA28Wa0JxjqlOgFYMJ0=;
+        b=aa8BGfsk4VBSxH46qpgxxl0ImxQOf10Z9W2G8CBPGYXwK+cbNSYa74Ngfjl6jXTTt9
+         OVlqCSwe0qDmau863A7N+Dr/pYsX1mid4iLbY3s7cBPwn4BL+XO+/xqSJvpn1GaBmGOk
+         VMINB6B9i3nI9hNr4bMOjqkPclem3jVK/wXFDuRyJBXdYChUo12h9MO71suDsJch6RmK
+         BlFsUDgxQOlwQoR0Ftlsll/Hy6WKwabQElTUtxQvRsUdrribJ/IagmEhiJEVCAETSxhE
+         wPhGXQCZz596o39rlHFBONSSvc740Dnh3k+jHmKCWrSBR9dLh7HNkkP6sPyvgXJFYgEG
+         UFjg==
+X-Forwarded-Encrypted: i=1; AJvYcCVC4YhiojxegZhdg5BZgzWt5yUUdOwHz9Jwwl1Oazk1RYiRpVAJ6HtAM2j1YbCuP2j5jXrUSIGNPp/46qg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxyR+6lArXRfmIQE6ASF0fwUgrHc5mLNyQoIc5o1P3KB30jtmSR
+	BlZVPcXInNKiK0k7cy6Zd6wgDXaJrmlEpK0Bb8NP2O8NDPZHyKwu29viztFaYlEbIsaZ/BeHJcW
+	vn9n5ug==
+X-Google-Smtp-Source: AGHT+IHYV6enzbdprLHZMQD92QaUuZlgGwTGzCSSf0HmxvgO/jp3WQcTuWxTF7EcB+yhrb6mkrn1yXRToanq
+X-Received: from edvi16.prod.google.com ([2002:aa7:dd10:0:b0:5d0:27b6:2cde])
+ (user=qperret job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6402:510e:b0:5d0:8606:9ba1
+ with SMTP id 4fb4d7f45d1cf-5d10cb82718mr1488954a12.24.1733222257469; Tue, 03
+ Dec 2024 02:37:37 -0800 (PST)
+Date: Tue,  3 Dec 2024 10:37:17 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20241202151228.32609-1-ansuelsmth@gmail.com> <CAPDyKFqrY7uLD8ATqH0LghmkHgApQSsGtvGkOTd8UVazGu0_uA@mail.gmail.com>
- <674dd60f.7b0a0220.2ba255.7b7a@mx.google.com> <20241202205738.GA3149730-robh@kernel.org>
- <674e1fc4.050a0220.a615a.6ff9@mx.google.com>
-In-Reply-To: <674e1fc4.050a0220.a615a.6ff9@mx.google.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Tue, 3 Dec 2024 11:36:58 +0100
-Message-ID: <CAPDyKFrb4-oJT2TMgw0SU035S2nO8LZZEOrQOz2mN+pFgZcYDA@mail.gmail.com>
-Subject: Re: [PATCH v4 1/2] dt-bindings: cpufreq: Document support for Airoha
- EN7581 CPUFreq
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Viresh Kumar <viresh.kumar@linaro.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, upstream@airoha.com
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
+Message-ID: <20241203103735.2267589-1-qperret@google.com>
+Subject: [PATCH v2 00/18] KVM: arm64: Non-protected guest stage-2 support for pKVM
+From: Quentin Perret <qperret@google.com>
+To: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+	Joey Gouly <joey.gouly@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
+	Zenghui Yu <yuzenghui@huawei.com>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>
+Cc: Fuad Tabba <tabba@google.com>, Vincent Donnefort <vdonnefort@google.com>, 
+	Sebastian Ene <sebastianene@google.com>, linux-arm-kernel@lists.infradead.org, 
+	kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-On Mon, 2 Dec 2024 at 21:59, Christian Marangi <ansuelsmth@gmail.com> wrote:
->
-> On Mon, Dec 02, 2024 at 02:57:38PM -0600, Rob Herring wrote:
-> > On Mon, Dec 02, 2024 at 04:45:17PM +0100, Christian Marangi wrote:
-> > > On Mon, Dec 02, 2024 at 04:42:33PM +0100, Ulf Hansson wrote:
-> > > > On Mon, 2 Dec 2024 at 16:20, Christian Marangi <ansuelsmth@gmail.com> wrote:
-> > > > >
-> > > > > Document required property for Airoha EN7581 CPUFreq .
-> > > > >
-> > > > > On newer Airoha SoC, CPU Frequency is scaled indirectly with SMCCC commands
-> > > > > to ATF and no clocks are exposed to the OS.
-> > > > >
-> > > > > The SoC have performance state described by ID for each OPP, for this a
-> > > > > Power Domain is used that sets the performance state ID according to the
-> > > > > required OPPs defined in the CPU OPP tables.
-> > > > >
-> > > > > Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-> > > > > ---
-> > > > > Changes v4:
-> > > > > - Add this patch
-> > > > >
-> > > > >  .../cpufreq/airoha,en7581-cpufreq.yaml        | 259 ++++++++++++++++++
-> > > > >  1 file changed, 259 insertions(+)
-> > > > >  create mode 100644 Documentation/devicetree/bindings/cpufreq/airoha,en7581-cpufreq.yaml
-> > > > >
-> > > > > diff --git a/Documentation/devicetree/bindings/cpufreq/airoha,en7581-cpufreq.yaml b/Documentation/devicetree/bindings/cpufreq/airoha,en7581-cpufreq.yaml
-> > > > > new file mode 100644
-> > > > > index 000000000000..a5bdea7f34b5
-> > > > > --- /dev/null
-> > > > > +++ b/Documentation/devicetree/bindings/cpufreq/airoha,en7581-cpufreq.yaml
-> > > >
-> > > > [...]
-> > > >
-> > > > > +examples:
-> > > > > +  - |
-> > > > > +    / {
-> > > > > +        #address-cells = <2>;
-> > > > > +       #size-cells = <2>;
-> > > > > +
-> > > > > +        cpus {
-> > > > > +            #address-cells = <1>;
-> > > > > +            #size-cells = <0>;
-> > > > > +
-> > > > > +            cpu0: cpu@0 {
-> > > > > +                device_type = "cpu";
-> > > > > +                compatible = "arm,cortex-a53";
-> > > > > +                reg = <0x0>;
-> > > > > +                operating-points-v2 = <&cpu_opp_table>;
-> > > > > +                enable-method = "psci";
-> > > > > +                clocks = <&cpufreq>;
-> > > > > +                clock-names = "cpu";
-> > > > > +                power-domains = <&cpufreq>;
-> > > > > +                power-domain-names = "cpu_pd";
-> > > >
-> > > > Nitpick: Perhaps clarify the name to be "perf" or "cpu_perf", to
-> > > > indicate it's a power-domain with performance scaling support.
-> > > >
-> > >
-> > > Will change to cpu_perf. Thanks a lot for the review!
-> >
-> > Is that defined in arm/cpus.yaml? No.
-> >
-> > The current choices are perf or psci though those aren't enforced (yet).
-> > Or nothing which is my preference if there is only 1 power domain.
-> >
->
-> I would also prefer not having to define the names property but I guess
-> that is mandatory for the PD APIs? Maybe Ulf can confirm.
+Hi all,
 
-No, that's not needed.
+This is the v2 of the series adding support for non-protected guests to
+pKVM. Please refer to v1 for all the context:
 
-dev_pm_domain_attach() attaches a single PM domain, without requiring a name.
+  https://lore.kernel.org/kvmarm/20241104133204.85208-1-qperret@google.com/
 
-But as stated in the other thread, to be future proof, I would suggest
-using a name already at this point. Even if it's not required.
+The series is organized as follows:
 
-Kind regards
-Uffe
+ - Patches 01 to 04 move the host ownership state tracking from the
+   host's stage-2 page-table to the hypervisor's vmemmap. This avoids
+   fragmenting the host stage-2 for shared pages, which is only needed
+   to store an annotation in the SW bits of the corresponding PTE. All
+   pages mapped into non-protected guests are shared from pKVM's PoV,
+   so the cost of stage-2 fragmentation will increase massively as we
+   start tracking that at EL2. Note that these patches also help with
+   the existing sharing for e.g. FF-A, so they could possibly be merged
+   separately from the rest of the series.
+
+ - Patches 05 to 07 implement a minor refactoring of the pgtable code to
+   ease the integration of the pKVM MMU later on.
+
+ - Patches 08 to 16 introduce all the infrastructure needed on the pKVM
+   side for handling guest stage-2 page-tables at EL2.
+
+ - Patches 17 and 18 plumb the newly introduced pKVM support into
+   KVM/arm64.
+
+Patches based on 6.13-rc1, tested on Pixel 6 and Qemu.
+
+Changes in v2:
+ - Rebased on 6.13-rc1 (small conflicts with 2362506f7cff ("KVM: arm64:
+   Don't mark "struct page" accessed when making SPTE young") in
+   particular)
+ - Fixed kerneldoc breakage for __unmap_stage2_range()
+ - Fixed pkvm_pgtable_test_clear_young() to use correct HVC
+ - Folded guest_get_valid_pte() into __check_host_unshare_guest() for
+   clarity
+
+Thanks,
+Quentin
+
+Marc Zyngier (1):
+  KVM: arm64: Introduce __pkvm_vcpu_{load,put}()
+
+Quentin Perret (17):
+  KVM: arm64: Change the layout of enum pkvm_page_state
+  KVM: arm64: Move enum pkvm_page_state to memory.h
+  KVM: arm64: Make hyp_page::order a u8
+  KVM: arm64: Move host page ownership tracking to the hyp vmemmap
+  KVM: arm64: Pass walk flags to kvm_pgtable_stage2_mkyoung
+  KVM: arm64: Pass walk flags to kvm_pgtable_stage2_relax_perms
+  KVM: arm64: Make kvm_pgtable_stage2_init() a static inline function
+  KVM: arm64: Add {get,put}_pkvm_hyp_vm() helpers
+  KVM: arm64: Introduce __pkvm_host_share_guest()
+  KVM: arm64: Introduce __pkvm_host_unshare_guest()
+  KVM: arm64: Introduce __pkvm_host_relax_guest_perms()
+  KVM: arm64: Introduce __pkvm_host_wrprotect_guest()
+  KVM: arm64: Introduce __pkvm_host_test_clear_young_guest()
+  KVM: arm64: Introduce __pkvm_host_mkyoung_guest()
+  KVM: arm64: Introduce __pkvm_tlb_flush_vmid()
+  KVM: arm64: Introduce the EL1 pKVM MMU
+  KVM: arm64: Plumb the pKVM MMU in KVM
+
+ arch/arm64/include/asm/kvm_asm.h              |   9 +
+ arch/arm64/include/asm/kvm_host.h             |   4 +
+ arch/arm64/include/asm/kvm_pgtable.h          |  42 ++-
+ arch/arm64/include/asm/kvm_pkvm.h             |  28 ++
+ arch/arm64/kvm/arm.c                          |  23 +-
+ arch/arm64/kvm/hyp/include/nvhe/gfp.h         |   6 +-
+ arch/arm64/kvm/hyp/include/nvhe/mem_protect.h |  38 +--
+ arch/arm64/kvm/hyp/include/nvhe/memory.h      |  43 ++-
+ arch/arm64/kvm/hyp/include/nvhe/pkvm.h        |  15 +
+ arch/arm64/kvm/hyp/nvhe/hyp-main.c            | 210 +++++++++++-
+ arch/arm64/kvm/hyp/nvhe/mem_protect.c         | 312 ++++++++++++++++--
+ arch/arm64/kvm/hyp/nvhe/page_alloc.c          |  14 +-
+ arch/arm64/kvm/hyp/nvhe/pkvm.c                |  56 ++++
+ arch/arm64/kvm/hyp/nvhe/setup.c               |   7 +-
+ arch/arm64/kvm/hyp/pgtable.c                  |  13 +-
+ arch/arm64/kvm/mmu.c                          | 109 ++++--
+ arch/arm64/kvm/pkvm.c                         | 195 +++++++++++
+ arch/arm64/kvm/vgic/vgic-v3.c                 |   6 +-
+ 18 files changed, 987 insertions(+), 143 deletions(-)
+
+-- 
+2.47.0.338.g60cca15819-goog
+
 
