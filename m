@@ -1,206 +1,105 @@
-Return-Path: <linux-kernel+bounces-430243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 544419E2E70
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 22:51:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D64EE9E2E72
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 22:52:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15C472831BA
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 21:51:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 274AA283369
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 21:52:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 529EE208997;
-	Tue,  3 Dec 2024 21:51:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D50D207A0F;
+	Tue,  3 Dec 2024 21:52:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ggx/T285"
-Received: from mail-il1-f177.google.com (mail-il1-f177.google.com [209.85.166.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dkEcctv/"
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD1701FBEA7
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 21:51:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42D511FBEA7
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 21:52:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733262711; cv=none; b=U1WbmEL7c1G5MNF46l6kvQNDd4IhddeS2j+mByQLwd0gPyRar0sDu01wlE2NKbv5yIrsMyEOOyvIIMPib3pFhAVI2wXOchDxNR1VmhE+wavelWuJ2xrHHVFEJyTejYQ0oMiFp07kMMdlee85McTkzFUiYpOvC36/WZ/SM5mSB6M=
+	t=1733262746; cv=none; b=ROxn0aKugt/sFZap9CIS0LFbQ1XN6h3vVDNp255VHmz37u+nyA3PlPPN6NCadw6OAyCJ0T1LFd/zwlp0GxZtV32ILMiDSx0E/WPvizQWJEUKPotZcILwqLpuWdSUi6WazKLnJXMvVrZZNZVRpuSlnBMniQvrCN6H+2aoCqv7y5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733262711; c=relaxed/simple;
-	bh=w/za6g/C2T8C1zYEm4lH01z3wiLU4LniKnBoSQC6CTA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MX0495/bmitrBgK6UoVFJ5Scj0YEtSnyKrMKFhesuNE50c8bP1Za2BW9UnMc+zSayNQaGFLQ+3H8XilK2wqkUHS1QrJXwvGmOU3h84cGclWoYF6zILQcOxOQygC8zSrgm/x5vUke/CP4IpYA7S5vAR+NOspUbaErCq55lniaXqo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ggx/T285; arc=none smtp.client-ip=209.85.166.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-3a777fd574bso24458805ab.1
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 13:51:49 -0800 (PST)
+	s=arc-20240116; t=1733262746; c=relaxed/simple;
+	bh=JFnTyIRsPpqY5AsaHUp4L48z7m2klcMtXpHcgHvP+9w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=M6nkcrKYfvPID7GLC2U07q0TVcp6u6dADTmnkrb0urHC9Wfu1IE4lQFv+5Qk+a8xrWl2UL+Sa12WteH2MK6iXtVTIQ+xwtHm0P/M1qQN/UT/zxUJ3b5rtnJqz+7frNiaGnO5yQa+1oOjSgsftgTxKlJbtxJhdBo5p/QmBJJ9TAo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dkEcctv/; arc=none smtp.client-ip=209.85.215.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-7c3d415f85eso572640a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 13:52:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1733262709; x=1733867509; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Q/qmq4RkrTR0mwK5R2/n+7YJQwRc8U1zqrzjxyswgIA=;
-        b=ggx/T285GUSYCrIsDrUDCafsbPXdSuLaOE89xDXyDv3cuzDfpFl3g0G/1Wc+PphVI6
-         VwKBUd6caCG0gZwMv1zfeKu3cbx8x77Gb9ROPTxOkXTv7Ceelxy+lHM8X0xKCmze3ncn
-         MibyjBKuRfMgtJEk/lbAaOthhRST57+Qt1uJQ=
+        d=gmail.com; s=20230601; t=1733262744; x=1733867544; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JFnTyIRsPpqY5AsaHUp4L48z7m2klcMtXpHcgHvP+9w=;
+        b=dkEcctv/R/v+2bqMG8UBzkXWEIqjEHejJV57qAbTQBaQjcsdYXk4RJLR49e6OIsC8i
+         Ib636lTEp/XeiHvmQn8O6R1EPuTJHFq/FjqjUA+Ipu+Y7MC7mIdNQDHL/l2IqchY922t
+         GSGs/mTmBNtBe3aZvgIh2nemhdNbCzClw6id6neGRnwn33VvrHlRF125nvqOZZL76O6P
+         Xe+67ggoq88YC2er01Ca5qF1nxjbVJh9xQYA4VkVxh6bpUZ6LUu3qKy2Yj7gOWFeQvA6
+         9yC8CeDxhiPEJH+4IEPqkAohxfFWESRRP9nI7SNaoNWP0xXyyk4pqk7fqH5UVnkDfW2W
+         JVhg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733262709; x=1733867509;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Q/qmq4RkrTR0mwK5R2/n+7YJQwRc8U1zqrzjxyswgIA=;
-        b=WDYOopk7tCcGbGICnyANg2ggokM5h+ESqLKJQbFYJF1A4b3qUP+kLltQoKya4WsGIP
-         JSAZpmt7DPo1YScD3PXlEJEPb1TDMmqOG8M2UMOcPIejXwHLNRKfE6NXih5ofm1WbgAa
-         GkkKdCtC7Q4GBf9jzqmbeNq3oBxV00rTDM1UXn8nU5VwNDuNkbNhR1n3JrUSCfN8any5
-         s/JTri1EKpjx07aRsrJ7Pr9Gxz7BeVOYsqKpNGBf+Bi4xfCvRQ9SIM8cpXAKj1nscCdO
-         Pr7tSd9YiaWS0fnAW3WNOvTfnyWS/KQ/xyqfLHLHKkfII5U7IeEi06RRV8QTb0e72vYt
-         P+5w==
-X-Forwarded-Encrypted: i=1; AJvYcCVWBFqkbjgYOFh74OKGeZjs/voRY8SR2I5pEWO5RJPdah+lyEbHOqv9z+Mo4yhtup3Js7MhFhAb1epfrqA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLGE+GWZGSJ/fCjClfdhUjDn9cdxNiMj1G23ZLxq7QWYWWeu9E
-	fFdRidFh+WoNF5aNsBnfW1oDFnQN7EfkAUGgY8TZK5yVgjZFYOhP43sWwGaDfbs=
-X-Gm-Gg: ASbGncsme9iNJrXYGTH7Zod+wGspmhrVJfytIzdn3/b80O+JX4XNjjJsJtByLjs4Z6A
-	d4SLl1zfy67zyittkkfkzHJ4+NLB8lNL5RHLXoplcnzc28bCQeA57YKkmkQQK4ankPsitk67nNn
-	1IPdu7Xk1X0TAPtOW9JF4lVJ5cEL881wLpFG8pSHYzS44BvWZoDY7RYEUOIQA2nk9QpyAOihdZQ
-	T8526iUmGZsosqJu9ldwEl4i3RKYK5SlwhlzDyZh9zMziwkvwPIpEMB3K7IWA==
-X-Google-Smtp-Source: AGHT+IFJZm1pyj3Fg3MjUuY3Et/7tEKYtEYkkN9KqCfkKnr7F7oeZ0lKHKFB8IqY1HEBxaRaMn8L1w==
-X-Received: by 2002:a05:6e02:17c7:b0:3a7:c5ff:e60b with SMTP id e9e14a558f8ab-3a7f9a3bab6mr60789465ab.6.1733262709011;
-        Tue, 03 Dec 2024 13:51:49 -0800 (PST)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a7ccc0dd6dsm28689165ab.41.2024.12.03.13.51.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Dec 2024 13:51:48 -0800 (PST)
-Message-ID: <63d5e3bb-9817-4a34-98fe-823a9cac7c16@linuxfoundation.org>
-Date: Tue, 3 Dec 2024 14:51:47 -0700
+        d=1e100.net; s=20230601; t=1733262744; x=1733867544;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JFnTyIRsPpqY5AsaHUp4L48z7m2klcMtXpHcgHvP+9w=;
+        b=kuI5tpiFaVHGocqzIYZJIbKYoCXcQ9jjMr8OLNZjSzA0kZQt3FkULbWxl9cgjK9MVr
+         JAO2dhqnAouAX8imBFFlajUlfV+5h23W8SvGx7/+MnQszDDIdmCTFwamtxyI8CWxxaP0
+         /7QvLYF1Fz3sdEkXhnz5L86bAKOS63NARgDtL+yHkwEv+JIYctdMYVBcnBFVHYrnijU2
+         pmlXKvi6GRbpf65jPSAlhBd2zyxum5Ah/221bcRDk1Nx93+BUIXT5dP8WRqsjbi2eBbh
+         gK2ukCRhqT5Jyo1aWblMzx9Ag0mElqskowP9//iTvz22EDV5XlaOUGWlVqa2yejQeCnd
+         N+RQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUN2T0I0cCsatLcUR46ub2YEAEQaJSUoyyO0kpxCQGhac425DV/0Bmq25B6xiNBuDAkvDFR5Dq3ukl2/h8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5fKPoReD/rStnxZujcZO85IHHQAFWvVPsS0we7MYrEA5izKIZ
+	YiO/A2HPXpk7JZbxuonBpjtv0eSc5TEU6E935R46Icea9FnN4cTbuDQLoXTOoAqW1u0HcxAxtSq
+	u9P2BpaHo0W48aYFCFVK8O1TiQvc+nktP
+X-Gm-Gg: ASbGncvJ2UWi2hQDt4Ka3q6354N8fA5/6EuXEGrsr5LwGTt38BpC2KoqtmevbetKFLc
+	UnlSvsiecvUWIOsv1eKGKh90o+kv7QII=
+X-Google-Smtp-Source: AGHT+IHqmX81dM5YXkrjxZwhEES+8t9hmi/pVu2J0d9jk4qhifvDXN6Y1xWXKGbFFHdP5HO9p1WuZwk5sntpyJEj8Pw=
+X-Received: by 2002:a17:90b:1b52:b0:2ee:6563:20b5 with SMTP id
+ 98e67ed59e1d1-2ef01018121mr2264183a91.0.1733262744530; Tue, 03 Dec 2024
+ 13:52:24 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 2/2] selftests: tmpfs: Add kselftest support to tmpfs
-To: Shivam Chaudhary <cvam0000@gmail.com>, shuah@kernel.org
-Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241112143056.565122-1-cvam0000@gmail.com>
- <20241112143056.565122-3-cvam0000@gmail.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20241112143056.565122-3-cvam0000@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20241119182442.GA416521@thelio-3990X>
+In-Reply-To: <20241119182442.GA416521@thelio-3990X>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Tue, 3 Dec 2024 22:52:12 +0100
+Message-ID: <CANiq72kJUx9rgA0Ex9_5ny4ss3sG5pSo_OSY=acR_Bg5jzHLVA@mail.gmail.com>
+Subject: Re: Prebuilt LLVM 19.1.4 uploaded
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: llvm@lists.linux.dev, linux-kernel@vger.kernel.org, conor@kernel.org, 
+	ojeda@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 11/12/24 07:30, Shivam Chaudhary wrote:
-> Replace direct error handling with 'ksft_test_result_*',
-> 'ksft_exit_fail_msg' macros for better reporting.
-> 
+On Tue, Nov 19, 2024 at 7:24=E2=80=AFPM Nathan Chancellor <nathan@kernel.or=
+g> wrote:
+>
+> I have built and uploaded LLVM 19.1.4 to
+> https://mirrors.edge.kernel.org/pub/tools/llvm/.
+>
+> If there are any issues found, please let us know via email or
+> https://github.com/ClangBuiltLinux/linux/issues/new, so that we have an
+> opportunity to get them fixed in main and backported before the 19.x
+> series is no longer supported.
 
-Don't fail the test - skip is the right exit code in this case.
+Sorry for the late reply, I saw 19.1.5 getting released and I noticed
+I didn't reply to this one: works for Rust -- thanks, as usual! :)
 
-> Test logs:
-> 
-> Before change:
-> - Without root
->   error: unshare, errno 1
-> 
-> - With root
->   No, output
-> 
-> After change:
-> - Without root
-> TAP version 13
-> 1..1
-> Bail out! Error : Need to run as root# Planned tests != run tests (1 != 0)
+Tested-by: Miguel Ojeda <ojeda@kernel.org>
 
-This should be a skip -- see above.
-
-> Totals: pass:0 fail:0 xfail:0 xpass:0 skip:0 error:0
-> 
-> - With root
-> TAP version 13
-> 1..1
-> ok 1 Test : Success
-> Totals: pass:1 fail:0 xfail:0 xpass:0 skip:0 error:0
-> 
-> Signed-off-by: Shivam Chaudhary <cvam0000@gmail.com>
-> ---
->   .../selftests/tmpfs/bug-link-o-tmpfile.c      | 49 ++++++++++---------
->   1 file changed, 26 insertions(+), 23 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/tmpfs/bug-link-o-tmpfile.c b/tools/testing/selftests/tmpfs/bug-link-o-tmpfile.c
-> index f0b36e7a152e..c3a8c9c50c8a 100644
-> --- a/tools/testing/selftests/tmpfs/bug-link-o-tmpfile.c
-> +++ b/tools/testing/selftests/tmpfs/bug-link-o-tmpfile.c
-> @@ -40,39 +40,42 @@ int main(void)
->   
->   	if (unshare(CLONE_NEWNS) == -1) {
->   		if (errno == ENOSYS || errno == EPERM) {
-> -			fprintf(stderr, "error: unshare, errno %d\n", errno);
-> -			return 4;
-> +			ksft_test_result_skip("unshare() error: unshare, errno %d\n", errno);
-
-This looks right.
-
-	
->   		}
-> -		fprintf(stderr, "error: unshare, errno %d\n", errno);
-> -		return 1;
-> -	}
-> -	if (mount(NULL, "/", NULL, MS_PRIVATE|MS_REC, NULL) == -1) {
-> -		fprintf(stderr, "error: mount '/', errno %d\n", errno);
-> -		return 1;
-> -	}
-> +		else{
-> +			ksft_exit_fail_msg("unshare() error: unshare, errno %d\n", errno);
-> +		}
-> +	}
-> +	
-> +	if (mount(NULL, "/", NULL, MS_PRIVATE | MS_REC, NULL) == -1) {
-> +		ksft_exit_fail_msg("mount() error: Root filesystem private mount: Fail %d\n", errno);
-> +	}
-> +
->   
->   	/* Our heroes: 1 root inode, 1 O_TMPFILE inode, 1 permanent inode. */
->   	if (mount(NULL, "/tmp", "tmpfs", 0, "nr_inodes=3") == -1) {
-> -		fprintf(stderr, "error: mount tmpfs, errno %d\n", errno);
-> -		return 1;
-> -	}
-> +		ksft_exit_fail_msg("mount() error: Mounting tmpfs on /tmp: Fail %d\n", errno);
-> +	}
->   
-> -	fd = openat(AT_FDCWD, "/tmp", O_WRONLY|O_TMPFILE, 0600);
-> +	fd = openat(AT_FDCWD, "/tmp", O_WRONLY | O_TMPFILE, 0600);
->   	if (fd == -1) {
-> -		fprintf(stderr, "error: open 1, errno %d\n", errno);
-> -		return 1;
-> -	}
-> +		ksft_exit_fail_msg("openat() error: Open first temporary file: Fail %d\n", errno);
-> +	}
-> +
->   	if (linkat(fd, "", AT_FDCWD, "/tmp/1", AT_EMPTY_PATH) == -1) {
-> -		fprintf(stderr, "error: linkat, errno %d\n", errno);
-> -		return 1;
-> -	}
-> +		ksft_exit_fail_msg("linkat() error: Linking the temporary file: Fail %d\n", errno);
-> +		/* Ensure fd is closed on failure */
-> +		close(fd);
-> +	}
->   	close(fd);
->   
-> -	fd = openat(AT_FDCWD, "/tmp", O_WRONLY|O_TMPFILE, 0600);
-> +
-> +	fd = openat(AT_FDCWD, "/tmp", O_WRONLY | O_TMPFILE, 0600);
->   	if (fd == -1) {
-> -		fprintf(stderr, "error: open 2, errno %d\n", errno);
-> -		return 1;
-> -	}
-> +		ksft_exit_fail_msg("openat() error: Opening the second temporary file: Fail %d\n", errno);
-> +	}
->   
-> +    ksft_test_result_pass("Test : Success\n");
-> +	ksft_exit_pass();
->   	return 0;
->   }
-
-The rest looks good.
-
-thanks,
--- Shuah
+Cheers,
+Miguel
 
