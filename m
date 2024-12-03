@@ -1,129 +1,100 @@
-Return-Path: <linux-kernel+bounces-429681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D8F99E1FE3
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 15:45:19 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 390999E1FE5
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 15:45:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD1B61618A8
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 14:45:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6653F16450F
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 14:45:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F5681F7553;
-	Tue,  3 Dec 2024 14:44:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 726571F429C;
+	Tue,  3 Dec 2024 14:45:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b="F/xs/DWx";
-	dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b="fWTohsPr"
-Received: from mta-03.yadro.com (mta-03.yadro.com [89.207.88.253])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="TIai6xz0"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07CFB1F707A;
-	Tue,  3 Dec 2024 14:44:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.207.88.253
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 836ED13B5B6;
+	Tue,  3 Dec 2024 14:45:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733237079; cv=none; b=DPIQqETwQhsdo2pzce9AwUNwEKlYLCLu4u5lbKT84KLkBGpkL063EwsVxDt8FgqVQ/fW8dPDZS5580E+pBibILkEP+DlcpCvQOwqYTDgeVi0Uya9T0NBFV8D1ISohTcWeSdA14IBPDVvGhuCPWX9CUSP4lEtlDJpVp/IVbH0AFs=
+	t=1733237129; cv=none; b=GZtwZrGSOX2DRtTvij0T6mX541guiekVFqH+g0KXHxL7Dhk5BInWQQ0izKjlR6CNosR84NJMZkFwaInBZEHeXuaKcXuxprA4e+7TA/FFlV+MBMhHdBXUn9wSHPXeRLtm0kLG+L9/gL0h3pFIvbRpC+Z7P6Qv2JYMXdaCUESVzAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733237079; c=relaxed/simple;
-	bh=j+1Z523yN4c3k35sEz8WLWeR9a0Tote+0vlm4AhrGg4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=a+MxjVCVf7JauTTt3grRcKyo8NCfxoNZGdxdhySlyS1fz/t1ftQgty1jicW8BoKM4dUGrJBN1Zkz/THTf9NPx8Qz1hSe6JLW/8m4KrVqmUZVmKqmNmslYc6Sl7oQBW9QWXOC70Jwm/im5HtSIrbx4pSv4TCa+q4zUMLqynUx7M8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yadro.com; spf=pass smtp.mailfrom=yadro.com; dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b=F/xs/DWx; dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b=fWTohsPr; arc=none smtp.client-ip=89.207.88.253
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yadro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yadro.com
-DKIM-Filter: OpenDKIM Filter v2.11.0 mta-03.yadro.com 47C23E0002
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yadro.com; s=mta-04;
-	t=1733237067; bh=yZe/rHto/yJINXzpM0VYaXBnEXiTAtPyuKao0ifLMUM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:From;
-	b=F/xs/DWxB9Q2xFJTiRE+BRDiKHj8Xg2JNDNpNKatEFAPn6Sq07CSqnIlkmho4PfwY
-	 i4n8ckL5a3UEcYTNOdpkqLXDKZBfkd7+wWE0mfifon8WjKC8MyRJDp03drsPHit5qs
-	 YQ9JnPohpFjFSsvMm/cRC4ssbK1H5e16wHHOhNFvdjZdWNGq1Um3S0RFtcZhc9MLLx
-	 JI6jMOpobs78O2XmE6kLtD4ZuLeOTprjTa1H/Bj57GLN36L35e6RvCsN1uEfiK+MmH
-	 xw0PDm5poqRVGxc5JxpvzQd/rZMdMmLU2C+NBl1lHNHgIe0+HD+RrzjY70tqcVWiiQ
-	 4I9yvZTO/OnBQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yadro.com; s=mta-03;
-	t=1733237067; bh=yZe/rHto/yJINXzpM0VYaXBnEXiTAtPyuKao0ifLMUM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:From;
-	b=fWTohsPr10f9KWPbfxCVvIwt69HevffSbsXqEZwu0WmT/iJSr6Wx4XOMh6Tw4Ad+T
-	 q5eZ4Qizq7Ej1Yh2GCmzHd3vuVmhdLUhUkUpFEGb1BNl1+/gC7sjTpWuMv1FRKZXEk
-	 lvtHtuet3zGS8CLJjXx3dc/4KJ1DhZTBy7XOFhii3mdZNcrDl+JORThtZRey7sxPIa
-	 ElFPQLxavdFMRreKNyLlsIV+jRBOXPYHkmHEGB2PyhLbKxMQihpOo+SnmtNBOSg7a3
-	 SjEGQJVx/l1YViUNgBV2f9s43som2T4UPePX0ueYyz1oFITpw/l1a2GcyHg2MwNnAg
-	 Cx9inGVCixcLg==
-Message-ID: <7e5ce1ce-e30a-46c5-80fb-eb52e59e4dc2@yadro.com>
-Date: Tue, 3 Dec 2024 17:44:25 +0300
+	s=arc-20240116; t=1733237129; c=relaxed/simple;
+	bh=s70dZjnxOR/Viyl1o26MHuhoRyjT/UuPusJ74A47LWY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NVmA5EiiduElLih9WITxOvCf9axDuiUHm2ouC+C0IdgcJJQyeKJkyq4ANIGveKsjjHdXybpP4L90VvOIGeQr8iOeIPXMcXoz7UmT7+nOWM/0ROF0H9zaZgyhFiWMccLJGldmMZXGAMbRorOt1jdeahesrjavRDoamarod28Px9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=TIai6xz0; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=blBteVWpp5GLG/dhaZyUrh1QEumbYVjnKpfdzoL1dHA=; b=TIai6xz0RoigsftCvxKZudV4Gs
+	xHClZ1bIABhmxUH6PW5XnL17GBgRUWxe+APZC9DoFk8GNBy/d3+1j1nUAkt7a5vSioM+kyUC/cjCK
+	+k5g4REntOz2A8+fYP2QjR0Pao182QLDCSNI7uhgQVc+a6YxQzuONmZpkTsQuqoL/VlQ=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tIU9F-00F6Hp-OL; Tue, 03 Dec 2024 15:45:09 +0100
+Date: Tue, 3 Dec 2024 15:45:09 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Dennis Ostermann <dennis.ostermann@renesas.com>
+Cc: Russell King <linux@armlinux.org.uk>,
+	"nikita.yoush" <nikita.yoush@cogentembedded.com>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Michael Dege <michael.dege@renesas.com>,
+	Christian Mardmoeller <christian.mardmoeller@renesas.com>
+Subject: Re: [PATCH] net: phy: phy_ethtool_ksettings_set: Allow any supported
+ speed
+Message-ID: <1ff52755-ef24-4e4b-a671-803db37b58fc@lunn.ch>
+References: <20241202100334.454599a7@fedora.home>
+ <73ca1492-d97b-4120-b662-cc80fc787ffd@cogentembedded.com>
+ <Z02He-kU6jlH-TJb@shell.armlinux.org.uk>
+ <eddde51a-2e0b-48c2-9681-48a95f329f5c@cogentembedded.com>
+ <Z02KoULvRqMQbxR3@shell.armlinux.org.uk>
+ <c1296735-81be-4f7d-a601-bc1a3718a6a2@cogentembedded.com>
+ <Z02oTJgl1Ldw8J6X@shell.armlinux.org.uk>
+ <5cef26d0-b24f-48c6-a5e0-f7c9bd0cefec@cogentembedded.com>
+ <Z03aPw_QgVYn8WyR@shell.armlinux.org.uk>
+ <TYCPR01MB1047854DA050E52CADB04393A8E362@TYCPR01MB10478.jpnprd01.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Re: [PATCH v3 1/7] riscv: ftrace: support fastcc in Clang for
- WITH_ARGS
-To: =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>
-CC: Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
-	Nick Desaulniers <ndesaulniers@google.com>, Nathan Chancellor
-	<nathan@kernel.org>, Albert Ou <aou@eecs.berkeley.edu>, Palmer Dabbelt
-	<palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, Mark Rutland
-	<mark.rutland@arm.com>, Masami Hiramatsu <mhiramat@kernel.org>, Steven
- Rostedt <rostedt@goodmis.org>, Andy Chiu <andybnac@gmail.com>,
-	<linux-kernel@vger.kernel.org>, <linux-trace-kernel@vger.kernel.org>,
-	<linux-riscv@lists.infradead.org>, <llvm@lists.linux.dev>,
-	<bjorn@rivosinc.com>, <puranjay12@gmail.com>, <alexghiti@rivosinc.com>,
-	<yongxuan.wang@sifive.com>, <greentime.hu@sifive.com>, <nick.hu@sifive.com>,
-	<nylon.chen@sifive.com>, <tommy.wu@sifive.com>, <eric.lin@sifive.com>,
-	<viccent.chen@sifive.com>, <zong.li@sifive.com>, <samuel.holland@sifive.com>
-References: <20241127172908.17149-1-andybnac@gmail.com>
- <20241127172908.17149-2-andybnac@gmail.com>
- <87wmghotth.fsf@all.your.base.are.belong.to.us>
-Content-Language: en-US
-From: Evgenii Shatokhin <e.shatokhin@yadro.com>
-In-Reply-To: <87wmghotth.fsf@all.your.base.are.belong.to.us>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: T-Exch-05.corp.yadro.com (172.17.10.109) To
- T-EXCH-10.corp.yadro.com (172.17.11.60)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <TYCPR01MB1047854DA050E52CADB04393A8E362@TYCPR01MB10478.jpnprd01.prod.outlook.com>
 
-Hi,
-
-On 03.12.2024 15:05, Björn Töpel wrote:
+On Tue, Dec 03, 2024 at 02:05:07PM +0000, Dennis Ostermann wrote:
+> Hi,
 > 
-> Andy Chiu <andybnac@gmail.com> writes:
+> according to IEE 802.3-2022, ch. 125.2.4.3, Auto-Negotiation is optional for 2.5GBASE-T1
 > 
->> From: Andy Chiu <andy.chiu@sifive.com>
->>
->> Some caller-saved registers which are not defined as function arguments
->> in the ABI can still be passed as arguments when the kernel is compiled
->> with Clang. As a result, we must save and restore those registers to
->> prevent ftrace from clobbering them.
->>
->> - [1]: https://reviews.llvm.org/D68559
->>
->> Reported-by: Evgenii Shatokhin <e.shatokhin@yadro.com>
->> Closes: https://lore.kernel.org/linux-riscv/7e7c7914-445d-426d-89a0-59a9199c45b1@yadro.com/
->> Acked-by: Nathan Chancellor <nathan@kernel.org>
->> Signed-off-by: Andy Chiu <andy.chiu@sifive.com>
+> > 125.2.4.3 Auto-Negotiation, type single differential-pair media
+> > Auto-Negotiation (Clause 98) may be used by 2.5GBASE-T1 and 5GBASE-T1 devices to detect the
+> > abilities (modes of operation) supported by the device at the other end of a link segment, determine common
+> > abilities, and configure for joint operation. Auto-Negotiation is performed upon link startup through the use
+> > of half-duplex differential Manchester encoding.
+> > The use of Clause 98 Auto-Negotiation is optional for 2.5GBASE-T1 and 5GBASE-T1 PHYs
 > 
-> Fixes tag?
+> So, purposed change could make sense for T1 PHYs.
 
-As far as I understand it, Ftrace for RISC-V has had this problem since 
-support for FTRACE_WITH_REGS was added. FTRACE_WITH_ARGS inherited it.
+The proposed change it too liberal. We need the PHY to say it supports
+2.5GBASE-T1, not 2.5GBASE-T. We can then allow 2.5GBASE-T1 to not use
+autoneg, but 2.5GBASE-T has to use autoneg.
 
-So, it should probably be as follows:
-
-Fixes: aea4c671fb98 ("riscv/ftrace: Add DYNAMIC_FTRACE_WITH_REGS support")
-
-It is more of a workaround rather than a fix though, because it is still 
-undecided where the problem is, in the kernel or in LLVM/clang. That 
-discussion went nowhere, unfortunately, so it is better to use a 
-workaround and move on, IMO.
-
-> 
-> Reviewed-by: Björn Töpel <bjorn@rivosinc.com>
-> 
-
-Regards,
-Evgenii
-
+	Andrew
 
