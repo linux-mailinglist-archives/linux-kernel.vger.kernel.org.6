@@ -1,185 +1,126 @@
-Return-Path: <linux-kernel+bounces-429436-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADE339E1D4E
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 14:16:19 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C0E49E1F88
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 15:38:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BC2E9B39879
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 12:24:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 04CD6B3EC49
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 12:46:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 614F81E6310;
-	Tue,  3 Dec 2024 12:24:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99BC41F7079;
+	Tue,  3 Dec 2024 12:43:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="PgY5nn9U"
-Received: from pv50p00im-hyfv10011601.me.com (pv50p00im-hyfv10011601.me.com [17.58.6.43])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eHwue4hi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A7EB1E493C
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 12:24:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E91001F706A;
+	Tue,  3 Dec 2024 12:43:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733228657; cv=none; b=Ep3l9po4gL80rMZfiPDaaeer0BvnUiGvPsjJ0Iv1oZ+rkdRiYu8baMivpw7nujHNI5fpH1F2Ebo9Fh9P0gn5Z6inXqssAeWRqoxWS7q0dOeoSjIceG20MF7PYr4hn3pnHs3574eeii5lV5+bde+rUg53m1kquy0vcGfCuxA7TaI=
+	t=1733229823; cv=none; b=jthcY/89vxSPx7nRwaG/McX4FWpiIU9j9WWVEOIFHShFsUT12dF5gnF3Jc5tmRLnm5WwsfsnfjOIs97PBNqdczV03ayjQaLY5MB4LuJ8yTP4guUuNGgmP0TX9yoo++ZvypZU5NvGI+RoAkeDwBvYfyz/5qa7zEt+qoT1sBBYlsU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733228657; c=relaxed/simple;
-	bh=mCIHbMTp8TXOIpl1+nubIptrAHWq3pU6doVeMEipNVc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tevQA9ArlRT1+O9NrOf8zJqLVGPaq1sM83SqP0xlR2iQ1CiGjdoac6/k204JiQy6TSdCEQNahc/S5g3/RGng4PnwXoPxE6IIMc+Wr+RbhNuv3ZO6cF8qLjo70Qs90MXm8v1wMmT/8ViLx22RSYkSeRTJjoWoq0M10up3OzHRgkw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=PgY5nn9U; arc=none smtp.client-ip=17.58.6.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-	s=1a1hai; t=1733228654;
-	bh=CgCScBX/+fgZ0roCuYsgonJhaxWB8rsl1yCC6V0WM+E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:
-	 x-icloud-hme;
-	b=PgY5nn9UjaNQNnW4ZpJ9WuRQx6im5psJe58NOrhuMYaP81TCjCoqg7OOKUTCf/GiQ
-	 U5NzWhh2P25K5ajpXMvRXYX0Q0QlkR8pgL3oTItbqVZutGKevLmlI66ZBGBcrDMdzZ
-	 tMmlV2WZ2o8x16WpoGlJ/JnV1zI3oqt06fGl4I8/qI7wYj0KQ1QQr5n3xLSgizk9fw
-	 TQ9xaKi2nZyOPqodk3YoZL2QcRqFeCLp3CsTqDDtllnMk1q4GHXKVq7SsECnBkg8jm
-	 H9mCDktUr1zn+c+7ek7cGPeMoLhQxufGfyCDPYAJQXskQd4pXIE2C7c2QiBSj9B4RB
-	 vRrMl0+rr+jVw==
-Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
-	by pv50p00im-hyfv10011601.me.com (Postfix) with ESMTPSA id 675CEC8010E;
-	Tue,  3 Dec 2024 12:23:51 +0000 (UTC)
-Message-ID: <9d34bd6f-b120-428a-837b-5a5813e14618@icloud.com>
-Date: Tue, 3 Dec 2024 20:23:45 +0800
+	s=arc-20240116; t=1733229823; c=relaxed/simple;
+	bh=IZV9ZhzHqJVnEKcJxYKcUwlnmw8jFD+SNDgdQoZo3EE=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=KEREwH+uJytMK5FQeu4LAQQibEzBSXMspTP0P/zxiKZK+TT1Ks1FYek59z8ulGqwDK0yjtPxbOGo3oDRE4Uj9GJSng+WoXsHxPWU+/6wZWuMsOy2mxI3BYvH5EbxmJa+U9ibZy7pcP4pu/IGUC75kP9Ve/4gPRr6Aw5gq2BDC2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eHwue4hi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4F70C4CECF;
+	Tue,  3 Dec 2024 12:43:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733229822;
+	bh=IZV9ZhzHqJVnEKcJxYKcUwlnmw8jFD+SNDgdQoZo3EE=;
+	h=From:Subject:Date:To:Cc:From;
+	b=eHwue4hiGhU7+JckTcKQExSjN39OQ+LcvCPsrbvsG3Jtl+C7Wc613FxEoPK2RFTVS
+	 2Kva0TyImTcKhid1jZGB2I1/sw+0+YfrDr3wSW6xIXxyNEw5rkEED3PNpR6FP9+4LE
+	 znyOfQ24Z4h3Tx4sGDEvnUM8BIfdNQLYj88/5OclsfM8E4LeisndOHUyn/EEkJ9/Vv
+	 RRMaYeCaKL6UfOg10+pR20bEVVqXJiKwiWrZhNbGNlWMTfywM0hfddWSYBNGfwq8Sx
+	 5RoIC6AoK4kjlnUmrTQZKhzSZBwoLQ67eo7UM3SlnL6hh1hYx4z8+DragFyQmrxBRR
+	 H3ftvuhaDc+sA==
+From: Mark Brown <broonie@kernel.org>
+Subject: [PATCH v3 0/9] arm64: Support 2024 dpISA extensions
+Date: Tue, 03 Dec 2024 12:39:19 +0000
+Message-Id: <20241203-arm64-2024-dpisa-v3-0-a6c78b1aa297@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 00/32] driver core: Constify API device_find_child()
- and adapt for various existing usages
-To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Chun-Kuang Hu <chunkuang.hu@kernel.org>,
- Philipp Zabel <p.zabel@pengutronix.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
- Martin Tuma <martin.tuma@digiteqautomotive.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Andreas Noever <andreas.noever@gmail.com>,
- Michael Jamet <michael.jamet@intel.com>,
- Mika Westerberg <mika.westerberg@linux.intel.com>,
- Yehezkel Bernat <YehezkelShB@gmail.com>,
- Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski
- <brgl@bgdev.pl>, Andrew Lunn <andrew@lunn.ch>,
- Vladimir Oltean <olteanv@gmail.com>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Simon Horman <horms@kernel.org>, Dan Williams <dan.j.williams@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>,
- Ira Weiny <ira.weiny@intel.com>, Takashi Sakamoto <o-takashi@sakamocchi.jp>,
- Jiri Slaby <jirislaby@kernel.org>,
- Heikki Krogerus <heikki.krogerus@linux.intel.com>,
- Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
- Lee Duncan <lduncan@suse.com>, Chris Leech <cleech@redhat.com>,
- Mike Christie <michael.christie@oracle.com>,
- "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>,
- Nilesh Javali <njavali@marvell.com>,
- Manish Rangankar <mrangankar@marvell.com>,
- GR-QLogic-Storage-Upstream@marvell.com, Davidlohr Bueso <dave@stgolabs.net>,
- Jonathan Cameron <jonathan.cameron@huawei.com>,
- Alison Schofield <alison.schofield@intel.com>,
- Andreas Larsson <andreas@gaisler.com>, Stuart Yoder <stuyoder@gmail.com>,
- Laurentiu Tudor <laurentiu.tudor@nxp.com>, Jens Axboe <axboe@kernel.dk>,
- Sudeep Holla <sudeep.holla@arm.com>,
- Cristian Marussi <cristian.marussi@arm.com>, Ard Biesheuvel
- <ardb@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, linux-hwmon@vger.kernel.org,
- linux-media@vger.kernel.org, linux-usb@vger.kernel.org,
- linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
- linux-pwm@vger.kernel.org, nvdimm@lists.linux.dev,
- linux1394-devel@lists.sourceforge.net, linux-serial@vger.kernel.org,
- linux-sound@vger.kernel.org, open-iscsi@googlegroups.com,
- linux-scsi@vger.kernel.org, linux-cxl@vger.kernel.org,
- sparclinux@vger.kernel.org, linux-block@vger.kernel.org,
- arm-scmi@vger.kernel.org, linux-efi@vger.kernel.org,
- linux-remoteproc@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>
-References: <20241203-const_dfc_done-v2-0-7436a98c497f@quicinc.com>
- <g32cigmktmj4egkq2tof27el2yss4liccfxgebkgqvkil32mlb@e3ta4ezv7y4m>
-Content-Language: en-US
-From: Zijun Hu <zijun_hu@icloud.com>
-In-Reply-To: <g32cigmktmj4egkq2tof27el2yss4liccfxgebkgqvkil32mlb@e3ta4ezv7y4m>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-GUID: HfN3ugOwn0RD4lT0NgRrMbrQZDyUcr0J
-X-Proofpoint-ORIG-GUID: HfN3ugOwn0RD4lT0NgRrMbrQZDyUcr0J
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2024-12-03_01,2024-12-03_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 phishscore=0 suspectscore=0
- clxscore=1015 adultscore=0 malwarescore=0 mlxlogscore=903 mlxscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2308100000 definitions=main-2412030107
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAPf7TmcC/23NQQ6CMBCF4auQWTtmWgpUV97DuBhsgUYF0ppGQ
+ 7i7hbjQhOU/yXxvgmC9swGO2QTeRhfc0KfIdxlcO+5bi86kBklSCSKN7B+lwiXRjC4wajoIqhR
+ XjdKQ3kZvG/dayfMldefCc/DvdSGK5frF5AYWBRJyrg3pOq2xPt2s7+19P/gWFi3KHyGnDUEmo
+ S5LEiwKI7n4E+Z5/gCfvkMD8wAAAA==
+X-Change-ID: 20241008-arm64-2024-dpisa-8091074a7f48
+To: Catalin Marinas <catalin.marinas@arm.com>, 
+ Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
+ Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+ Joey Gouly <joey.gouly@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
+ Shuah Khan <shuah@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ linux-doc@vger.kernel.org, kvmarm@lists.linux.dev, 
+ linux-kselftest@vger.kernel.org, Mark Brown <broonie@kernel.org>
+X-Mailer: b4 0.15-dev-9b746
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2022; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=IZV9ZhzHqJVnEKcJxYKcUwlnmw8jFD+SNDgdQoZo3EE=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBnTvzz7hlUQbTGXweDHSxiaLyo/jZx/81Z2eBMmkqR
+ OhrG3nyJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZ0788wAKCRAk1otyXVSH0Kd0B/
+ 9wcLjxF+pY4wnLffdC8iHWzfQtl+IDjeHS7OvcKXcadzjW9nOFTjtmZYB3DN02HxbBNRU6O0V5vSnC
+ luo2DkfmzB4DWPIcVCdmaIqEO1xEZEfIZ8dS7yFF9Z/wvmD3neIjP5CV8WZCznY0253/4ghki2s/cq
+ KQ/ttPhSqx+3oqOOe3AP9kkWRwa09lJmljZKtBwCmnQWwEHMdtLYgzai5kZB0DXWGg9CRyz3cqxUPf
+ IdYlLytkhcnRVJVasl5vzK7PQBUvYQlqFZjJPL9su+Z+O9nt76vQLa248RQjLyKhO+GYd+AbnxpUWO
+ MzERraxO3i6lmp/+S6NcHURXTC7XOq
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-On 2024/12/3 20:00, Uwe Kleine-König wrote:
-> Hello,
-> 
-> On Tue, Dec 03, 2024 at 08:33:22AM +0800, Zijun Hu wrote:
->> This patch series is to constify the following API:
->> struct device *device_find_child(struct device *dev, void *data,
->> 		int (*match)(struct device *dev, void *data));
->> To :
->> struct device *device_find_child(struct device *dev, const void *data,
->> 				 device_match_t match);
->> typedef int (*device_match_t)(struct device *dev, const void *data);
-> 
-> This series isn't bisectible. With only the first two patches applied I
-> hit:
+The 2024 architecture release includes a number of data processing
+extensions, mostly SVE and SME additions with a few others.  These are
+all very straightforward extensions which add instructions but no
+architectural state so only need hwcaps and exposing of the ID registers
+to KVM guests and userspace.
 
-yes. such patch series needs to be merge as atomic way.
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+Changes in v3:
+- Commit log update for the hwcap test.
+- Link to v2: https://lore.kernel.org/r/20241030-arm64-2024-dpisa-v2-0-b6601a15d2a5@kernel.org
 
-Hi Greg,
+Changes in v2:
+- Filter KVM guest visible bitfields in ID_AA64ISAR3_EL1 to only those
+  we make writeable.
+- Link to v1: https://lore.kernel.org/r/20241028-arm64-2024-dpisa-v1-0-a38d08b008a8@kernel.org
 
-is it possible to ONLY merge such patch series by atomic way into your
-driver-core tree?
+---
+Mark Brown (9):
+      arm64/sysreg: Update ID_AA64PFR2_EL1 to DDI0601 2024-09
+      arm64/sysreg: Update ID_AA64ISAR3_EL1 to DDI0601 2024-09
+      arm64/sysreg: Update ID_AA64FPFR0_EL1 to DDI0601 2024-09
+      arm64/sysreg: Update ID_AA64ZFR0_EL1 to DDI0601 2024-09
+      arm64/sysreg: Update ID_AA64SMFR0_EL1 to DDI0601 2024-09
+      arm64/sysreg: Update ID_AA64ISAR2_EL1 to DDI0601 2024-09
+      arm64/hwcap: Describe 2024 dpISA extensions to userspace
+      KVM: arm64: Allow control of dpISA extensions in ID_AA64ISAR3_EL1
+      kselftest/arm64: Add 2024 dpISA extensions to hwcap test
 
-or squash such patch series into a single patch ?
+ Documentation/arch/arm64/elf_hwcaps.rst   |  51 ++++++
+ arch/arm64/include/asm/hwcap.h            |  17 ++
+ arch/arm64/include/uapi/asm/hwcap.h       |  17 ++
+ arch/arm64/kernel/cpufeature.c            |  35 ++++
+ arch/arm64/kernel/cpuinfo.c               |  17 ++
+ arch/arm64/kvm/sys_regs.c                 |   6 +-
+ arch/arm64/tools/sysreg                   |  87 +++++++++-
+ tools/testing/selftests/arm64/abi/hwcap.c | 273 +++++++++++++++++++++++++++++-
+ 8 files changed, 493 insertions(+), 10 deletions(-)
+---
+base-commit: 40384c840ea1944d7c5a392e8975ed088ecf0b37
+change-id: 20241008-arm64-2024-dpisa-8091074a7f48
 
-various subsystem maintainers may not like squashing way.
-
-> 
->   CC      drivers/pwm/core.o
-> drivers/pwm/core.c: In function ‘pwm_unexport_child’:
-> drivers/pwm/core.c:1292:55: error: passing argument 3 of ‘device_find_child’ from incompatible pointer type [-Wincompatible-pointer-types]
->  1292 |         pwm_dev = device_find_child(pwmchip_dev, pwm, pwm_unexport_match);
->       |                                                       ^~~~~~~~~~~~~~~~~~
->       |                                                       |
->       |                                                       int (*)(struct device *, void *)
-> In file included from include/linux/acpi.h:14,
->                  from drivers/pwm/core.c:11:
-> include/linux/device.h:1085:49: note: expected ‘device_match_t’ {aka ‘int (*)(struct device *, const void *)’} but argument is of type ‘int (*)(struct device *, void *)’
->  1085 |                                  device_match_t match);
->       |                                  ~~~~~~~~~~~~~~~^~~~~
-> drivers/pwm/core.c: In function ‘pwm_class_get_state’:
-> drivers/pwm/core.c:1386:55: error: passing argument 3 of ‘device_find_child’ from incompatible pointer type [-Wincompatible-pointer-types]
->  1386 |         pwm_dev = device_find_child(pwmchip_dev, pwm, pwm_unexport_match);
->       |                                                       ^~~~~~~~~~~~~~~~~~
->       |                                                       |
->       |                                                       int (*)(struct device *, void *)
-> include/linux/device.h:1085:49: note: expected ‘device_match_t’ {aka ‘int (*)(struct device *, const void *)’} but argument is of type ‘int (*)(struct device *, void *)’
->  1085 |                                  device_match_t match);
->       |                                  ~~~~~~~~~~~~~~~^~~~~
-> make[5]: *** [scripts/Makefile.build:194: drivers/pwm/core.o] Error 1
-> make[4]: *** [scripts/Makefile.build:440: drivers/pwm] Error 2
-> make[3]: *** [scripts/Makefile.build:440: drivers] Error 2
-> make[2]: *** [Makefile:1989: .] Error 2
-> make[1]: *** [Makefile:372: __build_one_by_one] Error 2
-> make: *** [Makefile:251: __sub-make] Error 2
-> 
-> Best regards
-> Uwe
+Best regards,
+-- 
+Mark Brown <broonie@kernel.org>
 
 
