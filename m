@@ -1,94 +1,66 @@
-Return-Path: <linux-kernel+bounces-430196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D104D9E2E9D
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 23:06:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 120469E2F08
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 23:27:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5149FB38BA3
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 20:54:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1FEF5B35F3F
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 21:22:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B9DB20B815;
-	Tue,  3 Dec 2024 20:53:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4985B20A5DB;
+	Tue,  3 Dec 2024 21:21:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ChGkL5oK"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=venev.name header.i=@venev.name header.b="L9I59bjh"
+Received: from a1-bg02.venev.name (a1-bg02.venev.name [213.240.239.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B95820B211;
-	Tue,  3 Dec 2024 20:53:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A050204F89;
+	Tue,  3 Dec 2024 21:21:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.240.239.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733259198; cv=none; b=K8+Be71Ya+9G/ANTwIDy2/JTMrVwOMmrwMMhuYncI0uUUgXDIimF9b7R18DEMXHolVqI4wvx7Mq5s499uqpk5QcSNmUdVwQWJOuw+O7XbwpyehqrPjal8FYlz6MbsO0JbbmT5pyL3Wpi+SIB4qk29vwH2bc9jArqSNbCRyXB+ac=
+	t=1733260885; cv=none; b=rUIhrXEsJFH8dtTEYZlmbh93qZYuh/W9sWjw9/5Ndl+Q13TdnJF06GdBxRXS099tL3okOQ0uqYXd+S5vk3chKyzjvpE+EUi8nAUFIUJWsOpGtie+z5H/1hSpsjqs0JZuTa8suG76ykwJ6S7WXSeDHLW166YwBgYfMWigmCtUeSE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733259198; c=relaxed/simple;
-	bh=FY91FECIG8vyXTtfxzalXSXZ249nSTm+wGDBjFYvNpU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=i+KGl03Cju4D1EnG0nJEbCC8uKuxwxXqgZSChyrzScxJiFrTqREAxkNgHAE48IJnECbq0M5fWFYDQ1vsZVBReCREEWQN6PPHedJ/dmlm9wKaqqSWILTb6is9IVn3A8Pc5kUXnI65mLwohsWOy05Rbozzbybsr6aemlzXYggG4i0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ChGkL5oK; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-434a29ecbceso7078605e9.0;
-        Tue, 03 Dec 2024 12:53:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733259194; x=1733863994; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yA7vOziRlmc/bZx4fMvI0r+Cuk3SCmX4PpXxbI8VPks=;
-        b=ChGkL5oKYMG4OGy9tnFfWEKYdX4NhGnSNGcgZkNZiTWewNUHHL62btl3Jch5OSbsC8
-         egFdjkJ3F/NCkn44qD9vXebn3x8CCwad2NZMjNzwHeGEpK8Aj0J8BkR0tLgGNeOYdsK2
-         3x8Fme6O3bxCBSfBY5GR5cF8bGjNqkUhCXlDPfL6F5FKOQvVs02PADhyBY7bkUvbPLge
-         DKizbwFL+CrEqPrv0TNrWvOpvx46u6O6UgXLX6VxCbHWgl3cFYF+6ghejfXbrj+MhbXZ
-         A8x6+WN5zj/QxFp3zKNtFh7w37qMI2Y+JmejbNSaXqyAH5Wuh2hKtzytogOav731/PTB
-         diBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733259194; x=1733863994;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yA7vOziRlmc/bZx4fMvI0r+Cuk3SCmX4PpXxbI8VPks=;
-        b=CnuYDsFThDhlfVgQD+l/xnFglGdo9mtPG5Fy+PvgbV3hML9FqTOwO4v8sF3ojbQcfj
-         3oUA3psShPC3n4Yb46JJKtIIuStG8QIPlDkejjogwVbjr0d/Z3Ra6neKCvRqNgD/Uty3
-         cXKAPQL4OMN6DwD5/P/0JLqTZeiA3PfiEEj6iPy4l2nb1xJrCm04SBn7mDUG4JlJIoWw
-         B5RpRSOWZGmxqT0A+agEFxyU1TM5hWL3jOba9zdEGYcIRQr9L+62CHo4Q4A0R6QZusO5
-         4runpQDdu8Ji3QrDWB7ZDa+tTcPWfvPy7ctyhPYlsKHR5VwZ+uVsggmdy3TRU1qOUTrk
-         pRMg==
-X-Forwarded-Encrypted: i=1; AJvYcCUbbYyem3zidzD2o7ygaho3Mpqn/Vrq0RPL22KlRKu0UDjVgXfDpQURZdPgknqfeUISLOvFX9fYGnQrUCqJ@vger.kernel.org, AJvYcCWE2jcwnp/0AkvUeWMKDaZjGF28qWM7H+et2ztuA3sMlHjNQI9NuMGPLfNT6/U5DB2alw6C9WHBJLs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywk02RA3A4C0n0qttr5S3wbAzwiNzCzkE3EeuT4w8OU8OigXch7
-	fSxCaymtjC5A9mExDxOYP9ZagcDtAJ0zRv1JFfx/TVw936mN/jwg
-X-Gm-Gg: ASbGncslLvzVoxJDHfb7Cg2veVR1LEl8Jt4rPEp1E06rPkqs3oo8tFTK3bQ3SwbzVVN
-	b3DRTzsTjdoVmAQXzvWdwgWwat+dfh8cJW7TTkcxji3uatVGd3k+h9byJ7HmkIwOqurk4BzVKJX
-	kAd3iOhRFh9kXgemiwtCEHl/4P6lZQT/kN8w7jXFD7eGxI16xEIjC6TjtEKPMqtZAnlgYEfXZ0b
-	7NV7u19kRUesS5nLqSiTZ15aA+aRc90TCZVpXodgErN5s3TI3nEQKjmhJm46OVm5L7xpnajPuVS
-	AjGHpSlkktIypwMSZmOIeyq2tF+x
-X-Google-Smtp-Source: AGHT+IF8CuGWZEBktezY5BS7YphnMd2zJ/kIWieEl2c7J3moHhstF2htiyuWmP6rtnP+sHe/iTdE6Q==
-X-Received: by 2002:a05:6000:4011:b0:382:4e71:1a12 with SMTP id ffacd0b85a97d-385fd3c30aamr1439178f8f.1.1733259194422;
-        Tue, 03 Dec 2024 12:53:14 -0800 (PST)
-Received: from 7b58d44c4ff6.v.cablecom.net (84-72-156-211.dclient.hispeed.ch. [84.72.156.211])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385ebaf3bccsm9042750f8f.68.2024.12.03.12.53.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Dec 2024 12:53:14 -0800 (PST)
-From: Lothar Rubusch <l.rubusch@gmail.com>
-To: lars@metafoo.de,
-	Michael.Hennerich@analog.com,
-	jic23@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org
-Cc: devicetree@vger.kernel.org,
-	linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	eraretuya@gmail.com,
-	l.rubusch@gmail.com
-Subject: [PATCH v3 07/10] iio: accel: adxl345: initialize IRQ number
-Date: Tue,  3 Dec 2024 20:52:38 +0000
-Message-Id: <20241203205241.48077-8-l.rubusch@gmail.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20241203205241.48077-1-l.rubusch@gmail.com>
-References: <20241203205241.48077-1-l.rubusch@gmail.com>
+	s=arc-20240116; t=1733260885; c=relaxed/simple;
+	bh=kTLMKEkMHsNkJ1dNvZM2CqRxYRI12AdCF29gHHsyoQM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DDIq+Xej7uy6ZDcCTr5z5+fwyrTe9AC7JeS11quU0nuem5wGr5Jrz5obAwjLW2QYILrn21sI2od3EZGmd6asLPve/wUCxGKGYQxsH3RK+7A7QYncvHVoSRe/wvDSLpBdca5+9sfPEHtIICDLtaC1XirKL24CU6cPFSBaS+ehc+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=venev.name; spf=pass smtp.mailfrom=venev.name; dkim=pass (4096-bit key) header.d=venev.name header.i=@venev.name header.b=L9I59bjh; arc=none smtp.client-ip=213.240.239.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=venev.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=venev.name
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=venev.name;
+	s=default; h=Content-Transfer-Encoding:Message-ID:Date:Subject:To:From:
+	Content-Type:Reply-To:Sender; bh=YibmFRXSsQ6h1u9JRjweqc/uxZpoOBFSIk8GiWn4mDI=
+	; b=L9I59bjh8i1CbxXdOXdHpoMdNxcV1l1hrkvm8zzuwAGES29h4OtKYlGZNwatLdbElZB1zG0OY
+	RtcO2aOdL/yKD2smTFMfGy4yI463bCYNmOKnAr0U/8b/qd5wJ4ljFbru+BUSAEGP8AEcD7bAFBjKU
+	sOEwsXFF2RXexV0hVprSoCmCiObB/71od6NfrlA0lkQUigZx7V/uu3GtT4lRN0xYkshM5dN81GVxy
+	80NAWTHnzPIbDLkiT1hLxMfVRJSGh8SyZNqzUS+F/N3FdA8RrLW8Md0V0UmuUYuQIDue38TsvYOGU
+	sHTh2TYws8zj1Id/e080UAKFWXpOZI4sF41SD4A2OAzji7IhWORVZtID8/H1m+UOXCCnZ4JhAAhxv
+	IQD6dZEiOJZYWOtACwAXmAhYScsRq30KuXxNUOTrh2ufdIbjrwx5p8WMx0n7iNGUwuhsmJUrwgw+5
+	a1RPKAYOB5XYNPtLPStDBTB66QsIJwfk7NkwNtlXdr1wvTsok1EsYc5IfHHii4lc6Fp/eDpc338l3
+	MfLsTqbpPJZwC152CsdJTSjUlT0hmx4et+GZ0ZtP2RqnzOsQ+LuzLjnYvECMwqC1DJ7VOUrsdfKxK
+	O1U5ThH07HXH3eSfNJlCeBGpPINC/scTz/uPmN4SnEhS4GYiwgMuu72hUvDgKy2yYV9AfXs=;
+Received: from a1-bg02.venev.name ([213.240.239.49] helo=pmx1.venev.name)
+	by a1-bg02.venev.name with esmtps
+	id 1tIZu6-0000000103f-1si5
+	(TLS1.3:TLS_AES_256_GCM_SHA384:256)
+	(envelope-from <hristo@venev.name>);
+	Tue, 03 Dec 2024 20:53:54 +0000
+Received: from venev.name ([213.240.239.49])
+	by pmx1.venev.name with ESMTPSA
+	id j69LKeBvT2fXowMAT9YxdQ
+	(envelope-from <hristo@venev.name>); Tue, 03 Dec 2024 20:53:54 +0000
+From: Hristo Venev <hristo@venev.name>
+To: linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Hristo Venev <hristo@venev.name>
+Subject: [PATCH] initramfs: Protect the built-in initramfs from the external one
+Date: Tue,  3 Dec 2024 22:52:48 +0200
+Message-ID: <20241203205318.238364-1-hristo@venev.name>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,59 +69,147 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add the possibility to claim an interrupt and init the state structure
-with interrupt number and interrupt line to use. The adxl345 can use
-two different interrupt lines, mainly to signal FIFO watermark events,
-single or double tap, activity, etc. Hence, having the interrupt line
-available is crucial to implement such features.
+In a typical Secure Boot setup the kernel image is signed, but the
+initramfs provided by the bootloader is not. This reduces the usefulness
+of Secure Boot because an attacker can overwrite the initramfs without
+detection.
 
-Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
+With this change, when a built-in initramfs is used, the kernel can be
+configured to extract the initramfs provided by the bootloader into a
+subdirectory, ensuring it cannot overwrite the built-in one.
+
+Userspace can implement a verification scheme. One simple approach is
+to embed all executables in the built-in initramfs and use the external
+one for the (signed) kernel modules necessary for the system to boot.
+
+Signed-off-by: Hristo Venev <hristo@venev.name>
 ---
- drivers/iio/accel/adxl345_core.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ init/initramfs.c | 38 +++++++++++++++++++++++++++++++++++++-
+ usr/Kconfig      | 26 ++++++++++++++++++++++++++
+ 2 files changed, 63 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/iio/accel/adxl345_core.c b/drivers/iio/accel/adxl345_core.c
-index 0bb2c653e13..dc91b2dcd62 100644
---- a/drivers/iio/accel/adxl345_core.c
-+++ b/drivers/iio/accel/adxl345_core.c
-@@ -11,6 +11,7 @@
- #include <linux/property.h>
- #include <linux/regmap.h>
- #include <linux/units.h>
-+#include <linux/interrupt.h>
+diff --git a/init/initramfs.c b/init/initramfs.c
+index b2f7583bb1f5c..97eec8a6db07b 100644
+--- a/init/initramfs.c
++++ b/init/initramfs.c
+@@ -5,6 +5,7 @@
+ #include <linux/slab.h>
+ #include <linux/types.h>
+ #include <linux/fcntl.h>
++#include <linux/fs_struct.h>
+ #include <linux/delay.h>
+ #include <linux/string.h>
+ #include <linux/dirent.h>
+@@ -355,6 +356,7 @@ static int __init maybe_link(void)
  
- #include <linux/iio/iio.h>
- #include <linux/iio/sysfs.h>
-@@ -18,8 +19,10 @@
- #include "adxl345.h"
+ static __initdata struct file *wfile;
+ static __initdata loff_t wfile_pos;
++static bool skip_special __initdata;
  
- struct adxl345_state {
-+	int irq;
- 	const struct adxl345_chip_info *info;
- 	struct regmap *regmap;
-+	u8 intio;
- };
+ static int __init do_name(void)
+ {
+@@ -399,7 +401,7 @@ static int __init do_name(void)
+ 		dir_add(collected, mtime);
+ 	} else if (S_ISBLK(mode) || S_ISCHR(mode) ||
+ 		   S_ISFIFO(mode) || S_ISSOCK(mode)) {
+-		if (maybe_link() == 0) {
++		if (!skip_special && maybe_link() == 0) {
+ 			init_mknod(collected, mode, rdev);
+ 			init_chown(collected, uid, gid, 0);
+ 			init_chmod(collected, mode);
+@@ -705,6 +707,11 @@ static void __init populate_initrd_image(char *err)
  
- #define ADXL345_CHANNEL(index, axis) {					\
-@@ -212,6 +215,17 @@ int adxl345_core_probe(struct device *dev, struct regmap *regmap,
- 
- 	st = iio_priv(indio_dev);
- 	st->regmap = regmap;
+ static void __init do_populate_rootfs(void *unused, async_cookie_t cookie)
+ {
++#ifdef CONFIG_INITRAMFS_EXTERNAL_IS_SUBDIR
++	int r;
++	struct path orig_root, sub_root;
++#endif
 +
-+	st->intio = -1;
-+	st->irq = fwnode_irq_get_byname(dev_fwnode(dev), "INT1");
-+	if (st->irq > 0)
-+		st->intio = ADXL345_INT1;
-+	else {
-+		st->irq = fwnode_irq_get_byname(dev_fwnode(dev), "INT2");
-+		if (st->irq > 0)
-+			st->intio = ADXL345_INT2;
-+	}
+ 	/* Load the built in initramfs */
+ 	char *err = unpack_to_rootfs(__initramfs_start, __initramfs_size);
+ 	if (err)
+@@ -718,6 +725,28 @@ static void __init do_populate_rootfs(void *unused, async_cookie_t cookie)
+ 	else
+ 		printk(KERN_INFO "Unpacking initramfs...\n");
+ 
++#ifdef CONFIG_INITRAMFS_EXTERNAL_IS_SUBDIR
++	/*
++	 * Switch the root so that the external initramfs is extracted there.
++	 * Use chroot so that paths under absolute symlinks resolve properly.
++	 */
++	get_fs_root(current->fs, &orig_root);
 +
- 	st->info = device_get_match_data(dev);
- 	if (!st->info)
- 		return -ENODEV;
++	/*
++	 * Don't allow the creation of device nodes. Otherwise duplicate entries
++	 * may result in writes to devices.
++	 */
++	skip_special = true;
++
++	r = init_chdir(CONFIG_INITRAMFS_EXTERNAL_PATH);
++	if (r < 0)
++		panic_show_mem("Failed to open switch to external initramfs directory (%s): %d",
++			       CONFIG_INITRAMFS_EXTERNAL_PATH, r);
++	get_fs_pwd(current->fs, &sub_root);
++	set_fs_root(current->fs, &sub_root);
++	path_put(&sub_root);
++#endif
++
+ 	err = unpack_to_rootfs((char *)initrd_start, initrd_end - initrd_start);
+ 	if (err) {
+ #ifdef CONFIG_BLK_DEV_RAM
+@@ -727,6 +756,13 @@ static void __init do_populate_rootfs(void *unused, async_cookie_t cookie)
+ #endif
+ 	}
+ 
++#ifdef CONFIG_INITRAMFS_EXTERNAL_IS_SUBDIR
++	/* Restore the original root now that the external initramfs is extracted. */
++	set_fs_root(current->fs, &orig_root);
++	set_fs_pwd(current->fs, &orig_root);
++	path_put(&orig_root);
++#endif
++
+ done:
+ 	security_initramfs_populated();
+ 
+diff --git a/usr/Kconfig b/usr/Kconfig
+index 9279a2893ab0e..b781db0603903 100644
+--- a/usr/Kconfig
++++ b/usr/Kconfig
+@@ -32,6 +32,32 @@ config INITRAMFS_FORCE
+ 	  and is useful if you cannot or don't want to change the image
+ 	  your bootloader passes to the kernel.
+ 
++config INITRAMFS_EXTERNAL_PATH
++	string "External initramfs extraction path"
++	default "/"
++	depends on INITRAMFS_SOURCE!=""
++	depends on !INITRAMFS_FORCE
++	help
++	  This option causes the kernel to extract the initramfs image(s)
++	  provided by the bootloader into a subdirectory under the root
++	  directory. The subdirectory must exist in the built-in initramfs.
++
++	  This enables the built-in initramfs to check the integrity of the
++	  external one.
++
++	  If this option is used, any special nodes (device/fifo/socket) in the
++	  external initramfs are ignored. Symlinks, including ones pointing
++	  outside the subdirectory, are allowed.
++
++	  If your built-in initramfs is not capable of dealing with this, leave
++	  this option set to "/".
++
++config INITRAMFS_EXTERNAL_IS_SUBDIR
++	bool
++	default y
++	depends on INITRAMFS_EXTERNAL_PATH!=""
++	depends on INITRAMFS_EXTERNAL_PATH!="/"
++
+ config INITRAMFS_ROOT_UID
+ 	int "User ID to map to 0 (user root)"
+ 	depends on INITRAMFS_SOURCE!=""
 -- 
-2.39.5
+2.47.1
 
 
