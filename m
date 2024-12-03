@@ -1,133 +1,252 @@
-Return-Path: <linux-kernel+bounces-428605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51D5B9E113A
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 03:25:40 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A09B29E114E
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 03:31:06 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1352428324D
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 02:25:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B107165244
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 02:31:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51BA8137C35;
-	Tue,  3 Dec 2024 02:25:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAC47165EEB;
+	Tue,  3 Dec 2024 02:30:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="b4EAqaIS"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="RRde32nS"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3798F18643
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 02:25:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68A6A10E3;
+	Tue,  3 Dec 2024 02:30:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733192731; cv=none; b=P03SxjWVcLJ6EeJfdGgu9GX3Sq4JGA8/OqhxCvBpdpZLLXzZt9N9cLSYiNf1UOZOjK7idwX9TfPcaDG2AvlfrkeWbd8LwXk/JpPozDwB8bTOUeDx1KxehBs5wqw5ZK8YHr2Z1p10hHvp38zEKUkgICDPGaadV/CPC7MCgMvIRv0=
+	t=1733193045; cv=none; b=G1W25i7/xbWAD0An+FCidiOfLR1T5DfqN6OicrvpFNguRJjScKq0QFzcj+4HB8u1cBFQpTL1DSzvYBsRjn/90fS2IUgYPCu5Qyh8tdtnjJN8kIu0/N3wFsNMPbCI+R1ZfS9sCUZTFxlgTL+oQO1i8nF1p2mTxO7h0n3hcetC09s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733192731; c=relaxed/simple;
-	bh=d6q8bGpZsfPskVwkj6L7Lml5GYk/xxetw+D0hD9cEJM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UB5yiFwG/VthNCOSxIQpcX5k0Sqck1yV2KS37jV8rsitKwg067VQO+tHqpZ0qDvnJVyzxGtJIrRWjuURBJ/NKKchgw6dFqPbdtXwanuu7pYJBUD6AlqGlPu83cYGEfeMa+tqopBNKF1OVhOawZwGq9j4LPH0DyZYjt19TubQuTc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=b4EAqaIS; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1733192728;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=d6q8bGpZsfPskVwkj6L7Lml5GYk/xxetw+D0hD9cEJM=;
-	b=b4EAqaISwa+mJLCpjirIdOJEDEr99H45OfozaT2BnlqphUszY1aQH9E/8RbSHufGQNaM2i
-	FikslVW2l2Jq4psub1JJzeJSHlE8jDI5H47GUqR2JiNSPecWDaVKxyXumrD/mHCP0Auqef
-	ES8PlEtOPo9keg81GyodeKLacych1u0=
-Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
- [209.85.216.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-548-1NbUzMBGOgCMo65wzploZg-1; Mon, 02 Dec 2024 21:25:27 -0500
-X-MC-Unique: 1NbUzMBGOgCMo65wzploZg-1
-X-Mimecast-MFC-AGG-ID: 1NbUzMBGOgCMo65wzploZg
-Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-2e95713327eso4716467a91.1
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 18:25:26 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733192726; x=1733797526;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=d6q8bGpZsfPskVwkj6L7Lml5GYk/xxetw+D0hD9cEJM=;
-        b=WTDSjERFmjVsk4REXjfaxsQ8uKzeSd85B24xSC8kcy1JekAPiQ854WctQStAQe/P99
-         SughIN7m67xfwrtl6Z0JIhE16dpMQNu/X4rWDeO+cva/eXwSmrUgdy/iCAQLed52gTYZ
-         /JgJB8g0RxsJeGakRvU+PrPs+usSJSj4rdZpBLWX0YxNZJQO6h1FKt7etmRHjl6/+y7n
-         GHyYmEiRq2ChgNjk9lpcQkzlunoQ+1DGbFbXF+h2PdZBgsqqME5k2jZtlYxW4Vt/YFXj
-         WgupACVErutoqJhIOMHbleOaVjZvUKADLXSyioy9LsUBc7vkpmldQq8Y69Kpa9hY5x58
-         fIvg==
-X-Forwarded-Encrypted: i=1; AJvYcCVDb5JNU63oQxUH1gDYUwVPs78e61qqKmD9ZW8ouchvtEjFlZOKZLLm0dSKDUT3fQIIVXltFMrPY4ohADE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxjmLyxHR2u8i/6GyTObjoSPRbASYNSiLMUdwwNdutlHsr1YLiX
-	q/OHSRiqRSG5EdrpyBAhy2XHvX2GVU/EAiaT0OyShfHDWuriSNOFpCLC8DJeuFdQpKmMhuAr6a3
-	bbror+3J5Vc/NrSanYE3gOHf4vWVVyCoZyR64HI/Y6yZzxwuhT1x2EmHfx6D2bMSLNakigcPIyt
-	kd6bkksA5wnJiG/YuPFHFKsTIi2EH33HUbA+0y
-X-Gm-Gg: ASbGncvGik1AkLT9C3FWnL9sdF/LrtHVK15p2apMiYV6j5zZ4FY27Eb6Y02l1B5zEzf
-	WD9zILqgMjCthUcDnF1M8QHwcAHjxSGQq
-X-Received: by 2002:a17:90b:3ecb:b0:2ee:b8ac:73b4 with SMTP id 98e67ed59e1d1-2ef01276888mr1136815a91.36.1733192726101;
-        Mon, 02 Dec 2024 18:25:26 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHH5qQnZ0DiMbRpH7Ik71jXULxUEUKJNASFzFHC0GxhUTgu42/8cZ6SwHvLSqsP/acaKB2ErIzMfAseQ2enXwc=
-X-Received: by 2002:a17:90b:3ecb:b0:2ee:b8ac:73b4 with SMTP id
- 98e67ed59e1d1-2ef01276888mr1136791a91.36.1733192725616; Mon, 02 Dec 2024
- 18:25:25 -0800 (PST)
+	s=arc-20240116; t=1733193045; c=relaxed/simple;
+	bh=J6kCfI3+mWerd7aq/zsBLPHGDZ8UEOfEIHFUtwzbGYI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=THvaf7nkKNs5jwVRSsgjadtwflQxKiCvIkPiPPApeum0jne3H3cWuxL4Q8ZM3tw0qWLNuwMeFbzbtQMWO8ndAofffOJ8kS5MqF2PA+mn3RNGKYWeecAI4PwP73o7eL6XrTwjhFKRq+d4ApfV/8qSq+ioTGX2JY2OQ/Q2mhRAIJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=RRde32nS; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B2JiNhx002455;
+	Tue, 3 Dec 2024 02:29:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	NIaI2elXEkKBTIlhVG0Yzqw6Bciw63poFYlLyhXrzLk=; b=RRde32nSzcRxMrSK
+	3YY48p5GhAm/mS3vg+lg0D3FxoLRUoXHl6L6mFOiaFQ0NUs64z4qP9NXbiSaNwuW
+	UPDyDFwFPQRU0EmYGW3R+htK2LnFtwBpcL9NYc0cTlJz6+KZ7RnCcKlcHFXgdSBs
+	4hOmhReGBmYd+L5FIw+NNGPXBf4XxY1kh1YFOaRQ5bgqAurrXjKPjHQqP8meWo1S
+	FxVJCDc7TPr9tPzg/n2iO1FNFr5TavnqdSHOfxEULmMuF/LuNqWO63aXcR4VMQ/m
+	y/SzLtMKr0fs+aWdYnMz7AWmptfUSpVYKhOKRFY2AAOYWY0RgRGpiI0Fn4re0YZO
+	4VrQfg==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 437ufe6ers-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 03 Dec 2024 02:29:30 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B32TTh9004144
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 3 Dec 2024 02:29:29 GMT
+Received: from [10.253.34.13] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 2 Dec 2024
+ 18:29:13 -0800
+Message-ID: <e14311a5-6461-4834-9770-e74314d11f44@quicinc.com>
+Date: Tue, 3 Dec 2024 10:29:07 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241130181744.3772632-1-koichiro.den@canonical.com>
- <CACGkMEtmH9ukthh+DGCP5cJDrR=o9ML_1tF8nfS-rFa+NrijdA@mail.gmail.com> <20241202181445.0da50076@kernel.org>
-In-Reply-To: <20241202181445.0da50076@kernel.org>
-From: Jason Wang <jasowang@redhat.com>
-Date: Tue, 3 Dec 2024 10:25:14 +0800
-Message-ID: <CACGkMEs=A3tJHf3sFFN++Fb+VL=7P9bWGCynDAVFjtOT-0bYFQ@mail.gmail.com>
-Subject: Re: [PATCH net-next] virtio_net: drop netdev_tx_reset_queue() from virtnet_enable_queue_pair()
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Koichiro Den <koichiro.den@canonical.com>, virtualization@lists.linux.dev, 
-	mst@redhat.com, xuanzhuo@linux.alibaba.com, eperezma@redhat.com, 
-	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com, 
-	pabeni@redhat.com, jiri@resnulli.us, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 00/32] driver core: Constify API device_find_child()
+ and adapt for various existing usages
+To: Zijun Hu <zijun_hu@icloud.com>,
+        Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+        Philipp Zabel
+	<p.zabel@pengutronix.de>,
+        David Airlie <airlied@gmail.com>, Simona Vetter
+	<simona@ffwll.ch>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+        Jean
+ Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
+        Martin Tuma
+	<martin.tuma@digiteqautomotive.com>,
+        Mauro Carvalho Chehab
+	<mchehab@kernel.org>,
+        Andreas Noever <andreas.noever@gmail.com>,
+        Michael
+ Jamet <michael.jamet@intel.com>,
+        Mika Westerberg
+	<mika.westerberg@linux.intel.com>,
+        Yehezkel Bernat <YehezkelShB@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski
+	<brgl@bgdev.pl>, Andrew Lunn <andrew@lunn.ch>,
+        Vladimir Oltean
+	<olteanv@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet
+	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni
+	<pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
+        =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+        Dan Williams
+	<dan.j.williams@intel.com>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Dave
+ Jiang <dave.jiang@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+        Takashi
+ Sakamoto <o-takashi@sakamocchi.jp>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Heikki
+ Krogerus <heikki.krogerus@linux.intel.com>,
+        Srinivas Kandagatla
+	<srinivas.kandagatla@linaro.org>,
+        Lee Duncan <lduncan@suse.com>, Chris Leech
+	<cleech@redhat.com>,
+        Mike Christie <michael.christie@oracle.com>,
+        "James E.J.
+ Bottomley" <James.Bottomley@HansenPartnership.com>,
+        "Martin K. Petersen"
+	<martin.petersen@oracle.com>,
+        Nilesh Javali <njavali@marvell.com>,
+        Manish
+ Rangankar <mrangankar@marvell.com>,
+        <GR-QLogic-Storage-Upstream@marvell.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Jonathan Cameron
+	<jonathan.cameron@huawei.com>,
+        Alison Schofield <alison.schofield@intel.com>,
+        Andreas Larsson <andreas@gaisler.com>,
+        Stuart Yoder <stuyoder@gmail.com>,
+        Laurentiu Tudor <laurentiu.tudor@nxp.com>,
+        Jens Axboe <axboe@kernel.dk>, Sudeep Holla <sudeep.holla@arm.com>,
+        Cristian Marussi
+	<cristian.marussi@arm.com>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+CC: <linux-kernel@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-hwmon@vger.kernel.org>,
+        <linux-media@vger.kernel.org>, <linux-usb@vger.kernel.org>,
+        <linux-gpio@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-pwm@vger.kernel.org>, <nvdimm@lists.linux.dev>,
+        <linux1394-devel@lists.sourceforge.net>,
+        <linux-serial@vger.kernel.org>, <linux-sound@vger.kernel.org>,
+        <open-iscsi@googlegroups.com>, <linux-scsi@vger.kernel.org>,
+        <linux-cxl@vger.kernel.org>, <sparclinux@vger.kernel.org>,
+        <linux-block@vger.kernel.org>, <arm-scmi@vger.kernel.org>,
+        <linux-efi@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>
+References: <20241203-const_dfc_done-v2-0-7436a98c497f@quicinc.com>
+Content-Language: en-US
+From: quic_zijuhu <quic_zijuhu@quicinc.com>
+In-Reply-To: <20241203-const_dfc_done-v2-0-7436a98c497f@quicinc.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: lKi-wmQMsP51n4Wn2N7vwhZDjLiVDpwn
+X-Proofpoint-GUID: lKi-wmQMsP51n4Wn2N7vwhZDjLiVDpwn
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
+ spamscore=0 impostorscore=0 lowpriorityscore=0 priorityscore=1501
+ mlxlogscore=999 clxscore=1011 adultscore=0 bulkscore=0 mlxscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412030019
 
-On Tue, Dec 3, 2024 at 10:14=E2=80=AFAM Jakub Kicinski <kuba@kernel.org> wr=
-ote:
->
-> On Mon, 2 Dec 2024 12:22:53 +0800 Jason Wang wrote:
-> > > Fixes: c8bd1f7f3e61 ("virtio_net: add support for Byte Queue Limits")
-> > > Cc: <stable@vger.kernel.org> # v6.11+
-> > > Signed-off-by: Koichiro Den <koichiro.den@canonical.com>
-> >
-> > Acked-by: Jason Wang <jasowang@redhat.com>
->
-> I see Tx skb flush in:
->
-> virtnet_freeze() -> remove_vq_common() -> free_unused_bufs() -> virtnet_s=
-q_free_unused_buf()
->
-> do we need to reset the BQL state in that case?
+On 12/3/2024 8:33 AM, Zijun Hu wrote:
+> This patch series is to constify the following API:
+> struct device *device_find_child(struct device *dev, void *data,
+> 		int (*match)(struct device *dev, void *data));
+> To :
+> struct device *device_find_child(struct device *dev, const void *data,
+> 				 device_match_t match);
+> typedef int (*device_match_t)(struct device *dev, const void *data);
+> 
+> Why to constify the API?
+> 
+> - Protect caller's match data @*data which is for comparison and lookup
+>   and the API does not actually need to modify @*data.
+> 
+> - Make the API's parameters (@match)() and @data have the same type as
+>   all of other device finding APIs (bus|class|driver)_find_device().
+> 
+> - All kinds of existing device matching functions can be directly taken
+>   as the API's argument, they were exported by driver core.
+> 
+> How to constify the API?
+> 
+> - Now, no (@match)() argument of the API usages is modifying its match
+>   data @*data after previous cleanup, so it is easy and safe to make its
+>   parameter @data take const void * as type.
+> 
+> - Simplify involved codes further if it is possbile with benefits
+>   brought by constifying the API.
+> 
+> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
+> ---
+> Changes in v2:
+> - Series v1 have no code review comments and are posted a long time ago, so may ignore differences.
+> - Link to v1: https://lore.kernel.org/r/20240811-const_dfc_done-
+> v1-0-9d85e3f943cb@quicinc.com
+> - Motivation link: https://lore.kernel.org/lkml/917359cc-a421-41dd-93f4-d28937fe2325@icloud.com
+> 
+> ---
+> Zijun Hu (32):
+>       driver core: Constify API device_find_child()
+>       driver core: Introduce device_match_type() to match device with a device type
+>       drm/mediatek: Adapt for constified device_find_child()
+>       hwmon: Adapt for constified device_find_child()
+>       media: pci: mgb4: Adapt for constified device_find_child()
+>       thunderbolt: Adapt for constified device_find_child()
+>       gpio: sim: Remove gpio_sim_dev_match_fwnode()
+>       net: dsa: Adapt for constified device_find_child()
+>       pwm: Adapt for constified device_find_child()
+>       nvdimm: Adapt for constified device_find_child()
+>       libnvdimm: Simplify nd_namespace_store() implementation
+>       firewire: core: Adapt for constified device_find_child()
+>       serial: core: Adapt for constified device_find_child()
+>       usb: typec: class: Remove both cable_match() and partner_match()
+>       usb: typec: class: Adapt for constified device_find_child()
+>       slimbus: core: Simplify of_find_slim_device() implementation
+>       slimbus: core: Constify slim_eaddr_equal()
+>       slimbus: core: Adapt for constified device_find_child()
+>       scsi: iscsi: Constify API iscsi_find_flashnode_sess()
+>       scsi: qla4xxx: Adapt for constified iscsi_find_flashnode_sess()
+>       scsi: iscsi: Adapt for constified device_find_child()
+>       cxl/region: Adapt for constified device_find_child()
+>       cxl/pmem: Remove match_nvdimm_bridge()
+>       cxl/core/pci: Adapt for constified device_find_child()
+>       cxl/test: Adapt for constified device_find_child()
+>       sparc: vio: Adapt for constified device_find_child()
+>       bus: fsl-mc: Adapt for constified device_find_child()
+>       block: sunvdc: Adapt for constified device_find_child()
+>       firmware: arm_scmi: Adapt for constified device_find_child()
+>       efi: dev-path-parser: Adapt for constified device_find_child()
+>       rpmsg: core: Adapt for constified device_find_child()
+>       driver core: Simplify API device_find_child_by_name() implementation
 
-Yes, I think so. And I spot another path which is:
+sorry for that only part of this series [0/32, 11/32] were sent out due
+to mail account capability limitation.
 
-virtnet_tx_resize() -> virtqueue_resize() -> virtnet_sq_free_unused_buf().
+will solve the limitation and send out whole patch series as v3.
 
-> Rule of thumb is netdev_tx_reset_queue() should follow any flush
-> (IOW skb freeing not followed by netdev_tx_completed_queue()).
->
-
-Right.
-
-Koichiro, I think this fixes the problem of open/stop but may break
-freeze/restore(). Let's fix that.
-
-For resizing, it's a path that has been buggy since the introduction of BQL=
-.
-
-Thanks
+thanks (^^)
 
 
