@@ -1,126 +1,132 @@
-Return-Path: <linux-kernel+bounces-429185-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FF2F9E1844
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:50:09 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 615209E18D5
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 11:07:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2DA92837B3
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:50:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3E3D4B475A9
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:50:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 803D21E0DE0;
-	Tue,  3 Dec 2024 09:48:52 +0000 (UTC)
-Received: from mail-ua1-f54.google.com (mail-ua1-f54.google.com [209.85.222.54])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A59811E1034;
+	Tue,  3 Dec 2024 09:49:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Os4/fbpq"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C298A1E009A;
-	Tue,  3 Dec 2024 09:48:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42BA31E0DB2
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 09:49:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733219332; cv=none; b=ZgD5w3+RIvnMO1dXH2PPUQNKex+2QBzd3kBqmbxI37qDdqfnsC6Yjch0DgSRHOWC4vdpuYJCFGD+YjGA5guVartk5qGfe2yzQSPKd/cc3yGBXHs8Kby9QGWz3ck3a5Ziy9MNZV4pULCPlbbemicSwHu/8LJZMf8TxTrE5xBBNXY=
+	t=1733219348; cv=none; b=OYBB4yrktpvByfr5BWNn5Hi7RrfWvc9VyX33+NZ7vcCI6pg/ngkb0Zntwwe2X6VA6F38VWcITi6Ajwa7fTFlcDlxwR7aEcaCLKIW+tnt4+nBtvEYADIikUoe4lU/JbGcswwi4HHxRPuGNlUFIU4lvAIJy2Ba2IsSGSMYsUYAtI8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733219332; c=relaxed/simple;
-	bh=PG9196wRXMmgtxOoHLyiAMvB2Lsd0RXo8mYB2x7rhd4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Cva1dQpC0V5r5K3ZkEJnt4cT3KADXo+1wPoBXPDMiPNWbe9Nbp8o4eryT+aVnWdCKEViEqPne3jRB8XObRaXg/xzOOOG+rp0Cf53OTNJTqbV75sncCowWCckT6a14q1h+h9Pydtsj/+D4vL2vykVUjlGWtYrtV49tBmm/j4dAHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f54.google.com with SMTP id a1e0cc1a2514c-84ff43e87cbso1442035241.1;
-        Tue, 03 Dec 2024 01:48:49 -0800 (PST)
+	s=arc-20240116; t=1733219348; c=relaxed/simple;
+	bh=66C7X0y5JSIvmxFiooKiDwrInLALIuU1cghHxsv7Mrw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QnTTbspctY444UMPSPTbc/cZnAn06l/NVyH3jtAbfYIWNy9T/T0xyCom3wamtI5J9Z99mA6ruy5ghFSbgOrWzjUL5Rg0oUfJ1gExfnIPIpxX6OLYcowJDHoODNI12bMXapGUIWsVBbWKm03La1jXNEUp9oE/Qkpf547o4LEn9Pw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Os4/fbpq; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-434a8b94fb5so31384175e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 01:49:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733219344; x=1733824144; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=k5m6hg1T/8NDguGzINl2AjokycuEBlMQVbW4nuTy6h4=;
+        b=Os4/fbpq6FR4D2jx0XLq3ouYACEKaboZsV3uXhNT/xJhqFPFoyLunsdtORGF58ChM8
+         MaJn26loszUFyLfcPYRkAIba5cWHzYOOPc9xWOVvSGpB64fr9Hmhcr3FjyVKFw91hL14
+         hYvmmddyHfYzHLNWckwX8WS+WGINd1/4wEm55inotYVykwIFSIzHXhAwpvdY1WcV7P9Y
+         Z6uqGPV4S3lBBFGAJ5ys3fhvq0ij6cpV4/FP3P3PaE4+Tq2BJXnJ5a5Vb5m8ujCyt+24
+         FAfmipDS+n/qxQXyzd2/Pbu/T+AB6VIlCOSbavxepgTlStwtF77macYegLPA80Pr3QrG
+         xWXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733219328; x=1733824128;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XU54JmccrCF1VbYyZLPWkaVUjumLO6idy1nMQ0BP5Ug=;
-        b=hFKq4+nsQWYMutKnwa8lOoLncuGZ00LOpS0D0MxdfQCIQav38wHUL0ww1vWbho17Ij
-         SU92NYwWPwh6+CaTgMC70vlPLW3qmQzNZpXyH72gyBy8wM/OV1kjsCgHtNcUvPLYhtCz
-         DZdOMg3RLUDOOkvQ0LMITNrirvQeNmF8x4/v9GJaR9bzf4NUBUPDrzN8B4t9jYX/v6wE
-         XM/6pjTAUj68kEzmE7fd0i8NMDBndTHFMPStKb9r5RyKJP8OcN117sVrS55Bvq+YeQNr
-         ZbL+GAXq5TlxYXuaz5hnESx95tVxsBaw9xW+LFEw9cjeIKWDEaWBjzkGGEQDmAIhVcE5
-         DJGg==
-X-Forwarded-Encrypted: i=1; AJvYcCUH81FsMpddkKxyl3oLGj7lqmMceIGKN65bmf+zrou/aa9putGCUbl1ds1zdQfQk5iwo70U7lgy@vger.kernel.org, AJvYcCVyWYer9umZ0nFZh5LafYZaNFJ0N/++AKABkjWud3UQ8sGbTJDYWMSYYUCBR2IFWcdwl0oJEZ6pdXzAcsg=@vger.kernel.org, AJvYcCXrt3ef1q2HKf9WbmWMI/1jeWGUQN/t3g/JlFZ+an+1SxSy9fuBU/WU4ujxN/jVxtMS4b+RkrtYMctrQA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyI2GZIWkPHYBU49rl7KVJiMQdpf0QqQbwdKGvhBzbFwPjj3jL+
-	csoPHRVlKg1g65rw8XQ6rT0s+CXdIA2bQ7KjhwC5ebPeQ4f64bRDALCxWZj3
-X-Gm-Gg: ASbGnctjqUbtXlf33zHA92A9ddpwRYPmanW6NvlS18K1Oxr3Em7RNBZ/4+dHPPILK1K
-	XnmymhtWTOBIWa3qtq5Ru2/Ec54/QHIfjvWPSppoFNXnUeQJBO5JjYA9oUvY49DskMz3Yule23e
-	CFNCaZ2Um32q1EnUe2d6WYDQ2D8jE8GU6A25o3CGeO8Vhu5xBCVZjWCi9j7baC0lizPx8GeEKCn
-	P3Wf/u85Br2NK9oK3e5JZ7kIsiMQjG0i98gV4pO6jYln3PcZyrcSHWC+WJSqpD1xrIci4NgqACz
-	LcchWG0ffEIH
-X-Google-Smtp-Source: AGHT+IHvmzyfEPWhzDVbWCH8r2vx0TL6SDD8bl87hsG4+AWHbmIqT+V0B16srjvm0DDkOjdUP8DDSQ==
-X-Received: by 2002:a05:6102:5486:b0:4af:5d9f:f8b with SMTP id ada2fe7eead31-4af97375e45mr2463156137.20.1733219328190;
-        Tue, 03 Dec 2024 01:48:48 -0800 (PST)
-Received: from mail-vs1-f51.google.com (mail-vs1-f51.google.com. [209.85.217.51])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4af592352b8sm2066031137.27.2024.12.03.01.48.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Dec 2024 01:48:47 -0800 (PST)
-Received: by mail-vs1-f51.google.com with SMTP id ada2fe7eead31-4af3719294eso1437867137.0;
-        Tue, 03 Dec 2024 01:48:47 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUCbHf/iqxOqsEvouGi0NgEGTUrNLY3nqVSxXNfcdYsLENyCDgED0xbXqn2fe2ghThecCvunMkSwtKgaw==@vger.kernel.org, AJvYcCUqiTDRU/dl00SDbfYQpMXsBVHBFuJOTDrfagA7fq0j1YpOxQa07Z2l0XFRcGbppOZIUXrlg3HP@vger.kernel.org, AJvYcCVxcZYyJkCNdxe4Uw2gnPR1nufBWrJvHCR7WsXg6tKQ+Uq6B0g5rgD8A81twBoZ0xoc24tR+bIdFwpeNxM=@vger.kernel.org
-X-Received: by 2002:a05:6102:3054:b0:4a4:8d45:6839 with SMTP id
- ada2fe7eead31-4af97268516mr2634403137.13.1733219327668; Tue, 03 Dec 2024
- 01:48:47 -0800 (PST)
+        d=1e100.net; s=20230601; t=1733219344; x=1733824144;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=k5m6hg1T/8NDguGzINl2AjokycuEBlMQVbW4nuTy6h4=;
+        b=ppK5Laa+L5xxkOr+Muvp79S5kBgZKVwOGdXkD4xM3v2ghy/cskKI4VMCHPfjnBFPHl
+         XA6Dx+FZm0w0xgh+Hu9riE2PGwaOjxs1qVlyw7l6Urbm/kseiEiKYAvCeO9+G6ke4M9T
+         qf3ysvKBHoByGmcmIgS75Aog8L2v31TRT0FGY85d9pyot9gMJpQdAhmg3Wh+mNuzYWgd
+         L0hDFCEcQt1CLmxwHVETtRDrAKfDN2UmVxph7c8SvRTgi/uF7BTsgcRCDvDXMia4LkRW
+         pZL37vmaKISVb/VjJ1BHc82evHuBwGP/96jZY35x4dYFoOwcbIsqhtSnJkaj9ueYHqyu
+         6/bw==
+X-Forwarded-Encrypted: i=1; AJvYcCVN9JPie5YNKvAVsVASd7dRKHlhzJL8KIxmTKGVOnQwr+n9/kKBKDOXyn2vo006YBohwohFQw2kyLJMIcU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxYUyltUGMHeCr0PvzwnO4ZkzvCiJGc6FfdBA3BNspeOVhU6oJY
+	ncoiixUKKAqDoUi2oVplIrUvh3H1uwDl0yWzxLOR7F3p4PEHwlsWm6SR7GCUpFw=
+X-Gm-Gg: ASbGncvSGhbbFqcFjbsLAuEWU0/apVTbgR515xbnSeQWPCspnO1TFjjbS9NDObOYAs5
+	f5M4xgf7v4TrQ3jw8XhNT9dgjawqbJ56ZGUNfiBP60wCTWhF1TT/pKFNQ+qjETgm3J9UeOdnmwa
+	pXeLHKj/Jg1KZoETPqo8AgBdAjeXxqZY74cBQwusCHCnZrgBQcNqfx0X56Ymt6t5sRZRqno88Lh
+	2YkAyI1TmGkVi1+hmUbzwhJNgZGPf7zPiYe6FlKIByUlEsulCV88/E=
+X-Google-Smtp-Source: AGHT+IGiq5MfIfBd9OA4L42VqbX8iZSuCB9pKeFGXwzXoQE5bTKyZlB+OEQ8WGkhd7IzIABfKHMT6w==
+X-Received: by 2002:a05:600c:198e:b0:434:9cf6:a2a5 with SMTP id 5b1f17b1804b1-434afb9ecc7mr189287195e9.8.1733219344634;
+        Tue, 03 Dec 2024 01:49:04 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434d04e7380sm15910995e9.0.2024.12.03.01.49.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Dec 2024 01:49:04 -0800 (PST)
+Date: Tue, 3 Dec 2024 12:49:00 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Yevgeny Kliteynik <kliteyn@nvidia.com>
+Cc: Mateusz Polchlopek <mateusz.polchlopek@intel.com>,
+	Saeed Mahameed <saeedm@nvidia.com>,
+	Leon Romanovsky <leon@kernel.org>, Tariq Toukan <tariqt@nvidia.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Muhammad Sammar <muhammads@nvidia.com>, netdev@vger.kernel.org,
+	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH net] net/mlx5: DR, prevent potential error pointer
+ dereference
+Message-ID: <46a97b8a-042c-4903-817f-efe3be5afabc@stanley.mountain>
+References: <aadb7736-c497-43db-a93a-4461d1426de4@stanley.mountain>
+ <ad93dd90-671b-4c0e-8a96-9dab239a5d07@intel.com>
+ <bf47a26a-ec69-433b-9cf9-667f9bccbec1@stanley.mountain>
+ <4183c48a-3c78-47e2-a7b2-11d387b6f833@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241130145349.899477-2-u.kleine-koenig@baylibre.com> <173318582905.3964978.17617943251785066504.git-patchwork-notify@kernel.org>
-In-Reply-To: <173318582905.3964978.17617943251785066504.git-patchwork-notify@kernel.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 3 Dec 2024 10:48:36 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdV3J=o2x9G=1t_y97iv9eLsPfiej108vU6JHnn=AR-Nvw@mail.gmail.com>
-Message-ID: <CAMuHMdV3J=o2x9G=1t_y97iv9eLsPfiej108vU6JHnn=AR-Nvw@mail.gmail.com>
-Subject: Re: [PATCH] ptp: Switch back to struct platform_driver::remove()
-To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
-	Jakub Kicinski <kuba@kernel.org>
-Cc: richardcochran@gmail.com, yangbo.lu@nxp.com, dwmw2@infradead.org, 
-	Linus Torvalds <torvalds@linux-foundation.org>, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Linux-Next <linux-next@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4183c48a-3c78-47e2-a7b2-11d387b6f833@nvidia.com>
 
-On Tue, Dec 3, 2024 at 1:30=E2=80=AFAM <patchwork-bot+netdevbpf@kernel.org>=
- wrote:
-> This patch was applied to netdev/net-next.git (main)
-> by Jakub Kicinski <kuba@kernel.org>:
->
-> On Sat, 30 Nov 2024 15:53:49 +0100 you wrote:
-> > After commit 0edb555a65d1 ("platform: Make platform_driver::remove()
-> > return void") .remove() is (again) the right callback to implement for
-> > platform drivers.
-> >
-> > Convert all platform drivers below drivers/ptp to use .remove(), with
-> > the eventual goal to drop struct platform_driver::remove_new(). As
-> > .remove() and .remove_new() have the same prototypes, conversion is don=
-e
-> > by just changing the structure member name in the driver initializer.
-> >
-> > [...]
->
-> Here is the summary with links:
->   - ptp: Switch back to struct platform_driver::remove()
->     https://git.kernel.org/netdev/net-next/c/b32913a5609a
+On Tue, Dec 03, 2024 at 11:44:12AM +0200, Yevgeny Kliteynik wrote:
+> On 03-Dec-24 11:39, Dan Carpenter wrote:
+> > On Tue, Dec 03, 2024 at 10:32:13AM +0100, Mateusz Polchlopek wrote:
+> > > 
+> > > 
+> > > On 11/30/2024 11:01 AM, Dan Carpenter wrote:
+> > > > The dr_domain_add_vport_cap() function genereally returns NULL on error
+> > > 
+> > > Typo. Should be "generally"
+> > > 
+> > 
+> > Sure.
+> > 
+> > > > but sometimes we want it to return ERR_PTR(-EBUSY) so the caller can
+> > > > retry.  The problem here is that "ret" can be either -EBUSY or -ENOMEM
+> > > 
+> > > Please remove unnecessary space.
+> > > 
+> > 
+> > What are you talking about?
+> 
+> Oh, I see it :)
+> Double space between "retry." and "The"
 
-Note that this now conflicts with commit e70140ba0d2b1a30 ("Get rid of
-'remove_new' relic from platform driver struct") upstream.
-Resolution: just take the version from upstream.
+I'm old.  I'm still using fixed width fonts in my editor so I still use
+the old school rules.
 
-Gr{oetje,eeting}s,
+regards,
+dan carpenter
 
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
 
