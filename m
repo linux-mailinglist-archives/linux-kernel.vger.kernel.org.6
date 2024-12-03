@@ -1,345 +1,103 @@
-Return-Path: <linux-kernel+bounces-428778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C511F9E1350
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 07:26:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6270C9E1351
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 07:27:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0B831648CC
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 06:26:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 334B21647B1
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 06:27:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CA5E1865EA;
-	Tue,  3 Dec 2024 06:26:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D983186287;
+	Tue,  3 Dec 2024 06:27:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yoseli.org header.i=@yoseli.org header.b="PJNGtvPB"
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="bAcQGKU7"
+Received: from out30-119.freemail.mail.aliyun.com (out30-119.freemail.mail.aliyun.com [115.124.30.119])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CEF916FF4E;
-	Tue,  3 Dec 2024 06:25:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15B5316FF4E;
+	Tue,  3 Dec 2024 06:27:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.119
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733207162; cv=none; b=tidx1JrLnkMD4EaW3gFPW/6W65H5v+mAq+9yNx7bnn9fyQn71suNA4YNeC3vXSk3O//ndx+CQQ8FyjsIna0OVoFlTixZR7ekBfcwM3sTsHmxkFOgKnS1j1Fuvub09PVfAVGZojiVbDD0Sx1SFLTfmR2Ss9OFD9r7ZSPuF3ybHsg=
+	t=1733207248; cv=none; b=NasbJCoicCj3oTu9rA2vIAjVs7CRUGCQDx3shRH732hSMQRNEURhm8/zcDJlCFR3jJlJdlKvbM5K0UHrr0rGeqh4lrOXKC2WVV/UFvE10S80/gQaMPZTcQxsn+w4H0BJo/v3jk/YHLosVl5TR9GWc47y7g0jk8uFpvNF0mQ49Y4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733207162; c=relaxed/simple;
-	bh=U2KVR6xA4C5R+KlB8AO5eqYS6d25V7Zmakjh/dMgBeA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Y3pgUX8RKIwoT6mGqUygkZYQWeR7juKGIGrEh413RfwKPsTw1es6YnGyFnoh3aBFzDwhSSJ++j9ANTVvd/7AEsKdyAY/DUN3ZAbhdm3Hl6khjXqFKWu/Gc01Sua0agBf70Qwh6wRmvRgbT934uLURw54TsNwjcWJ1OrPC561v1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=yoseli.org; spf=none smtp.mailfrom=yoseli.org; dkim=pass (2048-bit key) header.d=yoseli.org header.i=@yoseli.org header.b=PJNGtvPB; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=yoseli.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=yoseli.org
-Received: by mail.gandi.net (Postfix) with ESMTPSA id C33C8FF804;
-	Tue,  3 Dec 2024 06:25:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yoseli.org; s=gm1;
-	t=1733207156;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lHMXGWCbJaM9d7MCisbx79aN5ojBcfA9iJMYz0MFyR4=;
-	b=PJNGtvPBQs1rmicWd/1+nH6UTVqjuLZmkDwtpWg8I7TqGSifSbmXjNzPrv124CJTcdNuu9
-	EWtvniRX/qJcZl5Nr78e93mY517CQqRcRKARzszD52vWcwDf0GS2pzxUrs3yYf6rFhbd2L
-	3RzXYxP0bpqWRQqwwz8KWD49xG1fYoXbZHa1ewX6+VprzdXW33zaJUkDkPGKUe3mZSzpvI
-	juxc9S5K6VtTWACsSLxJx518hDEWmPxfv4l+Pz+aUqHlvi7dL2icJSvjZwBr9a7ua8E45h
-	fuLsOh7cQGMXSihZCxKO0/U+Gw18M2O5oBpnOAyBEs5LtVkjAuBPFZEa0o8C2w==
-Message-ID: <70ee3b94-1589-4d41-b68f-1ef16b4f13c4@yoseli.org>
-Date: Tue, 3 Dec 2024 07:25:55 +0100
+	s=arc-20240116; t=1733207248; c=relaxed/simple;
+	bh=a9o65h18zwdd49iZoTOnB/KaodhdIVoxC+xiHjydq7U=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=CIu3IsbSVZrNoCAgWtNPRTdShihwMCnjTo3USzGTFjdm8ithwii8Tu2bKeZ+BNz+c0RFAcqQLGELXiO9TveFWzYpiNOKHn6xxmy6CIE6+dx1pRPaMbo5GSqkXXCZ6yLdWYHRf/rJDV8ywbb9B2MvsGCYWx73PfqUBvERBFa7YI0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=bAcQGKU7; arc=none smtp.client-ip=115.124.30.119
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1733207237; h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
+	bh=lISfcjir4MGvhIlCz/kcscLyI0NrAxVbpsFJtfFwggM=;
+	b=bAcQGKU7qS2RDKu8ii4+BPIMZKAb/xIOlE6q6e56HROci82bSHK+dW7Dw5yrRIPPI9Uk2ZiXblM51+cB+2f1PrWePKk3ltC0W3oVp3ZXUoETP6FhCx5xM7n7K50/7xiNPlrj8Wjsomn88kvz1Y9qmJnB3ZcMTYFFGq5t9G5l7oU=
+Received: from DESKTOP-5N7EMDA(mailfrom:ying.huang@linux.alibaba.com fp:SMTPD_---0WKlgUAx_1733207212 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Tue, 03 Dec 2024 14:27:15 +0800
+From: "Huang, Ying" <ying.huang@linux.alibaba.com>
+To: Raghavendra K T <raghavendra.kt@amd.com>
+Cc: <linux-kernel@vger.kernel.org>,  <linux-cxl@vger.kernel.org>,
+  <bharata@amd.com>,  Andrew Morton <akpm@linux-foundation.org>,  "Dan
+ Williams" <dan.j.williams@intel.com>,  David Hildenbrand
+ <david@redhat.com>,  Davidlohr Bueso <dave@stgolabs.net>,  Jonathan
+ Cameron <jonathan.cameron@huawei.com>,  Dave Jiang <dave.jiang@intel.com>,
+  "Alison Schofield" <alison.schofield@intel.com>,  Vishal Verma
+ <vishal.l.verma@intel.com>,  Ira Weiny <ira.weiny@intel.com>,  Alistair
+ Popple <apopple@nvidia.com>,  Andy Shevchenko
+ <andriy.shevchenko@linux.intel.com>,  Bjorn Helgaas <bhelgaas@google.com>,
+  Baoquan He <bhe@redhat.com>,  <ilpo.jarvinen@linux.intel.com>,  Mika
+ Westerberg <mika.westerberg@linux.intel.com>,  Fontenot Nathan
+ <Nathan.Fontenot@amd.com>,  Wei Huang <wei.huang2@amd.com>
+Subject: Re: [RFC PATCH] resource: Fix CXL node not populated issue
+In-Reply-To: <20241202111941.2636613-1-raghavendra.kt@amd.com> (Raghavendra
+	K. T.'s message of "Mon, 2 Dec 2024 11:19:41 +0000")
+References: <20241202111941.2636613-1-raghavendra.kt@amd.com>
+Date: Tue, 03 Dec 2024 14:26:52 +0800
+Message-ID: <87frn5wac3.fsf@DESKTOP-5N7EMDA>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 2/2] arch: m68k: Add STACKTRACE support
-To: Greg Ungerer <gerg@linux-m68k.org>, linux-m68k@lists.linux-m68k.org
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- rostedt@goodmis.org, Michael Schmitz <schmitzmic@gmail.com>,
- Geert Uytterhoeven <geert@linux-m68k.org>
-References: <20241021-add-m68k-tracing-support-v1-0-0883d704525b@yoseli.org>
- <20241021-add-m68k-tracing-support-v1-2-0883d704525b@yoseli.org>
- <501c04d7-1a7d-4000-a948-e9effb281a05@yoseli.org>
- <a2efe6f7-4bfe-468b-9512-c60f646281b1@linux-m68k.org>
- <7fef0321-5a24-4d8d-9717-8fe02f80b8c2@yoseli.org>
- <34055476-e711-4e7e-9bc1-ba3e29ddbff1@linux-m68k.org>
-Content-Language: en-US
-From: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
-In-Reply-To: <34055476-e711-4e7e-9bc1-ba3e29ddbff1@linux-m68k.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: jeanmichel.hautbois@yoseli.org
+Content-Type: text/plain; charset=ascii
 
-Hi Greg,
+Raghavendra K T <raghavendra.kt@amd.com> writes:
 
-On 03/12/2024 00:01, Greg Ungerer wrote:
-> Hi JM,
-> 
-> On 3/12/24 00:52, Jean-Michel Hautbois wrote:
->> On 02/12/2024 15:41, Greg Ungerer wrote:
->>> On 27/11/24 21:26, Jean-Michel Hautbois wrote:
->>>> On 21/10/2024 11:44, Jean-Michel Hautbois wrote:
->>>>> In order to use tracing, implement a basic arch_stack_walk() based on
->>>>> the one in PowerPC.
->>>>> Tested on a M54418 coldfire.
->>>>
->>>> Well, I said it was tested, but it was only compile tested basically.
->>>> AFAICT now, I think it is not working as when I use wakeup_rt as a 
->>>> tracer, I don't have the stack trace:
->>>>
->>>> # wakeup_rt latency trace v1.1.5 on 6.12.0-10380-gb66f06337b66-dirty
->>>> # --------------------------------------------------------------------
->>>> # latency: 2000 us, #18/18, CPU#0 | (M:preempt VP:0, KP:0, SP:0 HP:0)
->>>> #    -----------------
->>>> #    | task: irq/100-enet-fe-118 (uid:0 nice:0 policy:1 rt_prio:50)
->>>> #    -----------------
->>>> #
->>>> #                    _------=> CPU#
->>>> #                   / _-----=> irqs-off/BH-disabled
->>>> #                  | / _----=> need-resched
->>>> #                  || / _---=> hardirq/softirq
->>>> #                  ||| / _--=> preempt-depth
->>>> #                  |||| / _-=> migrate-disable
->>>> #                  ||||| /     delay
->>>> #  cmd     pid     |||||| time  |   caller
->>>> #     \   /        ||||||  \    |    /
->>>> kworker/-11        0dnh5.    0us :       11:120:R   + [000]      22: 
->>>> 98:R irq_work/0
->>>> kworker/-11        0dnh5.    0us : <stack trace>
->>>> kworker/-11        0dnh5.    0us : 0
->>>> kworker/-11        0d..3.    0us : __schedule
->>>> kworker/-11        0d..3.    0us :       11:120:R ==> [000]      22: 
->>>> 98:R irq_work/0
->>>> kworker/-11        0d..3.    0us : <stack trace>
->>>>   telnetd-229       0Dnh4.    0us :      229:120:R   + [000]     
->>>> 118: 49:R irq/100-enet-fe
->>>>   telnetd-229       0Dnh4.    0us : <stack trace>
->>>>   telnetd-229       0Dnh4.    0us : 0
->>>>   telnetd-229       0D..3.    0us : __schedule
->>>>   telnetd-229       0D..3.    0us :      229:120:R ==> [000]     
->>>> 118: 49:R irq/100-enet-fe
->>>>   telnetd-229       0D..3.    0us : <stack trace>
->>>>   telnetd-229       0dn.5.    0us :      229:120:R   + [000]     
->>>> 118: 49:R irq/100-enet-fe
->>>>   telnetd-229       0dn.5.    0us : <stack trace>
->>>>   telnetd-229       0dn.5.    0us#: 0
->>>>   telnetd-229       0d..3. 2000us : __schedule
->>>>   telnetd-229       0d..3. 2000us :      229:120:R ==> [000]     
->>>> 118: 49:R irq/100-enet-fe
->>>>   telnetd-229       0d..3. 2000us : <stack trace>
->>>>
->>>> Geert, Greg, and maybe other highly skilled m68k people, could you 
->>>> please help me with this particular function :-) ?
->>>>
->>>> Thanks !
->>>> JM
->>>>
->>>>>
->>>>> Signed-off-by: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
->>>>> ---
->>>>>   arch/m68k/Kconfig             |  5 ++++
->>>>>   arch/m68k/kernel/Makefile     |  1 +
->>>>>   arch/m68k/kernel/stacktrace.c | 70 ++++++++++++++++++++++++++++++ 
->>>>> ++ +++++++++++
->>>>>   3 files changed, 76 insertions(+)
->>>>>
->>>>> diff --git a/arch/m68k/Kconfig b/arch/m68k/Kconfig
->>>>> index 
->>>>> ab3375475721fa63418c40d4ba6ac76679ebc77d..7142f9759181a90269ae1ba9e682d331ee2ddbf6 100644
->>>>> --- a/arch/m68k/Kconfig
->>>>> +++ b/arch/m68k/Kconfig
->>>>> @@ -40,6 +40,7 @@ config M68K
->>>>>       select UACCESS_MEMCPY if !MMU
->>>>>       select ZONE_DMA
->>>>>       select TRACE_IRQFLAGS_SUPPORT
->>>>> +    select ARCH_STACKWALK
->>>>>   config CPU_BIG_ENDIAN
->>>>>       def_bool y
->>>>> @@ -107,6 +108,10 @@ config BOOTINFO_PROC
->>>>>         Say Y to export the bootinfo used to boot the kernel in a
->>>>>         "bootinfo" file in procfs.  This is useful with kexec.
->>>>> +config STACKTRACE_SUPPORT
->>>>> +    bool
->>>>> +    default y
->>>>> +
->>>>>   menu "Platform setup"
->>>>>   source "arch/m68k/Kconfig.cpu"
->>>>> diff --git a/arch/m68k/kernel/Makefile b/arch/m68k/kernel/Makefile
->>>>> index 
->>>>> f335bf3268a108a45bab079fbf0a1c8ead9beb71..4efe92af0b711b19cb1d5129f74e67a739e289b1 100644
->>>>> --- a/arch/m68k/kernel/Makefile
->>>>> +++ b/arch/m68k/kernel/Makefile
->>>>> @@ -31,3 +31,4 @@ obj-$(CONFIG_UBOOT)        += uboot.o
->>>>>   obj-$(CONFIG_EARLY_PRINTK)    += early_printk.o
->>>>> +obj-y    += stacktrace.o
->>>>> diff --git a/arch/m68k/kernel/stacktrace.c b/arch/m68k/kernel/ 
->>>>> stacktrace.c
->>>>> new file mode 100644
->>>>> index 
->>>>> 0000000000000000000000000000000000000000..06c7459373bd25b3bb3540cfe2a909259c1db3ce
->>>>> --- /dev/null
->>>>> +++ b/arch/m68k/kernel/stacktrace.c
->>>>> @@ -0,0 +1,70 @@
->>>>> +// SPDX-License-Identifier: GPL-2.0
->>>>> +
->>>>> +/*
->>>>> + * Stack trace utility functions etc.
->>>>> + *
->>>>> + * Copyright 2024 Jean-Michel Hautbois, Yoseli SAS.
->>>>> + */
->>>>> +
->>>>> +#include <asm/current.h>
->>>>> +#include <asm/ptrace.h>
->>>>> +#include <linux/sched.h>
->>>>> +#include <linux/sched/task_stack.h>
->>>>> +#include <linux/stacktrace.h>
->>>>> +
->>>>> +static inline unsigned long current_stack_frame(void)
->>>>> +{
->>>>> +    unsigned long sp;
->>>>> +
->>>>> +    asm volatile("movl %%sp, %0" : "=r"(sp));
->>>>> +    return sp;
->>>>> +}
->>>
->>> If I am understanding what this is intended to do then this is 
->>> probably not right.
->>> This will be returning the current stack pointer, which will almost 
->>> certainly not
->>> be the current stack frame pointer. This will be the top of stack at 
->>> the call site,
->>> which will be after the pushed locals and saved registers at the very 
->>> least for m68k.
->>>
->>> Does your kernel config have CONFIG_FRAME_POINTER enabled?
->>> The default for m68k is usually disabled. Without this there won't be a
->>> chain of frame pointers to follow like the code is trying to do below in
->>> arch_stack_walk().
->>
->> Sorry for my preceding mail, it *is* better:
->> # tail -10 trace
->> #                  |||| / _-=> migrate-disable
->> #                  ||||| /     delay
->> #  cmd     pid     |||||| time  |   caller
->> #     \   /        ||||||  \    |    /
->>    <idle>-0         0dnh5.   11us+:        0:120:R   + [000]     119: 
->> 49:R irq/104-enet-fe
->>    <idle>-0         0dnh5.   42us+: <stack trace>
->>    <idle>-0         0dnh5.   57us!: wake_up_process <- 
->> __handle_irq_event_percpu
->>    <idle>-0         0d..3.  282us+: __schedule <-schedule_idle
->>    <idle>-0         0d..3.  302us+:        0:120:R ==> [000]     119: 
->> 49:R irq/104-enet-fe
->>    <idle>-0         0d..3.  325us : <stack trace>
-> 
-> Oh, yeah, there is more required.
-> 
-> The current_stack_frame() function needs to change to actually return
-> with the start of the frame pointer chain. You need it to look like this:
-> 
-> 
-> static inline unsigned long current_stack_frame(void)
-> {
->          unsigned long sp;
-> 
->          asm volatile("movl %%fp, %0" : "=r"(sp));
->          return sp;
-> }
-> 
-> 
-> Note that it is returning the "%fp" register - the current frame pointer.
+> Before:
+> ~]$ numastat -m
+> ...
+>                           Node 0          Node 1           Total
+>                  --------------- --------------- ---------------
+> MemTotal               128096.18       128838.48       256934.65
+>
+> After:
+> $ numastat -m
+> .....
+>                           Node 0          Node 1          Node 2           Total
+>                  --------------- --------------- --------------- ---------------
+> MemTotal               128054.16       128880.51       129024.00       385958.67
+>
+> Current patch reverts the effect of first commit where the issue is seen.
 
-Oh, thank you for this !
-It is now really helpful !
+This doesn't root cause the issue.  Please trace the code path
+(e.g. return value of region_intersects(), in which code path) at least.
+Without these information, we cannot come up with a proper fix to your issue.
 
-# cd /sys/kernel/debug/tracing/
-# echo wakeup_rt > current_tracer
-# echo 1 > tracing_on
-#  echo 0 > tracing_max_latency
-# chrt -f 5 sleep 1
-# echo 0 > tracing_on
-# cat trace
-# tracer: wakeup_rt
-#
-# wakeup_rt latency trace v1.1.5 on 6.13.0-rc1-00093-g2b74d5f38b38-dirty
-# --------------------------------------------------------------------
-# latency: 405 us, #6/6, CPU#0 | (M:preempt VP:0, KP:0, SP:0 HP:0)
-#    -----------------
-#    | task: irq/100-enet-fe-118 (uid:0 nice:0 policy:1 rt_prio:50)
-#    -----------------
-#
-#                    _------=> CPU#
-#                   / _-----=> irqs-off/BH-disabled
-#                  | / _----=> need-resched
-#                  || / _---=> hardirq/softirq
-#                  ||| / _--=> preempt-depth
-#                  |||| / _-=> migrate-disable
-#                  ||||| /     delay
-#  cmd     pid     |||||| time  |   caller
-#     \   /        ||||||  \    |    /
-  telnetd-229       0Dnh4.   13us+:      229:120:R   + [000]     118: 
-49:R irq/100-enet-fe
-  telnetd-229       0Dnh4.   53us+: <stack trace>
-  => __trace_stack
-  => probe_wakeup
-  => try_to_wake_up
-  => wake_up_process
-  => __handle_irq_event_percpu
-  => handle_irq_event
-  => handle_level_irq
-  => generic_handle_irq
-  => do_IRQ
-  => inthandler
-  => ip_finish_output2
-  => __ip_finish_output
-  => ip_output
-  => __ip_queue_xmit
-  => ip_queue_xmit
-  => __tcp_transmit_skb
-  => tcp_write_xmit
-  => __tcp_push_pending_frames
-  => tcp_push
-  => tcp_sendmsg_locked
-  => tcp_sendmsg
-  => inet_sendmsg
-  => sock_write_iter
-  => vfs_write
-  => ksys_write
-  => sys_write
-  => system_call
-  telnetd-229       0Dnh4.   68us!: wake_up_process 
-<-__handle_irq_event_percpu
-  telnetd-229       0D..3.  348us+: __schedule <-preempt_schedule_irq
-  telnetd-229       0D..3.  368us+:      229:120:R ==> [000]     118: 
-49:R irq/100-enet-fe
-  telnetd-229       0D..3.  395us : <stack trace>
-  => __trace_stack
-  => probe_wakeup_sched_switch
-  => __schedule
-  => preempt_schedule_irq
-  => Lkernel_return
-  => ip_finish_output2
-  => __ip_finish_output
-  => ip_output
-  => __ip_queue_xmit
-  => ip_queue_xmit
-  => __tcp_transmit_skb
-  => tcp_write_xmit
-  => __tcp_push_pending_frames
-  => tcp_push
-  => tcp_sendmsg_locked
-  => tcp_sendmsg
-  => inet_sendmsg
-  => sock_write_iter
-  => vfs_write
-  => ksys_write
-  => sys_write
-  => system_call
+> git bisect had led to below commit
+> Fixes: b4afe4183ec7 ("resource: fix region_intersects() vs add_memory_driver_managed()")
 
-I will use it and see if I can have more informations but, this makes 
-ftrace working nicely now, and I will submit a real patch now !
+This breaks you case, sorry about that.  But this also fixed a real bug
+too.  So, it's not appropriate just to revert it blindly.
 
-Thanks,
-JM
+[snip]
+
+---
+Best Regards,
+Huang, Ying
 
