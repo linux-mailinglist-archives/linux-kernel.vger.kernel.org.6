@@ -1,152 +1,174 @@
-Return-Path: <linux-kernel+bounces-428811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C1499E13D8
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 08:19:22 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BEED9E13D9
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 08:19:37 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1396164503
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 07:19:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3123CB213BD
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 07:19:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A4B618A95E;
-	Tue,  3 Dec 2024 07:19:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7225E189F36;
+	Tue,  3 Dec 2024 07:19:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aLB2VWqs"
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="sTFlhZC6";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="zbdjAzaA";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="sTFlhZC6";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="zbdjAzaA"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EC002500A8;
-	Tue,  3 Dec 2024 07:19:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 291CD1885B4
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 07:19:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733210354; cv=none; b=tmwfpe1ivTxsX564Ar8BA9GNLC3OKWo6GU2Q6bldX4b3+gv6y9OI3xQONWXOuuW0UzvaOGIImHUGj4jKGJlnv9DlrKahW8moeIZ5sxL7MMC/lJGVUl/zG+wMROPqr7q9eqekNdTCOEf+g3eh6JmTf77CQz5UIxgI5ZBh6cG3nZs=
+	t=1733210365; cv=none; b=TSWsZklgbJ3Z/HkCaHE25Zo6SsgMrF6vVQXB/q78ZG5BM9zgr6D51ISvHenrTVUhKtQ5k1rJamRAzR5YBKGpcJUBOSsd4nPVBN8jO9lC1BLkypR+7YXIT+JqhbjqD2TWTReXJNsusVBA9JbDPqh7h7wa6TvbMjf1rPXb55bIMIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733210354; c=relaxed/simple;
-	bh=K1Vu1L0HLzL1ggJymF4GIWCvoKHTnpnZvrRz8i5oRc0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ld3doFV0fAYmS5jh/CSysD/Mul0OsPC0cx3y7sbhyQVr650y57P3Qi1LeojdSYXFxosIguoqc9yFG5g07tlS++tmDa59XwRwsShfF7d/RN6pLgL8bCSenXbB59Jbv2sg6UT0wOCRfi5fcOR8+CJ/zOwuE5M0RPDbpauS23yAdWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aLB2VWqs; arc=none smtp.client-ip=209.85.215.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-7ea85fa4f45so408146a12.2;
-        Mon, 02 Dec 2024 23:19:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733210352; x=1733815152; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yt0eqAzlepSF0XS40uHuceUpxcC/1vIW2KGLShCrnRY=;
-        b=aLB2VWqspA8VDWAkrh5g3lfE2fpN0xOnEDKVUHXbaitV3cpBqh0o8gte06KDdf2WwY
-         cV4690ZqOeayL5XahrJ/T46aQGca1P8IC3+QVzsaS0eU3pA1NddTZ0jDCJEsyWM82xcv
-         qqeca2GNHkMKOKAAywXD0z6QzvH6SbIyIbs/GIhrV+Ue6G7e3RNT0gz08yq2cQgXGibn
-         9t84iHmoelZFXbDYy+EHWWtvCu4bbIIae7PEVZvtIaYhNfxy+UNtN0r4YCCpp9ZvxuMA
-         DLbgaNSEAOlXzHCcDLAooC4pQMFXCNAXtN2XnVekkxDyr3im5OQlD+f8icPpDhiMAxk2
-         0QVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733210352; x=1733815152;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yt0eqAzlepSF0XS40uHuceUpxcC/1vIW2KGLShCrnRY=;
-        b=lHKsizfPPhFOVgXbUt0bY+tf8FpicXWcahyjZFWYAettDGWxEnNaQfDTcBGzuqBJ10
-         mH1tKpp3HGl6hl+RqhcAPqRPJybafoIQtkev6dpuwHFHUXbzaa/+FHqMtKUo4qF42Y+D
-         TeRny86maNVpxFHyGzRweuO5sLFDfo6M+lvhUI8uNU46w5fHrWFGWDtaBl0Tx1FnEMEX
-         sgyGcwlUlJMBP5njD2RZ7/t0SVZOEoXtYjyaO48X1dTRs6aBs955+VoCwyBU24kiXICk
-         X64+SMqn4YVTOK+bI1Cxp/984s1+4QWAMqhu/Wmk/hrxIPFCvwm664cC4b/EBCJLlfzB
-         t9EA==
-X-Forwarded-Encrypted: i=1; AJvYcCU+jAnWyorRJRoZx3C4UxwNUuLYMMCzC/GsAMczCjbABtSSLvfi5K9UUrmHZRQNxhEX6cm4AwBpsvpajqQ=@vger.kernel.org, AJvYcCW8QFH+FQXDnJCQvBEyib7ilQV6hp+QO6Yq+QDDxYMYt/vLIPC2aUHmvCSnT4DdpakPqYPZxzJM@vger.kernel.org
-X-Gm-Message-State: AOJu0YwrogFspzd4tx0zJggWJJEvrqun4q+GU/HxWpMK6PkAuult3Byx
-	hbyOlQNskEqzleC8u+JNAIGY/n5LgsTy7Y6LCvdIHzlU92qNI7B2
-X-Gm-Gg: ASbGnctV9M4Qj3e6grfdaAWhUpehwG/5UGB7pmry7vJBScHzyZgHV9QuvmVox0uhSCy
-	EDUIryNfQj/COfqR+LhAFxagz45enVdKcxpDdlEYu54oW/Im2e3mfUjUkoZiDgwvUta2ImzM8FQ
-	UdjWQuEVMK5VqYpJXADd6tT66oiyjxkhRJfMMAKm0HZE9HH4fc5pzliubsL69Q2fDyJrne3ywmk
-	9nMzPa8t/9ou8y383IK3cfHrObiCr/7CCpGDIcOApWgNKtvopLuCnv6v809
-X-Google-Smtp-Source: AGHT+IFiawVIjfTUCmCmFuedXi3MMPJDaws4aM1CWRor1IlvHiH98I1sypOj08nVpTsD3oOX0gAZIw==
-X-Received: by 2002:a05:6a20:840d:b0:1cf:3be6:9f89 with SMTP id adf61e73a8af0-1e165337df6mr1364463637.0.1733210352461;
-        Mon, 02 Dec 2024 23:19:12 -0800 (PST)
-Received: from nas-server.i.2e4.me ([156.251.176.191])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72541847925sm9692329b3a.176.2024.12.02.23.19.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Dec 2024 23:19:12 -0800 (PST)
-From: Zhiyuan Wan <kmlinuxm@gmail.com>
-To: andrew@lunn.ch
-Cc: hkallweit1@gmail.com,
-	linux@armlinux.org.uk,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	willy.liu@realtek.com,
-	Zhiyuan Wan <kmlinuxm@gmail.com>,
-	Yuki Lee <febrieac@outlook.com>
-Subject: [PATCH net-next 1/2] net: phy: realtek: disable broadcast address feature of rtl8211f
-Date: Tue,  3 Dec 2024 15:18:53 +0800
-Message-Id: <20241203071853.2067014-1-kmlinuxm@gmail.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <7a322deb-e20e-4b32-9fef-d4a48bf0c128@gmail.com>
-References: <7a322deb-e20e-4b32-9fef-d4a48bf0c128@gmail.com>
+	s=arc-20240116; t=1733210365; c=relaxed/simple;
+	bh=L+KIBr+P2JlHeaWPFuMYtu71JGMklQf9EldIhXnWrtk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PTKOmLUkTct+ZOeHugk1maMc8/hoduMcf3jHQKLonA6rAYEmdYtSZB8JHlq3dKutJX3aMJt1KknvXC8xj2+EhzH+h587M9A9zDDFAkiDRdOviKmEOLkLfDkcO5l8DlGuEuE9TwlLdpbrfQR1yuG2vlzB/1CvJb6RIgXESQMqB7M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=sTFlhZC6; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=zbdjAzaA; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=sTFlhZC6; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=zbdjAzaA; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 3281E1F445;
+	Tue,  3 Dec 2024 07:19:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1733210362; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lDGofa4W4irmZgNhRHaGIFQMOW+vlknfrJB9XllaAzI=;
+	b=sTFlhZC61pLD+EdeHkxsxirk8UqojISVEuqXHcKKzxgQo3WNw5WDIyOf7sRGTy0mSVZ0lT
+	nmxk+RFGfaOzHAyOIEI+DTSXOXE4VmIOztdb6zyFLu8Iq6llOQAzgaYyTpijBESt9OGhYo
+	bwq5PcYUL3fE1z7EQLCMebLbFs+2gek=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1733210362;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lDGofa4W4irmZgNhRHaGIFQMOW+vlknfrJB9XllaAzI=;
+	b=zbdjAzaACmnBIVdehhDY/7ZCam9b84JPTxuG2+nkZ5H1DyUnWOzd2dCWt7xNGDjHDTIbTw
+	6SX3z9ZvLhDXthAQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1733210362; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lDGofa4W4irmZgNhRHaGIFQMOW+vlknfrJB9XllaAzI=;
+	b=sTFlhZC61pLD+EdeHkxsxirk8UqojISVEuqXHcKKzxgQo3WNw5WDIyOf7sRGTy0mSVZ0lT
+	nmxk+RFGfaOzHAyOIEI+DTSXOXE4VmIOztdb6zyFLu8Iq6llOQAzgaYyTpijBESt9OGhYo
+	bwq5PcYUL3fE1z7EQLCMebLbFs+2gek=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1733210362;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lDGofa4W4irmZgNhRHaGIFQMOW+vlknfrJB9XllaAzI=;
+	b=zbdjAzaACmnBIVdehhDY/7ZCam9b84JPTxuG2+nkZ5H1DyUnWOzd2dCWt7xNGDjHDTIbTw
+	6SX3z9ZvLhDXthAQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id DB8DE13A15;
+	Tue,  3 Dec 2024 07:19:21 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id z9jiM/mwTmdpKAAAD6G6ig
+	(envelope-from <hare@suse.de>); Tue, 03 Dec 2024 07:19:21 +0000
+Message-ID: <d1b103bb-fc9b-45dc-b637-75ce9fdb320c@suse.de>
+Date: Tue, 3 Dec 2024 08:19:21 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/4] nvme-tcp: fix the memleak while create new ctrl
+ failed
+To: "brookxu.cn" <brookxu.cn@gmail.com>, kbusch@kernel.org, axboe@kernel.dk,
+ hch@lst.de, sagi@grimberg.me, linux-nvme@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+Cc: lengchao@huawei.com
+References: <cover.1733196360.git.chunguang.xu@shopee.com>
+ <b4957fa602ebb3af58872042d8e3bf1adf3b386b.1733196360.git.chunguang.xu@shopee.com>
+Content-Language: en-US
+From: Hannes Reinecke <hare@suse.de>
+In-Reply-To: <b4957fa602ebb3af58872042d8e3bf1adf3b386b.1733196360.git.chunguang.xu@shopee.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	FREEMAIL_TO(0.00)[gmail.com,kernel.org,kernel.dk,lst.de,grimberg.me,lists.infradead.org,vger.kernel.org];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	ARC_NA(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_DN_SOME(0.00)[]
+X-Spam-Score: -2.80
+X-Spam-Flag: NO
 
-This feature is enabled defaultly after a reset of this transceiver.
-When this feature is enabled, the phy not only responds to the
-configuration PHY address by pin states on board, but also responds
-to address 0, the optional broadcast address of the MDIO bus.
+On 12/3/24 04:34, brookxu.cn wrote:
+> From: "Chunguang.xu" <chunguang.xu@shopee.com>
+> 
+> Now while we create new ctrl failed, we have not free the
+> tagset occupied by admin_q, here try to fix it.
+> 
+> Fixes: fd1418de10b9 ("nvme-tcp: avoid open-coding nvme_tcp_teardown_admin_queue()")
+> Signed-off-by: Chunguang.xu <chunguang.xu@shopee.com>
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> ---
+>   drivers/nvme/host/tcp.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/nvme/host/tcp.c b/drivers/nvme/host/tcp.c
+> index 3e416af2659f..55abfe5e1d25 100644
+> --- a/drivers/nvme/host/tcp.c
+> +++ b/drivers/nvme/host/tcp.c
+> @@ -2278,7 +2278,7 @@ static int nvme_tcp_setup_ctrl(struct nvme_ctrl *ctrl, bool new)
+>   	}
+>   destroy_admin:
+>   	nvme_stop_keep_alive(ctrl);
+> -	nvme_tcp_teardown_admin_queue(ctrl, false);
+> +	nvme_tcp_teardown_admin_queue(ctrl, new);
+>   	return ret;
+>   }
+>   
+Reviewed-by: Hannes Reinecke <hare@suse.de>
 
-But some MDIO device like mt7530 switch chip (integrated in mt7621
-SoC), also use address 0 to configure a specific port, when use
-mt7530 and rtl8211f together, it usually causes address conflict,
-leads to the port of RTL8211FS stops working.
+Cheers,
 
-This patch disables broadcast address feature of rtl8211f, and
-returns -ENODEV if using broadcast address (0) as phy address.
-
-Reviewed-by: Yuki Lee <febrieac@outlook.com>
-Signed-off-by: Zhiyuan Wan <kmlinuxm@gmail.com>
----
- drivers/net/phy/realtek.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
-
-diff --git a/drivers/net/phy/realtek.c b/drivers/net/phy/realtek.c
-index f65d7f1f3..8a38b02ad 100644
---- a/drivers/net/phy/realtek.c
-+++ b/drivers/net/phy/realtek.c
-@@ -31,6 +31,7 @@
- #define RTL8211F_PHYCR1				0x18
- #define RTL8211F_PHYCR2				0x19
- #define RTL8211F_INSR				0x1d
-+#define RTL8211F_PHYAD0_EN			BIT(13)
- 
- #define RTL8211F_LEDCR				0x10
- #define RTL8211F_LEDCR_MODE			BIT(15)
-@@ -139,6 +140,17 @@ static int rtl821x_probe(struct phy_device *phydev)
- 		return dev_err_probe(dev, PTR_ERR(priv->clk),
- 				     "failed to get phy clock\n");
- 
-+	dev_dbg(dev, "disabling MDIO address 0 for this phy");
-+	ret = phy_modify_paged_changed(phydev, 0xa43, RTL8211F_PHYCR1,
-+				       RTL8211F_PHYAD0_EN, 0);
-+	if (ret < 0) {
-+		dev_err(dev, "disabling MDIO address 0 failed: %pe\n",
-+			ERR_PTR(ret));
-+	}
-+	/* Don't allow using broadcast address as PHY address */
-+	if (phydev->mdio.addr == 0)
-+		return -ENODEV;
-+
- 	ret = phy_read_paged(phydev, 0xa43, RTL8211F_PHYCR1);
- 	if (ret < 0)
- 		return ret;
+Hannes
 -- 
-2.30.2
-
+Dr. Hannes Reinecke                  Kernel Storage Architect
+hare@suse.de                                +49 911 74053 688
+SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
+HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
 
