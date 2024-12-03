@@ -1,224 +1,136 @@
-Return-Path: <linux-kernel+bounces-429877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9840E9E2805
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 17:49:00 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 306519E280E
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 17:50:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 681E21621B4
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:48:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DCF971671A5
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:49:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BDFE1F8ADB;
-	Tue,  3 Dec 2024 16:48:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08F731F9F5C;
+	Tue,  3 Dec 2024 16:49:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="xHqiBuTW"
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2079.outbound.protection.outlook.com [40.107.100.79])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="xLgs2Li0"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAAC61F1313
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 16:48:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.79
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733244535; cv=fail; b=oEuIolCRlEbbsfzU9034lo+JXd43iWjBHu2UbzHq9fBSM+Gb9aaHCKDdNnL/Lvq1Qv9MR6dixW9YhNGM3OV8WAecauGeT738TWqrojdm+oREQQdRk6wsXeNZ3JRkrF8QkoL5ZXrAo/OT1rKMj6VjnLRAeuMKQYMTgwPKxTde01Y=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733244535; c=relaxed/simple;
-	bh=oE5bRxYjnUZWTxXAewkqOKkhkTKGk5snsMz/2uAb0Qg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=lOsAl+amjy15R40WIq9pmgK7FiliRE1+4wmftrNynLdyhDFc/PvuEoDVjQifJx2RSEB11TOs5C4RwGwH42OTHjjxe7aLZzR6lY+QWmqjVbi8NQdnUjly1aeNfLSs9Y6sP/UP9l6tcLjeTIjeX+9g/BPCBCVsnXzIeYezZlPfxys=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=xHqiBuTW; arc=fail smtp.client-ip=40.107.100.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=WNhrAj9sgXeOc8OXda5CFgqStsW0Opn9Vw3cMXHgArR2kYPfdYBOo0DkQZE0DsVMVmdwbW5CQC1YcxOnsIxG4e23uaa94nx3qL75xVYIPB16bn3HncoLu1wm9TsWTOgucV1e5Jb238k786XIV1QoP8T3n8WbI8n5NH7lnTwIbfab2Dy3p5LA49RT8W5MCXmFFv3baMvWghvQD9G6AFYaV0iy/k3e91iXI8odcjm4nue1MW6dQBATAb4Or/6sWy4R4B1YFM5EGHhYBRoro9XMxlJXBHPLamRBwb2/T5UyEEsOCNUxphtCBBfbAV25DKKyXLZhV7+FsrB6PlCcx5qrrg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=A1MH1/37qx92ctZzQutfeYzj8cA/5VJ5US0fj0pBGbY=;
- b=uIQuofSasDmtSVYrwIo6PI9e4nYxwF6b8BXtQPh/W0HTjXUBL6poZLtGDSKm741OzbwhI+Sj35PQ+ymBnab39Wf/M4OgUxrTkv5JZrd6Wm89xq66psqz23LAxSlJLIs6THjEHtP6uqHmdwKo9lZY3pxRsoUlooscbM8df3zGmQ8VNg21PSkXsmz83jx4/SKIWB/153gQsbiSMOz5vyGumyWIHHMQeLzrktVJlBB7LAd8zU7cUuX/dfcpVoggTtP7F9r+aV6yoGJvDg33bgm7xsr9vcWFgky/HyrYSm5JfEwFTxWg8UuA9865DxwGiIJho1XJTRpLLB//JL60bX6eYQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=infradead.org smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=A1MH1/37qx92ctZzQutfeYzj8cA/5VJ5US0fj0pBGbY=;
- b=xHqiBuTWOQ4XfPePSzg8WQBknQO42HrQgdhaxE7O6isyGxzlWxkU0GCp6PzOpvwKBsKKIIKv5WBh3TkFInzCrgBTOdsgyo9WpKcsfHJncv84Ecy71dDgmFDetdULuuDwC8ELNj324DxtQfrP5ktdjDAH8QliMSlO+bHknM9AQBs=
-Received: from BN9PR03CA0285.namprd03.prod.outlook.com (2603:10b6:408:f5::20)
- by PH0PR12MB8052.namprd12.prod.outlook.com (2603:10b6:510:28b::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.18; Tue, 3 Dec
- 2024 16:48:47 +0000
-Received: from BL02EPF00029927.namprd02.prod.outlook.com (2603:10b6:408:f5::4)
- by BN9PR03CA0285.outlook.office365.com (2603:10b6:408:f5::20) with Microsoft
- SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.8182.15
- via Frontend Transport; Tue, 3 Dec 2024 16:48:47 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- BL02EPF00029927.mail.protection.outlook.com (10.167.249.52) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8230.7 via Frontend Transport; Tue, 3 Dec 2024 16:48:47 +0000
-Received: from [10.252.216.179] (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 3 Dec
- 2024 10:48:43 -0600
-Message-ID: <d1047c7a-4e94-4ba4-a9a2-d2ed6778be8f@amd.com>
-Date: Tue, 3 Dec 2024 22:18:40 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B8D91F8927;
+	Tue,  3 Dec 2024 16:49:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733244590; cv=none; b=f7HukSC3GYfqSwHgKDNL+d1F8rdbmx3RVQRSbIm0bp/a5G2cxrEi6m3t3tnx3K9e1WnVByy/4BsO8qKmB/kKFPhm/cRnoL7vKPFXN5yQVhDWCiTq3Hi9DgSFQlCVkSdYwt+aGSqopijB3bIu/SHn3LaZ/zHpArUDUvr2iGyqVKk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733244590; c=relaxed/simple;
+	bh=9QjjQhrpIZoRjOjWjhp0+i8iOw4Ja0a0dKJQLqjYaIM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dQ+cAlVmqHVSlby2arOxbXmag8FAYJn3BlSgmxI/OuZVBbZgWhbGCxmc+p/OOSVCa21l8IH7aWrhOrQlV9GGXVji+Lp8XPDNQP1hTzNzDW4SRtgi6PnT1BlF/B8aMbJoIjzhHAp44wYD0gwKNMjpzgeUT3se9hIErUqeW+Fdkz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=xLgs2Li0; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
+	Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=zUMJP/s3MYtTzLFMldW9WHKV2OFH1dxcgqMyCi8YpAA=; b=xLgs2Li0E4WWYgibJQvB/usQtS
+	yWwXBBzBss1CTxpCwTQVUlxYtxqwQKa26hziDiYvJi4B9VhJBUYggV6CEHnwCv5pGZ1AsINt7lML8
+	Kxt9hWcUy4uTExzuAEd/m83ea+gro1NVHD1EFXOYXJ4ZIqN5s8Kboq3hobJ5HImqauVbCJkGz6B0d
+	pVWI3APtYH46o8Dw3zLkeT1T0g+2j6pZCeoVvOtECq8ULONzDDj/4esGWWqVhoBayXe/6WEotxcsL
+	/LuF6baMzZL0uphFqncOt1itZkjB0RknpMzV03UhTwfGRE1E9GcoTKfAYrLyE+DDCec/ikyhNcI+L
+	DZ+aRvzQ==;
+Received: from i53875bc4.versanet.de ([83.135.91.196] helo=localhost.localdomain)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1tIW5n-0003fy-5X; Tue, 03 Dec 2024 17:49:43 +0100
+From: Heiko Stuebner <heiko@sntech.de>
+To: vkoul@kernel.org,
+	kishon@kernel.org
+Cc: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	quentin.schulz@cherry.de,
+	sebastian.reichel@collabora.com,
+	heiko@sntech.de,
+	linux-phy@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	dse@thaumatec.com
+Subject: [PATCH v5 0/2] MIPI DSI phy for rk3588
+Date: Tue,  3 Dec 2024 17:49:30 +0100
+Message-ID: <20241203164934.1500616-1-heiko@sntech.de>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] sched/fair: Fix warning if NEXT_BUDDY enabled
-To: Peter Zijlstra <peterz@infradead.org>
-CC: Adam Li <adamli@os.amperecomputing.com>, <mingo@redhat.com>,
-	<juri.lelli@redhat.com>, <vincent.guittot@linaro.org>,
-	<dietmar.eggemann@arm.com>, <rostedt@goodmis.org>, <bsegall@google.com>,
-	<mgorman@suse.de>, <vschneid@redhat.com>, <linux-kernel@vger.kernel.org>,
-	<patches@amperecomputing.com>, <cl@linux.com>, <christian.loehle@arm.com>,
-	<vineethr@linux.ibm.com>
-References: <20241127055610.7076-1-adamli@os.amperecomputing.com>
- <20241127055610.7076-2-adamli@os.amperecomputing.com>
- <670a0d54-e398-4b1f-8a6e-90784e2fdf89@amd.com>
- <20241203160514.GI35539@noisy.programming.kicks-ass.net>
-Content-Language: en-US
-From: K Prateek Nayak <kprateek.nayak@amd.com>
-In-Reply-To: <20241203160514.GI35539@noisy.programming.kicks-ass.net>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL02EPF00029927:EE_|PH0PR12MB8052:EE_
-X-MS-Office365-Filtering-Correlation-Id: f253af9f-cfcc-4b2f-3f69-08dd13ba5b5e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|1800799024|82310400026|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?WHNYaWhZQnR2b0FBQThyMThZcEVtWjBWdURGaW5Uc0JQZ2o5VmpkOURZQU4x?=
- =?utf-8?B?QkhvSUkrdDVkeVY0NGhaVGpCR1lTQkhjZmNtZ1JrRnNzQXJLd2pWVGhIU3R3?=
- =?utf-8?B?c01uc2FzcXlkUlAwVmdoUGcwSGk3dzdrNTJFVlBFaHJ4bHRCUXVOQ0NQZ0pI?=
- =?utf-8?B?enQzNFVGVTM0SVBZTGc3T1pGenk0dUNSQkVteXlsVndhVWRuQjdJNjQ4WGRx?=
- =?utf-8?B?RFdxNjgvR3hWT2RXd1g0LzFDQVRpYjdWTXNMaFNkekNuZGdsTmNKZy9Ba1Z2?=
- =?utf-8?B?eUdYTmF4d1h2N0JhT3ZGZmwyL2VHcEc4SkxFWWVrMDV5Ni9PczBOVkdIRUtq?=
- =?utf-8?B?QWRSNFZKSFhZeVMyRHowL0hqTFVwRDhIdTM0SklTUklScUQrUGFXdWxNMCs3?=
- =?utf-8?B?ZU5JZmhYUnVPL0lVYy9jUUgrWDN1bjNVY3NGOTMva2VxNk5FL20vVHZpSno4?=
- =?utf-8?B?N0p2dzFYSGFmL2N1NE05TEtKRmhHWklnNDlSR2REMmVEWGNsdmZmWW5SR1F2?=
- =?utf-8?B?eXVPbThVK0QyaDhMNmMxRGphWDNHRk9hQkdBWnNQdWxzNEFmUThjeXhyb2ts?=
- =?utf-8?B?WFZsR2U1WDl5Z282Zm9MZ2lVdGFOYThRbFJxUkIxTDRncUpxdHl2eDJCUGNa?=
- =?utf-8?B?Nko5NWwxUWlnbDBYOExxcVh3TkJCTlQxbVAySGVlWmtaV2IvVDNSS0hOa0ky?=
- =?utf-8?B?VWNuOXpESkZyY1ZhR2dUeW4yVmtLQmhPaHF2SEh1bjVqcXRSYm5QcXVLRzVR?=
- =?utf-8?B?dGpLcFEzRmV2Q1BleUNDWFZ6THJNbWR0RmFOS3UvUjg5OXdjRjZib01BSjlS?=
- =?utf-8?B?Umc1angvU2JNK2Jvekw2eUVnQkE2QWh0Z01OOWgrVkdTcHhmWUtLSGdLSmp2?=
- =?utf-8?B?enJJQTlQRHZVdzR1ZURZcHlOMVIvRjFNVURqdnM0YjdnTXlhRHZGeHZ0cjVE?=
- =?utf-8?B?b1ZhTjU2aU52VHZEajgwd0tLQk5yYmwra3Z3SGFJRmpnYmc2OGVHa0ZZV2Uz?=
- =?utf-8?B?L1NUQ2p2cmNBTEFHbFBheWhuRU03SW5oNXl1UmRpME9EOHJRcUtmT3dlSUwz?=
- =?utf-8?B?QXErZGtUQ0dzNWdnUlprQ0JjakFjelVHa0VRTFhUWTZaNE8yajVPTUpoYjVq?=
- =?utf-8?B?TGc3NGllYVZYNDdwUjFMdFJHWTlROGErenF1RWxnazZ6cWhuSlNJdnpBZjRw?=
- =?utf-8?B?YVZ4dnovQ0VIMmZFR241L3RoYTU5QVhPTlkzMVRKUXlGTVJpcW1FNTJsTGMw?=
- =?utf-8?B?alNXSGhnSmdvT2hIUnBJWlpQWjYzZFhKYzhHa2EyT3cwQlRoc20yV29JQ1RL?=
- =?utf-8?B?Mk9EYzkxZ0JCVzBrVUdaRHNpWFVtR1V6eDZyTi8yeUFsODBaK0ptY1k2RUdZ?=
- =?utf-8?B?elhRSTk0dnRCcngyMFdWdklMNi83Sy9YRnZ3M2tiMlE2WnJrTmcvRWtWM0p0?=
- =?utf-8?B?MU1yV1RtQ3pqNGdGUlR5cW5LWWpYbEFjZFh0cXg2SkxsN0RWcERyY29yNWJv?=
- =?utf-8?B?dzJ0dnpMT0N1MGEzNGFPTkFKMlhFNXVPSmt0b2VpZ1FFa1BQQlFDUWpFVmdM?=
- =?utf-8?B?VFJPdkhpZDZIMmI4OXFLeWhCaHNCU0JNSnBvYm5yRVJVZG1tRHM4ZXJ2eUZS?=
- =?utf-8?B?VGhQdjloc3E3OW9Zb3Z0S3NHMDgyTGkra2ZISWxwSld0ejh1RG5lRjRHWWR0?=
- =?utf-8?B?WnFYaGpBdTNNMktzN3p2bTJIZ00vY0hiOFc4TEVJaElKY3orcU50a3Q4aVU5?=
- =?utf-8?B?bDA2ZWpZaW5BVmZ5WnNUZVBtNjMwSng2bzlINTc0enFoSUZKRUlFTG5PVGMw?=
- =?utf-8?B?UjRqaWdVdUwzV3JkUmxNTllIbVg1RmVXd2pTcDAxazcwV0p4NVZES3Y3cmFo?=
- =?utf-8?B?bVBKcjUzVU90Sk1tZ1YzT0Fvc1NDcXZTTXVjdGttRmNzVVNjOFMxUUlUdXdq?=
- =?utf-8?Q?XtZUv18+Zoh61TCwdk5BM+USDlJZLYJc?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(82310400026)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Dec 2024 16:48:47.3445
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: f253af9f-cfcc-4b2f-3f69-08dd13ba5b5e
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BL02EPF00029927.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB8052
+Content-Transfer-Encoding: 8bit
 
-Hello Peter,
+This adds the phy driver need for DSI output on rk3588.
 
-On 12/3/2024 9:35 PM, Peter Zijlstra wrote:
-> On Thu, Nov 28, 2024 at 12:59:54PM +0530, K Prateek Nayak wrote:
-> 
->> Can you please try the following diff instead of the first two patches
->> and see if you still hit these warnings, stalls, and pick_eevdf()
->> returning NULL?
->>
->> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
->> index ff7cae9274c5..61e74eb5af22 100644
->> --- a/kernel/sched/fair.c
->> +++ b/kernel/sched/fair.c
->> @@ -5478,6 +5478,7 @@ dequeue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
->>   	bool sleep = flags & DEQUEUE_SLEEP;
->>   	update_curr(cfs_rq);
->> +	clear_buddies(cfs_rq, se);
->>   	if (flags & DEQUEUE_DELAYED) {
->>   		SCHED_WARN_ON(!se->sched_delayed);
->> @@ -5520,8 +5521,6 @@ dequeue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
->>   	update_stats_dequeue_fair(cfs_rq, se, flags);
->> -	clear_buddies(cfs_rq, se);
->> -
->>   	update_entity_lag(cfs_rq, se);
->>   	if (sched_feat(PLACE_REL_DEADLINE) && !sleep) {
->>   		se->deadline -= se->vruntime;
->> @@ -8767,7 +8766,7 @@ static void check_preempt_wakeup_fair(struct rq *rq, struct task_struct *p, int
->>   	if (unlikely(throttled_hierarchy(cfs_rq_of(pse))))
->>   		return;
->> -	if (sched_feat(NEXT_BUDDY) && !(wake_flags & WF_FORK)) {
->> +	if (sched_feat(NEXT_BUDDY) && !(wake_flags & WF_FORK) && !pse->sched_delayed) {
->>   		set_next_buddy(pse);
->>   	}
-> 
-> 
-> Prateek, I've presumed your SoB on this change:
-> 
->    https://git.kernel.org/pub/scm/linux/kernel/git/peterz/queue.git/commit/?h=sched/urgent&id=d1139307fe97ffefcf90212772f7516732a11034
+The phy itself is used for both DSI output and CSI input, though the
+CSI part for the whole chain needs a lot more work, so is left out for
+now and only the DSI part implemented.
 
-No objections from my side! While at it, perhaps you can also squash in:
+This allows the rk3588 with its current VOP support to drive a DSI display
+using the DSI2 controller driver I'll submit in a next step.
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 3ed4af8be76b..eadcd64c03e9 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -5519,8 +5519,6 @@ dequeue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
-  
-  		if (sched_feat(DELAY_DEQUEUE) && delay &&
-  		    !entity_eligible(cfs_rq, se)) {
--			if (cfs_rq->next == se)
--				cfs_rq->next = NULL;
-  			update_load_avg(cfs_rq, se, 0);
-  			set_delayed(se);
-  			return false;
---
+Only generic phy interfaces are used, so the DSI part is pretty straight
+forward.
 
-Since we do a clear_buddy() upfront, we no longer need this special case
-for delayed entities. Tested it on top of queue:sched/urgent with
-hackbench and I didn't run into any problems / splats. Thank you.
+changes in v5:
+- add bitfield.h for the FIELD_PROP definition
+  (reported by kernel-test-robot)
+- add Sebastian's Reviewed-by
+- add Conor's Ack to the dt-binding
 
-> 
-> Holler if you want it modified.
-> 
-> Thanks!
+changes in v4:
+- moved to #phy-cells = 1 as suggested by Sebastian, with the argument
+  denoting the requested phy-type (C-PHY, D-PHY). This works similarly
+  how the Mediatek C/D-PHY already implements this, see mails around:
+  https://lore.kernel.org/all/20230608200552.GA3303349-robh@kernel.org/
+- dropped Krzysztof's review tag from the binding because of this
+- dropped custom UPDATE macro and use FIELD_PREP instead
+- build a FIELD_PREP_HIWORD macro for the GRF settings
+- add received Tested-by tags
+
+changes in v3:
+- add Krzysztof review tag to the binding
+- address Sebastian's review comments
+  - better error handling
+  - dropping empty function
+  - headers
+  - not using of_match_ptr - this should also make the
+    test-robot happier
+
+changes in v2:
+- fix error in dt-binding example
+- drop unused frequency table
+- pull in some more recent improvements from the vendor-kernel
+  which includes a lot less magic values
+- already include the support for rk3576
+- use dev_err_probe
+
+Heiko Stuebner (2):
+  dt-bindings: phy: Add Rockchip MIPI C-/D-PHY schema
+  phy: rockchip: Add Samsung MIPI D-/C-PHY driver
+
+ .../phy/rockchip,rk3588-mipi-dcphy.yaml       |   87 +
+ drivers/phy/rockchip/Kconfig                  |   12 +
+ drivers/phy/rockchip/Makefile                 |    1 +
+ .../phy/rockchip/phy-rockchip-samsung-dcphy.c | 1604 +++++++++++++++++
+ 4 files changed, 1704 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/phy/rockchip,rk3588-mipi-dcphy.yaml
+ create mode 100644 drivers/phy/rockchip/phy-rockchip-samsung-dcphy.c
 
 -- 
-Thanks and Regards,
-Prateek
+2.45.2
 
 
