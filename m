@@ -1,80 +1,55 @@
-Return-Path: <linux-kernel+bounces-430084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430086-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEF579E2CA0
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 21:04:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B5E1A9E2D9B
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 21:53:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C0D22B3FB36
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 19:53:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 20AD4B3A5DF
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 19:54:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94DD5205E31;
-	Tue,  3 Dec 2024 19:52:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UlD/x7yY"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A229205ACD;
+	Tue,  3 Dec 2024 19:53:49 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 137BB204F62;
-	Tue,  3 Dec 2024 19:52:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A8B61FA272
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 19:53:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733255578; cv=none; b=erFImipIIi/7YJ2eGGzLvx8KVy1FAF5q7YH3M4wdob+X5SRUIuKVNl+J68iTdmxSScdReZWCU7Jtd9dhw9j/XQGwUvoKOl9bBnrLyU3rxtLqRZKX7daHknS0pqmrSEsR61h8JRoMUHf8vFw2S3BRUgAyYR37Lx5//FSF5NHXzj4=
+	t=1733255628; cv=none; b=Gl4GUPKanPhDl6S0NdXDLr45T/ptcUrJ8ryg3zKthufyPfrkqYeNtwFd6PYr6TrpPsLnXI9nupwWSGoZojEZh4R/vMficwh+LswT9/cs0Nr7YY0+0qlSyEmHFI2sWr8HrizEDsOZNmu+Ls4BaLFuON79PUjCwnp+LhwHnzTQyz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733255578; c=relaxed/simple;
-	bh=ie5h+6CpGww4EvqMe8sRR1D6TyL6IN2CdvTaRNTfRB0=;
+	s=arc-20240116; t=1733255628; c=relaxed/simple;
+	bh=jLF7yX8YEBZ0IGriEwDu860hLvVyxOEV6A6LU9WxgPw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=baFjpIUcCooF67L0ArHHldYQtaCZfocUo1YNrXk1OtHUT4dMn/VZg2z152lrmhVYKE7lmwojtB4ZWd6jS0n42hjHo1+zA1g3DAyJ8h8NyvaF+ZFNKmzdn7zDb3VFnb/dF4xXkGreQByBVER5bMrkUy4knHhCvGqkOHbH/L20N0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UlD/x7yY; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-21539e1d09cso56230435ad.1;
-        Tue, 03 Dec 2024 11:52:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733255576; x=1733860376; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=7jNTWV+8gv1sP1pwmHNm1JBQRuq1KzrGOnDCul3WBmU=;
-        b=UlD/x7yYf5dfg1jPp24Q8/X/NNN8OvwJ8qS0w3KGEWXG7tG9BDvuTjsPXqd/fYTxpb
-         7XHeiY8pHk7aOcrEe3NcnGRS9l5cHQlBxJGOnwMdwX2VDDueQGDp2k6JIg7FCU8lSjeT
-         j2vP/V28TW/Ensg23meahWmiziVgmMpA6gkO8xGQpj9rUktC1dPsgPvsxJkHyfUB/V6W
-         We12UurVw8+GL+njXDc0TtEns+zR5cQfwzCmMoSnt3t+Ax6yKNogDW4qZLOWP5A3CRrS
-         GX2j5UVx+KXINjoj8XUhUSg2ou1jtyCT2bpnVtJMYMd2a9hzc4KS9qBdUFYFNzK3TNkz
-         TicQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733255576; x=1733860376;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7jNTWV+8gv1sP1pwmHNm1JBQRuq1KzrGOnDCul3WBmU=;
-        b=CFTpW0vVb6tg3KI8NZR2kXQRMNCj5o0gvnIXTCG5AxeMGTDQ7UWEhRpKNC5goftVHn
-         39SeB95lzjAJAaezuzTHey3mUiNDL/f7tRLJ69IRnnTssVyBIz1rDK3fYordqPwB0LYN
-         opW8FRVjmkG5AHpTQqLVrFLMK0FYf5c5etFDMsbHpoVXAAgRgIn4yk/ziLSs2V+Utu35
-         aJDZ7x+G+M3LXceSFud96eOHArtwc2gfGuy/nkKSAfCjKtdTVwlEf8xBrGkHEtGVusct
-         /xpdhM/+ptR4sbDDXIpNOin7KXT4OTV7x+nuis4DYYWSOG1ZZpYjI3x95+roUs99lSXJ
-         OCGA==
-X-Forwarded-Encrypted: i=1; AJvYcCW5ChLnthSN5FUMDkQYmWZWUmM+YyltxjAc8MwnDe5E8D+8PV9IEUzrbBeE0Cm3ORxPzzJZn5n2Oowx@vger.kernel.org
-X-Gm-Message-State: AOJu0YwVsvdo6f7ktq01aYAPDi0GRs+HLmTaIFKflEbT66i3b40cZ/W9
-	w9RUXF/Ht76J54B4Ado7uyNuORiAxYAOXER1PIlupHHZxuLorFPM1abnAQ==
-X-Gm-Gg: ASbGnctQGyH+mkftbTf+7FHf9VwQhc1XI30GHBm6I/wcASomIcwk6EU5losm0H35Csq
-	gv5Htg80mzLT9jfCJolVV8SDok6FXQzWI55VTDzve7tXQVoce6TUMud2cpj2y1WFMtAPCzblBv5
-	Zf1EYskKezb5W01KeMwaHPqtH3FLr5jzd7XUva15nS1BIVMo6ecCUuEdk9vEkeE07d2If5r7GSf
-	1jbVPESQ1Q7LhjPagP3pNJgBaTy7T8D49ulynavLjb82Unq34VuiHTlq2iE9DHqaQm/tcMwX+rK
-	Uuasm1EdgSgFw/MQ7Q/Qr+c=
-X-Google-Smtp-Source: AGHT+IFQj5ygVF12Vjd1JX0HqtF1mCI1f2Z/dwAH4ECKBi6ebdjhgLkcDmXNrtn/cQbT6imHAX1ysQ==
-X-Received: by 2002:a17:902:d4c2:b0:215:b468:1a48 with SMTP id d9443c01a7336-215bd2001f9mr45261085ad.26.1733255576212;
-        Tue, 03 Dec 2024 11:52:56 -0800 (PST)
-Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7258bbbc565sm126340b3a.61.2024.12.03.11.52.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Dec 2024 11:52:55 -0800 (PST)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <24c61106-9928-4423-97b5-f43dc823d54d@roeck-us.net>
-Date: Tue, 3 Dec 2024 11:52:54 -0800
+	 In-Reply-To:Content-Type; b=YAXrZnaKMCLqCcTeMSoi9U+Phoz63IJw9FvEq0H3eymXjzJPlgyzAJjJcG+NWUoDhHxMwT/nHb01XD6/D1TiUdrEtdEhmWQtegBez6EIihF+ctaGXO3y6Dne7ACZ+Pis08YQHPJuItgA+cDY2n6E90bHjs6MEQilyrTQhxwreD4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4Y2rtx34wrz9stR;
+	Tue,  3 Dec 2024 20:53:45 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id zs1iyu-MUpRl; Tue,  3 Dec 2024 20:53:45 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4Y2rtx1qpPz9stQ;
+	Tue,  3 Dec 2024 20:53:45 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 301298B767;
+	Tue,  3 Dec 2024 20:53:45 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id 3-0Y2_s9E4jO; Tue,  3 Dec 2024 20:53:45 +0100 (CET)
+Received: from [192.168.232.97] (unknown [192.168.232.97])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 997728B763;
+	Tue,  3 Dec 2024 20:53:44 +0100 (CET)
+Message-ID: <d736a5cc-d976-49fd-9f86-0151d4b0a050@csgroup.eu>
+Date: Tue, 3 Dec 2024 20:53:44 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,90 +57,90 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: build failure after merge of the hwmon-staging tree
-To: Mark Brown <broonie@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>
-References: <Z09c_U2l8SqLQG-n@sirena.org.uk>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <Z09c_U2l8SqLQG-n@sirena.org.uk>
+Subject: Re: [PATCH 2/3] powerpc: support dynamic preemption
+To: Shrikanth Hegde <sshegde@linux.ibm.com>, mpe@ellerman.id.au,
+ linuxppc-dev@lists.ozlabs.org
+Cc: npiggin@gmail.com, maddy@linux.ibm.com, bigeasy@linutronix.de,
+ ankur.a.arora@oracle.com, linux-kernel@vger.kernel.org,
+ mark.rutland@arm.com, vschneid@redhat.com, peterz@infradead.org
+References: <20241125042212.1522315-1-sshegde@linux.ibm.com>
+ <20241125042212.1522315-3-sshegde@linux.ibm.com>
+ <5089fd16-bc8c-4231-a89b-2658445e04b7@csgroup.eu>
+ <ff4c586b-7be7-4c31-8b8c-5846ded486de@linux.ibm.com>
+Content-Language: fr-FR
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+In-Reply-To: <ff4c586b-7be7-4c31-8b8c-5846ded486de@linux.ibm.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 12/3/24 11:33, Mark Brown wrote:
-> Hi all,
+
+
+Le 01/12/2024 à 20:45, Shrikanth Hegde a écrit :
 > 
-> After merging the hwmon-staging tree, today's linux-next build
-> (x86 allmodconfig) failed like this:
 > 
-> In file included from /tmp/next/build/include/linux/module.h:22,
->                   from /tmp/next/build/include/linux/device/driver.h:21,
->                   from /tmp/next/build/include/linux/device.h:32,
->                   from /tmp/next/build/include/linux/hwmon-sysfs.h:10,
->                   from /tmp/next/build/drivers/hwmon/pmbus/tps25990.c:9:
-> /tmp/next/build/drivers/hwmon/pmbus/tps25990.c:437:18: error: expected ',' or ';' before 'PMBUS'
->    437 | MODULE_IMPORT_NS(PMBUS);
->        |                  ^~~~~
-> /tmp/next/build/include/linux/moduleparam.h:26:61: note: in definition of macro '__MODULE_INFO'
->     26 |                 = __MODULE_INFO_PREFIX __stringify(tag) "=" info
->        |                                                             ^~~~
-> /tmp/next/build/include/linux/module.h:299:33: note: in expansion of macro 'MODULE_INFO'
->    299 | #define MODULE_IMPORT_NS(ns)    MODULE_INFO(import_ns, ns)
->        |                                 ^~~~~~~~~~~
-> /tmp/next/build/drivers/hwmon/pmbus/tps25990.c:437:1: note: in expansion of macro 'MODULE_IMPORT_NS'
->    437 | MODULE_IMPORT_NS(PMBUS);
->        | ^~~~~~~~~~~~~~~~
+> On 11/27/24 12:14, Christophe Leroy wrote:
+>>
+>>
+>> Le 25/11/2024 à 05:22, Shrikanth Hegde a écrit :
+>>> Once the lazy preemption is supported, it would be desirable to change
+>>> the preemption models at runtime. So this change adds support for 
+>>> dynamic
+>>> preemption using DYNAMIC_KEY.
+>>>
+>>> In irq-exit to kernel path, use preempt_model_preemptible for decision.
+>>> Other way would be using static key based decision. Keeping it
+>>> simpler since key based change didn't show performance improvement.
+>>
+>> What about static_call, wouldn't it improve performance ?
+>>
+>>>
+>>> diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
+>>> index 6d6bbd93abab..01c58f5258c9 100644
+>>> --- a/arch/powerpc/Kconfig
+>>> +++ b/arch/powerpc/Kconfig
+>>> @@ -270,6 +270,7 @@ config PPC
+>>>       select HAVE_PERF_EVENTS_NMI        if PPC64
+>>>       select HAVE_PERF_REGS
+>>>       select HAVE_PERF_USER_STACK_DUMP
+>>> +    select HAVE_PREEMPT_DYNAMIC_KEY
+>>
+>> Can you use HAVE_PREEPT_DYNAMIC_CALL instead ? That should be more 
+>> performant.
+>>
+>> I know static calls are not in for PPC64 yet, you can restart from 
+>> https://eur01.safelinks.protection.outlook.com/? 
+>> url=http%3A%2F%2Fpatchwork.ozlabs.org%2Fproject%2Flinuxppc- 
+>> dev%2F&data=05%7C02%7Cchristophe.leroy%40csgroup.eu%7C696bf56dcb544f3e49a408dd1240c477%7C8b87af7d86474dc78df45f69a2011bb5%7C0%7C0%7C638686791595217076%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=iUwKXhmoU3YgqNI%2Bi7vwi%2Fz4obxMXD0au%2Fclo1m23ng%3D&reserved=0 cover/20221010002957.128276-1-bgray@linux.ibm.com/ and https:// github.com/linuxppc/issues/issues/416
+>>
 > 
-> Caused by an interaction with Linus' tree.  I have used the hwmon tree
-> from 20241128 instead.
+> Thanks Christophe, I will take a look and understand.
+> 
+> May be stupid question, do the concerns of arm still valid for ppc64/ 
+> ppc32 out-line static calls?
 
-Yes, that is due to the MODULE_IMPORT_NS API change in the upstream kernel
-that was pushed right after -rc1. I'll push a new version after I build tested it.
+Not sure. Don't know what they call landing pad.
 
-Guenter
+Limited branch range is a limitation for sure, but whatever the method 
+when the called function is too far indirect call is required. And on 
+powerpc the max distance is 32 Mb which is quite big for a standard 
+kernel. Only modules should be concerned, but do we have scheduling code 
+in modules ?
 
+CFI I don't know.
+
+Anyway, I resurected the series I sent to implement inline static calls 
+on PPC32. I'm sure we can then amplify it to PPC64.
+
+
+> https://eur01.safelinks.protection.outlook.com/? 
+> url=https%3A%2F%2Flore.kernel.org%2Fall%2F20220214165216.2231574-6- 
+> mark.rutland%40arm.com%2F&data=05%7C02%7Cchristophe.leroy%40csgroup.eu%7C696bf56dcb544f3e49a408dd1240c477%7C8b87af7d86474dc78df45f69a2011bb5%7C0%7C0%7C638686791595233955%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=8jT7JHp7HgNIwVEEL7gAI8JiDvCFDShI1eIeARWwbVo%3D&reserved=0
+> 
+> As I understood, that is the reason they went ahead with DYNAMIC_KEY.
+
+In their commit they have comparisons of assembly code. Can you do the 
+same for powerpc to get a better picture of what we are talking about ?
+
+
+Christophe
 
