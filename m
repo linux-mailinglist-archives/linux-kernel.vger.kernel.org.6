@@ -1,81 +1,81 @@
-Return-Path: <linux-kernel+bounces-430360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE3FC9E2FE8
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 00:34:04 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CCF29E2FEC
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 00:34:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F9EA1628D2
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 23:34:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16B281623AB
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 23:34:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F3A4205E1C;
-	Tue,  3 Dec 2024 23:33:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A89D20899B;
+	Tue,  3 Dec 2024 23:34:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h1752C/t"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="kCD+enVb"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7461455897;
-	Tue,  3 Dec 2024 23:33:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD7BD55897;
+	Tue,  3 Dec 2024 23:34:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733268838; cv=none; b=UpO2ZTk12VIiNy3oIRm6uDPhMMggGEmbuc32afs7vipzcCXApzpbWu2q2ujf8YPpY4c49JGXpW/wCVBZJgyUT10zuJ54UBwQZsI+Oa1uVtbH3IfhnMehqA/SkynSvS49dKuInFdVps3cSCEYreXtkQqXLIeRk+IbZUDCi+txL9Y=
+	t=1733268889; cv=none; b=NLPrj1gHudR+NLG8A4jbda6zya5/MHPMFztVXOqXf6Sk0S5aA00VTGP5RZBOY8+7zU+YxIM7iZvoydolEkWykdgHfUwquj3bSmJn+/RXrZWYGxmb1uY6eRwUMca6wFxHpBCAbEj/jZXlNyPky8XmXv00ru6ksYpt5MATFeYvqN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733268838; c=relaxed/simple;
-	bh=23b1ZGVdfwFrDv8H1WoVxUqqB5MIQmsaiBWfLBxd6hU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=V2ug5Hjl5wC4c59Gn3V1wUeh/qCO/dSQJavTMwm+vrLUog9CvqayLE5ni6jZ5mJIx07GedDf63vWXlaf66XymwK9Ae0CNPtToYkk+19SAd2KFzBp1YOt3KbzivEtcuMpcyPlG3IR89UPkZ5bh+1+Na1h3KXu5ZoDU+qyJMvmxgU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h1752C/t; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-724e1b08fc7so5495513b3a.0;
-        Tue, 03 Dec 2024 15:33:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733268836; x=1733873636; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=jplALg4JiAwh3fPgDAk/lVd13WxepigZdut6GMlKTQQ=;
-        b=h1752C/tCZEzxAA3YHu3r5XA+CWIGvt8bXw25kAoYkX8US81yIOH/0Xgsrr+ic0gzh
-         uaFl62bodM+BlbiPIbeB6VqAQmQUHZa1mCdG4jOg3Cl0K20SU1sowRY+gJ0Ad4OxMDdg
-         5uB0EfAKWRLnoy1zgiyoAN5yLZjKxnDSvLrR5sPZu30lmV165/FgbOT3A+gxjSlWGPM5
-         0FvZKJLJ4jQtGtmCGY0kaymW7z6T9/2zXfgV1SyQuaMlt3qtcq9MDIKVot1pL0vTVvPu
-         q6YTv7xWe1CUeOsJW6spJnK1eZtTICOrfkODobLrVVW6RhizTHqXTVQwvqRxLnbwHoda
-         x01Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733268836; x=1733873636;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jplALg4JiAwh3fPgDAk/lVd13WxepigZdut6GMlKTQQ=;
-        b=xHuKeLMfUZDTL4533Zr7N/mfQMjp0yxchzhcP1k8jMx19Xfb7BDepNLhSgi5xYmMLA
-         jwMJ0OBoKaTha7upKx6K8oB2bTfyakTkqWbodHIa7bRC91KcD8sRiTXiNkH+Az4ZpGWB
-         8KOqISZLSzfltVAzpCmREz1+bypvQeGrg6fzNQ//mgQT85K1dq9Z5ZTgummHyjLuYzdV
-         DuYisKJMgl1M6FE8bO37N0+XkHyTzctmQshzRmIGXgluIX4WZV3B9Z10AMgpxmwdwzIk
-         Wsco+FMckbyr6s6UFXqDBHz013JrpCzwM1vW3DLhE2AVTivRbcH+9JnDB6XlwNZswAsG
-         maww==
-X-Forwarded-Encrypted: i=1; AJvYcCWuArqVA4YqIQhRR2ppbs39pnD8H+ugWu3qkl0cs+y0gnwaCzwJfkhUJqRCglZXPDeB5DGU8XFT027lE8M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwkRDML7jmGTpwcDFo7RJ33xNB1V8sCgyU+jqfCc5s0M2LaPMVE
-	szXQdriuuV4StrEFeNfJ9Fxv8ae+FscJQDxh7SSJ/AgkcPUrdLLdUiCjImu1+3Q=
-X-Gm-Gg: ASbGncvR1pdRm8pcuSEIGGp/SxumV46CTIankc8LfAmnRP4hbiDD9sUIzrvojT6ZVbw
-	arD+emzDI5d6z36LSp54FpWoUibRyefIC3yXKQC28a+ZSW4yR0FkBMBSD6wXEVBQs5IejleqcQR
-	kejL1hHae9/fCe1ZEpNI/QqcoPOI4uqqjtmrNm5j64jKtdhNf8iZNyshE0KN1Qe62H303sv4Nze
-	nNudsXtdTbD2a7GnVgs7pmYOA==
-X-Google-Smtp-Source: AGHT+IEemUSIMxxd7GHqxTuF5vKs0XqrXU71EJ5JMBJ6zerMn4TImqsl5Vs2K+HGA7tP/ObQKD2yoQ==
-X-Received: by 2002:a05:6a00:14d5:b0:71e:7d52:fa6d with SMTP id d2e1a72fcca58-7257fcc9e56mr5610834b3a.21.1733268836550;
-        Tue, 03 Dec 2024 15:33:56 -0800 (PST)
-Received: from ryzen.lan ([2601:644:8200:dab8::a86])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-725417fb9b9sm11402849b3a.109.2024.12.03.15.33.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Dec 2024 15:33:56 -0800 (PST)
-From: Rosen Penev <rosenp@gmail.com>
-To: linux-gpio@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] gpio: twl4030: use gpiochip_get_data
-Date: Tue,  3 Dec 2024 15:33:54 -0800
-Message-ID: <20241203233354.184404-1-rosenp@gmail.com>
+	s=arc-20240116; t=1733268889; c=relaxed/simple;
+	bh=BEBL2bpHnCsC21zu0UDZ80GnZqN75aCgXuUrt/nYgAw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pEHWpoVq3Zqa/qPb+JfsOKf4RlKJWbJ3SFZCKaf0+Rl2xoCu2O5Ztz9v9w+Ev+xeWBW+fYNAZa9znYrbDIIXyn7m+ibgluUhQ7yQj0y2NrSzUM42un6m1c7S6v7JJ1VbjwB04rV7FdrzsvXKjMwhVLBU4xJ2LCKeUheC/OOeAQA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=kCD+enVb; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B3K069e002901;
+	Tue, 3 Dec 2024 23:34:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=nA9SjGy9jz4LWF/XLkoUoFQ4mwaT7n/v+IYNFkXWv
+	VE=; b=kCD+enVb+kffxlH91nAgOAZ0+732AXHinUa5k2Qkmb34Yw09wbyO+PLA6
+	yCDwiaV9l7/CNHGY3foGSskWavC8FgS6092jUESxqFWUkUv2gW7XC/EcLOsMPoKo
+	cIQKCRN6EmR2owvocblC3DgU870/vzw+2ZOxXUdhCHCS9rFVn5RpHVhMblhVo0eE
+	FeZrrYdDU1NiLGf0IGmoGGN1TQn5AJVrkzW40uoe5w+sflqBqQmM2Mn68z6sQosx
+	EJC9r2mtIC2GavmOKCJ8JtoOPuCH6kOX/hXTg9uZWzfFE3e+GnJaEvagPV7SuwGc
+	18UCF6cfmCbpy5AGIHGcnwIbUoPzA==
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 437r4pmrup-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 03 Dec 2024 23:34:31 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4B3MWBZZ023551;
+	Tue, 3 Dec 2024 23:34:31 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 438e1n18gc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 03 Dec 2024 23:34:31 +0000
+Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4B3NYTgr21103038
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 3 Dec 2024 23:34:29 GMT
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 12B262004B;
+	Tue,  3 Dec 2024 23:34:29 +0000 (GMT)
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 099C920040;
+	Tue,  3 Dec 2024 23:34:27 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.fios-router.home (unknown [9.61.153.147])
+	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Tue,  3 Dec 2024 23:34:26 +0000 (GMT)
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: linux-integrity@vger.kernel.org
+Cc: Mimi Zohar <zohar@linux.ibm.com>,
+        =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+        roberto.sassu@huawei.com, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Jeff Xu <jeffxu@chromium.org>,
+        Kees Cook <kees@kernel.org>, Paul Moore <paul@paul-moore.com>,
+        audit@vger.kernel.org
+Subject: [PATCH v2] ima: instantiate the bprm_creds_for_exec() hook
+Date: Tue,  3 Dec 2024 18:34:24 -0500
+Message-ID: <20241203233424.287880-1-zohar@linux.ibm.com>
 X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -84,46 +84,164 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: hHr46sg7u6JUU6btydTrFUaUjL6wyzfD
+X-Proofpoint-ORIG-GUID: hHr46sg7u6JUU6btydTrFUaUjL6wyzfD
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
+ priorityscore=1501 clxscore=1011 phishscore=0 malwarescore=0
+ suspectscore=0 mlxscore=0 bulkscore=0 mlxlogscore=999 adultscore=0
+ lowpriorityscore=0 impostorscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2411120000 definitions=main-2412030194
 
-We can pass the pointer in probe to gpiochip_add_data instead of using
-dev_get_drvdata.
+Like direct file execution (e.g. ./script.sh), indirect file exection
+(e.g. sh script.sh) needs to be measured and appraised.  Instantiate
+the new security_bprm_creds_for_exec() hook to measure and verify the
+indirect file's integrity.  Unlike direct file execution, indirect file
+execution is optionally enforced by the interpreter.
 
-Signed-off-by: Rosen Penev <rosenp@gmail.com>
+Differentiate kernel and userspace enforced integrity audit messages.
+
+Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
 ---
- drivers/gpio/gpio-twl6040.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Changelog v2:
+- Mickael: Use same audit messages with new audit message number
+- Stefan Berger: Return boolean from is_bprm_creds_for_exec() 
 
-diff --git a/drivers/gpio/gpio-twl6040.c b/drivers/gpio/gpio-twl6040.c
-index 6c3fbf382dba..b9171bf66168 100644
---- a/drivers/gpio/gpio-twl6040.c
-+++ b/drivers/gpio/gpio-twl6040.c
-@@ -22,7 +22,7 @@
+ include/uapi/linux/audit.h            |  1 +
+ security/integrity/ima/ima_appraise.c | 28 +++++++++++++++++++++++++--
+ security/integrity/ima/ima_main.c     | 22 +++++++++++++++++++++
+ 3 files changed, 49 insertions(+), 2 deletions(-)
+
+diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
+index 75e21a135483..826337905466 100644
+--- a/include/uapi/linux/audit.h
++++ b/include/uapi/linux/audit.h
+@@ -161,6 +161,7 @@
+ #define AUDIT_INTEGRITY_RULE	    1805 /* policy rule */
+ #define AUDIT_INTEGRITY_EVM_XATTR   1806 /* New EVM-covered xattr */
+ #define AUDIT_INTEGRITY_POLICY_RULE 1807 /* IMA policy rules */
++#define AUDIT_INTEGRITY_DATA_CHECK  1808 /* Userspace enforced data integrity */
  
- static int twl6040gpo_get(struct gpio_chip *chip, unsigned offset)
+ #define AUDIT_KERNEL		2000	/* Asynchronous audit record. NOT A REQUEST. */
+ 
+diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
+index 656c709b974f..144e0b39fbcd 100644
+--- a/security/integrity/ima/ima_appraise.c
++++ b/security/integrity/ima/ima_appraise.c
+@@ -8,6 +8,7 @@
+ #include <linux/module.h>
+ #include <linux/init.h>
+ #include <linux/file.h>
++#include <linux/binfmts.h>
+ #include <linux/fs.h>
+ #include <linux/xattr.h>
+ #include <linux/magic.h>
+@@ -469,6 +470,18 @@ int ima_check_blacklist(struct ima_iint_cache *iint,
+ 	return rc;
+ }
+ 
++static bool is_bprm_creds_for_exec(enum ima_hooks func, struct file *file)
++{
++	struct linux_binprm *bprm = NULL;
++
++	if (func == BPRM_CHECK) {
++		bprm = container_of(&file, struct linux_binprm, file);
++		if (bprm->is_check)
++			return true;
++	}
++	return false;
++}
++
+ /*
+  * ima_appraise_measurement - appraise file measurement
+  *
+@@ -483,6 +496,7 @@ int ima_appraise_measurement(enum ima_hooks func, struct ima_iint_cache *iint,
+ 			     int xattr_len, const struct modsig *modsig)
  {
--	struct twl6040 *twl6040 = dev_get_drvdata(chip->parent->parent);
-+	struct twl6040 *twl6040 = gpiochip_get_data(chip);
- 	int ret = 0;
+ 	static const char op[] = "appraise_data";
++	int audit_msgno = AUDIT_INTEGRITY_DATA;
+ 	const char *cause = "unknown";
+ 	struct dentry *dentry = file_dentry(file);
+ 	struct inode *inode = d_backing_inode(dentry);
+@@ -494,6 +508,16 @@ int ima_appraise_measurement(enum ima_hooks func, struct ima_iint_cache *iint,
+ 	if (!(inode->i_opflags & IOP_XATTR) && !try_modsig)
+ 		return INTEGRITY_UNKNOWN;
  
- 	ret = twl6040_reg_read(twl6040, TWL6040_REG_GPOCTL);
-@@ -46,7 +46,7 @@ static int twl6040gpo_direction_out(struct gpio_chip *chip, unsigned offset,
++	/*
++	 * Unlike any of the other LSM hooks where the kernel enforces file
++	 * integrity, enforcing file integrity for the bprm_creds_for_exec()
++	 * LSM hook with the AT_EXECVE_CHECK flag is left up to the discretion
++	 * of the script interpreter(userspace). Differentiate kernel and
++	 * userspace enforced integrity audit messages.
++	 */
++	if (is_bprm_creds_for_exec(func, file))
++		audit_msgno = AUDIT_INTEGRITY_DATA_CHECK;
++
+ 	/* If reading the xattr failed and there's no modsig, error out. */
+ 	if (rc <= 0 && !try_modsig) {
+ 		if (rc && rc != -ENODATA)
+@@ -569,7 +593,7 @@ int ima_appraise_measurement(enum ima_hooks func, struct ima_iint_cache *iint,
+ 	     (iint->flags & IMA_FAIL_UNVERIFIABLE_SIGS))) {
+ 		status = INTEGRITY_FAIL;
+ 		cause = "unverifiable-signature";
+-		integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode, filename,
++		integrity_audit_msg(audit_msgno, inode, filename,
+ 				    op, cause, rc, 0);
+ 	} else if (status != INTEGRITY_PASS) {
+ 		/* Fix mode, but don't replace file signatures. */
+@@ -589,7 +613,7 @@ int ima_appraise_measurement(enum ima_hooks func, struct ima_iint_cache *iint,
+ 			status = INTEGRITY_PASS;
+ 		}
  
- static void twl6040gpo_set(struct gpio_chip *chip, unsigned offset, int value)
- {
--	struct twl6040 *twl6040 = dev_get_drvdata(chip->parent->parent);
-+	struct twl6040 *twl6040 = gpiochip_get_data(chip);
- 	int ret;
- 	u8 gpoctl;
+-		integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode, filename,
++		integrity_audit_msg(audit_msgno, inode, filename,
+ 				    op, cause, rc, 0);
+ 	} else {
+ 		ima_cache_flags(iint, func);
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index 06132cf47016..f0830e6d0cda 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -554,6 +554,27 @@ static int ima_bprm_check(struct linux_binprm *bprm)
+ 				   MAY_EXEC, CREDS_CHECK);
+ }
  
-@@ -91,7 +91,7 @@ static int gpo_twl6040_probe(struct platform_device *pdev)
++/**
++ * ima_bprm_creds_for_exec - collect/store/appraise measurement.
++ * @bprm: contains the linux_binprm structure
++ *
++ * Based on the IMA policy and the execvat(2) AT_CHECK flag, measure and
++ * appraise the integrity of a file to be executed by script interpreters.
++ * Unlike any of the other LSM hooks where the kernel enforces file integrity,
++ * enforcing file integrity is left up to the discretion of the script
++ * interpreter (userspace).
++ *
++ * On success return 0.  On integrity appraisal error, assuming the file
++ * is in policy and IMA-appraisal is in enforcing mode, return -EACCES.
++ */
++static int ima_bprm_creds_for_exec(struct linux_binprm *bprm)
++{
++	if (!bprm->is_check)
++		return 0;
++
++	return ima_bprm_check(bprm);
++}
++
+ /**
+  * ima_file_check - based on policy, collect/store measurement.
+  * @file: pointer to the file to be measured
+@@ -1177,6 +1198,7 @@ static int __init init_ima(void)
  
- 	twl6040gpo_chip.parent = &pdev->dev;
- 
--	ret = devm_gpiochip_add_data(&pdev->dev, &twl6040gpo_chip, NULL);
-+	ret = devm_gpiochip_add_data(&pdev->dev, &twl6040gpo_chip, twl6040);
- 	if (ret < 0) {
- 		dev_err(&pdev->dev, "could not register gpiochip, %d\n", ret);
- 		twl6040gpo_chip.ngpio = 0;
+ static struct security_hook_list ima_hooks[] __ro_after_init = {
+ 	LSM_HOOK_INIT(bprm_check_security, ima_bprm_check),
++	LSM_HOOK_INIT(bprm_creds_for_exec, ima_bprm_creds_for_exec),
+ 	LSM_HOOK_INIT(file_post_open, ima_file_check),
+ 	LSM_HOOK_INIT(inode_post_create_tmpfile, ima_post_create_tmpfile),
+ 	LSM_HOOK_INIT(file_release, ima_file_free),
 -- 
 2.47.0
 
