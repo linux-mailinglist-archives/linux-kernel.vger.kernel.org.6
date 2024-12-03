@@ -1,132 +1,168 @@
-Return-Path: <linux-kernel+bounces-430293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430294-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6A629E2F80
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 00:07:45 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEC159E2EE8
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 23:16:35 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 63522B468E0
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 22:14:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7370E168C74
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 22:15:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FE7620ADD1;
-	Tue,  3 Dec 2024 22:13:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 271C920A5E7;
+	Tue,  3 Dec 2024 22:14:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Za/D1pmU"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ISLacKa7"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE4D7207A20;
-	Tue,  3 Dec 2024 22:13:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C20501FA84F;
+	Tue,  3 Dec 2024 22:14:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733264036; cv=none; b=VDdChSRr5HPgXhRkVpUJwRvl17X6WPQxLdJLY8Z7V8NHtH6s8ARM67lcfaPxflDn64OBwcUmZYyqlZcnxFzdcB8RK+GWZeoSjlxMhdUtyWKdq1QJZlQH0Pk6ImUo6buIcWPjZHm9rE9AC39Y+HOGu4T32CPhQLyi0JRL0Aqzlpo=
+	t=1733264073; cv=none; b=PSLkPkPg+mx0NzlpMO6noygDb1ecrdg314IT0Vtikg/nLwzMAzJB1wNt8zG+GfGUWEhRsfbBKXrW0HYAJEu+jL/Aa0fkIUS2uoQ9XXLYb1vwqjvHpBpdDqp2weA+lLqVix6F91I64Lpe7FZan3b8h/ZMmEdORy1mSZKIYeaVvgw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733264036; c=relaxed/simple;
-	bh=BkbrVzdOiRECikibD4L1YGd8E6iWdSVVwdyBf+AYo/s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=GySMKxeNBzD6JMwisolXmmodaIb6gtwHKAUhcPDmq3nUzX33aoyS2ye48nlhOK8wZttnPuEyRGxSNtE6AkAZ7v02/olTnXHzNLtBM2suYa92klmjRc9TTLOcnuE8O5EzgiGRo9ZBA5FxUOjH1fYSOryXXSM+9z/mFQQVY3qfuIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Za/D1pmU; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B3DX5RW031984;
-	Tue, 3 Dec 2024 22:13:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	o638fS9a+Kgl6sSSM4E5PIbTqYncs25H9BZwPzS/vgQ=; b=Za/D1pmU1C0oej/1
-	l5hAliFZZxo+iTJmfoXovUIf8RFNArDJ6bkxojpH4AJYtmjEM2+5t8iuzeuPoDQK
-	U7zhYkQVtbmEIU+SUdIZJTV6Lmg0EcHYto2j7d3I/ha4u8psVNylov139DPuJ7gw
-	AS+ULkrpJWbGBJNZgeZ6tqLhFBLniG9koWAiRqIG8uJaNgU34o67qifBdzhZNhrA
-	Izr+2Khc6c6EXXm7BM/Qu8MeMUEGNGy0UeOatUfWVsD2t4q5ULmKPuCmEd5+nR7V
-	bYp/1zh6nIvWgj8+n6uoMSO4hhrgB8RrI7afqpn8U2J81jo75tOEjnuT7OcWLiFF
-	fvaePQ==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 439trbjpym-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 03 Dec 2024 22:13:49 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B3MDmdc030640
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 3 Dec 2024 22:13:48 GMT
-Received: from [10.4.85.39] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 3 Dec 2024
- 14:13:45 -0800
-Message-ID: <0df58435-94e7-4b81-b688-ec0e1c49c0e0@quicinc.com>
-Date: Wed, 4 Dec 2024 09:13:43 +1100
+	s=arc-20240116; t=1733264073; c=relaxed/simple;
+	bh=uPJe1PLra4CQK5SdJPdBzE3oonO1F1+GBrCkrCvazcs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jMb2vF9bV5lR591OWTfBGYnGW/sUTa7PjzbKbGH4Vyfu1QMYG9L+J6jSI6vvF0k/djQRfrSzofBO2/7y+i/rB0WfV4FOYe/Coc0WVA/HBaAhuJsy9utY8tg8wsJ2ZrE9ZRCSlsxLZAYg4hunomXa8rgArvp1DYqPRIJCW1AC3Aw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ISLacKa7; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-385ea29eee1so2418225f8f.3;
+        Tue, 03 Dec 2024 14:14:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733264070; x=1733868870; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZEKd2KtRYUftLCzklvlf03oHPrrEzWAjMeO8mfAXl9E=;
+        b=ISLacKa72TUs/OWZDGhhBiUuCiU/icvYe04bbmars6jqOnlZVS1N7Jj1aOtILSgwjw
+         O01CltVx6Bn+hnd7DCBcDeyk7Xfqy7xRdf/RYJZBr3WXpvFwHeS06Dyif9lbR/kSC3eU
+         MVvRcs8/jSE21N3bnmFhN3WYD5l3lAg6ja5cv5+eASoMi739alyhkB275zlVavITRbwb
+         72KbTiy7L1MmDWpLzb426Mh4itfDMIWQq9Np2WgTGWa2k8RG8Mp0fh4R2h9aZjofEEq/
+         1itnIKtOxnAn0ddNKbezZcz9vYULgGzlD8IoWvadccF+KVpyh347vWysgbKgAdr85pGM
+         NxuQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733264070; x=1733868870;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZEKd2KtRYUftLCzklvlf03oHPrrEzWAjMeO8mfAXl9E=;
+        b=bhs1I6vw6PUisPYppLa81dDVgC1+cnS+1qzQEoG8QsN6nKz+OAnt8VEQwj9KmcYbvx
+         r4OAJLM/xkk5FAQj47urNBvXHYayDE2kBHZJKarDIbYc6yU6ry0ot2PFQUNYsprbn0hX
+         vKx82KXJ9ZLqrH0urf+H+D37J5woFqJY2X37cZuK/dfBPIArWnYiLYPGyTKde5LGIRGV
+         g6xNVq21HcthQK+lBY5RY5E7CkPeNaR8qLZPJC1+Bwaph1mQFoWTfZEvKtR+PhK8oFMb
+         TNSFPQ8RnjTRV1GM99DxyL9WvLlE2SEqYlBgRvu5zZmf9J6FWD9JF6PycaJ5RlG8xGDJ
+         ASzw==
+X-Forwarded-Encrypted: i=1; AJvYcCVRRNE3qLSZsDDJ1NoAhQb5pEzuvpRTsHLN35IN5B/KElQmZCg/6d7ZOst89ArCkxvfqSryVfKzu0E=@vger.kernel.org, AJvYcCVzVFVr/Qxxs0UjP79gL0xGGkxjVvXCH4Kfz2R/cGT6TDaPyO2Brg444L636aZtXkf66dSG5yrrxInwWuRh@vger.kernel.org
+X-Gm-Message-State: AOJu0YwhogheUKe6RRUrPAKpZLODPSTcfnNfdUeD+85Y3meNIZ4rKjKd
+	Gz/xmQWAiOPiqwfibR9dMMo4MlnrF88AA7ss0Pknn/R3/Ko9csbz
+X-Gm-Gg: ASbGncvzHRus5GcjLrEun/fDyVRH7yox24l3JlaG4SJ2zYn9NhpLBoLBxUOTzmZt9zv
+	fS/yDatKqyf039xDwPyKu4nAdhWKwbwVbzBnw/cqehAyGuaKvfsq/6hRztsRqlrDEXSq39Ygpo9
+	NecTBN1HzzslRq/Jbcnb2x3wRckwHD7dTHbRoZr1uHYiJTTEEnrRGYq5OIqarGNgr9ITc5uYSE+
+	cvx6dqz3xGqbXkUUSkMCfo2x0JvquPzeo/qqHQhk62gMsOQqPii7QpjW8aG
+X-Google-Smtp-Source: AGHT+IHLYgaBrFFuZ+yssHooipIVuaZYQnPn8gMyCZL9dYlY/sI/RHSvvFitPKH0IUHhbiTNKOqCbw==
+X-Received: by 2002:a5d:5f8b:0:b0:385:f1f2:13ee with SMTP id ffacd0b85a97d-385fd53ed92mr3844314f8f.46.1733264069916;
+        Tue, 03 Dec 2024 14:14:29 -0800 (PST)
+Received: from vamoirid-laptop ([2a04:ee41:82:7577:56d9:cf1e:faf4:54e1])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385e5e3629fsm10599846f8f.93.2024.12.03.14.14.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Dec 2024 14:14:29 -0800 (PST)
+Date: Tue, 3 Dec 2024 23:14:27 +0100
+From: Vasileios Amoiridis <vassilisamir@gmail.com>
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: lars@metafoo.de, krzysztof.kozlowski@linaro.org, nuno.sa@analog.com,
+	u.kleine-koenig@baylibre.com, abhashkumarjha123@gmail.com,
+	jstephan@baylibre.com, dlechner@baylibre.com,
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC 6/6] iio: core: mark scan_timestamp as __private
+Message-ID: <Z0-Cw-R1FJZCpnPY@vamoirid-laptop>
+References: <20241130002710.18615-1-vassilisamir@gmail.com>
+ <20241130002710.18615-7-vassilisamir@gmail.com>
+ <20241130141954.07423793@jic23-huawei>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 00/10] Trusted Execution Environment (TEE) driver for
- Qualcomm TEE (QTEE)
-To: Trilok Soni <quic_tsoni@quicinc.com>,
-        Jens Wiklander
-	<jens.wiklander@linaro.org>,
-        Sumit Garg <sumit.garg@linaro.org>,
-        "Bjorn
- Andersson" <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        "Rob Herring" <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        "Conor Dooley" <conor+dt@kernel.org>,
-        Bartosz Golaszewski
-	<bartosz.golaszewski@linaro.org>,
-        Srinivas Kandagatla
-	<srinivas.kandagatla@linaro.org>
-CC: <linux-arm-msm@vger.kernel.org>, <op-tee@lists.trustedfirmware.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-doc@vger.kernel.org>
-References: <20241202-qcom-tee-using-tee-ss-without-mem-obj-v1-0-f502ef01e016@quicinc.com>
- <518ee3f1-b871-4349-ba85-3b3fc835a4ca@quicinc.com>
-Content-Language: en-US
-From: Amirreza Zarrabi <quic_azarrabi@quicinc.com>
-In-Reply-To: <518ee3f1-b871-4349-ba85-3b3fc835a4ca@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: ul74uRlLCFN8ibDVqsxhKq7DcVbsTQSq
-X-Proofpoint-ORIG-GUID: ul74uRlLCFN8ibDVqsxhKq7DcVbsTQSq
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=891 mlxscore=0
- suspectscore=0 spamscore=0 malwarescore=0 adultscore=0 priorityscore=1501
- clxscore=1015 phishscore=0 lowpriorityscore=0 impostorscore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
- definitions=main-2412030184
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241130141954.07423793@jic23-huawei>
 
-Based on our discussions, we implemented significant changes. We essentially
-rewrote most of the files and altered the overall direction, except for a
-couple of files. The changelog entry would have been extensive.
+On Sat, Nov 30, 2024 at 02:19:54PM +0000, Jonathan Cameron wrote:
+> On Sat, 30 Nov 2024 01:27:10 +0100
+> Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
+> 
+> > Since there are no more direct accesses to the indio_dev->scan_timestamp
+> > value, it can be marked as __private and use the macro ACCESS_PRIVATE()
+> > in order to access it. Like this, static checkers will be able to inform
+> > in case someone tries to either write to the value, or read its value
+> > directly.
+> > 
+> > Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
+> > ---
+> >  drivers/iio/industrialio-buffer.c | 2 +-
+> >  include/linux/iio/iio.h           | 4 ++--
+> >  2 files changed, 3 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/drivers/iio/industrialio-buffer.c b/drivers/iio/industrialio-buffer.c
+> > index 8104696cd475..c332741f3cf4 100644
+> > --- a/drivers/iio/industrialio-buffer.c
+> > +++ b/drivers/iio/industrialio-buffer.c
+> > @@ -1137,7 +1137,7 @@ static int iio_enable_buffers(struct iio_dev *indio_dev,
+> >  	int ret;
+> >  
+> >  	indio_dev->active_scan_mask = config->scan_mask;
+> > -	indio_dev->scan_timestamp = config->scan_timestamp;
+> > +	ACCESS_PRIVATE(indio_dev, scan_timestamp) = config->scan_timestamp;
+> >  	indio_dev->scan_bytes = config->scan_bytes;
+> >  	iio_dev_opaque->currentmode = config->mode;
+> >  
+> > diff --git a/include/linux/iio/iio.h b/include/linux/iio/iio.h
+> > index 5661794d1127..669b4ef1280d 100644
+> > --- a/include/linux/iio/iio.h
+> > +++ b/include/linux/iio/iio.h
+> > @@ -611,7 +611,7 @@ struct iio_dev {
+> >  	const unsigned long		*available_scan_masks;
+> >  	unsigned int			__private masklength;
+> >  	const unsigned long		*active_scan_mask;
+> > -	bool				scan_timestamp;
+> > +	bool				__private scan_timestamp;
+> >  	struct iio_trigger		*trig;
+> >  	struct iio_poll_func		*pollfunc;
+> >  	struct iio_poll_func		*pollfunc_event;
+> > @@ -908,7 +908,7 @@ int iio_active_scan_mask_index(struct iio_dev *indio_dev);
+> >   */
+> >  static inline bool iio_is_soft_ts_enabled(const struct iio_dev *indio_dev)
+> >  {
+> > -	return indio_dev->scan_timestamp;
+> > +	return ACCESS_PRIVATE(indio_dev, scan_timestamp);
+> If we only end up with one use of this (based on feedback on other drivers)
+> I'd tempted to deliberately not provide this convenience function and instead
+> just use ACCESS_PRIVATE() directly in iio_push_to_buffers_with_timestamp()
+> 
+> Nice work. Particularly by highlighting some 'odd corners' in drivers that
+> probably make no real sense to keep ;)
+> 
+> Jonathan
+> 
+> 
+> >  }
+> >  
+> >  ssize_t iio_format_value(char *buf, unsigned int type, int size, int *vals);
+>
 
-- Amir
+Hi Jonathan,
 
-On 12/3/2024 5:06 PM, Trilok Soni wrote:
-> On 12/2/2024 8:19 PM, Amirreza Zarrabi wrote:
->> This patch series introduces a Trusted Execution Environment (TEE)
->> driver for Qualcomm TEE (QTEE). QTEE enables Trusted Applications (TAs)
->> and services to run securely. It uses an object-based interface, where
->> each service is an object with sets of operations. Clients can invoke
->> these operations on objects, which can generate results, including other
->> objects. For example, an object can load a TA and return another object
->> that represents the loaded TA, allowing access to its services.
-> 
-> The first patch series was RFC and now you had removed the RFC. Can you please
-> provide the reasons?
-> 
-> https://lwn.net/ml/all/20240702-qcom-tee-object-and-ioctls-v1-0-633c3ddf57ee@quicinc.com/
-> 
-> I understand that you have now changed to tee framework but I want to check
-> if we should continue with the version and increment here or start from [00]?
-> 
+Indeed, if it is only one case that this is being used, it wouldn't make
+sense to provide an accessor. I wouldn't think of going directly to
+touch the drivers without sending this RFC first, so it's good that you
+like the solution of optimizing the drivers themselves. I might find
+some time before the weekend to spin a v2 to discuss. Thanks for your
+time, your comments are always of great help!
+
+Cheers,
+Vasilis
 
