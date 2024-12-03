@@ -1,76 +1,75 @@
-Return-Path: <linux-kernel+bounces-429874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FC539E2A4E
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 19:06:00 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 681489E28FE
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 18:21:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EB6EBB336D8
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:46:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4CFCEB325B5
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:50:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C93B71F9437;
-	Tue,  3 Dec 2024 16:44:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75A471F9F7A;
+	Tue,  3 Dec 2024 16:49:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="ABmffcZ+";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="ABmffcZ+"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="jTaNCrgB"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 398F713B2B8;
-	Tue,  3 Dec 2024 16:44:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02DC21F8AE0;
+	Tue,  3 Dec 2024 16:49:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733244292; cv=none; b=REsVC11SMmbyVPkXzSaOtAaGW8/4GJ/Pfbo3nUfyre15kNz982elYclPtfrzJQs7z+h8MJXJ6yaTcZmYE5Sz0UKppoo+myYXd07e3jRLH7dj4eC18ptzB6HZFABAr4gVx+Begy2NCnu01UNJXnlRPUPmge79R+cciBt67S5x9Xg=
+	t=1733244590; cv=none; b=mPTwsffpZnky6XeRfZzU8T293KxXO7LJu3aHihdM2tW7Wsd002lDjFxt+4k2eMFoGuAMC+h8hzP5svRp37ssowUcYMaOWNvNCGhgg2IrQlCnQufWl9r4ESetZjK9hG/fAMr8k6RpQF1didqEJ8eoLlo7ca/4JFjS9KwOx7gqXSw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733244292; c=relaxed/simple;
-	bh=X1k/huevY/l/ywsScMa166s7HjirUAOLJI63f0ykHiM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HRV5Z3XJ9QPeoQZEgrgSNwOuZpuA1QW6cDTafxyzrEidrYdiRjqfReDwZxrHfdjhYr1wZp5vwuYCMGYOZmknW29hUP0DiBy6cT/aCA8t9zMrrBQSqg1sIIrsJH9QDqUzi0nrzTcgZR2pOzfyCsX/b95BA+4mrLwjCpp8y1VsoD0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=ABmffcZ+; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=ABmffcZ+; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 4B1B81F44F;
-	Tue,  3 Dec 2024 16:44:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1733244287; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=TK7/Rstg1ISjshRPuAcqrN5niIwGEbGqudTRbgXZfwo=;
-	b=ABmffcZ+fijBx8NUdFjo6bctKlO/iQso9gstrVn+xW9jJuyHDtkJsTIAUcggMzw2aCVLOL
-	5WPTzvTExAkuIg20auctBbl3G6BSQj2JHz3Mh+iUkVD7Vqm3HF9UZ4tGDcOPr/zZLaYbUd
-	jibD8YwbLGaTwcXoMjpXSzfAO2B/NpY=
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1733244287; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=TK7/Rstg1ISjshRPuAcqrN5niIwGEbGqudTRbgXZfwo=;
-	b=ABmffcZ+fijBx8NUdFjo6bctKlO/iQso9gstrVn+xW9jJuyHDtkJsTIAUcggMzw2aCVLOL
-	5WPTzvTExAkuIg20auctBbl3G6BSQj2JHz3Mh+iUkVD7Vqm3HF9UZ4tGDcOPr/zZLaYbUd
-	jibD8YwbLGaTwcXoMjpXSzfAO2B/NpY=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 44748139C2;
-	Tue,  3 Dec 2024 16:44:47 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Hl+wEH81T2f9YAAAD6G6ig
-	(envelope-from <dsterba@suse.com>); Tue, 03 Dec 2024 16:44:47 +0000
-From: David Sterba <dsterba@suse.com>
-To: torvalds@linux-foundation.org
-Cc: David Sterba <dsterba@suse.com>,
-	linux-btrfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] Btrfs fixes for 6.13-rc2
-Date: Tue,  3 Dec 2024 17:44:40 +0100
-Message-ID: <cover.1733243359.git.dsterba@suse.com>
-X-Mailer: git-send-email 2.45.0
+	s=arc-20240116; t=1733244590; c=relaxed/simple;
+	bh=wWH4tgKlouNqImBYePx9huDiTJpEIRPS6nir8j7hcWA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=saFYofdfz1dO457YtG6pQD+esfsZ87lqHQOOQ7vCwCU3vyWrKhhNYZk++h6/OHu9e66vwA/7iv32zvzcV1rheSGgWYMIB5s/F06wmdXG77SYNHbLUhbVmppcT9O5SC41jU2kvooNo0hPR6fzO4jPtUIIGaQK58AWtFqgCFg+KyM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=jTaNCrgB; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Transfer-Encoding:MIME-Version:References:
+	In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=dDXtirkofJxQHdUKHvGa7WJ/KJTFg04tK9XP7XOZ27M=; b=jTaNCrgBZ+IiFYouTRSOu4rbUl
+	mYagNk3XadpVmDdPny1K2WzbbzERGPcw+xyns8UUQI1Rf9RTGsfToipMIY6e8aFbN07LeTEvOZP4f
+	o+DuMzw7BFBiHDBf8/6oR5EEiZ6lmYJsBgRcM/5+3MS9PZypJOzp+B/nWmEHakjTyeRsKrJPs1U43
+	Tb8339IgRSBRRgZNWQmkOyYvKo/Oyi0kya7DLWKvMii+Gm8Ckw4tRG0IouGQ9zIdXbxLYXXfqXL+k
+	TyS2Skc3KiNhnx43BQkMRXlPD/E8xAKemDIq3M7azRFznhSSOUw2O4DrpOb7xkboEXSMa7FLxNl1B
+	98OfhNcw==;
+Received: from i53875bc4.versanet.de ([83.135.91.196] helo=localhost.localdomain)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1tIW5n-0003fy-Rc; Tue, 03 Dec 2024 17:49:43 +0100
+From: Heiko Stuebner <heiko@sntech.de>
+To: vkoul@kernel.org,
+	kishon@kernel.org
+Cc: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	quentin.schulz@cherry.de,
+	sebastian.reichel@collabora.com,
+	heiko@sntech.de,
+	linux-phy@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	dse@thaumatec.com,
+	Heiko Stuebner <heiko.stuebner@cherry.de>,
+	Conor Dooley <conor.dooley@microchip.com>
+Subject: [PATCH v5 1/2] dt-bindings: phy: Add Rockchip MIPI C-/D-PHY schema
+Date: Tue,  3 Dec 2024 17:49:31 +0100
+Message-ID: <20241203164934.1500616-2-heiko@sntech.de>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20241203164934.1500616-1-heiko@sntech.de>
+References: <20241203164934.1500616-1-heiko@sntech.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,85 +77,116 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Spam-Score: -2.80
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_MISSING_CHARSET(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	RCVD_TLS_ALL(0.00)[];
-	RCPT_COUNT_THREE(0.00)[4];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:mid]
-X-Spam-Flag: NO
-X-Spam-Level: 
 
-Hi,
+From: Heiko Stuebner <heiko.stuebner@cherry.de>
 
-first batch of regression and regular fixes. Please pull, thanks.
+Add dt-binding schema for the MIPI C-/D-PHY found on
+Rockchip RK3588 SoCs.
 
-- add lockdep annotations for io_uring/encoded read integration, inode
-  lock is held when returning to userspace
+Tested-by: Daniel Semkowicz <dse@thaumatec.com>
+Tested-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Signed-off-by: Heiko Stuebner <heiko.stuebner@cherry.de>
+---
+ .../phy/rockchip,rk3588-mipi-dcphy.yaml       | 87 +++++++++++++++++++
+ 1 file changed, 87 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/phy/rockchip,rk3588-mipi-dcphy.yaml
 
-- properly reflect experimental config option to sysfs
+diff --git a/Documentation/devicetree/bindings/phy/rockchip,rk3588-mipi-dcphy.yaml b/Documentation/devicetree/bindings/phy/rockchip,rk3588-mipi-dcphy.yaml
+new file mode 100644
+index 000000000000..c8ff5ba22a86
+--- /dev/null
++++ b/Documentation/devicetree/bindings/phy/rockchip,rk3588-mipi-dcphy.yaml
+@@ -0,0 +1,87 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/phy/rockchip,rk3588-mipi-dcphy.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Rockchip MIPI D-/C-PHY with Samsung IP block
++
++maintainers:
++  - Guochun Huang <hero.huang@rock-chips.com>
++  - Heiko Stuebner <heiko@sntech.de>
++
++properties:
++  compatible:
++    enum:
++      - rockchip,rk3576-mipi-dcphy
++      - rockchip,rk3588-mipi-dcphy
++
++  reg:
++    maxItems: 1
++
++  "#phy-cells":
++    const: 1
++    description: |
++      Argument is mode to operate in. Supported modes are:
++        - PHY_TYPE_DPHY
++        - PHY_TYPE_CPHY
++      See include/dt-bindings/phy/phy.h for constants.
++
++  clocks:
++    maxItems: 2
++
++  clock-names:
++    items:
++      - const: pclk
++      - const: ref
++
++  resets:
++    maxItems: 4
++
++  reset-names:
++    items:
++      - const: m_phy
++      - const: apb
++      - const: grf
++      - const: s_phy
++
++  rockchip,grf:
++    $ref: /schemas/types.yaml#/definitions/phandle
++    description:
++      Phandle to the syscon managing the 'mipi dcphy general register files'.
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - clock-names
++  - resets
++  - reset-names
++  - "#phy-cells"
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/rockchip,rk3588-cru.h>
++    #include <dt-bindings/reset/rockchip,rk3588-cru.h>
++
++    soc {
++      #address-cells = <2>;
++      #size-cells = <2>;
++
++      phy@feda0000 {
++        compatible = "rockchip,rk3588-mipi-dcphy";
++        reg = <0x0 0xfeda0000 0x0 0x10000>;
++        clocks = <&cru PCLK_MIPI_DCPHY0>,
++                 <&cru CLK_USBDPPHY_MIPIDCPPHY_REF>;
++        clock-names = "pclk", "ref";
++        resets = <&cru SRST_M_MIPI_DCPHY0>,
++                 <&cru SRST_P_MIPI_DCPHY0>,
++                 <&cru SRST_P_MIPI_DCPHY0_GRF>,
++                 <&cru SRST_S_MIPI_DCPHY0>;
++        reset-names = "m_phy", "apb", "grf", "s_phy";
++        rockchip,grf = <&mipidcphy0_grf>;
++        #phy-cells = <1>;
++      };
++    };
+-- 
+2.45.2
 
-- handle NULL root in case the rescue mode accepts invalid/damaged tree
-  roots (rescue=ibadroot)
-
-- regression fix of a deadlock between transaction and extent locks
-
-- fix pending bio accounting bug in encoded read ioctl
-
-- fix NOWAIT mode when checking references for NOCOW files
-
-- fix use-after-free in a rb-tree cleanup in ref-verify debugging tool
-
-----------------------------------------------------------------
-The following changes since commit e82c936293aafb4f33b153c684c37291b3eed377:
-
-  btrfs: send: check for read-only send root under critical section (2024-11-11 14:34:23 +0100)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git tags/for-6.13-rc1-tag
-
-for you to fetch changes up to 22d2e48e318564f8c9b09faf03ecb4f03fb44dd5:
-
-  btrfs: fix lockdep warnings on io_uring encoded reads (2024-11-29 16:56:38 +0100)
-
-----------------------------------------------------------------
-Filipe Manana (4):
-      btrfs: fix deadlock between transaction commits and extent locks
-      btrfs: sysfs: advertise experimental features only if CONFIG_BTRFS_EXPERIMENTAL=y
-      btrfs: don't loop for nowait writes when checking for cross references
-      btrfs: ref-verify: fix use-after-free after invalid ref action
-
-Johannes Thumshirn (1):
-      btrfs: fix use-after-free in btrfs_encoded_read_endio()
-
-Lizhi Xu (1):
-      btrfs: add a sanity check for btrfs root in btrfs_search_slot()
-
-Mark Harmstone (1):
-      btrfs: fix lockdep warnings on io_uring encoded reads
-
- fs/btrfs/ctree.c       |  6 +++++-
- fs/btrfs/extent-tree.c |  2 +-
- fs/btrfs/inode.c       | 18 ++++++++++++++----
- fs/btrfs/ioctl.c       | 10 ++++++++++
- fs/btrfs/locking.h     | 10 ++++++++++
- fs/btrfs/ref-verify.c  |  1 +
- fs/btrfs/sysfs.c       |  4 ++--
- 7 files changed, 43 insertions(+), 8 deletions(-)
 
