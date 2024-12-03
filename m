@@ -1,231 +1,142 @@
-Return-Path: <linux-kernel+bounces-429482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B70909E1CB8
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 13:50:35 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E24B9E1CE8
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 14:00:49 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4A60167BA0
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 12:49:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 53741B634B8
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 12:51:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4CA91EF0B8;
-	Tue,  3 Dec 2024 12:46:56 +0000 (UTC)
-Received: from 189.cn (ptr.189.cn [183.61.185.103])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31FFE1EB9F3;
-	Tue,  3 Dec 2024 12:46:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=183.61.185.103
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E98681EBA0F;
+	Tue,  3 Dec 2024 12:49:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="xltb8R6t"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C3331EB9F5
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 12:49:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733230016; cv=none; b=m1RjFyOFwqunQdoFxZaVCIFUnlfjBAG0mpt4DGuv7enwPaP7PW/sKxt4XUH8DJUz1N7vJslZ9NeVV6ALRu9eIIzG6ptMM5S1WA0Vf2FDx0r1IRNN+8jQTT+sGqkAwt/HbCnd3HN+UIajYVNq02QZz6QhR5IRlgX/YtXB+n6STPg=
+	t=1733230182; cv=none; b=FXMr5aheXG+GYbzuy7/08KYeCgPWBWR3V7niicopPwuCsVYYydXOgWg0TQR2M/2gcRfSvHNUx5NVYpXaB9YhKcsxrgKw8WL+YCfO/H0ARdTbnB+pm9H72ZGtTj0pG6Zeo+kFsnhEFWRXZnki1wFBwvr77JIGtgyHLLKgsmibpjM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733230016; c=relaxed/simple;
-	bh=XUvKG8rmpTeKfs6cJxGKS5fKCHuP/bWdL33sNoy5MUs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=s7BB/UER8CVh7cfnPvqtxNmeep6e5x38udOI5izztHKxZoxyNhO0njZXj8By0YJ3qNpA2PoeQw1lgwAi8yWhschFqAqVaXRlCCWJfTOeXNLkvrbfhfOmK97RIRAx+j6OdTLbhLlJrBsxeXdFieGXNL3SGRRa1ozgm4MoK21A7kk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=189.cn; spf=pass smtp.mailfrom=189.cn; arc=none smtp.client-ip=183.61.185.103
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=189.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=189.cn
-HMM_SOURCE_IP:10.158.243.220:61015.1046576544
-HMM_ATTACHE_NUM:0000
-HMM_SOURCE_TYPE:SMTP
-Received: from clientip-117.15.92.245 (unknown [10.158.243.220])
-	by 189.cn (HERMES) with SMTP id D578F1000E6;
-	Tue,  3 Dec 2024 20:46:49 +0800 (CST)
-Received: from  ([117.15.92.245])
-	by gateway-153622-dep-5c5f88b874-f78lq with ESMTP id f59ace2d81c7420d85fd34d7fce76345 for hdegoede@redhat.com;
-	Tue, 03 Dec 2024 20:46:50 CST
-X-Transaction-ID: f59ace2d81c7420d85fd34d7fce76345
-X-Real-From: chensong_2000@189.cn
-X-Receive-IP: 117.15.92.245
-X-MEDUSA-Status: 0
-Sender: chensong_2000@189.cn
-Message-ID: <98cfdcf2-e823-4773-a396-84148a4d6a5b@189.cn>
-Date: Tue, 3 Dec 2024 20:46:48 +0800
+	s=arc-20240116; t=1733230182; c=relaxed/simple;
+	bh=T1GpIkBfvxvbX+MalpmiQrxGXfApHwhCr7QEBi1XWRg=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iWmdz+IOU1TzFyWAgXrgWKoTZyN0sP0f73/mfrygSfqFalPMN7aotXkCrQ/0ubLvNPn+6WpG/xSb/YTMP7RLj2aXy/WB6kLUSYRa4NnqlgHZbpI2gqcxyutd898tEGbbqxZLXgHGMf9AenPF1PFpr2u7Q+iI0AOX500gP4JmcGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=xltb8R6t; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1733230181; x=1764766181;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=T1GpIkBfvxvbX+MalpmiQrxGXfApHwhCr7QEBi1XWRg=;
+  b=xltb8R6tkFiSIivNQIt2fjMUhyPSY6QStvsTEZsvnK/vT92njrcTSWWZ
+   cMZK5Ptuf72YEM8J5P3LLbpWQ64/hzCabv1nPlliBsyycT67smyRVcgZN
+   XUvdfzRZYYwHtW+O91703fL8DsHK+9rSayXSgsgsL7aOjoiiDjSVku0H4
+   JtNH+NQ/j+ICT50PNeOrdMVR0FyibOWGTD/llFle/IGJrtHgDSV7Y3GC2
+   xbWIv2x76J4lcFDePvUqsWxm85ERWDS7cuW1s5bRg4uwsznsWdN/SG4pf
+   juyq5KRqK8trO7gp6Mac4FGBtlXQf5CedJ9FO2sYXD7vvNbTxC3E3A0PE
+   g==;
+X-CSE-ConnectionGUID: S20NuJ6cSjmnORbGeVYKQw==
+X-CSE-MsgGUID: g5ipLOFAQNG9hyM/4AxIEQ==
+X-IronPort-AV: E=Sophos;i="6.12,205,1728975600"; 
+   d="scan'208";a="266264389"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 03 Dec 2024 05:49:40 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Tue, 3 Dec 2024 05:48:59 -0700
+Received: from DEN-DL-M70577 (10.10.85.11) by chn-vm-ex02.mchp-main.com
+ (10.10.85.144) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
+ Transport; Tue, 3 Dec 2024 05:48:58 -0700
+Date: Tue, 3 Dec 2024 12:48:57 +0000
+From: Daniel Machon <daniel.machon@microchip.com>
+To: Calvin Owens <calvin@wbinvd.org>
+CC: Muhammad Usama Anjum <Usama.Anjum@collabora.com>, LKML
+	<linux-kernel@vger.kernel.org>, <Steen.Hegelund@microchip.com>,
+	<kuba@kernel.org>
+Subject: Re: [Bug Report] Depmod is failing on allmodconfig for arm64 and
+ x86_64
+Message-ID: <20241203124857.ng736mvwhvkmqie3@DEN-DL-M70577>
+References: <91c041ac-5491-4c97-9afc-9eb11c8e686c@collabora.com>
+ <Z03fvf3RT7mq9hUZ@mozart.vkv.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drivers/staging/media/atomisp: replace legacy GPIO APIs
- in atomisp_gmin_platform
-To: Hans de Goede <hdegoede@redhat.com>, andy@kernel.org, mchehab@kernel.org,
- sakari.ailus@linux.intel.com, gregkh@linuxfoundation.org,
- bergh.jonathan@gmail.com
-Cc: arnd@arndb.de, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- linux-staging@lists.linux.dev
-References: <20241203091436.203745-1-chensong_2000@189.cn>
- <81a63f9d-afe4-4a29-ae98-5c5837bcd7cb@redhat.com>
-Content-Language: en-US
-From: Song Chen <chensong_2000@189.cn>
-In-Reply-To: <81a63f9d-afe4-4a29-ae98-5c5837bcd7cb@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <Z03fvf3RT7mq9hUZ@mozart.vkv.me>
 
-oh, good to know, many thanks.
+Hi Calvin, Muhammad,
 
-Song
+Thanks for reporting this.
 
-在 2024/12/3 18:13, Hans de Goede 写道:
-> Hi,
+Took me a while to reproduce, turned out i needed a newer version of kmod in
+order to get the error print.
+
+> On Tuesday 11/26 at 18:25 +0500, Muhammad Usama Anjum wrote:
+> > Hi,
+> >
+> > The depmod is failing on 9f16d5e6f2206 (mainline) arm64 and x86_64 because of:
+> > ```
+> > depmod: ERROR: Cycle detected: libphy
+> >
+> > depmod: ERROR: Cycle detected: lan969x_switch -> sparx5_switch -> lan969x_switch
+> > depmod: ERROR: Cycle detected: ptp
+> > depmod: ERROR: Cycle detected: stp
+> > depmod: ERROR: Cycle detected: ipv6
+> > depmod: ERROR: Cycle detected: bridge
+> > depmod: ERROR: Found 2 modules in dependency cycles!
+> > make[2]: *** [scripts/Makefile.modinst:132: depmod] Error 1
+> > make[1]: *** [/tmp/kci/linux/Makefile:1844: modules_install] Error 2
+> > make: *** [Makefile:224: __sub-make] Error 2
+> > ```
+> >
+> > This issue wasn't present until c66fbc6c3df9.
 > 
-> On 3-Dec-24 10:14 AM, Song Chen wrote:
->> In atomisp_gmin_platform, gpio0 and gpio1 have moved to descriptor-based
->> GPIO APIs, but v1p8_gpio and v2p8_gpio still remain calling legacy ones,
->> such as gpio_request.
->>
->> This patch replaces old with new, also removes including gpio.h.
->>
->> Signed-off-by: Song Chen <chensong_2000@189.cn>
+> I set up a bisect script to run overnight, it landed here:
 > 
-> Thank you for your patch, this is already addresses by this patch
-> which I plan to merge soon:
+>     98a01119608d21e0ed95a544071beabb353240ed is the first bad commit
+>     commit 98a01119608d21e0ed95a544071beabb353240ed
+>     Author:     Daniel Machon <daniel.machon@microchip.com>
+>     AuthorDate: Thu Oct 24 00:01:33 2024 +0200
+>     Commit:     Jakub Kicinski <kuba@kernel.org>
+>     CommitDate: Wed Oct 30 18:08:06 2024 -0700
 > 
-> https://lore.kernel.org/linux-media/20241107221134.596149-1-hdegoede@redhat.com/
+>         net: sparx5: add compatible string for lan969x
 > 
-> Regards,
+>         Add lan9691-switch compatible string to mchp_sparx5_match. Guard it with
+>         IS_ENABLED(CONFIG_LAN969X_SWITCH) to make sure Sparx5 can be compiled on
+>         its own.
 > 
-> Hans
+>         Reviewed-by: Steen Hegelund <Steen.Hegelund@microchip.com>
+>         Signed-off-by: Daniel Machon <daniel.machon@microchip.com>
+>         Link: https://patch.msgid.link/20241024-sparx5-lan969x-switch-driver-2-v2-14-a0b5fae88a0f@microchip.com
+>         Signed-off-by: Jakub Kicinski <kuba@kernel.org>
 > 
+>      drivers/net/ethernet/microchip/sparx5/sparx5_main.c | 5 +++++
+>      1 file changed, 5 insertions(+)
+>     bisect found first bad commit
 > 
->> ---
->>   .../media/atomisp/pci/atomisp_gmin_platform.c | 63 ++++++++-----------
->>   1 file changed, 25 insertions(+), 38 deletions(-)
->>
->> diff --git a/drivers/staging/media/atomisp/pci/atomisp_gmin_platform.c b/drivers/staging/media/atomisp/pci/atomisp_gmin_platform.c
->> index e176483df301..7ff548ac3171 100644
->> --- a/drivers/staging/media/atomisp/pci/atomisp_gmin_platform.c
->> +++ b/drivers/staging/media/atomisp/pci/atomisp_gmin_platform.c
->> @@ -11,7 +11,6 @@
->>   #include <linux/mfd/intel_soc_pmic.h>
->>   #include <linux/regulator/consumer.h>
->>   #include <linux/gpio/consumer.h>
->> -#include <linux/gpio.h>
->>   #include <linux/platform_device.h>
->>   #include "../../include/linux/atomisp_platform.h"
->>   #include "../../include/linux/atomisp_gmin_platform.h"
->> @@ -85,8 +84,8 @@ struct gmin_subdev {
->>   	bool v2p8_on;
->>   	bool v1p2_on;
->>   
->> -	int v1p8_gpio;
->> -	int v2p8_gpio;
->> +	struct gpio_desc *v1p8_gpiod;
->> +	struct gpio_desc *v2p8_gpiod;
->>   
->>   	u8 pwm_i2c_addr;
->>   
->> @@ -548,23 +547,6 @@ static int gmin_subdev_add(struct gmin_subdev *gs)
->>   	else
->>   		dev_info(dev, "will handle gpio1 via ACPI\n");
->>   
->> -	/*
->> -	 * Those are used only when there is an external regulator apart
->> -	 * from the PMIC that would be providing power supply, like on the
->> -	 * two cases below:
->> -	 *
->> -	 * The ECS E7 board drives camera 2.8v from an external regulator
->> -	 * instead of the PMIC.  There's a gmin_CamV2P8 config variable
->> -	 * that specifies the GPIO to handle this particular case,
->> -	 * but this needs a broader architecture for handling camera power.
->> -	 *
->> -	 * The CHT RVP board drives camera 1.8v from an* external regulator
->> -	 * instead of the PMIC just like ECS E7 board.
->> -	 */
->> -
->> -	gs->v1p8_gpio = gmin_get_var_int(dev, true, "V1P8GPIO", -1);
->> -	gs->v2p8_gpio = gmin_get_var_int(dev, true, "V2P8GPIO", -1);
->> -
->>   	/*
->>   	 * FIXME:
->>   	 *
->> @@ -830,21 +812,23 @@ static int gmin_v1p2_ctrl(struct v4l2_subdev *subdev, int on)
->>   static int gmin_v1p8_ctrl(struct v4l2_subdev *subdev, int on)
->>   {
->>   	struct gmin_subdev *gs = find_gmin_subdev(subdev);
->> +	struct i2c_client *client = v4l2_get_subdevdata(gs->subdev);
->> +	struct device *dev = &client->dev;
->>   	int ret;
->>   	int value;
->>   	int reg;
->> +	int v1p8_gpio;
->>   
->>   	if (!gs || gs->v1p8_on == on)
->>   		return 0;
->>   
->> -	if (gs->v1p8_gpio >= 0) {
->> -		pr_info("atomisp_gmin_platform: 1.8v power on GPIO %d\n",
->> -			gs->v1p8_gpio);
->> -		ret = gpio_request(gs->v1p8_gpio, "camera_v1p8_en");
->> -		if (!ret)
->> -			ret = gpio_direction_output(gs->v1p8_gpio, 0);
->> -		if (ret)
->> +	v1p8_gpio = gmin_get_var_int(dev, true, "V1P8GPIO", -1);
->> +	if (v1p8_gpio >= 0) {
->> +		gs->v1p8_gpiod = gpiod_get_index(dev, "camera_v1p8", v1p8_gpio, GPIOD_ASIS);
->> +		if (IS_ERR(gs->v1p8_gpiod))
->>   			pr_err("V1P8 GPIO initialization failed\n");
->> +		else
->> +			gpiod_direction_output(gs->v1p8_gpiod, 0);
->>   	}
->>   
->>   	gs->v1p8_on = on;
->> @@ -861,8 +845,8 @@ static int gmin_v1p8_ctrl(struct v4l2_subdev *subdev, int on)
->>   			goto out; /* Still needed */
->>   	}
->>   
->> -	if (gs->v1p8_gpio >= 0)
->> -		gpio_set_value(gs->v1p8_gpio, on);
->> +	if (v1p8_gpio >= 0)
->> +		gpiod_set_value(gs->v1p8_gpiod, on);
->>   
->>   	if (gs->v1p8_reg) {
->>   		regulator_set_voltage(gs->v1p8_reg, 1800000, 1800000);
->> @@ -911,21 +895,24 @@ static int gmin_v1p8_ctrl(struct v4l2_subdev *subdev, int on)
->>   static int gmin_v2p8_ctrl(struct v4l2_subdev *subdev, int on)
->>   {
->>   	struct gmin_subdev *gs = find_gmin_subdev(subdev);
->> +	struct i2c_client *client = v4l2_get_subdevdata(gs->subdev);
->> +	struct device *dev = &client->dev;
->>   	int ret;
->>   	int value;
->>   	int reg;
->> +	int v2p8_gpio;
->>   
->>   	if (WARN_ON(!gs))
->>   		return -ENODEV;
->>   
->> -	if (gs->v2p8_gpio >= 0) {
->> -		pr_info("atomisp_gmin_platform: 2.8v power on GPIO %d\n",
->> -			gs->v2p8_gpio);
->> -		ret = gpio_request(gs->v2p8_gpio, "camera_v2p8");
->> -		if (!ret)
->> -			ret = gpio_direction_output(gs->v2p8_gpio, 0);
->> -		if (ret)
->> +	v2p8_gpio = gmin_get_var_int(dev, true, "V2P8GPIO", -1);
->> +	if (v2p8_gpio >= 0) {
->> +		pr_info("atomisp_gmin_platform: 2.8v power on GPIO %d\n", v2p8_gpio);
->> +		gs->v2p8_gpiod = gpiod_get_index(dev, "camera_v2p8", v2p8_gpio, GPIOD_ASIS);
->> +		if (IS_ERR(gs->v2p8_gpiod))
->>   			pr_err("V2P8 GPIO initialization failed\n");
->> +		else
->> +			gpiod_direction_output(gs->v2p8_gpiod, 0);
->>   	}
->>   
->>   	if (gs->v2p8_on == on)
->> @@ -944,8 +931,8 @@ static int gmin_v2p8_ctrl(struct v4l2_subdev *subdev, int on)
->>   			goto out; /* Still needed */
->>   	}
->>   
->> -	if (gs->v2p8_gpio >= 0)
->> -		gpio_set_value(gs->v2p8_gpio, on);
->> +	if (v2p8_gpio >= 0)
->> +		gpiod_set_value(gs->v2p8_gpiod, on);
->>   
->>   	if (gs->v2p8_reg) {
->>   		regulator_set_voltage(gs->v2p8_reg, 2900000, 2900000);
-> 
-> 
+> Thanks,
+> Calvin
+
+So we have two modules: sparx5-switch.ko and lan969x-switch.ko. They both
+require symbols from each other, so the error makes sense.  I think the
+solution here is to just ditch the lan969x-switch.ko module alltogether and
+compile the support into the sparx5-switch.ko module.
+
+/Daniel
+
 
