@@ -1,68 +1,68 @@
-Return-Path: <linux-kernel+bounces-430251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF0079E2E7D
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 22:56:07 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 980C09E2F5A
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 23:58:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3BAF281D8B
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 21:56:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 37DC5B3BFDA
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 21:56:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41C29209684;
-	Tue,  3 Dec 2024 21:55:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28DB1209F4C;
+	Tue,  3 Dec 2024 21:55:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="drE7YeN6"
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="a7F71anz"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EDCF20ADE4
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 21:55:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4068D20B1EE
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 21:55:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733262922; cv=none; b=Yfpf+LrmwpJRP3uR7DfkcaCCieQYKft2+C823EQSD4mQH1S/U82lcgA87imIzUgWMK7yxhnizVpPakrrHXcRjvFBC89Yk24lpII4ju5tK2VeyDGoqQ4fIcWzVVksI/DiPRgN64MpTbs8xPkaUJMZ93HN9uWKvcWZy57lTpJaV5Y=
+	t=1733262926; cv=none; b=OfYUU+A4fc/UZD7GiNmvATwYHK8ElZgFVyiDeY+TOLAK2dwkzHt1tEwylz8Xe7vKUj5Go6NouGk/+19iqf6kFzB+lUz+Kamh1sWXGNujo07nf43/yoWbMClvHmcCAsJTR5CC0Ived5jMy3L6KmpG+BydYQWCMXcICkAGpB0ODPo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733262922; c=relaxed/simple;
-	bh=Uw4pdPuj7RQuQpX2ZJLEmQOMp+U9isTb7zR1xRQDXz4=;
+	s=arc-20240116; t=1733262926; c=relaxed/simple;
+	bh=v2Vqb0C/RrzN9E6F6em14ZSMqGdIYr65QkP6Lxjzs/A=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=t7HQtFCA5FYC+Nvm4tdClsvyaEStfZ46u6r30xkAN86H6z9B2Fs7KXx/Xe7R4wD3ocvag1CERU7bCU0+oSzXroaY4+Cn91cUKG6ualPrQmeUeLIwmrodDNXm4BpqEeYQxPfCQwgx74Y7zNdvHBsy+hjB7PJxl6UqykiCzNJRS9c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--cmllamas.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=drE7YeN6; arc=none smtp.client-ip=209.85.210.201
+	 To:Cc:Content-Type; b=mOg+I7BSfiVVqWTl76FSgl3Pu9HBAm0SjaxsiP74rVJr9Izr3jogFySZlOu64OdpjTitsQcx62rtDqx1VhQUaW/A1Tzot7JYG2WPU13DoeAJr7unaejq9jn4MhaZORN5BZw0RwhubLVBwpC7o2FoNpyj/LbEAMvnRDKjP63kD2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--cmllamas.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=a7F71anz; arc=none smtp.client-ip=209.85.215.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--cmllamas.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-7251698c10aso5737668b3a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 13:55:21 -0800 (PST)
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-7eaac1e95ffso4698863a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 13:55:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733262920; x=1733867720; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1733262923; x=1733867723; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=gCCqnAEZK+ZKpJb5t5zYVlo4wXMTT1QvqaeCY/ftsfA=;
-        b=drE7YeN6V2GmQmgaYpI1jPTKsFeqY1IPosO2Xng5FIZ0R/CQNB1wPZ5MKHzhS4uMBC
-         UuC3dRaUDHAwdtKp86KiqKYk4+bqJcUXabMt7c7hRZL2LsoX3W0nIscHYxAXm5FgB+p3
-         V+yizb12hHUyoPGJM3xKjYwmZp694o5gC+Z5a3DTzcgCLIK8h++8rskqjkStcrzCo7sT
-         C5C19d3gYsmPCpZnUlhikYBxzyoZuRc3f00vJj4YJSzQV/uoJ4Dkq4mB0EVaCp0rXBLN
-         z1Cc38To1HpQZvAECnE3zDZaebxzaBc+aGT8+9wvppurN7pabLWpi1oUiSN+D06AyROZ
-         vDKQ==
+        bh=3x8dXmboKoljl/paH1tR6nAjbYohziE0faQAieVSRFk=;
+        b=a7F71anzdwwwuRy0TCOECUVq89HeWtxxNRpQPKsPLr3CWCE8sPW9/muzS2ki+TS0dg
+         MXFMbZMzPTvkuzSwMcFCn8G2egXuHB6Tt5MArWmGs+63q3Eqejjyh7l3P4GdIVIX+j5S
+         AJIvr8G9hm8triAEvdYt1fjkizqnLAGN+Enr1FTnz+erhx+TyWHcn4zokdhr4YhFDhXH
+         MxfY3ql8GshzPMyOyHl4zqE1VlNFuWyaejF9jozf3ixnD31J2uDvw7A1kUHCC5KmK7GH
+         zmM3nwpom24MIkWJtynjTXA/NR9oMAN8Ok2RUF4s6DzAPRjX9ENYAHmocgLw+ostyfwc
+         Z6Ww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733262920; x=1733867720;
+        d=1e100.net; s=20230601; t=1733262923; x=1733867723;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gCCqnAEZK+ZKpJb5t5zYVlo4wXMTT1QvqaeCY/ftsfA=;
-        b=AneHitD2UdgYo1c5s9M0XEwjMjuLebFYWVRigxfN7jW9Qt7Xd9iaZz59axhme3OMJE
-         yMez6HEV0ypD4jHFKJjJCHFK7peU9XEbcucSggEt1+BwySix2dZvveLYtkS4ZOpQf++L
-         5r7OobSTC8/kfzxYCXu26F1YXqgwBmkRO3KQLog02P6YU7XaWYP5VoSaFPMrwpSkPy9i
-         hI7Ef6b1eYwDQEYIPRzv879AieF/uNGU3Rzw06NiaxxUETp1iHznCJN8NSnd4iAxsZcy
-         QAJd2k4/2P4i11CjnrLWm3vizqjKpC/3JtCRzqKOlqmZzwdlr/jFtQBx5pKrs0KqgoQt
-         /ICQ==
-X-Gm-Message-State: AOJu0YweeRR4hHnpv6g/YClHZru/czNk3wgCz5g5WD9oEjfQmxqyOdRn
-	o9WDSqpVxKg8eJhJRo83TnnhlMYmwry2pY/4KU8ZupyUxqrwlumm/slmnS+7z4BzTuipVd2boyA
-	ULYJaLoh4BA==
-X-Google-Smtp-Source: AGHT+IFU6dUxmyTsRGZeIXrIqF1/FJ6uWBI5rS4YG76QjdHGSO5HrdORaRH9j2JEHYUJCjvfteUKzBUWGeoQFw==
-X-Received: from pfbcr9.prod.google.com ([2002:a05:6a00:f09:b0:71e:6711:537c])
+        bh=3x8dXmboKoljl/paH1tR6nAjbYohziE0faQAieVSRFk=;
+        b=FjboS4Tj042rWIb0Nd9eAEiskfIEFLHIa6aKTAABFaaINHyz3N3KbXn2JV4y/W/Av2
+         DrxC8DYwwN/BwfQR5/Azss8v4idF9r+B2fyom3i/3+ytlISCJfYgOqtbY/DNcruoAtbO
+         Uw63my8NMtYZ4AcmnzP7RJmXhEyen3mxBJdmuJjozLnY+8ByEFySuTX3vmYvl8/WtZnt
+         R5NodK3lAUc5m59ZWLzfuxupswz0oeRv8adSzfadQLQTp8h0GbAs/8XKWuxeZmUIUvCv
+         vhekdcNmXYOpWSGeTbEqmfqZbBsnfw7sPYfYC0KXCny1uzmonPKdFyvnR+eFyY4ZqBix
+         WcfQ==
+X-Gm-Message-State: AOJu0YzhX/iGvqOd8kbktZJNxIAD333f1oaXmMBIbLco0DpTMWK/KeCS
+	gevKQt/AQQp2ATjgWiAk/ffxxh+7pyXz11jhUQ2G3eJR4fEryg/8uYLuJ2Ry8b8ZbGI+MRev2C5
+	iZBJ9sa75AQ==
+X-Google-Smtp-Source: AGHT+IFmTDZioHUsffNoZpOTIyYLRMRF2XpdNpqLb2HoPxvSroKe3M3WgV4RmtgDsBTmzacYNxkqDSudk9H17Q==
+X-Received: from pfbjc2.prod.google.com ([2002:a05:6a00:6c82:b0:725:35b9:641b])
  (user=cmllamas job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a00:181b:b0:71e:427a:68de with SMTP id d2e1a72fcca58-7257fcd7ce6mr6044569b3a.24.1733262920677;
- Tue, 03 Dec 2024 13:55:20 -0800 (PST)
-Date: Tue,  3 Dec 2024 21:54:37 +0000
+ 2002:a05:6a20:7f9a:b0:1db:915b:ab11 with SMTP id adf61e73a8af0-1e1653c834bmr6415196637.24.1733262923466;
+ Tue, 03 Dec 2024 13:55:23 -0800 (PST)
+Date: Tue,  3 Dec 2024 21:54:38 +0000
 In-Reply-To: <20241203215452.2820071-1-cmllamas@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -72,75 +72,480 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20241203215452.2820071-1-cmllamas@google.com>
 X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
-Message-ID: <20241203215452.2820071-4-cmllamas@google.com>
-Subject: [PATCH v6 3/9] binder: select correct nid for pages in LRU
+Message-ID: <20241203215452.2820071-5-cmllamas@google.com>
+Subject: [PATCH v6 4/9] binder: store shrinker metadata under page->private
 From: Carlos Llamas <cmllamas@google.com>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
 	"=?UTF-8?q?Arve=20Hj=C3=B8nnev=C3=A5g?=" <arve@android.com>, Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
 	Joel Fernandes <joel@joelfernandes.org>, Christian Brauner <brauner@kernel.org>, 
 	Carlos Llamas <cmllamas@google.com>, Suren Baghdasaryan <surenb@google.com>
 Cc: linux-kernel@vger.kernel.org, kernel-team@android.com, 
-	Nhat Pham <nphamcs@gmail.com>, Johannes Weiner <hannes@cmpxchg.org>
+	Matthew Wilcox <willy@infradead.org>, "Liam R. Howlett" <Liam.Howlett@oracle.com>
 Content-Type: text/plain; charset="UTF-8"
 
-The numa node id for binder pages is currently being derived from the
-lru entry under struct binder_lru_page. However, this object doesn't
-reflect the node id of the struct page items allocated separately.
+Instead of pre-allocating an entire array of struct binder_lru_page in
+alloc->pages, install the shrinker metadata under page->private. This
+ensures the memory is allocated and released as needed alongside pages.
 
-Instead, select the correct node id from the page itself. This was made
-possible since commit 0a97c01cd20b ("list_lru: allow explicit memcg and
-NUMA node selection").
+By converting the alloc->pages[] into an array of struct page pointers,
+we can access these pages directly and only reference the shrinker
+metadata where it's being used (e.g. inside the shrinker's callback).
 
-Cc: Nhat Pham <nphamcs@gmail.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Suren Baghdasaryan <surenb@google.com>
+Rename struct binder_lru_page to struct binder_shrinker_mdata to better
+reflect its purpose. Add convenience functions that wrap the allocation
+and freeing of pages along with their shrinker metadata.
+
+Note I've reworked this patch to avoid using page->lru and page->index
+directly, as Matthew pointed out that these are being removed [1].
+
+Link: https://lore.kernel.org/all/ZzziucEm3np6e7a0@casper.infradead.org/ [1]
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: Liam R. Howlett <Liam.Howlett@oracle.com>
 Reviewed-by: Suren Baghdasaryan <surenb@google.com>
 Signed-off-by: Carlos Llamas <cmllamas@google.com>
 ---
- drivers/android/binder_alloc.c | 16 ++++++++++++----
- 1 file changed, 12 insertions(+), 4 deletions(-)
+ drivers/android/binder_alloc.c          | 130 ++++++++++++++----------
+ drivers/android/binder_alloc.h          |  25 +++--
+ drivers/android/binder_alloc_selftest.c |  14 +--
+ 3 files changed, 99 insertions(+), 70 deletions(-)
 
 diff --git a/drivers/android/binder_alloc.c b/drivers/android/binder_alloc.c
-index f26283c2c768..1f02bec78451 100644
+index 1f02bec78451..fd82ecefd961 100644
 --- a/drivers/android/binder_alloc.c
 +++ b/drivers/android/binder_alloc.c
-@@ -210,7 +210,10 @@ static void binder_lru_freelist_add(struct binder_alloc *alloc,
+@@ -176,25 +176,26 @@ struct binder_buffer *binder_alloc_prepare_to_free(struct binder_alloc *alloc,
+ }
+ 
+ static inline void
+-binder_set_installed_page(struct binder_lru_page *lru_page,
++binder_set_installed_page(struct binder_alloc *alloc,
++			  unsigned long index,
+ 			  struct page *page)
+ {
+ 	/* Pairs with acquire in binder_get_installed_page() */
+-	smp_store_release(&lru_page->page_ptr, page);
++	smp_store_release(&alloc->pages[index], page);
+ }
+ 
+ static inline struct page *
+-binder_get_installed_page(struct binder_lru_page *lru_page)
++binder_get_installed_page(struct binder_alloc *alloc, unsigned long index)
+ {
+ 	/* Pairs with release in binder_set_installed_page() */
+-	return smp_load_acquire(&lru_page->page_ptr);
++	return smp_load_acquire(&alloc->pages[index]);
+ }
+ 
+ static void binder_lru_freelist_add(struct binder_alloc *alloc,
+ 				    unsigned long start, unsigned long end)
+ {
+-	struct binder_lru_page *page;
+ 	unsigned long page_addr;
++	struct page *page;
+ 
+ 	trace_binder_update_page_range(alloc, false, start, end);
+ 
+@@ -203,16 +204,15 @@ static void binder_lru_freelist_add(struct binder_alloc *alloc,
+ 		int ret;
+ 
+ 		index = (page_addr - alloc->buffer) / PAGE_SIZE;
+-		page = &alloc->pages[index];
+-
+-		if (!binder_get_installed_page(page))
++		page = binder_get_installed_page(alloc, index);
++		if (!page)
+ 			continue;
  
  		trace_binder_free_lru_start(alloc, index);
  
--		ret = list_lru_add_obj(&binder_freelist, &page->lru);
-+		ret = list_lru_add(&binder_freelist,
-+				   &page->lru,
-+				   page_to_nid(page->page_ptr),
-+				   NULL);
+ 		ret = list_lru_add(&binder_freelist,
+-				   &page->lru,
+-				   page_to_nid(page->page_ptr),
++				   page_to_lru(page),
++				   page_to_nid(page),
+ 				   NULL);
  		WARN_ON(!ret);
  
- 		trace_binder_free_lru_end(alloc, index);
-@@ -334,7 +337,10 @@ static void binder_lru_freelist_del(struct binder_alloc *alloc,
- 		if (page->page_ptr) {
+@@ -220,8 +220,39 @@ static void binder_lru_freelist_add(struct binder_alloc *alloc,
+ 	}
+ }
+ 
++static struct page *binder_page_alloc(struct binder_alloc *alloc,
++				      unsigned long index)
++{
++	struct binder_shrinker_mdata *mdata;
++	struct page *page;
++
++	page = alloc_page(GFP_KERNEL | __GFP_HIGHMEM | __GFP_ZERO);
++	if (!page)
++		return NULL;
++
++	/* allocate and install shrinker metadata under page->private */
++	mdata = kzalloc(sizeof(*mdata), GFP_KERNEL);
++	if (!mdata) {
++		__free_page(page);
++		return NULL;
++	}
++
++	mdata->alloc = alloc;
++	mdata->page_index = index;
++	INIT_LIST_HEAD(&mdata->lru);
++	set_page_private(page, (unsigned long)mdata);
++
++	return page;
++}
++
++static void binder_free_page(struct page *page)
++{
++	kfree((void *)page_private(page));
++	__free_page(page);
++}
++
+ static int binder_install_single_page(struct binder_alloc *alloc,
+-				      struct binder_lru_page *lru_page,
++				      unsigned long index,
+ 				      unsigned long addr)
+ {
+ 	struct vm_area_struct *vma;
+@@ -232,9 +263,8 @@ static int binder_install_single_page(struct binder_alloc *alloc,
+ 	if (!mmget_not_zero(alloc->mm))
+ 		return -ESRCH;
+ 
+-	page = alloc_page(GFP_KERNEL | __GFP_HIGHMEM | __GFP_ZERO);
++	page = binder_page_alloc(alloc, index);
+ 	if (!page) {
+-		pr_err("%d: failed to allocate page\n", alloc->pid);
+ 		ret = -ENOMEM;
+ 		goto out;
+ 	}
+@@ -242,7 +272,7 @@ static int binder_install_single_page(struct binder_alloc *alloc,
+ 	mmap_read_lock(alloc->mm);
+ 	vma = vma_lookup(alloc->mm, addr);
+ 	if (!vma || vma != alloc->vma) {
+-		__free_page(page);
++		binder_free_page(page);
+ 		pr_err("%d: %s failed, no vma\n", alloc->pid, __func__);
+ 		ret = -ESRCH;
+ 		goto unlock;
+@@ -253,11 +283,11 @@ static int binder_install_single_page(struct binder_alloc *alloc,
+ 	case -EBUSY:
+ 		/*
+ 		 * EBUSY is ok. Someone installed the pte first but the
+-		 * lru_page->page_ptr has not been updated yet. Discard
++		 * alloc->pages[index] has not been updated yet. Discard
+ 		 * our page and look up the one already installed.
+ 		 */
+ 		ret = 0;
+-		__free_page(page);
++		binder_free_page(page);
+ 		npages = get_user_pages_remote(alloc->mm, addr, 1,
+ 					       FOLL_NOFAULT, &page, NULL);
+ 		if (npages <= 0) {
+@@ -269,10 +299,10 @@ static int binder_install_single_page(struct binder_alloc *alloc,
+ 		fallthrough;
+ 	case 0:
+ 		/* Mark page installation complete and safe to use */
+-		binder_set_installed_page(lru_page, page);
++		binder_set_installed_page(alloc, index, page);
+ 		break;
+ 	default:
+-		__free_page(page);
++		binder_free_page(page);
+ 		pr_err("%d: %s failed to insert page at offset %lx with %d\n",
+ 		       alloc->pid, __func__, addr - alloc->buffer, ret);
+ 		ret = -ENOMEM;
+@@ -289,7 +319,6 @@ static int binder_install_buffer_pages(struct binder_alloc *alloc,
+ 				       struct binder_buffer *buffer,
+ 				       size_t size)
+ {
+-	struct binder_lru_page *page;
+ 	unsigned long start, final;
+ 	unsigned long page_addr;
+ 
+@@ -301,14 +330,12 @@ static int binder_install_buffer_pages(struct binder_alloc *alloc,
+ 		int ret;
+ 
+ 		index = (page_addr - alloc->buffer) / PAGE_SIZE;
+-		page = &alloc->pages[index];
+-
+-		if (binder_get_installed_page(page))
++		if (binder_get_installed_page(alloc, index))
+ 			continue;
+ 
+ 		trace_binder_alloc_page_start(alloc, index);
+ 
+-		ret = binder_install_single_page(alloc, page, page_addr);
++		ret = binder_install_single_page(alloc, index, page_addr);
+ 		if (ret)
+ 			return ret;
+ 
+@@ -322,8 +349,8 @@ static int binder_install_buffer_pages(struct binder_alloc *alloc,
+ static void binder_lru_freelist_del(struct binder_alloc *alloc,
+ 				    unsigned long start, unsigned long end)
+ {
+-	struct binder_lru_page *page;
+ 	unsigned long page_addr;
++	struct page *page;
+ 
+ 	trace_binder_update_page_range(alloc, true, start, end);
+ 
+@@ -332,14 +359,14 @@ static void binder_lru_freelist_del(struct binder_alloc *alloc,
+ 		bool on_lru;
+ 
+ 		index = (page_addr - alloc->buffer) / PAGE_SIZE;
+-		page = &alloc->pages[index];
++		page = binder_get_installed_page(alloc, index);
+ 
+-		if (page->page_ptr) {
++		if (page) {
  			trace_binder_alloc_lru_start(alloc, index);
  
--			on_lru = list_lru_del_obj(&binder_freelist, &page->lru);
-+			on_lru = list_lru_del(&binder_freelist,
-+					      &page->lru,
-+					      page_to_nid(page->page_ptr),
-+					      NULL);
+ 			on_lru = list_lru_del(&binder_freelist,
+-					      &page->lru,
+-					      page_to_nid(page->page_ptr),
++					      page_to_lru(page),
++					      page_to_nid(page),
+ 					      NULL);
  			WARN_ON(!on_lru);
  
- 			trace_binder_alloc_lru_end(alloc, index);
-@@ -947,8 +953,10 @@ void binder_alloc_deferred_release(struct binder_alloc *alloc)
- 			if (!alloc->pages[i].page_ptr)
+@@ -760,11 +787,10 @@ static struct page *binder_alloc_get_page(struct binder_alloc *alloc,
+ 		(buffer->user_data - alloc->buffer);
+ 	pgoff_t pgoff = buffer_space_offset & ~PAGE_MASK;
+ 	size_t index = buffer_space_offset >> PAGE_SHIFT;
+-	struct binder_lru_page *lru_page;
+ 
+-	lru_page = &alloc->pages[index];
+ 	*pgoffp = pgoff;
+-	return lru_page->page_ptr;
++
++	return alloc->pages[index];
+ }
+ 
+ /**
+@@ -839,7 +865,7 @@ int binder_alloc_mmap_handler(struct binder_alloc *alloc,
+ {
+ 	struct binder_buffer *buffer;
+ 	const char *failure_string;
+-	int ret, i;
++	int ret;
+ 
+ 	if (unlikely(vma->vm_mm != alloc->mm)) {
+ 		ret = -EINVAL;
+@@ -862,17 +888,12 @@ int binder_alloc_mmap_handler(struct binder_alloc *alloc,
+ 	alloc->pages = kvcalloc(alloc->buffer_size / PAGE_SIZE,
+ 				sizeof(alloc->pages[0]),
+ 				GFP_KERNEL);
+-	if (alloc->pages == NULL) {
++	if (!alloc->pages) {
+ 		ret = -ENOMEM;
+ 		failure_string = "alloc page array";
+ 		goto err_alloc_pages_failed;
+ 	}
+ 
+-	for (i = 0; i < alloc->buffer_size / PAGE_SIZE; i++) {
+-		alloc->pages[i].alloc = alloc;
+-		INIT_LIST_HEAD(&alloc->pages[i].lru);
+-	}
+-
+ 	buffer = kzalloc(sizeof(*buffer), GFP_KERNEL);
+ 	if (!buffer) {
+ 		ret = -ENOMEM;
+@@ -948,20 +969,22 @@ void binder_alloc_deferred_release(struct binder_alloc *alloc)
+ 		int i;
+ 
+ 		for (i = 0; i < alloc->buffer_size / PAGE_SIZE; i++) {
++			struct page *page;
+ 			bool on_lru;
+ 
+-			if (!alloc->pages[i].page_ptr)
++			page = binder_get_installed_page(alloc, i);
++			if (!page)
  				continue;
  
--			on_lru = list_lru_del_obj(&binder_freelist,
--						  &alloc->pages[i].lru);
-+			on_lru = list_lru_del(&binder_freelist,
-+					      &alloc->pages[i].lru,
-+					      page_to_nid(alloc->pages[i].page_ptr),
-+					      NULL);
+ 			on_lru = list_lru_del(&binder_freelist,
+-					      &alloc->pages[i].lru,
+-					      page_to_nid(alloc->pages[i].page_ptr),
++					      page_to_lru(page),
++					      page_to_nid(page),
+ 					      NULL);
  			binder_alloc_debug(BINDER_DEBUG_BUFFER_ALLOC,
  				     "%s: %d: page %d %s\n",
  				     __func__, alloc->pid, i,
+ 				     on_lru ? "on lru" : "active");
+-			__free_page(alloc->pages[i].page_ptr);
++			binder_free_page(page);
+ 			page_count++;
+ 		}
+ 	}
+@@ -1010,7 +1033,7 @@ void binder_alloc_print_allocated(struct seq_file *m,
+ void binder_alloc_print_pages(struct seq_file *m,
+ 			      struct binder_alloc *alloc)
+ {
+-	struct binder_lru_page *page;
++	struct page *page;
+ 	int i;
+ 	int active = 0;
+ 	int lru = 0;
+@@ -1023,10 +1046,10 @@ void binder_alloc_print_pages(struct seq_file *m,
+ 	 */
+ 	if (binder_alloc_get_vma(alloc) != NULL) {
+ 		for (i = 0; i < alloc->buffer_size / PAGE_SIZE; i++) {
+-			page = &alloc->pages[i];
+-			if (!page->page_ptr)
++			page = binder_get_installed_page(alloc, i);
++			if (!page)
+ 				free++;
+-			else if (list_empty(&page->lru))
++			else if (list_empty(page_to_lru(page)))
+ 				active++;
+ 			else
+ 				lru++;
+@@ -1083,8 +1106,8 @@ enum lru_status binder_alloc_free_page(struct list_head *item,
+ 				       void *cb_arg)
+ 	__must_hold(&lru->lock)
+ {
+-	struct binder_lru_page *page = container_of(item, typeof(*page), lru);
+-	struct binder_alloc *alloc = page->alloc;
++	struct binder_shrinker_mdata *mdata = container_of(item, typeof(*mdata), lru);
++	struct binder_alloc *alloc = mdata->alloc;
+ 	struct mm_struct *mm = alloc->mm;
+ 	struct vm_area_struct *vma;
+ 	struct page *page_to_free;
+@@ -1097,10 +1120,8 @@ enum lru_status binder_alloc_free_page(struct list_head *item,
+ 		goto err_mmap_read_lock_failed;
+ 	if (!mutex_trylock(&alloc->mutex))
+ 		goto err_get_alloc_mutex_failed;
+-	if (!page->page_ptr)
+-		goto err_page_already_freed;
+ 
+-	index = page - alloc->pages;
++	index = mdata->page_index;
+ 	page_addr = alloc->buffer + index * PAGE_SIZE;
+ 
+ 	vma = vma_lookup(mm, page_addr);
+@@ -1109,8 +1130,8 @@ enum lru_status binder_alloc_free_page(struct list_head *item,
+ 
+ 	trace_binder_unmap_kernel_start(alloc, index);
+ 
+-	page_to_free = page->page_ptr;
+-	page->page_ptr = NULL;
++	page_to_free = alloc->pages[index];
++	binder_set_installed_page(alloc, index, NULL);
+ 
+ 	trace_binder_unmap_kernel_end(alloc, index);
+ 
+@@ -1128,12 +1149,11 @@ enum lru_status binder_alloc_free_page(struct list_head *item,
+ 	mutex_unlock(&alloc->mutex);
+ 	mmap_read_unlock(mm);
+ 	mmput_async(mm);
+-	__free_page(page_to_free);
++	binder_free_page(page_to_free);
+ 
+ 	return LRU_REMOVED_RETRY;
+ 
+ err_invalid_vma:
+-err_page_already_freed:
+ 	mutex_unlock(&alloc->mutex);
+ err_get_alloc_mutex_failed:
+ 	mmap_read_unlock(mm);
+diff --git a/drivers/android/binder_alloc.h b/drivers/android/binder_alloc.h
+index 33c5f971c0a5..d71f99189ef5 100644
+--- a/drivers/android/binder_alloc.h
++++ b/drivers/android/binder_alloc.h
+@@ -59,17 +59,26 @@ struct binder_buffer {
+ };
+ 
+ /**
+- * struct binder_lru_page - page object used for binder shrinker
+- * @page_ptr: pointer to physical page in mmap'd space
+- * @lru:      entry in binder_freelist
+- * @alloc:    binder_alloc for a proc
++ * struct binder_shrinker_mdata - binder metadata used to reclaim pages
++ * @lru:         LRU entry in binder_freelist
++ * @alloc:       binder_alloc owning the page to reclaim
++ * @page_index:  offset in @alloc->pages[] into the page to reclaim
+  */
+-struct binder_lru_page {
++struct binder_shrinker_mdata {
+ 	struct list_head lru;
+-	struct page *page_ptr;
+ 	struct binder_alloc *alloc;
++	unsigned long page_index;
+ };
+ 
++static inline struct list_head *page_to_lru(struct page *p)
++{
++	struct binder_shrinker_mdata *mdata;
++
++	mdata = (struct binder_shrinker_mdata *)page_private(p);
++
++	return &mdata->lru;
++}
++
+ /**
+  * struct binder_alloc - per-binder proc state for binder allocator
+  * @mutex:              protects binder_alloc fields
+@@ -83,7 +92,7 @@ struct binder_lru_page {
+  * @allocated_buffers:  rb tree of allocated buffers sorted by address
+  * @free_async_space:   VA space available for async buffers. This is
+  *                      initialized at mmap time to 1/2 the full VA space
+- * @pages:              array of binder_lru_page
++ * @pages:              array of struct page *
+  * @buffer_size:        size of address space specified via mmap
+  * @pid:                pid for associated binder_proc (invariant after init)
+  * @pages_high:         high watermark of offset in @pages
+@@ -104,7 +113,7 @@ struct binder_alloc {
+ 	struct rb_root free_buffers;
+ 	struct rb_root allocated_buffers;
+ 	size_t free_async_space;
+-	struct binder_lru_page *pages;
++	struct page **pages;
+ 	size_t buffer_size;
+ 	int pid;
+ 	size_t pages_high;
+diff --git a/drivers/android/binder_alloc_selftest.c b/drivers/android/binder_alloc_selftest.c
+index 81442fe20a69..a4c650843bee 100644
+--- a/drivers/android/binder_alloc_selftest.c
++++ b/drivers/android/binder_alloc_selftest.c
+@@ -105,10 +105,10 @@ static bool check_buffer_pages_allocated(struct binder_alloc *alloc,
+ 	page_addr = buffer->user_data;
+ 	for (; page_addr < end; page_addr += PAGE_SIZE) {
+ 		page_index = (page_addr - alloc->buffer) / PAGE_SIZE;
+-		if (!alloc->pages[page_index].page_ptr ||
+-		    !list_empty(&alloc->pages[page_index].lru)) {
++		if (!alloc->pages[page_index] ||
++		    !list_empty(page_to_lru(alloc->pages[page_index]))) {
+ 			pr_err("expect alloc but is %s at page index %d\n",
+-			       alloc->pages[page_index].page_ptr ?
++			       alloc->pages[page_index] ?
+ 			       "lru" : "free", page_index);
+ 			return false;
+ 		}
+@@ -148,10 +148,10 @@ static void binder_selftest_free_buf(struct binder_alloc *alloc,
+ 		 * if binder shrinker ran during binder_alloc_free_buf
+ 		 * calls above.
+ 		 */
+-		if (list_empty(&alloc->pages[i].lru)) {
++		if (list_empty(page_to_lru(alloc->pages[i]))) {
+ 			pr_err_size_seq(sizes, seq);
+ 			pr_err("expect lru but is %s at page index %d\n",
+-			       alloc->pages[i].page_ptr ? "alloc" : "free", i);
++			       alloc->pages[i] ? "alloc" : "free", i);
+ 			binder_selftest_failures++;
+ 		}
+ 	}
+@@ -168,9 +168,9 @@ static void binder_selftest_free_page(struct binder_alloc *alloc)
+ 	}
+ 
+ 	for (i = 0; i < (alloc->buffer_size / PAGE_SIZE); i++) {
+-		if (alloc->pages[i].page_ptr) {
++		if (alloc->pages[i]) {
+ 			pr_err("expect free but is %s at page index %d\n",
+-			       list_empty(&alloc->pages[i].lru) ?
++			       list_empty(page_to_lru(alloc->pages[i])) ?
+ 			       "alloc" : "lru", i);
+ 			binder_selftest_failures++;
+ 		}
 -- 
 2.47.0.338.g60cca15819-goog
 
