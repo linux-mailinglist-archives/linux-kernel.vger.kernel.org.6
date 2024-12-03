@@ -1,46 +1,104 @@
-Return-Path: <linux-kernel+bounces-429437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D5589E1C1C
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 13:26:43 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 921CB9E1C24
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 13:27:57 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B55128350B
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 12:26:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 59014165AA1
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 12:27:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F4F31E5000;
-	Tue,  3 Dec 2024 12:26:38 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91D711E47A6
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 12:26:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F7C91E501B;
+	Tue,  3 Dec 2024 12:27:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="djY/WER5"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C15C1E493C
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 12:27:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733228798; cv=none; b=ceNr8AoNnicVuAx+/WWZYVgtTo8t6wHiYUqa4YjFm10V46FD0aKAU6wbHOR/6lZArDMKfcuIbVarxB6ut3xG8sAQrlzE9KLNnp8U1kIm3BHcP/Uzr15zZYfV3ypykinKBzJIhP44CVffZdSfPMmTlIsgQ7+H/fk8hT7hwfoMb/w=
+	t=1733228871; cv=none; b=b8DAcq8HhLfRn+8edIVk3vH9aTk6pi71rOIIeJNx8Y7TRlxCSdD5lPemH8xvWYoZ6viMThLp1TxbOf+fsTsWQxF5zcFHhUMMXMhMv5GwN7KJ6XzB1uHoMhd2jT8MSL1df2Fcx7ERixR+WsROVjztu/yNyLIVSGAka8PPC1RKeUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733228798; c=relaxed/simple;
-	bh=4RnOKptB94SO2bFhv67ipSP7R0mT3WdRHm7+gxkVwy0=;
+	s=arc-20240116; t=1733228871; c=relaxed/simple;
+	bh=6RnywpFg91GD9e9AaGXdnmWR1etUR0dSB8zjuPzV61I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HDJ7lSum0VA/pY5m7xN3loRh7zQabz8n2YEW+6C/hv9p6Ez+67CsA8Q/mYEynAVB5TiaAIiyKn3f9vXkKbVsHqJfL2Yicoco3HSVNYzE6r6pRANmTvplucIOqf0/6g/ma4SS+hIv6GYxhTc67+nDaE+WUykfFyKQJ+JGwjaOqr0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0137BFEC;
-	Tue,  3 Dec 2024 04:27:02 -0800 (PST)
-Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1E2AC3F58B;
-	Tue,  3 Dec 2024 04:26:32 -0800 (PST)
-Date: Tue, 3 Dec 2024 12:26:22 +0000
-From: Mark Rutland <mark.rutland@arm.com>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Uros Bizjak <ubizjak@gmail.com>,
-	Alejandro Jimenez <alejandro.j.jimenez@oracle.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: Help with atomic fallback
-Message-ID: <Z0747n5bSep4_1VX@J2N7QTR9R3>
-References: <20241203003856.GJ1253388@nvidia.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=qBPkyFFfnISO7zblooCLnDQ5z5Q2lj/A+kxQsBWpe/XoBstuxG8Nc5ZDz6yWFvhhOZsDkcSVYhm3mmdTQvOgF2DpTKhHu7fDSgW/DhCrln9J4PEtvJcsN6J4d15SXSNAvuwSMsjDj7Kt4UN7wMqeAa4fU2uPgCH1It9hX6YGktc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=djY/WER5; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-53de5ec22adso6877170e87.3
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 04:27:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733228868; x=1733833668; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=4tMW5BgK0yNLwCH6utYoQVhW0P2uh6V2gFL0Ya9nckg=;
+        b=djY/WER5Rdu2jIlYxehbxDg/hlYaf361fF+3QnGzzUVRDumY5QD0FrO8+1CpEgWs+c
+         f3dW2UiSQnk7eJu/RhipkmoPi7FQIPpXix8rGgack7fCJRvlGrCw1BGXSoDDRxTKicJQ
+         IMUUuXlH2zOXbFm9GJLuykS1UsvBk5RSTaGyliJmG1x8cS6IZaEBgvcDhXH6yvafLQX3
+         s49uIxIcXNLt+8salXrxOWUhLKvCDCAkhYbtQfRSE7AqBjxNgV6kyl4Br6igAGdMLREJ
+         srgwR3oYPVVsvNJhOUdOwthKqw+HayL2AYYKPQAZBNE/3exPp1irghjYnI+ix380KhPm
+         NO/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733228868; x=1733833668;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4tMW5BgK0yNLwCH6utYoQVhW0P2uh6V2gFL0Ya9nckg=;
+        b=JgRLdBspgCFmi6jynQ+RkaIHaw3yBOLfanqp/fVEWEnOmSOPNIMgZeAFuxnDe5bN5b
+         FKLglxtxLENBeE+zw6ExVH+CnMrz/hBModd8rhByUjL4B4amQ6DFESPE5JmFY8LWjqVf
+         VWOPO/hJitCI9X7/DlKf+EgE8tBRh/tuTafEOTCOX2Wie90W+UZCMvUeIRCTG2JSYYVa
+         7fVsZc3Uq7HwWU0US7MuZPv42mdONbXmxCiZWQm6XN1BghKGn+7VMWjiNzxL0zMv7ixS
+         u92jwHEipxsG+AgayZuwTmmfEIHySjowFsV5WBiqc7b+DCJxPWHKSF6H383lBK1ReFfD
+         6Law==
+X-Forwarded-Encrypted: i=1; AJvYcCXtA5W7oKs7FtDJhM0luh2CIWXvB28dPIgonZHy93RWJ3/R2DmJTYKxCGO6JzvzBl8tGAbWAb0N8KJE25Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxFOvn0MIGnsLOsW6WZidNLoqLrZ3SIwNETIj8jYDB7o4OarNt+
+	BxCzr/OVR32j2CuXUut7Px13EKwI4/RHijIel2NaEpfPl/J4h7wO+iWbcwidX08=
+X-Gm-Gg: ASbGncuzMOFKJKLQKr0jYlxA9CpP6BcfgTx4L2+cFg2J0sksYwBzmRCyJhRuhNjfHG5
+	h3rhl+v4vc5sbWiXj7BDHCTqxDn0vGYaX4XQsViU9fN+KPblah+NWpMScJCl/fNKBy185UAnXo+
+	iWMk/JZq/8sVHhHsDRVguWei8G3O16FZiVY1Rlzoe8Gv+PeOW580nJ5/7MOwWY3Ezvft4A8D33S
+	JmDNNvzBHuRx70uQLquzoe2zeiWTfsKLA6yorPURkKIv/GjuTlOXb16hh0fkFIFe/WmVCwqdKqd
+	jO8mePXJZlXdgDqt1VUYJEfl1IFBfA==
+X-Google-Smtp-Source: AGHT+IG0HmZ8YSlH3L/g4YitdlPm2st4Okvau8mZpJCNyynGj3Z9KtsKcqo/MMABonQgOnqb21PQhQ==
+X-Received: by 2002:a05:6512:1089:b0:53d:d3ff:7309 with SMTP id 2adb3069b0e04-53e12a01ee6mr1387104e87.32.1733228867624;
+        Tue, 03 Dec 2024 04:27:47 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53df649f6f2sm1810134e87.246.2024.12.03.04.27.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Dec 2024 04:27:46 -0800 (PST)
+Date: Tue, 3 Dec 2024 14:27:44 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Phong LE <ple@baylibre.com>, 
+	Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, 
+	Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, Russell King <linux@armlinux.org.uk>, 
+	Chun-Kuang Hu <chunkuang.hu@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Sandy Huang <hjc@rock-chips.com>, 
+	Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>, Andy Yan <andy.yan@rock-chips.com>, 
+	Alain Volmat <alain.volmat@foss.st.com>, Raphael Gallais-Pou <rgallaispou@gmail.com>, 
+	Dave Stevenson <dave.stevenson@raspberrypi.com>, =?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>, 
+	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, Jani Nikula <jani.nikula@linux.intel.com>, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	linux-mediatek@lists.infradead.org, linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH v5 9/9] drm/vc4: hdmi: use
+ drm_atomic_helper_connector_hdmi_update_edid()
+Message-ID: <ae24x2bo736jpzi77l34hybejawwe4rp47v2idedga344ye6zr@bxsxz34dwrd2>
+References: <20241201-drm-bridge-hdmi-connector-v5-0-b5316e82f61a@linaro.org>
+ <20241201-drm-bridge-hdmi-connector-v5-9-b5316e82f61a@linaro.org>
+ <20241202-married-bald-raven-7acd83@houat>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,153 +107,79 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241203003856.GJ1253388@nvidia.com>
+In-Reply-To: <20241202-married-bald-raven-7acd83@houat>
 
-On Mon, Dec 02, 2024 at 08:38:56PM -0400, Jason Gunthorpe wrote:
-> Hi Mark/Uros,
-
-Hi Jason,
-
-> I hope one of you can help me unravel this, I'm trying to use
-> try_cmpxchg64_release() from driver code and 0-day is saying arc
-> compiles explode:
+On Mon, Dec 02, 2024 at 02:27:49PM +0100, Maxime Ripard wrote:
+> Hi,
 > 
->    In file included from include/linux/atomic.h:80,
->                     from drivers/iommu/generic_pt/fmt/../pt_defs.h:17,
->                     from drivers/iommu/generic_pt/fmt/iommu_template.h:35,
->                     from drivers/iommu/generic_pt/fmt/iommu_armv8_4k.c:13:
->    drivers/iommu/generic_pt/fmt/../pt_defs.h: In function 'pt_table_install64':
-> >> include/linux/atomic/atomic-arch-fallback.h:295:14: error: void value not ignored as it ought to be
->      295 |         ___r = raw_cmpxchg64_release((_ptr), ___o, (_new)); \
->          |              ^
->    include/linux/atomic/atomic-instrumented.h:4937:9: note: in expansion of macro 'raw_try_cmpxchg64_release'
->     4937 |         raw_try_cmpxchg64_release(__ai_ptr, __ai_oldp, __VA_ARGS__); \
->          |         ^~~~~~~~~~~~~~~~~~~~~~~~~
->    drivers/iommu/generic_pt/fmt/../pt_defs.h:144:16: note: in expansion of macro 'try_cmpxchg64_release'
->      144 |         return try_cmpxchg64_release(entryp, &old_entry, table_entry);
-
-I'm assuming that's the report at:
-
-  https://lore.kernel.org/oe-kbuild-all/202411301219.jHkzXdJD-lkp@intel.com/
-
-... for which the config is:
-
-  https://download.01.org/0day-ci/archive/20241130/202411301219.jHkzXdJD-lkp@intel.com/config
-
-> Which is immediately because of a typo in atomic-arch-fallback.h code gen:
+> On Sun, Dec 01, 2024 at 02:44:13AM +0200, Dmitry Baryshkov wrote:
+> > Use the helper function to update the connector's information. This
+> > makes sure that HDMI-related events are handled in a generic way.
+> > Currently it is limited to the HDMI state reporting to the sound system.
+> > 
+> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > ---
+> >  drivers/gpu/drm/vc4/vc4_hdmi.c | 9 +++++++--
+> >  1 file changed, 7 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/gpu/drm/vc4/vc4_hdmi.c b/drivers/gpu/drm/vc4/vc4_hdmi.c
+> > index d0a9aff7ad43016647493263c00d593296a1e3ad..d83f587ab69f4b8f7d5c37a00777f11da8301bc1 100644
+> > --- a/drivers/gpu/drm/vc4/vc4_hdmi.c
+> > +++ b/drivers/gpu/drm/vc4/vc4_hdmi.c
+> > @@ -401,13 +401,16 @@ static void vc4_hdmi_handle_hotplug(struct vc4_hdmi *vc4_hdmi,
+> >  	 */
+> >  
+> >  	if (status == connector_status_disconnected) {
+> > +		drm_atomic_helper_connector_hdmi_update_edid(connector, NULL);
+> >  		cec_phys_addr_invalidate(vc4_hdmi->cec_adap);
+> >  		return;
+> >  	}
+> >  
+> >  	drm_edid = drm_edid_read_ddc(connector, vc4_hdmi->ddc);
+> >  
+> > -	drm_edid_connector_update(connector, drm_edid);
+> > +	// TODO: use drm_atomic_helper_connector_hdmi_update() once it gains
+> > +	// CEC support
+> > +	drm_atomic_helper_connector_hdmi_update_edid(connector, drm_edid);
 > 
-> #if defined(arch_cmpxchg64_release)
-> #define raw_cmpxchg64_release arch_cmpxchg64_release
-> #elif defined(arch_cmpxchg64_relaxed)
-> #define raw_cmpxchg64_release(...) \
-> 	__atomic_op_release(arch_cmpxchg64, __VA_ARGS__)
-> #elif defined(arch_cmpxchg64)
-> #define raw_cmpxchg64_release arch_cmpxchg64
-> #else
-> extern void raw_cmpxchg64_release_not_implemented(void);
->      ^^^^^^^^^^^^^^^^^^^^^
-
-This means that arc isn't providing a suitable defintion to build
-raw_cmpxchg64_release() from, or for some reason the header includes up
-to this point haven't included the relevant definition.
-
-From the ifdeffery, there's no definition of:
-
-  arch_cmpxchg64_release
-  arch_cmpxchg64_relaxed
-  arch_cmpxchg64
-
-... and hence no way to build raw_cmpxchg64_release().
-
-The intent here is to have a build failure at point of use, since some
-architectures do not or cannot provide these, but we should clean this
-up to be clearer. The mismatch is intentional and this isn't a typo, but
-I agree it's not great.
-
-> That should return int to make the compiler happy, but then it will
-> fail to link (I think, my cross compiler ICEs before it gets there)
+> So, it's not just about EDID, and I think we shouldn't really focus on
+> that either.
 > 
-> However, arc defines:
+> As that patch points out, even if we only consider EDID's, we have
+> different path depending on the connector status. It shouldn't be up to
+> the drivers to get this right.
 > 
-> static inline s64
-> arch_atomic64_cmpxchg(atomic64_t *ptr, s64 expected, s64 new)
-> {
->
-> And I see a:
+> What I had in mind was something like a
+> drm_atomic_helper_connector_hdmi_hotplug function that would obviously
+> deal with EDID only here, but would expand to CEC, scrambling, etc.
+> later on.
+
+I thought about it, after our discussion, but in the end I had to
+implement the EDID-specific function, using edid == NULL as
+"disconnected" event. The issue is pretty simple: there is no standard
+way to get EDID from the connector. The devices can call
+drm_edid_read(), drm_edid_read_ddc(connector->ddc) or (especially
+embedded bridges) use drm_edid_read_custom().
+
+Of course we can go with the functional way and add the
+.read_edid(drm_connector) callback to the HDMI funcs. Then the
+drm_atomic_helper_connector_hdmi_hotplug() function can read EDID on its
+own.
+
+Also the function that you proposed perfectly fits the HPD notification
+callbacks, but which function should be called from the .get_modes()?
+The _hdmi_hotplug() doesn't fit there. Do we still end up with both
+drm_atomic_helper_connector_hdmi_hotplug() and
+drm_atomic_helper_connector_hdmi_update_edid()?
+
 > 
-> static __always_inline s64
-> raw_atomic64_cmpxchg_release(atomic64_t *v, s64 old, s64 new)
-> {
-> #if defined(arch_atomic64_cmpxchg_release)
-> 	return arch_atomic64_cmpxchg_release(v, old, new);
-> #elif defined(arch_atomic64_cmpxchg_relaxed)
-> 	__atomic_release_fence();
-> 	return arch_atomic64_cmpxchg_relaxed(v, old, new);
-> #elif defined(arch_atomic64_cmpxchg)
-> 	return arch_atomic64_cmpxchg(v, old, new);
+> And would cover both the connected/disconnected cases.
 > 
-> Which seems to strongly imply that arc can do the cmpxchg64_release
-> primitive.
-> 
-> But I haven't been able to figure out what is expected here for
-> arch_atomic64 vs try_cmpxchg64 to guess what is missing part here :\
+> Maxime
 
-In this case I think this is an oversight in the arc code, and arc *can*
-provide a definition of arch_cmpxchg64(), as per the hack below (which
-implicilty provides arch_atomic64_cmpxchg*()):
 
-| diff --git a/arch/arc/include/asm/atomic64-arcv2.h b/arch/arc/include/asm/atomic64-arcv2.h
-| index 9b5791b854713..ce3fdcb48b0f9 100644
-| --- a/arch/arc/include/asm/atomic64-arcv2.h
-| +++ b/arch/arc/include/asm/atomic64-arcv2.h
-| @@ -137,12 +137,10 @@ ATOMIC64_OPS(xor, xor, xor)
-|  #undef ATOMIC64_OP_RETURN
-|  #undef ATOMIC64_OP
-|  
-| -static inline s64
-| -arch_atomic64_cmpxchg(atomic64_t *ptr, s64 expected, s64 new)
-| +static inline u64
-| +__arch_cmpxchg64_relaxed(volatile void *ptr, u64 old, u64 new)
-|  {
-| -       s64 prev;
-| -
-| -       smp_mb();
-| +       u64 prev;
-|  
-|         __asm__ __volatile__(
-|         "1:     llockd  %0, [%1]        \n"
-| @@ -152,14 +150,12 @@ arch_atomic64_cmpxchg(atomic64_t *ptr, s64 expected, s64 new)
-|         "       bnz     1b              \n"
-|         "2:                             \n"
-|         : "=&r"(prev)
-| -       : "r"(ptr), "ir"(expected), "r"(new)
-| -       : "cc");        /* memory clobber comes from smp_mb() */
-| -
-| -       smp_mb();
-| +       : "r"(ptr), "ir"(old), "r"(new)
-| +       : "memory", "cc");
-|  
-|         return prev;
-|  }
-| -#define arch_atomic64_cmpxchg arch_atomic64_cmpxchg
-| +#define arch_cmpxchg64_relaxed __arch_cmpxchg64_relaxed
-|  
-|  static inline s64 arch_atomic64_xchg(atomic64_t *ptr, s64 new)
-|  {
 
-However, there are other cases where cmpxchg64 doesn't exist or cannot
-be used, and the existing (x86-specific) system_has_cmpxchg64() isn't
-ideal. I suspect we need both a Kconfig symbol and a runtime check to
-handle this properly.
-
-I think if we fix up arc along the lines of the above (with xchg too,
-and handled in the cmpxchg header), then we can rely on the Kconfig
-check that the existing io-pgtable code has:
-
-  depends on !GENERIC_ATOMIC64    # for cmpxchg64()
-
-... and we'll (separately) need to figure out what to do for the runtime
-system_has_cmpxchg64() check.
-
-Mark.
+-- 
+With best wishes
+Dmitry
 
