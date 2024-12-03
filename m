@@ -1,52 +1,53 @@
-Return-Path: <linux-kernel+bounces-429600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B72879E1E63
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 14:57:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AE149E1E68
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 14:57:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 099B5167773
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 13:56:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 433E7166C38
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 13:57:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06B7F1F6687;
-	Tue,  3 Dec 2024 13:56:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD35D1F12F2;
+	Tue,  3 Dec 2024 13:56:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="nFH216YS"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="GxS41E/f"
 Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42F401F130D;
-	Tue,  3 Dec 2024 13:55:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 587221F4725;
+	Tue,  3 Dec 2024 13:55:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733234160; cv=none; b=a2pXCsZ3swpJuNw6GqCEw3cmjTcuVd95NfmeC0stg0JhbpwYg/hsn+gpr5+xkNm6epC4THlv0lvRhbOJ/bySpaJ3kUZ5ZcOIYacZWJSKK7FhXeFgX4uG8XgpEf3MxCmhv66KkMITr4+zbjN9dLVVEx+7FXQRow9R7viIzOlLJxs=
+	t=1733234162; cv=none; b=h4kjEZAIjFepZ9WFDOrDKCpaPZAaUmxuVqSmNDJX8iV/mGox/A3Aqi8XGmG4nX2mLBP+Mc+LXBkYWVEjnw4VXea8OSgOVYZEcT+w3GskDTggGTqTNOrGlw8WFbmArQfYNDYnF8rYtPaE6M0XYjMtKNBN+M0anwULO1VRqcsVuN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733234160; c=relaxed/simple;
-	bh=MdWR4geCX0sDA47jJ/SqTV1HnlhBmPs5PiPUOZHai9E=;
+	s=arc-20240116; t=1733234162; c=relaxed/simple;
+	bh=pVnB3J68SJ5ZbxJrKUNajMzxZzFavA5FR2dTH5pwM0I=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=c2CzGomfId6c1EwJJahbPfahtv+lFRY5R2Vy1knhbmXVJdf9+UPUrua8gz3saFqPEHnNVakYl6yxaiU3JQPWTnbbDF7A7DjFhN2mF/etczbAWD4VL2ZKoPspQSjo9qefkXQ/fZjBOuGtF1yFC0w2R/t8yqnaArFrlk6Om1ZgMLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=nFH216YS; arc=none smtp.client-ip=217.70.183.195
+	 In-Reply-To:To:Cc; b=uoibZH4sweHxixtj1bs4CZ711f/8SdFoiBtN7JZfYSUNtpZGCOdhMyyjCqyWOVleoRGPHfXX5NPq58jEkJeoES6wBcWT3+W9ouLUNeoj8qkQzKHLPoWWSuc+0Z/3lqs3tpQzFKrWBlD8JcSFV5luV+eggw/C+whAv/3zLpX7TQg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=GxS41E/f; arc=none smtp.client-ip=217.70.183.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 303C06000F;
-	Tue,  3 Dec 2024 13:55:50 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 785EE60012;
+	Tue,  3 Dec 2024 13:55:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1733234150;
+	t=1733234152;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=0N40lnlE7TZQY7BMgIIS/Ptfi/+E+ziL+VaV/uRj/us=;
-	b=nFH216YSECAavBAAEQy/JmLluUlIAnzZEj22CFez7JpTc9nkNDJhZ5pbysztC9wS1YrAJ8
-	aNl/izHmVFbLPIiMu72g/6aiOuy7XiiylRuL/W1b82wpBPFg0WWHI5j6Bi09svyoCA9gxZ
-	hYWJMEUesH9ec5+M7DgekzTUzQlfAChM/7evbR80gQbZsUT5XVKoSJjeyab1rfs7SUeA27
-	YAMk9wCgafb7ZzIVAEHQwwRwBsw9H8SkY5mTPl21wswuFkLCUK6oF3nBgpsnapumi4uavQ
-	ahooxJA2nw1J3ly43fyPopYJxFm8sag0Qcu3PViAjmcvMIPacxNdNFfXOG8hAA==
+	bh=o69Mz00pbhAuPCU0BiftNOE1d7MIT8r8LNe86G5wyqg=;
+	b=GxS41E/fP4BUArZNLoPs+47NgNxZSk/SrDSF4rQwN3DJCqlfWXxiePM3CERDbbxvS5LGXR
+	GqZS8SsUytpbJPkH1/tjzrwLBKjh5ysd4arKAHn3ru9CEdbLCCaaPkFF0Tkle1FQSfHdxk
+	KDoslF8vQ7WXGWtYmEDV00oSU0s2fHdOKvyevQGaUaTSE4ZkwILDFy/8ZQRi2dZK8gqVod
+	oxCPN+lGsYsFQ6pjQGLqi1cQvoY/JPjGx1+pfkArHszoKz/qy3hj3RFUxYv3cVBX6mXbdD
+	w21RwZXjEMygK5KyiPODPs/FfvZlSVCI9koJkiMvliHiUIn5t8SVlS5LdFch7g==
 From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-Date: Tue, 03 Dec 2024 14:55:47 +0100
-Subject: [PATCH 4/6] nvmem: rmem: remove unused struct rmem::size field
+Date: Tue, 03 Dec 2024 14:55:49 +0100
+Subject: [PATCH 6/6] MIPS: mobileye: eyeq5: add bootloader config reserved
+ memory
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,7 +56,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20241203-rmem-v1-4-24f4970cf14e@bootlin.com>
+Message-Id: <20241203-rmem-v1-6-24f4970cf14e@bootlin.com>
 References: <20241203-rmem-v1-0-24f4970cf14e@bootlin.com>
 In-Reply-To: <20241203-rmem-v1-0-24f4970cf14e@bootlin.com>
 To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
@@ -73,27 +74,47 @@ Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
 X-Mailer: b4 0.14.2
 X-GND-Sasl: theo.lebrun@bootlin.com
 
-The private structure used by the rmem driver contains
-a `size` field that is unused. Remove it.
+Add a new reserved-memory node, containing bootloader config with MAC
+addresses for both ethernet instances of the SoC.
 
 Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
 ---
- drivers/nvmem/rmem.c | 2 --
- 1 file changed, 2 deletions(-)
+ arch/mips/boot/dts/mobileye/eyeq5.dtsi | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
-diff --git a/drivers/nvmem/rmem.c b/drivers/nvmem/rmem.c
-index 0dc5c8237c7538efe4597c182d7bdb709b945851..ca89c2689031534ff316a48e03360aeec823b025 100644
---- a/drivers/nvmem/rmem.c
-+++ b/drivers/nvmem/rmem.c
-@@ -13,8 +13,6 @@ struct rmem {
- 	struct device *dev;
- 	struct nvmem_device *nvmem;
- 	struct reserved_mem *mem;
--
--	phys_addr_t size;
- };
+diff --git a/arch/mips/boot/dts/mobileye/eyeq5.dtsi b/arch/mips/boot/dts/mobileye/eyeq5.dtsi
+index 5d73e8320b8efc1b4f68923482bf188c4345f1cb..a84e6e720619ef99e1405ae6296d8bad1aa3fa23 100644
+--- a/arch/mips/boot/dts/mobileye/eyeq5.dtsi
++++ b/arch/mips/boot/dts/mobileye/eyeq5.dtsi
+@@ -49,6 +49,28 @@ mini_coredump0_reserved: mini-coredump0@806200000 {
+ 		mhm_reserved_0: the-mhm-reserved-0@0 {
+ 			reg = <0x8 0x00000000 0x0 0x0000800>;
+ 		};
++
++		nvram@461fe00 {
++			compatible = "mobileye,eyeq5-bootloader-config", "nvmem-rmem";
++			reg = <0x0 0x0461fe00 0x0 0x200>;
++			#address-cells = <1>;
++			#size-cells = <1>;
++			no-map;
++
++			nvmem-layout {
++				compatible = "fixed-layout";
++				#address-cells = <1>;
++				#size-cells = <1>;
++
++				eth0_mac: mac@7c {
++					reg = <0x7c 0x6>;
++				};
++
++				eth1_mac: mac@82 {
++					reg = <0x82 0x6>;
++				};
++			};
++		};
+ 	};
  
- static int rmem_read(void *context, unsigned int offset,
+ 	aliases {
 
 -- 
 2.47.1
