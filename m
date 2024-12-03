@@ -1,131 +1,245 @@
-Return-Path: <linux-kernel+bounces-429643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74BF19E1F06
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 15:25:07 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 49D65163C1F
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 14:25:04 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DCF81F472D;
-	Tue,  3 Dec 2024 14:25:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Co2V7fSy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 052259E1F17
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 15:26:23 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8835A1DE2DE;
-	Tue,  3 Dec 2024 14:24:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BAD132838DC
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 14:26:21 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71E681F472D;
+	Tue,  3 Dec 2024 14:26:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MpTFppr8"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA9D41DE2DE;
+	Tue,  3 Dec 2024 14:26:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733235899; cv=none; b=A3b6O9M4HDAxgLzBIYuBEfytsIhGZMMc9TWoBDZ8+l+IPiVv5mc9NPQxDSXDEOc8CAO8DuWJP2DCC6HDY+m9LHcL19xq3W4Sh74HR/Y/kFB+WkDEZt73joA6HHj9D3fPad42F/enQS3ykFu/PtT9HqTlid1n4QJD5nTVO2T2ys4=
+	t=1733235977; cv=none; b=bh+sCb4hSvm7iyHFwyGOEcI6YMSfRkqs+17NEEWMpEZ8LRGd3QfLjbux1eDD1/HUy++CNdtPJo1SuZXBlgqLgEe870M9kAeLL17dhfdnsUZzBjnzCYY1U7XccwSZRflosWOKC7oa3olzLm7roh0D0u8hRJT35c8p31ZBAVgKMow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733235899; c=relaxed/simple;
-	bh=DKmOU7vnkUqoQgoBcoXntMTXjpSRQwhxPRgQDZ5KdtU=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=vEfooaoUdlVuQYfsBwyczvaR0ad2vRWRc6Nmf/12pmQLGtvH54iZm0Unaf78ZlUBN7UrNFQTkjuLCd8FwyO7tVk4j6XYpftgVtGPosE+boXNkxK8hOeyqcJMjSib3cNVYKnjppu5Rbva0TJSJTWX5v0k7CNdIB8CWspAR1/XVtU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Co2V7fSy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BD77C4CED8;
-	Tue,  3 Dec 2024 14:24:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733235899;
-	bh=DKmOU7vnkUqoQgoBcoXntMTXjpSRQwhxPRgQDZ5KdtU=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=Co2V7fSy5ZfdLr+VU+LEXPhBV1RGVb3XC0N4BvcXmZle40bb/bDgxXKxbL8EWyEgX
-	 ehTkv5t4EHupg8b3wg66x51JtG/jCwgDNrNZadsTi2ZHt+lWO0+3bto9DKBEj3O7GW
-	 h1OSEnLghbB8E9MbSCd4qA0YanTnWyeS0RrZFPBPpupM4RpbLRB8IoS4HTXDRLiH6G
-	 ehB7Cu1myEGkH9U9L/laOJ7tr+D2U6Al15ozJGDl8ZO/kXyYtRPi8xbClkPoHEUOOI
-	 PdGnXBIcuYwNFgQlMDAprEzCI4d1xtIgq7EdQaHMRhzw3Vhp8aI1B+zL8bYZC5+dxT
-	 yVOXtExy4DzyA==
-Date: Tue, 03 Dec 2024 08:24:57 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1733235977; c=relaxed/simple;
+	bh=uMWXhqZwProDmwOA4vHMhW1QbQjGRI1y8AQlSmfmBzk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=lSTHu0i3EfNoC03UTXJ89niFmdz4Z/pQqMTqFExTxuDMMqAHfL6ihrdOqTTzCyO/6RSYsv9jVghmLUIMBhnBJDq2P3L1gqJ3uZtm3gBq10DwxIfe2SGT6bXLlDw1TUW9yEcDQlpAoXMrVXoTAejJN4SSWiUj0Mjy3mYwd7LNu78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MpTFppr8; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733235975; x=1764771975;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=uMWXhqZwProDmwOA4vHMhW1QbQjGRI1y8AQlSmfmBzk=;
+  b=MpTFppr83dSNSiFrbOPkdaeMs+g5A3Iv9MsRG03UbzMZFHS/K/GiicXL
+   lfTI6oDrwtwxh8w9iMqFWcm8pyKar4hC0oN/to8vcQGPOcDdjKJznMGVk
+   oHenfYDCq/fbv4kSiIO/lhLExHpinCJPQnXkHOg5UCpQgy2BcVHUij7HK
+   F9wMQXRD6qMJhtn5kwQdvPiQ4DkI2B2CPtfHvgLaqw55UR5X4Iq9c7dBQ
+   YDjytlPIqR9LrpaH3ayT7PHzq2z4yndB9+OjjO3EvXpVpeCqTRNQBXmey
+   CWhgSgk2XukKb4U2i2tQfB2GMSdSG+dE2c4/MoSCTTUC6sNtn2koLZWYc
+   Q==;
+X-CSE-ConnectionGUID: tVipUhtRS0qxYbBudEaBcQ==
+X-CSE-MsgGUID: Uari58hYQaq2DzPy1zRnQQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11275"; a="44480677"
+X-IronPort-AV: E=Sophos;i="6.12,205,1728975600"; 
+   d="scan'208";a="44480677"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Dec 2024 06:26:13 -0800
+X-CSE-ConnectionGUID: aDPdg6NdRb+ONzW7kLZxAQ==
+X-CSE-MsgGUID: Tuwzy8/pRA2RVBUpHZa5NQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,205,1728975600"; 
+   d="scan'208";a="93328558"
+Received: from kniemiec-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.246.135])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Dec 2024 06:26:01 -0800
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Andrzej Hajda
+ <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>,
+ Robert Foss <rfoss@kernel.org>, Laurent Pinchart
+ <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Jaroslav Kysela <perex@perex.cz>, Takashi
+ Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown
+ <broonie@kernel.org>, Phong LE <ple@baylibre.com>, Inki Dae
+ <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin
+ Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>, Russell King
+ <linux@armlinux.org.uk>, Chun-Kuang Hu <chunkuang.hu@kernel.org>, Philipp
+ Zabel <p.zabel@pengutronix.de>, Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Sandy Huang <hjc@rock-chips.com>, Heiko =?utf-8?Q?St=C3=BCbner?=
+ <heiko@sntech.de>, Andy
+ Yan <andy.yan@rock-chips.com>, Alain Volmat <alain.volmat@foss.st.com>,
+ Raphael Gallais-Pou <rgallaispou@gmail.com>, Dave Stevenson
+ <dave.stevenson@raspberrypi.com>, =?utf-8?Q?Ma=C3=ADra?= Canal
+ <mcanal@igalia.com>,
+ Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ linux-sound@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-mediatek@lists.infradead.org,
+ linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH v5 7/9] drm/bridge_connector: hook
+ drm_atomic_helper_connector_hdmi_update_edid()
+In-Reply-To: <20241201-drm-bridge-hdmi-connector-v5-7-b5316e82f61a@linaro.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20241201-drm-bridge-hdmi-connector-v5-0-b5316e82f61a@linaro.org>
+ <20241201-drm-bridge-hdmi-connector-v5-7-b5316e82f61a@linaro.org>
+Date: Tue, 03 Dec 2024 16:25:58 +0200
+Message-ID: <87a5dc4zd5.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: mripard@kernel.org, m.szyprowski@samsung.com, 
- maarten.lankhorst@linux.intel.com, mturquette@baylibre.com, 
- aou@eecs.berkeley.edu, tzimmermann@suse.de, frank.binns@imgtec.com, 
- simona@ffwll.ch, wefu@redhat.com, jszhang@kernel.org, 
- linux-pm@vger.kernel.org, drew@pdp7.com, guoren@kernel.org, 
- palmer@dabbelt.com, linux-riscv@lists.infradead.org, 
- devicetree@vger.kernel.org, paul.walmsley@sifive.com, 
- linux-clk@vger.kernel.org, ulf.hansson@linaro.org, 
- linux-kernel@vger.kernel.org, krzk+dt@kernel.org, sboyd@kernel.org, 
- dri-devel@lists.freedesktop.org, matt.coster@imgtec.com, airlied@gmail.com, 
- jassisinghbrar@gmail.com, conor+dt@kernel.org
-To: Michal Wilczynski <m.wilczynski@samsung.com>
-In-Reply-To: <20241203134137.2114847-3-m.wilczynski@samsung.com>
-References: <20241203134137.2114847-1-m.wilczynski@samsung.com>
- <CGME20241203134151eucas1p18edf7fb37cd8f30983a559d7481f560b@eucas1p1.samsung.com>
- <20241203134137.2114847-3-m.wilczynski@samsung.com>
-Message-Id: <173323589571.1743485.13611709278152187222.robh@kernel.org>
-Subject: Re: [RFC PATCH v1 02/14] dt-bindings: clock: thead,th1520: Rename
- header file
+Content-Type: text/plain
 
-
-On Tue, 03 Dec 2024 14:41:25 +0100, Michal Wilczynski wrote:
-> As support for clocks from new subsystems is being added to the T-Head
-> TH1520 SoC, the header file name should reflect this broader scope. The
-> existing header file 'thead,th1520-clk-ap.h' includes the '-ap' suffix,
-> indicating it's specific to the Application Processor (AP) subsystem.
-> 
-> Rename the header file to 'thead,th1520-clk.h' to generalize it for all
-> subsystems.  Update all references to this header file accordingly.
-> 
-> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
+On Sun, 01 Dec 2024, Dmitry Baryshkov <dmitry.baryshkov@linaro.org> wrote:
+> Extend drm_bridge_connector code to read the EDID and use it to update
+> connector status if the bridge chain implements HDMI bridge. Performing
+> it from the generic location minimizes individual bridge's code and
+> enforces standard behaviour from all corresponding drivers.
+>
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 > ---
->  .../devicetree/bindings/clock/thead,th1520-clk-ap.yaml        | 4 ++--
->  .../devicetree/bindings/mailbox/thead,th1520-mbox.yaml        | 2 +-
->  MAINTAINERS                                                   | 2 +-
->  arch/riscv/boot/dts/thead/th1520.dtsi                         | 2 +-
->  drivers/clk/thead/clk-th1520.h                                | 2 +-
->  .../clock/{thead,th1520-clk-ap.h => thead,th1520-clk.h}       | 0
->  6 files changed, 6 insertions(+), 6 deletions(-)
->  rename include/dt-bindings/clock/{thead,th1520-clk-ap.h => thead,th1520-clk.h} (100%)
-> 
+>  drivers/gpu/drm/display/drm_bridge_connector.c | 67 ++++++++++++++++++++------
+>  1 file changed, 53 insertions(+), 14 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/display/drm_bridge_connector.c b/drivers/gpu/drm/display/drm_bridge_connector.c
+> index 12ab9f14cc8a8672478ae2804c9a68d766d88ea5..71ae3b2c9049016d1cc0d39a787f6461633efd53 100644
+> --- a/drivers/gpu/drm/display/drm_bridge_connector.c
+> +++ b/drivers/gpu/drm/display/drm_bridge_connector.c
+> @@ -17,6 +17,7 @@
+>  #include <drm/drm_edid.h>
+>  #include <drm/drm_managed.h>
+>  #include <drm/drm_modeset_helper_vtables.h>
+> +#include <drm/drm_print.h>
+>  #include <drm/drm_probe_helper.h>
+>  #include <drm/display/drm_hdmi_state_helper.h>
+>  
+> @@ -175,17 +176,55 @@ static void drm_bridge_connector_disable_hpd(struct drm_connector *connector)
+>   * Bridge Connector Functions
+>   */
+>  
+> +static const struct drm_edid *
+> +drm_bridge_connector_read_edid(struct drm_connector *connector,
+> +			       enum drm_connector_status status)
+> +{
+> +	struct drm_bridge_connector *bridge_connector =
+> +		to_drm_bridge_connector(connector);
+> +	const struct drm_edid *drm_edid;
+> +	struct drm_bridge *bridge;
+> +
+> +	bridge = bridge_connector->bridge_edid;
+> +	if (!bridge)
+> +		return NULL;
+> +
+> +	if (status != connector_status_connected)
+> +		return NULL;
+> +
+> +	drm_edid = drm_bridge_edid_read(bridge, connector);
+> +	if (!drm_edid_valid(drm_edid)) {
 
-My bot found errors running 'make dt_binding_check' on your patch:
+What's the case this check is for?
 
-yamllint warnings/errors:
+My preference would be that bridge->funcs->edid_read() uses
+drm_edid_read*() family of functions that do the checks and return the
+EDID.
 
-dtschema/dtc warnings/errors:
-Documentation/devicetree/bindings/mailbox/thead,th1520-mbox.example.dts:24:18: fatal error: dt-bindings/clock/thead,th1520-clk.h: No such file or directory
-   24 |         #include <dt-bindings/clock/thead,th1520-clk.h>
-      |                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-compilation terminated.
-make[2]: *** [scripts/Makefile.dtbs:131: Documentation/devicetree/bindings/mailbox/thead,th1520-mbox.example.dtb] Error 1
-make[2]: *** Waiting for unfinished jobs....
-Documentation/devicetree/bindings/clock/thead,th1520-clk-ap.example.dts:18:18: fatal error: dt-bindings/clock/thead,th1520-clk.h: No such file or directory
-   18 |         #include <dt-bindings/clock/thead,th1520-clk.h>
-      |                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-compilation terminated.
-make[2]: *** [scripts/Makefile.dtbs:131: Documentation/devicetree/bindings/clock/thead,th1520-clk-ap.example.dtb] Error 1
-make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1506: dt_binding_check] Error 2
-make: *** [Makefile:251: __sub-make] Error 2
+There are some cases that just allocate a blob and return it. Would be
+nice if they could be converted, but in the mean time could use
+drm_edid_valid() right there. Additional validity checks are redundant.
 
-doc reference errors (make refcheckdocs):
+BR,
+Jani.
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20241203134137.2114847-3-m.wilczynski@samsung.com
 
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
+> +		drm_edid_free(drm_edid);
+> +		return NULL;
+> +	}
+> +
+> +	return drm_edid;
+> +}
+> +
+>  static enum drm_connector_status
+>  drm_bridge_connector_detect(struct drm_connector *connector, bool force)
+>  {
+>  	struct drm_bridge_connector *bridge_connector =
+>  		to_drm_bridge_connector(connector);
+>  	struct drm_bridge *detect = bridge_connector->bridge_detect;
+> +	struct drm_bridge *hdmi = bridge_connector->bridge_hdmi;
+>  	enum drm_connector_status status;
+>  
+>  	if (detect) {
+>  		status = detect->funcs->detect(detect);
+>  
+> +		if (hdmi) {
+> +			const struct drm_edid *drm_edid;
+> +			int ret;
+> +
+> +			drm_edid = drm_bridge_connector_read_edid(connector, status);
+> +			ret = drm_atomic_helper_connector_hdmi_update_edid(connector, drm_edid);
+> +			if (ret)
+> +				drm_warn(connector->dev, "updating EDID failed with %d\n", ret);
+> +
+> +			drm_edid_free(drm_edid);
+> +		}
+> +
+>  		drm_bridge_connector_hpd_notify(connector, status);
+>  	} else {
+>  		switch (connector->connector_type) {
+> @@ -246,29 +285,29 @@ static const struct drm_connector_funcs drm_bridge_connector_funcs = {
+>  static int drm_bridge_connector_get_modes_edid(struct drm_connector *connector,
+>  					       struct drm_bridge *bridge)
+>  {
+> +	struct drm_bridge_connector *bridge_connector =
+> +		to_drm_bridge_connector(connector);
+> +	struct drm_bridge *hdmi = bridge_connector->bridge_hdmi;
+>  	enum drm_connector_status status;
+>  	const struct drm_edid *drm_edid;
+> -	int n;
+>  
+>  	status = drm_bridge_connector_detect(connector, false);
+>  	if (status != connector_status_connected)
+> -		goto no_edid;
+> +		return 0;
+>  
+> -	drm_edid = drm_bridge_edid_read(bridge, connector);
+> -	if (!drm_edid_valid(drm_edid)) {
+> +	/* In HDMI setup the EDID has been read and handled as a part of .detect() */
+> +	if (!hdmi) {
+> +		drm_edid = drm_bridge_connector_read_edid(connector, status);
+> +		if (!drm_edid) {
+> +			drm_edid_connector_update(connector, NULL);
+> +			return 0;
+> +		}
+> +
+> +		drm_edid_connector_update(connector, drm_edid);
+>  		drm_edid_free(drm_edid);
+> -		goto no_edid;
+>  	}
+>  
+> -	drm_edid_connector_update(connector, drm_edid);
+> -	n = drm_edid_connector_add_modes(connector);
+> -
+> -	drm_edid_free(drm_edid);
+> -	return n;
+> -
+> -no_edid:
+> -	drm_edid_connector_update(connector, NULL);
+> -	return 0;
+> +	return drm_edid_connector_add_modes(connector);
+>  }
+>  
+>  static int drm_bridge_connector_get_modes(struct drm_connector *connector)
 
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+-- 
+Jani Nikula, Intel
 
