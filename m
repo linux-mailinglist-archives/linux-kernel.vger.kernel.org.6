@@ -1,142 +1,105 @@
-Return-Path: <linux-kernel+bounces-429432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E275F9E1C29
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 13:29:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A4269E1BFD
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 13:21:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42E95B32E0E
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 12:20:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F4132283168
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 12:21:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BB701E6DD5;
-	Tue,  3 Dec 2024 12:19:53 +0000 (UTC)
-Received: from vmicros1.altlinux.org (vmicros1.altlinux.org [194.107.17.57])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56EA61E631D
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 12:19:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.107.17.57
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DABB1E5000;
+	Tue,  3 Dec 2024 12:21:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="ICjuNhDF"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D77861E0DA0
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 12:21:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733228393; cv=none; b=QDv93gt4P/pMMUvedLjnS3I2px3DeVMriTEN3bA5AS0D4/eV1O+V0niOEvxS5S83WLpzidAPBwg9GC32wsw1R7mzF1ikXlWSR6t0KPKpx8GcU/iYnxXga7xS5Y4B5aadX8pixsSZcHYOYdQvK2wN3xdkpzXIbkWr2+ZFOqbS3TU=
+	t=1733228469; cv=none; b=fN1uZpJWH5XpoSsJjKuUPC4NWDI75ttcAGRzulOrhcIda3R14Cow9Fo7JOttsO/xeTKzBmLoII+FT4kdAFMZyvcBb1PN3OYes6/fKe/9I8oQllNbNzSgcruIFklZ7GJfQaEK+HM1GsoG8iweOmj0rPGDWKZ5j8qbijNBRgpIBtA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733228393; c=relaxed/simple;
-	bh=HoHA9DNnzHKo8CYmBE2UkUFCkTlh+CXjWHVhf68naT4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=azV9DJ53Wu7bkc1u5ZCXSCj9A8xnmdjGmr14jBZsaaRvdFztPSUMerybTTo958t9CEXu8zTMhOzALfD56PKnw3mVP04xZ5sMOrrtvVnJuAaglESStHrqz0xLq6P/sS6hRfnYvmqj3CZUAbCm0gdJ5wqJmrHHxs4BrcBR0R9mpFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strace.io; spf=pass smtp.mailfrom=altlinux.org; arc=none smtp.client-ip=194.107.17.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strace.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altlinux.org
-Received: from mua.local.altlinux.org (mua.local.altlinux.org [192.168.1.14])
-	by vmicros1.altlinux.org (Postfix) with ESMTP id F264772C97D;
-	Tue,  3 Dec 2024 15:19:48 +0300 (MSK)
-Received: by mua.local.altlinux.org (Postfix, from userid 508)
-	id E68127CCB3A; Tue,  3 Dec 2024 14:19:48 +0200 (IST)
-Date: Tue, 3 Dec 2024 14:19:48 +0200
-From: "Dmitry V. Levin" <ldv@strace.io>
-To: Charlie Jenkins <charlie@rivosinc.com>
-Cc: Celeste Liu <uwu@coelacanthus.name>, Oleg Nesterov <oleg@redhat.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>,
-	Alexandre Ghiti <alex@ghiti.fr>,
-	Andrea Bolognani <abologna@redhat.com>,
-	=?utf-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>, Ron Economos <re@w6rz.net>,
-	Felix Yan <felixonmars@archlinux.org>,
-	Ruizhe Pan <c141028@gmail.com>,
-	Shiqi Zhang <shiqi@isrc.iscas.ac.cn>, Guo Ren <guoren@kernel.org>,
-	Yao Zi <ziyao@disroot.org>, Han Gao <gaohan@iscas.ac.cn>,
-	Quan Zhou <zhouquan@iscas.ac.cn>, linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH] riscv/ptrace: add new regset to get original a0 register
-Message-ID: <20241203121948.GA18179@strace.io>
-References: <20241201-riscv-new-regset-v1-1-c83c58abcc7b@coelacanthus.name>
- <Z06ZAP-_4J4-6aK_@ghost>
+	s=arc-20240116; t=1733228469; c=relaxed/simple;
+	bh=1WImKTFIXOmnid3RYi3wzcqOj3BPOQI6o3xUPdhcFHM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mI7qo8UprghFClO8x+I1KqkUIaAgV3lK+9bOB9T65B0zqLTND7n+BK7qs7otZnduLjLodzcD3SruEIAly/9U8IpjXzEsl5cILBcOE5pvAVgCaMqs86jh7OMfXxuGokQMs5oCNXxiuB9NxXDgh6prWw0I1MrTyhtNGptSTxzkvFk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=ICjuNhDF; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5d0d71d7f00so4726627a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 04:21:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ionos.com; s=google; t=1733228466; x=1733833266; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1WImKTFIXOmnid3RYi3wzcqOj3BPOQI6o3xUPdhcFHM=;
+        b=ICjuNhDFjYor4tRS3Vakn5n3YoTmX2DZonPbqp4VNKYEY39gZm3niP0BU2lcfQqZql
+         /cu+xtvauwoCaYHQhkLWVCaxs5ebzddVAz2kibYeJbp6riyX+5sgcPyAGnCMSeSpNMiF
+         wu6+FgtR9qEpr5wRhNluf1mo8XTPJDDYupT2CN05+KChmVORoEXMYFtBPEqlnpjJ97mv
+         5cf98xAwnW/rq0Ace23lbTTSxuCrMvw+IgCLcrFLUq47atA8JgW7g9xzA25z9X9OVX2D
+         wJq6gLL6Av7ZbGq7TSxDhkFkIM8RdT4pMMqiO4GldWXgJYEuyNEEGKwxeKBxYdknqMIv
+         Vp6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733228466; x=1733833266;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1WImKTFIXOmnid3RYi3wzcqOj3BPOQI6o3xUPdhcFHM=;
+        b=Svj4IMhTTy6SgeHRdf4Tp5C79lUT/pbc/UQK/sBK4uM3gvYNy5hJNSukgfkq7dD5tb
+         DVg2CjPm9NSQcqc9iS0EB5/UreYD1733ysj0dHjzvbZAAQagWfn/LM2OrR1S7svn1JIL
+         jNpX7X+3ceau/JWiL8gVMl5MAkk4Q3uJAw8cqt7q71XIhQtDirW5oFMjKMVhmIAgBHAC
+         8rB4BgL2gGdy+IzA13wkEjVHKsBhOqYKtdYrL20HgXwGEWugEJJAPziuBQ6ahqlK1ysj
+         uOxZsLZ3NgiUiHcWMkJHZzyxzEYo7+kp+qsdPOZ6P1hnj5219BjAcgLeZxSaGg4T9fmx
+         RPQg==
+X-Forwarded-Encrypted: i=1; AJvYcCWR5MVPGzS8NOYHyBS1KEYlJZMWDB2VFO2a6Z+/POTUl1cpvpIUr+JcWQw7vXu2xhvPvNLtz+4pZUGRemk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwuNF8DegjzEvbjLZQ39Zjl14e1jTLNjSik5YSSWBs83T1Nu4d8
+	1fO3OmpHtHk7Nq7jwnNqu3CxpXfyghkIHWM4SGI8igFb34XkU1Gbrd07brl+bTjJwQqjW234psm
+	w5zAN5+d3ZOoHU3QhMsC0BToLhBQKi/UX9K+wrA==
+X-Gm-Gg: ASbGncumIGVhIeheQyOO9Nuhl9/3sdwYgInfEBUjXducg0xC/Yg5aSgOGTgmYTeUz2r
+	cBVcLRAifER61fHunQjDjol87zbQmvzhV6hhncw6RpZhMglcAVhCc/ZmVaOhY
+X-Google-Smtp-Source: AGHT+IECgoPf7qHpNyXgItUjiYOWa+tp6n6p4rrfllPoXDocCVMcuQlttw8uJtNTEg/Pe8c6cPGDTSHhCImfY9HBpRY=
+X-Received: by 2002:a17:907:774c:b0:aa5:2bfb:2ec5 with SMTP id
+ a640c23a62f3a-aa5f7cc3150mr256183566b.5.1733228466291; Tue, 03 Dec 2024
+ 04:21:06 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z06ZAP-_4J4-6aK_@ghost>
+References: <20241118222828.240530-1-max.kellermann@ionos.com>
+ <CAOi1vP8Ni3s+NGoBt=uB0MF+kb5B-Ck3cBbOH=hSEho-Gruffw@mail.gmail.com>
+ <c32e7d6237e36527535af19df539acbd5bf39928.camel@kernel.org>
+ <CAKPOu+-orms2QBeDy34jArutySe_S3ym-t379xkPmsyCWXH=xw@mail.gmail.com>
+ <CA+2bHPZUUO8A-PieY0iWcBH-AGd=ET8uz=9zEEo4nnWH5VkyFA@mail.gmail.com>
+ <CAKPOu+8k9ze37v8YKqdHJZdPs8gJfYQ9=nNAuPeWr+eWg=yQ5Q@mail.gmail.com>
+ <CA+2bHPZW5ngyrAs8LaYzm__HGewf0De51MvffNZW4h+WX7kfwA@mail.gmail.com>
+ <CAO8a2SiRwVUDT8e3fN1jfFOw3Z92dtWafZd8M6MHB57D3d_wvg@mail.gmail.com>
+ <CAO8a2SiN+cnsK5LGMV+6jZM=VcO5kmxkTH1mR1bLF6Z5cPxH9A@mail.gmail.com>
+ <CAKPOu+8u1Piy9KVvo+ioL93i2MskOvSTn5qqMV14V6SGRuMpOw@mail.gmail.com> <CAO8a2SizOPGE6z0g3qFV4E_+km_fxNx8k--9wiZ4hUG8_XE_6A@mail.gmail.com>
+In-Reply-To: <CAO8a2SizOPGE6z0g3qFV4E_+km_fxNx8k--9wiZ4hUG8_XE_6A@mail.gmail.com>
+From: Max Kellermann <max.kellermann@ionos.com>
+Date: Tue, 3 Dec 2024 13:20:55 +0100
+Message-ID: <CAKPOu+_-RdM59URnGWp9x+Htzg5xHqUW9djFYi8msvDYwdGxyw@mail.gmail.com>
+Subject: Re: [PATCH] fs/ceph/mds_client: give up on paths longer than PATH_MAX
+To: Alex Markuze <amarkuze@redhat.com>
+Cc: Patrick Donnelly <pdonnell@redhat.com>, Jeff Layton <jlayton@kernel.org>, 
+	Ilya Dryomov <idryomov@gmail.com>, Venky Shankar <vshankar@redhat.com>, xiubli@redhat.com, 
+	ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org, dario@cure53.de, 
+	stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Dec 02, 2024 at 09:37:04PM -0800, Charlie Jenkins wrote:
-[...]
-> +static void ptrace_test(int opt, int *result)
-> +{
-> +	int status;
-> +	pid_t pid;
-> +	struct user_regs_struct regs;
-> +	struct iovec iov = {
-> +		.iov_base = &regs,
-> +		.iov_len = sizeof(regs),
-> +	};
-> +
-> +	unsigned long orig_a0;
-> +	struct iovec a0_iov = {
-> +		.iov_base = &orig_a0,
-> +		.iov_len = sizeof(orig_a0),
-> +	};
-> +
-> +	pid = fork();
-> +	if (pid == 0) {
-> +		/* Mark oneself being traced */
-> +		long val = ptrace(PTRACE_TRACEME, 0, 0, 0);
-> +		if (val)
-> +			perr_and_exit("failed to request for tracer to trace me: %ld\n", val);
-> +
-> +		kill(getpid(), SIGSTOP);
-> +
-> +		/* Perform exit syscall that will be intercepted */
-> +		exit(A0_OLD);
-> +	}
-> +
-> +	if (pid < 0)
-> +		exit(1);
-> +
-> +	if (waitpid(pid, &status, 0) != pid)
-> +		perr_and_exit("failed to wait for the tracee %d\n", pid);
-> +
-> +	/* Stop at the entry point of the syscall */
-> +	resume_and_wait_tracee(pid, PTRACE_SYSCALL);
-> +
-> +	/* Check tracee regs before the syscall */
-> +	if (ptrace(PTRACE_GETREGSET, pid, NT_PRSTATUS, &iov))
-> +		perr_and_exit("failed to get tracee registers\n");
-> +	if (ptrace(PTRACE_GETREGSET, pid, NT_RISCV_ORIG_A0, &a0_iov))
-> +		perr_and_exit("failed to get tracee registers\n");
-> +	if (orig_a0 != A0_OLD)
-> +		perr_and_exit("unexpected orig_a0: 0x%lx\n", orig_a0);
-> +
-> +	/* Modify a0/orig_a0 for the syscall */
-> +	switch (opt) {
-> +	case A0_MODIFY:
-> +		regs.a0 = A0_NEW;
-> +		break;
+On Mon, Nov 25, 2024 at 3:33=E2=80=AFPM Alex Markuze <amarkuze@redhat.com> =
+wrote:
+> You and Illia agree on this point. I'll wait for replies and take your
+> original patch into the testing branch unless any concerns are raised.
 
-Did you mean applying the modified user_regs_struct using PTRACE_SETREGSET?
-If yes, then there should be an appropriate PTRACE_SETREGSET NT_PRSTATUS call.
-If no, then regs is ignored, so why would you change it in the first place?
-
-> +	case ORIG_A0_MODIFY:
-> +		orig_a0 = A0_NEW;
-> +		break;
-> +	}
-> +
-> +	if (ptrace(PTRACE_SETREGSET, pid, NT_RISCV_ORIG_A0, &a0_iov))
-> +		perr_and_exit("failed to set tracee registers\n");
-> +
-> +	/* Resume the tracee */
-> +	ptrace(PTRACE_CONT, pid, 0, 0);
-> +	if (waitpid(pid, &status, 0) != pid)
-> +		perr_and_exit("failed to wait for the tracee\n");
-> +
-> +	*result = WEXITSTATUS(status);
-> +}
-
--- 
-ldv
+How long will you wait? It's been more than two weeks since I reported
+this DoS vulnerability.
 
