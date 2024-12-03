@@ -1,82 +1,188 @@
-Return-Path: <linux-kernel+bounces-429926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 670649E290A
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 18:22:21 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC87B9E2904
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 18:22:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CAC3E167B31
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 17:22:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A27EA167D62
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 17:22:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 543591FC0E8;
-	Tue,  3 Dec 2024 17:21:56 +0000 (UTC)
-Received: from shelob.surriel.com (shelob.surriel.com [96.67.55.147])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 059101FAC4E;
+	Tue,  3 Dec 2024 17:21:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=yoseli.org header.i=@yoseli.org header.b="dO2woW4y"
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15F5B1F471B
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 17:21:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.67.55.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D3F71FA166;
+	Tue,  3 Dec 2024 17:21:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733246515; cv=none; b=Erlts/kz8dZD59BzbUjw0M3Bilz5n9SCKvjtW85Bd+5SBX+Q6NgXUT4vfv67q+MxCzhGGfIFBWUBbp9C1w4MVyKIM6Egq2KNuami8PqnYkuegXKou86Vz4L4BEkmrULl8ClOaAiJ+PdefexnqWUeWVCxb1XOT29cnhcM6L0P/lo=
+	t=1733246514; cv=none; b=rGXsEILsATssCHgxuJ7RpdDiQA0qwq1NrJw++U+alPJ4W5GbBC+qcKyJ3bz4ENisKqIb8xR9v8Dmg6+5+815MLwEPufFXaihhK4nyibX4QzAB8Ni6lpYHUTa2MJT5qrwDdOcy1szqOT9cs74IhMAYOI/RC8LzTt52qALIHbFu+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733246515; c=relaxed/simple;
-	bh=Mph9ZWPb78z1yfeoiO9dyD32B0Gh6V1IWrfxxJOWoU0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=btv6B61rg+SwG/FYdqeM4UBtXQYb0ZkgLNQ9qZckPdSHM/ZeHwZBtZ70lYQkbxHbWhPgcDKW0Q77RZ21c7g5ebRaFqvwhAGPVbXIq/MHRrowS5ibauXqal03ESXp3SbwHtqpCEEzj+X9e0mHqaNKiXUhqglafLzREDZr80FX3IM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com; spf=pass smtp.mailfrom=shelob.surriel.com; arc=none smtp.client-ip=96.67.55.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shelob.surriel.com
-Received: from fangorn.home.surriel.com ([10.0.13.7])
-	by shelob.surriel.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.97.1)
-	(envelope-from <riel@shelob.surriel.com>)
-	id 1tIWaf-000000008IC-31LT;
-	Tue, 03 Dec 2024 12:21:37 -0500
-Message-ID: <207d3b2abb0a9ead709de7b4710e256563b02f3b.camel@surriel.com>
-Subject: Re: [RFC PATCH] smp: Evaluate local cond_func() before IPI
- side-effects
-From: Rik van Riel <riel@surriel.com>
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>, 
- Ingo Molnar <mingo@kernel.org>, Dave Hansen <dave.hansen@intel.com>, Linus
- Torvalds	 <torvalds@linux-foundation.org>, Mel Gorman <mgorman@suse.de>,
- x86@kernel.org
-Date: Tue, 03 Dec 2024 12:21:37 -0500
-In-Reply-To: <20241203163558.3455535-1-mathieu.desnoyers@efficios.com>
-References: <20241203163558.3455535-1-mathieu.desnoyers@efficios.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.1 (3.54.1-1.fc41) 
+	s=arc-20240116; t=1733246514; c=relaxed/simple;
+	bh=xy6Tvlpd9L1+hVrAsSZEgFC+sDEa9jTQGFW09O89aIM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=pNhZQ4HUC/D1oLFivQLXi1Hma21RVJ8QgS8JSq5JvgjKcvSvWCyfHhYfTGUnhhrS4D9lapPH3mUwxNgQV2yaIZBKSCUg3ktiG96OlL1hZtjKX0vkXkv2UDlG+/Jb0qzyOvhOXn06FcbCPHLYd4u3F9t8Z5wxc4MB/5oyhXof0Qk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=yoseli.org; spf=none smtp.mailfrom=yoseli.org; dkim=pass (2048-bit key) header.d=yoseli.org header.i=@yoseli.org header.b=dO2woW4y; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=yoseli.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=yoseli.org
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 75265240006;
+	Tue,  3 Dec 2024 17:21:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yoseli.org; s=gm1;
+	t=1733246503;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=WtJeg2U2iP69o6t1Gwg7RiKNYXTEb2gTKKysOkdqUKs=;
+	b=dO2woW4y1AZj9r8gNdbG0r4WuQPaj15d/6RpcSOsYWZgDJujwiOIVh7rc3DsvKNj3R3411
+	EJU4uV0zWuDQvQj9REHt/zWuS1YtKbycLy9Uk6nuTPT9g+Qw0Zlx2L/Ex1dk2dXGVmjX+Y
+	75BWr8YMPXfVtTcITgMmxYQo8S2iFfnqi8gWD0ukeK+Jghx3C19q/yc3I1tCgAY9KzUOIk
+	Aha6z0JU3G1qkNaoDs8EezOAHWtulk5jnEhP/KrwAe34B2wXjzPbdGiClKO+HpRJmVZE2m
+	uZnFkBuMoiYAm9X0fK1rF6oYRRy4pnJ8wv+LQdMuc8xxUyYU7d1dX2B0k7/7Ug==
+From: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
+Subject: [PATCH v2 0/2] Add basic tracing support for m68k
+Date: Tue, 03 Dec 2024 18:21:37 +0100
+Message-Id: <20241203-add-m68k-tracing-support-v2-0-77302097a9f4@yoseli.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Sender: riel@surriel.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIACE+T2cC/42NQQ6CMBBFr0Jm7Zh2Cti48h6GBdIKE5U2UyQSw
+ t2tnMDle8l/f4XkhX2Cc7GC+JkThzEDHQrohnbsPbLLDKSo1Io0ts7hq7YPnKTteOwxvWMMMqG
+ pO20dkTHOQp5H8Xf+7Olrk3ngNAVZ9qdZ/+wf0VmjQmWtcSdVVlTdLktI/snHID0027Z9AZKyN
+ xHBAAAA
+X-Change-ID: 20241021-add-m68k-tracing-support-36c18d2233d8
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org, 
+ linux-trace-kernel@vger.kernel.org, rostedt@goodmis.org, 
+ Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1733246503; l=3859;
+ i=jeanmichel.hautbois@yoseli.org; s=20240925; h=from:subject:message-id;
+ bh=xy6Tvlpd9L1+hVrAsSZEgFC+sDEa9jTQGFW09O89aIM=;
+ b=N/j2K5z9l5huXlI9GzLXNeT2fsNS8bKC2jRHQXhWrmIrfFPtpNVWDSCOiVGau995daaKnQbk4
+ BscNATXkn/8CGVGBhjfGslCMqGyD9nNp5fw1qiUyHpihJZ9OaX1yNJX
+X-Developer-Key: i=jeanmichel.hautbois@yoseli.org; a=ed25519;
+ pk=MsMTVmoV69wLIlSkHlFoACIMVNQFyvJzvsJSQsn/kq4=
+X-GND-Sasl: jeanmichel.hautbois@yoseli.org
 
-On Tue, 2024-12-03 at 11:35 -0500, Mathieu Desnoyers wrote:
-> In smp_call_function_many_cond(), the local cond_func() is evaluated
-> after triggering the remote CPU IPIs.
->=20
-> If cond_func() depends on loading shared state updated by other CPU's
-> IPI handlers func(), then triggering execution of remote CPUs IPI
-> before
-> evaluating cond_func() may have unexpected consequences.
->=20
-> One example scenario is evaluating a jiffies delay in cond_func(),
-> which
-> is updated by func() in the IPI handlers. This situation can prevent
-> execution of periodic cleanup code on the local CPU.
->=20
-> Link: https://lore.kernel.org/lkml/20241202202213.26a79ed6@fangorn/
-> Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
->=20
+In order to debug latency issues, I wanted to use ftrace on my M54418
+coldfire. Sadly, it is not supported yet.
+Thanks to Steven [1] it does not sound too difficult.
 
-Reviewed-by: Rik van Riel <riel@surriel.com>
+This small series adds basic functions to make it work, and for the few
+tests I could do, it seems to be working well.
 
---=20
-All Rights Reversed.
+Here is a simple output I get:
+
+```
+
+            bash-232     [000] d..3.   947.629000: thread_noise:     bash:232 start 947.629000000 duration 0 ns
+      timerlat/0-274     [000] .....   947.629000: #51598 context thread timer_latency    409280 ns
+            bash-232     [000] d.h..   947.630000: #51599 context    irq timer_latency    110720 ns
+            bash-232     [000] dnh1.   947.630000: irq_noise: timer:206 start 947.629000000 duration 1000000 ns
+            bash-232     [000] d..3.   947.630000: thread_noise:     bash:232 start 947.630000000 duration 0 ns
+      timerlat/0-274     [000] .....   947.630000: #51599 context thread timer_latency    407168 ns
+            bash-232     [000] d.h..   947.631000: #51600 context    irq timer_latency    108608 ns
+            bash-232     [000] dnh1.   947.631000: irq_noise: timer:206 start 947.630000000 duration 1000000 ns
+            bash-232     [000] d..3.   947.631000: thread_noise:     bash:232 start 947.631000000 duration 0 ns
+      timerlat/0-274     [000] .....   947.631000: #51600 context thread timer_latency    401472 ns
+```
+
+I used this on my board and afaik, it works quite well.
+
+```
+
+ telnetd-229       0Dnh4.   13us+:      229:120:R   + [000]     118: 49:R irq/100-enet-fe
+ telnetd-229       0Dnh4.   53us+: <stack trace>
+ => __trace_stack
+ => probe_wakeup
+ => try_to_wake_up
+ => wake_up_process
+ => __handle_irq_event_percpu
+ => handle_irq_event
+ => handle_level_irq
+ => generic_handle_irq
+ => do_IRQ
+ => inthandler
+ => ip_finish_output2
+ => __ip_finish_output
+ => ip_output
+ => __ip_queue_xmit
+ => ip_queue_xmit
+ => __tcp_transmit_skb
+ => tcp_write_xmit
+ => __tcp_push_pending_frames
+ => tcp_push
+ => tcp_sendmsg_locked
+ => tcp_sendmsg
+ => inet_sendmsg
+ => sock_write_iter
+ => vfs_write
+ => ksys_write
+ => sys_write
+ => system_call
+ telnetd-229       0Dnh4.   68us!: wake_up_process <-__handle_irq_event_percpu
+ telnetd-229       0D..3.  348us+: __schedule <-preempt_schedule_irq
+ telnetd-229       0D..3.  368us+:      229:120:R ==> [000]     118: 49:R irq/100-enet-fe
+ telnetd-229       0D..3.  395us : <stack trace>
+ => __trace_stack
+ => probe_wakeup_sched_switch
+ => __schedule
+ => preempt_schedule_irq
+ => Lkernel_return
+ => ip_finish_output2
+ => __ip_finish_output
+ => ip_output
+ => __ip_queue_xmit
+ => ip_queue_xmit
+ => __tcp_transmit_skb
+ => tcp_write_xmit
+ => __tcp_push_pending_frames
+ => tcp_push
+ => tcp_sendmsg_locked
+ => tcp_sendmsg
+ => inet_sendmsg
+ => sock_write_iter
+ => vfs_write
+ => ksys_write
+ => sys_write
+ => system_call
+```
+
+[1]: https://lore.kernel.org/linux-m68k/20241018124511.70d29198@gandalf.local.home
+
+Signed-off-by: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
+---
+Changes in v2:
+- Use the frame pointer and declare it
+- Comments on trace_irq have been tested, but adding the trace_on/off in
+  entry.S fails badly
+- Link to v1: https://lore.kernel.org/r/20241021-add-m68k-tracing-support-v1-0-0883d704525b@yoseli.org
+
+---
+Jean-Michel Hautbois (2):
+      m68k: Add tracirqs
+      arch: m68k: Add STACKTRACE support
+
+ arch/m68k/Kconfig             |  7 +++++
+ arch/m68k/kernel/Makefile     |  1 +
+ arch/m68k/kernel/irq.c        |  2 ++
+ arch/m68k/kernel/stacktrace.c | 70 +++++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 80 insertions(+)
+---
+base-commit: e70140ba0d2b1a30467d4af6bcfe761327b9ec95
+change-id: 20241021-add-m68k-tracing-support-36c18d2233d8
+
+Best regards,
+-- 
+Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
+
 
