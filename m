@@ -1,177 +1,92 @@
-Return-Path: <linux-kernel+bounces-429541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BAA99E1D8A
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 14:27:44 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 508E89E1F4C
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 15:34:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40CC8282C47
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 13:27:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AA3B7B27432
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 13:29:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EABAC1EF0A9;
-	Tue,  3 Dec 2024 13:27:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BXr3VXKH"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 733D91EF0A6;
+	Tue,  3 Dec 2024 13:28:57 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D733919A297;
-	Tue,  3 Dec 2024 13:27:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 733B219A297
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 13:28:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733232458; cv=none; b=pXRs2k006+KcrvGOaSTbLcGTqjpvBMo1cq5YIjVyvx2CJ05nYkXnplQ/WXOW7lqUenKdVXmM9E1L3pIfEgIApnEaatHvyMmksMM6rvv00DE28ewAxlGvJ5UAMl1WTumvVaJTazfTQx1uPfzR25r0mN8gAPhWA/n2RuKV0eQawvI=
+	t=1733232537; cv=none; b=CPEstW8h5xsHlePzcsFQ/zzwocKvZr3erNw/L2ZnHxE70StbxG1xGghlkJwYhB1M+cSBqYGGBqTypMr0ObYAShpmlFVl/+2tB412iNRdM9UImxu5feChAsBrD/GmtOiAEoVz3kLVX/QcnPMSQOAWUnx319UwzRxkv6y9Q+I9OYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733232458; c=relaxed/simple;
-	bh=6Q5UniimspbX4XfDjtpafCMvJCawwNGVwORSbaSKzwk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ktm94HCglySsbI4UKOdR+ZVFPUuF6hQpMzxe50R9A9kaQ5TS6iNwLQeBq0hzGqB5/k3Yww+WvPAagRAs3Sbfj7ipJLb+sEaMA1MVnO0Df1MtY30+K9c1dri4HszkNscaBMC23F/fpTzFmCAZ0j9YPaITsJWJweTiITzXHx/6rJA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BXr3VXKH; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733232456; x=1764768456;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=6Q5UniimspbX4XfDjtpafCMvJCawwNGVwORSbaSKzwk=;
-  b=BXr3VXKH+Om8QhBz6zmuMAm3S/q9SZJHmeU2OAyxA1SfW9lR+ZymfM/j
-   1fkwIJWCLnmQ4lZd49DE2JzdXbtKIPmT55ktAzTAAynaEzgWFAjFpUAjN
-   z2J+4yHNDV1bT4vTMdhE8/AdFDA0lEDE6TLtPHJb2fEe7r6a9YOQKXmlt
-   OyY8+F5WIsj84fcfripfcqHC9ZBCZAZUStC7nmUljE3jUY+XSfJa5iTCa
-   1hMz2BJkxKzWXYnLtrg0oi4sgOZnuwLsiq00tFzAN+lCpA9htBpFCFHUf
-   8xOGgwy6pWcqsI8K5NhDh92m1+lhpnR9mukOoNGjeD5uwPAsC8smV/PzN
-   w==;
-X-CSE-ConnectionGUID: h+spne0eSJahHWZ5Uv+0gA==
-X-CSE-MsgGUID: U8p8+LsNSouKS+szNxhLyw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11274"; a="21028225"
-X-IronPort-AV: E=Sophos;i="6.12,205,1728975600"; 
-   d="scan'208";a="21028225"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Dec 2024 05:27:36 -0800
-X-CSE-ConnectionGUID: FE87xROMQUWVZM+BXEbvpQ==
-X-CSE-MsgGUID: y931rEgfQxew5PUT0WD+Og==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,205,1728975600"; 
-   d="scan'208";a="116683978"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Dec 2024 05:27:34 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tISw7-00000003Rr0-3ABF;
-	Tue, 03 Dec 2024 15:27:31 +0200
-Date: Tue, 3 Dec 2024 15:27:31 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Daniel Scally <djrscally@gmail.com>, linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] device property: do not leak child nodes when using
- NULL/error pointers
-Message-ID: <Z08HQ2JmETJLNuud@smile.fi.intel.com>
-References: <20241128053937.4076797-1-dmitry.torokhov@gmail.com>
- <Z0hsbNqXSkQjsR1v@smile.fi.intel.com>
- <Z0j3EtRmYBmGFApu@google.com>
- <Z0nUpytu0GFUgQ9V@smile.fi.intel.com>
- <Z0q75n_P3sZYnviO@google.com>
- <Z0uHJJKMog-REw1D@smile.fi.intel.com>
- <Z06b0oTvxUi4DTlx@google.com>
+	s=arc-20240116; t=1733232537; c=relaxed/simple;
+	bh=pRjhf2Ka/V0lakXwM7BNa9baS7Tn+JzqTO0O0o0NwwE=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=UBSB1SlNk6+22WNKK8j8DASCAtUI0WEzxeexrhRhvg95GhXeRdRpZ+oGgycJJGugwtH7w6PxxJNvTnHn7iiOYtGdYujHrFFEjBhUvDbQa6H1lrA6E5M0rwCeABt5padae4Hsrn5Gp5xVKMjySTwEEovjBW3E+r3UdWjmVdHQwzo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a77a0ca771so39351525ab.0
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 05:28:55 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733232534; x=1733837334;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DpOhvann8v6cfjJBUe309C4fInbf8Nc00R+1ZjGvUeI=;
+        b=SAGRWAij/qmeQ7aK5qIgf7NstCZSSAv9J5WlFk7yzuP0AyfkfjGws6qqsGc2ZA1h1N
+         EHwaqQqn9wyYUv3uEJ3d4sAQ3MchDcznC5ECSDtKS3KvmOqvf5x9+oTNXoPJsbAE9noF
+         cJUXvKbX4MCeLnFdS59SrRsyfa0/Ne14xxZ2Y/etP704IPab9R9CG1EFsUZqDuZKUN/P
+         pe2ccVaj4bdMOfSRsri3dcimgOUgI+l2+2V3SBF/d3nAbkwWYGonRH56oD0CPA7c5X1v
+         F5x06gHkgEGx8pHeIXM1edJKOZ/yjPXd73xmRKwE/qJTHb5uARooI6VTsSp1eb4W+38U
+         HX2w==
+X-Gm-Message-State: AOJu0YwVI3CdZvPnxEcRrcLB6evure+8vOeHilGa6u6MQf38FhGfMjTK
+	OFPG7lfWj6YfySlfMktHpctoR1hpctjHZKHgf19Glc8zbJIVNlTTWaHamMqUrFtdBlL/mDm8YnW
+	ogUL4vrDN0EaDPUXKK118mgmLDSoC3QAWfpe/ymTvwnuG1PBqv4gYqn0=
+X-Google-Smtp-Source: AGHT+IE5Fu9DD0aCX6k/12w3cDpl9/A44Z/cBJI3u/bPnyTd9vJOqj+AzaedvYBneTGgfPV8FxlIEtmz+EpXbl0myKbqoBhi2EkJ
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z06b0oTvxUi4DTlx@google.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+X-Received: by 2002:a05:6e02:13af:b0:3a6:ad61:7ff8 with SMTP id
+ e9e14a558f8ab-3a7f9a56d35mr26198605ab.12.1733232534625; Tue, 03 Dec 2024
+ 05:28:54 -0800 (PST)
+Date: Tue, 03 Dec 2024 05:28:54 -0800
+In-Reply-To: <67409854.050a0220.363a1b.013f.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <674f0796.050a0220.48a03.0038.GAE@google.com>
+Subject: Re: [syzbot] Re: KMSAN: uninit-value in ip6table_mangle_hook()
+From: syzbot <syzbot+6023ea32e206eef7920a@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Dec 02, 2024 at 09:49:06PM -0800, Dmitry Torokhov wrote:
-> On Sat, Nov 30, 2024 at 11:44:04PM +0200, Andy Shevchenko wrote:
-> > On Fri, Nov 29, 2024 at 11:16:54PM -0800, Dmitry Torokhov wrote:
-> > > On Fri, Nov 29, 2024 at 04:50:15PM +0200, Andy Shevchenko wrote:
-> > > > On Thu, Nov 28, 2024 at 03:04:50PM -0800, Dmitry Torokhov wrote:
-> > > > > On Thu, Nov 28, 2024 at 03:13:16PM +0200, Andy Shevchenko wrote:
-> > > > > > On Wed, Nov 27, 2024 at 09:39:34PM -0800, Dmitry Torokhov wrote:
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-...
+***
 
-> > > > > > > @@ struct fwnode_handle *device_get_next_child_node(const struct device *dev,
-> > > > > > >  	const struct fwnode_handle *fwnode = dev_fwnode(dev);
-> > > > > > >  	struct fwnode_handle *next;
-> > > > > > 
-> > > > > > > -	if (IS_ERR_OR_NULL(fwnode))
-> > > > > > > +	if (IS_ERR_OR_NULL(fwnode)) {
-> > > > > > > +		fwnode_handle_put(child);
-> > > > > > >  		return NULL;
-> > > > > > > +	}
-> > > > > > 
-> > > > > > >  	/* Try to find a child in primary fwnode */
-> > > > > > >  	next = fwnode_get_next_child_node(fwnode, child);
-> > > > > > 
-> > > > > > So, why not just moving the original check (w/o dropping the reference) here?
-> > > > > > Wouldn't it have the same effect w/o explicit call to the fwnode_handle_put()?
-> > > > > 
-> > > > > Because if you rely on check in fwnode_get_next_child_node() you would
-> > > > > not know if it returned NULL because there are no more children or
-> > > > > because the node is invalid. In the latter case you can't dereference
-> > > > > fwnode->secondary.
-> > > > 
-> > > > Yes, so, how does it contradict my proposal?
-> > > 
-> > > I guess I misunderstood your proposal then. Could you please explain it
-> > > in more detail?
-> > 
-> > 
-> > Current code (in steps):
-> > 	if (IS_ERR_OR_NULL()) check
-> > 	trying primary
-> > 	trying secondary if previous is NULL
-> > 
-> > 
-> > My proposal
-> > 
-> > 	trying primary
-> > 	return if not NULL
-> > 	if (IS_ERR_OR_NULL()) check in its current form (no put op)
-> > 	trying secondary
-> > 
-> > After your first patch IIUC this is possible as trying primary will put child uncoditionally.
-> 
-> Ah, I see. No, I do not think this is a good idea: it will make the code
-> harder to understand for a casual reader: "Why do we check node validity
-> only after we used it for the first time?"
+Subject: Re: KMSAN: uninit-value in ip6table_mangle_hook()
+Author: dmantipov@yandex.ru
 
-Theare a re already a few API calls there that are hard to understand, I spent
-some time on them to get it through and still got it wrong as this series
-shows. So, I don't think we anyhow change this.
+#syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git cdd30ebb1b9f36159d66f088b61aee264e649d7a
 
-> For the code not in a hot path there is a lot of value in simplicity.
-
-If you really want to go to this rabbit hole, think how we can get rid of
-repetitive checks of the secondary or more if any in the future nodes in the
-list.
-
-So the basic idea is to have this all hidden (to some extent) behind the macro
-or alike. In the code it would be something as
-
-  for node in primary, secondary, ...
-    call the API
-    if (okay)
-	return result
-
-  return error
-
-This will indeed help.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+diff --git a/net/ipv6/ip6_tunnel.c b/net/ipv6/ip6_tunnel.c
+index 48fd53b98972..00840249554a 100644
+--- a/net/ipv6/ip6_tunnel.c
++++ b/net/ipv6/ip6_tunnel.c
+@@ -1224,7 +1224,9 @@ int ip6_tnl_xmit(struct sk_buff *skb, struct net_device *dev, __u8 dsfield,
+ 	    (skb_cloned(skb) && !skb_clone_writable(skb, 0))) {
+ 		struct sk_buff *new_skb;
+ 
+-		new_skb = skb_realloc_headroom(skb, max_headroom);
++		new_skb = skb_copy_expand(skb, max_headroom,
++					  skb_tailroom(skb),
++					  GFP_ATOMIC);
+ 		if (!new_skb)
+ 			goto tx_err_dst_release;
+ 
 
