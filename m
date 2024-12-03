@@ -1,113 +1,135 @@
-Return-Path: <linux-kernel+bounces-429756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429795-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91F749E2A52
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 19:06:10 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CB899E2A12
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 18:55:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D156BB88439
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 15:34:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9CB0FBE2FE8
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 15:52:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C6331FA82E;
-	Tue,  3 Dec 2024 15:32:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0772C1F890B;
+	Tue,  3 Dec 2024 15:51:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FgIgt+mD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="fHCeqkM6"
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA99D1F8AFA;
-	Tue,  3 Dec 2024 15:32:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A1141E0496;
+	Tue,  3 Dec 2024 15:51:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733239955; cv=none; b=oDoUMj3p77OEgcP8zbMzs3NLnFg6PFpooAUzvC4JIS0QUa60I0USQ93JjTaq+SRxWhLUoota90ccG9EuLt5BCW1XHiVGtbs/wEl7/iTqGvllrA+sCYRyHrXdQe7fdw3yc/5EaeN466k1EOxxw74q8abnR63BWeNw85vv7oRRDI8=
+	t=1733241116; cv=none; b=jPtaFq+5fFuYxqW8wqbM6wfEOCOpsNE9aH63nJo25+12sYQS130yvQk2uKNCWO0CmAeG+9G39cmTrU48VC1mxEPImZNTOyT7/tkdE6pRtaDk2YckXgqIe2iATGSdPzg4k3H1GonUXH7elXelUqEKPF865PqvgJilAzZCW6k9R7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733239955; c=relaxed/simple;
-	bh=9dyobPuiAigqFkgy1nXf6Wr/bRq7fJo42aRsWAsXsgo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PJZRjqTaHDElOutYO/m0dZn/DwENUpPo+s8+lw+25AugtLr+9Cs6LX5kbROrM7eubNA+ENTsRcLmSqJ67kCIFFKK4CrvVUH/ufqTOVgiiwcg83LtlNylNRMhR+crtit2ES3tQUS1KRe70P18b5YzxZl8++Zwc2KD4Xmv4/NPSRw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FgIgt+mD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F2A1C4CECF;
-	Tue,  3 Dec 2024 15:32:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733239954;
-	bh=9dyobPuiAigqFkgy1nXf6Wr/bRq7fJo42aRsWAsXsgo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FgIgt+mDsPsf122bbvT7gowNtGD6kjdn6EEl6x0FUr0CUyTUYIJteho8ZB7nVavOP
-	 lt70sI7leixdD4LrqXBoBSVEyjXfKTToeyBirNZ51JgaRyLg3r6zwpAWb4IDTtJTgS
-	 k/8gyMVgex2SMy5t47Yt1bCmq+cQ3+vZzqvPpsLIaz6+vGPAWHB6BbkAaY0ca59U2Y
-	 qkWOihUmIblKZd9MCQ9NIWUuL775HQYE5q/5UAtOp/PxvaYMb1oUVcIsuspo5tZYH1
-	 OeUHN02rqALZzqHEFZNACYGMvkz2kSYOApIOwBWTDVXTuvS6cSpf9i5dYmSENSkOJj
-	 F5LDvT6ys9pLA==
-Date: Tue, 3 Dec 2024 09:32:31 -0600
-From: Bjorn Andersson <andersson@kernel.org>
-To: Taniya Das <quic_tdas@quicinc.com>
-Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, quic_imrashai@quicinc.com, quic_jkona@quicinc.com, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Ajit Pandey <quic_ajipan@quicinc.com>
-Subject: Re: [PATCH v6 2/2] arm64: dts: qcom: sa8775p: Add support for clock
- controllers
-Message-ID: <gpikswuggsfnfu5ay3se46ah6rdehaeu5ylaa5aidmqtcejoo2@um7inmnjrcvq>
-References: <20241025-sa8775p-mm-v4-resend-patches-v6-0-329a2cac09ae@quicinc.com>
- <20241025-sa8775p-mm-v4-resend-patches-v6-2-329a2cac09ae@quicinc.com>
- <e810ab3d-a225-4c85-a755-3aa18c311cc5@oss.qualcomm.com>
- <9e0f200b-53dd-4dbf-8b0d-1a2f576d3e3f@oss.qualcomm.com>
- <97c6ef74-7ce8-4e67-85f9-d5452678f45f@quicinc.com>
+	s=arc-20240116; t=1733241116; c=relaxed/simple;
+	bh=bpMNhT7hs+A5dnCGGIqDp8qwNNx3fUETcoweFQOjllk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=eqGlhlEN4RqLfuFq17v1l1vha0aNaBUKz6ykXg1CJYbzSK9bGOBRKalyIktZ1UlAsgte6k8K+cWV2DrzLCsvH/+sJVSQysMnLD30OIJXcQCE6njV5tHE5FbNyUJZ7juEWYMhwIm7sudVEI70VcodMhNdQ87930IiArCKvXc6NhM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=fHCeqkM6; arc=none smtp.client-ip=217.70.183.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id E8697FF811;
+	Tue,  3 Dec 2024 15:51:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1733241111;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6mUUXlg2Sdr2QZ9xxnJnQJbYN76Rdm3JD+IpxMezPKc=;
+	b=fHCeqkM6Iljfd74vtUc6Go6drgzqlVnBl28AhspXXsK9XVyHDw/IVJcBm9JqWph4Y99KxK
+	4Oro9o3pP/wPORR2+ulupss5Q9szZdXpVRv5q4lBhgqtHRUHexaRBubmlFgh8Yx88ACHrN
+	p67sdXIJNWOhgNSxbFIkX5JYKy6CVzPRqbh4XsfskquLEX4QaJSI3a50jia5diUnqVDPCH
+	YnQ8eWcVajvIpP7Ocm5NhTPzKrUMJlS8eRbBFUUg23B7A6ehwCIsDcQsk39VtL6VyNjWi2
+	iuT79F2GWfUNiGlkYhbyZHqSrZYL+gWTXPDyFVf2XDdLpvkQC/1ZdZIqCH5hPg==
+Date: Tue, 3 Dec 2024 16:51:47 +0100
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+Cc: Andrew Lunn <andrew@lunn.ch>, Dennis Ostermann
+ <dennis.ostermann@renesas.com>, "nikita.yoush"
+ <nikita.yoush@cogentembedded.com>, Heiner Kallweit <hkallweit1@gmail.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+ <pabeni@redhat.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Michael Dege
+ <michael.dege@renesas.com>, Christian Mardmoeller
+ <christian.mardmoeller@renesas.com>
+Subject: Re: [PATCH] net: phy: phy_ethtool_ksettings_set: Allow any
+ supported speed
+Message-ID: <20241203165147.4706cc3b@fedora.home>
+In-Reply-To: <Z08h95dUlS7zacTY@shell.armlinux.org.uk>
+References: <73ca1492-d97b-4120-b662-cc80fc787ffd@cogentembedded.com>
+	<Z02He-kU6jlH-TJb@shell.armlinux.org.uk>
+	<eddde51a-2e0b-48c2-9681-48a95f329f5c@cogentembedded.com>
+	<Z02KoULvRqMQbxR3@shell.armlinux.org.uk>
+	<c1296735-81be-4f7d-a601-bc1a3718a6a2@cogentembedded.com>
+	<Z02oTJgl1Ldw8J6X@shell.armlinux.org.uk>
+	<5cef26d0-b24f-48c6-a5e0-f7c9bd0cefec@cogentembedded.com>
+	<Z03aPw_QgVYn8WyR@shell.armlinux.org.uk>
+	<TYCPR01MB1047854DA050E52CADB04393A8E362@TYCPR01MB10478.jpnprd01.prod.outlook.com>
+	<1ff52755-ef24-4e4b-a671-803db37b58fc@lunn.ch>
+	<Z08h95dUlS7zacTY@shell.armlinux.org.uk>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <97c6ef74-7ce8-4e67-85f9-d5452678f45f@quicinc.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
-On Tue, Dec 03, 2024 at 10:04:13AM +0530, Taniya Das wrote:
-> 
-> 
-> On 10/26/2024 12:12 AM, Konrad Dybcio wrote:
-> > On 25.10.2024 8:42 PM, Konrad Dybcio wrote:
-> > > On 25.10.2024 10:52 AM, Taniya Das wrote:
-> > > > Add support for video, camera, display0 and display1 clock controllers
-> > > > on SA8775P. The dispcc1 will be enabled based on board requirements.
-> > 
-> > Actually, why would that be? CCF should park it gracefully with
-> > unused cleanup
-> > 
-> 
-> Yes, CCF should take care to cleanup. But I am of an opinion that as we are
-> aware that this platform do not require the dispcc1 so we could avoid the
-> clock driver initialization and help in boot KPI.
-> 
+Hi Andrew,
 
-Does that imply that we're guaranteed that the bootloader will never
-configure any clocks in dispcc1 that needs to be gracefully parked from
-the OS? Is this guaranteed to be the case for all QCS9100 boards?
+On Tue, 3 Dec 2024 15:21:27 +0000
+"Russell King (Oracle)" <linux@armlinux.org.uk> wrote:
 
-IMHO we should default to correctness, and then make product-specific
-boot time optimizations from that starting point.
-
-Regards,
-Bjorn
-
-> > Konrad
-> > 
-> > > > 
-> > > > Reviewed-by: Jagadeesh Kona <quic_jkona@quicinc.com>
-> > > > Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
-> > > > ---
+> On Tue, Dec 03, 2024 at 03:45:09PM +0100, Andrew Lunn wrote:
+> > On Tue, Dec 03, 2024 at 02:05:07PM +0000, Dennis Ostermann wrote:  
+> > > Hi,
 > > > 
-> > > Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> > > according to IEE 802.3-2022, ch. 125.2.4.3, Auto-Negotiation is optional for 2.5GBASE-T1
+> > >   
+> > > > 125.2.4.3 Auto-Negotiation, type single differential-pair media
+> > > > Auto-Negotiation (Clause 98) may be used by 2.5GBASE-T1 and 5GBASE-T1 devices to detect the
+> > > > abilities (modes of operation) supported by the device at the other end of a link segment, determine common
+> > > > abilities, and configure for joint operation. Auto-Negotiation is performed upon link startup through the use
+> > > > of half-duplex differential Manchester encoding.
+> > > > The use of Clause 98 Auto-Negotiation is optional for 2.5GBASE-T1 and 5GBASE-T1 PHYs  
 > > > 
-> > > Konrad
+> > > So, purposed change could make sense for T1 PHYs.  
+> > 
+> > The proposed change it too liberal. We need the PHY to say it supports
+> > 2.5GBASE-T1, not 2.5GBASE-T. We can then allow 2.5GBASE-T1 to not use
+> > autoneg, but 2.5GBASE-T has to use autoneg.  
 > 
-> -- 
-> Thanks & Regards,
-> Taniya Das.
+> I'm wondering whether we should add:
+> 
+> 	__ETHTOOL_DECLARE_LINK_MODE_MASK(requires_an);
+> 
+> to struct phy_device, and have phylib populate that by default with all
+> base-T link modes > 1G (which would be the default case as it is now.)
+> Then, PHY drivers can change this bitmap as they need for their device.
+> After the PHY features have been discovered, this should then get
+> AND-ed with the supported bitmap.
+
+If the standards says that BaseT4 >1G needs aneg, and that we can't
+have it for baseT1, couldn't we just have some lookup table for each
+mode indicating if they need or support aneg ? I'm thinking about
+something similar as the big table in net/ethtool/common.c where we
+have the linkmode - speed - duplex - lanes mapping :
+
+https://elixir.bootlin.com/linux/v6.12.1/source/net/ethtool/common.c#L270
+
+maybe looking it up for each config operation would be too expensive ?
+or it maybe isn't flexible enough in case we have to deal with
+phy-pecific quirks...
+
+Maxime
+
+
 
