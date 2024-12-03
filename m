@@ -1,181 +1,274 @@
-Return-Path: <linux-kernel+bounces-428736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42CC09E12B1
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 06:08:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F2A59E12B9
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 06:09:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C34342821B4
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 05:08:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0EE6D282426
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 05:09:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35DC7185B6D;
-	Tue,  3 Dec 2024 05:07:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1035E17C21C;
+	Tue,  3 Dec 2024 05:08:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ID0h20OI"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="aexBnp6z"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6EC9183CD9;
-	Tue,  3 Dec 2024 05:07:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8421172BB9
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 05:08:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733202462; cv=none; b=WeYkmkVfJKGQTqW1qIMigcqTRoCCIoRl5rvbGM1GUwwpsJf+hpVECaNm3hvrwGJvrzz4i1YHmRLytL4rjRU+oDJ0x4A0WG600ptl5Lu5gpeT0aTRFKtt7P2a56bJLWPov/G9vmDwYinym29JVMotaIKXoOCkGOLbFvEV5Sci05c=
+	t=1733202517; cv=none; b=Xaej/Tahr8K/fjMSsyZ6CQdhDlsQyVcj3oX1khVgL81/+dw5H0wF3R6gbQ+XGlB89hIAej8UKrB9359PVfo+2QBpRsDCjIsMhe4fchlgouPUj/DfxdPQQsXOQ7q3BDeOg5U1cP9SgmlMBt1/rAMQ6g31NwOPWViuEzY7EdaqeaU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733202462; c=relaxed/simple;
-	bh=olrZUa/l6HYqHwYXrLNl0NTJ3ENoGhzCoDL6AAfCL74=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QTqBvGR7/2I3PvQVaMSAmctukK+vOQrwmQFMVc8Zazgtj2y8s1m5e5F+C4duk6nANgizAgWLuqjxYH87Wp+OsGt5NQV8aefxROLNjaYcb+x5AkdCHKNFK5FTXRqh/FptYOiKNtjiXM+nZZqDL4U5Vx2YzTLyy/iQV3uW4C7OKOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ID0h20OI; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-7250c199602so4224903b3a.1;
-        Mon, 02 Dec 2024 21:07:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733202460; x=1733807260; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=UuKlkmtsz2rNevWll5uRQcJimPYczbi6gifk4CNJf8A=;
-        b=ID0h20OI2hjTTPLX8XlmDAYN20y0qs924ritBUULZqQ4rCVzHd1PHxyO0W1VnqvcQf
-         L0D+sd8Eo31/omeHEbt7U92e1hX2QElftgViPAwnoZAnH1qj3kXTR4c4zHk7Mzij7Ud+
-         GO785hwoef1ocO1Lzk6AiH1L3cx5+JDeGD4MpTKH7r3sJDhItC/qCmuiWrsX8iPOQ1PB
-         euRcYAUhbCBqzkZL3TUg7urgDYhMhLDWa2116W5v+0LzkHRvw9va6lNLFmLKukhV4GNV
-         THWow7t5qG2zlLNhJDDgBZsEnjhUmm5ARIu7/ouMkOKuGiUWZlvrOHb2AVYGDBK2ibia
-         ntyQ==
+	s=arc-20240116; t=1733202517; c=relaxed/simple;
+	bh=rWELRw+pWt88DTwa4FldtjPdq+YHhDDz8qjkqx3Ocf8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=j7ty9t8pIoreoHmsY6U5wadNXu4/CC6CScPJDLgzaKqex9Qe01CnJ64yS8Q+tKFrhH0+RmD4o+jFzJgCn13N0VttNvZY3cVFpeRSHZwVMDTKi6RPeg+aOC9BzfyG+qX0dkTs+7EhZ9dXOEJqz1lk1iOvEfqFzaHhA9du/Pv6lIU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=aexBnp6z; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B2IdEFX017303
+	for <linux-kernel@vger.kernel.org>; Tue, 3 Dec 2024 05:08:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	PeB30fQL0XfKgyHxkYz31o4v69KHumpI9Fo32EFnXoo=; b=aexBnp6zeUw4DarV
+	CWVCO8k3JZC9D4Kxigmu64pMjzvzPDttPgxv2n2k58aujvvcA+E8SbbW8Xx6XAtp
+	mCRI5G1gTrGt5bpFkxwrgfsL8Zm70K9SlZWxHulDubxLXskB8pu3RUpGFh/q42RX
+	6948EZkWQzkfbjuMlu0m89RcqL499iHBZYA8e30r2EsHiJ/HfA/uTDSctopIWInz
+	Y/stWqujzygLRxg9SbL5cczotSNvkEreNQRiegPUiQi7AsrODkXKmFt7BsCg5EOJ
+	PFYIfrQrlaeWZ0M4+1DaV3et6OpJwxp6a1Ey7vpFT4B32dzR0X4NvrqH1q4Khi+s
+	/Jh04w==
+Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com [209.85.216.69])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 437r2my484-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 05:08:34 +0000 (GMT)
+Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-2ee9f66cb12so2573964a91.1
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 21:08:34 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733202460; x=1733807260;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UuKlkmtsz2rNevWll5uRQcJimPYczbi6gifk4CNJf8A=;
-        b=UmGUIVDCps6gD5Zdwg4mmy51CuatLKLCTzpVJzoRevN8bLKmbMEsRv+1hzGuyyCDM/
-         pdFgcGsYF5dEz2ZxAvg8tO6EyHnCKLrkjj47OWnnCvPdwZKRHrvj+efqFuK1bMz8thDx
-         +Jacv9KdS8kt93SnAWdsiI32VMLwUV8TTadkK+w1aRrLwkYUyklA+FA/AZ6h0fCi9LJ1
-         8WmYFVw74QpsTG0Cxq8Gm1i5/MnPW0U1pygJGzh0nZCGPuJWuZ/7etLMa2o//52bGtjn
-         g1sLtAmBdbmz5kTT4PJPQQwf1H4fp6zGKl9PXG66S9hsQf2Q1/QjILZe9/1n0gVyBF5V
-         NCTg==
-X-Forwarded-Encrypted: i=1; AJvYcCWDWYvKGAoAVgPSz1rYB88yKPSZ5KIhBpinasgf9f6WsWYuWB7RbGvn1/marQrpIuYzmz/fK49a@vger.kernel.org, AJvYcCWdwrhSq1yui42d/9/lVYbP8HS4iSGakxZh5y8X3tVjPenGg1Nzqq8C2P7kZ8crSZu9OAVrPbwfx4Q=@vger.kernel.org, AJvYcCXhG/lzLCoDNlDa1enuJ4dhzeo+/F3/Oz6F4efrQ3nZp2ro8V9IOtFp+E3B9WItEBPaN4WaXK6xsq5GiNFQ@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzx6xxGqbTIrivNwquXl9eZCkb+2MsPPDP+CYfOisFf77fmJgYo
-	p5jN5TIMvUMWl5YnMZ2ADs5h9UMK2/3MxlwVbTkdi+dJZ1feRS8=
-X-Gm-Gg: ASbGncutX1IxriID6GVJ0JloTn9iqzfGIHHD4tsNkxzqHL3lzTnYlm39ra9h+LYFaVV
-	Go97fhCCXCU7uHUoKmZdq3lx/6Z+t8AN065/EXN5wyFLVgMhzORRnmu6tBZNm+ZvPxYq3bR1JX2
-	+R1s/n32dNV3dtZelZ77H8BRmCFxirk4b5kWvQNqowmDL88PDXI7TtHPgzq6h02dTusxZqkd8P3
-	qh4jcFQoIQr2hyxgUmRrH/3V8ZEPZCt0rqYoxYa8L+hUPYvQw==
-X-Google-Smtp-Source: AGHT+IHIapbPNpE1JCSPINZu4GYWgbP7xezDiXQpr9UCEuts/wFFmZ3DvuGvpgu6vAW4nqwsIycUmg==
-X-Received: by 2002:a05:6a00:2284:b0:71e:64fe:965f with SMTP id d2e1a72fcca58-7257fcb0b89mr1558197b3a.20.1733202459941;
-        Mon, 02 Dec 2024 21:07:39 -0800 (PST)
-Received: from localhost ([2601:646:9e00:f56e:123b:cea3:439a:b3e3])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fc9c304fe2sm8779989a12.33.2024.12.02.21.07.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Dec 2024 21:07:39 -0800 (PST)
-Date: Mon, 2 Dec 2024 21:07:38 -0800
-From: Stanislav Fomichev <stfomichev@gmail.com>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Stanislav Fomichev <sdf@fomichev.me>, netdev@vger.kernel.org,
-	davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	horms@kernel.org, donald.hunter@gmail.com, corbet@lwn.net,
-	andrew+netdev@lunn.ch, kory.maincent@bootlin.com,
-	nicolas.dichtel@6wind.com
-Subject: Re: [PATCH net-next v3 0/8] ethtool: generate uapi header from the
- spec
-Message-ID: <Z06SGszVaXopVlhR@mini-arch>
-References: <20241202162936.3778016-1-sdf@fomichev.me>
- <20241202195228.65c9a49a@kernel.org>
+        d=1e100.net; s=20230601; t=1733202513; x=1733807313;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PeB30fQL0XfKgyHxkYz31o4v69KHumpI9Fo32EFnXoo=;
+        b=ULCW0dT4Z73q5HUAgfBIuTaR7LwECVMqKrfDOqEzruhMsyEnQD5pKu5hgHUPkHGUT8
+         2E5naEyOaMYRegf7gpkcvdJCO7n6TiKuy+SvyjeYq+PR9ohbF2/oCZifBa+SZM8QHH/U
+         5LXjWrfZt1Z+sixc4JBn/S6sw2oF0sk0gkRrDJD5yCHV8h3nb46IJCHdwRKyfV1i6kQa
+         u1oYgIcpNqOv0CLTe4f5CkmxhF+WCoqVRtQBN8NZ5gH6+GZObhI82/UYLuZ7OV0oDFhq
+         Vqy5cWz/0iKdAxXFt16CyRCqNdVf5W/ufW06yis/CMUlWbpnkqJ+U2EwyyyujFcQ4Gid
+         VPbg==
+X-Forwarded-Encrypted: i=1; AJvYcCVUvMgMLD8AN9yPCgaqHEiYTj2GV0/Qqpq8iJ78TOipnkIPuBitQRCDk+yhWrhFAE/zZ2x7eWMRX5ZRNuo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOgQ0tMMCYcasCVk8AHYd59cAI2HeDDYiZZ0x8AjM9+nBk0bSk
+	qxTf0EAWFqpk96Q8UFk9V8BnIeQsS67mLAGwCRMSwucLwya1+ngjzd39vrukGup7u8kYnxhW/zI
+	V6hzlfnrWoWjvY132obkRhLJuuDhc65vYf9+CFlJYXrLGay7tgEF44rBy54s9mmQ=
+X-Gm-Gg: ASbGnct4V72C0yMbfEwiYzrxzSyM6XYhYCs6bPd1LsoIyn18FaM/os49TvBQLxpjVDj
+	393oB4jr4lQWna4MMBx3+0M8V+9oDChe2WmwKyg2NICChcfYkoc+oXfiuHHEMk+NPGJVpTCix49
+	vDbxZsEGY0I1SnYpPYu2EZ8Ez6/lzZbTeaTD2zSmi+xkj8bDOaZC59xrqV/14v/l2KszGPsQRzQ
+	PbfHZOcChVWxcX4UVkvf5OUL0wEFyif97c8Bo2bDXwJ1ZUyJf3fpsnhMoVcd8or/GheL+xrfd5W
+	I9uECB4GEBGy
+X-Received: by 2002:a17:90b:1c07:b0:2ee:e113:815d with SMTP id 98e67ed59e1d1-2ef011e6854mr1839276a91.8.1733202513287;
+        Mon, 02 Dec 2024 21:08:33 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFBvtGADD0z0trB4fV2QIDKnYcHGg/a7Zv30Cn7/tlJyFX3VGmkGGs/WYRznnoQcLjF+Gvmpg==
+X-Received: by 2002:a17:90b:1c07:b0:2ee:e113:815d with SMTP id 98e67ed59e1d1-2ef011e6854mr1839261a91.8.1733202512897;
+        Mon, 02 Dec 2024 21:08:32 -0800 (PST)
+Received: from [192.168.31.128] ([152.58.197.27])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ee7137504bsm6184539a91.14.2024.12.02.21.08.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 02 Dec 2024 21:08:32 -0800 (PST)
+Message-ID: <0352b36d-92fa-42ba-bc20-40cef0f9ea42@oss.qualcomm.com>
+Date: Tue, 3 Dec 2024 10:38:27 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241202195228.65c9a49a@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 3/3] arm64: dts: qcom: sc8280xp-blackrock: dt
+ definition for WDK2023
+To: jens.glathe@oldschoolsolutions.biz,
+        Bjorn Andersson
+ <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+Cc: Kalle Valo <kvalo@kernel.org>, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Rob Herring <robh@kernel.org>, Merck Hung <merckhung@gmail.com>,
+        xlazom00@gmail.com, Conor Dooley <conor+dt@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>
+References: <20241202-jg-blackrock-for-upstream-v9-0-385bb46ca122@oldschoolsolutions.biz>
+ <20241202-jg-blackrock-for-upstream-v9-3-385bb46ca122@oldschoolsolutions.biz>
+Content-Language: en-US
+From: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
+In-Reply-To: <20241202-jg-blackrock-for-upstream-v9-3-385bb46ca122@oldschoolsolutions.biz>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: gX_VJfPR49P-hGI7k_bL_kg_U76WN8WO
+X-Proofpoint-GUID: gX_VJfPR49P-hGI7k_bL_kg_U76WN8WO
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 impostorscore=0
+ bulkscore=0 priorityscore=1501 suspectscore=0 lowpriorityscore=0
+ phishscore=0 mlxlogscore=999 clxscore=1015 mlxscore=0 adultscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412030040
 
-On 12/02, Jakub Kicinski wrote:
-> On Mon,  2 Dec 2024 08:29:28 -0800 Stanislav Fomichev wrote:
-> > We keep expanding ethtool netlink api surface and this leads to
-> > constantly playing catchup on the ynl spec side. There are a couple
-> > of things that prevent us from fully converting to generating
-> > the header from the spec (stats and cable tests), but we can
-> > generate 95% of the header which is still better than maintaining
-> > c header and spec separately. The series adds a couple of missing
-> > features on the ynl-gen-c side and separates the parts
-> > that we can generate into new ethtool_netlink_generated.h.
-> > 
-> > v3:
-> > - s/Unsupported enum-model/Unsupported message enum-model/ (Jakub)
-> > - add placeholder doc for header-flags (Jakub)
-> > 
-> > v2:
-> > - attr-cnt-name -> enum-cnt-name (Jakub)
-> > - add enum-cnt-name documentation (Jakub)
-> > - __ETHTOOL_XXX_CNT -> __ethtool-xxx-cnt + c_upper (Jakub)
-> > - keep and refine enum model check (Jakub)
-> > - use 'header' presence as a signal to omit rendering instead of new
-> >   'render' property (Jakub)
-> > - new patch to reverse the order of header dependencies in xxx-user.h
-> > 
-> > Stanislav Fomichev (8):
-> >   ynl: support enum-cnt-name attribute in legacy definitions
-> >   ynl: skip rendering attributes with header property in uapi mode
-> >   ynl: support directional specs in ynl-gen-c.py
-> >   ynl: add missing pieces to ethtool spec to better match uapi header
-> >   ynl: include uapi header after all dependencies
-> >   ethtool: separate definitions that are gonna be generated
-> >   ethtool: remove the comments that are not gonna be generated
-> >   ethtool: regenerate uapi header from the spec
+
+
+On 12/3/2024 1:29 AM, Jens Glathe via B4 Relay wrote:
+> From: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
 > 
-> Looks like doc codegen is unhappy about the missing type definitions:
+> Device tree for the Microsoft Windows Dev Kit 2023. This work
+> is based on the initial work of Merck Hung <merckhung@gmail.com>.
 > 
-> Documentation/networking/netlink_spec/ethtool.rst:1122: WARNING: Bullet list ends without a blank line; unexpected unindent.
-> Documentation/networking/netlink_spec/ethtool.rst:2126: ERROR: Unknown target name: Documentation/networking/netlink_spec/ethtool.rst:2131: ERROR: Unknown target name: "ethtool_a_cable_result_code".
-> Documentation/networking/netlink_spec/ethtool.rst:2136: ERROR: Unknown target name: "ethtool_a_cable_inf_src".
+> Original work: https://github.com/merckhung/linux_ms_dev_kit/blob/ms-dev-kit-2023-v6.3.0/arch/arm64/boot/dts/qcom/sc8280xp-microsoft-dev-kit-2023.dts
 > 
-> We need to teach it to not link to external types?
+> The Windows Dev Kit 2023 is a nice little desktop based on sc8280xp.
+> Link: https://learn.microsoft.com/en-us/windows/arm/dev-kit/
+> 
+> Supported features:
+> - USB type-c and type-a ports
+> - minidp connector
+> - built-in r8152 Ethernet adapter
+> - PCIe devices
+> - nvme
+> - ath11k WiFi (WCN6855)
+> - WCN6855 Bluetooth
+> - A690 GPU
+> - ADSP and CDSP
+> - GPIO keys
+> - Audio definition (works via USB)
+> 
+> Signed-off-by: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+> ---
+>   arch/arm64/boot/dts/qcom/Makefile                  |    1 +
+>   .../boot/dts/qcom/sc8280xp-microsoft-blackrock.dts | 1325 ++++++++++++++++++++
+>   2 files changed, 1326 insertions(+)
+> 
 
-The following calms it down on my side:
+[..]
 
-diff --git a/Documentation/netlink/specs/ethtool.yaml b/Documentation/netlink/specs/ethtool.yaml
-index efa00665c191..859ae0cb1fd8 100644
---- a/Documentation/netlink/specs/ethtool.yaml
-+++ b/Documentation/netlink/specs/ethtool.yaml
-@@ -60,7 +60,8 @@ uapi-header: linux/ethtool_netlink_generated.h
-     name-prefix: ethtool-c33-pse-ext-state-
-     header: linux/ethtool.h
-     entries:
--        - none
-+        - name: none
-+          doc: none
-         -
-           name: error-condition
-           doc: Group of error_condition states
-@@ -875,15 +876,15 @@ uapi-header: linux/ethtool_netlink_generated.h
-         value: 0
-       -
-         name: pair
--        doc: ETHTOOL_A_CABLE_PAIR_
-+        doc: ETHTOOL_A_CABLE_PAIR
-         type: u8
-       -
-         name: code
--        doc: ETHTOOL_A_CABLE_RESULT_CODE_
-+        doc: ETHTOOL_A_CABLE_RESULT_CODE
-         type: u8
-       -
-         name: src
--        doc: ETHTOOL_A_CABLE_INF_SRC_
-+        doc: ETHTOOL_A_CABLE_INF_SRC
-         type: u32
-   -
-     name: cable-fault-length
+> +&usb_0 {
+> +	status = "okay";
+> +};
+> +
+> +&usb_0_dwc3 {
+> +	dr_mode = "host";
+> +};
+> +
+> +&usb_0_dwc3_hs {
+> +	remote-endpoint = <&pmic_glink_con0_hs>;
+> +};
+> +
+> +&usb_0_hsphy {
+> +	vdda-pll-supply = <&vreg_l9d>;
+> +	vdda18-supply = <&vreg_l1c>;
+> +	vdda33-supply = <&vreg_l7d>;
+> +
+> +	status = "okay";
+> +};
+> +
+> +&usb_0_qmpphy {
+> +	vdda-phy-supply = <&vreg_l4d>;
+> +	vdda-pll-supply = <&vreg_l9d>;
+> +
+> +	orientation-switch;
+> +
+> +	status = "okay";
+> +};
+> +
+> +&usb_0_qmpphy_dp_in {
+> +	remote-endpoint = <&mdss0_dp0_out>;
+> +};
+> +
+> +&usb_0_qmpphy_out {
+> +	remote-endpoint = <&pmic_glink_con0_ss>;
+> +};
+> +
+> +&usb_1 {
+> +	status = "okay";
+> +};
+> +
+> +&usb_1_dwc3 {
+> +	dr_mode = "host";
+> +};
+> +
+> +&usb_1_dwc3_hs {
+> +	remote-endpoint = <&pmic_glink_con1_hs>;
+> +};
+> +
+> +&usb_1_hsphy {
+> +	vdda-pll-supply = <&vreg_l4b>;
+> +	vdda18-supply = <&vreg_l1c>;
+> +	vdda33-supply = <&vreg_l13c>;
+> +
+> +	status = "okay";
+> +};
+> +
+> +&usb_1_qmpphy {
+> +	vdda-phy-supply = <&vreg_l3b>;
+> +	vdda-pll-supply = <&vreg_l4b>;
+> +
+> +	orientation-switch;
+> +
+> +	status = "okay";
+> +};
+> +
+> +&usb_1_qmpphy_dp_in {
+> +	remote-endpoint = <&mdss0_dp1_out>;
+> +};
+> +
+> +&usb_1_qmpphy_out {
+> +	remote-endpoint = <&pmic_glink_con1_ss>;
+> +};
+> +
+> +&usb_2 {
+> +	pinctrl-0 = <&usb2_en_state>;
+> +	pinctrl-names = "default";
+> +
+> +	status = "okay";
+> +};
+> +
+> +&usb_2_dwc3 {
+> +	phys = <&usb_2_hsphy0>, <&usb_2_qmpphy0>;
+> +	phy-names = "usb2-0", "usb3-0";
 
-The first one fixes the bullet list (seems like mixing entries with and
-without docs confuses ynl-gen-rst.py). And removing trailing _ fixes the
-rest (don't know why).
+Thanks for fixing this up.
 
-Any objections to folding it as is into v4? I can go on and try to
-understand why ynl-gen-rst.py behaves exactly that way, but not sure
-it would buy us anything?
+> +};
+> +
+> +&usb_2_hsphy0 {
+> +	vdda-pll-supply = <&vreg_l1b>;
+> +	vdda18-supply = <&vreg_l1c>;
+> +	vdda33-supply = <&vreg_l7d>;
+> +
+> +	status = "okay";
+> +};
+> +
+> +&usb_2_qmpphy0 {
+> +	vdda-phy-supply = <&vreg_l1b>;
+> +	vdda-pll-supply = <&vreg_l4d>;
+> +
+> +	status = "okay";
+> +};
+> +
+
+The regulators seem fine.
+
+Although functionally unused, there is one more connector node that runs 
+between QMPPHY and DWC3 node. For example in [1], please check 
+"usb_dp_qmpphy_usb_ss_in" and "usb_1_dwc3_ss"
+
+Would be good to check why it is missing and add it further.
+
+[1]: 
+https://github.com/torvalds/linux/blob/master/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts 
+
+
+Regards,
+Krishna,
 
