@@ -1,202 +1,131 @@
-Return-Path: <linux-kernel+bounces-428922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A38D9E1547
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:11:41 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 102E39E150B
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:05:36 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ED287B2DD70
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 08:04:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D7CDC164DE8
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 08:05:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A39111DDC24;
-	Tue,  3 Dec 2024 08:01:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBFBB1E008D;
+	Tue,  3 Dec 2024 08:02:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="efqFtwdU"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="k71A0S3u"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2036E1DB54C;
-	Tue,  3 Dec 2024 08:01:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD41A1DFE36
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 08:02:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733212890; cv=none; b=pY87GymTXNd7BqDVeGKlBxdhWcj4cQ8krLzilD9sE6e8A3s4vDMitkdKdH1qGh9LOaih98a+XFL3vPwdIT9cwUVkrFW9r2amkCLh/emYQFKlbJ+6TTix1KyPXEjRMWxgbwVTiFFP6uW6hxM6X2rI/2ct7Koj4tLhV6DUGxKUDmg=
+	t=1733212925; cv=none; b=mQUfmD+y+lU8Wf/GfDP1Xlu4mAjbT58Uzw1inn310OhwzcS0+1DZ/gEZKxsgvrcjFxsekdfu7waFcqcKC2xMyuisewirUQ37YXCufFxF+d/E76+63drNokerd0XuKRStG6Y8a9lcymlyE7xN6opp1v1eqA+yRlO3so85izr4eR0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733212890; c=relaxed/simple;
-	bh=ZKJAqQp41SZRunZBqI23p2AD5fXliOJ9+DJTqvaKdBc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aU2fTi6PUMAR4znOcNcqfOnapEnTE9nTWiZL9A8srrJB9ma+YQp4p8PZfPI0tU3QCr207NfeIDWcbpsJ+yLiC7uQo9JyaRQF1/HQiJudLXteiLTEmyuuNf3KAuphgWN8QOFNpIkiqjCDw4v+EgbRDYRHdLDpefWv89jZIh8NWKQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=efqFtwdU; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1733212925; c=relaxed/simple;
+	bh=bgUgNjI5CwZYUCMaIi5Pl9Y4YHyJdxRhabmmG4cHyO0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=H68RNgs6madiF5r9s0nqP4CzVny1LaGNImkWjoJ3IkVua3ZLuSMqamCNdgzc4CDSG15q5Q2wBn3u6WsJqe+oHEMcl2mVpPC67PXqaShAS4DOQ5i+VsK5z/2HmdDso2Rid7Yhgy/4XfGNZq58MIkTaNvo+nibkiSYzSHanUk+Cd0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=k71A0S3u; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733212888; x=1764748888;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=ZKJAqQp41SZRunZBqI23p2AD5fXliOJ9+DJTqvaKdBc=;
-  b=efqFtwdUXBrm4vYWcIg5ApUhPChVhwJ9nlva6ek177URP50D0lnNERe/
-   zYvHi7l2qidIMuTppl0GSMlxD9Yz769r4a5i6r1oEzPkEEDj2Csdq4TUW
-   siR/PMg8ibWPq+lSc/e00AsxepsykPOICJPnQ0qUdWUV/UrUXkhz2w5xn
-   Uc9deNgCs83A9moLqdD8VaRMr8gqYUeEplKS0dSSSp64PQhlW1W4ugALy
-   274t3cSYcjE0EWYxCcXh5sHzeKzYPBYZnH3GXXHR08JLOnU0Cs7E9H6IE
-   PFIT0vk/jR84PmNiwiYxdTjTK3KCuYsgOzdCmdhrFZ4PqhUVWCX+NAl33
-   A==;
-X-CSE-ConnectionGUID: NnWLSaIDTWeim00q23vIRQ==
-X-CSE-MsgGUID: /om1VUvtTSWf8/jAKffejg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11274"; a="50823657"
+  t=1733212923; x=1764748923;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=bgUgNjI5CwZYUCMaIi5Pl9Y4YHyJdxRhabmmG4cHyO0=;
+  b=k71A0S3uaQ6J7oaKz8oBEnMfc4dxKaLWVBgi6l1dPaNZIuUy0m4xkpwB
+   hLWVGBdUzeIPW0rCc+tD4GQa0Wqsif9rqyuEqJM9W0GRGbjSY1Br/DMXp
+   ruDVVE/iUxPRDEHA+8jxCn70/SIBt2o8yP1S/KSwyV2KL7NS3D6Ue4YG2
+   bDAfyKdtuDKkBjIjEwqb0qaSfDRURQU3T1HPhC/1yhKfa5ykV+w3Ksvqj
+   H23fIBdakPht65QwDBKDCl1MoNRhpKBMrjRKvm/yhwuWuP1x+2BnHnmOO
+   3VpY35KdXrG+bQGgeGIdx2ThnG3t6dgZJj192N/OhKQTnpq9PvrwbF1ql
+   w==;
+X-CSE-ConnectionGUID: 1OLS4ii0Rgap8eXeUa+3kw==
+X-CSE-MsgGUID: ZQSyN/EjRHubrikjl/j2HA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11274"; a="44079176"
 X-IronPort-AV: E=Sophos;i="6.12,204,1728975600"; 
-   d="scan'208";a="50823657"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Dec 2024 00:01:28 -0800
-X-CSE-ConnectionGUID: dSCn8zhxTWa51nV7uyuzgQ==
-X-CSE-MsgGUID: 1TelqYUfT4m/0GVFI//h4Q==
+   d="scan'208";a="44079176"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Dec 2024 00:02:03 -0800
+X-CSE-ConnectionGUID: jm/ynzqCRMOxyvJjqfPJFA==
+X-CSE-MsgGUID: GmlW304CR/OQh3jNYKvfWQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.12,204,1728975600"; 
-   d="scan'208";a="93250015"
-Received: from unknown (HELO [10.238.9.154]) ([10.238.9.154])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Dec 2024 00:01:25 -0800
-Message-ID: <86e1f270-0bf1-4ac2-9195-4092d21c5888@linux.intel.com>
-Date: Tue, 3 Dec 2024 16:01:23 +0800
+   d="scan'208";a="98364762"
+Received: from lkp-server01.sh.intel.com (HELO 388c121a226b) ([10.239.97.150])
+  by orviesa005.jf.intel.com with ESMTP; 03 Dec 2024 00:02:02 -0800
+Received: from kbuild by 388c121a226b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tINr5-0000KJ-1K;
+	Tue, 03 Dec 2024 08:01:59 +0000
+Date: Tue, 3 Dec 2024 16:01:24 +0800
+From: kernel test robot <lkp@intel.com>
+To: Yogesh Lal <quic_ylal@quicinc.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Bjorn Andersson <andersson@kernel.org>,
+	Sibi Sankar <quic_sibis@quicinc.com>
+Subject: drivers/remoteproc/qcom_q6v5_pas.c:123:9: sparse: sparse: incorrect
+ type in argument 2 (different address spaces)
+Message-ID: <202412031509.TMyYOtXN-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 6/6] KVM: x86: Refactor __kvm_emulate_hypercall() into
- a macro
-To: Sean Christopherson <seanjc@google.com>,
- Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
- Tom Lendacky <thomas.lendacky@amd.com>,
- Isaku Yamahata <isaku.yamahata@intel.com>, Kai Huang <kai.huang@intel.com>,
- Xiaoyao Li <xiaoyao.li@intel.com>
-References: <20241128004344.4072099-1-seanjc@google.com>
- <20241128004344.4072099-7-seanjc@google.com>
-Content-Language: en-US
-From: Binbin Wu <binbin.wu@linux.intel.com>
-In-Reply-To: <20241128004344.4072099-7-seanjc@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   cdd30ebb1b9f36159d66f088b61aee264e649d7a
+commit: a376c10d45a8e6ee5ea55791193f90625b35e156 remoteproc: qcom: pas: Adjust the phys addr wrt the mem region
+date:   1 year, 10 months ago
+config: arm-randconfig-r123-20241111 (https://download.01.org/0day-ci/archive/20241203/202412031509.TMyYOtXN-lkp@intel.com/config)
+compiler: clang version 14.0.6 (https://github.com/llvm/llvm-project f28c006a5895fc0e329fe15fead81e37457cb1d1)
+reproduce: (https://download.01.org/0day-ci/archive/20241203/202412031509.TMyYOtXN-lkp@intel.com/reproduce)
 
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202412031509.TMyYOtXN-lkp@intel.com/
 
+sparse warnings: (new ones prefixed by >>)
+>> drivers/remoteproc/qcom_q6v5_pas.c:123:9: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected void const volatile [noderef] __iomem *from @@     got void * @@
+   drivers/remoteproc/qcom_q6v5_pas.c:123:9: sparse:     expected void const volatile [noderef] __iomem *from
+   drivers/remoteproc/qcom_q6v5_pas.c:123:9: sparse:     got void *
+   drivers/remoteproc/qcom_q6v5_pas.c:108:6: sparse: sparse: symbol 'adsp_segment_dump' was not declared. Should it be static?
+   drivers/remoteproc/qcom_q6v5_pas.c:553:26: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected void *mem_region @@     got void [noderef] __iomem * @@
+   drivers/remoteproc/qcom_q6v5_pas.c:553:26: sparse:     expected void *mem_region
+   drivers/remoteproc/qcom_q6v5_pas.c:553:26: sparse:     got void [noderef] __iomem *
+   drivers/remoteproc/qcom_q6v5_pas.c:575:30: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected void *dtb_mem_region @@     got void [noderef] __iomem * @@
+   drivers/remoteproc/qcom_q6v5_pas.c:575:30: sparse:     expected void *dtb_mem_region
+   drivers/remoteproc/qcom_q6v5_pas.c:575:30: sparse:     got void [noderef] __iomem *
 
-On 11/28/2024 8:43 AM, Sean Christopherson wrote:
-> Rework __kvm_emulate_hypercall() into a macro so that completion of
-> hypercalls that don't exit to userspace use direct function calls to the
-> completion helper, i.e. don't trigger a retpoline when RETPOLINE=y.
->
-> Opportunistically take the names of the input registers, as opposed to
-> taking the input values, to preemptively dedup more of the calling code
-> (TDX needs to use different registers).  Use the direct GPR accessors to
-> read values to avoid the pointless marking of the registers as available
-> (KVM requires GPRs to always be available).
->
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
+vim +123 drivers/remoteproc/qcom_q6v5_pas.c
 
-> ---
->   arch/x86/kvm/x86.c | 29 +++++++++--------------------
->   arch/x86/kvm/x86.h | 25 ++++++++++++++++++++-----
->   2 files changed, 29 insertions(+), 25 deletions(-)
->
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index 39be2a891ab4..fef8b4e63d25 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -9982,11 +9982,11 @@ static int complete_hypercall_exit(struct kvm_vcpu *vcpu)
->   	return kvm_skip_emulated_instruction(vcpu);
->   }
->   
-> -int __kvm_emulate_hypercall(struct kvm_vcpu *vcpu, unsigned long nr,
-> -			    unsigned long a0, unsigned long a1,
-> -			    unsigned long a2, unsigned long a3,
-> -			    int op_64_bit, int cpl,
-> -			    int (*complete_hypercall)(struct kvm_vcpu *))
-> +int ____kvm_emulate_hypercall(struct kvm_vcpu *vcpu, unsigned long nr,
-> +			      unsigned long a0, unsigned long a1,
-> +			      unsigned long a2, unsigned long a3,
-> +			      int op_64_bit, int cpl,
-> +			      int (*complete_hypercall)(struct kvm_vcpu *))
->   {
->   	unsigned long ret;
->   
-> @@ -10073,32 +10073,21 @@ int __kvm_emulate_hypercall(struct kvm_vcpu *vcpu, unsigned long nr,
->   
->   out:
->   	vcpu->run->hypercall.ret = ret;
-> -	complete_hypercall(vcpu);
->   	return 1;
->   }
-> -EXPORT_SYMBOL_GPL(__kvm_emulate_hypercall);
-> +EXPORT_SYMBOL_GPL(____kvm_emulate_hypercall);
->   
->   int kvm_emulate_hypercall(struct kvm_vcpu *vcpu)
->   {
-> -	unsigned long nr, a0, a1, a2, a3;
-> -	int op_64_bit;
-> -	int cpl;
-> -
->   	if (kvm_xen_hypercall_enabled(vcpu->kvm))
->   		return kvm_xen_hypercall(vcpu);
->   
->   	if (kvm_hv_hypercall_enabled(vcpu))
->   		return kvm_hv_hypercall(vcpu);
->   
-> -	nr = kvm_rax_read(vcpu);
-> -	a0 = kvm_rbx_read(vcpu);
-> -	a1 = kvm_rcx_read(vcpu);
-> -	a2 = kvm_rdx_read(vcpu);
-> -	a3 = kvm_rsi_read(vcpu);
-> -	op_64_bit = is_64_bit_hypercall(vcpu);
-> -	cpl = kvm_x86_call(get_cpl)(vcpu);
-> -
-> -	return __kvm_emulate_hypercall(vcpu, nr, a0, a1, a2, a3, op_64_bit, cpl,
-> +	return __kvm_emulate_hypercall(vcpu, rax, rbx, rcx, rdx, rsi,
-> +				       is_64_bit_hypercall(vcpu),
-> +				       kvm_x86_call(get_cpl)(vcpu),
->   				       complete_hypercall_exit);
->   }
->   EXPORT_SYMBOL_GPL(kvm_emulate_hypercall);
-> diff --git a/arch/x86/kvm/x86.h b/arch/x86/kvm/x86.h
-> index 28adc8ea04bf..ad6fe6159dea 100644
-> --- a/arch/x86/kvm/x86.h
-> +++ b/arch/x86/kvm/x86.h
-> @@ -617,11 +617,26 @@ static inline bool user_exit_on_hypercall(struct kvm *kvm, unsigned long hc_nr)
->   	return kvm->arch.hypercall_exit_enabled & BIT(hc_nr);
->   }
->   
-> -int __kvm_emulate_hypercall(struct kvm_vcpu *vcpu, unsigned long nr,
-> -			    unsigned long a0, unsigned long a1,
-> -			    unsigned long a2, unsigned long a3,
-> -			    int op_64_bit, int cpl,
-> -			    int (*complete_hypercall)(struct kvm_vcpu *));
-> +int ____kvm_emulate_hypercall(struct kvm_vcpu *vcpu, unsigned long nr,
-> +			      unsigned long a0, unsigned long a1,
-> +			      unsigned long a2, unsigned long a3,
-> +			      int op_64_bit, int cpl,
-> +			      int (*complete_hypercall)(struct kvm_vcpu *));
-> +
-> +#define __kvm_emulate_hypercall(_vcpu, nr, a0, a1, a2, a3, op_64_bit, cpl, complete_hypercall)	\
-> +({												\
-> +	int __ret;										\
-> +												\
-> +	__ret = ____kvm_emulate_hypercall(_vcpu,						\
-> +					  kvm_##nr##_read(_vcpu), kvm_##a0##_read(_vcpu),	\
-> +					  kvm_##a1##_read(_vcpu), kvm_##a2##_read(_vcpu),	\
-> +					  kvm_##a3##_read(_vcpu), op_64_bit, cpl,		\
-> +					  complete_hypercall);					\
-> +												\
-> +	if (__ret > 0)										\
-> +		complete_hypercall(_vcpu);							\
-> +	__ret;											\
-> +})
->   
->   int kvm_emulate_hypercall(struct kvm_vcpu *vcpu);
->   
+   107	
+   108	void adsp_segment_dump(struct rproc *rproc, struct rproc_dump_segment *segment,
+   109			       void *dest, size_t offset, size_t size)
+   110	{
+   111		struct qcom_adsp *adsp = rproc->priv;
+   112		int total_offset;
+   113	
+   114		total_offset = segment->da + segment->offset + offset - adsp->mem_phys;
+   115		if (total_offset < 0 || total_offset + size > adsp->mem_size) {
+   116			dev_err(adsp->dev,
+   117				"invalid copy request for segment %pad with offset %zu and size %zu)\n",
+   118				&segment->da, offset, size);
+   119			memset(dest, 0xff, size);
+   120			return;
+   121		}
+   122	
+ > 123		memcpy_fromio(dest, adsp->mem_region + total_offset, size);
+   124	}
+   125	
 
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
