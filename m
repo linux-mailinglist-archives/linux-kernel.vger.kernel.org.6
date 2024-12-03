@@ -1,109 +1,200 @@
-Return-Path: <linux-kernel+bounces-428796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428795-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8CCE9E138B
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 07:51:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CEC19E1389
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 07:50:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F3FD1B237C6
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 06:51:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D5D2282A9C
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 06:50:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1461F189F57;
-	Tue,  3 Dec 2024 06:50:49 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2068A8837;
-	Tue,  3 Dec 2024 06:50:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0B2818871D;
+	Tue,  3 Dec 2024 06:50:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EDjh6ejV"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BBF614F104;
+	Tue,  3 Dec 2024 06:50:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733208648; cv=none; b=tuBfA6zslPhF4ggYHG/nNyZ9FCvRYmnV3pmGJbEAH/Z37DYXphgB8D9NNE6GZvDHKuvVoG0TV/hr+zx2gcDhdchYGlo0bAEg3vsi3i8kRYFiOIZcdQ5oE+Znpte9Sj/KK3TyIyyf/HBXNYAn4rZ3GGmvlbdMPzuxQTQFJL1PGIk=
+	t=1733208646; cv=none; b=j1bWCfSprNvIawcpVIRnBXb/aKnR48m6AZSj9KqsmNyX6GeI1M/gamABOojEJsTbLROcowPMMUZinmoOBQMwjpMlvx/1Aw83a0OFkD/ohv8lWHnsY1kXzhdaUBcmjYQAggsg8ZU1Sqn9DCWUQ+Iurz8PwpO68P6czl13zr3Pdi4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733208648; c=relaxed/simple;
-	bh=vK3nHiRvsYyzZ2ySFUO1HZaxlOSxOdjetDSxes1tMI4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gIXc8d3OdA4MKO/POrFCKP+KwWcRTjgL5nH094vpGJT7yZ43vVKpyll407BncsJ7VeUpxwxiIeSpbrIS7zE3Fl8xLtu6uZF6S5mDv9LuHpVXlw2RuhtKRG1Co4IEN+EWBgo1DfvAaUWQP/f/jw2q1TLqYj6JqMs5aE3FOn7d3Lg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [223.64.68.38])
-	by gateway (Coremail) with SMTP id _____8CxieE3qk5nCXtPAA--.26365S3;
-	Tue, 03 Dec 2024 14:50:31 +0800 (CST)
-Received: from localhost.localdomain (unknown [223.64.68.38])
-	by front1 (Coremail) with SMTP id qMiowMCx+8Evqk5nVnpzAA--.9933S2;
-	Tue, 03 Dec 2024 14:50:28 +0800 (CST)
-From: Huacai Chen <chenhuacai@loongson.cn>
-To: Arnd Bergmann <arnd@arndb.de>,
-	Huacai Chen <chenhuacai@kernel.org>
-Cc: loongarch@lists.linux.dev,
-	linux-arch@vger.kernel.org,
-	Xuefeng Li <lixuefeng@loongson.cn>,
-	Guo Ren <guoren@kernel.org>,
-	Xuerui Wang <kernel@xen0n.name>,
-	Jiaxun Yang <jiaxun.yang@flygoat.com>,
-	linux-kernel@vger.kernel.org,
-	loongson-kernel@lists.loongnix.cn,
-	Huacai Chen <chenhuacai@loongson.cn>,
-	Xuefeng Zhao <zhaoxuefeng@loongson.cn>,
-	Jianmin Lv <lvjianmin@loongson.cn>,
-	Tianyang Zhang <zhangtianyang@loongson.cn>
-Subject: [PATCH] LoongArch: Fix reserving screen info memory for above-4G firmware
-Date: Tue,  3 Dec 2024 14:50:10 +0800
-Message-ID: <20241203065010.4164506-1-chenhuacai@loongson.cn>
-X-Mailer: git-send-email 2.43.5
+	s=arc-20240116; t=1733208646; c=relaxed/simple;
+	bh=JSHruDBztrs/q8PI7b7ZROkSdM4VTDPtybEgr9mzyRI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MdMKxaeDkl6Kh8Yiv2PdumukHRzh4kHGCUZ6P9HrSJjP+WIuCy+JjjYT3cMcllkrFTA3AAHFVDD/ZIU3Oqrpt2+6yNDtZr1zgczVhQ1P3iaijZTs1turb1OGg0vOmewEfx8v8/4cXr9F0EoM/lJhN6UDsMQ1YRmUzf7KrO5mkEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EDjh6ejV; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5d0cfb9fecaso4080280a12.2;
+        Mon, 02 Dec 2024 22:50:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733208643; x=1733813443; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=NI/werPgmltxPsDMyZ5Steam/JI1907/cU3EYFBKodA=;
+        b=EDjh6ejVBBPdGSh/im0GUEI9HIn2YcHClv6xEqPsw3TikLGqY/5b8LCAYULOCKLnF1
+         NMC4yAEov1WNoGOFAsIdRIJWiXGP6Ct4iCEYELJhnuyZOe9vWX2UJxEE74XnfWfs1lIE
+         h4px/HGZElYMGQ4u3ShLYG8Mi7eRJNfxJttHLftusnmYQN5XoHFLC58X94l6JD386LfL
+         31FKlYxngCjeDVk9TLq+tj9a0QspRRobaUp79JSiD+eVX7BgeGIrPLB776sy3RbdFz5D
+         wFYT3+1tyn2ARtuC/VvNl3Cbsdp8qKXttJa9rN3BKqx6YKMSk00fBE98SpTgPeeAwi1q
+         wBgQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733208643; x=1733813443;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NI/werPgmltxPsDMyZ5Steam/JI1907/cU3EYFBKodA=;
+        b=okkdaikfTyykyUUp4G0xU9mZ0F7XfwI8jExt2TVZ5X8KC0FD94hFk8B5ULPbHvf7wJ
+         932Y3yb7fh1KjrYS+WoAU384gUqWwIe64s737DGYL4BfZbBfFS1/fFHwXN6G2MBc5/OI
+         fYOv3EdCp29/vw0XPH9isjJQrtcHXYRfXcfAkxQrUVkeWy/6SdPbq21f3PczV9GclAlM
+         dAPpwG4B/fWvXQiu1LLEAX32FYoI7pMQZNFWG12hNDzYqCDwdD5MFr5owMj8Y05crBVO
+         DpXl4G69lndZPUsHJadpXC8lQJvD0QDnnXcSWCStOKIndmg9/kJjjgMA6Ok963hcJ6cG
+         FN7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUhKQ6UPKpfHGGP3blDKYHVX0LUkWoTslCf+irs7zdntcObP6W9Ab62V2Id5dDf83Pai041JFwh@vger.kernel.org, AJvYcCXF9hDgwpiv2/P740gBQ6FVLVsO/MHLF5oUl8qJey/hBFY7dy8yyKo2EjKGuJAkO8jZPE1vreaSboNennk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzmrcsVqV7p8GJISyT9ijpysfrSqcwuq6hqOxu6THeXoiFbR10x
+	UJgjilMBsHpZtDSXTDStEEiDaus7wKZ3HJSxSxCVlF4Iv8hOQp/f
+X-Gm-Gg: ASbGncsc9uTxWorg0qbacUsNcH248at1f4BzipmOrjhR46ivk55QC7uzgamCVbSCuem
+	i5HryqGmKyWYMhRNXIlm7UWoHD5fjx7x3yBQm/SrEEunb0IKeB15pbOUzXv1iuz+sU2g3RM1YNt
+	ocij6qqqHBrMPqyRDgLs0DWtisBaVCk8k9bre1JjwJwbH7pkgcYkXJkR5+CXptwCgzK3vs/xwR5
+	sMMaUP3mIh+8SLU3k/z5+VzwcUuiBgkYPRfc+KEEEJjvt4OzP2r9j+obIJg6NGqcTZXr2vnlKjE
+	5/xYc/gVnuB+C6+dLiEb7bFjpsBlAwHJ0MzCm7qjsSxj5z1G6qfj/byJ8eHKEUyCPFdPOMyhUYb
+	LDxx1jaU9IARF1K67vTkrr5v0bMG3cbve5a48LxU=
+X-Google-Smtp-Source: AGHT+IGcaH2H6IltS88+VsO3IgzpTZmbGobwHpKZsc+psm7G+ViCqqDF2MyAMurUyiW+FfzU6XdKYQ==
+X-Received: by 2002:a05:6402:26c1:b0:5d0:cc0d:9935 with SMTP id 4fb4d7f45d1cf-5d10cb55a03mr924793a12.9.1733208642458;
+        Mon, 02 Dec 2024 22:50:42 -0800 (PST)
+Received: from ?IPV6:2a02:3100:9d09:7500:e91b:2682:897:11e8? (dynamic-2a02-3100-9d09-7500-e91b-2682-0897-11e8.310.pool.telefonica.de. [2a02:3100:9d09:7500:e91b:2682:897:11e8])
+        by smtp.googlemail.com with ESMTPSA id 4fb4d7f45d1cf-5d0c6999e45sm4084026a12.52.2024.12.02.22.50.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 02 Dec 2024 22:50:41 -0800 (PST)
+Message-ID: <7a322deb-e20e-4b32-9fef-d4a48bf0c128@gmail.com>
+Date: Tue, 3 Dec 2024 07:50:40 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowMCx+8Evqk5nVnpzAA--.9933S2
-X-CM-SenderInfo: hfkh0x5xdftxo6or00hjvr0hdfq/
-X-Coremail-Antispam: 1Uk129KBj9xXoWrKF4kJrW5Kr13urWfGFyrXwc_yoWkXrg_WF
-	WxWa1kKr18Aay093yjqa15Jr10vw40van3C3Z7Xwn8Jw1YvF9xJF1xW3s3ZrnxWrWUWrs8
-	Aay2qF9akr12vosvyTuYvTs0mTUanT9S1TB71UUUUjUqnTZGkaVYY2UrUUUUj1kv1TuYvT
-	s0mT0YCTnIWjqI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUI
-	cSsGvfJTRUUUbS8YFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20EY4v20x
-	vaj40_Wr0E3s1l1IIY67AEw4v_Jrv_JF1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
-	w2x7M28EF7xvwVC0I7IYx2IY67AKxVWUCVW8JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
-	W8JVWxJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK6I8E87Iv6xkF7I0E14v2
-	6r4UJVWxJr1ln4kS14v26r1Y6r17M2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12
-	xvs2x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1Y
-	6r17McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64
-	vIr41lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_
-	Jr0_Gr1l4IxYO2xFxVAFwI0_Jrv_JF1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8Gjc
-	xK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0
-	cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8V
-	AvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E
-	14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07jOa93UUUUU=
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/2] net: phy: realtek: disable broadcast address
+ feature of rtl8211f
+To: Zhiyuan Wan <kmlinuxm@gmail.com>, andrew@lunn.ch
+Cc: kuba@kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ willy.liu@realtek.com, Yuki Lee <febrieac@outlook.com>
+References: <cb8b5a36-fe5c-4b10-ac28-5f31f95262ab@lunn.ch>
+ <20241203042631.2061737-1-kmlinuxm@gmail.com>
+Content-Language: en-US
+From: Heiner Kallweit <hkallweit1@gmail.com>
+Autocrypt: addr=hkallweit1@gmail.com; keydata=
+ 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
+In-Reply-To: <20241203042631.2061737-1-kmlinuxm@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Since screen_info.lfb_base is a __u32 type, an above-4G address need an
-ext_lfb_base to present its higher 32bits. In init_screen_info() we can
-use __screen_info_lfb_base() to handle this case for reserving screen
-info memory.
+On 03.12.2024 05:26, Zhiyuan Wan wrote:
+> This feature is enabled defaultly after a reset of this transceiver.
+> When this feature is enabled, the phy not only responds to the
+> configuration PHY address by pin states on board, but also responds
+> to address 0, the optional broadcast address of the MDIO bus.
+> 
+> But some MDIO device like mt7530 switch chip (integrated in mt7621
+> SoC), also use address 0 to configure a specific port, when use
+> mt7530 and rtl8211f together, it usually causes address conflict,
+> leads to the port of RTL8211FS stops working.
+> 
+> This patch disables broadcast address feature of rtl8211f, and
+> returns -ENODEV if using broadcast address (0) as phy address.
+> 
+> Reviewed-by: Yuki Lee <febrieac@outlook.com>
+> Signed-off-by: Zhiyuan Wan <kmlinuxm@gmail.com>
+> ---
+>  drivers/net/phy/realtek.c | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
+> 
+> diff --git a/drivers/net/phy/realtek.c b/drivers/net/phy/realtek.c
+> index f65d7f1f3..8a38b02ad 100644
+> --- a/drivers/net/phy/realtek.c
+> +++ b/drivers/net/phy/realtek.c
+> @@ -31,6 +31,7 @@
+>  #define RTL8211F_PHYCR1				0x18
+>  #define RTL8211F_PHYCR2				0x19
+>  #define RTL8211F_INSR				0x1d
+> +#define RTL8211F_PHYAD0_EN			BIT(13)
+>  
+>  #define RTL8211F_LEDCR				0x10
+>  #define RTL8211F_LEDCR_MODE			BIT(15)
+> @@ -139,6 +140,17 @@ static int rtl821x_probe(struct phy_device *phydev)
+>  		return dev_err_probe(dev, PTR_ERR(priv->clk),
+>  				     "failed to get phy clock\n");
+>  
+> +	dev_dbg(dev, "disabling MDIO address 0 for this phy");
+> +	ret = phy_modify_paged_changed(phydev, 0xa43, RTL8211F_PHYCR1,
+> +				       RTL8211F_PHYAD0_EN, 0);
 
-Signed-off-by: Xuefeng Zhao <zhaoxuefeng@loongson.cn>
-Signed-off-by: Jianmin Lv <lvjianmin@loongson.cn>
-Signed-off-by: Tianyang Zhang <zhangtianyang@loongson.cn>
-Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
----
- arch/loongarch/kernel/efi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Why do you use the _changed version if you don't use the related feature?
 
-diff --git a/arch/loongarch/kernel/efi.c b/arch/loongarch/kernel/efi.c
-index 2bf86aeda874..de21e72759ee 100644
---- a/arch/loongarch/kernel/efi.c
-+++ b/arch/loongarch/kernel/efi.c
-@@ -95,7 +95,7 @@ static void __init init_screen_info(void)
- 	memset(si, 0, sizeof(*si));
- 	early_memunmap(si, sizeof(*si));
- 
--	memblock_reserve(screen_info.lfb_base, screen_info.lfb_size);
-+	memblock_reserve(__screen_info_lfb_base(&screen_info), screen_info.lfb_size);
- }
- 
- void __init efi_init(void)
--- 
-2.43.5
+And formal aspects:
+- patch should be annotated net-next
+- you missed to address all maintainers, use the get_maintainers.pl
+  script
+
+> +	if (ret < 0) {
+> +		dev_err(dev, "disabling MDIO address 0 failed: %pe\n",
+> +			ERR_PTR(ret));
+> +	}
+> +	/* Don't allow using broadcast address as PHY address */
+> +	if (phydev->mdio.addr == 0)
+> +		return -ENODEV;
+> +
+>  	ret = phy_read_paged(phydev, 0xa43, RTL8211F_PHYCR1);
+>  	if (ret < 0)
+>  		return ret;
 
 
