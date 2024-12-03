@@ -1,450 +1,128 @@
-Return-Path: <linux-kernel+bounces-429262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429263-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A6529E1A10
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 11:57:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29C6D9E198F
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 11:42:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 36E84B37B03
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:41:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E31FC282EF3
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:42:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 702B31E283A;
-	Tue,  3 Dec 2024 10:38:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EYO1fjtY"
-Received: from mail-ed1-f73.google.com (mail-ed1-f73.google.com [209.85.208.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED15B1E2848;
+	Tue,  3 Dec 2024 10:39:17 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B00E1E5723
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 10:38:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1271B1E25E5
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 10:39:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733222299; cv=none; b=KqQ0YaS+xIRFMkfKlKhFn1chjfQGDW6ylNDbJbhvn4uPhzLAgCjgC2X9GqJLCXEprFPH28NR6nFGwgZuLnVAq/fLBJubnmPr2cZF1Ko54OTEq16pUSvPId/xUnpRpCK7HpqIiYPdDhsl+wMYCMsnP11lN+YLTyBEISjoeF4LG14=
+	t=1733222357; cv=none; b=YADFPKZizeq8NdhS7/zkWsjs+pXR7j2zMsKI0dsZK+JyfuHEroXCKZD/5D0812D05MJEu9W7VkpWDMm8vT2UqfHjCIVcN9sR1OJBJ5cwZeRI/OBQyHbLwlr9K9SxlEibS+KHV63U2bHmrEtNYX/setPeOgG+db4tLNSfjWA1gmk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733222299; c=relaxed/simple;
-	bh=DiLVTRp/Xrx26Pt2ZjM/uXTKObLonMpgfdYIGXe7rnA=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=UckkzIWFrUHnyCZm/Chafh7Kxw+1MJjaDwYL67tqQYQb86RzvDTZTQiWpAaHKelALRVxW9h3/kc6UvW6Uu5N5T3ag1vfGygTInPUirKP0iWDcHwaSL7Q11WoFTS1/n+NZ0tnegtTnBJPgApdktmVF9XI2M57peLu0+Mx3NTA6Uc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--qperret.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=EYO1fjtY; arc=none smtp.client-ip=209.85.208.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--qperret.bounces.google.com
-Received: by mail-ed1-f73.google.com with SMTP id 4fb4d7f45d1cf-5d0c8ba49bfso2499253a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 02:38:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733222296; x=1733827096; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=wgPt/MJOT4c2hQ5rFMWT4KcK8gju2jp760Q6iP+EbKk=;
-        b=EYO1fjtYJgmXzdAPiuf9bv1EQHx2B1o7G1xt1ICtOsCjX67BszxoLsCgS/R5PID6PB
-         fS2E2vpQxWq9iIslekc7u6PzjB6VnzWxfNVizRRdVXjkNb7ODhN7GvT4TTGl4S9ao16u
-         z673I9C0IdyXF5pHfiCPg1xH++jKV01fUXuwGGXqYmYt9x4YK/RUc+Pq9087RoZi0JuG
-         xPLQ+7peIyBeTdICfagcM8kzrf5V+hHXQywhwCKFzIIiDyrp2jnS3mWZ6UYMoUGbVHl0
-         elRZn8sTRTzjWGJVypnliCWpyfzHcsaXQsra+KOq6EUr66vvBIgyGqIHWfZZ8wk5xW1g
-         x5eg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733222296; x=1733827096;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wgPt/MJOT4c2hQ5rFMWT4KcK8gju2jp760Q6iP+EbKk=;
-        b=OyFM2og3eFMETCKCxrwz/0eoGce+zVznyw+NcuN19gA0ut4L5ZYWjSpA52sFhKdsJ8
-         vY7FT/OXDtP+0c0nYJ6FAoNtNaNWEoRop7kxtSBWjca2kp2/aed7CAR5UqR5YKviw+6T
-         D+HISIz13H5xXxqBKVm+Ge7JAoYga/45KfYNw9TCzEeHwQA+2KRoHG0DNROFh0c082E4
-         wjoaV5fGI6uNjADkDplSV0oy2KsYVDjvwKsYMzzqlILxgC1KTVYPGKDdaJhCUs4x6U+0
-         y17tRBbmKR2pzmpvjwAhrE5ZUdN+qd6chd/St/kPiNxCy9CJX4uW3bWU5fILkr+h5eqb
-         4pHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVHeBtW6ETYwxI+aB6T/Iet1JbzYpBPVi03um8+9fWJI0iJ9/42VCelmeoJ56ac1xGTccaZDAlvzCRzTQk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyOSjmx2j7VU7Rb50s/vQyVK8OpjujofRtMaNEc6td3Q5Sa7cmh
-	9emceNCf59v5pjWnBXIjuI+KipxLOgIFYIzba4Kdc468bWhnME3Rci0gekJDQPevon3Vd3mg9+W
-	ckGO0Fg==
-X-Google-Smtp-Source: AGHT+IFrkeZUOoGtB0RPzPui01GUZqeg3xMwt2VakMyQaQyu7YzIPmFugyAqeYB9MhEFEqFP32OTlJQu9U2t
-X-Received: from edrw6.prod.google.com ([2002:a50:fa86:0:b0:5cf:c898:62e0])
- (user=qperret job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6402:510a:b0:5d0:f9a0:7c1f
- with SMTP id 4fb4d7f45d1cf-5d10cb817d3mr1313892a12.23.1733222295925; Tue, 03
- Dec 2024 02:38:15 -0800 (PST)
-Date: Tue,  3 Dec 2024 10:37:35 +0000
-In-Reply-To: <20241203103735.2267589-1-qperret@google.com>
+	s=arc-20240116; t=1733222357; c=relaxed/simple;
+	bh=ANJhEQnIZzpgMyzVcsIOvll2KphdP0bup3EjD2KAFAc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=LQ/KjvIwRk/YDSPbHQQZxtGVCBGlGigkNULMrZWD3DOQJbAmAnVy7QE0/J6+9k/1B+zMLgiJ/casMQYk0QZdvA3KQqAZN9aLbGnGrHz/JrQwzQJ3aaxLoRQxwc4wf2q213+up5b1JnCZ8WHJhVmvI0GyaqD+fSNXo162ta956/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
+	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
+	(envelope-from <jre@pengutronix.de>)
+	id 1tIQJ6-00012Q-2c; Tue, 03 Dec 2024 11:39:04 +0100
+From: Jonas Rebmann <jre@pengutronix.de>
+Date: Tue, 03 Dec 2024 11:38:35 +0100
+Subject: [PATCH v3 1/3] mtd: mchp48l640: make WEL behaviour configurable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241203103735.2267589-1-qperret@google.com>
-X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
-Message-ID: <20241203103735.2267589-19-qperret@google.com>
-Subject: [PATCH v2 18/18] KVM: arm64: Plumb the pKVM MMU in KVM
-From: Quentin Perret <qperret@google.com>
-To: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
-	Joey Gouly <joey.gouly@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
-	Zenghui Yu <yuzenghui@huawei.com>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>
-Cc: Fuad Tabba <tabba@google.com>, Vincent Donnefort <vdonnefort@google.com>, 
-	Sebastian Ene <sebastianene@google.com>, linux-arm-kernel@lists.infradead.org, 
-	kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241203-mb85rs128ty-v3-1-79107d54d839@pengutronix.de>
+References: <20241203-mb85rs128ty-v3-0-79107d54d839@pengutronix.de>
+In-Reply-To: <20241203-mb85rs128ty-v3-0-79107d54d839@pengutronix.de>
+To: Miquel Raynal <miquel.raynal@bootlin.com>, 
+ Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Heiko Schocher <hs@denx.de>
+Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, David Jander <david@protonic.nl>, 
+ kernel@pengutronix.de, Jonas Rebmann <jre@pengutronix.de>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1743; i=jre@pengutronix.de;
+ h=from:subject:message-id; bh=pmKV2DTV1hVzHSifSfG65uDKd3xGW/MuLvE4Vczmd2E=;
+ b=owGbwMvMwCF2ZcYT3onnbjcwnlZLYkj3u39kRrfVeSbBia9O6pavmebx4fPZzxbeURUp7xY5N
+ NstuqHh3FHKwiDGwSArpsgSqyanIGTsf92s0i4WZg4rE8gQBi5OAZjImiBGhov+KzlOrX24eMnM
+ TeHp337E+ddOem10bnf/09x+J9bex4oM/90vdGxy31PVs9mhg2sj44Nf6+dHJhgs0Hh8e7HvxBO
+ GHGwA
+X-Developer-Key: i=jre@pengutronix.de; a=openpgp;
+ fpr=0B7B750D5D3CD21B3B130DE8B61515E135CD49B5
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:1101:1d::ac
+X-SA-Exim-Mail-From: jre@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Introduce the KVM_PGT_S2() helper macro to allow switching from the
-traditional pgtable code to the pKVM version easily in mmu.c. The cost
-of this 'indirection' is expected to be very minimal due to
-is_protected_kvm_enabled() being backed by a static key.
+From: David Jander <david@protonic.nl>
 
-With this, everything is in place to allow the delegation of
-non-protected guest stage-2 page-tables to pKVM, so let's stop using the
-host's kvm_s2_mmu from EL2 and enjoy the ride.
+The 48L640 resets the WEL bit (the Write Enable Latch bit in the status
+register) to zero on the completion of write operations. In preparation
+to support chips behaving differently, introduce .auto_disable_wel
+capability, and, if it's missing, explicitly reset the WEL bit after
+writes.
 
-Signed-off-by: Quentin Perret <qperret@google.com>
+Signed-off-by: David Jander <david@protonic.nl>
+Reviewed-by: Heiko Schocher <hs@denx.de>
+Signed-off-by: Jonas Rebmann <jre@pengutronix.de>
 ---
- arch/arm64/kvm/arm.c               |   9 ++-
- arch/arm64/kvm/hyp/nvhe/hyp-main.c |   2 -
- arch/arm64/kvm/mmu.c               | 103 +++++++++++++++++++++--------
- 3 files changed, 83 insertions(+), 31 deletions(-)
+ drivers/mtd/devices/mchp48l640.c | 14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm64/kvm/arm.c b/arch/arm64/kvm/arm.c
-index 55cc62b2f469..9bcbc7b8ed38 100644
---- a/arch/arm64/kvm/arm.c
-+++ b/arch/arm64/kvm/arm.c
-@@ -502,7 +502,10 @@ void kvm_arch_vcpu_postcreate(struct kvm_vcpu *vcpu)
+diff --git a/drivers/mtd/devices/mchp48l640.c b/drivers/mtd/devices/mchp48l640.c
+index f576e6a890e859e7d20aeeb2ede4ca0acf4850fc..4cdd24aaed416fc7e40a8060b5c7eaf6684fc6d5 100644
+--- a/drivers/mtd/devices/mchp48l640.c
++++ b/drivers/mtd/devices/mchp48l640.c
+@@ -27,6 +27,7 @@
+ struct mchp48_caps {
+ 	unsigned int size;
+ 	unsigned int page_size;
++	bool auto_disable_wel;
+ };
  
- void kvm_arch_vcpu_destroy(struct kvm_vcpu *vcpu)
- {
--	kvm_mmu_free_memory_cache(&vcpu->arch.mmu_page_cache);
-+	if (!is_protected_kvm_enabled())
-+		kvm_mmu_free_memory_cache(&vcpu->arch.mmu_page_cache);
-+	else
-+		free_hyp_memcache(&vcpu->arch.pkvm_memcache);
- 	kvm_timer_vcpu_terminate(vcpu);
- 	kvm_pmu_vcpu_destroy(vcpu);
- 	kvm_vgic_vcpu_destroy(vcpu);
-@@ -574,6 +577,9 @@ void kvm_arch_vcpu_load(struct kvm_vcpu *vcpu, int cpu)
- 	struct kvm_s2_mmu *mmu;
- 	int *last_ran;
+ struct mchp48l640_flash {
+@@ -194,9 +195,15 @@ static int mchp48l640_write_page(struct mtd_info *mtd, loff_t to, size_t len,
+ 	else
+ 		goto fail;
  
-+	if (is_protected_kvm_enabled())
-+		goto nommu;
-+
- 	if (vcpu_has_nv(vcpu))
- 		kvm_vcpu_load_hw_mmu(vcpu);
- 
-@@ -594,6 +600,7 @@ void kvm_arch_vcpu_load(struct kvm_vcpu *vcpu, int cpu)
- 		*last_ran = vcpu->vcpu_idx;
- 	}
- 
-+nommu:
- 	vcpu->cpu = cpu;
- 
- 	kvm_vgic_load(vcpu);
-diff --git a/arch/arm64/kvm/hyp/nvhe/hyp-main.c b/arch/arm64/kvm/hyp/nvhe/hyp-main.c
-index 219d7fb850ec..64c7dc595218 100644
---- a/arch/arm64/kvm/hyp/nvhe/hyp-main.c
-+++ b/arch/arm64/kvm/hyp/nvhe/hyp-main.c
-@@ -103,8 +103,6 @@ static void flush_hyp_vcpu(struct pkvm_hyp_vcpu *hyp_vcpu)
- 	/* Limit guest vector length to the maximum supported by the host.  */
- 	hyp_vcpu->vcpu.arch.sve_max_vl	= min(host_vcpu->arch.sve_max_vl, kvm_host_sve_max_vl);
- 
--	hyp_vcpu->vcpu.arch.hw_mmu	= host_vcpu->arch.hw_mmu;
--
- 	hyp_vcpu->vcpu.arch.mdcr_el2	= host_vcpu->arch.mdcr_el2;
- 	hyp_vcpu->vcpu.arch.hcr_el2 &= ~(HCR_TWI | HCR_TWE);
- 	hyp_vcpu->vcpu.arch.hcr_el2 |= READ_ONCE(host_vcpu->arch.hcr_el2) &
-diff --git a/arch/arm64/kvm/mmu.c b/arch/arm64/kvm/mmu.c
-index 641e4fec1659..058bc2c8f3c6 100644
---- a/arch/arm64/kvm/mmu.c
-+++ b/arch/arm64/kvm/mmu.c
-@@ -15,6 +15,7 @@
- #include <asm/kvm_arm.h>
- #include <asm/kvm_mmu.h>
- #include <asm/kvm_pgtable.h>
-+#include <asm/kvm_pkvm.h>
- #include <asm/kvm_ras.h>
- #include <asm/kvm_asm.h>
- #include <asm/kvm_emulate.h>
-@@ -31,6 +32,14 @@ static phys_addr_t __ro_after_init hyp_idmap_vector;
- 
- static unsigned long __ro_after_init io_map_base;
- 
-+#define KVM_PGT_S2(fn, ...)								\
-+	({										\
-+		typeof(kvm_pgtable_stage2_ ## fn) *__fn = kvm_pgtable_stage2_ ## fn;	\
-+		if (is_protected_kvm_enabled())						\
-+			__fn = pkvm_pgtable_ ## fn;					\
-+		__fn(__VA_ARGS__);							\
-+	})
-+
- static phys_addr_t __stage2_range_addr_end(phys_addr_t addr, phys_addr_t end,
- 					   phys_addr_t size)
- {
-@@ -147,7 +156,7 @@ static int kvm_mmu_split_huge_pages(struct kvm *kvm, phys_addr_t addr,
- 			return -EINVAL;
- 
- 		next = __stage2_range_addr_end(addr, end, chunk_size);
--		ret = kvm_pgtable_stage2_split(pgt, addr, next - addr, cache);
-+		ret = KVM_PGT_S2(split, pgt, addr, next - addr, cache);
- 		if (ret)
- 			break;
- 	} while (addr = next, addr != end);
-@@ -168,15 +177,23 @@ static bool memslot_is_logging(struct kvm_memory_slot *memslot)
-  */
- int kvm_arch_flush_remote_tlbs(struct kvm *kvm)
- {
--	kvm_call_hyp(__kvm_tlb_flush_vmid, &kvm->arch.mmu);
-+	if (is_protected_kvm_enabled())
-+		kvm_call_hyp_nvhe(__pkvm_tlb_flush_vmid, kvm->arch.pkvm.handle);
-+	else
-+		kvm_call_hyp(__kvm_tlb_flush_vmid, &kvm->arch.mmu);
- 	return 0;
- }
- 
- int kvm_arch_flush_remote_tlbs_range(struct kvm *kvm,
- 				      gfn_t gfn, u64 nr_pages)
- {
--	kvm_tlb_flush_vmid_range(&kvm->arch.mmu,
--				gfn << PAGE_SHIFT, nr_pages << PAGE_SHIFT);
-+	u64 size = nr_pages << PAGE_SHIFT;
-+	u64 addr = gfn << PAGE_SHIFT;
-+
-+	if (is_protected_kvm_enabled())
-+		kvm_call_hyp_nvhe(__pkvm_tlb_flush_vmid, kvm->arch.pkvm.handle);
-+	else
-+		kvm_tlb_flush_vmid_range(&kvm->arch.mmu, addr, size);
- 	return 0;
- }
- 
-@@ -225,7 +242,7 @@ static void stage2_free_unlinked_table_rcu_cb(struct rcu_head *head)
- 	void *pgtable = page_to_virt(page);
- 	s8 level = page_private(page);
- 
--	kvm_pgtable_stage2_free_unlinked(&kvm_s2_mm_ops, pgtable, level);
-+	KVM_PGT_S2(free_unlinked, &kvm_s2_mm_ops, pgtable, level);
- }
- 
- static void stage2_free_unlinked_table(void *addr, s8 level)
-@@ -280,6 +297,11 @@ static void invalidate_icache_guest_page(void *va, size_t size)
- 	__invalidate_icache_guest_page(va, size);
- }
- 
-+static int kvm_s2_unmap(struct kvm_pgtable *pgt, u64 addr, u64 size)
-+{
-+	return KVM_PGT_S2(unmap, pgt, addr, size);
-+}
-+
- /*
-  * Unmapping vs dcache management:
-  *
-@@ -324,8 +346,7 @@ static void __unmap_stage2_range(struct kvm_s2_mmu *mmu, phys_addr_t start, u64
- 
- 	lockdep_assert_held_write(&kvm->mmu_lock);
- 	WARN_ON(size & ~PAGE_MASK);
--	WARN_ON(stage2_apply_range(mmu, start, end, kvm_pgtable_stage2_unmap,
--				   may_block));
-+	WARN_ON(stage2_apply_range(mmu, start, end, kvm_s2_unmap, may_block));
- }
- 
- void kvm_stage2_unmap_range(struct kvm_s2_mmu *mmu, phys_addr_t start,
-@@ -334,9 +355,14 @@ void kvm_stage2_unmap_range(struct kvm_s2_mmu *mmu, phys_addr_t start,
- 	__unmap_stage2_range(mmu, start, size, may_block);
- }
- 
-+static int kvm_s2_flush(struct kvm_pgtable *pgt, u64 addr, u64 size)
-+{
-+	return KVM_PGT_S2(flush, pgt, addr, size);
-+}
-+
- void kvm_stage2_flush_range(struct kvm_s2_mmu *mmu, phys_addr_t addr, phys_addr_t end)
- {
--	stage2_apply_range_resched(mmu, addr, end, kvm_pgtable_stage2_flush);
-+	stage2_apply_range_resched(mmu, addr, end, kvm_s2_flush);
- }
- 
- static void stage2_flush_memslot(struct kvm *kvm,
-@@ -942,10 +968,14 @@ int kvm_init_stage2_mmu(struct kvm *kvm, struct kvm_s2_mmu *mmu, unsigned long t
- 		return -ENOMEM;
- 
- 	mmu->arch = &kvm->arch;
--	err = kvm_pgtable_stage2_init(pgt, mmu, &kvm_s2_mm_ops);
-+	err = KVM_PGT_S2(init, pgt, mmu, &kvm_s2_mm_ops);
- 	if (err)
- 		goto out_free_pgtable;
- 
-+	mmu->pgt = pgt;
-+	if (is_protected_kvm_enabled())
-+		return 0;
-+
- 	mmu->last_vcpu_ran = alloc_percpu(typeof(*mmu->last_vcpu_ran));
- 	if (!mmu->last_vcpu_ran) {
- 		err = -ENOMEM;
-@@ -959,7 +989,6 @@ int kvm_init_stage2_mmu(struct kvm *kvm, struct kvm_s2_mmu *mmu, unsigned long t
- 	mmu->split_page_chunk_size = KVM_ARM_EAGER_SPLIT_CHUNK_SIZE_DEFAULT;
- 	mmu->split_page_cache.gfp_zero = __GFP_ZERO;
- 
--	mmu->pgt = pgt;
- 	mmu->pgd_phys = __pa(pgt->pgd);
- 
- 	if (kvm_is_nested_s2_mmu(kvm, mmu))
-@@ -968,7 +997,7 @@ int kvm_init_stage2_mmu(struct kvm *kvm, struct kvm_s2_mmu *mmu, unsigned long t
- 	return 0;
- 
- out_destroy_pgtable:
--	kvm_pgtable_stage2_destroy(pgt);
-+	KVM_PGT_S2(destroy, pgt);
- out_free_pgtable:
- 	kfree(pgt);
- 	return err;
-@@ -1065,7 +1094,7 @@ void kvm_free_stage2_pgd(struct kvm_s2_mmu *mmu)
- 	write_unlock(&kvm->mmu_lock);
- 
- 	if (pgt) {
--		kvm_pgtable_stage2_destroy(pgt);
-+		KVM_PGT_S2(destroy, pgt);
- 		kfree(pgt);
- 	}
- }
-@@ -1082,9 +1111,11 @@ static void *hyp_mc_alloc_fn(void *unused)
- 
- void free_hyp_memcache(struct kvm_hyp_memcache *mc)
- {
--	if (is_protected_kvm_enabled())
--		__free_hyp_memcache(mc, hyp_mc_free_fn,
--				    kvm_host_va, NULL);
-+	if (!is_protected_kvm_enabled())
-+		return;
-+
-+	kfree(mc->mapping);
-+	__free_hyp_memcache(mc, hyp_mc_free_fn, kvm_host_va, NULL);
- }
- 
- int topup_hyp_memcache(struct kvm_hyp_memcache *mc, unsigned long min_pages)
-@@ -1092,6 +1123,12 @@ int topup_hyp_memcache(struct kvm_hyp_memcache *mc, unsigned long min_pages)
- 	if (!is_protected_kvm_enabled())
- 		return 0;
- 
-+	if (!mc->mapping) {
-+		mc->mapping = kzalloc(sizeof(struct pkvm_mapping), GFP_KERNEL_ACCOUNT);
-+		if (!mc->mapping)
-+			return -ENOMEM;
+-	ret = mchp48l640_waitforbit(flash, MCHP48L640_STATUS_WEL, false);
+-	if (ret)
+-		goto fail;
++	if (flash->caps->auto_disable_wel) {
++		ret = mchp48l640_waitforbit(flash, MCHP48L640_STATUS_WEL, false);
++		if (ret)
++			goto fail;
++	} else {
++		ret = mchp48l640_write_prepare(flash, false);
++		if (ret)
++			goto fail;
 +	}
-+
- 	return __topup_hyp_memcache(mc, min_pages, hyp_mc_alloc_fn,
- 				    kvm_host_pa, NULL);
- }
-@@ -1130,8 +1167,7 @@ int kvm_phys_addr_ioremap(struct kvm *kvm, phys_addr_t guest_ipa,
- 			break;
  
- 		write_lock(&kvm->mmu_lock);
--		ret = kvm_pgtable_stage2_map(pgt, addr, PAGE_SIZE, pa, prot,
--					     &cache, 0);
-+		ret = KVM_PGT_S2(map, pgt, addr, PAGE_SIZE, pa, prot, &cache, 0);
- 		write_unlock(&kvm->mmu_lock);
- 		if (ret)
- 			break;
-@@ -1143,6 +1179,10 @@ int kvm_phys_addr_ioremap(struct kvm *kvm, phys_addr_t guest_ipa,
- 	return ret;
- }
+ 	kfree(cmd);
+ 	return 0;
+@@ -293,6 +300,7 @@ static int mchp48l640_read(struct mtd_info *mtd, loff_t from, size_t len,
+ static const struct mchp48_caps mchp48l640_caps = {
+ 	.size = SZ_8K,
+ 	.page_size = 32,
++	.auto_disable_wel = true,
+ };
  
-+static int kvm_s2_wrprotect(struct kvm_pgtable *pgt, u64 addr, u64 size)
-+{
-+	return KVM_PGT_S2(wrprotect, pgt, addr, size);
-+}
- /**
-  * kvm_stage2_wp_range() - write protect stage2 memory region range
-  * @mmu:        The KVM stage-2 MMU pointer
-@@ -1151,7 +1191,7 @@ int kvm_phys_addr_ioremap(struct kvm *kvm, phys_addr_t guest_ipa,
-  */
- void kvm_stage2_wp_range(struct kvm_s2_mmu *mmu, phys_addr_t addr, phys_addr_t end)
- {
--	stage2_apply_range_resched(mmu, addr, end, kvm_pgtable_stage2_wrprotect);
-+	stage2_apply_range_resched(mmu, addr, end, kvm_s2_wrprotect);
- }
- 
- /**
-@@ -1442,9 +1482,9 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
- 	unsigned long mmu_seq;
- 	phys_addr_t ipa = fault_ipa;
- 	struct kvm *kvm = vcpu->kvm;
--	struct kvm_mmu_memory_cache *memcache = &vcpu->arch.mmu_page_cache;
- 	struct vm_area_struct *vma;
- 	short vma_shift;
-+	void *memcache;
- 	gfn_t gfn;
- 	kvm_pfn_t pfn;
- 	bool logging_active = memslot_is_logging(memslot);
-@@ -1472,8 +1512,15 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
- 	 * and a write fault needs to collapse a block entry into a table.
- 	 */
- 	if (!fault_is_perm || (logging_active && write_fault)) {
--		ret = kvm_mmu_topup_memory_cache(memcache,
--						 kvm_mmu_cache_min_pages(vcpu->arch.hw_mmu));
-+		int min_pages = kvm_mmu_cache_min_pages(vcpu->arch.hw_mmu);
-+
-+		if (!is_protected_kvm_enabled()) {
-+			memcache = &vcpu->arch.mmu_page_cache;
-+			ret = kvm_mmu_topup_memory_cache(memcache, min_pages);
-+		} else {
-+			memcache = &vcpu->arch.pkvm_memcache;
-+			ret = topup_hyp_memcache(memcache, min_pages);
-+		}
- 		if (ret)
- 			return ret;
- 	}
-@@ -1494,7 +1541,7 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
- 	 * logging_active is guaranteed to never be true for VM_PFNMAP
- 	 * memslots.
- 	 */
--	if (logging_active) {
-+	if (logging_active || is_protected_kvm_enabled()) {
- 		force_pte = true;
- 		vma_shift = PAGE_SHIFT;
- 	} else {
-@@ -1696,9 +1743,9 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
- 		 * PTE, which will be preserved.
- 		 */
- 		prot &= ~KVM_NV_GUEST_MAP_SZ;
--		ret = kvm_pgtable_stage2_relax_perms(pgt, fault_ipa, prot, flags);
-+		ret = KVM_PGT_S2(relax_perms, pgt, fault_ipa, prot, flags);
- 	} else {
--		ret = kvm_pgtable_stage2_map(pgt, fault_ipa, vma_pagesize,
-+		ret = KVM_PGT_S2(map, pgt, fault_ipa, vma_pagesize,
- 					     __pfn_to_phys(pfn), prot,
- 					     memcache, flags);
- 	}
-@@ -1724,7 +1771,7 @@ static void handle_access_fault(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa)
- 
- 	read_lock(&vcpu->kvm->mmu_lock);
- 	mmu = vcpu->arch.hw_mmu;
--	kvm_pgtable_stage2_mkyoung(mmu->pgt, fault_ipa, flags);
-+	KVM_PGT_S2(mkyoung, mmu->pgt, fault_ipa, flags);
- 	read_unlock(&vcpu->kvm->mmu_lock);
- }
- 
-@@ -1764,7 +1811,7 @@ int kvm_handle_guest_abort(struct kvm_vcpu *vcpu)
- 		}
- 
- 		/* Falls between the IPA range and the PARange? */
--		if (fault_ipa >= BIT_ULL(vcpu->arch.hw_mmu->pgt->ia_bits)) {
-+		if (fault_ipa >= BIT_ULL(VTCR_EL2_IPA(vcpu->arch.hw_mmu->vtcr))) {
- 			fault_ipa |= kvm_vcpu_get_hfar(vcpu) & GENMASK(11, 0);
- 
- 			if (is_iabt)
-@@ -1930,7 +1977,7 @@ bool kvm_age_gfn(struct kvm *kvm, struct kvm_gfn_range *range)
- 	if (!kvm->arch.mmu.pgt)
- 		return false;
- 
--	return kvm_pgtable_stage2_test_clear_young(kvm->arch.mmu.pgt,
-+	return KVM_PGT_S2(test_clear_young, kvm->arch.mmu.pgt,
- 						   range->start << PAGE_SHIFT,
- 						   size, true);
- 	/*
-@@ -1946,7 +1993,7 @@ bool kvm_test_age_gfn(struct kvm *kvm, struct kvm_gfn_range *range)
- 	if (!kvm->arch.mmu.pgt)
- 		return false;
- 
--	return kvm_pgtable_stage2_test_clear_young(kvm->arch.mmu.pgt,
-+	return KVM_PGT_S2(test_clear_young, kvm->arch.mmu.pgt,
- 						   range->start << PAGE_SHIFT,
- 						   size, false);
- }
+ static int mchp48l640_probe(struct spi_device *spi)
+
 -- 
-2.47.0.338.g60cca15819-goog
+2.39.5
 
 
