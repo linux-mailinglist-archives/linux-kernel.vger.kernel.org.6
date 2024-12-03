@@ -1,56 +1,99 @@
-Return-Path: <linux-kernel+bounces-428552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2BD99E1085
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 01:49:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E8F5F9E0F85
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 01:12:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C497282A9F
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 00:49:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B19B328303A
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 00:12:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AFBF1CABA;
-	Tue,  3 Dec 2024 00:48:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23EEC1FDA;
+	Tue,  3 Dec 2024 00:11:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="DwKx3BzA"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aDSI65nh"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27A6F10F2;
-	Tue,  3 Dec 2024 00:48:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65B19173;
+	Tue,  3 Dec 2024 00:11:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733186934; cv=none; b=YJ9en59i8yVn6olDuktfJ9k/GAenmOdHuUF7Bzs6cFCFy6aU3GZPJCPR4KMfoMguUQ2MQoGPAk48iQzKvaMxdfrQ6pCnTj8KO4cu6uGkQ+llRlUxW6lUkiP1U0j/2YLKIps+GAVKkrfpbCEdo5RcstNK99si9uaNjxgB5jgUiko=
+	t=1733184714; cv=none; b=f2Jm8SpbNfed6yAOJXqEr6Bjh+vEiyfq38mveA/Kx243eqXAZuevrCML7X7YA4b2fm9FcEdpQSLHylUiS1vb/aZ4As4qem60avIwby/dp6zmQix/rM2njVyIZjujVeE7WtWrbtJ3GcOgjcryclku71vg9Y+npxbtX9e2Fa6wwKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733186934; c=relaxed/simple;
-	bh=Kohrn/r3kJUIE/1CLkLKKsDIsURJR9Q6soGM08rJq/E=;
+	s=arc-20240116; t=1733184714; c=relaxed/simple;
+	bh=ow+zWbQweIAuNl4Su7qk5EX3gpm4kMrbYNuFNjhZSHY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T05yYKjHmPYwrP5L89/eaBvTdiGrr18rMzuv+EGYe6OZMaKM8EKVHj6aICdNVVHg574EWWN1Co2fvOY+xHc1IVfjZHKiYwPiClnuLFRQBjTauu5KubjORC1O6+p9TzjCgvrOWd1GXsyUfHAQP/JWIzaIJAHN8AY2z8ibsj70zj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=DwKx3BzA; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=BwYIYsnjo2/NyptkkM25mrPtyLgZ9LTr+fZrUyhiw4s=; b=DwKx3BzAjMbVdclLZH5DeQEtr2
-	7hHfikBmqmprVeYmL4K+nae9Qyz8J1jISKnuscXEy+bHZaPXYO5e4vtu7gsVseEnstpkKpWdnRcaM
-	mrMFYCEKvFmueMUlb17EVG2uYzheQFVgJ+JPIxRH4JvWA0BTZSO0Avu13ZbT5Gtt5b58=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tIGPL-00F0o5-GB; Tue, 03 Dec 2024 01:04:51 +0100
-Date: Tue, 3 Dec 2024 01:04:51 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Zhiyuan Wan <kmlinuxm@gmail.com>
-Cc: kuba@kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	willy.liu@realtek.com, Yuki Lee <febrieac@outlook.com>
-Subject: Re: [PATCH 2/2] net: phy: realtek: add dt property to disable
- broadcast PHY address
-Message-ID: <bc8c7c6a-5d5f-4f7c-a1e2-e10a6a82d50e@lunn.ch>
-References: <20241202195029.2045633-1-kmlinuxm@gmail.com>
- <20241202195029.2045633-2-kmlinuxm@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=X45aapIMqJp2bRAiankj1G7/DYESNk4AEXuDfW3rr1arkwoUC6zwp/Bwe0a3FwRQcxiV37s5jom5WIhPKEIWrnjSKLFEXPhImctkawIGx0DznjceQRblENoe6L5XxyhjSe6XRPLBwaMMqZNmTAFoZ7JzPoM2CqXhqCxcGeWa7i0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aDSI65nh; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733184713; x=1764720713;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ow+zWbQweIAuNl4Su7qk5EX3gpm4kMrbYNuFNjhZSHY=;
+  b=aDSI65nhHXh4aAq/mIHuKDxF+ydmOQI8epvC3ZjuG/ukq95BtvJG36Pc
+   5vGoVbp0nlKT0CJmu7zB9JUNMc2bBRbWjz5DTEDb8xEXPf0CPpH1d8wEi
+   k/f3bc3b1JBAzo9VajsHgZGWL/bif4enUUvASrq4Xb9f7QWPMDlYfCK/1
+   Tl/Jy5taSvy8sd0uko6ZM9Hjv4tTayC0YU6pAwo7cbV7Mm+6WzhMoJtaq
+   Ui+LqwmZ8IOJcangBeEVXObRZzXa0ZWLRPnlFtsZjgHr5Gb1U73YZIATL
+   Ws1axk1wHQ0o41oKsYX38WFfr6Pr5R0gj0SiL0l49GLZQDsJ/5ykMpqC1
+   Q==;
+X-CSE-ConnectionGUID: B7m+DBCmT8e8yca9Qw7z+A==
+X-CSE-MsgGUID: HycnrI9lTiObaB3qUpoSpA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11274"; a="36233205"
+X-IronPort-AV: E=Sophos;i="6.12,203,1728975600"; 
+   d="scan'208";a="36233205"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Dec 2024 16:11:52 -0800
+X-CSE-ConnectionGUID: CmkdaC4oTp+1o4OEq1/jRg==
+X-CSE-MsgGUID: G/8VFtyyRMGnLf0dl8ms8w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="98278120"
+Received: from lkp-server02.sh.intel.com (HELO 36a1563c48ff) ([10.239.97.151])
+  by orviesa003.jf.intel.com with ESMTP; 02 Dec 2024 16:11:45 -0800
+Received: from kbuild by 36a1563c48ff with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tIGVu-00033p-2y;
+	Tue, 03 Dec 2024 00:11:40 +0000
+Date: Tue, 3 Dec 2024 08:11:03 +0800
+From: kernel test robot <lkp@intel.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>, Jens Axboe <axboe@kernel.dk>,
+	Jonathan Corbet <corbet@lwn.net>, Alasdair Kergon <agk@redhat.com>,
+	Mike Snitzer <snitzer@kernel.org>,
+	Mikulas Patocka <mpatocka@redhat.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Asutosh Das <quic_asutoshd@quicinc.com>,
+	Ritesh Harjani <ritesh.list@gmail.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Avri Altman <avri.altman@wdc.com>,
+	Bart Van Assche <bvanassche@acm.org>,
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+	Gaurav Kashyap <quic_gaurkash@quicinc.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	Eric Biggers <ebiggers@kernel.org>,
+	"Theodore Y. Ts'o" <tytso@mit.edu>,
+	Jaegeuk Kim <jaegeuk@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-block@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	dm-devel@lists.linux.dev
+Subject: Re: [PATCH RESEND v7 11/17] soc: qcom: ice: add support for
+ generating, importing and preparing keys
+Message-ID: <202412030742.vCplCxJb-lkp@intel.com>
+References: <20241202-wrapped-keys-v7-11-67c3ca3f3282@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,41 +102,62 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241202195029.2045633-2-kmlinuxm@gmail.com>
+In-Reply-To: <20241202-wrapped-keys-v7-11-67c3ca3f3282@linaro.org>
 
-On Tue, Dec 03, 2024 at 03:50:29AM +0800, Zhiyuan Wan wrote:
-> This patch add support to disable 'broadcast PHY address' feature of
-> RTL8211F.
-> 
-> This feature is enabled defaultly after a reset of this transceiver.
-> When this feature is enabled, the phy not only responds to the
-> configuration PHY address by pin states on board, but also responds
-> to address 0, the optional broadcast address of the MDIO bus.
-> 
-> But not every transceiver supports this feature, when RTL8211
-> shares one MDIO bus with other transceivers which doesn't support
-> this feature, like mt7530 switch chip (integrated in mt7621 SoC),
-> it usually causes address conflict, leads to the
-> port of RTL8211FS stops working.
+Hi Bartosz,
 
-I think you can do this without needing a new property. The DT binding
-has:
+kernel test robot noticed the following build warnings:
 
-            reg = <4>;
+[auto build test WARNING on f486c8aa16b8172f63bddc70116a0c897a7f3f02]
 
-This is the address the PHY should respond on. If reg is not 0, then
-broadcast is not wanted.
+url:    https://github.com/intel-lab-lkp/linux/commits/Bartosz-Golaszewski/blk-crypto-add-basic-hardware-wrapped-key-support/20241202-201228
+base:   f486c8aa16b8172f63bddc70116a0c897a7f3f02
+patch link:    https://lore.kernel.org/r/20241202-wrapped-keys-v7-11-67c3ca3f3282%40linaro.org
+patch subject: [PATCH RESEND v7 11/17] soc: qcom: ice: add support for generating, importing and preparing keys
+config: i386-buildonly-randconfig-006-20241203 (https://download.01.org/0day-ci/archive/20241203/202412030742.vCplCxJb-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241203/202412030742.vCplCxJb-lkp@intel.com/reproduce)
 
-If reg is 0, it means one of two things:
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202412030742.vCplCxJb-lkp@intel.com/
 
-The DT author did not know about this broadcast feature, the PHY
-appeared at address 0, so they wrote that. It might actually be
-strapped to another address, but it does not matter.
+All warnings (new ones prefixed by >>):
 
-The DT author wants it to use the broadcast address, it might even be
-strapped to address 0.
+>> drivers/soc/qcom/ice.c:528: warning: Function parameter or struct member 'ice' not described in 'qcom_ice_import_key'
 
-Am i missing anything?
 
-	Andrew
+vim +528 drivers/soc/qcom/ice.c
+
+   512	
+   513	/**
+   514	 * qcom_ice_import_key() - Import a raw key for inline encryption
+   515	 * ice: ICE driver data
+   516	 * @imp_key: raw key that has to be imported
+   517	 * @imp_key_size: size of the imported key
+   518	 * @lt_key: longterm wrapped key that is imported, which is
+   519	 *          BLK_CRYPTO_MAX_HW_WRAPPED_KEY_SIZE in size.
+   520	 *
+   521	 * Make a scm call into trustzone to import a raw key for storage encryption
+   522	 * and generate a longterm wrapped key using hwkm.
+   523	 *
+   524	 * Return: 0 on success; -errno on failure.
+   525	 */
+   526	int qcom_ice_import_key(struct qcom_ice *ice, const u8 *imp_key, size_t imp_key_size,
+   527				u8 lt_key[BLK_CRYPTO_MAX_HW_WRAPPED_KEY_SIZE])
+ > 528	{
+   529		size_t wk_size = QCOM_ICE_HWKM_WRAPPED_KEY_SIZE(ice->hwkm_version);
+   530	
+   531		if (!qcom_scm_import_ice_key(imp_key, imp_key_size, lt_key, wk_size))
+   532			return wk_size;
+   533	
+   534		return 0;
+   535	}
+   536	EXPORT_SYMBOL_GPL(qcom_ice_import_key);
+   537	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
