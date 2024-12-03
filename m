@@ -1,144 +1,271 @@
-Return-Path: <linux-kernel+bounces-430273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42CCA9E2EAF
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 23:08:37 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 425989E2F4D
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 23:53:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 099282833EB
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 22:08:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0419CB2C5B2
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 22:09:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3D9F208978;
-	Tue,  3 Dec 2024 22:08:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 250E61F4731;
+	Tue,  3 Dec 2024 22:09:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C1CNli9O"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="iSSez8G3"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2080.outbound.protection.outlook.com [40.107.237.80])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95CAB1DF27E;
-	Tue,  3 Dec 2024 22:08:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733263706; cv=none; b=lwxeTEfSrlqNVdaYGGqrB0rXfhZDbELt3eeQxdtLaw/FAvyTJzOd8wkhUAcpPX2yAecWinT06MkQFdBdTAHfiSf6DDLVYocoP8aDZI31R8LHKfNJuaLCUkIqA+WCu+Ueu4e5gPoBnJFhMja7qoLScZ/Bcqd+GFzT/4v+CVND2hY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733263706; c=relaxed/simple;
-	bh=VXa02M2bOoTSZ7ie+aiT5+/ZS6gTPHLCPXgEwfBIXa8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ciJiuzRWOpwzDeBvEllqxtW+Mk5aSJAz8OhPW//s5PQoJcg2OiXOmJDblSXYMdPO+Ni5PAbIt2hDnxfCk6vLMEEwWLSdJhKZ5lUB/zykrTnjRSpofFtc16nnqmgGnvHxVy3cC96FfcFFCzd0uBnf9CokeApMV7WJnbO6Lax1Ld0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C1CNli9O; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-385e87b25f0so153096f8f.0;
-        Tue, 03 Dec 2024 14:08:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733263703; x=1733868503; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=TTMTIhFkJliXtjLotwueIZgPO7+0P79jKrSoxu+rgGQ=;
-        b=C1CNli9OAgPWBN6ecii7cXXh9lA8Lb4W41npWyTCXPi4RPk6i0w/p05mXHgoXp75d7
-         g+PVyLjXO2zpUaIkzeSm8zv9ttBceRUyk2SHTJShnwKlR3LYVfdX2j+G8DfNtQ8n30AY
-         kq9lvd8tFAGhKItnjIYiYRrj2ZbfQszYO+xRDOXUUIsvB347fip7wGl3wvkkxxlwVpjj
-         W82hLxkWXYdI4hzekEiXdi/gKkLQ0qOGI4JK3yyzjWGIYHv2l1eJIDKqwpnHzGRJIqId
-         slMlk3ieUQXFWrJFD3SjA5IoP03tT+gH0mInAKcoHyIqzZTptFlv8b/wl6SaFv+bu0Ng
-         yIUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733263703; x=1733868503;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TTMTIhFkJliXtjLotwueIZgPO7+0P79jKrSoxu+rgGQ=;
-        b=hzn8OeYQLlhYkDaquyBMb/b+N6ag6V3HfdDO7uTE4uXaVVC5jMxpYHyiwIB5VsV8DI
-         MAUuK9GmuERN3A3ElapQZSetTpPRuqfBYykOxQyeuMAA3F77M17uU6SVXlBWxREOgT/f
-         80u8WznBqG+99RafMbzdGk8ZwCYjID38d7a6HBF+zVdff/kF+WGFAKsgGGzIHmdMd+hs
-         0XPgt1Y5a+PXx5s4Td/PnwOfBgiio3YSv+bUvAuS9M60flA2rENp2QyNEEfkVg+R3qHo
-         gVe/XE0RgDiX1062f4VLeqHk8VW5GHuWl0PVy7rc0Q075097Yb92yNUBz9lymWpmDYDq
-         bOcw==
-X-Forwarded-Encrypted: i=1; AJvYcCVeXy71/YJSz9tuOgQVYJz6JNpA2htOuD5wTqQ31/854j6Fgy04CmNYXnNUxpC20/IbfhXwsE2xGlD4cPXo@vger.kernel.org, AJvYcCVia+nKhoCkKC5dXvTyGt5EdqeqjE8t7SB6fCI/N8g9f9H86DaNEqb88nE9k10Pi/mVdcFsZv4j718=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwLjrT05Z+sxkuS8H6fgW5YyPuNxIAm1X/kaABhdTOnZRHDm5S4
-	jhPI3V0Zlia0uX95M0PYU+4D5/my2+/VJ0gTG0gPkRKM7Bn0lYeD
-X-Gm-Gg: ASbGnctG0KRftJPzxe5gWgq98jkytF38iAthox5Lekonz15uuIAloejZoOHnlGggVJA
-	4m9I6Wlr/yCSX3QdyBkHWl5x6NLg/yn+BKgu2BcVPM+E89VdObTIt4qJlD0XxDo3b/E1WqPJFRk
-	HcyBw+v7tqn820XvBNqmQ+VzLIl4bSzCr1kDr6fwd4KqXVdNnXX02MHVpGhmi0TZC6NVCZU0SSO
-	YP8NHaVqIU9d+pSmNOBV5i1ElPmAk5f0s4g6UztVrcE4YQe/EiMIS5FO50a
-X-Google-Smtp-Source: AGHT+IHO+Calp6AWFoCwIw3sQBLAOxR9iYhb2hsuSBTqx4JSSOV3Lz+YVoeIb/4AIVwo0hFWomXayQ==
-X-Received: by 2002:a05:6000:1787:b0:385:e90a:b7de with SMTP id ffacd0b85a97d-385fd9699d4mr3440982f8f.5.1733263702623;
-        Tue, 03 Dec 2024 14:08:22 -0800 (PST)
-Received: from vamoirid-laptop ([2a04:ee41:82:7577:56d9:cf1e:faf4:54e1])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385d97ab259sm14838650f8f.95.2024.12.03.14.08.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Dec 2024 14:08:22 -0800 (PST)
-Date: Tue, 3 Dec 2024 23:08:20 +0100
-From: Vasileios Amoiridis <vassilisamir@gmail.com>
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: lars@metafoo.de, krzysztof.kozlowski@linaro.org, nuno.sa@analog.com,
-	u.kleine-koenig@baylibre.com, abhashkumarjha123@gmail.com,
-	jstephan@baylibre.com, dlechner@baylibre.com,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC 4/6] iio: adc: max1363: make use of
- iio_is_soft_ts_enabled()
-Message-ID: <Z0-BVKSCL-Pak9eA@vamoirid-laptop>
-References: <20241130002710.18615-1-vassilisamir@gmail.com>
- <20241130002710.18615-5-vassilisamir@gmail.com>
- <20241130140948.1e0f1082@jic23-huawei>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8443E1D79A0
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 22:09:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.80
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733263759; cv=fail; b=HikhSyDCLyPB2m4XznyMAZyIWgx64fYi9bAqjf0b1fPKKZcNSsqgPM32Ph6orlWjJsJqHM/IpgS3714VDkgeHwxVO+cSquSDFrI7URTtiL62gSjiukH1i6ntNMzrpKIx07fvtkjxZj7ts6yFvxPobmfXClcqsNt4Ejv67huoyLw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733263759; c=relaxed/simple;
+	bh=jI0fNOllVG4HCLHWdev6dT4aus7USTJHQ/1zXbmXpYQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=fP3B5bvQi7DO1NlV4ce7TsXImnLMVmqtRDJtvBkLBXzULCznkA755TK3KwBbc/Cha/GWlxEVjS35AEkXkM8PARQtBW8bdmPZTAH1TOBaE7/3oRqb3hT5k9g+YFsli2p73vPvrLUtjkrpx1u1tRqV89y51LJtSRgywwrDOarERf4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=iSSez8G3; arc=fail smtp.client-ip=40.107.237.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=qKmvV20VX8DAfak48q+YIKCysb5CeU+xNa4IPzuEqDsMFjZE5xyKG9CxhIuOcNvjGKi1i6FBOAnCPBPrenfk5UhnFaqio3NfcNNVWj5KkKwov3wdzCuhCQamjHV/9g8slf0Ahx9JfYlfqvvRm+/PagzpZ7C/ubOzunVJqn+p+Qv6jSgZbSJ1K6pyp7RgCKfisAzqaLhc2er8Nj/TMqNKRBOyw9Miz0KM2+17/JGcnx3qTPQI4mrYakL5GMft/vWaQumm0OVkGqpH836dfUyl3JNq1qK993OCJ0E3UaOl0fge7zFBUImL6WtrK0KjtmE1aw9TzbaVSflLzkWa944p6A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Z9BW7P+K2nrEHfG3ECYMxja8KtSCfd9Yu4xjWNVvWx8=;
+ b=D+Oh3n3qXeeGonR+BJcUnV0bj5UWhBG9H6Ox6v4PtQrOIT01a3vTa0deq7XMn0/hQ0jekhzMJ4oiGyTNNG4YDUW/Gz1qd0b7ddy+tJ8906LVeJXQOYNI87PKBFjxXqP76EEvkeeVCVuCXQDsQmQRB98WlUfodS3x73yS7NndhzP61xSBiYdHxERjDInlyb41z+wjG8K5GX0xK0CH4V/8FrZNReorCMzZuJm7+NN8RTZ5BmPT0TjNgQfR0xJNH0Oem/RjnayDCSjaPFwrF4jBrggn8ozGcrZM++CTqXXJPEF6zX27nP9h3v9yrsLsV/AcWEpBjijMDFmh/QA1zhhLPQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=suse.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Z9BW7P+K2nrEHfG3ECYMxja8KtSCfd9Yu4xjWNVvWx8=;
+ b=iSSez8G3gQceRt+MxYlQM+Dfcxb2zAXFi1sweU1DR/PBgRSs/bVmqEEjuvVWKzpFWNISDf1u1PH7g5EA/LcnQtwJaDeNn+9usj1oPS4JtIPeEKi+kruIw/uCcdnaXtkaXeHyd2aFsHVHf2UsUv63HG1DpRlXyzlX//yTNHI4FoI=
+Received: from PH8PR15CA0015.namprd15.prod.outlook.com (2603:10b6:510:2d2::23)
+ by PH7PR12MB7332.namprd12.prod.outlook.com (2603:10b6:510:20f::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.18; Tue, 3 Dec
+ 2024 22:09:07 +0000
+Received: from MWH0EPF000A6734.namprd04.prod.outlook.com
+ (2603:10b6:510:2d2:cafe::3b) by PH8PR15CA0015.outlook.office365.com
+ (2603:10b6:510:2d2::23) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8207.18 via Frontend Transport; Tue,
+ 3 Dec 2024 22:09:07 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
+Received: from SATLEXMB03.amd.com (165.204.84.17) by
+ MWH0EPF000A6734.mail.protection.outlook.com (10.167.249.26) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8230.7 via Frontend Transport; Tue, 3 Dec 2024 22:09:07 +0000
+Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 3 Dec
+ 2024 16:09:06 -0600
+Received: from [172.25.146.163] (10.180.168.240) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Tue, 3 Dec 2024 16:09:05 -0600
+Message-ID: <5c76ebcb-baf2-4a63-b9d9-bd498f417202@amd.com>
+Date: Tue, 3 Dec 2024 17:09:05 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241130140948.1e0f1082@jic23-huawei>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] xen/acpi: upload power and performance related data
+ from a PVH dom0
+To: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>, Stefano Stabellini
+	<sstabellini@kernel.org>, Oleksandr Tyshchenko
+	<oleksandr_tyshchenko@epam.com>
+CC: Roger Pau Monne <roger.pau@citrix.com>, <xen-devel@lists.xenproject.org>,
+	<linux-kernel@vger.kernel.org>
+References: <20240916205009.52887-1-jason.andryuk@amd.com>
+ <52a2b2f3-ecdc-45fa-afcf-c4d6e2b1dd0c@suse.com>
+Content-Language: en-US
+From: Jason Andryuk <jason.andryuk@amd.com>
+In-Reply-To: <52a2b2f3-ecdc-45fa-afcf-c4d6e2b1dd0c@suse.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+Received-SPF: None (SATLEXMB03.amd.com: jason.andryuk@amd.com does not
+ designate permitted sender hosts)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MWH0EPF000A6734:EE_|PH7PR12MB7332:EE_
+X-MS-Office365-Filtering-Correlation-Id: 30b45f19-4cdf-4ba4-c5c5-08dd13e71b4b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|36860700013|82310400026|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?ckR4blNQclYySWE5MHJoVDNvQjBzalh2TkdIUnM1eng3L3BIemMvZXFWT2Qw?=
+ =?utf-8?B?b0RIazQ2TmpyUlBHQThZcEFjU2V0aWlLWmFvUWo5bDYwbzZSSzJsLzQwbkcw?=
+ =?utf-8?B?RUJRbXFCc1poVkFOZ2RreGF5bFh0REdLYzFlYSs5K214UjBGWmNqRnVyUHNR?=
+ =?utf-8?B?eGsxemo2ZE9zVlh0TWNnZW5DMzJRTlNhMlAvSjhKYUVhbE85ZWdNSHdpdkFP?=
+ =?utf-8?B?dkkyYWxGYnNEYUc2SHVaV2ZrT3E5MGFpSkJMY1pkVlc3VTlLNGhRWnFLMnNN?=
+ =?utf-8?B?S2tLeWR6UHJ2YXZXckR5TW1KOHRBeUdQSnpCVHl6MHdLdFBpV0p6b2xBTjBo?=
+ =?utf-8?B?VjMxU1dQTjI5dDFLMW1pZ2wza2tHODZrc3dmTlJQZVJrTzg3Rm1LR0txUW9C?=
+ =?utf-8?B?Q1QvYzBDOHdUL25aOEVyS29haWQ3ZG1mVHRGNlJncjE4anZFejJ0WnFvS3RD?=
+ =?utf-8?B?TjZxT0JKaEpJQlYySm1zamlQRzhRK0luWmo3RmRSUGlBSktTWnNmWTdEZlVN?=
+ =?utf-8?B?VTcyWkJpQVpBZ2RwQUNDWWowemUvdERCNDE1elJZclhsNC9JbGFlWWliQmw3?=
+ =?utf-8?B?Q0ZCbmFETFdDZFlPakdmY2JDQTVSK0JsUGJLbjRGYnVXT2JQSmd2K0s2UUR2?=
+ =?utf-8?B?QUlqcFFtYkVHWFJCYTJhcGhnYlo3OVJyMld4ZVhKNjFFL2dPQ013UkZaS1hB?=
+ =?utf-8?B?ZkZ2bkpLVEIzc0VPaDZWUWRLbVd0N1Rjd05Jam1IOW9jOGV1YVNuamtyZTRQ?=
+ =?utf-8?B?dlNNbFR5Qy9GVXh2RE52Mnl4OXZ6Q0dkUHZwVVlPQnA1dVRHdE90WnNSVjhC?=
+ =?utf-8?B?QmlNNHlZZFRoY3VuMTB6SDRPQTNRVzZwVmNjVVFuNTBOalBCNmJyOXpzK28v?=
+ =?utf-8?B?UE41NHpkSXpScVlNQkFId3Z3NWNGTUJaRUNSNGN3WHY4VzlrajcvM1hYWDZH?=
+ =?utf-8?B?MmxoZ2ZpUmh5cGJZQWIyVkw3NnhDZFVjTFVLS0Q2Vko3L1k4cVJFR2R3Mnhj?=
+ =?utf-8?B?MVh6LzhuWksrWWpyaHV4dmttRjg4ZTg4UVJKUFFSR2FuREVZNjlqRnh5dS84?=
+ =?utf-8?B?cldWc3hQS0dXZEtiMmhxbDVXaW1uUnFzRmJpTkRWUGNybnI3dEoyWHp6ZGM5?=
+ =?utf-8?B?L2cxMkExb1lpZTIwQUdQT0hPOTlKcDk0ekg5ajFZYkR0QzdwZk1RYnZ6bFNG?=
+ =?utf-8?B?NnVIdXViUlJCVm9wUzRxVzhSajdTWlU5WjRZWVFNZHV3bW1ZMmJSMzdxSGtu?=
+ =?utf-8?B?Zk1OZEZLTTI5dUJEZ0h4TlR2R2trdEtPT2d6NnB5eGlHRm53K0JBS1BCOElG?=
+ =?utf-8?B?MGEwdjE0blZua1hHLzNqckxGbWdxVHBSNUU0K2FkWjVpdk0zZUk1RWc1d2hP?=
+ =?utf-8?B?V1o4RUdzM3NORXhKM0cxZ3dPL2FWa2ZHWUlWcGp6NDBlWlJ0U29JYVJ1Snls?=
+ =?utf-8?B?dWZyaTZBVlVabVVmZmNQempCNVh5bmNZNVZ0dGFFK2VoMnBBenJRbWw0TVE1?=
+ =?utf-8?B?U3pCdTV6RHBOTU03bk1MeW9pNk03aG96R2xsZXIvZ2VPOW02QWV4UjBDWnRX?=
+ =?utf-8?B?M1JxSzVsL0VObDBza2RzZGdDWC9IZUN4QVMxMUFSYUh3NlF1Vkdpd1k4VVd1?=
+ =?utf-8?B?blFKazBhUjh5T1VYT0RTdVlXMW9TQWVWQ1FTMzJ4bVAzRGRKQVNPQUV6Mjhn?=
+ =?utf-8?B?bTF1d1RIdktKWFB5UEJOcWNLTUlleVF4bWFLWjFuOTFCTVBJbnJQeXZtMTNp?=
+ =?utf-8?B?UTFIaHAwRkJLRVJNNWtjSVFsR2Zub09LQkEvdmtHMHdES3o4cE1QVStGYll3?=
+ =?utf-8?B?NFlJNEVRM0ZlMFUxK0dXbDdPN0xEUlNlVU5VbmV4S0lBY0NKVWM4Mkc5bmxr?=
+ =?utf-8?B?b3dlQWJEODZ3QVVKd3hnY2krQUdlNkJYWmhvUnA0VFVzbTR5Vm04SVpRT0tD?=
+ =?utf-8?Q?blsOhaKsdlhaffRQBP9ihSK/mu5zFucK?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(82310400026)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Dec 2024 22:09:07.1083
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 30b45f19-4cdf-4ba4-c5c5-08dd13e71b4b
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	MWH0EPF000A6734.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7332
 
-On Sat, Nov 30, 2024 at 02:09:48PM +0000, Jonathan Cameron wrote:
-> On Sat, 30 Nov 2024 01:27:08 +0100
-> Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
+On 2024-09-25 05:17, Jürgen Groß wrote:
+> On 16.09.24 22:50, Jason Andryuk wrote:
+>> From: Roger Pau Monne <roger.pau@citrix.com>
+>>
+>> When running as a PVH dom0 the ACPI MADT is crafted by Xen in order to
+>> report the correct numbers of vCPUs that dom0 has, so the host MADT is
+>> not provided to dom0.  This creates issues when parsing the power and
+>> performance related data from ACPI dynamic tables, as the ACPI
+>> Processor UIDs found on the dynamic code are likely to not match the
+>> ones crafted by Xen in the dom0 MADT.
+>>
+>> Xen would rely on Linux having filled at least the power and
+>> performance related data of the vCPUs on the system, and would clone
+>> that information in order to setup the remaining pCPUs on the system
+>> if dom0 vCPUs < pCPUs.  However when running as PVH dom0 it's likely
+>> that none of dom0 CPUs will have the power and performance data
+>> filled, and hence the Xen ACPI Processor driver needs to fetch that
+>> information by itself.
+>>
+>> In order to do so correctly, introduce a new helper to fetch the _CST
+>> data without taking into account the system capabilities from the
+>> CPUID output, as the capabilities reported to dom0 in CPUID might be
+>> different from the ones on the host.
+>>
+>> Note that the newly introduced code will only fetch the _CST, _PSS,
+>> _PPC and _PCT from a single CPU, and clone that information for all the
+>> other Processors.  This won't work on an heterogeneous system with
+>> Processors having different power and performance related data between
+>> them.
+>>
+>> Signed-off-by: Roger Pau Monné <roger.pau@citrix.com>
+>> Signed-off-by: Jason Andryuk <jason.andryuk@amd.com>
+>> ---
+>> v2:
+>> Add second buffer for _CST.  Call was failing with
+>> AE_BUFFER_OVERFLOW(0x000b)
+>>
+>> Running a PVH Dom0 on AMD, I needed this v2 change to get the C-State
+>> information uploaded.
+>>
+>> ---
+>>   drivers/xen/pcpu.c               |   3 +-
+>>   drivers/xen/xen-acpi-processor.c | 230 ++++++++++++++++++++++++++++---
+>>   include/xen/xen.h                |   2 +-
+>>   3 files changed, 216 insertions(+), 19 deletions(-)
+>>
+>> diff --git a/drivers/xen/pcpu.c b/drivers/xen/pcpu.c
+>> index c63f317e3df3..dc9f2c14bf62 100644
+>> --- a/drivers/xen/pcpu.c
+>> +++ b/drivers/xen/pcpu.c
 > 
-> > Use the iio_is_soft_ts_enabled() accessor to access the value of the
-> > scan_timestamp. This way, it can be marked as __private when there
-> > are no direct accessors of it.
-> > 
-> > Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
-> Hmm.  A younger me one ;) 
+> ...
 > 
-> A simple allocation that is always big enough is going to cost
-> us very little.  Should almost certainly be using kzalloc.
+>> @@ -354,24 +511,44 @@ read_acpi_id(acpi_handle handle, u32 lvl, void 
+>> *context, void **rv)
+>>       default:
+>>           return AE_OK;
+>>       }
+>> -    if (invalid_phys_cpuid(acpi_get_phys_id(handle,
+>> -                        acpi_type == ACPI_TYPE_DEVICE,
+>> -                        acpi_id))) {
+>> +
+>> +    if (!xen_processor_present(acpi_id)) {
+>>           pr_debug("CPU with ACPI ID %u is unavailable\n", acpi_id);
+>>           return AE_OK;
+>>       }
+>> -    /* There are more ACPI Processor objects than in x2APIC or MADT.
+>> -     * This can happen with incorrect ACPI SSDT declerations. */
+>> -    if (acpi_id >= nr_acpi_bits) {
+>> -        pr_debug("max acpi id %u, trying to set %u\n",
+>> -             nr_acpi_bits - 1, acpi_id);
+>> -        return AE_OK;
+>> -    }
+>> +
+>>       /* OK, There is a ACPI Processor object */
+>>       __set_bit(acpi_id, acpi_id_present);
+>>       pr_debug("ACPI CPU%u w/ PBLK:0x%lx\n", acpi_id, (unsigned 
+>> long)pblk);
+>> +    if (!pr_initialized) {
+>> +        struct acpi_processor *pr = context;
+>> +        int rc;
+>> +
+>> +        /*
+>> +         * There's no CPU on the system that has any performance or
+>> +         * power related data, initialize all the required fields by
+>> +         * fetching that info here.
+>> +         *
+>> +         * Note such information is only fetched once, and then reused
+>> +         * for all pCPUs.  This won't work on heterogeneous systems
+>> +         * with different Cx anb/or Px states between CPUs.
+>> +         */
+>> +
+>> +        pr->handle = handle;
+>> +
+>> +        rc = acpi_processor_get_performance_info(pr);
+>> +        if (rc)
+>> +            pr_debug("ACPI CPU%u failed to get performance data\n",
+>> +                 acpi_id);
 > 
-> I'd change this driver to just stick an array of size
-> 12 * 2  + 8 so 32bytes in the iio_priv()
-> (12 channels, possibly of 2 bytes each + aligned timestamp)
-> and always use that for the rx_buf.
+> Is it really normal to get a failure here? Shouldn't the reaction
+> be a little bit more visible in this case?
 > 
-> Both a simplification and probably a performance improvement
-> as well by dropping the frequent allocations.
+> And can you just continue processing?
 > 
+>> +        rc = xen_acpi_processor_evaluate_cst(handle, &pr->power);
+>> +        if (rc)
+>> +            pr_debug("ACPI CPU%u failed to get _CST data\n", acpi_id);
 > 
+> Same again. Is pr_debug() enough?
 
-Hi Jonathan,
+Thanks.  I'll switch them to pr_err().  And I'll only set pr_initialized 
+= true when both calls succeed.
 
-I see your point, I can implement this as well.
-
-Cheers,
-Vasilis
-
-> > ---
-> >  drivers/iio/adc/max1363.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/iio/adc/max1363.c b/drivers/iio/adc/max1363.c
-> > index 9a0baea08ab6..57d9aff729f4 100644
-> > --- a/drivers/iio/adc/max1363.c
-> > +++ b/drivers/iio/adc/max1363.c
-> > @@ -1473,7 +1473,7 @@ static irqreturn_t max1363_trigger_handler(int irq, void *p)
-> >  		d_size = numvals*2;
-> >  	else
-> >  		d_size = numvals;
-> > -	if (indio_dev->scan_timestamp) {
-> > +	if (iio_is_soft_ts_enabled(indio_dev)) {
-> >  		d_size += sizeof(s64);
-> >  		if (d_size % sizeof(s64))
-> >  			d_size += sizeof(s64) - (d_size % sizeof(s64));
-> 
+Regards,
+Jason
 
