@@ -1,154 +1,277 @@
-Return-Path: <linux-kernel+bounces-429697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429724-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A63269E228E
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:26:10 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D5569E217C
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:14:09 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EE7ABB3778E
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 14:56:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B631169E82
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 15:11:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3B5D1F75AD;
-	Tue,  3 Dec 2024 14:56:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="W88BdBj2"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E473A1FCF43;
+	Tue,  3 Dec 2024 15:08:25 +0000 (UTC)
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AFE313B5B6;
-	Tue,  3 Dec 2024 14:56:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E25731F8ADB;
+	Tue,  3 Dec 2024 15:08:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733237784; cv=none; b=M6Zo+Rv993IOdqdESiQxZtK4OpPTHAeyJ9YK3oKz7cAY6BY2O+0fTobIshOD+oP8wtXVkzDTlHMKSdOgeKQf1PVvGX4F0qmnKasVJHX7xXZ87vRd5FYccAv6xvPmvqDMtdJbG3KM8mEmIoCCIn4K9KFnj92OgNSU9fijibVQgPQ=
+	t=1733238505; cv=none; b=BANhsRDHPd7PfM6jfRIbaHNxhILtf/Wt5PovRc2RYB/+mNZlljBK15k9EYXiHuOkGV8xaKtsV3d7Jf9dLIZwXf6M/nlDvPIHVQNW9AaBl4JUaV0ADOj+l6Yap3f9cbHyJqn8iFZvcIsiZaFojLN7p7G8OV5YZ7Qxsc3LZx3YcGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733237784; c=relaxed/simple;
-	bh=nr9bqAPsYmVIpKYgeN/1T2895DfBpqXXw8ki35XQrNY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=hLBJUqQfWDGVuzNfnNE6BXCSmhvsCXT/NSKJHVgIrnTUgGwhE0AQgNw6S5TeZETUsyrivoOXSGczOoSEjo5+SiycUeShP+iooM5U67xKW+5uqBUb1YKAWF8/wIXaKNDbBKpUG2vcV93ZGWdrqKwAOFax+1NpbmQ9upnaREeRWOM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=W88BdBj2; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733237782; x=1764773782;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=nr9bqAPsYmVIpKYgeN/1T2895DfBpqXXw8ki35XQrNY=;
-  b=W88BdBj2Y6FNTGFFVAp8nVfFGFKBM0KGajMvEGYMYEIbQt7d0OZhmJxd
-   K77qQzqJovVmAfk+Cwo/dQtB8CosiWAYuc358NznUjo/twzCajJR2q/jo
-   ZAxoR2Ypb8wHZCInVj8P0PKXvuLKy1mT8RsBuvYaBGSt9o6jPKsEoszqr
-   HEOgjVug4juk9cVlB1qIIsaehAIt/cgLcgpRd5rUYAG78nlZyDdzkW5wZ
-   JfkN3CTLuTxRglvcwnMG7/FVtsx4OPCfR1ECHf94kZFvt/4QjHk9ToY0S
-   K4JzMpZ0MwlevVczJ8Ug9siGeUW6Zaz9f1IUEsHP09lmQjvHskn5ObDy0
-   w==;
-X-CSE-ConnectionGUID: FQ9dhUJzS+SXQJYDh3ymeg==
-X-CSE-MsgGUID: FfbATpKLSeS75hkgeYrFvg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11275"; a="37391896"
-X-IronPort-AV: E=Sophos;i="6.12,205,1728975600"; 
-   d="scan'208";a="37391896"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Dec 2024 06:56:20 -0800
-X-CSE-ConnectionGUID: Tre4A+gIQ0+OsOTsF+JqxA==
-X-CSE-MsgGUID: /jaX+ZgoRZKGdDviMXmvsQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,205,1728975600"; 
-   d="scan'208";a="93921130"
-Received: from kniemiec-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.246.135])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Dec 2024 06:56:07 -0800
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Harry Wentland <harry.wentland@amd.com>,
- Leo Li <sunpeng.li@amd.com>, Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
- Alex Deucher <alexander.deucher@amd.com>, Christian =?utf-8?Q?K=C3=B6nig?=
- <christian.koenig@amd.com>, Xinhui Pan <Xinhui.Pan@amd.com>, Andrzej Hajda
- <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>,
- Robert Foss <rfoss@kernel.org>, Laurent Pinchart
- <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>,
- Jernej Skrabec <jernej.skrabec@gmail.com>, Phong LE <ple@baylibre.com>,
- Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>,
- Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski
- <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, Rodrigo Vivi
- <rodrigo.vivi@intel.com>, Joonas Lahtinen
- <joonas.lahtinen@linux.intel.com>, Tvrtko Ursulin <tursulin@ursulin.net>,
- Rob Clark <robdclark@gmail.com>, Abhinav Kumar
- <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, Marijn Suijten
- <marijn.suijten@somainline.org>, Alain Volmat <alain.volmat@foss.st.com>,
- Raphael Gallais-Pou <rgallaispou@gmail.com>, Dave Stevenson
- <dave.stevenson@raspberrypi.com>, =?utf-8?Q?Ma=C3=ADra?= Canal
- <mcanal@igalia.com>,
- Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- amd-gfx@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
- intel-xe@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
- freedreno@lists.freedesktop.org
-Subject: Re: [PATCH 06/10] drm/i915/audio: use eld_mutex to protect access
- to connector->eld
-In-Reply-To: <20241201-drm-connector-eld-mutex-v1-6-ba56a6545c03@linaro.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20241201-drm-connector-eld-mutex-v1-0-ba56a6545c03@linaro.org>
- <20241201-drm-connector-eld-mutex-v1-6-ba56a6545c03@linaro.org>
-Date: Tue, 03 Dec 2024 16:56:04 +0200
-Message-ID: <874j3k4xyz.fsf@intel.com>
+	s=arc-20240116; t=1733238505; c=relaxed/simple;
+	bh=8HVyKJ/75/zyHsfLA7u8G+iX2QsF4ur15IOjO4Z8IyA=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=MkJKBSBjPDRazh3qWqmgHoztbQVitdSho6QXq+COM7QDvaVRq36Anyqx5RT2092EChCLPfAj39sSFixYDLnsRwbI+GuhAqaNCHlomjh6cNcXWyVePDQJ7s/6bAHP+sMm5jjSOTucPDuXUkIRvMxvUlxx7wkQ3ccq/oDTcSj0pKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4Y2kV64lJBz1V5PZ;
+	Tue,  3 Dec 2024 23:05:18 +0800 (CST)
+Received: from kwepemk100013.china.huawei.com (unknown [7.202.194.61])
+	by mail.maildlp.com (Postfix) with ESMTPS id 184A91800A1;
+	Tue,  3 Dec 2024 23:08:14 +0800 (CST)
+Received: from localhost.localdomain (10.90.30.45) by
+ kwepemk100013.china.huawei.com (7.202.194.61) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 3 Dec 2024 23:08:13 +0800
+From: Jijie Shao <shaojijie@huawei.com>
+To: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <andrew+netdev@lunn.ch>, <horms@kernel.org>
+CC: <shenjian15@huawei.com>, <wangpeiyang1@huawei.com>,
+	<liuyonglong@huawei.com>, <chenhao418@huawei.com>, <sudongming1@huawei.com>,
+	<xujunsheng@huawei.com>, <shiyongbang@huawei.com>, <libaihan@huawei.com>,
+	<jonathan.cameron@huawei.com>, <shameerali.kolothum.thodi@huawei.com>,
+	<salil.mehta@huawei.com>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <shaojijie@huawei.com>, <hkelam@marvell.com>
+Subject: [PATCH V4 RESEND net-next 1/7] net: hibmcge: Add debugfs supported in this module
+Date: Tue, 3 Dec 2024 23:01:25 +0800
+Message-ID: <20241203150131.3139399-2-shaojijie@huawei.com>
+X-Mailer: git-send-email 2.30.0
+In-Reply-To: <20241203150131.3139399-1-shaojijie@huawei.com>
+References: <20241203150131.3139399-1-shaojijie@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemk100013.china.huawei.com (7.202.194.61)
 
-On Sun, 01 Dec 2024, Dmitry Baryshkov <dmitry.baryshkov@linaro.org> wrote:
-> Reading access to connector->eld can happen at the same time the
-> drm_edid_to_eld() updates the data. Take the newly added eld_mutex in
-> order to protect connector->eld from concurrent access.
->
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+This patch initializes debugfs and creates root directory
+for each device. The tx_ring and rx_ring debugfs files
+are implemented together.
 
-Reviewed-by: Jani Nikula <jani.nikula@intel.com>
+Signed-off-by: Jijie Shao <shaojijie@huawei.com>
+---
+ChangeLog:
+v1 -> v2:
+  - Remove debugfs file 'dev_specs' because the dump register
+    does the same thing, suggested by Andrew.
+  - Move 'tx timeout cnt' from debugfs to ethtool -S, suggested by Andrew.
+  - Add a new patch for debugfs file 'irq_info', suggested by Andrew.
+  - Ignore the error code of the debugfs initialization failure, suggested by Andrew.
+v1: https://lore.kernel.org/all/20241023134213.3359092-3-shaojijie@huawei.com/
+---
+ .../net/ethernet/hisilicon/hibmcge/Makefile   |  3 +-
+ .../ethernet/hisilicon/hibmcge/hbg_debugfs.c  | 95 +++++++++++++++++++
+ .../ethernet/hisilicon/hibmcge/hbg_debugfs.h  | 12 +++
+ .../net/ethernet/hisilicon/hibmcge/hbg_main.c | 29 +++++-
+ 4 files changed, 136 insertions(+), 3 deletions(-)
+ create mode 100644 drivers/net/ethernet/hisilicon/hibmcge/hbg_debugfs.c
+ create mode 100644 drivers/net/ethernet/hisilicon/hibmcge/hbg_debugfs.h
 
-and
-
-Acked-by: Jani Nikula <jani.nikula@intel.com>
-
-for merging via whichever tree you find best.
-
-
-
-> ---
->  drivers/gpu/drm/i915/display/intel_audio.c | 3 +++
->  1 file changed, 3 insertions(+)
->
-> diff --git a/drivers/gpu/drm/i915/display/intel_audio.c b/drivers/gpu/drm/i915/display/intel_audio.c
-> index 32aa9ec1a204d2ecde46cad36598aa768a3af671..3902ab8431139c3ff4dc17b841d94b6d3241dec3 100644
-> --- a/drivers/gpu/drm/i915/display/intel_audio.c
-> +++ b/drivers/gpu/drm/i915/display/intel_audio.c
-> @@ -699,10 +699,12 @@ bool intel_audio_compute_config(struct intel_encoder *encoder,
->  	const struct drm_display_mode *adjusted_mode =
->  		&crtc_state->hw.adjusted_mode;
->  
-> +	mutex_lock(&connector->eld_mutex);
->  	if (!connector->eld[0]) {
->  		drm_dbg_kms(&i915->drm,
->  			    "Bogus ELD on [CONNECTOR:%d:%s]\n",
->  			    connector->base.id, connector->name);
-> +		mutex_unlock(&connector->eld_mutex);
->  		return false;
->  	}
->  
-> @@ -710,6 +712,7 @@ bool intel_audio_compute_config(struct intel_encoder *encoder,
->  	memcpy(crtc_state->eld, connector->eld, sizeof(crtc_state->eld));
->  
->  	crtc_state->eld[6] = drm_av_sync_delay(connector, adjusted_mode) / 2;
-> +	mutex_unlock(&connector->eld_mutex);
->  
->  	return true;
->  }
-
+diff --git a/drivers/net/ethernet/hisilicon/hibmcge/Makefile b/drivers/net/ethernet/hisilicon/hibmcge/Makefile
+index ae58ac38c206..1a0ec2fb8c24 100644
+--- a/drivers/net/ethernet/hisilicon/hibmcge/Makefile
++++ b/drivers/net/ethernet/hisilicon/hibmcge/Makefile
+@@ -5,4 +5,5 @@
+ 
+ obj-$(CONFIG_HIBMCGE) += hibmcge.o
+ 
+-hibmcge-objs = hbg_main.o hbg_hw.o hbg_mdio.o hbg_irq.o hbg_txrx.o hbg_ethtool.o
++hibmcge-objs = hbg_main.o hbg_hw.o hbg_mdio.o hbg_irq.o hbg_txrx.o hbg_ethtool.o \
++		hbg_debugfs.o
+diff --git a/drivers/net/ethernet/hisilicon/hibmcge/hbg_debugfs.c b/drivers/net/ethernet/hisilicon/hibmcge/hbg_debugfs.c
+new file mode 100644
+index 000000000000..9c0b2c7231fe
+--- /dev/null
++++ b/drivers/net/ethernet/hisilicon/hibmcge/hbg_debugfs.c
+@@ -0,0 +1,95 @@
++// SPDX-License-Identifier: GPL-2.0+
++// Copyright (c) 2024 Hisilicon Limited.
++
++#include <linux/debugfs.h>
++#include <linux/device.h>
++#include <linux/etherdevice.h>
++#include <linux/seq_file.h>
++#include "hbg_common.h"
++#include "hbg_debugfs.h"
++#include "hbg_hw.h"
++#include "hbg_irq.h"
++#include "hbg_txrx.h"
++
++static struct dentry *hbg_dbgfs_root;
++
++struct hbg_dbg_info {
++	const char *name;
++	int (*read)(struct seq_file *seq, void *data);
++};
++
++#define hbg_get_bool_str(state) ((state) ? "true" : "false")
++
++static void hbg_dbg_ring(struct hbg_priv *priv, struct hbg_ring *ring,
++			 struct seq_file *s)
++{
++	u32 irq_mask = ring->dir == HBG_DIR_TX ? HBG_INT_MSK_TX_B :
++						 HBG_INT_MSK_RX_B;
++
++	seq_printf(s, "ring used num: %u\n",
++		   hbg_get_queue_used_num(ring));
++	seq_printf(s, "ring max num: %u\n", ring->len);
++	seq_printf(s, "ring head: %u, tail: %u\n", ring->head, ring->tail);
++	seq_printf(s, "fifo used num: %u\n",
++		   hbg_hw_get_fifo_used_num(priv, ring->dir));
++	seq_printf(s, "fifo max num: %u\n",
++		   hbg_get_spec_fifo_max_num(priv, ring->dir));
++	seq_printf(s, "irq enabled: %s\n",
++		   hbg_get_bool_str(hbg_hw_irq_is_enabled(priv, irq_mask)));
++}
++
++static int hbg_dbg_tx_ring(struct seq_file *s, void *unused)
++{
++	struct net_device *netdev = dev_get_drvdata(s->private);
++	struct hbg_priv *priv = netdev_priv(netdev);
++
++	hbg_dbg_ring(priv, &priv->tx_ring, s);
++	return 0;
++}
++
++static int hbg_dbg_rx_ring(struct seq_file *s, void *unused)
++{
++	struct net_device *netdev = dev_get_drvdata(s->private);
++	struct hbg_priv *priv = netdev_priv(netdev);
++
++	hbg_dbg_ring(priv, &priv->rx_ring, s);
++	return 0;
++}
++
++static const struct hbg_dbg_info hbg_dbg_infos[] = {
++	{ "tx_ring", hbg_dbg_tx_ring },
++	{ "rx_ring", hbg_dbg_rx_ring },
++};
++
++static void hbg_debugfs_uninit(void *data)
++{
++	debugfs_remove_recursive((struct dentry *)data);
++}
++
++void hbg_debugfs_init(struct hbg_priv *priv)
++{
++	const char *name = pci_name(priv->pdev);
++	struct device *dev = &priv->pdev->dev;
++	struct dentry *root;
++	u32 i;
++
++	root = debugfs_create_dir(name, hbg_dbgfs_root);
++
++	for (i = 0; i < ARRAY_SIZE(hbg_dbg_infos); i++)
++		debugfs_create_devm_seqfile(dev, hbg_dbg_infos[i].name,
++					    root, hbg_dbg_infos[i].read);
++
++	/* Ignore the failure because debugfs is not a key feature. */
++	devm_add_action_or_reset(dev, hbg_debugfs_uninit, root);
++}
++
++void hbg_debugfs_register(void)
++{
++	hbg_dbgfs_root = debugfs_create_dir("hibmcge", NULL);
++}
++
++void hbg_debugfs_unregister(void)
++{
++	debugfs_remove_recursive(hbg_dbgfs_root);
++	hbg_dbgfs_root = NULL;
++}
+diff --git a/drivers/net/ethernet/hisilicon/hibmcge/hbg_debugfs.h b/drivers/net/ethernet/hisilicon/hibmcge/hbg_debugfs.h
+new file mode 100644
+index 000000000000..80670d66bbeb
+--- /dev/null
++++ b/drivers/net/ethernet/hisilicon/hibmcge/hbg_debugfs.h
+@@ -0,0 +1,12 @@
++/* SPDX-License-Identifier: GPL-2.0+ */
++/* Copyright (c) 2024 Hisilicon Limited. */
++
++#ifndef __HBG_DEBUGFS_H
++#define __HBG_DEBUGFS_H
++
++void hbg_debugfs_register(void);
++void hbg_debugfs_unregister(void);
++
++void hbg_debugfs_init(struct hbg_priv *priv);
++
++#endif
+diff --git a/drivers/net/ethernet/hisilicon/hibmcge/hbg_main.c b/drivers/net/ethernet/hisilicon/hibmcge/hbg_main.c
+index 75505fb5cc4a..7a03fdfa32a7 100644
+--- a/drivers/net/ethernet/hisilicon/hibmcge/hbg_main.c
++++ b/drivers/net/ethernet/hisilicon/hibmcge/hbg_main.c
+@@ -11,6 +11,7 @@
+ #include "hbg_irq.h"
+ #include "hbg_mdio.h"
+ #include "hbg_txrx.h"
++#include "hbg_debugfs.h"
+ 
+ static void hbg_change_mtu(struct hbg_priv *priv, int new_mtu);
+ 
+@@ -160,7 +161,12 @@ static int hbg_init(struct hbg_priv *priv)
+ 	if (ret)
+ 		return ret;
+ 
+-	return hbg_mdio_init(priv);
++	ret = hbg_mdio_init(priv);
++	if (ret)
++		return ret;
++
++	hbg_debugfs_init(priv);
++	return 0;
+ }
+ 
+ static int hbg_pci_init(struct pci_dev *pdev)
+@@ -245,7 +251,26 @@ static struct pci_driver hbg_driver = {
+ 	.id_table	= hbg_pci_tbl,
+ 	.probe		= hbg_probe,
+ };
+-module_pci_driver(hbg_driver);
++
++static int __init hbg_module_init(void)
++{
++	int ret;
++
++	hbg_debugfs_register();
++	ret = pci_register_driver(&hbg_driver);
++	if (ret)
++		hbg_debugfs_unregister();
++
++	return ret;
++}
++module_init(hbg_module_init);
++
++static void __exit hbg_module_exit(void)
++{
++	pci_unregister_driver(&hbg_driver);
++	hbg_debugfs_unregister();
++}
++module_exit(hbg_module_exit);
+ 
+ MODULE_LICENSE("GPL");
+ MODULE_AUTHOR("Huawei Tech. Co., Ltd.");
 -- 
-Jani Nikula, Intel
+2.33.0
+
 
