@@ -1,129 +1,216 @@
-Return-Path: <linux-kernel+bounces-429210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF28F9E18D3
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 11:07:36 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 278079E18D6
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 11:08:18 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD507166ABC
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:08:14 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D765D1E0B77;
+	Tue,  3 Dec 2024 10:08:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="UWhiOVTF"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84473280F87
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:07:35 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3066A1E0DB7;
-	Tue,  3 Dec 2024 10:07:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vCwMQb0S"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9E721DFE07
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 10:07:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 147DE1E0DA7
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 10:08:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733220448; cv=none; b=ShtKTXBX/wnAsalMBCzRgdaal+GVZbwNWlhC5IUg1FBTLbaws6DHn9bry4VwpLOHsh6tINaizarS8yvTquM7RJvBRG44pmSF5yON95P1Sh6EOPpFiJfKBd9EhxfTz0ubGcIxPU3xKJ0soTtZGDJ7o9wxhD7c3O4vz3ePt1U1wKw=
+	t=1733220493; cv=none; b=b4hZKwK6HpX4ERKB+pOnj6Gg+bd9dH3nr65AGOK7NaO21gcarLNj5DPWC52fJOm4fXk0UaAcwGr5OmCTMGaOqKQc0mVYM3/x8bgyWQyGS4Maj40NyYoONEZRtP8POLZAB3J37t7+Lckw29e/QajnlP2b+c9ZpVWJ6r82VdUI5fA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733220448; c=relaxed/simple;
-	bh=rDhrWjqsitQOm02p1yx3Crr6aSKeDzrUUQOFa0Mc4Mk=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=qLWJ5jNYUq4XPvo+GF5vpWbG5MaS+QwOr18m/geBfRKQkk1XAcmqlWBvgSUSYXWtlFTH/X4RWKUbds1wGaA1Uv3pmOVs/J9eD2yi49kQ7Zx6/JsuoS+21eAUsj/MFRDLNm7LKmm8hR+Q0/+503WZfZwvZ2TvHyUA9fY2uWfirCw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vCwMQb0S; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-434a852bb6eso48817335e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 02:07:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733220445; x=1733825245; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=rDhrWjqsitQOm02p1yx3Crr6aSKeDzrUUQOFa0Mc4Mk=;
-        b=vCwMQb0SpDy6GVSKib02Jg57j7HApfpkqcfpQS/BnOjiGD1ZCy9h4w3Thg3lFz5yzT
-         WgrawZDKABwPc0125SnoRrjb0be25/+d4vBzHHMswGAhraylixSKGley+BADQ9f5l78g
-         /OMn7BvXNx5kwNCub+dOGTxz383LRO9rKHt6sQAyvam5g+j9p9WDIR/lkcWFwWKXj85Q
-         eKODLwywcm/r0oTnochlw0Ly9EbNhzKTKG4Z0R2f8W5pAyXsCNl4PYQzDCR7Yh2QriH1
-         HULh2sPg6Zts1OCcopPRSW867orysHWB6sa7IIEzzZJKJUa/FTYUxY+rh0EQgzubUHX0
-         loKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733220445; x=1733825245;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=rDhrWjqsitQOm02p1yx3Crr6aSKeDzrUUQOFa0Mc4Mk=;
-        b=wTRz1TxCWdVz2iiA1+mokI4IeIv+UckLtqiI9VQqCUMsJJ0Ep1y5yHG6GLZ2GCEAzs
-         RvrzSuqlnBXjjTmf/DjnvTVDl3Uad1Acfi/lFs5RmurRMHCWyWDrigb7YnzcpNOIfMl0
-         d5caZ/7edO6imcHRKqAufbzPG/8lCIehLI7baKtkVnMZXTCfnU2KDckzl8PFn8xoT1LA
-         55xqUx2N+1JptzEDvNh3T3BNckrZyy9QOMO3p/ShOQgKRRLUpSkGHnuKJ1N43+G2ER+L
-         WA+SVFwMbhAp0yFIKHDAIzXTpVUBo/qJ9/9kwAghz6JalEyLaTRj6RZY6u2WY/9dYQW4
-         aYkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVUDk+dMzKstJcaCJYM4ldO5bRo4TzEV7B80QB/urhbTmaXIcwiYDCw+X7eMhvAbsWITHPVibQijWWb7VM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzOJEWPYt8MmY8zLrWiC6K2sMBsiKIclSYhdfYXlZHJtqQ27XTy
-	/wIn321a0x18q1OPro9pMCdxd/dTIHHReFeaGzH7fhuEGiCoFZjggyWQgJrJkeA=
-X-Gm-Gg: ASbGnctoG9n4L1YWdavMG42nmHYVOXlaO+MClkEyk56WDXhn2Rt5ecjJKjotGHzsGak
-	6P6rBgM5RXfwW3rEm09tziYVkB7ZV4rtLeKNPSCROylw2KTuu7wgiY0HwSbGzv1UotAwZWxZgWi
-	YLXCFPYLQ3Kbub5CLQ6HXERow8s5gc586n8AEBMRT0nnZ+kpcSFy+QlWyblGXdccVP3sP1E260V
-	/lf2nM8oLRznGhNhsbpFOh2M1TOGZqkR4NxIHHU+scRu/Orl1a7YXo=
-X-Google-Smtp-Source: AGHT+IEX3CBzUR11qB9xMFFVxV7orqiKJB6nzE3kEEtb8duUyFuW0fDSGHNnay9m/wWpgm8QQt4SVg==
-X-Received: by 2002:a05:600c:1f8e:b0:434:9efd:26b0 with SMTP id 5b1f17b1804b1-434d09c0c12mr16633575e9.13.1733220445220;
-        Tue, 03 Dec 2024 02:07:25 -0800 (PST)
-Received: from [10.1.1.109] ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434aa7e5b9csm215194865e9.43.2024.12.03.02.07.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Dec 2024 02:07:24 -0800 (PST)
-Message-ID: <b311b50e0f54959cd8dac1ef21dd798dd6204331.camel@linaro.org>
-Subject: Re: [PATCH 2/4] dt-bindings: power: supply: add max77759-fg flavor
- and don't require nvme address
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Thomas Antoine <t.antoine@uclouvain.be>, Sebastian Reichel
- <sre@kernel.org>,  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,  Dimitri Fedrau
- <dima.fedrau@gmail.com>, Catalin Marinas <catalin.marinas@arm.com>, Will
- Deacon <will@kernel.org>,  Peter Griffin <peter.griffin@linaro.org>, Alim
- Akhtar <alim.akhtar@samsung.com>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org
-Date: Tue, 03 Dec 2024 10:07:23 +0000
-In-Reply-To: <20588923-a660-49fe-8efb-766bee22f215@uclouvain.be>
-References: <20241202-b4-gs101_max77759_fg-v1-0-98d2fa7bfe30@uclouvain.be>
-	 <20241202-b4-gs101_max77759_fg-v1-2-98d2fa7bfe30@uclouvain.be>
-	 <fe254a002000f2bbfbe51d074cf28f7427a27f9a.camel@linaro.org>
-	 <20588923-a660-49fe-8efb-766bee22f215@uclouvain.be>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.1-4 
+	s=arc-20240116; t=1733220493; c=relaxed/simple;
+	bh=BHqRaVfc7tN4rHQ7YVrYeiJePGGG6pWV15o1/pcM6HI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YH4lgyo9Q0a1VI+snkhFiCCNWLqcF+C57DDfFofz4hSA461dBic8TmeOzQkK4nPUDiBMSv+mJZou7gEUs2ayzsMZr08aiG92MRKcfE8m5J64nPUSNqalNR9KPTi6/mYexE+5/1vPGhBFQ1peJpEMfOtAPRefyJSetZCX45pqWSA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=UWhiOVTF; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=1qwiw93w4KUHaVr81ssStA672Mi72xx31+mXTQRYpN0=; b=UWhiOVTFSRCc1rIXNPlWarYCLX
+	eTBveI+s8uH2R17Qe1XLXq5JLQLjGgyin7oCGLB6ukcu6PJ6s9uwydtIBvitNEFHEKa7hmXkVHFjC
+	mKAe8V8ljXgJ807hCIJthJXxMpSoUR8QDuKJbxR4zqwMLpno4LaNzbrxkXwmXBsFrE8nTUkZnP/Sy
+	zcPc5/bHsAlcv7xNg50vmJ6KlYIOXO6f/Ro1OqW129wvATUA7EMajqHA87qtsjyVZaiMXrlXCFzGX
+	fQSAdQ8YPy5ngBgt6nWwLAqgvRBmuw+eDltKd9LmvK8644wPjz7dpmF1sbH3jyx41+zAWU7iofm5U
+	c+mp4LEA==;
+Received: from 77-249-17-89.cable.dynamic.v4.ziggo.nl ([77.249.17.89] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tIPp0-00000002LiL-2SHc;
+	Tue, 03 Dec 2024 10:07:58 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id B2391300327; Tue,  3 Dec 2024 11:07:57 +0100 (CET)
+Date: Tue, 3 Dec 2024 11:07:57 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Seohyeon Maeng <msh1307@theori.io>
+Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+	jgross@suse.com, leitao@debian.org, linux-kernel@vger.kernel.org,
+	bioloidgp@gmail.com
+Subject: Re: [Report] Race Condition in text_poke_bp_batch/poke_int3_handler
+Message-ID: <20241203100757.GG8562@noisy.programming.kicks-ass.net>
+References: <674eba3e.620a0220.127f52.7e92@mx.google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <674eba3e.620a0220.127f52.7e92@mx.google.com>
 
-On Tue, 2024-12-03 at 10:32 +0100, Thomas Antoine wrote:
-> On 12/3/24 07:57, Andr=C3=A9 Draszik wrote:
-> > On Mon, 2024-12-02 at 14:07 +0100, Thomas Antoine via B4 Relay wrote:
-> > > From: Thomas Antoine <t.antoine@uclouvain.be>
-> > >=20
-> > > As the Maxim max77759 fuel gauge has no non-volatile memory slave add=
-ress,
-> > > make it non-obligatory. Except for this, the max77759 seems to behave=
- the
-> > > same as the max1720x.
-> >=20
-> > It also needs an interrupt line, and the previously mentioned shunt-
-> > resistor-micro-ohms, and probably a power supply.
->=20
-> I will try to add the interrupt line for v2. About the power supply, I
-> didn't see anything about it in the devicetree from Google. Even it
-> there is one, I guess it would be a single power supply for the whole
-> max77759, not just the fuel gauge. Wouldn't it be more logical to have an
-> mfd which activates the supply when other functions of the max77759 have
-> been implemented?
+On Tue, Dec 03, 2024 at 04:58:50PM +0900, Seohyeon Maeng wrote:
 
-I've looked it up now and for power supply nothing indeed seems necessary.
+> [   24.729808] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
+
+What QEMU version and setup are you using? 
+
+There have been QEMU bugs around there. Can you reproduce on real
+hardware? Because I can't seem to trigger this...
 
 
-Cheers,
-Andre'
+> A kernel panic occurs when the following code is executed during live
+> patching. In this scenario, an int3 trap can be triggered.
+> 
+> static inline void perf_event_task_sched_out(struct task_struct *prev,
+> 					     struct task_struct *next)
+> {
+> 	[...]
+> 	if (static_branch_unlikely(&perf_sched_events))
+> 		__perf_event_task_sched_out(prev, next);
+> }
+> 
+> noinstr int poke_int3_handler(struct pt_regs *regs)
+> {
+> 	[...]
+> 	desc = try_get_desc();    // [1]
+> 	if (!desc)
+> 		return 0;
+> 	[...]
+> 	if (unlikely(desc->nr_entries > 1)) {
+> 		tp = __inline_bsearch(ip, desc->vec, desc->nr_entries,
+> 				      sizeof(struct text_poke_loc),
+> 				      patch_cmp);
+> 		if (!tp)
+> 			goto out_put;
+> 	} else {
+> 		tp = desc->vec;
+> 		if (text_poke_addr(tp) != ip)
+> 			goto out_put;
+> 	}
+> 	[...]
+> out_put:
+> 	put_desc();
+> 	return ret;
+> }
+> 
+> During the Interrupt Handler (poke_int3_handler) processing, the patch
+> function may be entered, resulting in an improper reference count
+> (refcount). This can cause the reference count to be incorrectly set,
+> and the bp_desc.vec and bp_desc.nr_entries are reinitialized, leading
+> to a loss of critical information and subsequent failures in handling
+> the int3 trap.
+> 
+> static void text_poke_bp_batch(struct text_poke_loc *tp, unsigned int nr_entries)
+> {	
+> 	[...]
+> 	lockdep_assert_held(&text_mutex);
+> 
+> 	bp_desc.vec = tp;
+> 	bp_desc.nr_entries = nr_entries;
+> 
+> 	/*
+> 	 * Corresponds to the implicit memory barrier in try_get_desc() to
+> 	 * ensure reading a non-zero refcount provides up to date bp_desc data.
+> 	 */
+> 	atomic_set_release(&bp_desc.refs, 1); // [2]
+> 	[...]	
+> 	/*
+> 	 * Remove and wait for refs to be zero.
+> 	 */
+> 	if (!atomic_dec_and_test(&bp_desc.refs))   // [3]
+> 		atomic_cond_read_acquire(&bp_desc.refs, !VAL);
+> 	[...]
+> }
+> 
+> As demonstrated above, bp_desc and its refcount can be modified while
+> poke_int3_handler is executing, leading to unexpected behavior.
+> 
+> Consider a scenario where two CPUs concurrently execute the sequence
+> [1] -> [2] -> [3] -> [1], with overlapping operations on the reference
+> count.  When [3] is executed, the refcount may drop to zero. As a
+> result, when [1] attempts to retrieve the descriptor, it fails,
+> leading to a kernel panic.
+
+I'm failing to see how this can happen. The text_poke_bp() caller should
+hold text_mutex, there SHOULD be no concurrency on [2]/[3].
+
+So there is a single CPU doing text_poke_bp():
+
+  mutex_lock(&text_mutex);
+  text_poke_bp_batch()
+    lockdep_assert_held(&text_mutex);
+    atomic_set_release(&bp_desc.refs, 1);	[2]
+    smp_wmb();
+
+    poke-first-byte-to-INT3			[A]
+
+    text_poke_sync();
+
+    poke-tail-bytes
+
+    text_poke_sync();
+
+    poke-first-byte
+
+    text_poke_sync();				[B]
+							
+    if (!atomic_dec_and_test(&bp_desc.refs))	[3]
+      atomic_cond_read_acquire(&bp_desc.refs, VAL);
+  mutex_unlock(&text_mutex);
+
+
+The only concurrency is multiple CPUs hitting the INT3, which exists
+between [A] and [B], and notably, in that range the reference count
+should be very much >= 1.
+
+And [3] very specifically waits for all pre-existing interrupt handlers
+to complete; at point [B] the INT3 is gone and no new handlers can
+possibly start.
+
+The INT3 handler (poke_int3_handler()) had the following cases:
+
+ - the boring case, INT3 is observed right after A, it gets a ref, does
+   the emulation and completes before 3.
+
+ - the tail case, INT3 is observed somewhere before B, it gets a ref,
+   does the emulation but complets after B, in which case 3 will wait
+   for it.
+
+Hmm, there *might* be an issue when:
+
+ - INT3 triggers right before B, poke_int3_handler()'s try_get_desc() is
+   delayed until after 3.
+
+But that is not what you were describing, were you? I think that case is
+made impossible by text_poke_sync() itself, that sends an IPI to all
+CPUs, completion of that IPI would block on the completion of the INT3
+which triggered right before B.
+
+And after the sync-IPI that CPU must not observe INT3 anymore.
+
+
+If you really think there is a problem here, please describe the code
+flow in more detail. But given I can't trigger anything, nor actually
+see a hole in the code, I'm going to assume you managed to tickle the
+QEMU bug.
+
 
 
