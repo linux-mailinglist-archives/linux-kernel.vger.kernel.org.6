@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-429486-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B1A79E1EE1
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 15:19:18 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F3AC9E1D21
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 14:09:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3AAE1B3FAAC
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 12:50:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 27705B62CBA
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 12:50:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 690B71F1314;
-	Tue,  3 Dec 2024 12:48:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 217EF1F4718;
+	Tue,  3 Dec 2024 12:48:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YB1/JhVV"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yu2+KZWi"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD9CE1F4265;
-	Tue,  3 Dec 2024 12:48:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8004E1F4710
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 12:48:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733230094; cv=none; b=R3qKChsEeDZlIJi8UdtBimHIwNj3IrESVhWy98SpKmIPlDFuAzw/WXAwQsiis92rGDHvK7Kiyn4pkbp8WlCo9xdjfbrOYsbGJz1NwjO5k9IqSW4m9ffTxg424tyX0a6NBnHcomlyGRCYf0fr4fAP5ykVbXwZCuCn+AEL5pxBaQo=
+	t=1733230100; cv=none; b=WIK7XVQJqib13MNfdxC1Z1B485IWGNrLaPEoELzcsH5iALUkHU9HrO6v/e0ad2pmyZ4v1HORLNmwa/4u2sX8Sr5TMqR9XDrzn+/5Og5WeizJSx5WKIFlgTk0EZ+AoH9e6//ZEQd45I/Euc/TGWyfmZgoYtF4AbsRTk84K+i5SVk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733230094; c=relaxed/simple;
-	bh=A8QKBxilDmxPa7rkbda6zcbE9W7eNHPT2bdz3YleFLw=;
+	s=arc-20240116; t=1733230100; c=relaxed/simple;
+	bh=NfLmqQjhH+UlQ7Y+G2ykkZMplv/ejiQc6RhXEP3cv9c=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=nwwGfcMUNxLMVvAqCE0gNJz831GzPYO84z40bXl1bSbvwoLlC75NhgRJ77YmNZgElTJkOc8WVgFxuUesZ5StL35QgrlcAFSw/JBiah2pXcKhQJRZU6cJtkDG8mGBy4dQDySaAcUcspBK798JIf0jZfXhCXMcyPfzMVQY0EcKpcw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YB1/JhVV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35ACEC4CEDA;
-	Tue,  3 Dec 2024 12:48:12 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=er8C50aWiqVesmsasM1rjcwwJkgxTE8Pmo3V9RkQKdOylFhrkUJHwrKFlF/pV07M+R0o9BCAH7e8AqjjvML44ntCK0eRDa6FE+QwPJiBRnBOULxn35MMHFj77LrHsy3FD0YYVOct/SzJGJelCOuMC+pqpomlWw7rCopAxl1sf0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Yu2+KZWi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C299CC4CED8;
+	Tue,  3 Dec 2024 12:48:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733230093;
-	bh=A8QKBxilDmxPa7rkbda6zcbE9W7eNHPT2bdz3YleFLw=;
+	s=k20201202; t=1733230100;
+	bh=NfLmqQjhH+UlQ7Y+G2ykkZMplv/ejiQc6RhXEP3cv9c=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=YB1/JhVVfVllWqpTIrk7/axmeR9qWo1CHsDZMaaZTOWJ29KPqtjV3kLB4Pk0GoN2V
-	 AbbvlHTU1FZ+DHYwFi6AF3Yeu1TKtv9Yew9wF0o6u89WlZgOlzsLREFY46EmLl4PKE
-	 gPF3qGGGtg59PCzJPDt1gkn684JMR/mBBVmy2MShSIbi26KebRhM7L9dA3FiXS6KUs
-	 SwyBymbe+bDRIlhaoAYRn/ZBN5dHh2KzXQjr2m27ZIVUMpOTk8jlRJMmXw9f8XTI4k
-	 58sA3Wu7c1Pc8ei4ezose9Kdwq05p9VvShFCdrxjTEdh93/RDQeITLthtHW2ol+mUm
-	 HN/ENvn45KIsg==
+	b=Yu2+KZWiSIg/vcibGpWsC4cSQbX7GUoTsRpfcjQeVzVoSvs+rjG+UlSrYzTyUDwdI
+	 ga5ga1wgyLuIOxUK7PRdjOOwas0dHstcVRs4hb6Ct/oOTZlr3NpjewUgorCB0g1wv3
+	 uTSF9S1gNIZJ4Of4zDoStJL+72ik3DAONCVZE+JXx74xTwu/2AFg8rcOcRWXBMcuax
+	 mulsC1oYrj9JpLIzDjmaiHaRR9S9iFbbgMkR3dpxBTlauafShocbEDuyC47gx8wPKP
+	 jz4tCO3BzZ6kbwKbJMAX7d3JQ/oCVDEUMAaDvZQYqRnKRyZ8qaz8bgndw9Vy1S5HNY
+	 SNbYEK10lubvw==
 From: Mark Brown <broonie@kernel.org>
-Date: Tue, 03 Dec 2024 12:45:55 +0000
-Subject: [PATCH 3/6] arm64/ptrace: Zero FPMR on streaming mode entry/exit
+Date: Tue, 03 Dec 2024 12:45:58 +0000
+Subject: [PATCH 6/6] arm64/sme: Reenable SME
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,96 +51,47 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241203-arm64-sme-reenable-v1-3-d853479d1b77@kernel.org>
+Message-Id: <20241203-arm64-sme-reenable-v1-6-d853479d1b77@kernel.org>
 References: <20241203-arm64-sme-reenable-v1-0-d853479d1b77@kernel.org>
 In-Reply-To: <20241203-arm64-sme-reenable-v1-0-d853479d1b77@kernel.org>
 To: Catalin Marinas <catalin.marinas@arm.com>, 
  Will Deacon <will@kernel.org>
 Cc: Mark Rutland <mark.rutland@arm.com>, 
  linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Mark Brown <broonie@kernel.org>, stable@vger.kernel.org
+ Mark Brown <broonie@kernel.org>
 X-Mailer: b4 0.15-dev-9b746
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2536; i=broonie@kernel.org;
- h=from:subject:message-id; bh=A8QKBxilDmxPa7rkbda6zcbE9W7eNHPT2bdz3YleFLw=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBnTv4CiOSW2bhpgcdgsYNhwD/Bim4F7ucOylhTitF5
- bNZ69KSJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZ07+AgAKCRAk1otyXVSH0LOrB/
- 99y5btc73beTOcl314LKxYh6c8mPHO20HigFHyqQdH86SXdpieb5FJR5m4nRfAnosSZgvstgKONgTz
- XZqsLN/KGPd4tQ9DKCVEydJ3/qFG/nswfG8vbzrZjvHZJ/R27QaD+TrhV3stJvQ+vb9ExTbYHxLbly
- a2q+yRIYr7+UZg5twhsndT1luzc4kNgcnc3yyEiqUm/6CQZzYTl3hn7duGakQiQun0A5IFN4fo3+7W
- /RfIDT448OmJWNI/6atAEtDOSpHazBrW8YbYL2Hn8+vGSQmltJjnGmtktoMOAjED3od8W1fkRBQB9w
- gfO+/3RX68xQLyTKjlR4djCYJYqWcj
+X-Developer-Signature: v=1; a=openpgp-sha256; l=769; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=NfLmqQjhH+UlQ7Y+G2ykkZMplv/ejiQc6RhXEP3cv9c=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBnTv4EwAM7vHQhCvbi4NPdM/aOb5HiD8WW+R04Hwxs
+ zQLBaXaJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZ07+BAAKCRAk1otyXVSH0GhZB/
+ sGRSMP+r1w2EvOeWpp1ren3qhBDoiJyO61GV2YT1wDopNT9HefjfeDe+yPisElGPZdPvi21dHByK0u
+ 6EHYKPBCF6TrC5EW4eLWCIl86ntF5Ym7Zw6qsBgrdlnQNoUF1NzxxOziu2h9Odun/EjCWC0Ted5Uf4
+ 31BnrqOPDSmcBabkjEVeXjvAKgHv5uFRVHS9MnPNuM1TD55kahcDYCsjQmTFiHM/3OI3z3OkxaMxpu
+ Dr/XrY6g3eQ1/BD5u00yHaMQOHyF71QdwHBMgO6b6ZnKogrJcJcAUmmhlYqU7seGNaylYBWkSUfnum
+ R0rvriv0KBw/bSl5tqqYZBYvZm8ePz
 X-Developer-Key: i=broonie@kernel.org; a=openpgp;
  fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-When FPMR and SME are both present then entering and exiting streaming mode
-clears FPMR in the same manner as it clears the V/Z and P registers.
-Since entering and exiting streaming mode via ptrace is expected to have
-the same effect as doing so via SMSTART/SMSTOP it should clear FPMR too
-but this was missed when FPMR support was added. Add the required reset
-of FPMR.
+Now that fixes for all the known issues with SME have been applied
+remove the BROKEN dependency from it so it's generally available again.
 
-Since changing the vector length resets SVCR a SME vector length change
-implemented via a write to ZA can trigger an exit of streaming mode and
-we need to check when writing to ZA as well.
-
-Fixes: 4035c22ef7d4 ("arm64/ptrace: Expose FPMR via ptrace")
 Signed-off-by: Mark Brown <broonie@kernel.org>
-Cc: stable@vger.kernel.org
 ---
- arch/arm64/kernel/ptrace.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+ arch/arm64/Kconfig | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/arch/arm64/kernel/ptrace.c b/arch/arm64/kernel/ptrace.c
-index e4437f62a2cda93734052c44b48886db83d75b3e..43a9397d5903ff87b608befdcaed3f9a7e48f976 100644
---- a/arch/arm64/kernel/ptrace.c
-+++ b/arch/arm64/kernel/ptrace.c
-@@ -877,6 +877,7 @@ static int sve_set_common(struct task_struct *target,
- 			  const void *kbuf, const void __user *ubuf,
- 			  enum vec_type type)
- {
-+	u64 old_svcr = target->thread.svcr;
- 	int ret;
- 	struct user_sve_header header;
- 	unsigned int vq;
-@@ -908,8 +909,6 @@ static int sve_set_common(struct task_struct *target,
- 
- 	/* Enter/exit streaming mode */
- 	if (system_supports_sme()) {
--		u64 old_svcr = target->thread.svcr;
--
- 		switch (type) {
- 		case ARM64_VEC_SVE:
- 			target->thread.svcr &= ~SVCR_SM_MASK;
-@@ -1008,6 +1007,10 @@ static int sve_set_common(struct task_struct *target,
- 				 start, end);
- 
- out:
-+	/* If we entered or exited streaming mode then reset FPMR */
-+	if ((target->thread.svcr & SVCR_SM) != (old_svcr & SVCR_SM))
-+		target->thread.uw.fpmr = 0;
-+
- 	fpsimd_flush_task_state(target);
- 	return ret;
- }
-@@ -1104,6 +1107,7 @@ static int za_set(struct task_struct *target,
- 		  unsigned int pos, unsigned int count,
- 		  const void *kbuf, const void __user *ubuf)
- {
-+	u64 old_svcr = target->thread.svcr;
- 	int ret;
- 	struct user_za_header header;
- 	unsigned int vq;
-@@ -1184,6 +1188,10 @@ static int za_set(struct task_struct *target,
- 	target->thread.svcr |= SVCR_ZA_MASK;
- 
- out:
-+	/* If we entered or exited streaming mode then reset FPMR */
-+	if ((target->thread.svcr & SVCR_SM) != (old_svcr & SVCR_SM))
-+		target->thread.uw.fpmr = 0;
-+
- 	fpsimd_flush_task_state(target);
- 	return ret;
- }
+diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+index 100570a048c5e8892c0112704f9ca74c4fc55b27..7e3182dd6fa0dadd961c352f88484cff0e520eaa 100644
+--- a/arch/arm64/Kconfig
++++ b/arch/arm64/Kconfig
+@@ -2270,7 +2270,6 @@ config ARM64_SME
+ 	bool "ARM Scalable Matrix Extension support"
+ 	default y
+ 	depends on ARM64_SVE
+-	depends on BROKEN
+ 	help
+ 	  The Scalable Matrix Extension (SME) is an extension to the AArch64
+ 	  execution state which utilises a substantial subset of the SVE
 
 -- 
 2.39.5
