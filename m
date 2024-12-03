@@ -1,150 +1,168 @@
-Return-Path: <linux-kernel+bounces-429752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D589B9E2358
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:35:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E1519E2394
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:39:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4E1A16D035
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 15:31:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF80516D62C
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 15:34:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E94461F76CE;
-	Tue,  3 Dec 2024 15:30:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A369A1F9EAC;
+	Tue,  3 Dec 2024 15:32:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="PS54EpbB";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="P2746Q0s";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="PS54EpbB";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="P2746Q0s"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="ssdLS1LP"
+Received: from mail-oi1-f176.google.com (mail-oi1-f176.google.com [209.85.167.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6D201F76C7
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 15:30:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE7681F759C
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 15:32:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733239856; cv=none; b=YP+09jUIb5aM6zRZEcNMbB/ddlJbyXQAFvBUDRxeOP7Yb69hI2EeJPcFeCgYOBBrNxT721wlsuwh02r2NDejL52iG0JYQ8ulkG0npuG0nV3DrUB+i7qJGWfJTKZI61QqjsAHE16a4h7c+fJBd4bEWrqHR26JF+9RvsN8bx7X/WU=
+	t=1733239971; cv=none; b=OJQqFFCUaUw0W1xN1sVmXprMTP8tJa88uJBoGLUa3AEuOSHOvxx1lXo8MYVyjgnsc2n0y6NJa+dbyO2KwQo/r3iQ6wHLVTF2aglGgz2XSBfinndb5P9sEhnsPrLAo9Nxv2fZGaLzCHl9VjBmQVYlMu7vRl/EA5N2ZtFLpdEUH+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733239856; c=relaxed/simple;
-	bh=zWQgHYpyRQa2VA+Oolvik8QyyEbMbRXlJpcJNxb0ics=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QbEL0WYUQnVbkideEk0U5oTikXMKlpWWqsrG3b0j5dJFIimFF8GgMv/y97OYCgr/t/m5tKvSeeLA1YIBEVbJPftQCvR+884bchLwc3NIGAP/zkkpRwJmV8tcpB9cnzAtSp8jCoY4uyno0jLgOT/X+hZFNitYN1VC5Aj9Imm79jM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=PS54EpbB; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=P2746Q0s; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=PS54EpbB; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=P2746Q0s; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 066B51F445;
-	Tue,  3 Dec 2024 15:30:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1733239853; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RHb8MOnWhrezL6xDBmamy+BIYbJwg/hcDSsuLIyNMKs=;
-	b=PS54EpbB3GsItM2TlmOBy9MwWXLh+ZtKNQPY9jKbgSYxnD4ODh6WKWO3wsJZyeMMcy8/8X
-	THqYM/gYTMue0PF5FRt0pJlGPtmRtJLM9II/2lz+YV9kPSpIhWmgIbiJTaLlvZSzGhjCoS
-	n4GKvQM7lOgDD/FJPPQZK1nJ40j5yjA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1733239853;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RHb8MOnWhrezL6xDBmamy+BIYbJwg/hcDSsuLIyNMKs=;
-	b=P2746Q0sIH/p8zHpc4SmyGUCWw1dQg+5ZsOLHETYVmbjcKXVxMeQxS39gv92jzbWEGeFMv
-	PUSuHL2OuzgR3IDw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1733239853; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RHb8MOnWhrezL6xDBmamy+BIYbJwg/hcDSsuLIyNMKs=;
-	b=PS54EpbB3GsItM2TlmOBy9MwWXLh+ZtKNQPY9jKbgSYxnD4ODh6WKWO3wsJZyeMMcy8/8X
-	THqYM/gYTMue0PF5FRt0pJlGPtmRtJLM9II/2lz+YV9kPSpIhWmgIbiJTaLlvZSzGhjCoS
-	n4GKvQM7lOgDD/FJPPQZK1nJ40j5yjA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1733239853;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RHb8MOnWhrezL6xDBmamy+BIYbJwg/hcDSsuLIyNMKs=;
-	b=P2746Q0sIH/p8zHpc4SmyGUCWw1dQg+5ZsOLHETYVmbjcKXVxMeQxS39gv92jzbWEGeFMv
-	PUSuHL2OuzgR3IDw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5739913A15;
-	Tue,  3 Dec 2024 15:30:52 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id ZBpaEiwkT2ffSAAAD6G6ig
-	(envelope-from <osalvador@suse.de>); Tue, 03 Dec 2024 15:30:52 +0000
-Date: Tue, 3 Dec 2024 16:30:50 +0100
-From: Oscar Salvador <osalvador@suse.de>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	linuxppc-dev@lists.ozlabs.org,
-	Andrew Morton <akpm@linux-foundation.org>, Zi Yan <ziy@nvidia.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Naveen N Rao <naveen@kernel.org>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>
-Subject: Re: [PATCH RESEND v2 1/6] mm/page_isolation: don't pass gfp flags to
- isolate_single_pageblock()
-Message-ID: <Z08kKtfC0F41WscX@localhost.localdomain>
-References: <20241203094732.200195-1-david@redhat.com>
- <20241203094732.200195-2-david@redhat.com>
+	s=arc-20240116; t=1733239971; c=relaxed/simple;
+	bh=89Ccy3GI5ZUKxFiNR9lyKoxkgOUx6zEEiBrhRigykbc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=SlxJFQM7kLhAZxhYrzLxpjP+a8PBNmYE8ROvVEDkfVMOvzjWXdev8ljl+H7dITkHW9hfw4FaiCEcXHi2xXbJDa6czUwOKDsjgjWB5dOs6RlqwX27TtK0oEnqHzdx+IujJXyjzfeakhw/dtCRDgLJBf9sSLYaRB1GxzAWtFsf/qw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=ssdLS1LP; arc=none smtp.client-ip=209.85.167.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-oi1-f176.google.com with SMTP id 5614622812f47-3ea5e405870so2463532b6e.3
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 07:32:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1733239967; x=1733844767; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ReI+Zr1x7wQ/SlfmJGhzAq3WrMPRqrYdy9B8AN1mepA=;
+        b=ssdLS1LPBUHL1S31Q32Y/smkGXM0559dx9pYbkyDBWJ7eY6YZD+xY2uqJAfV12RuVW
+         xwtblMjAy2gaeg7xJ3mkFST5v0G+JzIFu+gF7FWes+8Q7MPyarpDkxEWlN68cx39P79p
+         qjZbtmWeQiUaON9nakCBeBVepmGECBc+cSpKmS1pPqYlRb+My0DohaccrNIzgMocBMs0
+         BERVtEJ35+2veCbgFwsQISDue53j3fIhlrIk9B843TKalWJPW9LaX+5PkTmNnFHdFkKf
+         BSbv+W/kFJrSiXxrJY/NJvfPwSfbmL+9mK/81i1/r5v5p7J86z08tUOY9ObHCH7ng6e9
+         sroQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733239967; x=1733844767;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ReI+Zr1x7wQ/SlfmJGhzAq3WrMPRqrYdy9B8AN1mepA=;
+        b=LjjBc2HYgTmS4DxlDgPILGdtwwaKIEXsziXFnGu10yT+fYZwJCeuRMJsFj7/5+cFSc
+         NJxxpccFlAC3j1t+V8X93JEgRT5+PUhFrBOLQ0xn78kurGqwHE8aexfCElZ9ZyrHKgE/
+         Rz7/E248BXnOByOPB7mHM9PcAod7ocDnZMzYjM8cJeUqbypTVEJIQrdIk4oS72HwDOND
+         QOq07TCS0COOHc6WOY6CFOhlXRUB6nZfq5YejUnwYpFbOYsq7H8/+t9PdeZOKr4z0cue
+         w9lFaf4THgL4ZzlNVou12frWdWNU7SPljQgolAXJoNoHpwB06VrR3ocBsRMZjntFbeWM
+         kj4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWXGj4Orv6UEazHXok2SJObPJyufGNV3M5NsYhGqHIi/e5inYpWzjUZSY7UEjTxnDMcgu21hXIbb40rBjg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxI9vNHW6XqDZRwlDIDba29H7P8kfIwoT/K5ulmS3A4x3RPgZMN
+	HTk/VZEZFpV/d6u0eAGQ2e3a8AZW75oS8tMNs6CMh1lrZHQqvlJ3JxOCOC7LDBNf2qHEqszBe6c
+	e
+X-Gm-Gg: ASbGncsT2M5dFvsJe3OF6ldqFfBQ7rEN7U2SuyVbrfJjD64pUJbcGij0WuTF1t7yA0C
+	fE9zHlpXEOGXhSsyBprCj5gtbRF5LaulckcZe/+1WhnEL2UaV+BiXwdhJ/aY2ott7WVkqVFbtnS
+	NxbPzP9kuiYlLPSCWggGShfGBoOGq7rX0agPCO4QGG43xHUiVdKweFUKXP6ljCUHWOOo1Xemi0Z
+	QO8JUv/pFPnfH8UbjEjiCOQYe4Yp3OA1UdtU3hq4cWam/6JVO0rVtXDIdE=
+X-Google-Smtp-Source: AGHT+IEjGwc7GFJjqyvYWDgJBqgGGBcMfQCEEJJRf9YUZZ1W6BgQFHNlpJWElLeXDmEpw+9XPHnUvQ==
+X-Received: by 2002:a05:6808:1406:b0:3e6:1ea5:6b30 with SMTP id 5614622812f47-3eae4f9162amr3792647b6e.24.1733239966815;
+        Tue, 03 Dec 2024 07:32:46 -0800 (PST)
+Received: from localhost.localdomain ([130.250.255.163])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-3ea86036cbbsm2891878b6e.8.2024.12.03.07.32.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Dec 2024 07:32:46 -0800 (PST)
+From: Jens Axboe <axboe@kernel.dk>
+To: linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org
+Cc: hannes@cmpxchg.org,
+	clm@meta.com,
+	linux-kernel@vger.kernel.org,
+	willy@infradead.org,
+	kirill@shutemov.name,
+	bfoster@redhat.com,
+	Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 01/12] mm/filemap: change filemap_create_folio() to take a struct kiocb
+Date: Tue,  3 Dec 2024 08:31:37 -0700
+Message-ID: <20241203153232.92224-3-axboe@kernel.dk>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20241203153232.92224-2-axboe@kernel.dk>
+References: <20241203153232.92224-2-axboe@kernel.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241203094732.200195-2-david@redhat.com>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-8.30 / 50.00];
-	REPLY(-4.00)[];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	MISSING_XM_UA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[vger.kernel.org,kvack.org,lists.ozlabs.org,linux-foundation.org,nvidia.com,ellerman.id.au,gmail.com,csgroup.eu,kernel.org,linux.ibm.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[nvidia.com:email,imap1.dmz-prg2.suse.org:helo,suse.de:email]
-X-Spam-Score: -8.30
-X-Spam-Flag: NO
+Content-Transfer-Encoding: 8bit
 
-On Tue, Dec 03, 2024 at 10:47:27AM +0100, David Hildenbrand wrote:
-> The flags are no longer used, we can stop passing them to
-> isolate_single_pageblock().
-> 
-> Reviewed-by: Zi Yan <ziy@nvidia.com>
-> Signed-off-by: David Hildenbrand <david@redhat.com>
+Rather than pass in both the file and position directly from the kiocb,
+just take a struct kiocb instead. While doing so, move the ki_flags
+checking into filemap_create_folio() as well. In preparation for actually
+needing the kiocb in the function.
 
-Reviewed-by: Oscar Salvador <osalvador@suse.de>
+No functional changes in this patch.
 
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+---
+ mm/filemap.c | 17 +++++++++--------
+ 1 file changed, 9 insertions(+), 8 deletions(-)
 
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 7c76a123ba18..898e992039e8 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -2459,15 +2459,17 @@ static int filemap_update_page(struct kiocb *iocb,
+ 	return error;
+ }
+ 
+-static int filemap_create_folio(struct file *file,
+-		struct address_space *mapping, loff_t pos,
+-		struct folio_batch *fbatch)
++static int filemap_create_folio(struct kiocb *iocb,
++		struct address_space *mapping, struct folio_batch *fbatch)
+ {
+ 	struct folio *folio;
+ 	int error;
+ 	unsigned int min_order = mapping_min_folio_order(mapping);
+ 	pgoff_t index;
+ 
++	if (iocb->ki_flags & (IOCB_NOWAIT | IOCB_WAITQ))
++		return -EAGAIN;
++
+ 	folio = filemap_alloc_folio(mapping_gfp_mask(mapping), min_order);
+ 	if (!folio)
+ 		return -ENOMEM;
+@@ -2486,7 +2488,7 @@ static int filemap_create_folio(struct file *file,
+ 	 * well to keep locking rules simple.
+ 	 */
+ 	filemap_invalidate_lock_shared(mapping);
+-	index = (pos >> (PAGE_SHIFT + min_order)) << min_order;
++	index = (iocb->ki_pos >> (PAGE_SHIFT + min_order)) << min_order;
+ 	error = filemap_add_folio(mapping, folio, index,
+ 			mapping_gfp_constraint(mapping, GFP_KERNEL));
+ 	if (error == -EEXIST)
+@@ -2494,7 +2496,8 @@ static int filemap_create_folio(struct file *file,
+ 	if (error)
+ 		goto error;
+ 
+-	error = filemap_read_folio(file, mapping->a_ops->read_folio, folio);
++	error = filemap_read_folio(iocb->ki_filp, mapping->a_ops->read_folio,
++					folio);
+ 	if (error)
+ 		goto error;
+ 
+@@ -2550,9 +2553,7 @@ static int filemap_get_pages(struct kiocb *iocb, size_t count,
+ 		filemap_get_read_batch(mapping, index, last_index - 1, fbatch);
+ 	}
+ 	if (!folio_batch_count(fbatch)) {
+-		if (iocb->ki_flags & (IOCB_NOWAIT | IOCB_WAITQ))
+-			return -EAGAIN;
+-		err = filemap_create_folio(filp, mapping, iocb->ki_pos, fbatch);
++		err = filemap_create_folio(iocb, mapping, fbatch);
+ 		if (err == AOP_TRUNCATED_PAGE)
+ 			goto retry;
+ 		return err;
 -- 
-Oscar Salvador
-SUSE Labs
+2.45.2
+
 
