@@ -1,81 +1,197 @@
-Return-Path: <linux-kernel+bounces-429095-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429096-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A29439E1753
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:24:15 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B248D9E18F8
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 11:15:03 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D19B164B74
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:24:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4F4BDB3CD51
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:24:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39EEB1DED75;
-	Tue,  3 Dec 2024 09:23:38 +0000 (UTC)
-Received: from cmccmta2.chinamobile.com (cmccmta6.chinamobile.com [111.22.67.139])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2763F1DED4D;
-	Tue,  3 Dec 2024 09:23:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.139
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733217817; cv=none; b=AuprHCQq9wYwCaeSDksCusYy/FHPwqOX6uI+CM46cQOCED/eqA5Ss9+H6rXFmPjN5JYkay6+WzoTYVApcIQpiUM82a47oRTDIi5EUAk97boWBDq0UUiXfmhm55CsBQZ5Yqz1iYXB7Qv3s5OfzbfJj/yPhxEv1FQWGrBTNlSBg0E=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733217817; c=relaxed/simple;
-	bh=TtXfN5H4J4ndzSU8WuIWwo4OK0Z8eJ7MsbV2nYDHcf8=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=RuR1zNQYryl2c0DDAhv9lYH/k6iI7PPzD6VV/h0sQy3oFA7gkIGJu+Ffl2wlfQxOyI1dqsaTW71IfRSAREVN9bns5F9BGrh3R+TWCYuXQ+Nu4T8R70IbHRHF/9aRm2wGiI9iyBr0+GoNAZFAWBvHcdcfat9F3Y+O8dGa65qakFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
-	by rmmx-syy-dmz-app05-12005 (RichMail) with SMTP id 2ee5674ece10549-c1560;
-	Tue, 03 Dec 2024 17:23:31 +0800 (CST)
-X-RM-TRANSID:2ee5674ece10549-c1560
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from ubuntu.localdomain (unknown[10.55.1.70])
-	by rmsmtp-syy-appsvr06-12006 (RichMail) with SMTP id 2ee6674ece1253c-241cc;
-	Tue, 03 Dec 2024 17:23:31 +0800 (CST)
-X-RM-TRANSID:2ee6674ece1253c-241cc
-From: Zhu Jun <zhujun2@cmss.chinamobile.com>
-To: thierry.reding@gmail.com
-Cc: jonathanh@nvidia.com,
-	zhujun2@cmss.chinamobile.com,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [RESEND] soc/tegra: bpmp: Fix typo in bpmp-abi.h
-Date: Tue,  3 Dec 2024 01:23:28 -0800
-Message-Id: <20241203092328.7614-1-zhujun2@cmss.chinamobile.com>
-X-Mailer: git-send-email 2.17.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F6261DF736;
+	Tue,  3 Dec 2024 09:23:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="YXOdcKCd"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2042.outbound.protection.outlook.com [40.107.92.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 455DE1DE3A2;
+	Tue,  3 Dec 2024 09:23:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.42
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733217832; cv=fail; b=EeeX8I+R12xZokoXk74BaKH7fiyFZhZsL2CGjv+S8muYQKXGnvMVC9y+gJLcdfFQi5qY0cl+YbRwn2I6Gk9pJoWxlOPUiGifjGHCpToGV8P8s9VWvvN3IY/D+mt4nT52rOD9zIUkOrxmPt45P9TnslcYNkn0nyHL4mTIqOMDNQc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733217832; c=relaxed/simple;
+	bh=srhE2265ekXcDB86qyQEnnsjpxARt+o7CXLkpMLUy18=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=KpyrmTyRyhUcYTfJ67qQZhBZ/nKepbpSES6wUrLC4QGXNsjRsdyb/S5dSupx/3HHfNCC++EWxQQFV1IkaJSr+MYpq80QDB8iTApLgPL9L+osy+OCzQ9rC7Y+xxNOFwtqJTbFdZVUn1t8y03IAE8kp0tr9WAX46MeRkxbnAMTXh4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=YXOdcKCd; arc=fail smtp.client-ip=40.107.92.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=BYTnpyyfD4xB5pDITnI2nP5aIEeSkB5+McS1hUzKT3DTf+UfqoR/D9ZlH697SCZPr5ns4/JU67Sx4jC0bW4sQZZDmyWmi99sd/NeAySq9smXAvJmgVU6Ojdd2LjdSX5yQkim3KhU15CAt7Q4aTWFYL5mRRGPRLhkR/89j+LMhmj0nPMKukPxFLr7ogiFmL1fdhoC6imTUzvJAh+UBJQF4YV0fUik+uv7aSHXbvj1OumIQDvmPm5+pXwB7LjpKRhzfEiDrTqIDdqaEJdj33giLFFbz/ofB539KLb/8nMBFNkL8nocudWJ0yKYQT5tmHuertuVnnp9Y9AGDunA+SBrvg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Ns4VoJFXeRedwoYg15qjWrvyxuSnkzVWO7rJp7vA988=;
+ b=Ppla9PTn0t0nbloTtzeBoZ3HvaYO4UwFdQHOoJkmI2ulA4SaRyYYQk4+AgFGs3rZKZGyLc67tyRAEkw6C9q7/fxMjToVrnq0CEcshetQ5VKEui51E8+I4EfrSOZl+ifa7OV/19ZfP6t0mO7In51+Q/NPUa2N4bxlCN2aj7hyu0mhRIrKuVQzw/7Kza6qb7gDLeiQrbgyIaxC3uXv848siFyP7gDTdIs4DSb7h5vHpePBbsN0yZCwPxNnZRTyQWc+F9y71pL5U3TxB/M4h7b/tI1+CncA5NCWDL+3csaV8N8rO+MAOCwsISV85l4R/lkcRMbmlK86hSdsXoT3skC1XQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Ns4VoJFXeRedwoYg15qjWrvyxuSnkzVWO7rJp7vA988=;
+ b=YXOdcKCd9Y2b6rzbAY4kRnbynP7oQS5291w315d/4PvcnXoPz8QqnMSqQxB+u2KpvQgGOqGtN/RufJYBxUM8q5jmFIVhEOC5atewIv97S7A4/aiLaNTjHfzU77B2nB+AETc20wo+xhCURnEf5xNyldPEEcsqqSko6hGEsJQfA6M=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DM6PR12MB4123.namprd12.prod.outlook.com (2603:10b6:5:21f::23)
+ by DM4PR12MB6664.namprd12.prod.outlook.com (2603:10b6:8:bb::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.17; Tue, 3 Dec
+ 2024 09:23:48 +0000
+Received: from DM6PR12MB4123.namprd12.prod.outlook.com
+ ([fe80::512d:6caa:552a:7ebf]) by DM6PR12MB4123.namprd12.prod.outlook.com
+ ([fe80::512d:6caa:552a:7ebf%3]) with mapi id 15.20.8207.014; Tue, 3 Dec 2024
+ 09:23:48 +0000
+Message-ID: <08a82ae3-659c-4de1-b3c2-d7ca8c0c7483@amd.com>
+Date: Tue, 3 Dec 2024 14:53:39 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RESEND] soundwire: amd: clear wake enable register for
+To: vkoul@kernel.org
+Cc: yung-chuan.liao@linux.intel.com, pierre-louis.bossart@linux.dev,
+ sanyog.r.kale@intel.com, Basavaraj.Hiregoudar@amd.com,
+ Sunil-kumar.Dommati@amd.com, venkataprasad.potturu@amd.com,
+ Mario.Limonciello@amd.com, linux-sound@vger.kernel.org,
+ linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
+References: <20241203091006.4096890-1-Vijendar.Mukunda@amd.com>
+Content-Language: en-US
+From: "Mukunda,Vijendar" <vijendar.mukunda@amd.com>
+In-Reply-To: <20241203091006.4096890-1-Vijendar.Mukunda@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: PN3PR01CA0042.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:98::7) To DM6PR12MB4123.namprd12.prod.outlook.com
+ (2603:10b6:5:21f::23)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6PR12MB4123:EE_|DM4PR12MB6664:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2331cc92-9915-47e6-97e9-08dd137c311c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?K2k4Y3pmUENvVDRuSTAyMCtvT1dtY0FadzE0SjBsR3ZqSWdqNlQrdm5IVUhm?=
+ =?utf-8?B?RWMxRGJpOUQ3ay93ZHZFL3ZJckxZR2phU3F1eC9hd2lzMVR2eGhuMkJISTh5?=
+ =?utf-8?B?NjVLTmZHSzhrRk9lNlY1MU9DeGVRVmVaaTdlR25FT3d6cHF2ZDVOQWJEckFQ?=
+ =?utf-8?B?MjR1NFdtS0FxZGpWVHZEYnBPNG1kek81V2tEUDJ0WlhkcVYxYnZSNENWdjN6?=
+ =?utf-8?B?dXB5QXNXUTZORTdrVU0rcFJMSVJNUDRNeTZ2bitFblp4Y3AvdHZscFZlczZp?=
+ =?utf-8?B?VmZoMlFNTlpTaGxhZE8zeDE0aXBSa2toOHZOZ1I2bVFCaVVnTTdKMGJuQlBI?=
+ =?utf-8?B?T1lRbGNWR3VsOHJEcjlxYmZUR2l0aGc0WGtyQ0xxNTBHa3FnTEZiM0cyOUt4?=
+ =?utf-8?B?STFReVZJdG5abEU2UjBzYTRldmJ6V0tRdlhLVzI5YTRiNzJPU2JGdTVGRW80?=
+ =?utf-8?B?ek5icnhFSVY4c2xWRVoxM2ZnWW1Oa1lkM0hTdGYvTVFXd1Zwc3gwM0RSa2VX?=
+ =?utf-8?B?aEttZnZ4T0R6Y1E4aDZoUGsrUVRjYlVVVE1oVXYreW5TUlV1OWl6aXNrVS9X?=
+ =?utf-8?B?c01nRlc4WEpxMnpNMExRUHhjREUyR2lJelIzcVJXK2ZzWEd2Y0k4RkNXZDRI?=
+ =?utf-8?B?cVZSelVwSWxJcWh6YjJNR0diQlkyc3E0S3NlK2ZwWHhUcTlKZG52M2Z2Y1hw?=
+ =?utf-8?B?bjFid2V1aGpCVWNpdGdaRzRhSXMyVCtFVldKZEZkT1JkMnFoaEF6QkY3Qm80?=
+ =?utf-8?B?V2dpN0UwNnRvVW1iK2s5WjRhS09oTXZUVTZmYUh2Z1ZiZGdzZXM0QXBUUE9w?=
+ =?utf-8?B?T1BaUThrRlJBWXNFcDgycEN4NGtxa2UwYlhjRC8xL0pQbVNvTytVM2t4alZX?=
+ =?utf-8?B?Wm53UTBWdm94d2dOcGc0ejhxYlNBalZEM25IaWRQMEtlaDdXZWU5Z0ozQVR2?=
+ =?utf-8?B?MVdvaklGY3lmWmFZQngvcGZ1TFVvQUNPNDl3U0hOQnBVcWpkbUw2Y1FkM0t3?=
+ =?utf-8?B?NkYzMWJpbkxldXhJWjhxWjc1dmM1THZ2Nm5CUmRUQUpHZGhRT3ZPQUUrT2l0?=
+ =?utf-8?B?NCtOeHc1eWpoYlk1RXFHSjRVbkRtaW1IUGhRLzFKMTRBSGUybTlnT2tBVUtw?=
+ =?utf-8?B?SHJsMGlndWRsOXhoYzhpMDFZS0V1Mk5kYnQwU2JML0k0MVdwYThzMjFiZVN6?=
+ =?utf-8?B?UUtURDA0aFFWV1M1N3V5bDNOb1V3VkpMNTg2U21yQitraFBhbHNhcnRtVGds?=
+ =?utf-8?B?NEdWK2tSV0w4YmRRZ1h0RHJQR0tYbXk4K0YyaDA5RlJpbEFkZ2hIdm1jRERl?=
+ =?utf-8?B?OW5NRG11Vm84Q1phTkJKcHpROHlSRnFpU2U5dmZmRDRHVERQalBjQ1BqMVdx?=
+ =?utf-8?B?UXpRZHcvbzRjWmtOR0hZZmlLenduMHB2N1kySzNMekYvR2pBemluZHFhOTNP?=
+ =?utf-8?B?QUJKNVlpTmlSRmgyeUd0d0k3Y0hzWkdZVXExdXp3WlRPU2gzY0FMTFJKR0tX?=
+ =?utf-8?B?ZExHQngyVmsxZmZ6QkNYYmU5eDJjUTBNVW02aHVKK1FMaDN6c1ZIdG1RSDds?=
+ =?utf-8?B?RHdiL0srQTJwZmQwdk9sYlp1WWF2QXFLVDhxMncvQTNXZDJQdVI4eUVvTVEr?=
+ =?utf-8?B?bGlJRzZBN2R0UVFVUEhSTG5rZTlZdXdWdDdleWpPWTdhOFFGNGwrcXV5TkNw?=
+ =?utf-8?B?OUoyT05LOHgrNVRwTVU3bGkycWhNRXNQSmZ6aDBzQmY1WDlzd2Z4bDhJMTIr?=
+ =?utf-8?B?bXZlMHNXZ2xtSjBQY2wvem9mY0dlODNaNVRPZ0xoZ0k2M3ZYQ0NzSngrYUtC?=
+ =?utf-8?B?eTVhd2hqUFY1cjJzTzcwUT09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB4123.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?d243bEJWWkNsS3E3bWxDejhoWEVYOUMvU2YxUmk2NVFNcmRCRzMwRExHR0Iz?=
+ =?utf-8?B?ZGt1b1dEb2l1Q3hSVXljb3B6OEpPLzVLZFNtdjRwdW4rSW5vRWdnLy9PWnI2?=
+ =?utf-8?B?SzBXUmE0aFhqRjFWeTcwTUh0MkVxWDVFK2c0Q2FkV0RQRzRrNG1ZMVk4L09N?=
+ =?utf-8?B?amROTU42TDV5YkRUWEpoekdraFFtYXFUcHZhZ0lLczR0WDFaM0p1Q1gwTERv?=
+ =?utf-8?B?V2Vad3d2K3hTazVRem5idXY4VFBxSWsrazgxY0krc2dXZXdOb2RiRGFrTnNa?=
+ =?utf-8?B?M3ZRVnMyRCtFRnBxenhKSzFBZTFYaDZzeTNQUHl5MWJEQmtUbGVla2VqSzc0?=
+ =?utf-8?B?Z01UT3BvaTc0WUdVOHY0TEM4dGNHR29wNW85RkFiRFZFdENpdDZiQ1NMVE9D?=
+ =?utf-8?B?enUvVVN5WTBkaytlQzgvcnZ1dmNwKzZxOGlxdUsyK0R1THd0SzF2ZTBjcnFu?=
+ =?utf-8?B?elJtZnFMbVJXZVlJMDhKSnJFNDBiaG9saytNTENIR0ZuRkdhNDRlM3p6cVBw?=
+ =?utf-8?B?dEg1bGxiZE1ISG1CZllRS1B6WFNOZS9xYWVybjZieEdqd1d3VWtxTFRnTFJI?=
+ =?utf-8?B?d0k5akVEQUxUcVh6Q0FtTzFENEp3ZmQ1Z1EwZlZvMjhlaFUySVVNTEdOdkRN?=
+ =?utf-8?B?K09ZQldLRUxlc3RYVlNyN0NxdHV4MXdDbkVOWlVpZEc5MllaVmdNeEk2S0Qz?=
+ =?utf-8?B?dlRVd3JFcjFLL0V2WEVseExmbDhpSFRyWk04TVdmbEo3cEx2Y0wydFk1REll?=
+ =?utf-8?B?L1RZNmlSZjZlb0pPdjdOc2NMME50U2tJekFacjIvSnNkVlh6Z2J5QllJR0JH?=
+ =?utf-8?B?Q0U2c0grNTZ4U0U0QzdvY2o3Z3NoazgxQTNLUm1iY3lEZmhudW1mTDU1eHBZ?=
+ =?utf-8?B?R0l2UEVtYVExUFdIQXl0MVdLL1Q3cUU3NW9DQ1gxZCsyd2xSNzVJYjIrTkh5?=
+ =?utf-8?B?WmhUdzJsRU96T3E1RHVpb1B0TVJDNEZGSzcyZWsrRDQ5K21SUzhISUNXK3JO?=
+ =?utf-8?B?dlZKVmd1cDZIUWdUWWw0ampSeU5NcWFwV1ArMDA2WUNDYnJ6MC9xd2p0cWZp?=
+ =?utf-8?B?MHRGT2VnR1pqUmFNRkpESlEwOFlyd2x4dGVDbHNucnpzNDR2N1pRWTdFUzhj?=
+ =?utf-8?B?K3hzaThKK2UxMzdPMzMwWVUycmF1ZFBQajNEVUJTbk5JNXpkSVNleWxQM1N4?=
+ =?utf-8?B?eFFxZ1pER0pBWkZ0cGVZLzVLRVBXZnlXZFJIQmszbzIvTTZnZVlVT0UvQ1dw?=
+ =?utf-8?B?cjFmQlVOaWNpN1ZBV1RIdzZBdHhVbWwxczR5RGViTWoxNkhCa2pJemRXRGV3?=
+ =?utf-8?B?ZFY5L29UVHJUdk1FMHVvZWJuOThTMXU3QTZLdVMraUdqTk56RkNwOVRpQWlN?=
+ =?utf-8?B?V2tPMnNxQlo5eVRsNWZwQ2o2Q0xMdHNVK0p6VFl6cnpPV0tRaHg3YmtTakdP?=
+ =?utf-8?B?NjUzbUlFR0pRMVIwR0t0Z0U4SWExczQySC8vOE9yNW82UGplWGp5MUtJSlRX?=
+ =?utf-8?B?VUREN0FORW9WY3dEdEtBVXRKOERhYkx4T05Cc0MwWEZJWDVJTGxQQ1hCcWJI?=
+ =?utf-8?B?SDZlSmNocGE0NzBHWjhrSnh2OHg1eHovdUpNaEFDSlVIdlp6TEhwTDlvWUtS?=
+ =?utf-8?B?VFhUQlcrMktvTHoxRk1IOUtWTmxDWVNoQVduMXJBSUprQnFxRlRRc2ZadXdm?=
+ =?utf-8?B?NHgweWRWd2ppZDArTVhmek1nMUtKR3RqZnBSQWtad2EvNnF0c1BrUkVBQzli?=
+ =?utf-8?B?R3VabWJYVXBXMXdrdFZlOUJVeHdVZ05CTkEweTgvcXdXeHFUWEE5VkhJbjF4?=
+ =?utf-8?B?ZzRoZE0wenlYRS85aC9CNzUzUEFYOGR1V2NySjZBd0xVb0l4WENTbmd6dWwx?=
+ =?utf-8?B?MmlCSzBkNkxWZG9zbys2cFZVOTdoL2wwRnlETzBFQjFaUWRjUldTTVIvYUcy?=
+ =?utf-8?B?ejFUMXJTWEk3RmEreDhsekNPN3Q4cDEvdktIcDRjZDJnbytTYlM1aWRhRDV1?=
+ =?utf-8?B?QnNVMG1mL3BtUUFJcUlLYU84QkRhQlV0L2U1RkxSSEp4YzRrclJteTVuM3Y1?=
+ =?utf-8?B?dDNURU5wSUVrVHh3UmxROE44S1dTYTR0N1NoakJibHVQQzFEclJPRGRzL3ZG?=
+ =?utf-8?Q?k+1UIfYq9rFANRb1l3XdJSPzw?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2331cc92-9915-47e6-97e9-08dd137c311c
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB4123.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Dec 2024 09:23:48.0941
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ADIkhb570GV8WHSkCWsLd0jgNTdZjbA6Bzyu796MOU+Nrnywp5u0qwV+rZnr2/QSgA4Ony6vEz71glsRyfWkWQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6664
 
-The word 'traget' is wrong, so fix it.
-
-Signed-off-by: Zhu Jun <zhujun2@cmss.chinamobile.com>
----
- include/soc/tegra/bpmp-abi.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/include/soc/tegra/bpmp-abi.h b/include/soc/tegra/bpmp-abi.h
-index 6b995a8f0f6d..dc0789c20333 100644
---- a/include/soc/tegra/bpmp-abi.h
-+++ b/include/soc/tegra/bpmp-abi.h
-@@ -3755,7 +3755,7 @@ enum mrq_pwr_limit_cmd {
-  * @defgroup bpmp_pwr_limit_type PWR_LIMIT TYPEs
-  * @{
-  */
--/** @brief Limit value specifies traget cap */
-+/** @brief Limit value specifies target cap */
- #define PWR_LIMIT_TYPE_TARGET_CAP		0U
- /** @brief Limit value specifies maximum possible target cap */
- #define PWR_LIMIT_TYPE_BOUND_MAX		1U
--- 
-2.17.1
-
-
+On 03/12/24 14:40, Vijendar Mukunda wrote:
+> As per design for power off mode, clear the wake enable register during
+> resume sequence.
+Ignore this patch as commit title was incomplete.
+Resent the patch again.
+>
+> Signed-off-by: Vijendar Mukunda <Vijendar.Mukunda@amd.com>
+> ---
+>  drivers/soundwire/amd_manager.c | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/drivers/soundwire/amd_manager.c b/drivers/soundwire/amd_manager.c
+> index 5a4bfaef65fb..96a3aa6da711 100644
+> --- a/drivers/soundwire/amd_manager.c
+> +++ b/drivers/soundwire/amd_manager.c
+> @@ -1190,6 +1190,7 @@ static int __maybe_unused amd_resume_runtime(struct device *dev)
+>  	if (amd_manager->power_mode_mask & AMD_SDW_CLK_STOP_MODE) {
+>  		return amd_sdw_clock_stop_exit(amd_manager);
+>  	} else if (amd_manager->power_mode_mask & AMD_SDW_POWER_OFF_MODE) {
+> +		writel(0x00, amd_manager->acp_mmio + ACP_SW_WAKE_EN(amd_manager->instance));
+>  		val = readl(amd_manager->mmio + ACP_SW_CLK_RESUME_CTRL);
+>  		if (val) {
+>  			val |= AMD_SDW_CLK_RESUME_REQ;
 
 
