@@ -1,192 +1,250 @@
-Return-Path: <linux-kernel+bounces-429832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C5EA9E2B25
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 19:41:44 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9E5F9E2B86
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 19:59:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 919ECB67192
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:22:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 74065B42057
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:23:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 502C61F8AFA;
-	Tue,  3 Dec 2024 16:22:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3E6D1F8938;
+	Tue,  3 Dec 2024 16:23:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="w68KKUgr"
-Received: from omta40.uswest2.a.cloudfilter.net (omta40.uswest2.a.cloudfilter.net [35.89.44.39])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="pj0q0gnU"
+Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2043.outbound.protection.outlook.com [40.107.100.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BA881F8AC0
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 16:22:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.39
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733242944; cv=none; b=ADnExwA7jJV5yNUdbEjlvab7EJ2lXMqulI1ijj8qhQaeNt3+5Ap/6FjSTUrRCsNfuI+gx6NXZZTCMyZH5fjuA9Xlg5qpEr5VhjFrovy4GMHom7DW1CIA8a8M4FcbkZckNpDHv/dbjq0wS8nyLPYK+r3oLKoCsLkZ7GkPqYnF5zw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733242944; c=relaxed/simple;
-	bh=MAMb3InXzNtxIVC9mpD36wC7DiH6bFIuVagB1fhWAqU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=H3x88KAJlmxo7oslbq3rqyy1IJubibcCZvCSjgDBRXzjTXubjraJLyOqQ3b2u7ntr+6Mcr6DyOg2H1XNm4Evu0S90anjrOvntHGU/wDVkkKYeT++iCnAaj0OSc1cyzg884I3LY4vhDqaW7sDsexBn1pdQLMhP4RfOGr4WuVPZuw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=w68KKUgr; arc=none smtp.client-ip=35.89.44.39
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
-Received: from eig-obgw-6009a.ext.cloudfilter.net ([10.0.30.184])
-	by cmsmtp with ESMTPS
-	id IUDxtso6wvH7lIVdmtipHr; Tue, 03 Dec 2024 16:20:46 +0000
-Received: from gator4166.hostgator.com ([108.167.133.22])
-	by cmsmtp with ESMTPS
-	id IVdltOFoWbs9MIVdltmAQG; Tue, 03 Dec 2024 16:20:45 +0000
-X-Authority-Analysis: v=2.4 cv=FY0xxo+6 c=1 sm=1 tr=0 ts=674f2fdd
- a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=GtNDhlRIH4u8wNL3EA3KcA==:17
- a=IkcTkHD0fZMA:10 a=RZcAm9yDv7YA:10 a=7T7KSl7uo7wA:10 a=mDV3o1hIAAAA:8
- a=NEAV23lmAAAA:8 a=VwQbUJbxAAAA:8 a=pGLkceISAAAA:8 a=YY3CVkhoXc6STAsvKmAA:9
- a=QEXdDO2ut3YA:10 a=J6ZU--GpMfYA:10 a=Xt_RvD8W3m28Mn_h3AK8:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=U74Ds+GFctnV/vlAbJcubbjqMwBEGmBMo13rCZz9JUQ=; b=w68KKUgrX01H8mxitVGqv0lS0F
-	B2ZzyNafbaYy6VjpmAnU6+vQTyJKoP+6NadRddjvX9w3PIkMHhpzvhftrt/dYchj4yjwtWjYPPqND
-	K9/QV6MPnGW8N4HZmBrpPdNF0sbatbLkJrR27cIhC0oIbUqt91oghFJBXIIRH/Vf4AI8CCDv7A5ny
-	e1p9spRgJJOIfvhg+SjxQbMye8R5XUhot8+lmEQxFf7cM8lv2lodKc9908l86r69hGU25N/3YvbfT
-	Je5UdHwow0NTbZXsNVFKDgaq6QW6tUuoxH6T/1tNSUhAWnW1MkNLiNUCjHLhFko71M59FJgUqcCqH
-	Ii7TGyzQ==;
-Received: from [177.238.21.80] (port=15554 helo=[192.168.0.21])
-	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96.2)
-	(envelope-from <gustavo@embeddedor.com>)
-	id 1tIVdk-002GvY-0s;
-	Tue, 03 Dec 2024 10:20:44 -0600
-Message-ID: <238df0b9-d1db-4f72-8238-828ea20ad1d9@embeddedor.com>
-Date: Tue, 3 Dec 2024 10:20:41 -0600
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 735BF1F7567;
+	Tue,  3 Dec 2024 16:23:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.43
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733242997; cv=fail; b=RzBLiyIy5g+DNsdxYsVNRNYEnm0xxREp8WRoKG9CJr4dTcdcK28u6nXN+VOWvtLIHQMfY1I1mOzBBBRL5Qn25M4NVi3FHEcvv2VihEyd9C35DvISaNwGVH9cYaBS09ui6xU8+PSm+75JcEIfBnu6KwGE6IRfttNnjZC1qLZTLaI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733242997; c=relaxed/simple;
+	bh=X4YF9qQY7FPHjvlz2AOp+f2HLBd9zAAp5nA16Z21BIs=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=OyiMUxNXWJ/nRYkhTBzoEywYKBpootGSzBioa7tvTta0NxaccObC2RMMofZ+CnAIFhmcEhcvFo/VHki+MysqXwyV837SThnz+/hk2g3nDpdxj49PXHY7LvPcA2lwCRHUkE91NnAEjfZHRX/qpuKwy+LFuQrTK1O0U2XTrkAgYJI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=pj0q0gnU; arc=fail smtp.client-ip=40.107.100.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=rYyvaewk856JuUGISmUIM7ObWdZ27o6pq9XHsI0K/RF9PErMDHLR/n1lrWIzdnyn3jf8r1J+m7ZD0eYPqsGwW2Pb38yG/86tRMRayHEo0626tF9kZmFxLA1hFUs0/6NbRPiEt08mewQtwuN/RXQixzbtPPqYzQEf0E1g4JfwglJ+CYlw4tvwjAyfgdGiR0eKTAg5v2fJpb+0UJ+D0Ot+wul4fU+zPxrdA0tdlp4IhIH7m7eBj+5HfdMlHdUxusxqGhj2fDOCeX844grfjLY2gsJEphF/o+K6IbHmbU2vlec6Yx6LnCsIN7w4DFWPsAzxsaU7kXxImVHn9+Ir9yQeWQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=MJKTw8DoswAXgJL2hdvjZ0V+i0zVWtkZBwtbDqi4nVQ=;
+ b=voAC2/mHEO1Yq7e2NKTEjtW+DGrB5Ab0TcsW2dyXWWDQ/tzWqgxAVdMKb4RHSN9evAlu27Oi5tBDd+0IXGmcWHiipLuyjhtUQtcU7ASGUIj5aq1xh+NA5wCzT77oEUQjPeIAWSxCrMXnWeVpp4aJ4Ok93J0kZOtVwOgKWDFl2qy8+UT7GHXuzQrVSh757UApJUuY5tS+/U6PaCTFA5WPlUg0ZX2puNSG2wfA3N59wVXX4lI48psME/vRBLMpb4jy38qzp5ORgbMD6OdTe46AcuehSb1SU4xWzyxsszkHwZ1bXf2bNhHptpIovaKzlsXUJ+DxHqO911O241RL1L4cAQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=gondor.apana.org.au smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=MJKTw8DoswAXgJL2hdvjZ0V+i0zVWtkZBwtbDqi4nVQ=;
+ b=pj0q0gnU3tb+I34TbYKlOEGQZXUuNBylJo8/hRYeZAoTJHuDkBMGpU7gy1pWfVL0w9tBdbJZ2bwxVDnvlEpA2f3lSJbT9vnomHUtwSM8RRdQsfXXPPQVlj9bzMHbYtdUY6N3mkeX4VBeQgvn73sRXK/FnmIbpffufiBmpQviIPs=
+Received: from SA9PR13CA0063.namprd13.prod.outlook.com (2603:10b6:806:23::8)
+ by SA1PR12MB8118.namprd12.prod.outlook.com (2603:10b6:806:333::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.18; Tue, 3 Dec
+ 2024 16:23:09 +0000
+Received: from SA2PEPF00001509.namprd04.prod.outlook.com
+ (2603:10b6:806:23:cafe::89) by SA9PR13CA0063.outlook.office365.com
+ (2603:10b6:806:23::8) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8230.7 via Frontend Transport; Tue, 3
+ Dec 2024 16:23:09 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ SA2PEPF00001509.mail.protection.outlook.com (10.167.242.41) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8230.7 via Frontend Transport; Tue, 3 Dec 2024 16:23:08 +0000
+Received: from AUS-P9-MLIMONCI.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 3 Dec
+ 2024 10:23:07 -0600
+From: Mario Limonciello <mario.limonciello@amd.com>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+CC: Mario Limonciello <mario.limonciello@amd.com>, Tom Lendacky
+	<thomas.lendacky@amd.com>, John Allen <john.allen@amd.com>, "open list:AMD
+ CRYPTOGRAPHIC COPROCESSOR (CCP) DRIVER - DB..."
+	<linux-crypto@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Subject: [PATCH v3] crypto: ccp: Use scoped guard for mutex
+Date: Tue, 3 Dec 2024 10:22:57 -0600
+Message-ID: <20241203162257.6566-1-mario.limonciello@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] net: wireless: sme: Initialize n_channels before
- accessing channels in cfg80211_conn_scan
-To: Johannes Berg <johannes@sipsolutions.net>, Haoyu Li <lihaoyu499@gmail.com>
-Cc: Kees Cook <kees@kernel.org>, "Gustavo A . R . Silva"
- <gustavoars@kernel.org>, Jeff Johnson <quic_jjohnson@quicinc.com>,
- linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-hardening@vger.kernel.org, stable@vger.kernel.org
-References: <20241203152049.348806-1-lihaoyu499@gmail.com>
- <fa9ef37903db0f81654451104b1407f60f85ce5d.camel@sipsolutions.net>
-Content-Language: en-US
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-In-Reply-To: <fa9ef37903db0f81654451104b1407f60f85ce5d.camel@sipsolutions.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 177.238.21.80
-X-Source-L: No
-X-Exim-ID: 1tIVdk-002GvY-0s
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.0.21]) [177.238.21.80]:15554
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 3
-X-Org: HG=hgshared;ORG=hostgator;
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfEX0pzAnL9fYzlPhaznTiJqCEHAewgCbxU8FHiZc0YtXfgQBvzwAnw9F6YBqFiFkZKLtAwn9VNHtXomg7uahCBIQ6exKzfrHD90h6uhysjBVDEycfu87
- iiWmpKJ/nExjpU/chvH+AOlI+cO1VDfNNAdyVuisSTIDkdQS2h5LM8SIVX/cgmHxx7sb2oYum83Z1yE2pc+mwdcT4+1MGIzWHzYyTFT2sjTw2W0mxGPVOyCC
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SA2PEPF00001509:EE_|SA1PR12MB8118:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1c8966a8-83e1-4a44-cc76-08dd13b6c647
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?USofDU3Bx7+wia5BoT5+UsXRlxmmUknqSnfSbGCAqgimQuRIqgn0YE8P3Mo9?=
+ =?us-ascii?Q?CdDWpELbhOl/eGlJxETNglyuRaU94zorWVYsSLfkw3f8WNVCq0RSzSF6xEWK?=
+ =?us-ascii?Q?+/1KK9kRZzD2YPRkGNcwiusC1ZFAM7dO30VxcEPT3dxs/BpkITR4eNn205qs?=
+ =?us-ascii?Q?nsbMYwFoV4njxK/bbn6VUphYTjRbH94uVOrtOdjeFkl21FmP52kl6oM6jaSL?=
+ =?us-ascii?Q?KzkjxyOetkm1bDmFVHK/FDoBbhpxqtROI5rRvxl8onUrTTsTIrd6lqxjFtzy?=
+ =?us-ascii?Q?HA3vwtiBBTqwlw1cRyuUWfpPOOqhJ1bSLFqQbL1QhJuhNRjhU5adGM4jI3SS?=
+ =?us-ascii?Q?Dx6e3GKPSyV/Nr8ZIRgimzA4JtGprUHsbyQCLk1Io4HA+AL+1YnuVMHIu7vm?=
+ =?us-ascii?Q?tG9zsDLNszpF+lQCMqPWsshcy3YiSXj+U+iOuKAfbJt6bmtTd/77bkd4hgQN?=
+ =?us-ascii?Q?jUZdvxlVZPXssrzALRk/QTfxAmV2Ap0e79kilz9c4onUkj+7hp4YaJjdYc3t?=
+ =?us-ascii?Q?pYM87ouPsH5fdExdbUvg7uzVZm8A8iZJDE5m9zltHgcGDIgqi9GrUe85Dg51?=
+ =?us-ascii?Q?BiZTv4GHKPbVDq66o1DIN5QU+ppSXmPo3TOcxdtSbhYpsrMKHsvTkvoqPP0i?=
+ =?us-ascii?Q?H1vt2ztWviwfI6FNG+swgcSNN6riH924vPCsQ5EABuKOSCzrSXJ1xZCaz0wD?=
+ =?us-ascii?Q?0gVo2B9R5C6OZOdVOlTA79gsssnURVCkPDT1xp83ZMKl+YnjqUxHwlcqbstn?=
+ =?us-ascii?Q?J4tNnsT+YrZCcitegItxOJR6Nmnynv3tf3Rlw4M/draDVpMXjNly77zwn8Ut?=
+ =?us-ascii?Q?4ldVlnUp3lwDoP0XCFxQDX4bcK1M005hPZBH9Kb1hfV0hBz2BWYPkmMPmv0J?=
+ =?us-ascii?Q?kxipaWqoSbQj3NDFpwFcesnr5BrXNnW/ldVx4QM4p565VbabghfSAw8iiisA?=
+ =?us-ascii?Q?CrK3x57xY2I9idx4clnO7fL/oPyl1+TZ48JUoj4ljeeR1H3cCDS1N4/81Lx3?=
+ =?us-ascii?Q?eFnuHfajCAjNfLuWK4RdMF5WKwyfgtcXxdfNp0Yt6jGZKBOkZ2bEGi7RINMw?=
+ =?us-ascii?Q?LEN8AwZSA6x3YWmZZ7NVKZflMq3ix1g8zSM2bXlZG4F5Ppp5J9A6ngkh9C5U?=
+ =?us-ascii?Q?annc2TS9m5/dWJNstjJyCTzG/Oy8lN1mb26wAVy9pXcPTJowtJicevEh2RXg?=
+ =?us-ascii?Q?qDSZC2TB4rzkEbMHS4P4I5+7Q8c2woXNNsLLBrzlbdgcl46yf6Wrr5xOOuBD?=
+ =?us-ascii?Q?rgTRs/hL/5StoPne/0etP24NktVgIqofMUyD28fzPJvsiSL9I89UoBXj1hQ6?=
+ =?us-ascii?Q?VOtlMzUBqk+phq1Jf+GwRjoIe4GVC6uB31SZandWpgw/5+KBY0XItjdzmYLV?=
+ =?us-ascii?Q?P0KxsoHgBrcAxd3h0uSObsh9n3f6uHPjTjaThHhlYPICgbgAoewlscvcNW/B?=
+ =?us-ascii?Q?4mlbraTwH5IJlqKqw6FKj2WF+ANvHsI7?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Dec 2024 16:23:08.7266
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1c8966a8-83e1-4a44-cc76-08dd13b6c647
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SA2PEPF00001509.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB8118
 
+Use a scoped guard to simplify the cleanup handling.
 
+Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+---
+v3:
+ * Fix logic error
+---
+ drivers/crypto/ccp/dbc.c | 53 +++++++++++++++-------------------------
+ 1 file changed, 20 insertions(+), 33 deletions(-)
 
-On 03/12/24 09:25, Johannes Berg wrote:
-> On Tue, 2024-12-03 at 23:20 +0800, Haoyu Li wrote:
->> With the new __counted_by annocation in cfg80211_scan_request struct,
->> the "n_channels" struct member must be set before accessing the
->> "channels" array. Failing to do so will trigger a runtime warning
->> when enabling CONFIG_UBSAN_BOUNDS and CONFIG_FORTIFY_SOURCE.
->>
->> Fixes: e3eac9f32ec0 ("wifi: cfg80211: Annotate struct cfg80211_scan_request with __counted_by")
->>
->> Signed-off-by: Haoyu Li <lihaoyu499@gmail.com>
-> 
-> nit: there should be no newline between these
-> 
-> My tolerance for this is going WAY down, it seems it's all just busy-
-> work, and then everyone complains and I need to handle "urgent fixes"
-> because of it etc.
-> 
-> I'm having severe second thoughts about ever having accepted the
-> __counted_by annotations, I think we should just revert it. Experiment
-> failed, we found ... that the code is fine but constantly needs changes
-> to make the checkers happy.
+diff --git a/drivers/crypto/ccp/dbc.c b/drivers/crypto/ccp/dbc.c
+index 5b105a23f6997..410084a9039c9 100644
+--- a/drivers/crypto/ccp/dbc.c
++++ b/drivers/crypto/ccp/dbc.c
+@@ -7,6 +7,8 @@
+  * Author: Mario Limonciello <mario.limonciello@amd.com>
+  */
+ 
++#include <linux/mutex.h>
++
+ #include "dbc.h"
+ 
+ #define DBC_DEFAULT_TIMEOUT		(10 * MSEC_PER_SEC)
+@@ -137,64 +139,49 @@ static long dbc_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+ 		return -ENODEV;
+ 	dbc_dev = psp_master->dbc_data;
+ 
+-	mutex_lock(&dbc_dev->ioctl_mutex);
++	guard(mutex)(&dbc_dev->ioctl_mutex);
+ 
+ 	switch (cmd) {
+ 	case DBCIOCNONCE:
+-		if (copy_from_user(dbc_dev->payload, argp, sizeof(struct dbc_user_nonce))) {
+-			ret = -EFAULT;
+-			goto unlock;
+-		}
++		if (copy_from_user(dbc_dev->payload, argp, sizeof(struct dbc_user_nonce)))
++			return -EFAULT;
+ 
+ 		ret = send_dbc_nonce(dbc_dev);
+ 		if (ret)
+-			goto unlock;
++			return ret;
+ 
+-		if (copy_to_user(argp, dbc_dev->payload, sizeof(struct dbc_user_nonce))) {
+-			ret = -EFAULT;
+-			goto unlock;
+-		}
++		if (copy_to_user(argp, dbc_dev->payload, sizeof(struct dbc_user_nonce)))
++			return -EFAULT;
+ 		break;
+ 	case DBCIOCUID:
+-		if (copy_from_user(dbc_dev->payload, argp, sizeof(struct dbc_user_setuid))) {
+-			ret = -EFAULT;
+-			goto unlock;
+-		}
++		if (copy_from_user(dbc_dev->payload, argp, sizeof(struct dbc_user_setuid)))
++			return -EFAULT;
+ 
+ 		*dbc_dev->payload_size = dbc_dev->header_size + sizeof(struct dbc_user_setuid);
+ 		ret = send_dbc_cmd(dbc_dev, PSP_DYNAMIC_BOOST_SET_UID);
+ 		if (ret)
+-			goto unlock;
++			return ret;
+ 
+-		if (copy_to_user(argp, dbc_dev->payload, sizeof(struct dbc_user_setuid))) {
+-			ret = -EFAULT;
+-			goto unlock;
+-		}
++		if (copy_to_user(argp, dbc_dev->payload, sizeof(struct dbc_user_setuid)))
++			return -EFAULT;
+ 		break;
+ 	case DBCIOCPARAM:
+-		if (copy_from_user(dbc_dev->payload, argp, sizeof(struct dbc_user_param))) {
+-			ret = -EFAULT;
+-			goto unlock;
+-		}
++		if (copy_from_user(dbc_dev->payload, argp, sizeof(struct dbc_user_param)))
++			return -EFAULT;
+ 
+ 		*dbc_dev->payload_size = dbc_dev->header_size + sizeof(struct dbc_user_param);
+ 		ret = send_dbc_parameter(dbc_dev);
+ 		if (ret)
+-			goto unlock;
++			return ret;
+ 
+-		if (copy_to_user(argp, dbc_dev->payload, sizeof(struct dbc_user_param)))  {
+-			ret = -EFAULT;
+-			goto unlock;
+-		}
++		if (copy_to_user(argp, dbc_dev->payload, sizeof(struct dbc_user_param)))
++			return -EFAULT;
+ 		break;
+ 	default:
+-		ret = -EINVAL;
+-
++		return -EINVAL;
+ 	}
+-unlock:
+-	mutex_unlock(&dbc_dev->ioctl_mutex);
+ 
+-	return ret;
++	return 0;
+ }
+ 
+ static const struct file_operations dbc_fops = {
 
-Thanks for taking these changes! - This is improving :) See below.
+base-commit: 40384c840ea1944d7c5a392e8975ed088ecf0b37
+-- 
+2.43.0
 
-"Right now, any addition of a counted_by annotation must also
-include an open-coded assignment of the counter variable after
-the allocation:
-
-   p = alloc(p, array, how_many);
-   p->counter = how_many;
-
-In order to avoid the tedious and error-prone work of manually adding
-the open-coded counted-by intializations everywhere in the Linux
-kernel, a new GCC builtin __builtin_counted_by_ref will be very useful
-to be added to help the adoption of the counted-by attribute.
-
-  -- Built-in Function: TYPE __builtin_counted_by_ref (PTR)
-      The built-in function '__builtin_counted_by_ref' checks whether the
-      array object pointed by the pointer PTR has another object
-      associated with it that represents the number of elements in the
-      array object through the 'counted_by' attribute (i.e.  the
-      counted-by object).  If so, returns a pointer to the corresponding
-      counted-by object.  If such counted-by object does not exist,
-      returns a null pointer.
-
-      This built-in function is only available in C for now.
-
-      The argument PTR must be a pointer to an array.  The TYPE of the
-      returned value is a pointer type pointing to the corresponding
-      type of the counted-by object or a void pointer type in case of a
-      null pointer being returned.
-
-With this new builtin, the central allocator could be updated to:
-
-   #define MAX(A, B) (A > B) ? (A) : (B)
-   #define alloc(P, FAM, COUNT) ({ \
-     __auto_type __p = &(P); \
-     __auto_type __c = (COUNT); \
-     size_t __size = MAX (sizeof (*(*__p)),\
-			 __builtin_offsetof (__typeof(*(*__p)),FAM) \
-			 + sizeof (*((*__p)->FAM)) * __c); \
-     if ((*__p = kmalloc(__size))) { \
-       __auto_type ret = __builtin_counted_by_ref((*__p)->FAM); \
-       *_Generic(ret, void *: &(size_t){0}, default: ret) = __c; \
-     } \
-   })
-
-And then structs can gain the counted_by attribute without needing
-additional open-coded counter assignments for each struct, and
-unannotated structs could still use the same allocator."[1]
-
-These changes have been merged already, and will likely be released
-in coming GCC 15.
-
-For Clang, see [2].
-
-For the kmalloc-family changes, see [3] (a new version of this that includes
-the __builtin_counted_by_ref() update is coming soon).
-
--Gustavo
-
-[1] https://gcc.gnu.org/pipermail/gcc-patches/2024-October/665165.html
-[2] https://github.com/llvm/llvm-project/issues/99774
-[3] https://lore.kernel.org/linux-hardening/20240822231324.make.666-kees@kernel.org/
 
