@@ -1,124 +1,113 @@
-Return-Path: <linux-kernel+bounces-428799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCC319E1396
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 07:53:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D78E49E139B
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 07:57:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4D0D5B2366C
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 06:53:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CBF7282951
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 06:57:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C7E418950A;
-	Tue,  3 Dec 2024 06:53:17 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E52F11862BD;
+	Tue,  3 Dec 2024 06:57:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="z2AaZCMF"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E077126C13;
-	Tue,  3 Dec 2024 06:53:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4D83186E5F
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 06:57:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733208797; cv=none; b=HWCGRkOKWxecpkz9zbzTv28F/xvHnYMdDyn3KqK8J81U3C/DA1OSaqW/FMIqtKs8W6LCTdoh6HHVQ+sdmSaYP07fjtegla5bM0ozTHhNXzIDOSoApi6vtgpEeVksMRkq5KmPemqE7DGH626f0Mdof/Hi6LDRLXqD6DNDBp0524E=
+	t=1733209064; cv=none; b=cgDPNkWpayu5L3YFm4ac57sNrjRFCbBVqcoB5ZFUh4j19GbxJuH9yzbu9Oy05fwq73GtHS9nD5c8Nbvf4wOcZs03b/ATXclW+40YfwLJLt5WArnsHZPFMDcshbP7gQsj+6atgYh/6mdj8bl1DngO8wIgH9ADkkmhHLEsjAaIu3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733208797; c=relaxed/simple;
-	bh=SVR6ceyuva1gKBEJ2DGGfb0ng5PiG04dXwLjRpLuvDI=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=Fg7ODL+QjRadWMuigvpJy3BLB5PSDMkiadQJz5CEi3gklLEyaaVP1vUWsBuwGoLPue8yPPeeDGrkAm7eSKe/SkCfNXtiAhIVwAcjvIglAFIXlKih+Kei0IxAq5BOZmeAsVeQZkUY+0PtAGpMjx/USn92aBpVb5vpn9UIIIjLQYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Y2WYs5StCz4f3jR1;
-	Tue,  3 Dec 2024 14:52:49 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id B61661A0568;
-	Tue,  3 Dec 2024 14:53:08 +0800 (CST)
-Received: from [10.174.178.129] (unknown [10.174.178.129])
-	by APP1 (Coremail) with SMTP id cCh0CgD3n7HTqk5nXGnBDQ--.6246S2;
-	Tue, 03 Dec 2024 14:53:08 +0800 (CST)
-Subject: Re: [PATCH 2/2] jbd2: flush filesystem device before updating tail
- sequence
-To: Zhang Yi <yi.zhang@huaweicloud.com>, linux-ext4@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- tytso@mit.edu, adilger.kernel@dilger.ca, jack@suse.cz, yi.zhang@huawei.com,
- chengzhihao1@huawei.com, yukuai3@huawei.com, yangerkun@huawei.com
-References: <20241203014407.805916-1-yi.zhang@huaweicloud.com>
- <20241203014407.805916-3-yi.zhang@huaweicloud.com>
-From: Kemeng Shi <shikemeng@huaweicloud.com>
-Message-ID: <ca1c680f-f3f4-40b5-13af-f8ee49d99dae@huaweicloud.com>
-Date: Tue, 3 Dec 2024 14:53:07 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+	s=arc-20240116; t=1733209064; c=relaxed/simple;
+	bh=eVFLB+6OBC9CZT606g/sbUfLAfNYRu7/+f5lWtBw8fY=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=LyI4/GgLP+x+WSGToDTNT7kxKjA8kbhxG+Vhov7Wbe+2MAs1wV5rsnmBXWYUhX9dNLDSpKAWcA7Lc3a7OVNuoM0Q29YuD0dwa/ZJ9sFTi9i8VThIVokunc8r02/oBzRVnFOVbGA5Kb+fQ8Fnb5D4bRjEKZsC3MDTvzHBup6sa7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=z2AaZCMF; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-434a8640763so43837105e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 22:57:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733209061; x=1733813861; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=eVFLB+6OBC9CZT606g/sbUfLAfNYRu7/+f5lWtBw8fY=;
+        b=z2AaZCMFOpm1sERIubzv4dZxQM7d8dJN2yZ0s+uAFPaLYZXvOi23yIfCHG5LN5DD1T
+         y51mLbzztaDq0+d1/H94neNYD8DENlgO+tVvf8OkfsMzdes5oz//HXsBTVUqAqGvSY9R
+         mYnJ84U6K8zuXydViIqveCvJTeojDNMpJl/xO7UpgJsIiygKZ08AXe+By5RcsFtmnV79
+         gDR1FIZbwVXtCZQzGFtkTuOd3SQNkXLDpKXLZFu+6oG8Ypzd/8hvubRf2CIh8C+una/u
+         oS7XWjBn5PZgaWnmFpMC2xSSwDzFg46m6J+WLm7gK1pRV5GtIFDmz99LImfigTvM2vg6
+         ZrAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733209061; x=1733813861;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=eVFLB+6OBC9CZT606g/sbUfLAfNYRu7/+f5lWtBw8fY=;
+        b=X8Drh4PoedfvwRXMtqJZiPKstU0a+9d8PcVXfA88ur0eJPsHAqSZHsXrLWdBqVsysn
+         du4LLuAiS7qzuKHp8zhKRUTA37Ibzci5gVErrv4LJFVwppjAYE7HUnAEb8kjLB+UP8Lq
+         /xc7CtNydz3CDDzcXJE1TNsZ3aez280CZM3Jirj8znzo9s9PsEb7IyxwafJW/pSebpGx
+         ePZR0jI72ZiPVJmP0Nr7tqX021Hyx4FTdb+duIss6IhT5TEgIoM34oUSsctVuvbiBNwD
+         CI+KG6Eef+aSj2tw2TmwLGZLl3wOfWvM/BWcp6bFzOjxHZoC+JaUgjXoJxPMNHtTGP5J
+         GSRg==
+X-Forwarded-Encrypted: i=1; AJvYcCVw4U/X1eTO5RRUkxtHgKa/NQSmSzlJGFlt+wIbJYoecVk73E7GkVJPnpC3uJuMCXZNoGFRu72juTeECno=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwAYsWpaKagYh2NfWJM4sBRPFCFYLvjlsZH48RU/hN2wIRPkWd/
+	KAC5D2cYhf0kBUAx8NzeVeFLfN1zHlLOg9g1uKqfICGhkQa5f1kKk3Uz8x+zGKs=
+X-Gm-Gg: ASbGncvMsWE8iaOv7U/+MsYpfHer6To7Kryjh6sEninqhRMER5mbdOZ8CQHapcfvMDK
+	RaKV+5RyKOTGklQ9FBXfMAwqVeRNq3ZiltwPnJA0yQF1rY9IusGO7BLKrnR0R06mVCs0GYGB7vG
+	E03LZT5CBxJn76lvZN2EtALYTEgurvnTAI7p0/bcscw3PVV4EcUDwEQ5uHN7CHtCc7MVZK282bq
+	mhMCpF1PePnQf1T3O6LZZDcOK3VpwCA1vYF9NtvdUSrxraSQdIgojI=
+X-Google-Smtp-Source: AGHT+IHBAYAD3b2nuutPCc6vz21mpmvr9yIOVo8l4J3kzBSf1gujYTEow9QfmlkAK91qibZX9uKohw==
+X-Received: by 2002:a5d:598b:0:b0:385:ec6e:e899 with SMTP id ffacd0b85a97d-385fd42a804mr907858f8f.59.1733209061057;
+        Mon, 02 Dec 2024 22:57:41 -0800 (PST)
+Received: from [10.1.1.109] ([80.111.64.44])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385ee60549dsm6267059f8f.34.2024.12.02.22.57.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Dec 2024 22:57:40 -0800 (PST)
+Message-ID: <fe254a002000f2bbfbe51d074cf28f7427a27f9a.camel@linaro.org>
+Subject: Re: [PATCH 2/4] dt-bindings: power: supply: add max77759-fg flavor
+ and don't require nvme address
+From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+To: t.antoine@uclouvain.be, Sebastian Reichel <sre@kernel.org>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Dimitri Fedrau <dima.fedrau@gmail.com>, Catalin
+ Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Peter
+ Griffin <peter.griffin@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org
+Date: Tue, 03 Dec 2024 06:57:39 +0000
+In-Reply-To: <20241202-b4-gs101_max77759_fg-v1-2-98d2fa7bfe30@uclouvain.be>
+References: <20241202-b4-gs101_max77759_fg-v1-0-98d2fa7bfe30@uclouvain.be>
+	 <20241202-b4-gs101_max77759_fg-v1-2-98d2fa7bfe30@uclouvain.be>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.1-4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20241203014407.805916-3-yi.zhang@huaweicloud.com>
-Content-Type: text/plain; charset=gbk
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:cCh0CgD3n7HTqk5nXGnBDQ--.6246S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7WF18Xw4ktry8Gw4xCw17Jrb_yoW8Ar1DpF
-	yUA3W2yrWkCF4UCFn7XF4xXFWIqFWvyFykWFykuF93Wa1DJwn3KrW3t34agr1qyr1F9w4r
-	Xr10gFyqg34jkaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9Ib4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
-	e2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4I
-	kC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWU
-	WwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr
-	0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWU
-	JVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJb
-	IYCTnIWIevJa73UjIFyTuYvjxUOBMKDUUUU
-X-CM-SenderInfo: 5vklyvpphqwq5kxd4v5lfo033gof0z/
 
+On Mon, 2024-12-02 at 14:07 +0100, Thomas Antoine via B4 Relay wrote:
+> From: Thomas Antoine <t.antoine@uclouvain.be>
+>=20
+> As the Maxim max77759 fuel gauge has no non-volatile memory slave address=
+,
+> make it non-obligatory. Except for this, the max77759 seems to behave the
+> same as the max1720x.
 
+It also needs an interrupt line, and the previously mentioned shunt-
+resistor-micro-ohms, and probably a power supply.
 
-on 12/3/2024 9:44 AM, Zhang Yi wrote:
-> From: Zhang Yi <yi.zhang@huawei.com>
-> 
-> When committing transaction in jbd2_journal_commit_transaction(), the
-> disk caches for the filesystem device should be flushed before updating
-> the journal tail sequence. However, this step is missed if the journal
-> is not located on the filesystem device. As a result, the filesystem may
-> become inconsistent following a power failure or system crash. Fix it by
-> ensuring that the filesystem device is flushed appropriately.
-> 
-> Fixes: 3339578f0578 ("jbd2: cleanup journal tail after transaction commit")
-> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
-> ---
->  fs/jbd2/commit.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/jbd2/commit.c b/fs/jbd2/commit.c
-> index 4305a1ac808a..f95cf272a1b5 100644
-> --- a/fs/jbd2/commit.c
-> +++ b/fs/jbd2/commit.c
-> @@ -776,9 +776,9 @@ void jbd2_journal_commit_transaction(journal_t *journal)
->  	/*
->  	 * If the journal is not located on the file system device,
->  	 * then we must flush the file system device before we issue
-> -	 * the commit record
-> +	 * the commit record and update the journal tail sequence.
->  	 */
-> -	if (commit_transaction->t_need_data_flush &&
-> +	if ((commit_transaction->t_need_data_flush || update_tail) &&
->  	    (journal->j_fs_dev != journal->j_dev) &&
->  	    (journal->j_flags & JBD2_BARRIER))
->  		blkdev_issue_flush(journal->j_fs_dev);
-> 
-In journal_submit_commit_record(), we will submit commit block with REQ_PREFLUSH
-which is supposed to ensure disk cache is flushed before writing commit block.
-So I think the current code is fine.
-Please correct me if I miss anything.
-
-Thanks,
-Kemeng
+Cheers,
+Andre'
 
 
