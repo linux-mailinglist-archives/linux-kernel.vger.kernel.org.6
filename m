@@ -1,215 +1,150 @@
-Return-Path: <linux-kernel+bounces-430220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430201-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 120469E2F08
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 23:27:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5360D9E2E8D
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 23:00:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1FEF5B35F3F
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 21:22:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 971FFB47F0B
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 20:56:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4985B20A5DB;
-	Tue,  3 Dec 2024 21:21:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=venev.name header.i=@venev.name header.b="L9I59bjh"
-Received: from a1-bg02.venev.name (a1-bg02.venev.name [213.240.239.49])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64DF020A5C6;
+	Tue,  3 Dec 2024 20:55:44 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A050204F89;
-	Tue,  3 Dec 2024 21:21:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.240.239.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEBED209F26;
+	Tue,  3 Dec 2024 20:55:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733260885; cv=none; b=rUIhrXEsJFH8dtTEYZlmbh93qZYuh/W9sWjw9/5Ndl+Q13TdnJF06GdBxRXS099tL3okOQ0uqYXd+S5vk3chKyzjvpE+EUi8nAUFIUJWsOpGtie+z5H/1hSpsjqs0JZuTa8suG76ykwJ6S7WXSeDHLW166YwBgYfMWigmCtUeSE=
+	t=1733259344; cv=none; b=qW1a6jZB/2VIS4nyscEbSCL2Pm2xq6gOojNlva5iXeBeU/2q/CSx5fN816GUxLJrmp0/CaG1bMDRVVMSggAuabsNBY7TXzpfmqyhIPrvGXfCMEE3Nb6QurQ92CkHt91JDIbyhl5fIV95KQZBWXc0179lxX7F03ekMDu8Vm8a3Z8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733260885; c=relaxed/simple;
-	bh=kTLMKEkMHsNkJ1dNvZM2CqRxYRI12AdCF29gHHsyoQM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DDIq+Xej7uy6ZDcCTr5z5+fwyrTe9AC7JeS11quU0nuem5wGr5Jrz5obAwjLW2QYILrn21sI2od3EZGmd6asLPve/wUCxGKGYQxsH3RK+7A7QYncvHVoSRe/wvDSLpBdca5+9sfPEHtIICDLtaC1XirKL24CU6cPFSBaS+ehc+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=venev.name; spf=pass smtp.mailfrom=venev.name; dkim=pass (4096-bit key) header.d=venev.name header.i=@venev.name header.b=L9I59bjh; arc=none smtp.client-ip=213.240.239.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=venev.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=venev.name
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=venev.name;
-	s=default; h=Content-Transfer-Encoding:Message-ID:Date:Subject:To:From:
-	Content-Type:Reply-To:Sender; bh=YibmFRXSsQ6h1u9JRjweqc/uxZpoOBFSIk8GiWn4mDI=
-	; b=L9I59bjh8i1CbxXdOXdHpoMdNxcV1l1hrkvm8zzuwAGES29h4OtKYlGZNwatLdbElZB1zG0OY
-	RtcO2aOdL/yKD2smTFMfGy4yI463bCYNmOKnAr0U/8b/qd5wJ4ljFbru+BUSAEGP8AEcD7bAFBjKU
-	sOEwsXFF2RXexV0hVprSoCmCiObB/71od6NfrlA0lkQUigZx7V/uu3GtT4lRN0xYkshM5dN81GVxy
-	80NAWTHnzPIbDLkiT1hLxMfVRJSGh8SyZNqzUS+F/N3FdA8RrLW8Md0V0UmuUYuQIDue38TsvYOGU
-	sHTh2TYws8zj1Id/e080UAKFWXpOZI4sF41SD4A2OAzji7IhWORVZtID8/H1m+UOXCCnZ4JhAAhxv
-	IQD6dZEiOJZYWOtACwAXmAhYScsRq30KuXxNUOTrh2ufdIbjrwx5p8WMx0n7iNGUwuhsmJUrwgw+5
-	a1RPKAYOB5XYNPtLPStDBTB66QsIJwfk7NkwNtlXdr1wvTsok1EsYc5IfHHii4lc6Fp/eDpc338l3
-	MfLsTqbpPJZwC152CsdJTSjUlT0hmx4et+GZ0ZtP2RqnzOsQ+LuzLjnYvECMwqC1DJ7VOUrsdfKxK
-	O1U5ThH07HXH3eSfNJlCeBGpPINC/scTz/uPmN4SnEhS4GYiwgMuu72hUvDgKy2yYV9AfXs=;
-Received: from a1-bg02.venev.name ([213.240.239.49] helo=pmx1.venev.name)
-	by a1-bg02.venev.name with esmtps
-	id 1tIZu6-0000000103f-1si5
-	(TLS1.3:TLS_AES_256_GCM_SHA384:256)
-	(envelope-from <hristo@venev.name>);
-	Tue, 03 Dec 2024 20:53:54 +0000
-Received: from venev.name ([213.240.239.49])
-	by pmx1.venev.name with ESMTPSA
-	id j69LKeBvT2fXowMAT9YxdQ
-	(envelope-from <hristo@venev.name>); Tue, 03 Dec 2024 20:53:54 +0000
-From: Hristo Venev <hristo@venev.name>
-To: linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Hristo Venev <hristo@venev.name>
-Subject: [PATCH] initramfs: Protect the built-in initramfs from the external one
-Date: Tue,  3 Dec 2024 22:52:48 +0200
-Message-ID: <20241203205318.238364-1-hristo@venev.name>
-X-Mailer: git-send-email 2.47.1
+	s=arc-20240116; t=1733259344; c=relaxed/simple;
+	bh=fP7CpZvJRQFUGLpdzElPlV5uhVAV/ahRnZ70kCLG3cI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=JsEDeuwxhsHbecmGFloCecqU1RwW/DWafIUmJxnRLUd77p5cUe34+60RELXZ3i2NDMe6z8RsdHiUlfJCtiOLwWeGIgCOA2ZCh1OR/kin4t2bKzcG1b01kJBqrcBYoNBkatPXvnfUqd10ZZrgZbO0EXoAZVD+63sviXYRBl0YrOA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 279F2C4CECF;
+	Tue,  3 Dec 2024 20:55:42 +0000 (UTC)
+Date: Tue, 3 Dec 2024 15:55:42 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
+ <linux-trace-kernel@vger.kernel.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Mark Rutland <mark.rutland@arm.com>, Peter Zijlstra <peterz@infradead.org>,
+ Joel Fernandes <joel@joelfernandes.org>, Thomas Bogendoerfer
+ <tsbogend@alpha.franken.de>, linux-mips@vger.kernel.org, Paul Burton
+ <paulburton@kernel.org>
+Subject: Re: [PATCH v2] tracing: Remove definition of trace_*_rcuidle()
+Message-ID: <20241203155542.462b1b21@gandalf.local.home>
+In-Reply-To: <bddb02de-957a-4df5-8e77-829f55728ea2@roeck-us.net>
+References: <20241003181629.36209057@gandalf.local.home>
+	<bddb02de-957a-4df5-8e77-829f55728ea2@roeck-us.net>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-In a typical Secure Boot setup the kernel image is signed, but the
-initramfs provided by the bootloader is not. This reduces the usefulness
-of Secure Boot because an attacker can overwrite the initramfs without
-detection.
 
-With this change, when a built-in initramfs is used, the kernel can be
-configured to extract the initramfs provided by the bootloader into a
-subdirectory, ensuring it cannot overwrite the built-in one.
+[ Adding MIPS maintainers ]
 
-Userspace can implement a verification scheme. One simple approach is
-to embed all executables in the built-in initramfs and use the external
-one for the (signed) kernel modules necessary for the system to boot.
+On Tue, 3 Dec 2024 12:39:08 -0800
+Guenter Roeck <linux@roeck-us.net> wrote:
 
-Signed-off-by: Hristo Venev <hristo@venev.name>
----
- init/initramfs.c | 38 +++++++++++++++++++++++++++++++++++++-
- usr/Kconfig      | 26 ++++++++++++++++++++++++++
- 2 files changed, 63 insertions(+), 1 deletion(-)
+> Hi Steven,
+> 
+> On Thu, Oct 03, 2024 at 06:16:29PM -0400, Steven Rostedt wrote:
+> > From: Steven Rostedt <rostedt@goodmis.org>
+> > 
+> > The trace_*_rcuidle() variant of a tracepoint was to handle places where a
+> > tracepoint was located but RCU was not "watching". All those locations
+> > have been removed, and RCU should be watching where all tracepoints are
+> > located. We can now remove the trace_*_rcuidle() variant.
+> > 
+> > Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+> > ---  
+> 
+> This patch triggers backtraces with mips qemu emulations.
+> 
+> WARNING: CPU: 0 PID: 0 at include/trace/events/preemptirq.h:36 handle_int+0x128/0x178
+> RCU not watching for tracepoint
+> ...
+> Call Trace:
+> [<ffffffff8012a89c>] show_stack+0x64/0x158
+> [<ffffffff8011e998>] dump_stack_lvl+0xb4/0x128
+> [<ffffffff801550f4>] __warn+0xa4/0x1f8
+> [<ffffffff80155328>] warn_slowpath_fmt+0xe0/0x1d0
+> [<ffffffff801233e8>] handle_int+0x128/0x178
+> [<ffffffff80f25ff8>] r4k_wait+0x30/0x40
+> [<ffffffff80f26448>] default_idle_call+0xa0/0x330
+> [<ffffffff801b6ccc>] do_idle+0xe4/0x1b8
+> [<ffffffff801b71c4>] cpu_startup_entry+0x34/0x48
+> [<ffffffff80f2689c>] kernel_init+0x0/0x110
+> 
+> WARNING: CPU: 0 PID: 0 at include/trace/events/preemptirq.h:40 trace_hardirqs_on+0x184/0x240
+> RCU not watching for tracepoint
+> ...
+> Call Trace:
+> [<ffffffff8012a89c>] show_stack+0x64/0x158
+> [<ffffffff8011e998>] dump_stack_lvl+0xb4/0x128
+> [<ffffffff801550f4>] __warn+0xa4/0x1f8
+> [<ffffffff80155328>] warn_slowpath_fmt+0xe0/0x1d0
+> [<ffffffff8028fb74>] trace_hardirqs_on+0x184/0x240
+> [<ffffffff80123030>] restore_partial+0x6c/0x13c
+> 
+> Bisect log is attached.
 
-diff --git a/init/initramfs.c b/init/initramfs.c
-index b2f7583bb1f5c..97eec8a6db07b 100644
---- a/init/initramfs.c
-+++ b/init/initramfs.c
-@@ -5,6 +5,7 @@
- #include <linux/slab.h>
- #include <linux/types.h>
- #include <linux/fcntl.h>
-+#include <linux/fs_struct.h>
- #include <linux/delay.h>
- #include <linux/string.h>
- #include <linux/dirent.h>
-@@ -355,6 +356,7 @@ static int __init maybe_link(void)
- 
- static __initdata struct file *wfile;
- static __initdata loff_t wfile_pos;
-+static bool skip_special __initdata;
- 
- static int __init do_name(void)
- {
-@@ -399,7 +401,7 @@ static int __init do_name(void)
- 		dir_add(collected, mtime);
- 	} else if (S_ISBLK(mode) || S_ISCHR(mode) ||
- 		   S_ISFIFO(mode) || S_ISSOCK(mode)) {
--		if (maybe_link() == 0) {
-+		if (!skip_special && maybe_link() == 0) {
- 			init_mknod(collected, mode, rdev);
- 			init_chown(collected, uid, gid, 0);
- 			init_chmod(collected, mode);
-@@ -705,6 +707,11 @@ static void __init populate_initrd_image(char *err)
- 
- static void __init do_populate_rootfs(void *unused, async_cookie_t cookie)
- {
-+#ifdef CONFIG_INITRAMFS_EXTERNAL_IS_SUBDIR
-+	int r;
-+	struct path orig_root, sub_root;
-+#endif
-+
- 	/* Load the built in initramfs */
- 	char *err = unpack_to_rootfs(__initramfs_start, __initramfs_size);
- 	if (err)
-@@ -718,6 +725,28 @@ static void __init do_populate_rootfs(void *unused, async_cookie_t cookie)
- 	else
- 		printk(KERN_INFO "Unpacking initramfs...\n");
- 
-+#ifdef CONFIG_INITRAMFS_EXTERNAL_IS_SUBDIR
-+	/*
-+	 * Switch the root so that the external initramfs is extracted there.
-+	 * Use chroot so that paths under absolute symlinks resolve properly.
-+	 */
-+	get_fs_root(current->fs, &orig_root);
-+
-+	/*
-+	 * Don't allow the creation of device nodes. Otherwise duplicate entries
-+	 * may result in writes to devices.
-+	 */
-+	skip_special = true;
-+
-+	r = init_chdir(CONFIG_INITRAMFS_EXTERNAL_PATH);
-+	if (r < 0)
-+		panic_show_mem("Failed to open switch to external initramfs directory (%s): %d",
-+			       CONFIG_INITRAMFS_EXTERNAL_PATH, r);
-+	get_fs_pwd(current->fs, &sub_root);
-+	set_fs_root(current->fs, &sub_root);
-+	path_put(&sub_root);
-+#endif
-+
- 	err = unpack_to_rootfs((char *)initrd_start, initrd_end - initrd_start);
- 	if (err) {
- #ifdef CONFIG_BLK_DEV_RAM
-@@ -727,6 +756,13 @@ static void __init do_populate_rootfs(void *unused, async_cookie_t cookie)
- #endif
- 	}
- 
-+#ifdef CONFIG_INITRAMFS_EXTERNAL_IS_SUBDIR
-+	/* Restore the original root now that the external initramfs is extracted. */
-+	set_fs_root(current->fs, &orig_root);
-+	set_fs_pwd(current->fs, &orig_root);
-+	path_put(&orig_root);
-+#endif
-+
- done:
- 	security_initramfs_populated();
- 
-diff --git a/usr/Kconfig b/usr/Kconfig
-index 9279a2893ab0e..b781db0603903 100644
---- a/usr/Kconfig
-+++ b/usr/Kconfig
-@@ -32,6 +32,32 @@ config INITRAMFS_FORCE
- 	  and is useful if you cannot or don't want to change the image
- 	  your bootloader passes to the kernel.
- 
-+config INITRAMFS_EXTERNAL_PATH
-+	string "External initramfs extraction path"
-+	default "/"
-+	depends on INITRAMFS_SOURCE!=""
-+	depends on !INITRAMFS_FORCE
-+	help
-+	  This option causes the kernel to extract the initramfs image(s)
-+	  provided by the bootloader into a subdirectory under the root
-+	  directory. The subdirectory must exist in the built-in initramfs.
-+
-+	  This enables the built-in initramfs to check the integrity of the
-+	  external one.
-+
-+	  If this option is used, any special nodes (device/fifo/socket) in the
-+	  external initramfs are ignored. Symlinks, including ones pointing
-+	  outside the subdirectory, are allowed.
-+
-+	  If your built-in initramfs is not capable of dealing with this, leave
-+	  this option set to "/".
-+
-+config INITRAMFS_EXTERNAL_IS_SUBDIR
-+	bool
-+	default y
-+	depends on INITRAMFS_EXTERNAL_PATH!=""
-+	depends on INITRAMFS_EXTERNAL_PATH!="/"
-+
- config INITRAMFS_ROOT_UID
- 	int "User ID to map to 0 (user root)"
- 	depends on INITRAMFS_SOURCE!=""
--- 
-2.47.1
+I'm guessing MIPS needs to implement something like what arm64 did with:
+
+ 7cd1ea1010acb ("arm64: entry: fix non-NMI kernel<->kernel transitions")
+
+Because we do not want to bring back the trace_*_rcuidle() crap.
+
+-- Steve
+
+> 
+> Guenter
+> 
+> ---
+> # bad: [f6420e2ee9caa3ecf226d0db22572db0d9451977] Merge branch 'fixes-v6.13' into testing
+> # good: [adc218676eef25575469234709c2d87185ca223a] Linux 6.12
+> git bisect start 'f6420e2ee9ca' 'v6.12'
+> # good: [6e95ef0258ff4ee23ae3b06bf6b00b33dbbd5ef7] Merge tag 'bpf-next-6.13' of git://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next
+> git bisect good 6e95ef0258ff4ee23ae3b06bf6b00b33dbbd5ef7
+> # good: [071b34dcf71523a559b6c39f5d21a268a9531b50] Merge tag 'sound-6.13-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound
+> git bisect good 071b34dcf71523a559b6c39f5d21a268a9531b50
+> # good: [8a07b2623e7ff04856f8d4470d002675049b2065] Merge tag 'drm-misc-next-2024-10-31' of https://gitlab.freedesktop.org/drm/misc/kernel into drm-next
+> git bisect good 8a07b2623e7ff04856f8d4470d002675049b2065
+> # bad: [80739fd00c7ea1315d362ce889bef499452913ef] Merge tag 'mfd-next-6.13' of git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd
+> git bisect bad 80739fd00c7ea1315d362ce889bef499452913ef
+> # good: [e175800137f588688ac6aae30ce491e098f30c45] Merge tag 'exynos-drm-next-for-v6.13-v2' of git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos into drm-next
+> git bisect good e175800137f588688ac6aae30ce491e098f30c45
+> # good: [ade5add00da20de40f63d097345bddea24d924f4] Merge tag 'amd-drm-next-6.13-2024-11-15' of https://gitlab.freedesktop.org/agd5f/linux into drm-next
+> git bisect good ade5add00da20de40f63d097345bddea24d924f4
+> # bad: [06afb0f36106ecb839c5e2509905e68c1e2677de] Merge tag 'trace-v6.13' of git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace
+> git bisect bad 06afb0f36106ecb839c5e2509905e68c1e2677de
+> # good: [f1db825805d48cee6826b7dc082a04112c1f0c8d] Merge tag 'trace-ring-buffer-v6.13' of git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace
+> git bisect good f1db825805d48cee6826b7dc082a04112c1f0c8d
+> # bad: [61c6fefa92bb4ed7a34163b94f6ffac628237a29] bpf: decouple BPF link/attach hook and BPF program sleepable semantics
+> git bisect bad 61c6fefa92bb4ed7a34163b94f6ffac628237a29
+> # bad: [cdb537ac417938408ee819992f432c410f2d01a2] tracing/perf: Add might_fault check to syscall probes
+> git bisect bad cdb537ac417938408ee819992f432c410f2d01a2
+> # bad: [e53244e2c8931f9e80c1841293aea86ef8ad32a3] tracepoint: Remove SRCU protection
+> git bisect bad e53244e2c8931f9e80c1841293aea86ef8ad32a3
+> # good: [49e4154f4b16345da5e219b23ed9737a6e735bc1] tracing: Remove TRACE_EVENT_FL_FILTERED logic
+> git bisect good 49e4154f4b16345da5e219b23ed9737a6e735bc1
+> # bad: [48bcda6848232667f13b4e97588de488c83c37d4] tracing: Remove definition of trace_*_rcuidle()
+> git bisect bad 48bcda6848232667f13b4e97588de488c83c37d4
+> # good: [4a8840af5f53f2902eba91130fae650879f18e7a] tracepoints: Use new static branch API
+> git bisect good 4a8840af5f53f2902eba91130fae650879f18e7a
+> # first bad commit: [48bcda6848232667f13b4e97588de488c83c37d4] tracing: Remove definition of trace_*_rcuidle()
 
 
