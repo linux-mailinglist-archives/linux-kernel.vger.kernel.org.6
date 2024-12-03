@@ -1,120 +1,111 @@
-Return-Path: <linux-kernel+bounces-429875-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3723A9E27F6
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 17:46:51 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 632271636AD
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:46:42 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47CCE1F8AD8;
-	Tue,  3 Dec 2024 16:45:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="zpNO17yG";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="cfCmn6mi"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A3769E27F8
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 17:47:02 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FAF11F8EE8;
-	Tue,  3 Dec 2024 16:45:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3C8B28A87C
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:47:00 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22D1B1FBC85;
+	Tue,  3 Dec 2024 16:45:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="HP7WJfHY"
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D3841FA84F;
+	Tue,  3 Dec 2024 16:45:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733244324; cv=none; b=napZA79BLRj1VZBu/87T/m9z6HqqMRUgzC55QtAl1ASNervjZqlKqyZ3X6x5z+SeSKapELN1yomRgcO3pO1kYQOPW/Rky0qpb4X5AxflaCdep4a0P9zEz4Zp1PbWYc0ewxX/qelwh7nUqAGxKKkoGaxmrc8zh68q5zfYgBHn5jo=
+	t=1733244346; cv=none; b=t4U2TH2LIrE3UFC6HAZr58cJcDKk4a9K11UkSr18ytOOBLpW3bCpZQC5gbxuDAgRIGDYn19k4o6CnyvvSXUoP2nDgasUklmjvGcRyhO6l+KnmXfSyMuZbojZ23viRpK5+eXSjNPkT04LTerbA8/Hn05kzjrmBCOIbvwr3xMWqSA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733244324; c=relaxed/simple;
-	bh=1Bw0F+SxSTnmR8dNHiR66xY/jvQrWs8B9IBh14mL3xk=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=BHg/+thHpOfPd18id8MzLflLL+B/ngSoGaUD7vpOfGdKT6D3XUdMNwo5jS5jmwHxfrvi6dYSrLtCyiRXiIDU9NG2Z4bLxdajVFYMByHmHBnhfBYyQ/OVeosF1lD5+0vWJjxgdRIErj2/2hRRZlv7kfv9gKRgsOv676huZKAZa2U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=zpNO17yG; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=cfCmn6mi; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 03 Dec 2024 16:45:20 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1733244321;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MeQ/5R0x1kZEGyRLFZJnmfj/7Aw1+ksokYH2Jf7fc90=;
-	b=zpNO17yGbB9IHpGbH4CjdDZJMEzpdLcV7/sqHqpCDLRmk0KHL/HN0HzQ43wyUaDCjDIL/m
-	ui0jEqnqF8BEZhlOvLAIh4uaQyxOn6bIuiYSoqTnpyAN/UIGWoQjoGffX21G22P/IFm2qv
-	Whfl+aGrfQLToZT98Jo6fbAAtngJrbNv9Gb+YMrI0w5MbpnwG5jZWw4w9Ev/Vy5OK9Dnnj
-	i4486lGU7lHiI9zihIPQEkFwWzlsAfbnqLguR870rWIJ246V2XG5YAXi+H3eeTmUumQiQ9
-	Lo5FRWBvdNeozxOe1AapBmip3skD0cFvQ1GKNl8fBLeZZcISjy5Hllk47qwdhA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1733244321;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MeQ/5R0x1kZEGyRLFZJnmfj/7Aw1+ksokYH2Jf7fc90=;
-	b=cfCmn6mi6pJ/+XDxPtSoHNFSzAJVedqBBoxK1pUZMBR76KaE2WS9D6awdTmiXNQRuVMijk
-	WGaBFUjNpwaAl0AQ==
-From: "tip-bot2 for Geert Uytterhoeven" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/urgent] irqchip/stm32mp-exti: CONFIG_STM32MP_EXTI should
- not default to y when compile-testing
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
- Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
- linux-kernel@vger.kernel.org, maz@kernel.org
-In-Reply-To: =?utf-8?q?=3Cef5ec063b23522058f92087e072419ea233acfe9=2E17332?=
- =?utf-8?q?43115=2Egit=2Egeert+renesas=40glider=2Ebe=3E?=
-References: =?utf-8?q?=3Cef5ec063b23522058f92087e072419ea233acfe9=2E173324?=
- =?utf-8?q?3115=2Egit=2Egeert+renesas=40glider=2Ebe=3E?=
+	s=arc-20240116; t=1733244346; c=relaxed/simple;
+	bh=BA76lR64G5jRwbmzef8LeHyHC95CSwPtwI8o3wr8d7w=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=KVuxDt8SvRdbrfvLlUUeDhTsZXXD2PZzeNeWDU6mdqwF1Ndmrt/bMPTCE7/IhrfOjBDeIkoIXNUEcNL5OzIiaPVy1ZjumcJIrobpjLuM3G8qpmP2W973ekDuZcPYGFjA1IYKW2nUubownMykDIC0e2IsaYCN+6a3/TB+V2wgGw8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=HP7WJfHY; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=1kn7esNHtCHkPR0o4sIQLKTBnvYJD1ZCR1/40e9RrWY=;
+	t=1733244345; x=1734453945; b=HP7WJfHYLdEgvw3B2UEcvhqocbS7w0bxsER1u/qJLQpfefd
+	MjdpsUTtxuuNIGTKU1QHZzqipnRImGzrrJhSLpSUWaGhwzXuj7DvZS2kBmICFOWDyBys+FnKZ63jr
+	y9aT40VmNZERooPO6tbmugA5386+8U5JwPp11CDsb+S+Xstvfqy9m73ecNGaHvQiDHEVVaA+l7wPU
+	6aAhowpvX/e9QmtSgfTOBhzxjFbulk/ICwdL7dj1PJ17N5FIb6v8twBu11Q2yU4w2VnQ6kYJBHKQR
+	oXIUSVLKcK6j0oOQ7MjYvVkm9IyA1Xwawee5MniDRQ49EMHr42asK/AMUubP53fA==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.98)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1tIW1s-000000035wi-0cie;
+	Tue, 03 Dec 2024 17:45:40 +0100
+Message-ID: <dcbf9bee124097e131a11f744b32bbeabc250c98.camel@sipsolutions.net>
+Subject: Re: [PATCH] net: wireless: sme: Initialize n_channels before
+ accessing channels in cfg80211_conn_scan
+From: Johannes Berg <johannes@sipsolutions.net>
+To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>, Haoyu Li
+	 <lihaoyu499@gmail.com>
+Cc: Kees Cook <kees@kernel.org>, "Gustavo A . R . Silva"
+ <gustavoars@kernel.org>,  Jeff Johnson <quic_jjohnson@quicinc.com>,
+ linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-hardening@vger.kernel.org, stable@vger.kernel.org
+Date: Tue, 03 Dec 2024 17:45:39 +0100
+In-Reply-To: <238df0b9-d1db-4f72-8238-828ea20ad1d9@embeddedor.com>
+References: <20241203152049.348806-1-lihaoyu499@gmail.com>
+	 <fa9ef37903db0f81654451104b1407f60f85ce5d.camel@sipsolutions.net>
+	 <238df0b9-d1db-4f72-8238-828ea20ad1d9@embeddedor.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <173324432003.412.3343520734679406090.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+X-malware-bazaar: not-scanned
 
-The following commit has been merged into the irq/urgent branch of tip:
+On Tue, 2024-12-03 at 10:20 -0600, Gustavo A. R. Silva wrote:
+>=20
+> "Right now, any addition of a counted_by annotation must also
+> include an open-coded assignment of the counter variable after
+> the allocation:
+>=20
+>    p =3D alloc(p, array, how_many);
+>    p->counter =3D how_many;
 
-Commit-ID:     9151299ee5101e03eeed544c1280b0e14b89a8a4
-Gitweb:        https://git.kernel.org/tip/9151299ee5101e03eeed544c1280b0e14b89a8a4
-Author:        Geert Uytterhoeven <geert+renesas@glider.be>
-AuthorDate:    Tue, 03 Dec 2024 17:27:40 +01:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Tue, 03 Dec 2024 17:40:30 +01:00
+Not sure where you copied that from, but quite obviously Kees didn't
+follow that guidance in e3eac9f32ec0 ("wifi: cfg80211: Annotate struct
+cfg80211_scan_request with __counted_by"), otherwise we wouldn't have
+this patch.
 
-irqchip/stm32mp-exti: CONFIG_STM32MP_EXTI should not default to y when compile-testing
+>   -- Built-in Function: TYPE __builtin_counted_by_ref (PTR)
 
-Merely enabling compile-testing should not enable additional functionality.
+Even with that though, we still have to actually implement it, and make
+sure we use struct_size everywhere when we allocate these things... In
+fact we probably need a new allocation function, not just struct_size,
+but rather kzalloc_struct_size(...) or so.
 
-Fixes: 0be58e0553812fcb ("irqchip/stm32mp-exti: Allow building as module")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/all/ef5ec063b23522058f92087e072419ea233acfe9.1733243115.git.geert+renesas@glider.be
+Which e3eac9f32ec0 didn't do, and which anyway we still don't do e.g. in
+nl80211_trigger_scan() because we have multiple variable things in the
+allocation, so we *can't*.
 
----
- drivers/irqchip/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+That therefore doesn't even help here.
 
-diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
-index 55d7122..9bee02d 100644
---- a/drivers/irqchip/Kconfig
-+++ b/drivers/irqchip/Kconfig
-@@ -415,7 +415,7 @@ config PARTITION_PERCPU
- config STM32MP_EXTI
- 	tristate "STM32MP extended interrupts and event controller"
- 	depends on (ARCH_STM32 && !ARM_SINGLE_ARMV7M) || COMPILE_TEST
--	default y
-+	default ARCH_STM32 && !ARM_SINGLE_ARMV7M
- 	select IRQ_DOMAIN_HIERARCHY
- 	select GENERIC_IRQ_CHIP
- 	help
+So that's not a very convincing argument. In a way moving again to "you
+need the newest unreleased compiler" makes it *worse*, not *better*?
+
+But of course if you do that now it'll basically mean again nobody is
+running it and you get to kick the can further down the road ... I still
+think it's a failed experiment. It didn't do any good here as far as I
+can tell, and we've spent a ton of time on it.
+
+johannes
+
 
