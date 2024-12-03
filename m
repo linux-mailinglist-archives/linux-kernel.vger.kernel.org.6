@@ -1,139 +1,92 @@
-Return-Path: <linux-kernel+bounces-428526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9477E9E0FB2
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 01:27:41 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EBF59E0FB6
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 01:30:22 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 398D716495E
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 00:30:19 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE693847C;
+	Tue,  3 Dec 2024 00:30:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hisqccDB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E62F4B22697
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 00:27:38 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E18C8136E;
-	Tue,  3 Dec 2024 00:27:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OGBjGht9"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE8F01370;
-	Tue,  3 Dec 2024 00:27:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51BCB370;
+	Tue,  3 Dec 2024 00:30:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733185630; cv=none; b=U8rdndGoz+qXWJoSylt5V5fyTL4ShIDAAeNx7sTXnhT2OA6oFh2GSzqnkV3WNqu+o37W7GoxrlgKDM/lNwkMtkhtyS/lKe6BG5cL9wn5i6pXAC7K/qiu9xkQFONpYG0mMrGqes/CAXTU2kwSzTle7y1VryrKJasosOUaupO3viU=
+	t=1733185815; cv=none; b=rLNxq89JusJJ1cMF8vpL9DbvgnuYQziv28jlW3fldVEoMbJMT/uNjF0y/zu6cwguYq/bsm0LHlnQGNtWgBoiE7vHbjYYmUBXwa/t0whPDfk1le8GcLiMtNyA21zTKTGymRCGtJu6xILiK75XG/5hk4rPg1GNMM/ra3/UE0H18R8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733185630; c=relaxed/simple;
-	bh=vIqmA1nOy+jz/4U+APL/rsZ/a53grp9JYAOhnJ4AJPI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Hm/8Q2189HW1Tx4r+lyThAHptvLhdWePC7MeMieqekXSqr3x35+XjKnwKCBYd/dKopOvS/Mi3O6cM8kZ0a4gWSjbjtdCXRmWDPApM5Jf1T9yeLyweDnp9OPR6kmjX1bSGPvQxw8QdlUyuYozt950y2b+hgAD6GWkd4VKBeGbPp8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OGBjGht9; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-21539e1d09cso44658845ad.1;
-        Mon, 02 Dec 2024 16:27:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733185628; x=1733790428; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=DLYTwGWkMWLIc6S8rXeQ5AdWzJOnAigIrBbJB1JhA1I=;
-        b=OGBjGht9TYS0GlBZPndVXqhMojLuG1mwQfFzQVAVjX5gkLkk1+nZd2VnMYRYUzFYqt
-         a9tOgDqXrEEBQDR8YSqt7/74R4AgEgfclKxeytBRl9ANQQROE2NuCy8PtjGD7+zO3MLm
-         C+JpQMNrmIQAfVsGM8QYnM12sGTFgeZVp9MCDJGNpgFLSRn2iFoe3vgkBIKIbO/xOjdV
-         WjdWRNod3QZkbukJ/h6khPBtqQfsZe/Bx/ah1UFqnVOFk/4I2FKoIZe3xf/pJzZdV5m4
-         DkARvEuBgsmWEwzeI6LantNe1JVT/i8MrX4cqF/KwxNe3RPFZ1R7qFwae6d4agaa/X+1
-         N4uA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733185628; x=1733790428;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DLYTwGWkMWLIc6S8rXeQ5AdWzJOnAigIrBbJB1JhA1I=;
-        b=nxrmGtctu6BnRglIZOPr2ZCNori7xzZGjTy9hbcSbaapQb/VdyG99TMYBvLqgJIkgh
-         BdmcCXFL07hJSYdt/9FSm9RlXidD37yEHt9QCrBaws9klh8DMg9QW4/tJC1qIK9wL0am
-         eFqFwFYCU4YWenWOZ0cYSJ+p6lyMJJjTLX4kQqHluf4BCK07z23l+7R04hqmcEAXcUzv
-         vL5ylINpVEcQ6S7ZKtgvHpCgtTqV8ZNFZOBZRKB84g3a7NjvBSFXUcI/KErgxlhigxHp
-         0J36pGRsrKxFyDGmtMZz3ju3lQAplvkfR56BlwFLlWk8Sk/T+hfrwSHVy0Y4qfiyNMuf
-         bDkg==
-X-Forwarded-Encrypted: i=1; AJvYcCUOp7TbK7KPmT1Ql/4M1louyS8EQ3ptdt4kX4UbMerZ8SBBIeTUCycjMxJ1KzaHt3sWNnVS8w6yEQ9E3mH4@vger.kernel.org, AJvYcCUXfteA0OLK46Ux3TxsR2hhWtaf8snL5jT0Gb/okXE4Uc4DRuOGQE8bJGw48iN6fHxi3bx7/mRB8vHp@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywjj6qa5ZxXwxuMEfbxUg6WLjfO8lAP13pT6QZ0Wv3pFrXNdgs2
-	sS+Iv3n+hNZzBsSplMHo2Pb93O29OkQIxG6zBFdoFe1g/rVksFqC
-X-Gm-Gg: ASbGncuGwPnDQfqviBvQJGC47AThY/xS9j6h4e2YZFTPx6EeXmip3G2eK0+lTfJbOpT
-	enDuxksNUZZ8PGMK0FH/w2mpo5yqpVATPZPaKt0sSeMvrxSIQjXsCoNrQ+Tamkx6G7gFJG/sUo2
-	0K3C4ANqDY/F9lRD599Ry2p2thL5jpGbWSAZfVWJrh5h/nmJ17hlvyzTUJonnVap3AYsoScJCLj
-	8BOWCRYZ2pvMJnhP2HD1mx3Dn1EPTaWK4PHH40WverI1qvQP3BCUj96uO44JbW0N249WU9mlx1F
-	wOpNS8wm7VdMbq5uWn1AdA96
-X-Google-Smtp-Source: AGHT+IGHwdUtcOPNOesLU2uYuzU+uzBNriJXCHFU8gQ6QyGwX1BK3vvXSZUFFBjaUgWZE1pjKQq8OQ==
-X-Received: by 2002:a17:903:22cf:b0:211:3275:3fe with SMTP id d9443c01a7336-215bd1cd723mr8388845ad.17.1733185628104;
-        Mon, 02 Dec 2024 16:27:08 -0800 (PST)
-Received: from [172.19.1.53] (60-250-196-139.hinet-ip.hinet.net. [60.250.196.139])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2159d48d97esm20570085ad.239.2024.12.02.16.27.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 Dec 2024 16:27:07 -0800 (PST)
-Message-ID: <6395117f-4ed8-45b5-ba80-417d61beb55b@gmail.com>
-Date: Tue, 3 Dec 2024 08:27:04 +0800
+	s=arc-20240116; t=1733185815; c=relaxed/simple;
+	bh=XmhgYk2x7GXJl2A5h4r9Cuq4mZXd4+wTyrcMFjA2fYs=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=Dt0Bw9Xmml4QXMAcayaoI+qhOdAbG0bJ2JcmN74WzFDAzvvcp24h4C+pb3YZecwcHBQo6QS0WXLabVo7XOD4yeaS0U1wUPcEyyCRzdMmrHbUC3wqO99CzCvRMUl7SgaGG6fGt+4p+iZhgveeHJdeOzKUR1s/E+zGecWqqj5dgbI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hisqccDB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D497BC4CED1;
+	Tue,  3 Dec 2024 00:30:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733185814;
+	bh=XmhgYk2x7GXJl2A5h4r9Cuq4mZXd4+wTyrcMFjA2fYs=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=hisqccDBzdlw503kp2/yMWEQuElW7wbDwOU1b/q2XIZTZc7FeP7ex+cijj3An+KJB
+	 HoTTrJRYsqCGq5yYASZkm93Zkkdy5am97lur0vwT2lBkB1e8Jy9dM7yXWZssXpOUKp
+	 OOoAO3Pt4vXg9rBs2291IeWWSw4uMkgY2D/BUtYdmAfxW1xbd7ORD99aCr9NQPhpuj
+	 0wmzl2+QIoYu5fwY3XvrnvRlw2wu7OAjVTnF5oxHVd9kDCxI4ZCzmS5yXvDEc0ErhB
+	 7umUJNTGBniG1cyzRMBEtFLFMMj97NWFrrQG3zagxQjcsRb2wAw4cPE8ANzk58W1pQ
+	 EKsSJMbMWE4tA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 342303806656;
+	Tue,  3 Dec 2024 00:30:30 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 2/2] mtd: rawnand: nuvoton: add new driver for the
- Nuvoton MA35 SoC
-To: Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: richard@nod.at, vigneshr@ti.com, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, nikita.shubin@maquefel.me, arnd@arndb.de,
- vkoul@kernel.org, esben@geanix.com, linux-arm-kernel@lists.infradead.org,
- linux-mtd@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241125052524.135362-1-hpchen0nvt@gmail.com>
- <20241125052524.135362-3-hpchen0nvt@gmail.com> <875xo257rd.fsf@bootlin.com>
-Content-Language: en-US
-From: Hui-Ping Chen <hpchen0nvt@gmail.com>
-In-Reply-To: <875xo257rd.fsf@bootlin.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] ptp: Switch back to struct platform_driver::remove()
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <173318582905.3964978.17617943251785066504.git-patchwork-notify@kernel.org>
+Date: Tue, 03 Dec 2024 00:30:29 +0000
+References: <20241130145349.899477-2-u.kleine-koenig@baylibre.com>
+In-Reply-To: <20241130145349.899477-2-u.kleine-koenig@baylibre.com>
+To: =?utf-8?q?Uwe_Kleine-K=C3=B6nig_=3Cu=2Ekleine-koenig=40baylibre=2Ecom=3E?=@codeaurora.org
+Cc: richardcochran@gmail.com, yangbo.lu@nxp.com, dwmw2@infradead.org,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Dear Mique,
+Hello:
 
-Thank you for your reply.
+This patch was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
+On Sat, 30 Nov 2024 15:53:49 +0100 you wrote:
+> After commit 0edb555a65d1 ("platform: Make platform_driver::remove()
+> return void") .remove() is (again) the right callback to implement for
+> platform drivers.
+> 
+> Convert all platform drivers below drivers/ptp to use .remove(), with
+> the eventual goal to drop struct platform_driver::remove_new(). As
+> .remove() and .remove_new() have the same prototypes, conversion is done
+> by just changing the structure member name in the driver initializer.
+> 
+> [...]
 
-On 2024/12/3 上午 01:12, Miquel Raynal wrote:
-> Hello,
->
->> +static int ma35_nand_attach_chip(struct nand_chip *chip)
->> +{
->> +	struct ma35_nand_info *nand = nand_get_controller_data(chip);
->> +	struct mtd_info *mtd = nand_to_mtd(chip);
->> +	struct device *dev = mtd->dev.parent;
->> +	u32 reg;
->> +
->> +	if (chip->options & NAND_BUSWIDTH_16) {
->> +		dev_err(dev, "16 bits bus width not supported");
->> +		return -EINVAL;
->> +	}
->> +
->> +	reg = readl(nand->regs + MA35_NFI_REG_NANDCTL) & (~PSIZE_MASK);
->> +	if (mtd->writesize == 2048)
->> +		writel(reg | PSIZE_2K, nand->regs + MA35_NFI_REG_NANDCTL);
->> +	else if (mtd->writesize == 4096)
->> +		writel(reg | PSIZE_4K, nand->regs + MA35_NFI_REG_NANDCTL);
->> +	else if (mtd->writesize == 8192)
->> +		writel(reg | PSIZE_8K, nand->regs + MA35_NFI_REG_NANDCTL);
-> You should error out if the writesize is not supported.
+Here is the summary with links:
+  - ptp: Switch back to struct platform_driver::remove()
+    https://git.kernel.org/netdev/net-next/c/b32913a5609a
 
-Okay. I will return -EINVAL if the writesize is not supported.
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-
->
-> Thanks,
-> Miquèl
-
-Best regards,
-
-Hui-Ping Chen
 
 
