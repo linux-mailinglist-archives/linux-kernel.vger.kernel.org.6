@@ -1,56 +1,61 @@
-Return-Path: <linux-kernel+bounces-430153-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430156-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47D759E2E75
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 22:54:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B857F9E2E0F
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 22:26:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 522A7B353AF
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 20:28:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 243AFB3E187
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 20:30:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FA8D205E22;
-	Tue,  3 Dec 2024 20:28:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61B5C207A03;
+	Tue,  3 Dec 2024 20:30:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jcLQnY6Q"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="s9+yw+XR"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78BE42500D3;
-	Tue,  3 Dec 2024 20:28:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32E5952F9E;
+	Tue,  3 Dec 2024 20:30:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733257718; cv=none; b=KsKfSbAwjg6qrryd8lR7whasGTb1TqwAy9Ag0DSmU7KBJobepRGsZW59RmrVHX2lIXwUFJEBqbJzqjvzAV9/tI9ckkzBf1UZvHx2juVpf+Jz4SdBOpzH8jPGOf5Viba1nnCaPEUb40ulkPnEVji8mEn9xIR5BHQTjTocjZWv3PA=
+	t=1733257805; cv=none; b=ASBDByxvsaYXPqxMLW5jkzfkgljGzlfth3Id+7eeYUtr4GjcVCOcxRFvo9nLfTv/X9CrBTy/ARkEOLkwhwEbkHVttq4SuBVQ5tG03c6zgj9e/kgyvxgPyehvTIhbttHRoqardlSade3J38bLVF8oIngy+igYITh+ZFLpRBmFVvk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733257718; c=relaxed/simple;
-	bh=BEX7Kxvtvd4L1WIdBYb0kjHAXUavUgl4UJxK6TD4XkA=;
+	s=arc-20240116; t=1733257805; c=relaxed/simple;
+	bh=ygU4cDdf1aNKCANLQbHcYyLJPac2zAuV88dsS8gsnfg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uDjnjGvtf5DxQRglo1QAKHyHxnSJ9OTr8s4yt2ND5i6VPJLDAE7Yq7WIXXw9mF5JP+N5FXQDBPdDUD7beeTzvPucPN1vUmSq3oM+Hl+IJC0tE0n/SKGWP1FtDwmn+kxptxGYvsv3eEuSIFBnjGicfiGlehVpt6NYspWl5EVVSQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jcLQnY6Q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DEE29C4CECF;
-	Tue,  3 Dec 2024 20:28:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733257718;
-	bh=BEX7Kxvtvd4L1WIdBYb0kjHAXUavUgl4UJxK6TD4XkA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jcLQnY6QIjBSDQezhlXcnZoJE7epPYszOztDr0QavO8N+xFQLXMWJAmch56InNnKo
-	 N6oFkEeqkN2zzSzq2G6XWUohsp8mCNzh2+Fh76ugPzi67jjoMzmxD3i2JPrNBAxil0
-	 kqDqCqUS6CFGWY8tt9Pg+TkWbnCHixBc8SDnC72q7h3Ibaa5uOhHB5bnSoAYWpRiMT
-	 6+VkhXcG0KkGRuWdwYwPXncvxHyj1O2SSzE7FVQ+bL+dcSWtrfuWm8p2VpTTUyRzUr
-	 rcwe9XUXNKK55sBhcYBI4rPnxW48tw0rn/aJhdcXR49GMFrj5gYWQEv1egglfMItUR
-	 0EhkPpEVG8ArQ==
-Date: Tue, 3 Dec 2024 10:28:36 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Honglei Wang <jameshongleiwang@126.com>
-Cc: void@manifault.com, nathan@kernel.org, ndesaulniers@google.com,
-	morbo@google.com, justinstitt@google.com, haoluo@google.com,
-	brho@google.com, joshdon@google.com, vishalc@linux.ibm.com,
-	hongyan.xia2@arm.com, linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org, llvm@lists.linux.dev
-Subject: Re: [PATCH] sched_ext: Add __weak to fix the build errors
-Message-ID: <Z09p9BhM6ZGGd3zP@slm.duckdns.org>
-References: <20241129091003.87716-1-jameshongleiwang@126.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=mxDTA7QK6jTL3YLm7so/p7/GtRI8oNWp6STsukYsc4Hr4lbQR6tBWJH987hRJ/Ocr8RHgxi/7ocJzPLeu89nAEEcpeVDwqTDsf2qfE1By0BmAT60B0ZLGlPeIh0kdG0z+7aofmNNXGk/atwos8eBO8oeeJeK6uB5RkCMk6nzNnM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=s9+yw+XR; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=3CguHt6X8P58BimZogJtxHqiLeYuGQMNg1+by0xxqgk=; b=s9+yw+XRmUHfREv6JmbYOdwTXT
+	kf45UNJzjYHXl6phoGOC43AstxS5NS+y7jtA5I70/fg22Wz26hngQF0gUgo5q9Y6ED1Nqp6l3z506
+	TryIxr9fz8ynFKrn2V9Kp1HRU9exw9Iv5DoYULGUrPRlDJ/h/geMIbkhb0SghHCtmP74=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tIZWw-00F83p-Hn; Tue, 03 Dec 2024 21:29:58 +0100
+Date: Tue, 3 Dec 2024 21:29:58 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Woojung Huh <woojung.huh@microchip.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>, kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	UNGLinuxDriver@microchip.com, Phil Elwell <phil@raspberrypi.org>
+Subject: Re: [PATCH net-next v1 03/21] net: usb: lan78xx: move functions to
+ avoid forward definitions
+Message-ID: <26ba9118-1aa7-40ba-928b-448462378969@lunn.ch>
+References: <20241203072154.2440034-1-o.rempel@pengutronix.de>
+ <20241203072154.2440034-4-o.rempel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,22 +64,27 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241129091003.87716-1-jameshongleiwang@126.com>
+In-Reply-To: <20241203072154.2440034-4-o.rempel@pengutronix.de>
 
-On Fri, Nov 29, 2024 at 05:10:03PM +0800, Honglei Wang wrote:
-> commit 5cbb302880f5 ("sched_ext: Rename
-> scx_bpf_dispatch[_vtime]_from_dsq*() -> scx_bpf_dsq_move[_vtime]*()")
-> introduced several new functions which caused compilation errors when
-> compiled with clang.
+On Tue, Dec 03, 2024 at 08:21:36AM +0100, Oleksij Rempel wrote:
+> Move following functions to avoid forward declarations in the code:
+> - lan78xx_start_hw()
+> - lan78xx_stop_hw()
+> - lan78xx_flush_fifo()
+> - lan78xx_start_tx_path()
+> - lan78xx_stop_tx_path()
+> - lan78xx_flush_tx_fifo()
+> - lan78xx_start_rx_path()
+> - lan78xx_stop_rx_path()
+> - lan78xx_flush_rx_fifo()
 > 
-> Let's fix this by adding __weak markers.
+> These functions will be used in an upcoming PHYlink migration patch.
 > 
-> Signed-off-by: Honglei Wang <jameshongleiwang@126.com>
+> No modifications to the functionality of the code are made.
+> 
+> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
 
-Applied to sched_ext/for-6.13-fixes.
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-Thanks.
-
--- 
-tejun
+    Andrew
 
