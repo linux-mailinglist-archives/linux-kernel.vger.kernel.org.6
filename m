@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-429039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429041-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7730D9E1699
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:03:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 879049E169D
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:04:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E40B2871D3
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:03:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47A0C287970
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:04:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6C341E0B96;
-	Tue,  3 Dec 2024 09:01:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECF371E0E05;
+	Tue,  3 Dec 2024 09:01:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="G4kX5rgy"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2083.outbound.protection.outlook.com [40.107.237.83])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="2Ar98UrJ"
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2074.outbound.protection.outlook.com [40.107.95.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A822D1E0B7F;
-	Tue,  3 Dec 2024 09:01:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.83
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 915E01E0DBE;
+	Tue,  3 Dec 2024 09:01:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.74
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733216501; cv=fail; b=AjlUfTNtqoM5b0Ywey4FE5SDr5kVqqw0sr3apYEUxvA2P6CEtWZSka+L+uSq9Whp0ZrqrT7ZdC05fWpP4rct529r4GCWSXxLcW3i38y1JsXQnpVg3LOw6FKxam2lN6/O9xVo0Rzy0P1d/X/gTkGF1cVf/zpQvDSGKZG8/aJACdE=
+	t=1733216506; cv=fail; b=jYuVJ2BLEZMoTdm/Xcfn29vEthXxOrWGPlz2n8uVq/JYJqGX+2hDQGCjssqTeN598ot1GU+FX2IqHyRwIm1ifa008DiZnWqKLw8X9zhHp1nx7JnPjEeUrOyxXXDum0WuWTrZEIo8LNfhDf+dPZl5oKnuE01cLMq4A2KTMALov/U=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733216501; c=relaxed/simple;
-	bh=f6vubs2pvTm3eVh/13qnd4PIdAdCj7J+u1+haCnCZe8=;
+	s=arc-20240116; t=1733216506; c=relaxed/simple;
+	bh=P1u32rIZ+FqWAL216aVVfOa7lDFV7oeVfPh5C68lBK4=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aDe20Ap9sOgszNBEAxfTf50NXU/JApNcvZSuPQMsjyWTWoIbB+AixA2L9lFq3HhqHHXoCxhC+H6wuqpiHNvEoytvtaKkm7fmg2zwgAk0kOQGRmzJUmErZa7LKU3JagruXpjXA0wm+Fq4P2rE+8iog7t3TpHA+CBdOS8GFs0O1oI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=G4kX5rgy; arc=fail smtp.client-ip=40.107.237.83
+	 MIME-Version:Content-Type; b=e9NrqyzQD1kXidR3wm63pkzC8/DC6ocbc4hJgtYCDOwj1WJeOaoobKd5JBDgT9wlQn/rgsamW3HGERTmSvRDTQIxh07n221uFEPzfFozj7Vp6dh9Dr6STrxUn4cqZ8CM9d294N/X9mjxW03USRse2ilD/hE1dwo9ENauuxEB5os=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=2Ar98UrJ; arc=fail smtp.client-ip=40.107.95.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Z6zDC6uguGTIBPPp/jzyZsJL2C9HFQ7oOLrT2FyGwzgVJmBPg0yJn4dIk28k0gsoF883aH3egjDwWilvM9GnnVsU7nPC4CLvZ04k2NqgQxf03Btr6MPus2gA3bEkDvum2yRhc9fmB3HR5yQT5QX8aEXRfHeJCiQQgmFPCwJ8nqSfxGXOrU7eL4OQFS7MrJ9kV1Jl0t7Id83vi/HkZL4UEBHKBfTAGJ+GZU4jnhmjS5TtRvv5gZ1LOpGCyAo6DViY9Y3suC2lBQnWbSB10KWPRerzaTb4NGvQgBuvSJ1htgDWy0gb5+SfensPzaAJ+oLtKwhQ88LI13jwGQs1tS0mdQ==
+ b=jr2Jelpn2wnzOUY0zXfAuNNDbJKAY5Xucp33RcrZnj2RIZZ5QpOtl/CuxkwEM/BBJIB4yegFokOMNqh2q+SAEx+f84EEdOabGjJ6T770vSsKLjhtOWPJ+tQFawYg0vfB5xAQpTtsJtRePJ3zJClo1nHpU4ZLq4oiJ4Vtd15WZdzpiW2p5bOFVKmE/uIetup/NgpjtfkgFvtc22qNyvg0Ct+mIhaQUD451E6YJ9YqK06auQsMx2F67xcq30X1UpsvCe+yadddr3doC2MbJe3asL9DkR6E+VkgFNIa69HIyDxMw7olSiw0a3RbZG0Mv8x2T8pp8NLlidVnq06hV3HM2A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=QqfnoyTzYJGKUa3O0n3sbxeLFTWLytTIonx8E3wq6Yo=;
- b=rFKuriVOajD9aWAhh751l8yu+nk+N0iiDBOLvTgLxyT+ZZEjQ22uiRZgZ6UMhkklDPHhL145JaLcj5G8h1ZYQJcuRNlk/JjwSiGz1ZF2FSoJ8sENR8v03yiKHlq19se+zOdnwJ9Kj7S+efrCMkK/Fde8eV3w8jH0d8lcHYGa6elMkjaAVgnE0KbLYUk5dSSuVvufe4OqGSIXp2UBFVuuU4BEEGuy98Ub1aShjvmIi0Glj7kKUQbKqw2ES4flb7p75WkWhdEKHI7X/SosAywHZbTbuY6JHdIqCZWt6H5PBxqYsYDPTKEXQVUQFD3aHtRp4BwfzrK97sCOWn/lItETfg==
+ bh=TnFNgpFnVxXh6rkEe/mdjR31OUGytIueqp5ARvjA/74=;
+ b=gPbpon0QC8G6zs+FPiaV0HaeV2aXAfFYfkDeIaCahkZOGsOAnCCYBhpaWRsG3DmEbpo2v3hYMafeypug67Q7Qn9EEWljXGDAL9P+BmaAiUoyOOcGLbjEzjOtN6Zk1R88fiYAZWjUz+gZ6tQHJeAAT0MJfMhqq+7a5ecuvlM7go3oYvVsLiMLwLviw8fVq7XAJlb2MHNMwrBPY7Uy0Ruwksl4rIF8gqhpyjYHOpGzxKWakH62Glb/keQcQzquPpJejuoaFcphTaAyrzOuPmepbXPQjgGfF6KO/EKptub3ky4X1FQKvxN9V1ib1UKfaB88i+8hQUblZed7Ura2TyD1KA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
  dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
  header.from=amd.com; dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=QqfnoyTzYJGKUa3O0n3sbxeLFTWLytTIonx8E3wq6Yo=;
- b=G4kX5rgyJiYaokBLh8X4zjs/3LZ+w/JgFFcbMQuuYIOoXk7ZISS/yMfzXo6KPw1jaYBjRZgUX29v7Xqx9rQWsqhBXHq0gHj3JUwNXH0iIO16Z6tdrx6kcgj9QHx+1BRWQvms5+IBzizsItLslV9j+GnJePE+ovQBwcg6GbHh6RE=
-Received: from CH0PR03CA0120.namprd03.prod.outlook.com (2603:10b6:610:cd::35)
- by PH8PR12MB6940.namprd12.prod.outlook.com (2603:10b6:510:1bf::8) with
+ bh=TnFNgpFnVxXh6rkEe/mdjR31OUGytIueqp5ARvjA/74=;
+ b=2Ar98UrJvNKGWKSVW1GIw0kHiu+264m+ciUd4RLN0czgIbGqnG4oTxpVcRg5SWWniqYusa3lRRfUhCRkfJIxKMCfhjlRk7ELgkWzAHmwbQLPUj+no+22lGhB4+f/VSHbqd1QLDZw7kAGZ75cw3IjhHdl92f1a0jimeKqwcadH4o=
+Received: from CH0P221CA0036.NAMP221.PROD.OUTLOOK.COM (2603:10b6:610:11d::14)
+ by CH3PR12MB7548.namprd12.prod.outlook.com (2603:10b6:610:144::12) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.18; Tue, 3 Dec
- 2024 09:01:34 +0000
-Received: from CH1PEPF0000A347.namprd04.prod.outlook.com
- (2603:10b6:610:cd:cafe::70) by CH0PR03CA0120.outlook.office365.com
- (2603:10b6:610:cd::35) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8207.19 via Frontend Transport; Tue,
- 3 Dec 2024 09:01:34 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.19; Tue, 3 Dec
+ 2024 09:01:41 +0000
+Received: from CH1PEPF0000A349.namprd04.prod.outlook.com
+ (2603:10b6:610:11d:cafe::be) by CH0P221CA0036.outlook.office365.com
+ (2603:10b6:610:11d::14) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8207.18 via Frontend Transport; Tue,
+ 3 Dec 2024 09:01:41 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=amd.com;
@@ -62,22 +62,22 @@ Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
  165.204.84.17 as permitted sender) receiver=protection.outlook.com;
  client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
 Received: from SATLEXMB04.amd.com (165.204.84.17) by
- CH1PEPF0000A347.mail.protection.outlook.com (10.167.244.7) with Microsoft
+ CH1PEPF0000A349.mail.protection.outlook.com (10.167.244.9) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8230.7 via Frontend Transport; Tue, 3 Dec 2024 09:01:33 +0000
+ 15.20.8230.7 via Frontend Transport; Tue, 3 Dec 2024 09:01:41 +0000
 Received: from gomati.amd.com (10.180.168.240) by SATLEXMB04.amd.com
  (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 3 Dec
- 2024 03:01:30 -0600
+ 2024 03:01:37 -0600
 From: Nikunj A Dadhania <nikunj@amd.com>
 To: <linux-kernel@vger.kernel.org>, <thomas.lendacky@amd.com>, <bp@alien8.de>,
 	<x86@kernel.org>, <kvm@vger.kernel.org>
 CC: <mingo@redhat.com>, <tglx@linutronix.de>, <dave.hansen@linux.intel.com>,
 	<pgonda@google.com>, <seanjc@google.com>, <pbonzini@redhat.com>,
 	<nikunj@amd.com>
-Subject: [PATCH v15 07/13] x86/sev: Mark Secure TSC as reliable clocksource
-Date: Tue, 3 Dec 2024 14:30:39 +0530
-Message-ID: <20241203090045.942078-8-nikunj@amd.com>
+Subject: [PATCH v15 09/13] tsc: Use the GUEST_TSC_FREQ MSR for discovering TSC frequency
+Date: Tue, 3 Dec 2024 14:30:41 +0530
+Message-ID: <20241203090045.942078-10-nikunj@amd.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20241203090045.942078-1-nikunj@amd.com>
 References: <20241203090045.942078-1-nikunj@amd.com>
@@ -93,80 +93,130 @@ X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
  (10.181.40.145)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH1PEPF0000A347:EE_|PH8PR12MB6940:EE_
-X-MS-Office365-Filtering-Correlation-Id: 86ba68f0-7b72-4e7f-2563-08dd13791624
+X-MS-TrafficTypeDiagnostic: CH1PEPF0000A349:EE_|CH3PR12MB7548:EE_
+X-MS-Office365-Filtering-Correlation-Id: a98a3ae7-a62b-481e-8db2-08dd13791a71
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|7416014|376014|36860700013|1800799024;
+	BCL:0;ARA:13230040|1800799024|36860700013|82310400026|376014|7416014;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?0etoc8hubzlFNREKmHjZxmugrindgNLUt9l6XNhPhCoVXxTRspBQ+Cbph64x?=
- =?us-ascii?Q?GAYzkHy38tBz76TtXzsJn4Z6GYTC3/QGrSMJ7FwP2EGOxqg75IgPYPnVP9O1?=
- =?us-ascii?Q?REuu06AkOy8qQcMtT2SV5MMEpwmt5rioGYnGhZHopEAzDQXRdmlNF/2HSkny?=
- =?us-ascii?Q?TT+9aOHwULDzj0nQBigo60cSMAhpVJvqKUnx/Bk5qIsPFsHg5O8oN7s9YfvF?=
- =?us-ascii?Q?7TXula7uQMkwWlYtwjysZvkJ8VGrvjEbUcv0pVSgEmrt8RPil0Qdn1Ddsab6?=
- =?us-ascii?Q?ucYXTS5H4wl9/9R9uhFNUWcF1GpMQqNr5JzGvP78xGLpjsfVzNKkfl6Vrh4L?=
- =?us-ascii?Q?rUehbjZjXM7kHmW8mbwNXfExroT6qAtqCcGsBpnq6FCtJP2UY963I+X4DrNE?=
- =?us-ascii?Q?ohvmmRlskcCFgMDxzbv4FuDpTkWt18n291HWgUMPt6QRbx23T/DxbWplmrWR?=
- =?us-ascii?Q?3tp4y9SXLJP7DfrmA/lB88RbKg6AYSIQgJHMDcdzdMeB5C8MfQ1FutQ8jWv5?=
- =?us-ascii?Q?SEchya6Xw9f4FUjEemMX1Jwbm0pih02BHq6xUwA9m39Lsib93aPeRP7hM6wd?=
- =?us-ascii?Q?M4E+x7uQuoh5lUJsTAhqWWSDn0VLVmS1Nzhr71S0rGTafXi/e+QZ+FBFGNRf?=
- =?us-ascii?Q?m0XyJNFZ2zimZI6TDh77o5ACa0MuaxNKNwvPJjLGtzbAkWYTFGQNC81yGm5q?=
- =?us-ascii?Q?RbvkOALG61BCYcQ8lmfy4b9Zh+mEjYu0lLz866zI68q6St8rGtuMn+3rB0Ri?=
- =?us-ascii?Q?02ttx0Px7edOmjCs7xhNBvLBdRtgWCoARNZSWdaqB8RgKxzA86ytdAaQ4WLW?=
- =?us-ascii?Q?y5VPTzxpNVt8PdtHhXnFzmyH7qRIgPb5SCPxLR2ORj41StnDdzjcjnF/zLtF?=
- =?us-ascii?Q?czmIS0yLkokSgPr+a5KIhasjaC6j5gHdZZaAKR5YDXprlSnWWT6nquZdtRvR?=
- =?us-ascii?Q?jCIQZmOfAX7nvNdfEbjieM+sbc6gEKyqDxs5JaDQ9wntOStkzl+cC1yJu6/s?=
- =?us-ascii?Q?UUAGr1QqCsIb8exTTBSJvjeoBY2dQHBEbZQDE8oF1yNTav4y30BZYjzDIuEL?=
- =?us-ascii?Q?Xe9lMhs08tu67eSTlvc8layfzw/BKgm17Yf6dTjmuswMp2ZX1WptWzOLuCOJ?=
- =?us-ascii?Q?sSyAR9B2FzC5DTdpCvjabtygTAvr05iFga6NCPnx8/eHl6s2SqfBIt41F+UW?=
- =?us-ascii?Q?HCkBAUhGgrjOHY21FoJrk0wms7HocWjBfH4LlOA+UcTj1Bpmppyn/bUpLZAy?=
- =?us-ascii?Q?3WR8BXmkQm1tm3wrduSNBlhQi+IwJP4E1Z2taum0gtuMk5o+xYazv7iNfa6z?=
- =?us-ascii?Q?0Gcp/iuaFNPa/bNDEPaC/t1+PTr9zXjdKuRJeSDdyhLZUXaeGi94igfjtL0t?=
- =?us-ascii?Q?DYSuGj6RHztTUPQZH/kI1MIWxBKBmY2QhTrkHSFbBiXgo5UW/Jm3M0NUcO9G?=
- =?us-ascii?Q?Y4zIawtFF8VEGsc+1vGtbr0yplOHEr4i?=
+	=?us-ascii?Q?zQ2Wmrfr6yRmIj5a5ePXd2dusK9+QG+JA4+0psTDlw73rXcv4ddFZShjraUX?=
+ =?us-ascii?Q?q9YTwPnVFygsTnlrmr/fUxRYP3HkXVZbxZAcHU3yPikiEjS6pY9BxvL9U/1/?=
+ =?us-ascii?Q?+QgnsNp6ZoTw17E+copnFCQ75Geps+wTiOZwWvYkiEd/mFiCTxbvXj3c/pnO?=
+ =?us-ascii?Q?8q5X8F3r3uHfkrMnwWFYYciNDQwBZKP5uHdqDMXC5zw9mQWmwLz+8S6xOubl?=
+ =?us-ascii?Q?zWVtHHr3iIlIss4eeCuErKIIrwS2u6pVX0Q0wp464WIcq8QUTUcPppnkKpOf?=
+ =?us-ascii?Q?u35Ktizn04GZYeM21Np70pofn2JfsROY3rYsn4wzryHd0K3H4RbxBJz7knk1?=
+ =?us-ascii?Q?YAqC3csMCQFcuTPnLUgcvDKawTJInRBGBJMa4G0A49lfL98CdK4VOXVpT+O5?=
+ =?us-ascii?Q?P1DJpsWafTGoSf2EEZcfMKqBKjTDHR3sodAMFUYy+n6BPptLdDUokO/brstW?=
+ =?us-ascii?Q?El1Nk0mYwQ98uxynROzZrwSiSHNZx0xZPiRi+keN7rC/nPuOwypl65lr1NwV?=
+ =?us-ascii?Q?i8ZKE6b2/U+q+P/haXXWn0VVJdhOQq4h1JFJ0EHcjGohv95XBS2mI3P/Y80Z?=
+ =?us-ascii?Q?6ckO/YbZ/lKcgVknYR+IXywzLNlgi14mFB9YzUKnBSTpXoQ7bAyhES031dAM?=
+ =?us-ascii?Q?mDBKFqLAGc0bXNPa0eS0u1W36WlJEiRy+JaE8O7kxeLmzu08eTTqYElqJsyr?=
+ =?us-ascii?Q?IbuMuWzMuYeXsdTsJoDpsj9PnYKKguTv+caf8tqM9E24Xim2BaxiEBqRwRv8?=
+ =?us-ascii?Q?d1ocu23KctTZcI8loz9ReZ3FbShzkbFis4Hg8R1jnVYiRFXsduHu7/CUx5AJ?=
+ =?us-ascii?Q?fNWYdD1JcQ0aB9cphdG4hl0ielmpQtCATbN6O506WfJejpchehOwDEpPitS3?=
+ =?us-ascii?Q?7XiXfCMIu12Cu/ggDepn3dGsPCt5gGqoaeVI9TWFceAmEKn4AiaGHXn+qiiy?=
+ =?us-ascii?Q?5xNpIAAiz2akF6gjM8H6HB3TDjZQZ5JG3vxVtxVONg0qja8kbbpb/md2kIXR?=
+ =?us-ascii?Q?8bhm/inGA+Tz6lTIPuF28ZOr+fjqmfhjx03O1mUSiCGSRINxGGfbQpzh1vyO?=
+ =?us-ascii?Q?EcuMKJyBDl7dqM/pyCDrqRyIpo84NzxREV7ZPLnxORXcVxPt65zozkjueeJ5?=
+ =?us-ascii?Q?h0jDqWkt8hPETQ9mPyHNWoJyFsXhv2JaQ3ogRe3PytT3Q7MrSAzKlkxl6ywZ?=
+ =?us-ascii?Q?BE+jU70OZ0xCrudcHQGZhQaCYbTNI6VklKAXlH/7eFVXCyrwHeqS6LFZ18M8?=
+ =?us-ascii?Q?zR/QyI4+Y4AkspVJpf5DqHvG4cDRpyhthWv90g4+ZC5pS2yRiX0qEtGgGD23?=
+ =?us-ascii?Q?Rr8pGl9Mi1/lig7lVkb1i42WGhWHXX4P6Y1euRv+7ePCBgpoqvINCI9Xaw2W?=
+ =?us-ascii?Q?Qc9SmKKB0VHARaI5bfWb1g6tP69qI9l4d5M0Wnr2+iagvnzavjKPOlQ35AF3?=
+ =?us-ascii?Q?7k/c2h4xc2bA9+e/zGtu1RSFoGTP3+jj?=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(7416014)(376014)(36860700013)(1800799024);DIR:OUT;SFP:1101;
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(82310400026)(376014)(7416014);DIR:OUT;SFP:1101;
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Dec 2024 09:01:33.9447
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Dec 2024 09:01:41.1317
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 86ba68f0-7b72-4e7f-2563-08dd13791624
+X-MS-Exchange-CrossTenant-Network-Message-Id: a98a3ae7-a62b-481e-8db2-08dd13791a71
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	CH1PEPF0000A347.namprd04.prod.outlook.com
+	CH1PEPF0000A349.namprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB6940
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB7548
 
-In SNP guest environment with Secure TSC enabled, unlike other clock
-sources (such as HPET, ACPI timer, APIC, etc.), the RDTSC instruction is
-handled without causing a VM exit, resulting in minimal overhead and
-jitters. Hence, mark Secure TSC as the only reliable clock source,
-bypassing unstable calibration.
+Calibrating the TSC frequency using the kvmclock is not correct for
+SecureTSC enabled guests. Use the platform provided TSC frequency via the
+GUEST_TSC_FREQ MSR (C001_0134h).
 
 Signed-off-by: Nikunj A Dadhania <nikunj@amd.com>
-Tested-by: Peter Gonda <pgonda@google.com>
-Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
 ---
- arch/x86/mm/mem_encrypt_amd.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ arch/x86/include/asm/sev.h |  2 ++
+ arch/x86/coco/sev/core.c   | 16 ++++++++++++++++
+ arch/x86/kernel/tsc.c      |  5 +++++
+ 3 files changed, 23 insertions(+)
 
-diff --git a/arch/x86/mm/mem_encrypt_amd.c b/arch/x86/mm/mem_encrypt_amd.c
-index 774f9677458f..fa0bc52ef707 100644
---- a/arch/x86/mm/mem_encrypt_amd.c
-+++ b/arch/x86/mm/mem_encrypt_amd.c
-@@ -541,6 +541,10 @@ void __init sme_early_init(void)
- 	 * kernel mapped.
- 	 */
- 	snp_update_svsm_ca();
-+
-+	/* Mark the TSC as reliable when Secure TSC is enabled */
-+	if (sev_status & MSR_AMD64_SNP_SECURE_TSC)
-+		setup_force_cpu_cap(X86_FEATURE_TSC_RELIABLE);
- }
+diff --git a/arch/x86/include/asm/sev.h b/arch/x86/include/asm/sev.h
+index 9fd02efef08e..c4dca06b3b01 100644
+--- a/arch/x86/include/asm/sev.h
++++ b/arch/x86/include/asm/sev.h
+@@ -493,6 +493,7 @@ int snp_send_guest_request(struct snp_msg_desc *mdesc, struct snp_guest_req *req
+ 			   struct snp_guest_request_ioctl *rio);
  
- void __init mem_encrypt_free_decrypted_mem(void)
+ void __init snp_secure_tsc_prepare(void);
++void __init snp_secure_tsc_init(void);
+ 
+ #else	/* !CONFIG_AMD_MEM_ENCRYPT */
+ 
+@@ -536,6 +537,7 @@ static inline void snp_msg_free(struct snp_msg_desc *mdesc) { }
+ static inline int snp_send_guest_request(struct snp_msg_desc *mdesc, struct snp_guest_req *req,
+ 					 struct snp_guest_request_ioctl *rio) { return -ENODEV; }
+ static inline void __init snp_secure_tsc_prepare(void) { }
++static inline void __init snp_secure_tsc_init(void) { }
+ 
+ #endif	/* CONFIG_AMD_MEM_ENCRYPT */
+ 
+diff --git a/arch/x86/coco/sev/core.c b/arch/x86/coco/sev/core.c
+index 59c5e716fdd1..1bc668883058 100644
+--- a/arch/x86/coco/sev/core.c
++++ b/arch/x86/coco/sev/core.c
+@@ -3279,3 +3279,19 @@ void __init snp_secure_tsc_prepare(void)
+ 
+ 	pr_debug("SecureTSC enabled");
+ }
++
++static unsigned long securetsc_get_tsc_khz(void)
++{
++	unsigned long long tsc_freq_mhz;
++
++	setup_force_cpu_cap(X86_FEATURE_TSC_KNOWN_FREQ);
++	rdmsrl(MSR_AMD64_GUEST_TSC_FREQ, tsc_freq_mhz);
++
++	return (unsigned long)(tsc_freq_mhz * 1000);
++}
++
++void __init snp_secure_tsc_init(void)
++{
++	x86_platform.calibrate_cpu = securetsc_get_tsc_khz;
++	x86_platform.calibrate_tsc = securetsc_get_tsc_khz;
++}
+diff --git a/arch/x86/kernel/tsc.c b/arch/x86/kernel/tsc.c
+index 67aeaba4ba9c..c0eef924b84e 100644
+--- a/arch/x86/kernel/tsc.c
++++ b/arch/x86/kernel/tsc.c
+@@ -30,6 +30,7 @@
+ #include <asm/i8259.h>
+ #include <asm/topology.h>
+ #include <asm/uv/uv.h>
++#include <asm/sev.h>
+ 
+ unsigned int __read_mostly cpu_khz;	/* TSC clocks / usec, not used here */
+ EXPORT_SYMBOL(cpu_khz);
+@@ -1515,6 +1516,10 @@ void __init tsc_early_init(void)
+ 	/* Don't change UV TSC multi-chassis synchronization */
+ 	if (is_early_uv_system())
+ 		return;
++
++	if (cc_platform_has(CC_ATTR_GUEST_SNP_SECURE_TSC))
++		snp_secure_tsc_init();
++
+ 	if (!determine_cpu_tsc_frequencies(true))
+ 		return;
+ 	tsc_enable_sched_clock();
 -- 
 2.34.1
 
