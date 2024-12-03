@@ -1,77 +1,78 @@
-Return-Path: <linux-kernel+bounces-429933-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9EE69E292E
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 18:27:00 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B2EA9E2930
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 18:27:07 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA4E7284A2F
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 17:26:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5BD416974B
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 17:27:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FC3C1FBCA6;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBBCB1FBEA7;
 	Tue,  3 Dec 2024 17:26:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kvuqWreo"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4SAjdCyj"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A199D1F8AE1
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 17:26:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9761D1FA82C
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 17:26:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733246810; cv=none; b=I1M7mh2JSV+ihZxdhR6mLur7j4Ds40gFk1l3nfbmTxQ6II6xazNsR5HRYKUfG3JL9PZktRGANWJxqZGYAhAA3ISpgLhRqA+GTKwQBYtMNc8iyA8nWhkzvL5aFq5ty8koOYYU86SX3xqos+2Bsphxpw9tRU4jRgmQMkqijqYDwcE=
+	t=1733246811; cv=none; b=BdNKNWcGv/hZTgjeBbiIfmzGFbk6nGdD2sxe46i2nE06ora1fzAAF5vpJZPbTHSuaoIOQ/UvSDiGt1kLuAUFjiOqfY6IbklZ1uX4s8g0DGt8lOFZ87mU9Xo2rtSHjHEVcrFYe3XtIMYKr/tGl9usQuzF7MDjLY00eMkhbeHVMaw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733246810; c=relaxed/simple;
-	bh=MCDy6HkUfDKHYjRUBvEabLuhWMTUUHI+2O5UXR9PdkA=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=bOPRnUZ4aKdTcwlcPxF2fO2GmjT7SZ5V0nbnIPwaJRVXiKhtVIZAeXODP86uOawgRDH35f2uG4Fw8qn+lRma9m7R+Wln6khXOwnRTSaGCBCZBNwBsQXSiiZijco3QRbYnI2BAPwUGF4ne2VirIvhSaCzOerGytevbFsesMhuCm0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kvuqWreo; arc=none smtp.client-ip=209.85.128.53
+	s=arc-20240116; t=1733246811; c=relaxed/simple;
+	bh=Aq2zO2su/gJQZo1LKHbVMD9Hcz8GmXaQFYJOvJIHJUg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=I9QhAj1XpUWXVAflK7rfp7Dvb9/89hDwC1DfoXhf79oSZ38Wrf2xSVS2/CjMgHEq1WrLK3n8eIqS/ueZm8dOjPiH6TZStH8phaadmMxQjFOPW/JuLKyj9WjG0LRxjs/y6sRB05iZGfN1GMbMqxMTiEjshKIYic4J9xViybNzF2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4SAjdCyj; arc=none smtp.client-ip=209.85.128.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-434a9f9a225so55995e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 09:26:48 -0800 (PST)
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4349ea54db7so56535e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 09:26:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733246807; x=1733851607; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=esMBl0uOLbGzsFzbKrL9tw7lBRfURdjOWkpYSobO80c=;
-        b=kvuqWreoEPTh05IQgWB1Xv6RDHveXyeGC6mbLxyug6E3zrExlcgZLcS7CX0oXYQZxa
-         FRMqWUSH79q/5HilViq8aYbF4L7698F8x7oj5QUYyChRYt21NgYNCAaieu/PXhsTE0V2
-         IN8XQd7bCDgCYgp7kQ5Lb4RpH5H+uM2/pH+hy5oHcvjHPVvaxXSRR1ziPJlj6y33Ei+e
-         0V/S/U3+LxnCxmDtw4OVdUaJ6g+g17KsQd5sbGwmVHsdmcrJvKTF5nkRWns5pxo7iG6f
-         +80TuNeq1CeJe1koiliq58tCB7GS7MFoam0U+sqBdfzC9VABIH8o3o+xloP4cJcHruUF
-         SMxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733246807; x=1733851607;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=google.com; s=20230601; t=1733246808; x=1733851608; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=esMBl0uOLbGzsFzbKrL9tw7lBRfURdjOWkpYSobO80c=;
-        b=oBiHbFI3/kZi5dsx44DSVq76LNzU0CzHawG7Ccy+wxp6NCNsPGFNoRPwqXaKcUHyaB
-         OzjXBZFF3JBL0XcZ0ooJ5WI7EhVEzvqd6GHbCbI0LElbvE5Ho0cx7E0dxtKmRLewqgwe
-         pQz946a88EpIjs6NdB1jL1/P7YhDxKXRvmvDaks+5nxDS1w4W2/voGQ8xIhB70ehDoMW
-         W8/nXxvgHd44a69VwdBRFv1gOeYzPpE2e7UDUvUQN/AZxvroiqCyy1JGniExOqDPAgc8
-         k/ilsLXcZ0ean7lmFGJzKqDvp5p/HOlot6yHPE939GN+W/xjNKrLsyz79IaOQs2T+6cv
-         9FDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWZUbjz4Wz3nLm/MopKPg6YF1IdrQCLfxwtWBEWh0/nGvKliIs3WawQSXmEm8tRouxrXuXeJaF8ylAPsgs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwdyHBhHhr3dV1Hh4iyx5ZHEyW35QTFsA2ay2mlKSSN1rek1NJV
-	s+C9U/lta3HaijL3SC+DO/RJmjsqa3y4JRK6xlCWHDEIyuRS1IiQ6mq287YtWA==
-X-Gm-Gg: ASbGnctHiTRHQ8Tcei9uaMKV9QbBzHEEopElIH+ybmxxQmfySHpOeVAB7kbs/Jxn49G
-	OF/mAYoMBVDm/wyxfUJU3uXKcHYXJVrvo6FicPbGPt4ClDQSpfuzgY3PCkMGklCkADzO0N0zfGn
-	oiXQ1D5MRLxfON5/Y53GREcswWrHW4tzGBsgWR0TdVWiyfqAEzFrgRlFLemJkuD1sdVkYgqlNEc
-	WmxDt2+rKcsD2jnm+JbpM7jVUdOFnHNrrfVirw=
-X-Google-Smtp-Source: AGHT+IHu3tfTAoXvieXaIRaJiRZryx8cWpn3+5PzdcsLUtGUjPoPKMn6gY/KMYeGtkKYB5HV7URZ6Q==
-X-Received: by 2002:a05:600c:2144:b0:434:9d0b:bd7c with SMTP id 5b1f17b1804b1-434d12b8df7mr1213685e9.3.1733246806576;
-        Tue, 03 Dec 2024 09:26:46 -0800 (PST)
+        bh=9A/J5jkgomsMiHFvcuDoSxKD5NJW5y7f08S/zY5zTv8=;
+        b=4SAjdCyjnIkugf8ljwDjQXnvxNeDEy1R3GoxGeaOuV0Zb0CNbkf+V7fSrTVGXqKVhD
+         Cq95lsNfmUSVwpWk+HDaec9oUsAlRMEIbLrmHCDQEND2gQJRoPas9IGX0OeK0z6tTckY
+         IVwrqCe6eXV1AkjY3J/otecJDvb1KU6L4sjiCNVzk6o6s+MHOou8A8DEVpoEGCoU7O8R
+         tAlak021kRrD++owqZ6JAHiMwFG7BE+AMYGWT5YY9ejwAUgMJYC+b7BVUsJ+eGuPbSMC
+         UbGQOZo1SO7gcyygN048hQ+Y4bmLU67CX8HTrLG49d4RHQ1jFrPU7abrroLJE7AWkBYr
+         IjaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733246808; x=1733851608;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9A/J5jkgomsMiHFvcuDoSxKD5NJW5y7f08S/zY5zTv8=;
+        b=qQ4Plf7bDO1DO4YZA0+gLNtBkW+htUAMbjsB8XAGiwqK7kOjRK9jQM3q2RGvsrx2qs
+         IvLlugi7Oiq95il+BHEhMq5rdyei0Rh4CaKbgKphhL8Uy7sn1aDx2yAKnAQAx3TA69Xc
+         flBTazYnFZZXNhewiQyOWX1g9IHjHClLFFM1UDy6lsVp5rTz4U3nyqSg2Xwf4dXB3MVD
+         MsmhX5pct4kGmDHggv1gVC/VWicu5OgIRyHbeLdM8kCE6/uoqbTJXRnaOeqdl5pHY5ES
+         RpbiRw1ln3t+GNQMOoCIbl8Z/oweHvmdd43RaFrp0SOUjH56DeAQxefbNcgLSdEhg65R
+         HA+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWmaEbKrdyiC4AUUF/aqpPmb22fc2I4bCzSPHS+knha1XVMiIngoKk9uindjT5Q8bTcuJon4bMakPA+/z4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx34vQC9dbfd9uF9pTLxR++Nul5887EdvbOyWpJHuYxGRUFmtFd
+	ZTCqB0rwkdx1mlieQv+Fo4f0fhZiroQQaECIQtuXzJy6Dquj+bzNkUDXL+SAqw==
+X-Gm-Gg: ASbGncvdSJSu4m1ZKa+Jj2ZSZO7YDyuYcQy6vUYUvfw8iSUL8LeGY207JbdGAoGTtgb
+	KO7Y3Ing9qmzrrMa55wUifcK7eBNkEKy7Ya2oQ/bCYq6qXVmTmR9+GXYrv9QsxfH+Q/kHhu+G5u
+	V2UbTtx0U2erAvZa8MgKuqC4WzsXVAOr8T8jlQ+Gug6MaSd/47C4vDYYn3c3bCP+HZtcgElLQlD
+	3mKkUi7eyHmbWrU//3HueOQ0saKIq9v2b53XQ==
+X-Google-Smtp-Source: AGHT+IFZqTIc4JHhlvLFIIqiUiNlQB9koDtYePpOB1Asac3qhzzJf/qabHheeO4gqnlhnImPyoFMHQ==
+X-Received: by 2002:a05:600c:1f93:b0:42b:a961:e51 with SMTP id 5b1f17b1804b1-434d04fbed7mr1401935e9.0.1733246807548;
+        Tue, 03 Dec 2024 09:26:47 -0800 (PST)
 Received: from localhost ([2a00:79e0:9d:4:92ba:3294:39ee:2d61])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385f8448d32sm4515574f8f.96.2024.12.03.09.26.45
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434b0f70d9csm201336315e9.38.2024.12.03.09.26.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Dec 2024 09:26:45 -0800 (PST)
+        Tue, 03 Dec 2024 09:26:47 -0800 (PST)
 From: Jann Horn <jannh@google.com>
-Subject: [PATCH 0/3] fixes for udmabuf (memfd sealing checks and a leak)
-Date: Tue, 03 Dec 2024 18:25:34 +0100
-Message-Id: <20241203-udmabuf-fixes-v1-0-f99281c345aa@google.com>
+Date: Tue, 03 Dec 2024 18:25:35 +0100
+Subject: [PATCH 1/3] udmabuf: fix racy memfd sealing check
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,10 +81,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAA4/T2cC/x3LTQqAIBBA4avIrBP8y0VXiRaaY80iC8UIpLsnL
- T8er0HBTFhgYg0y3lToTB1yYLDuLm3IKXSDEspIJTSv4XC+Rh7pwcKDMHpE77y1GvpzZfxDX+b
- lfT+rWACQXwAAAA==
-X-Change-ID: 20241203-udmabuf-fixes-d0435ebab663
+Message-Id: <20241203-udmabuf-fixes-v1-1-f99281c345aa@google.com>
+References: <20241203-udmabuf-fixes-v1-0-f99281c345aa@google.com>
+In-Reply-To: <20241203-udmabuf-fixes-v1-0-f99281c345aa@google.com>
 To: Gerd Hoffmann <kraxel@redhat.com>, 
  Vivek Kasireddy <vivek.kasireddy@intel.com>, 
  Sumit Semwal <sumit.semwal@linaro.org>, 
@@ -97,114 +97,60 @@ Cc: dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
  Jann Horn <jannh@google.com>, Julian Orth <ju.orth@gmail.com>, 
  stable@vger.kernel.org
 X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1733246801; l=2909;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1733246802; l=1642;
  i=jannh@google.com; s=20240730; h=from:subject:message-id;
- bh=MCDy6HkUfDKHYjRUBvEabLuhWMTUUHI+2O5UXR9PdkA=;
- b=7R1+MVXGDrX8ZjzD+lYpU8vJrqqQZsU/jjVE8x5Xvlp659inhHh4Hs6EU5+zsTLaWSIvHEjrU
- U58t58Lkh24B4O1A8seSqKkOWQKwCT4vgQTfc8JN9wGpHh4WP31+uUE
+ bh=Aq2zO2su/gJQZo1LKHbVMD9Hcz8GmXaQFYJOvJIHJUg=;
+ b=nHri5mQURsQCt6qUqaiD5aSYbBqGWvkkFAyFFqtmxx/10lRP3oWxueAag4of6Gz9UdJJ7j6rF
+ fH9tuFCVgXJDnU7/j0wwtosFko/X7UkQaHlRmJaTrIACgXmedoy/Ws4
 X-Developer-Key: i=jannh@google.com; a=ed25519;
  pk=AljNtGOzXeF6khBXDJVVvwSEkVDGnnZZYqfWhP1V+C8=
 
-I have tested that patches 2 and 3 work using the following reproducers.
-I did not write a reproducer for the issue described in patch 1.
+The current check_memfd_seals() is racy: Since we first do
+check_memfd_seals() and then udmabuf_pin_folios() without holding any
+relevant lock across both, F_SEAL_WRITE can be set in between.
+This is problematic because we can end up holding pins to pages in a
+write-sealed memfd.
 
-Reproducer for F_SEAL_FUTURE_WRITE not being respected:
-```
-#define _GNU_SOURCE
-#include <err.h>
-#include <fcntl.h>
-#include <stdio.h>
-#include <unistd.h>
-#include <sys/ioctl.h>
-#include <sys/mman.h>
-#include <linux/udmabuf.h>
+Fix it using the inode lock, that's probably the easiest way.
+In the future, we might want to consider moving this logic into memfd,
+especially if anyone else wants to use memfd_pin_folios().
 
-#define SYSCHK(x) ({          \
-  typeof(x) __res = (x);      \
-  if (__res == (typeof(x))-1) \
-    err(1, "SYSCHK(" #x ")"); \
-  __res;                      \
-})
-
-int main(void) {
-  int memfd = SYSCHK(memfd_create("test", MFD_ALLOW_SEALING));
-  SYSCHK(ftruncate(memfd, 0x1000));
-  SYSCHK(fcntl(memfd, F_ADD_SEALS, F_SEAL_SHRINK|F_SEAL_FUTURE_WRITE));
-  int udmabuf_fd = SYSCHK(open("/dev/udmabuf", O_RDWR));
-  struct udmabuf_create create_arg = {
-    .memfd = memfd,
-    .flags = 0,
-    .offset = 0,
-    .size = 0x1000
-  };
-  int buf_fd = SYSCHK(ioctl(udmabuf_fd, UDMABUF_CREATE, &create_arg));
-  printf("created udmabuf buffer fd %d\n", buf_fd);
-  char *map = SYSCHK(mmap(NULL, 0x1000, PROT_READ|PROT_WRITE, MAP_SHARED, buf_fd, 0));
-  *map = 'a';
-}
-```
-
-Reproducer for the memory leak (if you run this for a while, your memory
-usage will steadily go up, and /sys/kernel/debug/dma_buf/bufinfo will
-contain a ton of entries):
-```
-#define _GNU_SOURCE
-#include <err.h>
-#include <errno.h>
-#include <assert.h>
-#include <fcntl.h>
-#include <stdio.h>
-#include <unistd.h>
-#include <sys/ioctl.h>
-#include <sys/mman.h>
-#include <sys/resource.h>
-#include <linux/udmabuf.h>
-
-#define SYSCHK(x) ({          \
-  typeof(x) __res = (x);      \
-  if (__res == (typeof(x))-1) \
-    err(1, "SYSCHK(" #x ")"); \
-  __res;                      \
-})
-
-int main(void) {
-  int memfd = SYSCHK(memfd_create("test", MFD_ALLOW_SEALING));
-  SYSCHK(ftruncate(memfd, 0x1000));
-  SYSCHK(fcntl(memfd, F_ADD_SEALS, F_SEAL_SHRINK));
-  int udmabuf_fd = SYSCHK(open("/dev/udmabuf", O_RDWR));
-
-  // prevent creating new FDs
-  struct rlimit rlim = { .rlim_cur = 1, .rlim_max = 1 };
-  SYSCHK(setrlimit(RLIMIT_NOFILE, &rlim));
-
-  while (1) {
-    struct udmabuf_create create_arg = {
-      .memfd = memfd,
-      .flags = 0,
-      .offset = 0,
-      .size = 0x1000
-    };
-    int buf_fd = ioctl(udmabuf_fd, UDMABUF_CREATE, &create_arg);
-    assert(buf_fd == -1);
-    assert(errno == EMFILE);
-  }
-}
-```
-
+Reported-by: Julian Orth <ju.orth@gmail.com>
+Closes: https://bugzilla.kernel.org/show_bug.cgi?id=219106
+Closes: https://lore.kernel.org/r/CAG48ez0w8HrFEZtJkfmkVKFDhE5aP7nz=obrimeTgpD+StkV9w@mail.gmail.com
+Fixes: fbb0de795078 ("Add udmabuf misc device")
+Cc: stable@vger.kernel.org
 Signed-off-by: Jann Horn <jannh@google.com>
 ---
-Jann Horn (3):
-      udmabuf: fix racy memfd sealing check
-      udmabuf: also check for F_SEAL_FUTURE_WRITE
-      udmabuf: fix memory leak on last export_udmabuf() error path
+ drivers/dma-buf/udmabuf.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
- drivers/dma-buf/udmabuf.c | 36 ++++++++++++++++++++----------------
- 1 file changed, 20 insertions(+), 16 deletions(-)
----
-base-commit: b86545e02e8c22fb89218f29d381fa8e8b91d815
-change-id: 20241203-udmabuf-fixes-d0435ebab663
+diff --git a/drivers/dma-buf/udmabuf.c b/drivers/dma-buf/udmabuf.c
+index 8ce1f074c2d32a0a9f59ff7184359e37d56548c6..662b9a26e06668bf59ab36d07c0648c7b02ee5ae 100644
+--- a/drivers/dma-buf/udmabuf.c
++++ b/drivers/dma-buf/udmabuf.c
+@@ -436,14 +436,15 @@ static long udmabuf_create(struct miscdevice *device,
+ 			goto err;
+ 		}
+ 
++		inode_lock_shared(memfd->f_inode);
+ 		ret = check_memfd_seals(memfd);
+-		if (ret < 0) {
+-			fput(memfd);
+-			goto err;
+-		}
++		if (ret)
++			goto out_unlock;
+ 
+ 		ret = udmabuf_pin_folios(ubuf, memfd, list[i].offset,
+ 					 list[i].size, folios);
++out_unlock:
++		inode_unlock_shared(memfd->f_inode);
+ 		fput(memfd);
+ 		if (ret)
+ 			goto err;
 
 -- 
-Jann Horn <jannh@google.com>
+2.47.0.338.g60cca15819-goog
 
 
