@@ -1,140 +1,80 @@
-Return-Path: <linux-kernel+bounces-428782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AC369E1363
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 07:33:30 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 874BE9E1367
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 07:36:10 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E0EBFB22F5B
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 06:33:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 59D6C161647
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 06:36:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64E751885B3;
-	Tue,  3 Dec 2024 06:33:18 +0000 (UTC)
-Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B8C2173;
-	Tue,  3 Dec 2024 06:33:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39D1B187325;
+	Tue,  3 Dec 2024 06:36:05 +0000 (UTC)
+Received: from cmccmta2.chinamobile.com (cmccmta8.chinamobile.com [111.22.67.151])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA81E178383;
+	Tue,  3 Dec 2024 06:35:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733207598; cv=none; b=h+cVfOPKPONi8maFrf2Rz1vHsPD7NfneJwHu/JF1W955HT2nsAOf94/TKJGVtYuTvtALViQluwjeYzeI7qwuwPp580rM1A7fgDBbGMDzGt++6AL5xX9McGjI2SpM+SRdPrFF2Pc41f9BxN9tOlBa5IGLYE+AIfKe51/m5bOcs6I=
+	t=1733207764; cv=none; b=RP5V4gviUhKLr4G6QeQAHhFaP4HWuzZW5x361gKJVC5RHfOEexEUMexbZOENig+2/8oIvaR9cWVELoWG5Q2iMrR2mr45eO80rWEREeBBrkLX3VGnAn/HhqdYTXNMLBuiBpkC/LJNcbarGQamuMqjnMS57RryKixsN37DLyol0GA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733207598; c=relaxed/simple;
-	bh=xXzj5lui4mmh8UNRyRnUSzrAo+0fyVSgY5TeYZqjTo4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=plhMKvES51WxcU9ZHMD5ZMJyE5gORlzVXT53fAyhwCNbzkQGKNPNW+76wy0Z4/avObc9qNk/KfibJnrfKV6oUG3chDaYUDQqh4QxOvtOLgXJezfqHOa5ORJlN/LXElAmBYGVzgPeAO9kfcnY/V5n6HOaMg+GSdoKqZqtWF6XUlg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; arc=none smtp.client-ip=92.121.34.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 099B91A05B3;
-	Tue,  3 Dec 2024 07:33:15 +0100 (CET)
-Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id F00441A05A5;
-	Tue,  3 Dec 2024 07:33:14 +0100 (CET)
-Received: from lsv051416.swis.nl-cdc01.nxp.com (lsv051416.swis.nl-cdc01.nxp.com [10.168.48.122])
-	by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 48117202A7;
-	Tue,  3 Dec 2024 07:33:14 +0100 (CET)
-Date: Tue, 3 Dec 2024 07:33:14 +0100
-From: Jan Petrous <jan.petrous@oss.nxp.com>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Emil Renner Berthing <kernel@esmil.dk>,
-	Minda Chen <minda.chen@starfivetech.com>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Iyappan Subramanian <iyappan@os.amperecomputing.com>,
-	Keyur Chudgar <keyur@os.amperecomputing.com>,
-	Quan Nguyen <quan@os.amperecomputing.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	imx@lists.linux.dev, devicetree@vger.kernel.org,
-	NXP S32 Linux Team <s32@nxp.com>, 0x1207@gmail.com,
-	fancer.lancer@gmail.com
-Subject: Re: [PATCH net-next v7 14/15] net: stmmac: dwmac-s32: add basic NXP
- S32G/S32R glue driver
-Message-ID: <Z06mKpcvBO23RSx+@lsv051416.swis.nl-cdc01.nxp.com>
-References: <20241202-upstream_s32cc_gmac-v7-0-bc3e1f9f656e@oss.nxp.com>
- <20241202-upstream_s32cc_gmac-v7-14-bc3e1f9f656e@oss.nxp.com>
- <b9ad385b-7702-4c71-b14f-64f2714a35a4@lunn.ch>
+	s=arc-20240116; t=1733207764; c=relaxed/simple;
+	bh=B1UTk9/BytEAmv+lKwWMk2gv8t9dUj3Ot6I1jPWed3M=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Ssl6CYosE9mBxDGmkHYa35/K0LBc7zg/KvRIA9w6M/qSMDDHdDbMGC7Ii3bg9DdhrChVMpp+KZyhsTBK1sq2OxK1+oxqNleBd3zlYsyXEg9v5HZoI5ZvhsbxNxMKbTFvztjWGgJrSAp3+s1Hr3P5rPpEgoBD9YQlktvmxVJgdA4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
+	by rmmx-syy-dmz-app06-12006 (RichMail) with SMTP id 2ee6674ea6cacbe-8e58f;
+	Tue, 03 Dec 2024 14:35:55 +0800 (CST)
+X-RM-TRANSID:2ee6674ea6cacbe-8e58f
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from localhost.localdomain (unknown[10.55.1.71])
+	by rmsmtp-syy-appsvr03-12003 (RichMail) with SMTP id 2ee3674ea6ca7bb-1d643;
+	Tue, 03 Dec 2024 14:35:55 +0800 (CST)
+X-RM-TRANSID:2ee3674ea6ca7bb-1d643
+From: liujing <liujing@cmss.chinamobile.com>
+To: perex@perex.cz,
+	tiwai@suse.com
+Cc: linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	liujing <liujing@cmss.chinamobile.com>
+Subject: [PATCH] ALSA: ac97: Modify the incorrect format specifier
+Date: Tue,  3 Dec 2024 14:35:53 +0800
+Message-Id: <20241203063553.2825-1-liujing@cmss.chinamobile.com>
+X-Mailer: git-send-email 2.27.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b9ad385b-7702-4c71-b14f-64f2714a35a4@lunn.ch>
-X-Virus-Scanned: ClamAV using ClamSMTP
+Content-Transfer-Encoding: 8bit
 
-On Tue, Dec 03, 2024 at 12:43:58AM +0100, Andrew Lunn wrote:
-> > +static int s32_gmac_init(struct platform_device *pdev, void *priv)
-> > +{
-> > +	struct s32_priv_data *gmac = priv;
-> > +	int ret;
-> > +
-> > +	ret = clk_set_rate(gmac->tx_clk, GMAC_TX_RATE_125M);
-> > +	if (!ret)
-> > +		ret = clk_prepare_enable(gmac->tx_clk);
-> > +
-> > +	if (ret) {
-> > +		dev_err(&pdev->dev, "Can't set tx clock\n");
-> > +		return ret;
-> > +	}
-> 
-> The ordering is a bit odd here. Normally you would test each operation
-> individually for errors. So:
-> 
-> 	ret = clk_set_rate(gmac->tx_clk, GMAC_TX_RATE_125M);
-> 	if (ret) {
-> 		dev_err(&pdev->dev, "Can't set tx clock\n");
-> 		return ret;
-> 	}
-> 	ret = clk_prepare_enable(gmac->tx_clk);
-> 	if (ret) {
-> 		dev_err(&pdev->dev, "Can't enable tx clock\n");
-> 		return ret;
-> 	}
-> 
+Replace %d with %u in snprintf() because it is "unsigned int".
 
-Thanks for it. The ordering is incorrect, agree. I will fix it in v8.
+Signed-off-by: liujing <liujing@cmss.chinamobile.com>
 
-> 
-> > +
-> > +	ret = clk_prepare_enable(gmac->rx_clk);
-> > +	if (ret) {
-> > +		clk_disable_unprepare(gmac->tx_clk);
-> > +		dev_err(&pdev->dev, "Can't set rx clock\n");
-> > +		return ret;
-> > +	}
-> 
-> Is there no need to set the TX clock rate?
-> 
+diff --git a/sound/pci/ac97/ac97_codec.c b/sound/pci/ac97/ac97_codec.c
+index 25f93e56cfc7..6e710dce5c60 100644
+--- a/sound/pci/ac97/ac97_codec.c
++++ b/sound/pci/ac97/ac97_codec.c
+@@ -1864,7 +1864,7 @@ void snd_ac97_get_name(struct snd_ac97 *ac97, unsigned int id, char *name, int m
+ 		strcat(name, " ");
+ 		strcat(name, pid->name);
+ 		if (pid->mask != 0xffffffff)
+-			sprintf(name + strlen(name), " rev %d", id & ~pid->mask);
++			sprintf(name + strlen(name), " rev %u", id & ~pid->mask);
+ 		if (ac97 && pid->patch) {
+ 			if ((modem && (pid->flags & AC97_MODEM_PATCH)) ||
+ 			    (! modem && ! (pid->flags & AC97_MODEM_PATCH)))
+-- 
+2.27.0
 
-Do you mean RX clock, right? Yes, I'll add it in v8 too.
 
-BR.
-/Jan
+
 
