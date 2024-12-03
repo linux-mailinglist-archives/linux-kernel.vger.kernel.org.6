@@ -1,174 +1,131 @@
-Return-Path: <linux-kernel+bounces-429594-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D47449E1FEE
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 15:48:08 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1ABD09E1E56
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 14:56:11 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9D7D0B23DAE
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 13:55:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7DCE7166BF0
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 13:56:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C80A31EE01F;
-	Tue,  3 Dec 2024 13:55:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E0891F4273;
+	Tue,  3 Dec 2024 13:55:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lj8CkesZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="nj6Qod6/"
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31AF01EB9EB;
-	Tue,  3 Dec 2024 13:55:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 742981EE00D;
+	Tue,  3 Dec 2024 13:55:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733234129; cv=none; b=nmET6JFl9Bs5hH7f7OPbJX7fZ4bJySxL+9SCnuYLRPCIgMAE/URPZo231NtvqXQg0Z4+5c6rBXkdZWqjwWcW2rQ8shf9mXU795gk6wb04a858uQPU8Rz783jxiCP8wbOpWLGGQTwwLMnmhx93jJOxh+yTAry+kaz4jj8oDFP0yY=
+	t=1733234158; cv=none; b=l4oT3rQwAm2ue4qWuVVrbPlm6cE/3z6tDNBbN6L8d6SpcHldipL8RPl8hEs1NcoOJtc3ZVeDiCXG31GNJ8s0/dpQ7b4xTxfqlpMe4TXfWtRYywuZH7Qd2d/5CwselDebffTbLJfb9crRikD2jn3qwV/0wHjQBpSPWtQkP8/ppHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733234129; c=relaxed/simple;
-	bh=YxuqQgJLfpd4HodsZVa0O6Pu7LR7Mzot6gA3INEGXXY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=DG61PVrDfvTV1uV5nq3+21yN/GSZCTnThyrRSlHDyYZqJhpQhbbC/PCfxdrIr3fycLqkio6ATHgmjYSCviRQ+A15KuGmBpNqrDa4ZrSXj8BbddYahqkUYFct5fD7DH6xt4x1AYFxgvsrHTMJjut1NK/4om+F9eFsc7Lydhfza3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lj8CkesZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC636C4CECF;
-	Tue,  3 Dec 2024 13:55:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733234125;
-	bh=YxuqQgJLfpd4HodsZVa0O6Pu7LR7Mzot6gA3INEGXXY=;
-	h=From:To:Cc:Subject:Date:From;
-	b=Lj8CkesZEoJrvohwJHVD6zwGxEU/gmlipcnA4uTpjQPItZnXBAjzKOFmvxeMRMXcB
-	 rklPH52WxDGArT/fMrNBY73Fx4ujm4/VNjKH0ltl9R10w9agExTdXWZIQ/m+dut2Bp
-	 9AGusao2TJk3qwDtgd531COPGuiiNJoA+CqD0OadYnZrk8xVftFeFE3RHxb6YZKA9y
-	 1bmXjbTQLw302K7BxETQmRva9ADSDTpI9Ycyrc4ZQ/KfxRc8d7l0+n/+8vj5N5UKXm
-	 ZjZi37d5YesNPJSrC7s7dnnVxa6uVhn+v0ZzAUFM2JwpP39pWmhIjKlKq1bj5LvdTT
-	 KAjIfwmLL+cog==
-From: Leon Romanovsky <leon@kernel.org>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: Leon Romanovsky <leonro@nvidia.com>,
-	linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH rdma-next] kbuild: Respect request to silent output when merging configs
-Date: Tue,  3 Dec 2024 15:55:18 +0200
-Message-ID: <e534ce33b0e1060eb85ece8429810f087b034c88.1733234008.git.leonro@nvidia.com>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1733234158; c=relaxed/simple;
+	bh=EC9Dl1l1MQgi7BjluXyVcMHnEDdLKfTGSqTeB2Yn/K0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=UGioOeyZ7FfNvmsTBIyxGPqzfNRnmMiOirZoPhinyPGnflY9jZ+kdPA+hWP3hg+P/bKWMA1Z1i3G97rpUtTkiAZddQ0hEpiRRj9indEl7PABBGE7ESIXeVW7tyz7uSRyekCm6S2EMz9OXU6OdwC7mCidtwV427tQwKB+Kqkbx8I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=nj6Qod6/; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 5E8DC60007;
+	Tue,  3 Dec 2024 13:55:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1733234148;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=rvvx0a8RYQ/dRE3IBReGFV/D4LCSjgLGQJuojR4U/sM=;
+	b=nj6Qod6/4KlDinuZVy7Q6qV1D9eQs4lotapjdpSPkC1a+GNOfppLL35gKhM64DrgIZcc6J
+	OU5AWW2Os8xpO7FB3hnY1OexrlQH5cFScYV7UiroXIWOzww6EXWnZ4E1R/ach1r4elSSGY
+	3CWYNsuijYRzlKRvwfpSd/NY9Y6AILPz6XDgGWfww8Fld8gDK0el7MgiJx7360zd/RTDre
+	yBhuS0VMJVP8NwLtSywD7kz22kvm5kenYb0mHN7UyDj9j1NPDtsdCSrgPL71fhOUJB3JUe
+	KBEN28adD9RmbZaAO+XJZE5Ghm+KCFTJlKqZ9eFmJO8wkjaNfQEZLFMp36Youw==
+From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+Subject: [PATCH 0/6] nvmem: rmem: cleanup & add checksumming support for
+ Mobileye EyeQ5
+Date: Tue, 03 Dec 2024 14:55:43 +0100
+Message-Id: <20241203-rmem-v1-0-24f4970cf14e@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAN8NT2cC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxNDIwNj3aLc1FxdQ9OUNEtjA8PkNIMkJaDSgqLUtMwKsDHRsbW1AC6mgFx
+ WAAAA
+X-Change-ID: 20241203-rmem-15df9301cf0b
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Nicolas Saenz Julienne <nsaenz@kernel.org>, 
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-mips@vger.kernel.org, 
+ Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
+ =?utf-8?q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Tawfik Bayouk <tawfik.bayouk@mobileye.com>, 
+ =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+X-Mailer: b4 0.14.2
+X-GND-Sasl: theo.lebrun@bootlin.com
 
-From: Leon Romanovsky <leonro@nvidia.com>
+Hi,
 
-Builds with -s option (silent) are supposed to silence all output
-which is not an error. It is the case for target builds but not
-for configs. These builds generate prints like this:
+This series is two-fold.
 
-➜  kernel git:(rdma-next) make -s defconfig debug.config
- Using .config as base
- Merging ./kernel/configs/debug.config
- #
- # merged configuration written to .config (needs make)
- #
- ...
- Value of CONFIG_FUNCTION_TRACER is redefined by fragment ./kernel/configs/debug.config:
- Previous value: # CONFIG_FUNCTION_TRACER is not set
- New value: CONFIG_FUNCTION_TRACER=y
- ----
+ - First some cleanup to nvmem/rmem.
 
-Let's honor -s option and hide all non-error output.
+   [PATCH 2/6] nvmem: specify ->reg_read/reg_write() expected return values
+   [PATCH 3/6] nvmem: rmem: make ->reg_read() straight forward code
+   [PATCH 4/6] nvmem: rmem: remove unused struct rmem::size field
 
-Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
+   Those patches were sent on the 2024-07-24 [0] and saw no feedback.
+   There are small improvements to the commit messages but the commit
+   bodies stayed the same. I did not label this as V2 as the EyeQ5
+   compatible (see below) wasn't part of V1, and I wouldn't want people
+   to think it has been through a round of lkml review.
+
+ - Second, add a new compatible to rmem for the EyeQ5-specific usecase;
+   it parses a header and does checksumming at probe.
+
+   [PATCH 1/6] dt-bindings: nvmem: rmem: Add mobileye,eyeq5-bootloader-config
+   [PATCH 5/6] nvmem: rmem: add CRC validation for Mobileye EyeQ5 NVMEM
+   [PATCH 6/6] MIPS: mobileye: eyeq5: add bootloader config reserved memory
+
+Code is tested on real hardware, an EyeQ5 evaluation board.
+
+Have a nice day,
+Thanks,
+Théo
+
+[0]: https://lore.kernel.org/lkml/20240724-nvmem-rmem-v1-0-d2e3a97349a0@bootlin.com/
+
+Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
 ---
- scripts/kconfig/Makefile        |  3 ++-
- scripts/kconfig/merge_config.sh | 18 +++++++++++++-----
- 2 files changed, 15 insertions(+), 6 deletions(-)
+Théo Lebrun (6):
+      dt-bindings: nvmem: rmem: Add mobileye,eyeq5-bootloader-config
+      nvmem: specify ->reg_read/reg_write() expected return values
+      nvmem: rmem: make ->reg_read() straight forward code
+      nvmem: rmem: remove unused struct rmem::size field
+      nvmem: rmem: add CRC validation for Mobileye EyeQ5 NVMEM
+      MIPS: mobileye: eyeq5: add bootloader config reserved memory
 
-diff --git a/scripts/kconfig/Makefile b/scripts/kconfig/Makefile
-index a0a0be38cbdc..130c3c74b828 100644
---- a/scripts/kconfig/Makefile
-+++ b/scripts/kconfig/Makefile
-@@ -15,6 +15,7 @@ endif
- 
- ifeq ($(quiet),silent_)
- silent := -s
-+silent_merge := -q
- endif
- 
- export KCONFIG_DEFCONFIG_LIST :=
-@@ -107,7 +108,7 @@ config-fragments = $(call configfiles,$@)
- 
- %.config: $(obj)/conf
- 	$(if $(config-fragments),, $(error $@ fragment does not exists on this architecture))
--	$(Q)$(CONFIG_SHELL) $(srctree)/scripts/kconfig/merge_config.sh -m $(KCONFIG_CONFIG) $(config-fragments)
-+	$(Q)$(CONFIG_SHELL) $(srctree)/scripts/kconfig/merge_config.sh $(silent_merge) -m $(KCONFIG_CONFIG) $(config-fragments)
- 	$(Q)$(MAKE) -f $(srctree)/Makefile olddefconfig
- 
- PHONY += tinyconfig
-diff --git a/scripts/kconfig/merge_config.sh b/scripts/kconfig/merge_config.sh
-index 0b7952471c18..29060fba84b6 100755
---- a/scripts/kconfig/merge_config.sh
-+++ b/scripts/kconfig/merge_config.sh
-@@ -30,6 +30,7 @@ usage() {
- 	echo "  -O    dir to put generated output files.  Consider setting \$KCONFIG_CONFIG instead."
- 	echo "  -s    strict mode. Fail if the fragment redefines any value."
- 	echo "  -Q    disable warning messages for overridden options."
-+	echo "  -q    be quiet."
- 	echo
- 	echo "Used prefix: '$CONFIG_PREFIX'. You can redefine it with \$CONFIG_ environment variable."
- }
-@@ -42,6 +43,7 @@ OUTPUT=.
- STRICT=false
- CONFIG_PREFIX=${CONFIG_-CONFIG_}
- WARNOVERRIDE=echo
-+QUIET=echo
- 
- while true; do
- 	case $1 in
-@@ -89,6 +91,12 @@ while true; do
- 		shift
- 		continue
- 		;;
-+	"-q")
-+		WARNOVERRIDE=true
-+		QUIET=true
-+		shift
-+		continue
-+		;;
- 	*)
- 		break
- 		;;
-@@ -123,7 +131,7 @@ SED_CONFIG_EXP2="s/^# \(${CONFIG_PREFIX}[a-zA-Z0-9_]*\) is not set$/\1/p"
- TMP_FILE=$(mktemp ./.tmp.config.XXXXXXXXXX)
- MERGE_FILE=$(mktemp ./.merge_tmp.config.XXXXXXXXXX)
- 
--echo "Using $INITFILE as base"
-+${QUIET} "Using $INITFILE as base"
- 
- trap clean_up EXIT
- 
-@@ -131,7 +139,7 @@ cat $INITFILE > $TMP_FILE
- 
- # Merge files, printing warnings on overridden values
- for ORIG_MERGE_FILE in $MERGE_LIST ; do
--	echo "Merging $ORIG_MERGE_FILE"
-+	${QUIET} "Merging $ORIG_MERGE_FILE"
- 	if [ ! -r "$ORIG_MERGE_FILE" ]; then
- 		echo "The merge file '$ORIG_MERGE_FILE' does not exist.  Exit." >&2
- 		exit 1
-@@ -179,9 +187,9 @@ fi
- 
- if [ "$RUNMAKE" = "false" ]; then
- 	cp -T -- "$TMP_FILE" "$KCONFIG_CONFIG"
--	echo "#"
--	echo "# merged configuration written to $KCONFIG_CONFIG (needs make)"
--	echo "#"
-+	${QUIET} "#"
-+	${QUIET} "# merged configuration written to $KCONFIG_CONFIG (needs make)"
-+	${QUIET} "#"
- 	exit
- fi
- 
+ Documentation/devicetree/bindings/nvmem/rmem.yaml |  1 +
+ arch/mips/boot/dts/mobileye/eyeq5.dtsi            | 22 ++++++
+ drivers/nvmem/rmem.c                              | 95 ++++++++++++++++++++---
+ include/linux/nvmem-provider.h                    |  4 +-
+ 4 files changed, 110 insertions(+), 12 deletions(-)
+---
+base-commit: 40384c840ea1944d7c5a392e8975ed088ecf0b37
+change-id: 20241203-rmem-15df9301cf0b
+
+Best regards,
 -- 
-2.47.0
+Théo Lebrun <theo.lebrun@bootlin.com>
 
 
