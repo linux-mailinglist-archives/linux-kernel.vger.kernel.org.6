@@ -1,168 +1,105 @@
-Return-Path: <linux-kernel+bounces-428820-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428824-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78F999E13EA
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 08:23:05 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B55FF9E13EF
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 08:23:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 22A89B23353
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 07:23:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A3F59B238DC
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 07:23:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22F571CDFCB;
-	Tue,  3 Dec 2024 07:22:00 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FD8D1DD9AD;
+	Tue,  3 Dec 2024 07:22:08 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E3CC19DF45;
-	Tue,  3 Dec 2024 07:21:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAA1A1D9353
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 07:22:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733210519; cv=none; b=Ca2TWjB+2KJvCZ4hm74vDo8hbkrzlLIeEK78Q2Fg9iQQDOQO/8l34N/Qd6o2LNTgMQr7PvbaOqu/K1ZnbYqFRPY+Q4SrszLzFjNdruM+L7ZiABxPjNGL7A5sOx1/1o4VlaU2BSXMkJTbdlpeEt4CDAV59O9OjUiUyigZ1fELPtE=
+	t=1733210527; cv=none; b=hPONprgLrRXR4Mn46FG6E5sU2CL0zyqz1B7TgnqA8V8tPKHLQxW7iFQGWRhHRaD2OgDZExVrzZ7pmigFHiHm8B4wtVtSMZrSppkw71D8X+WbzYDhdunRYAHj9vg/7Yz7UzwPII3M/HgG9URrD9NJNjc7PH6YbeCe9IenK/8Oc7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733210519; c=relaxed/simple;
-	bh=MNDnIf14ttcW41QceAZpG+KmQb3ywrLXV6fKXU/qXjw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JEDp0eBXU7s34O/rpU8IvmAso7N8Sdel9izP/DnYDIJJYstaBAKuZSc3uqAqQnK+MWBDNaOgbjJoWiuhWT0glwXGI3GIeBx8oPLLb3n/u4JAdfaTMVNU60EVT3T2qAq4vugyvWwbj59VjWGyHNgmk7fiBzXl6z7gpK9sDO/MsaY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4Y2XCL3j8nz9sgW;
-	Tue,  3 Dec 2024 08:21:50 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id doaTwbzKneBg; Tue,  3 Dec 2024 08:21:50 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4Y2XCL2hwVz9sgV;
-	Tue,  3 Dec 2024 08:21:50 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 4A5CA8B765;
-	Tue,  3 Dec 2024 08:21:50 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id ROYUXKmWlZbo; Tue,  3 Dec 2024 08:21:50 +0100 (CET)
-Received: from [192.168.232.97] (unknown [192.168.232.97])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id CD7CD8B763;
-	Tue,  3 Dec 2024 08:21:49 +0100 (CET)
-Message-ID: <37824159-8f7b-49ca-80d7-99c6d76e3f9a@csgroup.eu>
-Date: Tue, 3 Dec 2024 08:21:49 +0100
+	s=arc-20240116; t=1733210527; c=relaxed/simple;
+	bh=g/OKuduUhe2JFrdTAfNDAaDkWJEOzOP2KVvW6wG+NzQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=OryJYapfVlwH/7is41d14kx6++vApcQrPuo/Xocr5yT6Qn7TY2jGcXFtFV4zXqhWVkwmXGUP+cYSAGHl2r2Q7jRNgYIMgcPxRA5bDDLd2G/J/k2g4KJEU6VTcantKh/aDgDRguOMNBVZkb7D7QxaQ6AdS+3S6pOjV8mA9JlPDgw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1tINEL-0004sD-6F; Tue, 03 Dec 2024 08:21:57 +0100
+Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1tINEJ-001QzE-1E;
+	Tue, 03 Dec 2024 08:21:56 +0100
+Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1tINEJ-00AEpI-38;
+	Tue, 03 Dec 2024 08:21:55 +0100
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Woojung Huh <woojung.huh@microchip.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
+	kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	UNGLinuxDriver@microchip.com,
+	Phil Elwell <phil@raspberrypi.org>
+Subject: [PATCH net-next v1 17/21] net: usb: lan78xx: Use ETIMEDOUT instead of ETIME in lan78xx_stop_hw
+Date: Tue,  3 Dec 2024 08:21:50 +0100
+Message-Id: <20241203072154.2440034-18-o.rempel@pengutronix.de>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20241203072154.2440034-1-o.rempel@pengutronix.de>
+References: <20241203072154.2440034-1-o.rempel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ftrace: Show timings of how long nop patching took
-To: Steven Rostedt <rostedt@goodmis.org>, Mike Rapoport <rppt@kernel.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Linux Trace Kernel <linux-trace-kernel@vger.kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Peter Zijlstra <peterz@infradead.org>, LKML <linux-kernel@vger.kernel.org>
-References: <20241017113105.1edfa943@gandalf.local.home>
- <6fb1e232-3bc3-4d5d-bff9-9f1a8c784782@csgroup.eu>
- <20241201150406.17f10247@rorschach.local.home> <Z01Vn8yZv-AlB-Z4@kernel.org>
- <20241202150516.3cf52584@gandalf.local.home>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <20241202150516.3cf52584@gandalf.local.home>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
+Update `lan78xx_stop_hw` to return `-ETIMEDOUT` instead of `-ETIME` when
+a timeout occurs. While `-ETIME` indicates a general timer expiration,
+`-ETIMEDOUT` is more commonly used for signaling operation timeouts and
+provides better consistency with standard error handling in the driver.
 
+Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+---
+ drivers/net/usb/lan78xx.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-Le 02/12/2024 à 21:05, Steven Rostedt a écrit :
-> On Mon, 2 Dec 2024 08:37:19 +0200
-> Mike Rapoport <rppt@kernel.org> wrote:
-> 
->>>> On powerpc I get:
->>>>
->>>> 25850 pages:14 groups: 3
->>>> ftrace boot update time = 0 (ns)
->>>> ftrace module total update time = 0 (ns)
->>>
->>> Hmm, does powerpc support "trace_clock_local()" at early boot? I
->>> probably can just switch from using "ftrace_now()" to using
->>> ktime_get_real_ts64(). Hmm.
->>
->> The calls to timekeeping_init() and time_init() are after ftrace_init() so
->> unless an architecture sets up some clock in setup_arch() like x86 does
->> there won't be a clock to use.
-> 
-> Hmm, maybe I should add:
-> 
-> diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-> index be62f0ea1814..362a125d7bcc 100644
-> --- a/kernel/trace/trace.c
-> +++ b/kernel/trace/trace.c
-> @@ -8588,14 +8588,23 @@ tracing_read_dyn_info(struct file *filp, char __user *ubuf,
->   		return -ENOMEM;
->   
->   	r = scnprintf(buf, DYN_INFO_BUF_SIZE,
-> -		      "%ld pages:%ld groups: %ld\n"
-> -		      "ftrace boot update time = %llu (ns)\n"
-> -		      "ftrace module total update time = %llu (ns)\n",
-> +		      "%ld pages:%ld groups: %ld\n",
->   		      ftrace_update_tot_cnt,
->   		      ftrace_number_of_pages,
-> -		      ftrace_number_of_groups,
-> -		      ftrace_update_time,
-> -		      ftrace_total_mod_time);
-> +		      ftrace_number_of_groups);
-> +
-> +	if (ftrace_update_time) {
-> +		r += scnprintf(buf + r, DYN_INFO_BUF_SIZE - r,
-> +			       "ftrace boot update time = %llu (ns)\n",
-> +			       ftrace_update_time);
-> +	} else {
-> +		r += scnprintf(buf + r, DYN_INFO_BUF_SIZE - r,
-> +			       "ftrace boot update time = [Unavailable]\n");
-> +	}
-> +
-> +	r += scnprintf(buf + r, DYN_INFO_BUF_SIZE - r,
-> +		       "ftrace module total update time = %llu (ns)\n",
-> +		       ftrace_total_mod_time);
->   
->   	ret = simple_read_from_buffer(ubuf, cnt, ppos, buf, r);
->   	kfree(buf);
-> 
-> Which should turn the above to:
-> 
->    25850 pages:14 groups: 3
->    ftrace boot update time = [Unavailable]
->    ftrace module total update time = 0 (ns)
-> 
-> Which should at least make it not confusing.
+diff --git a/drivers/net/usb/lan78xx.c b/drivers/net/usb/lan78xx.c
+index 2966f7e63617..c66e404f51ac 100644
+--- a/drivers/net/usb/lan78xx.c
++++ b/drivers/net/usb/lan78xx.c
+@@ -844,9 +844,7 @@ static int lan78xx_stop_hw(struct lan78xx_net *dev, u32 reg, u32 hw_enabled,
+ 		} while (!stopped && !time_after(jiffies, timeout));
+ 	}
+ 
+-	ret = stopped ? 0 : -ETIME;
+-
+-	return ret;
++	return stopped ? 0 : -ETIMEDOUT;
+ }
+ 
+ static int lan78xx_flush_fifo(struct lan78xx_net *dev, u32 reg, u32 fifo_flush)
+-- 
+2.39.5
 
-Well. Maybe, but at the end what we need is the measured value, if it 
-only works on x86 it is just pointless, isn't it ?
-
-trace_clock_local() calls sched_clock()
-
-I don't know about other architectures, but on powerpc sched_clock() is:
-
-	notrace unsigned long long sched_clock(void)
-	{
-		return mulhdu(get_tb() - boot_tb, tb_to_ns_scale) << tb_to_ns_shift;
-	}
-
-boot_tb, tb_to_ns_scale and tb_to_ns_shift are not known before 
-time_init() is called.
-
-But get_tb() returns a valid value already so it is possible to get the 
-ticks and do the calculation later with tb_to_ns()
-
-
-> 
-> I'm assuming that the module timings are zero because no modules were loaded?
-
-Indeed I don't even have CONFIG_MODULES, maybe the complete line should 
-be removed in that case.
-
-Christophe
 
