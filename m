@@ -1,39 +1,57 @@
-Return-Path: <linux-kernel+bounces-429680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD3539E1FCA
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 15:42:39 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D8F99E1FE3
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 15:45:19 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD1B61618A8
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 14:45:15 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F5681F7553;
+	Tue,  3 Dec 2024 14:44:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b="F/xs/DWx";
+	dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b="fWTohsPr"
+Received: from mta-03.yadro.com (mta-03.yadro.com [89.207.88.253])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7429B284C77
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 14:42:38 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 262991F4735;
-	Tue,  3 Dec 2024 14:42:33 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F6FE1E25E4;
-	Tue,  3 Dec 2024 14:42:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07CFB1F707A;
+	Tue,  3 Dec 2024 14:44:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.207.88.253
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733236952; cv=none; b=RDtpN74qb1B7SxxnlIYJuJTZWAXLEF5+QZRv/P14K6hAKNf+EEQy+PePhHx/1Hb7QSd7qaq9JwBpya7rDKk/HjyDV4DcSwCUJ3FVWSu20KRAFzou3CSbX3x+2CNv/MIPu1vqi4ILzCJ9W2hWmmc+vLftoKQ18CnPZRU0dTojKAc=
+	t=1733237079; cv=none; b=DPIQqETwQhsdo2pzce9AwUNwEKlYLCLu4u5lbKT84KLkBGpkL063EwsVxDt8FgqVQ/fW8dPDZS5580E+pBibILkEP+DlcpCvQOwqYTDgeVi0Uya9T0NBFV8D1ISohTcWeSdA14IBPDVvGhuCPWX9CUSP4lEtlDJpVp/IVbH0AFs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733236952; c=relaxed/simple;
-	bh=a1sv7yNgLfruuxtj7ruwGgaD5fU0gF2JQ7MMM+qelH8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=PmLz7h0hh9Mj0/FvGTm97EApSp2q6FZyZ51uPNcSsgIsT8rddhtaAhDdWDj9jXRZyCyxGC2J2D5vAyMGaGiurE+F9eAWEx35PlpMQHjXjeG1e4FSe3WlGReKixRlo1j5W4L1PyQX4oyHXb3A/BT7L9Ie7E+X4hWe+wjAh+bl7wk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A46D2FEC;
-	Tue,  3 Dec 2024 06:42:57 -0800 (PST)
-Received: from [10.57.90.133] (unknown [10.57.90.133])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 64AD63F71E;
-	Tue,  3 Dec 2024 06:42:27 -0800 (PST)
-Message-ID: <f2d58d57-df38-42eb-a00c-a993ca7299ba@arm.com>
-Date: Tue, 3 Dec 2024 14:42:25 +0000
+	s=arc-20240116; t=1733237079; c=relaxed/simple;
+	bh=j+1Z523yN4c3k35sEz8WLWeR9a0Tote+0vlm4AhrGg4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=a+MxjVCVf7JauTTt3grRcKyo8NCfxoNZGdxdhySlyS1fz/t1ftQgty1jicW8BoKM4dUGrJBN1Zkz/THTf9NPx8Qz1hSe6JLW/8m4KrVqmUZVmKqmNmslYc6Sl7oQBW9QWXOC70Jwm/im5HtSIrbx4pSv4TCa+q4zUMLqynUx7M8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yadro.com; spf=pass smtp.mailfrom=yadro.com; dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b=F/xs/DWx; dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b=fWTohsPr; arc=none smtp.client-ip=89.207.88.253
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yadro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yadro.com
+DKIM-Filter: OpenDKIM Filter v2.11.0 mta-03.yadro.com 47C23E0002
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yadro.com; s=mta-04;
+	t=1733237067; bh=yZe/rHto/yJINXzpM0VYaXBnEXiTAtPyuKao0ifLMUM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:From;
+	b=F/xs/DWxB9Q2xFJTiRE+BRDiKHj8Xg2JNDNpNKatEFAPn6Sq07CSqnIlkmho4PfwY
+	 i4n8ckL5a3UEcYTNOdpkqLXDKZBfkd7+wWE0mfifon8WjKC8MyRJDp03drsPHit5qs
+	 YQ9JnPohpFjFSsvMm/cRC4ssbK1H5e16wHHOhNFvdjZdWNGq1Um3S0RFtcZhc9MLLx
+	 JI6jMOpobs78O2XmE6kLtD4ZuLeOTprjTa1H/Bj57GLN36L35e6RvCsN1uEfiK+MmH
+	 xw0PDm5poqRVGxc5JxpvzQd/rZMdMmLU2C+NBl1lHNHgIe0+HD+RrzjY70tqcVWiiQ
+	 4I9yvZTO/OnBQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yadro.com; s=mta-03;
+	t=1733237067; bh=yZe/rHto/yJINXzpM0VYaXBnEXiTAtPyuKao0ifLMUM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:From;
+	b=fWTohsPr10f9KWPbfxCVvIwt69HevffSbsXqEZwu0WmT/iJSr6Wx4XOMh6Tw4Ad+T
+	 q5eZ4Qizq7Ej1Yh2GCmzHd3vuVmhdLUhUkUpFEGb1BNl1+/gC7sjTpWuMv1FRKZXEk
+	 lvtHtuet3zGS8CLJjXx3dc/4KJ1DhZTBy7XOFhii3mdZNcrDl+JORThtZRey7sxPIa
+	 ElFPQLxavdFMRreKNyLlsIV+jRBOXPYHkmHEGB2PyhLbKxMQihpOo+SnmtNBOSg7a3
+	 SjEGQJVx/l1YViUNgBV2f9s43som2T4UPePX0ueYyz1oFITpw/l1a2GcyHg2MwNnAg
+	 Cx9inGVCixcLg==
+Message-ID: <7e5ce1ce-e30a-46c5-80fb-eb52e59e4dc2@yadro.com>
+Date: Tue, 3 Dec 2024 17:44:25 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,71 +59,71 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] smaps: count large pages smaller than PMD size to
- anonymous_thp
-Content-Language: en-GB
-To: David Hildenbrand <david@redhat.com>, Wenchao Hao
- <haowenchao22@gmail.com>, Andrew Morton <akpm@linux-foundation.org>,
- Matthew Wilcox <willy@infradead.org>, Oscar Salvador <osalvador@suse.de>,
- Muhammad Usama Anjum <usama.anjum@collabora.com>,
- Andrii Nakryiko <andrii@kernel.org>, Peter Xu <peterx@redhat.com>,
- Barry Song <21cnbao@gmail.com>, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-References: <20241203134949.2588947-1-haowenchao22@gmail.com>
- <926c6f86-82c6-41bb-a24d-5418163d5c5e@redhat.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <926c6f86-82c6-41bb-a24d-5418163d5c5e@redhat.com>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: Re: [PATCH v3 1/7] riscv: ftrace: support fastcc in Clang for
+ WITH_ARGS
+To: =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>
+CC: Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
+	Nick Desaulniers <ndesaulniers@google.com>, Nathan Chancellor
+	<nathan@kernel.org>, Albert Ou <aou@eecs.berkeley.edu>, Palmer Dabbelt
+	<palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, Mark Rutland
+	<mark.rutland@arm.com>, Masami Hiramatsu <mhiramat@kernel.org>, Steven
+ Rostedt <rostedt@goodmis.org>, Andy Chiu <andybnac@gmail.com>,
+	<linux-kernel@vger.kernel.org>, <linux-trace-kernel@vger.kernel.org>,
+	<linux-riscv@lists.infradead.org>, <llvm@lists.linux.dev>,
+	<bjorn@rivosinc.com>, <puranjay12@gmail.com>, <alexghiti@rivosinc.com>,
+	<yongxuan.wang@sifive.com>, <greentime.hu@sifive.com>, <nick.hu@sifive.com>,
+	<nylon.chen@sifive.com>, <tommy.wu@sifive.com>, <eric.lin@sifive.com>,
+	<viccent.chen@sifive.com>, <zong.li@sifive.com>, <samuel.holland@sifive.com>
+References: <20241127172908.17149-1-andybnac@gmail.com>
+ <20241127172908.17149-2-andybnac@gmail.com>
+ <87wmghotth.fsf@all.your.base.are.belong.to.us>
+Content-Language: en-US
+From: Evgenii Shatokhin <e.shatokhin@yadro.com>
+In-Reply-To: <87wmghotth.fsf@all.your.base.are.belong.to.us>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: T-Exch-05.corp.yadro.com (172.17.10.109) To
+ T-EXCH-10.corp.yadro.com (172.17.11.60)
 
-On 03/12/2024 14:17, David Hildenbrand wrote:
-> On 03.12.24 14:49, Wenchao Hao wrote:
->> Currently, /proc/xxx/smaps reports the size of anonymous huge pages for
->> each VMA, but it does not include large pages smaller than PMD size.
+Hi,
+
+On 03.12.2024 15:05, Björn Töpel wrote:
+> 
+> Andy Chiu <andybnac@gmail.com> writes:
+> 
+>> From: Andy Chiu <andy.chiu@sifive.com>
 >>
->> This patch adds the statistics of anonymous huge pages allocated by
->> mTHP which is smaller than PMD size to AnonHugePages field in smaps.
+>> Some caller-saved registers which are not defined as function arguments
+>> in the ABI can still be passed as arguments when the kernel is compiled
+>> with Clang. As a result, we must save and restore those registers to
+>> prevent ftrace from clobbering them.
 >>
->> Signed-off-by: Wenchao Hao <haowenchao22@gmail.com>
->> ---
->>   fs/proc/task_mmu.c | 6 ++++++
->>   1 file changed, 6 insertions(+)
+>> - [1]: https://reviews.llvm.org/D68559
 >>
->> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
->> index 38a5a3e9cba2..b655011627d8 100644
->> --- a/fs/proc/task_mmu.c
->> +++ b/fs/proc/task_mmu.c
->> @@ -717,6 +717,12 @@ static void smaps_account(struct mem_size_stats *mss,
->> struct page *page,
->>           if (!folio_test_swapbacked(folio) && !dirty &&
->>               !folio_test_dirty(folio))
->>               mss->lazyfree += size;
->> +
->> +        /*
->> +         * Count large pages smaller than PMD size to anonymous_thp
->> +         */
->> +        if (!compound && PageHead(page) && folio_order(folio))
->> +            mss->anonymous_thp += folio_size(folio);
->>       }
->>         if (folio_test_ksm(folio))
+>> Reported-by: Evgenii Shatokhin <e.shatokhin@yadro.com>
+>> Closes: https://lore.kernel.org/linux-riscv/7e7c7914-445d-426d-89a0-59a9199c45b1@yadro.com/
+>> Acked-by: Nathan Chancellor <nathan@kernel.org>
+>> Signed-off-by: Andy Chiu <andy.chiu@sifive.com>
 > 
+> Fixes tag?
+
+As far as I understand it, Ftrace for RISC-V has had this problem since 
+support for FTRACE_WITH_REGS was added. FTRACE_WITH_ARGS inherited it.
+
+So, it should probably be as follows:
+
+Fixes: aea4c671fb98 ("riscv/ftrace: Add DYNAMIC_FTRACE_WITH_REGS support")
+
+It is more of a workaround rather than a fix though, because it is still 
+undecided where the problem is, in the kernel or in LLVM/clang. That 
+discussion went nowhere, unfortunately, so it is better to use a 
+workaround and move on, IMO.
+
 > 
-> I think we decided to leave this (and /proc/meminfo) be one of the last
-> interfaces where this is only concerned with PMD-sized ones:
-> 
-> Documentation/admin-guide/mm/transhuge.rst:
-> 
-> The number of PMD-sized anonymous transparent huge pages currently used by the
-> system is available by reading the AnonHugePages field in ``/proc/meminfo``.
-> To identify what applications are using PMD-sized anonymous transparent huge
-> pages, it is necessary to read ``/proc/PID/smaps`` and count the AnonHugePages
-> fields for each mapping. (Note that AnonHugePages only applies to traditional
-> PMD-sized THP for historical reasons and should have been called
-> AnonHugePmdMapped).
+> Reviewed-by: Björn Töpel <bjorn@rivosinc.com>
 > 
 
-Agreed. If you need per-process metrics for mTHP, we have a python script at
-tools/mm/thpmaps which does a fairly good job of parsing pagemap. --help gives
-you all the options.
+Regards,
+Evgenii
 
 
