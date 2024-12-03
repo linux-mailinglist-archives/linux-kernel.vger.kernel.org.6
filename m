@@ -1,255 +1,192 @@
-Return-Path: <linux-kernel+bounces-428798-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A2A59E1392
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 07:51:51 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EFCF9E1365
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 07:35:54 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 12C2E1644B0
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 06:35:51 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6905F17E016;
+	Tue,  3 Dec 2024 06:35:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="ZNUiqIjE"
+Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sg2apc01on2045.outbound.protection.outlook.com [40.107.215.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CCBAAB23A7C
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 06:51:48 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 202001891A8;
-	Tue,  3 Dec 2024 06:51:31 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 392C7189913;
-	Tue,  3 Dec 2024 06:51:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733208690; cv=none; b=uwfNCJEjCW0WfqkRDXmZmMPW8vdHjxT2XKhl/vyTx4l2eudnSCidR7RDbiEzbX9S4od6gn9HXScuSnB229w/qEQU2s+uvFgIO1CLog5W4/+qT+bBpWg71oKUJ7y9eyu7jijU+9q6rQcUpL1vlm86iE8nV1vyBC60tUwuMzmLFmA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733208690; c=relaxed/simple;
-	bh=kx3A+Xq1zGWJHYHWXaF8k+LvrXiSGuyO4HHlfQaGxmo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gU0ZmsTD0Hp4OB007CTRTYB/t4AlchFNng+h9N9839qCPWJsi91l7KWO5bGhHtLC24kKehH7a2RzpHek9GEnfnbcxbbOiyG/Xr0xfTt4c2ZqMq5TEYvnzw+pnUcllktZRUPAEBzaNo9mQDZfU/PfNSe4CsRYVXehIUNng78aRtY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [223.64.68.38])
-	by gateway (Coremail) with SMTP id _____8CxMK9pqk5nRHtPAA--.64760S3;
-	Tue, 03 Dec 2024 14:51:21 +0800 (CST)
-Received: from localhost.localdomain (unknown [223.64.68.38])
-	by front1 (Coremail) with SMTP id qMiowMAxL+FZqk5ni3pzAA--.13983S3;
-	Tue, 03 Dec 2024 14:51:19 +0800 (CST)
-From: Huacai Chen <chenhuacai@loongson.cn>
-To: Paolo Bonzini <pbonzini@redhat.com>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	Tianrui Zhao <zhaotianrui@loongson.cn>,
-	Bibo Mao <maobibo@loongson.cn>
-Cc: kvm@vger.kernel.org,
-	loongarch@lists.linux.dev,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D228173
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 06:35:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.215.45
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733207748; cv=fail; b=PDFbPbd2clWGPKeASUexGQIJLc4JMfSNoxIdDGJgdTacz8SEcWWJXYcS9QndY/ai5aJ7O+DcLtVsQtW8Yuamr9+aaIQ8IXkDuU3aXDfHTExeX4lkY4jfT8nNRImy+YXF17yR5upyCmZJndP98IjCKy+l6yOtqG1T9eN8Q21BgaQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733207748; c=relaxed/simple;
+	bh=A8p87v3Z2vh4SrUQh089EE7HgLzIekELDSlNWWf3Bkk=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=t8Z+B0/Hizj7amIPZzuYuV3ZaTXe1fF0uJH1ZFL1Di2Umj2hPC6J7gO+PL6Fo8h0XV5B0+sOa43PbazGWwgM9Txbcj2bgDxdwx1F3EBNCzn1Kx5BlZEi/l+/rv2MjnFfk/YHzbngFmlUaByQ8qXZzJeKBkkafmQJ72IkYNvmmN0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=ZNUiqIjE; arc=fail smtp.client-ip=40.107.215.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=iXUAFY4os88a9VFeIb1WRBSCNDq98qt/Ei/hH5jVIP2T5OPMup6wp/8pKM7LftcMqSj/VA1vZURs38qy0UVP8z9HExkVaL2RL9FDG4vqsmzamXfZ9BradeYPP+nFJRaNJBf0RSx3IvtuFVJ7srUHoPpIiLcah9wOVGIesuKHIW0twSbvBWxp96rwH20Nrw8zY0vfVBW2cHki6oaXfKAJFTBvj9vrVIKV1DMmCVJMzsaKd/1P6yJAgZs1reLXk6kuaH9qHnyNWTi9RN1ckvWm5TEvzP32JpAnRasmj+EaBap7XB4CNDhWaU4aMH9wZfalQ71tivGRXxJpt3DsFrYvyw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=N9Ni5AHT7Qj1XSGX6KHCBR9pGyvC7E8sQuUmptqfnyQ=;
+ b=smZOe5sEE/RzchbIHjsAXU+YNDGwqmw+jKS/imcPD2zsDJyz4bN4wTDBNJDVF2wLyxL6jPnc8MOf4BiVUSe0wh0xqY4KSp0QRLxlkhpULMsNPoQRe5i8+Seqd/ctXAUu3mYvYQvweCHD+33VbSil3tfCc/9L+1E9aRAsHO5hvlde0at3J6MZawrQVYP2COrDVXY/swjm7bkhJ/9BynwcO/51LkScl5gm7lGAUZkh42awbGeJyPsEBBZBPfV9bOV+oMei1KijKFHpE1aqJTiRm7Ss4VJ1IOz/McpBDfrfvAT7RLG6Fj0xjd7go8e+St2zAUyjH3bGLvHtSojUWOn/sw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=N9Ni5AHT7Qj1XSGX6KHCBR9pGyvC7E8sQuUmptqfnyQ=;
+ b=ZNUiqIjER0yMbZ896mUBLBW88cJU7Jo8KGBYE3FPntYqERQc8/FEMtp8FjnlLhdsBzuTFQTrBp4Wm7enKLyiYY4trE/hmpWhdEWbCbHiYoAm4rNPfgI4jojU4W6iH6+NQY0LzwN4DPUt92YFaKK31mOKZPpdDPbiLJCF93WMxON6u4uuvQy148jjdY6J1dIyFqFyM4IbP7yFYFkXNV+mc/eSQp3nQhdieG8/PD249klvd893EcFDR29TB2oigiRMAiCJdwesXXSrbV1qptALudtesEbNodMaVlVlAGTxL+BS4O6A2CMBJR4kU72Zu6GucQvdgeK/G7+DBXsruqFrXw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from TYZPR06MB7096.apcprd06.prod.outlook.com (2603:1096:405:b5::13)
+ by JH0PR06MB7055.apcprd06.prod.outlook.com (2603:1096:990:6e::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.9; Tue, 3 Dec
+ 2024 06:35:39 +0000
+Received: from TYZPR06MB7096.apcprd06.prod.outlook.com
+ ([fe80::6c3a:9f76:c4a5:c2b]) by TYZPR06MB7096.apcprd06.prod.outlook.com
+ ([fe80::6c3a:9f76:c4a5:c2b%6]) with mapi id 15.20.8230.000; Tue, 3 Dec 2024
+ 06:35:37 +0000
+From: Chunhai Guo <guochunhai@vivo.com>
+To: chao@kernel.org,
+	jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net,
 	linux-kernel@vger.kernel.org,
-	Xuerui Wang <kernel@xen0n.name>,
-	Jiaxun Yang <jiaxun.yang@flygoat.com>,
-	Huacai Chen <chenhuacai@loongson.cn>,
-	stable@vger.kernel.org
-Subject: [PATCH 2/2] LoongArch: KVM: Protect kvm_io_bus_{read,write}() with SRCU
-Date: Tue,  3 Dec 2024 14:50:58 +0800
-Message-ID: <20241203065058.4164631-2-chenhuacai@loongson.cn>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20241203065058.4164631-1-chenhuacai@loongson.cn>
-References: <20241203065058.4164631-1-chenhuacai@loongson.cn>
+	Chunhai Guo <guochunhai@vivo.com>
+Subject: [PATCH] f2fs: fix missing discard for active segments
+Date: Mon,  2 Dec 2024 23:51:08 -0700
+Message-Id: <20241203065108.2763436-1-guochunhai@vivo.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SI1PR02CA0002.apcprd02.prod.outlook.com
+ (2603:1096:4:1f7::16) To TYZPR06MB7096.apcprd06.prod.outlook.com
+ (2603:1096:405:b5::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowMAxL+FZqk5ni3pzAA--.13983S3
-X-CM-SenderInfo: hfkh0x5xdftxo6or00hjvr0hdfq/
-X-Coremail-Antispam: 1Uk129KBj93XoW3Ar1rCFWkCr4rKw4UCw4rJFc_yoWxZw1Upr
-	yrZ393ur4rJr97AwnrAr1Dur1jq3yvkF18JrykJr4fGr1jvrn8JF40yrW7ZFy5K34rCa17
-	ZF1xJr1Ykr1UAwcCm3ZEXasCq-sJn29KB7ZKAUJUUUU7529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUU9Fb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
-	xVW8Jr0_Cr1UM2kKe7AKxVWUXVWUAwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07
-	AIYIkI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWU
-	tVWrXwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7V
-	AKI48JMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMxCIbckI1I0E14v2
-	6r1q6r43MI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17
-	CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r4j6ryUMIIF
-	0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIx
-	AIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2
-	KfnxnUUI43ZEXa7IU8EeHDUUUUU==
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TYZPR06MB7096:EE_|JH0PR06MB7055:EE_
+X-MS-Office365-Filtering-Correlation-Id: 02420db3-c2ec-464d-5de7-08dd1364b2a0
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|376014|52116014|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?bQPBU/04mHb1Shs3H6xlWln/F/v3Al2iPFbpBo92K8yB1WZtBEW2wM6ZEeON?=
+ =?us-ascii?Q?ndi/dkKbF6CCtTB6RO0pKr60fgTd/2kwqxBT2DlZilnro8rNTK6v7atCYCoD?=
+ =?us-ascii?Q?chzZj0YNa/IRtGzctUE63wRdbhz3v9ZlMZiAKma9ZhnfpgBKHxmePc3iJY2s?=
+ =?us-ascii?Q?WWIF+MMtcCdw3LiDw1CWjlrcFkWz4XwQA+Si7qT8XUxrsKGg0qRImLyphDmS?=
+ =?us-ascii?Q?opMol9Z9j7OBEQYtTZfisUxtnhaZbNxT8cjJnmJ6KB2YbJwKDnhw5eYxoY1v?=
+ =?us-ascii?Q?8phMT0JhjbjGCUZ8glg8vfgD4youN6bkdsBlTBQBAQyBm+KjH9OvrbASVvq1?=
+ =?us-ascii?Q?IwBqCZcOiHfT/1U2DoFEAKSORdtOvjo5roLIlwh1kDB3z711botN4PSdlFI4?=
+ =?us-ascii?Q?rpdYtgCLcuJy30tvI0+0Zoxflv9P7g1CnmkoX3xfKWqI4tOJwDb/IMPl3/rq?=
+ =?us-ascii?Q?27ybx0UnnPjRM2TjWkqT98uVA22Ytg4eSHxE5Y4sTyb/F9vs9kZE+aRD4MLP?=
+ =?us-ascii?Q?Ev0fDfABWmt4OEhWl7l9yAAferSK5CndCMrxLPdjza/1eumG6smWbEvamlLG?=
+ =?us-ascii?Q?e0vgxDzf9EJjLh3BDqjT3CoDzBfLvYyfD4FdJ24JgMjvgj2eHbjrl+c4oQcJ?=
+ =?us-ascii?Q?GmoquA9Xv/YRuUXYFj3Im5NWTDliyWVuash7JJYqxrZzjEr4EsyOuCf3xCni?=
+ =?us-ascii?Q?QYPIR/uiv9Dvf1yTzIhi04n6voyYSbRETeFUxnG74++U8d+GpbW0kxdAUyg+?=
+ =?us-ascii?Q?yoq6xNGffvev7nidSIgqXXwUsrb/IKKcHeemjECxuUCeZ/3KSTXqby1q87KE?=
+ =?us-ascii?Q?SFl2BdG8/tkbDV5FPMlfuwyHECSVXYiTDfKd+5YGKvfVS1uC3hwWcNgZsrU/?=
+ =?us-ascii?Q?KRDij0hA5eHVqy2ITilYnSIaTL62XilWz+3/jVHg8idDN00PUQ+VWdKRWDvY?=
+ =?us-ascii?Q?EIrVQZBnsR/DreeQZmPt1M+qT+j1iPxLcdLVdpS6EL0ndAXyszBlJSOR+XdV?=
+ =?us-ascii?Q?TsBgClhX7ujT0I9VwNjyPjCw1PrezHjIcS3WIcIohmr6kXkZPvJXbPShPpy0?=
+ =?us-ascii?Q?PS6HKJY/FjFxsiu8iwEVq2vKuvWNPlrHgl2FG21LA0BANya5UamZaP8ZFL6Q?=
+ =?us-ascii?Q?ocAxqbPvOI06koNLz2QH38Nv3FreiISsJa0W7tWstbgo8gPm9e397KhjgMhX?=
+ =?us-ascii?Q?kJsc6lUhqOLuyrY6gYEvHRlWxBVaXkcU4zNq6QOmGxYX8vLpowgwWxvHNE5H?=
+ =?us-ascii?Q?o4zJDltdfF2ef/EbjCY20W5VOWqFULluMkZIDK1gtZggyze+kX7XaDlWfjLI?=
+ =?us-ascii?Q?t3LItiUYqocmb/R/rJLqGD3gNv24SNy9fgCkIQVsVEo12ulZ0Pm9ek2fakwm?=
+ =?us-ascii?Q?0Nf7gge1n1F9owH9JpbP+M0YzYDe4cObFWb/tAeuGeFzD1nVRg=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR06MB7096.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(52116014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?VAem7W1f+5Ku9xiBEQV8gMRnnLw16SOHyNghKz8BZaRF01BLjQ3pow9bkRpL?=
+ =?us-ascii?Q?hwih8gp8CnZIoEWcU17Ew/aIE1MxxU2+lbJ6Z/JoGrF2cNxThyiB/0pxG/v8?=
+ =?us-ascii?Q?g49cRkQ8vxUWqO8SUlGFqJYf0PItrOxY3sIHqsWQmpN0CtLebd8yE3Ic1T8/?=
+ =?us-ascii?Q?/WqO5cvw0NxRJK6c2Y3N1Mgli1BVLMGnk6p3PNueeODCRh/ihEAtym/beJC8?=
+ =?us-ascii?Q?SG2Zmcp4Tw9LFVAfpdt1ommmwBTSr66w7hbKVJSM96+kpzn5HlSEaouDeWnx?=
+ =?us-ascii?Q?JQvNqmRkLwHAnmuCvJa+Ywi3/1/gDAvI+AjWAf7g5wQ0C9wOdWh+gHRtyGg1?=
+ =?us-ascii?Q?noxdts6lGu31J9+SFYLllqJU/T+rjzQpJNt3hkc6iAET/HNgiATIsFvpBn6t?=
+ =?us-ascii?Q?J8VAcPx0MNvKJw/UL6L8+XapmZYlv5qJg4lxPA34pOmZsLiL6duRrSdye2ss?=
+ =?us-ascii?Q?2HM+oU4hyOguMvZ0/5neLqAvsQEf7SJVM8sib0I1FPwwovf1x4Uik46tA8uR?=
+ =?us-ascii?Q?Sa/qmQ5mnFO2St7cdVi3wkHRO06c8jSJRMcy1Ebx5IlIKU750EDxzbFEzadZ?=
+ =?us-ascii?Q?tcG/jzwgV5zFXVUWDzp9y9JdW0IJCamYTsGcglfJ+y3EKn1cNZWQnxrTSfOS?=
+ =?us-ascii?Q?wzTP4rjHGhLDPT44pbCnxbTHzHGB8Pk+bUO9gCCfNm8iQcrDAMmC1OnjlzLb?=
+ =?us-ascii?Q?0lIVF44JJZsc2KOqjYZMTgzRx5+EmsiS8Y9ciqth4oIWo3Mx9uWoMr4vxVmK?=
+ =?us-ascii?Q?CFYxZ3MuYHcg91eWChsNARkJee3JyCicoSptAbiBbZLfIkVGVcHg4Y+96BPn?=
+ =?us-ascii?Q?yN65/a6QAUqxE5cHIhbCBl+7Sc8cQyIutdNj00rS1WpxTuzuZH4yVEJt7vlX?=
+ =?us-ascii?Q?jmfxhiI29IzIBEa2lHRhQ8yJh8YJBnSUTiIs4sjP3RpKy0fGYvrY7Vb9wXoq?=
+ =?us-ascii?Q?Gd/pSka2D5ReM5lAn85TV98GkG6q/djcJ6BwfU3plu9dC/U3TUlhcuEKHG8K?=
+ =?us-ascii?Q?RW/f+KfaKJyji32zaxKeTncx43FV1LX4V/wxTfjLolVo68Vr8+VGKs0FAoP9?=
+ =?us-ascii?Q?CAgU59dmm87ZHOBWadJwHsX8wn0M7NmVLQBw0hILHdVEWOFKCMUjKKPezBaa?=
+ =?us-ascii?Q?hbH+XJ5cmegSCczLnLxOB8yB8khmR9WEdWkN349e1sowk3tT2Es57kn4Dg75?=
+ =?us-ascii?Q?kWaZ5IDlGJjtk5vQOnqOaete7dxgQS93eU1gbfaj5ZZKgI3lCrQ0S6gvQCKI?=
+ =?us-ascii?Q?KcTkDfVYCDu3jisGUvsvfRgvJgPLzpNtL2CIvhCwieyLujPnUM3whig9YqBy?=
+ =?us-ascii?Q?Ax9Nfqi0SHeu9N0N0IiY61PJsAviGh/msYS7cqkDD0qq99huRwzRE6gCcsX4?=
+ =?us-ascii?Q?ZAKZIEt64HRtQQtKdseqe6jzHxglgF+qbUKk9G0R92f/V6tVaqJ26A6xvM3f?=
+ =?us-ascii?Q?l0iTMknbBIQOEuykRBe8fEN3fQ9I+gPVTPEnvuIvGA3DFDwuywXcdedxfsni?=
+ =?us-ascii?Q?QrHtbsG/paB97rosThv5DKFP48cNcmsWgpSL0VrzYqVBS1xSBzY1S/lnMV1h?=
+ =?us-ascii?Q?i8xEwVlrowL5iHhakUtKGzPTIfahocUpXiVHfGH6?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 02420db3-c2ec-464d-5de7-08dd1364b2a0
+X-MS-Exchange-CrossTenant-AuthSource: TYZPR06MB7096.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Dec 2024 06:35:37.2566
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: W63zNyrLftVd0zMtG/vKiCaBd9jO6ogb2zb+OD/5mQpuTK2f2O0IqcDVjixkaGTQUiIciVNzXSv6q+xfhzQ+4w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: JH0PR06MB7055
 
-When we enable lockdep we get such a warning:
+locate_dirty_segment() does not set any current active segment as a
+prefree segment. Thus, the issue described below may occur:
 
- =============================
- WARNING: suspicious RCU usage
- 6.12.0-rc7+ #1891 Tainted: G        W
- -----------------------------
- arch/loongarch/kvm/../../../virt/kvm/kvm_main.c:5945 suspicious rcu_dereference_check() usage!
- other info that might help us debug this:
- rcu_scheduler_active = 2, debug_locks = 1
- 1 lock held by qemu-system-loo/948:
-  #0: 90000001184a00a8 (&vcpu->mutex){+.+.}-{4:4}, at: kvm_vcpu_ioctl+0xf4/0xe20 [kvm]
- stack backtrace:
- CPU: 2 UID: 0 PID: 948 Comm: qemu-system-loo Tainted: G        W          6.12.0-rc7+ #1891
- Tainted: [W]=WARN
- Hardware name: Loongson Loongson-3A5000-7A1000-1w-CRB/Loongson-LS3A5000-7A1000-1w-CRB, BIOS vUDK2018-LoongArch-V2.0.0-prebeta9 10/21/2022
- Stack : 0000000000000089 9000000005a0db9c 90000000071519c8 900000012c578000
-         900000012c57b940 0000000000000000 900000012c57b948 9000000007e53788
-         900000000815bcc8 900000000815bcc0 900000012c57b7b0 0000000000000001
-         0000000000000001 4b031894b9d6b725 0000000005dec000 9000000100427b00
-         00000000000003d2 0000000000000001 000000000000002d 0000000000000003
-         0000000000000030 00000000000003b4 0000000005dec000 0000000000000000
-         900000000806d000 9000000007e53788 00000000000000b4 0000000000000004
-         0000000000000004 0000000000000000 0000000000000000 9000000107baf600
-         9000000008916000 9000000007e53788 9000000005924778 000000001fe001e5
-         00000000000000b0 0000000000000007 0000000000000000 0000000000071c1d
-         ...
- Call Trace:
- [<9000000005924778>] show_stack+0x38/0x180
- [<90000000071519c4>] dump_stack_lvl+0x94/0xe4
- [<90000000059eb754>] lockdep_rcu_suspicious+0x194/0x240
- [<ffff80000221f47c>] kvm_io_bus_read+0x19c/0x1e0 [kvm]
- [<ffff800002225118>] kvm_emu_mmio_read+0xd8/0x440 [kvm]
- [<ffff8000022254bc>] kvm_handle_read_fault+0x3c/0xe0 [kvm]
- [<ffff80000222b3c8>] kvm_handle_exit+0x228/0x480 [kvm]
+Step 1: During a checkpoint, add_discard_addrs() does not handle the
+current active 'segment X' with 0 valid blocks (and non-zero discard
+blocks). As a result, no struct discard_cmd is created for 'segment X'
+and the value of sbi->discard_blks cannot be reduced to 0 after the
+checkpoint.
 
-Fix it by protecting kvm_io_bus_{read,write}() with SRCU.
+Step 2: f2fs is umounted without setting CP_TRIMMED_FLAG, as
+sbi->discard_blks is non-zero.
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
+Since add_discard_addrs() can handle active segments with non-zero valid
+blocks, it is reasonable to fix this issue by also handling active
+segments with 0 valid blocks in add_discard_addrs().
+
+Signed-off-by: Chunhai Guo <guochunhai@vivo.com>
 ---
- arch/loongarch/kvm/exit.c     | 31 +++++++++++++++++++++----------
- arch/loongarch/kvm/intc/ipi.c |  6 +++++-
- 2 files changed, 26 insertions(+), 11 deletions(-)
+ fs/f2fs/segment.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/arch/loongarch/kvm/exit.c b/arch/loongarch/kvm/exit.c
-index 69f3e3782cc9..a7893bd01e73 100644
---- a/arch/loongarch/kvm/exit.c
-+++ b/arch/loongarch/kvm/exit.c
-@@ -156,7 +156,7 @@ static int kvm_handle_csr(struct kvm_vcpu *vcpu, larch_inst inst)
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index eade36c5ef13..4fb1dc4aab97 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -2090,7 +2090,9 @@ static bool add_discard_addrs(struct f2fs_sb_info *sbi, struct cp_control *cpc,
+ 		return false;
  
- int kvm_emu_iocsr(larch_inst inst, struct kvm_run *run, struct kvm_vcpu *vcpu)
- {
--	int ret;
-+	int idx, ret;
- 	unsigned long *val;
- 	u32 addr, rd, rj, opcode;
- 
-@@ -167,7 +167,6 @@ int kvm_emu_iocsr(larch_inst inst, struct kvm_run *run, struct kvm_vcpu *vcpu)
- 	rj = inst.reg2_format.rj;
- 	opcode = inst.reg2_format.opcode;
- 	addr = vcpu->arch.gprs[rj];
--	ret = EMULATE_DO_IOCSR;
- 	run->iocsr_io.phys_addr = addr;
- 	run->iocsr_io.is_write = 0;
- 	val = &vcpu->arch.gprs[rd];
-@@ -207,20 +206,28 @@ int kvm_emu_iocsr(larch_inst inst, struct kvm_run *run, struct kvm_vcpu *vcpu)
- 	}
- 
- 	if (run->iocsr_io.is_write) {
--		if (!kvm_io_bus_write(vcpu, KVM_IOCSR_BUS, addr, run->iocsr_io.len, val))
-+		idx = srcu_read_lock(&vcpu->kvm->srcu);
-+		ret = kvm_io_bus_write(vcpu, KVM_IOCSR_BUS, addr, run->iocsr_io.len, val);
-+		srcu_read_unlock(&vcpu->kvm->srcu, idx);
-+		if (ret == 0)
- 			ret = EMULATE_DONE;
--		else
-+		else {
-+			ret = EMULATE_DO_IOCSR;
- 			/* Save data and let user space to write it */
- 			memcpy(run->iocsr_io.data, val, run->iocsr_io.len);
--
-+		}
- 		trace_kvm_iocsr(KVM_TRACE_IOCSR_WRITE, run->iocsr_io.len, addr, val);
- 	} else {
--		if (!kvm_io_bus_read(vcpu, KVM_IOCSR_BUS, addr, run->iocsr_io.len, val))
-+		idx = srcu_read_lock(&vcpu->kvm->srcu);
-+		ret = kvm_io_bus_read(vcpu, KVM_IOCSR_BUS, addr, run->iocsr_io.len, val);
-+		srcu_read_unlock(&vcpu->kvm->srcu, idx);
-+		if (ret == 0)
- 			ret = EMULATE_DONE;
--		else
-+		else {
-+			ret = EMULATE_DO_IOCSR;
- 			/* Save register id for iocsr read completion */
- 			vcpu->arch.io_gpr = rd;
--
-+		}
- 		trace_kvm_iocsr(KVM_TRACE_IOCSR_READ, run->iocsr_io.len, addr, NULL);
- 	}
- 
-@@ -359,7 +366,7 @@ static int kvm_handle_gspr(struct kvm_vcpu *vcpu)
- 
- int kvm_emu_mmio_read(struct kvm_vcpu *vcpu, larch_inst inst)
- {
--	int ret;
-+	int idx, ret;
- 	unsigned int op8, opcode, rd;
- 	struct kvm_run *run = vcpu->run;
- 
-@@ -464,8 +471,10 @@ int kvm_emu_mmio_read(struct kvm_vcpu *vcpu, larch_inst inst)
- 		 * it need not return to user space to handle the mmio
- 		 * exception.
- 		 */
-+		idx = srcu_read_lock(&vcpu->kvm->srcu);
- 		ret = kvm_io_bus_read(vcpu, KVM_MMIO_BUS, vcpu->arch.badv,
- 				      run->mmio.len, &vcpu->arch.gprs[rd]);
-+		srcu_read_unlock(&vcpu->kvm->srcu, idx);
- 		if (!ret) {
- 			update_pc(&vcpu->arch);
- 			vcpu->mmio_needed = 0;
-@@ -531,7 +540,7 @@ int kvm_complete_mmio_read(struct kvm_vcpu *vcpu, struct kvm_run *run)
- 
- int kvm_emu_mmio_write(struct kvm_vcpu *vcpu, larch_inst inst)
- {
--	int ret;
-+	int idx, ret;
- 	unsigned int rd, op8, opcode;
- 	unsigned long curr_pc, rd_val = 0;
- 	struct kvm_run *run = vcpu->run;
-@@ -631,7 +640,9 @@ int kvm_emu_mmio_write(struct kvm_vcpu *vcpu, larch_inst inst)
- 		 * it need not return to user space to handle the mmio
- 		 * exception.
- 		 */
-+		idx = srcu_read_lock(&vcpu->kvm->srcu);
- 		ret = kvm_io_bus_write(vcpu, KVM_MMIO_BUS, vcpu->arch.badv, run->mmio.len, data);
-+		srcu_read_unlock(&vcpu->kvm->srcu, idx);
- 		if (!ret)
- 			return EMULATE_DONE;
- 
-diff --git a/arch/loongarch/kvm/intc/ipi.c b/arch/loongarch/kvm/intc/ipi.c
-index a233a323e295..4b7ff20ed438 100644
---- a/arch/loongarch/kvm/intc/ipi.c
-+++ b/arch/loongarch/kvm/intc/ipi.c
-@@ -98,7 +98,7 @@ static void write_mailbox(struct kvm_vcpu *vcpu, int offset, uint64_t data, int
- 
- static int send_ipi_data(struct kvm_vcpu *vcpu, gpa_t addr, uint64_t data)
- {
--	int i, ret;
-+	int i, idx, ret;
- 	uint32_t val = 0, mask = 0;
- 
- 	/*
-@@ -107,7 +107,9 @@ static int send_ipi_data(struct kvm_vcpu *vcpu, gpa_t addr, uint64_t data)
- 	 */
- 	if ((data >> 27) & 0xf) {
- 		/* Read the old val */
-+		srcu_read_unlock(&vcpu->kvm->srcu, idx);
- 		ret = kvm_io_bus_read(vcpu, KVM_IOCSR_BUS, addr, sizeof(val), &val);
-+		srcu_read_unlock(&vcpu->kvm->srcu, idx);
- 		if (unlikely(ret)) {
- 			kvm_err("%s: : read date from addr %llx failed\n", __func__, addr);
- 			return ret;
-@@ -121,7 +123,9 @@ static int send_ipi_data(struct kvm_vcpu *vcpu, gpa_t addr, uint64_t data)
- 		val &= mask;
- 	}
- 	val |= ((uint32_t)(data >> 32) & ~mask);
-+	srcu_read_unlock(&vcpu->kvm->srcu, idx);
- 	ret = kvm_io_bus_write(vcpu, KVM_IOCSR_BUS, addr, sizeof(val), &val);
-+	srcu_read_unlock(&vcpu->kvm->srcu, idx);
- 	if (unlikely(ret))
- 		kvm_err("%s: : write date to addr %llx failed\n", __func__, addr);
- 
+ 	if (!force) {
+-		if (!f2fs_realtime_discard_enable(sbi) || !se->valid_blocks ||
++		if (!f2fs_realtime_discard_enable(sbi) ||
++			(!se->valid_blocks &&
++				!IS_CURSEG(sbi, cpc->trim_start)) ||
+ 			SM_I(sbi)->dcc_info->nr_discards >=
+ 				SM_I(sbi)->dcc_info->max_discards)
+ 			return false;
 -- 
-2.43.5
+2.34.1
 
 
