@@ -1,110 +1,113 @@
-Return-Path: <linux-kernel+bounces-429001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2479D9E1611
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:43:59 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC5BD1650E0
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 08:43:55 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D0021DE2AE;
-	Tue,  3 Dec 2024 08:43:48 +0000 (UTC)
-Received: from mail-gw02.astralinux.ru (mail-gw02.astralinux.ru [195.16.41.108])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 946CF9E162F
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:48:44 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F2211DDC39;
-	Tue,  3 Dec 2024 08:43:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.16.41.108
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733215428; cv=none; b=j9gsWw+vfTgFfjVR2wn0k6ctaBF59vYPhUf4U/KPPWJ9GRlgbtN85E+LG/PrUAbKO1QKWkgugzpumvLUP34V/hcDgvQYLZ1ZqF6SNlH5thied2OTgzTAWF9xoZv7CkVlEe61FmDds4ckcIgV3fPY9v0LcifcL7mevj9MMBA0iN4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733215428; c=relaxed/simple;
-	bh=jeXNRj5gqwqoLLCuPCrhuzvU5etRv7agVADjw5vEYb0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=VSVlmmpj+LPcJ8mn8y+5h/Ex3oyyFO9+QAoSJmlWKDRdJ4YUNackYTbVFqSoANqOFUL/aoM8m0hyvoVz+/hI6PicoOwFJWHO3y7prN7U6AqBbnv3i6X2K0fXjXgGBBcZU0CZ5+yj7wyLseCLTrgkh+BVnqQZnd4z+ZVQfYL9KJE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=astralinux.ru; spf=pass smtp.mailfrom=astralinux.ru; arc=none smtp.client-ip=195.16.41.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=astralinux.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=astralinux.ru
-Received: from gca-msk-a-srv-ksmg01.astralinux.ru (localhost [127.0.0.1])
-	by mail-gw02.astralinux.ru (Postfix) with ESMTP id 92B261F9D9;
-	Tue,  3 Dec 2024 11:43:33 +0300 (MSK)
-Received: from new-mail.astralinux.ru (gca-yc-ruca-srv-mail05.astralinux.ru [10.177.185.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B4962B28AA6
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 08:43:18 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 678291D9694;
+	Tue,  3 Dec 2024 08:43:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Jtud4UVm"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail-gw02.astralinux.ru (Postfix) with ESMTPS;
-	Tue,  3 Dec 2024 11:43:32 +0300 (MSK)
-Received: from rbta-msk-lt-106062.astralinux.ru (unknown [10.177.20.58])
-	by new-mail.astralinux.ru (Postfix) with ESMTPA id 4Y2Z1Z4RlKz1c0sD;
-	Tue,  3 Dec 2024 11:43:30 +0300 (MSK)
-From: Anastasia Belova <abelova@astralinux.ru>
-To: Bjorn Andersson <andersson@kernel.org>
-Cc: Anastasia Belova <abelova@astralinux.ru>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	David Dai <daidavid1@codeaurora.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org,
-	lvc-project@linuxtesting.org
-Subject: [PATCH] clk: qcom: clk-rpmh: prevent integer overflow in recalc_rate
-Date: Tue,  3 Dec 2024 11:42:31 +0300
-Message-Id: <20241203084231.6001-1-abelova@astralinux.ru>
-X-Mailer: git-send-email 2.30.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 114F21ABEB1
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 08:43:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733215393; cv=none; b=OutauqAzOE5Ry0kgYGebZ9umVJcJ4eyTHlYSZy6jQEquKCakbOwedYEDzguF5wGHJqfXC0Co0bYdQLh49qEu5+qzA13TFfVtTw56BbpfptE2oTita2ojXxL2TvzqmLUoARSxV3yk20yjKsQ+TOFmZbI7sYZQnPUu/iEpplhW1yE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733215393; c=relaxed/simple;
+	bh=hfLK2/DcSxYLCyqBn0xx2TTUK0YW1Z0m192Fs400nmI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=R+o1pdCHimj1QPt2mIqk9J0/CnwOt5vpKTlCDbh6y5fXiM85p0LEg+NLsAE0CqNURBF/Wng6RoNVNRwPtifmJpDywyiWp8y9bcyYBVlYydYt1CNgW1SFe+t4puyvpvNFt/+umftmG/8wLP06G/3NbFi9c6U4dY87zEycBjfzFXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Jtud4UVm; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733215392; x=1764751392;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=hfLK2/DcSxYLCyqBn0xx2TTUK0YW1Z0m192Fs400nmI=;
+  b=Jtud4UVm4KgPGHNF8xdaNTP4RF+jlGL6WUzN4ds/XsYin/s7WBZFkaKN
+   uBYZeA3T+pWmZJyQD+WoZa1uLt9tRGasnHQjyKO3L6hk1IUTPqLVomZkm
+   vWDxUT++Mjak6w5hmh+o6XFFkseoNcfcmV0HkLYsE3SeLaip/PTbMmrzB
+   zw512At4ssPGwmr9RiXUryPfSGHDFQaafjuCPyEq4gaW1jHS134Ez+tjh
+   64i3skcPJWTxw3WoFqYPkcA6jtVfBtBOIQHa7uuUBOnGHI7K7OKaSrjkr
+   Yl2Q5b/sHAHo6Mf0ubDrss8pkEKbPr7Cr8O7q2RrNjCegOL8BMJ3gAyzI
+   A==;
+X-CSE-ConnectionGUID: YXamP3v+Q86xtl8kojFfmA==
+X-CSE-MsgGUID: 8Wg/+0avR724VLtXHMgC1g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11274"; a="33291643"
+X-IronPort-AV: E=Sophos;i="6.12,204,1728975600"; 
+   d="scan'208";a="33291643"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Dec 2024 00:43:11 -0800
+X-CSE-ConnectionGUID: Dx2OZUwtSFm4dnrd40EDZg==
+X-CSE-MsgGUID: +pKKCQLAT3K4+Us78VhBkQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,204,1728975600"; 
+   d="scan'208";a="93188455"
+Received: from lkp-server01.sh.intel.com (HELO 388c121a226b) ([10.239.97.150])
+  by fmviesa007.fm.intel.com with ESMTP; 03 Dec 2024 00:43:10 -0800
+Received: from kbuild by 388c121a226b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tIOUu-0000Pf-0R;
+	Tue, 03 Dec 2024 08:43:08 +0000
+Date: Tue, 3 Dec 2024 16:42:35 +0800
+From: kernel test robot <lkp@intel.com>
+To: Peng Ma <peng.ma@nxp.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>
+Subject: drivers/rtc/rtc-fsl-ftm-alarm.c:310:36: warning: 'ftm_imx_acpi_ids'
+ defined but not used
+Message-ID: <202412031620.1tzCLuCU-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-KSMG-AntiPhishing: NotDetected
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Envelope-From: abelova@astralinux.ru
-X-KSMG-AntiSpam-Info: LuaCore: 44 0.3.44 5149b91aab9eaefa5f6630aab0c7a7210c633ab6, {Tracking_internal2}, {Tracking_from_domain_doesnt_match_to}, astralinux.ru:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2;new-mail.astralinux.ru:7.1.1, FromAlignment: s
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiSpam-Lua-Profiles: 189567 [Dec 03 2024]
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Version: 6.1.1.7
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.0.7854, bases: 2024/12/03 00:44:00 #26930054
-X-KSMG-AntiVirus-Status: NotDetected, skipped
-X-KSMG-LinksScanning: NotDetected
-X-KSMG-Message-Action: skipped
-X-KSMG-Rule-ID: 1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-aggr_state and unit fields are u32. The result of their
-multiplication may not fit in this type.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   cdd30ebb1b9f36159d66f088b61aee264e649d7a
+commit: 929a3270488956316214d70cd4e2ba3fa56ffe31 rtc: fsl-ftm-alarm: enable acpi support
+date:   4 years, 8 months ago
+config: arm-randconfig-004-20240106 (https://download.01.org/0day-ci/archive/20241203/202412031620.1tzCLuCU-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241203/202412031620.1tzCLuCU-lkp@intel.com/reproduce)
 
-Add explicit casting to prevent overflow.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202412031620.1tzCLuCU-lkp@intel.com/
 
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
+All warnings (new ones prefixed by >>):
 
-Fixes: 04053f4d23a4 ("clk: qcom: clk-rpmh: Add IPA clock support")
-Cc: stable@vger.kernel.org # 5.4+
-Signed-off-by: Anastasia Belova <abelova@astralinux.ru>
----
- drivers/clk/qcom/clk-rpmh.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+>> drivers/rtc/rtc-fsl-ftm-alarm.c:310:36: warning: 'ftm_imx_acpi_ids' defined but not used [-Wunused-const-variable=]
+     310 | static const struct acpi_device_id ftm_imx_acpi_ids[] = {
+         |                                    ^~~~~~~~~~~~~~~~
 
-diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
-index eefc322ce367..e6c33010cfbf 100644
---- a/drivers/clk/qcom/clk-rpmh.c
-+++ b/drivers/clk/qcom/clk-rpmh.c
-@@ -329,7 +329,7 @@ static unsigned long clk_rpmh_bcm_recalc_rate(struct clk_hw *hw,
- {
- 	struct clk_rpmh *c = to_clk_rpmh(hw);
- 
--	return c->aggr_state * c->unit;
-+	return (unsigned long)c->aggr_state * c->unit;
- }
- 
- static const struct clk_ops clk_rpmh_bcm_ops = {
+
+vim +/ftm_imx_acpi_ids +310 drivers/rtc/rtc-fsl-ftm-alarm.c
+
+   309	
+ > 310	static const struct acpi_device_id ftm_imx_acpi_ids[] = {
+   311		{"NXP0011",},
+   312		{ }
+   313	};
+   314	MODULE_DEVICE_TABLE(acpi, ftm_imx_acpi_ids);
+   315	
+
 -- 
-2.30.2
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
