@@ -1,62 +1,79 @@
-Return-Path: <linux-kernel+bounces-429710-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20FAB9E2873
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 18:00:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 750D59E27A3
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 17:36:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5E5DEB868EE
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 15:04:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E04E8B66ECA
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 15:03:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAA051F7587;
-	Tue,  3 Dec 2024 15:04:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 359021F7578;
+	Tue,  3 Dec 2024 15:03:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Y17tl2V0"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b="aLeULJb6"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A13C833FE;
-	Tue,  3 Dec 2024 15:04:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 735E61F130D
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 15:03:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733238242; cv=none; b=U+Li2Dl+SpnrYPzFCkEAIBNzHHcpX2VpDzWo6IpQfXX5ZF6CbfFC1OR6GrHwI+Sdz0VwuawxapTe9kAo3wtRd5pj1OEKu+2HfK4f3UtwZLwXa+9Mfg3oTHd/DCsLzvZwLASJOYQw/4Syw4NFRSeQ9hozNKl+/zgCF9RFfF+22hU=
+	t=1733238218; cv=none; b=i79tTDqhjPpNJtacJ0C7TQbPPTjfy0nkl1TF3HqXll3dih+Sdm421jl8XbVNEJofib8rrvCrZBSEUNrTXmx2fawFPBTlTrJnmRPtfnToHb32pJDMv0ZXn+acmpBvs+DP5cFQfNupruCIbXxpqBq72FDqQjjs16TZc5RZUgEGaJs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733238242; c=relaxed/simple;
-	bh=oZxcYeeBKfP2Xf+eDmjixDYj1PkvTZRQCoJoWW36lg0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=pIayI8E+qo50JmwpwRte4CaK/3D5UTSYDpqndpCMpoU10oii9gMeznuRk8vjfjKK59XxCJoYKidR/mvDhaUeu+j6E6iJS9NPxYrgYWfZa7Sy5yQ7WFDk+AatXu6J5IWd3j/HB2GzaMVhhxPfNgW5ajPYNElwvXj0de3ZcPxo8zw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Y17tl2V0; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B36NGek024941;
-	Tue, 3 Dec 2024 15:03:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	MY7TDK45v9rxCivZyWPBJNhQjz//IUsfYUZw5ZsKQRY=; b=Y17tl2V0UQ3A5LmA
-	agcuIl0bUonzdbvFF8vltUEadKeYOM3ugkAOYiqd/GP4yKpaoFrVkHUwvEwyIyQ0
-	4Yyf2WLLTxPXQSmWcYi4nMBYcXUdpsiDUga/lcuMTYRZ3TaV4U8q0bcp5Q/Bz8Gl
-	aBZZaUVwj7A4Hov0mIrIWwM2COwK4XDI5SHKfCVv58DETha+fae1Sd6AARC6jVIA
-	BQMSZgfd0SRQCwi9PKhEtoUrIaUs6ibLTgmwlIFCHk7YqhvLOctdapoh/jL5MTZD
-	CDXaElr0VzvQ9sgSX1F1EvTI3LGkoGtNw+D91M+0WNXIHVpLIM6hBNFikPm7aOHq
-	rHQ1RQ==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 439vnys7ud-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 03 Dec 2024 15:03:55 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B3F3r8g025733
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 3 Dec 2024 15:03:53 GMT
-Received: from [10.217.216.47] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 3 Dec 2024
- 07:03:49 -0800
-Message-ID: <d78e6fc9-2238-4f55-a604-f60df8565166@quicinc.com>
-Date: Tue, 3 Dec 2024 20:33:46 +0530
+	s=arc-20240116; t=1733238218; c=relaxed/simple;
+	bh=Y+Nv76JuimdwOlgZdxhPKuAZhbr3eXr/RrZVVR1Jszc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dd8d1G68DXXzH0i7U/TQAN1vbHZy7JD3v1ppaFM9mP7xWTK3ohX8rCuccfLOH9imlcH8edeQyqKo0mdW0yCEUqIU1RiMoEP9zBNMkGlewSs8qvyaSbjhHlFYb51r5EFhRvCsU8DHHgy10CTTtIbxshHdd2E2Ht1lZQ0qIdl2A6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net; spf=pass smtp.mailfrom=openvpn.com; dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b=aLeULJb6; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=openvpn.com
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-385eaecc213so1540738f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 07:03:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=openvpn.net; s=google; t=1733238214; x=1733843014; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=UUc2U6b8AsvwMKbUGdD9RXYUFtONNeSR6k1MPBCihcM=;
+        b=aLeULJb6Bgh7WyL+VeFoJp9l0qCJsv7OvahlhAXcQhy37SJoRHTblnXpqdcbTzvXbe
+         Zmae/ZNIenjrvbN1IjPrW6ifBMReqXde1eCzHfP8/ga8CDFU1Y148BTarBJjqs5ofCsK
+         2DhP4k8t1KV0qmgSlkzGOoXz1IYwxYo4mi4GAO+WU5Khzl4Tx4jb/onJkAgvOQH5sygU
+         aYdy6zjUxoGzSPuzBbH3QI6TgheVHBYM32yJbdvYSdQCb81ZcuUkKbi5p+3cd3XjfESQ
+         SlWHGBewuXdqrpRH8C9F5kl5/0UJ+3tXWQ/Ln7RgMHzco+xH+vo5HbmDRo98XufHC8N5
+         9mxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733238214; x=1733843014;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UUc2U6b8AsvwMKbUGdD9RXYUFtONNeSR6k1MPBCihcM=;
+        b=Zri9WJKXaF+nW3+wVAky7JNPXLXOfSJvo9fHLky2l3RsUszjG+08xFQdWynb6UVG88
+         K1Kdaq+NI5CHhYNmvUy59TW69jeY339spY9Jy+Vv3sOSX5aaw9K0kZaQoyNxty2n9jNK
+         NPQ1cfbGs8kdBWZVlyuXRzcfCgVii7VL294bg5G2PlmVnqOIVFZfE8KQ0LE9MXW9LvBX
+         jRzk5i4YX+UdCAYz5CXm5e9TMe76oNYjH5k0MvA4XbpRVXMrpfza/6BNp1NA0ncwT57J
+         ayTCB4deReZiomefjdeMspqE81tTIyst8ygACaUSYyx/lvhgSdjtkbNyq1Ya46qpeRkl
+         oEew==
+X-Forwarded-Encrypted: i=1; AJvYcCVpPmJ+Z3hqfmQrM43Mb8murWFbdd/YODIV3yJJBZUDmWutfuRYClmoGNFQdbKhX4IvZ2FujjC8mCgmIYI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyeIP+P4W0zzWiRMewV8PsSarSORZKAFV2bEkDPX3LMplePY1CG
+	r/0nmv1odJ+shteBaEoIISyVJaluM22jtYB1D9SVKsqUa1aDhhnNtalT/eLxjmo=
+X-Gm-Gg: ASbGncsi0JbBWC/Eb8ngOEhiSFaHxgZrn/i5i9rcCEi6Gtgp7OBTokBMttHMZRJrbnM
+	BH6wZ74tXS8oDBsdn5VVySwPza8eq1fLLY44IOBZLvQtUjQFwnsvw1Hcjt6/whtAZI0CQ07xIsU
+	boq1eW/EarcxPCEbOIQ63VnGM+ixlDMqooHc2iHv9EdI03elj7wdwwCaFpTrx7CjHBcD9G4RdIc
+	6sFWS/KqxVBerLtezgGD5PvMe6Nll5qEvTBfLOZEzTdVHIMsEGAcX3OkKWRMV5n9if3Hx782f7F
+	Z284dlGv84yi
+X-Google-Smtp-Source: AGHT+IGX4qlJajenQzrAt/pIuQUZzcr+mvo9oyzKhTai61NwFS1z9iEGZQMMyKzVXX2SQcLM+nGCGw==
+X-Received: by 2002:a5d:5c05:0:b0:385:d7f9:f15f with SMTP id ffacd0b85a97d-385d7f9f229mr18702317f8f.19.1733238213983;
+        Tue, 03 Dec 2024 07:03:33 -0800 (PST)
+Received: from ?IPV6:2001:67c:2fbc:1:138c:c1e3:75bf:72b5? ([2001:67c:2fbc:1:138c:c1e3:75bf:72b5])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434aa76b52bsm224254745e9.18.2024.12.03.07.03.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 03 Dec 2024 07:03:33 -0800 (PST)
+Message-ID: <943b6994-f87b-4e8b-a5ff-3f6680070cc4@openvpn.net>
+Date: Tue, 3 Dec 2024 16:04:12 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,121 +81,99 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] arm64: dts: qcom: sa8775p: Add CPU OPP tables to
- scale DDR/L3
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Dmitry Baryshkov
-	<dmitry.baryshkov@linaro.org>
-CC: Brian Masney <bmasney@redhat.com>, Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Ajit Pandey <quic_ajipan@quicinc.com>,
-        "Imran
- Shaik" <quic_imrashai@quicinc.com>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        "Satya Priya Kakitapalli" <quic_skakitap@quicinc.com>,
-        Shivnandan Kumar
-	<quic_kshivnan@quicinc.com>
-References: <20241017-sa8775p-cpufreq-l3-ddr-scaling-v1-0-074e0fb80b33@quicinc.com>
- <20241017-sa8775p-cpufreq-l3-ddr-scaling-v1-2-074e0fb80b33@quicinc.com>
- <ZxEwVShJuMH4J1Hp@x1> <9179759d-7af1-409f-8130-1136c9ae4ecd@quicinc.com>
- <daqa3krsp6emdha6h7tlcelsggb6qeilnojgtfxjbp5zw4n6ow@xzwdmu55ygjf>
- <5c3d91e3-e9d3-4e8d-bd4f-f7cbe765dddc@oss.qualcomm.com>
+Subject: Re: [PATCH net-next v12 09/22] ovpn: implement packet processing
+To: Paolo Abeni <pabeni@redhat.com>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Donald Hunter <donald.hunter@gmail.com>,
+ Shuah Khan <shuah@kernel.org>, sd@queasysnail.net, ryazanov.s.a@gmail.com,
+ Andrew Lunn <andrew@lunn.ch>
+Cc: Simon Horman <horms@kernel.org>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+References: <20241202-b4-ovpn-v12-0-239ff733bf97@openvpn.net>
+ <20241202-b4-ovpn-v12-9-239ff733bf97@openvpn.net>
+ <d3d942c0-ceed-484f-8f2a-28abbdd132aa@redhat.com>
 Content-Language: en-US
-From: Jagadeesh Kona <quic_jkona@quicinc.com>
-In-Reply-To: <5c3d91e3-e9d3-4e8d-bd4f-f7cbe765dddc@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"
+From: Antonio Quartulli <antonio@openvpn.net>
+Autocrypt: addr=antonio@openvpn.net; keydata=
+ xsFNBFN3k+ABEADEvXdJZVUfqxGOKByfkExNpKzFzAwHYjhOb3MTlzSLlVKLRIHxe/Etj13I
+ X6tcViNYiIiJxmeHAH7FUj/yAISW56lynAEt7OdkGpZf3HGXRQz1Xi0PWuUINa4QW+ipaKmv
+ voR4b1wZQ9cZ787KLmu10VF1duHW/IewDx9GUQIzChqQVI3lSHRCo90Z/NQ75ZL/rbR3UHB+
+ EWLIh8Lz1cdE47VaVyX6f0yr3Itx0ZuyIWPrctlHwV5bUdA4JnyY3QvJh4yJPYh9I69HZWsj
+ qplU2WxEfM6+OlaM9iKOUhVxjpkFXheD57EGdVkuG0YhizVF4p9MKGB42D70pfS3EiYdTaKf
+ WzbiFUunOHLJ4hyAi75d4ugxU02DsUjw/0t0kfHtj2V0x1169Hp/NTW1jkqgPWtIsjn+dkde
+ dG9mXk5QrvbpihgpcmNbtloSdkRZ02lsxkUzpG8U64X8WK6LuRz7BZ7p5t/WzaR/hCdOiQCG
+ RNup2UTNDrZpWxpwadXMnJsyJcVX4BAKaWGsm5IQyXXBUdguHVa7To/JIBlhjlKackKWoBnI
+ Ojl8VQhVLcD551iJ61w4aQH6bHxdTjz65MT2OrW/mFZbtIwWSeif6axrYpVCyERIDEKrX5AV
+ rOmGEaUGsCd16FueoaM2Hf96BH3SI3/q2w+g058RedLOZVZtyQARAQABzSdBbnRvbmlvIFF1
+ YXJ0dWxsaSA8YW50b25pb0BvcGVudnBuLm5ldD7Cwa0EEwEIAFcCGwMFCwkIBwMFFQoJCAsF
+ FgIDAQACHgECF4AFCRWQ2TIWIQTKvaEoIBfCZyGYhcdI8My2j1nRTAUCYRUquBgYaGtwczov
+ L2tleXMub3BlbnBncC5vcmcACgkQSPDMto9Z0UzmcxAAjzLeD47We0R4A/14oDKlZxXO0mKL
+ fCzaWFsdhQCDhZkgxoHkYRektK2cEOh4Vd+CnfDcPs/iZ1i2+Zl+va79s4fcUhRReuwi7VCg
+ 7nHiYSNC7qZo84Wzjz3RoGYyJ6MKLRn3zqAxUtFECoS074/JX1sLG0Z3hi19MBmJ/teM84GY
+ IbSvRwZu+VkJgIvZonFZjbwF7XyoSIiEJWQC+AKvwtEBNoVOMuH0tZsgqcgMqGs6lLn66RK4
+ tMV1aNeX6R+dGSiu11i+9pm7sw8tAmsfu3kQpyk4SB3AJ0jtXrQRESFa1+iemJtt+RaSE5LK
+ 5sGLAO+oN+DlE0mRNDQowS6q/GBhPCjjbTMcMfRoWPCpHZZfKpv5iefXnZ/xVj7ugYdV2T7z
+ r6VL2BRPNvvkgbLZgIlkWyfxRnGh683h4vTqRqTb1wka5pmyBNAv7vCgqrwfvaV1m7J9O4B5
+ PuRjYRelmCygQBTXFeJAVJvuh2efFknMh41R01PP2ulXAQuVYEztq3t3Ycw6+HeqjbeqTF8C
+ DboqYeIM18HgkOqRrn3VuwnKFNdzyBmgYh/zZx/dJ3yWQi/kfhR6TawAwz6GdbQGiu5fsx5t
+ u14WBxmzNf9tXK7hnXcI24Z1z6e5jG6U2Swtmi8sGSh6fqV4dBKmhobEoS7Xl496JN2NKuaX
+ jeWsF2rOwE0EZmhJFwEIAOAWiIj1EYkbikxXSSP3AazkI+Y/ICzdFDmiXXrYnf/mYEzORB0K
+ vqNRQOdLyjbLKPQwSjYEt1uqwKaD1LRLbA7FpktAShDK4yIljkxhvDI8semfQ5WE/1Jj/I/Q
+ U+4VXhkd6UvvpyQt/LiWvyAfvExPEvhiMnsg2zkQbBQ/M4Ns7ck0zQ4BTAVzW/GqoT2z03mg
+ p1FhxkfzHMKPQ6ImEpuY5cZTQwrBUgWif6HzCtQJL7Ipa2fFnDaIHQeiJG0RXl/g9x3YlwWG
+ sxOFrpWWsh6GI0Mo2W2nkinEIts48+wNDBCMcMlOaMYpyAI7fT5ziDuG2CBA060ZT7qqdl6b
+ aXUAEQEAAcLBfAQYAQgAJhYhBMq9oSggF8JnIZiFx0jwzLaPWdFMBQJmaEkXAhsMBQkB4TOA
+ AAoJEEjwzLaPWdFMbRUP/0t5FrjF8KY6uCU4Tx029NYKDN9zJr0CVwSGsNfC8WWonKs66QE1
+ pd6xBVoBzu5InFRWa2ed6d6vBw2BaJHC0aMg3iwwBbEgPn4Jx89QfczFMJvFm+MNc2DLDrqN
+ zaQSqBzQ5SvUjxh8lQ+iqAhi0MPv4e2YbXD0ROyO+ITRgQVZBVXoPm4IJGYWgmVmxP34oUQh
+ BM7ipfCVbcOFU5OPhd9/jn1BCHzir+/i0fY2Z/aexMYHwXUMha/itvsBHGcIEYKk7PL9FEfs
+ wlbq+vWoCtUTUc0AjDgB76AcUVxxJtxxpyvES9aFxWD7Qc+dnGJnfxVJI0zbN2b37fX138Bf
+ 27NuKpokv0sBnNEtsD7TY4gBz4QhvRNSBli0E5bGUbkM31rh4Iz21Qk0cCwR9D/vwQVsgPvG
+ ioRqhvFWtLsEt/xKolOmUWA/jP0p8wnQ+3jY6a/DJ+o5LnVFzFqbK3fSojKbfr3bY33iZTSj
+ DX9A4BcohRyqhnpNYyHL36gaOnNnOc+uXFCdoQkI531hXjzIsVs2OlfRufuDrWwAv+em2uOT
+ BnRX9nFx9kPSO42TkFK55Dr5EDeBO3v33recscuB8VVN5xvh0GV57Qre+9sJrEq7Es9W609a
+ +M0yRJWJEjFnMa/jsGZ+QyLD5QTL6SGuZ9gKI3W1SfFZOzV7hHsxPTZ6
+Organization: OpenVPN Inc.
+In-Reply-To: <d3d942c0-ceed-484f-8f2a-28abbdd132aa@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: A1pciyluYGEhyE04isEvtUXARHh2q3PN
-X-Proofpoint-GUID: A1pciyluYGEhyE04isEvtUXARHh2q3PN
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 adultscore=0
- mlxlogscore=730 bulkscore=0 impostorscore=0 mlxscore=0 suspectscore=0
- spamscore=0 priorityscore=1501 lowpriorityscore=0 phishscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412030128
 
-
-
-On 11/30/2024 8:02 PM, Konrad Dybcio wrote:
-> On 14.11.2024 11:48 PM, Dmitry Baryshkov wrote:
->> On Mon, Nov 11, 2024 at 06:39:48PM +0530, Jagadeesh Kona wrote:
->>>
->>>
->>> On 10/17/2024 9:12 PM, Brian Masney wrote:
->>>> On Thu, Oct 17, 2024 at 02:58:31PM +0530, Jagadeesh Kona wrote:
->>>>> +	cpu0_opp_table: opp-table-cpu0 {
->>>>> +		compatible = "operating-points-v2";
->>>>> +		opp-shared;
->>>>> +
->>>>> +		cpu0_opp_1267mhz: opp-1267200000 {
->>>>> +			opp-hz = /bits/ 64 <1267200000>;
->>>>> +			opp-peak-kBps = <6220800 29491200>;
->>>>> +		};
->>>>> +
->>>>> +		cpu0_opp_1363mhz: opp-1363200000 {
->>>>> +			opp-hz = /bits/ 64 <1363200000>;
->>>>> +			opp-peak-kBps = <6220800 29491200>;
->>>>> +		};
->>>>
->>>> [snip]
->>>>
->>>>> +	cpu4_opp_table: opp-table-cpu4 {
->>>>> +		compatible = "operating-points-v2";
->>>>> +		opp-shared;
->>>>> +
->>>>> +		cpu4_opp_1267mhz: opp-1267200000 {
->>>>> +			opp-hz = /bits/ 64 <1267200000>;
->>>>> +			opp-peak-kBps = <6220800 29491200>;
->>>>> +		};
->>>>> +
->>>>> +		cpu4_opp_1363mhz: opp-1363200000 {
->>>>> +			opp-hz = /bits/ 64 <1363200000>;
->>>>> +			opp-peak-kBps = <6220800 29491200>;
->>>>> +		};
->>>>
->>>> There's no functional differences in the cpu0 and cpu4 opp tables. Can
->>>> a single table be used?
->>>>
->>>> This aligns with my recollection that this particular SoC only has the
->>>> gold cores.
->>>>
->>>> Brian
->>>>
->>>
->>> Thanks Brian for your review. Sorry for the delayed response.
->>>
->>> We require separate OPP tables for CPU0 and CPU4 to allow independent
->>> scaling of DDR and L3 frequencies for each CPU domain, with the final
->>> DDR and L3 frequencies being an aggregate of both.
->>>
->>> If we use a single OPP table for both CPU domains, then _allocate_opp_table() [1]
->>> won't be invoked for CPU4. As a result both CPU devices will end up in sharing
->>> the same ICC path handle, which could lead to one CPU device overwriting the bandwidth
->>> votes of other.
+On 03/12/2024 15:58, Paolo Abeni wrote:
+> On 12/2/24 16:07, Antonio Quartulli wrote:
+>> @@ -286,6 +292,31 @@ struct ovpn_peer *ovpn_peer_get_by_dst(struct ovpn_priv *ovpn,
+>>   	return peer;
+>>   }
+>>   
+>> +/**
+>> + * ovpn_peer_check_by_src - check that skb source is routed via peer
+>> + * @ovpn: the openvpn instance to search
+>> + * @skb: the packet to extract source address from
+>> + * @peer: the peer to check against the source address
+>> + *
+>> + * Return: true if the peer is matching or false otherwise
+>> + */
+>> +bool ovpn_peer_check_by_src(struct ovpn_priv *ovpn, struct sk_buff *skb,
+>> +			    struct ovpn_peer *peer)
+>> +{
+>> +	bool match = false;
+>> +
+>> +	if (ovpn->mode == OVPN_MODE_P2P) {
+>> +		/* in P2P mode, no matter the destination, packets are always
+>> +		 * sent to the single peer listening on the other side
+>> +		 */
+>> +		rcu_read_lock();
+>> +		match = (peer == rcu_dereference(ovpn->peer));
+>> +		rcu_read_unlock();
 > 
-> Oh that's a fun find.. clocks get the same treatment.. very bad,
-> but may explain some schroedingerbugs.
-> 
-> Taking a peek at some code paths, wouldn't dropping opp-shared
-> solve our issues? dev_pm_opp_set_sharing_cpus() overrides it
-> 
-> Konrad
+> Here you are not dereferencing ovpn->peer, so you can use
+> rcu_access_pointer() instead and avoid the rcu_read_lock/unlock() pair.
 
-Thanks Konrad for your review.
+I see - thanks for pointing this out!
+Will switch to rcu_access_pointer().
 
-Yes, correct. I tried dropping opp-shared but it is again getting set due to
-dev_pm_opp_set_sharing_cpus().
+Regards,
 
-Thanks,
-Jagadeesh
+-- 
+Antonio Quartulli
+OpenVPN Inc.
 
 
