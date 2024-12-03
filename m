@@ -1,251 +1,254 @@
-Return-Path: <linux-kernel+bounces-429499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E68E19E1D0B
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 14:06:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D50C79E1D3E
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 14:13:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A9DFDB32A24
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 13:00:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B0E29B281CD
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 12:53:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56C241EF085;
-	Tue,  3 Dec 2024 12:59:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=uliege.be header.i=@uliege.be header.b="C8rxz9ti"
-Received: from serv108.segi.ulg.ac.be (serv108.segi.ulg.ac.be [139.165.32.111])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 870C01E53A;
-	Tue,  3 Dec 2024 12:59:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=139.165.32.111
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DA881EC016;
+	Tue,  3 Dec 2024 12:53:36 +0000 (UTC)
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF79C1EBA04;
+	Tue,  3 Dec 2024 12:53:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733230794; cv=none; b=cfgkUVj7Z0s31gV8gREhr1rU41PJYDoMkS4Q2CuGwkQSzbKfwMrs/716StNmrZQMzUFO46zNrm7OnR94XJFuoA3Qo1WfQxmdO1zQn2Tkth0VmC0nQYslrfT0WZwU+9AqHa/2uHCo4gq4zV7JflxIJuQYzZBZlquxo/gzbEqiGoY=
+	t=1733230415; cv=none; b=BsD2QP0/2AlFwEagnryw+8lU0j/50V4C6t48vCiMO4TZFK86+RXPBsYJmzVLI0gLYconcjUG1yTsWWk5HL1wSUAmoFcgefUrT3mgY/SF1tLJLZeYke6ILfEV/EN9ZP7ZYT8Bj9JkUKk3Agw9ia4cpYJfQaNPTpx/WTUA1/tx9o8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733230794; c=relaxed/simple;
-	bh=NxyQcAFC+EIcEx4ym0rUYYFqK38LZuoe4X6+NBqzFI8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Cz40q7j+IUSdtwDyhAoT0mjaO6NZ3wGx1ctUPgYuCuYHf72ESzazlA4YwLMwujnGwJiVW3u1f8SkXBbmhBPxWJE6OFAVaWKqsf0Tsa0BrpGSpcn6L+qBCauV2tE0VYn1tPIWq2vdJtsZzH8wAkNruIT/qzdPIWMwWOaYx+lrIp4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uliege.be; spf=pass smtp.mailfrom=uliege.be; dkim=pass (2048-bit key) header.d=uliege.be header.i=@uliege.be header.b=C8rxz9ti; arc=none smtp.client-ip=139.165.32.111
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uliege.be
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uliege.be
-Received: from ubuntu.home (220.24-245-81.adsl-dyn.isp.belgacom.be [81.245.24.220])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by serv108.segi.ulg.ac.be (Postfix) with ESMTPSA id 66573200E1FD;
-	Tue,  3 Dec 2024 13:49:54 +0100 (CET)
-DKIM-Filter: OpenDKIM Filter v2.11.0 serv108.segi.ulg.ac.be 66573200E1FD
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uliege.be;
-	s=ulg20190529; t=1733230194;
-	bh=mQveZItNLzTIo34Os3uLO1zS26WneyxGStddfBwzByY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=C8rxz9tifz7t2Kfe0pHs6PzAEWQcj9sBUMn9hS5/R8izQBdPsmoCV7ObTGyZFHeZ6
-	 UlY1lz7kuF4wsIPb029ai8NyJt/Hyy72k4LFgtqWR/sCPLxMVv4mVmccuBJTJwFahU
-	 raVyLBcaoogGvfU0YreNm2FJodoMw6RKGtQD4I6y8RStBxVPL62BJLPFGexcahFRdq
-	 3OIzBzOARPDsBGN5rDspPb72RYkF2rFaZrK9WEHbUo41ke6Tvo2aeAzKWxblUSr+LQ
-	 8jED026kdws+VTPJZ7brl8PPx+joIx4Q9Ivu2485cea7srv69Imr1DS+XfAkf9HPkv
-	 W8zWFNgPJr8dQ==
-From: Justin Iurman <justin.iurman@uliege.be>
-To: netdev@vger.kernel.org
-Cc: davem@davemloft.net,
-	dsahern@kernel.org,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	horms@kernel.org,
-	linux-kernel@vger.kernel.org,
-	justin.iurman@uliege.be
-Subject: [RESEND PATCH net-next v5 2/4] net: ipv6: ioam6_iptunnel: mitigate 2-realloc issue
-Date: Tue,  3 Dec 2024 13:49:43 +0100
-Message-Id: <20241203124945.22508-3-justin.iurman@uliege.be>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241203124945.22508-1-justin.iurman@uliege.be>
-References: <20241203124945.22508-1-justin.iurman@uliege.be>
+	s=arc-20240116; t=1733230415; c=relaxed/simple;
+	bh=cNmkxzapUO7QczoDwL+xVGi9yBG+fPmNhU/lvd+cUvs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=a9nj/H4gCHfSqw8wYg/iWEDP7MtcQx1xpehxTDZYP9+KTybSZJ6rm07exHRbMQH4Qoj1rPmhkfgrYHnmXHR7IrJkLtwiB1WIgL03XFEC8RKUP8Vg2RUIX0vT64p2pMi8hN3fFJQ2C2UfxgIUwfqJNZwp5Budk0wNV4lkEQtEMgc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+X-CSE-ConnectionGUID: NZ2Q9QJrS8etHAiLa1x1gg==
+X-CSE-MsgGUID: JtmiqDwnS4m1caDtvBSMNA==
+X-IronPort-AV: E=Sophos;i="6.12,205,1728918000"; 
+   d="asc'?scan'208";a="226786275"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie5.idc.renesas.com with ESMTP; 03 Dec 2024 21:53:30 +0900
+Received: from [10.226.93.8] (unknown [10.226.93.8])
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 161DC4002623;
+	Tue,  3 Dec 2024 21:53:24 +0900 (JST)
+Message-ID: <9fbf057c-164b-4451-85a8-cf4d5807b4c1@bp.renesas.com>
+Date: Tue, 3 Dec 2024 12:53:23 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 03/14] iio: adc: rzg2l_adc: Simplify the runtime PM code
+Content-Language: en-GB
+To: Claudiu <claudiu.beznea@tuxon.dev>,
+ prabhakar.mahadev-lad.rj@bp.renesas.com, jic23@kernel.org, lars@metafoo.de,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ geert+renesas@glider.be, magnus.damm@gmail.com, mturquette@baylibre.com,
+ sboyd@kernel.org, p.zabel@pengutronix.de
+Cc: linux-iio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20241203111314.2420473-1-claudiu.beznea.uj@bp.renesas.com>
+ <20241203111314.2420473-4-claudiu.beznea.uj@bp.renesas.com>
+From: Paul Barker <paul.barker.ct@bp.renesas.com>
+In-Reply-To: <20241203111314.2420473-4-claudiu.beznea.uj@bp.renesas.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="------------ejkQ6uLn0GaiFSlClZC0XSqf"
 
-This patch mitigates the two-reallocations issue with ioam6_iptunnel by
-providing the dst_entry (in the cache) to the first call to
-skb_cow_head(). As a result, the very first iteration may still trigger
-two reallocations (i.e., empty cache), while next iterations would only
-trigger a single reallocation.
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--------------ejkQ6uLn0GaiFSlClZC0XSqf
+Content-Type: multipart/mixed; boundary="------------dmg0AGwwVL6W8RXA0ox4qbMm";
+ protected-headers="v1"
+From: Paul Barker <paul.barker.ct@bp.renesas.com>
+To: Claudiu <claudiu.beznea@tuxon.dev>,
+ prabhakar.mahadev-lad.rj@bp.renesas.com, jic23@kernel.org, lars@metafoo.de,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ geert+renesas@glider.be, magnus.damm@gmail.com, mturquette@baylibre.com,
+ sboyd@kernel.org, p.zabel@pengutronix.de
+Cc: linux-iio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Message-ID: <9fbf057c-164b-4451-85a8-cf4d5807b4c1@bp.renesas.com>
+Subject: Re: [PATCH 03/14] iio: adc: rzg2l_adc: Simplify the runtime PM code
+References: <20241203111314.2420473-1-claudiu.beznea.uj@bp.renesas.com>
+ <20241203111314.2420473-4-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20241203111314.2420473-4-claudiu.beznea.uj@bp.renesas.com>
 
-Performance tests before/after applying this patch, which clearly shows
-the improvement:
-- inline mode:
-  - before: https://ibb.co/LhQ8V63
-  - after: https://ibb.co/x5YT2bS
-- encap mode:
-  - before: https://ibb.co/3Cjm5m0
-  - after: https://ibb.co/TwpsxTC
-- encap mode with tunsrc:
-  - before: https://ibb.co/Gpy9QPg
-  - after: https://ibb.co/PW1bZFT
+--------------dmg0AGwwVL6W8RXA0ox4qbMm
+Content-Type: multipart/mixed; boundary="------------u8Ideiazs4hCjoXAckzRyQhI"
 
-This patch also fixes an incorrect behavior: after the insertion, the
-second call to skb_cow_head() makes sure that the dev has enough
-headroom in the skb for layer 2 and stuff. In that case, the "old"
-dst_entry was used, which is now fixed. After discussing with Paolo, it
-appears that both patches can be merged into a single one -this one-
-(for the sake of readability) and target net-next.
+--------------u8Ideiazs4hCjoXAckzRyQhI
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Justin Iurman <justin.iurman@uliege.be>
----
- net/ipv6/ioam6_iptunnel.c | 73 ++++++++++++++++++++-------------------
- 1 file changed, 37 insertions(+), 36 deletions(-)
+Hi Claudiu,
 
-diff --git a/net/ipv6/ioam6_iptunnel.c b/net/ipv6/ioam6_iptunnel.c
-index 9d8422e350f8..28e5a89dc255 100644
---- a/net/ipv6/ioam6_iptunnel.c
-+++ b/net/ipv6/ioam6_iptunnel.c
-@@ -253,14 +253,15 @@ static int ioam6_do_fill(struct net *net, struct sk_buff *skb)
- }
- 
- static int ioam6_do_inline(struct net *net, struct sk_buff *skb,
--			   struct ioam6_lwt_encap *tuninfo)
-+			   struct ioam6_lwt_encap *tuninfo,
-+			   struct dst_entry *cache_dst)
- {
- 	struct ipv6hdr *oldhdr, *hdr;
- 	int hdrlen, err;
- 
- 	hdrlen = (tuninfo->eh.hdrlen + 1) << 3;
- 
--	err = skb_cow_head(skb, hdrlen + skb->mac_len);
-+	err = skb_cow_head(skb, hdrlen + dst_dev_overhead(cache_dst, skb));
- 	if (unlikely(err))
- 		return err;
- 
-@@ -291,7 +292,8 @@ static int ioam6_do_encap(struct net *net, struct sk_buff *skb,
- 			  struct ioam6_lwt_encap *tuninfo,
- 			  bool has_tunsrc,
- 			  struct in6_addr *tunsrc,
--			  struct in6_addr *tundst)
-+			  struct in6_addr *tundst,
-+			  struct dst_entry *cache_dst)
- {
- 	struct dst_entry *dst = skb_dst(skb);
- 	struct ipv6hdr *hdr, *inner_hdr;
-@@ -300,7 +302,7 @@ static int ioam6_do_encap(struct net *net, struct sk_buff *skb,
- 	hdrlen = (tuninfo->eh.hdrlen + 1) << 3;
- 	len = sizeof(*hdr) + hdrlen;
- 
--	err = skb_cow_head(skb, len + skb->mac_len);
-+	err = skb_cow_head(skb, len + dst_dev_overhead(cache_dst, skb));
- 	if (unlikely(err))
- 		return err;
- 
-@@ -334,7 +336,7 @@ static int ioam6_do_encap(struct net *net, struct sk_buff *skb,
- 
- static int ioam6_output(struct net *net, struct sock *sk, struct sk_buff *skb)
- {
--	struct dst_entry *dst = skb_dst(skb);
-+	struct dst_entry *dst = skb_dst(skb), *cache_dst;
- 	struct in6_addr orig_daddr;
- 	struct ioam6_lwt *ilwt;
- 	int err = -EINVAL;
-@@ -352,6 +354,10 @@ static int ioam6_output(struct net *net, struct sock *sk, struct sk_buff *skb)
- 
- 	orig_daddr = ipv6_hdr(skb)->daddr;
- 
-+	local_bh_disable();
-+	cache_dst = dst_cache_get(&ilwt->cache);
-+	local_bh_enable();
-+
- 	switch (ilwt->mode) {
- 	case IOAM6_IPTUNNEL_MODE_INLINE:
- do_inline:
-@@ -359,7 +365,7 @@ static int ioam6_output(struct net *net, struct sock *sk, struct sk_buff *skb)
- 		if (ipv6_hdr(skb)->nexthdr == NEXTHDR_HOP)
- 			goto out;
- 
--		err = ioam6_do_inline(net, skb, &ilwt->tuninfo);
-+		err = ioam6_do_inline(net, skb, &ilwt->tuninfo, cache_dst);
- 		if (unlikely(err))
- 			goto drop;
- 
-@@ -369,7 +375,7 @@ static int ioam6_output(struct net *net, struct sock *sk, struct sk_buff *skb)
- 		/* Encapsulation (ip6ip6) */
- 		err = ioam6_do_encap(net, skb, &ilwt->tuninfo,
- 				     ilwt->has_tunsrc, &ilwt->tunsrc,
--				     &ilwt->tundst);
-+				     &ilwt->tundst, cache_dst);
- 		if (unlikely(err))
- 			goto drop;
- 
-@@ -387,41 +393,36 @@ static int ioam6_output(struct net *net, struct sock *sk, struct sk_buff *skb)
- 		goto drop;
- 	}
- 
--	err = skb_cow_head(skb, LL_RESERVED_SPACE(dst->dev));
--	if (unlikely(err))
--		goto drop;
-+	if (unlikely(!cache_dst)) {
-+		struct ipv6hdr *hdr = ipv6_hdr(skb);
-+		struct flowi6 fl6;
-+
-+		memset(&fl6, 0, sizeof(fl6));
-+		fl6.daddr = hdr->daddr;
-+		fl6.saddr = hdr->saddr;
-+		fl6.flowlabel = ip6_flowinfo(hdr);
-+		fl6.flowi6_mark = skb->mark;
-+		fl6.flowi6_proto = hdr->nexthdr;
-+
-+		cache_dst = ip6_route_output(net, NULL, &fl6);
-+		if (cache_dst->error) {
-+			err = cache_dst->error;
-+			dst_release(cache_dst);
-+			goto drop;
-+		}
- 
--	if (!ipv6_addr_equal(&orig_daddr, &ipv6_hdr(skb)->daddr)) {
- 		local_bh_disable();
--		dst = dst_cache_get(&ilwt->cache);
-+		dst_cache_set_ip6(&ilwt->cache, cache_dst, &fl6.saddr);
- 		local_bh_enable();
- 
--		if (unlikely(!dst)) {
--			struct ipv6hdr *hdr = ipv6_hdr(skb);
--			struct flowi6 fl6;
--
--			memset(&fl6, 0, sizeof(fl6));
--			fl6.daddr = hdr->daddr;
--			fl6.saddr = hdr->saddr;
--			fl6.flowlabel = ip6_flowinfo(hdr);
--			fl6.flowi6_mark = skb->mark;
--			fl6.flowi6_proto = hdr->nexthdr;
--
--			dst = ip6_route_output(net, NULL, &fl6);
--			if (dst->error) {
--				err = dst->error;
--				dst_release(dst);
--				goto drop;
--			}
--
--			local_bh_disable();
--			dst_cache_set_ip6(&ilwt->cache, dst, &fl6.saddr);
--			local_bh_enable();
--		}
-+		err = skb_cow_head(skb, LL_RESERVED_SPACE(cache_dst->dev));
-+		if (unlikely(err))
-+			goto drop;
-+	}
- 
-+	if (!ipv6_addr_equal(&orig_daddr, &ipv6_hdr(skb)->daddr)) {
- 		skb_dst_drop(skb);
--		skb_dst_set(skb, dst);
--
-+		skb_dst_set(skb, cache_dst);
- 		return dst_output(net, sk, skb);
- 	}
- out:
--- 
-2.34.1
+On 03/12/2024 11:13, Claudiu wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>=20
+> All Renesas SoCs using the rzg2l_adc driver manage ADC clocks through P=
+M
+> domains. Calling pm_runtime_{resume_and_get, put_sync}() implicitly set=
+s
+> the state of the clocks. As a result, the code in the rzg2l_adc driver =
+that
+> explicitly manages ADC clocks can be removed, leading to simpler and
+> cleaner implementation.
+>=20
+> Additionally, replace the use of rzg2l_adc_set_power() with direct PM
+> runtime API calls to further simplify and clean up the code.
+>=20
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> ---
+>  drivers/iio/adc/rzg2l_adc.c | 100 ++++++++----------------------------=
 
+>  1 file changed, 20 insertions(+), 80 deletions(-)
+>=20
+> diff --git a/drivers/iio/adc/rzg2l_adc.c b/drivers/iio/adc/rzg2l_adc.c
+> index 7039949a7554..a17690ecbdc3 100644
+> --- a/drivers/iio/adc/rzg2l_adc.c
+> +++ b/drivers/iio/adc/rzg2l_adc.c
+> @@ -8,7 +8,6 @@
+>   */
+> =20
+>  #include <linux/bitfield.h>
+> -#include <linux/clk.h>
+>  #include <linux/completion.h>
+>  #include <linux/delay.h>
+>  #include <linux/iio/iio.h>
+> @@ -69,8 +68,6 @@ struct rzg2l_adc_data {
+> =20
+>  struct rzg2l_adc {
+>  	void __iomem *base;
+> -	struct clk *pclk;
+> -	struct clk *adclk;
+>  	struct reset_control *presetn;
+>  	struct reset_control *adrstn;
+>  	struct completion completion;
+> @@ -188,29 +185,18 @@ static int rzg2l_adc_conversion_setup(struct rzg2=
+l_adc *adc, u8 ch)
+>  	return 0;
+>  }
+> =20
+> -static int rzg2l_adc_set_power(struct iio_dev *indio_dev, bool on)
+> -{
+> -	struct device *dev =3D indio_dev->dev.parent;
+> -
+> -	if (on)
+> -		return pm_runtime_resume_and_get(dev);
+> -
+> -	return pm_runtime_put_sync(dev);
+> -}
+> -
+>  static int rzg2l_adc_conversion(struct iio_dev *indio_dev, struct rzg2=
+l_adc *adc, u8 ch)
+>  {
+> +	struct device *dev =3D indio_dev->dev.parent;
+>  	int ret;
+> =20
+> -	ret =3D rzg2l_adc_set_power(indio_dev, true);
+> +	ret =3D pm_runtime_resume_and_get(dev);
+>  	if (ret)
+>  		return ret;
+
+Should we check (ret < 0) here instead of just (ret)? According to the
+docs [1], pm_runtime_resume_and_get() can return 1 if the device is
+already active.
+
+[1]: https://docs.kernel.org/power/runtime_pm.html#runtime-pm-device-help=
+er-functions
+
+Thanks,
+
+--=20
+Paul Barker
+--------------u8Ideiazs4hCjoXAckzRyQhI
+Content-Type: application/pgp-keys; name="OpenPGP_0x27F4B3459F002257.asc"
+Content-Disposition: attachment; filename="OpenPGP_0x27F4B3459F002257.asc"
+Content-Description: OpenPGP public key
+Content-Transfer-Encoding: quoted-printable
+
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+
+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3D
+=3DsIIN
+-----END PGP PUBLIC KEY BLOCK-----
+
+--------------u8Ideiazs4hCjoXAckzRyQhI--
+
+--------------dmg0AGwwVL6W8RXA0ox4qbMm--
+
+--------------ejkQ6uLn0GaiFSlClZC0XSqf
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+wnsEABYIACMWIQSiu8gv1Xr0fIw/aoLbaV4Vf/JGvQUCZ07/QwUDAAAAAAAKCRDbaV4Vf/JGvVOM
+AQCiRexXepiHi421Gc03OVPh445YisuIwwomitYof6QldgEAujvSzuyZroUMHy7zZTCeAHqe4H/E
+Z+DS14dFXJTVyQU=
+=hrD+
+-----END PGP SIGNATURE-----
+
+--------------ejkQ6uLn0GaiFSlClZC0XSqf--
 
