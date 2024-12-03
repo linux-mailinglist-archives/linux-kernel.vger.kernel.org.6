@@ -1,55 +1,54 @@
-Return-Path: <linux-kernel+bounces-428858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAD1B9E144F
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 08:34:01 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 349319E1429
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 08:30:18 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2118B164C0A
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 07:33:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D1A05B2622F
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 07:30:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAD0E18C03A;
-	Tue,  3 Dec 2024 07:32:40 +0000 (UTC)
-Received: from 189.cn (ptr.189.cn [183.61.185.104])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 053BD7E591;
-	Tue,  3 Dec 2024 07:32:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=183.61.185.104
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D76D1D90A4;
+	Tue,  3 Dec 2024 07:28:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="KT81jjQl"
+Received: from out30-110.freemail.mail.aliyun.com (out30-110.freemail.mail.aliyun.com [115.124.30.110])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBC0619DF45
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 07:28:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.110
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733211160; cv=none; b=Vutldxihgg2aYJ4uEnxCtUg0d+TuZDIiSkYQsKM/LoV1KEO46LDhIO+uftz8S03P3z833rjakxuGskMnKXNNBVsqpWO56KjYbOgETghSJZc59jJuEXiEZ6IubpQLW/H+FMUte/ryiyVbekTe4t0Vk65NScX3fH3NRYS5gmyoHfo=
+	t=1733210917; cv=none; b=LrkmZQEM1KqbsUXgV65qAuBLwDJRG8DKqVAHfINMHXizLgnsDoC2g0MdPVosXTFTLkcehGXO9DAfWT4HpZLJyHAeLODUE2DockKB72k6gTfagldlCEP+4v4ZJblJj7X9F2BCvMFtAO+RazwLwZr5XnTalH6Y+Qw1tGaUzZdyUtg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733211160; c=relaxed/simple;
-	bh=+Xl3lu+VXqqmJBdNllhibQiFsvDx9x822+cm3lXnKpA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=eSwMnsltnL6zIXNcmWkAy/z9GjWzFuE0kzkwmwKKJaIclBmDIA/LumNhmyIoZnqMCP2Wn1TRygSvbG0c4DP/XMJlqljRGjCZ8H9LUzxRjYNL0Xoc0dYYSN0DpcSrF2glSR0r++vaCRz+aI4ujuN24u8cmCDM1iLpzqXp45dDB2A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=189.cn; spf=pass smtp.mailfrom=189.cn; arc=none smtp.client-ip=183.61.185.104
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=189.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=189.cn
-HMM_SOURCE_IP:10.158.243.220:9667.1260465660
-HMM_ATTACHE_NUM:0000
-HMM_SOURCE_TYPE:SMTP
-Received: from clientip-123.150.8.42 (unknown [10.158.243.220])
-	by 189.cn (HERMES) with SMTP id EF84A102915;
-	Tue,  3 Dec 2024 15:27:44 +0800 (CST)
-Received: from  ([123.150.8.42])
-	by gateway-153622-dep-5c5f88b874-f78lq with ESMTP id 4830e516074d44918743ff5d3f586373 for mchehab@kernel.org;
-	Tue, 03 Dec 2024 15:27:44 CST
-X-Transaction-ID: 4830e516074d44918743ff5d3f586373
-X-Real-From: chensong_2000@189.cn
-X-Receive-IP: 123.150.8.42
-X-MEDUSA-Status: 0
-Sender: chensong_2000@189.cn
-From: Song Chen <chensong_2000@189.cn>
-To: mchehab@kernel.org,
-	arnd@arndb.de,
-	hverkuil-cisco@xs4all.nl
-Cc: linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org,
-	Song Chen <chensong_2000@189.cn>
-Subject: [PATCH] drivers/media/pci/sta2x11: replace legacy GPIO APIs
-Date: Tue,  3 Dec 2024 15:27:42 +0800
-Message-Id: <20241203072742.191787-1-chensong_2000@189.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1733210917; c=relaxed/simple;
+	bh=bBmcMPIMrvWP8/w6Ho+hyiZUG00ncco65Hce9iOdt9c=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=iLoZQVO53FL6b0LVP2q1l7e94DhamVeIWiwblbIeUiogGYZnDt//JcFNCaBP7pyCDlWhlBMbVvWJl+C/TM9/vde96i/J2ZlkEd2fmt79M80HsxLJ2qGnt9sFdWcqqvlxYGHrcjF/jxp0oeP/S06RIddOjPmxOrAy6PDCAQVbWwU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=KT81jjQl; arc=none smtp.client-ip=115.124.30.110
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1733210907; h=From:To:Subject:Date:Message-ID:MIME-Version;
+	bh=ffVwQCplrSSi42sdO0aUOX+pWOHj43NN6iV37ZyGKPo=;
+	b=KT81jjQlOxEj2D8ILyL/6T4Bn3GVkJJL4Fhozd959nvRHjZQ3fBc4jMSNb+iy5KL8xS5NpGQDvdrWx6yjDLg8A1rrJIQqJSAdpd3S0mGHpT4idVgKpj1RR1xTMmx/Zg54JH/2RtSGbbYEvhz104OmK2Vmoskd+vlQoZTngGW7dE=
+Received: from x31i01179.sqa.na131.tbsite.net(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WKlm0CQ_1733210902 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Tue, 03 Dec 2024 15:28:26 +0800
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+To: linux-erofs@lists.ozlabs.org
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Gao Xiang <hsiangkao@linux.alibaba.com>,
+	syzbot+7ff87b095e7ca0c5ac39@syzkaller.appspotmail.com
+Subject: [PATCH] erofs: fix rare pcluster memory leak after unmounting
+Date: Tue,  3 Dec 2024 15:28:21 +0800
+Message-ID: <20241203072821.1885740-1-hsiangkao@linux.alibaba.com>
+X-Mailer: git-send-email 2.43.5
+In-Reply-To: <674c1235.050a0220.ad585.0032.GAE@google.com>
+References: <674c1235.050a0220.ad585.0032.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,198 +57,62 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-GPIO subsystem is moving toward a descriptor-based approach
-from global GPIO numberspace, but some of legacy GPIO APIs
-callings still remain in sta2x11.
+There may still exist some pcluster with valid reference counts
+during unmounting.  Instead of introducing another synchronization
+primitive, just try again as unmounting is relatively rare.  This
+approach is similar to z_erofs_cache_invalidate_folio().
 
-This patch mainly replaces gpio_request with gpiod_get_index
-and removes including gpio.h.
+It was also reported by syzbot as a UAF due to commit f5ad9f9a603f
+("erofs: free pclusters if no cached folio is attached"):
 
-Signed-off-by: Song Chen <chensong_2000@189.cn>
+BUG: KASAN: slab-use-after-free in do_raw_spin_trylock+0x72/0x1f0 kernel/locking/spinlock_debug.c:123
+..
+ queued_spin_trylock include/asm-generic/qspinlock.h:92 [inline]
+ do_raw_spin_trylock+0x72/0x1f0 kernel/locking/spinlock_debug.c:123
+ __raw_spin_trylock include/linux/spinlock_api_smp.h:89 [inline]
+ _raw_spin_trylock+0x20/0x80 kernel/locking/spinlock.c:138
+ spin_trylock include/linux/spinlock.h:361 [inline]
+ z_erofs_put_pcluster fs/erofs/zdata.c:959 [inline]
+ z_erofs_decompress_pcluster fs/erofs/zdata.c:1403 [inline]
+ z_erofs_decompress_queue+0x3798/0x3ef0 fs/erofs/zdata.c:1425
+ z_erofs_decompressqueue_work+0x99/0xe0 fs/erofs/zdata.c:1437
+ process_one_work kernel/workqueue.c:3229 [inline]
+ process_scheduled_works+0xa68/0x1840 kernel/workqueue.c:3310
+ worker_thread+0x870/0xd30 kernel/workqueue.c:3391
+ kthread+0x2f2/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4d/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+
+However, it seems a long outstanding memory leak.  Fix it now.
+
+Fixes: f5ad9f9a603f ("erofs: free pclusters if no cached folio is attached")
+Reported-by: syzbot+7ff87b095e7ca0c5ac39@syzkaller.appspotmail.com
+Closes: https://lore.kernel.org/r/674c1235.050a0220.ad585.0032.GAE@google.com
+Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
 ---
- drivers/media/pci/sta2x11/sta2x11_vip.c | 84 ++++++++++++-------------
- 1 file changed, 42 insertions(+), 42 deletions(-)
+ fs/erofs/zutil.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/media/pci/sta2x11/sta2x11_vip.c b/drivers/media/pci/sta2x11/sta2x11_vip.c
-index 364ce9e57018..03ad75899e09 100644
---- a/drivers/media/pci/sta2x11/sta2x11_vip.c
-+++ b/drivers/media/pci/sta2x11/sta2x11_vip.c
-@@ -19,7 +19,6 @@
- #include <linux/interrupt.h>
- #include <linux/io.h>
- #include <linux/gpio/consumer.h>
--#include <linux/gpio.h>
- #include <linux/i2c.h>
- #include <linux/delay.h>
- #include <media/v4l2-common.h>
-@@ -139,6 +138,8 @@ struct sta2x11_vip {
+diff --git a/fs/erofs/zutil.c b/fs/erofs/zutil.c
+index 75704f58ecfa..0dd65cefce33 100644
+--- a/fs/erofs/zutil.c
++++ b/fs/erofs/zutil.c
+@@ -230,9 +230,10 @@ void erofs_shrinker_unregister(struct super_block *sb)
+ 	struct erofs_sb_info *const sbi = EROFS_SB(sb);
  
- 	void __iomem *iomem;	/* I/O Memory */
- 	struct vip_config *config;
-+	struct gpio_desc  *gpiod_pwr;
-+	struct gpio_desc  *gpiod_reset;
- };
- 
- static const unsigned int registers_to_save[AUX_COUNT] = {
-@@ -888,18 +889,16 @@ static int sta2x11_vip_init_controls(struct sta2x11_vip *vip)
-  * @name: GPIO pin name
-  *
-  */
--static int vip_gpio_reserve(struct device *dev, int pin, int dir,
--			    const char *name)
-+static int vip_gpio_reserve(struct device *dev, struct gpio_desc **pgpiod,
-+			int pin, int dir, const char *name)
- {
--	struct gpio_desc *desc = gpio_to_desc(pin);
-+	struct gpio_desc *desc;
- 	int ret = -ENODEV;
- 
--	if (!gpio_is_valid(pin))
--		return ret;
+ 	mutex_lock(&sbi->umount_mutex);
+-	/* clean up all remaining pclusters in memory */
+-	z_erofs_shrink_scan(sbi, ~0UL);
 -
--	ret = gpio_request(pin, name);
--	if (ret) {
-+	desc = gpiod_get_index(dev, name, pin, GPIOD_ASIS);
-+	if (IS_ERR(desc)) {
- 		dev_err(dev, "Failed to allocate pin %d (%s)\n", pin, name);
-+		ret = PTR_ERR(desc);
- 		return ret;
- 	}
- 
-@@ -907,18 +906,21 @@ static int vip_gpio_reserve(struct device *dev, int pin, int dir,
- 	if (ret) {
- 		dev_err(dev, "Failed to set direction for pin %d (%s)\n",
- 			pin, name);
--		gpio_free(pin);
--		return ret;
-+		goto err;
- 	}
- 
- 	ret = gpiod_export(desc, false);
- 	if (ret) {
- 		dev_err(dev, "Failed to export pin %d (%s)\n", pin, name);
--		gpio_free(pin);
--		return ret;
-+		goto err;
- 	}
- 
-+	*pgpiod = desc;
- 	return 0;
-+
-+err:
-+	gpiod_put(desc);
-+	return ret;
- }
- 
- /**
-@@ -928,15 +930,12 @@ static int vip_gpio_reserve(struct device *dev, int pin, int dir,
-  * @name: GPIO pin name
-  *
-  */
--static void vip_gpio_release(struct device *dev, int pin, const char *name)
-+static void vip_gpio_release(struct device *dev, struct gpio_desc *desc,
-+			int pin, const char *name)
- {
--	if (gpio_is_valid(pin)) {
--		struct gpio_desc *desc = gpio_to_desc(pin);
--
--		dev_dbg(dev, "releasing pin %d (%s)\n",	pin, name);
--		gpiod_unexport(desc);
--		gpio_free(pin);
--	}
-+	dev_dbg(dev, "releasing pin %d (%s)\n",	pin, name);
-+	gpiod_unexport(desc);
-+	gpiod_put(desc);
- }
- 
- /**
-@@ -964,6 +963,7 @@ static int sta2x11_vip_init_one(struct pci_dev *pdev,
- 	int ret;
- 	struct sta2x11_vip *vip;
- 	struct vip_config *config;
-+	struct gpio_desc  *gpiod_pwr, *gpiod_reset;
- 
- 	/* Check if hardware support 26-bit DMA */
- 	if (dma_set_mask(&pdev->dev, DMA_BIT_MASK(26))) {
-@@ -984,30 +984,27 @@ static int sta2x11_vip_init_one(struct pci_dev *pdev,
- 	}
- 
- 	/* Power configuration */
--	ret = vip_gpio_reserve(&pdev->dev, config->pwr_pin, 0,
-+	ret = vip_gpio_reserve(&pdev->dev, &gpiod_pwr, config->pwr_pin, 0,
- 			       config->pwr_name);
- 	if (ret)
- 		goto disable;
- 
--	ret = vip_gpio_reserve(&pdev->dev, config->reset_pin, 0,
-+	ret = vip_gpio_reserve(&pdev->dev, &gpiod_reset, config->reset_pin, 0,
- 			       config->reset_name);
--	if (ret) {
--		vip_gpio_release(&pdev->dev, config->pwr_pin,
--				 config->pwr_name);
--		goto disable;
--	}
-+	if (ret)
-+		goto release_gpio_pwr;
- 
--	if (gpio_is_valid(config->pwr_pin)) {
--		/* Datasheet says 5ms between PWR and RST */
--		usleep_range(5000, 25000);
--		gpio_direction_output(config->pwr_pin, 1);
--	}
-+	/* Datasheet says 5ms between PWR and RST */
-+	usleep_range(5000, 25000);
-+	ret = gpiod_direction_output(gpiod_pwr, 1);
-+	if (ret)
-+		goto release_gpios;
-+
-+	usleep_range(5000, 25000);
-+	ret = gpiod_direction_output(gpiod_reset, 1);
-+	if (ret)
-+		goto release_gpios;
- 
--	if (gpio_is_valid(config->reset_pin)) {
--		/* Datasheet says 5ms between PWR and RST */
--		usleep_range(5000, 25000);
--		gpio_direction_output(config->reset_pin, 1);
--	}
- 	usleep_range(5000, 25000);
- 
- 	/* Allocate a new VIP instance */
-@@ -1020,6 +1017,8 @@ static int sta2x11_vip_init_one(struct pci_dev *pdev,
- 	vip->std = V4L2_STD_PAL;
- 	vip->format = formats_50[0];
- 	vip->config = config;
-+	vip->gpiod_reset = gpiod_reset;
-+	vip->gpiod_pwr = gpiod_pwr;
- 	mutex_init(&vip->v4l_lock);
- 
- 	ret = sta2x11_vip_init_controls(vip);
-@@ -1113,8 +1112,9 @@ static int sta2x11_vip_init_one(struct pci_dev *pdev,
- free_mem:
- 	kfree(vip);
- release_gpios:
--	vip_gpio_release(&pdev->dev, config->reset_pin, config->reset_name);
--	vip_gpio_release(&pdev->dev, config->pwr_pin, config->pwr_name);
-+	vip_gpio_release(&pdev->dev, gpiod_reset, config->reset_pin, config->reset_name);
-+release_gpio_pwr:
-+	vip_gpio_release(&pdev->dev, gpiod_pwr, config->pwr_pin, config->pwr_name);
- disable:
- 	/*
- 	 * do not call pci_disable_device on sta2x11 because it break all
-@@ -1152,9 +1152,9 @@ static void sta2x11_vip_remove_one(struct pci_dev *pdev)
- 
- 	v4l2_device_unregister(&vip->v4l2_dev);
- 
--	vip_gpio_release(&pdev->dev, vip->config->pwr_pin,
-+	vip_gpio_release(&pdev->dev, vip->gpiod_pwr, vip->config->pwr_pin,
- 			 vip->config->pwr_name);
--	vip_gpio_release(&pdev->dev, vip->config->reset_pin,
-+	vip_gpio_release(&pdev->dev, vip->gpiod_reset, vip->config->reset_pin,
- 			 vip->config->reset_name);
- 
- 	kfree(vip);
++	while (!xa_empty(&sbi->managed_pslots)) {
++		z_erofs_shrink_scan(sbi, ~0UL);
++		cond_resched();
++	}
+ 	spin_lock(&erofs_sb_list_lock);
+ 	list_del(&sbi->list);
+ 	spin_unlock(&erofs_sb_list_lock);
 -- 
-2.25.1
+2.43.5
 
 
