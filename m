@@ -1,228 +1,146 @@
-Return-Path: <linux-kernel+bounces-428631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F2339E1194
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 04:06:57 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEE1E9E1198
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 04:08:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E8D22832A5
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 03:06:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 35064B22964
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 03:08:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9C0B13AD38;
-	Tue,  3 Dec 2024 03:06:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A753156220;
+	Tue,  3 Dec 2024 03:08:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="pQbtSUJ3"
-Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fhtLhXVR"
+Received: from mail-vs1-f46.google.com (mail-vs1-f46.google.com [209.85.217.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21AD8A59
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 03:06:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1337F13AA27;
+	Tue,  3 Dec 2024 03:08:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733195211; cv=none; b=sHdXf5SzUyaMvwxRFoRup7oGSKajx2eJiXX8s56fwjlNKRKGi8F+zogq+xvpam3xPu9qL9vBPd0XtpKMa7OmgM4IGngHPXZ3Y+2QA45kcCpfwsdi+g7ldgFPYZziwkUWBFE4espcCtWeQUkfWLSZKADoWdbAXIZkChqjhDkxrIE=
+	t=1733195314; cv=none; b=uOjXQ2+wlnvDcSRWdi470wl3w+zdQTCm7NhnzUEtAGPYehp0jPbyeSrrr0HrenHkq9sqTqV3ZwOlvaDze5BK720xkRgnGfKOsuhXRXRaqTEKYgZAl9m5TC64wdc8lKLneL0wmzuH84WsAy5+RjrLOgOp3Qo8rilQdtrU2yOKst4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733195211; c=relaxed/simple;
-	bh=QIwXUEBI/ZjPLYBYPkWBrH3cp+R1rApUFoRfUUvZ1ik=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aeVBhj2eH6l+QNdkEwKElpOiW5HKrwQ5IwgLBX0rx6CVtP0LxzYRVDCBdWyJiG1ul/DZq1vMgoCqBsU0pp1fcR+LxUC5cqr2nyLmzXCyik39s58/hV5NRaE9QoNrb071apFfUUHSLR6nm1kv4+Ia9I26cO5YSAaDNk7loUbg2Z8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=pQbtSUJ3; arc=none smtp.client-ip=91.218.175.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <045a786d-7b13-4127-82ce-57510565bd15@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1733195203;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Ql37HxuYXrMwWUt9td8nUPZc9h8pa2tYvbPHU5U5GXQ=;
-	b=pQbtSUJ3RATHdLHqKQ/RravvKlIMY+bcfBz8ppmM1dL286zdwBjwM7CqOuWXR3DrlsWIl4
-	1TkmeifThxghLbxorDCU75K/YhS2yRKHCK7cWOGzUcY9Y0IbqLZU+yVe1aITRTX+FYzUxj
-	oEXmgPeZcFKh/74scf3H1mkXfeAO2yU=
-Date: Tue, 3 Dec 2024 11:06:27 +0800
+	s=arc-20240116; t=1733195314; c=relaxed/simple;
+	bh=I9HdeuwzGQExOhA5rCI3cMyGGCW8Hc/BPNELSeD+d9M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=e7gKeYVIsJDbTVknZKUb6UZVDZA++tg0nJaYKbbDdpOy6K2WJrPr4UwkMsgorAuO6p1HZ78VsD6iofNZDhnahwG7NQdYoT0Nt7t4uZFOaSlQYdPkyu8Z8mC9Y45TAYXGTRuNdl9YeurWe/ayVDAfFxo9cKQskXrzxvogJx2tS5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fhtLhXVR; arc=none smtp.client-ip=209.85.217.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f46.google.com with SMTP id ada2fe7eead31-4adde94b285so149138137.2;
+        Mon, 02 Dec 2024 19:08:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733195312; x=1733800112; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=ku0oUpkXwkR73AMLIaDw2wq8wpaRHnOk8BrRUC2FgOo=;
+        b=fhtLhXVR5z+MN5CHqVd3Qxb8kl7z1ZhtQVff0/fflIqwcvuGzs7zhfEcvbQUZ0c2Y0
+         /KkeSaT7ODyE9zkldmbWp36Sx01KNYI42/14BLOjqkqmbU+WRJmM36kmUfccyYy8Ncxr
+         i22aAxmuGEw22TiJuy4O5vsCE5dmxPzq7MtizrPYMcZ1vvaUas2vz8nNwEdHZjsL3KpE
+         uRstztF9FRS4VocO32mglOab347xS0F8+b2YN/ruFo8wIunhISWdacykGBeMaPvehi9P
+         jpG8EyYnUbDlqmT5DnZKr6jDHjmBkcYdlF1ojebVvPEtOn+fAJG8B0+7xSNuUXUucuKq
+         BZ5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733195312; x=1733800112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ku0oUpkXwkR73AMLIaDw2wq8wpaRHnOk8BrRUC2FgOo=;
+        b=WSqu/Rs6dnqu/8S2TPNFaw8jeFfu7zYimBlAfA0GVIelG0V/2PYnk0uktw25shvUF0
+         1NmhsWIvoeNb48IEz7/7yBGqqJeJGy6l4oZQjFCjkKnHRxEqmPfCrnOXU+UgmUgbPsnp
+         +nbezYmBg9qY4D9wCy/Y//Xb3hI2WAt5ZLH2qoTBLk9hAXv5G4oRMEi9pOJqqYyhosLw
+         yXeS8n2sMiGRcZ/yZslpr3MpngNEADIiNhkqClTYD9Ox5VH6+luo25WkiU86aF9AmTEn
+         o+2YW0aUY7HJksq45uy6+JQMbUNNvPIJEZd1hXzMVu5BzjJCt2IVoOmJ94ihjRALmnzq
+         YQvA==
+X-Forwarded-Encrypted: i=1; AJvYcCUNXWG/UzcrmR/1Rom3UVD9HeOFw/BhvSrkZ2NSpaO9MIDCESp4lWLDxqO0e6FsmgapRj91wBaj@vger.kernel.org, AJvYcCUYEpNTDBQMt/uZvM8V4RWATbAtx6JCWkZiPnMgJpQTCV2NBV6A5BPgfJ+P1n6mcugaUb4znCI9h7hJGQc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxdXHGZw7n8X+OVCrgDCRA+i1T1PItQs8Qal871EvMgFFYmXZIs
+	FdTKFb6v1e6hFZCDVdCSzkdTkD/jPRcYvu6I3e5qHBslD9NVlEEoRDGg9biVSxhmdkNACC9k7Lz
+	bH+EF1YAA0it2ptdnGe0ZAENVdbo=
+X-Gm-Gg: ASbGncsUaDB+xIBPLvx6yWTuQ1kolBIDvGLaEexZNhrYiytIEhZZZDazl/r2jhPvpN5
+	SB+/p+WZXoThm8L7uS//IHLwoZ8WCYLImLA==
+X-Google-Smtp-Source: AGHT+IH8v5uDc6en35PwSRLhhU/ZrGuKdouVMRWWkSXQNnKi5ZS5eFaQ7PnObMtJZleYaXGc6KvIEz6/Pl1V5L0U3QU=
+X-Received: by 2002:a05:6102:291f:b0:4af:47c9:8827 with SMTP id
+ ada2fe7eead31-4af9981a313mr298244137.1.1733195311950; Mon, 02 Dec 2024
+ 19:08:31 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v1 2/2] mm: zswap: zswap_store_pages() simplifications for
- batching.
-To: "Sridhar, Kanchana P" <kanchana.p.sridhar@intel.com>,
- Yosry Ahmed <yosryahmed@google.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-mm@kvack.org" <linux-mm@kvack.org>,
- "hannes@cmpxchg.org" <hannes@cmpxchg.org>,
- "nphamcs@gmail.com" <nphamcs@gmail.com>,
- "usamaarif642@gmail.com" <usamaarif642@gmail.com>,
- "ryan.roberts@arm.com" <ryan.roberts@arm.com>,
- "21cnbao@gmail.com" <21cnbao@gmail.com>,
- "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
- "Feghali, Wajdi K" <wajdi.k.feghali@intel.com>,
- "Gopal, Vinodh" <vinodh.gopal@intel.com>
-References: <20241127225324.6770-1-kanchana.p.sridhar@intel.com>
- <20241127225324.6770-3-kanchana.p.sridhar@intel.com>
- <c9a0f00b-3aeb-467a-8771-a4ebb57fbba0@linux.dev>
- <CAJD7tkbPSQguHegkzN65==GHuNN9_RPm1FonnF8Bi=BsQDhxng@mail.gmail.com>
- <SJ0PR11MB56781233ABFE772C5991AB01C9362@SJ0PR11MB5678.namprd11.prod.outlook.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Chengming Zhou <chengming.zhou@linux.dev>
-In-Reply-To: <SJ0PR11MB56781233ABFE772C5991AB01C9362@SJ0PR11MB5678.namprd11.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+References: <20241202195029.2045633-1-kmlinuxm@gmail.com> <690e556f-a486-41e3-99ef-c29cb0a26d83@lunn.ch>
+In-Reply-To: <690e556f-a486-41e3-99ef-c29cb0a26d83@lunn.ch>
+From: =?UTF-8?B?5LiH6Ie06L+c?= <kmlinuxm@gmail.com>
+Date: Tue, 3 Dec 2024 11:08:22 +0800
+Message-ID: <CAHwZ4N3dn+jWG0Hbz2ptPRyA3i1SwCq1F7ipgMdwBaahntqkjA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] net: phy: realtek: add combo mode support for RTL8211FS
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: kuba@kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	willy.liu@realtek.com, Yuki Lee <febrieac@outlook.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On 2024/12/3 09:01, Sridhar, Kanchana P wrote:
-> Hi Chengming, Yosry,
-> 
->> -----Original Message-----
->> From: Yosry Ahmed <yosryahmed@google.com>
->> Sent: Monday, December 2, 2024 11:33 AM
->> To: Chengming Zhou <chengming.zhou@linux.dev>
->> Cc: Sridhar, Kanchana P <kanchana.p.sridhar@intel.com>; linux-
->> kernel@vger.kernel.org; linux-mm@kvack.org; hannes@cmpxchg.org;
->> nphamcs@gmail.com; usamaarif642@gmail.com; ryan.roberts@arm.com;
->> 21cnbao@gmail.com; akpm@linux-foundation.org; Feghali, Wajdi K
->> <wajdi.k.feghali@intel.com>; Gopal, Vinodh <vinodh.gopal@intel.com>
->> Subject: Re: [PATCH v1 2/2] mm: zswap: zswap_store_pages() simplifications
->> for batching.
->>
->> On Wed, Nov 27, 2024 at 11:00 PM Chengming Zhou
->> <chengming.zhou@linux.dev> wrote:
->>>
->>> On 2024/11/28 06:53, Kanchana P Sridhar wrote:
->>>> In order to set up zswap_store_pages() to enable a clean batching
->>>> implementation in [1], this patch implements the following changes:
->>>>
->>>> 1) Addition of zswap_alloc_entries() which will allocate zswap entries for
->>>>      all pages in the specified range for the folio, upfront. If this fails,
->>>>      we return an error status to zswap_store().
->>>>
->>>> 2) Addition of zswap_compress_pages() that calls zswap_compress() for
->> each
->>>>      page, and returns false if any zswap_compress() fails, so
->>>>      zswap_store_page() can cleanup resources allocated and return an
->> error
->>>>      status to zswap_store().
->>>>
->>>> 3) A "store_pages_failed" label that is a catch-all for all failure points
->>>>      in zswap_store_pages(). This facilitates cleaner error handling within
->>>>      zswap_store_pages(), which will become important for IAA compress
->>>>      batching in [1].
->>>>
->>>> [1]: https://patchwork.kernel.org/project/linux-mm/list/?series=911935
->>>>
->>>> Signed-off-by: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
->>>> ---
->>>>    mm/zswap.c | 93 +++++++++++++++++++++++++++++++++++++++++----
->> ---------
->>>>    1 file changed, 71 insertions(+), 22 deletions(-)
->>>>
->>>> diff --git a/mm/zswap.c b/mm/zswap.c
->>>> index b09d1023e775..db80c66e2205 100644
->>>> --- a/mm/zswap.c
->>>> +++ b/mm/zswap.c
->>>> @@ -1409,9 +1409,56 @@ static void shrink_worker(struct work_struct
->> *w)
->>>>    * main API
->>>>    **********************************/
->>>>
->>>> +static bool zswap_compress_pages(struct page *pages[],
->>>> +                              struct zswap_entry *entries[],
->>>> +                              u8 nr_pages,
->>>> +                              struct zswap_pool *pool)
->>>> +{
->>>> +     u8 i;
->>>> +
->>>> +     for (i = 0; i < nr_pages; ++i) {
->>>> +             if (!zswap_compress(pages[i], entries[i], pool))
->>>> +                     return false;
->>>> +     }
->>>> +
->>>> +     return true;
->>>> +}
->>>
->>> How about introducing a `zswap_compress_folio()` interface which
->>> can be used by `zswap_store()`?
->>> ```
->>> zswap_store()
->>>          nr_pages = folio_nr_pages(folio)
->>>
->>>          entries = zswap_alloc_entries(nr_pages)
->>>
->>>          ret = zswap_compress_folio(folio, entries, pool)
->>>
->>>          // store entries into xarray and LRU list
->>> ```
->>>
->>> And this version `zswap_compress_folio()` is very simple for now:
->>> ```
->>> zswap_compress_folio()
->>>          nr_pages = folio_nr_pages(folio)
->>>
->>>          for (index = 0; index < nr_pages; ++index) {
->>>                  struct page *page = folio_page(folio, index);
->>>
->>>                  if (!zswap_compress(page, &entries[index], pool))
->>>                          return false;
->>>          }
->>>
->>>          return true;
->>> ```
->>> This can be easily extended to support your "batched" version.
->>>
->>> Then the old `zswap_store_page()` could be removed.
->>>
->>> The good point is simplicity, that we don't need to slice folio
->>> into multiple batches, then repeat the common operations for each
->>> batch, like preparing entries, storing into xarray and LRU list...
->>
->> +1
-> 
-> Thanks for the code review comments. One question though: would
-> it make sense to trade-off the memory footprint cost with the code
-> simplification? For instance, lets say we want to store a 64k folio.
-> We would allocate memory for 16 zswap entries, and lets say one of
-> the compressions fails, we would deallocate memory for all 16 zswap
-> entries. Could this lead to zswap_entry kmem_cache starvation and
-> subsequent zswap_store() failures in multiple processes scenarios?
+On 2024/12/3 7:52, Andrew Lunn wrote:
+>> +static int rtl8211f_config_aneg(struct phy_device *phydev)
+>> +{
+>> +    int ret;
+>> +
+>> +    struct rtl821x_priv *priv = phydev->priv;
+>> +
+>> +    ret = genphy_read_abilities(phydev);
+>> +    if (ret < 0)
+>> +            return ret;
+>> +
+>> +    linkmode_copy(phydev->advertising, phydev->supported);
+>
+> This is all very unusual for config_aneg(). genphy_read_abilities()
+> will have been done very early on during phy_probe(). So why do it
+> now? And why overwrite how the user might of configured what is to be
+> advertised?
+>
 
-Ah, I get your consideration. But it's the unlikely case, right?
+These codes are migrated from Rockchip SDK and I'm not familiar with this part.
 
-If the case you mentioned above happens a lot, I think yes, we should
-optimize its memory footprint to avoid allocation and deallocation.
+I will use `linkmode_and` instead of `linkmode_copy` in my next
+version of patch like Marvell does.
 
-On the other hand, we should consider a folio would be compressed
-successfully in most cases. So we have to allocate all entries
-eventually.
+>> +static int rtl8211f_read_status(struct phy_device *phydev)
+>> +{
+>> +    int ret;
+>> +    struct rtl821x_priv *priv = phydev->priv;
+>> +    bool changed = false;
+>> +
+>> +    if (rtl8211f_mode(phydev) != priv->lastmode) {
+>> +            changed = true;
+>> +            ret = rtl8211f_config_aneg(phydev);
+>> +            if (ret < 0)
+>> +                    return ret;
+>> +
+>> +            ret = genphy_restart_aneg(phydev);
+>> +            if (ret < 0)
+>> +                    return ret;
+>> +    }
+>> +
+>> +    return genphy_c37_read_status(phydev, &changed);
+>> +}
+>
+> So you are assuming read_status() is called once per second? But what
+> about when interrupts are used?
+>
+> You might want to look at how the marvell driver does this. It is not
+> great, but better than this.
 
-Based on your consideration, I think your way is ok too, although
-I think the patch 2/2 should be dropped, since it hides pages loop
-in smaller functions, as Yosry mentioned too.
+I'm not familiar with that either, could you please tell me how to do
+it properly to automatically switch between copper and fiber mode?
 
-> 
-> In other words, allocating entries in smaller batches -- more specifically,
-> only the compress batchsize -- seems to strike a balance in terms of
-> memory footprint, while mitigating the starvation aspect, and possibly
-> also helping latency (allocating a large # of zswap entries and potentially
-> deallocating, could impact latency).
+>
+>     Andrew
+>
+> ---
+> pw-bot: cr
+Sincerely,
 
-If we consider the likely case (compress successfully), the whole
-latency should be better, right? Since we can bulk allocate all
-entries at first, and bulk insert to xarray and LRU at last.
-
-> 
-> If we agree with the merits of processing a large folio in smaller batches:
-> this in turn requires we store the smaller batches of entries in the
-> xarray/LRU before moving to the next batch. Which means all the
-> zswap_store() ops need to be done for a batch before moving to the next
-> batch.
-> 
-
-Both way is ok for me based on your memory footprint consideration
-above.
-
-Thanks.
+Zhiyuan Wan
 
