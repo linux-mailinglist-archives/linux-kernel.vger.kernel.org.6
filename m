@@ -1,508 +1,88 @@
-Return-Path: <linux-kernel+bounces-429853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEFA09E29E3
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 18:47:57 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B92799E2A98
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 19:17:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B60B6B32357
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:37:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D0FF8B46621
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:40:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6720B1F8AD8;
-	Tue,  3 Dec 2024 16:37:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="nuGIkOQq"
-Received: from mail-io1-f44.google.com (mail-io1-f44.google.com [209.85.166.44])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54E961F943D;
+	Tue,  3 Dec 2024 16:40:16 +0000 (UTC)
+Received: from andre.telenet-ops.be (andre.telenet-ops.be [195.130.132.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61DC21F8927
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 16:37:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4FA01F8ADB
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 16:40:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733243869; cv=none; b=GuxpJu8pAB985PzNTDunctybh3zLgCA9rlu3apdQiEOJb2I1lyjxAmN69cBZLnBl3FF/N0mwR+by7SKHuUwUaAoTeLrmXE3hgw/JsS5eNwnOXPuBmZKqdgakf1Rb6jZ7YAoD+qtXeYvDDjKc9iC6HxwfGUfxgcaytcuBU9vZf+8=
+	t=1733244016; cv=none; b=VgW5Fekn0vosuBVZciLgld5sBR1AfrXmBsjAXXOtQ2nbaIHRahHwg9FWB3HKh9deGnl4VF1n5LJDyHpkMf8AJ2fpr616agun+FxQ9w899K0fgWnxVfpH/wxE8ug9+V+ROcanBDBWkNivT3fA0nNYFEE9fke1QOc4VqxcKroQTLg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733243869; c=relaxed/simple;
-	bh=ofyNNqa9LTqECGe/gznO0EdfOgfFJo0pEY4QR+7Ei5o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=o8olXxMgtkPGeaG3aExjKj9kMxVOq5LGHeN7mOtFYbIcAMB6Mz2V5RQ3T5BcwabK8E80IHdO1aB8HIjKkFs7f5iFDaUiQIdv4h6NP0G0u+DrJyruK6M/ovn3GE5dSEfbsZh524Fy69Zuc0j7tqx7RUEVkOMfuUMQ1KFtY16P0Po=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=nuGIkOQq; arc=none smtp.client-ip=209.85.166.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
-Received: by mail-io1-f44.google.com with SMTP id ca18e2360f4ac-841a7ae8d8aso211608039f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 08:37:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1733243866; x=1733848666; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SVEw9Z9xC+e2116o+1WJfODi8M47QRe9C2e4ZFiB9Qs=;
-        b=nuGIkOQqO0IoXQdY7H6EFS7elzVhFkdOmrOtb1YBUkiIcIbDwDEOhC//s0jniyM2p2
-         QMYNQRghg2gvhN+9XDKvcFHTkeR4pGlT47Lit/FrvMk5TzQk+TOPh+miHty7q+Kjp75F
-         DfIrWLX21Pd4jCOt4Zh70hai5pcIlpbCie1erHAPTPoMfyIqrsbTewMrnZWmgik4ohTB
-         LqVTHrFg+F/kDNfED/9HQCS0Pw4Dyc6CG1FLsaqfp/HYZfTMYbhC/TLeCUwveNbNY7r8
-         h44KTyQodHDa6HlMWGmQP4LLEMRgakXEmGTnaOq6OS52PW7lL+uZb2IQVeSoLeEMisfM
-         /jQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733243866; x=1733848666;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SVEw9Z9xC+e2116o+1WJfODi8M47QRe9C2e4ZFiB9Qs=;
-        b=bHhJfB4OQ+pmY1CRgIQjJwYtJKGbxw6lECYM/l7QsmnDtJKcjlPuu3/bEd18Y0d8kG
-         kJh7KAm/TqracYCtlaqbIRvxk2iRxy9YPeCfCHixGUGCHBeNo4w/Egl5uKCWfv7oD6sJ
-         EYMKdN9FTpY81gGhzWrqlynUHEdUvhxwtFILLqMWN5rWCdED5uSMHjgmntUbzdahsscj
-         4Qy8Pz9vjwnbSHZOSm2P/9WMRkJ51cAmdd3AzoCMVsuHi0kK3DgJpESH8xhRtF7Nqxig
-         rNeUIQmwZO6Ot5bpkqCrAt9G3lzZGOp1HABVL8bp/KCe9R+GTvUHyCwK/68ndy5yLsJ4
-         jV1A==
-X-Forwarded-Encrypted: i=1; AJvYcCV6l7ws2pkWbeu1nJrt++whXSPpZKKihFHJDsd2fx05XHZjhMLg9SG2aOTMfGTe193xsBafhYKr4Kg3qMA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwG1u1bKnluvZTZiJqvelpyZDpPl0Fv1d4FhEAetoz2y9Qqp2wz
-	uRmBulGAwMjF8y6e9yYgV98VAQcAYxu6FaSvbzE87FHbkTjmV4TsHIt7CPR1bGN/qZg3oRG2Y6H
-	kjM/bGQXoL7NvfTAJYIbOQAebJFfHm0AWJqb9ig==
-X-Gm-Gg: ASbGncuHMlWssVJ8HlAQXuM9SieOoRbAevyyu+A4PA5QGsPsN7OA1J38MF2ADOeEyvr
-	/qiPSfVEONqFgEOATnKSnaXGUkrd8/tptHg==
-X-Google-Smtp-Source: AGHT+IEZS46Tt3F60SbyrRtm2o2atDwxxLqUtooVOzxuLEORF7+J61E8/7nJWNy4oOtVonZIMZTW80oPYgYr7U4CpuY=
-X-Received: by 2002:a05:6602:1593:b0:843:e11e:e7e1 with SMTP id
- ca18e2360f4ac-8445b6da045mr370006839f.14.1733243866405; Tue, 03 Dec 2024
- 08:37:46 -0800 (PST)
+	s=arc-20240116; t=1733244016; c=relaxed/simple;
+	bh=iers8YwQihT5WN+yXYzlgjChPlB3E49WUvV+hZjKU+8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=GaETOwU13TPN2RRuPZLRs1QHv+aovFuOZv4SRRfLabqMxuRWo3O8sky5+vKrPsIRziWCZNjY5x2UcqDGDfsUR+SgqujpRQRk8cUEFmMTL1DnGjCOLAX1xTscodKHm/IruUiU/xZ4VUoxQNFlB+4HkIf9HSgaFowxust8wDUyYRA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:829d:a1e7:5b32:5d8e])
+	by andre.telenet-ops.be with cmsmtp
+	id kGgB2D00M3sLyzB01GgB42; Tue, 03 Dec 2024 17:40:12 +0100
+Received: from rox.of.borg ([192.168.97.57])
+	by ramsan.of.borg with esmtp (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1tIVwZ-000DZC-M8;
+	Tue, 03 Dec 2024 17:40:11 +0100
+Received: from geert by rox.of.borg with local (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1tIVwZ-00Aj1O-JM;
+	Tue, 03 Dec 2024 17:40:11 +0100
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Kent Overstreet <kent.overstreet@linux.dev>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: linux-bcachefs@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [PATCH resend] bcachefs: BCACHEFS_PATH_TRACEPOINTS should depend on TRACING
+Date: Tue,  3 Dec 2024 17:40:10 +0100
+Message-Id: <2d26d15c39b72c815f14593b8cc916d47e82402d.1733243875.git.geert@linux-m68k.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241114161845.502027-17-ajones@ventanamicro.com>
- <20241114161845.502027-18-ajones@ventanamicro.com> <87mshcub2u.ffs@tglx>
-In-Reply-To: <87mshcub2u.ffs@tglx>
-From: Anup Patel <anup@brainfault.org>
-Date: Tue, 3 Dec 2024 22:07:35 +0530
-Message-ID: <CAAhSdy08gi998HsTkGpaV+bTWczVSL6D8c7EmuTQqovo63oXDw@mail.gmail.com>
-Subject: Re: [RFC PATCH 01/15] irqchip/riscv-imsic: Use hierarchy to reach irq_set_affinity
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Andrew Jones <ajones@ventanamicro.com>, iommu@lists.linux.dev, 
-	kvm-riscv@lists.infradead.org, kvm@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	tjeznach@rivosinc.com, zong.li@sifive.com, joro@8bytes.org, will@kernel.org, 
-	robin.murphy@arm.com, atishp@atishpatra.org, alex.williamson@redhat.com, 
-	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Dec 3, 2024 at 7:23=E2=80=AFPM Thomas Gleixner <tglx@linutronix.de>=
- wrote:
->
-> On Thu, Nov 14 2024 at 17:18, Andrew Jones wrote:
-> > @@ -96,9 +96,8 @@ static int imsic_irq_set_affinity(struct irq_data *d,=
- const struct cpumask *mask
-> >                                 bool force)
-> >  {
-> >       struct imsic_vector *old_vec, *new_vec;
-> > -     struct irq_data *pd =3D d->parent_data;
-> >
-> > -     old_vec =3D irq_data_get_irq_chip_data(pd);
-> > +     old_vec =3D irq_data_get_irq_chip_data(d);
-> >       if (WARN_ON(!old_vec))
-> >               return -ENOENT;
-> >
-> > @@ -116,13 +115,13 @@ static int imsic_irq_set_affinity(struct irq_data=
- *d, const struct cpumask *mask
-> >               return -ENOSPC;
-> >
-> >       /* Point device to the new vector */
-> > -     imsic_msi_update_msg(d, new_vec);
-> > +     imsic_msi_update_msg(irq_get_irq_data(d->irq), new_vec);
->
-> This looks more than fishy. See below.
->
-> > @@ -245,7 +247,7 @@ static bool imsic_init_dev_msi_info(struct device *=
-dev,
-> >               if (WARN_ON_ONCE(domain !=3D real_parent))
-> >                       return false;
-> >  #ifdef CONFIG_SMP
-> > -             info->chip->irq_set_affinity =3D imsic_irq_set_affinity;
-> > +             info->chip->irq_set_affinity =3D irq_chip_set_affinity_pa=
-rent;
->
-> This should use msi_domain_set_affinity(), which does the right thing:
->
->   1) It invokes the irq_set_affinity() callback of the parent domain
->
->   2) It composes the message via the hierarchy
->
->   3) It writes the message with the msi_write_msg() callback of the top
->      level domain
->
-> Sorry, I missed that when reviewing the original IMSIC MSI support.
->
-> The whole IMSIC MSI support can be moved over to MSI LIB which makes all
-> of this indirection go away and your intermediate domain will just fit
-> in.
->
-> Uncompiled patch below. If that works, it needs to be split up properly.
->
-> Note, this removes the setup of the irq_retrigger callback, but that's
-> fine because on hierarchical domains irq_chip_retrigger_hierarchy() is
-> invoked anyway. See try_retrigger().
+When tracing is disabled, there is no point in asking the user about
+enabling extra btree_path tracepoints in bcachefs.
 
-The IMSIC driver was merged one kernel release before common
-MSI LIB was merged.
+Fixes: 32ed4a620c5405be ("bcachefs: Btree path tracepoints")
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+---
+ fs/bcachefs/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-We should definitely update the IMSIC driver to use MSI LIB, I will
-try your suggested changes (below) and post a separate series.
+diff --git a/fs/bcachefs/Kconfig b/fs/bcachefs/Kconfig
+index ab6c95b895b33591..464b927e4fffd1f2 100644
+--- a/fs/bcachefs/Kconfig
++++ b/fs/bcachefs/Kconfig
+@@ -90,7 +90,7 @@ config BCACHEFS_SIX_OPTIMISTIC_SPIN
+ 
+ config BCACHEFS_PATH_TRACEPOINTS
+ 	bool "Extra btree_path tracepoints"
+-	depends on BCACHEFS_FS
++	depends on BCACHEFS_FS && TRACING
+ 	help
+ 	Enable extra tracepoints for debugging btree_path operations; we don't
+ 	normally want these enabled because they happen at very high rates.
+-- 
+2.34.1
 
-Thanks,
-Anup
-
->
-> Thanks,
->
->         tglx
-> ---
->  drivers/irqchip/Kconfig                    |    1
->  drivers/irqchip/irq-gic-v2m.c              |    1
->  drivers/irqchip/irq-imx-mu-msi.c           |    1
->  drivers/irqchip/irq-msi-lib.c              |   11 +-
->  drivers/irqchip/irq-mvebu-gicp.c           |    1
->  drivers/irqchip/irq-mvebu-odmi.c           |    1
->  drivers/irqchip/irq-mvebu-sei.c            |    1
->  drivers/irqchip/irq-riscv-imsic-platform.c |  131 +---------------------=
--------
->  include/linux/msi.h                        |   11 ++
->  9 files changed, 32 insertions(+), 127 deletions(-)
->
-> --- a/drivers/irqchip/Kconfig
-> +++ b/drivers/irqchip/Kconfig
-> @@ -587,6 +587,7 @@ config RISCV_IMSIC
->         select IRQ_DOMAIN_HIERARCHY
->         select GENERIC_IRQ_MATRIX_ALLOCATOR
->         select GENERIC_MSI_IRQ
-> +       select IRQ_MSI_LIB
->
->  config RISCV_IMSIC_PCI
->         bool
-> --- a/drivers/irqchip/irq-gic-v2m.c
-> +++ b/drivers/irqchip/irq-gic-v2m.c
-> @@ -255,6 +255,7 @@ static void __init gicv2m_teardown(void)
->  static struct msi_parent_ops gicv2m_msi_parent_ops =3D {
->         .supported_flags        =3D GICV2M_MSI_FLAGS_SUPPORTED,
->         .required_flags         =3D GICV2M_MSI_FLAGS_REQUIRED,
-> +       .chip_flags             =3D MSI_CHIP_FLAG_SET_EOI | MSI_CHIP_FLAG=
-_SET_ACK,
->         .bus_select_token       =3D DOMAIN_BUS_NEXUS,
->         .bus_select_mask        =3D MATCH_PCI_MSI | MATCH_PLATFORM_MSI,
->         .prefix                 =3D "GICv2m-",
-> --- a/drivers/irqchip/irq-imx-mu-msi.c
-> +++ b/drivers/irqchip/irq-imx-mu-msi.c
-> @@ -214,6 +214,7 @@ static void imx_mu_msi_irq_handler(struc
->  static const struct msi_parent_ops imx_mu_msi_parent_ops =3D {
->         .supported_flags        =3D IMX_MU_MSI_FLAGS_SUPPORTED,
->         .required_flags         =3D IMX_MU_MSI_FLAGS_REQUIRED,
-> +       .chip_flags             =3D MSI_CHIP_FLAG_SET_EOI | MSI_CHIP_FLAG=
-_SET_ACK,
->         .bus_select_token       =3D DOMAIN_BUS_NEXUS,
->         .bus_select_mask        =3D MATCH_PLATFORM_MSI,
->         .prefix                 =3D "MU-MSI-",
-> --- a/drivers/irqchip/irq-msi-lib.c
-> +++ b/drivers/irqchip/irq-msi-lib.c
-> @@ -28,6 +28,7 @@ bool msi_lib_init_dev_msi_info(struct de
->                                struct msi_domain_info *info)
->  {
->         const struct msi_parent_ops *pops =3D real_parent->msi_parent_ops=
-;
-> +       struct irq_chip *chip =3D info->chip;
->         u32 required_flags;
->
->         /* Parent ops available? */
-> @@ -92,10 +93,10 @@ bool msi_lib_init_dev_msi_info(struct de
->         info->flags                     |=3D required_flags;
->
->         /* Chip updates for all child bus types */
-> -       if (!info->chip->irq_eoi)
-> -               info->chip->irq_eoi     =3D irq_chip_eoi_parent;
-> -       if (!info->chip->irq_ack)
-> -               info->chip->irq_ack     =3D irq_chip_ack_parent;
-> +       if (!chip->irq_eoi && (pops->chip_flags & MSI_CHIP_FLAG_SET_EOI))
-> +               chip->irq_eoi           =3D irq_chip_eoi_parent;
-> +       if (!chip->irq_ack && (pops->chip_flags & MSI_CHIP_FLAG_SET_ACK))
-> +               chip->irq_ack           =3D irq_chip_ack_parent;
->
->         /*
->          * The device MSI domain can never have a set affinity callback. =
-It
-> @@ -105,7 +106,7 @@ bool msi_lib_init_dev_msi_info(struct de
->          * device MSI domain aside of mask/unmask which is provided e.g. =
-by
->          * PCI/MSI device domains.
->          */
-> -       info->chip->irq_set_affinity    =3D msi_domain_set_affinity;
-> +       chip->irq_set_affinity          =3D msi_domain_set_affinity;
->         return true;
->  }
->  EXPORT_SYMBOL_GPL(msi_lib_init_dev_msi_info);
-> --- a/drivers/irqchip/irq-mvebu-gicp.c
-> +++ b/drivers/irqchip/irq-mvebu-gicp.c
-> @@ -161,6 +161,7 @@ static const struct irq_domain_ops gicp_
->  static const struct msi_parent_ops gicp_msi_parent_ops =3D {
->         .supported_flags        =3D GICP_MSI_FLAGS_SUPPORTED,
->         .required_flags         =3D GICP_MSI_FLAGS_REQUIRED,
-> +       .chip_flags             =3D MSI_CHIP_FLAG_SET_EOI | MSI_CHIP_FLAG=
-_SET_ACK,
->         .bus_select_token       =3D DOMAIN_BUS_GENERIC_MSI,
->         .bus_select_mask        =3D MATCH_PLATFORM_MSI,
->         .prefix                 =3D "GICP-",
-> --- a/drivers/irqchip/irq-mvebu-odmi.c
-> +++ b/drivers/irqchip/irq-mvebu-odmi.c
-> @@ -157,6 +157,7 @@ static const struct irq_domain_ops odmi_
->  static const struct msi_parent_ops odmi_msi_parent_ops =3D {
->         .supported_flags        =3D ODMI_MSI_FLAGS_SUPPORTED,
->         .required_flags         =3D ODMI_MSI_FLAGS_REQUIRED,
-> +       .chip_flags             =3D MSI_CHIP_FLAG_SET_EOI | MSI_CHIP_FLAG=
-_SET_ACK,
->         .bus_select_token       =3D DOMAIN_BUS_GENERIC_MSI,
->         .bus_select_mask        =3D MATCH_PLATFORM_MSI,
->         .prefix                 =3D "ODMI-",
-> --- a/drivers/irqchip/irq-mvebu-sei.c
-> +++ b/drivers/irqchip/irq-mvebu-sei.c
-> @@ -356,6 +356,7 @@ static void mvebu_sei_reset(struct mvebu
->  static const struct msi_parent_ops sei_msi_parent_ops =3D {
->         .supported_flags        =3D SEI_MSI_FLAGS_SUPPORTED,
->         .required_flags         =3D SEI_MSI_FLAGS_REQUIRED,
-> +       .chip_flags             =3D MSI_CHIP_FLAG_SET_EOI | MSI_CHIP_FLAG=
-_SET_ACK,
->         .bus_select_mask        =3D MATCH_PLATFORM_MSI,
->         .bus_select_token       =3D DOMAIN_BUS_GENERIC_MSI,
->         .prefix                 =3D "SEI-",
-> --- a/drivers/irqchip/irq-riscv-imsic-platform.c
-> +++ b/drivers/irqchip/irq-riscv-imsic-platform.c
-> @@ -21,6 +21,7 @@
->  #include <linux/smp.h>
->
->  #include "irq-riscv-imsic-state.h"
-> +#include "irq-msi-lib.h"
->
->  static bool imsic_cpu_page_phys(unsigned int cpu, unsigned int guest_ind=
-ex,
->                                 phys_addr_t *out_msi_pa)
-> @@ -84,19 +85,10 @@ static void imsic_irq_compose_msg(struct
->  }
->
->  #ifdef CONFIG_SMP
-> -static void imsic_msi_update_msg(struct irq_data *d, struct imsic_vector=
- *vec)
-> -{
-> -       struct msi_msg msg =3D { };
-> -
-> -       imsic_irq_compose_vector_msg(vec, &msg);
-> -       irq_data_get_irq_chip(d)->irq_write_msi_msg(d, &msg);
-> -}
-> -
->  static int imsic_irq_set_affinity(struct irq_data *d, const struct cpuma=
-sk *mask_val,
->                                   bool force)
->  {
->         struct imsic_vector *old_vec, *new_vec;
-> -       struct irq_data *pd =3D d->parent_data;
->
->         old_vec =3D irq_data_get_irq_chip_data(pd);
->         if (WARN_ON(!old_vec))
-> @@ -115,14 +107,11 @@ static int imsic_irq_set_affinity(struct
->         if (!new_vec)
->                 return -ENOSPC;
->
-> -       /* Point device to the new vector */
-> -       imsic_msi_update_msg(d, new_vec);
-> -
->         /* Update irq descriptors with the new vector */
-> -       pd->chip_data =3D new_vec;
-> +       d->chip_data =3D new_vec;
->
->         /* Update effective affinity of parent irq data */
-> -       irq_data_update_effective_affinity(pd, cpumask_of(new_vec->cpu));
-> +       irq_data_update_effective_affinity(d, cpumask_of(new_vec->cpu));
->
->         /* Move state of the old vector to the new vector */
->         imsic_vector_move(old_vec, new_vec);
-> @@ -137,6 +126,9 @@ static struct irq_chip imsic_irq_base_ch
->         .irq_unmask             =3D imsic_irq_unmask,
->         .irq_retrigger          =3D imsic_irq_retrigger,
->         .irq_compose_msi_msg    =3D imsic_irq_compose_msg,
-> +#ifdef CONFIG_SMP
-> +       .irq_set_affinity       =3D imsic_irq_set_affinity,
-> +#endif
->         .flags                  =3D IRQCHIP_SKIP_SET_WAKE |
->                                   IRQCHIP_MASK_ON_SUSPEND,
->  };
-> @@ -172,22 +164,6 @@ static void imsic_irq_domain_free(struct
->         irq_domain_free_irqs_parent(domain, virq, nr_irqs);
->  }
->
-> -static int imsic_irq_domain_select(struct irq_domain *domain, struct irq=
-_fwspec *fwspec,
-> -                                  enum irq_domain_bus_token bus_token)
-> -{
-> -       const struct msi_parent_ops *ops =3D domain->msi_parent_ops;
-> -       u32 busmask =3D BIT(bus_token);
-> -
-> -       if (fwspec->fwnode !=3D domain->fwnode || fwspec->param_count !=
-=3D 0)
-> -               return 0;
-> -
-> -       /* Handle pure domain searches */
-> -       if (bus_token =3D=3D ops->bus_select_token)
-> -               return 1;
-> -
-> -       return !!(ops->bus_select_mask & busmask);
-> -}
-> -
->  #ifdef CONFIG_GENERIC_IRQ_DEBUGFS
->  static void imsic_irq_debug_show(struct seq_file *m, struct irq_domain *=
-d,
->                                  struct irq_data *irqd, int ind)
-> @@ -210,104 +186,15 @@ static const struct irq_domain_ops imsic
->  #endif
->  };
->
-> -#ifdef CONFIG_RISCV_IMSIC_PCI
-> -
-> -static void imsic_pci_mask_irq(struct irq_data *d)
-> -{
-> -       pci_msi_mask_irq(d);
-> -       irq_chip_mask_parent(d);
-> -}
-> -
-> -static void imsic_pci_unmask_irq(struct irq_data *d)
-> -{
-> -       irq_chip_unmask_parent(d);
-> -       pci_msi_unmask_irq(d);
-> -}
-> -
-> -#define MATCH_PCI_MSI          BIT(DOMAIN_BUS_PCI_MSI)
-> -
-> -#else
-> -
-> -#define MATCH_PCI_MSI          0
-> -
-> -#endif
-> -
-> -static bool imsic_init_dev_msi_info(struct device *dev,
-> -                                   struct irq_domain *domain,
-> -                                   struct irq_domain *real_parent,
-> -                                   struct msi_domain_info *info)
-> -{
-> -       const struct msi_parent_ops *pops =3D real_parent->msi_parent_ops=
-;
-> -
-> -       /* MSI parent domain specific settings */
-> -       switch (real_parent->bus_token) {
-> -       case DOMAIN_BUS_NEXUS:
-> -               if (WARN_ON_ONCE(domain !=3D real_parent))
-> -                       return false;
-> -#ifdef CONFIG_SMP
-> -               info->chip->irq_set_affinity =3D imsic_irq_set_affinity;
-> -#endif
-> -               break;
-> -       default:
-> -               WARN_ON_ONCE(1);
-> -               return false;
-> -       }
-> -
-> -       /* Is the target supported? */
-> -       switch (info->bus_token) {
-> -#ifdef CONFIG_RISCV_IMSIC_PCI
-> -       case DOMAIN_BUS_PCI_DEVICE_MSI:
-> -       case DOMAIN_BUS_PCI_DEVICE_MSIX:
-> -               info->chip->irq_mask =3D imsic_pci_mask_irq;
-> -               info->chip->irq_unmask =3D imsic_pci_unmask_irq;
-> -               break;
-> -#endif
-> -       case DOMAIN_BUS_DEVICE_MSI:
-> -               /*
-> -                * Per-device MSI should never have any MSI feature bits
-> -                * set. It's sole purpose is to create a dumb interrupt
-> -                * chip which has a device specific irq_write_msi_msg()
-> -                * callback.
-> -                */
-> -               if (WARN_ON_ONCE(info->flags))
-> -                       return false;
-> -
-> -               /* Core managed MSI descriptors */
-> -               info->flags |=3D MSI_FLAG_ALLOC_SIMPLE_MSI_DESCS |
-> -                              MSI_FLAG_FREE_MSI_DESCS;
-> -               break;
-> -       case DOMAIN_BUS_WIRED_TO_MSI:
-> -               break;
-> -       default:
-> -               WARN_ON_ONCE(1);
-> -               return false;
-> -       }
-> -
-> -       /* Use hierarchial chip operations re-trigger */
-> -       info->chip->irq_retrigger =3D irq_chip_retrigger_hierarchy;
-> -
-> -       /*
-> -        * Mask out the domain specific MSI feature flags which are not
-> -        * supported by the real parent.
-> -        */
-> -       info->flags &=3D pops->supported_flags;
-> -
-> -       /* Enforce the required flags */
-> -       info->flags |=3D pops->required_flags;
-> -
-> -       return true;
-> -}
-> -
-> -#define MATCH_PLATFORM_MSI             BIT(DOMAIN_BUS_PLATFORM_MSI)
-> -
->  static const struct msi_parent_ops imsic_msi_parent_ops =3D {
->         .supported_flags        =3D MSI_GENERIC_FLAGS_MASK |
->                                   MSI_FLAG_PCI_MSIX,
->         .required_flags         =3D MSI_FLAG_USE_DEF_DOM_OPS |
-> -                                 MSI_FLAG_USE_DEF_CHIP_OPS,
-> +                                 MSI_FLAG_USE_DEF_CHIP_OPS |
-> +                                 MSI_FLAG_PCI_MSI_MASK_PARENT,
->         .bus_select_token       =3D DOMAIN_BUS_NEXUS,
->         .bus_select_mask        =3D MATCH_PCI_MSI | MATCH_PLATFORM_MSI,
-> -       .init_dev_msi_info      =3D imsic_init_dev_msi_info,
-> +       .init_dev_msi_info      =3D msi_lib_init_dev_msi_info,
->  };
->
->  int imsic_irqdomain_init(void)
-> --- a/include/linux/msi.h
-> +++ b/include/linux/msi.h
-> @@ -558,11 +558,21 @@ enum {
->         MSI_FLAG_NO_AFFINITY            =3D (1 << 21),
->  };
->
-> +/*
-> + * Flags for msi_parent_ops::chip_flags
-> + */
-> +enum {
-> +       MSI_CHIP_FLAG_SET_EOI           =3D (1 << 0),
-> +       MSI_CHIP_FLAG_SET_ACK           =3D (1 << 1),
-> +};
-> +
->  /**
->   * struct msi_parent_ops - MSI parent domain callbacks and configuration=
- info
->   *
->   * @supported_flags:   Required: The supported MSI flags of the parent d=
-omain
->   * @required_flags:    Optional: The required MSI flags of the parent MS=
-I domain
-> + * @chip_flags:                Optional: Select MSI chip callbacks to up=
-date with defaults
-> + *                     in msi_lib_init_dev_msi_info().
->   * @bus_select_token:  Optional: The bus token of the real parent domain=
- for
->   *                     irq_domain::select()
->   * @bus_select_mask:   Optional: A mask of supported BUS_DOMAINs for
-> @@ -575,6 +585,7 @@ enum {
->  struct msi_parent_ops {
->         u32             supported_flags;
->         u32             required_flags;
-> +       u32             chip_flags;
->         u32             bus_select_token;
->         u32             bus_select_mask;
->         const char      *prefix;
 
