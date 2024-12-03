@@ -1,169 +1,141 @@
-Return-Path: <linux-kernel+bounces-429007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 535AE9E162B
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:48:31 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F19A19E1686
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:01:12 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0AC181638CF
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 08:48:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 77385B30E2D
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 08:48:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18C4A1DDA33;
-	Tue,  3 Dec 2024 08:48:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D72111DD9AD;
+	Tue,  3 Dec 2024 08:48:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FfbPudO7"
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="t9brO18N"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E73B257D;
-	Tue,  3 Dec 2024 08:48:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 851321BD50C;
+	Tue,  3 Dec 2024 08:48:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733215703; cv=none; b=cln1UL7MgUBkir23zGpf17naAfXwe79p8/aAP+V2hCoBSiEzPvRc92JWwHOwUnvC8ux8MC8oOk9QnzWGHGjKDbQCD+Jo9ntSnSpM8HtpFlke5YvVoSF2HQPxLTGrLgZwKSuqqDgVI6YJExB6RThN4CkYLTSMIUyycUbwLj7arjo=
+	t=1733215720; cv=none; b=CtHW+OKVm4g1kP09DNnsl1A+FhygfENif4KxbQrEP5Pt/gZA+PuM7pcI5lASCWmWagim8/J+WKfLQ0JeGQVeynVyQQGE3LQeDK+2bDhK4jtyRF0aql3yfgAxHzPEyACceihCGD9UQgukLprccbogtbvXF3Ii4uFzVYVcXibkns8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733215703; c=relaxed/simple;
-	bh=WFKzI1fZ+E/odL6blUYCUeXJAWWClEFQFwA8lgkf2Uk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HSWRjAmReFIgTHVWt9wP0Su3lGMwnhXAGGYoCYDLVaPylCMfrh+HOtkjgJCw/+f0wZMFmqEIsQo8ZR6TxZbM+gcqRnmwgcWEy8HBc+Yd5WFq+Sz5ePDfz21iCkZPTGZOpcIv0BqQBrAiB2FH68QcWIkCxAY3uIj4+U4eHTwle+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FfbPudO7; arc=none smtp.client-ip=209.85.215.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-7fbbf456a63so311783a12.2;
-        Tue, 03 Dec 2024 00:48:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733215700; x=1733820500; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AOSZZo6COvONJZX2dpnbD1MkQEuc1G+gxCG2m+LKD1g=;
-        b=FfbPudO72vNA3pi7ij21kbrPl099a2dw8UMqW4cwBU8ktjppkktCP5jQYfNXXN2Cqu
-         QXLbijiWFwl3aQiZMylw5o1NuHqooIVxrT4KArg8FXIkvzAR0T+CqoAnjBRt/72lS3oG
-         vHzm9W6WHxAQ6p/mnDCXBe3A3zzC226AF7KujNTeTSASgFhDFTRk7jljGs5+WLZUo6mi
-         AEnSHk/hucjX/SYaXyi+lGFtfdtQ0Btsm2MtEX+wfifTzVDvsWE6LkwjBNQEjzzRmumi
-         pxiUNnuL8xbAbVysJIqCR7n7p5FBYrSzPJ5o1sqVb+oTB8YXNL97BKcjykZHXorie0cD
-         usxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733215700; x=1733820500;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AOSZZo6COvONJZX2dpnbD1MkQEuc1G+gxCG2m+LKD1g=;
-        b=oze42X6mE/uEPbqaA7NEulFU+bSOC4nvkxVRrBLQDIHhVaMsnRueZdHyUFeYSagdqs
-         o+/xMjZAFnc5PNsiNT8ll0oH7XX64ZTHyBK9/+mbFmWlafuLl1gKdPZPIoJk9mB01Igu
-         m0UGk/lsM7C3gKu5igfB3lRH3/itK99ebrOr/gbsxosas1jsB97ULOATzfVBkkHkDiAd
-         +nw7eDjh+l0XDfMmgYjtOiOR3sky6qkEYgbyJC0ptxWFawTAjlhdUGIdDdahNeNRVDrc
-         cO6VLX2NJ8aTtH7DP3+icYmVRGqh2OGGyVegFduPLA58KDt9NSaddnLRhV/WvxBpWMf3
-         z/wA==
-X-Forwarded-Encrypted: i=1; AJvYcCWPim6CBgzgqybpYnzgJUibg5+jJrqdvQCsqVy8KUy9vejhofgAup4eb2wyd7XO3UinurmdqpLyGzwSi6k=@vger.kernel.org, AJvYcCXjR/KmFTYrqS5UrS0w8KDCvFkX+oVC1lL32ZfIo5ObO7YC0/0zz6HxokVHuWFs6mwNHwxGEpz8tvrQUwu8lHI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxMNJ/w1knKOubCA4fnQ1UspTDD5RBLxqJgUnX1+C/l8fcGRp2u
-	z/5nHZOUOp3gTzy6C5TtB1c0pjT7G7b/DMqzOeUMmNLmvFpNtd92OvvReFiGXkp5yI8BkOjnMKg
-	9N89OoWRafUSVgU52FKVjY1+TxwKXJxCUEaY=
-X-Gm-Gg: ASbGnctzIsXh2PpVQ8J8BATw4Pzg3oZBo/16MGJ77c0V59BNeb7b2w6xsY8aOSUmt1p
-	fxSyUxZyu2hUvkBESc5Ftlr1vMAFPXNI=
-X-Google-Smtp-Source: AGHT+IGRdfSSIMxoMmoGcKQ0NDHpV8V+exuQ9YeI+S9wU3oIO/GKPXTP9f4hq+wXOlXUu3x6bprZaQnsqqX6G8k23vI=
-X-Received: by 2002:a17:90b:4a8d:b0:2ea:853a:99e0 with SMTP id
- 98e67ed59e1d1-2ef0124c9acmr967675a91.5.1733215700158; Tue, 03 Dec 2024
- 00:48:20 -0800 (PST)
+	s=arc-20240116; t=1733215720; c=relaxed/simple;
+	bh=0OpAzWPuoryPxuF28/pNqAjWqcvclJtIH5b6VDVvfN0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=um5pyVf9PoAwRII8IK1pGV6aR79deiXO3G0LqjmkqOmJqTaCbyL3dRqmiS+u0MyjUnGlTWmtCeUFwItbbyEAGThQQy6IziUB38vexfi4eNkAQEaX4GEJiJT22u6WEr+0kxmnwfC229SwxHnuj8NuiXthsvLJgUcqMza+2v6imNs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=t9brO18N; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 785328DB;
+	Tue,  3 Dec 2024 09:48:08 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1733215688;
+	bh=0OpAzWPuoryPxuF28/pNqAjWqcvclJtIH5b6VDVvfN0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=t9brO18N9dPcCEATfgU02ojolfRs6YqdOaDkiWn8yJNW2atTCM8O/g2Vpd3wQepmp
+	 ump13EAQaDL8jKuuK21ZroYB2mMypvk/OS1PrO0EwnKrj05YkBaLle8XTBOoR9iEnd
+	 NepGOJeAQW124EcLase6euLcGdjJmhfO/N3nS0BI=
+Date: Tue, 3 Dec 2024 10:48:24 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>, Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, LUU HOAI <hoai.luu.ub@renesas.com>,
+	Jagan Teki <jagan@amarulasolutions.com>,
+	Sam Ravnborg <sam@ravnborg.org>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+Subject: Re: [PATCH 4/9] drm/rcar-du: dsi: Fix PHY lock bit check
+Message-ID: <20241203084824.GG10736@pendragon.ideasonboard.com>
+References: <20241203-rcar-gh-dsi-v1-0-738ae1a95d2a@ideasonboard.com>
+ <20241203-rcar-gh-dsi-v1-4-738ae1a95d2a@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241203051843.291729-1-jtostler1@gmail.com>
-In-Reply-To: <20241203051843.291729-1-jtostler1@gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Tue, 3 Dec 2024 09:48:07 +0100
-Message-ID: <CANiq72ksaJcpjHi8=vuWLTLLfik9smaqY9oJXjwtieXgJ6Gy9Q@mail.gmail.com>
-Subject: Re: [PATCH] rust: alloc: Add doctest for `ArrayLayout`
-To: jtostler1@gmail.com
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241203-rcar-gh-dsi-v1-4-738ae1a95d2a@ideasonboard.com>
 
-On Tue, Dec 3, 2024 at 6:19=E2=80=AFAM <jtostler1@gmail.com> wrote:
->
-> From: Jimmy Ostler <jtostler1@gmail.com>
->
-> Added a rustdoc example and Kunit test to the `ArrayLayout` struct's
-> `ArrayLayout::new()` function.
->
-> Kunit tests ran using `./tools/testing/kunit/kunit.py run \
-> --make_options LLVM=3D1 \
-> --kconfig_add CONFIG_RUST=3Dy` passed.
->
-> Generated documentation looked as expected.
->
-> Signed-off-by: Jimmy Ostler <jtostler1@gmail.com>
-> Suggested-by: Boqun Feng <boqun.feng@gmail.com>
-> Link: https://github.com/Rust-for-Linux/linux/issues/1131
+Hi Tomi,
 
-Thanks for the patch!
+Thank you for the patch.
 
-A few procedural nits: please Cc the maintainers/reviewers, especially
-the main one (Danilo) -- for that, please see
-`scripts/get_maintainer.pl` as well as e.g.
-https://rust-for-linux.com/contributing#submitting-patches for one way
-to generate the arguments.
+On Tue, Dec 03, 2024 at 10:01:38AM +0200, Tomi Valkeinen wrote:
+> From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+> 
+> The driver checks for bit 16 (using CLOCKSET1_LOCK define) in CLOCKSET1
+> register when waiting for the PPI clock. However, the right bit to check
+> is bit 17 (CLOCKSET1_LOCK_PHY define). Not only that, but there's
+> nothing in the documents for bit 16 for V3U nor V4H.
+> 
+> So, fix the check to use bit 17, and drop the define for bit 16.
+> 
+> Fixes: 155358310f01 ("drm: rcar-du: Add R-Car DSI driver")
+> Fixes: 11696c5e8924 ("drm: Place Renesas drivers in a separate dir")
 
-The "Signed-off-by" tag normally would be the last one -- that way
-people see that you added the other two rather than the next person in
-the chain. It is good to mention the tests etc. that you have done,
-although normally for a patch like this it would normally not be
-mentioned (since all patches that add an example need to be tested
-anyway).
+Should this have CC: stable ?
 
-Finally, a nit on the commit message: normally they are written in the
-imperative mood.
+> Signed-off-by: Tomi Valkeiben <tomi.valkeinen+renesas@ideasonboard.com>
 
-By the way, the "From:" tag on the top would not need to be there if
-your "From:" in the email headers is configured properly.
+Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
->  /// Error when constructing an [`ArrayLayout`].
-> +#[derive(Debug)]
->  pub struct LayoutError;
+> ---
+>  drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c      | 2 +-
+>  drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi_regs.h | 1 -
+>  2 files changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c b/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c
+> index 2dba7c5ffd2c..92f4261305bd 100644
+> --- a/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c
+> +++ b/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c
+> @@ -587,7 +587,7 @@ static int rcar_mipi_dsi_startup(struct rcar_mipi_dsi *dsi,
+>  	for (timeout = 10; timeout > 0; --timeout) {
+>  		if ((rcar_mipi_dsi_read(dsi, PPICLSR) & PPICLSR_STPST) &&
+>  		    (rcar_mipi_dsi_read(dsi, PPIDLSR) & PPIDLSR_STPST) &&
+> -		    (rcar_mipi_dsi_read(dsi, CLOCKSET1) & CLOCKSET1_LOCK))
+> +		    (rcar_mipi_dsi_read(dsi, CLOCKSET1) & CLOCKSET1_LOCK_PHY))
+>  			break;
+>  
+>  		usleep_range(1000, 2000);
+> diff --git a/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi_regs.h b/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi_regs.h
+> index f8114d11f2d1..a6b276f1d6ee 100644
+> --- a/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi_regs.h
+> +++ b/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi_regs.h
+> @@ -142,7 +142,6 @@
+>  
+>  #define CLOCKSET1			0x101c
+>  #define CLOCKSET1_LOCK_PHY		(1 << 17)
+> -#define CLOCKSET1_LOCK			(1 << 16)
+>  #define CLOCKSET1_CLKSEL		(1 << 8)
+>  #define CLOCKSET1_CLKINSEL_EXTAL	(0 << 2)
+>  #define CLOCKSET1_CLKINSEL_DIG		(1 << 2)
 
-Ideally you would mention this change in the commit message too -- it
-is the only non-comment/doc change, after all :) It is also important
-because, in general, so far, we have not been using `expect`.
+-- 
+Regards,
 
-> +    ///
-> +    ///
-
-Please use a single line.
-
-> +    /// ```rust
-
-You can remove "rust" since it is the default.
-
-> +    /// use kernel::alloc::layout::ArrayLayout;
-
-This line could be hidden -- it is `Self`, after all, so it is not
-adding much for the reader. We are not fully consistent on this yet
-though.
-
-> +    /// let layout =3D ArrayLayout::<i32>::new(15);
-> +    /// assert_eq!(layout.expect("len * size_of::<i32>() does not overfl=
-ow").len(), 15);
-
-See above on `expect`.
-
-Moreover, since it is a test, it is fine to panic, but recently we
-were discussing that examples should ideally show how "real code"
-would be written, thus using `?` etc. instead.
-
-> +    /// let layout =3D ArrayLayout::<i32>::new(isize::MAX as usize);
-
-Perhaps we could consider an example with an smaller argument that
-still overflows, to drive home the multiplication involved. It could
-perhaps be a third one.
-
-Thanks!
-
-Cheers,
-Miguel
+Laurent Pinchart
 
