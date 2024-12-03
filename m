@@ -1,181 +1,170 @@
-Return-Path: <linux-kernel+bounces-429399-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB8519E1D87
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 14:27:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FEFE9E1E08
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 14:45:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 38F09B2DB68
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 12:01:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1F602B282C2
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 12:14:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 223241E5710;
-	Tue,  3 Dec 2024 12:01:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5B191E47DE;
+	Tue,  3 Dec 2024 12:13:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fdDeCtLV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iJaBU//F"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E26B3398B;
-	Tue,  3 Dec 2024 12:01:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BCCC1E47C2
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 12:13:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733227262; cv=none; b=FzO7zdcCbOGmFYMs76UesdXZ0Fc7Nl77VPhE/Ky8oPsmxh/+t/NuBngY4P11WQjiQKcoLXZUEeL+oLyj6J/lIYtd2avhg8Q37+X7gzST0DfTkg1ND5XKKKL2m2xNT2XRxgIuOqLRSGQZaCkfxUqnU/RvX7tcXDXl2ecIS5xu6yE=
+	t=1733228034; cv=none; b=ca3MdK/t4AMiw1q0ysW7dc8+TWOkfLjdLxlN0Ao0aIdBJufyqQGXTxRh3Vqojw2d7gNpFYeGiFsbRFJIxts96WaB7KbXThNv48HZxFvfQ2xVcdaDExTCZ8jq4AFvRM9mJrsBc1viWvj/HKxmhcF8DSs5dOYKLMNCWQC2eGmoCgI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733227262; c=relaxed/simple;
-	bh=rlz53vWDp5E/pYVOEj1URbYGt1AREB4Xo9ogjRjCu50=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rKPWitPTPIjPGJJtxcIdmX9tRnFLzlNuAIpWz2zE5F6v0tYsKpF7koC+Eb9bnpcfT39KKfLnppZUfH1YZHoE/zenBBuGQYVTNY9OhPRt+8L0D+bhGfVOiUWog413yWrdxB93lVnyAt02SIsC/sAreWOlPPF9/n13xvOgo4IWFA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fdDeCtLV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBAF4C4CECF;
-	Tue,  3 Dec 2024 12:01:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733227261;
-	bh=rlz53vWDp5E/pYVOEj1URbYGt1AREB4Xo9ogjRjCu50=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fdDeCtLVqECfRfNoqbCzzD0S2R+ze8fu4xgXlPdQFJQ+STayO+czgml6vxR6gAr9u
-	 SfvYrgXRdRmOjMEDiUcIg8Ywi35riI0nUxeZrJIGAla7/uurms7YmN220IRsCbVxR6
-	 0RLGXO472a27O/MHnrmTkWCsCE1MnHGszPPpy+ATOMh/r4ZUNj1XVz+G2aEnELC83Q
-	 5zXc30+JHwj5J8xXpxDpdRcwIa3kank2REKqd9CMrbu3SZA6RQSEQqgx6shuUaL3BU
-	 er9sxGEV01E1uZex0+a/6+JDYf3SqBVZ3ELFg7wS+IFimmHwT30DsHPjPlqmlPz8Tg
-	 GqLyWYoqGameA==
-Date: Tue, 3 Dec 2024 13:00:58 +0100
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-To: Zijun Hu <zijun_hu@icloud.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Jean Delvare <jdelvare@suse.com>, 
-	Guenter Roeck <linux@roeck-us.net>, Martin Tuma <martin.tuma@digiteqautomotive.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Andreas Noever <andreas.noever@gmail.com>, 
-	Michael Jamet <michael.jamet@intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, 
-	Yehezkel Bernat <YehezkelShB@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, Andrew Lunn <andrew@lunn.ch>, 
-	Vladimir Oltean <olteanv@gmail.com>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	Dan Williams <dan.j.williams@intel.com>, Vishal Verma <vishal.l.verma@intel.com>, 
-	Dave Jiang <dave.jiang@intel.com>, Ira Weiny <ira.weiny@intel.com>, 
-	Takashi Sakamoto <o-takashi@sakamocchi.jp>, Jiri Slaby <jirislaby@kernel.org>, 
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
-	Lee Duncan <lduncan@suse.com>, Chris Leech <cleech@redhat.com>, 
-	Mike Christie <michael.christie@oracle.com>, "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, 
-	"Martin K. Petersen" <martin.petersen@oracle.com>, Nilesh Javali <njavali@marvell.com>, 
-	Manish Rangankar <mrangankar@marvell.com>, GR-QLogic-Storage-Upstream@marvell.com, 
-	Davidlohr Bueso <dave@stgolabs.net>, Jonathan Cameron <jonathan.cameron@huawei.com>, 
-	Alison Schofield <alison.schofield@intel.com>, Andreas Larsson <andreas@gaisler.com>, 
-	Stuart Yoder <stuyoder@gmail.com>, Laurentiu Tudor <laurentiu.tudor@nxp.com>, 
-	Jens Axboe <axboe@kernel.dk>, Sudeep Holla <sudeep.holla@arm.com>, 
-	Cristian Marussi <cristian.marussi@arm.com>, Ard Biesheuvel <ardb@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, 
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
-	linux-hwmon@vger.kernel.org, linux-media@vger.kernel.org, linux-usb@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, netdev@vger.kernel.org, linux-pwm@vger.kernel.org, 
-	nvdimm@lists.linux.dev, linux1394-devel@lists.sourceforge.net, 
-	linux-serial@vger.kernel.org, linux-sound@vger.kernel.org, open-iscsi@googlegroups.com, 
-	linux-scsi@vger.kernel.org, linux-cxl@vger.kernel.org, sparclinux@vger.kernel.org, 
-	linux-block@vger.kernel.org, arm-scmi@vger.kernel.org, linux-efi@vger.kernel.org, 
-	linux-remoteproc@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>
-Subject: Re: [PATCH v2 00/32] driver core: Constify API device_find_child()
- and adapt for various existing usages
-Message-ID: <g32cigmktmj4egkq2tof27el2yss4liccfxgebkgqvkil32mlb@e3ta4ezv7y4m>
-References: <20241203-const_dfc_done-v2-0-7436a98c497f@quicinc.com>
+	s=arc-20240116; t=1733228034; c=relaxed/simple;
+	bh=ACKWQL0UkQUS7cOWEjRNwI1FfFj12bO7OxDuhVTv4KE=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ZWeRscKqQYtzWBvmKGaYkM0P+B3OfBzxceHLSDv5kxZOW9jlEnBY9W8O+89YAvsyEAOhUYWBTLMM0+L9iJQHVHt2ej+HgYP1m0kr2dVscM+qPtz+exi6qVNC1qVsRULuZhDnOhZDA+QoDM+cex9wCR66EZ4NOQx6ee+XOoikeNs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iJaBU//F; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a9f1c590ecdso900809566b.1
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 04:13:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733228031; x=1733832831; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+D27OUR16Cl4TWEJRos/7LAnM8aBb1wRGjF74GArkfA=;
+        b=iJaBU//FeDPXTTN/bLEC/FYuS4UdJNU9LBIInxQ2hL9/uIPfaEEbPe6nrQSVsyxQzN
+         S1CrogAScPi0v5ZoFgCNPO8qna9dHoSmu090XDuCyRuVuAvsPaXsnOqZTx1nJ2xEGavV
+         p9XR0sQLmNscztj39ZcYPGDh8J7SLGmiUDbILRNxwID9qTSJeCxKA7QILxzbqzhbqb+k
+         8U47/FRcBEP7pEFRfSUjDWCD9lEwl5gy7pxMZuM+869WnJY06gy7SX3M7bwxYzkXzUdi
+         x5khK2CtaQdj8/AW7jXF4/yBZK44Cg52q31l+BrMdxEoKRIEQ9Q7j2nym+bspyJRophE
+         JjAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733228031; x=1733832831;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+D27OUR16Cl4TWEJRos/7LAnM8aBb1wRGjF74GArkfA=;
+        b=kymN6jyC05WiKdJ7DpbxFDlyKPbBvJw5udR6cbo9K9cQuTIb/kIjDidILF5Ui1X1J9
+         M+5KR4zfNfkYTTbpPPj4Vt4Wbgzk4+gSRSrcB9jyk6ndl262VTFzsdThRChsRKd1OKaY
+         LC6g9b9SLM9OHC4OtehZ0kw80i8t8VsjZSRrNr2jlXF/Qk66HQw0J59jIJhrWqJWUJzc
+         P10WRcjvjmmlZt8e3t5zBUNW4WcKHujWZJqMpFfTrb2lI72mmSqit60SsQWrmqi8/qrd
+         D54EsbsJXtm2V+218l1CrBV8Wt2eXUfu+Ox+Ysh/GmL7ucGiEFp/M6TMLKKdNCGCAzQZ
+         PNEg==
+X-Forwarded-Encrypted: i=1; AJvYcCW+qX4xEjnJIbwr+1f3PRjF8zL4xYERSAJCjfPjpE55i5I/FCLav7JYoyDKupFzaNCMlhPtlG34gZMDY2U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxxwYx8BbXxgJ/choq8FBj5OesAcX/U3IWBcP3KImS/E8mDHLrN
+	U7rXsFFuBIuFfi5qvJXV07AmplC1nLNNBbDTtdKYXMz9ackts4bVYEeMtLZqhgI=
+X-Gm-Gg: ASbGncs3Lyf2EluCackjuyTSISdZWPhT2i2APkGcQaLzTN6dCwSwKsi2nOqFAsJXt0T
+	JBTe9j0UPzXR0U4XhDVwDowF2/lhVBTm0PoOvmS27uyjcyPnb/JHJTDQmxCuiWWiUIOpt2QlbVf
+	6qEc9rMBd1bkcBg/gXzDKA48/3zLJAuVopRCQG1wNzNJTv7C2SUVzAp7NZwxZeLTHmVb3hhH3+q
+	lkKhDFnFzVFlytxPeBqSW1bxppaS+ZJcmAt3NAdTk8XwV4GYj/kpJie0yKTXnbrkWZOCJgvKaiT
+	A9Ac9NqYZLnXKWxhGVkxP7Y98lSMVAUnvw==
+X-Google-Smtp-Source: AGHT+IG/LNiQRH1H/AD37FJTCdb/ukxG6+4AcIb4aIX7NrDNY7ETqg4yetmoSzQOoqOa1fQIjvYgLw==
+X-Received: by 2002:a17:906:1daa:b0:aa5:1661:1949 with SMTP id a640c23a62f3a-aa5f7f2413dmr188219066b.40.1733228030629;
+        Tue, 03 Dec 2024 04:13:50 -0800 (PST)
+Received: from puffmais.c.googlers.com (64.227.90.34.bc.googleusercontent.com. [34.90.227.64])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa5996c245bsm607603766b.8.2024.12.03.04.13.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Dec 2024 04:13:50 -0800 (PST)
+From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Subject: [PATCH v2 0/8] USB31DRD phy updates for Google Tensor gs101
+ (orientation & DWC3 rpm)
+Date: Tue, 03 Dec 2024 12:13:48 +0000
+Message-Id: <20241203-gs101-phy-lanes-orientation-phy-v2-0-40dcf1b7670d@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="35h4iyqfzzpzpkno"
-Content-Disposition: inline
-In-Reply-To: <20241203-const_dfc_done-v2-0-7436a98c497f@quicinc.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAPz1TmcC/42NQQqDMBBFryKz7pTMIFq76j2Ki2hGHZBEEpGKe
+ PemnqDL9+H9d0CSqJLgWRwQZdOkwWfgWwH9ZP0oqC4zsOGSiGscExnCZdpxtl4Shqz71a7Zu1Z
+ uHJu+co/SMeSXJcqgn6vwbjNPmtYQ9yu40W/9/3sjNEhdPfTCZVOZ7jWrtzHcQxyhPc/zC6gJ1
+ QTPAAAA
+To: Vinod Koul <vkoul@kernel.org>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Marek Szyprowski <m.szyprowski@samsung.com>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Peter Griffin <peter.griffin@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Sam Protsenko <semen.protsenko@linaro.org>, 
+ Will McVicker <willmcvicker@google.com>, Roy Luo <royluo@google.com>, 
+ kernel-team@android.com, linux-phy@lists.infradead.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ stable@vger.kernel.org
+X-Mailer: b4 0.13.0
 
+Hi,
 
---35h4iyqfzzpzpkno
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 00/32] driver core: Constify API device_find_child()
- and adapt for various existing usages
-MIME-Version: 1.0
+This series enables USB3 Type-C lane orientation detection and
+configuration on platforms that support this (Google gs101), and it
+also allows the DWC3 core to enter runtime suspend even when UDC is
+active.
 
-Hello,
+For lane orientation, this driver now optionally (based on DT)
+subscribes to the TCPC's lane orientation notifier and remembers the
+orientation to later be used during phy_init().
 
-On Tue, Dec 03, 2024 at 08:33:22AM +0800, Zijun Hu wrote:
-> This patch series is to constify the following API:
-> struct device *device_find_child(struct device *dev, void *data,
-> 		int (*match)(struct device *dev, void *data));
-> To :
-> struct device *device_find_child(struct device *dev, const void *data,
-> 				 device_match_t match);
-> typedef int (*device_match_t)(struct device *dev, const void *data);
+To enable DWC3 runtime suspend, the gadget needs to inform the core via
+dwc3_gadget_interrupt() with event type == DWC3_DEVICE_EVENT_DISCONNECT
+of a cable disconnect. For that to allow to happen, this driver
+therefore needs to stop forcing the Vbus and bvalid signals to active
+and instead change their state based on actual conditions. The same
+TCPC notifier is used to detect this, and program the hardware
+accordingly.
 
-This series isn't bisectible. With only the first two patches applied I
-hit:
+That signal state is based on advice given by Thinh in
+https://lore.kernel.org/all/20240813230625.jgkatqstyhcmpezv@synopsys.com/
 
-  CC      drivers/pwm/core.o
-drivers/pwm/core.c: In function =E2=80=98pwm_unexport_child=E2=80=99:
-drivers/pwm/core.c:1292:55: error: passing argument 3 of =E2=80=98device_fi=
-nd_child=E2=80=99 from incompatible pointer type [-Wincompatible-pointer-ty=
-pes]
- 1292 |         pwm_dev =3D device_find_child(pwmchip_dev, pwm, pwm_unexpor=
-t_match);
-      |                                                       ^~~~~~~~~~~~~=
-~~~~~
-      |                                                       |
-      |                                                       int (*)(struc=
-t device *, void *)
-In file included from include/linux/acpi.h:14,
-                 from drivers/pwm/core.c:11:
-include/linux/device.h:1085:49: note: expected =E2=80=98device_match_t=E2=
-=80=99 {aka =E2=80=98int (*)(struct device *, const void *)=E2=80=99} but a=
-rgument is of type =E2=80=98int (*)(struct device *, void *)=E2=80=99
- 1085 |                                  device_match_t match);
-      |                                  ~~~~~~~~~~~~~~~^~~~~
-drivers/pwm/core.c: In function =E2=80=98pwm_class_get_state=E2=80=99:
-drivers/pwm/core.c:1386:55: error: passing argument 3 of =E2=80=98device_fi=
-nd_child=E2=80=99 from incompatible pointer type [-Wincompatible-pointer-ty=
-pes]
- 1386 |         pwm_dev =3D device_find_child(pwmchip_dev, pwm, pwm_unexpor=
-t_match);
-      |                                                       ^~~~~~~~~~~~~=
-~~~~~
-      |                                                       |
-      |                                                       int (*)(struc=
-t device *, void *)
-include/linux/device.h:1085:49: note: expected =E2=80=98device_match_t=E2=
-=80=99 {aka =E2=80=98int (*)(struct device *, const void *)=E2=80=99} but a=
-rgument is of type =E2=80=98int (*)(struct device *, void *)=E2=80=99
- 1085 |                                  device_match_t match);
-      |                                  ~~~~~~~~~~~~~~~^~~~~
-make[5]: *** [scripts/Makefile.build:194: drivers/pwm/core.o] Error 1
-make[4]: *** [scripts/Makefile.build:440: drivers/pwm] Error 2
-make[3]: *** [scripts/Makefile.build:440: drivers] Error 2
-make[2]: *** [Makefile:1989: .] Error 2
-make[1]: *** [Makefile:372: __build_one_by_one] Error 2
-make: *** [Makefile:251: __sub-make] Error 2
+Both changes together now allow cable orientation detection to work, as
+the DWC3 will now call phy_exit() on cable disconnect, and we can
+reprogram the lane mux in phy_init().
 
-Best regards
-Uwe
+On top of that, there are some small related cleanup patches.
 
---35h4iyqfzzpzpkno
-Content-Type: application/pgp-signature; name="signature.asc"
+Signed-off-by: André Draszik <andre.draszik@linaro.org>
+---
+Changes in v2:
+- squash patches #2 and #3 from v1 to actually disallow
+  orientation-switch on !gs101 (not just optional) (Conor)
+- update bindings commit message to clarify that the intention for the
+  driver is to work with old and new DTS (Conor)
+- add cc-stable and fixes tags to power gating patch (Krzysztof)
+- fix an #include and typo (Peter)
+- Link to v1: https://lore.kernel.org/r/20241127-gs101-phy-lanes-orientation-phy-v1-0-1b7fce24960b@linaro.org
 
------BEGIN PGP SIGNATURE-----
+---
+André Draszik (8):
+      dt-bindings: phy: samsung,usb3-drd-phy: align to universal style
+      dt-bindings: phy: samsung,usb3-drd-phy: gs101: require Type-C properties
+      phy: exynos5-usbdrd: convert to dev_err_probe
+      phy: exynos5-usbdrd: fix EDS distribution tuning (gs101)
+      phy: exynos5-usbdrd: gs101: ensure power is gated to SS phy in phy_exit()
+      phy: exynos5-usbdrd: gs101: configure SS lanes based on orientation
+      phy: exynos5-usbdrd: subscribe to orientation notifier if required
+      phy: exynos5-usbdrd: allow DWC3 runtime suspend with UDC bound (E850+)
 
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmdO8vgACgkQj4D7WH0S
-/k5hrwgAmMfv4tgQM/zHhRunXZer+6rbqIrp5LbiXSYngMgHSWkkF/Aqcp/Uejmb
-FQwdlGB47gyVlHT5SP4HCDeST+PhX0lg3vHxP2lg0HaHp7/vgJRZAI65iOfy7DY7
-xqXQ+U2+YvtY+lwSneGFeXo9VZZtuu/YfpP8Qg6jH8dGaIojaU57rB+uJCpdvZmt
-VJhc51IAA6eHPcPMGf5mvS8/A7M8uPDwyEgWBDP/MRE0z6oKEjVLPWYFzXjUaVnZ
-MMOmGyzIfvhHTMxlkisgCC+PwmjrO2lZFsM1jD6SVNzMp6XeT2jiGa7lbfXaK9Rk
-7TvM1d7dwtqa42JTuIjTWWBR7AfmBA==
-=Sef0
------END PGP SIGNATURE-----
+ .../bindings/phy/samsung,usb3-drd-phy.yaml         |  24 +++
+ drivers/phy/samsung/Kconfig                        |   1 +
+ drivers/phy/samsung/phy-exynos5-usbdrd.c           | 223 ++++++++++++++++-----
+ 3 files changed, 202 insertions(+), 46 deletions(-)
+---
+base-commit: ed9a4ad6e5bd3a443e81446476718abebee47e82
+change-id: 20241127-gs101-phy-lanes-orientation-phy-29d20c6d84d2
 
---35h4iyqfzzpzpkno--
+Best regards,
+-- 
+André Draszik <andre.draszik@linaro.org>
+
 
