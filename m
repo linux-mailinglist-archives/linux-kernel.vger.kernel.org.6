@@ -1,119 +1,155 @@
-Return-Path: <linux-kernel+bounces-429014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AD519E164B
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:52:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D93FB9E164E
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:52:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6449281E56
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 08:52:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0107281F7A
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 08:52:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00DFB1DE2AE;
-	Tue,  3 Dec 2024 08:52:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C58AC1DE2AE;
+	Tue,  3 Dec 2024 08:52:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="gXvliHOy"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kBHLegiJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD0841DC734;
-	Tue,  3 Dec 2024 08:52:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 220F91DB527;
+	Tue,  3 Dec 2024 08:52:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733215928; cv=none; b=IO6SQbRH7lzmc5q9oMGTo0Y22pt4Qzl4+sjV+WU3QUVrXIZ3yVjlDsh/LVp/G5F/meiUfEuG1DSAUzzJXKhxUh9txSg3o9j5jXuaKmyH8mgkN+m9Bn5qL7BNPdghWT8H+PQnbNkmSYbjD7A6NToFwQQ6s/+f4JOMFuoG06IDNFE=
+	t=1733215953; cv=none; b=iva4yhzsboaywfkALCBOJ9FOZf1W//GVeSUK1ELNcU/NxxezBvNoyvY1zilRbuK/Ke/Gqq2CxYERcdAEXU3zIEkGg/P53S5giL+8O9mo2AB/QFbhEv1HyUiV3BoQtQEF8LinwRzXQbcOwsI0a2ppKznVeoLiW5+20P1HA710sBE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733215928; c=relaxed/simple;
-	bh=k/CPAkTCH4GNXfNu6lVPOl9bbkd52/w6hAyXN88j4w4=;
+	s=arc-20240116; t=1733215953; c=relaxed/simple;
+	bh=X1Xzk01NBeV8Yhr3oboL9gGlhpV3s6C8B5gNfJERTZ4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lW3AnHdcyAUfPHDoRpUHogU9VBr6uMmymifX18E6vplS4coDJyjZvKPnBYg397Z78ThntGKGum4v+FL3s7V52050AXMkN95yiMiVVWCPo37kUhPJzapy4QdpJ9h407pJeJyYNWNsS+y1AAFucxxwwe7Imj/3yChVyEUmWzHN/A8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=gXvliHOy; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id CC0CA8DB;
-	Tue,  3 Dec 2024 09:51:37 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1733215898;
-	bh=k/CPAkTCH4GNXfNu6lVPOl9bbkd52/w6hAyXN88j4w4=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=pCFlH8FoRNjMTriTEFu+hFTIeMLn7z3NAG3Ut/1g8xavWmTDzhWch8iHPCcrzlxEXhgXzA0tpb39pf0Qm8RxwRYtGsV9knUQAzHh6ENMHwEh8GjXy5SPmS6HLXiRYES91twavR/MIRfnIzFP60CSLfNh/E+tMUxosX6EJczStoQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kBHLegiJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA283C4CECF;
+	Tue,  3 Dec 2024 08:52:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733215952;
+	bh=X1Xzk01NBeV8Yhr3oboL9gGlhpV3s6C8B5gNfJERTZ4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gXvliHOyMmVoBYe8JEjRWOz/dNjDe1fuhFjNNgdumVKIs8l7gpkffffKNm1VK6Vh1
-	 VarE4e6BB8k0y4cqcxkmLDCWlEAUSlU0XbJDjSeY/nmuLJQKQSD1oaHqtQ73ZbE+kM
-	 JqzIq+MAYOs80ijIBBtJxWNlEYywnjI0x6hfn+4Q=
-Date: Tue, 3 Dec 2024 10:51:53 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>, Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
+	b=kBHLegiJMLqkmlNu8eveIFvVxI7+hlxsCCM9flPKv5lXT407b2+7+4b6l2C+MoL+y
+	 /zlovuHOITV6E3nGSye5k3h5sQcXvWlqda5sQE84F7DMnux83hplmP7prNK6Lee5mZ
+	 K+Gx+/P0xhMxNS0CdB45MO0qHIt52E2RF6P+cvalXDK2R4P3TQzHb5mVKWNJy08rV/
+	 BKy1sOsmAe857cCMsH9rsLWQzOoX91XuwB8Rj5GCs2gUInrdv8mNrGtSIILya4XDWw
+	 4cJ+8gfjalBAcr7G/0kJZTbT+Ihke97Q0bfSHxC6YDNXjLiuDd+HzjUl5+mpgVghFK
+	 LKO79+W5gYOag==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1tIOdw-000000000Cf-2JRx;
+	Tue, 03 Dec 2024 09:52:28 +0100
+Date: Tue, 3 Dec 2024 09:52:28 +0100
+From: Johan Hovold <johan@kernel.org>
+To: maud_spierings@hotmail.com
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
 	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, LUU HOAI <hoai.luu.ub@renesas.com>,
-	Jagan Teki <jagan@amarulasolutions.com>,
-	Sam Ravnborg <sam@ravnborg.org>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
 	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-Subject: Re: [PATCH 5/9] drm/rcar-du: dsi: Add r8a779h0 support
-Message-ID: <20241203085153.GI10736@pendragon.ideasonboard.com>
-References: <20241203-rcar-gh-dsi-v1-0-738ae1a95d2a@ideasonboard.com>
- <20241203-rcar-gh-dsi-v1-5-738ae1a95d2a@ideasonboard.com>
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Stephan Gerhold <stephan.gerhold@linaro.org>
+Subject: Re: [PATCH v5 3/3] arm64: dts: qcom: x1e80100-vivobook-s15: Add
+ bluetooth
+Message-ID: <Z07GzL3suEjGlnwF@hovoldconsulting.com>
+References: <20241202-asus_qcom_display-v5-0-e0d3752ff71f@hotmail.com>
+ <20241202-asus_qcom_display-v5-3-e0d3752ff71f@hotmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241203-rcar-gh-dsi-v1-5-738ae1a95d2a@ideasonboard.com>
+In-Reply-To: <20241202-asus_qcom_display-v5-3-e0d3752ff71f@hotmail.com>
 
-Hi Tomi,
-
-Thank you for the patch.
-
-On Tue, Dec 03, 2024 at 10:01:39AM +0200, Tomi Valkeinen wrote:
-> From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+On Mon, Dec 02, 2024 at 07:18:13PM +0100, Maud Spierings via B4 Relay wrote:
+> From: Maud Spierings <maud_spierings@hotmail.com>
 > 
-> Add support for DSI on r8a779h0. As it is identical to DSI on r8a779g0,
-> all we need is to handle the compatible string.
-> 
-> Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+> Add bluetooth for the asus vivobook s15
+> Describe wlan configuration
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+I assume you copied most of these (effectively boilerplate) definitions
+from somewhere so perhaps you can mention that here (e.g. if it was
+copied from Stephan's patches [1]).
 
+> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> Signed-off-by: Maud Spierings <maud_spierings@hotmail.com>
 > ---
->  drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c | 2 ++
->  1 file changed, 2 insertions(+)
+>  .../boot/dts/qcom/x1e80100-asus-vivobook-s15.dts   | 163 +++++++++++++++++++++
+>  1 file changed, 163 insertions(+)
 > 
-> diff --git a/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c b/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c
-> index 92f4261305bd..36e902601f84 100644
-> --- a/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c
-> +++ b/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c
-> @@ -1081,6 +1081,8 @@ static const struct rcar_mipi_dsi_device_info v4h_data = {
->  static const struct of_device_id rcar_mipi_dsi_of_table[] = {
->  	{ .compatible = "renesas,r8a779a0-dsi-csi2-tx", .data = &v3u_data },
->  	{ .compatible = "renesas,r8a779g0-dsi-csi2-tx", .data = &v4h_data },
-> +	/* DSI in r8a779h0 is identical to r8a779g0 */
-> +	{ .compatible = "renesas,r8a779h0-dsi-csi2-tx", .data = &v4h_data },
->  	{ }
->  };
+> diff --git a/arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dts b/arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dts
+> index 7269f8e7709988657b363004875163a69142f16c..0774bd65ae8cddab81b98e27a116fd5adbe1363c 100644
+> --- a/arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dts
+> +++ b/arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dts
+> @@ -18,6 +18,11 @@ / {
+>  	compatible = "asus,vivobook-s15", "qcom,x1e80100";
+>  	chassis-type = "laptop";
 >  
+> +	aliases {
+> +		serial0 = &uart21;
 
--- 
-Regards,
+No need to add an alias for the console port which is likely not
+accessible on this device (without some tinkering).
 
-Laurent Pinchart
+> +		serial1 = &uart14;
+> +	};
+> +
+>  	gpio-keys {
+>  		compatible = "gpio-keys";
+>  		pinctrl-0 = <&hall_int_n_default>;
+
+> +	wcn_bt_en: bt-en-state {
+
+Looks like you want a "wcn-" prefix on the node name here too.
+
+> +		pins = "gpio116";
+> +		function = "gpio";
+> +		drive-strength = <16>;
+
+Is this the drive-strength the firmware uses? The default 2 should be
+enough, but you can leave it as-is if it matches the fw settings if you
+prefer.
+
+> +		output-low;
+
+I don't think you should be setting the pin state already in the pin
+configuration as this should be left up to the driver to control.
+
+> +		bias-pull-down;
+
+A pull-down should not be needed for this output either.
+
+> +	};
+> +
+> +	wcn_sw_en: wcn-sw-en-state {
+> +		pins = "gpio214";
+> +		function = "gpio";
+> +		drive-strength = <16>;
+> +		bias-disable;
+> +	};
+> +
+> +	wcn_wlan_en: wlan-en-state {
+> +		pins = "gpio117";
+> +		function = "gpio";
+> +		drive-strength = <16>;
+> +		bias-disable;
+> +	};
+
+Same question about the drive strength applies to these two.
+
+> +};
+
+Johan
+
+
+[1] https://lore.kernel.org/all/20241007-x1e80100-pwrseq-qcp-v1-0-f7166510ab17@linaro.org/
 
