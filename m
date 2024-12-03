@@ -1,113 +1,108 @@
-Return-Path: <linux-kernel+bounces-430297-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CDAE9E2EE5
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 23:15:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B9D99E2EEA
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 23:16:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42CCA282BE7
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 22:15:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3D7F281AAF
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 22:16:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D06420A5EA;
-	Tue,  3 Dec 2024 22:15:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17D6B207A2E;
+	Tue,  3 Dec 2024 22:16:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RYKCDBYC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HEHcituU"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63FEE1F4287;
-	Tue,  3 Dec 2024 22:15:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F2411DDA3D;
+	Tue,  3 Dec 2024 22:16:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733264138; cv=none; b=j+XkxsbiJ5JvOOKr9qKFOANbD8R+RCYmfcjf7zmQRaHS1EFISA69/6Rd0WhmJA+FPKjnZgwKSDzFdOXXVEJIBYFgr1vGvy6Hct7m4V+Yeaqho4lZ4Y4t0789Tre3t/Y7j+mMyOAUu/S0dhSGft1e2mlYMWCGvPAyV/Tzfs9Cg4w=
+	t=1733264209; cv=none; b=fi1NywLqs9sM7DpYCoWkru7tklcYxuXdV9FgHCnr9XMWXNfT0SbfTARsjfRk5OegQE3EEm6nBHk5zN41YdOd+DD51Lt5gTLTLR9vmuRY6WzXpZRFbdOpDi+pkvsspMiCCAahdBDpiEQCnGypZNMw43KtozSsJLR4H+rReKk4cMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733264138; c=relaxed/simple;
-	bh=3sE36V4ydBt6WuhQB9Ej91v9qPw6dVRTOHmvA05Ud0M=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=YJzarllZzio7d956LNo9QZyhcOrAE815PGiD39CpjrkTI9d6tn+pcmsmssvEN3IlKSuje942kjMT4JPAdgJEjUwIsPd4E3TO9RXlriL5/PqtbFuZVEglQMAQPB3n9jL08iDGu1vtEQvFdaMn1Z8GTp0F9TTiYquz78ka34mGrzQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RYKCDBYC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B672C4CEDC;
-	Tue,  3 Dec 2024 22:15:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733264137;
-	bh=3sE36V4ydBt6WuhQB9Ej91v9qPw6dVRTOHmvA05Ud0M=;
-	h=Date:From:To:Cc:Subject:From;
-	b=RYKCDBYCVYE3/0GOI9S2zNtqR/NxXf5R5RkLZXnnGILXMjKSxDUnUwpzMN1aCcTat
-	 XyF+3EJK05tP02uILWMYoa4h+A8NufuA/y6sqM39+QOVIo316B/M1SHaJxPH3TkFe0
-	 ixixKMhogw7EHu7fYijl2iOnI+Ff+ivFpasPm3DMa22bN6YOd++2tG2Kszkk/BOcu/
-	 MyLkwGEEnCVRBieR/109BFLtvA4U18JWPb/JUFcZVsavYVLVIpHgN+zJvEIHO7dR5j
-	 lJFZ8MIDylGb+FqqU8C5hO/rXbuksySWHcgdrmI5W70b7XF92AcwXegRI4dzDMjVX6
-	 N9BbDJhNAar7Q==
-Date: Tue, 3 Dec 2024 22:15:33 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Wim Van Sebroeck <wim@iguana.be>
-Cc: Guenter Roeck <linux@roeck-us.net>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
-	Wim Van Sebroeck <wim@linux-watchdog.org>
-Subject: linux-next: manual merge of the watchdog tree with the origin tree
-Message-ID: <Z0-DBdonevU5_cRK@sirena.org.uk>
+	s=arc-20240116; t=1733264209; c=relaxed/simple;
+	bh=XBdFAs2cPxI0M40uwpUcyfZkFGO2YXBhz/J87Pe2kwo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EglS9uamj90jvCut75yqF1vLqbE2Hka8q2AIUDsl4no5x9ufxlcTPT8ZsGNGf1BdNIGYxEdVllYdXJjV01yMdbBBthI1Ti8uYdRXhF4M1Y6Nj7UlYBY3FEnvLl5kmS0sLYWaYIUCeaUOsoarUQ1cIt6sIFSPDL/JpVowlE9Fsls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HEHcituU; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-215bebfba73so12967475ad.1;
+        Tue, 03 Dec 2024 14:16:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733264207; x=1733869007; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=haiTXTrqAzXvaUPvAaWiZpIXLnFLLaTifEtYnRB0sCA=;
+        b=HEHcituU04e4MysJwddc1UzOoJtwxf3xOTbcHN1CWQMkCW5NJpJOMQxloNEcG3B9Ds
+         h3azCKJXo/6hbWWtNRJ0Z6ln6aiC+paVcm4LqOl1C9raVD4Q51/0GDebtOeIOuNJtLEo
+         0v+W89t+Vb8pvfDMnzbTt7iVd8TOyaFNteo8LshiKip85SWtLHqmGcVLGswEVsMApmxw
+         2kJhiNdTqQp0PASCx7XHCR0REfdNxg/gnFB6HPrWwJ5jO3iEYigfDjRTYnU6fJXwM8XO
+         dT10hEdfU7G1Xc1TydzBCSZWQ1AbUkn79X6f6fMhMb2jcd8IH0Oi+rBIrF2LL5GOgMB4
+         /2TA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733264207; x=1733869007;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=haiTXTrqAzXvaUPvAaWiZpIXLnFLLaTifEtYnRB0sCA=;
+        b=bh8d1k9+MujAzzhQbYyhV21nCbrunrd3ywJHn9TaZ3xalucwi0s/L0WdGRwEqNMvyM
+         8hdu8rD10WEybRE48y+4DoCH4/2fWg9hVUG5bizZSFWuK7ubezYT42tsEVCu/2geD3cG
+         wZSiLUGfffh+BERHdrRKnulqxAEVP7r3N8XM5sqpQa55oudQE+5n3TTIwwzh7xq5xHjy
+         m7pEMTAVie3qqtbVFRt9NLpKCFCfYVMKTdr9gm7T9aABmE/T9Lxuao2wu2zS2IH3qgPz
+         dNva2riyQe8v/KHV5ZpF7SW2yYV5HOsjGI3gl/EcMs6D9Tbx35sE4xbZVme3qFlsCNzq
+         Xfkg==
+X-Forwarded-Encrypted: i=1; AJvYcCWXPtG6FPtDOtajwxuj7CohGCaYXQfSsk9QGvSX4kHJEJDUnoNtpUh5dufAgUIZVEChO+djOYBXsWtx9cI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLmxHWKyXVdEhUqK0AE1wDs2zY26A8JYZ1Oq7EvXJnzoI4cepm
+	3SMZPALMA9LL0/3/ZLAhMecqt03iVVPJ34o+Ae2pgl6JdhLOSZt+JLPOZY42
+X-Gm-Gg: ASbGncvOu7cQx0X5+Y32WKb26I9lPPNO6AFKAnvuhs7FV0KetUgP2WQawvL4er3tiKN
+	m6U/Qa0SSfXzWoUEJzkCBJK7KavFHvIP5ept/0rCx+knJbISQ2cJA37nOUYosLWbAk33U2kU89D
+	nfl1FReTcF2GDJmerVefa1SPy/8JbLLyEa3jBX0zfET9awRT/TBi5DgiJW4cOdacrCrji/jb+B+
+	/lJ9O8C0Ebcn1u5BsVowyowMA==
+X-Google-Smtp-Source: AGHT+IEmvnMN5zq41czJHWt8tfKHMOEoDQ63A4/d8pYoRt8VJqv5NsgIbsvEgSAuj86bIrvt97ufpw==
+X-Received: by 2002:a17:902:d489:b0:215:401b:9535 with SMTP id d9443c01a7336-215bd13edf3mr56138685ad.47.1733264207189;
+        Tue, 03 Dec 2024 14:16:47 -0800 (PST)
+Received: from ryzen.lan ([2601:644:8200:dab8::a86])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21521904caasm99779045ad.60.2024.12.03.14.16.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Dec 2024 14:16:46 -0800 (PST)
+From: Rosen Penev <rosenp@gmail.com>
+To: netdev@vger.kernel.org
+Cc: Andrew Lunn <andrew@lunn.ch>,
+	ansuelsmth@gmail.com,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCHv2 net-next 0/2] simplify with devm
+Date: Tue,  3 Dec 2024 14:16:42 -0800
+Message-ID: <20241203221644.136104-1-rosenp@gmail.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="/fruUK97YepmfZCC"
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
+Makes probe simpler and easier to reason about.
 
---/fruUK97YepmfZCC
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+v2: Just resent.
 
-Hi all,
+Rosen Penev (2):
+  net: mdio-ipq8064: use platform_get_resource
+  net: mdio-ipq8064: remove _remove function
 
-Today's linux-next merge of the watchdog tree got a conflict in:
+ drivers/net/mdio/mdio-ipq8064.c | 24 +++++-------------------
+ 1 file changed, 5 insertions(+), 19 deletions(-)
 
-  drivers/watchdog/sa1100_wdt.c
+-- 
+2.47.0
 
-between commit:
-
-  e70140ba0d2b1 ("Get rid of 'remove_new' relic from platform driver struct=
-")
-
-=66rom the origin tree and commit:
-
-  562b0b03193b5 ("watchdog: Switch back to struct platform_driver::remove()=
-")
-
-=66rom the watchdog tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-(no diff, used Linus' version)
-
---/fruUK97YepmfZCC
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmdPgwQACgkQJNaLcl1U
-h9Chdwf/UfhkhK+SFDOKq/fYwjyo6EqceY1zIRRYWbXs7YZUjJQfwuTeZ65CuqBu
-r4Jkqm6k4eUiTBNiVnX9VOUROeSv49LBuBqGTmp6gaWQXOAuZqJp185BCu9jYmyS
-NdP2I9a2mcJWMz6uJMgnOFwlXySo3h4gmxLt7WF17P8taT2G/UAN59tLp65bkN7h
-/8Jm1wtxT61l/BVWVxco5NH0ypFT8wU27jz75tofLqNKMcCBiddtrM3c8mAgKirD
-C5+90Smnk6RqiChbJtGDE8gnrSfhjdt7jePZHyEDUP128CCS9eCOTJachWfhVKsO
-SCNZnIVhOXJ7gzztwnRG3IilCJikZA==
-=uBC7
------END PGP SIGNATURE-----
-
---/fruUK97YepmfZCC--
 
