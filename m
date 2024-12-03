@@ -1,120 +1,100 @@
-Return-Path: <linux-kernel+bounces-428607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C00BB9E1152
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 03:31:54 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99B839E1153
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 03:32:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E54128061E
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 02:31:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 08A3EB23E2E
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 02:32:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6F24762EB;
-	Tue,  3 Dec 2024 02:31:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="kXKTI3IB"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E092738DDB;
-	Tue,  3 Dec 2024 02:31:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 860E452F9E;
+	Tue,  3 Dec 2024 02:32:23 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B3A538DDB
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 02:32:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733193107; cv=none; b=FtSQ6vovNWdNGWNifHbYdHlexMDqJcoW3m+3K3rQdIVniq3Svm2z+bguaCpUXTweLwbQfaMNqiEsiu9+6WEgDmqH9P9KYIBuVHHAX/IoQFbCDqlJpSztjWdd53faFh05As36J3IK93YBUGg+tmZxBMGOfJREloDKc/2o37wqnno=
+	t=1733193143; cv=none; b=nTMVwxiCdP/aqzK794WVz3fD/MBt9gGaDEq9UlVcU/QC0LLh2DgkfTHXoBH0qPfynjS9BYtRwwK5e1OE8D3vaK6nmlX+iIL65dVpPgtiW4LUmEHUk97JmIAtYI4zS2PlX75wAObsZtaeGh+b4a4e+v23/SbaKFrnwl3LWXlraDY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733193107; c=relaxed/simple;
-	bh=l6EgaKsPaDToCcfWrVsfbJtmRikVaQ334izmq6vvcns=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=JpJTjInPnhEmPBysaitD9BpeWL68dWIzKf5LPm3oRT3cNpC71dss8HHvRBOjQVXZcWlldA8SKKqWcX8z2cHo+xdDAicaCZlYVs0dYMjjdjUfWNT9gYJSx28nAhKIHFgeEIw4yf0Dd+2KZodlUJ/04XAImiD/Mmh1HpaHxdH46nI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=kXKTI3IB; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B2IqWun032595;
-	Tue, 3 Dec 2024 02:31:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	cKfFTBye+b5/2bGwd2c4xoVvT+UBpVfZ9oklao5OV0U=; b=kXKTI3IBk9BZq6YO
-	JEK8v6hxeEApqSmmff+fWkBRidw5rlETKhIsejz7Rot8ARye3Bkmk+Z+Ipk36wXa
-	8dqlRiWhetITzyVr2iJiLSql1RJVBUjbBJihgeRgB8n60KcTO0Qg5AyRiAqpiod9
-	0Wqo3NSHdMjsWLPELw0ifOuPv/sWE0WDFiQfQMcoXuZRgmR2IR7rMf+3U2rKfI3q
-	+nMiVJPDppSe8qOtwD+ugKiaPimvdbjHASVbIUZ3oFitnKBtoXaHWgGrzsM7WcVb
-	DTF6YlZsqucIeVW9J4Odc1bO4IsJR4O24+MavsYmfFkKtUDvB+uQOH6TPLj25M7q
-	TR9hcA==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 437sq66jyc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 03 Dec 2024 02:31:35 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B32VYvt018685
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 3 Dec 2024 02:31:34 GMT
-Received: from [10.134.71.247] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 2 Dec 2024
- 18:31:33 -0800
-Message-ID: <d65a9bd8-13a7-447c-bb9b-bcff732e08ee@quicinc.com>
-Date: Mon, 2 Dec 2024 18:31:26 -0800
+	s=arc-20240116; t=1733193143; c=relaxed/simple;
+	bh=eir4lIbfKpbWRO9ZHD+STWyrYC0r1WzM1Sjaj8Mrx6U=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=W5w2g6oarL1pKXcPdAtH1skBPfh/l3hdhbwqvd0j/ADqfk1SqZidonxdTNbmHGGyJY5lfM4QK2YEecMzIIzP0s4H7Mt8eI6b3OkwRHDK4PiHlXrWai1tuMdYtc/9ayTZi+ifdjNlT8vbKOIc7Zk0o6IQW/wzX7qm9omX2eYmq+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 63C1FFEC;
+	Mon,  2 Dec 2024 18:32:46 -0800 (PST)
+Received: from a077893.arm.com (unknown [10.163.48.101])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 4C1B13F71E;
+	Mon,  2 Dec 2024 18:32:15 -0800 (PST)
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+To: linux-mm@kvack.org
+Cc: Anshuman Khandual <anshuman.khandual@arm.com>,
+	Muchun Song <muchun.song@linux.dev>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Oscar Salvador <osalvador@suse.de>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH V2] mm/hugetlb: Make __NR_USED_SUBPAGE check conditional
+Date: Tue,  3 Dec 2024 08:02:07 +0530
+Message-Id: <20241203023207.123416-1-anshuman.khandual@arm.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 01/14] drm/msm/dp: set safe_to_exit_level before
- printing it
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Rob Clark
-	<robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        Marijn Suijten
-	<marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, "Simona
- Vetter" <simona@ffwll.ch>,
-        Paloma Arellano <quic_parellan@quicinc.com>
-CC: Douglas Anderson <dianders@chromium.org>,
-        Stephen Boyd
-	<swboyd@chromium.org>, <linux-arm-msm@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <freedreno@lists.freedesktop.org>,
-        <linux-kernel@vger.kernel.org>, kernel test robot <lkp@intel.com>
-References: <20241202-fd-dp-audio-fixup-v2-0-d9187ea96dad@linaro.org>
- <20241202-fd-dp-audio-fixup-v2-1-d9187ea96dad@linaro.org>
-Content-Language: en-US
-From: Abhinav Kumar <quic_abhinavk@quicinc.com>
-In-Reply-To: <20241202-fd-dp-audio-fixup-v2-1-d9187ea96dad@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 6Bse4H9EcygaWlkUl8OvQJ6HvbZLQ6E7
-X-Proofpoint-ORIG-GUID: 6Bse4H9EcygaWlkUl8OvQJ6HvbZLQ6E7
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
- priorityscore=1501 mlxscore=0 clxscore=1015 lowpriorityscore=0
- suspectscore=0 adultscore=0 spamscore=0 impostorscore=0 mlxlogscore=862
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412030020
+Content-Transfer-Encoding: 8bit
 
+The HugeTLB order check against __NR_USED_SUBPAGE is required only when
+HUGETLB_PAGE_OPTIMIZE_VMEMMAP is enabled. Hence BUG_ON() trigger should
+happen only when applicable.
 
+Cc: Muchun Song <muchun.song@linux.dev>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Oscar Salvador <osalvador@suse.de>
+Cc: linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+---
+This patch applies on v6.13-rc1
 
-On 12/2/2024 2:06 AM, Dmitry Baryshkov wrote:
-> Rather than printing random garbage from stack and pretending that it is
-> the default safe_to_exit_level, set the variable beforehand.
-> 
-> Fixes: d13e36d7d222 ("drm/msm/dp: add audio support for Display Port on MSM")
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202411081748.0PPL9MIj-lkp@intel.com/
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
->   drivers/gpu/drm/msm/dp/dp_audio.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
+Changes in V2:
 
-Reviewed-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+- Fixed #ifdef with CONFIG_HUGETLB_PAGE_OPTIMIZE_VMEMMAP per Oscar
+
+Changes in V1:
+
+https://lore.kernel.org/all/20241202090728.78935-1-anshuman.khandual@arm.com/
+
+ mm/hugetlb.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+index ea2ed8e301ef..e6a5b21e3578 100644
+--- a/mm/hugetlb.c
++++ b/mm/hugetlb.c
+@@ -4513,11 +4513,13 @@ void __init hugetlb_add_hstate(unsigned int order)
+ 	struct hstate *h;
+ 	unsigned long i;
+ 
+-	if (size_to_hstate(PAGE_SIZE << order)) {
++	if (size_to_hstate(PAGE_SIZE << order))
+ 		return;
+-	}
++
+ 	BUG_ON(hugetlb_max_hstate >= HUGE_MAX_HSTATE);
++#ifdef CONFIG_HUGETLB_PAGE_OPTIMIZE_VMEMMAP
+ 	BUG_ON(order < order_base_2(__NR_USED_SUBPAGE));
++#endif
+ 	h = &hstates[hugetlb_max_hstate++];
+ 	__mutex_init(&h->resize_lock, "resize mutex", &h->resize_key);
+ 	h->order = order;
+-- 
+2.30.2
+
 
