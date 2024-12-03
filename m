@@ -1,73 +1,152 @@
-Return-Path: <linux-kernel+bounces-429052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED44C9E16BF
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:09:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB5A09E16C0
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:09:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B157C28912A
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:08:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48BE2289147
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:09:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10DD91DE8A3;
-	Tue,  3 Dec 2024 09:08:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AA3C1DE3A7;
+	Tue,  3 Dec 2024 09:08:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IONi9feh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pk9gdjSI"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 652CE1CD204;
-	Tue,  3 Dec 2024 09:08:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D6111DD0F9;
+	Tue,  3 Dec 2024 09:08:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733216925; cv=none; b=MJNQsZ3TuNHk5KRqU6s7FHclo68DD9RilkzTZ5kcn8QoaLkgXqWycGRzPlsGEEdGnHWs5u0fNKu/gJfJDjLUwwfCxa3smD2+/nVLehm7OXfprJW8rOuB9rYI1o3SM6KCDti23G/l06lxwAxvQ1j7FmEr9VfjMUQBApybt++cGOw=
+	t=1733216938; cv=none; b=OxRFP/jzq41S+CVHuXs8CAAF2lh/wHM2yyUuQKdcXa2tgoxJWgQpZWqUb7mkHQtxGIUyJxpH5kvH/qWbbaAYn25+oW8XNZLASbWSJitwNQzSfFQ9r5Gw9oUAvxLgtLm7Tw/5P4vz7g1ep+c3eybUUqRfx6o9AJeMbtgI8LB/wWY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733216925; c=relaxed/simple;
-	bh=d8kzUdU9z1KNgveBv3S4BD15LSA6cdX2777PaG6/rDA=;
+	s=arc-20240116; t=1733216938; c=relaxed/simple;
+	bh=MhgX52Eeuu6R9TGkJAO3G2bq54KKg9pdjOsDcDxCj5Q=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X2i7FXUwWCRejGS/pDoy+J3BOhhz56AMv1q3P+j++A1EC2OVEohLU4f3HZp0qx++LaPoZ5R/0w6vkaueF1mxbefd75cQo0Cx2559RNM6+jl002Zl1PL7tKlvVcGHDTJG53lt/w6nV364V205sSfx4i+fnkS2MQ38zuI+2/Itg2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IONi9feh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8691C4CECF;
-	Tue,  3 Dec 2024 09:08:42 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=bhSRfyNS0sO03VuVHKFuzIV6PXsUqrANhgCngDyohg51N40Pv03aSe4WdcUkmLRSww8S9ntIXejE2x35lbw5IehJVTNcpYhdemZDP5V7CF1hv2UGBHlfcOZRTcLlistdhAuiVL9n9sm8anA0lY/uNV5yxpnyOe9mgA6nfObTR2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pk9gdjSI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A665EC4CECF;
+	Tue,  3 Dec 2024 09:08:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733216925;
-	bh=d8kzUdU9z1KNgveBv3S4BD15LSA6cdX2777PaG6/rDA=;
+	s=k20201202; t=1733216938;
+	bh=MhgX52Eeuu6R9TGkJAO3G2bq54KKg9pdjOsDcDxCj5Q=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IONi9fehl366nb0Wh2p50YS8/i8T5dEhHXPviTCLplVddRNThLvESzbJ8HO1ouRrp
-	 PzLJoy1m7gSdOX0dkVBa/7tjKUev89UxIryHFCX1ZqXyLZxbGIWvVhvLEz8KdnTB46
-	 tKKrnC9Ph9OBVqN34DLkyiiMqSEpCl8tSnMwd7o2MWbogWpip6stNNCq2UPA63jnG5
-	 PzGQQx3PMqdYGk5+Of7YWxfbS1YMM2VHzVw6uKN5HZ7LPb8ObB3Sc7Dr0cPMJkgUZV
-	 PaX0zU7JOJFRfmR/Hxy5/1ozPMIxPD4zTiJ9ZxqJ4uVSN1EFizDK1S+sC8hd5R8P3L
-	 PsLr/aaUDuJZA==
-Date: Tue, 3 Dec 2024 10:08:39 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Chuck Lever III <chuck.lever@oracle.com>
-Cc: Jeff Layton <jlayton@kernel.org>, Amir Goldstein <amir73il@gmail.com>, 
-	Erin Shepherd <erin.shepherd@e43.eu>, Linux FS Devel <linux-fsdevel@vger.kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux NFS Mailing List <linux-nfs@vger.kernel.org>, 
-	stable <stable@kernel.org>
-Subject: Re: [PATCH 0/4] exportfs: add flag to allow marking export
- operations as only supporting file handles
-Message-ID: <20241203-ausmerzen-hauteng-d3610644ef6b@brauner>
-References: <20241201-work-exportfs-v1-0-b850dda4502a@kernel.org>
- <0974893ac7d97cc709ffa7df52fb5e0b7f502a4c.camel@kernel.org>
- <2F18FF7D-5AC9-4EE4-A19A-F016CF5B1971@oracle.com>
+	b=pk9gdjSIyiJyObIFwMRTmLwxuFq7gozJzR2VHw3ptBbwCH7t/gjIxSeBls7YJWFoq
+	 O0+CYPz8vnNzEZUj9AmrFFKoD+SYNHOO6XMbwCQUPcKzGWQ0wA2PbWT85ahxAxjxd1
+	 NQZgKPhpBdYvkmhvDwyGfZNKoJ5FBAL57tqHPzeSQ4gPzlyNB3VVjbOH/TjVJOIr4K
+	 iZvy76yfjGNeH6jP1nQZ/K0SVgSnXFoKLY5Vs1flTwe+95UuBOH4MYtEGEkxus6Ifw
+	 hmSaNL8Q8KuGTvA8ZJeYvlRdZQqUwBV/s3fxE0ioRs+qcEtrEDI1eim+gboV8Ou0cz
+	 LnwikBV1gAg+w==
+Date: Tue, 3 Dec 2024 11:08:44 +0200
+From: Mike Rapoport <rppt@kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, x86@kernel.org
+Subject: Re: [PATCH] x86/ftrace: fix boot time slowdown
+Message-ID: <Z07KnNk5AK_Jq6CU@kernel.org>
+References: <20241124140705.2883-1-rppt@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2F18FF7D-5AC9-4EE4-A19A-F016CF5B1971@oracle.com>
+In-Reply-To: <20241124140705.2883-1-rppt@kernel.org>
 
-> Though, I wonder if a similar but separate prohibition
-> mechanism might be necessary for other in-kernel network
-> file system server implementations (eg, ksmbd).
+Gentle ping
 
-Oh hm, interesting question.
-I have no idea how ksmbd or 9p "exports" work. I really hope they don't
-allow exporting arbitrary pseudo-fses.
+On Sun, Nov 24, 2024 at 04:07:05PM +0200, Mike Rapoport wrote:
+> From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
+> 
+> Steven Rostedt reported slowdown by over 30ms caused by commit 9bfc4824fd48
+> ("x86/module: prepare module loading for ROX allocations of text")
+> 
+>   Before:
+> 
+>    # cat /sys/kernel/tracing/dyn_ftrace_total_info
+>   57695 pages:231 groups: 9
+>   ftrace boot update time = 14733459 (ns)
+>   ftrace module total update time = 449016 (ns)
+> 
+>   After:
+> 
+>    # cat /sys/kernel/tracing/dyn_ftrace_total_info
+>   57708 pages:231 groups: 9
+>   ftrace boot update time = 47195374 (ns)
+>   ftrace module total update time = 592080 (ns)
+> 
+> The slowdown happened because initial patching of kernel code for ftrace
+> was switched from text_poke_early() to text_poke() to accommodate ftrace
+> updates of module text allocated as ROX.
+> 
+> Restore the use of text_poke_early() for boot time patching of the kernel
+> code.
+> 
+> Reported-by: Steven Rostedt <rostedt@goodmis.org>
+> Closes: https://lore.kernel.org/all/20241118132501.4eddb46c@gandalf.local.home
+> Fixes: 9bfc4824fd48 ("x86/module: prepare module loading for ROX allocations of text")
+> Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+> ---
+>  arch/x86/kernel/ftrace.c | 8 +++++---
+>  1 file changed, 5 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/x86/kernel/ftrace.c b/arch/x86/kernel/ftrace.c
+> index 4dd0ad6c94d6..9e50288abbaa 100644
+> --- a/arch/x86/kernel/ftrace.c
+> +++ b/arch/x86/kernel/ftrace.c
+> @@ -111,7 +111,7 @@ static int ftrace_verify_code(unsigned long ip, const char *old_code)
+>   */
+>  static int __ref
+>  ftrace_modify_code_direct(unsigned long ip, const char *old_code,
+> -			  const char *new_code)
+> +			  const char *new_code, struct module *mod)
+>  {
+>  	int ret = ftrace_verify_code(ip, old_code);
+>  	if (ret)
+> @@ -120,6 +120,8 @@ ftrace_modify_code_direct(unsigned long ip, const char *old_code,
+>  	/* replace the text with the new text */
+>  	if (ftrace_poke_late) {
+>  		text_poke_queue((void *)ip, new_code, MCOUNT_INSN_SIZE, NULL);
+> +	} else if (!mod) {
+> +		text_poke_early((void *)ip, new_code, MCOUNT_INSN_SIZE);
+>  	} else {
+>  		mutex_lock(&text_mutex);
+>  		text_poke((void *)ip, new_code, MCOUNT_INSN_SIZE);
+> @@ -145,7 +147,7 @@ int ftrace_make_nop(struct module *mod, struct dyn_ftrace *rec, unsigned long ad
+>  	 * just modify the code directly.
+>  	 */
+>  	if (addr == MCOUNT_ADDR)
+> -		return ftrace_modify_code_direct(ip, old, new);
+> +		return ftrace_modify_code_direct(ip, old, new, mod);
+>  
+>  	/*
+>  	 * x86 overrides ftrace_replace_code -- this function will never be used
+> @@ -164,7 +166,7 @@ int ftrace_make_call(struct dyn_ftrace *rec, unsigned long addr)
+>  	new = ftrace_call_replace(ip, addr);
+>  
+>  	/* Should only be called when module is loaded */
+> -	return ftrace_modify_code_direct(rec->ip, old, new);
+> +	return ftrace_modify_code_direct(rec->ip, old, new, NULL);
+>  }
+>  
+>  /*
+> 
+> base-commit: 9f16d5e6f220661f73b36a4be1b21575651d8833
+> -- 
+> 2.45.2
+> 
+
+-- 
+Sincerely yours,
+Mike.
 
