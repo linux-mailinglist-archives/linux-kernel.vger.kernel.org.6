@@ -1,130 +1,212 @@
-Return-Path: <linux-kernel+bounces-429067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B0279E1916
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 11:21:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 319EC9E192F
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 11:25:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A447DB3A127
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:13:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6EF3EB3A3BD
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:19:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A37951DE4FA;
-	Tue,  3 Dec 2024 09:13:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="BfWf3ptW"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADAFC1DB922;
-	Tue,  3 Dec 2024 09:13:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79D7B1DEFC2;
+	Tue,  3 Dec 2024 09:18:51 +0000 (UTC)
+Received: from 189.cn (ptr.189.cn [183.61.185.103])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 511491DE4CB;
+	Tue,  3 Dec 2024 09:18:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=183.61.185.103
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733217190; cv=none; b=hpIcfLtF4FD6Unw54xy+hUBatHwog+KP6I5wdEQOBS9GFhQHB0rgVNii+yYl3jJrR2+GwVjqK5vbdc3/UG02+gP2nLYlkNB9WIKeyjs2MYRLXqQW4AdAZa2KJ8RO8MESEsF8U3DrEnm8H6Ea/FkhRtLUDiM6w4XnF4eP+byrKfs=
+	t=1733217531; cv=none; b=WzRkqDMtIEHsVoY5fUkAOPl9vMYS1qUnPMKKqksrg8COgjIgNDhLgiCer5W15SIzuVmzlVDdlEKcP5nrzaTsTjdzUQsCrldqFXfEJCXmgPQIaPEF/DOUGWW2qe/PeNdJSFTQhCzVNOreRUDpxn5qe4TQ06kRM5WJuWMOocQKk6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733217190; c=relaxed/simple;
-	bh=XUH84e0egI5Kfw9FWhQHXx6YArW4ac5yEmTH0laDN8Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=ZPIQilNJ3lR9mh975Bkqx4rYbt7pbKGkeg0Dtr0dDGYUIgBkRautH9UD8RN2ZqCedNNGSoomSiGDrR5vDZiRihIQ627ZxPKKkiJRzI118G0tpS0LOpVAqjx40zoI2Xh6eHpus5yhFIExHqxUzvPYduuhL7vOIrZipRT39Mb4qiE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=BfWf3ptW; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B383AQs025674;
-	Tue, 3 Dec 2024 09:13:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	0KaoB5KjyuO+cWvVZwhloozjQT1ZeYOQtXDf2eB62T0=; b=BfWf3ptWqtx3B0+8
-	6Lv8xQ5gtjOpbgGOpFtG2mR3mUIl9HsLy/dDjZ/a43A3zfiDBjfVJIBJmk1rs9An
-	XojXd0wIabhRjVUVMUNMrL2IDW6AZr1on3lHhmPwUaDQBGmsgHi3+qO9zFjI6I8D
-	hzMQtDwvv+kTxGWeOth8qzZoW7ZlLom6jYDJq5M4NbLovLlw5uh/mulzMj2WEBoj
-	+6IGUjYbAgYTac2C/Msr9GOm95oLwSWZ+c7R3rtrzfYWPjZQEQIt0DtKgI+4wJ41
-	Ba9PvExvyhiB8KedJKU129fV0Pso9ha8ZYdJ+KlZiYR4ityi+KinM1mLQaN9Frdd
-	tATO4w==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 437uvjyd2s-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 03 Dec 2024 09:13:04 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B39D4UQ028352
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 3 Dec 2024 09:13:04 GMT
-Received: from [10.151.41.184] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 3 Dec 2024
- 01:12:59 -0800
-Message-ID: <d7a001aa-f203-4e2d-8d39-615066e12969@quicinc.com>
-Date: Tue, 3 Dec 2024 14:42:56 +0530
+	s=arc-20240116; t=1733217531; c=relaxed/simple;
+	bh=zs1BzBx0FFWchhyw0wpO+X0yZ1KXKXDEChtwQhKQDEM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=oDTxnU3AXxFNEUaYHWCfaROTbqJaxta8IX51LF9pZKx9l+guq729msMGLklv1YPPubpnfJ46Wnoch5dMaonXhq0QDXahHOs44Kn3v80jp6NDP44Nbzn85fvx6bkeFg27qiiemMcYN5xB+B2fSLqSyD8Ne+3DzEHngPHXFquuYpU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=189.cn; spf=pass smtp.mailfrom=189.cn; arc=none smtp.client-ip=183.61.185.103
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=189.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=189.cn
+HMM_SOURCE_IP:10.158.243.18:62357.39060554
+HMM_ATTACHE_NUM:0000
+HMM_SOURCE_TYPE:SMTP
+Received: from clientip-123.150.8.42 (unknown [10.158.243.18])
+	by 189.cn (HERMES) with SMTP id 6F41C100226;
+	Tue,  3 Dec 2024 17:14:38 +0800 (CST)
+Received: from  ([123.150.8.42])
+	by gateway-153622-dep-5c5f88b874-pd459 with ESMTP id cd71642bd5cb447ab35934049a789864 for andy@kernel.org;
+	Tue, 03 Dec 2024 17:14:39 CST
+X-Transaction-ID: cd71642bd5cb447ab35934049a789864
+X-Real-From: chensong_2000@189.cn
+X-Receive-IP: 123.150.8.42
+X-MEDUSA-Status: 0
+Sender: chensong_2000@189.cn
+From: Song Chen <chensong_2000@189.cn>
+To: andy@kernel.org,
+	hdegoede@redhat.com,
+	mchehab@kernel.org,
+	sakari.ailus@linux.intel.com,
+	gregkh@linuxfoundation.org,
+	bergh.jonathan@gmail.com
+Cc: arnd@arndb.de,
+	linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org,
+	linux-staging@lists.linux.dev,
+	Song Chen <chensong_2000@189.cn>
+Subject: [PATCH] drivers/staging/media/atomisp: replace legacy GPIO APIs in atomisp_gmin_platform
+Date: Tue,  3 Dec 2024 17:14:36 +0800
+Message-Id: <20241203091436.203745-1-chensong_2000@189.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 12/22] wifi: ath12k: fix incorrect CE addresses
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        <ath12k@lists.infradead.org>
-CC: <linux-wireless@vger.kernel.org>, Kalle Valo <kvalo@kernel.org>,
-        "Rob
- Herring" <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        "Conor
- Dooley" <conor+dt@kernel.org>,
-        Jeff Johnson <jjohnson@kernel.org>,
-        "Bjorn
- Andersson" <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        Balamurugan S <quic_bselvara@quicinc.com>
-References: <20241015182637.955753-1-quic_rajkbhag@quicinc.com>
- <20241015182637.955753-13-quic_rajkbhag@quicinc.com>
- <af289022-218f-46fc-99c2-3ccf027bc8fe@oss.qualcomm.com>
-Content-Language: en-US
-From: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>
-In-Reply-To: <af289022-218f-46fc-99c2-3ccf027bc8fe@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: F8grdtWab1wLU11PK20TeYLn5fXgllGg
-X-Proofpoint-ORIG-GUID: F8grdtWab1wLU11PK20TeYLn5fXgllGg
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
- suspectscore=0 mlxlogscore=949 impostorscore=0 adultscore=0 phishscore=0
- bulkscore=0 priorityscore=1501 clxscore=1015 spamscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412030079
+Content-Transfer-Encoding: 8bit
 
-On 10/19/2024 1:32 AM, Konrad Dybcio wrote:
-> On 15.10.2024 8:26 PM, Raj Kumar Bhagat wrote:
->> From: Balamurugan S <quic_bselvara@quicinc.com>
->>
->> In the current ath12k implementation, the CE addresses
->> CE_HOST_IE_ADDRESS and CE_HOST_IE_2_ADDRESS are incorrect. These
->> values were inherited from ath11k, but ath12k does not currently use
->> them.
->>
->> However, the Ath12k AHB support relies on these addresses. Therefore,
->> corrects the CE addresses for ath12k.
->>
->> Tested-on: IPQ5332 hw1.0 AHB WLAN.WBE.1.3.1-00130-QCAHKSWPL_SILICONZ-1
->> Tested-on: QCN9274 hw2.0 PCI WLAN.WBE.1.1.1-00210-QCAHKSWPL_SILICONZ-1
->>
->> Signed-off-by: Balamurugan S <quic_bselvara@quicinc.com>
->> Signed-off-by: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>
->> ---
-> 
-> This can be picked up independently of other patches in this patchset,
-> please try to position such changes at the beginning of series.
-> 
+In atomisp_gmin_platform, gpio0 and gpio1 have moved to descriptor-based
+GPIO APIs, but v1p8_gpio and v2p8_gpio still remain calling legacy ones,
+such as gpio_request.
 
-Sure, will have this patch in start of the series in the next version.
+This patch replaces old with new, also removes including gpio.h.
+
+Signed-off-by: Song Chen <chensong_2000@189.cn>
+---
+ .../media/atomisp/pci/atomisp_gmin_platform.c | 63 ++++++++-----------
+ 1 file changed, 25 insertions(+), 38 deletions(-)
+
+diff --git a/drivers/staging/media/atomisp/pci/atomisp_gmin_platform.c b/drivers/staging/media/atomisp/pci/atomisp_gmin_platform.c
+index e176483df301..7ff548ac3171 100644
+--- a/drivers/staging/media/atomisp/pci/atomisp_gmin_platform.c
++++ b/drivers/staging/media/atomisp/pci/atomisp_gmin_platform.c
+@@ -11,7 +11,6 @@
+ #include <linux/mfd/intel_soc_pmic.h>
+ #include <linux/regulator/consumer.h>
+ #include <linux/gpio/consumer.h>
+-#include <linux/gpio.h>
+ #include <linux/platform_device.h>
+ #include "../../include/linux/atomisp_platform.h"
+ #include "../../include/linux/atomisp_gmin_platform.h"
+@@ -85,8 +84,8 @@ struct gmin_subdev {
+ 	bool v2p8_on;
+ 	bool v1p2_on;
+ 
+-	int v1p8_gpio;
+-	int v2p8_gpio;
++	struct gpio_desc *v1p8_gpiod;
++	struct gpio_desc *v2p8_gpiod;
+ 
+ 	u8 pwm_i2c_addr;
+ 
+@@ -548,23 +547,6 @@ static int gmin_subdev_add(struct gmin_subdev *gs)
+ 	else
+ 		dev_info(dev, "will handle gpio1 via ACPI\n");
+ 
+-	/*
+-	 * Those are used only when there is an external regulator apart
+-	 * from the PMIC that would be providing power supply, like on the
+-	 * two cases below:
+-	 *
+-	 * The ECS E7 board drives camera 2.8v from an external regulator
+-	 * instead of the PMIC.  There's a gmin_CamV2P8 config variable
+-	 * that specifies the GPIO to handle this particular case,
+-	 * but this needs a broader architecture for handling camera power.
+-	 *
+-	 * The CHT RVP board drives camera 1.8v from an* external regulator
+-	 * instead of the PMIC just like ECS E7 board.
+-	 */
+-
+-	gs->v1p8_gpio = gmin_get_var_int(dev, true, "V1P8GPIO", -1);
+-	gs->v2p8_gpio = gmin_get_var_int(dev, true, "V2P8GPIO", -1);
+-
+ 	/*
+ 	 * FIXME:
+ 	 *
+@@ -830,21 +812,23 @@ static int gmin_v1p2_ctrl(struct v4l2_subdev *subdev, int on)
+ static int gmin_v1p8_ctrl(struct v4l2_subdev *subdev, int on)
+ {
+ 	struct gmin_subdev *gs = find_gmin_subdev(subdev);
++	struct i2c_client *client = v4l2_get_subdevdata(gs->subdev);
++	struct device *dev = &client->dev;
+ 	int ret;
+ 	int value;
+ 	int reg;
++	int v1p8_gpio;
+ 
+ 	if (!gs || gs->v1p8_on == on)
+ 		return 0;
+ 
+-	if (gs->v1p8_gpio >= 0) {
+-		pr_info("atomisp_gmin_platform: 1.8v power on GPIO %d\n",
+-			gs->v1p8_gpio);
+-		ret = gpio_request(gs->v1p8_gpio, "camera_v1p8_en");
+-		if (!ret)
+-			ret = gpio_direction_output(gs->v1p8_gpio, 0);
+-		if (ret)
++	v1p8_gpio = gmin_get_var_int(dev, true, "V1P8GPIO", -1);
++	if (v1p8_gpio >= 0) {
++		gs->v1p8_gpiod = gpiod_get_index(dev, "camera_v1p8", v1p8_gpio, GPIOD_ASIS);
++		if (IS_ERR(gs->v1p8_gpiod))
+ 			pr_err("V1P8 GPIO initialization failed\n");
++		else
++			gpiod_direction_output(gs->v1p8_gpiod, 0);
+ 	}
+ 
+ 	gs->v1p8_on = on;
+@@ -861,8 +845,8 @@ static int gmin_v1p8_ctrl(struct v4l2_subdev *subdev, int on)
+ 			goto out; /* Still needed */
+ 	}
+ 
+-	if (gs->v1p8_gpio >= 0)
+-		gpio_set_value(gs->v1p8_gpio, on);
++	if (v1p8_gpio >= 0)
++		gpiod_set_value(gs->v1p8_gpiod, on);
+ 
+ 	if (gs->v1p8_reg) {
+ 		regulator_set_voltage(gs->v1p8_reg, 1800000, 1800000);
+@@ -911,21 +895,24 @@ static int gmin_v1p8_ctrl(struct v4l2_subdev *subdev, int on)
+ static int gmin_v2p8_ctrl(struct v4l2_subdev *subdev, int on)
+ {
+ 	struct gmin_subdev *gs = find_gmin_subdev(subdev);
++	struct i2c_client *client = v4l2_get_subdevdata(gs->subdev);
++	struct device *dev = &client->dev;
+ 	int ret;
+ 	int value;
+ 	int reg;
++	int v2p8_gpio;
+ 
+ 	if (WARN_ON(!gs))
+ 		return -ENODEV;
+ 
+-	if (gs->v2p8_gpio >= 0) {
+-		pr_info("atomisp_gmin_platform: 2.8v power on GPIO %d\n",
+-			gs->v2p8_gpio);
+-		ret = gpio_request(gs->v2p8_gpio, "camera_v2p8");
+-		if (!ret)
+-			ret = gpio_direction_output(gs->v2p8_gpio, 0);
+-		if (ret)
++	v2p8_gpio = gmin_get_var_int(dev, true, "V2P8GPIO", -1);
++	if (v2p8_gpio >= 0) {
++		pr_info("atomisp_gmin_platform: 2.8v power on GPIO %d\n", v2p8_gpio);
++		gs->v2p8_gpiod = gpiod_get_index(dev, "camera_v2p8", v2p8_gpio, GPIOD_ASIS);
++		if (IS_ERR(gs->v2p8_gpiod))
+ 			pr_err("V2P8 GPIO initialization failed\n");
++		else
++			gpiod_direction_output(gs->v2p8_gpiod, 0);
+ 	}
+ 
+ 	if (gs->v2p8_on == on)
+@@ -944,8 +931,8 @@ static int gmin_v2p8_ctrl(struct v4l2_subdev *subdev, int on)
+ 			goto out; /* Still needed */
+ 	}
+ 
+-	if (gs->v2p8_gpio >= 0)
+-		gpio_set_value(gs->v2p8_gpio, on);
++	if (v2p8_gpio >= 0)
++		gpiod_set_value(gs->v2p8_gpiod, on);
+ 
+ 	if (gs->v2p8_reg) {
+ 		regulator_set_voltage(gs->v2p8_reg, 2900000, 2900000);
+-- 
+2.25.1
 
 
