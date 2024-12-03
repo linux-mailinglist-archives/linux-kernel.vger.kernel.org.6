@@ -1,169 +1,105 @@
-Return-Path: <linux-kernel+bounces-430080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20DD39E2C64
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 20:52:05 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CABB9E2D69
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 21:42:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8076282B5D
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 19:52:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 87BEAB3C43E
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 19:52:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E405204F62;
-	Tue,  3 Dec 2024 19:51:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3B1520408E;
+	Tue,  3 Dec 2024 19:52:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kEd3yKzO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="W2GifQmq"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBEB22040BB;
-	Tue,  3 Dec 2024 19:51:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8C6613DDAA
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 19:52:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733255497; cv=none; b=Mf0bHv9kDotkZhKV2yBIvLHbNqWLm2l7NchGPvp9dkXp/CS9PMBa5VALQCVM9VHvRV3rDgtButBOjW81P+Es+IGpA86pQjwNxUJPHdGQp+95GUPNYRblKurjSFSWoRN9yuMz9Yf3NLbskE9jkxMnies+RY+qFPrK/xbQMa+nIb4=
+	t=1733255549; cv=none; b=gXzcVJebI/X6rdLpXifjbSbeBh9CQDAf2873vX93eifMrwskanZzpHisytdXrfcEEMEY3LIOdR0nIj5Th0jmTNubbtrt5xC2f2TzWi384PW1rLhFhUNDRh3z5ghyxOw7MhADxm8PFyXBIoqyu/LOBJ6S2Jj8ZgV1RkOifLKyoCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733255497; c=relaxed/simple;
-	bh=mV7LLrltgDkaVfXGQHRmcEnjN0pqK4N33xm9mgi5Lp4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZkR6nsUGtj6zCK260/FPzC2wGSZ06XmXUNgwqdr+LrhrfPbtOyWfXgrbx+0JIw2YJrDbOei6rNSK6vXyn4Z5Ye7odW+3qMGRFD5B2ZzZxl/U2LsmQYqBU0bEqsPcd72SYV25UD8H0GVfQ+UNR6DNMaAI7ZrJhyQ8AWVn1rgbvXA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kEd3yKzO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1690C4CED8;
-	Tue,  3 Dec 2024 19:51:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733255497;
-	bh=mV7LLrltgDkaVfXGQHRmcEnjN0pqK4N33xm9mgi5Lp4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=kEd3yKzOnjt6LF6f8itwYdPhZXgHtKqKbpdh3EhIeEMrLyew3h4asNosGxjGNYgVh
-	 pnDjgIdWRrTAyPmHmtmTcChKK7k5Jgn6TqjWWvLWP5+aVUf0FoEJWhAzan8aRKhhrB
-	 PIpI+9aRHXIyk9wSwzU0QBU5J68CTO68EdHC6n8N4AsJFGXSJ8mUVsVhfcIhoBpvr/
-	 Rbeo6etK/CaHF3BoGi/r81xdOvk90TQDXNTelLRS8ywg5PrNbk6mV5+47i4RyavVf+
-	 dT/ZOHHKsf7aJHKO/tx2Q8gpoMXW+U3t137u1ow7PUh1wkqR3U24Rj0Uwv1XAVG2Q4
-	 XyQdG3+VaUnJg==
-Date: Tue, 3 Dec 2024 19:51:27 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: prabhakar.mahadev-lad.rj@bp.renesas.com, lars@metafoo.de,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- geert+renesas@glider.be, magnus.damm@gmail.com, mturquette@baylibre.com,
- sboyd@kernel.org, p.zabel@pengutronix.de, linux-iio@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, Claudiu Beznea
- <claudiu.beznea.uj@bp.renesas.com>
-Subject: Re: [PATCH 02/14] iio: adc: rzg2l_adc: Use devres helpers to
- request pre-deasserted reset controls
-Message-ID: <20241203195127.294245f6@jic23-huawei>
-In-Reply-To: <20241203111314.2420473-3-claudiu.beznea.uj@bp.renesas.com>
-References: <20241203111314.2420473-1-claudiu.beznea.uj@bp.renesas.com>
-	<20241203111314.2420473-3-claudiu.beznea.uj@bp.renesas.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1733255549; c=relaxed/simple;
+	bh=eQhT3lmDB6SLTG0JjVVKytPHuewUrsf19O0GDP6D8Uo=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=V9F50ukkIA4jQba+z2ZHhg2dnw+jB5ixqPYThtRS+z/qEGnKppD45DzYmO8djywC8rEk8drnYhILT57b3t9iThM8KjhtJjeql7dncaBfO1gKvgalsMEi8OK6JMjk+VH3vWV0ivlrMoUz8CUM0XUiETJsZTCzUZf1k2FxV2Yr1Uc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=W2GifQmq; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733255546;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nIqP7NUY2eFy7rNPuyXXrO7lQOOLNwlmTASFiEYxVm8=;
+	b=W2GifQmqyu/Fe4grgKN9+JEwVeUhEdD0dhCrOCb/Wy7cp33GF5c35xIuGsuu4VBYYsQRLs
+	oNFy1toY5i3/p0atZqQDlePvvxEmv55PamDkIrw04agA3D/UNwOa4S+JdnFP6tzGRnCcA2
+	4KyYkfGcIDm0ier3+ZXfz3UguK3/uRs=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-425-WBrKKZnGOLGNCSDj8cQXoQ-1; Tue,
+ 03 Dec 2024 14:52:23 -0500
+X-MC-Unique: WBrKKZnGOLGNCSDj8cQXoQ-1
+X-Mimecast-MFC-AGG-ID: WBrKKZnGOLGNCSDj8cQXoQ
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id AF114195608C;
+	Tue,  3 Dec 2024 19:52:20 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.48])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id DE1CC1956052;
+	Tue,  3 Dec 2024 19:52:17 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <20241202194337.305e0c22@kernel.org>
+References: <20241202194337.305e0c22@kernel.org> <20241202143057.378147-1-dhowells@redhat.com> <20241202143057.378147-11-dhowells@redhat.com>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: dhowells@redhat.com, netdev@vger.kernel.org,
+    Marc Dionne <marc.dionne@auristor.com>,
+    Yunsheng Lin <linyunsheng@huawei.com>,
+    "David S. Miller" <davem@davemloft.net>,
+    Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+    linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 10/37] rxrpc: Prepare to be able to send jumbo DATA packets
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <715425.1733255536.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date: Tue, 03 Dec 2024 19:52:16 +0000
+Message-ID: <715426.1733255536@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On Tue,  3 Dec 2024 13:13:02 +0200
-Claudiu <claudiu.beznea@tuxon.dev> wrote:
+Jakub Kicinski <kuba@kernel.org> wrote:
 
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> 
-> Starting with commit d872bed85036 ("reset: Add devres helpers to request
-> pre-deasserted reset controls"), devres helpers are available to simplify
-> the process of requesting pre-deasserted reset controls. Update the
-> rzg2l_adc driver to utilize these helpers, reducing complexity in this
-> way.
-> 
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Hi Claudia,
+> clang says (probably transient but since i'm nit picking anyway):
+> =
 
-Minor comments below.
+> net/rxrpc/input.c:696:25: warning: variable 'capacity' set but not used =
+[-Wunused-but-set-variable]
+>   696 |         unsigned int max_data, capacity;
+>       |                                ^
 
-Thanks
+Yeah - it's used from patch 29 "rxrpc: Send jumbo DATA packets".
 
-Jonathan
+I just noticed that patch 29 adds a member (tx_jumbo_limit) that is only s=
+et
+once and never used.  I'll remove it.
 
-> ---
->  drivers/iio/adc/rzg2l_adc.c | 37 ++-----------------------------------
->  1 file changed, 2 insertions(+), 35 deletions(-)
-> 
-> diff --git a/drivers/iio/adc/rzg2l_adc.c b/drivers/iio/adc/rzg2l_adc.c
-> index cd3a7e46ea53..7039949a7554 100644
-> --- a/drivers/iio/adc/rzg2l_adc.c
-> +++ b/drivers/iio/adc/rzg2l_adc.c
-> @@ -415,11 +415,6 @@ static void rzg2l_adc_pm_runtime_set_suspended(void *data)
->  	pm_runtime_set_suspended(dev->parent);
->  }
->  
-> -static void rzg2l_adc_reset_assert(void *data)
-> -{
-> -	reset_control_assert(data);
-> -}
-> -
->  static int rzg2l_adc_probe(struct platform_device *pdev)
->  {
->  	struct device *dev = &pdev->dev;
-> @@ -456,46 +451,18 @@ static int rzg2l_adc_probe(struct platform_device *pdev)
->  		return PTR_ERR(adc->adclk);
->  	}
->  
-> -	adc->adrstn = devm_reset_control_get_exclusive(dev, "adrst-n");
-> +	adc->adrstn = devm_reset_control_get_exclusive_deasserted(dev, "adrst-n");
->  	if (IS_ERR(adc->adrstn)) {
->  		dev_err(dev, "failed to get adrstn\n");
-I'd be tempted to keep the error message from below rather than this one.
-As we can only conclude the deassert failed to happen, not whether it was the
-get step or the deassert itself.
-
-Also, use dev_err_probe() throughout and definitely for anything you are touching
-in this series. Ideally add a patch converting all the other places where it
-is useful in things only called from probe.
-	return dev_err_probe(dev, PTR_ERR(adc->adrstn),
-			     "failed to deassert adrstn pin\n");
-
->  		return PTR_ERR(adc->adrstn);
->  	}
->  
-> -	adc->presetn = devm_reset_control_get_exclusive(dev, "presetn");
-> +	adc->presetn = devm_reset_control_get_exclusive_deasserted(dev, "presetn");
->  	if (IS_ERR(adc->presetn)) {
->  		dev_err(dev, "failed to get presetn\n");
->  		return PTR_ERR(adc->presetn);
->  	}
->  
-> -	ret = reset_control_deassert(adc->adrstn);
-> -	if (ret) {
-> -		dev_err(&pdev->dev, "failed to deassert adrstn pin, %d\n", ret);
-> -		return ret;
-> -	}
-> -
-> -	ret = devm_add_action_or_reset(&pdev->dev,
-> -				       rzg2l_adc_reset_assert, adc->adrstn);
-> -	if (ret) {
-> -		dev_err(&pdev->dev, "failed to register adrstn assert devm action, %d\n",
-> -			ret);
-> -		return ret;
-> -	}
-> -
-> -	ret = reset_control_deassert(adc->presetn);
-> -	if (ret) {
-> -		dev_err(&pdev->dev, "failed to deassert presetn pin, %d\n", ret);
-> -		return ret;
-> -	}
-> -
-> -	ret = devm_add_action_or_reset(&pdev->dev,
-> -				       rzg2l_adc_reset_assert, adc->presetn);
-> -	if (ret) {
-> -		dev_err(&pdev->dev, "failed to register presetn assert devm action, %d\n",
-> -			ret);
-> -		return ret;
-> -	}
-> -
->  	ret = rzg2l_adc_hw_init(adc);
->  	if (ret) {
->  		dev_err(&pdev->dev, "failed to initialize ADC HW, %d\n", ret);
+David
 
 
