@@ -1,156 +1,136 @@
-Return-Path: <linux-kernel+bounces-429852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02BE39E27AB
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 17:37:35 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BBBF9E27B1
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 17:39:09 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD09B286BA8
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:37:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC4BC167681
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:39:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 717C11F8AED;
-	Tue,  3 Dec 2024 16:37:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 161761F8ADB;
+	Tue,  3 Dec 2024 16:39:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="ftom6kRc"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=bell.net header.i=@bell.net header.b="68ogcBc1"
+Received: from cmx-mtlrgo001.bell.net (mta-mtl-001.bell.net [209.71.208.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7259C1F76BC;
-	Tue,  3 Dec 2024 16:37:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED0671EE019;
+	Tue,  3 Dec 2024 16:39:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.71.208.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733243847; cv=none; b=Muw6qKKPdOjZ6t1L6tAye/y6/rQW91F7tmqpL1cVLahdw1A8Jqx57bQmtyvToXKf8I97ezwgn50y2dvDYndymzlIHEcsj8eGrI2zCeZC/KtiXqu9L29WBlJ9PqgswY89bHsc0kRKEZWariznQSrxvgh6q1KmjuFDRedAtS0sIuo=
+	t=1733243943; cv=none; b=k6XzE/AikgUrVu7iWU1u6kekLBM2jlxOE3VbPU0aABz+zGlmnoAxdiqNettQiWg7nfvLCn9hQTibaVL0ApFD8/Ju6keOosvcBQhgBKWB4pCI5JU7QWfbg87kr41kDlt1o9+b1Hp6MRhIneRXjWyPFp0MR06TEZfdJLlspMrW8MU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733243847; c=relaxed/simple;
-	bh=G7HyrFe72+oitC4q4Te/YLaHT49oETpwcd2VcnKylhY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Wbf4f4jpGFQjVhAAODvmnD2zwXKSx5NIx7nDSyFOC8wdGhmqY4yU7CezF7tyEDwvtF2akHlfsUtJAJwcQwj+JDSYFKliWWHjWOcTvNE1YpPiJvOgSB8zy/Ymhe7DUieH8soK5ahVWJJG92v3G9AN8U8nRWodVZZtN/66GxrKKDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=ftom6kRc; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=vtg5kgR3ORav6GpvoI4HJZs080IrHQwvmLbc1RQ21fQ=; b=ftom6kRcfoNNnL7M3OobZtc2wW
-	IL6jehD17o658D1VERtVxcVeJaVpojtp0qxgdUGm8PFI2NMw/+uZ1ewKSM9DKzJE5RP4sarkT16J8
-	zV5TjMJhphX+KKLqSrSehiv6St1X79/44h45k5zOzlSbzapyBfodQkeAPUznNdsHwtmtyJYkzTYVx
-	eAi4E8f4SqfYkwsWiEA0QyuOA4xm91LnyP0MpbpEs69PJ/cSxkwCPWniu+EW+pwi+iL9WExlB949B
-	LpwhqTen0RKe8c1rFixbZFcid6L9TICWPFHsNVTBvB+YMsEeZSE3zYwt2p4wNwQcaYbUU8+j59mwN
-	y8jqHFAg==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:49004)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1tIVtj-0002E3-08;
-	Tue, 03 Dec 2024 16:37:15 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1tIVte-0004h5-2z;
-	Tue, 03 Dec 2024 16:37:11 +0000
-Date: Tue, 3 Dec 2024 16:37:10 +0000
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Cc: Andrew Lunn <andrew@lunn.ch>,
-	Dennis Ostermann <dennis.ostermann@renesas.com>,
-	"nikita.yoush" <nikita.yoush@cogentembedded.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Michael Dege <michael.dege@renesas.com>,
-	Christian Mardmoeller <christian.mardmoeller@renesas.com>
-Subject: Re: [PATCH] net: phy: phy_ethtool_ksettings_set: Allow any supported
- speed
-Message-ID: <Z08ztsAG8x8uqCwJ@shell.armlinux.org.uk>
-References: <eddde51a-2e0b-48c2-9681-48a95f329f5c@cogentembedded.com>
- <Z02KoULvRqMQbxR3@shell.armlinux.org.uk>
- <c1296735-81be-4f7d-a601-bc1a3718a6a2@cogentembedded.com>
- <Z02oTJgl1Ldw8J6X@shell.armlinux.org.uk>
- <5cef26d0-b24f-48c6-a5e0-f7c9bd0cefec@cogentembedded.com>
- <Z03aPw_QgVYn8WyR@shell.armlinux.org.uk>
- <TYCPR01MB1047854DA050E52CADB04393A8E362@TYCPR01MB10478.jpnprd01.prod.outlook.com>
- <1ff52755-ef24-4e4b-a671-803db37b58fc@lunn.ch>
- <Z08h95dUlS7zacTY@shell.armlinux.org.uk>
- <20241203165147.4706cc3b@fedora.home>
+	s=arc-20240116; t=1733243943; c=relaxed/simple;
+	bh=vxms5DIqNTipQhhG6Cp4FqAvutQweeMElDMclIuldlM=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=Cqj8ZCb179Dh0eh0yQ0R95N84Y93/LYPfaAigMylvH3BqgX3uxgoTIveryW2dtwUPEx6rEuJn1jmEDZA1TlDYO93yrdnVeTV7qmtZ1l7rylqwslOaXgqdwelhhDzs/dsGwIzaqtWqr9q35B7/X65ypPskTUuvHVza716NyRzP4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bell.net; spf=pass smtp.mailfrom=bell.net; dkim=pass (2048-bit key) header.d=bell.net header.i=@bell.net header.b=68ogcBc1; arc=none smtp.client-ip=209.71.208.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bell.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bell.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bell.net; s=selector1; t=1733243941; 
+        bh=oZ7q7RSNOOH9YeKm6NnPg1ciR8arHxUfoukjYdNgT/o=;
+        h=Message-ID:Date:MIME-Version:Subject:From:To:References:In-Reply-To:Content-Type;
+        b=68ogcBc1KvGD9QIdTYkNtpS827pGiuJgL2pbWZUfITywUXr9kuwkl1a5ZthCNwxoCP3DZh2PmbqEhLL6RTp1Ba8vovQ9o8fCbZtpqcQW8iHQRGudsbuWMN8yA4zVUO3VePwXYCCkGubWwN/DS/wPIttQjxjN7GV4CGFGm4YBJInnXjF5OZGTq9QVeNWO4NZm5rmcumEhsEoHeABxz/PHHR/FmNN8CRwULuNr+8/9RBscYaxghiaUC5nOxjalPl9KfHhuIHKr/VKZs+VDg8DqdQWLqGkaWTcGeYDPflHtmdMejt8on0PuA1/rGGaHDCDk/Ee/Qp2nHJReUWrqgJI7pw==
+X-RG-SOPHOS: Clean
+X-RG-VADE-SC: 0
+X-RG-VADE: Clean
+X-RG-Env-Sender: dave.anglin@bell.net
+X-RG-Rigid: 673CEB0602AB19D5
+X-RazorGate-Vade: gggruggvucftvghtrhhoucdtuddrgeefuddrieefgdeivdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemuceugffnnfdpqfgfvfenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffhvfevfhgjtgfgsehtkeertddtvdejnecuhfhrohhmpeflohhhnhcuffgrvhhiugcutehnghhlihhnuceouggrvhgvrdgrnhhglhhinhessggvlhhlrdhnvghtqeenucggtffrrghtthgvrhhnpefhiedukeehlefghefhtdelffekvedvfefglefgtdelhffggefhueeitddutddugfenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppedugedvrdduvdeirdduvdelrdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehhvghloheplgduledvrdduieekrddvrdeglegnpdhinhgvthepudegvddruddviedruddvledriedpmhgrihhlfhhrohhmpegurghvvgdrrghnghhlihhnsegsvghllhdrnhgvthdpnhgspghrtghpthhtohepkedprhgtphhtthhopegurghvvgdrrghnghhlihhnsegsvghllhdrnhgvthdprhgtphhtthhopeguvghllhgvrhesghhmgidruggvpdhrtghpthhtohepuggvlhhlvghrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnmhgrghejsehgmhgrihhlrdgtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhi
+	nhhugidqphgrrhhishgtsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepmhgrthhorhhopghmrghilhhinhhglhhishhtpghkvghrnhgvlhesmhgrthhorhhordhtkhdprhgtphhtthhopehsrghmsehgvghnthhoohdrohhrgh
+X-RazorGate-Vade-Verdict: clean 0
+X-RazorGate-Vade-Classification: clean
+Received: from [192.168.2.49] (142.126.129.6) by cmx-mtlrgo001.bell.net (authenticated as dave.anglin@bell.net)
+        id 673CEB0602AB19D5; Tue, 3 Dec 2024 11:38:52 -0500
+Message-ID: <7551c27f-58d5-4e4b-ac7f-8d09be634104@bell.net>
+Date: Tue, 3 Dec 2024 11:38:52 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241203165147.4706cc3b@fedora.home>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [bisected] ext4 corruption on parisc since 6.12
+From: John David Anglin <dave.anglin@bell.net>
+To: matoro <matoro_mailinglist_kernel@matoro.tk>
+Cc: Magnus Lindholm <linmag7@gmail.com>,
+ Linux Parisc <linux-parisc@vger.kernel.org>, deller@kernel.org,
+ Deller <deller@gmx.de>, Sam James <sam@gentoo.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <84d7b3e1053b2a8397bcc7fc8eee8106@matoro.tk>
+ <31c884b9-77c8-48dc-b84c-20e52cdc4d44@bell.net>
+ <71fae3d3a9bd816ea268eb73c152b564@matoro.tk>
+ <CA+=Fv5Qy0818xS3uW2bh2nVpy-3COUzbq5X0JPY6=YzbfYgNOA@mail.gmail.com>
+ <03978220-0153-417c-8479-09239d19c9ba@bell.net>
+ <9bdbf64bd63ab7eef2f5ead467f3c8c4@matoro.tk>
+ <7e3682f8-ec11-40b0-898f-f3729d6f110b@bell.net>
+Content-Language: en-US
+Autocrypt: addr=dave.anglin@bell.net; keydata=
+ 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
+ T70V9SSrl2hiw38vRzsl
+In-Reply-To: <7e3682f8-ec11-40b0-898f-f3729d6f110b@bell.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, Dec 03, 2024 at 04:51:47PM +0100, Maxime Chevallier wrote:
-> Hi Andrew,
-> 
-> On Tue, 3 Dec 2024 15:21:27 +0000
-> "Russell King (Oracle)" <linux@armlinux.org.uk> wrote:
-> 
-> > On Tue, Dec 03, 2024 at 03:45:09PM +0100, Andrew Lunn wrote:
-> > > On Tue, Dec 03, 2024 at 02:05:07PM +0000, Dennis Ostermann wrote:  
-> > > > Hi,
-> > > > 
-> > > > according to IEE 802.3-2022, ch. 125.2.4.3, Auto-Negotiation is optional for 2.5GBASE-T1
-> > > >   
-> > > > > 125.2.4.3 Auto-Negotiation, type single differential-pair media
-> > > > > Auto-Negotiation (Clause 98) may be used by 2.5GBASE-T1 and 5GBASE-T1 devices to detect the
-> > > > > abilities (modes of operation) supported by the device at the other end of a link segment, determine common
-> > > > > abilities, and configure for joint operation. Auto-Negotiation is performed upon link startup through the use
-> > > > > of half-duplex differential Manchester encoding.
-> > > > > The use of Clause 98 Auto-Negotiation is optional for 2.5GBASE-T1 and 5GBASE-T1 PHYs  
-> > > > 
-> > > > So, purposed change could make sense for T1 PHYs.  
-> > > 
-> > > The proposed change it too liberal. We need the PHY to say it supports
-> > > 2.5GBASE-T1, not 2.5GBASE-T. We can then allow 2.5GBASE-T1 to not use
-> > > autoneg, but 2.5GBASE-T has to use autoneg.  
-> > 
-> > I'm wondering whether we should add:
-> > 
-> > 	__ETHTOOL_DECLARE_LINK_MODE_MASK(requires_an);
-> > 
-> > to struct phy_device, and have phylib populate that by default with all
-> > base-T link modes > 1G (which would be the default case as it is now.)
-> > Then, PHY drivers can change this bitmap as they need for their device.
-> > After the PHY features have been discovered, this should then get
-> > AND-ed with the supported bitmap.
-> 
-> If the standards says that BaseT4 >1G needs aneg, and that we can't
-> have it for baseT1, couldn't we just have some lookup table for each
-> mode indicating if they need or support aneg ?
+On 2024-12-02 2:45 p.m., John David Anglin wrote:
+> I also have in config:
+> CONFIG_HAVE_UNSTABLE_SCHED_CLOCK=y
+Here is a comment from <https://www.kernel.org/doc/Documentation/timers/timekeeping.txt>:
 
-When operating in !AN mode, all that the ethtool API passes is the
-speed and duplex, with a guess at the advertising mask (which doesn't
-take account of the PHY's supported ethtool link modes.)
+On SMP systems, it is crucial for performance that sched_clock() can be called
+independently on each CPU without any synchronization performance hits.
+Some hardware (such as the x86 TSC) will cause the sched_clock() function to
+drift between the CPUs on the system. The kernel can work around this by
+enabling the CONFIG_HAVE_UNSTABLE_SCHED_CLOCK option. This is another aspect
+that makes sched_clock() different from the ordinary clock source.
 
-If e.g. we have a PHY that supports 1000base-T and 1000base-X, and the
-user attempts to disable AN specifying speed 1000 duplex full, we don't
-know whether the user means 1000base-T (which actually requires AN, but
-we work around that *) or 1000base-X without AN.
-
-Specifying speed + duplex for !AN is nice for humans, but ambiguous
-for computers.
-
-* - the workaround adopted is to do what Marvell PHYs internally do but
-in phylib code, which is to accept the request to disable AN and
-operate at the specified speed, but actually program AN to be enabled
-with only a single speed/duplex that can be negotiated. Without this,
-we end up with hacks in MAC drivers because the PHY they're paired with
-doesn't support AN being disabled at 1G speed. See
-__genphy_config_aneg(). Note: this is probably going to interact badly
-with the baseT1 case.
+Dave
 
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+John David Anglin  dave.anglin@bell.net
+
 
