@@ -1,141 +1,118 @@
-Return-Path: <linux-kernel+bounces-430271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44D869E2EB1
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 23:08:43 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0CF75167B6B
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 22:08:00 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D4B81DF968;
-	Tue,  3 Dec 2024 22:07:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZXkgnWoT"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97F909E2EAC
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 23:08:24 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BFB11DF27E;
-	Tue,  3 Dec 2024 22:07:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 399B7283827
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 22:08:23 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 168BE208990;
+	Tue,  3 Dec 2024 22:08:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GIrbT+F4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6327C1DF27E;
+	Tue,  3 Dec 2024 22:08:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733263678; cv=none; b=J/X0HF7RDDVplk0hK9FdfI4M3gVBCQdS+5daPzZVsxWiY0XNjRef4QeRPoAD4CWBmeyhNzogAlJ+11PtJ/QZq7yNb85VgNyqtwoz0jsckt2mE6oVTSnrwVvZfNFU85g8PIF1cwnt1J3vL4HqVan2Z+I6MzQkPcj92aTppmyc93c=
+	t=1733263696; cv=none; b=k5BcDOgo+GTBtQhuQpe5qkMKSehmHRPADqGgAJUkOj/FWk90KkFMXo2BN4VpcBtk0Rh6Ek2zlyu9O5XCEzY7WxnUeimymCdQrrRAPNDa64r7mQzuyfWsfyiFKwxtz32Na7bR8CKwxuWDrm54KAViZhmPmjcA7u73A8Q3Q8xnUp0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733263678; c=relaxed/simple;
-	bh=cWABRbRQSTNoxmBHCIL/kN00v2PronTcxiPovf7NaeU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CpvSWneaLok2Ft15jdUmDf1TkLVLBwxVH4Y1A4RidH0len8AWMYrv2j9sZ3OaCTN9V+6nsI6WI2FDro512E3mhweDaW67Vkp7QCQTdDIDMRVXijR7bFBXVRYo05XTm2a78m0A4P8qQ/QL4OL+Jdc72w8cMuyyWvLuYZBc+CEgT8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZXkgnWoT; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733263677; x=1764799677;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=cWABRbRQSTNoxmBHCIL/kN00v2PronTcxiPovf7NaeU=;
-  b=ZXkgnWoT3kNqB5xbCbcEtfbGKLfEGl9X6yrBfXvqcoPbw3bX47MdEWkU
-   +8XUozAzy8P8d0GcAUh3XjMGGFI/xOOH+YM552bg31m/8v4mIHetLJ9I1
-   cYdw8lHMcZa6k3LTGSoq82RtXq5kMC6q1vSZh+K//RvcDZUIl1jVFhAxy
-   +AzJ1WLsssAMVAJM+cJZ5Cb0c3p9ltAVYsw+1pYUFengqHQKFaUzQ0P4g
-   Ft+0ZzglhCrCIVq7Y4mJdD5FRiSzCbqwusTKoGV49ZK1JLpfTyzt+0QG1
-   Jbrk4oXvDqEbQKiQaAK05BwGQ+cZR/l8onQZvjPq+BA5vQDkaOmMB3sd0
-   A==;
-X-CSE-ConnectionGUID: paH+9+b+QmOXnnFUVGORlg==
-X-CSE-MsgGUID: gicE8YHyRBSg6ZDJLAtihg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11275"; a="33251832"
-X-IronPort-AV: E=Sophos;i="6.12,206,1728975600"; 
-   d="scan'208";a="33251832"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Dec 2024 14:07:56 -0800
-X-CSE-ConnectionGUID: AXxz1y0iQMK94dgoYoc3/w==
-X-CSE-MsgGUID: p2dcZNoTShS9j6wvmAXuzw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,206,1728975600"; 
-   d="scan'208";a="98649053"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Dec 2024 14:07:51 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tIb3b-00000003Z0g-2xww;
-	Wed, 04 Dec 2024 00:07:47 +0200
-Date: Wed, 4 Dec 2024 00:07:47 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Gregory Price <gourry@gourry.net>
-Cc: "Huang, Ying" <ying.huang@linux.alibaba.com>,
-	Raghavendra K T <raghavendra.kt@amd.com>,
-	linux-kernel@vger.kernel.org, linux-cxl <linux-cxl@vger.kernel.org>,
-	Bharata B Rao <bharata@amd.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Dan Williams <dan.j.williams@intel.com>,
-	David Hildenbrand <david@redhat.com>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	Alistair Popple <apopple@nvidia.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, Baoquan He <bhe@redhat.com>,
-	ilpo.jarvinen@linux.intel.com,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Fontenot Nathan <Nathan.Fontenot@amd.com>,
-	Wei Huang <wei.huang2@amd.com>
-Subject: Re: [RFC PATCH] resource: Fix CXL node not populated issue
-Message-ID: <Z0-BM5KcS9PQcycg@smile.fi.intel.com>
-References: <20241202111941.2636613-1-raghavendra.kt@amd.com>
- <87frn5wac3.fsf@DESKTOP-5N7EMDA>
- <Z08KiPwwiw72Vo9R@smile.fi.intel.com>
- <CAAt7c_piFt2UY_OSzdhhr3yFfgMZPgcw2ogtAoVRjgDFGaG_8Q@mail.gmail.com>
+	s=arc-20240116; t=1733263696; c=relaxed/simple;
+	bh=9ZguCax4zgSj4gzzoNSEdLNmuYozpUsLrWhfso455gQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lNw0Aty2RO8ZRmGpfHICAHwkQQmcbqPbgoY59hwboNKi/QJ505soMQ9htNyQ2SFBuUGdCyymTE2+2JPdqAR50UF2hSlkueFQ1N3A27xst01NqsU60zl2iVj30SL0BZs7xThF++xGeuJSegJDU7/x51TFo3KuYsB6PBcafILmFAE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GIrbT+F4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41F63C4CEDC;
+	Tue,  3 Dec 2024 22:08:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733263695;
+	bh=9ZguCax4zgSj4gzzoNSEdLNmuYozpUsLrWhfso455gQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=GIrbT+F4dnKTe7dXB2pJ85d2k+69p2NnZJi0dRIGi1z6z9oCIUvh3pxH/9y92RAlZ
+	 9kbaHZ4u8KZYtKmDxfTaR3dM02J/1mWTxAZad7vm1vWPDERxaZeBNuVRme9P2+3R3L
+	 1XFes72w00sfTANMMQgz64nsdcPggA7pwM+a32Jl3T4ur9rdqDHrB/LFV+vv3VrtsW
+	 VmaoEgFwPM6BzNGgerAlVX2Z5ZocUYQI0ZIvLux5Q/URkDCtYvjiGE7PZ/MJ0J8WiS
+	 4VzHMRpF9xW+eH9os2I4ErgpeEe8Pma0FetHJmrHuLnlQRJQaIQ2l93dQj0Z6oCxgW
+	 PivUEoXFAZ+rA==
+Date: Tue, 3 Dec 2024 22:08:04 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: prabhakar.mahadev-lad.rj@bp.renesas.com, lars@metafoo.de,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ geert+renesas@glider.be, magnus.damm@gmail.com, mturquette@baylibre.com,
+ sboyd@kernel.org, p.zabel@pengutronix.de, linux-iio@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, Claudiu Beznea
+ <claudiu.beznea.uj@bp.renesas.com>
+Subject: Re: [PATCH 12/14] iio: adc: rzg2l_adc: Add support for Renesas
+ RZ/G3S
+Message-ID: <20241203220804.3f3aa177@jic23-huawei>
+In-Reply-To: <20241203111314.2420473-13-claudiu.beznea.uj@bp.renesas.com>
+References: <20241203111314.2420473-1-claudiu.beznea.uj@bp.renesas.com>
+	<20241203111314.2420473-13-claudiu.beznea.uj@bp.renesas.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAAt7c_piFt2UY_OSzdhhr3yFfgMZPgcw2ogtAoVRjgDFGaG_8Q@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Dec 03, 2024 at 11:56:35AM -0800, Gregory Price wrote:
-> On Tue, Dec 3, 2024, 6:09 AM Andy Shevchenko <
-> andriy.shevchenko@linux.intel.com> wrote:
-> > On Tue, Dec 03, 2024 at 02:26:52PM +0800, Huang, Ying wrote:
-> > > Raghavendra K T <raghavendra.kt@amd.com> writes:
+On Tue,  3 Dec 2024 13:13:12 +0200
+Claudiu <claudiu.beznea@tuxon.dev> wrote:
 
-...
-
-> > > > git bisect had led to below commit
-> > > > Fixes: b4afe4183ec7 ("resource: fix region_intersects() vs
-> > add_memory_driver_managed()")
-> > >
-> > > This breaks you case, sorry about that.  But this also fixed a real bug
-> > > too.  So, it's not appropriate just to revert it blindly.
-> >
-> > Linus was clear about this recently. Even if it fixes a bug, regression is
-> > still regression
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 > 
-> In my experience, region intersection issues often stem from bad CEDT
-> entries.
+> Add ADC support for the Renesas RZ/G3S SoC. The key features of this IP
+> include:
+> - 9 channels, with one dedicated to reading the temperature reported by the
+>   Thermal Sensor Unit (TSU)
+> - A different default ADCMP value, which is written to the ADM3 register.
+> - Different default sampling rates
+> - ADM3.ADSMP field is 8 bits wide
+> - ADINT.INTEN field is 11 bits wide
+> 
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Hi Claudia,
 
-Yeah, sometimes fixes may reveal the hidden issues.
+This one and the others I haven't comment on look good to me.
 
-> Have you dumped the ACPI tables on your system and validated the content?
+Thanks,
 
-I believe this is the Q to the original reporter.
+Jonathan
 
-> It would be a shame to revert a patch because the ACPI tables were wrong.
-
-I agree with you and as I said in my reply "fixes are better than reverts".
-I.o.w. I'm on the same page with Linus on this.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
+> ---
+>  drivers/iio/adc/rzg2l_adc.c | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+> 
+> diff --git a/drivers/iio/adc/rzg2l_adc.c b/drivers/iio/adc/rzg2l_adc.c
+> index 634073e7241f..dd2ef8203966 100644
+> --- a/drivers/iio/adc/rzg2l_adc.c
+> +++ b/drivers/iio/adc/rzg2l_adc.c
+> @@ -525,7 +525,16 @@ static const struct rzg2l_adc_hw_params rzg2l_hw_params = {
+>  	.adivc = true
+>  };
+>  
+> +static const struct rzg2l_adc_hw_params rzg3s_hw_params = {
+> +	.num_channels = 9,
+> +	.default_adcmp = 0x1d,
+> +	.default_adsmp = { 0x7f, 0xff },
+> +	.adsmp_mask = GENMASK(7, 0),
+> +	.adint_inten_mask = GENMASK(11, 0),
+> +};
+> +
+>  static const struct of_device_id rzg2l_adc_match[] = {
+> +	{ .compatible = "renesas,r9a08g045-adc", .data = &rzg3s_hw_params },
+>  	{ .compatible = "renesas,rzg2l-adc", .data = &rzg2l_hw_params },
+>  	{ /* sentinel */ }
+>  };
 
 
