@@ -1,148 +1,192 @@
-Return-Path: <linux-kernel+bounces-429947-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C5AB9E2973
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 18:37:14 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BC0A9E2990
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 18:41:08 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE63116583C
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 17:41:04 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B30E61FC0E8;
+	Tue,  3 Dec 2024 17:40:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AVNnOntV"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 132E6285FD2
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 17:37:13 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1872F1FBC82;
-	Tue,  3 Dec 2024 17:37:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="x/sPXwUL"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25EBC1F942C
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 17:37:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 280EC1FAC51;
+	Tue,  3 Dec 2024 17:40:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733247429; cv=none; b=gOAuw8B550p4bguq8fRDsYCf8qXELEjoSUxm30xFXKfL26YTOjM4Lx3bHDtDHY/olLgMUMQTF5OM00bq4dN89kGzlKHzBXPOu6MCThMWGw28WL4LiqXFee953sQMVrwd4FXmN6cFF0fqtUEeana2YMo83GEhWHj7ZncGeFurNaM=
+	t=1733247651; cv=none; b=IPfsUpVPLATaEqwXTaSvpuq9UMdcY0H42p3Kbhuc0qsJfRYuGRzYWgeFtqjbgJOz1hu6gmrUiAc1KGl9oQD0KxnKx09aiPg5PHhm8zpTjCMn8sky4rqT83OFPQqqrrQkBdfwwvzRgPiWGDDj04lkhJ4T9JROQvOr/vKqOwd6O5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733247429; c=relaxed/simple;
-	bh=w7mAofiWzyf8juvu3AM7qcBAsuCXIoSz/RIAPv7U6Pk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fFEVXG1UrKgblRTsj4LNFPxoQkdOu0+QXX+lK9LdQzZAMHP6c57DzIiUAdk05tgRPBKgCgvhbhRN/fUHKR6TBBZM21wWxIoAKyNH8lPbo0v4iv8tpBtTtQC3qasFATAU4NU4iBqw5h/XHtFI65x5wcFs/QRZHYUFR58Gyxq8WH8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=x/sPXwUL; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-53dd0cb9ce3so5146874e87.3
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 09:37:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733247425; x=1733852225; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Y0ycjfZzwnPcCeUDtH0/9f2OzsKqNdVBQ5imE6kMpyI=;
-        b=x/sPXwULTNWCfUD4BW5jgLYSrIZ6+OdFZtGYXGnRn2fLCahYRYcd5k33zw+vCeXYbj
-         WtbmQU2kTOaxlpZyP658E6K/dQ2vbEFmzXc2cw9mQ4HSLUU0g6Blw8FZUY0qZipUJEls
-         wLNuZyyUvrhNFIEyKjJGwBWntbQY4ndCyzOJfPqQaB1FBp873QVJlBg0y1xoEcM82LGp
-         8GGNfWZP2kErSJhcpzcepeIFjtGpDLozGc16jgC5ZwTLzZ31xCE20eHo/oiuVuX64/pn
-         oVvq9dpktinPArRUUBaQRsgKY36krj2q1t9TG+r5fgI0OTTKjFMrGRewnhtUXO8fvbbq
-         jBeg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733247425; x=1733852225;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Y0ycjfZzwnPcCeUDtH0/9f2OzsKqNdVBQ5imE6kMpyI=;
-        b=HZpLav66IxwsTgdnd/+IxNjphk3he+ycf253lvmK2GLsm36K5m7bBx8uyFHp4pUY7k
-         zCm8cxh2wcj4BPNR8YUWZacN4u6IAAwY3uvm4ZuUDJ3gjqu62KVZSaNxpdtflXwBIDGW
-         Ek8pXniwQ7oWt7KZntgFW3cOMexEt/pt5Oeb5w38kDLy5FAQ2aMZmZIyUqr7IrV/Rjrl
-         Iaz1hysAFZHmmOZMvEIKKAM29z/ODrmdx1mFFU7LDcS55deJOZ8VccRwOEGgIHsIAkqY
-         tUa2Td9JbZdMyKAp5TxQLvpKRgTUBLosaM++Tsq6gQJUujI6LW2JIrW/uZQ/4oi3Oa0l
-         /MYA==
-X-Forwarded-Encrypted: i=1; AJvYcCW6zU4+E/mbJ3RFLBQJOnk6XM0ZYhSocU+2HOtlX3Q/FEjE19cTjOngPoSgJnDiuvknWrqDUpJxm0NUs7I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwjIpySnVYEpi2YN1vn2IeUShprssr9oUxQFm7kox2Qg0Ax6CD3
-	r/MoffSyTLxlzhPG2qxZCKpKpC9at1TLTEbmnCxxAft4M2enFgtt3ewFqd0jyC4=
-X-Gm-Gg: ASbGncuwUTHASz7G+s8KjduCtTjrJX5kiIlmcj5A2wRZrTJ6dGcRQAGKk+R4PLQrgpq
-	X6op6rD3YQVzu1z3yhgH0ms8tNdv52Wq6TrXl1h4FoiBD3OdpQZoPgltjmbcT+QGUJKDPxzOqmC
-	3zFkQjg0aKkhtNjgfx2YgEzhc5XQYv01KLDe0UTGSgyXING5Z79VtWUuhm5UqcGbkJFGQM6474n
-	dBE2/+tWQBq+9uwOJ01RCozWG7nuScGydAGMIOXl5sf4xh7dI1VRMKIyxk8yqerIR2wepD4bPzy
-	ca6LiIm1eFgR7rOIDbLU1GjXtzwY4w==
-X-Google-Smtp-Source: AGHT+IE+iThB2rDkPXhvDwKDCV995m9FRY0n6NLKd/YWSdF2FKr6uqn66k8o0X2h8rNCUXaQsEfXfg==
-X-Received: by 2002:a05:6512:4028:b0:53d:ec9a:4e6d with SMTP id 2adb3069b0e04-53e1b8b6f05mr505370e87.46.1733247425267;
-        Tue, 03 Dec 2024 09:37:05 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53df6443385sm1916238e87.95.2024.12.03.09.37.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Dec 2024 09:37:04 -0800 (PST)
-Date: Tue, 3 Dec 2024 19:37:03 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: tomm.merciai@gmail.com
-Cc: linux-renesas-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	biju.das.jz@bp.renesas.com, Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>, 
-	Liu Ying <victor.liu@nxp.com>, Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/bridge: ite-it6263: Support VESA input format
-Message-ID: <hd2kom5acz47c3mkjuauxhauahkt7vq2qoilppwn34iidldhos@rb5ydcayhtlj>
-References: <20241203172129.778123-1-tommaso.merciai.xr@bp.renesas.com>
+	s=arc-20240116; t=1733247651; c=relaxed/simple;
+	bh=5f8V0ViCWSwHPKr9N1Ee9MvOVQtipiD141WC9doMRfs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=odpbwVu0Nt4Cj5bozIlHnMTy5IYuGG6Ogru5x1yYXyfvlpsLTOxU3ObiSp8eiI72kwk0O74p3D10dUMob9bwD9AcYyAjh28qVTwDNSRVdh7MdjSnOmmzQO7jAXLtfUwTcvtz68loXUA8ApSDkIPy56nBLYTzd9OuJOQ5QBHX8u0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AVNnOntV; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733247651; x=1764783651;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=5f8V0ViCWSwHPKr9N1Ee9MvOVQtipiD141WC9doMRfs=;
+  b=AVNnOntV90hiZXOqX2mMQps7nFFfPsr4CZQZ02V+Jtc3frAlTu3fbtHL
+   8e4jSxPaVM0p+XUA2diEZgQ3x9NNb8/lAiJroS24espMJ/ARSoZBvUZj1
+   37cDDra1GJUN49Moh/ibskq9DnqJLX+aceYIgMWwOlZx2D8IFeZWKYEVq
+   yczEzDCNSyf5FLuUO9dYeNNoGVcnO+y8RdWRZ41cxC8fXmIr+Se0tDmtp
+   fbnSW0Rvr5s1ChtVHsoxkHOVPjGIgNwCiyM7Fqx7LvbuC+OuGKYMScAg4
+   703Btoti6Bh1a4IEN34A+k2ZMmtYI/0SBeEDKjjvoMnpau9VQa8hZJKes
+   w==;
+X-CSE-ConnectionGUID: mNeqAZu1Tsub2Uf8JAfkUw==
+X-CSE-MsgGUID: LSUlTI4xQkqs8dmZ791XBg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11275"; a="37135271"
+X-IronPort-AV: E=Sophos;i="6.12,205,1728975600"; 
+   d="scan'208";a="37135271"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Dec 2024 09:40:50 -0800
+X-CSE-ConnectionGUID: y/5LGjzMRACcXQoC2TjPLg==
+X-CSE-MsgGUID: n7FXlJYgTGGlQccDcgKKoQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,205,1728975600"; 
+   d="scan'208";a="124336982"
+Received: from newjersey.igk.intel.com ([10.102.20.203])
+  by orviesa002.jf.intel.com with ESMTP; 03 Dec 2024 09:40:46 -0800
+From: Alexander Lobakin <aleksander.lobakin@intel.com>
+To: Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Andrii Nakryiko <andrii@kernel.org>
+Cc: Alexander Lobakin <aleksander.lobakin@intel.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	=?UTF-8?q?Toke=20H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>,
+	Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Magnus Karlsson <magnus.karlsson@intel.com>,
+	nex.sw.ncis.osdt.itp.upstreaming@intel.com,
+	bpf@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net-next v6 00/10] xdp: a fistful of generic changes pt. I
+Date: Tue,  3 Dec 2024 18:37:23 +0100
+Message-ID: <20241203173733.3181246-1-aleksander.lobakin@intel.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241203172129.778123-1-tommaso.merciai.xr@bp.renesas.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, Dec 03, 2024 at 06:21:29PM +0100, tomm.merciai@gmail.com wrote:
-> From: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-> 
-> Introduce it6263_is_input_bus_fmt_valid() and refactor the
-> it6263_bridge_atomic_get_input_bus_fmts() function to support VESA
-> format by selecting the LVDS input format based on the LVDS data mapping
-> and thereby support both JEIDA and VESA input formats.
+XDP for idpf is currently 6 chapters:
+* convert Rx to libeth;
+* convert Tx and stats to libeth;
+* generic XDP and XSk code changes (you are here);
+* generic XDP and XSk code additions;
+* actual XDP for idpf via new libeth_xdp;
+* XSk for idpf (via ^).
 
-For the patch itself,
+Part III does the following:
+* improve &xdp_buff_xsk cacheline placement;
+* does some cleanups with marking read-only bpf_prog and xdp_buff
+  arguments const for some generic functions;
+* allows attaching already registered XDP memory model to RxQ info;
+* makes system percpu page_pools valid XDP memory models;
+* starts using netmems in the XDP core code (1 function);
+* allows mixing pages from several page_pools within one XDP frame;
+* optimizes &xdp_frame layout and removes no-more-used field.
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Bullets 4-6 are the most important ones. All of them are prereqs to
+libeth_xdp.
 
-A more generic question: is the bridge limited to 4 lanes or does it
-support 3-lane or 5-lane configurations?
+Alexander Lobakin (9):
+  xsk: align &xdp_buff_xsk harder
+  bpf, xdp: constify some bpf_prog * function arguments
+  xdp, xsk: constify read-only arguments of some static inline helpers
+  xdp: allow attaching already registered memory model to xdp_rxq_info
+  xsk: allow attaching XSk pool via xdp_rxq_info_reg_mem_model()
+  netmem: add a couple of page helper wrappers
+  page_pool: make page_pool_put_page_bulk() handle array of netmems
+  page_pool: allow mixing PPs within one bulk
+  xdp: get rid of xdp_frame::mem.id
 
-> 
-> Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-> ---
->  drivers/gpu/drm/bridge/ite-it6263.c | 25 ++++++++++++++++++++++---
->  1 file changed, 22 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/bridge/ite-it6263.c b/drivers/gpu/drm/bridge/ite-it6263.c
-> index cbabd4e20d3e..83d1db29157a 100644
-> --- a/drivers/gpu/drm/bridge/ite-it6263.c
-> +++ b/drivers/gpu/drm/bridge/ite-it6263.c
-> @@ -48,6 +48,7 @@
->  #define  REG_COL_DEP			GENMASK(1, 0)
->  #define  BIT8				FIELD_PREP(REG_COL_DEP, 1)
->  #define  OUT_MAP			BIT(4)
-> +#define  VESA				BIT(4)
->  #define  JEIDA				0
->  #define  REG_DESSC_ENB			BIT(6)
->  #define  DMODE				BIT(7)
-> @@ -428,12 +429,30 @@ static inline void it6263_lvds_reset(struct it6263 *it)
->  	fsleep(10000);
->  }
->  
-> +static bool it6263_is_input_bus_fmt_valid(u32 input_fmt)
-> +{
-> +	switch (input_fmt) {
-> +	case MEDIA_BUS_FMT_RGB888_1X7X4_JEIDA:
-> +	case MEDIA_BUS_FMT_RGB888_1X7X4_SPWG:
-> +		return true;
-> +	}
-> +	return false;
-> +}
-> +
+Toke Høiland-Jørgensen (1):
+  xdp: register system page pool as an XDP memory model
 
+ include/net/page_pool/types.h                 |   6 +-
+ include/linux/bpf.h                           |  12 +-
+ include/linux/filter.h                        |   9 +-
+ include/linux/netdevice.h                     |   7 +-
+ include/linux/skbuff.h                        |   2 +-
+ include/net/netmem.h                          |  78 +++++++++++-
+ include/net/xdp.h                             |  93 ++++++++++----
+ include/net/xdp_sock_drv.h                    |  11 +-
+ include/net/xsk_buff_pool.h                   |   4 +-
+ .../net/ethernet/freescale/dpaa/dpaa_eth.c    |   2 +-
+ drivers/net/veth.c                            |   4 +-
+ kernel/bpf/cpumap.c                           |   2 +-
+ kernel/bpf/devmap.c                           |   8 +-
+ net/bpf/test_run.c                            |   4 +-
+ net/core/dev.c                                |  20 ++-
+ net/core/filter.c                             |  41 +++---
+ net/core/page_pool.c                          |  79 ++++++++----
+ net/core/skbuff.c                             |   2 +-
+ net/core/xdp.c                                | 118 +++++++++++-------
+ 19 files changed, 348 insertions(+), 154 deletions(-)
+
+---
+From v5[0]:
+* split the overgrowth series into 2 parts: changes and additions
+  (Jakub);
+* 008: future-proof: make the touched function MP-agnostic to avoid
+  double work in future;
+* send to better fitting now bpf instead of netdev.
+
+From v4[1]:
+* 12: pick RB from Toke;
+* 19: drop redundant ';'s (Jakub);
+* 19: fix a couple context imbalance warnings by moving __acquires() /
+  __releases() to the proper place (smatch);
+* no functional changes.
+
+From v3[2]:
+* rebase on top of the latest net-next to solve conflict (Jakub);
+* 09: use iterative approach instead of recursive to not blow the stack
+  (Toke);
+* 12: rephrase the commitmsg since the functionality changed, so that
+  it's not actual anymore (Toke);
+* align &xdp_buff_xsk a bit harder since its alignment degraded
+  recently;
+* pick RBs from Toke.
+
+From v2[3]:
+* cover: rename the series;
+* collect RBs and Acks from Maciej;
+* 007: reword the commitmsg;
+* 011: fix typos in the commitmsg (M);
+* 012: 'ts' -> 'tsize' (M; not 'truesize' to fit into 80 cols =\);
+* 016: fix the intro sentence (M);
+* no functional changes.
+
+From v1[4]:
+* rebase on top of the latest net-next;
+* no other changes.
+
+[0] https://lore.kernel.org/netdev/20241113152442.4000468-1-aleksander.lobakin@intel.com
+[1] https://lore.kernel.org/netdev/20241107161026.2903044-1-aleksander.lobakin@intel.com
+[2] https://lore.kernel.org/netdev/20241030165201.442301-1-aleksander.lobakin@intel.com
+[3] https://lore.kernel.org/netdev/20241015145350.4077765-1-aleksander.lobakin@intel.com
+[4] https://lore.kernel.org/netdev/20241009152756.3113697-1-aleksander.lobakin@intel.com
 -- 
-With best wishes
-Dmitry
+2.47.0
+
 
