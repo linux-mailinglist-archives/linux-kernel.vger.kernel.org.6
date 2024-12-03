@@ -1,73 +1,75 @@
-Return-Path: <linux-kernel+bounces-428741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C230B9E12C6
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 06:12:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 740A49E12C9
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 06:12:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9AD98B22FA7
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 05:12:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 347BC282754
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 05:12:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D70616FF4E;
-	Tue,  3 Dec 2024 05:12:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93642186287;
+	Tue,  3 Dec 2024 05:12:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OxGk9VNG"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i9JCfMqT"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98907817;
-	Tue,  3 Dec 2024 05:12:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85D5E175D48;
+	Tue,  3 Dec 2024 05:12:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733202728; cv=none; b=pR8efjoglNzPiV5pt4KfpOSdNbryPKx6UaQGiQ63TW8Uv7uYxD6L5yxPwXouVod/7qVTFt0TGc52nvWXzE27j9fSLdYf0dQ4nKtBWkpqTURrezNhlw0y9Sl/GMkhEMwc3/b22r/3b7KDdst4k5EY97J3457ESBMEVgU+NT/OB+4=
+	t=1733202730; cv=none; b=Zj0niV7GUqdX/6y1Vu5kVg2tcHoMpEbqrw14LWBI7YZJCpvHfjQxrSHbKCz9f3kT0JlHeDwWHq6PO76OKUTe6p+3XdRjupu5BHZ/TfsMpedrQh8BUU6Vg32jp2uvB+NJT6B0ICNEcgxp3xRAc1tFpr5s0YoYkQq00Et/jFrvnLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733202728; c=relaxed/simple;
-	bh=IMlmGBUwgtv1jPmaH3aQf2iXHx+4qQUPO8/WcIT0iPU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=n2AU7z4TerDk83UqY82Dq24bEzthBu6mrsnMBJj4abVk8/2eXIEGXjCY/Mh2Cw87ZCwFutUF3JsnIA5sl9g9J3eeH5FhRrWCkdImvLLqRnmPDfgKTQQ0P8O81J4a/oqxGnG6kt+G022UVeWzZATTdf25tL1QyzqdGNWNrz6ahBU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OxGk9VNG; arc=none smtp.client-ip=209.85.210.169
+	s=arc-20240116; t=1733202730; c=relaxed/simple;
+	bh=kBlnPxGq6ChsufaUKBSLw6uMgtG56pxCd36D5k6/w5I=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=u+8uFnp/n4CzLIl00/l+vXhgu6GLgilUt13lbdMI6QcGmnINOUH1pHe30BfNg6Vo+ol9GTXsJpxfAEx6WCBlPY0fsPITEgbtvllZVVvY7frA0HmF46HH+RMcZcPHrd+/ObmdjCc7Jb6GdbHYfDDeEuKxRyx/G4LxkIkKbjokdiA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i9JCfMqT; arc=none smtp.client-ip=209.85.210.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-724e14b90cfso5076293b3a.2;
-        Mon, 02 Dec 2024 21:12:06 -0800 (PST)
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-724f383c5bfso3886281b3a.1;
+        Mon, 02 Dec 2024 21:12:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733202726; x=1733807526; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=L8n4o1v2RJyro7eTP9OXPaLkCulfPUB3irYVBi0m5MY=;
-        b=OxGk9VNGbt7megh1oa3lfOsSRkD7OGkyjHmEsv0GI2xeo7WrSQo3F6MwGe3GsqX/af
-         oIHGibmZwb8kXG2wUtcw4viBNwxJKK6ZdBedlseLPZ36F6XT4hqYdUTYkHqUk5XhCRz7
-         QMCLepMlqNMD/MqABWPShhKgHqwmdONktB14DjDgSUgJrLbmrfYJGWXri6NNb13KwKLp
-         CQgNFiUaKzsf9EwNk19M8OFg5ml3GiObltIIwQmlkMkrXLDcu1aZwr9+Q+hSe7xivY0s
-         YUHXOVgWEKVLV0Q3h+5eTAGiq+k4JtDprdWbVjPxGIe0cHbA7AY5/sJfNc7wPVIUI3P8
-         Ju5Q==
+        d=gmail.com; s=20230601; t=1733202729; x=1733807529; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zbp/SL17C/U69/mM4spr+KWpbV3+Jo5FoO9b1T7Q5mk=;
+        b=i9JCfMqTi+skQPxvIZRGbC9Hxb6XjY4Lm9otgpV4pcE+Bc/Yj8CzgKKkZp6L4XIE7N
+         U+4tXWMQZPcg8YzMzS0AH+MEKr5PMiWbTRAYPPnXIkj+PyiAvg2sAzOGQP0QP1HQL5Xm
+         YGm4laGinh2izfFCv5jWZ9lUF75Z6jj4WyK800VPJQs3EryvqXhPGamo4MHvziMi1uQN
+         9I/Er20CjAM6mZIG/mfNt6zWPBndv6VbWP00RiSqR4PpI6YLgnnuzk6m36/CLVuWXeZC
+         IE3NI2Ti/6P/1hiBx+keCUePE+otdigRxrS70YXySLsxQ3PwjM4Fe8qctSnUG0m6W2Vr
+         9GnQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733202726; x=1733807526;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=L8n4o1v2RJyro7eTP9OXPaLkCulfPUB3irYVBi0m5MY=;
-        b=Y4ugoCEuLFVZ7M8pVeSUbGfsfOflQU1DPQdfNOVzXV4pn3Lh6Qb1v1CVEUEbT3Jwvg
-         ywa36c/N1LLlTOD/rYDiOCdHy/p++uG0TGLwWSKdei/kasKN5kEvv0VFwzlTBlbVBkBl
-         /x8n9DKPc6xL28fjC8dWwFmCchkFAeK+c18z5f18RxMpZ9ZdkNV2ugjRm29Y1uCZghJ6
-         75uk8o09VtDWwjMjS9PZUpeIRlGjXw3BYG9Gc5j9Pm/9QIoDH5wbpfnsXBHygkBGRZWB
-         0gKUrZOfSTuu7RnGvS/Rx1WHdLyOd5YJBj/e3x9AowJ6B4TuOzFfr6wkNTUQJsD5h25V
-         gE6A==
-X-Forwarded-Encrypted: i=1; AJvYcCX2BffzatM7qC3KbEhL07Tgmjdpt8TtfxdrvkQJqnJrUonbSQB36t4f0SJJIDBw4u2Ov7QdemAenSwD@vger.kernel.org, AJvYcCXhsWRxUKfzVkt/X9IwSg0ZqolKeDZbZbjKPvhdgS5WflZXblCHXB6Z7041PHcoZU+src/IvbZ37MP9u7zr@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywjx4waeEA2INguf6Ec362glfaNLfvPk2mdiWC0Qq0sYU7s4Yxj
-	B0MrDI0ZkAiaDiWe+TSZUO9/tPR/wYqoyI7+RlRJez7MlPaOr16i
-X-Gm-Gg: ASbGncux8nIhP9s1jtLPuG3LkZOHn+c2x9b77rmcFg7QWlvenlDyWgSJBcWo0FF3JZJ
-	hzvPbLjA6cLHT2RkGv42QyKj+1p4vjkcNpyh8G6Ps8nsTbzSri9m9wRiCu9LmGaWCJS1ExrWzEP
-	CvzfMqs7XlHzWh0U7iQbcbMo52gx/7qZqOjXFZRY0OaEhZtVQgOTcEBLCPf9RvKkdH9UkCZjK0J
-	Y4/2NwXtZ4mBlMAB+usZ/6sm6OtTr/fxa2BIr9e6PVhWQseTG0+wEd9gw5km4GGpg==
-X-Google-Smtp-Source: AGHT+IGnu83UebF01ikbueB6H+BqrayrW3tr1aPcP1nMIYcEm8aOI82S07uAdTSrZ6i9cAF+koyUfw==
-X-Received: by 2002:a05:6a00:2d2a:b0:71e:6c67:2ebf with SMTP id d2e1a72fcca58-7257fa67cf3mr1425111b3a.11.1733202725908;
-        Mon, 02 Dec 2024 21:12:05 -0800 (PST)
+        d=1e100.net; s=20230601; t=1733202729; x=1733807529;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zbp/SL17C/U69/mM4spr+KWpbV3+Jo5FoO9b1T7Q5mk=;
+        b=p7q2T6SuBJMvegz8Xq3lqvQrO4xYu93WJ4DMCa5LRmdCamwEssiHoVA0RsKPbo/M2M
+         /RCgazB5nr9g4AQDMdOhV7/3s+rjECZilOmc/6KH1KXRyraV65yeZYacvZw6Ok1pIOVW
+         HK6uBaA/bIVvnWbaVCpbpxQ7ZiInSDgeu4xfAKiBPLxgM2nQ//1xGlt+MGzyM1PqRL0Z
+         mLY8+FoCluit9oqIntAGXPkCgIItb2slAGGGlWG2tYHSJ2k5mXW+jzqoSkLRuxDuvZ2e
+         bIctMmQAtGOF+Xv3NBFnhM7A6Db+rJx/RpUrmaMd9tVNsJv7leh62AMIvYBr/y3A+ZPA
+         U5Vg==
+X-Forwarded-Encrypted: i=1; AJvYcCVSKb3PiDwaQKiNI6RvRxQOHHMf4IBOZ1S/3oi9NHX3zwpfrZruFZMC3Gtffy24Kvf01UqIeh+KqPgw@vger.kernel.org, AJvYcCXhqPgpFstaZdizDIxOmFdUyPIBs4gpf6VyiCPagcimtqm87jA3iGL4FqVavn3nxW8hQxi0AbLV229jztbA@vger.kernel.org
+X-Gm-Message-State: AOJu0YwlssEQeR2RBkvfDrK82EL42ebjMDWf5l7rvqbuEIF9N1QOUF+k
+	+LGyLZYf31seBddgQsP8ZnRJ1ymZCChlSU2d228ELbWff0cAljtw
+X-Gm-Gg: ASbGncuijt7myFugO5On7cWfLOZpjdgBQaNhNGFUahSHd3KLtiuhNmjAesIeHadHStO
+	Jr+etgv8gZemEOZ6ejfT1kRpL6qLONM+X4XPFGGYwfGt3SKSmcz1cZCnxmcG21wKoj41/tBgbXr
+	+B439ut57oOMbUpN+tJcJGrgt6ZKQgxkmBLfmn3q1Nspte2PlIOKeSeihVvQbmMyljfzk9dIOfH
+	3jQ1venY9BNYRo3i+ev9OpE+UMTTHSEhuIqE9CW8vEJuRrJ7+yvCikwHdzX3VKJHA==
+X-Google-Smtp-Source: AGHT+IHa2D6F1wVcNR9basJsPDGbsJTvLncGUr3XXRt4xi82659gCSs3b7qvxB6i6firh4TNGuWY5g==
+X-Received: by 2002:a05:6a00:1893:b0:71e:7294:bbc4 with SMTP id d2e1a72fcca58-7257fa753f8mr1643490b3a.13.1733202728883;
+        Mon, 02 Dec 2024 21:12:08 -0800 (PST)
 Received: from localhost.localdomain ([59.188.211.160])
-        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-72541848916sm9525047b3a.172.2024.12.02.21.12.03
+        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-72541848916sm9525047b3a.172.2024.12.02.21.12.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Dec 2024 21:12:05 -0800 (PST)
+        Mon, 02 Dec 2024 21:12:08 -0800 (PST)
 From: Nick Chan <towinchenmi@gmail.com>
 To: Hector Martin <marcan@marcan.st>,
 	Sven Peter <sven@svenpeter.dev>,
@@ -81,11 +83,14 @@ To: Hector Martin <marcan@marcan.st>,
 	linux-kernel@vger.kernel.org
 Cc: Aun-Ali Zaidi <admin@kodeit.net>,
 	Paul Pawlowski <paul@mrarm.io>,
-	Nick Chan <towinchenmi@gmail.com>
-Subject: [PATCH v2 0/3] Device Tree for Apple T2 (T8012) SoC devices
-Date: Tue,  3 Dec 2024 13:10:26 +0800
-Message-ID: <20241203051147.110980-1-towinchenmi@gmail.com>
+	Nick Chan <towinchenmi@gmail.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v2 1/3] dt-bindings: arm: apple: Add T2 devices
+Date: Tue,  3 Dec 2024 13:10:27 +0800
+Message-ID: <20241203051147.110980-2-towinchenmi@gmail.com>
 X-Mailer: git-send-email 2.47.1
+In-Reply-To: <20241203051147.110980-1-towinchenmi@gmail.com>
+References: <20241203051147.110980-1-towinchenmi@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,75 +99,93 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This series adds device trees for the Apple T2 Security Chip found on
-some Intel Macs released after 2017. This SoC is based on Apple A10
-(T8010) SoC and, for many hardware blocks, can share the A10 compatibles.
+Add the following apple,t8012 based platforms:
 
-This series requires the PMGR power domains series for A7-A11[1] for
-the "apple,t8010-pmgr-pwrstate" and "apple,t8010-pmgr" compaibles,
-but otherwise can be applied cleanly.
+- Apple T2 MacBookPro15,2 (j132)
+- Apple T2 iMacPro1,1 (j137)
+- Apple T2 MacBookAir8,2 (j140a)
+- Apple T2 MacBookAir8,1 (j140k)
+- Apple T2 MacBookPro16,1 (j152f)
+- Apple T2 MacPro7,1 (j160)
+- Apple T2 Macmini8,1 (j174)
+- Apple T2 iMac20,1 (j185)
+- Apple T2 iMac20,2 (j185f)
+- Apple T2 MacBookPro15,4 (j213)
+- Apple T2 MacBookPro16,2 (j214k)
+- Apple T2 MacBookPro16,4 (j215)
+- Apple T2 MacBookPro16,3 (j223)
+- Apple T2 MacBookAir9,1 (j230k)
+- Apple T2 MacBookPro15,1 (j680)
+- Apple T2 MacBookPro15,3 (j780)
 
-Changes since v1:
-- Use imperative mood in commit messages
+These devices have no offical names, the naming scheme is from
+libirecovery.
 
-Link to v1: https://lore.kernel.org/asahi/20241201161942.36027-1-towinchenmi@gmail.com/T
-
-[1]: https://lore.kernel.org/asahi/20241201155820.29259-1-towinchenmi@gmail.com/T
-
-Nick Chan
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Signed-off-by: Nick Chan <towinchenmi@gmail.com>
 ---
+ .../devicetree/bindings/arm/apple.yaml        | 41 +++++++++++++++++++
+ 1 file changed, 41 insertions(+)
 
-Nick Chan (3):
-  dt-bindings: arm: apple: Add T2 devices
-  arm64: dts: apple: Add T2 devices
-  arm64: dts: apple: t8012: Add PMGR nodes
-
- .../devicetree/bindings/arm/apple.yaml        |  41 +
- arch/arm64/boot/dts/apple/Makefile            |  16 +
- arch/arm64/boot/dts/apple/t8012-j132.dts      |  14 +
- arch/arm64/boot/dts/apple/t8012-j137.dts      |  14 +
- arch/arm64/boot/dts/apple/t8012-j140a.dts     |  14 +
- arch/arm64/boot/dts/apple/t8012-j140k.dts     |  14 +
- arch/arm64/boot/dts/apple/t8012-j152f.dts     |  15 +
- arch/arm64/boot/dts/apple/t8012-j160.dts      |  14 +
- arch/arm64/boot/dts/apple/t8012-j174.dts      |  14 +
- arch/arm64/boot/dts/apple/t8012-j185.dts      |  14 +
- arch/arm64/boot/dts/apple/t8012-j185f.dts     |  14 +
- arch/arm64/boot/dts/apple/t8012-j213.dts      |  15 +
- arch/arm64/boot/dts/apple/t8012-j214k.dts     |  15 +
- arch/arm64/boot/dts/apple/t8012-j215.dts      |  15 +
- arch/arm64/boot/dts/apple/t8012-j223.dts      |  15 +
- arch/arm64/boot/dts/apple/t8012-j230k.dts     |  14 +
- arch/arm64/boot/dts/apple/t8012-j680.dts      |  15 +
- arch/arm64/boot/dts/apple/t8012-j780.dts      |  15 +
- arch/arm64/boot/dts/apple/t8012-jxxx.dtsi     |  44 +
- arch/arm64/boot/dts/apple/t8012-pmgr.dtsi     | 837 ++++++++++++++++++
- arch/arm64/boot/dts/apple/t8012-touchbar.dtsi |  20 +
- arch/arm64/boot/dts/apple/t8012.dtsi          | 198 +++++
- 22 files changed, 1387 insertions(+)
- create mode 100644 arch/arm64/boot/dts/apple/t8012-j132.dts
- create mode 100644 arch/arm64/boot/dts/apple/t8012-j137.dts
- create mode 100644 arch/arm64/boot/dts/apple/t8012-j140a.dts
- create mode 100644 arch/arm64/boot/dts/apple/t8012-j140k.dts
- create mode 100644 arch/arm64/boot/dts/apple/t8012-j152f.dts
- create mode 100644 arch/arm64/boot/dts/apple/t8012-j160.dts
- create mode 100644 arch/arm64/boot/dts/apple/t8012-j174.dts
- create mode 100644 arch/arm64/boot/dts/apple/t8012-j185.dts
- create mode 100644 arch/arm64/boot/dts/apple/t8012-j185f.dts
- create mode 100644 arch/arm64/boot/dts/apple/t8012-j213.dts
- create mode 100644 arch/arm64/boot/dts/apple/t8012-j214k.dts
- create mode 100644 arch/arm64/boot/dts/apple/t8012-j215.dts
- create mode 100644 arch/arm64/boot/dts/apple/t8012-j223.dts
- create mode 100644 arch/arm64/boot/dts/apple/t8012-j230k.dts
- create mode 100644 arch/arm64/boot/dts/apple/t8012-j680.dts
- create mode 100644 arch/arm64/boot/dts/apple/t8012-j780.dts
- create mode 100644 arch/arm64/boot/dts/apple/t8012-jxxx.dtsi
- create mode 100644 arch/arm64/boot/dts/apple/t8012-pmgr.dtsi
- create mode 100644 arch/arm64/boot/dts/apple/t8012-touchbar.dtsi
- create mode 100644 arch/arm64/boot/dts/apple/t8012.dtsi
-
-
-base-commit: bcdb59aa6d1f196ec853235957aba5852d6697cc
+diff --git a/Documentation/devicetree/bindings/arm/apple.yaml b/Documentation/devicetree/bindings/arm/apple.yaml
+index dc9aab19ff11..da60e9de1cfb 100644
+--- a/Documentation/devicetree/bindings/arm/apple.yaml
++++ b/Documentation/devicetree/bindings/arm/apple.yaml
+@@ -57,6 +57,25 @@ description: |
+   - iPad Pro (2nd Generation) (10.5 Inch)
+   - iPad Pro (2nd Generation) (12.9 Inch)
+ 
++  Devices based on the "T2" SoC:
++
++  - Apple T2 MacBookPro15,2 (j132)
++  - Apple T2 iMacPro1,1 (j137)
++  - Apple T2 MacBookAir8,2 (j140a)
++  - Apple T2 MacBookAir8,1 (j140k)
++  - Apple T2 MacBookPro16,1 (j152f)
++  - Apple T2 MacPro7,1 (j160)
++  - Apple T2 Macmini8,1 (j174)
++  - Apple T2 iMac20,1 (j185)
++  - Apple T2 iMac20,2 (j185f)
++  - Apple T2 MacBookPro15,4 (j213)
++  - Apple T2 MacBookPro16,2 (j214k)
++  - Apple T2 MacBookPro16,4 (j215)
++  - Apple T2 MacBookPro16,3 (j223)
++  - Apple T2 MacBookAir9,1 (j230k)
++  - Apple T2 MacBookPro15,1 (j680)
++  - Apple T2 MacBookPro15,3 (j780)
++
+   Devices based on the "A11" SoC:
+ 
+   - iPhone 8
+@@ -211,6 +230,28 @@ properties:
+           - const: apple,t8011
+           - const: apple,arm-platform
+ 
++      - description: Apple T2 SoC based platforms
++        items:
++          - enum:
++              - apple,j132  # Apple T2 MacBookPro15,2 (j132)
++              - apple,j137  # Apple T2 iMacPro1,1 (j137)
++              - apple,j140a # Apple T2 MacBookAir8,2 (j140a)
++              - apple,j140k # Apple T2 MacBookAir8,1 (j140k)
++              - apple,j152f # Apple T2 MacBookPro16,1 (j152f)
++              - apple,j160  # Apple T2 MacPro7,1 (j160)
++              - apple,j174  # Apple T2 Macmini8,1 (j174)
++              - apple,j185  # Apple T2 iMac20,1 (j185)
++              - apple,j185f # Apple T2 iMac20,2 (j185f)
++              - apple,j213  # Apple T2 MacBookPro15,4 (j213)
++              - apple,j214k # Apple T2 MacBookPro16,2 (j214k)
++              - apple,j215  # Apple T2 MacBookPro16,4 (j215)
++              - apple,j223  # Apple T2 MacBookPro16,3 (j223)
++              - apple,j230k # Apple T2 MacBookAir9,1 (j230k)
++              - apple,j680  # Apple T2 MacBookPro15,1 (j680)
++              - apple,j780  # Apple T2 MacBookPro15,3 (j780)
++          - const: apple,t8012
++          - const: apple,arm-platform
++
+       - description: Apple A11 SoC based platforms
+         items:
+           - enum:
 -- 
 2.47.1
 
