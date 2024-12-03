@@ -1,124 +1,153 @@
-Return-Path: <linux-kernel+bounces-429311-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E8A79E1A4E
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 12:05:12 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6819A9E1A51
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 12:06:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D9694160536
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 11:05:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 114E61668D3
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 11:06:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 081121E3793;
-	Tue,  3 Dec 2024 11:05:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9354F1E25E5;
+	Tue,  3 Dec 2024 11:06:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="W3qUl5Wt"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jvN4th6Q"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04B541E0E13;
-	Tue,  3 Dec 2024 11:05:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AA871E32D4
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 11:06:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733223904; cv=none; b=P78GUynB/RcsXq52JX58SlJ3SNlyzXxSj4kqr5jvYAgRD6p27PFjY3PILCx108oHKnvS+lx+oVhcEPml4HiHKMc58Lb0rMPzYhC5qnkDFJ5wfgE5QJMBUhdgr9oKDcYNsltJyuXlpU2TF21NeGWvH+fx1wyO6EI93VST71Ixkcs=
+	t=1733223978; cv=none; b=UuqKwmUXhcyp3niljOeAOfMgpbbUtkF+SUSZ9h4Wzoo+2aZY1zTGeqM3keDdudhWRNTZqJ1O2DmlTop5yHksk88lVVNlfPhTXXQNhWF/Q9lBXOVsfPuf6un+YpMdj8gTCSxQ9JJvlI09nICs4cf0eDUvWBAOeLTrCQosTr/M1gE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733223904; c=relaxed/simple;
-	bh=UXqhP6SUgW2/ozvu0lhett25qlygR77ER7pLs3VvEIM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=m4q62X7ESbXRojMMuwRWMxurS7buWaAJCktie2rjc0e5CD5WM3fOUmMVim/MYtPjroArl8hfakPQKu1NlzCw+4vq00OmRebpOPTVEQT9s9vB93VNFq3MWsgRyWaK+rKaG25WLUJ+rbwAfqufAB6bBc3zjBoAs6wAogzYqPPoYts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=W3qUl5Wt; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B38tmMU010851;
-	Tue, 3 Dec 2024 11:04:45 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	9KhuAO45BpGUJQh6ai96J1rGFDAPsljoRBrp3z4py8Q=; b=W3qUl5Wt9kYDTdvA
-	qciAg6ePv0EDGxkuOFckIdSLXkFi7fiGfo7Mbyg5HNdAzt24EK4eio0MFXECT4jM
-	KUDFNSZyRP4pQ76AKTplz/QpxpW6UMXpm6KsOufrRY+T+cie98C9t8OKW8wu3YG5
-	Fk+8QLaL4gq23vnWFR8naci+2no+q+WeragMDrLS6gvpOMyqLfoC4tBZto9RjFUw
-	7mJO10mr9sfmtzvPESwGDAsUuRthUykQrismf1ZisZWbIr80s0ZSm7rBt/rQsdz5
-	4qflIW+MZvCaykTCtkHODYU371sEO6lPiRC9bXtSD2dPdcocml1UhRat5XmxE7kN
-	zPsCIw==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4393mpcs38-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 03 Dec 2024 11:04:44 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B3B4iVv004429
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 3 Dec 2024 11:04:44 GMT
-Received: from [10.151.36.201] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 3 Dec 2024
- 03:04:39 -0800
-Message-ID: <11ed6654-5362-4529-88a0-801e770e164b@quicinc.com>
-Date: Tue, 3 Dec 2024 16:34:35 +0530
+	s=arc-20240116; t=1733223978; c=relaxed/simple;
+	bh=ljSYGUKoLDTXsKObxNS/4LJp3u+C/OrF1P+fya2ivGg=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=rnAXzhW6ph18jmJ7AfBIKnryNh67BEC7UqxYOvNBDW2QEm5nIh2wJ0TkSY93Zpn2h2iHfZdmH5j8qBLFdNiVytvIPC7R1gImvMtvdy+nL3pz/2oerm8opSQLKs4GqTGZEdx83ZmKMIc92TNSak4wHyG90x4fD1aaXeqlyFEe0BQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jvN4th6Q; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4349f160d62so45893065e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 03:06:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733223975; x=1733828775; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=5y5ad0avUs5r379umO5xs4htnxZ4LiFXVwnGLxowvNw=;
+        b=jvN4th6QFgWV6BYuy2oid2F7cnhN8eKcy1cIghtquMsYKKbt5H3jZoJeVTFiQZ5U4g
+         SYtT4I8kOXfwFs2iw6y7WLsLpQsFgyxadnf7mopFboXIDnO0gdhvyT/77NjpwIJpABxF
+         0dy8Q5wHWLyDp+Xiez1Vhnjkn0m3tift4Z2NXpHeQ/COacbdSj3+UsEuDwo/tq+meIOK
+         Exwns69Kgc6Bk4XcMzfpdl4oE4L65JXn5CykOHpdty/3V4fMstUr1ftBC6YIShzbGzcF
+         N1KPGsovVVOI3j/zYBfErODY6ebIN/6BlbEFUplLQIdla7amCSLsRPrAvdt2MkvhHaAE
+         orPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733223975; x=1733828775;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=5y5ad0avUs5r379umO5xs4htnxZ4LiFXVwnGLxowvNw=;
+        b=ol5WR6IVefBLb03+D1lqbG51MaHnU1pE94JH+Is85uqCSbITRtPwl4gq+gPinibTHv
+         a+TFSW99LoWvARleIq7ELkUgFhNX07c4xL96oyiyYlK/8y5PACby9lA6XTQlXUbSToT5
+         mKIXVt+R5qNCz+LgRFTI2i1dEJkpKff5/TK1jKDi0nHp0MF9hz+ycJVqqPx702GcNdL2
+         3axLzwqdtTdItMAOtUfvlW17HG4otgMFTO42oQcgCR51pIZYY7uBcUgAKRkvB5jpu/5c
+         tN1IXuMNXjmc5f+Y7CWSISZZepOuvZ8+9jgP2NhZPVRSxoFGRdeOUnH9SJ4Uh16i/hB+
+         LlkA==
+X-Forwarded-Encrypted: i=1; AJvYcCUOVGnWCQ92W7cWmn9klNzBlgHSz7S0rTOqVQKLCadNi0jjRUyMiNyaURNCONW4AuCPxCniDq8WVdh27IE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwvLkdtJfKYum+dZtF5HCsr9mA1gD4DY9+jo6inXbpAECdNS0Gw
+	lKE97uojtpxysyrXeGDEwOW8LmQmPGdlnY6yj5uYvkplJceDvI3YlthlsyGDNEQ=
+X-Gm-Gg: ASbGnctPfRkpBSvorXzFjHERxBCwNG+qsJ7K1naH9XQCoBYiQl4q6ltKQsmEdqPIUmI
+	aq7GhnfV65GZ3EpJC4aIAywZKMslOlDL8+MBxvXIIS2RIRxT9rmIN+gLAtmPfGPiWp4lVWmgGC8
+	d2pwaxIapMCyOrb7UFAoOvfaVynyT+IYZqKzpn7Y89y+OY3yT9l37kQp4Qs2YOCGxL7TwU07Z6d
+	2xiK9gDzGdkdktbgwzhx0BRWDYH+YJm2PDXfDDQ6LPgsgBJ26yghWA=
+X-Google-Smtp-Source: AGHT+IGLmTRJVKICc1kAtHcJQX0sTL1Ubtwsn5MKrksTZEqwhDb+BEw5tNQRlwNX5ov75IPA38SNyg==
+X-Received: by 2002:a05:600c:3b8c:b0:434:a4bc:535b with SMTP id 5b1f17b1804b1-434d09bf66dmr16906005e9.11.1733223975578;
+        Tue, 03 Dec 2024 03:06:15 -0800 (PST)
+Received: from [10.1.1.109] ([80.111.64.44])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434b0d9bc5asm183847755e9.2.2024.12.03.03.06.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Dec 2024 03:06:15 -0800 (PST)
+Message-ID: <d1bade77b5281c1de6b2ddcb4dbbd033e455a116.camel@linaro.org>
+Subject: Re: [PATCH 1/4] power: supply: add support for max77759 fuel gauge
+From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+To: Thomas Antoine <t.antoine@uclouvain.be>, Sebastian Reichel
+ <sre@kernel.org>,  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,  Dimitri Fedrau
+ <dima.fedrau@gmail.com>, Catalin Marinas <catalin.marinas@arm.com>, Will
+ Deacon <will@kernel.org>,  Peter Griffin <peter.griffin@linaro.org>, Alim
+ Akhtar <alim.akhtar@samsung.com>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org
+Date: Tue, 03 Dec 2024 11:06:14 +0000
+In-Reply-To: <61a54367-2406-4106-bf8b-9fda4f2d11a6@uclouvain.be>
+References: <20241202-b4-gs101_max77759_fg-v1-0-98d2fa7bfe30@uclouvain.be>
+	 <20241202-b4-gs101_max77759_fg-v1-1-98d2fa7bfe30@uclouvain.be>
+	 <c377f3302c6c282ad826211c859e2b65bb1222cb.camel@linaro.org>
+	 <8f585460a1bc52f78a6d0867aed87398bde30152.camel@linaro.org>
+	 <18629c9edd295a524a1c9764f013a0e97e0b275f.camel@linaro.org>
+	 <61a54367-2406-4106-bf8b-9fda4f2d11a6@uclouvain.be>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.1-4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v14 0/8] Add QPIC SPI NAND driver
-To: Miquel Raynal <miquel.raynal@bootlin.com>
-CC: <broonie@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <andersson@kernel.org>,
-        <konradybcio@kernel.org>, <richard@nod.at>, <vigneshr@ti.com>,
-        <manivannan.sadhasivam@linaro.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-spi@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-mtd@lists.infradead.org>,
-        <quic_srichara@quicinc.com>, <quic_varada@quicinc.com>
-References: <20241120091507.1404368-1-quic_mdalam@quicinc.com>
- <87mshe58gq.fsf@bootlin.com>
-Content-Language: en-US
-From: Md Sadre Alam <quic_mdalam@quicinc.com>
-In-Reply-To: <87mshe58gq.fsf@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: HMFqzdjarEFsMZ_sJpFyTTzJmtl81YBi
-X-Proofpoint-GUID: HMFqzdjarEFsMZ_sJpFyTTzJmtl81YBi
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=999
- impostorscore=0 mlxscore=0 malwarescore=0 suspectscore=0
- lowpriorityscore=0 adultscore=0 spamscore=0 priorityscore=1501
- clxscore=1015 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412030094
 
+On Tue, 2024-12-03 at 11:30 +0100, Thomas Antoine wrote:
+>=20
+> Should I explicitly deny their use in the code for the max77759 or is it
+> just for information?
 
+I'd probably do something like this, which will indeed deny their reading
+and/or writing, both via debugfs, and also normal driver access via
+readmap_read()/write() etc:
 
-On 12/2/2024 10:27 PM, Miquel Raynal wrote:
-> Hi Marc,
-> 
-> On 20/11/2024 at 14:44:58 +0530, Md Sadre Alam <quic_mdalam@quicinc.com> wrote:
-> 
->> v14:
->>   * Updated commit message
->>   * Fix spelling mistake
->>   * Remove "inline" from multiple APIs from qcom_nandc.c file
->>   * Move '|' in qcom_param_page_type_exec() APIs at the end of line
-> 
-> I guess it is now time to move on, I can apply patches 2-5 and share an
-> immutable tag. However, due to the frequent inconsistencies observed
-> during the lifetime of this patchset, we might be slightly more
-> conservative than usual and split the patches over two kernel
-> releases. I fear there might be annoying fixes on the mtd side needed
-> because of some side effects. Without these, the spi tree might have
-> broken qcom support for several weeks. What do you think?
-Sorry for the delayed response. I'm fine with merging patches 2 to 5. I 
-tested them on today's linux-next, and the driver performed as expected.
-> 
-> Cheers,
-> Miquèl
+static const struct regmap_range max77759_registers[] =3D {
+	regmap_reg_range(0x00, 0x4f),
+	regmap_reg_range(0xb0, 0xbf),
+	regmap_reg_range(0xd0, 0xd0),
+	regmap_reg_range(0xdc, 0xdf),
+	regmap_reg_range(0xfb, 0xfb),
+	regmap_reg_range(0xff, 0xff),
+};
+
+static const struct regmap_range max77759_ro_registers[] =3D {
+	regmap_reg_range(0x3d, 0x3d),
+	regmap_reg_range(0xfb, 0xfb),
+	regmap_reg_range(0xff, 0xff),
+};
+
+static const struct regmap_access_table max77759_write_table =3D {
+	.yes_ranges =3D max77759_registers,
+	.n_yes_ranges =3D ARRAY_SIZE(max77759_registers),
+	.no_ranges =3D max77759_ro_registers,
+	.n_no_ranges =3D ARRAY_SIZE(max77759_ro_registers),
+};
+
+static const struct regmap_access_table max77759_rd_table =3D {
+	.yes_ranges =3D max77759_registers,
+	.n_yes_ranges =3D ARRAY_SIZE(max77759_registers),
+};
+
+static const struct regmap_config max77759_regmap_config =3D {
+	.reg_bits =3D 8,
+	.val_bits =3D 8,
+	.max_register =3D 0xff,
+	.wr_table =3D &max77759_write_table,
+	.rd_table =3D &max77759_rd_table,
+	.cache_type =3D REGCACHE_NONE,
+};
+
+And maybe without cache for now. Most are probably not cacheable anyway.
+
+Cheers,
+Andre'
 
 
