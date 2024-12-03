@@ -1,149 +1,73 @@
-Return-Path: <linux-kernel+bounces-430182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B1AC9E2D60
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 21:41:30 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B64719E2D64
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 21:41:47 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A7CF516222D
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 20:41:40 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1E3920A5E8;
+	Tue,  3 Dec 2024 20:40:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jZbD5cB+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AC14283EE1
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 20:41:28 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84AC6209F4C;
-	Tue,  3 Dec 2024 20:40:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="p80H0VL/"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F5D2208964
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 20:40:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F38F22040BB;
+	Tue,  3 Dec 2024 20:40:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733258427; cv=none; b=FS0h6mZyXKMkyGB0ZmHL1IdsUVwtq8M4QbDHCZiX7i9Cn5QSmwbv+WVdBW2vjuyt6ylgW8YNgogdDwAkns4cD+g0sRKdwJ0u+JjWJkKLCM33K3K3+TJBiBKwO5fCVTsso+RM1NEqWwh+i8Sl7/N1SinIPM9fzVwP5dHnZE6gZAY=
+	t=1733258435; cv=none; b=LWX6ZKLwnT3uK2CTTW0PEyJqnaZxe5O/JdG/CGdBL9/+oUehpvxyEoeY7BPb89n/TG4Pmwc4+/ywvo4LmhiNSnEtm5CHJXa96k/LzUXWpeaEp1yxIH6EVYvv1aGIfMGHdJezsTWSnRT5lpNJBIbw3APMEvvd9GRMRA8OdzkTPeY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733258427; c=relaxed/simple;
-	bh=rSeMRzYyG+qr3owWq1fdPRuk1G0UR6sd75t7TH+Te8Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u7k/X7x6rKXP1+37MalW/lDZapcSlyA2HETs5fA7a5es/VewQ2DcJGJG9fNF/QX53umOnUBzmlP7J1jKCpYwLEl0vHzwgTlyzDVzfRiniHlIs33EEWtQgt+Kgt2lk8jHjR1/gpSaHzk/nD6dYC0xwhftNuUaUjZIaBztSiY41vY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=p80H0VL/; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-7251d20e7f2so5997510b3a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 12:40:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1733258424; x=1733863224; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=gh+WkW3kMcY8GItbOWmb7Albb9UCyz9TXbZGgcVLwPQ=;
-        b=p80H0VL/ZHEQCKRlYsIwGZ8v+qDOwaC+6sz2fuVUzIaoWRIs9w2VABkmVIPFVgQyLc
-         9k3oaAZCyz5AcaQcTio/j1HyViDbfjfnEIQPArYkJZlQBT5GB6wiNLFUfLY+0Qzxk88E
-         JVyqjFuKELVcfeF6jOXlAnuwf+fQOMoEIV1vOWDDKCVneLusHRIwlGZbq72/lO0t6fQs
-         WoHxD2rJez0/Of+NAWwJSExKazn8Ii9OFpdaX17pVNv07V5Wvs4I/C2UVMNgCJQuPWto
-         VuMWhhxfosATMxRZpQNYaVO8o6irXSeWjgcPYSOMQvJEpKQfaYitdth2pvSu+iO3FbVG
-         zVjQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733258424; x=1733863224;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gh+WkW3kMcY8GItbOWmb7Albb9UCyz9TXbZGgcVLwPQ=;
-        b=R9nr3yXGZdbU4KguOKVj7bET098tk2pnJJ4LD5DrfedFKB4+ZNhTFcHDStCYf6r8Qx
-         6I9zFI4aCzLNkKfJsR4HXjVQwL+IViSCr7+PNCJE3yc7H1izosjBvk3TJIKW/naiN4pf
-         MnB79vB7qgNfHyM11x2m2dEtINrS80xzv56ThBErULuEoZ5eFbCH8+CIJhFKSAeZp9hp
-         C8MKRzBnB1ac5xK4gPOSN9F1PCyxFRbWtF+9U69HB0ns5nKR8qhhPNoJCCYvL22iV5xx
-         gGQX+f5Qe8CApQbBTCxs2Wx7zRvqooUfRwyW8AsjOhbeCCiv81KQkyie+ByooXXlgTxR
-         Nd8g==
-X-Forwarded-Encrypted: i=1; AJvYcCUM8Z1tl1nf/TB0rf0qBlb+p/sNkkgceiFzPFp8Ja5rVlEo+n8mBwNcv42xGuXC66rCCI9oae2OPBLj40I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxX5qEcx10DfAi/lA1ZrS/oJyTrBVOpyH4+XiBJ5VTKDYXcnLkp
-	/JhEbz0+hIHObPBjY+cLj1JuP7TMeRZcfj/hqSETLvV0Q0VzGFdaKclE8WUneYU=
-X-Gm-Gg: ASbGnctPpR8T40GPbJGPIFXTiJ309HUf/452RlkqZjg7z+y6oUqSAC/cFLqUgfZmrRQ
-	aaL2gxHGQ3pZ+LHMvVe0TUuzfXNBL+EeUKMfU0Uts+6LZpXUY3Wz/20kjDrlOUZZ8s4nwkTZuxh
-	dvrhBBBsA+TueL1QieXETb7tzI4Zc5P/vkL5lSj0iHQQBOie691YsB82Q9950m+ri+OJVYqM10q
-	8lEskE0Ci/trEMc4BIu3xO/HW529u94NT6aYEVUO0QVc0t2SEPAY2atxoE4uwb+Qfosk+eiYMqR
-	M1PNve4ZLv/zURC23kQNX+vGcA==
-X-Google-Smtp-Source: AGHT+IHu1DUrZWKsZf2sxYqF3mSf+fZSaDb0CZwptZ+kh51z1iAIA1GqYtP7epMmpdosj0IIbBaGhg==
-X-Received: by 2002:a05:6a00:3998:b0:71e:5e04:be9b with SMTP id d2e1a72fcca58-7257fa70dc6mr4903784b3a.12.1733258424461;
-        Tue, 03 Dec 2024 12:40:24 -0800 (PST)
-Received: from dread.disaster.area (pa49-180-121-96.pa.nsw.optusnet.com.au. [49.180.121.96])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-725417614f5sm10922852b3a.7.2024.12.03.12.40.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Dec 2024 12:40:23 -0800 (PST)
-Received: from dave by dread.disaster.area with local (Exim 4.98)
-	(envelope-from <david@fromorbit.com>)
-	id 1tIZgy-00000006GzU-1Z32;
-	Wed, 04 Dec 2024 07:40:20 +1100
-Date: Wed, 4 Dec 2024 07:40:20 +1100
-From: Dave Chinner <david@fromorbit.com>
-To: Jinliang Zheng <alexjlzheng@gmail.com>
-Cc: cem@kernel.org, djwong@kernel.org, hch@infradead.org,
-	dchinner@redhat.com, chandanbabu@kernel.org,
-	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Jinliang Zheng <alexjlzheng@tencent.com>
-Subject: Re: [RESEND PATCH v2] xfs: fix the entry condition of exact EOF
- block allocation optimization
-Message-ID: <Z09stGvgxKV91XfX@dread.disaster.area>
-References: <20241130111132.1359138-1-alexjlzheng@tencent.com>
+	s=arc-20240116; t=1733258435; c=relaxed/simple;
+	bh=4UjsiC0KsWowBXHcrV7nZu5jRThZpr9xrSV3uf9AHMY=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=MPbCBBiEmspyPDOc5V7NIvqoW+cJze/A1Kpffr1sXJ7A92OUsI8mX7gDaMgTGpuvZOtHTAcYVcrRO5pVXZr+C/d/f+f5/DnbcJfYhyc2XjWnOjLZKpgL25sZ8dM4LkGFfId3/d2Nf7wzDo5iVx/UMCGJqwBMaGE4gVv2J+YTjVQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jZbD5cB+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58FBFC4CECF;
+	Tue,  3 Dec 2024 20:40:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733258434;
+	bh=4UjsiC0KsWowBXHcrV7nZu5jRThZpr9xrSV3uf9AHMY=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=jZbD5cB+8cM095ogWta+4NF5rrGHNyBhea4lomQM43bAe6yABlDfcBYrnNi1biFp/
+	 YU01SFTTaCuEf7yRX102QK1LMjnUlK4W7XdvR3m1DFL2b+mltLTCveVTd4h+9EWX74
+	 uADzl9CJNHLdocs3bt/4VEogA6aLuG/H1+zJiUsnhHp3jM3iOfpRdpYSx/clEjUKt4
+	 0WLEhyZl72QMs5JJFv1QEIq6FzQz463EpnLWsjXp2t8d3vq80LTnImUVlJQ6ET8boQ
+	 e83xR84FZ547Wz2dmicOwaSjwrfa50SdptnQHe/GWx28Z5Wm70sderqhxnwSowWALh
+	 C+YGurMCYJ2TA==
+Message-ID: <0c17fbef1e4dd692e2459255af0b4ace.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241130111132.1359138-1-alexjlzheng@tencent.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <CAPY8ntD7tf6+PXKdWe8_KjCiPoemR0RQDiaHHndtjutOLGbR1w@mail.gmail.com>
+References: <20241023-drm-vc4-2712-support-v1-0-1cc2d5594907@raspberrypi.com> <CAPY8ntBM=34pTiQ=t-CjtYEE5Ax6D=EtiY-sLT1keUkUMXuLeA@mail.gmail.com> <20241122-orthodox-mantis-of-reading-2dcdcf@houat> <13cfb66b-f904-4720-8829-a6d9db85aaa5@broadcom.com> <CAPY8ntD7tf6+PXKdWe8_KjCiPoemR0RQDiaHHndtjutOLGbR1w@mail.gmail.com>
+Subject: Re: [PATCH 00/37] drm/vc4: Add support for BCM2712 / Pi5 display hardware
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: Maxime Ripard <mripard@kernel.org>, =?utf-8?q?Ma=C3=ADra?= Canal <mcanal@igalia.com>, Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, Michael Turquette <mturquette@baylibre.com>, Javier Martinez Canillas <javierm@redhat.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Stefan Wahren <wahrenst@gmx.net>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, Dom Cobley <popcornmix@gmail.com>
+To: Dave Stevenson <dave.stevenson@raspberrypi.com>, Florian Fainelli <florian.fainelli@broadcom.com>
+Date: Tue, 03 Dec 2024 12:40:32 -0800
+User-Agent: alot/0.12.dev1+gaa8c22fdeedb
 
-On Sat, Nov 30, 2024 at 07:11:32PM +0800, Jinliang Zheng wrote:
-> When we call create(), lseek() and write() sequentially, offset != 0
-> cannot be used as a judgment condition for whether the file already
-> has extents.
-> 
-> Furthermore, when xfs_bmap_adjacent() has not given a better blkno,
-> it is not necessary to use exact EOF block allocation.
-> 
-> Signed-off-by: Jinliang Zheng <alexjlzheng@tencent.com>
-> ---
-> Changelog:
-> - V2: Fix the entry condition
-> - V1: https://lore.kernel.org/linux-xfs/ZyFJm7xg7Msd6eVr@dread.disaster.area/T/#t
-> ---
->  fs/xfs/libxfs/xfs_bmap.c | 12 +++++++-----
->  1 file changed, 7 insertions(+), 5 deletions(-)
-> 
-> diff --git a/fs/xfs/libxfs/xfs_bmap.c b/fs/xfs/libxfs/xfs_bmap.c
-> index 36dd08d13293..c1e5372b6b2e 100644
-> --- a/fs/xfs/libxfs/xfs_bmap.c
-> +++ b/fs/xfs/libxfs/xfs_bmap.c
-> @@ -3531,12 +3531,14 @@ xfs_bmap_btalloc_at_eof(
->  	int			error;
->  
->  	/*
-> -	 * If there are already extents in the file, try an exact EOF block
-> -	 * allocation to extend the file as a contiguous extent. If that fails,
-> -	 * or it's the first allocation in a file, just try for a stripe aligned
-> -	 * allocation.
-> +	 * If there are already extents in the file, and xfs_bmap_adjacent() has
-> +	 * given a better blkno, try an exact EOF block allocation to extend the
-> +	 * file as a contiguous extent. If that fails, or it's the first
-> +	 * allocation in a file, just try for a stripe aligned allocation.
->  	 */
-> -	if (ap->offset) {
-> +	if (ap->prev.br_startoff != NULLFILEOFF &&
-> +	     !isnullstartblock(ap->prev.br_startblock) &&
-> +	     xfs_bmap_adjacent_valid(ap, ap->blkno, ap->prev.br_startblock)) {
+Quoting Dave Stevenson (2024-11-27 06:43:38)
+>=20
+> V2 includes fixing Maxime's comment on "[PATCH 31/37] clk: bcm: rpi:
+> Allow cpufreq driver to also adjust gpu clocks" that Stephen also
+> commented on.
+>=20
+> Stephen: Sorry, maintaining newbie, particularly for clocks. I see in
+> linux-clk patchwork they are marked as "Awaiting Upstream". What, if
+> anything, do I need to do on those?
 
-There's no need for calling xfs_bmap_adjacent_valid() here -
-we know that ap->blkno is valid because the
-bounds checking has already been done by xfs_bmap_adjacent().
-
-Actually, for another patch, the bounds checking in
-xfs_bmap_adjacent_valid() is incorrect. What happens if the last AG
-is a runt? i.e. it open codes xfs_verify_fsbno() and gets it wrong.
-
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+I wasn't expecting to take the patches. If you want me to do so please
+resend the clk patches and I'll apply them for the next merge window..
 
