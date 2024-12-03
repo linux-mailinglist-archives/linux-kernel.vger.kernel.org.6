@@ -1,252 +1,146 @@
-Return-Path: <linux-kernel+bounces-429678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429734-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCC249E225F
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:23:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 872949E2209
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:19:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3F29DB6422A
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 14:41:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47AFE283380
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 15:19:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 045AE1F6662;
-	Tue,  3 Dec 2024 14:41:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 564A01F7550;
+	Tue,  3 Dec 2024 15:19:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DNqdqGBl"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ZF8ka+GC"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EB911F471B;
-	Tue,  3 Dec 2024 14:41:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A33181F4707;
+	Tue,  3 Dec 2024 15:19:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733236863; cv=none; b=sOG5N2cD4Ee8ANpiOWM85PWMwt1i8yr7Xe4xQ7WQU/6KZzArqrwVPsh9YWaA4YKtUYdiL9dwfMkWmP0TPEUcfam6NK5l2MJf+b10qC7T6e8/5jJh73DDd1zpHgHWp6dt9z1aqh/5bdyNqm2+wEeuycJiQfNHl8BC5btI/0ckrFw=
+	t=1733239182; cv=none; b=SL5i3vJKY3hXRxygAbqeX5B6GwSUL4XgPO23RsYrfHt3boRncm6ENCFltilOy+EpKc75goO3vH7aYmJyZno69Q+KH2QEUQ5HUHcayLdtLMuizRylGLrXQZ+LyqYtzBuDSz5fInw3O6JIPs3XqQLL3BBFRQOkCrT+uG+uVXcUvEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733236863; c=relaxed/simple;
-	bh=ctU4KmvHpTQaD8qF7NkLw7BW76DUfHNWlBh/UL+aC+I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kONV2sYG+GSTh5k1/GNeCPuQQH6/EUN3kSwihx4HeAhV9fLrtF2Dqx/SJ0SoiRKXNp+v4SYgTb9e3D6luI5/NQ/VXemm3GrSncpdissYyuAXshEl8aGEeYxX1DH+rbMesoO9JOTnftUkCmfIBjxr/ypl4HPkuNoiDf4wMTv5LiE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DNqdqGBl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6619C4CED6;
-	Tue,  3 Dec 2024 14:41:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733236863;
-	bh=ctU4KmvHpTQaD8qF7NkLw7BW76DUfHNWlBh/UL+aC+I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DNqdqGBlGmVkId3Vx2EZCIgv63wTOjQdDccfJAO1RddjRXdIWavlcVYb+WWWC9vFd
-	 9ilwiPVZWLmrA8wJf7mKe6nSJ/MfWc8NclJGXdaNLkk8L0cAMdeqWKT7EwUJLuWCSg
-	 W488elV9+ay6MFoUJEU51ctZANCJqCjBcQfT0XucpNKUdMM37HEicfV2P639zpmCgv
-	 axXzU2GCT0omZXrLvPcw06/I4/stMqp9cVMf97gsTSyev/6CUzkaEsgkL4h5VYmZj3
-	 50JE5WEpxy9Q4B3IDu/OnqZj7CTTCzwrtXzKW77ys/1Y2apKyvW97NDF3nFwYrU1KD
-	 3oIzonk8Ta1XQ==
-Date: Tue, 3 Dec 2024 08:41:01 -0600
-From: Rob Herring <robh@kernel.org>
-To: Thippeswamy Havalige <thippeswamy.havalige@amd.com>
-Cc: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com,
-	manivannan.sadhasivam@linaro.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	jingoohan1@gmail.com, michal.simek@amd.com,
-	bharat.kumar.gogada@amd.com
-Subject: Re: [PATCH v2 1/2] dt-bindings: PCI: amd-mdb: Add AMD Versal2 MDB
- PCIe Root Port Bridge
-Message-ID: <20241203144101.GA1756254-robh@kernel.org>
-References: <20241203123608.2944662-1-thippeswamy.havalige@amd.com>
- <20241203123608.2944662-2-thippeswamy.havalige@amd.com>
+	s=arc-20240116; t=1733239182; c=relaxed/simple;
+	bh=Y5RTXCk6MwROQWiJoZennfeunbSv/r106SOVb8zZ7Vg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Zixh8lpTzzn1VZbGOAJ4U9OXJmf2RU9Pli9n+0QGMPl/UdShGLWnT2HBVBxs4z3afOFytSTxoafKJR+64Q54CLgis1I7hJOLOU3gYgZvXUgijiZRTALjChUGu9iOdPIerJOZ4M7qrATavWjPHkFDETiFmnsRQWgzbsYGu/lOhjM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ZF8ka+GC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A0BFC4CECF;
+	Tue,  3 Dec 2024 15:19:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1733239182;
+	bh=Y5RTXCk6MwROQWiJoZennfeunbSv/r106SOVb8zZ7Vg=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=ZF8ka+GCgaZBhivF58WcuGr53OAng5jflSMqSxW+c1ot7TdF8jYoLIwvkQVkKBX9l
+	 EUhOeMyfWuuqk7xBDfQqZ/q2NdYm9itpGIpn/NQF/boYjvvhA4Ws/Cs7Pu8dP5dD+j
+	 bsKcIFR0WTkGxH5wGoOFzvnIJBuA114EMOnj/STw=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: stable@vger.kernel.org,
+	Greg Ungerer <gerg@linux-m68k.org>,
+	Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	patches@lists.linux.dev,
+	linux-m68k@lists.linux-m68k.org,
+	linux-kernel@vger.kernel.org,
+	Antonio Quartulli <antonio@mandelbit.com>,
+	Greg Ungerer <gerg@kernel.org>,
+	Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 6.11 527/817] m68k: coldfire/device.c: only build FEC when HW macros are defined
+Date: Tue,  3 Dec 2024 15:41:39 +0100
+Message-ID: <20241203144016.470244149@linuxfoundation.org>
+X-Mailer: git-send-email 2.47.1
+In-Reply-To: <20241203143955.605130076@linuxfoundation.org>
+References: <20241203143955.605130076@linuxfoundation.org>
+User-Agent: quilt/0.67
+X-stable: review
+X-Patchwork-Hint: ignore
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241203123608.2944662-2-thippeswamy.havalige@amd.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Dec 03, 2024 at 06:06:07PM +0530, Thippeswamy Havalige wrote:
-> Add AMD Versal2 MDB (Multimedia DMA Bridge) PCIe Root Port Bridge.
-> 
-> Signed-off-by: Thippeswamy Havalige <thippeswamy.havalige@amd.com>
-> ---
-> Changes in v2:
-> -------------
-> - Modify patch subject.
-> - Add pcie host bridge reference.
-> - Modify filename as per compatible string.
-> - Remove standard PCI properties.
-> - Modify interrupt controller description.
-> - Indentation
-> ---
->  .../bindings/pci/amd,versal2-mdb-host.yaml    | 132 ++++++++++++++++++
->  1 file changed, 132 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pci/amd,versal2-mdb-host.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/pci/amd,versal2-mdb-host.yaml b/Documentation/devicetree/bindings/pci/amd,versal2-mdb-host.yaml
-> new file mode 100644
-> index 000000000000..75795bab8254
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/pci/amd,versal2-mdb-host.yaml
-> @@ -0,0 +1,132 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/pci/amd,mdb-pcie.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: AMD Versal2 MDB(Multimedia DMA Bridge) Host Controller
-> +
-> +maintainers:
-> +  - Thippeswamy Havalige <thippeswamy.havalige@amd.com>
-> +
-> +allOf:
-> +  - $ref: /schemas/pci/pci-host-bridge.yaml#
-> +
-> +properties:
-> +  compatible:
-> +    const: amd,versal2-mdb-host
-> +
-> +  reg:
-> +    items:
-> +      - description: MDB PCIe controller 0 SLCR
+6.11-stable review patch.  If anyone has any objections, please let me know.
 
-SLCR is not defined anywhere.
+------------------
 
-> +      - description: configuration region
-> +      - description: data bus interface
-> +      - description: address translation unit register
-> +
-> +  reg-names:
-> +    items:
-> +      - const: mdb_pcie_slcr
-> +      - const: config
-> +      - const: dbi
-> +      - const: atu
+From: Antonio Quartulli <antonio@mandelbit.com>
 
-DWC based it seems. You need to reference the DWC schema.
+[ Upstream commit 63a24cf8cc330e5a68ebd2e20ae200096974c475 ]
 
-> +
-> +  ranges:
-> +    maxItems: 2
-> +
-> +  msi-map:
-> +    maxItems: 1
-> +
-> +  bus-range:
-> +    maxItems: 1
+When CONFIG_FEC is set (due to COMPILE_TEST) along with
+CONFIG_M54xx, coldfire/device.c has compile errors due to
+missing MCFEC_* and MCF_IRQ_FEC_* symbols.
 
-Already defined in the common schema. Plus you obviously didn't test 
-anything with this because bus-range must be exactly 2 entries. 1 is not 
-valid.
+Make the whole FEC blocks dependent on having the HW macros
+defined, rather than on CONFIG_FEC itself.
 
-> +
-> +  "#address-cells":
-> +    const: 3
-> +
-> +  "#size-cells":
-> +    const: 2
+This fix is very similar to commit e6e1e7b19fa1 ("m68k: coldfire/device.c: only build for MCF_EDMA when h/w macros are defined")
 
-Both of these are also already defined in the pci-host-bridge.yaml.
+Fixes: b7ce7f0d0efc ("m68knommu: merge common ColdFire FEC platform setup code")
+To: Greg Ungerer <gerg@linux-m68k.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: linux-m68k@lists.linux-m68k.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Antonio Quartulli <antonio@mandelbit.com>
+Signed-off-by: Greg Ungerer <gerg@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ arch/m68k/coldfire/device.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  interrupt-map-mask:
-> +    items:
-> +      - const: 0
-> +      - const: 0
-> +      - const: 0
-> +      - const: 7
-> +
-> +  interrupt-map:
-> +    maxItems: 4
-> +
-> +  "#interrupt-cells":
-> +    const: 1
-> +
-> +  interrupt-controller:
-> +    description: identifies the node as an interrupt controller
-> +    type: object
-> +    properties:
-> +      interrupt-controller: true
-> +
-> +      "#address-cells":
-> +        const: 0
-> +
-> +      "#interrupt-cells":
-> +        const: 1
-> +
-> +    required:
-> +      - interrupt-controller
-> +      - "#address-cells"
-> +      - "#interrupt-cells"
-> +
-> +    additionalProperties: false
+diff --git a/arch/m68k/coldfire/device.c b/arch/m68k/coldfire/device.c
+index 7dab46728aeda..b6958ec2a220c 100644
+--- a/arch/m68k/coldfire/device.c
++++ b/arch/m68k/coldfire/device.c
+@@ -93,7 +93,7 @@ static struct platform_device mcf_uart = {
+ 	.dev.platform_data	= mcf_uart_platform_data,
+ };
+ 
+-#if IS_ENABLED(CONFIG_FEC)
++#ifdef MCFFEC_BASE0
+ 
+ #ifdef CONFIG_M5441x
+ #define FEC_NAME	"enet-fec"
+@@ -145,6 +145,7 @@ static struct platform_device mcf_fec0 = {
+ 		.platform_data		= FEC_PDATA,
+ 	}
+ };
++#endif /* MCFFEC_BASE0 */
+ 
+ #ifdef MCFFEC_BASE1
+ static struct resource mcf_fec1_resources[] = {
+@@ -182,7 +183,6 @@ static struct platform_device mcf_fec1 = {
+ 	}
+ };
+ #endif /* MCFFEC_BASE1 */
+-#endif /* CONFIG_FEC */
+ 
+ #if IS_ENABLED(CONFIG_SPI_COLDFIRE_QSPI)
+ /*
+@@ -624,12 +624,12 @@ static struct platform_device mcf_flexcan0 = {
+ 
+ static struct platform_device *mcf_devices[] __initdata = {
+ 	&mcf_uart,
+-#if IS_ENABLED(CONFIG_FEC)
++#ifdef MCFFEC_BASE0
+ 	&mcf_fec0,
++#endif
+ #ifdef MCFFEC_BASE1
+ 	&mcf_fec1,
+ #endif
+-#endif
+ #if IS_ENABLED(CONFIG_SPI_COLDFIRE_QSPI)
+ 	&mcf_qspi,
+ #endif
+-- 
+2.43.0
 
-Move this before 'properties'.
 
-> +
-> +required:
-> +  - reg
-> +  - reg-names
-> +  - interrupts
-> +  - interrupt-map
-> +  - interrupt-map-mask
-> +  - msi-map
-> +  - ranges
 
-Already required by common schema.
-
-> +  - "#interrupt-cells"
-> +  - interrupt-controller
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +
-
-Drop blank line.
-
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +
-> +    soc {
-> +        #address-cells = <2>;
-> +        #size-cells = <2>;
-> +        pci@ed931000 {
-
-pcie@...
-
-> +            compatible = "amd,versal2-mdb-host";
-> +            reg = <0x0 0xed931000 0x0 0x2000>,
-> +                  <0x1000 0x100000 0x0 0xff00000>,
-> +                  <0x1000 0x0 0x0 0x100000>,
-> +                  <0x0 0xed860000 0x0 0x2000>;
-> +            reg-names = "mdb_pcie_slcr", "config", "dbi", "atu";
-> +            ranges = <0x2000000 0x00 0xa8000000 0x00 0xa8000000 0x00 0x10000000>,
-> +                     <0x43000000 0x1100 0x00 0x1100 0x00 0x00 0x1000000>;
-> +            interrupts = <GIC_SPI 198 IRQ_TYPE_LEVEL_HIGH>;
-> +            interrupt-parent = <&gic>;
-> +            interrupt-map-mask = <0 0 0 7>;
-> +            interrupt-map = <0 0 0 1 &pcie_intc_0 0>,
-> +                            <0 0 0 2 &pcie_intc_0 1>,
-> +                            <0 0 0 3 &pcie_intc_0 2>,
-> +                            <0 0 0 4 &pcie_intc_0 3>;
-> +            msi-map = <0x0 &gic_its 0x00 0x10000>;
-> +            #address-cells = <3>;
-> +            #size-cells = <2>;
-> +            #interrupt-cells = <1>;
-> +            device_type = "pci";
-> +            pcie_intc_0: interrupt-controller {
-> +                #address-cells = <0>;
-> +                #interrupt-cells = <1>;
-> +                interrupt-controller;
-> +           };
-> +        };
-> +    };
-> -- 
-> 2.34.1
-> 
 
