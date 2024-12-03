@@ -1,124 +1,191 @@
-Return-Path: <linux-kernel+bounces-429360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 298D89E1B0C
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 12:33:51 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D66399E1B17
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 12:34:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4538166CAF
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 11:33:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9CA72166847
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 11:34:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A93F31E47A6;
-	Tue,  3 Dec 2024 11:33:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E5591E3DE5;
+	Tue,  3 Dec 2024 11:34:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EcFlMqJe"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=permerror (0-bit key) header.d=sapience.com header.i=@sapience.com header.b="Xnz7J3/S";
+	dkim=pass (2048-bit key) header.d=sapience.com header.i=@sapience.com header.b="QbfmX/CN"
+Received: from s1.sapience.com (s1.sapience.com [72.84.236.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47C2C1E048B
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 11:33:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733225622; cv=none; b=C1ThJ89mwcx9teEu2rGXWBMsyrY9L+5Y1gzLfMmpu46zrk3rdxGd3ZdHU5iqeXXQ7tY6kD4XqJPb5Vphbn4RhYhPbo4JUiX6sK6uBZLEGatmmPNe7XSrsA/TPe/zHu8bGiwUgKNaC7ZS2bUdczg2yDl3iGEEDwfKmMHzf9fHBc0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733225622; c=relaxed/simple;
-	bh=AHmmkPHjvu7RIKywEf+EAV3LQMeU6/vP4mpQ4B4VTxU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WlnAvlHko4n+h/aOJBbd+kAK7oyLrNj52D5yvm6VyuV81ud05QslamlhhKHLbkz0GZzGIfRhy6AfPdwazONf6Ik+b5SpJ1gKmf8FD6tQPd+XRozHXw30lD1b3bT/tiv6VUT+dbVAn8L5XZqxx7dWBcbMkZzD6BkffuL/4kEQvVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EcFlMqJe; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1733225619;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zREU+lwYhiaQLLeLq6O0V37r0ooXMYuGzQk3sQUa+FM=;
-	b=EcFlMqJeFGV/mn0p2xgtXEmScexNjCnI91qxteotQYOSJttkmWwM0b++xyS18cbVq0zENz
-	JgDMg1Qhq2y8r1fQr7aceVbZO/3y0tmg70vvVwWtRZrIvJsBOmVEYqcm3Cj5KKbV4mQ3+J
-	JfkvSjN5nZ42pEs+an48nAGWjJCN1P0=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-222-GvIppP9JMGqAhyEWOQHYKw-1; Tue, 03 Dec 2024 06:33:37 -0500
-X-MC-Unique: GvIppP9JMGqAhyEWOQHYKw-1
-X-Mimecast-MFC-AGG-ID: GvIppP9JMGqAhyEWOQHYKw
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-381d0582ad3so4151777f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 03:33:37 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733225616; x=1733830416;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zREU+lwYhiaQLLeLq6O0V37r0ooXMYuGzQk3sQUa+FM=;
-        b=UB6t/GdpbahcQM9XR66T8LVKTEhSX5BuFY421f1ZM1pQD7Em01Q1wAt05rpjEGrPkh
-         cSorGWQiCuc2fA1ZMCwO3Hj6Y3ULaAoZ8zS6qTfNh42fMZZWMdo5k5w0a8b702LaXof3
-         YhMapXxYUHcGpMh6a41l9GfELLnyMl2XZ4U8PF5hrab7t+p50WnSuCZ1BEZtBVGURIj1
-         46mHgPZKKiPpC1vI9rRIaPztqqwB/OFVYyaa6TRumXTnLSQCCss8oGxejPmRmFlYtaDl
-         F1zQ1m0gxe2GIEVDA7Gu8MNmofG/AfrZSZ6eDIUkv/4Vp6i4u4FO0IsKbqk5kTPCPJ8r
-         0TlA==
-X-Forwarded-Encrypted: i=1; AJvYcCUTjG/b5Wkzp3rv9ZTAJ6fJH5yrfcu/rmv+Ep0T+A8C/dgPZEBzZDu3w2KF5SURwsUhQd/QTBdcXWj/9Ac=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLi1X6PqH/wPHGj8oYCuq67qib5DV40WHo+anMWLV/tc7FRAUi
-	sdGm28p1HzIdSZy3Muj/XnTmKLLbtgS4zwT3akST8vlwRrg7l97lx7LTmrt4QNwG5ImN1yiCwn6
-	uIKgDCBWetOoEKcnsuoJlz9IXuDl8WThuaYas0QKzC2ZyqCB93sOWBZBs09w12Q==
-X-Gm-Gg: ASbGncs8e5h4VGskS3Z26aCRnQlItMx+u0siRLDFYWBbbV6I8b5DD21yaoVqJk43Gme
-	327Fn4JDA9/o+f5DSNFWfKPniXbzPf8S5nUaJEJB/qv72iCrngv9pcEm1hnJMn1JrcdKjiSPX8/
-	MaQPJcwEvhLMfwyBjpoF+fbDMCJP9xEAfI1q6C9pRRv4bSgRufn88iZ/puiWG/q/2hpyYBThici
-	knry56eWo++n3umtOVO37KUvztbLXfmqmX4DVVWH2lX3GRM4tU4sZxhm6x8KU9xAU56bIF4lHOq
-X-Received: by 2002:a05:6000:1a86:b0:385:ef8e:a652 with SMTP id ffacd0b85a97d-385fd43c331mr2302343f8f.56.1733225616654;
-        Tue, 03 Dec 2024 03:33:36 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGhUjhzZs78Nz7CtLp5MQzYsLnMpSAwzkbqY7OFNZJSdUe3DRiH8XjGzF8cD+LMHI88SBHTyg==
-X-Received: by 2002:a05:6000:1a86:b0:385:ef8e:a652 with SMTP id ffacd0b85a97d-385fd43c331mr2302316f8f.56.1733225616306;
-        Tue, 03 Dec 2024 03:33:36 -0800 (PST)
-Received: from [192.168.88.24] (146-241-38-31.dyn.eolo.it. [146.241.38.31])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385fd599b31sm1570921f8f.21.2024.12.03.03.33.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Dec 2024 03:33:35 -0800 (PST)
-Message-ID: <4c426297-6215-46a4-a9bc-371fb4efe2d1@redhat.com>
-Date: Tue, 3 Dec 2024 12:33:34 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1C6C1E2312
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 11:34:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=72.84.236.66
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733225671; cv=fail; b=rmOIs3QqiGK/gIZqH7ORNwbC/jBjoT9f72C8jt68jrAIDugU1Zd409//6VWq1nZu+ySrSVX9Ln7KHfBFYwtwjeI8BWuWa5lks7K1IaMMxX3LuNEeP2Ali3o9+o0kbes7xRgM6A6y4o2xPP2qocIltkpVvqY44zgPrcizf8vqJEo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733225671; c=relaxed/simple;
+	bh=HDQyOvsh2luRrVameeR+JVt226PJ1eteUZhAlxPdkoc=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=HiMyy4bR+VW9cGUU7EOkB0HqoRdOd/Sb4yZGw4eMpOOl5j9wJBPrjDqyXLmWc0SlxrdILTQpxaLBeQnnIOP9rUTRa/GAT/QdFJ/MklSvk9tC0JVRrhc5ZWB0sAB/IzamZd/RFWZU2B/iEQUsiOOTbsjQTfLQD1kEjOmNYQaerTU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sapience.com; spf=pass smtp.mailfrom=sapience.com; dkim=permerror (0-bit key) header.d=sapience.com header.i=@sapience.com header.b=Xnz7J3/S; dkim=pass (2048-bit key) header.d=sapience.com header.i=@sapience.com header.b=QbfmX/CN; arc=fail smtp.client-ip=72.84.236.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sapience.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sapience.com
+Authentication-Results: dkim-srvy7; dkim=pass (Good ed25519-sha256 
+   signature) header.d=sapience.com header.i=@sapience.com 
+   header.a=ed25519-sha256; dkim=pass (Good 2048 bit rsa-sha256 signature) 
+   header.d=sapience.com header.i=@sapience.com header.a=rsa-sha256
+Received: from srv8.sapience.com (srv8.sapience.com [x.x.x.x])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (secp384r1) server-digest SHA384)
+	(No client certificate requested)
+	by s1.sapience.com (Postfix) with ESMTPS id 70019480A24;
+	Tue, 03 Dec 2024 06:34:27 -0500 (EST)
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=sapience.com;
+ i=@sapience.com; q=dns/txt; s=dk-ed25519-220413; t=1733225667;
+ h=message-id : subject : from : to : cc : date : in-reply-to :
+ references : content-type : mime-version : from;
+ bh=FjIsCWIzubmEadMxCxRD+23+CAxaNUechI3CQvCtXx0=;
+ b=Xnz7J3/SZzrB63AjCyC/ry6atBJQehY7fYwydCQgX7jrWYPxWYRpjNzFDdjvXm+3foesw
+ 3bFLEAE5r/03w0NCw==
+ARC-Seal: i=1; a=rsa-sha256; d=sapience.com; s=arc6-rsa-220412; t=1733225667;
+	cv=none; b=Otf9ilu8vUl5mRseHp9NDhxlQgJRf+lp8QgAa1z8G1Ra1hmiwaPMRjjZabl9DEe+c4GNP34dYBudJOS/L3AhL0D1dzpA5qLjdX7xQ+zxUfohiz8c90O6Z07CCEa4p2Iit4c0DebSlFOnfsWOcP/QQWSQ7Scfy7uzy0lpC08o4O3DsxAe1zgrdTzVoNvJarofyvYQNZlmYpStcw1iJ2C/j1S0okE3FfDceoOI2bPiOaJ0QInt9UMRkDT2/vIiVJR8wYRYoyjgcm8Rqe0GrhIRQ/UFKjrAYV1aiHxcmxbC5BrDISkMJBTA241ByZKbY+ueEQyy5iPgX/afGMrnp+JppQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; d=sapience.com; s=arc6-rsa-220412;
+	t=1733225667; c=relaxed/simple;
+	bh=HDQyOvsh2luRrVameeR+JVt226PJ1eteUZhAlxPdkoc=;
+	h=DKIM-Signature:DKIM-Signature:Message-ID:Subject:From:To:Cc:Date:
+	 In-Reply-To:References:Autocrypt:Content-Type:User-Agent:
+	 MIME-Version; b=dmgoBp5/FloERMSBlsD8r/cs5B2lbP4lsnalIZ3vua6CdXvgdO3scrl07ZuPIddJV1YHPb/ArNloMwKfLgyjNhGTY1Dm9kycqmnhL3YOm4ZghI1CuuGZmUpmw9oJpyWYwi3XkwqSK4DWnjOK02M0n8ox4KCmk3161yDHh5PJab94c8oEtZ6IKgHmy2dT4FWeKxWfJ+OuC1oSZULvpXhPKrsBGQhP33aoibPy1e1W44x9TOJS7alm5crhxWRqUUjbVgmRA78Dg0C+vodHkUQKS96de+Qc77QgG+Q7fh8kemVJhMXSaur6YQ+fO5A7lmgt/HxiTvVk8vjdtXfxL+6ADw==
+ARC-Authentication-Results: i=1; arc-srv8.sapience.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sapience.com;
+ i=@sapience.com; q=dns/txt; s=dk-rsa-220413; t=1733225667;
+ h=message-id : subject : from : to : cc : date : in-reply-to :
+ references : content-type : mime-version : from;
+ bh=FjIsCWIzubmEadMxCxRD+23+CAxaNUechI3CQvCtXx0=;
+ b=QbfmX/CNmvbAKXRB8cjqJEhNjdEvgQl4tzCmynQJKZ7fyNPNAdDdlXGFsXTiP1QkQeDmD
+ 2FdoUApdeThn3lQ1vBgybGDPorKAh08nAm2XmRL4E3u8KcM03ecjyCS1JAfvqnRL8ZN7s8b
+ cnPEXWOSO3xwU2icAgsIWNiC0+kRW1ZIF9Nc7kvcRKGhbLpAJqE3t9b4n2dARt9uk/R85FR
+ 842byfVDajfNaVbrDO+cGWKdVH9vffmYLVR+9PYrgWLaWAIMylCBh8obw/P33WGYtCNUNfL
+ kov2m4byjg3+ikLmPSsCZGq0YuKX3Yl+NIjQhwv+xB8G6220uS8X/49sjHNg==
+Received: from lap7.sapience.com (lap7w.sapience.com [x.x.x.x])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature ECDSA (secp384r1) server-digest SHA384)
+	(No client certificate requested)
+	by srv8.sapience.com (Postfix) with ESMTPS id 44AB6280018;
+	Tue, 03 Dec 2024 06:34:27 -0500 (EST)
+Message-ID: <7db24095f935d874fae466853b0984103f97b40f.camel@sapience.com>
+Subject: Re: 6.13-rc1 graphics fail
+From: Genes Lists <lists@sapience.com>
+To: Ville =?ISO-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org, lucas.demarchi@intel.com, 
+	thomas.hellstrom@linux.intel.com, rodrigo.vivi@intel.com,
+ airlied@gmail.com, 	tzimmermann@suse.de, dri-devel@lists.freedesktop.org, 
+	intel-xe@lists.freedesktop.org
+Date: Tue, 03 Dec 2024 06:34:25 -0500
+In-Reply-To: <Z07Mg2_6y2MW22qV@intel.com>
+References: <3b097dddd7095bccabe6791b90899c689f271a35.camel@sapience.com>
+	 <Z07Mg2_6y2MW22qV@intel.com>
+Autocrypt: addr=lists@sapience.com; prefer-encrypt=mutual;
+ keydata=mDMEXSY9GRYJKwYBBAHaRw8BAQdAwzFfmp+m0ldl2vgmbtPC/XN7/k5vscpADq3BmRy5R
+ 7y0LU1haWwgTGlzdHMgKEwwIDIwMTkwNzEwKSA8bGlzdHNAc2FwaWVuY2UuY29tPoiWBBMWCAA+Ah
+ sBBQsJCAcCBhUKCQgLAgQWAgMBAh4BAheAFiEE5YMoUxcbEgQOvOMKc+dlCv6PxQAFAmPJfooFCRl
+ vRHEACgkQc+dlCv6PxQAc/wEA/Dbmg91DOGXll0OW1GKaZQGQDl7fHibMOKRGC6X/emoA+wQR5FIz
+ BnV/PrXbao8LS/h0tSkeXgPsYxrzvfZInIAC
+Content-Type: multipart/signed; micalg="pgp-sha384";
+	protocol="application/pgp-signature"; boundary="=-JUlQ6gVOaBB9Bh5Ok49w"
+User-Agent: Evolution 3.54.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next RESEND v2] net/smc: Remove unused function
- parameter in __smc_diag_dump
-To: manas18244@iiitd.ac.in, Wenjia Zhang <wenjia@linux.ibm.com>,
- Jan Karcher <jaka@linux.ibm.com>, "D. Wythe" <alibuda@linux.alibaba.com>,
- Tony Lu <tonylu@linux.alibaba.com>, Wen Gu <guwen@linux.alibaba.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Simon Horman <horms@kernel.org>
-Cc: Shuah Khan <shuah@kernel.org>, Anup Sharma <anupnewsmail@gmail.com>,
- linux-s390@vger.kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org
-References: <20241202-fix-oops-__smc_diag_dump-v2-1-119736963ba9@iiitd.ac.in>
-Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <20241202-fix-oops-__smc_diag_dump-v2-1-119736963ba9@iiitd.ac.in>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-On 12/2/24 11:10, Manas via B4 Relay wrote:
-> From: Manas <manas18244@iiitd.ac.in>
-> 
-> The last parameter in __smc_diag_dump (struct nlattr *bc) is unused.
-> There is only one instance of this function being called and its passed
-> with a NULL value in place of bc.
-> 
-> Reviewed-by: Simon Horman <horms@kernel.org>
-> Signed-off-by: Manas <manas18244@iiitd.ac.in>
 
-The signed-off-by tag must include your full name, see:
+--=-JUlQ6gVOaBB9Bh5Ok49w
+Content-Type: multipart/alternative; boundary="=-itxtGDsHq12QHbd862EQ"
 
-https://elixir.bootlin.com/linux/v6.11.8/source/Documentation/process/submitting-patches.rst#L440
+--=-itxtGDsHq12QHbd862EQ
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Thanks,
+On Tue, 2024-12-03 at 11:16 +0200, Ville Syrj=C3=A4l=C3=A4 wrote:
+> > ...
 
-Paolo
+> Probably
+> https://gitlab.freedesktop.org/drm/i915/kernel/-/issues/13057
+>=20
+Very helpful.
 
+I tested your patch set on Linus' tree commit
+cdd30ebb1b9f36159d66f088b61aee264e649d7a :
+
+=C2=A0 =C2=A0=C2=A0https://patchwork.freedesktop.org/series/141911/
+
+and confirm that this fixes the problem=C2=A0
+
+Thank you.
+
+
+--=20
+Gene
+
+
+--=-itxtGDsHq12QHbd862EQ
+Content-Type: text/html; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+
+<html><head><style>pre,code,address {
+  margin: 0px;
+}
+h1,h2,h3,h4,h5,h6 {
+  margin-top: 0.2em;
+  margin-bottom: 0.2em;
+}
+ol,ul {
+  margin-top: 0em;
+  margin-bottom: 0em;
+}
+blockquote {
+  margin-top: 0em;
+  margin-bottom: 0em;
+}
+</style></head><body><div>On Tue, 2024-12-03 at 11:16 +0200, Ville Syrj=C3=
+=A4l=C3=A4 wrote:</div><blockquote type=3D"cite" style=3D"margin:0 0 0 .8ex=
+; border-left:2px #729fcf solid;padding-left:1ex"><blockquote type=3D"cite"=
+ style=3D"margin:0 0 0 .8ex; border-left:2px #729fcf solid;padding-left:1ex=
+"><div>...</div></blockquote></blockquote><div><br></div><blockquote type=
+=3D"cite" style=3D"margin:0 0 0 .8ex; border-left:2px #729fcf solid;padding=
+-left:1ex"><div>Probably <a href=3D"https://gitlab.freedesktop.org/drm/i915=
+/kernel/-/issues/13057">https://gitlab.freedesktop.org/drm/i915/kernel/-/is=
+sues/13057</a><br></div><div><br></div></blockquote><div>Very helpful.</div=
+><div><br></div><div>I tested your patch set on Linus' tree commit cdd30ebb=
+1b9f36159d66f088b61aee264e649d7a :</div><div><br></div><div>&nbsp; &nbsp;&n=
+bsp;<a href=3D"https://patchwork.freedesktop.org/series/141911/">https://pa=
+tchwork.freedesktop.org/series/141911/</a></div><div><br></div><div>and con=
+firm that this fixes the problem&nbsp;</div><div><br></div><div style=3D"ca=
+ret-color: rgb(238, 238, 236); color: rgb(238, 238, 236); font-family: Cant=
+arell; font-style: normal; font-variant-caps: normal; font-weight: 400; let=
+ter-spacing: normal; text-align: start; text-indent: 0px; text-transform: n=
+one; white-space: normal; word-spacing: 0px; -webkit-tap-highlight-color: r=
+gba(0, 0, 0, 0.4); -webkit-text-stroke-width: 0px; text-decoration: none;">=
+Thank you.</div><br class=3D"Apple-interchange-newline"><div><br></div><div=
+><span><pre>-- <br></pre><div><span style=3D"background-color: inherit;">Ge=
+ne</span></div><div><br></div></span></div></body></html>
+
+--=-itxtGDsHq12QHbd862EQ--
+
+--=-JUlQ6gVOaBB9Bh5Ok49w
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYJAB0WIQRByXNdQO2KDRJ2iXo5BdB0L6Ze2wUCZ07swQAKCRA5BdB0L6Ze
+2xjMAQCXYZGJ+24+9MzxNKobmrAdhhVfa3LEPOrGGTRQW0H2AwD/ZQgTxaBVaMvR
+TNwZTZjXU8DbH1iFzCdt5600iRf7uAM=
+=gz23
+-----END PGP SIGNATURE-----
+
+--=-JUlQ6gVOaBB9Bh5Ok49w--
 
