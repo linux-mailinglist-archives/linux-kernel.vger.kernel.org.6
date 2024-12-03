@@ -1,204 +1,246 @@
-Return-Path: <linux-kernel+bounces-430337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430286-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A1B09E2F7D
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 00:05:24 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 316779E2F9A
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 00:15:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A9E6282C12
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 23:05:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2D993B44B00
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 22:12:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E9E1205ACE;
-	Tue,  3 Dec 2024 23:05:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90EB220C47F;
+	Tue,  3 Dec 2024 22:11:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="nI2b5BaJ"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="EPe9B0UM"
+Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2065.outbound.protection.outlook.com [40.107.101.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BAD78460
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 23:05:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733267117; cv=none; b=LCRSR/GB/rJpSj44z86iUp/bdUZ3KY5VLLP3xyLKQZoxVbARdhPbK6Z4ojKSDstsDEPf15DsqgIVL/RiEVXkgFrNbyPufKg1vKnE31SPbYINvveHA8GpPMi2zpdIdXoBmEo2Q1YuCmyNZytn+/7/nm15lbT5gff2ioawqrNfaik=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733267117; c=relaxed/simple;
-	bh=tCCvWq1dmiUGYNc6XoLfwju1glhutvBWzNPcvqslXxk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rEGfTzMCQIhKnDP7uWwSZZ0lIh8UYt/DunZJ3pT1VAS7pcI1zPCM2/bB5lkrPUGXqYwY0yp5o1vxh6bwmmzLdR+3EGN/ArzYB6SGlSERnY1rlRuhmnfKK1LJ/Gl5Y7rtn9ofRY6HZ6RVWI5qrsmCF1Tzt0yUnNi8Wq+UiaYoHjQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=nI2b5BaJ; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-7258cf297d4so146756b3a.2
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 15:05:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1733267110; x=1733871910; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zuVSzwilGDWOKulMLoLFDmD1T0xJ+EejpQ1nF1fWuWk=;
-        b=nI2b5BaJAFCuRQ36i32vS70RtMenOsw2RT3LYEmIS0Sm4I4kgg0e6JrX+ZEh571pzZ
-         78fmpdgxP4DPn5sJ1d8sHQgPHPKbhhWJ+ms2zIXI8AcxMxrgOOcWcdWAhSYqAeQWouhA
-         6TcUcOqjVMZMLMHuL/Muw688RO4cgIbBfF6kk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733267110; x=1733871910;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zuVSzwilGDWOKulMLoLFDmD1T0xJ+EejpQ1nF1fWuWk=;
-        b=w3yiKolBZkhig4O+izfczOpY0T+Ki55mQT4V0cX/oEeAb2cFQCjCwe4Op04jE9CSXv
-         QbtcSxWCxUul0nFlGxzNZWVCnA/KnOcWdAsKAeg73EyrCVEVggNmNKZEIog24JLMfs0F
-         FrDdna65iTzyYOfeBw5+I8Z94nEP4V1gZ5rkIsPdJelnSUJ0DjY/uugmQSXbNugHl0MZ
-         bYb4P8vlbzFRAAI5nXsxpv+U19Xs73zPy5tEsNF1mKLuiJJ0/BssNQbvbGBcEYpfApgl
-         A8WD607Ea1O8GtNuJ0zOuMar7ShGRa/8PrwuTdgoRQtQFen01eW7PTL1cRk3rVFNjZIp
-         tlSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVw8ujqH06oiQfF2F2SL0NEwHQXb1b+0G5LKBLhdbk7LPoSDYbm7wQy0ZA+kaE3u1vOqtDO73QWGsulgdE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzdbjc6Qjv4opSR1vv3S2piv+t2kd4rm2grqPdxyHF6KnfuJn0a
-	7K0OMf9so7H0hAtOnx4vUvEaLvuG5WMZ5UqlllWz5XXsZz0jjATrPEjbm+X0fhZBdPVM0znfn24
-	=
-X-Gm-Gg: ASbGncsF1r0t78yA+6SX7ZgL+cLwdcWiWz+eLazqDQAryxlSwyWhsT2i6h5PP6Rsjer
-	rp29RRKpyjhHPh5RNKm/vIA7yvqT065LrKjjZhcWMG/1MxOnMpiJyl7C0PvFP0xrP5GVGZ97t7p
-	yaMK47M2874jORM+WKtgndq9/B6T7vuwHN4d3Ly6CKM66Ph3ZhfFhMhC0PJeGFXcGn6J1awZNhJ
-	+7n8CjbdQuQJsdh66hv5NL/TLvsrEYng7ODJeLa/qju1t6A6skqdSp+ojQUXhSek43D90nuXKbD
-	gcHlu+OQr0zeefiW1zmflg==
-X-Google-Smtp-Source: AGHT+IGdqmJqEM6tDa5d4rTT5TPkFnaxrsqm5h+AU1l6QHBWxsck+6kt6T46eRpAVVKt8Aq1OX8jRw==
-X-Received: by 2002:a17:90b:1848:b0:2ee:d63f:d8f with SMTP id 98e67ed59e1d1-2ef011f682bmr5321613a91.13.1733267110379;
-        Tue, 03 Dec 2024 15:05:10 -0800 (PST)
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com. [209.85.214.179])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ef2705d42dsm108588a91.8.2024.12.03.15.05.09
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Dec 2024 15:05:09 -0800 (PST)
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2154dc36907so26385ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 15:05:09 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVmOSCjU6wbhMFrKoM2NhByslwshUOl/dLSyorEMhjN2BswL3qAIn+DqR86pNRaXehxecb8H2eiCpXEdww=@vger.kernel.org
-X-Received: by 2002:a17:902:cf41:b0:215:3a16:6f82 with SMTP id
- d9443c01a7336-215d6c43a68mr851995ad.4.1733267108611; Tue, 03 Dec 2024
- 15:05:08 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 486B620B7E3;
+	Tue,  3 Dec 2024 22:11:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.65
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733263869; cv=fail; b=UogaQf+Hr7G/7DPijTqOzLJZmdyOs6gU0Oz9vwWKX3Gr91MCxdboWYQNcMwlQIPTxZiwOd1Ag1/pAozOvTYrKD0etqdsW38l2AFcZA/76Q9+W03drArd+Iyff5VRChEhR0FfThj+lFksCpvGgX4rmsQRNgCVYo8GPHoyyAu4bJA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733263869; c=relaxed/simple;
+	bh=1hlT0kSUhwJMKbMRzE23lybS5jktDbtEiCMbJFEdKhQ=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=NpNM82VU1u2HBGWSmfIqi9a8MzEjit1yKnjFZMuUMQZwIc6YY3Po/Vuqnlg3sfN3wLw56pSPUsKLVoutEohS0QlZrr3VbyITgnVWuV00BMM//sAOke3qmLQOIRkriimUl+K800oSTWUmH27g5W/m24r7CenQPvRVAaN+ylFbl4Y=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=EPe9B0UM; arc=fail smtp.client-ip=40.107.101.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Lo3jqJwBufCZL6o0FE62TSfSkoT6E20LB9aGrdRHxxWnd2+MKxuWCywQ2z7d5OoXwQ2L3pf1x3zR8SW4mYmEsw00VMYYdFuHV+LlVTbqcjUk8yHkKuIdDd8dfP18jt0Uw5Meh4T1qNNH8/QYWkVZ1zRX8iu6GgxsL7HAvdomyFvpwCpEuJHVG7qFkAegFZs0cjqjEsuP1Ot31sBEBKboMw0iik0UxVMni1twbC2f+1wlyBU2OAvoyo/oadcnTj3fyi8zng414bcD89UA/y7bgfFB67aIfLEOvfZhaPmfNvnHdysmrwvURe6eP/1L8TTyKxVNcb1PPab1j4ftWOQ7Vg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=/NCGCZqr17sVj2upoM7Gwc0ihyUUa8f5uRYg1Aproo8=;
+ b=v2QIXLTjco2/N6cyxeYlsinxh9ANfzuqyRQeQQFKxdm8FL1pYGU9hzdHZywaIj134uLViMsMaEwbJuEnhBxug9nto4w3/vyzBIm9IDuqkvm3D7AUxCCDN0OIeewLTKhQJ0vJj647VHw3noL5qrZBwvpUHKtAj8MZO0xJ+ocQyu0n8LSTuVIa9fURyXjl+rUdtSblVVoibog6Ro+SfAZu1nJN6YtO8/zP2s1kSwuKhGBjGPTgmH2VnvQVv1ZoOJP1gs53LdaXwM851RSlxFYLzKM+KZI8ML/7qnab0xPeuBkeVqf/MOtL+trnJZqQjgsJHO2RjbMlFNPQ/v+mDl9hgg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.233) smtp.rcpttodomain=google.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/NCGCZqr17sVj2upoM7Gwc0ihyUUa8f5uRYg1Aproo8=;
+ b=EPe9B0UMCnqA/Cd3HNhV6cBQkFZZBrVUzJSSUTsDBPYkXUN9qiwKwnHYugxRxnVqqno2wE/nlypBApvpHpDMVIhY7J7r1Y653CiA43twclLRP44kuFzMO5vlT9q5Zy+jPBZ2kiiJI40Theyzhek0no1lUtpmXBVgtasOlWwQJyFgAtlf463tfvkrdZIYXUvC7qsYeLlHAvQ/WxnqyiecCushcM07eE6E7QuwTTTfanrv3xT1F6TchdKilfwmi+bPtw0SHJhbOZJIOebPcyoEj7mlKG/se8hwU/PZRcx+fDD6PXOJ/iEpx2mTnTLkCItH8ugR67qjMUcPsCgTwk6BeQ==
+Received: from SJ0PR13CA0044.namprd13.prod.outlook.com (2603:10b6:a03:2c2::19)
+ by DM3PR12MB9286.namprd12.prod.outlook.com (2603:10b6:8:1ae::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.18; Tue, 3 Dec
+ 2024 22:11:03 +0000
+Received: from SJ1PEPF00002324.namprd03.prod.outlook.com
+ (2603:10b6:a03:2c2:cafe::5b) by SJ0PR13CA0044.outlook.office365.com
+ (2603:10b6:a03:2c2::19) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8230.8 via Frontend Transport; Tue, 3
+ Dec 2024 22:11:00 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.233) by
+ SJ1PEPF00002324.mail.protection.outlook.com (10.167.242.87) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8230.7 via Frontend Transport; Tue, 3 Dec 2024 22:11:00 +0000
+Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
+ (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 3 Dec 2024
+ 14:10:45 -0800
+Received: from drhqmail203.nvidia.com (10.126.190.182) by
+ drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Tue, 3 Dec 2024 14:10:45 -0800
+Received: from Asurada-Nvidia.nvidia.com (10.127.8.14) by mail.nvidia.com
+ (10.126.190.182) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Tue, 3 Dec 2024 14:10:44 -0800
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: <jgg@nvidia.com>, <kevin.tian@intel.com>, <will@kernel.org>
+CC: <corbet@lwn.net>, <joro@8bytes.org>, <suravee.suthikulpanit@amd.com>,
+	<robin.murphy@arm.com>, <dwmw2@infradead.org>, <baolu.lu@linux.intel.com>,
+	<shuah@kernel.org>, <linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kselftest@vger.kernel.org>,
+	<linux-doc@vger.kernel.org>, <eric.auger@redhat.com>,
+	<jean-philippe@linaro.org>, <mdf@kernel.org>, <mshavit@google.com>,
+	<shameerali.kolothum.thodi@huawei.com>, <smostafa@google.com>,
+	<ddutile@redhat.com>, <yi.l.liu@intel.com>
+Subject: [PATCH v2 09/13] iommufd/selftest: Add IOMMU_TEST_OP_TRIGGER_VIRQ for vIRQ coverage
+Date: Tue, 3 Dec 2024 14:10:14 -0800
+Message-ID: <7993411d7634d6bf5e7da4459ca4ee540f59188a.1733263737.git.nicolinc@nvidia.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <cover.1733263737.git.nicolinc@nvidia.com>
+References: <cover.1733263737.git.nicolinc@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241127105709.4014302-1-treapking@chromium.org> <CAD=FV=XhDdBJXfC72PZAbgaSpVx4ubtKSRFptock0SMRg=+Miw@mail.gmail.com>
-In-Reply-To: <CAD=FV=XhDdBJXfC72PZAbgaSpVx4ubtKSRFptock0SMRg=+Miw@mail.gmail.com>
-From: Brian Norris <briannorris@chromium.org>
-Date: Tue, 3 Dec 2024 15:04:56 -0800
-X-Gmail-Original-Message-ID: <CA+ASDXPXiyga6mKLBacupCXa0wsBbXCrmq20RFo7T2eSF8kbzQ@mail.gmail.com>
-Message-ID: <CA+ASDXPXiyga6mKLBacupCXa0wsBbXCrmq20RFo7T2eSF8kbzQ@mail.gmail.com>
-Subject: Re: [PATCH] wifi: mwifiex: decrease timeout waiting for host sleep
- from 10s to 5s
-To: Doug Anderson <dianders@chromium.org>
-Cc: Pin-yen Lin <treapking@chromium.org>, Francesco Dolcini <francesco@dolcini.it>, 
-	Kalle Valo <kvalo@kernel.org>, David Lin <yu-hao.lin@nxp.com>, linux-kernel@vger.kernel.org, 
-	linux-wireless@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PEPF00002324:EE_|DM3PR12MB9286:EE_
+X-MS-Office365-Filtering-Correlation-Id: f6c6a2d5-dfa6-4e46-0ecf-08dd13e75ede
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|376014|7416014|82310400026|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?+D23Hh75keIEiJHAMbFaw1W44unuDMPoRo9gE0o5BP/o8j/Nuy84yZ8pSWe3?=
+ =?us-ascii?Q?AsfKf5psCeVkH39lp/Rf9I/sa4n7tbIeovIIO6h6tfyP4Px3WwKfoQs8x+NR?=
+ =?us-ascii?Q?T4gXy8THUblFevOMkzokOxN2DDcRxN+pHySDhbZlUG+wd7NuxLy/DkmW35j4?=
+ =?us-ascii?Q?SxDZyFHzFy1V48otwtNyDElRLn1tVyJ3PmNWscB8jveNgR87O9/yhEgaOTcM?=
+ =?us-ascii?Q?r640C9uPo33yogoP+nxx0jGuzqFCayb6n2Klzayh4o0UkFwkECyHJKeFziJ0?=
+ =?us-ascii?Q?kSDOemTt4ojwg35FuNtdw8cmdYtoOi6bszVcR+c2AjefQTToqkoBQlyqqu2C?=
+ =?us-ascii?Q?39AaIzPWyr+6TlVNaXYdMXVi1ozd43zXBD8BBBoaD5UkV/7hCOZiofMPw8BK?=
+ =?us-ascii?Q?KeoubFi3cwwcfQIrV6E25gvdsbwiV7m8HzrShSLrj1533TUGNBjN24ULvdPr?=
+ =?us-ascii?Q?B1m5b+rRczgSIVI3UZ77RfXy6X+41bYZRQ3JK5kIU3ZOPuNb+13CoegL6SKb?=
+ =?us-ascii?Q?Y90ZVkhmlH4ls9Zv8EejlZZYjhW7cmTDmHsEPlFdQ1CvtOeR1+HWpa7I8OUl?=
+ =?us-ascii?Q?taxuPYXYEAzGjaCmNLkn9V9aA4DvdhZY9ib0mSbUFQQYYR4t/ckSJzYCXVN8?=
+ =?us-ascii?Q?nFy2DzJ7t4rMehx4Jq03+eWQaBL8SHzjB+u64BtAHcuOzAApCC9tkdrUJvvA?=
+ =?us-ascii?Q?OJ47TEuvZZ7efc/cRG069HneplcQYu+i9lFhi+7Eivkf19TPCgF3Rk3wYSxj?=
+ =?us-ascii?Q?WQPjQ13AK25aAftvqs7A12+lA59nHQHvAjMxMLfCfEUcpbIuJQNpOYerxI7k?=
+ =?us-ascii?Q?9jR4hxQ7yAi87HDxGS7NujeMLqgspxbvstT8T9flnFkFLz+yvbGWiARl0gYE?=
+ =?us-ascii?Q?kcQ2o/g+UeLZd+7drfvnVzc/HwbP/PRTeQFODtRkwmE8wgb7bD/4OHVeij7K?=
+ =?us-ascii?Q?tSx2J8cXHACU4ocCj8jwmYHVs/ZVoK+7W0zS1ckXwjvGnic8uzu1Rj5UfEr+?=
+ =?us-ascii?Q?PEl86TegAWSSmBjRs7mc3GnIBGbwu6l/SvGIbup3evS6Tvzby/3Zn+fTjIQQ?=
+ =?us-ascii?Q?sVO23Dv0tfSaqtRsXIV4GuFR7VpRrU9UmXfaKfq/p9F//cOQRnr34nMh2ztJ?=
+ =?us-ascii?Q?XdbefHymlfQ4/B2cRpJjOaB0vbOsDDKc0k5ntGZhPJ4uMXHvyH/HtqOTaeLG?=
+ =?us-ascii?Q?Ebis3pgOuhG29BmLd5s5gCOjWiRJDOhGRFgQoWvCZZja/NUcrnARVN7NUZex?=
+ =?us-ascii?Q?GGsb/zeEBjakLx212GTMK+vyUknPPNryNXExdCCq4nEN01/LUiPpFyEJFhkW?=
+ =?us-ascii?Q?TDpFJIYBprX4vBllzreQhNnbOzqyRIScLRdF6+lVFXYJIC33y8MK8usciQkN?=
+ =?us-ascii?Q?mXpdJgDdIF0II222/64EgqUF15twYlY+W6Xa5xwQ2JX3E89aAGhM+TOuH+vP?=
+ =?us-ascii?Q?XJ/9C0GZKAy+GGEAHn+0Fa5Q4mcWbL/4?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(376014)(7416014)(82310400026)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Dec 2024 22:11:00.5993
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: f6c6a2d5-dfa6-4e46-0ecf-08dd13e75ede
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ1PEPF00002324.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM3PR12MB9286
 
-Hi,
+The handler will get vDEVICE object from the given mdev and convert it to
+its per-vIOMMU virtual ID to mimic a real IOMMU driver.
 
-On Wed, Nov 27, 2024 at 7:44=E2=80=AFAM Doug Anderson <dianders@chromium.or=
-g> wrote:
-> On Wed, Nov 27, 2024 at 2:58=E2=80=AFAM Pin-yen Lin <treapking@chromium.o=
-rg> wrote:
-> > In commit 52250cbee7f6 ("mwifiex: use timeout variant for
-> > wait_event_interruptible") it was noted that sometimes we seemed
-> > to miss the signal that our host sleep settings took effect. A
-> > 10 second timeout was added to the code to make sure we didn't
-> > hang forever waiting. It appears that this problem still exists
-> > and we hit the timeout sometimes for Chromebooks in the field.
-> >
-> > Recently on ChromeOS we've started setting the DPM watchdog
-> > to trip if full system suspend takes over 10 seconds. Given
-> > the timeout in the original patch, obviously we're hitting
-> > the DPM watchdog before mwifiex gets a chance to timeout.
+Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
+---
+ drivers/iommu/iommufd/iommufd_test.h | 10 ++++++++++
+ drivers/iommu/iommufd/selftest.c     | 30 ++++++++++++++++++++++++++++
+ 2 files changed, 40 insertions(+)
 
-The Kconfig default is 120 seconds, and it's hidden under
-CONFIG_EXPERT. What makes you think 10 is a good value? (It sounds
-pretty small for triggering panics.) The smallest I can see outside of
-ChromeOS is 12 seconds, although 60 seconds is much more common. I
-also happen to see other WiFi drivers have hit similar problems, but
-they settled on 20 seconds (assuming a 60s timeout on other distros):
-https://lore.kernel.org/linux-wireless/20230329162038.8637-1-kvalo@kernel.o=
-rg/
-https://git.kernel.org/linus/cf5fa3ca0552f1b7ba8490de40700bbfb6979b17
+diff --git a/drivers/iommu/iommufd/iommufd_test.h b/drivers/iommu/iommufd/iommufd_test.h
+index a6b7a163f636..3037904f2e52 100644
+--- a/drivers/iommu/iommufd/iommufd_test.h
++++ b/drivers/iommu/iommufd/iommufd_test.h
+@@ -24,6 +24,7 @@ enum {
+ 	IOMMU_TEST_OP_MD_CHECK_IOTLB,
+ 	IOMMU_TEST_OP_TRIGGER_IOPF,
+ 	IOMMU_TEST_OP_DEV_CHECK_CACHE,
++	IOMMU_TEST_OP_TRIGGER_VIRQ,
+ };
+ 
+ enum {
+@@ -145,6 +146,9 @@ struct iommu_test_cmd {
+ 			__u32 id;
+ 			__u32 cache;
+ 		} check_dev_cache;
++		struct {
++			__u32 dev_id;
++		} trigger_virq;
+ 	};
+ 	__u32 last;
+ };
+@@ -212,4 +216,10 @@ struct iommu_viommu_invalidate_selftest {
+ 	__u32 cache_id;
+ };
+ 
++#define IOMMU_VIRQ_TYPE_SELFTEST 0xbeefbeef
++
++struct iommu_viommu_irq_selftest {
++	__u32 virt_id;
++};
++
+ #endif
+diff --git a/drivers/iommu/iommufd/selftest.c b/drivers/iommu/iommufd/selftest.c
+index d1438d81e664..0785c9447102 100644
+--- a/drivers/iommu/iommufd/selftest.c
++++ b/drivers/iommu/iommufd/selftest.c
+@@ -1631,6 +1631,34 @@ static int iommufd_test_trigger_iopf(struct iommufd_ucmd *ucmd,
+ 	return 0;
+ }
+ 
++static int iommufd_test_trigger_virq(struct iommufd_ucmd *ucmd,
++				     struct iommu_test_cmd *cmd)
++{
++	struct iommu_viommu_irq_selftest test = {};
++	struct iommufd_device *idev;
++	struct mock_dev *mdev;
++	int rc = -ENOENT;
++
++	idev = iommufd_get_device(ucmd, cmd->trigger_virq.dev_id);
++	if (IS_ERR(idev))
++		return PTR_ERR(idev);
++	mdev = to_mock_dev(idev->dev);
++
++	down_read(&mdev->viommu_rwsem);
++	if (!mdev->viommu || !mdev->vdev_id)
++		goto out_unlock;
++
++	test.virt_id = mdev->vdev_id;
++	rc = iommufd_viommu_report_irq(&mdev->viommu->core,
++				       IOMMU_VIRQ_TYPE_SELFTEST, &test,
++				       sizeof(test));
++out_unlock:
++	up_read(&mdev->viommu_rwsem);
++	iommufd_put_object(ucmd->ictx, &idev->obj);
++
++	return rc;
++}
++
+ void iommufd_selftest_destroy(struct iommufd_object *obj)
+ {
+ 	struct selftest_obj *sobj = to_selftest_obj(obj);
+@@ -1712,6 +1740,8 @@ int iommufd_test(struct iommufd_ucmd *ucmd)
+ 					  cmd->dirty.flags);
+ 	case IOMMU_TEST_OP_TRIGGER_IOPF:
+ 		return iommufd_test_trigger_iopf(ucmd, cmd);
++	case IOMMU_TEST_OP_TRIGGER_VIRQ:
++		return iommufd_test_trigger_virq(ucmd, cmd);
+ 	default:
+ 		return -EOPNOTSUPP;
+ 	}
+-- 
+2.43.0
 
-Technically, this Kconfig lets you set a value as small as 1 second. I
-don't think we should work at reducing all timeouts to fit that
-target.
-
-I could maybe approve lowering this one, but I'd also recommend
-reconsidering your timeout value. And more questions below.
-
-> > While we could increase the DPM watchdog in ChromeOS to avoid
-> > this problem, it's probably better to simply decrease the
-> > timeout. Any time we're waiting several seconds for the
-> > firmware to respond it's likely that the firmware won't ever
-> > respond. With that in mind, decrease the timeout in mwifiex
-> > from 10 seconds to 5 seconds.
-> >
-> > Suggested-by: Doug Anderson <dianders@chromium.org>
-> > Signed-off-by: Pin-yen Lin <treapking@chromium.org>
-> > ---
-> >
-> >  drivers/net/wireless/marvell/mwifiex/sta_ioctl.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> I believe Brian Norris is still anointed as the personally nominally
-> in charge of mwifiex upstream (get_maintainer labels him as "odd"
-> fixer, which seems awfully judgemental), so he should be CCed on
-> fixes. Added him.
-
-I tend to see mwifiex patches even if I don't get CC'd, but thanks. I
-wonder why get_maintainer(?) picked up Francesco properly but not me.
-*shrug*
-
-> > diff --git a/drivers/net/wireless/marvell/mwifiex/sta_ioctl.c b/drivers=
-/net/wireless/marvell/mwifiex/sta_ioctl.c
-> > index e06a0622973e..f79589cafe57 100644
-> > --- a/drivers/net/wireless/marvell/mwifiex/sta_ioctl.c
-> > +++ b/drivers/net/wireless/marvell/mwifiex/sta_ioctl.c
-> > @@ -545,7 +545,7 @@ int mwifiex_enable_hs(struct mwifiex_adapter *adapt=
-er)
-> >
-> >         if (wait_event_interruptible_timeout(adapter->hs_activate_wait_=
-q,
-> >                                              adapter->hs_activate_wait_=
-q_woken,
-> > -                                            (10 * HZ)) <=3D 0) {
-> > +                                            (5 * HZ)) <=3D 0) {
->
-> Given that I suggested this fix, it should be no surprise:
->
-> Reviewed-by: Douglas Anderson <dianders@chromium.org>
->
-> Upon sleeping on the idea, the only slight concern I have here is
-> whether we'll trigger this timeout if we try to suspend while WiFi
-> scanning is in progress. I don't have any actual evidence supporting
-> this concern, but I remember many years ago when I used to deal with
-> the WiFi drivers more often there were cases where suspend could be
-> delayed if it happened while a scan was in progress. Maybe/hopefully
-> that's fixed now, but I figured I'd at least bring it up in case it
-> tickled anything in someone's mind...
-
-Scans should essentially have been canceled by now, but IIUC, the
-driver doesn't really force the card to stop if it's in the middle of
-a scan (I'm not 100% sure if it's possible). So it's possible that
-pending scans could delay this step.
-
-I wonder what the distribution of (successful) timing is today. I'd
-assume this typically take on the order of milliseconds, but do we
-commonly see outliers? What if a system is fully loaded while
-suspending? Can you try testing (and gather timing numbers) when
-suspending soon after initiating scans? It's hard to judge what the
-lower limit of this timeout should really be without any numbers, just
-like it's hard to judge whether your 10 second watchdog is reasonable.
-
-Also, for the record, since we might have to field regression reports
-for other systems: what hardware (chip variant, FW version) are you
-seeing problems on?
-
-Brian
 
