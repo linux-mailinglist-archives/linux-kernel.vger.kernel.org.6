@@ -1,133 +1,146 @@
-Return-Path: <linux-kernel+bounces-429703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429706-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C87BC9E20AA
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:02:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D73A59E20D0
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:03:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C66C5168D6D
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 15:00:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE996169312
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 15:01:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9BCA1F7071;
-	Tue,  3 Dec 2024 15:00:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="XXpsw74m"
-Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C1FC1F75B3;
+	Tue,  3 Dec 2024 15:01:33 +0000 (UTC)
+Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 964E31E3DF9
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 15:00:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26B4C1F7576
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 15:01:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733238040; cv=none; b=JKGTxpS3YR0smK8/3mP3Yl5koKxa7mbrWdQZTxVQxKuKre6zCBN7ifm/hxXhaAFZEzY5mAbcy+MEfMP9gYhzadJ6vzpV5s+dm1WVTPGAt91u3Z2TErAL+p/x5r328/bJgN3yHS2bRxfghtzR616QJJAXYNiwc0a1bZQ8v8fjqeQ=
+	t=1733238092; cv=none; b=KrbmM2Xabttf/6d872uPT4k7hKdtW5uzosaIRowx0jHXiWjgytD1uIRuUrX9UP88sHHxgsGop4RS1rdN8nQPJWe5y6oGsRzjapawmtQY5zPrbg5HM+2dJEa6JAlcuC7730K5bxIcwXP0ZQD0KpHOHGaJAovKNLLhqajIyPk+eXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733238040; c=relaxed/simple;
-	bh=xYdG6YiEKREyfGjp9fPGIDehVO+II6FjrLqDnuvl/CI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gsQgUAwOOneH/xMlYryHHW9TD2Q1jzn5xZFsPVP8qqV/6MmssyrF9/iOwsNXmTChgduJuBSKXIkOLA7OQF0qlDL/68gLQU7HX09DlRD5O91538AIuYQ4tXFxuSVcCkDaRXm4Md0MxlnpV6YADk6x3HhTHb6DXXSAOF2qtyq1RJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org; spf=pass smtp.mailfrom=joelfernandes.org; dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b=XXpsw74m; arc=none smtp.client-ip=209.85.219.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=joelfernandes.org
-Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-e387ad7abdaso5217093276.0
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 07:00:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google; t=1733238037; x=1733842837; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xYdG6YiEKREyfGjp9fPGIDehVO+II6FjrLqDnuvl/CI=;
-        b=XXpsw74mVrFoPVOUXwd5roI023HY29iVTclpql/74YIJXLwUIzPxhxlLSYIf+7C397
-         u2hkzXZ262C4X5tZZ24e30BCVvm1huyx7/0Y5Qmj0XnuB9z7/ftfnf9hv9v/n1vY75tW
-         RISI92oeAShx3slFVPLyRj/aRQXSkElLMD8bI=
+	s=arc-20240116; t=1733238092; c=relaxed/simple;
+	bh=epfXPtQQGV/4eFzs7XpCiT2I2Fk+Ddf8QWi9zuNcTjE=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=GW//2dEBwltZ1Kjls+83NcNfDTVUuA/oqMalnTK0QYrzTMfGl16Gza4hTcmCraqJQI+R6/yP5UjDrvuyDOc46H4YgdM34zqHgUJvYRIOiJUz3hNmIVZyl/8BHUB7u5YcXaeofJ/XKPSDWPaMjKIvdVsdT+/aR3TXGRbxwXFtUpE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-84188ac27bdso503805539f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 07:01:30 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733238037; x=1733842837;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xYdG6YiEKREyfGjp9fPGIDehVO+II6FjrLqDnuvl/CI=;
-        b=edo6SFvIF5jDnIAJOU7XFXk/QwqNeno5qpgoKoJ2aNXFus8m+xK0j63/k0gWLZolpw
-         UcrvKtFTY7l6oKT8sLLhrRAw10VfQPYWsKxKzZxx49bDRu2ETDCHLGYcRhuJBkHLLC2e
-         pyy/9Es5mCqf5fhqxrslpHOtusUGsOu3KK4Lj0KOhjqVaoipoSa5yQKrXfeSs5sg1bpH
-         pUSHgjO+HmJTIlyl5jqnLEJOsDo3pX8Qz3FzEQHFule9V6GS6dLac3wuWtfsJzJeCscS
-         lb125US4A1zSP4szIHxidiwtYNNLSx2SQ9w3R9OOi4Cn2NsF+MP6G8YCyQEJE1nOtQLE
-         FTRA==
-X-Forwarded-Encrypted: i=1; AJvYcCXVKbXl+8tOa0dy1QtQha+k9VZEiC0KcpYSRwm8IH6uGjqnko+TwNQfVWAjsk2umozfUR/km+77WHLkPbQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9Ph23AmjOfjAZlWnTPmLJaZhCD5c0P2Ta21m/MiGxUMJdFxGp
-	AWeA5AGQdf537lqvBl53nprk6PGZ5hZLDGP2QPtHSzoaEEcvFqKA7IwhWA1LVig7u1A4FG+2/kb
-	mjjn+oAcr8OcnDzywgxhZ5o+HynvBHAFyf6SyEw==
-X-Gm-Gg: ASbGncvbZ/SzeCBb2DZRzd2vIweK3S7sJxsvC7FmFix/LfSIFtYwZHLPmXNwNI6IIPe
-	6+0qc9lBJo5/H4l7DbmhjrerNc4KJXZeq
-X-Google-Smtp-Source: AGHT+IHRBFQmfm+41Q5jBpD1n0GIw3d9h3v9DOtoxp1AQL7jHIgH+IMa5yeDq7jLQOG5SQPiBGSig1+NhW7ZskWGNiw=
-X-Received: by 2002:a05:6902:1b12:b0:e38:a550:89c4 with SMTP id
- 3f1490d57ef6-e39d3a29589mr2748197276.14.1733238036551; Tue, 03 Dec 2024
- 07:00:36 -0800 (PST)
+        d=1e100.net; s=20230601; t=1733238090; x=1733842890;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=htusEmkyDY/hbdcduVlcNhrCjMOkDBfuFuzKEt3oxJ0=;
+        b=LgDa+Xn14PFk+qLcORGeLTMVNqhvoHRB7vlSFl4jx79JTWOWxk/Wjtwk/ZLJEDp+b3
+         f4b68zMGiIGgdQRc+eojT/MM3IUKP7BcL1uEAecBRh9IZiJa6IHkDows1S9qvEP6KuIs
+         vctz+xaLvH1Egj65128ge/zV4vnIN6oUH3dBCe7GuMLiB2lJ3WlLPPPvZmzRmNXJDPYD
+         MXfpJ+KBHAu49g/D9EMHnAwT4T0fZttYVCbeKCnhmdwdawdotS3zZD0l0M9COJjbhuFk
+         HhkeBx0gIGUyidOh486mmDPbrrpa28eZep1NH1KqNk0xT1T8EnthE48J/UnI4gSdjHbQ
+         jM0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUwnTSGhKT3ujwc7dF1IKTLS6sjqwLtsJ2r2IRInXBO3vRonOsvdY4TQxTPWVjNeczwtVHxYa/r31DWbrI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywt1xYHvgWtneFIx40ykXNyq0IETteyE3AMWUYdl+QKurOzyaRw
+	gj2Ew24mSwq+aOlVEfjV5A0X8eFz/HfeYk24YUNO3oKfGXo4na98FsROTvTrndtYzjfbrwnGO2F
+	ty55nigLVFspOXlqfkUta236qYDZaQjiI3ovFXf591zQ94jfIbypE6TY=
+X-Google-Smtp-Source: AGHT+IEbjGX4zYdW+eNsISIwwcOpV6m4rCfsdUDuP40rWLKfNrY/QCJxUommigDOdl5Hxs2Y7WIN81pSYj8Q7Uiy77OOs2aChOdb
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241202140735.56368-1-gmonaco@redhat.com> <20241202140735.56368-3-gmonaco@redhat.com>
- <c16481a7-20f1-44b8-981c-fd31cb331cbf@efficios.com>
-In-Reply-To: <c16481a7-20f1-44b8-981c-fd31cb331cbf@efficios.com>
-From: Joel Fernandes <joel@joelfernandes.org>
-Date: Tue, 3 Dec 2024 10:00:25 -0500
-Message-ID: <CAEXW_YT1NLU2xsBHwDjbBPg_rZWc4hNGNgmkdxF8C_0Dw60N1w@mail.gmail.com>
-Subject: Re: [PATCH 2/2] sched: Move task_mm_cid_work to RCU callback
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Gabriele Monaco <gmonaco@redhat.com>, Ingo Molnar <mingo@redhat.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
-	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Valentin Schneider <vschneid@redhat.com>, linux-kernel@vger.kernel.org, 
-	paulmck <paulmck@kernel.org>, Frederic Weisbecker <frederic@kernel.org>, 
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>, Josh Triplett <josh@joshtriplett.org>, 
-	Boqun Feng <boqun.feng@gmail.com>, Uladzislau Rezki <urezki@gmail.com>, 
-	Lai Jiangshan <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>, 
-	"rcu@vger.kernel.org" <rcu@vger.kernel.org>
+X-Received: by 2002:a92:c265:0:b0:3a7:e8df:3fde with SMTP id
+ e9e14a558f8ab-3a7f9a46252mr27511935ab.9.1733238089926; Tue, 03 Dec 2024
+ 07:01:29 -0800 (PST)
+Date: Tue, 03 Dec 2024 07:01:29 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <674f1d49.050a0220.48a03.003b.GAE@google.com>
+Subject: [syzbot] [f2fs?] KMSAN: uninit-value in f2fs_new_node_page
+From: syzbot <syzbot+5141f6db57a2f7614352@syzkaller.appspotmail.com>
+To: chao@kernel.org, jaegeuk@kernel.org, 
+	linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Dec 2, 2024 at 9:34=E2=80=AFAM Mathieu Desnoyers
-<mathieu.desnoyers@efficios.com> wrote:
->
-> +=3D CC RCU maintainers, reviewers and list.
-> +=3D RSEQ maintainers.
->
-> On 2024-12-02 09:07, Gabriele Monaco wrote:
-> > Currently, the task_mm_cid_work function is called in a task work
-> > triggered by a scheduler tick. This can delay the execution of the
-> > task for the entire duration of the function.
-> >
-> > This patch runs the task_mm_cid_work in the RCU callback thread rather
-> > than in the task context before returning to userspace.
-> >
-> > The main advantage of this change is that the function can be offloaded
-> > to a different CPU and even preempted by RT tasks.
-> >
-> > On a busy system, this may mean the function gets called less often, bu=
-t
-> > the current behaviour already doesn't provide guarantees.
->
-> I've used the same task work pattern as NUMA here. What makes it
-> OK for NUMA and not for mm_cid ?
->
-> I wonder why we'd want to piggy-back on call_rcu here when
-> this has nothing to do with RCU. There is likely a characteristic
-> of the call_rcu worker threads that we want to import into
-> task_tick_mm_cid(), or change task_work.c to add a new flag
-> that says the work can be dispatched to any CPU.
+Hello,
 
-Also there is no guarantee that RCU callback will run within a thread
-context (example, some configurations run it in softirq). Further,
-call_rcu() usage as shown in this patch can also delay callback runs
-by seconds (with RCU_LAZY enabled).
+syzbot found the following issue on:
 
-See also #5 in checklist: https://docs.kernel.org/RCU/checklist.html
+HEAD commit:    0e287d31b62b Merge tag 'rtc-6.13' of git://git.kernel.org/..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=117ddf78580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=b131ba4658863ffa
+dashboard link: https://syzkaller.appspot.com/bug?extid=5141f6db57a2f7614352
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=145a65e8580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=157ddf78580000
 
-thanks,
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/19a3d9ed3459/disk-0e287d31.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/3473a586f547/vmlinux-0e287d31.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/bfd02e5a5157/bzImage-0e287d31.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/f9968897b785/mount_0.gz
 
- - Joel
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+5141f6db57a2f7614352@syzkaller.appspotmail.com
+
+F2FS-fs (loop0): Mounted with checkpoint version = 48b305e5
+F2FS-fs (loop0): f2fs_check_nid_range: out-of-range nid=1, run fsck to fix.
+F2FS-fs (loop0): f2fs_check_nid_range: out-of-range nid=2, run fsck to fix.
+=====================================================
+BUG: KMSAN: uninit-value in f2fs_new_node_page+0x14c5/0x1690 fs/f2fs/node.c:1341
+ f2fs_new_node_page+0x14c5/0x1690 fs/f2fs/node.c:1341
+ f2fs_new_inode_page+0xb6/0x100 fs/f2fs/node.c:1311
+ f2fs_init_inode_metadata+0x18b/0x1e40 fs/f2fs/dir.c:501
+ f2fs_add_inline_entry+0x5f5/0xbe0 fs/f2fs/inline.c:665
+ f2fs_add_dentry fs/f2fs/dir.c:742 [inline]
+ f2fs_do_add_link+0x4b0/0xad0 fs/f2fs/dir.c:785
+ f2fs_add_link fs/f2fs/f2fs.h:3628 [inline]
+ f2fs_symlink+0x6d5/0xf80 fs/f2fs/namei.c:641
+ vfs_symlink+0x1ed/0x460 fs/namei.c:4669
+ do_symlinkat+0x253/0x8b0 fs/namei.c:4695
+ __do_sys_symlink fs/namei.c:4716 [inline]
+ __se_sys_symlink fs/namei.c:4714 [inline]
+ __x64_sys_symlink+0xe0/0x140 fs/namei.c:4714
+ x64_sys_call+0x31ca/0x3c30 arch/x86/include/generated/asm/syscalls_64.h:89
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Local variable new_ni created at:
+ f2fs_new_node_page+0xa4/0x1690 fs/f2fs/node.c:1317
+ f2fs_new_inode_page+0xb6/0x100 fs/f2fs/node.c:1311
+
+CPU: 0 UID: 0 PID: 5782 Comm: syz-executor986 Not tainted 6.12.0-syzkaller-11930-g0e287d31b62b #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+=====================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
