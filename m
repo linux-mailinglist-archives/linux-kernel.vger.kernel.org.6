@@ -1,216 +1,171 @@
-Return-Path: <linux-kernel+bounces-430082-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DA569E2C68
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 20:53:04 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEF579E2CA0
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 21:04:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DDB1B282A8C
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 19:53:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C0D22B3FB36
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 19:53:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 132D12040BD;
-	Tue,  3 Dec 2024 19:52:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94DD5205E31;
+	Tue,  3 Dec 2024 19:52:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="H2h8FiwZ"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2116.outbound.protection.outlook.com [40.107.237.116])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UlD/x7yY"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3E8B1E1035;
-	Tue,  3 Dec 2024 19:52:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.116
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733255576; cv=fail; b=sTQ02pUGhLjKU0b4T3pqVWJH4rp5icF8ATIn/PAJ66TRLpYSbtFaXmiOxvV51ITIslRQfu32PVEZ8E6i5sTp61QcBWONMN1GhL8xCwemcZhNyAKhRvZ/yYDsj08B13ipDtQJI5kk+tfUjIB5Z3fjT3qu/6/Lsuen6pxU7pBJIzo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733255576; c=relaxed/simple;
-	bh=PhwZaSUxNhgZdAc7rmpyAQp12hoOuOWzpoTLaQFt0/k=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=oeKiltvdtHqSFUVnu+VzgBchJNAs8aqC7qq9B4UjNKYNoQ6spL/0l+kKKOqPJPKdSyVXc/FntBKERrL53e0PB58VrUQIKHqY8y+BSizR9fYsRMGqd+n08z0DVfd6WgxH1rUcwkLyw68mTSYA2zPbUOX2pSvfTGr+Xfyv5F7RzLw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microsoft.com; spf=pass smtp.mailfrom=microsoft.com; dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b=H2h8FiwZ; arc=fail smtp.client-ip=40.107.237.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microsoft.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Uz0eFQezw/5ZkinjSh2/UwkG+alC/PUCHbGbgTIUkGXbrMjyUbZv+I5zTwP3+y43HycN4DikDqWeCyLYVTZHTmOMOPCOhiMntYg7U60XmjZci+mL5yaytUeXlKLPGgklhFTOKNARII47hZ9e13ciR9Xj3CAERzzQt0C4lzP5ttaVJKM3ZqY2VbB/O2Hl8XYBJSMCtC5RiQL48yAKfCM2oHL7WALoy29xl9qMvEgDrk157IZ9M1uQsBSOKZ97O3ZC6lg5AM0o9WBYq33CuqtdLznB5wWt6LB8wxp1WXwgC3d2aKn+mYVq+hsd8l+KAgWwEyXwZe0cG5rDyloFS16etQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=PhwZaSUxNhgZdAc7rmpyAQp12hoOuOWzpoTLaQFt0/k=;
- b=r871bsRgQVrE1OTyxmRWEbHPkI5Zoh1QlL9E/0GNICl9BsHEyJw2XpcVJmBzXL4aA8TBckJHFyGmBkPZ+yrxnPGYpobWHYoQYHDyiRRTx2J/U59pkCQWFR0gKYWyAPgHzAhFaGGcSjgoRgsIBlPRQDD4dM+hsd1ZQsLfljWJsVHqAqGIpVd5eR7t/sxGtP8Kbxney1ixz05gDwmmcVArynoGTj8Xd5EsaNPNtzaDnOjLcr5/2GdPUh9TbbirNpA1xq3IR7YsMizp7oFRH64UpMvB+DNlwl7y6A8JHCc4JiE2VTV/LlHzquTw5D68JOlliMrYTVbCs/cHZWKupE88cQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microsoft.com; dmarc=pass action=none
- header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=PhwZaSUxNhgZdAc7rmpyAQp12hoOuOWzpoTLaQFt0/k=;
- b=H2h8FiwZa1CMFHiRg3Yt+uhUQmjqEVIA4wcnHxmoXiXa/3zYbRsHpww2/ZjdtFdTnvj/WwB7hWOqMBTQt9XZ2etGGBusK59GCnro6wuNSWf7vRKT/L2usClucybNuGmVmRRaYlhNlU99RCth8TaBg0XdWbACx123cB4goW2jZC8=
-Received: from CH3PR21MB4398.namprd21.prod.outlook.com (2603:10b6:610:21b::6)
- by CH4PR21MB4170.namprd21.prod.outlook.com (2603:10b6:610:22c::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8251.4; Tue, 3 Dec
- 2024 19:52:52 +0000
-Received: from CH3PR21MB4398.namprd21.prod.outlook.com
- ([fe80::d17f:89c7:62dd:247d]) by CH3PR21MB4398.namprd21.prod.outlook.com
- ([fe80::d17f:89c7:62dd:247d%4]) with mapi id 15.20.8251.000; Tue, 3 Dec 2024
- 19:52:52 +0000
-From: Long Li <longli@microsoft.com>
-To: Jakub Kicinski <kuba@kernel.org>, "longli@linuxonhyperv.com"
-	<longli@linuxonhyperv.com>
-CC: KY Srinivasan <kys@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>, "David S.
- Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo
- Abeni <pabeni@redhat.com>, Shradha Gupta <shradhagupta@linux.microsoft.com>,
-	Simon Horman <horms@kernel.org>, Konstantin Taranov
-	<kotaranov@microsoft.com>, Souradeep Chakrabarti
-	<schakrabarti@linux.microsoft.com>, Erick Archer <erick.archer@outlook.com>,
-	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Stephen
- Hemminger <stephen@networkplumber.org>
-Subject: RE: [EXTERNAL] Re: [PATCH] hv_netvsc: Set device flags for properly
- indicating bonding
-Thread-Topic: [EXTERNAL] Re: [PATCH] hv_netvsc: Set device flags for properly
- indicating bonding
-Thread-Index: AQHbQ3OobFEVpZbbJEukMRDwXTGZE7LU7Gvw
-Date: Tue, 3 Dec 2024 19:52:51 +0000
-Message-ID:
- <CH3PR21MB43989123B48D11E16B78802FCE362@CH3PR21MB4398.namprd21.prod.outlook.com>
-References: <1732736570-19700-1-git-send-email-longli@linuxonhyperv.com>
- <20241130140307.3f0c028c@kernel.org>
-In-Reply-To: <20241130140307.3f0c028c@kernel.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=827a8984-035a-436a-9b2a-42cc6703233f;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ContentBits=0;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=true;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Method=Standard;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=Internal;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2024-12-03T19:29:25Z;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=microsoft.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: CH3PR21MB4398:EE_|CH4PR21MB4170:EE_
-x-ms-office365-filtering-correlation-id: cf9b5763-00d3-4636-fef0-08dd13d4126e
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|366016|376014|7416014|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?9n/MT+cyTWzPW0VSvgIJrohu/UCEIgR6OBvST5blkQOXNQctzoVrUj7S7Gii?=
- =?us-ascii?Q?1io4QaN5WQj9cVbRyzeYQdZE32otZIQJzLXTpoFMnI7aMyETdPY8aj1MslhK?=
- =?us-ascii?Q?1E+faBQt+phwiRMz3uBZDECVPrF3KOb1TByRmoM8mFUOM0eLn0xHuspX97bR?=
- =?us-ascii?Q?6CHHGkxkOQ9M2/+5Ph3tcB+yf4+KWXJiuK7X8F73sxYfSpN5qAMyrKjYWN4w?=
- =?us-ascii?Q?k37LM1wC2N4DrLGvY30a5VxSjHOPVMOF0IwE4bu0Y2Q0oR2X5COfIgCHbFKm?=
- =?us-ascii?Q?uwCck93rQvf1g9gty8dJ+XVpt5gDFelC+mL6bksjLlw+dc9NGfr2W2HJ4WyQ?=
- =?us-ascii?Q?NmBA1eqd56D/xKnR/rhZz+bzD+R2EKI63GfS6hE4FCtpa+6LLvovdtll/81P?=
- =?us-ascii?Q?7tPUPEZ2wIzpCmI8w6kXU6hYUzGUZo9j4kcq7x2sIYrkRYpvix/nNYD2iNvr?=
- =?us-ascii?Q?GpFCtbTm5kQ79eljHRxW0STi+a8kFiyksTBVAwTAtDfwoER4/jBcuEWQHeS5?=
- =?us-ascii?Q?oIvIpg6syKYXq/ICwuVHaa0VfubJD95zdWYa8Km82Ci+dCcNNeaMYQ2jg/e1?=
- =?us-ascii?Q?9j/SdGPy8udptjGK+Z//B09NuEVbC8a0MG2kWM43c5rNtPPr3G1mZp6YAZSE?=
- =?us-ascii?Q?IjqEETx56FsPncCUAERascO5H8Z8iaQlIYzsw8UItY/Fo5aA3YWjIP5T8rQb?=
- =?us-ascii?Q?RJd4nGVfDvJcI+RIFvqQsTb7e9Ug+F2dBQ1siGyRz8/xCqcC9TrMwSvHG0hm?=
- =?us-ascii?Q?NVjlMJ+fO/fQEIi7CCLw9e+NLZs9rqAuT5Iq3EHpfUquOu9+Dn3E2xOwp5aD?=
- =?us-ascii?Q?UcCDJhv808LgjS5WjtDIVDmTBf4i1B6R+BJBx1imvUfwzT3c/alYhk08v+GO?=
- =?us-ascii?Q?TpQUZqOGRacOfUQIQf3SrCTWYhRFL/FzostXD1QpV7ClKu3e0pyQNxRKu98L?=
- =?us-ascii?Q?NSjbYN8qGaB5Oc7SFfen1OCFS0oMiuK6D883DG2c/xIwXuXERx24bnQFJR+m?=
- =?us-ascii?Q?9Z7b38paOwl89WYh532mxXjR+vYMtjj0laoys4+CgnE+k2czIUBNVbJs2P9U?=
- =?us-ascii?Q?DBlZThBGjat2nu4XG1A/BBQzxCYcGjtJ6o+vsVAAp7WXteoEsnin/Mc8qx1j?=
- =?us-ascii?Q?8UOxi4a98lmWs6dCgwAtkhKSjKrSHdgplOpISl9X9LAJy3Z1xcLp8gQWQnU0?=
- =?us-ascii?Q?/p/tgY9R+f72DoT/Ig4ieYZ5wRu2XW0/w1T9NopWPhhnrtdUwNylC2pEHtyd?=
- =?us-ascii?Q?lSsz0rJBHzTv3OWbRWE7RqGMuoOdYO7haMUZL+FP+XmTzn4GSPYBgFpO7wh8?=
- =?us-ascii?Q?Hd11SYmrvRXQ2mjU0g4vcgjbCzPVOuCKnbKfL+dxD+X+Z176gJh6Q6MCRIGB?=
- =?us-ascii?Q?F5CiAK/ukWUgLvtxhvpgDSTSzQ+Zc5c/ChmPc540vxT/OfooMQ=3D=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR21MB4398.namprd21.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(38070700018);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?XM1pFruSbV7gDzTuhMs/moItm6m0+w8+Gf/YAbwHCLl9nvlB209dMoCJPrUt?=
- =?us-ascii?Q?/WNEcSiA9LPUd0ufS1BPHkpmCQ4HcuB8nW8g5W75r+fyS8BUuKUJXl0pJMoE?=
- =?us-ascii?Q?ZBx8+S47oN1xxcJFBqoBAlDR4dAX4zEmVu8fTkk+4YQY1k+Kxumc5ieoOA19?=
- =?us-ascii?Q?VjTl7VrAVgQ/xJ9wRNFXv8jR2Uw7vc/dYSnouQeFOcyRthpUGHrsN6kT50m6?=
- =?us-ascii?Q?n6ZpjsBGjskMEm9bCeBdkN9Ql9oSH8UZRVF50hOTdr3Z1zMVYvG1XISs8zjZ?=
- =?us-ascii?Q?EOJU6luzQDc1zH+C7z8//nxCl1gWjGJc/uPMzqEGX21HZoWAylvfRhzItCnR?=
- =?us-ascii?Q?DHa+WBSEQ009B09aNHIrBZiVunWxSPgc8HNAhsuXut7G4OllG6/OLD+20v+8?=
- =?us-ascii?Q?tnvgxmierbOw6KAZaLWxE+xrC1pCGOjQHrEilxctMP8ho7trLt0hdYG8sZ16?=
- =?us-ascii?Q?U2iF+gHaC3bko207AsUPojBfn07tp+OEmaljib7EYH+Fcxx16M0BH81NI5qU?=
- =?us-ascii?Q?x2V2baGCkZ/YCxFZEZm2QffZ/WBxI/Fu4I/kEK+/nex5od5nDwK9CF/sa6h7?=
- =?us-ascii?Q?Ql7ThrPFpQW6eWzWM9UTjL678DCjdSv8K9Ls8MX5xxL1WAFRrZ7Kxy/9oHef?=
- =?us-ascii?Q?TXc4l6SypHwKvoX6CiBW51AESGpArb5YE88qorXCbpAexp/1idyNtTO2Jj2u?=
- =?us-ascii?Q?34tQ4afYl0MVxVspVxFDHUl8lRITa6y8941RZUuPBNardHfTXNSvRn2OPX3q?=
- =?us-ascii?Q?1YLkRe6ownjrJM7RJ6qxOOag+64BbTfUoomznV/ckXZGHv0PmCusDCM2+Cr/?=
- =?us-ascii?Q?7aGj7rNZE2SEeNPsK+iDPjbPScNtyRbodH7VJ67giNIU7D19LPAwI98ZfV0a?=
- =?us-ascii?Q?eUdYi6ov5DmwOYPO5V+Xh6tDhNUR+cjlKwOtFd54vM9Z/aX/TKVAcMraMB37?=
- =?us-ascii?Q?7BREVXL2ZWJhMDzrQndctDyT8U4dZFG93F7XCOiypoNgyqu2Kw9+RhYg8e3r?=
- =?us-ascii?Q?h/76kXWN13B3ZSTaN0AhbbjLZebjxsDTua46jX5l+rAVUN8ZI5b3Dw52vl/G?=
- =?us-ascii?Q?blTfRUwr4kUtc/QkpcMhHZpkCawxdbohea3HrCLNzBj19tPztbKQatP6tZ55?=
- =?us-ascii?Q?lYjRVPxnwnItK/7B1g/b0T3VdNg6p2R1oWBmZUeArwG7fdC7rMhyWF3P2Pwn?=
- =?us-ascii?Q?JPonZ3rqQXwYS3be/XuMYjTli26+by/XCMGSQjrWyOLKhcmfub9pUOD7u6Sf?=
- =?us-ascii?Q?W0jQSyUnA2nApT+o5LKHzGagyJqvUGN9hNvHjiqxL4fzjYs6Y9k+h4gWmKt6?=
- =?us-ascii?Q?Jz7b8Nr6g0aPDDWD12EXWf4LYPhVAqbekS2+w4lrke0qHSqAkmHY9VeCbpUN?=
- =?us-ascii?Q?f9lWwPW7+Qur54kXm0+0RxAkNNpIm4d5YZkTpw7yJ16DBhtfOE6Kqof6C7Pc?=
- =?us-ascii?Q?Q2kpZ3TAaPo1B8KKUwLh2GAuOMDBUwo7FuL8kr1F0rPwTyH5tLNltvZk9ATA?=
- =?us-ascii?Q?xAMJWFTvdPUiE+FPGt8e2M8sPWcT412gh2kC5ATvK9moEDHLgSSKKGI6Syge?=
- =?us-ascii?Q?pOxJbS0kShZ3EkfZDxAO8H311TxTsnoqe+elr1WM?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 137BB204F62;
+	Tue,  3 Dec 2024 19:52:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733255578; cv=none; b=erFImipIIi/7YJ2eGGzLvx8KVy1FAF5q7YH3M4wdob+X5SRUIuKVNl+J68iTdmxSScdReZWCU7Jtd9dhw9j/XQGwUvoKOl9bBnrLyU3rxtLqRZKX7daHknS0pqmrSEsR61h8JRoMUHf8vFw2S3BRUgAyYR37Lx5//FSF5NHXzj4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733255578; c=relaxed/simple;
+	bh=ie5h+6CpGww4EvqMe8sRR1D6TyL6IN2CdvTaRNTfRB0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=baFjpIUcCooF67L0ArHHldYQtaCZfocUo1YNrXk1OtHUT4dMn/VZg2z152lrmhVYKE7lmwojtB4ZWd6jS0n42hjHo1+zA1g3DAyJ8h8NyvaF+ZFNKmzdn7zDb3VFnb/dF4xXkGreQByBVER5bMrkUy4knHhCvGqkOHbH/L20N0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UlD/x7yY; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-21539e1d09cso56230435ad.1;
+        Tue, 03 Dec 2024 11:52:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733255576; x=1733860376; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=7jNTWV+8gv1sP1pwmHNm1JBQRuq1KzrGOnDCul3WBmU=;
+        b=UlD/x7yYf5dfg1jPp24Q8/X/NNN8OvwJ8qS0w3KGEWXG7tG9BDvuTjsPXqd/fYTxpb
+         7XHeiY8pHk7aOcrEe3NcnGRS9l5cHQlBxJGOnwMdwX2VDDueQGDp2k6JIg7FCU8lSjeT
+         j2vP/V28TW/Ensg23meahWmiziVgmMpA6gkO8xGQpj9rUktC1dPsgPvsxJkHyfUB/V6W
+         We12UurVw8+GL+njXDc0TtEns+zR5cQfwzCmMoSnt3t+Ax6yKNogDW4qZLOWP5A3CRrS
+         GX2j5UVx+KXINjoj8XUhUSg2ou1jtyCT2bpnVtJMYMd2a9hzc4KS9qBdUFYFNzK3TNkz
+         TicQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733255576; x=1733860376;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7jNTWV+8gv1sP1pwmHNm1JBQRuq1KzrGOnDCul3WBmU=;
+        b=CFTpW0vVb6tg3KI8NZR2kXQRMNCj5o0gvnIXTCG5AxeMGTDQ7UWEhRpKNC5goftVHn
+         39SeB95lzjAJAaezuzTHey3mUiNDL/f7tRLJ69IRnnTssVyBIz1rDK3fYordqPwB0LYN
+         opW8FRVjmkG5AHpTQqLVrFLMK0FYf5c5etFDMsbHpoVXAAgRgIn4yk/ziLSs2V+Utu35
+         aJDZ7x+G+M3LXceSFud96eOHArtwc2gfGuy/nkKSAfCjKtdTVwlEf8xBrGkHEtGVusct
+         /xpdhM/+ptR4sbDDXIpNOin7KXT4OTV7x+nuis4DYYWSOG1ZZpYjI3x95+roUs99lSXJ
+         OCGA==
+X-Forwarded-Encrypted: i=1; AJvYcCW5ChLnthSN5FUMDkQYmWZWUmM+YyltxjAc8MwnDe5E8D+8PV9IEUzrbBeE0Cm3ORxPzzJZn5n2Oowx@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVsvdo6f7ktq01aYAPDi0GRs+HLmTaIFKflEbT66i3b40cZ/W9
+	w9RUXF/Ht76J54B4Ado7uyNuORiAxYAOXER1PIlupHHZxuLorFPM1abnAQ==
+X-Gm-Gg: ASbGnctQGyH+mkftbTf+7FHf9VwQhc1XI30GHBm6I/wcASomIcwk6EU5losm0H35Csq
+	gv5Htg80mzLT9jfCJolVV8SDok6FXQzWI55VTDzve7tXQVoce6TUMud2cpj2y1WFMtAPCzblBv5
+	Zf1EYskKezb5W01KeMwaHPqtH3FLr5jzd7XUva15nS1BIVMo6ecCUuEdk9vEkeE07d2If5r7GSf
+	1jbVPESQ1Q7LhjPagP3pNJgBaTy7T8D49ulynavLjb82Unq34VuiHTlq2iE9DHqaQm/tcMwX+rK
+	Uuasm1EdgSgFw/MQ7Q/Qr+c=
+X-Google-Smtp-Source: AGHT+IFQj5ygVF12Vjd1JX0HqtF1mCI1f2Z/dwAH4ECKBi6ebdjhgLkcDmXNrtn/cQbT6imHAX1ysQ==
+X-Received: by 2002:a17:902:d4c2:b0:215:b468:1a48 with SMTP id d9443c01a7336-215bd2001f9mr45261085ad.26.1733255576212;
+        Tue, 03 Dec 2024 11:52:56 -0800 (PST)
+Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7258bbbc565sm126340b3a.61.2024.12.03.11.52.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 03 Dec 2024 11:52:55 -0800 (PST)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <24c61106-9928-4423-97b5-f43dc823d54d@roeck-us.net>
+Date: Tue, 3 Dec 2024 11:52:54 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR21MB4398.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cf9b5763-00d3-4636-fef0-08dd13d4126e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Dec 2024 19:52:51.9199
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: X5puJaMfqk3pQOwgUOMg2ru1r/+aCdxFaY5tzNruFESemP/oNspU/tfqzFU5pxtyT9B/awag2bNZwUQqk0ZNuw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH4PR21MB4170
+User-Agent: Mozilla Thunderbird
+Subject: Re: linux-next: build failure after merge of the hwmon-staging tree
+To: Mark Brown <broonie@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux Next Mailing List <linux-next@vger.kernel.org>
+References: <Z09c_U2l8SqLQG-n@sirena.org.uk>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <Z09c_U2l8SqLQG-n@sirena.org.uk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-> Subject: [EXTERNAL] Re: [PATCH] hv_netvsc: Set device flags for properly
-> indicating bonding
->=20
-> On Wed, 27 Nov 2024 11:42:50 -0800 longli@linuxonhyperv.com wrote:
-> > hv_netvsc uses a subset of bonding features in that the master always
-> > has only one active slave. But it never properly setup those flags.
-> >
-> > Other kernel APIs (e.g those in "include/linux/netdevice.h") check for
-> > IFF_MASTER, IFF_SLAVE and IFF_BONDING for determing if those are used
-> > in a master/slave setup.
->=20
-> I feel like this has been nacked 10 times already?
-> IFF_BONDING means the bonding driver.
-> There is more than one driver in the tree providing link aggregation and =
-only
-> bonding uses IFF_BONDING. If some user is buggy fix the user.
-> --
-> pw-bot: reject
+On 12/3/24 11:33, Mark Brown wrote:
+> Hi all,
+> 
+> After merging the hwmon-staging tree, today's linux-next build
+> (x86 allmodconfig) failed like this:
+> 
+> In file included from /tmp/next/build/include/linux/module.h:22,
+>                   from /tmp/next/build/include/linux/device/driver.h:21,
+>                   from /tmp/next/build/include/linux/device.h:32,
+>                   from /tmp/next/build/include/linux/hwmon-sysfs.h:10,
+>                   from /tmp/next/build/drivers/hwmon/pmbus/tps25990.c:9:
+> /tmp/next/build/drivers/hwmon/pmbus/tps25990.c:437:18: error: expected ',' or ';' before 'PMBUS'
+>    437 | MODULE_IMPORT_NS(PMBUS);
+>        |                  ^~~~~
+> /tmp/next/build/include/linux/moduleparam.h:26:61: note: in definition of macro '__MODULE_INFO'
+>     26 |                 = __MODULE_INFO_PREFIX __stringify(tag) "=" info
+>        |                                                             ^~~~
+> /tmp/next/build/include/linux/module.h:299:33: note: in expansion of macro 'MODULE_INFO'
+>    299 | #define MODULE_IMPORT_NS(ns)    MODULE_INFO(import_ns, ns)
+>        |                                 ^~~~~~~~~~~
+> /tmp/next/build/drivers/hwmon/pmbus/tps25990.c:437:1: note: in expansion of macro 'MODULE_IMPORT_NS'
+>    437 | MODULE_IMPORT_NS(PMBUS);
+>        | ^~~~~~~~~~~~~~~~
+> 
+> Caused by an interaction with Linus' tree.  I have used the hwmon tree
+> from 20241128 instead.
 
-Sorry I didn't know this has been discussed in other threads. As far as I k=
-now, this is probably the 1st time it is discussed in the context of netvsc=
-.
+Yes, that is due to the MODULE_IMPORT_NS API change in the upstream kernel
+that was pushed right after -rc1. I'll push a new version after I build tested it.
 
-My understanding is that netvsc is a special use-case of bonding which is i=
-mplemented as an emulated device in drivers/net/bonding. It is the only non=
--emulated driver that sets IFF_MASTER and IFF_SLAVE flags on netdevs. After=
- the master/slave devices are set up in this way, the behavior is very simi=
-lar to that of the bonding device with a single active bonded slave.
+Guenter
 
-There are code that use netif_is_bond_master() and netif_is_bond_slave() to=
- decide how a netdev should be used when it is in a master/slave setup. One=
- example is "drivers/infiniband/core/roce_gid_mgmt.c". Their use case is re=
-levant to netvsc and its slave device setup.
-
-I haven't found a good way to communicate the relationship of netvsc and it=
-s slave netdev to those code. The best solution I can think of is to use th=
-e IFF_BONDING, as it is the closest representation of this relationship. An=
-other way would be adding a new IFF flag (e.g. IFF_PERMSLAVE) to netdev_pri=
-v_flags. I feel this is not needed for this special use-case in netvsc.
-
-Thanks,
-
-Long
 
