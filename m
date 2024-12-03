@@ -1,226 +1,212 @@
-Return-Path: <linux-kernel+bounces-428753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E172F9E12EB
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 06:35:00 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37BFA9E12F3
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 06:36:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3D5ADB22E35
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 05:34:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9D8A8B231E7
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 05:36:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 792C5154C0B;
-	Tue,  3 Dec 2024 05:34:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6B2E170A37;
+	Tue,  3 Dec 2024 05:36:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RJuBUqqd"
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="UhQAd+lL"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11A152B9A2
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 05:34:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 944A32B9A2;
+	Tue,  3 Dec 2024 05:36:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733204092; cv=none; b=j9kgHdEFxZml/r0XuVe+8IvhoS5rknBm4JEiYrI75fDoPk2WzUeJkxwJNtc6UllZ8X+dwhOEKLgEDJU1gPtPzXNqY0AI7UfI2rYHEQmr/ZOnyQqY9XeoN/3CUxB/54M3gcSGmtLk1GmphRcwJhjv4lxrqj0Gktwt70LFvsQ7Srs=
+	t=1733204204; cv=none; b=ddCKOnd+9Kdc4fFzmznrue7EThgAPuUnIjZS1FInbvtjbbUiN+LCBH6+vt4z6JrdtO/48PUWThYSXFCOJWy/Rch6z9J6YjW+riRpjHUHBlYXd4D49+epfTUY8IUDSKqmEyxofzcBXC41y5iAvaora5S3r8rHwJar9furFY5d/3Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733204092; c=relaxed/simple;
-	bh=QSb6sDRxv+4S4xM25Ho10z7tY4yY1I302OHfwwPJnjc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=G13s2VASJBAdcqy8biDWFZ/lfoSZE6jodcmhXXD0NfE1ezA+GgktK3fgx4tqf64qJIG7Mu/EbGKIqoOeSa1NY/i23LbfONMmySuSD5dmwNPRcmZbeLyD4IYIeBptX8pjzl+pgMR882mqATvdutU0B+nMcfYLgfs5PQ5gad2vmYM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RJuBUqqd; arc=none smtp.client-ip=209.85.128.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-6ef4b6719d1so47721247b3.2
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 21:34:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733204090; x=1733808890; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pJNCj+uh9klufOQ1xByZwnI7VLbBQeWlMH2kBkaAN4M=;
-        b=RJuBUqqdQrOt4dNj/GnkTZCdmqGJuoMXAMlH+TtpkNZvzuwptFVHqajCoIHai6RVqN
-         GLe+G+NddyNsj+F/gLhFObbA4JGuBr24IMOTi71MGy6OQ0YxAPzQeB7eyhlyh2EkjOro
-         vvxksjw9oGv1c8T3K+It8XWcK3QZX8qp9b2EWYa2DEnAig5HKXC2Xt2IVPnCGihJ2JJW
-         p9JRsBSM7vbvRlYbuSbnMkH9104zWYEvuwoqK8DvZrEFaO3PDHWpTttt2b9GCvLxclj4
-         xX9ay7CFVBnaYeDSu4jQ/gusl6dIq4M+HaPWPyiXRthFKI3imeylYfkW5ydcrgDcESF6
-         pR2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733204090; x=1733808890;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pJNCj+uh9klufOQ1xByZwnI7VLbBQeWlMH2kBkaAN4M=;
-        b=OkynGJXBGu5Ia59tzJd6i2k+eB7hsh++TDTwgw44R+Cs0GW7EKzAQl2RfXjM1bQ5wh
-         lpbhG5B0O58olM3P2dmSAiCSqHn5PlWrD4cXCQUyTKGE4DQoJGTCeENzJ6RbTZ5lSQZ5
-         Z/oAs0IcI1e9SLVdPeGc4Ytr5H/0woPRnksMDj1AoJHIiTf7w+gTvTsR2zWxx87zMc+z
-         kK7rlRYjgf/Enb3p76pOhUxre7gSmN36JeB5UI9dlUzgyDh3KxJI88+hB4NfMcmV91ff
-         O4Ajeu36mhm9O+qL97DsGdqsbXBggXRzFP6i3Lqq/saulQzl++g91k6D+RAV6AEtNcVp
-         uZ0Q==
-X-Gm-Message-State: AOJu0YySwZQW0bfgzrNfjuiP7jqHeASZR/hriGvoSgXLUk9qBN9ov+Vb
-	b9MSwBAJMHEOnxETN09I1vFMWgnKX/llcUGHxV7WvIZvKUxNLNgkYPkpFiHZpOm0DJtuGh1pNEL
-	nj80r0+uS6vDXMuplTo2LAhGA8cJUWGPTAtmP
-X-Gm-Gg: ASbGncst+L5vv7RLLpUPRS+jmOicrvsaiO0QjYYGxA8qcAJfpMP4ipg7IFW3A4zHMh+
-	POP428/lTOW3fxWAnWxq/k2g48/L1
-X-Google-Smtp-Source: AGHT+IFVS0+686xfkJkz3Ni0rcQ6kFCbqnTgmutwtLIbKBx85HDDFrnjFwn9cLymCgTplIULZcE8wd1+dj1nwK7xikM=
-X-Received: by 2002:a05:690c:9985:b0:6ee:7797:672 with SMTP id
- 00721157ae682-6eface05a9emr20561557b3.7.1733204089842; Mon, 02 Dec 2024
- 21:34:49 -0800 (PST)
+	s=arc-20240116; t=1733204204; c=relaxed/simple;
+	bh=CnWjJp7KuWfu3q7jeM8LsNoRI6q/vr5e32gqQiKKyQk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=pV7RLX7AXGeoDJB83r43XF8ZGECsIRtWshp1rR75wwr5kh0LmGQ6ytS030cErs4Z4vMWrRSDn7xxyE6Sha1HnDBOagN3D/5TSM7ijSW8GbjB10F8WPyc8zQLueEMDCG7nwVdGXOBtvGZlmFzEiOvhM2kL0qckJ9GdF5yz683iZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=UhQAd+lL; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B34BYeT031794;
+	Tue, 3 Dec 2024 05:36:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	iimk/1bW3RQ01BkChxMyVtAt6JPNcrxxZqkbptEgdPk=; b=UhQAd+lLwsPIqqx/
+	r2PWQ6MKBEATqUrVgkDR9RcoMO7FAEyn4jf4bXaoPMX5PLE0WJs4fZDvv5kIVGiL
+	PXjqGjrchc8q0TokKpRgbB1P4q1sWWOPbZDrYy1L278fnLCyxtj0e7l0TuyX1ENQ
+	9wb73B9PEvTf4gf3N5fh43/nhjB+IApG8W4LSOjtva/nsYEEr6TOX7q4KQEhO41q
+	KfVwWFna9e9vYFl6w3Djo92JwlBdp2eQZJZJsEjjzSYDYXaUYDgjsO15oql/o5wU
+	KM7HVCz1n2Ei6KC9eq2jLDmvvmJRhvTsrbi9ejmhQ9navn6zzeZ0AYkQn8rO/NfH
+	BTILUA==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 439trbg6ag-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 03 Dec 2024 05:36:38 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B35abZt013820
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 3 Dec 2024 05:36:37 GMT
+Received: from [10.216.55.7] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 2 Dec 2024
+ 21:36:35 -0800
+Message-ID: <59bc14c1-502e-4931-bbce-e1b01ebd53b6@quicinc.com>
+Date: Tue, 3 Dec 2024 11:06:31 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241127225324.6770-1-kanchana.p.sridhar@intel.com>
- <20241127225324.6770-2-kanchana.p.sridhar@intel.com> <CAJD7tkYZSWL9WQ9X9UMLNTbDcF0hX=t90Ouf22WWHrcUvXyPRg@mail.gmail.com>
- <SJ0PR11MB5678D7B05A23EB9DB9ACC267C9362@SJ0PR11MB5678.namprd11.prod.outlook.com>
-In-Reply-To: <SJ0PR11MB5678D7B05A23EB9DB9ACC267C9362@SJ0PR11MB5678.namprd11.prod.outlook.com>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Mon, 2 Dec 2024 21:34:13 -0800
-Message-ID: <CAJD7tkZMzHXWDPsAhd+JTm24LfKG+MT+kOm167EjzuYjCiBq5A@mail.gmail.com>
-Subject: Re: [PATCH v1 1/2] mm: zswap: Modified zswap_store_page() to process
- multiple pages in a folio.
-To: "Sridhar, Kanchana P" <kanchana.p.sridhar@intel.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, 
-	"hannes@cmpxchg.org" <hannes@cmpxchg.org>, "nphamcs@gmail.com" <nphamcs@gmail.com>, 
-	"chengming.zhou@linux.dev" <chengming.zhou@linux.dev>, 
-	"usamaarif642@gmail.com" <usamaarif642@gmail.com>, "ryan.roberts@arm.com" <ryan.roberts@arm.com>, 
-	"21cnbao@gmail.com" <21cnbao@gmail.com>, "akpm@linux-foundation.org" <akpm@linux-foundation.org>, 
-	"Feghali, Wajdi K" <wajdi.k.feghali@intel.com>, "Gopal, Vinodh" <vinodh.gopal@intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] usb: gadget: u_serial: Fix the issue that gs_start_io
+ crashed due to accessing null pointer
+To: =?UTF-8?B?6IOh6L+e5Yuk?= <hulianqin@vivo.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "quic_jjohnson@quicinc.com" <quic_jjohnson@quicinc.com>,
+        "mwalle@kernel.org"
+	<mwalle@kernel.org>
+CC: "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        opensource.kernel <opensource.kernel@vivo.com>
+References: <TYUPR06MB62170A30651D64EB59F94B88D22F2@TYUPR06MB6217.apcprd06.prod.outlook.com>
+Content-Language: en-US
+From: Prashanth K <quic_prashk@quicinc.com>
+In-Reply-To: <TYUPR06MB62170A30651D64EB59F94B88D22F2@TYUPR06MB6217.apcprd06.prod.outlook.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 7RIV7PRRcxUJHSg0iqN2QJl2L8Rk-Cdf
+X-Proofpoint-ORIG-GUID: 7RIV7PRRcxUJHSg0iqN2QJl2L8Rk-Cdf
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 mlxscore=0
+ suspectscore=0 spamscore=0 malwarescore=0 adultscore=0 priorityscore=1501
+ clxscore=1015 phishscore=0 lowpriorityscore=0 impostorscore=0 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
+ definitions=main-2412030045
 
-On Mon, Dec 2, 2024 at 5:13=E2=80=AFPM Sridhar, Kanchana P
-<kanchana.p.sridhar@intel.com> wrote:
->
->
-> > -----Original Message-----
-> > From: Yosry Ahmed <yosryahmed@google.com>
-> > Sent: Monday, December 2, 2024 11:34 AM
-> > To: Sridhar, Kanchana P <kanchana.p.sridhar@intel.com>
-> > Cc: linux-kernel@vger.kernel.org; linux-mm@kvack.org;
-> > hannes@cmpxchg.org; nphamcs@gmail.com; chengming.zhou@linux.dev;
-> > usamaarif642@gmail.com; ryan.roberts@arm.com; 21cnbao@gmail.com;
-> > akpm@linux-foundation.org; Feghali, Wajdi K <wajdi.k.feghali@intel.com>=
-;
-> > Gopal, Vinodh <vinodh.gopal@intel.com>
-> > Subject: Re: [PATCH v1 1/2] mm: zswap: Modified zswap_store_page() to
-> > process multiple pages in a folio.
-> >
-> > On Wed, Nov 27, 2024 at 2:53=E2=80=AFPM Kanchana P Sridhar
-> > <kanchana.p.sridhar@intel.com> wrote:
-> > >
-> > > Modified zswap_store() to store the folio in batches of
-> > > SWAP_CRYPTO_BATCH_SIZE pages. Accordingly, refactored
-> > zswap_store_page()
-> > > into zswap_store_pages() that processes a range of pages in the folio=
-.
-> > > zswap_store_pages() is a vectorized version of zswap_store_page().
-> > >
-> > > For now, zswap_store_pages() will sequentially compress these pages w=
-ith
-> > > zswap_compress().
-> > >
-> > > These changes are follow-up to code review comments received for [1],=
- and
-> > > are intended to set up zswap_store() for batching with Intel IAA.
-> > >
-> > > [1]: https://patchwork.kernel.org/project/linux-
-> > mm/patch/20241123070127.332773-11-kanchana.p.sridhar@intel.com/
-> > >
-> > > Signed-off-by: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
-> > > ---
-> > >  include/linux/zswap.h |   1 +
-> > >  mm/zswap.c            | 154 ++++++++++++++++++++++++----------------=
---
-> > >  2 files changed, 88 insertions(+), 67 deletions(-)
-> > >
-> > > diff --git a/include/linux/zswap.h b/include/linux/zswap.h
-> > > index d961ead91bf1..05a81e750744 100644
-> > > --- a/include/linux/zswap.h
-> > > +++ b/include/linux/zswap.h
-> > > @@ -7,6 +7,7 @@
-> > >
-> > >  struct lruvec;
-> > >
-> > > +#define SWAP_CRYPTO_BATCH_SIZE 8UL
-> > >  extern atomic_long_t zswap_stored_pages;
-> > >
-> > >  #ifdef CONFIG_ZSWAP
-> > > diff --git a/mm/zswap.c b/mm/zswap.c
-> > > index f6316b66fb23..b09d1023e775 100644
-> > > --- a/mm/zswap.c
-> > > +++ b/mm/zswap.c
-> > > @@ -1409,78 +1409,96 @@ static void shrink_worker(struct work_struct
-> > *w)
-> > >  * main API
-> > >  **********************************/
-> > >
-> > > -static ssize_t zswap_store_page(struct page *page,
-> > > -                               struct obj_cgroup *objcg,
-> > > -                               struct zswap_pool *pool)
-> > > +/*
-> > > + * Store multiple pages in @folio, starting from the page at index @=
-si up to
-> > > + * and including the page at index @ei.
-> > > + */
-> > > +static ssize_t zswap_store_pages(struct folio *folio,
-> > > +                                long si,
-> > > +                                long ei,
-> > > +                                struct obj_cgroup *objcg,
-> > > +                                struct zswap_pool *pool)
-> > >  {
-> > > -       swp_entry_t page_swpentry =3D page_swap_entry(page);
-> > > +       struct page *page;
-> > > +       swp_entry_t page_swpentry;
-> > >         struct zswap_entry *entry, *old;
-> > > +       size_t compressed_bytes =3D 0;
-> > > +       u8 nr_pages =3D ei - si + 1;
-> > > +       u8 i;
-> > > +
-> > > +       for (i =3D 0; i < nr_pages; ++i) {
-> > > +               page =3D folio_page(folio, si + i);
-> > > +               page_swpentry =3D page_swap_entry(page);
-> > > +
-> > > +               /* allocate entry */
-> > > +               entry =3D zswap_entry_cache_alloc(GFP_KERNEL,
-> > page_to_nid(page));
-> > > +               if (!entry) {
-> > > +                       zswap_reject_kmemcache_fail++;
-> > > +                       return -EINVAL;
-> > > +               }
-> >
-> > I think this patch is wrong on its own, for example if an allocation
-> > fails in the above loop we exit without cleaning up previous
-> > allocations. I think it's fixed in patch 2 but we cannot introduce
->
-> I think there might be a misunderstanding. zswap_store_pages() will
-> clean up local resources allocated during an iteration of the for loop,
-> upon an error in that iteration. If you see the "goto store_failed" and
-> "goto compress_failed" this would explain what I mean. If an allocation
-> fails for an iteration, we simply return -EINVAL, and zswap_store()
-> will goto the "put_pool" label with "ret" still false, which will delete
-> all zswap entries for the folio (allocated up until the error iteration i=
-n
-> zswap_store_pages(); or potentially already in the xarray).
->
-> Hence, there is no bug and each of the two patches are correct by
-> themselves AFAICT, but please let me know if I am missing anything. Thank=
-s!
 
-Uh yes, the cleanup is in zswap_store().
 
->
-> > bugs in-between patches. I think the helpers in patch 2 don't really
-> > help as I mentioned. Please combine the changes and keep them in the
-> > main series (unless you have a reason not to).
->
-> Sure. As noted in my earlier response to comments received for patch 2,
-> I can either inline all iterations or create helpers for all iterations o=
-ver
-> the pages in a batch. Appreciate your suggestions on which would be a
-> better approach.
+On 26-11-24 12:30 pm, 胡连勤 wrote:
+> From: Lianqin Hu <hulianqin@vivo.com>
+> 
+> Considering that in some extreme cases,
+> when u_serial driver is accessed by multiple threads,
+> Thread A is executing the open operation and calling the gs_open,
+> Thread B is executing the disconnect operation and calling the
+> gserial_disconnect function,The port->port_usb pointer will be set to NULL.
+> 
+> E.g.
+>     Thread A                                 Thread B
+> 
+>     gs_open()                                gadget_unbind_driver()
+> 
+>     gs_start_io()                            composite_disconnect()
+> 
+>     gs_start_rx()                            gserial_disconnect()
+>     ...                                      ...
+>     spin_unlock(&port->port_lock)
+>     status = usb_ep_queue()                  spin_lock(&port->port_lock)
+>     spin_lock(&port->port_lock)              port->port_usb = NULL
+>     gs_free_requests(port->port_usb->in)     spin_unlock(&port->port_lock)
+>     Crash
+> 
+> This causes thread A to access a null pointer (port->port_usb is null)
+> when calling the gs_free_requests function, causing a crash.
+> 
+> If port_usb is NULL, the release request will be skipped as it
+> will be done by gserial_disconnect.
+> 
+> So add a null pointer check to gs_start_io before attempting
+> to access the value of the pointer port->port_usb.
+> 
+> Unable to handle kernel NULL pointer dereference at
+> virtual address 00000000000000e8
+> pc : gs_start_io+0x164/0x25c
+> lr : gs_start_io+0x238/0x25c
+> sp : ffffffc08b75ba00
+> x29: ffffffc08b75ba00 x28: ffffffed8ba01000 x27: 0000000000020902
+> x26: dead000000000100 x25: ffffff899f43a400 x24: ffffff8862325400
+> x23: ffffff88623256a4 x22: ffffff8862325690 x21: ffffff88623255ec
+> x20: ffffff88623255d8 x19: ffffff885e19d700 x18: ffffffed8c45ae40
+> x17: 00000000d48d30ad x16: 00000000d48d30ad x15: 0010000000000001
+> x14: ffffffed8c50fcc0 x13: 0000000040000000 x12: 0000000000000001
+> x11: 0000000080200012 x10: 0000000080200012 x9 : ffffff88623255d8
+> x8 : 0000000000000000 x7 : 0000000000000000 x6 : 000000000000003f
+> x5 : ffffffed8ae0b9a4 x4 : fffffffe267d0ea0 x3 : 0000000080200012
+> x2 : ffffff899f43a400 x1 : 0000000080200013 x0 : ffffff899f43b100
+> Call trace:
+>  gs_start_io+0x164/0x25c
+>  gs_open+0x108/0x13c
+>  tty_open+0x314/0x638
+>  chrdev_open+0x1b8/0x258
+>  do_dentry_open+0x2c4/0x700
+>  vfs_open+0x2c/0x3c
+>  path_openat+0xa64/0xc60
+>  do_filp_open+0xb8/0x164
+>  do_sys_openat2+0x84/0xf0
+>  __arm64_sys_openat+0x70/0x9c
+>  invoke_syscall+0x58/0x114
+>  el0_svc_common+0x80/0xe0
+>  do_el0_svc+0x1c/0x28
+>  el0_svc+0x38/0x68
+>  el0t_64_sync_handler+0x68/0xbc
+>  el0t_64_sync+0x1a8/0x1ac
+> Code: f2fbd5ba eb14013f 540004a1 f940e708 (f9407513)
+> ---[ end trace 0000000000000000 ]---
+> 
+> Suggested-by: Prashanth K <quic_prashk@quicinc.com>
+> Signed-off-by: Lianqin Hu <hulianqin@vivo.com>
+> 
+> v3:
+>  - Update patch submission description
+>  - Link to v2: https://lore.kernel.org/all/TYUPR06MB62178D00DC96CC2702114CF5D2222@TYUPR06MB6217.apcprd06.prod.outlook.com/
+> 
+> v2:
+>  - Modify patch content and description according to "v1 suggestion"
+>  - Link to v1: https://lore.kernel.org/all/TYUPR06MB621737D16F68B5ABD6CF5772D2272@TYUPR06MB6217.apcprd06.prod.outlook.com/
+> 
+>  drivers/usb/gadget/function/u_serial.c | 9 ++++++---
+>  1 file changed, 6 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/usb/gadget/function/u_serial.c b/drivers/usb/gadget/function/u_serial.c
+> index 0a8c05b2746b..53d9fc41acc5 100644
+> --- a/drivers/usb/gadget/function/u_serial.c
+> +++ b/drivers/usb/gadget/function/u_serial.c
+> @@ -579,9 +579,12 @@ static int gs_start_io(struct gs_port *port)
+>  		 * we didn't in gs_start_tx() */
+>  		tty_wakeup(port->port.tty);
+>  	} else {
+> -		gs_free_requests(ep, head, &port->read_allocated);
+> -		gs_free_requests(port->port_usb->in, &port->write_pool,
+> -			&port->write_allocated);
+> +		/* Free reqs only if we are still connected */
+> +		if (port->port_usb) {
+> +			gs_free_requests(ep, head, &port->read_allocated);
+> +			gs_free_requests(port->port_usb->in, &port->write_pool,
+> +				&port->write_allocated);
+> +		}
+>  		status = -EIO;
+>  	}
+>  
+Had asked to remove some empty newlines and address list from dumpstack
+from commit text -
+https://lore.kernel.org/all/b0c787ad-55a1-4fb1-b9cd-1f688ea65316@quicinc.com/
 
-I think leaving them open-coded will be clearer for now. We can
-revisit the code organization later if it gets out of hand.
+And the rest seems fine to me.
+
+Acked-by: Prashanth K <quic_prashk@quicinc.com>
+
+Thanks,
+Prashanth K
 
