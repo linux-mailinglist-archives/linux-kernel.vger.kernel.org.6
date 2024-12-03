@@ -1,126 +1,136 @@
-Return-Path: <linux-kernel+bounces-430109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 710D89E2E1C
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 22:30:54 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 209E19E2E37
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 22:40:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42A79B46CEF
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 20:03:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 57D26B3A014
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 20:22:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D91E820B808;
-	Tue,  3 Dec 2024 20:00:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC3C4205AD6;
+	Tue,  3 Dec 2024 20:22:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Dx9CyQRg"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XjAb3HnD"
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B307418FC91;
-	Tue,  3 Dec 2024 20:00:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C42E2500D3;
+	Tue,  3 Dec 2024 20:22:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733256042; cv=none; b=RYqCxfI0B5Jwcx20/ncTuBtBTNIoEmaCE23FGJuRtrB0oYsHSYEvBs0YbtZITPhORPiaMtDBk8d/JJP0q50nHXQGI9iTQ3C/C8g7IN/9Kl1VLw73CkYXEvCXnl5nndflHG7KP1S3KarQ76p5LvVtjXf2Prc18MVHnMtJeHJ25D0=
+	t=1733257335; cv=none; b=uxXadb98UdF8IkyUE4yJYjiW53fozaQMnvN8Ory1Hz4NSD1vd7ohOpAApICL3u6vMe7e9lN6Wxphd4oIzY3a20JgccJT/h6rQEwal4iHNrz0kOc1gLHAbYkSDBHYhBNN2Qh7CScmAKEGWUR/BZF4UqpGkb91F0hXej6xexIZOWA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733256042; c=relaxed/simple;
-	bh=4C3/OEvhnC35KoVHeykoD3L+vw3BLbZSJonpse2YmR4=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NtJejpuq0cQcMxKkkJlMAbZf03qXZWzdk4C0KJ53Rv0rsybXYNm5SuMYN3aLuKaHiv6+fKrvXkwvoV/v2cHo03QnlDYVeWoII2nU5xNtmEMbaFgmq+xjZWTgJdKfeoBRWLCfMjSSWWM/gtPZx1GrL555QZmhyXW+0jKCryefT2A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Dx9CyQRg; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 4B3K08X11933806
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-	Tue, 3 Dec 2024 14:00:08 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1733256008;
-	bh=qIpNvcwb6jGE4JnEYwnRpJQr4L5g98mEzuVOATTEvz8=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=Dx9CyQRgo6ZSXaoJuz4g34QRfWdOUULbtr5adzg3AjLI1kXQdtIp6wrVlKM6h1vA6
-	 purdIMCl2/trKEUyeG9CR+S2j7UKN4Wn8A7O2JSUNTfawlpYNvKdRJelBUe4OjO/Ve
-	 E2XieHrq47FAmFG0WTsI3PQUDKrbZpBGAPsrFFjs=
-Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4B3K07b0029168;
-	Tue, 3 Dec 2024 14:00:07 -0600
-Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 3
- Dec 2024 14:00:07 -0600
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 3 Dec 2024 14:00:07 -0600
-Received: from lelvsmtp6.itg.ti.com ([10.249.42.149])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4B3K02Ji122616;
-	Tue, 3 Dec 2024 14:00:07 -0600
-From: Andrew Davis <afd@ti.com>
-To: Lars-Peter Clausen <lars@metafoo.de>,
-        =?UTF-8?q?Nuno=20S=C3=A1?=
-	<nuno.sa@analog.com>,
-        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown
-	<broonie@kernel.org>,
-        Marek Vasut <marex@denx.de>
-CC: <patches@opensource.cirrus.com>, <linux-sound@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Andrew Davis <afd@ti.com>
-Subject: [PATCH 14/21] ASoC: tas2781: Remove use of i2c_match_id()
-Date: Tue, 3 Dec 2024 13:59:54 -0600
-Message-ID: <20241203200001.197295-14-afd@ti.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20241203200001.197295-1-afd@ti.com>
-References: <20241203200001.197295-1-afd@ti.com>
+	s=arc-20240116; t=1733257335; c=relaxed/simple;
+	bh=Sxi5znYxUP0UQHfoEwAVGT8OLLm0PJLiAgjwzuzzVFc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=axuvxMqaJjxWD5CDhDe68On9zcPJocQm0ZVcCL+scUQu+PKqq0ZNunrCxJ8ias8BkqVEm146IfzeEJeTRXXHVi7vkuP52e5mhOIV7IZoypXBtDlHKdo5tKER3OobX/SP0i92JB44e/7wMyJS/YIn1PRtqZdIdM17a/AwHTnhQ3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XjAb3HnD; arc=none smtp.client-ip=209.85.160.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4668978858aso41595011cf.0;
+        Tue, 03 Dec 2024 12:22:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733257332; x=1733862132; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OtDaLebm7vDIYp1YKWMPydQGkMzApAsOlbbc618I72c=;
+        b=XjAb3HnDiLZNGcfHz4oVmAKHAX7PlR7XNXEdmD5Ao3fc3X8kQ15Eebkk/h+DVHYVsy
+         PH3xO+GLQ9A/+eRkDN/nalNgVtXUOvKOQVetLPM6BmSR744jde9VduHLFOCDIccCi8wV
+         O9axayaxCpQnLYCqZPa/drp/0RAjgNTCer5Aaj35kXu+i+Ay/67gtxzwq6Av+SBnOOqv
+         AOADuk0WC26cEjFJVC95h6rYtpfetEHZRZfUSTxcSBJXIAKN6ncJ44+IB8VhjEz5J7hm
+         mEogFtt4HrBiMiTC6PU7bVGq6fGDKmEfPKRs1Pgzq8h2mfgISjUpY7gb7jwnWVV3A0Mu
+         H+XQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733257332; x=1733862132;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OtDaLebm7vDIYp1YKWMPydQGkMzApAsOlbbc618I72c=;
+        b=Oas2GRfYZykKdhtXncBOPcZWlnlNGt+sIzu4CZ4iRazce7CUW6FNTwWrGjeqbUXxTw
+         t8b4+MskYrHTFLfg1DVXIfvrbX2ljX0Aal+txVbSE/q2qhtFj2kRz+LNSvwuwbusVXag
+         w3jgeKH5wFbWr0R5APKN9JaK6doMSWcUnP1+psBL4zOmvpi2/GL9wFzQ6GPhSTekY8e4
+         wt1WwpOVxBvAj6Rv9IXSfdYgF5u9ZR7pZEKMAv/lpkLUrTc4H+c2n0T3HkgqZ0T/RIUM
+         WS3/I0nHYv1gSQN5HXvDhWdxdMa8T1hCAWhfX+x0iJ9HHwAaD/l5two8CFkDfacrRmGZ
+         lOyA==
+X-Forwarded-Encrypted: i=1; AJvYcCUPGYDZsK+VGAQj0XtDzK16Z09ZhgxkeQa0imNbgB2OAWa3BioH7DLRYBtUncDD3tpxesg0xqI9hX1EDo8=@vger.kernel.org, AJvYcCWjcdRzT5Oj3kaYLuYFWR4TU+uGhKqZsi0w/XZtGfysW0FE8xVVuINbG+8ogWxMe7931662PtSFLvOfR1s=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0zID+/4iXIG+2AjY5QwZYLKDi90249xjdbPuNgMwbto39OLeO
+	lZ/IfW+2st9A97pKFyArPxOb55oJZYCEiBorCauN1N+koXhrb3/TGt7+7OkfI+rvowfGUPgOiu5
+	rqJi/J0cLx/GD72INzvOnciqkh50=
+X-Gm-Gg: ASbGncusXl3AaQ3toOnVSDyxhC/9gTdENLBzJZTNflt89tJ8QDrYNZ+9rbcz7UPLF/B
+	3hFlzHWVbQ+Kf8BRaIXkZ9Dx1yZNs9Xlc
+X-Google-Smtp-Source: AGHT+IGWhJBAhMOwv6y+Q9Ivu4+z0fkek9ZyRdpVrOExnOki61wjJGgx6H1YWOFMLiZ5QmF1tJkyfJWKQaHl4PO0Fgs=
+X-Received: by 2002:a05:622a:104:b0:466:a179:d3aa with SMTP id
+ d75a77b69052e-4670c3ac945mr49543411cf.34.1733257332291; Tue, 03 Dec 2024
+ 12:22:12 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+References: <20241121202506.37602-1-jiashengjiangcool@gmail.com> <a285cdf6-2a58-412f-9751-1b6f9e3edeaf@xs4all.nl>
+In-Reply-To: <a285cdf6-2a58-412f-9751-1b6f9e3edeaf@xs4all.nl>
+From: Jiasheng Jiang <jiashengjiangcool@gmail.com>
+Date: Tue, 3 Dec 2024 15:22:01 -0500
+Message-ID: <CANeGvZXZAHJX=tE=4s8CxfzDioUU8_T6Agt9NEz_BOLQF8js3w@mail.gmail.com>
+Subject: Re: [PATCH] media: marvell: Add check for clk_enable()
+To: Hans Verkuil <hverkuil@xs4all.nl>
+Cc: mchehab@kernel.org, andrzejtp2010@gmail.com, allen.lkml@gmail.com, 
+	neil.armstrong@linaro.org, quic_jjohnson@quicinc.com, lkundrak@v3.sk, 
+	sakari.ailus@linux.intel.com, linux-media@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The function i2c_match_id() is used to fetch the matching ID from
-the i2c_device_id table. This is often used to then retrieve the
-matching driver_data. This can be done in one step with the helper
-i2c_get_match_data().
+Hi Hans,
 
-This helper has a couple other benefits:
- * It doesn't need the i2c_device_id passed in so we do not need
-   to have that forward declared, allowing us to remove those or
-   move the i2c_device_id table down to its more natural spot
-   with the other module info.
- * It also checks for device match data, which allows for OF and
-   ACPI based probing. That means we do not have to manually check
-   those first and can remove those checks.
+On Tue, Dec 3, 2024 at 2:14=E2=80=AFAM Hans Verkuil <hverkuil@xs4all.nl> wr=
+ote:
+>
+> Hi Jiasheng,
+>
+> On 21/11/2024 21:25, Jiasheng Jiang wrote:
+> > Add check for the return value of clk_enable() to gurantee the success.
+> >
+> > Fixes: 81a409bfd551 ("media: marvell-ccic: provide a clock for the sens=
+or")
+> > Signed-off-by: Jiasheng Jiang <jiashengjiangcool@gmail.com>
+> > ---
+> >  drivers/media/platform/marvell/mcam-core.c | 4 +++-
+> >  1 file changed, 3 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/media/platform/marvell/mcam-core.c b/drivers/media=
+/platform/marvell/mcam-core.c
+> > index 9ec01228f907..47023e701e12 100644
+> > --- a/drivers/media/platform/marvell/mcam-core.c
+> > +++ b/drivers/media/platform/marvell/mcam-core.c
+> > @@ -935,7 +935,9 @@ static int mclk_enable(struct clk_hw *hw)
+> >       ret =3D pm_runtime_resume_and_get(cam->dev);
+> >       if (ret < 0)
+> >               return ret;
+> > -     clk_enable(cam->clk[0]);
+> > +     ret =3D clk_enable(cam->clk[0]);
+> > +     if (ret)
+> > +             return ret;
+>
+> If clk_enable returns an error, doesn't this also require a call to pm_ru=
+ntime_put() to
+> balance the pm_runtime_resume_and_get() call?
 
-Signed-off-by: Andrew Davis <afd@ti.com>
----
- sound/soc/codecs/tas2781-i2c.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Thanks. I will submit a v2 to add error handling.
 
-diff --git a/sound/soc/codecs/tas2781-i2c.c b/sound/soc/codecs/tas2781-i2c.c
-index e41f81eb8d16c..5e59b80fe0082 100644
---- a/sound/soc/codecs/tas2781-i2c.c
-+++ b/sound/soc/codecs/tas2781-i2c.c
-@@ -1663,7 +1663,6 @@ static void tasdevice_parse_dt(struct tasdevice_priv *tas_priv)
- 
- static int tasdevice_i2c_probe(struct i2c_client *i2c)
- {
--	const struct i2c_device_id *id = i2c_match_id(tasdevice_id, i2c);
- 	const struct acpi_device_id *acpi_id;
- 	struct tasdevice_priv *tas_priv;
- 	int ret;
-@@ -1685,7 +1684,7 @@ static int tasdevice_i2c_probe(struct i2c_client *i2c)
- 		tas_priv->chip_id = acpi_id->driver_data;
- 		tas_priv->isacpi = true;
- 	} else {
--		tas_priv->chip_id = id ? id->driver_data : 0;
-+		tas_priv->chip_id = (uintptr_t)i2c_get_match_data(i2c);
- 		tas_priv->isacpi = false;
- 	}
- 
--- 
-2.39.2
+-Jiasheng
 
+> Regards,
+>
+>         Hans
+>
+> >       mcam_reg_write(cam, REG_CLKCTRL, (mclk_src << 29) | mclk_div);
+> >       mcam_ctlr_power_up(cam);
+> >
+>
 
