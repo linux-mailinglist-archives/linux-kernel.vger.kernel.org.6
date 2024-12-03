@@ -1,271 +1,127 @@
-Return-Path: <linux-kernel+bounces-430274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 425989E2F4D
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 23:53:24 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1638E9E2EB3
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 23:09:54 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0419CB2C5B2
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 22:09:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1523F165B08
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 22:09:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 250E61F4731;
-	Tue,  3 Dec 2024 22:09:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B5131FA84F;
+	Tue,  3 Dec 2024 22:09:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="iSSez8G3"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2080.outbound.protection.outlook.com [40.107.237.80])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="KBz/qKwZ"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8443E1D79A0
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 22:09:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.80
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733263759; cv=fail; b=HikhSyDCLyPB2m4XznyMAZyIWgx64fYi9bAqjf0b1fPKKZcNSsqgPM32Ph6orlWjJsJqHM/IpgS3714VDkgeHwxVO+cSquSDFrI7URTtiL62gSjiukH1i6ntNMzrpKIx07fvtkjxZj7ts6yFvxPobmfXClcqsNt4Ejv67huoyLw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733263759; c=relaxed/simple;
-	bh=jI0fNOllVG4HCLHWdev6dT4aus7USTJHQ/1zXbmXpYQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=fP3B5bvQi7DO1NlV4ce7TsXImnLMVmqtRDJtvBkLBXzULCznkA755TK3KwBbc/Cha/GWlxEVjS35AEkXkM8PARQtBW8bdmPZTAH1TOBaE7/3oRqb3hT5k9g+YFsli2p73vPvrLUtjkrpx1u1tRqV89y51LJtSRgywwrDOarERf4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=iSSez8G3; arc=fail smtp.client-ip=40.107.237.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=qKmvV20VX8DAfak48q+YIKCysb5CeU+xNa4IPzuEqDsMFjZE5xyKG9CxhIuOcNvjGKi1i6FBOAnCPBPrenfk5UhnFaqio3NfcNNVWj5KkKwov3wdzCuhCQamjHV/9g8slf0Ahx9JfYlfqvvRm+/PagzpZ7C/ubOzunVJqn+p+Qv6jSgZbSJ1K6pyp7RgCKfisAzqaLhc2er8Nj/TMqNKRBOyw9Miz0KM2+17/JGcnx3qTPQI4mrYakL5GMft/vWaQumm0OVkGqpH836dfUyl3JNq1qK993OCJ0E3UaOl0fge7zFBUImL6WtrK0KjtmE1aw9TzbaVSflLzkWa944p6A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Z9BW7P+K2nrEHfG3ECYMxja8KtSCfd9Yu4xjWNVvWx8=;
- b=D+Oh3n3qXeeGonR+BJcUnV0bj5UWhBG9H6Ox6v4PtQrOIT01a3vTa0deq7XMn0/hQ0jekhzMJ4oiGyTNNG4YDUW/Gz1qd0b7ddy+tJ8906LVeJXQOYNI87PKBFjxXqP76EEvkeeVCVuCXQDsQmQRB98WlUfodS3x73yS7NndhzP61xSBiYdHxERjDInlyb41z+wjG8K5GX0xK0CH4V/8FrZNReorCMzZuJm7+NN8RTZ5BmPT0TjNgQfR0xJNH0Oem/RjnayDCSjaPFwrF4jBrggn8ozGcrZM++CTqXXJPEF6zX27nP9h3v9yrsLsV/AcWEpBjijMDFmh/QA1zhhLPQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=suse.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Z9BW7P+K2nrEHfG3ECYMxja8KtSCfd9Yu4xjWNVvWx8=;
- b=iSSez8G3gQceRt+MxYlQM+Dfcxb2zAXFi1sweU1DR/PBgRSs/bVmqEEjuvVWKzpFWNISDf1u1PH7g5EA/LcnQtwJaDeNn+9usj1oPS4JtIPeEKi+kruIw/uCcdnaXtkaXeHyd2aFsHVHf2UsUv63HG1DpRlXyzlX//yTNHI4FoI=
-Received: from PH8PR15CA0015.namprd15.prod.outlook.com (2603:10b6:510:2d2::23)
- by PH7PR12MB7332.namprd12.prod.outlook.com (2603:10b6:510:20f::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.18; Tue, 3 Dec
- 2024 22:09:07 +0000
-Received: from MWH0EPF000A6734.namprd04.prod.outlook.com
- (2603:10b6:510:2d2:cafe::3b) by PH8PR15CA0015.outlook.office365.com
- (2603:10b6:510:2d2::23) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8207.18 via Frontend Transport; Tue,
- 3 Dec 2024 22:09:07 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
-Received: from SATLEXMB03.amd.com (165.204.84.17) by
- MWH0EPF000A6734.mail.protection.outlook.com (10.167.249.26) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8230.7 via Frontend Transport; Tue, 3 Dec 2024 22:09:07 +0000
-Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 3 Dec
- 2024 16:09:06 -0600
-Received: from [172.25.146.163] (10.180.168.240) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Tue, 3 Dec 2024 16:09:05 -0600
-Message-ID: <5c76ebcb-baf2-4a63-b9d9-bd498f417202@amd.com>
-Date: Tue, 3 Dec 2024 17:09:05 -0500
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F39C1DDA3D;
+	Tue,  3 Dec 2024 22:09:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733263781; cv=none; b=NnDzjd8chBGhSmX1k3Vh8zYYOR5cRr0l5gkBtm0qnsNbwY611KWW7jo2rM1fETedfl8eM8PG65rSeRH2IXEaS1JUnf74xZq6iDRIvtyw7oV3kCtkTAhPbv30vaTORxk5tgq/ZpDLgHKVWLPM1qiWJNKQq41a6SPp13UdHzjmWHk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733263781; c=relaxed/simple;
+	bh=+OI97RttOwWbVb6vhDaP2/G9TkHStlnAitmerH4Rprc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lgY0DmwOupmocH/SBYy+PiJ1L8UqSpJLHntdYZbhkQ7EhZDR80LlFBLV1NL1PwRzIKNv8J01w4drRd9du+XBeizw6F1AH2qqRgKHjW48fzLOwkq5sIZT8VV7kb6XhN9gJxJxSU88zdVszeyz4ncMr0axr73zS+PHLfXJTCLSKgk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=KBz/qKwZ; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-385ea29eee1so2416077f8f.3;
+        Tue, 03 Dec 2024 14:09:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20230601; t=1733263778; x=1733868578; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=wq7RlqBqYTJgNcVGikdgd/6+YugmYFoD+v+g89HEvfY=;
+        b=KBz/qKwZ3gK7tFo4NeI1KU5d6KcBOm96xug+nXAVfcJ4jUuWyvH3wo6JQbJHJDxkG+
+         vgoTSsphPbg4sBAxBx6rRSGH7qFZW8mB/ozwGuxQJYnpIwaHCJ8/nhFbZnFuE7fvs1IE
+         LUuFjljmpd2Of8HuVvUZQE0gl4sD0Bds4Mgido62SUj8kNmriS0pBjL/olYuqGUi7WIC
+         8IiOg0LKgYqPhqna4XPELSeNwctHbfpPP/KLGk+bkCxMLhHJqlNrmw0oBq1ePG5ZRNQl
+         VIhs+V2mI4JCVki0VCboCZnhXGs2WmG8lXe2rlRITL4rPIWbbu1h0S76qj7C8nY/l89h
+         3vqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733263778; x=1733868578;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wq7RlqBqYTJgNcVGikdgd/6+YugmYFoD+v+g89HEvfY=;
+        b=duCpd2EnQDZ2t7pjFRSmrvBqPUdvxcbBiwjpEDypxHnEpgULun4Lwl/T64yIr1w2je
+         vDWaVxTCPn5ujjVMVIvve6PoAFz49ZLMYFcplYb0r+5jMk6ImEqOmwXR0obtpwmTlX9q
+         CyZCZwp9VQA/03UYia0DzkkuqfhS5NVvGOGsUxd5262HrSiuk80KhijITefdQMFMKGbf
+         fqe3Ui5t5G1zwoqvrG+aw1eTtt1HEa3T9NNEe1tokTqzV1KPVK9va5H0Qnz8qV0yp8nZ
+         kgytjrP2LTV2w3n/uMkl7lrvoBBSv0U2omPSR+XoTaORDOfscZ8k9R0L8xGmtmkLHUWB
+         LL/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUnCFm4hiVQadvqBwQkns0QUnybiMAlgOx/v2I61rMKoOu72I1JVslUndwOxehlWrBfXzwXCXVagyyEhpU=@vger.kernel.org, AJvYcCWqYo7h/EHGpgtvkpTiY26rSWuq4OfL7cQhpw+dVRaH2pQ4WpgwTPdO3XXUoI5/Zzc66dzfMP9M@vger.kernel.org
+X-Gm-Message-State: AOJu0YwRsweabxx1nBXVGlnSmanarAcnbD+qNKoSkLyGhEE7vszpn425
+	f8kErrYX8RFf1vkRlCFTbvATUCsXGqX6ARmel7w+Ni1Lec+srgM=
+X-Gm-Gg: ASbGncsOEU6BID3Edl4TKGH4nNDCkLMjpggZlugmt6Lz/Bm9BGBU8lUKRpOyxrMYY65
+	oAp6XRSf/PczvFuvwG9kInc1rfao8qpHASUaI2ryrEuWRoWcp7qtgKgHYmTp8eVw3ONLEs+GoR5
+	X1GToxR6p7IvpJvfWFZR2u0jL+s1vnIBBJIrz8pJfx72xvM3QNu64xfyX3xowYx78xt+iKlgYwi
+	qsNbG5XNJ8OXyVbOBanVQximSOlLYFhpXQze+qnfaKJekhHsV3bSkhVm6uQuGmIID54iTpjNCja
+	SUXsjM6YFwrTO3p09Dh9UiGRlmM=
+X-Google-Smtp-Source: AGHT+IFJgvZy0ng1MDxsWS2X4TUhHyqqMOIIIsx8jSXLNYBrh3HO5W77s7kYQIniZGNfqY1bA7ScPA==
+X-Received: by 2002:a05:6000:4025:b0:385:f573:1f78 with SMTP id ffacd0b85a97d-385fd40ab50mr3841152f8f.24.1733263778334;
+        Tue, 03 Dec 2024 14:09:38 -0800 (PST)
+Received: from [192.168.1.3] (p5b2ac059.dip0.t-ipconnect.de. [91.42.192.89])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434d52c0bc7sm1426565e9.35.2024.12.03.14.09.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 03 Dec 2024 14:09:36 -0800 (PST)
+Message-ID: <04de8963-2d60-492b-afd7-4a271dae95ea@googlemail.com>
+Date: Tue, 3 Dec 2024 23:09:34 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] xen/acpi: upload power and performance related data
- from a PVH dom0
-To: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>, Stefano Stabellini
-	<sstabellini@kernel.org>, Oleksandr Tyshchenko
-	<oleksandr_tyshchenko@epam.com>
-CC: Roger Pau Monne <roger.pau@citrix.com>, <xen-devel@lists.xenproject.org>,
-	<linux-kernel@vger.kernel.org>
-References: <20240916205009.52887-1-jason.andryuk@amd.com>
- <52a2b2f3-ecdc-45fa-afcf-c4d6e2b1dd0c@suse.com>
-Content-Language: en-US
-From: Jason Andryuk <jason.andryuk@amd.com>
-In-Reply-To: <52a2b2f3-ecdc-45fa-afcf-c4d6e2b1dd0c@suse.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH 6.11 000/817] 6.11.11-rc1 review
+Content-Language: de-DE
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
+References: <20241203143955.605130076@linuxfoundation.org>
+From: Peter Schneider <pschneider1968@googlemail.com>
+In-Reply-To: <20241203143955.605130076@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Received-SPF: None (SATLEXMB03.amd.com: jason.andryuk@amd.com does not
- designate permitted sender hosts)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MWH0EPF000A6734:EE_|PH7PR12MB7332:EE_
-X-MS-Office365-Filtering-Correlation-Id: 30b45f19-4cdf-4ba4-c5c5-08dd13e71b4b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|36860700013|82310400026|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?ckR4blNQclYySWE5MHJoVDNvQjBzalh2TkdIUnM1eng3L3BIemMvZXFWT2Qw?=
- =?utf-8?B?b0RIazQ2TmpyUlBHQThZcEFjU2V0aWlLWmFvUWo5bDYwbzZSSzJsLzQwbkcw?=
- =?utf-8?B?RUJRbXFCc1poVkFOZ2RreGF5bFh0REdLYzFlYSs5K214UjBGWmNqRnVyUHNR?=
- =?utf-8?B?eGsxemo2ZE9zVlh0TWNnZW5DMzJRTlNhMlAvSjhKYUVhbE85ZWdNSHdpdkFP?=
- =?utf-8?B?dkkyYWxGYnNEYUc2SHVaV2ZrT3E5MGFpSkJMY1pkVlc3VTlLNGhRWnFLMnNN?=
- =?utf-8?B?S2tLeWR6UHJ2YXZXckR5TW1KOHRBeUdQSnpCVHl6MHdLdFBpV0p6b2xBTjBo?=
- =?utf-8?B?VjMxU1dQTjI5dDFLMW1pZ2wza2tHODZrc3dmTlJQZVJrTzg3Rm1LR0txUW9C?=
- =?utf-8?B?Q1QvYzBDOHdUL25aOEVyS29haWQ3ZG1mVHRGNlJncjE4anZFejJ0WnFvS3RD?=
- =?utf-8?B?TjZxT0JKaEpJQlYySm1zamlQRzhRK0luWmo3RmRSUGlBSktTWnNmWTdEZlVN?=
- =?utf-8?B?VTcyWkJpQVpBZ2RwQUNDWWowemUvdERCNDE1elJZclhsNC9JbGFlWWliQmw3?=
- =?utf-8?B?Q0ZCbmFETFdDZFlPakdmY2JDQTVSK0JsUGJLbjRGYnVXT2JQSmd2K0s2UUR2?=
- =?utf-8?B?QUlqcFFtYkVHWFJCYTJhcGhnYlo3OVJyMld4ZVhKNjFFL2dPQ013UkZaS1hB?=
- =?utf-8?B?ZkZ2bkpLVEIzc0VPaDZWUWRLbVd0N1Rjd05Jam1IOW9jOGV1YVNuamtyZTRQ?=
- =?utf-8?B?dlNNbFR5Qy9GVXh2RE52Mnl4OXZ6Q0dkUHZwVVlPQnA1dVRHdE90WnNSVjhC?=
- =?utf-8?B?QmlNNHlZZFRoY3VuMTB6SDRPQTNRVzZwVmNjVVFuNTBOalBCNmJyOXpzK28v?=
- =?utf-8?B?UE41NHpkSXpScVlNQkFId3Z3NWNGTUJaRUNSNGN3WHY4VzlrajcvM1hYWDZH?=
- =?utf-8?B?MmxoZ2ZpUmh5cGJZQWIyVkw3NnhDZFVjTFVLS0Q2Vko3L1k4cVJFR2R3Mnhj?=
- =?utf-8?B?MVh6LzhuWksrWWpyaHV4dmttRjg4ZTg4UVJKUFFSR2FuREVZNjlqRnh5dS84?=
- =?utf-8?B?cldWc3hQS0dXZEtiMmhxbDVXaW1uUnFzRmJpTkRWUGNybnI3dEoyWHp6ZGM5?=
- =?utf-8?B?L2cxMkExb1lpZTIwQUdQT0hPOTlKcDk0ekg5ajFZYkR0QzdwZk1RYnZ6bFNG?=
- =?utf-8?B?NnVIdXViUlJCVm9wUzRxVzhSajdTWlU5WjRZWVFNZHV3bW1ZMmJSMzdxSGtu?=
- =?utf-8?B?Zk1OZEZLTTI5dUJEZ0h4TlR2R2trdEtPT2d6NnB5eGlHRm53K0JBS1BCOElG?=
- =?utf-8?B?MGEwdjE0blZua1hHLzNqckxGbWdxVHBSNUU0K2FkWjVpdk0zZUk1RWc1d2hP?=
- =?utf-8?B?V1o4RUdzM3NORXhKM0cxZ3dPL2FWa2ZHWUlWcGp6NDBlWlJ0U29JYVJ1Snls?=
- =?utf-8?B?dWZyaTZBVlVabVVmZmNQempCNVh5bmNZNVZ0dGFFK2VoMnBBenJRbWw0TVE1?=
- =?utf-8?B?U3pCdTV6RHBOTU03bk1MeW9pNk03aG96R2xsZXIvZ2VPOW02QWV4UjBDWnRX?=
- =?utf-8?B?M1JxSzVsL0VObDBza2RzZGdDWC9IZUN4QVMxMUFSYUh3NlF1Vkdpd1k4VVd1?=
- =?utf-8?B?blFKazBhUjh5T1VYT0RTdVlXMW9TQWVWQ1FTMzJ4bVAzRGRKQVNPQUV6Mjhn?=
- =?utf-8?B?bTF1d1RIdktKWFB5UEJOcWNLTUlleVF4bWFLWjFuOTFCTVBJbnJQeXZtMTNp?=
- =?utf-8?B?UTFIaHAwRkJLRVJNNWtjSVFsR2Zub09LQkEvdmtHMHdES3o4cE1QVStGYll3?=
- =?utf-8?B?NFlJNEVRM0ZlMFUxK0dXbDdPN0xEUlNlVU5VbmV4S0lBY0NKVWM4Mkc5bmxr?=
- =?utf-8?B?b3dlQWJEODZ3QVVKd3hnY2krQUdlNkJYWmhvUnA0VFVzbTR5Vm04SVpRT0tD?=
- =?utf-8?Q?blsOhaKsdlhaffRQBP9ihSK/mu5zFucK?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(82310400026)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Dec 2024 22:09:07.1083
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 30b45f19-4cdf-4ba4-c5c5-08dd13e71b4b
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	MWH0EPF000A6734.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7332
 
-On 2024-09-25 05:17, Jürgen Groß wrote:
-> On 16.09.24 22:50, Jason Andryuk wrote:
->> From: Roger Pau Monne <roger.pau@citrix.com>
->>
->> When running as a PVH dom0 the ACPI MADT is crafted by Xen in order to
->> report the correct numbers of vCPUs that dom0 has, so the host MADT is
->> not provided to dom0.  This creates issues when parsing the power and
->> performance related data from ACPI dynamic tables, as the ACPI
->> Processor UIDs found on the dynamic code are likely to not match the
->> ones crafted by Xen in the dom0 MADT.
->>
->> Xen would rely on Linux having filled at least the power and
->> performance related data of the vCPUs on the system, and would clone
->> that information in order to setup the remaining pCPUs on the system
->> if dom0 vCPUs < pCPUs.  However when running as PVH dom0 it's likely
->> that none of dom0 CPUs will have the power and performance data
->> filled, and hence the Xen ACPI Processor driver needs to fetch that
->> information by itself.
->>
->> In order to do so correctly, introduce a new helper to fetch the _CST
->> data without taking into account the system capabilities from the
->> CPUID output, as the capabilities reported to dom0 in CPUID might be
->> different from the ones on the host.
->>
->> Note that the newly introduced code will only fetch the _CST, _PSS,
->> _PPC and _PCT from a single CPU, and clone that information for all the
->> other Processors.  This won't work on an heterogeneous system with
->> Processors having different power and performance related data between
->> them.
->>
->> Signed-off-by: Roger Pau Monné <roger.pau@citrix.com>
->> Signed-off-by: Jason Andryuk <jason.andryuk@amd.com>
->> ---
->> v2:
->> Add second buffer for _CST.  Call was failing with
->> AE_BUFFER_OVERFLOW(0x000b)
->>
->> Running a PVH Dom0 on AMD, I needed this v2 change to get the C-State
->> information uploaded.
->>
->> ---
->>   drivers/xen/pcpu.c               |   3 +-
->>   drivers/xen/xen-acpi-processor.c | 230 ++++++++++++++++++++++++++++---
->>   include/xen/xen.h                |   2 +-
->>   3 files changed, 216 insertions(+), 19 deletions(-)
->>
->> diff --git a/drivers/xen/pcpu.c b/drivers/xen/pcpu.c
->> index c63f317e3df3..dc9f2c14bf62 100644
->> --- a/drivers/xen/pcpu.c
->> +++ b/drivers/xen/pcpu.c
+Am 03.12.2024 um 15:32 schrieb Greg Kroah-Hartman:
+> -----------
+> Note, this is will probably be the last 6.11.y kernel to be released.
+> Please move to the 6.12.y branch at this time.
+> -----------
 > 
-> ...
-> 
->> @@ -354,24 +511,44 @@ read_acpi_id(acpi_handle handle, u32 lvl, void 
->> *context, void **rv)
->>       default:
->>           return AE_OK;
->>       }
->> -    if (invalid_phys_cpuid(acpi_get_phys_id(handle,
->> -                        acpi_type == ACPI_TYPE_DEVICE,
->> -                        acpi_id))) {
->> +
->> +    if (!xen_processor_present(acpi_id)) {
->>           pr_debug("CPU with ACPI ID %u is unavailable\n", acpi_id);
->>           return AE_OK;
->>       }
->> -    /* There are more ACPI Processor objects than in x2APIC or MADT.
->> -     * This can happen with incorrect ACPI SSDT declerations. */
->> -    if (acpi_id >= nr_acpi_bits) {
->> -        pr_debug("max acpi id %u, trying to set %u\n",
->> -             nr_acpi_bits - 1, acpi_id);
->> -        return AE_OK;
->> -    }
->> +
->>       /* OK, There is a ACPI Processor object */
->>       __set_bit(acpi_id, acpi_id_present);
->>       pr_debug("ACPI CPU%u w/ PBLK:0x%lx\n", acpi_id, (unsigned 
->> long)pblk);
->> +    if (!pr_initialized) {
->> +        struct acpi_processor *pr = context;
->> +        int rc;
->> +
->> +        /*
->> +         * There's no CPU on the system that has any performance or
->> +         * power related data, initialize all the required fields by
->> +         * fetching that info here.
->> +         *
->> +         * Note such information is only fetched once, and then reused
->> +         * for all pCPUs.  This won't work on heterogeneous systems
->> +         * with different Cx anb/or Px states between CPUs.
->> +         */
->> +
->> +        pr->handle = handle;
->> +
->> +        rc = acpi_processor_get_performance_info(pr);
->> +        if (rc)
->> +            pr_debug("ACPI CPU%u failed to get performance data\n",
->> +                 acpi_id);
-> 
-> Is it really normal to get a failure here? Shouldn't the reaction
-> be a little bit more visible in this case?
-> 
-> And can you just continue processing?
-> 
->> +        rc = xen_acpi_processor_evaluate_cst(handle, &pr->power);
->> +        if (rc)
->> +            pr_debug("ACPI CPU%u failed to get _CST data\n", acpi_id);
-> 
-> Same again. Is pr_debug() enough?
+> This is the start of the stable review cycle for the 6.11.11 release.
+> There are 817 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-Thanks.  I'll switch them to pr_err().  And I'll only set pr_initialized 
-= true when both calls succeed.
+Builds, boots and works on my 2-socket Ivy Bridge Xeon E5-2697 v2 server. No dmesg 
+oddities or regressions found.
 
-Regards,
-Jason
+Tested-by: Peter Schneider <pschneider1968@googlemail.com>
+
+
+Beste Grüße,
+Peter Schneider
+
+-- 
+Climb the mountain not to plant your flag, but to embrace the challenge,
+enjoy the air and behold the view. Climb it so you can see the world,
+not so the world can see you.                    -- David McCullough Jr.
+
+OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
+Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
 
