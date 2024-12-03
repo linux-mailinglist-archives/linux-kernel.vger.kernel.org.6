@@ -1,113 +1,173 @@
-Return-Path: <linux-kernel+bounces-429820-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FF8D9E2695
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 17:14:49 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7126C168CD2
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:10:30 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7D4F1F8AC5;
-	Tue,  3 Dec 2024 16:10:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Z+2ReGAd";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="JClbkhKx"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E55799E2647
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 17:11:27 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92BDC1F76D7;
-	Tue,  3 Dec 2024 16:10:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9CDE288939
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:11:26 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D6F11F8936;
+	Tue,  3 Dec 2024 16:11:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="sizE5QoI"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF7291F76D5;
+	Tue,  3 Dec 2024 16:11:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733242214; cv=none; b=JWDMWCPGEvM8Ycnm7lawalX/r761dWd3sNSoGViQTIc2AEMvAsMoEaoqXWy1bnwg6M+suoSIKYu930RtGJP1eSsn0QXyQrmdMAbEH/vpMNkJxbM7AL6Bg8xF70gFByr3waeLe9+1l5VBS/qor7BFB6DE4hH5dBkqrpJsjAdQSRU=
+	t=1733242274; cv=none; b=H00SFwAIGMzxML6BoK05PVrh+axHGzN5LGC4FKvMTVC0SjhDbhgh+FVW0wnEsToUt/MhmBWMo9O5ajlXXHhwPyMC3PG6FKVIi5C6sXTQEPdmGHKQPzzR1KltOTe+MBGjqw7LETxv+FqX9Fid6yL7+C262aFQIhDV5c25s0YMG0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733242214; c=relaxed/simple;
-	bh=fG2igQkn+4+8e57/uPhJs9Uh52Ls0xvv3KuRt0L7L8g=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=SMcTEb2cv+J0niaqMJ+sGWZ8LfKYn2FCL6MKRIoe9j1rMD3TK+0xqFR2dYF+SR0j7Q97TWuE/mYZHXAWWnnYVFeW3MxygiUga1kt9bjcsEkfiyDZSaHNrr9WObl0zmq/1h0TjOKR7317kQ9kOFLzY81dKL76yQPQHHILgeGyaHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Z+2ReGAd; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=JClbkhKx; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1733242210;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ddk6G81ViUFgr4R1ETgTtudIxbjBUqRlwB5igRmXu4g=;
-	b=Z+2ReGAdXtDLEPMXg5raBwXetTEwjAfMflPPAVrOEfwrcGysNtb8Ptm4XzSqdf4ddJMGIq
-	ZZBqiBOgCOuNuIq7DGHEpXVU5Xu4jv5Ii0TG4PGQvsseXUozaeu5T5eRpVLSIubrfSBUZY
-	lFZrJk3uf2apYr8jS5FoEhfHHkKwHL1pNg0eQKunI6+PHruC3fqVPA0XwdV0EArk+NSne1
-	qRUQSW5+Hn6udBK6/6UYU3VD1Qvh1dzaS5h0bDf2GWTmtVuK2vdUqgTz4h/DjFGF7xoGyx
-	74YrDneOpK3BgwfyF7vv7CsmkugBesXXEbSgxcas7HUjervqVsUTsLXvAgoZEw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1733242210;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ddk6G81ViUFgr4R1ETgTtudIxbjBUqRlwB5igRmXu4g=;
-	b=JClbkhKx8PC6kkrMhZFXxilt17KHhS6wyGx8qQN8eby8jwpBXi3PGasAee6M7LJ+MvpgRm
-	h+JYswnTZp71zZAw==
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
- 20241015061522.25288-1-rui.zhang@intel.com, Zhang Rui
- <rui.zhang@intel.com>, hpa@zytor.com, peterz@infradead.org,
- thorsten.blum@toblux.com, yuntao.wang@linux.dev, tony.luck@intel.com,
- len.brown@intel.com, srinivas.pandruvada@intel.com,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org, mingo@redhat.com,
- bp@alien8.de, dave.hansen@linux.intel.com, rafael.j.wysocki@intel.com,
- x86@kernel.org, linux-pm@vger.kernel.org, Nathan Chancellor
- <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>,
- linux-kbuild@vger.kernel.org
-Subject: Re: [PATCH] modpost: Add .irqentry.text to OTHER_SECTIONS
-In-Reply-To: <CAK7LNARufW5wc=qBt5R=RJ9BkFirLKAgRgg_t=OmTTGbjLfsAg@mail.gmail.com>
-References: <20241128111844.GE10431@google.com> <87o71xvuf3.ffs@tglx>
- <20241130114549.GI10431@google.com> <87iks3wt2t.ffs@tglx>
- <CAK7LNARWpcbVsJFYCDN28vuuLfEibZmT+m5=qMEJcKD9Abzv4Q@mail.gmail.com>
- <87iks1vlu5.ffs@tglx>
- <CAK7LNARufW5wc=qBt5R=RJ9BkFirLKAgRgg_t=OmTTGbjLfsAg@mail.gmail.com>
-Date: Tue, 03 Dec 2024 17:10:09 +0100
-Message-ID: <87h67ku4ri.ffs@tglx>
+	s=arc-20240116; t=1733242274; c=relaxed/simple;
+	bh=277NQChdWnV4HacrcegFUWzVRwOH48nxQcs2AvUWU/M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lGXaFk9hK96JaCeFodjWvUoSRcALoVvacJpLSwcJVZJQQa9WcT4ayy/THVgawXHlMrzGptCbKlwU9RxEyfdPP0br0rY/Aoz2PWe163A81Z5xIrn+yOJwPFAsEUVRk8X5nLmXsTKfM6oCCvPIQFG8InDrEUUyNC1JDYR7Fdil3ts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=sizE5QoI; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1733242270;
+	bh=277NQChdWnV4HacrcegFUWzVRwOH48nxQcs2AvUWU/M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sizE5QoIfdIYrqxRdwX94ZC/agXw0pa0PTSsY+EhiaHK9ZyNdezGC3st3dTpS0o5y
+	 8J4Rum3nNJJc9R7oV79zFn2aPNNgOgAo2+kTKS3uiDI40pDCkYOi6LivymYIQUOLVi
+	 Vh/4iUKA2LVrdrQMyxIcCg+a3+hHswgOA9DOmlgg=
+Date: Tue, 3 Dec 2024 17:11:10 +0100
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: James Bottomley <James.Bottomley@hansenpartnership.com>
+Cc: Xinhui.Pan@amd.com, airlied@gmail.com, ajd@linux.ibm.com, 
+	alexander.deucher@amd.com, alison.schofield@intel.com, amd-gfx@lists.freedesktop.org, 
+	arnd@arndb.de, bhelgaas@google.com, carlos.bilbao.osdev@gmail.com, 
+	christian.koenig@amd.com, dan.j.williams@intel.com, dave.jiang@intel.com, 
+	dave@stgolabs.net, david.e.box@linux.intel.com, decui@microsoft.com, 
+	dennis.dalessandro@cornelisnetworks.com, dri-devel@lists.freedesktop.org, fbarrat@linux.ibm.com, 
+	gregkh@linuxfoundation.org, haiyangz@microsoft.com, hdegoede@redhat.com, 
+	ilpo.jarvinen@linux.intel.com, ira.weiny@intel.com, jgg@ziepe.ca, jonathan.cameron@huawei.com, 
+	kys@microsoft.com, leon@kernel.org, linux-alpha@vger.kernel.org, 
+	linux-cxl@vger.kernel.org, linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mtd@lists.infradead.org, linux-pci@vger.kernel.org, linux-rdma@vger.kernel.org, 
+	linux-scsi@vger.kernel.org, linux-usb@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
+	logang@deltatee.com, martin.petersen@oracle.com, mattst88@gmail.com, 
+	miquel.raynal@bootlin.com, mwalle@kernel.org, naveenkrishna.chatradhi@amd.com, 
+	platform-driver-x86@vger.kernel.org, pratyush@kernel.org, rafael@kernel.org, 
+	richard.henderson@linaro.org, richard@nod.at, simona@ffwll.ch, srinivas.kandagatla@linaro.org, 
+	tudor.ambarus@linaro.org, vigneshr@ti.com, vishal.l.verma@intel.com, wei.liu@kernel.org
+Subject: Re: [PATCH v2 09/10] sysfs: bin_attribute: add const read/write
+ callback variants
+Message-ID: <5b589ddb-e3c9-40e1-987f-30ba81dc8ace@t-8ch.de>
+References: <20241103-sysfs-const-bin_attr-v2-9-71110628844c@weissschuh.net>
+ <7ed3b713f8901398f52d7485d59613c19ea0e752.camel@HansenPartnership.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7ed3b713f8901398f52d7485d59613c19ea0e752.camel@HansenPartnership.com>
 
-On Wed, Dec 04 2024 at 00:27, Masahiro Yamada wrote:
-> On Tue, Dec 3, 2024 at 6:03=E2=80=AFAM Thomas Gleixner <tglx@linutronix.d=
-e> wrote:
->> > In this mainline kernel, DEFINE_IDTENTRY_SYSVEC()
->> > expands to a normal .text function which is explicitly
->> > annotated 'noinline'.
->>
->> It's not annotated noinline, it's annotated 'noinstr', which puts the
->> code into the .noinstr.text section. That one is indeed covered.
->
-> The callsite of local_apic_timer_interrupt() is annotated 'noinline'
-> if I correctly understand this line:
->   https://github.com/torvalds/linux/blob/v6.13-rc1/arch/x86/include/asm/i=
-dtentry.h#L272
+On 2024-12-03 11:06:16-0500, James Bottomley wrote:
+> > diff --git a/include/linux/sysfs.h b/include/linux/sysfs.h
+> > index
+> > d17c473c1ef292875475bf3bdf62d07241c13882..d713a6445a6267145a7014f308d
+> > f3bb25b8c3287 100644
+> > --- a/include/linux/sysfs.h
+> > +++ b/include/linux/sysfs.h
+> > @@ -305,8 +305,12 @@ struct bin_attribute {
+> >  	struct address_space *(*f_mapping)(void);
+> >  	ssize_t (*read)(struct file *, struct kobject *, struct
+> > bin_attribute *,
+> >  			char *, loff_t, size_t);
+> > +	ssize_t (*read_new)(struct file *, struct kobject *, const
+> > struct bin_attribute *,
+> > +			    char *, loff_t, size_t);
+> >  	ssize_t (*write)(struct file *, struct kobject *, struct
+> > bin_attribute *,
+> >  			 char *, loff_t, size_t);
+> > +	ssize_t (*write_new)(struct file *, struct kobject *,
+> > +			     const struct bin_attribute *, char *,
+> > loff_t, size_t);
+> >  	loff_t (*llseek)(struct file *, struct kobject *, const
+> > struct bin_attribute *,
+> >  			 loff_t, int);
+> >  	int (*mmap)(struct file *, struct kobject *, const struct
+> > bin_attribute *attr,
+> > @@ -325,11 +329,28 @@ struct bin_attribute {
+> >   */
+> >  #define sysfs_bin_attr_init(bin_attr) sysfs_attr_init(&(bin_attr)-
+> > >attr)
+> >  
+> > +typedef ssize_t __sysfs_bin_rw_handler_new(struct file *, struct
+> > kobject *,
+> > +					   const struct
+> > bin_attribute *, char *, loff_t, size_t);
+> > +
+> >  /* macros to create static binary attributes easier */
+> >  #define __BIN_ATTR(_name, _mode, _read, _write, _size)
+> > {		\
+> >  	.attr = { .name = __stringify(_name), .mode = _mode
+> > },		\
+> > -	.read	=
+> > _read,						\
+> > -	.write	=
+> > _write,						\
+> > +	.read =
+> > _Generic(_read,						\
+> > +		__sysfs_bin_rw_handler_new * :
+> > NULL,			\
+> > +		default :
+> > _read						\
+> > +	),							
+> > 	\
+> > +	.read_new =
+> > _Generic(_read,					\
+> > +		__sysfs_bin_rw_handler_new * :
+> > _read,			\
+> > +		default :
+> > NULL						\
+> > +	),							
+> > 	\
+> > +	.write =
+> > _Generic(_write,					\
+> > +		__sysfs_bin_rw_handler_new * :
+> > NULL,			\
+> > +		default :
+> > _write					\
+> > +	),							
+> > 	\
+> > +	.write_new =
+> > _Generic(_write,					\
+> > +		__sysfs_bin_rw_handler_new * :
+> > _write,			\
+> > +		default :
+> > NULL						\
+> > +	),							
+> > 	\
+> >  	.size	=
+> > _size,						\
+> >  }
+> 
+> It's probably a bit late now, but you've done this the wrong way
+> around.  What you should have done is added the const to .read/.write
+> then added a .read_old/.write_old with the original function prototype
+> and used _Generic() to switch between them.  Then when there are no
+> more non const left, you can simply remove .read_old and .write_old
+> without getting Linus annoyed by having to do something like this:
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=e70140ba0d2b1a30467d4af6bcfe761327b9ec95
 
-You're right. I got lost in the macro maze and looked at the actual
-sysvec_...() part.
+Not all users are using the macros to define their attributes.
+(Nor do they want to)
 
->> So yes, the fix is only required for pre 5.8 kernels.
->
-> This never occurs on x86 after commit f0178fc01fe46,
-> but theoretically this may occur for other architectures.
+These users would break with your suggestion.
+Otherwise I agree.
 
-Correct.
 
-Thanks,
-
-        tglx
+Thomas
 
