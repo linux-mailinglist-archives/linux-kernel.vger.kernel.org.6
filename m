@@ -1,198 +1,112 @@
-Return-Path: <linux-kernel+bounces-428793-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6ADA19E1381
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 07:48:19 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 170859E1387
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 07:49:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C703282A62
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 06:48:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8B44EB22919
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 06:49:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAE4F189F3F;
-	Tue,  3 Dec 2024 06:48:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="ON/teFOr";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="ON/teFOr"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C6BC188A0E;
+	Tue,  3 Dec 2024 06:49:39 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6CB18837;
-	Tue,  3 Dec 2024 06:47:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A0E98837;
+	Tue,  3 Dec 2024 06:49:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733208483; cv=none; b=tsSpViOsiDavod29D5sQOZ6suhPJk8W18Ngco62h0QpS0XtJsVTCFhtwsYbxGtsKVGab16OiyjwbBgEx4gUktz16iZSW3qZHJLIc9Xt8wWEebJVASVmJED+8hvODfgrRkbFFZnTWDatU8Fcw7KqqHJEwSDuZIEOO8Xou1HDFsZY=
+	t=1733208578; cv=none; b=Ug1lZpxxDlrFYZ+6GjzkXhB15giJS1Rt0Iivrpd4BCMq/fS5w2Z/FKyP6etm2DuKiNFY5wBPiersqSy1kinJLgV9zEaLdihQnBG4UXxaWW7dsNsD3K6BlD3pv52KdTtfdsKxYT/aGs15vYOiLkkcXdN3BeHEZFNZb9WpsYIlfV4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733208483; c=relaxed/simple;
-	bh=skXBrguFnEEJ9cK1Wgw6mdBV+KU7BMDS9WBaBnwTQ3U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dIiaG5E8nbGspiao0XCs8y5tVe+iIuq264pByivkAYt3EmPGfiE51coHOlgDpc3q9wgHwBNdnPEa4+apmvSjWWblmnZPU529vakuLckR1PafkeBdQOzHTPLJM032Nz0PEw7Zw4sJTZsZKuAymGGyeVHDoD1Ve5RA0FhUwW8L9as=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=ON/teFOr; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=ON/teFOr; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id C9C0A2116D;
-	Tue,  3 Dec 2024 06:47:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1733208475; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KmTgfQaLPbT4i+fON6Y5ezxxdO6L+T5ytkzLsgHmxZg=;
-	b=ON/teFOrcct37tAnFgOR2NrHAzcYeTxxCe+Wn8mh605pWh3cYXyGwQEBkWPTRFw7+/i7NV
-	qwzuhbiRwNVQTD4toB3ap+JgGGMd2lLu28dXvzkFxz++s2mQnTKsVu3K1n5Q/fYktaQ9vp
-	A64vaMyCcjx0mZv1ZUdJGrpLd9e1rRI=
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1733208475; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KmTgfQaLPbT4i+fON6Y5ezxxdO6L+T5ytkzLsgHmxZg=;
-	b=ON/teFOrcct37tAnFgOR2NrHAzcYeTxxCe+Wn8mh605pWh3cYXyGwQEBkWPTRFw7+/i7NV
-	qwzuhbiRwNVQTD4toB3ap+JgGGMd2lLu28dXvzkFxz++s2mQnTKsVu3K1n5Q/fYktaQ9vp
-	A64vaMyCcjx0mZv1ZUdJGrpLd9e1rRI=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1459F139C2;
-	Tue,  3 Dec 2024 06:47:55 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id IfMAApupTmdmIAAAD6G6ig
-	(envelope-from <jgross@suse.com>); Tue, 03 Dec 2024 06:47:55 +0000
-Message-ID: <24b80006-dcea-4a76-b5c8-e147d9191ed2@suse.com>
-Date: Tue, 3 Dec 2024 07:47:54 +0100
+	s=arc-20240116; t=1733208578; c=relaxed/simple;
+	bh=nq3LmtWF3DuD5mUH3kjW2xIUPaFRDgXKI7KW0h2/meE=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=iP8hP0yhIBMjjExzAAK+LNorkzUIKsQJzTs82skN7IUB9Ix69/AMoUKj6s0SmZOek+Vowzx6vsmKcdXteIYuHgSOzg9H6Bkei6sdbVw7cAONWx5j1vCtqmCvrNs3E6QxCVescb/vwCLclHazRtx+hfLdrQEWhyu3fxlpnQLYnyU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Y2WTZ1KgMz4f3jRC;
+	Tue,  3 Dec 2024 14:49:06 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id 1D70B1A0196;
+	Tue,  3 Dec 2024 14:49:25 +0800 (CST)
+Received: from [10.174.178.129] (unknown [10.174.178.129])
+	by APP1 (Coremail) with SMTP id cCh0CgB3bK7nqU5niSfBDQ--.45529S2;
+	Tue, 03 Dec 2024 14:49:24 +0800 (CST)
+Subject: Re: [PATCH 1/2] jbd2: increase IO priority for writing revoke records
+To: Zhang Yi <yi.zhang@huaweicloud.com>, linux-ext4@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ tytso@mit.edu, adilger.kernel@dilger.ca, jack@suse.cz, yi.zhang@huawei.com,
+ chengzhihao1@huawei.com, yukuai3@huawei.com, yangerkun@huawei.com
+References: <20241203014407.805916-1-yi.zhang@huaweicloud.com>
+ <20241203014407.805916-2-yi.zhang@huaweicloud.com>
+From: Kemeng Shi <shikemeng@huaweicloud.com>
+Message-ID: <dd1bac63-b06f-96da-38a1-9c62f63a784e@huaweicloud.com>
+Date: Tue, 3 Dec 2024 14:49:11 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 1/2] x86, lib, xenpv: Add WBNOINVD helper functions
-To: Xin Li <xin@zytor.com>, Kevin Loughlin <kevinloughlin@google.com>,
- Andrew Cooper <andrew.cooper3@citrix.com>
-Cc: linux-kernel@vger.kernel.org, seanjc@google.com, pbonzini@redhat.com,
- tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
- kvm@vger.kernel.org, thomas.lendacky@amd.com, pgonda@google.com,
- sidtelang@google.com, mizhang@google.com, virtualization@lists.linux.dev,
- xen-devel@lists.xenproject.org, bcm-kernel-feedback-list@broadcom.com
-References: <20241203005921.1119116-1-kevinloughlin@google.com>
- <20241203005921.1119116-2-kevinloughlin@google.com>
- <a9560e97-478d-4e03-b936-cf6f663279a4@citrix.com>
- <CAGdbjmLRA5g+Rgiq-fRbWaNqXK51+naNBi0b3goKxsN-79wpaw@mail.gmail.com>
- <bc4a4095-d8bd-4d97-a623-be35ef81aad0@zytor.com>
-Content-Language: en-US
-From: Juergen Gross <jgross@suse.com>
-In-Reply-To: <bc4a4095-d8bd-4d97-a623-be35ef81aad0@zytor.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Score: -4.30
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FROM_HAS_DN(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[20];
-	MIME_TRACE(0.00)[0:+];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:mid]
-X-Spam-Flag: NO
-X-Spam-Level: 
+In-Reply-To: <20241203014407.805916-2-yi.zhang@huaweicloud.com>
+Content-Type: text/plain; charset=gbk
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:cCh0CgB3bK7nqU5niSfBDQ--.45529S2
+X-Coremail-Antispam: 1UD129KBjvdXoWruF4UZw1DXryrKFy5AF1fWFg_yoWkJwc_WF
+	Wj9ryfZ3yftr12vF4jvw15AFsak3yfWF1xC3s8tr18W34DWas5JF9rtr95Xr1kJFZFgrZ5
+	Cr1SqFWrKrs7ZjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbaxYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
+	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
+	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8IcVCY1x02
+	67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7I2V7IY0VAS
+	07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4
+	IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1r
+	MI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJV
+	WUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j
+	6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYx
+	BIdaVFxhVjvjDU0xZFpf9x07UAwIDUUUUU=
+X-CM-SenderInfo: 5vklyvpphqwq5kxd4v5lfo033gof0z/
 
-On 03.12.24 05:09, Xin Li wrote:
-> On 12/2/2024 5:44 PM, Kevin Loughlin wrote:
->> On Mon, Dec 2, 2024 at 5:28 PM Andrew Cooper <andrew.cooper3@citrix.com> wrote:
->>>
->>> On 03/12/2024 12:59 am, Kevin Loughlin wrote:
->>>> diff --git a/arch/x86/include/asm/paravirt.h b/arch/x86/include/asm/paravirt.h
->>>> index d4eb9e1d61b8..c040af2d8eff 100644
->>>> --- a/arch/x86/include/asm/paravirt.h
->>>> +++ b/arch/x86/include/asm/paravirt.h
->>>> @@ -187,6 +187,13 @@ static __always_inline void wbinvd(void)
->>>>        PVOP_ALT_VCALL0(cpu.wbinvd, "wbinvd", ALT_NOT_XEN);
->>>>   }
->>>>
->>>> +extern noinstr void pv_native_wbnoinvd(void);
->>>> +
->>>> +static __always_inline void wbnoinvd(void)
->>>> +{
->>>> +     PVOP_ALT_VCALL0(cpu.wbnoinvd, "wbnoinvd", ALT_NOT_XEN);
->>>> +}
->>>
->>> Given this, ...
->>>
->>>> diff --git a/arch/x86/kernel/paravirt.c b/arch/x86/kernel/paravirt.c
->>>> index fec381533555..a66b708d8a1e 100644
->>>> --- a/arch/x86/kernel/paravirt.c
->>>> +++ b/arch/x86/kernel/paravirt.c
->>>> @@ -149,6 +154,7 @@ struct paravirt_patch_template pv_ops = {
->>>>        .cpu.write_cr0          = native_write_cr0,
->>>>        .cpu.write_cr4          = native_write_cr4,
->>>>        .cpu.wbinvd             = pv_native_wbinvd,
->>>> +     .cpu.wbnoinvd           = pv_native_wbnoinvd,
->>>>        .cpu.read_msr           = native_read_msr,
->>>>        .cpu.write_msr          = native_write_msr,
->>>>        .cpu.read_msr_safe      = native_read_msr_safe,
->>>
->>> this, and ...
->>>
->>>> diff --git a/arch/x86/xen/enlighten_pv.c b/arch/x86/xen/enlighten_pv.c
->>>> index d6818c6cafda..a5c76a6f8976 100644
->>>> --- a/arch/x86/xen/enlighten_pv.c
->>>> +++ b/arch/x86/xen/enlighten_pv.c
->>>> @@ -1162,6 +1162,7 @@ static const typeof(pv_ops) xen_cpu_ops __initconst = {
->>>>                .write_cr4 = xen_write_cr4,
->>>>
->>>>                .wbinvd = pv_native_wbinvd,
->>>> +             .wbnoinvd = pv_native_wbnoinvd,
->>>>
->>>>                .read_msr = xen_read_msr,
->>>>                .write_msr = xen_write_msr,
->>>
->>> this, what is the point having a paravirt hook which is wired to
->>> native_wbnoinvd() in all cases?
->>>
->>> That just seems like overhead for overhead sake.
->>
->> I'm mirroring what's done for WBINVD here, which was changed to a
->> paravirt hook in 10a099405fdf ("cpuidle, xenpv: Make more PARAVIRT_XXL
->> noinstr clean") in order to avoid calls out to instrumented code as
->> described in the commit message in more detail. I believe a hook is
->> similarly required for WBNOINVD, but please let me know if you
->> disagree. Thanks!
+
+
+on 12/3/2024 9:44 AM, Zhang Yi wrote:
+> From: Zhang Yi <yi.zhang@huawei.com>
 > 
-> Then the question is why we need to add WBINVD/WBNOINVD to the paravirt
-> hooks.
+> Commit '6a3afb6ac6df ("jbd2: increase the journal IO's priority")'
+> increases the priority of journal I/O by marking I/O with the
+> JBD2_JOURNAL_REQ_FLAGS. However, that commit missed the revoke buffers,
+> so also addresses that kind of I/Os.
 > 
+> Fixes: 6a3afb6ac6df ("jbd2: increase the journal IO's priority")
+> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+> ---
+>  fs/jbd2/revoke.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/jbd2/revoke.c b/fs/jbd2/revoke.c
+> index 4556e4689024..ce63d5fde9c3 100644
+> --- a/fs/jbd2/revoke.c
+> +++ b/fs/jbd2/revoke.c
+> @@ -654,7 +654,7 @@ static void flush_descriptor(journal_t *journal,
+>  	set_buffer_jwrite(descriptor);
+>  	BUFFER_TRACE(descriptor, "write");
+>  	set_buffer_dirty(descriptor);
+> -	write_dirty_buffer(descriptor, REQ_SYNC);
+> +	write_dirty_buffer(descriptor, JBD2_JOURNAL_REQ_FLAGS);
+>  }
+>  #endif
+Look good to me. Feel free to add:
 
-We don't.
+Reviewed-by: Kemeng Shi <shikemeng@huaweicloud.com>
 
-The wbinvd hook is a leftover from lguest times.
-
-I'll send a patch to remove it.
-
-
-Juergen
-
-P.S.: As the paravirt maintainer I would have preferred to be Cc-ed in the
-       initial patch mail.
 
