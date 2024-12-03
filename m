@@ -1,39 +1,62 @@
-Return-Path: <linux-kernel+bounces-429270-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FDAA9E1999
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 11:43:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B1AD9E199D
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 11:44:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65906282EBE
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:43:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 338F5280E8D
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:44:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D38C1E47B3;
-	Tue,  3 Dec 2024 10:41:54 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A31A61E47AE
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 10:41:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 890411E2614;
+	Tue,  3 Dec 2024 10:42:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="haOnfxa0"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62A651E22E9;
+	Tue,  3 Dec 2024 10:42:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733222514; cv=none; b=VZGYJNU9lAJAhM1+EAi+95SGqb3rqZYM3dBL609i9UsZXNUkxI9fQZ5RQK2Z5micjUg90JCVJy3S2rw2uBXVomVCTNWLOVhCOKJASVjt3gvvnStSpmBq6ayHbhkVIg6hQYfUZEg8IKRh9o0Tsb7GGcAwI+u/ONZhcGQERKduCvg=
+	t=1733222548; cv=none; b=KICGQUblVElLZwIBwKoK0yF+CB1KQ0CNOwMUhuJJDwj7KJwfp+o4HmMN6b/CaDJWI+oaLE2DbXebuRU6AqlJ3uM6svOuoaIulXCVhdEXXBleaDEo2YzGuC9iEmFcjwunVgzRlQUN1cEteFnzYkG0OoYZTlSpiv7DXZAXmFsYBsQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733222514; c=relaxed/simple;
-	bh=BV4ihEZeoGoPr/jg+0qyPa2e/I26bj5M3So69x7y7QE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Xoz8PbbXHJAZnL3KaXoCeCQ7frbVYf/4H5oVddzWapKXUYtIa+OtEFf8d7y36jcAXzChGy1+6/0C/yWAEAElgpC2mUHBce+nwjHMl0i+Fbh5LyF48JfvQj4WuRTPUWKyGBDu9zaMrR9VIMAzNgvdCXxsB0UFx7jdH06a15gOTuQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D9878FEC;
-	Tue,  3 Dec 2024 02:42:18 -0800 (PST)
-Received: from [192.168.178.6] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B1D8A3F71E;
-	Tue,  3 Dec 2024 02:41:48 -0800 (PST)
-Message-ID: <95b655c2-dd60-488e-ab07-c7b958da1457@arm.com>
-Date: Tue, 3 Dec 2024 11:41:47 +0100
+	s=arc-20240116; t=1733222548; c=relaxed/simple;
+	bh=huDWne30J5ob4zsS1bNSlBR9Y1rYCh2kjshpdpHvoIs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=oj+DbM9J7sNWzCpHyAuzJWReYWezhCSyHCy4uIqKMSWhGLPRWK7TWV7SkAPjfLS2BjoJ2YHDb1E6w+ok49xSCEBZXiV6WLxv3HcExTVcTEhW2TL7rLmfT13POX5I8KvZDwZsFsPcTfHVPTBnP3ZrjxRPFZ788cr0fLvmI2LFlqo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=haOnfxa0; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B38JfKY027880;
+	Tue, 3 Dec 2024 10:42:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	eCQE5jN00zJcuauOCTLwZrT7GsJeMG7eyAEO1hGFE8Y=; b=haOnfxa0PVsqapGn
+	v0iAlk29s23mXpU918TYooJmvQrUr5pQwlgPYXO1q1pr/yDe3MIfLU2ebvYBn1pw
+	FEI0E3AWv6xE0AE+bhwCS/dnxkEk6o3Y5yfFrGS5tFa8w8ZZC3ob/KB+BRPfXas+
+	tOhhSimPXV2QvgzbArCEKwyRYPNlllHBzyxWQmx0dOfS65XwfiCdFEg9MN5a3jHz
+	J7sRr+rizZp2D1vBRoN3ZFcEBN4++mJyeplqDXNYOSMUa8EV9Ryyb+0Yr5WDW8Cp
+	9v495IZ7EJxFiyAedBCtJPkh6ztreZ35L41cUYY117+rdAKgpisAuBHkoR4K11ct
+	YzzgWg==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 437tstfsk5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 03 Dec 2024 10:42:05 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B3Ag4RW013842
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 3 Dec 2024 10:42:04 GMT
+Received: from [10.239.133.66] (10.80.80.8) by nasanex01c.na.qualcomm.com
+ (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 3 Dec 2024
+ 02:42:00 -0800
+Message-ID: <577fb7ea-f540-4ca0-9569-3bd5bee87df8@quicinc.com>
+Date: Tue, 3 Dec 2024 18:41:58 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,89 +64,100 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/11 v3] sched/fair: Fix statistics with delayed dequeue
-To: Vincent Guittot <vincent.guittot@linaro.org>, mingo@redhat.com,
- peterz@infradead.org, juri.lelli@redhat.com, rostedt@goodmis.org,
- bsegall@google.com, mgorman@suse.de, vschneid@redhat.com,
- linux-kernel@vger.kernel.org
-Cc: kprateek.nayak@amd.com, pauld@redhat.com, efault@gmx.de,
- luis.machado@arm.com, tj@kernel.org, void@manifault.com
-References: <20241202174606.4074512-1-vincent.guittot@linaro.org>
-From: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Subject: Re: [PATCH 0/3] perf tool: Fix multiple memory leakages
+To: Namhyung Kim <namhyung@kernel.org>
+CC: <peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
+        <mark.rutland@arm.com>, <alexander.shishkin@linux.intel.com>,
+        <jolsa@kernel.org>, <irogers@google.com>, <adrian.hunter@intel.com>,
+        <kan.liang@linux.intel.com>, <james.clark@linaro.org>,
+        <yangyicong@hisilicon.com>, <song@kernel.org>,
+        <linux-perf-users@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <bpf@vger.kernel.org>
+References: <20241128125432.2748981-1-quic_zhonhan@quicinc.com>
+ <Z04u-7DQr5w9daS5@google.com>
 Content-Language: en-US
-In-Reply-To: <20241202174606.4074512-1-vincent.guittot@linaro.org>
-Content-Type: text/plain; charset=UTF-8
+From: Zhongqiu Han <quic_zhonhan@quicinc.com>
+In-Reply-To: <Z04u-7DQr5w9daS5@google.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: djibvdknjQX8f7VbEhxQnJS14VM8ZfqT
+X-Proofpoint-GUID: djibvdknjQX8f7VbEhxQnJS14VM8ZfqT
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ malwarescore=0 spamscore=0 impostorscore=0 mlxlogscore=999 mlxscore=0
+ priorityscore=1501 suspectscore=0 phishscore=0 adultscore=0 clxscore=1011
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412030091
 
-On 02/12/2024 18:45, Vincent Guittot wrote:
-> Delayed dequeued feature keeps a sleeping sched_entitiy enqueued until its
-> lag has elapsed. As a result, it stays also visible in the statistics that
-> are used to balance the system and in particular the field h_nr_running.
+On 12/3/2024 6:04 AM, Namhyung Kim wrote:
+> On Thu, Nov 28, 2024 at 08:54:29PM +0800, Zhongqiu Han wrote:
+>> Fix memory leakages when btf_node or bpf_prog_info_node is duplicated
+>> during insertion into perf_env.
+>>
+>> Signed-off-by: Zhongqiu Han <quic_zhonhan@quicinc.com>
+>> ---
+>> Zhongqiu Han (3):
+>>    perf header: Fix one memory leakage in process_bpf_btf()
+>>    perf header: Fix one memory leakage in process_bpf_prog_info()
+>>    perf bpf: Fix two memory leakages when calling
+>>      perf_env__insert_bpf_prog_info()
 > 
-> This serie fixes those metrics by creating a new h_nr_runnable that tracks
-> only tasks that want to run. It renames h_nr_running into h_nr_runnable.
+> Although I have a nitpick in the patch 3, it looks good otherwise.
 > 
-> h_nr_runnable is used in several places to make decision on load balance:
->   - PELT runnable_avg
->   - deciding if a group is overloaded or has spare capacity
->   - numa stats
->   - reduced capacity management
->   - load balance between groups
+> Reviewed-by: Namhyung Kim <namhyung@kernel.org>
 > 
-> While fixing h_nr_running, some fields have been renamed to follow the
-> same pattern. We now have:
->   - cfs.h_nr_runnable : running tasks in the hierarchy
->   - cfs.h_nr_queued : enqueued tasks in the hierarchy either running or
->       delayed dequeue
->   - cfs.h_nr_idle : enqueued sched idle tasks in the hierarchy
+Hi Namhyung,
+Thanks for your review~
+I will arise the V2 to optimize patch 3.
+
+> And I don't think the Fixes tags are correct, but it won't apply before
+> the change it points to.  So for practical reason, I'm ok with that.
 > 
-> cfs.nr_running has been rename cfs.nr_queued because it includes the
-> delayed dequeued entities
+> Thanks,
+> Namhyung
 > 
-> The unused cfs.idle_nr_running has been removed
-> 
-> Load balance compares the number of running tasks when selecting the
-> busiest group or runqueue and tries to migrate a runnable task and not a
-> sleeping delayed dequeue one. delayed dequeue tasks are considered only
-> when migrating load as they continue to impact it.
-> 
-> It should be noticed that this serie doesn't fix the problem of delayed
-> dequeued tasks that can't migrate at wakeup.
-> 
-> Some additional cleanups have been added:
->   - move variable declaration at the beginning of pick_next_entity()
->     and dequeue_entity() 
->   - sched_can_stop_tick() should use cfs.h_nr_queued instead of
->     cfs.nr_queued (previously cfs.nr_running) to know how many tasks
->     are running in the whole hierarchy instead of how many entities at
->     root level
-> 
-> Changes since v2:
-> - Fix h_nr_runnable after removing h_nr_delayed (reported by Mike and Prateek)
-> - Move "sched/fair: Fix sched_can_stop_tick() for fair tasks" at the
->   beginning of the series so it can be easily backported (asked by Prateek)
-> - Split "sched/fair: Add new cfs_rq.h_nr_runnable" in 2 patches. One
->   for the creation of h_nr_runnable and one for its use (asked by Peter)
-> - Fix more variable declarations (reported Prateek)
 
-with the following nits:
+I will fix the Fixes tag as follows on V2:
 
-(1) 01/11
+[PATCH 1/3] perf header: Fix one memory leakage in process_bpf_btf()
+Fixes: a70a1123174a ("perf bpf: Save BTF information as headers to
+perf.data")
 
-    Proposed 'Fixes:' missing:
-    https://lkml.kernel.org/r/c82ed217-cfe4-41a4-b39a-e7356231835f@amd.com
+[PATCH 2/3] perf header: Fix one memory leakage in
+process_bpf_prog_info()
+Fixes: 606f972b1361 ("perf bpf: Save bpf_prog_info information as
+headers to perf.data")
 
-(2) 08/11
 
-    Would be helpful to point out that we lost the only use case for 
-    'cfs_rq->idle_nr_running' with the advent of EEVDF with:
+[PATCH 3/3] perf bpf: Fix two memory leakages when calling
+perf_env__insert_bpf_prog_info()
+Fixes: e4378f0cb90b ("perf bpf: Save bpf_prog_info in a rbtree in
+perf_env")
+Fixes: d56354dc4909 ("perf tools: Save bpf_prog_info and BTF of new BPF
+programs")
 
-    5e963f2bd465 - sched/fair: Commit to EEVDF
 
-(3) Using nr_running on rq/rt_rq/dl_rq and nr_queued 
-    for cfs_rq might look strange to the untrained eye.
+>>
+>>   tools/perf/util/bpf-event.c | 10 ++++++++--
+>>   tools/perf/util/env.c       | 12 ++++++++----
+>>   tools/perf/util/env.h       |  4 ++--
+>>   tools/perf/util/header.c    |  8 ++++++--
+>>   4 files changed, 24 insertions(+), 10 deletions(-)
+>>
+>>
+>> base-commit: f486c8aa16b8172f63bddc70116a0c897a7f3f02
+>> -- 
+>> 2.25.1
+>>
 
-Reviewed-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
 
-[...]
+-- 
+Thx and BRs,
+Zhongqiu Han
 
