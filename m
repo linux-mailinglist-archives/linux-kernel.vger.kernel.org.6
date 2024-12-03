@@ -1,282 +1,187 @@
-Return-Path: <linux-kernel+bounces-429049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C71B9E16B7
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:07:57 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 51C87160835
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:07:54 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FC051DE3BD;
-	Tue,  3 Dec 2024 09:07:37 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D58F9E16BC
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:08:45 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 035531D79B3;
-	Tue,  3 Dec 2024 09:07:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2081A284DE2
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:08:44 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD6E71DE3C8;
+	Tue,  3 Dec 2024 09:08:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="i1VwqZaf"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F58B1D79B3
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 09:08:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733216857; cv=none; b=sbL1XIXbsVdGKW/MEWtooY+6lJX84QqeRajXQrfkvTOCily+BsSimagkM0XK1UvMfp1b1wDwqWOReLJpslqtfxccOdggotV1lqQaTymCQeUz+ONE9p2Nk8kTpXtn6Lzq7K97iTAzjpkr8vzOvNW7xZVWYVNyf85YE3V6JBTURKI=
+	t=1733216917; cv=none; b=DTlyzIMPnJfrX4P4d2iR4WKCWAyXT+87Ye20xqny+TGYy4mKnrCTAKZkue+P3pRxB9VcqtyCmZinW6X1PPehLdaRRXbHo0dbvnaqEXU/krmCJ8pP9Fhd7GkgBXZIECHumw4JhF3qdBuji/QSKbB0mFEkFwSSGCWU816sVZlie+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733216857; c=relaxed/simple;
-	bh=FlC5ceALkQRM8ePGitK90A/GLW9WBPK7icrNzlP61Fo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qanB3GHs88kPW7tu8UM20EW5K5CC/kpwTK0s5FaerrKhzA9UCGZyggGjriblrLxR8VJDxINtmSFL0612gT9hCmiCX3kjdKOtHYY4Tcev89b5iZZDH9t2v8T10fdauxCVn2OGgh19Fn5B4Ec2zs8mvxDh84KR7e1EB3gHeZuRwCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D721C4CECF;
-	Tue,  3 Dec 2024 09:07:33 +0000 (UTC)
-Message-ID: <832ee6b4-8238-4ef6-b870-f541b744880b@xs4all.nl>
-Date: Tue, 3 Dec 2024 10:07:31 +0100
+	s=arc-20240116; t=1733216917; c=relaxed/simple;
+	bh=IK/NZLp7gFIseOlzH1eyJFFhNVM8lpD61ZE4vbOZSvY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KN6BUNSAPGxtNBhfz8KpK+mcEn1DzOx637Vzx4IgmCmSLLaY19fqiP3LFFLn8hYPWexsAUeA08GVPtMWgTX0a5m68LNXMM6DJAXFaOUTeTmw7WNJ7DlCzp1KVWQL9/9183hlAUqb/GLr4ggoK3uB/wXviTtOisPGvMmkndB3KEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=i1VwqZaf; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-385e87b25f0so1533600f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 01:08:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1733216913; x=1733821713; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cFzvdgxxhPyYuZGDVV6pnwFjLTQZ9Vw8KV9E08J3sjM=;
+        b=i1VwqZafGDbrApIQ2kiwsHPSoKqAz3KphDq+Vmd4plF/KiIeHpb/hiLNqXWT79k5a6
+         1UWNv/oFAGANHp33BowwAv6dIUJKJOohEik42kq+kKXc0hQ1MTn9gnj0+9wd9m31VSYn
+         csE+2dGz+0cmSq59KFrOLn4ypdYFCMXRMwT2ZhQjDEbfXh1OIknOww5ZUciK53KGtgOh
+         EiHH1lg9lBqsDJDk5dq6CT9rp5zmy0CncsDh9J9OrwiI0fgWsfOu+sPZ8lAejy3cthWh
+         Cn0eqGbdHL98pOXulP1tY6AXqGDgrscfGg+tSeSYW40J77zQ59rsqrBxng3HVzaU/EWj
+         5COQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733216913; x=1733821713;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cFzvdgxxhPyYuZGDVV6pnwFjLTQZ9Vw8KV9E08J3sjM=;
+        b=lOUG/qqOl1sJRdkaKSW7QG9yxp+Ydo97tRACm/uUnMp3PsInoOWihZwBPjPWlTiPpr
+         pY60fpb5jd/+O5tdbb8tO7LW+hZknhzLSZC/bsFZWL88cIBYC/jaYrt/v+JE/yL5ZzI6
+         hbMi2vyOghrRUbyWgLs9xb9VGmq1hINKuJtlZ9lfxarcsGc6Z0vAUkK14xL2pTNcTJEO
+         TdftRdvVbq+DuEMPkdIPlUr05jOSLtzf1V3zw10zg3ekreA6jdRYvS7d7CP3JpAJko/Q
+         8eDDuIwz2ebZKshztPAVeQs3xq5eXQFvMtT4fLVyqXjaEgkoCFPssF+rtfGPXxocnBR+
+         Py7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV04URLLQDaJ+oznZMiM1HbBpkD4193SYrqIal0joPkc+hwcUkUSNMqGz7mJraWkGvyrVkZBk333paU9RQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8jGVtw9FPG+ix9sUmDjQ70aYXpCybpGjcoEiIDZ9ZOjxzPFRc
+	8vaDrpCHaR/HfX57uEuSH5chyNtIwjVOMuVvOONF4MoyxyrcvyjhesGrsrUW67LPbX9xbQ4E0pZ
+	CSyPDxZdQFpb3J/1Nk4m4Sjc92TpjzpZwx1Sr
+X-Gm-Gg: ASbGncteCTl1zMhp54aC8xq1jswGsDcrfgmKsTrJvpVss+Nv8y9QgFmgHkhTc4Peb3A
+	gEzwpwMcyjAVF3ZbbMdM3F9Enw7dd5aCUgQseNvVW/HGu5gG6BXMEo0/AmIoH5g==
+X-Google-Smtp-Source: AGHT+IHhYrDB/wb1xEJctCPoLD5SdDr7fE6pSh9gwJ2FOr50D60Fh2pWUtTRrn/qZKQFAckFbG2l+/EGK8cyVIZsKZI=
+X-Received: by 2002:a5d:47a7:0:b0:382:45db:6a1e with SMTP id
+ ffacd0b85a97d-385fd97edadmr1314617f8f.14.1733216913503; Tue, 03 Dec 2024
+ 01:08:33 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 13/15] media: stm32: dcmipp: add core support for the
- stm32mp25
-To: Alain Volmat <alain.volmat@foss.st.com>,
- Hugues Fruchet <hugues.fruchet@foss.st.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Sakari Ailus <sakari.ailus@linux.intel.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-media@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <20241118-csi_dcmipp_mp25-v3-0-c1914afb0a0f@foss.st.com>
- <20241118-csi_dcmipp_mp25-v3-13-c1914afb0a0f@foss.st.com>
-Content-Language: en-US, nl
-From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-In-Reply-To: <20241118-csi_dcmipp_mp25-v3-13-c1914afb0a0f@foss.st.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20241119112408.779243-1-abdiel.janulgue@gmail.com> <4c58b3b7-0c2a-441d-9b2c-7be65cb39bf2@asahilina.net>
+In-Reply-To: <4c58b3b7-0c2a-441d-9b2c-7be65cb39bf2@asahilina.net>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Tue, 3 Dec 2024 10:08:21 +0100
+Message-ID: <CAH5fLggE2Ud=2GdrAxsxC-KUoZVQEOFEpjgpSMq_h6dK=Cq1QA@mail.gmail.com>
+Subject: Re: [PATCH v3 0/2] rust: page: Add support for existing struct page mappings
+To: Asahi Lina <lina@asahilina.net>
+Cc: Abdiel Janulgue <abdiel.janulgue@gmail.com>, rust-for-linux@vger.kernel.org, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
+	Wedson Almeida Filho <wedsonaf@gmail.com>, Valentin Obst <kernel@valentinobst.de>, 
+	open list <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	"open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>, airlied@redhat.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Alain,
+On Mon, Dec 2, 2024 at 1:03=E2=80=AFPM Asahi Lina <lina@asahilina.net> wrot=
+e:
+>
+> On 11/19/24 8:24 PM, Abdiel Janulgue wrote:
+> > This series aims to add support for pages that are not constructed by a=
+n
+> > instance of the rust Page abstraction, for example those returned by
+> > vmalloc_to_page() or virt_to_page().
+> >
+> > Changes sinve v3:
+> > - Use the struct page's reference count to decide when to free the
+> >   allocation (Alice Ryhl, Boqun Feng).
+> > - Make Page::page_slice_to_page handle virt_to_page cases as well
+> >   (Danilo Krummrich).
+> > - Link to v2: https://lore.kernel.org/lkml/20241022224832.1505432-1-abd=
+iel.janulgue@gmail.com/
+> >
+> > Changes since v2:
+> > - Use Owned and Ownable types for constructing Page as suggested in
+> >   instad of using ptr::read().
+> > - Link to v1: https://lore.kernel.org/rust-for-linux/20241007202752.309=
+6472-1-abdiel.janulgue@gmail.com/
+> >
+> > Abdiel Janulgue (2):
+> >   rust: page: use the page's reference count to decide when to free the
+> >     allocation
+> >   rust: page: Extend support to existing struct page mappings
+> >
+> >  rust/bindings/bindings_helper.h |   1 +
+> >  rust/helpers/page.c             |  20 +++++
+> >  rust/kernel/page.rs             | 135 ++++++++++++++++++++++++++++----
+> >  3 files changed, 142 insertions(+), 14 deletions(-)
+> >
+> >
+> > base-commit: b2603f8ac8217bc59f5c7f248ac248423b9b99cb
+>
+> Just wanted to comment on an upcoming use case I have that will need
+> this, to make sure we're aligned. I want to use the page allocator to
+> manage GPU page tables (currently done via an io-pgtable patch and
+> abstraction but that's going away because it turned out to be too
+> intrusive to upstream).
+>
+> Since I'm dealing with page tables which are their own tree ownership
+> structure, and I don't want to duplicate management of the page life
+> cycles, this means I need to be able to:
+>
+> - Convert a Rust-allocated and owned page *into* its physical address
+> (page_to_phys()).
+> - Convert a physical address *into* a Rust-allocated and owned page
+> (phys_to_page()).
+> - Borrow a Rust Page from a physical address (so I can do read/write
+> operations on its data without intending to destroy it).
+>
+> Conceptually, the first two are like ARef::into_raw() and
+> ARef::from_raw() (or Box for that matter), while the third would
+> basically return a &Page with an arbitrary lifetime (up to the caller to
+> enforce the rules). The latter two would be unsafe functions by nature,
+> of course.
+>
+> I think this would work just as well with some kind of Owned/Ownable
+> solution. Basically, I just need to be able to express the two concepts
+> of "Page owned and allocated by Rust" and "Page borrowed from a physical
+> address".
 
-On 18/11/2024 14:35, Alain Volmat wrote:
-> The stm32mp25 supports both parallel & csi inputs.
-> An additional clock control is necessary.
-> Skeleton of the subdev structures for the stm32mp25 is added,
-> identical for the time being to the stm32mp13 however more subdeves
-> will be added in further commits.
-> 
-> Signed-off-by: Alain Volmat <alain.volmat@foss.st.com>
-> ---
->  .../platform/st/stm32/stm32-dcmipp/dcmipp-core.c   | 98 ++++++++++++++++++----
->  1 file changed, 80 insertions(+), 18 deletions(-)
-> 
-> diff --git a/drivers/media/platform/st/stm32/stm32-dcmipp/dcmipp-core.c b/drivers/media/platform/st/stm32/stm32-dcmipp/dcmipp-core.c
-> index d2cc19bb40d77f67a1f5fe565bc62f45eff2d266..0087f9017f024ba6b918b99c1ef39212ad6b881a 100644
-> --- a/drivers/media/platform/st/stm32/stm32-dcmipp/dcmipp-core.c
-> +++ b/drivers/media/platform/st/stm32/stm32-dcmipp/dcmipp-core.c
-> @@ -40,6 +40,7 @@ struct dcmipp_device {
->  
->  	/* Hardware resources */
->  	void __iomem			*regs;
-> +	struct clk			*mclk;
->  	struct clk			*kclk;
->  
->  	/* The pipeline configuration */
-> @@ -132,6 +133,40 @@ static const struct dcmipp_pipeline_config stm32mp13_pipe_cfg = {
->  	.hw_revision	= DCMIPP_STM32MP13_VERR
->  };
->  
-> +static const struct dcmipp_ent_config stm32mp25_ent_config[] = {
-> +	{
-> +		.name = "dcmipp_input",
-> +		.init = dcmipp_inp_ent_init,
-> +		.release = dcmipp_inp_ent_release,
-> +	},
-> +	{
-> +		.name = "dcmipp_dump_postproc",
-> +		.init = dcmipp_byteproc_ent_init,
-> +		.release = dcmipp_byteproc_ent_release,
-> +	},
-> +	{
-> +		.name = "dcmipp_dump_capture",
-> +		.init = dcmipp_bytecap_ent_init,
-> +		.release = dcmipp_bytecap_ent_release,
-> +	},
-> +};
-> +
-> +static const struct dcmipp_ent_link stm32mp25_ent_links[] = {
-> +	DCMIPP_ENT_LINK(ID_INPUT, 1, ID_DUMP_BYTEPROC, 0,
-> +			MEDIA_LNK_FL_ENABLED | MEDIA_LNK_FL_IMMUTABLE),
-> +	DCMIPP_ENT_LINK(ID_DUMP_BYTEPROC, 1, ID_DUMP_CAPTURE,  0,
-> +			MEDIA_LNK_FL_ENABLED | MEDIA_LNK_FL_IMMUTABLE),
-> +};
-> +
-> +#define DCMIPP_STM32MP25_VERR  0x30
-> +static const struct dcmipp_pipeline_config stm32mp25_pipe_cfg = {
-> +	.ents		= stm32mp25_ent_config,
-> +	.num_ents	= ARRAY_SIZE(stm32mp25_ent_config),
-> +	.links		= stm32mp25_ent_links,
-> +	.num_links	= ARRAY_SIZE(stm32mp25_ent_links),
-> +	.hw_revision    = DCMIPP_STM32MP25_VERR
-> +};
-> +
->  #define LINK_FLAG_TO_STR(f) ((f) == 0 ? "" :\
->  			     (f) == MEDIA_LNK_FL_ENABLED ? "ENABLED" :\
->  			     (f) == MEDIA_LNK_FL_IMMUTABLE ? "IMMUTABLE" :\
-> @@ -212,6 +247,7 @@ static int dcmipp_create_subdevs(struct dcmipp_device *dcmipp)
->  
->  static const struct of_device_id dcmipp_of_match[] = {
->  	{ .compatible = "st,stm32mp13-dcmipp", .data = &stm32mp13_pipe_cfg },
-> +	{ .compatible = "st,stm32mp25-dcmipp", .data = &stm32mp25_pipe_cfg },
->  	{ /* end node */ },
->  };
->  MODULE_DEVICE_TABLE(of, dcmipp_of_match);
-> @@ -261,13 +297,22 @@ static int dcmipp_graph_notify_bound(struct v4l2_async_notifier *notifier,
->  {
->  	struct dcmipp_device *dcmipp = notifier_to_dcmipp(notifier);
->  	unsigned int ret;
-> -	int src_pad;
-> +	int src_pad, i;
->  	struct dcmipp_ent_device *sink;
-> -	struct v4l2_fwnode_endpoint vep = { .bus_type = V4L2_MBUS_PARALLEL };
-> +	struct v4l2_fwnode_endpoint vep = { 0 };
->  	struct fwnode_handle *ep;
-> +	enum v4l2_mbus_type supported_types[] = {
-> +		V4L2_MBUS_PARALLEL, V4L2_MBUS_BT656, V4L2_MBUS_CSI2_DPHY
-> +	};
-> +	int supported_types_nb = ARRAY_SIZE(supported_types);
->  
->  	dev_dbg(dcmipp->dev, "Subdev \"%s\" bound\n", subdev->name);
->  
-> +	/* Only MP25 supports CSI input */
-> +	if (!of_device_is_compatible(dcmipp->dev->of_node,
-> +				     "st,stm32mp25-dcmipp"))
-> +		supported_types_nb--;
-> +
->  	/*
->  	 * Link this sub-device to DCMIPP, it could be
->  	 * a parallel camera sensor or a CSI-2 to parallel bridge
-> @@ -284,21 +329,23 @@ static int dcmipp_graph_notify_bound(struct v4l2_async_notifier *notifier,
->  		return -ENODEV;
->  	}
->  
-> -	/* Check for parallel bus-type first, then bt656 */
-> -	ret = v4l2_fwnode_endpoint_parse(ep, &vep);
-> -	if (ret) {
-> -		vep.bus_type = V4L2_MBUS_BT656;
-> +	/* Check for supported MBUS type */
-> +	for (i = 0; i < supported_types_nb; i++) {
-> +		vep.bus_type = supported_types[i];
->  		ret = v4l2_fwnode_endpoint_parse(ep, &vep);
-> -		if (ret) {
-> -			dev_err(dcmipp->dev, "Could not parse the endpoint\n");
-> -			fwnode_handle_put(ep);
-> -			return ret;
-> -		}
-> +		if (!ret)
-> +			break;
->  	}
->  
->  	fwnode_handle_put(ep);
->  
-> -	if (vep.bus.parallel.bus_width == 0) {
-> +	if (ret) {
-> +		dev_err(dcmipp->dev, "Could not parse the endpoint\n");
-> +		return ret;
-> +	}
-> +
-> +	if (vep.bus_type != V4L2_MBUS_CSI2_DPHY &&
-> +	    vep.bus.parallel.bus_width == 0) {
->  		dev_err(dcmipp->dev, "Invalid parallel interface bus-width\n");
->  		return -ENODEV;
->  	}
-> @@ -311,11 +358,13 @@ static int dcmipp_graph_notify_bound(struct v4l2_async_notifier *notifier,
->  		return -ENODEV;
->  	}
->  
-> -	/* Parallel input device detected, connect it to parallel subdev */
-> +	/* Connect input device to the dcmipp_input subdev */
->  	sink = dcmipp->entity[ID_INPUT];
-> -	sink->bus.flags = vep.bus.parallel.flags;
-> -	sink->bus.bus_width = vep.bus.parallel.bus_width;
-> -	sink->bus.data_shift = vep.bus.parallel.data_shift;
-> +	if (vep.bus_type != V4L2_MBUS_CSI2_DPHY) {
-> +		sink->bus.flags = vep.bus.parallel.flags;
-> +		sink->bus.bus_width = vep.bus.parallel.bus_width;
-> +		sink->bus.data_shift = vep.bus.parallel.data_shift;
-> +	}
->  	sink->bus_type = vep.bus_type;
->  	ret = media_create_pad_link(&subdev->entity, src_pad, sink->ent, 0,
->  				    MEDIA_LNK_FL_IMMUTABLE |
-> @@ -414,7 +463,7 @@ static int dcmipp_graph_init(struct dcmipp_device *dcmipp)
->  static int dcmipp_probe(struct platform_device *pdev)
->  {
->  	struct dcmipp_device *dcmipp;
-> -	struct clk *kclk;
-> +	struct clk *kclk, *mclk;
->  	const struct dcmipp_pipeline_config *pipe_cfg;
->  	struct reset_control *rstc;
->  	int irq;
-> @@ -474,12 +523,20 @@ static int dcmipp_probe(struct platform_device *pdev)
->  		return ret;
->  	}
->  
-> -	kclk = devm_clk_get(&pdev->dev, NULL);
-> +	kclk = devm_clk_get(&pdev->dev, "kclk");
->  	if (IS_ERR(kclk))
->  		return dev_err_probe(&pdev->dev, PTR_ERR(kclk),
->  				     "Unable to get kclk\n");
->  	dcmipp->kclk = kclk;
->  
-> +	if (!of_device_is_compatible(pdev->dev.of_node, "st,stm32mp13-dcmipp")) {
-> +		mclk = devm_clk_get(&pdev->dev, "mclk");
-> +		if (IS_ERR(mclk))
-> +			return dev_err_probe(&pdev->dev, PTR_ERR(mclk),
-> +					     "Unable to get mclk\n");
-> +		dcmipp->mclk = mclk;
-> +	}
-> +
->  	dcmipp->entity = devm_kcalloc(&pdev->dev, dcmipp->pipe_cfg->num_ents,
->  				      sizeof(*dcmipp->entity), GFP_KERNEL);
->  	if (!dcmipp->entity)
-> @@ -542,6 +599,7 @@ static int dcmipp_runtime_suspend(struct device *dev)
->  	struct dcmipp_device *dcmipp = dev_get_drvdata(dev);
->  
->  	clk_disable_unprepare(dcmipp->kclk);
-> +	clk_disable_unprepare(dcmipp->mclk);
->  
->  	return 0;
->  }
-> @@ -551,6 +609,10 @@ static int dcmipp_runtime_resume(struct device *dev)
->  	struct dcmipp_device *dcmipp = dev_get_drvdata(dev);
->  	int ret;
->  
-> +	ret = clk_prepare_enable(dcmipp->mclk);
-> +	if (ret)
-> +		dev_err(dev, "%s: Failed to prepare_enable mclk\n", __func__);
-> +
+I actually think the Owned/Ownable solution is even better for what
+you need, because having a borrowed reference to the current Page
+abstraction is pretty awkward as it assumes that the page is always
+owned.
 
-Shouldn't this return on error?
+Alice
 
->  	ret = clk_prepare_enable(dcmipp->kclk);
->  	if (ret)
->  		dev_err(dev, "%s: Failed to prepare_enable kclk\n", __func__);
-
-And on error here, it should call clk_disable_unprepare for mclk.
-
-> 
-
-This was reported by smatch:
-
-.../dcmipp-core.c:620 dcmipp_runtime_resume() warn: 'dcmipp->mclk' from clk_prepare_enable() not released on lines: 620.
-
-Everything else in this series looks good to me, so you can either post a fix for this
-and I will fold it into this 13/15 patch, or you post an updated v3.1 13/15 patch.
-Or of course a v4, if you prefer.
-
-Regards,
-
-	Hans
+> This maps to pagetable management like this:
+> - On PT allocation, a Page is allocated, cleared, and turned into its
+> physical address (to be populated in the parent PTE or top-level TTB)
+> - On PT free, a page physical address is converted back to a Page, its
+> PTEs are walked to recursively free child PTs or verify they are empty
+> entries for leaf PTs (invariant: no leaf PTEs, all mappings should be
+> removed before PT free) and dropped.
+> - On PT walk/PTE insertion and removal, a physical address is borrowed
+> as a Page, then `Page::with_page_mapped()` is used to perform R/W
+> operations on the PTEs contained within.
+>
+> Tying the lifetime of actual leaf data pages mapped into the page table
+> to the page table itself is a higher-level concern that isn't relevant
+> here, drm_gpuvm handles that part and those pages are not allocated
+> directly via the page allocator, but rather as GEM objects which
+> ultimately come from shmem)
+>
+> (Note: this hardware is always 64-bit without highmem so those concerns
+> don't apply here.)
+>
+> ~~ Lina
+>
 
