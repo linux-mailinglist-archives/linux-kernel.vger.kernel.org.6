@@ -1,106 +1,70 @@
-Return-Path: <linux-kernel+bounces-430126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70A299E2D1A
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 21:30:51 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8AF29E2CB3
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 21:07:18 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3F88AB2A7CB
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 20:07:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A05BC161CAC
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 20:07:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 706EF18DF81;
-	Tue,  3 Dec 2024 20:02:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCDBE20A5D1;
+	Tue,  3 Dec 2024 20:02:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qloih+gC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YvMmRdmi"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF3CC209F46;
-	Tue,  3 Dec 2024 20:02:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43AFE1F9437;
+	Tue,  3 Dec 2024 20:02:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733256149; cv=none; b=sioqyX2wSWpTfWhLP7pIyWvPsFx1ymvrjPN0QvXBH7AtGibwHDcRP/oS/tYXoIQdwL3sm6BT9UyPRv51XmeSQ3FP0G5Vhcbm9hUhTXoiazg9y8Yw8cY7N1ZzLJDjI9KMekvG7G4RCWoi435lsQOOzr/nwst/yuLaEJQipvVDAnc=
+	t=1733256159; cv=none; b=fR9ZPDnTUmFMFGc3FZHS63v56+pRgm3LoQL4ItBOW7LFuKZ4EEtAov3E0SFg83jEQY76sbBCIQjyjimM0ioDN3TDO18vHkGyEhtfYUNlYLQdtlG8xwOZDG3NvhObfMIXP6sCUBASpfhkWEcbxkXqiMlGwh3o6cFq5egZMr0NKi8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733256149; c=relaxed/simple;
-	bh=YgO+22E9CP1aoJ8xQyShLmWzJS1FxWDyHERFzMsZ6TQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DCYUl8pAf/eP0+Vx7ZrnJ+IAJXDR131FIWfAjtST41wknbLLthAs90aeHl6sC/HGMm4Jz2TS7qf4ph3A3Rj1qd40PVTbVjfn/zp2mBi7/+U8e5Cgi73CoO0fjLE3geZd8267JTy7O0PvvWWT6AkHSVBC5w3X2LuJ7opqWNXee4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qloih+gC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54CE0C4CECF;
-	Tue,  3 Dec 2024 20:02:28 +0000 (UTC)
+	s=arc-20240116; t=1733256159; c=relaxed/simple;
+	bh=9s/JWRvFfTdgkQKV/nGBL2EuwZaFUujocxVtr4jGDQI=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=kAG8E/+28tGBsf5/7dgoGzV7y3+EfvG9OYwdkkzQcmGD/ZVcfSV5TqmL0cEtOCoZHLRn7Fzfd0CnidXaPUIf3CEf69C1rt/L0DKzhyBUhGNNblqRoeAiJLrvXa2nQUaL04kUePPl4XKTVYg2TNI54RBzi3833B19HidNWEz6ihs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YvMmRdmi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92A18C4CECF;
+	Tue,  3 Dec 2024 20:02:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733256149;
-	bh=YgO+22E9CP1aoJ8xQyShLmWzJS1FxWDyHERFzMsZ6TQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qloih+gC69E9I09sLS7Zww5CUtFyohiFZfGU0qpUsTatiBzwDEGnSUWiYUHE6weJW
-	 VOSva0dbERQdn5xJ+GFEe5QcLZNXHH5FEc4+JJvQe+vR+ydvClB9388gUmGN+VMsaY
-	 mc/4HegJE4xLCG6OB/8wl3/OONV7fISKalkHhqHY20uzhNfaJ+HDx0I7FMgwVvX44A
-	 1nBP7MYrpriGEZ/wrUzWQj40SrJ1xuOLmsBAVBxL7hkXKPWBrhA3VuSCQQQAWj/t9I
-	 F6Rw5ZlGf1xOipQnwCPq2fzaCo36Br2J+HL7Xj3DTM3Tbu1yOEGnmdVR0+E7M/Oa61
-	 Z3rrDDBd3AqGw==
-Date: Tue, 3 Dec 2024 20:02:25 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Andi Shyti <andi.shyti@kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the hwmon-staging tree
-Message-ID: <da18d79a-542d-49b4-a0d2-da7b483af158@sirena.org.uk>
-References: <Z09c_U2l8SqLQG-n@sirena.org.uk>
- <cba440fc-88c6-444c-af57-046ebedd60c2@sirena.org.uk>
- <d57e049a-9d1b-4229-84ba-0933cc0315d4@roeck-us.net>
+	s=k20201202; t=1733256158;
+	bh=9s/JWRvFfTdgkQKV/nGBL2EuwZaFUujocxVtr4jGDQI=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=YvMmRdmimDYcDO5m1vowBcbTVKAUOkz0LrjMrixOZXMGNMZHtmRvTww9XjYqcdcIZ
+	 RLp8KJ3+buP3VIO16MSwrYrx0VrV8djm2v/XhJrkC1ogXtjOkQtutFGss9vuJH8OIF
+	 ICPMWgYWF4gZnj4Ran+0UQD+TEyGMk5J9AeV88u883j2HBEJKTG2rOmx3LWiL4DLNx
+	 xB7TZHiKv7To8Fc7lqCHPOrcoSlvMsVgakcqGdDpocEH+nepBYQ867PP/t/Q8MOpm2
+	 sr2aBkXCTOdN+nf/DCNXqdtUSb8fDjtX78J0TtJJchfhzcxc3aPEzE48xgL7ZyyZ2A
+	 pkufFOQG18c7A==
+Message-ID: <afb3fce310d7a4bd1960cbabfc355d32.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="SjqtM/eYBztvk2cQ"
-Content-Disposition: inline
-In-Reply-To: <d57e049a-9d1b-4229-84ba-0933cc0315d4@roeck-us.net>
-X-Cookie: Alimony is the high cost of leaving.
-
-
---SjqtM/eYBztvk2cQ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <d7078eb7-a7d6-4753-b453-8fce15245c34@stanley.mountain>
+References: <d7078eb7-a7d6-4753-b453-8fce15245c34@stanley.mountain>
+Subject: Re: [PATCH next] clk: mmp: pxa1908-apbc: Fix NULL vs IS_ERR() check in probe
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@linaro.org>, Duje =?utf-8?q?Mihanovi=C4=87?= <duje.mihanovic@skole.hr>
+Date: Tue, 03 Dec 2024 12:02:36 -0800
+User-Agent: alot/0.12.dev1+gaa8c22fdeedb
 
-On Tue, Dec 03, 2024 at 11:53:58AM -0800, Guenter Roeck wrote:
-> On 12/3/24 11:40, Mark Brown wrote:
-> > On Tue, Dec 03, 2024 at 07:33:22PM +0000, Mark Brown wrote:
-> > > Hi all,
-> > >=20
-> > > After merging the hwmon-staging tree, today's linux-next build
-> > > (x86 allmodconfig) failed like this:
-> >=20
-> > Sorry, this was the i2c-host tree rather than the hwmon-staging tree.
-> >=20
+Quoting Dan Carpenter (2024-11-20 09:18:38)
+> The devm_kzalloc() function returns NULL on error, not error pointers.
+> Fix the check.
 >=20
-> I think it is (or should be) the hwmon-next tree.
+> Fixes: 51ce55919273 ("clk: mmp: Add Marvell PXA1908 APBC driver")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
 
-It is the hwmon-staging tree (which is the hwmon-next branch in
-linux-staging.git) - came here to say that, I'd forgotten how to drive
-the scripts and got confused about the I2C tree sorry for the noise
-there.
-
---SjqtM/eYBztvk2cQ
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmdPY9AACgkQJNaLcl1U
-h9ClPgf/Tv0h6f/799XpSl+6KmdSMzRdA+YDIE+roPcarkj63TP7MijE3T7KgHMY
-eQiQX6iFYvjQgK7deLFPP1hIUZGFkOUr+EYB5JTRiUQpSTXi8EXV1SZfcOVsLsKB
-VEdvElvPFs+NcOdFyZaQNbAmAIklpnaZGTN0VLYVy1eqL2BFGZJh60xpzErVMP6u
-Di3obsPai0BUCLsO0Kf7QcZfA0EX6XmIE8e+FiEHGycX5TWZ4Zi+jPLF74NMyNf5
-dkrvPPp47d8ZBkdA82VpOuPg4FYAIE9lLBtxnY0y2yozUE8hluhPdP21e/q9K6cL
-9fGt8ZgxLjAfa2XZJjDMBB0VHa3M3Q==
-=615t
------END PGP SIGNATURE-----
-
---SjqtM/eYBztvk2cQ--
+Applied to clk-next
 
