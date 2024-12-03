@@ -1,118 +1,219 @@
-Return-Path: <linux-kernel+bounces-429287-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429288-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B52739E19B8
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 11:47:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BA9E79E19BE
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 11:48:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AA48288633
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:47:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B215288DDC
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:47:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B74621E4106;
-	Tue,  3 Dec 2024 10:46:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B7151E378C;
+	Tue,  3 Dec 2024 10:46:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="nTrt4M3C"
-Received: from www530.your-server.de (www530.your-server.de [188.40.30.78])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="UKnCqHRr"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD38E1E282D;
-	Tue,  3 Dec 2024 10:45:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.30.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1B3A1E25EC;
+	Tue,  3 Dec 2024 10:46:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733222759; cv=none; b=AgnB3F6tR49YAW5P0g0tuuQLgubXm+YVLb/njrbxGrrPo0N4783sVd7yAm1dcuYM/Vuo6weVwNvNjbgwcOMY8+gQmehxzd9kmL/Z4G8pyWF1588wyj+DFsTrrJiX59ofNXOf9A7xvzmeiqzK8pIM/0/2ZqUMzuFKE8evfbvGIeU=
+	t=1733222773; cv=none; b=VIL4YlgycEx2yQI1fGEHkIJmdk696v06oX7F4zrBOivzUxt0MN9ZbApIZJbsZH96w6ymU+6hIWsv6RC9sgC+ETq0hehzt6ED3WKj3voKBLxv2pIVLg0b0XZFr6b6Y7MgDrZMfqZIfVw38Mk2Qsw5W7qysxyIRJ/p6HM5QChJn/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733222759; c=relaxed/simple;
-	bh=9Dt96s2Bcm1MRb0U9H3U4fTwQJyZ4SwoQ7T4izq5lpw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=MKAnvFYWcSIVCpR/I0gq25pgkwLCmslgRitYSe3UR4r9gfv5gEVDXWAVVgwe+gZkqi+Vv3k7+6wbjX5cfaG8c868QRTDXb6XAsDSVSYBybhgNORtBEF4Pgd6dCvlrhAuylmE2YYKg4XMrpwwg/wddGL0kR31lXExi5lF2baz1zA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=nTrt4M3C; arc=none smtp.client-ip=188.40.30.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=geanix.com;
-	s=default2211; h=Cc:To:In-Reply-To:References:Message-Id:
-	Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:Date:From:Sender:
-	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
-	:Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=q4sUFc93gmjBPZgy68yfM8oI42T2WlPXmr5pgphYQSI=; b=nTrt4M3CasJxXw6OBstUtotAwB
-	1WpkLzMA5oiU3Ba86Sa2CIFx8lJwxpKMWvAhVTsNWCxypFy4crjYZgHxUfIjloq0PSFz9Z6mLCja8
-	oq1Ce0VtkITV8dQ7PqrelwFvQHDwT+b1Ka3jhM/rn1oR5Lpws+Lo9izXljgMkZSYsre8Bx389bRnP
-	m1saEEoL2bDUQ9moGPwOIR5M3wyGvAH8jduBhN+/ibCY1f5PAQSQbspSClgVADFxNO5RNubN7YcRG
-	d8EkB38Vd+VTVd8H6GhekIHctrFkou6mPGf/KuaA5iKodR8RAy5PIHKzlCqZFJhYeKjFp9d/MmEEP
-	8YY/dTaw==;
-Received: from sslproxy06.your-server.de ([78.46.172.3])
-	by www530.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <esben@geanix.com>)
-	id 1tIQPj-0001Pu-Nv; Tue, 03 Dec 2024 11:45:55 +0100
-Received: from [185.17.218.86] (helo=localhost)
-	by sslproxy06.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <esben@geanix.com>)
-	id 1tIQPj-000LGA-0D;
-	Tue, 03 Dec 2024 11:45:55 +0100
-From: Esben Haabendal <esben@geanix.com>
-Date: Tue, 03 Dec 2024 11:45:36 +0100
-Subject: [PATCH 6/6] rtc: interface: Ensure alarm irq is enabled when UIE
- is enabled
+	s=arc-20240116; t=1733222773; c=relaxed/simple;
+	bh=P51bhc3HZ3o911SSeg8+stkV+cAHvwFIJ068zwsw+4A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=AzwRkmni5Te1EBZ/R5u3W8R0YUH76RMBB9AOeo3K7PT8iKKc34VIID2ARdj9lFpYtR9z0zrLm3t4qZ4JwSNxNh4fCzJd0RRT/JxESlFu/qes1PeZlpWhSmx2tlErrxKxAAPjpqSS+zbgcqENGxbf5dRws/hLN1a+b7IrdL5l/1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=UKnCqHRr; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B362c2m027841;
+	Tue, 3 Dec 2024 10:45:52 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	UN0XSC5qycfF5izJMc2/kTr5aNMxSwmq9lk/LJNJHAE=; b=UKnCqHRr6h7c9L+G
+	SOUED9IjML+F6Wq4l6MVo+/n63ONsACHcyNcKpfdwX+DOuhJYPM4inCAazjGwrTM
+	UrcLm9UbC5vyB60B481/9B4Sr6PxifDtM+Joiah0cviayC3ka41Sxh28rrYkZZUG
+	yWxWdH6ZKGs66aUuZPkSu5LusPAOeuhx6dsIYMVBGLdu2kRfniujuHLWs23w3gBM
+	sGw5MhkxrFDuzR2V2IiW+Ffm7fEhJrxwxnmG8zyJWJL8FF8r7RVwLdCwZegVUhvQ
+	80Ol5DE4OqUOZTapI4HIeYJ8JLey107dMHwIF44EBEL+IA2X1f567YNZcByhX5be
+	DWTXzw==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 439vcegqwy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 03 Dec 2024 10:45:52 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B3AjpEI023835
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 3 Dec 2024 10:45:51 GMT
+Received: from [10.239.133.66] (10.80.80.8) by nasanex01c.na.qualcomm.com
+ (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 3 Dec 2024
+ 02:45:47 -0800
+Message-ID: <de297c20-8a91-48b5-96bd-e59019a780ef@quicinc.com>
+Date: Tue, 3 Dec 2024 18:45:45 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] perf bpf: Fix two memory leakages when calling
+ perf_env__insert_bpf_prog_info()
+To: Namhyung Kim <namhyung@kernel.org>
+CC: <peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
+        <mark.rutland@arm.com>, <alexander.shishkin@linux.intel.com>,
+        <jolsa@kernel.org>, <irogers@google.com>, <adrian.hunter@intel.com>,
+        <kan.liang@linux.intel.com>, <james.clark@linaro.org>,
+        <yangyicong@hisilicon.com>, <song@kernel.org>,
+        <linux-perf-users@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <bpf@vger.kernel.org>
+References: <20241128125432.2748981-1-quic_zhonhan@quicinc.com>
+ <20241128125432.2748981-4-quic_zhonhan@quicinc.com>
+ <Z04uaWQxI3LXfAtg@google.com>
+Content-Language: en-US
+From: Zhongqiu Han <quic_zhonhan@quicinc.com>
+In-Reply-To: <Z04uaWQxI3LXfAtg@google.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241203-rtc-uie-irq-fixes-v1-6-01286ecd9f3f@geanix.com>
-References: <20241203-rtc-uie-irq-fixes-v1-0-01286ecd9f3f@geanix.com>
-In-Reply-To: <20241203-rtc-uie-irq-fixes-v1-0-01286ecd9f3f@geanix.com>
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, Esben Haabendal <esben@geanix.com>, 
- stable@vger.kernel.org
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1733222752; l=1219;
- i=esben@geanix.com; s=20240523; h=from:subject:message-id;
- bh=9Dt96s2Bcm1MRb0U9H3U4fTwQJyZ4SwoQ7T4izq5lpw=;
- b=r3Dyu5602AIrHx2dWjtPnTDJcvMVNYZzvLiEShal74iF5XFHfuxtkFwXBxg/GB5IcrPZAcp/Y
- sUdFz60GGCoARdQ0Yvo2lFgP3OoUSFmijOQzgDAwUvHBkSD7c4NrMhn
-X-Developer-Key: i=esben@geanix.com; a=ed25519;
- pk=PbXoezm+CERhtgVeF/QAgXtEzSkDIahcWfC7RIXNdEk=
-X-Authenticated-Sender: esben@geanix.com
-X-Virus-Scanned: Clear (ClamAV 0.103.10/27476/Tue Dec  3 10:52:11 2024)
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: sw8Ejl0PTIlAF3LzMLtkVf2tQuYRTu8e
+X-Proofpoint-ORIG-GUID: sw8Ejl0PTIlAF3LzMLtkVf2tQuYRTu8e
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ bulkscore=0 mlxlogscore=999 adultscore=0 suspectscore=0 spamscore=0
+ impostorscore=0 phishscore=0 mlxscore=0 malwarescore=0 clxscore=1011
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412030092
 
-When setting a normal alarm, user-space is responsible for using
-RTC_AIE_ON/RTC_AIE_OFF to control if alarm irq should be enabled.
+On 12/3/2024 6:02 AM, Namhyung Kim wrote:
+> Hello,
+> 
+> On Thu, Nov 28, 2024 at 08:54:32PM +0800, Zhongqiu Han wrote:
+>> If perf_env__insert_bpf_prog_info() returns false due to a duplicate bpf
+>> prog info node insertion, the temporary info_node and info_linear memory
+>> will leak. Add a check to ensure the memory is freed if the function
+>> returns false.
+>>
+>> Fixes: 9c51f8788b5d ("perf env: Avoid recursively taking env->bpf_progs.lock")
+>> Signed-off-by: Zhongqiu Han <quic_zhonhan@quicinc.com>
+>> ---
+>>   tools/perf/util/bpf-event.c | 10 ++++++++--
+>>   tools/perf/util/env.c       |  7 +++++--
+>>   tools/perf/util/env.h       |  2 +-
+>>   3 files changed, 14 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/tools/perf/util/bpf-event.c b/tools/perf/util/bpf-event.c
+>> index 13608237c50e..c81444059ad0 100644
+>> --- a/tools/perf/util/bpf-event.c
+>> +++ b/tools/perf/util/bpf-event.c
+>> @@ -289,7 +289,10 @@ static int perf_event__synthesize_one_bpf_prog(struct perf_session *session,
+>>   		}
+>>   
+>>   		info_node->info_linear = info_linear;
+>> -		perf_env__insert_bpf_prog_info(env, info_node);
+>> +		if (!perf_env__insert_bpf_prog_info(env, info_node)) {
+>> +			free(info_linear);
+>> +			free(info_node);
+>> +		}
+>>   		info_linear = NULL;
+>>   
+>>   		/*
+>> @@ -480,7 +483,10 @@ static void perf_env__add_bpf_info(struct perf_env *env, u32 id)
+>>   	info_node = malloc(sizeof(struct bpf_prog_info_node));
+>>   	if (info_node) {
+>>   		info_node->info_linear = info_linear;
+>> -		perf_env__insert_bpf_prog_info(env, info_node);
+>> +		if (!perf_env__insert_bpf_prog_info(env, info_node)) {
+>> +			free(info_linear);
+>> +			free(info_node);
+>> +		}
+>>   	} else
+>>   		free(info_linear);
+>>   
+>> diff --git a/tools/perf/util/env.c b/tools/perf/util/env.c
+>> index d7865ae5f8f5..38401a289c24 100644
+>> --- a/tools/perf/util/env.c
+>> +++ b/tools/perf/util/env.c
+>> @@ -24,12 +24,15 @@ struct perf_env perf_env;
+>>   #include "bpf-utils.h"
+>>   #include <bpf/libbpf.h>
+>>   
+>> -void perf_env__insert_bpf_prog_info(struct perf_env *env,
+>> +bool perf_env__insert_bpf_prog_info(struct perf_env *env,
+>>   				    struct bpf_prog_info_node *info_node)
+>>   {
+>> +	bool ret = true;
+> 
+> Please add a blank line between declaration and the other statements.
+> Also I think you can just use the return value of the internal function
+> instead of initializaing it to true.
+> 
+> Thanks,
+> Namhyung
+> 
+> 
 
-But when RTC_UIE_ON is used, interrupts must be so that the requested
-irq events are generated.
-When RTC_UIE_OFF is used, alarm irq is disabled if there are no other
-alarms queued, so this commit brings symmetry to that.
+Hi Namhyung,
+Thanks for your review~
 
-Signed-off-by: Esben Haabendal <esben@geanix.com>
-Cc: stable@vger.kernel.org
----
- drivers/rtc/interface.c | 4 ++++
- 1 file changed, 4 insertions(+)
+I will add a blank line between the declaration and the other
+statements, and optimize it as below:
 
-diff --git a/drivers/rtc/interface.c b/drivers/rtc/interface.c
-index e365e8fd166db31f8b44fac9fb923d36881b1394..39db12f267cc627febb78e67400aaf8fc3301b0c 100644
---- a/drivers/rtc/interface.c
-+++ b/drivers/rtc/interface.c
-@@ -617,6 +617,10 @@ int rtc_update_irq_enable(struct rtc_device *rtc, unsigned int enabled)
- 		rtc->uie_rtctimer.node.expires = ktime_add(now, onesec);
- 		rtc->uie_rtctimer.period = ktime_set(1, 0);
- 		err = rtc_timer_enqueue(rtc, &rtc->uie_rtctimer);
-+		if (!err && rtc->ops && rtc->ops->alarm_irq_enable)
-+			err = rtc->ops->alarm_irq_enable(rtc->dev.parent, 1);
-+		if (err)
-+			goto out;
- 	} else {
- 		rtc_timer_remove(rtc, &rtc->uie_rtctimer);
- 	}
+
++bool perf_env__insert_bpf_prog_info(struct perf_env *env,
+  				    struct bpf_prog_info_node
+*info_node)
+  {
++	bool ret;
++
+  	down_write(&env->bpf_progs.lock);
+-	__perf_env__insert_bpf_prog_info(env, info_node);
++	ret = __perf_env__insert_bpf_prog_info(env, info_node);
+  	up_write(&env->bpf_progs.lock);
++	return ret;
+  }
+
+
+>>   	down_write(&env->bpf_progs.lock);
+>> -	__perf_env__insert_bpf_prog_info(env, info_node);
+>> +	if (!__perf_env__insert_bpf_prog_info(env, info_node))
+>> +		ret = false;
+>>   	up_write(&env->bpf_progs.lock);
+>> +	return ret;
+>>   }
+>>   
+>>   bool __perf_env__insert_bpf_prog_info(struct perf_env *env, struct bpf_prog_info_node *info_node)
+>> diff --git a/tools/perf/util/env.h b/tools/perf/util/env.h
+>> index 9db2e5a625ed..da11add761d0 100644
+>> --- a/tools/perf/util/env.h
+>> +++ b/tools/perf/util/env.h
+>> @@ -178,7 +178,7 @@ int perf_env__nr_cpus_avail(struct perf_env *env);
+>>   void perf_env__init(struct perf_env *env);
+>>   bool __perf_env__insert_bpf_prog_info(struct perf_env *env,
+>>   				      struct bpf_prog_info_node *info_node);
+>> -void perf_env__insert_bpf_prog_info(struct perf_env *env,
+>> +bool perf_env__insert_bpf_prog_info(struct perf_env *env,
+>>   				    struct bpf_prog_info_node *info_node);
+>>   struct bpf_prog_info_node *perf_env__find_bpf_prog_info(struct perf_env *env,
+>>   							__u32 prog_id);
+>> -- 
+>> 2.25.1
+>>
+
 
 -- 
-2.47.1
-
+Thx and BRs,
+Zhongqiu Han
 
