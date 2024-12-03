@@ -1,179 +1,213 @@
-Return-Path: <linux-kernel+bounces-429593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58A0A9E22E4
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:30:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 483729E22BF
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:28:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D5AD7B2BC46
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 13:55:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F6C7B61995
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 13:56:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AE641F1302;
-	Tue,  3 Dec 2024 13:55:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B5111F6691;
+	Tue,  3 Dec 2024 13:56:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dqnCpyNj"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="DieYce3V"
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C69B3189F3F
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 13:55:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42F9A1F130E;
+	Tue,  3 Dec 2024 13:55:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733234117; cv=none; b=MbF7sSdQf9fMEcfdGr5aytzwxOyRFy3eU3Us2K3RNwvG6s+g7WDjHnkC9tl+kPPfZt9gqmOCh6jw0XWgq+joDdlstIZ/UxBWNQ4hgoOTV3UeQsuNDqSwwQ22FjKsmUwq5yUO+IdpLaWAjuq07629EtvmubYi0ps9YcArhWLAcBg=
+	t=1733234160; cv=none; b=cfVlQfBTRr86hf1LPDkvDpUPx8aWfdP8Th7iK2skicbJdXDz90ODg6SyiNRBIjRBl4YUYa/0tRxRblKAIblFiCPB3JsvUEZecMD5TI7voTloORtlP5OFw3Nj7M3ctLRTd/XrK5roGkkayI0bZX0hvnKQ3G/Kf3dqiCrVwBZlee8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733234117; c=relaxed/simple;
-	bh=mle9UUb7dDskLtd9jCH9QqWnYl8wSrz63i6CvmV7vXA=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=RH8Zklfx+uKH/5v4qHAP+EX/lYFRYvxuwFnDe6UDGC2CJbJfIE1T+M0Ag4pvj1LOABCldnQnpmED5n4X9TBYQ6Ql+hOZ3nuL61CX5upkzx2Q+v5+gOEOAmg1ZH1UxrHy8t/9rRkhBPsmmnSCgcKZUpwW9k4bHSx5NGAXqdQZMwk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dqnCpyNj; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-434a044dce2so68690235e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 05:55:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733234114; x=1733838914; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=gz+l3KqObW/HJFvDTOv2iIjYIEIUxrukQz2sYdYBT8s=;
-        b=dqnCpyNjGijGuEX4/HQfs0ORJbyiO2qrZUfkpvhuJBMOAAs3fj+kRSrNPS9+qA6p0X
-         aqFOMLenlOaGS6gsxD8DgXpo4VM103k0d9wfvBE4a7g41PZLb6IJeuCf+9zkXOv9JS/9
-         wkmXuCnzzVkyQdW/km5AyhUSzOjz/dBfCj+pgU7hZ7tq0FkCZZO2dPQ4ojBWYJM/bGsd
-         mMvzkxOmrioMP7zd85+FODqysa4P/2awx96fJyhA13nLawuywC7j3CeyW/+pqc0lGLyq
-         +7UrbkalMXACAwftQhn+mcL+pW7VqwNQQVnoCcdRAXCz9hj3fRFw7hmR2eaPbpa5yA5F
-         aW8g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733234114; x=1733838914;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=gz+l3KqObW/HJFvDTOv2iIjYIEIUxrukQz2sYdYBT8s=;
-        b=bAWzyYoP5zK+rlzFBoEHAyD/pK2zCOSR2jxnTZl0ukYRCQnKUAi6rXKLWy8QojJ4GA
-         sqwSKPvJwtx+auqHRBZTi8Wv9XHpk7KQbV/KB5I5loQ3DOTELLxZTfPlTpk9hkN9QrMQ
-         jtSWHXfefuapUYJb2dXk/DV9C0NVe7xa2E9Fk1BgKZ7FQmLkawYCC4WE0sBWyAreRHk8
-         4BX4/u/y3P3a5VebWpECuN9PKOx/f0xJhnAskIvk2bbRWDODUH7iOWEyC5mV0kLs/Y7n
-         pwst61542KDWB/8gdXbopFUJATvt3TEhNH5WRXuH5i9oe9VtkXLbHFVxu48b3+yEJLOb
-         7qJA==
-X-Forwarded-Encrypted: i=1; AJvYcCX6gfsEfju0Vy8+0TgtBRnBy3MnPYyvng3xaIy6dmbFbzs7O7UXiDtdCQv28FUADbiYhObmErU/HIveWmY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxq+mr+0fE1DZJWbQyWVi1cFMStr3HZL1vJPSMJBL9z6OSlLj8s
-	TiQ1yKlrcNfgz5/xUVATyTjikfpmqPV/rsAM6z2lvIifOnYo3Hxy2emSfeslxpI=
-X-Gm-Gg: ASbGncvK93wIn4X/Ja1zmwgEEjJ9g+1Q4dGypNnp0OZy891JBaenntjrb6jslbwWe0h
-	vyFLVZxKgzVUUcYtp38ggHwumpwpBkTXRQnMGuOyx8fIOtOoiuFG7BVRSxZ4pk5W/YbgoV9k++x
-	ykUdbuAe165qXJt/pV7NZY3glZlihG/NO67EfjJzrqBZ3jgjQkbgrsihfFvExytGakyu5cAz5C5
-	MoS2F5sZI7FSavNh8KtL5AB4o/XE8kLE3VbBUDLRHHbS3NCU2hb4Td26PYJNMsIfW3IGLObn+oU
-	r4L9MZ+2LN9VAUQfz469bS5u
-X-Google-Smtp-Source: AGHT+IHO5v4mBO5cO68x6c9dihydjdMPOihkNn60wLtRB6InkOSEoDsCz6rUvo0qtKSH5DZhekNFlg==
-X-Received: by 2002:a05:600c:3502:b0:431:24c3:dbaa with SMTP id 5b1f17b1804b1-434d09b2e2cmr24599645e9.2.1733234114210;
-        Tue, 03 Dec 2024 05:55:14 -0800 (PST)
-Received: from ?IPV6:2a01:e0a:982:cbb0:b668:b88:4ecf:c065? ([2a01:e0a:982:cbb0:b668:b88:4ecf:c065])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434b0f32594sm193399585e9.32.2024.12.03.05.55.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Dec 2024 05:55:13 -0800 (PST)
-Message-ID: <b3e5184d-19bc-45ed-92e3-a751842839b3@linaro.org>
-Date: Tue, 3 Dec 2024 14:55:12 +0100
+	s=arc-20240116; t=1733234160; c=relaxed/simple;
+	bh=lKeQ9AtKmtT3/g6/89CnJT2/810ZwKky7x2wGzEisZY=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=cFAYzcEyzrnfYDnxiNv9ZHW/75UmyvY+qwADBMfFcfp/f+wy87x4RYBulcFIgdKt99opV1vNRCEC22rEbdGR3zMzkRn3rNsI32VsdeMr5nlKbKrlxbmM6+yZO74KfTv85IEWWQDR5kOCEXQFzE7AhDQ87FBADeT8yty2MR/IPI8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=DieYce3V; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id C9E9B60010;
+	Tue,  3 Dec 2024 13:55:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1733234151;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jsABzj1Vfkjzo1UXnSDoTFRCNe+h1i3gV/KNPBs/irU=;
+	b=DieYce3VkYHzLoO+PC9eGa31KQ6wBRNn/L8eFhyXMtAAQhXPZorJUVIUnzkqZTfh0VWG2t
+	rPJWTtFoefA9cSwPeGftVWZl6jgTvJczPqcJtrZagXun79wcqK4RuPN4L9l9CPaAjJM4zl
+	99Jm/r6wrNiwiQ5FzLxfzzjawscumEAsLFz1aHlvjHHyY92RqtfkXZQtunooa+VnV9EmVp
+	5weaRlG33b6Bpvpu2nHDdfk8vZbsgxAMcOAdLaXzxV2aLF1sTx3xmu78T5bTMfdXHQIUpI
+	rHxQndz8ESUlm9PMV5FHVC3L4TbbITkJUXLie6nr50dxsc7xYNtufxjUggs2wg==
+From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+Date: Tue, 03 Dec 2024 14:55:48 +0100
+Subject: [PATCH 5/6] nvmem: rmem: add CRC validation for Mobileye EyeQ5
+ NVMEM
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: neil.armstrong@linaro.org
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH 2/9] crypto: qce - unregister previously registered algos
- in error path
-To: Bartosz Golaszewski <brgl@bgdev.pl>,
- Thara Gopinath <thara.gopinath@gmail.com>,
- Herbert Xu <herbert@gondor.apana.org.au>,
- "David S. Miller" <davem@davemloft.net>,
- Stanimir Varbanov <svarbanov@mm-sol.com>
-Cc: linux-crypto@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, stable@vger.kernel.org
-References: <20241203-crypto-qce-refactor-v1-0-c5901d2dd45c@linaro.org>
- <20241203-crypto-qce-refactor-v1-2-c5901d2dd45c@linaro.org>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20241203-crypto-qce-refactor-v1-2-c5901d2dd45c@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20241203-rmem-v1-5-24f4970cf14e@bootlin.com>
+References: <20241203-rmem-v1-0-24f4970cf14e@bootlin.com>
+In-Reply-To: <20241203-rmem-v1-0-24f4970cf14e@bootlin.com>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Nicolas Saenz Julienne <nsaenz@kernel.org>, 
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-mips@vger.kernel.org, 
+ Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
+ =?utf-8?q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Tawfik Bayouk <tawfik.bayouk@mobileye.com>, 
+ =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+X-Mailer: b4 0.14.2
+X-GND-Sasl: theo.lebrun@bootlin.com
 
-On 03/12/2024 10:19, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> 
-> If we encounter an error when registering alorithms with the crypto
-> framework, we just bail out and don't unregister the ones we
-> successfully registered in prior iterations of the loop.
-> 
-> Add code that goes back over the algos and unregisters them before
-> returning an error from qce_register_algs().
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: ec8f5d8f6f76 ("crypto: qce - Qualcomm crypto engine driver")
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> ---
->   drivers/crypto/qce/core.c | 11 +++++++----
->   1 file changed, 7 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/crypto/qce/core.c b/drivers/crypto/qce/core.c
-> index 58ea93220f015..848e5e802b92b 100644
-> --- a/drivers/crypto/qce/core.c
-> +++ b/drivers/crypto/qce/core.c
-> @@ -51,16 +51,19 @@ static void qce_unregister_algs(struct qce_device *qce)
->   static int qce_register_algs(struct qce_device *qce)
->   {
->   	const struct qce_algo_ops *ops;
-> -	int i, ret = -ENODEV;
-> +	int i, j, ret = -ENODEV;
->   
->   	for (i = 0; i < ARRAY_SIZE(qce_ops); i++) {
->   		ops = qce_ops[i];
->   		ret = ops->register_algs(qce);
-> -		if (ret)
-> -			break;
-> +		if (ret) {
-> +			for (j = i - 1; j >= 0; j--)
-> +				ops->unregister_algs(qce);
-> +			return ret;
-> +		}
->   	}
->   
-> -	return ret;
-> +	return 0;
->   }
->   
->   static int qce_handle_request(struct crypto_async_request *async_req)
-> 
+Mobileye EyeQ5 has a non-volatile memory region which
+gets used to store MAC addresses. Its format includes
+a prefix 12-byte header and a suffix 4-byte CRC.
 
-Perhaps you can also use the devm trick here aswell ?
+Add an optional ->checksum() callback inside match data;
+it runs CRC32 onto the content.
 
-Neil
+Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
+---
+ drivers/nvmem/rmem.c | 80 ++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 80 insertions(+)
+
+diff --git a/drivers/nvmem/rmem.c b/drivers/nvmem/rmem.c
+index ca89c2689031534ff316a48e03360aeec823b025..04796f4fa8ae708387013fa260afb901a14e24ff 100644
+--- a/drivers/nvmem/rmem.c
++++ b/drivers/nvmem/rmem.c
+@@ -3,6 +3,7 @@
+  * Copyright (C) 2020 Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+  */
+ 
++#include <linux/crc32.h>
+ #include <linux/io.h>
+ #include <linux/module.h>
+ #include <linux/nvmem-provider.h>
+@@ -15,6 +16,18 @@ struct rmem {
+ 	struct reserved_mem *mem;
+ };
+ 
++struct rmem_match_data {
++	int (*checksum)(struct rmem *priv);
++};
++
++struct __packed rmem_eyeq5_header {
++	u32 magic;
++	u32 version;
++	u32 size;
++};
++
++#define RMEM_EYEQ5_MAGIC	((u32)0xDABBAD00)
++
+ static int rmem_read(void *context, unsigned int offset,
+ 		     void *val, size_t bytes)
+ {
+@@ -47,10 +60,66 @@ static int rmem_read(void *context, unsigned int offset,
+ 	return 0;
+ }
+ 
++static int rmem_eyeq5_checksum(struct rmem *priv)
++{
++	struct rmem_eyeq5_header header;
++	void *buf __free(kfree) = NULL;
++	u32 computed_crc, *target_crc;
++	size_t data_size;
++	int ret;
++
++	ret = rmem_read(priv, 0, &header, sizeof(header));
++	if (ret)
++		return ret;
++
++	if (header.magic != RMEM_EYEQ5_MAGIC)
++		return -EINVAL;
++
++	/*
++	 * Avoid massive kmalloc() if header read is invalid;
++	 * the check would be done by the next rmem_read() anyway.
++	 */
++	if (header.size > priv->mem->size)
++		return -EINVAL;
++
++	/*
++	 *           0 +-------------------+
++	 *             | Header (12 bytes) | \
++	 *             +-------------------+ |
++	 *             |                   | | data to be CRCed
++	 *             |        ...        | |
++	 *             |                   | /
++	 *   data_size +-------------------+
++	 *             |   CRC (4 bytes)   |
++	 * header.size +-------------------+
++	 */
++
++	buf = kmalloc(header.size, GFP_KERNEL);
++	if (!buf)
++		return -ENOMEM;
++
++	ret = rmem_read(priv, 0, buf, header.size);
++	if (ret)
++		return ret;
++
++	data_size = header.size - sizeof(*target_crc);
++	target_crc = buf + data_size;
++	computed_crc = crc32(U32_MAX, buf, data_size) ^ U32_MAX;
++
++	if (computed_crc == *target_crc)
++		return 0;
++
++	dev_err(priv->dev,
++		"checksum failed: computed %#x, expected %#x, header (%#x, %#x, %#x)\n",
++		computed_crc, *target_crc, header.magic, header.version, header.size);
++	return -EINVAL;
++}
++
+ static int rmem_probe(struct platform_device *pdev)
+ {
+ 	struct nvmem_config config = { };
+ 	struct device *dev = &pdev->dev;
++	const struct rmem_match_data *match_data = device_get_match_data(dev);
+ 	struct reserved_mem *mem;
+ 	struct rmem *priv;
+ 
+@@ -73,10 +142,21 @@ static int rmem_probe(struct platform_device *pdev)
+ 	config.size = mem->size;
+ 	config.reg_read = rmem_read;
+ 
++	if (match_data && match_data->checksum) {
++		int ret = match_data->checksum(priv);
++		if (ret)
++			return ret;
++	}
++
+ 	return PTR_ERR_OR_ZERO(devm_nvmem_register(dev, &config));
+ }
+ 
++static const struct rmem_match_data rmem_eyeq5_match_data = {
++	.checksum = rmem_eyeq5_checksum,
++};
++
+ static const struct of_device_id rmem_match[] = {
++	{ .compatible = "mobileye,eyeq5-bootloader-config", .data = &rmem_eyeq5_match_data },
+ 	{ .compatible = "nvmem-rmem", },
+ 	{ /* sentinel */ },
+ };
+
+-- 
+2.47.1
+
 
