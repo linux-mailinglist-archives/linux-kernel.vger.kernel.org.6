@@ -1,137 +1,255 @@
-Return-Path: <linux-kernel+bounces-429401-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D63069E1B97
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 13:02:35 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F9449E1B9C
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 13:03:20 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 973EF283309
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 12:02:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 665B31614DD
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 12:03:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 840361E47C6;
-	Tue,  3 Dec 2024 12:02:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C7511E501B;
+	Tue,  3 Dec 2024 12:03:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AwHYLJkM"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VKt0pbeO"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EBD78F6C
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 12:02:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D05B61E2306
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 12:03:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733227349; cv=none; b=o7iGjCeinKW1yY1cUNYzLZekC57T86vvq3O5RSPs8YIjRrq4EMp6FzQL8mP/oxyRQjkdcJTUQddqhNestIn0+qjr6keWncIQIbEaKT7ci0V+XcZPCthmCZN2ndeFW11T0hVh70/8akjMcC2e7SQ1+z0V3UvqXBr0ibzIhbeShmw=
+	t=1733227391; cv=none; b=GTHw+PzQX8t1n+n12gN45USu2TJ5TlPalQzK7WJx/7oVAQat1BpeTnZvbzWjFUENU7D1yrHehHAwMgebXtM1n6okMN23P33xVC6YV4rS2EIpTQDfdggXgjbWsLe1U/v8QqaNird71RyYS3mDB1QBvo/Hg+dZZUQF3h09Yzl0EU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733227349; c=relaxed/simple;
-	bh=cYFvDCGsx9bEANm2Z/oDCpOTMA3AgsfZGUcgsiPXyvI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=TwnX1jC+rj87RoGQ38jSA6bca2fRz+0VaoU7i4/opQc3fGqDXItp3n9rWQVmYPwN9qMdEBM1Cy/W3BkCL6RbS62EgwmKQugks69qRr2//0f2FH9Bhq66tSq1GM9lFFOKPd2AjEEGwXR5Y4MSW2R2+7k0/wIM+cNjZ7YeHBDXa2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AwHYLJkM; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1733227346;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Uh3BjfKFpPpRrAA5lOBF7auSwsv3QwQnUXqCXfoS+DE=;
-	b=AwHYLJkMfjyKtRecSdog9Yqw6oXntGJO4r2hkO5fEzRVWWtRy/AQGwW5VwSSxDkck5See6
-	aan3x3JNx9otwZ52x6+iHXv3mc0JIkY7AKQLY3vVP0NXwz37U44CC8EnioluRKcXc6VnkM
-	nzroO1chjwgl3lTsOl+g4grZjjDlJuw=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-645-RkTg01XJMBGCNV3NOfzyRw-1; Tue, 03 Dec 2024 07:02:25 -0500
-X-MC-Unique: RkTg01XJMBGCNV3NOfzyRw-1
-X-Mimecast-MFC-AGG-ID: RkTg01XJMBGCNV3NOfzyRw
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-434a467e970so38254375e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 04:02:24 -0800 (PST)
+	s=arc-20240116; t=1733227391; c=relaxed/simple;
+	bh=/SHUjEZj0+DIt9galfwmQtnRJJrNtbTjKsnxqJpKtVQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dEmO7nTcekgAWRJh5KRiZOco3rRSzoqrM27Tjq7mYFcTQmJ42BJ3up+mO2fW2xSvh6T9zSbbP3HlNGrP7b+pGJxCg6fsCNG0cqcybGolqWNY8KRRn2bqwKxNQ5QAql81UTCuZQaITEC7hA1ePXLcQBpcoZ5QG6nOuARGa9pPqTk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VKt0pbeO; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-434a852bb6eso50002965e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 04:03:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733227387; x=1733832187; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=y0I7eoP4tW1sy5Wnizr4Z0EwfocpUFRNEULcv2IVlsM=;
+        b=VKt0pbeOjDTzcWY7bYHbQBR5pBgJmIXYSicNJj48qkYVUd2pDmITsE1z7ggPkgEYgq
+         5L/W9i/w/02VIk8DHhVNA1q+Yhl/5Q1vyWfT+5or/TsbR5SUGuBsIEYqVtgSt2f1aJrn
+         I0gmFgYglz9y9Qz9prdJP/KSXWg/iRzOu0Jd3mcWxf24udoy1uw87+13hopFaAmuquM6
+         FHdvxly8z8olS9DxWwDV6pibq/4lxpWLYbguQxeJc7GdceLGo89HgN9poYzPHMABdLKw
+         1aeHIsaqYmkd9eUfb2og9E0C83S5dp26nLM8MnMfly0I3pckDswRLlCSdG54M7me3W4h
+         G8zA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733227343; x=1733832143;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Uh3BjfKFpPpRrAA5lOBF7auSwsv3QwQnUXqCXfoS+DE=;
-        b=PUYdMi6Sni4Txa4hKbgRHqiZwHF/nLEK5V0yuLF5frs04GDYe2s+JHiLTaWzfzyM61
-         r8D+prJfpV8sJo+v4h9D62ygPIdeHbtoWzsXl7O0uXGrXF81WpseXRr5jfqQKXfJuS74
-         z7yIujxOEMRiFaNNqheWCQZZ7JYtGTnDdtI5vxKn1NIiFU64456kHt7k+21Bh2bPwEQk
-         L6e/58DJ6Y5fPAod6oNPW8iznYZ5Jfx6GnBWYDv76S++wQqGtGJFTMb0G5KLPUkDnMf8
-         AMOQNNm2hgEdzSh16UTu9Mr0yBzYALj4hzn/O4t+Zgro8QmbZNyP4coSXlUKVC3yaOcg
-         gyiA==
-X-Gm-Message-State: AOJu0YxmR6IvCNpEOeLDduBUcw/hgEtHiX2iOyISwpYtL74NVbbRlAHv
-	0LD5Gwc5D9e6WyGt/xPRp/YQ4w01mdLIasD5CNlf7Xukc//ZTmaKj2TegIEIZzvRR+unKd/xXYb
-	wrLZnB3yUhw1ZYrBiZfNqoLi8OIpkJtvF536/aO+Pt+jmNcgLg0fj+BoF6/GDSQ==
-X-Gm-Gg: ASbGncvZKsKMenla779SR1LP9DnR4AGOy6DmnxnNi2pgzb+EYNN2fLMMByPgxESQHfb
-	2JRjdA97o93tyk8U9++XDVpUCWMxA/C8fjmZtRMlSbH9RZse1I+PDF/DMqw9jNGdBTAyVj51FEW
-	OxluCwJ2HJ0HKb5RbfidTK9jQ/j5uKbTjQlJRo+xX62MFg9ewoPNvpaH3W2s9f19Hf1gtvw7fa5
-	NsBJLR4PEK26L/ZboY+vr1MSOhTUlniXtgN4agKQUD91B8JRB1E/pDW4guJwAId6m6PvbkJHDLj
-	9voZ1JahBvKXtHAbu88jWS5NMquAh5fEgTk=
-X-Received: by 2002:a05:6000:2812:b0:385:f631:612 with SMTP id ffacd0b85a97d-385fd3f8f10mr1131486f8f.17.1733227342894;
-        Tue, 03 Dec 2024 04:02:22 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IE8g1lgTk/qX3+5XRF05oGWihjt6rYlGQCZNRqXp6buxI1qfNSZLPtjGRwGY2p2+J1fktx0Eg==
-X-Received: by 2002:a05:6000:2812:b0:385:f631:612 with SMTP id ffacd0b85a97d-385fd3f8f10mr1131463f8f.17.1733227342473;
-        Tue, 03 Dec 2024 04:02:22 -0800 (PST)
-Received: from vschneid-thinkpadt14sgen2i.remote.csb (213-44-141-166.abo.bbox.fr. [213.44.141.166])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385e13e8eadsm11109928f8f.28.2024.12.03.04.02.21
+        d=1e100.net; s=20230601; t=1733227387; x=1733832187;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=y0I7eoP4tW1sy5Wnizr4Z0EwfocpUFRNEULcv2IVlsM=;
+        b=tPPK6WoL6lsvaj2DqyR4D4hM1mDyJ8JWkX+xXNAjtq0f8/NPatVQrk5icI72ZEfRZe
+         mATJXk1iiIA2/oIDo1YmVslCS9pcIf1H8NTxkqW9QO1wBA3zhh4Yrh65iU5EXdjmwkzz
+         DhIRP2HIAFfMhKIAMAo0fN42gv8vs4dDFmaG4MZme0jrGAGu43aWlFCEXMMAvYJ2rLiZ
+         Ixa4LcIWYz+Kz9/bhjrbu/y2MfEdS+4YLWyGrSGV5FhL15L9gw751y6FAqCw7TP+9Sao
+         Z3e6HIZFjekeNlLGq3fzdB4GTkQeBnkX4tLIZBXY7Qm36UnyrQlezwux/jHlvfS2Ug6w
+         fyRg==
+X-Forwarded-Encrypted: i=1; AJvYcCXRySKWWhzbpebIidrGdlfoDqZayoYL0EPVeubCcoSEbVUgcdRRNr6/BbVClb0ofxM/e4vtqJSvoOQuEbk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyitJdPXx5/1U5QLMtNc01Z3q6pyYbg4oEqMX1tL7TY2rowLDDS
+	9KihPyXQ0MdkgC5yUV8Q+J0qfcCI1pkEFpIbMIZU/noj+7QwxerhXIDcIUInrLw=
+X-Gm-Gg: ASbGncv9DNlwu0JrfTgEZRaq1FPPJi1nu6xoaDLItlCIwuXX1AAPShCvzGAkw2dW0Gl
+	Kf4aXOd+jZ/mOMoJd+QX6KcZqNZzMw1uzXDyMyhjzTHvHInhk/bqEyO1poNfNCWIYzjas7OikMD
+	e+uwucXEiU9yJZgWI7tljN+p5T2CUz5sx98X+2fik8bDhKzP2qxo0rRVRe7S4k/N2Lyk8qI1/tt
+	2hyyIsNfnWYU//gPcyiEAsNoxlWXxnYMwZrvzkxq+H/Q+rV
+X-Google-Smtp-Source: AGHT+IGJuNygbZCGb6hKSPq7svZI0UjE9YSI8WZDBfz+rnhnNF8S82REfql2U1Ng0i3TWUIKQNJLRw==
+X-Received: by 2002:a05:600c:138a:b0:431:52da:9d67 with SMTP id 5b1f17b1804b1-434d09b1831mr21654615e9.3.1733227387134;
+        Tue, 03 Dec 2024 04:03:07 -0800 (PST)
+Received: from linaro.org ([82.76.168.176])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434b0f326a9sm189099435e9.35.2024.12.03.04.03.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Dec 2024 04:02:21 -0800 (PST)
-From: Valentin Schneider <vschneid@redhat.com>
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH v2 3/3] objtool: Add noinstr validation for static
- branches/calls
-In-Reply-To: <51fd13276df848dcb320bf7ff423f73364b06266.1732682344.git.jpoimboe@kernel.org>
-References: <cover.1732682344.git.jpoimboe@kernel.org>
- <51fd13276df848dcb320bf7ff423f73364b06266.1732682344.git.jpoimboe@kernel.org>
-Date: Tue, 03 Dec 2024 13:02:21 +0100
-Message-ID: <xhsmhed2p560i.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+        Tue, 03 Dec 2024 04:03:06 -0800 (PST)
+Date: Tue, 3 Dec 2024 14:03:05 +0200
+From: Abel Vesa <abel.vesa@linaro.org>
+To: Stephan Gerhold <stephan.gerhold@linaro.org>
+Cc: Johan Hovold <johan@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Krishna Kurapati <quic_kriskura@quicinc.com>,
+	Thinh Nguyen <Thinh.Nguyen@synopsys.com>, linux-usb@vger.kernel.org
+Subject: Re: [PATCH 1/2] arm64: dts: qcom: x1e80100-crd: Add USB multiport
+ fingerprint readery
+Message-ID: <Z07zeVJU3Y1GiSLL@linaro.org>
+References: <20241118-x1e80100-crd-fp-v1-0-ec6b553a2e53@linaro.org>
+ <20241118-x1e80100-crd-fp-v1-1-ec6b553a2e53@linaro.org>
+ <Z07bgH5vVk44zuEH@hovoldconsulting.com>
+ <Z07r3Upr50vLluyn@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z07r3Upr50vLluyn@linaro.org>
 
-On 26/11/24 20:47, Josh Poimboeuf wrote:
-> @@ -3532,14 +3577,29 @@ static inline bool noinstr_call_dest(struct objtool_file *file,
->       return false;
->  }
->
-> +static char *static_call_name(struct symbol *func)
-> +{
-> +	return func->name + strlen("__SCT__");
-> +}
-> +
->  static int validate_call(struct objtool_file *file,
->                        struct instruction *insn,
->                        struct insn_state *state)
->  {
-> -	if (state->noinstr && state->instr <= 0 &&
-> -	    !noinstr_call_dest(file, insn, insn_call_dest(insn))) {
-> -		WARN_INSN(insn, "call to %s() leaves .noinstr.text section", call_dest_name(insn));
-> -		return 1;
-> +	if (state->noinstr && state->instr <= 0) {
-> +		struct symbol *dest = insn_call_dest(insn);
-> +
+On 24-12-03 12:30:37, Stephan Gerhold wrote:
+> On Tue, Dec 03, 2024 at 11:20:48AM +0100, Johan Hovold wrote:
+> > [ +CC: Krishna, Thinh and the USB list ]
+> > 
+> > On Mon, Nov 18, 2024 at 11:34:29AM +0100, Stephan Gerhold wrote:
+> > > The X1E80100 CRD has a Goodix fingerprint reader connected to the USB
+> > > multiport controller on eUSB6. All other ports (including USB super-speed
+> > > pins) are unused.
+> > > 
+> > > Set it up in the device tree together with the NXP PTN3222 repeater.
+> > > 
+> > > Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
+> > > ---
+> > >  arch/arm64/boot/dts/qcom/x1e80100-crd.dts | 48 +++++++++++++++++++++++++++++++
+> > >  1 file changed, 48 insertions(+)
+> > > 
+> > > diff --git a/arch/arm64/boot/dts/qcom/x1e80100-crd.dts b/arch/arm64/boot/dts/qcom/x1e80100-crd.dts
+> > > index 39f9d9cdc10d..44942931c18f 100644
+> > > --- a/arch/arm64/boot/dts/qcom/x1e80100-crd.dts
+> > > +++ b/arch/arm64/boot/dts/qcom/x1e80100-crd.dts
+> > > @@ -735,6 +735,26 @@ keyboard@3a {
+> > >  	};
+> > >  };
+> > >  
+> > > +&i2c5 {
+> > > +	clock-frequency = <400000>;
+> > > +
+> > > +	status = "okay";
+> > > +
+> > > +	eusb6_repeater: redriver@4f {
+> > > +		compatible = "nxp,ptn3222";
+> > > +		reg = <0x4f>;
+> > 
+> > The driver does not currently check that there's actually anything at
+> > this address. Did you verify that this is the correct address? 
+> > 
+> > (Abel is adding a check to the driver as we speak to catch any such
+> > mistakes going forward).
+> > 
+> 
+> Yes, I verified this using
+> https://git.codelinaro.org/stephan.gerhold/linux/-/commit/45d5add498612387f88270ca944ee16e2236fddd
+> 
+> (I sent this to Abel back then, so I'm surprised he didn't run that :-))
 
-Interestingly only after I tried making __flush_tlb_all() noinstr did this
-start causing a segfault due to a NULL dest. I added a NULL check here but
-I wonder if I'm not just plastering over some other issue?
+I don't remember seeing this commit back then. Maybe I didn't look
+careful enough. Sorry.
 
-> +		if (dest->static_call_tramp) {
-> +			if (!dest->noinstr_allowed) {
-> +				WARN_INSN(insn, "%s: non-RO static call usage in noinstr",
-> +					  static_call_name(dest));
-> +			}
-> +
-> +		} else if (!noinstr_call_allowed(file, insn, dest)) {
-> +			WARN_INSN(insn, "call to %s() leaves .noinstr.text section",
-> +				  call_dest_name(insn));
-> +			return 1;
-> +		}
->       }
->
->       if (state->uaccess && !func_uaccess_safe(insn_call_dest(insn))) {
+Since you already did the work, can you send that on the list?
 
+So if you remember, back then I hunted down all of these with i2cget on
+my t14s (it has 3 such repeaters, unlike CRD).
+
+> 
+> > > +		#phy-cells = <0>;
+> > 
+> > nit: I'd put provider properties like this one last.
+> > 
+> > > +		vdd3v3-supply = <&vreg_l13b_3p0>;
+> > > +		vdd1v8-supply = <&vreg_l4b_1p8>;
+> > 
+> > Sort by supply name?
+> > 
+> 
+> Ack.
+> 
+> > > +		reset-gpios = <&tlmm 184 GPIO_ACTIVE_LOW>;
+> > > +
+> > > +		pinctrl-0 = <&eusb6_reset_n>;
+> > > +		pinctrl-names = "default";
+> > > +	};
+> > > +};
+> > > +
+> > >  &i2c8 {
+> > >  	clock-frequency = <400000>;
+> > >  
+> > > @@ -1047,6 +1067,14 @@ edp_reg_en: edp-reg-en-state {
+> > >  		bias-disable;
+> > >  	};
+> > >  
+> > > +	eusb6_reset_n: eusb6-reset-n-state {
+> > > +		pins = "gpio184";
+> > > +		function = "gpio";
+> > > +		drive-strength = <2>;
+> > > +		bias-disable;
+> > > +		output-low;
+> > 
+> > I don't think the pin config should assert reset, that should be up to
+> > the driver to control.
+> > 
+> 
+> I can drop it I guess, but pinctrl is applied before the driver takes
+> control of the GPIO. This means if the GPIO happens to be in input mode
+> before the driver loads (with pull up or pull down), then we would
+> briefly leave it floating when applying the bias-disable.
+> 
+> Or I guess we could drop the bias-disable, since it shouldn't be
+> relevant for a pin we keep in output mode all the time?
+> 
+> > > +	};
+> > > +
+> > >  	hall_int_n_default: hall-int-n-state {
+> > >  		pins = "gpio92";
+> > >  		function = "gpio";
+> > > @@ -1260,3 +1288,23 @@ &usb_1_ss2_dwc3_hs {
+> > >  &usb_1_ss2_qmpphy_out {
+> > >  	remote-endpoint = <&pmic_glink_ss2_ss_in>;
+> > >  };
+> > > +
+> > > +&usb_mp {
+> > > +	status = "okay";
+> > > +};
+> > > +
+> > > +&usb_mp_dwc3 {
+> > > +	/* Limit to USB 2.0 and single port */
+> > > +	maximum-speed = "high-speed";
+> > > +	phys = <&usb_mp_hsphy1>;
+> > > +	phy-names = "usb2-1";
+> > > +};
+> > 
+> > The dwc3 driver determines (and acts on) the number of ports based on
+> > the port interrupts in DT and controller capabilities. 
+> > 
+> > I'm not sure we can (should) just drop the other HS PHY and the SS PHYs
+> > that would still be there in the SoC (possibly initialised by the boot
+> > firmware).
+> > 
+> > I had a local patch to enable the multiport controller (for the suspend
+> > work) and I realise that you'd currently need to specify a repeater also
+> > for the HS PHY which does not have one, but that should be possible to
+> > fix somehow.
+> > 
+> 
+> I think there are two separate questions here:
+> 
+>  1. Should we (or do we even need to) enable unused PHYs?
+>  2. Do we need to power off unused PHYs left enabled by the firmware?
+> 
+> For (1), I'm not not sure if there is a technical reason that requires
+> us to. And given that PHYs typically consume quite a bit of power, I'm
+> not sure if we should. Perhaps it's not worth spending effort on this
+> minor optimization now, but then the device tree would ideally still
+> tell us which PHYs are actually used (for future optimizations).
+> 
+> For (2), yes, we probably need to. But my impression so far is that this
+> might be a larger problem that we need to handle on the SoC level. I
+> have seen some firmware versions that blindly power up all USB
+> controllers, even completely unused ones. Ideally we would power down
+> unused components during startup and then leave them off.
+> 
+> Thanks,
+> Stephan
 
