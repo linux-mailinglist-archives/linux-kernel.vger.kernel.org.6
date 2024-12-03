@@ -1,185 +1,121 @@
-Return-Path: <linux-kernel+bounces-429415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92BCD9E1BD0
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 13:16:09 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CCD09E1BD6
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 13:16:57 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4ED6B1668F2
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 12:16:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33833284DE4
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 12:16:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AE1B1E5708;
-	Tue,  3 Dec 2024 12:14:07 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24D351EBFEB
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 12:14:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CE9F1E7653;
+	Tue,  3 Dec 2024 12:14:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="NlGZAjfV"
+Received: from out30-131.freemail.mail.aliyun.com (out30-131.freemail.mail.aliyun.com [115.124.30.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 870751E570A;
+	Tue,  3 Dec 2024 12:14:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733228046; cv=none; b=rrH/WtGZcRtbUwkrZCYbRZl2XLqjcTveXpAw3dGdcycwFQtdkGidBqX1qSW6RSwV865it3Cn7An3TjDQytW5EN3pjoOBdF0L0py4UlGfYvdIMyce0pSbcwYqpRO9IJBO+og3DEXfsBZbZKRuROr0ddMPzgHUR2wCuFzEvmoF+nA=
+	t=1733228079; cv=none; b=rllMAx6GBkXDV0m3zNhYJF9x0PYutRlTp8KTLmaddZlKf7DF1sLTp4J9nggZJyXE8so1s5HgSRgTwAzqSMYRMS/uuIB5/Pmgg94o2CTPT744sj7ZAeibMED3C0ytbKtzEa/y8Wk/Rfbp/i1nx5lLN/gxEGAHNhm3u5o87KBOfmI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733228046; c=relaxed/simple;
-	bh=GqWO3fq4RQjDgaJzIdhE1lh8jWnl1zp60bvD9QgRXlg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UWFvWZFWDpitxbuYQ18HpbagYQ2xaa+2Q75jQOFXZ/B1FDVbAoQVICyDGXuQyskFWjgT6wfHQP6yPRfBYzb7O1vSLeKTglQXzQMZv7aB1YOpgOMFh2qhDADguVopa73NB5AN1laWHjslZXs0ksVZdUajItAhk8PxW3z++pWZgPY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5E5B3FEC;
-	Tue,  3 Dec 2024 04:14:31 -0800 (PST)
-Received: from bogus (e133711.arm.com [10.1.196.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A21493F58B;
-	Tue,  3 Dec 2024 04:14:02 -0800 (PST)
-Date: Tue, 3 Dec 2024 12:14:00 +0000
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Yeoreum Yun <yeoreum.yun@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Sudeep Holla <sudeep.holla@arm.com>
-Subject: Re: [PATCH 1/3] firmware/arm_ffa: change ffa_device_register()'s
- parameters and return
-Message-ID: <Z072CGn6fhnT0hED@bogus>
-References: <20241125095251.366866-1-yeoreum.yun@arm.com>
- <20241125095251.366866-2-yeoreum.yun@arm.com>
+	s=arc-20240116; t=1733228079; c=relaxed/simple;
+	bh=QdBxzNQs/JcMK80Dvkj/Snot7CWTforQH5lu/RdEUjs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=O9nW9oMV+3CZB3Zi91coEs5ZkO85EKTqnSCUHp4Ymlg5zqVDFJ/S/KedW5eXNK2w1+lWXG1GU5I9MDGeWUA/T/dG6gjP6YbA1b3rmN7O9TIh4xvEJYErPGvHcI0nhqq3s91BQiz3V1Hvol+ZCrufgc1aNOO73lUWnJ5dnaRgjio=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=NlGZAjfV; arc=none smtp.client-ip=115.124.30.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1733228074; h=From:To:Subject:Date:Message-Id:MIME-Version:Content-Type;
+	bh=HuqGAvbN2L/LVkbTrKAfpTJN10lUOcd/PL9tmLaFQ8g=;
+	b=NlGZAjfV5YqUdQ2Dju/QcLIgN2Xyx+TSPhYiEEF7pm9QiJYd6iH2n9nxX/aDkSRrWK0flChp6aIvMm4aw1lu8RzF3syrBRMxkphZ9+ZPmSlIlrs8M4YdRMK67j6yePPZ1Wo6N8ZXHK3v2FjQ7FmolWnQgwUQV8vP8r9zsyCw3Ok=
+Received: from j66c13357.sqa.eu95.tbsite.net(mailfrom:mengferry@linux.alibaba.com fp:SMTPD_---0WKmboQr_1733228066 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Tue, 03 Dec 2024 20:14:33 +0800
+From: Ferry Meng <mengferry@linux.alibaba.com>
+To: "Michael S . Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	linux-block@vger.kernel.org,
+	Jens Axboe <axboe@kernel.dk>,
+	virtualization@lists.linux.dev
+Cc: linux-kernel@vger.kernel.org,
+	io-uring@vger.kernel.org,
+	Joseph Qi <joseph.qi@linux.alibaba.com>,
+	Jeffle Xu <jefflexu@linux.alibaba.com>,
+	Ferry Meng <mengferry@linux.alibaba.com>
+Subject: [PATCH 0/3][RFC] virtio-blk: add io_uring passthrough support for virtio-blk
+Date: Tue,  3 Dec 2024 20:14:21 +0800
+Message-Id: <20241203121424.19887-1-mengferry@linux.alibaba.com>
+X-Mailer: git-send-email 2.32.0.3.g01195cf9f
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241125095251.366866-2-yeoreum.yun@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, Nov 25, 2024 at 09:52:49AM +0000, Yeoreum Yun wrote:
-> From: Levi Yun <yeoreum.yun@arm.com>
-> 
-> Currently, ffa_dev->properties is set after ffa_device_register() in
-> ffa_setup_partitions().
-> This means it couldn't validate partition's properties
-> while probing ffa_device.
-> 
-> Change parameter of ffa_device_register() to receive ffa_partition_info
-> so that before device_register(), ffa_device->properties can be setup
-> and any other data.
-> 
-> Also, change return value of ffa_device_register() from NULL to ERR_PTR
-> so that it passes error code.
-> 
-> Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
-> ---
->  drivers/firmware/arm_ffa/bus.c    | 22 +++++++++++++++-------
->  drivers/firmware/arm_ffa/driver.c | 12 ++++--------
->  include/linux/arm_ffa.h           | 12 ++++++++----
->  3 files changed, 27 insertions(+), 19 deletions(-)
-> 
-> diff --git a/drivers/firmware/arm_ffa/bus.c b/drivers/firmware/arm_ffa/bus.c
-> index eb17d03b66fe..95c0e9518556 100644
-> --- a/drivers/firmware/arm_ffa/bus.c
-> +++ b/drivers/firmware/arm_ffa/bus.c
-> @@ -38,6 +38,7 @@ static int ffa_device_match(struct device *dev, const struct device_driver *drv)
->  
->  		if (uuid_equal(&ffa_dev->uuid, &id_table->uuid))
->  			return 1;
-> +
+We seek to develop a more flexible way to use virtio-blk and bypass the block
+layer logic in order to accomplish certain performance optimizations. As a
+result, we referred to the implementation of io_uring passthrough in NVMe
+and implemented it in the virtio-blk driver. This patch series adds io_uring
+passthrough support for virtio-blk devices, resulting in lower submit latency
+and increased flexibility when utilizing virtio-blk.
 
-Spurious, don't add formatting or style changes in functional change. We
-can take it up later when there are other formatting issues.
+To test this patch series, I changed fio's code: 
+1. Added virtio-blk support to engines/io_uring.c.
+2. Added virtio-blk support to the t/io_uring.c testing tool.
+Link: https://github.com/jdmfr/fio 
 
->  		id_table++;
->  	}
->  
-> @@ -187,21 +188,26 @@ bool ffa_device_is_valid(struct ffa_device *ffa_dev)
->  	return valid;
->  }
->  
-> -struct ffa_device *ffa_device_register(const uuid_t *uuid, int vm_id,
-> -				       const struct ffa_ops *ops)
-> +struct ffa_device *ffa_device_register(
-> +		const struct ffa_partition_info *part_info,
-> +		const struct ffa_ops *ops)
->  {
->  	int id, ret;
-> +	uuid_t uuid;
->  	struct device *dev;
->  	struct ffa_device *ffa_dev;
->  
-> +	if (!part_info)
-> +		return ERR_PTR(-EINVAL);
-> +
->  	id = ida_alloc_min(&ffa_bus_id, 1, GFP_KERNEL);
->  	if (id < 0)
-> -		return NULL;
-> +		return ERR_PTR(-ENOMEM);
->  
->  	ffa_dev = kzalloc(sizeof(*ffa_dev), GFP_KERNEL);
->  	if (!ffa_dev) {
->  		ida_free(&ffa_bus_id, id);
-> -		return NULL;
-> +		return ERR_PTR(-ENOMEM);
+Using t/io_uring-vblk, the performance of virtio-blk based on uring-cmd
+scales better than block device access. (such as below, Virtio-Blk with QEMU,
+1-depth fio) 
+(passthru) read: IOPS=17.2k, BW=67.4MiB/s (70.6MB/s) 
+slat (nsec): min=2907, max=43592, avg=3981.87, stdev=595.10 
+clat (usec): min=38, max=285,avg=53.47, stdev= 8.28 
+lat (usec): min=44, max=288, avg=57.45, stdev= 8.28
+(block) read: IOPS=15.3k, BW=59.8MiB/s (62.7MB/s) 
+slat (nsec): min=3408, max=35366, avg=5102.17, stdev=790.79 
+clat (usec): min=35, max=343, avg=59.63, stdev=10.26 
+lat (usec): min=43, max=349, avg=64.73, stdev=10.21
 
-I am not keen on changing the error from NULL here. -ENOMEM has its own
-logging. ida_alloc failing is very unlikely unless you have so many
-partitions in the system.
+Testing the virtio-blk device with fio using 'engines=io_uring_cmd'
+and 'engines=io_uring' also demonstrates improvements in submit latency.
+(passthru) taskset -c 0 t/io_uring-vblk -b4096 -d8 -c4 -s4 -p0 -F1 -B0 -O0 -n1 -u1 /dev/vdcc0 
+IOPS=189.80K, BW=741MiB/s, IOS/call=4/3
+IOPS=187.68K, BW=733MiB/s, IOS/call=4/3 
+(block) taskset -c 0 t/io_uring-vblk -b4096 -d8 -c4 -s4 -p0 -F1 -B0 -O0 -n1 -u0 /dev/vdc 
+IOPS=101.51K, BW=396MiB/s, IOS/call=4/3
+IOPS=100.01K, BW=390MiB/s, IOS/call=4/4
 
->  	}
->  
->  	dev = &ffa_dev->dev;
-> @@ -210,16 +216,18 @@ struct ffa_device *ffa_device_register(const uuid_t *uuid, int vm_id,
->  	dev_set_name(&ffa_dev->dev, "arm-ffa-%d", id);
->  
->  	ffa_dev->id = id;
-> -	ffa_dev->vm_id = vm_id;
-> +	ffa_dev->vm_id = part_info->id;
-> +	ffa_dev->properties = part_info->properties;
->  	ffa_dev->ops = ops;
-> -	uuid_copy(&ffa_dev->uuid, uuid);
-> +	import_uuid(&uuid, (u8 *)part_info->uuid);
-> +	uuid_copy(&ffa_dev->uuid, &uuid);
->  
->  	ret = device_register(&ffa_dev->dev);
->  	if (ret) {
->  		dev_err(dev, "unable to register device %s err=%d\n",
->  			dev_name(dev), ret);
+The performance overhead of submitting IO can be decreased by 25% overall
+with this patch series. The implementation primarily references 'nvme io_uring
+passthrough', supporting io_uring_cmd through a separate character interface
+(temporarily named /dev/vdXc0). Since this is an early version, many
+details need to be taken into account and redesigned, like:
+● Currently, it only considers READ/WRITE scenarios, some more complex operations 
+not included like discard or zone ops.(Normal sqe64 is sufficient, in my opinion;
+following upgrades, sqe128 and cqe32 might not be needed).
+● ......
 
-This error log will give the information you are adding in driver.c, so
-it is again not needed to change that.
+I would appreciate any useful recommendations.
 
->  		put_device(dev);
-> -		return NULL;
-> +		return ERR_PTR(ret);
->  	}
->  
->  	return ffa_dev;
-> diff --git a/drivers/firmware/arm_ffa/driver.c b/drivers/firmware/arm_ffa/driver.c
-> index b14cbdae94e8..a3a9cdec7389 100644
-> --- a/drivers/firmware/arm_ffa/driver.c
-> +++ b/drivers/firmware/arm_ffa/driver.c
-> @@ -1406,23 +1406,19 @@ static int ffa_setup_partitions(void)
->  
->  	xa_init(&drv_info->partition_info);
->  	for (idx = 0, tpbuf = pbuf; idx < count; idx++, tpbuf++) {
-> -		import_uuid(&uuid, (u8 *)tpbuf->uuid);
-> -
->  		/* Note that if the UUID will be uuid_null, that will require
->  		 * ffa_bus_notifier() to find the UUID of this partition id
->  		 * with help of ffa_device_match_uuid(). FF-A v1.1 and above
->  		 * provides UUID here for each partition as part of the
->  		 * discovery API and the same is passed.
->  		 */
-> -		ffa_dev = ffa_device_register(&uuid, tpbuf->id, &ffa_drv_ops);
-> -		if (!ffa_dev) {
-> -			pr_err("%s: failed to register partition ID 0x%x\n",
-> -			       __func__, tpbuf->id);
-> +		ffa_dev = ffa_device_register(tpbuf, &ffa_drv_ops);
-> +		if (IS_ERR_OR_NULL(ffa_dev)) {
-> +			pr_err("%s: failed to register partition ID 0x%x, error %ld\n",
-> +			       __func__, tpbuf->id, PTR_ERR(ffa_dev));
+Ferry Meng (3):
+  virtio-blk: add virtio-blk chardev support.
+  virtio-blk: add uring_cmd support for I/O passthru on chardev.
+  virtio-blk: add uring_cmd iopoll support.
 
-Drop this additional error info you are adding as bus.c will provide it.
+ drivers/block/virtio_blk.c      | 325 +++++++++++++++++++++++++++++++-
+ include/uapi/linux/virtio_blk.h |  16 ++
+ 2 files changed, 336 insertions(+), 5 deletions(-)
 
 -- 
-Regards,
-Sudeep
+2.43.5
+
 
