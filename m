@@ -1,232 +1,330 @@
-Return-Path: <linux-kernel+bounces-429120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429018-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 643BC9E1799
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:31:50 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E62B59E16F2
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:15:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23B30285F79
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:31:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D2CB9B33B60
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 08:53:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EF3C1E1C17;
-	Tue,  3 Dec 2024 09:29:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75D751DE2AE;
+	Tue,  3 Dec 2024 08:53:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PGy8LrwX"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="HP8hqSO2"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 072D91E0B73
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 09:29:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB2701DDC24;
+	Tue,  3 Dec 2024 08:53:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733218162; cv=none; b=feMI6aCJQ9psqy4sx9YC6Wki2xZgaVBrFvspaYVikqh6k+rtTfC3kvFCHgRDo95j7b3GtgtGEyFKVXStuX4Npium2uY7GfvUQ4IRbeJQjrMt2/GgNRceGpWc0lub/z4g+MDc82po3eIefJa0Q0C4HzU/3BF/JfWF37M3Lvc+imw=
+	t=1733216004; cv=none; b=hR/Sn9gW41jObUxZnuXgsDgbaxdGiOJUDhlQN/dtk0YQm45E/KRDKBlbUzPu5KsDgSPrd90K1mHojp3KtSYCGSLyed1d1Mfcou5IRrtSh+lPORsl8VSQ9n56G1jOgLARFhT8BR8ddjtbWvN1VLROy8IdtduMSq9chM5LFBJlQDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733218162; c=relaxed/simple;
-	bh=Oe/PmGUJGd4jst2kv9Ks+M7AN2ZDS0k67M7GTHReQOw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=LhxQUp65BSPH+/mFEQpAUGFVMeiTeSyeOQeT0aBuWuXv16FtccXY16RvMfAM1kYCQRNxIteser5sarRupslGGrStl+vgZ0HloAcGqwbO3c4+549yyrv0ZSyy61RAgQHW8DPt1hWjeXCri9VkrR2Vywlosvco12I8yKnDHMjy5+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PGy8LrwX; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1733218159;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xnIpLUaZjZ89RucMDbcSAI8aEU0VifFxCRWXuWOR5LI=;
-	b=PGy8LrwXlC8fxmgaFCw7yYxc23SEtS+fnbUXFkvxJUYug6RTz30YiSJ/ZviEm/VlnuvM4m
-	i4QMno6ASVBoPQWyqYZ4zbv9mnSQxz1+kZA4B2z8wg+LbgxpFNqVt1wybv3OnOOff4pxWA
-	xaI1OOkF0EleqAQJVlVSxyuwfr2HDlM=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-621-9ri83S1KOnqNWER8SpvSmw-1; Tue,
- 03 Dec 2024 04:29:15 -0500
-X-MC-Unique: 9ri83S1KOnqNWER8SpvSmw-1
-X-Mimecast-MFC-AGG-ID: 9ri83S1KOnqNWER8SpvSmw
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3E2D4195396F;
-	Tue,  3 Dec 2024 09:29:14 +0000 (UTC)
-Received: from hydra.redhat.com (unknown [10.39.193.255])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 4C55D19560A3;
-	Tue,  3 Dec 2024 09:29:11 +0000 (UTC)
-From: Jocelyn Falempe <jfalempe@redhat.com>
-To: Jani Nikula <jani.nikula@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	intel-gfx@lists.freedesktop.org,
-	intel-xe@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Cc: Jocelyn Falempe <jfalempe@redhat.com>
-Subject: [PATCH v2 5/5] drm/i915: Add drm_panic support
-Date: Tue,  3 Dec 2024 09:50:22 +0100
-Message-ID: <20241203092836.426422-6-jfalempe@redhat.com>
-In-Reply-To: <20241203092836.426422-1-jfalempe@redhat.com>
-References: <20241203092836.426422-1-jfalempe@redhat.com>
+	s=arc-20240116; t=1733216004; c=relaxed/simple;
+	bh=M0EjJaHg8KSQcwZrJtKYJaJ70DFRSVI94Tna4RXSxhc=;
+	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=A/7+O4V5n5t2Ty7+XZF68/rFlFCAily/+jymIHjCauNjjYx/6vO7kitLMlGRXBDops+RTJ4hO5bnaBdWz8h6OOCxlz6FMO/PcOA2uHkTbuiqJ37dS2qsmLNybM7/wJlYqgko0eCaZS1cQhNGM7uwbpvU60dC6pekmF7sBCPtPWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=HP8hqSO2; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1733216003; x=1764752003;
+  h=from:to:subject:date:message-id:in-reply-to:references:
+   mime-version;
+  bh=M0EjJaHg8KSQcwZrJtKYJaJ70DFRSVI94Tna4RXSxhc=;
+  b=HP8hqSO2H44juArimCN2+tGmWb9NlpKtOgUlPftWKff5SF2X2YnLymgw
+   ToSWQFayP/n1m5y3jlbe8tfqYSGbeN+x9gB5S9oi9pcyav34280ebpsq8
+   ankICo4HWMQXTqW1dYl3ur3xkg/ilO22oNCOfiS/RVCfM3XEODt0hDDrv
+   ePfWf7idlXiwjY9rdhG8PmwR0Kr9nJc0dOWg76sYypQ6F82zTyZ2if13m
+   dyaV68LQ/Zr5gNz3VPEJLncZSNq/vff+rPs0UJ8X3xVwhjDygGR0kZu1w
+   k3ilPXEadWH2PZT7Znla3PbC0sPD+WKWe6r1PZw2+VXev4qrYojFcd3YF
+   w==;
+X-CSE-ConnectionGUID: PYHc5D2VTXmCViyiEXibzQ==
+X-CSE-MsgGUID: FJojtjWRRueH929hDujIPA==
+X-IronPort-AV: E=Sophos;i="6.12,204,1728975600"; 
+   d="scan'208";a="38706051"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa1.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 03 Dec 2024 01:53:21 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Tue, 3 Dec 2024 01:52:54 -0700
+Received: from training-HP-280-G1-MT-PC.microchip.com (10.10.85.11) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
+ 15.1.2507.35 via Frontend Transport; Tue, 3 Dec 2024 01:52:50 -0700
+From: Divya Koppera <divya.koppera@microchip.com>
+To: <andrew@lunn.ch>, <arun.ramadoss@microchip.com>,
+	<UNGLinuxDriver@microchip.com>, <hkallweit1@gmail.com>,
+	<linux@armlinux.org.uk>, <davem@davemloft.net>, <edumazet@google.com>,
+	<kuba@kernel.org>, <pabeni@redhat.com>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <richardcochran@gmail.com>,
+	<vadim.fedorenko@linux.dev>
+Subject: [PATCH net-next v5 1/5] net: phy: microchip_ptp : Add header file for Microchip ptp library
+Date: Tue, 3 Dec 2024 14:22:44 +0530
+Message-ID: <20241203085248.14575-2-divya.koppera@microchip.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20241203085248.14575-1-divya.koppera@microchip.com>
+References: <20241203085248.14575-1-divya.koppera@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Type: text/plain
 
-This adds drm_panic support for a wide range of Intel GPU. I've
-tested it only on 3 laptops, haswell (with 128MB of eDRAM),
-cometlake and alderlake.
+This ptp header file library will cover ptp macros for future phys in
+Microchip where addresses will be same but base offset and mmd address
+may changes.
 
- * DPT: if I disable tiling on a framebuffer using DPT, then it
-   displays some other memory location. As DPT is enabled only for
-   tiled framebuffer, there might be some hardware limitations.
- * fbdev: On my haswell laptop, the fbdev framebuffer is configured
-   with tiling enabled, but really it's linear, because fbcon don't
-   know about tiling, and the panic screen is perfect when it's drawn
-   as linear.
-
-Signed-off-by: Jocelyn Falempe <jfalempe@redhat.com>
+Reviewed-by: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+Signed-off-by: Divya Koppera <divya.koppera@microchip.com>
 ---
- .../gpu/drm/i915/display/intel_atomic_plane.c | 85 ++++++++++++++++++-
- 1 file changed, 84 insertions(+), 1 deletion(-)
+v4 -> v5
+- Reduced scope of config PTP Macro check to APIs
 
-diff --git a/drivers/gpu/drm/i915/display/intel_atomic_plane.c b/drivers/gpu/drm/i915/display/intel_atomic_plane.c
-index b7e462075ded3..58eb3b4c55fa5 100644
---- a/drivers/gpu/drm/i915/display/intel_atomic_plane.c
-+++ b/drivers/gpu/drm/i915/display/intel_atomic_plane.c
-@@ -33,16 +33,20 @@
- 
- #include <linux/dma-fence-chain.h>
- #include <linux/dma-resv.h>
-+#include <linux/iosys-map.h>
- 
- #include <drm/drm_atomic_helper.h>
- #include <drm/drm_blend.h>
-+#include <drm/drm_cache.h>
- #include <drm/drm_fourcc.h>
- #include <drm/drm_gem.h>
- #include <drm/drm_gem_atomic_helper.h>
-+#include <drm/drm_panic.h>
- 
- #include "i915_config.h"
- #include "i9xx_plane_regs.h"
- #include "intel_atomic_plane.h"
-+#include "intel_bo.h"
- #include "intel_cdclk.h"
- #include "intel_cursor.h"
- #include "intel_display_rps.h"
-@@ -50,6 +54,7 @@
- #include "intel_display_types.h"
- #include "intel_fb.h"
- #include "intel_fb_pin.h"
-+#include "intel_fbdev.h"
- #include "skl_scaler.h"
- #include "skl_watermark.h"
- 
-@@ -1198,14 +1203,92 @@ intel_cleanup_plane_fb(struct drm_plane *plane,
- 	intel_plane_unpin_fb(old_plane_state);
- }
- 
-+/* Only used by drm_panic get_scanout_buffer() and panic_flush(), so it is
-+ * protected by the drm panic spinlock
+v3 -> v4
+- Re-ordered mchp_ptp_clock structure.
+
+v2 -> v3
+- No changes
+
+v1 -> v2
+- Fixed sparse warnings and compilation errors/warnings reported by kernel
+  test robot
+---
+ drivers/net/phy/microchip_ptp.h | 216 ++++++++++++++++++++++++++++++++
+ 1 file changed, 216 insertions(+)
+ create mode 100644 drivers/net/phy/microchip_ptp.h
+
+diff --git a/drivers/net/phy/microchip_ptp.h b/drivers/net/phy/microchip_ptp.h
+new file mode 100644
+index 000000000000..bf2fbc2a453e
+--- /dev/null
++++ b/drivers/net/phy/microchip_ptp.h
+@@ -0,0 +1,216 @@
++/* SPDX-License-Identifier: GPL-2.0
++ * Copyright (C) 2024 Microchip Technology
 + */
-+static struct iosys_map panic_map;
 +
-+static void intel_panic_flush(struct drm_plane *plane)
++#ifndef _MICROCHIP_PTP_H
++#define _MICROCHIP_PTP_H
++
++#include <linux/ptp_clock_kernel.h>
++#include <linux/ptp_clock.h>
++#include <linux/ptp_classify.h>
++#include <linux/net_tstamp.h>
++#include <linux/mii.h>
++#include <linux/phy.h>
++
++#define MCHP_PTP_CMD_CTL(b)			((b) + 0x0)
++#define MCHP_PTP_CMD_CTL_LTC_STEP_NSEC		BIT(6)
++#define MCHP_PTP_CMD_CTL_LTC_STEP_SEC		BIT(5)
++#define MCHP_PTP_CMD_CTL_CLOCK_LOAD		BIT(4)
++#define MCHP_PTP_CMD_CTL_CLOCK_READ		BIT(3)
++#define MCHP_PTP_CMD_CTL_EN			BIT(1)
++#define MCHP_PTP_CMD_CTL_DIS			BIT(0)
++
++#define MCHP_PTP_REF_CLK_CFG(b)			((b) + 0x2)
++#define MCHP_PTP_REF_CLK_SRC_250MHZ		0x0
++#define MCHP_PTP_REF_CLK_PERIOD_OVERRIDE	BIT(9)
++#define MCHP_PTP_REF_CLK_PERIOD			4
++#define MCHP_PTP_REF_CLK_CFG_SET	(MCHP_PTP_REF_CLK_SRC_250MHZ |\
++					 MCHP_PTP_REF_CLK_PERIOD_OVERRIDE |\
++					 MCHP_PTP_REF_CLK_PERIOD)
++
++#define MCHP_PTP_LTC_SEC_HI(b)			((b) + 0x5)
++#define MCHP_PTP_LTC_SEC_MID(b)			((b) + 0x6)
++#define MCHP_PTP_LTC_SEC_LO(b)			((b) + 0x7)
++#define MCHP_PTP_LTC_NS_HI(b)			((b) + 0x8)
++#define MCHP_PTP_LTC_NS_LO(b)			((b) + 0x9)
++#define MCHP_PTP_LTC_RATE_ADJ_HI(b)		((b) + 0xc)
++#define MCHP_PTP_LTC_RATE_ADJ_HI_DIR		BIT(15)
++#define MCHP_PTP_LTC_RATE_ADJ_LO(b)		((b) + 0xd)
++#define MCHP_PTP_LTC_STEP_ADJ_HI(b)		((b) + 0x12)
++#define MCHP_PTP_LTC_STEP_ADJ_HI_DIR		BIT(15)
++#define MCHP_PTP_LTC_STEP_ADJ_LO(b)		((b) + 0x13)
++#define MCHP_PTP_LTC_READ_SEC_HI(b)		((b) + 0x29)
++#define MCHP_PTP_LTC_READ_SEC_MID(b)		((b) + 0x2a)
++#define MCHP_PTP_LTC_READ_SEC_LO(b)		((b) + 0x2b)
++#define MCHP_PTP_LTC_READ_NS_HI(b)		((b) + 0x2c)
++#define MCHP_PTP_LTC_READ_NS_LO(b)		((b) + 0x2d)
++#define MCHP_PTP_OP_MODE(b)			((b) + 0x41)
++#define MCHP_PTP_OP_MODE_DIS			0
++#define MCHP_PTP_OP_MODE_STANDALONE		1
++#define MCHP_PTP_LATENCY_CORRECTION_CTL(b)	((b) + 0x44)
++#define MCHP_PTP_PREDICTOR_EN			BIT(6)
++#define MCHP_PTP_TX_PRED_DIS			BIT(1)
++#define MCHP_PTP_RX_PRED_DIS			BIT(0)
++#define MCHP_PTP_LATENCY_SETTING		(MCHP_PTP_PREDICTOR_EN | \
++						 MCHP_PTP_TX_PRED_DIS | \
++						 MCHP_PTP_RX_PRED_DIS)
++
++#define MCHP_PTP_INT_EN(b)			((b) + 0x0)
++#define MCHP_PTP_INT_STS(b)			((b) + 0x01)
++#define MCHP_PTP_INT_TX_TS_OVRFL_EN		BIT(3)
++#define MCHP_PTP_INT_TX_TS_EN			BIT(2)
++#define MCHP_PTP_INT_RX_TS_OVRFL_EN		BIT(1)
++#define MCHP_PTP_INT_RX_TS_EN			BIT(0)
++#define MCHP_PTP_INT_ALL_MSK		(MCHP_PTP_INT_TX_TS_OVRFL_EN | \
++					 MCHP_PTP_INT_TX_TS_EN | \
++					 MCHP_PTP_INT_RX_TS_OVRFL_EN |\
++					 MCHP_PTP_INT_RX_TS_EN)
++
++#define MCHP_PTP_CAP_INFO(b)			((b) + 0x2e)
++#define MCHP_PTP_TX_TS_CNT(v)			(((v) & GENMASK(11, 8)) >> 8)
++#define MCHP_PTP_RX_TS_CNT(v)			((v) & GENMASK(3, 0))
++
++#define MCHP_PTP_RX_PARSE_CONFIG(b)		((b) + 0x42)
++#define MCHP_PTP_RX_PARSE_L2_ADDR_EN(b)		((b) + 0x44)
++#define MCHP_PTP_RX_PARSE_IPV4_ADDR_EN(b)	((b) + 0x45)
++
++#define MCHP_PTP_RX_TIMESTAMP_CONFIG(b)		((b) + 0x4e)
++#define MCHP_PTP_RX_TIMESTAMP_CONFIG_PTP_FCS_DIS BIT(0)
++
++#define MCHP_PTP_RX_VERSION(b)			((b) + 0x48)
++#define MCHP_PTP_RX_TIMESTAMP_EN(b)		((b) + 0x4d)
++
++#define MCHP_PTP_RX_INGRESS_NS_HI(b)		((b) + 0x54)
++#define MCHP_PTP_RX_INGRESS_NS_HI_TS_VALID	BIT(15)
++
++#define MCHP_PTP_RX_INGRESS_NS_LO(b)		((b) + 0x55)
++#define MCHP_PTP_RX_INGRESS_SEC_HI(b)		((b) + 0x56)
++#define MCHP_PTP_RX_INGRESS_SEC_LO(b)		((b) + 0x57)
++#define MCHP_PTP_RX_MSG_HEADER2(b)		((b) + 0x59)
++
++#define MCHP_PTP_TX_PARSE_CONFIG(b)		((b) + 0x82)
++#define MCHP_PTP_PARSE_CONFIG_LAYER2_EN		BIT(0)
++#define MCHP_PTP_PARSE_CONFIG_IPV4_EN		BIT(1)
++#define MCHP_PTP_PARSE_CONFIG_IPV6_EN		BIT(2)
++
++#define MCHP_PTP_TX_PARSE_L2_ADDR_EN(b)		((b) + 0x84)
++#define MCHP_PTP_TX_PARSE_IPV4_ADDR_EN(b)	((b) + 0x85)
++
++#define MCHP_PTP_TX_VERSION(b)			((b) + 0x88)
++#define MCHP_PTP_MAX_VERSION(x)			(((x) & GENMASK(7, 0)) << 8)
++#define MCHP_PTP_MIN_VERSION(x)			((x) & GENMASK(7, 0))
++
++#define MCHP_PTP_TX_TIMESTAMP_EN(b)		((b) + 0x8d)
++#define MCHP_PTP_TIMESTAMP_EN_SYNC		BIT(0)
++#define MCHP_PTP_TIMESTAMP_EN_DREQ		BIT(1)
++#define MCHP_PTP_TIMESTAMP_EN_PDREQ		BIT(2)
++#define MCHP_PTP_TIMESTAMP_EN_PDRES		BIT(3)
++#define MCHP_PTP_TIMESTAMP_EN_ALL		(MCHP_PTP_TIMESTAMP_EN_SYNC |\
++						 MCHP_PTP_TIMESTAMP_EN_DREQ |\
++						 MCHP_PTP_TIMESTAMP_EN_PDREQ |\
++						 MCHP_PTP_TIMESTAMP_EN_PDRES)
++
++#define MCHP_PTP_TX_TIMESTAMP_CONFIG(b)		((b) + 0x8e)
++#define MCHP_PTP_TX_TIMESTAMP_CONFIG_PTP_FCS_DIS BIT(0)
++
++#define MCHP_PTP_TX_MOD(b)			((b) + 0x8f)
++#define MCHP_PTP_TX_MOD_PTP_SYNC_TS_INSERT	BIT(12)
++#define MCHP_PTP_TX_MOD_PTP_FU_TS_INSERT	BIT(11)
++
++#define MCHP_PTP_TX_EGRESS_NS_HI(b)		((b) + 0x94)
++#define MCHP_PTP_TX_EGRESS_NS_HI_TS_VALID	BIT(15)
++
++#define MCHP_PTP_TX_EGRESS_NS_LO(b)		((b) + 0x95)
++#define MCHP_PTP_TX_EGRESS_SEC_HI(b)		((b) + 0x96)
++#define MCHP_PTP_TX_EGRESS_SEC_LO(b)		((b) + 0x97)
++#define MCHP_PTP_TX_MSG_HEADER2(b)		((b) + 0x99)
++
++#define MCHP_PTP_TSU_GEN_CONFIG(b)		((b) + 0xc0)
++#define MCHP_PTP_TSU_GEN_CFG_TSU_EN		BIT(0)
++
++#define MCHP_PTP_TSU_HARD_RESET(b)		((b) + 0xc1)
++#define MCHP_PTP_TSU_HARDRESET			BIT(0)
++
++/* Represents 1ppm adjustment in 2^32 format with
++ * each nsec contains 4 clock cycles in 250MHz.
++ * The value is calculated as following: (1/1000000)/((2^-32)/4)
++ */
++#define MCHP_PTP_1PPM_FORMAT			17179
++#define MCHP_PTP_FIFO_SIZE			8
++#define MCHP_PTP_MAX_ADJ				31249999
++
++#define BASE_CLK(p)		((p)->clk_base_addr)
++#define BASE_PORT(p)		((p)->port_base_addr)
++#define PTP_MMD(p)		((p)->mmd)
++
++enum ptp_fifo_dir {
++	PTP_INGRESS_FIFO,
++	PTP_EGRESS_FIFO
++};
++
++struct mchp_ptp_clock {
++	struct mii_timestamper mii_ts;
++	struct phy_device *phydev;
++	struct ptp_clock *ptp_clock;
++
++	struct sk_buff_head tx_queue;
++	struct sk_buff_head rx_queue;
++	struct list_head rx_ts_list;
++
++	struct ptp_clock_info caps;
++
++	/* Lock for Rx ts fifo */
++	spinlock_t rx_ts_lock;
++	int hwts_tx_type;
++
++	enum hwtstamp_rx_filters rx_filter;
++	int layer;
++	int version;
++	u16 port_base_addr;
++	u16 clk_base_addr;
++
++	/* Lock for phc */
++	struct mutex ptp_lock;
++	u8 mmd;
++};
++
++struct mchp_ptp_rx_ts {
++	struct list_head list;
++	u32 seconds;
++	u32 nsec;
++	u16 seq_id;
++};
++
++#if IS_ENABLED(CONFIG_MICROCHIP_PHYPTP)
++
++struct mchp_ptp_clock *mchp_ptp_probe(struct phy_device *phydev, u8 mmd,
++				      u16 clk_base, u16 port_base);
++
++int mchp_config_ptp_intr(struct mchp_ptp_clock *ptp_clock,
++			 u16 reg, u16 val, bool enable);
++
++irqreturn_t mchp_ptp_handle_interrupt(struct mchp_ptp_clock *ptp_clock);
++
++#else
++
++static inline struct mchp_ptp_clock *mchp_ptp_probe(struct phy_device *phydev,
++						    u8 mmd, u16 clk_base,
++						    u16 port_base)
 +{
-+	struct intel_plane_state *plane_state = to_intel_plane_state(plane->state);
-+	struct drm_i915_private *dev_priv = to_i915(plane->dev);
-+	struct drm_framebuffer *fb = plane_state->hw.fb;
-+	struct intel_plane *iplane = to_intel_plane(plane);
-+
-+	/* Force a cache flush, otherwise the new pixels won't show up */
-+	drm_clflush_virt_range(panic_map.vaddr, fb->height * fb->pitches[0]);
-+
-+	/* Don't disable tiling if it's the fbdev framebuffer.*/
-+	if (to_intel_framebuffer(fb) == intel_fbdev_framebuffer(dev_priv->display.fbdev.fbdev))
-+		return;
-+
-+	if (fb->modifier && iplane->disable_tiling)
-+		iplane->disable_tiling(iplane);
++	return NULL;
 +}
 +
-+static int intel_get_scanout_buffer(struct drm_plane *plane,
-+				    struct drm_scanout_buffer *sb)
++static inline int mchp_config_ptp_intr(struct mchp_ptp_clock *ptp_clock,
++				       u16 reg, u16 val, bool enable)
 +{
-+	struct intel_plane_state *plane_state;
-+	struct drm_gem_object *obj;
-+	struct drm_framebuffer *fb;
-+	struct drm_i915_private *dev_priv = to_i915(plane->dev);
-+	void *ptr;
-+
-+	if (!plane->state || !plane->state->fb || !plane->state->visible)
-+		return -ENODEV;
-+
-+	plane_state = to_intel_plane_state(plane->state);
-+	fb = plane_state->hw.fb;
-+	obj = intel_fb_bo(fb);
-+	if (!obj)
-+		return -ENODEV;
-+
-+	if (to_intel_framebuffer(fb) == intel_fbdev_framebuffer(dev_priv->display.fbdev.fbdev)) {
-+		ptr = intel_fbdev_get_vaddr(dev_priv->display.fbdev.fbdev);
-+	} else {
-+		/* can't disable tiling if DPT is in use */
-+		if (intel_bo_is_tiled(obj) && HAS_DPT(dev_priv))
-+			return -EOPNOTSUPP;
-+
-+		ptr = intel_bo_panic_map(obj);
-+	}
-+
-+	if (!ptr)
-+		return -ENOMEM;
-+
-+	if (intel_bo_has_iomem(obj))
-+		iosys_map_set_vaddr_iomem(&panic_map, ptr);
-+	else
-+		iosys_map_set_vaddr(&panic_map, ptr);
-+
-+	sb->map[0] = panic_map;
-+	sb->width = fb->width;
-+	sb->height = fb->height;
-+	sb->format = fb->format;
-+	sb->pitch[0] = fb->pitches[0];
-+
 +	return 0;
 +}
 +
- static const struct drm_plane_helper_funcs intel_plane_helper_funcs = {
- 	.prepare_fb = intel_prepare_plane_fb,
- 	.cleanup_fb = intel_cleanup_plane_fb,
- };
- 
-+static const struct drm_plane_helper_funcs intel_primary_plane_helper_funcs = {
-+	.prepare_fb = intel_prepare_plane_fb,
-+	.cleanup_fb = intel_cleanup_plane_fb,
-+	.get_scanout_buffer = intel_get_scanout_buffer,
-+	.panic_flush = intel_panic_flush,
-+};
++static inline irqreturn_t mchp_ptp_handle_interrupt(struct mchp_ptp_clock *ptp_clock)
++{
++	return IRQ_NONE;
++}
 +
- void intel_plane_helper_add(struct intel_plane *plane)
- {
--	drm_plane_helper_add(&plane->base, &intel_plane_helper_funcs);
-+	if (plane->base.type == DRM_PLANE_TYPE_PRIMARY)
-+		drm_plane_helper_add(&plane->base, &intel_primary_plane_helper_funcs);
-+	else
-+		drm_plane_helper_add(&plane->base, &intel_plane_helper_funcs);
- }
- 
- void intel_plane_init_cursor_vblank_work(struct intel_plane_state *old_plane_state,
++#endif //CONFIG_MICROCHIP_PHYPTP
++
++#endif //_MICROCHIP_PTP_H
 -- 
-2.47.1
+2.17.1
 
 
