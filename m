@@ -1,87 +1,159 @@
-Return-Path: <linux-kernel+bounces-428966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428968-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0FB29E1630
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:48:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D7D69E158B
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:23:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 84468B3298A
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 08:21:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D1DE280DD8
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 08:23:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 853341D31B2;
-	Tue,  3 Dec 2024 08:21:06 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FCC81CCEE9;
+	Tue,  3 Dec 2024 08:23:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="m8d+30ml"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EDB01CCEE0
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 08:21:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8043118FDC9;
+	Tue,  3 Dec 2024 08:23:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733214066; cv=none; b=mhB+5o/MQ7WL2a7WkJvnhju9CSyplVWxVqq7XbE8iooRNywCjMkWcxxOpw2mqKV8xOXXWT3p79mBNhUhRaDNITlJ4f+2EZ6JA4iZ1o4OtIanw1s7/zEOcPUbRaBf7SxvTaHsWhWYgOUx2pluEzB9t5dlnsrALVeOs+nfoofARfo=
+	t=1733214211; cv=none; b=qIra576/A31EqMCcWKIqaXU2+e2H0e9vHwFVeEelPxsPdaoteimzv6dnarGoi3Li66dfzDyHyeG2kYhSx8MY0T/HChjXlCbokuun4MnUtQXU8Qi6euZFBwmVZc8Ef8ZIAw+EHOlKx1w7Y4V/4XNXntFG4DlPoQJj1uBz4NweoyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733214066; c=relaxed/simple;
-	bh=ml2uHO4t7V8hBUvlBvRDiwQbbJ+06fLcl4INsm12114=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=fkY9BXLvS4yRZdSuo5ZNUEiqXY6zNvVlbo8U4kfR7ot+4I+x7OcU2Ewn7COBYTcUw74m3sVfQTZ6SyFbh5vTkB8nSInI1/ykI9DrYYpvvIkbwLwDwE3OB8mDy0OKY3itQNltbBLqhyaxgwHxsz6MBE+CqG92UpS7cQoQOelnwgI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a743d76ed9so45917395ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 00:21:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733214064; x=1733818864;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pD9qz2IHK2pBeuWVDCIQigNJXeea/L4R4zID3bimFek=;
-        b=om/X61AIayQ7sb7JagwO4Rrf0OsfIqQYpBNDAdHFInWybOKsGZT26vBPHCvcof7bFZ
-         kc80giD7E9Bga+dE0gPOJitmFrD22BjPxaaGxALsbeoQUwIC08ncULWTE0aRM++72TOk
-         iKHEt2tgRjWnZe9TzXWsAIWyUif2JMfZQpxoCIRAFcFLdbZXJzfdkEpxN/fWsXRTWlgj
-         7Bc/t/LMIWOyiseR+YeCOGXiV8Lx5jsyXVa9lEifRYo88ObzvA1ntjs4rPSYivszDqZc
-         6IG+5AIXram3gDcL1QTp8l4miBbutjq0/tY2e56bPem8aOpUhLX3L07jLZB+CWS/P7Mw
-         oDSg==
-X-Forwarded-Encrypted: i=1; AJvYcCUL6SOap2U7Z4KaA63J+4Eor+bTyrRWiB7VERGKOOC3cC33YZ4QQskp4EiI4bQNPgkanzyIoXhfJLG4vMk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwkU7leGnL3Pe3e5bWK6RBZJY43iVgyZ6Au8acGaTeQMjY2m27L
-	KEX6H1ALub7gIPJZnsy4bGA7ybSoo7F3tqxtaVJukOrpL+ojWf1Ju3D27Tj0HWUp6QZjWu6IKhH
-	UNZpI6Vc0HRufn/GXWk5z3jQh7AzhDNb1xa6k6tEdy/YV4nmu33nW6jI=
-X-Google-Smtp-Source: AGHT+IGf3eXoW0FMZB8US2fmFDnTRnZk6yDeMgC9hHQkkGTqUFo0lSBIRrVisiICdJf3u3jpqfNagT9kiDO49iANQ9iA9s/+xJBe
+	s=arc-20240116; t=1733214211; c=relaxed/simple;
+	bh=jYkHVKxM+txa3uLXglsNqrbty+MvGtomW127aTwLa2Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WwtshGflkndFO3NlfLuuzA5lxh72tZvYhK5Z97ZMEp3UA0c6km80KenXkDR9ic6TUkrjcDfNyPn9L824zWNpV1frU1eedgFmB9KibjOHIXyL4aZITyOksBkEOw1layaZh2pldqbHPPN5gXORKiziCLgmRa4ooaahcLKq4wwf1zc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=m8d+30ml; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [192.168.88.20] (91-157-155-49.elisa-laajakaista.fi [91.157.155.49])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id C72E88DB;
+	Tue,  3 Dec 2024 09:22:58 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1733214180;
+	bh=jYkHVKxM+txa3uLXglsNqrbty+MvGtomW127aTwLa2Y=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=m8d+30mlzd4b86w4BHT9pGeSuxGZHG1a8aTy+j6lu65tJ9A5d7x0k/LI31ea+Tjeh
+	 aD4/iPTSeZDbR0OsplDV24VV4TQynC0SLnkk3twY0ctmrbKyad/yNu8OP4Xzuy3x8r
+	 IndVwl77bgxYW6yx5PAf0R3s69VzHULZ29Uij+dQ=
+Message-ID: <de544e9f-d5bb-4623-99fb-dbfc1518a623@ideasonboard.com>
+Date: Tue, 3 Dec 2024 10:23:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1b01:b0:3a7:9b16:7b6c with SMTP id
- e9e14a558f8ab-3a7cbd45e72mr221625365ab.9.1733214063882; Tue, 03 Dec 2024
- 00:21:03 -0800 (PST)
-Date: Tue, 03 Dec 2024 00:21:03 -0800
-In-Reply-To: <tencent_A26C496423B3445C97605771C6C67369C305@qq.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <674ebf6f.050a0220.17bd51.0042.GAE@google.com>
-Subject: Re: [syzbot] [jfs?] divide error in dbAllocAG
-From: syzbot <syzbot+7c808908291a569281a9@syzkaller.appspotmail.com>
-To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/9] dt-bindings: display: renesas,du: Add r8a779h0
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+ Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Magnus Damm <magnus.damm@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, LUU HOAI <hoai.luu.ub@renesas.com>,
+ Jagan Teki <jagan@amarulasolutions.com>, Sam Ravnborg <sam@ravnborg.org>,
+ Biju Das <biju.das.jz@bp.renesas.com>, dri-devel@lists.freedesktop.org,
+ linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+References: <20241203-rcar-gh-dsi-v1-0-738ae1a95d2a@ideasonboard.com>
+ <20241203-rcar-gh-dsi-v1-2-738ae1a95d2a@ideasonboard.com>
+ <20241203081935.GE10736@pendragon.ideasonboard.com>
+Content-Language: en-US
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
+ 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
+In-Reply-To: <20241203081935.GE10736@pendragon.ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On 03/12/2024 10:19, Laurent Pinchart wrote:
+> Hi Tomi,
+> 
+> Thank you for the patch.
+> 
+> On Tue, Dec 03, 2024 at 10:01:36AM +0200, Tomi Valkeinen wrote:
+>> From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+>>
+>> Extend the Renesas DU display bindings to support the r8a779h0 V4M.
+>>
+>> Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+>> ---
+>>   Documentation/devicetree/bindings/display/renesas,du.yaml | 1 +
+>>   1 file changed, 1 insertion(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/display/renesas,du.yaml b/Documentation/devicetree/bindings/display/renesas,du.yaml
+>> index c5b9e6812bce..d369953f16f7 100644
+>> --- a/Documentation/devicetree/bindings/display/renesas,du.yaml
+>> +++ b/Documentation/devicetree/bindings/display/renesas,du.yaml
+>> @@ -41,6 +41,7 @@ properties:
+>>         - renesas,du-r8a77995 # for R-Car D3 compatible DU
+>>         - renesas,du-r8a779a0 # for R-Car V3U compatible DU
+>>         - renesas,du-r8a779g0 # for R-Car V4H compatible DU
+>> +      - renesas,du-r8a779h0 # for R-Car V4M compatible DU
+>>   
+>>     reg:
+>>       maxItems: 1
+> 
+> You also need to add h0 to the g0 block in the conditional properties
+> below. With that,
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Ah, I missed that. Thanks.
 
-Reported-by: syzbot+7c808908291a569281a9@syzkaller.appspotmail.com
-Tested-by: syzbot+7c808908291a569281a9@syzkaller.appspotmail.com
+  Tomi
 
-Tested on:
-
-commit:         62cc82b7 jfs: check agwidth and agheight before alloca..
-git tree:       https://github.com/ea1davis/linux jfs/syz
-console output: https://syzkaller.appspot.com/x/log.txt?x=11a7afc0580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=18d90fa8ec96d8b0
-dashboard link: https://syzkaller.appspot.com/bug?extid=7c808908291a569281a9
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-
-Note: no patches were applied.
-Note: testing is done by a robot and is best-effort only.
 
