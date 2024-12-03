@@ -1,113 +1,123 @@
-Return-Path: <linux-kernel+bounces-430095-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D7049E2C86
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 20:58:07 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 087791656F1
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 19:58:04 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC862204F87;
-	Tue,  3 Dec 2024 19:58:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HFt2vLXx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6567E9E2C91
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 21:01:00 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C2341EE039;
-	Tue,  3 Dec 2024 19:57:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29F56284792
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 20:00:59 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00A7A205E04;
+	Tue,  3 Dec 2024 20:00:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Fl3VAPc5"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4CA71B3724;
+	Tue,  3 Dec 2024 20:00:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733255880; cv=none; b=lS4pFVlLfofVFih+yyNsNKhNzeeFdruSDzY1NqS4l7xi/4y6WppcHgwiQZQ2DWZLdzGV+vOLpzYeVL6FZTK3ZUph4i8HWEWyj5hK8GE6C8Ag/O3h1fnZaEldDY922FI905s5BspSJ8T00v4duBYMOkciCEje+56E9TH/VJDq0P8=
+	t=1733256033; cv=none; b=AUd3lj4OzYfjZ/nzQk0c6L6stMTUQEAOcx76a++mdbpPpefCRrEqYVshbkAeaPWejctOxrVkH3B35qT23OPT/ImWV3CZv0tHtkKeT/IRYDmsfk5MKfiUTrOVF4tZe3EN1BEesFw/wDeZmpl69AO+zpkX3zYxCpRY3spLWyHLFt0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733255880; c=relaxed/simple;
-	bh=SK78w0Rl9WD3OnfNjypBp4Bp599Yq2lSFf2smMGqxhg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=qoDSSAt5rBaEGRRy3K2Y6gbLZ2zncYXz7nQdVRM/UZITQ1YuBXw5HUtZipHEPKzlN/2doFg94wQl+EZi/8oRetkUMCuM5NiD9noNMoFC+Ooeeulmhne7w+W+m0LcwdZUpgMB6hCi6u7lLBRLPViQTiuAuyyGmLHLd3LXlC/QKEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HFt2vLXx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5E1CC4CECF;
-	Tue,  3 Dec 2024 19:57:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733255879;
-	bh=SK78w0Rl9WD3OnfNjypBp4Bp599Yq2lSFf2smMGqxhg=;
-	h=Date:From:To:Cc:Subject:From;
-	b=HFt2vLXxoApCgtvLgjNMDuN6VR9dfPm/I7Sz0LD5crp/ovm5PAzOn3z86Vsq4dR4V
-	 zEpb6mrqqGUmlKOtoJb3NfYNJl1dZZaOmmMTT9VpVI0RA4ZfK2k0xuQ1d+nyqb7fHG
-	 v6or+6LR1zRKl0god0tHTbN8p5XrA2G3Ap2Um0cYHTcRub81pb448vmNwgO9lp86Mc
-	 6b4w969yY5e4+aaKzUWkDr6i9ghczb3H/e3fVCuuax2dN3uprlMh/WnsWRZ8WkHpCA
-	 xkDWCIwTp233jwrsN4p2xvLzrZTaa6dDppBuE/+HVqeQXcTiOm/56iC1cy+AmZXbXd
-	 a9iPRoMe9zLig==
-Date: Tue, 3 Dec 2024 19:57:54 +0000
-From: Mark Brown <broonie@kernel.org>
-To: David Miller <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Networking <netdev@vger.kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>
-Subject: linux-next: manual merge of the net-next tree with the origin tree
-Message-ID: <Z09iwtgMaBZ8d4QY@sirena.org.uk>
+	s=arc-20240116; t=1733256033; c=relaxed/simple;
+	bh=kbUadZWMLB9QFr8ymoYDR74sgK4EuHKuY7Ru4T7FeYI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Qy7Ekgg0ICFz29ab0bqfmgPx5unSfePlVsm+6pk6MXHojcWL6qndLt8xY5tGNdLNiqtIJJpA4Eai/qC6yTG6EJlv8MrNtu2yNBSTsMObiIdxn5/A3WQQBownZV9BSPG98rXQkQD2bSo1f0v9HmmZiVGsOP82bBC4WMCt2cNDPkc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Fl3VAPc5; arc=none smtp.client-ip=198.47.19.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 4B3K05G11663503
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+	Tue, 3 Dec 2024 14:00:05 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1733256005;
+	bh=MOO66E6nunjkk5i9keFTAZvvbB4m1HuIDnaO0EWJMS8=;
+	h=From:To:CC:Subject:Date;
+	b=Fl3VAPc5YYWyWQOQGqTuu3TAKuRrjN7sDkieYpKfXI+ZYtcASsFjzF0CtUIuqCfD0
+	 Ar5vgy3qupr4CtpJG2B7HwrYzzA+RgeZXeTE3lGfP6dd9gLvB5EkoTr6zHw9jPYAPm
+	 hXLWBbWznRS5NTkLBhySeNmwoA7Xhiov7Dd+YF2Y=
+Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4B3K05wM028909;
+	Tue, 3 Dec 2024 14:00:05 -0600
+Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 3
+ Dec 2024 14:00:03 -0600
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE101.ent.ti.com
+ (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 3 Dec 2024 14:00:02 -0600
+Received: from lelvsmtp6.itg.ti.com ([10.249.42.149])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4B3K02JV122616;
+	Tue, 3 Dec 2024 14:00:02 -0600
+From: Andrew Davis <afd@ti.com>
+To: Lars-Peter Clausen <lars@metafoo.de>,
+        =?UTF-8?q?Nuno=20S=C3=A1?=
+	<nuno.sa@analog.com>,
+        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown
+	<broonie@kernel.org>,
+        Marek Vasut <marex@denx.de>
+CC: <patches@opensource.cirrus.com>, <linux-sound@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Andrew Davis <afd@ti.com>
+Subject: [PATCH 01/21] ASoC: ad193x: Remove use of i2c_match_id()
+Date: Tue, 3 Dec 2024 13:59:41 -0600
+Message-ID: <20241203200001.197295-1-afd@ti.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="OvwrEfEnsLb5Nfr6"
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
+The function i2c_match_id() is used to fetch the matching ID from
+the i2c_device_id table. This is often used to then retrieve the
+matching driver_data. This can be done in one step with the helper
+i2c_get_match_data().
 
---OvwrEfEnsLb5Nfr6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This helper has a couple other benefits:
+ * It doesn't need the i2c_device_id passed in so we do not need
+   to have that forward declared, allowing us to remove those or
+   move the i2c_device_id table down to its more natural spot
+   with the other module info.
+ * It also checks for device match data, which allows for OF and
+   ACPI based probing. That means we do not have to manually check
+   those first and can remove those checks.
 
-Hi all,
+Signed-off-by: Andrew Davis <afd@ti.com>
+---
+ sound/soc/codecs/ad193x-i2c.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Today's linux-next merge of the net-next tree got a conflict in:
+diff --git a/sound/soc/codecs/ad193x-i2c.c b/sound/soc/codecs/ad193x-i2c.c
+index 15d74bb31c4c5..6aa168e01fbbd 100644
+--- a/sound/soc/codecs/ad193x-i2c.c
++++ b/sound/soc/codecs/ad193x-i2c.c
+@@ -23,7 +23,6 @@ MODULE_DEVICE_TABLE(i2c, ad193x_id);
+ static int ad193x_i2c_probe(struct i2c_client *client)
+ {
+ 	struct regmap_config config;
+-	const struct i2c_device_id *id = i2c_match_id(ad193x_id, client);
+ 
+ 	config = ad193x_regmap_config;
+ 	config.val_bits = 8;
+@@ -31,7 +30,7 @@ static int ad193x_i2c_probe(struct i2c_client *client)
+ 
+ 	return ad193x_probe(&client->dev,
+ 			    devm_regmap_init_i2c(client, &config),
+-			    (enum ad193x_type)id->driver_data);
++			    (uintptr_t)i2c_get_match_data(client));
+ }
+ 
+ static struct i2c_driver ad193x_i2c_driver = {
+-- 
+2.39.2
 
-   drivers/ptp/ptp_dte.c
-   drivers/ptp/ptp_ines.c
-
-between commit:
-
-  e70140ba0d2b1 ("Get rid of 'remove_new' relic from platform driver struct=
-")
-
-=66rom the origin tree and commit:
-
-  b32913a5609a3 ("ptp: Switch back to struct platform_driver::remove()")
-
-=66rom the net-next tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-(no diff, used Linus' version)
-
---OvwrEfEnsLb5Nfr6
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmdPYsEACgkQJNaLcl1U
-h9ATlAf7BlOXwOWpcMW9sRLgOvZKdQ6QiefO4uwjXZwholw3ccuGEBMRCTqJLHxn
-rCgibYaqB7t9ZbTdoTFtdj3wNyBTWGt/V1DeK7g0ysvADYkibP4PnbkOG2oxe54S
-oKdkC/iRfAZAnRXUj+NG+EYK2KP5VUvv82XJi1xsH3jdb5q7kndZcvwB8tD9BCIC
-omoqzc1y7542xXSxYueKFpYSnXcCOYyICvAcZmEYgBN0Y30dGZUebWwYyCut8qAi
-pMnOyVwzj+kxcmmSxWzw74iIxcdxYtVqgkLYTMsRGmCGe4RebwXw1/corUW1MX2T
-FQm9y0GSUh2qhyPnynjwir9odX2/Og==
-=6Fak
------END PGP SIGNATURE-----
-
---OvwrEfEnsLb5Nfr6--
 
