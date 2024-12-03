@@ -1,142 +1,123 @@
-Return-Path: <linux-kernel+bounces-429560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93C779E1DD6
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 14:42:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C7999E1E0E
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 14:46:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A0A02829ED
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 13:42:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B2E1282256
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 13:46:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2EC61F12F8;
-	Tue,  3 Dec 2024 13:41:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 902061F9A88;
+	Tue,  3 Dec 2024 13:42:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eBra507H"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="LjxLmdEk"
+Received: from mail-oo1-f49.google.com (mail-oo1-f49.google.com [209.85.161.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB71E1DF96C
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 13:41:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D6961F76B4
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 13:42:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733233317; cv=none; b=ReTMCSdnyft/qTwyasJnyUFV4+J2R1Vxu/i2J9kBuTcgdzGGcBWlBwNGCGGr03BmXq+Vb5+Uo7liatMJaBKoqmCc0qSOHCvFP65ZSCgS4QxIHi+hlkYkQZ51v43wqplvAOdY6OenttVB7fa7SMo3k0PqqLSXVXzKIwvBOE+w7PY=
+	t=1733233336; cv=none; b=VZCwUN0YYcnrivKdMRzAMdOUuTzMjtIIEK6HbKkXwhL2UakrL8Hm3tityTeM8qq/nGH8JSHVr58nUDNMF8+KjoGE+DDDPAAq4oWAX4cVnzvFLSPD0NVVOdJaj5yakNGB3EBbYlNetT7C4q2+k6dCPAVhuBkJMjI9JU86xBIfBmE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733233317; c=relaxed/simple;
-	bh=DqfltT7T9BezPLgtZyLHK/lyVoHlR7r77Ivrvg4Dg2s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JgXx65FGHdQSfa6g6/cD2UwoQX/z0xtyfi80P0DnvOAwEUem4FKGg4v8sJT4M3WBcruF+n5oH2v59MHCUUyv8GlJsvIhnwINrwaWKd4Ob8sy3MDuqPFhhCKYlPw/niFxoMfe72TL0JdnNTbBLM1AgxH1W9HZvErtia15KsjFwx4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eBra507H; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2ffc7a2c5d5so58049641fa.1
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 05:41:53 -0800 (PST)
+	s=arc-20240116; t=1733233336; c=relaxed/simple;
+	bh=BPqo/+vJ9OA99wMkdAF6vWPVOkXo/UQOziFQPIlW/1E=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=P9NsK3qzrJ/I6iqvSdjcmc0NXHRWouELVBq3vCfgWEzYGnBi7pIWl63QvfIxXDlFxfVdanWDSlXr/Y2ooE+vAJg7OUG6n90ZtoH22es0CD6td2jtPrEtbbzT3rpQR7V03rLuZLOZ1tDMNe/m3UO71yF9Hf/tZqtNjqz/O3wm4ug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=LjxLmdEk; arc=none smtp.client-ip=209.85.161.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-oo1-f49.google.com with SMTP id 006d021491bc7-5f1d1fdb328so2090702eaf.3
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 05:42:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733233312; x=1733838112; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=b9EQvBAb2SX0qrGU/ZgIliBiKbnHvi2rA/qAWxRRbY0=;
-        b=eBra507H+jqog4Lr0wPhtilGP+q3t97Y+wM5N+XMDPucSk2F4wIUx94Zd/n4NykM3N
-         umAKdQyaZelp2YwsWvXFwnShFTUZxTkyik//einNrO/uoXE+Vbo25SWW52I3Z8H05R2J
-         j1bztD9CrrSfX+iKEE77vZNlj0AfDMesEBqbAqxenH5Jz3HEa/smpNl+tAQEIPnziKNR
-         k5qwtWt909L3UGyBBCREqjjFC4ERtfnYv7zR3zO4fY+83p5CIIE/J1qY/DMuvcmbtGJ4
-         cuHURRjzx9YkvKMyiGE8q7XdWur9YnZcYYYf78ih107JTpYFu3c0trQrRPLFThRlUBPZ
-         7png==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733233312; x=1733838112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1733233333; x=1733838133; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=b9EQvBAb2SX0qrGU/ZgIliBiKbnHvi2rA/qAWxRRbY0=;
-        b=mnQu+XqWJITeQheUtue1D/t+RNLrK8QcrVgz1EQWiTYKFQeoRZXL41yiGRS+kKlZeN
-         6dLTkRcHoT5GrIjEhZWDVc8FiDVS2lXWPIDI6OL87HrliOjjtYf/nlcvp7QlSbhyLnBi
-         ugcX0rjwm2AJnkeLYDl+6KCNuZ4eoyZe5HQWbg80cpVIrkdxor/nJr0mWDQC1U6+tmZI
-         mxQZEWd46XzG4cbMJ/NOA+exLCvt/W5ShCD3SCESDZVTU3cJCp3b9TMbpkmdsY3jOz8d
-         E2IKUwMEiAWLtnMGSP7/C+HFnzZEs1sYlO4tBwF7w9GZ56wwHt2kAArTywAfvq9YWJV6
-         HJKg==
-X-Forwarded-Encrypted: i=1; AJvYcCUgSjoN18PAPfeCpZvuPmgpxVX/UTxK6MNwA2GzkZeXcyPCF5vc6T8Xs2jP73tiIym0doKVkzaskWkJxv8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+mrO1YsH1TZXqNf8V5WEx/Yp6naUTrzpzHWtQQVTM93gP39fx
-	+F0kiUImmfidiuezyii51DFXP9mX/KNcjkQ1pIp5vfJHEfKkWBaK0sqgMVmoXMQ=
-X-Gm-Gg: ASbGncuybU5VTI6bkED/1/izV3gG2u79X5f6OeZh3wL0z5+LS2kfCePmiox+UB8oErK
-	PAnhHX2nyBHgKESxZxUXUOCp03gYf4l1EoQiCgHoFTBj/uNTcyiUk9Wspkv7afGkrUNS6stsncJ
-	mD2J9MKgsF2o0Wj1MlwL1rTUZ03T407u3m2d6fl4G/EX9++v9CgQ9emgufHjs5e8KO8cyYRoFJF
-	tqaKdoXz6SMP1AfCMc+KYA3ZDDl50UhZJXvmUK5jYssItRncNIlZ+jj5DIm6RGq7J6WS4MKOaCb
-	vcZ8bBCuuxb2ETxxyMxsLDv+hx0Abg==
-X-Google-Smtp-Source: AGHT+IHpMzPr6Lls4GRyBuCcJBMUBsc/X9uSkqqmTyZzvhlEVvAz5e+LXYqBKqUPPK3QZnPGFneqVQ==
-X-Received: by 2002:a2e:a99f:0:b0:2ff:d49f:dd4a with SMTP id 38308e7fff4ca-30014e2437fmr870081fa.21.1733233311908;
-        Tue, 03 Dec 2024 05:41:51 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ffdfc75236sm16038451fa.86.2024.12.03.05.41.49
+        bh=TPziSiz6FIPz1llFZL4/mtv70ocOZmo18hfdyDsh/VQ=;
+        b=LjxLmdEkeOzRdv2LOy8MDnd9IqaiNPf9AwmUCLMdGor82amWTMEVsYs886T7eymnrB
+         zy8yYZDY14DZBsGdWmoreADl7hEbgNxly+iMObL2qjPO96HYxRFEMFESudSPrIrCorcR
+         pN+ddZMBHAZGjOilYlZu3wGLqsmLvLhmRK6B6WTWkWx+Gwg3aJwrbmEcJtGqStUMLWo4
+         5rFsmQDKA5/pJyD9px7Z8bfH1jM8OQvEJy2YnJ5LT9/9tPEaVmlge6SEKDrJKq/Kp095
+         LUHrm3vRacst7YQRSd4WbhxJxCrvuRECNqC0Mq45G8cYccbtqc/wCGNoMVpKdDrOAZVm
+         Qs0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733233333; x=1733838133;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TPziSiz6FIPz1llFZL4/mtv70ocOZmo18hfdyDsh/VQ=;
+        b=oI390VvihAkqsjmIs71RzilrGYsUQrMO6oUdnEDyr7UBbYg3ZyEj4UrirGL8xP8TOO
+         uo+RY+T1RWrhb2NjZlgJAJhBDiUgOGIsDhcnX3kxLa+70gbRVI5P0kEbM2QyhG8HWCwC
+         XxjiPXj5bNZc48UafYlkLPZeQ+XTwIuQ/Td/+XckeiAfaFjE/SDsKzGlXukUiNzZFGvb
+         AZ4dZVpmdLoKNOwyIpeHB0DUIDNWzeCfoz8Whs0QBiUEBhAOGfU/l/pLpeuk8sSZRqM2
+         69ffMZ4ZdTDtXYrKabWwYprhR2TXfMJTRRd8wQE/M82ma/IlKqQr0VEaQsQCCkBRbaFT
+         Bp7A==
+X-Forwarded-Encrypted: i=1; AJvYcCUtrYQ13s0vB3ZTDW4bBDlOmtwYVSwGKs059VVc3Apiex+2gSMdm3cfyCD1hJEfSCB8GLF3oKRmzaLwh4A=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyhz70TSo7h+UIQiuCEViVdBmPcCqiyZWJYSyqRHIYecJ+8AeMr
+	LAzAuuZvYpgxI8IaEuAYnKtz4r8O60E5frmGkIWuyr7M6YUx1WXX25ALfy+mCLSCpLu8mqz3Mpd
+	W
+X-Gm-Gg: ASbGncvKAV2elh0Hm4ppXcvBkRABPieUkuiqdnCPwKfWEPip4ieglrrK8Uf1SD8X/Ve
+	ByYhYljtYUOF9fbu0MS9HuZv4nmfAQRCiG/9XrBeqM70L49pSFjjnoqGQEl3lpNTiGu6sGyb1nH
+	2u5SeIjxx2V4eodU8F0XMxXXrGwmKOjvqpcp/Z/Ues7CsEJK/mA5dhTLwcT+Id7EwM7QHznW1kC
+	06XTVB+Xg/z8PN68le5NjfAF9WmmoZGTtYBWfe9Z53pRQ==
+X-Google-Smtp-Source: AGHT+IF3JxViCcZr46UetkoBs9MyylLeqwOA8mylprKsogFh27HKGMF5642pWucfOY8iKk1uqQ4f1w==
+X-Received: by 2002:a05:6820:50c:b0:5ee:d89f:1d2c with SMTP id 006d021491bc7-5f25ad40e71mr1942008eaf.1.1733233333038;
+        Tue, 03 Dec 2024 05:42:13 -0800 (PST)
+Received: from [127.0.0.1] ([130.250.255.163])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5f21a4cd86bsm2782124eaf.29.2024.12.03.05.42.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Dec 2024 05:41:50 -0800 (PST)
-Date: Tue, 3 Dec 2024 15:41:48 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Abhinav Kumar <quic_abhinavk@quicinc.com>, 
-	Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Kuogee Hsieh <quic_khsieh@quicinc.com>, 
-	Mahadevan <quic_mahap@quicinc.com>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	freedreno@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/4] dt-bindings: display: msm: dp-controller: document
- clock parents better
-Message-ID: <gpqrugcsyhz32bvip5mgjtcservhral2o5b6c5nz4ocwbjw5uo@eypv4x6jyrdr>
-References: <20241202-dp_mst_bindings-v1-0-9a9a43b0624a@quicinc.com>
- <20241202-dp_mst_bindings-v1-2-9a9a43b0624a@quicinc.com>
- <bfa857c2-cd74-4fe2-a88c-3b35a58710b0@kernel.org>
+        Tue, 03 Dec 2024 05:42:12 -0800 (PST)
+From: Jens Axboe <axboe@kernel.dk>
+To: John Garry <john.g.garry@oracle.com>
+Cc: haris.iqbal@ionos.com, jinpu.wang@ionos.com, colyli@suse.de, 
+ kent.overstreet@linux.dev, agk@redhat.com, snitzer@kernel.org, 
+ mpatocka@redhat.com, linux-block@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-bcache@vger.kernel.org, 
+ dm-devel@lists.linux.dev, linux-bcachefs@vger.kernel.org, hch@lst.de
+In-Reply-To: <20241202111957.2311683-1-john.g.garry@oracle.com>
+References: <20241202111957.2311683-1-john.g.garry@oracle.com>
+Subject: Re: [PATCH 0/2] block: Delete bio_set_prio() and bio_prio()
+Message-Id: <173323333147.59116.15700360793401292347.b4-ty@kernel.dk>
+Date: Tue, 03 Dec 2024 06:42:11 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bfa857c2-cd74-4fe2-a88c-3b35a58710b0@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.3-dev-86319
 
-On Tue, Dec 03, 2024 at 09:01:31AM +0100, Krzysztof Kozlowski wrote:
-> On 03/12/2024 04:31, Abhinav Kumar wrote:
-> > Document the assigned-clock-parents better for the DP controller node
-> > to indicate its functionality better.
-> 
-> 
-> You change the clocks entirely, not "document". I would say that's an
-> ABI break if it really is a Linux requirement. You could avoid any
-> problems by just dropping the property from binding.
 
-But if you take a look at the existing usage, the proposed change
-matches the behaviour. So, I'd say, it's really a change that makes
-documentation follow the actual hardware.
+On Mon, 02 Dec 2024 11:19:55 +0000, John Garry wrote:
+> Macros bio_set_prio() and bio_prio() do nothing special in terms of
+> setting and getting the bio io prio member, so just delete them.
+> 
+> Prior to commit 43b62ce3ff0a, they would actually encode and decode the
+> prio in the now-deleted bi_rw member.
+> 
+> John Garry (2):
+>   block: Delete bio_prio()
+>   block: Delete bio_set_prio()
+> 
+> [...]
 
-> 
-> > 
-> > Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
-> > ---
-> >  Documentation/devicetree/bindings/display/msm/dp-controller.yaml | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/display/msm/dp-controller.yaml b/Documentation/devicetree/bindings/display/msm/dp-controller.yaml
-> > index 35ae2630c2b3..9fe2bf0484d8 100644
-> > --- a/Documentation/devicetree/bindings/display/msm/dp-controller.yaml
-> > +++ b/Documentation/devicetree/bindings/display/msm/dp-controller.yaml
-> > @@ -72,8 +72,8 @@ properties:
-> >  
-> >    assigned-clock-parents:
-> >      items:
-> > -      - description: phy 0 parent
-> > -      - description: phy 1 parent
-> > +      - description: Link clock PLL output provided by PHY block
-> > +      - description: Stream 0 pixel clock PLL output provided by PHY block
-> 
-> 
-> Best regards,
-> Krzysztof
+Applied, thanks!
 
+[1/2] block: Delete bio_prio()
+      commit: 099d214fc7abc3fec0f38d10bec31ac7acce8d13
+[2/2] block: Delete bio_set_prio()
+      commit: 77cfdf838d8467d3ca44058caff7c1727080efb2
+
+Best regards,
 -- 
-With best wishes
-Dmitry
+Jens Axboe
+
+
+
 
