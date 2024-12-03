@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-428684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8E009E121E
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 04:55:36 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C36789E1220
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 04:55:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2B4228291B
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 03:55:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 55069B23EFE
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 03:55:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C7291D4351;
-	Tue,  3 Dec 2024 03:53:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A0981DB37C;
+	Tue,  3 Dec 2024 03:53:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IPQS33jM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lq4aEAo+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7DE61B3959;
-	Tue,  3 Dec 2024 03:53:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DE101CDA17;
+	Tue,  3 Dec 2024 03:53:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733198037; cv=none; b=Cjxny0RTTkBENYooWqEKzM7Q3TgVussMuXCXzjCeTfFc0zTJiXYIRAoQilSQYCbaHAfOObFQ2i5O+L1Ex3MELMqnigbp7WJyQdXFmLH910zToa3M1Zs24GX9beYncvHaR8FQBEdESmY1lhO7QhvwQqTtFjJVKPtoOkU2wKr5IAo=
+	t=1733198038; cv=none; b=I/Deo+bIQmYiu+YVaj0Iic2Zpc6VP4j1EAw2F3bRISUJAH37Ek0Akj6sCeBaAWGKUyV3GcXzqFk8qZd31Nm5TgTqUK9nko4DB229NFFWXXJNFFPUZLVdX+tbcxvPdJ95XoS7gqDOT8dOVMgMdB7YwaYSEpJ+7X7A4hyvTKxarGY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733198037; c=relaxed/simple;
-	bh=BQm/1aP/K8xvjEddkH1/orrgM/dsPMVCSgObmtMyX8s=;
+	s=arc-20240116; t=1733198038; c=relaxed/simple;
+	bh=Hp2sHHC+kfgp9mI9q7a62u7eBY07I61uBeBGfgVyxrk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=mTMhQL9eFkrMAgfkek0YkgKWO6Pu8FWoRNMb+3RsVoFw+DJqTvEFnDswUNkydB2Tl1EumC/JxdT7erDHNDLKJwgET7cuSUDzFZPyl4/DnBYQ9eGv9ViDRfizamrMES0zRyey/SF9PNeSUHtvm3mKVqGjGy5/wvJUo6QKmoFxKU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IPQS33jM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2521DC4CEE3;
+	 MIME-Version; b=nLMabvPShT4lo2S8xZwQ+R90ZDt69DcJTeAHmNipN/CGLeg5+WV81+xm5p9TkWGsv/ksh9qesnMCYvilKHuYNLMOoqZzWg0X28mDk+P6PacH900rzhq4SRyOqlxPgMpTWpH4k5sUvWCNH7CflWt2xsirmYIySRkc+qVdgZJq7Cw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lq4aEAo+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99275C4CECF;
 	Tue,  3 Dec 2024 03:53:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1733198037;
-	bh=BQm/1aP/K8xvjEddkH1/orrgM/dsPMVCSgObmtMyX8s=;
+	bh=Hp2sHHC+kfgp9mI9q7a62u7eBY07I61uBeBGfgVyxrk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=IPQS33jM0NIJL+o45Z8vwy4uo23P0YfyCHf+fV/dkterpOJglAFiJZ0VIUWd0fMHT
-	 8Nz1JsMVOq+jXyKCamqLy90zKm1LAwd7sU1Qu+jMCg7pK94nALz2jYr0LrNc+1V6uv
-	 fsSRyZ+PxY3LMUKpqQuHrd9D6ppdq/NOrI5WAqf/UWAmceFtw9jIijUexEv2/dlDDE
-	 pSNcQxpcI4ou2vMBppcEHZjilroM+DWBjXN89McaVYq02xkCP5g2s4pFrYWZNExGtK
-	 mXQXj4XeWBEjpCU36r2vP0iZP5kRaI4l5M5TCFr42MAD/rlB2UrSLHn3WFuoSckhvF
-	 m+Zb7Uz2GdNGQ==
+	b=lq4aEAo+Npw1/SeWM28OzPiCalmHDJ3K0y35NryWNaFrIXZ3qF+AQTfXCJG5CPViL
+	 3Aq7xLpmS4qH6Sv0zZjYhSDnSf6Lp8bJ4aRqjyy4DeuVRusDXvvReGS6M+kxClP+Ex
+	 zaGkvQmu1OWiliV0w854CYMkzqkvvU58YMj2lf+I92fdHOSHez7QWmurbvyxHZ2vR+
+	 2FOOLe42CnCD50Ig3Rn8+T8vR0yba+bpYaXGCdJy5qXWCNvA4wlOukBXcD+cem5Bbj
+	 y5bT3j/r7J4Z2fkS2hWgOC/4HwcC0ZgPwmS9w0M09enTs78QCgUetWz38OCkW9PVT3
+	 Y4Zsbf3pKheeA==
 From: Namhyung Kim <namhyung@kernel.org>
 To: Arnaldo Carvalho de Melo <acme@kernel.org>
 Cc: Ian Rogers <irogers@google.com>,
@@ -49,12 +49,11 @@ Cc: Ian Rogers <irogers@google.com>,
 	Ingo Molnar <mingo@kernel.org>,
 	LKML <linux-kernel@vger.kernel.org>,
 	linux-perf-users@vger.kernel.org,
-	Christian Brauner <brauner@kernel.org>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH 09/11] tools headers: Sync uapi/linux/mount.h with the kernel sources
-Date: Mon,  2 Dec 2024 19:53:47 -0800
-Message-ID: <20241203035349.1901262-10-namhyung@kernel.org>
+	Mark Brown <broonie@kernel.org>,
+	Palmer Dabbelt <palmer@rivosinc.com>
+Subject: [PATCH 10/11] tools headers: Sync uapi/linux/prctl.h with the kernel sources
+Date: Mon,  2 Dec 2024 19:53:48 -0800
+Message-ID: <20241203035349.1901262-11-namhyung@kernel.org>
 X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
 In-Reply-To: <20241203035349.1901262-1-namhyung@kernel.org>
 References: <20241203035349.1901262-1-namhyung@kernel.org>
@@ -68,65 +67,73 @@ Content-Transfer-Encoding: 8bit
 
 To pick up the changes in this cset:
 
-  aefff51e1c2986e1 statmount: retrieve security mount options
-  2f4d4503e9e5ab76 statmount: add flag to retrieve unescaped options
-  44010543fc8bedad fs: add the ability for statmount() to report the sb_source
-  ed9d95f691c29748 fs: add the ability for statmount() to report the fs_subtype
+  09d6775f503b393d riscv: Add support for userspace pointer masking
+  91e102e79740ae43 prctl: arch-agnostic prctl for shadow stack
 
 This addresses these perf build warnings:
 
   Warning: Kernel ABI header differences:
-    diff -u tools/perf/trace/beauty/include/uapi/linux/mount.h include/uapi/linux/mount.h
+    diff -u tools/perf/trace/beauty/include/uapi/linux/prctl.h include/uapi/linux/prctl.h
 
 Please see tools/include/uapi/README for further details.
 
-Cc: Christian Brauner <brauner@kernel.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Palmer Dabbelt <palmer@rivosinc.com>
 Signed-off-by: Namhyung Kim <namhyung@kernel.org>
 ---
- tools/perf/trace/beauty/include/uapi/linux/mount.h | 14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
+ .../trace/beauty/include/uapi/linux/prctl.h   | 27 ++++++++++++++++++-
+ 1 file changed, 26 insertions(+), 1 deletion(-)
 
-diff --git a/tools/perf/trace/beauty/include/uapi/linux/mount.h b/tools/perf/trace/beauty/include/uapi/linux/mount.h
-index 225bc366ffcbf031..c07008816acae89c 100644
---- a/tools/perf/trace/beauty/include/uapi/linux/mount.h
-+++ b/tools/perf/trace/beauty/include/uapi/linux/mount.h
-@@ -154,7 +154,7 @@ struct mount_attr {
-  */
- struct statmount {
- 	__u32 size;		/* Total size, including strings */
--	__u32 mnt_opts;		/* [str] Mount options of the mount */
-+	__u32 mnt_opts;		/* [str] Options (comma separated, escaped) */
- 	__u64 mask;		/* What results were written */
- 	__u32 sb_dev_major;	/* Device ID */
- 	__u32 sb_dev_minor;
-@@ -173,7 +173,13 @@ struct statmount {
- 	__u32 mnt_root;		/* [str] Root of mount relative to root of fs */
- 	__u32 mnt_point;	/* [str] Mountpoint relative to current root */
- 	__u64 mnt_ns_id;	/* ID of the mount namespace */
--	__u64 __spare2[49];
-+	__u32 fs_subtype;	/* [str] Subtype of fs_type (if any) */
-+	__u32 sb_source;	/* [str] Source string of the mount */
-+	__u32 opt_num;		/* Number of fs options */
-+	__u32 opt_array;	/* [str] Array of nul terminated fs options */
-+	__u32 opt_sec_num;	/* Number of security options */
-+	__u32 opt_sec_array;	/* [str] Array of nul terminated security options */
-+	__u64 __spare2[46];
- 	char str[];		/* Variable size part containing strings */
- };
+diff --git a/tools/perf/trace/beauty/include/uapi/linux/prctl.h b/tools/perf/trace/beauty/include/uapi/linux/prctl.h
+index 35791791a879b288..5c6080680cb27b19 100644
+--- a/tools/perf/trace/beauty/include/uapi/linux/prctl.h
++++ b/tools/perf/trace/beauty/include/uapi/linux/prctl.h
+@@ -230,7 +230,7 @@ struct prctl_mm_map {
+ # define PR_PAC_APDBKEY			(1UL << 3)
+ # define PR_PAC_APGAKEY			(1UL << 4)
  
-@@ -207,6 +213,10 @@ struct mnt_id_req {
- #define STATMOUNT_FS_TYPE		0x00000020U	/* Want/got fs_type */
- #define STATMOUNT_MNT_NS_ID		0x00000040U	/* Want/got mnt_ns_id */
- #define STATMOUNT_MNT_OPTS		0x00000080U	/* Want/got mnt_opts */
-+#define STATMOUNT_FS_SUBTYPE		0x00000100U	/* Want/got fs_subtype */
-+#define STATMOUNT_SB_SOURCE		0x00000200U	/* Want/got sb_source */
-+#define STATMOUNT_OPT_ARRAY		0x00000400U	/* Want/got opt_... */
-+#define STATMOUNT_OPT_SEC_ARRAY		0x00000800U	/* Want/got opt_sec... */
+-/* Tagged user address controls for arm64 */
++/* Tagged user address controls for arm64 and RISC-V */
+ #define PR_SET_TAGGED_ADDR_CTRL		55
+ #define PR_GET_TAGGED_ADDR_CTRL		56
+ # define PR_TAGGED_ADDR_ENABLE		(1UL << 0)
+@@ -244,6 +244,9 @@ struct prctl_mm_map {
+ # define PR_MTE_TAG_MASK		(0xffffUL << PR_MTE_TAG_SHIFT)
+ /* Unused; kept only for source compatibility */
+ # define PR_MTE_TCF_SHIFT		1
++/* RISC-V pointer masking tag length */
++# define PR_PMLEN_SHIFT			24
++# define PR_PMLEN_MASK			(0x7fUL << PR_PMLEN_SHIFT)
  
- /*
-  * Special @mnt_id values that can be passed to listmount
+ /* Control reclaim behavior when allocating memory */
+ #define PR_SET_IO_FLUSHER		57
+@@ -328,4 +331,26 @@ struct prctl_mm_map {
+ # define PR_PPC_DEXCR_CTRL_CLEAR_ONEXEC	0x10 /* Clear the aspect on exec */
+ # define PR_PPC_DEXCR_CTRL_MASK		0x1f
+ 
++/*
++ * Get the current shadow stack configuration for the current thread,
++ * this will be the value configured via PR_SET_SHADOW_STACK_STATUS.
++ */
++#define PR_GET_SHADOW_STACK_STATUS      74
++
++/*
++ * Set the current shadow stack configuration.  Enabling the shadow
++ * stack will cause a shadow stack to be allocated for the thread.
++ */
++#define PR_SET_SHADOW_STACK_STATUS      75
++# define PR_SHADOW_STACK_ENABLE         (1UL << 0)
++# define PR_SHADOW_STACK_WRITE		(1UL << 1)
++# define PR_SHADOW_STACK_PUSH		(1UL << 2)
++
++/*
++ * Prevent further changes to the specified shadow stack
++ * configuration.  All bits may be locked via this call, including
++ * undefined bits.
++ */
++#define PR_LOCK_SHADOW_STACK_STATUS      76
++
+ #endif /* _LINUX_PRCTL_H */
 -- 
 2.47.0.338.g60cca15819-goog
 
