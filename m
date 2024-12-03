@@ -1,137 +1,181 @@
-Return-Path: <linux-kernel+bounces-429398-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5484A9E1DCD
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 14:40:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id AB8519E1D87
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 14:27:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 11838B359EE
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 12:00:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 38F09B2DB68
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 12:01:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A02E51E47D4;
-	Tue,  3 Dec 2024 12:00:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 223241E5710;
+	Tue,  3 Dec 2024 12:01:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dfPvoxMC"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fdDeCtLV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 958311E47BE
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 12:00:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E26B3398B;
+	Tue,  3 Dec 2024 12:01:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733227213; cv=none; b=oQOs/71W5ocDBXcZIyPjpC3/AuVuyUWGIl/WBkJDTbuQTyFxxIK0fAzuiXFAlassKkOXzudrlnsumVMTgpuMbSOwGF7xxdI1VIzkb7GakWxJVSD9SFd6Jak49Qbcp8OucTq3e9fA/HiE5EUyskDXQFQPBAkMSX/A70vNpbkou74=
+	t=1733227262; cv=none; b=FzO7zdcCbOGmFYMs76UesdXZ0Fc7Nl77VPhE/Ky8oPsmxh/+t/NuBngY4P11WQjiQKcoLXZUEeL+oLyj6J/lIYtd2avhg8Q37+X7gzST0DfTkg1ND5XKKKL2m2xNT2XRxgIuOqLRSGQZaCkfxUqnU/RvX7tcXDXl2ecIS5xu6yE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733227213; c=relaxed/simple;
-	bh=vCWjo4UwK/zJnGBd+Ae+dYddf0xdwHelnN1vgicoN6s=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=NttNyKvmEIINezeEb6uvb/jrYY48GtCYp8gmc2wgxUg8P5/2zYqQCX7gChnul2Ph6yQk4kU1OYUiOotbjSHapeSr3KhsKhrfxm9E25/jwfIpwBL6sTErjFNiZnRRehTuSZ7ErQkkU8VoktcBiZ5Au/XVnAVUCpxS+CjHHGh3WI4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dfPvoxMC; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1733227210;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=r+gcZq4akU5famwcdbMHLgs5gLJ8OKdKfq60hRuVR5Y=;
-	b=dfPvoxMCcsNK3BqY/SlkpX7/IV/CcdvJdSRDL3uViRL9eErCAlD100ZJlN5ee/PtvuR3bK
-	HB3Sde+DoEPR3mIeQrKErxYTHPDtVFLJE+mwt9PfuvCNL49gyBPrcnBpPZYXlY9IbVBri/
-	3VIXIePFVJxlhLyF6aRey/+3Aj4lI2U=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-630-WCfQjhYtMWG1B7M9BXYdeQ-1; Tue, 03 Dec 2024 07:00:09 -0500
-X-MC-Unique: WCfQjhYtMWG1B7M9BXYdeQ-1
-X-Mimecast-MFC-AGG-ID: WCfQjhYtMWG1B7M9BXYdeQ
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-385e03ee802so1682983f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 04:00:09 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733227208; x=1733832008;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=r+gcZq4akU5famwcdbMHLgs5gLJ8OKdKfq60hRuVR5Y=;
-        b=h1SEEopMc94yAIXgq6WIVQN8gONjPUt65P1Zn337kg7251Ae58Ss3mh4RaZOJqhgVn
-         m1hnBAlF2xdgqItRXNJS4dDRwf9lyB7pz2rrU5jk2vSxAF41bcAFnr3Ga3zZFRcypMiq
-         iRADnfwU6R1e4Cc2fxLb7Nwwe8D4crd1shRmGc/O32n7n/GALZDthFtJp1OhK62ca+KJ
-         QrmbFyaFPkVBUKarJ5nsFq6rNunfPsK25UnJfB5TSleFqTNbHCJa/yRKDLZqssxEHeW1
-         7qeRZYPlJMZX8/7zyc2Lj2FBXgosgLSAP8P7YBzcL4IgmkYAUL3NGW2j4Qxvj5q8x+B6
-         S5Nw==
-X-Gm-Message-State: AOJu0Yw3y6sSkIrN66d/2cXT1j3RTJXrpt3F+pkGzGMarjgYpSmTvD2o
-	0uwBS/CPWMUtF/FBc4tsq661aPyTMfQvEQ1C39RSDhZvbmjQAFhyOWHjTVX4wgij/1UvhRzYDsi
-	RqZw2r9Wxdz/BXVQR7a4pQ2gqWyWxXuHhn11q6V83vt1xBQr6rh8QvzNOhTeceg==
-X-Gm-Gg: ASbGnctZXKMfcYwI9xqa+dlzrNDSR7MQvQ1iAvPP0+BwvzlD9ESCYA951t6u4otpUq4
-	I5tqV+s0GRwieM9Mb18MBncQC4dWGZPmSs0jQeDHyhlD+OL8MZrzb6IAxbRZRguA0LOfL6SddYU
-	St2OG//K7G4GrqlnqiGr62YuNG0FKArZrEJGzmA8Zdiex6L/ayPflwIOHTN71XsK+9+WyNagYuP
-	O63G0jvru4njX1wNjgdtNZZ/njbzq2sn7hfZQ87K0p+EwkzZUToeObGqFqBQrmoMtwiCmJkqapu
-	LWHJ4w7B0vor0XKnoCJ/JfpYBI4oQooTuJY=
-X-Received: by 2002:a05:6000:42c9:b0:385:f7ef:a57f with SMTP id ffacd0b85a97d-385fd3f1c4bmr1431340f8f.27.1733227208147;
-        Tue, 03 Dec 2024 04:00:08 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IE1gmAc+ZEEBHrfuNXDTG/UpwaAK/S0WeHK2J3tcVT0AzfMePj9e0aQTvRzwnquWudR75Acjw==
-X-Received: by 2002:a05:6000:42c9:b0:385:f7ef:a57f with SMTP id ffacd0b85a97d-385fd3f1c4bmr1431325f8f.27.1733227207833;
-        Tue, 03 Dec 2024 04:00:07 -0800 (PST)
-Received: from vschneid-thinkpadt14sgen2i.remote.csb (213-44-141-166.abo.bbox.fr. [213.44.141.166])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434b0f7148fsm185888995e9.41.2024.12.03.04.00.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Dec 2024 04:00:07 -0800 (PST)
-From: Valentin Schneider <vschneid@redhat.com>
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH v2 0/3] objtool: noinstr validation for static
- branches/calls
-In-Reply-To: <20241128013507.6um4vkfz2ojqwnoz@jpoimboe>
-References: <cover.1732682344.git.jpoimboe@kernel.org>
- <20241128013507.6um4vkfz2ojqwnoz@jpoimboe>
-Date: Tue, 03 Dec 2024 13:00:06 +0100
-Message-ID: <xhsmhh67l5649.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+	s=arc-20240116; t=1733227262; c=relaxed/simple;
+	bh=rlz53vWDp5E/pYVOEj1URbYGt1AREB4Xo9ogjRjCu50=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rKPWitPTPIjPGJJtxcIdmX9tRnFLzlNuAIpWz2zE5F6v0tYsKpF7koC+Eb9bnpcfT39KKfLnppZUfH1YZHoE/zenBBuGQYVTNY9OhPRt+8L0D+bhGfVOiUWog413yWrdxB93lVnyAt02SIsC/sAreWOlPPF9/n13xvOgo4IWFA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fdDeCtLV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBAF4C4CECF;
+	Tue,  3 Dec 2024 12:01:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733227261;
+	bh=rlz53vWDp5E/pYVOEj1URbYGt1AREB4Xo9ogjRjCu50=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fdDeCtLVqECfRfNoqbCzzD0S2R+ze8fu4xgXlPdQFJQ+STayO+czgml6vxR6gAr9u
+	 SfvYrgXRdRmOjMEDiUcIg8Ywi35riI0nUxeZrJIGAla7/uurms7YmN220IRsCbVxR6
+	 0RLGXO472a27O/MHnrmTkWCsCE1MnHGszPPpy+ATOMh/r4ZUNj1XVz+G2aEnELC83Q
+	 5zXc30+JHwj5J8xXpxDpdRcwIa3kank2REKqd9CMrbu3SZA6RQSEQqgx6shuUaL3BU
+	 er9sxGEV01E1uZex0+a/6+JDYf3SqBVZ3ELFg7wS+IFimmHwT30DsHPjPlqmlPz8Tg
+	 GqLyWYoqGameA==
+Date: Tue, 3 Dec 2024 13:00:58 +0100
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+To: Zijun Hu <zijun_hu@icloud.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Jean Delvare <jdelvare@suse.com>, 
+	Guenter Roeck <linux@roeck-us.net>, Martin Tuma <martin.tuma@digiteqautomotive.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Andreas Noever <andreas.noever@gmail.com>, 
+	Michael Jamet <michael.jamet@intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, 
+	Yehezkel Bernat <YehezkelShB@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, Andrew Lunn <andrew@lunn.ch>, 
+	Vladimir Oltean <olteanv@gmail.com>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	Dan Williams <dan.j.williams@intel.com>, Vishal Verma <vishal.l.verma@intel.com>, 
+	Dave Jiang <dave.jiang@intel.com>, Ira Weiny <ira.weiny@intel.com>, 
+	Takashi Sakamoto <o-takashi@sakamocchi.jp>, Jiri Slaby <jirislaby@kernel.org>, 
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
+	Lee Duncan <lduncan@suse.com>, Chris Leech <cleech@redhat.com>, 
+	Mike Christie <michael.christie@oracle.com>, "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, 
+	"Martin K. Petersen" <martin.petersen@oracle.com>, Nilesh Javali <njavali@marvell.com>, 
+	Manish Rangankar <mrangankar@marvell.com>, GR-QLogic-Storage-Upstream@marvell.com, 
+	Davidlohr Bueso <dave@stgolabs.net>, Jonathan Cameron <jonathan.cameron@huawei.com>, 
+	Alison Schofield <alison.schofield@intel.com>, Andreas Larsson <andreas@gaisler.com>, 
+	Stuart Yoder <stuyoder@gmail.com>, Laurentiu Tudor <laurentiu.tudor@nxp.com>, 
+	Jens Axboe <axboe@kernel.dk>, Sudeep Holla <sudeep.holla@arm.com>, 
+	Cristian Marussi <cristian.marussi@arm.com>, Ard Biesheuvel <ardb@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, 
+	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+	linux-hwmon@vger.kernel.org, linux-media@vger.kernel.org, linux-usb@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, netdev@vger.kernel.org, linux-pwm@vger.kernel.org, 
+	nvdimm@lists.linux.dev, linux1394-devel@lists.sourceforge.net, 
+	linux-serial@vger.kernel.org, linux-sound@vger.kernel.org, open-iscsi@googlegroups.com, 
+	linux-scsi@vger.kernel.org, linux-cxl@vger.kernel.org, sparclinux@vger.kernel.org, 
+	linux-block@vger.kernel.org, arm-scmi@vger.kernel.org, linux-efi@vger.kernel.org, 
+	linux-remoteproc@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>
+Subject: Re: [PATCH v2 00/32] driver core: Constify API device_find_child()
+ and adapt for various existing usages
+Message-ID: <g32cigmktmj4egkq2tof27el2yss4liccfxgebkgqvkil32mlb@e3ta4ezv7y4m>
+References: <20241203-const_dfc_done-v2-0-7436a98c497f@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-
-On 27/11/24 17:35, Josh Poimboeuf wrote:
-> On Tue, Nov 26, 2024 at 08:47:39PM -0800, Josh Poimboeuf wrote:
->> v2:
->> - Add some fixes reported by kbuild.
->> 
->> 
->> FWIW, this reports the following static keys:
->> 
->>   - sched_clock_running
->>   - __sched_clock_stable
->>   - mds_idle_clear
->>   - vmx_l1d_flush_cond
->>   - stack_erasing_bypass
->
-
-sched_clock_running, __sched_clock_stable and mds_idle_clear are already
-covered in v3
-
-vmx_l1d_flush_cond is modified
-- at init via __init vmx_init()
-- via a module parameter write ending in vmentry_l1d_flush_set()
-So either init or user/admin action, IMO that's a "don't touch it"
-scenario.
-
-stack_erasing_bypass is modified only via a sysctl write, so IMO same
-argument.
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="35h4iyqfzzpzpkno"
+Content-Disposition: inline
+In-Reply-To: <20241203-const_dfc_done-v2-0-7436a98c497f@quicinc.com>
 
 
->> and the following static calls:
->> 
->>   - pv_sched_clock
->>   - x86_idle
->     - perf_lopwr_cb
+--35h4iyqfzzpzpkno
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2 00/32] driver core: Constify API device_find_child()
+ and adapt for various existing usages
+MIME-Version: 1.0
 
-All of these are only ever modified at __init, so they can be made
-__ro_after_init.
+Hello,
 
->
-> -- 
-> Josh
+On Tue, Dec 03, 2024 at 08:33:22AM +0800, Zijun Hu wrote:
+> This patch series is to constify the following API:
+> struct device *device_find_child(struct device *dev, void *data,
+> 		int (*match)(struct device *dev, void *data));
+> To :
+> struct device *device_find_child(struct device *dev, const void *data,
+> 				 device_match_t match);
+> typedef int (*device_match_t)(struct device *dev, const void *data);
 
+This series isn't bisectible. With only the first two patches applied I
+hit:
+
+  CC      drivers/pwm/core.o
+drivers/pwm/core.c: In function =E2=80=98pwm_unexport_child=E2=80=99:
+drivers/pwm/core.c:1292:55: error: passing argument 3 of =E2=80=98device_fi=
+nd_child=E2=80=99 from incompatible pointer type [-Wincompatible-pointer-ty=
+pes]
+ 1292 |         pwm_dev =3D device_find_child(pwmchip_dev, pwm, pwm_unexpor=
+t_match);
+      |                                                       ^~~~~~~~~~~~~=
+~~~~~
+      |                                                       |
+      |                                                       int (*)(struc=
+t device *, void *)
+In file included from include/linux/acpi.h:14,
+                 from drivers/pwm/core.c:11:
+include/linux/device.h:1085:49: note: expected =E2=80=98device_match_t=E2=
+=80=99 {aka =E2=80=98int (*)(struct device *, const void *)=E2=80=99} but a=
+rgument is of type =E2=80=98int (*)(struct device *, void *)=E2=80=99
+ 1085 |                                  device_match_t match);
+      |                                  ~~~~~~~~~~~~~~~^~~~~
+drivers/pwm/core.c: In function =E2=80=98pwm_class_get_state=E2=80=99:
+drivers/pwm/core.c:1386:55: error: passing argument 3 of =E2=80=98device_fi=
+nd_child=E2=80=99 from incompatible pointer type [-Wincompatible-pointer-ty=
+pes]
+ 1386 |         pwm_dev =3D device_find_child(pwmchip_dev, pwm, pwm_unexpor=
+t_match);
+      |                                                       ^~~~~~~~~~~~~=
+~~~~~
+      |                                                       |
+      |                                                       int (*)(struc=
+t device *, void *)
+include/linux/device.h:1085:49: note: expected =E2=80=98device_match_t=E2=
+=80=99 {aka =E2=80=98int (*)(struct device *, const void *)=E2=80=99} but a=
+rgument is of type =E2=80=98int (*)(struct device *, void *)=E2=80=99
+ 1085 |                                  device_match_t match);
+      |                                  ~~~~~~~~~~~~~~~^~~~~
+make[5]: *** [scripts/Makefile.build:194: drivers/pwm/core.o] Error 1
+make[4]: *** [scripts/Makefile.build:440: drivers/pwm] Error 2
+make[3]: *** [scripts/Makefile.build:440: drivers] Error 2
+make[2]: *** [Makefile:1989: .] Error 2
+make[1]: *** [Makefile:372: __build_one_by_one] Error 2
+make: *** [Makefile:251: __sub-make] Error 2
+
+Best regards
+Uwe
+
+--35h4iyqfzzpzpkno
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmdO8vgACgkQj4D7WH0S
+/k5hrwgAmMfv4tgQM/zHhRunXZer+6rbqIrp5LbiXSYngMgHSWkkF/Aqcp/Uejmb
+FQwdlGB47gyVlHT5SP4HCDeST+PhX0lg3vHxP2lg0HaHp7/vgJRZAI65iOfy7DY7
+xqXQ+U2+YvtY+lwSneGFeXo9VZZtuu/YfpP8Qg6jH8dGaIojaU57rB+uJCpdvZmt
+VJhc51IAA6eHPcPMGf5mvS8/A7M8uPDwyEgWBDP/MRE0z6oKEjVLPWYFzXjUaVnZ
+MMOmGyzIfvhHTMxlkisgCC+PwmjrO2lZFsM1jD6SVNzMp6XeT2jiGa7lbfXaK9Rk
+7TvM1d7dwtqa42JTuIjTWWBR7AfmBA==
+=Sef0
+-----END PGP SIGNATURE-----
+
+--35h4iyqfzzpzpkno--
 
