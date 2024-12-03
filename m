@@ -1,107 +1,168 @@
-Return-Path: <linux-kernel+bounces-429019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 912AC9E1761
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:26:31 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E7D59E182E
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:48:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D0A7CB26576
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 08:54:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A5E1BB24050
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 08:57:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2F301DF738;
-	Tue,  3 Dec 2024 08:53:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D2D11DE2B5;
+	Tue,  3 Dec 2024 08:57:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="amcobkKi"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="L2YR/bTr"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C38DC1DE3CE;
-	Tue,  3 Dec 2024 08:53:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6477718A6BC
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 08:57:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733216006; cv=none; b=NZCBsfHWOUT1bqNiDIQm+zsXCAKPmsJIgN9PMfM4Jb0LXFn5ZlrC217j1N1FCer58muOaXzuxquxkGna2ks345k9gxrCCRBRW2/D1cPg/aYe7OKv7MevzGeuZRedDdiIpPaZw4GeVg3c0eLMFR9gPe7kaVQh6kof4fQ1swO0cl4=
+	t=1733216228; cv=none; b=QEK4mPbPRsyT36dv/GSaW2OosigUkMsJUXzQ3LXD+gbYeW+CFCzdWU82Uzj87EwEnL533qP55pX5ktiEPG9ZWdiw+cntHi4vtnIRcO0qeotBr4PXZJC0aOdGojiTFauQJFJmy3xBjrZjDrtGr9WvGCuIU7UeodhbRw4VGcbuLKI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733216006; c=relaxed/simple;
-	bh=OA/nV2yPoFw2d+CvBeaMlumBuPI9T3l2MZw9NSNqfto=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ryckWI3z2FdDIVe1cl9dl1M4UCYBYvDuJmrGAFxfhNnAwROrm9MU/8jol42kBlBDZB1hqjT5+wDikndevOiTJ+EQxDz+dQ6XEeJlXw7msQy2UJZmoUUzbQSko0TLBky2vnrSj54MIE4Ev3eDBCNUlj1abGwBJByYkgL11nOI5nc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=amcobkKi; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1733216004; x=1764752004;
-  h=from:to:subject:date:message-id:in-reply-to:references:
-   mime-version;
-  bh=OA/nV2yPoFw2d+CvBeaMlumBuPI9T3l2MZw9NSNqfto=;
-  b=amcobkKiaY519FB9PTOuVguT+Sv/ncc0QtOzGfHlWT46M9o5k2hipmEJ
-   n9G2ILu4x2p9OLFt73fuY0Plc00qb81T7B8+8bZKYc248Efycky4pf6vt
-   hj7GF4i/cZD+EJ3JkPcUBLDkDjO3s9nSRcnSRlifvEwPhCu/bg1OJlRyZ
-   HZPB6NIshqfEYYkdEPBHY1jjleBALNrJ+F4HPgkNsAJIOGr/g07VW4eup
-   63OJ8rLWH/X5oh3KIM8kmqScRi5c36/Lr16OSbCpKMOyKaK3MxgrCWYNp
-   bQJsB7kXa1xUaslR0+da9qPas9ZuaJJJXbN2B309UDpI6oK0Beq//Eulb
-   Q==;
-X-CSE-ConnectionGUID: PYHc5D2VTXmCViyiEXibzQ==
-X-CSE-MsgGUID: YMRgXJL/T4ecxtHMKurBQw==
-X-IronPort-AV: E=Sophos;i="6.12,204,1728975600"; 
-   d="scan'208";a="38706054"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa1.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 03 Dec 2024 01:53:22 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Tue, 3 Dec 2024 01:53:09 -0700
-Received: from training-HP-280-G1-MT-PC.microchip.com (10.10.85.11) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
- 15.1.2507.35 via Frontend Transport; Tue, 3 Dec 2024 01:53:05 -0700
-From: Divya Koppera <divya.koppera@microchip.com>
-To: <andrew@lunn.ch>, <arun.ramadoss@microchip.com>,
-	<UNGLinuxDriver@microchip.com>, <hkallweit1@gmail.com>,
-	<linux@armlinux.org.uk>, <davem@davemloft.net>, <edumazet@google.com>,
-	<kuba@kernel.org>, <pabeni@redhat.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <richardcochran@gmail.com>,
-	<vadim.fedorenko@linux.dev>
-Subject: [PATCH net-next v5 4/5] net: phy: Makefile: Add makefile support for ptp in Microchip phys
-Date: Tue, 3 Dec 2024 14:22:47 +0530
-Message-ID: <20241203085248.14575-5-divya.koppera@microchip.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20241203085248.14575-1-divya.koppera@microchip.com>
-References: <20241203085248.14575-1-divya.koppera@microchip.com>
+	s=arc-20240116; t=1733216228; c=relaxed/simple;
+	bh=OOceX6kz0XXbimZbAprvOOOhYfdQDD8f85dFSF0Tppg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YtG9aduwLImB4VNyJUR/ywrAOTKq7qnwtcGlNtCHfpb02S7Wr5DyUy3m/PEP65Ml9H5ePeiylarlnx/Af9zVV0YtnjPopp5Bx18ZkSGJFFWAS6O32oeDAYXtKX4xs6rJ50FTmpr2zVYrL4/c7PoHMxcWXpYIN2Q7DDTu4Z1V7y0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=L2YR/bTr; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733216225;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FGHz7ghiBxVIbssf5/hQmDMUZC5ROBwA/LtGFN8UTlY=;
+	b=L2YR/bTr50036YLMzv/6VnzsYYxfAv3Ow1r8VDzAYjY8exbJ0XTkVlIMnMb2ZL/FvdwG16
+	+XEZOnOcoUKAZFkuO9jQDxWbCNoXM1JtnXsQ6IrZUUGk7GbsDQ9iVBJQb4130JHBADQUwZ
+	wqwxlwsP8/SrfqFK/Wtusq4zSQ5sKko=
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
+ [209.85.216.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-332-bNOwHLQfN62x5VR2LJ22xA-1; Tue, 03 Dec 2024 03:57:03 -0500
+X-MC-Unique: bNOwHLQfN62x5VR2LJ22xA-1
+X-Mimecast-MFC-AGG-ID: bNOwHLQfN62x5VR2LJ22xA
+Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-2ee3c572485so6153944a91.2
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 00:57:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733216222; x=1733821022;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FGHz7ghiBxVIbssf5/hQmDMUZC5ROBwA/LtGFN8UTlY=;
+        b=wXhia39n74C7sugH3yi3MqU+Cxl33aRBuUwlS/OTpKK9Xhq2FgurP1S2ux4X7k8uU8
+         l0w0XQ3F4mBbHZqPsd3xCdqHg0b1D0PFb0ElX6Z2camJ2Wh6Ivdpa9dUVBHRi+n+k27+
+         sllYCar/X3K9WyGEO+A63sPIeEMg9XycI9G9A5hbS8Hp/gAadYNIvj0HhtVmPm7JWvEg
+         +AUWswCTEdlOw8dfEq5B/6xv1SKa34oFV8kSmx9PslfrlVOsQQ/37tIELaJEQltoQ+7r
+         f4WyCQEmSahWFhrGfeiTl2CX/mhYqYg9ObPzUySHsC39rKZ1Jrzx1raQFFt55IPkJp0Z
+         5Tbg==
+X-Forwarded-Encrypted: i=1; AJvYcCXm+Yr7XI3xdYaXilqDnZV60HjYeaP/lThCYUV9uutRpz6rt/hhWzXE03Y27no7giiTW2xhX2ZKbQhjcfM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLsPL7WurBdkWFjGM493mDUtnZGHmzbuX+K1pD4mxKMnwaF4IJ
+	akxqYK2BdQhkDPaNeisAi4TR94THG+WjRJafMAszXlEvsR/C2XlcFuzpspWjhSpAfwd2XyUF/HP
+	fe+FZ0+wP4kGlBIERemcZW+tf3du/HczGKhd/qZDe4iCe7Vd5xTVSAQfFbjZa2w==
+X-Gm-Gg: ASbGnctdm4rq7O4hiJIdzpvIBdmP8oookMmcNd0z7SmM6zvdHIdksnNTG7J+gGcTIMi
+	Ya135HLamAPJJF7F5GBNqIYCtBXX+GpgBFnCDYKoV0/f0iBaisx35f4vPmiOfnuM4bQZTILIf5J
+	oMFMdkE5wTnhfgVrWCOW+NMtYF2h38Z0OLhBmlkZG+dPu3PY/zztQ3HiDkBAOOEwrMJ4j6GE1UB
+	Qq8EtW5Hs02hfEpy4l1WT4S+MfnQ6URtsObhLdSHbjDDuNVn/c=
+X-Received: by 2002:a17:90b:33c6:b0:2ee:ee77:2263 with SMTP id 98e67ed59e1d1-2ef011e4926mr2503888a91.7.1733216222616;
+        Tue, 03 Dec 2024 00:57:02 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEIcOl4s6XHMdDXHxmOpeH3xZ9kLRLW+50zloAvOHAMK7Z7v1F6jBYhjBcR7dhJA5/1Z8PpzQ==
+X-Received: by 2002:a17:90b:33c6:b0:2ee:ee77:2263 with SMTP id 98e67ed59e1d1-2ef011e4926mr2503625a91.7.1733216215342;
+        Tue, 03 Dec 2024 00:56:55 -0800 (PST)
+Received: from [10.72.112.157] ([43.228.180.230])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2eead160674sm4605513a91.3.2024.12.03.00.56.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 03 Dec 2024 00:56:54 -0800 (PST)
+Message-ID: <b1923d68-726a-4864-8661-54588a634d95@redhat.com>
+Date: Tue, 3 Dec 2024 18:56:49 +1000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/1] arm64: rsi: Add automatic arm-cca-guest module
+ loading
+To: kernel test robot <lkp@intel.com>, Jeremy Linton <jeremy.linton@arm.com>,
+ linux-arm-kernel@lists.infradead.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+ steven.price@arm.com, sami.mujawar@arm.com, suzuki.poulose@arm.com,
+ will@kernel.org, catalin.marinas@arm.com, linux-kernel@vger.kernel.org
+References: <20241203000156.72451-2-jeremy.linton@arm.com>
+ <202412031348.bp5i3ws2-lkp@intel.com>
+Content-Language: en-US
+From: Gavin Shan <gshan@redhat.com>
+In-Reply-To: <202412031348.bp5i3ws2-lkp@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Add makefile support for ptp library.
 
-Reviewed-by: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-Signed-off-by: Divya Koppera <divya.koppera@microchip.com>
----
-v1 -> v5
-- No changes
----
- drivers/net/phy/Makefile | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/net/phy/Makefile b/drivers/net/phy/Makefile
-index e6145153e837..0a19308dcd40 100644
---- a/drivers/net/phy/Makefile
-+++ b/drivers/net/phy/Makefile
-@@ -79,6 +79,7 @@ obj-$(CONFIG_MESON_GXL_PHY)	+= meson-gxl.o
- obj-$(CONFIG_MICREL_KS8995MA)	+= spi_ks8995.o
- obj-$(CONFIG_MICREL_PHY)	+= micrel.o
- obj-$(CONFIG_MICROCHIP_PHY)	+= microchip.o
-+obj-$(CONFIG_MICROCHIP_PHYPTP) += microchip_ptp.o
- obj-$(CONFIG_MICROCHIP_T1_PHY)	+= microchip_t1.o
- obj-$(CONFIG_MICROCHIP_T1S_PHY) += microchip_t1s.o
- obj-$(CONFIG_MICROSEMI_PHY)	+= mscc/
--- 
-2.17.1
+On 12/3/24 4:03 PM, kernel test robot wrote:
+> Hi Jeremy,
+> 
+> kernel test robot noticed the following build warnings:
+> 
+> [auto build test WARNING on arm64/for-next/core]
+> [also build test WARNING on linus/master v6.13-rc1 next-20241128]
+> [cannot apply to kvmarm/next soc/for-next arm/for-next arm/fixes]
+> [If your patch is applied to the wrong git tree, kindly drop us a note.
+> And when submitting patch, we suggest to use '--base' as documented in
+> https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> 
+> url:    https://github.com/intel-lab-lkp/linux/commits/Jeremy-Linton/arm64-rsi-Add-automatic-arm-cca-guest-module-loading/20241203-080347
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-next/core
+> patch link:    https://lore.kernel.org/r/20241203000156.72451-2-jeremy.linton%40arm.com
+> patch subject: [PATCH v2 1/1] arm64: rsi: Add automatic arm-cca-guest module loading
+> config: arm64-randconfig-004-20241203 (https://download.01.org/0day-ci/archive/20241203/202412031348.bp5i3ws2-lkp@intel.com/config)
+> compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 592c0fe55f6d9a811028b5f3507be91458ab2713)
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241203/202412031348.bp5i3ws2-lkp@intel.com/reproduce)
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202412031348.bp5i3ws2-lkp@intel.com/
+> 
+> All warnings (new ones prefixed by >>):
+> 
+>>> drivers/virt/coco/arm-cca-guest/arm-cca-guest.c:224:21: warning: attribute declaration must precede definition [-Wignored-attributes]
+>       224 | static const struct __maybe_unused platform_device_id arm_cca_match[] = {
+>           |                     ^
+>     include/linux/compiler_attributes.h:356:56: note: expanded from macro '__maybe_unused'
+>       356 | #define __maybe_unused                  __attribute__((__unused__))
+>           |                                                        ^
+>     include/linux/mod_devicetable.h:607:8: note: previous definition is here
+>       607 | struct platform_device_id {
+>           |        ^
+>>> drivers/virt/coco/arm-cca-guest/arm-cca-guest.c:224:55: warning: unused variable 'arm_cca_match' [-Wunused-const-variable]
+>       224 | static const struct __maybe_unused platform_device_id arm_cca_match[] = {
+>           |                                                       ^~~~~~~~~~~~~
+>     2 warnings generated.
+> 
+> 
+> vim +224 drivers/virt/coco/arm-cca-guest/arm-cca-guest.c
+> 
+>     222	
+>     223	/* modalias, so userspace can autoload this module when RSI is available */
+>   > 224	static const struct __maybe_unused platform_device_id arm_cca_match[] = {
+>     225		{ RSI_PDEV_NAME, 0},
+>     226		{ }
+>     227	};
+>     228	
+> 
+
+The definition may have to be something like below, to avoid the compiling warning.
+
+static const struct platform_device_id __maybe_unused arm_cca_match[] = {
+        ...
+};
+
+Thanks,
+Gavin
 
 
