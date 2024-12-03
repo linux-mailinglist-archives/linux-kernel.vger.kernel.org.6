@@ -1,198 +1,230 @@
-Return-Path: <linux-kernel+bounces-430374-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430375-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79C949E3016
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 00:51:10 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C56E9E301C
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 00:52:42 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2748116702B
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 23:52:39 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6010420B1E1;
+	Tue,  3 Dec 2024 23:52:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="U4Scl82+"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16567283B1A
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 23:51:09 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A9A620ADDA;
-	Tue,  3 Dec 2024 23:51:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="RDOBMIxV"
-Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB6EB1E4110
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 23:50:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5215189F56;
+	Tue,  3 Dec 2024 23:52:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733269861; cv=none; b=Q3wyGqplaMa2YPYyQ/DC/DgXPFUI098I6xlu/bjhJnx02BKRMU7KzyIJV2ffl9O1/JM+RVzFRdubptKcUrYaFaWfX99zMR/W5cEU1WppF7vgLCmw39VFUiUVZYevAL3OGZZOikjYBYv8+ahGPAr0B93o2jSFJQZtF44NyfohswM=
+	t=1733269950; cv=none; b=GCNiuUP5TCtQklBN5DOqbvITNFGHZzAKH1oJdWO4BCXHEFVFI6DABf9Lwt8lcEUTPHjV4zZs+pm05cCkJSy/1Rbq0nPLrYi+Ra0+BH+2dtQuNWhSkBuXQkvEyOYbub0y94w1OgXSrL8qdKlcbqwIrCvtY/qokEer48D3gKvyLQM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733269861; c=relaxed/simple;
-	bh=R45xxkijHNvo3KBLPSidEKjRiqPbaArVtuFKk4DrS9Y=;
-	h=MIME-Version:In-Reply-To:References:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CrJcfIDRmPaAgjGT4okZa641d0+/iQ6WNfePiUp4fd76s0eB21Z8QcF7df+6pYEdqPwvTTT7Yq+8XVJmzwpoVe6CEbR3vD57xaFVSl4sIaRrs/ElSC+Oteykyr8RgKZZewh0MkHzhJpLoVPuk0Vm+mptmIjjdOKvYwEyxKHMcZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=RDOBMIxV; arc=none smtp.client-ip=209.85.222.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7b66a740de4so453225885a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 15:50:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1733269859; x=1733874659; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:user-agent:from:references
-         :in-reply-to:mime-version:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=EnjgP+/pVl9iI2xT3/J2oBRnCck1VdgzOQo4g6wMy/Y=;
-        b=RDOBMIxVRl0oMVWC0oFXwAUz5pK8kv+l9guJQGcjiTgsnnpPeNr5WM1vDRAxsYE1A7
-         ktEOxVW9cWLA8rEolAtqDCcyagdjmJy1Nkr3JwKpfF/OiS9S5jk6gds9nKiBfDTL6wiD
-         XYed4aOP/d4VVmblYx/wPcztTz5X7fsp9e374=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733269859; x=1733874659;
-        h=cc:to:subject:message-id:date:user-agent:from:references
-         :in-reply-to:mime-version:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EnjgP+/pVl9iI2xT3/J2oBRnCck1VdgzOQo4g6wMy/Y=;
-        b=rnO8SdBVdpyANWTbB669FDu84Q5vwdOuS5K9oaP+85vWFhRSjnXQuIx89IZFG67NQH
-         8YcEGWmeYNh2C1Lp76wqY6ynbY5J4tk6WUQSNw8Y8TXSmCw/IdZzXaimeDj45E4H71r9
-         Ypp03qkzMt1EZFGtpzIRZAAcxN57rvFbnURmB/exS0bvQT4jbEwhCMpdqEB44aPy4hcG
-         av/IBpun9H+Q7fWtLJX09ZZkCMDb1f4OXZHZ0w4+p9Ndqp4BV0h4/Pzk417EdDA78x0B
-         48grg8DAmeqPiFrQjQNYTp91T8IOvOk5DcROO60LANtYfIJJApBzIUQ442odPmwQey0e
-         FWxA==
-X-Forwarded-Encrypted: i=1; AJvYcCUKKOOKFWVA/PuqAGadQf6R3OeplrsWENk4MXZAE+uKIVjoI9k4OVgdOIH+/CQDkhKd+v8M8dy48UQO/vU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YySNQ1Ue+zJh6QjomTyadeQE9v9NyVmZ1XWqVgiKDBV67R5iQP3
-	r8ZwOF7X4baU0ELtQpo6dBMDeyJLdkHHf6fPWK4u8JmFHBMgJ/muyGqABugfMmRjYa95Zn3dW/7
-	dkMXfdKn0GWcJO2BaQjWualckfRXiOzKriLEd
-X-Gm-Gg: ASbGnctmQOZM5IBVwSkpreNlZGyLbXLiL8qsxSPXp7Qfsg6P3ZBZNO0OgJixCqFIo/d
-	zRwGToEsJPqo/UwG9mrmX2JXMWAxBRYpGcmrTWGdI9r5CyHMY5EJYcvJBrYo=
-X-Google-Smtp-Source: AGHT+IHEgBXWoi8BJHO3jSXOG7m1oHxpYBSZUKMhC1usrxD/ibe1QmfujCFJzYfILghK3QdcAVLyYpr9Sv5mqRngbJA=
-X-Received: by 2002:a05:6214:2029:b0:6d3:7a47:2034 with SMTP id
- 6a1803df08f44-6d8c443cefdmr40855326d6.3.1733269858918; Tue, 03 Dec 2024
- 15:50:58 -0800 (PST)
-Received: from 753933720722 named unknown by gmailapi.google.com with
- HTTPREST; Tue, 3 Dec 2024 15:50:58 -0800
+	s=arc-20240116; t=1733269950; c=relaxed/simple;
+	bh=YeKECodB54j8DVOkgWE3bZYUE4a8mJE+BK8G/Cktrro=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Mm46Lt05j1bSiLuRfRiFWH5RUqMWYbAdWYqUQCPQp/pi+lFlONrN9HX//TgEtO5JrSMQhl+48zbf4PZoGQy3nBifWS0vkpnrB6wogEzI6VyXDtqzPCzaRX0dJUl6IzWYAQubka7WfIwKJDEB8zdbX12nC4jJfnSfYGWbZXYOEdU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=U4Scl82+; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B3GTxq7024524;
+	Tue, 3 Dec 2024 23:52:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	YeKECodB54j8DVOkgWE3bZYUE4a8mJE+BK8G/Cktrro=; b=U4Scl82+YESk/5Yd
+	thhZkkaoq5975CPjQOdA1AXQo3q8fok5VjqHgSDUraekcsV1KMntkLMUuxBRMUYO
+	MJfAdUjywQmsBZC16q7kv7zjZeb+1h25g1cQiCPlMXdMb0dYCk8Yh9FXOxUjaHHb
+	ew9NPwcLLku+wQn5ugVDkCrRuMsPFH9bE6xepbyB6skDrkiL7pY5djM3ndkQiNE+
+	iuDZb4C7Bt4U4a/iTyW9leV8xhLlo0rgzYKuz7VyzM40AZggqnLMpj6xbXQLrXHE
+	0mB5oQSThfC3wz8YqH9PSjqMNv7bY0DbO87m7aT00u+zhEB2t0oh34XLr9WVF4WT
+	mqXHcQ==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 439vnyth7x-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 03 Dec 2024 23:52:14 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B3NqCDB023272
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 3 Dec 2024 23:52:12 GMT
+Received: from [10.110.57.23] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 3 Dec 2024
+ 15:52:12 -0800
+Message-ID: <11ced6c9-6917-41f7-975b-24641595002b@quicinc.com>
+Date: Tue, 3 Dec 2024 15:52:11 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <cartdeijkv6z23dgm7uif4lti3lahfqmuyxcmruzqbefhsp6yk@m6ocjhncs2ko>
-References: <lf7y7wpuca6kzqcglgs5d443iusf7xjocum4adi7t3npfavccx@zgsp37oyztme>
- <yk3xidaisbd56yndaucax7otijjauqmm7lqm6q4q633kdawlqo@qaq27lwxmvwd>
- <CAE-0n501j+8bMnMKabFyZjn+MLUy3Z68Hiv1PsfW0APy5ggN8g@mail.gmail.com>
- <gstohhcdnmnkszk4l2ikd5xiewtotgo5okia62paauj6zpaw7y@4wchyvoynm2p>
- <CAE-0n50z6MNa7WOsg-NU7k8BpFeJJyYfHX3ov6DsthLWauSNpA@mail.gmail.com>
- <hqmx7jtkvrwvb27n56hw7rpefhp37lhr3a5fawz7gsl76uuj5s@h7m6wpdhibkk>
- <CAE-0n50y1O2C47zOGJPmMjKXK_m6a=jhpEAP4nW+RymZbo2xyg@mail.gmail.com>
- <5kisfv22tgqwzjpxqrbx56ywr7l4r7pny3pl2r7crv4rijqbwk@azricdasttg7>
- <CAE-0n50Bxi2GfnxOmMwe-F+k5jMSiyAVPDb6K8pYm-i6hpJTOA@mail.gmail.com> <cartdeijkv6z23dgm7uif4lti3lahfqmuyxcmruzqbefhsp6yk@m6ocjhncs2ko>
-From: Stephen Boyd <swboyd@chromium.org>
-User-Agent: alot/0.12.dev1+gaa8c22fdeedb
-Date: Tue, 3 Dec 2024 15:50:58 -0800
-Message-ID: <CAE-0n51-QLLje0f7T4p3xK6Q-FRk4K0NUrVVm4cxkKoevuzktw@mail.gmail.com>
-Subject: Re: [PATCH v4 15/18] dt-bindings: usb: Add ports to
- google,cros-ec-typec for DP altmode
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	patches@lists.linux.dev, devicetree@vger.kernel.org, 
-	Douglas Anderson <dianders@chromium.org>, Pin-yen Lin <treapking@chromium.org>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Benson Leung <bleung@chromium.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@gmail.com>, 
-	dri-devel@lists.freedesktop.org, Guenter Roeck <groeck@chromium.org>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Lee Jones <lee@kernel.org>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Prashant Malani <pmalani@chromium.org>, 
-	Robert Foss <rfoss@kernel.org>, Rob Herring <robh+dt@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, Tzung-Bi Shih <tzungbi@kernel.org>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Daniel Scally <djrscally@gmail.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>, Ivan Orlov <ivan.orlov0322@gmail.com>, 
-	linux-acpi@vger.kernel.org, linux-usb@vger.kernel.org, 
-	Mika Westerberg <mika.westerberg@linux.intel.com>, 
-	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Vinod Koul <vkoul@kernel.org>, Rob Herring <robh@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v30 14/30] ASoC: usb: Create SOC USB SND jack kcontrol
+To: Cezary Rojewski <cezary.rojewski@intel.com>
+CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-sound@vger.kernel.org>, <linux-usb@vger.kernel.org>,
+        <linux-input@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-doc@vger.kernel.org>, <srinivas.kandagatla@linaro.org>,
+        <mathias.nyman@intel.com>, <perex@perex.cz>, <conor+dt@kernel.org>,
+        <dmitry.torokhov@gmail.com>, <corbet@lwn.net>, <broonie@kernel.org>,
+        <lgirdwood@gmail.com>, <krzk+dt@kernel.org>,
+        <pierre-louis.bossart@linux.intel.com>, <Thinh.Nguyen@synopsys.com>,
+        <tiwai@suse.com>, <robh@kernel.org>, <gregkh@linuxfoundation.org>
+References: <20241106193413.1730413-1-quic_wcheng@quicinc.com>
+ <20241106193413.1730413-15-quic_wcheng@quicinc.com>
+ <2075e22b-f6ec-4868-8880-cad78a6a35d9@intel.com>
+Content-Language: en-US
+From: Wesley Cheng <quic_wcheng@quicinc.com>
+In-Reply-To: <2075e22b-f6ec-4868-8880-cad78a6a35d9@intel.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: m9l7QOzOCmtciTCYJWumIVB9hjaeDlTB
+X-Proofpoint-GUID: m9l7QOzOCmtciTCYJWumIVB9hjaeDlTB
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 adultscore=0
+ mlxlogscore=907 bulkscore=0 impostorscore=0 mlxscore=0 suspectscore=0
+ spamscore=0 priorityscore=1501 lowpriorityscore=0 phishscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412030197
 
-Quoting Dmitry Baryshkov (2024-11-21 14:59:42)
-> On Tue, Nov 19, 2024 at 08:09:31PM -0500, Stephen Boyd wrote:
-> >
-> > It sounds like we're debating how to handle lane assignment in the
-> > kernel. Either way, the code is going to be implemented in the bridge
-> > driver because it's the one that has to change what physical lane a
-> > logical lane is assigned to. The question is if it should be some sort
-> > of bridge_funcs callback, or should bridge drivers hook into the typec
-> > framework to expose an orientation switch, or something else?
+
+On 12/3/2024 8:14 AM, Cezary Rojewski wrote:
+> On 2024-11-06 8:33 PM, Wesley Cheng wrote:
+>> Expose API for creation of a jack control for notifying of available
+>> devices that are plugged in/discovered, and that support offloading.  This
+>> allows for control names to be standardized across implementations of USB
+>> audio offloading.
 >
-> I was assuming that orientation switch is such kind of a hook.
+> ...
 >
-> >
-> > I'm thinking we should introduce some sort of bridge_funcs callback that
-> > can be called from the DP altmode driver, either parallel to the
-> > drm_connector_oob_hotplug_event() function or from it directly. If we
-> > can pass the fwnode for the usb-c-connector to the oob_hotplug_event
-> > callback, maybe that's all we need to figure out which lanes go where.
-> > And then in the 2 DP connector muxing world we can call
-> > drm_connector_oob_hotplug_event() with one or the other DP connector
-> > node, which will likely be children nodes of the "HPD redriver" device.
+>> +/* SOC USB sound kcontrols */
 >
-> If you call it from drm_bridge_connector's oob_hotplug_event handler,
-> this should fly. Does it cover your 3-DP or 4-DP usecases?
+> I'd suggest to use 'SoC' over 'SOC'. The former is predominant in the ASoC code.
 >
 
-I think it will work as long as we're able to add some sort of property
-to the usb-c-connector node to indicate that the DP lanes are flipped.
-It feels like that should be in the displayport altmode node to keep
-things tidy because the SuperSpeed port is overloaded. Maybe the drm
-framework can have some API that can take the fwnode from the
-oob_hotplug_event handler and tell the bridge driver which way the
-orientation is.
-
- connector {
-   compatible = "usb-c-connector";
-
-   altmodes {
-     displayport {
-       orientation-reversed;
-     }
-   };
-
-   ports {
-     ...
-   };
- };
+Ok, I can modify the abbreviations
 
 
- int drm_dp_typec_orientation_flipped(struct fwnode_handle *fwnode)
- {
-   struct fwnode_handle *altmodes;
-   struct fwnode_handle *dp;
+>> +/**
+>> + * snd_soc_usb_setup_offload_jack() - Create USB offloading jack
+>> + * @component: USB DPCM backend DAI component
+>> + * @jack: jack structure to create
+>> + *
+>> + * Creates a jack device for notifying userspace of the availability
+>> + * of an offload capable device.
+>> + *
+>> + * Returns 0 on success, negative on error.
+>> + *
+>> + */
+>> +int snd_soc_usb_setup_offload_jack(struct snd_soc_component *component,
+>> +                   struct snd_soc_jack *jack)
+>> +{
+>> +    int ret;
+>> +
+>> +    ret = snd_soc_card_jack_new(component->card, "USB Offload Jack",
+>> +                    SND_JACK_USB, jack);
+>> +    if (ret < 0) {
+>> +        dev_err(component->card->dev, "Unable to add USB offload jack: %d\n",
+>> +            ret);
+>> +        return ret;
+>> +    }
+>> +
+>> +    ret = snd_soc_component_set_jack(component, jack, NULL);
+>> +    if (ret) {
+>> +        dev_err(component->card->dev, "Failed to set jack: %d\n", ret);
+>> +        return ret;
+>> +    }
+>> +
+>> +    return 0;
+>> +}
+>> +EXPORT_SYMBOL_GPL(snd_soc_usb_setup_offload_jack);
+>
+> Do we really need this one? Error reporting/handling for both invocations above is redundant, the log message should be provided by lower-level API. No need to pollute each caller with them. And with that part removed, we end up with basic ASoC calls, hardly a new-API candidate.
+>
 
-   altmodes = fwnode_get_named_child_node(fwnode, "altmodes");
-   if (!altmodes)
-     return -EINVAL;
+In previous discussions, my understanding was that we wanted to have this API, so that the sound jack naming, etc.. was consistent throughout all designs.  So that was the incentive of having its own dedicated API.
 
-   dp = fwnode_get_named_child_node(altmodes, "displayport");
-   if (!dp)
-     return -EINVAL;
+https://lore.kernel.org/linux-usb/8e08fd5e-91b8-c73e-1d97-7cf4d98573d4@quicinc.com/
 
-   if (fwnode_property_read_bool(dp, "orientation-reversed"))
-     return 1;
 
-   return 0;
- }
+>> +/**
+>> + * snd_soc_usb_disable_offload_jack() - Disables USB offloading jack
+>> + * @component: USB DPCM backend DAI component
+>> + *
+>> + * Disables the offload jack device, so that further connection events
+>> + * won't be notified.
+>> + *
+>> + * Returns 0 on success, negative on error.
+>> + *
+>> + */
+>> +int snd_soc_usb_disable_offload_jack(struct snd_soc_component *component)
+>> +{
+>> +    int ret;
+>> +
+>> +    ret = snd_soc_component_set_jack(component, NULL, NULL);
+>> +    if (ret) {
+>> +        dev_err(component->card->dev, "Failed to disable jack: %d\n", ret);
+>> +        return ret;
+>> +    }
+>> +
+>> +    return 0;
+>> +}
+>> +EXPORT_SYMBOL_GPL(snd_soc_usb_disable_offload_jack);
+>
+> Code duplication. ASoC already provides the API and the logging is redundant here.
+>
 
-There's another wrinkle on some Corsola devices where the EC says
-there's a usb-c-connector on the board, but in reality the DP lanes are
-connected to a DP-to-HDMI bridge that is controlled by the EC which goes
-to an HDMI connector on the side of the laptop. The EC does the
-arbitration as usual because there's only one DP source and one or two
-usb type-c connectors physically on the laptop in addition to the HDMI
-connector.
+OK, maybe the enable/disable apis are not too useful.
 
-The easiest way to imagine this is that we took the usb-c-connector and
-jammed an HDMI dongle in there with some glue so that it can never be
-removed. There isn't any USB going there either because it can't be
-used. I suppose we can continue to describe this with an
-altmodes/displayport node but then add some compatible like
-"usb-c-hdmi-connector" or another property to the altmodes/displayport
-node like "type = hdmi" that signifies this is a connector that only
-outputs HDMI.
+
+Thanks
+
+Wesley Cheng
+
+
+>> +/**
+>> + * snd_soc_usb_enable_offload_jack() - Enables USB offloading jack
+>> + * @component: USB DPCM backend DAI component
+>> + * @jack: offload jack to enable
+>> + *
+>> + * Enables the offload jack device, so that further connection events
+>> + * will be notified.  This is the complement to
+>> + * snd_soc_usb_disable_offload_jack().
+>> + *
+>> + * Returns 0 on success, negative on error.
+>> + *
+>> + */
+>> +int snd_soc_usb_enable_offload_jack(struct snd_soc_component *component,
+>> +                    struct snd_soc_jack *jack)
+>> +{
+>> +    int ret;
+>> +
+>> +    ret = snd_soc_component_set_jack(component, jack, NULL);
+>> +    if (ret) {
+>> +        dev_err(component->card->dev, "Failed to enable jack: %d\n", ret);
+>> +        return ret;
+>> +    }
+>> +
+>> +    return 0;
+>> +}
+>> +EXPORT_SYMBOL_GPL(snd_soc_usb_enable_offload_jack);
+>
+> Ditto.
+>
+>>   /**
+>>    * snd_soc_usb_find_priv_data() - Retrieve private data stored
+>>    * @usbdev: device reference
+>>
+>
 
