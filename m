@@ -1,207 +1,101 @@
-Return-Path: <linux-kernel+bounces-429140-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 313A69E17DA
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:38:17 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 056991606A1
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:38:14 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 732341E04B5;
-	Tue,  3 Dec 2024 09:37:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="YKuB4AXb"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEAD19E17E0
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:38:54 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 181981DFE2E;
-	Tue,  3 Dec 2024 09:37:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94401283282
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:38:53 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4A801E0DE4;
+	Tue,  3 Dec 2024 09:37:44 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF0A31DE4FD
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 09:37:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733218639; cv=none; b=glglvok/m6enF8IlZ9LB/nu0VJ4ThkTaTY3vvFfWIKGcSYR6E90NsMfA88d90gWzPy6lnsf6LxlzUp+USV6ev1Ox5nW1dym9idMmhp5xsScw5h5MmfB2/x8YVfoWzuzsQvf+biCV27Nw/hay9GVyOwlOSGMZzOq7pyBEOzuP5KM=
+	t=1733218664; cv=none; b=l6UtIKAQY3b8wjBEoe1sxwsfnNRE/EfrSqC//o2k1/rXn1CDNuI/zJQ4Fw1PQ/lllaEhtb7h8HHObBO9YPkbJO1VHCiFX3T1OViCvKM/dy1MIKJ87HWeddw7/OxF+lb6P8eg0ijY+foJ2TXV7lA/AlOwUNmw9ZG5JKDHVuOsIsM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733218639; c=relaxed/simple;
-	bh=jQXX/Tc40kph/7OBLJnEEHlRiFU1zhsnN3QXwzQG3EA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M1pRPBaDJ2IDR9Ch1BEgzvvIqzzPun3IdTeTdi+X+VujlPZ1QgkarcDhJEDMbfUbakkQz3Hbjrv4BeNfYfnM0FvZxxdwJQEajejwSUvhJhkRXbCKhfNMuOyfmuRx5+O2OnpvoozwrX7RMP10OXlXi9SaclY6D6pd/xaIPiITekE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=YKuB4AXb; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id C59994CE;
-	Tue,  3 Dec 2024 10:36:47 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1733218608;
-	bh=jQXX/Tc40kph/7OBLJnEEHlRiFU1zhsnN3QXwzQG3EA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YKuB4AXbRMhscTWbDWfRTbNGPURysibT8ay+/BUsYsk5ruwPwvod/Z8ANtwVLPX+m
-	 4YUAPFw7VbQrfWN2PeXlVZ4elGmpGiXE/IkctEaJ3V6P5Bhn17BRaPHmPKJMeiipoL
-	 1eD1zdRGU6DB72E6rDe9aTcpZCkqD+QwOjko6uCk=
-Date: Tue, 3 Dec 2024 11:37:03 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>, Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, LUU HOAI <hoai.luu.ub@renesas.com>,
-	Jagan Teki <jagan@amarulasolutions.com>,
-	Sam Ravnborg <sam@ravnborg.org>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-Subject: Re: [PATCH 8/9] arm64: dts: renesas: r8a779h0: Add display support
-Message-ID: <20241203093703.GL10736@pendragon.ideasonboard.com>
-References: <20241203-rcar-gh-dsi-v1-0-738ae1a95d2a@ideasonboard.com>
- <20241203-rcar-gh-dsi-v1-8-738ae1a95d2a@ideasonboard.com>
+	s=arc-20240116; t=1733218664; c=relaxed/simple;
+	bh=7ev4NVxVo+TJSeuLy6DxDZOiuXgvvpucuXg1z5L2tY8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=NNNX5JvbfNMc+kqatp0s2v+Vfv/TnPkM0xNJFNbaC3ePsAvOOQaYrz7U/uyo5LhUO+wY76lXhZ3GvXQoE+shdqlr79jLitgLpBgDtYLwEidDUhQ9R1paoaE0tf2i3UJOQUWGod+ASzP2ICTQsAco9yPyaxWqd9aGZwkgIMGggw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
+	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
+	(envelope-from <jre@pengutronix.de>)
+	id 1tIPLZ-0006C6-GQ; Tue, 03 Dec 2024 10:37:33 +0100
+From: Jonas Rebmann <jre@pengutronix.de>
+Subject: [PATCH v2 0/3] Add support for Fujitsu MB85RS128TY
+Date: Tue, 03 Dec 2024 10:37:24 +0100
+Message-Id: <20241203-mb85rs128ty-v2-0-42df3e7ff147@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241203-rcar-gh-dsi-v1-8-738ae1a95d2a@ideasonboard.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAFTRTmcC/1XMQQ6DIBCF4auYWZcGiFDoyns0LlSmOouCAWs0h
+ ruX2lU3k/yTvO+AhJEwwb06IOJKiYIvIS8VDFPnR2TkSoPkshZCWvbqjYpJSLPsTCuLRljOrbp
+ BWcwRn7Sd2qMtPVFaQtxPfBXf788p589ZBeOs05r3urbcDaaZ0Y/vJQZP29UhtDnnDyv0186rA
+ AAA
+X-Change-ID: 20241129-mb85rs128ty-659e81900957
+To: Miquel Raynal <miquel.raynal@bootlin.com>, 
+ Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Heiko Schocher <hs@denx.de>
+Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, David Jander <david@protonic.nl>, 
+ kernel@pengutronix.de, Jonas Rebmann <jre@pengutronix.de>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=997; i=jre@pengutronix.de;
+ h=from:subject:message-id; bh=7ev4NVxVo+TJSeuLy6DxDZOiuXgvvpucuXg1z5L2tY8=;
+ b=owGbwMvMwCF2ZcYT3onnbjcwnlZLYkj3uxgW8ufDefNr6a93WP5onTXH7feiiLPehjFS04y+6
+ x/YLcmY1VHKwiDGwSArpsgSqyanIGTsf92s0i4WZg4rE8gQBi5OAZhIdg/DH55fC1+aaZYUbW5i
+ OVmotP6BP0eaPoPhzCm+82TPbljFN4eRYV/+l8wFiYXn4vR9lntHzsz1kZvANjP3Q2bdLS82pb+
+ 5nAA=
+X-Developer-Key: i=jre@pengutronix.de; a=openpgp;
+ fpr=0B7B750D5D3CD21B3B130DE8B61515E135CD49B5
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:1101:1d::ac
+X-SA-Exim-Mail-From: jre@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Hi Tomi,
+The Fujitsu MB85RS128TY FRAM chips behave almost identically to the
+Microchip 48L640. This series adds their support to the mchp48l640
+driver.
 
-Thank you for the patch.
+Signed-off-by: Jonas Rebmann <jre@pengutronix.de>
+---
+Changes in v2:
+- Correct dt schema in Documentation/devicetree/bindings/mtd/microchip,mchp48l640.yaml
+- Link to v1: https://lore.kernel.org/r/20241202-mb85rs128ty-v1-0-a660b6490dc8@pengutronix.de
 
-On Tue, Dec 03, 2024 at 10:01:42AM +0200, Tomi Valkeinen wrote:
-> From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-> 
-> Add the device nodes for supporting DU and DSI.
-> 
-> Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-> ---
->  arch/arm64/boot/dts/renesas/r8a779h0.dtsi | 77 +++++++++++++++++++++++++++++++
->  1 file changed, 77 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/renesas/r8a779h0.dtsi b/arch/arm64/boot/dts/renesas/r8a779h0.dtsi
-> index 12d8be3fd579..82df6ee98afb 100644
-> --- a/arch/arm64/boot/dts/renesas/r8a779h0.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/r8a779h0.dtsi
-> @@ -1828,6 +1828,54 @@ csi41isp1: endpoint {
->  			};
->  		};
->  
-> +		fcpvd0: fcp@fea10000 {
-> +			compatible = "renesas,fcpv";
-> +			reg = <0 0xfea10000 0 0x200>;
-> +			clocks = <&cpg CPG_MOD 508>;
-> +			power-domains = <&sysc R8A779H0_PD_C4>;
-> +			resets = <&cpg 508>;
-> +		};
-> +
-> +		vspd0: vsp@fea20000 {
-> +			compatible = "renesas,vsp2";
-> +			reg = <0 0xfea20000 0 0x8000>;
-> +			interrupts = <GIC_SPI 546 IRQ_TYPE_LEVEL_HIGH>;
+---
+David Jander (2):
+      mtd: mchp48l640: make WEL behaviour configurable
+      mtd: mchp48l640: add support for Fujitsu MB85RS128TY FRAM
 
-The documentation lists this interrupt as being LevelSensitive and
-Negative. I wouldn't expect the VSP to work at all with a wrong polarity
-in DT, so the level may get inverted somewhere.
+Jonas Rebmann (1):
+      dt-bindings: mtd: mchp48l640 add mb85rs128ty compatible
 
-> +			clocks = <&cpg CPG_MOD 830>;
-> +			power-domains = <&sysc R8A779H0_PD_C4>;
-> +			resets = <&cpg 830>;
-> +			renesas,fcp = <&fcpvd0>;
-> +		};
-> +
-> +		du: display@feb00000 {
-> +			compatible = "renesas,du-r8a779h0";
-> +			reg = <0 0xfeb00000 0 0x40000>;
-> +			interrupts = <GIC_SPI 523 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks = <&cpg CPG_MOD 411>;
-> +			clock-names = "du.0";
-> +			power-domains = <&sysc R8A779H0_PD_C4>;
-> +			resets = <&cpg 411>;
-> +			reset-names = "du.0";
-> +			renesas,vsps = <&vspd0 0>;
-> +
-> +			status = "disabled";
-> +
-> +			ports {
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
-> +
-> +				port@0 {
-> +					reg = <0>;
-> +					du_out_dsi0: endpoint {
-> +						remote-endpoint = <&dsi0_in>;
-> +					};
-> +				};
-> +
-> +				port@1 {
-> +					reg = <1>;
-> +				};
+ .../bindings/mtd/microchip,mchp48l640.yaml         |  5 ++--
+ drivers/mtd/devices/mchp48l640.c                   | 28 +++++++++++++++++++---
+ 2 files changed, 28 insertions(+), 5 deletions(-)
+---
+base-commit: 7af08b57bcb9ebf78675c50069c54125c0a8b795
+change-id: 20241129-mb85rs128ty-659e81900957
 
-On V4M the DU has a single channel, so there should be a single port.
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-
-> +			};
-> +		};
-> +
->  		isp0: isp@fed00000 {
->  			compatible = "renesas,r8a779h0-isp",
->  				     "renesas,rcar-gen4-isp";
-> @@ -1996,6 +2044,35 @@ isp1vin15: endpoint {
->  			};
->  		};
->  
-> +		dsi0: dsi-encoder@fed80000 {
-> +			compatible = "renesas,r8a779h0-dsi-csi2-tx";
-> +			reg = <0 0xfed80000 0 0x10000>;
-> +			clocks = <&cpg CPG_MOD 415>,
-> +				 <&cpg CPG_CORE R8A779H0_CLK_DSIEXT>,
-> +				 <&cpg CPG_CORE R8A779H0_CLK_DSIREF>;
-> +			clock-names = "fck", "dsi", "pll";
-> +			power-domains = <&sysc R8A779H0_PD_C4>;
-> +			resets = <&cpg 415>;
-> +
-> +			status = "disabled";
-> +
-> +			ports {
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
-> +
-> +				port@0 {
-> +					reg = <0>;
-> +					dsi0_in: endpoint {
-> +						remote-endpoint = <&du_out_dsi0>;
-> +					};
-> +				};
-> +
-> +				port@1 {
-> +					reg = <1>;
-> +				};
-> +			};
-> +		};
-> +
->  		prr: chipid@fff00044 {
->  			compatible = "renesas,prr";
->  			reg = <0 0xfff00044 0 4>;
-
+Best regards,
 -- 
-Regards,
+Jonas Rebmann <jre@pengutronix.de>
 
-Laurent Pinchart
 
