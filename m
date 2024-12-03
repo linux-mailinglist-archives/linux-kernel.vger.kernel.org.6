@@ -1,98 +1,110 @@
-Return-Path: <linux-kernel+bounces-429450-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B7EB9E1C4E
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 13:37:32 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82AC99E1CBA
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 13:50:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21788284703
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 12:37:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EDB07B602DC
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 12:47:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAC311E5733;
-	Tue,  3 Dec 2024 12:37:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 577241F7098;
+	Tue,  3 Dec 2024 12:43:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eAdJ8xP1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MqLNpnMS"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4875A1E4919
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 12:37:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD6281F708D;
+	Tue,  3 Dec 2024 12:43:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733229448; cv=none; b=IRDI4T5VL6nhZVwRfXtpD9YHZ38mTH3/ky2QsnsbsJvMxqEt1aDLzHnoDKdR6v/8MAAiDlZGojMUTp8F389ExRWZZXuxcZdY/4YAEYHx3tc5MgIMyH2e46Bzycm7gKKVXHkT0iFk/HRuceVACM5YjI/xkEoxmRposJj731EU0Wg=
+	t=1733229825; cv=none; b=owzXDlvFqEPC99PGpd5EjmH9MpQz1GQ6qJN5czfJsPDqNDBfc/kv0+xS8kk22W21W2aqygYteqMBTgSj+mQKx7xLdoaD6++Qq1+13fkbTQNdH2IAZEkSdOJj/k3MGKZ+zcgQwZgwdOLMVLmUY3hHxjrhbMZ8PT5NUxeuGiTp27w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733229448; c=relaxed/simple;
-	bh=69QcTpbm8HYAOEez/L3Ux7Gj2eB8EOWegOb73arSY9Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=N24FDY+DAm6Xq0meHg76k7qL7SRaRv/SipjbGMLc0tTjjXGPmC83eBdgGJpYRa1W1+TBEYeIavHhpuN9VkIt+19CyU/qrCN48a/hBqfFtmErB7gRsiVQqA5+kKYZOoKHtvwlgcLbmkTlJzMpWPb5Vb6HG1529wvY5o0nyPlI2WI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eAdJ8xP1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F88CC4CECF;
-	Tue,  3 Dec 2024 12:37:27 +0000 (UTC)
+	s=arc-20240116; t=1733229825; c=relaxed/simple;
+	bh=JZ5YG/ZPtu0+rE3J++aCFRB1wnbLT9/tbF2mceWYsQI=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=dagZSfTuL7REhotYxCZVJqpVe8X2Qze26707EJ+slt5v186fE6jbVyShPWSoNIGu5fLw+GakBhTOHJ2ecMdJuRxK1MX97EtH3nnDZN0vlRbFP/daZtyviGUxp/AdzpUYEbGFyCiEfTKyN19GqzmDCihHdCGNJIAWQN5/tULSigg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MqLNpnMS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2744C4CED6;
+	Tue,  3 Dec 2024 12:43:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733229448;
-	bh=69QcTpbm8HYAOEez/L3Ux7Gj2eB8EOWegOb73arSY9Y=;
-	h=From:To:Cc:Subject:Date:From;
-	b=eAdJ8xP11KMa4dw/P2p5f0dF61hJ8OlvUOKtLwvyvXvCFCzsKOrfx47mDJdfFXzFo
-	 lzL18hX1CKWxmQod0RQqfKADCsBVZXlhtd5Rqjy3o/kwjFkwOCWhFqgJctaay9SFOd
-	 8Ofc/mD5fArxkigj+/8Y1FkI+UepRHpULZgQ1CihbPImMRX2xrjPahmsmceVv5BPzH
-	 WNI0mIgeGxNuYzKeGimbX60nFcjZ9LGrEBXlA0txsXATkCPq3uD84IdbI3DZaRFDaL
-	 f8UHmxPbA12uUJlawWSKRgdmHWOvfAXzdVuoFDev97NgN++jWar+oTAzZeY6iZFWZF
-	 qS5BlTSZMjANw==
-From: Leon Romanovsky <leon@kernel.org>
-To: Vineet Gupta <vgupta@kernel.org>
-Cc: Leon Romanovsky <leonro@nvidia.com>,
-	linux-snps-arc@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] ARC: build: Try to guess GCC variant of cross compiler
-Date: Tue,  3 Dec 2024 14:37:15 +0200
-Message-ID: <00d3173fe207ab9ba85dc974777a6ccb4656b03c.1733229205.git.leonro@nvidia.com>
-X-Mailer: git-send-email 2.47.0
+	s=k20201202; t=1733229825;
+	bh=JZ5YG/ZPtu0+rE3J++aCFRB1wnbLT9/tbF2mceWYsQI=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=MqLNpnMSxfXKNkwAiyGtAHz+PjY/cEOqfzx5pk84QkspoLpvAFTQFHDuQCjBOaOcH
+	 hrYzxEPOBT47SUYd8CP2haXoa3m220LYpP1V+E7FZA37UDa7RQ/AsmF/WXF1qTPjl2
+	 z5hIL8DZigDgWiuy4td6/Gl4CkrjBQd9o9EQtFwqVctEiGb0pMx1nGwEM/VR33Y1ti
+	 v1KgeYmOAGuR5YkSdSlHRZ3ETjREGAyjFDY6C1rxmQSZLJ9+YAebrLn6cEQjKzyYRT
+	 /MQQnzT3CisaeNQ0ywvN2AAXkTXYjLai1zON7J4K1bdQlaZaj8vt9R0EjMN5nYei8f
+	 jHktvBXb1YLww==
+From: Mark Brown <broonie@kernel.org>
+Date: Tue, 03 Dec 2024 12:39:20 +0000
+Subject: [PATCH v3 1/9] arm64/sysreg: Update ID_AA64PFR2_EL1 to DDI0601
+ 2024-09
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241203-arm64-2024-dpisa-v3-1-a6c78b1aa297@kernel.org>
+References: <20241203-arm64-2024-dpisa-v3-0-a6c78b1aa297@kernel.org>
+In-Reply-To: <20241203-arm64-2024-dpisa-v3-0-a6c78b1aa297@kernel.org>
+To: Catalin Marinas <catalin.marinas@arm.com>, 
+ Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
+ Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+ Joey Gouly <joey.gouly@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
+ Shuah Khan <shuah@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ linux-doc@vger.kernel.org, kvmarm@lists.linux.dev, 
+ linux-kselftest@vger.kernel.org, Mark Brown <broonie@kernel.org>
+X-Mailer: b4 0.15-dev-9b746
+X-Developer-Signature: v=1; a=openpgp-sha256; l=771; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=JZ5YG/ZPtu0+rE3J++aCFRB1wnbLT9/tbF2mceWYsQI=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBnTvz0exMUM1k05N+NteMxb/PS3DKFXKYKVDe2VAqA
+ u7dI2GOJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZ0789AAKCRAk1otyXVSH0OJsB/
+ 4qAZ0/ezAvRfl6l87cUQLXedjUo+f5aJjldDkEkycIdA3mI1yC+bS7BSrN4yPJJf7QAJ33nqOMvLw9
+ xeogePvloWXukyFZktUUSu3IfhR3Pc9+rlaaaYTQRdxJAhNB6EAUI3tVzxKDP0eJIlTceaBRRuWBaN
+ Sm61AwQhZ5pKS2G/5PNmj1i0d8iNy+lxBPvjuOLINs68EKSBardSmzQkzi9FWjyKqsqfERYZdlLwTM
+ P8qti1abSvRRd1KXnM73EUY3nufr0ZHogeLzNClxNQAfKEO6AKAQEgC+HuGBeJ/fK2wVeOeqVg6C/q
+ jNMPPMnKFaUU3ernj4bq888DY8eHlT
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-From: Leon Romanovsky <leonro@nvidia.com>
+DDI0601 2024-09 defines a new feature flags in ID_AA64PFR2_EL1
+describing support for injecting UNDEF exceptions, update sysreg to
+include this.
 
-ARC GCC compiler is packaged starting from Fedora 39i and the GCC
-variant of cross compile tools has arc-linux-gnu- prefix and not
-arc-linux-. This is causing that CROSS_COMPILE variable is left unset.
-
-This change allows builds without need to supply CROSS_COMPILE argument
-if distro package is used.
-
-Before this change:
-$ make -j 128 ARCH=arc W=1 drivers/infiniband/hw/mlx4/
-  gcc: warning: ‘-mcpu=’ is deprecated; use ‘-mtune=’ or ‘-march=’ instead
-  gcc: error: unrecognized command-line option ‘-mmedium-calls’
-  gcc: error: unrecognized command-line option ‘-mlock’
-  gcc: error: unrecognized command-line option ‘-munaligned-access’
-
-[1] https://packages.fedoraproject.org/pkgs/cross-gcc/gcc-arc-linux-gnu/index.html
-Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- arch/arc/Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/tools/sysreg | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arc/Makefile b/arch/arc/Makefile
-index 2390dd042e36..fb98478ed1ab 100644
---- a/arch/arc/Makefile
-+++ b/arch/arc/Makefile
-@@ -6,7 +6,7 @@
- KBUILD_DEFCONFIG := haps_hs_smp_defconfig
- 
- ifeq ($(CROSS_COMPILE),)
--CROSS_COMPILE := $(call cc-cross-prefix, arc-linux- arceb-linux-)
-+CROSS_COMPILE := $(call cc-cross-prefix, arc-linux- arceb-linux- arc-linux-gnu-)
- endif
- 
- cflags-y	+= -fno-common -pipe -fno-builtin -mmedium-calls -D__linux__
+diff --git a/arch/arm64/tools/sysreg b/arch/arm64/tools/sysreg
+index b081b54d6d227ed8300a6f129896647316f0b673..911f16c82ebd3ee98ffed965b02a5c6b153bc50c 100644
+--- a/arch/arm64/tools/sysreg
++++ b/arch/arm64/tools/sysreg
+@@ -1010,7 +1010,12 @@ UnsignedEnum	35:32	FPMR
+ 	0b0000	NI
+ 	0b0001	IMP
+ EndEnum
+-Res0	31:12
++Res0	31:20
++UnsignedEnum	19:16	UINJ
++	0b0000	NI
++	0b0001	IMP
++EndEnum
++Res0	15:12
+ UnsignedEnum	11:8	MTEFAR
+ 	0b0000	NI
+ 	0b0001	IMP
+
 -- 
-2.47.0
+2.39.5
 
 
