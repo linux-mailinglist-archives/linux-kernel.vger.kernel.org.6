@@ -1,82 +1,244 @@
-Return-Path: <linux-kernel+bounces-430161-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D7B99E2D37
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 21:35:59 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DC599E2D39
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 21:36:25 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EDDBE28224C
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 20:35:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8EC02163F48
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 20:36:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4D651FE473;
-	Tue,  3 Dec 2024 20:35:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC767205AA9;
+	Tue,  3 Dec 2024 20:36:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="QKQo2a1n"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="gTLWXnnR"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA743189F56;
-	Tue,  3 Dec 2024 20:35:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3BD21DB34E;
+	Tue,  3 Dec 2024 20:36:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733258152; cv=none; b=Px9FzYo0qZVrQ5VXOpAeV83rIHhOU56kD0jLRPUNwdKx4x1cGgbv1isaTpfQzCuY7VZmXYm1kTYv7gRhFegW3q354gjUggSl9z+DbaWn8GVIsJ9jW30G8Na3EVBNg5VOmWZ0BLzcgToy7xo8i+0mR9TVl/p/TLPwIrudw5yhdB4=
+	t=1733258174; cv=none; b=WJEICjFaSumciJuHLNysgZPDScIS9afielHPTvbaBZOXhC1LsB2mCVVR3mltBA1X9zPBQnS3w327dgrfgeoULBQYfdk8AHLQJQWv18KF55ehTwHITISY89mbvzvvFQb2onLSEkGAZ8/a87za5CXb4ZVPQdGznDI1k84aJLbtOb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733258152; c=relaxed/simple;
-	bh=3XFuyDVd24VNId3mtojt/s2zg943OWmadIp5MN1XvSc=;
+	s=arc-20240116; t=1733258174; c=relaxed/simple;
+	bh=4Waxk1OrNO6GTFs5DQaMfzgQ3SOLEn10SlKSkxh4Wqw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HpEZuGAdcx9plywsu4L4P5GbZFzBr92GkDM16EvgrbBsn/ArADnZv0hvtrrATBpyHrd12P69smZclC60sW5pdxYBXYKXbfqMc3gtIp+RKO/UVncjgl4laK42r4dNKmRuZqlwXaxsxQ8BlGBa5LPlvcR9t0kUgzRO+PHPCzceJUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=QKQo2a1n; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=XNUfzojEoIvPMsw7o5EQsm4flrwBcXxoTxbRJXaPFAY=; b=QKQo2a1nk6P25Xj4/v/PVvI61b
-	U+IcTWv8NQcLQJVs1rn516ArAyXOtvfrrpRMhBX06ALJ+gn3ZqVb2MSbDZx6+dQ+n6qJmx035Gw3z
-	lxBgDGZCD6jlXf9eLy8pG269wUo4f0tM9PAc5Ba8z7ZxFs/0t/5rTalBR4BRw3V9e9Y4=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tIZcV-00F8BB-T5; Tue, 03 Dec 2024 21:35:43 +0100
-Date: Tue, 3 Dec 2024 21:35:43 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Woojung Huh <woojung.huh@microchip.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>, kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	UNGLinuxDriver@microchip.com, Phil Elwell <phil@raspberrypi.org>
-Subject: Re: [PATCH net-next v1 06/21] net: usb: lan78xx: Improve error
- handling in EEPROM and OTP operations
-Message-ID: <ce20c7c4-0cbd-4c19-b695-4916c2d63f78@lunn.ch>
-References: <20241203072154.2440034-1-o.rempel@pengutronix.de>
- <20241203072154.2440034-7-o.rempel@pengutronix.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=A1ouv4HwwpJiNwBBtTMd1dxxxwIj/DgSQWnAJkxIoqIaxteAGiktmQDEk5IwNT7uat2411Tla86cs0q7x1/4zHxhbU7U+Ojhb28TCQrMx6T15ZqlFfKZE+J1PhpyPdv1qVWr9tlVBE8WXmZgryi41Rwv50KAWEOZVaxrV2nLYPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=gTLWXnnR; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 64865670;
+	Tue,  3 Dec 2024 21:35:41 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1733258141;
+	bh=4Waxk1OrNO6GTFs5DQaMfzgQ3SOLEn10SlKSkxh4Wqw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gTLWXnnRHlD/aULJBcJfMgCX1Aiwui4OhNloCG5ZGnfFARmqFxHR5mzxT6hbVfzpH
+	 EYHQ7g3jUTm3SBXv6E2+ToDBIuzzix6Tgx8XzJ+PfyrXFc0rmGvwc+6PR5VdxyWliP
+	 Ybne+jhjC04jfD25h2XPbWrp4bBXafcWw6U5wv40=
+Date: Tue, 3 Dec 2024 22:35:57 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Ricardo Ribalda <ribalda@chromium.org>
+Cc: Hans de Goede <hdegoede@redhat.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Guennadi Liakhovetski <guennadi.liakhovetski@intel.com>,
+	Hans Verkuil <hverkuil@xs4all.nl>,
+	Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v5 2/5] media: uvcvideo: Remove dangling pointers
+Message-ID: <20241203203557.GC5196@pendragon.ideasonboard.com>
+References: <20241202-uvc-fix-async-v5-0-6658c1fe312b@chromium.org>
+ <20241202-uvc-fix-async-v5-2-6658c1fe312b@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241203072154.2440034-7-o.rempel@pengutronix.de>
+In-Reply-To: <20241202-uvc-fix-async-v5-2-6658c1fe312b@chromium.org>
 
-On Tue, Dec 03, 2024 at 08:21:39AM +0100, Oleksij Rempel wrote:
-> Refine error handling in EEPROM and OTP read/write functions by:
-> - Return error values immediately upon detection.
-> - Avoid overwriting correct error codes with `-EIO`.
-> - Preserve initial error codes as they were appropriate for specific
->   failures.
-> - Use `-ETIMEDOUT` for timeout conditions instead of `-EIO`.
+Hi Ricardo,
+
+Thank you for the patch.
+
+On Mon, Dec 02, 2024 at 02:24:36PM +0000, Ricardo Ribalda wrote:
+> When an async control is written, we copy a pointer to the file handle
+> that started the operation. That pointer will be used when the device is
+> done. Which could be anytime in the future.
 > 
-> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> If the user closes that file descriptor, its structure will be freed,
+> and there will be one dangling pointer per pending async control, that
+> the driver will try to use.
+> 
+> Clean all the dangling pointers during release().
+> 
+> To avoid adding a performance penalty in the most common case (no async
+> operation), a counter has been introduced with some logic to make sure
+> that it is properly handled.
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: e5225c820c05 ("media: uvcvideo: Send a control event when a Control Change interrupt arrives")
+> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> ---
+>  drivers/media/usb/uvc/uvc_ctrl.c | 52 ++++++++++++++++++++++++++++++++++++++--
+>  drivers/media/usb/uvc/uvc_v4l2.c |  2 ++
+>  drivers/media/usb/uvc/uvcvideo.h |  9 ++++++-
+>  3 files changed, 60 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
+> index 9a80a7d8e73a..af1e38f5c6e9 100644
+> --- a/drivers/media/usb/uvc/uvc_ctrl.c
+> +++ b/drivers/media/usb/uvc/uvc_ctrl.c
+> @@ -1579,6 +1579,37 @@ static void uvc_ctrl_send_slave_event(struct uvc_video_chain *chain,
+>  	uvc_ctrl_send_event(chain, handle, ctrl, mapping, val, changes);
+>  }
+>  
+> +static void uvc_ctrl_get_handle(struct uvc_fh *handle, struct uvc_control *ctrl)
+> +{
+> +	lockdep_assert_held(&handle->chain->ctrl_mutex);
+> +
+> +	if (ctrl->handle)
+> +		dev_warn_ratelimited(&handle->stream->dev->udev->dev,
+> +				     "UVC non compliance: Setting an async control with a pending operation.");
+> +
+> +	if (handle == ctrl->handle)
+> +		return;
+> +
+> +	if (ctrl->handle)
+> +		ctrl->handle->pending_async_ctrls--;
+> +
+> +	ctrl->handle = handle;
+> +	handle->pending_async_ctrls++;
+> +}
+> +
+> +static void uvc_ctrl_put_handle(struct uvc_fh *handle, struct uvc_control *ctrl)
+> +{
+> +	lockdep_assert_held(&handle->chain->ctrl_mutex);
+> +
+> +	if (ctrl->handle != handle) /* Nothing to do here.*/
+> +		return;
+> +
+> +	ctrl->handle = NULL;
+> +	if (WARN_ON(!handle->pending_async_ctrls))
+> +		return;
+> +	handle->pending_async_ctrls--;
+> +}
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+get/put have strong connotations in the kernel, related to acquiring a
+reference to a given object, and releasing it. The usage here is
+different, and I think it makes the usage below confusing. I prefer the
+original single function.
 
-    Andrew
+> +
+>  void uvc_ctrl_status_event(struct uvc_video_chain *chain,
+>  			   struct uvc_control *ctrl, const u8 *data)
+>  {
+> @@ -1589,7 +1620,8 @@ void uvc_ctrl_status_event(struct uvc_video_chain *chain,
+>  	mutex_lock(&chain->ctrl_mutex);
+>  
+>  	handle = ctrl->handle;
+> -	ctrl->handle = NULL;
+> +	if (handle)
+> +		uvc_ctrl_put_handle(handle, ctrl);
+>  
+>  	list_for_each_entry(mapping, &ctrl->info.mappings, list) {
+>  		s32 value = __uvc_ctrl_get_value(mapping, data);
+> @@ -1865,7 +1897,7 @@ static int uvc_ctrl_commit_entity(struct uvc_device *dev,
+>  
+>  		if (!rollback && handle &&
+>  		    ctrl->info.flags & UVC_CTRL_FLAG_ASYNCHRONOUS)
+> -			ctrl->handle = handle;
+> +			uvc_ctrl_get_handle(handle, ctrl);
+>  	}
+>  
+>  	return 0;
+> @@ -2774,6 +2806,22 @@ int uvc_ctrl_init_device(struct uvc_device *dev)
+>  	return 0;
+>  }
+>  
+> +void uvc_ctrl_cleanup_fh(struct uvc_fh *handle)
+> +{
+> +	struct uvc_entity *entity;
+> +
+> +	guard(mutex)(&handle->chain->ctrl_mutex);
+> +
+> +	if (!handle->pending_async_ctrls)
+> +		return;
+> +
+> +	list_for_each_entry(entity, &handle->chain->dev->entities, list)
+
+	list_for_each_entry(entity, &handle->chain->dev->entities, list) {
+
+> +		for (unsigned int i = 0; i < entity->ncontrols; ++i)
+> +			uvc_ctrl_put_handle(handle, &entity->controls[i]);
+
+	}
+
+> +
+> +	WARN_ON(handle->pending_async_ctrls);
+> +}
+> +
+>  /*
+>   * Cleanup device controls.
+>   */
+> diff --git a/drivers/media/usb/uvc/uvc_v4l2.c b/drivers/media/usb/uvc/uvc_v4l2.c
+> index 97c5407f6603..b425306a3b8c 100644
+> --- a/drivers/media/usb/uvc/uvc_v4l2.c
+> +++ b/drivers/media/usb/uvc/uvc_v4l2.c
+> @@ -652,6 +652,8 @@ static int uvc_v4l2_release(struct file *file)
+>  
+>  	uvc_dbg(stream->dev, CALLS, "%s\n", __func__);
+>  
+> +	uvc_ctrl_cleanup_fh(handle);
+> +
+>  	/* Only free resources if this is a privileged handle. */
+>  	if (uvc_has_privileges(handle))
+>  		uvc_queue_release(&stream->queue);
+> diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
+> index 07f9921d83f2..92ecdd188587 100644
+> --- a/drivers/media/usb/uvc/uvcvideo.h
+> +++ b/drivers/media/usb/uvc/uvcvideo.h
+> @@ -337,7 +337,11 @@ struct uvc_video_chain {
+>  	struct uvc_entity *processing;		/* Processing unit */
+>  	struct uvc_entity *selector;		/* Selector unit */
+>  
+> -	struct mutex ctrl_mutex;		/* Protects ctrl.info */
+> +	struct mutex ctrl_mutex;		/*
+> +						 * Protects ctrl.info,
+> +						 * ctrl.handle and
+> +						 * uvc_fh.pending_async_ctrls
+> +						 */
+>  
+>  	struct v4l2_prio_state prio;		/* V4L2 priority state */
+>  	u32 caps;				/* V4L2 chain-wide caps */
+> @@ -612,6 +616,7 @@ struct uvc_fh {
+>  	struct uvc_video_chain *chain;
+>  	struct uvc_streaming *stream;
+>  	enum uvc_handle_state state;
+> +	unsigned int pending_async_ctrls;
+>  };
+>  
+>  struct uvc_driver {
+> @@ -797,6 +802,8 @@ int uvc_ctrl_is_accessible(struct uvc_video_chain *chain, u32 v4l2_id,
+>  int uvc_xu_ctrl_query(struct uvc_video_chain *chain,
+>  		      struct uvc_xu_control_query *xqry);
+>  
+> +void uvc_ctrl_cleanup_fh(struct uvc_fh *handle);
+> +
+>  /* Utility functions */
+>  struct usb_host_endpoint *uvc_find_endpoint(struct usb_host_interface *alts,
+>  					    u8 epaddr);
+> 
+
+-- 
+Regards,
+
+Laurent Pinchart
 
