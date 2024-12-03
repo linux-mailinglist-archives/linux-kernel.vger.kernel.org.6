@@ -1,247 +1,685 @@
-Return-Path: <linux-kernel+bounces-429125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B04779E1A0D
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 11:56:11 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A85D99E17B1
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 10:33:44 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2EADFB41B88
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:33:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D9B5164F06
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 09:33:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAD361DFDAA;
-	Tue,  3 Dec 2024 09:32:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 209261DFE27;
+	Tue,  3 Dec 2024 09:32:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="S5OTNioU"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Sr7s4XWU"
+Received: from mail-oa1-f48.google.com (mail-oa1-f48.google.com [209.85.160.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA3231DE4FD;
-	Tue,  3 Dec 2024 09:32:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.13
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733218356; cv=fail; b=XN9mTBIO7ltCPvRmjXda9dUfMqF9FwpjMULaTJu8odAFaz1kNaoG6Qsd7Sjl8eO5JxTpMhGED06+3oMoSpOAXpfR+KMICS79UhqtVquAskAUQA+tyPbR+XHaw/XouBwj1mebhrI+h3+uF+Ba7t117I2OR7QcAyk0E/ooTDwQymc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733218356; c=relaxed/simple;
-	bh=4fsyVtCYtGSJvDLMrXYS28SU+xnL+fqXQr12Q4HSxRE=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=nVT7GcVTI9LAiUpCNrcQKMEsjNrL3S/1VpveX6puPL6huLBO+fNws73P3gUK2lot4JQeypx2uVRSHEytghH3oXGDijwjGTrc6wt17uRPSkvRoj4p4PtMZoUp1ST6MowFxEAmnM3r+FAhAgm7XSx4i5ODtospsriZixAXgN5uxMc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=S5OTNioU; arc=fail smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733218355; x=1764754355;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=4fsyVtCYtGSJvDLMrXYS28SU+xnL+fqXQr12Q4HSxRE=;
-  b=S5OTNioUKvAsN96Mr3YI83Lxbq1Cdj/b+RpH/4gFyBAUw2Uzpw2BzbeY
-   p5YHADg+O7PC9otXOHKRLS9bYJlR3zDz2rL0/s2zmerZmTIJWzk6NJTyn
-   grB2ylixofFB9tMx7A8zbxv/3C3bk0s8y/MOjN8CJOR8qy5FeLwwKx+Y+
-   2VtvhHkowdm3x3OCneAFokEhcBp6g4Lfqvc/1syu7X0gvPOsuQ5CxUxI9
-   9qNMEvUGEmVjgf2B6munj3ktunxqsuT0sjrhlfbea4dkSnoQ+pzIQoZE+
-   omKCvBzdT6baZB/CziHppgB8c+9TLpyTVI5A7v7vpyViYn//vPyyXNapc
-   w==;
-X-CSE-ConnectionGUID: l8aC9Z8+SSq+SlcaPhwsow==
-X-CSE-MsgGUID: +oN9RrorQmuk11NSVqJfpg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11274"; a="36276316"
-X-IronPort-AV: E=Sophos;i="6.12,204,1728975600"; 
-   d="scan'208";a="36276316"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Dec 2024 01:32:34 -0800
-X-CSE-ConnectionGUID: 7WyuHO0RQoKo9JmBuIzqNA==
-X-CSE-MsgGUID: v13s9mRNRI6wVBC0kIwWlA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,204,1728975600"; 
-   d="scan'208";a="97819477"
-Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
-  by fmviesa005.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 03 Dec 2024 01:32:33 -0800
-Received: from fmsmsx603.amr.corp.intel.com (10.18.126.83) by
- fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 3 Dec 2024 01:32:33 -0800
-Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
- fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Tue, 3 Dec 2024 01:32:33 -0800
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (104.47.58.42) by
- edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 3 Dec 2024 01:32:26 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=yj9zbIfXbjaJ48GNJXmX028uYMslckboSPzR0tm2EAunCkCpbSvyZLPHeLSWVOnEORbPyW89LpxOXUqFdUlCa9/YdHg68dj40Zq7yqRV1Yd6Uo+49JQhStIV34LdsLrJo2LD3Sy0oqRi83WiZenisGM+ET4Pt3ZtFQMmDZdboc6/76j38lafowc+88vvREB/pNvufc7dcNj5gKZ95+aQ7xgkew8e4e+TjcWNQgUXK0iT9WYj7U09i0frZViXXElJf4Yi8eEg8MB18uYIvvNeo3SEYXJcq9lKOvrS7gcBhkiCzLnUNNzGSjI/MK5Tr4NJwdtOWImPHepnIiCoct7udA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=wV9YzKoMk8az40gKN/Grs/NH2BFlm+I7NkXIn+IjC8k=;
- b=hVb1S/flk2QTsHW9G8Uhtr6iHmbNCy+n8Whumv5ccwHRl9nmUDuVRHt2x4hQafyLp1km5vBypNOl8mGmWJEOgt+DFoKHHnW9fGoHNI+dTVdI5eEs5ahcmKvUGFpSU0fDX5zkSJDGplpEkRlruaGZCyoBuRRMJ47T0lG3rplfBrtrpz417XaUpDydntx8/pCMz+2JxLDP0MI89bL27Vkcb7/L7+hFHIbF8cgc8ZqZ8u2coITFD1EP34CwB224DUtRZGBSYq8INYwqmQ3j6Ts5/1LCNDDGGMiInpY/tRIT52Qh/cCkQiLzgcFmitZXWvVqDWVYzwvm2+ojDTAJctm+QQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from BL1PR11MB5399.namprd11.prod.outlook.com (2603:10b6:208:318::12)
- by SA2PR11MB5148.namprd11.prod.outlook.com (2603:10b6:806:11e::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.18; Tue, 3 Dec
- 2024 09:32:20 +0000
-Received: from BL1PR11MB5399.namprd11.prod.outlook.com
- ([fe80::b8f1:4502:e77d:e2dc]) by BL1PR11MB5399.namprd11.prod.outlook.com
- ([fe80::b8f1:4502:e77d:e2dc%5]) with mapi id 15.20.8207.017; Tue, 3 Dec 2024
- 09:32:19 +0000
-Message-ID: <ad93dd90-671b-4c0e-8a96-9dab239a5d07@intel.com>
-Date: Tue, 3 Dec 2024 10:32:13 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net] net/mlx5: DR, prevent potential error pointer
- dereference
-To: Dan Carpenter <dan.carpenter@linaro.org>, Yevgeny Kliteynik
-	<kliteyn@nvidia.com>
-CC: Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
-	Tariq Toukan <tariqt@nvidia.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David
- S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, "Jakub
- Kicinski" <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Muhammad Sammar
-	<muhammads@nvidia.com>, <netdev@vger.kernel.org>,
-	<linux-rdma@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<kernel-janitors@vger.kernel.org>
-References: <aadb7736-c497-43db-a93a-4461d1426de4@stanley.mountain>
-Content-Language: pl
-From: Mateusz Polchlopek <mateusz.polchlopek@intel.com>
-Organization: Intel
-In-Reply-To: <aadb7736-c497-43db-a93a-4461d1426de4@stanley.mountain>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MI2P293CA0012.ITAP293.PROD.OUTLOOK.COM
- (2603:10a6:290:45::10) To BL1PR11MB5399.namprd11.prod.outlook.com
- (2603:10b6:208:318::12)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ACB81DFE0D;
+	Tue,  3 Dec 2024 09:32:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.48
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733218361; cv=none; b=d9P8J9am1tlHbd/vTU6gzPDKaaAfWPAQc400eVsHsYKTPuGAuevDcPyliMjcLXb2fW6/O0j6bGaD1A1uY0FIofr93LHzeeEduYo7KlBPLenffv0w9R7rpgvrRW8BWQ7Rd4loBuoX7SuJMC3K/34MmJF/vLXX66ntugq6jUbUMqQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733218361; c=relaxed/simple;
+	bh=/5kejO84iip0yZUndqNzhFUqUYotZduZe2Ih+pS05TU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z0NSxXF2j3aH/kJW7+GAGUV4M9MhBS3Cn3jTW3KG2Dm8e7JGwX9g3g+s+0djzTyoocpmYdTbgJjfS+WjN8GsueHhF82qieU8UjyzB9vZoZw0owl421DjEjAel0UIYIsAEvciNHyonl8Ave9JihQt66GEL65D09gZMbxKnBSmXuo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Sr7s4XWU; arc=none smtp.client-ip=209.85.160.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-294ec8e1d8aso3520977fac.1;
+        Tue, 03 Dec 2024 01:32:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733218358; x=1733823158; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=nei3h6t39hVqwZ7imVAZ4RH2IrcPo10fZdIENZvQJes=;
+        b=Sr7s4XWUaxgCWTG1T8sNYjMBbczmtSKjJ0I9oH/qbKWgjupRb2ha+iXJah9AyEFdgP
+         bMGwz5lHd6UpS7lNClUxqKGMR4zwBaGO9Fxl1FHh0f98OSjQzBZNg+ct73GdcYXHOVfL
+         u7ioQ8astSCfPv4WT8XXRUVD61NTUFuZwgVApzEnfQAInXpGk9YUYlVih6f5oDbE/hvR
+         UG+e5OwEFNp5eRLtLDR6dXLR6k6vURzHIPGybZDddPkqXVeRdHjmBC7OAd0Cm0wWyF2m
+         u0zepP9C8WQedAxt2S83Rbdxx2QwZINW9cncRFCTjMasUrWFYeo6w/jk77Ipk7poio6R
+         2CJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733218358; x=1733823158;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nei3h6t39hVqwZ7imVAZ4RH2IrcPo10fZdIENZvQJes=;
+        b=Jn3I06+bMfP59TclTfmzBcRsoS8sYN4LvLJldXlngfVqwb6liovDgtznRIajHbA7Sq
+         T3Uqriy5gKOQKuSnPIlp7s4SJuHAaY29bmwmJ6An+Yn22ehPm11gRaU0nyUgzWFsOo2x
+         i9Gq8ksDloHbsYNoIfsoJmBISURB6+ozf8aWaUWucBBgEQNo/604jheuSX7UNaKRyGjO
+         pAiJeS66XGSMeYINNPFTx2iMOr4WPls5fsGSZjCNiJoBf9NVWLUmRJRHLPZwW1oEHv9W
+         iH3kSw1XHSvOkh8UBdHEAq04Zi+C7XVSB7OnGS0DYb1HyP4q7CZ0W4Yp0NZOt4SY12Cj
+         x+gg==
+X-Forwarded-Encrypted: i=1; AJvYcCUI5AKAis6wsivLy3CfPfpX0L05zxWW8WH7VZ4Rwef111RsjMbUwAazMCJumfGrFmkGyE8elFv8uqmtJA==@vger.kernel.org, AJvYcCXbkKHXkeG190GKCodYly0cpDYRAIvE8qq20Fz5KgTZLZ2qOPOrxSCgi1OaHa2ARVkrlEqrtb1WkWoDoSc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVx25fuTj5dqzJt20mbaIYfJUXiDIs+d6CLUjOmMNjuZHfEWRP
+	Uum+8x8FGDKt+RBMFCBc03WA79tybJPXBPDdBMPYeKkjFZssXdLm
+X-Gm-Gg: ASbGncsBYSmjYwCl1dJXtgVQkNyyIdJ2gjvwWTLL6Ssf1JfOkkk0Af1sEPzLqAnIAeo
+	+ZxKLek2jDiE+0ryrA1EyWc0mZm2mXfef0TS7iYnmJnjzvGa6bCjSNdMZNyqkkbPQOajrspaffW
+	xQ4qBBm2TcnRCXK/3dkdCB0nbhUTh9zNA85lGIzPD/2FymTqMPmvHNJXTeCEXGxIcTdzatZPNx7
+	JitLSw2Ja4uIuZJSA8DwGam/rG8vy3GUU42iyeJ/ZHi+8Lv6p2WNtA=
+X-Google-Smtp-Source: AGHT+IHk7H2ZhKETHIij5zSdi7ntkjcXnmHrJhuzURqQAkfqIHHDBg8lkxAj/H28ijlzMUPsUzYxtA==
+X-Received: by 2002:a05:6870:d886:b0:29e:37bb:c0e0 with SMTP id 586e51a60fabf-29e886d4e4cmr1915681fac.23.1733218357913;
+        Tue, 03 Dec 2024 01:32:37 -0800 (PST)
+Received: from melbuntu ([2401:4900:1cb9:6d90:4398:1b59:5c22:1aa8])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fc9c30e27fsm8000407a12.40.2024.12.03.01.32.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Dec 2024 01:32:37 -0800 (PST)
+Date: Tue, 3 Dec 2024 15:02:30 +0530
+From: Dhruv Menon <dhruvmenon1104@gmail.com>
+To: "H. Nikolaus Schaller" <hns@goldelico.com>
+Cc: Aaro Koskinen <aaro.koskinen@iki.fi>,
+	"Raghavendra, Vignesh" <vigneshr@ti.com>, andi.shyti@kernel.org,
+	Janusz Krzysztofik <jmkrzyszt@gmail.com>,
+	tony Lindgren <tony@atomide.com>,
+	Andreas Kemnade <andreas@kemnade.info>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Roger Quadros <rogerq@kernel.org>,
+	Linux-OMAP <linux-omap@vger.kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] i2c: omap: Cleaned up coding style and parameters
+Message-ID: <Z07QLveHUQlvDfIt@melbuntu>
+References: <Z04CA8fGCC-nyZIY@melbuntu>
+ <Z04faeJUgZTydiMb@darkstar.musicnaut.iki.fi>
+ <Z06zxM3pREgrOvQA@melbuntu>
+ <7B167CB3-EC8E-41C6-8A91-123167579475@goldelico.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL1PR11MB5399:EE_|SA2PR11MB5148:EE_
-X-MS-Office365-Filtering-Correlation-Id: aa5d5c21-8793-44e1-aebc-08dd137d6222
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?QjlYaWFMdHRic04rcHpHME9FZTJpOTFGdXZsQkUrTTVCeFlvSmg0cDNzRDdE?=
- =?utf-8?B?d0hLNzNqSnkwTkp3TzBvbUJpcU5HRUhTbFdOQ0E3VjFnU0xybklVckxuckEz?=
- =?utf-8?B?cCsxTFNQOHlieUtwQmFjUjNBbUpPcjJyenZxcXUvd0IrVVExYUNnWm8zVjZo?=
- =?utf-8?B?TkljbmtQc1VGVFgrUmRjQzVvZ2hlN0tDV2FremVRUDlhT25ZL2hRWTZQYWhj?=
- =?utf-8?B?QzdHUTNST1VWdzhxVTNzTjc1c2JJd29xZTkzVitIVnBVWUdaZXVFOXRqYmFJ?=
- =?utf-8?B?WjZPdHpyQzRaWkpLSm81SFdvL1VkRU8wb2N0SG8wTGt4M25CYUlvRlV0T1pF?=
- =?utf-8?B?blZqWitBSEVvQWlxTkRRYmV3aVZDU0gyYUxUREJQcWxQbDZFNmxRdVBEakcz?=
- =?utf-8?B?SldZWUkrUDdmaW9uekZISzNMdDFhcjBuZ1A2amNlNzZOSmpvU3JyUEdTTVgw?=
- =?utf-8?B?NHd5clhTK3g3UEc5TVRkODRIM1kwU3RsZDRqWXByd3F4cFppc2dkdi82UDNZ?=
- =?utf-8?B?QzlSMUQwdUMyN1J0dGt3emtXNEx5ekVBZ3YvNUdIakRsbFV2aUdrcGdIME5F?=
- =?utf-8?B?blhJM05uVkRpNjJrbEE4ME9nYUNNT21XbE5xeDQydmN0bmQ0d3ZyNW42WWpT?=
- =?utf-8?B?UUhUMUdYeTZobVBiYklMakFwUXpWdDl4WmErRVNaY000dGE5VlZpLytjcjEw?=
- =?utf-8?B?Sis0SWlueGlBaU1JdXNLUysvaVlCZkJXTi9PZVc0QVhYVnVUdUxNZVRsUUhl?=
- =?utf-8?B?cXd1TjZ0dWViMk45aGhNWVVjNS95aW1TRU9oOTExY0RhY3Fhc3A5Q21WTUZP?=
- =?utf-8?B?czJZOXBhZkZMMU9LTGNwazl5RHZPdTkwRDVjUGJod2owaEFrSzJYT2VSQW1T?=
- =?utf-8?B?TFNUdU9uc1RNMTVNakFjSDJIUWZDd1hLTENNNzJadGFMRUhENnBpeEsrd1Zl?=
- =?utf-8?B?K2ZCV3FTMm14dnFLbWlqNDdMZEEzdmFLZnlERDdVYVpremhHbmw1TVZMb0Rz?=
- =?utf-8?B?d2lCaXZ3bzBTcE81UGI4R3FXZVlVWlNaNnhhbnZ6QnVBUFNjZkJXSXBNUHEy?=
- =?utf-8?B?UGFhajFMcFNDVElOVzdsWHBoKzEzN1JxdjlyR21qK0hSMGZwUDROQ0xIMEpi?=
- =?utf-8?B?SERsWDQ3UElQODhYVVJWZjNnWXd0S2hvM1EvMnlFZXlXdDh6eGxhc1l3Ukc1?=
- =?utf-8?B?bjdlYjZwUklrZDRQcmEzT0M1eFBHYk05TWRBRitpVDk2ZjVCL0FJKzJnNlk4?=
- =?utf-8?B?aC92dUlQR3prQnhJMTZmeHhCRHdteW9WQnB6OUd2Nkx0UnpqTEtmS2RJNG9W?=
- =?utf-8?B?RFgwS2loOXdxWFoxZ1lYNm9LYUFMUGowWWg3T3gwWlFvcDJYZTNQQnluNkln?=
- =?utf-8?B?dVhTeUhERVFIZ29IRzF0SnY4TGI5RG5TSWY4bC9zOTZWdFd1ZGhjMWVZYmli?=
- =?utf-8?B?U0FhTVlyVktmenJpZGlnS0hwcytoeDlEVlRqcmREU2MrcFM1Mzd6aGp0aTNa?=
- =?utf-8?B?ODhaa3VnaFNwbHRrNGhpTEs5RkdmZjlZYlZUYTVtQUhuRnI0SlpyT0loT3Z5?=
- =?utf-8?B?SWF2ZHdMbTVUQ0xFQjBlMC9DQWxBN3h4bUhvcnBQOGNTT2t5Z2EvTXJpSHFl?=
- =?utf-8?B?bWR3bk1qSHl0bUhHYnlQdHRKak9ka0Z4a3BhdWRaWWxrZHQ0WlQ5L3d5U1l3?=
- =?utf-8?B?cnB0KytLei9XdEI2WTNFd2F6WTRsMWE0ckdXNis0SzVVS0JDOGtmMHVvdi9W?=
- =?utf-8?B?dnRxSUkxR3lwSTVhUGN1SmNQRy8yVXc5UmcvMnlYayt1VzZ0cnViY0MvUW1J?=
- =?utf-8?B?RUJES2JIYXhrVndFWjFyZz09?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR11MB5399.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?ekdkeWNVdVB4aXIxT1UvbThkalU5SXUrSHpPZ0NIN1JZb3cxSDNYb25maS85?=
- =?utf-8?B?U3luZG1PbGVNenA2dGgzZ1g1bWk1VFhHZ0V6ZkwxdFlDdFF3ckEvU2I4NzV4?=
- =?utf-8?B?dUR1SnRabVJ4WXlLUm9pc2tFV1pRTUdXZEl1MTVOdmpvaFQ0MTNhWS9FbUJi?=
- =?utf-8?B?LzM4MHZQU0ZaczlBZXdGL3FCZkpzbEZZZFpZRTZvUlFWYVdHTEg3aTJyMVlQ?=
- =?utf-8?B?WU9pbnBMRlk2a2kxNHlmYVVwaDZoVXZZR3kxMk80czE5ZTVQd2tqL1RUL3NF?=
- =?utf-8?B?MmNINks4czdnTkM3Tk1VcFY5TDRibmJyWHhCbVI0bFRVcWJ2YmJMenA4Vm1s?=
- =?utf-8?B?czUyNHRHTmg0elRwbGM3anY0clhGY3dLN1hmSVZoQitVR09GTzlZUzVDOGw2?=
- =?utf-8?B?amRJZ3NaaGcrR1hIbG1UWEtRVENpOUhrOG9ySGtyS0dacWx1UjJ4blhaV2hp?=
- =?utf-8?B?VGVMUVNBeHY5VFM3SmFSUVdxTWY1RzQ3RXlBL2hvOVluVk5iYUhMa1VzbGFz?=
- =?utf-8?B?WWdNQnE2SGZqaUMxUFpYazMrWVE3WGNHZFB6eGljcHZkbXd5RzhmRlNGcnNU?=
- =?utf-8?B?TE1rYnFkZGUvTnpDZjlkRXZVWHEyeko3UG5ldlJCc1dDM0lmRC8vS2JtUkJj?=
- =?utf-8?B?Q2pmdzJsY045Z2pZQkh3WFVBREh1blFpbGlmOE1oTERaRUlIR2wrUnF0RTlq?=
- =?utf-8?B?TXNyUHcwdEszTUFDNVUwYmMyYk81ckttNHYvTEdjTDk1WkhXMDNqbmxyTVVP?=
- =?utf-8?B?aEU4YWJZZzZKa0VvVGQ0Rjc1Vy8vVWwwTkFpZ3JhSjZuaDhOek5qZnRlVnZr?=
- =?utf-8?B?cVdwcFhZOXNOT1RYWmVQQ1ROZFluMFQzdFRqTlgxWDY5MEFjcTdEdkNyT0Na?=
- =?utf-8?B?Z0MrVFAyaWxHa0JzSCttSFE0MkNydU1tQ1ZtQ3UyVFF6WGNXMlBCVjNvaFlk?=
- =?utf-8?B?K3o5NStFdXA1Q09lbUZaZ0dwZUI0N3V1M05EN1FzOXhycUhoUjcra0ZUVnlk?=
- =?utf-8?B?cEN4N2pxakFTQVBXZnJOVFlsUHozbXY0bEoyK3ZMT2h6bFFUR2hETmpFV093?=
- =?utf-8?B?TkN5aUZGM1E0aTlUcnpmZ0xicVNZYjF3VGgyTXdUQVRtT2U0RGw1R3pqZTQw?=
- =?utf-8?B?akxqOGlQOWtBdHJFcGtQQmlYeEplakdOak1GQ1hYbHdDaHZoT21DS2ZMSnJO?=
- =?utf-8?B?MHZCYm9mdFZ0Z0pTUVFYVGZsa05oU2piMUU1VkhrMktEV0JSVFZwZk82RG5k?=
- =?utf-8?B?V25YNi9tc0RPM1NEd01uS3JjaTUxSXlEU3J4eE9HUlJhOFQ1Z0p0Q21MVmNy?=
- =?utf-8?B?VDcrbk1YNTJyY2xyUS9QcFk0cUZjaGR2ZksvL2phWlA1RVowRVNDR1pLSlAv?=
- =?utf-8?B?WmRKTFdkcHMxTWtCOGZRZ3d3ZEVZUVIvMlpxckRKdlRkdncrNmllN00yT2hy?=
- =?utf-8?B?cHhNNE81eW5Ga2ZSSHhudEVVT2FrVHZtemRQbnh1bEp2RllRcUFYaVhtNDRV?=
- =?utf-8?B?bk4wNnllclA1d0JRM3RDRHZQaTZnUUwvQzQvNjBsNWpTK0NLdGlVbTluZVZH?=
- =?utf-8?B?NWU2cG1TWXlQZUd0T2VJUlUzYW1ZaEJCcEhoS3JrTzFma1pjakFjZGlLejBS?=
- =?utf-8?B?NmMvRjVwQmFEWFp1L013Tko2ZVF1U25PTnRpaEFLOVVIYVM2WkVmeVB1T1lC?=
- =?utf-8?B?dHluVVhqZmdqSU0wMUhCdzRDNXM4TEhMc1ZRQ3djdERoendlVFZHVDR3ZUhS?=
- =?utf-8?B?ejdITHNSNlViTzhPVEdZMU91REtKN3J5ZDU0NjJMencrOVBhRldreUNGS29I?=
- =?utf-8?B?NExIaXdWdDlmdWlSS0VCMDJDV3NLK2VYZ0lvclFJLzc4TFNCQ1NlbVFwMHFv?=
- =?utf-8?B?cG02R3dUVlU3UjBSNDB4UDlQem5jMVUvaVpocVRNblcxUytSTGMrY2Z4Zm11?=
- =?utf-8?B?Zlp4Rm5RemVXL1R0dHVROHhndjU1UWxtbkVDS1VMNFVQLytNZ3lFNVMvUGQr?=
- =?utf-8?B?cDhUcjB0ZXhEQkJCRmhVV3FQc1RYVHAvVHJ1b1F6eFZEc0ZnZXI5WnVVSDdB?=
- =?utf-8?B?Slc1N0YwZ3IzUjhWekJLeGY3eTNhVDRWb25FcXllVkwxRFVzbnVpM2d0Y29i?=
- =?utf-8?B?NmJ6bXhIVFZING5qZE9aVmtOV1NEWkdrMkhQRmlaVlJJTXNQR2FVamlmZnVk?=
- =?utf-8?B?S1E9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: aa5d5c21-8793-44e1-aebc-08dd137d6222
-X-MS-Exchange-CrossTenant-AuthSource: BL1PR11MB5399.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Dec 2024 09:32:19.6956
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: yyCcP0RWw7XwtQEjTd6iMFlQrtfpYvAZ12i2JZPNy6lhRjFpme81P2XXxF3gGUV/R0AFjldPm3yP3hMB4ZF9Xiqz+KFvgs0HhD0gh2T7sX0=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA2PR11MB5148
-X-OriginatorOrg: intel.com
+Content-Type: multipart/mixed; boundary="OlygTlqBXS+R21F8"
+Content-Disposition: inline
+In-Reply-To: <7B167CB3-EC8E-41C6-8A91-123167579475@goldelico.com>
 
 
+--OlygTlqBXS+R21F8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 11/30/2024 11:01 AM, Dan Carpenter wrote:
-> The dr_domain_add_vport_cap() function genereally returns NULL on error
+This patch has been splitted into two parts,
 
-Typo. Should be "generally"
+        1. [PATCH v2 1/2] i2c: omap: Clean up coding style
+        2. [PATCH v2 2/2] i2c: omap: Removed unused parameter
 
-> but sometimes we want it to return ERR_PTR(-EBUSY) so the caller can
-> retry.  The problem here is that "ret" can be either -EBUSY or -ENOMEM
+The patchset also removed the changes regarding msleep as the 
+adjustment was relatively minor which was added earlier. The 
+change was initially considered based on "Timer's howto" 
+documentation which recommends to change any msleep(x) < 10ms
+to usleep_range(x*1000, x*2000) for better precision.
 
-Please remove unnecessary space.
+Thank you for the time and review. I look forward to your feedback
 
-> and if it's and -ENOMEM then the error pointer is propogated back and
-> eventually dereferenced in dr_ste_v0_build_src_gvmi_qpn_tag().
+Regards
+Dhruv Menon
+
+On Tue, Dec 03, 2024 at 09:25:43AM +0100, H. Nikolaus Schaller wrote:
+> Just a minor nit:
 > 
-> Fixes: 11a45def2e19 ("net/mlx5: DR, Add support for SF vports")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->   .../net/ethernet/mellanox/mlx5/core/steering/sws/dr_domain.c    | 2 ++
->   1 file changed, 2 insertions(+)
+> > Am 03.12.2024 um 08:31 schrieb Dhruv Menon <dhruvmenon1104@gmail.com>:
+> > 
+> > Hello Aaro, 
+> > 
+> > I have updated the patch as requiested, splitting it two parts,
+> > 
+> > 1. [PATCH v2 1/2] i2c: omap: Cleaned up coding style
+> > 2. [PATCH v2 2/2] i2c: omap: Removed unsed parameter
 > 
-> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/steering/sws/dr_domain.c b/drivers/net/ethernet/mellanox/mlx5/core/steering/sws/dr_domain.c
-> index 3d74109f8230..a379e8358f82 100644
-> --- a/drivers/net/ethernet/mellanox/mlx5/core/steering/sws/dr_domain.c
-> +++ b/drivers/net/ethernet/mellanox/mlx5/core/steering/sws/dr_domain.c
-> @@ -297,6 +297,8 @@ dr_domain_add_vport_cap(struct mlx5dr_domain *dmn, u16 vport)
->   	if (ret) {
->   		mlx5dr_dbg(dmn, "Couldn't insert new vport into xarray (%d)\n", ret);
->   		kvfree(vport_caps);
-> +		if (ret != -EBUSY)
-> +			return NULL;
->   		return ERR_PTR(ret);
->   	}
->
+> use "this patch will do" point of view, not "I have done"
+> 
+> => Cleaned -> Clean
+> 
+> And there is a typo in "unsed".
+> 
+> > 
+> > I have also removed the changes regarding msleep as the adjustment
+> > was relatively minor. The change was initially considered based 
+> > on "Timer's howto" documentation which recommends to change any
+> > msleep(x) < 10ms to usleep_range(x*1000, x*2000) for better 
+> > precision.
+> > 
+> > Thank you for the time and review. I look forward to your feedback
+> > 
+> > Regards
+> > Dhruv Menon
+> > 
+> 
 
-When applied those comments please add my RB tag.
+--OlygTlqBXS+R21F8
+Content-Type: text/x-diff; charset=us-ascii
+Content-Disposition: attachment; filename="0000-cover-letter.patch"
+
+From e4327ab4199883ec2554222c2697225abb797491 Mon Sep 17 00:00:00 2001
+Message-ID: <cover.1733217877.git.dhruvmenon1104@gmail.com>
+From: Dhruv Menon <dhruvmenon1104@gmail.com>
+Date: Tue, 3 Dec 2024 14:54:37 +0530
+Subject: [PATCH v3 0/2] *** SUBJECT HERE ***
+
+*** BLURB HERE ***
+
+Dhruv Menon (2):
+  i2c: omap: Clean up coding style
+  i2c: omap: remove unused parameter
+
+ drivers/i2c/busses/i2c-omap.c | 203 ++++++++++++++++------------------
+ 1 file changed, 98 insertions(+), 105 deletions(-)
+
+-- 
+2.43.0
+
+
+--OlygTlqBXS+R21F8
+Content-Type: text/x-diff; charset=us-ascii
+Content-Disposition: attachment;
+	filename="0001-i2c-omap-Clean-up-coding-style.patch"
+
+From cf8f6f85fd0279b8a77e3e89b0cb879494a40cd8 Mon Sep 17 00:00:00 2001
+Message-ID: <cf8f6f85fd0279b8a77e3e89b0cb879494a40cd8.1733217877.git.dhruvmenon1104@gmail.com>
+In-Reply-To: <cover.1733217877.git.dhruvmenon1104@gmail.com>
+References: <cover.1733217877.git.dhruvmenon1104@gmail.com>
+From: Dhruv Menon <dhruvmenon1104@gmail.com>
+Date: Tue, 3 Dec 2024 10:23:54 +0530
+Subject: [PATCH v3 1/2] i2c: omap: Clean up coding style
+
+This commit addresses the coding style issues present in i2c-omap.c,
+identified by checkpatch.pl.
+
+1. BIT Macros utilization
+2. Spelling correction
+3. Alignment correction
+4. unnecessary blank lines removal
+
+No functional changes have been introduced in this commit.
+
+Signed-off-by: Dhruv Menon <dhruvmenon1104@gmail.com>
+---
+ drivers/i2c/busses/i2c-omap.c | 189 +++++++++++++++++-----------------
+ 1 file changed, 92 insertions(+), 97 deletions(-)
+
+diff --git a/drivers/i2c/busses/i2c-omap.c b/drivers/i2c/busses/i2c-omap.c
+index 1d9ad25c89ae..df945ddfe089 100644
+--- a/drivers/i2c/busses/i2c-omap.c
++++ b/drivers/i2c/busses/i2c-omap.c
+@@ -78,39 +78,39 @@ enum {
+ };
+ 
+ /* I2C Interrupt Enable Register (OMAP_I2C_IE): */
+-#define OMAP_I2C_IE_XDR		(1 << 14)	/* TX Buffer drain int enable */
+-#define OMAP_I2C_IE_RDR		(1 << 13)	/* RX Buffer drain int enable */
+-#define OMAP_I2C_IE_XRDY	(1 << 4)	/* TX data ready int enable */
+-#define OMAP_I2C_IE_RRDY	(1 << 3)	/* RX data ready int enable */
+-#define OMAP_I2C_IE_ARDY	(1 << 2)	/* Access ready int enable */
+-#define OMAP_I2C_IE_NACK	(1 << 1)	/* No ack interrupt enable */
+-#define OMAP_I2C_IE_AL		(1 << 0)	/* Arbitration lost int ena */
++#define OMAP_I2C_IE_XDR		BIT(14)	/* TX Buffer drain int enable */
++#define OMAP_I2C_IE_RDR		BIT(13)	/* RX Buffer drain int enable */
++#define OMAP_I2C_IE_XRDY	BIT(4)	/* TX data ready int enable */
++#define OMAP_I2C_IE_RRDY	BIT(3)	/* RX data ready int enable */
++#define OMAP_I2C_IE_ARDY	BIT(2)	/* Access ready int enable */
++#define OMAP_I2C_IE_NACK	BIT(1)	/* No ack interrupt enable */
++#define OMAP_I2C_IE_AL		BIT(0)	/* Arbitration lost int ena */
+ 
+ /* I2C Status Register (OMAP_I2C_STAT): */
+-#define OMAP_I2C_STAT_XDR	(1 << 14)	/* TX Buffer draining */
+-#define OMAP_I2C_STAT_RDR	(1 << 13)	/* RX Buffer draining */
+-#define OMAP_I2C_STAT_BB	(1 << 12)	/* Bus busy */
+-#define OMAP_I2C_STAT_ROVR	(1 << 11)	/* Receive overrun */
+-#define OMAP_I2C_STAT_XUDF	(1 << 10)	/* Transmit underflow */
+-#define OMAP_I2C_STAT_AAS	(1 << 9)	/* Address as slave */
+-#define OMAP_I2C_STAT_BF	(1 << 8)	/* Bus Free */
+-#define OMAP_I2C_STAT_XRDY	(1 << 4)	/* Transmit data ready */
+-#define OMAP_I2C_STAT_RRDY	(1 << 3)	/* Receive data ready */
+-#define OMAP_I2C_STAT_ARDY	(1 << 2)	/* Register access ready */
+-#define OMAP_I2C_STAT_NACK	(1 << 1)	/* No ack interrupt enable */
+-#define OMAP_I2C_STAT_AL	(1 << 0)	/* Arbitration lost int ena */
++#define OMAP_I2C_STAT_XDR	BIT(14)	/* TX Buffer draining */
++#define OMAP_I2C_STAT_RDR	BIT(13)	/* RX Buffer draining */
++#define OMAP_I2C_STAT_BB	BIT(12)	/* Bus busy */
++#define OMAP_I2C_STAT_ROVR	BIT(11)	/* Receive overrun */
++#define OMAP_I2C_STAT_XUDF	BIT(10)	/* Transmit underflow */
++#define OMAP_I2C_STAT_AAS	BIT(9)	/* Address as slave */
++#define OMAP_I2C_STAT_BF	BIT(8)	/* Bus Free */
++#define OMAP_I2C_STAT_XRDY	BIT(4)	/* Transmit data ready */
++#define OMAP_I2C_STAT_RRDY	BIT(3)	/* Receive data ready */
++#define OMAP_I2C_STAT_ARDY	BIT(2)	/* Register access ready */
++#define OMAP_I2C_STAT_NACK	BIT(1)	/* No ack interrupt enable */
++#define OMAP_I2C_STAT_AL	BIT(0)	/* Arbitration lost int ena */
+ 
+ /* I2C WE wakeup enable register */
+-#define OMAP_I2C_WE_XDR_WE	(1 << 14)	/* TX drain wakup */
+-#define OMAP_I2C_WE_RDR_WE	(1 << 13)	/* RX drain wakeup */
+-#define OMAP_I2C_WE_AAS_WE	(1 << 9)	/* Address as slave wakeup*/
+-#define OMAP_I2C_WE_BF_WE	(1 << 8)	/* Bus free wakeup */
+-#define OMAP_I2C_WE_STC_WE	(1 << 6)	/* Start condition wakeup */
+-#define OMAP_I2C_WE_GC_WE	(1 << 5)	/* General call wakeup */
+-#define OMAP_I2C_WE_DRDY_WE	(1 << 3)	/* TX/RX data ready wakeup */
+-#define OMAP_I2C_WE_ARDY_WE	(1 << 2)	/* Reg access ready wakeup */
+-#define OMAP_I2C_WE_NACK_WE	(1 << 1)	/* No acknowledgment wakeup */
+-#define OMAP_I2C_WE_AL_WE	(1 << 0)	/* Arbitration lost wakeup */
++#define OMAP_I2C_WE_XDR_WE	BIT(14)	/* TX drain wakup */
++#define OMAP_I2C_WE_RDR_WE	BIT(13)	/* RX drain wakeup */
++#define OMAP_I2C_WE_AAS_WE	BIT(9)	/* Address as slave wakeup*/
++#define OMAP_I2C_WE_BF_WE	BIT(8)	/* Bus free wakeup */
++#define OMAP_I2C_WE_STC_WE	BIT(6)	/* Start condition wakeup */
++#define OMAP_I2C_WE_GC_WE	BIT(5)	/* General call wakeup */
++#define OMAP_I2C_WE_DRDY_WE	BIT(3)	/* TX/RX data ready wakeup */
++#define OMAP_I2C_WE_ARDY_WE	BIT(2)	/* Reg access ready wakeup */
++#define OMAP_I2C_WE_NACK_WE	BIT(1)	/* No acknowledgment wakeup */
++#define OMAP_I2C_WE_AL_WE	BIT(0)	/* Arbitration lost wakeup */
+ 
+ #define OMAP_I2C_WE_ALL		(OMAP_I2C_WE_XDR_WE | OMAP_I2C_WE_RDR_WE | \
+ 				OMAP_I2C_WE_AAS_WE | OMAP_I2C_WE_BF_WE | \
+@@ -119,59 +119,59 @@ enum {
+ 				OMAP_I2C_WE_NACK_WE | OMAP_I2C_WE_AL_WE)
+ 
+ /* I2C Buffer Configuration Register (OMAP_I2C_BUF): */
+-#define OMAP_I2C_BUF_RDMA_EN	(1 << 15)	/* RX DMA channel enable */
+-#define OMAP_I2C_BUF_RXFIF_CLR	(1 << 14)	/* RX FIFO Clear */
+-#define OMAP_I2C_BUF_XDMA_EN	(1 << 7)	/* TX DMA channel enable */
+-#define OMAP_I2C_BUF_TXFIF_CLR	(1 << 6)	/* TX FIFO Clear */
++#define OMAP_I2C_BUF_RDMA_EN	BIT(15)	/* RX DMA channel enable */
++#define OMAP_I2C_BUF_RXFIF_CLR	BIT(14)	/* RX FIFO Clear */
++#define OMAP_I2C_BUF_XDMA_EN	BIT(7)	/* TX DMA channel enable */
++#define OMAP_I2C_BUF_TXFIF_CLR	BIT(6)	/* TX FIFO Clear */
+ 
+ /* I2C Configuration Register (OMAP_I2C_CON): */
+-#define OMAP_I2C_CON_EN		(1 << 15)	/* I2C module enable */
+-#define OMAP_I2C_CON_BE		(1 << 14)	/* Big endian mode */
+-#define OMAP_I2C_CON_OPMODE_HS	(1 << 12)	/* High Speed support */
+-#define OMAP_I2C_CON_STB	(1 << 11)	/* Start byte mode (master) */
+-#define OMAP_I2C_CON_MST	(1 << 10)	/* Master/slave mode */
+-#define OMAP_I2C_CON_TRX	(1 << 9)	/* TX/RX mode (master only) */
+-#define OMAP_I2C_CON_XA		(1 << 8)	/* Expand address */
+-#define OMAP_I2C_CON_RM		(1 << 2)	/* Repeat mode (master only) */
+-#define OMAP_I2C_CON_STP	(1 << 1)	/* Stop cond (master only) */
+-#define OMAP_I2C_CON_STT	(1 << 0)	/* Start condition (master) */
++#define OMAP_I2C_CON_EN		BIT(15)	/* I2C module enable */
++#define OMAP_I2C_CON_BE		BIT(14)	/* Big endian mode */
++#define OMAP_I2C_CON_OPMODE_HS	BIT(12)	/* High Speed support */
++#define OMAP_I2C_CON_STB	BIT(11)	/* Start byte mode (master) */
++#define OMAP_I2C_CON_MST	BIT(10)	/* Master/slave mode */
++#define OMAP_I2C_CON_TRX	BIT(9)	/* TX/RX mode (master only) */
++#define OMAP_I2C_CON_XA		BIT(8)	/* Expand address */
++#define OMAP_I2C_CON_RM		BIT(2)	/* Repeat mode (master only) */
++#define OMAP_I2C_CON_STP	BIT(1)	/* Stop cond (master only) */
++#define OMAP_I2C_CON_STT	BIT(0)	/* Start condition (master) */
+ 
+ /* I2C SCL time value when Master */
+ #define OMAP_I2C_SCLL_HSSCLL	8
+ #define OMAP_I2C_SCLH_HSSCLH	8
+ 
+ /* I2C System Test Register (OMAP_I2C_SYSTEST): */
+-#define OMAP_I2C_SYSTEST_ST_EN		(1 << 15)	/* System test enable */
+-#define OMAP_I2C_SYSTEST_FREE		(1 << 14)	/* Free running mode */
+-#define OMAP_I2C_SYSTEST_TMODE_MASK	(3 << 12)	/* Test mode select */
+-#define OMAP_I2C_SYSTEST_TMODE_SHIFT	(12)		/* Test mode select */
++#define OMAP_I2C_SYSTEST_ST_EN		BIT(15)	/* System test enable */
++#define OMAP_I2C_SYSTEST_FREE		BIT(14)	/* Free running mode */
++#define OMAP_I2C_SYSTEST_TMODE_MASK	GENMASK(13, 12)	/* Test mode select */
++#define OMAP_I2C_SYSTEST_TMODE_SHIFT	(12)	/* Test mode select */
+ /* Functional mode */
+-#define OMAP_I2C_SYSTEST_SCL_I_FUNC	(1 << 8)	/* SCL line input value */
+-#define OMAP_I2C_SYSTEST_SCL_O_FUNC	(1 << 7)	/* SCL line output value */
+-#define OMAP_I2C_SYSTEST_SDA_I_FUNC	(1 << 6)	/* SDA line input value */
+-#define OMAP_I2C_SYSTEST_SDA_O_FUNC	(1 << 5)	/* SDA line output value */
++#define OMAP_I2C_SYSTEST_SCL_I_FUNC	BIT(8)	/* SCL line input value */
++#define OMAP_I2C_SYSTEST_SCL_O_FUNC	BIT(7)	/* SCL line output value */
++#define OMAP_I2C_SYSTEST_SDA_I_FUNC	BIT(6)	/* SDA line input value */
++#define OMAP_I2C_SYSTEST_SDA_O_FUNC	BIT(5)	/* SDA line output value */
+ /* SDA/SCL IO mode */
+-#define OMAP_I2C_SYSTEST_SCL_I		(1 << 3)	/* SCL line sense in */
+-#define OMAP_I2C_SYSTEST_SCL_O		(1 << 2)	/* SCL line drive out */
+-#define OMAP_I2C_SYSTEST_SDA_I		(1 << 1)	/* SDA line sense in */
+-#define OMAP_I2C_SYSTEST_SDA_O		(1 << 0)	/* SDA line drive out */
++#define OMAP_I2C_SYSTEST_SCL_I		BIT(3)	/* SCL line sense in */
++#define OMAP_I2C_SYSTEST_SCL_O		BIT(2)	/* SCL line drive out */
++#define OMAP_I2C_SYSTEST_SDA_I		BIT(1)	/* SDA line sense in */
++#define OMAP_I2C_SYSTEST_SDA_O		BIT(0)	/* SDA line drive out */
+ 
+ /* OCP_SYSSTATUS bit definitions */
+-#define SYSS_RESETDONE_MASK		(1 << 0)
++#define SYSS_RESETDONE_MASK		BIT(0)
+ 
+ /* OCP_SYSCONFIG bit definitions */
+-#define SYSC_CLOCKACTIVITY_MASK		(0x3 << 8)
+-#define SYSC_SIDLEMODE_MASK		(0x3 << 3)
+-#define SYSC_ENAWAKEUP_MASK		(1 << 2)
+-#define SYSC_SOFTRESET_MASK		(1 << 1)
+-#define SYSC_AUTOIDLE_MASK		(1 << 0)
++#define SYSC_CLOCKACTIVITY_MASK		GENMASK(9, 8)
++#define SYSC_SIDLEMODE_MASK		GENMASK(4, 3)
++#define SYSC_ENAWAKEUP_MASK		BIT(2)
++#define SYSC_SOFTRESET_MASK		BIT(1)
++#define SYSC_AUTOIDLE_MASK		BIT(0)
+ 
+ #define SYSC_IDLEMODE_SMART		0x2
+ #define SYSC_CLOCKACTIVITY_FCLK		0x2
+ 
+ /* Errata definitions */
+-#define I2C_OMAP_ERRATA_I207		(1 << 0)
+-#define I2C_OMAP_ERRATA_I462		(1 << 1)
++#define I2C_OMAP_ERRATA_I207		BIT(0)
++#define I2C_OMAP_ERRATA_I462		BIT(1)
+ 
+ #define OMAP_I2C_IP_V2_INTERRUPTS_MASK	0x6FFF
+ 
+@@ -277,7 +277,6 @@ static inline u16 omap_i2c_read_reg(struct omap_i2c_dev *omap, int reg)
+ 
+ static void __omap_i2c_init(struct omap_i2c_dev *omap)
+ {
+-
+ 	omap_i2c_write_reg(omap, OMAP_I2C_CON_REG, 0);
+ 
+ 	/* Setup clock prescaler to obtain approx 12MHz I2C module clock: */
+@@ -316,19 +315,19 @@ static int omap_i2c_reset(struct omap_i2c_dev *omap)
+ 
+ 		/* Disable I2C controller before soft reset */
+ 		omap_i2c_write_reg(omap, OMAP_I2C_CON_REG,
+-			omap_i2c_read_reg(omap, OMAP_I2C_CON_REG) &
+-				~(OMAP_I2C_CON_EN));
++				   omap_i2c_read_reg(omap, OMAP_I2C_CON_REG) &
++		~(OMAP_I2C_CON_EN));
+ 
+ 		omap_i2c_write_reg(omap, OMAP_I2C_SYSC_REG, SYSC_SOFTRESET_MASK);
+ 		/* For some reason we need to set the EN bit before the
+-		 * reset done bit gets set. */
++		 * reset done bit gets set.
++		 */
+ 		timeout = jiffies + OMAP_I2C_TIMEOUT;
+ 		omap_i2c_write_reg(omap, OMAP_I2C_CON_REG, OMAP_I2C_CON_EN);
+ 		while (!(omap_i2c_read_reg(omap, OMAP_I2C_SYSS_REG) &
+ 			 SYSS_RESETDONE_MASK)) {
+ 			if (time_after(jiffies, timeout)) {
+-				dev_warn(omap->dev, "timeout waiting "
+-						"for controller reset\n");
++				dev_warn(omap->dev, "timeout waiting for controller reset\n");
+ 				return -ETIMEDOUT;
+ 			}
+ 			msleep(1);
+@@ -396,15 +395,13 @@ static int omap_i2c_init(struct omap_i2c_dev *omap)
+ 	}
+ 
+ 	if (!(omap->flags & OMAP_I2C_FLAG_SIMPLE_CLOCK)) {
+-
+ 		/*
+ 		 * HSI2C controller internal clk rate should be 19.2 Mhz for
+ 		 * HS and for all modes on 2430. On 34xx we can use lower rate
+ 		 * to get longer filter period for better noise suppression.
+ 		 * The filter is iclk (fclk for HS) period.
+ 		 */
+-		if (omap->speed > 400 ||
+-			       omap->flags & OMAP_I2C_FLAG_FORCE_19200_INT_CLK)
++		if (omap->speed > 400 || omap->flags & OMAP_I2C_FLAG_FORCE_19200_INT_CLK)
+ 			internal_clk = 19200;
+ 		else if (omap->speed > 100)
+ 			internal_clk = 9600;
+@@ -616,7 +613,7 @@ static void omap_i2c_resize_fifo(struct omap_i2c_dev *omap, u8 size, bool is_rx)
+ 	 * then we might use draining feature to transfer the remaining bytes.
+ 	 */
+ 
+-	omap->threshold = clamp(size, (u8) 1, omap->fifo_size);
++	omap->threshold = clamp(size, (u8)1, omap->fifo_size);
+ 
+ 	buf = omap_i2c_read_reg(omap, OMAP_I2C_BUF_REG);
+ 
+@@ -636,7 +633,7 @@ static void omap_i2c_resize_fifo(struct omap_i2c_dev *omap, u8 size, bool is_rx)
+ 		omap->b_hw = 1; /* Enable hardware fixes */
+ 
+ 	/* calculate wakeup latency constraint for MPU */
+-	if (omap->set_mpu_wkup_lat != NULL)
++	if (omap->set_mpu_wkup_lat)
+ 		omap->latency = (1000000 * omap->threshold) /
+ 			(1000 * omap->speed / 8);
+ }
+@@ -718,13 +715,13 @@ static int omap_i2c_xfer_msg(struct i2c_adapter *adap,
+ 	if (omap->b_hw && stop) {
+ 		unsigned long delay = jiffies + OMAP_I2C_TIMEOUT;
+ 		u16 con = omap_i2c_read_reg(omap, OMAP_I2C_CON_REG);
++
+ 		while (con & OMAP_I2C_CON_STT) {
+ 			con = omap_i2c_read_reg(omap, OMAP_I2C_CON_REG);
+ 
+ 			/* Let the user know if i2c is in a bad state */
+ 			if (time_after(jiffies, delay)) {
+-				dev_err(omap->dev, "controller timed out "
+-				"waiting for start condition to finish\n");
++				dev_err(omap->dev, "controller timed out waiting for start condition to finish\n");
+ 				return -ETIMEDOUT;
+ 			}
+ 			cpu_relax();
+@@ -782,7 +779,6 @@ static int omap_i2c_xfer_msg(struct i2c_adapter *adap,
+ 	return -EIO;
+ }
+ 
+-
+ /*
+  * Prepare controller for a transaction and call omap_i2c_xfer_msg
+  * to do the work during IRQ processing.
+@@ -807,7 +803,7 @@ omap_i2c_xfer_common(struct i2c_adapter *adap, struct i2c_msg msgs[], int num,
+ 	if (r < 0)
+ 		goto out;
+ 
+-	if (omap->set_mpu_wkup_lat != NULL)
++	if (omap->set_mpu_wkup_lat)
+ 		omap->set_mpu_wkup_lat(omap->dev, omap->latency);
+ 
+ 	for (i = 0; i < num; i++) {
+@@ -822,7 +818,7 @@ omap_i2c_xfer_common(struct i2c_adapter *adap, struct i2c_msg msgs[], int num,
+ 
+ 	omap_i2c_wait_for_bb(omap);
+ 
+-	if (omap->set_mpu_wkup_lat != NULL)
++	if (omap->set_mpu_wkup_lat)
+ 		omap->set_mpu_wkup_lat(omap->dev, -1);
+ 
+ out:
+@@ -875,18 +871,15 @@ static inline void i2c_omap_errata_i207(struct omap_i2c_dev *omap, u16 stat)
+ 	if (stat & OMAP_I2C_STAT_RDR) {
+ 		/* Step 1: If RDR is set, clear it */
+ 		omap_i2c_ack_stat(omap, OMAP_I2C_STAT_RDR);
+-
+ 		/* Step 2: */
+ 		if (!(omap_i2c_read_reg(omap, OMAP_I2C_STAT_REG)
+ 						& OMAP_I2C_STAT_BB)) {
+-
+ 			/* Step 3: */
+ 			if (omap_i2c_read_reg(omap, OMAP_I2C_STAT_REG)
+ 						& OMAP_I2C_STAT_RDR) {
+ 				omap_i2c_ack_stat(omap, OMAP_I2C_STAT_RDR);
+ 				dev_dbg(omap->dev, "RDR when bus is busy.\n");
+ 			}
+-
+ 		}
+ 	}
+ }
+@@ -911,7 +904,7 @@ omap_i2c_omap1_isr(int this_irq, void *dev_id)
+ 		dev_err(omap->dev, "Arbitration lost\n");
+ 		omap_i2c_complete_cmd(omap, OMAP_I2C_STAT_AL);
+ 		break;
+-	case 0x02:	/* No acknowledgement */
++	case 0x02:	/* No acknowledgment */
+ 		omap_i2c_complete_cmd(omap, OMAP_I2C_STAT_NACK);
+ 		omap_i2c_write_reg(omap, OMAP_I2C_CON_REG, OMAP_I2C_CON_STP);
+ 		break;
+@@ -927,8 +920,9 @@ omap_i2c_omap1_isr(int this_irq, void *dev_id)
+ 				*omap->buf++ = w >> 8;
+ 				omap->buf_len--;
+ 			}
+-		} else
++		} else {
+ 			dev_err(omap->dev, "RRDY IRQ while no data requested\n");
++		}
+ 		break;
+ 	case 0x05:	/* Transmit data ready */
+ 		if (omap->buf_len) {
+@@ -939,8 +933,9 @@ omap_i2c_omap1_isr(int this_irq, void *dev_id)
+ 				omap->buf_len--;
+ 			}
+ 			omap_i2c_write_reg(omap, OMAP_I2C_DATA_REG, w);
+-		} else
++		} else {
+ 			dev_err(omap->dev, "XRDY IRQ while no data to send\n");
++		}
+ 		break;
+ 	default:
+ 		return IRQ_NONE;
+@@ -1266,13 +1261,13 @@ static const struct of_device_id omap_i2c_of_match[] = {
+ MODULE_DEVICE_TABLE(of, omap_i2c_of_match);
+ #endif
+ 
+-#define OMAP_I2C_SCHEME(rev)		((rev & 0xc000) >> 14)
++#define OMAP_I2C_SCHEME(rev)           (((rev) & 0xc000) >> 14)
+ 
+-#define OMAP_I2C_REV_SCHEME_0_MAJOR(rev) (rev >> 4)
+-#define OMAP_I2C_REV_SCHEME_0_MINOR(rev) (rev & 0xf)
++#define OMAP_I2C_REV_SCHEME_0_MAJOR(rev) (((rev) >> 4))
++#define OMAP_I2C_REV_SCHEME_0_MINOR(rev) (((rev) & 0xf))
+ 
+-#define OMAP_I2C_REV_SCHEME_1_MAJOR(rev) ((rev & 0x0700) >> 7)
+-#define OMAP_I2C_REV_SCHEME_1_MINOR(rev) (rev & 0x1f)
++#define OMAP_I2C_REV_SCHEME_1_MAJOR(rev) (((rev) & 0x0700) >> 7)
++#define OMAP_I2C_REV_SCHEME_1_MINOR(rev) (((rev) & 0x1f))
+ #define OMAP_I2C_SCHEME_0		0
+ #define OMAP_I2C_SCHEME_1		1
+ 
+@@ -1383,7 +1378,7 @@ omap_i2c_probe(struct platform_device *pdev)
+ 		of_property_read_u32(node, "clock-frequency", &freq);
+ 		/* convert DT freq value in Hz into kHz for speed */
+ 		omap->speed = freq / 1000;
+-	} else if (pdata != NULL) {
++	} else if (pdata) {
+ 		omap->speed = pdata->clkrate;
+ 		omap->flags = pdata->flags;
+ 		omap->set_mpu_wkup_lat = pdata->set_mpu_wkup_lat;
+@@ -1434,7 +1429,7 @@ omap_i2c_probe(struct platform_device *pdev)
+ 	omap->errata = 0;
+ 
+ 	if (omap->rev >= OMAP_I2C_REV_ON_2430 &&
+-			omap->rev < OMAP_I2C_REV_ON_4430_PLUS)
++	    omap->rev < OMAP_I2C_REV_ON_4430_PLUS)
+ 		omap->errata |= I2C_OMAP_ERRATA_I207;
+ 
+ 	if (omap->rev <= OMAP_I2C_REV_ON_3430_3530)
+@@ -1459,7 +1454,7 @@ omap_i2c_probe(struct platform_device *pdev)
+ 			omap->b_hw = 1; /* Enable hardware fixes */
+ 
+ 		/* calculate wakeup latency constraint for MPU */
+-		if (omap->set_mpu_wkup_lat != NULL)
++		if (omap->set_mpu_wkup_lat)
+ 			omap->latency = (1000000 * omap->fifo_size) /
+ 				       (1000 * omap->speed / 8);
+ 	}
+@@ -1469,12 +1464,12 @@ omap_i2c_probe(struct platform_device *pdev)
+ 
+ 	if (omap->rev < OMAP_I2C_OMAP1_REV_2)
+ 		r = devm_request_irq(&pdev->dev, omap->irq, omap_i2c_omap1_isr,
+-				IRQF_NO_SUSPEND, pdev->name, omap);
++				     IRQF_NO_SUSPEND, pdev->name, omap);
+ 	else
+ 		r = devm_request_threaded_irq(&pdev->dev, omap->irq,
+-				omap_i2c_isr, omap_i2c_isr_thread,
+-				IRQF_NO_SUSPEND | IRQF_ONESHOT,
+-				pdev->name, omap);
++					      omap_i2c_isr, omap_i2c_isr_thread,
++							IRQF_NO_SUSPEND | IRQF_ONESHOT,
++							pdev->name, omap);
+ 
+ 	if (r) {
+ 		dev_err(omap->dev, "failure requesting irq %i\n", omap->irq);
+-- 
+2.43.0
+
+
+--OlygTlqBXS+R21F8
+Content-Type: text/x-diff; charset=us-ascii
+Content-Disposition: attachment;
+	filename="0002-i2c-omap-remove-unused-parameter.patch"
+
+From e4327ab4199883ec2554222c2697225abb797491 Mon Sep 17 00:00:00 2001
+Message-ID: <e4327ab4199883ec2554222c2697225abb797491.1733217877.git.dhruvmenon1104@gmail.com>
+In-Reply-To: <cover.1733217877.git.dhruvmenon1104@gmail.com>
+References: <cover.1733217877.git.dhruvmenon1104@gmail.com>
+From: Dhruv Menon <dhruvmenon1104@gmail.com>
+Date: Tue, 3 Dec 2024 10:47:16 +0530
+Subject: [PATCH v3 2/2] i2c: omap: remove unused parameter
+
+The parameters `is_rdr` in `omap_i2c_receive_data` and `is_xdr` in
+`omap_i2c_transmit_data` were unused in the function implementations.
+This commit removes these parameters.
+
+Signed-off-by: Dhruv Menon <dhruvmenon1104@gmail.com>
+---
+ drivers/i2c/busses/i2c-omap.c | 14 ++++++--------
+ 1 file changed, 6 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/i2c/busses/i2c-omap.c b/drivers/i2c/busses/i2c-omap.c
+index df945ddfe089..9838d89df385 100644
+--- a/drivers/i2c/busses/i2c-omap.c
++++ b/drivers/i2c/busses/i2c-omap.c
+@@ -990,8 +990,7 @@ static int errata_omap3_i462(struct omap_i2c_dev *omap)
+ 	return 0;
+ }
+ 
+-static void omap_i2c_receive_data(struct omap_i2c_dev *omap, u8 num_bytes,
+-		bool is_rdr)
++static void omap_i2c_receive_data(struct omap_i2c_dev *omap, u8 num_bytes)
+ {
+ 	u16		w;
+ 
+@@ -1011,8 +1010,7 @@ static void omap_i2c_receive_data(struct omap_i2c_dev *omap, u8 num_bytes,
+ 	}
+ }
+ 
+-static int omap_i2c_transmit_data(struct omap_i2c_dev *omap, u8 num_bytes,
+-		bool is_xdr)
++static int omap_i2c_transmit_data(struct omap_i2c_dev *omap, u8 num_bytes)
+ {
+ 	u16		w;
+ 
+@@ -1128,7 +1126,7 @@ static int omap_i2c_xfer_data(struct omap_i2c_dev *omap)
+ 					OMAP_I2C_BUFSTAT_REG) >> 8) & 0x3F;
+ 			}
+ 
+-			omap_i2c_receive_data(omap, num_bytes, true);
++			omap_i2c_receive_data(omap, num_bytes);
+ 			omap_i2c_ack_stat(omap, OMAP_I2C_STAT_RDR);
+ 			continue;
+ 		}
+@@ -1139,7 +1137,7 @@ static int omap_i2c_xfer_data(struct omap_i2c_dev *omap)
+ 			if (omap->threshold)
+ 				num_bytes = omap->threshold;
+ 
+-			omap_i2c_receive_data(omap, num_bytes, false);
++			omap_i2c_receive_data(omap, num_bytes);
+ 			omap_i2c_ack_stat(omap, OMAP_I2C_STAT_RRDY);
+ 			continue;
+ 		}
+@@ -1151,7 +1149,7 @@ static int omap_i2c_xfer_data(struct omap_i2c_dev *omap)
+ 			if (omap->fifo_size)
+ 				num_bytes = omap->buf_len;
+ 
+-			ret = omap_i2c_transmit_data(omap, num_bytes, true);
++			ret = omap_i2c_transmit_data(omap, num_bytes);
+ 			if (ret < 0)
+ 				break;
+ 
+@@ -1166,7 +1164,7 @@ static int omap_i2c_xfer_data(struct omap_i2c_dev *omap)
+ 			if (omap->threshold)
+ 				num_bytes = omap->threshold;
+ 
+-			ret = omap_i2c_transmit_data(omap, num_bytes, false);
++			ret = omap_i2c_transmit_data(omap, num_bytes);
+ 			if (ret < 0)
+ 				break;
+ 
+-- 
+2.43.0
+
+
+--OlygTlqBXS+R21F8--
 
