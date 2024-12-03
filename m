@@ -1,52 +1,52 @@
-Return-Path: <linux-kernel+bounces-430092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430094-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55D599E2C7E
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 20:56:43 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68BBD9E2D73
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 21:44:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5F4328429E
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 19:56:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1F1C7B443B4
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 19:56:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA79E204F8E;
-	Tue,  3 Dec 2024 19:56:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DDF9205E28;
+	Tue,  3 Dec 2024 19:56:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yoseli.org header.i=@yoseli.org header.b="NWt5wUxo"
+	dkim=pass (2048-bit key) header.d=yoseli.org header.i=@yoseli.org header.b="c+eKq+x+"
 Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B5DA203704;
-	Tue,  3 Dec 2024 19:56:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D601C20408E;
+	Tue,  3 Dec 2024 19:56:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733255796; cv=none; b=qygvy2wiN4R7vD8JbNMD4Z8Ssr1l2FFSp6K5dsGH2N5EwwdOxWOkfmbFT6Oxb0JGMuxkjvxlqYb4YZMXh6gjr7omKIcc4Ad4mLuccFeswIXl7antcKW64RWUw2SeR2iR0n4vVB9b6Cv1Acra5g4SAn4L+sRhYmT9hcpxkeLpC7I=
+	t=1733255797; cv=none; b=p0l6c9mIcRMF1rctso+RyvP6RQgef9hQu2t/YrnTyHuAYyO2DUU2SFzUqcKCzvgm1uxzvkJil91MY0TRnekHjuXMrozfdwD8vGsA1kIRTf0Lq2AICgKEFynw1yVnc7cAf8Gty8GwEqZXd5ksLkyPShggyYypGOykVnBjC73FtVE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733255796; c=relaxed/simple;
-	bh=dPtvInl3dZDE6YJyE2VQcjQt7kOABVSw6IKmdkRd2Gc=;
+	s=arc-20240116; t=1733255797; c=relaxed/simple;
+	bh=lATQn35Lh/b3dk+WEOeuwOuK+UJNMeapYBTnIVg3ZVs=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=fmOyOG4yaS/NENVgG4KKr94WydwGDX/3g3Tt25P82z7W3YbfdbzoxNAaraV5c3GxhD3cr3DDxKhe3K8w+mod1WNheIc6dyqqgZw3f/56oyXAo3/nRYwbOh2clSR1Fs66crlJ30QNnb7A0auVIKBdxpQi08hIhba8BE+AeIFfgUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=yoseli.org; spf=none smtp.mailfrom=yoseli.org; dkim=pass (2048-bit key) header.d=yoseli.org header.i=@yoseli.org header.b=NWt5wUxo; arc=none smtp.client-ip=217.70.183.200
+	 In-Reply-To:To:Cc; b=pdS2CoSydHFY2+pkKfvdfXZCkbgbrwLu2f+nxsZj9cV10P/YU37Np8Lro9+gJS95mwFeTS1FU5Iv9kfEqI8uboecnQCFr4nqP1Ogw7L56rLjIBSlUAdK3aYMRLoy8TPN81XOBNJbKJfJ5MUJuwjwFnDO14+vEI8312xxHVd0itU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=yoseli.org; spf=none smtp.mailfrom=yoseli.org; dkim=pass (2048-bit key) header.d=yoseli.org header.i=@yoseli.org header.b=c+eKq+x+; arc=none smtp.client-ip=217.70.183.200
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=yoseli.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=yoseli.org
-Received: by mail.gandi.net (Postfix) with ESMTPSA id ED11D20008;
-	Tue,  3 Dec 2024 19:56:26 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id A793520009;
+	Tue,  3 Dec 2024 19:56:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yoseli.org; s=gm1;
-	t=1733255787;
+	t=1733255788;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=jPbF7+/TQfjwapydYgnIMDSNN4XoQOjgaOnk1RL58gs=;
-	b=NWt5wUxoHhHzRMRhe8r4rNxJRUs9Fs09AfqCcKxf6+ZFy9UGUb2aYGjux0S8abd6t4L0e4
-	aZJJqYeEhoj3AKncBRqt3D14DxAcZyMfQTbzWLArUfOCAmaJ4WJ8X3Mcw77PGU2CNASAsA
-	Y/VwR69t7dwDINOve2sBtqPLiP4KeXxwvaRi6Y+oKK9TYx1t6NnrS1NZReF/+wKZzygQuH
-	XTLfwVv0t1yx5GdzPFB2y+dF5aTSz8cVMvB8Wb4P9H/aWim7dEy1HZYOogaZVVwtxZd58j
-	ehPDi89l6SxWrSywJw8bG/g0IfSR5tfLYRJHTcJzOsneO+adxAPKx5PlQGVPuQ==
+	bh=BFmvl4A54RbX2d0A+Hcc5Q1dzADd/mmBQrsMzEB+NMM=;
+	b=c+eKq+x+X9OvrvZj5PDoGvQDtXxjnEjEn8fxyrItuVaL2YkC3DABbPB+9GbD2ZJ5vN/YVR
+	epcemcrQ0vkk1r4CdopI4tbIdVzEFOweAO2PdExBl3Xlv5CHxGSHcETVW/eUad0JXc89HR
+	MoRC4r1rfU3hWXGD8o473ujeRTo6NOVKCQpdoZx7OWn6yKlRoNZBM7drDSXDO1p0wcKAz7
+	cQyWP2SrYKqBBF1ZCgfs4RGM6/7NuDFqwxgRih/fSRnBwX87AIVkGA9mZwFwqesM90iliG
+	Ll0zS6Sxd0iRYzXI0yb1nNzDr5TcnWDDT4H10gacSGVYrjfVDgQtx2xWR5CmTA==
 From: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
-Date: Tue, 03 Dec 2024 20:56:25 +0100
-Subject: [PATCH v3 1/2] m68k: Add tracirqs
+Date: Tue, 03 Dec 2024 20:56:26 +0100
+Subject: [PATCH v3 2/2] arch: m68k: Add STACKTRACE support
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,7 +55,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241203-add-m68k-tracing-support-v3-1-4de93f6cae55@yoseli.org>
+Message-Id: <20241203-add-m68k-tracing-support-v3-2-4de93f6cae55@yoseli.org>
 References: <20241203-add-m68k-tracing-support-v3-0-4de93f6cae55@yoseli.org>
 In-Reply-To: <20241203-add-m68k-tracing-support-v3-0-4de93f6cae55@yoseli.org>
 To: Geert Uytterhoeven <geert@linux-m68k.org>
@@ -63,54 +63,127 @@ Cc: linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org,
  linux-trace-kernel@vger.kernel.org, rostedt@goodmis.org, 
  Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1733255785; l=1262;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1733255785; l=3079;
  i=jeanmichel.hautbois@yoseli.org; s=20240925; h=from:subject:message-id;
- bh=dPtvInl3dZDE6YJyE2VQcjQt7kOABVSw6IKmdkRd2Gc=;
- b=rdDBprTiLuOTZodxLBQt+kKbJjksWJvpBhNLlSK1A81xqOF5znKta0LrQUTWvVWz+8SgFneOt
- 7bkuZkuUbVUAZOmQo9BwfttyqqpOAfNgVlbBpn2sLJPNLpiwLX9pD8s
+ bh=lATQn35Lh/b3dk+WEOeuwOuK+UJNMeapYBTnIVg3ZVs=;
+ b=9b9w2q+XntKKeFdrnDRrBYXPVk/GWwlEks9sY5+TE+l6RufrJe1Fs9xBQj9EwN0QZv703mV6x
+ /PvmWMehrkpBBlfFVbIO2n4RMLoxJ5S7/kv3Q9Xe5+6VWIXbuzo+kP/
 X-Developer-Key: i=jeanmichel.hautbois@yoseli.org; a=ed25519;
  pk=MsMTVmoV69wLIlSkHlFoACIMVNQFyvJzvsJSQsn/kq4=
 X-GND-Sasl: jeanmichel.hautbois@yoseli.org
 
-The TRACE_IRQFLAGS_SUPPORT requires the architecture to call
-trace_hardirqs_off() when interrupts are disabled and
-trace_hardirqs_on() when they are enabled.
-Add those calls to do_IRQ function.
+In order to use tracing, implement a basic arch_stack_walk() based on
+the one in PowerPC.
+Tested on a M54418 coldfire.
 
 Signed-off-by: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
 ---
- arch/m68k/Kconfig      | 1 +
- arch/m68k/kernel/irq.c | 2 ++
- 2 files changed, 3 insertions(+)
+ arch/m68k/Kconfig             |  5 ++++
+ arch/m68k/kernel/Makefile     |  1 +
+ arch/m68k/kernel/stacktrace.c | 70 +++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 76 insertions(+)
 
 diff --git a/arch/m68k/Kconfig b/arch/m68k/Kconfig
-index 7c4f7bcc89d76326b9d7280a3bcba79412ead7d2..793ab1e2762609725bbf793f6dffecfa3ecfff0f 100644
+index 793ab1e2762609725bbf793f6dffecfa3ecfff0f..3ad8596aab71190807f8c11dd5876aa1198760f3 100644
 --- a/arch/m68k/Kconfig
 +++ b/arch/m68k/Kconfig
-@@ -39,6 +39,7 @@ config M68K
- 	select OLD_SIGSUSPEND3
- 	select UACCESS_MEMCPY if !MMU
- 	select ZONE_DMA
-+	select TRACE_IRQFLAGS_SUPPORT
+@@ -106,6 +106,11 @@ config BOOTINFO_PROC
+ 	  Say Y to export the bootinfo used to boot the kernel in a
+ 	  "bootinfo" file in procfs.  This is useful with kexec.
  
- config CPU_BIG_ENDIAN
- 	def_bool y
-diff --git a/arch/m68k/kernel/irq.c b/arch/m68k/kernel/irq.c
-index 9ab4f550342e5de11c528f55781432675ffd66bf..74cf60ebbc4bca51f3caa4046dbd2bdb02355711 100644
---- a/arch/m68k/kernel/irq.c
-+++ b/arch/m68k/kernel/irq.c
-@@ -21,9 +21,11 @@ asmlinkage void do_IRQ(int irq, struct pt_regs *regs)
- {
- 	struct pt_regs *oldregs = set_irq_regs(regs);
++config STACKTRACE_SUPPORT
++	def_bool MMU_COLDFIRE
++	select ARCH_STACKWALK
++	select ARCH_WANT_FRAME_POINTERS
++
+ menu "Platform setup"
  
-+	trace_hardirqs_off();
- 	irq_enter();
- 	generic_handle_irq(irq);
- 	irq_exit();
-+	trace_hardirqs_on();
+ source "arch/m68k/Kconfig.cpu"
+diff --git a/arch/m68k/kernel/Makefile b/arch/m68k/kernel/Makefile
+index 6c732ed3998b714a4842ee29c977550a61979779..cb02bcfe04c6b265fa97db9237395a262e649989 100644
+--- a/arch/m68k/kernel/Makefile
++++ b/arch/m68k/kernel/Makefile
+@@ -23,3 +23,4 @@ obj-$(CONFIG_UBOOT)		+= uboot.o
  
- 	set_irq_regs(oldregs);
- }
+ obj-$(CONFIG_EARLY_PRINTK)	+= early_printk.o
+ 
++obj-y	+= stacktrace.o
+diff --git a/arch/m68k/kernel/stacktrace.c b/arch/m68k/kernel/stacktrace.c
+new file mode 100644
+index 0000000000000000000000000000000000000000..4c2fb6b0cf675ee5a3a21393a50603fea98a1b03
+--- /dev/null
++++ b/arch/m68k/kernel/stacktrace.c
+@@ -0,0 +1,70 @@
++// SPDX-License-Identifier: GPL-2.0
++
++/*
++ * Stack trace utility functions etc.
++ *
++ * Copyright 2024 Jean-Michel Hautbois, Yoseli SAS.
++ */
++
++#include <asm/current.h>
++#include <asm/ptrace.h>
++#include <linux/sched.h>
++#include <linux/sched/task_stack.h>
++#include <linux/stacktrace.h>
++
++static inline unsigned long current_stack_frame(void)
++{
++	unsigned long sp;
++
++	asm volatile("movl %%fp, %0" : "=r"(sp));
++	return sp;
++}
++
++static inline int validate_sp(unsigned long sp, struct task_struct *task)
++{
++	unsigned long stack_start, stack_end;
++
++	if (task == current)
++		stack_start = (unsigned long)task_stack_page(task);
++	else
++		stack_start = (unsigned long)task->thread.esp0;
++
++	stack_end = stack_start + THREAD_SIZE;
++
++	if (sp < stack_start || sp >= stack_end)
++		return 0;
++
++	return 1;
++}
++
++void __no_sanitize_address arch_stack_walk(stack_trace_consume_fn consume_entry, void *cookie,
++					   struct task_struct *task, struct pt_regs *regs)
++{
++	unsigned long sp;
++
++	if (regs && !consume_entry(cookie, regs->pc))
++		return;
++
++	if (regs)
++		sp = (unsigned long) regs;
++	else if (task == current)
++		sp = current_stack_frame();
++	else
++		sp = task->thread.ksp;
++
++	for (;;) {
++		unsigned long *stack = (unsigned long *) sp;
++		unsigned long newsp, ip;
++
++		if (!validate_sp(sp, task))
++			return;
++
++		newsp = stack[0];
++		ip = stack[1];
++
++		if (!consume_entry(cookie, ip))
++			return;
++
++		sp = newsp;
++	}
++}
 
 -- 
 2.39.5
