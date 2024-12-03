@@ -1,283 +1,173 @@
-Return-Path: <linux-kernel+bounces-430340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 083A69E2F8B
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 00:09:47 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C6987164BF3
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 23:09:43 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23B3B20B1E7;
-	Tue,  3 Dec 2024 23:09:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="jQtG7Bkf"
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC9509E2FD0
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 00:27:13 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71D17204F6C
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 23:09:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733267365; cv=none; b=UwHTgesqGYYRAt/U2w+eP0b4otQ28g8WHYctl9DBTJNADaTcr3fEpYNXrJWNBkwljMni+oVaKHoW1OlW91o/qiXLnJuH2tP5PxY/k6G7k7HH9z/kTU7MnvRLIr6PCNPpXmrkDHT0po9UwA7RsXTuMlfi2GH87bYrFyljh+Hl3Jc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733267365; c=relaxed/simple;
-	bh=463OO+a1qAHyjW2ZZ+OYe+cOM0s/qFghP2piUoJLCsc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GYpvyMh1dxNL4hJXVBKg7S1Hhlbr2z/JWfLx8BOBkkuVUjlxqJ2tHK4Lb62fQ6Kaz/35RZhqLbwaOF8X9WMelHYDCTYIlbj6Yhu5D+5rvXlCX0EJRnB5w45V7Q8un4V3nBmbDBxoFnrWnc1PuHo2V2Wv3cjoXig2Egbp8o/+0uk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=jQtG7Bkf; arc=none smtp.client-ip=185.125.188.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com [209.85.208.71])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 611BFB2B427
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 23:09:24 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EF2720A5E8;
+	Tue,  3 Dec 2024 23:09:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="b1ASdtAH"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 564BD3F851
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 23:09:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1733267360;
-	bh=vfjen1DyciWCYS6b4BMbyu8Mff3purGah6xy+CqllBA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type;
-	b=jQtG7BkfBICgNklYxKa+ZM8aPCUmG5WLb8QSldYBHNu8/nyel2gm6zHG/AuiYqNsx
-	 BGKayFhimxVDteqIMT+YkbfNJK7TYaxkBiiOIhV4G/4qBoS0k/WdGb3JKe56Wttt6/
-	 +Q6gcYQrRl5RP/LLrzGxBWQ+E6Q7dwXatimMBE0dSmQDacShPJIwG5PXCqf/jKykJ6
-	 NSQDO0zpoBr/KWRJhD1HZTzoQomVGz76+oizg3bJ/70Ry7LwFk60SVudvV3VvvJL0m
-	 dm1nqwUicrZPZHXX46yRUdOXwewg7D0tTXk+LZA9Kc8gpoxyEZwCdJP7MT/GM17QvS
-	 GoN5eHZZHv0Lw==
-Received: by mail-ed1-f71.google.com with SMTP id 4fb4d7f45d1cf-5d0d2fa9e61so262380a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 15:09:20 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733267359; x=1733872159;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vfjen1DyciWCYS6b4BMbyu8Mff3purGah6xy+CqllBA=;
-        b=bR2iK6dYVlxZEuQEySxbRZROpFZbDnt+MsfOnzEvHBC+UCflmo+KZuYYHaZ9LJ6TJz
-         AxIcwbtKqE7kEr5QsEJA5Th5Ajhde3BlX1xg/BlKelu21+28eZyztEPTgFzMV+aP/2HP
-         KUZrDNEoMcNH0bQ2K19+AlnNq4MVaXzHCpPduiqBCDihiv8zHZoMCLWEBzAWd0xw7gJ5
-         1roIbO0+R5uFKbI0MW+5BfQTqB6ui/b5JldykCXgRh0M1zTUziX5acUnIGd03PEXR19f
-         QKBDnUt+086HOR1brsNXDBzzdEX5NhLPjEo6N4IYVOc+ECwTUchUomyJFbtSTe1xCUmW
-         xpFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX04PJCJlzLhwJ7w4EbFzRmQF1uzLxCoNYKvWyb1CVnr2wFCIGTf6gih0+6qTjHaGMw9ItomuIEnL03C1s=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyfiry3sCrzsO1ytzyDV0o1UTKqTCNlng53QVk+2gZapIQlM8mQ
-	k7KbISqehCEEeAsKWa/mOTmscYnJJiYk0suRZMuYX7YiUL+Epei2CsznRV4rykOZAWjpMMYGEMa
-	hhiIm0lKXRNwHB/QvXvDuTUJwdPg+gQvm5ODAscjvNesj7pKMVFuicVkFmwtSDnQ2BaXH42ftY9
-	zn8VyWUPmY9MnTtziwE8O8XYqiu8YIuM3XlQMlrrP4x9FlZ9zQBwrp
-X-Gm-Gg: ASbGncv/t3MAWRmA3VDvX9OcMNjFoyejmrHM0MawR9XoTS75B1b299WqLI0/Q9hyy6B
-	tcHhWaJcWlk08wgUcCmx6drVwrIe4hQ==
-X-Received: by 2002:a05:6402:449b:b0:5d0:9c4f:4945 with SMTP id 4fb4d7f45d1cf-5d10c26d561mr4050281a12.11.1733267358887;
-        Tue, 03 Dec 2024 15:09:18 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHN/ATHTPZJ9bM2/jaipzxIwMyq5dvGI0c6nWnaWDSNV62dClGUtj4eq9eqe8U0Ivpo7Px3/z2aGmqZ7bDCp6U=
-X-Received: by 2002:a05:6402:449b:b0:5d0:9c4f:4945 with SMTP id
- 4fb4d7f45d1cf-5d10c26d561mr4050267a12.11.1733267358506; Tue, 03 Dec 2024
- 15:09:18 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 458078460;
+	Tue,  3 Dec 2024 23:09:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733267357; cv=none; b=Pwr9j/PbgaKTglohvRnS3Q/NkshYLBd280u1ruFcWoPaC4BSfM09QqIMFkNABx3WivkaYv/8bMoNdYliHhkOnQlJojAFLlLTXcn0S2ZZ0zlw+UGIOAQfvgmlwEYh22ggXbApuy7X7nVtCgfYnriqqTmUvpz4FimeVZUM/z2yB0U=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733267357; c=relaxed/simple;
+	bh=3zN1x3N+s9QrJx4DCJMFRRP/JtlOXiWxV6oDmoR/K0E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZOKyQ/ivVknfuovA8kp62ZZgBn2FuchtCUS8ciTOKk0h0mvup7uFLwK6QBo5aAdOOfs5+S5USVG0RVKOyKtOg2nWL62sh6iGh2Qt7u0bXS5h1yulex6aIhwZuga1taLkGBfO7Ewen6fuK0b87blTmRG+/9qZIC94AtRyxxW+JBo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=b1ASdtAH; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1733267349;
+	bh=3zN1x3N+s9QrJx4DCJMFRRP/JtlOXiWxV6oDmoR/K0E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=b1ASdtAHY6b2cx0XrR2Y7/JBFvWsaNY22fJtiUq98k0Rkk9vF4BvVGNeGmqFWijz4
+	 MNQY1TwPW7/kF2houjesmHMja7FUDIaWYCHxNP1v8GbxgvCLEo/AIHtmM+1KnfZ9Dy
+	 NGnV5GWwWzh9YbSgHeG6l6Rfad+CuHi3mEKhlBPM=
+Date: Wed, 4 Dec 2024 00:09:08 +0100
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Masahiro Yamada <masahiroy@kernel.org>, 
+	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, 
+	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] tools/resolve_btfids: Add --fatal-warnings option
+Message-ID: <9a11cf2f-ddca-4a50-817f-74183d31dcaf@t-8ch.de>
+References: <20241126-resolve_btfids-v2-0-288c37cb89ee@weissschuh.net>
+ <20241126-resolve_btfids-v2-1-288c37cb89ee@weissschuh.net>
+ <CAEf4BzahMQWVH0Gaub-tWjH9GweG8Kt7OBU-f+PBhmmRDCKfrA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAHTA-uYp07FgM6T1OZQKqAdSA5JrZo0ReNEyZgQZub4mDRrV5w@mail.gmail.com>
- <20241126103427.42d21193.alex.williamson@redhat.com> <CAHTA-ubXiDePmfgTdPbg144tHmRZR8=2cNshcL5tMkoMXdyn_Q@mail.gmail.com>
- <20241126154145.638dba46.alex.williamson@redhat.com> <CAHTA-uZp-bk5HeE7uhsR1frtj9dU+HrXxFZTAVeAwFhPen87wA@mail.gmail.com>
- <20241126170214.5717003f.alex.williamson@redhat.com> <CAHTA-uY3pyDLH9-hy1RjOqrRR+OU=Ko6hJ4xWmMTyoLwHhgTOQ@mail.gmail.com>
- <20241127102243.57cddb78.alex.williamson@redhat.com> <CAHTA-uaGZkQ6rEMcRq6JiZn8v9nZPn80NyucuSTEXuPfy+0ccw@mail.gmail.com>
- <20241203122023.21171712.alex.williamson@redhat.com> <CAHTA-uZWGmoLr0R4L608xzvBAxnr7zQPMDbX0U4MTfN3BAsfTQ@mail.gmail.com>
- <20241203150620.15431c5c.alex.williamson@redhat.com>
-In-Reply-To: <20241203150620.15431c5c.alex.williamson@redhat.com>
-From: Mitchell Augustin <mitchell.augustin@canonical.com>
-Date: Tue, 3 Dec 2024 17:09:07 -0600
-Message-ID: <CAHTA-uZD5_TAZQkxdJRt48T=aPNAKg+x1tgpadv8aDbX5f14vA@mail.gmail.com>
-Subject: Re: drivers/pci: (and/or KVM): Slow PCI initialization during VM boot
- with passthrough of large BAR Nvidia GPUs on DGX H100
-To: Alex Williamson <alex.williamson@redhat.com>
-Cc: linux-pci@vger.kernel.org, kvm@vger.kernel.org, 
-	Bjorn Helgaas <bhelgaas@google.com>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAEf4BzahMQWVH0Gaub-tWjH9GweG8Kt7OBU-f+PBhmmRDCKfrA@mail.gmail.com>
 
-Thanks for the suggestions!
-
-> The calling convention of __pci_read_base() is already changing if we're =
-having the caller disable decoding
-
-The way I implemented that in my initial patch draft[0] still allows
-for __pci_read_base() to be called independently, as it was
-originally, since (as far as I understand) the encode disable/enable
-is just a mask - so I didn't need to remove the disable/enable inside
-__pci_read_base(), and instead just added an extra one in
-pci_read_bases(), turning the __pci_read_base() disable/enable into a
-no-op when called from pci_read_bases(). In any case...
-
-> I think maybe another alternative that doesn't hold off the console would=
- be to split the BAR sizing and resource processing into separate steps.
-
-This seems like a potentially better option, so I'll dig into that approach=
-.
-
-
-Providing some additional info you requested last week, just for more conte=
-xt:
-
-> Do you have similar logs from that [hotplug] operation
-
-Attached [1] is the guest boot output (boot was quick, since no GPUs
-were attached at boot time)
-
-Here is what I see when I enable a single GPU (takes 1-3 seconds):
-[Dec 3 22:53] pci 0000:09:00.0: [10de:2330] type 00 class 0x030200 PCIe End=
-point
-[  +0.000526] pci 0000:09:00.0: BAR 0 [mem 0x00000000-0x00ffffff 64bit pref=
-]
-[  +0.000237] pci 0000:09:00.0: BAR 2 [mem 0x00000000-0x1fffffffff 64bit pr=
-ef]
-[  +0.000212] pci 0000:09:00.0: BAR 4 [mem 0x00000000-0x01ffffff 64bit pref=
-]
-[  +0.000275] pci 0000:09:00.0: Max Payload Size set to 128 (was 256, max 2=
-56)
-[  +0.000453] pci 0000:09:00.0: Enabling HDA controller
-[  +0.003052] pci 0000:09:00.0: 252.048 Gb/s available PCIe bandwidth,
-limited by 16.0 GT/s PCIe x16 link at 0000:00:02.0 (capable of 504.112
-Gb/s with 32.0 GT/s PCIe x16 link)
-[  +0.003327] pci 0000:09:00.0: BAR 2 [mem
-0x384000000000-0x385fffffffff 64bit pref]: assigned
-[  +0.000258] pci 0000:09:00.0: BAR 4 [mem
-0x386000000000-0x386001ffffff 64bit pref]: assigned
-[  +0.000311] pci 0000:09:00.0: BAR 0 [mem
-0x386002000000-0x386002ffffff 64bit pref]: assigned
-[  +0.000993] nvidia 0000:09:00.0: enabling device (0140 -> 0142)
-
-And below[2] is the output of /proc/iomem after I have done that
-process 4 times (GPUs are 0000:08, 0000:09, 0000:0a, 0000:0b)
-
-[0] https://raw.githubusercontent.com/MitchellAugustin/script-dump-public/r=
-efs/heads/main/slow-ovmf-case/patches/0001-Move-decode-disable-enable-up-on=
-e-level-and-add-kern.patch
-[1] https://pastebin.ubuntu.com/p/T4myPSQSJ5/
-[2] https://pastebin.ubuntu.com/p/GD2WtkW9Gq/
-
-Other info:
-Guest:
-ubuntu@testbox02:~$ cat /proc/cmdline
-BOOT_IMAGE=3D/boot/vmlinuz-6.12.1
-root=3DUUID=3Dfec1c9ae-0df3-419c-80dd-f3035049b845 ro console=3Dtty1
-console=3DttyS0
-
-Host (DGX H100):
-$ cat /proc/cmdline
-BOOT_IMAGE=3D/boot/vmlinuz-6.12.0+
-root=3DUUID=3Dbb04f707-1c00-4806-8adb-cf9eb876786f ro
-console=3DttyS0,115200n8 iommu=3Dpt init_on_alloc=3D0
-
--  Mitchell Augustin
-
-On Tue, Dec 3, 2024 at 4:06=E2=80=AFPM Alex Williamson
-<alex.williamson@redhat.com> wrote:
->
-> On Tue, 3 Dec 2024 14:33:10 -0600
-> Mitchell Augustin <mitchell.augustin@canonical.com> wrote:
->
-> > Thanks.
+On 2024-12-03 14:31:01-0800, Andrii Nakryiko wrote:
+> On Tue, Nov 26, 2024 at 1:17 PM Thomas Weißschuh <linux@weissschuh.net> wrote:
 > >
-> > I'm thinking about the cleanest way to accomplish this:
+> > Currently warnings emitted by resolve_btfids are buried in the build log
+> > and are slipping into mainline frequently.
+> > Add an option to elevate warnings to hard errors so the CI bots can
+> > catch any new warnings.
 > >
-> > 1. I'm wondering if replacing the pci_info() calls with equivalent
-> > printk_deferred() calls might be sufficient here. This works in my
-> > initial test, but I'm not sure if this is definitive proof that we
-> > wouldn't have any issues in all deployments, or if my configuration is
-> > just not impacted by this kind of deadlock.
->
-> Just switching to printk_deferred() alone seems like wishful thinking,
-> but if you were also to wrap the code in console_{un}lock(), that might
-> be a possible low-impact solution.
->
-> > 2. I did also draft a patch that would just eliminate the redundancy
-> > and disable the impacted logs by default, and allow them to be
-> > re-enabled with a new kernel command line option
-> > "pci=3Dbar_logging_enabled" (at the cost of the performance gains due t=
-o
-> > reduced redundancy). This works well in all of my tests.
->
-> I suspect Bjorn would prefer not to add yet another pci command line
-> option and as we've seen here, the logs are useful by default.
->
-> > Do you think either of those approaches would work / be appropriate?
-> > Ultimately I am trying to avoid messy changes that would require
-> > actually propagating all of the info needed for these logs back up to
-> > pci_read_bases(), if at all possible, since there seems like no
-> > obvious way to do that without changing the signature of
-> > __pci_read_base() or tracking additional state.
->
-> The calling convention of __pci_read_base() is already changing if
-> we're having the caller disable decoding and it doesn't have a lot of
-> callers, so I don't think I'd worry about changing the signature.
->
-> I think maybe another alternative that doesn't hold off the console
-> would be to split the BAR sizing and resource processing into separate
-> steps.  For example pci_read_bases() might pass arrays like:
->
->         u32 bars[PCI_STD_NUM_BARS] =3D { 0 };
->         u32 romsz =3D 0;
->
-> To a function like:
->
-> void __pci_read_bars(struct pci_dev *dev, u32 *bars, u32 *romsz,
->                      int num_bars, int rom)
-> {
->         u16 orig_cmd;
->         u32 tmp;
->         int i;
->
->         if (!dev->mmio_always_on) {
->                 pci_read_config_word(dev, PCI_COMMAND, &orig_cmd);
->                 if (orig_cmd & PCI_COMMAND_DECODE_ENABLE) {
->                         pci_write_config_word(dev, PCI_COMMAND,
->                                 orig_cmd & ~PCI_COMMAND_DECODE_ENABLE);
->                 }
->         }
->
->         for (i =3D 0; i < num_bars; i++) {
->                 unsigned int pos =3D PCI_BASE_ADDRESS_0 + (i << 2);
->
->                 pci_read_config_dword(dev, pos, &tmp);
->                 pci_write_config_dword(dev, pos, ~0);
->                 pci_read_config_dword(dev, pos, &bars[i]);
->                 pci_write_config_dword(dev, pos, tmp);
->         }
->
->         if (rom) {
->                 pci_read_config_dword(dev, rom, &tmp);
->                 pci_write_config_dword(dev, rom, PCI_ROM_ADDRESS_MASK);
->                 pci_read_config_dword(dev, rom, romsz);
->                 pci_write_config_dword(dev, rom, tmp);
->         }
->
->         if (!dev->mmio_always_on && (orig_cmd & PCI_COMMAND_DECODE_ENABLE=
-))
->                 pci_write_config_word(dev, PCI_COMMAND, orig_cmd);
-> }
->
-> pci_read_bases() would then iterate in a similar way that it does now,
-> passing pointers to the stashed data to __pci_read_base(), which would
-> then only do the resource processing and could freely print.
->
-> To me that seems better than blocking the console... Maybe there are
-> other ideas on the list.  Thanks,
->
-> Alex
->
+> > Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+> > Acked-by: Jiri Olsa <jolsa@kernel.org>
+> > ---
+> >  tools/bpf/resolve_btfids/main.c | 12 ++++++++++--
+> >  1 file changed, 10 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/tools/bpf/resolve_btfids/main.c b/tools/bpf/resolve_btfids/main.c
+> > index bd9f960bce3d5b74dc34159b35af1e0b33524d2d..571d29d2da97fea75e5f9c544a95b9ac65f9e579 100644
+> > --- a/tools/bpf/resolve_btfids/main.c
+> > +++ b/tools/bpf/resolve_btfids/main.c
+> > @@ -141,6 +141,7 @@ struct object {
+> >  };
+> >
+> >  static int verbose;
+> > +static int warnings;
+> >
+> >  static int eprintf(int level, int var, const char *fmt, ...)
+> >  {
+> > @@ -604,6 +605,7 @@ static int symbols_resolve(struct object *obj)
+> >                         if (id->id) {
+> >                                 pr_info("WARN: multiple IDs found for '%s': %d, %d - using %d\n",
+> >                                         str, id->id, type_id, id->id);
+> > +                               warnings++;
+> >                         } else {
+> >                                 id->id = type_id;
+> >                                 (*nr)--;
+> > @@ -625,8 +627,10 @@ static int id_patch(struct object *obj, struct btf_id *id)
+> >         int i;
+> >
+> >         /* For set, set8, id->id may be 0 */
+> > -       if (!id->id && !id->is_set && !id->is_set8)
+> > +       if (!id->id && !id->is_set && !id->is_set8) {
+> >                 pr_err("WARN: resolve_btfids: unresolved symbol %s\n", id->name);
+> > +               warnings++;
+> > +       }
+> >
+> >         for (i = 0; i < id->addr_cnt; i++) {
+> >                 unsigned long addr = id->addr[i];
+> > @@ -782,6 +786,7 @@ int main(int argc, const char **argv)
+> >                 .funcs    = RB_ROOT,
+> >                 .sets     = RB_ROOT,
+> >         };
+> > +       bool fatal_warnings = false;
+> >         struct option btfid_options[] = {
+> >                 OPT_INCR('v', "verbose", &verbose,
+> >                          "be more verbose (show errors, etc)"),
+> > @@ -789,6 +794,8 @@ int main(int argc, const char **argv)
+> >                            "BTF data"),
+> >                 OPT_STRING('b', "btf_base", &obj.base_btf_path, "file",
+> >                            "path of file providing base BTF"),
+> > +               OPT_BOOLEAN(0, "fatal-warnings", &fatal_warnings,
+> > +                           "turn warnings into errors"),
+> 
+> We are mixing naming styles here: we have "btf_base" with underscore
+> separator, and you are adding "fatal-warnings" with dash separator. I
+> personally like dashes, but whichever way we should stay consistent.
+> So let's fix it, otherwise it looks a bit sloppy.
 
+Ack.
 
---
-Mitchell Augustin
-Software Engineer - Ubuntu Partner Engineering
-Email:mitchell.augustin@canonical.com
-Location:United States of America
+> 
+> Please also use [PATCH bpf-next v3] subject prefix to make it explicit
+> that this should go through bpf-next tree.
 
+Ack.
 
-canonical.com
-ubuntu.com
+> 
+> pw-bot: cr
+> 
+> >                 OPT_END()
+> >         };
+> >         int err = -1;
+> > @@ -823,7 +830,8 @@ int main(int argc, const char **argv)
+> >         if (symbols_patch(&obj))
+> >                 goto out;
+> >
+> > -       err = 0;
+> > +       if (!(fatal_warnings && warnings))
+> > +               err = 0;
+> 
+> nit: just
+> 
+> if (!fatal_warnings)
+>     err = 0;
+> 
+> ?
+
+This seems wrong. Now the actual warning counter is never evaluated.
+And --fatal_warnings will always lead to an error exit code.
+
+> >  out:
+> >         if (obj.efile.elf) {
+> >                 elf_end(obj.efile.elf);
+> >
+> > --
+> > 2.47.1
+> >
 
