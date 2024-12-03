@@ -1,109 +1,96 @@
-Return-Path: <linux-kernel+bounces-429884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DED829E2820
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 17:51:11 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A69569E2824
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 17:51:36 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A546C2883EC
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:51:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 25500167969
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 16:51:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BD561FC0E5;
-	Tue,  3 Dec 2024 16:50:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 853DA1F9EAD;
+	Tue,  3 Dec 2024 16:50:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="T9WrCOrx";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="7UtLMG0F"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KOm5RBU3"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F4441FA176;
-	Tue,  3 Dec 2024 16:50:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 522AA1F8F1D
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 16:50:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733244617; cv=none; b=b0nFUW8lTPr8RfdszRl2MfsggKrjsZZCSgT/fSwESVQnCHFqOvQmYybocglL35DMwRs8CS3v99567ZHdg1SDUgvM7s1nfDL00vpPoKZiXCXkIOYfB/Hy+cAoWeumbZR00cOIBt+1HYtQpUhliNXolDfQtkyBcR7vcojVYAybz+I=
+	t=1733244641; cv=none; b=aTuhfvawrQTPhLBki+LqllaBRLOP/6jXIKdG/bHQIltTlyTbKBDi80etg+H7eBWlqO7PXm/mGFd8NQaYjxX3dHqjlhXqxEUdtGmt6jmu7rUAE6ImSTizdERVyJaPwc+DMoS7tJbPULBg36hRUY4nBle43beDVBtJjXNck7f9uYk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733244617; c=relaxed/simple;
-	bh=dCLZ/6d9Emqzk6rjNaKFq70Ab/o+bBlDNmnOufWyYvo=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=tZ3kYYBWM8vFjVcFfDcgsYufJHZhsdzpzaTqCZC930WEaDVnwQDaUz0f2MePbW7E30EGInl1bd3V2oXvj3UOoiiFD0++mQpqcFZfhcuwfE27JLDI7rSr2J0IW/ky50eT5T5N2g49eV7AQaphoqiSurMmMwEzKBg1xg+eUxHGJWM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=T9WrCOrx; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=7UtLMG0F; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1733244613;
+	s=arc-20240116; t=1733244641; c=relaxed/simple;
+	bh=U/kZg6wRRAGFaUyq3MwugoqyLVhimU1xugPQde6x/+U=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=ha1muVfO6N6W1NUp+t9vcrPyfhePJg1lMT+VMAB5fXp4xP7Xw580npvV9r5B0D9Qyq4DnKBXRXrENpagsC4UmvnXaDJi4ZI9QeJJ7Geohr/53xxRq95tVbVDAqNFc4Jijp0r6qZ5RpFyfPwW44veew9S3gb9xhI2/RaKgbTqCDk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KOm5RBU3; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733244639;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=ddUgFgPxg+SS7wo0+tjynAsBYR5Mxah4PrQSaFnCmnk=;
-	b=T9WrCOrxKvgOzRX18+gpG03ZanbaXNOW4Q8EJ+AjPslvATRO09l/e/uoFg5o0u3V7mUxIc
-	FKCFbTtx7TWQa10iy/a+u0zHSpl3oM+K6vPIY9QN3aZr19zGDrMJOmgz4vPYA6x3G1/c3M
-	WxUqbqLRsTrv/siOEk3R5LiTzgSo1JgEv+NOVe8nSL0VGMxhIKdtW2JlhhQbsGo42ibEke
-	2lZUHWjzXEzzayRZlFzV90vwPiuaNQ2p8MbtOrPSWndbBJzlUJHotzmppPVkuKRyl+XUKe
-	4OyeIQ55HqBlfvUvBUNtTExzn47SF13chN/bZbI7ZfD22izCmNHBbNZyXaOqwQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1733244613;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ddUgFgPxg+SS7wo0+tjynAsBYR5Mxah4PrQSaFnCmnk=;
-	b=7UtLMG0FCrXqstktFxvDODEZS+Zvp0Wod9CVP17RsZNtcP0UOJ6fcJsb5uKaTcWojLI+EE
-	5MXVE3lGdmrbDeBQ==
-To: Andrew Jones <ajones@ventanamicro.com>
-Cc: iommu@lists.linux.dev, kvm-riscv@lists.infradead.org,
- kvm@vger.kernel.org, linux-riscv@lists.infradead.org,
- linux-kernel@vger.kernel.org, tjeznach@rivosinc.com, zong.li@sifive.com,
- joro@8bytes.org, will@kernel.org, robin.murphy@arm.com,
- anup@brainfault.org, atishp@atishpatra.org, alex.williamson@redhat.com,
- paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu
-Subject: Re: [RFC PATCH 01/15] irqchip/riscv-imsic: Use hierarchy to reach
- irq_set_affinity
-In-Reply-To: <20241203-1cadc72be6883bc2d77a8050@orel>
-References: <20241114161845.502027-17-ajones@ventanamicro.com>
- <20241114161845.502027-18-ajones@ventanamicro.com> <87mshcub2u.ffs@tglx>
- <20241203-1cadc72be6883bc2d77a8050@orel>
-Date: Tue, 03 Dec 2024 17:50:13 +0100
-Message-ID: <87a5dcu2wq.ffs@tglx>
+	bh=U/kZg6wRRAGFaUyq3MwugoqyLVhimU1xugPQde6x/+U=;
+	b=KOm5RBU3R9xv+4NCbHnxg/GBPr0u4kA5bf6IdaaR7PcD/03pQya3a5AiYNScLrRKdAYClS
+	5edh6T3sF6oIf7KKu1abZwiTEre4UqoKMQYkGlBz6gyMRJ+vfKF50V8//e0sghyMZ4/8me
+	tJj+zgRqBzt9SYcZ5l6YlZExITPtLI4=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-626-ZaPuXlSMM0KYIhsLt3rKvg-1; Tue,
+ 03 Dec 2024 11:50:36 -0500
+X-MC-Unique: ZaPuXlSMM0KYIhsLt3rKvg-1
+X-Mimecast-MFC-AGG-ID: ZaPuXlSMM0KYIhsLt3rKvg
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A0BF71944DDF;
+	Tue,  3 Dec 2024 16:50:31 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.48])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id DA9A030000DF;
+	Tue,  3 Dec 2024 16:50:23 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <674ded0b.050a0220.48a03.0027.GAE@google.com>
+References: <674ded0b.050a0220.48a03.0027.GAE@google.com>
+To: syzbot <syzbot+5621e2baf492be382fa9@syzkaller.appspotmail.com>
+Cc: dhowells@redhat.com, asmadeus@codewreck.org, bharathsm@microsoft.com,
+    brauner@kernel.org, ericvh@kernel.org, jlayton@kernel.org,
+    linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
+    linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+    linux-trace-kernel@vger.kernel.org, linux_oss@crudebyte.com,
+    lucho@ionkov.net, marc.dionne@auristor.com,
+    mathieu.desnoyers@efficios.com, mhiramat@kernel.org,
+    netfs@lists.linux.dev, pc@manguebit.com, ronniesahlberg@gmail.com,
+    rostedt@goodmis.org, samba-technical@lists.samba.org,
+    sfrench@samba.org, sprasad@microsoft.com,
+    syzkaller-bugs@googlegroups.com, tom@talpey.com,
+    v9fs@lists.linux.dev
+Subject: Re: [syzbot] [netfs?] WARNING in netfs_retry_reads (2)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <589148.1733244622.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date: Tue, 03 Dec 2024 16:50:22 +0000
+Message-ID: <589149.1733244622@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Tue, Dec 03 2024 at 17:27, Andrew Jones wrote:
-> On Tue, Dec 03, 2024 at 02:53:45PM +0100, Thomas Gleixner wrote:
->> On Thu, Nov 14 2024 at 17:18, Andrew Jones wrote:
->> The whole IMSIC MSI support can be moved over to MSI LIB which makes all
->> of this indirection go away and your intermediate domain will just fit
->> in.
->> 
->> Uncompiled patch below. If that works, it needs to be split up properly.
->
-> Thanks Thomas. I gave your patch below a go, but we now fail to have an
-> msi domain set up when probing devices which go through aplic_msi_setup(),
-> resulting in an immediate NULL deference in
-> msi_create_device_irq_domain(). I'll look closer tomorrow.
+#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs=
+.git netfs-writeback
 
-Duh! I forgot to update the .select callback. I don't know how you fixed that
-compile fail up. Delta patch below.
-
-Thanks,
-
-        tglx
----
---- a/drivers/irqchip/irq-riscv-imsic-platform.c
-+++ b/drivers/irqchip/irq-riscv-imsic-platform.c
-@@ -180,7 +180,7 @@ static void imsic_irq_debug_show(struct
- static const struct irq_domain_ops imsic_base_domain_ops = {
- 	.alloc		= imsic_irq_domain_alloc,
- 	.free		= imsic_irq_domain_free,
--	.select		= imsic_irq_domain_select,
-+	.select		= msi_lib_irq_domain_select,
- #ifdef CONFIG_GENERIC_IRQ_DEBUGFS
- 	.debug_show	= imsic_irq_debug_show,
- #endif
 
