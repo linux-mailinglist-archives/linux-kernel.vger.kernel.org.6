@@ -1,77 +1,84 @@
-Return-Path: <linux-kernel+bounces-429970-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429971-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B9949E29D3
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 18:47:08 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF4A09E2A23
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 18:58:58 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B1781648A8
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 17:46:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BE319BC01E4
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 17:47:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF6C21FC7EC;
-	Tue,  3 Dec 2024 17:46:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E00BF1FDE01;
+	Tue,  3 Dec 2024 17:46:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="GIIC6FEE"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="F/fTAeIu"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 318371E492D
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 17:46:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A17021F9F77
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 17:46:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733247999; cv=none; b=aFDZhQW70koJ3IiPSTpbDNkZg5LiARukJPm6NqMK31EbWmu6Wc+rJGbS6P+GBkAJDl8IG+38SRYhreLkg2T6Zw5JPcHyyvPHYen1vcfy3ov4QL+H8hFS5wJD6uMTaAATUCBoSTuFiZIXWQXk3af1/QbivtttcgWlGxwSU1TSHwY=
+	t=1733248011; cv=none; b=D0YUmy8v7qSvZYBGdBiAI9d2PiCVrT47uw4faq5YgCO0Pp6zDZUDocjnIKfDsCRsLBxG0Gj7tGWZ+bx0PkRxxMAxtcsYVt31hvKZqlXKnuTkxdp8geMUKIla3kk1k5jz+kLAG6YpTL2E17Tm7W3QVlXbWUpVq3GVZh6yj1rqih4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733247999; c=relaxed/simple;
-	bh=7ZIAPMkPeTEbfvq7656BNyWbZaPIwCHNSn6wtGvXZw0=;
+	s=arc-20240116; t=1733248011; c=relaxed/simple;
+	bh=50YYxZWRrgFvV7RWzGZagJmm/MIRxY3i13DlmK0l2CQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YNIbN1v/lQvOXs1TSRZMl006ZlvSDjUkMk4RIYAY4AGkWKxbwnU68KtgVnHVgifkcYr7KagQ55boKKuE3XFqzl33OcctrYarq6+cwA+dmJTIaADy5c2TZXnsmDoB8EvA5BI33SGIHtAk1O9WjdyJFXKdiO7ntBMFpqa1sHRDSCg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=GIIC6FEE; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-434a2f3bae4so54256465e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 09:46:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1733247995; x=1733852795; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=iFxdVjj7PZ/N/qs/J/1mLWKxmYr4aiVLL3tA6PIFZOU=;
-        b=GIIC6FEEvpW/uv0jC4Fi7QOkqOAwpe9h/oixQK9dppf1Y+YbVSokNqg98l22EVzRx9
-         07bliXvney/T3VOgeEwI5ufoVArDeUlsEsHoux1qZw5fXuQGs8Gt2RNoB75js5KPiNZ4
-         Ju8+yQtFXJhmMkjp/zSzgVVFx3YjKOVQi95TGhE1F5R7WYpZkKSR2JdpbmsioXbL2MR8
-         7zmncLSBriGWv1Oo2hzI2g0GOfIOAGZQuFw/POZXglAJ1U/+adA3aBTxgntKZuQdOIk/
-         TJKjtngQ8pkCJKmLv9uVb05UYSZr5uJbnYqVuIJDF+Yt/cdrbzBrfE+6RaG/ZFPALbFD
-         yj1w==
+	 In-Reply-To:Content-Type; b=ctDvgibSr431LuriShOZmEIkESC989KQM+uKPzlrkdCFPYCRkrvjv6MwCTz9M5kxzLewQYzbtq7fHwGedzx5NBWJfu3iAWSE2NVJ72XHte3VN1oHY6QGObOnQXHH3a6bv2CeuMKtX9NfDORcbfHDAjRaxXP5kFH0Xuqc11wN2BU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=F/fTAeIu; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733248008;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rSpS4mkww3n7ZfxdPyPAe92ZnrZDWXRdAxdhxgPhie0=;
+	b=F/fTAeIu9y15Fvw+vZZe/j2+i3YH8I6hivYSqIVbIz6kUZrH6w5zyTsf80EH+zfccMFGgD
+	0rMTomLkrtXjvUC4S/OZ8GX/5iLjEQTiM3f874zAgDZpHRMZinVT870KVb0709x9eHyJd0
+	tOO5X/xhJNcINH8yKhHzUGITr7fsLv8=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-422-5UugD2EIMiCxUrrn2uP1bg-1; Tue, 03 Dec 2024 12:46:47 -0500
+X-MC-Unique: 5UugD2EIMiCxUrrn2uP1bg-1
+X-Mimecast-MFC-AGG-ID: 5UugD2EIMiCxUrrn2uP1bg
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-43498af79a6so214995e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 09:46:47 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733247995; x=1733852795;
-        h=content-transfer-encoding:in-reply-to:content-language:from
+        d=1e100.net; s=20230601; t=1733248006; x=1733852806;
+        h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=iFxdVjj7PZ/N/qs/J/1mLWKxmYr4aiVLL3tA6PIFZOU=;
-        b=pRLzPHH//yJ0KzEEcDTPPPeBHHJMBUMzjo4Y9mZWG7jiAjZPBmYr8d9z4dVFwqrPoB
-         NJZ2LINtTMSST1KFFjdcGbtvb0KC5yv5+a8kGQSWTMszs7cm1aLjwwV7hivL8zLQjtsU
-         +SlZUAGhmTkTNALyOmYTzenrYylQpguSiQ/1Py8D3AWWdPgvzFWJ41DPBA/UzN1CxyJP
-         ieSb7vSde/pEz8NGIgSxFgFdxiz2GxvBVV1myK/c1vi2kw82nlMe6xBhH3zRoS9OeZhK
-         B2muL/KZucNcQmW+RFQQBXGNesatDoZemKtJtqAK0GodK4JX/+fDy6fD/SegGD9LEWGE
-         iZkw==
-X-Forwarded-Encrypted: i=1; AJvYcCXPEsng21WcZLh/uXV+d76jvrf21fWucLRwGQxDAwY81JVgnLg3ahogzV3vuFXgdANvYTn0EWrbo8Lln3U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTBHUP37f56PUqH+Zw1xAvHyWqlRzk00aFBiErzYEZxXk1kB9F
-	gVZtOopovhGJ1LvgHjCxTMNG645prAztfFB1cMOPB0Xo9pJGsPZIJRn7xDCvaVQ=
-X-Gm-Gg: ASbGncs6UeT88zwXuhdRAUyyFQpoOY6/8dh0lbzPdROYovfkbd3firWf6DXh00Gb0Rp
-	/7+0z122mMaJjfj3cBatzImjzjRqE1unxdSr/x/7ITVU5g9SPVfRJ3i/vwnEgibGunaX+01MsM2
-	fzSmq8NZh7yYjWPqK3Eh7jNspa/HgLWkOwJGhfY6TuNklaYBUQKmKBcEN8WcTvNI0FsbC2E8Lmm
-	f5QKj6d2ub5+ksuH1QED3pkcurnemp34P/xGdvCqre031CUbon23VkMW8+Y1HWXgOHTIdGjzKw=
-X-Google-Smtp-Source: AGHT+IHsn0zhsY3RgS4QgXAl/s0nx8qN5jv8ueOZFuunzjyiUev362zciGDLjEQzLbYMzDUDDjWbjA==
-X-Received: by 2002:a05:6000:4912:b0:385:f23a:2fe1 with SMTP id ffacd0b85a97d-385fd3f176amr3319514f8f.26.1733247995510;
-        Tue, 03 Dec 2024 09:46:35 -0800 (PST)
-Received: from [192.168.0.20] (nborisov.ddns.nbis.net. [85.187.217.62])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434aa74f18bsm234796265e9.4.2024.12.03.09.46.34
+        bh=rSpS4mkww3n7ZfxdPyPAe92ZnrZDWXRdAxdhxgPhie0=;
+        b=w9IDu+nXkwxzsXxpM78eE8x41cbA+6H0jiuKeeDeIIja/UVolBmOZ+BGiCIF6HAG18
+         naxVzykUxIbRgap0OZhgSOe/cTHtHITfAOi6RRqUuxH+FpiUoCc6HVbq2P1E5kDF0ufN
+         H5UEm0W+CL6Zc5OYVnfik3dv85DGsUKv6cXS37s6c78h51dJLawLGAvyJdMLz0A6nuuk
+         eEIWJJL6DAULX988fgJSEbszh4bwRfvqU7lOfO8gJgtayUQTwooBy89A/PuPF/SUSXow
+         r3VVM51deOU2m7h51XXzDXFcQaDI5fTrh26Ly4momhyZOaGOHGWdPHFcpvKUHSy3N1dA
+         z5+A==
+X-Forwarded-Encrypted: i=1; AJvYcCX8olyl/ivpnx4IUd+HcajFsjxSx3anWNq2T+C/Y3FPCKdiVKEF8Eqz0oRFkTD/mnpJWbm18TcDV1MOeeQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYgKu/01oMBIUnmZ8a7MfzrKAdBxfdV5EyNRml9pACoCi64lIF
+	+sYRFHe9rw7HBuiTpJP639dun7IWOEG+C/A0zi2vhpUgptbl/h++jnZNA/V3LimjOxgwCO0goWN
+	rYjtzbLt2Z+U1arEFM/YRIZ2IdkA/0yIqynCluJngG781y7WtjSzoWf5ZnF9vGw==
+X-Gm-Gg: ASbGncvHt9KSkuY9N5FfcCjjblixXgIHM6R9OEV5fwBeCO9RNCOSKNv9SmTA2//GFRB
+	we4BFOQSTSHCd9K1TRh7tMH0WMv7bzukt/3BDUbNzFnYduU/Pnu9LzSrwiiXSTkHM8CdLMdXYKd
+	nYUDLT4FzIikgng3bWuk8j/CNVcYGM0tlpI4WkM1o896Cx6mrv4iao2zQ9UpEJ6b1yW70ms8mRd
+	k/kkPUX9uy9yZ0tMJW1qWkYJkEPhlAJ3HyTDedKJAYc+WQGYvBt16xwdWfT79Y/mpUdRSOyJfXb
+X-Received: by 2002:a05:600c:4e86:b0:434:9f90:2583 with SMTP id 5b1f17b1804b1-434afc1d39amr204882425e9.11.1733248006241;
+        Tue, 03 Dec 2024 09:46:46 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IETgA2pFZtAPaTKpdbTBMQYjJVZRs89hmZMU86qmFTgXb6S51/atTKr2YYGr045N/IDGnqPBA==
+X-Received: by 2002:a05:600c:4e86:b0:434:9f90:2583 with SMTP id 5b1f17b1804b1-434afc1d39amr204882335e9.11.1733248005853;
+        Tue, 03 Dec 2024 09:46:45 -0800 (PST)
+Received: from [192.168.88.24] (146-241-38-31.dyn.eolo.it. [146.241.38.31])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385e19104a0sm11552257f8f.32.2024.12.03.09.46.43
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Dec 2024 09:46:35 -0800 (PST)
-Message-ID: <b2bacaab-8264-4532-9a8b-e060f50d41ca@suse.com>
-Date: Tue, 3 Dec 2024 19:46:34 +0200
+        Tue, 03 Dec 2024 09:46:45 -0800 (PST)
+Message-ID: <c6ec324f-dcfe-46c0-8bfb-1af77c03cb59@redhat.com>
+Date: Tue, 3 Dec 2024 18:46:43 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,97 +86,94 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] x86/tdx: Dump attributes and TD_CTLS on boot
-To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, x86@kernel.org,
- "H. Peter Anvin" <hpa@zytor.com>
-Cc: linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20241202072458.447455-1-kirill.shutemov@linux.intel.com>
-From: Nikolay Borisov <nik.borisov@suse.com>
+Subject: Re: [PATCH net-next v12 17/22] ovpn: implement peer
+ add/get/dump/delete via netlink
+To: Antonio Quartulli <antonio@openvpn.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Donald Hunter <donald.hunter@gmail.com>, Shuah Khan <shuah@kernel.org>,
+ sd@queasysnail.net, ryazanov.s.a@gmail.com, Andrew Lunn <andrew@lunn.ch>
+Cc: Simon Horman <horms@kernel.org>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+References: <20241202-b4-ovpn-v12-0-239ff733bf97@openvpn.net>
+ <20241202-b4-ovpn-v12-17-239ff733bf97@openvpn.net>
 Content-Language: en-US
-In-Reply-To: <20241202072458.447455-1-kirill.shutemov@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20241202-b4-ovpn-v12-17-239ff733bf97@openvpn.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-
-
-On 2.12.24 г. 9:24 ч., Kirill A. Shutemov wrote:
-> Dump TD configuration on boot. Attributes and TD_CTLS define TD
-> behavior. This information is useful for tracking down bugs.
-> 
-> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-
-Reviewed-by: Nikolay Borisov <nik.borisov@suse.com>
-
-
-> ---
->   arch/x86/coco/tdx/Makefile        |  2 +-
->   arch/x86/coco/tdx/debug.c         | 69 +++++++++++++++++++++++++++++++
->   arch/x86/coco/tdx/tdx.c           | 27 ++++++++----
->   arch/x86/include/asm/shared/tdx.h | 39 +++++++++++++++--
->   arch/x86/include/asm/tdx.h        |  3 ++
->   5 files changed, 128 insertions(+), 12 deletions(-)
->   create mode 100644 arch/x86/coco/tdx/debug.c
-> 
-> diff --git a/arch/x86/coco/tdx/Makefile b/arch/x86/coco/tdx/Makefile
-> index 2c7dcbf1458b..b3c47d3700e2 100644
-> --- a/arch/x86/coco/tdx/Makefile
-> +++ b/arch/x86/coco/tdx/Makefile
-> @@ -1,3 +1,3 @@
->   # SPDX-License-Identifier: GPL-2.0
->   
-> -obj-y += tdx.o tdx-shared.o tdcall.o
-> +obj-y += debug.o tdcall.o tdx.o tdx-shared.o
-> diff --git a/arch/x86/coco/tdx/debug.c b/arch/x86/coco/tdx/debug.c
-> new file mode 100644
-> index 000000000000..cef847c8bb67
-> --- /dev/null
-> +++ b/arch/x86/coco/tdx/debug.c
-> @@ -0,0 +1,69 @@
-> +// SPDX-License-Identifier: GPL-2.0
+On 12/2/24 16:07, Antonio Quartulli wrote:
+> +/**
+> + * ovpn_nl_peer_modify - modify the peer attributes according to the incoming msg
+> + * @peer: the peer to modify
+> + * @info: generic netlink info from the user request
+> + * @attrs: the attributes from the user request
+> + *
+> + * Return: a negative error code in case of failure, 0 on success or 1 on
+> + *	   success and the VPN IPs have been modified (requires rehashing in MP
+> + *	   mode)
+> + */
+> +static int ovpn_nl_peer_modify(struct ovpn_peer *peer, struct genl_info *info,
+> +			       struct nlattr **attrs)
+> +{
+> +	struct sockaddr_storage ss = {};
+> +	u32 sockfd, interv, timeout;
+> +	struct socket *sock = NULL;
+> +	u8 *local_ip = NULL;
+> +	bool rehash = false;
+> +	int ret;
 > +
-> +#undef pr_fmt
-> +#define pr_fmt(fmt)     "tdx: " fmt
+> +	if (attrs[OVPN_A_PEER_SOCKET]) {
+> +		if (peer->sock) {
+> +			NL_SET_ERR_MSG_FMT_MOD(info->extack,
+> +					       "peer socket can't be modified");
+> +			return -EINVAL;
+> +		}
 > +
-> +#include <linux/array_size.h>
-> +#include <linux/printk.h>
-> +#include <asm/tdx.h>
+> +		/* lookup the fd in the kernel table and extract the socket
+> +		 * object
+> +		 */
+> +		sockfd = nla_get_u32(attrs[OVPN_A_PEER_SOCKET]);
+> +		/* sockfd_lookup() increases sock's refcounter */
+> +		sock = sockfd_lookup(sockfd, &ret);
+> +		if (!sock) {
+> +			NL_SET_ERR_MSG_FMT_MOD(info->extack,
+> +					       "cannot lookup peer socket (fd=%u): %d",
+> +					       sockfd, ret);
+> +			return -ENOTSOCK;
+> +		}
 > +
-> +#define DEF_TDX_ATTR_NAME(_name) [TDX_ATTR_##_name##_BIT] = __stringify(_name)
+> +		/* Only when using UDP as transport protocol the remote endpoint
+> +		 * can be configured so that ovpn knows where to send packets
+> +		 * to.
+> +		 *
+> +		 * In case of TCP, the socket is connected to the peer and ovpn
+> +		 * will just send bytes over it, without the need to specify a
+> +		 * destination.
+> +		 */
+> +		if (sock->sk->sk_protocol != IPPROTO_UDP &&
+> +		    (attrs[OVPN_A_PEER_REMOTE_IPV4] ||
+> +		     attrs[OVPN_A_PEER_REMOTE_IPV6])) {
+> +			NL_SET_ERR_MSG_FMT_MOD(info->extack,
+> +					       "unexpected remote IP address for non UDP socket");
+> +			sockfd_put(sock);
+> +			return -EINVAL;
+> +		}
 > +
-> +static __initdata const char *tdx_attributes[] = {
-> +	DEF_TDX_ATTR_NAME(DEBUG),
-> +	DEF_TDX_ATTR_NAME(HGS_PLUS_PROF),
-> +	DEF_TDX_ATTR_NAME(PERF_PROF),
-> +	DEF_TDX_ATTR_NAME(PMT_PROF),
-> +	DEF_TDX_ATTR_NAME(ICSSD),
-> +	DEF_TDX_ATTR_NAME(LASS),
-> +	DEF_TDX_ATTR_NAME(SEPT_VE_DISABLE),
-> +	DEF_TDX_ATTR_NAME(MIGRTABLE),
-> +	DEF_TDX_ATTR_NAME(PKS),
-> +	DEF_TDX_ATTR_NAME(KL),
-> +	DEF_TDX_ATTR_NAME(TPA),
-> +	DEF_TDX_ATTR_NAME(PERFMON),
-> +};
-> +
-> +#define DEF_TD_CTLS_NAME(_name) [TD_CTLS_##_name##_BIT] = __stringify(_name)
-> +
-> +static __initdata const char *tdcs_td_ctls[] = {
-> +	DEF_TD_CTLS_NAME(PENDING_VE_DISABLE),
-> +	DEF_TD_CTLS_NAME(ENUM_TOPOLOGY),
-> +	DEF_TD_CTLS_NAME(VIRT_CPUID2),
-> +	DEF_TD_CTLS_NAME(REDUCE_VE),
-> +	DEF_TD_CTLS_NAME(LOCK),
+> +		peer->sock = ovpn_socket_new(sock, peer);
+> +		if (IS_ERR(peer->sock)) {
+> +			NL_SET_ERR_MSG_FMT_MOD(info->extack,
+> +					       "cannot encapsulate socket: %ld",
+> +					       PTR_ERR(peer->sock));
+> +			sockfd_put(sock);
+> +			peer->sock = NULL;
 
-nit: That's a bit wasteful for sparsely populated fields but I guess the 
-extra complexity of having a struct in the array with the bit definition 
-and the name isn't worth the space saving.
+This looks race-prone. If any other CPU can do concurrent read access to
+peer->sock it could observe an invalid pointer
+Even if such race does not exist, it would be cleaner store
+ovpn_socket_new() return value in a local variable and set peer->sock
+only on successful creation.
 
-> +};
-> +
-
-<snip>
+/P
 
 
