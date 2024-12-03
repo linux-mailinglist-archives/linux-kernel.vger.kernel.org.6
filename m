@@ -1,49 +1,49 @@
-Return-Path: <linux-kernel+bounces-429487-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-429488-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A9A49E1CBF
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 13:51:41 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 585CA9E1CC0
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 13:51:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76BAD167D4B
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 12:50:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0FC2161DF9
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 12:50:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E422A1B0F39;
-	Tue,  3 Dec 2024 12:48:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AEBB1F130A;
+	Tue,  3 Dec 2024 12:48:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RLd6ENmP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f6uhEE7H"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 218C81F130A
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2024 12:48:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 904A61F4289;
+	Tue,  3 Dec 2024 12:48:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733230096; cv=none; b=ty20bXoJg3DZSes4QFsEV/hQBBl1JZbFb0jYR8hfq2LnGKNwusu7FFr/d/eU7u/hLj23vGarEJKRUj10f7PkFyCjoRD9p4hWh7klJFpGFfSl2lXLTA4tShdDy/Ydj0mC3v8LSBiWK9AiFs37MhLFFbZZbLAazLw9pZWGriHbk0Y=
+	t=1733230099; cv=none; b=URVYj13fy/sai89O4K7tFQOE9sdu+ctRQRc+3XyOtqpqo0bnUcdYTZNSDbp69vrC/izhYxvRLF0eMpD68sH4m1k6n/7RZ2QNLcdbwlb9Jpl8/+5VkYuHWegjA/z1RXrWxfI0wToWZOadX40TPcfkuMTO3/K+Dv85PQPSmro7xso=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733230096; c=relaxed/simple;
-	bh=i08Tzo89Z13rb+kYRXH2bI07rV1ZZlwqvs7iq1bbVjc=;
+	s=arc-20240116; t=1733230099; c=relaxed/simple;
+	bh=tqDF+LZfpEl117YVlmHOd2bm86U4BFv5nd1yWgZtYGw=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=FevbS7rGSgXtZYuOfZKNj6OEnnbTbgmmsF4JX/DRCp7c7S+xRiHjg06kt4YNoWx8fkjzqATRL/3LrfHVo/7Of3WobqY+myVZ+YswNwT5QZ3XFt+V0M05zCIzam1ZY6A4nvriFjiqDsZXueD9xLkc9E8HtS5PFjTmDPiWDeew6+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RLd6ENmP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0832DC4CED6;
-	Tue,  3 Dec 2024 12:48:13 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=XFOyS28rrdbXQjx/C3ZvWAtc3A0priYHFCCDji2QbqPw/iKGDKsTeKywrf2y3sbCc/fjSc24cvIKRbdhymvygZRSxGJ8r2F7XAE4PEUWltII2IWeEx3J8DmiNM+e8y5Bxy3lCrItczqCsFEFH3CQtgm8whpSYq+nYtAjIiXB1oI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f6uhEE7H; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41E3FC4CECF;
+	Tue,  3 Dec 2024 12:48:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733230095;
-	bh=i08Tzo89Z13rb+kYRXH2bI07rV1ZZlwqvs7iq1bbVjc=;
+	s=k20201202; t=1733230098;
+	bh=tqDF+LZfpEl117YVlmHOd2bm86U4BFv5nd1yWgZtYGw=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=RLd6ENmPrTM0A34TzAcUtU1uiKIT0kVJ+FuE5vic1Vz/f14EEiVqDcDscxQ70QZJH
-	 /jd82Oyg6xjbMeEeeiOjVQU0lWN8KMeItR5pKlc3rstA2RAp39whz6I73IC9VZ1Ep9
-	 oMvJNYuJ50MydecPpV9rOInue5MgbRfSRfMJh+yB1+6LfF4mDm0KGRHAcUFiS9/ZLp
-	 czl1/GimPnA/L6WSb2EuRUVANWIwmWObblrr6mZ4c2op/zJ9g7aIcqudeKdY8Aixvf
-	 HOj0cbfHtBoCR3uWfqI8qC3HXi97lp/yj5na4Dh/3NTUtqIXyv0jRe99Hug9IU8hAy
-	 X7cznEbbOUxSg==
+	b=f6uhEE7H+DIQTiSt6efWDdKqNHf4x8FbOju6/e0fmTWKzZ3d0B9DIcj+vhB05z1B3
+	 lYXZ8lJ0if1ZmJesw7RAue1VKPWYXso1SNkS9sUzPdsfMyK8eXqTk4p7ocD2wqX99C
+	 Vnv+m1Q4zA7VwKhRZaavpHfgALVNFYbQvIBsaeDGn4ygeGelIrol/lInc4PLz1FQZd
+	 3S8Yph/IhbU22252h0frg/hHF5CBFi3AVI/DWkVOrvhdBVY0HBzL/XbE0z/O2TPZPk
+	 AYQvifJVkM9velVV/4/LrWM8uK9nkhnw2Unjvh9eOnLN9tcxCcXTqFhzJ4uggGvyKf
+	 racF4Br/ohEpQ==
 From: Mark Brown <broonie@kernel.org>
-Date: Tue, 03 Dec 2024 12:45:56 +0000
-Subject: [PATCH 4/6] arm64/signal: Consistently invalidate the in register
- FP state in restore
+Date: Tue, 03 Dec 2024 12:45:57 +0000
+Subject: [PATCH 5/6] arm64/signal: Avoid corruption of SME state when
+ entering signal handler
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -52,200 +52,180 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241203-arm64-sme-reenable-v1-4-d853479d1b77@kernel.org>
+Message-Id: <20241203-arm64-sme-reenable-v1-5-d853479d1b77@kernel.org>
 References: <20241203-arm64-sme-reenable-v1-0-d853479d1b77@kernel.org>
 In-Reply-To: <20241203-arm64-sme-reenable-v1-0-d853479d1b77@kernel.org>
 To: Catalin Marinas <catalin.marinas@arm.com>, 
  Will Deacon <will@kernel.org>
 Cc: Mark Rutland <mark.rutland@arm.com>, 
  linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Mark Brown <broonie@kernel.org>
+ Mark Brown <broonie@kernel.org>, stable@vger.kernel.org
 X-Mailer: b4 0.15-dev-9b746
-X-Developer-Signature: v=1; a=openpgp-sha256; l=7030; i=broonie@kernel.org;
- h=from:subject:message-id; bh=i08Tzo89Z13rb+kYRXH2bI07rV1ZZlwqvs7iq1bbVjc=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBnTv4C57b2eCs7HLjeNSCmcdMbpX+CdFHe1mg7BuJt
- nPHGwkSJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZ07+AgAKCRAk1otyXVSH0BCxB/
- 4uPgjG9e6YkBaGPIdRsGHOnukmb1x17JGEj6UQpY/pJHCtwqJcFwnfc07vZQ6R2iRB7GvOIX3iJokl
- oLaXc6zX8Zwa8+WxPGG2sm8lnP47LDXCyi+NdtA9VOP3KUjnxai2aeN44YrAGzq9VGZ+B6a8XvOPvp
- Mn6H2Gx4ZiajcWQ7XR9SNeXUAR21k/UDEZsOqZoZPcYKHsQyXfUuRxYnMRTb9/X76CJOHM+w5Fu12q
- seHTGI72aiBJA481jDry92XRzjSJ9GRiqYA2/YEnkINviq3drGIarOQlEBt6mIcltxZPDbhcks3uKl
- 3H3N7ysk4yc2poh/Avxtja8Im1pedg
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6180; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=tqDF+LZfpEl117YVlmHOd2bm86U4BFv5nd1yWgZtYGw=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBnTv4DRiB8mALTlanBgA4iu6r/2JeW9mfceg8ltz9C
+ lMm+gWGJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZ07+AwAKCRAk1otyXVSH0KpXB/
+ 91iUpGoZkqphYBXkHXp+N0vZK7oXmkKGHfuOimfDbia5FwbFMvPjAGF0/KH1aIbemNG/356x2/1zTw
+ l2n+JeMtTVaAH08PKBv+bz8YlbeTzHe8/10/nkMBE35m26sZ0MVTgADLhZbuX6NDxw3FGxz+GvOnEN
+ z0XxIwuCi3OGCAPmt8L905uHm3c8i0A6oMAn+ZlVxdmsiBIEmE2EH6gt++6XEQ3KMor7hptg6gd2Yw
+ HtB9UITN4mPZvJr99IR8Cmwk/Xr5W5VPwh2DDTn6hVy6bE2tCNZ7EBIdNc1teFGpOFyRDr/8/tHul5
+ jOhMoIZxMl/vjNRcGLNdMNJKDtjntH
 X-Developer-Key: i=broonie@kernel.org; a=openpgp;
  fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-When restoring the SVE and SME specific floating point register states we
-flush the task floating point state, marking the hardware state as stale so
-that preemption does not result in us saving register state from the signal
-handler on top of the restored context and forcing a reload from memory.
-For the plain FPSIMD state we don't do this, we just copy the state from
-userspace and then force an immediate reload of the register state.
-This isn't racy against context switch since we copy the incoming data
-onto the stack rather than directly into the task struct but it's still
-messy and inconsistent.
+We intend that signal handlers are entered with PSTATE.{SM,ZA}={0,0}.
+The logic for this in setup_return() manipulates the saved state and
+live CPU state in an unsafe manner, and consequently, when a task enters
+a signal handler:
 
-Simplify things and avoid a potential source of error by moving the
-invalidation of the CPU state to the main restore_sigframe() and
-reworking the restore of the FPSIMD state to update the task struct and
-rely on loading as part of the general do_notify_resume() handling for
-return to user like we do for the SVE and SME state.
+ * The task entering the signal handler might not have its PSTATE.{SM,ZA}
+   bits cleared, and other register state that is affected by changes to
+   PSTATE.{SM,ZA} might not be zeroed as expected.
 
-As a result of this the only user of fpsimd_update_current_state() is
-the 32 bit signal code which should not have any SVE state, add an
-assert there that we don't have SVE enabled.
+ * An unrelated task might have its PSTATE.{SM,ZA} bits cleared
+   unexpectedly, potentially zeroing other register state that is
+   affected by changes to PSTATE.{SM,ZA}.
 
+   Tasks which do not set PSTATE.{SM,ZA} (i.e. those only using plain
+   FPSIMD or non-streaming SVE) are not affected, as there is no
+   resulting change to PSTATE.{SM,ZA}.
+
+Consider for example two tasks on one CPU:
+
+ A: Begins signal entry in kernel mode, is preempted prior to SMSTOP.
+ B: Using SM and/or ZA in userspace with register state current on the
+    CPU, is preempted.
+ A: Scheduled in, no register state changes made as in kernel mode.
+ A: Executes SMSTOP, modifying live register state.
+ A: Scheduled out.
+ B: Scheduled in, fpsimd_thread_switch() sees the register state on the
+    CPU is tracked as being that for task B so the state is not reloaded
+    prior to returning to userspace.
+
+Task B is now running with SM and ZA incorrectly cleared.
+
+Fix this by:
+
+ * Checking TIF_FOREIGN_FPSTATE, and only updating the saved or live
+   state as appropriate.
+
+ * Using {get,put}_cpu_fpsimd_context() to ensure mutual exclusion
+   against other code which manipulates this state. To allow their use,
+   the logic is moved into a new fpsimd_enter_sighandler() helper in
+   fpsimd.c.
+
+This race has been observed intermittently with fp-stress, especially
+with preempt disabled, commonly but not exclusively reporting "Bad SVCR: 0".
+
+While we're at it also fix a discrepancy between in register and in memory
+entries. When operating on the register state we issue a SMSTOP, exiting
+streaming mode if we were in it. This clears the V/Z and P register and
+FPMR but nothing else. The in memory version clears all the user FPSIMD
+state including FPCR and FPSR but does not clear FPMR. Add the clear of
+FPMR and limit the existing memset() to only cover the vregs, preserving
+the state of FPCR and FPSR like SMSTOP does.
+
+Fixes: 40a8e87bb3285 ("arm64/sme: Disable ZA and streaming mode when handling signals")
 Signed-off-by: Mark Brown <broonie@kernel.org>
+Cc: stable@vger.kernel.org
 ---
- arch/arm64/kernel/fpsimd.c |  2 +-
- arch/arm64/kernel/signal.c | 70 +++++++++++++++-------------------------------
- 2 files changed, 23 insertions(+), 49 deletions(-)
+ arch/arm64/include/asm/fpsimd.h |  1 +
+ arch/arm64/kernel/fpsimd.c      | 39 +++++++++++++++++++++++++++++++++++++++
+ arch/arm64/kernel/signal.c      | 19 +------------------
+ 3 files changed, 41 insertions(+), 18 deletions(-)
 
+diff --git a/arch/arm64/include/asm/fpsimd.h b/arch/arm64/include/asm/fpsimd.h
+index f2a84efc361858d4deda99faf1967cc7cac386c1..09af7cfd9f6c2cec26332caa4c254976e117b1bf 100644
+--- a/arch/arm64/include/asm/fpsimd.h
++++ b/arch/arm64/include/asm/fpsimd.h
+@@ -76,6 +76,7 @@ extern void fpsimd_load_state(struct user_fpsimd_state *state);
+ extern void fpsimd_thread_switch(struct task_struct *next);
+ extern void fpsimd_flush_thread(void);
+ 
++extern void fpsimd_enter_sighandler(void);
+ extern void fpsimd_signal_preserve_current_state(void);
+ extern void fpsimd_preserve_current_state(void);
+ extern void fpsimd_restore_current_state(void);
 diff --git a/arch/arm64/kernel/fpsimd.c b/arch/arm64/kernel/fpsimd.c
-index a3bb17c88942eba031d26e9f75ad46f37b6dc621..f02762762dbcf954e9add6dfd3575ae7055b6b0e 100644
+index f02762762dbcf954e9add6dfd3575ae7055b6b0e..c5465c8ec467cb1ab8bd211dc5370f91aa2bcf35 100644
 --- a/arch/arm64/kernel/fpsimd.c
 +++ b/arch/arm64/kernel/fpsimd.c
-@@ -1828,7 +1828,7 @@ void fpsimd_update_current_state(struct user_fpsimd_state const *state)
- 	get_cpu_fpsimd_context();
+@@ -1696,6 +1696,45 @@ void fpsimd_signal_preserve_current_state(void)
+ 		sve_to_fpsimd(current);
+ }
  
- 	current->thread.uw.fpsimd_state = *state;
--	if (test_thread_flag(TIF_SVE))
-+	if (WARN_ON_ONCE(test_thread_flag(TIF_SVE)))
- 		fpsimd_to_sve(current);
- 
- 	task_fpsimd_load();
++/*
++ * Called by the signal handling code when preparing current to enter
++ * a signal handler. Currently this only needs to take care of exiting
++ * streaming mode and clearing ZA on SME systems.
++ */
++void fpsimd_enter_sighandler(void)
++{
++	if (!system_supports_sme())
++		return;
++
++	get_cpu_fpsimd_context();
++
++	if (test_thread_flag(TIF_FOREIGN_FPSTATE)) {
++		/*
++		 * Exiting streaming mode zeros the V/Z and P
++		 * registers and FPMR.  Zero FPMR and the V registers,
++		 * marking the state as FPSIMD only to force a clear
++		 * of the remaining bits during reload if needed.
++		 */
++		if (current->thread.svcr & SVCR_SM_MASK) {
++			memset(&current->thread.uw.fpsimd_state.vregs, 0,
++			       sizeof(current->thread.uw.fpsimd_state.vregs));
++			current->thread.uw.fpmr = 0;
++			current->thread.fp_type = FP_STATE_FPSIMD;
++		}
++
++		current->thread.svcr &= ~(SVCR_ZA_MASK |
++					  SVCR_SM_MASK);
++
++		/* Ensure any copies on other CPUs aren't reused */
++		fpsimd_flush_task_state(current);
++	} else {
++		/* The register state is current, just update it. */
++		sme_smstop();
++	}
++
++	put_cpu_fpsimd_context();
++}
++
+ /*
+  * Called by KVM when entering the guest.
+  */
 diff --git a/arch/arm64/kernel/signal.c b/arch/arm64/kernel/signal.c
-index 14ac6fdb872b9672e4b16a097f1b577aae8dec50..abd0907061fe664bf22d1995319f9559c4bbed91 100644
+index abd0907061fe664bf22d1995319f9559c4bbed91..335c2327baf74eac9634cf594855dbf26a7d6b01 100644
 --- a/arch/arm64/kernel/signal.c
 +++ b/arch/arm64/kernel/signal.c
-@@ -271,7 +271,7 @@ static int preserve_fpsimd_context(struct fpsimd_context __user *ctx)
+@@ -1461,24 +1461,7 @@ static int setup_return(struct pt_regs *regs, struct ksignal *ksig,
+ 	/* TCO (Tag Check Override) always cleared for signal handlers */
+ 	regs->pstate &= ~PSR_TCO_BIT;
  
- static int restore_fpsimd_context(struct user_ctxs *user)
- {
--	struct user_fpsimd_state fpsimd;
-+	struct user_fpsimd_state *fpsimd = &current->thread.uw.fpsimd_state;
- 	int err = 0;
- 
- 	/* check the size information */
-@@ -279,18 +279,14 @@ static int restore_fpsimd_context(struct user_ctxs *user)
- 		return -EINVAL;
- 
- 	/* copy the FP and status/control registers */
--	err = __copy_from_user(fpsimd.vregs, &(user->fpsimd->vregs),
--			       sizeof(fpsimd.vregs));
--	__get_user_error(fpsimd.fpsr, &(user->fpsimd->fpsr), err);
--	__get_user_error(fpsimd.fpcr, &(user->fpsimd->fpcr), err);
-+	err = __copy_from_user(fpsimd->vregs, &(user->fpsimd->vregs),
-+			       sizeof(fpsimd->vregs));
-+	__get_user_error(fpsimd->fpsr, &(user->fpsimd->fpsr), err);
-+	__get_user_error(fpsimd->fpcr, &(user->fpsimd->fpcr), err);
- 
- 	clear_thread_flag(TIF_SVE);
- 	current->thread.fp_type = FP_STATE_FPSIMD;
- 
--	/* load the hardware registers from the fpsimd_state structure */
--	if (!err)
--		fpsimd_update_current_state(&fpsimd);
+-	/* Signal handlers are invoked with ZA and streaming mode disabled */
+-	if (system_supports_sme()) {
+-		/*
+-		 * If we were in streaming mode the saved register
+-		 * state was SVE but we will exit SM and use the
+-		 * FPSIMD register state - flush the saved FPSIMD
+-		 * register state in case it gets loaded.
+-		 */
+-		if (current->thread.svcr & SVCR_SM_MASK) {
+-			memset(&current->thread.uw.fpsimd_state, 0,
+-			       sizeof(current->thread.uw.fpsimd_state));
+-			current->thread.fp_type = FP_STATE_FPSIMD;
+-		}
 -
- 	return err ? -EFAULT : 0;
- }
+-		current->thread.svcr &= ~(SVCR_ZA_MASK |
+-					  SVCR_SM_MASK);
+-		sme_smstop();
+-	}
++	fpsimd_enter_sighandler();
  
-@@ -396,7 +392,7 @@ static int restore_sve_fpsimd_context(struct user_ctxs *user)
- {
- 	int err = 0;
- 	unsigned int vl, vq;
--	struct user_fpsimd_state fpsimd;
-+	struct user_fpsimd_state *fpsimd = &current->thread.uw.fpsimd_state;
- 	u16 user_vl, flags;
- 
- 	if (user->sve_size < sizeof(*user->sve))
-@@ -439,16 +435,6 @@ static int restore_sve_fpsimd_context(struct user_ctxs *user)
- 	if (user->sve_size < SVE_SIG_CONTEXT_SIZE(vq))
- 		return -EINVAL;
- 
--	/*
--	 * Careful: we are about __copy_from_user() directly into
--	 * thread.sve_state with preemption enabled, so protection is
--	 * needed to prevent a racing context switch from writing stale
--	 * registers back over the new data.
--	 */
--
--	fpsimd_flush_task_state(current);
--	/* From now, fpsimd_thread_switch() won't touch thread.sve_state */
--
- 	sve_alloc(current, true);
- 	if (!current->thread.sve_state) {
- 		clear_thread_flag(TIF_SVE);
-@@ -471,14 +457,10 @@ static int restore_sve_fpsimd_context(struct user_ctxs *user)
- fpsimd_only:
- 	/* copy the FP and status/control registers */
- 	/* restore_sigframe() already checked that user->fpsimd != NULL. */
--	err = __copy_from_user(fpsimd.vregs, user->fpsimd->vregs,
--			       sizeof(fpsimd.vregs));
--	__get_user_error(fpsimd.fpsr, &user->fpsimd->fpsr, err);
--	__get_user_error(fpsimd.fpcr, &user->fpsimd->fpcr, err);
--
--	/* load the hardware registers from the fpsimd_state structure */
--	if (!err)
--		fpsimd_update_current_state(&fpsimd);
-+	err = __copy_from_user(fpsimd->vregs, user->fpsimd->vregs,
-+			       sizeof(fpsimd->vregs));
-+	__get_user_error(fpsimd->fpsr, &user->fpsimd->fpsr, err);
-+	__get_user_error(fpsimd->fpcr, &user->fpsimd->fpcr, err);
- 
- 	return err ? -EFAULT : 0;
- }
-@@ -587,16 +569,6 @@ static int restore_za_context(struct user_ctxs *user)
- 	if (user->za_size < ZA_SIG_CONTEXT_SIZE(vq))
- 		return -EINVAL;
- 
--	/*
--	 * Careful: we are about __copy_from_user() directly into
--	 * thread.sme_state with preemption enabled, so protection is
--	 * needed to prevent a racing context switch from writing stale
--	 * registers back over the new data.
--	 */
--
--	fpsimd_flush_task_state(current);
--	/* From now, fpsimd_thread_switch() won't touch thread.sve_state */
--
- 	sme_alloc(current, true);
- 	if (!current->thread.sme_state) {
- 		current->thread.svcr &= ~SVCR_ZA_MASK;
-@@ -664,16 +636,6 @@ static int restore_zt_context(struct user_ctxs *user)
- 	if (nregs != 1)
- 		return -EINVAL;
- 
--	/*
--	 * Careful: we are about __copy_from_user() directly into
--	 * thread.zt_state with preemption enabled, so protection is
--	 * needed to prevent a racing context switch from writing stale
--	 * registers back over the new data.
--	 */
--
--	fpsimd_flush_task_state(current);
--	/* From now, fpsimd_thread_switch() won't touch ZT in thread state */
--
- 	err = __copy_from_user(thread_zt_state(&current->thread),
- 			       (char __user const *)user->zt +
- 					ZT_SIG_REGS_OFFSET,
-@@ -1028,6 +990,18 @@ static int restore_sigframe(struct pt_regs *regs,
- 	if (err == 0)
- 		err = parse_user_sigframe(&user, sf);
- 
-+	/*
-+	 * Careful: we are about __copy_from_user() directly into
-+	 * thread floating point state with preemption enabled, so
-+	 * protection is needed to prevent a racing context switch
-+	 * from writing stale registers back over the new data. Mark
-+	 * the register floating point state as invalid and unbind the
-+	 * task from the CPU to force a reload before we return to
-+	 * userspace. fpsimd_flush_task_state() has a check for FP
-+	 * support.
-+	 */
-+	fpsimd_flush_task_state(current);
-+
- 	if (err == 0 && system_supports_fpsimd()) {
- 		if (!user.fpsimd)
- 			return -EINVAL;
+ 	if (ksig->ka.sa.sa_flags & SA_RESTORER)
+ 		sigtramp = ksig->ka.sa.sa_restorer;
 
 -- 
 2.39.5
