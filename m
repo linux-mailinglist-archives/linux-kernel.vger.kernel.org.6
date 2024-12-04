@@ -1,56 +1,81 @@
-Return-Path: <linux-kernel+bounces-430897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB6709E36F1
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 10:52:40 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 332C59E36F4
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 10:53:29 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CA86CB29FCC
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 09:48:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E984E166088
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 09:53:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B32A1AB52F;
-	Wed,  4 Dec 2024 09:48:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF1471AB52D;
+	Wed,  4 Dec 2024 09:53:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="s5AZSUID"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Hri5/53m"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 997B619CC37;
-	Wed,  4 Dec 2024 09:48:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF39ABE5E;
+	Wed,  4 Dec 2024 09:53:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733305715; cv=none; b=dJJRXxY51d63Qw5hISxRC57SkNbgXuc5UyIVleRwhrT6fqJKxJTvnF08XxaZqlyB+CD4uFSPRpXFSca38NrmMGg7oIY22e8fg2+koKfCgcrvvyZNXkpex43Td//3F1SYhx6+9GkBl6A5G4lYOgcmJDMgb9rL7Ri45GKHmGXSxH4=
+	t=1733306001; cv=none; b=rUjlqGIp3KpYRthGV39rA3kKQR5Cr8wkH7UdriDn2x79llAkkRKknUha5OVroTWubUvWkZHC862VodFwDa2cKaT4paDYW6gW3fBf1DNOAv+ofP3+ST5KIFDdLxCobV7j/+53oHnkjViTiQ8azde3ZPL24tCJlugm22xiYvlZpQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733305715; c=relaxed/simple;
-	bh=u/P/hlu0k7735Cpyavyp1Y9i5sb+YioZt9K7R7M1cm0=;
+	s=arc-20240116; t=1733306001; c=relaxed/simple;
+	bh=ikvRGFtWLr4avaowkPIcLkUV2+AZIXQa/xtSbMU/Rxc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aB0msmJkiMRzyevbuaW0aUAs/nORKOgBmFj8jRVkTK45hhVebTY0SD4Jj6MI8TbSOGUf9d+NN2ZGkZoMxcb6cRBn05EWy+wxO80X0+NKMCWDf4brNAT9fA7dFPe05R8Icmc68VwITAxydMUIHHIxVLb4TEWIUyLNLiJXSoMheDk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=s5AZSUID; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78555C4CED1;
-	Wed,  4 Dec 2024 09:48:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1733305715;
-	bh=u/P/hlu0k7735Cpyavyp1Y9i5sb+YioZt9K7R7M1cm0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=s5AZSUID/ZrRS+n5uuGx6o364AU9I1Ita5ScStCBZsnm+ZW/FsdXH7MwhrBMlX7UB
-	 PzFk6m2X2/spcXqHJXJndzmbYdJyuUj/c7OV8Ql1Fc5XDFj2P3mq7DNhya5IZhidQC
-	 5PhuvgdsGBgldfMXKw9kHOLJQF+r+KfeYC8Aqrvo=
-Date: Wed, 4 Dec 2024 10:48:31 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Pavel Machek <pavel@denx.de>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
-Subject: Re: [PATCH 4.19 000/138] 4.19.325-rc1 review
-Message-ID: <2024120424-diminish-staple-50d5@gregkh>
-References: <20241203141923.524658091@linuxfoundation.org>
- <Z09KXnGlTJZBpA90@duo.ucw.cz>
+	 Content-Type:Content-Disposition:In-Reply-To; b=OEVL0WgwVTYlc3P918/Hw3kZdF2ylMacYEAgNY5hwifg59bHNYTQ15Vl5BGG3dc88L5nJKCipWcBcMkacXTlrjHKLPnw+aDAv9kZ6PeXKFeKTD6DreLKQQdBNMLKB2HelyWJX1nzFj5NrSmcmOxUX597fNHO9Cu5ZKrd4WxOz0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Hri5/53m; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733306000; x=1764842000;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ikvRGFtWLr4avaowkPIcLkUV2+AZIXQa/xtSbMU/Rxc=;
+  b=Hri5/53mPnbB4ickc6AlcWmc5rduXH5Y3w2bpJ8RFUpeBhXYIU1iAkIR
+   65uyg6Fm48djlFC8P4BYtpwWetNasTOldxpKUcxEbLlghyw1rSwotj8zW
+   Y38Y2TWNrdDpCZyFrd62ga8kiAKj9UvOf/YNMEIfaxHFqliy7IpzA4y3B
+   NoBGiq8t4ijJ4y26YF2TWDeM+OnkWyYndN/5X5+O9XPNO+mt3CM/YOoqZ
+   ZeOY4dbB5lKaYLysdH6dzsgedgz1V8tIS74aMdOEiiDihHXoI3YPzKPsj
+   y3OI8oXy2BsxccCwIAa+zRgaJHTzmMM//Ck4kiKjPAmummegSYwLQ3RoW
+   A==;
+X-CSE-ConnectionGUID: G1Ph2sFISUuCd4B5/qra5A==
+X-CSE-MsgGUID: RXOSBTexRqybkKnooSOKvg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11275"; a="33693621"
+X-IronPort-AV: E=Sophos;i="6.12,207,1728975600"; 
+   d="scan'208";a="33693621"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Dec 2024 01:53:19 -0800
+X-CSE-ConnectionGUID: D2fcP3wARVat8joSsrPGgQ==
+X-CSE-MsgGUID: cSjB88oiSW6FNEc2LT/82Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,207,1728975600"; 
+   d="scan'208";a="93900666"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Dec 2024 01:53:17 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tIm4H-00000003i4V-45v4;
+	Wed, 04 Dec 2024 11:53:13 +0200
+Date: Wed, 4 Dec 2024 11:53:13 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Jiri Slaby <jirislaby@kernel.org>
+Cc: Cameron Williams <cang1@live.co.uk>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Fenghua Yu <fenghua.yu@intel.com>, linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org, linux-pci@vger.kernel.org,
+	Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
+	Bjorn Helgaas <bhelgaas@google.com>
+Subject: Re: [PATCH v1 2/2] serial: 8250_pci: Share WCH IDs with
+ parport_serial driver
+Message-ID: <Z1AmiSyKZhzzy8JJ@smile.fi.intel.com>
+References: <20241204031114.1029882-1-andriy.shevchenko@linux.intel.com>
+ <20241204031114.1029882-3-andriy.shevchenko@linux.intel.com>
+ <5ca95d14-84a7-48af-a5e3-cefc558d2e7f@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,66 +84,40 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Z09KXnGlTJZBpA90@duo.ucw.cz>
+In-Reply-To: <5ca95d14-84a7-48af-a5e3-cefc558d2e7f@kernel.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Tue, Dec 03, 2024 at 07:13:50PM +0100, Pavel Machek wrote:
-> Hi!
+On Wed, Dec 04, 2024 at 08:14:42AM +0100, Jiri Slaby wrote:
+> On 04. 12. 24, 4:09, Andy Shevchenko wrote:
+> > parport_serial driver uses subset of WCH IDs that are present in 8250_pci.
+> > Share them via pci_ids.h and switch parport_serial to use defined constants.
+
+> >   	{ 0x1409, 0x7168, 0x1409, 0xd079, 0, 0, timedia_9079c },
+> >   	/* WCH CARDS */
+> > -	{ 0x4348, 0x5053, PCI_ANY_ID, PCI_ANY_ID, 0, 0, wch_ch353_1s1p},
+> > -	{ 0x4348, 0x7053, 0x4348, 0x3253, 0, 0, wch_ch353_2s1p},
+> > -	{ 0x1c00, 0x3050, 0x1c00, 0x3050, 0, 0, wch_ch382_0s1p},
+> > -	{ 0x1c00, 0x3250, 0x1c00, 0x3250, 0, 0, wch_ch382_2s1p},
+> > +	{ PCI_VENDOR_ID_WCHCN, PCI_DEVICE_ID_WCHCN_CH353_1S1P,
+> > +	  PCI_ANY_ID, PCI_ANY_ID, 0, 0, wch_ch353_1s1p },
+> > +	{ PCI_VENDOR_ID_WCHCN, PCI_DEVICE_ID_WCHCN_CH353_2S1P,
+> > +	  0x4348, 0x3253, 0, 0, wch_ch353_2s1p },
+> > +	{ PCI_VENDOR_ID_WCHIC, PCI_DEVICE_ID_WCHIC_CH382_0S1P,
+> > +	  0x1c00, 0x3050, 0, 0, wch_ch382_0s1p },
+> > +	{ PCI_VENDOR_ID_WCHIC, PCI_DEVICE_ID_WCHIC_CH382_2S1P,
+> > +	  0x1c00, 0x3250, 0, 0, wch_ch382_2s1p },
 > 
-> > ------------------
-> > Note, this is the LAST 4.19.y kernel to be released.  After this one, it
-> > is end-of-life.  It's been 6 years, everyone should have moved off of it
-> > by now.
-> > ------------------
-> 
-> Releasing 130 patches as end-of-life kernel is not good idea. There
-> may be regression hiding between them...
+> I know this is the current pattern in the file. But what about using
+> PCI_DEVICE_DATA() for the first and PCI_DEVICE_SUB() + .driver_data for the
+> rest? Otherwise it occurs as a load of incomprehensible constants.
 
-It is better to have a regression for a fix then ignoring known fixes
-every time.  You seriously would want the final 4.19.y release to be
-missing 100+ known fixes?  That's just not ok for anyone who is waiting
-until the last week of this kernel to change (and I know many are, which
-is odd...)
+I can issue an additional patch, I was really thinking about this, but decided
+to go the above way as it seems logical and moving to mentioned macros sounds
+like unrelated to the point of the change.
 
-> > This is the start of the stable review cycle for the 4.19.325 release.
-> > There are 138 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> 
-> Build fails:
-> 
-> https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/jobs/8532423815
-> 
->   CC      drivers/pinctrl/uniphier/pinctrl-uniphier-pro4.o
-> 3895
->   CC      drivers/pci/of.o
-> 3896
-> drivers/rtc/rtc-st-lpc.c: In function 'st_rtc_probe':
-> 3897
-> drivers/rtc/rtc-st-lpc.c:233:11: error: 'IRQF_NO_AUTOEN' undeclared (first use in this function); did you mean 'IRQ_NOAUTOEN'?
-> 3898
->            IRQF_NO_AUTOEN, pdev->name, rtc);
-> 3899
->            ^~~~~~~~~~~~~~
-> 3900
->            IRQ_NOAUTOEN
-> 3901
-> drivers/rtc/rtc-st-lpc.c:233:11: note: each undeclared identifier is reported only once for each function it appears in
-> 3902
->   CC      drivers/pci/quirks.o
-> 3903
-> make[2]: *** [scripts/Makefile.build:303: drivers/rtc/rtc-st-lpc.o] Error 1
-> 3904
-> make[1]: *** [scripts/Makefile.build:544: drivers/rtc] Error 2
-> 3905
-> make[1]: *** Waiting for unfinished jobs....
-> 3906
->   CC      drivers/pinctrl/uniphier/pinctrl-uniphier-sld8.o
-> 3907
->   CC      drivers/soc/renesas/r8a7743-sysc.o
+-- 
+With Best Regards,
+Andy Shevchenko
 
-What arch is this?  And can you not wrap error logs like this please?
 
-thanks,
-
-greg k-h
 
