@@ -1,119 +1,99 @@
-Return-Path: <linux-kernel+bounces-431983-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431985-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AE5C9E4370
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 19:31:29 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A9059E4376
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 19:32:12 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25FAA283E9A
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:31:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 74321165A72
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:32:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 525DF1A8F81;
-	Wed,  4 Dec 2024 18:31:24 +0000 (UTC)
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69A001A8F8D;
+	Wed,  4 Dec 2024 18:32:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JUO+PTki"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F53217E010
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 18:31:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.86.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0C9728F4;
+	Wed,  4 Dec 2024 18:32:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733337084; cv=none; b=WyrBWA6D9ZenAx9lqEPwBfQXgo/V+XOBoOXjN4tTUiVfs1fn/e62Pd7X0awaOF+O/8s2k2kwiVhS6OEmqIPABrngxSK9xjN7mmZ/Iy7D7Vpm/Tkx7Xe7poMKH2Sw6DlFYdzkfptIQdYC7mZ4vhHptIUJpxxLlOgsMyQTZ3GccCM=
+	t=1733337124; cv=none; b=IJtnyjsGem24k3h4yghxpV/R8BoVdB8O1CQITSu/HsZpaJqNaRJeaEsZYLsdCLXBObJgGVU6Z+dyJ9v7FacIfxvc0rmTy62pZiX9fQCgb7nrrHun5OHeiiITd5cJh6rC6ZGi/hu6DtjnVIMjP/EUCph8vjb8TIR2UeBFdsveat0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733337084; c=relaxed/simple;
-	bh=fhrL0uncEcrQ3AECIN+oYBnEJDHoGLltvd2rhDn6Kww=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=V0/BhPxlvC+fo024Vxz1xoObB4cWxxbN82igCD1MZ8EKGFMVW69/RDW8Tvdj8SltXfEJfdu1U0GcNihFiyn2o3cAT01yFTW+Y3r0LfzSbQkh68KH5OxhkIXwrI+7LRBvvHRMbkv6qV0XADYfIiIZm5havytsjNBpoVAU8ho4pMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.86.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-227-kUr0Et9cOBasZhKmceyLzw-1; Wed, 04 Dec 2024 18:31:19 +0000
-X-MC-Unique: kUr0Et9cOBasZhKmceyLzw-1
-X-Mimecast-MFC-AGG-ID: kUr0Et9cOBasZhKmceyLzw
-Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
- (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Wed, 4 Dec
- 2024 18:30:40 +0000
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Wed, 4 Dec 2024 18:30:40 +0000
-From: David Laight <David.Laight@ACULAB.COM>
-To: Vincent Mailhol <mailhol.vincent@wanadoo.fr>, Linus Torvalds
-	<torvalds@linux-foundation.org>, Luc Van Oostenryck
-	<luc.vanoostenryck@gmail.com>, Nathan Chancellor <nathan@kernel.org>, "Nick
- Desaulniers" <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>, Yury Norov <yury.norov@gmail.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Kees Cook <kees@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>, Jani Nikula
-	<jani.nikula@linux.intel.com>, Joonas Lahtinen
-	<joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>, Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Rikard Falkeborn
-	<rikard.falkeborn@gmail.com>, Martin Uecker
-	<Martin.Uecker@med.uni-goettingen.de>
-CC: "linux-sparse@vger.kernel.org" <linux-sparse@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"llvm@lists.linux.dev" <llvm@lists.linux.dev>,
-	"linux-hardening@vger.kernel.org" <linux-hardening@vger.kernel.org>,
-	"intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	"coresight@lists.linaro.org" <coresight@lists.linaro.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Subject: RE: [PATCH 01/10] compiler.h: add statically_false()
-Thread-Topic: [PATCH 01/10] compiler.h: add statically_false()
-Thread-Index: AQHbROCIk5mOE+KmUE+HEr8z57N8IbLWaz+w
-Date: Wed, 4 Dec 2024 18:30:40 +0000
-Message-ID: <e115a4245e5342a994a7e596cc6357fa@AcuMS.aculab.com>
-References: <20241203-is_constexpr-refactor-v1-0-4e4cbaecc216@wanadoo.fr>
- <20241203-is_constexpr-refactor-v1-1-4e4cbaecc216@wanadoo.fr>
-In-Reply-To: <20241203-is_constexpr-refactor-v1-1-4e4cbaecc216@wanadoo.fr>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
+	s=arc-20240116; t=1733337124; c=relaxed/simple;
+	bh=+4Kt8FQgX1dXK3ytxSuKT6GwIzThB5cSGjNPnJtIIl8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Vo80se1xtN1cA4qWI2B0jdcvpJ26zu8oX/s1yY+G1ixLiY478v9kJWMoHCDeeAWgD5JsrkLxFGhjsKay/n/QU6fdAcD00QybpbuqBSvpiwLE+gbhQwlLj+K6TEOUnAEChLF2xIkXPS5JoMDJEEPWYzm9gq5a/p+WmIn2SKZyUgo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JUO+PTki; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21332C4CECD;
+	Wed,  4 Dec 2024 18:32:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733337124;
+	bh=+4Kt8FQgX1dXK3ytxSuKT6GwIzThB5cSGjNPnJtIIl8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JUO+PTkifvg77tFPDqbocLqM6dde9ocUoP4m2IB3JQLJtlAZU+s2xxdOivSy9ruGW
+	 E7gSkIWcMxzAbL+FcC2L/5hZVB6/SpCfcJJxo7Vqm8zGhKzrgQvh19blEGfic7huPq
+	 sj3GcqlXZYb+fhkQNCH/KbQWYRj/j/2aMBNMam8FP+WYetLCPshfWGc4EulIiLaZoi
+	 A5ohewiy3XzIF2m8stkhUIr15z/sy9m4rj64Qo8VrQu41bhSbFiW4tuvznog1UPuam
+	 kS8qE7kX9mHbS3OLMF3CoEMXW1yQREzjXkcdZUY8NRXLRAnL70L3GHpzpKjH4QNmqm
+	 uJsXHybtpxiXA==
+Date: Wed, 4 Dec 2024 08:32:03 -1000
+From: 'Tejun Heo' <tj@kernel.org>
+To: David Laight <David.Laight@aculab.com>
+Cc: Dan Carpenter <dan.carpenter@linaro.org>,
+	Naresh Kamboju <naresh.kamboju@linaro.org>,
+	"linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
+	clang-built-linux <llvm@lists.linux.dev>,
+	linux-block <linux-block@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"lkft-triage@lists.linaro.org" <lkft-triage@lists.linaro.org>,
+	Linux Regressions <regressions@lists.linux.dev>,
+	Anders Roxell <anders.roxell@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Nathan Chancellor <nathan@kernel.org>, Jens Axboe <axboe@kernel.dk>
+Subject: Re: s390: block/blk-iocost.c:1101:11: error: call to
+ '__compiletime_assert_557' declared with 'error' attribute: clamp() low
+ limit 1 greater than high limit active
+Message-ID: <Z1CgIzluYZzNVpuK@slm.duckdns.org>
+References: <CA+G9fYsD7mw13wredcZn0L-KBA3yeoVSTuxnss-AEWMN3ha0cA@mail.gmail.com>
+ <5ffa868f-cbf0-42ae-ae10-5c39b0de05e7@stanley.mountain>
+ <7920126775c74fa5915afbeedcfe2058@AcuMS.aculab.com>
+ <c795c090-430a-45a6-88b2-94033d50dea2@stanley.mountain>
+ <Z1CUIT8zAqWOnot-@slm.duckdns.org>
+ <be025b385bb94e0c92cd02ab57dc984b@AcuMS.aculab.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: tyopLNcpA_TjXACAMYEwKBih5vhHl-NPGyzsE6WfTfs_1733337078
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <be025b385bb94e0c92cd02ab57dc984b@AcuMS.aculab.com>
 
-RnJvbTogVmluY2VudCBNYWlsaG9sDQo+IFNlbnQ6IDAyIERlY2VtYmVyIDIwMjQgMTc6MzMNCj4g
-DQo+IEZyb206IFZpbmNlbnQgTWFpbGhvbCA8bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI+DQo+
-IA0KPiBGb3IgY29tcGxldGlvbiwgYWRkIHN0YXRpY2FsbHlfZmFsc2UoKSB3aGljaCBpcyB0aGUg
-ZXF1aXZhbGVudCBvZg0KPiBzdGF0aWNhbGx5X3RydWUoKSBleGNlcHQgdGhhdCBpdCB3aWxsIHJl
-dHVybiB0cnVlIG9ubHkgaWYgdGhlIGlucHV0IGlzDQo+IGtub3duIHRvIGJlIGZhbHNlIGF0IGNv
-bXBpbGUgdGltZS4NCg0KVGhpcyBpcyBwcmV0dHkgbXVjaCBwb2ludGxlc3MuDQpJdCBpcyBqdXN0
-IGFzIGVhc3kgdG8gaW52ZXJ0IHRoZSBjb25kaXRpb24gYXQgdGhlIGNhbGwgc2l0ZS4NCg0KCURh
-dmlkDQoNCj4gDQo+IFRoZSA9PSBvcGVyYXRvciBpcyB1c2VkIGluc3RlYWQgb2YgdGhlICEgbmVn
-YXRpb24gdG8gcHJldmVudCBhDQo+IC1XaW50LWluLWJvb2wtY29udGV4dCBjb21waWxlciB3YXJu
-aW5nIHdoZW4gdGhlIGFyZ3VtZW50IGlzIG5vdCBhDQo+IGJvb2xlYW4uIEZvciBleGFtcGxlOg0K
-PiANCj4gICBzdGF0aWNhbGx5X2ZhbHNlKHZhciAqIDApDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBW
-aW5jZW50IE1haWxob2wgPG1haWxob2wudmluY2VudEB3YW5hZG9vLmZyPg0KPiAtLS0NCj4gIGlu
-Y2x1ZGUvbGludXgvY29tcGlsZXIuaCB8IDEgKw0KPiAgMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0
-aW9uKCspDQo+IA0KPiBkaWZmIC0tZ2l0IGEvaW5jbHVkZS9saW51eC9jb21waWxlci5oIGIvaW5j
-bHVkZS9saW51eC9jb21waWxlci5oDQo+IGluZGV4IDQ2OWE2NGRkNjQ5NWZlZmFiMmM4NWZmYzI3
-OTU2OGE2NTdiNzI2NjAuLmEyYTU2YTUwZGQ4NTIyN2E0ZmRjNjIyMzZhMjcxMGNhMzdjNWJhNTIg
-MTAwNjQ0DQo+IC0tLSBhL2luY2x1ZGUvbGludXgvY29tcGlsZXIuaA0KPiArKysgYi9pbmNsdWRl
-L2xpbnV4L2NvbXBpbGVyLmgNCj4gQEAgLTMxNCw2ICszMTQsNyBAQCBzdGF0aWMgaW5saW5lIHZv
-aWQgKm9mZnNldF90b19wdHIoY29uc3QgaW50ICpvZmYpDQo+ICAgKiB2YWx1ZXMgdG8gZGV0ZXJt
-aW5lIHRoYXQgdGhlIGNvbmRpdGlvbiBpcyBzdGF0aWNhbGx5IHRydWUuDQo+ICAgKi8NCj4gICNk
-ZWZpbmUgc3RhdGljYWxseV90cnVlKHgpIChfX2J1aWx0aW5fY29uc3RhbnRfcCh4KSAmJiAoeCkp
-DQo+ICsjZGVmaW5lIHN0YXRpY2FsbHlfZmFsc2UoeCkgKF9fYnVpbHRpbl9jb25zdGFudF9wKHgp
-ICYmICh4KSA9PSAwKQ0KPiANCj4gIC8qDQo+ICAgKiBUaGlzIGlzIG5lZWRlZCBpbiBmdW5jdGlv
-bnMgd2hpY2ggZ2VuZXJhdGUgdGhlIHN0YWNrIGNhbmFyeSwgc2VlDQo+IA0KPiAtLQ0KPiAyLjQ1
-LjINCj4gDQo+IA0KDQotDQpSZWdpc3RlcmVkIEFkZHJlc3MgTGFrZXNpZGUsIEJyYW1sZXkgUm9h
-ZCwgTW91bnQgRmFybSwgTWlsdG9uIEtleW5lcywgTUsxIDFQVCwgVUsNClJlZ2lzdHJhdGlvbiBO
-bzogMTM5NzM4NiAoV2FsZXMpDQo=
+Hello,
 
+On Wed, Dec 04, 2024 at 06:26:16PM +0000, David Laight wrote:
+> > This is a good catch. It's impressive that this can be caught at compile
+> > time. The upper limit can become zero but the lower limit should win as
+> > that's there to protect against divide by zero, so I think the right thinig
+> > to do is replacing clamp() with max(min()). Is someone interested in writing
+> > up the patch and sending it Jens' way?
+> 
+> Perhaps if written as:
+> 	inuse = min(inuse, active) ?: 1;
+> it might stop someone changing it back.
+
+And maybe some comments too. When I was writing that clamp(), the case of
+min and max crossing each other didn't even cross my mind and I was dumbly
+thinking just "oh, this protects the value on both fronts", so yeah, there's
+some chance of someone (including myself) converting it back to clamp().
+
+Thanks.
+
+-- 
+tejun
 
