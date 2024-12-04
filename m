@@ -1,106 +1,125 @@
-Return-Path: <linux-kernel+bounces-432213-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 017569E47B5
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 23:19:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D0629E47DE
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 23:29:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 739BE1880978
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 22:19:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0FE861880368
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 22:29:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF9811AC43A;
-	Wed,  4 Dec 2024 22:19:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KeIXYDID"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A95141C3C1F;
+	Wed,  4 Dec 2024 22:29:49 +0000 (UTC)
+Received: from lobo.ruivo.org (lobo.ruivo.org [173.14.175.98])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D2C6171CD;
-	Wed,  4 Dec 2024 22:19:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1F9614D43D
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 22:29:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.14.175.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733350742; cv=none; b=lNK6E7uIgXUq0yZrlZ4wjxb5ifTl4BY2QHp1Q6UVoaYXX/y7esmjZHNz8XTkS9ej/zMHO/0p4xEuShTIgjFpiyzaIKR4r53SLx9EX9OZl5lfnJWj+B1ShxjEkBd1lP0E4ieUVyxu5PJeplGQwbygydf4pu51FOSjzN/t3FkbVY8=
+	t=1733351389; cv=none; b=WIEsFyQ8hYvzLJ/IZFOukXWPSYQWOI5zOp6U/X8CLyuCGHpSGJ1lsn7TXEtSczQ5drWcO4qvy3znkSybfqItMENQmruqRh+4wO6wPvS4tZO63FHMzQa+YnugsNqvLuGKE/cZXzqf8gR1YXqoqjE03VB4CSH24ONab3vVTeCNGfo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733350742; c=relaxed/simple;
-	bh=Wp0PTle/BHGhcTvLa7B8zRmlNzq3MdHFa2kOSeQrpHk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gMNCYbBh5x1QH5ltxaQQu+2UlmSDSzKcsKqat0+DbejxaDsd31jbhc7g86eWfLf+6XoUpEdt4imkyVVUqHm0jzHzbEGKwtQLu3aFZX6cD21iowEdSNWZvebZBsqVXn03XCbOV1qW14V1yewjxkKjHOigdV98hpjFp8oYt8iueJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KeIXYDID; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4349f160d62so1893205e9.2;
-        Wed, 04 Dec 2024 14:19:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733350739; x=1733955539; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Wp0PTle/BHGhcTvLa7B8zRmlNzq3MdHFa2kOSeQrpHk=;
-        b=KeIXYDIDGODtp0kuRh5iOF1/F3V9sg+0+v6ESlm5EeeccfuMdrJUL2pQROKL8EGkfr
-         gIgsWMoisRsMKDoGthBlwND3h+gbUQz3+/IeHhPyPDqzUzlTIBOYr8icHHmytIkLwAGH
-         f+hMwAemQeYfQcDDsgM9vs1rMwCaTiqdqa2EnMqdH878mEEay7GNk8ZG9qm672fk9rlr
-         5Uzur3R2FlE5jszkz3uysfpax31LV9BGxCMQJOPh0OULu4WN2VtfZuCndHO389KX8Emt
-         i4gqF118dQWHXztKTvcEGI1Xyc21Pp/7N3yMqvqoatzZVK5hey47VXsURoS0dzCzHdlH
-         JZ1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733350739; x=1733955539;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Wp0PTle/BHGhcTvLa7B8zRmlNzq3MdHFa2kOSeQrpHk=;
-        b=QtUpaylJUgJ+durv3fE3A3ALQ9wi/nK909kQqn56YvRMHEtb6M0mx4ieKZ0wJMgTBc
-         RpESo6e+a2f+0Mf/Vjf5AhSY2GAxqn/ZplXCFJhxSWTKvOai4YJpQd9dbBNF8BXWsXTu
-         UyBt8oM4uu0YAoXjMULchR+toRUo2tM7PisS/MPQ9J4IFCC7ivQ7HK8M3NEzdzk1E+kz
-         BghdY+/82QHT4JIU2e6w/NpH+yKok9UnXCdKSb6hrT8OVsukck/c70Tj6uoaG0t60KnP
-         d7+PGUM57qbsbT3QrIifzTKl2Vg7BhzZ9O0y38uagxRe/BXAMe8g46zIZhNxsAG9LNzK
-         DBrg==
-X-Forwarded-Encrypted: i=1; AJvYcCWSsvyEy6ERCjVZdecH3pwhDKj1RtZdncntYmEeZXWLB9CYxPKriPiLchMkkH57RSfAatw=@vger.kernel.org, AJvYcCX+DPQzWXRXIRNwbU3o8zRN+23J4umUm0/ooqqsDgxXTxeVVfv4AgfvfDGVmFTw5enfQ8kZwoU/JR+qUNZd@vger.kernel.org
-X-Gm-Message-State: AOJu0YwnjA3I9LK4TK/dwEmnLE+XyMEVnuGEa2a4+hg+6vmPNSiHzAR6
-	AiIHS6t4+UHBzeExZsHEc2wfMWXB2GzrxJePnXoWJ7WL9TP2wnN48mcOOFlmX0MaCuvIvcLc/Ga
-	10sM2e0fynQISIErzZokeNswmoQ8=
-X-Gm-Gg: ASbGncsbK6WtQuhjkN01ZO3h18/YntCh6RNRLsbEQ8tvVig057wMqC94P8c3+8h95/c
-	XCVkFXVjuRlVR49HwtDgKewHeuoW2vv/9Opwx/EF0dULKaCs=
-X-Google-Smtp-Source: AGHT+IGG3kuqd8+aNV0WyDqWWtmf3emAnGN83yWGfcoTC/lmN/+vTDtaSB/HNlFawpm394bKEBIg9HzwYvyEd5IXUwc=
-X-Received: by 2002:a05:600c:1c0e:b0:434:a802:e99a with SMTP id
- 5b1f17b1804b1-434d09b1590mr73836775e9.4.1733350738500; Wed, 04 Dec 2024
- 14:18:58 -0800 (PST)
+	s=arc-20240116; t=1733351389; c=relaxed/simple;
+	bh=ux5zMYTkey3E5tiiH4Tq3NsLZqwUsZVzg1+aB3mwpPw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Zh4d/4fYARcIV6mm87W1gMvuL1yYIQxex9tJ++1uD9immlqMGHpjVnThFfUFPsxTV/M6Y7lVkYux9E/qpcNFOYWuw1BnYDxjYjGuHaFt8oYdS19IhrRRpECt8pRenR0BaveuVb7/XfiXsT1RtXoVU3bkECtfwmNKJl39EFKOAK0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ruivo.org; spf=pass smtp.mailfrom=ruivo.org; arc=none smtp.client-ip=173.14.175.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ruivo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ruivo.org
+Received: by lobo.ruivo.org (Postfix, from userid 1011)
+	id 4416A102562; Wed,  4 Dec 2024 17:21:11 -0500 (EST)
+X-Spam-Level: 
+Received: from jake.ruivo.org (bob.qemu.ruivo [192.168.72.19])
+	by lobo.ruivo.org (Postfix) with ESMTPSA id CDAE4102550;
+	Wed,  4 Dec 2024 17:20:54 -0500 (EST)
+Received: by jake.ruivo.org (Postfix, from userid 1000)
+	id B087C17A0923; Wed, 04 Dec 2024 17:20:54 -0500 (EST)
+Date: Wed, 4 Dec 2024 17:20:54 -0500
+From: Aristeu Rozanski <aris@ruivo.org>
+To: Koichiro Den <koichiro.den@canonical.com>
+Cc: linux-mm@kvack.org, muchun.song@linux.dev, akpm@linux-foundation.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] hugetlb: prioritize surplus allocation from current node
+Message-ID: <20241204222054.GA37229@cathedrallabs.org>
+References: <20241204165503.628784-1-koichiro.den@canonical.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241126005206.3457974-1-andrii@kernel.org> <20241127165848.42331fd7078565c0f4e0a7e9@linux-foundation.org>
- <CAEf4BzZF8Gt_H=7J9SYXGorcjukQAqPJoX-a8vqBFdo73ZnXFA@mail.gmail.com>
- <CAADnVQKwZqajMd04Fp2CMmNbSAkfSKkUZiBwzoo4Dno1AzX7zQ@mail.gmail.com> <20241204135038.1fa7e7803e14c41050584fc2@linux-foundation.org>
-In-Reply-To: <20241204135038.1fa7e7803e14c41050584fc2@linux-foundation.org>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Wed, 4 Dec 2024 14:18:47 -0800
-Message-ID: <CAADnVQ+ZtUWOUheHYriAwSRAqyrt5YOtRveWeV-Usae2FLnKKA@mail.gmail.com>
-Subject: Re: [PATCH mm/stable] mm: fix vrealloc()'s KASAN poisoning logic
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, 
-	linux-mm <linux-mm@kvack.org>, Uladzislau Rezki <urezki@gmail.com>, 
-	Christoph Hellwig <hch@infradead.org>, Vlastimil Babka <vbabka@suse.cz>, dakr@kernel.org, 
-	Michal Hocko <mhocko@suse.com>, LKML <linux-kernel@vger.kernel.org>, 
-	bpf <bpf@vger.kernel.org>, Alexei Starovoitov <ast@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241204165503.628784-1-koichiro.den@canonical.com>
+User-Agent: Mutt/2.2.13 (2024-03-09)
 
-On Wed, Dec 4, 2024 at 1:50=E2=80=AFPM Andrew Morton <akpm@linux-foundation=
-.org> wrote:
->
-> On Wed, 4 Dec 2024 09:01:06 -0800 Alexei Starovoitov <alexei.starovoitov@=
-gmail.com> wrote:
->
-> > Andrew,
-> >
-> > What is the status of this urgent fix ?
-> >
->
-> In mm-hotfixes for an upstream maerge later this week.
+On Thu, Dec 05, 2024 at 01:55:03AM +0900, Koichiro Den wrote:
+> Previously, surplus allocations triggered by mmap were typically made
+> from the node where the process was running. On a page fault, the area
+> was reliably dequeued from the hugepage_freelists for that node.
+> However, since commit 003af997c8a9 ("hugetlb: force allocating surplus
+> hugepages on mempolicy allowed nodes"), dequeue_hugetlb_folio_vma() may
+> fall back to other nodes unnecessarily even if there is no MPOL_BIND
+> policy, causing folios to be dequeued from nodes other than the current
+> one.
+> 
+> Also, allocating from the node where the current process is running is
+> likely to result in a performance win, as mmap-ing processes often
+> touch the area not so long after allocation. This change minimizes
+> surprises for users relying on the previous behavior while maintaining
+> the benefit introduced by the commit.
+> 
+> So, prioritize the node the current process is running on when possible.
+> 
+> Signed-off-by: Koichiro Den <koichiro.den@canonical.com>
+> ---
+>  mm/hugetlb.c | 20 +++++++++++++++++---
+>  1 file changed, 17 insertions(+), 3 deletions(-)
+> 
+> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+> index 5c8de0f5c760..0fa24e105202 100644
+> --- a/mm/hugetlb.c
+> +++ b/mm/hugetlb.c
+> @@ -2463,7 +2463,13 @@ static int gather_surplus_pages(struct hstate *h, long delta)
+>  	long needed, allocated;
+>  	bool alloc_ok = true;
+>  	int node;
+> -	nodemask_t *mbind_nodemask = policy_mbind_nodemask(htlb_alloc_mask(h));
+> +	nodemask_t *mbind_nodemask, alloc_nodemask;
+> +
+> +	mbind_nodemask = policy_mbind_nodemask(htlb_alloc_mask(h));
+> +	if (mbind_nodemask)
+> +		nodes_and(alloc_nodemask, *mbind_nodemask, cpuset_current_mems_allowed);
+> +	else
+> +		alloc_nodemask = cpuset_current_mems_allowed;
+>  
+>  	lockdep_assert_held(&hugetlb_lock);
+>  	needed = (h->resv_huge_pages + delta) - h->free_huge_pages;
+> @@ -2479,8 +2485,16 @@ static int gather_surplus_pages(struct hstate *h, long delta)
+>  	spin_unlock_irq(&hugetlb_lock);
+>  	for (i = 0; i < needed; i++) {
+>  		folio = NULL;
+> -		for_each_node_mask(node, cpuset_current_mems_allowed) {
+> -			if (!mbind_nodemask || node_isset(node, *mbind_nodemask)) {
+> +
+> +		/* Prioritize current node */
+> +		if (node_isset(numa_mem_id(), alloc_nodemask))
+> +			folio = alloc_surplus_hugetlb_folio(h, htlb_alloc_mask(h),
+> +					numa_mem_id(), NULL);
+> +
+> +		if (!folio) {
+> +			for_each_node_mask(node, alloc_nodemask) {
+> +				if (node == numa_mem_id())
+> +					continue;
+>  				folio = alloc_surplus_hugetlb_folio(h, htlb_alloc_mask(h),
+>  						node, NULL);
+>  				if (folio)
 
-Awesome. Thanks!
+Acked-by: Aristeu Rozanski <aris@ruivo.org>
+
+-- 
+Aristeu
+
 
