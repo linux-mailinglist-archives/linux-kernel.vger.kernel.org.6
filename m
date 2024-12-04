@@ -1,214 +1,162 @@
-Return-Path: <linux-kernel+bounces-431008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1308F9E381E
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 12:00:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 065EE9E3824
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 12:01:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D51C216993A
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 11:00:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E9B3165E22
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 11:01:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0BF31B1D65;
-	Wed,  4 Dec 2024 11:00:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47ED11B21A2;
+	Wed,  4 Dec 2024 11:01:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BKthbUhy"
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pkh4e012"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 377F41AD3E0
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 11:00:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C5FB1AF0AE;
+	Wed,  4 Dec 2024 11:01:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733310021; cv=none; b=exmqPy178AhqoV5WtnsAM6ukW2XYCX9jSpPZ1A4uSEHDWOEP/kt4q9Pbo/M5kVp37cloV5e+OYpn+I9Uqe8DGN+LhdF53Hc9quxuzajvGVSLYHNuCHzZW2sgJhrctmVMSpH17DGhK3W0JThRtdW/mx+Wd2OBWZfmvAOi8M6BgPw=
+	t=1733310098; cv=none; b=uPOKtkE8KVvWwAPOT6HGOZ9EHHMxZdH/Q/78xR42USdxPNORVZSIWUUG4tnt/3aCfJ/iba3iZ9VwNuetkSXF1nZm5B/iYDbjoqYuMUbhUJI1qoHuKUfwob21qwYiIvJA38XpN8JRQ9S/EHZaWVesnTAtPNp+Swz/7Ob4DJ7h8XM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733310021; c=relaxed/simple;
-	bh=hum9XH/iQEVn6rvdWBZbw3PzECry8JMXGpvWCzKve8I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N8cq4gtGMW6TcqQgt2EaXvMZM/ZMh08rAi2ufBpnbcSGg/p4F7xVQg70PpCMvsa0csLfQBNnzqBiSCI6p+ytyqE8xQuJNR1Tv1zLNwTWY0vf25HJGBk98wDigh/ObfV2Q0KK1JwLC5plO/XfDQXVtmz89XdaKWLdTrVrz9b1Ylg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BKthbUhy; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2ffb0bbe9c8so77011811fa.0
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 03:00:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733310017; x=1733914817; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=GJdH0FDAVg0EEk1mbuvWK42ZlhNl2Kz+F54+9FBuNwQ=;
-        b=BKthbUhyePhBpmj2P0hk9/uENeQYTeP4+h7v6jtQEiRpsna3E62hBKQCJaEfag0b1+
-         g2jBQhO4hC++ngNtuWkOqX49gZh2H5RDtKZpO7xtOCMs4FL7t9QZJf4r8j835jx9Lnee
-         bUPOuYzMjQF7QWzcfGqK7HmfZzeh2Em46m2111LcFhpnMU0Idju4WKlols+r8NzK3KKc
-         QJAj4ATooFpyudbjJVUxngt63h9xP7L9ZI4ppzF/SzvqYYLaMbmZVfdVy1kb7bKRhoVW
-         9AJQ99xWcmzjANkou36eucVMtoz0J7JGJ3fyEtxiwiOrkaoB5wNbTWg9ATAQnjj48wzI
-         xlkQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733310017; x=1733914817;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GJdH0FDAVg0EEk1mbuvWK42ZlhNl2Kz+F54+9FBuNwQ=;
-        b=DoXtqP5qtXiA9iljtoHXaqTqKm91CWBF3QvvYoMrfqodwV2BPyVfelMPYe8xcSuDc/
-         yPX4LVUAJT6z2fbRK7qf29dlXRjnBfBkKzznMHqKi5s7fuCtXLDLrYbjEOJuOKI9WiOs
-         jkGf6amg/jGG4kW5ROy5iHdYQHP6u5wABos39ytPQoJE87jYiCO+5RwcLXsVWSZKj8TF
-         d0ihWji2DiqNs0jQC5o8wlgHb05fDSvYJCkvxhoF45jF6n/b7Pjm8rwl7YxOlTeWgZCt
-         n+sidQ7Sl8tnwnFA5SJkP68RFrM9PVqhKQQmv5r/aKNUZbKJ1g+xBvIShpgKXpGVYt6X
-         jNJA==
-X-Forwarded-Encrypted: i=1; AJvYcCXzPrlBSm2ijOox6Pyn5BbxIPdnk3jKMhHdXMqBYflwQ9lbZau4Ip2tR+cNXeVxGQ10Yt57tCzyaLvbRMM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwqjN+6Yc3htlwYIt/wxwszO592DTMXM6QkhysUqHz/ok/vY1tF
-	3qAl5/h3a9FfTYEGRbdX0Keuc0TcL1jET6EkGzeTqtaFPLoka8Ukv0nLvG0N6WI=
-X-Gm-Gg: ASbGncuSZoZVX/bpvll3CEEoe60yxfjlv7c4krpWDJB4WhVxGpmdoz/r2gUUKxeZmTK
-	LXsEMhED3ZGYQ83Trr3e8CEPH2e3Yn8bj330YYZYnrYANBjpbGXNiB3KnVWeFr3I1oV+adUUA4S
-	8+3JeyGZ/d399h9u25nVPx0/8BmSUiApwba+oLi7gpa8RNfWDdZS8KS/RN/znKpMgLVaiUseVGU
-	TU+RLnSU1H6GBvMbiWAEJKcjheobalmw/cvDD8B9PggRFo8r17nbe8+LTNeQDdwOGqoLRrEJtpk
-	f61WjBR4vbi5Cu+6wdQPLJOSCPYg9A==
-X-Google-Smtp-Source: AGHT+IH2m5MdbvSvbQSirMXSPeeVLCVyuJiF+F6i3kFP5GX6kABJsSiszeviPrPnCBLylQWVUOX0TQ==
-X-Received: by 2002:a2e:a912:0:b0:2ff:aa0c:5d35 with SMTP id 38308e7fff4ca-30009be4859mr36174051fa.9.1733310017154;
-        Wed, 04 Dec 2024 03:00:17 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ffdfbb8e7fsm19991021fa.2.2024.12.04.03.00.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Dec 2024 03:00:15 -0800 (PST)
-Date: Wed, 4 Dec 2024 13:00:13 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Jagadeesh Kona <quic_jkona@quicinc.com>
-Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
-	Brian Masney <bmasney@redhat.com>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Ajit Pandey <quic_ajipan@quicinc.com>, Imran Shaik <quic_imrashai@quicinc.com>, 
-	Taniya Das <quic_tdas@quicinc.com>, Satya Priya Kakitapalli <quic_skakitap@quicinc.com>, 
-	Shivnandan Kumar <quic_kshivnan@quicinc.com>
-Subject: Re: [PATCH 2/3] arm64: dts: qcom: sa8775p: Add CPU OPP tables to
- scale DDR/L3
-Message-ID: <fddfl7ohxlo6sqm365s7x3ykfas7ucxdc6csxphusdpzzoxlbi@x7vhdtebb5gu>
-References: <20241017-sa8775p-cpufreq-l3-ddr-scaling-v1-0-074e0fb80b33@quicinc.com>
- <20241017-sa8775p-cpufreq-l3-ddr-scaling-v1-2-074e0fb80b33@quicinc.com>
- <ZxEwVShJuMH4J1Hp@x1>
- <9179759d-7af1-409f-8130-1136c9ae4ecd@quicinc.com>
- <daqa3krsp6emdha6h7tlcelsggb6qeilnojgtfxjbp5zw4n6ow@xzwdmu55ygjf>
- <5c3d91e3-e9d3-4e8d-bd4f-f7cbe765dddc@oss.qualcomm.com>
- <d78e6fc9-2238-4f55-a604-f60df8565166@quicinc.com>
- <fhueah2gfi7fartnitasetvxiax3vgpgnbjis6ydjt523cnksk@vs4jmmtxk5jw>
- <e88a1685-5aa3-497a-84a0-18065f1bf6a4@quicinc.com>
+	s=arc-20240116; t=1733310098; c=relaxed/simple;
+	bh=z1HFY+L1IO4WPUG9WzHJoKxu2wP+G47aGlRxHp7HWF8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oe7CttzIIVwJZRaNDfBoyxFjnMR+COladEXdF3mPsvm2hN76Td4QCHYMS2gbyvzg3+9k97ECeU7kUrU8UTBAYp55M2Sv0FnFDvib+Qc2J7Rjl6o2r/xWMiRvZT9YzToL3xjWvRicbHVOvlNMvumjZ6GlO9lnY8WnS6OYmZ6u6iw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pkh4e012; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31192C4CED1;
+	Wed,  4 Dec 2024 11:01:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733310098;
+	bh=z1HFY+L1IO4WPUG9WzHJoKxu2wP+G47aGlRxHp7HWF8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Pkh4e012awYuobGmVqxNqBoekFIvIsI0yCxWj1ISx9OgkGJWLQUTT/vgX4D9ukvyO
+	 ps8Ii7qwjm4XRj0J/MPFPIiOunjW38AcrAakW7sJjGnn9c+vtjrbsbZmcrEc4P8WwE
+	 2uL3vB84zpzBS373JgGy4k1Ca592sqNMKmaMe6i9BmusaZyTQPak5OxmS74dWfIZok
+	 mt0KKEzDLamXQPv4Z4sccQ5c7DnTl3Y4DxYbRlVI1o1CJ+0vd4Tu49sP7G3OQ+j5Su
+	 plLJHwIoAJaJpA+Uwzh9I2wnCOIkVtqZ9upYnsu+WV3G6zBcL06c8jviD1zCeMrcvt
+	 4oCd8BtR+0wPg==
+Message-ID: <80b6603d-ed52-43b7-a434-0253e5de784a@kernel.org>
+Date: Wed, 4 Dec 2024 12:01:32 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e88a1685-5aa3-497a-84a0-18065f1bf6a4@quicinc.com>
+User-Agent: Mozilla Thunderbird Beta
+Subject: Re: [PATCH net-next] tcp: Check space before adding MPTCP options
+Content-Language: en-GB
+To: MoYuanhao <moyuanhao3676@163.com>, edumazet@google.com,
+ davem@davemloft.net, dsahern@kernel.org, kuba@kernel.org, pabeni@redhat.com,
+ horms@kernel.org
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ martineau@kernel.org, geliang@kernel.org, MPTCP Linux <mptcp@lists.linux.dev>
+References: <20241204085801.11563-1-moyuanhao3676@163.com>
+From: Matthieu Baerts <matttbe@kernel.org>
+Autocrypt: addr=matttbe@kernel.org; keydata=
+ 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
+ lzVbFe7fduHbABmYz9cefQpO7wDE/Q==
+Organization: NGI0 Core
+In-Reply-To: <20241204085801.11563-1-moyuanhao3676@163.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, Dec 04, 2024 at 02:15:09PM +0530, Jagadeesh Kona wrote:
-> 
-> 
-> On 12/4/2024 8:43 AM, Dmitry Baryshkov wrote:
-> > On Tue, Dec 03, 2024 at 08:33:46PM +0530, Jagadeesh Kona wrote:
-> >>
-> >>
-> >> On 11/30/2024 8:02 PM, Konrad Dybcio wrote:
-> >>> On 14.11.2024 11:48 PM, Dmitry Baryshkov wrote:
-> >>>> On Mon, Nov 11, 2024 at 06:39:48PM +0530, Jagadeesh Kona wrote:
-> >>>>>
-> >>>>>
-> >>>>> On 10/17/2024 9:12 PM, Brian Masney wrote:
-> >>>>>> On Thu, Oct 17, 2024 at 02:58:31PM +0530, Jagadeesh Kona wrote:
-> >>>>>>> +	cpu0_opp_table: opp-table-cpu0 {
-> >>>>>>> +		compatible = "operating-points-v2";
-> >>>>>>> +		opp-shared;
-> >>>>>>> +
-> >>>>>>> +		cpu0_opp_1267mhz: opp-1267200000 {
-> >>>>>>> +			opp-hz = /bits/ 64 <1267200000>;
-> >>>>>>> +			opp-peak-kBps = <6220800 29491200>;
-> >>>>>>> +		};
-> >>>>>>> +
-> >>>>>>> +		cpu0_opp_1363mhz: opp-1363200000 {
-> >>>>>>> +			opp-hz = /bits/ 64 <1363200000>;
-> >>>>>>> +			opp-peak-kBps = <6220800 29491200>;
-> >>>>>>> +		};
-> >>>>>>
-> >>>>>> [snip]
-> >>>>>>
-> >>>>>>> +	cpu4_opp_table: opp-table-cpu4 {
-> >>>>>>> +		compatible = "operating-points-v2";
-> >>>>>>> +		opp-shared;
-> >>>>>>> +
-> >>>>>>> +		cpu4_opp_1267mhz: opp-1267200000 {
-> >>>>>>> +			opp-hz = /bits/ 64 <1267200000>;
-> >>>>>>> +			opp-peak-kBps = <6220800 29491200>;
-> >>>>>>> +		};
-> >>>>>>> +
-> >>>>>>> +		cpu4_opp_1363mhz: opp-1363200000 {
-> >>>>>>> +			opp-hz = /bits/ 64 <1363200000>;
-> >>>>>>> +			opp-peak-kBps = <6220800 29491200>;
-> >>>>>>> +		};
-> >>>>>>
-> >>>>>> There's no functional differences in the cpu0 and cpu4 opp tables. Can
-> >>>>>> a single table be used?
-> >>>>>>
-> >>>>>> This aligns with my recollection that this particular SoC only has the
-> >>>>>> gold cores.
-> >>>>>>
-> >>>>>> Brian
-> >>>>>>
-> >>>>>
-> >>>>> Thanks Brian for your review. Sorry for the delayed response.
-> >>>>>
-> >>>>> We require separate OPP tables for CPU0 and CPU4 to allow independent
-> >>>>> scaling of DDR and L3 frequencies for each CPU domain, with the final
-> >>>>> DDR and L3 frequencies being an aggregate of both.
-> >>>>>
-> >>>>> If we use a single OPP table for both CPU domains, then _allocate_opp_table() [1]
-> >>>>> won't be invoked for CPU4. As a result both CPU devices will end up in sharing
-> >>>>> the same ICC path handle, which could lead to one CPU device overwriting the bandwidth
-> >>>>> votes of other.
-> >>>
-> >>> Oh that's a fun find.. clocks get the same treatment.. very bad,
-> >>> but may explain some schroedingerbugs.
-> >>>
-> >>> Taking a peek at some code paths, wouldn't dropping opp-shared
-> >>> solve our issues? dev_pm_opp_set_sharing_cpus() overrides it
-> >>>
-> >>> Konrad
-> >>
-> >> Thanks Konrad for your review.
-> >>
-> >> Yes, correct. I tried dropping opp-shared but it is again getting set due to
-> >> dev_pm_opp_set_sharing_cpus().
-> > 
-> > It should be set, but then it should get the limited CPU mask rather
-> > than the full CPU set. Isn't that enough for your case?
-> > 
-> 
-> Even if we call dev_pm_opp_set_sharing_cpus() with the limited CPU mask, it adds
-> OPP_TABLE_ACCESS_SHARED flag to the OPP table. Due to this flag being set, if this
-> same opp table is used for another CPU domain(CPU4-7) also in DT, then _managed_opp[1]
-> which gets called inside from dev_pm_opp_of_add_table() for CPU4 will return the same
-> CPU0 OPP table. 
-> 
-> Due to above, _allocate_opp_table() [2] won't be invoked for CPU4 but instead CPU4 will be
-> added as device under the CPU0 OPP table [3]. Due to this, dev_pm_opp_of_find_icc_paths() [4]
-> won't be invoked for CPU4 device and hence CPU4 won't be able to independently scale it's
-> interconnects. Both CPU0 and CPU4 devices will scale the same ICC path which can lead to one
-> device overwriting the BW vote placed by other device. So we need two separate OPP tables for
-> both domains.
+Hi MoYuanhao,
 
-Ack, that makes sense. Thanks for the explanation!
++Cc MPTCP mailing list.
 
-> 
-> [1] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/drivers/opp/core.c#n1600
-> [2] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/drivers/opp/core.c#n1613
-> [3] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/drivers/opp/core.c#n1606
-> [4] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/drivers/opp/core.c#n1484
-> 
-> Thanks,
-> Jagadeesh
+(Please cc the MPTCP list next time)
 
+On 04/12/2024 09:58, MoYuanhao wrote:
+> Ensure enough space before adding MPTCP options in tcp_syn_options()
+> Added a check to verify sufficient remaining space
+> before inserting MPTCP options in SYN packets.
+> This prevents issues when space is insufficient.
+
+Thank you for this patch. I'm surprised we all missed this check, but
+yes it is missing.
+
+As mentioned by Eric in his previous email, please add a 'Fixes' tag.
+For bug-fixes, you should also Cc stable and target 'net', not 'net-next':
+
+Fixes: cec37a6e41aa ("mptcp: Handle MP_CAPABLE options for outgoing
+connections")
+Cc: stable@vger.kernel.org
+
+
+Regarding the code, it looks OK to me, as we did exactly that with
+mptcp_synack_options(). In mptcp_established_options(), we pass
+'remaining' because many MPTCP options can be set, but not here. So I
+guess that's fine to keep the code like that, especially for the 'net' tree.
+
+
+Also, and linked to Eric's email, did you have an issue with that, or is
+it to prevent issues in the future?
+
+
+One last thing, please don’t repost your patches within one 24h period, see:
+
+  https://docs.kernel.org/process/maintainer-netdev.html
+
+
+Because the code is OK to me, and the same patch has already been sent
+twice to the netdev ML within a few hours, I'm going to apply this patch
+in our MPTCP tree with the suggested modifications. Later on, we will
+send it for inclusion in the net tree.
+
+pw-bot: awaiting-upstream
+
+(Not sure this pw-bot instruction will work as no net/mptcp/* files have
+been modified)
+
+Cheers,
+Matt
 -- 
-With best wishes
-Dmitry
+Sponsored by the NGI0 Core fund.
+
 
