@@ -1,179 +1,214 @@
-Return-Path: <linux-kernel+bounces-430817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F0A59E3612
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 09:59:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A87719E3602
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 09:55:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 746EEB28B01
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 08:55:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 539FE281D72
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 08:55:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1046A1990D3;
-	Wed,  4 Dec 2024 08:55:05 +0000 (UTC)
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C738319993E;
+	Wed,  4 Dec 2024 08:55:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FvfoC279"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8C9717D354
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 08:55:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44542194AC7
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 08:55:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733302504; cv=none; b=tXoO5Mi2ErtaQ+1LKewYuKRdndvNKSGZMqZfEvlfEnJQUZl3BwrErY9rXMzDzXtDE8g0zXRtlfPk0uipwxVjpwVQ5mQQfQZIdvkwuvAfSk9Vx/D2EdCEDxmyWd444w4w3pR2/Yt9caSKAgkCucmzBoGtBGfpt748dmtcf+GEn/w=
+	t=1733302542; cv=none; b=VEokn5nhxOCAa+dG/NzaNquWH+FbujzHGa4C/PbsdRu7sIaYD9lbS2x2/evOaWfi2A/Mt4QCcoOlwFYBs8zt/DDjx5Lm4q2/6IL/F9yKjPUeOkco+hZ2Vy1FwHjsoBqi29puYFMnmxRm7QW1xGV8/YpX5W8kJnuEsAkOHT8bD5A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733302504; c=relaxed/simple;
-	bh=GKEYz2yv3lCcJYcb9izR1OzbIidfSi+o0kUI74mUvi4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iwAbc7QTO+8EWsCVB54Yen9J9cBjTEsAkQr2LeKr/mpZh6RHCUCBXamXdfWnfAjAk351Io28l/gG9KKrpQFNWHCCF9zOyBV/+Y+2Em84DfXgSbR70/giOJNRgtHIFxd0+wMxlgn9NbzmRS0qYPw8DlyjkwQswiY9yTIekZXQhuA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 0212021158;
-	Wed,  4 Dec 2024 08:54:55 +0000 (UTC)
-Authentication-Results: smtp-out1.suse.de;
-	none
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id DA52A139C2;
-	Wed,  4 Dec 2024 08:54:54 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id gfnvNN4YUGf8YQAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Wed, 04 Dec 2024 08:54:54 +0000
-Message-ID: <eaf8acda-c492-4cfa-b4b9-ea4d7a0c2420@suse.cz>
-Date: Wed, 4 Dec 2024 09:54:54 +0100
+	s=arc-20240116; t=1733302542; c=relaxed/simple;
+	bh=6Izke65AXpS0VmYoo22e0g0QsGHtrZ06IK9M6bCw2cE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iavJXC27h7CoKI8/rAfNc0zUWKHY1HbOtPLZG/ulYzwebd7c5HiMxsqzi1Ol7JhsPimWHClA7CLPD87csSNyH53iuvva8wcDYTi4ni1CbjZYIcKsIxdNy5n+rslnNViaHoOWVUOZk3j5SbJAVKGdPl/1nPbguUIDAvissyYIWHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FvfoC279; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5cf6f367f97so7985072a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 00:55:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1733302538; x=1733907338; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SJbrEWxBCkHbyaq9EdVtGXFN+ax//3d1lQb0Nm+ee6g=;
+        b=FvfoC2792yz+VKuy5rfvlLSlyRXHiMatjOE7NYK1rZaZBbO0NgOvapb5YdI6DHBMz4
+         ENLyvkpqNje0Svn2CkyXJ87PimIu5D12JP+a+K78lv77VtPn+C1wLE1DS0JdsczQvEGV
+         Z2ixUDQW5sAG8Zu7AhUenCwN2LoMhm1WwI22HU9DpRRi5+wyssuQB7hj4lETQBH4UgFr
+         VenfEE5TbPCWUrhbQSSTSX8kuokHSsZa2U0TuwH+BTtw2svl5R+OC4KXOUNzrWWc7cZE
+         TFHVvJMGT10Z0oHxYkKeya/DiyJdfsl5NHISL6zMnxFdUoSaiBOAq7Ys/r1ngn2oRCC4
+         tV6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733302538; x=1733907338;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SJbrEWxBCkHbyaq9EdVtGXFN+ax//3d1lQb0Nm+ee6g=;
+        b=Jy77dDjzwfvn+atPb2aLqczlQaeUi4yPZ04TQ2mOAiplCR+dNPF8dc77+qcDmrDamI
+         O0/DLBjxMaKIZ0TpBbJJSEBkxnmpeSomZkX7ewkcYmMWz6fSKFBtPIm0dpEXI7lAukvj
+         Z8AdNmVJr884uE0QmO6rLCEcb5KcS/SLEQJLTf/YEo69AGSYRKU69ExT/gyHsL/V2/c7
+         O28TIQx5Ng48He5HM2UPZUTzexkyFy8VAHVB98hpBJvHBt5Gx5GQOZQaSswBy03yB/NC
+         BV86lMEbExrM8ofuq5W23ADOvHw5L1YrVaaI67o4N4I2gvwIk3ye/X8BYt+wrfdz5S7P
+         Gh+g==
+X-Forwarded-Encrypted: i=1; AJvYcCWgDC97i0IN6JgXCDcOhoRHxSkDVEHfBYTU4F5pUXdnXraMofSe7sDp37M9yoEVOw/BF+iRdb3NiX5kGgo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yweby6vPn3Oh+ztRVmzmqABjVF84CvXS7cMDQwoSOlaJI7NM5JJ
+	QGHzz3m5JMn4kwKh1qH2dHM6zMb3I12pXzP1Lxdsp9d2Pysy6VKONDEVjaUJrButBPF9F0orTPX
+	+1MnvqPjwJR8S36M0UdlwytoOY/pRQOL0S/xg
+X-Gm-Gg: ASbGncvJpagxd4xu+exA5AzzGLet1hK3wdyLnr/3OLpX8Uk1Qz0KEgmgxuDv7rp/i0P
+	dpOvbvPhgVCZkZ0MAmRWRyfxPpI1Wjgnh
+X-Google-Smtp-Source: AGHT+IFLv8Go2ESiUlixE1oPJUrkZ+SZMuqPqhRi/X2v6c4Cj8NkE5kV/d4b0u8vBcSwZLQ7b46y6DZnCQ2lgETqDSI=
+X-Received: by 2002:a05:6402:3903:b0:5d0:b74f:6422 with SMTP id
+ 4fb4d7f45d1cf-5d10cba2bd8mr5494843a12.32.1733302537392; Wed, 04 Dec 2024
+ 00:55:37 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND v2 4/6] mm/page_alloc: sort out the
- alloc_contig_range() gfp flags mess
-To: David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org
-Cc: linux-mm@kvack.org, linuxppc-dev@lists.ozlabs.org,
- Andrew Morton <akpm@linux-foundation.org>, Oscar Salvador
- <osalvador@suse.de>, Zi Yan <ziy@nvidia.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Naveen N Rao <naveen@kernel.org>, Madhavan Srinivasan <maddy@linux.ibm.com>
-References: <20241203094732.200195-1-david@redhat.com>
- <20241203094732.200195-5-david@redhat.com>
- <feffbbe8-4176-48e8-b503-ef53d7914197@suse.cz>
- <96c92857-4850-4f85-9474-ac193c5ea48c@redhat.com>
- <04c1d28e-bbea-4499-9a6d-770f9ca53ba9@suse.cz>
- <d736f1c0-343e-4031-88ba-3b33b73dbeba@redhat.com>
-Content-Language: en-US
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- EP+ylKVEKb0Q2A==
-In-Reply-To: <d736f1c0-343e-4031-88ba-3b33b73dbeba@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Pre-Result: action=no action;
-	module=replies;
-	Message is reply to one we originated
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.00 / 50.00];
-	REPLY(-4.00)[];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU]
-X-Spam-Score: -4.00
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 0212021158
-X-Rspamd-Pre-Result: action=no action;
-	module=replies;
-	Message is reply to one we originated
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+References: <CGME20241203081005epcas2p247b3d05bc767b1a50ba85c4433657295@epcas2p2.samsung.com>
+ <20241203081247.1533534-1-youngmin.nam@samsung.com> <CANn89iK+7CKO31=3EvNo6-raUzyibwRRN8HkNXeqzuP9q8k_tA@mail.gmail.com>
+ <CADVnQynUspJL4e3UnZTKps9WmgnE-0ngQnQmn=8gjSmyg4fQ5A@mail.gmail.com> <Z0/L2gDjvXVfj1ho@perf>
+In-Reply-To: <Z0/L2gDjvXVfj1ho@perf>
+From: Eric Dumazet <edumazet@google.com>
+Date: Wed, 4 Dec 2024 09:55:26 +0100
+Message-ID: <CANn89i+LzKpwfCRX2YGqi-0fmekT53fDpGtvav2u3E0EMB95qw@mail.gmail.com>
+Subject: Re: [PATCH] tcp: check socket state before calling WARN_ON
+To: Youngmin Nam <youngmin.nam@samsung.com>
+Cc: Neal Cardwell <ncardwell@google.com>, davem@davemloft.net, dsahern@kernel.org, 
+	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, dujeong.lee@samsung.com, 
+	guo88.liu@samsung.com, yiwang.cai@samsung.com, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, joonki.min@samsung.com, hajun.sung@samsung.com, 
+	d7271.choe@samsung.com, sw.ju@samsung.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 12/3/24 20:19, David Hildenbrand wrote:
-> On 03.12.24 15:24, Vlastimil Babka wrote:
->> On 12/3/24 15:12, David Hildenbrand wrote:
->>> On 03.12.24 14:55, Vlastimil Babka wrote:
->>> likely the thing we are assuming here is that we are migrating a page, and
->>> usually, these are user allocation (except maybe balloon and some other non-lru
->>> movable things).
->> 
->> Yeah and user allocations obey cpuset and mempolicies etc. But these are
->> likely somebody elses allocations that were done according to their
->> policies. With our migration we might be actually violating those, which
->> probably can't be helped (is at least migration within the same node
->> preferred? hmm).
-> 
-> I would hope that we handle memory policies somehow (via VMAs? not 
-> sure). cpuset? I have no idea.
+On Wed, Dec 4, 2024 at 4:22=E2=80=AFAM Youngmin Nam <youngmin.nam@samsung.c=
+om> wrote:
+>
+> On Tue, Dec 03, 2024 at 10:34:46AM -0500, Neal Cardwell wrote:
+> > On Tue, Dec 3, 2024 at 6:07=E2=80=AFAM Eric Dumazet <edumazet@google.co=
+m> wrote:
+> > >
+> > > On Tue, Dec 3, 2024 at 9:10=E2=80=AFAM Youngmin Nam <youngmin.nam@sam=
+sung.com> wrote:
+> > > >
+> > > > We encountered the following WARNINGs
+> > > > in tcp_sacktag_write_queue()/tcp_fastretrans_alert()
+> > > > which triggered a kernel panic due to panic_on_warn.
+> > > >
+> > > > case 1.
+> > > > ------------[ cut here ]------------
+> > > > WARNING: CPU: 4 PID: 453 at net/ipv4/tcp_input.c:2026
+> > > > Call trace:
+> > > >  tcp_sacktag_write_queue+0xae8/0xb60
+> > > >  tcp_ack+0x4ec/0x12b8
+> > > >  tcp_rcv_state_process+0x22c/0xd38
+> > > >  tcp_v4_do_rcv+0x220/0x300
+> > > >  tcp_v4_rcv+0xa5c/0xbb4
+> > > >  ip_protocol_deliver_rcu+0x198/0x34c
+> > > >  ip_local_deliver_finish+0x94/0xc4
+> > > >  ip_local_deliver+0x74/0x10c
+> > > >  ip_rcv+0xa0/0x13c
+> > > > Kernel panic - not syncing: kernel: panic_on_warn set ...
+> > > >
+> > > > case 2.
+> > > > ------------[ cut here ]------------
+> > > > WARNING: CPU: 0 PID: 648 at net/ipv4/tcp_input.c:3004
+> > > > Call trace:
+> > > >  tcp_fastretrans_alert+0x8ac/0xa74
+> > > >  tcp_ack+0x904/0x12b8
+> > > >  tcp_rcv_state_process+0x22c/0xd38
+> > > >  tcp_v4_do_rcv+0x220/0x300
+> > > >  tcp_v4_rcv+0xa5c/0xbb4
+> > > >  ip_protocol_deliver_rcu+0x198/0x34c
+> > > >  ip_local_deliver_finish+0x94/0xc4
+> > > >  ip_local_deliver+0x74/0x10c
+> > > >  ip_rcv+0xa0/0x13c
+> > > > Kernel panic - not syncing: kernel: panic_on_warn set ...
+> > > >
+> > >
+> > > I have not seen these warnings firing. Neal, have you seen this in th=
+e past ?
+> >
+> > I can't recall seeing these warnings over the past 5 years or so, and
+> > (from checking our monitoring) they don't seem to be firing in our
+> > fleet recently.
+> >
+> > > In any case this test on sk_state is too specific.
+> >
+> > I agree with Eric. IMHO TCP_FIN_WAIT1 deserves all the same warnings
+> > as ESTABLISHED, since in this state the connection may still have a
+> > big queue of data it is trying to reliably send to the other side,
+> > with full loss recovery and congestion control logic.
+> Yes I agree with Eric as well.
+>
+> >
+> > I would suggest that instead of running with panic_on_warn it would
+> > make more sense to not panic on warning, and instead add more detail
+> > to these warning messages in your kernels during your testing, to help
+> > debug what is going wrong. I would suggest adding to the warning
+> > message:
+> >
+> > tp->packets_out
+> > tp->sacked_out
+> > tp->lost_out
+> > tp->retrans_out
+> > tcp_is_sack(tp)
+> > tp->mss_cache
+> > inet_csk(sk)->icsk_ca_state
+> > inet_csk(sk)->icsk_pmtu_cookie
+>
+> Hi Neal.
+> Thanks for your opinion.
+>
+> By the way, we enable panic_on_warn by default for stability.
+> As you know, panic_on_warn is not applied to a specific subsystem but to =
+the entire kernel.
+> We just want to avoid the kernel panic.
+>
+> So when I see below lwn article, I think we might use pr_warn() instaed o=
+f WARN_ON().
+> https://lwn.net/Articles/969923/
+>
+> How do you think of it ?
 
-They are handled when allocating, but then the info is lost, the allocation
-doesn't carry its effective nodemask.
-But that's really a separate issue that just occured to me.
+You want to silence a WARN_ON() because you chose  to make all WARN_ON() fa=
+tal.
 
-> But it doesn't seem to me that our caller's restrictions
->> (if those exist, would be enforced by __GFP_HARDWALL) are that relevant for
->> somebody else's pages?
-> 
-> It was always set using "GFP_USER | __GFP_MOVABLE | 
-> __GFP_RETRY_MAYFAIL", and I removed the same flag combination in #2 from 
-> memory offline code, and we do have the exact same thing in 
-> do_migrate_range() in mm/memory_hotplug.c.
+We want something to be able to fix real bugs, because we really care
+of TCP being correct.
 
-Yeah I agree a refactoring patch shouldn't change the existing behavior...
+We have these discussions all the time.
+https://lwn.net/Articles/969923/ is a good summary.
 
-> We should investigate if__GFP_HARDWALL is the right thing to use here, 
-> and if we can get rid of that by switching to GFP_KERNEL in all these 
-> places.
-> 
-> I can look into it + send a follow-up patch.
+It makes sense for debug kernels (for instance used by syzkaller or
+other fuzzers) to panic,
+but for production this is a high risk, there is a reason
+panic_on_warn is not set by default.
 
-...but it's a great opportunity to start questioning it and possibly change
-it as a follow up :)
+If we use a soft  print there like pr_warn(), no future bug will be caught.
 
-Thanks!
+What next : add a new sysctl to panic whenever a pr_warn() is hit by syzkal=
+ler ?
 
-> Thanks!
-> 
+Then Android will set this sysctl "because of stability concerns"
 
+> >
+> > A hunch would be that this is either firing for (a) non-SACK
+> > connections, or (b) after an MTU reduction.
+> >
+> > In particular, you might try `echo 0 >
+> > /proc/sys/net/ipv4/tcp_mtu_probing` and see if that makes the warnings
+> > go away.
+> >
+> > cheers,
+> > neal
+> >
 
