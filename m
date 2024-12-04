@@ -1,151 +1,114 @@
-Return-Path: <linux-kernel+bounces-431038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 123CD9E3864
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 12:10:04 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8D5F9E3867
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 12:10:26 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18E5B280339
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 11:10:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A59B9161CD3
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 11:10:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0B061F759F;
-	Wed,  4 Dec 2024 11:06:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA83616F851;
+	Wed,  4 Dec 2024 11:07:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="qRiXfGCI"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AwF6CUim"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A32E81F707A;
-	Wed,  4 Dec 2024 11:06:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 441271B218B
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 11:06:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733310370; cv=none; b=tl/KNurscG35kEWd8fJTAngLi+wco+BYSwz16SkiXCq5dKSw2dtYfhgFCXbPQ0DqiNnJigGgfAl5JPx0+A/Fu6tGaGFmfplAh8VmdkH7a/OHVEAvg3NejtyTTh2qCSYL2QWEeckwD0zvvp87VChqFk0Bdt+/4g5t4yAUpcQ+Ubg=
+	t=1733310421; cv=none; b=cQ7yLnWIVy5fjyzCrB3HZbeRtBGYfYMB7zziDRmu1oLSe6pPL3uoeit5mBrxO2sM/4IbqwMJN3Uzd+z27fJboC2KSLPtP10V+VnofBf7LTi49Coj8zZh/GlMLz2ei6rs8sGU7M3NU/THN1MtYG6lHTCv58Bgc+BzrS2twWWX2e4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733310370; c=relaxed/simple;
-	bh=F4Yp+U6nA046A4kQeZWpOFa99vdkMkgLtGHd/gDDUno=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=KhHG32nYcAwgs7I3ImcQTamVU6nVQXqWjf38KpKdVNxsZ1f2IoqDvhQb0024rN+5llwLqU5SLJsPjJMplajxxDEWffBK1UHKtdvE/WHZMChNkdAqG7V1CR7sjukVHvxwLvqeQRV9Rvmp6yzJse3rGkMsdR1VOju/UJtk7JnLO/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=qRiXfGCI; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from [127.0.1.1] (91-157-155-49.elisa-laajakaista.fi [91.157.155.49])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 0241BD04;
-	Wed,  4 Dec 2024 12:05:24 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1733310325;
-	bh=F4Yp+U6nA046A4kQeZWpOFa99vdkMkgLtGHd/gDDUno=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=qRiXfGCI/q05wx4tfn+K5MNWhdCr+jSKK4lNilxn/mWxlszW+lquCMbmHElFnU9Yn
-	 8Dig7++Un4TO40H5p+UvTjDsLlvOaPdA0cSFdT4ypW5yL+sHk+/gajVXtyVTmLJGr6
-	 EZiHJKxBgFJ1xRZd73pq1IqFGe5VbkkL3bDizmBA=
-From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Date: Wed, 04 Dec 2024 13:05:29 +0200
-Subject: [PATCH v3 15/15] media: i2c: ds90ub960: Fix shadowing of local
- variables
+	s=arc-20240116; t=1733310421; c=relaxed/simple;
+	bh=E65WWkwNgLnXFkVJhkwVsz00upPotmr4Pfe+PM77E68=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mUi0ElRaIiDuOVoRfKsiRCEex3eDQG/4fKnoMBLZdeYyMkAue5cT56xKsbhdYks+nVFOW/MlAsD3u9sG38c8mP7XC8Z6I61F164InTs+gxj2DgaM9gcMJF5nK8S5Ts1d7APMCqsGiQZcKyda5vVLTtFfdQCp0SIxrnYCe7oBAX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AwF6CUim; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-3001699fbabso5346651fa.1
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 03:06:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733310417; x=1733915217; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Frwodt7e80iVestTvU82jBPF1mauExxFI6AqVijqEjg=;
+        b=AwF6CUimdgFE5Pc5NTsfZ2kgva8lQYAofkJAciTJcm8hk8fp7oo5Jut2rkh6NnILtH
+         LKMQ16ThbY0cXsTsHxeZ3D7vbPI4kbi4zRFz+mjBZjBS39l9pOyD4tAh4wld3o7IzAMd
+         Aa2lKHphSl9t3Dz7gwTpVQZD8MLZ9zRoaHyoD4wXh+WknS2QUzcvMUlh9m0kxDTcZAYf
+         qIzjjmKw4w+R/58I7xulE5A5TbBC6xZVRvLyI37weeymWHnQurBCqGGIJnetYVhhB+q8
+         JxTY+DnbQZim5mLgcVJA+b7J0FtXMzH2X5un2BZzo7SgZnMDdPE5HQqXjABV2XYT1Dyf
+         yChA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733310417; x=1733915217;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Frwodt7e80iVestTvU82jBPF1mauExxFI6AqVijqEjg=;
+        b=bvDlmx38+dlrbLBMpdoqfl0ZmnWDbCoYU37uYiAH5ntRHGhKLWBx5RtoMelV93PJ3J
+         vX3R1ST0NDIQga8NQnExUr7pj3yJABKur+foGpUgQJ9uXTqrHXe7XC8j4HiS8HbsAq7Z
+         Fdbi5ZUIpnbQwPMaoVREozdrG7GUo7+yCauNmARDzbyHHCBZPoScA75qxeUZe7cePenp
+         8gGtmeaW1TdgXIntg7mjabplk8UHb6NA3KNHEopC5llCha47e4ibl1TISHOMiKSZT4zw
+         w/tWH8/DRiFUun+67jc2fVFjpxlUeyMdMqD7lAO5B59p3z4Mv/yeHWv6FWwgCvJ1wiVx
+         XJgA==
+X-Forwarded-Encrypted: i=1; AJvYcCUu1+z8XNQTbrTEve25iYTL3SxWDS8iaDYyqLoY83Jbmjalz2a1oOch+YMAmWCwIeDft+6TyPROnVKW4GM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7s19ciD2D4hPf08NhmxNdvC+V3yk8zdXujjuVtQQ/WRpnL4C5
+	kKVmFpmc0/R8WxOslmlFlEYKPjSYe8y+J6m+xSREiB8yV04PEZV1v80ceitMAcI=
+X-Gm-Gg: ASbGncveNDhgFrnMSaQDxAIxDGFObzSB7NIhjoeww4TGXDgD3q9Fsa8PZPtaE4auFU2
+	3G5d5bFRjVPbFr/JbHy0FqfAFSuN4NFzi3I1MWZAF0HafsXhqNu9zTRPgBIRjkeI5uvioafshrS
+	iksB7G3EinKVjO1HIe7Lnkrh731CithU+cgdDZO8SdC/gjEvpZXH7Rk/c3Ugrzeksk3pT/XSEnX
+	CLQMVNObeDbOg08tVjiqNbcMCDdc5UmIEJ2T4ABuIOQlfNmDmoIIA6sWkFiKICn+Bbs5sb9HPb1
+	Wp3FLEn4bOmxgaf1brF4mES99Coq5Q==
+X-Google-Smtp-Source: AGHT+IEMk4pFxAlr3TGP6UdHEhLOi9fl1THCZj9kUnw9vcRnkqFukVuUyiWzLySwmier7TkiwbynLw==
+X-Received: by 2002:a2e:b8c9:0:b0:2ff:d81f:2d33 with SMTP id 38308e7fff4ca-30009ca9f84mr30152041fa.28.1733310417470;
+        Wed, 04 Dec 2024 03:06:57 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ffdfca1c6esm19213481fa.104.2024.12.04.03.06.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Dec 2024 03:06:56 -0800 (PST)
+Date: Wed, 4 Dec 2024 13:06:53 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Neil Armstrong <neil.armstrong@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	cros-qcom-dts-watchers@chromium.org, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/5] arm64: dts: qcom: sc7180-trogdor-pompom: rename
+ 5v-choke thermal zone
+Message-ID: <b7ayn6kejzh3uaxcn5kfvrjdl5isiqei3uelf6yma7ap5c4gul@4qmnbdb6bix3>
+References: <20241204-topic-misc-dt-fixes-v1-0-6d320b6454e6@linaro.org>
+ <20241204-topic-misc-dt-fixes-v1-4-6d320b6454e6@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241204-ub9xx-fixes-v3-15-a933c109b323@ideasonboard.com>
-References: <20241204-ub9xx-fixes-v3-0-a933c109b323@ideasonboard.com>
-In-Reply-To: <20241204-ub9xx-fixes-v3-0-a933c109b323@ideasonboard.com>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Sakari Ailus <sakari.ailus@linux.intel.com>, 
- Hans Verkuil <hverkuil-cisco@xs4all.nl>, 
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
- Jai Luthra <jai.luthra@ideasonboard.com>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2197;
- i=tomi.valkeinen@ideasonboard.com; h=from:subject:message-id;
- bh=F4Yp+U6nA046A4kQeZWpOFa99vdkMkgLtGHd/gDDUno=;
- b=owEBbQKS/ZANAwAIAfo9qoy8lh71AcsmYgBnUDeHDsGS6sHdQ72vklvrsxC57Lnab+5ZACq/P
- 1kt/QdpRSCJAjMEAAEIAB0WIQTEOAw+ll79gQef86f6PaqMvJYe9QUCZ1A3hwAKCRD6PaqMvJYe
- 9b2tEACXUh+aYh0Kri5QlXdTZYTUo6aFoWFS4VnOZUhHtws+f2TNq6aR+y/ebtfIOFrL14BB3dP
- O8/1eHAu2wOFRWtQFRy43cCaNSl/QoQ7S0UjomoOqhJ3YlsfiWfy5uay2QXk4mLh2wluRoodPjb
- DLSxnqofabLXfgF8YsfEuevO8UGaAMUS5WAjRWbf8+lRIKvC0ijbphwme1jZHHQVTnbDTxI2dQi
- eM+xh0a4q/BJK5fgF1TPN3R8at2diVbIhubMl6vZPMRA7OES93rfnROY8aEaOcpZzXXcfLu5ktH
- OF+wuJJM2LcLAYazqB9vaRQFBElIEw1wIAPJyP1zicETjwA+Cf5ne6X+M4jM2J28HgwcqSEFvEu
- Q+FMcoYKu3MpWwds+jKLdtiIRCx4aAc+ZpboWbJLaXzxSNf0ZjoTDMFhgp3UpiZsC5zvVYQhZLq
- NoF5Mtw56GPMjSoeDxt+lM+yc5bDSeB71ceLlDJ5z7A9gvAgKlT66Yu23Zocm5JYoNXc3oT7Yia
- M98EtCAbMAGVXoSMT/Hm8x0zQ3iMS1qGhrioivuzYtVPsPT6eb0U0MUKJxob3dbfUcL2NVzuU2G
- G8SAwh8hnoqcpOP+Li8UFtXLdCzni/d/S1RpJ1RobiCEGSr8sJ+lCmseLNAF387UtrSXZIlFxvH
- zK2liPQ8VDofmHg==
-X-Developer-Key: i=tomi.valkeinen@ideasonboard.com; a=openpgp;
- fpr=C4380C3E965EFD81079FF3A7FA3DAA8CBC961EF5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241204-topic-misc-dt-fixes-v1-4-6d320b6454e6@linaro.org>
 
-Fix a few cases where a local shadows a previously declared local of the
-same name.
+On Wed, Dec 04, 2024 at 11:56:56AM +0100, Neil Armstrong wrote:
+> Rename the 5v-choke thermal zone to satisfy the bindings.
+> 
+> This fixes:
+> sc7180-trogdor-pompom-r2-lte.dts: thermal-zones: '5v-choke-thermal' does not match any of the regexes: '^[a-zA-Z][a-zA-Z0-9\\-]{1,10}-thermal$', 'pinctrl-[0-9]+'
+> 	from schema $id: http://devicetree.org/schemas/thermal/thermal-zones.yaml#
+> 
+> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+> ---
+>  arch/arm64/boot/dts/qcom/sc7180-trogdor-pompom.dtsi | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
 
-Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
----
- drivers/media/i2c/ds90ub960.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/media/i2c/ds90ub960.c b/drivers/media/i2c/ds90ub960.c
-index 1dc10b2ba1f1..a9afada7bdc1 100644
---- a/drivers/media/i2c/ds90ub960.c
-+++ b/drivers/media/i2c/ds90ub960.c
-@@ -2449,7 +2449,6 @@ static int ub960_configure_ports_for_streaming(struct ub960_data *priv,
- 	} rx_data[UB960_MAX_RX_NPORTS] = {};
- 	u8 vc_map[UB960_MAX_RX_NPORTS] = {};
- 	struct v4l2_subdev_route *route;
--	unsigned int nport;
- 	int ret;
- 
- 	ret = ub960_validate_stream_vcs(priv);
-@@ -2519,7 +2518,8 @@ static int ub960_configure_ports_for_streaming(struct ub960_data *priv,
- 	 */
- 	fwd_ctl = GENMASK(7, 4);
- 
--	for (nport = 0; nport < priv->hw_data->num_rxports; nport++) {
-+	for (unsigned int nport = 0; nport < priv->hw_data->num_rxports;
-+	     nport++) {
- 		struct ub960_rxport *rxport = priv->rxports[nport];
- 		u8 vc = vc_map[nport];
- 
-@@ -3041,14 +3041,13 @@ static int ub960_log_status(struct v4l2_subdev *sd)
- 	struct device *dev = &priv->client->dev;
- 	struct v4l2_subdev_state *state;
- 	unsigned int nport;
--	unsigned int i;
- 	u16 v16 = 0;
- 	u8 v = 0;
- 	u8 id[UB960_SR_FPD3_RX_ID_LEN];
- 
- 	state = v4l2_subdev_lock_and_get_active_state(sd);
- 
--	for (i = 0; i < sizeof(id); i++)
-+	for (unsigned int i = 0; i < sizeof(id); i++)
- 		ub960_read(priv, UB960_SR_FPD3_RX_ID(i), &id[i]);
- 
- 	dev_info(dev, "ID '%.*s'\n", (int)sizeof(id), id);
-@@ -3082,7 +3081,6 @@ static int ub960_log_status(struct v4l2_subdev *sd)
- 
- 	for (nport = 0; nport < priv->hw_data->num_rxports; nport++) {
- 		struct ub960_rxport *rxport = priv->rxports[nport];
--		unsigned int i;
- 
- 		dev_info(dev, "RX %u\n", nport);
- 
-@@ -3121,7 +3119,7 @@ static int ub960_log_status(struct v4l2_subdev *sd)
- 			ub960_log_status_ub960_sp_eq(priv, nport);
- 
- 		/* GPIOs */
--		for (i = 0; i < UB960_NUM_BC_GPIOS; i++) {
-+		for (unsigned int i = 0; i < UB960_NUM_BC_GPIOS; i++) {
- 			u8 ctl_reg;
- 			u8 ctl_shift;
- 
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
 -- 
-2.43.0
-
+With best wishes
+Dmitry
 
