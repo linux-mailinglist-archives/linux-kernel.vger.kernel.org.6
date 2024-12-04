@@ -1,282 +1,279 @@
-Return-Path: <linux-kernel+bounces-431960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60F6B9E4330
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 19:19:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C35B9E432C
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 19:19:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1790E28969B
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:19:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC67F289825
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:18:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD2911A8F9D;
-	Wed,  4 Dec 2024 18:18:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 519E21A8F7E;
+	Wed,  4 Dec 2024 18:18:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="HbZVa5qU"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UXBF5GDD"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37023183CC1;
-	Wed,  4 Dec 2024 18:18:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A480B156997;
+	Wed,  4 Dec 2024 18:18:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733336334; cv=none; b=Lptoozt8OpTiE2svj//cGcmLGnrNahHYd5qhxu476/8nbyT5JD13FP/LWo8XcmXnA+4vC6jzQiRNo5AwxirMVH7g7PtU717E4YBDL3O8BCP0P9YTCA0ExgHPvbBG/gSGmbs3qiaYUohJKeLbvSxcbuSnE0m386ZOCW0VHXpZOoQ=
+	t=1733336332; cv=none; b=ZXlvZyUW9UA78peGubXU0OJyeKAxPCHKNREXldmXa8FEQsllVMDkHjSnprdJMVecoN7l8Nu+gYRU5prOi3dEgXx+quCiWb2sj9MD8qL5jXMnqttMvjaxUCfc3VTN/01WmbpPZgjZtedyBiLQrKiFcO5XXYa4oOBOHeLSJk575Mw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733336334; c=relaxed/simple;
-	bh=35O2qOEEDqk4rGLxxPrsZzMnhTaHUW28oZ0mxOBlfBw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=rDXQ8IYlJLowoeH4qnyw/JsdbfCMysg7eWSxn6ewRWzkyTTYVCT8cZvujA7OBHpRUYuLYiocQU3lG/xaUdYFGSohj0MGan63qVxj8aL4d/9UiNbj+7ofk/nG5Gl6BhK6fgWiLMVOnqi67EjDQ5nGbxS9hBhkghsxre3h9KGsDao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=HbZVa5qU; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B4FwgYw010257;
-	Wed, 4 Dec 2024 18:18:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	QWatU+h2tMlWKUWIV6wKORAB9sEqTdJL5tW0x2dZ7AQ=; b=HbZVa5qU8kB2V9VA
-	42Zci/QRMziiYa9sWODs9HumViuhvF0Nkx2+lkoGyhpx55AUIit+UKLRUZRWHO1Y
-	Pn6I6br910kdcqjLVxyiYHWwDlnOfSHCy3+I36uPE1wvJT4pN08I+1ssPW5j7San
-	kmjIhn8FTupKQzdp/we3kMi8Hy2secbKAogppbLc0P0C+ZqRRoFvJKI5SZ+tljCQ
-	X+rPyquj04ytVSc4Drh/tEJ74ErB+6eAWHYFeDHt9DMdT34UJt9ocvmGt2NjJi1D
-	ul9ntENae21jINdp0aXb4jp42YvZIzTWl6LEixaiym0LfMxlsVR+wdyNx/lw6EaI
-	MO/2WQ==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 439v7yw8rx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 04 Dec 2024 18:18:37 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B4IIZW2027888
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 4 Dec 2024 18:18:36 GMT
-Received: from [10.216.22.114] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 4 Dec 2024
- 10:18:29 -0800
-Message-ID: <982686bb-0ddd-45a2-b620-564af4f01800@quicinc.com>
-Date: Wed, 4 Dec 2024 23:48:27 +0530
+	s=arc-20240116; t=1733336332; c=relaxed/simple;
+	bh=iIT9WTlddAJaqwr/4YoIF8Qi4AeZGWiinhaOc3oGwEk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PnRPZlON0TXzecqtdw+XK0OhzrWzhDBfW9YJxJI886rq/tqWeR9eFOHAZ/0j7WEQ/lvM2no/ohK/DZ8voQqKgmDh//cKlafCbKhvaTsZtPyiVnBWEiHc66A7aUx0k+8+nQ+S0UmowK4J6j+IgSTCGX5CkmPmZCnLsydzDsb2yg0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UXBF5GDD; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-385e35912f1so63472f8f.3;
+        Wed, 04 Dec 2024 10:18:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733336329; x=1733941129; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=RvYXiMNIXwBmvuPCaPr45HpFOmqvpqbSH+NMAIqTqIY=;
+        b=UXBF5GDDlHlW4jov2Uf440nDiykTQUKFxrnflJLK8Owk60wqYXDQ78AA8pHIpgvrdZ
+         wP3NrRjOP/OKjczrkfPGi7/cwI5dM5rszJ8HG2qHX1Tw54CZlvsCLTIcyMGdyV/ZJHNH
+         JcFqwrbDTkrYX838gQcqbiP5ED09ewBvTAVstYDXGGaz/46oeWUxpM4bpVOXlNqVvtsB
+         jFsbN5j7l6nOHkOYJTp8H/hjZ9JMgd5I/YeEo1lPNqHp9aZvRs9y5N/ah9/ZI/4Z5qS8
+         1k3fzeTdSYEFf3QFg0N1Ggtk/3bHnRX+xYA4Ho2AGbVOaHzD3Pf+mVSaJNBvWjCfkDWI
+         kwkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733336329; x=1733941129;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RvYXiMNIXwBmvuPCaPr45HpFOmqvpqbSH+NMAIqTqIY=;
+        b=Wz1Tx9KhIg5Dbruyz3jzVbaMt2UBEvRWMcnNZin62gYUw+qATB1Ju+a3an1z/EvjYM
+         iXWYV9jJOH6mxpuo+YF6WSVNQVCuzVtpudEvpXjyVuMRtC+bE0reazn8V3IjNP/Rm0sC
+         60pV50a7xs9Tz4kpqezxcvIAx7cO1pN+n9pjnxHPuGsm+Tm1OxJd4pH5plQfQljRPO1I
+         b27SNNStJCzWCYodUJ73v3ISg1NdZMfmKqmCSuS/gEK+jV44bxSqQtzIcJgefQpfcEFt
+         N68RtiJQbRkD6psUAaEcjqOJrDlXHELECJVlrxnGN26M9z2k2Z24eCjWwt2hJl92OB0x
+         gj5A==
+X-Forwarded-Encrypted: i=1; AJvYcCUh/JVyUr4SfGHKw1CENeZKMDozoGVptDT+zjtuHpUEvV5nkhMBy8u6A2l8H7MNbS2xwvGAozRI@vger.kernel.org, AJvYcCWkfTQJyGMGXvXsndRt6HE7+5H0PZITItk/KiClPI6YmB1A9W/0k3G1YK0c4DQ4tMqzdmdWwGplL2F0RU4=@vger.kernel.org, AJvYcCXy/gmoXcthIl4fNJJuvce/NRdzbS4S+McRuWlNxvTesXgi2E3nsHsuFXwiM9lKRdLLO1f2UTpWXetv1Zo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/3kP+8ZRLJUHUYZtKV5jspLNQC4IfKY/i1kWDsRr4RwiwudQI
+	N/j0bM6pwPM1nEka/QAypYQMAjd1Ltr9Vu2AFPOdxUGT7vbVXqoF
+X-Gm-Gg: ASbGnctuXfTfw4pJxwW89Oe/2O9OpHwalFvFKguR5qOyUd7nicruPB0Q37NcnJ9byV0
+	11vcbf3Z6TenVco4GyLiQZoEEgc9DLJbuOvXGkc1hEK0U+jk/+pKBZHBKR0SH+sb5TYobFEN1g4
+	y4AjOI9CwARpxQ80JpT0QQCTNbscF3dZbul0TpbbMJXAvI4BWrTrOxEyAIJiPktL8QmhhKgLpC7
+	zqMn0EvtrLE/yOE91UtJ4cD/f3Kqkw0iM9Glh5VjKuEMTugxRSz8dHypOAC4+i1o9CZyYfaR5PA
+	T8f9DqnslbH33+DCNOgEGTdGHCkuiNP6AwZ/
+X-Google-Smtp-Source: AGHT+IHBkvT0ri1XCR+aU4iikxdd7BREWggswkR0IWXNfrk6Mcb/whX3n+sIiaZsFIAUhv8N+QosMQ==
+X-Received: by 2002:a05:6000:2b12:b0:385:df8a:b489 with SMTP id ffacd0b85a97d-385fd42d422mr5214681f8f.55.1733336328708;
+        Wed, 04 Dec 2024 10:18:48 -0800 (PST)
+Received: from orome (p200300e41f281900f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f28:1900:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385d7264f27sm18145336f8f.80.2024.12.04.10.18.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Dec 2024 10:18:47 -0800 (PST)
+Date: Wed, 4 Dec 2024 19:18:46 +0100
+From: Thierry Reding <thierry.reding@gmail.com>
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+Cc: Jon Hunter <jonathanh@nvidia.com>, Robin Murphy <robin.murphy@arm.com>, 
+	Furong Xu <0x1207@gmail.com>, Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org, 
+	linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	Jose Abreu <joabreu@synopsys.com>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, xfr@outlook.com, Suraj Jaiswal <quic_jsuraj@quicinc.com>, 
+	Thierry Reding <treding@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, 
+	Will Deacon <will@kernel.org>
+Subject: Re: [PATCH net v1] net: stmmac: TSO: Fix unbalanced DMA map/unmap
+ for non-paged SKB data
+Message-ID: <pckuhqpx33woc7tgcv4mluhwg2clriokzb7r4vkzmr6jz3gy3p@hykwm4qtgv6f>
+References: <20241202163309.05603e96@kernel.org>
+ <20241203100331.00007580@gmail.com>
+ <20241202183425.4021d14c@kernel.org>
+ <20241203111637.000023fe@gmail.com>
+ <klkzp5yn5kq5efgtrow6wbvnc46bcqfxs65nz3qy77ujr5turc@bwwhelz2l4dw>
+ <df3a6a9d-4b53-4338-9bc5-c4eea48b8a40@arm.com>
+ <2g2lp3bkadc4wpeslmdoexpidoiqzt7vejar5xhjx5ayt3uox3@dqdyfzn6khn6>
+ <Z1CFz7GpeIzkDro1@shell.armlinux.org.uk>
+ <9719982a-d40c-4110-9233-def2e6cb4d74@nvidia.com>
+ <Z1CVRzWcSDuPyQZe@shell.armlinux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] dt-bindings: opp: Add v2-qcom-adreno vendor
- bindings
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Krzysztof Kozlowski
-	<krzk@kernel.org>, Rob Herring <robh@kernel.org>
-CC: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        "Konrad
- Dybcio" <konradybcio@kernel.org>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie
-	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Viresh Kumar
-	<vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Stephen Boyd
-	<sboyd@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>, <devicetree@vger.kernel.org>
-References: <20241021-gpu-acd-v2-0-9c25a62803bc@quicinc.com>
- <20241021-gpu-acd-v2-2-9c25a62803bc@quicinc.com>
- <mz4zpcr4tqh2w7vt75f4ofxjzfve54ozzgpdbi2jjzk5pdxbk7@t36tlt3mmprt>
- <d858dadb-4098-4c9f-b4f0-393dc988db5f@quicinc.com>
- <4426b4kybtac6rc4twa5pgm3hvlegofemvqjcrvh6ni7f5z2h6@5dnlv3hgywh5>
- <c5e868e1-2dae-466c-a6fc-ef0f247fa0ce@quicinc.com>
- <278e62e1-02a4-4e33-8592-fb4fafcedf7e@quicinc.com>
- <CAA8EJprgshjbNqNErOb06jqV__LmbWvocsK5eD8PQqL+FaLb1g@mail.gmail.com>
- <f67c72c3-7393-47b0-9b9c-1bfadce13110@quicinc.com>
- <CAA8EJppy+V9m-t_qPEJh2iTkC7tyDcf2y8wD9vYoHtFSp=HrkQ@mail.gmail.com>
-Content-Language: en-US
-From: Akhil P Oommen <quic_akhilpo@quicinc.com>
-In-Reply-To: <CAA8EJppy+V9m-t_qPEJh2iTkC7tyDcf2y8wD9vYoHtFSp=HrkQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 5DXGYqj1RVnQ5CFSS6j-NbPDnBrSAzYb
-X-Proofpoint-GUID: 5DXGYqj1RVnQ5CFSS6j-NbPDnBrSAzYb
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxscore=0
- impostorscore=0 adultscore=0 priorityscore=1501 clxscore=1015
- lowpriorityscore=0 suspectscore=0 mlxlogscore=999 malwarescore=0
- bulkscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412040139
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="iwdew6aguv2p2efu"
+Content-Disposition: inline
+In-Reply-To: <Z1CVRzWcSDuPyQZe@shell.armlinux.org.uk>
 
-On 11/16/2024 1:17 AM, Dmitry Baryshkov wrote:
-> On Fri, 15 Nov 2024 at 19:54, Akhil P Oommen <quic_akhilpo@quicinc.com> wrote:
->>
->> On 11/15/2024 3:54 AM, Dmitry Baryshkov wrote:
->>> Hello Akhil,
->>>
->>> On Thu, 14 Nov 2024 at 20:50, Akhil P Oommen <quic_akhilpo@quicinc.com> wrote:
->>>>
->>>> On 11/1/2024 9:54 PM, Akhil P Oommen wrote:
->>>>> On 10/25/2024 11:58 AM, Dmitry Baryshkov wrote:
->>>>>> On Thu, Oct 24, 2024 at 12:56:58AM +0530, Akhil P Oommen wrote:
->>>>>>> On 10/22/2024 11:19 AM, Krzysztof Kozlowski wrote:
->>>>>>>> On Mon, Oct 21, 2024 at 05:23:43PM +0530, Akhil P Oommen wrote:
->>>>>>>>> Add a new schema which extends opp-v2 to support a new vendor specific
->>>>>>>>> property required for Adreno GPUs found in Qualcomm's SoCs. The new
->>>>>>>>> property called "qcom,opp-acd-level" carries a u32 value recommended
->>>>>>>>> for each opp needs to be shared to GMU during runtime.
->>>>>>>>>
->>>>>>>>> Cc: Rob Clark <robdclark@gmail.com>
->>>>>>>>> Signed-off-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
->>>>>>>>> ---
->>>>>>>>>  .../bindings/opp/opp-v2-qcom-adreno.yaml           | 96 ++++++++++++++++++++++
->>>>>>>>>  1 file changed, 96 insertions(+)
->>>>>>>>>
->>>>>>>>> diff --git a/Documentation/devicetree/bindings/opp/opp-v2-qcom-adreno.yaml b/Documentation/devicetree/bindings/opp/opp-v2-qcom-adreno.yaml
->>>>>>>>> new file mode 100644
->>>>>>>>> index 000000000000..6d50c0405ef8
->>>>>>>>> --- /dev/null
->>>>>>>>> +++ b/Documentation/devicetree/bindings/opp/opp-v2-qcom-adreno.yaml
->>>>>>>>> @@ -0,0 +1,96 @@
->>>>>>>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->>>>>>>>> +%YAML 1.2
->>>>>>>>> +---
->>>>>>>>> +$id: http://devicetree.org/schemas/opp/opp-v2-qcom-adreno.yaml#
->>>>>>>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>>>>>>>> +
->>>>>>>>> +title: Qualcomm Adreno compatible OPP supply
->>>>>>>>> +
->>>>>>>>> +description:
->>>>>>>>> +  Adreno GPUs present in Qualcomm's Snapdragon chipsets uses an OPP specific
->>>>>>>>> +  ACD related information tailored for the specific chipset. This binding
->>>>>>>>> +  provides the information needed to describe such a hardware value.
->>>>>>>>> +
->>>>>>>>> +maintainers:
->>>>>>>>> +  - Rob Clark <robdclark@gmail.com>
->>>>>>>>> +
->>>>>>>>> +allOf:
->>>>>>>>> +  - $ref: opp-v2-base.yaml#
->>>>>>>>> +
->>>>>>>>> +properties:
->>>>>>>>> +  compatible:
->>>>>>>>> +    items:
->>>>>>>>> +      - const: operating-points-v2-adreno
->>>>>>>>> +      - const: operating-points-v2
->>>>>>>>> +
->>>>>>>>> +patternProperties:
->>>>>>>>> +  '^opp-?[0-9]+$':
->>>>>>>>
->>>>>>>> '-' should not be optional. opp1 is not expected name.
->>>>>>>
->>>>>>> Agree. Will change this to '^opp-[0-9]+$'
->>>>>>>
->>>>>>>>
->>>>>>>>> +    type: object
->>>>>>>>> +    additionalProperties: false
->>>>>>>>> +
->>>>>>>>> +    properties:
->>>>>>>>> +      opp-hz: true
->>>>>>>>> +
->>>>>>>>> +      opp-level: true
->>>>>>>>> +
->>>>>>>>> +      opp-peak-kBps: true
->>>>>>>>> +
->>>>>>>>> +      opp-supported-hw: true
->>>>>>>>> +
->>>>>>>>> +      qcom,opp-acd-level:
->>>>>>>>> +        description: |
->>>>>>>>> +          A positive value representing the ACD (Adaptive Clock Distribution,
->>>>>>>>> +          a fancy name for clk throttling during voltage droop) level associated
->>>>>>>>> +          with this OPP node. This value is shared to a co-processor inside GPU
->>>>>>>>> +          (called Graphics Management Unit a.k.a GMU) during wake up. It may not
->>>>>>>>> +          be present for some OPPs and GMU will disable ACD while transitioning
->>>>>>>>> +          to that OPP. This value encodes a voltage threshold and few other knobs
->>>>>>>>> +          which are identified by characterization of the SoC. So, it doesn't have
->>>>>>>>> +          any unit.
->>>>>>>>
->>>>>>>> Thanks for explanation and other updates. I am still not happy with this
->>>>>>>> property. I do not see reason why DT should encode magic values in a
->>>>>>>> quite generic piece of code. This creates poor ABI, difficult to
->>>>>>>> maintain or understand.
->>>>>>>>
->>>>>>>
->>>>>>> Configuring GPU ACD block with its respective value is a requirement for each OPP.
->>>>>>> So OPP node seems like the natural place for this data.
->>>>>>>
->>>>>>> If it helps to resolve your concerns, I can elaborate the documentation with
->>>>>>> details on the GMU HFI interface where this value should be passed on to the
->>>>>>> hardware. Also replace "few other knobs" with "Delay cycles & Calibration margin"
->>>>>>> in the above doc.
->>>>>>
->>>>>> Usually the preference for DT is to specify data in a sensible way
->>>>>> rather than just the values being programmed to the register. Is it
->>>>>> possible to implement this approach for ACD values?
->>>>
->>>> Krzysztof/Dmitry,
->>>>
->>>> BIT(0)-BIT(15) are static configurations which doesn't change between
->>>> OPPs. We can move it to driver.
->>>>
->>>> BIT(16)-BIT(31) indicates a threshold margin which triggers ACD. We can
->>>> keep this in the devicetree. And the driver can construct the final
->>>> value from both data and send it to GMU.
->>>>
->>>> If this is acceptable, I will send the v3 revision.
->>>
->>> Can the upper bitfield have a sensible representation in DT (like uV
->>> or something similar)?
->>
->> Closest approximation is quantized voltage steps. So, unit-less.
->> Converting it to the exact voltage requires identifying the pmic voltage
->> steps and other stuffs which are outside of my expertise.
->>
->> It is convenient if we can abstract it as an integer which correlates
->> with the voltage margin that should be maintained for each regulator corner.
 
-Krzysztof,
+--iwdew6aguv2p2efu
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH net v1] net: stmmac: TSO: Fix unbalanced DMA map/unmap
+ for non-paged SKB data
+MIME-Version: 1.0
 
-Could you please confirm if this approach would be acceptable?
+On Wed, Dec 04, 2024 at 05:45:43PM +0000, Russell King (Oracle) wrote:
+> On Wed, Dec 04, 2024 at 05:02:19PM +0000, Jon Hunter wrote:
+> > Hi Russell,
+> >=20
+> > On 04/12/2024 16:39, Russell King (Oracle) wrote:
+> > > On Wed, Dec 04, 2024 at 04:58:34PM +0100, Thierry Reding wrote:
+> > > > This doesn't match the location from earlier, but at least there's
+> > > > something afoot here that needs fixing. I suppose this could simply=
+ be
+> > > > hiding any subsequent errors, so once this is fixed we might see ot=
+her
+> > > > similar issues.
+> > >=20
+> > > Well, having a quick look at this, the first thing which stands out i=
+s:
+> > >=20
+> > > In stmmac_tx_clean(), we have:
+> > >=20
+> > >                  if (likely(tx_q->tx_skbuff_dma[entry].buf &&
+> > >                             tx_q->tx_skbuff_dma[entry].buf_type !=3D =
+STMMAC_TXBUF_T
+> > > _XDP_TX)) {
+> > >                          if (tx_q->tx_skbuff_dma[entry].map_as_page)
+> > >                                  dma_unmap_page(priv->device,
+> > >                                                 tx_q->tx_skbuff_dma[e=
+ntry].buf,
+> > >                                                 tx_q->tx_skbuff_dma[e=
+ntry].len,
+> > >                                                 DMA_TO_DEVICE);
+> > >                          else
+> > >                                  dma_unmap_single(priv->device,
+> > >                                                   tx_q->tx_skbuff_dma=
+[entry].buf,
+> > >                                                   tx_q->tx_skbuff_dma=
+[entry].len,
+> > >                                                   DMA_TO_DEVICE);
+> > >                          tx_q->tx_skbuff_dma[entry].buf =3D 0;
+> > >                          tx_q->tx_skbuff_dma[entry].len =3D 0;
+> > >                          tx_q->tx_skbuff_dma[entry].map_as_page =3D f=
+alse;
+> > >                  }
+> > >=20
+> > > So, tx_skbuff_dma[entry].buf is expected to point appropriately to the
+> > > DMA region.
+> > >=20
+> > > Now if we look at stmmac_tso_xmit():
+> > >=20
+> > >          des =3D dma_map_single(priv->device, skb->data, skb_headlen(=
+skb),
+> > >                               DMA_TO_DEVICE);
+> > >          if (dma_mapping_error(priv->device, des))
+> > >                  goto dma_map_err;
+> > >=20
+> > >          if (priv->dma_cap.addr64 <=3D 32) {
+> > > ...
+> > >          } else {
+> > > ...
+> > >                  des +=3D proto_hdr_len;
+> > > ...
+> > > 	}
+> > >=20
+> > >          tx_q->tx_skbuff_dma[tx_q->cur_tx].buf =3D des;
+> > >          tx_q->tx_skbuff_dma[tx_q->cur_tx].len =3D skb_headlen(skb);
+> > >          tx_q->tx_skbuff_dma[tx_q->cur_tx].map_as_page =3D false;
+> > >          tx_q->tx_skbuff_dma[tx_q->cur_tx].buf_type =3D STMMAC_TXBUF_=
+T_SKB;
+> > >=20
+> > > This will result in stmmac_tx_clean() calling dma_unmap_single() using
+> > > "des" and "skb_headlen(skb)" as the buffer start and length.
+> > >=20
+> > > One of the requirements of the DMA mapping API is that the DMA handle
+> > > returned by the map operation will be passed into the unmap function.
+> > > Not something that was offset. The length will also be the same.
+> > >=20
+> > > We can clearly see above that there is a case where the DMA handle has
+> > > been offset by proto_hdr_len, and when this is so, the value that is
+> > > passed into the unmap operation no longer matches this requirement.
+> > >=20
+> > > So, a question to the reporter - what is the value of
+> > > priv->dma_cap.addr64 in your failing case? You should see the value
+> > > in the "Using %d/%d bits DMA host/device width" kernel message.
+> >=20
+> > It is ...
+> >=20
+> >  dwc-eth-dwmac 2490000.ethernet: Using 40/40 bits DMA host/device width
+>=20
+> So yes, "des" is being offset, which will upset the unmap operation.
+> Please try the following patch, thanks:
+>=20
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/=
+net/ethernet/stmicro/stmmac/stmmac_main.c
+> index 9b262cdad60b..c81ea8cdfe6e 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+> @@ -4192,8 +4192,8 @@ static netdev_tx_t stmmac_tso_xmit(struct sk_buff *=
+skb, struct net_device *dev)
+>  	struct stmmac_txq_stats *txq_stats;
+>  	struct stmmac_tx_queue *tx_q;
+>  	u32 pay_len, mss, queue;
+> +	dma_addr_t tso_des, des;
+>  	u8 proto_hdr_len, hdr;
+> -	dma_addr_t des;
+>  	bool set_ic;
+>  	int i;
+> =20
+> @@ -4289,14 +4289,15 @@ static netdev_tx_t stmmac_tso_xmit(struct sk_buff=
+ *skb, struct net_device *dev)
+> =20
+>  		/* If needed take extra descriptors to fill the remaining payload */
+>  		tmp_pay_len =3D pay_len - TSO_MAX_BUFF_SIZE;
+> +		tso_des =3D des;
+>  	} else {
+>  		stmmac_set_desc_addr(priv, first, des);
+>  		tmp_pay_len =3D pay_len;
+> -		des +=3D proto_hdr_len;
+> +		tso_des =3D des + proto_hdr_len;
+>  		pay_len =3D 0;
+>  	}
+> =20
+> -	stmmac_tso_allocator(priv, des, tmp_pay_len, (nfrags =3D=3D 0), queue);
+> +	stmmac_tso_allocator(priv, tso_des, tmp_pay_len, (nfrags =3D=3D 0), que=
+ue);
+> =20
+>  	/* In case two or more DMA transmit descriptors are allocated for this
+>  	 * non-paged SKB data, the DMA buffer address should be saved to
 
-To reiterate, move the lower 16 bits which is same across OPPs to the
-driver. Abstract the higher 16 bits as number of quantized voltage
-margin when ACD mitigation gets triggered.
+I see, that makes sense. Looks like this has been broken for a few years
+(since commit 34c15202896d ("net: stmmac: Fix the problem of tso_xmit"))
+and Furong's patch ended up exposing it.
 
--Akhil.
+Anyway, this seems to fix it for me. I can usually trigger the issue
+within one or two iperf runs, with your patch I haven't seen it break
+after a dozen or so runs.
 
-> 
-> I'd say, this is up to the DT maintainers then.
-> 
->>
->> -Akhil.
->>
->>>
->>>>
->>>> -Akhil.
->>>>
->>>>>
->>>>> I am still checking about this. Will get back.
->>>>>
->>>>> -Akhil
->>>>>
->>>>>>
->>>>>>>
->>>>>>>>
->>>>>>
->>>>>
->>>>
->>>
->>>
->>
-> 
-> 
+It may be good to have Jon's test results as well, but looks good so
+far.
 
+Thanks!
+Thierry
+
+--iwdew6aguv2p2efu
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmdQnQIACgkQ3SOs138+
+s6GyGA/+Mi+zWzm7HiVlhKv4XJWkUknxqYmbqs0d/bC8641dT3ogSqPfVbcMFbZO
+s9APdaIXCK2cRivM9PTITkrIrK0YHwgHgbvv0ronPOnsvcX0i4uZ2q/QtILbznwX
+ch7P++KrfYTPikIqDP1GC77bC1L9l5BYzc+/iOTltKRqA9oM/t0cclTVegQkfzdE
+cLfTJ4JzYkqneOl69+f3P5pOLnr1wj3tULGssJK5oDg71gIz6JgtieLgRSV+4d5s
+b6R79vnIJXeWMUK0JN+7yt49SatPrbVMMg5qluURZDmKO4TMIZuVIuq0qK8H7+pf
+atrCkAZIpNKRLnVkN7BZQCsYk/LuDSsZn3DRnCRTo4q/DW5jCO1A7XCQhqV7jnNZ
+9QgZePJR/3STPPC04E37NKKdLiBpinUZcVIgm/EIcXD/mlTJEEFVtTD2f0PucOk7
+AHYRkbHIZ7kvsBVtVG7lW+Z5Y2FE19o5RnhoSNpIgubPRAZXmZSP00PTKxAmdyOo
+HTapRMCe381Y9gjKeIy7ZpFpA0CHqH6WqJAb47DYdKKRaAfZbAgTujOg2NYXhRMO
+43MHpldVISdfxs0wENT0QnHHV3sWCfFa5cJvwRwm/Cr/3y3Ia4LM+mZx5hggaMfJ
+YvlC+2075bywCZn7qfrZ7PxFE5FEgz1RJar4do29uSnbdP5TUBU=
+=p0Oa
+-----END PGP SIGNATURE-----
+
+--iwdew6aguv2p2efu--
 
