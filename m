@@ -1,177 +1,259 @@
-Return-Path: <linux-kernel+bounces-432064-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432065-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A28569E4485
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 20:24:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 35EAD9E448B
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 20:25:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 694F2168617
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 19:24:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0A001686BF
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 19:25:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 003F21C3BEF;
-	Wed,  4 Dec 2024 19:24:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8BBA1C3BF5;
+	Wed,  4 Dec 2024 19:25:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jilvUodB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="HiAzTTOM"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CE362391AA;
-	Wed,  4 Dec 2024 19:24:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B77C2391AA;
+	Wed,  4 Dec 2024 19:25:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733340258; cv=none; b=h6h4N19HG/5NH6ZwWm0xYjLD3xG4ruwn8iR7GItEzKxnKepzfF+onrVTlzoK/DBPeTgIFSU2ZU7UZipkI/FrWchGlp2J6sVZ2JTW81w3ppKVYphC0MwViaoer7uKZpAc5PTsSqXKlUZJZNk75EwF53isBic2pWYCU2FZnV7+hdY=
+	t=1733340341; cv=none; b=DtXYC5pHkyL/u9DVK0FNfjQIslBfGze5hIbtiJihRWjPPxPKPI59tKzMD7kbn1OG5WlqplXbunlaHlc8rNHSgMhUlUL0C3bmLv60wYk2/Eg6aOQ4vNQ9oGtpMGi0a7vI7DJ5EAXIzr7SwnxBjI39NkqG7Mb2ec2MhrcEohIYPw0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733340258; c=relaxed/simple;
-	bh=7Nz7Fmk1v8MZPUXucg959qe8Vj0xy0XnrVAGLmjOadM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XN4MImQxAKlFaGPPqnlRhNB+EhQdAFotDrkwKOEQ1mmSuNUi1kX335/APwG6pdPMS4Yd0KArr3FdTB4ZRSMCi7fDvztj4IGG0CDSBs19b0YxeT0W7ZF55EL77qB/JysfIFNwIPBIDEd3zhcoTj9eeteiouvgWV0MzghYoR5sWBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jilvUodB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37E47C4CECD;
-	Wed,  4 Dec 2024 19:24:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733340257;
-	bh=7Nz7Fmk1v8MZPUXucg959qe8Vj0xy0XnrVAGLmjOadM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jilvUodBBXvpy7uZs90jylcs939jMLElAtL5N2rCxsdXZL+ruqpViv3Qs9G1zoBu5
-	 pYc7AYinwE68/JBySCEmCwHnJOJZVIqQo8KMmROLNbt4AUREUEdYpJISGfRm3OscIo
-	 dVPg6NY3tt4hVLTZogUofA2q6m/qGC1wbc/P9swbbFADyO4/tLcgosoS6lEXtcZGHc
-	 rvuvc0YFyX80RtU7BAK6jiwH6PYVwcxroNHCpCogZbHfnm5cQZFMCMEdodmThCv+hu
-	 lzjY6br9ijStQR8jT+GIt+AsfcrS8zFFvJopV+SwTruREJXQgLE7Cz+V3303aCihD2
-	 L2jnITPmmC85Q==
-Date: Wed, 4 Dec 2024 11:24:15 -0800
-From: Namhyung Kim <namhyung@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: James Clark <james.clark@linaro.org>,
-	Ravi Bangoria <ravi.bangoria@amd.com>,
-	Atish Patra <atishp@atishpatra.org>,
-	Mingwei Zhang <mizhang@google.com>,
-	Kajol Jain <kjain@linux.ibm.com>,
-	Thomas Richter <tmricht@linux.ibm.com>,
-	Palmer Dabbelt <palmer@rivosinc.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Ian Rogers <irogers@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [REGRESSION] 'perf mem record' on a Intel hybrid system broken
-Message-ID: <Z1CsX3n5U_q5ehRp@google.com>
-References: <Z1CVTJ5jzIyNiB1R@x1>
+	s=arc-20240116; t=1733340341; c=relaxed/simple;
+	bh=EerDhxJpSU5cCC4UM+W+smPICn3fsnMpZc0x2ONSUZQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JgzZ3pTr85NI0vXuf8xp2QsGqoUIlxqxm4ynKCFsL1GsN6fOxCfVz2LoQYZ5uy3pR/VF2EAvKfONQt+bS4Cfzg0SzqFi4if7A4zMb7x0vOTk7BTDle1Scc15XZrUwmEK2XfUYjzCQ2QlZ7BIqvvtMIp9r5sD3ofYPUtvtHCvMOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=HiAzTTOM; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B4FxYJK010244;
+	Wed, 4 Dec 2024 19:25:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=JJ9ZRvfwunck08W7rLxglNPCEXNky9oQEKVt+rM4a
+	+4=; b=HiAzTTOMK0wWE7PZWBTbx5yxSAzoJZcFqFOnYG9UYhRRWkVdmRhuKjRjO
+	HpNaJ0MBfyTb4UcTojRcSJEWKavzfPOJT43TnIUZcQVwrrTJkWWxbU8Xa+2+BRFG
+	MthWFOAKTGvzjXITzv0BjzD+p0ErSCqUj4on0/kkv0n1BugkpbRa9J604cGZgFqc
+	/i0Oc4CUBjuXv2zt2WQYC1AEaCJUaepvS9ef0sRsW+7sb1DW9wp2XcmkgGX6bC+Y
+	uH/WuKq/eJEjvEF/r06Ou8TXvEqWLduoLth78OHOtOXltet1sevTgZ7N5RI/PFqL
+	dlfH0iw8dTPR/uCIEouUHHVRWWC+Q==
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43ahve3qjb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 04 Dec 2024 19:25:24 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4B4IwtrH022960;
+	Wed, 4 Dec 2024 19:25:23 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 438e1n5b9h-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 04 Dec 2024 19:25:23 +0000
+Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4B4JPLtY30802616
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 4 Dec 2024 19:25:21 GMT
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4935820049;
+	Wed,  4 Dec 2024 19:25:21 +0000 (GMT)
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 87D4320040;
+	Wed,  4 Dec 2024 19:25:19 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.watson.ibm.com (unknown [9.31.103.152])
+	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Wed,  4 Dec 2024 19:25:19 +0000 (GMT)
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: linux-integrity@vger.kernel.org
+Cc: Mimi Zohar <zohar@linux.ibm.com>,
+        =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+        roberto.sassu@huawei.com, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Jeff Xu <jeffxu@chromium.org>,
+        Kees Cook <kees@kernel.org>, Paul Moore <paul@paul-moore.com>,
+        audit@vger.kernel.org
+Subject: [PATCH v2] ima: instantiate the bprm_creds_for_exec() hook
+Date: Wed,  4 Dec 2024 14:25:14 -0500
+Message-ID: <20241204192514.40308-1-zohar@linux.ibm.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <Z1CVTJ5jzIyNiB1R@x1>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: iOqdpHeouk3A7X1sMprDgAJHPij2y0EY
+X-Proofpoint-ORIG-GUID: iOqdpHeouk3A7X1sMprDgAJHPij2y0EY
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 phishscore=0
+ clxscore=1015 priorityscore=1501 adultscore=0 mlxscore=0
+ lowpriorityscore=0 spamscore=0 malwarescore=0 impostorscore=0 bulkscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412040145
 
-Hi Arnaldo,
+Like direct file execution (e.g. ./script.sh), indirect file execution
+(e.g. sh script.sh) needs to be measured and appraised.  Instantiate
+the new security_bprm_creds_for_exec() hook to measure and verify the
+indirect file's integrity.  Unlike direct file execution, indirect file
+execution is optionally enforced by the interpreter.
 
-On Wed, Dec 04, 2024 at 02:45:48PM -0300, Arnaldo Carvalho de Melo wrote:
-> Hi Namhyung,
-> 
-> root@number:/tmp# perf mem record -a sleep 1s
-> Error:
-> The sys_perf_event_open() syscall returned with 22 (Invalid argument) for event (cpu_core/mem-loads,ldlat=30/).
-> "dmesg | grep -i perf" may provide additional information.
-> 
-> root@number:/tmp# dmesg | tail
-> [18865.729882] ixgbe 0000:05:00.0 enp5s0: NIC Link is Up 10 Gbps, Flow Control: RX/TX
-> [18865.848172] mlx5_core 0000:01:00.0 enp1s0f0np0: Link down
-> [18866.057990] mlx5_core 0000:01:00.1 enp1s0f1np1: Link down
-> [19066.396215] input: JBL RACE TWS (AVRCP) as /devices/virtual/input/input27
-> [19078.378477] usb 2-3: current rate 16000 is different from the runtime rate 48000
-> [21158.375680] usb 2-3: current rate 16000 is different from the runtime rate 48000
-> [31386.186675] input: JBL RACE TWS (AVRCP) as /devices/virtual/input/input28
-> [31409.098352] usb 2-3: current rate 16000 is different from the runtime rate 48000
-> [36409.737615] sysrq: Emergency Sync
-> [36409.742619] Emergency Sync complete
-> root@number:/tmp#
-> 
-> 	That I bisected down to:
-> 
-> ⬢ [acme@toolbox perf-tools-next]$ git bisect good 
-> af954f76eea56453713ae657f6812d4063f9bc57 is the first bad commit
-> commit af954f76eea56453713ae657f6812d4063f9bc57
-> Author: Namhyung Kim <namhyung@kernel.org>
-> Date:   Tue Oct 15 23:23:57 2024 -0700
-> 
->     perf tools: Check fallback error and order
->     
->     The perf_event_open might fail due to various reasons, so blindly
->     reducing precise_ip level might not be the best way to deal with it.
->     
->     It seems the kernel return -EOPNOTSUPP when PMU doesn't support the
->     given precise level.  Let's try again with the correct error code.
->     
->     This caused a problem on AMD, as it stops on precise_ip of 2 for IBS but
->     user events with exclude_kernel=1 cannot make progress.  Let's add the
->     evsel__handle_error_quirks() to this case specially.  I plan to work on
->     the kernel side to improve this situation but it'd still need some
->     special handling for IBS.
->     
->     Reviewed-by: James Clark <james.clark@linaro.org>
->     Reviewed-by: Ravi Bangoria <ravi.bangoria@amd.com>
->     Acked-by: Kan Liang <kan.liang@linux.intel.com>
->     Cc: James Clark <james.clark@arm.com>
->     Cc: Atish Patra <atishp@atishpatra.org>
->     Cc: Mingwei Zhang <mizhang@google.com>
->     Cc: Kajol Jain <kjain@linux.ibm.com>
->     Cc: Thomas Richter <tmricht@linux.ibm.com>
->     Cc: Palmer Dabbelt <palmer@rivosinc.com>
->     Link: https://lore.kernel.org/r/20241016062359.264929-8-namhyung@kernel.org
->     Signed-off-by: Namhyung Kim <namhyung@kernel.org>
-> 
-> If I revert that patch:
-> 
-> ⬢ [acme@toolbox perf-tools-next]$ git log --oneline -5
-> 9a9f2d6da1ea5ef5 (HEAD -> perf-tools-next) Revert "perf tools: Check fallback error and order"
-> d12d4cfc5033cd8c perf script python: Improve physical mem type resolution
-> 3f79d822e331022f perf disasm: Return a proper error when not determining the file type
-> 1a5b914261f0ebee tools features: Don't check for libunwind devel files by default
-> 40384c840ea1944d (tag: v6.13-rc1, perf-tools/perf-tools) Linux 6.13-rc1
-> ⬢ [acme@toolbox perf-tools-next]$
-> 
-> And rebuild, it works again:
-> 
-> root@number:/tmp# perf mem record -a sleep 1s
-> [ perf record: Woken up 1 times to write data ]
-> [ perf record: Captured and wrote 13.014 MB perf.data (10316 samples) ]
-> root@number:/tmp# perf evlist
-> cpu_atom/mem-loads,ldlat=30/P
-> cpu_atom/mem-stores/P
-> cpu_core/mem-loads-aux/
-> cpu_core/mem-loads,ldlat=30/
-> cpu_core/mem-stores/P
-> dummy:u
-> # Tip: use 'perf evlist -g' to show group information
-> root@number:/tmp# perf evlist -v
-> cpu_atom/mem-loads,ldlat=30/P: type: 10 (cpu_atom), size: 136, config: 0x5d0 (mem-loads), { sample_period, sample_freq }: 4000, sample_type: IP|TID|TIME|ADDR|CPU|PERIOD|IDENTIFIER|DATA_SRC|WEIGHT_STRUCT, read_format: ID|LOST, disabled: 1, freq: 1, precise_ip: 3, sample_id_all: 1, { bp_addr, config1 }: 0x1f
-> cpu_atom/mem-stores/P: type: 10 (cpu_atom), size: 136, config: 0x6d0 (mem-stores), { sample_period, sample_freq }: 4000, sample_type: IP|TID|TIME|ADDR|CPU|PERIOD|IDENTIFIER|DATA_SRC|WEIGHT_STRUCT, read_format: ID|LOST, disabled: 1, freq: 1, precise_ip: 3, sample_id_all: 1
-> cpu_core/mem-loads-aux/: type: 4 (cpu_core), size: 136, config: 0x8203 (mem-loads-aux), { sample_period, sample_freq }: 4000, sample_type: IP|TID|TIME|ADDR|CPU|PERIOD|IDENTIFIER|DATA_SRC|WEIGHT_STRUCT, read_format: ID|LOST, disabled: 1, freq: 1, precise_ip: 3, sample_id_all: 1
-> cpu_core/mem-loads,ldlat=30/: type: 4 (cpu_core), size: 136, config: 0x1cd (mem-loads), { sample_period, sample_freq }: 4000, sample_type: IP|TID|TIME|ADDR|CPU|PERIOD|IDENTIFIER|DATA_SRC|WEIGHT_STRUCT, read_format: ID|LOST, freq: 1, precise_ip: 2, sample_id_all: 1, { bp_addr, config1 }: 0x1f
-> cpu_core/mem-stores/P: type: 4 (cpu_core), size: 136, config: 0x2cd (mem-stores), { sample_period, sample_freq }: 4000, sample_type: IP|TID|TIME|ADDR|CPU|PERIOD|IDENTIFIER|DATA_SRC|WEIGHT_STRUCT, read_format: ID|LOST, disabled: 1, freq: 1, precise_ip: 3, sample_id_all: 1
-> dummy:u: type: 1 (software), size: 136, config: 0x9 (PERF_COUNT_SW_DUMMY), { sample_period, sample_freq }: 1, sample_type: IP|TID|TIME|ADDR|CPU|IDENTIFIER|DATA_SRC|WEIGHT_STRUCT, read_format: ID|LOST, exclude_kernel: 1, exclude_hv: 1, mmap: 1, comm: 1, task: 1, mmap_data: 1, sample_id_all: 1, exclude_guest: 1, mmap2: 1, comm_exec: 1, ksymbol: 1, bpf_event: 1
-> # Tip: use 'perf evlist -g' to show group information
-> root@number:/tmp# perf evlist -g
-> cpu_atom/mem-loads,ldlat=30/P
-> cpu_atom/mem-stores/P
-> {cpu_core/mem-loads-aux/,cpu_core/mem-loads,ldlat=30/}
-> cpu_core/mem-stores/P
-> dummy:u
-> root@number:/tmp#
-> 
-> Now trying to investigate this,
+Differentiate kernel and userspace enforced integrity audit messages.
 
-I think I got a related report from the kernel test robot but it was a
-Sapphire Rapids machine.  I don't have a Intel hybrid machine in hand.
-I'll try to take a look at it on Sapphire Rapids.
+Co-developed-by: Roberto Sassu <roberto.sassu@huawei.com>
+Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+---
+Changelog v3:
+- Mickael: add comment ima_bprm_creds_for_exec(), minor code cleanup,
+  add Co-developed-by tag.
 
-Thanks,
-Namhyung
+Changelog v2:
+- Mickael: Use same audit messages with new audit message number
+- Stefan Berger: Return boolean from is_bprm_creds_for_exec()
+
+ include/uapi/linux/audit.h            |  1 +
+ security/integrity/ima/ima_appraise.c | 27 +++++++++++++++++++++++--
+ security/integrity/ima/ima_main.c     | 29 +++++++++++++++++++++++++++
+ 3 files changed, 55 insertions(+), 2 deletions(-)
+
+diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
+index 75e21a135483..826337905466 100644
+--- a/include/uapi/linux/audit.h
++++ b/include/uapi/linux/audit.h
+@@ -161,6 +161,7 @@
+ #define AUDIT_INTEGRITY_RULE	    1805 /* policy rule */
+ #define AUDIT_INTEGRITY_EVM_XATTR   1806 /* New EVM-covered xattr */
+ #define AUDIT_INTEGRITY_POLICY_RULE 1807 /* IMA policy rules */
++#define AUDIT_INTEGRITY_DATA_CHECK  1808 /* Userspace enforced data integrity */
+ 
+ #define AUDIT_KERNEL		2000	/* Asynchronous audit record. NOT A REQUEST. */
+ 
+diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
+index 656c709b974f..fc0d1f3cceca 100644
+--- a/security/integrity/ima/ima_appraise.c
++++ b/security/integrity/ima/ima_appraise.c
+@@ -8,6 +8,7 @@
+ #include <linux/module.h>
+ #include <linux/init.h>
+ #include <linux/file.h>
++#include <linux/binfmts.h>
+ #include <linux/fs.h>
+ #include <linux/xattr.h>
+ #include <linux/magic.h>
+@@ -469,6 +470,17 @@ int ima_check_blacklist(struct ima_iint_cache *iint,
+ 	return rc;
+ }
+ 
++static bool is_bprm_creds_for_exec(enum ima_hooks func, struct file *file)
++{
++	struct linux_binprm *bprm;
++
++	if (func == BPRM_CHECK) {
++		bprm = container_of(&file, struct linux_binprm, file);
++		return bprm->is_check;
++	}
++	return false;
++}
++
+ /*
+  * ima_appraise_measurement - appraise file measurement
+  *
+@@ -483,6 +495,7 @@ int ima_appraise_measurement(enum ima_hooks func, struct ima_iint_cache *iint,
+ 			     int xattr_len, const struct modsig *modsig)
+ {
+ 	static const char op[] = "appraise_data";
++	int audit_msgno = AUDIT_INTEGRITY_DATA;
+ 	const char *cause = "unknown";
+ 	struct dentry *dentry = file_dentry(file);
+ 	struct inode *inode = d_backing_inode(dentry);
+@@ -494,6 +507,16 @@ int ima_appraise_measurement(enum ima_hooks func, struct ima_iint_cache *iint,
+ 	if (!(inode->i_opflags & IOP_XATTR) && !try_modsig)
+ 		return INTEGRITY_UNKNOWN;
+ 
++	/*
++	 * Unlike any of the other LSM hooks where the kernel enforces file
++	 * integrity, enforcing file integrity for the bprm_creds_for_exec()
++	 * LSM hook with the AT_EXECVE_CHECK flag is left up to the discretion
++	 * of the script interpreter(userspace). Differentiate kernel and
++	 * userspace enforced integrity audit messages.
++	 */
++	if (is_bprm_creds_for_exec(func, file))
++		audit_msgno = AUDIT_INTEGRITY_DATA_CHECK;
++
+ 	/* If reading the xattr failed and there's no modsig, error out. */
+ 	if (rc <= 0 && !try_modsig) {
+ 		if (rc && rc != -ENODATA)
+@@ -569,7 +592,7 @@ int ima_appraise_measurement(enum ima_hooks func, struct ima_iint_cache *iint,
+ 	     (iint->flags & IMA_FAIL_UNVERIFIABLE_SIGS))) {
+ 		status = INTEGRITY_FAIL;
+ 		cause = "unverifiable-signature";
+-		integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode, filename,
++		integrity_audit_msg(audit_msgno, inode, filename,
+ 				    op, cause, rc, 0);
+ 	} else if (status != INTEGRITY_PASS) {
+ 		/* Fix mode, but don't replace file signatures. */
+@@ -589,7 +612,7 @@ int ima_appraise_measurement(enum ima_hooks func, struct ima_iint_cache *iint,
+ 			status = INTEGRITY_PASS;
+ 		}
+ 
+-		integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode, filename,
++		integrity_audit_msg(audit_msgno, inode, filename,
+ 				    op, cause, rc, 0);
+ 	} else {
+ 		ima_cache_flags(iint, func);
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index 06132cf47016..5d4ac8aa2f1f 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -554,6 +554,34 @@ static int ima_bprm_check(struct linux_binprm *bprm)
+ 				   MAY_EXEC, CREDS_CHECK);
+ }
+ 
++/**
++ * ima_bprm_creds_for_exec - collect/store/appraise measurement.
++ * @bprm: contains the linux_binprm structure
++ *
++ * Based on the IMA policy and the execvat(2) AT_EXECVE_CHECK flag, measure
++ * and appraise the integrity of a file to be executed by script interpreters.
++ * Unlike any of the other LSM hooks where the kernel enforces file integrity,
++ * enforcing file integrity is left up to the discretion of the script
++ * interpreter (userspace).
++ *
++ * On success return 0.  On integrity appraisal error, assuming the file
++ * is in policy and IMA-appraisal is in enforcing mode, return -EACCES.
++ */
++static int ima_bprm_creds_for_exec(struct linux_binprm *bprm)
++{
++	/*
++	 * As security_bprm_check() is called multiple times, both
++	 * the script and the shebang interpreter are measured, appraised,
++	 * and audited. Limit usage of this LSM hook to just measuring,
++	 * appraising, and auditing the indirect script execution
++	 * (e.g. ./sh example.sh).
++	 */
++	if (!bprm->is_check)
++		return 0;
++
++	return ima_bprm_check(bprm);
++}
++
+ /**
+  * ima_file_check - based on policy, collect/store measurement.
+  * @file: pointer to the file to be measured
+@@ -1177,6 +1205,7 @@ static int __init init_ima(void)
+ 
+ static struct security_hook_list ima_hooks[] __ro_after_init = {
+ 	LSM_HOOK_INIT(bprm_check_security, ima_bprm_check),
++	LSM_HOOK_INIT(bprm_creds_for_exec, ima_bprm_creds_for_exec),
+ 	LSM_HOOK_INIT(file_post_open, ima_file_check),
+ 	LSM_HOOK_INIT(inode_post_create_tmpfile, ima_post_create_tmpfile),
+ 	LSM_HOOK_INIT(file_release, ima_file_free),
+-- 
+2.47.0
 
 
