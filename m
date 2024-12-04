@@ -1,214 +1,154 @@
-Return-Path: <linux-kernel+bounces-430818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A87719E3602
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 09:55:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 864D19E3603
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 09:56:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 539FE281D72
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 08:55:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A3C72857E5
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 08:56:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C738319993E;
-	Wed,  4 Dec 2024 08:55:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B8951991CD;
+	Wed,  4 Dec 2024 08:56:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FvfoC279"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sZUMJfIC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44542194AC7
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 08:55:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEB3719309C
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 08:56:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733302542; cv=none; b=VEokn5nhxOCAa+dG/NzaNquWH+FbujzHGa4C/PbsdRu7sIaYD9lbS2x2/evOaWfi2A/Mt4QCcoOlwFYBs8zt/DDjx5Lm4q2/6IL/F9yKjPUeOkco+hZ2Vy1FwHjsoBqi29puYFMnmxRm7QW1xGV8/YpX5W8kJnuEsAkOHT8bD5A=
+	t=1733302601; cv=none; b=qfoKpsgr17VC4+AyBo5JzJ4btA0jin0ZW5niv4m8L1z0GdXZKf9F3u3Mmo04D/yldlAklwbhOWx2U11GiYtSU0eK5lY+2EeCsBeHB1ZbNV0ktIn9/Vuk86oO+Cc6RVxfUjnEjUnvlFUmAtvagnPDw7jttZtYPjBpT+bPkhh/az4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733302542; c=relaxed/simple;
-	bh=6Izke65AXpS0VmYoo22e0g0QsGHtrZ06IK9M6bCw2cE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iavJXC27h7CoKI8/rAfNc0zUWKHY1HbOtPLZG/ulYzwebd7c5HiMxsqzi1Ol7JhsPimWHClA7CLPD87csSNyH53iuvva8wcDYTi4ni1CbjZYIcKsIxdNy5n+rslnNViaHoOWVUOZk3j5SbJAVKGdPl/1nPbguUIDAvissyYIWHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FvfoC279; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5cf6f367f97so7985072a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 00:55:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733302538; x=1733907338; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SJbrEWxBCkHbyaq9EdVtGXFN+ax//3d1lQb0Nm+ee6g=;
-        b=FvfoC2792yz+VKuy5rfvlLSlyRXHiMatjOE7NYK1rZaZBbO0NgOvapb5YdI6DHBMz4
-         ENLyvkpqNje0Svn2CkyXJ87PimIu5D12JP+a+K78lv77VtPn+C1wLE1DS0JdsczQvEGV
-         Z2ixUDQW5sAG8Zu7AhUenCwN2LoMhm1WwI22HU9DpRRi5+wyssuQB7hj4lETQBH4UgFr
-         VenfEE5TbPCWUrhbQSSTSX8kuokHSsZa2U0TuwH+BTtw2svl5R+OC4KXOUNzrWWc7cZE
-         TFHVvJMGT10Z0oHxYkKeya/DiyJdfsl5NHISL6zMnxFdUoSaiBOAq7Ys/r1ngn2oRCC4
-         tV6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733302538; x=1733907338;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SJbrEWxBCkHbyaq9EdVtGXFN+ax//3d1lQb0Nm+ee6g=;
-        b=Jy77dDjzwfvn+atPb2aLqczlQaeUi4yPZ04TQ2mOAiplCR+dNPF8dc77+qcDmrDamI
-         O0/DLBjxMaKIZ0TpBbJJSEBkxnmpeSomZkX7ewkcYmMWz6fSKFBtPIm0dpEXI7lAukvj
-         Z8AdNmVJr884uE0QmO6rLCEcb5KcS/SLEQJLTf/YEo69AGSYRKU69ExT/gyHsL/V2/c7
-         O28TIQx5Ng48He5HM2UPZUTzexkyFy8VAHVB98hpBJvHBt5Gx5GQOZQaSswBy03yB/NC
-         BV86lMEbExrM8ofuq5W23ADOvHw5L1YrVaaI67o4N4I2gvwIk3ye/X8BYt+wrfdz5S7P
-         Gh+g==
-X-Forwarded-Encrypted: i=1; AJvYcCWgDC97i0IN6JgXCDcOhoRHxSkDVEHfBYTU4F5pUXdnXraMofSe7sDp37M9yoEVOw/BF+iRdb3NiX5kGgo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yweby6vPn3Oh+ztRVmzmqABjVF84CvXS7cMDQwoSOlaJI7NM5JJ
-	QGHzz3m5JMn4kwKh1qH2dHM6zMb3I12pXzP1Lxdsp9d2Pysy6VKONDEVjaUJrButBPF9F0orTPX
-	+1MnvqPjwJR8S36M0UdlwytoOY/pRQOL0S/xg
-X-Gm-Gg: ASbGncvJpagxd4xu+exA5AzzGLet1hK3wdyLnr/3OLpX8Uk1Qz0KEgmgxuDv7rp/i0P
-	dpOvbvPhgVCZkZ0MAmRWRyfxPpI1Wjgnh
-X-Google-Smtp-Source: AGHT+IFLv8Go2ESiUlixE1oPJUrkZ+SZMuqPqhRi/X2v6c4Cj8NkE5kV/d4b0u8vBcSwZLQ7b46y6DZnCQ2lgETqDSI=
-X-Received: by 2002:a05:6402:3903:b0:5d0:b74f:6422 with SMTP id
- 4fb4d7f45d1cf-5d10cba2bd8mr5494843a12.32.1733302537392; Wed, 04 Dec 2024
- 00:55:37 -0800 (PST)
+	s=arc-20240116; t=1733302601; c=relaxed/simple;
+	bh=Yxjz03f7YodAcFNWgPYlbjlPTqBBEgCdSqNH6Yu1n2I=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=IB/tHSp8HY9Nts2FkrtbAKagYNFVvCFibCjSZ8moFAilqigUY61FSV9NVkdkTbeKABo41kpqbukgxl/l0x0uRpr7EuKK2D0edOxOJMKD/mxz0fk2SFKmTUOoGXJ/zdOH+ivypUVr/VzXppN8W4w4FBxEBTOWDLL6hSUhomYRWLs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sZUMJfIC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86E0DC4CED1;
+	Wed,  4 Dec 2024 08:56:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733302600;
+	bh=Yxjz03f7YodAcFNWgPYlbjlPTqBBEgCdSqNH6Yu1n2I=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=sZUMJfICmSw5hLZaZVsxoyreIQxAXAfsqxhGH2q5GCKVHhhQzOW4rRXiubXGWxw9s
+	 /xkk6fq4A1MHnBkN9nl6LsX4K8uTKr/DBDBjHOlpWpo27ps6+CH+AyMgT2K8uCHUZF
+	 g1F+D2S/lsJOemrBKaGI9c9XCK2EUr01B6jjxee+N0mgEfogSz/r+vRSzwFFl4tgxw
+	 xqjrft2V/MMxEd7A6BPR2fcoONzZreez4Rxp98+r5hA3mydQOSpxwxLTJk2cSz5cqj
+	 TBSMjR3iiNp5Nu1dxEmEToGS8PmhqBeDHlBQ/JmkCb0hJiN/z+FhkkIKAhDsOPAnt8
+	 tBLZ8o3NaBLOQ==
+Date: Wed, 4 Dec 2024 09:56:35 +0100
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Igor Mammedov <imammedo@redhat.com>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, Shiju Jose
+ <shiju.jose@huawei.com>, "Michael S. Tsirkin" <mst@redhat.com>, Ani Sinha
+ <anisinha@redhat.com>, Dongjiu Geng <gengdongjiu1@gmail.com>,
+ linux-kernel@vger.kernel.org, qemu-arm@nongnu.org, qemu-devel@nongnu.org
+Subject: Re: [PATCH v4 13/15] acpi/ghes: move offset calculus to a separate
+ function
+Message-ID: <20241204095635.512a44d5@foz.lan>
+In-Reply-To: <20241204085440.4640a476@imammedo.users.ipa.redhat.com>
+References: <cover.1732266152.git.mchehab+huawei@kernel.org>
+	<e5661a6383449675b28e15c8479ebca42c939368.1732266152.git.mchehab+huawei@kernel.org>
+	<20241203125143.7171892a@imammedo.users.ipa.redhat.com>
+	<20241203144730.47b8ca86@foz.lan>
+	<20241204085440.4640a476@imammedo.users.ipa.redhat.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CGME20241203081005epcas2p247b3d05bc767b1a50ba85c4433657295@epcas2p2.samsung.com>
- <20241203081247.1533534-1-youngmin.nam@samsung.com> <CANn89iK+7CKO31=3EvNo6-raUzyibwRRN8HkNXeqzuP9q8k_tA@mail.gmail.com>
- <CADVnQynUspJL4e3UnZTKps9WmgnE-0ngQnQmn=8gjSmyg4fQ5A@mail.gmail.com> <Z0/L2gDjvXVfj1ho@perf>
-In-Reply-To: <Z0/L2gDjvXVfj1ho@perf>
-From: Eric Dumazet <edumazet@google.com>
-Date: Wed, 4 Dec 2024 09:55:26 +0100
-Message-ID: <CANn89i+LzKpwfCRX2YGqi-0fmekT53fDpGtvav2u3E0EMB95qw@mail.gmail.com>
-Subject: Re: [PATCH] tcp: check socket state before calling WARN_ON
-To: Youngmin Nam <youngmin.nam@samsung.com>
-Cc: Neal Cardwell <ncardwell@google.com>, davem@davemloft.net, dsahern@kernel.org, 
-	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, dujeong.lee@samsung.com, 
-	guo88.liu@samsung.com, yiwang.cai@samsung.com, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, joonki.min@samsung.com, hajun.sung@samsung.com, 
-	d7271.choe@samsung.com, sw.ju@samsung.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, Dec 4, 2024 at 4:22=E2=80=AFAM Youngmin Nam <youngmin.nam@samsung.c=
-om> wrote:
+Em Wed, 4 Dec 2024 08:54:40 +0100
+Igor Mammedov <imammedo@redhat.com> escreveu:
+
+> On Tue, 3 Dec 2024 14:47:30 +0100
+> Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
+> 
+> > Em Tue, 3 Dec 2024 12:51:43 +0100
+> > Igor Mammedov <imammedo@redhat.com> escreveu:
+> >   
+> > > On Fri, 22 Nov 2024 10:11:30 +0100
+> > > Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
+> > >     
+> > > > Currently, CPER address location is calculated as an offset of
+> > > > the hardware_errors table. It is also badly named, as the
+> > > > offset actually used is the address where the CPER data starts,
+> > > > and not the beginning of the error source.
+> > > > 
+> > > > Move the logic which calculates such offset to a separate
+> > > > function, in preparation for a patch that will be changing the
+> > > > logic to calculate it from the HEST table.
+> > > > 
+> > > > While here, properly name the variable which stores the cper
+> > > > address.
+> > > > 
+> > > > Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> > > > Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> > > > ---
+> > > >  hw/acpi/ghes.c | 41 ++++++++++++++++++++++++++++++++---------
+> > > >  1 file changed, 32 insertions(+), 9 deletions(-)
+> > > > 
+> > > > diff --git a/hw/acpi/ghes.c b/hw/acpi/ghes.c
+> > > > index 87fd3feedd2a..d99697b20164 100644
+> > > > --- a/hw/acpi/ghes.c
+> > > > +++ b/hw/acpi/ghes.c
+> > > > @@ -364,10 +364,37 @@ void acpi_ghes_add_fw_cfg(AcpiGhesState *ags, FWCfgState *s,
+> > > >      ags->present = true;
+> > > >  }
+> > > >  
+> > > > +static void get_hw_error_offsets(uint64_t ghes_addr,
+> > > > +                                 uint64_t *cper_addr,
+> > > > +                                 uint64_t *read_ack_register_addr)
+> > > > +{      
+> > > 
+> > >     
+> > > > +    if (!ghes_addr) {
+> > > > +        return;
+> > > > +    }      
+> > > 
+> > > why do we need this check?    
+> > 
+> > It is a safeguard measure to avoid crashes and OOM access. If fw_cfg 
+> > callback doesn't fill it properly, this will be zero.  
+> 
+> shouldn't happen, but yeah it firmware job to write back addr
+> which might happen for whatever reason (a bug for example).
 >
-> On Tue, Dec 03, 2024 at 10:34:46AM -0500, Neal Cardwell wrote:
-> > On Tue, Dec 3, 2024 at 6:07=E2=80=AFAM Eric Dumazet <edumazet@google.co=
-m> wrote:
-> > >
-> > > On Tue, Dec 3, 2024 at 9:10=E2=80=AFAM Youngmin Nam <youngmin.nam@sam=
-sung.com> wrote:
-> > > >
-> > > > We encountered the following WARNINGs
-> > > > in tcp_sacktag_write_queue()/tcp_fastretrans_alert()
-> > > > which triggered a kernel panic due to panic_on_warn.
-> > > >
-> > > > case 1.
-> > > > ------------[ cut here ]------------
-> > > > WARNING: CPU: 4 PID: 453 at net/ipv4/tcp_input.c:2026
-> > > > Call trace:
-> > > >  tcp_sacktag_write_queue+0xae8/0xb60
-> > > >  tcp_ack+0x4ec/0x12b8
-> > > >  tcp_rcv_state_process+0x22c/0xd38
-> > > >  tcp_v4_do_rcv+0x220/0x300
-> > > >  tcp_v4_rcv+0xa5c/0xbb4
-> > > >  ip_protocol_deliver_rcu+0x198/0x34c
-> > > >  ip_local_deliver_finish+0x94/0xc4
-> > > >  ip_local_deliver+0x74/0x10c
-> > > >  ip_rcv+0xa0/0x13c
-> > > > Kernel panic - not syncing: kernel: panic_on_warn set ...
-> > > >
-> > > > case 2.
-> > > > ------------[ cut here ]------------
-> > > > WARNING: CPU: 0 PID: 648 at net/ipv4/tcp_input.c:3004
-> > > > Call trace:
-> > > >  tcp_fastretrans_alert+0x8ac/0xa74
-> > > >  tcp_ack+0x904/0x12b8
-> > > >  tcp_rcv_state_process+0x22c/0xd38
-> > > >  tcp_v4_do_rcv+0x220/0x300
-> > > >  tcp_v4_rcv+0xa5c/0xbb4
-> > > >  ip_protocol_deliver_rcu+0x198/0x34c
-> > > >  ip_local_deliver_finish+0x94/0xc4
-> > > >  ip_local_deliver+0x74/0x10c
-> > > >  ip_rcv+0xa0/0x13c
-> > > > Kernel panic - not syncing: kernel: panic_on_warn set ...
-> > > >
-> > >
-> > > I have not seen these warnings firing. Neal, have you seen this in th=
-e past ?
-> >
-> > I can't recall seeing these warnings over the past 5 years or so, and
-> > (from checking our monitoring) they don't seem to be firing in our
-> > fleet recently.
-> >
-> > > In any case this test on sk_state is too specific.
-> >
-> > I agree with Eric. IMHO TCP_FIN_WAIT1 deserves all the same warnings
-> > as ESTABLISHED, since in this state the connection may still have a
-> > big queue of data it is trying to reliably send to the other side,
-> > with full loss recovery and congestion control logic.
-> Yes I agree with Eric as well.
->
-> >
-> > I would suggest that instead of running with panic_on_warn it would
-> > make more sense to not panic on warning, and instead add more detail
-> > to these warning messages in your kernels during your testing, to help
-> > debug what is going wrong. I would suggest adding to the warning
-> > message:
-> >
-> > tp->packets_out
-> > tp->sacked_out
-> > tp->lost_out
-> > tp->retrans_out
-> > tcp_is_sack(tp)
-> > tp->mss_cache
-> > inet_csk(sk)->icsk_ca_state
-> > inet_csk(sk)->icsk_pmtu_cookie
->
-> Hi Neal.
-> Thanks for your opinion.
->
-> By the way, we enable panic_on_warn by default for stability.
-> As you know, panic_on_warn is not applied to a specific subsystem but to =
-the entire kernel.
-> We just want to avoid the kernel panic.
->
-> So when I see below lwn article, I think we might use pr_warn() instaed o=
-f WARN_ON().
-> https://lwn.net/Articles/969923/
->
-> How do you think of it ?
 
-You want to silence a WARN_ON() because you chose  to make all WARN_ON() fa=
-tal.
+The main reason I added it is that, after the second series, it could 
+also happen if there's something wrong with the backward compat logic.
 
-We want something to be able to fix real bugs, because we really care
-of TCP being correct.
+So, both here and after switching to HEST-based offsets, I opted
+to explicitly test.
 
-We have these discussions all the time.
-https://lwn.net/Articles/969923/ is a good summary.
+> Perhaps push this up to the stack, so we don't have to deal
+> with scattered checks in ghes code.
+> 
+> kvm_arch_on_sigbus_vcpu() looks like a goo candidate for check
+> and warn_once if that ever happens.
+> It already calls acpi_ghes_present() which resolves GED device
+> and then later we duplicate this job in ghes_record_cper_errors()
+> 
+> so maybe rename acpi_ghes_present to something like AcpiGhesState* acpi_ghes_get_state()
+> and call it instead. And then move ghes_addr check/warn_once there.
+> This way the rest of ghes code won't have to deal handling practically
+> impossible error conditions that cause reader to wonder why it might happen.
 
-It makes sense for debug kernels (for instance used by syzkaller or
-other fuzzers) to panic,
-but for production this is a high risk, there is a reason
-panic_on_warn is not set by default.
+I'll look on it. Yet, if ok for you, I would prefer dealing with this
+once we have a bigger picture, e.g. once we merge those tree series:
 
-If we use a soft  print there like pr_warn(), no future bug will be caught.
+	- cleanup series (this one);
+	- HEST offset (I'll be sending a new version today);
+	- error_inject.
 
-What next : add a new sysctl to panic whenever a pr_warn() is hit by syzkal=
-ler ?
-
-Then Android will set this sysctl "because of stability concerns"
-
-> >
-> > A hunch would be that this is either firing for (a) non-SACK
-> > connections, or (b) after an MTU reduction.
-> >
-> > In particular, you might try `echo 0 >
-> > /proc/sys/net/ipv4/tcp_mtu_probing` and see if that makes the warnings
-> > go away.
-> >
-> > cheers,
-> > neal
-> >
+Thanks,
+Mauro
 
