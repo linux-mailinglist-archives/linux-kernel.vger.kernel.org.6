@@ -1,228 +1,304 @@
-Return-Path: <linux-kernel+bounces-430984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1BE59E37CE
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 11:45:55 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF05A9E37DE
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 11:49:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8237D284268
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 10:45:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 82C6CB252BD
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 10:45:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 369E718C92F;
-	Wed,  4 Dec 2024 10:45:34 +0000 (UTC)
-Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 124BA1AF0C5;
+	Wed,  4 Dec 2024 10:45:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ObR8PXyu"
+Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7465193067;
-	Wed,  4 Dec 2024 10:45:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5934C187FFA
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 10:45:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733309133; cv=none; b=jMEBseWfUC2PxXZfnEzVVriinG+NQ2OaccMEHoEpqBDKpItk8MI6nTOKgOhmw+g24bFaohZ2l5c/3dsyt/F4KjjzO5fq19IU3BikVAiP2tjkzlImZ1szD0+pzPt7N+Uo5njnlnvAd4z/8RWC6aORxG/dSo6EuJyL6fIuYuaE6+g=
+	t=1733309120; cv=none; b=Vk+yS6Rqvd6xQQnWqG/cV+pfoHzmHNryKg29dW6UPhdQBQ1OUFpPQvlOmXJeNn3zvV217a0bOVP11qhbCWJIDE1Sx4rWwKJYKk+F2NcEfwYJ/PdrWZezak49uBKg/uho7j1a5DnS3FZYn5YQO66z7Bge+SJBXso0OFiihanK8pY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733309133; c=relaxed/simple;
-	bh=vlqTmq5FsT2/FE3QTwtg6jzPyAfB1te9WN7A5R7FPxY=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Dm8aAZ2tOszeSHKY/O5VmadzHWTc860D6O3T/580kL2AOrIUVLRUKEzrwgQFHX5Y97xJPdjBXMDeTWHqwa3NVNYX+cIr1Gk6HuM2ev/TuPrmZZwXwowrFGL53h84a4vpiWFS8X13aPScYfq0LWN9eo5JDoMVlkgtDBbcP2BNGiI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.29])
-	by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4Y3DCJ121Vz9v7Nj;
-	Wed,  4 Dec 2024 18:24:12 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.27])
-	by mail.maildlp.com (Postfix) with ESMTP id 24EC41401F2;
-	Wed,  4 Dec 2024 18:45:22 +0800 (CST)
-Received: from [127.0.0.1] (unknown [10.204.63.22])
-	by APP2 (Coremail) with SMTP id GxC2BwD3X3+uMlBnYunQAg--.4171S2;
-	Wed, 04 Dec 2024 11:45:21 +0100 (CET)
-Message-ID: <00f3eb72042aedaa4644ff0932d06d4e8d215f6b.camel@huaweicloud.com>
-Subject: Re: [PATCH v6 00/15] integrity: Introduce the Integrity Digest Cache
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: Eric Snowberg <eric.snowberg@oracle.com>
-Cc: Mimi Zohar <zohar@linux.ibm.com>, Dmitry Kasatkin
- <dmitry.kasatkin@gmail.com>, "corbet@lwn.net" <corbet@lwn.net>, 
- "mcgrof@kernel.org" <mcgrof@kernel.org>, "petr.pavlu@suse.com"
- <petr.pavlu@suse.com>,  "samitolvanen@google.com"
- <samitolvanen@google.com>, "da.gomez@samsung.com" <da.gomez@samsung.com>, 
- Andrew Morton <akpm@linux-foundation.org>, "paul@paul-moore.com"
- <paul@paul-moore.com>, "jmorris@namei.org" <jmorris@namei.org>,
- "serge@hallyn.com" <serge@hallyn.com>, "shuah@kernel.org"
- <shuah@kernel.org>, "mcoquelin.stm32@gmail.com"
- <mcoquelin.stm32@gmail.com>,  "alexandre.torgue@foss.st.com"
- <alexandre.torgue@foss.st.com>, "linux-integrity@vger.kernel.org"
- <linux-integrity@vger.kernel.org>, "linux-doc@vger.kernel.org"
- <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>, "linux-api@vger.kernel.org"
- <linux-api@vger.kernel.org>, "linux-modules@vger.kernel.org"
- <linux-modules@vger.kernel.org>, "linux-security-module@vger.kernel.org"
- <linux-security-module@vger.kernel.org>, "linux-kselftest@vger.kernel.org"
- <linux-kselftest@vger.kernel.org>, "wufan@linux.microsoft.com"
- <wufan@linux.microsoft.com>, "pbrobinson@gmail.com" <pbrobinson@gmail.com>,
-  "zbyszek@in.waw.pl" <zbyszek@in.waw.pl>, "hch@lst.de" <hch@lst.de>,
- "mjg59@srcf.ucam.org" <mjg59@srcf.ucam.org>, "pmatilai@redhat.com"
- <pmatilai@redhat.com>,  "jannh@google.com" <jannh@google.com>,
- "dhowells@redhat.com" <dhowells@redhat.com>,  "jikos@kernel.org"
- <jikos@kernel.org>, "mkoutny@suse.com" <mkoutny@suse.com>,
- "ppavlu@suse.com" <ppavlu@suse.com>, "petr.vorel@gmail.com"
- <petr.vorel@gmail.com>,  "mzerqung@0pointer.de" <mzerqung@0pointer.de>,
- "kgold@linux.ibm.com" <kgold@linux.ibm.com>, Roberto Sassu
- <roberto.sassu@huawei.com>
-Date: Wed, 04 Dec 2024 11:44:59 +0100
-In-Reply-To: <B135AC90-7CE5-4E51-90B1-9D82031668A8@oracle.com>
-References: <20241119104922.2772571-1-roberto.sassu@huaweicloud.com>
-	 <C4BE31F8-1FA3-4AD1-A712-ED2AA7E61E96@oracle.com>
-	 <17ef4f662e594c8431a00fe423507af4f6a82286.camel@huaweicloud.com>
-	 <B135AC90-7CE5-4E51-90B1-9D82031668A8@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	s=arc-20240116; t=1733309120; c=relaxed/simple;
+	bh=fxYcdUfZVshmW3K+OY/btqceQ6KRhi9srUFU5dW2Pyw=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=Nevrh0r/DUaWXZFZYOZzQE8kLNIH56ppjz+xATH1LMWoZ2XCkq5ROSN0LV0CdEUfTfcBFYGCQVpZB7KjDWFQGfEN169VBtjxbo9YTq3uS3ZoT0sbmAKCN2Z9WLu2qvD7Id+4AJAFD3xfCho4vap28xJD0FE7jXnZUNYQvHbhJhA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--dawidn.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ObR8PXyu; arc=none smtp.client-ip=209.85.221.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--dawidn.bounces.google.com
+Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-385d51ba2f5so2708623f8f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 02:45:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1733309117; x=1733913917; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=47E3YyW6DrR27MbE2FWe5udRH/OIbLEqcmInTqvOrvY=;
+        b=ObR8PXyugZaiircKphs6MRecOl5HzRMJJwFC4qhdpqmab9zyifD8JnyGFsiLX2ygxV
+         os0kudJoVtdABI+zcSk/zMo6HgSYTx9r81ZgkiZL9FkXKl72WCOlAFaJgb0YkA7x2Ahf
+         t5VebpCWGWHlyhd66Pt0E1cfWuijm5vkgNuW8R6DgQPkQMJsck6hro7JB6o5cb3hRNda
+         og1C2f8dNFjo2awld3zQtiH6syh/dtXd0e9jqwN9falY2beHofU1uImSSV3oHEYibpBl
+         n/UK9BqyMkUwAgDLTyDbQvvW8tU+/NhthPd8VEnL1KbDzunccA8QybawoGEJ0RjAUSnH
+         oljg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733309117; x=1733913917;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=47E3YyW6DrR27MbE2FWe5udRH/OIbLEqcmInTqvOrvY=;
+        b=wO35w/Uaou8nZZquzDPAxcR3llGqxozSkNeyibGLcNhrUaH4xR+LUt7R2aLWkZyRSc
+         wjLCobwvJvPkkyZCA5aIYElYs+DQ9z/nONA/0WAJ4Ue9W4qHxB+p/NNIgS19QmQzd1e1
+         N7GRdBt0oPH80snj31Q5RUMKrHFs8f4c5FeTVeEEw4e5QT4aHDzZnKLmgD5P5HR54/IN
+         hN2wmeVMn2ugVKQJ9ri1EJyzDrFdOT5XvUr7NFQk5+xvqp7dy8n9E86qMN7QW95lhfxl
+         WUgRJ9D4ZEoaTZsSxSODdwidUN0sIG14xdeOchBpNFEJs8MAGg1sRZO927gk/zAcUc5+
+         C7Yw==
+X-Forwarded-Encrypted: i=1; AJvYcCVpqMv77NdKofhtYmMRO2eFSJBOUlVoMduNFc6czqa7HtTs09w4Q7aOPtfUdIyGy12AsHzWj3UkN7/WTHo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YySBJCskVCtPIMAhgzgg76zBiCSDw7ppVfkFLKAio8X8oz3SWvL
+	EGuMBEQyET0WwP48akydmmZ2COjpWXxga/hJXMfAiXVdnq3d+sy4M7TbIGuWpzhwd7rU7sYGKyH
+	DtQ==
+X-Google-Smtp-Source: AGHT+IHO5lBRS9CVlcosceV4uqtJ3ozsKz1F+Tz3ehGwr2YlfyuEuN7UJFBK45IYdvS2HvYYpO+OLpjs6HY=
+X-Received: from wmil20.prod.google.com ([2002:a7b:c454:0:b0:434:9dec:7cc5])
+ (user=dawidn job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6000:186b:b0:385:ec89:2f07
+ with SMTP id ffacd0b85a97d-38607ae4117mr2655875f8f.32.1733309116850; Wed, 04
+ Dec 2024 02:45:16 -0800 (PST)
+Date: Wed,  4 Dec 2024 10:45:13 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-CM-TRANSID:GxC2BwD3X3+uMlBnYunQAg--.4171S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxAF4xCFWkWryrCFyfKryUZFb_yoWrZw1kpF
-	WrKa17KrWkGr1Fkrn2ka17XFyFkws3tFyUXr1DGr98CrZ8WFyI9ryfKFW5uFyqgr1vkr42
-	vr4agFy7Cwn8ZaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvlb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
-	wI0_Wrv_ZF1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26rWY6r4U
-	JwCIccxYrVCFb41lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6x
-	IIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvE
-	x4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvj
-	DU0xZFpf9x07bhb18UUUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAHBGdPvjYHuwABsf
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
+Message-ID: <20241204104514.1541964-1-dawidn@google.com>
+Subject: [PATCH v2 1/2] platform/chrome: cros_ec: jump to RW before probing
+From: Dawid Niedzwiecki <dawidn@google.com>
+To: Tzung-Bi Shih <tzungbi@kernel.org>, Benson Leung <bleung@chromium.org>
+Cc: chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	chromeos-krk-upstreaming@google.com, Dawid Niedzwiecki <dawidn@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, 2024-12-03 at 20:06 +0000, Eric Snowberg wrote:
->=20
-> > On Nov 26, 2024, at 3:41=E2=80=AFAM, Roberto Sassu <roberto.sassu@huawe=
-icloud.com> wrote:
-> >=20
-> > On Tue, 2024-11-26 at 00:13 +0000, Eric Snowberg wrote:
-> > >=20
-> > > > On Nov 19, 2024, at 3:49=E2=80=AFAM, Roberto Sassu <roberto.sassu@h=
-uaweicloud.com> wrote:
-> > > >=20
-> > > > From: Roberto Sassu <roberto.sassu@huawei.com>
-> > > >=20
-> > > > The Integrity Digest Cache can also help IMA for appraisal. IMA can=
- simply
-> > > > lookup the calculated digest of an accessed file in the list of dig=
-ests
-> > > > extracted from package headers, after verifying the header signatur=
-e. It is
-> > > > sufficient to verify only one signature for all files in the packag=
-e, as
-> > > > opposed to verifying a signature for each file.
-> > >=20
-> > > Is there a way to maintain integrity over time?  Today if a CVE is di=
-scovered=20
-> > > in a signed program, the program hash can be added to the blacklist k=
-eyring.=20
-> > > Later if IMA appraisal is used, the signature validation will fail ju=
-st for that=20
-> > > program.  With the Integrity Digest Cache, is there a way to do this?=
- =20
-> >=20
-> > As far as I can see, the ima_check_blacklist() call is before
-> > ima_appraise_measurement(). If it fails, appraisal with the Integrity
-> > Digest Cache will not be done.
->=20
->=20
-> It is good the program hash would be checked beforehand and fail if it is=
-=20
-> contained on the list.=20
->=20
-> The .ima keyring may contain many keys.  If one of the keys was later=20
-> revoked and added to the .blacklist, wouldn't this be missed?  It would=
-=20
-> be caught during signature validation when the file is later appraised, b=
-ut=20
-> now this step isn't taking place.  Correct?
+There are EC devices, like FPMCU, that use RWSIG as a method of
+authenticating RW section. After the authentication succeeds, EC device
+waits some time before jumping to RW. EC can be probed before the jump,
+which means there is a time window after jump to RW in which EC won't
+respond, because it is not initialized. It can cause a communication
+errors after probing.
 
-For files included in the digest lists, yes, there won't be detection
-of later revocation of a key. However, it will still work at package
-level/digest list level, since they are still appraised with a
-signature.
+To avoid such problems, send the RWSIG continue command first, which
+skips waiting for the jump to RW. Send the command more times, to make
+sure EC is ready in RW before the start of the actual probing process. If
+a EC device doesn't support the RWSIG, it will respond with invalid
+command error code and probing will continue as usual.
 
-We can add a mechanism (if it does not already exist) to invalidate the
-integrity status based on key revocation, which can be propagated to
-files verified with the affected digest lists.
+Signed-off-by: Dawid Niedzwiecki <dawidn@google.com>
+---
+V1 -> V2:
+- Use dev_info instead of dev_warn when cros_ec_rwsig_continue returns
+  an error.
+- Return immediately from cros_ec_rwsig_continue, if the RWSIG_ACTION
+  command fails itself, not SPI transaction.
 
-> With IMA appraisal, it is easy to maintain authenticity but challenging t=
-o=20
-> maintain integrity over time. In user-space there are constantly new CVEs=
-. =20
-> To maintain integrity over time, either keys need to be rotated in the .i=
-ma=20
-> keyring or program hashes need to be frequently added to the .blacklist. =
- =20
-> If neither is done, for an end-user on a distro, IMA-appraisal basically=
-=20
-> guarantees authenticity.
->=20
-> While I understand the intent of the series is to increase performance,=
-=20
-> have you considered using this to give the end-user the ability to mainta=
-in=20
-> integrity of their system?  What I mean is, instead of trying to import a=
-nything=20
-> from an RPM, just have the end-user provide this information in some form=
-at=20
-> to the Digest Cache.  User-space tools could be built to collect and form=
-at=20
+ drivers/platform/chrome/cros_ec.c           |  5 ++
+ drivers/platform/chrome/cros_ec_i2c.c       |  3 +-
+ drivers/platform/chrome/cros_ec_ishtp.c     |  2 +-
+ drivers/platform/chrome/cros_ec_lpc.c       |  2 +-
+ drivers/platform/chrome/cros_ec_proto.c     | 62 +++++++++++++++++++++
+ drivers/platform/chrome/cros_ec_rpmsg.c     |  2 +-
+ drivers/platform/chrome/cros_ec_spi.c       |  2 +-
+ drivers/platform/chrome/cros_ec_uart.c      |  2 +-
+ include/linux/platform_data/cros_ec_proto.h |  2 +
+ 9 files changed, 76 insertions(+), 6 deletions(-)
 
-This is already possible, digest-cache-tools
-(https://github.com/linux-integrity/digest-cache-tools) already allow
-to create a digest list with the file a user wants.
-
-But in this case, the user is vouching for having taken the correct
-measure of the file at the time it was added to the digest list. This
-would be instead automatically guaranteed by RPMs or other packages
-shipped with Linux distributions.
-
-To mitigate the concerns of CVEs, we can probably implement a rollback
-prevention mechanism, which would not allow to load a previous version
-of a digest list.
-
-> the data needed by the Digest Cache.  This data  may allow multiple versi=
-ons=20
-> of the same program.  The data would then be signed by one of the system=
-=20
-> kernel keys (either something in the secondary or machine keyring), to ma=
-intain=20
-> a root of trust.  This would give the end-user the ability to have integr=
-ity however=20
-> they see fit.  This leaves the distro to provide signed programs and the =
-end-user=20
-> the ability to decide what level of software they want to run on their sy=
-stem.  If=20
-> something isn't in the Digest Cache, it gets bumped down to the tradition=
-al=20
-> IMA-appraisal.  I think it would simplify the problem you are trying to s=
-olve,=20
-
-All you say it is already possible. Users can generate and sign their
-digest lists, and add enroll their key to the kernel keyring.
-
-> especially around the missing kernel PGP code required for all this to wo=
-rk,=20
-> since it wouldn't be necessary.   With this approach, besides the perform=
-ance=20
-> gain, the end-user would gain the ability to maintain integrity that is e=
-nforced by
-> the kernel.
-
-For what I understood, Linus would not be against the=20
+diff --git a/drivers/platform/chrome/cros_ec.c b/drivers/platform/chrome/cros_ec.c
+index e821b3d39590..110771a8645e 100644
+--- a/drivers/platform/chrome/cros_ec.c
++++ b/drivers/platform/chrome/cros_ec.c
+@@ -204,6 +204,11 @@ int cros_ec_register(struct cros_ec_device *ec_dev)
+ 	mutex_init(&ec_dev->lock);
+ 	lockdep_set_class(&ec_dev->lock, &ec_dev->lockdep_key);
+ 
++	/* Send RWSIG continue to jump to RW for devices using RWSIG. */
++	err = cros_ec_rwsig_continue(ec_dev);
++	if (err)
++		dev_info(dev, "Failed to continue RWSIG: %d\n", err);
++
+ 	err = cros_ec_query_all(ec_dev);
+ 	if (err) {
+ 		dev_err(dev, "Cannot identify the EC: error %d\n", err);
+diff --git a/drivers/platform/chrome/cros_ec_i2c.c b/drivers/platform/chrome/cros_ec_i2c.c
+index 62662ba5bf6e..38af97cdaab2 100644
+--- a/drivers/platform/chrome/cros_ec_i2c.c
++++ b/drivers/platform/chrome/cros_ec_i2c.c
+@@ -305,7 +305,8 @@ static int cros_ec_i2c_probe(struct i2c_client *client)
+ 	ec_dev->phys_name = client->adapter->name;
+ 	ec_dev->din_size = sizeof(struct ec_host_response_i2c) +
+ 			   sizeof(struct ec_response_get_protocol_info);
+-	ec_dev->dout_size = sizeof(struct ec_host_request_i2c);
++	ec_dev->dout_size = sizeof(struct ec_host_request_i2c) +
++			    sizeof(struct ec_params_rwsig_action);
+ 
+ 	err = cros_ec_register(ec_dev);
+ 	if (err) {
+diff --git a/drivers/platform/chrome/cros_ec_ishtp.c b/drivers/platform/chrome/cros_ec_ishtp.c
+index 5ac37bd024c8..7e7190b30cbb 100644
+--- a/drivers/platform/chrome/cros_ec_ishtp.c
++++ b/drivers/platform/chrome/cros_ec_ishtp.c
+@@ -557,7 +557,7 @@ static int cros_ec_dev_init(struct ishtp_cl_data *client_data)
+ 	ec_dev->phys_name = dev_name(dev);
+ 	ec_dev->din_size = sizeof(struct cros_ish_in_msg) +
+ 			   sizeof(struct ec_response_get_protocol_info);
+-	ec_dev->dout_size = sizeof(struct cros_ish_out_msg);
++	ec_dev->dout_size = sizeof(struct cros_ish_out_msg) + sizeof(struct ec_params_rwsig_action);
+ 
+ 	return cros_ec_register(ec_dev);
+ }
+diff --git a/drivers/platform/chrome/cros_ec_lpc.c b/drivers/platform/chrome/cros_ec_lpc.c
+index 924bf4d3cc77..1e1d68359958 100644
+--- a/drivers/platform/chrome/cros_ec_lpc.c
++++ b/drivers/platform/chrome/cros_ec_lpc.c
+@@ -573,7 +573,7 @@ static int cros_ec_lpc_probe(struct platform_device *pdev)
+ 	ec_dev->cmd_readmem = cros_ec_lpc_readmem;
+ 	ec_dev->din_size = sizeof(struct ec_host_response) +
+ 			   sizeof(struct ec_response_get_protocol_info);
+-	ec_dev->dout_size = sizeof(struct ec_host_request);
++	ec_dev->dout_size = sizeof(struct ec_host_request) + sizeof(struct ec_params_rwsig_action);
+ 	ec_dev->priv = ec_lpc;
+ 
+ 	/*
+diff --git a/drivers/platform/chrome/cros_ec_proto.c b/drivers/platform/chrome/cros_ec_proto.c
+index 5c9a53dffcf9..9b451fac275d 100644
+--- a/drivers/platform/chrome/cros_ec_proto.c
++++ b/drivers/platform/chrome/cros_ec_proto.c
+@@ -15,6 +15,8 @@
+ #include "cros_ec_trace.h"
+ 
+ #define EC_COMMAND_RETRIES	50
++#define RWSIG_CONTINUE_RETRIES	8
++#define RWSIG_CONTINUE_MAX_ERRORS_IN_ROW	3
+ 
+ static const int cros_ec_error_map[] = {
+ 	[EC_RES_INVALID_COMMAND] = -EOPNOTSUPP,
+@@ -288,6 +290,66 @@ static int cros_ec_get_host_event_wake_mask(struct cros_ec_device *ec_dev, uint3
+ 	return ret;
+ }
+ 
++int cros_ec_rwsig_continue(struct cros_ec_device *ec_dev)
++{
++	struct cros_ec_command *msg;
++	struct ec_params_rwsig_action *rwsig_action;
++	int ret = 0;
++	int error_count = 0;
++
++	ec_dev->proto_version = 3;
++
++	msg = kmalloc(sizeof(*msg) + sizeof(*rwsig_action), GFP_KERNEL);
++	if (!msg)
++		return -ENOMEM;
++
++	msg->version = 0;
++	msg->command = EC_CMD_RWSIG_ACTION;
++	msg->insize = 0;
++	msg->outsize = sizeof(*rwsig_action);
++
++	rwsig_action = (struct ec_params_rwsig_action *)msg->data;
++	rwsig_action->action = RWSIG_ACTION_CONTINUE;
++
++	for (int i = 0; i < RWSIG_CONTINUE_RETRIES; i++) {
++		ret = cros_ec_send_command(ec_dev, msg);
++
++		if (ret < 0) {
++			error_count++;
++		} else if (msg->result == EC_RES_INVALID_COMMAND) {
++			/*
++			 * If EC_RES_INVALID_COMMAND is retured, it means RWSIG
++			 * is not supported or EC is already in RW, so there is
++			 * nothing left to do.
++			 */
++			break;
++		} else if (msg->result != EC_RES_SUCCESS) {
++			/* Unexpected command error. */
++			ret = cros_ec_map_error(msg->result);
++			break;
++		} else {
++			/*
++			 * The EC_CMD_RWSIG_ACTION succeed. Send the command
++			 * more times, to make sure EC is in RW. A following
++			 * command can timeout, because EC may need some time to
++			 * initialize after jump to RW.
++			 */
++			error_count = 0;
++		}
++
++		if (error_count >= RWSIG_CONTINUE_MAX_ERRORS_IN_ROW)
++			break;
++
++		if (ret != -ETIMEDOUT)
++			usleep_range(90000, 100000);
++	}
++
++	kfree(msg);
++
++	return ret;
++}
++EXPORT_SYMBOL(cros_ec_rwsig_continue);
++
+ static int cros_ec_get_proto_info(struct cros_ec_device *ec_dev, int devidx)
+ {
+ 	struct cros_ec_command *msg;
+diff --git a/drivers/platform/chrome/cros_ec_rpmsg.c b/drivers/platform/chrome/cros_ec_rpmsg.c
+index 39d3b50a7c09..bc2666491db1 100644
+--- a/drivers/platform/chrome/cros_ec_rpmsg.c
++++ b/drivers/platform/chrome/cros_ec_rpmsg.c
+@@ -231,7 +231,7 @@ static int cros_ec_rpmsg_probe(struct rpmsg_device *rpdev)
+ 	ec_dev->phys_name = dev_name(&rpdev->dev);
+ 	ec_dev->din_size = sizeof(struct ec_host_response) +
+ 			   sizeof(struct ec_response_get_protocol_info);
+-	ec_dev->dout_size = sizeof(struct ec_host_request);
++	ec_dev->dout_size = sizeof(struct ec_host_request) + sizeof(struct ec_params_rwsig_action);
+ 	dev_set_drvdata(dev, ec_dev);
+ 
+ 	ec_rpmsg->rpdev = rpdev;
+diff --git a/drivers/platform/chrome/cros_ec_spi.c b/drivers/platform/chrome/cros_ec_spi.c
+index 86a3d32a7763..946373238502 100644
+--- a/drivers/platform/chrome/cros_ec_spi.c
++++ b/drivers/platform/chrome/cros_ec_spi.c
+@@ -766,7 +766,7 @@ static int cros_ec_spi_probe(struct spi_device *spi)
+ 	ec_dev->din_size = EC_MSG_PREAMBLE_COUNT +
+ 			   sizeof(struct ec_host_response) +
+ 			   sizeof(struct ec_response_get_protocol_info);
+-	ec_dev->dout_size = sizeof(struct ec_host_request);
++	ec_dev->dout_size = sizeof(struct ec_host_request) + sizeof(struct ec_params_rwsig_action);
+ 
+ 	ec_spi->last_transfer_ns = ktime_get_ns();
+ 
+diff --git a/drivers/platform/chrome/cros_ec_uart.c b/drivers/platform/chrome/cros_ec_uart.c
+index 62bc24f6dcc7..19c179d49c90 100644
+--- a/drivers/platform/chrome/cros_ec_uart.c
++++ b/drivers/platform/chrome/cros_ec_uart.c
+@@ -283,7 +283,7 @@ static int cros_ec_uart_probe(struct serdev_device *serdev)
+ 	ec_dev->pkt_xfer = cros_ec_uart_pkt_xfer;
+ 	ec_dev->din_size = sizeof(struct ec_host_response) +
+ 			   sizeof(struct ec_response_get_protocol_info);
+-	ec_dev->dout_size = sizeof(struct ec_host_request);
++	ec_dev->dout_size = sizeof(struct ec_host_request) + sizeof(struct ec_params_rwsig_action);
+ 
+ 	serdev_device_set_client_ops(serdev, &cros_ec_uart_client_ops);
+ 
+diff --git a/include/linux/platform_data/cros_ec_proto.h b/include/linux/platform_data/cros_ec_proto.h
+index b34ed0cc1f8d..701389c16fa7 100644
+--- a/include/linux/platform_data/cros_ec_proto.h
++++ b/include/linux/platform_data/cros_ec_proto.h
+@@ -246,6 +246,8 @@ int cros_ec_cmd_xfer(struct cros_ec_device *ec_dev,
+ int cros_ec_cmd_xfer_status(struct cros_ec_device *ec_dev,
+ 			    struct cros_ec_command *msg);
+ 
++int cros_ec_rwsig_continue(struct cros_ec_device *ec_dev);
++
+ int cros_ec_query_all(struct cros_ec_device *ec_dev);
+ 
+ int cros_ec_get_next_event(struct cros_ec_device *ec_dev,
+-- 
+2.47.0.338.g60cca15819-goog
 
 
