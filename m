@@ -1,117 +1,133 @@
-Return-Path: <linux-kernel+bounces-432215-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432214-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7EB69E47BC
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 23:21:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1028B9E47B8
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 23:21:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FB331880206
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 22:21:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D203418805BA
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 22:21:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D7401C3BFC;
-	Wed,  4 Dec 2024 22:21:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 828CD1BBBE0;
+	Wed,  4 Dec 2024 22:21:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dmxe6/43"
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NG6WqY8n"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3E641C3C04
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 22:21:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA237191F9C;
+	Wed,  4 Dec 2024 22:21:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733350871; cv=none; b=r+OT2xwFMoYgFJNc3SnxsPkHuYsiuZ7ua2+iIkyKZ66zfw4JWMGofyF3emmaxytgazEt1jlXcO5mnA5x/yLPm95BCCmOLc8CzQcTAeFA95P+lYlIN5QEuoxXtRHVOmpzS7x03MtA1l+SGotqoGP/wIsBUpOhBgeHa4yUeZjUUys=
+	t=1733350869; cv=none; b=isWJs2Ic6aNtCXI6thIRvUkEMfI2UnmFyzR8lvLnMCv4gHS2l/GgFKkx/PtbhUvsoWPLSjJya2k3nyNREUUMYEmsYR6+gWKkcE5gpiijGErlrgN3zxIccMoE18yR7LSY3qoA0XSZY5l/GcyVx2H+rVZhOD3DcmJvRYX6j6gU7jU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733350871; c=relaxed/simple;
-	bh=1XfksjHiUmLDBwfWEVhZRw6suaxhtKcDRmMSFnlRbIA=;
+	s=arc-20240116; t=1733350869; c=relaxed/simple;
+	bh=7Kjwv6X8sBlPbnZSg35bGxloNhQZkO7cxpO2/leNb70=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SL29CWStRDyT25mJ5Q1uGQaDmINdChwdyVBjatJf3vcwci+2fhJP8tKyYbH/07g8U6NHgdDMJMMedCY/59jIqWKVn+TBivNfvNKP0OfIJaDbR95tEUPoJp+T4CsM9iejktIGIWtdK8OE0TEOJ+32yX+IK0pTYXrJhMXWmqKH4+c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dmxe6/43; arc=none smtp.client-ip=209.85.208.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2ffdd9fc913so2349251fa.3
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 14:21:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733350868; x=1733955668; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=OH4y0lMP3bH1lveKpeX+aBwZ95mtO7UpbBtdFwlO2l8=;
-        b=dmxe6/43c5nCrEDsG3SuGqFFn2sZ5xxLPNi64hW6yfrIbDLs7Mmwrz+Qocjc1aNx+e
-         zKfk5JCTscvALQor1UUfbV71YrNF0Dm3KTlpQrjtV2iAMX7KwuodapleVx0PDMbiSAmh
-         WEw72zL+NiJ1AXsd5PSCyElTaN2JLQbhEv8TcmwE8GuixEK8c4b+bsYpCI2YB2A0snOx
-         6u7ouy14GrUisYNRT5QGnVMFGdtL2DKWS3G+AFJTWlDDwRXFZcTVb+2PxIq/ID5pxsDx
-         zPSmFXeG0E4XZa4bBZvkSiNRr+bJ/IOhBEPl8c2z/SFxAiDTmiIbBjt1MBq6XbNumeAe
-         fBUQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733350868; x=1733955668;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OH4y0lMP3bH1lveKpeX+aBwZ95mtO7UpbBtdFwlO2l8=;
-        b=eG0fPpAC3FKsOQhRlGescaWLru0gSQXoENUTtXy/g1R9bwzcuYjeP5v8UIRNhmLEco
-         zPMgm8bptz+bWz7X39qYHtHRwbAhDTYgWasQuVg6n+mI1grC9Ji0hnAfrxLmWsUDVLDR
-         qgoriVqBGNBJs3XXvTPZI1RXORHCR48xi0LSZDcRiaZFH/YIdHNlaGUNCH83YRArzx8O
-         n87/1uFQMelm4WGOJiqx1IoJxTpjsO/f3i2T4+tkLvu1aLkY/bF/8Fc2BLL5LMNe2Kdd
-         jYbecNgCdIGufNakG0//ITng+RDyFbi+IEZSfKC1+twu20vjhc/MsLVRVQiHN1G+pWx1
-         04Pg==
-X-Forwarded-Encrypted: i=1; AJvYcCXVA3iURRF1+idUGknKV4K+s69YSYm6gIUqfR4aiXp+RBqbcaqSkbBcKCbPj+u//RBL0Wh4IMROLgDbbnE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwW/PPg7b4wagckalgj7mM2AvDyXLVze46dbC90Sb3ygcjOi31i
-	9mwVlEBZ1/dYqs2LbduZ42/tMA9wVot3/Semcq3og/zEPHaqQg7dUlTFb1qYu2o=
-X-Gm-Gg: ASbGncuLAXGj05AmipcG7d5HOhHjXCaX2xxhGHOWRzR/YV/iCJO8GOgzC+28G64gPbh
-	VMrMYo3ElEDPzY/RCsvAe1mlYGPfc0ADcbOVjF7UPftAexVczKVbK4Kn5HR4JG7TvDKqXzznNo0
-	ZKGZRKlT3gHrJe3aS+JHYYYb9jAFFJdcMEXvGToq3LwB5k4NYKSjy3QW0A7XuKYoMrXX4LL7Yzv
-	fDwuPH+DP5c9wI+wJKYOG2iLRP1JIsQ+pRN648L9JM8uJ+AmiMrhjHxzSJ6E017lsHlhhxJJTZ4
-	XP+hN1RrL93kVK9u/V0N8vR7RxM+Zg==
-X-Google-Smtp-Source: AGHT+IFQNKupoOz5B2N+8vVrOXLHYn4xv4Wtyf/8DA/aT70hkUWOnF+im9j6wqbTorBqmEkgbKr9BA==
-X-Received: by 2002:a2e:a904:0:b0:2fa:cac0:2a14 with SMTP id 38308e7fff4ca-30009c30156mr45544571fa.11.1733350868075;
-        Wed, 04 Dec 2024 14:21:08 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30020e20aa9sm23431fa.80.2024.12.04.14.21.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Dec 2024 14:21:06 -0800 (PST)
-Date: Thu, 5 Dec 2024 00:21:04 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Melody Olvera <quic_molvera@quicinc.com>
-Cc: Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Abel Vesa <abel.vesa@linaro.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>, Trilok Soni <quic_tsoni@quicinc.com>, 
-	linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
-Subject: Re: [PATCH v3 2/2] interconnect: qcom: Add interconnect provider
- driver for SM8750
-Message-ID: <snccv4rebzwolmqknc2jm6nkfxchi3hm2vauxnneefsisc3xwe@slfyaiss2vat>
-References: <20241204-sm8750_master_interconnects-v3-0-3d9aad4200e9@quicinc.com>
- <20241204-sm8750_master_interconnects-v3-2-3d9aad4200e9@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=D7H0jz/+B0UWVKP/dPZ4aLDyHcfax120+Tp2wtf9sQCb/cVqRoziD5RwIkeqANvs6DkY0oBm3fXXZj+JSKNllaOqZjIl440BnW0uuEOeYJCaOPmc6YWeJs3q8bKRhKEbtOdUNLnVTd+ZbqZJlWfQ7B5VzE3QoCnWF7IRYNTnV/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NG6WqY8n; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35233C4CECD;
+	Wed,  4 Dec 2024 22:21:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733350868;
+	bh=7Kjwv6X8sBlPbnZSg35bGxloNhQZkO7cxpO2/leNb70=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NG6WqY8nt8BOlMu3is3Z8/126MyljUh+G25WjO47mr3cx7/Kw2Wb/UYef8zXXW44A
+	 eW3g3J9aTPwlz0VVfL1QAqjP12xCjK27qlN8Xxidn5TRERb5AQM9FJDOP2KUOJsXlF
+	 mpEMerhgCI0dOgPWDyl7X0mIgUaonr/DWOlxMQvv3GgiYQOtgH01PAAi2buk46tMw3
+	 9JANmaCDcfJ1vF1DCwBNQvjcx191In0hzmMasmqzqJx4OVoN1LpFrJVxwESv6xn27R
+	 1IrKBivisRl/XfCWinYnu5Ld3DYgaGANn9mljubBh/ref+1sRfqf68QzMfp/J9wr31
+	 pVRzP3kA8idiw==
+Date: Wed, 4 Dec 2024 14:21:06 -0800
+From: Namhyung Kim <namhyung@kernel.org>
+To: Oliver Sang <oliver.sang@intel.com>
+Cc: oe-lkp@lists.linux.dev, lkp@intel.com, linux-kernel@vger.kernel.org,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	James Clark <james.clark@linaro.org>,
+	Ravi Bangoria <ravi.bangoria@amd.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	James Clark <james.clark@arm.com>,
+	Atish Patra <atishp@atishpatra.org>,
+	Mingwei Zhang <mizhang@google.com>,
+	Kajol Jain <kjain@linux.ibm.com>,
+	Thomas Richter <tmricht@linux.ibm.com>,
+	Palmer Dabbelt <palmer@rivosinc.com>,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [linus:master] [perf tools]  af954f76ee:
+ perf-sanity-tests.Test_data_symbol.fail
+Message-ID: <Z1DV0lN8qHSysX7f@google.com>
+References: <202411301431.799e5531-lkp@intel.com>
+ <Z04ZUHaGdsBapIEL@google.com>
+ <Z1BhfpYWpUQ0p+qR@xsang-OptiPlex-9020>
+ <Z1DNJpDzCIBFrIZT@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241204-sm8750_master_interconnects-v3-2-3d9aad4200e9@quicinc.com>
+In-Reply-To: <Z1DNJpDzCIBFrIZT@google.com>
 
-On Wed, Dec 04, 2024 at 01:26:06PM -0800, Melody Olvera wrote:
-> From: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
+On Wed, Dec 04, 2024 at 01:44:06PM -0800, Namhyung Kim wrote:
+[SNIP]
+>   perf_event_attr:
+>     type                             4 (cpu)
+>     size                             136
+>     config                           0x1cd (mem-loads)
+>     { sample_period, sample_freq }   4000
+>     sample_type                      IP|TID|TIME|ADDR|CPU|PERIOD|IDENTIFIER|DATA_SRC|WEIGHT_STRUCT
+>     read_format                      ID|LOST
+>     freq                             1
+>     precise_ip                       3
+>     sample_id_all                    1
+>     { bp_addr, config1 }             0x1f
+>   ------------------------------------------------------------
+>   sys_perf_event_open: pid -1  cpu 0  group_fd 5  flags 0x8
+>   sys_perf_event_open failed, error -22
+>   Using PERF_SAMPLE_READ / :S modifier is not compatible with inherit, falling back to no-inherit.
+>   Error:
+>   The sys_perf_event_open() syscall returned with 22 (Invalid argument) for event (cpu/mem-loads,ldlat=30/).
+>   "dmesg | grep -i perf" may provide additional information.
 > 
-> Introduce SM8750 interconnect provider driver using the interconnect
-> framework.
-> 
-> Signed-off-by: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
-> Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
-> ---
->  drivers/interconnect/qcom/Kconfig  |    9 +
->  drivers/interconnect/qcom/Makefile |    2 +
->  drivers/interconnect/qcom/sm8750.c | 1705 ++++++++++++++++++++++++++++++++++++
->  3 files changed, 1716 insertions(+)
-> 
+> There's an issue with fallback on the inherit bit with the sample read.
+> I'll take a look.
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Hmm, no.  It doesn't have neight SAMPLE_READ nor inherit.  So the error
+message was misleading.  Maybe it should be printed when it actually
+clears the bits.
 
--- 
-With best wishes
-Dmitry
+Anyway, I've tested with the old code and realzed that it might be due
+to precise_ip being 3.  I expected it'd return EOPNOTSUPP for the case
+but it seems to return EINVAL sometimes.  Then it should check it after
+the missing features like below.  Can you please test?
+
+Thanks,
+Namhyung
+
+
+---8<---
+diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
+index f745723d486ba962..d22c5df1701eccc5 100644
+--- a/tools/perf/util/evsel.c
++++ b/tools/perf/util/evsel.c
+@@ -2571,12 +2571,12 @@ static int evsel__open_cpu(struct evsel *evsel, struct perf_cpu_map *cpus,
+ 	if (err == -EMFILE && rlimit__increase_nofile(&set_rlimit))
+ 		goto retry_open;
+ 
+-	if (err == -EOPNOTSUPP && evsel__precise_ip_fallback(evsel))
+-		goto retry_open;
+-
+ 	if (err == -EINVAL && evsel__detect_missing_features(evsel))
+ 		goto fallback_missing_features;
+ 
++	if (evsel__precise_ip_fallback(evsel))
++		goto retry_open;
++
+ 	if (evsel__handle_error_quirks(evsel, err))
+ 		goto retry_open;
+ 
 
