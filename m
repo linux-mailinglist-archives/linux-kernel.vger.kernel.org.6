@@ -1,139 +1,207 @@
-Return-Path: <linux-kernel+bounces-432134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B6789E45EB
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 21:39:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 85BF99E4604
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 21:43:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20F20169D30
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 20:39:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 434B3169D6A
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 20:43:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5078918FDAA;
-	Wed,  4 Dec 2024 20:39:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="W7903zJh";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="u9Q8s5ab"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71437190055;
+	Wed,  4 Dec 2024 20:43:31 +0000 (UTC)
+Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 243D618E02A;
-	Wed,  4 Dec 2024 20:39:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2445718EFCC
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 20:43:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733344787; cv=none; b=kF1/So9JMDGhVpBH5mn2dBfZ0eL9ukOEN9mCI2VnWyh2LCn0OIoeKXUMVNJejblokKUfvrsprYwkc61Dyd1EqWS6JkVk6MyEohgg5gdLnT0ayZTuyirKe9fuXqix8q549l90jsw53WrLcAcTM8O8KVqVEJMS8TrTtdkNV8QtXiA=
+	t=1733345010; cv=none; b=omlWawhbw5XMHhAXHjFqMixg7aBGA2of5Szqr2C7mD7FgUuLlJJlr/vkn+CR7VOfFFp/ilR38mi/qWdy0c+SWd+tUia1vURZqpeAQzovpDOnfeiSuV0RQnCKqRb1z9y2m1gqFUACf4kiT7gPYZ55z2/8qz9ytkhBxyw3P/77B3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733344787; c=relaxed/simple;
-	bh=9buZEb2X77sNHuyBwseJrXQxsmZbvUjrIxGCs1RNYBU=;
-	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=s2FlboWeKuPmMWLmo787CodRhdo7DMVwMTpOn52tFbU3f63E1sLMXCshZz46Qgq2bCCaeP+HFUIqK7j+5XESAmHqNFMe7NNymIVKerD9e2XZxBh+4tBE5Yjfgg3sWxfqbnQACn4r7jQycRcWC1Jiy2b+U1wVQpyB0aBej1vxoxg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=W7903zJh; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=u9Q8s5ab; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 04 Dec 2024 20:39:43 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1733344784;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=Yid1eSqSo8HI1ZkY8JaBTagIek04H3U6SC4TXGkhz0I=;
-	b=W7903zJhQthmcpD6UuAZu77PRjbP6W8SwmpgPAILhPnKqU5Uw7BS5Bos8zFC6lauDXKVH1
-	TWC//+Q7eQrrrBZrHXGq4oT6m4M0lAlO/CTfgbuJ0+nH3KdYcQ18uvwCzTBuZauug528kQ
-	W1qm9IGDOMHocUFpYJH1zzOhBsZYc9HE059lM+qMzuYo/SVi3lZgZp0/oLQX46dNr/4wjW
-	iktBJAV8zl2uxls9KIfamf5kbFMJ1Z4edBf0WAmXFcYAlocfn5vKv2FMthhFedt8KSLKgd
-	ExrVKGaWz3/Oq3UYUMvLJ/fDg3sApuFgPonVVIZ2BGeU6f247W9spj+cY59r8g==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1733344784;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=Yid1eSqSo8HI1ZkY8JaBTagIek04H3U6SC4TXGkhz0I=;
-	b=u9Q8s5abwNQ2qYsScTaIoQ2yr5RgI32XePhZKy79adZlxzP17wEqQ/gNtdPuSW3mKYlbVn
-	o65zycqhVS6TrpDQ==
-From: "tip-bot2 for Sohil Mehta" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/cpu] x86/cpufeatures: Free up unused feature bits
-Cc: Sohil Mehta <sohil.mehta@intel.com>,
- Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
- linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1733345010; c=relaxed/simple;
+	bh=MxqrL7P+q5TtbAG4Bjz4LhtI/kOkk5CviQKzYIdVOEo=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=FL4FB+f+Ps9GRXby4V6PATCJpEaP5aW1Wbu8LxMgbG6GTvXgGz8jV3knC9jklRZe+QMSysj9NEgxiwspTLZwpMgCooemlACiHqW+kmAYy3UKBS8fjVj2mLJ4Wu0WBQRUkG1+eeodd9hNr+1Esp0G13vKCSGto6Ie/3VMkSbFn90=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3a7cff77f99so1942075ab.3
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 12:43:28 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733345008; x=1733949808;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=6k9FdKQ2cY0hs7m3TWq6tSTQAE+PkoV2U5ODf+4lDTE=;
+        b=OLu3RA0ftRsrb3afbbGiMa68yIU71KkY4sAhFwGVemABiQ2phft2JvKFN/jiG3p8Z3
+         q1tBCLlr+mQkAL8MN/As0J1DAyJH4E05RECJmp7utcB6qw/InbKTiVfLP06qGNBqhNT4
+         alYFFw819RstsuEqgC3d34y3YtlJZCqFswpzTN/xma5B76rk7zCQ9nq5qqhvdadb1AIb
+         2V8QVaED+C7hmvRfJe1eNdnKQS88sScE2TK5NvUwM83VU3i1L9slbJZwIC9jvXntKEcu
+         6LT1spzvtX0wIJ+HGRUdpfyKi6ulYrE7dMSslJ4Qx/2PydeBiAz85LCX7wti7FoC0A43
+         WCOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWvecSCem5HeiamrU5yuI1Cy3XojmcGr4a0mokVnf1LdRDTSbJTbjd3AvsWSl0qxfDkL9oWIBaQBGpnHHY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNCKc16qEFT4pTK1rvYjVfuxH8mowovSqx9jUDiJTgqDzwN8jP
+	JhuWe8m6LmmWuL6xbEzlb0VN7mLnQanAFqXRm/iuE1bwBkuCTuClYyHK8nn3MH6NbMD4ArLuOor
+	5ITTPxhakpIMlnCS1H0/6YQKPrBJ7NTxJjfCc8g413FP/WPYZz5gJ8oM=
+X-Google-Smtp-Source: AGHT+IGzcfQlcveK056IjyzEAo6BuiDtS7T5gBiKtK++qt8PMl5gkvyuubW/bOBIEUWrnazFAgccABw+QgUre2ueSmGU7oZrkqBW
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <173334478346.412.3186447152849006342.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a92:c246:0:b0:3a6:c98d:86bc with SMTP id
+ e9e14a558f8ab-3a7f9a3838cmr101282705ab.1.1733345008365; Wed, 04 Dec 2024
+ 12:43:28 -0800 (PST)
+Date: Wed, 04 Dec 2024 12:43:28 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6750bef0.050a0220.17bd51.007a.GAE@google.com>
+Subject: [syzbot] [wireless?] [ext4?] general protection fault in pcpu_alloc
+From: syzbot <syzbot+e874685d80aae83785cc@syzkaller.appspotmail.com>
+To: johannes@sipsolutions.net, linux-ext4@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org, 
+	netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-The following commit has been merged into the x86/cpu branch of tip:
+Hello,
 
-Commit-ID:     a734d9d653faf3ddfbe09ef30f31e8977418515c
-Gitweb:        https://git.kernel.org/tip/a734d9d653faf3ddfbe09ef30f31e8977418515c
-Author:        Sohil Mehta <sohil.mehta@intel.com>
-AuthorDate:    Thu, 07 Nov 2024 23:30:00 
-Committer:     Dave Hansen <dave.hansen@linux.intel.com>
-CommitterDate: Wed, 04 Dec 2024 12:27:13 -08:00
+syzbot found the following issue on:
 
-x86/cpufeatures: Free up unused feature bits
+HEAD commit:    bcc8eda6d349 Merge tag 'turbostat-2024.11.30' of git://git..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=128dbf78580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=53ebff8e07a0ee6f
+dashboard link: https://syzkaller.appspot.com/bug?extid=e874685d80aae83785cc
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14bd15e8580000
 
-Linux defined feature bits X86_FEATURE_P3 and X86_FEATURE_P4 are not
-used anywhere. Commit f31d731e4467 ("x86: use X86_FEATURE_NOPL in
-alternatives") got rid of the last usage in 2008. Remove the related
-mappings and code.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/7dd7042cbaae/disk-bcc8eda6.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/48269d20d4af/vmlinux-bcc8eda6.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/010f2b2a997f/bzImage-bcc8eda6.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/73a779ed9f88/mount_0.gz
 
-Just like all X86_FEATURE bits, the raw bit numbers can be exposed to
-userspace via MODULE_DEVICE_TABLE(). There is a very small theoretical
-chance of userspace getting confused if these bits got reassigned and
-changed logical meaning.  But these bits were never used for a device
-table, so it's highly unlikely this will ever happen in practice.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+e874685d80aae83785cc@syzkaller.appspotmail.com
 
-[ dhansen: clarify userspace visibility of these bits ]
+Oops: general protection fault, probably for non-canonical address 0xec2c282c2c2c2c2d: 0000 [#1] PREEMPT SMP KASAN PTI
+KASAN: maybe wild-memory-access in range [0x6161616161616168-0x616161616161616f]
+CPU: 0 UID: 0 PID: 5926 Comm: syz-executor Not tainted 6.12.0-syzkaller-12113-gbcc8eda6d349 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+RIP: 0010:__hlist_del include/linux/list.h:982 [inline]
+RIP: 0010:hlist_del include/linux/list.h:994 [inline]
+RIP: 0010:__alloc_object lib/debugobjects.c:232 [inline]
+RIP: 0010:pcpu_alloc+0x1a8/0x300 lib/debugobjects.c:256
+Code: 2e 4c 89 e8 48 c1 e8 03 80 3c 28 00 74 08 4c 89 ef e8 0c d2 3e fd 49 89 5d 00 48 85 db 74 1c 48 83 c3 08 48 89 d8 48 c1 e8 03 <80> 3c 28 00 74 08 48 89 df e8 ea d1 3e fd 4c 89 2b 41 80 3c 2f 00
+RSP: 0018:ffffc900038a6f60 EFLAGS: 00010006
+RAX: 0c2c2c2c2c2c2c2d RBX: 6161616161616169 RCX: 0000000000000001
+RDX: ffffffff8c09c480 RSI: ffffffff8c5e9080 RDI: ffffffff8c5e9040
+RBP: dffffc0000000000 R08: 0000000000000003 R09: fffff52000714ddc
+R10: dffffc0000000000 R11: fffff52000714ddc R12: 1ffff1100f228801
+R13: ffff8880b863fe00 R14: ffff888079144008 R15: 1ffff1100f228800
+FS:  000055555fac2500(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00005555915bb808 CR3: 000000001cad4000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ alloc_object+0xbf/0x310 lib/debugobjects.c:458
+ lookup_object_or_alloc lib/debugobjects.c:685 [inline]
+ __debug_object_init+0x185/0x470 lib/debugobjects.c:743
+ ieee80211_alloc_hw_nm+0x126e/0x1ea0 net/mac80211/main.c:976
+ mac80211_hwsim_new_radio+0x1db/0x4a90 drivers/net/wireless/virtual/mac80211_hwsim.c:5146
+ hwsim_new_radio_nl+0xece/0x2290 drivers/net/wireless/virtual/mac80211_hwsim.c:6203
+ genl_family_rcv_msg_doit net/netlink/genetlink.c:1115 [inline]
+ genl_family_rcv_msg net/netlink/genetlink.c:1195 [inline]
+ genl_rcv_msg+0xb14/0xec0 net/netlink/genetlink.c:1210
+ netlink_rcv_skb+0x1e3/0x430 net/netlink/af_netlink.c:2542
+ genl_rcv+0x28/0x40 net/netlink/genetlink.c:1219
+ netlink_unicast_kernel net/netlink/af_netlink.c:1321 [inline]
+ netlink_unicast+0x7f6/0x990 net/netlink/af_netlink.c:1347
+ netlink_sendmsg+0x8e4/0xcb0 net/netlink/af_netlink.c:1891
+ sock_sendmsg_nosec net/socket.c:711 [inline]
+ __sock_sendmsg+0x221/0x270 net/socket.c:726
+ __sys_sendto+0x363/0x4c0 net/socket.c:2197
+ __do_sys_sendto net/socket.c:2204 [inline]
+ __se_sys_sendto net/socket.c:2200 [inline]
+ __x64_sys_sendto+0xde/0x100 net/socket.c:2200
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f811ad826dc
+Code: 2a 5a 02 00 44 8b 4c 24 2c 4c 8b 44 24 20 89 c5 44 8b 54 24 28 48 8b 54 24 18 b8 2c 00 00 00 48 8b 74 24 10 8b 7c 24 08 0f 05 <48> 3d 00 f0 ff ff 77 34 89 ef 48 89 44 24 08 e8 70 5a 02 00 48 8b
+RSP: 002b:00007ffd7f24e760 EFLAGS: 00000293 ORIG_RAX: 000000000000002c
+RAX: ffffffffffffffda RBX: 00007f811ba74620 RCX: 00007f811ad826dc
+RDX: 0000000000000024 RSI: 00007f811ba74670 RDI: 0000000000000003
+RBP: 0000000000000000 R08: 00007ffd7f24e7b4 R09: 000000000000000c
+R10: 0000000000000000 R11: 0000000000000293 R12: 0000000000000003
+R13: 0000000000000000 R14: 00007f811ba74670 R15: 0000000000000000
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:__hlist_del include/linux/list.h:982 [inline]
+RIP: 0010:hlist_del include/linux/list.h:994 [inline]
+RIP: 0010:__alloc_object lib/debugobjects.c:232 [inline]
+RIP: 0010:pcpu_alloc+0x1a8/0x300 lib/debugobjects.c:256
+Code: 2e 4c 89 e8 48 c1 e8 03 80 3c 28 00 74 08 4c 89 ef e8 0c d2 3e fd 49 89 5d 00 48 85 db 74 1c 48 83 c3 08 48 89 d8 48 c1 e8 03 <80> 3c 28 00 74 08 48 89 df e8 ea d1 3e fd 4c 89 2b 41 80 3c 2f 00
+RSP: 0018:ffffc900038a6f60 EFLAGS: 00010006
+RAX: 0c2c2c2c2c2c2c2d RBX: 6161616161616169 RCX: 0000000000000001
+RDX: ffffffff8c09c480 RSI: ffffffff8c5e9080 RDI: ffffffff8c5e9040
+RBP: dffffc0000000000 R08: 0000000000000003 R09: fffff52000714ddc
+R10: dffffc0000000000 R11: fffff52000714ddc R12: 1ffff1100f228801
+R13: ffff8880b863fe00 R14: ffff888079144008 R15: 1ffff1100f228800
+FS:  000055555fac2500(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00005555915bb808 CR3: 000000001cad4000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess):
+   0:	2e 4c 89 e8          	cs mov %r13,%rax
+   4:	48 c1 e8 03          	shr    $0x3,%rax
+   8:	80 3c 28 00          	cmpb   $0x0,(%rax,%rbp,1)
+   c:	74 08                	je     0x16
+   e:	4c 89 ef             	mov    %r13,%rdi
+  11:	e8 0c d2 3e fd       	call   0xfd3ed222
+  16:	49 89 5d 00          	mov    %rbx,0x0(%r13)
+  1a:	48 85 db             	test   %rbx,%rbx
+  1d:	74 1c                	je     0x3b
+  1f:	48 83 c3 08          	add    $0x8,%rbx
+  23:	48 89 d8             	mov    %rbx,%rax
+  26:	48 c1 e8 03          	shr    $0x3,%rax
+* 2a:	80 3c 28 00          	cmpb   $0x0,(%rax,%rbp,1) <-- trapping instruction
+  2e:	74 08                	je     0x38
+  30:	48 89 df             	mov    %rbx,%rdi
+  33:	e8 ea d1 3e fd       	call   0xfd3ed222
+  38:	4c 89 2b             	mov    %r13,(%rbx)
+  3b:	41 80 3c 2f 00       	cmpb   $0x0,(%r15,%rbp,1)
 
-Signed-off-by: Sohil Mehta <sohil.mehta@intel.com>
-Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
-Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
-Link: https://lore.kernel.org/all/20241107233000.2742619-1-sohil.mehta%40intel.com
+
 ---
- arch/x86/include/asm/cpufeatures.h | 4 ++--
- arch/x86/kernel/cpu/intel.c        | 5 -----
- 2 files changed, 2 insertions(+), 7 deletions(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
-index 05e985c..de3f299 100644
---- a/arch/x86/include/asm/cpufeatures.h
-+++ b/arch/x86/include/asm/cpufeatures.h
-@@ -83,8 +83,8 @@
- #define X86_FEATURE_CENTAUR_MCR		( 3*32+ 3) /* "centaur_mcr" Centaur MCRs (= MTRRs) */
- #define X86_FEATURE_K8			( 3*32+ 4) /* Opteron, Athlon64 */
- #define X86_FEATURE_ZEN5		( 3*32+ 5) /* CPU based on Zen5 microarchitecture */
--#define X86_FEATURE_P3			( 3*32+ 6) /* P3 */
--#define X86_FEATURE_P4			( 3*32+ 7) /* P4 */
-+/* Free                                 ( 3*32+ 6) */
-+/* Free                                 ( 3*32+ 7) */
- #define X86_FEATURE_CONSTANT_TSC	( 3*32+ 8) /* "constant_tsc" TSC ticks at a constant rate */
- #define X86_FEATURE_UP			( 3*32+ 9) /* "up" SMP kernel running on UP */
- #define X86_FEATURE_ART			( 3*32+10) /* "art" Always running timer (ART) */
-diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
-index e7656cb..1c892eb 100644
---- a/arch/x86/kernel/cpu/intel.c
-+++ b/arch/x86/kernel/cpu/intel.c
-@@ -628,11 +628,6 @@ static void init_intel(struct cpuinfo_x86 *c)
- 		if (p)
- 			strcpy(c->x86_model_id, p);
- 	}
--
--	if (c->x86 == 15)
--		set_cpu_cap(c, X86_FEATURE_P4);
--	if (c->x86 == 6)
--		set_cpu_cap(c, X86_FEATURE_P3);
- #endif
- 
- 	/* Work around errata */
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
