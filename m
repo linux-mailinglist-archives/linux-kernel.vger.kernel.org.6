@@ -1,79 +1,35 @@
-Return-Path: <linux-kernel+bounces-431067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6483B9E38B3
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 12:23:36 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E34F79E3898
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 12:17:40 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AEF23165F4F
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 11:17:31 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50D0F1B87F2;
+	Wed,  4 Dec 2024 11:15:44 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 438B4B2CE62
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 11:16:51 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0D7D1B4125;
-	Wed,  4 Dec 2024 11:14:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b="DHcbSxTn"
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53CDC1AC884
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 11:14:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C1D11B2188;
+	Wed,  4 Dec 2024 11:15:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733310882; cv=none; b=PY+9muqzoRdVYzxUjUecSpfsFpO2i/ioTFSw18dK06pNPB7qSzzvwZ/zW0UXcodmal9ttqLGoT2tDbF4gGbxHwVkfC6qz+y5GQB1+cl7CPmfiSw8V3k64a10R3+X7VL3Fx9V1J7tKUlIzarFb4XSqFNC5yd9YLyTrt9ou7tHFxg=
+	t=1733310943; cv=none; b=fRzQ7u8ziZQJJf78IYkVRZOSATesbK3SzQ/lnYg6cUGKFVzmKg2M0OCHg0aRkckbrPx3AM/jWiMOtCLfvdQpIrxf+p2tBqLIvq2Qq61e4iThwMxi9x6V/5WodC00kM8qefbWUiMUsNUAZkt+sfjE+TH8b2y7s8TaOCMCESy1HG8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733310882; c=relaxed/simple;
-	bh=9OLhs2SzV/pCzSUkig7J9m6Sox+2hEhjUdbeM9Ztw2Y=;
+	s=arc-20240116; t=1733310943; c=relaxed/simple;
+	bh=sKEMmn0VIMcFOF8el2EUq9z+0qgCsppj4x5WhEOPcNI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bZOI/TlVDlNXNGC1stCpJ8Ua0VukwIOvm3DowYIx+a5YONPPP55CJjBi1MIBY2ur9lCdn22M3XXFF8Fl0Ty0jMwXaUKB0C8hrh5Zf3525EaJQ7xBsuUH7NoitZ7sGxRLQIDsvAd3smI+HJJVfMAfIKFVK1QB+YH0GCzpEaaqh2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net; spf=pass smtp.mailfrom=openvpn.com; dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b=DHcbSxTn; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=openvpn.com
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2ffc3f2b3a9so90489341fa.1
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 03:14:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=openvpn.net; s=google; t=1733310878; x=1733915678; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=ez2v/hFK48GJBwcBEU6ORn4LsLhEflZ+7+C1VR4AmbE=;
-        b=DHcbSxTnRWfR74T4K+DSrnKQ7X3Hjtu/9vMoVGk4rnI7NHF998POYiEQ7STuaA4s5l
-         2ibeeBBOt+V2FugFDxAWgQha0LyCHc81OYFBSax3m2c7rn8ji/j43j3/Pj0q53UMA8jC
-         VqqfYygguOKMyGvD38rPsL6dRCObZC8gboFfc+sRmuJxIwYh2p03oqO5Ln8GsCvSDIcv
-         s58AgVfPIrtVhW1z1O0tLahpqGjqmOPSQWzDEizSQbn/7WDjtmSz4pmOAwB+uocaPVXt
-         Hb7RqcVfbD6Nr6wvKh+XLAN60zhvWjmAPt6NxvWIPCYgfUv+mZCe4xhRSz+n96CYVgn0
-         X64A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733310878; x=1733915678;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ez2v/hFK48GJBwcBEU6ORn4LsLhEflZ+7+C1VR4AmbE=;
-        b=q3OFSwpmIJ4NXszI4oqgPfN9QjLKFZb9dB8Ne4zY5PVtwmc0yfSwtyp3kvnARMH3Oe
-         4Ri5D9QhOC32Nlwr7YjeoL4TSPfV9pfFbYrmY3z0tgJf5zUiwHW35cY3yDJPgMW3TiYg
-         8fx+0QY/yJ4rHNZGeGc5pT7zG6pIiZu7dAZc5Y1ZD3FUkIMe2D0wlP9yFUNJG99ali3Z
-         LFkU1Ojo5HIBku/qGVqRgRmfmRQF70ylRMbR+DQSvJooXzwELx3SWMJrDT598/CeElI2
-         DugAAjYbRg40Itujj57vlc5VQhpD7/gkBF9RCXdoescrNFjUrf2Mz11LfLEeRpb+HFYu
-         eEhw==
-X-Forwarded-Encrypted: i=1; AJvYcCUD1Oo/uU+na1avXAK8jqPZDS90F214owj0q3bBiXMdKhUAtrfUQ8LC9hOPCxGs8+4T9g38YJiOotyKfhI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOHMtK4iiLn1ULF4NfZzatLSHedxP8iDjk27juuGD9WXe75Wry
-	bWVTFPWxvD4GbETP2oPvryVFMS5a4cvwd8MYmwJSRvIeGzDrQnxZjOvTFJoriKg=
-X-Gm-Gg: ASbGncuKCUDSJ0/y7qpeA/N+ZaTdaxDwQF6bSxS47zhHbr/q7yAF+7CICgP2RV8PqJu
-	/NXeEQAsxWM2VX1hxo5m/LvtVhJTXyZ2w5q3yOcR1dC4lM8Kq+8g3xjRz95hhpF1m8/bZe5EBEl
-	Y349R4n7nGludyZFr+DUyyQOyIeDklAhJbyA20TIFPwsIUpd3QVbsxbQ8EbUF/F2SiEbrDCWX8/
-	/+ftPt480LWaULHpc6DyJgNhbLGZ41j268abQRhrdvhTMEoHTnclc3m1uQlzIaPUQNU0V4GTwho
-	Ap5dLBsXkQz9
-X-Google-Smtp-Source: AGHT+IHjWaqG1rXyWFR8Wi2Ha3hd2f8CVysn1B6oBnd2IW0Yh1Bn5HcpN52v67q0BsPdR2Y8WU7QnA==
-X-Received: by 2002:a05:6512:3e06:b0:53d:d3cb:d90b with SMTP id 2adb3069b0e04-53e12a38999mr5628954e87.47.1733310878264;
-        Wed, 04 Dec 2024 03:14:38 -0800 (PST)
-Received: from ?IPV6:2001:67c:2fbc:1:85f4:5278:b2f6:64fb? ([2001:67c:2fbc:1:85f4:5278:b2f6:64fb])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa5996c192fsm730780566b.27.2024.12.04.03.14.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Dec 2024 03:14:37 -0800 (PST)
-Message-ID: <2a1b614c-c52d-44c7-8cb8-c68a8864508d@openvpn.net>
-Date: Wed, 4 Dec 2024 12:15:16 +0100
+	 In-Reply-To:Content-Type; b=QEf1FeJiYkDpYg0xIJ28oNZ5jJahbZzFrH5NyHQmnMDclp5AOeux2lOYD8YaRuPQ0fN77C+Jd9hZ0OXIUQnnAZXLcTQHkQQ32LIXucuxZT96qW/+1Svyxgt3RHTePjDBclcxmbjygPQMVTpbYQ1L0WSBGqU4p4Kq5kYHD/n/v8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 198F2C4CED1;
+	Wed,  4 Dec 2024 11:15:40 +0000 (UTC)
+Message-ID: <cf9cd17a-30d6-43e7-ae59-2f34d6f2dc00@linux-m68k.org>
+Date: Wed, 4 Dec 2024 21:15:38 +1000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,352 +37,358 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v12 11/22] ovpn: implement TCP transport
-To: Paolo Abeni <pabeni@redhat.com>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Donald Hunter <donald.hunter@gmail.com>,
- Shuah Khan <shuah@kernel.org>, sd@queasysnail.net, ryazanov.s.a@gmail.com,
- Andrew Lunn <andrew@lunn.ch>
-Cc: Simon Horman <horms@kernel.org>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-References: <20241202-b4-ovpn-v12-0-239ff733bf97@openvpn.net>
- <20241202-b4-ovpn-v12-11-239ff733bf97@openvpn.net>
- <784fddc4-336c-4674-8277-c7cebea6b94f@redhat.com>
+Subject: Re: [PATCH] m68k: coldfire: Support resources for UART
+To: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>,
+ Geert Uytterhoeven <geert@linux-m68k.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jiri Slaby <jirislaby@kernel.org>
+Cc: linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org,
+ linux-serial@vger.kernel.org
+References: <20241202-m5441x_uart_resource-v1-1-6b28cb295fb5@yoseli.org>
+ <52517849-48ed-4fe8-8638-ec2a4dc2bcbd@linux-m68k.org>
+ <a06e4806-8b5a-4073-96d5-2a37103e572f@yoseli.org>
 Content-Language: en-US
-From: Antonio Quartulli <antonio@openvpn.net>
-Autocrypt: addr=antonio@openvpn.net; keydata=
- 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
-Organization: OpenVPN Inc.
-In-Reply-To: <784fddc4-336c-4674-8277-c7cebea6b94f@redhat.com>
+From: Greg Ungerer <gerg@linux-m68k.org>
+In-Reply-To: <a06e4806-8b5a-4073-96d5-2a37103e572f@yoseli.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 03/12/2024 16:19, Paolo Abeni wrote:
-> On 12/2/24 16:07, Antonio Quartulli wrote:
->> +void ovpn_tcp_socket_detach(struct socket *sock)
->> +{
->> +	struct ovpn_socket *ovpn_sock;
->> +	struct ovpn_peer *peer;
->> +
->> +	if (!sock)
->> +		return;
->> +
->> +	rcu_read_lock();
->> +	ovpn_sock = rcu_dereference_sk_user_data(sock->sk);
->> +
->> +	if (!ovpn_sock->peer) {
->> +		rcu_read_unlock();
->> +		return;
->> +	}
->> +
->> +	peer = ovpn_sock->peer;
->> +	strp_stop(&peer->tcp.strp);
->> +
->> +	skb_queue_purge(&peer->tcp.user_queue);
->> +
->> +	/* restore CBs that were saved in ovpn_sock_set_tcp_cb() */
->> +	sock->sk->sk_data_ready = peer->tcp.sk_cb.sk_data_ready;
->> +	sock->sk->sk_write_space = peer->tcp.sk_cb.sk_write_space;
->> +	sock->sk->sk_prot = peer->tcp.sk_cb.prot;
->> +	sock->sk->sk_socket->ops = peer->tcp.sk_cb.ops;
->> +	/* drop reference to peer */
->> +	rcu_assign_sk_user_data(sock->sk, NULL);
->> +
->> +	rcu_read_unlock();
->> +
->> +	barrier();
+Hi JM,
+
+On 4/12/24 20:58, Jean-Michel Hautbois wrote:
+> On 04/12/2024 11:54, Greg Ungerer wrote:
+>> On 2/12/24 20:34, Jean-Michel Hautbois wrote:
+>>> In order to use the eDMA channels for UART, the mcf_platform_uart needs
+>>> to be changed. Instead of adding another custom member for the
+>>> structure, use a resource tree in a platform_device per UART. It then
+>>> makes it possible to have a device named like "mcfuart.N" with N the
+>>> UART number.
+>>>
+>>> Later, adding the dma channel in the mcf tty driver will also be more
+>>> straightfoward.
+>>>
+>>> Signed-off-by: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
+>>> ---
+>>>   arch/m68k/coldfire/device.c | 96 +++++++++++++ +-------------------------------
+>>>   drivers/tty/serial/mcf.c    | 69 +++++++++++++++++++-------------
+>>>   2 files changed, 70 insertions(+), 95 deletions(-)
+>>>
+>>> diff --git a/arch/m68k/coldfire/device.c b/arch/m68k/coldfire/device.c
+>>> index b6958ec2a220cf91a78a14fc7fa18749451412f7..fd7d0b0ce7eb2970cb8ffe33589fe8d7e88c268d 100644
+>>> --- a/arch/m68k/coldfire/device.c
+>>> +++ b/arch/m68k/coldfire/device.c
+>>> @@ -24,73 +24,35 @@
+>>>   #include <linux/platform_data/dma-mcf-edma.h>
+>>>   #include <linux/platform_data/mmc-esdhc-mcf.h>
+>>> -/*
+>>> - *    All current ColdFire parts contain from 2, 3, 4 or 10 UARTS.
+>>> - */
+>>> -static struct mcf_platform_uart mcf_uart_platform_data[] = {
+>>> -    {
+>>> -        .mapbase    = MCFUART_BASE0,
+>>> -        .irq        = MCF_IRQ_UART0,
+>>> -    },
+>>> -    {
+>>> -        .mapbase    = MCFUART_BASE1,
+>>> -        .irq        = MCF_IRQ_UART1,
+>>> -    },
+>>> -#ifdef MCFUART_BASE2
+>>> -    {
+>>> -        .mapbase    = MCFUART_BASE2,
+>>> -        .irq        = MCF_IRQ_UART2,
+>>> -    },
+>>> -#endif
+>>> -#ifdef MCFUART_BASE3
+>>> -    {
+>>> -        .mapbase    = MCFUART_BASE3,
+>>> -        .irq        = MCF_IRQ_UART3,
+>>> -    },
+>>> -#endif
+>>> -#ifdef MCFUART_BASE4
+>>> -    {
+>>> -        .mapbase    = MCFUART_BASE4,
+>>> -        .irq        = MCF_IRQ_UART4,
+>>> -    },
+>>> -#endif
+>>> -#ifdef MCFUART_BASE5
+>>> -    {
+>>> -        .mapbase    = MCFUART_BASE5,
+>>> -        .irq        = MCF_IRQ_UART5,
+>>> -    },
+>>> -#endif
+>>> -#ifdef MCFUART_BASE6
+>>> -    {
+>>> -        .mapbase    = MCFUART_BASE6,
+>>> -        .irq        = MCF_IRQ_UART6,
+>>> -    },
+>>> -#endif
+>>> -#ifdef MCFUART_BASE7
+>>> -    {
+>>> -        .mapbase    = MCFUART_BASE7,
+>>> -        .irq        = MCF_IRQ_UART7,
+>>> +static u64 mcf_uart_mask = DMA_BIT_MASK(32);
+>>> +
+>>> +static struct resource mcf_uart0_resource[] = {
+>>> +    [0] = {
+>>> +        .start = MCFUART_BASE0,
+>>> +        .end   = MCFUART_BASE0 + 0x3fff,
+>>> +        .flags = IORESOURCE_MEM,
+>>>       },
+>>> -#endif
+>>> -#ifdef MCFUART_BASE8
+>>> -    {
+>>> -        .mapbase    = MCFUART_BASE8,
+>>> -        .irq        = MCF_IRQ_UART8,
+>>> +    [1] = {
+>>> +        .start = 2,
+>>> +        .end   = 3,
+>>> +        .flags = IORESOURCE_DMA,
+>>>       },
+>>> -#endif
+>>> -#ifdef MCFUART_BASE9
+>>> -    {
+>>> -        .mapbase    = MCFUART_BASE9,
+>>> -        .irq        = MCF_IRQ_UART9,
+>>> +    [2] = {
+>>> +        .start = MCF_IRQ_UART0,
+>>> +        .end   = MCF_IRQ_UART0,
+>>> +        .flags = IORESOURCE_IRQ,
+>>>       },
+>>> -#endif
+>>> -    { },
+>>>   };
+>>> -static struct platform_device mcf_uart = {
+>>> +static struct platform_device mcf_uart0 = {
+>>>       .name            = "mcfuart",
+>>>       .id            = 0,
+>>> -    .dev.platform_data    = mcf_uart_platform_data,
+>>> +    .num_resources = ARRAY_SIZE(mcf_uart0_resource),
+>>> +    .resource = mcf_uart0_resource,
+>>> +    .dev = {
+>>> +        .dma_mask = &mcf_uart_mask,
+>>> +        .coherent_dma_mask = DMA_BIT_MASK(32),
+>>> +    },
+>>>   };
+>>>   #ifdef MCFFEC_BASE0
+>>> @@ -485,12 +447,12 @@ static struct platform_device mcf_i2c5 = {
+>>>   static const struct dma_slave_map mcf_edma_map[] = {
+>>>       { "dreq0", "rx-tx", MCF_EDMA_FILTER_PARAM(0) },
+>>>       { "dreq1", "rx-tx", MCF_EDMA_FILTER_PARAM(1) },
+>>> -    { "uart.0", "rx", MCF_EDMA_FILTER_PARAM(2) },
+>>> -    { "uart.0", "tx", MCF_EDMA_FILTER_PARAM(3) },
+>>> -    { "uart.1", "rx", MCF_EDMA_FILTER_PARAM(4) },
+>>> -    { "uart.1", "tx", MCF_EDMA_FILTER_PARAM(5) },
+>>> -    { "uart.2", "rx", MCF_EDMA_FILTER_PARAM(6) },
+>>> -    { "uart.2", "tx", MCF_EDMA_FILTER_PARAM(7) },
+>>> +    { "mcfuart.0", "rx", MCF_EDMA_FILTER_PARAM(2) },
+>>> +    { "mcfuart.0", "tx", MCF_EDMA_FILTER_PARAM(3) },
+>>> +    { "mcfuart.1", "rx", MCF_EDMA_FILTER_PARAM(4) },
+>>> +    { "mcfuart.1", "tx", MCF_EDMA_FILTER_PARAM(5) },
+>>> +    { "mcfuart.2", "rx", MCF_EDMA_FILTER_PARAM(6) },
+>>> +    { "mcfuart.2", "tx", MCF_EDMA_FILTER_PARAM(7) },
+>>>       { "timer0", "rx-tx", MCF_EDMA_FILTER_PARAM(8) },
+>>>       { "timer1", "rx-tx", MCF_EDMA_FILTER_PARAM(9) },
+>>>       { "timer2", "rx-tx", MCF_EDMA_FILTER_PARAM(10) },
+>>> @@ -623,7 +585,7 @@ static struct platform_device mcf_flexcan0 = {
+>>>   #endif /* MCFFLEXCAN_SIZE */
+>>>   static struct platform_device *mcf_devices[] __initdata = {
+>>> -    &mcf_uart,
+>>> +    &mcf_uart0,
+>>>   #ifdef MCFFEC_BASE0
+>>>       &mcf_fec0,
+>>>   #endif
+>>> diff --git a/drivers/tty/serial/mcf.c b/drivers/tty/serial/mcf.c
+>>> index 93e7dda4d39acd23daf8c0d4c29ac8d666f263c5..07b8decfdb6005f0265dd130765e45c3fd1715eb 100644
+>>> --- a/drivers/tty/serial/mcf.c
+>>> +++ b/drivers/tty/serial/mcf.c
+>>> @@ -570,31 +570,46 @@ static struct uart_driver mcf_driver = {
+>>>   static int mcf_probe(struct platform_device *pdev)
+>>>   {
+>>> -    struct mcf_platform_uart *platp = dev_get_platdata(&pdev->dev);
+>>>       struct uart_port *port;
+>>> -    int i;
+>>> -
+>>> -    for (i = 0; ((i < MCF_MAXPORTS) && (platp[i].mapbase)); i++) {
+>>> -        port = &mcf_ports[i].port;
+>>> -
+>>> -        port->line = i;
+>>> -        port->type = PORT_MCF;
+>>> -        port->mapbase = platp[i].mapbase;
+>>> -        port->membase = (platp[i].membase) ? platp[i].membase :
+>>> -            (unsigned char __iomem *) platp[i].mapbase;
+>>> -        port->dev = &pdev->dev;
+>>> -        port->iotype = SERIAL_IO_MEM;
+>>> -        port->irq = platp[i].irq;
+>>> -        port->uartclk = MCF_BUSCLK;
+>>> -        port->ops = &mcf_uart_ops;
+>>> -        port->flags = UPF_BOOT_AUTOCONF;
+>>> -        port->rs485_config = mcf_config_rs485;
+>>> -        port->rs485_supported = mcf_rs485_supported;
+>>> -        port->has_sysrq = IS_ENABLED(CONFIG_SERIAL_MCF_CONSOLE);
+>>> -
+>>> -        uart_add_one_port(&mcf_driver, port);
+>>> +    struct mcf_uart *pp;
+>>> +    struct resource *res;
+>>> +    void __iomem *base;
+>>> +    int id = pdev->id;
+>>> +
+>>> +    if (id == -1 || id >= MCF_MAXPORTS) {
+>>> +        dev_err(&pdev->dev, "uart%d out of range\n",
+>>> +            id);
+>>> +        return -EINVAL;
+>>>       }
+>>> +    port = &mcf_ports[id].port;
+>>> +    port->line = id;
+>>> +
+>>> +    base = devm_platform_get_and_ioremap_resource(pdev, 0, &res);
+>>> +    if (IS_ERR(base))
+>>> +        return PTR_ERR(base);
+>>> +
+>>> +    port->mapbase = res->start;
+>>> +    port->membase = base;
+>>> +
+>>> +    port->irq = platform_get_irq(pdev, 0);
+>>> +    if (port->irq < 0)
+>>> +        return port->irq;
+>>> +
+>>> +    port->type = PORT_MCF;
+>>> +    port->dev = &pdev->dev;
+>>> +    port->iotype = SERIAL_IO_MEM;
+>>> +    port->uartclk = MCF_BUSCLK;
+>>> +    port->ops = &mcf_uart_ops;
+>>> +    port->flags = UPF_BOOT_AUTOCONF;
+>>> +    port->rs485_config = mcf_config_rs485;
+>>> +    port->rs485_supported = mcf_rs485_supported;
+>>> +    port->has_sysrq = IS_ENABLED(CONFIG_SERIAL_MCF_CONSOLE);
+>>> +
+>>> +    pp = container_of(port, struct mcf_uart, port);
+>>> +
+>>> +    uart_add_one_port(&mcf_driver, port);
+>>> +
+>>
+>> This breaks platforms with more than one UART - which is quite a few of
+>> the ColdFire platforms. Numerous boards bring and use more than one UART.
 > 
-> It's unclear to me the role of the above barrier. A comment would help
+> I don't get why, as I have two uarts here, and each is detected properly when declaring those in my platform ? I get that it breaks existing detection (we are parsing all uarts even when only one or two is used) but it does not prevent it to work ?
 
-Unless I misinterpreted Sabrina's previous comment, the barrier() is 
-needed to prevent reordering and therefore ensure that the assumption 
-described in the comment below is true.
+Building and testing on an M5208EVB platform.
+With original un-modified code boot console shows:
 
-I can re-arrange the comment to make it clear that the barrier() is 
-serving this specific purpose.
+...
+[    0.110000] romfs: ROMFS MTD (C) 2007 Red Hat, Inc.
+[    0.110000] ColdFire internal UART serial driver
+[    0.110000] mcfuart.0: ttyS0 at MMIO 0xfc060000 (irq = 90, base_baud = 5208333) is a ColdFire UART
+[    0.120000] printk: legacy console [ttyS0] enabled
+[    0.120000] mcfuart.0: ttyS1 at MMIO 0xfc064000 (irq = 91, base_baud = 5208333) is a ColdFire UART
+[    0.120000] mcfuart.0: ttyS2 at MMIO 0xfc068000 (irq = 92, base_baud = 5208333) is a ColdFire UART
+[    0.130000] brd: module loaded
+...
 
+
+But with this change applied only the first port is probed:
+
+...
+[    0.120000] romfs: ROMFS MTD (C) 2007 Red Hat, Inc.
+[    0.120000] ColdFire internal UART serial driver
+[    0.130000] mcfuart.0: ttyS0 at MMIO 0xfc060000 (irq = 90, base_baud = 5208333) is a ColdFire UART
+[    0.130000] printk: legacy console [ttyS0] enabled
+[    0.130000] brd: module loaded
+...
+
+Regards
+Greg
+
+
+
+> static struct resource mcf_uart2_resource[] = {
+>      [0] = {
+>          .start = MCFUART_BASE2,
+>          .end   = MCFUART_BASE2 + 0x3fff,
+>          .flags = IORESOURCE_MEM,
+>      },
+>      [1] = {
+>          .start = 6,
+>          .end   = 7,
+>          .flags = IORESOURCE_DMA,
+>      },
+>      [2] = {
+>          .start = MCF_IRQ_UART2,
+>          .end   = MCF_IRQ_UART2,
+>          .flags = IORESOURCE_IRQ,
+>      },
+> };
 > 
->> +	/* cancel any ongoing work. Done after removing the CBs so that these
->> +	 * workers cannot be re-armed
->> +	 */
->> +	cancel_work_sync(&peer->tcp.tx_work);
->> +	strp_done(&peer->tcp.strp);
->> +	skb_queue_purge(&peer->tcp.out_queue);
->> +
->> +	ovpn_peer_put(peer);
->> +}
->> +
->> +static void ovpn_tcp_send_sock(struct ovpn_peer *peer)
->> +{
->> +	struct sk_buff *skb = peer->tcp.out_msg.skb;
->> +
->> +	if (!skb)
->> +		return;
->> +
->> +	if (peer->tcp.tx_in_progress)
->> +		return;
->> +
->> +	peer->tcp.tx_in_progress = true;
->> +
->> +	do {
->> +		int ret = skb_send_sock_locked(peer->sock->sock->sk, skb,
->> +					       peer->tcp.out_msg.offset,
->> +					       peer->tcp.out_msg.len);
->> +		if (unlikely(ret < 0)) {
->> +			if (ret == -EAGAIN)
->> +				goto out;
->> +
->> +			net_warn_ratelimited("%s: TCP error to peer %u: %d\n",
->> +					     netdev_name(peer->ovpn->dev),
->> +					     peer->id, ret);
->> +
->> +			/* in case of TCP error we can't recover the VPN
->> +			 * stream therefore we abort the connection
->> +			 */
->> +			ovpn_peer_del(peer,
->> +				      OVPN_DEL_PEER_REASON_TRANSPORT_ERROR);
->> +			break;
->> +		}
->> +
->> +		peer->tcp.out_msg.len -= ret;
->> +		peer->tcp.out_msg.offset += ret;
->> +	} while (peer->tcp.out_msg.len > 0);
->> +
->> +	if (!peer->tcp.out_msg.len)
->> +		dev_sw_netstats_tx_add(peer->ovpn->dev, 1, skb->len);
->> +
->> +	kfree_skb(peer->tcp.out_msg.skb);
->> +	peer->tcp.out_msg.skb = NULL;
->> +	peer->tcp.out_msg.len = 0;
->> +	peer->tcp.out_msg.offset = 0;
->> +
->> +out:
->> +	peer->tcp.tx_in_progress = false;
->> +}
->> +
->> +static void ovpn_tcp_tx_work(struct work_struct *work)
->> +{
->> +	struct ovpn_peer *peer;
->> +
->> +	peer = container_of(work, struct ovpn_peer, tcp.tx_work);
->> +
->> +	lock_sock(peer->sock->sock->sk);
->> +	ovpn_tcp_send_sock(peer);
->> +	release_sock(peer->sock->sock->sk);
->> +}
->> +
->> +static void ovpn_tcp_send_sock_skb(struct ovpn_peer *peer, struct sk_buff *skb)
->> +{
->> +	if (peer->tcp.out_msg.skb)
->> +		ovpn_tcp_send_sock(peer);
->> +
->> +	if (peer->tcp.out_msg.skb) {
->> +		dev_core_stats_rx_dropped_inc(peer->ovpn->dev);
->> +		kfree_skb(skb);
->> +		return;
->> +	}
->> +
->> +	peer->tcp.out_msg.skb = skb;
->> +	peer->tcp.out_msg.len = skb->len;
->> +	peer->tcp.out_msg.offset = 0;
->> +	ovpn_tcp_send_sock(peer);
->> +}
->> +
->> +void ovpn_tcp_send_skb(struct ovpn_peer *peer, struct sk_buff *skb)
->> +{
->> +	u16 len = skb->len;
->> +
->> +	*(__be16 *)__skb_push(skb, sizeof(u16)) = htons(len);
->> +
->> +	bh_lock_sock(peer->sock->sock->sk);
+> static struct platform_device mcf_uart2 = {
+>      .name            = "mcfuart",
+>      .id            = 2,
+>      .num_resources = ARRAY_SIZE(mcf_uart2_resource),
+>      .resource = mcf_uart2_resource,
+>      .dev = {
+>          .dma_mask = &mcf_uart_mask,
+>          .coherent_dma_mask = DMA_BIT_MASK(32),
+>      },
+> };
 > 
-> Are you sure this runs in BH context? AFAICS we reach here from an AEAD
-> callback.
-
-It could be from the AEAD callback (crypto async case), but it may also 
-be directly from the packet RX path (crypto sync case).
-
-If I am not wrong, in the latter case we are in BH context.
-
+> static struct resource mcf_uart6_resource[] = {
+>      [0] = {
+>          .start = MCFUART_BASE6,
+>          .end   = MCFUART_BASE6 + 0x3fff,
+>          .flags = IORESOURCE_MEM,
+>      },
+>      [1] = {
+>          .start = 22,
+>          .end   = 23,
+>          .flags = IORESOURCE_DMA,
+>      },
+>      [2] = {
+>          .start = MCF_IRQ_UART6,
+>          .end   = MCF_IRQ_UART6,
+>          .flags = IORESOURCE_IRQ,
+>      },
+> };
 > 
+> static struct platform_device mcf_uart6 = {
+>      .name            = "mcfuart",
+>      .id            = 6,
+>      .num_resources = ARRAY_SIZE(mcf_uart6_resource),
+>      .resource = mcf_uart6_resource,
+>      .dev = {
+>          .dma_mask = &mcf_uart_mask,
+>          .coherent_dma_mask = DMA_BIT_MASK(32),
+>      },
+> };
 > 
+> JM
 > 
->> +	if (sock_owned_by_user(peer->sock->sock->sk)) {
->> +		if (skb_queue_len(&peer->tcp.out_queue) >=
->> +		    READ_ONCE(net_hotdata.max_backlog)) {
->> +			dev_core_stats_rx_dropped_inc(peer->ovpn->dev);
->> +			kfree_skb(skb);
->> +			goto unlock;
->> +		}
->> +		__skb_queue_tail(&peer->tcp.out_queue, skb);
->> +	} else {
->> +		ovpn_tcp_send_sock_skb(peer, skb);
->> +	}
->> +unlock:
->> +	bh_unlock_sock(peer->sock->sock->sk);
->> +}
+>>
+>> Regards
+>> Greg
+>>
+>>
+>>
+>>>       return 0;
+>>>   }
+>>> @@ -603,13 +618,11 @@ static int mcf_probe(struct platform_device *pdev)
+>>>   static void mcf_remove(struct platform_device *pdev)
+>>>   {
+>>>       struct uart_port *port;
+>>> -    int i;
+>>> +    int id = pdev->id;
+>>> -    for (i = 0; (i < MCF_MAXPORTS); i++) {
+>>> -        port = &mcf_ports[i].port;
+>>> -        if (port)
+>>> -            uart_remove_one_port(&mcf_driver, port);
+>>> -    }
+>>> +    port = &mcf_ports[id].port;
+>>> +    if (port)
+>>> +        uart_remove_one_port(&mcf_driver, port);
+>>>   }
+>>>   / ****************************************************************************/
+>>>
+>>> ---
+>>> base-commit: e457f18d7f25288d143c1fe024a620d0b15caec1
+>>> change-id: 20241202-m5441x_uart_resource-729b30c15363
+>>>
+>>> Best regards,
 > 
-> [...]
-> 
->> +static void ovpn_tcp_build_protos(struct proto *new_prot,
->> +				  struct proto_ops *new_ops,
->> +				  const struct proto *orig_prot,
->> +				  const struct proto_ops *orig_ops);
->> +
->> +/* Set TCP encapsulation callbacks */
->> +int ovpn_tcp_socket_attach(struct socket *sock, struct ovpn_peer *peer)
->> +{
->> +	struct strp_callbacks cb = {
->> +		.rcv_msg = ovpn_tcp_rcv,
->> +		.parse_msg = ovpn_tcp_parse,
->> +	};
->> +	int ret;
->> +
->> +	/* make sure no pre-existing encapsulation handler exists */
->> +	if (sock->sk->sk_user_data)
->> +		return -EBUSY;
->> +
->> +	/* sanity check */
->> +	if (sock->sk->sk_protocol != IPPROTO_TCP) {
->> +		net_err_ratelimited("%s: provided socket is not TCP as expected\n",
->> +				    netdev_name(peer->ovpn->dev));
->> +		return -EINVAL;
->> +	}
->> +
->> +	/* only a fully connected socket are expected. Connection should be
->> +	 * handled in userspace
->> +	 */
->> +	if (sock->sk->sk_state != TCP_ESTABLISHED) {
->> +		net_err_ratelimited("%s: provided TCP socket is not in ESTABLISHED state: %d\n",
->> +				    netdev_name(peer->ovpn->dev),
->> +				    sock->sk->sk_state);
->> +		return -EINVAL;
->> +	}
->> +
->> +	lock_sock(sock->sk);
->> +
->> +	ret = strp_init(&peer->tcp.strp, sock->sk, &cb);
->> +	if (ret < 0) {
->> +		DEBUG_NET_WARN_ON_ONCE(1);
->> +		release_sock(sock->sk);
->> +		return ret;
->> +	}
->> +
->> +	INIT_WORK(&peer->tcp.tx_work, ovpn_tcp_tx_work);
->> +	__sk_dst_reset(sock->sk);
->> +	skb_queue_head_init(&peer->tcp.user_queue);
->> +	skb_queue_head_init(&peer->tcp.out_queue);
->> +
->> +	/* save current CBs so that they can be restored upon socket release */
->> +	peer->tcp.sk_cb.sk_data_ready = sock->sk->sk_data_ready;
->> +	peer->tcp.sk_cb.sk_write_space = sock->sk->sk_write_space;
->> +	peer->tcp.sk_cb.prot = sock->sk->sk_prot;
->> +	peer->tcp.sk_cb.ops = sock->sk->sk_socket->ops;
->> +
->> +	/* assign our static CBs and prot/ops */
->> +	sock->sk->sk_data_ready = ovpn_tcp_data_ready;
->> +	sock->sk->sk_write_space = ovpn_tcp_write_space;
->> +
->> +	if (sock->sk->sk_family == AF_INET) {
->> +		sock->sk->sk_prot = &ovpn_tcp_prot;
->> +		sock->sk->sk_socket->ops = &ovpn_tcp_ops;
->> +	} else {
->> +		mutex_lock(&tcp6_prot_mutex);
->> +		if (!ovpn_tcp6_prot.recvmsg)
->> +			ovpn_tcp_build_protos(&ovpn_tcp6_prot, &ovpn_tcp6_ops,
->> +					      sock->sk->sk_prot,
->> +					      sock->sk->sk_socket->ops);
->> +		mutex_unlock(&tcp6_prot_mutex);
-> 
-> This looks like an hack to avoid a build dependency on IPV6, I think the
-> explicit
-
-I happily copied this approach from espintcp.c:espintcp_init_sk() :-D
-
-> 
-> #if IS_ENABLED(CONFIG_IPV6)
-> 
-> at init time should be preferable
-
-Ok, will try to take this other approach.
-
-I also have the feeling that by going this way I can get rid of the 
-checkpatch warning about proto_ops not being consts.
-
-> 
->> +
->> +		sock->sk->sk_prot = &ovpn_tcp6_prot;
->> +		sock->sk->sk_socket->ops = &ovpn_tcp6_ops;
->> +	}
-> 
-> [...]
-> 
->> +static void ovpn_tcp_close(struct sock *sk, long timeout)
->> +{
->> +	struct ovpn_socket *sock;
->> +
->> +	rcu_read_lock();
->> +	sock = rcu_dereference_sk_user_data(sk);
->> +
->> +	strp_stop(&sock->peer->tcp.strp);
->> +	barrier();
-> 
-> Again, is not clear to me the role of the above barrier, please document it.
-
-Also taken from espintcp_close(), with the idea to avoid reordering 
-during the shut down sequence.
-
-Will add a comment here too.
-
-
-Thanks a lot.
-
-Regards,
-
-> 
-> Thanks,
-> 
-> Paolo
-> 
-
--- 
-Antonio Quartulli
-OpenVPN Inc.
-
 
