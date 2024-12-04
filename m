@@ -1,142 +1,182 @@
-Return-Path: <linux-kernel+bounces-432243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8820C9E482E
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 23:54:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CA069E4832
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 23:56:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AFA72168FA0
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 22:54:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 195B81880447
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 22:55:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F2B11FC7E7;
-	Wed,  4 Dec 2024 22:54:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 499251F543E;
+	Wed,  4 Dec 2024 22:55:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="iP/8hB6x"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="b57mTEVz"
+Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A65E2391AD;
-	Wed,  4 Dec 2024 22:54:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E03E11B3955
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 22:55:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733352843; cv=none; b=PxUSKhGSsDRAqBEMRtMwGmNuyzY84qOOs/PlW1AnaHuRiRwV0vfvTVkmCh/9EKxaPMspKj34L/tdZve5PQTg3SiBC1DuVKXhh2zt3QGdwR8fjlbBu/aZ8PCsMHF9NjyAmHcLw0v+it9hqGDlbE2XmzStn6pcYoQkQZl7JXuKcpc=
+	t=1733352944; cv=none; b=lor37bmUpnU6Uh8pKh7CfWFXduwXKpXtT8PCBap3PiQ31xJ0sSKJ7pYX9jvpOwT+ktZoHXbu1FgNk8JxQAtOGIagjgeeksuWJ0pF9dCgNu3vEm4v2qHtxtoYLIgGNup9OlqXU/RMKm/kjfas9rfhtm5ZHYMy2T4/d9DFI9H0IQw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733352843; c=relaxed/simple;
-	bh=phBG4qPWzZ0qStQD5GB5kfJM1TvRh39dWaqrGwY+E64=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=rqG14DWh+CvrHyNv6Dh2byjlW9x7oxpnvr3REx6b6EnZlcpgWjqzZtY6Nl6YqY5IGshqD1Nrct+it6Idn9Fpd61Nua/7vkqGUJVuwLHx1h7Nd2xcVHlLeKeIueMkcpJAkGy0UbyZDXucMhRtWTDqrfojCCc+BjcZ4eesT1xd1bI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=iP/8hB6x; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B4MfLcS026173;
-	Wed, 4 Dec 2024 22:53:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=/Q+3VnkjXBFaSuC92/iafg
-	3bdPqJUT22HKrS5ADna5o=; b=iP/8hB6x86ighS1gD4YgJj6pmJ/AnX7rAo+qtE
-	TDWnq2xLHZiwlY0TEqaqjCEPeHY00abtg4ufi9q2NMgO30KZJSSLKlJbvLCThT/P
-	2FXQ51qn24HPjomaph+/h3i+pdyZfnvdsPCKPfiSq+q9ZzB14i9CnXQto8YUzdzc
-	YXPaJJqFEE0+r9RW+JUUeCyf3GaV2jbBImEfxe2JKj5S/tJWnAuy+tUp112p3IZ9
-	4apqrcSuNzw/NszZ7Yn9S/j8PDY88hEKfKPDm4t3lHf+0itk2EXsU4BCxgzsCpFk
-	FxY8cfvoocEK2PBHdn85+F3iq7hjxS/10QzBj0YRxphY2vRw==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 439yr9n4s7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 04 Dec 2024 22:53:46 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B4MrjlI000790
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 4 Dec 2024 22:53:45 GMT
-Received: from hu-molvera-lv.qualcomm.com (10.49.16.6) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 4 Dec 2024 14:53:45 -0800
-From: Melody Olvera <quic_molvera@quicinc.com>
-Date: Wed, 4 Dec 2024 14:53:37 -0800
-Subject: [PATCH RESEND] dt-bindings: interrupt-controller: qcom,pdc:
- Document SM8750 PDC
+	s=arc-20240116; t=1733352944; c=relaxed/simple;
+	bh=sn4enATu6n42dvq7Gr3MM0WwCTGADHpPBuoqCtsWjMc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ILvtM5NrFXfPFir/9Sfk7OSI0VDOXxUOoV2/50AEus+OvXlFpQbkmWGb8uEK65EElSMTWASkGhcYBQVfy+WtQfHF62Ht6v2Mm80X7WiNcxkj7pNL0F/lT9zN0NaK4quVxJbN1JuWYOR/UxgO2brn/uPWOogl44MMeGapqF5af2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=b57mTEVz; arc=none smtp.client-ip=209.85.219.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-6d842280932so5100166d6.2
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 14:55:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1733352941; x=1733957741; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=h8PrHsy7yaVJu8qpxJGFoxRiq8VZTbuR/cuaMqNGRsc=;
+        b=b57mTEVznwGgmhqt5gAsg8h7j3aB2+l5F/wOMndhABhH6Bqv3wbH1K6UV41htvJCfn
+         7Y5jGauXFw35WP4q2NIV3A1TSX6n+kpbahf5PgGEfbVLttbptGHIkrRaaxpzT6yxTY61
+         JpHFM6/uyjgY+g4cZZLtkZ07kK8v6eQNXLL70gv9xYweKpyqTygnpS6l7rVg1/eqqnOR
+         9fyjYjG/0xFr7VVaLAf4UMVVh0NEXXhslm3pfwIO9sN1ZyjvvQdDlNsKjbFsC6EjoTEt
+         W8vQrOb6EWHSepn5Tiz6OV6JuvqWQCy4hbxdaT/Iwv/M2SXAxktFO4ZPNG4YmoLQLumR
+         TY6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733352941; x=1733957741;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=h8PrHsy7yaVJu8qpxJGFoxRiq8VZTbuR/cuaMqNGRsc=;
+        b=oXMMeySQhJzm7qVVLUSCaQPX++gC946SCFqAZadK4xBZ0TMyANa96bfi02MzY2nV7w
+         yLtXvedpR2xYTetxH3bYnNwh2VJEVdzYlfrSWfz+dNyRQUFCZXdAYALhmPe+Dq43NPsO
+         Dziglv+MoyFPW5Ya1Rv/dY4Eud3tZdEbBk5DnCBW6SZkePZwu3tXDrQ8szmZe+qeZvr+
+         7+atS6O9wIqmtAO+ThoOmgYZKvP2aCQMs6yRPyBt3Sjk7H4em35uR69GJHLBP0/+KxAM
+         XtSc4Gp/Q3OV3WWvrJ7lTbqQ1y7WSdZUE/eSNptQThrOuhrsLTRc2Vv9m9diE6/5+qtn
+         QOcA==
+X-Forwarded-Encrypted: i=1; AJvYcCUXj2etSChG6iH6VBxz8Lf62fT+srTgGIcQRn0egECfnPunl27k6owp2L3a4LCKFx3o6q18m/BlGYORNlU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywm7zERfEHnl2dTqSui/HQ5jP1FV/m3c2idqstlgRS1QaH68RQ/
+	iWskpqNjVvrM67ginxv34cUrh2diuyZ8tr8nQd0jexshOu0Vu6Wg9S/L1pfzb87qOSseFW+2NIr
+	fuEFBzVd9vxwtEHXIVfgB2BbrzDgplwdKNVwg
+X-Gm-Gg: ASbGncu9IMBiKpBR5TW0gWd5bAvbxX0GwvBUgzD8ORiTWiN6IpSHnL0XVnVIGqQfgY7
+	zR/BuOgMH9JxC9vcSAl3jjAHXP2BT
+X-Google-Smtp-Source: AGHT+IFHMvdGJnDSH/n2cmR1dw1uCaoTdi4uTiVuOPJ7MAJXp/aLmZCowxUTvoBD+ogJikqJuWi8/DrgUYgZfKbTBzw=
+X-Received: by 2002:ad4:5f8a:0:b0:6d4:1662:348c with SMTP id
+ 6a1803df08f44-6d8b73067b5mr123350746d6.17.1733352940619; Wed, 04 Dec 2024
+ 14:55:40 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20241204-sm8750_master_pdc-v1-1-3a06cb62a28f@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAHDdUGcC/0XMPQ+CMBSF4b9C7mzJ7QeCTg6yOuhoDGnKRZpYi
- i0SE8J/t7o4Pic57wKRgqUI+2yBQLON1g8JfJOB6fVwJ2bbZBAoFBeoWHRVWWDjdJwoNGNrmCg
- LKjSiJDKQfmOgzr5/zSuc60t9OsIt7V3wjk19IP0vouBCopK7XGylUBUyzp4vaxrnHzMFffjCD
- iY33sG6fgDA978GrwAAAA==
-X-Change-ID: 20241204-sm8750_master_pdc-275e5a003eec
-To: Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Satya Durga Srinivasu Prabhala
-	<quic_satyap@quicinc.com>,
-        Trilok Soni <quic_tsoni@quicinc.com>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski@linaro.org>,
-        Melody Olvera <quic_molvera@quicinc.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1733352825; l=1221;
- i=quic_molvera@quicinc.com; s=20241204; h=from:subject:message-id;
- bh=phBG4qPWzZ0qStQD5GB5kfJM1TvRh39dWaqrGwY+E64=;
- b=iiXf6Qjb/hsHC45eAXMlOWfmC2zrz5+cqteIPU35vh9zkc/MpPRJr9Et2Ong94e/ZQuifgREA
- cMuxRmoT3k5DiGwzBRFRUKFQoQP9yxI6XKecvnB4+7KSJe99HBF10fA
-X-Developer-Key: i=quic_molvera@quicinc.com; a=ed25519;
- pk=1DGLp3zVYsHAWipMaNZZTHR321e8xK52C9vuAoeca5c=
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: G8oFa1XUxzk6P31GiSuHHsJrRSYElQ_Z
-X-Proofpoint-GUID: G8oFa1XUxzk6P31GiSuHHsJrRSYElQ_Z
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 impostorscore=0
- clxscore=1015 priorityscore=1501 mlxlogscore=712 phishscore=0
- lowpriorityscore=0 malwarescore=0 mlxscore=0 suspectscore=0 adultscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412040175
+References: <20241123070127.332773-1-kanchana.p.sridhar@intel.com>
+ <20241123070127.332773-10-kanchana.p.sridhar@intel.com> <CAKEwX=PmKWH4Z4Py9Jti9fcD6qCYJBBRrDF48qdmo8-i+LzzfA@mail.gmail.com>
+ <SJ0PR11MB56783454B5985ACD48744772C9362@SJ0PR11MB5678.namprd11.prod.outlook.com>
+ <Z066p53LoISwqkmX@gondor.apana.org.au> <SJ0PR11MB5678AAEF4F62773847E6307FC9362@SJ0PR11MB5678.namprd11.prod.outlook.com>
+ <CAJD7tkbui2MTkkGA6_+RDA0oZW2m3rMnUTKp1Fp6tPqp2QLgKw@mail.gmail.com>
+ <Z0-zboLmrybOt8pv@gondor.apana.org.au> <CAJD7tkaJwti5vwUXP=T9MW4XXHmen+SCQXv=hWWN+-V3SJJSVA@mail.gmail.com>
+ <SJ0PR11MB5678F2E6E78A2B74D2F6AB8AC9372@SJ0PR11MB5678.namprd11.prod.outlook.com>
+In-Reply-To: <SJ0PR11MB5678F2E6E78A2B74D2F6AB8AC9372@SJ0PR11MB5678.namprd11.prod.outlook.com>
+From: Yosry Ahmed <yosryahmed@google.com>
+Date: Wed, 4 Dec 2024 14:55:03 -0800
+Message-ID: <CAJD7tkbgaV-KjvAyLs5LXa95qb4f93QY4FxCzt7r-Juccq4z_Q@mail.gmail.com>
+Subject: Re: [PATCH v4 09/10] mm: zswap: Allocate pool batching resources if
+ the crypto_alg supports batching.
+To: "Sridhar, Kanchana P" <kanchana.p.sridhar@intel.com>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>, Nhat Pham <nphamcs@gmail.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, 
+	"hannes@cmpxchg.org" <hannes@cmpxchg.org>, "chengming.zhou@linux.dev" <chengming.zhou@linux.dev>, 
+	"usamaarif642@gmail.com" <usamaarif642@gmail.com>, "ryan.roberts@arm.com" <ryan.roberts@arm.com>, 
+	"ying.huang@intel.com" <ying.huang@intel.com>, "21cnbao@gmail.com" <21cnbao@gmail.com>, 
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>, 
+	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>, "davem@davemloft.net" <davem@davemloft.net>, 
+	"clabbe@baylibre.com" <clabbe@baylibre.com>, "ardb@kernel.org" <ardb@kernel.org>, 
+	"ebiggers@google.com" <ebiggers@google.com>, "surenb@google.com" <surenb@google.com>, 
+	"Accardi, Kristen C" <kristen.c.accardi@intel.com>, 
+	"Feghali, Wajdi K" <wajdi.k.feghali@intel.com>, "Gopal, Vinodh" <vinodh.gopal@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Document the PDC block on the SM8750 SoC.
+On Wed, Dec 4, 2024 at 2:49=E2=80=AFPM Sridhar, Kanchana P
+<kanchana.p.sridhar@intel.com> wrote:
+>
+>
+> > -----Original Message-----
+> > From: Yosry Ahmed <yosryahmed@google.com>
+> > Sent: Wednesday, December 4, 2024 2:36 PM
+> > To: Herbert Xu <herbert@gondor.apana.org.au>
+> > Cc: Sridhar, Kanchana P <kanchana.p.sridhar@intel.com>; Nhat Pham
+> > <nphamcs@gmail.com>; linux-kernel@vger.kernel.org; linux-mm@kvack.org;
+> > hannes@cmpxchg.org; chengming.zhou@linux.dev;
+> > usamaarif642@gmail.com; ryan.roberts@arm.com; ying.huang@intel.com;
+> > 21cnbao@gmail.com; akpm@linux-foundation.org; linux-
+> > crypto@vger.kernel.org; davem@davemloft.net; clabbe@baylibre.com;
+> > ardb@kernel.org; ebiggers@google.com; surenb@google.com; Accardi,
+> > Kristen C <kristen.c.accardi@intel.com>; Feghali, Wajdi K
+> > <wajdi.k.feghali@intel.com>; Gopal, Vinodh <vinodh.gopal@intel.com>
+> > Subject: Re: [PATCH v4 09/10] mm: zswap: Allocate pool batching resourc=
+es if
+> > the crypto_alg supports batching.
+> >
+> > On Tue, Dec 3, 2024 at 5:42=E2=80=AFPM Herbert Xu <herbert@gondor.apana=
+.org.au>
+> > wrote:
+> > >
+> > > On Tue, Dec 03, 2024 at 01:44:00PM -0800, Yosry Ahmed wrote:
+> > > >
+> > > > Does this mean that instead of zswap breaking down the folio into
+> > > > SWAP_CRYPTO_BATCH_SIZE -sized batches, we pass all the pages to the
+> > > > crypto layer and let it do the batching as it pleases?
+> > >
+> > > You provide as much (or little) as you're comfortable with.  Just
+> > > treat the acomp API as one that can take as much as you want to
+> > > give it.
+> >
+> > In this case, it seems like the batch size is completely up to zswap,
+> > and not necessarily dependent on the compressor. That being said,
+> > Intel IAA will naturally prefer a batch size that maximizes the
+> > parallelization.
+> >
+> > How about this, we can define a fixed max batch size in zswap, to
+> > provide a hard limit on the number of buffers we preallocate (e.g.
+> > MAX_BATCH_SIZE). The compressors can provide zswap a hint with their
+> > desired batch size (e.g. 8 for Intel IAA). Then zswap can allocate
+> > min(MAX_BATCH_SIZE, compressor_batch_size).
+> >
+> > Assuming software compressors provide 1 for the batch size, if
+> > MAX_BATCH_SIZE is >=3D 8, Intel IAA gets the batching rate it wants, an=
+d
+> > software compressors get the same behavior as today. This abstracts
+> > the batch size needed by the compressor while making sure zswap does
+> > not preallocate a ridiculous amount of memory.
+> >
+> > Does this make sense to everyone or am I missing something?
+>
+> Thanks Yosry, this makes perfect sense. I can declare a default
+> CRYPTO_ACOMP_BATCH_SIZE=3D1, and a crypto API that zswap can
+> query, acomp_get_batch_size(struct crypto_acomp *tfm) that
+> can call a crypto algorithm interface if it is registered, for e.g.
+> crypto_get_batch_size() that IAA can register to return the max
+> batch size for IAA. If a compressor does not provide an
+> implementation for crypto_get_batch_size(), we would return
+> CRYPTO_ACOMP_BATCH_SIZE. This way, nothing specific will
+> need to be done for the software compressors for now. Unless
+> they define a specific batch_size via say, another interface,
+> crypto_set_batch_size(), the acomp_get_batch_size() will return 1.
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
----
-Resending in case this fell through the cracks.
-Original:
-https://lore.kernel.org/all/20241021230439.2632480-1-quic_molvera@quicinc.com/
----
- Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.yaml | 1 +
- 1 file changed, 1 insertion(+)
+I still think zswap should define its own maximum to avoid having the
+compressors have complete control over the amount of memory that zswap
+preallocates.
 
-diff --git a/Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.yaml b/Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.yaml
-index a54da66a89e73212f7b965997dc487d9f0d421b0..5d4a22322c45528a1a8b9a41cc9d4c88387b5a0f 100644
---- a/Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.yaml
-+++ b/Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.yaml
-@@ -47,6 +47,7 @@ properties:
-           - qcom,sm8450-pdc
-           - qcom,sm8550-pdc
-           - qcom,sm8650-pdc
-+          - qcom,sm8750-pdc
-           - qcom,x1e80100-pdc
-       - const: qcom,pdc
- 
+For the acomp stuff I will let Herbert decide what he thinks is best.
+From the zswap side, I just want:
+- A hard limit on the amount of memory we preallocate.
+- No change for the software compressors.
 
----
-base-commit: bcf2acd8f64b0a5783deeeb5fd70c6163ec5acd7
-change-id: 20241204-sm8750_master_pdc-275e5a003eec
-
-Best regards,
--- 
-Melody Olvera <quic_molvera@quicinc.com>
-
+>
+> Thanks,
+> Kanchana
 
