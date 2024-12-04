@@ -1,244 +1,239 @@
-Return-Path: <linux-kernel+bounces-430521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 998829E3210
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 04:24:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8507C9E3212
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 04:24:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C52CAB2B75A
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 03:23:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2DB81B29133
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 03:23:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E2B91534F7;
-	Wed,  4 Dec 2024 03:23:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1761D1514CC;
+	Wed,  4 Dec 2024 03:23:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="tEgWJyg7"
-Received: from MA0PR01CU012.outbound.protection.outlook.com (mail-southindiaazolkn19011032.outbound.protection.outlook.com [52.103.67.32])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Ss9QreUY"
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BA0017BA1;
-	Wed,  4 Dec 2024 03:23:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.67.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733282601; cv=fail; b=l7FOBd9pcgoTQKskS/ItT678P89Ysas9zkd20m/qftGwVuwDww0eN1bDpD0Lo/MVpARQe5aeP8HDRcYwuHLwfezB0u5VAbd9SPWteX7OTPBm6N1avHuvShDBm6Y00qsta+JHOIsKOKihcjuPcA2Cbt7uoXQd/+ZJQQsMej5RrGg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733282601; c=relaxed/simple;
-	bh=aw3kKwzk90aNKJaAya5tp/LnLs9TY8OJlBs2ra/cw0Q=;
-	h=Message-ID:Date:Subject:To:References:Cc:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=PufzT7KddMWO3XSkXLdrVNhb9eIpaaDPLNwdmRBT40LsOI77QmXXzC8+DioSIIqheHmpSzvCCkyGZqA4T9xurpPY5Hn2ddo9BlozBTFAzvY9EZShoDKe1R1evaEWIzCe1tNZN1DxyTm7zh3Rx5vgzSlQzf5JBUIRNZ8EhQy+ko4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=tEgWJyg7; arc=fail smtp.client-ip=52.103.67.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=qj/VesgACq2oA+Y4w44cY4KcXDb1ahimCI4i9paJh840r+F0s1hl4gOe5w1VjkkFtELvfjkjfFyXoEFgocGf9qoJk0jmhqs5pbUBcyQPAkJejZoT+dMeFr6BjQZnfGkwvGqG8z/4F//76tRksM2yGX+sbNKgKYKvZQus7vp/7uQht0guGZof08l4/GjSzbACypYscjp4OPgTiFdYrUFzyqeChkdCwjvLlBKk3MJdv6JNNu3IskpIKoPghaD6Qi/cnH8vAgF9v7PC4AJ1p2uwsh8/DrCetNFQuo+pWYABT+bpWcb8gwjiLQCcOfhUYj9PCLomZ+e8xL8QmSc6/+lbZg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=dEIYQkyB4Smd+P+BECZuWMz6OmOagP+INf/nQWIDIJ8=;
- b=jytept3bOjdo/OfP23oECJd6YIAXOF+mrjKZPohuF31zRsbPN17mSOq6NeBbDFp9R1Ju0havrsl8g8kqMoDoIDA75QLLl5aOe/snBo+SxW6/C48w5LLQQssYPDV4j4BYrkVLZGmVNIgGDH2njKbYwY/CZiuhkhMiCIZQNRlLcCxu46X/rx3iJznVygQ4jzRPxKif3/KcFdqZXmIMbnzyHIpNWk/pQSUfrB7wKPNptUqBxUHUAc5DVspNyxXuxMnincYqwg4jS0ppepxgiVTnkbatFB9tKZG8tJrt5buFBDDGPasET1NanMMlkGyJ4R0ckMTAEOIFOQ7HgRNMYnC+TQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dEIYQkyB4Smd+P+BECZuWMz6OmOagP+INf/nQWIDIJ8=;
- b=tEgWJyg7H9e3zdNeZYlRwaNdCge0VayOZqRu5CC/XWdKn1nha/2OcIyCNkPT308pyT5BErQoR3+FhIBj3WFLu2CTtRbN1Gr3HJGkPpGYviGX40cNvlqSwHsbStZLVfrHnluTAc6korFWML59TbwMIjMfD+BpU3Cgi+9kO/Xme6CbGH0nVKaN4H/XdOcqAbIPeWi7TtNGmRLDlmIXarMGEdS4dz1xz78KE0QZG8XNX5+BkXMqX7ZhvUzu/zg7oEYBG8uddKOegWkqosQRr4VSseRFgpIhsFfFw4fYidYjvnIUbTb9rWXOT1OLsHk1DPJcyiT7kmD0DJay2sQYhHfYYw==
-Received: from MA1PR01MB3979.INDPRD01.PROD.OUTLOOK.COM (2603:1096:a00:77::15)
- by PN0PR01MB9037.INDPRD01.PROD.OUTLOOK.COM (2603:1096:c01:164::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.19; Wed, 4 Dec
- 2024 03:23:12 +0000
-Received: from MA1PR01MB3979.INDPRD01.PROD.OUTLOOK.COM
- ([fe80::8f4f:f03b:c8ca:7432]) by MA1PR01MB3979.INDPRD01.PROD.OUTLOOK.COM
- ([fe80::8f4f:f03b:c8ca:7432%3]) with mapi id 15.20.8230.010; Wed, 4 Dec 2024
- 03:23:12 +0000
-Message-ID:
- <MA1PR01MB3979DAB77659B77873E009F7FE372@MA1PR01MB3979.INDPRD01.PROD.OUTLOOK.COM>
-Date: Wed, 4 Dec 2024 11:23:07 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 0/3] pwm: Add pwm driver for Sophgo SG2042
-To: ukleinek@kernel.org
-References: <cover.1733281657.git.unicorn_wang@outlook.com>
-Cc: Chen Wang <unicornxw@gmail.com>, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, inochiama@outlook.com, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
- linux-riscv@lists.infradead.org, chao.wei@sophgo.com,
- haijiao.liu@sophgo.com, xiaoguang.xing@sophgo.com, chunzhi.lin@sophgo.com
-From: Chen Wang <unicorn_wang@outlook.com>
-In-Reply-To: <cover.1733281657.git.unicorn_wang@outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SG2P153CA0009.APCP153.PROD.OUTLOOK.COM (2603:1096::19) To
- MA1PR01MB3979.INDPRD01.PROD.OUTLOOK.COM (2603:1096:a00:77::15)
-X-Microsoft-Original-Message-ID:
- <0bace35b-2679-4017-a3b7-a54a3689bd6d@outlook.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF663142E86
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 03:23:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733282586; cv=none; b=D/KELaBz/8rvfqLYKrkPxmZS0DMF585SVVMXLB3BELKZlrp2iREflvomOzTmuTsMmwObpQCdSTFMOPvPFQZnVcwkWNMoLYZAkZcALDHhKwu2lOyHZcZgUguulk3a0wibj19SRRaYtN2909CYZPRzvBq1dCjGVAciBjv2DPfumUs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733282586; c=relaxed/simple;
+	bh=/x87zGqFlYW6FOa7WxLzFnS8i2jC1Co1eFatKFG84+g=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
+	 Content-Type:References; b=sMNoBHgHluJmg18ZZQJIDErxUCsDuHIOPeP978zVvuUMNyZxW9kkrLWkGQv5BfmKdP8idNTwLF/vk9owcRBsDP1VW1xRg7uQMKZDy3xJFypuVNqmvtbu951WgMEI4SHBFKydXf9ZEgyaKqMsaTBI8EFtJIqrBimfynG1/Xnyi+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Ss9QreUY; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas2p2.samsung.com (unknown [182.195.41.54])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20241204032255epoutp030de630087674663367dbb62a8f8f7896~N21GzPj_N0395403954epoutp03o
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 03:22:55 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20241204032255epoutp030de630087674663367dbb62a8f8f7896~N21GzPj_N0395403954epoutp03o
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1733282575;
+	bh=Ydhw1LSmSJ9spvNZRfN6ZlVoFUHHEfXL806Y9X19014=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Ss9QreUYSo6lN5WevNqo/5QRYZ0Oag0b81l8Y1JL+8HiPKbm++xVx9Rh+5oPl4CS1
+	 SWr4f3dTZB3YVOTRoOFp6jrZDG3BsM2RWE9MQiBf1NQq7Oo4O/FU0eoAa5I/REC6ui
+	 9id1Q8WDbpTTjBIwyDuGTVY1oQHH+vMXzvYeRpEw=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+	epcas2p3.samsung.com (KnoxPortal) with ESMTP id
+	20241204032254epcas2p3a513227c336e23119d5c9fad7d9041a3~N21GDxUz30889308893epcas2p3Z;
+	Wed,  4 Dec 2024 03:22:54 +0000 (GMT)
+Received: from epsmges2p3.samsung.com (unknown [182.195.36.89]) by
+	epsnrtp2.localdomain (Postfix) with ESMTP id 4Y32sB1Ncpz4x9Pt; Wed,  4 Dec
+	2024 03:22:54 +0000 (GMT)
+Received: from epcas2p2.samsung.com ( [182.195.41.54]) by
+	epsmges2p3.samsung.com (Symantec Messaging Gateway) with SMTP id
+	83.39.22105.E0BCF476; Wed,  4 Dec 2024 12:22:54 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas2p1.samsung.com (KnoxPortal) with ESMTPA id
+	20241204032253epcas2p1d973d0a4992989ba03c5ab73cbb6696a~N21FJR65m1427114271epcas2p1L;
+	Wed,  4 Dec 2024 03:22:53 +0000 (GMT)
+Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20241204032253epsmtrp249837e3b9fea563214cb1dcd9a4da891~N21FIPsNJ1447114471epsmtrp24;
+	Wed,  4 Dec 2024 03:22:53 +0000 (GMT)
+X-AuditID: b6c32a47-fd1c970000005659-4e-674fcb0eb518
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	93.20.33707.D0BCF476; Wed,  4 Dec 2024 12:22:53 +0900 (KST)
+Received: from perf (unknown [10.229.95.91]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20241204032253epsmtip1ee7d9ee643204be4e67cfeb73c95dcb3~N21E24wCR2668026680epsmtip1l;
+	Wed,  4 Dec 2024 03:22:53 +0000 (GMT)
+Date: Wed, 4 Dec 2024 12:26:18 +0900
+From: Youngmin Nam <youngmin.nam@samsung.com>
+To: Neal Cardwell <ncardwell@google.com>, Eric Dumazet <edumazet@google.com>
+Cc: Youngmin Nam <youngmin.nam@samsung.com>, davem@davemloft.net,
+	dsahern@kernel.org, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
+	dujeong.lee@samsung.com, guo88.liu@samsung.com, yiwang.cai@samsung.com,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	joonki.min@samsung.com, hajun.sung@samsung.com, d7271.choe@samsung.com,
+	sw.ju@samsung.com
+Subject: Re: [PATCH] tcp: check socket state before calling WARN_ON
+Message-ID: <Z0/L2gDjvXVfj1ho@perf>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MA1PR01MB3979:EE_|PN0PR01MB9037:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8898a657-b16e-4a57-9721-08dd1412fb41
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|5072599009|7092599003|15080799006|19110799003|461199028|6090799003|8060799006|1602099012|440099028|10035399004|4302099013|3412199025;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?b2xDaHBOaXh1eWNIWm10cS9pbVVCblNJajNIS0toNTN0aXpQMVBIVTdxMjJJ?=
- =?utf-8?B?bW5ldzJ3N2pjNG0vR3pCamNSbUx6UURvRElOTHVVMzJodjdwMy9LTjl5aTBz?=
- =?utf-8?B?blBNcjVvWHpkbTlYNHR6eFZyOVhXUUVjWHpTUWptYkdDanFwdHFiTEdJTGEw?=
- =?utf-8?B?MUJoM2h1UkJ5RStsVGV1UWdzR0h3bE1kNlpiM1ZaVTIwenJVRE9uSmI0eFRx?=
- =?utf-8?B?YmxOOVVCUjluaGEvaG9TREhnWkZkYlpyQjNnREFJY0RWbU9SdmVwL2R3UnlC?=
- =?utf-8?B?WmsrR0lycndyNHN4RDhVVjV2d0djWjU1VkF5b08yMGh2djZZMTZRNDBDZEdo?=
- =?utf-8?B?ejZUb1BZZWUxc3VrVUN2Y1p1RjdpTk9pc2RsZEx6OFArUnRhQnJIQUZ1cnRu?=
- =?utf-8?B?eTdIMTc0V3hHNHlkL2xKMTFsZEllc2oydzFGdnZ6RmdXUTc2WTZyc01ZTVpU?=
- =?utf-8?B?dzZqOTZLdTZiOGswK2pOZFpCTEJlOVN0cTUvc1pkTmJkT0JlWmFwUDJCRGht?=
- =?utf-8?B?TnRTMThDektVbENOUXJ5eTY3aW4wZ1hlekREZzdqRDV1ckFwWHlPWWo1bVEx?=
- =?utf-8?B?NDlPS3ZNU0c0N0ZWd0F2VFRtWlVEdzFINnE0eGV0bjBLMlhUckNCUTg3KzVG?=
- =?utf-8?B?RlhvOXk2bVZCbzB6QURXNWtzUHdZeEY0SW9LTkZFTnAzb0VsekliT1VKdW5Z?=
- =?utf-8?B?VFNpbW41d2xmQjFwZGNuTUJEdmcyVTVkL0hxYlZscXpIK3VNQkEvYUNMNDlE?=
- =?utf-8?B?NUVrWnlTQjFUVi90YkkydHF6aUJ5Nzlvc0tzTWtKQk9CMFdEN1lpdk1SR2ZK?=
- =?utf-8?B?YWR5YmxMdkIrMlZyamc3YzhrL245Z3lwWm43WXVzMUJ5Q2pnTjNOck02alJK?=
- =?utf-8?B?UndxZEd1eUFnYzVienhTUnBrUWdZSTFDWGVwSkd2QVo0STdPTnd5NldvcUJ3?=
- =?utf-8?B?SkhoUUZ3YUdJU2hqZFJPLzU2MnFoL0ZtUjNRdTlRR0JPVzE4Si8zakVNcmly?=
- =?utf-8?B?RzJoeStBZTEwRlhaVHZIV25nYWRlM25uMHhRamNDcS9OT1hOQ1RQbUIvVlVJ?=
- =?utf-8?B?TkdhU00zKzVRYTR5dXdZYmhZOWIwSkZWZDN4V0N6cmFOa2lnLzZGdGhtV2sw?=
- =?utf-8?B?VGl0SzhmNTdlZG1rRVFjYWRBck5kRW9MTHpvaUdETFNGQVN0SCtlcVFNUjh6?=
- =?utf-8?B?ZXZlL21qQzI4OUVFMDRJemtaaTVOVXkva01IWklPSXJaMUdFeXplOHFPMXFp?=
- =?utf-8?B?dmRhQTBKSWdocGk4a05wL1RObXYwQ3h2UHhFc2xWWFhGT1BhZDc2Q2RmYk1q?=
- =?utf-8?B?NEV2dC9vUzQyN3FGYnVxNXJ1eVJzSVdMS3l3aFpXT2U4cDJwYkxxY1o0TktB?=
- =?utf-8?B?OGNCNWU4NFQ2ODU2UWF1MUwyTFZqZUJobnBpZ3J6WFI5NVhoMzc3YmxTblZP?=
- =?utf-8?B?OURKdUwweC9nTTAvbFRwa2xkaUZiQTFqVXU1YlE2SmorcTVNcjdvWWZMYTRU?=
- =?utf-8?B?Wm84SVlPNUpwRlVHeHNvT2crTzBDbHJYUVNXVGVvZ0JwVXNjU0hWVzcxNDJv?=
- =?utf-8?B?aUR5TDZhbFhNMjFOelQvblB1NFpwaVNGVDZFNXlTbjExVVZQOGZEUUw3ZDFB?=
- =?utf-8?Q?bNy+K/SG6Jn0Tb8XskzNH7V17txBJ/K0MhfcpKDEq7HE=3D?=
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Ti92bml4RXVudGFVblRSWXNmQzlpSDByNG9BL1NaR05qT3FIVmZkSGYxOXZu?=
- =?utf-8?B?SEw5QlVTaERJUFM0QnVpN0xnZVJkOXVORHE1a0JBc2RUb2JiZjk4aXZBbUor?=
- =?utf-8?B?U25rbmFuWVppREZpUFoySDVyNjUyZU1xY1dYTHAxaUJmOE5OOTY3U3Evck5q?=
- =?utf-8?B?VzBXeU1CemRXcTl0Vms3OWlQWnFDdVkzZzhWM0FLVWxqK0R5dkpSWEtBR0k0?=
- =?utf-8?B?cDdyZ00xQ1NrbkdDZzBOVkVJMVZNSXllUFJ3Q1BSSVlXWVNQWEVqNjNoUFRC?=
- =?utf-8?B?ZWdwUnNoZVBqLzNLeUtNNXRFQ2JQQUJKWDFKYkVwTUhpQy9mZEkvTmxYNEsz?=
- =?utf-8?B?VXpMbU5wOUJRcjV2TlZXVWdjOGtMa2pSYWtnRGo3elhLR3VJcHdkV01ZR0ND?=
- =?utf-8?B?VXdVZlJNUXpvbmttMEtSUVdvUjRWVXdKVHN0VzArcjkvYWFMUzFXbXo1SjdR?=
- =?utf-8?B?YlNjUjBLQVlQYUVuVDBHL3dmMEJTOFdhYTRvVkZjWjVKZGNmU255UmNBcWNH?=
- =?utf-8?B?V2tFenkxZ1J1UGNhd2VWSU1lanB6enNuTkNXUklLTDVFOG5JLzkrOEIyWmpq?=
- =?utf-8?B?OEl3TzFsRHA3bzdYZmNXMlQ2YXRkM1d4YUZMUk5kRUhCS09wam5VOTJNVG5L?=
- =?utf-8?B?TkpxVWZBbkZ2VDNqQ3cxVUQ3L2lNbzJldUh1Tm9jeFBjVEY4amgzaHpBQWlt?=
- =?utf-8?B?VFJlMUxkY1cyeUNaM2xHTjBoN2xlY2FVUEhKcmxucCtLa3VGUHpaMklYVUpK?=
- =?utf-8?B?ZEQ0Sk5BZyswMWtwc2E0cjIxdG54clNLNUNIbVpybkhxaytzS3pibXZBQTRj?=
- =?utf-8?B?WG5DRmlEbVl2dTFQOFF1aFRsZTVtRDJUU0pLQ25KdFB1NTQ4bkhZZlB6QVZY?=
- =?utf-8?B?cVVNVzRJZnhGSUtQODdwc2tuYW0rbUZsYXNKTVVDR0NwTkdET2ZjMEF6U1pL?=
- =?utf-8?B?YWJYZUhuMUZ6R0ZrVFl5VFhUVU1rRllOajg2bEZoZ3FzcExLdEFwNm8wOXQ5?=
- =?utf-8?B?ZXdPRDY1eHdFZTFMbE5GMzU2K29zb3NkczVLNUk1YWEzU1JMZ21HNnVkQldX?=
- =?utf-8?B?WmJaUUFJVGVTcjlLMzZyWEhQbWx0VVRJZmxOWG5RRzBQVzdtWEtJdDRuWXho?=
- =?utf-8?B?bTZ2NWo5NFBiSDBGMllTNUd5L0YvdWxkQXdXTnd5eXFvV2dNUnJwRU9YQWQv?=
- =?utf-8?B?QzhLcEVIeFVjRjZBcmovNU52SWJQa2dVV3ZwTHR5Vk1iUUFGNnc0YkpYTnFQ?=
- =?utf-8?B?c1JGZkhMaGFtbHpsTVhMZkYzdm1wd05GeWM4SGljVXpkVVNXZTFJSDBQSm9Q?=
- =?utf-8?B?MEZ2akhISVFqZWNsMHg3Sm5FT2MyMVRZK2VGTlJ0bGhGbDYySnNQK09hSnV2?=
- =?utf-8?B?T2RTbDlnVjFYYTBYbDVJOGlxVUJBYnhuU2lLRzFjcXM2MXg2eHhvL2xKaXY5?=
- =?utf-8?B?bkordzhmMUpzOEZMMmdkZUoyZGpGMnlJS1EvOGt5alVsbGFMQk9xY1N5Y2Mw?=
- =?utf-8?B?OXN1L25ZYWk5NnEya09HNGlIUzVXZUo4cVR4elc0c2lpVVNRVGdFK1RVSHd4?=
- =?utf-8?B?TUp0aTFMR0J1ZXJiQldSUm1BajdlenZQUUN0RmdGZ1JqWVpLdUQ5REFaNHdy?=
- =?utf-8?B?d3Q5aEIxMW1jL2V5WFNDOVFiQXlYTnFiRXl2d0ZGSk41Z0wxMG1JeW5id3NE?=
- =?utf-8?Q?keIbzQg+Ji8Nkb5q2Zsk?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8898a657-b16e-4a57-9721-08dd1412fb41
-X-MS-Exchange-CrossTenant-AuthSource: MA1PR01MB3979.INDPRD01.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Dec 2024 03:23:11.7674
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN0PR01MB9037
+In-Reply-To: <CADVnQynUspJL4e3UnZTKps9WmgnE-0ngQnQmn=8gjSmyg4fQ5A@mail.gmail.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrJJsWRmVeSWpSXmKPExsWy7bCmmS7faf90g63X2Cyu7Z3IbjHnfAuL
+	xbpdrUwWzxbMYLF4euwRu8XkKYwWTfsvMVs86j/BZnF19ztmiwvb+lgtLu+aw2bRcWcvi8Wx
+	BWIW306/YbRoffyZ3eLj8SZ2i8UHPrE7CHpsWXmTyWPBplKPTas62Tze77vK5tG3ZRWjx+dN
+	cgFsUdk2GamJKalFCql5yfkpmXnptkrewfHO8aZmBoa6hpYW5koKeYm5qbZKLj4Bum6ZOUCn
+	KymUJeaUAoUCEouLlfTtbIryS0tSFTLyi0tslVILUnIKzAv0ihNzi0vz0vXyUkusDA0MjEyB
+	ChOyM16evMJY0C9T8XtqdgPjY7EuRk4OCQETiTtPD7N1MXJxCAnsYJRYsf8yK4TziVFi3orf
+	CM6yAytYYFqedy5ghkjsZJR4MmkyE0hCSOAho8TMPfogNouAisSH+xOYQWw2AV2JbSf+MYLY
+	IgI+ElcftDCBNDMLvGWSWPLqBdAKDg5hAWeJv3dsQWp4BZQlLrd2sUDYghInZz5hASnhFAiU
+	ePmoAKRVQuAEh0Tvt2WMEAe5SPSdu8kOYQtLvDq+BcqWkvj8bi8bhF0s0XD/FjNEcwujxKnr
+	L5ghEsYSs561gw1iFsiQeLZmCTPIMgmgI47cYoEI80l0HP7LDhHmlehoE4LoVJP4NWUD1Aky
+	ErsXr4Ca6CFx6/gJdkj4LGSSePHmCfMERrlZSN6ZhWTbLKCxzAKaEut36UOE5SWat86GCktL
+	LP/HgaRiASPbKkax1ILi3PTUYqMCY3hUJ+fnbmIEp2kt9x2MM95+0DvEyMTBeIhRgoNZSYQ3
+	cIl/uhBvSmJlVWpRfnxRaU5q8SFGU2A0TWSWEk3OB2aKvJJ4QxNLAxMzM0NzI1MDcyVx3nut
+	c1OEBNITS1KzU1MLUotg+pg4OKUamMTmGqnL9jm9mzuvbnFU86oPEtc689kF1lxPur7xSu+0
+	G/8d1y+t7CjYxn+3TDXRsHT3p0useXvb1e55HPKMslkeILmb+2+67JWZqtOr9db17WQ+w7+q
+	aWevQZLqvDpe9bN2ro1pqp9XxZ689+vYlyUPcw5niB+VvVbqata9VUrdaO27yMWJCRoHVU+F
+	yjyPcA9ueSlndu5IG1P6pznnAtifevSuXL3WOlP9ZNpTXpaAdseGsCPVAfdPp6jYJq3dkNtS
+	/0lxEYfX/o5/WjzG0kdXMpc+tPs0T1kyp9Zlc9srP+/nfy5NV9DYafd2xQ6WBi/Fdexub5+o
+	pLSdavl/+O7dqScmX3/M2ZzhedP+mRJLcUaioRZzUXEiAGQdXpdcBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprBIsWRmVeSWpSXmKPExsWy7bCSnC7vaf90g/8fVCyu7Z3IbjHnfAuL
+	xbpdrUwWzxbMYLF4euwRu8XkKYwWTfsvMVs86j/BZnF19ztmiwvb+lgtLu+aw2bRcWcvi8Wx
+	BWIW306/YbRoffyZ3eLj8SZ2i8UHPrE7CHpsWXmTyWPBplKPTas62Tze77vK5tG3ZRWjx+dN
+	cgFsUVw2Kak5mWWpRfp2CVwZmxt+MBdslKw4+3QCcwPjQpEuRk4OCQETieedC5i7GLk4hAS2
+	M0ps/36HBSIhI3F75WVWCFtY4n7LEVaIovuMEk/OnGMGSbAIqEh8uD8BzGYT0JXYduIfI4gt
+	IuAnsXzKS0aQBmaBt0wSf3YcYu9i5OAQFnCW+HvHFqSGV0BZ4nJrF9gyIYGFTBKPpitBxAUl
+	Ts58AhZnFlCX+DPvEjNIK7OAtMTyfxwQYXmJ5q2zwcKcAoESLx8VTGAUnIWkeRaS5lkIzbOQ
+	NC9gZFnFKJpaUJybnptcYKhXnJhbXJqXrpecn7uJERx5WkE7GJet/6t3iJGJg/EQowQHs5II
+	b+AS/3Qh3pTEyqrUovz4otKc1OJDjNIcLErivMo5nSlCAumJJanZqakFqUUwWSYOTqkGpg2i
+	CR0lrv+m3rp45bSwdl0x983CMwG1LI9Wxv27s6Xj0tZMVoPIXKEts3uW3XweYsm3wPHtup1X
+	upm7Dh7Vum9ScsXyEJdzd3fKnRkztBlvhkl5PpqyT7DOYvbfpTqhgVXO7KxOuz7eebzZaKLN
+	HgbBOY02XzeuS9QunJjReUlXPuKDAWsgZyIP49kDD5IWJXHtveGwMvGzmEXM2eIdG3lefFJW
+	Xr608slCy/Oztjx/zDFF3M/OcvfNWe2tmaVCDx7YLG9RkUudvkJm1o7K67eYEzXkDELib+ef
+	mvXkVGAjR7vmZbeleZaqM0tld85zfaJc8tv+2L/12h0OSwSCbdOWLtzQc85M/yzDw73lakos
+	xRmJhlrMRcWJABmmdrYrAwAA
+X-CMS-MailID: 20241204032253epcas2p1d973d0a4992989ba03c5ab73cbb6696a
+X-Msg-Generator: CA
+Content-Type: multipart/mixed;
+	boundary="----6TxoHKXr_qkwT5q0XKHb2K6SEyMzWlX0etqXdnnbNHHFM6GI=_cd804_"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20241203081005epcas2p247b3d05bc767b1a50ba85c4433657295
+References: <CGME20241203081005epcas2p247b3d05bc767b1a50ba85c4433657295@epcas2p2.samsung.com>
+	<20241203081247.1533534-1-youngmin.nam@samsung.com>
+	<CANn89iK+7CKO31=3EvNo6-raUzyibwRRN8HkNXeqzuP9q8k_tA@mail.gmail.com>
+	<CADVnQynUspJL4e3UnZTKps9WmgnE-0ngQnQmn=8gjSmyg4fQ5A@mail.gmail.com>
 
-Hi, Uwe,
+------6TxoHKXr_qkwT5q0XKHb2K6SEyMzWlX0etqXdnnbNHHFM6GI=_cd804_
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Content-Disposition: inline
 
-I just upgraded this patchset and rebased it to the latest v6.13-rc1, 
-hope you can merge it in v6.14.
+On Tue, Dec 03, 2024 at 10:34:46AM -0500, Neal Cardwell wrote:
+> On Tue, Dec 3, 2024 at 6:07 AM Eric Dumazet <edumazet@google.com> wrote:
+> >
+> > On Tue, Dec 3, 2024 at 9:10 AM Youngmin Nam <youngmin.nam@samsung.com> wrote:
+> > >
+> > > We encountered the following WARNINGs
+> > > in tcp_sacktag_write_queue()/tcp_fastretrans_alert()
+> > > which triggered a kernel panic due to panic_on_warn.
+> > >
+> > > case 1.
+> > > ------------[ cut here ]------------
+> > > WARNING: CPU: 4 PID: 453 at net/ipv4/tcp_input.c:2026
+> > > Call trace:
+> > >  tcp_sacktag_write_queue+0xae8/0xb60
+> > >  tcp_ack+0x4ec/0x12b8
+> > >  tcp_rcv_state_process+0x22c/0xd38
+> > >  tcp_v4_do_rcv+0x220/0x300
+> > >  tcp_v4_rcv+0xa5c/0xbb4
+> > >  ip_protocol_deliver_rcu+0x198/0x34c
+> > >  ip_local_deliver_finish+0x94/0xc4
+> > >  ip_local_deliver+0x74/0x10c
+> > >  ip_rcv+0xa0/0x13c
+> > > Kernel panic - not syncing: kernel: panic_on_warn set ...
+> > >
+> > > case 2.
+> > > ------------[ cut here ]------------
+> > > WARNING: CPU: 0 PID: 648 at net/ipv4/tcp_input.c:3004
+> > > Call trace:
+> > >  tcp_fastretrans_alert+0x8ac/0xa74
+> > >  tcp_ack+0x904/0x12b8
+> > >  tcp_rcv_state_process+0x22c/0xd38
+> > >  tcp_v4_do_rcv+0x220/0x300
+> > >  tcp_v4_rcv+0xa5c/0xbb4
+> > >  ip_protocol_deliver_rcu+0x198/0x34c
+> > >  ip_local_deliver_finish+0x94/0xc4
+> > >  ip_local_deliver+0x74/0x10c
+> > >  ip_rcv+0xa0/0x13c
+> > > Kernel panic - not syncing: kernel: panic_on_warn set ...
+> > >
+> >
+> > I have not seen these warnings firing. Neal, have you seen this in the past ?
+> 
+> I can't recall seeing these warnings over the past 5 years or so, and
+> (from checking our monitoring) they don't seem to be firing in our
+> fleet recently.
+> 
+> > In any case this test on sk_state is too specific.
+> 
+> I agree with Eric. IMHO TCP_FIN_WAIT1 deserves all the same warnings
+> as ESTABLISHED, since in this state the connection may still have a
+> big queue of data it is trying to reliably send to the other side,
+> with full loss recovery and congestion control logic.
+Yes I agree with Eric as well.
 
-BTW, you just please handle the bindings & driver part, I will handle 
-the left DTS part.
+> 
+> I would suggest that instead of running with panic_on_warn it would
+> make more sense to not panic on warning, and instead add more detail
+> to these warning messages in your kernels during your testing, to help
+> debug what is going wrong. I would suggest adding to the warning
+> message:
+> 
+> tp->packets_out
+> tp->sacked_out
+> tp->lost_out
+> tp->retrans_out
+> tcp_is_sack(tp)
+> tp->mss_cache
+> inet_csk(sk)->icsk_ca_state
+> inet_csk(sk)->icsk_pmtu_cookie
 
-Thanks,
+Hi Neal.
+Thanks for your opinion.
 
-Chen
+By the way, we enable panic_on_warn by default for stability.
+As you know, panic_on_warn is not applied to a specific subsystem but to the entire kernel.
+We just want to avoid the kernel panic.
 
-On 2024/12/4 11:15, Chen Wang wrote:
-> From: Chen Wang <unicorn_wang@outlook.com>
->
-> Add driver for pwm controller of Sophgo SG2042 SoC.
->
-> Thanks,
-> Chen
->
-> ---
->
-> Changes in v6:
->    Nothing major changes just rebased onto v6.13-rc1 and retested.
->
-> Changes in v5:
->    The patch series is based on v6.12-rc1. You can simply review or test
->    the patches at the link [5].
->
->    Updated driver to add resets property for pwm controller node as per
->    suggestion from Inochi.
->
-> Changes in v4:
->    The patch series is based on v6.12-rc1. You can simply review or test
->    the patches at the link [4].
->
->    Updated driver to set property atomic of pwm_chip to true as per suggestion
->    from Sean.
->
-> Changes in v3:
->    The patch series is catched up with v6.12-rc1. You can simply review or test
->    the patches at the link [3].
->
->    Add patch #3 for dts part change.
->
-> Changes in v2:
->    The patch series is based on v6.11-rc6. You can simply review or test the
->    patches at the link [2].
->
->    Fixed following issues as per comments from Yixun Lan, Krzysztof Kozlowski
->    and Uwe Kleine-König, thanks.
->
->    - Some minor issues in dt-bindings.
->    - driver issues, use macros with name prefix for registers access; add
->      limitations comments; fixed potential calculation overflow problem;
->      add .get_state() callback and other miscellaneous code improvements.
->
-> Changes in v1:
->    The patch series is based on v6.11-rc6. You can simply review or test the
->    patches at the link [1].
->
-> Link: https://lore.kernel.org/linux-riscv/cover.1725536870.git.unicorn_wang@outlook.com/ [1]
-> Link: https://lore.kernel.org/linux-riscv/cover.1725931796.git.unicorn_wang@outlook.com/ [2]
-> Link: https://lore.kernel.org/linux-riscv/cover.1728355974.git.unicorn_wang@outlook.com/ [3]
-> Link: https://lore.kernel.org/linux-riscv/cover.1729037302.git.unicorn_wang@outlook.com/ [4]
-> Link: https://lore.kernel.org/linux-riscv/cover.1729843087.git.unicorn_wang@outlook.com/ [5]
-> ---
->
-> Chen Wang (3):
->    dt-bindings: pwm: sophgo: add PWM controller for SG2042
->    pwm: sophgo: add driver for Sophgo SG2042 PWM
->    riscv: sophgo: dts: add pwm controller for SG2042 SoC
->
->   .../bindings/pwm/sophgo,sg2042-pwm.yaml       |  58 ++++++
->   arch/riscv/boot/dts/sophgo/sg2042.dtsi        |   9 +
->   drivers/pwm/Kconfig                           |  10 +
->   drivers/pwm/Makefile                          |   1 +
->   drivers/pwm/pwm-sophgo-sg2042.c               | 194 ++++++++++++++++++
->   5 files changed, 272 insertions(+)
->   create mode 100644 Documentation/devicetree/bindings/pwm/sophgo,sg2042-pwm.yaml
->   create mode 100644 drivers/pwm/pwm-sophgo-sg2042.c
->
->
-> base-commit: 40384c840ea1944d7c5a392e8975ed088ecf0b37
+So when I see below lwn article, I think we might use pr_warn() instaed of WARN_ON().
+https://lwn.net/Articles/969923/
+
+How do you think of it ?
+> 
+> A hunch would be that this is either firing for (a) non-SACK
+> connections, or (b) after an MTU reduction.
+> 
+> In particular, you might try `echo 0 >
+> /proc/sys/net/ipv4/tcp_mtu_probing` and see if that makes the warnings
+> go away.
+> 
+> cheers,
+> neal
+> 
+
+------6TxoHKXr_qkwT5q0XKHb2K6SEyMzWlX0etqXdnnbNHHFM6GI=_cd804_
+Content-Type: text/plain; charset="utf-8"
+
+
+------6TxoHKXr_qkwT5q0XKHb2K6SEyMzWlX0etqXdnnbNHHFM6GI=_cd804_--
 
