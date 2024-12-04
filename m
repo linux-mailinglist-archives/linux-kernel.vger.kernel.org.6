@@ -1,312 +1,379 @@
-Return-Path: <linux-kernel+bounces-431226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3B809E3AC5
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 14:01:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D45729E3AC2
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 14:01:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72B36281B84
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 13:01:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 952552821B5
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 13:01:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DAD74A33;
-	Wed,  4 Dec 2024 13:01:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="o3yqCzJM"
-Received: from mail-ua1-f46.google.com (mail-ua1-f46.google.com [209.85.222.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90D771B983F
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 13:01:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 069C31B87F7;
+	Wed,  4 Dec 2024 13:01:12 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F1C14A33;
+	Wed,  4 Dec 2024 13:01:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733317274; cv=none; b=WkCbRGZ1Io2WbODBF8KHrXdW+qOuXSCTsJA2QEwmzpnIWEoGy36NIxtLUPZMvQ2JLoNa3dIjwtswpGfopxmi+v6uAyygy2U5DDwdiD2Yw3MLdZdUTeRRMaZkE1SgpuHpmqhvWIySglARTS8HiM1ioYHzNtxZ9MhB9dsMEbbteUw=
+	t=1733317271; cv=none; b=YnTYo/8+ItXRCzO6o19+83s4tuMpLhbnr6puuGxjbKQvpBL1JAoWc0HJUrIPsmCVZf3HggGgsdHj7hJk/4u1ZxJD3fu22csLe2RI9rnBmsrzBzpcQBz6IycYqOS10R2s6GlerEFrsn+UOHlG9ZOidtl2kQMTsMmvThotMQrVgzg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733317274; c=relaxed/simple;
-	bh=5ILmEqTiQzWMOMrrhvDVYhyp5VUJ3IUTTE1tEB2Ycdo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=q4ICIAyGaRU6hXYaJF8HbBMdTOIwHv+zMIx9tO+rY2vNdUdeNGfutCXV0PZ7JoLhtQc2/hHkcU+k9/SNrhWxqKYOLVTxJ05pA+gh/J+OzBCRhslCjqOrummEBR8sDSc3HJOhSWwWkzbpbkiDBMXVZDSE5KQerQ3e8GX/8yP7WXQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=o3yqCzJM; arc=none smtp.client-ip=209.85.222.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ua1-f46.google.com with SMTP id a1e0cc1a2514c-85bc7d126b2so1000091241.1
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 05:01:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733317271; x=1733922071; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tpV0x8eY3pglXksgasLFNdR3HbZHXmyjX5FpR9r0Yfo=;
-        b=o3yqCzJMB5TfxGFVVDs07UYhnRl4QqB46ur2zy/NJ4neu4vp3pAmP5rFOyECLYUpAw
-         UG/LIDelBlzDgoL6DsbQ9FQmZj0qK/nHmIkWiCfYa1GW7jnQrQfJ1NbKiAxqlMU7VVFQ
-         pwQElR/kGpXIiQ3IcP/Da8XVu9TqlRUTuVliX1J/BAllNfapEyjiMUuDMAis0wzB+JMW
-         R2Ighmq/Qz9aAs1zBPTlug8qDc5M9AAXb3Yzd6eZYWDOOaQFdppZ3FFpP6ShHSXPtzuI
-         VJKvSs4RHfqsywQbfFw4WBop6QjsXU8wnZnhFXAaF2SfHRYXKfnzabgTEMwork+hr2/4
-         U4IA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733317271; x=1733922071;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tpV0x8eY3pglXksgasLFNdR3HbZHXmyjX5FpR9r0Yfo=;
-        b=ISY8bYWxxZOnPvg344GaQizj6aPbLPZgMz3sVeVai5Jv6qnsEj01qbS3jbQYhCql0C
-         sNP12KhAz4Kra3g8VpEJVExMyvERSvyRTTO/JJx2MU88i9jInBc+PA1Y8hFVpxGdIogv
-         uxIQzJjT4xxu0PD9LxCW5Nfp6FM3Sa3qJwQ61yV7dsUvg/htthgfRmg2HsH5dCvU4z8p
-         cSaJC3ZukgPf9y+7S6B/c2FGlrCIR9rnwYcFPBib4+XcVHQgsmwWO/UN9DN0qRuqffp4
-         m/mS87Q6wywbMBvvBS/IRhk8Ke7tITuVrIPysODzL71DBzabZt8YjSA73OqMt99cGfNV
-         a8nA==
-X-Forwarded-Encrypted: i=1; AJvYcCXNgYCV4Iowb9ZxQY/LjjLOqpfcfdVsM0YqKBm4vX8Y/Tr135RWFk2PYk2ct/DwgwHUFXr9SLUOv86zSC0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yze0J58W9Rgsng2/i0ynphVrxWjJiPa+WkkEyJ2T/33mLVMQTyg
-	m4BHf7qfi05mvyNm0a32LOgdQFywC6O7T8Dxi75H80m7jXmSPTEUrl8H7HWx3EHMg2av6JNkSwJ
-	JSMWj/llLN4FJGn5xkQEUTdSpvasfp2dhw/YSnW0rQ5TBkQTrypA=
-X-Gm-Gg: ASbGncsXgtL8N2fpna6oF8DvHIQeAI5b9wpawn47TPWu+r8j6E+pQ03+oXox+0hN7ga
-	RP6yfBb+Uln+RuXzGNPP37zqHQZxtmq/F
-X-Google-Smtp-Source: AGHT+IH+iTIPjsJVLJ1TxqzWa1PXd6bsGmH6/EGI/vqgJHKP761HYaMPr1dif7uYa4ILxAw1c15EM8Qscw23c6n3EfE=
-X-Received: by 2002:a05:6102:d93:b0:4af:b127:6742 with SMTP id
- ada2fe7eead31-4afb127685cmr756838137.21.1733317259252; Wed, 04 Dec 2024
- 05:00:59 -0800 (PST)
+	s=arc-20240116; t=1733317271; c=relaxed/simple;
+	bh=g3tWKF0IiA52A6wIvPAxkU2dG0hlw8+KXjuLtb3lccI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=d9ay3MKzp2/KfopmemR1agat+3B6uAtudtpOTAMJrhvHWTC5g0Lx4F5A79DS7mmxw9SO5OK5DQuVCxx2Ih544gnrq1haFJaa8RDI7Hb29yf3d/n8Xr4ILUxQzIYmh3eTrUU+/i8e2ZLe2CsVuM1pNtnKilnEBcWVntoCtEWBDCs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A4C6E1063;
+	Wed,  4 Dec 2024 05:01:34 -0800 (PST)
+Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 54AEB3F71E;
+	Wed,  4 Dec 2024 05:01:03 -0800 (PST)
+Date: Wed, 4 Dec 2024 13:01:00 +0000
+From: Cristian Marussi <cristian.marussi@arm.com>
+To: Sibi Sankar <quic_sibis@quicinc.com>
+Cc: sudeep.holla@arm.com, cristian.marussi@arm.com, andersson@kernel.org,
+	konrad.dybcio@linaro.org, linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	quic_rgottimu@quicinc.com, quic_kshivnan@quicinc.com,
+	arm-scmi@vger.kernel.org, Amir Vajid <avajid@quicinc.com>
+Subject: Re: [PATCH V5 2/2] firmware: arm_scmi: vendors: Add QCOM SCMI
+ Generic Extensions
+Message-ID: <Z1BSjM5heBoRFCYk@pluto>
+References: <20241115011515.1313447-1-quic_sibis@quicinc.com>
+ <20241115011515.1313447-3-quic_sibis@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241203144743.428732212@linuxfoundation.org>
-In-Reply-To: <20241203144743.428732212@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Wed, 4 Dec 2024 18:30:47 +0530
-Message-ID: <CA+G9fYu21yqTvL428TFueMJ1uU1H_u8Vc470dER2CTrNK=Js0g@mail.gmail.com>
-Subject: Re: [PATCH 6.12 000/826] 6.12.2-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
-	broonie@kernel.org, Dan Carpenter <dan.carpenter@linaro.org>, 
-	Arnd Bergmann <arnd@arndb.de>, Anders Roxell <anders.roxell@linaro.org>, 
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
-	Alexander Stein <alexander.stein@ew.tq-group.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Michal Suchanek <msuchanek@suse.de>, Nicolai Stange <nstange@suse.com>, 
-	Michael Ellerman <mpe@ellerman.id.au>, Herbert Xu <herbert@gondor.apana.org.au>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241115011515.1313447-3-quic_sibis@quicinc.com>
 
-On Tue, 3 Dec 2024 at 21:06, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
+On Fri, Nov 15, 2024 at 06:45:15AM +0530, Sibi Sankar wrote:
+> The QCOM SCMI Generic Extensions Protocol provides a generic way of
+> exposing a number of Qualcomm SoC specific features (like memory bus
+> scaling) through a mixture of pre-determined algorithm strings and
+> param_id pairs hosted on the SCMI controller.
 >
-> This is the start of the stable review cycle for the 6.12.2 release.
-> There are 826 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Thu, 05 Dec 2024 14:45:11 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
-6.12.2-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-6.12.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
 
-Results from Linaro=E2=80=99s test farm.
-Regressions on arm64, arm, x86_64 riscv and powerpc.
+Hi,
+ 
+> Co-developed-by: Shivnandan Kumar <quic_kshivnan@quicinc.com>
+> Signed-off-by: Shivnandan Kumar <quic_kshivnan@quicinc.com>
+> Co-developed-by: Ramakrishna Gottimukkula <quic_rgottimu@quicinc.com>
+> Signed-off-by: Ramakrishna Gottimukkula <quic_rgottimu@quicinc.com>
+> Co-developed-by: Amir Vajid <avajid@quicinc.com>
+> Signed-off-by: Amir Vajid <avajid@quicinc.com>
+> Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
+> Reviewed-by: Cristian Marussi <cristian.marussi@arm.com>
 
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+You reworked/refactored quite a lot the internals since V4, you should
+have dropped the Reviewed-by tag.
 
-1) The allmodconfig builds failed on arm64, arm, riscv and x86_64
-     due to following build warnings / errors.
+> ---
+> 
+> v4:
+> * Splitting the series into vendor protocol and memlat client.
+>   Also the move the memlat client implementation back to RFC
+>   due to multiple opens.
+> * Use common xfer helper to avoid code duplication [Dmitry]
+> * Update enum documentation without duplicate enum info [Dmitry]
+> 
+>  drivers/firmware/arm_scmi/Kconfig             |   1 +
+>  drivers/firmware/arm_scmi/Makefile            |   1 +
+>  .../firmware/arm_scmi/vendors/qcom/Kconfig    |  15 ++
+>  .../firmware/arm_scmi/vendors/qcom/Makefile   |   2 +
+>  .../arm_scmi/vendors/qcom/qcom-generic-ext.c  | 139 ++++++++++++++++++
+>  include/linux/scmi_qcom_protocol.h            |  37 +++++
+>  6 files changed, 195 insertions(+)
+>  create mode 100644 drivers/firmware/arm_scmi/vendors/qcom/Kconfig
+>  create mode 100644 drivers/firmware/arm_scmi/vendors/qcom/Makefile
+>  create mode 100644 drivers/firmware/arm_scmi/vendors/qcom/qcom-generic-ext.c
+>  create mode 100644 include/linux/scmi_qcom_protocol.h
+> 
+> diff --git a/drivers/firmware/arm_scmi/Kconfig b/drivers/firmware/arm_scmi/Kconfig
+> index dabd874641d0..73128442d97b 100644
+> --- a/drivers/firmware/arm_scmi/Kconfig
+> +++ b/drivers/firmware/arm_scmi/Kconfig
+> @@ -71,6 +71,7 @@ config ARM_SCMI_DEBUG_COUNTERS
+>  
+>  source "drivers/firmware/arm_scmi/transports/Kconfig"
+>  source "drivers/firmware/arm_scmi/vendors/imx/Kconfig"
+> +source "drivers/firmware/arm_scmi/vendors/qcom/Kconfig"
+>  
+>  endif #ARM_SCMI_PROTOCOL
+>  
+> diff --git a/drivers/firmware/arm_scmi/Makefile b/drivers/firmware/arm_scmi/Makefile
+> index 9ac81adff567..58cf4d656cbb 100644
+> --- a/drivers/firmware/arm_scmi/Makefile
+> +++ b/drivers/firmware/arm_scmi/Makefile
+> @@ -12,6 +12,7 @@ scmi-module-objs := $(scmi-driver-y) $(scmi-protocols-y) $(scmi-transport-y)
+>  
+>  obj-$(CONFIG_ARM_SCMI_PROTOCOL) += transports/
+>  obj-$(CONFIG_ARM_SCMI_PROTOCOL) += vendors/imx/
+> +obj-$(CONFIG_ARM_SCMI_PROTOCOL) += vendors/qcom/
+>  
+>  obj-$(CONFIG_ARM_SCMI_PROTOCOL) += scmi-core.o
+>  obj-$(CONFIG_ARM_SCMI_PROTOCOL) += scmi-module.o
+> diff --git a/drivers/firmware/arm_scmi/vendors/qcom/Kconfig b/drivers/firmware/arm_scmi/vendors/qcom/Kconfig
+> new file mode 100644
+> index 000000000000..5dd9e8a6b75f
+> --- /dev/null
+> +++ b/drivers/firmware/arm_scmi/vendors/qcom/Kconfig
+> @@ -0,0 +1,15 @@
+> +# SPDX-License-Identifier: GPL-2.0-only
+> +menu "ARM SCMI QCOM Vendor Protocols"
+> +
+> +config QCOM_SCMI_GENERIC_EXT
+> +	tristate "Qualcomm Technologies, Inc. Qcom SCMI vendor Protocol"
+> +	depends on ARM_SCMI_PROTOCOL || COMPILE_TEST
+> +	help
+> +	  The QCOM SCMI vendor protocol provides a generic way of exposing
+> +	  a number of Qualcomm SoC specific features (like memory bus scaling)
+> +	  through a mixture of pre-determined algorithm strings and param_id
+> +	  pairs hosted on the SCMI controller.
+> +
+> +	  This driver defines/documents the message ID's used for this
+> +	  communication and also exposes the operations used by the clients.
+> +endmenu
+> diff --git a/drivers/firmware/arm_scmi/vendors/qcom/Makefile b/drivers/firmware/arm_scmi/vendors/qcom/Makefile
+> new file mode 100644
+> index 000000000000..6b98fabbebb8
+> --- /dev/null
+> +++ b/drivers/firmware/arm_scmi/vendors/qcom/Makefile
+> @@ -0,0 +1,2 @@
+> +# SPDX-License-Identifier: GPL-2.0-only
+> +obj-$(CONFIG_QCOM_SCMI_GENERIC_EXT) += qcom-generic-ext.o
+> diff --git a/drivers/firmware/arm_scmi/vendors/qcom/qcom-generic-ext.c b/drivers/firmware/arm_scmi/vendors/qcom/qcom-generic-ext.c
+> new file mode 100644
+> index 000000000000..1b209093d275
+> --- /dev/null
+> +++ b/drivers/firmware/arm_scmi/vendors/qcom/qcom-generic-ext.c
+> @@ -0,0 +1,139 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright (c) 2024, Qualcomm Innovation Center, Inc. All rights reserved.
+> + */
+> +
+> +#include <linux/scmi_qcom_protocol.h>
+> +
+> +#include "../../common.h"
+> +
+> +/**
+> + * enum qcom_generic_ext_protocol_cmd - vendor specific commands supported by SCMI Qualcomm
+> + *                                      generic vendor protocol.
+> + *
+> + * This protocol is intended as a generic way of exposing a number of Qualcomm SoC
+> + * specific features through a mixture of pre-determined algorithm string and param_id
+> + * pairs hosted on the SCMI controller.
+> + *
+> + * The QCOM SCMI Vendor Protocol has the protocol id as 0x80 and vendor id set to
+> + * Qualcomm and the implementation version set to 0x20000. The PROTOCOL_VERSION command
+> + * returns version 1.0.
 
-Build errors for allmodconfig:
---------------
-drivers/gpu/drm/imx/ipuv3/parallel-display.c:75:3: error: variable
-'num_modes' is uninitialized when used here [-Werror,-Wuninitialized]
-   75 |                 num_modes++;
-      |                 ^~~~~~~~~
-drivers/gpu/drm/imx/ipuv3/parallel-display.c:55:15: note: initialize
-the variable 'num_modes' to silence this warning
-   55 |         int num_modes;
-      |                      ^
-      |                       =3D 0
-1 error generated.
-make[8]: *** [scripts/Makefile.build:229:
-drivers/gpu/drm/imx/ipuv3/parallel-display.o] Error 1
-drivers/gpu/drm/imx/ipuv3/imx-ldb.c:143:3: error: variable 'num_modes'
-is uninitialized when used here [-Werror,-Wuninitialized]
-  143 |                 num_modes++;
-      |                 ^~~~~~~~~
-drivers/gpu/drm/imx/ipuv3/imx-ldb.c:133:15: note: initialize the
-variable 'num_modes' to silence this warning
-  133 |         int num_modes;
-      |                      ^
-      |                       =3D 0
-1 error generated.
+The chosen protocol ID is already defined in the protocol doc in the
+series, and the note about the implementation version seems redundant,
+it is indeed specified as needed in scmi_protocol.
 
-2) The powerpc builds failed due to this build warnings / errors.
-      ERROR: modpost: "gcm_update"
-[arch/powerpc/crypto/aes-gcm-p10-crypto.ko] undefined!
+> + *
+> + * @QCOM_SCMI_SET_PARAM: is used to set the parameter of a specific algo_str hosted on
+> + *			 QCOM SCMI Vendor Protocol. The tx len depends on the algo_str used.
+> + * @QCOM_SCMI_GET_PARAM: is used to get parameter information of a specific algo_str
+> + *			 hosted on QCOM SCMI Vendor Protocol. The tx and rx len depends
+> + *			 on the algo_str used.
+> + * @QCOM_SCMI_START_ACTIVITY: is used to start the activity performed by the algo_str.
+> + * @QCOM_SCMI_STOP_ACTIVITY: is used to stop a pre-existing activity performed by the algo_str.
+> + */
+> +enum qcom_generic_ext_protocol_cmd {
+> +	QCOM_SCMI_SET_PARAM = 0x10,
+> +	QCOM_SCMI_GET_PARAM = 0x11,
+> +	QCOM_SCMI_START_ACTIVITY = 0x12,
+> +	QCOM_SCMI_STOP_ACTIVITY = 0x13,
+> +};
+> +
+> +/**
+> + * struct qcom_scmi_msg - represents the various parameters to be populated
+> + *                        for using the QCOM SCMI Vendor Protocol
+> + *
+> + * @ext_id: reserved, must be zero
+> + * @algo_low: lower 32 bits of the algo_str
+> + * @algo_high: upper 32 bits of the algo_str
+> + * @param_id: serves as token message id to the specific algo_str
+> + * @buf: serves as the payload to the specified param_id and algo_str pair
+> + */
+> +struct qcom_scmi_msg {
+> +	__le32 ext_id;
+> +	__le32 algo_low;
+> +	__le32 algo_high;
+> +	__le32 param_id;
+> +	__le32 buf[];
+> +};
+> +
+> +static int qcom_scmi_common_xfer(const struct scmi_protocol_handle *ph,
+> +				 enum qcom_generic_ext_protocol_cmd cmd_id, void *buf,
+> +				 size_t buf_len, u64 algo_str, u32 param_id, size_t rx_size)
+> +{
+> +	struct scmi_xfer *t;
+> +	struct qcom_scmi_msg *msg;
+> +	int ret;
+> +
+> +	ret = ph->xops->xfer_get_init(ph, cmd_id, buf_len + sizeof(*msg), rx_size, &t);
+> +	if (ret)
+> +		return ret;
+> +
+> +	msg = t->tx.buf;
+> +	msg->algo_low = cpu_to_le32(lower_32_bits(algo_str));
+> +	msg->algo_high = cpu_to_le32(upper_32_bits(algo_str));
+> +	msg->param_id = cpu_to_le32(param_id);
+> +	memcpy(msg->buf, buf, buf_len);
+> +
+> +	ret = ph->xops->do_xfer(ph, t);
+> +	if (rx_size)
 
-3) As other reported perf build failures
-   util/stat-display.c: In function 'uniquify_event_name':
-   util/stat-display.c:895:45: error: 'struct evsel' has no member
-named 'alternate_hw_config'
-     895 |         if (counter->pmu->is_core &&
-counter->alternate_hw_config !=3D PERF_COUNT_HW_MAX)
-      |                                             ^~
+You should check ret == 0 also here before considering to pick up the reply
+if a non-zero rx_size was specified.
 
-Build errors:
----------------
-ERROR: modpost: "gcm_update"
-[arch/powerpc/crypto/aes-gcm-p10-crypto.ko] undefined!
+> +		memcpy(buf, t->rx.buf, t->rx.len);
 
-## Build
-* kernel: 6.12.2-rc1
-* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
-rc.git
-* git commit: 1b3321bcbfba89474cbae3673f3dac9c456ce4b9
-* git describe: v6.12.1-827-g1b3321bcbfba
-* test details:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.12.y/build/v6.12=
-.1-827-g1b3321bcbfba
+...you are using the same buf/buf_len to hold the TX request and get back
+the reply content if a non-zero rx_size was provided but while you can
+be sure that the reply payload rx.len <= rx_size by construction
+(via xfer_get_init) you cannot be equally sure that rx_size <= buf_len
+...it depends on te caller how this operation is invoked...so you could
+end up oveflowing buf depending on the caller-provided params...
 
-## Test Regressions (compared to v6.12-4-g11741096a22c)
-* arm, build
-  - gcc-13-lkftconfig-perf
+...please add some additional check at the start of this function like:
 
-* arm64, build
-  - clang-19-allmodconfig
-  - gcc-13-lkftconfig-perf
+	if (rx_size > buf_len)
+		return -EINVAL;
 
-* powerpc, build
-  - clang-19-defconfig
-  - clang-nightly-defconfig
-  - clang-nightly-lkftconfig-hardening
-  - clang-nightly-lkftconfig-lto-full
-  - clang-nightly-lkftconfig-lto-thing
-  - gcc-13-defconfig
-  - gcc-13-lkftconfig-hardening
-  - gcc-8-defconfig
-  - gcc-8-lkftconfig-hardening
-  - korg-clang-19-lkftconfig-hardening
-  - korg-clang-19-lkftconfig-lto-full
-  - korg-clang-19-lkftconfig-lto-thing
+...to catch such bad invcations...
 
-* riscv, build
-  - clang-19-allmodconfig
+> +	ph->xops->xfer_put(ph, t);
+> +
+> +	return ret;
+> +}
+> +
+> +static int qcom_scmi_set_param(const struct scmi_protocol_handle *ph, void *buf, size_t buf_len,
+> +			       u64 algo_str, u32 param_id)
+> +{
+> +	return qcom_scmi_common_xfer(ph, QCOM_SCMI_SET_PARAM, buf, buf_len, algo_str,
+> +				     param_id, 0);
+> +}
+> +
+> +static int qcom_scmi_get_param(const struct scmi_protocol_handle *ph, void *buf, size_t buf_len,
+> +			       u64 algo_str, u32 param_id, size_t rx_size)
+> +{
+> +	return qcom_scmi_common_xfer(ph, QCOM_SCMI_GET_PARAM, buf, buf_len, algo_str,
+> +				     param_id, rx_size);
+> +}
+> +
+> +static int qcom_scmi_start_activity(const struct scmi_protocol_handle *ph, void *buf,
+> +				    size_t buf_len, u64 algo_str, u32 param_id)
+> +{
+> +	return qcom_scmi_common_xfer(ph, QCOM_SCMI_START_ACTIVITY, buf, buf_len, algo_str,
+> +				     param_id, 0);
+> +}
+> +
+> +static int qcom_scmi_stop_activity(const struct scmi_protocol_handle *ph, void *buf,
+> +				   size_t buf_len, u64 algo_str, u32 param_id)
+> +{
+> +	return qcom_scmi_common_xfer(ph, QCOM_SCMI_STOP_ACTIVITY, buf, buf_len, algo_str,
+> +				     param_id, 0);
+> +}
+> +
+> +static struct qcom_generic_ext_ops qcom_proto_ops = {
+> +	.set_param = qcom_scmi_set_param,
+> +	.get_param = qcom_scmi_get_param,
+> +	.start_activity = qcom_scmi_start_activity,
+> +	.stop_activity = qcom_scmi_stop_activity,
+> +};
+> +
+> +static int qcom_generic_ext_protocol_init(const struct scmi_protocol_handle *ph)
+> +{
+> +	u32 version;
+> +
+> +	ph->xops->version_get(ph, &version);
 
-* x86_64, build
-  - clang-19-allmodconfig
-  - gcc-13-lkftconfig-perf
+... please check retval and bailout on error when not even a basic version_get
+succedeed...
 
-## Metric Regressions (compared to v6.12-4-g11741096a22c)
+> +
+> +	dev_dbg(ph->dev, "QCOM Generic Vendor Version %d.%d\n",
+> +		PROTOCOL_REV_MAJOR(version), PROTOCOL_REV_MINOR(version));
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct scmi_protocol qcom_generic_ext = {
+> +	.id = SCMI_PROTOCOL_QCOM_GENERIC,
+> +	.owner = THIS_MODULE,
+> +	.instance_init = &qcom_generic_ext_protocol_init,
+> +	.ops = &qcom_proto_ops,
+> +	.vendor_id = "Qualcomm",
+> +	.impl_ver = 0x20000,
+> +};
+> +module_scmi_protocol(qcom_generic_ext);
+> +
 
-## Test Fixes (compared to v6.12-4-g11741096a22c)
+You may have to add a proper MODULE_ALIAS, if the series on autoload
+goes through
 
-## Metric Fixes (compared to v6.12-4-g11741096a22c)
+https://lore.kernel.org/linux-arm-kernel/20241203200038.3961090-1-cristian.marussi@arm.com/
 
-## Test result summary
-total: 157764, pass: 129957, fail: 2971, skip: 24836, xfail: 0
+> +MODULE_DESCRIPTION("QCOM SCMI Generic Vendor protocol");
+> +MODULE_LICENSE("GPL");
+> diff --git a/include/linux/scmi_qcom_protocol.h b/include/linux/scmi_qcom_protocol.h
+> new file mode 100644
+> index 000000000000..465b2522ca29
+> --- /dev/null
+> +++ b/include/linux/scmi_qcom_protocol.h
+> @@ -0,0 +1,37 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only */
+> +/*
+> + * SCMI Message Protocol driver QCOM extension header
+> + *
+> + * Copyright (c) 2024, Qualcomm Innovation Center, Inc. All rights reserved.
+> + */
+> +
+> +#ifndef _LINUX_SCMI_QCOM_PROTOCOL_H
+> +#define _LINUX_SCMI_QCOM_PROTOCOL_H
+> +
+> +#include <linux/types.h>
+> +
+> +#define SCMI_PROTOCOL_QCOM_GENERIC    0x80
+> +
+> +struct scmi_protocol_handle;
+> +
+> +/**
+> + * struct qcom_generic_ext_ops - represents the various operations provided
+> + *				 by QCOM Generic Vendor Protocol
+> + *
+> + * @set_param: set parameter specified by param_id and algo_str pair.
+> + * @get_param: retrieve parameter specified by param_id and algo_str pair.
+> + * @start_activity: initiate a specific activity defined by algo_str.
+> + * @stop_activity: halt previously initiated activity defined by algo_str.
+> + */
+> +struct qcom_generic_ext_ops {
+> +	int (*set_param)(const struct scmi_protocol_handle *ph, void *buf, size_t buf_len,
+> +			 u64 algo_str, u32 param_id);
+> +	int (*get_param)(const struct scmi_protocol_handle *ph, void *buf, size_t buf_len,
+> +			 u64 algo_str, u32 param_id, size_t rx_size);
+> +	int (*start_activity)(const struct scmi_protocol_handle *ph, void *buf, size_t buf_len,
+> +			      u64 algo_str, u32 param_id);
+> +	int (*stop_activity)(const struct scmi_protocol_handle *ph, void *buf, size_t buf_len,
+> +			     u64 algo_str, u32 param_id);
+> +};
+> +
+> +#endif /* _LINUX_SCMI_QCOM_PROTOCOL_H */
+> -- 
 
-## Build Summary
-* arc: 5 total, 5 passed, 0 failed
-* arm: 138 total, 135 passed, 3 failed
-* arm64: 52 total, 50 passed, 2 failed
-* i386: 18 total, 17 passed, 1 failed
-* mips: 34 total, 33 passed, 1 failed
-* parisc: 4 total, 3 passed, 1 failed
-* powerpc: 40 total, 27 passed, 13 failed
-* riscv: 24 total, 22 passed, 2 failed
-* s390: 22 total, 21 passed, 1 failed
-* sh: 5 total, 5 passed, 0 failed
-* sparc: 4 total, 3 passed, 1 failed
-* x86_64: 44 total, 42 passed, 2 failed
-
-## Test suites summary
-* boot
-* commands
-* kselftest-arm64
-* kselftest-breakpoints
-* kselftest-capabilities
-* kselftest-cgroup
-* kselftest-clone3
-* kselftest-core
-* kselftest-cpu-hotplug
-* kselftest-cpufreq
-* kselftest-efivarfs
-* kselftest-exec
-* kselftest-filesystems
-* kselftest-filesystems-binderfs
-* kselftest-filesystems-epoll
-* kselftest-firmware
-* kselftest-fpu
-* kselftest-ftrace
-* kselftest-futex
-* kselftest-gpio
-* kselftest-intel_pstate
-* kselftest-ipc
-* kselftest-kcmp
-* kselftest-kvm
-* kselftest-livepatch
-* kselftest-membarrier
-* kselftest-memfd
-* kselftest-mincore
-* kselftest-mqueue
-* kselftest-net
-* kselftest-net-mptcp
-* kselftest-openat2
-* kselftest-ptrace
-* kselftest-rseq
-* kselftest-rtc
-* kselftest-rust
-* kselftest-seccomp
-* kselftest-sigaltstack
-* kselftest-size
-* kselftest-tc-testing
-* kselftest-timers
-* kselftest-tmpfs
-* kselftest-tpm2
-* kselftest-user_events
-* kselftest-vDSO
-* kselftest-watchdog
-* kselftest-x86
-* kunit
-* kvm-unit-tests
-* libgpiod
-* libhugetlbfs
-* log-parser-boot
-* log-parser-test
-* ltp-commands
-* ltp-containers
-* ltp-controllers
-* ltp-cpuhotplug
-* ltp-crypto
-* ltp-cve
-* ltp-dio
-* ltp-fcntl-locktests
-* ltp-fs
-* ltp-fs_bind
-* ltp-fs_perms_simple
-* ltp-hugetlb
-* ltp-ipc
-* ltp-math
-* ltp-mm
-* ltp-nptl
-* ltp-pty
-* ltp-sched
-* ltp-smoke
-* ltp-syscalls
-* ltp-tracing
-* rcutorture
-
---
-Linaro LKFT
-https://lkft.linaro.org
+Thanks,
+Cristian
 
