@@ -1,278 +1,99 @@
-Return-Path: <linux-kernel+bounces-431279-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431280-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A8C69E3B7A
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 14:41:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B0799E3B7D
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 14:42:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDECE285D0E
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 13:41:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C2D1285E41
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 13:42:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF3A71E0E18;
-	Wed,  4 Dec 2024 13:41:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A71B11E3DCF;
+	Wed,  4 Dec 2024 13:41:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="e+28Xtj3"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hTqDS7VV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5507B1B87CE;
-	Wed,  4 Dec 2024 13:41:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1291C1DFE15;
+	Wed,  4 Dec 2024 13:41:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733319684; cv=none; b=Lu9AfiQh+I0vwbNguRKtHAVXUhN1QbM4n6PM3a0NoY/jmdcBKwbqIVoq0iwvClCP0V25NiPvrdCRgt57tpA9Z8W+D2HQZwWaLmZvcw7BjWW9+3kKb8/VE+R9XcQNO86IHlC5Yie4ikd2bpDTtQF1Lb8rO5g8f6NlyKYYblDlKAA=
+	t=1733319712; cv=none; b=b/nAVHWVQz0Py4VciLjXH8+Bn8CLHhfyhvmCgZRhFPsgnAEWjZThbb1RJ6MS0BGueGCSFuQarfgNlHFX3byE9gzFU2rMANL34opxu9FG5VIII50GWtO1g3AQI6r3CiUw2oDvCPODb+MbQq5IO0Dj+wVqC0TYD4daCNsA53vpahk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733319684; c=relaxed/simple;
-	bh=OrUBrzA867BuM25tSmoSho1+xInsbkDy8p/o5TqA0Pc=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=p0a2AQP9dSQAvyewsqks8KupovasQq3uhvC82lzd9C+gptgkpfreGfyGnGHk359p3/GydY3kf0Xg5g+B5YFenLntLWlMjkxHzupYPOPpwpvgVuDYdz24nV495GFn2gIqSvON6mI4XbO+9rIUths4pMX/2Z6TwihP+eEPlGENLFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=e+28Xtj3; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733319682; x=1764855682;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=OrUBrzA867BuM25tSmoSho1+xInsbkDy8p/o5TqA0Pc=;
-  b=e+28Xtj3qpXGuyANGWXwtfxpGBmgCCesPKu6pFOUNW4FGOEesCrMxbSt
-   M+6/YUodXeljv1gNLo5jFDylFETOSiv2nwrdGqVdrKNPSerWF05ILzOeI
-   gZpQ7YhR2mVH01/PmZJ3OsKcQ9tz80imeDzGv4Cd/uv78u9eVViRDH/90
-   15mPIsT+V8heRaasUgPR1lXt5DwUCqnSWPC0SwrvpzKe7/XMvdHWjOGIW
-   H3V9hbkxOg760saQEYXN/6s7cnEyuGk0EScXqcrB2BXqXHOLy0Cl+7gBf
-   2by9k1HIRq9KV/cQffTkfIZr6KFbOO5YkU/1mfMBuX01e3HPEa+50w9M6
-   A==;
-X-CSE-ConnectionGUID: Me78Ql4yThC/fxUXo1OPLA==
-X-CSE-MsgGUID: 5RCCAnVcQ9eMi+rg0ku/sQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11276"; a="32927184"
-X-IronPort-AV: E=Sophos;i="6.12,207,1728975600"; 
-   d="scan'208";a="32927184"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Dec 2024 05:41:21 -0800
-X-CSE-ConnectionGUID: 9P8O9cslRGKVO9efCilCog==
-X-CSE-MsgGUID: sNMJU2HuQeazbzD+h/zPrw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,207,1728975600"; 
-   d="scan'208";a="94595871"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.178])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Dec 2024 05:41:15 -0800
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Wed, 4 Dec 2024 15:41:12 +0200 (EET)
-To: Mario Limonciello <mario.limonciello@amd.com>
-cc: Hans de Goede <hdegoede@redhat.com>, 
-    "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
-    Maximilian Luz <luzmaximilian@gmail.com>, Lee Chun-Yi <jlee@suse.com>, 
-    Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, 
-    Corentin Chary <corentin.chary@gmail.com>, 
-    "Luke D . Jones" <luke@ljones.dev>, Ike Panhc <ike.pan@canonical.com>, 
-    Henrique de Moraes Holschuh <hmh@hmh.eng.br>, 
-    Alexis Belmonte <alexbelm48@gmail.com>, 
-    =?ISO-8859-15?Q?Uwe_Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>, 
-    Ai Chao <aichao@kylinos.cn>, Gergo Koteles <soyer@irl.hu>, 
-    open list <linux-kernel@vger.kernel.org>, 
-    "open list:ACPI" <linux-acpi@vger.kernel.org>, 
-    "open list:MICROSOFT SURFACE PLATFORM PROFILE DRIVER" <platform-driver-x86@vger.kernel.org>, 
-    "open list:THINKPAD ACPI EXTRAS DRIVER" <ibm-acpi-devel@lists.sourceforge.net>, 
-    Mark Pearson <mpearson-lenovo@squebb.ca>, 
-    Matthew Schwartz <matthew.schwartz@linux.dev>, Armin Wolf <W_Armin@gmx.de>
-Subject: Re: [PATCH v9 10/22] ACPI: platform_profile: Create class for ACPI
- platform profile
-In-Reply-To: <20241202055031.8038-11-mario.limonciello@amd.com>
-Message-ID: <9ab7b709-33eb-45fa-3e5d-a1f0c8c72e14@linux.intel.com>
-References: <20241202055031.8038-1-mario.limonciello@amd.com> <20241202055031.8038-11-mario.limonciello@amd.com>
+	s=arc-20240116; t=1733319712; c=relaxed/simple;
+	bh=8YrSi64SILEzk2L3gzAG7q9pm11+7mhNeKqXUDDxahI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=S9sShjKXflMgwyb5VM2vHN5J8mLUv17RFyBcD2eJfe5y+kKx4d//l79MjMQrTW9QKQbvs1MiWFj4c0SO68PB7kg2O5w1CBKFkaLonCbsLVEB1uGrhlgH4B9DG3ooYdh1VyvHz/Yoxysjr2if00vmoeZabhiWPpmQR8hWyziRjoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hTqDS7VV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49CB0C4CED2;
+	Wed,  4 Dec 2024 13:41:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733319711;
+	bh=8YrSi64SILEzk2L3gzAG7q9pm11+7mhNeKqXUDDxahI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=hTqDS7VVpaRWPd1BV0c9QaY7XdOB+ajT1wweOYxHOO2/7mYdFmKYWpPwudq/4Cb7G
+	 6k/zVVJQprfeFuKP/Jols+znDHT8Q1UcehN0Y5R9W1VM+kcbf9D/yDKCzZq1JIFJqd
+	 DQZIJkQLzI9IHa+U5tt2kWHRpeSNjIaVhnkIfzENnNvwx12Uja1qM+6xhW02wsh3jc
+	 CVafdPbOhK8AfR8YFXMSXRGc0xCTm1eoRQWKOe8v8ILgkvLxBMTXIimZWFBhX0CNAo
+	 IiBFua61jkCc3ZBBtYMh9dcTtzdNSQ7atXpqRsZa2HNAvD5WUd8Uvn2qPFrkIDNeBm
+	 Ugbx528nA0GRQ==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: "Miguel Ojeda" <miguel.ojeda.sandonis@gmail.com>
+Cc: "Lyude Paul" <lyude@redhat.com>,  "Miguel Ojeda" <ojeda@kernel.org>,
+  "Anna-Maria Behnsen" <anna-maria@linutronix.de>,  "Frederic Weisbecker"
+ <frederic@kernel.org>,  "Thomas Gleixner" <tglx@linutronix.de>,  "Alex
+ Gaynor" <alex.gaynor@gmail.com>,  "Boqun Feng" <boqun.feng@gmail.com>,
+  "Gary Guo" <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>,  "Benno Lossin" <benno.lossin@proton.me>,
+  "Alice Ryhl" <aliceryhl@google.com>,  "Trevor Gross" <tmgross@umich.edu>,
+  <rust-for-linux@vger.kernel.org>,  <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 04/13] rust: hrtimer: implement `TimerPointer` for `Arc`
+In-Reply-To: <CANiq72mkBufEV43HcZZVKB=1UDxOrpweFxeZJBXt6U0=vPMsdg@mail.gmail.com>
+ (Miguel
+	Ojeda's message of "Fri, 22 Nov 2024 13:36:25 +0100")
+References: <20241017-hrtimer-v3-v6-12-rc2-v3-0-59a75cbb44da@kernel.org>
+	<20241017-hrtimer-v3-v6-12-rc2-v3-4-59a75cbb44da@kernel.org>
+	<25I5c2B_KkmqpaLqb6jsZyMd9WMhQbTaIKyUYY5cKa8bvR7--HvRiXJ_5cDiyde31tnivT5_C_5IJ6XvLqCusA==@protonmail.internalid>
+	<73814ac7e363af44ae6e410f101feb75e94244ef.camel@redhat.com>
+	<874j423p7r.fsf@kernel.org>
+	<xSW32IhgoSjRIqCoAHtm1UkO4trcAg7QE1-2cite-wE1dNgIJLtZwnRjMGlSP63MaqOqUjXdmiMcOWhedRz4Yg==@protonmail.internalid>
+	<CANiq72mkBufEV43HcZZVKB=1UDxOrpweFxeZJBXt6U0=vPMsdg@mail.gmail.com>
+Date: Wed, 04 Dec 2024 14:41:39 +0100
+Message-ID: <87wmgfefak.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-281037050-1733319672=:904"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+"Miguel Ojeda" <miguel.ojeda.sandonis@gmail.com> writes:
 
---8323328-281037050-1733319672=:904
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+> On Wed, Nov 20, 2024 at 4:52=E2=80=AFPM Andreas Hindborg <a.hindborg@kern=
+el.org> wrote:
+>>
+>> No particular reason. It is often easier to rebase things around when
+>> they are on their own line.
+>>
+>> Are there any code guidelines to follow on this?
+>
+> Not yet -- we have a mixture of styles, though we typically don't go
+> to the item-level like in this patch, and instead have done it closer
+> to the "Crate" or "Module" styles.
 
-On Sun, 1 Dec 2024, Mario Limonciello wrote:
+What is the rationale behind this bias? Perhaps we should do a pros/cons
+list before settling on a style.
 
-> When registering a platform profile handler create a class device
-> that will allow changing a single platform profile handler.
->=20
-> The class and sysfs group are no longer needed when the platform profile
-> core is a module and unloaded, so remove them at that time as well.
->=20
-> Reviewed-by: Armin Wolf <W_Armin@gmx.de>
-> Tested-by: Mark Pearson <mpearson-lenovo@squebb.ca>
-> Reviewed-by: Mark Pearson <mpearson-lenovo@squebb.ca>
-> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+It is arguably easier to merge and rebase when using the `Item` policy.
 
-Reviewed-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
 
---=20
- i.
+Best regards,
+Andreas Hindborg
 
-> ---
-> v8:
->  * Use attr->mode
-> ---
->  drivers/acpi/platform_profile.c  | 82 ++++++++++++++++++++++++++++++--
->  include/linux/platform_profile.h |  2 +
->  2 files changed, 79 insertions(+), 5 deletions(-)
->=20
-> diff --git a/drivers/acpi/platform_profile.c b/drivers/acpi/platform_prof=
-ile.c
-> index a1f0378f15e62..11eb60b09bac4 100644
-> --- a/drivers/acpi/platform_profile.c
-> +++ b/drivers/acpi/platform_profile.c
-> @@ -5,6 +5,7 @@
->  #include <linux/acpi.h>
->  #include <linux/bits.h>
->  #include <linux/init.h>
-> +#include <linux/kdev_t.h>
->  #include <linux/mutex.h>
->  #include <linux/platform_profile.h>
->  #include <linux/sysfs.h>
-> @@ -22,6 +23,12 @@ static const char * const profile_names[] =3D {
->  };
->  static_assert(ARRAY_SIZE(profile_names) =3D=3D PLATFORM_PROFILE_LAST);
-> =20
-> +static DEFINE_IDA(platform_profile_ida);
-> +
-> +static const struct class platform_profile_class =3D {
-> +=09.name =3D "platform-profile",
-> +};
-> +
->  static ssize_t platform_profile_choices_show(struct device *dev,
->  =09=09=09=09=09struct device_attribute *attr,
->  =09=09=09=09=09char *buf)
-> @@ -101,8 +108,21 @@ static struct attribute *platform_profile_attrs[] =
-=3D {
->  =09NULL
->  };
-> =20
-> +static int profile_class_registered(struct device *dev, const void *data=
-)
-> +{
-> +=09return 1;
-> +}
-> +
-> +static umode_t profile_class_is_visible(struct kobject *kobj, struct att=
-ribute *attr, int idx)
-> +{
-> +=09if (!class_find_device(&platform_profile_class, NULL, NULL, profile_c=
-lass_registered))
-> +=09=09return 0;
-> +=09return attr->mode;
-> +}
-> +
->  static const struct attribute_group platform_profile_group =3D {
-> -=09.attrs =3D platform_profile_attrs
-> +=09.attrs =3D platform_profile_attrs,
-> +=09.is_visible =3D profile_class_is_visible,
->  };
-> =20
->  void platform_profile_notify(struct platform_profile_handler *pprof)
-> @@ -160,25 +180,77 @@ int platform_profile_register(struct platform_profi=
-le_handler *pprof)
->  =09if (cur_profile)
->  =09=09return -EEXIST;
-> =20
-> -=09err =3D sysfs_create_group(acpi_kobj, &platform_profile_group);
-> -=09if (err)
-> -=09=09return err;
-> +=09/* create class interface for individual handler */
-> +=09pprof->minor =3D ida_alloc(&platform_profile_ida, GFP_KERNEL);
-> +=09if (pprof->minor < 0)
-> +=09=09return pprof->minor;
-> +=09pprof->class_dev =3D device_create(&platform_profile_class, pprof->de=
-v,
-> +=09=09=09=09=09 MKDEV(0, 0), pprof, "platform-profile-%d",
-> +=09=09=09=09=09 pprof->minor);
-> +=09if (IS_ERR(pprof->class_dev)) {
-> +=09=09err =3D PTR_ERR(pprof->class_dev);
-> +=09=09goto cleanup_ida;
-> +=09}
-> =20
->  =09cur_profile =3D pprof;
-> +
-> +=09err =3D sysfs_update_group(acpi_kobj, &platform_profile_group);
-> +=09if (err)
-> +=09=09goto cleanup_cur;
-> +
->  =09return 0;
-> +
-> +cleanup_cur:
-> +=09cur_profile =3D NULL;
-> +=09device_unregister(pprof->class_dev);
-> +
-> +cleanup_ida:
-> +=09ida_free(&platform_profile_ida, pprof->minor);
-> +
-> +=09return err;
->  }
->  EXPORT_SYMBOL_GPL(platform_profile_register);
-> =20
->  int platform_profile_remove(struct platform_profile_handler *pprof)
->  {
-> +=09int id;
->  =09guard(mutex)(&profile_lock);
-> =20
-> -=09sysfs_remove_group(acpi_kobj, &platform_profile_group);
->  =09cur_profile =3D NULL;
-> +
-> +=09id =3D pprof->minor;
-> +=09device_unregister(pprof->class_dev);
-> +=09ida_free(&platform_profile_ida, id);
-> +
-> +=09sysfs_update_group(acpi_kobj, &platform_profile_group);
-> +
->  =09return 0;
->  }
->  EXPORT_SYMBOL_GPL(platform_profile_remove);
-> =20
-> +static int __init platform_profile_init(void)
-> +{
-> +=09int err;
-> +
-> +=09err =3D class_register(&platform_profile_class);
-> +=09if (err)
-> +=09=09return err;
-> +
-> +=09err =3D sysfs_create_group(acpi_kobj, &platform_profile_group);
-> +=09if (err)
-> +=09=09class_unregister(&platform_profile_class);
-> +
-> +=09return err;
-> +}
-> +
-> +static void __exit platform_profile_exit(void)
-> +{
-> +=09sysfs_remove_group(acpi_kobj, &platform_profile_group);
-> +=09class_unregister(&platform_profile_class);
-> +}
-> +module_init(platform_profile_init);
-> +module_exit(platform_profile_exit);
-> +
->  MODULE_AUTHOR("Mark Pearson <markpearson@lenovo.com>");
->  MODULE_DESCRIPTION("ACPI platform profile sysfs interface");
->  MODULE_LICENSE("GPL");
-> diff --git a/include/linux/platform_profile.h b/include/linux/platform_pr=
-ofile.h
-> index 8ec0b8da56db5..a888fd085c513 100644
-> --- a/include/linux/platform_profile.h
-> +++ b/include/linux/platform_profile.h
-> @@ -29,6 +29,8 @@ enum platform_profile_option {
->  struct platform_profile_handler {
->  =09const char *name;
->  =09struct device *dev;
-> +=09struct device *class_dev;
-> +=09int minor;
->  =09unsigned long choices[BITS_TO_LONGS(PLATFORM_PROFILE_LAST)];
->  =09int (*profile_get)(struct platform_profile_handler *pprof,
->  =09=09=09=09enum platform_profile_option *profile);
->=20
---8323328-281037050-1733319672=:904--
+
 
