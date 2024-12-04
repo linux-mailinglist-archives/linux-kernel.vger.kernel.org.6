@@ -1,75 +1,112 @@
-Return-Path: <linux-kernel+bounces-430915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B3769E371E
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 11:03:44 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C6EF162895
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 10:03:41 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC0C21A9B5D;
-	Wed,  4 Dec 2024 10:02:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OdSDZ0WT"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B816D9E3720
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 11:04:39 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33FD318BC0F
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 10:02:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733306561; cv=none; b=MWfnltc7VR2wQlj9CPEtjD9TLhqxCXj1VpHwEv54iDnSH9L63IXSgRkVuvt0h2Tt04QAAbkpsFyTGEOnL6G8TkPSreckLSSt9qvkAE4TdH0TNveb4RSX2p92ZP2In3v4dO9FHVWWuNN+JO8jbgR1wVudErvH2f5igkAuZ6rw7NI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733306561; c=relaxed/simple;
-	bh=MwsR2mbowrnQQui8fv3qlqMbuCSWqqx8gdWPHVBRMp0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mATku3gSf/ixPJsRoN478hKoKiwc5OgV1Ey96VsgMpr8R8u0uVdTIjHWUFlr3xvMPUCZskf+F0SRI36npOmCH46ysxwKgmyTH0yHEENt0pjToyVS/Go84ausPU2dAC7Ra5SyFwN7JJDSUGYeUo8iliUC96DVk1+A5oDzIeIApBI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OdSDZ0WT; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1733306558;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XdUxnRxx7xG7IK8kX72EG0FoUadvd8/m53LGdPg3aec=;
-	b=OdSDZ0WTu2fmvBnt41qhjUIDdsfPrZB4Ur+QnVPQU8v2q1xnsDBD1/l3mIbCmdMPsLPKO/
-	Y0ZwReqZOubnnY4y7qObj2m4WkDiSMGOcmP4eMqiFIVQv7N0KZSFJGLW7jcX1K/uDv8KMw
-	2GqGkwHuhTS3dB35ZKDzoMTh6B5Zx7E=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-26-Wxw75sU_M6qlKAMlK1FbfA-1; Wed,
- 04 Dec 2024 05:02:36 -0500
-X-MC-Unique: Wxw75sU_M6qlKAMlK1FbfA-1
-X-Mimecast-MFC-AGG-ID: Wxw75sU_M6qlKAMlK1FbfA
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7895728AD51
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 10:04:38 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3C8B1917D0;
+	Wed,  4 Dec 2024 10:04:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="AUbPhStJ";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="dkyMDhkV";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="AUbPhStJ";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="dkyMDhkV"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A9E5B1954ADC;
-	Wed,  4 Dec 2024 10:02:34 +0000 (UTC)
-Received: from fedora (unknown [10.72.112.144])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 359A019560A2;
-	Wed,  4 Dec 2024 10:02:28 +0000 (UTC)
-Date: Wed, 4 Dec 2024 18:02:23 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Qiang Ma <maqianga@uniontech.com>
-Cc: James.Bottomley@hansenpartnership.com, martin.petersen@oracle.com,
-	axboe@kernel.dk, dwagner@suse.de, hare@suse.de,
-	linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] scsi: Don't wait for completion of in-flight requests
-Message-ID: <Z1Aor8aqEBLjbaxE@fedora>
-References: <20241126115008.31272-1-maqianga@uniontech.com>
- <Z0XX5ts2yTO7Frl8@fedora>
- <2100C70C0D4CA64E+20241127220437.65ae99dd@john-PC>
- <Z0c4vPLnwicI6T9J@fedora>
- <F991D40F7D096653+20241203211857.0291ab1b@john-PC>
- <Z08Xf_ZuMFWfP0jd@fedora>
- <BA66D0A31F3EBFD9+20241204164557.0296e677@john-PC>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 962B0187561
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 10:04:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733306674; cv=none; b=lrkBX64SQTq3FEDQi9FzLkS/bdyxj/VQf6m5dYTkUe5JI24G2mbGhqu/BC8fsi4YStHjOkBJNGEr8e5WzlmR2pgPXIRRsKZU4er9NPCJxnMVadhdYhJTkuJee2xsKUd6tBQPiQ96Bp1ZoTm2dMi7i9bq3j3XwQQtlUk9ABFTfLU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733306674; c=relaxed/simple;
+	bh=eK9/NUqTGJF5Z3QRPgehKRV93VI6WmVYNn30lsRPe4g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MMkgP7oNsUx0KaoFDsOEQHY/kdMS8riCf3JfLw1uMvlgxYtCv2iIHl/rxFfbs35UiMJrXjKieMkvGharJFOUhy9Q/1O0vIFZGfMA4UXCqu/jZYP0IjzHDZXPjO3ZXVesF2l7ScshOjT8wljYYwgzbOYfkmP5lM02lXWv/S4Um6Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=AUbPhStJ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=dkyMDhkV; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=AUbPhStJ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=dkyMDhkV; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id C1E402115E;
+	Wed,  4 Dec 2024 10:04:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1733306670; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Xy7OLEHT9rPxg4WvTixZV3fgQXGtfE/zFSKuC+qdFso=;
+	b=AUbPhStJ9yLoo6V50DDcNOU42gZHOU/H3vOQfmxAS7nnzu3mUSgDU/5wbUoWW2ncTaNGpD
+	BbGdUg0waSbq+6zkHZ/ATIAUXIX7VCyiLnFz1o8url87wKJoiBaXhDJ8M1XRemRPlMPCbj
+	HGWj4jgvFngkJBE8qYMVi50PgwUkvFc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1733306670;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Xy7OLEHT9rPxg4WvTixZV3fgQXGtfE/zFSKuC+qdFso=;
+	b=dkyMDhkVk9mDPsH6MkoIidfsFFWuhjQdK3ZtCKOSv3p4X1FupD0yvwe+1mxVzqnkchxQfY
+	TWUOPOj1YIi5flAQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1733306670; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Xy7OLEHT9rPxg4WvTixZV3fgQXGtfE/zFSKuC+qdFso=;
+	b=AUbPhStJ9yLoo6V50DDcNOU42gZHOU/H3vOQfmxAS7nnzu3mUSgDU/5wbUoWW2ncTaNGpD
+	BbGdUg0waSbq+6zkHZ/ATIAUXIX7VCyiLnFz1o8url87wKJoiBaXhDJ8M1XRemRPlMPCbj
+	HGWj4jgvFngkJBE8qYMVi50PgwUkvFc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1733306670;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Xy7OLEHT9rPxg4WvTixZV3fgQXGtfE/zFSKuC+qdFso=;
+	b=dkyMDhkVk9mDPsH6MkoIidfsFFWuhjQdK3ZtCKOSv3p4X1FupD0yvwe+1mxVzqnkchxQfY
+	TWUOPOj1YIi5flAQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 20F8C1396E;
+	Wed,  4 Dec 2024 10:04:30 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id toxJBS4pUGfEdwAAD6G6ig
+	(envelope-from <osalvador@suse.de>); Wed, 04 Dec 2024 10:04:30 +0000
+Date: Wed, 4 Dec 2024 11:04:24 +0100
+From: Oscar Salvador <osalvador@suse.de>
+To: David Hildenbrand <david@redhat.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, linuxppc-dev@lists.ozlabs.org,
+	Andrew Morton <akpm@linux-foundation.org>, Zi Yan <ziy@nvidia.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Naveen N Rao <naveen@kernel.org>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>
+Subject: Re: [PATCH RESEND v2 4/6] mm/page_alloc: sort out the
+ alloc_contig_range() gfp flags mess
+Message-ID: <Z1ApKEC-_OPPreun@localhost.localdomain>
+References: <20241203094732.200195-1-david@redhat.com>
+ <20241203094732.200195-5-david@redhat.com>
+ <feffbbe8-4176-48e8-b503-ef53d7914197@suse.cz>
+ <96c92857-4850-4f85-9474-ac193c5ea48c@redhat.com>
+ <04c1d28e-bbea-4499-9a6d-770f9ca53ba9@suse.cz>
+ <d736f1c0-343e-4031-88ba-3b33b73dbeba@redhat.com>
+ <Z1AaC5Hj2RV_5FDD@localhost.localdomain>
+ <15096b27-6f27-45fc-8a8b-de781a9c42a5@suse.cz>
+ <Z1AdotZfAJG-zVZX@localhost.localdomain>
+ <cee06baa-8561-4be3-8f5c-ca453f58950b@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,309 +115,77 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <BA66D0A31F3EBFD9+20241204164557.0296e677@john-PC>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+In-Reply-To: <cee06baa-8561-4be3-8f5c-ca453f58950b@redhat.com>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	MISSING_XM_UA(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[suse.cz,vger.kernel.org,kvack.org,lists.ozlabs.org,linux-foundation.org,nvidia.com,ellerman.id.au,gmail.com,csgroup.eu,kernel.org,linux.ibm.com];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
+X-Spam-Score: -4.30
+X-Spam-Flag: NO
 
-On Wed, Dec 04, 2024 at 04:45:57PM +0800, Qiang Ma wrote:
-> On Tue, 3 Dec 2024 22:36:47 +0800
-> Ming Lei <ming.lei@redhat.com> wrote:
-> 
-> > On Tue, Dec 03, 2024 at 09:21:04PM +0800, Qiang Ma wrote:
-> > > On Wed, 27 Nov 2024 23:20:28 +0800
-> > > Ming Lei <ming.lei@redhat.com> wrote:
-> > >   
-> > > > On Wed, Nov 27, 2024 at 10:04:37PM +0800, Qiang Ma wrote:  
-> > > > > On Tue, 26 Nov 2024 22:15:02 +0800
-> > > > > Ming Lei <ming.lei@redhat.com> wrote:
-> > > > >     
-> > > > > > On Tue, Nov 26, 2024 at 07:50:08PM +0800, Qiang Ma wrote:    
-> > > > > > > Problem:
-> > > > > > > When the system disk uses the scsi disk bus, The main
-> > > > > > > qemu command line includes:
-> > > > > > > ...
-> > > > > > > -device virtio-scsi-pci,id=scsi0 \
-> > > > > > > -device scsi-hd,scsi-id=1,drive=drive-virtio-disk
-> > > > > > > -drive
-> > > > > > > id=drive-virtio-disk,if=none,file=/home/kvm/test.qcow2 ...
-> > > > > > > 
-> > > > > > > The dmesg log is as follows::
-> > > > > > > 
-> > > > > > > [   50.304591][ T4382] sd 0:0:0:0: [sda] Synchronizing SCSI
-> > > > > > > cache [   50.377002][ T4382] kexec_core: Starting new
-> > > > > > > kernel    
-> > > > 
-> > > > Why is one new kernel started? what event triggers kernel_kexec()?
-> > > > 
-> > > > machine_shutdown() follows, probably the scsi controller is dead.
-> > > >   
-> > > 
-> > > Yes, triggered by kexec, manually execute the following command:
-> > > kexec -l /boot/vmlinuz-6.6.0+ --reuse-cmdline
-> > > --initrd=/boot/initramfs-6.6.0+.img kexec -e
-> > >   
-> > > > > > > [   50.669775][  T194] psci: CPU1 killed (polled 0 ms)
-> > > > > > > [   50.849665][  T194] psci: CPU2 killed (polled 0 ms)
-> > > > > > > [   51.109625][  T194] psci: CPU3 killed (polled 0 ms)
-> > > > > > > [   51.319594][  T194] psci: CPU4 killed (polled 0 ms)
-> > > > > > > [   51.489667][  T194] psci: CPU5 killed (polled 0 ms)
-> > > > > > > [   51.709582][  T194] psci: CPU6 killed (polled 0 ms)
-> > > > > > > [   51.949508][   T10] psci: CPU7 killed (polled 0 ms)
-> > > > > > > [   52.139499][   T10] psci: CPU8 killed (polled 0 ms)
-> > > > > > > [   52.289426][   T10] psci: CPU9 killed (polled 0 ms)
-> > > > > > > [   52.439552][   T10] psci: CPU10 killed (polled 0 ms)
-> > > > > > > [   52.579525][   T10] psci: CPU11 killed (polled 0 ms)
-> > > > > > > [   52.709501][   T10] psci: CPU12 killed (polled 0 ms)
-> > > > > > > [   52.819509][  T194] psci: CPU13 killed (polled 0 ms)
-> > > > > > > [   52.919509][  T194] psci: CPU14 killed (polled 0 ms)
-> > > > > > > [  243.214009][  T115] INFO: task kworker/0:1:10 blocked for
-> > > > > > > more than 122 seconds. [  243.214810][  T115]       Not
-> > > > > > > tainted 6.6.0+ #1 [  243.215517][  T115] "echo 0    
-> > > > > > > > /proc/sys/kernel/hung_task_timeout_secs" disables this
-> > > > > > > > message. [  243.216390][  T115] task:kworker/0:1
-> > > > > > > > state:D stack:0 pid:10    ppid:2      flags:0x00000008    
-> > > > > > > [  243.217299][  T115] Workqueue: events vmstat_shepherd
-> > > > > > > [  243.217816][  T115] Call trace:
-> > > > > > > [  243.218133][  T115]  __switch_to+0x130/0x1e8
-> > > > > > > [  243.218568][  T115]  __schedule+0x660/0xcf8
-> > > > > > > [  243.219013][  T115]  schedule+0x58/0xf0
-> > > > > > > [  243.219402][  T115]  percpu_rwsem_wait+0xb0/0x1d0
-> > > > > > > [  243.219880][  T115]  __percpu_down_read+0x40/0xe0
-> > > > > > > [  243.220353][  T115]  cpus_read_lock+0x5c/0x70
-> > > > > > > [  243.220795][  T115]  vmstat_shepherd+0x40/0x140
-> > > > > > > [  243.221250][  T115]  process_one_work+0x170/0x3c0
-> > > > > > > [  243.221726][  T115]  worker_thread+0x234/0x3b8
-> > > > > > > [  243.222176][  T115]  kthread+0xf0/0x108
-> > > > > > > [  243.222564][  T115]  ret_from_fork+0x10/0x20
-> > > > > > > ...
-> > > > > > > [  243.254080][  T115] INFO: task kworker/0:2:194 blocked
-> > > > > > > for more than 122 seconds. [  243.254834][  T115]       Not
-> > > > > > > tainted 6.6.0+ #1 [  243.255529][  T115] "echo 0    
-> > > > > > > > /proc/sys/kernel/hung_task_timeout_secs" disables this
-> > > > > > > > message. [  243.256378][  T115] task:kworker/0:2
-> > > > > > > > state:D stack:0 pid:194   ppid:2      flags:0x00000008    
-> > > > > > > [  243.257284][  T115] Workqueue: events work_for_cpu_fn
-> > > > > > > [  243.257793][  T115] Call trace:
-> > > > > > > [  243.258111][  T115]  __switch_to+0x130/0x1e8
-> > > > > > > [  243.258541][  T115]  __schedule+0x660/0xcf8
-> > > > > > > [  243.258971][  T115]  schedule+0x58/0xf0
-> > > > > > > [  243.259360][  T115]  schedule_timeout+0x280/0x2f0
-> > > > > > > [  243.259832][  T115]  wait_for_common+0xcc/0x2d8
-> > > > > > > [  243.260287][  T115]  wait_for_completion+0x20/0x38
-> > > > > > > [  243.260767][  T115]  cpuhp_kick_ap+0xe8/0x278
-> > > > > > > [  243.261207][  T115]  cpuhp_kick_ap_work+0x5c/0x188
-> > > > > > > [  243.261688][  T115]  _cpu_down+0x120/0x378
-> > > > > > > [  243.262103][  T115]  __cpu_down_maps_locked+0x20/0x38
-> > > > > > > [  243.262609][  T115]  work_for_cpu_fn+0x24/0x40
-> > > > > > > [  243.263059][  T115]  process_one_work+0x170/0x3c0
-> > > > > > > [  243.263533][  T115]  worker_thread+0x234/0x3b8
-> > > > > > > [  243.263981][  T115]  kthread+0xf0/0x108
-> > > > > > > [  243.264405][  T115]  ret_from_fork+0x10/0x20
-> > > > > > > [  243.264846][  T115] INFO: task kworker/15:2:639 blocked
-> > > > > > > for more than 122 seconds. [  243.265602][  T115]       Not
-> > > > > > > tainted 6.6.0+ #1 [  243.266296][  T115] "echo 0    
-> > > > > > > > /proc/sys/kernel/hung_task_timeout_secs" disables this
-> > > > > > > > message. [  243.267143][  T115] task:kworker/15:2
-> > > > > > > > state:D stack:0 pid:639   ppid:2      flags:0x00000008    
-> > > > > > > [  243.268044][  T115] Workqueue: events_freezable_power_
-> > > > > > > disk_events_workfn [  243.268727][  T115] Call trace:
-> > > > > > > [  243.269051][  T115]  __switch_to+0x130/0x1e8
-> > > > > > > [  243.269481][  T115]  __schedule+0x660/0xcf8
-> > > > > > > [  243.269903][  T115]  schedule+0x58/0xf0
-> > > > > > > [  243.270293][  T115]  schedule_timeout+0x280/0x2f0
-> > > > > > > [  243.270763][  T115]  io_schedule_timeout+0x50/0x70
-> > > > > > > [  243.271245][  T115]
-> > > > > > > wait_for_common_io.constprop.0+0xb0/0x298
-> > > > > > > [  243.271830][  T115]  wait_for_completion_io+0x1c/0x30
-> > > > > > > [  243.272335][  T115]  blk_execute_rq+0x1d8/0x278
-> > > > > > > [  243.272793][  T115]  scsi_execute_cmd+0x114/0x238
-> > > > > > > [  243.273267][  T115]  sr_check_events+0xc8/0x310 [sr_mod]
-> > > > > > > [  243.273808][  T115]  cdrom_check_events+0x2c/0x50 [cdrom]
-> > > > > > > [  243.274408][  T115]  sr_block_check_events+0x34/0x48
-> > > > > > > [sr_mod] [  243.274994][  T115]
-> > > > > > > disk_check_events+0x44/0x1b0 [  243.275468][  T115]
-> > > > > > > disk_events_workfn+0x20/0x38 [  243.275939][  T115]
-> > > > > > > process_one_work+0x170/0x3c0 [  243.276410][  T115]
-> > > > > > > worker_thread+0x234/0x3b8 [  243.276855][  T115]
-> > > > > > > kthread+0xf0/0x108 [  243.277241][  T115]
-> > > > > > > ret_from_fork+0x10/0x20      
-> > > > > > 
-> > > > > > Question is why this scsi command can't be completed?
-> > > > > > 
-> > > > > > When blk_mq_hctx_notify_offline() is called, the CPU isn't
-> > > > > > shutdown yet, and it still can handle interrupt of this SCSI
-> > > > > > command.
-> > > > > > 
-> > > > > > 
-> > > > > > Thanks,
-> > > > > > Ming
-> > > > > > 
-> > > > > >     
-> > > > > Sorry, at the moment I don't know why it can't be finished,
-> > > > > just provides a solution like loop and dm-rq.
+On Wed, Dec 04, 2024 at 10:28:39AM +0100, David Hildenbrand wrote:
+> On 04.12.24 10:15, Oscar Salvador wrote:
+> > On Wed, Dec 04, 2024 at 10:03:28AM +0100, Vlastimil Babka wrote:
+> > > On 12/4/24 09:59, Oscar Salvador wrote:
+> > > > On Tue, Dec 03, 2024 at 08:19:02PM +0100, David Hildenbrand wrote:
+> > > > > It was always set using "GFP_USER | __GFP_MOVABLE | __GFP_RETRY_MAYFAIL",
+> > > > > and I removed the same flag combination in #2 from memory offline code, and
+> > > > > we do have the exact same thing in do_migrate_range() in
+> > > > > mm/memory_hotplug.c.
 > > > > > 
-> > > > > Currently see the call stack:    
-> > > > >  => blk_mq_run_hw_queue
-> > > > >  =>__blk_mq_sched_restart
-> > > > >  => blk_mq_run_hw_queue
-> > > > >  => __blk_mq_sched_restart
-> > > > >  => __blk_mq_free_request
-> > > > >  => blk_mq_free_request
-> > > > >  => blk_mq_end_request
-> > > > >  => blk_flush_complete_seq
-> > > > >  => flush_end_io
-> > > > >  => __blk_mq_end_request
-> > > > >  => scsi_end_request
-> > > > >  => scsi_io_completion
-> > > > >  => scsi_finish_command
-> > > > >  => scsi_complete
-> > > > >  => blk_mq_complete_request
-> > > > >  => scsi_done_internal
-> > > > >  => scsi_done
-> > > > >  => virtscsi_complete_cmd
-> > > > >  => virtscsi_req_done
-> > > > >  => vring_interrupt    
-> > > > > 
-> > > > > In finction blk_mq_run_hw_queue():
-> > > > > __blk_mq_run_dispatch_ops(hctx->queue, false,
-> > > > > 	need_run = !blk_queue_quiesced(hctx->queue) &&
-> > > > > 	blk_mq_hctx_has_pending(hctx));
-> > > > > 	
-> > > > > 	if (!need_run)
-> > > > > 		return;
-> > > > > 
-> > > > > Come here and return directly.    
+> > > > > We should investigate if__GFP_HARDWALL is the right thing to use here, and
+> > > > > if we can get rid of that by switching to GFP_KERNEL in all these places.
 > > > > 
-> > > > Does blk_queue_quiesced() return true?
-> > > >   
+> > > > Why would not we want __GFP_HARDWALL set?
+> > > > Without it, we could potentially migrate the page to a node which is not
+> > > > part of the cpuset of the task that originally allocated it, thus violating the
+> > > > policy? Is not that a problem?
 > > > 
-> > > blk_queue_quiesced() return false
-> > > 
-> > > Sorry, the calltrace above is not the one that is stuck this time.
-> > > The hang is caused by the wait_for_completion_io(), in
-> > > blk_execute_rq():
-> > > 
-> > > blk_status_t blk_execute_rq(struct request *rq, bool at_head)
-> > > {
-> > > 	...
-> > > 	rq->end_io_data = &wait;
-> > > 	rq->end_io = blk_end_sync_rq;
-> > > 	...
-> > > 	blk_account_io_start(rq);
-> > > 	blk_mq_insert_request(rq, at_head ? BLK_MQ_INSERT_AT_HEAD :
-> > > 0); blk_mq_run_hw_queue(hctx, false);
-> > > 
-> > > 	if (blk_rq_is_poll(rq)) {
-> > > 		blk_rq_poll_completion(rq, &wait.done);
-> > > 	} else {
-> > > 		...
-> > > 		wait_for_completion_io(&wait.done);
-> > > 	}
-> > > }
-> > > 
-> > > In this case, end_io is blk_end_sync_rq, which is not executed.
-> > > 
-> > > The process for sending scsi commands is as follows:
-> > > 
-> > >      kworker/7:1-134     [007] .....    32.772727: vp_notify
-> > >      <-virtqueue_notify kworker/7:1-134     [007] .....
-> > > 32.772729: <stack trace> => vp_notify  
-> > >  => virtqueue_notify
-> > >  => virtscsi_add_cmd
-> > >  => virtscsi_queuecommand
-> > >  => scsi_dispatch_cmd
-> > >  => scsi_queue_rq
-> > >  => blk_mq_dispatch_rq_list
-> > >  => __blk_mq_sched_dispatch_requests
-> > >  => blk_mq_sched_dispatch_requests
-> > >  => blk_mq_run_hw_queue
-> > >  => blk_execute_rq
-> > >  => scsi_execute_cmd
-> > >  => sr_check_events
-> > >  => cdrom_check_events
-> > >  => sr_block_check_events
-> > >  => disk_check_events
-> > >  => disk_events_workfn
-> > >  => process_one_work
-> > >  => worker_thread
-> > >  => kthread
-> > >  => ret_from_fork  
-> > > 
-> > > In qemu:
-> > > static void virtio_scsi_handle_cmd_vq(VirtIOSCSI *s, VirtQueue *vq)
-> > > {
-> > > 	...
-> > > 	do {
-> > >         	if (suppress_notifications) {
-> > > 			virtio_queue_set_notification(vq, 0);
-> > > 		}
-> > > 		...
-> > > 	} while (ret != -EINVAL && !virtio_queue_empty(vq));
-> > > 	...
-> > > 	QTAILQ_FOREACH_SAFE(req, &reqs, next, next) {
-> > > 		virtio_scsi_handle_cmd_req_submit(s, req);
-> > > 	}
-> > > }
-> > > 
-> > > virtio_queue_empty() always return true.
-> > > 
-> > > As a result, the virtio_scsi_handle_cmd_req_submit() was not
-> > > executed, and the io command was never submitted.
-> > > 
-> > > The reason is that virtio_device_disabled returns true in
-> > > virtio_queue_split_empty, the code is as follows:
-> > > 
-> > > int virtio_queue_empty(VirtQueue *vq)
-> > > {   
-> > > 	if (virtio_vdev_has_feature(vq->vdev,
-> > > VIRTIO_F_RING_PACKED)) { return virtio_queue_packed_empty(vq);
-> > > 	} else {
-> > > 		return virtio_queue_split_empty(vq);
-> > > 	}
-> > > }
-> > > 
-> > > static int virtio_queue_split_empty(VirtQueue *vq)
-> > > {
-> > > 	bool empty;
-> > >             
-> > > 	if (virtio_device_disabled(vq->vdev)) {
-> > > 		return 1;
-> > > 	...
-> > > }
-> > > 
-> > > This function was introduced in the following patch:
-> > > 
-> > > commit 9d7bd0826f2d19f88631ad7078662668148f7b5f
-> > > Author: Michael Roth <mdroth@linux.vnet.ibm.com>
-> > > Date:   Tue Nov 19 18:50:03 2019 -0600
-> > > 
-> > >     virtio-pci: disable vring processing when bus-mastering is
-> > > disabled  
+> > > The task doing the alloc_contig_range() will likely not be the same task as
+> > > the one that originally allocated the page, so its policy would be
+> > > different, no? So even with __GFP_HARDWALL we might be already migrating
+> > > outside the original tasks's constraint? Am I missing something?
 > > 
-> > OK, then it is obviously one qemu issue, and it can explain why IO
-> > isn't completed in this case.
+> > Yes, that is right, I thought we derive the policy from the old page
+> > somehow when migrating it, but reading the code does not seem to be the
+> > case.
 > > 
+> > Looking at prepare_alloc_pages(), if !ac->nodemask, which would be the
+> > case here, we would get the policy from the current task
+> > (alloc_contig_range()) when cpusets are enabled.
 > > 
+> > So yes, I am a bit puzzled why __GFP_HARDWALL was chosen in the first
+> > place.
 > 
-> However, in fact, the current pci-master state is disabled, it is
-> shutdown by executing the syscore_shutdown() in kernel_kexec(), and the
-> call stack is as follows:
-> kernel_kexec
-> => syscore_shutdown
-> => ops->shutdown
-> => pci_device_shutdown
-> => pci_clear_master
-> => __pci_set_master
-> 
-> Therefore, qemu determines the pci-master status and disable
-> virtio-pci when tthe state of the pci-master is disabled.
+> I suspect because "GFP_USER" felt like the appropriate thing to do.
 
-But either virtio-scsi driver or qemu knows clearly that there is one
-in-flight request not completed, and is just ignored silently.
+Looking back at when the whole contiguous allocator patchset was posted,
+it seems that it kinda copied what memory-offline code was doing, which
+was migrating pages with GFP_HIGHUSER_MOVABLE (hotremove_migrate_alloc()).
 
-Anyway, it is not one issue in block layer or scsi-core code.
+Then, the HIGHMEM modifier was dropped due to HIGHMEM restrictions on
+some systems, ending up with GFP_USER.
 
 
-Thanks,
-Ming
-
+-- 
+Oscar Salvador
+SUSE Labs
 
