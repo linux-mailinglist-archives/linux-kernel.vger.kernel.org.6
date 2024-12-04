@@ -1,57 +1,55 @@
-Return-Path: <linux-kernel+bounces-431679-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDE759E43CB
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 19:53:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DEB819E433D
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 19:23:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 61707B3F66D
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:00:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5C7F3B47EE2
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:01:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DB002101AB;
-	Wed,  4 Dec 2024 16:58:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37D1B2144AC;
+	Wed,  4 Dec 2024 16:58:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FhqyEGla"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KRBd06Sf"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BDF8210194;
-	Wed,  4 Dec 2024 16:58:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D6872139D4;
+	Wed,  4 Dec 2024 16:58:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733331487; cv=none; b=kDFZvS9O8DqSxRvWcfC4/Bdr77LIgwDPetbFpOw5G1NjG2CWbPEDlgP8fCSp28eMch9rsNgj8rsoTbqGdBLns0AKbhlUfoMext3Hmx9TqelsAJZ6sduRkibBbCJmB9tDSZeVb2LkITZ4sIDnzrT8xQaZj39IAznjPW+FBaeBvkA=
+	t=1733331495; cv=none; b=Ao5Do2guGjX8Pc8oOT1WMPhNAG+BXE0SB+S/s39NYnmqHCtBng27ii85TBPbdGwpAjvu67OALmRs/aziIDSe2tH/lU6aavIqZJvlVX7NcYQOi8tD+avGr1EVipgY5pZGjnaYkIBD4qy3J6oSBALVOLyFwDcpjLwOt/SjfPFQpFg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733331487; c=relaxed/simple;
-	bh=MBHc23BvyC78TLIGftiFLCn0LobkzZ03SbtTOPGgFZI=;
+	s=arc-20240116; t=1733331495; c=relaxed/simple;
+	bh=0mNno1EiiSC9NUog4xuo7N7vBR1QdqDrwjHVF5pU6jU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=sDJP+BIM0e0WSOoZb7/7lLPLAZb8h2O9IRLOVnoQu06K5iHJMCO0+wjf6Svc9slkT/QHELXVQInUuCt+H2xDXifRuOIXcL9RsPJDSoSYhIE0IekYfLU8bhfmtB+fIesABX9ymm5WwW4xVw8kJqGnUPb4CcKKLqz8p8J0JrN/ORc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FhqyEGla; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3CF6FC4CED1;
-	Wed,  4 Dec 2024 16:58:06 +0000 (UTC)
+	 MIME-Version; b=R9JOiL585osNnhJ4+w/bZYSitTas54oOPeXa+Ln7jl/AuImn/6PX7Pf2ianCEEy0wq6zKcYJ1BTYAUuwAi6y5tq5jZNY5arlyKXT+75lx4/zoP090URxar18QR2jt+yDUDLerEhCSnPOFMkC11hbcEcrlgcB9Jc9GFF9jC2lmlA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KRBd06Sf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39944C4CEE6;
+	Wed,  4 Dec 2024 16:58:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733331487;
-	bh=MBHc23BvyC78TLIGftiFLCn0LobkzZ03SbtTOPGgFZI=;
+	s=k20201202; t=1733331495;
+	bh=0mNno1EiiSC9NUog4xuo7N7vBR1QdqDrwjHVF5pU6jU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=FhqyEGlabNmjXCleW4FCUTFHgmO3GZ3a+TXFaMV0X8jx20QtB7W6aCr84Ukrk4WiK
-	 Ps/qsk73P+A2ryx7n7tDtrhu1+AJP7mAgKn+/Wj596QhDXJlATa426t1o7DViFtggM
-	 SfiRT0FHNmqRqtyeQaOj65NoBB2Twu0m6Q52snvD7UwTtRUisbqPGwoMGXQoU6BK/I
-	 O0hfRU5dCtHbiLFNdua4RUPbCgPk+XVKrgnLK2f5nvUairtLsXSvjuKgMyJANxMo7T
-	 7lOFq4TuH1Mjs+jRNul0kZ9Pbep48R2jUQXJMLpy0gs6KrqIv1riKU/kGYUgAKSE8s
-	 NY3Slh0/HkfHw==
+	b=KRBd06SfmWU/aeG357zsf9VioPKhw3/v/vDgzKte79d1W1ygWAoQr1f8qSmW0W7H5
+	 fgYkbvDYYKBZX3xXfd/mrV1xZRTeYYdMXvjdu8F7Pmh9VDzR1r24kRlaA2pNApoZid
+	 Gsjm2Nb3Q9xuPR4h/FXl3PFh43CXj9uSbhV4k63amuJ1ypX6Ak/qIfwAL5/KNfHfRf
+	 mL3m2Xqzn2PnA6sJS2j+upgoI3dzSNSTEnN7PF2L9wUQnKXASzC42i8ule+Rpn9S8S
+	 Np8satgKnqHgMzkrx/cRasPmEIjCsH2JfQiCyUaeUwVuAXMztuBfvFWwAHA4ElzG62
+	 UchoGaRToNHWA==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Yihang Li <liyihang9@huawei.com>,
-	Xingui Yang <yangxingui@huawei.com>,
-	"Martin K . Petersen" <martin.petersen@oracle.com>,
+Cc: Mukesh Ojha <quic_mojha@quicinc.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
 	Sasha Levin <sashal@kernel.org>,
-	James.Bottomley@HansenPartnership.com,
-	linux-scsi@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.12 09/36] scsi: hisi_sas: Create all dump files during debugfs initialization
-Date: Wed,  4 Dec 2024 10:45:25 -0500
-Message-ID: <20241204154626.2211476-9-sashal@kernel.org>
+	linux-gpio@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.12 12/36] pinmux: Use sequential access to access desc->pinmux data
+Date: Wed,  4 Dec 2024 10:45:28 -0500
+Message-ID: <20241204154626.2211476-12-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20241204154626.2211476-1-sashal@kernel.org>
 References: <20241204154626.2211476-1-sashal@kernel.org>
@@ -66,365 +64,334 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.12.1
 Content-Transfer-Encoding: 8bit
 
-From: Yihang Li <liyihang9@huawei.com>
+From: Mukesh Ojha <quic_mojha@quicinc.com>
 
-[ Upstream commit 9f564f15f88490b484e02442dc4c4b11640ea172 ]
+[ Upstream commit 5a3e85c3c397c781393ea5fb2f45b1f60f8a4e6e ]
 
-For the current debugfs of hisi_sas, after user triggers dump, the
-driver allocate memory space to save the register information and create
-debugfs files to display the saved information. In this process, the
-debugfs files created after each dump.
+When two client of the same gpio call pinctrl_select_state() for the
+same functionality, we are seeing NULL pointer issue while accessing
+desc->mux_owner.
 
-Therefore, when the dump is triggered while the driver is unbind, the
-following hang occurs:
+Let's say two processes A, B executing in pin_request() for the same pin
+and process A updates the desc->mux_usecount but not yet updated the
+desc->mux_owner while process B see the desc->mux_usecount which got
+updated by A path and further executes strcmp and while accessing
+desc->mux_owner it crashes with NULL pointer.
 
-[67840.853907] Unable to handle kernel NULL pointer dereference at virtual address 00000000000000a0
-[67840.862947] Mem abort info:
-[67840.865855]   ESR = 0x0000000096000004
-[67840.869713]   EC = 0x25: DABT (current EL), IL = 32 bits
-[67840.875125]   SET = 0, FnV = 0
-[67840.878291]   EA = 0, S1PTW = 0
-[67840.881545]   FSC = 0x04: level 0 translation fault
-[67840.886528] Data abort info:
-[67840.889524]   ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
-[67840.895117]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
-[67840.900284]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
-[67840.905709] user pgtable: 4k pages, 48-bit VAs, pgdp=0000002803a1f000
-[67840.912263] [00000000000000a0] pgd=0000000000000000, p4d=0000000000000000
-[67840.919177] Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
-[67840.996435] pstate: 80400009 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-[67841.003628] pc : down_write+0x30/0x98
-[67841.007546] lr : start_creating.part.0+0x60/0x198
-[67841.012495] sp : ffff8000b979ba20
-[67841.016046] x29: ffff8000b979ba20 x28: 0000000000000010 x27: 0000000000024b40
-[67841.023412] x26: 0000000000000012 x25: ffff20202b355ae8 x24: ffff20202b35a8c8
-[67841.030779] x23: ffffa36877928208 x22: ffffa368b4972240 x21: ffff8000b979bb18
-[67841.038147] x20: ffff00281dc1e3c0 x19: fffffffffffffffe x18: 0000000000000020
-[67841.045515] x17: 0000000000000000 x16: ffffa368b128a530 x15: ffffffffffffffff
-[67841.052888] x14: ffff8000b979bc18 x13: ffffffffffffffff x12: ffff8000b979bb18
-[67841.060263] x11: 0000000000000000 x10: 0000000000000000 x9 : ffffa368b1289b18
-[67841.067640] x8 : 0000000000000012 x7 : 0000000000000000 x6 : 00000000000003a9
-[67841.075014] x5 : 0000000000000000 x4 : ffff002818c5cb00 x3 : 0000000000000001
-[67841.082388] x2 : 0000000000000000 x1 : ffff002818c5cb00 x0 : 00000000000000a0
-[67841.089759] Call trace:
-[67841.092456]  down_write+0x30/0x98
-[67841.096017]  start_creating.part.0+0x60/0x198
-[67841.100613]  debugfs_create_dir+0x48/0x1f8
-[67841.104950]  debugfs_create_files_v3_hw+0x88/0x348 [hisi_sas_v3_hw]
-[67841.111447]  debugfs_snapshot_regs_v3_hw+0x708/0x798 [hisi_sas_v3_hw]
-[67841.118111]  debugfs_trigger_dump_v3_hw_write+0x9c/0x120 [hisi_sas_v3_hw]
-[67841.125115]  full_proxy_write+0x68/0xc8
-[67841.129175]  vfs_write+0xd8/0x3f0
-[67841.132708]  ksys_write+0x70/0x108
-[67841.136317]  __arm64_sys_write+0x24/0x38
-[67841.140440]  invoke_syscall+0x50/0x128
-[67841.144385]  el0_svc_common.constprop.0+0xc8/0xf0
-[67841.149273]  do_el0_svc+0x24/0x38
-[67841.152773]  el0_svc+0x38/0xd8
-[67841.156009]  el0t_64_sync_handler+0xc0/0xc8
-[67841.160361]  el0t_64_sync+0x1a4/0x1a8
-[67841.164189] Code: b9000882 d2800002 d2800023 f9800011 (c85ffc05)
-[67841.170443] ---[ end trace 0000000000000000 ]---
+Serialize the access to mux related setting with a mutex lock.
 
-To fix this issue, create all directories and files during debugfs
-initialization. In this way, the driver only needs to allocate memory
-space to save information each time the user triggers dumping.
+	cpu0 (process A)			cpu1(process B)
 
-Signed-off-by: Yihang Li <liyihang9@huawei.com>
-Link: https://lore.kernel.org/r/20241008021822.2617339-13-liyihang9@huawei.com
-Reviewed-by: Xingui Yang <yangxingui@huawei.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+pinctrl_select_state() {		  pinctrl_select_state() {
+  pin_request() {				pin_request() {
+  ...
+						 ....
+    } else {
+         desc->mux_usecount++;
+    						desc->mux_usecount && strcmp(desc->mux_owner, owner)) {
+
+         if (desc->mux_usecount > 1)
+               return 0;
+         desc->mux_owner = owner;
+
+  }						}
+
+Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
+Link: https://lore.kernel.org/20241014192930.1539673-1-quic_mojha@quicinc.com
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/hisi_sas/hisi_sas_v3_hw.c | 99 ++++++++++++++++++++------
- 1 file changed, 77 insertions(+), 22 deletions(-)
+ drivers/pinctrl/core.c   |   3 +
+ drivers/pinctrl/core.h   |   1 +
+ drivers/pinctrl/pinmux.c | 173 ++++++++++++++++++++++-----------------
+ 3 files changed, 100 insertions(+), 77 deletions(-)
 
-diff --git a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-index a7401bade099a..cd394d8c9f07f 100644
---- a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-+++ b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-@@ -3551,6 +3551,11 @@ debugfs_to_reg_name_v3_hw(int off, int base_off,
- 	return NULL;
- }
+diff --git a/drivers/pinctrl/core.c b/drivers/pinctrl/core.c
+index 4061890a17483..b3eec63c00ba0 100644
+--- a/drivers/pinctrl/core.c
++++ b/drivers/pinctrl/core.c
+@@ -220,6 +220,9 @@ static int pinctrl_register_one_pin(struct pinctrl_dev *pctldev,
  
-+static bool debugfs_dump_is_generated_v3_hw(void *p)
-+{
-+	return p ? true : false;
-+}
-+
- static void debugfs_print_reg_v3_hw(u32 *regs_val, struct seq_file *s,
- 				    const struct hisi_sas_debugfs_reg *reg)
- {
-@@ -3576,6 +3581,9 @@ static int debugfs_global_v3_hw_show(struct seq_file *s, void *p)
- {
- 	struct hisi_sas_debugfs_regs *global = s->private;
+ 	/* Set owner */
+ 	pindesc->pctldev = pctldev;
++#ifdef CONFIG_PINMUX
++	mutex_init(&pindesc->mux_lock);
++#endif
  
-+	if (!debugfs_dump_is_generated_v3_hw(global->data))
-+		return -EPERM;
-+
- 	debugfs_print_reg_v3_hw(global->data, s,
- 				&debugfs_global_reg);
+ 	/* Copy basic pin info */
+ 	if (pin->name) {
+diff --git a/drivers/pinctrl/core.h b/drivers/pinctrl/core.h
+index 4e07707d2435b..d6c24978e7081 100644
+--- a/drivers/pinctrl/core.h
++++ b/drivers/pinctrl/core.h
+@@ -177,6 +177,7 @@ struct pin_desc {
+ 	const char *mux_owner;
+ 	const struct pinctrl_setting_mux *mux_setting;
+ 	const char *gpio_owner;
++	struct mutex mux_lock;
+ #endif
+ };
  
-@@ -3587,6 +3595,9 @@ static int debugfs_axi_v3_hw_show(struct seq_file *s, void *p)
- {
- 	struct hisi_sas_debugfs_regs *axi = s->private;
+diff --git a/drivers/pinctrl/pinmux.c b/drivers/pinctrl/pinmux.c
+index 02033ea1c6438..0743190da59e8 100644
+--- a/drivers/pinctrl/pinmux.c
++++ b/drivers/pinctrl/pinmux.c
+@@ -14,6 +14,7 @@
  
-+	if (!debugfs_dump_is_generated_v3_hw(axi->data))
-+		return -EPERM;
-+
- 	debugfs_print_reg_v3_hw(axi->data, s,
- 				&debugfs_axi_reg);
+ #include <linux/array_size.h>
+ #include <linux/ctype.h>
++#include <linux/cleanup.h>
+ #include <linux/debugfs.h>
+ #include <linux/device.h>
+ #include <linux/err.h>
+@@ -93,6 +94,7 @@ bool pinmux_can_be_used_for_gpio(struct pinctrl_dev *pctldev, unsigned int pin)
+ 	if (!desc || !ops)
+ 		return true;
  
-@@ -3598,6 +3609,9 @@ static int debugfs_ras_v3_hw_show(struct seq_file *s, void *p)
- {
- 	struct hisi_sas_debugfs_regs *ras = s->private;
++	guard(mutex)(&desc->mux_lock);
+ 	if (ops->strict && desc->mux_usecount)
+ 		return false;
  
-+	if (!debugfs_dump_is_generated_v3_hw(ras->data))
-+		return -EPERM;
-+
- 	debugfs_print_reg_v3_hw(ras->data, s,
- 				&debugfs_ras_reg);
+@@ -127,29 +129,31 @@ static int pin_request(struct pinctrl_dev *pctldev,
+ 	dev_dbg(pctldev->dev, "request pin %d (%s) for %s\n",
+ 		pin, desc->name, owner);
  
-@@ -3610,6 +3624,9 @@ static int debugfs_port_v3_hw_show(struct seq_file *s, void *p)
- 	struct hisi_sas_debugfs_port *port = s->private;
- 	const struct hisi_sas_debugfs_reg *reg_port = &debugfs_port_reg;
+-	if ((!gpio_range || ops->strict) &&
+-	    desc->mux_usecount && strcmp(desc->mux_owner, owner)) {
+-		dev_err(pctldev->dev,
+-			"pin %s already requested by %s; cannot claim for %s\n",
+-			desc->name, desc->mux_owner, owner);
+-		goto out;
+-	}
++	scoped_guard(mutex, &desc->mux_lock) {
++		if ((!gpio_range || ops->strict) &&
++		    desc->mux_usecount && strcmp(desc->mux_owner, owner)) {
++			dev_err(pctldev->dev,
++				"pin %s already requested by %s; cannot claim for %s\n",
++				desc->name, desc->mux_owner, owner);
++			goto out;
++		}
  
-+	if (!debugfs_dump_is_generated_v3_hw(port->data))
-+		return -EPERM;
-+
- 	debugfs_print_reg_v3_hw(port->data, s, reg_port);
+-	if ((gpio_range || ops->strict) && desc->gpio_owner) {
+-		dev_err(pctldev->dev,
+-			"pin %s already requested by %s; cannot claim for %s\n",
+-			desc->name, desc->gpio_owner, owner);
+-		goto out;
+-	}
++		if ((gpio_range || ops->strict) && desc->gpio_owner) {
++			dev_err(pctldev->dev,
++				"pin %s already requested by %s; cannot claim for %s\n",
++				desc->name, desc->gpio_owner, owner);
++			goto out;
++		}
  
- 	return 0;
-@@ -3665,6 +3682,9 @@ static int debugfs_cq_v3_hw_show(struct seq_file *s, void *p)
- 	struct hisi_sas_debugfs_cq *debugfs_cq = s->private;
- 	int slot;
+-	if (gpio_range) {
+-		desc->gpio_owner = owner;
+-	} else {
+-		desc->mux_usecount++;
+-		if (desc->mux_usecount > 1)
+-			return 0;
++		if (gpio_range) {
++			desc->gpio_owner = owner;
++		} else {
++			desc->mux_usecount++;
++			if (desc->mux_usecount > 1)
++				return 0;
  
-+	if (!debugfs_dump_is_generated_v3_hw(debugfs_cq->complete_hdr))
-+		return -EPERM;
-+
- 	for (slot = 0; slot < HISI_SAS_QUEUE_SLOTS; slot++)
- 		debugfs_cq_show_slot_v3_hw(s, slot, debugfs_cq);
- 
-@@ -3686,8 +3706,12 @@ static void debugfs_dq_show_slot_v3_hw(struct seq_file *s, int slot,
- 
- static int debugfs_dq_v3_hw_show(struct seq_file *s, void *p)
- {
-+	struct hisi_sas_debugfs_dq *debugfs_dq = s->private;
- 	int slot;
- 
-+	if (!debugfs_dump_is_generated_v3_hw(debugfs_dq->hdr))
-+		return -EPERM;
-+
- 	for (slot = 0; slot < HISI_SAS_QUEUE_SLOTS; slot++)
- 		debugfs_dq_show_slot_v3_hw(s, slot, s->private);
- 
-@@ -3701,6 +3725,9 @@ static int debugfs_iost_v3_hw_show(struct seq_file *s, void *p)
- 	struct hisi_sas_iost *iost = debugfs_iost->iost;
- 	int i, max_command_entries = HISI_SAS_MAX_COMMANDS;
- 
-+	if (!debugfs_dump_is_generated_v3_hw(iost))
-+		return -EPERM;
-+
- 	for (i = 0; i < max_command_entries; i++, iost++) {
- 		__le64 *data = &iost->qw0;
- 
-@@ -3720,6 +3747,9 @@ static int debugfs_iost_cache_v3_hw_show(struct seq_file *s, void *p)
- 	int i, tab_idx;
- 	__le64 *iost;
- 
-+	if (!debugfs_dump_is_generated_v3_hw(iost_cache))
-+		return -EPERM;
-+
- 	for (i = 0; i < HISI_SAS_IOST_ITCT_CACHE_NUM; i++, iost_cache++) {
- 		/*
- 		 * Data struct of IOST cache:
-@@ -3743,6 +3773,9 @@ static int debugfs_itct_v3_hw_show(struct seq_file *s, void *p)
- 	struct hisi_sas_debugfs_itct *debugfs_itct = s->private;
- 	struct hisi_sas_itct *itct = debugfs_itct->itct;
- 
-+	if (!debugfs_dump_is_generated_v3_hw(itct))
-+		return -EPERM;
-+
- 	for (i = 0; i < HISI_SAS_MAX_ITCT_ENTRIES; i++, itct++) {
- 		__le64 *data = &itct->qw0;
- 
-@@ -3762,6 +3795,9 @@ static int debugfs_itct_cache_v3_hw_show(struct seq_file *s, void *p)
- 	int i, tab_idx;
- 	__le64 *itct;
- 
-+	if (!debugfs_dump_is_generated_v3_hw(itct_cache))
-+		return -EPERM;
-+
- 	for (i = 0; i < HISI_SAS_IOST_ITCT_CACHE_NUM; i++, itct_cache++) {
- 		/*
- 		 * Data struct of ITCT cache:
-@@ -3779,10 +3815,9 @@ static int debugfs_itct_cache_v3_hw_show(struct seq_file *s, void *p)
- }
- DEFINE_SHOW_ATTRIBUTE(debugfs_itct_cache_v3_hw);
- 
--static void debugfs_create_files_v3_hw(struct hisi_hba *hisi_hba)
-+static void debugfs_create_files_v3_hw(struct hisi_hba *hisi_hba, int index)
- {
- 	u64 *debugfs_timestamp;
--	int dump_index = hisi_hba->debugfs_dump_index;
- 	struct dentry *dump_dentry;
- 	struct dentry *dentry;
- 	char name[256];
-@@ -3790,17 +3825,17 @@ static void debugfs_create_files_v3_hw(struct hisi_hba *hisi_hba)
- 	int c;
- 	int d;
- 
--	snprintf(name, 256, "%d", dump_index);
-+	snprintf(name, 256, "%d", index);
- 
- 	dump_dentry = debugfs_create_dir(name, hisi_hba->debugfs_dump_dentry);
- 
--	debugfs_timestamp = &hisi_hba->debugfs_timestamp[dump_index];
-+	debugfs_timestamp = &hisi_hba->debugfs_timestamp[index];
- 
- 	debugfs_create_u64("timestamp", 0400, dump_dentry,
- 			   debugfs_timestamp);
- 
- 	debugfs_create_file("global", 0400, dump_dentry,
--			    &hisi_hba->debugfs_regs[dump_index][DEBUGFS_GLOBAL],
-+			    &hisi_hba->debugfs_regs[index][DEBUGFS_GLOBAL],
- 			    &debugfs_global_v3_hw_fops);
- 
- 	/* Create port dir and files */
-@@ -3809,7 +3844,7 @@ static void debugfs_create_files_v3_hw(struct hisi_hba *hisi_hba)
- 		snprintf(name, 256, "%d", p);
- 
- 		debugfs_create_file(name, 0400, dentry,
--				    &hisi_hba->debugfs_port_reg[dump_index][p],
-+				    &hisi_hba->debugfs_port_reg[index][p],
- 				    &debugfs_port_v3_hw_fops);
+-		desc->mux_owner = owner;
++			desc->mux_owner = owner;
++		}
  	}
  
-@@ -3819,7 +3854,7 @@ static void debugfs_create_files_v3_hw(struct hisi_hba *hisi_hba)
- 		snprintf(name, 256, "%d", c);
+ 	/* Let each pin increase references to this module */
+@@ -178,12 +182,14 @@ static int pin_request(struct pinctrl_dev *pctldev,
  
- 		debugfs_create_file(name, 0400, dentry,
--				    &hisi_hba->debugfs_cq[dump_index][c],
-+				    &hisi_hba->debugfs_cq[index][c],
- 				    &debugfs_cq_v3_hw_fops);
+ out_free_pin:
+ 	if (status) {
+-		if (gpio_range) {
+-			desc->gpio_owner = NULL;
+-		} else {
+-			desc->mux_usecount--;
+-			if (!desc->mux_usecount)
+-				desc->mux_owner = NULL;
++		scoped_guard(mutex, &desc->mux_lock) {
++			if (gpio_range) {
++				desc->gpio_owner = NULL;
++			} else {
++				desc->mux_usecount--;
++				if (!desc->mux_usecount)
++					desc->mux_owner = NULL;
++			}
+ 		}
+ 	}
+ out:
+@@ -219,15 +225,17 @@ static const char *pin_free(struct pinctrl_dev *pctldev, int pin,
+ 		return NULL;
  	}
  
-@@ -3829,32 +3864,32 @@ static void debugfs_create_files_v3_hw(struct hisi_hba *hisi_hba)
- 		snprintf(name, 256, "%d", d);
- 
- 		debugfs_create_file(name, 0400, dentry,
--				    &hisi_hba->debugfs_dq[dump_index][d],
-+				    &hisi_hba->debugfs_dq[index][d],
- 				    &debugfs_dq_v3_hw_fops);
+-	if (!gpio_range) {
+-		/*
+-		 * A pin should not be freed more times than allocated.
+-		 */
+-		if (WARN_ON(!desc->mux_usecount))
+-			return NULL;
+-		desc->mux_usecount--;
+-		if (desc->mux_usecount)
+-			return NULL;
++	scoped_guard(mutex, &desc->mux_lock) {
++		if (!gpio_range) {
++			/*
++			 * A pin should not be freed more times than allocated.
++			 */
++			if (WARN_ON(!desc->mux_usecount))
++				return NULL;
++			desc->mux_usecount--;
++			if (desc->mux_usecount)
++				return NULL;
++		}
  	}
  
- 	debugfs_create_file("iost", 0400, dump_dentry,
--			    &hisi_hba->debugfs_iost[dump_index],
-+			    &hisi_hba->debugfs_iost[index],
- 			    &debugfs_iost_v3_hw_fops);
+ 	/*
+@@ -239,13 +247,15 @@ static const char *pin_free(struct pinctrl_dev *pctldev, int pin,
+ 	else if (ops->free)
+ 		ops->free(pctldev, pin);
  
- 	debugfs_create_file("iost_cache", 0400, dump_dentry,
--			    &hisi_hba->debugfs_iost_cache[dump_index],
-+			    &hisi_hba->debugfs_iost_cache[index],
- 			    &debugfs_iost_cache_v3_hw_fops);
+-	if (gpio_range) {
+-		owner = desc->gpio_owner;
+-		desc->gpio_owner = NULL;
+-	} else {
+-		owner = desc->mux_owner;
+-		desc->mux_owner = NULL;
+-		desc->mux_setting = NULL;
++	scoped_guard(mutex, &desc->mux_lock) {
++		if (gpio_range) {
++			owner = desc->gpio_owner;
++			desc->gpio_owner = NULL;
++		} else {
++			owner = desc->mux_owner;
++			desc->mux_owner = NULL;
++			desc->mux_setting = NULL;
++		}
+ 	}
  
- 	debugfs_create_file("itct", 0400, dump_dentry,
--			    &hisi_hba->debugfs_itct[dump_index],
-+			    &hisi_hba->debugfs_itct[index],
- 			    &debugfs_itct_v3_hw_fops);
+ 	module_put(pctldev->owner);
+@@ -458,7 +468,8 @@ int pinmux_enable_setting(const struct pinctrl_setting *setting)
+ 				 pins[i]);
+ 			continue;
+ 		}
+-		desc->mux_setting = &(setting->data.mux);
++		scoped_guard(mutex, &desc->mux_lock)
++			desc->mux_setting = &(setting->data.mux);
+ 	}
  
- 	debugfs_create_file("itct_cache", 0400, dump_dentry,
--			    &hisi_hba->debugfs_itct_cache[dump_index],
-+			    &hisi_hba->debugfs_itct_cache[index],
- 			    &debugfs_itct_cache_v3_hw_fops);
- 
- 	debugfs_create_file("axi", 0400, dump_dentry,
--			    &hisi_hba->debugfs_regs[dump_index][DEBUGFS_AXI],
-+			    &hisi_hba->debugfs_regs[index][DEBUGFS_AXI],
- 			    &debugfs_axi_v3_hw_fops);
- 
- 	debugfs_create_file("ras", 0400, dump_dentry,
--			    &hisi_hba->debugfs_regs[dump_index][DEBUGFS_RAS],
-+			    &hisi_hba->debugfs_regs[index][DEBUGFS_RAS],
- 			    &debugfs_ras_v3_hw_fops);
- }
- 
-@@ -4517,22 +4552,34 @@ static void debugfs_release_v3_hw(struct hisi_hba *hisi_hba, int dump_index)
+ 	ret = ops->set_mux(pctldev, setting->data.mux.func,
+@@ -472,8 +483,10 @@ int pinmux_enable_setting(const struct pinctrl_setting *setting)
+ err_set_mux:
+ 	for (i = 0; i < num_pins; i++) {
+ 		desc = pin_desc_get(pctldev, pins[i]);
+-		if (desc)
+-			desc->mux_setting = NULL;
++		if (desc) {
++			scoped_guard(mutex, &desc->mux_lock)
++				desc->mux_setting = NULL;
++		}
+ 	}
+ err_pin_request:
+ 	/* On error release all taken pins */
+@@ -492,6 +505,7 @@ void pinmux_disable_setting(const struct pinctrl_setting *setting)
+ 	unsigned int num_pins = 0;
  	int i;
+ 	struct pin_desc *desc;
++	bool is_equal;
  
- 	devm_kfree(dev, hisi_hba->debugfs_iost_cache[dump_index].cache);
-+	hisi_hba->debugfs_iost_cache[dump_index].cache = NULL;
- 	devm_kfree(dev, hisi_hba->debugfs_itct_cache[dump_index].cache);
-+	hisi_hba->debugfs_itct_cache[dump_index].cache = NULL;
- 	devm_kfree(dev, hisi_hba->debugfs_iost[dump_index].iost);
-+	hisi_hba->debugfs_iost[dump_index].iost = NULL;
- 	devm_kfree(dev, hisi_hba->debugfs_itct[dump_index].itct);
-+	hisi_hba->debugfs_itct[dump_index].itct = NULL;
+ 	if (pctlops->get_group_pins)
+ 		ret = pctlops->get_group_pins(pctldev, setting->data.mux.group,
+@@ -517,7 +531,10 @@ void pinmux_disable_setting(const struct pinctrl_setting *setting)
+ 				 pins[i]);
+ 			continue;
+ 		}
+-		if (desc->mux_setting == &(setting->data.mux)) {
++		scoped_guard(mutex, &desc->mux_lock)
++			is_equal = (desc->mux_setting == &(setting->data.mux));
++
++		if (is_equal) {
+ 			pin_free(pctldev, pins[i], NULL);
+ 		} else {
+ 			const char *gname;
+@@ -608,40 +625,42 @@ static int pinmux_pins_show(struct seq_file *s, void *what)
+ 		if (desc == NULL)
+ 			continue;
  
--	for (i = 0; i < hisi_hba->queue_count; i++)
-+	for (i = 0; i < hisi_hba->queue_count; i++) {
- 		devm_kfree(dev, hisi_hba->debugfs_dq[dump_index][i].hdr);
-+		hisi_hba->debugfs_dq[dump_index][i].hdr = NULL;
-+	}
- 
--	for (i = 0; i < hisi_hba->queue_count; i++)
-+	for (i = 0; i < hisi_hba->queue_count; i++) {
- 		devm_kfree(dev,
- 			   hisi_hba->debugfs_cq[dump_index][i].complete_hdr);
-+		hisi_hba->debugfs_cq[dump_index][i].complete_hdr = NULL;
-+	}
- 
--	for (i = 0; i < DEBUGFS_REGS_NUM; i++)
-+	for (i = 0; i < DEBUGFS_REGS_NUM; i++) {
- 		devm_kfree(dev, hisi_hba->debugfs_regs[dump_index][i].data);
-+		hisi_hba->debugfs_regs[dump_index][i].data = NULL;
-+	}
- 
--	for (i = 0; i < hisi_hba->n_phy; i++)
-+	for (i = 0; i < hisi_hba->n_phy; i++) {
- 		devm_kfree(dev, hisi_hba->debugfs_port_reg[dump_index][i].data);
-+		hisi_hba->debugfs_port_reg[dump_index][i].data = NULL;
-+	}
- }
- 
- static const struct hisi_sas_debugfs_reg *debugfs_reg_array_v3_hw[DEBUGFS_REGS_NUM] = {
-@@ -4659,8 +4706,6 @@ static int debugfs_snapshot_regs_v3_hw(struct hisi_hba *hisi_hba)
- 	debugfs_snapshot_itct_reg_v3_hw(hisi_hba);
- 	debugfs_snapshot_iost_reg_v3_hw(hisi_hba);
- 
--	debugfs_create_files_v3_hw(hisi_hba);
+-		if (desc->mux_owner &&
+-		    !strcmp(desc->mux_owner, pinctrl_dev_get_name(pctldev)))
+-			is_hog = true;
 -
- 	debugfs_snapshot_restore_v3_hw(hisi_hba);
- 	hisi_hba->debugfs_dump_index++;
- 
-@@ -4744,6 +4789,17 @@ static void debugfs_bist_init_v3_hw(struct hisi_hba *hisi_hba)
- 	hisi_hba->debugfs_bist_linkrate = SAS_LINK_RATE_1_5_GBPS;
- }
- 
-+static void debugfs_dump_init_v3_hw(struct hisi_hba *hisi_hba)
-+{
-+	int i;
+-		if (pmxops->strict) {
+-			if (desc->mux_owner)
+-				seq_printf(s, "pin %d (%s): device %s%s",
+-					   pin, desc->name, desc->mux_owner,
++		scoped_guard(mutex, &desc->mux_lock) {
++			if (desc->mux_owner &&
++			    !strcmp(desc->mux_owner, pinctrl_dev_get_name(pctldev)))
++				is_hog = true;
 +
-+	hisi_hba->debugfs_dump_dentry =
-+			debugfs_create_dir("dump", hisi_hba->debugfs_dir);
++			if (pmxops->strict) {
++				if (desc->mux_owner)
++					seq_printf(s, "pin %d (%s): device %s%s",
++						   pin, desc->name, desc->mux_owner,
++						   is_hog ? " (HOG)" : "");
++				else if (desc->gpio_owner)
++					seq_printf(s, "pin %d (%s): GPIO %s",
++						   pin, desc->name, desc->gpio_owner);
++				else
++					seq_printf(s, "pin %d (%s): UNCLAIMED",
++						   pin, desc->name);
++			} else {
++				/* For non-strict controllers */
++				seq_printf(s, "pin %d (%s): %s %s%s", pin, desc->name,
++					   desc->mux_owner ? desc->mux_owner
++					   : "(MUX UNCLAIMED)",
++					   desc->gpio_owner ? desc->gpio_owner
++					   : "(GPIO UNCLAIMED)",
+ 					   is_hog ? " (HOG)" : "");
+-			else if (desc->gpio_owner)
+-				seq_printf(s, "pin %d (%s): GPIO %s",
+-					   pin, desc->name, desc->gpio_owner);
++			}
 +
-+	for (i = 0; i < hisi_sas_debugfs_dump_count; i++)
-+		debugfs_create_files_v3_hw(hisi_hba, i);
-+}
-+
- static void debugfs_exit_v3_hw(struct hisi_hba *hisi_hba)
- {
- 	debugfs_remove_recursive(hisi_hba->debugfs_dir);
-@@ -4764,8 +4820,7 @@ static void debugfs_init_v3_hw(struct hisi_hba *hisi_hba)
- 	/* create bist structures */
- 	debugfs_bist_init_v3_hw(hisi_hba);
++			/* If mux: print function+group claiming the pin */
++			if (desc->mux_setting)
++				seq_printf(s, " function %s group %s\n",
++					   pmxops->get_function_name(pctldev,
++						desc->mux_setting->func),
++					   pctlops->get_group_name(pctldev,
++						desc->mux_setting->group));
+ 			else
+-				seq_printf(s, "pin %d (%s): UNCLAIMED",
+-					   pin, desc->name);
+-		} else {
+-			/* For non-strict controllers */
+-			seq_printf(s, "pin %d (%s): %s %s%s", pin, desc->name,
+-				   desc->mux_owner ? desc->mux_owner
+-				   : "(MUX UNCLAIMED)",
+-				   desc->gpio_owner ? desc->gpio_owner
+-				   : "(GPIO UNCLAIMED)",
+-				   is_hog ? " (HOG)" : "");
++				seq_putc(s, '\n');
+ 		}
+-
+-		/* If mux: print function+group claiming the pin */
+-		if (desc->mux_setting)
+-			seq_printf(s, " function %s group %s\n",
+-				   pmxops->get_function_name(pctldev,
+-					desc->mux_setting->func),
+-				   pctlops->get_group_name(pctldev,
+-					desc->mux_setting->group));
+-		else
+-			seq_putc(s, '\n');
+ 	}
  
--	hisi_hba->debugfs_dump_dentry =
--			debugfs_create_dir("dump", hisi_hba->debugfs_dir);
-+	debugfs_dump_init_v3_hw(hisi_hba);
- 
- 	debugfs_phy_down_cnt_init_v3_hw(hisi_hba);
- 	debugfs_fifo_init_v3_hw(hisi_hba);
+ 	mutex_unlock(&pctldev->mutex);
 -- 
 2.43.0
 
