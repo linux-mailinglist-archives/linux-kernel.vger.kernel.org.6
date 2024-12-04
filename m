@@ -1,128 +1,104 @@
-Return-Path: <linux-kernel+bounces-430747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0D849E3506
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 09:13:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B8F069E354E
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 09:29:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BDF45B2F6CA
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 08:08:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A53B1B23F6C
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 08:08:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 807AF18C03B;
-	Wed,  4 Dec 2024 08:07:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAE7818C03B;
+	Wed,  4 Dec 2024 08:08:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="ZQtaeQkJ"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IZQgiVkt"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 025181FA4
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 08:07:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C026113D281
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 08:08:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733299678; cv=none; b=bz7tFI8SvOPVGo6k4H37/sksVAJKVmP+4uWljF1maFcU4V1msenoqxXyhG4R2LjTXoTHqUtfH/ecSlof0pikImZ+TIHzn9xMW+lvUG76X7yxBN8ErV+pKfm/L2qWVKuDc/4ZiPdAO4/2iEUaADK6ydbEaCduqjeqbyXxyCRgwsE=
+	t=1733299716; cv=none; b=RgIbmRlgjOBOVHLTvb6rNxP+0mOzUW8x8PhJjv+rI9wnzf84RTeRMDR7RzBLvKxs+r65UdI439k6cqB2qFMC/7KCZq57eEkJ53uRYnLdqKJOJVsVjAtMF/crPHFO8MF4CL3NGqfSDbs4+4/82e+e9VLu/msCLa4QCBJZnTDbJE8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733299678; c=relaxed/simple;
-	bh=aGXnP4As4Q8D2YGCYpvDboUqA/0JV/QAU1GfLgG0/js=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=JAzl83MpNn6/I7Ml7/CCUtI+tB5EMEu1CMYMF6kXezMY2QbXYGUqnqvCflajc54yG+gJ2MozSJaIaA62dVh5EDAvcZ5jYW8dNZrQ0ipU02kB7bWFtDIPGDxyQuwF2XLVoAGhr1+/6cmtJrGXY9gZ9tJiWOtU0N02HkZrt0bexa8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=ZQtaeQkJ; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-215b13e9ccbso24478725ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 00:07:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1733299676; x=1733904476; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=TQLyVjn39GB0RJ5Jlf6NdEbky8z1gaSlOm3YTv1PuzM=;
-        b=ZQtaeQkJNYl38GkKvQZkMZYtLm0PDXzAxpCJ2GFzSpjxsv2EwG8mghaIw11jVavdBx
-         QynO6Qe8bLsrgxlJFExiYKU9Qu35BTHKGv/oUuh2z6N5qfjp5XmC+i8h44ql98UU4pgu
-         by7rQkozY+SEvBUXFgudHS1U/cmnAkMXlBd+RPuvTMetGAVEug7Go2FkBuf6s0PEhYwf
-         soE/mnCU8X1xinyzOvwVqRiScHkOCT8YRKfjWblDURm84NRhg003qKKzD6hhZEYKzAbW
-         PQoexN8xMySa5wK8luf/oGde7tKtX9ZtVn5THoqYie1WpGScMo+vr8BeHTtY8wIptwVr
-         6Gzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733299676; x=1733904476;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TQLyVjn39GB0RJ5Jlf6NdEbky8z1gaSlOm3YTv1PuzM=;
-        b=JoA/WZQv2jHaW0iFf2KVoTVf9J6QkX/OIf73kmz07ZvYIbCe51nGae0DfdPbBV6FYX
-         XwydElB9POVNTdGupmFtEA0rdtSVe9mUJnKKjYVTP+NYDmV7uAovazmJco7u9r/uE6zW
-         ZEKZ4PiZUQpSbrnK8py9T5Khk4+O+P1fjGHprZOStKlH7peL/r894TpJZX7hcamjRbdr
-         Mc9nJP/a/RP29wDMiTXa3RHKUyQtcbykkxSqqc+mIs7cUrdj3Ln1D3m+BarZveEMzUNi
-         mqyEDwSnD/GitkikNPe6lvICuqbT9eUO63mvdzeNje0h1Cb3fPQhuGGYSZ0pjBu014z2
-         PxsA==
-X-Forwarded-Encrypted: i=1; AJvYcCXribqv0QFYdCRRC/XyC5tlj6mDXP4H71a5pDWdf0jzEHiy89NxGlZ3b5mBZKEx2yuebv0olHEfcL8fVes=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzD4GKBuRAxC6H0DkcslZgSWcJbizNhFDku1CXv8SED+3tcdYJS
-	ghD21g6XCjOIiiyCwsG31uoAWglT3vmDXuzRqeFTDCOUEdPUTmfuVFAgra2Vaq0=
-X-Gm-Gg: ASbGncty04fVwtBySN5t3dzo8KExEeN34Gct1yc3wZ0r6CUa2TuhJ+xjLoBNwdP8m04
-	1KnN6iz3KGguqX37Trvgm4aAmKl+1CHWaKH8QUGJPUOSM3VpWkNDH4Ib7C5buLYSmOp+w3ndyaE
-	3+FtTZIqVVlB0Amqql11XqomMsW60vr6Lt5KYfVUXYfX07C+Proiz4Qg/GofE8J1rWaLyKZ+mFb
-	eOjHwwtO5Ns1RdfnZe42Ae4vOU7AhEfBhfQaqMMlNnLclrO2NFSariOFUgHZmc=
-X-Google-Smtp-Source: AGHT+IF17paEdGmDWae3eRLQCC4EhulVdZUuMeuv9MrhWfCyVw4yz9GlI8P8MlT5HDOyMkqNyPv4iA==
-X-Received: by 2002:a17:902:e84c:b0:215:9642:4d6d with SMTP id d9443c01a7336-215bd0c4b0bmr63970865ad.17.1733299676332;
-        Wed, 04 Dec 2024 00:07:56 -0800 (PST)
-Received: from [10.255.194.25] ([139.177.225.238])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-215411c3530sm89475575ad.54.2024.12.04.00.07.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Dec 2024 00:07:55 -0800 (PST)
-Message-ID: <663c3133-12ea-4bc8-b30c-c925d7e86bf6@bytedance.com>
-Date: Wed, 4 Dec 2024 16:07:47 +0800
+	s=arc-20240116; t=1733299716; c=relaxed/simple;
+	bh=ctPCVNh5tHp7G5O9ZKsq28RSv9/8I27VOINoe25Eb3s=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=lQK6V6jZJcBNPy+Ziw25lN8TU8nsMUY2Ufn0RVYVbqImYCMpZ8HuMOxUNLb++20qGJsfxGOK4uwRMPkl+b89hAqd27hfhbsEdPhxlS+nx70/qaYQmISQ1uPphEvJLfkO9L4eSi0qyGik4N+4XiU3g6ydjbKN6VjvDH3XgRO2rHI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IZQgiVkt; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733299715; x=1764835715;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=ctPCVNh5tHp7G5O9ZKsq28RSv9/8I27VOINoe25Eb3s=;
+  b=IZQgiVktzEtaK/yKWGZHVMak1nNtLj7l6GMuizgdSDy+Kkp2Bp/tP9nF
+   EYPfFZ4QaBb1HZCZSsKnsT5jdu9LyDtdalOplfBes5vb/1pnxmU5uUggY
+   0DhOXT8cMwsIm5jWFS5JIZVzvRJ3rf+ngeJQSRKgG/KB3/aaUwb5PnoVv
+   MWjHhkvblPSQl0oGhYdz/8+unD4NLsa7wmO/NN3tXPmF9wpYdT4gjse2S
+   XG+K0tWbCuSHNjmY6cEDqUhDe8b2nkxU6tQWzMSlslwUE8j+j+wOR71mt
+   GGvb1a/ROeP70JQkQcWMTGBfab87CsYR8wpD28KGHyTjjB+rQIPwweBYE
+   A==;
+X-CSE-ConnectionGUID: 0/a75jqeQJCeBXVePcoVCg==
+X-CSE-MsgGUID: QSSii5HUR/S7o+g2TU9xYA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11275"; a="44214961"
+X-IronPort-AV: E=Sophos;i="6.12,207,1728975600"; 
+   d="scan'208";a="44214961"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Dec 2024 00:08:34 -0800
+X-CSE-ConnectionGUID: KxsGcLy/Qhq+RHwwk8DXVA==
+X-CSE-MsgGUID: 5IacHtq7RfK5ZlacAxB1BQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,207,1728975600"; 
+   d="scan'208";a="93781822"
+Received: from lkp-server02.sh.intel.com (HELO 1f5a171d57e2) ([10.239.97.151])
+  by orviesa006.jf.intel.com with ESMTP; 04 Dec 2024 00:08:33 -0800
+Received: from kbuild by 1f5a171d57e2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tIkQw-0002k3-26;
+	Wed, 04 Dec 2024 08:08:30 +0000
+Date: Wed, 4 Dec 2024 16:08:28 +0800
+From: kernel test robot <lkp@intel.com>
+To: Johannes Berg <johannes.berg@intel.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: /usr/bin/ld: warning: arch/um/kernel/skas/stub_exe.dbg has a LOAD
+ segment with RWX permissions
+Message-ID: <202412041645.0fo0mztX-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [External] Re: [RFC 00/12] perf record: Add event action support
-Content-Language: en-US
-To: Adrian Hunter <adrian.hunter@intel.com>, peterz@infradead.org,
- mingo@redhat.com, acme@kernel.org, namhyung@kernel.org,
- mark.rutland@arm.com, alexander.shishkin@linux.intel.com, jolsa@kernel.org,
- irogers@google.com, kan.liang@linux.intel.com, james.clark@arm.com,
- linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241128133553.823722-1-yangjihong@bytedance.com>
- <0aecb442-ede7-44ce-824e-6fc0271207b7@intel.com>
-From: Yang Jihong <yangjihong@bytedance.com>
-In-Reply-To: <0aecb442-ede7-44ce-824e-6fc0271207b7@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Hello,
+Hi Johannes,
 
-On 11/28/24 21:53, Adrian Hunter wrote:
-> On 28/11/24 15:35, Yang Jihong wrote:
->> In perf-record, when an event is triggered, default behavior is to
->> save sample data to perf.data. Sometimes, we may just want to do
->> some lightweight actions, such as printing a log.
-> 
-> Why not just pipe 'perf record' to 'perf script'?
-> 
-> # perf record -e sched:sched_switch | perf script | head
->              perf  768231 [000] 2318380.474267: sched:sched_switch: perf:768231 [120] R ==> migration/0:18 [0]
->       migration/0      18 [000] 2318380.474294: sched:sched_switch: migration/0:18 [0] S ==> swapper/0:0 [120]
->              perf  768231 [001] 2318380.474353: sched:sched_switch: perf:768231 [120] R ==> migration/1:23 [0]
->       migration/1      23 [001] 2318380.474382: sched:sched_switch: migration/1:23 [0] S ==> swapper/1:0 [120]
->              perf  768231 [002] 2318380.474477: sched:sched_switch: perf:768231 [120] R ==> migration/2:29 [0]
->       migration/2      29 [002] 2318380.474503: sched:sched_switch: migration/2:29 [0] S ==> swapper/2:0 [120]
->              perf  768231 [003] 2318380.474513: sched:sched_switch: perf:768231 [120] R ==> migration/3:35 [0]
->       migration/3      35 [003] 2318380.474523: sched:sched_switch: migration/3:35 [0] S ==> swapper/3:0 [120]
->              perf  768231 [004] 2318380.474534: sched:sched_switch: perf:768231 [120] R ==> migration/4:41 [0]
->       migration/4      41 [004] 2318380.474541: sched:sched_switch: migration/4:41 [0] S ==> swapper/4:0 [120]
+FYI, the error/warning was bisected to this commit, please ignore it if it's irrelevant.
 
-pipe 'perf record' to 'perf script' has limited extensions.
-We can use bpf prog to do more (such as saving user-defined data (such 
-as registers, function parameters), and customizing the format of 
-user-printed logs).
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   feffde684ac29a3b7aec82d2df850fbdbdee55e4
+commit: d3b08e5f3f2829943342b88d3e2b44fb0ccdccab um: fix stub exe build with CONFIG_GCOV
+date:   6 weeks ago
+config: um-randconfig-r061-20241204 (https://download.01.org/0day-ci/archive/20241204/202412041645.0fo0mztX-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 592c0fe55f6d9a811028b5f3507be91458ab2713)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241204/202412041645.0fo0mztX-lkp@intel.com/reproduce)
 
-Now we only implement a simple print() call, and we can support more 
-calls later.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202412041645.0fo0mztX-lkp@intel.com/
 
-Thanks,
-Yang
+All warnings (new ones prefixed by >>):
+
+   clang: warning: argument unused during compilation: '-mno-3dnow' [-Wunused-command-line-argument]
+>> /usr/bin/ld: warning: arch/um/kernel/skas/stub_exe.dbg has a LOAD segment with RWX permissions
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
