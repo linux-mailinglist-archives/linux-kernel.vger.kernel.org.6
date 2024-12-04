@@ -1,30 +1,30 @@
-Return-Path: <linux-kernel+bounces-430796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430795-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A8419E35AE
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 09:42:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E9219E35AC
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 09:42:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1DD962813D4
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 08:42:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DC69280DF2
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 08:42:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4945E1AAE02;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 289BD1AA7A2;
 	Wed,  4 Dec 2024 08:41:57 +0000 (UTC)
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D9C6198841
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C40C198836
 	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 08:41:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733301715; cv=none; b=IDz2iZNUtE14tO71DtLzTn+sgJ3TN92qeBwMtA60RFy5XNQ6qVbdmbdft0b1u5DsYADvOtxqtcAz1owJoO41YU60XtJKcX6bh+dLyjrqVyMBzATfomsYn2Kl1YogOotA/0QXReTcqfF+DJzNb8Yrxojdi0JlwOLcn4PN6wEr5zc=
+	t=1733301715; cv=none; b=neNyaX/bbhQneT8VBd7BI7w1mejTvqWuJj8FL18a6PhoAcOMdjIWcshRTH8Jxs1Oam/OAHw+6Z7v9bJHXdTFVTx6RPyP59EhR9jAtNVe+UW1kNM32pxrnBWM7YYUCRbSN5dn4aG03g4190wYXOuGkvjC6vl1mozfywsE+QnMjeY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1733301715; c=relaxed/simple;
-	bh=mzjTFGrttSsCn/51pAntoYmX38f7QDB45JL75XW+zPY=;
+	bh=8wmLacBMvyz8kmAJOUEg9VmWO184ZhoitVgivolWgg8=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=h6IPeAK0h97DLSseccC4pJ8iLpJESxdVbNL2pxANujciA2NCNNIPqoVIlnukPT6t+j753/PC+2gAAiKzG3loMsLbYBDSLu47jiKTqkISc8Up1BVQkRBYjvfDwgzy1M1THEsIaoKMYgaOH/o8Qc8tSCEJJkC0tt0BCCutKL7XMqQ=
+	 MIME-Version; b=OGu5bpAWpXT8FRL4BbYVm9W9sioNEYxqollWM6l9k4TsfWQmh5dvMlJ2HrFmyL3PrDj2IY3RNq0MYOkhNhC6Uw93TV6Op4pGMeiLeHKVMNSu5pbaNy6kwe/3QatydX4HnL1y3G8t2/xvtba5kA7l3lxuhvnMmFbxNQUkQAHYFKc=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
@@ -32,16 +32,16 @@ Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
 	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
 	(Exim 4.92)
 	(envelope-from <ore@pengutronix.de>)
-	id 1tIkx7-0001I0-44; Wed, 04 Dec 2024 09:41:45 +0100
+	id 1tIkx7-0001I1-45; Wed, 04 Dec 2024 09:41:45 +0100
 Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
 	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.96)
 	(envelope-from <ore@pengutronix.de>)
-	id 1tIkx5-001cU7-0M;
+	id 1tIkx5-001cU8-0Q;
 	Wed, 04 Dec 2024 09:41:43 +0100
 Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
 	(envelope-from <ore@pengutronix.de>)
-	id 1tIkx5-004psf-2d;
+	id 1tIkx5-004psp-2h;
 	Wed, 04 Dec 2024 09:41:43 +0100
 From: Oleksij Rempel <o.rempel@pengutronix.de>
 To: "David S. Miller" <davem@davemloft.net>,
@@ -57,9 +57,9 @@ Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
 	netdev@vger.kernel.org,
 	UNGLinuxDriver@microchip.com,
 	Phil Elwell <phil@raspberrypi.org>
-Subject: [PATCH net-next v2 01/10] net: usb: lan78xx: Remove LAN8835 PHY fixup
-Date: Wed,  4 Dec 2024 09:41:33 +0100
-Message-Id: <20241204084142.1152696-2-o.rempel@pengutronix.de>
+Subject: [PATCH net-next v2 02/10] net: usb: lan78xx: Remove KSZ9031 PHY fixup
+Date: Wed,  4 Dec 2024 09:41:34 +0100
+Message-Id: <20241204084142.1152696-3-o.rempel@pengutronix.de>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20241204084142.1152696-1-o.rempel@pengutronix.de>
 References: <20241204084142.1152696-1-o.rempel@pengutronix.de>
@@ -75,122 +75,126 @@ X-SA-Exim-Mail-From: ore@pengutronix.de
 X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
 X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Remove the PHY fixup for the LAN8835 PHY in the lan78xx driver due to
-the following reasons:
+Remove the KSZ9031RNX PHY fixup from the lan78xx driver. The fixup applied
+specific RGMII pad skew configurations globally, but these settings violate the
+RGMII specification and cause more harm than benefit.
 
-- There is no publicly available information about the LAN8835 PHY.
-  However, it appears to be the integrated PHY used in the LAN7800 and
-  LAN7850 USB Ethernet controllers. These PHYs use the GMII interface,
-  not RGMII as configured by the fixup.
+Key issues with the fixup:
+1. **Non-Compliant Timing**: The fixup's delay settings fall outside the RGMII
+   specification requirements of 1.5 ns to 2.0 ns:
+   - RX Path: Total delay of **2.16 ns** (PHY internal delay of 1.2 ns + 0.96
+     ns skew).
+   - TX Path: Total delay of **0.96 ns**, significantly below the RGMII minimum
+     of 1.5 ns.
 
-- The correct driver for handling the LAN8835 PHY functionality is the
-  Microchip PHY driver (`drivers/net/phy/microchip.c`), which properly
-  supports these integrated PHYs.
+2. **Redundant or Incorrect Configurations**:
+   - The RGMII skew registers written by the fixup do not meaningfully alter
+     the PHY's default behavior and fail to account for its internal delays.
+   - The TX_DATA pad skew was not configured, relying on power-on defaults
+     that are insufficient for RGMII compliance.
 
-- The PHY ID `0x0007C130` is actually used by the LAN8742A PHY, which
-  only supports RMII. This interface is incompatible with the LAN78xx
-  MAC, as the LAN7801 (the only LAN78xx version without an integrated
-  PHY) supports only RGMII.
+3. **Micrel Driver Support**: By setting `PHY_INTERFACE_MODE_RGMII_ID`, the
+   Micrel driver can calculate and assign appropriate skew values for the
+   KSZ9031 PHY.  This ensures better timing configurations without relying on
+   external fixups.
 
-- The mask applied for this fixup is overly broad, inadvertently
-  covering both Microchip LAN88xx PHYs and unrelated SMSC LAN8742A PHYs,
-  leading to potential conflicts with other devices.
+4. **System Interference**: The fixup applied globally, reconfiguring all
+   KSZ9031 PHYs in the system, even those unrelated to the LAN78xx adapter.
+   This could lead to unintended and harmful behavior on unrelated interfaces.
 
-- Testing has shown that removing this fixup for LAN7800 and LAN7850
-  does not result in any noticeable difference in functionality, as the
-  Microchip PHY driver (`drivers/net/phy/microchip.c`) handles all
-  necessary configurations for these integrated PHYs.
+While the fixup is removed, a better mechanism is still needed to dynamically
+determine the optimal combination of PHY and MAC delays to fully meet RGMII
+requirements without relying on Device Tree or global fixups. This would allow
+for robust operation across different hardware configurations.
 
-- Registering this fixup globally (not limited to USB devices) risks
-  conflicts by unintentionally modifying other interfaces whenever a
-  LAN7801 adapter is connected to the system.
-
-Note that both LAN7800 and LAN7850 USB Ethernet controllers use an
-integrated PHY with the ID `0x0007C132`. Additionally, the LAN7515, a
-specialized part for Raspberry Pi, includes an integrated LAN7800 USB
-Ethernet controller and USB hub in a multifunctional chip design, and it
-also uses the same PHY ID (`0x0007C132`).
+The Micrel driver is capable of using the interface mode value to calculate and
+apply better skew values, providing a configuration much closer to the RGMII
+specification than the fixup. Removing the fixup ensures better default
+behavior and prevents harm to other system interfaces.
 
 Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
 Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 ---
- drivers/net/usb/lan78xx.c | 35 -----------------------------------
- 1 file changed, 35 deletions(-)
+ drivers/net/usb/lan78xx.c | 38 +++++---------------------------------
+ 1 file changed, 5 insertions(+), 33 deletions(-)
 
 diff --git a/drivers/net/usb/lan78xx.c b/drivers/net/usb/lan78xx.c
-index 531b1b6a37d1..6e468e77d796 100644
+index 6e468e77d796..918b88bd9524 100644
 --- a/drivers/net/usb/lan78xx.c
 +++ b/drivers/net/usb/lan78xx.c
-@@ -473,7 +473,6 @@ struct lan78xx_net {
+@@ -472,9 +472,6 @@ struct lan78xx_net {
+ 	struct irq_domain_data	domain_data;
  };
  
- /* define external phy id */
--#define	PHY_LAN8835			(0x0007C130)
- #define	PHY_KSZ9031RNX			(0x00221620)
- 
+-/* define external phy id */
+-#define	PHY_KSZ9031RNX			(0x00221620)
+-
  /* use ethtool to change the level for any given device */
-@@ -2234,29 +2233,6 @@ static void lan78xx_remove_irq_domain(struct lan78xx_net *dev)
+ static int msg_level = -1;
+ module_param(msg_level, int, 0);
+@@ -2233,23 +2230,6 @@ static void lan78xx_remove_irq_domain(struct lan78xx_net *dev)
  	dev->domain_data.irqdomain = NULL;
  }
  
--static int lan8835_fixup(struct phy_device *phydev)
+-static int ksz9031rnx_fixup(struct phy_device *phydev)
 -{
--	int buf;
 -	struct lan78xx_net *dev = netdev_priv(phydev->attached_dev);
 -
--	/* LED2/PME_N/IRQ_N/RGMII_ID pin to IRQ_N mode */
--	buf = phy_read_mmd(phydev, MDIO_MMD_PCS, 0x8010);
--	buf &= ~0x1800;
--	buf |= 0x0800;
--	phy_write_mmd(phydev, MDIO_MMD_PCS, 0x8010, buf);
+-	/* Micrel9301RNX PHY configuration */
+-	/* RGMII Control Signal Pad Skew */
+-	phy_write_mmd(phydev, MDIO_MMD_WIS, 4, 0x0077);
+-	/* RGMII RX Data Pad Skew */
+-	phy_write_mmd(phydev, MDIO_MMD_WIS, 5, 0x7777);
+-	/* RGMII RX Clock Pad Skew */
+-	phy_write_mmd(phydev, MDIO_MMD_WIS, 8, 0x1FF);
 -
--	/* RGMII MAC TXC Delay Enable */
--	lan78xx_write_reg(dev, MAC_RGMII_ID,
--			  MAC_RGMII_ID_TXC_DELAY_EN_);
--
--	/* RGMII TX DLL Tune Adjust */
--	lan78xx_write_reg(dev, RGMII_TX_BYP_DLL, 0x3D00);
--
--	dev->interface = PHY_INTERFACE_MODE_RGMII_TXID;
+-	dev->interface = PHY_INTERFACE_MODE_RGMII_RXID;
 -
 -	return 1;
 -}
 -
- static int ksz9031rnx_fixup(struct phy_device *phydev)
+ static struct phy_device *lan7801_phy_init(struct lan78xx_net *dev)
  {
- 	struct lan78xx_net *dev = netdev_priv(phydev->attached_dev);
-@@ -2315,14 +2291,6 @@ static struct phy_device *lan7801_phy_init(struct lan78xx_net *dev)
- 			netdev_err(dev->net, "Failed to register fixup for PHY_KSZ9031RNX\n");
+ 	u32 buf;
+@@ -2283,14 +2263,11 @@ static struct phy_device *lan7801_phy_init(struct lan78xx_net *dev)
+ 			netdev_err(dev->net, "no PHY driver found\n");
  			return NULL;
  		}
--		/* external PHY fixup for LAN8835 */
--		ret = phy_register_fixup_for_uid(PHY_LAN8835, 0xfffffff0,
--						 lan8835_fixup);
+-		dev->interface = PHY_INTERFACE_MODE_RGMII;
+-		/* external PHY fixup for KSZ9031RNX */
+-		ret = phy_register_fixup_for_uid(PHY_KSZ9031RNX, 0xfffffff0,
+-						 ksz9031rnx_fixup);
 -		if (ret < 0) {
--			netdev_err(dev->net, "Failed to register fixup for PHY_LAN8835\n");
+-			netdev_err(dev->net, "Failed to register fixup for PHY_KSZ9031RNX\n");
 -			return NULL;
 -		}
--		/* add more external PHY fixup here if needed */
++		dev->interface = PHY_INTERFACE_MODE_RGMII_ID;
++		/* The PHY driver is responsible to configure proper RGMII
++		 * interface delays. Disable RGMII delays on MAC side.
++		 */
++		lan78xx_write_reg(dev, MAC_RGMII_ID, 0);
  
  		phydev->is_internal = false;
  	}
-@@ -2384,8 +2352,6 @@ static int lan78xx_phy_init(struct lan78xx_net *dev)
- 			} else {
- 				phy_unregister_fixup_for_uid(PHY_KSZ9031RNX,
- 							     0xfffffff0);
--				phy_unregister_fixup_for_uid(PHY_LAN8835,
+@@ -2349,9 +2326,6 @@ static int lan78xx_phy_init(struct lan78xx_net *dev)
+ 			if (phy_is_pseudo_fixed_link(phydev)) {
+ 				fixed_phy_unregister(phydev);
+ 				phy_device_free(phydev);
+-			} else {
+-				phy_unregister_fixup_for_uid(PHY_KSZ9031RNX,
 -							     0xfffffff0);
  			}
  		}
  		return -EIO;
-@@ -4243,7 +4209,6 @@ static void lan78xx_disconnect(struct usb_interface *intf)
+@@ -4208,8 +4182,6 @@ static void lan78xx_disconnect(struct usb_interface *intf)
+ 
  	phydev = net->phydev;
  
- 	phy_unregister_fixup_for_uid(PHY_KSZ9031RNX, 0xfffffff0);
--	phy_unregister_fixup_for_uid(PHY_LAN8835, 0xfffffff0);
- 
+-	phy_unregister_fixup_for_uid(PHY_KSZ9031RNX, 0xfffffff0);
+-
  	phy_disconnect(net->phydev);
  
+ 	if (phy_is_pseudo_fixed_link(phydev)) {
 -- 
 2.39.5
 
