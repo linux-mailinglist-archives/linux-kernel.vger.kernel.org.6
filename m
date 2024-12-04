@@ -1,60 +1,57 @@
-Return-Path: <linux-kernel+bounces-431693-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431695-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26A979E4233
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:47:00 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AAB69E427D
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:55:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F3FC4B61137
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:03:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4438DB4641B
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:04:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57C9321C187;
-	Wed,  4 Dec 2024 16:58:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7FA321D59C;
+	Wed,  4 Dec 2024 16:58:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PS9dOT2Z"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lheyj6sh"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A76F721C16F;
-	Wed,  4 Dec 2024 16:58:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2F8E21D592;
+	Wed,  4 Dec 2024 16:58:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733331517; cv=none; b=eo+6PHeDYPAfMIeyDiNWdrtO/ac19ICvAIfGZUjQOBJCBoukKkEDuZOMNqLY0uAUGgofNY7hDKjbG/xcQchJwesV4C3IKiNTkaczCdvuhS8FBW+EKFrZWlxwkovUn8ml8IEtjCFDH3iuKKUi9+8lTSUDIN/8NtP/ux/RTGrnvko=
+	t=1733331521; cv=none; b=HICIpD7aYQfNkx8DylADYq6OGSZ7QtHx2dYHCuY+Zd5XK5Hn7VMCFTUbBErz7VFuArPZRCsFPJ//LpF/c6DBKobfEpfXJMZ2xSAJf7XQdlDpoN9WQzc4Otj1RKEy8nJE3QNHqS6qUpqhCUOovhisJoJoL+ZwMSqeQQJR+C56jeo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733331517; c=relaxed/simple;
-	bh=WXIbVvxTlJvBoUek1MnVbfGc5Mt4uhb2gkV11zvU4pY=;
+	s=arc-20240116; t=1733331521; c=relaxed/simple;
+	bh=+3QbbymVydoAEz3tQcpD8e6HMFFTdMGCMx+gofE1oRI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=TIKZA0HgJZYRAo7ocTm7MWxX8jXDaY/2+omFQaCwYDAP2MfCP5lc6UwYicTKRFGdhtQCxBgYZvLkmr+TCHy57V5Ftf6VritegoOn+5wZPKtyCdrVxN4nLsZuDcGsFTEtrQzjM4ayS8Ucrf8W1RYd/gLgoBIUEgeZDGCprWolOlk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PS9dOT2Z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55B45C4CECD;
-	Wed,  4 Dec 2024 16:58:36 +0000 (UTC)
+	 MIME-Version; b=qgzj5kjdhVZCmmy8KFgCyHALahOmSZoMuFJlTGFg+rb9pKIwBPpnIUxUqL6EvjDlYJPtHNENZjESvZEVzXGo2wOPV7YhEfaNj2tOgCIAr5vNyjoZkg+51Si2zUPFRjTnIdLu4H72ervj4CXA1axWQJP8m7NnLckCAloeCEkC2Ig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lheyj6sh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9D5EC4CED1;
+	Wed,  4 Dec 2024 16:58:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733331517;
-	bh=WXIbVvxTlJvBoUek1MnVbfGc5Mt4uhb2gkV11zvU4pY=;
+	s=k20201202; t=1733331520;
+	bh=+3QbbymVydoAEz3tQcpD8e6HMFFTdMGCMx+gofE1oRI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=PS9dOT2ZL5zzNspKIt2JxUy0Gbp9Akg0AMxi3orX5UKWCJiVOzRYD0IgGH4MgA9Y0
-	 X/a77Je+7LVxjTegs6U/+ZUrq9yIdBmreuu1EQB3NE0TIK0R0GLE8sKEhF20sQer71
-	 knWoEeaUKEaXctiUq7Qgzw4Rd4Dqeo7w5rBL2hn0JQVLSpfWunPc1qA+A09amtSFgg
-	 uopWEd82NzYj/0EzCjyooXVS+MVZmj+iIsrxb0CF8aO5bVLF4LSgLbaYo23m9Hz62L
-	 NIombaMKV8B0ACLwKzPT9LwQaC7OES2jo4qZC4xZlU0RPDRDNMrCqPB/IqDHTL3U69
-	 xZEmUS/lY53+A==
+	b=Lheyj6sh4HxcJQ42nTgOt+0qnHSGHdt5qSZKRmo6UYb8nNaOHqXB6KRASIACeOtpg
+	 uY0rPzsJ8r7TDqzDCEu1VYTNxCVcIga6JRRIAFszW7EmhvCjQq5SjLz5P0lmsajvAT
+	 WYTV06Li8AQKtTjhc3uVbHNgsnOsoxb1BXGrjzE+I0npAHN2Py8Sz81dBpfOwZ6XKT
+	 +C/PYn5fcGtaRAjiM0X1+gyYyeu3UNc6Xjcd2fZLPd4i6/lWEPFJKyqMsE5Wz79nfM
+	 ngWPXlsdDzllutv1Jzwqi1kxFz9W1Hx41d2Ur1dEK0HE/t60Wn6vG7ae5g7tvU0NjH
+	 sVkUN8XlxxZ/g==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-	Bjorn Andersson <andersson@kernel.org>,
+Cc: Mukesh Ojha <quic_mojha@quicinc.com>,
+	Anish Kumar <yesanishhere@gmail.com>,
+	Lee Jones <lee@kernel.org>,
 	Sasha Levin <sashal@kernel.org>,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.12 23/36] clk: qcom: dispcc-sm8550: enable support for SAR2130P
-Date: Wed,  4 Dec 2024 10:45:39 -0500
-Message-ID: <20241204154626.2211476-23-sashal@kernel.org>
+	pavel@ucw.cz,
+	linux-leds@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.12 25/36] leds: class: Protect brightness_show() with led_cdev->led_access mutex
+Date: Wed,  4 Dec 2024 10:45:41 -0500
+Message-ID: <20241204154626.2211476-25-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20241204154626.2211476-1-sashal@kernel.org>
 References: <20241204154626.2211476-1-sashal@kernel.org>
@@ -69,99 +66,171 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.12.1
 Content-Transfer-Encoding: 8bit
 
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+From: Mukesh Ojha <quic_mojha@quicinc.com>
 
-[ Upstream commit 1335c7eb7012f23dc073b8ae4ffcfc1f6e69cfb3 ]
+[ Upstream commit 4ca7cd938725a4050dcd62ae9472e931d603118d ]
 
-The display clock controller on SAR2130P is very close to the clock
-controller on SM8550 (and SM8650). Reuse existing driver to add support
-for the controller on SAR2130P.
+There is NULL pointer issue observed if from Process A where hid device
+being added which results in adding a led_cdev addition and later a
+another call to access of led_cdev attribute from Process B can result
+in NULL pointer issue.
 
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Link: https://lore.kernel.org/r/20241027-sar2130p-clocks-v5-10-ecad2a1432ba@linaro.org
-Signed-off-by: Bjorn Andersson <andersson@kernel.org>
+Use mutex led_cdev->led_access to protect access to led->cdev and its
+attribute inside brightness_show() and max_brightness_show() and also
+update the comment for mutex that it should be used to protect the led
+class device fields.
+
+	Process A 				Process B
+
+ kthread+0x114
+ worker_thread+0x244
+ process_scheduled_works+0x248
+ uhid_device_add_worker+0x24
+ hid_add_device+0x120
+ device_add+0x268
+ bus_probe_device+0x94
+ device_initial_probe+0x14
+ __device_attach+0xfc
+ bus_for_each_drv+0x10c
+ __device_attach_driver+0x14c
+ driver_probe_device+0x3c
+ __driver_probe_device+0xa0
+ really_probe+0x190
+ hid_device_probe+0x130
+ ps_probe+0x990
+ ps_led_register+0x94
+ devm_led_classdev_register_ext+0x58
+ led_classdev_register_ext+0x1f8
+ device_create_with_groups+0x48
+ device_create_groups_vargs+0xc8
+ device_add+0x244
+ kobject_uevent+0x14
+ kobject_uevent_env[jt]+0x224
+ mutex_unlock[jt]+0xc4
+ __mutex_unlock_slowpath+0xd4
+ wake_up_q+0x70
+ try_to_wake_up[jt]+0x48c
+ preempt_schedule_common+0x28
+ __schedule+0x628
+ __switch_to+0x174
+						el0t_64_sync+0x1a8/0x1ac
+						el0t_64_sync_handler+0x68/0xbc
+						el0_svc+0x38/0x68
+						do_el0_svc+0x1c/0x28
+						el0_svc_common+0x80/0xe0
+						invoke_syscall+0x58/0x114
+						__arm64_sys_read+0x1c/0x2c
+						ksys_read+0x78/0xe8
+						vfs_read+0x1e0/0x2c8
+						kernfs_fop_read_iter+0x68/0x1b4
+						seq_read_iter+0x158/0x4ec
+						kernfs_seq_show+0x44/0x54
+						sysfs_kf_seq_show+0xb4/0x130
+						dev_attr_show+0x38/0x74
+						brightness_show+0x20/0x4c
+						dualshock4_led_get_brightness+0xc/0x74
+
+[ 3313.874295][ T4013] Unable to handle kernel NULL pointer dereference at virtual address 0000000000000060
+[ 3313.874301][ T4013] Mem abort info:
+[ 3313.874303][ T4013]   ESR = 0x0000000096000006
+[ 3313.874305][ T4013]   EC = 0x25: DABT (current EL), IL = 32 bits
+[ 3313.874307][ T4013]   SET = 0, FnV = 0
+[ 3313.874309][ T4013]   EA = 0, S1PTW = 0
+[ 3313.874311][ T4013]   FSC = 0x06: level 2 translation fault
+[ 3313.874313][ T4013] Data abort info:
+[ 3313.874314][ T4013]   ISV = 0, ISS = 0x00000006, ISS2 = 0x00000000
+[ 3313.874316][ T4013]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+[ 3313.874318][ T4013]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+[ 3313.874320][ T4013] user pgtable: 4k pages, 39-bit VAs, pgdp=00000008f2b0a000
+..
+
+[ 3313.874332][ T4013] Dumping ftrace buffer:
+[ 3313.874334][ T4013]    (ftrace buffer empty)
+..
+..
+[ dd3313.874639][ T4013] CPU: 6 PID: 4013 Comm: InputReader
+[ 3313.874648][ T4013] pc : dualshock4_led_get_brightness+0xc/0x74
+[ 3313.874653][ T4013] lr : led_update_brightness+0x38/0x60
+[ 3313.874656][ T4013] sp : ffffffc0b910bbd0
+..
+..
+[ 3313.874685][ T4013] Call trace:
+[ 3313.874687][ T4013]  dualshock4_led_get_brightness+0xc/0x74
+[ 3313.874690][ T4013]  brightness_show+0x20/0x4c
+[ 3313.874692][ T4013]  dev_attr_show+0x38/0x74
+[ 3313.874696][ T4013]  sysfs_kf_seq_show+0xb4/0x130
+[ 3313.874700][ T4013]  kernfs_seq_show+0x44/0x54
+[ 3313.874703][ T4013]  seq_read_iter+0x158/0x4ec
+[ 3313.874705][ T4013]  kernfs_fop_read_iter+0x68/0x1b4
+[ 3313.874708][ T4013]  vfs_read+0x1e0/0x2c8
+[ 3313.874711][ T4013]  ksys_read+0x78/0xe8
+[ 3313.874714][ T4013]  __arm64_sys_read+0x1c/0x2c
+[ 3313.874718][ T4013]  invoke_syscall+0x58/0x114
+[ 3313.874721][ T4013]  el0_svc_common+0x80/0xe0
+[ 3313.874724][ T4013]  do_el0_svc+0x1c/0x28
+[ 3313.874727][ T4013]  el0_svc+0x38/0x68
+[ 3313.874730][ T4013]  el0t_64_sync_handler+0x68/0xbc
+[ 3313.874732][ T4013]  el0t_64_sync+0x1a8/0x1ac
+
+Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
+Reviewed-by: Anish Kumar <yesanishhere@gmail.com>
+Link: https://lore.kernel.org/r/20241103160527.82487-1-quic_mojha@quicinc.com
+Signed-off-by: Lee Jones <lee@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/qcom/Kconfig         |  4 ++--
- drivers/clk/qcom/dispcc-sm8550.c | 18 ++++++++++++++++--
- 2 files changed, 18 insertions(+), 4 deletions(-)
+ drivers/leds/led-class.c | 14 +++++++++++---
+ include/linux/leds.h     |  2 +-
+ 2 files changed, 12 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index a3e2a09e2105b..46a6cdee65e5d 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -959,10 +959,10 @@ config SM_DISPCC_8450
- config SM_DISPCC_8550
- 	tristate "SM8550 Display Clock Controller"
- 	depends on ARM64 || COMPILE_TEST
--	depends on SM_GCC_8550 || SM_GCC_8650
-+	depends on SM_GCC_8550 || SM_GCC_8650 || SAR_GCC_2130P
- 	help
- 	  Support for the display clock controller on Qualcomm Technologies, Inc
--	  SM8550 or SM8650 devices.
-+	  SAR2130P, SM8550 or SM8650 devices.
- 	  Say Y if you want to support display devices and functionality such as
- 	  splash screen.
+diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
+index 06b97fd49ad9a..f69f4e928d614 100644
+--- a/drivers/leds/led-class.c
++++ b/drivers/leds/led-class.c
+@@ -29,11 +29,14 @@ static ssize_t brightness_show(struct device *dev,
+ 		struct device_attribute *attr, char *buf)
+ {
+ 	struct led_classdev *led_cdev = dev_get_drvdata(dev);
++	unsigned int brightness;
  
-diff --git a/drivers/clk/qcom/dispcc-sm8550.c b/drivers/clk/qcom/dispcc-sm8550.c
-index 7f9021ca0ecb0..e41d4104d7702 100644
---- a/drivers/clk/qcom/dispcc-sm8550.c
-+++ b/drivers/clk/qcom/dispcc-sm8550.c
-@@ -75,7 +75,7 @@ static struct pll_vco lucid_ole_vco[] = {
- 	{ 249600000, 2000000000, 0 },
- };
+-	/* no lock needed for this */
++	mutex_lock(&led_cdev->led_access);
+ 	led_update_brightness(led_cdev);
++	brightness = led_cdev->brightness;
++	mutex_unlock(&led_cdev->led_access);
  
--static const struct alpha_pll_config disp_cc_pll0_config = {
-+static struct alpha_pll_config disp_cc_pll0_config = {
- 	.l = 0xd,
- 	.alpha = 0x6492,
- 	.config_ctl_val = 0x20485699,
-@@ -106,7 +106,7 @@ static struct clk_alpha_pll disp_cc_pll0 = {
- 	},
- };
+-	return sprintf(buf, "%u\n", led_cdev->brightness);
++	return sprintf(buf, "%u\n", brightness);
+ }
  
--static const struct alpha_pll_config disp_cc_pll1_config = {
-+static struct alpha_pll_config disp_cc_pll1_config = {
- 	.l = 0x1f,
- 	.alpha = 0x4000,
- 	.config_ctl_val = 0x20485699,
-@@ -594,6 +594,13 @@ static const struct freq_tbl ftbl_disp_cc_mdss_mdp_clk_src[] = {
- 	{ }
- };
- 
-+static const struct freq_tbl ftbl_disp_cc_mdss_mdp_clk_src_sar2130p[] = {
-+	F(200000000, P_DISP_CC_PLL0_OUT_MAIN, 3, 0, 0),
-+	F(325000000, P_DISP_CC_PLL0_OUT_MAIN, 3, 0, 0),
-+	F(514000000, P_DISP_CC_PLL0_OUT_MAIN, 3, 0, 0),
-+	{ }
-+};
+ static ssize_t brightness_store(struct device *dev,
+@@ -70,8 +73,13 @@ static ssize_t max_brightness_show(struct device *dev,
+ 		struct device_attribute *attr, char *buf)
+ {
+ 	struct led_classdev *led_cdev = dev_get_drvdata(dev);
++	unsigned int max_brightness;
 +
- static const struct freq_tbl ftbl_disp_cc_mdss_mdp_clk_src_sm8650[] = {
- 	F(19200000, P_BI_TCXO, 1, 0, 0),
- 	F(85714286, P_DISP_CC_PLL0_OUT_MAIN, 3, 0, 0),
-@@ -1750,6 +1757,7 @@ static struct qcom_cc_desc disp_cc_sm8550_desc = {
++	mutex_lock(&led_cdev->led_access);
++	max_brightness = led_cdev->max_brightness;
++	mutex_unlock(&led_cdev->led_access);
+ 
+-	return sprintf(buf, "%u\n", led_cdev->max_brightness);
++	return sprintf(buf, "%u\n", max_brightness);
+ }
+ static DEVICE_ATTR_RO(max_brightness);
+ 
+diff --git a/include/linux/leds.h b/include/linux/leds.h
+index e5968c3ed4ae0..2337f516fa7c2 100644
+--- a/include/linux/leds.h
++++ b/include/linux/leds.h
+@@ -238,7 +238,7 @@ struct led_classdev {
+ 	struct kernfs_node	*brightness_hw_changed_kn;
+ #endif
+ 
+-	/* Ensures consistent access to the LED Flash Class device */
++	/* Ensures consistent access to the LED class device */
+ 	struct mutex		led_access;
  };
  
- static const struct of_device_id disp_cc_sm8550_match_table[] = {
-+	{ .compatible = "qcom,sar2130p-dispcc" },
- 	{ .compatible = "qcom,sm8550-dispcc" },
- 	{ .compatible = "qcom,sm8650-dispcc" },
- 	{ }
-@@ -1780,6 +1788,12 @@ static int disp_cc_sm8550_probe(struct platform_device *pdev)
- 		disp_cc_mdss_mdp_clk_src.freq_tbl = ftbl_disp_cc_mdss_mdp_clk_src_sm8650;
- 		disp_cc_mdss_dptx1_usb_router_link_intf_clk.clkr.hw.init->parent_hws[0] =
- 			&disp_cc_mdss_dptx1_link_div_clk_src.clkr.hw;
-+	} else if (of_device_is_compatible(pdev->dev.of_node, "qcom,sar2130p-dispcc")) {
-+		disp_cc_pll0_config.l = 0x1f;
-+		disp_cc_pll0_config.alpha = 0x4000;
-+		disp_cc_pll0_config.user_ctl_val = 0x1;
-+		disp_cc_pll1_config.user_ctl_val = 0x1;
-+		disp_cc_mdss_mdp_clk_src.freq_tbl = ftbl_disp_cc_mdss_mdp_clk_src_sar2130p;
- 	}
- 
- 	clk_lucid_ole_pll_configure(&disp_cc_pll0, regmap, &disp_cc_pll0_config);
 -- 
 2.43.0
 
