@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-430940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4ABAD9E379F
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 11:36:40 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2775A9E3771
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 11:30:15 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8DC80B2F3B8
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 10:29:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8348168A3B
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 10:30:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2F961B0F0A;
-	Wed,  4 Dec 2024 10:29:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1C7C1B2182;
+	Wed,  4 Dec 2024 10:29:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kWS6xxv/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BGbXtS48"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 153031AF0DD
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 10:29:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35F2818FDB1
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 10:29:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733308180; cv=none; b=QSwQ3yShuPkmyvD0Po6iJrgyhl6kXkVxqwKb+uw4FJUIkHRYvmXn8bY7Ov4v6N9dHgVfxH+lbpc6QAoT8cPYj4EWsnXa0B6qy7U1qIsdYzQIkMblo0HVNP3pMcCoYpQkcsTcz+JiWdZc9e3ESlAPAenuEKqySRmcCf406u+seRo=
+	t=1733308185; cv=none; b=WJppBpkI46o9U3VKTCdn7beY7gZWOn5YNNL7HyK+3lS0DLRA6y33nxh/e1c67QvV/44E6Im8O2YOCLWkeSzLggX4xhA60dYCIN37y/NoA+pGOAqbyEnKnbHZmAYunsw64l76YFTJLVaMzeJyPKR8ymRcXXekXlXW0JhJej2pt1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733308180; c=relaxed/simple;
-	bh=0r10L0YCyc4mHIa4LmRwV2eFEw40ha9ErMc2w48Ije4=;
+	s=arc-20240116; t=1733308185; c=relaxed/simple;
+	bh=Z8C/SJOGPrii+3rirnKZTIg2TyBH2bjsxXwXRI4COuU=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Px98Q7V5TRjNyVNf7BOazMGky6XaWsza/DonR3csN6SLdiqF5lZH+uvsvB2wS5hZkZdaes53Csy1fv1QC9nZA751ekJ3IWHcovZn84sleJN/GXApXg4o0h5eB5gaP0LXF01ElxT7NvxYw/De1fQhgiP37IeuFHeFy7DBt6+JtRs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kWS6xxv/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0537BC4CEDD;
-	Wed,  4 Dec 2024 10:29:35 +0000 (UTC)
+	 MIME-Version; b=PJwwgzIaOyM1k09zrqCzSKi79CpHgfafg3jeSb/8RsxBwLF06r7KWw8inp1SzYmEAnGTLUSoLLONKM6fGQclwp6kwRwfjKWEcPczBTmK99GCKofpgGbpKZU1VOK4UGqDA1D4Z8+0OeM1kgIT/zT4vgByTgWIoPuMNduamfLrvnE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BGbXtS48; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67A4DC4CEE3;
+	Wed,  4 Dec 2024 10:29:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733308179;
-	bh=0r10L0YCyc4mHIa4LmRwV2eFEw40ha9ErMc2w48Ije4=;
+	s=k20201202; t=1733308184;
+	bh=Z8C/SJOGPrii+3rirnKZTIg2TyBH2bjsxXwXRI4COuU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=kWS6xxv/D0II+x/uHDJV7zBfhSB+xp/+0+xQ/BEmIWa9fFF62990uvJMieEDHJXcs
-	 Nyeolhp8EOa45Xdacjp83BWNh+O1yzDhIAbTFx+39LAEUl7o5tTUjdThuHEgNy2lPK
-	 a943Iw2EhFDWSdu+hvpEUF/FiZF+3gS13QZf6SEzE61K40gQxHsd6R3J89512Hghoz
-	 e4+PHpEJtpmIr6L1htv/GLv0ZRqajbPALtMlf+O9ZTA5ilOMv76imf/kj66AOfIjj1
-	 uqd1/gy5GnP2MuUG6Dx1wWBbGlcSCbVNy17WsprzBzXHYoWYVkRgPbNApr5giK6qHU
-	 EFAIH4Di5Hutw==
+	b=BGbXtS48eNdntOOP+Oqh51yWnND0HA0Qm8GlavCAlPA3vEyNpm2hGem6+mu7CeahV
+	 +WZmQV2Odn3ubdIK0izoLtcc8fH/96cudDOiE7fMN4kvXLodI2tJmkeYluL2aJSiWG
+	 It0BdG0rCUmVD1UnQALK/TSJ3qr6mJd9f5g5hzjDcMGNbqq04x90i0GFmsCKihH1LU
+	 vHcDy4bamjf/LgnkB4FgCcqQnnkDM2flqLOGxHuq6EctQYhemMa2IiKZztfJfHbq75
+	 5xRsEc+Cj/yJeZpQGEvPHxPcN28SdFDDOdZvzmjBlwy+a8CtZ3Rrfm0EAmxJzJOB6+
+	 nZmIA/yxGcy9Q==
 From: Arnd Bergmann <arnd@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org
@@ -60,9 +60,9 @@ Cc: Arnd Bergmann <arnd@arndb.de>,
 	Russell King <linux@armlinux.org.uk>,
 	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
 	Tony Lindgren <tony@atomide.com>
-Subject: [PATCH 02/15] ARM: limit OABI support to StrongARM CPUs
-Date: Wed,  4 Dec 2024 11:28:51 +0100
-Message-Id: <20241204102904.1863796-3-arnd@kernel.org>
+Subject: [PATCH 03/15] ARM: rework ARM11 CPU selection logic
+Date: Wed,  4 Dec 2024 11:28:52 +0100
+Message-Id: <20241204102904.1863796-4-arnd@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20241204102904.1863796-1-arnd@kernel.org>
 References: <20241204102904.1863796-1-arnd@kernel.org>
@@ -76,143 +76,200 @@ Content-Transfer-Encoding: 8bit
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-As discussed on the mailing lists, there is no way to build OABI userspace
-binaries any more since gcc-4.8, and now support is also getting dropped in
-binutils, which will make it impossible to build pure OABI kernels at some
-point in the future.
+Support for SMP on ARM1136r0 has been broken for a while, and nobody
+is working on fixing it. I had a plan to change ARMv6 support to no
+longer coexist in a common kernel with ARMv7 CPUs but instead ARMv5 and
+below. This would have addressed the problem, but after a recent mailing
+list discussion, we concluded that an easier approach is to just forbid
+ARM1136r0 CPU support on SMP-enabled kernels.
 
-I found no evidence of anyone still sing OABI userspace on embedded systems
-that keep getting kernel updates, but there are a few desktop-class machines
-that date back to the 1990s using Intel StrongARM processors that were
-supported by old versions of Debian, Red Hat or the official Corel
-Netwinder distribution.
+This mainly affects users of the Nokia N800/N810 tablets using an
+OMAP2420 SoC, which is the only commercial product with an ARM1136r0
+that is still supported by the kernel.
 
-Add a much stricter Kconfig dependency for both native OABI and OABI_COMPAT
-enabled kernels, only allowing either of them to be selected when building
-a kernel that targets a StrongARM based machine.
+The other machines that are still in the same hardware catogory are:
 
-Link: https://lore.kernel.org/lkml/2831c5a6-cfbf-4fe0-b51c-0396e5b0aeb7@app.fastmail.com/
+ - TI OMAP2420 H4 reference board
+ - TI OMAP2430 SDP software development platform
+ - Freescale/NXP i.MX31 Lite Development Kit
+ - Buglabs i.MX31 Bug 1.x prototype
+ - Arm Integrator/AP with CM1136JF-S core module
+
+To my knowledge, none of these have any actual users aside from
+reference boards being used more easily test the platforms.
+
+There are also a few ARM1136r1 machines, which implement the
+ARMv6K SMP support (barriers, atomics and TLS):
+
+ - Eukrea CPUIMX35 reference platform
+ - Freescale/NXP i.MX35 Product Development Kit
+ - ARM Integrator/CP/IM-LT3 with ARM1136J Core Tile
+ - ARM Realview/EB with ARM1136J Core Tile
+
+Again, these are mainly reference implementations rather than
+actual products, but since they support ARMv6K, they should
+continue to work correctly in SMP-enabled kernels. For the
+ARM Core Tile, I have not found a datasheet but instead use
+the revision based on what the respective virtual models
+report.
+
+All the other ARMv6 platforms use an ARM1176 with ARMv6K,
+VMSAv7 and Trustzone support.
+
+To avoid the broken configuration, annotate the ARM1136 based
+machines with specific CPU_ARM1136R0 or CPU_ARM1136R2 symbols
+in Kconfig and make the r0 variants depend on !SMP.
+
+Link: https://lore.kernel.org/linux-arm-kernel/2831c5a6-cfbf-4fe0-b51c-0396e5b0aeb7@app.fastmail.com/T/
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/arm/Kconfig                       | 14 +++++++-------
- arch/arm/configs/am200epdkit_defconfig |  1 -
- arch/arm/configs/axm55xx_defconfig     |  1 -
- arch/arm/configs/footbridge_defconfig  |  2 +-
- arch/arm/configs/neponset_defconfig    |  2 +-
- arch/arm/configs/versatile_defconfig   |  1 -
- 6 files changed, 9 insertions(+), 12 deletions(-)
+ arch/arm/Kconfig.platforms      |  2 +-
+ arch/arm/mach-imx/Kconfig       |  3 ++-
+ arch/arm/mach-omap2/Kconfig     |  2 +-
+ arch/arm/mach-versatile/Kconfig | 10 +++++-----
+ arch/arm/mm/Kconfig             | 24 +++++++++++++++++++++++-
+ 5 files changed, 32 insertions(+), 9 deletions(-)
 
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index f8f127650ace..54f5cc12dea4 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -1161,8 +1161,7 @@ config ARM_PATCH_IDIV
- 	  code to do integer division.
+diff --git a/arch/arm/Kconfig.platforms b/arch/arm/Kconfig.platforms
+index 845ab08e20a4..e56d47eadfdf 100644
+--- a/arch/arm/Kconfig.platforms
++++ b/arch/arm/Kconfig.platforms
+@@ -37,7 +37,7 @@ config ARCH_MULTI_V4_V5
+ config ARCH_MULTI_V6
+ 	bool "ARMv6 based platforms (ARM11)"
+ 	select ARCH_MULTI_V6_V7
+-	select CPU_V6K
++	select CPU_1176
  
- config AEABI
--	bool "Use the ARM EABI to compile the kernel" if !CPU_V7 && \
--		!CPU_V7M && !CPU_V6 && !CPU_V6K && !CC_IS_CLANG
-+	bool "Use the ARM EABI to compile the kernel" if CPU_SA110 || CPU_SA1100
- 	default y
+ config ARCH_MULTI_V7
+ 	bool "ARMv7 based platforms (Cortex-A, PJ4, Scorpion, Krait)"
+diff --git a/arch/arm/mach-imx/Kconfig b/arch/arm/mach-imx/Kconfig
+index e4fe059cd861..dce9cfc510b7 100644
+--- a/arch/arm/mach-imx/Kconfig
++++ b/arch/arm/mach-imx/Kconfig
+@@ -40,13 +40,14 @@ comment "ARM1136 platforms"
+ 
+ config SOC_IMX31
+ 	bool "i.MX31 support"
+-	select CPU_V6
++	select CPU_ARM1136R0
+ 	select MXC_AVIC
  	help
- 	  The Arm EABI is the default ABI on all modern Linux
-@@ -1172,9 +1171,13 @@ config AEABI
- 	  Everyone should enable this, as support for OABI user space
- 	  was dropped in gcc-4.8 and most distributions after ca. 2013.
+ 	  This enables support for Freescale i.MX31 processor
  
-+	  Support for OABI mode will be removed from the kernel
-+	  once Intel StrongARM CPUs are phased out.
+ config SOC_IMX35
+ 	bool "i.MX35 support"
++	select CPU_ARM1136R1
+ 	select MXC_AVIC
+ 	help
+ 	  This enables support for Freescale i.MX35 processor
+diff --git a/arch/arm/mach-omap2/Kconfig b/arch/arm/mach-omap2/Kconfig
+index 821727eefd5a..c2b379850f59 100644
+--- a/arch/arm/mach-omap2/Kconfig
++++ b/arch/arm/mach-omap2/Kconfig
+@@ -9,7 +9,7 @@ config ARCH_OMAP2
+ 	bool "TI OMAP2"
+ 	depends on ARCH_MULTI_V6
+ 	select ARCH_OMAP2PLUS
+-	select CPU_V6
++	select CPU_ARM1136R0
+ 	select OMAP_HWMOD
+ 	select SOC_HAS_OMAP2_SDRC
+ 
+diff --git a/arch/arm/mach-versatile/Kconfig b/arch/arm/mach-versatile/Kconfig
+index 513618078440..de42da7de8c8 100644
+--- a/arch/arm/mach-versatile/Kconfig
++++ b/arch/arm/mach-versatile/Kconfig
+@@ -113,7 +113,8 @@ config INTEGRATOR_CM1136JFS
+ 	bool "Integrator/CM1136JF-S core module"
+ 	depends on ARCH_INTEGRATOR_AP
+ 	depends on ARCH_MULTI_V6
+-	select CPU_V6
++	depends on !SMP
++	select CPU_ARM1136R0
+ 
+ config ARCH_INTEGRATOR_CP
+ 	bool "Support Integrator/CP platform"
+@@ -135,7 +136,7 @@ config INTEGRATOR_CTB36
+ 	bool "Integrator/CTB36 (ARM1136JF-S) core tile"
+ 	depends on ARCH_INTEGRATOR_CP
+ 	depends on ARCH_MULTI_V6
+-	select CPU_V6
++	select CPU_ARM1136R1
+ 
+ config ARCH_CINTEGRATOR
+ 	depends on ARCH_INTEGRATOR_CP
+@@ -182,7 +183,7 @@ config MACH_REALVIEW_EB
+ config REALVIEW_EB_ARM1136
+ 	bool "Support ARM1136J(F)-S Tile"
+ 	depends on MACH_REALVIEW_EB && ARCH_MULTI_V6
+-	select CPU_V6
++	select CPU_ARM1136R1
+ 	help
+ 	  Enable support for the ARM1136 tile fitted to the
+ 	  Realview(R) Emulation Baseboard platform.
+@@ -201,11 +202,10 @@ config REALVIEW_EB_A9MP
+ 	  Enable support for the Cortex-A9MPCore tile fitted to the
+ 	  Realview(R) Emulation Baseboard platform.
+ 
+-# ARMv6 CPU without K extensions, but does have the new exclusive ops
+ config MACH_REALVIEW_PB1176
+ 	bool "Support RealView(R) Platform Baseboard for ARM1176JZF-S"
+ 	depends on ARCH_MULTI_V6
+-	select CPU_V6
++	select CPU_ARM1176
+ 	select HAVE_TCM
+ 	help
+ 	  Include support for the ARM(R) RealView(R) Platform Baseboard for
+diff --git a/arch/arm/mm/Kconfig b/arch/arm/mm/Kconfig
+index 2b6f50dd5478..f5c1c6f82892 100644
+--- a/arch/arm/mm/Kconfig
++++ b/arch/arm/mm/Kconfig
+@@ -376,6 +376,7 @@ config CPU_PJ4B
+ # ARMv6
+ config CPU_V6
+ 	bool
++	depends on !SMP
+ 	select CPU_32v6
+ 	select CPU_ABRT_EV6
+ 	select CPU_CACHE_V6
+@@ -386,7 +387,6 @@ config CPU_V6
+ 	select CPU_PABRT_V6
+ 	select CPU_THUMB_CAPABLE
+ 	select CPU_TLB_V6 if MMU
+-	select SMP_ON_UP if SMP
+ 
+ # ARMv6k
+ config CPU_V6K
+@@ -403,6 +403,28 @@ config CPU_V6K
+ 	select CPU_THUMB_CAPABLE
+ 	select CPU_TLB_V6 if MMU
+ 
++config CPU_ARM1136R0
++	bool
++	select CPU_V6
++	depends on !SMP
++	help
++	  These early revisions of ARM1136 lack support for the
++	  ARMv6k extensions for multiprocessing.
 +
- config OABI_COMPAT
- 	bool "Allow old ABI binaries to run with this kernel (EXPERIMENTAL)"
- 	depends on AEABI && !THUMB2_KERNEL
-+	depends on CPU_SA110 || CPU_SA1100
- 	help
- 	  This option preserves the old syscall interface along with the
- 	  new (ARM EABI) one. It also provides a compatibility layer to
-@@ -1187,11 +1190,8 @@ config OABI_COMPAT
- 	  selected, since there is no way yet to sensibly distinguish
- 	  between calling conventions during filtering.
- 
--	  If you know you'll be using only pure EABI user space then you
--	  can say N here. If this option is not selected and you attempt
--	  to execute a legacy ABI binary then the result will be
--	  UNPREDICTABLE (in fact it can be predicted that it won't work
--	  at all). If in doubt say N.
-+	  Support for OABI_COMPAT will be removed from the kernel
-+	  once Intel StrongARM CPUs are phased out.
- 
- config ARCH_SELECT_MEMORY_MODEL
- 	def_bool y
-diff --git a/arch/arm/configs/am200epdkit_defconfig b/arch/arm/configs/am200epdkit_defconfig
-index 22397d45f4a0..55c5c08a5f96 100644
---- a/arch/arm/configs/am200epdkit_defconfig
-+++ b/arch/arm/configs/am200epdkit_defconfig
-@@ -7,7 +7,6 @@ CONFIG_EXPERT=y
- # CONFIG_ARCH_MULTI_V7 is not set
- CONFIG_ARCH_PXA=y
- CONFIG_ARCH_GUMSTIX=y
--# CONFIG_OABI_COMPAT is not set
- CONFIG_CMDLINE="console=ttyS0,115200n8 root=1f01 rootfstype=jffs2"
- CONFIG_MODULES=y
- CONFIG_MODULE_UNLOAD=y
-diff --git a/arch/arm/configs/axm55xx_defconfig b/arch/arm/configs/axm55xx_defconfig
-index 39b06d59d87a..9d14b987ee94 100644
---- a/arch/arm/configs/axm55xx_defconfig
-+++ b/arch/arm/configs/axm55xx_defconfig
-@@ -38,7 +38,6 @@ CONFIG_PCIE_AXXIA=y
- CONFIG_SMP=y
- CONFIG_NR_CPUS=16
- CONFIG_HOTPLUG_CPU=y
--CONFIG_OABI_COMPAT=y
- CONFIG_HIGHMEM=y
- CONFIG_ARM_APPENDED_DTB=y
- CONFIG_ARM_ATAG_DTB_COMPAT=y
-diff --git a/arch/arm/configs/footbridge_defconfig b/arch/arm/configs/footbridge_defconfig
-index 589b7b1df8c6..e8bf9847d35d 100644
---- a/arch/arm/configs/footbridge_defconfig
-+++ b/arch/arm/configs/footbridge_defconfig
-@@ -9,9 +9,9 @@ CONFIG_ARCH_MULTI_V4=y
- CONFIG_ARCH_FOOTBRIDGE=y
- CONFIG_ARCH_EBSA285_HOST=y
- CONFIG_ARCH_NETWINDER=y
-+# CONFIG_AEABI is not set
- CONFIG_FPE_NWFPE=y
- CONFIG_FPE_NWFPE_XP=y
--# CONFIG_AEABI is not set
- CONFIG_MODULES=y
- CONFIG_PARTITION_ADVANCED=y
- CONFIG_ACORN_PARTITION=y
-diff --git a/arch/arm/configs/neponset_defconfig b/arch/arm/configs/neponset_defconfig
-index a8833b2ce335..7a7b6a896f85 100644
---- a/arch/arm/configs/neponset_defconfig
-+++ b/arch/arm/configs/neponset_defconfig
-@@ -6,12 +6,12 @@ CONFIG_ARCH_MULTI_V4=y
- CONFIG_ARCH_SA1100=y
- CONFIG_SA1100_ASSABET=y
- CONFIG_ASSABET_NEPONSET=y
-+# CONFIG_AEABI is not set
- CONFIG_ZBOOT_ROM_TEXT=0x80000
- CONFIG_ZBOOT_ROM_BSS=0xc1000000
- CONFIG_ZBOOT_ROM=y
- CONFIG_CMDLINE="console=ttySA0,38400n8 cpufreq=221200 rw root=/dev/mtdblock2 mtdparts=sa1100:512K(boot),1M(kernel),2560K(initrd),4M(root) load_ramdisk=1 prompt_ramdisk=0 mem=32M noinitrd initrd=0xc0800000,3M"
- CONFIG_FPE_NWFPE=y
--# CONFIG_AEABI is not set
- CONFIG_PM=y
- CONFIG_MODULES=y
- CONFIG_MODULE_UNLOAD=y
-diff --git a/arch/arm/configs/versatile_defconfig b/arch/arm/configs/versatile_defconfig
-index 8e89debb5a5b..bb9eb9ccbbde 100644
---- a/arch/arm/configs/versatile_defconfig
-+++ b/arch/arm/configs/versatile_defconfig
-@@ -6,7 +6,6 @@ CONFIG_LOG_BUF_SHIFT=14
- CONFIG_BLK_DEV_INITRD=y
- # CONFIG_ARCH_MULTI_V7 is not set
- CONFIG_ARCH_VERSATILE=y
--CONFIG_OABI_COMPAT=y
- CONFIG_CMDLINE="root=1f03 mem=32M"
- CONFIG_FPE_NWFPE=y
- CONFIG_VFP=y
++config CPU_ARM1136R1
++	bool
++	select CPU_V6K
++	help
++	  Later revisions of ARM1136 add ARMv6k (atomics, barriers
++	  and TLS register) in addition to the features from r0.
++
++config CPU_ARM1176
++	bool
++	select CPU_V6K
++	help
++	  ARM1176 implements ARMv6k, VMSAv7 and Trustzone in
++	  addition to the ARMv6 baseline.
++
+ # ARMv7 and ARMv8 architectures
+ config CPU_V7
+ 	bool
 -- 
 2.39.5
 
