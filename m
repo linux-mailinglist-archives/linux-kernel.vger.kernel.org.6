@@ -1,135 +1,187 @@
-Return-Path: <linux-kernel+bounces-431467-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431471-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4618A9E3DAC
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:05:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 283F49E3DB6
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:06:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 86CD31648DF
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:04:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E45C7164AFD
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:06:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20ACD20D50A;
-	Wed,  4 Dec 2024 15:03:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="IOkEu/NV"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B2BB20C016;
+	Wed,  4 Dec 2024 15:04:14 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5B2120C461;
-	Wed,  4 Dec 2024 15:03:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABF2820B7E0;
+	Wed,  4 Dec 2024 15:04:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733324624; cv=none; b=ggyHx58Ia4U/slEsnToinCj7lBOF2YlhBysZ8QQEtfnrT9FuTv3f+ZdRBz9UygVW8kaSvuuR4hiXwEtBRRMx+Xxqi0m0iynyvjG76/Ymvdv+l+s7SKkpbjknrWWuUP6pZBiaTex784vmPbxebej9FU7AT9KVWWHyAs5myiXLv/0=
+	t=1733324653; cv=none; b=HjXRgV0QH3xZ5pr0Rl38XNdtyswbOm0qKKRnsegtQ7MTZ+t4vkCH85osVahInQa69aFuuYZZCLEqWmzg2O6NjBwj99/CxGLhFlGsj1pk8rJN84I9KZ6RZ8NfD83aYEVWFubHwToktsJ7ehQRD4+7zTSwBFRbWKjCygx7UT7GPKg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733324624; c=relaxed/simple;
-	bh=Y7FucONKiPz1qmmLTKvznPQ/455OqbhB1yHc4rwLpN8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=O+TBfMjjFcLeikUoMDpO5KINIVUapo1CZpG/ROO5cHn4KFgCGPoY8aFMxkNlnMtyC8qzFhdVX0pmBFQpxJyD+R8SGyKV1Z+x731lgtRmuYTZ7Ene0ykn7No6YR8RC7IwIPuPlqoGws/Pb1D+3+b638Gbv+WfMjF9RQgUiROc6BQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=IOkEu/NV; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B46VU1r027853;
-	Wed, 4 Dec 2024 15:03:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=txFYIp4/q0z
-	VEIvPK6RxdTIa8Ns51fTEevXo+PWIebE=; b=IOkEu/NV+VML2ywW0xqKsDKbWiE
-	VJlspeDtYq7q4LPmME3bq3s+s+0ZqCf5QqM60r5bwMBj3C/tFX+0jpeSu+IscPEc
-	RlN7HPtBuLrxrKrceUZU+HrguHfvDVxT6gpgDzxUvR5puhgz1DcCksXzuc08jD1l
-	NlHwQSktHmkuq0m1+qehH1FYTyN0GR0dfyaOpC2E55R6C8r3IVUu1ENlixEd+POL
-	PusFisT2jPXYSm1PeM97qQ/i6fDbEEX2JlsRug8C+7E55b4gV6XxuKziseCY0PNB
-	jzuJkhHNRpacpJEPH1dsowG4g7D35MOaRxHgFjf2SPP1dFEV5IMxiLUQwQg==
-Received: from apblrppmta02.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 439vcemqph-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 04 Dec 2024 15:03:38 +0000 (GMT)
-Received: from pps.filterd (APBLRPPMTA02.qualcomm.com [127.0.0.1])
-	by APBLRPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 4B4F3VMH025767;
-	Wed, 4 Dec 2024 15:03:35 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTPS id 437uskx4ut-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 04 Dec 2024 15:03:35 +0000
-Received: from APBLRPPMTA02.qualcomm.com (APBLRPPMTA02.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 4B4F3XHL025802;
-	Wed, 4 Dec 2024 15:03:35 GMT
-Received: from hu-devc-hyd-u22-c.qualcomm.com ([10.213.97.252])
-	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTPS id 4B4F3YHs025837
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 04 Dec 2024 15:03:35 +0000
-Received: by hu-devc-hyd-u22-c.qualcomm.com (Postfix, from userid 4047106)
-	id 38BE7503; Wed,  4 Dec 2024 20:33:34 +0530 (+0530)
-From: Viken Dadhaniya <quic_vdadhani@quicinc.com>
-To: andi.shyti@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-        conor+dt@kernel.org, gregkh@linuxfoundation.org, jirislaby@kernel.org,
-        broonie@kernel.or, andersson@kernel.org, konradybcio@kernel.org,
-        johan+linaro@kernel.org, dianders@chromium.org, agross@kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-i2c@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-serial@vger.kernel.org, linux-spi@vger.kernel.org
-Cc: =quic_msavaliy@quicinc.com, quic_anupkulk@quicinc.com,
-        Viken Dadhaniya <quic_vdadhani@quicinc.com>,
-        Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
-Subject: [PATCH v1 7/7] serial: qcom-geni: Load UART qup Firmware from linux side
-Date: Wed,  4 Dec 2024 20:33:26 +0530
-Message-Id: <20241204150326.1470749-8-quic_vdadhani@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241204150326.1470749-1-quic_vdadhani@quicinc.com>
-References: <20241204150326.1470749-1-quic_vdadhani@quicinc.com>
+	s=arc-20240116; t=1733324653; c=relaxed/simple;
+	bh=L1/USE0+lkG3io4fQUeuoZjFcccCvhDD/C55n8bbZcg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=tJ1cmrdhDE6MOqJGLWeH6OxwDRlAIC99lSXr1WaZBJmfucRTMmwvm0BJSTbGwAhobAYro2+vKqY78TzykystOQ8rC4+6K3PY9cpvpazgT+SZyglAf0eFYxdafxDcZAbPpws7sjywsZkihakWdfBPNXlFKNnQblLu9VMyEL4wZdk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 476C9C4CECD;
+	Wed,  4 Dec 2024 15:04:12 +0000 (UTC)
+Date: Wed, 4 Dec 2024 10:04:14 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
+ <linux-trace-kernel@vger.kernel.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Peter Zijlstra <peterz@infradead.org>,
+ Mark Rutland <mark.rutland@arm.com>, Geert Uytterhoeven
+ <geert@linux-m68k.org>, Guenter Roeck <linux@roeck-us.net>
+Subject: [PATCH] tracing: Fix archs that still call tracepoints without RCU
+ watching
+Message-ID: <20241204100414.4d3e06d0@gandalf.local.home>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: wh6wqi6INLQl8i0K6R2oAtobp6rlQmzi
-X-Proofpoint-ORIG-GUID: wh6wqi6INLQl8i0K6R2oAtobp6rlQmzi
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- bulkscore=0 mlxlogscore=999 adultscore=0 suspectscore=0 spamscore=0
- impostorscore=0 phishscore=0 mlxscore=0 malwarescore=0 clxscore=1015
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412040115
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Add provision to load firmware of Serial engine for UART protocol from
-Linux Execution Environment on running on APPS processor.
+From: Steven Rostedt <rostedt@goodmis.org>
 
-Co-developed-by: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
-Signed-off-by: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
-Signed-off-by: Viken Dadhaniya <quic_vdadhani@quicinc.com>
+Tracepoints require having RCU "watching" as it uses RCU to do updates to
+the tracepoints. There are some cases that would call a tracepoint when
+RCU was not "watching". This was usually in the idle path where RCU has
+"shutdown". For the few locations that had tracepoints without RCU
+watching, there was an trace_*_rcuidle() variant that could be used. This
+used SRCU for protection.
+
+There are tracepoints that trace when interrupts and preemption are
+enabled and disabled. In some architectures, these tracepoints are called
+in a path where RCU is not watching. When x86 and arm64 removed these
+locations, it was incorrectly assumed that it would be safe to remove the
+trace_*_rcuidle() variant and also remove the SRCU logic, as it made the
+code more complex and harder to implement new tracepoint features (like
+faultable tracepoints and tracepoints in rust).
+
+Instead of bringing back the trace_*_rcuidle(), as it will not be trivial
+to do as new code has already been added depending on its removal, add a
+workaround to the one file that still requires it (trace_preemptirq.c). If
+the architecture does not define CONFIG_ARCH_WANTS_NO_INSTR, then check if
+the code is in the idle path, and if so, call ct_irq_enter/exit() which
+will enable RCU around the tracepoint.
+
+Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Fixes: 48bcda684823 ("tracing: Remove definition of trace_*_rcuidle()")
+Closes: https://lore.kernel.org/all/bddb02de-957a-4df5-8e77-829f55728ea2@roeck-us.net/
+Tested-by: Guenter Roeck <linux@roeck-us.net>
+Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 ---
- drivers/tty/serial/qcom_geni_serial.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ kernel/trace/trace_preemptirq.c | 43 ++++++++++++++++++++++++++++-----
+ 1 file changed, 37 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/tty/serial/qcom_geni_serial.c b/drivers/tty/serial/qcom_geni_serial.c
-index a80ce7aaf309..e3b0fc65f3bb 100644
---- a/drivers/tty/serial/qcom_geni_serial.c
-+++ b/drivers/tty/serial/qcom_geni_serial.c
-@@ -1146,8 +1146,11 @@ static int qcom_geni_serial_port_setup(struct uart_port *uport)
+diff --git a/kernel/trace/trace_preemptirq.c b/kernel/trace/trace_preemptirq.c
+index 5c03633316a6..0c42b15c3800 100644
+--- a/kernel/trace/trace_preemptirq.c
++++ b/kernel/trace/trace_preemptirq.c
+@@ -10,11 +10,42 @@
+ #include <linux/module.h>
+ #include <linux/ftrace.h>
+ #include <linux/kprobes.h>
++#include <linux/hardirq.h>
+ #include "trace.h"
  
- 	proto = geni_se_read_proto(&port->se);
- 	if (proto != GENI_SE_UART) {
--		dev_err(uport->dev, "Invalid FW loaded, proto: %d\n", proto);
--		return -ENXIO;
-+		ret = geni_load_se_firmware(&port->se, GENI_SE_UART);
-+		if (ret) {
-+			dev_err(uport->dev, "UART firmware load failed ret: %d\n", ret);
-+			return ret;
-+		}
+ #define CREATE_TRACE_POINTS
+ #include <trace/events/preemptirq.h>
+ 
++/*
++ * Use regular trace points on architectures that implement noinstr
++ * tooling: these calls will only happen with RCU enabled, which can
++ * use a regular tracepoint.
++ *
++ * On older architectures, RCU may not be watching in idle. In that
++ * case, wake up RCU to watch while calling the tracepoint. These
++ * aren't NMI-safe - so exclude NMI contexts:
++ */
++#ifdef CONFIG_ARCH_WANTS_NO_INSTR
++#define trace(point, args)	trace_##point(args)
++#else
++#define trace(point, args)					\
++	do {							\
++		if (trace_##point##_enabled()) {		\
++			bool exit_rcu = false;			\
++			if (in_nmi())				\
++				break;				\
++			if (!IS_ENABLED(CONFIG_TINY_RCU) &&	\
++			    is_idle_task(current)) {		\
++				ct_irq_enter();			\
++				exit_rcu = true;		\
++			}					\
++			trace_##point(args);			\
++			if (exit_rcu)				\
++				ct_irq_exit();			\
++		}						\
++	} while (0)
++#endif
++
+ #ifdef CONFIG_TRACE_IRQFLAGS
+ /* Per-cpu variable to prevent redundant calls when IRQs already off */
+ static DEFINE_PER_CPU(int, tracing_irq_cpu);
+@@ -28,7 +59,7 @@ static DEFINE_PER_CPU(int, tracing_irq_cpu);
+ void trace_hardirqs_on_prepare(void)
+ {
+ 	if (this_cpu_read(tracing_irq_cpu)) {
+-		trace_irq_enable(CALLER_ADDR0, CALLER_ADDR1);
++		trace(irq_enable, TP_ARGS(CALLER_ADDR0, CALLER_ADDR1));
+ 		tracer_hardirqs_on(CALLER_ADDR0, CALLER_ADDR1);
+ 		this_cpu_write(tracing_irq_cpu, 0);
+ 	}
+@@ -39,7 +70,7 @@ NOKPROBE_SYMBOL(trace_hardirqs_on_prepare);
+ void trace_hardirqs_on(void)
+ {
+ 	if (this_cpu_read(tracing_irq_cpu)) {
+-		trace_irq_enable(CALLER_ADDR0, CALLER_ADDR1);
++		trace(irq_enable, TP_ARGS(CALLER_ADDR0, CALLER_ADDR1));
+ 		tracer_hardirqs_on(CALLER_ADDR0, CALLER_ADDR1);
+ 		this_cpu_write(tracing_irq_cpu, 0);
+ 	}
+@@ -61,7 +92,7 @@ void trace_hardirqs_off_finish(void)
+ 	if (!this_cpu_read(tracing_irq_cpu)) {
+ 		this_cpu_write(tracing_irq_cpu, 1);
+ 		tracer_hardirqs_off(CALLER_ADDR0, CALLER_ADDR1);
+-		trace_irq_disable(CALLER_ADDR0, CALLER_ADDR1);
++		trace(irq_disable, TP_ARGS(CALLER_ADDR0, CALLER_ADDR1));
  	}
  
- 	qcom_geni_serial_stop_rx(uport);
+ }
+@@ -75,7 +106,7 @@ void trace_hardirqs_off(void)
+ 	if (!this_cpu_read(tracing_irq_cpu)) {
+ 		this_cpu_write(tracing_irq_cpu, 1);
+ 		tracer_hardirqs_off(CALLER_ADDR0, CALLER_ADDR1);
+-		trace_irq_disable(CALLER_ADDR0, CALLER_ADDR1);
++		trace(irq_disable, TP_ARGS(CALLER_ADDR0, CALLER_ADDR1));
+ 	}
+ }
+ EXPORT_SYMBOL(trace_hardirqs_off);
+@@ -86,13 +117,13 @@ NOKPROBE_SYMBOL(trace_hardirqs_off);
+ 
+ void trace_preempt_on(unsigned long a0, unsigned long a1)
+ {
+-	trace_preempt_enable(a0, a1);
++	trace(preempt_enable, TP_ARGS(a0, a1));
+ 	tracer_preempt_on(a0, a1);
+ }
+ 
+ void trace_preempt_off(unsigned long a0, unsigned long a1)
+ {
+-	trace_preempt_disable(a0, a1);
++	trace(preempt_disable, TP_ARGS(a0, a1));
+ 	tracer_preempt_off(a0, a1);
+ }
+ #endif
 -- 
-2.34.1
+2.45.2
 
 
