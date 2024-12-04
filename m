@@ -1,59 +1,50 @@
-Return-Path: <linux-kernel+bounces-432395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432401-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F28339E4A2C
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 00:53:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17E8C9E4A3B
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 00:59:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05CCA188136C
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 23:51:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0FB91880551
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 23:59:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20129206F20;
-	Wed,  4 Dec 2024 23:45:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lbvnWolI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 078601BC099;
+	Wed,  4 Dec 2024 23:59:05 +0000 (UTC)
+Received: from kawka3.in.waw.pl (kawka3.in.waw.pl [68.183.222.220])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3949B1F7090;
-	Wed,  4 Dec 2024 23:45:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA00E1AF0A1;
+	Wed,  4 Dec 2024 23:59:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.183.222.220
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733355923; cv=none; b=RjYVc71kyyH28gKkmwQZk1Ez3DYpe6ev0x2ZMREXQWGgIsEEepbgeiK9N1mcJpYDn6yjgT3zs/3ZMHbCFPVHZ1O291QKtb8IBo52AJgd0FBetXP8eXUXznRGGKW6V3vtG1jx4W/oZfe9+dW67b3BVqMJnhhFEeMsKLnoYoQRlCA=
+	t=1733356744; cv=none; b=DIG6mXTPWmu62lzZbVoGiVld2Yx4gpeBHpnc05aj7wZKOBO6LZgIBPnOaVu0f2tl4Weftwnn2y9h8v2TtIzNgGxdnmn+/B5xDlknkUdI3UfvS0KGMtNK7TJ3qIHC1KolHIFWC45djZfX/HQBE/4/utojTd+3QlCjOA+wkOG0Qf8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733355923; c=relaxed/simple;
-	bh=z7AWWg34fLrhF9G3JhauMZtLU2MAusRLa3ZDUkavrd8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=D6soTs7YgzTa6YDZm6zru7e7vLzjfcf4c7RNKrbqj99xqDQjrsnYFeAC3azKrNvqeX3f04RZ6FSIJdRV52WGoNKhce64gyVaGkGXrurqB8dvTWVI9wlIjGzWQr2Eb5dHtgDp7+4lMxWn82rfCYp8IDRLgIPnRHbOp5Z3FANG5yo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lbvnWolI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 942FFC4CECD;
-	Wed,  4 Dec 2024 23:45:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733355922;
-	bh=z7AWWg34fLrhF9G3JhauMZtLU2MAusRLa3ZDUkavrd8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=lbvnWolIH8D/c3+N2z/nrC6h6Qebbdk7Cj6tj2mbukK3K/yNeoj9BbsY8d2p7ebbL
-	 2MXKx4dxTDM9z+13wkte9qREpZlm3R3YMdFIpEM2K/TRxk/XeLvC1GnFhIVa7sUcNR
-	 oYqVpNtrjFkUblJLOKq4AzFRV/rmGJoKBXAOGJqtrp9nsmpte4Zl2VztNhG8VfIXzx
-	 51CaghtyTvlfM+x+TqtH4Ouzm0RaQDgjUvlQy6npSWl9ZZB7JtkpzEvJslZrZQ9tLz
-	 cZWnbtZ6xt/CSUg72427fd8YTKERcqqyib4YqV0WT4PSjU11VwUSmbRiy1NxG1mvbe
-	 6CGzVAaPbz9Yw==
-Date: Wed, 4 Dec 2024 17:45:21 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Mario Limonciello <superm1@kernel.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-	"open list : PCI SUBSYSTEM" <linux-pci@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list : USB XHCI DRIVER" <linux-usb@vger.kernel.org>,
-	Daniel Drake <drake@endlessos.org>, Gary Li <Gary.Li@amd.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
-	Mathias Nyman <mathias.nyman@intel.com>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [PATCH v5 0/5] Verify devices transition from D3cold to D0
-Message-ID: <20241204234521.GA3028067@bhelgaas>
+	s=arc-20240116; t=1733356744; c=relaxed/simple;
+	bh=2cHuMuL3bbquJfw1YnlX4Rf7lFZ8x9rfe9wja96Zj0k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iMEDQ6Ama+ueisL/vzFDHxiTYMjQUZ6CNZhTA1bbP7w34JD0Db5fRCl5gG/7XZWs/Vok3hUovF4AuwvKDf7vpRSrobZQzfhrbFDbqyRLnBI2MtGL7pu8Xz1mYVFsblDHxnJVHrpzDLWKzaTbyg4lsUO7mU4FJA4+RevWHMGWSpA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=in.waw.pl; spf=pass smtp.mailfrom=in.waw.pl; arc=none smtp.client-ip=68.183.222.220
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=in.waw.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=in.waw.pl
+Received: by kawka3.in.waw.pl (Postfix, from userid 1000)
+	id C2F315B99BA; Wed,  4 Dec 2024 23:50:08 +0000 (UTC)
+Date: Wed, 4 Dec 2024 23:50:08 +0000
+From: Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>
+To: Kees Cook <kees@kernel.org>
+Cc: Aleksa Sarai <cyphar@cyphar.com>, Al Viro <viro@zeniv.linux.org.uk>,
+	Tycho Andersen <tandersen@netflix.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH] exec: fix up /proc/pid/comm in the
+ execveat(AT_EMPTY_PATH) case
+Message-ID: <Z1DqsDSYxLF85ljc@kawka3.in.waw.pl>
+References: <20241130045437.work.390-kees@kernel.org>
+ <20241130.055433-shy.herds.gross.wars-zGaSWwzAa56n@cyphar.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,79 +53,34 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aaac430f-ba1a-47ee-a290-0bb1559dcf24@kernel.org>
+In-Reply-To: <20241130.055433-shy.herds.gross.wars-zGaSWwzAa56n@cyphar.com>
 
-On Wed, Dec 04, 2024 at 11:30:51AM -0600, Mario Limonciello wrote:
-> On 8/23/2024 10:40, Mario Limonciello wrote:
-> > From: Mario Limonciello <mario.limonciello@amd.com>
+On Sat, Nov 30, 2024 at 04:55:09PM +1100, Aleksa Sarai wrote:
+> On 2024-11-29, Kees Cook <kees@kernel.org> wrote:
+> > Zbigniew mentioned at Linux Plumber's that systemd is interested in
+> > switching to execveat() for service execution, but can't, because the
+> > contents of /proc/pid/comm are the file descriptor which was used,
+> > instead of the path to the binary. This makes the output of tools like
+> > top and ps useless, especially in a world where most fds are opened
+> > CLOEXEC so the number is truly meaningless.
 > > 
-> > Gary has reported that when a dock is plugged into a system at the same
-> > time the autosuspend delay has tripped that the USB4 stack malfunctions.
+> > When the filename passed in is empty (e.g. with AT_EMPTY_PATH), use the
+> > dentry's filename for "comm" instead of using the useless numeral from
+> > the synthetic fdpath construction. This way the actual exec machinery
+> > is unchanged, but cosmetically the comm looks reasonable to admins
+> > investigating things.
 > > 
-> > Messages show up like this:
-> > 
-> > ```
-> > thunderbolt 0000:e5:00.6: ring_interrupt_active: interrupt for TX ring 0 is already enabled
-> > ```
-> > 
-> > Furthermore the USB4 router is non-functional at this point.
-> > 
-> > Those messages happen because the device is still in D3cold at the time
-> > that the PCI core handed control back to the USB4 connection manager
-> > (thunderbolt).
-> > 
-> > The issue is that it takes time for a device to enter D3cold and do a
-> > conventional reset, and then more time for it to exit D3cold.
-> > 
-> > This appears not to be a new problem; previously there were very similar
-> > reports from Ryzen XHCI controllers.  Quirks were added for those.
-> > Furthermore; adding extra logging it's apparent that other PCI devices
-> > in the system can take more than 10ms to recover from D3cold as well.
-> > 
-> > This series add a wait into pci_power_up() specifically for D3cold exit and
-> > then drops the quirks that were previously used for the Ryzen XHCI controllers.
-> > 
-> > Mario Limonciello (5):
-> >    PCI: Use an enum for reset type in pci_dev_wait()
-> >    PCI: Check PCI_PM_CTRL instead of PCI_COMMAND in pci_dev_wait()
-> >    PCI: Verify functions currently in D3cold have entered D0
-> >    PCI: Allow Ryzen XHCI controllers into D3cold and drop delays
-> >    PCI: Drop Radeon quirk for Macbook Pro 8.2
-> > 
-> >   drivers/pci/pci-driver.c    |  2 +-
-> >   drivers/pci/pci.c           | 70 +++++++++++++++++++++++++++----------
-> >   drivers/pci/pci.h           | 13 ++++++-
-> >   drivers/pci/pcie/dpc.c      |  2 +-
-> >   drivers/pci/quirks.c        | 25 -------------
-> >   drivers/usb/host/xhci-pci.c | 11 ------
-> >   6 files changed, 66 insertions(+), 57 deletions(-)
+> > Instead of adding TASK_COMM_LEN more bytes to bprm, use one of the unused
+> > flag bits to indicate that we need to set "comm" from the dentry.
 > 
-> Bjorn,
+> Looks reasonable to me, feel free to take my
 > 
-> This series has stalled a while.
-> 
-> Mika and I went back and forth and I think are generally in agreement so I
-> think it's waiting on your feedback.
-> 
-> Can you take another look?
-> 
-> The alternative is to add some more piles of quirks, but I'm hoping that we
-> can go this direction and drop a bunch of the old ones instead.
-> 
-> LMK if you want me to rebase it on 6.13-rc1 and resend a v6.
+> Reviewed-by: Aleksa Sarai <cyphar@cyphar.com>
 
-I'm still stuck on patch 2/5 because I'm not aware of any spec
-language about polling PCI_PM_CTRL to wait for a power state
-transition, so it seems really ad hoc.
+Thank you for making another version of the patch.
 
-If you do rebase to v6.13-rc1, in the 2/5 commit log,
-s/evices/devices/.
+I tested this with systemd compiled to use fexecve and everything
+seems to work as expected (the filename in /proc//comm).
 
-I guess that whole patch and commit log needs updating since the RRS
-code was added to pci_dev_wait() in the interim, so the "device that
-has gone through a reset may return a value in PCI_COMMAND but that
-doesn't mean it's finished transitioning to D0" doesn't directly apply
-anymore.
-
-Bjorn
+Zbyszek
 
