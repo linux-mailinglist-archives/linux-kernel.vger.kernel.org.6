@@ -1,87 +1,108 @@
-Return-Path: <linux-kernel+bounces-430437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 287C69E30DC
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 02:42:18 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8152B9E30DD
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 02:42:33 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 572B7167336
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 01:42:30 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D325AFC0B;
+	Wed,  4 Dec 2024 01:42:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="gaOrulX2"
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AE54DB26089
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 01:42:15 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D3BB1A296;
-	Wed,  4 Dec 2024 01:42:05 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CC99179BF
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 01:42:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3120BEADA;
+	Wed,  4 Dec 2024 01:42:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733276524; cv=none; b=Yxwqw34RJN37Ev1bpaRx08h+e6UKnVgifOXakZsH95FRGwq+YKdRBDBgD3rlxhSVk0fR1bK37Kx92NUOsvU+Qu+aQ4whfzuszjyZ0nhUhYbRMo7gviMHLO40B/FE3Ws+YWH5B8d455um0ruYu3VKV2ZI9BlS9fiLehy6vXnplvM=
+	t=1733276547; cv=none; b=D597WxJYPS1BbgzvIjgRKO9NxrsLjCzex3lOo2GZwucrHYI2WFNTp6s5ZOX0aiYb7JWTwgszoESPxlEzxxjiOf0YfF8paYetVyAsFUQ0rOU9x2uf4KrnHpUQuZeDTpeZlCUNtulSA7ls1g9iCqx/b1HkpQhAI8gAeWeVhualVg0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733276524; c=relaxed/simple;
-	bh=0IQSyeCIZXFVq1c4RZ7ti+MmEOnpVlNEuFUPdQmLSGA=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Mul+fhBcl2bIR15j2b7qg06M0eLv1J6AIYwqgNkANEFTacD7XgwgdwmOJG7A6j1fUJq0rzgJxxcSVpq0G6y2wakw8scRdgvQ5Gf9faZCCp38Cs/spZEUbOD/nXu5cGIh42JPS1zf5dQFBk7VKfDX3/RifR8XrePZMBGIE5Ugtx8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a77a808c27so73432895ab.1
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 17:42:02 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733276522; x=1733881322;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6Dd1h7YPvVbCv8jzdjnPxoBMbhyGc757amvI8/ZS7WI=;
-        b=l7xbOch1cZLbV4a58hLMkiphx6T0fSveI2ijswIyrfVdadXfKFZKEPO6zxVgYG8S48
-         hOc37KIeEq6EQW4MgMI++APehzJDbRrhAWYM0gIdu8nvZnQms3SejzreF/dWuxnywCVy
-         XG8jPkvHh6m8A3RS/cu6TMREvKicw4Mvb7jaYAiP7eZi9oOFoef8wx+akIKG6a8P8/BO
-         FpZuhtG0j845m+SBNe9PxxVyCd8tQGqoGycbujTLZYh3PZbQLUKwKVnNQndavobX+xc2
-         CB2kq0kksVcjtPXWbsK7lqklYzrNEJn09GXHdHBjGbfJmCRmP6+Sp7/WQVliPre02FJq
-         fZyg==
-X-Forwarded-Encrypted: i=1; AJvYcCVIrOgE/7rJI9OC/8DPrF+IYy+L2/f4ytp/Pwj3u6S2FGRIp3C6kckdRe2mIWxSo9k7cs4hQdB9bvgCWn4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwB+be814CyLnNJpKMZqbHEx6oUkTIvX8+Hc9IsKsVrSrZ5fiK+
-	fES2H0zX9fjO57HTggfotBWgYdMD1U8A84itdIDvifUCLYJD7UNdMW8h3abKMTQNb+CjwX+z7mS
-	mGvxGUc7+xIkLIapoorBTvMbOM/ZOYUWBiiaE0Mf8893IHBxLTg1SE20=
-X-Google-Smtp-Source: AGHT+IF8Lbzr5AvQpD3cOoT2tBn7ukWAll9w1pRE5i7BrpDsU2c/i51P5bqx0058EnG3v6yIVkMb2h5ku04osRsCPhacsArv3IeS
+	s=arc-20240116; t=1733276547; c=relaxed/simple;
+	bh=i515qrN+o0Y2z+dHBSVxbSEQvqfs+eKhveR5GlSIk+c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fY2eRr0H8c+Smp225OUC9UxCAOVB7aFX4M0tQ2dL1uOyUMVz71VtyI0gcdWq66ARV13IeeDDteomcV0fz1pnh8TJXW7Vg+4kZbNBLeZmBCNqSJxEVSs6iw2rJeDJ7mNAPI3AFCPOGdSBQdNp08kcMvJy7n/BuJ0C2f9W+jIO+og=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=gaOrulX2; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=3xrjkPPSEAkSa3WwcdPGjAiriHQqDB0jIWGmrmCx1tU=; b=gaOrulX2iAl1bw+sotyIbP4wCO
+	K2GXLH7VGD+kH8eVws+7zsX+f8RiiRcutQYuFxNtEvAV9qY8enCbNUXyGuspGSDCimja29Q3x+7jI
+	QX6Aj+Uhp79DM01JTEzbLed2jkTzRywQ7hQF7gHpif6Kuo9hNehIPV5jRchasS9UPa7391HkTXf+W
+	bTvfJENlP2yOlcqCClOCrRMKwjzid+hUlHczhyswdOXR6AQEYgGsldJqjLUcoYYUbfTd8AjiZMHei
+	5ZSb9KZATf2oqwyOycMUFoy4/WLFyWxHzu6eFJ90AM68bwq03qx1R7uEE41Vitw7p5mH+xEZYZ0V5
+	MD2BST/g==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1tIeP0-003Lnb-2j;
+	Wed, 04 Dec 2024 09:42:07 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Wed, 04 Dec 2024 09:42:06 +0800
+Date: Wed, 4 Dec 2024 09:42:06 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Yosry Ahmed <yosryahmed@google.com>
+Cc: "Sridhar, Kanchana P" <kanchana.p.sridhar@intel.com>,
+	Nhat Pham <nphamcs@gmail.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"hannes@cmpxchg.org" <hannes@cmpxchg.org>,
+	"chengming.zhou@linux.dev" <chengming.zhou@linux.dev>,
+	"usamaarif642@gmail.com" <usamaarif642@gmail.com>,
+	"ryan.roberts@arm.com" <ryan.roberts@arm.com>,
+	"ying.huang@intel.com" <ying.huang@intel.com>,
+	"21cnbao@gmail.com" <21cnbao@gmail.com>,
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+	"davem@davemloft.net" <davem@davemloft.net>,
+	"clabbe@baylibre.com" <clabbe@baylibre.com>,
+	"ardb@kernel.org" <ardb@kernel.org>,
+	"ebiggers@google.com" <ebiggers@google.com>,
+	"surenb@google.com" <surenb@google.com>,
+	"Accardi, Kristen C" <kristen.c.accardi@intel.com>,
+	"Feghali, Wajdi K" <wajdi.k.feghali@intel.com>,
+	"Gopal, Vinodh" <vinodh.gopal@intel.com>
+Subject: Re: [PATCH v4 09/10] mm: zswap: Allocate pool batching resources if
+ the crypto_alg supports batching.
+Message-ID: <Z0-zboLmrybOt8pv@gondor.apana.org.au>
+References: <20241123070127.332773-1-kanchana.p.sridhar@intel.com>
+ <20241123070127.332773-10-kanchana.p.sridhar@intel.com>
+ <CAKEwX=PmKWH4Z4Py9Jti9fcD6qCYJBBRrDF48qdmo8-i+LzzfA@mail.gmail.com>
+ <SJ0PR11MB56783454B5985ACD48744772C9362@SJ0PR11MB5678.namprd11.prod.outlook.com>
+ <Z066p53LoISwqkmX@gondor.apana.org.au>
+ <SJ0PR11MB5678AAEF4F62773847E6307FC9362@SJ0PR11MB5678.namprd11.prod.outlook.com>
+ <CAJD7tkbui2MTkkGA6_+RDA0oZW2m3rMnUTKp1Fp6tPqp2QLgKw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a0b:b0:3a7:e047:733f with SMTP id
- e9e14a558f8ab-3a7f9a2a1d3mr62744165ab.1.1733276522327; Tue, 03 Dec 2024
- 17:42:02 -0800 (PST)
-Date: Tue, 03 Dec 2024 17:42:02 -0800
-In-Reply-To: <20241203162849.UmsGp%dmantipov@yandex.ru>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <674fb36a.050a0220.17bd51.0056.GAE@google.com>
-Subject: Re: [syzbot] [f2fs?] KMSAN: uninit-value in f2fs_new_node_page
-From: syzbot <syzbot+5141f6db57a2f7614352@syzkaller.appspotmail.com>
-To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJD7tkbui2MTkkGA6_+RDA0oZW2m3rMnUTKp1Fp6tPqp2QLgKw@mail.gmail.com>
 
-Hello,
+On Tue, Dec 03, 2024 at 01:44:00PM -0800, Yosry Ahmed wrote:
+>
+> Does this mean that instead of zswap breaking down the folio into
+> SWAP_CRYPTO_BATCH_SIZE -sized batches, we pass all the pages to the
+> crypto layer and let it do the batching as it pleases?
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+You provide as much (or little) as you're comfortable with.  Just
+treat the acomp API as one that can take as much as you want to
+give it.
 
-Reported-by: syzbot+5141f6db57a2f7614352@syzkaller.appspotmail.com
-Tested-by: syzbot+5141f6db57a2f7614352@syzkaller.appspotmail.com
-
-Tested on:
-
-commit:         cdd30ebb module: Convert symbol namespace to string li..
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=11d50de8580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=96ee18b6611821ab
-dashboard link: https://syzkaller.appspot.com/bug?extid=5141f6db57a2f7614352
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=129bc0f8580000
-
-Note: testing is done by a robot and is best-effort only.
+Cheers,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
