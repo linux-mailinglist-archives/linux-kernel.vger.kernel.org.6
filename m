@@ -1,73 +1,76 @@
-Return-Path: <linux-kernel+bounces-431017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431018-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB9039E3832
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 12:04:06 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AA9B9E3833
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 12:04:11 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7AFEB16155F
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 11:04:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B75C2820EC
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 11:04:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 869A61B2193;
-	Wed,  4 Dec 2024 11:03:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A92521B3928;
+	Wed,  4 Dec 2024 11:04:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Zr+W4TVh"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VkJPK65k"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9D541B218A
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 11:03:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 493EF16F851
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 11:03:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733310238; cv=none; b=LQLYfH9Iedj106vL9vbusrTr03rNRXb4W1Zjb+d4iOKLlvG9vZ1d4qceuG+3BiwpAAW9YKFwFEna+XdIfHUJLt/hbkKvl0po645bLrIQB+xTvXCyp/sv3+ahzIP+Pu/FnhyzF9J/qeG5GAWeTHUdG53WaO7tJ9OdkciiNPEqkxs=
+	t=1733310239; cv=none; b=HlL0sSB9I/exQhIZHkRzZCZptRa9dBoNKqyuJ7xKitkwUr5wkq5Hl3U1rk9uWDIpCsPIffGZG8kpN+brubgOKv1a64+f7qEDZdQk+dnnXvdeXK8WaIdGJ/O1/AvGWHc6vt1PEo546Ygp6T8IbzOeXiMeaUBx0+n9TW5Y4Kmjyfk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733310238; c=relaxed/simple;
-	bh=HwQULjtZoCnIZhnviTpDylo0k0BrxR0OmasICKiucVQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RfMfS/7MT7bjlOsO53wo77Ro9GywHI7gGPgjSa74dqAmi50zBg8ZNfRYFI0IaWcmYzjJDKU8w5SUgnc+ydDJzi78d/4nfy5Bb+CpCczUMhuIOdYEXBhiPgaCFzivwGXUZ0pMCX9ss82DI5voVkj20TEYyfidG20/eUfh1yE9PtA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Zr+W4TVh; arc=none smtp.client-ip=209.85.128.53
+	s=arc-20240116; t=1733310239; c=relaxed/simple;
+	bh=eK2bc+r40bXRT3jb7mE/fHjz/uhul0CcsjUEp7wenxI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=BiH35G9BjKkkoKPHrJxOygEit9fVI3eM4kRn+YF+8dvoXk5nCeMbe01gsJQeTJbGcaUT6R88fZbbHokX1ZFdBlpZQe+8tWvdIPRhJoWWK6rHi7/qVTGS20x8nm5uJ5VVFIaoodQXG88Szt9nz6Trxu83cH39+75L2a9Y0Izh6bY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VkJPK65k; arc=none smtp.client-ip=209.85.128.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-43499332f7aso5945925e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 03:03:55 -0800 (PST)
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-434a1095fe4so7853555e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 03:03:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733310234; x=1733915034; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=pEtsPx1N9q/msevZzeL8uie551bRgE5h4Ujcp6NpSeo=;
-        b=Zr+W4TVh1jDEWSyqU0E2HPafB3yGh+rCl8fh1+hTLIdCBPHvf+11OC4Kl5dLqhyhdL
-         F1s9VG7AUvYdcVHH1mMGKrC4fS92gvRQGEtZITpUMdPDal/wmWCPNgQ9FN3vhsjHvE/k
-         AS9g+aX+Lrwe5EFX72edZFFwQt+NoSx7T+FKlWIYdrrt8oYzjAUk8kMfoUbJWZzkHLSZ
-         uiaLHn58rEjeLRKWn56ftt753p4eg6aCr0hEMG1NFFwF3XVcYtEgXxCuJkAI6yMFDe0R
-         z8ZGS663MnSUaqbj3uIrk1rTN0OCWz5O33HfJUh/YDC70584XqJgCXQl3/8lMZHb3vKB
-         UJ5Q==
+        d=linaro.org; s=google; t=1733310236; x=1733915036; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pXai8rhzVjBb9mfuCX2EknVygzx13+OAyvruaefap38=;
+        b=VkJPK65kFYRAS2L6G88U29eMo0IsDIGiWhubGN4sHbC/3GuoUcdzjXWISI1fr2xB8H
+         /MXQLXs0c0QiAEIoiqj6r/Gan4JdFQyspPoAYkfOZ3XrRo1WDrGJokAwtF5cN/DhAxkK
+         X/0fiznTIr3VocvuvzP4ZZPEqXv/Y6rXz239nzYJJWyZqe72QkNGL/7Wgh1p9NFgiF0K
+         3HEGI+4BY1F/noq6DEshXNXB4EZaMPO733HwcmmcQ2U8H4S7ctJ117WTwxP0BuRcHKD9
+         AVOaYlkkEk8NfxaV8Ya5QU1FI0HW/oBOMtrAyz100DFGbztPoAVe3xCU4tHjpub20zRj
+         SR/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733310234; x=1733915034;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=pEtsPx1N9q/msevZzeL8uie551bRgE5h4Ujcp6NpSeo=;
-        b=EfKd38fZ/C7ULE/pm5fAG1/FGbEWwZxZXCBa2h5F2UmC4GJBC8VibFfYPlGJGpsWHe
-         0aA1ON9Yet8XFW8/n0a/G0OV8TGnGB0xOy+IFjs1CHSogNYm68YtrkQF1+6JPowk79m2
-         JQ7vEA6alibPBWS3+xr6w6UqAj/nMKjjJ4YnVm6wnjowFkP/SBMq5iYhGWbb1egPaDSB
-         PWPBMPFYk9+fIRUGmmyeLPVcczmSHexAAORDy7K3C7WqFXAwHhzk33zDBJFGboBMydRc
-         nqmfOkum1ftZYlSCQgV7JooG4wn1R/8OHX+6Th6A6fY3hnUDul2RB8/ahKokRVZ/IEJ4
-         pouQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWnu2EA5W1cl0SlVQgcz3ZuslepDSpoVM6T7eshTnFl6uA04PsXhm8VYDp8IWU1OBfJK0mEqSmexII7D6I=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2R6GHalGdAkaJQPRSpUv8i2zFnUoC1B4J/8NGuZEuF+a6rnnt
-	wp2DB4Dg9uwJzwUH20aa4UiywMvyQxS2Rre8fm9B7TsmoGnVK1unzrGCQ1Fi3eU=
-X-Gm-Gg: ASbGncugM6uMkDcG1E9ePFWWhgNE1oEBIA3quyL58r0r8cGjRlhK5BGgLtjI3oL5zJk
-	nAxqf1+1lYJdcQ8hLt4rXKjuYRRiWGAeI9vQV0BC5RI2rNtplVCtZxOnh3U59kGpJ7bMNZqhRvc
-	Xz/3VCBBoqeZJMODX2jyJg2wz3oPAh1mgC9xxHnJ0oATHQWeL3g0qsuliEmJq0+sR+ZC5DMokw0
-	R7J2pQy6f4ZeKFljHaPKoK/Ws4iVTvNXGD8GS8VXeSB0vGUUuJ+9cWI2zQT2bsQ
-X-Google-Smtp-Source: AGHT+IF2Bul51lXYvpNGLu37H17FnxzETxdYp547y3amX+SfMaaNXNCLoRYGjnL49oQMT3OUagPHSA==
-X-Received: by 2002:a05:600c:a07:b0:42c:aeee:80a with SMTP id 5b1f17b1804b1-434d11c7b9dmr19696715e9.7.1733310234134;
-        Wed, 04 Dec 2024 03:03:54 -0800 (PST)
+        d=1e100.net; s=20230601; t=1733310236; x=1733915036;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pXai8rhzVjBb9mfuCX2EknVygzx13+OAyvruaefap38=;
+        b=OrZdhikwtQNAxdTUZtCEpJom+40++3BwhMdvQC81Ums5yIfXeyilpwsS/hWI72aBZA
+         hfncROXYWSYmKImzZrFjOAm1MTVW2Qm4ZAmj7vJgkt81Z0Fk6biZFUMagNpB0uEPdraI
+         7ObMnyK0mrliDC9XNp8xfERQ5on8114t0gujf+Km3g5bzQxwdnW4M1fzajT/lrN7jDaw
+         5dtMmvjNfTnmfpCxk0so5mNPqbF7PCitAyQSANMW3Z4DbsjsVNQEVmFlnCW1wsNJO9qc
+         q5PmCyDPzRjAjpb5P4QZgAfWJy9ScGOR82fkNPAWgJd5YFMJMqKWMDHNvjvMGU5s2ktj
+         LyFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUtP0OUhHIhh/8Ox3rgRED1syxAW/5lCWKZJtNta4L1piXtisAGNxV9vD2GF2bq0vymQomUdPutm3tlfCQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxsy3UtYJ0m5lZvy9Mcvy0Am3XvAhZR0RXT9wlzLUwX2kIAHu3B
+	otlaV2DWT+hcMT35J77MN2Cvo/pfCfQwBlNjdf9tinu4A8/khEOrW6YHdT2qLG9F+1yIJcnye5J
+	FH8I=
+X-Gm-Gg: ASbGnctdJjFF4F9yM5OTCOuyeugICbLS5SWmIAcrKOcb3TlroffC/WwPKqV1OJJ8kNk
+	CM7GTia5yg/9T8bgLLLBes9mTZc5LvyYMBIP2RoySHEWmUFxFDj24S+MgxLHio4r/O9Q+fnkCbS
+	kPGoe2j2yJpamq/ztRV2Lrlxre9TbP/J+fiFr+H7Tg2QOPNdz563/FeVwaJehD3/5AEEzZ9Ywyv
+	BXYXzvFCsUagXvFAx7MCUyzSG68ouy+GdWvXQhOkxVmcYJz1za/Rc1PK39zlGt+
+X-Google-Smtp-Source: AGHT+IHWiRZoORgF6WlPwo4qs4jHYdRpmX8ARz8V02ny77m9pN0lXsWmbSkUvuTytBCsPVapmKBy5g==
+X-Received: by 2002:a05:600c:3556:b0:431:4e33:98ae with SMTP id 5b1f17b1804b1-434d0a062bbmr20096375e9.5.1733310235583;
+        Wed, 04 Dec 2024 03:03:55 -0800 (PST)
 Received: from krzk-bin.. ([178.197.223.165])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434d52a6aa9sm20445875e9.33.2024.12.04.03.03.52
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434d52a6aa9sm20445875e9.33.2024.12.04.03.03.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Dec 2024 03:03:53 -0800 (PST)
+        Wed, 04 Dec 2024 03:03:54 -0800 (PST)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To: Bjorn Andersson <andersson@kernel.org>,
 	Michael Turquette <mturquette@baylibre.com>,
@@ -76,10 +79,12 @@ To: Bjorn Andersson <andersson@kernel.org>,
 	linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org
 Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH 1/2] clk: qcom: Drop unused header includes
-Date: Wed,  4 Dec 2024 12:03:47 +0100
-Message-ID: <20241204110348.100841-1-krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 2/2] clk: qcom: Include missing header includes
+Date: Wed,  4 Dec 2024 12:03:48 +0100
+Message-ID: <20241204110348.100841-2-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20241204110348.100841-1-krzysztof.kozlowski@linaro.org>
+References: <20241204110348.100841-1-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,549 +93,513 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Drivers should include only headers they use so drop:
-1. of.h and of_address.h: When no OF call is used (of_device_id is
-   coming from mod_devicetable.h).
-2. clk.h, property.h and reset-controller.h: No calls to clock consumer
-   or reset framework, no fwnode/property calls.
+Include mod_devicetable.h for the 'struct of_device_id' and
+clk-provider.h for the 'struct clk_hw'.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- drivers/clk/qcom/camcc-sa8775p.c      | 1 -
- drivers/clk/qcom/camcc-sc7180.c       | 1 -
- drivers/clk/qcom/camcc-sc7280.c       | 1 -
- drivers/clk/qcom/camcc-sm4450.c       | 1 -
- drivers/clk/qcom/camcc-sm7150.c       | 1 -
- drivers/clk/qcom/camcc-sm8150.c       | 1 -
- drivers/clk/qcom/camcc-sm8250.c       | 1 -
- drivers/clk/qcom/dispcc-qcm2290.c     | 1 -
- drivers/clk/qcom/dispcc-sc8280xp.c    | 2 --
- drivers/clk/qcom/dispcc-sdm845.c      | 1 -
- drivers/clk/qcom/dispcc-sm4450.c      | 1 -
- drivers/clk/qcom/dispcc-sm6115.c      | 1 -
- drivers/clk/qcom/dispcc-sm7150.c      | 1 -
- drivers/clk/qcom/dispcc-sm8250.c      | 1 -
- drivers/clk/qcom/dispcc-sm8450.c      | 2 --
- drivers/clk/qcom/dispcc-sm8550.c      | 2 --
- drivers/clk/qcom/dispcc-sm8750.c      | 2 --
- drivers/clk/qcom/dispcc0-sa8775p.c    | 1 -
- drivers/clk/qcom/dispcc1-sa8775p.c    | 1 -
- drivers/clk/qcom/gcc-msm8960.c        | 1 -
- drivers/clk/qcom/gcc-msm8974.c        | 1 -
- drivers/clk/qcom/gpucc-msm8998.c      | 2 --
- drivers/clk/qcom/gpucc-sdm660.c       | 4 +---
- drivers/clk/qcom/gpucc-sm4450.c       | 1 -
- drivers/clk/qcom/gpucc-sm8350.c       | 1 -
- drivers/clk/qcom/kpss-xcc.c           | 1 -
- drivers/clk/qcom/krait-cc.c           | 1 -
- drivers/clk/qcom/lpasscc-sdm845.c     | 1 -
- drivers/clk/qcom/lpasscorecc-sc7180.c | 1 -
- drivers/clk/qcom/lpasscorecc-sc7280.c | 1 -
- drivers/clk/qcom/mmcc-apq8084.c       | 1 -
- drivers/clk/qcom/mmcc-msm8960.c       | 3 ---
- drivers/clk/qcom/mmcc-msm8974.c       | 1 -
- drivers/clk/qcom/mmcc-msm8994.c       | 2 --
- drivers/clk/qcom/mmcc-msm8996.c       | 3 ---
- drivers/clk/qcom/mmcc-msm8998.c       | 2 --
- drivers/clk/qcom/mmcc-sdm660.c        | 5 -----
- 37 files changed, 1 insertion(+), 54 deletions(-)
+ drivers/clk/qcom/camcc-sc7180.c    | 1 +
+ drivers/clk/qcom/camcc-sc7280.c    | 1 +
+ drivers/clk/qcom/camcc-sdm845.c    | 1 +
+ drivers/clk/qcom/camcc-sm6350.c    | 1 +
+ drivers/clk/qcom/camcc-sm8150.c    | 1 +
+ drivers/clk/qcom/camcc-sm8250.c    | 1 +
+ drivers/clk/qcom/dispcc-qcm2290.c  | 2 ++
+ drivers/clk/qcom/dispcc-sc7180.c   | 1 +
+ drivers/clk/qcom/dispcc-sc7280.c   | 1 +
+ drivers/clk/qcom/dispcc-sc8280xp.c | 1 +
+ drivers/clk/qcom/dispcc-sdm845.c   | 1 +
+ drivers/clk/qcom/dispcc-sm4450.c   | 1 +
+ drivers/clk/qcom/dispcc-sm6115.c   | 2 ++
+ drivers/clk/qcom/dispcc-sm6125.c   | 1 +
+ drivers/clk/qcom/dispcc-sm6350.c   | 1 +
+ drivers/clk/qcom/dispcc-sm6375.c   | 1 +
+ drivers/clk/qcom/dispcc-sm8250.c   | 1 +
+ drivers/clk/qcom/dispcc-sm8450.c   | 1 +
+ drivers/clk/qcom/dispcc-sm8550.c   | 1 +
+ drivers/clk/qcom/dispcc-sm8750.c   | 1 +
+ drivers/clk/qcom/gpucc-msm8998.c   | 1 +
+ drivers/clk/qcom/gpucc-sar2130p.c  | 1 +
+ drivers/clk/qcom/gpucc-sc7180.c    | 1 +
+ drivers/clk/qcom/gpucc-sc7280.c    | 1 +
+ drivers/clk/qcom/gpucc-sc8280xp.c  | 1 +
+ drivers/clk/qcom/gpucc-sdm660.c    | 1 +
+ drivers/clk/qcom/gpucc-sdm845.c    | 1 +
+ drivers/clk/qcom/gpucc-sm6350.c    | 1 +
+ drivers/clk/qcom/gpucc-sm8150.c    | 1 +
+ drivers/clk/qcom/gpucc-sm8250.c    | 1 +
+ drivers/clk/qcom/gpucc-sm8350.c    | 1 +
+ drivers/clk/qcom/mmcc-apq8084.c    | 1 +
+ drivers/clk/qcom/mmcc-msm8960.c    | 1 +
+ drivers/clk/qcom/mmcc-msm8974.c    | 1 +
+ drivers/clk/qcom/mmcc-msm8994.c    | 1 +
+ drivers/clk/qcom/mmcc-msm8996.c    | 1 +
+ drivers/clk/qcom/mmcc-msm8998.c    | 1 +
+ drivers/clk/qcom/mmcc-sdm660.c     | 1 +
+ 38 files changed, 40 insertions(+)
 
-diff --git a/drivers/clk/qcom/camcc-sa8775p.c b/drivers/clk/qcom/camcc-sa8775p.c
-index c04801a5af35..1df86da41940 100644
---- a/drivers/clk/qcom/camcc-sa8775p.c
-+++ b/drivers/clk/qcom/camcc-sa8775p.c
-@@ -6,7 +6,6 @@
- #include <linux/clk-provider.h>
- #include <linux/module.h>
- #include <linux/mod_devicetable.h>
--#include <linux/of.h>
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
- #include <linux/regmap.h>
 diff --git a/drivers/clk/qcom/camcc-sc7180.c b/drivers/clk/qcom/camcc-sc7180.c
-index 10e924cd533d..a69b70ab1a70 100644
+index a69b70ab1a70..5031df813b4a 100644
 --- a/drivers/clk/qcom/camcc-sc7180.c
 +++ b/drivers/clk/qcom/camcc-sc7180.c
-@@ -6,7 +6,6 @@
+@@ -5,6 +5,7 @@
+ 
  #include <linux/clk-provider.h>
  #include <linux/err.h>
++#include <linux/mod_devicetable.h>
  #include <linux/module.h>
--#include <linux/of.h>
  #include <linux/platform_device.h>
  #include <linux/pm_clock.h>
- #include <linux/pm_runtime.h>
 diff --git a/drivers/clk/qcom/camcc-sc7280.c b/drivers/clk/qcom/camcc-sc7280.c
-index accd257632df..5a9992a5b5ba 100644
+index 5a9992a5b5ba..55545f5fdb98 100644
 --- a/drivers/clk/qcom/camcc-sc7280.c
 +++ b/drivers/clk/qcom/camcc-sc7280.c
-@@ -8,7 +8,6 @@
+@@ -7,6 +7,7 @@
+ #include <linux/clk-provider.h>
  #include <linux/err.h>
  #include <linux/kernel.h>
++#include <linux/mod_devicetable.h>
  #include <linux/module.h>
--#include <linux/of.h>
  #include <linux/platform_device.h>
  #include <linux/regmap.h>
+diff --git a/drivers/clk/qcom/camcc-sdm845.c b/drivers/clk/qcom/camcc-sdm845.c
+index 40022a10f8c0..cf60e8dd292a 100644
+--- a/drivers/clk/qcom/camcc-sdm845.c
++++ b/drivers/clk/qcom/camcc-sdm845.c
+@@ -4,6 +4,7 @@
+  */
  
-diff --git a/drivers/clk/qcom/camcc-sm4450.c b/drivers/clk/qcom/camcc-sm4450.c
-index f8503ced3d05..e51590d89a3c 100644
---- a/drivers/clk/qcom/camcc-sm4450.c
-+++ b/drivers/clk/qcom/camcc-sm4450.c
-@@ -6,7 +6,6 @@
  #include <linux/clk-provider.h>
++#include <linux/mod_devicetable.h>
  #include <linux/module.h>
- #include <linux/mod_devicetable.h>
--#include <linux/of.h>
  #include <linux/platform_device.h>
  #include <linux/regmap.h>
+diff --git a/drivers/clk/qcom/camcc-sm6350.c b/drivers/clk/qcom/camcc-sm6350.c
+index f6634cc8663e..1871970fb046 100644
+--- a/drivers/clk/qcom/camcc-sm6350.c
++++ b/drivers/clk/qcom/camcc-sm6350.c
+@@ -5,6 +5,7 @@
+  */
  
-diff --git a/drivers/clk/qcom/camcc-sm7150.c b/drivers/clk/qcom/camcc-sm7150.c
-index 39033a6bb616..4a3baf5d8e85 100644
---- a/drivers/clk/qcom/camcc-sm7150.c
-+++ b/drivers/clk/qcom/camcc-sm7150.c
-@@ -7,7 +7,6 @@
  #include <linux/clk-provider.h>
- #include <linux/mod_devicetable.h>
++#include <linux/mod_devicetable.h>
  #include <linux/module.h>
--#include <linux/of.h>
  #include <linux/platform_device.h>
  #include <linux/regmap.h>
- 
 diff --git a/drivers/clk/qcom/camcc-sm8150.c b/drivers/clk/qcom/camcc-sm8150.c
-index bb3009818ad7..ed96dcb885b3 100644
+index ed96dcb885b3..f105534cb318 100644
 --- a/drivers/clk/qcom/camcc-sm8150.c
 +++ b/drivers/clk/qcom/camcc-sm8150.c
-@@ -8,7 +8,6 @@
+@@ -6,6 +6,7 @@
+ #include <linux/clk-provider.h>
+ #include <linux/err.h>
  #include <linux/kernel.h>
++#include <linux/mod_devicetable.h>
  #include <linux/module.h>
  #include <linux/platform_device.h>
--#include <linux/of.h>
  #include <linux/regmap.h>
- #include <linux/pm_runtime.h>
- 
 diff --git a/drivers/clk/qcom/camcc-sm8250.c b/drivers/clk/qcom/camcc-sm8250.c
-index 34d2f17520dc..dcbc6c354e5a 100644
+index dcbc6c354e5a..2b84b1a0ac9c 100644
 --- a/drivers/clk/qcom/camcc-sm8250.c
 +++ b/drivers/clk/qcom/camcc-sm8250.c
-@@ -7,7 +7,6 @@
+@@ -4,6 +4,7 @@
+  */
+ 
+ #include <linux/clk-provider.h>
++#include <linux/mod_devicetable.h>
  #include <linux/module.h>
  #include <linux/platform_device.h>
  #include <linux/regmap.h>
--#include <linux/reset-controller.h>
- 
- #include <dt-bindings/clock/qcom,camcc-sm8250.h>
- 
 diff --git a/drivers/clk/qcom/dispcc-qcm2290.c b/drivers/clk/qcom/dispcc-qcm2290.c
-index 449ffea2295d..bf0ff76e0745 100644
+index bf0ff76e0745..8b7eafa4e251 100644
 --- a/drivers/clk/qcom/dispcc-qcm2290.c
 +++ b/drivers/clk/qcom/dispcc-qcm2290.c
-@@ -7,7 +7,6 @@
+@@ -4,8 +4,10 @@
+  * Copyright (c) 2021, Linaro Ltd.
+  */
+ 
++#include <linux/clk-provider.h>
  #include <linux/err.h>
  #include <linux/kernel.h>
++#include <linux/mod_devicetable.h>
  #include <linux/module.h>
--#include <linux/of.h>
  #include <linux/platform_device.h>
  #include <linux/regmap.h>
+diff --git a/drivers/clk/qcom/dispcc-sc7180.c b/drivers/clk/qcom/dispcc-sc7180.c
+index 4710247be530..ab1a8d419863 100644
+--- a/drivers/clk/qcom/dispcc-sc7180.c
++++ b/drivers/clk/qcom/dispcc-sc7180.c
+@@ -4,6 +4,7 @@
+  */
  
+ #include <linux/clk-provider.h>
++#include <linux/mod_devicetable.h>
+ #include <linux/module.h>
+ #include <linux/platform_device.h>
+ #include <linux/regmap.h>
+diff --git a/drivers/clk/qcom/dispcc-sc7280.c b/drivers/clk/qcom/dispcc-sc7280.c
+index db0745954894..8bdf57734a3d 100644
+--- a/drivers/clk/qcom/dispcc-sc7280.c
++++ b/drivers/clk/qcom/dispcc-sc7280.c
+@@ -4,6 +4,7 @@
+  */
+ 
+ #include <linux/clk-provider.h>
++#include <linux/mod_devicetable.h>
+ #include <linux/module.h>
+ #include <linux/platform_device.h>
+ #include <linux/regmap.h>
 diff --git a/drivers/clk/qcom/dispcc-sc8280xp.c b/drivers/clk/qcom/dispcc-sc8280xp.c
-index f1ca9ae0b33f..0a810fc847ce 100644
+index 0a810fc847ce..34fae823423a 100644
 --- a/drivers/clk/qcom/dispcc-sc8280xp.c
 +++ b/drivers/clk/qcom/dispcc-sc8280xp.c
-@@ -7,11 +7,9 @@
+@@ -5,6 +5,7 @@
+  */
+ 
  #include <linux/clk-provider.h>
++#include <linux/mod_devicetable.h>
  #include <linux/module.h>
  #include <linux/platform_device.h>
--#include <linux/property.h>
  #include <linux/pm_clock.h>
- #include <linux/pm_runtime.h>
- #include <linux/regmap.h>
--#include <linux/reset-controller.h>
- 
- #include <dt-bindings/clock/qcom,dispcc-sc8280xp.h>
- 
 diff --git a/drivers/clk/qcom/dispcc-sdm845.c b/drivers/clk/qcom/dispcc-sdm845.c
-index e6139e8f74dc..94079c54333f 100644
+index 94079c54333f..2f9e9665d7e9 100644
 --- a/drivers/clk/qcom/dispcc-sdm845.c
 +++ b/drivers/clk/qcom/dispcc-sdm845.c
-@@ -7,7 +7,6 @@
+@@ -4,6 +4,7 @@
+  */
+ 
+ #include <linux/clk-provider.h>
++#include <linux/mod_devicetable.h>
  #include <linux/module.h>
  #include <linux/platform_device.h>
  #include <linux/regmap.h>
--#include <linux/reset-controller.h>
- 
- #include <dt-bindings/clock/qcom,dispcc-sdm845.h>
- 
 diff --git a/drivers/clk/qcom/dispcc-sm4450.c b/drivers/clk/qcom/dispcc-sm4450.c
-index 98ba016bc57f..465725f9bfeb 100644
+index 465725f9bfeb..cd8a284258b2 100644
 --- a/drivers/clk/qcom/dispcc-sm4450.c
 +++ b/drivers/clk/qcom/dispcc-sm4450.c
-@@ -6,7 +6,6 @@
+@@ -4,6 +4,7 @@
+  */
+ 
  #include <linux/clk-provider.h>
++#include <linux/mod_devicetable.h>
  #include <linux/module.h>
  #include <linux/mod_devicetable.h>
--#include <linux/of.h>
  #include <linux/platform_device.h>
- #include <linux/regmap.h>
- 
 diff --git a/drivers/clk/qcom/dispcc-sm6115.c b/drivers/clk/qcom/dispcc-sm6115.c
-index 939887f82ecc..5790253e7d89 100644
+index 5790253e7d89..185a8f54bde1 100644
 --- a/drivers/clk/qcom/dispcc-sm6115.c
 +++ b/drivers/clk/qcom/dispcc-sm6115.c
-@@ -8,7 +8,6 @@
+@@ -5,8 +5,10 @@
+  * Copyright (c) 2021, Linaro Ltd.
+  */
+ 
++#include <linux/clk-provider.h>
  #include <linux/err.h>
  #include <linux/kernel.h>
++#include <linux/mod_devicetable.h>
  #include <linux/module.h>
--#include <linux/of.h>
  #include <linux/platform_device.h>
  #include <linux/regmap.h>
+diff --git a/drivers/clk/qcom/dispcc-sm6125.c b/drivers/clk/qcom/dispcc-sm6125.c
+index 51c7492816fb..851d38a487d3 100644
+--- a/drivers/clk/qcom/dispcc-sm6125.c
++++ b/drivers/clk/qcom/dispcc-sm6125.c
+@@ -4,6 +4,7 @@
+  */
  
-diff --git a/drivers/clk/qcom/dispcc-sm7150.c b/drivers/clk/qcom/dispcc-sm7150.c
-index d32bd7df1433..bdfff246ed3f 100644
---- a/drivers/clk/qcom/dispcc-sm7150.c
-+++ b/drivers/clk/qcom/dispcc-sm7150.c
-@@ -8,7 +8,6 @@
  #include <linux/clk-provider.h>
- #include <linux/mod_devicetable.h>
++#include <linux/mod_devicetable.h>
  #include <linux/module.h>
--#include <linux/of.h>
  #include <linux/platform_device.h>
  #include <linux/regmap.h>
+diff --git a/drivers/clk/qcom/dispcc-sm6350.c b/drivers/clk/qcom/dispcc-sm6350.c
+index 50facb36701a..ede3552fde9e 100644
+--- a/drivers/clk/qcom/dispcc-sm6350.c
++++ b/drivers/clk/qcom/dispcc-sm6350.c
+@@ -5,6 +5,7 @@
+  */
  
+ #include <linux/clk-provider.h>
++#include <linux/mod_devicetable.h>
+ #include <linux/module.h>
+ #include <linux/platform_device.h>
+ #include <linux/regmap.h>
+diff --git a/drivers/clk/qcom/dispcc-sm6375.c b/drivers/clk/qcom/dispcc-sm6375.c
+index 167dd369a794..ec9dbb1f4a7c 100644
+--- a/drivers/clk/qcom/dispcc-sm6375.c
++++ b/drivers/clk/qcom/dispcc-sm6375.c
+@@ -5,6 +5,7 @@
+  */
+ 
+ #include <linux/clk-provider.h>
++#include <linux/mod_devicetable.h>
+ #include <linux/module.h>
+ #include <linux/platform_device.h>
+ #include <linux/regmap.h>
 diff --git a/drivers/clk/qcom/dispcc-sm8250.c b/drivers/clk/qcom/dispcc-sm8250.c
-index 884bbd3fb305..1f48e79acfac 100644
+index 1f48e79acfac..8f433e1e7028 100644
 --- a/drivers/clk/qcom/dispcc-sm8250.c
 +++ b/drivers/clk/qcom/dispcc-sm8250.c
-@@ -8,7 +8,6 @@
+@@ -4,6 +4,7 @@
+  */
+ 
+ #include <linux/clk-provider.h>
++#include <linux/mod_devicetable.h>
+ #include <linux/module.h>
  #include <linux/platform_device.h>
  #include <linux/pm_runtime.h>
- #include <linux/regmap.h>
--#include <linux/reset-controller.h>
- 
- #include <dt-bindings/clock/qcom,dispcc-sm8250.h>
- 
 diff --git a/drivers/clk/qcom/dispcc-sm8450.c b/drivers/clk/qcom/dispcc-sm8450.c
-index a1f183e6c636..96987d8445cb 100644
+index 96987d8445cb..0b76cddbeb94 100644
 --- a/drivers/clk/qcom/dispcc-sm8450.c
 +++ b/drivers/clk/qcom/dispcc-sm8450.c
-@@ -4,12 +4,10 @@
-  * Copyright (c) 2022, Linaro Ltd.
-  */
- 
--#include <linux/clk.h>
+@@ -7,6 +7,7 @@
  #include <linux/clk-provider.h>
  #include <linux/err.h>
  #include <linux/kernel.h>
++#include <linux/mod_devicetable.h>
  #include <linux/module.h>
--#include <linux/of.h>
  #include <linux/platform_device.h>
  #include <linux/regmap.h>
- #include <linux/pm_runtime.h>
 diff --git a/drivers/clk/qcom/dispcc-sm8550.c b/drivers/clk/qcom/dispcc-sm8550.c
-index e41d4104d770..4c5feb96ae53 100644
+index 4c5feb96ae53..a373c92a10aa 100644
 --- a/drivers/clk/qcom/dispcc-sm8550.c
 +++ b/drivers/clk/qcom/dispcc-sm8550.c
-@@ -4,12 +4,10 @@
-  * Copyright (c) 2023, Linaro Ltd.
-  */
- 
--#include <linux/clk.h>
+@@ -7,6 +7,7 @@
  #include <linux/clk-provider.h>
  #include <linux/err.h>
  #include <linux/kernel.h>
++#include <linux/mod_devicetable.h>
  #include <linux/module.h>
--#include <linux/of.h>
  #include <linux/platform_device.h>
  #include <linux/regmap.h>
- #include <linux/pm_runtime.h>
 diff --git a/drivers/clk/qcom/dispcc-sm8750.c b/drivers/clk/qcom/dispcc-sm8750.c
-index ff64ff93c4db..a085a9e67f3b 100644
+index a085a9e67f3b..9216c37246ab 100644
 --- a/drivers/clk/qcom/dispcc-sm8750.c
 +++ b/drivers/clk/qcom/dispcc-sm8750.c
-@@ -4,12 +4,10 @@
-  * Copyright (c) 2023-2024, Linaro Ltd.
-  */
- 
--#include <linux/clk.h>
+@@ -7,6 +7,7 @@
  #include <linux/clk-provider.h>
  #include <linux/err.h>
  #include <linux/kernel.h>
++#include <linux/mod_devicetable.h>
  #include <linux/module.h>
--#include <linux/of.h>
  #include <linux/platform_device.h>
  #include <linux/regmap.h>
- #include <linux/pm_runtime.h>
-diff --git a/drivers/clk/qcom/dispcc0-sa8775p.c b/drivers/clk/qcom/dispcc0-sa8775p.c
-index 6e399b5f1383..bf9de92a5dd2 100644
---- a/drivers/clk/qcom/dispcc0-sa8775p.c
-+++ b/drivers/clk/qcom/dispcc0-sa8775p.c
-@@ -6,7 +6,6 @@
- #include <linux/clk-provider.h>
- #include <linux/module.h>
- #include <linux/mod_devicetable.h>
--#include <linux/of.h>
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
- #include <linux/regmap.h>
-diff --git a/drivers/clk/qcom/dispcc1-sa8775p.c b/drivers/clk/qcom/dispcc1-sa8775p.c
-index 30ccea59415a..cd2f2eb7ffb4 100644
---- a/drivers/clk/qcom/dispcc1-sa8775p.c
-+++ b/drivers/clk/qcom/dispcc1-sa8775p.c
-@@ -6,7 +6,6 @@
- #include <linux/clk-provider.h>
- #include <linux/module.h>
- #include <linux/mod_devicetable.h>
--#include <linux/of.h>
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
- #include <linux/regmap.h>
-diff --git a/drivers/clk/qcom/gcc-msm8960.c b/drivers/clk/qcom/gcc-msm8960.c
-index 9ddce11db6df..c2e4fa5d63ad 100644
---- a/drivers/clk/qcom/gcc-msm8960.c
-+++ b/drivers/clk/qcom/gcc-msm8960.c
-@@ -7,7 +7,6 @@
- #include <linux/bitops.h>
- #include <linux/err.h>
- #include <linux/platform_device.h>
--#include <linux/property.h>
- #include <linux/module.h>
- #include <linux/of.h>
- #include <linux/of_platform.h>
-diff --git a/drivers/clk/qcom/gcc-msm8974.c b/drivers/clk/qcom/gcc-msm8974.c
-index b32e66714951..92ad35cfb75e 100644
---- a/drivers/clk/qcom/gcc-msm8974.c
-+++ b/drivers/clk/qcom/gcc-msm8974.c
-@@ -7,7 +7,6 @@
- #include <linux/bitops.h>
- #include <linux/err.h>
- #include <linux/platform_device.h>
--#include <linux/property.h>
- #include <linux/module.h>
- #include <linux/of.h>
- #include <linux/clk-provider.h>
 diff --git a/drivers/clk/qcom/gpucc-msm8998.c b/drivers/clk/qcom/gpucc-msm8998.c
-index 9efeab2691ba..066793e47f79 100644
+index 066793e47f79..7fce70503141 100644
 --- a/drivers/clk/qcom/gpucc-msm8998.c
 +++ b/drivers/clk/qcom/gpucc-msm8998.c
-@@ -8,10 +8,8 @@
+@@ -7,6 +7,7 @@
+ #include <linux/bitops.h>
  #include <linux/err.h>
  #include <linux/platform_device.h>
++#include <linux/mod_devicetable.h>
  #include <linux/module.h>
--#include <linux/of.h>
  #include <linux/clk-provider.h>
  #include <linux/regmap.h>
--#include <linux/reset-controller.h>
+diff --git a/drivers/clk/qcom/gpucc-sar2130p.c b/drivers/clk/qcom/gpucc-sar2130p.c
+index dd72b2a48c42..c2903179ac85 100644
+--- a/drivers/clk/qcom/gpucc-sar2130p.c
++++ b/drivers/clk/qcom/gpucc-sar2130p.c
+@@ -6,6 +6,7 @@
  
- #include <dt-bindings/clock/qcom,gpucc-msm8998.h>
- 
-diff --git a/drivers/clk/qcom/gpucc-sdm660.c b/drivers/clk/qcom/gpucc-sdm660.c
-index 3ae1b80e38d9..6d37b3d8d1a4 100644
---- a/drivers/clk/qcom/gpucc-sdm660.c
-+++ b/drivers/clk/qcom/gpucc-sdm660.c
-@@ -6,15 +6,13 @@
+ #include <linux/clk-provider.h>
+ #include <linux/kernel.h>
++#include <linux/mod_devicetable.h>
+ #include <linux/module.h>
+ #include <linux/platform_device.h>
+ #include <linux/regmap.h>
+diff --git a/drivers/clk/qcom/gpucc-sc7180.c b/drivers/clk/qcom/gpucc-sc7180.c
+index 08f3983d016f..a7bf44544b95 100644
+--- a/drivers/clk/qcom/gpucc-sc7180.c
++++ b/drivers/clk/qcom/gpucc-sc7180.c
+@@ -4,6 +4,7 @@
   */
  
- #include <linux/bitops.h>
--#include <linux/clk.h>
+ #include <linux/clk-provider.h>
++#include <linux/mod_devicetable.h>
+ #include <linux/module.h>
+ #include <linux/platform_device.h>
+ #include <linux/regmap.h>
+diff --git a/drivers/clk/qcom/gpucc-sc7280.c b/drivers/clk/qcom/gpucc-sc7280.c
+index bd699a624517..f81289fa719d 100644
+--- a/drivers/clk/qcom/gpucc-sc7280.c
++++ b/drivers/clk/qcom/gpucc-sc7280.c
+@@ -5,6 +5,7 @@
+  */
+ 
+ #include <linux/clk-provider.h>
++#include <linux/mod_devicetable.h>
+ #include <linux/module.h>
+ #include <linux/platform_device.h>
+ #include <linux/regmap.h>
+diff --git a/drivers/clk/qcom/gpucc-sc8280xp.c b/drivers/clk/qcom/gpucc-sc8280xp.c
+index c96be61e3f47..913e17f10196 100644
+--- a/drivers/clk/qcom/gpucc-sc8280xp.c
++++ b/drivers/clk/qcom/gpucc-sc8280xp.c
+@@ -5,6 +5,7 @@
+ 
+ #include <linux/clk-provider.h>
+ #include <linux/kernel.h>
++#include <linux/mod_devicetable.h>
+ #include <linux/module.h>
+ #include <linux/platform_device.h>
+ #include <linux/pm_runtime.h>
+diff --git a/drivers/clk/qcom/gpucc-sdm660.c b/drivers/clk/qcom/gpucc-sdm660.c
+index 6d37b3d8d1a4..28db307b6717 100644
+--- a/drivers/clk/qcom/gpucc-sdm660.c
++++ b/drivers/clk/qcom/gpucc-sdm660.c
+@@ -9,6 +9,7 @@
  #include <linux/clk-provider.h>
  #include <linux/err.h>
  #include <linux/kernel.h>
++#include <linux/mod_devicetable.h>
  #include <linux/module.h>
  #include <linux/platform_device.h>
--#include <linux/of.h>
  #include <linux/regmap.h>
--#include <linux/reset-controller.h>
-+
- #include <dt-bindings/clock/qcom,gpucc-sdm660.h>
+diff --git a/drivers/clk/qcom/gpucc-sdm845.c b/drivers/clk/qcom/gpucc-sdm845.c
+index ef26690cf504..0d63b110a1fb 100644
+--- a/drivers/clk/qcom/gpucc-sdm845.c
++++ b/drivers/clk/qcom/gpucc-sdm845.c
+@@ -4,6 +4,7 @@
+  */
  
- #include "clk-alpha-pll.h"
-diff --git a/drivers/clk/qcom/gpucc-sm4450.c b/drivers/clk/qcom/gpucc-sm4450.c
-index a14d0bb031ac..34c7ba0c7d55 100644
---- a/drivers/clk/qcom/gpucc-sm4450.c
-+++ b/drivers/clk/qcom/gpucc-sm4450.c
-@@ -6,7 +6,6 @@
  #include <linux/clk-provider.h>
++#include <linux/mod_devicetable.h>
  #include <linux/module.h>
- #include <linux/mod_devicetable.h>
--#include <linux/of.h>
  #include <linux/platform_device.h>
  #include <linux/regmap.h>
+diff --git a/drivers/clk/qcom/gpucc-sm6350.c b/drivers/clk/qcom/gpucc-sm6350.c
+index 1e12ad8948db..35ed0500bc59 100644
+--- a/drivers/clk/qcom/gpucc-sm6350.c
++++ b/drivers/clk/qcom/gpucc-sm6350.c
+@@ -5,6 +5,7 @@
+  */
  
+ #include <linux/clk-provider.h>
++#include <linux/mod_devicetable.h>
+ #include <linux/module.h>
+ #include <linux/platform_device.h>
+ #include <linux/regmap.h>
+diff --git a/drivers/clk/qcom/gpucc-sm8150.c b/drivers/clk/qcom/gpucc-sm8150.c
+index d711464a71b6..7ce91208c0bc 100644
+--- a/drivers/clk/qcom/gpucc-sm8150.c
++++ b/drivers/clk/qcom/gpucc-sm8150.c
+@@ -4,6 +4,7 @@
+  */
+ 
+ #include <linux/clk-provider.h>
++#include <linux/mod_devicetable.h>
+ #include <linux/module.h>
+ #include <linux/platform_device.h>
+ #include <linux/regmap.h>
+diff --git a/drivers/clk/qcom/gpucc-sm8250.c b/drivers/clk/qcom/gpucc-sm8250.c
+index 113b486a6d2f..ca0a1681d352 100644
+--- a/drivers/clk/qcom/gpucc-sm8250.c
++++ b/drivers/clk/qcom/gpucc-sm8250.c
+@@ -4,6 +4,7 @@
+  */
+ 
+ #include <linux/clk-provider.h>
++#include <linux/mod_devicetable.h>
+ #include <linux/module.h>
+ #include <linux/platform_device.h>
+ #include <linux/regmap.h>
 diff --git a/drivers/clk/qcom/gpucc-sm8350.c b/drivers/clk/qcom/gpucc-sm8350.c
-index f3b6bdc24485..6d2660bdd825 100644
+index 6d2660bdd825..4025dab0a1ca 100644
 --- a/drivers/clk/qcom/gpucc-sm8350.c
 +++ b/drivers/clk/qcom/gpucc-sm8350.c
-@@ -9,7 +9,6 @@
+@@ -8,6 +8,7 @@
+ #include <linux/clk.h>
  #include <linux/err.h>
  #include <linux/kernel.h>
++#include <linux/mod_devicetable.h>
  #include <linux/module.h>
--#include <linux/of.h>
  #include <linux/platform_device.h>
  #include <linux/regmap.h>
- 
-diff --git a/drivers/clk/qcom/kpss-xcc.c b/drivers/clk/qcom/kpss-xcc.c
-index e7cfa8d22044..97bfb21a5e5e 100644
---- a/drivers/clk/qcom/kpss-xcc.c
-+++ b/drivers/clk/qcom/kpss-xcc.c
-@@ -5,7 +5,6 @@
- #include <linux/init.h>
- #include <linux/module.h>
- #include <linux/platform_device.h>
--#include <linux/property.h>
- #include <linux/err.h>
- #include <linux/io.h>
- #include <linux/of.h>
-diff --git a/drivers/clk/qcom/krait-cc.c b/drivers/clk/qcom/krait-cc.c
-index ae325f4e1047..f29d6dd1f3ac 100644
---- a/drivers/clk/qcom/krait-cc.c
-+++ b/drivers/clk/qcom/krait-cc.c
-@@ -5,7 +5,6 @@
- #include <linux/init.h>
- #include <linux/module.h>
- #include <linux/platform_device.h>
--#include <linux/property.h>
- #include <linux/err.h>
- #include <linux/io.h>
- #include <linux/of.h>
-diff --git a/drivers/clk/qcom/lpasscc-sdm845.c b/drivers/clk/qcom/lpasscc-sdm845.c
-index 7040da952728..5c1ea75f9ba8 100644
---- a/drivers/clk/qcom/lpasscc-sdm845.c
-+++ b/drivers/clk/qcom/lpasscc-sdm845.c
-@@ -6,7 +6,6 @@
- #include <linux/clk-provider.h>
- #include <linux/platform_device.h>
- #include <linux/module.h>
--#include <linux/of_address.h>
- #include <linux/regmap.h>
- 
- #include <dt-bindings/clock/qcom,lpass-sdm845.h>
-diff --git a/drivers/clk/qcom/lpasscorecc-sc7180.c b/drivers/clk/qcom/lpasscorecc-sc7180.c
-index 726c6378752f..605516d03993 100644
---- a/drivers/clk/qcom/lpasscorecc-sc7180.c
-+++ b/drivers/clk/qcom/lpasscorecc-sc7180.c
-@@ -9,7 +9,6 @@
- #include <linux/platform_device.h>
- #include <linux/pm_clock.h>
- #include <linux/pm_runtime.h>
--#include <linux/of.h>
- #include <linux/regmap.h>
- 
- #include <dt-bindings/clock/qcom,lpasscorecc-sc7180.h>
-diff --git a/drivers/clk/qcom/lpasscorecc-sc7280.c b/drivers/clk/qcom/lpasscorecc-sc7280.c
-index b0888cd2460b..56882c202376 100644
---- a/drivers/clk/qcom/lpasscorecc-sc7280.c
-+++ b/drivers/clk/qcom/lpasscorecc-sc7280.c
-@@ -6,7 +6,6 @@
- #include <linux/clk-provider.h>
- #include <linux/err.h>
- #include <linux/module.h>
--#include <linux/of.h>
- #include <linux/platform_device.h>
- #include <linux/pm_clock.h>
- #include <linux/pm_runtime.h>
 diff --git a/drivers/clk/qcom/mmcc-apq8084.c b/drivers/clk/qcom/mmcc-apq8084.c
-index cc03722596a4..3affa525b875 100644
+index 3affa525b875..2d334977d783 100644
 --- a/drivers/clk/qcom/mmcc-apq8084.c
 +++ b/drivers/clk/qcom/mmcc-apq8084.c
-@@ -8,7 +8,6 @@
+@@ -6,6 +6,7 @@
+ #include <linux/clk-provider.h>
+ #include <linux/kernel.h>
  #include <linux/platform_device.h>
++#include <linux/mod_devicetable.h>
  #include <linux/module.h>
  #include <linux/regmap.h>
--#include <linux/reset-controller.h>
  
- #include <dt-bindings/clock/qcom,mmcc-apq8084.h>
- #include <dt-bindings/reset/qcom,mmcc-apq8084.h>
 diff --git a/drivers/clk/qcom/mmcc-msm8960.c b/drivers/clk/qcom/mmcc-msm8960.c
-index 3f41249c5ae4..c0adb2b86718 100644
+index c0adb2b86718..595cc065ab9c 100644
 --- a/drivers/clk/qcom/mmcc-msm8960.c
 +++ b/drivers/clk/qcom/mmcc-msm8960.c
-@@ -8,13 +8,10 @@
+@@ -8,6 +8,7 @@
  #include <linux/err.h>
  #include <linux/delay.h>
  #include <linux/platform_device.h>
--#include <linux/property.h>
++#include <linux/mod_devicetable.h>
  #include <linux/module.h>
--#include <linux/of.h>
  #include <linux/clk.h>
  #include <linux/clk-provider.h>
- #include <linux/regmap.h>
--#include <linux/reset-controller.h>
- 
- #include <dt-bindings/clock/qcom,mmcc-msm8960.h>
- #include <dt-bindings/reset/qcom,mmcc-msm8960.h>
 diff --git a/drivers/clk/qcom/mmcc-msm8974.c b/drivers/clk/qcom/mmcc-msm8974.c
-index 169e85f60550..f2e802cf6afc 100644
+index f2e802cf6afc..12bbc49c87af 100644
 --- a/drivers/clk/qcom/mmcc-msm8974.c
 +++ b/drivers/clk/qcom/mmcc-msm8974.c
-@@ -11,7 +11,6 @@
- #include <linux/of.h>
- #include <linux/clk-provider.h>
- #include <linux/regmap.h>
--#include <linux/reset-controller.h>
- 
- #include <dt-bindings/clock/qcom,mmcc-msm8974.h>
- #include <dt-bindings/reset/qcom,mmcc-msm8974.h>
-diff --git a/drivers/clk/qcom/mmcc-msm8994.c b/drivers/clk/qcom/mmcc-msm8994.c
-index f70d080bf51c..0a273630e852 100644
---- a/drivers/clk/qcom/mmcc-msm8994.c
-+++ b/drivers/clk/qcom/mmcc-msm8994.c
-@@ -11,8 +11,6 @@
- #include <linux/of.h>
- #include <linux/clk-provider.h>
- #include <linux/regmap.h>
--#include <linux/reset-controller.h>
--#include <linux/clk.h>
- 
- #include <dt-bindings/clock/qcom,mmcc-msm8994.h>
- 
-diff --git a/drivers/clk/qcom/mmcc-msm8996.c b/drivers/clk/qcom/mmcc-msm8996.c
-index a742f848e4ee..3426e3dde924 100644
---- a/drivers/clk/qcom/mmcc-msm8996.c
-+++ b/drivers/clk/qcom/mmcc-msm8996.c
-@@ -8,11 +8,8 @@
- #include <linux/err.h>
- #include <linux/platform_device.h>
- #include <linux/module.h>
--#include <linux/of.h>
- #include <linux/clk-provider.h>
- #include <linux/regmap.h>
--#include <linux/reset-controller.h>
--#include <linux/clk.h>
- 
- #include <dt-bindings/clock/qcom,mmcc-msm8996.h>
- 
-diff --git a/drivers/clk/qcom/mmcc-msm8998.c b/drivers/clk/qcom/mmcc-msm8998.c
-index 5738445a8656..5c37be700fa7 100644
---- a/drivers/clk/qcom/mmcc-msm8998.c
-+++ b/drivers/clk/qcom/mmcc-msm8998.c
-@@ -8,10 +8,8 @@
- #include <linux/err.h>
- #include <linux/platform_device.h>
- #include <linux/module.h>
--#include <linux/of.h>
- #include <linux/clk-provider.h>
- #include <linux/regmap.h>
--#include <linux/reset-controller.h>
- 
- #include <dt-bindings/clock/qcom,mmcc-msm8998.h>
- 
-diff --git a/drivers/clk/qcom/mmcc-sdm660.c b/drivers/clk/qcom/mmcc-sdm660.c
-index 98ba5b4518fb..b3beeabe39ed 100644
---- a/drivers/clk/qcom/mmcc-sdm660.c
-+++ b/drivers/clk/qcom/mmcc-sdm660.c
-@@ -9,14 +9,9 @@
+@@ -7,6 +7,7 @@
  #include <linux/bitops.h>
  #include <linux/err.h>
  #include <linux/platform_device.h>
--#include <linux/property.h>
++#include <linux/mod_devicetable.h>
  #include <linux/module.h>
--#include <linux/of.h>
+ #include <linux/of.h>
+ #include <linux/clk-provider.h>
+diff --git a/drivers/clk/qcom/mmcc-msm8994.c b/drivers/clk/qcom/mmcc-msm8994.c
+index 0a273630e852..7c0b959a4aa2 100644
+--- a/drivers/clk/qcom/mmcc-msm8994.c
++++ b/drivers/clk/qcom/mmcc-msm8994.c
+@@ -7,6 +7,7 @@
+ #include <linux/bitops.h>
+ #include <linux/err.h>
+ #include <linux/platform_device.h>
++#include <linux/mod_devicetable.h>
+ #include <linux/module.h>
+ #include <linux/of.h>
+ #include <linux/clk-provider.h>
+diff --git a/drivers/clk/qcom/mmcc-msm8996.c b/drivers/clk/qcom/mmcc-msm8996.c
+index 3426e3dde924..7d67c6f73fe1 100644
+--- a/drivers/clk/qcom/mmcc-msm8996.c
++++ b/drivers/clk/qcom/mmcc-msm8996.c
+@@ -7,6 +7,7 @@
+ #include <linux/bitops.h>
+ #include <linux/err.h>
+ #include <linux/platform_device.h>
++#include <linux/mod_devicetable.h>
+ #include <linux/module.h>
  #include <linux/clk-provider.h>
  #include <linux/regmap.h>
--#include <linux/reset-controller.h>
--#include <linux/clk.h>
--
- 
- #include <dt-bindings/clock/qcom,mmcc-sdm660.h>
- 
+diff --git a/drivers/clk/qcom/mmcc-msm8998.c b/drivers/clk/qcom/mmcc-msm8998.c
+index 5c37be700fa7..e2f198213b21 100644
+--- a/drivers/clk/qcom/mmcc-msm8998.c
++++ b/drivers/clk/qcom/mmcc-msm8998.c
+@@ -7,6 +7,7 @@
+ #include <linux/bitops.h>
+ #include <linux/err.h>
+ #include <linux/platform_device.h>
++#include <linux/mod_devicetable.h>
+ #include <linux/module.h>
+ #include <linux/clk-provider.h>
+ #include <linux/regmap.h>
+diff --git a/drivers/clk/qcom/mmcc-sdm660.c b/drivers/clk/qcom/mmcc-sdm660.c
+index b3beeabe39ed..e5bdcc75a36e 100644
+--- a/drivers/clk/qcom/mmcc-sdm660.c
++++ b/drivers/clk/qcom/mmcc-sdm660.c
+@@ -9,6 +9,7 @@
+ #include <linux/bitops.h>
+ #include <linux/err.h>
+ #include <linux/platform_device.h>
++#include <linux/mod_devicetable.h>
+ #include <linux/module.h>
+ #include <linux/clk-provider.h>
+ #include <linux/regmap.h>
 -- 
 2.43.0
 
