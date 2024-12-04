@@ -1,104 +1,218 @@
-Return-Path: <linux-kernel+bounces-431621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B48B69E3F8E
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:25:38 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FDAD9E3F99
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:27:12 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 755A7281B16
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:25:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 25F28163D88
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:27:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C5AB20C48F;
-	Wed,  4 Dec 2024 16:25:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 154BB20CCC3;
+	Wed,  4 Dec 2024 16:27:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="EkAml4HD"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="V31ZNHFr"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D5E420CCC8;
-	Wed,  4 Dec 2024 16:25:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92E9720C479
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 16:27:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733329526; cv=none; b=GhsKecNN/CBtSTavmHHau5Q613cVWnHt3uj/MGPaiTG3DJIVsnfHEcBPMq0wUMsn9NuzFNV2zcAQ8un1n3pYmX4/TO4zUOf3s5QJRi1x3WxCOLiPZq8bZrKpVOX2pjg3lDi3mwtG7+WOws2+EfvRhmnhuy8EZ7P83JuVu3PkGkA=
+	t=1733329623; cv=none; b=O874HUbCdKWYsKckJPqEpi/I5djEdg1Vi7a+Va4RuQjfzzt20sWD6uGzpnCSLqT/rUAlGmCoVUAVU4yqXU9BBgZQ8mcu6n4MUg1+ma7zAnWQi6lIo1r0mEx+2MjHakDODCMBnmAXUNTDyiHdRPb1WAH1WUAWhJ2xfHw3Yg4dYL4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733329526; c=relaxed/simple;
-	bh=J0NkytdeoSDuYK02EGcBE+sEaWUWn9wKPlUOOeTyzhs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YkQ+NvstCLfwjGk+UtsCeB5GvJ0R4fZ6EbwB8DUF6FIZ9HdHtVva7p7WVZG9scLR/jgJiiaFW1SKIU3xfJ53zMsJg3wp/F6DVYdoTcE7C0mH/03WCb/8FB8lZzFmBQbxRhWXMK8r080EdNPsMtJLnOHrG29GrzJ9XYJs9nVdbrA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=EkAml4HD; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=tnChT+DuHDBrgRdPGMFu9O3S0vDozFvAcTxya8Mah08=; b=EkAml4HDHQeTM3S4ksspHSqI8V
-	9cFfB11GrmxwQkmfOEMi2i2TgvicxvqYQqUOhH2dih+gHtguzxJqv2uqChF6piP6kwRXdI9aF8zA/
-	v84rDyJJ05mN/MqBOHPLQcxYQworusOLBYA1Ru3hJNIdUSfd/Sx4ni5i5ESKMdWa69omqGqFxqjBN
-	q84ZnqCC90vda5XOmCWnaesmuhsIkjRZTloYUlu8IuuFXecwe3BrmnGTH1+u8IK3oaaLrDKs0Fw60
-	DU9JWhAGsNHsOYUGVKtWMJzeOeG3ugvxBhVznCxA/agYVqLZDILr38kDuFSUuYIEw8OtBRFLpCH0C
-	XJ1WFfmQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tIsBk-0000000BdtE-0GgU;
-	Wed, 04 Dec 2024 16:25:20 +0000
-Date: Wed, 4 Dec 2024 16:25:19 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Tamir Duberstein <tamird@gmail.com>,
-	syzbot <syzbot+092bbab7da235a02a03a@syzkaller.appspotmail.com>,
-	asml.silence@gmail.com, io-uring@vger.kernel.org,
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-	Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [syzbot] [io-uring?] KASAN: null-ptr-deref Write in
- sys_io_uring_register
-Message-ID: <Z1CCbyZVOXQRDz_2@casper.infradead.org>
-References: <67505f88.050a0220.17bd51.0069.GAE@google.com>
- <6be84787-b1d9-4a20-85f3-34d8d9a0d492@kernel.dk>
- <a41eb55f-01b3-4388-a98c-cc0de15179bd@kernel.dk>
- <CAJ-ks9kN_qddZ3Ne5d=cADu5POC1rHd4rQcbVSD_spnZOrLLZg@mail.gmail.com>
- <1ab4e254-0254-4089-888b-2ec2ce152302@kernel.dk>
+	s=arc-20240116; t=1733329623; c=relaxed/simple;
+	bh=x70cZ6Pnodptk8s8H2UvJEPrrE/aNUkvtZGjOJaEWtk=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=TP5T1AnSJTumBtNpiTve8TN569eEKp4aPKTwJm/tTW3yFH1rYVeIHRwuj2NlhrrP3+B7BT+ljutYyBg3EkFHq+ZUrNSe65RewnNRs/vhzQ+2QzWYsJ2zqmaD0u9luACcQLEcIZaLwi9oJ2ejPOsAJrEnBY+ejeVAVmHpro0AeeI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=V31ZNHFr; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4349ea54db7so61675e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 08:27:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1733329620; x=1733934420; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=KyQtsXmeUdkqec1pltW/92iEDMhCyyh/Xugcf79kOqw=;
+        b=V31ZNHFr50T7ICeDRNi9HoJWR8UJd9yFPtaFXfh3HC79SWtGvJJta7PE0hSlmZZL1/
+         8ku4HytApLjsSbL7rymTgPqvTHFsveXMVbVS1c4NZPlx9sBC5PDE/Y2jTSEQiPaw9ARZ
+         Ynf902Ff+xIBb5MEXWgC0hRGy0Vv7o7zuuP9w9y0mahTluJOMUKkEWYnowx+4OaFN4HG
+         lf6+YnakI05ylVVefXhqtrWIlcOB+Ujzi4R1P/PZSaTMRS4IfPCsUvvDVjbW7Y8Ywiyb
+         jD5iGIBMcYMTL60IpKwr9i+PCY766H9yq4BGRMoN8I2YE8I/Czf3WtQqS9UJSPFa/Bn1
+         C9Pw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733329620; x=1733934420;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KyQtsXmeUdkqec1pltW/92iEDMhCyyh/Xugcf79kOqw=;
+        b=o6g1JR6DEWsY9jQA8J1JZXhwPSt6Tc45xX458msJKv0fH7As/+H29eCp5tbvx/TVxO
+         WiQ5yZ9RYMXMpBJzCr+vwqQw7GayKQypOYzFluePFh/KjaFJd3I73Tqm5zCY591BNYNQ
+         oQ56AsE6/NkQ26K6PPCusWYfXntUPCXrc/LFHYF6fYHIM+4pguhWPBNfG6L7EJ80Tx5i
+         ym38lw8y3eS2HZGPHraY3lIOg5juVkIhMZoFzvkbhb869QEswOc9mOaoNA8Km5sJhMUM
+         Ud3KLkp5vbYv+y6drR7m+VFD291NciGzAPQKzMo8T0jKmHn2ObbYW6vzESQDygZ+E27R
+         CyRA==
+X-Forwarded-Encrypted: i=1; AJvYcCVuN1J5OcEvFfbBlnVd8wytw7riklhROwTUlVqQoyq1+8aLIgUmimfCG/hQ0nxqC0vNEQ1FP6azQi7L19E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/Lirl9aURBT0GUxUTL3nM6dCJrSaUUbDlCopbFGB9izhZbziv
+	agn0mqX2GpilK3VKxRaloLTjgJfHbOl4DwRaSMnaTsXe7aDvzVNzIOeuqrXBHg==
+X-Gm-Gg: ASbGncugtd6E8fLbKJp1NftsckspxEuvW2k7IJcJNoZf3C/tefXw2ji1USnJyk2ri4l
+	dGIBAOojFNeaiaRPMV15NL9AxnD6DDtFXQLvC1h9tXhMEvz19Bnj+QBCLFVyzS2nz4Hz9RzdFmF
+	5HhS/XSsEHE8qxdFILM7LtgRlXOMeGfZv10lSxai+1+Eb7baeQGY5+Dl6ym74KrnZoWhcQhR5T2
+	kcUzitamXUs8TeEMsu21rC6OMLF2QYJDiMaNw==
+X-Google-Smtp-Source: AGHT+IFpzQfGXpeDPtULiRhPLDybLBEA4OSAEcAX75ckbymNW1nJjJIq12WV3lMHghFcvSelG5JPlw==
+X-Received: by 2002:a05:600c:55c5:b0:42b:8ff7:bee2 with SMTP id 5b1f17b1804b1-434d52b563dmr1239595e9.5.1733329619368;
+        Wed, 04 Dec 2024 08:26:59 -0800 (PST)
+Received: from localhost ([2a00:79e0:9d:4:4606:5fa1:8ade:6950])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385e17574ebsm14388276f8f.30.2024.12.04.08.26.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Dec 2024 08:26:58 -0800 (PST)
+From: Jann Horn <jannh@google.com>
+Subject: [PATCH v2 0/3] fixes for udmabuf (memfd sealing checks and a leak)
+Date: Wed, 04 Dec 2024 17:26:18 +0100
+Message-Id: <20241204-udmabuf-fixes-v2-0-23887289de1c@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1ab4e254-0254-4089-888b-2ec2ce152302@kernel.dk>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAKqCUGcC/3WMyw7CIBQFf6W5azG82lhX/ofpgseFkthiwBJNw
+ 7+L3bucczKzQ8YUMMO12yFhCTnEtQE/dWBmtXokwTYGTrlknAqy2UXpzREX3piJpVL0qJUeBgH
+ NeSY8jqbcp8ZzyK+YPke+sN/6r1QYocSNI78wI2Sv1M3H6B94NnGBqdb6BTX3zp2rAAAA
+X-Change-ID: 20241203-udmabuf-fixes-d0435ebab663
+To: Gerd Hoffmann <kraxel@redhat.com>, 
+ Vivek Kasireddy <vivek.kasireddy@intel.com>, 
+ Sumit Semwal <sumit.semwal@linaro.org>, 
+ =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+ Simona Vetter <simona.vetter@ffwll.ch>, John Stultz <jstultz@google.com>, 
+ Andrew Morton <akpm@linux-foundation.org>, 
+ "Joel Fernandes (Google)" <joel@joelfernandes.org>
+Cc: dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org, 
+ linaro-mm-sig@lists.linaro.org, linux-kernel@vger.kernel.org, 
+ Jann Horn <jannh@google.com>, Julian Orth <ju.orth@gmail.com>, 
+ stable@vger.kernel.org
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1733329589; l=3258;
+ i=jannh@google.com; s=20240730; h=from:subject:message-id;
+ bh=x70cZ6Pnodptk8s8H2UvJEPrrE/aNUkvtZGjOJaEWtk=;
+ b=wvi+WMu5XyGongyF0xG2h2EfpSwyL8Ch96wwqWKQwp3k2ZEGtB86dYewh42kVY0ZyLnBTMeKu
+ 1GCnV9vQLOPBwlbq+veVUlxDTxbwGjCn5HlM6jDoIcqd5fad7aYhFUZ
+X-Developer-Key: i=jannh@google.com; a=ed25519;
+ pk=AljNtGOzXeF6khBXDJVVvwSEkVDGnnZZYqfWhP1V+C8=
 
-On Wed, Dec 04, 2024 at 09:17:27AM -0700, Jens Axboe wrote:
-> >   XA_STATE(xas, xa, index);
-> > - return xas_result(&xas, xas_store(&xas, NULL));
-> > + return xas_result(&xas, xa_zero_to_null(xas_store(&xas, NULL)));
-> >  }
-> >  EXPORT_SYMBOL(__xa_erase);
-> > 
-> > This would explain deletion of a reserved entry returning
-> > `XA_ZERO_ENTRY` rather than `NULL`.
-> 
-> Yep this works.
-> 
-> > My apologies for this breakage. Should I send a new version? A new
-> > "fixes" patch?
-> 
-> Since it seems quite drastically broken, and since it looks like Andrew
-> is holding it, seems like the best course of action would be to have it
-> folded with the existing patch.
+I have tested that patches 2 and 3 work using the following reproducers.
+I did not write a reproducer for the issue described in patch 1.
 
-... and please include an addition to the test-suite that would catch
-this bug.
+Reproducer for F_SEAL_FUTURE_WRITE not being respected:
+```
+#define _GNU_SOURCE
+#include <err.h>
+#include <fcntl.h>
+#include <stdio.h>
+#include <unistd.h>
+#include <sys/ioctl.h>
+#include <sys/mman.h>
+#include <linux/udmabuf.h>
 
-Wait, why doesn't this one catch it?  You did run the test-suite, right?
+#define SYSCHK(x) ({          \
+  typeof(x) __res = (x);      \
+  if (__res == (typeof(x))-1) \
+    err(1, "SYSCHK(" #x ")"); \
+  __res;                      \
+})
 
-        /* xa_insert treats it as busy */
-        XA_BUG_ON(xa, xa_reserve(xa, 12345678, GFP_KERNEL) != 0);
-        XA_BUG_ON(xa, xa_insert(xa, 12345678, xa_mk_value(12345678), 0) !=
-                        -EBUSY);
-        XA_BUG_ON(xa, xa_empty(xa));
-        XA_BUG_ON(xa, xa_erase(xa, 12345678) != NULL);
-        XA_BUG_ON(xa, !xa_empty(xa));
+int main(void) {
+  int memfd = SYSCHK(memfd_create("test", MFD_ALLOW_SEALING));
+  SYSCHK(ftruncate(memfd, 0x1000));
+  SYSCHK(fcntl(memfd, F_ADD_SEALS, F_SEAL_SHRINK|F_SEAL_FUTURE_WRITE));
+  int udmabuf_fd = SYSCHK(open("/dev/udmabuf", O_RDWR));
+  struct udmabuf_create create_arg = {
+    .memfd = memfd,
+    .flags = 0,
+    .offset = 0,
+    .size = 0x1000
+  };
+  int buf_fd = SYSCHK(ioctl(udmabuf_fd, UDMABUF_CREATE, &create_arg));
+  printf("created udmabuf buffer fd %d\n", buf_fd);
+  char *map = SYSCHK(mmap(NULL, 0x1000, PROT_READ|PROT_WRITE, MAP_SHARED, buf_fd, 0));
+  *map = 'a';
+}
+```
+
+Reproducer for the memory leak (if you run this for a while, your memory
+usage will steadily go up, and /sys/kernel/debug/dma_buf/bufinfo will
+contain a ton of entries):
+```
+#define _GNU_SOURCE
+#include <err.h>
+#include <errno.h>
+#include <assert.h>
+#include <fcntl.h>
+#include <stdio.h>
+#include <unistd.h>
+#include <sys/ioctl.h>
+#include <sys/mman.h>
+#include <sys/resource.h>
+#include <linux/udmabuf.h>
+
+#define SYSCHK(x) ({          \
+  typeof(x) __res = (x);      \
+  if (__res == (typeof(x))-1) \
+    err(1, "SYSCHK(" #x ")"); \
+  __res;                      \
+})
+
+int main(void) {
+  int memfd = SYSCHK(memfd_create("test", MFD_ALLOW_SEALING));
+  SYSCHK(ftruncate(memfd, 0x1000));
+  SYSCHK(fcntl(memfd, F_ADD_SEALS, F_SEAL_SHRINK));
+  int udmabuf_fd = SYSCHK(open("/dev/udmabuf", O_RDWR));
+
+  // prevent creating new FDs
+  struct rlimit rlim = { .rlim_cur = 1, .rlim_max = 1 };
+  SYSCHK(setrlimit(RLIMIT_NOFILE, &rlim));
+
+  while (1) {
+    struct udmabuf_create create_arg = {
+      .memfd = memfd,
+      .flags = 0,
+      .offset = 0,
+      .size = 0x1000
+    };
+    int buf_fd = ioctl(udmabuf_fd, UDMABUF_CREATE, &create_arg);
+    assert(buf_fd == -1);
+    assert(errno == EMFILE);
+  }
+}
+```
+
+Signed-off-by: Jann Horn <jannh@google.com>
+---
+Changes in v2:
+- patch 1/3: use file_inode instead of ->f_inode (Vivek)
+- patch 1/3: add comment explaining the inode_lock_shared()
+- patch 3/3: remove unused parameter (Vivek)
+- patch 3/3: add comment on cleanup (Vivek)
+- collect Acks
+- Link to v1: https://lore.kernel.org/r/20241203-udmabuf-fixes-v1-0-f99281c345aa@google.com
+
+---
+Jann Horn (3):
+      udmabuf: fix racy memfd sealing check
+      udmabuf: also check for F_SEAL_FUTURE_WRITE
+      udmabuf: fix memory leak on last export_udmabuf() error path
+
+ drivers/dma-buf/udmabuf.c | 43 +++++++++++++++++++++++++++----------------
+ 1 file changed, 27 insertions(+), 16 deletions(-)
+---
+base-commit: b86545e02e8c22fb89218f29d381fa8e8b91d815
+change-id: 20241203-udmabuf-fixes-d0435ebab663
+
+-- 
+Jann Horn <jannh@google.com>
 
 
