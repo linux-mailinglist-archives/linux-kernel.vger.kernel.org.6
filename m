@@ -1,144 +1,177 @@
-Return-Path: <linux-kernel+bounces-431929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8ABB9E42D0
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 19:05:03 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 193C39E42D2
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 19:05:24 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84205282813
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:05:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFE4116A44C
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:05:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D50C520CCF8;
-	Wed,  4 Dec 2024 17:53:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CC5320E000;
+	Wed,  4 Dec 2024 17:53:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="bBw4sB5f";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ID39xCta"
-Received: from fhigh-b7-smtp.messagingengine.com (fhigh-b7-smtp.messagingengine.com [202.12.124.158])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Far6yeZu"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02E2F2066FB;
-	Wed,  4 Dec 2024 17:53:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B67E220D511
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 17:53:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733334799; cv=none; b=fx0ghJRY6mDN0PJf4kUISdqxC6Hs01BRCD4M9y2mOcJDhsmXqzC/ib4RA8pTAAFJuGhp1NAgqNFUNU+z96g8RqCQHOwtrHZld8ECcTZ3Hj6DePh5AEBIOrpTw3N4BKxi63DVSm19Gw9Gp3fjcrGSjbmU7L6nLkAx0GPYhUcGdso=
+	t=1733334810; cv=none; b=Y7eq3TKAtVllNltthpfZbI1lNkNZOnb2PhCbB011dkGZW/pV0h9cEicsCivD2IIymFFLP7KYuUlQkS4Xtqt2vXDux5ZSBlUMNMCZmqjHEmpJIAWObywpA8I5vDZSjFX6HnhiwMY4U00i70pV5h+11/KAidpPazRCA99fps5nEnQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733334799; c=relaxed/simple;
-	bh=ILqcDVf0bHvauQ7XevK6gLD0PM4sliITJZefCfN3d7M=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=curxM9IvTaCaK4ozp0ZjhawVMzZEHDEdrHgIxgeRSSPCkYVpegMVprLAXEpo+eEcV2Zy2fdnPgh5kceVK3viycoB3HRyvu4MI3P4LuoSjtzfBhfuFAzQcyyZnDE0K//Dlpk1YCeCTBlXO8EBwWPnBMaL6RWO0IlP4U6VkAJ6ANY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=bBw4sB5f; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ID39xCta; arc=none smtp.client-ip=202.12.124.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id C9FA925401D6;
-	Wed,  4 Dec 2024 12:53:15 -0500 (EST)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Wed, 04 Dec 2024 12:53:16 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1733334795;
-	 x=1733421195; bh=oWL3XXyWg2R72Xts4Xo78/Yld3x5a5rS9W2B7LxHVzc=; b=
-	bBw4sB5fF1//66xy4theRT4CpQxzw3s5cLBTfffQ9ayMk6ETfJIB3wBiKkxxUKqe
-	eOPV2q/yPqBubHyc4NSR2pRCeOb9AQJQA20ah2na3448PROrVfSN6eYUtp+1uu9m
-	mpX9q8PyOib2MwugiSNQVujN5bfQpQ/LSM5GViT/LP6LTScexhbpFgEa+N3x2Og0
-	vlSLKPHsqf1y08NXBnPRpId99vFOIX3nSlD6PiWmc5qKB42+lSw/+VQNCpg/QLO2
-	AoFtkZsc9j9W0X1xqFvmIKfg5zQfLE+9JgWIw1UJzKhVOx2GDBtBc3+AIA8u+NFg
-	TzZuz1jyXk4HSWhAmw74lg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1733334795; x=
-	1733421195; bh=oWL3XXyWg2R72Xts4Xo78/Yld3x5a5rS9W2B7LxHVzc=; b=I
-	D39xCtah2vTTGuhlbA9t/sITxspFcf/KKhVlMnK3+VukJ4TJ1AuwKYwh/FAUZkOu
-	d2VkE3L6efwSZeP7seb1tl/LtiWXUvwFcZbhlZ30ZNqbBsgM9uU6aLMllsjnGgIM
-	T9EzPYUuwME7eOESlyvVbgGRiOukCsU2hqTMm9H0vP82v7jtLezAWBDXlpSfmV+E
-	nfq/qAAjbG3YNNF/qVI3jt1WucWTTZj0KwWEG2aqOHp7IC9GZcU2AMP6Ty8DCs0M
-	xfZ9gQsLZCTqxZgfWz+x6X6xqGu1rKVIZoqXz/Lk8JTLfAdoavqEzS5i90HZR1Nn
-	S1MvhvHgwloabmjWMVtCQ==
-X-ME-Sender: <xms:C5dQZ7nPHPngcKCgjcOIGlze3pxEpCxcmEN_6qTZiurDHkFLW2vwTg>
-    <xme:C5dQZ-3DZii5BE9w9ywrFCCKBWF_WGm005VRbBPH-dQPKHBwmRDNDYZonj5AWo-oo
-    CYkJRqR5sDNwErKYrc>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrieehgddutddvucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
-    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
-    guvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefg
-    gfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgepudenucfrrghrrghmpe
-    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepudei
-    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegsphesrghlihgvnhekrdguvgdprh
-    gtphhtthhopegtihhmihhnrghghhhisehgnhhuuggurdgtohhmpdhrtghpthhtohepshgv
-    rghnjhgtsehgohhoghhlvgdrtghomhdprhgtphhtthhopeifihhllhihsehinhhfrhgrug
-    gvrggurdhorhhgpdhrtghpthhtoheprghnugihsehkvghrnhgvlhdrohhrghdprhgtphht
-    thhopegrrhhnugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepnhgrthhhrghnsehkvg
-    hrnhgvlhdrohhrghdprhgtphhtthhopeigkeeisehkvghrnhgvlhdrohhrghdprhgtphht
-    thhopehtghhlgieslhhinhhuthhrohhnihigrdguvg
-X-ME-Proxy: <xmx:C5dQZxqypKMmdn8z1HsclNAJM4CcNiDwc7OEXdDcOqQKq0tMt2nwXA>
-    <xmx:C5dQZzmd_qVhgjr9Ob8Dm71rqAvaHIq9PxQ77iOxilwOLVT3LSiPCg>
-    <xmx:C5dQZ53reQmHWGedkgfzDd-R-cN-eNSsSFbT3Me7oZEV35GdqV3Kmw>
-    <xmx:C5dQZyv8Om79-lMZ_NMhYSMhgNhOIByp_JdbHndnWVSjUmuWEHxrAw>
-    <xmx:C5dQZ43TGv3WJO3SImfzMCignN7m4hlUF9F9BOs4hlb4htKzHPkmFmCu>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 33EC22220072; Wed,  4 Dec 2024 12:53:15 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1733334810; c=relaxed/simple;
+	bh=AyKo+YmzS+804dulbnT0hBLtMmwENaVVL5O39CWyHfY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Jzr2891yrg/VIHU2otxbTbIOxTsjzCIL+RZ6hgY8GO3hmKD5FjeOPCjCFRF87ML2QdVrxeQ6nyrw+n4eGkLOYHcLP+xUvzF4WpCI1zptunSNozHXKVn9+bHrW9E7Oy7X4kfsC924GUFJuiQgjWTsUdprMJFFEeLdNpcrk7wdJDg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Far6yeZu; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-215a0390925so248485ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 09:53:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733334808; x=1733939608; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=+EdRdjsNOeXam2HnODspyLGBuskP5LGbao1nKrj0X3k=;
+        b=Far6yeZui4GxeUze7xP8uTC8M1kvxQH/RfjxgopVyrrCUd9CTFMnR6PeoMU6eV/axh
+         UZWSJ9q6vuXmIbSRxoRQHWxAAvqL/P4Dn9sheA++QRB/T4wFXzbVQN3JX0HocUroNJKE
+         xVALB9gJeEi2HjaLTj2lqMOatfDqDqkB20Pd5uW57QaxexUjdFVOnT42FjQTmVW+gGhY
+         T8w9JrjyeeBwBJCwCOF2ct+IRVRSkh5IReCozY01UTmqIT4BUwODd4r2FXV1b9X4xgiQ
+         2Wa26xaZC5Bfjp9ewuDvICvjaOUqunSgRlOw6jcbCEPAnOjA67iMXtuH3MATY05kZAp+
+         UVGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733334808; x=1733939608;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+EdRdjsNOeXam2HnODspyLGBuskP5LGbao1nKrj0X3k=;
+        b=q7SsA+zoHMxU1vuXafunt1OUp0QDD9NCxcnlxhgxQvs/6gzF3Bj0pO3GaLRvsBO1YN
+         8HZb4bY698shNLdAI2Y8ipERsihccj9NJy/CRQhsXrhctNF3Lpx/CHJc8lSOg7LiErPz
+         FNSSy6HFQHyX0qv9ALoj91L8XHrp2+lCAr8FUG0zC3Kt6/ayvz5sYdBOfWJ628jK9Q9k
+         e/3Z6j7CoScQf9GKdmG8WKALf0t7NG3T9wD+/sYbS2bFXoDCGb+ItadzZY+4R9+7/qzG
+         YCfl1lTEKWIJH3gtTU2g8w0+NVvK8wEElQYgkVLDl8SyEbqbk0mR4x2DkdQopbJE19mL
+         /q7A==
+X-Forwarded-Encrypted: i=1; AJvYcCUbKLnew1aGtGhftR1+cLbD8OK8p8GB/cKeBC6MNYGFOxA98Dyrutk/lGW4EapX0J1T6zEad4NJ6xZw1pA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx4nU3kWQonxERAyjRXq1BsPfulzc9v2tx9LVBLfzQgmrNqKNKU
+	IihMAcwy+y9SxSanKFlVbVMMDyTiglZ6WJpjpbHk2sR0i4EM8J4cTyy6iefvk6Y=
+X-Gm-Gg: ASbGnctDmpokK6Ux24nhayshCYZEtOe9xw/HhQYKUTsmNu9dpm6QilQflU+hnmdYuQ3
+	hAuo8kTWuctyT//hoc8vgnXldiXnWh5yYBV1hGUicGo6sj4lO1JCWCjhXuEJpqcFYQqjq2g5roN
+	HUzIkXDSa9pMwdg6MoAnQZyQFV7J/tk+hFJsXiip9WgsGasbg4cIDYdQB+Fem5kjO81d9hAiHeQ
+	lyQXlEOC2+a/HKmW0LI+J/pjKL3RK2oGkedvcBds5fvHayObHkeVw==
+X-Google-Smtp-Source: AGHT+IF3kCe4ZPa78Jwjel1HDu6mlsuiDp/NiBNhxqks+ew9mmhBlvqyTlfFPhbg92AJrj72T7k3kg==
+X-Received: by 2002:a17:902:ea04:b0:215:7153:5697 with SMTP id d9443c01a7336-215bd200c68mr121380025ad.28.1733334807988;
+        Wed, 04 Dec 2024 09:53:27 -0800 (PST)
+Received: from p14s ([2604:3d09:148c:c800:cb58:bf7f:6102:4f57])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2155249b0cesm84754705ad.211.2024.12.04.09.53.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Dec 2024 09:53:27 -0800 (PST)
+Date: Wed, 4 Dec 2024 10:53:25 -0700
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v15 5/8] remoteproc: Make load_segments and load_fw ops
+ exclusive and optional
+Message-ID: <Z1CXFfXnSKkTPKU+@p14s>
+References: <20241128084219.2159197-1-arnaud.pouliquen@foss.st.com>
+ <20241128084219.2159197-6-arnaud.pouliquen@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Wed, 04 Dec 2024 18:52:51 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Nathan Chancellor" <nathan@kernel.org>, "Arnd Bergmann" <arnd@kernel.org>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
- "Thomas Gleixner" <tglx@linutronix.de>, "Ingo Molnar" <mingo@redhat.com>,
- "Borislav Petkov" <bp@alien8.de>,
- "Dave Hansen" <dave.hansen@linux.intel.com>,
- "H. Peter Anvin" <hpa@zytor.com>,
- "Linus Torvalds" <torvalds@linux-foundation.org>,
- "Andy Shevchenko" <andy@kernel.org>, "Matthew Wilcox" <willy@infradead.org>,
- "Sean Christopherson" <seanjc@google.com>,
- "Davide Ciminaghi" <ciminaghi@gnudd.com>,
- "Paolo Bonzini" <pbonzini@redhat.com>, kvm@vger.kernel.org
-Message-Id: <4a5898f6-f159-4f3e-b352-3a72c23422a2@app.fastmail.com>
-In-Reply-To: <20241204170935.GB3356373@thelio-3990X>
-References: <20241204103042.1904639-1-arnd@kernel.org>
- <20241204103042.1904639-10-arnd@kernel.org>
- <20241204170935.GB3356373@thelio-3990X>
-Subject: Re: [PATCH 09/11] x86: rework CONFIG_GENERIC_CPU compiler flags
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241128084219.2159197-6-arnaud.pouliquen@foss.st.com>
 
-On Wed, Dec 4, 2024, at 18:09, Nathan Chancellor wrote:
-> Hi Arnd,
->
-> On Wed, Dec 04, 2024 at 11:30:40AM +0100, Arnd Bergmann wrote:
-> ...
->> +++ b/arch/x86/Kconfig.cpu
->> +config X86_64_V1
->> +config X86_64_V2
->> +config X86_64_V3
-> ...
->> +++ b/arch/x86/Makefile
->> +        cflags-$(CONFIG_MX86_64_V1)	+= -march=x86-64
->> +        cflags-$(CONFIG_MX86_64_V2)	+= $(call cc-option,-march=x86-64-v2,-march=x86-64)
->> +        cflags-$(CONFIG_MX86_64_V3)	+= $(call cc-option,-march=x86-64-v3,-march=x86-64)
-> ...
->> +        rustflags-$(CONFIG_MX86_64_V1)	+= -Ctarget-cpu=x86-64
->> +        rustflags-$(CONFIG_MX86_64_V2)	+= -Ctarget-cpu=x86-64-v2
->> +        rustflags-$(CONFIG_MX86_64_V3)	+= -Ctarget-cpu=x86-64-v3
->
-> There appears to be an extra 'M' when using these CONFIGs in Makefile,
-> so I don't think this works as is?
+On Thu, Nov 28, 2024 at 09:42:12AM +0100, Arnaud Pouliquen wrote:
+> The two methods to load the firmware to memory should be exclusive.
+> 
+> - make load_segments optional returning 0 if not set in
+>   rproc_load_segments(),
+> - ensure that load_segments() and load_fw() are not both set,
+> - do not set default rproc::ops fields if load_fw() is set.
 
-Fixed now by adding the 'M' in the Kconfig file, thanks for
-noticing it.
+This changelog is describing "what" the patch does rather than "why".  I have
+commented on that before.
 
-      Arnd
+> 
+> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+> ---
+>  drivers/remoteproc/remoteproc_core.c     | 4 ++++
+>  drivers/remoteproc/remoteproc_internal.h | 2 +-
+>  include/linux/remoteproc.h               | 7 +++++--
+>  3 files changed, 10 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> index e4ad024efcda..deadec0f3474 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -2477,6 +2477,10 @@ static int rproc_alloc_firmware(struct rproc *rproc,
+>  
+>  static int rproc_alloc_ops(struct rproc *rproc, const struct rproc_ops *ops)
+>  {
+> +	/* A processor with a load_segments() and a load_fw() functions makes no sense. */
+> +	if (ops->load_segments && ops->load_fw)
+> +		return -EINVAL;
+> +
+
+It is only a matter of time before someone needs both ->load_segments() and
+->load_fw().
+
+
+>  	rproc->ops = kmemdup(ops, sizeof(*ops), GFP_KERNEL);
+>  	if (!rproc->ops)
+>  		return -ENOMEM;
+> diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
+> index b898494600cf..3a4161eaf291 100644
+> --- a/drivers/remoteproc/remoteproc_internal.h
+> +++ b/drivers/remoteproc/remoteproc_internal.h
+> @@ -170,7 +170,7 @@ int rproc_load_segments(struct rproc *rproc, const struct firmware *fw)
+>  	if (rproc->ops->load_segments)
+>  		return rproc->ops->load_segments(rproc, fw);
+>  
+> -	return -EINVAL;
+> +	return 0;
+
+Other than this hunk I would drop this patch completely.
+
+>  }
+>  
+>  static inline int rproc_parse_fw(struct rproc *rproc, const struct firmware *fw)
+> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+> index 55c20424a99f..4f4c65ce74af 100644
+> --- a/include/linux/remoteproc.h
+> +++ b/include/linux/remoteproc.h
+> @@ -374,8 +374,9 @@ enum rsc_handling_status {
+>   * @find_loaded_rsc_table: find the loaded resource table from firmware image
+>   * @get_loaded_rsc_table: get resource table installed in memory
+>   *			  by external entity
+> - * @load_segments:	load firmware ELF segment to memory, where the remote processor
+> - *			expects to find it
+> + * @load_segments:	optional load firmware ELF segments to memory, where the remote processor
+> + *			expects to find it.
+> + *			This operation is exclusive with the load_fw()
+>   * @sanity_check:	sanity check the fw image
+>   * @get_boot_addr:	get boot address to entry point specified in firmware
+>   * @panic:	optional callback to react to system panic, core will delay
+> @@ -383,8 +384,10 @@ enum rsc_handling_status {
+>   * @coredump:	  collect firmware dump after the subsystem is shutdown
+>   * @load_fw:	optional function to load non-ELF firmware image to memory, where the remote
+>   *		processor expects to find it.
+> + *		This operation is exclusive with the load_segments()
+>   * @release_fw:	optional function to release the firmware image from memories.
+>   *		This function is called after stopping the remote processor or in case of error
+> + *
+>   */
+>  struct rproc_ops {
+>  	int (*prepare)(struct rproc *rproc);
+> -- 
+> 2.25.1
+> 
 
