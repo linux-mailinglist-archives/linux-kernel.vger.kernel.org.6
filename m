@@ -1,78 +1,123 @@
-Return-Path: <linux-kernel+bounces-431543-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7227F9E4013
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:52:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FC629E3FDB
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:40:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 73DAFB308FD
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:53:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A66D4B2A189
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:52:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E271720C479;
-	Wed,  4 Dec 2024 15:52:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D47D20C481;
+	Wed,  4 Dec 2024 15:52:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="DGRNeuBX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=laura.nao@collabora.com header.b="BJwNCBh4"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4331320A5FC;
-	Wed,  4 Dec 2024 15:52:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733327579; cv=none; b=IUhgeF6MMLAw64INKLxOro4k9vBvMDUdFb2DIUGOE/8eKnzKdqRvopgTgTbn3uZ/Z7VcMJZCcWrzBnAIH4zGNvOY6FURSAjMSX5BJlVuBBJmbYPg+WasKauX2a7xYR5nel339aDuMarsbe9dZV47W4z5wdOQNwQCUQezqmloEqc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733327579; c=relaxed/simple;
-	bh=rYzR5iA+832IYD8XZPdYk8GIWIBb77RihMzScqCDuaM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EvNmDsM6s7P7daFy0+ZKww1XOhBbBbLsX6pQ3cNY2hWvldFxL2WzXYVntcK8R5RaKAyth36ldhlhHwE+zZ+IZ1VleDeBchd/3mC5Vu8wUi5/mO7KjOUW2/rP9qlm4qPbFsdb8t8VK3aFzYZ+fBc7fIhTPqtyEBRfJ4zJIp9VXbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=DGRNeuBX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59B39C4CECD;
-	Wed,  4 Dec 2024 15:52:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1733327578;
-	bh=rYzR5iA+832IYD8XZPdYk8GIWIBb77RihMzScqCDuaM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DGRNeuBX1xoK7+XlzIIlDBekaNTlJWcaAna5prPVsOWmcxqdtUXoE2cZXLddb+QRI
-	 cg7NSc2oePjWV6KyasUlxY3aA5YLc7Dqbqf2pg3k4hDL1HrMVEw5Y/kFL2Ue5/qe81
-	 kQ7ijrev66JoVu2hDAll6K4Sg8OvxhDAg+/7dulI=
-Date: Wed, 4 Dec 2024 16:52:55 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>
-Cc: philipp.g.hortmann@gmail.com, ~lkcamp/patches@lists.sr.ht,
-	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] staging: rtl8723bs: fix broken code when cflag is used
-Message-ID: <2024120426-shininess-scorpion-cc26@gregkh>
-References: <20241125225308.8702-1-rodrigo.gobbi.7@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54425207A33;
+	Wed,  4 Dec 2024 15:52:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733327558; cv=pass; b=ImlO4sJUTXMb0HO5dHDJXeE7PA+cjHgBRFsYWCup0b1/2bXoGx51iUo21+p1mMCL8y4+gsWydMbsJdwyKPKvPSUhRlzsbOgMxk1FDDmX8h8QhJ+Zjj24UNHMcMgSoMRfmHkzh+M+oPZg+dhomom4BR/kn0H4N7qg3xU1q+dQGvA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733327558; c=relaxed/simple;
+	bh=3GgiW3N3LZXUecZzX/Z2bD7+HxZswZiDkcxIzU0Xo+s=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=ABheIGRiSKyKFPcin9/5vFIelBvu4vXPyCgkHaruUc59YFTTMN9WVctHx62oNmowF7jLUrJU8vs3+2JSuGyUO5d4+1Mx1sgErGIhiRkI1rwEEdRiiN/67yjOJlt8//ewLRppMZV0DDYxuJUy5WTeZGqBWFudyRXkXAb7sbOwXY4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=laura.nao@collabora.com header.b=BJwNCBh4; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1733327539; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=hNs4+qe1RmVGYY2POaIHuG1D8b9khVvg9QRQTKlRWSOiaU7RcJ4rRAUJpSjORgMcFR61xUMNZLY5MLFTjQoEAraUwMsmwImKiZDSmZpq6cdLhGBcGxDcIDK64SJCYp30R/+pNFOUSPOdbIYkqOpTFbtAIoNKkQ0a7B/GfMHnVMo=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1733327539; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=t+IOc0/iUALeNouk/Un46l8WsfTzgxm/2DTtzgWefrU=; 
+	b=EqhoHs6thdnmqnu25+iGd8pnF7vHIguvkMBCXsC++uwiURKcbmaPXDhNg8Rw+e78QYTBYcBIH9h4Y6P2p12+dUXnsZkou5aG94CDy8DI7I19fAbse8Tswf52zCuuFqNSDw2EsOLAh0hCUNvl5GbyZ+xxc8YA7FfI2HsGu4bDu+I=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=laura.nao@collabora.com;
+	dmarc=pass header.from=<laura.nao@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1733327539;
+	s=zohomail; d=collabora.com; i=laura.nao@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-Id:Message-Id:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Reply-To;
+	bh=t+IOc0/iUALeNouk/Un46l8WsfTzgxm/2DTtzgWefrU=;
+	b=BJwNCBh4EdmZGLio2uXycnjDwApd/XO27+TkvJMtxZT1Q1eSoAzZUaLkx6sDClH8
+	Kl/F/v/sgTzd+nDGSSYhDFuC8JpmxuplaIDQ4HN40GXsBkmUTnpQyd5PyfKkC4SswaC
+	NDDJA7GpSEJCyzVVapL3Aj+jOCLstz/NcnBzf9YE=
+Received: by mx.zohomail.com with SMTPS id 1733327536916423.899350380492;
+	Wed, 4 Dec 2024 07:52:16 -0800 (PST)
+From: Laura Nao <laura.nao@collabora.com>
+To: ubizjak@gmail.com
+Cc: laura.nao@collabora.com,
+	alan.maguire@oracle.com,
+	bpf@vger.kernel.org,
+	chrome-platform@lists.linux.dev,
+	kernel@collabora.com,
+	linux-kernel@vger.kernel.org,
+	regressions@lists.linux.dev
+Subject: Re: [REGRESSION] module BTF validation failure (Error -22) on next
+Date: Wed,  4 Dec 2024 16:53:05 +0100
+Message-Id: <20241204155305.444280-1-laura.nao@collabora.com>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20241115171712.427535-1-laura.nao@collabora.com>
+References: <20241115171712.427535-1-laura.nao@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241125225308.8702-1-rodrigo.gobbi.7@gmail.com>
+Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
-On Mon, Nov 25, 2024 at 07:45:04PM -0300, Rodrigo Gobbi wrote:
-> When using an extra cflag, DBG_RX_SIGNAL_DISPLAY_RAW_DATA,
-> hal_com.c file doesn't compile.
+On 11/15/24 18:17, Laura Nao wrote:
+> I managed to reproduce the issue locally and I've uploaded the vmlinux[1]
+> (stripped of DWARF data) and vmlinux.raw[2] files, as well as one of the
+> modules[3] and its btf data[4] extracted with:
 > 
-> Fixes: ec57f8641fbc ("staging: rtl8723bs: Rework 'struct _ODM_Phy_Status_Info_' coding style.")
-> Signed-off-by: Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>
-> ---
-> As noticed at [1], hal_com.c is not compiling with -DDBG_RX_SIGNAL_DISPLAY_RAW_DATA due
-> the changes at [2] (a few statements were not replaced with the new struct).
-> A little discussion was made at [1] too about how useful this cflag was or if
-> the code under the cflag should be deleted. I think there is no harm to keep those things 
-> as is since we can easily fix the error and someone might be interested in using that
-> to further debug the driver.
+> bpftool -B vmlinux btf dump file cros_kbd_led_backlight.ko > cros_kbd_led_backlight.ko.raw
+> 
+> Looking again at the logs[5], I've noticed the following is reported:
+> 
+> [    0.415885] BPF: 	 type_id=115803 offset=177920 size=1152
+> [    0.416029] BPF:
+> [    0.416083] BPF: Invalid offset
+> [    0.416165] BPF:
+> 
+> There are two different definitions of rcu_data in '.data..percpu', one
+> is a struct and the other is an integer:
+> 
+> type_id=115801 offset=177920 size=1152 (VAR 'rcu_data')
+> type_id=115803 offset=177920 size=1152 (VAR 'rcu_data')
+> 
+> [115801] VAR 'rcu_data' type_id=115572, linkage=static
+> [115803] VAR 'rcu_data' type_id=1, linkage=static
+> 
+> [115572] STRUCT 'rcu_data' size=1152 vlen=69
+> [1] INT 'long unsigned int' size=8 bits_offset=0 nr_bits=64 encoding=(none)
+> 
+> I assume that's not expected, correct?
+> 
+> I'll dig a bit deeper and report back if I can find anything else.
 
-Let's just delete that flag entirely, no one builds in-kernel modules
-with different cflags.  Please just remove the code completly.
+I ran a bisection, and it appears the culprit commit is:
+https://lore.kernel.org/all/20241021080856.48746-2-ubizjak@gmail.com/
 
-thanks,
+Hi Uros, do you have any suggestions or insights on resolving this issue?
 
-greg k-h
+This problem is now impacting mainline as well. The full context can be 
+found at the beginning of this thread[1].
+
+Thanks,
+
+Laura
+
+[1] https://lore.kernel.org/all/20241106160820.259829-1-laura.nao@collabora.com/
+
+#regzbot introduced: 001217defd
+
 
