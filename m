@@ -1,348 +1,210 @@
-Return-Path: <linux-kernel+bounces-430744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 517BE9E3523
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 09:22:49 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A8BE9E34EC
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 09:06:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3B16DB3781A
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 08:05:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EDD982840A4
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 08:06:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ED0418FC92;
-	Wed,  4 Dec 2024 08:04:16 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A3CE1714B3;
+	Wed,  4 Dec 2024 08:05:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=outer-limits.org header.i=@outer-limits.org header.b="CZa6ESmv";
+	dkim=permerror (0-bit key) header.d=outer-limits.org header.i=@outer-limits.org header.b="sazbsbYT"
+Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [81.169.146.166])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E42B1714B3;
-	Wed,  4 Dec 2024 08:04:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733299455; cv=none; b=BDOZWGhGX0/f06bNHgp+MIaUF6edYVhk3r4oGH3KZq8rigsGQWc+UXtg1thv6JHnifSaRNytTJTU8LsyLB4OYm2xg/EbpO7EDOW16b6mHGd27WqN3ZhEiAy6lw4Zx+o/c3B7l85kOKLlDlzQaC9wVU18SFiL8e9RMGpHLy3xycQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733299455; c=relaxed/simple;
-	bh=6lc+T70g0cHeF6pMgbKKJz4et25cPCzPshkSXHauDSo=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=W49IgIus9QkSfZlwk/6sIy5/P9KCUrKHs524UCcanILwr99PNfd6TxZEVP40o7JyEHncb39bFg3gFvnGw8FtHbqLJCEV7P9rr4Po76FQGTRaJXbKQ1n8pira5TgtW4nG6xX9LuByocS5HFtGCMibdKAUfq0Xissd8nViHfsnR3c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E603BC4CED1;
-	Wed,  4 Dec 2024 08:04:12 +0000 (UTC)
-Message-ID: <951be9c9-0739-4833-ac97-73fbe53405ed@xs4all.nl>
-Date: Wed, 4 Dec 2024 09:04:11 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBC06189F56;
+	Wed,  4 Dec 2024 08:05:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=81.169.146.166
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733299504; cv=pass; b=aV/XiTL+zLdP0TF3E+vCk2zw/IBtI+PyEdj1P+4ZDpnucJAFVFZrv9BN3ABLz/qQSnYNce7ONc2mgI3DY3ABGLbMlK/ljKpt4lU6UITL3h9AyzP1ewvKch9I/I9WJZpLlW3yr7mZRwoA4ooTtz0iJsZvOcy4pg9TjajKJ0kyRvE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733299504; c=relaxed/simple;
+	bh=XK3q7ajrPEkEBPZ4BeyLsoPyHAONosmfl2NTR/B5py4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=faUSKGFtmPtsnGinMvYZieTkjgktwO4Wd4HLs3GOh4488qsuRkuWC49wlKU1kIGaq7fv25EAoq2Sj8fAoKkNz20ztlFQl3V9j4PLKQ4AVfcFc+y5ygkPRG0GD+7jPzrQt5t96DnCy890N+Y4SNq8LxnwEzoEyYpFKBBTcuKHhDw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=outer-limits.org; spf=none smtp.mailfrom=outer-limits.org; dkim=pass (2048-bit key) header.d=outer-limits.org header.i=@outer-limits.org header.b=CZa6ESmv; dkim=permerror (0-bit key) header.d=outer-limits.org header.i=@outer-limits.org header.b=sazbsbYT; arc=pass smtp.client-ip=81.169.146.166
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=outer-limits.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=outer-limits.org
+ARC-Seal: i=1; a=rsa-sha256; t=1733299499; cv=none;
+    d=strato.com; s=strato-dkim-0002;
+    b=nsIlw2EFyz3yT1LldAYOTcqErG582TjG2oY5nf+QKJFXvRrYHHgvvicjFbqOzYu4RY
+    iCGzVqv9FtZ+qj+3iWqOcvY9Amh8aD5TbsqHtw5LoeAOFRCwrkWuCR23d6n9ymugGJhu
+    /9sz8WmjWbqBVTzACFtgz7ke34wt/VMq1V5tzKqbcHvH6PqOqyyAjE1CQkE//TSrpdpO
+    jTZCQtvMez+2Adr+Ngds/BvP44/1q7oNqejjEAhlJT6Ajb2oBbvbOKWtDnL6FfbzuD+g
+    F2tdI21Scq/4jA40xhXZPiYv47pNng4WGyFNDY82ZrX85ebUIKhLj+lQJsCAYlR4SH65
+    MQRQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1733299499;
+    s=strato-dkim-0002; d=strato.com;
+    h=Message-Id:Date:Subject:Cc:To:From:Cc:Date:From:Subject:Sender;
+    bh=7MssRol3K7ItcFHd/ONuI+GpueXbhvQJYbT9pZF/fag=;
+    b=glNIhwHaUjoFxCWCXl7lDbpEcxXty6iB2f7NBkq0SWpkYNYaYQhKv+5tK4K7hjbqjr
+    MUXKHvECS9oVMm1WFA3pIWgYF+3RrpVg/SnsJFp7imrA6b97SBsPXshQjgSuC1/jL0qL
+    zBjfWFSaH3L8WytSWWNKH1teCaK3PqgCX/zdPxXT1odm8t1+CgtKPtcA7h/Z/u45CQV+
+    ePbYlWiIFUWICYZ99ffA6DxGaC+tR04PRX2FLZMAkjN9zy8uTZ0vszvB9UQpUwubnB8H
+    4dLmG0Z38sIdiJm1QAM6ZOJ2KmA8Kd52e8KMt4AcgsN+sP7SzXQMQWihGV3gSoH26E75
+    fISg==
+ARC-Authentication-Results: i=1; strato.com;
+    arc=none;
+    dkim=none
+X-RZG-CLASS-ID: mo01
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1733299499;
+    s=strato-dkim-0002; d=outer-limits.org;
+    h=Message-Id:Date:Subject:Cc:To:From:Cc:Date:From:Subject:Sender;
+    bh=7MssRol3K7ItcFHd/ONuI+GpueXbhvQJYbT9pZF/fag=;
+    b=CZa6ESmvRVTrpu0qDNSDvo8+AbWcs5cqcGWHAtfnsSF06zYpYRIaGm7gd8amYOrxv7
+    ORlZPd9osDU/hl/bByrr8giyq1irmr5Q8GkUF++e+Nm5Ro8fOhnQs96KMdOeVnPd4qdS
+    sfhACz6dPoLzy/ccQYBwRH48IZWk3HHvYqwRoZ0fmAUVBZKbvOspyzWoY1bLSFVxgA4J
+    d8A59Eus25PO+uito96EotGvyTbWhtkgDn3ddjHfxh6EBdc+diQDuJfXTqWEHlxx/JHi
+    H6BhrYdgjm6qQ9CrRaAznbuHbju2m6VC2sq7sE4zLaWIycRBZBNqEjYIQ/2cfEUUnvMP
+    oiiQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1733299499;
+    s=strato-dkim-0003; d=outer-limits.org;
+    h=Message-Id:Date:Subject:Cc:To:From:Cc:Date:From:Subject:Sender;
+    bh=7MssRol3K7ItcFHd/ONuI+GpueXbhvQJYbT9pZF/fag=;
+    b=sazbsbYTmKVWZxd6KQ+tBKSuj+kSGr5q2Uzex4U+W4N//uJJUGx9F/pQV4nJigTvXt
+    atG3clUnVBa85Zr/n+BQ==
+X-RZG-AUTH: ":JnkIfEGmW/AMJS6HttH4FbRVwc4dHlPLCp4e/IoHo8zEMMHAgwTfqBEHcVJSv9P5mRTGd2ImeA=="
+Received: from ws2104.lan.kalrayinc.com
+    by smtp.strato.de (RZmta 51.2.11 AUTH)
+    with ESMTPSA id Ja0a030B484xQyk
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+	(Client did not present a certificate);
+    Wed, 4 Dec 2024 09:04:59 +0100 (CET)
+From: Julian Vetter <julian@outer-limits.org>
+To: Arnd Bergmann <arnd@arndb.de>,
+	"James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
+	Helge Deller <deller@gmx.de>
+Cc: linux-parisc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Julian Vetter <julian@outer-limits.org>
+Subject: [PATCH v2] parisc: Remove memcpy_toio and memset_io
+Date: Wed,  4 Dec 2024 09:04:40 +0100
+Message-Id: <20241204080440.3721170-1-julian@outer-limits.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/4] media: uvcvideo: Do not set an async control owned
- by other fh
-From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Hans de Goede <hdegoede@redhat.com>,
- Ricardo Ribalda <ribalda@chromium.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Guennadi Liakhovetski <guennadi.liakhovetski@intel.com>,
- Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
- linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <CANiDSCvj4VVAcQOpR-u-BcnKA+2ifcuq_8ZML=BNOHT_55fBog@mail.gmail.com>
- <CANiDSCvwzY3DJ+U3EyzA7TCQu2qMUL6L1eTmZYbM+_Tk6DsPaA@mail.gmail.com>
- <20241129220339.GD2652@pendragon.ideasonboard.com>
- <CANiDSCsXi-WQLpbeXMat5FoM8AnYoJ0nVeCkTDMvEus8pXCC3w@mail.gmail.com>
- <20241202001846.GD6105@pendragon.ideasonboard.com>
- <fb321ade-40e7-4b1e-8fcd-c6475767239d@xs4all.nl>
- <20241202081157.GB16635@pendragon.ideasonboard.com>
- <445e551c-c527-443c-8913-6999455bd366@xs4all.nl>
- <633ca07b-6795-429f-874d-474a68396f45@redhat.com>
- <9b3e21b7-1b15-4c27-9df0-0b9f31858721@xs4all.nl>
- <20241203171818.GA30248@pendragon.ideasonboard.com>
- <70a3a985-4484-4016-a383-49d084970b80@xs4all.nl>
-Content-Language: en-US, nl
-In-Reply-To: <70a3a985-4484-4016-a383-49d084970b80@xs4all.nl>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
 
-On 04/12/2024 08:59, Hans Verkuil wrote:
-> On 03/12/2024 18:18, Laurent Pinchart wrote:
->> On Mon, Dec 02, 2024 at 11:55:20AM +0100, Hans Verkuil wrote:
->>> On 02/12/2024 11:26, Hans de Goede wrote:
->>>> On 2-Dec-24 9:44 AM, Hans Verkuil wrote:
->>>>> On 02/12/2024 09:11, Laurent Pinchart wrote:
->>>>>> On Mon, Dec 02, 2024 at 09:05:07AM +0100, Hans Verkuil wrote:
->>>>>>> On 02/12/2024 01:18, Laurent Pinchart wrote:
->>>>>>>> On Fri, Nov 29, 2024 at 11:18:54PM +0100, Ricardo Ribalda wrote:
->>>>>>>>> On Fri, 29 Nov 2024 at 23:03, Laurent Pinchart wrote:
->>>>>>>>>> On Fri, Nov 29, 2024 at 07:47:31PM +0100, Ricardo Ribalda wrote:
->>>>>>>>>>> Before we all go on a well deserved weekend, let me recap what we
->>>>>>>>>>> know. If I did not get something correctly, let me know.
->>>>>>>>>>>
->>>>>>>>>>> 1) Well behaved devices do not allow to set or get an incomplete async
->>>>>>>>>>> control. They will stall instead (ref: Figure 2-21 in UVC 1.5 )
->>>>>>>>>>> 2) Both Laurent and Ricardo consider that there is a big chance that
->>>>>>>>>>> some camera modules do not implement this properly. (ref: years of
->>>>>>>>>>> crying over broken module firmware :) )
->>>>>>>>>>>
->>>>>>>>>>> 3) ctrl->handle is designed to point to the fh that originated the
->>>>>>>>>>> control. So the logic can decide if the originator needs to be
->>>>>>>>>>> notified or not. (ref: uvc_ctrl_send_event() )
->>>>>>>>>>> 4) Right now we replace the originator in ctrl->handle for unfinished
->>>>>>>>>>> async controls.  (ref:
->>>>>>>>>>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/media/usb/uvc/uvc_ctrl.c#n2050)
->>>>>>>>>>>
->>>>>>>>>>> My interpretation is that:
->>>>>>>>>>> A) We need to change 4). We shall not change the originator of
->>>>>>>>>>> unfinished ctrl->handle.
->>>>>>>>>>> B) Well behaved cameras do not need the patch "Do not set an async
->>>>>>>>>>> control owned by another fh"
->>>>>>>>>>> C) For badly behaved cameras, it is fine if we slightly break the
->>>>>>>>>>> v4l2-compliance in corner cases, if we do not break any internal data
->>>>>>>>>>> structure.
->>>>>>>>>>
->>>>>>>>>> The fact that some devices may not implement the documented behaviour
->>>>>>>>>> correctly may not be a problem. Well-behaved devices will stall, which
->>>>>>>>>> means we shouldn't query the device while as async update is in
->>>>>>>>>> progress. Badly-behaved devices, whatever they do when queried, should
->>>>>>>>>> not cause any issue if we don't query them.
->>>>>>>>>
->>>>>>>>> I thought we could detect the stall and return safely. Isn't that the case?
->>>>>>>>
->>>>>>>> We could, but if we know the device will stall anyway, is there a reason
->>>>>>>> not to avoid issuing the request in the first place ?
->>>>>>>>
->>>>>>>>> Why we have not seen issues with this?
->>>>>>>>
->>>>>>>> I haven't tested a PTZ device for a very long time, and you would need
->>>>>>>> to hit a small time window to see the issue.
->>>>>>>>
->>>>>>>>>> We should not send GET_CUR and SET_CUR requests to the device while an
->>>>>>>>>> async update is in progress, and use cached values instead. When we
->>>>>>>>>> receive the async update event, we should clear the cache. This will be
->>>>>>>>>> the same for both well-behaved and badly-behaved devices, so we can
->>>>>>>>>> expose the same behaviour towards userspace.
->>>>>>>>>
->>>>>>>>> seting ctrl->loaded = 0 when we get an event sounds like a good idea
->>>>>>>>> and something we can implement right away.
->>>>>>>>> If I have to resend the set I will add it to the end.
->>>>>>>>>
->>>>>>>>>> We possibly also need some kind of timeout mechanism to cope with the
->>>>>>>>>> async update event not being delivered by the device.
->>>>>>>>>
->>>>>>>>> This is the part that worries me the most:
->>>>>>>>> - timeouts make the code fragile
->>>>>>>>> - What is a good value for timeout? 1 second, 30, 300? I do not think
->>>>>>>>> that we can find a value.
->>>>>>>>
->>>>>>>> I've been thinking about the implementation of uvc_fh cleanup over the
->>>>>>>> weekend, and having a timeout would have the nice advantage that we
->>>>>>>> could reference-count uvc_fh instead of implementing a cleanup that
->>>>>>>> walks over all controls when closing a file handle. I think it would
->>>>>>>> make the code simpler, and possibly safer too.
->>>>>>>>
->>>>>>>>>> Regarding the userspace behaviour during an auto-update, we have
->>>>>>>>>> multiple options:
->>>>>>>>>>
->>>>>>>>>> For control get,
->>>>>>>>>>
->>>>>>>>>> - We can return -EBUSY
->>>>>>>>>> - We can return the old value from the cache
->>>>>>>
->>>>>>> This would match the control behavior best. Only when the operation is
->>>>>>> done is the control updated and the control event sent.
->>>>>>>
->>>>>>> Some questions: is any of this documented for UVC? Because this is non-standard
->>>>>>
->>>>>> No this isn't documented.
->>>>>>
->>>>>>> behavior. Are there applications that rely on this? Should we perhaps add
->>>>>>
->>>>>> I don't know.
->>>>>>
->>>>>>> proper support for this to the control framework? E.g. add an ASYNC flag and
->>>>>>> document this?
->>>>>>
->>>>>> We could, but this is such a specific use case that I don't think is
->>>>>> worth adding complexity to the already complex control framework would
->>>>>> be worth it. What we could do is perhaps adding a flag for the userspace
->>>>>> API, but even there, I never like modelling an API with a single user.
->>>>>
->>>>> Well, it might be a single driver that uses this, but it is also the most
->>>>> used driver by far. I think the only change is to add a flag for this and
->>>>> describe how it should behave. And add v4l2-compliance tests for it.
->>>>>
->>>>> Otherwise no changes to the control framework are needed, I think.
->>>>>
->>>>> Controls with the ASYNC flag set would:
->>>>>
->>>>> - return the old value from the cache.
->>>>> - document that setting a new value while the operation is in progress
->>>>>   results in EBUSY. Document that if the new value is equal to the old value,
->>>>>   then return 0 and do nothing (alternative is to just immediately send
->>>>>   the control changed event, but that might require a control framework change).
->>>>> - when the operation finishes, update the cache to the new value and
->>>>>   send the control changed event.
->>>>> - document that userspace should specify V4L2_EVENT_SUB_FL_ALLOW_FEEDBACK
->>>>>   when subscribing to the control if you calling fh wants to know when
->>>>>   the operation finishes.
->>>>> - document how timeouts should be handled: this is tricky, especially with
->>>>>   bad hardware. I.e. if the hw doesn't send the event, does that mean that
->>>>>   you are never able to set the control since it will stall?
->>>>>   In the end this will just reflect how UVC handles this.
->>>>
->>>> I have been catching up on this thread (I have not read the v3 and v4
->>>> threads yet).
->>>>
->>>> This all started with Ricardo noticing that ctrl->handle may get
->>>> overwritten when another app sets the ctrl, causing the first app
->>>> to set the ctrl to get a V4L2_EVENT for the ctrl (if subscribed)
->>>> even though it set the ctrl itself.
->>>>
->>>> My observations so far:
->>>>
->>>> 1. This is only hit when another app changes the ctrl after the first app,
->>>> in this case, if there is no stall issued by the hw for the second app's
->>>> request, arguably the first app getting the event for the ctrl is correct
->>>> since it was changed by the second app. IOW I think the current behavior
->>>> is not only fine, but even desirable. Assuming we only override ctrl->handle
->>>> after successfully sending the set-ctrl request to the hardware.
->>
->> I think you're right.
->>
->>>> 2. This adds a lot of complexity for not sending an event to the app
->>>> which made the change. Hans V. suggested maybe adding some sort of flag
->>>> for async ctrls to the userspace API. I wonder if we should not just
->>>> get rid of this complexity and document that these controls will always
->>>> generate events independent of V4L2_EVENT_SUB_FL_ALLOW_FEEDBACK ?
->>>> That would certainly simplify things, but it raises the questions if
->>>> this will cause issues for existing applications.
->>>
->>> I'm not that keen on this. That's why a new flag can come in handy since
->>> if present, then that indicates that it makes sense to specify
->>> V4L2_EVENT_SUB_FL_ALLOW_FEEDBACK when subscribing to the control events.
->>>
->>> This ensures that uvc follows the current v4l2 spec. It's also why I
->>> prefer that g_ctrl will just return the old value until the new value
->>> has been reached: that way the control event corresponds with the actual
->>> updating of the control value.
->>>
->>> That said, it's just my opinion and I am OK with UVC doing things a bit
->>> differently. Just be aware that I have no objection to adding an ASYNC flag,
->>> given how widely UVC is used.
->>
->> My experience with the V4L2 control API is that we've overdesigned quite
->> a few things, and in particular control events. The independent
->> "capture" and "control panel" application model that V4L2 controls were
->> designed for is not really a good fit for the 21st century anymore. The
->> V4L2 API isn't rich enough to arbitrate between applications that are
->> not designed to collaborate, and way too rich when applications do
->> collaborate. The only two real use cases I found for control events are
->> async set completion notification, and notification of automatic changes
->> to other controls (and in particular changes to control limits) when a
->> control is set. The second use case isn't even something that we support
->> well today: to make it really usable, the change notification should be
->> *synchronous* with the control set ioctl, returning the information from
->> the same ioctl, not through asynchronous control events.
-> 
-> The main reason you think it is complicated is because the uvc driver does
-> not use the control framework, so it has to copy all the logic in the driver.
-> That's very painful. Ideally, uvc should use the control framework, but that
-> would require a complete overhaul of the uvc driver.
-> 
-> For all other drivers the complexity is zero since it is all in the framework.
-> 
-> Some of the Digital Video controls (HOTPLUG, EDID_PRESENT, RXSENSE,
-> POWER_PRESENT) are meant to be used with control events to inform the applications
-> when these things change. But you don't deal with HDMI video, so you never see
-> them in use. The control event mechanism is generic, i.e. available for all
-> controls. So the use in control panels is just one use-case and it is probably
-> just qv4l2 that implements it. But control events are great for anything that
-> happens asynchronously.
-> 
-> What is missing is support for asynchronous event like the zoom control that
-> takes time to finish the operation. Ideally I would prefer that it would operate
-> like the V4L2_CID_AUTO_FOCUS_* controls. But since the current mechanism is
-> already in use in UVC I am fine with the current uvc approach. I just think
-> this is something that should be signaled to userspace by a flag and that it
-> is properly documented.
+Recently new functions for IO memcpy and IO memset were added in
+libs/iomem_copy.c. So, remove the arch specific implementations, to fall
+back to the generic ones which do exactly the same. Keep memcpy_fromio
+for now, because it's slight more optimized by doing 'u16' accesses if
+the buffer is aligned this way.
 
-Sorry for this second post, I just wanted to say that in my opinion it is OK if
-frameworks are complicated internally. That's the whole point of a framework: to
-put the complexity in one place and hide it from the users of the framework.
+Signed-off-by: Julian Vetter <julian@outer-limits.org>
+---
+ arch/parisc/include/asm/io.h      |  4 ---
+ arch/parisc/kernel/parisc_ksyms.c |  2 --
+ arch/parisc/lib/io.c              | 47 -------------------------------
+ 3 files changed, 53 deletions(-)
 
-If a framework was simple, then you probably wouldn't have needed a framework in
-the first place. The problem with uvc is that you can't use the framework so all
-the complexity now enters the driver :-(
-
-Regards,
-
-	Hans
-
-> 
-> Regarding the second use case: it's perfectly doable, but it would require a
-> new ioctl. You would need really good arguments for doing that.
-> 
-> Regards,
-> 
-> 	Hans
-> 
->>
->> TL;DR: If I can pick an option, let's make things simpler, not more
->> complex.
->>
->>>> Note that if we simply return -EBUSY on set until acked by a status
->>>> event we also avoid the issue of ctrl->handle getting overwritten,
->>>> but that relies on reliable status events; or requires timeout handling.
->>>>
->>>> 3. I agree with Ricardo that a timeout based approach for cameras which
->>>> to not properly send status events for async ctrls is going to be
->>>> problematic. Things like pan/tilt homing can take multiple seconds which
->>>> is really long to use as a timeout if we plan to return -EBUSY until
->>>> the timeout triggers. I think it would be better to just rely on
->>>> the hardware sending a stall, or it accepting and correctly handling
->>>> a new CUR_SET command while the previous one is still being processed.
->>>>
->>>> I guess we can track if the hw does send status events when async ctrls
->>>> complete and then do the -EBUSY thing without going out to the hw after
->>>> the first time an async ctrl has been acked by a status event.
->>>>
->>>> And then combine that with the current behavior of overwriting ctrl->handle
->>>> until the ctrl has been marked as having working status events. So:
->>>>
->>>> a) In case we do not know yet if a ctrl gets status-event acks; and
->>>> on devices without reliable status events keep current behavior.
->>>>
->>>> b) As soon as we know a ctrl has reliable status events, switch to
->>>> returning -EBUSY if a set is pending (as indicated by ctrl->handle
->>>> being set).
->>>>
->>>> I don't like the fact that this changes the behavior after the first
->>>> status event acking an async ctrl, but I don't really see another way.
->>>>
->>>>>>>>>> - We can return the new value fromt he cache
->>>>>>>>>>
->>>>>>>>>> Returning -EBUSY would be simpler to implement.
->>>>>>>>>
->>>>>>>>> Not only easy, I think it is the most correct,
->>>>>>>>>
->>>>>>>>>> I don't think the behaviour should depend on whether the control is read
->>>>>>>>>> on the file handle that initiated the async operation or on a different
->>>>>>>>>> file handle.
->>>>>>>>>>
->>>>>>>>>> For control set, I don't think we can do much else than returning
->>>>>>>>>> -EBUSY, regardless of which file handle the control is set on.
->>>>>>>>>
->>>>>>>>> ACK.
->>>>>>>>>
->>>>>>>>>>> I will send a new version with my interpretation.
->>>>>>>>>>>
->>>>>>>>>>> Thanks for a great discussion
->>>>>>>>>
->>>>>>>>> Looking with some perspective... I believe that we should look into
->>>>>>>>> the "userspace behaviour for auto controls" in a different patchset.
->>>>>>>>> It is slightly unrelated to this discussion.
->>
-> 
+diff --git a/arch/parisc/include/asm/io.h b/arch/parisc/include/asm/io.h
+index a63190af2f05..3143cf29ce27 100644
+--- a/arch/parisc/include/asm/io.h
++++ b/arch/parisc/include/asm/io.h
+@@ -135,12 +135,8 @@ static inline void gsc_writeq(unsigned long long val, unsigned long addr)
+ 
+ #define pci_iounmap			pci_iounmap
+ 
+-void memset_io(volatile void __iomem *addr, unsigned char val, int count);
+ void memcpy_fromio(void *dst, const volatile void __iomem *src, int count);
+-void memcpy_toio(volatile void __iomem *dst, const void *src, int count);
+-#define memset_io memset_io
+ #define memcpy_fromio memcpy_fromio
+-#define memcpy_toio memcpy_toio
+ 
+ /* Port-space IO */
+ 
+diff --git a/arch/parisc/kernel/parisc_ksyms.c b/arch/parisc/kernel/parisc_ksyms.c
+index c1587aa35beb..1c366b0d3134 100644
+--- a/arch/parisc/kernel/parisc_ksyms.c
++++ b/arch/parisc/kernel/parisc_ksyms.c
+@@ -43,9 +43,7 @@ EXPORT_SYMBOL($global$);
+ #endif
+ 
+ #include <asm/io.h>
+-EXPORT_SYMBOL(memcpy_toio);
+ EXPORT_SYMBOL(memcpy_fromio);
+-EXPORT_SYMBOL(memset_io);
+ 
+ extern void $$divI(void);
+ extern void $$divU(void);
+diff --git a/arch/parisc/lib/io.c b/arch/parisc/lib/io.c
+index 7c00496b47d4..7461366a65c9 100644
+--- a/arch/parisc/lib/io.c
++++ b/arch/parisc/lib/io.c
+@@ -12,32 +12,6 @@
+ #include <linux/module.h>
+ #include <asm/io.h>
+ 
+-/* Copies a block of memory to a device in an efficient manner.
+- * Assumes the device can cope with 32-bit transfers.  If it can't,
+- * don't use this function.
+- */
+-void memcpy_toio(volatile void __iomem *dst, const void *src, int count)
+-{
+-	if (((unsigned long)dst & 3) != ((unsigned long)src & 3))
+-		goto bytecopy;
+-	while ((unsigned long)dst & 3) {
+-		writeb(*(char *)src, dst++);
+-		src++;
+-		count--;
+-	}
+-	while (count > 3) {
+-		__raw_writel(*(u32 *)src, dst);
+-		src += 4;
+-		dst += 4;
+-		count -= 4;
+-	}
+- bytecopy:
+-	while (count--) {
+-		writeb(*(char *)src, dst++);
+-		src++;
+-	}
+-}
+-
+ /*
+ ** Copies a block of memory from a device in an efficient manner.
+ ** Assumes the device can cope with 32-bit transfers.  If it can't,
+@@ -99,27 +73,6 @@ void memcpy_fromio(void *dst, const volatile void __iomem *src, int count)
+ 	}
+ }
+ 
+-/* Sets a block of memory on a device to a given value.
+- * Assumes the device can cope with 32-bit transfers.  If it can't,
+- * don't use this function.
+- */
+-void memset_io(volatile void __iomem *addr, unsigned char val, int count)
+-{
+-	u32 val32 = (val << 24) | (val << 16) | (val << 8) | val;
+-	while ((unsigned long)addr & 3) {
+-		writeb(val, addr++);
+-		count--;
+-	}
+-	while (count > 3) {
+-		__raw_writel(val32, addr);
+-		addr += 4;
+-		count -= 4;
+-	}
+-	while (count--) {
+-		writeb(val, addr++);
+-	}
+-}
+-
+ /*
+  * Read COUNT 8-bit bytes from port PORT into memory starting at
+  * SRC.
+-- 
+2.34.1
 
 
