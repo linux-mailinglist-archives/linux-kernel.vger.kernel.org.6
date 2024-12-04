@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-430670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E93339E3443
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 08:43:54 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C209E9E3449
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 08:44:05 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4F13168128
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 07:43:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 21669B29A26
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 07:44:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DBCE194147;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75253194C85;
 	Wed,  4 Dec 2024 07:42:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AqyeXqi/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nnKzYgWl"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB77218E764
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB80518EFCC
 	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 07:42:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733298153; cv=none; b=CTJPBe7yBAMM65zfJP8VyageMXuIy2OiiTD6H0G4ZwC4Of74N8FE/dENdFmGQnmuvQ+87ZJxTKnPf4o8E3G1BCgMc+MOmM1xRF5zDpp1uIF0r3jzV6xC2Zi1+fxdwUywNfnFUV2cTLI+OSPVzla+KFMVjVQWVI6kGHGx2FgO1hI=
+	t=1733298153; cv=none; b=plteDuICP65ombwJHZYKMOZIV70LDZRLZhEJPLuRdplksS3A8Lxvlgw2z1kfHO7WFPni8vjffV7GgT+hSzxT11rLCffWiXGs+ZsVhhKtALCTXgfMeEwYMntbo4SYFW5GmdXoa1+8kz9b4AZ4qaGxP7gEH1nhn/XBjkwFT3LiY5o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1733298153; c=relaxed/simple;
-	bh=WUvT8Ughz2H3l7zFkf4yAqTlDCn4hpG5JQNObbE2feQ=;
+	bh=mtr3SAhcJul8SH7gyq7dWJqCajR+YSKyCDlfSYBqOeM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hwdWss/eO+ifGQtyvCDW+2wOeEf1PBaGVV7vFtpYNO/wOGx2n4z8N3ZqFsVL2gsvfZ3kq/7+U0v8x9mqQICPLx4p31unDAA0Te5uim98XHwi08NhIwrz+5flsOA4qq188/xk92wNFlSA5rivvm4UNK3tRUtoA5w1MRedK0WZ0kY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AqyeXqi/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17385C4CEE6;
-	Wed,  4 Dec 2024 07:42:32 +0000 (UTC)
+	 MIME-Version; b=NcDq4L6iUoFG+z2M9HGh3iu0NBCe0OOa9yLPtLE/wA30npnUYHT7/E2Qe+pObqiDH2uVv964XHaEyO0t/NSPvLdbMgGWmG86bOhJLYrOU/PRiKADrRa6Vp2cUKWEcYipDwDuGhaDLrrB0cv1Wmq/WRavYK4SLYDa7V4e4qSTZuQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nnKzYgWl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1EA57C4CEE9;
+	Wed,  4 Dec 2024 07:42:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1733298153;
-	bh=WUvT8Ughz2H3l7zFkf4yAqTlDCn4hpG5JQNObbE2feQ=;
+	bh=mtr3SAhcJul8SH7gyq7dWJqCajR+YSKyCDlfSYBqOeM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=AqyeXqi/iQubsZ0LmfpUgncboOmdJjPWuOwc7JOFzUX9iI3/OsERiEL4eVk7aN9+w
-	 IMVDBx5Fbc2xHIP97EwVbUzTSNEJFmCMd7nMM/KPNgkCkQEXNiz7Cs7ig6O3KUSvqO
-	 /JmSyasiCqF4V7v0/L/bXbS/+IFm7M7o2aZYqnFJdtFgOeyhxbQnxiLHVqWjQQtFUG
-	 CjOVkIk/i44ehwPfrum+m9K2iiWkWDcYjgrT7S7lPyRhv8Yh7mCJF+QHejqIC1QBF6
-	 gkqhsrPN/BIQhkrsXEe3nSNbjO6eQkYzDJx2U4SkHZ5wdhgTZR7Xzv4wiztOh0vNDT
-	 Mcg9n3WHq+G6A==
+	b=nnKzYgWlEY4eCl1TbECjPQe0NywyeGcVa9klsW3z8dEdH4tGq0SU+wN3KN+sQFAKG
+	 RqsR5lQRfRvZarKiSAFNVOU/4fh76kkVfg1pr4aT7SDKR130zefC5ToE7P7m7QL6e4
+	 oVDnw4mGbjFPc8B3P6k4WYLRKQD9dCKJEq1X8gl9Hnheyq8syWF5BsR/lTP91GPavk
+	 RaaA7+R4wezzRiZgzK1NB3e3jj86Ar/RfWn6SCoHaHfLk9/X5sRnvTZGHY99gw3oRP
+	 UCXTS41cBm/omSd/VsEUxNImh1Rud8k5V+kWJ+c5Px1+RtWwnF20Py8qpXYhsFgANf
+	 wOasEZJpZpBAQ==
 Received: from mchehab by mail.kernel.org with local (Exim 4.98)
 	(envelope-from <mchehab+huawei@kernel.org>)
-	id 1tIk1n-00000004Kiy-0GH3;
+	id 1tIk1n-00000004Kj2-0N2r;
 	Wed, 04 Dec 2024 08:42:31 +0100
 From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 To: Igor Mammedov <imammedo@redhat.com>
@@ -55,9 +55,9 @@ Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
 	linux-kernel@vger.kernel.org,
 	qemu-arm@nongnu.org,
 	qemu-devel@nongnu.org
-Subject: [PATCH v5 05/16] acpi/ghes: Fix acpi_ghes_record_errors() argument
-Date: Wed,  4 Dec 2024 08:41:13 +0100
-Message-ID: <d2c93ea407f127b404fabbc9c7e428abf600284d.1733297707.git.mchehab+huawei@kernel.org>
+Subject: [PATCH v5 06/16] acpi/ghes: Remove a duplicated out of bounds check
+Date: Wed,  4 Dec 2024 08:41:14 +0100
+Message-ID: <3447853c8f174a8f2a1a0e8c029c73c403a85ba0.1733297707.git.mchehab+huawei@kernel.org>
 X-Mailer: git-send-email 2.47.1
 In-Reply-To: <cover.1733297707.git.mchehab+huawei@kernel.org>
 References: <cover.1733297707.git.mchehab+huawei@kernel.org>
@@ -70,39 +70,32 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-Align the header file with the actual implementation of
-this function, as the first argument is source ID and not
-notification type.
+acpi_ghes_record_errors() has an assert() at the beginning
+to ensure that source_id will be lower than
+ACPI_GHES_ERROR_SOURCE_COUNT. Remove a duplicated check.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Reviewed-by: Igor Mammedov <imammedo@redhat.com>
-
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 ---
+ hw/acpi/ghes.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-Changes from v8:
-- Non-rename/cleanup changes merged altogether;
-- source ID is now more generic, defined per guest target.
-  That should make easier to add support for 86.
-
-Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
----
- include/hw/acpi/ghes.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/include/hw/acpi/ghes.h b/include/hw/acpi/ghes.h
-index 20016c226d1f..50e3a25ea384 100644
---- a/include/hw/acpi/ghes.h
-+++ b/include/hw/acpi/ghes.h
-@@ -73,7 +73,7 @@ void acpi_build_hest(GArray *table_data, GArray *hardware_errors,
-                      const char *oem_id, const char *oem_table_id);
- void acpi_ghes_add_fw_cfg(AcpiGhesState *vms, FWCfgState *s,
-                           GArray *hardware_errors);
--int acpi_ghes_record_errors(uint8_t notify, uint64_t error_physical_addr);
-+int acpi_ghes_record_errors(uint8_t source_id, uint64_t error_physical_addr);
+diff --git a/hw/acpi/ghes.c b/hw/acpi/ghes.c
+index 29cd7e4d8171..5f67322bf0f2 100644
+--- a/hw/acpi/ghes.c
++++ b/hw/acpi/ghes.c
+@@ -404,9 +404,7 @@ int acpi_ghes_record_errors(uint8_t source_id, uint64_t physical_address)
+         return -1;
+     }
  
- /**
-  * acpi_ghes_present: Report whether ACPI GHES table is present
+-    if (source_id < ACPI_GHES_ERROR_SOURCE_COUNT) {
+-        start_addr += source_id * sizeof(uint64_t);
+-    }
++    start_addr += source_id * sizeof(uint64_t);
+ 
+     cpu_physical_memory_read(start_addr, &error_block_addr,
+                              sizeof(error_block_addr));
 -- 
 2.47.1
 
