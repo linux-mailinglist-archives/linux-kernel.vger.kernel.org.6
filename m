@@ -1,116 +1,152 @@
-Return-Path: <linux-kernel+bounces-431645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F252C9E3FD8
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:40:31 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3761F9E3FED
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:42:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C6FC9165499
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:40:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1212B165157
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:42:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A812220CCDA;
-	Wed,  4 Dec 2024 16:40:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CB2220D512;
+	Wed,  4 Dec 2024 16:41:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="e62okoPB"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=outer-limits.org header.i=@outer-limits.org header.b="fGoqj4Be";
+	dkim=permerror (0-bit key) header.d=outer-limits.org header.i=@outer-limits.org header.b="QIdAotBb"
+Received: from mo4-p00-ob.smtp.rzone.de (mo4-p00-ob.smtp.rzone.de [81.169.146.161])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 929D520C473
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 16:40:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733330423; cv=none; b=dxZqIv2E34APT2kYLKmjzpBBurScujRKAA5MNBtdXZiUPWwOJQ+pBZ+pxoDpFhjgIpPZ2bxmvYH7E5rkjIQvcxavMvIfNZXLONUylwNx/kg1BFC8TGR/Kps2oAUc9IJCLslw+LGYkEcLdJd7jJWAHTBR3bS7ID+R64ApfKxPh60=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733330423; c=relaxed/simple;
-	bh=/04I5Sh36cVEWH0Dc57OoZdAbdAokopOpW2ylNRnEV4=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=OZmvssqMn4JVQgJeQsXEO5yoAFC3PqQfdRMLH9hRHh0wNjtCFkW4oFCCVlMTqWAN54fbL2fE+hy/2nxgAJYxi4fAlSIpM0idVrCjcobPxCiAe04zZZ11vD03xKoyMCz30FplvlWcnw/BWTeKJe4pkmUpGoK6ZZC+yH8SUQghRMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=e62okoPB; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-215e194b65aso8279475ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 08:40:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1733330422; x=1733935222; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ea41nc8IA/yWz0s00ynnrLVfux7dYksfDzuAH1K99H4=;
-        b=e62okoPBN1EZ1e62EceYghK3vwedofJo6Jdpz1L0w695AosDS8l13OWPT8C4yK8aun
-         7VVEzLMs53pysJwQOIM440Jj2vsqGCVku0WzJepWBrm5I+GeMcY80KZM2NL8ipDGLah8
-         IwamuyP3RBN7H5aRBURiBrQLCDREimvS1cCgxWyHG7wGv8I+FWhw7Ws0i7Qxy9GnIgMk
-         /I4PkPWL7Q7V7iK2PkRHTxyZmMLlgAbal1efn42tR3noFAxEEw+X4dPk0iIcShoCvC/m
-         j2xSQrGvBSoe2dzIwb69Fx7kdxZXDaxSZ/FU5qUzU0JLainIuYREQ8kZzx7a+TfPPm1R
-         q7zA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733330422; x=1733935222;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ea41nc8IA/yWz0s00ynnrLVfux7dYksfDzuAH1K99H4=;
-        b=aVEn1oDU2fpEnoMo/cU6ghrAB5vesYMNwtG312OsmlTY/UNbxGmRdVup2z06GZp4+G
-         bqjl03QsuuJVaKpWcA+CGfV13T96a1e88MFq0n3dh3gUaJcPmoe0241sRy4XeWIqkkOc
-         +s9RbS4ybk6PgbfoDXJOvHcFbAHRBUX5mav9sRO/yAWYtgLoKiqCO0K7DU8BhRoZZRZd
-         zUEYnc4WExoY0sA1ZJ4KYShfdaucC7v6KAWaKIyU2onqrMg6EzOdu0zX49AZNcKw3hIS
-         8zb23Rj7iXC1yt+hHVaX/0c2MgDctMCxFg+RIH/KVb04ZKSAWTGrnTdBbobbtjf3DDir
-         yc5A==
-X-Forwarded-Encrypted: i=1; AJvYcCU1bk1+Po02y6pZUkKSt8N272dPJAsdtyE//R3ml2CQlXCGmm4iU+bScDh4aknLFM7WWCJvvbFxXU8Y+3k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxRWY+4Vak++9G3Ue2L6aGFwamiwAG69uOU1YHhbGZA5UrkLDpN
-	7p2WyAV0BLYlQ/LGm20x9Y9LbXyrLtZMGL2BqA7EN9P1M6AP/AJ2545jjda7gkI=
-X-Gm-Gg: ASbGncvbuIYq8vbmiajxwCy5vU3SWkuTZnBOVehc/BY5nyBmdHTrRTP8Z90mEEO2r0H
-	s2AUNToDWw2EbuB5HzXfK2xFetTN5DkA0Ha6tSzazvCQ+1F4MEjIzPHpmcTqfpRzmR2uH0PmXtz
-	xxYZPr53QMp/4AZ1N1LJ8AFpfLYok+M1hox72TJOWhHU0Z3Vq/x80bRlCHotNx3/284dewjlEm2
-	6zlBFHrda2GblDH5LWn7VX/Dv85Ig==
-X-Google-Smtp-Source: AGHT+IHvExbzUsZz3phLvXEVX1hQ65i0mcWOe7p/CmHEt2r2LOx5jc+H2no4a9V5TPiVKl76Q80KNQ==
-X-Received: by 2002:a17:903:41c6:b0:215:9642:4d7a with SMTP id d9443c01a7336-215bd0ed2efmr111425035ad.0.1733330421907;
-        Wed, 04 Dec 2024 08:40:21 -0800 (PST)
-Received: from [127.0.0.1] ([2620:10d:c090:600::1:a7a9])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2154e1c34a4sm88508675ad.260.2024.12.04.08.40.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Dec 2024 08:40:21 -0800 (PST)
-From: Jens Axboe <axboe@kernel.dk>
-To: Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org, 
- Colin Ian King <colin.i.king@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20241204153923.401674-1-colin.i.king@gmail.com>
-References: <20241204153923.401674-1-colin.i.king@gmail.com>
-Subject: Re: [PATCH][next] io_uring/kbuf: fix unintentional sign extension
- on shift of reg.bgid
-Message-Id: <173333042069.512655.8947541818653406492.b4-ty@kernel.dk>
-Date: Wed, 04 Dec 2024 09:40:20 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB85E20DD57;
+	Wed,  4 Dec 2024 16:41:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=81.169.146.161
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733330469; cv=pass; b=tB+r+lVk7FkyWCRYMkvd7n9ZHIrg4eLAnQRsAQForbLP77C96nh7yH2fnCHwJ3fBEIt3oiR36awVw8uwSHzawcF6Sw3k5pTaktTDWutOq/2so/9QuNvf3DewmPcxz+npIRFfTq8f/NGAAa7e78cAKSS7WLpoa+KMIcmE3ledO+Q=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733330469; c=relaxed/simple;
+	bh=eryuLDvmmbLftO01zifGIFMBK9atEa5hjuNe1vBCoUk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=blYefpB+bNRUUzv29hH3xndQceuyXVele0dNYEk+DclKxNFJnMWNcy0O3ZEZ8AgsGRu1NzXASAdKJOqtf663E2TEN7kg9QfROLtNQRp1QMt2TCF+6zKSYHPCTLgAlax54nkKRoRV4084R5EXgcNHS80Ooc9V90NITR+SPBVAkxI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=outer-limits.org; spf=none smtp.mailfrom=outer-limits.org; dkim=pass (2048-bit key) header.d=outer-limits.org header.i=@outer-limits.org header.b=fGoqj4Be; dkim=permerror (0-bit key) header.d=outer-limits.org header.i=@outer-limits.org header.b=QIdAotBb; arc=pass smtp.client-ip=81.169.146.161
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=outer-limits.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=outer-limits.org
+ARC-Seal: i=1; a=rsa-sha256; t=1733330454; cv=none;
+    d=strato.com; s=strato-dkim-0002;
+    b=lc5XhTSqN5jHKATJGIZcAbB+BEyDUFJFsW5YcMyqG7QDohdchMPDCXqamltZXkatiw
+    9mVNBP6MACMrh5iD7UYDw7bJAmu8Ypz/ksTL8s/oQSuy5FLY8vfcwqd1lYIDQCgAoY5n
+    NFKpPS6zlzt4Dv8Ml4PZDjsvUqz2z9JRWApTKlvG50/p9SyZTRDtwoM0+zMN1ifEKE+M
+    K58mNYuxQeCPbrUaIBrzuHSkL+sGiLtmzS9IVwsI93g7X8Tti4Fx4XJzfbFk6dzNjVnf
+    itrXgphQd7uv4DSdigDDxnkVcygmxJ2eWeD7Ey9zvzTJfpGYOr0xBjxj5xc21qhGh5oO
+    VjoQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1733330454;
+    s=strato-dkim-0002; d=strato.com;
+    h=Message-Id:Date:Subject:Cc:To:From:Cc:Date:From:Subject:Sender;
+    bh=4Xma7fhGxTfx7BBhKnsUPv1dB06IlM6G/DN6OKrivtI=;
+    b=jDLyADiCe8QVNA7wa4KH6Jq0avPrne1V8Ue5hzo9KP0BciBfrRwQCxc6Dhzo07wTBo
+    l+N6osZpMGYE+XANsbp4H26aoG6du/AmezQYcgkDcjVZZnI7e309Hle/p1tLm2H/WELO
+    bN0/oub7Dnczs8WsAkB8UIKMefdQYBagETXE7tEps/eCemj/x4TBSJaA9G/bsPf+0i+j
+    c2a2ozGTYMBMEVBU7mK5MSduOIBU5xQqK+0CXRZ/rWiHi0PDmlyS9ci8nEtuDuFq1k4f
+    h1m8UjcJLpmKexvQr0FRwXrhRUFj5p8tUl+d0XR1cS2k2GVRofjKUDwOMNDlTnudaGwb
+    Iaaw==
+ARC-Authentication-Results: i=1; strato.com;
+    arc=none;
+    dkim=none
+X-RZG-CLASS-ID: mo00
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1733330454;
+    s=strato-dkim-0002; d=outer-limits.org;
+    h=Message-Id:Date:Subject:Cc:To:From:Cc:Date:From:Subject:Sender;
+    bh=4Xma7fhGxTfx7BBhKnsUPv1dB06IlM6G/DN6OKrivtI=;
+    b=fGoqj4Ben01CPmgIUwFuX802O7VY9wXZ1wchuc/Xe5irPVeX5H5tfi+K+kMFe4nn6I
+    V7sKJirFY0aBl2fJBMs7OQ5z+sKY/gJz0zH5LTa9cpfKS/CehVWckXPvpea7czPTHA7Z
+    cBRLZwIuOSmNCcXbzYizh/QsuyRFRZ0UATtmslUUINqlgb/bSh2VobA1KyGdK0NxWQvt
+    oUpRjJaaKL4PMoVzZkWsO+efBiWq1wwkqx+xcwQABL/O73q7HC/jzok9VhUMzyVhAkqg
+    nCjS0H+1NjGzONyWOz/EvyTz+blZbFqm8V5L5QgueQqjPNb7DFQj8C27mj3DUoxxdBO0
+    7xjw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1733330454;
+    s=strato-dkim-0003; d=outer-limits.org;
+    h=Message-Id:Date:Subject:Cc:To:From:Cc:Date:From:Subject:Sender;
+    bh=4Xma7fhGxTfx7BBhKnsUPv1dB06IlM6G/DN6OKrivtI=;
+    b=QIdAotBbUboSBf4KiW51l6tPrSYxhu0f2kqOaHFG2Wp4Pm3pdVe5ntNn8UGLOSjO3A
+    PL36l9cb72jq1poKWIAA==
+X-RZG-AUTH: ":JnkIfEGmW/AMJS6HttH4FbRVwc4dHlPLCp4e/IoHo8zEMMHAgwTfqBEHcVJSv9P5mRTGd2ImeA=="
+Received: from ws2104.lan.kalrayinc.com
+    by smtp.strato.de (RZmta 51.2.11 AUTH)
+    with ESMTPSA id Ja0a030B4GesXdc
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+	(Client did not present a certificate);
+    Wed, 4 Dec 2024 17:40:54 +0100 (CET)
+From: Julian Vetter <julian@outer-limits.org>
+To: Arnd Bergmann <arnd@arndb.de>,
+	Yoshinori Sato <ysato@users.sourceforge.jp>,
+	Rich Felker <dalias@libc.org>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+Cc: linux-sh@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Julian Vetter <julian@outer-limits.org>
+Subject: [PATCH] sh: Remove memset_io from sh specific code
+Date: Wed,  4 Dec 2024 17:40:20 +0100
+Message-Id: <20241204164020.48361-1-julian@outer-limits.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3-dev-86319
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
 
+Remove memset_io from sh specific code and fall back to the new
+implementation from lib/iomem_copy.c. It uses word accesses if the
+buffer is aligned and only falls back to byte accesses for potentially
+unaligned parts of a buffer (i.e., at the beginning and end).
 
-On Wed, 04 Dec 2024 15:39:23 +0000, Colin Ian King wrote:
-> Shifting reg.bgid << IORING_OFF_PBUF_SHIFT results in a promotion
-> from __u16 to a 32 bit signed integer, this is then sign extended
-> to a 64 bit unsigned long on 64 bit architectures. If reg.bgid is
-> greater than 0x7fff then this leads to a sign extended result where
-> all the upper 32 bits of mmap_offset are set to 1. Fix this by
-> casting reg.bgid to the same type as mmap_offset before performing
-> the shift.
-> 
-> [...]
+Signed-off-by: Julian Vetter <julian@outer-limits.org>
+---
+ arch/sh/include/asm/io.h |  2 --
+ arch/sh/kernel/io.c      | 14 --------------
+ 2 files changed, 16 deletions(-)
 
-Applied, thanks!
-
-[1/1] io_uring/kbuf: fix unintentional sign extension on shift of reg.bgid
-      commit: e54fb80b57e4534ae91e65ea14cc66b9f21b4b7a
-
-Best regards,
+diff --git a/arch/sh/include/asm/io.h b/arch/sh/include/asm/io.h
+index cf5eab840d57..3771bfa984af 100644
+--- a/arch/sh/include/asm/io.h
++++ b/arch/sh/include/asm/io.h
+@@ -269,12 +269,10 @@ __BUILD_IOPORT_STRING(q, u64)
+ #define IO_SPACE_LIMIT 0xffffffff
+ 
+ /* We really want to try and get these to memcpy etc */
+-#define memset_io memset_io
+ #define memcpy_fromio memcpy_fromio
+ #define memcpy_toio memcpy_toio
+ void memcpy_fromio(void *, const volatile void __iomem *, unsigned long);
+ void memcpy_toio(volatile void __iomem *, const void *, unsigned long);
+-void memset_io(volatile void __iomem *, int, unsigned long);
+ 
+ /* Quad-word real-mode I/O, don't ask.. */
+ unsigned long long peek_real_address_q(unsigned long long addr);
+diff --git a/arch/sh/kernel/io.c b/arch/sh/kernel/io.c
+index da22f3b32d30..16e963bab595 100644
+--- a/arch/sh/kernel/io.c
++++ b/arch/sh/kernel/io.c
+@@ -95,17 +95,3 @@ void memcpy_toio(volatile void __iomem *to, const void *from, unsigned long coun
+ 	mb();
+ }
+ EXPORT_SYMBOL(memcpy_toio);
+-
+-/*
+- * "memset" on IO memory space.
+- * This needs to be optimized.
+- */
+-void memset_io(volatile void __iomem *dst, int c, unsigned long count)
+-{
+-        while (count) {
+-                count--;
+-                writeb(c, dst);
+-                dst++;
+-        }
+-}
+-EXPORT_SYMBOL(memset_io);
 -- 
-Jens Axboe
-
-
+2.34.1
 
 
