@@ -1,334 +1,210 @@
-Return-Path: <linux-kernel+bounces-431087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04A339E38C6
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 12:28:07 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E04EA9E399F
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 13:13:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8880283572
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 11:28:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6FF10B22F2E
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 11:27:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44A07192D70;
-	Wed,  4 Dec 2024 11:28:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BD111B392F;
+	Wed,  4 Dec 2024 11:27:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="h4IdPtN/"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="QYhTiyS9";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="91W21iiy";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="QYhTiyS9";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="91W21iiy"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77AE61B2188;
-	Wed,  4 Dec 2024 11:27:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C5F1192D70;
+	Wed,  4 Dec 2024 11:27:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733311681; cv=none; b=aLaDmKF6Nf8+QlnUoIAaLzZTc77MzAJDGE0I0PR/56800zl8cusyjLFaaWfSDfORuTQDTwhmr5pqkkfNn2x5dLVlTPmvS+9J6+7EdUJTRwsMbdQhYfLUAiWkibyW4GNlrbdg/Rt+GSY/SmQFrhJI/XpbH8gNlnmYtXRby2JXVEc=
+	t=1733311629; cv=none; b=ja4pRMJo2L3+VV/a+0McBCHh6tcelVFS1MOY0FhsQz9fba9+jFBnHQwNvD9Mi9W5bs6KfY+wnqhKbFv2RenLClPgEZwsUqyIrJGSC44Lp7DfbGvKvUCQ+WcObQkwj56980icVX3Zi308z10i+0nTtBmX4BPYCAClpkQ9/V73vjw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733311681; c=relaxed/simple;
-	bh=CNZPQNT5nASLkcY0qfkRV7ofyBL9SXIxerIwPO19edg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=DPBqBI2/zvRxItH/LZi1T7qcuInRaohWOGx7aI6hB7yMDRkpbnvgX9p+yseBYD2YXJP3NqUaw3ynr6VClEPz7xsC3TOzx7XuxdgcinBtdEbTO6WqNNGKxhj4pb+SWSZcqX4EjGgmyG6Al4tLXjcByBX2s2CMqdIICtSm0Oq9pQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=h4IdPtN/; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B46XM6f028726;
-	Wed, 4 Dec 2024 11:27:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Q9+YQhMyqGEldOzM8kI48pkL9+xS4Yrwz68Lyr2duoA=; b=h4IdPtN/ToF7u1/E
-	kBH4gvABu4+fL105M2wGaTX5BwyzPxFkXFMqx89cHbTSldZ5JewlXwew2XujE1XL
-	QGOUPXTS+mBZprhARQfSHjl27JmVOB+jkhb2HCTe0djEadPS6sDGW2HrrMeZISar
-	wc58QKPVl8yW4ucQqCtH2RlJkGxSj/tQVK+w67rWq5l4p8pTBCqmAbl/eF0tp2nQ
-	yIdak4xhC9CF0RWKEB197CERzMElxI2g0SVUb3qT3BHiKmQNzP2PluKjKqT3hwVX
-	FRMCsb5Uj2F9KYbbfQrdzc21m4pBuMgf/t+rZ5CEwgy2Wgy6Yk8s+ORQZEulWhxN
-	ScRzwQ==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 439vcem6av-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 04 Dec 2024 11:27:42 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B4BRfrF031409
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 4 Dec 2024 11:27:41 GMT
-Received: from [10.214.66.253] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 4 Dec 2024
- 03:27:34 -0800
-Message-ID: <d2d8d9e9-74b1-4b05-84a2-dcfa204e6e00@quicinc.com>
-Date: Wed, 4 Dec 2024 16:57:02 +0530
+	s=arc-20240116; t=1733311629; c=relaxed/simple;
+	bh=PFRn3SGhnoozp3qOlFIq1FHCxlbiVxXerVcc6TG/vn8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ODsnp7NsiNmVW9XuKoCoZabO6oVDsAZ1N+12k12tgpQ8vf2RB2rvjf8ExJJuQfrxDIR6TiaiYf1tCBEaWOLk4Y1Qaj0ue4vk8dC/BLLRNFdpdIGTLoCOqturewHba8WBNi5HdlJG4lfYOhb0ugvhW21a9DGSm4NY/lqxkci8Ia8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=QYhTiyS9; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=91W21iiy; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=QYhTiyS9; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=91W21iiy; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 4B57D2115B;
+	Wed,  4 Dec 2024 11:27:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1733311626; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5ZbRM7aT9H1zCBrthd8zNiiKo8o7hfrWZ+zYFC840jM=;
+	b=QYhTiyS98L90Ejp4UTqBDdrkHsZD25sBzm/WeLeRLO7kn47yIat7mDHa9ntw1qN6VCE7lE
+	FrM+CO4bOrwh2Tg/v+Nl2fO/1d8d4xuwe4w4Xbm3Z9fFjo3DrPDuQ9EVt6hl7vtedY+1kl
+	o+CvM4CYToQLY53o95uGFQz2bGoRzMA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1733311626;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5ZbRM7aT9H1zCBrthd8zNiiKo8o7hfrWZ+zYFC840jM=;
+	b=91W21iiyUEgT1iIljCiRMPB3jrv7G9qooMXHedvLN+ISvlAnxas0KB8AACY6TWKxnU2iH2
+	/4dRZgCQrV5GSECw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1733311626; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5ZbRM7aT9H1zCBrthd8zNiiKo8o7hfrWZ+zYFC840jM=;
+	b=QYhTiyS98L90Ejp4UTqBDdrkHsZD25sBzm/WeLeRLO7kn47yIat7mDHa9ntw1qN6VCE7lE
+	FrM+CO4bOrwh2Tg/v+Nl2fO/1d8d4xuwe4w4Xbm3Z9fFjo3DrPDuQ9EVt6hl7vtedY+1kl
+	o+CvM4CYToQLY53o95uGFQz2bGoRzMA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1733311626;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5ZbRM7aT9H1zCBrthd8zNiiKo8o7hfrWZ+zYFC840jM=;
+	b=91W21iiyUEgT1iIljCiRMPB3jrv7G9qooMXHedvLN+ISvlAnxas0KB8AACY6TWKxnU2iH2
+	/4dRZgCQrV5GSECw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3C6241396E;
+	Wed,  4 Dec 2024 11:27:06 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id cMi8Doo8UGcYEwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 04 Dec 2024 11:27:06 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id EFDE1A0918; Wed,  4 Dec 2024 12:27:05 +0100 (CET)
+Date: Wed, 4 Dec 2024 12:27:05 +0100
+From: Jan Kara <jack@suse.cz>
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, tytso@mit.edu,
+	adilger.kernel@dilger.ca, jack@suse.cz, ritesh.list@gmail.com,
+	hch@infradead.org, djwong@kernel.org, david@fromorbit.com,
+	zokeefe@google.com, yi.zhang@huawei.com, chengzhihao1@huawei.com,
+	yukuai3@huawei.com, yangerkun@huawei.com
+Subject: Re: [PATCH 03/27] ext4: don't write back data before punch hole in
+ nojournal mode
+Message-ID: <20241204112705.vb2vhlklnzswtvlf@quack3>
+References: <20241022111059.2566137-1-yi.zhang@huaweicloud.com>
+ <20241022111059.2566137-4-yi.zhang@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND v17 3/5] iommu/arm-smmu: add support for PRR bit
- setup
-To: Rob Clark <robdclark@gmail.com>
-CC: <will@kernel.org>, <robin.murphy@arm.com>, <joro@8bytes.org>,
-        <jgg@ziepe.ca>, <jsnitsel@redhat.com>, <robh@kernel.org>,
-        <krzysztof.kozlowski@linaro.org>, <quic_c_gdjako@quicinc.com>,
-        <dmitry.baryshkov@linaro.org>, <iommu@lists.linux.dev>,
-        <linux-arm-msm@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        Connor Abbott <cwabbott0@gmail.com>,
-        "Rob
- Clark" <robdclark@chromium.org>
-References: <20241114160721.1527934-1-quic_bibekkum@quicinc.com>
- <20241114160721.1527934-4-quic_bibekkum@quicinc.com>
- <CAF6AEGuwWsAkRyF-h5Aj3KzM7iksb12HsfJ5Ks+-P8hv60MWFg@mail.gmail.com>
- <9beca099-5cf3-42b5-b1f9-fb1551219b18@quicinc.com>
- <CAF6AEGvAOswFTpS5PHrgCsG_2-QN_Bi4YjZbPpV+r3x=9D2aUQ@mail.gmail.com>
-Content-Language: en-US
-From: Bibek Kumar Patro <quic_bibekkum@quicinc.com>
-In-Reply-To: <CAF6AEGvAOswFTpS5PHrgCsG_2-QN_Bi4YjZbPpV+r3x=9D2aUQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: P-OvR3y_xMkwfLTGQEUOOM9C7fq8Yz4N
-X-Proofpoint-ORIG-GUID: P-OvR3y_xMkwfLTGQEUOOM9C7fq8Yz4N
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- bulkscore=0 mlxlogscore=999 adultscore=0 suspectscore=0 spamscore=0
- impostorscore=0 phishscore=0 mlxscore=0 malwarescore=0 clxscore=1015
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412040089
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241022111059.2566137-4-yi.zhang@huaweicloud.com>
+X-Spam-Score: -2.30
+X-Spamd-Result: default: False [-2.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TAGGED_RCPT(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[16];
+	RCVD_COUNT_THREE(0.00)[3];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[vger.kernel.org,mit.edu,dilger.ca,suse.cz,gmail.com,infradead.org,kernel.org,fromorbit.com,google.com,huawei.com];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,huawei.com:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-
-
-On 11/22/2024 10:33 PM, Rob Clark wrote:
-> On Fri, Nov 22, 2024 at 8:19 AM Bibek Kumar Patro
-> <quic_bibekkum@quicinc.com> wrote:
->>
->>
->>
->> On 11/20/2024 10:47 PM, Rob Clark wrote:
->>> On Thu, Nov 14, 2024 at 8:10 AM Bibek Kumar Patro
->>> <quic_bibekkum@quicinc.com> wrote:
->>>>
->>>> Add an adreno-smmu-priv interface for drm/msm to call
->>>> into arm-smmu-qcom and initiate the PRR bit setup or reset
->>>> sequence as per request.
->>>>
->>>> This will be used by GPU to setup the PRR bit and related
->>>> configuration registers through adreno-smmu private
->>>> interface instead of directly poking the smmu hardware.
->>>>
->>>> Suggested-by: Rob Clark <robdclark@gmail.com>
->>>> Signed-off-by: Bibek Kumar Patro <quic_bibekkum@quicinc.com>
->>>> ---
->>>>    drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c | 37 ++++++++++++++++++++++
->>>>    drivers/iommu/arm/arm-smmu/arm-smmu.h      |  2 ++
->>>>    include/linux/adreno-smmu-priv.h           | 14 ++++++++
->>>>    3 files changed, 53 insertions(+)
->>>>
->>>> diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
->>>> index d26f5aea248e..0e4f3fbda961 100644
->>>> --- a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
->>>> +++ b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
->>>> @@ -16,6 +16,8 @@
->>>>
->>>>    #define QCOM_DUMMY_VAL -1
->>>>
->>>> +#define GFX_ACTLR_PRR          (1 << 5)
->>>> +
->>>>    static struct qcom_smmu *to_qcom_smmu(struct arm_smmu_device *smmu)
->>>>    {
->>>>           return container_of(smmu, struct qcom_smmu, smmu);
->>>> @@ -99,6 +101,32 @@ static void qcom_adreno_smmu_resume_translation(const void *cookie, bool termina
->>>>           arm_smmu_cb_write(smmu, cfg->cbndx, ARM_SMMU_CB_RESUME, reg);
->>>>    }
->>>>
->>>> +static void qcom_adreno_smmu_set_prr_bit(const void *cookie, bool set)
->>>> +{
->>>> +       struct arm_smmu_domain *smmu_domain = (void *)cookie;
->>>> +       struct arm_smmu_device *smmu = smmu_domain->smmu;
->>>> +       struct arm_smmu_cfg *cfg = &smmu_domain->cfg;
->>>> +       u32 reg = 0;
->>>> +
->>>> +       reg =  arm_smmu_cb_read(smmu, cfg->cbndx, ARM_SMMU_CB_ACTLR);
->>>> +       reg &= ~GFX_ACTLR_PRR;
->>>> +       if (set)
->>>> +               reg |= FIELD_PREP(GFX_ACTLR_PRR, 1);
->>>> +       arm_smmu_cb_write(smmu, cfg->cbndx, ARM_SMMU_CB_ACTLR, reg);
->>>> +}
->>>> +
->>>> +static void qcom_adreno_smmu_set_prr_addr(const void *cookie, phys_addr_t page_addr)
->>>> +{
->>>> +       struct arm_smmu_domain *smmu_domain = (void *)cookie;
->>>> +       struct arm_smmu_device *smmu = smmu_domain->smmu;
->>>> +
->>>> +       writel_relaxed(lower_32_bits(page_addr),
->>>> +                               smmu->base + ARM_SMMU_GFX_PRR_CFG_LADDR);
->>>> +
->>>> +       writel_relaxed(upper_32_bits(page_addr),
->>>> +                               smmu->base + ARM_SMMU_GFX_PRR_CFG_UADDR);
->>>> +}
->>>> +
->>>>    #define QCOM_ADRENO_SMMU_GPU_SID 0
->>>>
->>>>    static bool qcom_adreno_smmu_is_gpu_device(struct device *dev)
->>>> @@ -210,6 +238,7 @@ static bool qcom_adreno_can_do_ttbr1(struct arm_smmu_device *smmu)
->>>>    static int qcom_adreno_smmu_init_context(struct arm_smmu_domain *smmu_domain,
->>>>                   struct io_pgtable_cfg *pgtbl_cfg, struct device *dev)
->>>>    {
->>>> +       const struct device_node *np = smmu_domain->smmu->dev->of_node;
->>>>           struct adreno_smmu_priv *priv;
->>>>
->>>>           smmu_domain->cfg.flush_walk_prefer_tlbiasid = true;
->>>> @@ -239,6 +268,14 @@ static int qcom_adreno_smmu_init_context(struct arm_smmu_domain *smmu_domain,
->>>>           priv->get_fault_info = qcom_adreno_smmu_get_fault_info;
->>>>           priv->set_stall = qcom_adreno_smmu_set_stall;
->>>>           priv->resume_translation = qcom_adreno_smmu_resume_translation;
->>>> +       priv->set_prr_bit = NULL;
->>>> +       priv->set_prr_addr = NULL;
->>>> +
->>>> +       if (of_device_is_compatible(np, "qcom,smmu-500") &&
->>>> +                       of_device_is_compatible(np, "qcom,adreno-smmu")) {
->>>
->>> fwiw, it seems like PRR actually works on sc7180, which is _not_
->>> mmu-500, so I guess the support actually goes back further.
->>>
->>
->> As I checked sc7180 was on previous variant of SMMU,
->> so targets on this variant have different steps to set PRR bit.
->> <Do not have both prr bit and PRR page registers>.
+On Tue 22-10-24 19:10:34, Zhang Yi wrote:
+> From: Zhang Yi <yi.zhang@huawei.com>
 > 
-> Experimentally, I have to set both the PRR LADDR/UADDR regs and
-> ACTLR.PRR bit on sc7180 to get the sparse-residency tests passing.  So
-> the underlying hw seems to work in the same way as mmu-500.  _But_
-> this is on a sc7180 chromebook, the situation might be different
-> depending on fw on things that have QC hyp.
+> There is no need to write back all data before punching a hole in
+> data=ordered|writeback mode since it will be dropped soon after removing
+> space, so just remove the filemap_write_and_wait_range() in these modes.
+> However, in data=journal mode, we need to write dirty pages out before
+> discarding page cache in case of crash before committing the freeing
+> data transaction, which could expose old, stale data.
 > 
+> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 
-I checked on sc7180 chipset which is based on the smmu-v2,
-this time by looking for these offsets specifically. I can see the 
-nomenclature of the PRR related registers are a bit different
-compared to MMU-500 variant.
-Also the implementation register is 64 bit instead of
-dual 32 bit as in case of MMU-500. and PRR bit is not marked in
-ACTLR register offset.
+With the ext4_truncate_page_cache_block_range() function I propose, this
+will get slightly simpler. But overall the patch looks good.
 
-So turns out PRR is supported but with some modification and
-can be carried out with same compatible based approach only - as per
-my understanding.
+								Honza
 
-In current patch plan was to provide support for MMU-500 based targets
-and won't break any legacy targets, so we can take the PRR support
-for legacy targets in different series once our evaluation is done on 
-smmu-v2 ?
-We would explore more on this PRR feature for smmu-v2 based targets,
-before supporting it.
-
-Thanks & regards,
-Bibek
-
->> It's MMU-500 targets only where PRR support is with both PRR bit
->> and PRR page addr registers. As I was re-visiting our discussions on v13
->> regarding this - I remember that's why we started using the SMMU-
->> compatible string based PRR procedure selection instead of the reserved-
->> memory node. [1] i.e Based on SMMU variant (as selected by compatible
->> string), specific sequence will be selected.
->>
->> So for now only MMU-500 based selection has been supported as part of
->> this series and will add subsequent support for other SMMU-variants
->> thereafter.
->>
->>> I'm curious if we can just rely on this being supported by any hw that
->>> has a6xx or newer?
->>>
->>
->> I'd need to check on targets which will be based on a6xx onwards, on
->> what will be the procedure planned to support PRR feature. I'll update
->> the information over this space.
+> ---
+>  fs/ext4/inode.c | 26 +++++++++++++++-----------
+>  1 file changed, 15 insertions(+), 11 deletions(-)
 > 
-> One of the open questions about the drm/msm sparse-memory patchset is
-> whether we need to expose to userspace whether PRR is supported, or if
-> we can just rely on sparse-binding support implying sparse residency
-> (ie, PRR) support. All a6xx devices support per-process pgtables,
-> which is the only requirement for basic sparseBinding support.  But
-> PRR is required to additionally expose
-> sparseResidencyBuffer/sparseResidencyImage2D.
+> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> index f8796f7b0f94..94b923afcd9c 100644
+> --- a/fs/ext4/inode.c
+> +++ b/fs/ext4/inode.c
+> @@ -3965,17 +3965,6 @@ int ext4_punch_hole(struct file *file, loff_t offset, loff_t length)
+>  
+>  	trace_ext4_punch_hole(inode, offset, length, 0);
+>  
+> -	/*
+> -	 * Write out all dirty pages to avoid race conditions
+> -	 * Then release them.
+> -	 */
+> -	if (mapping_tagged(mapping, PAGECACHE_TAG_DIRTY)) {
+> -		ret = filemap_write_and_wait_range(mapping, offset,
+> -						   offset + length - 1);
+> -		if (ret)
+> -			return ret;
+> -	}
+> -
+>  	inode_lock(inode);
+>  
+>  	/* No need to punch hole beyond i_size */
+> @@ -4037,6 +4026,21 @@ int ext4_punch_hole(struct file *file, loff_t offset, loff_t length)
+>  		ret = ext4_update_disksize_before_punch(inode, offset, length);
+>  		if (ret)
+>  			goto out_dio;
+> +
+> +		/*
+> +		 * For journalled data we need to write (and checkpoint) pages
+> +		 * before discarding page cache to avoid inconsitent data on
+> +		 * disk in case of crash before punching trans is committed.
+> +		 */
+> +		if (ext4_should_journal_data(inode)) {
+> +			ret = filemap_write_and_wait_range(mapping,
+> +					first_block_offset, last_block_offset);
+> +			if (ret)
+> +				goto out_dio;
+> +		}
+> +
+> +		ext4_truncate_folios_range(inode, first_block_offset,
+> +					   last_block_offset + 1);
+>  		truncate_pagecache_range(inode, first_block_offset,
+>  					 last_block_offset);
+>  	}
+> -- 
+> 2.46.1
 > 
-> I think, long term, turnip probably will want to drop support for
-> older kernels and remove support for legacy buffer mapping.  But if we
-> have some a6xx devices without PRR, then to do that we'd need to
-> decouple sparse binding and sparse residency.  (Vulkan allows a driver
-> to expose the former without the latter.)
-> 
-> BR,
-> -R
-> 
->> [1]:
->> https://lore.kernel.org/all/5790afa3-f9c0-4720-9804-8a7ff3d91854@quicinc.com/#:~:text=%3E%20I%20guess%20if,part%20as%20well.
->>
->> Thanks & regards,
->> Bibek
->>
->>> BR,
->>> -R
->>>
->>>> +               priv->set_prr_bit = qcom_adreno_smmu_set_prr_bit;
->>>> +               priv->set_prr_addr = qcom_adreno_smmu_set_prr_addr;
->>>> +       }
->>>>
->>>>           return 0;
->>>>    }
->>>> diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu.h b/drivers/iommu/arm/arm-smmu/arm-smmu.h
->>>> index e2aeb511ae90..2dbf3243b5ad 100644
->>>> --- a/drivers/iommu/arm/arm-smmu/arm-smmu.h
->>>> +++ b/drivers/iommu/arm/arm-smmu/arm-smmu.h
->>>> @@ -154,6 +154,8 @@ enum arm_smmu_cbar_type {
->>>>    #define ARM_SMMU_SCTLR_M               BIT(0)
->>>>
->>>>    #define ARM_SMMU_CB_ACTLR              0x4
->>>> +#define ARM_SMMU_GFX_PRR_CFG_LADDR     0x6008
->>>> +#define ARM_SMMU_GFX_PRR_CFG_UADDR     0x600C
->>>>
->>>>    #define ARM_SMMU_CB_RESUME             0x8
->>>>    #define ARM_SMMU_RESUME_TERMINATE      BIT(0)
->>>> diff --git a/include/linux/adreno-smmu-priv.h b/include/linux/adreno-smmu-priv.h
->>>> index c637e0997f6d..614665153b3e 100644
->>>> --- a/include/linux/adreno-smmu-priv.h
->>>> +++ b/include/linux/adreno-smmu-priv.h
->>>> @@ -50,6 +50,18 @@ struct adreno_smmu_fault_info {
->>>>     *                 the GPU driver must call resume_translation()
->>>>     * @resume_translation: Resume translation after a fault
->>>>     *
->>>> + * *CAUTION* : PRR callbacks (set_prr_bit/set_prr_addr) are NULL terminated for
->>>> + *             targets without PRR support. Exercise caution and verify target
->>>> + *             capabilities before invoking these callbacks to prevent potential
->>>> + *             runtime errors or unexpected behavior.
->>>> + *
->>>> + * @set_prr_bit:   Extendible interface to be used by GPU to modify the
->>>> + *                ACTLR register bits, currently used to configure
->>>> + *                Partially-Resident-Region (PRR) bit for feature's
->>>> + *                setup and reset sequence as requested.
->>>> + * @set_prr_addr:  Configure the PRR_CFG_*ADDR register with the
->>>> + *                physical address of PRR page passed from
->>>> + *                GPU driver.
->>>>     *
->>>>     * The GPU driver (drm/msm) and adreno-smmu work together for controlling
->>>>     * the GPU's SMMU instance.  This is by necessity, as the GPU is directly
->>>> @@ -67,6 +79,8 @@ struct adreno_smmu_priv {
->>>>        void (*get_fault_info)(const void *cookie, struct adreno_smmu_fault_info *info);
->>>>        void (*set_stall)(const void *cookie, bool enabled);
->>>>        void (*resume_translation)(const void *cookie, bool terminate);
->>>> +    void (*set_prr_bit)(const void *cookie, bool set);
->>>> +    void (*set_prr_addr)(const void *cookie, phys_addr_t page_addr);
->>>>    };
->>>>
->>>>    #endif /* __ADRENO_SMMU_PRIV_H */
->>>> --
->>>> 2.34.1
->>>>
->>
-
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
