@@ -1,172 +1,176 @@
-Return-Path: <linux-kernel+bounces-432062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432063-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED8189E447C
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 20:21:11 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31B319E4480
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 20:21:53 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DEF3D168575
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 19:21:49 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEDA41C3BE7;
+	Wed,  4 Dec 2024 19:21:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ajNLWKeG"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7FD7286038
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 19:21:10 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 112641C3BF0;
-	Wed,  4 Dec 2024 19:21:05 +0000 (UTC)
-Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com [209.85.217.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 479AE24B26;
-	Wed,  4 Dec 2024 19:21:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84FA224B26;
+	Wed,  4 Dec 2024 19:21:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733340064; cv=none; b=GJtllBfIO7+uNqSOwXikrJc7pb0uN9SjxtwNSCLQ4Cc3x9itg/Q/rulR+Et912AEQDnjetfRtFGtCpmeUM+KGLhXENySUzq2ByU6yP54fxuTGtHebgBk2+Z2+uoesbAGsG5YFb+Q/MAYkemmM5OUTv1TSY7YkY2ilCNW82VI8QE=
+	t=1733340106; cv=none; b=CMN/245n3RJWrKmQG9TftDcDU2jOUR8OEnUDEtuSNAeYfNYNd40045dmOdCPWw7inKYGBVXMin32fAtKeLc2MM4cxcZiHTVgWHKU7bPddiJavcOKOo0XG8uNd3JN9n7N/e4RmaRA8nbzoo9fK051DO8NvUAqiMazcOf4WDJTALs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733340064; c=relaxed/simple;
-	bh=rYhegL9//2A2bkxLAO5La3avhpkdVv+Y03oZNvQdDP4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bc6zr5E7Oi7fiXFSE4iASTjfoGtsEfOoKzES0DHnClSFtpiw6hKNa7+CU3j7Ua5QbMHJ01uk24+4iiN+FNj3BwGJACOzP9hjd1lViOCALq6F3xGjX2FY1ad3vGtCGHdcbomEFeBfGAGoOCKh0JT9Px/TevFNFsPgyra60malhfs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f42.google.com with SMTP id ada2fe7eead31-4afab735b6cso19566137.1;
-        Wed, 04 Dec 2024 11:21:01 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733340059; x=1733944859;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=inT4fZZhlTH1i9AqeiQIOnUqbVGNn3i6ScA8tNJSX0o=;
-        b=rrkn7jUWaqqnkKTtqBrX2IvTkz2PXyTF6diWFK/ct9Y/JCkB9aGR4NxsDm9N1tjhWH
-         LK/5vYPXyj+H9d2rFS7c9OnD3i2vb/Utc6YbNbxo/hne5ZoB2os3AT7huJEQaz1UK90y
-         Plvb+/JrJIOSNoQ5ITLetg7kXXJrOdcRCiLdbTMZgCwkwCmuVe1fX9ONszOzBJKsYgfJ
-         oDGE/2V9mK4F7uauuhmLm0U/zkLHXTa6yf4M0+aYMSQLrncR04/0gCmfB7nkCeZohelt
-         DYZOB5XuWcTJEkHMPv3qiwB7bv9+dQnVxyC/MAPOiMp3oC/7pNWl3Fv6d2p2bRlADbPX
-         DI3g==
-X-Forwarded-Encrypted: i=1; AJvYcCUXPoLigzQVvMSJvZvtbyCTlnGX0n6x2+jHvE9ZHqM+WtVLYBf2F0PSmB1fy54gTbuw42EycCeDdL6I@vger.kernel.org, AJvYcCVYOvfRoh4+L2p2C608m268ImPoyUHN9BOBntDnicmP6YDKM5i+qfobTTrJCBHEOPNtXRuzY1wqzax+PnPS@vger.kernel.org, AJvYcCWNWEPbx+4YvN6NVpCRio1/h9/h9X7joyDkxdnCtmXNyDeDmrd50ffFQUgxYPlJniFL2fqBpyTQ2540@vger.kernel.org, AJvYcCWn4nV109sYQJVkhMIr4yhccoDMOLyVOW2P2UvV8JkAOGwaxX962wSv3clAF0VZXl7xmiJcbeKh9JE72DeFlbmClXI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUf8ZUjpNXEpQhBMpqjIdMFOwdBRgbR6Yhat04VYhRCovp3pw/
-	qLAQ9jcOQkZ546naGU0W5GXWDtkLS+LdtF5aEbRG7BGGWK+XrMszz+LZh1dY
-X-Gm-Gg: ASbGncu3p6Wu1R6PTbBHvAyr24hB4aDkf32XNPwAVmsAl2rSjqwmkKLzMQEQxZXyEvy
-	kIqZLA3LQbyr3UnFwkaLMKNCwUWjiOggeZ4a8FAr/WYeC8f4/edBseopk2WeCneaLcVQjUwsyUY
-	OYMvqBV+Go4oml8RxTn7X9si6iLdmBGcvJLXlSLll0YbvrqxwHTGHWnHP+tvznavfg/W7kJ4ioa
-	/ygag2fDG4WKipwzRFwW1yqYX64ZKTrEFySCkqXCWoIrtC6AOl6Akq9eJHj9q0O0y8p+Snbp31i
-	SbTrcpVOCZKV
-X-Google-Smtp-Source: AGHT+IEEIZ8CorMuYzHXaNNDh4cSOaq176oWOIGGNawbSdY8MvMyxV6s4iJqrQL2TWN1aWVXKhUqVw==
-X-Received: by 2002:a05:6102:3f53:b0:4ad:de0b:fe11 with SMTP id ada2fe7eead31-4af97375fe1mr11646918137.17.1733340059620;
-        Wed, 04 Dec 2024 11:20:59 -0800 (PST)
-Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com. [209.85.217.48])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4af9d9d123bsm514620137.5.2024.12.04.11.20.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Dec 2024 11:20:57 -0800 (PST)
-Received: by mail-vs1-f48.google.com with SMTP id ada2fe7eead31-4af4575ec4cso15593137.2;
-        Wed, 04 Dec 2024 11:20:56 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUPrrvZ8v+6dfnyZKo4pWLdfNW7h7MV8OuCzV8XtjwuFLEIBpoLITAVB3ZJWfjQR0z0okdEjvuz5ftd@vger.kernel.org, AJvYcCUZpo6TKX9cgxUAGbf0KOQlo9+u19Rh00BlwO0lDQuhA47/hCX6lrvHiTjw6GVJJIr50SSIQTIlxHkFW04V@vger.kernel.org, AJvYcCUkj812aZHMW674kbnLGjZBDuAdh0pphw11QDE7UHj2EI67e+TlnwqbuaC/MiJonr0DBF80ZOY9luqPY1o2aowmuQ0=@vger.kernel.org, AJvYcCUz/hv9SWDFCfR44n6VBDZHTfDxnwjdXN651PuDbPGARcZitfpb9WyiFrcPko2iWUwdsf6+gyqyoi1D@vger.kernel.org
-X-Received: by 2002:a05:6102:3054:b0:4a4:8d45:6839 with SMTP id
- ada2fe7eead31-4af97268516mr11708144137.13.1733340056024; Wed, 04 Dec 2024
- 11:20:56 -0800 (PST)
+	s=arc-20240116; t=1733340106; c=relaxed/simple;
+	bh=XvwEqCgaLZUkQxD62yH5xGJhJYQI48sqzkTzpiBTSzU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=STTVyqbqgrEcV9oYtng/NuNXQfejGFjD4C0A+bj9YFu4KBDPvovPpKQuJElRs64zzkYTMixP6Mfv7d+MmoC43pkFmJx8OuqRtzx0BTeu/0rIi94xsHDTu+twLZ0LPw1Tj0jOr/hvKCtJX6Dh/JiDOR3N34byHpffIHX8rzY9QIc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ajNLWKeG; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B4GXaCD023317;
+	Wed, 4 Dec 2024 19:21:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	4U2a+iogl9VHRsnyNgkVeDFo4vdPT+GZFNYfMDV4B8Q=; b=ajNLWKeG8XnRXwzR
+	sE/RYcmfZN88Yo0v/2Tsa/B6Yli6kX0pz2ugKKgtTR8XLRZaBiQKW5tnCFzyDUjG
+	hah7gkMHf3/ny2P0+5hTfTmzFSpelJGn2vvpNcM6xky+llTrOhmkuUxx6icNuhE3
+	Dw15nTS7TExFUFgBMKzUhjR/LrcY79Wwo+WC3JpR4KuQkVvO8Et1HvJks5EXKxWu
+	xBPp+vfIhHJrYCL55dzy/iwpbQacAfrcmQ63ZEFzrhjvG8RPCh3LOeqI5rBLdQSg
+	DME20U/hFTlJzfEYu/uYx7VNF2C/U8/pFwKL1gqXx6quBWwfBUXN8tfHdteIFtqA
+	0uANpQ==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43aj429ymc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 04 Dec 2024 19:21:29 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B4JLS6K018655
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 4 Dec 2024 19:21:28 GMT
+Received: from [10.71.110.107] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 4 Dec 2024
+ 11:21:27 -0800
+Message-ID: <20a3955e-3d10-47c5-8e68-d70342805010@quicinc.com>
+Date: Wed, 4 Dec 2024 11:21:26 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241203-rcar-gh-dsi-v1-0-738ae1a95d2a@ideasonboard.com>
- <20241203-rcar-gh-dsi-v1-8-738ae1a95d2a@ideasonboard.com> <20241203093703.GL10736@pendragon.ideasonboard.com>
- <b9a07779-34c3-496f-ac04-d7f6e1e61d82@ideasonboard.com>
-In-Reply-To: <b9a07779-34c3-496f-ac04-d7f6e1e61d82@ideasonboard.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 4 Dec 2024 20:20:44 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdWa0frtVLJcoz7QRe=ZHa24K9MxyV5-_Ce4AUJo+LDEGA@mail.gmail.com>
-Message-ID: <CAMuHMdWa0frtVLJcoz7QRe=ZHa24K9MxyV5-_Ce4AUJo+LDEGA@mail.gmail.com>
-Subject: Re: [PATCH 8/9] arm64: dts: renesas: r8a779h0: Add display support
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, LUU HOAI <hoai.luu.ub@renesas.com>, 
-	Jagan Teki <jagan@amarulasolutions.com>, Sam Ravnborg <sam@ravnborg.org>, 
-	Biju Das <biju.das.jz@bp.renesas.com>, dri-devel@lists.freedesktop.org, 
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
-	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
-	=?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/ci: add kms_cursor_legacy@torture-bo to apq8016
+ flakes
+To: Helen Mae Koike Fornazier <helen.koike@collabora.com>
+CC: Rob Clark <robdclark@gmail.com>,
+        Dmitry Baryshkov
+	<dmitry.baryshkov@linaro.org>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten
+	<marijn.suijten@somainline.org>,
+        Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        dri-devel
+	<dri-devel@lists.freedesktop.org>,
+        freedreno
+	<freedreno@lists.freedesktop.org>
+References: <20241204-cursor_tor_skip-v1-1-f5f0bba5df7b@quicinc.com>
+ <193931869a5.f923adf2270026.8321075661083367617@collabora.com>
+Content-Language: en-US
+From: Abhinav Kumar <quic_abhinavk@quicinc.com>
+In-Reply-To: <193931869a5.f923adf2270026.8321075661083367617@collabora.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: -yi9Rln1Vs3X-sbEcRIRKWHjdiusp5_y
+X-Proofpoint-ORIG-GUID: -yi9Rln1Vs3X-sbEcRIRKWHjdiusp5_y
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 bulkscore=0
+ mlxscore=0 mlxlogscore=999 lowpriorityscore=0 clxscore=1015 malwarescore=0
+ priorityscore=1501 spamscore=0 adultscore=0 suspectscore=0 impostorscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
+ definitions=main-2412040148
 
-Hi Tomi,
+Hi Helen
 
-On Wed, Dec 4, 2024 at 5:04=E2=80=AFPM Tomi Valkeinen
-<tomi.valkeinen@ideasonboard.com> wrote:
-> On 03/12/2024 11:37, Laurent Pinchart wrote:
-> > On Tue, Dec 03, 2024 at 10:01:42AM +0200, Tomi Valkeinen wrote:
-> >> From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-> >>
-> >> Add the device nodes for supporting DU and DSI.
-> >>
-> >> Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com=
->
-> >> ---
-> >>   arch/arm64/boot/dts/renesas/r8a779h0.dtsi | 77 +++++++++++++++++++++=
-++++++++++
-> >>   1 file changed, 77 insertions(+)
-> >>
-> >> diff --git a/arch/arm64/boot/dts/renesas/r8a779h0.dtsi b/arch/arm64/bo=
-ot/dts/renesas/r8a779h0.dtsi
-> >> index 12d8be3fd579..82df6ee98afb 100644
-> >> --- a/arch/arm64/boot/dts/renesas/r8a779h0.dtsi
-> >> +++ b/arch/arm64/boot/dts/renesas/r8a779h0.dtsi
-> >> @@ -1828,6 +1828,54 @@ csi41isp1: endpoint {
-> >>                      };
-> >>              };
-> >>
-> >> +            fcpvd0: fcp@fea10000 {
-> >> +                    compatible =3D "renesas,fcpv";
-> >> +                    reg =3D <0 0xfea10000 0 0x200>;
-> >> +                    clocks =3D <&cpg CPG_MOD 508>;
-> >> +                    power-domains =3D <&sysc R8A779H0_PD_C4>;
-> >> +                    resets =3D <&cpg 508>;
-> >> +            };
-> >> +
-> >> +            vspd0: vsp@fea20000 {
-> >> +                    compatible =3D "renesas,vsp2";
-> >> +                    reg =3D <0 0xfea20000 0 0x8000>;
-> >> +                    interrupts =3D <GIC_SPI 546 IRQ_TYPE_LEVEL_HIGH>;
-> >
-> > The documentation lists this interrupt as being LevelSensitive and
-> > Negative. I wouldn't expect the VSP to work at all with a wrong polarit=
-y
-> > in DT, so the level may get inverted somewhere.
->
-> Indeed... It's the same for V4H. And it also has IRQ_TYPE_LEVEL_HIGH in
-> the dts. I tried changing it to LOW on V4H, but:
->
-> genirq: Setting trigger mode 8 for irq 91 failed
-> vsp1 fea20000.vsp: failed to request IRQ
->
-> I didn't dig further yet.
+On 12/4/2024 11:14 AM, Helen Mae Koike Fornazier wrote:
+> Hi Abhinav,
+> 
+> Thanks for your patch.
+> 
+> 
+> 
+> ---- On Wed, 04 Dec 2024 15:55:17 -0300 Abhinav Kumar  wrote ---
+> 
+>   > From the jobs [1] and [2] of pipeline [3], its clear that
+>   > kms_cursor_legacy@torture-bo is most certainly a flake and
+>   > not a fail for apq8016. Mark the test accordingly to match the results.
+>   >
+>   > [1] : https://gitlab.freedesktop.org/drm/msm/-/jobs/67676481
+>   > [2] : https://gitlab.freedesktop.org/drm/msm/-/jobs/67677430
+>   > [3]: https://gitlab.freedesktop.org/drm/msm/-/pipelines/1322770
+>   >
+>   > Signed-off-by: Abhinav Kumar quic_abhinavk@quicinc.com>
+>   > ---
+>   >  drivers/gpu/drm/ci/xfails/msm-apq8016-flakes.txt | 5 +++++
+>   >  1 file changed, 5 insertions(+)
+>   >
+>   > diff --git a/drivers/gpu/drm/ci/xfails/msm-apq8016-flakes.txt b/drivers/gpu/drm/ci/xfails/msm-apq8016-flakes.txt
+>   > new file mode 100644
+>   > index 000000000000..18639853f18f
+>   > --- /dev/null
+>   > +++ b/drivers/gpu/drm/ci/xfails/msm-apq8016-flakes.txt
+>   > @@ -0,0 +1,5 @@
+>   > +# Board Name: msm-apq8016-db410c
+>   > +# Failure Rate: 100
+> 
+> Is failure rate is 100%, isn't it a fail than?
+> (I know we have other cases with Failure Rate: 100, maybe we should fix them as well)
+> 
 
-Yeah, I don't think the GIC supports anything but IRQ_TYPE_LEVEL_HIGH.
-Which brings us to the two ISP nodes on R-Car V4H and V4M, both using
-IRQ_TYPE_LEVEL_LOW.
-Niklas: looks like drivers/media/platform/renesas/rcar-isp.c doesn't
-actually use the IRQ, so I guess that's how this could slip in?
+Maybe I misunderstood the meaning of "Failure rate" for a flake.
 
-Gr{oetje,eeting}s,
+I interpreted this as this test being flaky 100% of the time :)
 
-                        Geert
+Out of the 3 runs of the test, it passed 2/3 times and failed 1/3.
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+So its fail % actually is 33.33% in that case.
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+I think I saw a Failure rate of 100% on msm-sm8350-hdk-flakes.txt and 
+mistook that as the rate at which flakes are seen.
+
+Let me fix this up as 33%
+
+> Regards,
+> Helen
+> 
+>   > +# IGT Version: 1.28-ga73311079
+>   > +# Linux Version: 6.12.0-rc2
+>   > +kms_cursor_legacy@torture-bo
+>   >
+>   > ---
+>   > base-commit: 798bb342e0416d846cf67f4725a3428f39bfb96b
+>   > change-id: 20241204-cursor_tor_skip-9d128dd62c4f
+>   >
+>   > Best regards,
+>   > --
+>   > Abhinav Kumar quic_abhinavk@quicinc.com>
+>   >
+>   >
+> 
 
