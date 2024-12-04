@@ -1,55 +1,59 @@
-Return-Path: <linux-kernel+bounces-431858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4DC29E4223
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:45:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CA8DF9E4224
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:45:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89D5A168DD0
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:45:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F52F168E47
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:45:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDA6222EBC2;
-	Wed,  4 Dec 2024 17:12:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B47A822F39A;
+	Wed,  4 Dec 2024 17:12:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LIqkoCJw"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PsR+YJhr"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31384206F19;
-	Wed,  4 Dec 2024 17:12:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BA6C22F383;
+	Wed,  4 Dec 2024 17:12:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733332343; cv=none; b=RTItYqr1w57Au5eq5GnLGJxTcfYaFSvS06tdtyvaoLRKEHtESxRAOgMWejzHxMMbQ/UdyqX7hIDjgw+0XmEeb1uBwgnwzm+JKbT3mUuvLOT4fvDuXtuNR0tMzrlSliHq/4OveMNnEN2uy5BRavTiDWdv5CEczxYMCrSDvAdgU0c=
+	t=1733332344; cv=none; b=rfghSARxN88RCjd9GYywO3JhhBZdWMZIsVKTq4NYkCYoJzhQnjB6FrO2ZBU9VhiVuez+rm1j10byVIjr0J5dM0384kauLDY5oZZJb6d01TzdAeULPQhIdgs6ajFgsahGC1eZl2Esso85+UQIj5X5gCV2MfKY4XXoknitY9IodCI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733332343; c=relaxed/simple;
-	bh=ckDMjVDSyBTqcPOpG8jfSlViv6qZAcYWL7qVzsWgtYM=;
+	s=arc-20240116; t=1733332344; c=relaxed/simple;
+	bh=rxoBcMFbJyrz7iCwfBybM9Sod743Iqe6GpVYyVawzFg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=TcTB5ohnsWG5QbDcy8dFQuY+ADEhCNAgQTDrahzeAe+yJZAQlgqZOfwzC9EUiJOoEd4bnnMJmjCTeIvNgHC3idw3mgMcychTYyMOv+bvQTQBwiOEHVeKYw2OKMhUfkyQNP+MIs5xV9sKpCLbafMDgq84CJUyqhyFxwV6diWlO0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LIqkoCJw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A52A0C4CEDF;
-	Wed,  4 Dec 2024 17:12:21 +0000 (UTC)
+	 MIME-Version; b=D3YlJNeHPPjgmZUTKiuwvh3ufp44+r6hN3tbex/fE3fhuFYXbKPHvsXOc1zmCD+XRm/x3q5rtHrXWsD5Bg9E/6N8/ONj/vB8PMpvw3FbTXqzXjnikJZe2Vp6otN8NJGfNEN4sOEd8xudVssFEHfqPLjDzhlL+iI9i7boGKFmm4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PsR+YJhr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D21A6C4CECD;
+	Wed,  4 Dec 2024 17:12:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733332342;
-	bh=ckDMjVDSyBTqcPOpG8jfSlViv6qZAcYWL7qVzsWgtYM=;
+	s=k20201202; t=1733332344;
+	bh=rxoBcMFbJyrz7iCwfBybM9Sod743Iqe6GpVYyVawzFg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=LIqkoCJwZMjNqLbr4oHIdKyvdz4eC4aI9fbG3R3/CTvFzQNFTbJVhYABCNArcYYqw
-	 8zSd679WV86w4Pxyli0nrLSrheMWxyFLh9IAlh8Ksbk22NBC3T5lTCsFKndtXGO5+R
-	 r6W2E5P8NEBS78UIigTDFvG9dTGwxk++p498xAHy2L85UujJoopAYtUfSWICBSJqjB
-	 ijpvcv+cIEUfKfj05cT009gh3y+dBcaJGO8nqGLx54acvF1mKqcyfXqSFSdxXvG6rl
-	 8Id9k3rY2LIZaR1M8eAQzLq3elc5tyCI6zn9vEmb8KDEqdKoGCwzy8f8I/KGNbqmKB
-	 4KgoDXp+LR2XA==
+	b=PsR+YJhraxY1ps9zz+bLi2TrgvT7PpEAVoLq9ttNro2KefwMImRvLHcuTvfPxkjqa
+	 5iZ6v6ohmmaCZyLJZMTazhu8C2qr/o2YapC1BihXgBLBX/qDYgZqGIccF5bkGF5cyb
+	 c84EUUFqTRG/n5Ln4yVNhsjSlyESDdXAvsLOF26h7GqjXy5StiL8jYvjSwDApghoEE
+	 mJx6urO36bv+JvLbsbU5mGX2ED7KYNp5XyMGA4IcvygNkBSo6TMjg/jojDL16u057u
+	 +v1Ied5JhKEFz0+kjVpJ1WMT5UTAo6G4vE7dd/HlMD88IJvHfBdlXuJKYcMPsv2gIn
+	 PTjgbO9maQkRA==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Mengyuan Lou <mengyuanlou@net-swift.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
+Cc: Defa Li <defa.li@mediatek.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
 	Sasha Levin <sashal@kernel.org>,
-	linux-pci@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.11 10/13] PCI: Add ACS quirk for Wangxun FF5xxx NICs
-Date: Wed,  4 Dec 2024 11:00:35 -0500
-Message-ID: <20241204160044.2216380-10-sashal@kernel.org>
+	matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com,
+	linux-i3c@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: [PATCH AUTOSEL 6.11 11/13] i3c: Use i3cdev->desc->info instead of calling i3c_device_get_info() to avoid deadlock
+Date: Wed,  4 Dec 2024 11:00:36 -0500
+Message-ID: <20241204160044.2216380-11-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20241204160044.2216380-1-sashal@kernel.org>
 References: <20241204160044.2216380-1-sashal@kernel.org>
@@ -64,61 +68,110 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.11.10
 Content-Transfer-Encoding: 8bit
 
-From: Mengyuan Lou <mengyuanlou@net-swift.com>
+From: Defa Li <defa.li@mediatek.com>
 
-[ Upstream commit aa46a3736afcb7b0793766d22479b8b99fc1b322 ]
+[ Upstream commit 6cf7b65f7029914dc0cd7db86fac9ee5159008c6 ]
 
-Wangxun FF5xxx NICs are similar to SFxxx, RP1000 and RP2000 NICs.  They may
-be multi-function devices, but they do not advertise an ACS capability.
+A deadlock may happen since the i3c_master_register() acquires
+&i3cbus->lock twice. See the log below.
+Use i3cdev->desc->info instead of calling i3c_device_info() to
+avoid acquiring the lock twice.
 
-But the hardware does isolate FF5xxx functions as though it had an ACS
-capability and PCI_ACS_RR and PCI_ACS_CR were set in the ACS Control
-register, i.e., all peer-to-peer traffic is directed upstream instead of
-being routed internally.
+v2:
+  - Modified the title and commit message
 
-Add ACS quirk for FF5xxx NICs in pci_quirk_wangxun_nic_acs() so the
-functions can be in independent IOMMU groups.
+============================================
+WARNING: possible recursive locking detected
+6.11.0-mainline
+--------------------------------------------
+init/1 is trying to acquire lock:
+f1ffff80a6a40dc0 (&i3cbus->lock){++++}-{3:3}, at: i3c_bus_normaluse_lock
 
-Link: https://lore.kernel.org/r/E16053DB2B80E9A5+20241115024604.30493-1-mengyuanlou@net-swift.com
-Signed-off-by: Mengyuan Lou <mengyuanlou@net-swift.com>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+but task is already holding lock:
+f1ffff80a6a40dc0 (&i3cbus->lock){++++}-{3:3}, at: i3c_master_register
+
+other info that might help us debug this:
+ Possible unsafe locking scenario:
+
+       CPU0
+       ----
+  lock(&i3cbus->lock);
+  lock(&i3cbus->lock);
+
+ *** DEADLOCK ***
+
+ May be due to missing lock nesting notation
+
+2 locks held by init/1:
+ #0: fcffff809b6798f8 (&dev->mutex){....}-{3:3}, at: __driver_attach
+ #1: f1ffff80a6a40dc0 (&i3cbus->lock){++++}-{3:3}, at: i3c_master_register
+
+stack backtrace:
+CPU: 6 UID: 0 PID: 1 Comm: init
+Call trace:
+ dump_backtrace+0xfc/0x17c
+ show_stack+0x18/0x28
+ dump_stack_lvl+0x40/0xc0
+ dump_stack+0x18/0x24
+ print_deadlock_bug+0x388/0x390
+ __lock_acquire+0x18bc/0x32ec
+ lock_acquire+0x134/0x2b0
+ down_read+0x50/0x19c
+ i3c_bus_normaluse_lock+0x14/0x24
+ i3c_device_get_info+0x24/0x58
+ i3c_device_uevent+0x34/0xa4
+ dev_uevent+0x310/0x384
+ kobject_uevent_env+0x244/0x414
+ kobject_uevent+0x14/0x20
+ device_add+0x278/0x460
+ device_register+0x20/0x34
+ i3c_master_register_new_i3c_devs+0x78/0x154
+ i3c_master_register+0x6a0/0x6d4
+ mtk_i3c_master_probe+0x3b8/0x4d8
+ platform_probe+0xa0/0xe0
+ really_probe+0x114/0x454
+ __driver_probe_device+0xa0/0x15c
+ driver_probe_device+0x3c/0x1ac
+ __driver_attach+0xc4/0x1f0
+ bus_for_each_dev+0x104/0x160
+ driver_attach+0x24/0x34
+ bus_add_driver+0x14c/0x294
+ driver_register+0x68/0x104
+ __platform_driver_register+0x20/0x30
+ init_module+0x20/0xfe4
+ do_one_initcall+0x184/0x464
+ do_init_module+0x58/0x1ec
+ load_module+0xefc/0x10c8
+ __arm64_sys_finit_module+0x238/0x33c
+ invoke_syscall+0x58/0x10c
+ el0_svc_common+0xa8/0xdc
+ do_el0_svc+0x1c/0x28
+ el0_svc+0x50/0xac
+ el0t_64_sync_handler+0x70/0xbc
+ el0t_64_sync+0x1a8/0x1ac
+
+Signed-off-by: Defa Li <defa.li@mediatek.com>
+Link: https://lore.kernel.org/r/20241107132549.25439-1-defa.li@mediatek.com
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pci/quirks.c | 15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
+ drivers/i3c/master.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
-index dccb60c1d9cc3..8103bc24a54ea 100644
---- a/drivers/pci/quirks.c
-+++ b/drivers/pci/quirks.c
-@@ -4996,18 +4996,21 @@ static int pci_quirk_brcm_acs(struct pci_dev *dev, u16 acs_flags)
- }
+diff --git a/drivers/i3c/master.c b/drivers/i3c/master.c
+index 7028f03c2c42e..5e3b63f78d2d2 100644
+--- a/drivers/i3c/master.c
++++ b/drivers/i3c/master.c
+@@ -282,7 +282,8 @@ static int i3c_device_uevent(const struct device *dev, struct kobj_uevent_env *e
+ 	struct i3c_device_info devinfo;
+ 	u16 manuf, part, ext;
  
- /*
-- * Wangxun 10G/1G NICs have no ACS capability, and on multi-function
-- * devices, peer-to-peer transactions are not be used between the functions.
-- * So add an ACS quirk for below devices to isolate functions.
-+ * Wangxun 40G/25G/10G/1G NICs have no ACS capability, but on
-+ * multi-function devices, the hardware isolates the functions by
-+ * directing all peer-to-peer traffic upstream as though PCI_ACS_RR and
-+ * PCI_ACS_CR were set.
-  * SFxxx 1G NICs(em).
-  * RP1000/RP2000 10G NICs(sp).
-+ * FF5xxx 40G/25G/10G NICs(aml).
-  */
- static int  pci_quirk_wangxun_nic_acs(struct pci_dev *dev, u16 acs_flags)
- {
- 	switch (dev->device) {
--	case 0x0100 ... 0x010F:
--	case 0x1001:
--	case 0x2001:
-+	case 0x0100 ... 0x010F: /* EM */
-+	case 0x1001: case 0x2001: /* SP */
-+	case 0x5010: case 0x5025: case 0x5040: /* AML */
-+	case 0x5110: case 0x5125: case 0x5140: /* AML */
- 		return pci_acs_ctrl_enabled(acs_flags,
- 			PCI_ACS_SV | PCI_ACS_RR | PCI_ACS_CR | PCI_ACS_UF);
- 	}
+-	i3c_device_get_info(i3cdev, &devinfo);
++	if (i3cdev->desc)
++		devinfo = i3cdev->desc->info;
+ 	manuf = I3C_PID_MANUF_ID(devinfo.pid);
+ 	part = I3C_PID_PART_ID(devinfo.pid);
+ 	ext = I3C_PID_EXTRA_INFO(devinfo.pid);
 -- 
 2.43.0
 
