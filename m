@@ -1,95 +1,94 @@
-Return-Path: <linux-kernel+bounces-432238-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2B339E481F
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 23:48:58 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F47F9E4825
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 23:49:46 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB5FB188048C
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 22:48:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E38FE2845CF
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 22:49:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADBB21F5438;
-	Wed,  4 Dec 2024 22:48:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E275202C33;
+	Wed,  4 Dec 2024 22:49:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="NEoGi3lD"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="gJ9Buxxr"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76F5718C932
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 22:48:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BC211F542D
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 22:49:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733352529; cv=none; b=jf2IW1x3uyhRKtx6+kh3Al1Y50DtavvQqOEzfWXpFErA0oFNlIMcsAaIP/WRnNOrZB7dDAWEjkOnKlcpGoyXaS9kNdI6YIVYYBpTLtniBG2QF854gBWZ0tTUtzTToD7qb4TJF4Z0NY1NQU8KY7YVmojZjzeqrWSI3yHxOZJD6a4=
+	t=1733352569; cv=none; b=fmgDHxLz35P4/LaHlTpR8VfMmR03U4tqDIRrK7idvtEXY4IFQgvYvgasX4sFR09h1XnKfI/cMqY/Q40OPMsTpXP7YllhaiNqOG56K79eRgHa1vL5Sk3fP9/Lwe0YLRn451vwtTrnqZYSaNAwHqhVoctZ7oNV4s4qNbThBGwHHwU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733352529; c=relaxed/simple;
-	bh=TSj4StKekoMWof/0a9RDpcEaVlkxhZJJcFqRiqpRSp0=;
+	s=arc-20240116; t=1733352569; c=relaxed/simple;
+	bh=TFhy+fON5EYXB48RBtCSmjPevQfB+1YjtuhEruheq8w=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Jx4heDWG8tkMHutuQV2iUlhI5zX3XQqquOVf/pXDLB8H2HsWov7EVfiNYfnOhFs3MV1ukj2M+nBXxfzQfOUAhX1u2a3uvA8hrxIsJsqQnpSDW8ps1Bf8cALg7nU7WZ56uT4N8PagHLiZDXyETysUCFyLNPYPL/JFGljQTtQfgaM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=NEoGi3lD; arc=none smtp.client-ip=209.85.167.45
+	 To:Cc:Content-Type; b=p818qeLd0ckSbbjhg74l0IiWCxrJRR9xXe4yajU+aFCN2hXT2Yjh4Y0+91IY85YsDgs4SI8sSgsiTIUjlxCikHVdo3i+aZt8paE/kpkk4P4GXartladmcMmoKqqdD+Vg8RbsqsBJ1b7DAAcAAJ12jHheahTAbLIPUPRRkaMSSbA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=gJ9Buxxr; arc=none smtp.client-ip=209.85.208.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-53de6b7da14so315638e87.0
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 14:48:46 -0800 (PST)
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2ffdbc0c103so1981361fa.3
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 14:49:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1733352523; x=1733957323; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1733352565; x=1733957365; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=eS5St45eHSe24ISFP3PYGVU7STuxo7md32QjNE7kdII=;
-        b=NEoGi3lDwp6W1/daj4d9A3avq1l4mkKCq4sqaRrGFS8YKoO149M2vlLirdwDPuxa/H
-         NgCziL3wrG3mxLaZtQFTenhQJu32FbS1jtJQ6fSdlVl9j/gHRFTxF3DWiDuw1Gssi6r3
-         FR/dUtKlAbIlbTHX4ct0qIzY36Ywv1SAb1xKc=
+        bh=s3NqyklxNKjn7GA1Xiioa4rdBEF1bx3QvQxtDhyi8+k=;
+        b=gJ9Buxxr4i+Zh6zHQ84t1zFOu/ew1Y4U7mWy78f/U7w/hx7N8N8W7d/jJG79Dh0xJ8
+         6ZeRKcS6YXNTjQf/WbV+IpV8jp+ObWuYrVj1YDZWKlmXyJl0+s2dXyd5a0X46Ci8brFp
+         VhMqaetajVFBEXAMLIW1NJ7MjulHdFgN00v+g=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733352523; x=1733957323;
+        d=1e100.net; s=20230601; t=1733352565; x=1733957365;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=eS5St45eHSe24ISFP3PYGVU7STuxo7md32QjNE7kdII=;
-        b=QOkd4L+OHFxiMuPp9zbVEbuh9n6dPOc8KjVyt6dwIxJbkgC7+LU3pwmoHJNTf3B06V
-         dsttP9NauRQfOd8zSRthan6vfH0wbU/cK0LGI/foSsUVtsEf0q8vAqUBlBNp1F7//qls
-         UNVJP1e/BVlzBTargRU/Cm0zCoZi69LkOoNxOfW0D8Mf6AgUdi5p+0/U/vaY1xQSEt4F
-         WK3AMBssbcNK+yca1UQODB+NjRt4iAv+pCT4goiOoCBm91QoL46ovqtlm2r2q96jiNs1
-         t4z7nBIe/nC0CH9u9eI0PyqxbgMxrgQ6QOWYpy36Z9YL3rcysxmAgg4dAacq3QnylwEY
-         9NBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV+IfvctJ6jcljnkAVdf+tmODmiTFrwfgq/smCehCgQjX022tyO0kd3gLGvq0OKsItH6hMgiT2rFJ3gppU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIuVR5zt4iXgrfUrxw0rZWsAc5rOrwlfoASSeDakmskZO/zdHF
-	On1jOxzKqCcev8inhvlSmtGJMwbOkiQmgEtcfTdI7lBydAPMDzFtwc2Rn0oV5WUv4TNBViMYsh5
-	E9RaH
-X-Gm-Gg: ASbGncsmCLOG5nBdqVdIESIU/UK5NbvmZbZl90B+5eSD0Nln9CUEoRbUrPs5ztcgPIK
-	RCDs00mlfqCpVFFUtSEtEwuXnGbxGsclqu4V45KX1gTDjpTMJHZ+LEpTRTgQGmzWaOsmDb0ia0N
-	qC0O6kY43Wf+wvmmxL5vqzGFm7YMZ21UXRGXNRB6Y3bkyLeqOIcQPn43bM08yxZK8bpBQ3l8SJ8
-	14clYL6WAXU/c0CANsFC2EJIDJvG4NVQ4aN0PX9gI/G+w/calBi+sAiscKMf6ghJoKt4b0+5owp
-	CL0PxWzQGYO4GA==
-X-Google-Smtp-Source: AGHT+IFhS79gnv6j2J+6E8hDnGiVKl7PnOv9cBwgG5sc8vWttw5iqsbIGpZLm4sfQ342rNZsblHy0Q==
-X-Received: by 2002:a05:6512:3111:b0:53e:1c3d:fb2d with SMTP id 2adb3069b0e04-53e1c3dfcaamr1265772e87.0.1733352522757;
-        Wed, 04 Dec 2024 14:48:42 -0800 (PST)
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com. [209.85.167.45])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53e229d9913sm24365e87.283.2024.12.04.14.48.41
+        bh=s3NqyklxNKjn7GA1Xiioa4rdBEF1bx3QvQxtDhyi8+k=;
+        b=MC3JBNYRPPMwOcsWI2N4saikoAmJ9MwzF5f/GOXd6eySLkNnpM1U/zdeuxponEkopJ
+         c9ZMRLxWlmc18D7II0EiaF8vsJEmv8XfhfigqOQmgpHv7YPagd/sZh6YALc1qrCLMdBE
+         8vuqqN3nIgVnGhgGUViTfzb9WYcrw4BUByV/u6zKcstT43jcFSomxFocuirO/Ebx5tcX
+         keMF0WvblFfIDhS+H5K2RZSeekLAINkqDwr0HyZeSHEcRFtLm3LbanhWvETD6ws0HLE2
+         Vh5h+o3SgdgeD58T0UXB5NWG0j4HHaBpPS46QKKANhOLiOyjURKPFUNKVP3KgGPGsXI+
+         5QcA==
+X-Forwarded-Encrypted: i=1; AJvYcCUK95KUwv7wkRXBIlM5KwAT85ZlpkEF8NnaKvKbgBFFm7Th0OjFeNlRYrRaWdGuWKwFHYDOnbmbfw+7WOk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzpFEBcUz2ksFKv/oc2Boay9WoY9ugov87ABajQBwjqvMLh3FVK
+	XVGhuKAd/6uUfiCnTzutqQSKHY3Zc76Jq/4XKtqeaHH89sLuOr3no/bu6m4/8XvPqq0nExglrri
+	/RE4g
+X-Gm-Gg: ASbGncsbVqmH3wzugsn7LOqqIzQweY7zBSwiWM9n8gMENu9h02ztIkelwEPM7/1AnnU
+	E2RPIA6m24/jkwYXY3VVizrHl8uBtTLIeSHhsLCmi9BK+9FajGq8q0zu2CKAwkFmw/+uDlwjb3P
+	nmjF0Gn9qOE3QSrZP9g7rTq3jA21IECQiBruGZkcOMtXZ4PnMkX1iE2vxpZebihtjDDGnBiSlaZ
+	QCbNwvdJiXoyvUmFbFV196kyjMk7n6Cn19b9LjxxCp0qAALgtG7eZ/uuGUGA1sNeWdvpTY+jyiV
+	hLhLfxCPVO3G7NXs0Q==
+X-Google-Smtp-Source: AGHT+IFZ5sq2pxWWRKFS20g9hOEkxLgfKhKlaaTOD9IIrcXSDT6dGP8tqeqF39DQG8od6Av+A0IcdQ==
+X-Received: by 2002:a05:651c:892:b0:2ff:c77c:c71e with SMTP id 38308e7fff4ca-30009c9e079mr73752291fa.20.1733352564631;
+        Wed, 04 Dec 2024 14:49:24 -0800 (PST)
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com. [209.85.208.170])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30020da0296sm87911fa.33.2024.12.04.14.49.23
         for <linux-kernel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Dec 2024 14:48:41 -0800 (PST)
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-53de852a287so309274e87.2
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 14:48:41 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWt1t6XDp97QDe36DyxVlFwCvuiLq6NzhYJVj+ploWQiWViHGcd7sEfHfthDepdmhOKHZpBt/G4EgYTi8o=@vger.kernel.org
-X-Received: by 2002:a05:6512:3087:b0:53d:ed89:d78d with SMTP id
- 2adb3069b0e04-53e1b8785eamr2316814e87.5.1733352520879; Wed, 04 Dec 2024
- 14:48:40 -0800 (PST)
+        Wed, 04 Dec 2024 14:49:23 -0800 (PST)
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2ffc1009a06so1640081fa.2
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 14:49:23 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWUUX0AWRh8AXagCwbyBJrOMN3WOCNBct1wgs2ZVZBVeAoMMLV0lKe2SG3Td9w+pzYlEcgPLX75xtY1t2Y=@vger.kernel.org
+X-Received: by 2002:a05:6512:b0a:b0:53d:d44e:fae4 with SMTP id
+ 2adb3069b0e04-53e12a0687fmr5763487e87.28.1733352563093; Wed, 04 Dec 2024
+ 14:49:23 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241204-topic-misc-dt-fixes-v1-0-6d320b6454e6@linaro.org> <20241204-topic-misc-dt-fixes-v1-4-6d320b6454e6@linaro.org>
-In-Reply-To: <20241204-topic-misc-dt-fixes-v1-4-6d320b6454e6@linaro.org>
+References: <20241204-topic-misc-dt-fixes-v1-0-6d320b6454e6@linaro.org> <20241204-topic-misc-dt-fixes-v1-5-6d320b6454e6@linaro.org>
+In-Reply-To: <20241204-topic-misc-dt-fixes-v1-5-6d320b6454e6@linaro.org>
 From: Doug Anderson <dianders@chromium.org>
-Date: Wed, 4 Dec 2024 14:48:29 -0800
-X-Gmail-Original-Message-ID: <CAD=FV=WMm5j60+jn9JFYkTDgm73NOHU5SAxbWvXOicEFbDySxQ@mail.gmail.com>
-Message-ID: <CAD=FV=WMm5j60+jn9JFYkTDgm73NOHU5SAxbWvXOicEFbDySxQ@mail.gmail.com>
-Subject: Re: [PATCH 4/5] arm64: dts: qcom: sc7180-trogdor-pompom: rename
- 5v-choke thermal zone
+Date: Wed, 4 Dec 2024 14:49:11 -0800
+X-Gmail-Original-Message-ID: <CAD=FV=UKyyp4_BfHwpYLEB-N+-R0P=RVBsUDHHu2gS=Zwi3WmQ@mail.gmail.com>
+Message-ID: <CAD=FV=UKyyp4_BfHwpYLEB-N+-R0P=RVBsUDHHu2gS=Zwi3WmQ@mail.gmail.com>
+Subject: Re: [PATCH 5/5] arm64: dts: qcom: sc7180: fix psci power domain node names
 To: Neil Armstrong <neil.armstrong@linaro.org>
 Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
 	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
@@ -103,19 +102,17 @@ Hi,
 On Wed, Dec 4, 2024 at 2:57=E2=80=AFAM Neil Armstrong <neil.armstrong@linar=
 o.org> wrote:
 >
-> Rename the 5v-choke thermal zone to satisfy the bindings.
+> Rename the psci power domain node names to match the bindings.
 >
-> This fixes:
-> sc7180-trogdor-pompom-r2-lte.dts: thermal-zones: '5v-choke-thermal' does =
-not match any of the regexes: '^[a-zA-Z][a-zA-Z0-9\\-]{1,10}-thermal$', 'pi=
-nctrl-[0-9]+'
->         from schema $id: http://devicetree.org/schemas/thermal/thermal-zo=
-nes.yaml#
+> This Fixes:
+> sc7180-acer-aspire1.dts: psci: 'cpu-cluster0', 'cpu0', 'cpu1', 'cpu2', 'c=
+pu3', 'cpu4', 'cpu5', 'cpu6', 'cpu7' do not match any of the regexes: '^pow=
+er-domain-', 'pinctrl-[0-9]+'
 >
 > Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
 > ---
->  arch/arm64/boot/dts/qcom/sc7180-trogdor-pompom.dtsi | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>  arch/arm64/boot/dts/qcom/sc7180.dtsi | 18 +++++++++---------
+>  1 file changed, 9 insertions(+), 9 deletions(-)
 
 Reviewed-by: Douglas Anderson <dianders@chromium.org>
 
