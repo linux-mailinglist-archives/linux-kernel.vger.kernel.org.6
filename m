@@ -1,143 +1,128 @@
-Return-Path: <linux-kernel+bounces-431326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B13BC9E3BFC
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:02:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EDCB9E3BFF
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:03:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76DEE280D01
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 14:02:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 649B1285DE1
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 14:03:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E77B81F9EAB;
-	Wed,  4 Dec 2024 14:02:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D4561F76B7;
+	Wed,  4 Dec 2024 14:03:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xtcCIGnQ"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AbNSluFY"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FEDC1B86CC
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 14:02:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0EE01F7063;
+	Wed,  4 Dec 2024 14:03:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733320938; cv=none; b=ZNBohd6fvuxuJt3s75PaOUu/nxlIMTIs8JZhis8j46s+Z73HEf4B+7hzzeRgVH96ykTBW+jQpwOeiIDy5N4ABLTjyix2cZe77jFVbbY4NEIc8jPNh9oYnaQkuuggMECAvNci8efqLBWrQ4EsctCo1oqpdiiQJ3Dz5kS9rMK0x6o=
+	t=1733320985; cv=none; b=Tc4KeVom9dxU6vdNznHkS4buaycAhSLTJ4M2q5PkTBw1tITD0yCxo1qe0X/Vo9ExsQXN+w/EGqNgnB86P58pez2xJpbrZq1PMLwXC5SH44zly6+2eVRYDK2txMdZ9eA79kvqdopAJLzXDbTq+N5xG+PusPMmQSEvnlP7acCou5A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733320938; c=relaxed/simple;
-	bh=EF6Gt+T6W7BZkopuI+DSu4Amz2QuoavNBsIjJLhIag0=;
+	s=arc-20240116; t=1733320985; c=relaxed/simple;
+	bh=3KGHbh74PL8FENaLPeIGYJZyqpRguO1ac32S/lCqWBY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PU+pDOSsNCWfO8lfVYibZ2jDfbnGgOrtUn4Hw+GLZOtYsmCqzIuHrDy7gfxJivBJPYw9hp6QFUcVIQ48TimEsAc/jDMoKuQ+HyeuFwTb9pl0UPoB08uKsu67jDSEybawa678QOmT5OGMG12z1jpNwf8gQP4cLDJKnHbaA17tbGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xtcCIGnQ; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-53de7321675so7336749e87.2
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 06:02:16 -0800 (PST)
+	 To:Cc:Content-Type; b=J1BELklo0Svpca0nqLgRrTU2+M/OdMn12Rj/cqf/yw81O8Xc0L1Qwk5pt9nK3ySQbbqF2MlDRZoJ+mSYFSceJ+3jRaTptFGf2bKD4b+c+3LDmJBkM8k71+vnx2dg0M6pvgk/ZUIL8RHWDIpGocezPZzVF073mdbND2Rd7RsAnqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AbNSluFY; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-53dde4f0f23so6850259e87.3;
+        Wed, 04 Dec 2024 06:03:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733320935; x=1733925735; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1733320982; x=1733925782; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=yqP87WCiN6ncxgmgpniBE1T1mI3RT4GMjwb4A1C8J6c=;
-        b=xtcCIGnQ9CYcxGWexOBUEEJxxhAe/eAXRx2/6DQS7N/TT7h4qnNhNKsPzGD073yPTh
-         NBk2Yhr1MMuuRK6uAUkNnCB5fK2SrCXxg0T1N9uy3lPdzOiv6K4tVJ87ptvYbfDzFWqi
-         lV5GsQPKAhkt+1QTBrZTomopWxOr84/lfOyyq/XMVRYa8E1jykHPz7Bk3lmRxd6BWY/t
-         sJQ3oHI89DzsIBHnkfg8Ql+AuI2VnxW5FukOpF/RcohA9i5zJBGpNaI2G42rSVuaQQqj
-         JJlvucWJXiyK0IW6/bAccaS5OUJ6d0TbPc/q8KT72FMHC/0jpirJPpxchJA17GCE67F/
-         nWvA==
+        bh=0pLINUAWWHpZc7WEX/isPU9K9d9FAmMIJVRAMNTydl4=;
+        b=AbNSluFY4aaH7vFnTCn9xwxQCIXnqGHLay85UH5gI/0zt7w7x3L32FUrom+WRu7b/q
+         cpiMQs1yS5cBuJyvK3nc0rDG6C4X/GEBRZYGIE0uZePcJaoa+eXkHMmx5+fGxAuZn4Qn
+         s0sLKs6lSQRWzfu9vjEZhtiNbV8vY5hn4yTVvUumtDx+U0Bo2LQlh+X0WOD6zEh0rKWp
+         jpL3T0we0Fadk5bgTzTdZpqOvQ13PhiB5Teqqm0WKivbQyHhqBn+snt0lXt0DZfP87Q4
+         +wI/SPrxUs0EQFhGYid/fXyb2LifRtocfRS7XUKQAjpPLBs4cQNmnfjBrDOz9bFP/fxm
+         mX9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733320935; x=1733925735;
+        d=1e100.net; s=20230601; t=1733320982; x=1733925782;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=yqP87WCiN6ncxgmgpniBE1T1mI3RT4GMjwb4A1C8J6c=;
-        b=F8KL7laYOQXLSARBaTPBapWK7nUXSl4pVcFR5weCd/gkCbDkvJlExmdqNqro1lcjKv
-         LvcCkey57eUFJc0p78RknDLAyYoPEl7TdpqaHCxr/nSM6Ky0L+l0QaR734f0mL4z/f2Z
-         YCN7TGne/v0Fxa+fMvkK0YmSQG4k1GeedUI4rvHOISG4D45DebkqiRnIkE1fH6e552Lv
-         gL1Mn3l1/1YkDG8rxfBufYnvOloq2igWJpccVBSPqFm9rWEMAeJOJd7nSVHvIBp/C99H
-         BORtCM+cGG4P58md1SW1Pn+hgPWY9u3SGShoNVwQDnYnBulywDrVdBrlTa6BK9KSwOuo
-         kLNQ==
-X-Gm-Message-State: AOJu0YzoNYhvP0/5vBjoey0qWBObbWeesDRkIYhGinLBZi7vJ6sFyuhq
-	OisiFrhHJfHI9kepGRXX3MrsCjqKrzIq5+8hfptnqMyOth/G9wWnXcaGEy9lhOvaOeTSVKRPxFN
-	7DDJuiadZFP8eOZgHHKBofOzK9+SoJCynYUNRqg==
-X-Gm-Gg: ASbGncvTPBABBh8cf54uOcvV4WWqZ9Y0aZTF9elZglbuwrQh+bTGtiGc/WYdHbYNIwz
-	eSqOBAE/+3W2a3VfPe6CzJAgt3ZrRBQ==
-X-Google-Smtp-Source: AGHT+IF42JEDDralS/q7GAyf8ShLhuPw9fjRPS3IF1nVPtKZCVFYhoqWECbNYFk03ea8B3Fz+6drL1O/4aVN2nZ4eJw=
-X-Received: by 2002:a05:6512:1256:b0:53d:cb91:2f3e with SMTP id
- 2adb3069b0e04-53e129f36c8mr4029043e87.22.1733320934341; Wed, 04 Dec 2024
- 06:02:14 -0800 (PST)
+        bh=0pLINUAWWHpZc7WEX/isPU9K9d9FAmMIJVRAMNTydl4=;
+        b=ainIGH4v1cLFmNDYGU/IbjAV6zRr9ROetQguxaz7fdVfo0y5nRpBneYvy7jj9cce8q
+         WFII2tFWXj9RagMZe9+Ar7ILzCaVWsufw84cPdxqBHeO+esxQo06zrcOUpeeVWGA05Ye
+         Rzsq1Nq40ChYL5xjP1Tujc9H2RqO0h4Df7NdT2Rr/eI23As/BpEgSwITgcDqXW1qivRo
+         sNKytVQy7YU9nex1n5hlrm+2x4Gc7PFGGlzg6N/hsebskedgyt1mW+aoGBY1d7ki+vE2
+         ebZL1unia9dfRnMScR4ZZoGQhR/l5ij6GXFQ3GQdn1NRiX5THJfX5Z9RYP4nzsusAqG2
+         Ny/w==
+X-Forwarded-Encrypted: i=1; AJvYcCWL6VRMMIKN4Tl5bvkQkDgQ9lBr6XFMOwVVg3HWeZhiKtpya9TpYwxoueFVxYDVKbYvDSmKJAP6jbluTwv5@vger.kernel.org, AJvYcCWLqye0/G+n/Kzl/uL2qskpdsr0oFMwYAuasGLi0UMQqdTBdaytjZmmCBxsrprbjbG2T0E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTNGC7ghg1caJxRwkBxq17gxCXLcAAroUE+T+USlqCe/CCUwUT
+	Lb9wCBs0uiYNpOcWF8QxmhmM2TSamuKF04Ov0MfujXUAYXfzkrK8/+UVZgerJzEoHEH7PC8+FYl
+	HWQi39kIlCDJSq8YE6FNo4CMb0A==
+X-Gm-Gg: ASbGncuwpk7P9IgxY0eK7zyYihzxZKbrZ9nLG5srIR4eh3eHODn3FLeXgLOezuQDKL7
+	bKUZM6sDea0HcEjDVi5ZjHyZPfRQTPnF65Ddzt/7UgmKNyQ==
+X-Google-Smtp-Source: AGHT+IFM8eESFGwByTwn9nzvvRumhG+01+X3aWsUAJaLsxSd+y2sT6upYNjKhhLCxS3WrtgnS9mpqP6Rpo0mFVw+sNE=
+X-Received: by 2002:a05:6512:1247:b0:53d:a321:db74 with SMTP id
+ 2adb3069b0e04-53e12a28208mr4148964e87.50.1733320980056; Wed, 04 Dec 2024
+ 06:03:00 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241204102904.1863796-1-arnd@kernel.org> <20241204102904.1863796-4-arnd@kernel.org>
-In-Reply-To: <20241204102904.1863796-4-arnd@kernel.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 4 Dec 2024 15:02:03 +0100
-Message-ID: <CACRpkdYws_rfGPe--xj8d4Gu1pON=_T2sSAoTi3=sMz7wpSFHQ@mail.gmail.com>
-Subject: Re: [PATCH 03/15] ARM: rework ARM11 CPU selection logic
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	Arnd Bergmann <arnd@arndb.de>, Aaro Koskinen <aaro.koskinen@iki.fi>, Andrew Lunn <andrew@lunn.ch>, 
-	Ard Biesheuvel <ardb@kernel.org>, Daniel Mack <daniel@zonque.org>, 
-	Gregory Clement <gregory.clement@bootlin.com>, Haojian Zhuang <haojian.zhuang@gmail.com>, 
-	"Jeremy J. Peper" <jeremy@jeremypeper.com>, Kristoffer Ericson <kristoffer.ericson@gmail.com>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Mark Brown <broonie@kernel.org>, 
-	Ralph Siemsen <ralph.siemsen@linaro.org>, Robert Jarzmik <robert.jarzmik@free.fr>, 
-	Russell King <linux@armlinux.org.uk>, 
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Tony Lindgren <tony@atomide.com>
+References: <20241204103042.1904639-1-arnd@kernel.org> <20241204103042.1904639-6-arnd@kernel.org>
+ <CAMzpN2joPcvg887tJLF_4SU4aJt+wTGy2M_xaExrozLS-mvXsw@mail.gmail.com> <00e344d7-8d2f-41d3-8c6a-1a828ee95967@app.fastmail.com>
+In-Reply-To: <00e344d7-8d2f-41d3-8c6a-1a828ee95967@app.fastmail.com>
+From: Brian Gerst <brgerst@gmail.com>
+Date: Wed, 4 Dec 2024 09:02:48 -0500
+Message-ID: <CAMzpN2gTUks3K3Hvwq3MEVBCN-9HHTLM4+FNdHkuQOmgX0Tfjg@mail.gmail.com>
+Subject: Re: [PATCH 05/11] x86: remove HIGHMEM64G support
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Arnd Bergmann <arnd@kernel.org>, linux-kernel@vger.kernel.org, x86@kernel.org, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, Andy Shevchenko <andy@kernel.org>, 
+	Matthew Wilcox <willy@infradead.org>, Sean Christopherson <seanjc@google.com>, 
+	Davide Ciminaghi <ciminaghi@gnudd.com>, Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Dec 4, 2024 at 11:29=E2=80=AFAM Arnd Bergmann <arnd@kernel.org> wro=
-te:
-
-> From: Arnd Bergmann <arnd@arndb.de>
+On Wed, Dec 4, 2024 at 8:43=E2=80=AFAM Arnd Bergmann <arnd@arndb.de> wrote:
 >
-> Support for SMP on ARM1136r0 has been broken for a while, and nobody
-> is working on fixing it. I had a plan to change ARMv6 support to no
-> longer coexist in a common kernel with ARMv7 CPUs but instead ARMv5 and
-> below. This would have addressed the problem, but after a recent mailing
-> list discussion, we concluded that an easier approach is to just forbid
-> ARM1136r0 CPU support on SMP-enabled kernels.
+> On Wed, Dec 4, 2024, at 14:29, Brian Gerst wrote:
+> > On Wed, Dec 4, 2024 at 5:34=E2=80=AFAM Arnd Bergmann <arnd@kernel.org> =
+wrote:
+> >>
+> >>  - In the early days of x86-64 hardware, there was sometimes the need
+> >>    to run a 32-bit kernel to work around bugs in the hardware drivers,
+> >>    or in the syscall emulation for 32-bit userspace. This likely still
+> >>    works but there should never be a need for this any more.
+> >>
+> >> Removing this also drops the need for PHYS_ADDR_T_64BIT and SWIOTLB.
+> >> PAE mode is still required to get access to the 'NX' bit on Atom
+> >> 'Pentium M' and 'Core Duo' CPUs.
+> >
+> > 8GB of memory is still useful for 32-bit guest VMs.
 >
-> This mainly affects users of the Nokia N800/N810 tablets using an
-> OMAP2420 SoC, which is the only commercial product with an ARM1136r0
-> that is still supported by the kernel.
+> Can you give some more background on this?
 >
-> The other machines that are still in the same hardware catogory are:
+> It's clear that one can run a virtual machine this way and it
+> currently works, but are you able to construct a case where this
+> is a good idea, compared to running the same userspace with a
+> 64-bit kernel?
 >
->  - TI OMAP2420 H4 reference board
->  - TI OMAP2430 SDP software development platform
->  - Freescale/NXP i.MX31 Lite Development Kit
->  - Buglabs i.MX31 Bug 1.x prototype
->  - Arm Integrator/AP with CM1136JF-S core module
->
-> To my knowledge, none of these have any actual users aside from
-> reference boards being used more easily test the platforms.
->
-> There are also a few ARM1136r1 machines, which implement the
-> ARMv6K SMP support (barriers, atomics and TLS):
->
->  - Eukrea CPUIMX35 reference platform
->  - Freescale/NXP i.MX35 Product Development Kit
->  - ARM Integrator/CP/IM-LT3 with ARM1136J Core Tile
+> From what I can tell, any practical workload that requires
+> 8GB of total RAM will likely run into either the lowmem
+> limits or into virtual addressig limits, in addition to the
+> problems of 32-bit kernels being generally worse than 64-bit
+> ones in terms of performance, features and testing.
 
-I can't test that, I doubt anyone can. I think this support can
-be simply deleted unless there is some QEMU support or
-so.
+I use a 32-bit VM to test 32-bit kernel builds.  I haven't benchmarked
+kernel builds with 4GB/8GB yet, but logically more memory would be
+better for caching files.
 
->  - ARM Realview/EB with ARM1136J Core Tile
 
-I will check if I have this one, otherwise this can probably go
-as well.
-
->  arch/arm/mach-versatile/Kconfig | 10 +++++-----
-
-For Versatile:
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
-
-Yours,
-Linus Walleij
+Brian Gerst
 
