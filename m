@@ -1,143 +1,156 @@
-Return-Path: <linux-kernel+bounces-432236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 213469E4815
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 23:47:45 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 546019E4817
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 23:48:16 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB0122843FB
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 22:47:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C3516188045F
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 22:48:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3ABE1F541B;
-	Wed,  4 Dec 2024 22:47:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B59141C3C13;
+	Wed,  4 Dec 2024 22:48:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="MIaWaH1z"
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="AjxIvlHs"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53DAD23918D
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 22:47:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FA94192B88
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 22:48:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733352458; cv=none; b=eUO3QaABhGZgAQjB0Jkm1sW1kef50FYpKA0IG4nSlRWM9jQnBk6jLKllknrp9aB3qAVJdiThCdmjXhVy8yxMW2TgnKUCHfWhURN2Ly82ld8osvZmyAfm6ctlXP9p1OxajL8bQkiwCcpEa6KHrIiTRhAG76/eT2NOrif8X9UUY4k=
+	t=1733352490; cv=none; b=p626MfLl6tFhRHcJrvS6HCK86umzPno+tPVzibesM+YAVBhs5hwNyRTYazKxevysnJNL67M9akZ2KmGrjhGTvJwT4Xgcww2+ZqBLDDw5WrS12Z7P34a7GMI2Bnb1oEFwupvZJaaIUSJIgRpv8KWSpXyqiN616rCHpFKGQwIMb3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733352458; c=relaxed/simple;
-	bh=kJdSvnUsUWuFAazx9AVYeMRAMXugvXd7n56wCE1Oaq0=;
+	s=arc-20240116; t=1733352490; c=relaxed/simple;
+	bh=ihO3CW5VFzATTaROcHLypVMgxnj6D/t73M49l7mA4MU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Hc277Tgd0L60A+0YDoo2nY1qqrDwjHej4OQl/kpxQhoX1ZrpXy6Svpmrleda8ba00qbHcvtKAU+D0mAePYKvdQsGIsZmmNu30vasn0bV+3WcwJY2pJJD8BaH1Efm6u5Z6cyyAcnmdqvsEiSdznupMu8yEMfHbnVK8Zf0hdXIhM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=MIaWaH1z; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2ffdd9fc913so2521551fa.3
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 14:47:35 -0800 (PST)
+	 To:Cc:Content-Type; b=NX9InCGlKwBbVRwoqB6KyvHadZE/QzvHSuZ/QYW9ZVIvXPofknoQjaEGMqaqFNdNmGv/3Vws0PKn351ofp+fmglyNq7YgGkIR30vXMCBZQZzUwu/ny6aDcQ35kff7j3QkMcFGIy8BWZAEX5fkT7OmbpADk1pPsFRCr6yZ0ZKZYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=AjxIvlHs; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5d0aab1aafcso1275a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 14:48:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1733352453; x=1733957253; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1733352487; x=1733957287; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=1HJnxmfo5xvPN+49q760TRmvPlUcAyzClpyK24RSgC4=;
-        b=MIaWaH1zJqcU2Yr1C8UDy8Zz/DWR6wHsBevwuK4f5cstgGbJ1Go69NLNOMpYibqfms
-         IFxZGiPF2ngCzvsJ7xPLaT+UcejOHjnHERPk2nv24mJurv7uvYG29zUt6jJB/1ACE/WM
-         vTbg5gZu46ipQXxen0hZt0hn8e/PuMnEeI8w4=
+        bh=1i377nu++qLdmOLgcxee8cAP5hNqhYVzOX02yU9RrIs=;
+        b=AjxIvlHsA45uIuYvc0q0XGmG9atiToYKz4N4P2dwcj668CQ5hHQhtiZLKGJ2jM8hGh
+         o3Hm94sCZkRssBTWoqRtB+LRtDxhKTT3skWsoNvfvOgeum7oZs71mc0XX7CxutJR1a1k
+         oqffnttGjBVk3cOn1OZR66IFpVvz8OElRCiAheLQRHkJT6BGJVO2mPK77N1bRhz4rqgN
+         n0pazUU6CAjsCUIjut2fjNao4FvaLAl7y+a8022Ri2jH31knaJIrLBdDJdAl016QNBFk
+         KvSTdf0YWiveqmxe55o1RlvkTrNqEHWbS8AvuVPMe1/yEFYvZX35tFLt9FWPotXGc6O+
+         sMDA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733352453; x=1733957253;
+        d=1e100.net; s=20230601; t=1733352487; x=1733957287;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=1HJnxmfo5xvPN+49q760TRmvPlUcAyzClpyK24RSgC4=;
-        b=XF9r8hRnXGH0AuKuqtqzUp1b5TeI8gxe7jKjDVfnDyksUd3gJ8BcvpUxpzIeaNDgs2
-         9fcfDg9hY3vXM3ynPdH1uEEXPt0Jt298CYF+IwXIKp/kB6fOw5zAYmEWj+qn5Y9lIj1z
-         /ksIfRyCWgoDVdaIYdvmTTMWwtgmxzstJrQFC3c/wYQRcLPzNzxE+PQ/V3Mjr/ldD1e3
-         UrLkMC3NW8Cioqxk3UUwhEoMreDQPVTTCQBi9mVDXEs9sBDNa3rs1TuNn60qtS87jivR
-         W3zV2/UfTmr1rBEJ2kXLmhVFrlt8w2zPuYGyJFaU5d46L9XXn+8lh2Q2l8EAlsP5BqDC
-         Z5qA==
-X-Forwarded-Encrypted: i=1; AJvYcCVfwSoWc2Uvi3MTIpdygy+6hgqlqsbCU1k7tiSRRxa72MU5G+uHqGXQI7dQS5baqD5eNW/ZoIM93SEPuSk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1ENHRTfw9QKZLOCEo/tvYLOoBwtLk7KJ7T/CuokSEc8ngzRKK
-	Z5FVvNioUKhhwWicAtpv5P0X3lEfjjj3HadBPiOKBTD96xH2UGQSuEghWZZvkEakYCo0wXoNDzq
-	7worD
-X-Gm-Gg: ASbGnctbSfSZPrDnJBhk9yd+Nf1coE2Op+BJavLuaJWoLdFgypvS7MfrjO/F0gEMx9Y
-	3tRsrbzIAAVWhC/v/l0eCmkRHzVIQc28C9SpuFdDtx6pzPjSdoTEtvjTamKNVRbVjVRB878HrMP
-	6GiMvc8VlNdz/3phe8YK3zvFLIlORpvymMAC4h5nSC4YzagG0Bdx7vCDoUW2sVDas/HxApIfXyO
-	nRdoG4lAlxMKgUREX5ve3LVW9cx+b8WnJ0sdHHdilaUFb2wSIPN4FJlpRQpupjJjZX9/POhPqeo
-	tOUodH57BjeRyg==
-X-Google-Smtp-Source: AGHT+IHUnF2vjHMxL0HdApFhlf6cYfTGuWaoFDDOqxQBl+ocBdVWwDrxp4KnRPRM8vqIVYbrdN2xVA==
-X-Received: by 2002:a2e:b8d2:0:b0:300:8de:d2a4 with SMTP id 38308e7fff4ca-30009c52bacmr47949391fa.17.1733352453283;
-        Wed, 04 Dec 2024 14:47:33 -0800 (PST)
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com. [209.85.167.49])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30020dbb4bfsm87221fa.64.2024.12.04.14.47.32
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Dec 2024 14:47:32 -0800 (PST)
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-53df1d1b726so314264e87.0
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 14:47:32 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUh5PcErvw6dhnEJRg+0VNjArdvqZ464so27FPQkxs67RCPV14pArcrblx9JG6bw2wUvX+oUu7+myJ/FJ4=@vger.kernel.org
-X-Received: by 2002:a05:6512:3f0e:b0:539:905c:15ab with SMTP id
- 2adb3069b0e04-53e12a01745mr5161964e87.32.1733352451667; Wed, 04 Dec 2024
- 14:47:31 -0800 (PST)
+        bh=1i377nu++qLdmOLgcxee8cAP5hNqhYVzOX02yU9RrIs=;
+        b=hDkSH8CFgnK6nPL6wV2H3K8NBKQ2pSYA/Ck1adOqpb8kmSLlbZxN6ogzmXpct+/wFf
+         HfhNxm/D/sbtaPN71lmPwOb7AiZIrKO4A8JWyUyZlsZ1ZeU2yfQrgYBAY3JCARu0zJVc
+         3nzEb5HQWo5xbXwsxDJRH1lr72yCZmHF0tnMkRlQ/wkyyN3mMxI6BW1sxj/eWIYfZQNA
+         MlKQKLlPrfWFFoid2zdc0VVITTpc7OviqHT1cc1osoGKRexF5MbVh0WvljXTQFJuI8Fx
+         4u+bnVUTPhhcVNAaWB53mb8JIPxVc1JFTJP/ORmJ2NQIa8154ALi55r3GNdUl2cMqu5C
+         hPkA==
+X-Forwarded-Encrypted: i=1; AJvYcCV58fzYMEz9OjJPE7lmiK4PAKqNzAxGBSlQrszfHQMMWacm5raoKzJh5qaxxDoW2MJBNGQlqyyFOw13UCo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQgHvH5e1appmusHQgAtF/OAs4JR5xxiaUNlX0wGIGTfkDUQet
+	S/2nGW1UloZOtay8AIu6bR0YNBcAUy+i9KdJAVaZmk4SRLy3J8JBJB05S5kT27aKWbWhxwgvF17
+	aoNt9Hht9Ws9Fs4fwnm4vRWDy42yddz4Be/Pi
+X-Gm-Gg: ASbGncvUlmPNLLjATxZWsaj+9yToWz0QtSaQeKWmyB23JTJ6IgxZ33jqQHvQZx8rwZo
+	57P4KhP4GEFrIFCV9jfAsHVU6kgXr1oGnfH2/AJVDY0aPmMsV1MopCSuS/1Q=
+X-Google-Smtp-Source: AGHT+IFut9yUAXYtT2MdTOBVgQ/tvh7Uh5w614iijMxjBbTbOVc4uk+lry4TS3NDkThd/iprdC4bfMpTsRSsHPDfvSo=
+X-Received: by 2002:a05:6402:1342:b0:5d0:dfe4:488a with SMTP id
+ 4fb4d7f45d1cf-5d1259b6906mr24278a12.2.1733352486308; Wed, 04 Dec 2024
+ 14:48:06 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241204-topic-misc-dt-fixes-v1-0-6d320b6454e6@linaro.org> <20241204-topic-misc-dt-fixes-v1-3-6d320b6454e6@linaro.org>
-In-Reply-To: <20241204-topic-misc-dt-fixes-v1-3-6d320b6454e6@linaro.org>
-From: Doug Anderson <dianders@chromium.org>
-Date: Wed, 4 Dec 2024 14:47:20 -0800
-X-Gmail-Original-Message-ID: <CAD=FV=V8VwixdgNjyTL5m5YzEcCuCFE1iYAwBkdkcpzZ6OusgA@mail.gmail.com>
-Message-ID: <CAD=FV=V8VwixdgNjyTL5m5YzEcCuCFE1iYAwBkdkcpzZ6OusgA@mail.gmail.com>
-Subject: Re: [PATCH 3/5] arm64: dts: qcom: sc7180-trogdor-quackingstick: add
- missing avee-supply
-To: Neil Armstrong <neil.armstrong@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	cros-qcom-dts-watchers@chromium.org, linux-arm-msm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <cover.1733305182.git.zhengqi.arch@bytedance.com>
+ <92aba2b319a734913f18ba41e7d86a265f0b84e2.1733305182.git.zhengqi.arch@bytedance.com>
+ <20241204143625.a09c2b8376b2415b985cf50a@linux-foundation.org>
+In-Reply-To: <20241204143625.a09c2b8376b2415b985cf50a@linux-foundation.org>
+From: Jann Horn <jannh@google.com>
+Date: Wed, 4 Dec 2024 23:47:30 +0100
+Message-ID: <CAG48ez1HjoZiyk+_JOxcA5eM797vCmzvXaEVUgd6Mkze-aykbg@mail.gmail.com>
+Subject: Re: [PATCH v4 09/11] mm: pgtable: reclaim empty PTE page in madvise(MADV_DONTNEED)
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Qi Zheng <zhengqi.arch@bytedance.com>, david@redhat.com, hughd@google.com, 
+	willy@infradead.org, muchun.song@linux.dev, vbabka@kernel.org, 
+	peterx@redhat.com, mgorman@suse.de, catalin.marinas@arm.com, will@kernel.org, 
+	dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org, 
+	x86@kernel.org, lorenzo.stoakes@oracle.com, zokeefe@google.com, 
+	rientjes@google.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi,
-
-On Wed, Dec 4, 2024 at 2:57=E2=80=AFAM Neil Armstrong <neil.armstrong@linar=
-o.org> wrote:
+On Wed, Dec 4, 2024 at 11:36=E2=80=AFPM Andrew Morton <akpm@linux-foundatio=
+n.org> wrote:
 >
-> The bindings requires the avee-supply, use the same regulator as
-> the avdd (positive voltage) which would also provide the negative
-> voltage by definition.
+> On Wed,  4 Dec 2024 19:09:49 +0800 Qi Zheng <zhengqi.arch@bytedance.com> =
+wrote:
+> > As a first step, this commit aims to synchronously free the empty PTE
+> > pages in madvise(MADV_DONTNEED) case. We will detect and free empty PTE
+> > pages in zap_pte_range(), and will add zap_details.reclaim_pt to exclud=
+e
+> > cases other than madvise(MADV_DONTNEED).
+> >
+> > Once an empty PTE is detected, we first try to hold the pmd lock within
+> > the pte lock. If successful, we clear the pmd entry directly (fast path=
+).
+> > Otherwise, we wait until the pte lock is released, then re-hold the pmd
+> > and pte locks and loop PTRS_PER_PTE times to check pte_none() to re-det=
+ect
+> > whether the PTE page is empty and free it (slow path).
 >
-> The fixes:
-> sc7180-trogdor-quackingstick-r0.dts: panel@0: 'avee-supply' is a required=
- property
->         from schema $id: http://devicetree.org/schemas/display/panel/boe,=
-tv101wum-nl6.yaml#
+> "wait until the pte lock is released" sounds nasty.  I'm not
+> immediately seeing the code which does this.  PLease provide more
+> description?
+
+It's worded a bit confusingly, but it's fine; a better description
+might be "if try_get_and_clear_pmd() fails to trylock the PMD lock
+(against lock order), then later, after we have dropped the PTE lock,
+try_to_free_pte() takes the PMD and PTE locks in the proper lock
+order".
+
+The "wait until the pte lock is released" part is just supposed to
+mean that the try_to_free_pte() call is placed after the point where
+the PTE lock has been dropped (which makes it possible to take the PMD
+lock). It does not refer to waiting for other threads.
+
+> > +void try_to_free_pte(struct mm_struct *mm, pmd_t *pmd, unsigned long a=
+ddr,
+> > +                  struct mmu_gather *tlb)
+> > +{
+> > +     pmd_t pmdval;
+> > +     spinlock_t *pml, *ptl;
+> > +     pte_t *start_pte, *pte;
+> > +     int i;
+> > +
+> > +     pml =3D pmd_lock(mm, pmd);
+> > +     start_pte =3D pte_offset_map_rw_nolock(mm, pmd, addr, &pmdval, &p=
+tl);
+> > +     if (!start_pte)
+> > +             goto out_ptl;
+> > +     if (ptl !=3D pml)
+> > +             spin_lock_nested(ptl, SINGLE_DEPTH_NESTING);
+> > +
+> > +     /* Check if it is empty PTE page */
+> > +     for (i =3D 0, pte =3D start_pte; i < PTRS_PER_PTE; i++, pte++) {
+> > +             if (!pte_none(ptep_get(pte)))
+> > +                     goto out_ptl;
+> > +     }
 >
-> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
-> ---
->  arch/arm64/boot/dts/qcom/sc7180-trogdor-quackingstick.dtsi | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/arch/arm64/boot/dts/qcom/sc7180-trogdor-quackingstick.dtsi b=
-/arch/arm64/boot/dts/qcom/sc7180-trogdor-quackingstick.dtsi
-> index 00229b1515e60505f15fd58c6e7f16dcbf9c661b..ff8996b4de4e1e66a0f2aac01=
-80233640602caf3 100644
-> --- a/arch/arm64/boot/dts/qcom/sc7180-trogdor-quackingstick.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sc7180-trogdor-quackingstick.dtsi
-> @@ -78,6 +78,7 @@ panel: panel@0 {
->                 pinctrl-names =3D "default";
->                 pinctrl-0 =3D <&lcd_rst>;
->                 avdd-supply =3D <&ppvar_lcd>;
-> +               avee-supply =3D <&ppvar_lcd>;
+> Are there any worst-case situations in which we'll spend uncceptable
+> mounts of time running this loop?
 
-Looks right. I guess technically they could be modeled as two
-regulators, but it feels pointless. Looking at the schematics there is
-a single component on the board that provides both the positive and
-negative voltages. There are two enable lines on the component but
-they're tied together on the board so we can't enable one separately
-from the other anyway.
-
-Thanks for the fix!
-
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
+This loop is just over a single page table, that should be no more
+expensive than what we already do in other common paths like
+zap_pte_range().
 
