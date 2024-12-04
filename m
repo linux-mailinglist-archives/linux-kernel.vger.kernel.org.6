@@ -1,156 +1,121 @@
-Return-Path: <linux-kernel+bounces-432237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 546019E4817
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 23:48:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A2B339E481F
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 23:48:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C3516188045F
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 22:48:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB5FB188048C
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 22:48:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B59141C3C13;
-	Wed,  4 Dec 2024 22:48:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADBB21F5438;
+	Wed,  4 Dec 2024 22:48:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="AjxIvlHs"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="NEoGi3lD"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FA94192B88
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 22:48:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76F5718C932
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 22:48:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733352490; cv=none; b=p626MfLl6tFhRHcJrvS6HCK86umzPno+tPVzibesM+YAVBhs5hwNyRTYazKxevysnJNL67M9akZ2KmGrjhGTvJwT4Xgcww2+ZqBLDDw5WrS12Z7P34a7GMI2Bnb1oEFwupvZJaaIUSJIgRpv8KWSpXyqiN616rCHpFKGQwIMb3M=
+	t=1733352529; cv=none; b=jf2IW1x3uyhRKtx6+kh3Al1Y50DtavvQqOEzfWXpFErA0oFNlIMcsAaIP/WRnNOrZB7dDAWEjkOnKlcpGoyXaS9kNdI6YIVYYBpTLtniBG2QF854gBWZ0tTUtzTToD7qb4TJF4Z0NY1NQU8KY7YVmojZjzeqrWSI3yHxOZJD6a4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733352490; c=relaxed/simple;
-	bh=ihO3CW5VFzATTaROcHLypVMgxnj6D/t73M49l7mA4MU=;
+	s=arc-20240116; t=1733352529; c=relaxed/simple;
+	bh=TSj4StKekoMWof/0a9RDpcEaVlkxhZJJcFqRiqpRSp0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NX9InCGlKwBbVRwoqB6KyvHadZE/QzvHSuZ/QYW9ZVIvXPofknoQjaEGMqaqFNdNmGv/3Vws0PKn351ofp+fmglyNq7YgGkIR30vXMCBZQZzUwu/ny6aDcQ35kff7j3QkMcFGIy8BWZAEX5fkT7OmbpADk1pPsFRCr6yZ0ZKZYo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=AjxIvlHs; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5d0aab1aafcso1275a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 14:48:08 -0800 (PST)
+	 To:Cc:Content-Type; b=Jx4heDWG8tkMHutuQV2iUlhI5zX3XQqquOVf/pXDLB8H2HsWov7EVfiNYfnOhFs3MV1ukj2M+nBXxfzQfOUAhX1u2a3uvA8hrxIsJsqQnpSDW8ps1Bf8cALg7nU7WZ56uT4N8PagHLiZDXyETysUCFyLNPYPL/JFGljQTtQfgaM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=NEoGi3lD; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-53de6b7da14so315638e87.0
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 14:48:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733352487; x=1733957287; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1733352523; x=1733957323; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=1i377nu++qLdmOLgcxee8cAP5hNqhYVzOX02yU9RrIs=;
-        b=AjxIvlHsA45uIuYvc0q0XGmG9atiToYKz4N4P2dwcj668CQ5hHQhtiZLKGJ2jM8hGh
-         o3Hm94sCZkRssBTWoqRtB+LRtDxhKTT3skWsoNvfvOgeum7oZs71mc0XX7CxutJR1a1k
-         oqffnttGjBVk3cOn1OZR66IFpVvz8OElRCiAheLQRHkJT6BGJVO2mPK77N1bRhz4rqgN
-         n0pazUU6CAjsCUIjut2fjNao4FvaLAl7y+a8022Ri2jH31knaJIrLBdDJdAl016QNBFk
-         KvSTdf0YWiveqmxe55o1RlvkTrNqEHWbS8AvuVPMe1/yEFYvZX35tFLt9FWPotXGc6O+
-         sMDA==
+        bh=eS5St45eHSe24ISFP3PYGVU7STuxo7md32QjNE7kdII=;
+        b=NEoGi3lDwp6W1/daj4d9A3avq1l4mkKCq4sqaRrGFS8YKoO149M2vlLirdwDPuxa/H
+         NgCziL3wrG3mxLaZtQFTenhQJu32FbS1jtJQ6fSdlVl9j/gHRFTxF3DWiDuw1Gssi6r3
+         FR/dUtKlAbIlbTHX4ct0qIzY36Ywv1SAb1xKc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733352487; x=1733957287;
+        d=1e100.net; s=20230601; t=1733352523; x=1733957323;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=1i377nu++qLdmOLgcxee8cAP5hNqhYVzOX02yU9RrIs=;
-        b=hDkSH8CFgnK6nPL6wV2H3K8NBKQ2pSYA/Ck1adOqpb8kmSLlbZxN6ogzmXpct+/wFf
-         HfhNxm/D/sbtaPN71lmPwOb7AiZIrKO4A8JWyUyZlsZ1ZeU2yfQrgYBAY3JCARu0zJVc
-         3nzEb5HQWo5xbXwsxDJRH1lr72yCZmHF0tnMkRlQ/wkyyN3mMxI6BW1sxj/eWIYfZQNA
-         MlKQKLlPrfWFFoid2zdc0VVITTpc7OviqHT1cc1osoGKRexF5MbVh0WvljXTQFJuI8Fx
-         4u+bnVUTPhhcVNAaWB53mb8JIPxVc1JFTJP/ORmJ2NQIa8154ALi55r3GNdUl2cMqu5C
-         hPkA==
-X-Forwarded-Encrypted: i=1; AJvYcCV58fzYMEz9OjJPE7lmiK4PAKqNzAxGBSlQrszfHQMMWacm5raoKzJh5qaxxDoW2MJBNGQlqyyFOw13UCo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQgHvH5e1appmusHQgAtF/OAs4JR5xxiaUNlX0wGIGTfkDUQet
-	S/2nGW1UloZOtay8AIu6bR0YNBcAUy+i9KdJAVaZmk4SRLy3J8JBJB05S5kT27aKWbWhxwgvF17
-	aoNt9Hht9Ws9Fs4fwnm4vRWDy42yddz4Be/Pi
-X-Gm-Gg: ASbGncvUlmPNLLjATxZWsaj+9yToWz0QtSaQeKWmyB23JTJ6IgxZ33jqQHvQZx8rwZo
-	57P4KhP4GEFrIFCV9jfAsHVU6kgXr1oGnfH2/AJVDY0aPmMsV1MopCSuS/1Q=
-X-Google-Smtp-Source: AGHT+IFut9yUAXYtT2MdTOBVgQ/tvh7Uh5w614iijMxjBbTbOVc4uk+lry4TS3NDkThd/iprdC4bfMpTsRSsHPDfvSo=
-X-Received: by 2002:a05:6402:1342:b0:5d0:dfe4:488a with SMTP id
- 4fb4d7f45d1cf-5d1259b6906mr24278a12.2.1733352486308; Wed, 04 Dec 2024
- 14:48:06 -0800 (PST)
+        bh=eS5St45eHSe24ISFP3PYGVU7STuxo7md32QjNE7kdII=;
+        b=QOkd4L+OHFxiMuPp9zbVEbuh9n6dPOc8KjVyt6dwIxJbkgC7+LU3pwmoHJNTf3B06V
+         dsttP9NauRQfOd8zSRthan6vfH0wbU/cK0LGI/foSsUVtsEf0q8vAqUBlBNp1F7//qls
+         UNVJP1e/BVlzBTargRU/Cm0zCoZi69LkOoNxOfW0D8Mf6AgUdi5p+0/U/vaY1xQSEt4F
+         WK3AMBssbcNK+yca1UQODB+NjRt4iAv+pCT4goiOoCBm91QoL46ovqtlm2r2q96jiNs1
+         t4z7nBIe/nC0CH9u9eI0PyqxbgMxrgQ6QOWYpy36Z9YL3rcysxmAgg4dAacq3QnylwEY
+         9NBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV+IfvctJ6jcljnkAVdf+tmODmiTFrwfgq/smCehCgQjX022tyO0kd3gLGvq0OKsItH6hMgiT2rFJ3gppU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzIuVR5zt4iXgrfUrxw0rZWsAc5rOrwlfoASSeDakmskZO/zdHF
+	On1jOxzKqCcev8inhvlSmtGJMwbOkiQmgEtcfTdI7lBydAPMDzFtwc2Rn0oV5WUv4TNBViMYsh5
+	E9RaH
+X-Gm-Gg: ASbGncsmCLOG5nBdqVdIESIU/UK5NbvmZbZl90B+5eSD0Nln9CUEoRbUrPs5ztcgPIK
+	RCDs00mlfqCpVFFUtSEtEwuXnGbxGsclqu4V45KX1gTDjpTMJHZ+LEpTRTgQGmzWaOsmDb0ia0N
+	qC0O6kY43Wf+wvmmxL5vqzGFm7YMZ21UXRGXNRB6Y3bkyLeqOIcQPn43bM08yxZK8bpBQ3l8SJ8
+	14clYL6WAXU/c0CANsFC2EJIDJvG4NVQ4aN0PX9gI/G+w/calBi+sAiscKMf6ghJoKt4b0+5owp
+	CL0PxWzQGYO4GA==
+X-Google-Smtp-Source: AGHT+IFhS79gnv6j2J+6E8hDnGiVKl7PnOv9cBwgG5sc8vWttw5iqsbIGpZLm4sfQ342rNZsblHy0Q==
+X-Received: by 2002:a05:6512:3111:b0:53e:1c3d:fb2d with SMTP id 2adb3069b0e04-53e1c3dfcaamr1265772e87.0.1733352522757;
+        Wed, 04 Dec 2024 14:48:42 -0800 (PST)
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com. [209.85.167.45])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53e229d9913sm24365e87.283.2024.12.04.14.48.41
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 04 Dec 2024 14:48:41 -0800 (PST)
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-53de852a287so309274e87.2
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 14:48:41 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWt1t6XDp97QDe36DyxVlFwCvuiLq6NzhYJVj+ploWQiWViHGcd7sEfHfthDepdmhOKHZpBt/G4EgYTi8o=@vger.kernel.org
+X-Received: by 2002:a05:6512:3087:b0:53d:ed89:d78d with SMTP id
+ 2adb3069b0e04-53e1b8785eamr2316814e87.5.1733352520879; Wed, 04 Dec 2024
+ 14:48:40 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1733305182.git.zhengqi.arch@bytedance.com>
- <92aba2b319a734913f18ba41e7d86a265f0b84e2.1733305182.git.zhengqi.arch@bytedance.com>
- <20241204143625.a09c2b8376b2415b985cf50a@linux-foundation.org>
-In-Reply-To: <20241204143625.a09c2b8376b2415b985cf50a@linux-foundation.org>
-From: Jann Horn <jannh@google.com>
-Date: Wed, 4 Dec 2024 23:47:30 +0100
-Message-ID: <CAG48ez1HjoZiyk+_JOxcA5eM797vCmzvXaEVUgd6Mkze-aykbg@mail.gmail.com>
-Subject: Re: [PATCH v4 09/11] mm: pgtable: reclaim empty PTE page in madvise(MADV_DONTNEED)
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Qi Zheng <zhengqi.arch@bytedance.com>, david@redhat.com, hughd@google.com, 
-	willy@infradead.org, muchun.song@linux.dev, vbabka@kernel.org, 
-	peterx@redhat.com, mgorman@suse.de, catalin.marinas@arm.com, will@kernel.org, 
-	dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org, 
-	x86@kernel.org, lorenzo.stoakes@oracle.com, zokeefe@google.com, 
-	rientjes@google.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <20241204-topic-misc-dt-fixes-v1-0-6d320b6454e6@linaro.org> <20241204-topic-misc-dt-fixes-v1-4-6d320b6454e6@linaro.org>
+In-Reply-To: <20241204-topic-misc-dt-fixes-v1-4-6d320b6454e6@linaro.org>
+From: Doug Anderson <dianders@chromium.org>
+Date: Wed, 4 Dec 2024 14:48:29 -0800
+X-Gmail-Original-Message-ID: <CAD=FV=WMm5j60+jn9JFYkTDgm73NOHU5SAxbWvXOicEFbDySxQ@mail.gmail.com>
+Message-ID: <CAD=FV=WMm5j60+jn9JFYkTDgm73NOHU5SAxbWvXOicEFbDySxQ@mail.gmail.com>
+Subject: Re: [PATCH 4/5] arm64: dts: qcom: sc7180-trogdor-pompom: rename
+ 5v-choke thermal zone
+To: Neil Armstrong <neil.armstrong@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	cros-qcom-dts-watchers@chromium.org, linux-arm-msm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Dec 4, 2024 at 11:36=E2=80=AFPM Andrew Morton <akpm@linux-foundatio=
-n.org> wrote:
+Hi,
+
+On Wed, Dec 4, 2024 at 2:57=E2=80=AFAM Neil Armstrong <neil.armstrong@linar=
+o.org> wrote:
 >
-> On Wed,  4 Dec 2024 19:09:49 +0800 Qi Zheng <zhengqi.arch@bytedance.com> =
-wrote:
-> > As a first step, this commit aims to synchronously free the empty PTE
-> > pages in madvise(MADV_DONTNEED) case. We will detect and free empty PTE
-> > pages in zap_pte_range(), and will add zap_details.reclaim_pt to exclud=
-e
-> > cases other than madvise(MADV_DONTNEED).
-> >
-> > Once an empty PTE is detected, we first try to hold the pmd lock within
-> > the pte lock. If successful, we clear the pmd entry directly (fast path=
-).
-> > Otherwise, we wait until the pte lock is released, then re-hold the pmd
-> > and pte locks and loop PTRS_PER_PTE times to check pte_none() to re-det=
-ect
-> > whether the PTE page is empty and free it (slow path).
+> Rename the 5v-choke thermal zone to satisfy the bindings.
 >
-> "wait until the pte lock is released" sounds nasty.  I'm not
-> immediately seeing the code which does this.  PLease provide more
-> description?
-
-It's worded a bit confusingly, but it's fine; a better description
-might be "if try_get_and_clear_pmd() fails to trylock the PMD lock
-(against lock order), then later, after we have dropped the PTE lock,
-try_to_free_pte() takes the PMD and PTE locks in the proper lock
-order".
-
-The "wait until the pte lock is released" part is just supposed to
-mean that the try_to_free_pte() call is placed after the point where
-the PTE lock has been dropped (which makes it possible to take the PMD
-lock). It does not refer to waiting for other threads.
-
-> > +void try_to_free_pte(struct mm_struct *mm, pmd_t *pmd, unsigned long a=
-ddr,
-> > +                  struct mmu_gather *tlb)
-> > +{
-> > +     pmd_t pmdval;
-> > +     spinlock_t *pml, *ptl;
-> > +     pte_t *start_pte, *pte;
-> > +     int i;
-> > +
-> > +     pml =3D pmd_lock(mm, pmd);
-> > +     start_pte =3D pte_offset_map_rw_nolock(mm, pmd, addr, &pmdval, &p=
-tl);
-> > +     if (!start_pte)
-> > +             goto out_ptl;
-> > +     if (ptl !=3D pml)
-> > +             spin_lock_nested(ptl, SINGLE_DEPTH_NESTING);
-> > +
-> > +     /* Check if it is empty PTE page */
-> > +     for (i =3D 0, pte =3D start_pte; i < PTRS_PER_PTE; i++, pte++) {
-> > +             if (!pte_none(ptep_get(pte)))
-> > +                     goto out_ptl;
-> > +     }
+> This fixes:
+> sc7180-trogdor-pompom-r2-lte.dts: thermal-zones: '5v-choke-thermal' does =
+not match any of the regexes: '^[a-zA-Z][a-zA-Z0-9\\-]{1,10}-thermal$', 'pi=
+nctrl-[0-9]+'
+>         from schema $id: http://devicetree.org/schemas/thermal/thermal-zo=
+nes.yaml#
 >
-> Are there any worst-case situations in which we'll spend uncceptable
-> mounts of time running this loop?
+> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+> ---
+>  arch/arm64/boot/dts/qcom/sc7180-trogdor-pompom.dtsi | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
-This loop is just over a single page table, that should be no more
-expensive than what we already do in other common paths like
-zap_pte_range().
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
 
