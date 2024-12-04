@@ -1,162 +1,141 @@
-Return-Path: <linux-kernel+bounces-430560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430562-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C8CF9E32C8
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 05:51:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E00E9E32D6
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 06:02:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2AB2FB26B74
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 04:51:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5E00283BE6
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 05:02:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FBC517C7B6;
-	Wed,  4 Dec 2024 04:51:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C0ED18452C;
+	Wed,  4 Dec 2024 05:02:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="KebMb7UL"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="LkYJodZQ"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A70CE502BE;
-	Wed,  4 Dec 2024 04:50:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DD702500D2;
+	Wed,  4 Dec 2024 05:02:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733287860; cv=none; b=J4k6KofVx/wBmTdynTK0pWv/ynbPfnhpsesgZrokeztYU1zDdfnWlgQ5xKxonryG02icQUgQkxtHLyz7bhfKWb40f/LkxaQKJpjwQdJXz5qW0J/cQFBazbYuZs9cpJOWjL6yEHCJBhrLsucGA0Nv/MBP8wT6svisl+3/fjtokns=
+	t=1733288526; cv=none; b=YWn6qG0o+egs1MN5+upjh4bLCgxYj4XVZd3I3eE9CAd6haj/+LLmvObHJTNqkA6CgS8+Z2JbwqXKRyeYjmEnKOeN8CNmsmWVjXwBDwFr38jdLC/PCQvMiIgjglHsMjFALgKgWDiQNHqi4pbRQqZrfV/yNzmx3X9wSpU0fPBJFW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733287860; c=relaxed/simple;
-	bh=jr6/2axKyMSR18uZ66Kb/g4i6DxyDlHZwP1V5vP7+pY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=cQJyp+HLGfwv1WlcC3enhtv1XNVxhn9pjINir3akXuGx3TA9Re3VdLVZVPK1+DJ9y/aJsvyLDlMIyWzjpCoHGGURqOXADgOLyXTyUEPDm9DMIL4AdNxdx5J0tTYVYacmgpd5GAJ/FTCGt4ChWWya8pkjbOB7iC3s17TWEWRfvpY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=KebMb7UL; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B3JNSf1027880;
-	Wed, 4 Dec 2024 04:50:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	HrT+ix17CMvRW4h/CZZjYHFfnbNWyyW8v5tETaJEQNI=; b=KebMb7ULABBC+0Ku
-	DlM/hOuQ1YzmmaUhzDsiqS6F51v49PEV7oL+cSpPoAGn27/i67wla15Z1w/0RCAL
-	gdz127wEY9Y6yPWS2c1HAOpIZ2aKXlPVrPgZZXqlTPOxgC1aJHwWlKHrtDzbroOi
-	aWgfQjSerQVRKrU1A4T5s/XmCyHtRxid0/Nns+t0AsbJB69mogbfNHdc1ej7ua8p
-	jErbKBb8R5HzDjQ44nPwHGmnuDrGKw7y26MaRGPxCGTuVNAhaePsQI7efN4tt5sl
-	EqHJ9PCONzl2uHlCr7jvTTlZPflMoFSp0CL7U8oSgtN35mjno2oLIfX06TMvidGt
-	csCcYw==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 437tstj85s-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 04 Dec 2024 04:50:34 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B44oXVS027878
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 4 Dec 2024 04:50:33 GMT
-Received: from [10.253.8.52] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 3 Dec 2024
- 20:50:30 -0800
-Message-ID: <8360f26a-f384-4089-b50a-ae9751f503db@quicinc.com>
-Date: Wed, 4 Dec 2024 12:50:27 +0800
+	s=arc-20240116; t=1733288526; c=relaxed/simple;
+	bh=GnlVFOTcxvnw7IjZn/QE30JbutuH7Q8Nof7P5Bi1Png=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dT1fY2oyVhVlM2UVv5I3S5fz13Al5C9H1XtWU561CeRYs0zt4FBZBs5jmEsFO69xH09el0GGmMnzB4Ldd+B0cN78HOnrB9VBY7ZIvu75+9JhPIFpcPIKzutXvbRBCwZYMsHsRng1OuLmzKnjGlBmz4SGNQ/m2b0juBzFc58hrqE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=LkYJodZQ; arc=none smtp.client-ip=198.47.19.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 4B451rh91719832
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 3 Dec 2024 23:01:53 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1733288513;
+	bh=7DhUtPoGTteIH7DDUn9cBBWATVGD5xciR65qwj35AMo=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=LkYJodZQptK5Ov/2agxu1hQJFiQq9ogLyzt9ycpuU136ErY6+CfHi4uatuuYQE+lk
+	 UZ1TgL+tAJVstYkd0l06JjIZafmT+t+iJjN2RSDAd/cxjtivzgzuRe7vKIFJcLhKgX
+	 sate8IUHbWjMbtbSd5rZiQr97iCMhTNLEMDDDDCQ=
+Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4B451r6S015782
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 3 Dec 2024 23:01:53 -0600
+Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 3
+ Dec 2024 23:01:52 -0600
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 3 Dec 2024 23:01:52 -0600
+Received: from localhost (uda0492258.dhcp.ti.com [10.24.72.81])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4B451pSo018690;
+	Tue, 3 Dec 2024 23:01:52 -0600
+Date: Wed, 4 Dec 2024 10:31:50 +0530
+From: s-vadapalli <s-vadapalli@ti.com>
+To: Enric Balletbo i Serra <eballetb@redhat.com>
+CC: s-vadapalli <s-vadapalli@ti.com>, Nishanth Menon <nm@ti.com>,
+        "Vignesh
+ Raghavendra" <vigneshr@ti.com>,
+        Tero Kristo <kristo@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Dasnavis Sabiya
+	<sabiya.d@ti.com>
+Subject: Re: [PATCH] arm64: dts: ti: k3-am69-sk: Add USB SuperSpeed support
+Message-ID: <o37g5m3qvod4mydnjytyubobmvit7zjmh5xhv6jxjze3reiqct@wkwm36yvftyr>
+References: <20241126-am69sk-dt-usb-v1-1-aa55aed7b89e@redhat.com>
+ <2nuncc5rscu6h74ylaiu6yozg34aoigaj5d4uzvdtolt5q7bmv@6hacpxyb2532>
+ <CALE0LRtUN2N_Z05jH_BMSg7yvirSRob0pSErmQxTu8AatmODgw@mail.gmail.com>
+ <CALE0LRu-Sx5oTVNY3hm+Msu-zb04a7_ZD+r3xF1eRfR_WtK0VA@mail.gmail.com>
+ <wbsg3fmco6rwjj7vtiqtqv7trfjor73j7rjx7efnlafo4pz4bc@awixm2iygd55>
+ <CALE0LRvZNnNJ8jBG35bU8Ev5Fvr2400O5qXUsRn0zufkidJeJw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] Bluetooth: qca: Support downloading board ID specific
- NVM for WCN6855
-To: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-CC: Paul Menzel <pmenzel@molgen.mpg.de>, Zijun Hu <zijun_hu@icloud.com>,
-        <linux-bluetooth@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        "Luiz
- Augusto von Dentz" <luiz.von.dentz@intel.com>,
-        Bjorn Andersson
-	<bjorande@quicinc.com>,
-        "Aiqun Yu (Maria)" <quic_aiquny@quicinc.com>,
-        "Cheng
- Jiang" <quic_chejiang@quicinc.com>,
-        Johan Hovold <johan@kernel.org>,
-        "Jens
- Glathe" <jens.glathe@oldschoolsolutions.biz>,
-        <stable@vger.kernel.org>, "Johan Hovold" <johan+linaro@kernel.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Steev Klimaszewski <steev@kali.org>,
-        Marcel Holtmann
-	<marcel@holtmann.org>
-References: <20241116-x13s_wcn6855_fix-v2-1-c08c298d5fbf@quicinc.com>
-Content-Language: en-US
-From: quic_zijuhu <quic_zijuhu@quicinc.com>
-In-Reply-To: <20241116-x13s_wcn6855_fix-v2-1-c08c298d5fbf@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: EJh6MI1RqT8UnI3hcLLEmYr2rP2v2RRo
-X-Proofpoint-GUID: EJh6MI1RqT8UnI3hcLLEmYr2rP2v2RRo
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- malwarescore=0 spamscore=0 impostorscore=0 mlxlogscore=999 mlxscore=0
- priorityscore=1501 suspectscore=0 phishscore=0 adultscore=0 clxscore=1015
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412040037
+In-Reply-To: <CALE0LRvZNnNJ8jBG35bU8Ev5Fvr2400O5qXUsRn0zufkidJeJw@mail.gmail.com>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On 11/16/2024 11:49 PM, Zijun Hu wrote:
-> For WCN6855, board ID specific NVM needs to be downloaded once board ID
-> is available, but the default NVM is always downloaded currently, and
-> the wrong NVM causes poor RF performance which effects user experience.
+On Tue, Dec 03, 2024 at 04:29:02PM +0100, Enric Balletbo i Serra wrote:
+> Hi,
 > 
-
-Hi Luiz,
-
-could you please code review for this change ?
-
-several types of product in market need this fix, hope it will go to
-mainline as early as possible.
-
-sorry for this noise.
-
-> Fix by downloading board ID specific NVM if board ID is available.
+> On Thu, Nov 28, 2024 at 10:58 AM s-vadapalli <s-vadapalli@ti.com> wrote:
+> >
+> > On Thu, Nov 28, 2024 at 10:47:42AM +0100, Enric Balletbo i Serra wrote:
+> > > Hi,
+> >
+> > [...]
+> >
+> > > So I changed the dr_mode to otg instead of host and tried to configure
+> > > a usb mass storage gadget but unfortunately didn't work, but this
+> > > could be a driver problem, I got the following error
+> > >
+> > >   UDC core: g1: couldn't find an available UDC
+> > >
+> > > As the devicetree should describe the hardware, and as far as I can
+> > > see it should support the type-c port act as a gadget, I'm fine with
+> > > changing the dr_mode, unless anyone have more information about this,
+> > > the thing that makes me think a bit more is that, in the TI kernel
+> > > this is set to host, so I'm wondering if I'm missing something or is
+> > > just that was never tested.
+> >
+> > Are all interfaces (Type-A and Type-C) functional as Host when the
+> > dr_mode is set to "otg"? (Do USB devices connected to the interfaces
+> > enumerate on AM69-SK?) If yes, then it could be a DIP Switch setting
+> > that is related to OTG mode of operation or a USB-C Mux that needs to be
+> > configured.
+> >
 > 
-> Cc: Bjorn Andersson <bjorande@quicinc.com>
-> Cc: Aiqun Yu (Maria) <quic_aiquny@quicinc.com>
-> Cc: Cheng Jiang <quic_chejiang@quicinc.com>
-> Cc: Johan Hovold <johan@kernel.org>
-> Cc: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
-> Cc: Steev Klimaszewski <steev@kali.org>
-> Cc: Paul Menzel <pmenzel@molgen.mpg.de>
-> Fixes: 095327fede00 ("Bluetooth: hci_qca: Add support for QTI Bluetooth chip wcn6855")
-> Cc: stable@vger.kernel.org # 6.4
-> Reviewed-by: Johan Hovold <johan+linaro@kernel.org>
-> Tested-by: Johan Hovold <johan+linaro@kernel.org>
-> Tested-by: Steev Klimaszewski <steev@kali.org>
-> Tested-by: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
-> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
-> ---
-> Thank you Paul, Jens, Steev, Johan, Luiz for code review, various
-> verification, comments and suggestions. these comments and suggestions
-> are very good, and all of them are taken by this v2 patch.
+> Yes, all interfaces (Type-A and Type-C) are functional as host when
+> the dr_mode is set to "otg". Looking at SK-AM69 Processor Start Kit
+> User's Guide (Rev. A) [1] I don't see any DIP Switch related to the
+> OTG  mode. Looks like the type-c connector connects directly to the
+> SoC through a USB HUB (TUSB4041).
 > 
-> Regarding the variant 'g', sorry for that i can say nothing due to
-> confidential information (CCI), but fortunately, we don't need to
-> care about its difference against one without 'g' from BT host
-> perspective, qca_get_hsp_nvm_name_generic() shows how to map BT chip
-> to firmware.
-> 
-> I will help to backport it to LTS kernels ASAP once this commit
-> is mainlined.
-> ---
-> Changes in v2:
-> - Correct subject and commit message
-> - Temporarily add nvm fallback logic to speed up backport.
-> — Add fix/stable tags as suggested by Luiz and Johan
-> - Link to v1: https://lore.kernel.org/r/20241113-x13s_wcn6855_fix-
-> v1-1-15af0aa2549c@quicinc.com
-> ---
+> [1] https://www.ti.com/lit/ug/spruj70a/spruj70a.pdf?ts=1733215039014
 
+In that case, please post the patch setting "dr_mode" to "otg". As to
+why "peripheral"/"gadget" operation doesn't work could be addressed
+separately and seems to be independent of the device-tree. The reason
+for suggesting "otg" instead of "host" is to ensure that the device-tree
+describes the Hardware. Since "host" mode is still functional with
+"dr_mode" set to "otg", at-least for the use-cases that you have in mind,
+I believe that "otg" should be acceptable.
+
+Regards,
+Siddharth.
 
