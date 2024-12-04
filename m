@@ -1,148 +1,88 @@
-Return-Path: <linux-kernel+bounces-430805-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71C769E35C4
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 09:46:07 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8AA5E169E0E
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 08:46:03 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA8FF1A256C;
-	Wed,  4 Dec 2024 08:45:39 +0000 (UTC)
-Received: from mout.kundenserver.de (mout.kundenserver.de [217.72.192.73])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BB559E359E
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 09:40:43 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1198A1990C4;
-	Wed,  4 Dec 2024 08:45:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.73
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DADAD282B14
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 08:40:41 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC1FB196434;
+	Wed,  4 Dec 2024 08:40:37 +0000 (UTC)
+Received: from cmccmta2.chinamobile.com (cmccmta6.chinamobile.com [111.22.67.139])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D489F191489;
+	Wed,  4 Dec 2024 08:40:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733301939; cv=none; b=fxutrGNlXD7xTQWPN8ygyciv76Ve8TkU+57Pl659h9u0Mmuve/M2RCI/eqZ8OTC+BQHwVnL2mR4jbsurUreGGmmk8s6dFwL218RQfB0Hw7/XC9QcUaP7HEPq5RhS9eZmxHyhjvqpP0sFWFl1duSx8jQRQhnMEd0EpsFmQp3i9fY=
+	t=1733301637; cv=none; b=f5N8RoTBXhaLUQaY/ooc735pOA3AVBf7aGQ8EFIzp0JyAEmjCi+TRQ2qukJT1RE1lZ/BspQUKVo7lUzbssU0XylOfcxUXwEtA5EYF+iazSSu51C9NbXXcH9vFSsOpbRWF2BivCOBOjzU2AtWnTXiDOIF8Ff6X9nlUVcyYICkoi0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733301939; c=relaxed/simple;
-	bh=cxBWfMZH2U+jwIDZvQvJEXLqWIblgWr8+ybOCIolbnc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=iqCfdbCDvdX5gAhtrbLAt1OCMXMPrW7rVOsfHaskPq9qwKnncgfuPl1W3EDlEp/alK8qGDg2TEm8k6/I0rvt2ALWRcqjszZnmJDUDk32sl8AtpWI95BoLHh1maTzdWrZ+G+A/SK/X92kGVIKd3SFsvKjrgW+mFkB6M6px5GtAc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dugarreau.fr; spf=none smtp.mailfrom=dugarreau.fr; arc=none smtp.client-ip=217.72.192.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dugarreau.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=dugarreau.fr
-Received: from [127.0.1.1] ([185.116.133.150]) by mrelayeu.kundenserver.de
- (mreue107 [213.165.67.119]) with ESMTPSA (Nemesis) id
- 1M1IRY-1tLW5B02fK-00CGAz; Wed, 04 Dec 2024 09:40:03 +0100
-From: =?utf-8?q?Beno=C3=AEt_du_Garreau?= <benoit@dugarreau.fr>
-Date: Wed, 04 Dec 2024 09:38:39 +0100
-Subject: [PATCH] block: rnull: Initialize the module in place
+	s=arc-20240116; t=1733301637; c=relaxed/simple;
+	bh=D0+CwvJjK4KkI3Qr0Lhqfqdn9zkfNfWbDrrcicnW4v8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=g3o3uhdW8lefNrq1CF39b18MkH0upmDHAAIXQHRBY8lvU8BjMFP+vnH+YhwEhcq8IS8bLtiHdQEBa1v8IGvGrf82Q7KbwppVqEwxe8rr7Q1brERzKYcCj3h1dy6r4jCQS0fNtA8YvGTvQgwQZc8LShAYpPkBJMcX/wDjHyGNynM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
+	by rmmx-syy-dmz-app05-12005 (RichMail) with SMTP id 2ee56750157dec9-caee0;
+	Wed, 04 Dec 2024 16:40:30 +0800 (CST)
+X-RM-TRANSID:2ee56750157dec9-caee0
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from 192.168.28.197 (unknown[10.55.1.72])
+	by rmsmtp-syy-appsvr07-12007 (RichMail) with SMTP id 2ee76750157ce96-60ac4;
+	Wed, 04 Dec 2024 16:40:30 +0800 (CST)
+X-RM-TRANSID:2ee76750157ce96-60ac4
+From: liujing <liujing@cmss.chinamobile.com>
+To: richard.henderson@linaro.org,
+	ink@jurassic.park.msu.ru,
+	mattst88@gmail.com,
+	paulmck@kernel.org,
+	arnd@arndb.de
+Cc: linux-alpha@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	liujing <liujing@cmss.chinamobile.com>
+Subject: [PATCH] alpha: Fix condition 'i>40' is always false
+Date: Wed,  4 Dec 2024 16:40:28 +0800
+Message-Id: <20241204084028.6067-1-liujing@cmss.chinamobile.com>
+X-Mailer: git-send-email 2.27.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20241204-rnull_in_place-v1-1-efe3eafac9fb@dugarreau.fr>
-X-B4-Tracking: v=1; b=H4sIAA4VUGcC/zXM0QrCMAxA0V8ZebaQtRPFXxEZbZdtgRJHOkUY+
- 3fjwMfzcO8GlZSpwq3ZQOnNlZ9iaE8N5DnKRI4HM3j0XesxOJVXKT1Lv5SYyZ0J0yUM14CYwaJ
- FaeTPMbw/zClWckmj5Pm3+Xc24BX2/Que9xuTgAAAAA==
-X-Change-ID: 20241203-rnull_in_place-5e0b73d8300c
-To: Andreas Hindborg <a.hindborg@kernel.org>, 
- Boqun Feng <boqun.feng@gmail.com>, Jens Axboe <axboe@kernel.dk>
-Cc: linux-block@vger.kernel.org, rust-for-linux@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- =?utf-8?q?Beno=C3=AEt_du_Garreau?= <benoit@dugarreau.fr>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1733301602; l=2218;
- i=benoit@dugarreau.fr; s=20241203; h=from:subject:message-id;
- bh=cxBWfMZH2U+jwIDZvQvJEXLqWIblgWr8+ybOCIolbnc=;
- b=+hLAeDCGQO4R2Of+/EAJ8WlTlZvIWp6dmrjrTOXGwjmFyMSxS1/HN+XeuTDv6ZRacpw3rbFCj
- ymEpD2FdCI3Dw6DfvNbh7MRlIUVg2lE1AUCvKuOPV/2jHV+klaQHUzA
-X-Developer-Key: i=benoit@dugarreau.fr; a=ed25519;
- pk=l4tCZw3UpEkwtwhwsl5BV1HlPvHlXLQQRh96sL21/FU=
-X-Provags-ID: V03:K1:z91Ow9ERORgj5fKYQthmbNT+6lMCY18u9hLuV/E5/6LtiMa4kk4
- Wf0CXcNkh4cIajEQC8M//B96h5ZFxQgVV05hyJQBSEjqaGX1rW534aHVOVkfaK5t1WAYRsy
- cnpJGT0zy2DESxKG7j4vy4JozRvow6GF0xGLUmD4N2NvI6VzbB28xXsv1y+yQBzkuk1mGNQ
- fgr7NQV81+lgXtbcjZ/aw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:/6RFLwCjgX8=;d84qXBJWLhfQt80OPCIh+zxgg+M
- M6Nv0N+L+GG0waOM00OTFLldTlBKm6+eLpJeepFlDW7pN24TRw59GzlMiSww58WGiGxbV8eg+
- wNm+DWbcg0J+tgeL7nmxQqEohtBHXZpEx7FnV9DPnvg69hkvzmBWnVJ6Ze/X4HPBkhJeyi+xA
- cZWEb/LF4Vw18NjUVAhzPG33wF6btEzgqkhF9uGlQl3HGaXEuc5PEm4lMvZegwy+TslhvC79a
- GqRpWp+7+zUbohGeqQKb52yltN/kRacOtGlLVpTpLGJWxKqPcD7fj1fo5SwVqCkaaBKnve6nZ
- bMLYtDgEdVFCxtzc8zhTOQAMcWZu2qsJod2sEii2kVW3hroLfXyhJV+yLEMmrdc6/Kn4JgeaZ
- eIhY/glpwJtukb05JH6y4oQD7ZQSoOOx4yjhD+FwgPIKG5cx36Wcymwzhu14WDGb4jQNbA08O
- HsL+m/5vsCYGoxj0LI+0Ed7X3X8CHeUidQXN8ZCvoqnWvPDrIPbRzkzXe76kz3HDIL+LIEvgL
- 1nnV4Nz+53k5QEoTUlihezzBWJD2oMY+7+AYwJ59vug6lO3zMF7yojLsEjWQOON5Y3l1RZT8Q
- TPtMVve/wJJO7gz56ExFitPMNY6CLthRm3hPCZOvmADVU16nTMbIR8xZgytFsLU6hpaUrXKJ2
- FZaDWG1jEUI08NHOx4Sd9DkcTFsEc56XbKHygtX8cY+KJv93Hh4Z3o4rEbQQ0dxT3AMTtMD5z
- h3Rapi1BICvqXRHRYAEYcsHMdQo7vxIg7rIdoQSaB3LUfA6lktGXLss+osaTNPFWq7FUr+1Ib
- 32CPdyQCqtFUJp5RnymurtjPGwp1xcloeoHo4xbcVmVIcSWQriMmJERaxqNzXWmqwnYs0SokP
- ZMdVjLYx/+vTjBLAfZboWHGbGvuR2nAcBUp9abo3DV5C//51Eo9FPKqN81AjJ9kQW+9ASFJP+
- wyiqHOmFtaHaUJYln1/5w+aLOeCuw08wB7LZidz8xQUvFk+qMsBtkDxkO5I1Why/gCrGMoyl5
- XT/NpeEhS9KZ/VO8HPYaw3vJuia5FJnvdDr6DyG
 
-Using `InPlaceModule` avoids an allocation and an indirection.
+The i variable is used to count the number of stack frames printed,
+but it is initialized to 0 only at the beginning of the loop, and
+is not increased later in the loop. Therefore, the value of i is
+always 0, resulting in the condition if (i > 40) never being true.
 
-Signed-off-by: Benoît du Garreau <benoit@dugarreau.fr>
----
- drivers/block/rnull.rs | 30 ++++++++++++++++++------------
- 1 file changed, 18 insertions(+), 12 deletions(-)
+To ensure that i counts correctly, you need to increase the value
+of i each time the stack frame is successfully printed.
 
-diff --git a/drivers/block/rnull.rs b/drivers/block/rnull.rs
-index 5de7223beb4d5b4224010c86fca826967a019c27..6cdd2589c4621369cd57af66a2b817889321ed15 100644
---- a/drivers/block/rnull.rs
-+++ b/drivers/block/rnull.rs
-@@ -31,25 +31,31 @@
-     license: "GPL v2",
- }
- 
-+#[pin_data]
- struct NullBlkModule {
--    _disk: Pin<KBox<Mutex<GenDisk<NullBlkDevice>>>>,
-+    #[pin]
-+    _disk: Mutex<GenDisk<NullBlkDevice>>,
- }
- 
--impl kernel::Module for NullBlkModule {
--    fn init(_module: &'static ThisModule) -> Result<Self> {
-+impl kernel::InPlaceModule for NullBlkModule {
-+    fn init(_module: &'static ThisModule) -> impl PinInit<Self, Error> {
-         pr_info!("Rust null_blk loaded\n");
--        let tagset = Arc::pin_init(TagSet::new(1, 256, 1), flags::GFP_KERNEL)?;
- 
--        let disk = gen_disk::GenDiskBuilder::new()
--            .capacity_sectors(4096 << 11)
--            .logical_block_size(4096)?
--            .physical_block_size(4096)?
--            .rotational(false)
--            .build(format_args!("rnullb{}", 0), tagset)?;
-+        // Use a immediately-called closure as a stable `try` block
-+        let disk = /* try */ (|| {
-+            let tagset = Arc::pin_init(TagSet::new(1, 256, 1), flags::GFP_KERNEL)?;
- 
--        let disk = KBox::pin_init(new_mutex!(disk, "nullb:disk"), flags::GFP_KERNEL)?;
-+            gen_disk::GenDiskBuilder::new()
-+                .capacity_sectors(4096 << 11)
-+                .logical_block_size(4096)?
-+                .physical_block_size(4096)?
-+                .rotational(false)
-+                .build(format_args!("rnullb{}", 0), tagset)
-+        })();
- 
--        Ok(Self { _disk: disk })
-+        try_pin_init!(Self {
-+            _disk <- new_mutex!(disk?, "nullb:disk"),
-+        })
-     }
- }
- 
+Signed-off-by: liujing <liujing@cmss.chinamobile.com>
 
----
-base-commit: 4d6f8ba6e0a7b0627b4a559747948ee0d6797a3a
-change-id: 20241203-rnull_in_place-5e0b73d8300c
-
-Best regards,
+diff --git a/arch/alpha/kernel/traps.c b/arch/alpha/kernel/traps.c
+index 6afae65e9a8b..65c44756f949 100644
+--- a/arch/alpha/kernel/traps.c
++++ b/arch/alpha/kernel/traps.c
+@@ -100,6 +100,7 @@ dik_show_trace(unsigned long *sp, const char *loglvl)
+ 		if (!is_kernel_text(tmp))
+ 			continue;
+ 		printk("%s[<%lx>] %pSR\n", loglvl, tmp, (void *)tmp);
++		i++;
+ 		if (i > 40) {
+ 			printk("%s ...", loglvl);
+ 			break;
 -- 
-Benoît du Garreau <benoit@dugarreau.fr>
+2.27.0
+
+
 
 
