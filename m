@@ -1,191 +1,151 @@
-Return-Path: <linux-kernel+bounces-430641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EBB39E33F1
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 08:15:17 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 670449E33EE
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 08:14:54 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1D60284FEE
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 07:15:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4234A161EF9
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 07:14:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A4CF18E050;
-	Wed,  4 Dec 2024 07:14:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E363F18C006;
+	Wed,  4 Dec 2024 07:14:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yoseli.org header.i=@yoseli.org header.b="Pm0A72fO"
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SFgqgT7z"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D08E1E522;
-	Wed,  4 Dec 2024 07:14:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34553184;
+	Wed,  4 Dec 2024 07:14:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733296493; cv=none; b=hZO7JxQBctmciqjTHQNa74jX08YZaYMqGE24ot0E5AV0KWIQgtu7d3FOJDvACpklQcQlEpdomNnf6ENJQ97rXKpTiYtcPRJs5zUbIGAf3h/M9/AtqItoFUOapKMaqw26/bHEUIDd9bXaye+dkP77xbJzOpSD/WwlhM2JGU3Qr34=
+	t=1733296487; cv=none; b=dAMa4gbWNApnFzPCjGix4jn0a2mq54ZmpL+HdECxwd+PSVbYDexmXViGO+IHmwhOyYgH9h1ZnS5tx3ah5P+pBH2vSYw1IZ8OW/xYmWuAI9Kue4pzB4jaX0OcCnsHvfyR2WqGh2M/I7qq3sK2eNG2pp6aizYCCkJR1e74276UKcs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733296493; c=relaxed/simple;
-	bh=lATQn35Lh/b3dk+WEOeuwOuK+UJNMeapYBTnIVg3ZVs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=NR8Doa1sAYdFodFAmu6m7X7UUu9FoE6uA3HcwUIJyPl89sZhunXxv0KjZ9bXENBJCEpVG1eh23ETi1EHCfsr5eypzxtkMQAP2i2rdI0vEhgL8y+tDK4b26rQftziMRmbcG7Ram1/nTC55ILxavwidhdQM+fxpGNmIHiVCEvFRYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=yoseli.org; spf=none smtp.mailfrom=yoseli.org; dkim=pass (2048-bit key) header.d=yoseli.org header.i=@yoseli.org header.b=Pm0A72fO; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=yoseli.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=yoseli.org
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 5343AE0002;
-	Wed,  4 Dec 2024 07:14:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yoseli.org; s=gm1;
-	t=1733296483;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BFmvl4A54RbX2d0A+Hcc5Q1dzADd/mmBQrsMzEB+NMM=;
-	b=Pm0A72fOex7Xpk4AWwY2C3hkBHOP0yvZSFQ/vreKK8rP+GfP5FHA+ehs6b7f85EAOncn64
-	eBF+VLkQgiudnnk1p3SHfql0+x6eSjbyuGprVND0Wqa1KkAgeCKtFs2vBl/ZYVN+lwjJsM
-	pQ/03AlpCtwUAVQtk6auSkIwtYj/tO6bg1nwAtYecpox44mNlSC4Z5mum6lUolsW1X5NNq
-	NOhX5MTJV8oxmvntUuqWHV6h4cQCbm6IkzXeP9CDG3XwwtvfmUrj9yk+umeI67BJgSJC5m
-	S+3zyF2RPPlWZ7W3AwFSeTxoxhhY01F4nwgRJRqCKfGCVBK+tms7rPbDcVLe4Q==
-From: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
-Date: Wed, 04 Dec 2024 08:14:40 +0100
-Subject: [PATCH v4 2/2] arch: m68k: Add STACKTRACE support
+	s=arc-20240116; t=1733296487; c=relaxed/simple;
+	bh=5zNcSh3mZKePkawVDiO1jvH5kno4N7sHW5GQf/o65KU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kiR/X+L4KgJJDUwyn47oscipb9kbin2MnKXJXvQaq8Ylf20T9upPWZpanmrwzlOCU2/ZOOiQ2fHVKLi3QMUAMxuRCRW5b6nMt3qsB/xvqXrQr1/VRcn03AwOvGNcMmsrAcCf5dHAuu13J3rJaQNnNKLhxSYLvi5Qj3hliSJuHDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SFgqgT7z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE476C4CED1;
+	Wed,  4 Dec 2024 07:14:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733296486;
+	bh=5zNcSh3mZKePkawVDiO1jvH5kno4N7sHW5GQf/o65KU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=SFgqgT7zDsWAHSZpaLswFk2iD5LBMSw5SsS8u7vV3dh1z0ERyZFuUWk5/vOpViXti
+	 MPh4HOPdrXBhiAAZEnMX/whAspbCSWeDOscx3X4uO8X0EST3/KO8tRKZ+gQNTRMtas
+	 YIGqafH7tmywzPyuM1G4cEcQAhzweurRsuRWC+Kj24KrMKTKrQ9AgIIFb1C/Gdh/On
+	 yon3dH/h0MQy9IdMwT1b24dq0ONb9qHf4G6Z8yNnaAC0PoJKLG59idLs2P4MEEEqXj
+	 hzyLJyvY3c+QYUFn8tc9HJw9fuLncGqligIACs3kuMZGCsMwQAj4g38KWw0DhwqRRt
+	 HQpAbzV7Yo5DA==
+Message-ID: <5ca95d14-84a7-48af-a5e3-cefc558d2e7f@kernel.org>
+Date: Wed, 4 Dec 2024 08:14:42 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 2/2] serial: 8250_pci: Share WCH IDs with
+ parport_serial driver
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Cameron Williams <cang1@live.co.uk>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Fenghua Yu <fenghua.yu@intel.com>, linux-kernel@vger.kernel.org,
+ linux-serial@vger.kernel.org, linux-pci@vger.kernel.org
+Cc: Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
+ Bjorn Helgaas <bhelgaas@google.com>
+References: <20241204031114.1029882-1-andriy.shevchenko@linux.intel.com>
+ <20241204031114.1029882-3-andriy.shevchenko@linux.intel.com>
+Content-Language: en-US
+From: Jiri Slaby <jirislaby@kernel.org>
+Autocrypt: addr=jirislaby@kernel.org; keydata=
+ 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
+In-Reply-To: <20241204031114.1029882-3-andriy.shevchenko@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241204-add-m68k-tracing-support-v4-2-e24fe5ef3b6b@yoseli.org>
-References: <20241204-add-m68k-tracing-support-v4-0-e24fe5ef3b6b@yoseli.org>
-In-Reply-To: <20241204-add-m68k-tracing-support-v4-0-e24fe5ef3b6b@yoseli.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org, 
- linux-trace-kernel@vger.kernel.org, rostedt@goodmis.org, 
- Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1733296481; l=3079;
- i=jeanmichel.hautbois@yoseli.org; s=20240925; h=from:subject:message-id;
- bh=lATQn35Lh/b3dk+WEOeuwOuK+UJNMeapYBTnIVg3ZVs=;
- b=N+MC+nVTnN0sMIPNUDszQzACCuIkYM4+P3jwOIkKdVlqpOnChOhLEWY6IO5dO17tbBzB9JHjp
- 5vILhAjbQ9MD3pQ8LpXrOAAgOiI3nwfmgqR9w5eKNz/mjv7Y9O090hw
-X-Developer-Key: i=jeanmichel.hautbois@yoseli.org; a=ed25519;
- pk=MsMTVmoV69wLIlSkHlFoACIMVNQFyvJzvsJSQsn/kq4=
-X-GND-Sasl: jeanmichel.hautbois@yoseli.org
 
-In order to use tracing, implement a basic arch_stack_walk() based on
-the one in PowerPC.
-Tested on a M54418 coldfire.
+On 04. 12. 24, 4:09, Andy Shevchenko wrote:
+> parport_serial driver uses subset of WCH IDs that are present in 8250_pci.
+> Share them via pci_ids.h and switch parport_serial to use defined constants.
+> 
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
+>   drivers/parport/parport_serial.c   | 12 ++++++++----
+>   drivers/tty/serial/8250/8250_pci.c | 10 ++--------
+>   include/linux/pci_ids.h            | 11 +++++++++++
+>   3 files changed, 21 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/parport/parport_serial.c b/drivers/parport/parport_serial.c
+> index 3644997a8342..24d4f3a3ec3d 100644
+> --- a/drivers/parport/parport_serial.c
+> +++ b/drivers/parport/parport_serial.c
+> @@ -266,10 +266,14 @@ static struct pci_device_id parport_serial_pci_tbl[] = {
+>   	{ 0x1409, 0x7168, 0x1409, 0xd079, 0, 0, timedia_9079c },
+>   
+>   	/* WCH CARDS */
+> -	{ 0x4348, 0x5053, PCI_ANY_ID, PCI_ANY_ID, 0, 0, wch_ch353_1s1p},
+> -	{ 0x4348, 0x7053, 0x4348, 0x3253, 0, 0, wch_ch353_2s1p},
+> -	{ 0x1c00, 0x3050, 0x1c00, 0x3050, 0, 0, wch_ch382_0s1p},
+> -	{ 0x1c00, 0x3250, 0x1c00, 0x3250, 0, 0, wch_ch382_2s1p},
+> +	{ PCI_VENDOR_ID_WCHCN, PCI_DEVICE_ID_WCHCN_CH353_1S1P,
+> +	  PCI_ANY_ID, PCI_ANY_ID, 0, 0, wch_ch353_1s1p },
+> +	{ PCI_VENDOR_ID_WCHCN, PCI_DEVICE_ID_WCHCN_CH353_2S1P,
+> +	  0x4348, 0x3253, 0, 0, wch_ch353_2s1p },
+> +	{ PCI_VENDOR_ID_WCHIC, PCI_DEVICE_ID_WCHIC_CH382_0S1P,
+> +	  0x1c00, 0x3050, 0, 0, wch_ch382_0s1p },
+> +	{ PCI_VENDOR_ID_WCHIC, PCI_DEVICE_ID_WCHIC_CH382_2S1P,
+> +	  0x1c00, 0x3250, 0, 0, wch_ch382_2s1p },
 
-Signed-off-by: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
----
- arch/m68k/Kconfig             |  5 ++++
- arch/m68k/kernel/Makefile     |  1 +
- arch/m68k/kernel/stacktrace.c | 70 +++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 76 insertions(+)
+I know this is the current pattern in the file. But what about using 
+PCI_DEVICE_DATA() for the first and PCI_DEVICE_SUB() + .driver_data for 
+the rest? Otherwise it occurs as a load of incomprehensible constants.
 
-diff --git a/arch/m68k/Kconfig b/arch/m68k/Kconfig
-index 793ab1e2762609725bbf793f6dffecfa3ecfff0f..3ad8596aab71190807f8c11dd5876aa1198760f3 100644
---- a/arch/m68k/Kconfig
-+++ b/arch/m68k/Kconfig
-@@ -106,6 +106,11 @@ config BOOTINFO_PROC
- 	  Say Y to export the bootinfo used to boot the kernel in a
- 	  "bootinfo" file in procfs.  This is useful with kexec.
- 
-+config STACKTRACE_SUPPORT
-+	def_bool MMU_COLDFIRE
-+	select ARCH_STACKWALK
-+	select ARCH_WANT_FRAME_POINTERS
-+
- menu "Platform setup"
- 
- source "arch/m68k/Kconfig.cpu"
-diff --git a/arch/m68k/kernel/Makefile b/arch/m68k/kernel/Makefile
-index 6c732ed3998b714a4842ee29c977550a61979779..cb02bcfe04c6b265fa97db9237395a262e649989 100644
---- a/arch/m68k/kernel/Makefile
-+++ b/arch/m68k/kernel/Makefile
-@@ -23,3 +23,4 @@ obj-$(CONFIG_UBOOT)		+= uboot.o
- 
- obj-$(CONFIG_EARLY_PRINTK)	+= early_printk.o
- 
-+obj-y	+= stacktrace.o
-diff --git a/arch/m68k/kernel/stacktrace.c b/arch/m68k/kernel/stacktrace.c
-new file mode 100644
-index 0000000000000000000000000000000000000000..4c2fb6b0cf675ee5a3a21393a50603fea98a1b03
---- /dev/null
-+++ b/arch/m68k/kernel/stacktrace.c
-@@ -0,0 +1,70 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+/*
-+ * Stack trace utility functions etc.
-+ *
-+ * Copyright 2024 Jean-Michel Hautbois, Yoseli SAS.
-+ */
-+
-+#include <asm/current.h>
-+#include <asm/ptrace.h>
-+#include <linux/sched.h>
-+#include <linux/sched/task_stack.h>
-+#include <linux/stacktrace.h>
-+
-+static inline unsigned long current_stack_frame(void)
-+{
-+	unsigned long sp;
-+
-+	asm volatile("movl %%fp, %0" : "=r"(sp));
-+	return sp;
-+}
-+
-+static inline int validate_sp(unsigned long sp, struct task_struct *task)
-+{
-+	unsigned long stack_start, stack_end;
-+
-+	if (task == current)
-+		stack_start = (unsigned long)task_stack_page(task);
-+	else
-+		stack_start = (unsigned long)task->thread.esp0;
-+
-+	stack_end = stack_start + THREAD_SIZE;
-+
-+	if (sp < stack_start || sp >= stack_end)
-+		return 0;
-+
-+	return 1;
-+}
-+
-+void __no_sanitize_address arch_stack_walk(stack_trace_consume_fn consume_entry, void *cookie,
-+					   struct task_struct *task, struct pt_regs *regs)
-+{
-+	unsigned long sp;
-+
-+	if (regs && !consume_entry(cookie, regs->pc))
-+		return;
-+
-+	if (regs)
-+		sp = (unsigned long) regs;
-+	else if (task == current)
-+		sp = current_stack_frame();
-+	else
-+		sp = task->thread.ksp;
-+
-+	for (;;) {
-+		unsigned long *stack = (unsigned long *) sp;
-+		unsigned long newsp, ip;
-+
-+		if (!validate_sp(sp, task))
-+			return;
-+
-+		newsp = stack[0];
-+		ip = stack[1];
-+
-+		if (!consume_entry(cookie, ip))
-+			return;
-+
-+		sp = newsp;
-+	}
-+}
-
+thanks,
 -- 
-2.39.5
-
+js
+suse labs
 
