@@ -1,151 +1,134 @@
-Return-Path: <linux-kernel+bounces-430403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430404-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EEF89E3077
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 01:46:42 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EABC9E307A
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 01:50:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F00428216A
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 00:46:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 165F9B220FE
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 00:50:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80C7C2904;
-	Wed,  4 Dec 2024 00:46:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B81A94C6E;
+	Wed,  4 Dec 2024 00:50:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PLpG6vMb"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="C5FGDZgo"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAF692500AC
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 00:46:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB7F82500AE
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 00:50:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733273197; cv=none; b=WIeTApcvSh+PhsPMdqwiAZjiasH06Oz7uvagFF08SXOUX6XJe28jcPZBb/aog+LMgFesuHSi1xu60dNRGO4vL/vmTdD0Da/tGIab6dZQO1/PJJIbyLC3Ok+86KVUzdWvRBGIKNiB/RgexgjtjWIESaq/VDUGz22rNFPpQ8fbWaw=
+	t=1733273407; cv=none; b=FGgtos/4Bfnr60R8Wd2eyqWkOqmvBkQExSXuDSvMAXgnsv3GhgABMX+AohMjYyOH38H30xN+QwT2CocViP4RsJcHM8wQrOeWfkIF6DpGmhLQUhY96X1I7LItXOHF+Acia7Vm+Kqws537N+r0I7iyvOEpZNSAj2BRDQjOgZozj2A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733273197; c=relaxed/simple;
-	bh=YCd+iKZ9hgdSEt4Ob/vLfq8idska0koAISciiAqZkkU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ncBMvadA7SpN4SMviwkWTqx/SNyjwfBek3Ly0RRNdyBZEtiv4UYdEH0j+iBwPBd3W+QXwto4VeWrJIo28lf22nsJvy8ddIkTtUauvkxRUF3+JswALncx8yMs3H7aXKD0/7bw91w2b/DF9AYPqtNn25XYuWj8uLWn+FqM9qGsMnk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PLpG6vMb; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733273195; x=1764809195;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=YCd+iKZ9hgdSEt4Ob/vLfq8idska0koAISciiAqZkkU=;
-  b=PLpG6vMblZ310j57ZFmzh8al+DwbLzsL3ihboZl07v0pp1T96jUG6fgk
-   2atJsoFCweycCnGkIx4lRMqEapyo1PMVzRH/1nY/fifMPm7wHvSijYbHN
-   HeWoZzLMBirwnjs1I3jgxO78AfP6fdhkapEKDWd7AKQnG4Mw4RnCe5+nN
-   7CXX4dcFuZXEi+79GkvUrTdLSBlNPhXV/kfsjm4KMx1wn75aDMU+bNcw8
-   IvNbhPs8N3CpqLv5rvF5HiCE8/NSVP3eNbKxl74mbCl3eXVS3KDgTtNzv
-   2dz8fErybvWrfkXKm/IE98PhW/mX29WA1QhHgtqdQ3fjb5uHjZ80lpyV/
-   A==;
-X-CSE-ConnectionGUID: 0+zaKVBESfiFPaVNTX22Uw==
-X-CSE-MsgGUID: D3wwUReXTHSYZEfI3PXqKA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11275"; a="33395729"
-X-IronPort-AV: E=Sophos;i="6.12,206,1728975600"; 
-   d="scan'208";a="33395729"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Dec 2024 16:46:34 -0800
-X-CSE-ConnectionGUID: XkxcxuLTS1K6c/b/Be/33A==
-X-CSE-MsgGUID: qkVIXpAYRfCQrcf4jWGQIw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,206,1728975600"; 
-   d="scan'208";a="94057589"
-Received: from tfalcon-desk.amr.corp.intel.com (HELO [10.124.223.112]) ([10.124.223.112])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Dec 2024 16:46:34 -0800
-Message-ID: <4360210d-0656-4328-ab67-240465ab2f9c@intel.com>
-Date: Tue, 3 Dec 2024 16:46:32 -0800
+	s=arc-20240116; t=1733273407; c=relaxed/simple;
+	bh=KMybNKJa6HXPkJyY3evuV9cRNIrcl39P7pBoeOSIbE0=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=WkCBUrT+877h3Ti7y1IvNMsboZ/mCBPiea0aMYpXGSbxMBFbpuLbHKlsbZor3PbH5+ILJcgW7V4ABeCpbw4QOhyDT5SoIBF2nMU0v2oYA+EpmCz/8QJ8EYZe+Hb7B6o0zLDiG7fIPFalu4KoDI6LBuVZsn/Gz638enoyn0xXUpc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=C5FGDZgo; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2ee948b77c9so4683228a91.3
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 16:50:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1733273405; x=1733878205; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=d/4oU1vpIu322T3uD3MqvxDC01OZZ/wF6FgrljBVKQg=;
+        b=C5FGDZgohOGHHAx9SyFOlFYhjs80esmPHXtsmbn0UMGr29fRvlSyXfFjY2J3AHPHFH
+         CASqqYrAFkS1hbk1HK5uc8wOE4P3iMIcax9TwLJClEMAEF9EJrLpvUuXF0a8lWsnryaN
+         yt+uYmjCAsmP7bTOT7gX3t7zw7z1mrMXqJk/dfYF+tdr5oM2eHBn+o/MfwwDbwqFB/av
+         Y0WGt9vHgnZjcuB6r3hp4s4NjLm0ZrE7sTuJ8w6emfzmaPbANORdC5CfMw3I0q6KTY4Y
+         7Q8UwcnxMbgZZShj/MoJDK/JkZ0GhUbyStXqmSojtmFSUv0qRItwd60P/94bK1/JY8tF
+         XFxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733273405; x=1733878205;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=d/4oU1vpIu322T3uD3MqvxDC01OZZ/wF6FgrljBVKQg=;
+        b=D1EpO9KPlpWdm9yXjyhWOuI98Kn6/KOtqKZUODiFGAfd3xn9WKYbnIt26iG69Tq7Pn
+         filiuxoeGfrWimJspk8C2PlDYvpNC5Od3StbpyuPuKBhgbe/JDe6viz0yVG8YeuNGGXR
+         8hblz+Yd+UX3iCT3slVndo7f/MDJYpJi3/Y1FGx4sR51ugYx/TJVPZyn8bNOZm8/K10V
+         j2HWsoAFNF9VngaWh4Q+991Ll2CdVYeYplzS+rQEDKFwxvT+k8ukwVzv9wNjIo4xQE7G
+         T473FrOgiJcbnJ3WaxpwZGq8tm3bubicsQOvYSqZ9u9rklyqrlGxSAus+ARhA61a+rmP
+         C+mQ==
+X-Gm-Message-State: AOJu0YwMQI/EQlg0LMWBaFZxR0zICYlj1lsqiZTdTOXUrCQ9NlriBwRF
+	jv+hpbEKi6pTYFBDL67PbzDpipNdfYRZv+OPx3KPd69VIEnkSO0wQ6DB7yQKvRrPnc/n8r7GUPn
+	gyQ==
+X-Google-Smtp-Source: AGHT+IGetD+k1LiPtdGDtPCALjWPT0cRMYF9pgZzkeaWbjBEos1LRP8RMAbDbrQ+niFK+QYtksQM6BeyJH4=
+X-Received: from pjbsb8.prod.google.com ([2002:a17:90b:50c8:b0:2ea:6b84:3849])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3e81:b0:2ee:b26c:10a0
+ with SMTP id 98e67ed59e1d1-2ef0125b0e3mr6902810a91.24.1733273405136; Tue, 03
+ Dec 2024 16:50:05 -0800 (PST)
+Date: Tue, 3 Dec 2024 16:50:03 -0800
+In-Reply-To: <c09a99e8-913f-4a86-ba0b-c64d5cdcfb2e@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] x86,mm: only trim the mm_cpumask once a second
-To: Rik van Riel <riel@surriel.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: kernel test robot <oliver.sang@intel.com>, oe-lkp@lists.linux.dev,
- lkp@intel.com, linux-kernel@vger.kernel.org, x86@kernel.org,
- Ingo Molnar <mingo@kernel.org>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Peter Zijlstra <peterz@infradead.org>, Mel Gorman <mgorman@suse.de>
-References: <202411282207.6bd28eae-lkp@intel.com>
- <20241202202213.26a79ed6@fangorn>
- <5dcb4050-f0f3-43d6-b4b1-42fa305a0fba@efficios.com>
- <20241203144845.7093ea1a@fangorn>
- <5544716d-31be-40c6-a289-030220e518de@intel.com>
- <cc6d6e0be9b4fb61228f42ad82a057f60a1c1e12.camel@surriel.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <cc6d6e0be9b4fb61228f42ad82a057f60a1c1e12.camel@surriel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <20241202214032.350109-1-huibo.wang@amd.com> <Z05MrWbtZQXOY2qk@google.com>
+ <c09a99e8-913f-4a86-ba0b-c64d5cdcfb2e@amd.com>
+Message-ID: <Z0-nO-iyICRy_m5S@google.com>
+Subject: Re: [PATCH v2] KVM: SVM: Convert plain error code numbers to defines
+From: Sean Christopherson <seanjc@google.com>
+To: "Melody (Huibo) Wang" <huibo.wang@amd.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>, 
+	Paolo Bonzini <pbonzini@redhat.com>, Tom Lendacky <thomas.lendacky@amd.com>, KVM <kvm@vger.kernel.org>, 
+	Pavan Kumar Paluri <papaluri@amd.com>
+Content-Type: text/plain; charset="us-ascii"
 
-On 12/3/24 12:07, Rik van Riel wrote:
-> The tlb_flush2 threaded test does not only madvise in a
-> loop, but also mmap and munmap from inside every thread.
+On Tue, Dec 03, 2024, Melody (Huibo) Wang wrote:
+> Hi Sean,
 > 
-> This should create massive contention on the mmap_lock,
-> resulting in threads going to sleep while waiting in
-> mmap and munmap.
+> On 12/2/2024 4:11 PM, Sean Christopherson wrote:
 > 
-> https://github.com/antonblanchard/will-it-scale/blob/master/tests/tlb_flush2.c
+> > 
+> > E.g. something like this?  Definitely feel free to suggest better names.
+> > 
+> > static inline void svm_vmgexit_set_return_code(struct vcpu_svm *svm,
+> > 					       u64 response, u64 data)
+> > {
+> > 	ghcb_set_sw_exit_info_1(svm->sev_es.ghcb, response);
+> > 	ghcb_set_sw_exit_info_2(svm->sev_es.ghcb, data);
+> > }
+> > 
+> If I make this function more generic where the exit info is set for both KVM
+> and the guest, then maybe I can write something like this:
 
-Oh, wow, it only madvise()'s a 1MB allocation before doing the
-munmap()/mmap(). I somehow remembered it being a lot larger. And, yeah,
-I see a ton of idle time which would be 100% explained by mmap_lock
-contention.
+I like the idea, but I actually think it's better to keep the guest and host code
+separate in the case, because the guest code should actually set a triple, e.g.
 
-Did the original workload that you care about have idle time?
+static __always_inline void sev_es_vmgexit_set_exit_info(struct ghcb *ghcb,
+							 u64 exit_code,
+							 u64 exit_info_1,
+							 u64 exit_info_2)
+{
+	ghcb_set_sw_exit_code(ghcb, exit_code);
+	ghcb_set_sw_exit_info_1(ghcb, exit_info_1);
+	ghcb_set_sw_exit_info_2(ghcb, exit_info_2);
+}
 
-I'm wondering if trimming mm_cpumask() on the way to idle but leaving it
-alone on a context switch to another thread is a good idea.
+I'm not totally opposed to sharing code, but I think it will be counter-productive
+in this specific case.  E.g. the guest version needs to be __always_inline so that
+it can be used in noinstr code.
+
+> void ghcb_set_exit_info(struct ghcb *ghcb,
+>                       u64 info1, u64 info2)
+> {
+> 	ghcb_set_sw_exit_info_1(ghcb, info1);
+> 	ghcb_set_sw_exit_info_2(ghcb, info2);
+> 
+> }
+> This way we can address every possible case that sets the exit info - not only KVM. 
+> 
+> And I am not sure about the wrappers for each specific case because we will
+> have too many, too specific small functions, but if you want them I can add
+> them.
+
+I count three.  We have far, far more wrappers VMX's is_exception_n(), and IMO
+those wrappers make the code significantly more readable.
 
