@@ -1,131 +1,197 @@
-Return-Path: <linux-kernel+bounces-431486-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D7089E3EC8
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:56:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 022159E3F11
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:03:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 63FBFB26D01
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:17:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8FD00B28C07
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:19:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54840204F7A;
-	Wed,  4 Dec 2024 15:17:01 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEFD41B0F34
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 15:16:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2784D20C001;
+	Wed,  4 Dec 2024 15:19:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="HB1iovpU"
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD3B7205E1C
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 15:19:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733325421; cv=none; b=U13GkJIWwE2Rj3dif0/PCe5kBGzpGQaxB4nwbFsFTF9/63flUcmfx44oj9Vl2O7J/Vlk92hBaq4nH2F+tuNqCEQWXKlN2EtLvRrVRNyO21w1InzruperuPfeq34c5InT0vu2+d5IH03SNqqr77dqEr63A9U7gsPSvq7/wslfwFE=
+	t=1733325583; cv=none; b=fCgYAiSD0tcH9tM0fMTQvNsA0nMeSV2nbwwbjMaXOnq9zAzAP5Pqdp1bqKMy7HdDXF0qcFIAnXF2wW6LLb1eSLlINpRD7ho5l/jM29UKB3N8MBj6vEpXGCaMjnOgijTfia1z77FNjpbQUos/F3mRaT2ejRcUndRjxhaA8EC/O/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733325421; c=relaxed/simple;
-	bh=snS7sYQoySg+075/kCzr8GpOyL7IkvNcwzYTnmHfZPg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aci45NWb8BQM0TqCei7kyy3lW+kH5uVUhewRwFdTsVW22v8Pw/0eVAvLyqTxVfbXhK0ppk6cXLdn63jQoBriU5EmZ9M0+BOv64HuFoAzisKVSTfRuWSzHnf9/0b77JdUaXxXWxh0pgtw8vtUcU/PGRBfP1NUF5Qq6EvZ3n1nCCs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CC8961063;
-	Wed,  4 Dec 2024 07:17:24 -0800 (PST)
-Received: from localhost (e132581.arm.com [10.2.76.71])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 582A83F5A1;
-	Wed,  4 Dec 2024 07:16:56 -0800 (PST)
-Date: Wed, 4 Dec 2024 15:16:50 +0000
-From: Leo Yan <leo.yan@arm.com>
-To: yuanfang zhang <quic_yuanfang@quicinc.com>
-Cc: suzuki.poulose@arm.com, mike.leach@linaro.org, james.clark@linaro.org,
-	alexander.shishkin@linux.intel.com, coresight@lists.linaro.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] coresight-etm4x: add isb() before reading the TRCSTATR
-Message-ID: <20241204151650.GA1976757@e132581.arm.com>
-References: <20241204112332.3706137-1-quic_yuanfang@quicinc.com>
+	s=arc-20240116; t=1733325583; c=relaxed/simple;
+	bh=rKDCPf8A9rIpjJrOC+5ylAOaezhr016mpWauI4DkMDU=;
+	h=From:In-Reply-To:References:Mime-Version:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tv1/50aZT4j9N0H8kKvIlV7/nupwc4+S3hVcJ1PrIvAx09D9c/9+UiWToqI02ZNFblF1mxtN6Bs7StlZPOk0B1SPtClHq+gn37Sry3KvAhfTpFqUhURaLLX80AaRC7r3D2xYnZdCHv4UQxvZMGXnupkgEuJNF4znB/91YkjWkDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=HB1iovpU; arc=none smtp.client-ip=185.125.188.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-oo1-f69.google.com (mail-oo1-f69.google.com [209.85.161.69])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 0E7B540C49
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 15:19:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1733325571;
+	bh=mT6saqI3kUrpS1by1WPPwkqD7keXMeGTbVJLvZHkNkU=;
+	h=From:In-Reply-To:References:Mime-Version:Date:Message-ID:Subject:
+	 To:Cc:Content-Type;
+	b=HB1iovpUhdyYSP+mSpkG6x/61vpv+abUxfnQwq5GQpPa/GrcAKHa/26g7Uzk0YK4z
+	 9RofIy83jhFsXI7tQr2C5T0FFfxEwpHTLrvQ5AmTET3f8EpmgwkMfi4iPBY7clmOBl
+	 map6YFqCjuhH0C+ZGNsfqEGD/2yVJ3LWIt6e1sjZZ1+FS9ooDYpUKAmX+dDAHk3sqb
+	 sL2kkGFMtSKrOIiQYdCgTOwqd3bNiK9gKnIKwVx+In+3f7RjZWjZZoceAFjXV/1UDP
+	 tjU36YRbtnsharZpAQFUjBzLMmgTH6q/AyMy5jC/xND0dzXr/umjnvJQ4p/ewxmlKc
+	 dB8jvMDB/+lXA==
+Received: by mail-oo1-f69.google.com with SMTP id 006d021491bc7-5f1d5f7afd4so794899eaf.0
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 07:19:30 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733325569; x=1733930369;
+        h=cc:to:subject:message-id:date:mime-version:references:in-reply-to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=mT6saqI3kUrpS1by1WPPwkqD7keXMeGTbVJLvZHkNkU=;
+        b=lFy2abao59AZoYuAiB4A1gjcZ5wyY6qu/e+rwuZR5zKFiwA7uQ7e+MgudZ+3hr/w9S
+         nTqmZAvZtscp6RnmnYcR6FDUy3bbs9UtxweI3Rn8Vzp99bQ+VOaZgKhe5lcV/Qk/902v
+         JQlvfAnqyNEuwvbncx5eGUZpHu12YNozXZW7ooEOrbi6rqe+Zb5fu74jo7b09+DpJ32v
+         LJwloA32M3Z6bwMpVYJB2Oqs3P14BZEJ99gsqSv9NVu9Qfq2l9NDFTMulGei0TqDlqMZ
+         vMuq8a/045DMt1kh/u44tfSKgANurP0l/qvRrWJnyCa8bO9xEiVcy1R1gHUFnwr1cjvM
+         fd3g==
+X-Forwarded-Encrypted: i=1; AJvYcCVp3B3sgXxco0Ul2fhFmtVOvhrSfni1iAdXP1zn8C9rJR/wb652Azc9KMiBVIyHIUPvW1L0E0cbVGRBGkU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxBRb04vzrYnn6EIth0x44ftOtE8NPflE1GtIh0RuOHuPmNFkj1
+	DuzVq52aIurHQfnOZ9p1idyTXkEMqvFCqRgbq/Cvh0Sr42HVxdQf0pc7HWvafgxC84e1Hifx7cm
+	dOEiSbgAsRCQ/8fTKT54mw77psN+jm2O6e8FVD9YqgmY0BQAv72/6ewKHL8cOuI//M+oJiQRnu/
+	lorMSbbkJMXmZUzLi3VUOPsQQYM/Wwch8dgaXf+JHesVs9Risq4Ges
+X-Gm-Gg: ASbGnctVdkX8eLD9VNSlsk0YDsVsaAvQz9Svtn7N/nZx5yU2HNnp0W9LoNtGVBhMwbX
+	ccQXzXUj92tErBHbpxxYN5zJ0DRjEaARf2AdZOnsUik7ynC0VBJZrvji9KgtD
+X-Received: by 2002:a05:6820:1e10:b0:5f1:dc89:fa85 with SMTP id 006d021491bc7-5f25b131ff8mr4435711eaf.3.1733325569633;
+        Wed, 04 Dec 2024 07:19:29 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEYwLk9Qr3DA7xA9lz+xOHZPQK14U34Jh9h4Le9KlnSbh+Bl4LotmHax0+v3W1xjiGt64wfnRfDdpr4eIKywwE=
+X-Received: by 2002:a05:6820:1e10:b0:5f1:dc89:fa85 with SMTP id
+ 006d021491bc7-5f25b131ff8mr4435690eaf.3.1733325569341; Wed, 04 Dec 2024
+ 07:19:29 -0800 (PST)
+Received: from 348282803490 named unknown by gmailapi.google.com with
+ HTTPREST; Wed, 4 Dec 2024 15:19:28 +0000
+From: Emil Renner Berthing <emil.renner.berthing@canonical.com>
+In-Reply-To: <20241204111424.263055-1-bigunclemax@gmail.com>
+References: <20241204111424.263055-1-bigunclemax@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241204112332.3706137-1-quic_yuanfang@quicinc.com>
+Mime-Version: 1.0
+Date: Wed, 4 Dec 2024 15:19:28 +0000
+Message-ID: <CAJM55Z-YAMtRN=K5KxCH1+++Xw4uMM_c49z8tGzi3snU+-KrYA@mail.gmail.com>
+Subject: Re: [PATCH v1] riscv: dts: thead: Fix TH1520 emmc and shdci clock rate
+To: bigunclemax@gmail.com
+Cc: Drew Fustini <drew@pdp7.com>, Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, linux-riscv@lists.infradead.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Yuanfang,
+bigunclemax@ wrote:
+> From: Maksim Kiselev <bigunclemax@gmail.com>
+>
+> In accordance with LicheePi 4A BSP the clock that comes to emmc/sdhci
+> is 198Mhz.
+>
+> But changing from fixed-clock to CLK_EMMC_SDIO leads to increasing input
+> clock from 198Mhz to 792Mhz. Because the CLK_EMMC_SDIO is actually 792Mhz.
+>
+> Therefore calculation of output SDCLK is incorrect now.
+> The mmc driver sets the divisor to 4 times larger than it should be
+> and emmc/sd works 4 times slower.
+>
+> This can be confirmed with fio test:
+> Sequential read of emmc with fixed 198Mz clock:
+> READ: bw=289MiB/s (303MB/s)
+>
+> Sequential read with CLK_EMMC_SDIO clock:
+> READ: bw=82.6MiB/s (86.6MB/s)
+>
+> Let's fix this issue by providing fixed-factor-clock that divides
+> CLK_EMMC_SDIO by 4 for emmc/sd nodes.
 
-Recently I just acrossed this part, so some comments.
+Thanks for finding this bug!
 
-On Wed, Dec 04, 2024 at 07:23:32PM +0800, yuanfang zhang wrote:
-> 
-> From: Yuanfang Zhang <quic_yuanfang@quicinc.com>
-> 
-> As recommended by section 4.3.7 ("Synchronization when using system
-> instructions to progrom the trace unit") of ARM IHI 0064H.b, the
-> self-hosted trace analyzer must perform a Context synchronization
-> event between writing to the TRCPRGCTLR and reading the TRCSTATR.
-> 
-> Fixes: ebddaad09e10 ("coresight: etm4x: Add missing single-shot control API to sysfs")
-> Signed-off-by: Yuanfang Zhang <quic_yuanfang@quicinc.com>
+However, this feels like a work-around for a bug in the clock driver, and even
+if there is a fixed factor divider somewhere this should probably be modelled
+by the clock driver. Did you look into the documentation[1] and try to figure
+out where eMMC clock comes from and where the /4 is missing?
+
+There is also a vendor tree somewhere with a much more complete clock driver.
+Drew do you remember where it is? Maybe it's worth looking at how that driver
+models the eMMC clocks.
+
+[1]: https://openbeagle.org/beaglev-ahead/beaglev-ahead/-/blob/main/docs/TH1520%20System%20User%20Manual.pdf
+
+/Emil
+
+>
+> Fixes: 03a20182e1e0 ("riscv: dts: thead: change TH1520 mmc nodes to use clock controller")
+> Signed-off-by: Maksim Kiselev <bigunclemax@gmail.com>
 > ---
-> Change in V2:
-> Added comments in the code.
->  drivers/hwtracing/coresight/coresight-etm4x-core.c | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
-> diff --git a/drivers/hwtracing/coresight/coresight-etm4x-core.c b/drivers/hwtracing/coresight/coresight-etm4x-core.c
-> index 66d44a404ad0..decb3a87e27e 100644
-> --- a/drivers/hwtracing/coresight/coresight-etm4x-core.c
-> +++ b/drivers/hwtracing/coresight/coresight-etm4x-core.c
-> @@ -906,6 +906,13 @@ static void etm4_disable_hw(void *info)
->         tsb_csync();
->         etm4x_relaxed_write32(csa, control, TRCPRGCTLR);
-> 
-> +       /*
-> +        * As recommended by section 4.3.7 ("Synchronization when using system
-> +        * instructions to progrom the trace unit") of ARM IHI 0064H.b, the
-> +        * self-hosted trace analyzer must perform a Context synchronization
-> +        * event between writing to the TRCPRGCTLR and reading the TRCSTATR.
-> +        */
-> +       isb();
-
-As described in the doc, the "isb" is only required for system
-instructions case.  It is good to only apply the ISB on system
-register case:
-
-        if (!csa->io_mem)
-                isb();
-
->         /* wait for TRCSTATR.PMSTABLE to go to '1' */
->         if (coresight_timeout(csa, TRCSTATR, TRCSTATR_PMSTABLE_BIT, 1))
->                 dev_err(etm_dev,
-
-As mentioned in system register case: "Arm recommends that the
-self-hosted trace analyzer always executes an ISB instruction after
-programming the trace unit registers, to ensure that all updates are
-committed to the trace unit before normal code execution resumes."
-
-And for MMIO case:
-
-"When the memory is marked as Device-nGnRE or stronger.
- ...
- - Poll TRCSTATR to ensure the previous write has completed.
- — Execute an ISB operation."
-
-Thus we need to add an ISB after polling.
-
-        isb();
-
-For consistent behaviour, a relevant thing is the dsb(sy) in
-etm4_enable_hw().  I do not think the dsb(sy) is necessary, as the
-driver uses the sequence "write TRCPRGCTLR + polling TRCSTATR" to
-ensure the data has been populated to trace unit, the polling
-operations somehow act as a read back.  And the ETM manual does not
-mention the requirement for DSB when enabling trace unit.  Thus, we
-should remove dsb(sy) (maybe use a separte patch).
-
-Mike / Suzuki / James, please confirm if my conclusions are valid.
-
-Thanks,
-Leo
+>  arch/riscv/boot/dts/thead/th1520.dtsi | 14 +++++++++++---
+>  1 file changed, 11 insertions(+), 3 deletions(-)
+>
+> diff --git a/arch/riscv/boot/dts/thead/th1520.dtsi b/arch/riscv/boot/dts/thead/th1520.dtsi
+> index acfe030e803a..6c20965cd10c 100644
+> --- a/arch/riscv/boot/dts/thead/th1520.dtsi
+> +++ b/arch/riscv/boot/dts/thead/th1520.dtsi
+> @@ -229,6 +229,14 @@ stmmac_axi_config: stmmac-axi-config {
+>  		snps,blen = <0 0 64 32 0 0 0>;
+>  	};
+>
+> +	sdhci_clk: sdhci-clock {
+> +		compatible = "fixed-factor-clock";
+> +		clocks = <&clk CLK_EMMC_SDIO>;
+> +		#clock-cells = <0>;
+> +		clock-div = <4>;
+> +		clock-mult = <1>;
+> +	};
+> +
+>  	soc {
+>  		compatible = "simple-bus";
+>  		interrupt-parent = <&plic>;
+> @@ -328,7 +336,7 @@ emmc: mmc@ffe7080000 {
+>  			compatible = "thead,th1520-dwcmshc";
+>  			reg = <0xff 0xe7080000 0x0 0x10000>;
+>  			interrupts = <62 IRQ_TYPE_LEVEL_HIGH>;
+> -			clocks = <&clk CLK_EMMC_SDIO>;
+> +			clocks = <&sdhci_clk>;
+>  			clock-names = "core";
+>  			status = "disabled";
+>  		};
+> @@ -337,7 +345,7 @@ sdio0: mmc@ffe7090000 {
+>  			compatible = "thead,th1520-dwcmshc";
+>  			reg = <0xff 0xe7090000 0x0 0x10000>;
+>  			interrupts = <64 IRQ_TYPE_LEVEL_HIGH>;
+> -			clocks = <&clk CLK_EMMC_SDIO>;
+> +			clocks = <&sdhci_clk>;
+>  			clock-names = "core";
+>  			status = "disabled";
+>  		};
+> @@ -346,7 +354,7 @@ sdio1: mmc@ffe70a0000 {
+>  			compatible = "thead,th1520-dwcmshc";
+>  			reg = <0xff 0xe70a0000 0x0 0x10000>;
+>  			interrupts = <71 IRQ_TYPE_LEVEL_HIGH>;
+> -			clocks = <&clk CLK_EMMC_SDIO>;
+> +			clocks = <&sdhci_clk>;
+>  			clock-names = "core";
+>  			status = "disabled";
+>  		};
+> --
+> 2.45.2
+>
+>
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
