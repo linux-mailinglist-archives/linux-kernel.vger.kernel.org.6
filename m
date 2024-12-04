@@ -1,206 +1,330 @@
-Return-Path: <linux-kernel+bounces-431638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADEEB9E425B
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:51:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 08A199E4259
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:51:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DE3F5B35812
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:35:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 81A8DB32D52
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:38:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95EB720C49E;
-	Wed,  4 Dec 2024 16:35:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B75420C498;
+	Wed,  4 Dec 2024 16:38:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="CITSfbab"
-Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2073.outbound.protection.outlook.com [40.107.22.73])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ah4caY1S"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9CB54A28;
-	Wed,  4 Dec 2024 16:35:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.73
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733330132; cv=fail; b=jWN38ya8mOnpUCPpOjz6nfqfQKHrN/i9bQEhBZM1E1GToX++6cowfDs2jdzNtDnWYgF/e7koWndEXQKAI51prSSfi2HUYF6ldWGJ77AsPdyd4Kh6N5ZT+VdiJU9i163QgXLKIsKMOmLLcIqAqq8H7Xf259lRZt45HbJ9/t2zCOU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733330132; c=relaxed/simple;
-	bh=A5WmZu++0CYRHoBKnYb4HMSlpFxdRFL70ldALhSo4fI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=tg2EWZ6UcuC1JHXBUUPPcSh7dZqVEZQyfs8Jk6xvqljTDSHGIZVdOJdTrW+yIYeHrJllYS8GhJUTCr0pzKgcL6SgnZ0wW2uuRRQrU98KMy0K8UWsQa5GH/Q86K36a1hRT0ip1Ez8yHStTQlovxmJZYwUYHDkcNGFigUGWuNvPk0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=CITSfbab; arc=fail smtp.client-ip=40.107.22.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=iTEf4tSk6KdC+nV26yWRdWYy+arBm1dhETD6ZUpZKOUVn1cc0aSlcmEun6Nj1Xgqrg7S5112gSGUGJ0bmQm7y7o+qWd+D8VWegYWHr8zhcBA2KpJ9Kf9r1ACchkvDlE/5RsjNWwZAOa5BlBfRM9Enms8CgGgNRX7LArLpvhh8qRXgev2BzjnCgqc9IbusEZLkKBuRvopT7JVhF+LCJjZEIKhoCkm96oihI/FlBAsKJN627CHcwXaAwrkmzixLFujYu3rJuhRpfh5OrKAvLAUxfdidw5JOpWr2Arnga9ZNTN6qli/CnEVw8gjds3312BE0EfhmMBJ1iZnjvXcdlOu5Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=rsIBRYUuFM0899T9WNw8x3+NfNa18s1BEWfwk2AcC7E=;
- b=MsCOrMd0QkfEXVgRFPJID0KEMNcjBy2Q7QOfmJGcGVea0C+BxxMUz2ZSe9cQEi3Dr+y3uY0ip+aC3fOkCKbBpvfqh0MDWxnx0002P94JnkyFYiOkVFnSxT6feoXFDAvw5LPyJDZXv9jYmnTjCBXJaxZ46rwstEKZ9m0Gv/e6DpdVrgoidL9Dtk/XFhM58Z0YBzgNkgpIxD0oyXXdn7Zg6cW9Y5hObG8I5aDui/+SRNS7QB6TYowfmHsVIpctcDcxOWbA9SZheJSj669RSemFqgQVgOY3KMa5hBeHShEhjGVUPouR9foPvVgWNoDxMKn6JR1N2bTbQjBnzro+dI+zGQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rsIBRYUuFM0899T9WNw8x3+NfNa18s1BEWfwk2AcC7E=;
- b=CITSfbabPsN8MoMS8JL1NJq1vONYee0sCNxiYG1PebxdNb3W1i6BeMQ7CshZuJNc/4H2KMo2UKLqsq+bnSOb4FPAlojgRr/XnuiQP80FG6D43aGmMdsimFfOeUmcxDzkEEG4fvP9ATanWW0hjTmJKx9qNYMjH0eSPbGSB8zHyegaOE66E1/8jZ3UfKlHoo64o5acmetfo0RRxKJvuqgjrsfP/w4OwGnYBlKXExL0abq8B4tqEvPccwZ62BfKbHweCwDZbnhmXqLn27mve+ZxCpc9YTz5e04zLTvgvmBpNlDGGkATuDJ9Odif1BE34Bcj/Qo4OKIRPApehgzy3W0WmA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by VI0PR04MB10807.eurprd04.prod.outlook.com (2603:10a6:800:25a::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.10; Wed, 4 Dec
- 2024 16:35:28 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%5]) with mapi id 15.20.8207.017; Wed, 4 Dec 2024
- 16:35:28 +0000
-Date: Wed, 4 Dec 2024 11:35:20 -0500
-From: Frank Li <Frank.li@nxp.com>
-To: Marc Zyngier <maz@kernel.org>
-Cc: linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>
-Subject: Re: [PATCH 1/2] PCI: host-generic: Allow {en,dis}able_device() to be
- provided via pci_ecam_ops
-Message-ID: <Z1CEyAJn8OnxEHUO@lizhi-Precision-Tower-5810>
-References: <20241204150145.800408-1-maz@kernel.org>
- <20241204150145.800408-2-maz@kernel.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241204150145.800408-2-maz@kernel.org>
-X-ClientProxiedBy: BYAPR02CA0065.namprd02.prod.outlook.com
- (2603:10b6:a03:54::42) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1C0A182D9
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 16:38:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733330330; cv=none; b=QnESExSsBBB8yrH/3wIVa4eBGwEBLy1uDKBX3bHEHE7Fxozee9Ra/P87XhffbZvUUrJ4CiHrytAqZFG8yp2wSMNVU4vH4OGagWpyBlTt/++0AjjMZChCe1ilQweKvDTthp/GzoLjRY8OTrrGpsUt3B1ruPp7YxI4TS6nvyeNpdk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733330330; c=relaxed/simple;
+	bh=f8U4iGJbRi7PhpEfBx6oqnBhy1Hwq3b+Sd1pGGbG6+8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=PfVUEGqfjFydWzK5uzYRXVTdLtK3m3ycKJ2ICqC4QHkxnKORQd9Zd6si9ho/cH/s+6E5XHE23jcji2So5XpR26zjraxWhO3sv9+IH/+a5rqFIoxipgZGsbnsRYTmykI0qDCDYwovMj0xOz89Ek90rJvPCJVgFahwayFZMH+s5dA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ah4caY1S; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733330327;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=m7FHAZNgtIO2mya219lJtrQUxVa6TSIG1yUsoSpK1nk=;
+	b=ah4caY1Se57koN38AVZIuIuzOq7li5watAGQbaKylvFYQlUHVTYjhxwFdYV6Ix18ZxVJss
+	+D1rBjkeGKUjS8A8VVw1/rjYZ9OR4ASan72a/uTflcCj8AoW4ijWzD9p2mHEE1BJC97vTD
+	C2EP1FEv9QmuUaPkvXCDVynnHLlQoaA=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-359-SSuoTx1nPEKEQN7b9KgOmw-1; Wed, 04 Dec 2024 11:38:46 -0500
+X-MC-Unique: SSuoTx1nPEKEQN7b9KgOmw-1
+X-Mimecast-MFC-AGG-ID: SSuoTx1nPEKEQN7b9KgOmw
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-434a9861222so57165825e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 08:38:46 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733330325; x=1733935125;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=m7FHAZNgtIO2mya219lJtrQUxVa6TSIG1yUsoSpK1nk=;
+        b=CUKkS9WRGn1+Hsy+yBY6No1WGlT8yw7lNgIVeDFLMrE9CICjuHiq264190tezB03Bj
+         BNNAeep9YUzSWNes+28MutJs0JVgOSiCQrk7XPUyYmQmFzjliJ4RvmoFf9r0cVKjxG2J
+         zdLf9EXoC5LB0I1dLf8uOusEESs7zK3RBdRs0NRtGgAt17Q4iBPPanEjdcJt5j+bED0k
+         xLJRhxpy71/6GCppKd/KkvT9IZtB7uRetIsBgh/OQT08diHiXfr10UBEWKVKRrLpoctY
+         8zkeQGotdBDNMgLWr6E2m/LqocxY0bAzLcoTwGhHkxeE/2kbzctLYAn5PSD9kYUvzaqM
+         ZjjA==
+X-Forwarded-Encrypted: i=1; AJvYcCUAEUEjA1ay5pdhaDCt5zHixAhd6yAj/uM4T4RYVyIoiPksvIG7IcBdX8Yt91utkmG02R+2ifzoQCVzTkw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWZrbvMF+LkYy6CfQY1pn6RXgTY5rboesJSCryZj/BPVKW0nSn
+	U3owIhP7QV+xrW/63ErS12SH7NHz2BvVrOJwB/KCX4QGqj2lZvsTls1Sm6d0CC5ciwWiJSmH3hq
+	RZFdB2ypCP8ASpb63+010x2ALyMDNyYumfBevyFYYU8uGN3mt8U7gPgJVcrl0/w==
+X-Gm-Gg: ASbGncv/LfmoQvGOODgRb9C9DXBfX5YfKyVsix7KmkjucbhsIhULK3WWUSvngYgMAN6
+	ETzh8DmPDR93Dlkt+Pj94Os6McS7txTSb2dSV/vCe6zvSx7RSruVosmryZVhARGlRb8Dcf5I4DE
+	k2g9/GN+dlyncnxCPs6UnSNg3E6ZVpoeSdrZyDDQ/Clt2t29r+8iq0XEynVFOiAZJuuJQ+F+jHD
+	siTn1rbCdVP3Jk5Y+p4s+w5vb7W6qIV2e+aYqd35LQI3UMgRMIuROmiHuZGaFXUq/QUXRmWc3Yu
+	5pLIuzUvInyCwTKxnhm3QQ==
+X-Received: by 2002:a05:600c:19cc:b0:434:9f0d:3823 with SMTP id 5b1f17b1804b1-434d09b65cdmr65110315e9.9.1733330325119;
+        Wed, 04 Dec 2024 08:38:45 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEgS/tXRLkVvWJzJRPdSMcfQnoJ+MJatvpJpBw2izGhf6xSOfLRGEB75XhYrYjcuaJia8KK1w==
+X-Received: by 2002:a05:600c:19cc:b0:434:9f0d:3823 with SMTP id 5b1f17b1804b1-434d09b65cdmr65109995e9.9.1733330324699;
+        Wed, 04 Dec 2024 08:38:44 -0800 (PST)
+Received: from imammedo.users.ipa.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434d527395csm29851305e9.17.2024.12.04.08.38.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Dec 2024 08:38:44 -0800 (PST)
+Date: Wed, 4 Dec 2024 17:38:43 +0100
+From: Igor Mammedov <imammedo@redhat.com>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, Shiju Jose
+ <shiju.jose@huawei.com>, "Michael S. Tsirkin" <mst@redhat.com>, Ani Sinha
+ <anisinha@redhat.com>, Dongjiu Geng <gengdongjiu1@gmail.com>,
+ linux-kernel@vger.kernel.org, qemu-arm@nongnu.org, qemu-devel@nongnu.org
+Subject: Re: [PATCH v5 09/16] acpi/ghes: make the GHES record generation
+ more generic
+Message-ID: <20241204173843.7ddd2c0a@imammedo.users.ipa.redhat.com>
+In-Reply-To: <a35a02028136f9d5445b41760c892de302801500.1733297707.git.mchehab+huawei@kernel.org>
+References: <cover.1733297707.git.mchehab+huawei@kernel.org>
+	<a35a02028136f9d5445b41760c892de302801500.1733297707.git.mchehab+huawei@kernel.org>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|VI0PR04MB10807:EE_
-X-MS-Office365-Filtering-Correlation-Id: dc05042d-89b0-41b8-8156-08dd1481a944
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|52116014|376014|7416014|1800799024|7053199007|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Cf9Bh60T2hKpfgaAagypNZiiu9wRSb2uszIxf89AIn1mzqCY3Vuio/yx8Slh?=
- =?us-ascii?Q?wSPxpkGkpzBbbL78aNJURvw0Hqnli14aiCq5VP167/8UFNtkUxExDguQxIzU?=
- =?us-ascii?Q?t0dqqKICmWlBn+x0o67g6dFFWV6Q43kkT94HuVgX1D5tBS4uD+2lD+HKozPC?=
- =?us-ascii?Q?VU7I0ftQBTgnrP3i3TL6hHgjanvuEhu+VBck6YV4jAHsZLRvyINnkbF0moGR?=
- =?us-ascii?Q?PrWUIoPRvitEmF68F0UUOIuZNYPE0F6oIooy2AhWRmkFdssj5fCy559NlOMH?=
- =?us-ascii?Q?94vB93HcZk03b06nmJZklgiQR73OzGUa7oNiFTuwgetU24ZiPYnqjS0/jdpD?=
- =?us-ascii?Q?m0zRNCC2XoIR510CLNsXEb67udCF3hCvHEasxPw2TCswgOyxRwUacCsK/BGt?=
- =?us-ascii?Q?WgYoU7b5w9CIQU8wSdooB9uhpB7GDMXB6roM/Wo1EsmNc30j6GfBds3VAb4a?=
- =?us-ascii?Q?Pk8o5MOjpMzWIir8e1tPA4LXKnZLjq/EANuAiZZ6J0WQUwlWirhsfflhSvxu?=
- =?us-ascii?Q?iBbelRc8TUq/oBCzxUXDyGxZ9s2PXw4XaZDbvK0S7qHLnLodmEi9zOFJc3a3?=
- =?us-ascii?Q?yBNcU2pNIulX2l/qC7FSdwTi0mp265r5zSYoVnovPW4cux5TAbqlRIwe+BcA?=
- =?us-ascii?Q?IpgwYmFjqCCVGLT+n2nYhAL67O3d7V3D3t0GcEQ3OYEMvxPCKu6in68BSx4W?=
- =?us-ascii?Q?GHNmYzEL0p1b70pd45iAM449RTGriOjLFD2yhurFrtCTd3GioZZvRH5jPu7A?=
- =?us-ascii?Q?h2pIBbNz/wMsLFYiRDcAxMMOYjP+0rObDekui6u10m2Xi3bf9lv/7bugYqtA?=
- =?us-ascii?Q?rm5XLIYaOvD5qIzELN0Jhjgi8pM2VyJU0fDur0bEejC16g8LNqEvoR/IyJe2?=
- =?us-ascii?Q?biO55exvl7zwvtic15gv96Hwdw8G4ig6H6OFQSmfij/rsyOteEqNGvDBw5w5?=
- =?us-ascii?Q?Qipp5nSVkzMK2THUMj/+i5lxyz3vmQ+GBAV0bwCwXcTC310Zx9/qXTc2qOZr?=
- =?us-ascii?Q?/HNouR8Hk4vkvR5oDmRsA9y9s/LeMRfeJSefhcadHVt2RmO3qFgLZcVwCrAr?=
- =?us-ascii?Q?kqGEf2ci0nn1l25rOBjwHtRNUcQjs0pnhjL2i4XwuuyCyc+PwswPv+V7+5wm?=
- =?us-ascii?Q?md4NONp6bCG4Vv2WO0Ek0Ig84v8cJb4xXdSoadzFqueapY+x5R5OdNPGjL24?=
- =?us-ascii?Q?7YTupB2gRg6gM2EDjqnsloxu3v3Qtevf7lXf3d5lJPYh6+5Y179IS2snd1ZQ?=
- =?us-ascii?Q?sfO5CO5o6JKF1tEsfI6eO2WR5V6ysSxpH+xQdMG/by3lftqG4YytjaCRUX5W?=
- =?us-ascii?Q?1xImtjaICuKQMcAqdO3Io/ZVpILRd1JLXD9Cy9T8jUsPzLhnR+bI0m3YOvzC?=
- =?us-ascii?Q?o1dpUWF5wMvyr2ZhyHI8ew45GrBlnr3MEe4i9vHljbVcUUnT3g=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(52116014)(376014)(7416014)(1800799024)(7053199007)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?tc2pAVrsuyrm09cgv5su3siSeXOtGTsp+FnP+2cmxdwznCL/MVrcESNPd3tK?=
- =?us-ascii?Q?u8guosWCXfcBfpDNnPbsiyOozbqXFES0AlFaWlhTWGk5lzL9jfNCVoAgH59T?=
- =?us-ascii?Q?Mgbx/YwBF7f5432QT/n5vIcBWPzPHxRL9JdbF1K72JFapfJNV1gifzilwNgT?=
- =?us-ascii?Q?2NfiNyD5wVGiX9DvU+jqPuGcoj4Li7vXy+wf6IQhNolpgzTZ1SGtsNwIWOxj?=
- =?us-ascii?Q?+USCyAq/p7SnOYqS7XK5D2f8yfezdruWd9UImdn5ZIcfWypoV5tWhGQgT+LP?=
- =?us-ascii?Q?gI8vZ42F5nAcK9GexYZc0YD8/K+lls6LodZ7Q0Z7IE37th/UAFClS+VH7IN8?=
- =?us-ascii?Q?FrR+tdBbK9gxVAwU3qZhdMbJUmEofvxbxVTef+ZMdZfZQmhPj1XJC5d4D7cA?=
- =?us-ascii?Q?2go4CGif4HWjdB5dZ8/C1CvU85GdQ51O07Enl6kiqSZXa0CpYdyFsINAb+db?=
- =?us-ascii?Q?JRyRTeow5PHZ4Vn3ihIeN5yt7OakXIHUEvvblwIaH8Ybidilv4kJHmWSeBbJ?=
- =?us-ascii?Q?D4bxtuMGN1/7FLFn1jKs3sghOoVXN1PoP2LdL3aFJERyl98mf2lJnJoq2TF5?=
- =?us-ascii?Q?fx1YOQIsIJxtHyPaoyPSHJKnbpM3taJYzNQ3S2jCIYM/40EighNhOqvLTb1P?=
- =?us-ascii?Q?WQ2CruQ5NBOLF9Icu0BW0oUsEtmx+lPvDo49ozx2CcmiDhaZ9i2o5aZ2O+ZR?=
- =?us-ascii?Q?/3HsXBYkOFw1Y/a2hmQbDVj1xzynLUHnCojPpbIJ2s0IQEAXf4Sbx1VynX08?=
- =?us-ascii?Q?1VDq6w74IV1grCMXYec0bCVN0yiZKlM67UpLPOGLtzQKMiln7sEGmKLJzkt9?=
- =?us-ascii?Q?/N75EzODgYZS45PSm/bwADZqT5HPoYiVW8Shn218MiGIMfE5NPWS3SOaHZ2/?=
- =?us-ascii?Q?kmxKG6wqBy9pLFpgTRg6WHlcAZaql901hddbycf0cm3I3ofJ11vdxf5c5S26?=
- =?us-ascii?Q?TUaI2wM5eX43OsB1OY6M8ARfs6MwbuDflRavgckFDDe3tUGIX0T8v8AIRZT6?=
- =?us-ascii?Q?C1eqTGNJ5ZekfalBHtwgXo/uxjUvDRkxn20R5OHbRVYcIx9RLWwpsh1/uB9R?=
- =?us-ascii?Q?Ef4cZrpTn0g+jtYsM/PANiJfMXDjvXN/5NIaJLmgn9puWeCYdf0eNkwE3MQO?=
- =?us-ascii?Q?dmlgKWpu+HbdhnpZXVC6y/PUoXSxO0XZOhbgfD7nCKnohyp+734nGkSI0q7W?=
- =?us-ascii?Q?GwnypcfuGHSg6S1sE6NqA8KIjmD0PJHDnI9Wus7dv7hxcwvYXY4gOZLXpYGi?=
- =?us-ascii?Q?VsD31GrgdsdsLtmQ5Eg72U9Dosz5vk4/nhfDEwSJNNJ0RI+ydE0tfqLBNN6E?=
- =?us-ascii?Q?tTPATN0kodVugQhKEBNe6NiAaVaxsMr8Wvr3zEhj1LUQEqZB0LXXkG1gCUbr?=
- =?us-ascii?Q?0xSumoqKs5qEwt8DLqujL+cVBbJh0GbrO8JiHgfEqu7b17OXNbF+rWrBkG89?=
- =?us-ascii?Q?eclWNJVOZBN9rwF9TfDG3WfVZkMFhjwOdck2oVBV/WvI0KPiVUJSt6bgv+ME?=
- =?us-ascii?Q?cI029niPjVzxOfeurzKAFzdmgg6EA/aQiqEDHZ7Rl8HUYJQb2MntT2KJK7QO?=
- =?us-ascii?Q?7PgpjUWA7Wejfky19pmmYQ+fjAfc4eaXmna4X/2m?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: dc05042d-89b0-41b8-8156-08dd1481a944
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Dec 2024 16:35:28.0800
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: bhtnVA21dzEkvUTBwrNlnDr2mvsrLMwxdJB263kWPEctviZzExu7T4YGhV9LouPq7XTLwFqX/4aaRdzDyj+OAw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR04MB10807
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, Dec 04, 2024 at 03:01:44PM +0000, Marc Zyngier wrote:
-> In order to let host controller drivers using the host-generic
-> infrastructure use the {en,dis}able_device() callbacks that can
-> be used to configure sideband RID mapping hardware, provide these
-> two callbacks as part of the pci_ecap_ops structure.
->
-> Signed-off-by: Marc Zyngier <maz@kernel.org>
+On Wed,  4 Dec 2024 08:41:17 +0100
+Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
 
-Reviewed-by: Frank Li <Frank.Li@nxp.com>
+> Split the code into separate functions to allow using the
+> common CPER filling code by different error sources.
+> 
+> The generic code was moved to ghes_record_cper_errors(),
+> and ghes_gen_err_data_uncorrectable_recoverable() now contains
+> only a logic to fill the Generic Error Data part of the record,
+> as described at:
+> 
+> 	ACPI 6.2: 18.3.2.7.1 Generic Error Data
+> 
+> The remaining code to generate a memory error now belongs to
+> acpi_ghes_record_errors() function.
+> 
+> A further patch will give it a better name.
+> 
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
+Reviewed-by: Igor Mammedov <imammedo@redhat.com>
+
+> 
+> # Conflicts:
+> #	roms/edk2
 > ---
->  drivers/pci/controller/pci-host-common.c | 2 ++
->  include/linux/pci-ecam.h                 | 4 ++++
->  2 files changed, 6 insertions(+)
->
-> diff --git a/drivers/pci/controller/pci-host-common.c b/drivers/pci/controller/pci-host-common.c
-> index cf5f59a745b37..f441bfd6f96a8 100644
-> --- a/drivers/pci/controller/pci-host-common.c
-> +++ b/drivers/pci/controller/pci-host-common.c
-> @@ -75,6 +75,8 @@ int pci_host_common_probe(struct platform_device *pdev)
->
->  	bridge->sysdata = cfg;
->  	bridge->ops = (struct pci_ops *)&ops->pci_ops;
-> +	bridge->enable_device = ops->enable_device;
-> +	bridge->disable_device = ops->disable_device;
->  	bridge->msi_domain = true;
->
->  	return pci_host_probe(bridge);
-> diff --git a/include/linux/pci-ecam.h b/include/linux/pci-ecam.h
-> index 3a4860bd27586..3a10f8cfc3ad5 100644
-> --- a/include/linux/pci-ecam.h
-> +++ b/include/linux/pci-ecam.h
-> @@ -45,6 +45,10 @@ struct pci_ecam_ops {
->  	unsigned int			bus_shift;
->  	struct pci_ops			pci_ops;
->  	int				(*init)(struct pci_config_window *);
-> +	int				(*enable_device)(struct pci_host_bridge *,
-> +							 struct pci_dev *);
-> +	void				(*disable_device)(struct pci_host_bridge *,
-> +							  struct pci_dev *);
->  };
->
+>  hw/acpi/ghes.c         | 121 ++++++++++++++++++++++++-----------------
+>  include/hw/acpi/ghes.h |   3 +
+>  2 files changed, 73 insertions(+), 51 deletions(-)
+> 
+> diff --git a/hw/acpi/ghes.c b/hw/acpi/ghes.c
+> index a3dffd78b012..4b5332f8c667 100644
+> --- a/hw/acpi/ghes.c
+> +++ b/hw/acpi/ghes.c
+> @@ -181,51 +181,24 @@ static void acpi_ghes_build_append_mem_cper(GArray *table,
+>      build_append_int_noprefix(table, 0, 7);
+>  }
+>  
+> -static int acpi_ghes_record_mem_error(uint64_t error_block_address,
+> -                                      uint64_t error_physical_addr)
+> +static void
+> +ghes_gen_err_data_uncorrectable_recoverable(GArray *block,
+> +                                            const uint8_t *section_type,
+> +                                            int data_length)
+>  {
+> -    GArray *block;
+> -
+> -    /* Memory Error Section Type */
+> -    const uint8_t uefi_cper_mem_sec[] =
+> -          UUID_LE(0xA5BC1114, 0x6F64, 0x4EDE, 0xB8, 0x63, 0x3E, 0x83, \
+> -                  0xED, 0x7C, 0x83, 0xB1);
+> -
+>      /* invalid fru id: ACPI 4.0: 17.3.2.6.1 Generic Error Data,
+>       * Table 17-13 Generic Error Data Entry
+>       */
+>      QemuUUID fru_id = {};
+> -    uint32_t data_length;
+> -
+> -    block = g_array_new(false, true /* clear */, 1);
+> -
+> -    /* This is the length if adding a new generic error data entry*/
+> -    data_length = ACPI_GHES_DATA_LENGTH + ACPI_GHES_MEM_CPER_LENGTH;
+> -    /*
+> -     * It should not run out of the preallocated memory if adding a new generic
+> -     * error data entry
+> -     */
+> -    assert((data_length + ACPI_GHES_GESB_SIZE) <=
+> -            ACPI_GHES_MAX_RAW_DATA_LENGTH);
+>  
+>      /* Build the new generic error status block header */
+>      acpi_ghes_generic_error_status(block, ACPI_GEBS_UNCORRECTABLE,
+>          0, 0, data_length, ACPI_CPER_SEV_RECOVERABLE);
+>  
+>      /* Build this new generic error data entry header */
+> -    acpi_ghes_generic_error_data(block, uefi_cper_mem_sec,
+> +    acpi_ghes_generic_error_data(block, section_type,
+>          ACPI_CPER_SEV_RECOVERABLE, 0, 0,
+>          ACPI_GHES_MEM_CPER_LENGTH, fru_id, 0);
+> -
+> -    /* Build the memory section CPER for above new generic error data entry */
+> -    acpi_ghes_build_append_mem_cper(block, error_physical_addr);
+> -
+> -    /* Write the generic error data entry into guest memory */
+> -    cpu_physical_memory_write(error_block_address, block->data, block->len);
+> -
+> -    g_array_free(block, true);
+> -
+> -    return 0;
+>  }
+>  
 >  /*
-> --
-> 2.39.2
->
+> @@ -383,15 +356,18 @@ void acpi_ghes_add_fw_cfg(AcpiGhesState *ags, FWCfgState *s,
+>      ags->present = true;
+>  }
+>  
+> -int acpi_ghes_record_errors(uint16_t source_id, uint64_t physical_address)
+> +void ghes_record_cper_errors(const void *cper, size_t len,
+> +                             uint16_t source_id, Error **errp)
+>  {
+>      uint64_t error_block_addr, read_ack_register_addr, read_ack_register = 0;
+>      uint64_t start_addr;
+> -    bool ret = -1;
+>      AcpiGedState *acpi_ged_state;
+>      AcpiGhesState *ags;
+>  
+> -    assert(source_id < ACPI_GHES_ERROR_SOURCE_COUNT);
+> +    if (len > ACPI_GHES_MAX_RAW_DATA_LENGTH) {
+> +        error_setg(errp, "GHES CPER record is too big: %ld", len);
+> +        return;
+> +    }
+>  
+>      acpi_ged_state = ACPI_GED(object_resolve_path_type("", TYPE_ACPI_GED,
+>                                                         NULL));
+> @@ -406,6 +382,10 @@ int acpi_ghes_record_errors(uint16_t source_id, uint64_t physical_address)
+>                               sizeof(error_block_addr));
+>  
+>      error_block_addr = le64_to_cpu(error_block_addr);
+> +    if (!error_block_addr) {
+> +        error_setg(errp, "can not find Generic Error Status Block");
+> +        return;
+> +    }
+>  
+>      read_ack_register_addr = start_addr +
+>                               ACPI_GHES_ERROR_SOURCE_COUNT * sizeof(uint64_t);
+> @@ -415,24 +395,63 @@ int acpi_ghes_record_errors(uint16_t source_id, uint64_t physical_address)
+>  
+>      /* zero means OSPM does not acknowledge the error */
+>      if (!read_ack_register) {
+> -        error_report("OSPM does not acknowledge previous error,"
+> -                     " so can not record CPER for current error anymore");
+> -    } else if (error_block_addr) {
+> -        read_ack_register = cpu_to_le64(0);
+> -        /*
+> -         * Clear the Read Ack Register, OSPM will write it to 1 when
+> -         * it acknowledges this error.
+> -         */
+> -        cpu_physical_memory_write(read_ack_register_addr,
+> -                                  &read_ack_register, sizeof(uint64_t));
+> -
+> -        ret = acpi_ghes_record_mem_error(error_block_addr,
+> -                                         physical_address);
+> -    } else {
+> -        error_report("can not find Generic Error Status Block");
+> +        error_setg(errp,
+> +                   "OSPM does not acknowledge previous error,"
+> +                   " so can not record CPER for current error anymore");
+> +        return;
+>      }
+>  
+> -    return ret;
+> +    read_ack_register = cpu_to_le64(0);
+> +    /*
+> +     * Clear the Read Ack Register, OSPM will write 1 to this register when
+> +     * it acknowledges the error.
+> +     */
+> +    cpu_physical_memory_write(read_ack_register_addr,
+> +        &read_ack_register, sizeof(uint64_t));
+> +
+> +    /* Write the generic error data entry into guest memory */
+> +    cpu_physical_memory_write(error_block_addr, cper, len);
+> +
+> +    return;
+> +}
+> +
+> +int acpi_ghes_record_errors(uint16_t source_id, uint64_t physical_address)
+> +{
+> +    /* Memory Error Section Type */
+> +    const uint8_t guid[] =
+> +          UUID_LE(0xA5BC1114, 0x6F64, 0x4EDE, 0xB8, 0x63, 0x3E, 0x83, \
+> +                  0xED, 0x7C, 0x83, 0xB1);
+> +    Error *errp = NULL;
+> +    int data_length;
+> +    GArray *block;
+> +
+> +    block = g_array_new(false, true /* clear */, 1);
+> +
+> +    data_length = ACPI_GHES_DATA_LENGTH + ACPI_GHES_MEM_CPER_LENGTH;
+> +    /*
+> +     * It should not run out of the preallocated memory if adding a new generic
+> +     * error data entry
+> +     */
+> +    assert((data_length + ACPI_GHES_GESB_SIZE) <=
+> +            ACPI_GHES_MAX_RAW_DATA_LENGTH);
+> +
+> +    ghes_gen_err_data_uncorrectable_recoverable(block, guid,
+> +                                                data_length);
+> +
+> +    /* Build the memory section CPER for above new generic error data entry */
+> +    acpi_ghes_build_append_mem_cper(block, physical_address);
+> +
+> +    /* Report the error */
+> +    ghes_record_cper_errors(block->data, block->len, source_id, &errp);
+> +
+> +    g_array_free(block, true);
+> +
+> +    if (errp) {
+> +        error_report_err(errp);
+> +        return -1;
+> +    }
+> +
+> +    return 0;
+>  }
+>  
+>  bool acpi_ghes_present(void)
+> diff --git a/include/hw/acpi/ghes.h b/include/hw/acpi/ghes.h
+> index 9295e46be25e..8859346af51a 100644
+> --- a/include/hw/acpi/ghes.h
+> +++ b/include/hw/acpi/ghes.h
+> @@ -23,6 +23,7 @@
+>  #define ACPI_GHES_H
+>  
+>  #include "hw/acpi/bios-linker-loader.h"
+> +#include "qapi/error.h"
+>  
+>  /*
+>   * Values for Hardware Error Notification Type field
+> @@ -73,6 +74,8 @@ void acpi_build_hest(GArray *table_data, GArray *hardware_errors,
+>                       const char *oem_id, const char *oem_table_id);
+>  void acpi_ghes_add_fw_cfg(AcpiGhesState *vms, FWCfgState *s,
+>                            GArray *hardware_errors);
+> +void ghes_record_cper_errors(const void *cper, size_t len,
+> +                             uint16_t source_id, Error **errp);
+>  int acpi_ghes_record_errors(uint16_t source_id, uint64_t error_physical_addr);
+>  
+>  /**
+
 
