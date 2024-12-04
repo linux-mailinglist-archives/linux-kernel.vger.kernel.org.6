@@ -1,84 +1,67 @@
-Return-Path: <linux-kernel+bounces-431914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDC639E42B7
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 19:01:14 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D5829E42BC
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 19:01:49 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8CB47165D3B
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:01:27 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A1171C3BE9;
+	Wed,  4 Dec 2024 17:40:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W0o+6MGi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 833E0286343
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:01:13 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2A551A8F85;
-	Wed,  4 Dec 2024 17:39:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hsyASPLz"
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FA041A8F7F
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 17:39:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3CEF152E12;
+	Wed,  4 Dec 2024 17:40:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733333955; cv=none; b=RwgkPpkjKwHAOuAkb6b51GNlz79KlKfSZSTHowUFCnwlDhYG0PfKj//JKSrjGpC+GLKlSKEsawvyyRxhHbhRDxErzFldPEqYxurZ8BDljCodNFkyz2Kq1sIFQ6t97pvrB7LlGG2KbPgUhw0YPMUgndyhPAXrVTrMNU4g/fe25J8=
+	t=1733334051; cv=none; b=c/5XT2+yPUP1Ebej8MYVdLdSadeT1NEeHm84lk9UCFb1NW9NHDb6LlpcsovWMNTc2H9ozWCnCYFsIWz72L3BUjbvDYhGnaXjXYlms+am4kWDPx7/FtCbfOVelviopIp88IaKmVc1SK5JzeOJ0hqcQQE4lPEzl3kn2XoiNWdX4rE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733333955; c=relaxed/simple;
-	bh=fgfEZZslgIKWvv4S+o/nxyoqF3C4cu7XP4OXGkmGtHM=;
+	s=arc-20240116; t=1733334051; c=relaxed/simple;
+	bh=LxkpU69xnQRzVLx5RpprBjdsbPTfZlN2KukOZTd+EfQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SVbcv9yWnsks7sGj9CX4yss0qiI4sFuauTGPnuYem9oyQP6LyQ78EkS2TNQ0nclkzhTZfZJT9w1i8Dq4mY1g7crxPMG4EsF/ScjrLHCnzqwTUDTalNCxcME3rSXgZcO8CVLTuwIvqDKMLA9COZQWW+VxpSWq02jT3obCnmp0EAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hsyASPLz; arc=none smtp.client-ip=209.85.215.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-7ee51d9ae30so32323a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 09:39:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733333953; x=1733938753; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=+VthV+b5458qivE7JcnZbaYt7S0cTsx4Urffvhiw4LM=;
-        b=hsyASPLzKSeLbO6yMfbpqUWGotvdw4Se3SJFFeX5ESEkOxHjCMPGmNAkrB0/GGuovQ
-         RBsFqBF1h2LBQhWvCq463ZEe7h4f82FSz+rdPR1UKm/yZe37fgtABOgm9LCsL5IG8ABp
-         FBYGLk0ub7nrb6SUWj5WpzA5w2uGbKT/1zeHi4oV0Cu3h5FsXbSUXhOp6LHHxo4x9NpT
-         QAt4+qxryC6LmS6ggo1fCUNE88X9T/vm32awUwFXnsx2htFE18xwZaDfC7zK0CO2x/RF
-         cN8a4SwAmt6ErCXjlwROigqAbLt07yda3KF/1lNxgc7oAz6pG3U8fpPaeJscCGAlDfrA
-         ABEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733333953; x=1733938753;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+VthV+b5458qivE7JcnZbaYt7S0cTsx4Urffvhiw4LM=;
-        b=Zb3gbRGwCPqj+UfvaQOVfbo42YJDwf8R6KySzZsGdyjAn+pro1Dt00duKbnkuwQMiv
-         +JumC1GZHcsX4b1+oODGcxFfmjFGDpZyS7pir7+MUFDBc+TOOenRQqrBzynR3mbr5Trk
-         urgoLtqAhMkOy/7fzHNbYSqHydaV9cHZErDulV676ZbN53eMSQ3w7aEp6DTpD9GLxm6G
-         lWthVFeLqjllGgOqjLTSOEJyibnQwVmJhkN3rZsndTV+ZnreeWrNKy5oESU6K01bVhDG
-         UuZU2C1xcnn/riIraRhjCJvOjYiN2qC4xXokYDr3zzFk1G9HdTu30cpUvSPaj9aRB6K9
-         fWow==
-X-Forwarded-Encrypted: i=1; AJvYcCUi9l4j713jqVr8GrfhAJteml4lUWysmXrioIhmAuX1lecvxEVpOt/Vm9vPPI4qHR7u35RCULUBwnIry2M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6hpx3t89fTBLvCPFiu+eVfas649FOAjBQZ5q53jpKj98dREJ/
-	UPRXyO7NqTrU4FWtPFKmiu/OnJkweOPTeFfXS/JXVkb7PGGbn4wKhWqgRNbf2jg=
-X-Gm-Gg: ASbGnctaUh46aM4/KEvzMUIFKcwcypR2gJQ9z01l0EOHuOXs2Ve1xA1mgkpedK5KWAX
-	/ITbvb42zb6+zKbaYNarMU3oFUabb5VOZSb70J3jkQuRKRJf0WCTYprx26RAmvgEqOiTwbBuJOZ
-	ulVAEU3PiEk8xGdfDBR0ab4wM87n3Kd+xdrNoNm67WhLD3Mxqz6dw9xdtLbKaBPAgq+h0vt2zX+
-	rXFGSJNZoj1M+uLf9VxSCrkNivhzJ1P7W3tc212q956PlZEn56nhQ==
-X-Google-Smtp-Source: AGHT+IGhU7zUXdw1jO4qBjRP/qSHZPrcmJ5kU/snB6sUvFjEiUozfQ22D4pCzEUIkaBRIYvxxgj5yw==
-X-Received: by 2002:a17:90b:1643:b0:2ee:f80c:6884 with SMTP id 98e67ed59e1d1-2ef012796bdmr10132428a91.33.1733333952612;
-        Wed, 04 Dec 2024 09:39:12 -0800 (PST)
-Received: from p14s ([2604:3d09:148c:c800:cb58:bf7f:6102:4f57])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ef2701df43sm1838077a91.30.2024.12.04.09.39.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Dec 2024 09:39:11 -0800 (PST)
-Date: Wed, 4 Dec 2024 10:39:09 -0700
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v15 3/8] remoteproc: Introduce load_fw and release_fw
- optional operation
-Message-ID: <Z1CTvQqULM0TjulR@p14s>
-References: <20241128084219.2159197-1-arnaud.pouliquen@foss.st.com>
- <20241128084219.2159197-4-arnaud.pouliquen@foss.st.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=chkQqIWFEzACmvkeEwmD6ng6KjO7ip6oA5tb/uxfThXfSGiYgrCslJQV5tHZ5tb19RGUPf1NRvQEnrDaB0SRyYboNJPaT25lq9lxRsjPYmfCZIR1qSP95maRfjg4AeFgNAMJsOjmWwjM7D8I7lMHouX9XISjNoCh9pD3EV18Ssw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W0o+6MGi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31D9AC4CECD;
+	Wed,  4 Dec 2024 17:40:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733334050;
+	bh=LxkpU69xnQRzVLx5RpprBjdsbPTfZlN2KukOZTd+EfQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=W0o+6MGi/wfSfQDbviNlNP+lYxR+zz8vT1Crl7fh/xTX4Jh181+4KxWEO2v9s36BS
+	 WYS7yjwzaQsVi1v0/yxcDMk8/xXOD9DAWKvQm4WMI/SiaQuB0jW8aF0WnLZye/9VQO
+	 gU1NCyetAZCaMreIT5NwzD7jGEhsrxUMCqTPNoCOQ8UmivXus38CJD7DS36qK83YDj
+	 tS01Sm1v2zIrUW3SZbYSATO2Z0Nfd3/Q8GlGVl8wcn0WQ0fC8p3UFhPQGSQW/Bsz86
+	 fOIkKi+38RkqLiWFIgHeQodQlGOpqABRbMGFgHJS0rI+BSgKQiGhdxRBB0wPblMN2k
+	 xkXpDUaI6NtQg==
+Date: Wed, 4 Dec 2024 07:40:49 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: David Laight <David.Laight@aculab.com>,
+	Naresh Kamboju <naresh.kamboju@linaro.org>,
+	"linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
+	clang-built-linux <llvm@lists.linux.dev>,
+	linux-block <linux-block@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"lkft-triage@lists.linaro.org" <lkft-triage@lists.linaro.org>,
+	Linux Regressions <regressions@lists.linux.dev>,
+	Anders Roxell <anders.roxell@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Nathan Chancellor <nathan@kernel.org>, Jens Axboe <axboe@kernel.dk>
+Subject: Re: s390: block/blk-iocost.c:1101:11: error: call to
+ '__compiletime_assert_557' declared with 'error' attribute: clamp() low
+ limit 1 greater than high limit active
+Message-ID: <Z1CUIT8zAqWOnot-@slm.duckdns.org>
+References: <CA+G9fYsD7mw13wredcZn0L-KBA3yeoVSTuxnss-AEWMN3ha0cA@mail.gmail.com>
+ <5ffa868f-cbf0-42ae-ae10-5c39b0de05e7@stanley.mountain>
+ <7920126775c74fa5915afbeedcfe2058@AcuMS.aculab.com>
+ <c795c090-430a-45a6-88b2-94033d50dea2@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,147 +70,52 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241128084219.2159197-4-arnaud.pouliquen@foss.st.com>
+In-Reply-To: <c795c090-430a-45a6-88b2-94033d50dea2@stanley.mountain>
 
-On Thu, Nov 28, 2024 at 09:42:10AM +0100, Arnaud Pouliquen wrote:
-> This patch updates the rproc_ops structures to include two new optional
-> operations.
-> 
-> - The load_fw() op is responsible for loading the remote processor
-> non-ELF firmware image before starting the boot sequence. This ops will
-> be used, for instance, to call OP-TEE to  authenticate an load the firmware
+Hello,
 
-1) two space between "to" and "authenticate"
-2) s/"an load"/"and load"
+On Wed, Dec 04, 2024 at 07:50:14PM +0300, Dan Carpenter wrote:
+> Tejun probably reads everything to linux-block, but let's CC him explicitly.
 
-> image before accessing to its resources (a.e the resource table)
+Oh, I'm not. Thanks for cc'ing.
+
+> block/blk-iocost.c
+>   2222                          TRACE_IOCG_PATH(iocg_idle, iocg, now,
+>   2223                                          atomic64_read(&iocg->active_period),
+>   2224                                          atomic64_read(&ioc->cur_period), vtime);
+>   2225                          __propagate_weights(iocg, 0, 0, false, now);
+>                                                           ^
+> Why is "active" zero?  __propagate_weights() does a clamp() to 1 as minimum and
+> we've added new build time asserts so this breaks the build.
 > 
-> - The release_fw op is responsible for releasing the remote processor
-> firmware image. For instance to clean memories.
-> The ops is called in the following cases:
->  - An error occurs between the loading of the firmware image and the
->    start of the remote processor.
->  - after stopping the remote processor.
+>   2226                          list_del_init(&iocg->active_list);
 > 
-> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-> ---
-> Update vs version V13:
-> - Rework the commit to introduce load_fw() op.
-> - remove rproc_release_fw() call from  rproc_start() as called in
->   rproc_boot() and rproc_boot_recovery() in case of error.
-> - create rproc_load_fw() and rproc_release_fw() internal functions.
-> ---
->  drivers/remoteproc/remoteproc_core.c     | 16 +++++++++++++++-
->  drivers/remoteproc/remoteproc_internal.h | 14 ++++++++++++++
->  include/linux/remoteproc.h               |  6 ++++++
->  3 files changed, 35 insertions(+), 1 deletion(-)
+> The other way to solve this would be to something stupid like:
 > 
-> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> index ace11ea17097..8df4b2c59bb6 100644
-> --- a/drivers/remoteproc/remoteproc_core.c
-> +++ b/drivers/remoteproc/remoteproc_core.c
-> @@ -1488,6 +1488,7 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
->  	kfree(rproc->cached_table);
->  	rproc->cached_table = NULL;
->  	rproc->table_ptr = NULL;
-> +	rproc_release_fw(rproc);
->  unprepare_rproc:
->  	/* release HW resources if needed */
->  	rproc_unprepare_device(rproc);
-> @@ -1855,8 +1856,14 @@ static int rproc_boot_recovery(struct rproc *rproc)
->  		return ret;
->  	}
->  
-> +	ret = rproc_load_fw(rproc, firmware_p);
-> +	if (ret)
-> +		return ret;
-> +
->  	/* boot the remote processor up again */
->  	ret = rproc_start(rproc, firmware_p);
-> +	if (ret)
-> +		rproc_release_fw(rproc);
->  
->  	release_firmware(firmware_p);
->  
-> @@ -1997,7 +2004,13 @@ int rproc_boot(struct rproc *rproc)
->  			goto downref_rproc;
->  		}
->  
-> +		ret = rproc_load_fw(rproc, firmware_p);
-> +		if (ret)
-> +			goto downref_rproc;
-> +
->  		ret = rproc_fw_boot(rproc, firmware_p);
-> +		if (ret)
-> +			rproc_release_fw(rproc);
->  
->  		release_firmware(firmware_p);
->  	}
-> @@ -2071,6 +2084,7 @@ int rproc_shutdown(struct rproc *rproc)
->  	kfree(rproc->cached_table);
->  	rproc->cached_table = NULL;
->  	rproc->table_ptr = NULL;
-> +	rproc_release_fw(rproc);
->  out:
->  	mutex_unlock(&rproc->lock);
->  	return ret;
-> @@ -2471,7 +2485,7 @@ static int rproc_alloc_ops(struct rproc *rproc, const struct rproc_ops *ops)
->  	if (!rproc->ops->coredump)
->  		rproc->ops->coredump = rproc_coredump;
->  
-> -	if (rproc->ops->load)
-> +	if (rproc->ops->load || rproc->ops->load_fw)
->  		return 0;
->  
->  	/* Default to ELF loader if no load function is specified */
-> diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
-> index 0cd09e67ac14..2104ca449178 100644
-> --- a/drivers/remoteproc/remoteproc_internal.h
-> +++ b/drivers/remoteproc/remoteproc_internal.h
-> @@ -221,4 +221,18 @@ bool rproc_u64_fit_in_size_t(u64 val)
->  	return (val <= (size_t) -1);
->  }
->  
-> +static inline void rproc_release_fw(struct rproc *rproc)
-> +{
-> +	if (rproc->ops->release_fw)
-> +		rproc->ops->release_fw(rproc);
-> +}
-> +
-> +static inline int rproc_load_fw(struct rproc *rproc, const struct firmware *fw)
-> +{
-> +	if (rproc->ops->load_fw)
-> +		return rproc->ops->load_fw(rproc, fw);
-> +
-> +	return 0;
-> +}
-> +
->  #endif /* REMOTEPROC_INTERNAL_H */
-> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-> index 2e0ddcb2d792..ba6fd560f7ba 100644
-> --- a/include/linux/remoteproc.h
-> +++ b/include/linux/remoteproc.h
-> @@ -381,6 +381,10 @@ enum rsc_handling_status {
->   * @panic:	optional callback to react to system panic, core will delay
->   *		panic at least the returned number of milliseconds
->   * @coredump:	  collect firmware dump after the subsystem is shutdown
-> + * @load_fw:	optional function to load non-ELF firmware image to memory, where the remote
-> + *		processor expects to find it.
-> + * @release_fw:	optional function to release the firmware image from memories.
-> + *		This function is called after stopping the remote processor or in case of error
->   */
->  struct rproc_ops {
->  	int (*prepare)(struct rproc *rproc);
-> @@ -403,6 +407,8 @@ struct rproc_ops {
->  	u64 (*get_boot_addr)(struct rproc *rproc, const struct firmware *fw);
->  	unsigned long (*panic)(struct rproc *rproc);
->  	void (*coredump)(struct rproc *rproc);
-> +	int (*load_fw)(struct rproc *rproc, const struct firmware *fw);
-> +	void (*release_fw)(struct rproc *rproc);
->  };
->  
->  /**
-> -- 
-> 2.25.1
+> diff --git a/block/blk-iocost.c b/block/blk-iocost.c
+> index 384aa15e8260..551edd2f661f 100644
+> --- a/block/blk-iocost.c
+> +++ b/block/blk-iocost.c
+> @@ -1094,7 +1094,7 @@ static void __propagate_weights(struct ioc_gq *iocg, u32 active, u32 inuse,
+>          * @active. An active internal node's inuse is solely determined by the
+>          * inuse to active ratio of its children regardless of @inuse.
+>          */
+> -       if (list_empty(&iocg->active_list) && iocg->child_active_sum) {
+> +       if ((list_empty(&iocg->active_list) && iocg->child_active_sum) || active == 0) {
+>                 inuse = DIV64_U64_ROUND_UP(active * iocg->child_inuse_sum,
+>                                            iocg->child_active_sum);
+>         } else {
 > 
+> But that seems really stupid.
+
+This is a good catch. It's impressive that this can be caught at compile
+time. The upper limit can become zero but the lower limit should win as
+that's there to protect against divide by zero, so I think the right thinig
+to do is replacing clamp() with max(min()). Is someone interested in writing
+up the patch and sending it Jens' way?
+
+Thanks.
+
+-- 
+tejun
 
