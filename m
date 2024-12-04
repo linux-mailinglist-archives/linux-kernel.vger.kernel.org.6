@@ -1,127 +1,116 @@
-Return-Path: <linux-kernel+bounces-431120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45EA39E3928
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 12:45:38 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 259669E3956
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 12:56:41 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23140167B8D
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 11:45:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E05AF28503D
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 11:56:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B7661AC44D;
-	Wed,  4 Dec 2024 11:45:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F41E51B414D;
+	Wed,  4 Dec 2024 11:56:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yz90akPk"
-Received: from mail-io1-f42.google.com (mail-io1-f42.google.com [209.85.166.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=fau.de header.i=@fau.de header.b="DZd7wSIk"
+Received: from mx-rz-2.rrze.uni-erlangen.de (mx-rz-2.rrze.uni-erlangen.de [131.188.11.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 770131B5823;
-	Wed,  4 Dec 2024 11:45:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1B1A1B3950;
+	Wed,  4 Dec 2024 11:56:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=131.188.11.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733312706; cv=none; b=Pi+tKATd676NEsQJmeXSdRurOrVNzSzbc5i+UsVzoCRi34tINvLFhHsGLZZGINUryFFTWVr3PIVMiQ59qP61OeFgsdk5xncw863uHyNpM6X4u7tOxMCLeVCGgfQ1dhJWs8QqoMtMKl+IsvmiUZfYh2wmalJIZjtM2v94+F7Dsi8=
+	t=1733313394; cv=none; b=o8AdxHppkYFgPqBocgMJb57f6ny52lAqGJ6kLVWNuaXNSovcuMFiaiJVWwMqQbn1Fpw5TDKBjeZI8Q0oatoXeUNbbtVhVWlPjPMVYAGrH8T3h4vgBA2t47rhPD41LR+l3uOeQ6lC4SBNZ6zuiwfo4utlGGM4C3P1XPCHWT+cmb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733312706; c=relaxed/simple;
-	bh=RovnKJv9VRPyPnU6oCFtT0/JKYl0c6u9fgdt5vqnjFo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UW864qbg1OhK00LvapLmjBnrztTn16wGusC/2C8KUDVRQMHoTxte4dFz6iwimtBSU1XNJizlvI6IdX2XdVDd3z12GKLVflceFjv2lYqgcOlqPmEQFBbdRYmLMhWZd9YdpzwysvADPK1giuZW2NMYO/e3Tk8LH/H0mLDBMwCyAP0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Yz90akPk; arc=none smtp.client-ip=209.85.166.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f42.google.com with SMTP id ca18e2360f4ac-843e9db3e65so28157739f.1;
-        Wed, 04 Dec 2024 03:45:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733312703; x=1733917503; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=MP1IFoCtUECa7auIxqrxM0e+TZCBmVEADW+5Kskf1Ng=;
-        b=Yz90akPkKaXHYw88Y999XmsuzILOOqPWs8HvpG6uEC52z+42LrEPDB9Q8uAux9mQge
-         ih4vArCsJ3Cv5LypNzEYa9GCcxNTuFt/w8/Xs4nX5Sz2KZNmgkzSz7z80igy+J1raO6d
-         6BEYipjEX7MGouJjCmsZD/fHA1X/nzrMl+m2ALeVlHlOBWfHb9s9Hr5uUZ8f/DHRGdlW
-         +dE1ln4bdgf2jzrLThM9KgmkZ6gAACuxCIbK1jbm/tMErqL97B/blONgiF4Vt8TBvKiR
-         rYCLzao2vVXU/CmriKSobSq/27wOMWnihicMRwL6b+ccdpGTLjKIuEbkvTiH8HZzXi7/
-         G6gQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733312703; x=1733917503;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=MP1IFoCtUECa7auIxqrxM0e+TZCBmVEADW+5Kskf1Ng=;
-        b=cDgnLfI/RWvCbllEvoRysipzmiXt2FM4SoY8nMUFxmrwJfOxFDSU7WlOGyTbBapWm/
-         hIRNC7gr4lhYNaV75TKGi0xMTHm948pEgwHq8Ryo9epFhUE2ySGiMGPf4PZraMYydbpy
-         kXHQYjPpsAWAUGy9yKoSjH1Qy6YmiuaMej1saKapE8s2sz+/dC1kNraLPD3wh++L0Qaj
-         9spA89V60A67OqdTMkdg0RoJnnC68wZcJD13/Qxiv+mYbnChIl2sMSxzyPYI9WiFJTxi
-         5fcXrq92ZNUZUNPM3PlBfe6WKWBbhmaI5kOZCUXKRN0H9Kh14w74lfOa7xPTV+RNukxD
-         ljGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUHCpxxlSe1odCxToZN/IeoH5xzsSop8TUVu7/Vw+5Ifyv0hTxhCJmIANjAT2sSiGtyzyo6lXomQek=@vger.kernel.org, AJvYcCXVE2ybYktZPxjl5buiyZO5ljE4U56Qpx7zjid07z5YRfb5aN/Ef/uzjnU+N1xjxi/sTKp8Bq2bzITsN5J2@vger.kernel.org, AJvYcCXeXKIziQDPBs0jKLlWd1lg/wsxHfu15dYLQHj3njHcTDAeJTaeSDe76I9KldBSKAR7A1+uWhZefA3ujzk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyzbC19MZp2mYs8yiWa5PnzHEUIvR6ZTTQDR6fi8DlPQggYeZFk
-	4jUAZ/Nk3WSVY3Dd+BTaRnjbUhHXjnmaC8zcq+uqEJNymFGbySGXiz8/w07H0FDl/PUZCwLo2Gs
-	Mi0BBOEL5IN4Fs50DDRA1VEwQ7RI=
-X-Gm-Gg: ASbGncvAv4uhwpNm2N0FQAqGxRWyQDuu/QJTr6kjdmEp+/lEyRynYzYCQA48yn5GvgM
-	bNXTpkUshUQi0MuGD5XgI9lEqTRs=
-X-Google-Smtp-Source: AGHT+IEBt7Y3AoZe/E0djwwPsqCvw+zc0j5mZ94vDNVDO8XiK/PLM3XziwSPyrI6XblnANThkNiK/yHMr86Yy1Wou6s=
-X-Received: by 2002:a5e:a60d:0:b0:841:9225:1f56 with SMTP id
- ca18e2360f4ac-84401589d4amr2255415639f.3.1733312703542; Wed, 04 Dec 2024
- 03:45:03 -0800 (PST)
+	s=arc-20240116; t=1733313394; c=relaxed/simple;
+	bh=gfrZtkK4A+DOGZgYgjVo7j3CV+EEQ4cZ7jeW9wIdt5w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JKWrHOzGdkt15T2MxVRpe68s5sPbDxzIzawMa5T1Yxg2kELGjFnnE0EhA8KC77aMiChJgUfjdTCQRSWcRIZ027o+g+K91OOlzoZDWzTXBByhPzYK2yKvNOsum819gZc3iXMOhdVZD70QXN8ROmpYKeWw/bUglTnImnYHwO/E2x4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fau.de; spf=pass smtp.mailfrom=fau.de; dkim=pass (2048-bit key) header.d=fau.de header.i=@fau.de header.b=DZd7wSIk; arc=none smtp.client-ip=131.188.11.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fau.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fau.de
+Received: from mx-rz-smart.rrze.uni-erlangen.de (mx-rz-smart.rrze.uni-erlangen.de [IPv6:2001:638:a000:1025::1e])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-rz-2.rrze.uni-erlangen.de (Postfix) with ESMTPS id 4Y3G3B0qktzPk68;
+	Wed,  4 Dec 2024 12:47:18 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fau.de; s=fau-2021;
+	t=1733312838; bh=gfrZtkK4A+DOGZgYgjVo7j3CV+EEQ4cZ7jeW9wIdt5w=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From:To:CC:
+	 Subject;
+	b=DZd7wSIkv3/2Bo17KZyUK+M4I12AusFLMbl7/xkJGRxWEaQiOZSMLxZsSq97WfoIe
+	 xCtO+mNR1btfdG0KMG7ZRmCKkqizO0LmQQVVjKyOhmVvQOC2MTQ+DJEjBgDGerCxBH
+	 WSG5ItX77bL4K0alAUoE3mRAw9zgZ8MppkthHJXt+ZnE141KxJejQpHtuYBkUJSXe4
+	 GBpmsAaPOX2vrtIpCo7BrHmasRwlLxcpmw5Fd8sob9j6YxPdVi8wrhUtgUOh8ldJIJ
+	 +Ntw7gLEmCOD15F5k0CWCA7AmBV2OjYXAZBOTk1aev7Hall1AE4Y160UydnmJAw87o
+	 ENwrdWn1nEgCQ==
+X-Virus-Scanned: amavisd-new at boeck4.rrze.uni-erlangen.de (RRZE)
+X-RRZE-Flag: Not-Spam
+X-RRZE-Submit-IP: 131.188.37.42
+Received: from [131.188.37.42] (faui7y.informatik.uni-erlangen.de [131.188.37.42])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: U2FsdGVkX1/suPM4bff5/GBbiflfuJQPB+JDQHv2SKk=)
+	by smtp-auth.uni-erlangen.de (Postfix) with ESMTPSA id 4Y3G374hqTzPkl7;
+	Wed,  4 Dec 2024 12:47:15 +0100 (CET)
+Message-ID: <ce09216d-ccb2-4cf3-8c68-4de468411db5@fau.de>
+Date: Wed, 4 Dec 2024 12:47:15 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241201034803.584482-1-yanhuoguifan@gmail.com> <20241201034803.584482-2-yanhuoguifan@gmail.com>
-In-Reply-To: <20241201034803.584482-2-yanhuoguifan@gmail.com>
-From: Eugene Shalygin <eugene.shalygin@gmail.com>
-Date: Wed, 4 Dec 2024 12:44:52 +0100
-Message-ID: <CAB95QAQLh3mnfWxB9rnsAzNQ+e43=2xZNP3h4HcWY7jYQ8Yi_g@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] hwmon: (asus-ec-sensors) AMD 600 motherboard add
- support for fan cpu opt
-To: Li XingYang <yanhuoguifan@gmail.com>
-Cc: jdelvare@suse.com, linux@roeck-us.net, corbet@lwn.net, 
-	linux-hwmon@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] net/sched: netem: account for backlog updates from child
+ qdisc
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+ Jamal Hadi Salim <jhs@mojatatu.com>, Cong Wang <xiyou.wangcong@gmail.com>,
+ Jiri Pirko <jiri@resnulli.us>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+ Simon Horman <horms@kernel.org>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241125231825.2586179-1-martin.ottens@fau.de>
+ <20241202191312.3d3c8097@kernel.org>
+Content-Language: en-US, de-DE
+From: Martin Ottens <martin.ottens@fau.de>
+In-Reply-To: <20241202191312.3d3c8097@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-LGTM.
+On 03.12.24 04:13, Jakub Kicinski wrote:
+> I don't understand why we need to perform packet accounting=20
+> in a separate new member (t_len). You seem to fix qlen accounting,
+> anyway, and I think sch->limit should apply to the qdisc and all
+> its children. Not just qdisc directly (since most classful qdiscs
+> don't hold packets).
 
-Best Regards,
-Eugene
+Netem is a classful qdisc but different from others because it holds=20
+packets in its internal tfifo and optional additionally in a child=20
+qdisc. However, sch->limit currently only considers the packets in=20
+the tfifo and not the packets hold by a child, but child qdiscs=20
+expect this value to refer to the number of packets that are in=20
+netem and all its children together. If the children change this=20
+value (using 'qdisc_tree_reduce_backlog'), then the number of=20
+packets in the tfifo no longer matches sch->limit.
+By adding t_len, the number of packets in the tfifo will be tracked=20
+independently from sch->limit therefore sch->limit can be changes=20
+by children without unwanted behavior. t_len is required, because=20
+currently the limit option of netem refers to the maximum number=20
+of packets in the tfifo - therefore the behavior of netem is not
+changed by this patch.
 
-On Sun, 1 Dec 2024 at 04:48, Li XingYang <yanhuoguifan@gmail.com> wrote:
->
-> Refer to the LibreHardwareMonitor project, LibreHardwareMonitorLib/
-> Hardware/Motherboard/Lpc/EC/EmbeddedController.cs file,
-> fan cpu opt is support by amd600 EC.
-> the registers are described:
-> BoardFamily.Amd600, new Dictionary<ECSensor, EmbeddedControllerSource>
-> {
-> { ECSensor.FanCPUOpt,  new EmbeddedControllerSource
-> ("CPU Optional Fan", SensorType.Fan, 0x00b0, 2) },
-> }
->
-> now add the FanCPUOpt support for amd600
->
-> Signed-off-by: Li XingYang <yanhuoguifan@gmail.com>
-> ---
->  drivers/hwmon/asus-ec-sensors.c | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/drivers/hwmon/asus-ec-sensors.c b/drivers/hwmon/asus-ec-sensors.c
-> index 9555366aeaf0..381bf117104f 100644
-> --- a/drivers/hwmon/asus-ec-sensors.c
-> +++ b/drivers/hwmon/asus-ec-sensors.c
-> @@ -250,6 +250,8 @@ static const struct ec_sensor_info sensors_family_amd_600[] = {
->                 EC_SENSOR("Water_In", hwmon_temp, 1, 0x01, 0x00),
->         [ec_sensor_temp_water_out] =
->                 EC_SENSOR("Water_Out", hwmon_temp, 1, 0x01, 0x01),
-> +       [ec_sensor_fan_cpu_opt] =
-> +               EC_SENSOR("CPU_Opt", hwmon_fan, 2, 0x00, 0xb0),
->  };
->
->  static const struct ec_sensor_info sensors_family_intel_300[] = {
-> --
-> 2.47.1
->
+> I'm not a qdisc expert, so if you feel confident about this code you
+> need to explain the thinking in the commit message..
+
+With the patch I try to fix the error without changing the behavior=20
+of netem (e.g., change the meaning of the limit option to apply to=20
+the tfifo length and the packets in the child qdisc). Maybe there=20
+are even better approaches - I am happy about any feedback. I will=20
+revise the explanation in the patch to make this clearer and=20
+resubmit it.
 
