@@ -1,308 +1,183 @@
-Return-Path: <linux-kernel+bounces-431640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 964A69E4017
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:52:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E86CF9E3FD1
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:38:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2C0E5B2F6E8
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:37:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BB2D281D85
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:38:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF4A420CCD1;
-	Wed,  4 Dec 2024 16:37:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25ECC20D4E5;
+	Wed,  4 Dec 2024 16:38:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="aiuX9o5i"
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2056.outbound.protection.outlook.com [40.107.21.56])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TehPCWTl"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0BF14A28;
-	Wed,  4 Dec 2024 16:37:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.56
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733330266; cv=fail; b=U7VUyHUb41ZTrUByN9Hi7Kz5GLf6C2QRxR0PYov8WQ26BvikIFpQQ2046WUJNVoCkJVF+yeUKkVPM1bOkoS48VZEXN1Xne8t1kzT6x7C03X9h5I5HYxI5e1DdTkxd+c4eepVzCyrQWAn9+y7xB+gEy6fn0rTFuf9l0JuddIXOmM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733330266; c=relaxed/simple;
-	bh=L/EZVm39cCus7u7sQLek/lKVBFpPN6s682xgm6TKVLI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=FEjeOalQjACZXLu5AwpoBJe3Gnwp4i2c1YUIvqFawGdIBNUozRuKIst64Xexd28lcvplxKZNiKJZGBJY/t5ZB9gUhiImkD04RcEkoD2KmwIO5MjwooO4XIGCxRMzoqAQCD3VcQ51ZRR16T3O+TGMj3umi57VJhp7zcYF6Yq9K8Q=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=aiuX9o5i; arc=fail smtp.client-ip=40.107.21.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=baPsg8xf/W8Cco/EAcYIX0mz8JDtQ0bSxbHpI5KRdXf89BGYhMnb1kPu9xX1r+5yffAhizQb/GWNFi7zuJE+JN2Tr4zkB+Fy/PlrBpdYhJJphkCoL8XZcOo5LnJ/N3EmQ9I+OJ4Iaaor1Dv6ZLxuf7PyoHZrC4IwGYQXP69iDPW85y0pGMkIJa/QIk/PecMSYV8KkYJGPJpo/R8TEpwgs2X5cnrWoTWOlw+u+qabYku+Zeg0jIWWpDHaz+J7aSQ9Fp4vsgTXhPrDHo03ZLpJ5WNVc4QSSpn3eN/dH2ffdU7o7nN3OGnw5EZrhy7hOELpybqGMg+XX3jQFgXphGHa5g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=vOhdKF6NTp3/UTaak6tOKZpUBRwTVeN+/jW60MaTkGE=;
- b=zKDGJ+mr+dq2XQ0gd7tffdCYqS/OSlq3gxXrJ4DhTxXUPTsEapQurV3wpyYXYGrkTty+4a0v/k/J7r0UZleL59lJ1rFy8bBvfK19Z5PyW2QY7asiANK02A+tP4+X9ztqrCvEYhcCvJjKWbfHc3E51uVMjInHy0LefEjrsEbDDThHIDFtGIYbSZaR/8bQxndgWlDoV+KRRkkVoK9oDhHSrZ6gNRxWjvxNqG8ApZjTbdulE2rl4EetybNTmeljHlAn425XnUviBs17U7C7EJypAnZuQgOlIk6yuwBcLfEl9lI8cUHhhfu0FcmqPO4C6FWqzuVlrmfQaZVz+1xiRNAtlg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vOhdKF6NTp3/UTaak6tOKZpUBRwTVeN+/jW60MaTkGE=;
- b=aiuX9o5i6Jx+McmRr22QULgwdRMNJuXnlpURd4ZKjthQEU/4VF1oX/ApXw26Ev1zn9ErYE5AzzD7EGt69TE7p3xm62AVKUsSHz9fEM1p5YcJNDowmBq0paiksXYJGIwe2QnjXYksQlI5S4JAGfsH64IqcEYcY2LpS57aIi4ZDGdq9t+nU2IuL50OyCmTDitVQFRiAkdqgQH87Rl3xBJZeb1P7OyIGgKDytN980wi7PCsoPoYmmz3dSpcKfseqBbpgd9fKZe9Dhi1KZLQ190g8GDyre00mvW4miW/So4lypzfHFEiFTG3p0K7hi8muyEY4CbbqTZyd8J2qkyuzhSNvA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by VI0PR04MB10807.eurprd04.prod.outlook.com (2603:10a6:800:25a::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.10; Wed, 4 Dec
- 2024 16:37:40 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%5]) with mapi id 15.20.8207.017; Wed, 4 Dec 2024
- 16:37:40 +0000
-Date: Wed, 4 Dec 2024 11:37:33 -0500
-From: Frank Li <Frank.li@nxp.com>
-To: Marc Zyngier <maz@kernel.org>
-Cc: linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>
-Subject: Re: [PATCH 2/2] PCI: apple: Convert to {en,dis}able_device()
- callbacks
-Message-ID: <Z1CFTb8d1SfAmP2w@lizhi-Precision-Tower-5810>
-References: <20241204150145.800408-1-maz@kernel.org>
- <20241204150145.800408-3-maz@kernel.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241204150145.800408-3-maz@kernel.org>
-X-ClientProxiedBy: BYAPR02CA0065.namprd02.prod.outlook.com
- (2603:10b6:a03:54::42) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E7B315B10D
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 16:38:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733330288; cv=none; b=qF0f8SiWe7EVCkxGZe2fNnloFDPghYAE40FLmTojUVfFDS0KPXAPnySuCiiFxts9lXT/BM5MjPUgamt12N4qL18qZmYA0H/BxDMqkVBFfw27OnuL9fwjZgiBc9gZjGY1XOp0595Y9Lnq/AI/0Or3Zcp+YcN3ubcdCwDXQZAe6iE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733330288; c=relaxed/simple;
+	bh=UsrhK2O8qYZAWeAQ04dz0BfyqgWPFxCcwLNHHtKiaJU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fXCxz+ZqdIi9k7gCzwOf7LOZ7qSCTOP0MRBZ+uQ9sLWei0PCtvPlkv/nSD7JYgMkgLU9Ku+NA74j9sjZFLL6HKJ7Mz4L6nbri8xtykkc1dPm2BwqelXtCLEyjAfYQL/nU8m6AkHl9GXtMdcGQTIxSUph2iIA+UcaKOkaiBcNbQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TehPCWTl; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733330285;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=I56T0jef1B9MebW55HaogqObbHI0foL5BjBnDVvFKBY=;
+	b=TehPCWTlgalxcB4ar/jXRaT2yzdBHRr9082RU0DVjZ7U8BXb9hdGXB8TSRlwOLKUf6dHy+
+	Ta902By3WFpu5dhDKBgI18/opLYoNWZ1wdjVXEtD36q/GkxsEmgUD03e2TqCWEHFGHXtP6
+	Om912VPDO1rQxCJXVxT6YB6gJ6MlxK8=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-77-GyTXbKblPjG71s5WZX8qMg-1; Wed, 04 Dec 2024 11:38:04 -0500
+X-MC-Unique: GyTXbKblPjG71s5WZX8qMg-1
+X-Mimecast-MFC-AGG-ID: GyTXbKblPjG71s5WZX8qMg
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-434a9861222so57159515e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 08:38:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733330282; x=1733935082;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=I56T0jef1B9MebW55HaogqObbHI0foL5BjBnDVvFKBY=;
+        b=q+2KMd1k8rovIgLd/9fmu8T5/PLbRbvHzUoJA8tNYaieF/3TvCmHt+MlNJthpjW3Yj
+         fLpXsps15gpdIej5/dhXtCOKbEIZXrtYaDVP9h9e193Bgi2RQdl3qzxj4Zn8SLTAjF8C
+         27daMxOSB4teLboMQM1CSUIltflh1eNcswuaV4k0zXxSAph4H6YBYlEfObdishKPl2cB
+         dSnYE5lhTH9tyG5bPzIHs8SOFZh7JdoJGQ4ERXrOPjrixwJ8moToMyYkyFtQeDjlVCfD
+         pumk0Jl3lkIdwkYeIdksak/KcOVdEE6F4iSe1T4MO4My0Uk5kl2njTNtnoewnF2WNFk+
+         xIJg==
+X-Forwarded-Encrypted: i=1; AJvYcCVHa1OVXg9nWIg7SAB3zlV6A7PL8VnMDYBdbCssco1x0ZKzeAR+8i4XsPg2dtaQt9CXyPbi30BC3XmbUDY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQ5mSXVjq8sKqgqYqOC8EOu7EUUq4sXAsaMKCAXYbMcSdkTsxb
+	UxCNEhMhkgaEdpTONiUkgQPiBvfdtj278lgw/AbBNhZAv1OdQTq+xp2mx04RaTwlIHuDlyaBgVW
+	Z4gRhJy0NsZxpXJ/1V1cpJuWQfwnA0jVD2kERZBRNkDanmH7Yfk3dr0kRKni0eaNXz50pZw==
+X-Gm-Gg: ASbGncstVagPnU6wIYQx34e6NpKKbiMR7j888STRUDD+fbQ58UbaAVrkjtYgcZAFsFf
+	HNa6DkNBUGnK/wT452HI9u8bWg4/3hgT94VnwA5ZNwAWMaZw31RWd0ALhvjSh4XNWtz29wDqHmX
+	MimH135U9uPgUFhLigao0Ji3Oiyh2jEdch/d8BYyXHxGIKgMcDp7p4foMfFvPbY5YOOy65mra+4
+	mtZYG2rPsfQbK20j3aDJXMSl4clbFbXM8ok1hJ8kFqj4N25zFIqZu9xEUaQcPMf1cHi2nXygpYU
+	g/tI/2+ArjF2m4NfD0vlpw==
+X-Received: by 2002:a05:600c:19d1:b0:434:a765:7f9c with SMTP id 5b1f17b1804b1-434d09acf91mr64226155e9.6.1733330282486;
+        Wed, 04 Dec 2024 08:38:02 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGqhxb34XhNhR3Z5uEkWHHBS3X+fStnfGrP/o4WHuOKX8TwbFpardigflmA7xm7EucHBEKmgg==
+X-Received: by 2002:a05:600c:19d1:b0:434:a765:7f9c with SMTP id 5b1f17b1804b1-434d09acf91mr64225985e9.6.1733330282132;
+        Wed, 04 Dec 2024 08:38:02 -0800 (PST)
+Received: from imammedo.users.ipa.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434d5280120sm29353435e9.20.2024.12.04.08.38.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Dec 2024 08:38:01 -0800 (PST)
+Date: Wed, 4 Dec 2024 17:37:59 +0100
+From: Igor Mammedov <imammedo@redhat.com>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, Shiju Jose
+ <shiju.jose@huawei.com>, "Michael S. Tsirkin" <mst@redhat.com>, Ani Sinha
+ <anisinha@redhat.com>, Dongjiu Geng <gengdongjiu1@gmail.com>,
+ linux-kernel@vger.kernel.org, qemu-arm@nongnu.org, qemu-devel@nongnu.org
+Subject: Re: [PATCH v5 13/16] acpi/ghes: better name the offset of the
+ hardware error firmware
+Message-ID: <20241204173759.6f02561a@imammedo.users.ipa.redhat.com>
+In-Reply-To: <20b003136d8c008fd54e8d40c806f13867336e13.1733297707.git.mchehab+huawei@kernel.org>
+References: <cover.1733297707.git.mchehab+huawei@kernel.org>
+	<20b003136d8c008fd54e8d40c806f13867336e13.1733297707.git.mchehab+huawei@kernel.org>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|VI0PR04MB10807:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8c6dce6e-1b5c-43b4-317b-08dd1481f855
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|52116014|376014|7416014|1800799024|7053199007|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?cUczH68vKLROXsiNfzmg+NQBWl9tsSFqI9BWCYIiI8fK8Wdxq/0cRBWZyluu?=
- =?us-ascii?Q?bw8PBm6AQz0vjkUqTrPD6TrmVZdqDUelrkScNNb/ZuVPUW+xbqBxZJvXGzRH?=
- =?us-ascii?Q?1ftn37bBZiehxckf+VKomX4iRJ24H2ZTe67ZhlZNuOP2hMzuFDhu730hB7Wq?=
- =?us-ascii?Q?zDUoIHwbvFb8LgYrOm4jptT+B7w39MygzU5UV1eTYBOWdDbX9cISTFvJ1+NF?=
- =?us-ascii?Q?4WrUyNlNBe9H8kYxiujxXZLsaae83iAzptmrKBl1w03dwCY6WpyAYeHLz52j?=
- =?us-ascii?Q?PEYoQwn4LEp2ZAfxbJLAmPvTP7wXrTdT9FBK1NtryCrJUqqyJsGVuLLpzEmo?=
- =?us-ascii?Q?10stiTxkbJwj2Nm7RELe2Y62p2eZBXi5vMGlFr/Njslj/TlBe1tDUNUbzWJs?=
- =?us-ascii?Q?WD9P6H4UKTV27qPBlIfWwR+8tpQysggg83S6HaVCPGqs/k0ZUWOUWg9mp/Qm?=
- =?us-ascii?Q?ykzvHvPXCzLhf60aOY6jWOvJcngKp3/jEe+ppNCFD4B3TTsD2TV9zYAD2+XH?=
- =?us-ascii?Q?Gz+zjdhMOlZ0xGG8/UcJLZzd2QdkSZ8u9CaEuiIe7SPklMDNb0EoZUuRclJP?=
- =?us-ascii?Q?kWL7gUzwq0bpihWzcm6hXaeSmCSK4SgAl44ywFwIS2S0m3tsmw9oHxQWcAMM?=
- =?us-ascii?Q?zh6gXU0ykbTtSc1JPsk6okMn4n/Ag2duyjNUEhql2Wd/qJt4yJUZwbuTTf2V?=
- =?us-ascii?Q?NE/fFoICErfQgR5QJcQm2YIIBD6ZKliQkcIcc51M2eF1l09A8OeD1U/tD8rM?=
- =?us-ascii?Q?K1BuU8/dPttENuaHm7ld+6C8s7Ce5osBuD3LhROxlfEj+/KEsIcyQBW/sU4j?=
- =?us-ascii?Q?g0xuSYunnP4jKit6JmoCP0Cs7EJaw9/CC/Zo5jZ1rMO0zjb7SH8InAsE2uFn?=
- =?us-ascii?Q?oHK+We5MkJnbVZw30N7mlFFEPKrta79zKasufgGKI8h2WRLpjXJZ+3dNqOfs?=
- =?us-ascii?Q?ye8k8iWz/kYpkIGO3lUN8sU8KFrsZukARtXwHLW/2WgXthJiY0fc7CF4ufmj?=
- =?us-ascii?Q?Y26ea6VkRl8ZcoInAAfFtNhG0wbBEGuCwV8/H5UbN7xseULn5wwQ5GAmi8Kv?=
- =?us-ascii?Q?D5BSDB7C2vTBMO2JZmzyI3EDMvlWYVlLJwk5nWPrlQhbUuLa2ehev1fukPku?=
- =?us-ascii?Q?KzNBlA/ouQUdcHK0tQ2GRCqPPmkJUIpaBfOF111j9auh7YAD5bRzWiYyuAml?=
- =?us-ascii?Q?EbPyb3V9T1B02+kHMQsmHdvo4kl9brtmj/JIAPl6wjLyUe7Cja7GlnniN/d2?=
- =?us-ascii?Q?8E/v2bW2IqNrnT6ytL9R6E2hfqjsUxuZtsXDtaChgpcGNDe9LpsGv4HEYsx3?=
- =?us-ascii?Q?dK5VI09W3w4gFazOzeLByLUma7Db3G59dtCWXxdLf8+l1mSgWEMW5/s3qtkl?=
- =?us-ascii?Q?uH6ge4uZVvch1zKcpxkouJ6I4dQwhfaNFMX48spvI+zpGvH5+A=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(52116014)(376014)(7416014)(1800799024)(7053199007)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?hPI7JDik9sHCnYAnh+gtSpP5X6W5JVUOTOh0MyZ3400k/IeZ4FcKGNNzPwlH?=
- =?us-ascii?Q?YWZ5rca49IqSMSrKcU2ELRMeCnEtUp3R0EOyeddKB45Lr41odyPbF4AGzpL0?=
- =?us-ascii?Q?ca+zvmbVFNWCerGmtA1LX2UScKOnQN7DxmtEF2YE2EDFtAAx4kzAZIF1M+MK?=
- =?us-ascii?Q?m7Q255IoB1mu1p14q0zP4ovm+mfB3tM6voZXMJtU50rHGlxHV3oN86lekqQT?=
- =?us-ascii?Q?ZwhEE734YoUgdo2B2LPNoMIGDr8KDdrwcbWBRccyHb8IoX1XvYWNsRjILeAg?=
- =?us-ascii?Q?q5MlccydckuGAuvl7ko1FWb7S+GDAaFfVxm8c2z6QDBpaQhQmoLyZILIaC/C?=
- =?us-ascii?Q?k/LM6sM2YDvblz2/ns2UkJaOUp1ydJH7GH2y4Rs1l3x+QC16ftHPG8+B7hr+?=
- =?us-ascii?Q?Ik0vgCHICHUxndTlamCehRj3boudgPnUDA5MunEqiHBBToCok3Ex5UX0iEPr?=
- =?us-ascii?Q?Q2rYIK61G/QKBb9UGNzQ0oEI1zb4obF8J6I/L2tG0QEWi2CFGjhcFnV4M0R2?=
- =?us-ascii?Q?HSvHkOKOn0HzgHqWGdziO8W7FKCxpX9CRXQp8OxLTA++VxOwkREqNRIv9eGU?=
- =?us-ascii?Q?XZZfgyZKgt2ihp46OYFKF3qBj1I7h+xSiZWxTY2i6ohpxlX4slGC954odaOH?=
- =?us-ascii?Q?4Z1WwQMhErTccBMxIUEDAwE0EwkImgXLzDw7yKeEZ6rhhvg3CZMQhpaDDhvt?=
- =?us-ascii?Q?/u60+6MzF4AkmqvprwvPP/JLAA1P1VdaGaJzMu5JlaXFmUVBMJpOUsK9W8Vx?=
- =?us-ascii?Q?HeD9iLTsh840Li4+gid7ceMDmLiS6XNFomJEk3nWlL0DUuy0oHcdaZiEaAg/?=
- =?us-ascii?Q?5zraF6W3priJRL6OcaZXKrMH5UwNKXAhSzC+wtKSYAyMH50pwIU+1/g7pXOV?=
- =?us-ascii?Q?76Cb9sDgLivtfTn4QtT+/2z9EJgLM415ArK+HUyrEI1iiFHW130XLjgwHEBu?=
- =?us-ascii?Q?R6aJRSQoKmGMZ7jqYwp6nPXctPD1ZCKX+xB/Ub+AAraAYfdnmspNecnF/dfE?=
- =?us-ascii?Q?QYMEfgmQU4SbNrO4K4I9NPSx1s8WQxCYSvDbyc4Z63dOV634CnYx7HOARFQI?=
- =?us-ascii?Q?nWpL46CjYATXbsBVIwBytD8+v1aVKELtLtCKKKJzqKrycBFYG/bJ1wY4TpZu?=
- =?us-ascii?Q?jOlFKvg2NMJPYD9v0XijcKrC7+WZ+Y6hW0zDWXIKnKx9kPhxzn9DuKpV5h8H?=
- =?us-ascii?Q?RR9P7/Ntj+i9MZzsTvTg5Zrb7crx/z1ngwKkLkYu5OaJMZnKixje0hEzM4yT?=
- =?us-ascii?Q?efAxDO+o9xiM20qU8uqoqY7289d4vg/7OSla/bk6cvU+P9a7MFubAvxBTzuB?=
- =?us-ascii?Q?7ZEd9Rsvc+5pllsOrn4ggTL//lmZxIoyTWZtGWcQJb8qBNeNtnD6ZWkg0J48?=
- =?us-ascii?Q?1QKbl+7qgaZfC/5wfXzLZwqrzSLE3YrISZVa5yQlQyvAEczIZ3/LpJ8eP0pW?=
- =?us-ascii?Q?l+QoQtLI2fAUFHsSueZNsGErk8aBvfmZc1TpW4nYAaN7yEcew0rJPHidKNcv?=
- =?us-ascii?Q?FsaEXOpzehl2fay3NACRmKAbPf1Gl0YCUyYO9NJ5lTODoiJ6LBCONwJd24Ws?=
- =?us-ascii?Q?fmEuJiuWorZPHmP831MjFJ9dWxoeooWwvMi+H/6n?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8c6dce6e-1b5c-43b4-317b-08dd1481f855
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Dec 2024 16:37:40.7616
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: co5iOok1lZRGRocjRSuucuhZ75b/cjGNW2zRmSEm04A3YmxIS7dk5xLod01ZNbmGf0/IlftejUsjcBkBpnGdGA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR04MB10807
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, Dec 04, 2024 at 03:01:45PM +0000, Marc Zyngier wrote:
-> Now that the core host-bridge infrastructure is able to give
-> us a callback on each device being added or removed, convert
-> the bus-notifier hack to it.
->
-> Signed-off-by: Marc Zyngier <maz@kernel.org>
+On Wed,  4 Dec 2024 08:41:21 +0100
+Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
 
-Reviewed-by: Frank Li <Frank.Li@nxp.com>
+> The hardware error firmware is where HEST error structures are
+      ^^^^^^^^^^^^^^^^^^^^^^^ I can't parse this, suspect you've meant something else here
 
-
+> stored. Those can be GHESv2, but they can also be other types.
+> 
+> Better name the location of the hardware error.
+> 
+> No functional changes.
+> 
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Reviewed-by: Igor Mammedov <imammedo@redhat.com>
 > ---
->  drivers/pci/controller/pcie-apple.c | 75 ++++++-----------------------
->  1 file changed, 15 insertions(+), 60 deletions(-)
->
-> diff --git a/drivers/pci/controller/pcie-apple.c b/drivers/pci/controller/pcie-apple.c
-> index fefab2758a064..a7e51bc1c2fe8 100644
-> --- a/drivers/pci/controller/pcie-apple.c
-> +++ b/drivers/pci/controller/pcie-apple.c
-> @@ -26,7 +26,6 @@
->  #include <linux/list.h>
->  #include <linux/module.h>
->  #include <linux/msi.h>
-> -#include <linux/notifier.h>
->  #include <linux/of_irq.h>
->  #include <linux/pci-ecam.h>
->
-> @@ -667,12 +666,16 @@ static struct apple_pcie_port *apple_pcie_get_port(struct pci_dev *pdev)
->  	return NULL;
->  }
->
-> -static int apple_pcie_add_device(struct apple_pcie_port *port,
-> -				 struct pci_dev *pdev)
-> +static int apple_pcie_enable_device(struct pci_host_bridge *bridge, struct pci_dev *pdev)
+>  hw/acpi/generic_event_device.c | 4 ++--
+>  hw/acpi/ghes.c                 | 4 ++--
+>  include/hw/acpi/ghes.h         | 2 +-
+>  3 files changed, 5 insertions(+), 5 deletions(-)
+> 
+> diff --git a/hw/acpi/generic_event_device.c b/hw/acpi/generic_event_device.c
+> index 663d9cb09380..17baf36132a8 100644
+> --- a/hw/acpi/generic_event_device.c
+> +++ b/hw/acpi/generic_event_device.c
+> @@ -364,7 +364,7 @@ static const VMStateDescription vmstate_ghes = {
+>      .version_id = 1,
+>      .minimum_version_id = 1,
+>      .fields = (const VMStateField[]) {
+> -        VMSTATE_UINT64(ghes_addr_le, AcpiGhesState),
+> +        VMSTATE_UINT64(hw_error_le, AcpiGhesState),
+>          VMSTATE_END_OF_LIST()
+>      },
+>  };
+> @@ -372,7 +372,7 @@ static const VMStateDescription vmstate_ghes = {
+>  static bool ghes_needed(void *opaque)
 >  {
->  	u32 sid, rid = pci_dev_id(pdev);
-> +	struct apple_pcie_port *port;
->  	int idx, err;
->
-> +	port = apple_pcie_get_port(pdev);
-> +	if (!port)
-> +		return 0;
-> +
->  	dev_dbg(&pdev->dev, "added to bus %s, index %d\n",
->  		pci_name(pdev->bus->self), port->idx);
->
-> @@ -698,12 +701,16 @@ static int apple_pcie_add_device(struct apple_pcie_port *port,
->  	return idx >= 0 ? 0 : -ENOSPC;
+>      AcpiGedState *s = opaque;
+> -    return s->ghes_state.ghes_addr_le;
+> +    return s->ghes_state.hw_error_le;
 >  }
->
-> -static void apple_pcie_release_device(struct apple_pcie_port *port,
-> -				      struct pci_dev *pdev)
-> +static void apple_pcie_disable_device(struct pci_host_bridge *bridge, struct pci_dev *pdev)
->  {
-> +	struct apple_pcie_port *port;
->  	u32 rid = pci_dev_id(pdev);
->  	int idx;
->
-> +	port = apple_pcie_get_port(pdev);
-> +	if (!port)
-> +		return;
-> +
->  	mutex_lock(&port->pcie->lock);
->
->  	for_each_set_bit(idx, port->sid_map, port->sid_map_sz) {
-> @@ -721,45 +728,6 @@ static void apple_pcie_release_device(struct apple_pcie_port *port,
->  	mutex_unlock(&port->pcie->lock);
+>  
+>  static const VMStateDescription vmstate_ghes_state = {
+> diff --git a/hw/acpi/ghes.c b/hw/acpi/ghes.c
+> index 52c2b69d3664..90d76b9c2d8c 100644
+> --- a/hw/acpi/ghes.c
+> +++ b/hw/acpi/ghes.c
+> @@ -359,7 +359,7 @@ void acpi_ghes_add_fw_cfg(AcpiGhesState *ags, FWCfgState *s,
+>  
+>      /* Create a read-write fw_cfg file for Address */
+>      fw_cfg_add_file_callback(s, ACPI_HW_ERROR_ADDR_FW_CFG_FILE, NULL, NULL,
+> -        NULL, &(ags->ghes_addr_le), sizeof(ags->ghes_addr_le), false);
+> +        NULL, &(ags->hw_error_le), sizeof(ags->hw_error_le), false);
+>  
+>      ags->present = true;
 >  }
->
-> -static int apple_pcie_bus_notifier(struct notifier_block *nb,
-> -				   unsigned long action,
-> -				   void *data)
-> -{
-> -	struct device *dev = data;
-> -	struct pci_dev *pdev = to_pci_dev(dev);
-> -	struct apple_pcie_port *port;
-> -	int err;
-> -
-> -	/*
-> -	 * This is a bit ugly. We assume that if we get notified for
-> -	 * any PCI device, we must be in charge of it, and that there
-> -	 * is no other PCI controller in the whole system. It probably
-> -	 * holds for now, but who knows for how long?
-> -	 */
-> -	port = apple_pcie_get_port(pdev);
-> -	if (!port)
-> -		return NOTIFY_DONE;
-> -
-> -	switch (action) {
-> -	case BUS_NOTIFY_ADD_DEVICE:
-> -		err = apple_pcie_add_device(port, pdev);
-> -		if (err)
-> -			return notifier_from_errno(err);
-> -		break;
-> -	case BUS_NOTIFY_DEL_DEVICE:
-> -		apple_pcie_release_device(port, pdev);
-> -		break;
-> -	default:
-> -		return NOTIFY_DONE;
-> -	}
-> -
-> -	return NOTIFY_OK;
-> -}
-> -
-> -static struct notifier_block apple_pcie_nb = {
-> -	.notifier_call = apple_pcie_bus_notifier,
-> -};
-> -
->  static int apple_pcie_init(struct pci_config_window *cfg)
->  {
->  	struct device *dev = cfg->parent;
-> @@ -799,23 +767,10 @@ static int apple_pcie_init(struct pci_config_window *cfg)
->  	return 0;
->  }
->
-> -static int apple_pcie_probe(struct platform_device *pdev)
-> -{
-> -	int ret;
-> -
-> -	ret = bus_register_notifier(&pci_bus_type, &apple_pcie_nb);
-> -	if (ret)
-> -		return ret;
-> -
-> -	ret = pci_host_common_probe(pdev);
-> -	if (ret)
-> -		bus_unregister_notifier(&pci_bus_type, &apple_pcie_nb);
-> -
-> -	return ret;
-> -}
-> -
->  static const struct pci_ecam_ops apple_pcie_cfg_ecam_ops = {
->  	.init		= apple_pcie_init,
-> +	.enable_device	= apple_pcie_enable_device,
-> +	.disable_device	= apple_pcie_disable_device,
->  	.pci_ops	= {
->  		.map_bus	= pci_ecam_map_bus,
->  		.read		= pci_generic_config_read,
-> @@ -830,7 +785,7 @@ static const struct of_device_id apple_pcie_of_match[] = {
->  MODULE_DEVICE_TABLE(of, apple_pcie_of_match);
->
->  static struct platform_driver apple_pcie_driver = {
-> -	.probe	= apple_pcie_probe,
-> +	.probe	= pci_host_common_probe,
->  	.driver	= {
->  		.name			= "pcie-apple",
->  		.of_match_table		= apple_pcie_of_match,
-> --
-> 2.39.2
->
+> @@ -385,7 +385,7 @@ void ghes_record_cper_errors(const void *cper, size_t len,
+>      }
+>      ags = &acpi_ged_state->ghes_state;
+>  
+> -    start_addr = le64_to_cpu(ags->ghes_addr_le);
+> +    start_addr = le64_to_cpu(ags->hw_error_le);
+>  
+>      start_addr += source_id * sizeof(uint64_t);
+>  
+> diff --git a/include/hw/acpi/ghes.h b/include/hw/acpi/ghes.h
+> index 21666a4bcc8b..39619a2457cb 100644
+> --- a/include/hw/acpi/ghes.h
+> +++ b/include/hw/acpi/ghes.h
+> @@ -65,7 +65,7 @@ enum {
+>  };
+>  
+>  typedef struct AcpiGhesState {
+> -    uint64_t ghes_addr_le;
+> +    uint64_t hw_error_le;
+>      bool present; /* True if GHES is present at all on this board */
+>  } AcpiGhesState;
+>  
+
 
