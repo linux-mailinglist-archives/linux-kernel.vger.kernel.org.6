@@ -1,66 +1,45 @@
-Return-Path: <linux-kernel+bounces-430634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 386069E33DC
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 08:09:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AEF29E33E5
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 08:13:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F14782848D0
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 07:09:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CF26284EEF
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 07:12:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DC7618B499;
-	Wed,  4 Dec 2024 07:09:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BB5418C006;
+	Wed,  4 Dec 2024 07:12:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="AXIcT3Rg"
-Received: from omta36.uswest2.a.cloudfilter.net (omta36.uswest2.a.cloudfilter.net [35.89.44.35])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="JnriCWgG"
+Received: from out30-99.freemail.mail.aliyun.com (out30-99.freemail.mail.aliyun.com [115.124.30.99])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48C9F18A931
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 07:09:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57B161E522;
+	Wed,  4 Dec 2024 07:12:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.99
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733296166; cv=none; b=qefaJlZBbm3XFLdnILosUo8lE97tDTgZ7nzQcoak9JHleu7zCQ0OgXVF+vL7oENzWLU2hCb5cWmfKIleahw3y1hBnjz2KNp967rL1aMBL0OLVK8dzFKz//7osbhVX/fkxy5e1q8i2HnGhHfNljjEwyy2z4pogIvLKKLsEHF0PfA=
+	t=1733296371; cv=none; b=Kcgf5hplf7txFlRxBJT+2Xi0++0fK3qpE6D5iXFDvZ2Yl+r0cLAM4u9o04dic32x+1dvvSa0bdFkyHnOZ00MNoAUazffMHivuWOiloVq4nXXfkcrWbWs8HqIDcOsglFdNlW47iiRiEVG1l2nntH68DQO2FZKmsnDATO7H5Amk/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733296166; c=relaxed/simple;
-	bh=CC+MjCAkZzJLcoqvbXmhMHmEPLKO53R3HEjLtel5JEc=;
+	s=arc-20240116; t=1733296371; c=relaxed/simple;
+	bh=Zba78+gYrWAoBfrxNZ7VQ+Kvb5wQPYUwdoQFXqA5xpc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cfMfdYuCrHSpkWYr3TvQIyktkmiOvwoE9SzIhC7mz8VVkIrA4JxMr/BFHGJnMfE5Upr3lnRDXYDmxVAdb4enzs8XTL3GbFOmzBb/W6bpP5cmZfOXFWVx7BUmpznS58CeoliGPHLp7MxKX4N6C/RF/m7nNSfBgW5lMt3IzhIHsG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=AXIcT3Rg; arc=none smtp.client-ip=35.89.44.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
-Received: from eig-obgw-5005a.ext.cloudfilter.net ([10.0.29.234])
-	by cmsmtp with ESMTPS
-	id IeQhtIuijqvuoIjVetSzhQ; Wed, 04 Dec 2024 07:09:18 +0000
-Received: from box5620.bluehost.com ([162.241.219.59])
-	by cmsmtp with ESMTPS
-	id IjVctVQyijcdmIjVdtSMIh; Wed, 04 Dec 2024 07:09:17 +0000
-X-Authority-Analysis: v=2.4 cv=DrWd+3/+ c=1 sm=1 tr=0 ts=6750001d
- a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
- a=IkcTkHD0fZMA:10 a=RZcAm9yDv7YA:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
- a=HaFmDPmJAAAA:8 a=Q5_8b3TqwLNI1KgPcvkA:9 a=QEXdDO2ut3YA:10
- a=nmWuMzfKamIsx3l42hEX:22 a=hTR6fmoedSdf3N0JiVF8:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
-	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=zUG+b8RpCONyYnfAip3HiV/DqliaNHNjvaQcav8VtMY=; b=AXIcT3RgIUnKrMfyc1ZBl5ejV1
-	jTd8fJZZz/Iv5r0XBPvkH3ValuZhN+rok+XtjoKE4qMsZHp6hkM96qRVUSS0rhS/jG2P0KtykC3Uc
-	xcJvvXU5A0tWafCG4Myt/z7eowDjjV55nMcGR/hEEvPvtF8L2+wBeppFCnLJlH0hzqSMAeTaEIHTe
-	LBvu1f1khS46pinLxLY1Moy4NaqNH6sD8XmcHUsO7osdsTyJsBOURc8DZwiRZkLGWzzXiJVsSVESg
-	N/YOXZ3Ex3O4V+xdZE9+F+/QVoUj+imvCD12+CGh7eqFnd9aVBex97V3QXD/TQ5b6uU162TTw6APZ
-	1743c/eA==;
-Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:33898 helo=[10.0.1.115])
-	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96.2)
-	(envelope-from <re@w6rz.net>)
-	id 1tIjVb-004BFI-2T;
-	Wed, 04 Dec 2024 00:09:15 -0700
-Message-ID: <c363a831-83d2-4901-b38a-67cd7a9fde77@w6rz.net>
-Date: Tue, 3 Dec 2024 23:09:13 -0800
+	 In-Reply-To:Content-Type; b=DGeemOZD9ItTui++m4ShkxVE1/YiTZZnZe3bYWEFbQTJqLupWzDCWmPYoXo2kocqM54jeQEa0ycPXmRGqvgLYuB0+nfTbOP7cQZx45U/OlX/IW6KrG2okUYEn76KgFvrQyaRcrp1WMMkYJxMOAbRNoH1KmOyBCdntbJWWOxzVAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=JnriCWgG; arc=none smtp.client-ip=115.124.30.99
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1733296365; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=R2wd7f4YKjWBjF5YWtj+hMQ427DiXvpVSrWDNNtOBuo=;
+	b=JnriCWgGaGnqW5P0YPyY9ZfrgGT9s2kK4juO5hAfDS4w/UBXiRZjWsVtSCSZQbZXr1X1IHX95zeHPcADUTaTXVyPWcTJf+mNqFfN+HfteL8Sbr8d5GKAjA9kQ4i8KgU7Bc3B7Sg+TMuAy8K5u0ajIa6NJeHzuY0uC8cE3km4GiI=
+Received: from 30.221.101.58(mailfrom:guangguan.wang@linux.alibaba.com fp:SMTPD_---0WKp7DFJ_1733296363 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Wed, 04 Dec 2024 15:12:44 +0800
+Message-ID: <2b9d0b12-6830-48d5-ad65-49f401c4e365@linux.alibaba.com>
+Date: Wed, 4 Dec 2024 15:12:42 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,62 +47,73 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.12 000/826] 6.12.2-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
-References: <20241203144743.428732212@linuxfoundation.org>
+Subject: Re: [PATCH net 2/6] net/smc: set SOCK_NOSPACE when send_remaining but
+ no sndbuf_space left
+To: Paolo Abeni <pabeni@redhat.com>, wenjia@linux.ibm.com,
+ jaka@linux.ibm.com, alibuda@linux.alibaba.com, tonylu@linux.alibaba.com,
+ guwen@linux.alibaba.com, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, horms@kernel.org
+Cc: linux-rdma@vger.kernel.org, linux-s390@vger.kernel.org,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241128121435.73071-1-guangguan.wang@linux.alibaba.com>
+ <20241128121435.73071-3-guangguan.wang@linux.alibaba.com>
+ <62cd6d62-b233-4906-af4a-72127fc4c0f4@redhat.com>
 Content-Language: en-US
-From: Ron Economos <re@w6rz.net>
-In-Reply-To: <20241203144743.428732212@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Guangguan Wang <guangguan.wang@linux.alibaba.com>
+In-Reply-To: <62cd6d62-b233-4906-af4a-72127fc4c0f4@redhat.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - box5620.bluehost.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - w6rz.net
-X-BWhitelist: no
-X-Source-IP: 73.223.253.157
-X-Source-L: No
-X-Exim-ID: 1tIjVb-004BFI-2T
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.115]) [73.223.253.157]:33898
-X-Source-Auth: re@w6rz.net
-X-Email-Count: 16
-X-Org: HG=bhshared;ORG=bluehost;
-X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfP6nx86xyYW9Yv7kcJYQaRTDbUE72/WOvcAb0dvLIs5OGUG++kagWvJ08asV9osIf7S2Pp0+YQMnug/jjrHO1+buNzWhuv+lN/Rfbf/wss0NiZCN9uKD
- eBeXAHfTmOkA6dkOnca04LlqFi0NdJkscsccBXsoruGFFBGCj/QHsaf/kzeBvoa4iQ9/qblxJo7rQt/EbetKnKW0hx+JPPAMXmY=
 
-On 12/3/24 06:35, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.12.2 release.
-> There are 826 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Thu, 05 Dec 2024 14:45:11 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.12.2-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.12.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
 
-Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
 
-Tested-by: Ron Economos <re@w6rz.net>
+On 2024/12/3 18:04, Paolo Abeni wrote:
+> 
+> 
+> On 11/28/24 13:14, Guangguan Wang wrote:
+>> When application sending data more than sndbuf_space, there have chances
+>> application will sleep in epoll_wait, and will never be wakeup again. This
+>> is caused by a race between smc_poll and smc_cdc_tx_handler.
+>>
+>> application                                      tasklet
+>> smc_tx_sendmsg(len > sndbuf_space)   |
+>> epoll_wait for EPOLL_OUT,timeout=0   |
+>>   smc_poll                           |
+>>     if (!smc->conn.sndbuf_space)     |
+>>                                      |  smc_cdc_tx_handler
+>>                                      |    atomic_add sndbuf_space
+>>                                      |    smc_tx_sndbuf_nonfull
+>>                                      |      if (!test_bit SOCK_NOSPACE)
+>>                                      |        do not sk_write_space;
+>>       set_bit SOCK_NOSPACE;          |
+>>     return mask=0;                   |
+>>
+>> Application will sleep in epoll_wait as smc_poll returns 0. And
+>> smc_cdc_tx_handler will not call sk_write_space because the SOCK_NOSPACE
+>> has not be set. If there is no inflight cdc msg, sk_write_space will not be
+>> called any more, and application will sleep in epoll_wait forever.
+>> So set SOCK_NOSPACE when send_remaining but no sndbuf_space left in
+>> smc_tx_sendmsg, to ensure call sk_write_space in smc_cdc_tx_handler
+>> even when the above race happens.
+> 
+> I think it should be preferable to address the mentioned race the same
+> way as tcp_poll(). i.e. checking again smc->conn.sndbuf_space after
+> setting the NOSPACE bit with appropriate barrier, see:
+> 
+> https://elixir.bootlin.com/linux/v6.12.1/source/net/ipv4/tcp.c#L590
+> 
+> that will avoid additional, possibly unneeded atomic operation in the tx
+> path (the application could do the next sendmsg()/poll() call after that
+> the send buf has been freed) and will avoid some code duplication.
+> 
+> Cheers,
+> 
+> Paolo
 
+Hi, Paolo
+
+Thanks for advice, and the way in tcp_poll() seems a better solution for this race.
+I will retest it, and resend a new version of patch if it works.
+
+Thanks,
+Guangguan Wang
 
