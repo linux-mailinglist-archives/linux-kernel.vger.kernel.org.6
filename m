@@ -1,107 +1,123 @@
-Return-Path: <linux-kernel+bounces-432015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 731E09E43CC
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 19:53:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C75309E43CD
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 19:53:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E46D164B7E
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:53:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9CB1E164CAA
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:53:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 577071F03DE;
-	Wed,  4 Dec 2024 18:51:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HNNjWnaF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2087E1C3BF4;
+	Wed,  4 Dec 2024 18:52:54 +0000 (UTC)
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 851EA1F03CF;
-	Wed,  4 Dec 2024 18:51:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3A051C3BEE
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 18:52:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733338312; cv=none; b=qSPtcDjNWFEs1xjjJslnohcl1RQk5kHDth5kC4rEMhhxDjaUzl+vkKChxF6ljZHWqpMQ5a5jtKrcGxKfeT7JkudI9Y60l+/gEIA/xODmtO1+e/lxlaGgTBlfWQ+xV5ObuXbg0LDGMvEy3Ms/VEyMXJ00SLhTOE+xnqDJVd9DdaI=
+	t=1733338373; cv=none; b=N+TjqZ3IZZm8pP9O388KZj3I5FimGbeVvYL79neaUSG7GO6xY1ubN5Z+oChc08YoWWEbsbQ7w62TfIz7o8IKNZ2HNppVNim2Zf6KWBMT+UjrogIZhP0B8dTK+3bB6HThPADlwxOuyxAFRznu29a/K1Wa5dAIF/U9jE9++LsBfoE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733338312; c=relaxed/simple;
-	bh=si4F9IImxaNJXpTOVCiXoQ2/EXX9kI29cmbk2KF/aVo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=BV+Dg6FGh3qAnSYpgiwubaarSfxzbBUPro+/hPS8HfXH8dPQFjb1dhPOWibjEe08OITPI055tnJsn3xxHgI6kb3NfCNo+rplc1gfAVO1B8K+w2iGwS1ikv8dUY4Ud1TXsFLOOpF3e7naUlfImVsT+hya6ND3/g5DlNdmc199GHk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HNNjWnaF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3963C4CECD;
-	Wed,  4 Dec 2024 18:51:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733338311;
-	bh=si4F9IImxaNJXpTOVCiXoQ2/EXX9kI29cmbk2KF/aVo=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=HNNjWnaFsh5Tku0puSo+cL/tWENHnPOzlvqtdMyVgFmTMmj1MyIP+g3Q6iMNtH4m0
-	 Eyoc3cdULXicUvxKS7UD2PcxPiFWVLXVMp99mDgYnRI9YfZz0Rr73milJXdzHM2bYN
-	 njgsq9NKR2/Hx+65YQrdmGcGDkCka4njuNXs2OWs5mh3jfRMTQennUg2B5OuJiaNk5
-	 5m/VwptS0l2x7EbzrL31GsJFZaN3q8rZSF4NfTuVi0xvnXUf5SZ5t8+R0fk8HlKcL0
-	 ta7XZ6Ki5wjfYFkcFIjj1VrARD7iAZZkVY0oq6mR83eRUXe+b9sLqNF12ObxQrbnhZ
-	 98EcgBl9a81hw==
-From: Miguel Ojeda <ojeda@kernel.org>
-To: gregkh@linuxfoundation.org
-Cc: akpm@linux-foundation.org,
-	broonie@kernel.org,
-	conor@kernel.org,
-	f.fainelli@gmail.com,
-	hargar@microsoft.com,
-	jonathanh@nvidia.com,
-	linux-kernel@vger.kernel.org,
-	linux@roeck-us.net,
-	lkft-triage@lists.linaro.org,
-	patches@kernelci.org,
-	patches@lists.linux.dev,
-	pavel@denx.de,
-	rwarsow@gmx.de,
-	shuah@kernel.org,
-	srw@sladewatkins.net,
-	stable@vger.kernel.org,
-	sudipm.mukherjee@gmail.com,
-	torvalds@linux-foundation.org,
-	Miguel Ojeda <ojeda@kernel.org>
-Subject: Re: [PATCH 6.11 000/817] 6.11.11-rc1 review
-Date: Wed,  4 Dec 2024 19:51:36 +0100
-Message-ID: <20241204185136.1609963-1-ojeda@kernel.org>
-In-Reply-To: <20241203143955.605130076@linuxfoundation.org>
-References: <20241203143955.605130076@linuxfoundation.org>
+	s=arc-20240116; t=1733338373; c=relaxed/simple;
+	bh=YwY9xHZHGpEHtbkNcyeJTSKGNlyl22M9/V3vuq7ghwA=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 MIME-Version:Content-Type; b=ZPESLrbmcEj+aqXkmMl85FZvIsYx9SlIFogbMT9T2Y/2BZNNjRDJ/d3cHGzS7kfFTGNVUgorhKflklFFi7svoAF0Ov8adN+svLKCaHADK0x+G+ez++5CC9VbtaYEMILbnwj/UXmrvi5bkAXCgSWEvGVIo3f5MO6Gxl/HbmNhjiw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-232-Fo2j8UHqOR6f0adwkoLvrA-1; Wed, 04 Dec 2024 18:52:49 +0000
+X-MC-Unique: Fo2j8UHqOR6f0adwkoLvrA-1
+X-Mimecast-MFC-AGG-ID: Fo2j8UHqOR6f0adwkoLvrA
+Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
+ (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Wed, 4 Dec
+ 2024 18:52:10 +0000
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Wed, 4 Dec 2024 18:52:10 +0000
+From: David Laight <David.Laight@ACULAB.COM>
+To: Vincent Mailhol <mailhol.vincent@wanadoo.fr>, Linus Torvalds
+	<torvalds@linux-foundation.org>, Luc Van Oostenryck
+	<luc.vanoostenryck@gmail.com>, Nathan Chancellor <nathan@kernel.org>, "Nick
+ Desaulniers" <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>, Yury Norov <yury.norov@gmail.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Kees Cook <kees@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>, Jani Nikula
+	<jani.nikula@linux.intel.com>, Joonas Lahtinen
+	<joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>, Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Rikard Falkeborn
+	<rikard.falkeborn@gmail.com>, Martin Uecker
+	<Martin.Uecker@med.uni-goettingen.de>
+CC: "linux-sparse@vger.kernel.org" <linux-sparse@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"llvm@lists.linux.dev" <llvm@lists.linux.dev>,
+	"linux-hardening@vger.kernel.org" <linux-hardening@vger.kernel.org>,
+	"intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"coresight@lists.linaro.org" <coresight@lists.linaro.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Subject: RE: [PATCH 04/10] linux/bits.h: simplify GENMASK_INPUT_CHECK() by
+ using is_const_true()
+Thread-Topic: [PATCH 04/10] linux/bits.h: simplify GENMASK_INPUT_CHECK() by
+ using is_const_true()
+Thread-Index: AQHbROFQQHprgo51TES1ijsBCX2RL7LWcP7w
+Date: Wed, 4 Dec 2024 18:52:10 +0000
+Message-ID: <dff4cdd543104e3792e4856375f310c1@AcuMS.aculab.com>
+References: <20241203-is_constexpr-refactor-v1-0-4e4cbaecc216@wanadoo.fr>
+ <20241203-is_constexpr-refactor-v1-4-4e4cbaecc216@wanadoo.fr>
+In-Reply-To: <20241203-is_constexpr-refactor-v1-4-4e4cbaecc216@wanadoo.fr>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: -O0oyLE_qJu4nf1wkW_9cIjafbtg8tqzuBubxmH1gQk_1733338368
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 
-On Tue, 03 Dec 2024 15:32:52 +0100 Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
->
-> -----------
-> Note, this is will probably be the last 6.11.y kernel to be released.
-> Please move to the 6.12.y branch at this time.
-> -----------
->
-> This is the start of the stable review cycle for the 6.11.11 release.
-> There are 817 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Thu, 05 Dec 2024 14:36:47 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
-> https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.11.11-rc1.gz
-> or in the git tree and branch at:
-> git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.11.y
-> and the diffstat can be found below.
+RnJvbTogVmluY2VudCBNYWlsaG9sDQo+IFNlbnQ6IDAyIERlY2VtYmVyIDIwMjQgMTc6MzMNCj4g
+DQo+ICAgX19idWlsdGluX2Nob29zZV9leHByKF9faXNfY29uc3RleHByKChsKSA+IChoKSksIChs
+KSA+IChoKSwgMCkNCj4gDQo+IGlzIGVxdWl2YWxlbnQgdG86DQo+IA0KPiAgIGlzX2NvbnN0X3Ry
+dWUoKGwpID4gKGgpKQ0KDQpDaGFuZ2UgaXQgdG8gQlVJTERfQlVHX09OX01TRyhzdGF0aWNhbGx5
+X3RydWUoKGwpIDwgKGgpKSwgImVycm9yIG1lc3NhZ2UiKQ0KDQphbmQgdGhlbiBmaXggYWxsIHRo
+ZSBmYWxsb3V0IDotKQ0KDQoJRGF2aWQNCg0KPiANCj4gQXBwbHkgaXNfY29uc3RfdHJ1ZSgpIHRv
+IHNpbXBsaWZ5IEdFTk1BU0tfSU5QVVRfQ0hFQ0soKS4NCj4gDQo+IFNpZ25lZC1vZmYtYnk6IFZp
+bmNlbnQgTWFpbGhvbCA8bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI+DQo+IC0tLQ0KPiBUaGlz
+IGNoYW5nZSBwYXNzZXMgdGhlIHVuaXQgdGVzdHMgZnJvbSBDT05GSUdfQklUU19URVNULCBpbmNs
+dWRpbmcgdGhlDQo+IGV4dHJhIG5lZ2F0aXZlIHRlc3RzIHByb3ZpZGVkIHVuZGVyICNpZmRlZiBU
+RVNUX0dFTk1BU0tfRkFJTFVSRVMgWzFdLg0KPiANCj4gWzFdIGNvbW1pdCA2ZDUxMTAyMGUxM2Qg
+KCJsaWIvdGVzdF9iaXRzLmM6IGFkZCB0ZXN0cyBvZiBHRU5NQVNLIikNCj4gTGluazogaHR0cHM6
+Ly9naXQua2VybmVsLm9yZy90b3J2YWxkcy9jLzZkNTExMDIwZTEzZA0KPiAtLS0NCj4gIGluY2x1
+ZGUvbGludXgvYml0cy5oIHwgNSArKy0tLQ0KPiAgMSBmaWxlIGNoYW5nZWQsIDIgaW5zZXJ0aW9u
+cygrKSwgMyBkZWxldGlvbnMoLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9pbmNsdWRlL2xpbnV4L2Jp
+dHMuaCBiL2luY2x1ZGUvbGludXgvYml0cy5oDQo+IGluZGV4IDYwMDQ0YjYwODgxNzJiM2YyNmFh
+M2YxN2NkYWVkZTk3ODY4NjNkYWUuLmVmMDExOWU2MTc5ZTFjYTk1MzQ1YTNkNGQzMzI3YmExOTYz
+MzAyOGUgMTAwNjQ0DQo+IC0tLSBhL2luY2x1ZGUvbGludXgvYml0cy5oDQo+ICsrKyBiL2luY2x1
+ZGUvbGludXgvYml0cy5oDQo+IEBAIC0yMCw5ICsyMCw4IEBADQo+ICAgKi8NCj4gICNpZiAhZGVm
+aW5lZChfX0FTU0VNQkxZX18pDQo+ICAjaW5jbHVkZSA8bGludXgvYnVpbGRfYnVnLmg+DQo+IC0j
+ZGVmaW5lIEdFTk1BU0tfSU5QVVRfQ0hFQ0soaCwgbCkgXA0KPiAtCShCVUlMRF9CVUdfT05fWkVS
+TyhfX2J1aWx0aW5fY2hvb3NlX2V4cHIoIFwNCj4gLQkJX19pc19jb25zdGV4cHIoKGwpID4gKGgp
+KSwgKGwpID4gKGgpLCAwKSkpDQo+ICsjaW5jbHVkZSA8bGludXgvY29tcGlsZXIuaD4NCj4gKyNk
+ZWZpbmUgR0VOTUFTS19JTlBVVF9DSEVDSyhoLCBsKSBCVUlMRF9CVUdfT05fWkVSTyhpc19jb25z
+dF90cnVlKChsKSA+IChoKSkpDQo+ICAjZWxzZQ0KPiAgLyoNCj4gICAqIEJVSUxEX0JVR19PTl9a
+RVJPIGlzIG5vdCBhdmFpbGFibGUgaW4gaCBmaWxlcyBpbmNsdWRlZCBmcm9tIGFzbSBmaWxlcywN
+Cj4gDQo+IC0tDQo+IDIuNDUuMg0KPiANCg0KLQ0KUmVnaXN0ZXJlZCBBZGRyZXNzIExha2VzaWRl
+LCBCcmFtbGV5IFJvYWQsIE1vdW50IEZhcm0sIE1pbHRvbiBLZXluZXMsIE1LMSAxUFQsIFVLDQpS
+ZWdpc3RyYXRpb24gTm86IDEzOTczODYgKFdhbGVzKQ0K
 
-Boot-tested under QEMU for Rust x86_64, arm64 and riscv64; built-tested
-for loongarch64:
-
-Tested-by: Miguel Ojeda <ojeda@kernel.org>
-
-Thanks!
-
-Cheers,
-Miguel
 
