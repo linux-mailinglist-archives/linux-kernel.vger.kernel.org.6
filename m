@@ -1,186 +1,134 @@
-Return-Path: <linux-kernel+bounces-431478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431475-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E19659E3DD0
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:08:36 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 801B1163EF4
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:08:33 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC0C520B20E;
-	Wed,  4 Dec 2024 15:08:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="L5qS+xXK"
-Received: from out-188.mta0.migadu.com (out-188.mta0.migadu.com [91.218.175.188])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C321D9E3ED6
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:57:52 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7016199B8
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 15:08:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.188
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 576A8B3A846
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:07:53 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9EE920B815;
+	Wed,  4 Dec 2024 15:07:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kvKR5RS1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 355D0199B8;
+	Wed,  4 Dec 2024 15:07:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733324912; cv=none; b=WarQVCv+ErDtb0/bxs2kSUVYeZOj8ZkS8W2yH+SiNaIyrVPCQzTXZv8eK1+KwR5/7JJZnYQX3MyxZeGQry36ZzYzC6+EyolV7v/HLxMJrgL7wf3opY4LqVqudL5fBa3TngJBqdvbZe4YuLTX1LIR1WD55aaRYMQdxMdhS+ppExE=
+	t=1733324863; cv=none; b=fyy8zceQbzKhi4p5J2vRqMPb9wcZsmGx/C/SuGyl6EpQCuZlU96MtevZdAFSrWeSogZuB0Atldq5FaJ67vHDF+38i4QuNUC1GjFWAO4W6knk5fGEDGfd2Fe0LkjC0GT3OvKe6SU/tcxXkaZWZddF/5yQJCwXBnOZMNSQKPzeqBE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733324912; c=relaxed/simple;
-	bh=fH0rcU365Gu14gVnRVBeBEWX2YVdqyyKuSNDY1wJ+Kw=;
+	s=arc-20240116; t=1733324863; c=relaxed/simple;
+	bh=bYFDui5o6MfDmAuyJUHOjs7Lk8R9vRm1rUxRwl/f30c=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hPPavrBant9+wfLiGiuNXm5J8uaJpA0MzjL3MosNFsRU5EPSdUeroViwSOj09lwzO2nv3oW26zRtH5ULddB0qh5hoMZ/nhV1X6mok9GZS74rYvgUnyCbycFA/Ini+fHCQ/nDdlnV5r4ESaXn2uWQummaSXZOK3QYHa0zqA06TNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=L5qS+xXK; arc=none smtp.client-ip=91.218.175.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <e5d6cb44-9a86-ee94-9210-d56acee483c4@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1733324906;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UeqDwe7OfzX6pXC9ysM09lnzx5uDn8pHvrsJtH2QnXA=;
-	b=L5qS+xXKRvEZygB5GjsCTkhYyYlvZEItOvISPIf+yQZl0ICxWVNAhOyLsfAAvXD//B6gV1
-	rB3hbV0Dqmr0xY9hWUPiZz90UAi0a3knBmMZB1HNy0OIC2ofZKtNvsnyhHnu1MiIbcbIrL
-	z9tcW2YbG138sGzRQwd7Cbf30Yswgao=
-Date: Wed, 4 Dec 2024 23:07:35 +0800
+	 In-Reply-To:Content-Type; b=thgA4KWucZMGUubixMGjcEKYVTkoiSpqxyCLh8YRHwFGKV4X9dQwbi218gCjBiFoX2TGGPprCpQYE/fa6nsCXQYGEsjKFLqL8lts8twrYtdo0AJEiccjI2jFyRYn1QQ/7MB7I+MgILV4v7GFIveV1csnu+Cx3omwWQdtKXvYWLs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kvKR5RS1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A4A9C4CECD;
+	Wed,  4 Dec 2024 15:07:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733324862;
+	bh=bYFDui5o6MfDmAuyJUHOjs7Lk8R9vRm1rUxRwl/f30c=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=kvKR5RS1/XfLobsZmixwmkVdSzhWCfLgFlshIEumd+TnctTDDvlY8rbPECwiTE2xl
+	 ToZn0vUJgixk5ttyxvsWUPMX+dG5ZQye+9KOkoX9NFCtxJKL454/wazadgEisoQbe5
+	 lG91YMmTJIPe3DObyYf3NIG/woImwWLiSzvKSPH12QJnDEyeE9Je8QZFauWkIcJuEm
+	 k50bM4SYyEpMhHjDpO12JfphNNQz4LHFo1BXdaDiWago8BfHBp4ycqbmTlXDFkcv7/
+	 qaM5luAPcOAKEDuO/ovgsgsGPXJ1ubfwCs8vhB8H5x9DsRpCq/jI/rpnr167V94rOV
+	 +rAdD9G8xRJxA==
+Message-ID: <93e59e64-00a2-43b8-b7d6-ef20d07207b2@kernel.org>
+Date: Wed, 4 Dec 2024 16:07:36 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v2] mm/alloc_tag: fix vm_module_tags_populate's KASAN
- poisoning logic
-To: Suren Baghdasaryan <surenb@google.com>
-Cc: kent.overstreet@linux.dev, akpm@linux-foundation.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, Hao Ge <gehao@kylinos.cn>
-References: <20241204075248.384215-1-hao.ge@linux.dev>
- <20241204083448.387862-1-hao.ge@linux.dev>
- <CAJuCfpF5Yo3Bz1OUy=rfd5-0DRZsWSRaekR3Y-f5TRatdXWkVQ@mail.gmail.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Hao Ge <hao.ge@linux.dev>
-In-Reply-To: <CAJuCfpF5Yo3Bz1OUy=rfd5-0DRZsWSRaekR3Y-f5TRatdXWkVQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 2/7] spi: dt-bindings: Document DT properties for QUP
+ firmware loading
+To: Viken Dadhaniya <quic_vdadhani@quicinc.com>, andi.shyti@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ gregkh@linuxfoundation.org, jirislaby@kernel.org, broonie@kernel.or,
+ andersson@kernel.org, konradybcio@kernel.org, johan+linaro@kernel.org,
+ dianders@chromium.org, agross@kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+ linux-spi@vger.kernel.org
+Cc: =quic_msavaliy@quicinc.com, quic_anupkulk@quicinc.com,
+ Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
+References: <20241204150326.1470749-1-quic_vdadhani@quicinc.com>
+ <20241204150326.1470749-3-quic_vdadhani@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241204150326.1470749-3-quic_vdadhani@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Suren
+On 04/12/2024 16:03, Viken Dadhaniya wrote:
+> Document the 'qcom,load-firmware' and 'qcom,xfer-mode' properties to
+> support SE(Serial Engine) firmware loading from the protocol driver and
+> to select the data transfer mode, either GPI DMA (Generic Packet Interface)
+> or non-GPI mode (PIO/CPU DMA).
+> 
+> SPI controller can operate in one of two modes based on the
+> 'qcom,xfer-mode' property, and the firmware is loaded accordingly.
+> 
+> Co-developed-by: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
+> Signed-off-by: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
+> Signed-off-by: Viken Dadhaniya <quic_vdadhani@quicinc.com>
+> ---
 
+My comments from I2C patch apply here, but let's keep discussion there.
+Responding here just for formality.
 
-Thank you for your review.
-
-
-On 12/4/24 22:39, Suren Baghdasaryan wrote:
-> On Wed, Dec 4, 2024 at 12:35 AM Hao Ge <hao.ge@linux.dev> wrote:
->> From: Hao Ge <gehao@kylinos.cn>
->>
->> After merge commit 233e89322cbe ("alloc_tag:
->> fix module allocation tags populated area calculation"),
->> We still encountered a KASAN bug.
->>
->> This is because we have only actually performed
->> page allocation and address mapping here.
->> we need to unpoisoned portions of underlying memory.
->>
->> Because we have a change in the size here,we need to
->> re-annotate poisoned and unpoisoned portions of underlying memory
->> according to the new size.
->>
->> Here is the log for KASAN:
->>
->> [    5.041171][    T1] ==================================================================
->> [    5.042047][    T1] BUG: KASAN: vmalloc-out-of-bounds in move_module+0x2c0/0x708
->> [    5.042723][    T1] Write of size 240 at addr ffff80007e510000 by task systemd/1
->> [    5.043412][    T1]
->> [    5.043523][   T72] input: QEMU QEMU USB Tablet as /devices/pci0000:00/0000:00:01.1/0000:02:001
->> [    5.043614][    T1] CPU: 0 UID: 0 PID: 1 Comm: systemd Not tainted 6.13.0-rc1+ #28
->> [    5.045560][    T1] Hardware name: QEMU KVM Virtual Machine, BIOS 0.0.0 02/06/2015
->> [    5.046328][    T1] Call trace:
->> [    5.046670][    T1]  show_stack+0x20/0x38 (C)
->> [    5.047127][    T1]  dump_stack_lvl+0x80/0xf8
->> [    5.047533][    T1]  print_address_description.constprop.0+0x58/0x358
->> [    5.048092][   T72] hid-generic 0003:0627:0001.0001: input,hidraw0: USB HID v0.01 Mouse [QEMU 0
->> [    5.048126][    T1]  print_report+0xb0/0x280
->> [    5.049682][    T1]  kasan_report+0xb8/0x108
->> [    5.050170][    T1]  kasan_check_range+0xe8/0x190
->> [    5.050685][    T1]  memcpy+0x58/0xa0
->> [    5.051135][    T1]  move_module+0x2c0/0x708
->> [    5.051586][    T1]  layout_and_allocate.constprop.0+0x308/0x5b8
->> [    5.052219][    T1]  load_module+0x134/0x16c8
->> [    5.052671][    T1]  init_module_from_file+0xdc/0x138
->> [    5.053193][    T1]  idempotent_init_module+0x344/0x600
->> [    5.053742][    T1]  __arm64_sys_finit_module+0xbc/0x150
->> [    5.054289][    T1]  invoke_syscall+0xd4/0x258
->> [    5.054749][    T1]  el0_svc_common.constprop.0+0xb4/0x240
->> [    5.055319][    T1]  do_el0_svc+0x48/0x68
->> [    5.055743][    T1]  el0_svc+0x40/0xe0
->> [    5.056142][    T1]  el0t_64_sync_handler+0x10c/0x138
->> [    5.056658][    T1]  el0t_64_sync+0x1ac/0x1b0
->>
->> Fixes: 233e89322cbe ("alloc_tag: fix module allocation tags populated area calculation")
->> Signed-off-by: Hao Ge <gehao@kylinos.cn>
-> Thanks for the fix!
->
->> ---
->> v2: Add comments to kasan_unpoison_vmalloc like other places.
->>
->> commit 233e89322cbe ("alloc_tag: fix module allocation
->> tags populated area calculation") is currently in the
->> mm-hotfixes-unstable branch, so this patch is
->> developed based on the mm-hotfixes-unstable branch.
->> ---
->>   lib/alloc_tag.c | 13 +++++++++++++
->>   1 file changed, 13 insertions(+)
->>
->> diff --git a/lib/alloc_tag.c b/lib/alloc_tag.c
->> index 4ee6caa6d2da..f885b3f3af0e 100644
->> --- a/lib/alloc_tag.c
->> +++ b/lib/alloc_tag.c
->> @@ -421,7 +421,20 @@ static int vm_module_tags_populate(void)
->>                                  __free_page(next_page[i]);
->>                          return -ENOMEM;
->>                  }
->> +
->> +               kasan_poison_vmalloc((void *)module_tags.start_addr,
->> +                                    vm_module_tags->nr_pages << PAGE_SHIFT);
->> +
->>                  vm_module_tags->nr_pages += nr;
->> +
->> +               /*
->> +                * Mark the pages as accessible, now that they are mapped.
->> +                * With hardware tag-based KASAN, marking is skipped for
->> +                * non-VM_ALLOC mappings, see __kasan_unpoison_vmalloc().
->> +                */
->> +               kasan_unpoison_vmalloc((void *)module_tags.start_addr,
->> +                                      vm_module_tags->nr_pages << PAGE_SHIFT,
->> +                                      KASAN_VMALLOC_PROT_NORMAL);
-> Instead of poisoning [module_tags.start_addr,
-> vm_module_tags->nr_pages], incrementing vm_module_tags->nr_pages and
-> the unpoisoning [module_tags.start_addr, vm_module_tags->nr_pages]
-> could we simply poisons the additional area like this:
->
->                  kasan_unpoison_vmalloc((void *)module_tags.start_addr +
->                                         (vm_module_tags->nr_pages << PAGE_SHIFT),
->                                         nr << PAGE_SHIFT,
->                                         KASAN_VMALLOC_PROT_NORMAL);
->                 vm_module_tags->nr_pages += nr;
-> ?
-
-
-I had considered making such modifications earlier.
-
-But considering the following situation,
-
-A module tags spans across the regions of [module_tags.start_addr, 
-vm_module_tags->nr_pages] and [module_tags.start_addr + 
-vm_module_tags->nr_pages, ...].
-
-It may result in false positives for out-of-bounds errors.
-
-
->>          }
->>
->>          return 0;
->> --
->> 2.25.1
->>
+Best regards,
+Krzysztof
 
