@@ -1,111 +1,243 @@
-Return-Path: <linux-kernel+bounces-431041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9794B9E386D
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 12:11:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CF1B9E3871
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 12:11:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71D55161E46
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 11:10:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 18AA9163327
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 11:11:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 602971B21B9;
-	Wed,  4 Dec 2024 11:08:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 116071B218A;
+	Wed,  4 Dec 2024 11:10:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NH5lT/dO"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="eoDw9nL4"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 089011B218D
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 11:08:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34C101B3922
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 11:10:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733310496; cv=none; b=HZrWFeSB+qdAfub3aQWd2DavtElkWHf3r9xLNNpSEhwa5idVJ52HbLVuJ3Al/6nl2N1LI2JRjvAUckBrBwEVGQu8vhz44kAQx2Ad4r8qvif6XXO/o0JMUkf8OJxA4Oz6+RlGEVnTPju/uOjBDXHs9B1gYvHdqplROGOL8Zz862o=
+	t=1733310618; cv=none; b=r6RuWN+6PJzMlCCvfsOqiTkroczsM0WCLNkr9mTf+xSA/oE2O/D81gwkF8bHKDLeZbkEZcakpW9NhTkY9rTebpDwQ0qoycx2GwjUcNQuKdKasu85Yw9bOY6Tp+F49WV7LiUY+Q2gidl18/4EHrMUUsKodHY+a8LKoRcgEe7rsxE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733310496; c=relaxed/simple;
-	bh=+RY6ohi9sFPlxkhpxwJXOS/UxS/f9iEvJNG9RSPIfkI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l5GN03l4srCp5rjUsuQWK1+H6IIZY4BNwtfUQFb/jgWyHDsvcDSUh8+JVBRvahCEvhMJjGaPEEH29y78oqDtLKAXphC3LJCY5RGy0UHRG+KfPvOlXvVbV9bM7bYgO38uqJgDLSxPDDHvsX/dPbJrDJ/CrFloK5vgmS2Jdn8ntXA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NH5lT/dO; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-53de852a287so7318570e87.2
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 03:08:14 -0800 (PST)
+	s=arc-20240116; t=1733310618; c=relaxed/simple;
+	bh=wu5+Xv+DfArThO4xQ8ioNVrSEjYsAQqgsRpFC1qpXgo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=LTmT76PMi4OA+2mBQOWYziLzdxLrApDF5/dlQfVBiffzRWeDwn8x1x4idmRrzLdPm47WcVpjDIymU/0kLTp8dh5kTKA9Wc5Yx43nLNLf4n/uHWGl3JF98ty+rLrHwdCSpXKrsqY2A+RnbetCeOJ060BsTZ1lpz5p1BclSAIePM4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=eoDw9nL4; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-215c4000c20so16418845ad.3
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 03:10:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733310493; x=1733915293; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=hYzXxKS9pvS6m9YWg7f10P9BUeef0GzPwC4VorO/deo=;
-        b=NH5lT/dOKvi5ckfHYGJ1XqYv7R4uMwQBtmJ2mNwzG5f+x4dxpKE+6zBNLfcWCReo3J
-         r5ehmIqxGL/xKgIrhwtPskZ71S8doVO++UH0rCdCs4ZdAnXWsGXrQrsC9IdXHfelgVM0
-         hJpgJ3vRF0wRY87QXMo8KARMOaZSgCVHaXICXQoVQQUWxOYHOjW7xjDtlVKVXbaPz+sr
-         F27oKZ2ngNWzOf/vyU3QiKirhwKeUX2p9Mt0uYrix3Es7En6C1s6vWrfaEcNNUrO+T5h
-         is+sLRERCjy5HMD/LdAx5YLaGjXRtbsTlJyqfzLEQk8WcZlCCuiraODsQTCD/qc7NM3s
-         aY4g==
+        d=bytedance.com; s=google; t=1733310615; x=1733915415; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=8v/2J9FQpQc9WZCTNK+PDAJdMK8SXRfaFd/20oYgCX4=;
+        b=eoDw9nL4KcRyxuBQZrZcZsKystds7Pm74QaMQUYpsCHvzyhOrFPYkAVzldYGd6ZaEB
+         TOFNVeO2+1ADZbD/Heo84MYfuPybPs93IEw4EXm2g3oUw1FaTjMc+Gva+N6w1hpu2aeV
+         FszSgfmTldJd400Vfh87gdA3QJkvHQ06UFsozVbYsKrSIlMMEDRKbAhkfbgXiNCTUMug
+         3IOjBoLMtPv8FxWNA5WuhnzlqYzzqBU1hvnT2jdcyIkPJN6HbxWPUjHChV+fhYYhzhFG
+         M430vel9lTzZiUNIDQhTPv3wpHxbs3DtbSBwNzOPj80Lv1BiCk7jhvdOZkbZUcCEbJD2
+         HiXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733310493; x=1733915293;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hYzXxKS9pvS6m9YWg7f10P9BUeef0GzPwC4VorO/deo=;
-        b=Lm/emURQTh4UrRpviskuvR9G90EashlEzzGfLcvXK1nuRykdEw3SEFBGwITUWrhU6n
-         8YKyKSGZEwciUVsMHF2dMfRucbriEdgWGW3mRDTivR2yWue19yOCeUZSLsUeRebkGhD9
-         AOOWkzD2waFKSdU4UNOkekLA7kcy+lf2CLCcu/MTua0wRDHMRwl7aNVr2Afx+8jefZsd
-         pRzitsG3BeovbRP6WkXVuRyPVp27rtHvmX26c6xUusAjZoVC/p65FVxklX6YgSroUtAa
-         XGSEIHLpOKmGjE0AtbHolh0F4MHdMuozu99bFPCN2m9tAusEMK99IRAmBE3KgQd30kr+
-         MUBg==
-X-Forwarded-Encrypted: i=1; AJvYcCW83+3GhHDz+fB1MwKwdSsIcpS+eAalHUnv8J0nENBv5JBzKN10qRNTGKBmgrUGWUEOvyz2KQZj+Scwn0Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz2XGOknw5Pu9ZJL2K8sS8pxFDMueMHEwFeQMyb9KocgArCx2Md
-	mpX0lgFCOe94CSGw18ASwSC7WbTjOLmQg1nyKCX8Ag1Nbg5ABCqKVvvdp/1QqLA=
-X-Gm-Gg: ASbGnctsCda+bPJsWg0OnZ9a7ioyKHFDX2hF9ngyNZ6Okm5g2tfVNKP+Y0StU6JYFha
-	PjIhc/i/G6srZBLyEGoBK5wiAjSaaln1fEVubJ5/EaQV37RcPy5YYuImtz38MjPazPobhPJYPN0
-	mTqC12KQ/MvLVEX+B07Na/OCb5qTKuuRxXBW2yLrhZ/XTewYGidoF7SWCWVt2d58U58kpAXPOiZ
-	hyUDCkmuy2OeX61KWXDT9IYD/Rp7OV3iwrGcRWjr/r5PvbmwlRJ1Ym0lE/HTfiF43LFh6UUjhQL
-	0NI1yUWY3+frTFtEV9Ly9A2+JOqHRg==
-X-Google-Smtp-Source: AGHT+IGELuEbjRgnVDODbB41rhvdxo1vdb+kOa96jTHi0iriMuN3VSziSI0b2CaPZwJDkoAtxZYX/Q==
-X-Received: by 2002:a05:6512:1107:b0:53d:d210:4060 with SMTP id 2adb3069b0e04-53e1b8c1a94mr1283260e87.53.1733310493137;
-        Wed, 04 Dec 2024 03:08:13 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53e1bff42b1sm283793e87.177.2024.12.04.03.08.10
+        d=1e100.net; s=20230601; t=1733310615; x=1733915415;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8v/2J9FQpQc9WZCTNK+PDAJdMK8SXRfaFd/20oYgCX4=;
+        b=boi7HFkT6yZdF1RECmKzVGnv+QLiUPFtJFRNZmVQAzvzup5BKDoOrbXHYxffAkhmgL
+         7BRGTpyIYLy2dNDm/NrdxYwxpw18fxIs7EGSKcJhOTIGt8WPGYE4J+NttJp01VVjBoQv
+         IhJr9+p9GAY+Hs8RcSHMkvw32LOLzs9b8JMnZdyd4ggrQabYZYLJ7ZsSULA+SeaBREyJ
+         HFAQV/b3aLDXUgaSRb43HltlQvi9JPTk7fZxxNkbm7XKppYt15Oapohsrv7ln3krqtty
+         VEgZ8OOwOjO3A83OOaOirbe6ta4ukw2YEXTNXMk9uyq8UYDapc2j4qnoTX+FaCf85v1W
+         MWsA==
+X-Forwarded-Encrypted: i=1; AJvYcCW5UWYDn/7cL3lfgwemL2iBOxRuSj50anEdXZaMcs+M6IoKPKD/auXzdJr/+Nbk6p2eJ6NXaSaKJhLxjgk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGzbujpkZ+pnzHTLxL/DJmQ7ablm3UoO8WuZ6BFTfrtzrr/lKB
+	IJDs086sjD8zyKt1tOxpmD/M+E5/lPCcZZFDjEdIdpRj2OlPHvUxDHc/XzVajPE=
+X-Gm-Gg: ASbGncsMxkMnSglCvb9hUC/Lo0YjQmxkxQYkuyWkeSxeesQDeLYLPBujRy5nI0THpqS
+	74t5BiPUGn46eAR0XHt5sg/ad2Iv2y+JiNAL+M5FWwNAFr9MVytj3NhoI+r6Kc502TFjcVCXK3N
+	b+1aOrdQVZ6jbWQxyK5DEaoja0JG9H00iTdgT8lbUrc72rdT/V7kZhEenQ8NBwL+tbUl0iiaab0
+	s3Q4i5kzKYSXkVy2yYULPg6yZViNOkPLzAXcQ2/k6LUcVj7AaISyNK/pRnepBd+EKy+JLoEEl97
+	Cas5kpxfE2Rb8u0=
+X-Google-Smtp-Source: AGHT+IH48Wa8LfWoa8qFH8RpsZrm4aa9MAs4O8ws8UrMK3r6was8ohTmagz60VzDfKmxNZy3Wldn3g==
+X-Received: by 2002:a17:902:d2cc:b0:215:9ebc:f1ab with SMTP id d9443c01a7336-215bd2514d7mr81044525ad.35.1733310615221;
+        Wed, 04 Dec 2024 03:10:15 -0800 (PST)
+Received: from C02DW0BEMD6R.bytedance.net ([203.208.167.148])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21527515731sm107447495ad.192.2024.12.04.03.10.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Dec 2024 03:08:11 -0800 (PST)
-Date: Wed, 4 Dec 2024 13:08:09 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Neil Armstrong <neil.armstrong@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	cros-qcom-dts-watchers@chromium.org, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 5/5] arm64: dts: qcom: sc7180: fix psci power domain node
- names
-Message-ID: <f7pivzwjn3wmybdm3pgue6azi2jb7afc26pj6vyyfixspumpsx@cwjrgxojcr2o>
-References: <20241204-topic-misc-dt-fixes-v1-0-6d320b6454e6@linaro.org>
- <20241204-topic-misc-dt-fixes-v1-5-6d320b6454e6@linaro.org>
+        Wed, 04 Dec 2024 03:10:14 -0800 (PST)
+From: Qi Zheng <zhengqi.arch@bytedance.com>
+To: david@redhat.com,
+	jannh@google.com,
+	hughd@google.com,
+	willy@infradead.org,
+	muchun.song@linux.dev,
+	vbabka@kernel.org,
+	peterx@redhat.com,
+	akpm@linux-foundation.org
+Cc: mgorman@suse.de,
+	catalin.marinas@arm.com,
+	will@kernel.org,
+	dave.hansen@linux.intel.com,
+	luto@kernel.org,
+	peterz@infradead.org,
+	x86@kernel.org,
+	lorenzo.stoakes@oracle.com,
+	zokeefe@google.com,
+	rientjes@google.com,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Qi Zheng <zhengqi.arch@bytedance.com>
+Subject: [PATCH v4 00/11] synchronously scan and reclaim empty user PTE pages
+Date: Wed,  4 Dec 2024 19:09:40 +0800
+Message-Id: <cover.1733305182.git.zhengqi.arch@bytedance.com>
+X-Mailer: git-send-email 2.24.3 (Apple Git-128)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241204-topic-misc-dt-fixes-v1-5-6d320b6454e6@linaro.org>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Dec 04, 2024 at 11:56:57AM +0100, Neil Armstrong wrote:
-> Rename the psci power domain node names to match the bindings.
-> 
-> This Fixes:
-> sc7180-acer-aspire1.dts: psci: 'cpu-cluster0', 'cpu0', 'cpu1', 'cpu2', 'cpu3', 'cpu4', 'cpu5', 'cpu6', 'cpu7' do not match any of the regexes: '^power-domain-', 'pinctrl-[0-9]+'
-> 
-> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
-> ---
->  arch/arm64/boot/dts/qcom/sc7180.dtsi | 18 +++++++++---------
->  1 file changed, 9 insertions(+), 9 deletions(-)
+Changes in v4:
+ - update the process_addrs.rst in [PATCH v4 01/11]
+   (suggested by Lorenzo Stoakes)
+ - fix [PATCH v3 4/9] and move it after [PATCH v3 5/9]
+   (pointed by David Hildenbrand)
+ - change to use any_skipped instead of rechecking pte_none() to detect empty
+   user PTE pages (suggested by David Hildenbrand)
+ - rebase onto the next-20241203
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Changes in v3:
+ - recheck pmd state instead of pmd_same() in retract_page_tables()
+   (suggested by Jann Horn)
+ - recheck dst_pmd entry in move_pages_pte() (pointed by Jann Horn)
+ - introduce new skip_none_ptes() (suggested by David Hildenbrand)
+ - minor changes in [PATCH v2 5/7]
+ - remove tlb_remove_table_sync_one() if CONFIG_PT_RECLAIM is enabled.
+ - use put_page() instead of free_page_and_swap_cache() in
+   __tlb_remove_table_one_rcu() (pointed by Jann Horn)
+ - collect the Reviewed-bys and Acked-bys
+ - rebase onto the next-20241112
+
+Changes in v2:
+ - fix [PATCH v1 1/7] (Jann Horn)
+ - reset force_flush and force_break to false in [PATCH v1 2/7] (Jann Horn)
+ - introduce zap_nonpresent_ptes() and do_zap_pte_range()
+ - check pte_none() instead of can_reclaim_pt after the processing of PTEs
+   (remove [PATCH v1 3/7] and [PATCH v1 4/7])
+ - reorder patches
+ - rebase onto the next-20241031
+
+Changes in v1:
+ - replace [RFC PATCH 1/7] with a separate serise (already merge into mm-unstable):
+   https://lore.kernel.org/lkml/cover.1727332572.git.zhengqi.arch@bytedance.com/
+   (suggested by David Hildenbrand)
+ - squash [RFC PATCH 2/7] into [RFC PATCH 4/7]
+   (suggested by David Hildenbrand)
+ - change to scan and reclaim empty user PTE pages in zap_pte_range()
+   (suggested by David Hildenbrand)
+ - sent a separate RFC patch to track the tlb flushing issue, and remove
+   that part form this series ([RFC PATCH 3/7] and [RFC PATCH 6/7]).
+   link: https://lore.kernel.org/lkml/20240815120715.14516-1-zhengqi.arch@bytedance.com/
+ - add [PATCH v1 1/7] into this series
+ - drop RFC tag
+ - rebase onto the next-20241011
+
+Changes in RFC v2:
+ - fix compilation errors in [RFC PATCH 5/7] and [RFC PATCH 7/7] reproted by
+   kernel test robot
+ - use pte_offset_map_nolock() + pmd_same() instead of check_pmd_still_valid()
+   in retract_page_tables() (in [RFC PATCH 4/7])
+ - rebase onto the next-20240805
+
+Hi all,
+
+Previously, we tried to use a completely asynchronous method to reclaim empty
+user PTE pages [1]. After discussing with David Hildenbrand, we decided to
+implement synchronous reclaimation in the case of madvise(MADV_DONTNEED) as the
+first step.
+
+So this series aims to synchronously free the empty PTE pages in
+madvise(MADV_DONTNEED) case. We will detect and free empty PTE pages in
+zap_pte_range(), and will add zap_details.reclaim_pt to exclude cases other than
+madvise(MADV_DONTNEED).
+
+In zap_pte_range(), mmu_gather is used to perform batch tlb flushing and page
+freeing operations. Therefore, if we want to free the empty PTE page in this
+path, the most natural way is to add it to mmu_gather as well. Now, if
+CONFIG_MMU_GATHER_RCU_TABLE_FREE is selected, mmu_gather will free page table
+pages by semi RCU:
+
+ - batch table freeing: asynchronous free by RCU
+ - single table freeing: IPI + synchronous free
+
+But this is not enough to free the empty PTE page table pages in paths other
+that munmap and exit_mmap path, because IPI cannot be synchronized with
+rcu_read_lock() in pte_offset_map{_lock}(). So we should let single table also
+be freed by RCU like batch table freeing.
+
+As a first step, we supported this feature on x86_64 and selectd the newly
+introduced CONFIG_ARCH_SUPPORTS_PT_RECLAIM.
+
+For other cases such as madvise(MADV_FREE), consider scanning and freeing empty
+PTE pages asynchronously in the future.
+
+This series is based on next-20241112 (which contains the series [2]).
+
+Note: issues related to TLB flushing are not new to this series and are tracked
+      in the separate RFC patch [3]. And more context please refer to this
+      thread [4].
+
+Comments and suggestions are welcome!
+
+Thanks,
+Qi
+
+[1]. https://lore.kernel.org/lkml/cover.1718267194.git.zhengqi.arch@bytedance.com/
+[2]. https://lore.kernel.org/lkml/cover.1727332572.git.zhengqi.arch@bytedance.com/
+[3]. https://lore.kernel.org/lkml/20240815120715.14516-1-zhengqi.arch@bytedance.com/
+[4]. https://lore.kernel.org/lkml/6f38cb19-9847-4f70-bbe7-06881bb016be@bytedance.com/
+
+Qi Zheng (11):
+  mm: khugepaged: recheck pmd state in retract_page_tables()
+  mm: userfaultfd: recheck dst_pmd entry in move_pages_pte()
+  mm: introduce zap_nonpresent_ptes()
+  mm: introduce do_zap_pte_range()
+  mm: skip over all consecutive none ptes in do_zap_pte_range()
+  mm: zap_install_uffd_wp_if_needed: return whether uffd-wp pte has been
+    re-installed
+  mm: do_zap_pte_range: return any_skipped information to the caller
+  mm: make zap_pte_range() handle full within-PMD range
+  mm: pgtable: reclaim empty PTE page in madvise(MADV_DONTNEED)
+  x86: mm: free page table pages by RCU instead of semi RCU
+  x86: select ARCH_SUPPORTS_PT_RECLAIM if X86_64
+
+ Documentation/mm/process_addrs.rst |   4 +
+ arch/x86/Kconfig                   |   1 +
+ arch/x86/include/asm/tlb.h         |  20 +++
+ arch/x86/kernel/paravirt.c         |   7 +
+ arch/x86/mm/pgtable.c              |  10 +-
+ include/linux/mm.h                 |   1 +
+ include/linux/mm_inline.h          |  11 +-
+ include/linux/mm_types.h           |   4 +-
+ mm/Kconfig                         |  15 ++
+ mm/Makefile                        |   1 +
+ mm/internal.h                      |  19 +++
+ mm/khugepaged.c                    |  45 +++--
+ mm/madvise.c                       |   7 +-
+ mm/memory.c                        | 253 ++++++++++++++++++-----------
+ mm/mmu_gather.c                    |   9 +-
+ mm/pt_reclaim.c                    |  71 ++++++++
+ mm/userfaultfd.c                   |  51 ++++--
+ 17 files changed, 397 insertions(+), 132 deletions(-)
+ create mode 100644 mm/pt_reclaim.c
+
 -- 
-With best wishes
-Dmitry
+2.20.1
+
 
