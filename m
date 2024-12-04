@@ -1,102 +1,75 @@
-Return-Path: <linux-kernel+bounces-431674-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431533-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E1419E4041
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:59:02 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 48687167730
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:58:59 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2595220E311;
-	Wed,  4 Dec 2024 16:57:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Noeq6KZ5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C4389E3F4A
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:09:58 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C36620E01C;
-	Wed,  4 Dec 2024 16:57:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 65238B2C7D2
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:45:43 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DE461ADFE3;
+	Wed,  4 Dec 2024 15:45:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="NRNvUt7H"
+Received: from mail-10629.protonmail.ch (mail-10629.protonmail.ch [79.135.106.29])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B01DB126C10
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 15:45:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.29
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733331473; cv=none; b=LU2SnXYOnDEEHj/W5z6MiJTrzcxphWek/4Q6ucJASgoQiab1GrODAIVWtXxIREPTSnpnasOWx+nzcc0iuv6NNA8ca8d9f4CqNsjiQOyBiHc4RltnsnoWgvuXERuiX4JjVh845larz5JbBKtUB3ZDbHbEsR0HfUpol6jQ1yk7VtU=
+	t=1733327138; cv=none; b=ZNNQ5VuTki1vSLv4djHLbcZ2WHkobJfk/AgHW2aHyEYWMCRpp+N6ESizcZYzM8ob1nB9u7qeTgAVmz5k9CFDK1GnnrjV0tIObvLJXLM5QEu8w1tk3rh9H4g2xzCKqu0MaRr43v9Ro2VOpG/380l2QTcx+nMDYkXDRKEQe1lcEQc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733331473; c=relaxed/simple;
-	bh=2GzttSpa/kaeonSAGg1jQW/Lt5L31GNe3I0m2S2UGNA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=eVT9POlOWonLzoucwouAfqOZmO+6+wBxuZbhIVKCoIWo1xAKpOlN9qd6xt8xmydhvjx6+jOPsdc9hUeRz98A7ew1CehAF66jTbEGDAruAb/zBiuncDMlZNoLAwhCcrtHa5wzF3EFgNPnx2Lbp0mtWmDq07HJgdZ9fKLwLRQcfBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Noeq6KZ5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65DE1C4CEDF;
-	Wed,  4 Dec 2024 16:57:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733331473;
-	bh=2GzttSpa/kaeonSAGg1jQW/Lt5L31GNe3I0m2S2UGNA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Noeq6KZ5uscoS/zF2aoOX4NeTvjAYKhmsiswl8zMi3/iMSMoYVhc/izkQuTQGG1DV
-	 xnpzYXsULNwaKeZdmKJHfu4xUmzL8AXRspeFxZpAJIpsZ9FHSfnHQLYqRadasxBf+J
-	 Ba47+knI3aq0984oRSxnRzZjucfbNIk334xSSGz5/s1TdtI3UvDwknHrDvXGN1wWOc
-	 WR6GvWDSTFda8PIBCnquZQRj94tJa3WzsT0RBf8+pw8q9YLCenvGH6L8oWax7QiKhx
-	 yUPWmkxjGjQasD2VpOKC65mTrlU6gzfOXyUR+egOmxotuJOreMZfjKMSleLfOVMtCg
-	 Sbu9K/qESKNsw==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Uros Bizjak <ubizjak@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Sasha Levin <sashal@kernel.org>,
-	linux-trace-kernel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.12 04/36] tracing: Use atomic64_inc_return() in trace_clock_counter()
-Date: Wed,  4 Dec 2024 10:45:20 -0500
-Message-ID: <20241204154626.2211476-4-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241204154626.2211476-1-sashal@kernel.org>
-References: <20241204154626.2211476-1-sashal@kernel.org>
+	s=arc-20240116; t=1733327138; c=relaxed/simple;
+	bh=zsW3P2k6T49Ey7msdJFqq/bskLvtp3R1ODCsR+DajSk=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Mt/3BBwO2zlMcokGfbEzWhRnXlmCR2EozzpRF4MNXIlg5J1Sskoe9w0S752UeY+NDa5MQ4UBhzO3OpF1d/64t/2JqaepPpRDt1gIPy+cw3TW3wffAIvxPxuHZwC+c86Zq5Ldjp1pGTp7x+3CO8ohjzll9IE8MP3GbRr3BNfaDko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=NRNvUt7H; arc=none smtp.client-ip=79.135.106.29
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1733327128; x=1733586328;
+	bh=zsW3P2k6T49Ey7msdJFqq/bskLvtp3R1ODCsR+DajSk=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=NRNvUt7HhECMIl8yQpiHpQJ56mc1E5xg0aO3r2yXYdr5NqWkSLwnoMxa98HmOpN7p
+	 kKV8D2fR0w+VLay45drsoikN9vp2ESNP4OKd5kjr+afHiAymDmWsW659qAPCtbUw5/
+	 Ja/uK1u8HfR39su4/jw01Pk+45uBLnmy0SrMdHqChjfoj4xc6H4QNcJIKdHS4/l/Gl
+	 N3v7Q1588l2b2T+3kzhxe9mRbeFrzOG96aMCmSpr+zbws6MNFeLu7J/PhP4V/5bPv1
+	 pcMb1fOO1igHx0oFyE8F+ulJFJMo0YKdW1m94SFB6tXUO5KS9K0HiRzsg7kVjszJOs
+	 Tggsc08QUktQw==
+Date: Wed, 04 Dec 2024 15:45:21 +0000
+To: hjc@rock-chips.com, heiko@sntech.de, andy.yan@rock-chips.com, maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+From: Piotr Zalewski <pZ010001011111@proton.me>
+Cc: skhan@linuxfoundation.org, Piotr Zalewski <pZ010001011111@proton.me>, Daniel Stone <daniel@fooishbar.org>, Dragan Simic <dsimic@manjaro.org>, Diederik de Haas <didi.debian@cknow.org>
+Subject: Re: [PATCH v7] rockchip/drm: vop2: add support for gamma LUT
+Message-ID: <9Rp0NJW2QG5qDduowVaialZWN6xTe9KJFciu7Q2LERJZQXsUgFvMGXfcFaNznIEJEBpZeOdZPuL4fxOEFduaSJLuQJ3cIvN-fx2lEzYSBKE=@proton.me>
+In-Reply-To: <20241101185545.559090-3-pZ010001011111@proton.me>
+References: <20241101185545.559090-3-pZ010001011111@proton.me>
+Feedback-ID: 53478694:user:proton
+X-Pm-Message-ID: 6afc641a1cddc26bcfae7f62410b05a81c0b4b8c
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.12.1
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-From: Uros Bizjak <ubizjak@gmail.com>
+Hi all,
 
-[ Upstream commit eb887c4567d1b0e7684c026fe7df44afa96589e6 ]
+I just noticed that after coming out of suspend gamma LUT is lost and must
+be rewritten by userspace.
 
-Use atomic64_inc_return(&ref) instead of atomic64_add_return(1, &ref)
-to use optimized implementation and ease register pressure around
-the primitive for targets that implement optimized variant.
+So I guess it will be needed to save LUT to a buffer and rewrite it after
+going out of suspend during modeset?
 
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Link: https://lore.kernel.org/20241007085651.48544-1-ubizjak@gmail.com
-Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- kernel/trace/trace_clock.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I checked the patch isn't yet in the "official" linux-next.
 
-diff --git a/kernel/trace/trace_clock.c b/kernel/trace/trace_clock.c
-index 4702efb00ff21..4cb2ebc439be6 100644
---- a/kernel/trace/trace_clock.c
-+++ b/kernel/trace/trace_clock.c
-@@ -154,5 +154,5 @@ static atomic64_t trace_counter;
-  */
- u64 notrace trace_clock_counter(void)
- {
--	return atomic64_add_return(1, &trace_counter);
-+	return atomic64_inc_return(&trace_counter);
- }
--- 
-2.43.0
-
+Regards, Piotr Zalewski
 
