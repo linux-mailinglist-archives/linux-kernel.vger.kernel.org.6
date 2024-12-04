@@ -1,416 +1,331 @@
-Return-Path: <linux-kernel+bounces-430812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7E6C9E35EA
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 09:50:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 77E3A9E35E7
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 09:50:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A802C288086
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 08:50:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB07A287B86
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 08:50:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1276199FB0;
-	Wed,  4 Dec 2024 08:50:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72ADC198E84;
+	Wed,  4 Dec 2024 08:50:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="QV2RHhNw"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="mapWc9ew"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5A7D196455;
-	Wed,  4 Dec 2024 08:50:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9CE3198848
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 08:50:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733302222; cv=none; b=oKQqDp45r8UcRblpuv2o5GFqe+Qp4mXYqT7mMIQDrJ7Vw1Pxz9Cmesw6XohE7gbLi1YN4sNmupvnDgcw/bBnJqN6eYPfepIjhRmN88ARHfpq3cMNE4HG68Yu9G7yO62NhDNtKdBAYBgL0hIB7mWalyYUJkyb0T867+lG/cdI+y8=
+	t=1733302210; cv=none; b=pQ8BhkW6SJiYbFZQuMwwWFRTYIj8Z27FG3fiGXIp0KTjICoq1IQXwbh6zovntFMO1q973CMqvQvXti1sylEuoMt767vmshes7iMto44qAMAwOFB43dLZFyP2otdBbgbVb2V4cVWr+tf224YIQa/AwZ4+H7YMEgaTxTSC1lYB548=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733302222; c=relaxed/simple;
-	bh=hNlPkf5NqG8+nHPzczVze2XuO0oMwTVOsTyoFHzP1g4=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
-	 In-Reply-To:Content-Type; b=Ifqt+2gv3GS5LMPjJNBHXs7HHdmiHe2xM3Ft+hPyGLGJ3BTkpoCJzl56bJojQMMZ9obnE+ABz7sesBaHLYqBm9wxtPioauZgI7Kd/cHciRPTkBHXwU/iGNL+qVINDRHJjZXt8I4GIThoOtysLGs15SDvnXYHDHEVON6qsncti7w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=QV2RHhNw; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B4373J6031984;
-	Wed, 4 Dec 2024 08:50:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	dWcYN7trE9+kxmNFdtPGUAVyMSHfGLmTpoONu/Od/sI=; b=QV2RHhNwskL5IrfI
-	Zm4hTLSIsN8qW/eA3q4u9pPH5wKOHxlp6o7c7/SXRTEodDP0qtEQKfXvzcu/tj7E
-	agufPOXfujcDuS3A+thBUy2erKN9YkiyY2A8T0rB7mJsYEd7BuLyNJRs3Y2DJk2h
-	FVFkrQtilg3YpdMrdG1b0tD4azyERPqSlPJIxEvluqFXwCGmQ0tu0u+7QRJ8RTN0
-	FuE1JuCVp+3N83nl3XFQJ/GUXzz1k5SNwDqb1tr67ir5h1PWNOviXzIinr2mDqBs
-	vjW49mlFfOweaEVQKGX3klFTmYRllZDWCSuAs6n5GyCpPusQp4pV0Acu9iOAsTQu
-	sdW4SQ==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 439trbm284-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 04 Dec 2024 08:50:06 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B48o5RK015219
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 4 Dec 2024 08:50:05 GMT
-Received: from [10.216.0.233] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 4 Dec 2024
- 00:49:59 -0800
-Message-ID: <83337e51-6554-6543-059d-c71a50601b09@quicinc.com>
-Date: Wed, 4 Dec 2024 14:19:56 +0530
+	s=arc-20240116; t=1733302210; c=relaxed/simple;
+	bh=SKbPOKp8EmEZzoWIWsE7IwT5qwKdLVo+LROCnTyZjbA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ALNAyedKkaMVLOkv982CiBTqccah9LFs9TfTBnkCgVQmkHe20/3sQ8Fmp0zoaJb1v0BmNpN9KG2c0TIjES9swp89DoaLe9qZW629x8TAXpFE3JcL6VSbolP29bzseiCtQJuKSwh+nwK65qf4WLiO/2synnGRvjxwdy7mUS5UbK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=mapWc9ew; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-434a099ba95so58858315e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 00:50:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1733302206; x=1733907006; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=kX/PdWrycYoLN9w/gftabjVrrnBJFYg9A4mS6DbMIag=;
+        b=mapWc9ewi5JeMYlI9k9igzEbEMTg7RZ3PSBcLYVp5Zw0zsvmuPjdeQ1+GBgd1dTnM3
+         LmVMIkusahLlK2LC9hf8hURugxEV9DdwUsx5QFfybldduxxhl3eZW35+UZ/G0aWbQze9
+         v0pKnJwceFnl3n+HCGtWf/2Lfh8umMPh7r8VUMQuEmXtFhn3zxe8SIVu2G1N1ydzrk0A
+         zhS4Cbbx69kFm2YEJJo6Eiack/uVHiyGnsH///zzVp5cAq0k41BxadFwtpswdgLy0eC+
+         nD5KokG+/tgnoAiUrGk+v4+SurbnxO3menGShwGI24ibbJznQu3dMxMTw5FwabXNfuK7
+         i/Tg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733302206; x=1733907006;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kX/PdWrycYoLN9w/gftabjVrrnBJFYg9A4mS6DbMIag=;
+        b=XJVePvOFTXgfuHf5Hq6mi87As8ez99fh3KbjlKMjnO9ITGh7vrc3G6+lZyoqqAKrl9
+         I/jJiIlIyvY/3eGBpNVyK1LO1J4XNrQwlclMILXQ8FR5MidoZ2qAO7Z2isEkwwyT6QBe
+         o57Jf273H6wQeaXuqJNdnzDsBNewZjiN1PvyGraj722o/HWb2JEx34aKhj6i/YlbYirH
+         n8MsAvgeEKvRcfrUNS4piycB7Uty+Pagzyqd5HHdYHT9GFMfqsCl6bNRhn81szQRSH1A
+         OR3wi7gOYpXq/J4vIll2+peo8NZ9N1iCqvJc76kzGNusUP4v7TmLYurbWlBFQE3HX2un
+         TPlA==
+X-Forwarded-Encrypted: i=1; AJvYcCULMCn7Rzxov5zRICq0DBvaJkqgHjwO5Q/BgSvtSqKfHSc89WF0cMG5NbrReT02YNLdpk45Lq/eUcdfgWU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwX1QmShWPbpJH9FgIz/DwVkraz2cn1nKRHIEbtPrAi4MlZKFbk
+	4n6hbe1c0WfMTSx/EjFb9YUBQsi6rJU0RDEe4yP6QEDt1p7bIRBGcl4oQAKyVic=
+X-Gm-Gg: ASbGncsIa2Frb4VUfBeHF2yx+kQVlRZqQyomyr+JS2utBTnSwmL1HcEg/bRGkHTrGrw
+	Ing7LLMhUJA6zZJMt0u2sHwQEOX6vT1mujYR2y5/Vf+HBA8NlPDlg187/pVCcXGbGVliGcp52LD
+	uB5giUJEr1vaBUMz2G7rv+PBHmJ/Lq5sbZSMbzpQTdokTMOiOGgLmriAKh6S/DFGoPyCrWRrUc2
+	fhqcV+TnJbKlLkkgWZSWOrupOmMXoLR+bAKXw6ewVi1HKtc9JCctfwc3/w=
+X-Google-Smtp-Source: AGHT+IGbtU/rD+eIsFIVhtu10NokIMY21idDwmyfqhDLr7nu+tQXuHISi1JSEe4tGoyx24spnbSvMg==
+X-Received: by 2002:a05:600c:1ca2:b0:434:ba13:e52b with SMTP id 5b1f17b1804b1-434d0a14a83mr53170425e9.31.1733302205966;
+        Wed, 04 Dec 2024 00:50:05 -0800 (PST)
+Received: from [192.168.50.4] ([82.78.167.161])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434d5272f99sm16732325e9.11.2024.12.04.00.50.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 04 Dec 2024 00:50:05 -0800 (PST)
+Message-ID: <0e5bafb1-fbf9-4168-bbe4-1feaaa6f812b@tuxon.dev>
+Date: Wed, 4 Dec 2024 10:50:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH v3 1/6] dt-bindings: PCI: Add binding for qps615
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 09/14] iio: adc: rzg2l_adc: Add support for channel 8
 Content-Language: en-US
-From: Krishna Chaitanya Chundru <quic_krichai@quicinc.com>
-To: Rob Herring <robh@kernel.org>
-CC: <andersson@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-        "Lorenzo
- Pieralisi" <lpieralisi@kernel.org>,
-        =?UTF-8?Q?Krzysztof_Wilczy=c5=84ski?=
-	<kw@linux.com>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        <cros-qcom-dts-watchers@chromium.org>,
-        Jingoo Han <jingoohan1@gmail.com>, Bartosz Golaszewski <brgl@bgdev.pl>,
-        <quic_vbadigan@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20241112-qps615_pwr-v3-0-29a1e98aa2b0@quicinc.com>
- <20241112-qps615_pwr-v3-1-29a1e98aa2b0@quicinc.com>
- <20241115161848.GA2961450-robh@kernel.org>
- <74eaef67-18f2-c2a1-1b9c-ac97cefecc54@quicinc.com>
-In-Reply-To: <74eaef67-18f2-c2a1-1b9c-ac97cefecc54@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 9RHSsYHkdml5LfK89Zazk02UMSuhtbBO
-X-Proofpoint-ORIG-GUID: 9RHSsYHkdml5LfK89Zazk02UMSuhtbBO
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 mlxscore=0
- suspectscore=0 spamscore=0 malwarescore=0 adultscore=0 priorityscore=1501
- clxscore=1015 phishscore=0 lowpriorityscore=0 impostorscore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
- definitions=main-2412040067
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: prabhakar.mahadev-lad.rj@bp.renesas.com, lars@metafoo.de,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ geert+renesas@glider.be, magnus.damm@gmail.com, mturquette@baylibre.com,
+ sboyd@kernel.org, p.zabel@pengutronix.de, linux-iio@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20241203111314.2420473-1-claudiu.beznea.uj@bp.renesas.com>
+ <20241203111314.2420473-10-claudiu.beznea.uj@bp.renesas.com>
+ <20241203201857.7ccdcf99@jic23-huawei>
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <20241203201857.7ccdcf99@jic23-huawei>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+Hi, Jonathan,
+
+On 03.12.2024 22:18, Jonathan Cameron wrote:
+> On Tue,  3 Dec 2024 13:13:09 +0200
+> Claudiu <claudiu.beznea@tuxon.dev> wrote:
+> 
+>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>
+>> The ADC on the Renesas RZ/G3S SoC includes an additional channel (channel
+>> 8) dedicated to reading temperature values from the Thermal Sensor Unit
+>> (TSU). There is a direct in-SoC connection between the ADC and TSU IPs.
+>>
+>> To read the temperature reported by the TSU, a different sampling rate
+>> (compared to channels 0-7) must be configured in the ADM3 register.
+>>
+>> The rzg2l_adc driver has been updated to support reading the TSU
+>> temperature.
+>>
+>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> 
+>>  static unsigned int rzg2l_adc_readl(struct rzg2l_adc *adc, u32 reg)
+>> @@ -161,7 +173,7 @@ static void rzg2l_set_trigger(struct rzg2l_adc *adc)
+>>  	rzg2l_adc_writel(adc, RZG2L_ADM(1), reg);
+>>  }
+>>  
+>> -static int rzg2l_adc_conversion_setup(struct rzg2l_adc *adc, u8 ch)
+>> +static int rzg2l_adc_conversion_setup(struct rzg2l_adc *adc, u8 ch, enum iio_chan_type type)
+>>  {
+>>  	const struct rzg2l_adc_hw_params *hw_params = adc->hw_params;
+>>  	u32 reg;
+>> @@ -177,6 +189,15 @@ static int rzg2l_adc_conversion_setup(struct rzg2l_adc *adc, u8 ch)
+>>  	reg |= BIT(ch);
+>>  	rzg2l_adc_writel(adc, RZG2L_ADM(2), reg);
+>>  
+>> +	reg = rzg2l_adc_readl(adc, RZG2L_ADM(3));
+>> +	reg &= ~hw_params->adsmp_mask;
+>> +	/*
+>> +	 * type could be IIO_VOLTAGE = 0 or IIO_TEMP = 9. Divide to 8 to get
+>> +	 * index 0 or 1 depending on the channel type.
+> 
+> That is not particularly nice and potentially a little fragile if we get other device
+> support in future. Better to match on the type in rzg2l_adc_channels[] possibly wrapped
+> up in a little utility function bool rzg2l_adc_channels_is_temp(); Then use a
+> ? 1 : 0 to get the offset in default_adsmp[]
+
+I though about this, too, but considered we should not go beyond 1 as the
+rzg2l_adc_conversion_setup() is currently call in places where the channel
+type is only IIO_VOLTAGE and IIO_TEMP, just saying...
+
+I'll switch to the approach you propose in the next version.
+
+> 
+> 
+>> +	 */
+>> +	reg |= hw_params->default_adsmp[type / 8];
+>> +	rzg2l_adc_writel(adc, RZG2L_ADM(3), reg);
+>> +
+>>  	/*
+>>  	 * Setup ADINT
+>>  	 * INTS[31] - Select pulse signal
+>> @@ -192,7 +213,8 @@ static int rzg2l_adc_conversion_setup(struct rzg2l_adc *adc, u8 ch)
+>>  	return 0;
+>>  }
+>>
+>>  
+>> +	case IIO_CHAN_INFO_PROCESSED:
+>> +		if (chan->type != IIO_TEMP)
+>> +			return -EINVAL;
+>> +
+>> +		mutex_lock(&adc->lock);
+>> +		ret = rzg2l_adc_conversion(indio_dev, chan->type, adc, ch);
+>> +		if (!ret) {
+>> +			/* Convert it to mili Celsius. */
+>> +			*val = adc->last_val[ch] * 1000;
+> Prefer you provide a scale of 1000 and report this raw.
+
+I'll look to this.
+
+>> +		}
+> Also strong preference for error conditions out of line.
+> As in that other case, guard() makes that easier as yo ucan do
+> 		{
+> 
+> 			guard(mutex)(&adc->lock);
+> 			ret = rz....
+> 			if (ret)
+> 				return ret;
+> 
+> 			*val = ...
+> 			
+> 			return IIO_VAL_INT;
+> 		}
 
 
+I agree, looks cleaner with guard().
 
-On 11/24/2024 7:02 AM, Krishna Chaitanya Chundru wrote:
 > 
+>> +		mutex_unlock(&adc->lock);
+>> +
+>> +		return ret ? ret : IIO_VAL_INT;
+>> +
+>>  	default:
+>>  		return -EINVAL;
+>>  	}
 > 
-> On 11/15/2024 9:48 PM, Rob Herring wrote:
->> On Tue, Nov 12, 2024 at 08:31:33PM +0530, Krishna chaitanya chundru 
->> wrote:
->>> Add binding describing the Qualcomm PCIe switch, QPS615,
->>> which provides Ethernet MAC integrated to the 3rd downstream port
->>> and two downstream PCIe ports.
->>>
->>> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
->>> ---
->>>   .../devicetree/bindings/pci/qcom,qps615.yaml       | 205 
->>> +++++++++++++++++++++
->>>   1 file changed, 205 insertions(+)
->>>
->>> diff --git a/Documentation/devicetree/bindings/pci/qcom,qps615.yaml 
->>> b/Documentation/devicetree/bindings/pci/qcom,qps615.yaml
->>> new file mode 100644
->>> index 000000000000..e6a63a0bb0f3
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/pci/qcom,qps615.yaml
->>> @@ -0,0 +1,205 @@
->>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->>> +%YAML 1.2
->>> +---
->>> +$id: http://devicetree.org/schemas/pci/qcom,qps615.yaml#
->>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>> +
->>> +title: Qualcomm QPS615 PCIe switch
->>> +
->>> +maintainers:
->>> +  - Krishna chaitanya chundru <quic_krichai@quicinc.com>
->>> +
->>> +description: |
->>> +  Qualcomm QPS615 PCIe switch has one upstream and three downstream
->>> +  ports. The 3rd downstream port has integrated endpoint device of
->>> +  Ethernet MAC. Other two downstream ports are supposed to connect
->>> +  to external device.
->>> +
->>> +  The QPS615 PCIe switch can be configured through I2C interface before
->>> +  PCIe link is established to change FTS, ASPM related entry delays,
->>> +  tx amplitude etc for better power efficiency and functionality.
->>> +
->>> +properties:
->>> +  compatible:
->>> +    enum:
->>> +      - pci1179,0623
->>> +
->>> +  reg:
->>> +    maxItems: 1
->>> +
->>> +  i2c-parent:
->>> +    $ref: /schemas/types.yaml#/definitions/phandle-array
->>> +    description: |
->>
->> Don't need '|' if no formatting to preserve.
->>
-> ack
->>> +      A phandle to the parent I2C node and the slave address of the 
->>> device
->>> +      used to do configure qps615 to change FTS, tx amplitude etc.
->>> +    items:
->>> +      - description: Phandle to the I2C controller node
->>> +      - description: I2C slave address
->>> +
->>> +  vdd18-supply: true
->>> +
->>> +  vdd09-supply: true
->>> +
->>> +  vddc-supply: true
->>> +
->>> +  vddio1-supply: true
->>> +
->>> +  vddio2-supply: true
->>> +
->>> +  vddio18-supply: true
->>> +
->>> +  reset-gpios:
->>> +    maxItems: 1
->>> +    description:
->>> +      GPIO controlling the RESX# pin.
->>
->> Is the PERST# or something else?
->>
-> it is not PERST GPIO, it is similar to PERST in terms
-> of functionality which brings switch out from reset.
->>> +
->>> +  qps615,axi-clk-freq-hz:
->>
->> qps615 is not a vendor prefix.
->>
->>> +    description:
->>> +      AXI clock rate which is internal bus of the switch
->>> +      The switch only runs in two frequencies i.e 250MHz and 125MHz.
->>> +    enum: [125000000, 250000000]
->>> +
->>> +allOf:
->>> +  - $ref: "#/$defs/qps615-node"
->>> +
->>> +patternProperties:
->>> +  "@1?[0-9a-f](,[0-7])?$":
->>
->> You have 3 ports. So isn't this fixed and limited to 0-2?
->>
-> sure I will change it to below as suggested
-> "@1?[0-3](,[0-1])?$"
->>> +    description: child nodes describing the internal downstream ports
->>> +      the qps615 switch.
->>
->> Please be consistent with starting after the ':' or on the next line.
->>
->> And start with capital C.
->>
->>
-> ack
+>>  static const struct iio_info rzg2l_adc_iio_info = {
+>> @@ -332,11 +368,14 @@ static int rzg2l_adc_parse_properties(struct platform_device *pdev, struct rzg2l
+>>  		if (channel >= hw_params->num_channels)
+>>  			return -EINVAL;
+>>  
+>> -		chan_array[i].type = IIO_VOLTAGE;
+>> +		chan_array[i].type = rzg2l_adc_channels[channel].type;
+>>  		chan_array[i].indexed = 1;
+>>  		chan_array[i].channel = channel;
+>> -		chan_array[i].info_mask_separate = BIT(IIO_CHAN_INFO_RAW);
+>> -		chan_array[i].datasheet_name = rzg2l_adc_channel_name[channel];
+>> +		if (rzg2l_adc_channels[channel].type == IIO_VOLTAGE)
+>> +			chan_array[i].info_mask_separate = BIT(IIO_CHAN_INFO_RAW);
+>> +		else
+>> +			chan_array[i].info_mask_separate = BIT(IIO_CHAN_INFO_PROCESSED);
 > 
->>> +    type: object
->>> +    $ref: "#/$defs/qps615-node"
->>> +    unevaluatedProperties: false
->>> +
->>> +$defs:
->>> +  qps615-node:
->>> +    type: object
->>> +
->>> +    properties:
->>> +      qcom,l0s-entry-delay-ns:
->>> +        description: Aspm l0s entry delay.
->>> +
->>> +      qcom,l1-entry-delay-ns:
->>> +        description: Aspm l1 entry delay.
->>
->> These should probably be common being standard PCIe things. Though, why
->> are they needed? I'm sure the timing is defined by the PCIe spec, so
->> they are not compliant?
->>
-> Usually the firmware in the endpoints/switches should do this these
-> configurations. But the qps615 PCIe switch doesn't have any firmware
-> running to configure these. So the hardware exposes i2c interface to
-> configure these before link training.
->>> +
->>> +      qcom,tx-amplitude-millivolt:
->>> +        $ref: /schemas/types.yaml#/definitions/uint32
->>> +        description: Change Tx Margin setting for low power 
->>> consumption.
->>> +
->>> +      qcom,no-dfe-support:
->>> +        type: boolean
->>> +        description: Disable DFE (Decision Feedback Equalizer), 
->>> which mitigates
->>> +          intersymbol interference and some reflections caused by 
->>> impedance mismatches.
->>> +
->>> +      qcom,nfts:
->>> +        $ref: /schemas/types.yaml#/definitions/uint32
->>> +        description:
->>> +          Number of Fast Training Sequence (FTS) used during L0s to 
->>> L0 exit
->>> +          for bit and Symbol lock.
->>
->> Also something common.
->>
->> The problem I have with all these properties is you are using them on
->> both the upstream and downstream sides of the PCIe links. They belong in
->> either the device's node (downstream) or the bus's node (upstream).
->>
-> This switch allows us to configure both upstream, downstream ports and
-> also embedded Ethernet port which is internal to the switch. These
-> properties are applicable for all of those.
->>> +
->>> +    allOf:
->>> +      - $ref: /schemas/pci/pci-bus.yaml#
->>
->> pci-pci-bridge.yaml is more specific and closer to what this device is.
->>
-> I tried this now, I was getting warning saying the compatible
-> /local/mnt/workspace/skales/kobj/Documentation/devicetree/bindings/pci/qcom,qps615.example.dtb: pcie@0,0: compatible: ['pci1179,0623'] does not contain items matching the given schema
->          from schema $id: 
-> http://devicetree.org/schemas/pci/qcom,qps615.yaml#
-> /local/mnt/workspace/skales/kobj/Documentation/devicetree/bindings/pci/qcom,qps615.example.dtb: pcie@0,0: Unevaluated properties are not allowed ('#address-cells', '#size-cells', 'bus-range', 'device_type', 'ranges' were unexpected)
-> 
-> I think pci-pci-bridge is expecting the compatible string in this format
-> only "pciclass,0604".
-> 
->>> +
->>> +unevaluatedProperties: false
->>> +
->>> +required:
->>> +  - vdd18-supply
->>> +  - vdd09-supply
->>> +  - vddc-supply
->>> +  - vddio1-supply
->>> +  - vddio2-supply
->>> +  - vddio18-supply
->>> +  - i2c-parent
->>> +  - reset-gpios
->>> +
->>> +examples:
->>> +  - |
->>> +
->>> +    #include <dt-bindings/gpio/gpio.h>
->>> +
->>> +    pcie {
->>> +        #address-cells = <3>;
->>> +        #size-cells = <2>;
->>> +
->>> +        pcie@0 {
->>> +            device_type = "pci";
->>> +            reg = <0x0 0x0 0x0 0x0 0x0>;
->>> +
->>> +            #address-cells = <3>;
->>> +            #size-cells = <2>;
->>> +            ranges;
->>> +            bus-range = <0x01 0xff>;
->>> +
->>> +            pcie@0,0 {
->>> +                compatible = "pci1179,0623";
->>> +                reg = <0x10000 0x0 0x0 0x0 0x0>;
->>> +                device_type = "pci";
->>> +                #address-cells = <3>;
->>> +                #size-cells = <2>;
->>> +                ranges;
->>> +                bus-range = <0x02 0xff>;
->>> +
->>> +                i2c-parent = <&qup_i2c 0x77>;
->>> +
->>> +                vdd18-supply = <&vdd>;
->>> +                vdd09-supply = <&vdd>;
->>> +                vddc-supply = <&vdd>;
->>> +                vddio1-supply = <&vdd>;
->>> +                vddio2-supply = <&vdd>;
->>> +                vddio18-supply = <&vdd>;
->>> +
->>> +                reset-gpios = <&gpio 1 GPIO_ACTIVE_LOW>;
->>> +
->>> +                pcie@1,0 {
->>> +                    reg = <0x20800 0x0 0x0 0x0 0x0>;
->>> +                    #address-cells = <3>;
->>> +                    #size-cells = <2>;
->>> +                    device_type = "pci";
->>> +                    ranges;
->>> +                    bus-range = <0x03 0xff>;
->>> +
->>> +                    qcom,no-dfe-support;
->>> +                };
->>> +
->>> +                pcie@2,0 {
->>> +                    reg = <0x21000 0x0 0x0 0x0 0x0>;
->>> +                    #address-cells = <3>;
->>> +                    #size-cells = <2>;
->>> +                    device_type = "pci";
->>> +                    ranges;
->>> +                    bus-range = <0x04 0xff>;
->>> +
->>> +                    qcom,nfts = <10>;
->>> +                };
->>> +
->>> +                pcie@3,0 {
->>> +                    reg = <0x21800 0x0 0x0 0x0 0x0>;
->>> +                    #address-cells = <3>;
->>> +                    #size-cells = <2>;
->>> +                    device_type = "pci";
->>> +                    ranges;
->>> +                    bus-range = <0x05 0xff>;
->>> +
->>> +                    qcom,tx-amplitude-millivolt = <10>;
->>> +                    pcie@0,0 {
->>> +                        reg = <0x50000 0x0 0x0 0x0 0x0>;
->>> +                        #address-cells = <3>;
->>> +                        #size-cells = <2>;
->>> +                        device_type = "pci";
->>
->> There's a 2nd PCI-PCI bridge?
-> This the embedded ethernet port which is as part of DSP3.
-> 
-Hi Rob,
+> Make it raw, but I'm curious we have no _SCALE on this device.  Do we really have no idea
+> of the calibration of these channels?
 
-Can you please check my response on your queries, if you need
-any extra information, we can provide to sort this out.
+The calibration data is stored on the TSU (Thermal Sensor Unit) hardware
+block. From the TSU driver (not yet published) we read the temperature
+through the ADC channel and apply the calibration data on the value
+returned by ADC (this is how HW manual suggests). This is the current
+(internal) struct thermal_zone_device_ops::get_temp() API of the TSU driver
+(it will be published later, after some clarifications with hardware team
+on SoC specific aspects):
 
-- Krishna Chaitanya.
-> - Krishna Chaitanya.
->>
->>> +                        ranges;
->>> +
->>> +                        qcom,l1-entry-delay-ns = <10>;
->>> +                    };
->>> +
->>> +                    pcie@0,1 {
->>> +                        reg = <0x50100 0x0 0x0 0x0 0x0>;
->>> +                        #address-cells = <3>;
->>> +                        #size-cells = <2>;
->>> +                        device_type = "pci";
->>> +                        ranges;
->>> +
->>> +                        qcom,l0s-entry-delay-ns = <10>;
->>> +                    };
->>> +                };
->>> +            };
->>> +        };
->>> +    };
->>>
->>> -- 
->>> 2.34.1
->>>
+// ..
+
+#define TSU_READ_STEPS		8
+#define MCELSIUS(temp)		(temp * MILLIDEGREE_PER_DEGREE)
+
+// ...
+
+struct rzg3s_thermal_priv {
+	void __iomem *base;
+	struct device *dev;
+	struct thermal_zone_device *tz;
+	struct reset_control *rstc;
+	struct iio_channel *channel;
+	u16 calib0;
+	u16 calib1;
+};
+
+// ...
+
+static int rzg3s_thermal_get_temp(struct thermal_zone_device *tz, int *temp)
+{
+	struct rzg3s_thermal_priv *priv = thermal_zone_device_priv(tz);
+	struct device *dev = priv->dev;
+	u32 ts_code_ave = 0;
+	int ret, val;
+
+	ret = pm_runtime_resume_and_get(dev);
+	if (ret)
+		return ret;
+
+	for (u8 i = 0; i < TSU_READ_STEPS; i++) {
+		ret = iio_read_channel_processed(priv->channel, &val);
+		if (ret < 0)
+			goto rpm_put;
+		
+		ts_code_ave += val;
+		/*
+		 * According to HW manual (section 40.4.4 Procedure for
+		 * Measuring the Temperature) we need to wait here at
+		 * leat 3us.
+		 */
+		usleep_range(5, 10);
+	}
+
+	ret = 0;
+	ts_code_ave = DIV_ROUND_CLOSEST(ts_code_ave, TSU_READ_STEPS);
+
+	/*
+	 * According to HW manual (section 40.4.4 Procedure for Measuring
+	 * the Temperature) the formula mentioned in the hardware manual is
+	 * as follows;
+	 *
+	 * Tj = (ts_code_ave - priv->calib0) * (165 / (priv->calib0 -
+	 * priv->calib1)) - 40
+	 *
+	 * As the temperature retrieved from the IIO channel is in
+	 * milicelsius convert all members of the equation to milicelsius.
+	 * It has been chose like this to avoid loosing precisions by
+	 * converting IIO reported temperature to celsius.
+	 */
+	*temp = DIV_ROUND_CLOSEST_ULL(((u64)(ts_code_ave -
+		MCELSIUS(priv->calib1)) * MCELSIUS(165)),
+		MCELSIUS((priv->calib0 - priv->calib1))) - MCELSIUS(40);
+
+	/* Round it up to 0.5 degrees Celsius. */
+	*temp = roundup(*temp, 500);
+
+rpm_put:
+	pm_runtime_mark_last_busy(dev);
+	pm_runtime_put_autosuspend(dev);
+
+	return ret;
+}
+
+
+> 
+>> +		chan_array[i].datasheet_name = rzg2l_adc_channels[channel].name;
+>>  		i++;
+>>  	}
+>>  
+>> @@ -386,7 +425,7 @@ static int rzg2l_adc_hw_init(struct device *dev, struct rzg2l_adc *adc)
+>>  	reg &= ~RZG2L_ADM3_ADCMP_MASK;
+>>  	reg &= ~hw_params->adsmp_mask;
+>>  	reg |= FIELD_PREP(RZG2L_ADM3_ADCMP_MASK, hw_params->default_adcmp) |
+>> -	       hw_params->default_adsmp;
+>> +	       hw_params->default_adsmp[0];
+>>  
+>>  	rzg2l_adc_writel(adc, RZG2L_ADM(3), reg);
+>>  
+>> @@ -479,7 +518,7 @@ static int rzg2l_adc_probe(struct platform_device *pdev)
+>>  static const struct rzg2l_adc_hw_params rzg2l_hw_params = {
+>>  	.num_channels = 8,
+>>  	.default_adcmp = 0xe,
+>> -	.default_adsmp = 0x578,
+>> +	.default_adsmp = { 0x578 },
+>>  	.adsmp_mask = GENMASK(15, 0),
+>>  	.adint_inten_mask = GENMASK(7, 0),
+>>  	.adivc = true
 > 
 
