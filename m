@@ -1,62 +1,64 @@
-Return-Path: <linux-kernel+bounces-430402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430403-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39A899E3076
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 01:45:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EEF89E3077
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 01:46:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6621AB246D2
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 00:45:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F00428216A
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 00:46:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACDE35227;
-	Wed,  4 Dec 2024 00:45:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80C7C2904;
+	Wed,  4 Dec 2024 00:46:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="AS4W69/C"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PLpG6vMb"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 452142500AC;
-	Wed,  4 Dec 2024 00:45:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAF692500AC
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 00:46:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733273134; cv=none; b=eE9nVD1rCgB1OwnL3SjQuDTXdF1KXir6frAldLp4PpREYexurPMZIj6JnJ/A7K8TrX01HpN3U13HnPhFj7ekDNZZSugt8Syn0MZV12HDeWJOrlayS/k1vNjaFLWczo2CghYbf2/loaJqm+puG/MiTQdyBk9cA8Z/D36/UCsmOJ4=
+	t=1733273197; cv=none; b=WIeTApcvSh+PhsPMdqwiAZjiasH06Oz7uvagFF08SXOUX6XJe28jcPZBb/aog+LMgFesuHSi1xu60dNRGO4vL/vmTdD0Da/tGIab6dZQO1/PJJIbyLC3Ok+86KVUzdWvRBGIKNiB/RgexgjtjWIESaq/VDUGz22rNFPpQ8fbWaw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733273134; c=relaxed/simple;
-	bh=KwpksROF8MIl17VHFw2GUEgj6nQPUlGTObzL6xopRRI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=lW0nAszP44OOpSHZi/sbviEo4kSSxODsUMSKyeVxtZTL6rUsLm+87u3iah/pZ35NJe1ipmw+BXOSY7UIqnaDfLBzf4XqFRwjKpd8MRhYQoT1CzsRX9ny6fh6JZlTEQ2jCGm4NEQc0HDRfa7J3sJQ1i7Y4xNf3S6baOp9ccagZ8Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=AS4W69/C; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B3GaDOc024054;
-	Wed, 4 Dec 2024 00:45:24 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	S9+QcQG+ya2i4p6PSZQryV4ua7A0gAjw7d9g+kWUA7w=; b=AS4W69/C75Ne5Bh3
-	Wq8fkSZmg6Syn3IaOYloxq4TSAbdS5rTM6+7909Pad2LKnrAPqWdhsvFsJcUwsOw
-	yhYUNML2cFVoDWfYlWomwhY83sOuRIvoioedwcB7dWtQ5kGB+W7J+7KCFp0JVtZb
-	TTD0xlNtO9iEneihahEJ0yiwxExaVVe93nh/WLL2M6sQtPO9OCGDFcnTdgxo6nt2
-	xoE/CgDnw2vizk1HqQM1k0JB9S9qyU3VxSCRyu85t12Y0xxc+yQXw6AZgOal5s7P
-	pNKU47T9e5OhAnGwjm9w3DUUmheIalNexInBtL59p7k7KbHvmkA5H2hv+LcCA9FF
-	IrsWyQ==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 439vnytm2a-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 04 Dec 2024 00:45:23 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B40jM5v005563
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 4 Dec 2024 00:45:22 GMT
-Received: from [10.4.85.39] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 3 Dec 2024
- 16:45:19 -0800
-Message-ID: <873da5ca-c18a-4f31-a4a5-53903e14950f@quicinc.com>
-Date: Wed, 4 Dec 2024 11:45:17 +1100
+	s=arc-20240116; t=1733273197; c=relaxed/simple;
+	bh=YCd+iKZ9hgdSEt4Ob/vLfq8idska0koAISciiAqZkkU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ncBMvadA7SpN4SMviwkWTqx/SNyjwfBek3Ly0RRNdyBZEtiv4UYdEH0j+iBwPBd3W+QXwto4VeWrJIo28lf22nsJvy8ddIkTtUauvkxRUF3+JswALncx8yMs3H7aXKD0/7bw91w2b/DF9AYPqtNn25XYuWj8uLWn+FqM9qGsMnk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PLpG6vMb; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733273195; x=1764809195;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=YCd+iKZ9hgdSEt4Ob/vLfq8idska0koAISciiAqZkkU=;
+  b=PLpG6vMblZ310j57ZFmzh8al+DwbLzsL3ihboZl07v0pp1T96jUG6fgk
+   2atJsoFCweycCnGkIx4lRMqEapyo1PMVzRH/1nY/fifMPm7wHvSijYbHN
+   HeWoZzLMBirwnjs1I3jgxO78AfP6fdhkapEKDWd7AKQnG4Mw4RnCe5+nN
+   7CXX4dcFuZXEi+79GkvUrTdLSBlNPhXV/kfsjm4KMx1wn75aDMU+bNcw8
+   IvNbhPs8N3CpqLv5rvF5HiCE8/NSVP3eNbKxl74mbCl3eXVS3KDgTtNzv
+   2dz8fErybvWrfkXKm/IE98PhW/mX29WA1QhHgtqdQ3fjb5uHjZ80lpyV/
+   A==;
+X-CSE-ConnectionGUID: 0+zaKVBESfiFPaVNTX22Uw==
+X-CSE-MsgGUID: D3wwUReXTHSYZEfI3PXqKA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11275"; a="33395729"
+X-IronPort-AV: E=Sophos;i="6.12,206,1728975600"; 
+   d="scan'208";a="33395729"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Dec 2024 16:46:34 -0800
+X-CSE-ConnectionGUID: XkxcxuLTS1K6c/b/Be/33A==
+X-CSE-MsgGUID: qkVIXpAYRfCQrcf4jWGQIw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,206,1728975600"; 
+   d="scan'208";a="94057589"
+Received: from tfalcon-desk.amr.corp.intel.com (HELO [10.124.223.112]) ([10.124.223.112])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Dec 2024 16:46:34 -0800
+Message-ID: <4360210d-0656-4328-ab67-240465ab2f9c@intel.com>
+Date: Tue, 3 Dec 2024 16:46:32 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,93 +66,86 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 00/10] Trusted Execution Environment (TEE) driver for
- Qualcomm TEE (QTEE)
+Subject: Re: [PATCH v2] x86,mm: only trim the mm_cpumask once a second
+To: Rik van Riel <riel@surriel.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: kernel test robot <oliver.sang@intel.com>, oe-lkp@lists.linux.dev,
+ lkp@intel.com, linux-kernel@vger.kernel.org, x86@kernel.org,
+ Ingo Molnar <mingo@kernel.org>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Peter Zijlstra <peterz@infradead.org>, Mel Gorman <mgorman@suse.de>
+References: <202411282207.6bd28eae-lkp@intel.com>
+ <20241202202213.26a79ed6@fangorn>
+ <5dcb4050-f0f3-43d6-b4b1-42fa305a0fba@efficios.com>
+ <20241203144845.7093ea1a@fangorn>
+ <5544716d-31be-40c6-a289-030220e518de@intel.com>
+ <cc6d6e0be9b4fb61228f42ad82a057f60a1c1e12.camel@surriel.com>
+From: Dave Hansen <dave.hansen@intel.com>
 Content-Language: en-US
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Trilok Soni <quic_tsoni@quicinc.com>,
-        Jens Wiklander
-	<jens.wiklander@linaro.org>,
-        Sumit Garg <sumit.garg@linaro.org>,
-        "Bjorn
- Andersson" <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        "Rob Herring" <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        "Conor Dooley" <conor+dt@kernel.org>,
-        Bartosz Golaszewski
-	<bartosz.golaszewski@linaro.org>,
-        Srinivas Kandagatla
-	<srinivas.kandagatla@linaro.org>,
-        <linux-arm-msm@vger.kernel.org>, <op-tee@lists.trustedfirmware.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-doc@vger.kernel.org>
-References: <20241202-qcom-tee-using-tee-ss-without-mem-obj-v1-0-f502ef01e016@quicinc.com>
- <518ee3f1-b871-4349-ba85-3b3fc835a4ca@quicinc.com>
- <0df58435-94e7-4b81-b688-ec0e1c49c0e0@quicinc.com>
- <gtfm7paylpcobucmwmapgdxva2wnvn5skkakaalzpx4ip7x2h2@lphbinkzaw7k>
-From: Amirreza Zarrabi <quic_azarrabi@quicinc.com>
-In-Reply-To: <gtfm7paylpcobucmwmapgdxva2wnvn5skkakaalzpx4ip7x2h2@lphbinkzaw7k>
-Content-Type: text/plain; charset="UTF-8"
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
+ oAiUXvGAOxPDsB/P6UEOISPpLl5IuYsSwAeZGkdQ5g6m1xq7AlDJQZddhr/1DC/nMVa/2BoY
+ 2UnKuZuSBu7lgOE193+7Uks3416N2hTkyKUSNkduyoZ9F5twiBhxPJwPtn/wnch6n5RsoXsb
+ ygOEDxLEsSk/7eyFycjE+btUtAWZtx+HseyaGfqkZK0Z9bT1lsaHecmB203xShwCPT49Blxz
+ VOab8668QpaEOdLGhtvrVYVK7x4skyT3nGWcgDCl5/Vp3TWA4K+IofwvXzX2ON/Mj7aQwf5W
+ iC+3nWC7q0uxKwwsddJ0Nu+dpA/UORQWa1NiAftEoSpk5+nUUi0WE+5DRm0H+TXKBWMGNCFn
+ c6+EKg5zQaa8KqymHcOrSXNPmzJuXvDQ8uj2J8XuzCZfK4uy1+YdIr0yyEMI7mdh4KX50LO1
+ pmowEqDh7dLShTOif/7UtQYrzYq9cPnjU2ZW4qd5Qz2joSGTG9eCXLz5PRe5SqHxv6ljk8mb
+ ApNuY7bOXO/A7T2j5RwXIlcmssqIjBcxsRRoIbpCwWWGjkYjzYCjgsNFL6rt4OL11OUF37wL
+ QcTl7fbCGv53KfKPdYD5hcbguLKi/aCccJK18ZwNjFhqr4MliQARAQABzUVEYXZpZCBDaHJp
+ c3RvcGhlciBIYW5zZW4gKEludGVsIFdvcmsgQWRkcmVzcykgPGRhdmUuaGFuc2VuQGludGVs
+ LmNvbT7CwXgEEwECACIFAlQ+9J0CGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEGg1
+ lTBwyZKwLZUP/0dnbhDc229u2u6WtK1s1cSd9WsflGXGagkR6liJ4um3XCfYWDHvIdkHYC1t
+ MNcVHFBwmQkawxsYvgO8kXT3SaFZe4ISfB4K4CL2qp4JO+nJdlFUbZI7cz/Td9z8nHjMcWYF
+ IQuTsWOLs/LBMTs+ANumibtw6UkiGVD3dfHJAOPNApjVr+M0P/lVmTeP8w0uVcd2syiaU5jB
+ aht9CYATn+ytFGWZnBEEQFnqcibIaOrmoBLu2b3fKJEd8Jp7NHDSIdrvrMjYynmc6sZKUqH2
+ I1qOevaa8jUg7wlLJAWGfIqnu85kkqrVOkbNbk4TPub7VOqA6qG5GCNEIv6ZY7HLYd/vAkVY
+ E8Plzq/NwLAuOWxvGrOl7OPuwVeR4hBDfcrNb990MFPpjGgACzAZyjdmYoMu8j3/MAEW4P0z
+ F5+EYJAOZ+z212y1pchNNauehORXgjrNKsZwxwKpPY9qb84E3O9KYpwfATsqOoQ6tTgr+1BR
+ CCwP712H+E9U5HJ0iibN/CDZFVPL1bRerHziuwuQuvE0qWg0+0SChFe9oq0KAwEkVs6ZDMB2
+ P16MieEEQ6StQRlvy2YBv80L1TMl3T90Bo1UUn6ARXEpcbFE0/aORH/jEXcRteb+vuik5UGY
+ 5TsyLYdPur3TXm7XDBdmmyQVJjnJKYK9AQxj95KlXLVO38lczsFNBFRjzmoBEACyAxbvUEhd
+ GDGNg0JhDdezyTdN8C9BFsdxyTLnSH31NRiyp1QtuxvcqGZjb2trDVuCbIzRrgMZLVgo3upr
+ MIOx1CXEgmn23Zhh0EpdVHM8IKx9Z7V0r+rrpRWFE8/wQZngKYVi49PGoZj50ZEifEJ5qn/H
+ Nsp2+Y+bTUjDdgWMATg9DiFMyv8fvoqgNsNyrrZTnSgoLzdxr89FGHZCoSoAK8gfgFHuO54B
+ lI8QOfPDG9WDPJ66HCodjTlBEr/Cwq6GruxS5i2Y33YVqxvFvDa1tUtl+iJ2SWKS9kCai2DR
+ 3BwVONJEYSDQaven/EHMlY1q8Vln3lGPsS11vSUK3QcNJjmrgYxH5KsVsf6PNRj9mp8Z1kIG
+ qjRx08+nnyStWC0gZH6NrYyS9rpqH3j+hA2WcI7De51L4Rv9pFwzp161mvtc6eC/GxaiUGuH
+ BNAVP0PY0fqvIC68p3rLIAW3f97uv4ce2RSQ7LbsPsimOeCo/5vgS6YQsj83E+AipPr09Caj
+ 0hloj+hFoqiticNpmsxdWKoOsV0PftcQvBCCYuhKbZV9s5hjt9qn8CE86A5g5KqDf83Fxqm/
+ vXKgHNFHE5zgXGZnrmaf6resQzbvJHO0Fb0CcIohzrpPaL3YepcLDoCCgElGMGQjdCcSQ+Ci
+ FCRl0Bvyj1YZUql+ZkptgGjikQARAQABwsFfBBgBAgAJBQJUY85qAhsMAAoJEGg1lTBwyZKw
+ l4IQAIKHs/9po4spZDFyfDjunimEhVHqlUt7ggR1Hsl/tkvTSze8pI1P6dGp2XW6AnH1iayn
+ yRcoyT0ZJ+Zmm4xAH1zqKjWplzqdb/dO28qk0bPso8+1oPO8oDhLm1+tY+cOvufXkBTm+whm
+ +AyNTjaCRt6aSMnA/QHVGSJ8grrTJCoACVNhnXg/R0g90g8iV8Q+IBZyDkG0tBThaDdw1B2l
+ asInUTeb9EiVfL/Zjdg5VWiF9LL7iS+9hTeVdR09vThQ/DhVbCNxVk+DtyBHsjOKifrVsYep
+ WpRGBIAu3bK8eXtyvrw1igWTNs2wazJ71+0z2jMzbclKAyRHKU9JdN6Hkkgr2nPb561yjcB8
+ sIq1pFXKyO+nKy6SZYxOvHxCcjk2fkw6UmPU6/j/nQlj2lfOAgNVKuDLothIxzi8pndB8Jju
+ KktE5HJqUUMXePkAYIxEQ0mMc8Po7tuXdejgPMwgP7x65xtfEqI0RuzbUioFltsp1jUaRwQZ
+ MTsCeQDdjpgHsj+P2ZDeEKCbma4m6Ez/YWs4+zDm1X8uZDkZcfQlD9NldbKDJEXLIjYWo1PH
+ hYepSffIWPyvBMBTW2W5FRjJ4vLRrJSUoEfJuPQ3vW9Y73foyo/qFoURHO48AinGPZ7PC7TF
+ vUaNOTjKedrqHkaOcqB185ahG2had0xnFsDPlx5y
+In-Reply-To: <cc6d6e0be9b4fb61228f42ad82a057f60a1c1e12.camel@surriel.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 8y4aOpmRfA2PO1Qffh1I4_FYMo2mbQwd
-X-Proofpoint-GUID: 8y4aOpmRfA2PO1Qffh1I4_FYMo2mbQwd
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 adultscore=0
- mlxlogscore=947 bulkscore=0 impostorscore=0 mlxscore=0 suspectscore=0
- spamscore=0 priorityscore=1501 lowpriorityscore=0 phishscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412040005
 
-
-
-On 12/4/2024 10:43 AM, Dmitry Baryshkov wrote:
-> On Wed, Dec 04, 2024 at 09:13:43AM +1100, Amirreza Zarrabi wrote:
->> Based on our discussions, we implemented significant changes. We essentially
->> rewrote most of the files and altered the overall direction, except for a
->> couple of files. The changelog entry would have been extensive.
+On 12/3/24 12:07, Rik van Riel wrote:
+> The tlb_flush2 threaded test does not only madvise in a
+> loop, but also mmap and munmap from inside every thread.
 > 
-> At least some changelog should be provided, even if tells "reworked to
-> use TEE framework, made it jump over the head and tie the shoelaces".
+> This should create massive contention on the mmap_lock,
+> resulting in threads going to sleep while waiting in
+> mmap and munmap.
 > 
+> https://github.com/antonblanchard/will-it-scale/blob/master/tests/tlb_flush2.c
 
-Sure, I'll provide some changelog.
+Oh, wow, it only madvise()'s a 1MB allocation before doing the
+munmap()/mmap(). I somehow remembered it being a lot larger. And, yeah,
+I see a ton of idle time which would be 100% explained by mmap_lock
+contention.
 
-> Also please don't top-post, this style is frowned upon in the mailing
-> list discussions, it breaks the logic of reading.
-> 
+Did the original workload that you care about have idle time?
 
-;) Oops, that shouldn't have been sent out like this. My apologies.
-I'll ensure it doesn't happen again..
-
-- Amir
-
->>
->> - Amir
->>
->> On 12/3/2024 5:06 PM, Trilok Soni wrote:
->>> On 12/2/2024 8:19 PM, Amirreza Zarrabi wrote:
->>>> This patch series introduces a Trusted Execution Environment (TEE)
->>>> driver for Qualcomm TEE (QTEE). QTEE enables Trusted Applications (TAs)
->>>> and services to run securely. It uses an object-based interface, where
->>>> each service is an object with sets of operations. Clients can invoke
->>>> these operations on objects, which can generate results, including other
->>>> objects. For example, an object can load a TA and return another object
->>>> that represents the loaded TA, allowing access to its services.
->>>
->>> The first patch series was RFC and now you had removed the RFC. Can you please
->>> provide the reasons?
->>>
->>> https://lwn.net/ml/all/20240702-qcom-tee-object-and-ioctls-v1-0-633c3ddf57ee@quicinc.com/
->>>
->>> I understand that you have now changed to tee framework but I want to check
->>> if we should continue with the version and increment here or start from [00]?
->>>
-> 
+I'm wondering if trimming mm_cpumask() on the way to idle but leaving it
+alone on a context switch to another thread is a good idea.
 
