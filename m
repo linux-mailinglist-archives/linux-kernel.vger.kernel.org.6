@@ -1,58 +1,58 @@
-Return-Path: <linux-kernel+bounces-431684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A40A79E43A5
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 19:45:05 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A5ED9E4117
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:18:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1A435B341FA
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:01:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D07C1B61DC1
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:02:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9A8A215F42;
-	Wed,  4 Dec 2024 16:58:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37108217657;
+	Wed,  4 Dec 2024 16:58:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aOP6CR9x"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sMV339sZ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E9112144D4;
-	Wed,  4 Dec 2024 16:58:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FE4C215F4B;
+	Wed,  4 Dec 2024 16:58:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733331504; cv=none; b=CdwMJ2k5kSJyR2OHnU2zMVCDjbMb+v9sdL0j1kKPpw13C+wJvlE+cnDxYGOvulCwsjwHR8Ygp4zjShB7829YK8qYc515A1ozR4tYD0ibgoYVRdrN7Yfae2oc8/3EfFmLS2SYD/9FuAR2X2paUSCy8cwmhSWtB+LZnNl2jjZe8IE=
+	t=1733331508; cv=none; b=dmaDfKTrMuhyjx0gnB47N0vk+49hY5cQhIFJkk85avhzs4V3K+0I+0H7UVlaMvDGOY8L9+izZ6GQwpWqdHTDgNE466kQKglYPjI8AkxYD18hq3lkGsYMnebMj/+/lwIIHQUPrharwjMpltdkaOH6FSVkA7wjOduCz2/wm4d8yQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733331504; c=relaxed/simple;
-	bh=+X1/Nu5CoD/sFJfWzapKZW1fSBzONFEp4WsLJt5tBFM=;
+	s=arc-20240116; t=1733331508; c=relaxed/simple;
+	bh=ShxyKbUZbqLWskYD7MScECKc0N7WMzo8edmStbKj94g=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=mpJg6RfdhfBYb501HNDCKgYo+OicZ7CB1yp+I1lGmNz+DWeHepknNida4Q7ZJ6t79q5A5XdBHZtg3LyMvVhCeDtyoGK9j2MCj/+ORdJygXii4RNj579/3RCqvWuHD+Nku2SjN6VgtquqWCDBIoMI5RZ/cOUb9PqQerrKxLVZq40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aOP6CR9x; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78FBBC4CED1;
-	Wed,  4 Dec 2024 16:58:22 +0000 (UTC)
+	 MIME-Version; b=qmdOIY1smmk6VmN59U59/T5C08oogXpYZNPsS0Iahd8/LWFHc9zKmyPgSSxgrcOE119b+3RwDADOEkt5F/k+AqPn9A+NiFrRO2AGgbUX8iSn7ZEsA+iqm9vAYQ0FtJZV+Lxz9YK+L7WnKzs63wPtIVM2wD4X5L4DfHym1oS9HvM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sMV339sZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD874C4CECD;
+	Wed,  4 Dec 2024 16:58:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733331503;
-	bh=+X1/Nu5CoD/sFJfWzapKZW1fSBzONFEp4WsLJt5tBFM=;
+	s=k20201202; t=1733331507;
+	bh=ShxyKbUZbqLWskYD7MScECKc0N7WMzo8edmStbKj94g=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=aOP6CR9x1MSXJrkzdipFL7zDncCk2Thxf059pgA/sW+3ySc/PeajnF2NklWOgKgPR
-	 qDUYzE96KmEgvZV+zb7fcYB2Us8Q2XZppAo+uZL0OWWEe4wgw8v6+Em4PQzWUIhefd
-	 Ad9sARNwO4mv8wuDT2H8l7LpYo0VXodwiCX3rSyAE2Uv1KQiVRweTpkvbjQN8axGJH
-	 YhW86EqE2taRGhinPtKuZzwrjuBNi4Z8dpw5ec2hl09ollhAk9AfhtzVcY1JR3+SKM
-	 Ka5z7ZddkayW54a35jTNRpiZ5JJR2EBm0wRJtYSKuTHhT4MnnkLnThWGEjE0/VfyvG
-	 /aGN3V4EKMVpg==
+	b=sMV339sZZ7uiJGnGydhXEFB6tzR9a5kz6iZWmSFrp0c76ISQlIpGdwS7puiDgjdm6
+	 06mSjJYTMgDaJgjGUrV2/cwaJRtNvSKLruKwM70CYoAGOdhc4lfK2h/QIioZA7iepO
+	 Rwp/GZIQmodI7qh28P6M5vtBhhBkzBstYag/IWVd70pciEjtXLR9kG8FNId1D5jLZy
+	 L1hI5E8f6qnrzX8tBXqpG2pJ1JtksEP5sh4Kh/JTOmeA4Jfo5K210/awlm20IDH3Fv
+	 YyL4eTwduGlattMdzAdV/hTpBsx8g5bT2Q0Pw3cIwPLDlJJ53Pi3heeKDpvLLzQvHg
+	 vzje4Y5nVlpAg==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Jason Gunthorpe <jgg@nvidia.com>,
-	Alejandro Jimenez <alejandro.j.jimenez@oracle.com>,
-	Joerg Roedel <jroedel@suse.de>,
+Cc: Justin Tee <justin.tee@broadcom.com>,
+	"Martin K . Petersen" <martin.petersen@oracle.com>,
 	Sasha Levin <sashal@kernel.org>,
-	joro@8bytes.org,
-	will@kernel.org,
-	iommu@lists.linux.dev
-Subject: [PATCH AUTOSEL 6.12 14/36] iommu/amd: Fix corruption when mapping large pages from 0
-Date: Wed,  4 Dec 2024 10:45:30 -0500
-Message-ID: <20241204154626.2211476-14-sashal@kernel.org>
+	james.smart@broadcom.com,
+	dick.kennedy@broadcom.com,
+	James.Bottomley@HansenPartnership.com,
+	linux-scsi@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.12 17/36] scsi: lpfc: Call lpfc_sli4_queue_unset() in restart and rmmod paths
+Date: Wed,  4 Dec 2024 10:45:33 -0500
+Message-ID: <20241204154626.2211476-17-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20241204154626.2211476-1-sashal@kernel.org>
 References: <20241204154626.2211476-1-sashal@kernel.org>
@@ -67,80 +67,181 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.12.1
 Content-Transfer-Encoding: 8bit
 
-From: Jason Gunthorpe <jgg@nvidia.com>
+From: Justin Tee <justin.tee@broadcom.com>
 
-[ Upstream commit e3a682eaf2af51a83f5313145ef592ce50fa787f ]
+[ Upstream commit d35f7672715d1ff3e3ad9bb4ae6ac6cb484200fe ]
 
-If a page is mapped starting at 0 that is equal to or larger than can fit
-in the current mode (number of table levels) it results in corrupting the
-mapping as the following logic assumes the mode is correct for the page
-size being requested.
+During initialization, the driver allocates wq->pring in lpfc_wq_create
+and lpfc_sli4_queue_unset() is the only place where kfree(wq->pring) is
+called.
 
-There are two issues here, the check if the address fits within the table
-uses the start address, it should use the last address to ensure that last
-byte of the mapping fits within the current table mode.
+There is a possible memory leak in lpfc_sli_brdrestart_s4() (restart)
+and lpfc_pci_remove_one_s4() (rmmod) paths because there are no calls to
+lpfc_sli4_queue_unset() to kfree() the wq->pring.
 
-The second is if the mapping is exactly the size of the full page table it
-has to add another level to instead hold a single IOPTE for the large
-size.
+Fix by inserting a call to lpfc_sli4_queue_unset() in
+lpfc_sli_brdrestart_s4() and lpfc_sli4_hba_unset() routines.  Also, add
+a check for the SLI_ACTIVE flag before issuing the Q_DESTROY mailbox
+command.  If not set, then the mailbox command will obviously fail.  In
+such cases, skip issuing the mailbox command and only execute the driver
+resource clean up portions of the lpfc_*q_destroy routines.
 
-Since both corner cases require a 0 IOVA to be hit and doesn't start until
-a page size of 2^48 it is unlikely to ever hit in a real system.
-
-Reported-by: Alejandro Jimenez <alejandro.j.jimenez@oracle.com>
-Signed-off-by: Jason Gunthorpe <jgg@nvidia.com>
-Link: https://lore.kernel.org/r/0-v1-27ab08d646a1+29-amd_0map_jgg@nvidia.com
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
+Signed-off-by: Justin Tee <justin.tee@broadcom.com>
+Link: https://lore.kernel.org/r/20241031223219.152342-4-justintee8345@gmail.com
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/iommu/amd/io_pgtable.c | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+ drivers/scsi/lpfc/lpfc_init.c |  2 ++
+ drivers/scsi/lpfc/lpfc_sli.c  | 41 ++++++++++++++++++++++++++++++-----
+ 2 files changed, 38 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/iommu/amd/io_pgtable.c b/drivers/iommu/amd/io_pgtable.c
-index 804b788f3f167..f3399087859fd 100644
---- a/drivers/iommu/amd/io_pgtable.c
-+++ b/drivers/iommu/amd/io_pgtable.c
-@@ -118,6 +118,7 @@ static void free_sub_pt(u64 *root, int mode, struct list_head *freelist)
-  */
- static bool increase_address_space(struct amd_io_pgtable *pgtable,
- 				   unsigned long address,
-+				   unsigned int page_size_level,
- 				   gfp_t gfp)
- {
- 	struct io_pgtable_cfg *cfg = &pgtable->pgtbl.cfg;
-@@ -133,7 +134,8 @@ static bool increase_address_space(struct amd_io_pgtable *pgtable,
+diff --git a/drivers/scsi/lpfc/lpfc_init.c b/drivers/scsi/lpfc/lpfc_init.c
+index 0dd451009b079..a3658ef1141b2 100644
+--- a/drivers/scsi/lpfc/lpfc_init.c
++++ b/drivers/scsi/lpfc/lpfc_init.c
+@@ -13518,6 +13518,8 @@ lpfc_sli4_hba_unset(struct lpfc_hba *phba)
+ 	/* Disable FW logging to host memory */
+ 	lpfc_ras_stop_fwlog(phba);
  
- 	spin_lock_irqsave(&domain->lock, flags);
++	lpfc_sli4_queue_unset(phba);
++
+ 	/* Reset SLI4 HBA FCoE function */
+ 	lpfc_pci_function_reset(phba);
  
--	if (address <= PM_LEVEL_SIZE(pgtable->mode))
-+	if (address <= PM_LEVEL_SIZE(pgtable->mode) &&
-+	    pgtable->mode - 1 >= page_size_level)
- 		goto out;
+diff --git a/drivers/scsi/lpfc/lpfc_sli.c b/drivers/scsi/lpfc/lpfc_sli.c
+index 2ec6e55771b45..6748fba48a07e 100644
+--- a/drivers/scsi/lpfc/lpfc_sli.c
++++ b/drivers/scsi/lpfc/lpfc_sli.c
+@@ -5291,6 +5291,8 @@ lpfc_sli_brdrestart_s4(struct lpfc_hba *phba)
+ 			"0296 Restart HBA Data: x%x x%x\n",
+ 			phba->pport->port_state, psli->sli_flag);
  
- 	ret = false;
-@@ -163,18 +165,21 @@ static u64 *alloc_pte(struct amd_io_pgtable *pgtable,
- 		      gfp_t gfp,
- 		      bool *updated)
- {
-+	unsigned long last_addr = address + (page_size - 1);
- 	struct io_pgtable_cfg *cfg = &pgtable->pgtbl.cfg;
- 	int level, end_lvl;
- 	u64 *pte, *page;
++	lpfc_sli4_queue_unset(phba);
++
+ 	rc = lpfc_sli4_brdreset(phba);
+ 	if (rc) {
+ 		phba->link_state = LPFC_HBA_ERROR;
+@@ -17625,6 +17627,9 @@ lpfc_eq_destroy(struct lpfc_hba *phba, struct lpfc_queue *eq)
+ 	if (!eq)
+ 		return -ENODEV;
  
- 	BUG_ON(!is_power_of_2(page_size));
- 
--	while (address > PM_LEVEL_SIZE(pgtable->mode)) {
-+	while (last_addr > PM_LEVEL_SIZE(pgtable->mode) ||
-+	       pgtable->mode - 1 < PAGE_SIZE_LEVEL(page_size)) {
- 		/*
- 		 * Return an error if there is no memory to update the
- 		 * page-table.
- 		 */
--		if (!increase_address_space(pgtable, address, gfp))
-+		if (!increase_address_space(pgtable, last_addr,
-+					    PAGE_SIZE_LEVEL(page_size), gfp))
- 			return NULL;
++	if (!(phba->sli.sli_flag & LPFC_SLI_ACTIVE))
++		goto list_remove;
++
+ 	mbox = mempool_alloc(eq->phba->mbox_mem_pool, GFP_KERNEL);
+ 	if (!mbox)
+ 		return -ENOMEM;
+@@ -17651,10 +17656,12 @@ lpfc_eq_destroy(struct lpfc_hba *phba, struct lpfc_queue *eq)
+ 				shdr_status, shdr_add_status, rc);
+ 		status = -ENXIO;
  	}
++	mempool_free(mbox, eq->phba->mbox_mem_pool);
+ 
++list_remove:
+ 	/* Remove eq from any list */
+ 	list_del_init(&eq->list);
+-	mempool_free(mbox, eq->phba->mbox_mem_pool);
++
+ 	return status;
+ }
+ 
+@@ -17682,6 +17689,10 @@ lpfc_cq_destroy(struct lpfc_hba *phba, struct lpfc_queue *cq)
+ 	/* sanity check on queue memory */
+ 	if (!cq)
+ 		return -ENODEV;
++
++	if (!(phba->sli.sli_flag & LPFC_SLI_ACTIVE))
++		goto list_remove;
++
+ 	mbox = mempool_alloc(cq->phba->mbox_mem_pool, GFP_KERNEL);
+ 	if (!mbox)
+ 		return -ENOMEM;
+@@ -17707,9 +17718,11 @@ lpfc_cq_destroy(struct lpfc_hba *phba, struct lpfc_queue *cq)
+ 				shdr_status, shdr_add_status, rc);
+ 		status = -ENXIO;
+ 	}
++	mempool_free(mbox, cq->phba->mbox_mem_pool);
++
++list_remove:
+ 	/* Remove cq from any list */
+ 	list_del_init(&cq->list);
+-	mempool_free(mbox, cq->phba->mbox_mem_pool);
+ 	return status;
+ }
+ 
+@@ -17737,6 +17750,10 @@ lpfc_mq_destroy(struct lpfc_hba *phba, struct lpfc_queue *mq)
+ 	/* sanity check on queue memory */
+ 	if (!mq)
+ 		return -ENODEV;
++
++	if (!(phba->sli.sli_flag & LPFC_SLI_ACTIVE))
++		goto list_remove;
++
+ 	mbox = mempool_alloc(mq->phba->mbox_mem_pool, GFP_KERNEL);
+ 	if (!mbox)
+ 		return -ENOMEM;
+@@ -17762,9 +17779,11 @@ lpfc_mq_destroy(struct lpfc_hba *phba, struct lpfc_queue *mq)
+ 				shdr_status, shdr_add_status, rc);
+ 		status = -ENXIO;
+ 	}
++	mempool_free(mbox, mq->phba->mbox_mem_pool);
++
++list_remove:
+ 	/* Remove mq from any list */
+ 	list_del_init(&mq->list);
+-	mempool_free(mbox, mq->phba->mbox_mem_pool);
+ 	return status;
+ }
+ 
+@@ -17792,6 +17811,10 @@ lpfc_wq_destroy(struct lpfc_hba *phba, struct lpfc_queue *wq)
+ 	/* sanity check on queue memory */
+ 	if (!wq)
+ 		return -ENODEV;
++
++	if (!(phba->sli.sli_flag & LPFC_SLI_ACTIVE))
++		goto list_remove;
++
+ 	mbox = mempool_alloc(wq->phba->mbox_mem_pool, GFP_KERNEL);
+ 	if (!mbox)
+ 		return -ENOMEM;
+@@ -17816,11 +17839,13 @@ lpfc_wq_destroy(struct lpfc_hba *phba, struct lpfc_queue *wq)
+ 				shdr_status, shdr_add_status, rc);
+ 		status = -ENXIO;
+ 	}
++	mempool_free(mbox, wq->phba->mbox_mem_pool);
++
++list_remove:
+ 	/* Remove wq from any list */
+ 	list_del_init(&wq->list);
+ 	kfree(wq->pring);
+ 	wq->pring = NULL;
+-	mempool_free(mbox, wq->phba->mbox_mem_pool);
+ 	return status;
+ }
+ 
+@@ -17850,6 +17875,10 @@ lpfc_rq_destroy(struct lpfc_hba *phba, struct lpfc_queue *hrq,
+ 	/* sanity check on queue memory */
+ 	if (!hrq || !drq)
+ 		return -ENODEV;
++
++	if (!(phba->sli.sli_flag & LPFC_SLI_ACTIVE))
++		goto list_remove;
++
+ 	mbox = mempool_alloc(hrq->phba->mbox_mem_pool, GFP_KERNEL);
+ 	if (!mbox)
+ 		return -ENOMEM;
+@@ -17890,9 +17919,11 @@ lpfc_rq_destroy(struct lpfc_hba *phba, struct lpfc_queue *hrq,
+ 				shdr_status, shdr_add_status, rc);
+ 		status = -ENXIO;
+ 	}
++	mempool_free(mbox, hrq->phba->mbox_mem_pool);
++
++list_remove:
+ 	list_del_init(&hrq->list);
+ 	list_del_init(&drq->list);
+-	mempool_free(mbox, hrq->phba->mbox_mem_pool);
+ 	return status;
+ }
  
 -- 
 2.43.0
