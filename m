@@ -1,113 +1,197 @@
-Return-Path: <linux-kernel+bounces-431510-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E4D69E3E57
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:31:15 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA3BE9E3E5A
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:31:37 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 384BE16741B
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:31:29 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8C9A20B817;
+	Wed,  4 Dec 2024 15:31:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QpfgU2ty"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D33FF283080
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:31:13 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E88B420C479;
-	Wed,  4 Dec 2024 15:31:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="s7cfGAPq"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEF8F1F708F
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 15:31:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CF4C1B87C4
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 15:31:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733326262; cv=none; b=Tmw+UUntsDhlp9Lx7pFI6/PUZmxqfniLBO+JPRWfVyhgWYG074jptFhR0H/UZCmfnssosIMfnm1OCgAtMPrSqMzOmxC7/pHmvOoHTxcPCaopGoF1kAbnQsKos2vI+kdxEpJw2Jp7IZ8Hg2ew+CkiKmDJbIKwT0DYmCSckXwm5DY=
+	t=1733326271; cv=none; b=CFKrsrUqCDYDoI5VBeakNFno2SrSLWhUKHC9J5RB9i0eAuG6fmzBcyAxKZg0RSS/IQOOPS+OxzNu4Ftjusj+tLbIL4YU/mi9QYOhMI3ZjSHpqxVdUYUMim/s2rye8leA7hEtn1CT0uA8y86XOv/6ers6sQNzctMVMWBHUkq5g0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733326262; c=relaxed/simple;
-	bh=raZSwCSoIxMAMxZedsY7kgc1gQPkh8K/6vkYq+qQ0yU=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=cUAxwhQ6lgirhy0MVyfZUod3rR6Q5SnuZQm1JO0fFpV9FmtQkeaBCDjmp6bgTVyJOMoa+m+O/3cHz/QRjpYl4mTmBevSzAYrrrxvy7aigCRpwb5yKD+VYZKHJL6l+PjqVW2A2NAoVZUrB58AwstuTwdT4dmsyRb3pQenf9eaK68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=s7cfGAPq; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2e5efb04da7so6490093a91.0
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 07:31:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733326260; x=1733931060; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=LWzYXhh1XGle9PKP984gp5jQmjBdiOdHdzDrlgt7MZk=;
-        b=s7cfGAPqPixORq7s40p3eeNZ/H1XR5cPKckVKg9m2ggNuD61U8uFHMGNSh5YYHOw10
-         PWLRT8ocbR8jRE7eFe8qEQHHCvtINmDWRtHDPVIT8ZRQf2lijLxqDnx6ctnNzl8w7ltd
-         5XKX+vMjqscW+ArK9+OzUgcr9T9YzWGXmvw1ymuRLiWJ7nsdvE1n+GXFWU3WTC8hL6z9
-         vG4S6lHJUkQdTKys0Qy4BrcXPZlT7+wcqKlyr618RWtSi3AFrSuhxewrwPA6fIMjigMK
-         hLCupV5MSqWMJgG/O2IkIdW7D2a6fQcMMNadBY87dR3T9r2Xxus3VCMEhhT6b9r0V1fk
-         k/lw==
+	s=arc-20240116; t=1733326271; c=relaxed/simple;
+	bh=FnedYdliMkbNvjlTKXUvEgoTb3hgJGdO2wOtZxecK28=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=s0v1HX/0vjivc4FIDuttSXzbhMqT0lwPjMJcCMU+wDkNbFHjDKvVeFcfmJ7rwSi9M2RztqW61rixNp0WEA86CUjyFOc7+HsKF85Gu/iyMhxHLEURrnPe/2jKsFHmtCTdjwwtxmv+39skrgNKoK3ByjyMWJUxhTugswulbFZeWko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QpfgU2ty; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733326268;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=l9fhs8oLh1QjbfUj0vlrM+TGXkkJdF2GwEtvfsxMfMY=;
+	b=QpfgU2tyhl5hqyddIyJKgqqlVUWVbI9+zvHwRNAUfpmKaf/7eURvG491f3s/6LEbXOQYSE
+	+CqL7bfrummARaXZYdCQzmoLjFt4/5mPLMH4+Kk+OLrPiqFhyZA6x9dk71phDzHhajuztz
+	ZyZNv0/6rmgdMIFVh10Iv0gtClaPXRQ=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-86-j0eL1E2VOTy_n2NJgJIBxQ-1; Wed, 04 Dec 2024 10:31:05 -0500
+X-MC-Unique: j0eL1E2VOTy_n2NJgJIBxQ-1
+X-Mimecast-MFC-AGG-ID: j0eL1E2VOTy_n2NJgJIBxQ
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-385e1339790so3131841f8f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 07:31:05 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733326260; x=1733931060;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LWzYXhh1XGle9PKP984gp5jQmjBdiOdHdzDrlgt7MZk=;
-        b=wdm6I2gVUTYC6WS6h0RqJ+ml5tpEhZ3ArEv718rj9lHIUtln5i1tCulIwdYvXI3Udl
-         FBCDleVG8vQVWl6YbborxWtkowPCdTOyS4xSG+31UQ0FfB0TdU+sOVkFw2swBlvNJ66V
-         Misp96UieeapqUM/qJxRg2uN5H9PYmJ7QpkX88TFbbUj4gm9MMmGClp0EUy8tBH7VEqY
-         uTDvJHXer2lhCLA0YPrX+DJ+DcrRiBrD5//nToPm5bUe9uDZlX4WKSv2HGCSbAHKv0a3
-         7TQow1LY/lC9OHoOsS1orZToMTp73SFibD/c8eBHhndXlHIX6WYejBT2XLff9mAZqYIe
-         mc0Q==
-X-Gm-Message-State: AOJu0Yz8+kKT4lW+MXem3OYho7uyQKnEN7vh7OBt12XfqAsZAAdFjPWD
-	4s2DkVWBCFM3nKKeRhj4YCPMWHe87hkCfH6x19ZlRNUxCoHCtuWYjI6fv1TqhaNHB7dJDvqZUJS
-	BFA==
-X-Google-Smtp-Source: AGHT+IG8hKZnFRirR/ao2e8umiwaB/AV15nxqrbtp2UlNP2cgH4Q1y4HPfvHflLtOx0OwlnKrZjyoia9Lc8=
-X-Received: from pjj15.prod.google.com ([2002:a17:90b:554f:b0:2e5:5ffc:1c36])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:1a8e:b0:2ee:f550:3848
- with SMTP id 98e67ed59e1d1-2ef011e3802mr8465345a91.5.1733326260234; Wed, 04
- Dec 2024 07:31:00 -0800 (PST)
-Date: Wed, 4 Dec 2024 07:30:58 -0800
-In-Reply-To: <20241204103042.1904639-12-arnd@kernel.org>
+        d=1e100.net; s=20230601; t=1733326264; x=1733931064;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=l9fhs8oLh1QjbfUj0vlrM+TGXkkJdF2GwEtvfsxMfMY=;
+        b=DBq4OHTN+Yv4enRR+rgI5a9/LFEuxFdJWKX2jpQMfQp34zGgQTCr3BxmjGrWRJOK87
+         TH0LbezbrJC4Hphy1md6WSPabJRCn+a/ru4d9KTtQHnvx9rkvsOgf1BJ96ikBlrG96gx
+         vZyB2RLk+HUfw2P31xloVG1O5vcjzsvasHmaZ6Wq4ZJzjg7KqdNFmrqCAyxMa8X66JpB
+         MgANaVim6qV6cQLbZ8/pINS3UMoF0xfqZb25i4lhfWCpfNywd25P7fRHtpUB0HIBUoCk
+         S+9dOThCE2o+0CpdwESkCZ0CvywXU67HjoOTpyzvxOMOwplkvjclAj0aPRV9aZR3QP9R
+         07IQ==
+X-Gm-Message-State: AOJu0Yx8vZKDJXNEHdz4Esu0pGBORCof/VSAkLUuaAIMXnHBHQMpi5Tf
+	rM7dHI89GQmI5J9cpgG92lCe8yi+LWWrO2AeVQ102IlQj2bbuJ7nNPKmNH23V6gqcW+o0/1v1xv
+	dJuuHG1yzh2wdMKAmeyYkiraGZguqXnNHXey4KQnsieM2baIuJsRtR8DKh676pMfrQ1F4riVN3A
+	HTxAHr3UlUw5VhQCiAzDejNRTi5Eja3nHqZ3SB4hTzHHZD
+X-Gm-Gg: ASbGncsGKXPjNEZUbEZiMMmeEFb+d5CNu8ZviaeXZv7nQgBKR+DA+KFE8VhZQq4ASUD
+	IiS56ufmG49QyX57+uXUYiwbdGqKu2pj8jCP3LHRueKo2s02b+qs+wMRYUKSVfNejdffJ4dWTz5
+	paXWloFxucJnppay4jx7aD5stir1DtpXWosr5aMEqt3LK+Lx4SIzJHyGDmLQzPgk/fxkfi6HUIl
+	7eq0SZHl60Fq1vhsK/gKFCdZ5FBtBM7O4MG7ZaSxp3OrRSqeiaEVISutfKwsx+zWt5EiFYuUzsa
+	l29pRTqKHqdjSZqxjRR7YWhFi2bAwJeSs/Y=
+X-Received: by 2002:a05:6000:1845:b0:385:fb8d:865b with SMTP id ffacd0b85a97d-385fd43b822mr6278190f8f.48.1733326264438;
+        Wed, 04 Dec 2024 07:31:04 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFK3GfFKAdadjhJ8yUNAOcQLour5Trqk91M2KqVctSQG28t/yBAlyfLEoVLJ5g8CHGaYcEHVA==
+X-Received: by 2002:a05:6000:1845:b0:385:fb8d:865b with SMTP id ffacd0b85a97d-385fd43b822mr6278120f8f.48.1733326263725;
+        Wed, 04 Dec 2024 07:31:03 -0800 (PST)
+Received: from localhost (p200300cbc70be10038d68aa111b0a20a.dip0.t-ipconnect.de. [2003:cb:c70b:e100:38d6:8aa1:11b0:a20a])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-385dc169d79sm16684772f8f.92.2024.12.04.07.31.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 04 Dec 2024 07:31:02 -0800 (PST)
+From: David Hildenbrand <david@redhat.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-mm@kvack.org,
+	David Hildenbrand <david@redhat.com>,
+	Muchun Song <muchun.song@linux.dev>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Peter Xu <peterx@redhat.com>,
+	Guillaume Morin <guillaume@morinfr.org>
+Subject: [PATCH v1] mm/hugetlb: don't map folios writable without VM_WRITE when copying during fork()
+Date: Wed,  4 Dec 2024 16:31:00 +0100
+Message-ID: <20241204153100.1967364-1-david@redhat.com>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241204103042.1904639-1-arnd@kernel.org> <20241204103042.1904639-12-arnd@kernel.org>
-Message-ID: <Z1B1phcpbiYWLgCD@google.com>
-Subject: Re: [PATCH 11/11] x86: drop 32-bit KVM host support
-From: Sean Christopherson <seanjc@google.com>
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org, 
-	Arnd Bergmann <arnd@arndb.de>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
-	"H. Peter Anvin" <hpa@zytor.com>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	Andy Shevchenko <andy@kernel.org>, Matthew Wilcox <willy@infradead.org>, 
-	Davide Ciminaghi <ciminaghi@gnudd.com>, Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Wed, Dec 04, 2024, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
-> There are very few 32-bit machines that support KVM, the main exceptions
-> are the "Yonah" Generation Xeon-LV and Core Duo from 2006 and the Atom
-> Z5xx "Silverthorne" from 2008 that were all release just before their
-> 64-bit counterparts.
-> 
-> Using KVM as a host on a 64-bit CPU using a 32-bit kernel generally
-> works fine, but is rather pointless since 64-bit kernels are much better
-> supported and deal better with the memory requirements of VM guests.
-> 
-> Drop all the 32-bit-only portions and the "#ifdef CONFIG_X86_64" checks
-> of the x86 KVM code and add a Kconfig dependency to only allow building
-> this on 64-bit kernels.
+If we have to trigger a hugetlb folio copy during fork() because the anon
+folio might be pinned, we currently unconditionally create a writable
+PTE.
 
-While 32-bit KVM doesn't need to be a thing for x86 usage, Paolo expressed concerns
-that dropping 32-bit support on x86 would cause general 32-bit KVM support to
-bitrot horribly.  32-bit x86 doesn't get much testing, but I do at least boot VMs
-with it on a semi-regular basis.  I don't think we can say the same for other
-architectures with 32-bit variants.
+However, the VMA might not have write permissions (VM_WRITE) at that
+point.
 
-PPC apparently still has 32-bit users[1][2], and 32-bit RISC-V is a thing, so I
-think we're stuck with 32-bit x86 for the time being. :-(
+Fix it by checking the VMA for VM_WRITE. Make the code less error prone
+by moving checking for VM_WRITE into make_huge_pte(), and letting
+callers only specify whether we should try making it writable.
 
-[1] https://lore.kernel.org/all/87zg4aveow.fsf@mail.lhotse
-[2] https://lore.kernel.org/all/fc43f9eb-a60f-5c4a-a694-83029234a9c4@xenosoft.de
+A simple reproducer that longter-pins the folios using liburing to then
+mprotect(PROT_READ) the folios befor fork() [1] results in:
+
+Before:
+[FAIL] access should not have worked
+
+After:
+[PASS] access did not work as expected
+
+[1] https://gitlab.com/davidhildenbrand/scratchspace/-/raw/main/reproducers/hugetlb-mkwrite-fork.c
+
+This is rather a corner case, so stable might not be warranted.
+
+Fixes: 4eae4efa2c29 ("hugetlb: do early cow when page pinned on src mm")
+Cc: Muchun Song <muchun.song@linux.dev>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Peter Xu <peterx@redhat.com>
+Cc: Guillaume Morin <guillaume@morinfr.org>
+Signed-off-by: David Hildenbrand <david@redhat.com>
+---
+ mm/hugetlb.c | 18 ++++++------------
+ 1 file changed, 6 insertions(+), 12 deletions(-)
+
+diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+index 5c8de0f5c760..6db4e8176303 100644
+--- a/mm/hugetlb.c
++++ b/mm/hugetlb.c
+@@ -5141,12 +5141,12 @@ const struct vm_operations_struct hugetlb_vm_ops = {
+ };
+ 
+ static pte_t make_huge_pte(struct vm_area_struct *vma, struct page *page,
+-				int writable)
++		bool try_mkwrite)
+ {
+ 	pte_t entry;
+ 	unsigned int shift = huge_page_shift(hstate_vma(vma));
+ 
+-	if (writable) {
++	if (try_mkwrite && (vma->vm_flags & VM_WRITE)) {
+ 		entry = huge_pte_mkwrite(huge_pte_mkdirty(mk_huge_pte(page,
+ 					 vma->vm_page_prot)));
+ 	} else {
+@@ -5199,7 +5199,7 @@ static void
+ hugetlb_install_folio(struct vm_area_struct *vma, pte_t *ptep, unsigned long addr,
+ 		      struct folio *new_folio, pte_t old, unsigned long sz)
+ {
+-	pte_t newpte = make_huge_pte(vma, &new_folio->page, 1);
++	pte_t newpte = make_huge_pte(vma, &new_folio->page, true);
+ 
+ 	__folio_mark_uptodate(new_folio);
+ 	hugetlb_add_new_anon_rmap(new_folio, vma, addr);
+@@ -6223,8 +6223,7 @@ static vm_fault_t hugetlb_no_page(struct address_space *mapping,
+ 		hugetlb_add_new_anon_rmap(folio, vma, vmf->address);
+ 	else
+ 		hugetlb_add_file_rmap(folio);
+-	new_pte = make_huge_pte(vma, &folio->page, ((vma->vm_flags & VM_WRITE)
+-				&& (vma->vm_flags & VM_SHARED)));
++	new_pte = make_huge_pte(vma, &folio->page, vma->vm_flags & VM_SHARED);
+ 	/*
+ 	 * If this pte was previously wr-protected, keep it wr-protected even
+ 	 * if populated.
+@@ -6556,7 +6555,6 @@ int hugetlb_mfill_atomic_pte(pte_t *dst_pte,
+ 	spinlock_t *ptl;
+ 	int ret = -ENOMEM;
+ 	struct folio *folio;
+-	int writable;
+ 	bool folio_in_pagecache = false;
+ 
+ 	if (uffd_flags_mode_is(flags, MFILL_ATOMIC_POISON)) {
+@@ -6710,12 +6708,8 @@ int hugetlb_mfill_atomic_pte(pte_t *dst_pte,
+ 	 * For either: (1) CONTINUE on a non-shared VMA, or (2) UFFDIO_COPY
+ 	 * with wp flag set, don't set pte write bit.
+ 	 */
+-	if (wp_enabled || (is_continue && !vm_shared))
+-		writable = 0;
+-	else
+-		writable = dst_vma->vm_flags & VM_WRITE;
+-
+-	_dst_pte = make_huge_pte(dst_vma, &folio->page, writable);
++	_dst_pte = make_huge_pte(dst_vma, &folio->page,
++				 !wp_enabled && !(is_continue && !vm_shared));
+ 	/*
+ 	 * Always mark UFFDIO_COPY page dirty; note that this may not be
+ 	 * extremely important for hugetlbfs for now since swapping is not
+-- 
+2.47.1
+
 
