@@ -1,156 +1,155 @@
-Return-Path: <linux-kernel+bounces-431311-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4FE09E3BCF
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 14:56:03 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A5439E3BD2
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 14:56:34 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84A6B285CB2
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 13:56:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 08E1D166EF8
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 13:56:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD4B51F6686;
-	Wed,  4 Dec 2024 13:55:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PLbP6FLO"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 831131F666A;
+	Wed,  4 Dec 2024 13:56:27 +0000 (UTC)
+Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C5A31E0E18
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 13:55:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 860781F667B
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 13:56:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733320519; cv=none; b=X92Z6Z8wYvcqzgwjsjhfABQv9t2lDS/GYEkysMRvxAIqJXyyixSl769VjrAjIO7UprHH/RM0NH69OFavCvRZWOydSzkKYFE+xn8fO18VrHMvT2JO+9UBesOgaeBbbG+NTgdYMWJKreSaPdmvXkippPAFmGtB71PhUT+V3eG/y3o=
+	t=1733320587; cv=none; b=C/jPMz6BUSw4QyLRi7Jk/2jXVP+zAu8HWK3lq/WFfOrIRXKidT1rynDnZLxpF6dksUOrzzBqr7Itt90KcrDrCzg1/Opkas4UvTk59HuKEcLhco7vwchDpja+jXm33PfHbOPxdfnFpuDWF4tqtUMzEnsgp0ZX7FZg4kCiip5uzgc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733320519; c=relaxed/simple;
-	bh=zSlyAfMKjMlD5d4tkS5/g5brX19pSMk5FQkVq3WQHgM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OUM5EZh4n876cw5EBiyIL0PoG3EzgvGYRQtlUpA1NpMDqVkDvVBBW/zjdhxKln+O4xjWSeD88BT4mujzGGqZA+kdHhtmpUNGGiNLGtfH/JEggV5hpgnvptrADN1ChKJkGubLtqwIvLf/hvSG1KGPJerj/wAbJZHKNkKI0BAIn1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PLbP6FLO; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-2155c25e9a4so124455ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 05:55:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733320517; x=1733925317; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=x638IQv73ev3kL+5x95GVwF3inC5lSOYKtCxOMkEmgY=;
-        b=PLbP6FLO3lnu6g7cQ1taD6kDEeSVFztIbHIqy9/ujj3B8YaxPb+eZ5qy/SJXnOXBz8
-         okC722VT0fNR3a6bhF0mUjKxsHv1ATqqbL8/BNRsVQitQwN99KTGawxYRVewJ+Ni/Olw
-         ZcrONEJmujfW8nJLDCRiH0mbZcR7+YvhT9X8m+VIYKWu20QimsKXkhXEw18t4mxmxEG2
-         LwOMRne0Of+RUnUtfBMdRS1hxcIWtMuX2Mb51WCK+/G493NawgkODzCOhNMk4hmUT6XM
-         OC7WYl9uTImn36BVQS3hsTl9MFk2Yp3GSpNayAE6Onr9QkhkwwNDgJiTIsBHd47G6o0G
-         ZEbA==
+	s=arc-20240116; t=1733320587; c=relaxed/simple;
+	bh=IIqv0YfRrcq4yOjAPt46G57LVEad234saSZ2S7kHmU8=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=OvlxGODQxXGWRqCr13KlaQDpLRAIUabTH6V1oD4Bx9pL7ALetJ2Tfda2l2lwMryX5rULULBY8hoPZ6f80TmOk8u4MUqwSLKCRestpnAVG1C0C/0YcHlCGgdxrIrIRwn5MZ4S0/ubhdUJRVy0YTMhhdNkPecMG6fmLiOgDQ7dSLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3a7d85ab308so67810575ab.3
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 05:56:25 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733320517; x=1733925317;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=x638IQv73ev3kL+5x95GVwF3inC5lSOYKtCxOMkEmgY=;
-        b=GsNjAr1lh8wlkO0hXtdtHaymG+Jwtkh+DaiQxCZh3C43fddlM7kYHGdeaV4tnDxLvw
-         ehysJ1LOCw743to+Ie17qJgs38jlrxqcaOyXEJvz6+iV0HpqXdH+1WSZzjFwfQw3uUVu
-         pl31beyBDq50dNcSxp+Mf+1hBx9Fs6i/HdnG2atpo/+qQ55141ESpmko99YXyeAXJzA1
-         vY5NDyVSpk/GiwNwd3FM0ayfJTB159C6SRalMP/sjL4Xupcjk8UAsBqhiR9kygBgdlgG
-         nVpxd+9jSZ9QcqOMEBm73/3g8fQcIpLFI+ywTKYpsZ+Mn45kTL2wcao1XbSG61ZFuCCv
-         5rag==
-X-Forwarded-Encrypted: i=1; AJvYcCVJojrMSIOUJQv84isnfwT3FFo3VMWlycwYl5a62+0CzsZzey6gHdQ+3SjHF7EZgre984DJVnri1KcFvzw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0TD2ChKSV8fQLXKlx0n4D55aOYtK5Ts8J7nHm2KA8tcdqr8fX
-	3EkZvteq9qLMV3vix1PwtrORy1Tgukm9m6atnlmC86WVBUQvT46esG3JO4Bo6w==
-X-Gm-Gg: ASbGncsWo7S7J+nqlQkCyDucCBDLdweNI/HMNhzZ3tNU6pal3oH2kbllKEyZhp2+cMF
-	mhpJ43/H1CiAFaOCMroSsB5ZSIrtbJBp0kWcI+8O0q666YmbrVI/k0MlyXZX/Cq+3n0bzlY22Oh
-	4yLm8yd2FLUIRDbVwk+A8a8G8SqJuNXKVi2LOrRXHum09/Vss7Wv+QEbDCkdd5bslSjiTw0E26C
-	KWEfQOdFT8ia/NDiIn434ntUFApTjeyDvVGgHDjQJ+evrSxr4g2oR81ogbuD8xfv7P5MCHkBpQ1
-	lwcLhJTdl/Za
-X-Google-Smtp-Source: AGHT+IEM3LT+EA003bGz4ycOOOax+XMH5GTTK/mIB2/u5KP6rMr/ViGcyyN7o/Y6fCR3ZJjJco8j9g==
-X-Received: by 2002:a17:903:1381:b0:215:7ced:9d66 with SMTP id d9443c01a7336-215d6c3e407mr2485915ad.10.1733320516640;
-        Wed, 04 Dec 2024 05:55:16 -0800 (PST)
-Received: from google.com (226.75.127.34.bc.googleusercontent.com. [34.127.75.226])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72565b4868dsm7404337b3a.105.2024.12.04.05.55.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Dec 2024 05:55:16 -0800 (PST)
-Date: Wed, 4 Dec 2024 13:55:12 +0000
-From: Carlos Llamas <cmllamas@google.com>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
-	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	linux-kernel@vger.kernel.org, kernel-team@android.com,
-	Matthew Wilcox <willy@infradead.org>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>
-Subject: Re: [PATCH v6 4/9] binder: store shrinker metadata under
- page->private
-Message-ID: <Z1BfQE6IMI9nqUIB@google.com>
-References: <20241203215452.2820071-1-cmllamas@google.com>
- <20241203215452.2820071-5-cmllamas@google.com>
- <CAH5fLgiarbw82R34Ct=GP3-6ophJOuhuRoerr427gHsEPy+Rcg@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1733320584; x=1733925384;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=PeKQvVqhvqQ9Vgj6AG4YhaLPHD9fEEuLtDLtiQxASck=;
+        b=mrOifzevSoePJ625XsbHOxt9Huk+cDA8r8fd5BI0uZpQQWJcuJok0BNBqMw1ox9Zhr
+         qttHlmhkEOHPWOWljTTlwpiDHo06CPMepKgdJ1S9uGaFPq/LJuV/T3Oldb/QRQtZHfsM
+         GbCoZhaMmicVfhEr8l8G4fC+oCjxxq/MmKGSpENoUsbrIKhDvEI0c44r8tibT0YW0RDP
+         Jy2REbUVw5cbOwELA7TrvIol7FGchv9Yik3ju6SrMMIy3e8xxWoYznIhcPAZIHFkwVt6
+         RjXpiBeDwkOa5wJhSuWQ1yVd/aeZC81xFzzjbv14hi/yfpr+VqbX5/8rCebWJvi0+56z
+         0jKg==
+X-Forwarded-Encrypted: i=1; AJvYcCXrnOSwKMWPWYA6DnFBWSleZUMqL0QWFY3ZHezM5updQ8RRLTrb1zN5WjpzxZrWiy5SBBZvc01T003YdNo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHN1KT89cnmU2DyLTTPHoi3Iap1peJ0FW6qNxMUaS92AtFrLWr
+	JEYx6SYuncQ/qmqY/jYDvMkJP4FmaR6lAPu0eKhwc+3OjlSXj1ciE9CtqtX5mM0H1KOCAI32kAA
+	/MMIWKOs9aOf5ECEQ94X+oMuv+akAGi324mnAkXKq1MDQfiy8KuKfMis=
+X-Google-Smtp-Source: AGHT+IEwne+ZNYYPuUTkWa6QoLT5wSf5ZPppwzlEoKbEroRmt/jwLFqINAbcmY8JM/5X63zl37/pKsn98PMHMhvHoV+pCFjd3ryL
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAH5fLgiarbw82R34Ct=GP3-6ophJOuhuRoerr427gHsEPy+Rcg@mail.gmail.com>
+X-Received: by 2002:a05:6e02:3d88:b0:3a7:e86a:e812 with SMTP id
+ e9e14a558f8ab-3a7f9a8c510mr89331335ab.17.1733320584741; Wed, 04 Dec 2024
+ 05:56:24 -0800 (PST)
+Date: Wed, 04 Dec 2024 05:56:24 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67505f88.050a0220.17bd51.0069.GAE@google.com>
+Subject: [syzbot] [io-uring?] KASAN: null-ptr-deref Write in sys_io_uring_register
+From: syzbot <syzbot+092bbab7da235a02a03a@syzkaller.appspotmail.com>
+To: asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Dec 04, 2024 at 10:39:58AM +0100, Alice Ryhl wrote:
-> On Tue, Dec 3, 2024 at 10:56 PM Carlos Llamas <cmllamas@google.com> wrote:
-> >
-> > Instead of pre-allocating an entire array of struct binder_lru_page in
-> > alloc->pages, install the shrinker metadata under page->private. This
-> > ensures the memory is allocated and released as needed alongside pages.
-> >
-> > By converting the alloc->pages[] into an array of struct page pointers,
-> > we can access these pages directly and only reference the shrinker
-> > metadata where it's being used (e.g. inside the shrinker's callback).
-> 
-> Using many allocations instead of a single array will increase the
-> number of allocations a lot. Is it worth it?
+Hello,
 
-It's not a lot, is as needed. Yes, there will be some transactions that
-need to allocate a page and the metadata here and there. However, the
-vast majority will find an existing page.
+syzbot found the following issue on:
 
-Another way to think about this is how userspace defines the mmap size:
-It makes sense to leave some slack beyond the expected usage. This patch
-avoids preallocating all that memory for the "slack" which will end up
-unused most of the time.
+HEAD commit:    c245a7a79602 Add linux-next specific files for 20241203
+git tree:       linux-next
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=10ae840f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=af3fe1d01b9e7b7
+dashboard link: https://syzkaller.appspot.com/bug?extid=092bbab7da235a02a03a
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14a448df980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15cca330580000
 
-> 
-> > Rename struct binder_lru_page to struct binder_shrinker_mdata to better
-> > reflect its purpose. Add convenience functions that wrap the allocation
-> > and freeing of pages along with their shrinker metadata.
-> >
-> > Note I've reworked this patch to avoid using page->lru and page->index
-> > directly, as Matthew pointed out that these are being removed [1].
-> >
-> > Link: https://lore.kernel.org/all/ZzziucEm3np6e7a0@casper.infradead.org/ [1]
-> > Cc: Matthew Wilcox <willy@infradead.org>
-> > Cc: Liam R. Howlett <Liam.Howlett@oracle.com>
-> > Reviewed-by: Suren Baghdasaryan <surenb@google.com>
-> > Signed-off-by: Carlos Llamas <cmllamas@google.com>
-> 
-> [...]
-> 
-> > +static void binder_free_page(struct page *page)
-> > +{
-> > +       kfree((void *)page_private(page));
-> > +       __free_page(page);
-> 
-> I would cast the page_private to a pointer of the right type here.
-> There may be tools or future improvements to kfree that use the type
-> information.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/8cc90a2ea120/disk-c245a7a7.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/0f6b1a1a0541/vmlinux-c245a7a7.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/9fa3eac09ddc/bzImage-c245a7a7.xz
 
-Ok, I'll change this. There is also us humans that might benefit from
-using the explicit type for context.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+092bbab7da235a02a03a@syzkaller.appspotmail.com
 
---
-Carlos Llamas
+==================================================================
+BUG: KASAN: null-ptr-deref in instrument_atomic_read_write include/linux/instrumented.h:96 [inline]
+BUG: KASAN: null-ptr-deref in atomic_long_sub_and_test include/linux/atomic/atomic-instrumented.h:4521 [inline]
+BUG: KASAN: null-ptr-deref in put_cred_many include/linux/cred.h:255 [inline]
+BUG: KASAN: null-ptr-deref in put_cred include/linux/cred.h:269 [inline]
+BUG: KASAN: null-ptr-deref in io_unregister_personality io_uring/register.c:82 [inline]
+BUG: KASAN: null-ptr-deref in __io_uring_register io_uring/register.c:698 [inline]
+BUG: KASAN: null-ptr-deref in __do_sys_io_uring_register io_uring/register.c:902 [inline]
+BUG: KASAN: null-ptr-deref in __se_sys_io_uring_register+0x1227/0x3b60 io_uring/register.c:879
+Write of size 8 at addr 0000000000000406 by task syz-executor274/5828
+
+CPU: 1 UID: 0 PID: 5828 Comm: syz-executor274 Not tainted 6.13.0-rc1-next-20241203-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ print_report+0xe8/0x550 mm/kasan/report.c:492
+ kasan_report+0x143/0x180 mm/kasan/report.c:602
+ kasan_check_range+0x282/0x290 mm/kasan/generic.c:189
+ instrument_atomic_read_write include/linux/instrumented.h:96 [inline]
+ atomic_long_sub_and_test include/linux/atomic/atomic-instrumented.h:4521 [inline]
+ put_cred_many include/linux/cred.h:255 [inline]
+ put_cred include/linux/cred.h:269 [inline]
+ io_unregister_personality io_uring/register.c:82 [inline]
+ __io_uring_register io_uring/register.c:698 [inline]
+ __do_sys_io_uring_register io_uring/register.c:902 [inline]
+ __se_sys_io_uring_register+0x1227/0x3b60 io_uring/register.c:879
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f65bbcb03a9
+Code: 48 83 c4 28 c3 e8 37 17 00 00 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffe8fac7478 EFLAGS: 00000246 ORIG_RAX: 00000000000001ab
+RAX: ffffffffffffffda RBX: 000000000000371d RCX: 00007f65bbcb03a9
+RDX: 0000000000000000 RSI: 000000000000000a RDI: 0000000000000003
+RBP: 0000000000000003 R08: 00000000000ac5f8 R09: 00000000000ac5f8
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
+R13: 00007ffe8fac7648 R14: 0000000000000001 R15: 0000000000000001
+ </TASK>
+==================================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
