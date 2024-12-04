@@ -1,141 +1,137 @@
-Return-Path: <linux-kernel+bounces-432246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C87A19E4834
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 23:56:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 97BEC9E4830
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 23:55:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 886262815A9
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 22:56:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D82828139F
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 22:55:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A804F1B3955;
-	Wed,  4 Dec 2024 22:55:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C145D202C20;
+	Wed,  4 Dec 2024 22:55:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TYnWUYXl"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fpW9QQN8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37F461FC7C6;
-	Wed,  4 Dec 2024 22:55:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21CB11B3955;
+	Wed,  4 Dec 2024 22:55:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733352948; cv=none; b=UlLJXym8at+f2hS7yRrpmnPnXNp1zWrL78eedgucE7+VpX9OSJWXbRIUJdbOnNpvLPF+ICHTf/3Bfd4Mc7UKbACKcyxKLDXOZKEqz21uEO4PvQs33CzoQjD74mYDs4ENZLC8dPkK/7dtV4vYn0paXscxfpqMv/yaFAfYFFBJivQ=
+	t=1733352938; cv=none; b=AMFIqyQev0c+2XPP6BwsShvCs75SgImiV5MxHzCnOreJK5S+sthHhWtPG108gC8ZRSbEFVdGD78YZFlqLpy8Z6J4KhWjAchaw3cCVXUypPyqkow9UMAoonfw3kC+NGP4N5TaGWnW1VjNecHe/6yj6pJ79p2jpL3+tCXkqdivl7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733352948; c=relaxed/simple;
-	bh=cgJO1mT6QbFYcsRg42YFOL0quGCzPqrV4QxF7OZZOrE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JWB30fgLerv+nu7/unvdcuqDBHrE5mHO+egWmMKGflXlko+iB63oB+7TelZIEh3wWdaOy2TdjLDNeG4Xn+1g9sIk9SYn0w7ORx5SrGqSErfM/3nIM4sjkxqguMKbELC1QQq3X5m9gGmV//acnvAqsMl6u5jP/N5NC+khjV20Of4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TYnWUYXl; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733352946; x=1764888946;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=cgJO1mT6QbFYcsRg42YFOL0quGCzPqrV4QxF7OZZOrE=;
-  b=TYnWUYXlZkytAUJuVQpKZMzss0/R2NG4g6jgREQk9YCdIeeHGXaLY+hG
-   vRyUjIV3Of16WHPzviljXvLjQ3XOm60pMgjEfBAyzpqkLScY6kKmkLjIG
-   my5mTvq1Npv7lITP8ktOKTq/7HbeI2k0EHG62lHiwpJQVJ0MBXI1g6pbV
-   uchbBUoQ9cgugj9l2RKeVYkFk4/wCOSvFausJczaWdo/ZVZuqRD2ce6pm
-   QZQlqLco2P2YQ34xJwqo7SeAOKTmHdFQBdljwXR8c0wxE+kNgFa70xQmK
-   hPYMrvto+ICWMPPtr4cvh6KXsDeNPV0nG8v8jNByjrKq5G1yoZH2q+ziA
-   A==;
-X-CSE-ConnectionGUID: 9/fZGsl5RQOSSd3B5q4RPA==
-X-CSE-MsgGUID: +zRqnr3/R+yfUbiAoA4XPg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11276"; a="44122754"
-X-IronPort-AV: E=Sophos;i="6.12,208,1728975600"; 
-   d="scan'208";a="44122754"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Dec 2024 14:55:46 -0800
-X-CSE-ConnectionGUID: IsgjPig3SxWaIsvTMN9ylg==
-X-CSE-MsgGUID: WP+7dF4CQ8SgGxUUs7HR3g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,208,1728975600"; 
-   d="scan'208";a="93784255"
-Received: from lkp-server02.sh.intel.com (HELO 1f5a171d57e2) ([10.239.97.151])
-  by fmviesa007.fm.intel.com with ESMTP; 04 Dec 2024 14:55:43 -0800
-Received: from kbuild by 1f5a171d57e2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tIyHV-0003ZV-0J;
-	Wed, 04 Dec 2024 22:55:41 +0000
-Date: Thu, 5 Dec 2024 06:55:32 +0800
-From: kernel test robot <lkp@intel.com>
-To: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>, gautham.shenoy@amd.com,
-	mario.limonciello@amd.com, perry.yuan@amd.com, rafael@kernel.org,
-	viresh.kumar@linaro.org
-Cc: oe-kbuild-all@lists.linux.dev, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
-Subject: Re: [PATCH 3/5] cpufreq/amd-pstate: Refactor
- amd_pstate_epp_reenable() and amd_pstate_epp_offline()
-Message-ID: <202412050615.ObPzrf34-lkp@intel.com>
-References: <20241204144842.164178-4-Dhananjay.Ugwekar@amd.com>
+	s=arc-20240116; t=1733352938; c=relaxed/simple;
+	bh=+Q45rMcj/Fj7beQEwYwmqYRFo5yImuTS1FBU1UB/mj0=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=iloH3d7xO718U4gpfJwUZjZIWp3F7slzjoDMF4r88WwPoZIykpNcPUXynbhFcIeba5g372kU8GdbOHfXNWlwADDZBjYNgYM7PiU40LToBoiBfsTPJ0OAoD6R79tgyu6PssBqX2DFqFNw9LDaXlep74sKe3KUvhCsDWHV5PeBRX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fpW9QQN8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6CFEC4CECD;
+	Wed,  4 Dec 2024 22:55:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733352937;
+	bh=+Q45rMcj/Fj7beQEwYwmqYRFo5yImuTS1FBU1UB/mj0=;
+	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
+	b=fpW9QQN8bXNpNBx5eqf+nU+gDjqK42IVHeUmo06lbiIaDIgBAMVXSH97AR2VV2Bq0
+	 by7j6CwsL5T9O21yWDLhuqtkqiPR0ZgxJOB/7N/WyiUelSNaECAv3iR5IW88hYU07A
+	 S/hjHARwttPbuMLxZKjmcuc+5HC7OiTJP1dTyvQ8KzCXNMSyNVY/NGQBHZ2JbvHlmJ
+	 vzo3Nrxxt0yI2c2Cc9QxVW/zF6UohJ4YTtYHpn/QANoYWYxtU9HQAl/Ev39ym3PxsA
+	 L+AdbKSbXh+lq3AqHy+kfhIbncEQuDikdQwDi9221ewP1n+VzNUeubGoHomRQXHXPY
+	 Gm7Yfe24J4RzA==
+Message-ID: <d4d5e80d-1a95-4ef7-a83f-1303563a91eb@kernel.org>
+Date: Wed, 4 Dec 2024 22:55:32 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241204144842.164178-4-Dhananjay.Ugwekar@amd.com>
+User-Agent: Mozilla Thunderbird
+From: Quentin Monnet <qmo@kernel.org>
+Subject: Re: [PATCH] bpftool: Fix failure with static linkage
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Leo Yan <leo.yan@arm.com>, Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
+ Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
+ <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+ Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, Nick Terrell <terrelln@fb.com>,
+ bpf@vger.kernel.org, linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Mahe Tardy <mahe.tardy@gmail.com>
+References: <20241204213059.2792453-1-leo.yan@arm.com>
+ <Z1DLYCha0-o1RWkF@google.com>
+ <bf5da4d3-c317-4616-ac68-0d49bb5815c2@kernel.org>
+ <Z1DW1aJ4rYlMI6S1@google.com>
+Content-Language: en-GB
+In-Reply-To: <Z1DW1aJ4rYlMI6S1@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Dhananjay,
+2024-12-04 14:25 UTC-0800 ~ Namhyung Kim <namhyung@kernel.org>
+> Hello,
+> 
+> On Wed, Dec 04, 2024 at 10:08:15PM +0000, Quentin Monnet wrote:
+>> 2024-12-04 13:36 UTC-0800 ~ Namhyung Kim <namhyung@kernel.org>
+>>> Hi Leo,
+>>>
+>>> On Wed, Dec 04, 2024 at 09:30:59PM +0000, Leo Yan wrote:
+>>>> When building perf with static linkage:
+>>>>
+>>>>   make O=/build LDFLAGS="-static" -C tools/perf VF=1 DEBUG=1
+>>>>   ...
+>>>>   LINK    /build/util/bpf_skel/.tmp/bootstrap/bpftool
+>>>>   /usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/13/../../../x86_64-linux-gnu/libelf.a(elf_compress.o): in function `__libelf_compress':
+>>>>   (.text+0x113): undefined reference to `ZSTD_createCCtx'
+>>>>   /usr/bin/ld: (.text+0x2a9): undefined reference to `ZSTD_compressStream2'
+>>>>   /usr/bin/ld: (.text+0x2b4): undefined reference to `ZSTD_isError'
+>>>>   /usr/bin/ld: (.text+0x2db): undefined reference to `ZSTD_freeCCtx'
+>>>>   /usr/bin/ld: (.text+0x5a0): undefined reference to `ZSTD_compressStream2'
+>>>>   /usr/bin/ld: (.text+0x5ab): undefined reference to `ZSTD_isError'
+>>>>   /usr/bin/ld: (.text+0x6b9): undefined reference to `ZSTD_freeCCtx'
+>>>>   /usr/bin/ld: (.text+0x835): undefined reference to `ZSTD_freeCCtx'
+>>>>   /usr/bin/ld: (.text+0x86f): undefined reference to `ZSTD_freeCCtx'
+>>>>   /usr/bin/ld: (.text+0x91b): undefined reference to `ZSTD_freeCCtx'
+>>>>   /usr/bin/ld: (.text+0xa12): undefined reference to `ZSTD_freeCCtx'
+>>>>   /usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/13/../../../x86_64-linux-gnu/libelf.a(elf_compress.o): in function `__libelf_decompress':
+>>>>   (.text+0xbfc): undefined reference to `ZSTD_decompress'
+>>>>   /usr/bin/ld: (.text+0xc04): undefined reference to `ZSTD_isError'
+>>>>   /usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/13/../../../x86_64-linux-gnu/libelf.a(elf_compress.o): in function `__libelf_decompress_elf':
+>>>>   (.text+0xd45): undefined reference to `ZSTD_decompress'
+>>>>   /usr/bin/ld: (.text+0xd4d): undefined reference to `ZSTD_isError'
+>>>>   collect2: error: ld returned 1 exit status
+>>>>
+>>>> Building bpftool with static linkage also fails with the same errors:
+>>>>
+>>>>   make O=/build -C tools/bpf/bpftool/ V=1
+>>>>
+>>>> To fix the issue, explicitly link libzstd.
+>>>
+>>> I was about to report exactly the same. :)
+>>
+>> Thank you both. This has been reported before [0] but I didn't find the
+>> time to look into a proper fix.
+>>
+>> The tricky part is that static linkage works well without libzstd for
+>> older versions of elfutils [1], but newer versions now require this
+>> library. Which means that we don't want to link against libzstd
+>> unconditionally, or users trying to build bpftool may have to install
+>> unnecessary dependencies. Instead we should add a new probe under
+>> tools/build/feature (Note that we already have several combinations in
+>> there, libbfd, libbfd-liberty, libbfd-liberty-z, and I'm not sure what's
+>> the best approach in terms of new combinations).
+> 
+> I think you can use pkg-config if available.
+> 
+>   $ pkg-config --static --libs libelf
+>   -lelf -lz -lzstd -pthread 
+> 
 
-kernel test robot noticed the following build warnings:
 
-[auto build test WARNING on rafael-pm/linux-next]
-[also build test WARNING on rafael-pm/bleeding-edge linus/master v6.13-rc1 next-20241204]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+That's another dependency that I'd like to avoid if I can :)
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Dhananjay-Ugwekar/cpufreq-amd-pstate-Convert-the-amd_pstate_get-set_epp-to-static-calls/20241204-225537
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git linux-next
-patch link:    https://lore.kernel.org/r/20241204144842.164178-4-Dhananjay.Ugwekar%40amd.com
-patch subject: [PATCH 3/5] cpufreq/amd-pstate: Refactor amd_pstate_epp_reenable() and amd_pstate_epp_offline()
-config: x86_64-buildonly-randconfig-006-20241205 (https://download.01.org/0day-ci/archive/20241205/202412050615.ObPzrf34-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241205/202412050615.ObPzrf34-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202412050615.ObPzrf34-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   drivers/cpufreq/amd-pstate.c: In function 'amd_pstate_epp_offline':
->> drivers/cpufreq/amd-pstate.c:1664:13: warning: variable 'value' set but not used [-Wunused-but-set-variable]
-    1664 |         u64 value;
-         |             ^~~~~
-
-
-vim +/value +1664 drivers/cpufreq/amd-pstate.c
-
-d4da12f8033a123 Perry Yuan        2023-01-31  1659  
-d4da12f8033a123 Perry Yuan        2023-01-31  1660  static void amd_pstate_epp_offline(struct cpufreq_policy *policy)
-d4da12f8033a123 Perry Yuan        2023-01-31  1661  {
-d4da12f8033a123 Perry Yuan        2023-01-31  1662  	struct amd_cpudata *cpudata = policy->driver_data;
-d4da12f8033a123 Perry Yuan        2023-01-31  1663  	int min_perf;
-d4da12f8033a123 Perry Yuan        2023-01-31 @1664  	u64 value;
-d4da12f8033a123 Perry Yuan        2023-01-31  1665  
-d4da12f8033a123 Perry Yuan        2023-01-31  1666  	min_perf = READ_ONCE(cpudata->lowest_perf);
-d4da12f8033a123 Perry Yuan        2023-01-31  1667  	value = READ_ONCE(cpudata->cppc_req_cached);
-d4da12f8033a123 Perry Yuan        2023-01-31  1668  
-d4da12f8033a123 Perry Yuan        2023-01-31  1669  	mutex_lock(&amd_pstate_limits_lock);
-d4da12f8033a123 Perry Yuan        2023-01-31  1670  
-33cc0b550fa3510 Dhananjay Ugwekar 2024-12-04  1671  	amd_pstate_update_perf(cpudata, min_perf, 0, min_perf, false);
-33cc0b550fa3510 Dhananjay Ugwekar 2024-12-04  1672  	amd_pstate_set_epp(cpudata, AMD_CPPC_EPP_BALANCE_POWERSAVE);
-33cc0b550fa3510 Dhananjay Ugwekar 2024-12-04  1673  
-d4da12f8033a123 Perry Yuan        2023-01-31  1674  	mutex_unlock(&amd_pstate_limits_lock);
-d4da12f8033a123 Perry Yuan        2023-01-31  1675  }
-d4da12f8033a123 Perry Yuan        2023-01-31  1676  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Quentin
 
