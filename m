@@ -1,76 +1,81 @@
-Return-Path: <linux-kernel+bounces-431080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 610969E38B4
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 12:23:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 007369E38B6
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 12:24:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2902F164CA6
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 11:23:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21769164C51
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 11:24:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9141B1B4F09;
-	Wed,  4 Dec 2024 11:23:14 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAFCE1B21BA;
+	Wed,  4 Dec 2024 11:23:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qkLlYc3f"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E18951B4158;
-	Wed,  4 Dec 2024 11:23:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37E2E1B0F29;
+	Wed,  4 Dec 2024 11:23:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733311394; cv=none; b=qKyfr0nRe5WWj8zK8BJ1v+3Bp8a8RK9s9Fq4LMZdWebrKFUafAALIbEsFMdvNJQ0fE0oU6hnwKS8wv9YAENjlrWpv3qpq3QvWUZ7IGRjfaPpAJ/MGcu+4zKaQos9pze4enu2d380amie4qtdqEp7eeuHbK4bDVaPavJqNt+OCyw=
+	t=1733311436; cv=none; b=UB4qG6uGuh+Yv6419kWqgHiuTz5Cy5AajlFuYitNdkjxidoNV2x66QO/DRDxBTKm+xc0HyeUhir0NXYXmHoVmEHDsco+HDLBg9b/6rM4LdOh1ZPghuGIgzF3g0YNaLhFlj6JCKRZonzR51XFZvOtkTR37gOT4hpBDslO5yP8rCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733311394; c=relaxed/simple;
-	bh=qwjt/ECOTb9xxuzZ7OzMYz4iCEymLyzapY56BmcX4eg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=W7n106mAQHRVOwtW2GpjG5yyqUPhSAI4OVh4LeaGSN2lwG9Ef7EQKPXDw+YHbVFLOCn21exLBoqxKQatdFpC6XTLiMoshCZRQozlDPXx/jEA9NdUaftxCu+dw3tlcup+C/E8K74GwURHe/g9beot6O4dX9Pzcl5LfzqaJoaXSwU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4Y3FTR6Sygz21mW6;
-	Wed,  4 Dec 2024 19:21:31 +0800 (CST)
-Received: from dggpemf200006.china.huawei.com (unknown [7.185.36.61])
-	by mail.maildlp.com (Postfix) with ESMTPS id 3E90D14011B;
-	Wed,  4 Dec 2024 19:23:09 +0800 (CST)
-Received: from [10.67.120.129] (10.67.120.129) by
- dggpemf200006.china.huawei.com (7.185.36.61) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 4 Dec 2024 19:23:08 +0800
-Message-ID: <18654cde-769c-4b44-9603-367299b693dd@huawei.com>
-Date: Wed, 4 Dec 2024 19:23:08 +0800
+	s=arc-20240116; t=1733311436; c=relaxed/simple;
+	bh=/blkFvAPE4y7AxysmsikoAFMjOhJ04M0iaoZSxkIbkU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=FaeCN4qPuFwI7VfLnma6r4QcC4OQOjSaRQMCznwOTuAOTmvLMp4RJcxWWoxBOJtg23lxy5zhyllTn9W9ARthRJjG6O3SmfjPjr+EDjQl24neMRSwfCQiVuz9st5SJh4F/k2FjoBGKw8xmS1Kve20RLCXBmPUCFHKzw3lqjcxgM8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qkLlYc3f; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0EFD9C4CED1;
+	Wed,  4 Dec 2024 11:23:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733311435;
+	bh=/blkFvAPE4y7AxysmsikoAFMjOhJ04M0iaoZSxkIbkU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=qkLlYc3fQ4YNtcoKZzuxJ4Es3jp4p/gpQyvId8VLiOLOiAI7in617EKb6AtcOhqPO
+	 1LnWeKSbPYKOJxXRmfUWc+o9L37QJ6eJNYMrw8CZeq1znv8UmhCNtZhN/WlJ40krs3
+	 LTZxUW5TPtxBZwkXDinaUdifMFbm2joKIUNV/c9nFRkRU0fQOnaO54aR9LaNWw/cK7
+	 UXyMPpsIZZ83s8S9vnFyBwXX9ojgrwsxzJjc9CDIo4qst2C9QeyRBYW5Slnisob/YM
+	 m26c8V12yzVVtYSAQJ6GjOZj+fZ64DOybVgTGlQz5pWP6WasAEIKaxCg+FmkJH0rSL
+	 SvPP/BtUJKo7w==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: =?utf-8?Q?Beno=C3=AEt?= du Garreau <benoit@dugarreau.fr>
+Cc: "Boqun Feng" <boqun.feng@gmail.com>,  "Jens Axboe" <axboe@kernel.dk>,
+  <linux-block@vger.kernel.org>,  <rust-for-linux@vger.kernel.org>,
+  <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] block: rnull: Initialize the module in place
+In-Reply-To: <20241204-rnull_in_place-v1-1-efe3eafac9fb@dugarreau.fr>
+ (=?utf-8?Q?=22Beno=C3=AEt?=
+	du Garreau"'s message of "Wed, 04 Dec 2024 09:38:39 +0100")
+References: <KDOrOz0f1qbGhNBKxiESVrGZaUhIbkfe1DgOqgX3pd7N7hiaJpbrvaLUklCHjUrGgHOVsYl3M-crnKTUa_WMjA==@protonmail.internalid>
+	<20241204-rnull_in_place-v1-1-efe3eafac9fb@dugarreau.fr>
+Date: Wed, 04 Dec 2024 12:23:30 +0100
+Message-ID: <87cyi7g099.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v1 00/10] Replace page_frag with page_frag_cache
- (Part-2)
-To: <davem@davemloft.net>, <kuba@kernel.org>, <pabeni@redhat.com>, Alexander
- Duyck <alexander.duyck@gmail.com>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Shuah Khan
-	<skhan@linuxfoundation.org>, Andrew Morton <akpm@linux-foundation.org>,
-	Linux-MM <linux-mm@kvack.org>
-References: <20241114121606.3434517-1-linyunsheng@huawei.com>
-Content-Language: en-US
-From: Yunsheng Lin <linyunsheng@huawei.com>
-In-Reply-To: <20241114121606.3434517-1-linyunsheng@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- dggpemf200006.china.huawei.com (7.185.36.61)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 2024/11/14 20:15, Yunsheng Lin wrote:
-> This is part 2 of "Replace page_frag with page_frag_cache",
-> which introduces the new API and replaces page_frag with
-> page_frag_cache for sk_page_frag().
+Beno=C3=AEt du Garreau <benoit@dugarreau.fr> writes:
 
-Hi, Alexander & Maintainers
-As the part 1 merged in the last recycle seems to have not
-caused any obvious regression except the testing one. Any
-comment or idea for this version of part 2?
-If not, I should probably repost based on the latest net-next.
+> Using `InPlaceModule` avoids an allocation and an indirection.
+>
+> Signed-off-by: Beno=C3=AEt du Garreau <benoit@dugarreau.fr>
+
+Looks good to me. Thanks!
+
+
+Acked-by: Andreas Hindborg <a.hindborg@kernel.org>
+
+
+Best regards,
+Andreas Hindborg
+
+
 
