@@ -1,232 +1,209 @@
-Return-Path: <linux-kernel+bounces-430537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430538-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA2399E3279
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 04:55:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B9109E327D
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 04:57:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AAB5284EEB
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 03:55:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32B3D2841B5
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 03:57:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 669D1166307;
-	Wed,  4 Dec 2024 03:55:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CE9E1684AE;
+	Wed,  4 Dec 2024 03:57:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mGYhx6+H"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="jR+Iz3lW"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08B2E14A4E9;
-	Wed,  4 Dec 2024 03:55:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.19
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733284543; cv=fail; b=si8TDg0VyBFg/3zgJ4spPOq/fWqsduR4wmP/stnvHFHZUqsFFcyyMHhx1A/ilS3vVh2K5/rR8UZv5jSxCgzAf1xnKH1gPQfpBFOPLyqEnQk9pulQ2K8tGKr8O6C+AErTEu8cS3A/NcHAllKkXUxPkJ664H5SphdltYxnV2KvICI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733284543; c=relaxed/simple;
-	bh=5IjA5Uw7fIsX7Db7fn3tJvQ5Nou9fYnk0DjQD1EdxX0=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=mC4SKKf/b7rWqkzpL3ZoYHpXwh58we+DDxUETggFuMJD9mix8Vp+FxR1qbpg3CnPUHaRH87+GEE25oTKBxQVCtXR6QomOGvQnJmr9XrnfwoFwsF3BJo5oIYERKk7PBiVPRXudcOLWKN0g321bXLqtRultHUfJo6D5q1F32MbZaQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mGYhx6+H; arc=fail smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733284542; x=1764820542;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=5IjA5Uw7fIsX7Db7fn3tJvQ5Nou9fYnk0DjQD1EdxX0=;
-  b=mGYhx6+H+DQGY2vAKc+aRj6y24I1hcYduUvQrSf4xTrsHD7zhl1x37Z8
-   txbk9AG5XiUVpj/5JSPVbnA08JpnCV7kG9RkgpWQeXWpKtk7od2QnBnV9
-   HYSEbMfbpPpTeBEdOBvLFnODRXpVqIVZvn9yonK404mExE6ISW3+ULPgD
-   VMM4rzuF2+zCDZtoFc4j51PVY79Wd7Mox6R8bIS0Pa0TAzbrWe1eUCuyO
-   eBNjxFL9L3hHt7pQle8V6HxsscKk4XhuQjfcIY26miDpPpm+34XzswfJF
-   vxtR3/+/tkjOwk04Gl+SKArznlutLSveY6mPjkCy2UbnSaxoJav0vxlWi
-   w==;
-X-CSE-ConnectionGUID: 7WeqWbCsRKySBa9Uptlp3Q==
-X-CSE-MsgGUID: dod1R3zDQ+S7NgMEIdTUnQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11275"; a="33408186"
-X-IronPort-AV: E=Sophos;i="6.12,206,1728975600"; 
-   d="scan'208";a="33408186"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Dec 2024 19:55:42 -0800
-X-CSE-ConnectionGUID: jPQkhlQGQte9vl/WrO99EA==
-X-CSE-MsgGUID: pUHmwadnQdSHaMMfWEziSw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,206,1728975600"; 
-   d="scan'208";a="93302469"
-Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
-  by fmviesa006.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 03 Dec 2024 19:55:41 -0800
-Received: from orsmsx603.amr.corp.intel.com (10.22.229.16) by
- ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 3 Dec 2024 19:55:40 -0800
-Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
- orsmsx603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Tue, 3 Dec 2024 19:55:40 -0800
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (104.47.58.170)
- by edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 3 Dec 2024 19:55:40 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=PmM/xnQzcfTzhyt2F/QG59tri5jiJ8IOAAXaHukoyr3PfwLjRjtwhjluSyuWxRnd3ie4SziVkglzLbiQZlGVEKZ/WMW3r81moca39E1yeibwMleRbkVG/qQfQkKpIff8cj3ikl5mJjWvopDiXFZid5aVnt4Kz5hwVU8qohH1MwPSVLOwviLLVOcF4GMicJVO+veGJ4cmVF0JIExOl5v/6XEe2wXKqoKUYsN47yyXpSX6iOgfsRi6mfPHm7PYKh7LLyI/fGtspshIliwboGjoD8maQIHi+KsiiIXqJVqxBAK5PZAn4dJT6wz8PXZP9W9gCcwe6sKrz0KMzJ3KATylzA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=SPijDGu9/s8N+q6moVs8V/+ES68sacbJmqRmtsZAbdo=;
- b=TfBwyurSYIaOULs6aryhovoSMsgtd0el0ibkXCotpwIAlFfbIZP/CVhVg0QyWb+5bIGuWrts7YvthuuQNouegv7uTqhf0oICrUTda3gFfqAZTou/rapEuZtHFLi+XU87RgoBc+FdxLbp6cSokxZ8+eNr19xKuTIgB+Ifz1QbJKkqNNdyMf6O6Xa/g976MrH2pUSxHjCmDI+bhuzg63NNb8BNXTNmknOFRO5yu/MeViWpa4Tj/Qa4GaVe8WYHLBqrKOXh/QIHS0dgy8yePbJ+UZ2lP4VumeaJECW3RcngZzm9ZbJEWqnpVDCHV04EqxGrKmkSGsxty98EHvCmZTLtJQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from PH8PR11MB8107.namprd11.prod.outlook.com (2603:10b6:510:256::6)
- by CO1PR11MB4818.namprd11.prod.outlook.com (2603:10b6:303:93::24) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.20; Wed, 4 Dec
- 2024 03:55:37 +0000
-Received: from PH8PR11MB8107.namprd11.prod.outlook.com
- ([fe80::6b05:74cf:a304:ecd8]) by PH8PR11MB8107.namprd11.prod.outlook.com
- ([fe80::6b05:74cf:a304:ecd8%5]) with mapi id 15.20.8230.010; Wed, 4 Dec 2024
- 03:55:36 +0000
-Date: Tue, 3 Dec 2024 19:55:32 -0800
-From: Dan Williams <dan.j.williams@intel.com>
-To: Raghavendra K T <raghavendra.kt@amd.com>, <linux-kernel@vger.kernel.org>,
-	<linux-cxl@vger.kernel.org>
-CC: <bharata@amd.com>, Raghavendra K T <raghavendra.kt@amd.com>, Huang Ying
-	<ying.huang@intel.com>, Andrew Morton <akpm@linux-foundation.org>, "Dan
- Williams" <dan.j.williams@intel.com>, David Hildenbrand <david@redhat.com>,
-	Davidlohr Bueso <dave@stgolabs.net>, Jonathan Cameron
-	<jonathan.cameron@huawei.com>, Dave Jiang <dave.jiang@intel.com>, "Alison
- Schofield" <alison.schofield@intel.com>, Vishal Verma
-	<vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, Alistair Popple
-	<apopple@nvidia.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, Baoquan He <bhe@redhat.com>,
-	<ilpo.jarvinen@linux.intel.com>, Mika Westerberg
-	<mika.westerberg@linux.intel.com>, Fontenot Nathan <Nathan.Fontenot@amd.com>,
-	Wei Huang <wei.huang2@amd.com>, <regressions@lists.linux.dev>
-Subject: Re: [RFC PATCH] resource: Fix CXL node not populated issue
-Message-ID: <674fd2b4942f1_3e0f629420@dwillia2-mobl3.amr.corp.intel.com.notmuch>
-References: <20241202111941.2636613-1-raghavendra.kt@amd.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20241202111941.2636613-1-raghavendra.kt@amd.com>
-X-ClientProxiedBy: MW4PR04CA0208.namprd04.prod.outlook.com
- (2603:10b6:303:86::33) To PH8PR11MB8107.namprd11.prod.outlook.com
- (2603:10b6:510:256::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 004F814A4E9;
+	Wed,  4 Dec 2024 03:57:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733284656; cv=none; b=gWm3ssz2Mg0ZTjWgohY4ywMXC11PfgNy82gy4mCVm3Ba7bnZPhFqPxFQP4q9CIfhq+AEZJbKgZh1SIjpJDenpG0hs/5W0f8kGPKHogEZPtLS0Eq6uyz+e3LxBZDyoPfh+epYsxaqYSzNWc22Kk3XkiK5OxWYWJ196Uryv2BCiXQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733284656; c=relaxed/simple;
+	bh=50JEYhQd/y8iB3PYyRtnGuomt+kBbb+KKN0iIpAGBhE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=dx6TgtxXCgyWkxc0g27aQi1DYkDvsYBuZWcLDwZeTrEmJxggm6dEcvtPiuYIHa+shJl+7W5JXkv7E2xhwv1NmiCKVvhRbRalKTBekmYlJOR1RY9yI5/z/+oy+phafRrPgg6HP/RgBW1Gs9G/T+lfz9ZVl8rGzoWzCXT3WWgtwcY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=jR+Iz3lW; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B3I3XvI032011;
+	Wed, 4 Dec 2024 03:57:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	EQOZybB3xZXVZBZkQs9rYIlof9+/VTrTvUScM8wwlyo=; b=jR+Iz3lWsY6moAm/
+	yCh/zLwSkCAQAMLbpiJKnU+aKIH/N5xjGB/Rf4bH0Zr1117lxAmXaVxOx85ChvED
+	DGyj+YMJdem4QShvehONHyCrGtNK0e5Zrw0OhIPZwBm7T1uA6T8+k/OhncpkMoo6
+	FEcDrCYu0iLBgMapLzuo4FUpkIv2jYpR2Mf350JSOTgs47nHd1iNPfL/uQaib3OQ
+	NHyQcjGrcjigmZz/5J3iYwnnZ0VJUa27XXPnFce7en7/gXyQpEFRRN+IjVXfsk+O
+	1F4gJOLX4A9JgBgnD+AEFTVob4J2OOuJMY2l+qYuTX60f2o5y3Wuaaz1bifyzQ9F
+	wFvoYA==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 437tstj54s-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 04 Dec 2024 03:57:27 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B43vQtE017953
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 4 Dec 2024 03:57:26 GMT
+Received: from [10.134.71.247] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 3 Dec 2024
+ 19:57:25 -0800
+Message-ID: <2193c915-cdda-416d-8e24-209e808c6d10@quicinc.com>
+Date: Tue, 3 Dec 2024 19:57:25 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH8PR11MB8107:EE_|CO1PR11MB4818:EE_
-X-MS-Office365-Filtering-Correlation-Id: ab386336-6beb-49b4-8444-08dd14178274
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?ITnAief9lBc38eiyp+xYUZyrkef3uTfHPhe192Ai2hiIf4uAQ6S98PVgFTfJ?=
- =?us-ascii?Q?CtDCSfBmmxWGyFSMrwm2sTHi81Lqj0pOvYatilKNV5ehkcZioDTxxc6DtaSz?=
- =?us-ascii?Q?fUhMp9ufCW6MFF5i+NHHj+O5eFfc8eGtHYhb+LqL6+0PsaQozFqZZ80Am+52?=
- =?us-ascii?Q?xA7z8I8SvseQiNZbd7UO/kk8tNSWG+IYyC+JTg1dOhbCMfzaGM/hvAJefhCi?=
- =?us-ascii?Q?cr04Hid8hLkNTulxabj9OYhILmiDZVEOdcmkl8AsmagssrmyFbGo1CaGjhmc?=
- =?us-ascii?Q?9PzRfPmUUveksFPxA5Fliq00WrAtAe2NJOj8+59leZU9CScqUtkNEe4vMB1q?=
- =?us-ascii?Q?a31v1ieIv+hpEr6nEa+3O59IbRk0LEHdU0ON0L5kNsa9gFxtFjgCVTr5Ve7/?=
- =?us-ascii?Q?AXVf5hbSeiSjNovS20KeprCWhQBN6IWKK6oBz0YZeHRNiMiQnU3Nyb6AeDEf?=
- =?us-ascii?Q?rDQWC6EDWk1mzrz5jmyLPuAuuI67EtZSw3m9dHocqe4xiU0GvZAyDYcsi600?=
- =?us-ascii?Q?9CC5Z+yKKMkiUqa0HB6HLgni7G5JezUJBsg8kL27Lu5oN3FLIMSIL0+ieTes?=
- =?us-ascii?Q?mbtbf8sGwilHBYMmaVjEhCmRbaXFmcJAVLmxrGqyWucZ0kC5yIXPb+sm/JDY?=
- =?us-ascii?Q?+T8L2uB6YLYjs9hDH+LH9UvMEaIOzb5arErEdPqHoykEHM9aej1CVHwYM6pU?=
- =?us-ascii?Q?mTb5Yw4cNuX1wwki2rZ6k1ru4o5helU+sZC22QOLCPc8NYW3KRfTca6YWLi/?=
- =?us-ascii?Q?359Wza92eOwsg3+HflI8jboo9CkjBWQla9un6dCVVpF2OzPhVu8bGyl2B9vY?=
- =?us-ascii?Q?OLlpLI8HTjTD5w8A2d0Eb2/HNCNAEs5+VHov7YsLGIHOYTkXIymAhL20yayM?=
- =?us-ascii?Q?UH4gOqHwvsSNiIouYaootn6Guq+bY1hEKaqBTgaJYO2+jnlB6NJ9Q9U0L84u?=
- =?us-ascii?Q?tPPAnSWebwgbY7/XHmP1WpSpNGlH4dcNmACsr4cdf5GzLQmXYWFKcpi7iUVz?=
- =?us-ascii?Q?8ZcoCOQ6PVIHoP3e1MUCmHF8tnAOMqwnK4Ta+FfTzjyGX6zXtElb6rM3TetA?=
- =?us-ascii?Q?UYK8N5jw1la/nzEeCGu8Z9eDIdu4I/IVGvPJJDZXKiZfXVfcM3X/b14yz90M?=
- =?us-ascii?Q?LAZn+F/aDz06YVBywW97jvq262P8qM0NvEv6zpoNO1cV85rr2JCCrrShDUlr?=
- =?us-ascii?Q?OlKH5z6Y3NpItJ30fZaA3GsLWYn2fW3hfLn0Dbk+svxwZlejgz1GjSHETt8o?=
- =?us-ascii?Q?iStGruXaanZPuKEVGuJB+6clOpvQwSBUUmYuPKoex/u/t62AZhbFq17QSuRc?=
- =?us-ascii?Q?jr3UyTZin+owJqAmCCLtJPc0G2KR6MrlmxGE7eQAEtVqfQ=3D=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR11MB8107.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?Ctl7zN/DbGEd7mHuabYJRvsuik+JcyCNRkpFmkA0BfItEInTvpYa9TUzaV+S?=
- =?us-ascii?Q?vd5aaY6swb5sX2C0A3qfzz/6QAWGQaSUDHPWSDwTA8f9NIs9zbjOtJ5uRg7N?=
- =?us-ascii?Q?lWap5PhvQWdLvoqkx6xmd7SHUCQNtp+cSTms3btxkjd4z9R9l6et/USfHqO4?=
- =?us-ascii?Q?+mZL8zAZV4dRrpqiqy8rHbxA/rXyAQylkmWdFEwAJ/W/jsh/7WN21ugP356Y?=
- =?us-ascii?Q?OBffVPKNE0XYJrEkBBdzKsUGbB55T/CrYSzAwxNWqFc++soOi9WXp8CjB+Gl?=
- =?us-ascii?Q?DztbMfpPOn0t4pfG5O5Y8LhhpdUqmuX3Dt49Z9yYePcodUYYxj2XCDMj2kAz?=
- =?us-ascii?Q?kBoBGVseLijMFPSkSKCwIZTLOWAhFSDpgCPBsq2zzDbI65ajfLe22HncBuP0?=
- =?us-ascii?Q?c69/h+cNrAA9l9T8fijxO339GzudXOe/8dFEWb0gGhmRMySeiNxe+b57VDP0?=
- =?us-ascii?Q?ulPSIMrMtx3R/5/ZCKRnlrBXe0QAbzPVOQ7ZMAfUG3BC6Wh/c+WezE0YOnec?=
- =?us-ascii?Q?vSvPNntyQo7rT5LSv3XIBtx3xVyBB/y4Lc7wsUO2+g5SXYFXs+Aby/rDqRYr?=
- =?us-ascii?Q?nU82jczaSU6uWF2cdAGB2nvcMO/2wVPbac+APznSj+OtiwP4ZYw1MAnpyL/h?=
- =?us-ascii?Q?EOiy9K0b19UtPysxJBYNF+/WJ2XcAWV+wwyy2nuNu4XnnJfFzZxy02FWNNEu?=
- =?us-ascii?Q?p53i03vbajcqxE4Pr/o2Rw1xoG/b/dXjzyUoYPKa4cVCVlcCflR+MZ7UNfw2?=
- =?us-ascii?Q?7B+BjgPS6EFG0WrCBxATVYwnoAf2jRZwL+aZApMTBbl9YwZvkTxviBcfFVpi?=
- =?us-ascii?Q?YIP5kOQacfALVm0Zes/v+oVFXuZAE2mdVQ7fuiX0Swu1dhyq8M54yr5WZnjq?=
- =?us-ascii?Q?TlRK4n9Fsce1TMbJE36a+ue+/CwStb5cCXPXC48gfiHE/4zR4ok8R/mZvoEh?=
- =?us-ascii?Q?yEPOlGWbLzRd9py8FcGYHzFcx2ob7TGfqoW4eEBEgFLFSLTgG+PuWeZSOx4G?=
- =?us-ascii?Q?AGx0UAnb1sjr2kCjdMVBRhfSOXZLRHJSOoGhrEHLrzhFCETXRHRtrltkaDC1?=
- =?us-ascii?Q?Rozb3SYI7gpxHTjK05eBkilfxzrU6UgETYN1C8T2XK67rrOAhw2S7Rg4PEyV?=
- =?us-ascii?Q?rbX0aHNN2TOMvUeay1mL/nKMJtgZoI7G41J4Upq8Dhssz3Ag4mKsxT5ja5Oq?=
- =?us-ascii?Q?K3QTiAM6lIRYAhbjPnyicjR2rL/LYC6772LmIse00NqPozI0UdcUI9xws2nZ?=
- =?us-ascii?Q?no7c5Nt8zacPjOPRQgnte8ys2eNvdGjm558UAYEnX4FlBtqDqHEqgETO0Q7U?=
- =?us-ascii?Q?/c9IK9yN++kGsrgwfYpBzIljTHNKkBgU3RJ+HxUf08HaU+9N6ZRKYsoC0YCP?=
- =?us-ascii?Q?5FdWo9SOZ4Ah3Qf2Ji126R/Lks0MsU7Tls1eA0bQIaOuUpCMajg5ySkB54r0?=
- =?us-ascii?Q?juH15JSmrz4K71CfyCfXRShhA3NMEy6W0hc/7W/yzB3pWJJQNNYgAEX4LBj6?=
- =?us-ascii?Q?ABfBdKXogS6bwLy0LNzJiTwCe+9YXP+TwFQuv0fxjWrQ2KyPAl0ntGXLNvPu?=
- =?us-ascii?Q?rBjBkO82MRsKUAwwSPNVa4i4AVOuq6dBYn/aEgnNsNLzPu+h6XzK6ABo2uyh?=
- =?us-ascii?Q?ng=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: ab386336-6beb-49b4-8444-08dd14178274
-X-MS-Exchange-CrossTenant-AuthSource: PH8PR11MB8107.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Dec 2024 03:55:36.5215
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: fFRcPVk4QSMldirEOSxV2gqMb96o+losRvYox00ftvlwcYcrzejh3yL2DIsU7b6ryY98KE3JDWNjha8k1lb3XP3s1L69S3EmIf+N7Ido1QA=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR11MB4818
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] drm/msm/dp: add a debugfs node for using tpg
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        "Marijn
+ Suijten" <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Stephen Boyd <swboyd@chromium.org>,
+        "Kuogee
+ Hsieh" <quic_khsieh@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        Jessica Zhang <quic_jesszhan@quicinc.com>
+References: <20241202-tpg-v1-0-0fd6b518b914@quicinc.com>
+ <20241202-tpg-v1-3-0fd6b518b914@quicinc.com>
+ <uv2phgi72mmw5c462ijsqlqedeiv4gahrwi26i2luqkhgwmfxc@ycj7jrujdj6w>
+Content-Language: en-US
+From: Abhinav Kumar <quic_abhinavk@quicinc.com>
+In-Reply-To: <uv2phgi72mmw5c462ijsqlqedeiv4gahrwi26i2luqkhgwmfxc@ycj7jrujdj6w>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: OpvUY6EiqIuSqrYWmzPFh9AHKPkrTCnH
+X-Proofpoint-GUID: OpvUY6EiqIuSqrYWmzPFh9AHKPkrTCnH
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ malwarescore=0 spamscore=0 impostorscore=0 mlxlogscore=999 mlxscore=0
+ priorityscore=1501 suspectscore=0 phishscore=0 adultscore=0 clxscore=1015
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412040030
 
-[ add regressions@lists.linux.dev ]
 
-Next time make the subject of the patch:
 
-   Revert "resource: fix region_intersects() vs add_memory_driver_managed()"
-
-...to make it clear that this is a revert, not a fix.
-
-The revert should be applied if a fix does not materialize in the next few weeks.
-
-Raghavendra K T wrote:
-> Before:
-> ~]$ numastat -m
-> ...
->                           Node 0          Node 1           Total
->                  --------------- --------------- ---------------
-> MemTotal               128096.18       128838.48       256934.65
+On 12/3/2024 3:38 PM, Dmitry Baryshkov wrote:
+> On Mon, Dec 02, 2024 at 12:42:00PM -0800, Abhinav Kumar wrote:
+>> DP test pattern generator is a very useful tool to debug issues
+>> where monitor is showing incorrect output as it helps to isolate
+>> whether the issue is due to rest of DPU pipeline or in the DP
+>> controller itself. Expose a debugfs to use the TPG configuration
+>> to help debug DP issues.
+>>
+>> Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+>> ---
+>>   drivers/gpu/drm/msm/dp/dp_debug.c | 61 +++++++++++++++++++++++++++++++++++++++
+>>   drivers/gpu/drm/msm/dp/dp_panel.h |  2 ++
+>>   2 files changed, 63 insertions(+)
+>>
+>> diff --git a/drivers/gpu/drm/msm/dp/dp_debug.c b/drivers/gpu/drm/msm/dp/dp_debug.c
+>> index 22fd946ee201..843fe77268f8 100644
+>> --- a/drivers/gpu/drm/msm/dp/dp_debug.c
+>> +++ b/drivers/gpu/drm/msm/dp/dp_debug.c
+>> @@ -197,6 +197,65 @@ static const struct file_operations test_active_fops = {
+>>   	.write = msm_dp_test_active_write
+>>   };
+>>   
+>> +static ssize_t msm_dp_tpg_write(struct file *file, const char __user *ubuf,
+>> +				size_t len, loff_t *offp)
+>> +{
+>> +	const struct msm_dp_debug_private *debug;
+>> +	char *input_buffer;
+>> +	int val;
+>> +	int status = 0;
+>> +	struct msm_dp_panel *dp_panel;
+>> +
+>> +	debug = ((struct seq_file *)file->private_data)->private;
+>> +	dp_panel = debug->panel;
+>> +
+>> +	input_buffer = memdup_user_nul(ubuf, len);
+>> +	if (IS_ERR(input_buffer))
+>> +		return PTR_ERR(input_buffer);
+>> +
+>> +	status = kstrtoint(input_buffer, 10, &val);
+>> +	if (status < 0) {
+>> +		kfree(input_buffer);
+>> +		return status;
+>> +	}
+>> +
+>> +	msm_dp_panel_tpg_config(dp_panel, val);
+>> +
+>> +	dp_panel->tpg_enabled = val;
 > 
-> After:
-> $ numastat -m
-> .....
->                           Node 0          Node 1          Node 2           Total
->                  --------------- --------------- --------------- ---------------
-> MemTotal               128054.16       128880.51       129024.00       385958.67
+> Does this need any kind of locking? The driver performs some actions,
+> then we write the global state. What if the user in parallel writes
+> different values to the file?
 > 
-> Current patch reverts the effect of first commit where the issue is seen.
 
-Might you be able to dig a bit further into the details like memory map
-for this platform and ACPI SRAT tables? A dmesg comparison of the good
-and bad cases would be useful (those can be shared via a github gist).
-Even better would be some debug instrumentation to identify which call
-to __region_intersects() started behaving differently resulting in a
-whole node disappearing.
+Sure, I can add a lock to struct msm_dp_debug_private and use it to 
+protect the tpg_write and tpg_reads.
 
-In terms of the urgency of fixing this it would also help to know how
-prevalent the system this was found on is in the wild.
+>> +
+>> +	kfree(input_buffer);
+>> +
+>> +	*offp += len;
+>> +	return len;
+>> +}
+>> +
+>> +static int msm_dp_tpg_show(struct seq_file *f, void *data)
+>> +{
+>> +	struct msm_dp_debug_private *debug = f->private;
+>> +	struct msm_dp_panel *dp_panel = debug->panel;
+>> +
+>> +	if (dp_panel->tpg_enabled)
+>> +		seq_puts(f, "1");
+>> +	else
+>> +		seq_puts(f, "0");
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int msm_dp_tpg_open(struct inode *inode, struct file *file)
+>> +{
+>> +	return single_open(file, msm_dp_tpg_show, inode->i_private);
+>> +}
+>> +
+>> +static const struct file_operations msm_dp_tpg_fops = {
+>> +	.owner = THIS_MODULE,
+>> +	.open = msm_dp_tpg_open,
+>> +	.read = seq_read,
+>> +	.llseek = seq_lseek,
+>> +	.release = single_release,
+>> +	.write = msm_dp_tpg_write
+>> +};
+>> +
+>>   int msm_dp_debug_init(struct device *dev, struct msm_dp_panel *panel,
+>>   		  struct msm_dp_link *link,
+>>   		  struct drm_connector *connector,
+>> @@ -231,6 +290,8 @@ int msm_dp_debug_init(struct device *dev, struct msm_dp_panel *panel,
+>>   		debugfs_create_file("dp_test_type", 0444,
+>>   				    root,
+>>   				    debug, &msm_dp_test_type_fops);
+>> +
+>> +		debugfs_create_file("dp_tpg", 0444, root, debug, &msm_dp_tpg_fops);
+> 
+> I'd say, skip the dp_ part of the name, everything in that dir is
+> DP-related.
+> 
+
+Ack.
 
