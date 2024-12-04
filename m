@@ -1,157 +1,84 @@
-Return-Path: <linux-kernel+bounces-431249-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431250-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50B659E3B12
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 14:19:06 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D6F4167B8B
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 13:19:03 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73D911F4267;
-	Wed,  4 Dec 2024 13:18:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="WlC42VNk"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98F339E3B15
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 14:19:19 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F1B61BF300;
-	Wed,  4 Dec 2024 13:17:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5EA22282DC6
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 13:19:18 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2C141B4F02;
+	Wed,  4 Dec 2024 13:18:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rB5k+ijE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03E301BD032;
+	Wed,  4 Dec 2024 13:18:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733318279; cv=none; b=o7qc6oqOzoLmQQsAm1ExnY6RpBj2gXgYg1lu+QAJ9y7GZQcq40AB4plO9Ds6vRp2B/rWn+3CMeTEgN62b43LLeClSWmWtGPPE9qm57R+f8ItS4z4aLRi88QEiyPG9Qkn+DBufCVBKZdnpuCq4uWxb1r8p3xYhA01ipwqU3kEJ1Q=
+	t=1733318323; cv=none; b=EPYfxPdr1EjjupoA2AdCPdSU4nTCbCDILJv+HZ3a+SevTwNUJgelyhuEwkUdmLuRoRp3mg9XSCH3PfdRZEVXwFxjuErfkCmEjCFF/o1MFsQWEactXKlWhek6zvxf8IJfzzd8QOnYYKiRM5Zvp+JEDf9qD/+cfa8G4gZ6bWBKtYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733318279; c=relaxed/simple;
-	bh=KsFuDdmHVUNStA4sv4Yo8JQTbghbT9Geq1tm71pFoYw=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GQeXfhKX2vH02iMbtk5UchWAiQN5DOU8c+sOrMhtuXU5USWrIkXZLOxRWEKqhlB6E2E3WStBuIofAT9SoqfybYwucNcy03ocpsK4mqFzs+85P/sqD08yicznd2a4oykRxtfd8nWYY/+yl6bquVAjLgSmj2t3AuUtaYQBu+ZQIYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=WlC42VNk; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B445V7J020221;
-	Wed, 4 Dec 2024 13:17:51 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=6kSzxwcWv3fB3wPageKcAnLH
-	kyQmtDZtMwI8vGFdIds=; b=WlC42VNkB3XcdLi0m3o8EwKXwcjxPxg/MxgOuuEv
-	uBURKv5mKblpP60CDpXn4JaxQf6nYS+gaCGi6hWKrb2G3FobhxIwdER8I6NnFA+O
-	i/A86KlxVSQCHoNWkifcG1rBrH7h5FoPpiAHpF/zrfMEJRcxxs/xUPQXvIlH+LDe
-	Y7ARNiX/JBkUfUeWDYT3rL0tVYV3I+Vef93tOorACOtmNJs8bXps8tatWssZ29K+
-	+JjmCQBtgx37JsMV8ygtLggWYXe8xMdkVUTnrhcP8/97YQdGL11DC2eD0U5aKG0c
-	1GcuAtRNhwXIQGIrLTto1i4/WI14L/UA+Ip0or0pMwQf/w==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43a3exb8tq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 04 Dec 2024 13:17:51 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B4DHo34030578
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 4 Dec 2024 13:17:50 GMT
-Received: from hu-janathot-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 4 Dec 2024 05:17:44 -0800
-From: Janaki Ramaiah Thota <quic_janathot@quicinc.com>
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        "Rob
- Herring" <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        "Conor
- Dooley" <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        "Konrad Dybcio" <konradybcio@kernel.org>,
-        Marcel Holtmann
-	<marcel@holtmann.org>,
-        "Luiz Augusto von Dentz" <luiz.dentz@gmail.com>,
-        Bartosz Golaszewski <brgl@bgdev.pl>
-CC: <quic_mohamull@quicinc.com>, <quic_hbandi@quicinc.com>,
-        <quic_anubhavg@quicinc.com>,
-        Bartosz Golaszewski
-	<bartosz.golaszewski@linaro.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-bluetooth@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>
-Subject: [PATCH v4 4/4] power: sequencing: qcom-wcn: add support for the WCN6750 PMU
-Date: Wed, 4 Dec 2024 18:47:06 +0530
-Message-ID: <20241204131706.20791-5-quic_janathot@quicinc.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20241204131706.20791-1-quic_janathot@quicinc.com>
-References: <20241204131706.20791-1-quic_janathot@quicinc.com>
+	s=arc-20240116; t=1733318323; c=relaxed/simple;
+	bh=faV2UgrFbUwgZHqI4NWc38uDrA+m4co89RJaBnWShTs=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=hi+dqtuzSvfh05eT06l3aZGcbDMc+PFid6c2/4bMBa5GGvVNomwXdsvyG0Zv6+ZXhVWTwOJ1W/V8vaui4nW6ffz4nS0FQuo587FIC5iJxrPUIQyBZkYa6jG8z5bOj5DO2w5+U64XRDlEYca43SCa7hpdd3Iq0M/EEdNkvC6GpHU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rB5k+ijE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D442C4CED1;
+	Wed,  4 Dec 2024 13:18:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733318322;
+	bh=faV2UgrFbUwgZHqI4NWc38uDrA+m4co89RJaBnWShTs=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=rB5k+ijEcQq+GMI+O3ZZNor55nQ668cDtyWYBE7E4Va4VThnAJARQoUwM41lr6DQs
+	 eg/c4KoQZPtSVwhiyjgGzdoeOUhN7CFtAkSsUUnmhhoYzfyY5G4S8fz2+uVW+2vXzL
+	 L5gk/3MHecf9HaNMHav+bF/cx1jOE+WnaruBainUiMSjC/Gr05RXI7CvUjVFw8/V/4
+	 GfSeAQRGPOM2WkwuusLY8NXSjh/yUmlwdk66JEkSYdQ84kx0lQmb4sWbvSMbzfV4CS
+	 w4XQPY8Dlt9LOclYz8x+Jdg2z2cuZuAAwqmiFq/XkPkPluXzeMXhab0EwWCAKOlUzV
+	 NEqqC2FH7f53w==
+From: Vinod Koul <vkoul@kernel.org>
+To: linux-kernel@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>
+Cc: Dan Williams <dan.j.williams@intel.com>, 
+ Dave Jiang <dave.jiang@intel.com>, Paul Cercueil <paul@crapouillou.net>, 
+ Nuno Sa <nuno.sa@analog.com>, dmaengine@vger.kernel.org
+In-Reply-To: <20241202172004.76020-1-rdunlap@infradead.org>
+References: <20241202172004.76020-1-rdunlap@infradead.org>
+Subject: Re: [PATCH v2] linux/dmaengine.h: fix a few kernel-doc warnings
+Message-Id: <173331832011.673314.3759206188321207606.b4-ty@kernel.org>
+Date: Wed, 04 Dec 2024 18:48:40 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 3iwO9-LMCPNWTWMLnJZNApmGcp80MA0w
-X-Proofpoint-GUID: 3iwO9-LMCPNWTWMLnJZNApmGcp80MA0w
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 lowpriorityscore=0
- mlxlogscore=999 clxscore=1011 phishscore=0 adultscore=0 suspectscore=0
- malwarescore=0 spamscore=0 priorityscore=1501 impostorscore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
- definitions=main-2412040102
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
-Enable support for controlling the power-up sequence of the PMU inside
-the WCN6750 model.
 
-Signed-off-by: Janaki Ramaiah Thota <quic_janathot@quicinc.com>
----
- drivers/power/sequencing/pwrseq-qcom-wcn.c | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+On Mon, 02 Dec 2024 09:20:04 -0800, Randy Dunlap wrote:
+> The comment block for "Interleaved Transfer Request" should not begin
+> with "/**" since it is not in kernel-doc format.
+> 
+> Fix doc name for enum sum_check_flags.
+> 
+> Fix all (4) missing struct member warnings.
+> 
+> [...]
 
-diff --git a/drivers/power/sequencing/pwrseq-qcom-wcn.c b/drivers/power/sequencing/pwrseq-qcom-wcn.c
-index 682a9beac69e..e38da79f0ada 100644
---- a/drivers/power/sequencing/pwrseq-qcom-wcn.c
-+++ b/drivers/power/sequencing/pwrseq-qcom-wcn.c
-@@ -293,6 +293,24 @@ static const struct pwrseq_qcom_wcn_pdata pwrseq_wcn6855_of_data = {
- 	.targets = pwrseq_qcom_wcn6855_targets,
- };
- 
-+static const char *const pwrseq_wcn6750_vregs[] = {
-+	"vddaon",
-+	"vddasd",
-+	"vddpmu",
-+	"vddrfa0p8",
-+	"vddrfa1p2",
-+	"vddrfa1p7",
-+	"vddrfa2p2",
-+};
-+
-+static const struct pwrseq_qcom_wcn_pdata pwrseq_wcn6750_of_data = {
-+	.vregs = pwrseq_wcn6750_vregs,
-+	.num_vregs = ARRAY_SIZE(pwrseq_wcn6750_vregs),
-+	.pwup_delay_ms = 50,
-+	.gpio_enable_delay_ms = 5,
-+	.targets = pwrseq_qcom_wcn_targets,
-+};
-+
- static const char *const pwrseq_wcn7850_vregs[] = {
- 	"vdd",
- 	"vddio",
-@@ -431,6 +449,10 @@ static const struct of_device_id pwrseq_qcom_wcn_of_match[] = {
- 		.compatible = "qcom,wcn7850-pmu",
- 		.data = &pwrseq_wcn7850_of_data,
- 	},
-+	{
-+		.compatible = "qcom,wcn6750-pmu",
-+		.data = &pwrseq_wcn6750_of_data,
-+	},
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, pwrseq_qcom_wcn_of_match);
+Applied, thanks!
+
+[1/1] linux/dmaengine.h: fix a few kernel-doc warnings
+      commit: 790fb9956eead785b720ccc0851f09a5ca3a093e
+
+Best regards,
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+~Vinod
+
 
 
