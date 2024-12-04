@@ -1,144 +1,210 @@
-Return-Path: <linux-kernel+bounces-432260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432262-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C77019E4884
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 00:17:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DD6749E488A
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 00:19:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8CCB216317B
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 23:17:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA847168E9D
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 23:19:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1F6D1F03FF;
-	Wed,  4 Dec 2024 23:17:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE064202C58;
+	Wed,  4 Dec 2024 23:18:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FotN6tnC"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="MiToF2r4"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8002919DFB4
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 23:17:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F3B719DFB4;
+	Wed,  4 Dec 2024 23:18:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733354267; cv=none; b=FAYyp2QLOZBZYgRBkabcp+3AE5tSPEGZ0VSF6Dvs+ELUh+h/F1BHTj6ywyHB486YOQQ4zd6GGk5TFvmL2Zg0IWtP/HR9kb7gWGjaeWyRMer71rMk/7xSBAYCff1k29qgXNHgiMeyhIQc8sZAbLKtqlu82Kq1kQ5vwteHPEZwJL4=
+	t=1733354334; cv=none; b=CCdBGY7cTXWBJbjhglxRK98DjuF11CB4gmIqko0l24cyLJZsBq4uFqbQoGb8APlxRv8PFMvwalqyM9KQi1Yuy2z4HPrpii7aYRL7eTD3ZlMiuYAKjUw1yLCtRrr5+FjB1f0xCJ8hm2qoE2XapfkSYlnfCf7DufWEaIuvO4KiHrk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733354267; c=relaxed/simple;
-	bh=6gz/5JCvku0V5yr9ixVyR9+FNlFCkvwcxxf4D0X90ZQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L7vxSoN8JNz0d1nhcuJeaGbGFOREJyDY6OQAsp4/nsED/TwR34O3ZGFUsOl3jVZ+28zmXQzbJHD2bTQJ8Rpvuu3Nl7FeWXlBRkwHoq6QQjfrXB7Kyfv3Qh7Ny9F/Q2aaotdJub0DTTIb/qVLvihpZCPgFPHI9ryCNJOkbp+u8is=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FotN6tnC; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-53df7f6a133so263980e87.3
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 15:17:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733354264; x=1733959064; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=R+qyWMAaxSXjS/GuoQtdsJ9zo8e90abOj5J8SrRL65M=;
-        b=FotN6tnCZCSpJq3dIQKpLY6hsyU/QkOWsmUZWT6AoSl4H7VVj83y4bykbZH+QYhZ/D
-         CgngLSiN2uxozRcewUkdHitjzNLLcozG+AKLiN62HiJwNE829/Zv/LlIp27hHt+QGU/D
-         oTJS5Ff2IdwgvZIAuj1t3XPPXmWizukxB57tFLqu0xp55cTJgJ4h0NljgXALyriNlU6X
-         dq2LFmoNOG+jRo4J5KzDRbnn5RoM7SkY/WwbItpSxg/NSPleJMpXJ1phiqs7TjXQq+Uf
-         ANIFAP/FnLt0HyMNQ4Pg14q/chrOSXdS9hi8vEjzK6fDWOcjKBoMnEev4EhydtpxGFK5
-         HaYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733354264; x=1733959064;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=R+qyWMAaxSXjS/GuoQtdsJ9zo8e90abOj5J8SrRL65M=;
-        b=OLynF6sYs9JEVUO/xtRBvM4aKaJ7y83tA8bKJUPw6xrjpQMi7dCz30PZU2RhJkF5pB
-         QgogcL4Uuponlmy3xZLvX83C8IUJjdljBABv9moH/XKIvMpoLrdU/vkLDnmrrHYKajxF
-         DMkIZiyQhUsSAutLzbm2jwHCaAL6qGIcMyVopqXE4fcAFwN1BQ/2ubsx5ZTzUWwwx/Cz
-         mQeZi1rwdE/74kzOEbmtIK+qpnzBq8xAjo9p+1a0N7csXdb+es+/n15MeyIHrfEnW9ao
-         N7KNfnFluMpr4pcLsNMQNzMiFFm9YLriksFLO37kE7hOfTWbJuXEqkyxxJh8zBrDNUed
-         lv1g==
-X-Forwarded-Encrypted: i=1; AJvYcCUCKJpN3kKrMh9e2HoZWaoI16m7T78hI3uGn0EAntOChBX5g4ifG8H2VqdkHX8AanaGi9DFy/3haUZIdf8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyfs0IDpvwzo3w+MvtrKTXOq1XJJtTz2YPSl2LN19N5iT04TOs7
-	0E2nqDNRXPGct/MXwGrHWhXANxrrJi18VorHyvkJMGPRqg6L4u/w1+TaUIJsrAo=
-X-Gm-Gg: ASbGncuZ2IiX1gteOAbsKz8A8RkkROPnqQ6LdhE8jYbQHgFMI4gIM47qn3tIjDasZh6
-	eHKO6V5+eNhe/2qWhGE126WXElNo8ZN2dHuhpMSBLGW5sI3n3ilrpoM6Nk9hidDW65WLXpVCyta
-	HZXMkwc3pExH8895vdk9rgzpoUvdQh4uj2ENJNzcn48r9/KwnMwXnGDPQLf0ILB7rbs3aL4tNQR
-	Vtlw1ajE9Jdmb0nHBSRI5LAilA/tEz8JJ9YnRx/EodLxXOz/p9pkk8ytqdzqxD7OBw3pwXEYaQj
-	iljL7JMMZTS3dHYPeaHyT+8thKIrKA==
-X-Google-Smtp-Source: AGHT+IG2aNoUrJvkerXSq3eWJ+qwjRlvZ17m+biwTB/m1eLy8NPmwfbxly/t8CsrnbMCJEk1wfQi/Q==
-X-Received: by 2002:a05:6512:3f16:b0:53d:dd09:124a with SMTP id 2adb3069b0e04-53e129ed245mr3412222e87.8.1733354263629;
-        Wed, 04 Dec 2024 15:17:43 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53e229ca4c2sm31823e87.269.2024.12.04.15.17.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Dec 2024 15:17:42 -0800 (PST)
-Date: Thu, 5 Dec 2024 01:17:39 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Jani Nikula <jani.nikula@linux.intel.com>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Phong LE <ple@baylibre.com>, 
-	Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, 
-	Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Russell King <linux@armlinux.org.uk>, 
-	Chun-Kuang Hu <chunkuang.hu@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Sandy Huang <hjc@rock-chips.com>, 
-	Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>, Andy Yan <andy.yan@rock-chips.com>, 
-	Alain Volmat <alain.volmat@foss.st.com>, Raphael Gallais-Pou <rgallaispou@gmail.com>, 
-	Dave Stevenson <dave.stevenson@raspberrypi.com>, =?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>, 
-	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	linux-sound@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, linux-mediatek@lists.infradead.org, 
-	linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH v5 7/9] drm/bridge_connector: hook
- drm_atomic_helper_connector_hdmi_update_edid()
-Message-ID: <3oz2k3ywwdkxhi4t4setfqjl54yzxg3nxe7upxwl4syyyygf42@3ynkabu2bmvs>
-References: <20241201-drm-bridge-hdmi-connector-v5-0-b5316e82f61a@linaro.org>
- <20241201-drm-bridge-hdmi-connector-v5-7-b5316e82f61a@linaro.org>
- <87a5dc4zd5.fsf@intel.com>
- <txzri7x4pdeakx4juandk3hfhsbx3dhlulxfuehqlmrr7b3wpw@jaunqktsro6x>
- <87v7vz3ne4.fsf@intel.com>
+	s=arc-20240116; t=1733354334; c=relaxed/simple;
+	bh=kO7MwWdiM4AG+x7YQdOgVuSXUwY5fFp/QzN8WcM/PoQ=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=P1jrWQB6SIQSTenGQ0aNIpF9lfZIeMRoFtOiv4nJSwtbrMs2A94JbhXiZ+EKVmkIxJVqJKkFwMEvPp29kvg5n53V7PRt22Hm+ERziobNCbz48If04uNyE8g7sU8TzLPZHahBb2fDeB40g8K/aMeAEFiqt11rVfgnIZ/JcTBAgfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=MiToF2r4; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B4LvJiU031658;
+	Wed, 4 Dec 2024 23:18:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=jGsn9P0xO8ecD7EeEfGnlR
+	h+FsBMMz/72Pm4+DZwJRw=; b=MiToF2r418pJIYevyglRIUzkgN8KmV4+4uxs8c
+	f/9PWYl6SU+O8WIW7NcyVvFdD/L00Y6gjTo8rMA4k3A7irkDcdBWpXu6jq+wSBbl
+	6DhuyqHABZlYDjXiP1ao5xAqqpWPciAQo4/RDT39mfWiyWzqVqj1MhQg0QmEphKz
+	LhgWs5UdO0Q1ubeyqXX65F+WuYhhcjXN5H+4X+yjyX18jcd7xFPyrOeqaCv3wC55
+	4/R2FLY3HLXWp3x7ZSk8Ilsf9h7OKIJATwF3I8zf0lCXNkYyLftsUEM805Tyt1/a
+	9yFpKb5ZntbnTRrZ5X5qiCWutPqAMjSaYZBecqke63NrYwSw==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43ayem84pu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 04 Dec 2024 23:18:43 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B4NIgwW029808
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 4 Dec 2024 23:18:42 GMT
+Received: from hu-molvera-lv.qualcomm.com (10.49.16.6) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Wed, 4 Dec 2024 15:18:41 -0800
+From: Melody Olvera <quic_molvera@quicinc.com>
+Subject: [PATCH v3 0/7] dts: qcom: Introduce SM8750 device trees
+Date: Wed, 4 Dec 2024 15:18:00 -0800
+Message-ID: <20241204-sm8750_master_dt-v3-0-4d5a8269950b@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87v7vz3ne4.fsf@intel.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIACnjUGcC/42O3WoDIRBGX2XxugP+rK76KiEEfyattLqpmiUQ8
+ u61DaW9CeRm4HxwDnMlDWvCRux0JRW31NJaBoiXiYQ3V14RUhxMOOUz43SGlvUi6SG71rEeYge
+ mAhfR06iFIkM7VTymy09yt79zxc/zKPf7+Be204NsKuOGtRQMvYGk2gRpaDyitJsg/397mAgf7
+ w2QK2TezEx59bTZcj4D1Wpx3gij9DD5c+YpBuCLROkoFYjBbuxb9K4hhDXn1O1U8NLh1yf72+0
+ LcAI0KIMBAAA=
+X-Change-ID: 20241204-sm8750_master_dt-16c23db0d836
+To: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Catalin Marinas
+	<catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        "Satya Durga
+ Srinivasu Prabhala" <quic_satyap@quicinc.com>,
+        Trilok Soni
+	<quic_tsoni@quicinc.com>
+CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        Melody Olvera <quic_molvera@quicinc.com>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski@linaro.org>,
+        Jishnu Prakash <quic_jprakash@quicinc.com>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        Raviteja Laggyshetty
+	<quic_rlaggysh@quicinc.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1733354321; l=4638;
+ i=quic_molvera@quicinc.com; s=20241204; h=from:subject:message-id;
+ bh=kO7MwWdiM4AG+x7YQdOgVuSXUwY5fFp/QzN8WcM/PoQ=;
+ b=BOpQnrIJ5Rd4iqV/aOtURe7M27VeIfy7NuZD9E+yepIrKDDN67MxZTa6YS2WhDqGqoxi6QQ/b
+ KwbwaTbYwJWDZnjQVnYrdNkGFSxIf/ae/mOMR/6WwR6vEZpWcNLQwkj
+X-Developer-Key: i=quic_molvera@quicinc.com; a=ed25519;
+ pk=1DGLp3zVYsHAWipMaNZZTHR321e8xK52C9vuAoeca5c=
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: M391r5N-uv_P5jX7cKNMwFs0AJ8OqUsD
+X-Proofpoint-ORIG-GUID: M391r5N-uv_P5jX7cKNMwFs0AJ8OqUsD
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
+ priorityscore=1501 mlxlogscore=657 phishscore=0 malwarescore=0 mlxscore=0
+ adultscore=0 lowpriorityscore=0 bulkscore=0 suspectscore=0 spamscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412040179
 
-On Wed, Dec 04, 2024 at 09:42:11AM +0200, Jani Nikula wrote:
-> On Wed, 04 Dec 2024, Dmitry Baryshkov <dmitry.baryshkov@linaro.org> wrote:
-> > On Tue, Dec 03, 2024 at 04:25:58PM +0200, Jani Nikula wrote:
-> >> On Sun, 01 Dec 2024, Dmitry Baryshkov <dmitry.baryshkov@linaro.org> wrote:
-> >> > +	drm_edid = drm_bridge_edid_read(bridge, connector);
-> >> > +	if (!drm_edid_valid(drm_edid)) {
-> >> 
-> >> What's the case this check is for?
-> >> 
-> >> My preference would be that bridge->funcs->edid_read() uses
-> >> drm_edid_read*() family of functions that do the checks and return the
-> >> EDID.
-> >> 
-> >> There are some cases that just allocate a blob and return it. Would be
-> >> nice if they could be converted, but in the mean time could use
-> >> drm_edid_valid() right there. Additional validity checks are redundant.
-> >
-> > This was c&p from drm_bridge_connector_get_modes_edid(). If you think
-> > that the check is redundant, could you please send a patch dropping the
-> > check?
-> 
-> Mmmh. It's just scary to *remove* them, and that's the reason I didn't
-> want you to add one in the first place! :)
+This series adds the initial device tree support for the SM8750 SoCs
+needed to boot to shell. This specifically adds support for clocks,
+pinctrl, rpmhpd, regulators, interconnects, and SoC and board
+compatibles.
 
-Ack
+The Qualcomm Technologies, Inc. SM8750 SoC is the latest in the line of
+consumer mobile device SoCs. See more at:
+https://www.qualcomm.com/content/dam/qcomm-martech/dm-assets/images/company/news-media/media-center/press-kits/snapdragon-summit-2024/day-1/documents/Snapdragon8EliteProductBrief.pdf
 
+Dependencies:
+clks: https://lore.kernel.org/all/20241204-sm8750_master_clks-v3-0-1a8f31a53a86@quicinc.com/
+interconnects: https://lore.kernel.org/all/20241204-sm8750_master_interconnects-v3-0-3d9aad4200e9@quicinc.com/
+pinctrl (applied): https://lore.kernel.org/all/20241112002843.2804490-1-quic_molvera@quicinc.com/
+regulators (applied): https://lore.kernel.org/all/20241112002645.2803506-1-quic_molvera@quicinc.com/
+power domains (applied): https://lore.kernel.org/all/20241112002444.2802092-1-quic_molvera@quicinc.com/
+misc bindings:
+- https://lore.kernel.org/all/20241204-sm8750_master_smmu-v2-1-9e73e3fc15f2@quicinc.com/
+- https://lore.kernel.org/all/20241204-sm8750_master_pdc-v1-1-3a06cb62a28f@quicinc.com/
+applied bindings:
+- https://lore.kernel.org/all/20241021230427.2632466-1-quic_molvera@quicinc.com/
+- https://lore.kernel.org/all/20241112003544.2807368-1-quic_molvera@quicinc.com/
+- https://lore.kernel.org/all/20241021230500.2632527-1-quic_molvera@quicinc.com/
+
+Changes in V3:
+- split PMD8028 PMIC and PMIH0108 PMIC into two patches
+- added critical trips for PMD8028 and PMIH0108
+- updated commit msgs to all use uppercase for names
+- updated cpu idle states in dt to follow previous conventions
+- enabled msi-controller@16040000
+- reordered gcc clocks to match bindings 
+
+Changes in V2:
+- split dts and dtsi patches into separate patches
+- changed eusb-repeater to phy
+- removed empty chosen node
+- lowercased phandles in dtsi
+- added system-wide domain idle state
+- added leading zeroes to applicable regs
+- corrected gpio ranges
+- removed some unnecessary comments
+- updated timer size cells
+- separated pmics & thermal zones into their own file
+- added chassis type to board files
+- added reserved tlmm nodes to board files
+- corrected regulator-0 supplies in board files
+
+Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
+---
+Melody Olvera (7):
+      dt-bindings: arm: qcom: Document SM8750 SoC and boards
+      arm64: dts: qcom: Add PMD8028 PMIC
+      arm64: dts: qcom: Add PMIH0108 PMIC
+      arm64: dts: qcom: Add base SM8750 dtsi
+      arm64: dts: qcom: sm8750: Add pmic dtsi
+      arm64: dts: qcom: Add board dts files for SM8750 MTP and QRD
+      arm64: defconfig: Enable SM8750 SoC base configs
+
+ Documentation/devicetree/bindings/arm/qcom.yaml |    7 +
+ arch/arm64/boot/dts/qcom/Makefile               |    2 +
+ arch/arm64/boot/dts/qcom/pmd8028.dtsi           |   62 +
+ arch/arm64/boot/dts/qcom/pmih0108.dtsi          |   68 +
+ arch/arm64/boot/dts/qcom/sm8750-mtp.dts         |  794 +++++++
+ arch/arm64/boot/dts/qcom/sm8750-pmics.dtsi      |  188 ++
+ arch/arm64/boot/dts/qcom/sm8750-qrd.dts         |  792 ++++++
+ arch/arm64/boot/dts/qcom/sm8750.dtsi            | 2907 +++++++++++++++++++++++
+ arch/arm64/configs/defconfig                    |    4 +
+ 9 files changed, 4824 insertions(+)
+---
+base-commit: ed2e49e900fcf3ea198df034facb67bf8d99f44e
+change-id: 20241204-sm8750_master_dt-16c23db0d836
+prerequisite-change-id: 20241204-sm8750_master_interconnects-5089c590dfe5:v3
+prerequisite-patch-id: 2129d2b0d43098012e7e63a728971870eda5a891
+prerequisite-patch-id: a4c4f081f8e050b93f33730fa63af4e8413834bf
+prerequisite-change-id: 20241204-sm8750_master_clks-e26e1b9416b6:v3
+prerequisite-patch-id: 6746978c15f8c943df3ca44013b1692668d7c60a
+prerequisite-patch-id: ac3e8d8cbeac3f1a77f8d54751063dba61642a01
+prerequisite-patch-id: e0affb2c25d8c566c875994970503aa446983ea7
+prerequisite-patch-id: 70df483173f5546f676427883505bd135663583b
+prerequisite-patch-id: 8897202725dcee6119e018c8c3c11dcc2a5337ef
+prerequisite-patch-id: 5e652ef99d655ab31e4c86cabb7fd58b03ad7437
+prerequisite-patch-id: 551a78c20b5320c0d51b262f5de9772d8f554d0a
+prerequisite-patch-id: a4db6036b69abd4f25ec8d44a9919e8a1b5fb7da
+prerequisite-change-id: 20241204-sm8750_master_smmu-0867ab939686:v2
+prerequisite-patch-id: 05669e3fd6558fd8a03082bb0c42347cc74e4b4c
+prerequisite-change-id: 20241204-sm8750_master_pdc-275e5a003eec:v1
+prerequisite-patch-id: e02a35925d37a2e61abbf240cc8963208f54e1c0
+
+Best regards,
 -- 
-With best wishes
-Dmitry
+Melody Olvera <quic_molvera@quicinc.com>
+
 
