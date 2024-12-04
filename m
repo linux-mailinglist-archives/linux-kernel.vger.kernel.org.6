@@ -1,55 +1,58 @@
-Return-Path: <linux-kernel+bounces-431682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEB819E433D
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 19:23:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A40A79E43A5
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 19:45:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5C7F3B47EE2
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:01:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1A435B341FA
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:01:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37D1B2144AC;
-	Wed,  4 Dec 2024 16:58:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9A8A215F42;
+	Wed,  4 Dec 2024 16:58:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KRBd06Sf"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aOP6CR9x"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D6872139D4;
-	Wed,  4 Dec 2024 16:58:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E9112144D4;
+	Wed,  4 Dec 2024 16:58:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733331495; cv=none; b=Ao5Do2guGjX8Pc8oOT1WMPhNAG+BXE0SB+S/s39NYnmqHCtBng27ii85TBPbdGwpAjvu67OALmRs/aziIDSe2tH/lU6aavIqZJvlVX7NcYQOi8tD+avGr1EVipgY5pZGjnaYkIBD4qy3J6oSBALVOLyFwDcpjLwOt/SjfPFQpFg=
+	t=1733331504; cv=none; b=CdwMJ2k5kSJyR2OHnU2zMVCDjbMb+v9sdL0j1kKPpw13C+wJvlE+cnDxYGOvulCwsjwHR8Ygp4zjShB7829YK8qYc515A1ozR4tYD0ibgoYVRdrN7Yfae2oc8/3EfFmLS2SYD/9FuAR2X2paUSCy8cwmhSWtB+LZnNl2jjZe8IE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733331495; c=relaxed/simple;
-	bh=0mNno1EiiSC9NUog4xuo7N7vBR1QdqDrwjHVF5pU6jU=;
+	s=arc-20240116; t=1733331504; c=relaxed/simple;
+	bh=+X1/Nu5CoD/sFJfWzapKZW1fSBzONFEp4WsLJt5tBFM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=R9JOiL585osNnhJ4+w/bZYSitTas54oOPeXa+Ln7jl/AuImn/6PX7Pf2ianCEEy0wq6zKcYJ1BTYAUuwAi6y5tq5jZNY5arlyKXT+75lx4/zoP090URxar18QR2jt+yDUDLerEhCSnPOFMkC11hbcEcrlgcB9Jc9GFF9jC2lmlA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KRBd06Sf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39944C4CEE6;
-	Wed,  4 Dec 2024 16:58:14 +0000 (UTC)
+	 MIME-Version; b=mpJg6RfdhfBYb501HNDCKgYo+OicZ7CB1yp+I1lGmNz+DWeHepknNida4Q7ZJ6t79q5A5XdBHZtg3LyMvVhCeDtyoGK9j2MCj/+ORdJygXii4RNj579/3RCqvWuHD+Nku2SjN6VgtquqWCDBIoMI5RZ/cOUb9PqQerrKxLVZq40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aOP6CR9x; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78FBBC4CED1;
+	Wed,  4 Dec 2024 16:58:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733331495;
-	bh=0mNno1EiiSC9NUog4xuo7N7vBR1QdqDrwjHVF5pU6jU=;
+	s=k20201202; t=1733331503;
+	bh=+X1/Nu5CoD/sFJfWzapKZW1fSBzONFEp4WsLJt5tBFM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=KRBd06SfmWU/aeG357zsf9VioPKhw3/v/vDgzKte79d1W1ygWAoQr1f8qSmW0W7H5
-	 fgYkbvDYYKBZX3xXfd/mrV1xZRTeYYdMXvjdu8F7Pmh9VDzR1r24kRlaA2pNApoZid
-	 Gsjm2Nb3Q9xuPR4h/FXl3PFh43CXj9uSbhV4k63amuJ1ypX6Ak/qIfwAL5/KNfHfRf
-	 mL3m2Xqzn2PnA6sJS2j+upgoI3dzSNSTEnN7PF2L9wUQnKXASzC42i8ule+Rpn9S8S
-	 Np8satgKnqHgMzkrx/cRasPmEIjCsH2JfQiCyUaeUwVuAXMztuBfvFWwAHA4ElzG62
-	 UchoGaRToNHWA==
+	b=aOP6CR9x1MSXJrkzdipFL7zDncCk2Thxf059pgA/sW+3ySc/PeajnF2NklWOgKgPR
+	 qDUYzE96KmEgvZV+zb7fcYB2Us8Q2XZppAo+uZL0OWWEe4wgw8v6+Em4PQzWUIhefd
+	 Ad9sARNwO4mv8wuDT2H8l7LpYo0VXodwiCX3rSyAE2Uv1KQiVRweTpkvbjQN8axGJH
+	 YhW86EqE2taRGhinPtKuZzwrjuBNi4Z8dpw5ec2hl09ollhAk9AfhtzVcY1JR3+SKM
+	 Ka5z7ZddkayW54a35jTNRpiZ5JJR2EBm0wRJtYSKuTHhT4MnnkLnThWGEjE0/VfyvG
+	 /aGN3V4EKMVpg==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Mukesh Ojha <quic_mojha@quicinc.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
+Cc: Jason Gunthorpe <jgg@nvidia.com>,
+	Alejandro Jimenez <alejandro.j.jimenez@oracle.com>,
+	Joerg Roedel <jroedel@suse.de>,
 	Sasha Levin <sashal@kernel.org>,
-	linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.12 12/36] pinmux: Use sequential access to access desc->pinmux data
-Date: Wed,  4 Dec 2024 10:45:28 -0500
-Message-ID: <20241204154626.2211476-12-sashal@kernel.org>
+	joro@8bytes.org,
+	will@kernel.org,
+	iommu@lists.linux.dev
+Subject: [PATCH AUTOSEL 6.12 14/36] iommu/amd: Fix corruption when mapping large pages from 0
+Date: Wed,  4 Dec 2024 10:45:30 -0500
+Message-ID: <20241204154626.2211476-14-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20241204154626.2211476-1-sashal@kernel.org>
 References: <20241204154626.2211476-1-sashal@kernel.org>
@@ -64,334 +67,81 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.12.1
 Content-Transfer-Encoding: 8bit
 
-From: Mukesh Ojha <quic_mojha@quicinc.com>
+From: Jason Gunthorpe <jgg@nvidia.com>
 
-[ Upstream commit 5a3e85c3c397c781393ea5fb2f45b1f60f8a4e6e ]
+[ Upstream commit e3a682eaf2af51a83f5313145ef592ce50fa787f ]
 
-When two client of the same gpio call pinctrl_select_state() for the
-same functionality, we are seeing NULL pointer issue while accessing
-desc->mux_owner.
+If a page is mapped starting at 0 that is equal to or larger than can fit
+in the current mode (number of table levels) it results in corrupting the
+mapping as the following logic assumes the mode is correct for the page
+size being requested.
 
-Let's say two processes A, B executing in pin_request() for the same pin
-and process A updates the desc->mux_usecount but not yet updated the
-desc->mux_owner while process B see the desc->mux_usecount which got
-updated by A path and further executes strcmp and while accessing
-desc->mux_owner it crashes with NULL pointer.
+There are two issues here, the check if the address fits within the table
+uses the start address, it should use the last address to ensure that last
+byte of the mapping fits within the current table mode.
 
-Serialize the access to mux related setting with a mutex lock.
+The second is if the mapping is exactly the size of the full page table it
+has to add another level to instead hold a single IOPTE for the large
+size.
 
-	cpu0 (process A)			cpu1(process B)
+Since both corner cases require a 0 IOVA to be hit and doesn't start until
+a page size of 2^48 it is unlikely to ever hit in a real system.
 
-pinctrl_select_state() {		  pinctrl_select_state() {
-  pin_request() {				pin_request() {
-  ...
-						 ....
-    } else {
-         desc->mux_usecount++;
-    						desc->mux_usecount && strcmp(desc->mux_owner, owner)) {
-
-         if (desc->mux_usecount > 1)
-               return 0;
-         desc->mux_owner = owner;
-
-  }						}
-
-Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
-Link: https://lore.kernel.org/20241014192930.1539673-1-quic_mojha@quicinc.com
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Reported-by: Alejandro Jimenez <alejandro.j.jimenez@oracle.com>
+Signed-off-by: Jason Gunthorpe <jgg@nvidia.com>
+Link: https://lore.kernel.org/r/0-v1-27ab08d646a1+29-amd_0map_jgg@nvidia.com
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/core.c   |   3 +
- drivers/pinctrl/core.h   |   1 +
- drivers/pinctrl/pinmux.c | 173 ++++++++++++++++++++++-----------------
- 3 files changed, 100 insertions(+), 77 deletions(-)
+ drivers/iommu/amd/io_pgtable.c | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/pinctrl/core.c b/drivers/pinctrl/core.c
-index 4061890a17483..b3eec63c00ba0 100644
---- a/drivers/pinctrl/core.c
-+++ b/drivers/pinctrl/core.c
-@@ -220,6 +220,9 @@ static int pinctrl_register_one_pin(struct pinctrl_dev *pctldev,
+diff --git a/drivers/iommu/amd/io_pgtable.c b/drivers/iommu/amd/io_pgtable.c
+index 804b788f3f167..f3399087859fd 100644
+--- a/drivers/iommu/amd/io_pgtable.c
++++ b/drivers/iommu/amd/io_pgtable.c
+@@ -118,6 +118,7 @@ static void free_sub_pt(u64 *root, int mode, struct list_head *freelist)
+  */
+ static bool increase_address_space(struct amd_io_pgtable *pgtable,
+ 				   unsigned long address,
++				   unsigned int page_size_level,
+ 				   gfp_t gfp)
+ {
+ 	struct io_pgtable_cfg *cfg = &pgtable->pgtbl.cfg;
+@@ -133,7 +134,8 @@ static bool increase_address_space(struct amd_io_pgtable *pgtable,
  
- 	/* Set owner */
- 	pindesc->pctldev = pctldev;
-+#ifdef CONFIG_PINMUX
-+	mutex_init(&pindesc->mux_lock);
-+#endif
+ 	spin_lock_irqsave(&domain->lock, flags);
  
- 	/* Copy basic pin info */
- 	if (pin->name) {
-diff --git a/drivers/pinctrl/core.h b/drivers/pinctrl/core.h
-index 4e07707d2435b..d6c24978e7081 100644
---- a/drivers/pinctrl/core.h
-+++ b/drivers/pinctrl/core.h
-@@ -177,6 +177,7 @@ struct pin_desc {
- 	const char *mux_owner;
- 	const struct pinctrl_setting_mux *mux_setting;
- 	const char *gpio_owner;
-+	struct mutex mux_lock;
- #endif
- };
+-	if (address <= PM_LEVEL_SIZE(pgtable->mode))
++	if (address <= PM_LEVEL_SIZE(pgtable->mode) &&
++	    pgtable->mode - 1 >= page_size_level)
+ 		goto out;
  
-diff --git a/drivers/pinctrl/pinmux.c b/drivers/pinctrl/pinmux.c
-index 02033ea1c6438..0743190da59e8 100644
---- a/drivers/pinctrl/pinmux.c
-+++ b/drivers/pinctrl/pinmux.c
-@@ -14,6 +14,7 @@
+ 	ret = false;
+@@ -163,18 +165,21 @@ static u64 *alloc_pte(struct amd_io_pgtable *pgtable,
+ 		      gfp_t gfp,
+ 		      bool *updated)
+ {
++	unsigned long last_addr = address + (page_size - 1);
+ 	struct io_pgtable_cfg *cfg = &pgtable->pgtbl.cfg;
+ 	int level, end_lvl;
+ 	u64 *pte, *page;
  
- #include <linux/array_size.h>
- #include <linux/ctype.h>
-+#include <linux/cleanup.h>
- #include <linux/debugfs.h>
- #include <linux/device.h>
- #include <linux/err.h>
-@@ -93,6 +94,7 @@ bool pinmux_can_be_used_for_gpio(struct pinctrl_dev *pctldev, unsigned int pin)
- 	if (!desc || !ops)
- 		return true;
+ 	BUG_ON(!is_power_of_2(page_size));
  
-+	guard(mutex)(&desc->mux_lock);
- 	if (ops->strict && desc->mux_usecount)
- 		return false;
- 
-@@ -127,29 +129,31 @@ static int pin_request(struct pinctrl_dev *pctldev,
- 	dev_dbg(pctldev->dev, "request pin %d (%s) for %s\n",
- 		pin, desc->name, owner);
- 
--	if ((!gpio_range || ops->strict) &&
--	    desc->mux_usecount && strcmp(desc->mux_owner, owner)) {
--		dev_err(pctldev->dev,
--			"pin %s already requested by %s; cannot claim for %s\n",
--			desc->name, desc->mux_owner, owner);
--		goto out;
--	}
-+	scoped_guard(mutex, &desc->mux_lock) {
-+		if ((!gpio_range || ops->strict) &&
-+		    desc->mux_usecount && strcmp(desc->mux_owner, owner)) {
-+			dev_err(pctldev->dev,
-+				"pin %s already requested by %s; cannot claim for %s\n",
-+				desc->name, desc->mux_owner, owner);
-+			goto out;
-+		}
- 
--	if ((gpio_range || ops->strict) && desc->gpio_owner) {
--		dev_err(pctldev->dev,
--			"pin %s already requested by %s; cannot claim for %s\n",
--			desc->name, desc->gpio_owner, owner);
--		goto out;
--	}
-+		if ((gpio_range || ops->strict) && desc->gpio_owner) {
-+			dev_err(pctldev->dev,
-+				"pin %s already requested by %s; cannot claim for %s\n",
-+				desc->name, desc->gpio_owner, owner);
-+			goto out;
-+		}
- 
--	if (gpio_range) {
--		desc->gpio_owner = owner;
--	} else {
--		desc->mux_usecount++;
--		if (desc->mux_usecount > 1)
--			return 0;
-+		if (gpio_range) {
-+			desc->gpio_owner = owner;
-+		} else {
-+			desc->mux_usecount++;
-+			if (desc->mux_usecount > 1)
-+				return 0;
- 
--		desc->mux_owner = owner;
-+			desc->mux_owner = owner;
-+		}
+-	while (address > PM_LEVEL_SIZE(pgtable->mode)) {
++	while (last_addr > PM_LEVEL_SIZE(pgtable->mode) ||
++	       pgtable->mode - 1 < PAGE_SIZE_LEVEL(page_size)) {
+ 		/*
+ 		 * Return an error if there is no memory to update the
+ 		 * page-table.
+ 		 */
+-		if (!increase_address_space(pgtable, address, gfp))
++		if (!increase_address_space(pgtable, last_addr,
++					    PAGE_SIZE_LEVEL(page_size), gfp))
+ 			return NULL;
  	}
  
- 	/* Let each pin increase references to this module */
-@@ -178,12 +182,14 @@ static int pin_request(struct pinctrl_dev *pctldev,
- 
- out_free_pin:
- 	if (status) {
--		if (gpio_range) {
--			desc->gpio_owner = NULL;
--		} else {
--			desc->mux_usecount--;
--			if (!desc->mux_usecount)
--				desc->mux_owner = NULL;
-+		scoped_guard(mutex, &desc->mux_lock) {
-+			if (gpio_range) {
-+				desc->gpio_owner = NULL;
-+			} else {
-+				desc->mux_usecount--;
-+				if (!desc->mux_usecount)
-+					desc->mux_owner = NULL;
-+			}
- 		}
- 	}
- out:
-@@ -219,15 +225,17 @@ static const char *pin_free(struct pinctrl_dev *pctldev, int pin,
- 		return NULL;
- 	}
- 
--	if (!gpio_range) {
--		/*
--		 * A pin should not be freed more times than allocated.
--		 */
--		if (WARN_ON(!desc->mux_usecount))
--			return NULL;
--		desc->mux_usecount--;
--		if (desc->mux_usecount)
--			return NULL;
-+	scoped_guard(mutex, &desc->mux_lock) {
-+		if (!gpio_range) {
-+			/*
-+			 * A pin should not be freed more times than allocated.
-+			 */
-+			if (WARN_ON(!desc->mux_usecount))
-+				return NULL;
-+			desc->mux_usecount--;
-+			if (desc->mux_usecount)
-+				return NULL;
-+		}
- 	}
- 
- 	/*
-@@ -239,13 +247,15 @@ static const char *pin_free(struct pinctrl_dev *pctldev, int pin,
- 	else if (ops->free)
- 		ops->free(pctldev, pin);
- 
--	if (gpio_range) {
--		owner = desc->gpio_owner;
--		desc->gpio_owner = NULL;
--	} else {
--		owner = desc->mux_owner;
--		desc->mux_owner = NULL;
--		desc->mux_setting = NULL;
-+	scoped_guard(mutex, &desc->mux_lock) {
-+		if (gpio_range) {
-+			owner = desc->gpio_owner;
-+			desc->gpio_owner = NULL;
-+		} else {
-+			owner = desc->mux_owner;
-+			desc->mux_owner = NULL;
-+			desc->mux_setting = NULL;
-+		}
- 	}
- 
- 	module_put(pctldev->owner);
-@@ -458,7 +468,8 @@ int pinmux_enable_setting(const struct pinctrl_setting *setting)
- 				 pins[i]);
- 			continue;
- 		}
--		desc->mux_setting = &(setting->data.mux);
-+		scoped_guard(mutex, &desc->mux_lock)
-+			desc->mux_setting = &(setting->data.mux);
- 	}
- 
- 	ret = ops->set_mux(pctldev, setting->data.mux.func,
-@@ -472,8 +483,10 @@ int pinmux_enable_setting(const struct pinctrl_setting *setting)
- err_set_mux:
- 	for (i = 0; i < num_pins; i++) {
- 		desc = pin_desc_get(pctldev, pins[i]);
--		if (desc)
--			desc->mux_setting = NULL;
-+		if (desc) {
-+			scoped_guard(mutex, &desc->mux_lock)
-+				desc->mux_setting = NULL;
-+		}
- 	}
- err_pin_request:
- 	/* On error release all taken pins */
-@@ -492,6 +505,7 @@ void pinmux_disable_setting(const struct pinctrl_setting *setting)
- 	unsigned int num_pins = 0;
- 	int i;
- 	struct pin_desc *desc;
-+	bool is_equal;
- 
- 	if (pctlops->get_group_pins)
- 		ret = pctlops->get_group_pins(pctldev, setting->data.mux.group,
-@@ -517,7 +531,10 @@ void pinmux_disable_setting(const struct pinctrl_setting *setting)
- 				 pins[i]);
- 			continue;
- 		}
--		if (desc->mux_setting == &(setting->data.mux)) {
-+		scoped_guard(mutex, &desc->mux_lock)
-+			is_equal = (desc->mux_setting == &(setting->data.mux));
-+
-+		if (is_equal) {
- 			pin_free(pctldev, pins[i], NULL);
- 		} else {
- 			const char *gname;
-@@ -608,40 +625,42 @@ static int pinmux_pins_show(struct seq_file *s, void *what)
- 		if (desc == NULL)
- 			continue;
- 
--		if (desc->mux_owner &&
--		    !strcmp(desc->mux_owner, pinctrl_dev_get_name(pctldev)))
--			is_hog = true;
--
--		if (pmxops->strict) {
--			if (desc->mux_owner)
--				seq_printf(s, "pin %d (%s): device %s%s",
--					   pin, desc->name, desc->mux_owner,
-+		scoped_guard(mutex, &desc->mux_lock) {
-+			if (desc->mux_owner &&
-+			    !strcmp(desc->mux_owner, pinctrl_dev_get_name(pctldev)))
-+				is_hog = true;
-+
-+			if (pmxops->strict) {
-+				if (desc->mux_owner)
-+					seq_printf(s, "pin %d (%s): device %s%s",
-+						   pin, desc->name, desc->mux_owner,
-+						   is_hog ? " (HOG)" : "");
-+				else if (desc->gpio_owner)
-+					seq_printf(s, "pin %d (%s): GPIO %s",
-+						   pin, desc->name, desc->gpio_owner);
-+				else
-+					seq_printf(s, "pin %d (%s): UNCLAIMED",
-+						   pin, desc->name);
-+			} else {
-+				/* For non-strict controllers */
-+				seq_printf(s, "pin %d (%s): %s %s%s", pin, desc->name,
-+					   desc->mux_owner ? desc->mux_owner
-+					   : "(MUX UNCLAIMED)",
-+					   desc->gpio_owner ? desc->gpio_owner
-+					   : "(GPIO UNCLAIMED)",
- 					   is_hog ? " (HOG)" : "");
--			else if (desc->gpio_owner)
--				seq_printf(s, "pin %d (%s): GPIO %s",
--					   pin, desc->name, desc->gpio_owner);
-+			}
-+
-+			/* If mux: print function+group claiming the pin */
-+			if (desc->mux_setting)
-+				seq_printf(s, " function %s group %s\n",
-+					   pmxops->get_function_name(pctldev,
-+						desc->mux_setting->func),
-+					   pctlops->get_group_name(pctldev,
-+						desc->mux_setting->group));
- 			else
--				seq_printf(s, "pin %d (%s): UNCLAIMED",
--					   pin, desc->name);
--		} else {
--			/* For non-strict controllers */
--			seq_printf(s, "pin %d (%s): %s %s%s", pin, desc->name,
--				   desc->mux_owner ? desc->mux_owner
--				   : "(MUX UNCLAIMED)",
--				   desc->gpio_owner ? desc->gpio_owner
--				   : "(GPIO UNCLAIMED)",
--				   is_hog ? " (HOG)" : "");
-+				seq_putc(s, '\n');
- 		}
--
--		/* If mux: print function+group claiming the pin */
--		if (desc->mux_setting)
--			seq_printf(s, " function %s group %s\n",
--				   pmxops->get_function_name(pctldev,
--					desc->mux_setting->func),
--				   pctlops->get_group_name(pctldev,
--					desc->mux_setting->group));
--		else
--			seq_putc(s, '\n');
- 	}
- 
- 	mutex_unlock(&pctldev->mutex);
 -- 
 2.43.0
 
