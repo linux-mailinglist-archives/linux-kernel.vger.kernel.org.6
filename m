@@ -1,151 +1,244 @@
-Return-Path: <linux-kernel+bounces-431388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431389-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA2B69E3CAA
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:26:58 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE76D9E3CD3
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:33:14 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA0061672C3
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 14:26:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C938DB2D743
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 14:27:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93CA01FF5EF;
-	Wed,  4 Dec 2024 14:26:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97AF62040BB;
+	Wed,  4 Dec 2024 14:27:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="OlBvW6EB"
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BdFpiD9E"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81B1B1FECCD
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 14:26:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5AA926AFF;
+	Wed,  4 Dec 2024 14:27:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733322413; cv=none; b=LH7bZFk2V2X6GMBIwBvE9fnVZ8TihcOtGXUAaE0ez0xxZ8g33m8XBSit4ZKNwAFZ8779RdbnsIzXbXzTE8xUx3t6UiZFk+QYn5c/JM+mQ/h81jqJ4UBO5vQz4Neab06G1pBB1r2GtVSr1pfUPvUXWLB4FLZ/sE7xX6DfTMdd+Gc=
+	t=1733322445; cv=none; b=lu1si1rYaZTNmv70UlS4yC8hg27Hho51k8AFI38nUWbNtA/gtGtPBtLfbDivbHJOzpNhQL0bUZaZgZTJA6PPxve+3nlxzKBbzcfWS7nJwaO+u93yzyGMGiy+lpx4vp1UVh8uA3qJc7YWrSuUPLVLDPcybstP78gmdgSEm97i58w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733322413; c=relaxed/simple;
-	bh=qCu9A/y2OyMs7h56cxNRqbX/XeYEdvmyAnkDk2O1u9w=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZSQAVuTtbojvMgu6lSD5UKGVwaz2Cnm7W78Aab6P2Hbekh/R+xPn0TWVnLh97x0cY4cT/lv3POXyetuhB8eXaio2AAk7Wz/0jWgfFBRvhx2eeUCB7OwfvTa0peXwqx+3VSQj5zDiMwmt5hAcdEyezXkRRUJNnXlxVF+PTviXVNw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=OlBvW6EB; arc=none smtp.client-ip=209.85.215.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-7fc1f1748a3so4602707a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 06:26:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1733322411; x=1733927211; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Y6Zm/pDEZ2wWuq6CLhWp8fdFsf6yo2FBchkfiY2ICjk=;
-        b=OlBvW6EBmQW/+fkuecbC4vvBnggvmEvXNCp3wRb8qASqWmCaFxKgxgcTtcaLMvrdju
-         aviaPfKLqLQnnpJspeIDuiu03OY9s92daiww2Sd0tBfRv3aUneA1vyqzvM/MhYrYRgFo
-         j7yV7h9WvslkqZ/oH/kSMT49y3LATsRMjRDww=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733322411; x=1733927211;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Y6Zm/pDEZ2wWuq6CLhWp8fdFsf6yo2FBchkfiY2ICjk=;
-        b=jOkVMogUVj720jxqmhrJJOSCzRYwKcke3jn6ymGvoWzOWRhud3azEkspHQ4QedokPW
-         sR7dhn1Ez4hnm11Nr2pbCjEu/2d4H5WdPULd7jvr05MZ2AuBFna3y+dxlg2QloKzNlfp
-         9MW8dYFXqxeuFx/Py+FRzaVVK7/Nse1MxVdOJpUGXruegSZEeeKxcN0yFcs5mYw18tCd
-         jb6amY4yY21A3OS+EepgrORZHYwZDmFfEykn/W96lLNjjW76IJFkNqbzFA2k/bRJM1Lr
-         icYiGysOfB6eB9g9YJTXu8Pic/pqlx262ra9kZtI00IN4f054Js6vKNM10NPwHfMmHC/
-         RInA==
-X-Forwarded-Encrypted: i=1; AJvYcCWtLAPgGWeL+ciAcPTjXVtD6zMJsQ2Z3o3EwcNnUY6hbVo7FvIKaR6dKalTYN+k2b1/kfxHQEdJ2wqvrYk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPVG6z6Gagpr9qpgxHZx1JRnkPtH/FdMoyGXWy9d9kTZHILDtQ
-	RPBvx9OAl6tlKnEU96wfqYYhnptkUKS97MK9pbhAAVW/DtxlLDbBJcT88au2fsl9rkOD6/qlAqo
-	=
-X-Gm-Gg: ASbGncvrsFNXXpAiYR/T/iRj01DRF0aWIL8qbXaBd83p6hBM11BOeZ6x/z7EE/NjxXA
-	VhHi2FDu76Hd90x4X5ggRRbQmmKF2U+nhMBFlirdpepKoxyDLlzgdGIl6Qu91LSHFYkdy/MybtT
-	DrqWRdPIgQ7fFr/4Gxp73WHnVZ/fXgjmKd+kDzecle9LLAWGkEGR2p2r8pEJvjfZo7VVdnDcCWj
-	B9ikwsKETrUt81lvN2bXuknWJtST83xPA3NLhqbchkudvh3INhA+SEpNl6m/NsI5YM=
-X-Google-Smtp-Source: AGHT+IF0dNNNk83kN4LRrd8AEGyz62WUomCygJPIZPBTF7uW7lrdAcSow02U1nyM8E/b/c2B1GaPog==
-X-Received: by 2002:a05:6a20:cfa6:b0:1dc:bdbd:9017 with SMTP id adf61e73a8af0-1e165412f33mr9668165637.40.1733322410642;
-        Wed, 04 Dec 2024 06:26:50 -0800 (PST)
-Received: from fshao-p620.tpe.corp.google.com ([2401:fa00:1:10:b764:8a78:a02:6e0])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fc9c3a2a5asm11416510a12.80.2024.12.04.06.26.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Dec 2024 06:26:50 -0800 (PST)
-From: Fei Shao <fshao@chromium.org>
-To: Chun-Kuang Hu <chunkuang.hu@kernel.org>
-Cc: Fei Shao <fshao@chromium.org>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-mediatek@lists.infradead.org
-Subject: [PATCH v2] drm/mediatek: dp: Support flexible length of DP calibration data
-Date: Wed,  4 Dec 2024 22:25:38 +0800
-Message-ID: <20241204142626.158395-1-fshao@chromium.org>
-X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
+	s=arc-20240116; t=1733322445; c=relaxed/simple;
+	bh=8kSlC422IeYzzzg01gqSDhhGR5XtczDm7IOevfiFGpg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YxjFIeFHUK5/dLJLqGjETyj90tlJVlSy+HOwAqhtSRDp7B4PttmIi63farSUEFg4Sb0VBHBWBA/CsXPZ4IepP8tXGREQ/0qFmvCebqKUe8V+smsK/t0ag/AEYw4B7mkLYQdEaNIfJuTRzCfT15NFqfceaRe1EPd03chRPRV/i74=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BdFpiD9E; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F5A6C4CECD;
+	Wed,  4 Dec 2024 14:27:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733322444;
+	bh=8kSlC422IeYzzzg01gqSDhhGR5XtczDm7IOevfiFGpg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BdFpiD9Ehf6NJ3eXKMvlAfMjtslR49WOP1XgUzl8Ck2/Y6xhUo9QDz+XhMIbVjE45
+	 eFZCibANpmxxsm8ynWVu518p2aaxX5pvpUjiWwJ3rL50jEhG4+crmF4GqsX+cGlAaF
+	 u3q4BVYokvbhtYT0F2HAj2uqIWUtSa/NzF9/pe/iHr7eXhLjT4RL8/r2z3XDX4OJpQ
+	 K7iLFPQx5+KMMN2w5WvvSClaxGbQsO9IHAAEIF+2l8VL3TB61Y7/VCkJFWkSfUuFqG
+	 JWEd0DwOXxYGfhjwMSg9DBQAKawNzvv6CLepS2tQA0KymkZBGUiOdZlz2DgRb4ULEe
+	 JWqZQZUMt6mXg==
+Date: Wed, 4 Dec 2024 08:27:22 -0600
+From: Rob Herring <robh@kernel.org>
+To: Joey Lu <a0987203069@gmail.com>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, krzk+dt@kernel.org,
+	conor+dt@kernel.org, mcoquelin.stm32@gmail.com,
+	richardcochran@gmail.com, alexandre.torgue@foss.st.com,
+	joabreu@synopsys.com, ychuang3@nuvoton.com, schung@nuvoton.com,
+	yclu4@nuvoton.com, peppe.cavallaro@st.com,
+	linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	openbmc@lists.ozlabs.org, linux-stm32@st-md-mailman.stormreply.com
+Subject: Re: [PATCH v4 1/3] dt-bindings: net: nuvoton: Add schema for Nuvoton
+ MA35 family GMAC
+Message-ID: <20241204142722.GA177756-robh@kernel.org>
+References: <20241202023643.75010-1-a0987203069@gmail.com>
+ <20241202023643.75010-2-a0987203069@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241202023643.75010-2-a0987203069@gmail.com>
 
-The DP calibration data is stored in nvmem cells, and the data layout is
-described in the `mtk_dp_efuse_fmt` arrays for each platform.
+On Mon, Dec 02, 2024 at 10:36:41AM +0800, Joey Lu wrote:
+> Create initial schema for Nuvoton MA35 family Gigabit MAC.
+> 
+> Signed-off-by: Joey Lu <a0987203069@gmail.com>
+> ---
+>  .../bindings/net/nuvoton,ma35d1-dwmac.yaml    | 134 ++++++++++++++++++
+>  .../devicetree/bindings/net/snps,dwmac.yaml   |   1 +
+>  2 files changed, 135 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/net/nuvoton,ma35d1-dwmac.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/net/nuvoton,ma35d1-dwmac.yaml b/Documentation/devicetree/bindings/net/nuvoton,ma35d1-dwmac.yaml
+> new file mode 100644
+> index 000000000000..e44abaf4da3e
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/net/nuvoton,ma35d1-dwmac.yaml
+> @@ -0,0 +1,134 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/net/nuvoton,ma35d1-dwmac.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Nuvoton DWMAC glue layer controller
+> +
+> +maintainers:
+> +  - Joey Lu <yclu4@nuvoton.com>
+> +
+> +description:
+> +  Nuvoton 10/100/1000Mbps Gigabit Ethernet MAC Controller is based on
+> +  Synopsys DesignWare MAC (version 3.73a).
+> +
+> +allOf:
+> +  - $ref: snps,dwmac.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    items:
+> +      - enum:
+> +          - nuvoton,ma35d1-dwmac
+> +
+> +  reg:
+> +    maxItems: 1
+> +    description:
+> +      Register range should be one of the GMAC interface.
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    items:
+> +      - description: MAC clock
+> +      - description: PTP clock
+> +
+> +  clock-names:
+> +    items:
+> +      - const: stmmaceth
+> +      - const: ptp_ref
+> +
+> +  nuvoton,sys:
+> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+> +    items:
+> +      - items:
+> +          - description: phandle to access syscon registers.
+> +          - description: GMAC interface ID.
+> +            enum:
+> +              - 0
+> +              - 1
+> +    description:
+> +      A phandle to the syscon with one argument that configures system registers
+> +      for MA35D1's two GMACs. The argument specifies the GMAC interface ID.
+> +
+> +  resets:
+> +    maxItems: 1
+> +
+> +  reset-names:
+> +    items:
+> +      - const: stmmaceth
+> +
+> +  phy-mode:
+> +    enum:
+> +      - rmii
+> +      - rgmii
+> +      - rgmii-id
+> +      - rgmii-txid
+> +      - rgmii-rxid
+> +
+> +  tx-internal-delay-ps:
+> +    default: 0
+> +    minimum: 0
+> +    maximum: 2000
+> +    description:
+> +      RGMII TX path delay used only when PHY operates in RGMII mode with
+> +      internal delay (phy-mode is 'rgmii-id' or 'rgmii-txid') in pico-seconds.
+> +      Allowed values are from 0 to 2000.
+> +
+> +  rx-internal-delay-ps:
+> +    default: 0
+> +    minimum: 0
+> +    maximum: 2000
+> +    description:
+> +      RGMII RX path delay used only when PHY operates in RGMII mode with
+> +      internal delay (phy-mode is 'rgmii-id' or 'rgmii-rxid') in pico-seconds.
+> +      Allowed values are from 0 to 2000.
+> +
+> +  mdio:
+> +    $ref: /schemas/net/mdio.yaml#
 
-There is no guarantee that the data is always a 4-length u32 cell array.
-For example, MT8188 has a data length of 3, preventing it from passing
-the preliminary check and undergoing calibration.
+Drop. snps,dwmac.yaml already has this.
 
-Update the logic to support flexible data lengths. Specifically, we
-validate the length returned from `nvmem_cell_read()` against the
-platform-specific efuse format. If out-of-bound access is detected, fall
-back to the default calibration values. This likely indicates an error
-in either the efuse data length described in DT or the efuse format
-within the driver.
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - interrupt-names
 
-Signed-off-by: Fei Shao <fshao@chromium.org>
----
+Drop all 4. Already required by snps,dwmac.yaml.
 
-Changes in v2:
-- use %zu identifier for size_t in dev_warn()
+> +  - clocks
+> +  - clock-names
+> +  - nuvoton,sys
+> +  - resets
+> +  - reset-names
+> +  - phy-mode
 
- drivers/gpu/drm/mediatek/mtk_dp.c | 18 +++++++++++++-----
- 1 file changed, 13 insertions(+), 5 deletions(-)
+Drop this one too.
 
-diff --git a/drivers/gpu/drm/mediatek/mtk_dp.c b/drivers/gpu/drm/mediatek/mtk_dp.c
-index 36713c176cfc..55671701459a 100644
---- a/drivers/gpu/drm/mediatek/mtk_dp.c
-+++ b/drivers/gpu/drm/mediatek/mtk_dp.c
-@@ -1165,17 +1165,25 @@ static void mtk_dp_get_calibration_data(struct mtk_dp *mtk_dp)
- 	buf = (u32 *)nvmem_cell_read(cell, &len);
- 	nvmem_cell_put(cell);
- 
--	if (IS_ERR(buf) || ((len / sizeof(u32)) != 4)) {
-+	if (IS_ERR(buf)) {
- 		dev_warn(dev, "Failed to read nvmem_cell_read\n");
--
--		if (!IS_ERR(buf))
--			kfree(buf);
--
- 		goto use_default_val;
- 	}
- 
-+	/* The cell length is in bytes. Convert it to be compatible with u32 buffer. */
-+	len /= sizeof(u32);
-+
- 	for (i = 0; i < MTK_DP_CAL_MAX; i++) {
- 		fmt = &mtk_dp->data->efuse_fmt[i];
-+
-+		if (fmt->idx >= len) {
-+			dev_warn(mtk_dp->dev,
-+				 "Out-of-bound efuse data access, fmt idx = %d, buf len = %zu\n",
-+				 fmt->idx, len);
-+			kfree(buf);
-+			goto use_default_val;
-+		}
-+
- 		cal_data[i] = (buf[fmt->idx] >> fmt->shift) & fmt->mask;
- 
- 		if (cal_data[i] < fmt->min_val || cal_data[i] > fmt->max_val) {
--- 
-2.47.0.338.g60cca15819-goog
-
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    #include <dt-bindings/clock/nuvoton,ma35d1-clk.h>
+> +    #include <dt-bindings/reset/nuvoton,ma35d1-reset.h>
+> +    ethernet@40120000 {
+> +        compatible = "nuvoton,ma35d1-dwmac";
+> +        reg = <0x40120000 0x10000>;
+> +        interrupts = <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>;
+> +        interrupt-names = "macirq";
+> +        clocks = <&clk EMAC0_GATE>, <&clk EPLL_DIV8>;
+> +        clock-names = "stmmaceth", "ptp_ref";
+> +
+> +        nuvoton,sys = <&sys 0>;
+> +        resets = <&sys MA35D1_RESET_GMAC0>;
+> +        reset-names = "stmmaceth";
+> +
+> +        phy-mode = "rgmii-id";
+> +        phy-handle = <&eth_phy0>;
+> +        mdio {
+> +            compatible = "snps,dwmac-mdio";
+> +            #address-cells = <1>;
+> +            #size-cells = <0>;
+> +
+> +            ethernet-phy@0 {
+> +                reg = <0>;
+> +            };
+> +        };
+> +    };
+> diff --git a/Documentation/devicetree/bindings/net/snps,dwmac.yaml b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
+> index eb1f3ae41ab9..4bf59ab910cc 100644
+> --- a/Documentation/devicetree/bindings/net/snps,dwmac.yaml
+> +++ b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
+> @@ -67,6 +67,7 @@ properties:
+>          - ingenic,x2000-mac
+>          - loongson,ls2k-dwmac
+>          - loongson,ls7a-dwmac
+> +        - nuvoton,ma35d1-dwmac
+>          - qcom,qcs404-ethqos
+>          - qcom,sa8775p-ethqos
+>          - qcom,sc8280xp-ethqos
+> -- 
+> 2.34.1
+> 
 
