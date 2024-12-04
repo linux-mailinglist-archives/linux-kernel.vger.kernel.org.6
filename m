@@ -1,171 +1,94 @@
-Return-Path: <linux-kernel+bounces-430452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5E959E3105
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 02:59:29 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9AFCD167A10
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 01:59:22 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDB2A3D0D5;
-	Wed,  4 Dec 2024 01:59:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="pyW+3v/1"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4146B9E3100
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 02:59:10 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E2E2802;
-	Wed,  4 Dec 2024 01:59:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F40E328464E
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 01:59:08 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19E0F1A296;
+	Wed,  4 Dec 2024 01:59:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Pky3cQsb"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4ADE175AB;
+	Wed,  4 Dec 2024 01:59:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733277550; cv=none; b=KejbB0KYRs42hBtBlf8fmQ8Cm0ZXRNntH9doUbuOhVxbVdxjUls2aSFKwvr730vCwHgfdxVZd3GsABt4Ak5GiudCMyw992Uobzqb9rlCXgVne1ZETmrMGj68PkhgPbImntNt9z/F6TcX5mPLyHgdKKJMryWZY2hJa4aHAdLs6xQ=
+	t=1733277544; cv=none; b=hUUMbLerMaIS3GEiIFZK/AMAhepghLWFGcvXvfUEORdpvfFCK8+LID2T/RLZAVaiULEMlEZeRMDLe9JvJiyKRe28StHYm857TmuYLxslqBqa2+UTWD+6YSiQJMoBGaxoA5f6B0NEzfh5VYZ0Ni6HW1v5IF6fvKtKBQzTQ3u2cgc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733277550; c=relaxed/simple;
-	bh=6px3nMewNz5U3azGAq8dupSl8iP0Ism8ATYbvHM22uY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=R+zt6dwSm9fEAE6FQ1nMF7/hO137wmlEvTRQJZ/P/p184QbU8misNpJeYYVndXGtjB2BxYbL94C2bO0SfjWo+HZNAlrzpZpdAn0wcADc6052aw9GWCeMU0QRSHCPGWKq8HOTLMh8UJAoOfmo4JL8rIkPgkqAVrGgdkUigVP+Pjs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=pyW+3v/1; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B3H2Qtg031188;
-	Wed, 4 Dec 2024 01:58:59 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	OlsOEZknfuP2mKF9fzrlKtZr6iB5ieP+FcHOtEu9FkA=; b=pyW+3v/1PJ7ojsqn
-	hegA0pqdIijvJl4ov+avNOv8hDs0tKMuZW3lAbdIPKKj4h6i/pPhVrQALZFJUPWb
-	CJsUl0N9x24OIsxHaUDBMjq7hKmbXRXFAXrRCD7T3qwIoD/ItqOaS0afVx6Afh+C
-	2HNW0RvbeTbaZG8ryo/xQtP7mk59c+0j55icM/uRobL6kM0N8uBf1l7zXsb2d1wf
-	5VbC8o092cerFGYl1gjm/9VzqHaKsfO83F4mJ5yPcLDnO8Uy3TbUG8YwsvG4B0/P
-	rCk+s2qJYBcctv7VnwKr/7DQb1cZZRkC31O0atb/5ffCKGke08S8F6LZmQlMiYML
-	EE4tRQ==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 439w90tqam-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 04 Dec 2024 01:58:59 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B41wwcQ013223
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 4 Dec 2024 01:58:58 GMT
-Received: from [10.216.45.237] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 3 Dec 2024
- 17:58:49 -0800
-Message-ID: <064b93db-5e7b-23d2-46e9-b1fe28233def@quicinc.com>
-Date: Wed, 4 Dec 2024 07:28:45 +0530
+	s=arc-20240116; t=1733277544; c=relaxed/simple;
+	bh=a4OZ1LAsIhpvqDIbwxI6lO+bUIIMhMLh2jh+/n5Pwik=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZQqgJkyot1E6FuRxhBMXA/G644nstPaZfCS7XBmSlY+RaFlienRW8MJ/cqETID6VyR0HATxpAId9iSHjNhO2MgAj5rCyoFwka/x0nQ74S1CvoR2U+uGNQ3G0SuMwlZdw5CqupGKN+/NVQHqtG0VCsoGnHAEaz8dl6N5oUQBjI9w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=Pky3cQsb; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=4Gc5eRUdt6i47eRmmyZftOhvRJWmkHfc+4Lk40uszfU=; b=Pky3cQsb6N0D7N39MRKMYgnan4
+	3qv32+LdLkRz/XAqE7Tp4Dn5PrGFpqxAa2Y998SJZi8w8KRRZmTWUhB2zn8YaSThwkDuYggvSowof
+	CooDXXCavKYEBYa2KLUqx4Gj8ZNnq3VFPwrPL2uw1THrWl9EYMs+ICT5t1xyuU1Aehu4=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tIefG-00F9bS-8D; Wed, 04 Dec 2024 02:58:54 +0100
+Date: Wed, 4 Dec 2024 02:58:54 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Cc: davem@davemloft.net, Jakub Kicinski <kuba@kernel.org>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Heiner Kallweit <hkallweit1@gmail.com>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
+	Simon Horman <horms@kernel.org>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
+	linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH net-next v3 04/10] net: freescale: ucc_geth: Fix WOL
+ configuration
+Message-ID: <179742dc-2df2-4d69-99ac-4951dc36aa71@lunn.ch>
+References: <20241203124323.155866-1-maxime.chevallier@bootlin.com>
+ <20241203124323.155866-5-maxime.chevallier@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH 1/3] arm64: dts: qcom: sc7280: Increase config size to
- 256MB for ECAM feature
-Content-Language: en-US
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-CC: <cros-qcom-dts-watchers@chromium.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>, Jingoo Han <jingoohan1@gmail.com>,
-        Lorenzo Pieralisi
-	<lpieralisi@kernel.org>,
-        =?UTF-8?Q?Krzysztof_Wilczy=c5=84ski?=
-	<kw@linux.com>,
-        Bjorn Helgaas <bhelgaas@google.com>, <quic_vbadigan@quicinc.com>,
-        <quic_ramkri@quicinc.com>, <quic_nitegupt@quicinc.com>,
-        <quic_skananth@quicinc.com>, <quic_vpernami@quicinc.com>,
-        <quic_mrana@quicinc.com>, <mmareddy@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>
-References: <20241117-ecam-v1-0-6059faf38d07@quicinc.com>
- <20241117-ecam-v1-1-6059faf38d07@quicinc.com>
- <20241202150648.fwi2wzbdyyedueby@thinkpad>
-From: Krishna Chaitanya Chundru <quic_krichai@quicinc.com>
-In-Reply-To: <20241202150648.fwi2wzbdyyedueby@thinkpad>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: wpGnz_c3EvE3_2jUrX-VUlnUbS_d4rB9
-X-Proofpoint-GUID: wpGnz_c3EvE3_2jUrX-VUlnUbS_d4rB9
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=969 bulkscore=0
- impostorscore=0 phishscore=0 suspectscore=0 adultscore=0 mlxscore=0
- spamscore=0 clxscore=1015 priorityscore=1501 malwarescore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412040015
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241203124323.155866-5-maxime.chevallier@bootlin.com>
 
+On Tue, Dec 03, 2024 at 01:43:15PM +0100, Maxime Chevallier wrote:
+> The get/set_wol ethtool ops rely on querying the PHY for its WoL
+> capabilities, checking for the presence of a PHY and a PHY interrupts
+> isn't enough. Address that by cleaning up the WoL configuration
+> sequence.
+> 
+> Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
 
+This at least looks sensible.
 
-On 12/2/2024 8:36 PM, Manivannan Sadhasivam wrote:
-> On Sun, Nov 17, 2024 at 03:30:18AM +0530, Krishna chaitanya chundru wrote:
->> Increase the configuration size to 256MB as required by the ECAM feature.
->> And also move config space, DBI, ELBI, IATU to upper PCIe region and use
->> lower PCIe region entierly for BAR region.
->>
-> 
-> Is this change compatible with old kernels before commit '10ba0854c5e6 ("PCI:
-> qcom: Disable mirroring of DBI and iATU register space in BAR region")'?
-> 
-> - Mani
-No mani, we need this commit '10ba0854c5e6 ("PCI:
- > qcom: Disable mirroring of DBI and iATU register space in BAR region")
-for this.
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-- Krishna Chaitanya.
-> 
->> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
->> ---
->>   arch/arm64/boot/dts/qcom/sc7280.dtsi | 12 ++++++------
->>   1 file changed, 6 insertions(+), 6 deletions(-)
->>
->> diff --git a/arch/arm64/boot/dts/qcom/sc7280.dtsi b/arch/arm64/boot/dts/qcom/sc7280.dtsi
->> index 3d8410683402..a7e3d3e9d034 100644
->> --- a/arch/arm64/boot/dts/qcom/sc7280.dtsi
->> +++ b/arch/arm64/boot/dts/qcom/sc7280.dtsi
->> @@ -2196,10 +2196,10 @@ wifi: wifi@17a10040 {
->>   		pcie1: pcie@1c08000 {
->>   			compatible = "qcom,pcie-sc7280";
->>   			reg = <0 0x01c08000 0 0x3000>,
->> -			      <0 0x40000000 0 0xf1d>,
->> -			      <0 0x40000f20 0 0xa8>,
->> -			      <0 0x40001000 0 0x1000>,
->> -			      <0 0x40100000 0 0x100000>;
->> +			      <4 0x00000000 0 0xf1d>,
->> +			      <4 0x00000f20 0 0xa8>,
->> +			      <4 0x10000000 0 0x1000>,
->> +			      <4 0x00000000 0 0x10000000>;
->>   
->>   			reg-names = "parf", "dbi", "elbi", "atu", "config";
->>   			device_type = "pci";
->> @@ -2210,8 +2210,8 @@ pcie1: pcie@1c08000 {
->>   			#address-cells = <3>;
->>   			#size-cells = <2>;
->>   
->> -			ranges = <0x01000000 0x0 0x00000000 0x0 0x40200000 0x0 0x100000>,
->> -				 <0x02000000 0x0 0x40300000 0x0 0x40300000 0x0 0x1fd00000>;
->> +			ranges = <0x01000000 0x0 0x00000000 0x0 0x40000000 0x0 0x100000>,
->> +				 <0x02000000 0x0 0x40100000 0x0 0x40100000 0x0 0x1ff00000>;
->>   
->>   			interrupts = <GIC_SPI 307 IRQ_TYPE_LEVEL_HIGH>,
->>   				     <GIC_SPI 308 IRQ_TYPE_LEVEL_HIGH>,
->>
->> -- 
->> 2.34.1
->>
-> 
+I don't think we are going to get a perfect implementation until we
+move most of the logic into phylink. We need the MAC to declare a
+bitmap of what WoL options it supports. And we need the PHY to declare
+the same. And the core can then figure out which of the enabled WoL
+options the PHY should do, which the MAC should do, if the MAC can be
+powered off, etc.
+
+But i doubt that will get implemented any time soon.
+
+	Andrew
 
