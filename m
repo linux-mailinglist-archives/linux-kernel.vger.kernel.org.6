@@ -1,111 +1,182 @@
-Return-Path: <linux-kernel+bounces-431635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B2479E3FC1
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:33:47 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 245559E3FC3
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:34:30 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5DF11650EA
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:34:26 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B382720CCC0;
+	Wed,  4 Dec 2024 16:34:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="Bgz/rgP/";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="i3QZhTqh"
+Received: from fout-b4-smtp.messagingengine.com (fout-b4-smtp.messagingengine.com [202.12.124.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E205282B06
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:33:46 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6800C20C473;
-	Wed,  4 Dec 2024 16:33:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Q/+2DcYx"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18C7420CCC0
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 16:33:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9955C1547C3;
+	Wed,  4 Dec 2024 16:34:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733330010; cv=none; b=jj8MAkdDvEs53AUAmdDxI9I+0iVKW45thhR0O/WviTArvfYOyFWuPV7F1CJge6PqZ+V0Y6q9H5CcghGGu/KixeWgpVLpURvovjD4B1fPNEtoskmD80xg7wb9wZrE0bsz6QuzDM8R2xFwYMoZ9n5utRwsgMQ9mICPli4jUYxzgcY=
+	t=1733330062; cv=none; b=dOCgEp4FiTsiEajGNqN4gaOvujcO36PJXWET8Y8Q9/vgdtvVKTief9Hfh27NblUXh9umza7u6Bfn3DO0TBABXNMwdKPQrw4w7Ltff2KQbDb2WpJEg2i5IcX3oftJKvV0qBkccEV4V0UMzP1W32F3Wy32Pdc/+njRXyy6wTUHS6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733330010; c=relaxed/simple;
-	bh=jjpAsfnDViEPTArEMDoLsQjV/xeaagtYm84LbRevTPk=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=Ib+LnzhrdDW8VdqQNAkHviIKSGm6t0cyDu07e3brm9wsH3akWZ4dqWfDtUImaww09DDP2Jew3XeF00Jjiv3LfKMrz/HWhqkbDjdylGBR+3vn1lDVxjHo+47bWv/JDrL6DlgbnK8UWKpcmDCBEkPxZ+HkZm7G33NxUrXDsLMYMLA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Q/+2DcYx; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-7253bc4d25eso24239b3a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 08:33:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1733330007; x=1733934807; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Hb5hc3qgWT9L6cng9NISv31Ehv7llzw2Vl8uDpnsua4=;
-        b=Q/+2DcYxxT6g/pM9QwL+1fSTK1kRbq1P6IgWb/Rv+dPmn7PBTZZjF3+VTyhrbLSn0H
-         kv3aeHSGxOfcDPYlTwx3THE3tTAGEp9cEdccq6kfHDz/2g6lYP1jD40nb3U+5EM+NkIs
-         H5prj+UuDenOoB4vMGAOvvw3ANcHudneUU+Rq74Rz2mgJovQO8vHVzMYal/RaEXcg0sA
-         QpZHI79qxQBaEks5wnJYTju1CMpK5eJX3Hwug62bNLANPnKpQ9qnc/2VXiFucODz0wCN
-         2NPwPwRWdVw2ElxTrtXfpCm8kJhGkG9hrhYGiJKc90tSMha3djazlEQmYr0b0IOLbvGl
-         JyAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733330007; x=1733934807;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Hb5hc3qgWT9L6cng9NISv31Ehv7llzw2Vl8uDpnsua4=;
-        b=TN0bvR0I3JWXtrhdbpI6iofhZSZ00FYV0Amp+tildaOgXe21a8hVpVrTYqs5pnXGNx
-         8EhJWTIrcgkd7WcjflMf/wyeqAHQ6T89G8DzbKXIpY42T9rGybOy56v+Adj33I1nfsNp
-         c6nVMUjk8/992D/WxszDwN7kGZZ2vQsNBaYnw66/PnQ5iX3NuqIC4C9AO6tbpXieTWbR
-         SZJU2Gx7WApf7ESLvaU+/is+Gvc7AefwPyuPr6guQ51XTdRtX8DiqHhLiOkhqyuogYG6
-         daOBJEygR4HKrpoyUoP3IlqG4tH8RsON1UgxHVBBXxdfeUbABLKQXGPR7G2149vWtQnD
-         y8sA==
-X-Forwarded-Encrypted: i=1; AJvYcCV+PwuT1SgrgIw1CJULH4guzDbZWTdIwBkJuPUxM7QtAjXpXsLyrKlsnPir0QBV4Qr7RpI1f0HkIGxi2H8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCC9m+xp3qct5PTS7wxtcwd7qyNRe7Y66/uFTswmROPc7j2kHu
-	VpSE8zXhpmI1zGawX2ciV4+ZtdWJThEAP0PUYjQYkFpMbK1U0qEsFBNUDIYbRAA=
-X-Gm-Gg: ASbGnct/ltuzgk51Bp/Vtq5vmYeMmPIFXp3UdjD219h3zK65SCo3aV3+eU+vyZGA0NF
-	M6nQaA9RPbtA7UkOCWt0fNSBzi8EQFbQfnZpjunnwxVgzyEeMWKYDtutKEk9AlokM1YZ3WDcHXp
-	vu7aD3Fcmry+LZv6uVigllA7A0eREWLRSL3giqgmpphl+EtzEoM3mNp/lblMX5cDY9SFzrtCXre
-	Y0VfnSVybRMTusmG5GoNdqWzNlE5A==
-X-Google-Smtp-Source: AGHT+IGEY5dtfqqu7yQqDHuO3mHKg1f9S+1DRwm5m5EOLxdsx+PQqoK1BhMnJkgc7n3v5DxDmYv9oQ==
-X-Received: by 2002:a05:6a00:cc3:b0:725:4915:c0f with SMTP id d2e1a72fcca58-7259d6008e4mr10467b3a.11.1733330007187;
-        Wed, 04 Dec 2024 08:33:27 -0800 (PST)
-Received: from [127.0.0.1] ([2620:10d:c090:600::1:a7a9])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7254184952csm12955492b3a.185.2024.12.04.08.33.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Dec 2024 08:33:26 -0800 (PST)
-From: Jens Axboe <axboe@kernel.dk>
-To: Andreas Hindborg <a.hindborg@kernel.org>, 
- Boqun Feng <boqun.feng@gmail.com>, 
- =?utf-8?q?Beno=C3=AEt_du_Garreau?= <benoit@dugarreau.fr>
-Cc: linux-block@vger.kernel.org, rust-for-linux@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20241204-rnull_in_place-v1-1-efe3eafac9fb@dugarreau.fr>
-References: <20241204-rnull_in_place-v1-1-efe3eafac9fb@dugarreau.fr>
-Subject: Re: [PATCH] block: rnull: Initialize the module in place
-Message-Id: <173333000587.511414.15268819552143079818.b4-ty@kernel.dk>
-Date: Wed, 04 Dec 2024 09:33:25 -0700
+	s=arc-20240116; t=1733330062; c=relaxed/simple;
+	bh=x78ACWAOEZm++OCDsqG7/c0mVwye3P8tzwVfBS2KS84=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=RpTjS67rY0FZGg3yxOTortPjr+5xQ3sPGUYNfP+efvGLbX1op6ZssskoNXJv6A/F3/fcEpbePZJe1xicSUJiTnrOOq8mcVSg+6BfJcLg/P4+YhoZx8bOr5CuUxsU97LII4iJrcF6fpbIYjf71W80KM02kmH9Pvqyrkv6yMDrxSk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=Bgz/rgP/; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=i3QZhTqh; arc=none smtp.client-ip=202.12.124.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfout.stl.internal (Postfix) with ESMTP id 4B62811401D5;
+	Wed,  4 Dec 2024 11:34:18 -0500 (EST)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-10.internal (MEProxy); Wed, 04 Dec 2024 11:34:18 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1733330058;
+	 x=1733416458; bh=Ah70jlP4CTaxYAWVJ4RDilPcmjlaIxhGSKcMYOP92jw=; b=
+	Bgz/rgP/rbciUaPGqY2T3BoA6Hn2zEV/kByiE1kyZQG+kfS/TkxHGrVjWOlfxDYe
+	8ZH9j2sz2cZ9F2yFj4Of2USSJIFYFI6uDLo7a5j6pqOp3zw1y77xCG9o+s5CouU0
+	NYt4X+V92Zmk1CIlQ8OOSiuA/cGNrJlRw9+tLMELy++7d7CuGE3nXUfSbx5CjpSC
+	cBylWUXFob1xjRec19aW292Kpq6vsRMo+qPZjm64Hah7zdxM7Nf/HQj9PQ8lwfS8
+	BKZyLL8UVf/OYQT9vLXu+EUxyiJ4enKDTkDxWN7OnJSeXaeDxJ0xzlu4muvc3U9t
+	NiGSUq166HdOcv5YrGIpWg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1733330058; x=
+	1733416458; bh=Ah70jlP4CTaxYAWVJ4RDilPcmjlaIxhGSKcMYOP92jw=; b=i
+	3QZhTqhBZKJAh64ysePHTOf5V9j0ogPScaaqrkuI/8qEz0S4w9N63NXsrN+bonbS
+	AFxzlYlj10Nn8vT4NRUQUCOzgK81UwvV6a+ceHmTu6TB14eGtUdYJQM+ZNnEH/Zp
+	yIATyZITF9MNZQF64PZK8kIFrq4OeEfa8MkRDqi5ykZlDNXK5yucS/czq2o1ARCv
+	DOqjPaVQz0gX0cf+BE/uEWO+kZOyGMzHqB+reItDcdnh1teFuJ3Eq2Epqtx8xbVu
+	lO7K9H6cJAb4HMZJBiIyTzyXiCMO1jUTmEoPy0FZeUXoMpaIPUvYxDJC2ZALPx9g
+	R01wmE0Do74tWgIsLyRcA==
+X-ME-Sender: <xms:iYRQZ5P4VkR9mZXjSbymRRoy_dVJGGGO2fgNixTyN1iz5o8b1eRt7Q>
+    <xme:iYRQZ78E1iUGLfxfK2V_YNHcB4b8fnvBbhJctOqcnHBkJvbaaKdK9DYZV5G3AuDvV
+    ePwdBmGq2WHT8TH6ew>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrieehgdekiecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
+    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
+    hsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredttden
+    ucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdrug
+    gvqeenucggtffrrghtthgvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffg
+    vedugeduveelvdekhfdvieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmh
+    grihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopeduhedp
+    mhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepsghpsegrlhhivghnkedruggvpdhrtg
+    hpthhtoheptghimhhinhgrghhhihesghhnuhguugdrtghomhdprhgtphhtthhopehsvggr
+    nhhjtgesghhoohhglhgvrdgtohhmpdhrtghpthhtohepfihilhhlhiesihhnfhhrrgguvg
+    grugdrohhrghdprhgtphhtthhopegrnhguhieskhgvrhhnvghlrdhorhhgpdhrtghpthht
+    oheprghrnhgusehkvghrnhgvlhdrohhrghdprhgtphhtthhopeigkeeisehkvghrnhgvlh
+    drohhrghdprhgtphhtthhopehtghhlgieslhhinhhuthhrohhnihigrdguvgdprhgtphht
+    thhopehtohhrvhgrlhgusheslhhinhhugidqfhhouhhnuggrthhiohhnrdhorhhg
+X-ME-Proxy: <xmx:iYRQZ4T3112cRzwmCs5KIhZTO7PC40uLVK1f5fb7qcRgieEPEFSXJg>
+    <xmx:iYRQZ1tn6Oe_zSU_P3NsbgNWOppvawQfIK1GXrcVLkiEIBvpl84eLw>
+    <xmx:iYRQZxeI9_hIN2rr4QXf81ZGygsLT6b28nbbmcqx4dYpgXXdY4YgXQ>
+    <xmx:iYRQZx04xE3iirr5QntJttrlCLCtfFrE_z9P1c0P4DvPS10Yw7vZGQ>
+    <xmx:ioRQZ82OD2mhqILmQZxp7mH4r5lmE-yzLCstRa81WHTlxPCYuR9p44RM>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 68E422220072; Wed,  4 Dec 2024 11:34:17 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.14.3-dev-86319
+Date: Wed, 04 Dec 2024 17:33:57 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Sean Christopherson" <seanjc@google.com>,
+ "Arnd Bergmann" <arnd@kernel.org>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
+ "Thomas Gleixner" <tglx@linutronix.de>, "Ingo Molnar" <mingo@redhat.com>,
+ "Borislav Petkov" <bp@alien8.de>,
+ "Dave Hansen" <dave.hansen@linux.intel.com>,
+ "H. Peter Anvin" <hpa@zytor.com>,
+ "Linus Torvalds" <torvalds@linux-foundation.org>,
+ "Andy Shevchenko" <andy@kernel.org>, "Matthew Wilcox" <willy@infradead.org>,
+ "Davide Ciminaghi" <ciminaghi@gnudd.com>,
+ "Paolo Bonzini" <pbonzini@redhat.com>, kvm@vger.kernel.org
+Message-Id: <bb9d86e4-4641-4b1b-af9e-7d468dc2e2ee@app.fastmail.com>
+In-Reply-To: <Z1B1phcpbiYWLgCD@google.com>
+References: <20241204103042.1904639-1-arnd@kernel.org>
+ <20241204103042.1904639-12-arnd@kernel.org> <Z1B1phcpbiYWLgCD@google.com>
+Subject: Re: [PATCH 11/11] x86: drop 32-bit KVM host support
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
+On Wed, Dec 4, 2024, at 16:30, Sean Christopherson wrote:
+> On Wed, Dec 04, 2024, Arnd Bergmann wrote:
+>> From: Arnd Bergmann <arnd@arndb.de>
+>> 
+>> There are very few 32-bit machines that support KVM, the main exceptions
+>> are the "Yonah" Generation Xeon-LV and Core Duo from 2006 and the Atom
+>> Z5xx "Silverthorne" from 2008 that were all release just before their
+>> 64-bit counterparts.
+>> 
+>> Using KVM as a host on a 64-bit CPU using a 32-bit kernel generally
+>> works fine, but is rather pointless since 64-bit kernels are much better
+>> supported and deal better with the memory requirements of VM guests.
+>> 
+>> Drop all the 32-bit-only portions and the "#ifdef CONFIG_X86_64" checks
+>> of the x86 KVM code and add a Kconfig dependency to only allow building
+>> this on 64-bit kernels.
+>
+> While 32-bit KVM doesn't need to be a thing for x86 usage, Paolo 
+> expressed concerns
+> that dropping 32-bit support on x86 would cause general 32-bit KVM 
+> support to
+> bitrot horribly.  32-bit x86 doesn't get much testing, but I do at 
+> least boot VMs
+> with it on a semi-regular basis.  I don't think we can say the same for 
+> other
+> architectures with 32-bit variants.
 
-On Wed, 04 Dec 2024 09:38:39 +0100, Benoît du Garreau wrote:
-> Using `InPlaceModule` avoids an allocation and an indirection.
-> 
-> 
+I see.
 
-Applied, thanks!
+> PPC apparently still has 32-bit users[1][2],
 
-[1/1] block: rnull: Initialize the module in place
-      commit: c018ec9dd144dd29b4a664bf69e486f14bb4ee87
+I looked at the links but only see 64-bit users there.
 
-Best regards,
--- 
-Jens Axboe
+There is KVM support for 32-bit BookE (e500v2, e500mc)
+in the PPC85xx and QorIQ P1/P2/P3/P4, and Crystal mentioned
+that there might be users, but did not point to anyone
+in particular.
 
+The A-EON AmigaOne X5000 and Powerboard Tyche that were
+mentioned in the thread as being actively used are both
+64-bit QorIQ P5/T2 (e5500, e6500) based. These are the
+same platform ("85xx" in Linux, "e500" in qemu), so it's
+easy to confuse. We can probably ask again if anyone
+cares about removing the 32-bit side of this.
 
+> and 32-bit RISC-V is a thing,
 
+There are many 32-bit RISC-V chips, but all RISC-V
+SoCs supported by Linux today are in fact 64-bit.
+
+While there is still talk of adding support for 32-bit
+SoCs, the only usecase for those is really to allow
+machines with smaller amounts of physical RAM, which
+tends to rule out virtualization.
+
+There is one more platform that supports virtualization
+on 32-bit CPUs, which is the MIPS P5600 core in the
+Baikal T1.
+
+I still think it makes sense to just drop KVM support
+for all 32-bit hosts, but I agree that it also
+makes sense to keep x86-32 as the last one of those
+for testing purposes.
+
+    Arnd
 
