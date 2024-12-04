@@ -1,214 +1,192 @@
-Return-Path: <linux-kernel+bounces-430804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430806-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB7B09E35C3
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 09:45:52 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8E3C9E35CD
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 09:47:15 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C8AE28286F
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 08:45:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B7459163DCE
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 08:47:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5210D17D354;
-	Wed,  4 Dec 2024 08:45:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEC8B196434;
+	Wed,  4 Dec 2024 08:47:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="dcJ3GlD9"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="pt1V5H1+"
+Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2061.outbound.protection.outlook.com [40.107.100.61])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD69F187553;
-	Wed,  4 Dec 2024 08:45:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733301936; cv=none; b=uk/2kUOhofoLHWrCu0Qd1JGnY7TM3lbnnNWa27sX7WFW2LSrRWYpDOxZtdcxyA3rwz6ghnf9qT0KJDqiDdZziASupC7kPEVEM8n6og2x+VkbacelGQSWw8PoyS4yvF3E90zG9NP2X5/xuTGSkwzta2E/oso+Lp8z43vHDFR4kDI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733301936; c=relaxed/simple;
-	bh=H5Pdte9yCep1RuuYv+mgFrE6RddrgYB3DpbdUfVBB1s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Bb1YifVPBQu9KlCKk4umEkCyhaLhAH2cNAhIiDbzBWmlk56KwTCPqsVLAnsJp+D90qRML379/Si0CDwlYQ0XeuWEKTxphcALwDgvSoH9oimyypQruE5EC8Bl+lFePkQLfwzK11OK/gb33T58XzGFMUGvJkWGgMbQhDQ7Kfr2xQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=dcJ3GlD9; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B47Uru6024918;
-	Wed, 4 Dec 2024 08:45:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	1U1UA+Kq4bZJj97Vu0Z6azZESzoABDxU4CYc2edLMsE=; b=dcJ3GlD9juFstqsh
-	HiiETuX0bYaiR4KQdRgRG3NYaWRBVycMjWY//MsEI8sJBIzuSIHwZBtUMKZpdNuw
-	bqeGALP7UG8NumCmpzLp/ho9Tt5xJ0bXrrOgGYlFRJbaDD6pwW+PXfBpTy7UkNFm
-	SOpkLDv6IhCScoF+T0G3fPZ30cD5Y7wKVcORvRnmqYdtGSA3WSltjUG/8kx4wcXG
-	yi6Inz1IxryhGkPpr+5iqSaFob2MjvThB8b1+Igtgi5Rt5trXT/a/wHh+V8qppCk
-	HNu3Aga1t9tkx6i5GPEghm6Bg4qi50392j4QXzocV+Ul2h33JWC68qGvmcVpXb5o
-	fFfNsQ==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 439vnyumhr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 04 Dec 2024 08:45:17 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B48jGEW030356
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 4 Dec 2024 08:45:16 GMT
-Received: from [10.217.216.47] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 4 Dec 2024
- 00:45:12 -0800
-Message-ID: <e88a1685-5aa3-497a-84a0-18065f1bf6a4@quicinc.com>
-Date: Wed, 4 Dec 2024 14:15:09 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6485F18C03B
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 08:47:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.61
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733302029; cv=fail; b=A9q0Kyy/REbJPtyIKJdBomSTQLAA8tHRRGt+qHnyivF2oYhrHkoSW0H7eUzr2ysG/IBRqKXaajxvl85An/fRfVS6eZWnvaJsZ10fQQXB3bg1h3V/H749ktOw/MxVGIbtiEgK+7ZN19QQVMJpKxxen/V1BRuOTVzbgDVvM6+Ofjk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733302029; c=relaxed/simple;
+	bh=yDGkziWpNOFQY5YmF0BXHH3VEpHXS/+uEVx7nhdQlyw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=LWNezhHC7+FZoSv79kioIGIqLlUw5oIcEnoYsQkeqHCOsqfFZJS3PA3UUVTrMpeMoHnLpVKNVdJT4ApUi0ufrpDBMN8TNLQeb2o+LJB2ij3eUn9gS6gQREf14wOL+o+6gdt4rcsrdfhfr2FNhkB3ZbGBrZvclEJMeSi+h65kv8c=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=pt1V5H1+; arc=fail smtp.client-ip=40.107.100.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=KKqHEWhg1XldssuHtVBZoaCkDg26XnOKrZCCq3sXejNcVsRDOxz5lQgk4nKVz5WtlfestYTT1MXL6oFAz6rKyYa5+8LbMZ+tJR7fkrzH90wzOyHUOz5Mx6CAq5fxCS02MbKhGBBrxNp2hYTZtBQMcpVfptAHx5h2c6H5BuImqIZ+pya5F71tVvWXNuP2qy4yPcrfTzbiyoOQCmSZtyhXhJ2ksykOWPulq+Nmn7WSsG84RrNJjrkgzm5T6coQMBjfjzxWbEmfRwllq6pvZJcdWonj0Nqv8FT2mtXuVFjolqBxGkF8wsomCfh4YDqgV1MJgW1tbfm1a+ZwLtOsrhb8iQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Ff8eIj6Jq3qFxilrO/ove+LUGn6eM28Q4g6tMVux0TE=;
+ b=oROVrzSLF9wtz+wE6SjiYCOOX1kX5Qn/RRvqQMjCsvzPeYw8L9cunbVPPXaz71KUn16jCyweaDmCgOTiUWqLm2zs2TjUbY8C043csfbIeHi+RqPF/UaUPpuuuVbNXMFdbW5ZIRrk75FzlISVMu7kF4chTCxon3QDhIggZbC1TiX8HpAGv+76lIpefsf3s8S8ZHo6AozTfISvO9evwblbvuB2qv3pCHDblAWdINXNbrazxmwECl7mGJYEsU6q9CLpNc+fybs/rXKEx5ruxpgiiPA8X/tYAza+oxaIT1VugsU2HEVmzg/V6XjUOfCsvP4GbOTadtWd3u45EHus2zGkUg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Ff8eIj6Jq3qFxilrO/ove+LUGn6eM28Q4g6tMVux0TE=;
+ b=pt1V5H1+8Sl4J03MSk+fKXWVpGDaHnVEIP5yEkdrZrNDm+lqWuwfGtVFxPssEFl+TLP3NKPGdUYqWXhNDOTRAdkL3ntkVgoPvRImWxMBeNkGtHG6PzRHco4PozMWIvWpUI3myf0Apy/ATgYfXmjj02UzHjh2ecJoAGp24z+MoG7PaP6NlPI0rg2FRVAi081goDDuMDBdk0/RGw42P++/T2DRhKtYDtZHHrBjD+OSbNzji28dOZJpZSCW3CnS3ubwoNIZwoNkspAWJBYcMmix+uearcUFsfxzpauk67UBcYzvhM0b/9Ta7U+kgvp9j0Z/HPljkFcKPjZyD6uvTjW4Bw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CY5PR12MB6405.namprd12.prod.outlook.com (2603:10b6:930:3e::17)
+ by CH3PR12MB9431.namprd12.prod.outlook.com (2603:10b6:610:1c1::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.11; Wed, 4 Dec
+ 2024 08:47:04 +0000
+Received: from CY5PR12MB6405.namprd12.prod.outlook.com
+ ([fe80::2119:c96c:b455:53b5]) by CY5PR12MB6405.namprd12.prod.outlook.com
+ ([fe80::2119:c96c:b455:53b5%6]) with mapi id 15.20.8207.017; Wed, 4 Dec 2024
+ 08:47:04 +0000
+Date: Wed, 4 Dec 2024 09:47:00 +0100
+From: Andrea Righi <arighi@nvidia.com>
+To: Yury Norov <yury.norov@gmail.com>
+Cc: Tejun Heo <tj@kernel.org>, David Vernet <void@manifault.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] sched_ext: Introduce per-NUMA idle cpumasks
+Message-ID: <Z1AXBHsCuX_6SOra@gpd3>
+References: <20241203154917.123419-1-arighi@nvidia.com>
+ <20241203154917.123419-3-arighi@nvidia.com>
+ <Z0-cf7gUzV8jIWIX@slm.duckdns.org>
+ <Z0-kovS-Ba9CaP9J@yury-ThinkPad>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z0-kovS-Ba9CaP9J@yury-ThinkPad>
+X-ClientProxiedBy: FR4P281CA0103.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:cb::19) To CY5PR12MB6405.namprd12.prod.outlook.com
+ (2603:10b6:930:3e::17)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] arm64: dts: qcom: sa8775p: Add CPU OPP tables to
- scale DDR/L3
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Brian Masney
-	<bmasney@redhat.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Ajit Pandey <quic_ajipan@quicinc.com>,
-        "Imran
- Shaik" <quic_imrashai@quicinc.com>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        "Satya Priya Kakitapalli" <quic_skakitap@quicinc.com>,
-        Shivnandan Kumar
-	<quic_kshivnan@quicinc.com>
-References: <20241017-sa8775p-cpufreq-l3-ddr-scaling-v1-0-074e0fb80b33@quicinc.com>
- <20241017-sa8775p-cpufreq-l3-ddr-scaling-v1-2-074e0fb80b33@quicinc.com>
- <ZxEwVShJuMH4J1Hp@x1> <9179759d-7af1-409f-8130-1136c9ae4ecd@quicinc.com>
- <daqa3krsp6emdha6h7tlcelsggb6qeilnojgtfxjbp5zw4n6ow@xzwdmu55ygjf>
- <5c3d91e3-e9d3-4e8d-bd4f-f7cbe765dddc@oss.qualcomm.com>
- <d78e6fc9-2238-4f55-a604-f60df8565166@quicinc.com>
- <fhueah2gfi7fartnitasetvxiax3vgpgnbjis6ydjt523cnksk@vs4jmmtxk5jw>
-Content-Language: en-US
-From: Jagadeesh Kona <quic_jkona@quicinc.com>
-In-Reply-To: <fhueah2gfi7fartnitasetvxiax3vgpgnbjis6ydjt523cnksk@vs4jmmtxk5jw>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: ib6fPkQkCk_WNrkyJD978-R3C9wdMYuV
-X-Proofpoint-GUID: ib6fPkQkCk_WNrkyJD978-R3C9wdMYuV
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 adultscore=0
- mlxlogscore=919 bulkscore=0 impostorscore=0 mlxscore=0 suspectscore=0
- spamscore=0 priorityscore=1501 lowpriorityscore=0 phishscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412040067
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY5PR12MB6405:EE_|CH3PR12MB9431:EE_
+X-MS-Office365-Filtering-Correlation-Id: f45e0215-c612-45cd-34b6-08dd14403a03
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?AVkNnR8L8w948Ejwp3dob6xW/DSNt1Hd3aSyIvH0/vG2khTtS6flvw8AhQA2?=
+ =?us-ascii?Q?b65zsgbVTXfZMlmQ5U/aeIMROpsmZY3NfWARgq/9kfgT7ZJN/hus5qYbMHU0?=
+ =?us-ascii?Q?4lFE+wxRdmkbC86+azRsE8MyDJWAzbyPHe2Ko6ZrCdJZ9h3snwFFeTKGMeVn?=
+ =?us-ascii?Q?FbXf6X3LwBvH8NKqh6HBMzGv7DMg3VDKQ5Mei4yBKyT5ue+Rzi+pSMGCh5vx?=
+ =?us-ascii?Q?cfsPzmaHSYkNolftqd/Hc6RA9Wrt9q25bIEKRLFVtFcB/nM7vlXToYF/31vk?=
+ =?us-ascii?Q?PagaWrf1MiIlhCgnE2dcCSc4TLeeeu1Sx4BlBzG6/mn0pHDjp/LqyKxIR2h4?=
+ =?us-ascii?Q?kJf8yeDFhSaLG7OYCNvMWtqWxxiFzWIzlGq8kqqPzIDh/khr4aVIJXrEcB9Y?=
+ =?us-ascii?Q?XhOW+XRlmpyxu6QKgPzbwnvmRyG6DASI/mAHbyrnwWd3uOJjFpXY//KCndot?=
+ =?us-ascii?Q?ChGIgqP01LNQHVnoNLQfKfgikT6tivHq1XqUk+JHJPmeez3vP4fioGIJLNQ9?=
+ =?us-ascii?Q?l0wuRm2K6Y7l11FnfjQvm3LUUz2MilGI5qOtauLGYywrQi7wOo+7DAKB/wUv?=
+ =?us-ascii?Q?P6a3JThxZD+2B/hYEPwtODWlsMLn4sXghfX3uq263R5yBPCqHh5lQd6pUL6n?=
+ =?us-ascii?Q?ONMY2a+5SIpJbw6oKdtn3DXsAmWbvtqiiRSoYKWta7/srqbi4TZfFEW/obr2?=
+ =?us-ascii?Q?C3/oZtu6PkilvrTlruqkvPY+U212ztPOtVr4lIt+f+vO6f6CBqaAEidE1Rlf?=
+ =?us-ascii?Q?10VigVE0VLdteDXRrPUrkV2xGfUR240JBrAnJbhcm4yjn2wq4y9xMoyR7zyG?=
+ =?us-ascii?Q?FktWetzfFKeU0Xr5hwllFJlvX3fsfXGBx+iu/2YnJRCZDw0BlvCsVUPCGkEW?=
+ =?us-ascii?Q?dJQHF6M6WbyC7g2Z+xnrs1HxFmBZG/Dp95bOXRrNqdDs/K1kRgbtGNPRBCIu?=
+ =?us-ascii?Q?X5kk+edcCc6ZxfPsey6mt7sYeL34iArIyFyQbsJPGOsS67v/J0cCcJtG83qN?=
+ =?us-ascii?Q?bCPpYXrCpugKHCZL5uGFsc3q4yY1hnr243/fTi+08otzzHRZXIb09N33sP0I?=
+ =?us-ascii?Q?dFNpSD3XUfJV+e0osFrEJUU+QzwILKpg3Dd9NCEhiaKkRGx+6yebiJF5jhPQ?=
+ =?us-ascii?Q?CtOZe9sf0akecHBbtKTNJolJX1LAq/+0mx4ML2TZWPPfYN0yAXtSJE2TRzQW?=
+ =?us-ascii?Q?oRtEc9yY8UGgMly8UtHH737J/GAxHUU5bObEqgpUXliI2DsRV8jht6ggyHZv?=
+ =?us-ascii?Q?/MuC/Ec2/wWZKSrxA7OqcXqzl8NF8xY7mQYlmK/ZDOHFNVhOXWvup2gr2Q1g?=
+ =?us-ascii?Q?bVhM95JqC5VDLAiXArWYAlzkxAKbEr0c9XdXjAS3hmZXAA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR12MB6405.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?U4yaHrNHUZF1LyOW1IX4o+0a7B+rsDElaAiOfiWQ1jvBrknUHVAnuvRYs6nC?=
+ =?us-ascii?Q?g+zxjykV1Xxq5De+ltCfjON3sISLHEMaqC7MRUvPJRdKuNidewekC4n8084G?=
+ =?us-ascii?Q?Q2/PZfNPCduyvE3/RMC12a6Oi0sjMKkQjIZFT0Vo8cP+p5KVfYxYsdBRgnFI?=
+ =?us-ascii?Q?WqgtHHSkNc6hMNtYWDZqlwcMupIx/XcwP3Vhhtwvtnf8WHC30x0mBXoQ5yrQ?=
+ =?us-ascii?Q?VBuXH4rQpQuoQRre+8i1AgIh/XNT1LF3egb6oU12AB69e4lWzpCbK4XSdZ1C?=
+ =?us-ascii?Q?quY1gI5ZeUvyjQ5KN8uLcdMXQ2x8iKfHyHf5ho/kRlRRQxRS6FJAeAboaT58?=
+ =?us-ascii?Q?vI5t/HtlJIztYG76e6GScILN/EMllai2Ylt3Jjjx4mGq2KzcKBjlEIqKGaHg?=
+ =?us-ascii?Q?WviU7427CpAgAEP5w7PQF9WQH/sTR6u3RPVitlDXAEkpb6JJrZVHT4MOp8Pz?=
+ =?us-ascii?Q?kRMLVnzXn8HAos4LMc7n7IixD87TJDqxLqNXzzpsgpHqTnsKiqGSWfWukqIU?=
+ =?us-ascii?Q?bshwj2Ue2TqwNXWjUT19VPGZEmg10KcVrXkeRNOMvQlZZ2lfrHQCujfwrlSz?=
+ =?us-ascii?Q?1eRPa7ELCmFuKbPaRAcnd2ErHRsCaOD66xhmAPjMoJ7OmUS0SGVTuSfQlDfi?=
+ =?us-ascii?Q?oliBKZTWZ54UHwWozi3SEmfObSGhmW3SMt59zRLwy1llRpCWJZKUI1BiyXR+?=
+ =?us-ascii?Q?Smg5ZgFcmLzlO82qJtRipPmSvlBQ5z9/wQ4Ex5zCrEAZprWvFTFEMkNRzD74?=
+ =?us-ascii?Q?q+ouXOFkaon9cusqNXUTPT+VSTtmlvuOn8Ke15TsJGpvck/iYkRxsEx588Re?=
+ =?us-ascii?Q?J43Efw3HXc2Vm3wof/fteaYJuoyXIm0uaR0snucpfzvJ7iuWHChgURdaumvI?=
+ =?us-ascii?Q?kMJ2PR2MzOX0yShqyJp4zNZTYm05fgAAcLQ9kLBC0lfTU5d6kQddr5VdBeBx?=
+ =?us-ascii?Q?mmZcweyv5mR7pWNf6+sr2p8kcLr8hzr527ON8iwl6DMlohKiXbFKuEHd02eO?=
+ =?us-ascii?Q?8kJN428dWCLIY2X5+wtksECE5J2ObfezAn2lSwu9SVwIZT/tniIsjV0qHcBZ?=
+ =?us-ascii?Q?TdeNwB0Z/5So5pP8lNNazd+nHo7lrAxvMZPqIgPv9rnYamPmYaesUDqyUg9Z?=
+ =?us-ascii?Q?PBqgY8/7V++DwuLu1wr33YQ+RL3mWcjWurBAhSWresvImdAVu6SFuTwO0w8+?=
+ =?us-ascii?Q?KTWsZi9YzbwWui7Lgp6f2DpsJuEl45QL2UKZPJZCY+WOAfS3bAUeP7P0fiP6?=
+ =?us-ascii?Q?YRD2pM6XHDJB6mSPsLk+hQJBPPnjQcn2s82xvZlEUbTqFFZD+a6yBDl35RjF?=
+ =?us-ascii?Q?Qd9KIIfrAY7FoWmcl4xikD7N+wII2BPqnBsBNfl0WgFAkIaqblEkLiTTQjUQ?=
+ =?us-ascii?Q?Pi8y5SbvRVA0mhhJnjScko3GoyUnxQ21Nk5TZOZd3t5/rvHz8PKTA4+i3UKx?=
+ =?us-ascii?Q?G6/B/roqmSgDn+bdrFxlYHiz7SL6VgsLy+Advgeou5eMZbtDobOEt/lvltqJ?=
+ =?us-ascii?Q?MxXFjxykhMkAxK7nId/Qfo5RKSRxaBCZoFnce+pFQkOJzs6/+q9kYbMj681z?=
+ =?us-ascii?Q?adnNFQciFtBrNfWnW5nyeFqB4qW1wmKfuBi9CxZI?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f45e0215-c612-45cd-34b6-08dd14403a03
+X-MS-Exchange-CrossTenant-AuthSource: CY5PR12MB6405.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Dec 2024 08:47:04.1074
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: dpk2iezAdRtYBCTWNrtGmnL6vAGQSbYLZd9ZTzZhc9J+4dDDIjTz5YCnoFpUr20EZ6iiooIDDfQS8+j0VSx7kg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB9431
 
-
-
-On 12/4/2024 8:43 AM, Dmitry Baryshkov wrote:
-> On Tue, Dec 03, 2024 at 08:33:46PM +0530, Jagadeesh Kona wrote:
->>
->>
->> On 11/30/2024 8:02 PM, Konrad Dybcio wrote:
->>> On 14.11.2024 11:48 PM, Dmitry Baryshkov wrote:
->>>> On Mon, Nov 11, 2024 at 06:39:48PM +0530, Jagadeesh Kona wrote:
->>>>>
->>>>>
->>>>> On 10/17/2024 9:12 PM, Brian Masney wrote:
->>>>>> On Thu, Oct 17, 2024 at 02:58:31PM +0530, Jagadeesh Kona wrote:
->>>>>>> +	cpu0_opp_table: opp-table-cpu0 {
->>>>>>> +		compatible = "operating-points-v2";
->>>>>>> +		opp-shared;
->>>>>>> +
->>>>>>> +		cpu0_opp_1267mhz: opp-1267200000 {
->>>>>>> +			opp-hz = /bits/ 64 <1267200000>;
->>>>>>> +			opp-peak-kBps = <6220800 29491200>;
->>>>>>> +		};
->>>>>>> +
->>>>>>> +		cpu0_opp_1363mhz: opp-1363200000 {
->>>>>>> +			opp-hz = /bits/ 64 <1363200000>;
->>>>>>> +			opp-peak-kBps = <6220800 29491200>;
->>>>>>> +		};
->>>>>>
->>>>>> [snip]
->>>>>>
->>>>>>> +	cpu4_opp_table: opp-table-cpu4 {
->>>>>>> +		compatible = "operating-points-v2";
->>>>>>> +		opp-shared;
->>>>>>> +
->>>>>>> +		cpu4_opp_1267mhz: opp-1267200000 {
->>>>>>> +			opp-hz = /bits/ 64 <1267200000>;
->>>>>>> +			opp-peak-kBps = <6220800 29491200>;
->>>>>>> +		};
->>>>>>> +
->>>>>>> +		cpu4_opp_1363mhz: opp-1363200000 {
->>>>>>> +			opp-hz = /bits/ 64 <1363200000>;
->>>>>>> +			opp-peak-kBps = <6220800 29491200>;
->>>>>>> +		};
->>>>>>
->>>>>> There's no functional differences in the cpu0 and cpu4 opp tables. Can
->>>>>> a single table be used?
->>>>>>
->>>>>> This aligns with my recollection that this particular SoC only has the
->>>>>> gold cores.
->>>>>>
->>>>>> Brian
->>>>>>
->>>>>
->>>>> Thanks Brian for your review. Sorry for the delayed response.
->>>>>
->>>>> We require separate OPP tables for CPU0 and CPU4 to allow independent
->>>>> scaling of DDR and L3 frequencies for each CPU domain, with the final
->>>>> DDR and L3 frequencies being an aggregate of both.
->>>>>
->>>>> If we use a single OPP table for both CPU domains, then _allocate_opp_table() [1]
->>>>> won't be invoked for CPU4. As a result both CPU devices will end up in sharing
->>>>> the same ICC path handle, which could lead to one CPU device overwriting the bandwidth
->>>>> votes of other.
->>>
->>> Oh that's a fun find.. clocks get the same treatment.. very bad,
->>> but may explain some schroedingerbugs.
->>>
->>> Taking a peek at some code paths, wouldn't dropping opp-shared
->>> solve our issues? dev_pm_opp_set_sharing_cpus() overrides it
->>>
->>> Konrad
->>
->> Thanks Konrad for your review.
->>
->> Yes, correct. I tried dropping opp-shared but it is again getting set due to
->> dev_pm_opp_set_sharing_cpus().
+On Tue, Dec 03, 2024 at 04:38:58PM -0800, Yury Norov wrote:
+> On Tue, Dec 03, 2024 at 02:04:15PM -1000, Tejun Heo wrote:
+...
+> > > +static s32 scx_pick_idle_cpu(const struct cpumask *cpus_allowed, u64 flags)
+> > > +{
+> > > +   int start = cpu_to_node(smp_processor_id());
+> > > +   int node, cpu;
+> > > +
+> > > +   for_each_node_state_wrap(node, N_ONLINE, start) {
+> > > +           /*
+> > > +            * scx_pick_idle_cpu_from_node() can be expensive and redundant
+> > > +            * if none of the CPUs in the NUMA node can be used (according
+> > > +            * to cpus_allowed).
+> > > +            *
+> > > +            * Therefore, check if the NUMA node is usable in advance to
+> > > +            * save some CPU cycles.
+> > > +            */
+> > > +           if (!cpumask_intersects(cpumask_of_node(node), cpus_allowed))
+> > > +                   continue;
+> > > +           cpu = scx_pick_idle_cpu_from_node(node, cpus_allowed, flags);
+> > > +           if (cpu >= 0)
+> > > +                   return cpu;
+> >
+> > This is fine for now but it'd be ideal if the iteration is in inter-node
+> > distance order so that each CPU radiates from local node to the furthest
+> > ones.
 > 
-> It should be set, but then it should get the limited CPU mask rather
-> than the full CPU set. Isn't that enough for your case?
-> 
+> cpumask_local_spread() does exactly that - traverses CPUs in NUMA-aware
+> order. Or we can use for_each_numa_hop_mask() iterator, which does the
+> same thing more efficiently.
 
-Even if we call dev_pm_opp_set_sharing_cpus() with the limited CPU mask, it adds
-OPP_TABLE_ACCESS_SHARED flag to the OPP table. Due to this flag being set, if this
-same opp table is used for another CPU domain(CPU4-7) also in DT, then _managed_opp[1]
-which gets called inside from dev_pm_opp_of_add_table() for CPU4 will return the same
-CPU0 OPP table. 
-
-Due to above, _allocate_opp_table() [2] won't be invoked for CPU4 but instead CPU4 will be
-added as device under the CPU0 OPP table [3]. Due to this, dev_pm_opp_of_find_icc_paths() [4]
-won't be invoked for CPU4 device and hence CPU4 won't be able to independently scale it's
-interconnects. Both CPU0 and CPU4 devices will scale the same ICC path which can lead to one
-device overwriting the BW vote placed by other device. So we need two separate OPP tables for
-both domains.
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/drivers/opp/core.c#n1600
-[2] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/drivers/opp/core.c#n1613
-[3] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/drivers/opp/core.c#n1606
-[4] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/drivers/opp/core.c#n1484
+Nice, for_each_numa_hop_mask() seems to be exactly what I need, there's
+also a starting node, so with that we don't need to introduce
+for_each_online_node_wrap() and the other new *_wrap() helpers.
 
 Thanks,
-Jagadeesh
+-Andrea
 
