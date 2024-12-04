@@ -1,118 +1,84 @@
-Return-Path: <linux-kernel+bounces-432010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A44A29E44FA
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 20:46:58 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CAC19E45C0
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 21:31:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6268BB81614
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:52:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F23AAB45673
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:53:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53AE5202C23;
-	Wed,  4 Dec 2024 18:50:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 456F61C3BE2;
+	Wed,  4 Dec 2024 18:51:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b="MxDjWDBE"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="iZZGSebo"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 558BB1F5426
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 18:50:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733338253; cv=pass; b=h85m/5+D8V0/bD1Q19gOinpnX22CqerW2x9e2VfoZk4ehgGKKMtk9xaq2tdlTUeu1BGjW7uCBjwRWjhZPxrV6Ss5obvicS3C8I6vupad6TKThQnpFuMKLmeTSqbiIp0epahybmaXc6Br2PhqlsVkjmqIeoyRDMtcVaVjIyPl/wI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733338253; c=relaxed/simple;
-	bh=dplq4x6BedNB5JheFQIXwPZGhbGv4xVl4+D/cXJcX2g=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XaxW9qgALLjsY7fgJtBqKLWdLRMwIW1Nf3IYVI15tPa9USvAT+6srPlPtCBjYbsSd726wxCHgrVwaFTP6Fuo46SDej6JkVgqHMIxItHmZXyUEM4N/cBZXA6MDAsUMKSx8ow9loX+LpmsjCvsv9fCe1NoHcavsHytj3GAbp2PgIk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b=MxDjWDBE; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1733338232; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=g5ov8K2zqxVSH2Z5IH9nRm+RGq78G57aQffUfuEklFccCLY629g/IsCfXWeY6ejsuDZTbgsYWl2VmTxMy2QimCNbEuWdn2IggM/1DAkaallb97R+scw2eJDwjhQ14eOiyh3sBTHQamvKmmh5mUtRF6EmFo2H+HHxoE5teBBrwFg=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1733338232; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=Ows0zJTgSZQ4scHFg0XOpHfquBwwawR0kxgR/lAiOQA=; 
-	b=N/i4zihArNbnjW5roW11qwta/gCSQgCHugXLS7LWxjKdUDjCMwiX7yjnBKMRla02eeXjQQDzSoJGNMbEekq+65npAK4Ll3XsxhfeTfckhsgek6NAni33oHHqjaYl/EpkvSMdi609z0agsgtZAyHVRmk+CLGdpFdCCOu7NZOSmDQ=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=adrian.larumbe@collabora.com;
-	dmarc=pass header.from=<adrian.larumbe@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1733338232;
-	s=zohomail; d=collabora.com; i=adrian.larumbe@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=Ows0zJTgSZQ4scHFg0XOpHfquBwwawR0kxgR/lAiOQA=;
-	b=MxDjWDBEMxm2eAtndg1+cEeULnvauw0VZd9aAkzEAIBby/5u7hVKtMWJvqbujQtt
-	WKwYEsOtc06+BqjJfaHlShBaC4tACtwOgAcxNBTeZN+2qy+H85O4RqjeOQOD7KqAMc1
-	HsBQWa3e4RZudV5JTVVyeylz7LeLuylEb6opWSuI=
-Received: by mx.zohomail.com with SMTPS id 1733338231243207.3303468289498;
-	Wed, 4 Dec 2024 10:50:31 -0800 (PST)
-From: =?UTF-8?q?Adri=C3=A1n=20Larumbe?= <adrian.larumbe@collabora.com>
-To: Boris Brezillon <boris.brezillon@collabora.com>,
-	Rob Herring <robh@kernel.org>,
-	Steven Price <steven.price@arm.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Philipp Zabel <p.zabel@pengutronix.de>
-Cc: kernel@collabora.com,
-	=?UTF-8?q?Adri=C3=A1n=20Larumbe?= <adrian.larumbe@collabora.com>,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 9/9] drm/panfrost: Remove unused device property
-Date: Wed,  4 Dec 2024 18:49:38 +0000
-Message-ID: <20241204184945.1477677-10-adrian.larumbe@collabora.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241204184945.1477677-1-adrian.larumbe@collabora.com>
-References: <20241204184945.1477677-1-adrian.larumbe@collabora.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67FF726AC1;
+	Wed,  4 Dec 2024 18:51:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733338291; cv=none; b=r5XHcm5SNcYAgMFVYowD+4U5Yf28Jhzc902JFGKpNc5/+I774qqz+Mn4RMCAorWiOPPlRMjareDR2pkNNnAldXbDgSwzb7ABKC0jos1BEmQ1LAFQldWRZvI/kaNIg6oflPFQepkPExu2kH1nhRYt1F3mOcqfWquEX2uRWEUIANY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733338291; c=relaxed/simple;
+	bh=l9Gq4VrWql6pFYa/zpV4swTzVUCQHgcZyumww0xkHz4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=j7Jn+cPAkqidpvnzEi6JbuErho6uFoQbcls3gkf4V+9//xn1NnTFKwRNVACHafX+2OucS5KyNBzhSJzX6QUUNwBsW2TOFbFbUfyt5n2wkE5AE2RKWHyZVX3KRGu5S3/QdegSNGKok1viVHv0/daUuSf89LuhICO/eZQxKrImHyQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=iZZGSebo; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=gzwaDKFITa3a1kTuMDLUi8RHqXoRF8SnJ574ygIwsd8=; b=iZZGSeboGs336wLmOOqXq+foP+
+	nAGvWZZ+SPmzamZr8qKmSDivHHisRlQa2H+KQPjwIRJLsX7JdQMiS/CDOBE7U/g7Ti4GJKrbjPNlb
+	oS4d94OeCdyOm1vcyKt3uoY63qF0oCAYsVgs7HjrdUcZVxcjzc05gKIyj9tHwOxk/5i/FI9icc7XJ
+	v+MW324n61ZHgRmXDo/39K9ECJsUKMJNmd+kdQFCkxlvJ6DfKSn9bjpEuRYofCnMR65WDqjMHbP+c
+	s0zoZY/AixFtSfsgH+8KCw1jQaICZPXV0LynPTnRMp3MY/EvJL0rfcJGyuzx6qstLCQ8PsAtr+vOi
+	LASG/mfg==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tIuT8-0000000BocF-1oSK;
+	Wed, 04 Dec 2024 18:51:26 +0000
+Date: Wed, 4 Dec 2024 18:51:26 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Tamir Duberstein <tamird@gmail.com>
+Cc: Jens Axboe <axboe@kernel.dk>,
+	syzbot <syzbot+092bbab7da235a02a03a@syzkaller.appspotmail.com>,
+	asml.silence@gmail.com, io-uring@vger.kernel.org,
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+	Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [syzbot] [io-uring?] KASAN: null-ptr-deref Write in
+ sys_io_uring_register
+Message-ID: <Z1Ckrl-gC3HpPj0W@casper.infradead.org>
+References: <67505f88.050a0220.17bd51.0069.GAE@google.com>
+ <6be84787-b1d9-4a20-85f3-34d8d9a0d492@kernel.dk>
+ <a41eb55f-01b3-4388-a98c-cc0de15179bd@kernel.dk>
+ <CAJ-ks9kN_qddZ3Ne5d=cADu5POC1rHd4rQcbVSD_spnZOrLLZg@mail.gmail.com>
+ <1ab4e254-0254-4089-888b-2ec2ce152302@kernel.dk>
+ <Z1CCbyZVOXQRDz_2@casper.infradead.org>
+ <CAJ-ks9k5BZ1eSezMZX2oRT8JbNDra1-PoFa+dWnboW_kT4d11A@mail.gmail.com>
+ <CAJ-ks9mfswrDNPjbakUsEtCTY-GbEoOGkOCrfAymDbDvUFgz5g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJ-ks9mfswrDNPjbakUsEtCTY-GbEoOGkOCrfAymDbDvUFgz5g@mail.gmail.com>
 
-The as_in_use_mask device state variable is no longer in use.
+On Wed, Dec 04, 2024 at 01:39:37PM -0500, Tamir Duberstein wrote:
+> > I thought I did, but when I ran it again just now, this test did catch
+> > it. So there is coverage.
+> 
+> Matthew, would you consider a patch that migrates the xarray tests to kunit?
 
-Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
-Signed-off-by: Adrián Larumbe <adrian.larumbe@collabora.com>
----
- drivers/gpu/drm/panfrost/panfrost_device.h | 1 -
- drivers/gpu/drm/panfrost/panfrost_mmu.c    | 1 -
- 2 files changed, 2 deletions(-)
-
-diff --git a/drivers/gpu/drm/panfrost/panfrost_device.h b/drivers/gpu/drm/panfrost/panfrost_device.h
-index 30ce8cec1aa6..6aea214ca1f2 100644
---- a/drivers/gpu/drm/panfrost/panfrost_device.h
-+++ b/drivers/gpu/drm/panfrost/panfrost_device.h
-@@ -121,7 +121,6 @@ struct panfrost_device {
- 	DECLARE_BITMAP(is_suspended, PANFROST_COMP_BIT_MAX);
- 
- 	spinlock_t as_lock;
--	unsigned long as_in_use_mask;
- 	unsigned long as_alloc_mask;
- 	unsigned long as_faulty_mask;
- 	struct list_head as_lru_list;
-diff --git a/drivers/gpu/drm/panfrost/panfrost_mmu.c b/drivers/gpu/drm/panfrost/panfrost_mmu.c
-index 2a6c60170109..6914018d5540 100644
---- a/drivers/gpu/drm/panfrost/panfrost_mmu.c
-+++ b/drivers/gpu/drm/panfrost/panfrost_mmu.c
-@@ -609,7 +609,6 @@ static void panfrost_mmu_release_ctx(struct kref *kref)
- 		pm_runtime_put_autosuspend(pfdev->base.dev);
- 
- 		clear_bit(mmu->as, &pfdev->as_alloc_mask);
--		clear_bit(mmu->as, &pfdev->as_in_use_mask);
- 		list_del(&mmu->list);
- 	}
- 	spin_unlock(&pfdev->as_lock);
--- 
-2.47.0
-
+how would that help?  it's already a kernel module as well as being a
+userspace testsuite.  kunit just seemed to add useless boilerplate last
+tie i looked.
 
