@@ -1,61 +1,60 @@
-Return-Path: <linux-kernel+bounces-431779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431788-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 666689E4488
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 20:25:21 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBCCA9E4425
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 20:08:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 59CCBB3AC08
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:25:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E6B67B872B1
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:27:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 886A4217F36;
-	Wed,  4 Dec 2024 17:02:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F34A5226763;
+	Wed,  4 Dec 2024 17:03:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XcGMApev"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GFPwMKsO"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF1CC224B07;
-	Wed,  4 Dec 2024 17:02:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58508226750;
+	Wed,  4 Dec 2024 17:03:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733331770; cv=none; b=GhSAejkSJNu0gTuwSdFFm0k50fKbAUempek7DXukukBSNOHZtWlQqJfEhELkbDBRF9yawXFjule8vXFfoxLcFmzbAvwD7JOUHH8cfomny6dqHgL12iHVuNfzCfdQyekVMWRcwmOjG03LYYJ8Ve7CpJFcCGaQdUNvMRaZ9VPfbi4=
+	t=1733331788; cv=none; b=X7Kjt1Bg4ZslmUnFTI2m36rqywXo0GPNkzOnj2oWTKMsGAsCOOe5luFXthGwLzpJAITq2GzGS+IbTo+WSfdkwsopMzy6kr1D+SWyeTnwrfsyzwmpXwDiKC4691v7vVZtDMX5oqjT3qIvfgaTtmImcl2Rvhp0FNpabxoAeVZAxWo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733331770; c=relaxed/simple;
-	bh=OJNu50YNgqoBrOcGF4lciAHcWjVwGvUYhnDDiLLPJKs=;
+	s=arc-20240116; t=1733331788; c=relaxed/simple;
+	bh=b3q143f0WN8SOp3K98ejxkw4u7S9SDRMRRBB3LDdzG0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eRVgHBPvyI0nmWHGpDsKapDsut9sDXzkgkAKeDDMIJA+Oz2grLxmGLMxgeV7/AvfQTmhhf4wY7TGRo3Thu29fKIBSazW0EbM1PdLuQ0pSqYjpCdd6GCPMU6l99vILbY7ZJAFNJ2aiJgxYCNOClRouoRXTnjGp41Y1cJUfPYNB84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XcGMApev; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5F1CC4CED1;
-	Wed,  4 Dec 2024 17:02:49 +0000 (UTC)
+	 MIME-Version:Content-Type; b=FQ6pFz1PZEgNisUK6XiiteRbOeviaEI44k8hqe32CPDDOk9NkxMAXpo2DR4zDDpcLTE0iFqBnd8sRJ5EA0AMngj0vZx4E94xLUVCoWEofqZ4SNHgplwbS8r4T+Guvtc+o0SMKamlLuAyIwr5sbOMkMZvSAjbpp1iHSuzoD9a7Ts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GFPwMKsO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50F75C4CED1;
+	Wed,  4 Dec 2024 17:03:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733331770;
-	bh=OJNu50YNgqoBrOcGF4lciAHcWjVwGvUYhnDDiLLPJKs=;
+	s=k20201202; t=1733331788;
+	bh=b3q143f0WN8SOp3K98ejxkw4u7S9SDRMRRBB3LDdzG0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=XcGMApevayaCZSTmDUNm0bCB6VGjy7OTCmmYL1uX4+rcmoxRURhlq45XeLPDzJRn8
-	 69p13wR58Gb5fTag+0TerMd4iTcNX7gIuoThp6rZdlJi4iMioxH8lpGt76PjNRGY9t
-	 6b7b0l3jGrg5xsD8RbSOxUd6fza47uZiT5XyDBsFhmvLb/ZFwpbPDfTEz+qj27aVWm
-	 83xdPdL03J9jgIupZSKSxbhFbQRC+OSYhpamX8/7cfHvurniL09iM1DodFCfUMr4sN
-	 9PleXDnnbOc/4hO22kIM+iD0bkPFTz4fM9eZKOgp0Y7cRbx5qlzEz6cWz7uiou30U4
-	 a4JXQCkXr+uPw==
+	b=GFPwMKsOEwoRzhE0Cy22bNe32CrLzEWlwgtJbNS7i9YefdThhGWTxe2WBigYEleOV
+	 a8uTxP3EoR7Gzr6Xgw0JghAqtzn6YyxLuZDAboXJK+tW9ZuGYT72OSoEKW7fS6NhKu
+	 0kHXtxEANN0+bwwE1QYqNNc+NDtQnrAR8JmaofDlbENSy2pU2vKR7V87OR+vHaVIJp
+	 0UF3zyyE/a73re+JP13q3+azqtElEFZq/Sz4dVB6W/C6T7JV51fvv+t2E2LRLfuusT
+	 AmD80RF94lcYy/dcCZWHG+pcSv0at3xpBEU1/WWVgg/XnqjaIsTE13YJc2SbvoQRGX
+	 Oua4vOACsov7g==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: =?UTF-8?q?Barnab=C3=A1s=20Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
+Cc: =?UTF-8?q?Kai=20M=C3=A4kisara?= <Kai.Makisara@kolumbus.fi>,
+	John Meneghini <jmeneghi@redhat.com>,
+	"Martin K . Petersen" <martin.petersen@oracle.com>,
 	Sasha Levin <sashal@kernel.org>,
-	andersson@kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.1 12/15] pinctrl: qcom: spmi-mpp: Add PM8937 compatible
-Date: Wed,  4 Dec 2024 10:50:51 -0500
-Message-ID: <20241204155105.2214350-12-sashal@kernel.org>
+	James.Bottomley@HansenPartnership.com,
+	linux-scsi@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.15 6/9] scsi: st: Don't modify unknown block number in MTIOCGET
+Date: Wed,  4 Dec 2024 10:51:36 -0500
+Message-ID: <20241204155141.2214748-6-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241204155105.2214350-1-sashal@kernel.org>
-References: <20241204155105.2214350-1-sashal@kernel.org>
+In-Reply-To: <20241204155141.2214748-1-sashal@kernel.org>
+References: <20241204155141.2214748-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,37 +64,40 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.1.119
+X-stable-base: Linux 5.15.173
 Content-Transfer-Encoding: 8bit
 
-From: Barnabás Czémán <barnabas.czeman@mainlining.org>
+From: Kai Mäkisara <Kai.Makisara@kolumbus.fi>
 
-[ Upstream commit f755261190e88f5d19fe0a3b762f0bbaff6bd438 ]
+[ Upstream commit 5bb2d6179d1a8039236237e1e94cfbda3be1ed9e ]
 
-The PM8937 provides 4 MPPs.
-Add a compatible to support them.
+Struct mtget field mt_blkno -1 means it is unknown. Don't add anything to
+it.
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
-Link: https://lore.kernel.org/20241031-msm8917-v2-4-8a075faa89b1@mainlining.org
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Kai Mäkisara <Kai.Makisara@kolumbus.fi>
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=219419#c14
+Link: https://lore.kernel.org/r/20241106095723.63254-2-Kai.Makisara@kolumbus.fi
+Reviewed-by: John Meneghini <jmeneghi@redhat.com>
+Tested-by: John Meneghini <jmeneghi@redhat.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/qcom/pinctrl-spmi-mpp.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/scsi/st.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c b/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
-index 6937157f50b3c..148cc107b7aff 100644
---- a/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
-+++ b/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
-@@ -964,6 +964,7 @@ static const struct of_device_id pmic_mpp_of_match[] = {
- 	{ .compatible = "qcom,pm8226-mpp", .data = (void *) 8 },
- 	{ .compatible = "qcom,pm8841-mpp", .data = (void *) 4 },
- 	{ .compatible = "qcom,pm8916-mpp", .data = (void *) 4 },
-+	{ .compatible = "qcom,pm8937-mpp", .data = (void *) 4 },
- 	{ .compatible = "qcom,pm8941-mpp", .data = (void *) 8 },
- 	{ .compatible = "qcom,pm8950-mpp", .data = (void *) 4 },
- 	{ .compatible = "qcom,pmi8950-mpp", .data = (void *) 4 },
+diff --git a/drivers/scsi/st.c b/drivers/scsi/st.c
+index 9933722acfd96..861038a1cbd48 100644
+--- a/drivers/scsi/st.c
++++ b/drivers/scsi/st.c
+@@ -3751,7 +3751,7 @@ static long st_ioctl(struct file *file, unsigned int cmd_in, unsigned long arg)
+ 		    ((STp->density << MT_ST_DENSITY_SHIFT) & MT_ST_DENSITY_MASK);
+ 		mt_status.mt_blkno = STps->drv_block;
+ 		mt_status.mt_fileno = STps->drv_file;
+-		if (STp->block_size != 0) {
++		if (STp->block_size != 0 && mt_status.mt_blkno >= 0) {
+ 			if (STps->rw == ST_WRITING)
+ 				mt_status.mt_blkno +=
+ 				    (STp->buffer)->buffer_bytes / STp->block_size;
 -- 
 2.43.0
 
