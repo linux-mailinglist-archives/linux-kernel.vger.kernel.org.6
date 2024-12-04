@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-432053-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30F7F9E445B
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 20:16:47 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 390CF9E445C
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 20:16:48 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50C65168871
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 19:16:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E869A2880D4
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 19:16:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FCDA206F15;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A63BA206F31;
 	Wed,  4 Dec 2024 19:14:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Va4w2hA+"
-Received: from mail-oo1-f74.google.com (mail-oo1-f74.google.com [209.85.161.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YZCIZO+D"
+Received: from mail-qk1-f201.google.com (mail-qk1-f201.google.com [209.85.222.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3604202C3E
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 19:14:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D21951F5430
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 19:14:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733339666; cv=none; b=e71Tj9BkT4gx6ow3UOMGjweHkm5agUNGHSJjgw7x+q6qhAvbEU55TllZsjCAqIbeXTX7ZZyMO3SkwcUVDxxFYpoBzkCpUTOQMiPLB+J8xo//Rf4qMoGBRr8nmIAcdRtMh5//0FTLTwDEq19h1PklFLNNAT+Dd/t6q8xECU22F+g=
+	t=1733339666; cv=none; b=GYWyKk7qipAHZv7dOo9uLN7qvvBGMiECvfxTEbQYk4uENvPJIRXyyfifWfaFbISf5xufyKN0VnKznYnWV9kuRqVOhr0OLSDH+6GdknwY7wuwRYA3PtgR2qjme6sCVtKAOQ/BPyjY8Gg3hL9Pd2DIvGpZi0DRKnmqiOOrGSP+0w0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1733339666; c=relaxed/simple;
-	bh=g0rkDGLpu4v+ug31ibm4fJibfbopHH42jmhVi9EOmqs=;
+	bh=+IUtnc1DFoGPVy1DRFRoxmxu2aWJ46Lvmm6jdceQ08U=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=YgGlcwRjSG6zm5PjrYXmygKfOnIfOTbXoxNYf72q7AKZuUxklt9tCazusuAKemKyA/t8znB7QvMHFQhUJiaTP/9LsRFhIm34wjLU3MBcgFnJA44o4gLx+/Vco5UV18bwKzqo0NFh3LxPuEyURusSqlYzPD9icqxnRe/QYUasvS0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jthoughton.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Va4w2hA+; arc=none smtp.client-ip=209.85.161.74
+	 To:Cc:Content-Type; b=J6y7zF+Prnuc2+w/qGU9YRYiJiucNyXehwZh0aifW7oY4O5zER4UqSjgCjF9RYb0xQrJUKcm6BHcBGH1rtaa8bDjWyLIgbqHu8RBOj9I1iaqbHKY7a5SdP/QtTK2m/tF4cwaUdzxkUpIjb+tHvaqLP9XNWTgugjQy8lv5TGTgzU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jthoughton.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YZCIZO+D; arc=none smtp.client-ip=209.85.222.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jthoughton.bounces.google.com
-Received: by mail-oo1-f74.google.com with SMTP id 006d021491bc7-5f2033c97cfso118424eaf.3
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 11:14:23 -0800 (PST)
+Received: by mail-qk1-f201.google.com with SMTP id af79cd13be357-7b676e150fcso16685085a.3
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 11:14:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733339663; x=1733944463; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1733339664; x=1733944464; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=zFzCtU30qR2oi/Is6fdl592GY3fZRLXfeluJtZi8G84=;
-        b=Va4w2hA+uWJh+kB1R8xnR1i0iaMi6BjrdFaDRcbvZyPJGCmNwdYyf7bTwTHdYq0cFi
-         j35iNpYKEftFzvCpL8twNGARFLc8Sm/SZ5SiFJoH6207g4BvSdcGqhpxvk6J/qWfTScn
-         B5TSb/vi3sPD7axxPeHmH2DCtDXQ33kr0XyJOWnnYn0oN2WNt9PlxBDmH0ofuEVWEL5o
-         a2Ji22A9CzQjX3ajlFgf37s0zqJCQo6nQdapFEFMYwdtJNUzkNH3waahXw5H6OPOK//q
-         Z80MAY/imeKmrkb7frsWZtW1b4cXuC1/J6AAyOtkaHjBS1nfdVeIW1IWQKcfLrxvIPnp
-         AviQ==
+        bh=gP/1ZRcuFjEEMybT5UMVVNt/puu4fP/kE3PemhzVNvM=;
+        b=YZCIZO+DbqhbehBvM69e/tEJJ8i5uXPoksPv/Ke0UFiHSA7MXTrhPGufAqeGVtdTwu
+         SwqXXdHmPMagW4HABsEFIIBJezCiRYotazeptUCHcPr8zR303RpnZw7IMYZ8TJySJTVb
+         e04Ypoxa+s5hZTPssoLkzp0sZzAp3+SAxVw/vpSghCJTneWTOXOfpMj9xuf0j7xHZFL5
+         s11MEDla4jfa0ononUrJ+VA4hzP4lgFI0Dg1rLYcod83Lr23FYaI/bpxjbkApzrg1nH2
+         XnbQqhDl7WiLcOSZ6yd7t/NrFFM3f7OOu68l4vyQQsNnGgp35X8U8fM8pX1a2NZr55kv
+         HW0Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733339663; x=1733944463;
+        d=1e100.net; s=20230601; t=1733339664; x=1733944464;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zFzCtU30qR2oi/Is6fdl592GY3fZRLXfeluJtZi8G84=;
-        b=sQNBGBfuYLCCflTZ7GQgut3hESNPtuWmJoZALI6eeKgjEPup6VuMoExlHhKABZd+3D
-         UaGBFzN0tiHW++bcIzP20DMTaKEvrDIXdqBOCoAz+k0V1aLVz23ZPtYgrQR6q7Rxz+2M
-         t8yPl80LYgvyDqYW75g3LYre3N/iWcG8krYYIJuzWdecrf98SE4AKVNUsA7TQWi9Y1XD
-         +cQGXnqD1H+jCX6X/9R8388Ia64a6Orbgu3xOEc517t8BneStbOX0GIwq9Edq/sDLkA2
-         DNuX8BpoDDtZ6CZkm/6wuQyhluWUGPvkx37OAfhK+Os5iOpnN4JkoxqN3Fu0Vb7UCINi
-         A+XQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXq7TfWp/Ri6UEYRzGaLpYVns9DwiGSaPDItn45tyLnfwjgET7lE9kQG3++lgUcqpuh9skrxpPvov8aISU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YysRRLOW+HQgsD9m5b80xp0woGfq5IwRgpXKqWRCoz0s6WBb/d1
-	2yGoyhRKGypznJv5/wgy6/PLvyTSHA/mnK0+RcBi10rDFEc/T00txwi8R/XV5YYlPkiYSxh3XE/
-	YQXS4T8z4PQkzAImk/A==
-X-Google-Smtp-Source: AGHT+IE0Bvu2wb5sZ62wPHnkPebE9DLvFVJFuHpqNaMFqI9+9IIU97LvrniH728q/X5uxBPvfLsjs32/EpieLb++
-X-Received: from uad11.prod.google.com ([2002:a05:6130:800b:b0:855:e8c8:6d6c])
+        bh=gP/1ZRcuFjEEMybT5UMVVNt/puu4fP/kE3PemhzVNvM=;
+        b=ArEk0bwDUYCIYQr17yDYBkpJWoltbTDofkdRCTP/kb/ZaDmqeNs0d0I3rsMYw/Lx4a
+         p7iBGtxXfmaqaoY6ZqXWzmJl4FWgjOvfi+Do/ujLbqy2zyuMxD1hyxriX5aKeJuuVa27
+         0diJnHT1vEU4iMsa44dWQqWI6HhKxROQUc3PD/kSC2KOT/5XAm5H0OWO01zcl9gTDthq
+         vQC2QcDR1EzBenFUeG398MV00CLTocwgVkX21//LPvQfxN29sl5VyfHQfgEhAROYB7XJ
+         e1K3o+zWNpAgEQTdNW/+yIhsGmgjfy9TqPfQzDuAQP3AC4UOaoidE1wXdgQMlDRoY8Ci
+         9X2w==
+X-Forwarded-Encrypted: i=1; AJvYcCXEvgPSNRVzzO/gngWZPzaEE9mDy9A155cud40Fc7VQF3q0hRV5/qak0K54MtB3yoFFJKoFNnXCCSDJPBw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyHIc8cUQk8LtSounae0ce9hH4QVGCf+c1a6T1VCdxkpJeEUjsd
+	Mybf/+7rvUVJflfGV78sM40b33+k23qRlLjEQRBSpBbHBzywle91bDZQjF9BBi8jeMKa/KXbxM6
+	EA1foVR2ODo0S639NQQ==
+X-Google-Smtp-Source: AGHT+IGl8+Y6jXlfDxpaeYQWcz7MkBYaeVCfdRzcMWgZ4EOOrzmqxMS37+BVzh9ZHq4dtxMyhyVDFBoslVL+V2Wp
+X-Received: from uabih6.prod.google.com ([2002:a05:6130:1f06:b0:85b:c307:6bbd])
  (user=jthoughton job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6218:2812:b0:1bc:45bc:81f0 with SMTP id e5c5f4694b2df-1caeaab608amr694161055d.11.1733339663073;
+ 2002:a05:620a:44c4:b0:7b1:52a9:ae1a with SMTP id af79cd13be357-7b6a5d2aa5bmr858557685a.4.1733339663968;
  Wed, 04 Dec 2024 11:14:23 -0800 (PST)
-Date: Wed,  4 Dec 2024 19:13:43 +0000
+Date: Wed,  4 Dec 2024 19:13:44 +0000
 In-Reply-To: <20241204191349.1730936-1-jthoughton@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20241204191349.1730936-1-jthoughton@google.com>
 X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
-Message-ID: <20241204191349.1730936-9-jthoughton@google.com>
-Subject: [PATCH v1 08/13] KVM: selftests: Fix prefault_mem logic
+Message-ID: <20241204191349.1730936-10-jthoughton@google.com>
+Subject: [PATCH v1 09/13] KVM: selftests: Add va_start/end into uffd_desc
 From: James Houghton <jthoughton@google.com>
 To: Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>
 Cc: Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>, 
@@ -86,34 +86,41 @@ Cc: Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>,
 	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev
 Content-Type: text/plain; charset="UTF-8"
 
-The previous logic didn't handle the case where memory was partitioned
-AND we were using a single userfaultfd. It would only prefault the first
-vCPU's memory and not the rest.
+This will be used for the self-test to look up which userfaultfd we
+should be using when handling a KVM Userfault (in the event KVM
+Userfault and userfaultfd are being used together).
 
 Signed-off-by: James Houghton <jthoughton@google.com>
 ---
- tools/testing/selftests/kvm/demand_paging_test.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ tools/testing/selftests/kvm/include/userfaultfd_util.h | 2 ++
+ tools/testing/selftests/kvm/lib/userfaultfd_util.c     | 2 ++
+ 2 files changed, 4 insertions(+)
 
-diff --git a/tools/testing/selftests/kvm/demand_paging_test.c b/tools/testing/selftests/kvm/demand_paging_test.c
-index 0202b78f8680..315f5c9037b4 100644
---- a/tools/testing/selftests/kvm/demand_paging_test.c
-+++ b/tools/testing/selftests/kvm/demand_paging_test.c
-@@ -172,11 +172,13 @@ static void run_test(enum vm_guest_mode mode, void *arg)
- 	memset(guest_data_prototype, 0xAB, demand_paging_size);
+diff --git a/tools/testing/selftests/kvm/include/userfaultfd_util.h b/tools/testing/selftests/kvm/include/userfaultfd_util.h
+index 60f7f9d435dc..b62fecdfe745 100644
+--- a/tools/testing/selftests/kvm/include/userfaultfd_util.h
++++ b/tools/testing/selftests/kvm/include/userfaultfd_util.h
+@@ -30,6 +30,8 @@ struct uffd_desc {
+ 	int *pipefds;
+ 	pthread_t *readers;
+ 	struct uffd_reader_args *reader_args;
++	void *va_start;
++	void *va_end;
+ };
  
- 	if (p->uffd_mode == UFFDIO_REGISTER_MODE_MINOR) {
--		num_uffds = p->single_uffd ? 1 : nr_vcpus;
--		for (i = 0; i < num_uffds; i++) {
-+		for (i = 0; i < nr_vcpus; i++) {
- 			vcpu_args = &memstress_args.vcpu_args[i];
- 			prefault_mem(addr_gpa2alias(vm, vcpu_args->gpa),
- 				     vcpu_args->pages * memstress_args.guest_page_size);
-+			if (!p->partition_vcpu_memory_access)
-+				/* We prefaulted everything */
-+				break;
- 		}
- 	}
+ struct uffd_desc *uffd_setup_demand_paging(int uffd_mode, useconds_t delay,
+diff --git a/tools/testing/selftests/kvm/lib/userfaultfd_util.c b/tools/testing/selftests/kvm/lib/userfaultfd_util.c
+index 7c9de8414462..93004c85bcdc 100644
+--- a/tools/testing/selftests/kvm/lib/userfaultfd_util.c
++++ b/tools/testing/selftests/kvm/lib/userfaultfd_util.c
+@@ -152,6 +152,8 @@ struct uffd_desc *uffd_setup_demand_paging(int uffd_mode, useconds_t delay,
+ 		    expected_ioctls, "missing userfaultfd ioctls");
+ 
+ 	uffd_desc->uffd = uffd;
++	uffd_desc->va_start = hva;
++	uffd_desc->va_end = (char *)hva + len;
+ 	for (i = 0; i < uffd_desc->num_readers; ++i) {
+ 		int pipes[2];
  
 -- 
 2.47.0.338.g60cca15819-goog
