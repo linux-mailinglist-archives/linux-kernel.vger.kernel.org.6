@@ -1,84 +1,145 @@
-Return-Path: <linux-kernel+bounces-431555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A34C79E3EE3
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:59:15 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A48969E3F17
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:03:53 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D27EA169627
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:59:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F7FC28519C
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:03:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F49D20CCD2;
-	Wed,  4 Dec 2024 15:57:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59D5421858F;
+	Wed,  4 Dec 2024 15:58:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="bwsZfyCg"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GhUknTQV"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 978614A28;
-	Wed,  4 Dec 2024 15:57:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82E23217F48
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 15:58:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733327820; cv=none; b=GWcE/dFCx2mP8X3OOGimiRbFzEOCXKNrfKRkLYfS4rjYZT0zFoc6BXdbS2/4iu2ry2cmKIuYe2+xkfwjEg8G92mZKgxaF07Vae6cXgPbfLTquoTaBLYkEu9LvrLVe36XroIIBfB8+O2VcuADjEUiqXi9uTtjEcVWbewVI7vT8dE=
+	t=1733327909; cv=none; b=bOis/TIL35o/htgfi8KjpSHa2J+wk3kgPW7tNGtP9q7dxNq/kIZ1mwkoEWs4OkFt23j9C+bEbKKhaj9mPvxVZQzWbzGo2NR5t6/rBn3aCI/cVze4rJhP111MQgZy41U4X+ZAGpv+2UZ/2KZfENwKD0D/7zfbkcvLlzs9ouBCspM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733327820; c=relaxed/simple;
-	bh=7MuzFaF7/PzJgw3wMYY7sgx8oUD2VziZD1Y2qehSPBM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KcGa4Cikclg+R4KyuOQVhKcMzvxLcJtZ612zHnKUZOJ+hT8/kxVH+VPY/KIu1B4HfOIcoGI6I8oa+UU+ifXfQrr6kBvmuCK9b5lUG+f9Ces/KsAyd8DIwRueD5k1a7XXySd57dCjFAGLXUbgYSyUaCQwfT8OXqFZqeSujHUwIlk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=bwsZfyCg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0B69C4CECD;
-	Wed,  4 Dec 2024 15:56:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1733327820;
-	bh=7MuzFaF7/PzJgw3wMYY7sgx8oUD2VziZD1Y2qehSPBM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bwsZfyCg63dksC7ETuAK+qJ2wnEPyEDcoUyWU+CBvBBu/jP8nDhW0k847ttEp6TjL
-	 ynan2WSImgegH4d1AtXfNib6aldWq/Rm6dXu4si6tJzUx+n1CHYmTb2pORmAL8P/8x
-	 rRzOa80LAlCj4NG4oEeUM7PO1JSI6ZMK5JPLBRkY=
-Date: Wed, 4 Dec 2024 16:56:57 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Dave Penkler <dpenkler@gmail.com>
-Cc: linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Guenter Roeck <linux@roeck-us.net>
-Subject: Re: [PATCH v4] staging: gpib: Fix i386 build issue
-Message-ID: <2024120444-apron-levers-d701@gregkh>
-References: <20241204153612.22867-1-dpenkler@gmail.com>
+	s=arc-20240116; t=1733327909; c=relaxed/simple;
+	bh=jueMBi9DqtcIAo8jCb8vFwaEcMnWhMI0+nsU7Naunbo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dT1i7GBEa8coIjamhYBQW+0S7BSOdHGf2KPCKArXBqyk16b8Cu9kijdjBSZ/g4ghVRGGqNc2wpBq7iO/3Nkjwi0LPw2sIIFrCtLfT/vWzGsvEk1YuiPHknsHa0vxm1Y/zWPwnJi4NZTRI85i4flbwkh36A1l0sipvYdEccGpvv8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GhUknTQV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 249CCC4CED2;
+	Wed,  4 Dec 2024 15:58:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733327909;
+	bh=jueMBi9DqtcIAo8jCb8vFwaEcMnWhMI0+nsU7Naunbo=;
+	h=From:To:Cc:Subject:Date:From;
+	b=GhUknTQVxI50Jxwu9VmhFjNs3op+lf/OTVA8FmnQWxFzTsMOfExv7I1rAuKrd9a36
+	 oQ68qTKjBhtWueYPiTTACBtwrN4hliJm9ufJeh4FT2jGtfTcF9fzamauhRheIlmT4O
+	 YULaUG/LU8ictiFlD4Qo+kQlfJB4xCvfKr7gjvjtb7aUS/TlyY4MJ90+yZxGL+8bNn
+	 6+ujN+JnuvLIIpNY2V8KCWA2CKqLSlTfRDka+kbtMJM9O/AWMFD7EvNm+PpHjJ1qlE
+	 74T8z2Octji2s4cr6q40rrr7z7CDy4zI/jtc3l+H1M55FE8rPdOt+laRsCt6lg1Eso
+	 3AjlS6gKJYtkQ==
+Received: from mchehab by mail.kernel.org with local (Exim 4.98)
+	(envelope-from <mchehab@kernel.org>)
+	id 1tIrlf-00000000HYp-3B0D;
+	Wed, 04 Dec 2024 16:58:23 +0100
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Igor Mammedov <imammedo@redhat.com>
+Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	=?UTF-8?q?Philippe=20Mathieu-Daud=C3=A9?= <philmd@linaro.org>,
+	Ani Sinha <anisinha@redhat.com>,
+	Dongjiu Geng <gengdongjiu1@gmail.com>,
+	Eduardo Habkost <eduardo@habkost.net>,
+	Marcel Apfelbaum <marcel.apfelbaum@gmail.com>,
+	Peter Maydell <peter.maydell@linaro.org>,
+	Shannon Zhao <shannon.zhaosl@gmail.com>,
+	Yanan Wang <wangyanan55@huawei.com>,
+	Zhao Liu <zhao1.liu@intel.com>,
+	linux-kernel@vger.kernel.org,
+	qemu-arm@nongnu.org,
+	qemu-devel@nongnu.org
+Subject: [PATCH v3 0/5] Change ghes driver to use HEST-based offsets
+Date: Wed,  4 Dec 2024 16:57:54 +0100
+Message-ID: <cover.1733327276.git.mchehab+huawei@kernel.org>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241204153612.22867-1-dpenkler@gmail.com>
+Content-Transfer-Encoding: 8bit
+Sender: Mauro Carvalho Chehab <mchehab@kernel.org>
 
-On Wed, Dec 04, 2024 at 04:36:12PM +0100, Dave Penkler wrote:
-> These drivers cast resource_type_t to void * causing the build to fail.
-> 
-> With CONFIG_X86_PAE enabled the resource_size_t type is a 64bit unsigned int
-> which cannot be cast to a 32 bit pointer.
-> 
-> Disable these drivers if X68_PAE is enabled
-> 
-> Reported-by: Guenter Roeck <linux@roeck-us.net>
-> Link: https://lore.kernel.org/all/f10e976e-7a04-4454-b38d-39cd18f142da@roeck-us.net/
-> Fixes: e9dc69956d4d ("staging: gpib: Add Computer Boards GPIB driver")
-> Fixes: e1339245eba3 ("staging: gpib: Add Computer Equipment Corporation GPIB driver")
-> Fixes: bb1bd92fa0f2 ("staging: gpib: Add ines GPIB driver")
-> Fixes: 0cd5b05551e0 ("staging: gpib: Add TNT4882 chip based GPIB driver")
-> ---
-> v1 -> v2 changed pci_resource_start to pci_resource_len for second parameter of ioremap
-> v2 -> v3 add changes for cb7210 and tnt4882 drivers
-> v3 -> v4 disable build of drivers when X86_PAE is enabled
+This  series was part of the previous PR to add generic error injection
+support on GHES. It depends on a cleanup patch series sent earlier
+today:
 
-You forgot to sign off on this change :(
+    https://lore.kernel.org/qemu-devel/cover.1733297707.git.mchehab+huawei@kernel.org/T/#t
 
-v5?
+It contains the changes of the math used to calculate offsets at HEST table 
+and hardware_error firmware file. It prepares for the addition of GHES
+error injection.
 
-thanks,
+The first patch was previously at the cleanup series. It prepares
+the logic to support multiple sources.
 
-greg k-h
+The second patch adds a new firmware file to store HEST address.
+
+The third patch use the new firmware to calculate offsets using
+HEST table.
+
+Patches 4 and 5 add migration support. They assume that this
+series will be merged for qemu 9.2 (maybe it is too late for that,
+as QEMU is now on soft freeze). 
+
+I tested migration using both virt-9.1 and virt-9.2 machines
+on qemu 9.2.
+
+I also tested migration with:
+
+	qemu-9.1 -M virt-9.1 -cpu cortex-a57 => qemu-9.2 -M virt-9.1 -cpu cortex-a57
+	qemu-9.2 -M virt-9.1 -cpu cortex-a57 => qemu-9.1 -M virt-9.1 -cpu cortex-a57 
+
+The full qemu command when test backward-compatibility when running virt-9.1 is:
+
+
+~/qemu/build/qemu-system-aarch64 \
+-m 4g,maxmem=8G,slots=8 -monitor stdio -no-reboot -bios ~/emulator/QEMU_EFI-silent.fd -kernel~/kernel/arm64_build/arch/arm64/boot/Image.gz -device pcie-root-port,id=root_port1 -device virtio-blk-pci,drive=hd -device virtio-net-pci,netdev=mynet,id=bob -drive if=none,file=~/emulator/debian.qcow2,format=qcow2,id=hd -object memory-backend-ram,size=4G,id=mem0 -netdev type=user,id=mynet,hostfwd=tcp::5555-:22 -qmp tcp:localhost:4445,server=on,wait=off -M virt-9.1,nvdimm=on,gic-version=3,ras=on -cpu max -smp 4 -numa node,nodeid=0,cpus=0-3,memdev=mem0 -append 'earlycon nomodeset root=/dev/vda1 fsck.mode=skip tp_printk maxcpus=4'
+
+(I actually call it from two different directories, one with qemu-9.1 and the other one with qemu-9.2.
+
+For tests on qemu-9.2 with virt-9.2, I used a similar command:
+
+~/qemu/build/qemu-system-aarch64 -m 4g,maxmem=8G,slots=8 -monitor stdio -no-reboot -bios ~/emulator/QEMU_EFI-silent.fd -kernel ~/kernel/arm64_build/arch/arm64/boot/Image.gz -device pcie-root-port,id=root_port1 -device virtio-blk-pci,drive=hd -device virtio-net-pci,netdev=mynet,id=bob -drive if=none,file=~/emulator/debian.qcow2,format=qcow2,id=hd -object memory-backend-ram,size=4G,id=mem0 -netdev type=user,id=mynet,hostfwd=tcp::5555-:22 -qmp tcp:localhost:4445,server=on,wait=off -M virt-9.2,nvdimm=on,gic-version=3,ras=on -cpu max -smp 4 -numa node,nodeid=0,cpus=0-3,memdev=mem0 -append 'earlycon nomodeset root=/dev/vda1 fsck.mode=skip tp_printk maxcpus=4'
+
+---
+
+v3: did some minor cleanups at the code, as suggested by Jonathan Cameron.
+
+v2:
+  - some whitespace and comment changes
+  - patch 3/6 (acpi/ghes: rename the function which gets hw error offsets)
+    was merged on the cleanup series.
+
+Mauro Carvalho Chehab (5):
+  acpi/ghes: Prepare to support multiple sources on ghes
+  acpi/ghes: add a firmware file with HEST address
+  acpi/ghes: Use HEST table offsets when preparing GHES records
+  acpi/generic_event_device: Update GHES migration to cover hest addr
+  acpi/generic_event_device: add logic to detect if HEST addr is
+    available
+
+ hw/acpi/generic_event_device.c |  30 +++++++
+ hw/acpi/ghes.c                 | 160 +++++++++++++++++++++++++++++----
+ hw/arm/virt-acpi-build.c       |  33 ++++++-
+ hw/core/machine.c              |   2 +
+ include/hw/acpi/ghes.h         |  23 +++--
+ 5 files changed, 220 insertions(+), 28 deletions(-)
+
+-- 
+2.47.1
+
+
 
