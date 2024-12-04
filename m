@@ -1,116 +1,142 @@
-Return-Path: <linux-kernel+bounces-431817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9C639E456F
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 21:12:53 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E7559E44E1
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 20:40:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DD404BA507A
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:35:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A7890B3DA5D
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:35:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1FD822D4FB;
-	Wed,  4 Dec 2024 17:04:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBDB821C194;
+	Wed,  4 Dec 2024 17:04:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V96CZvVI"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Z03Hk1+3"
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACF8022D4EF;
-	Wed,  4 Dec 2024 17:04:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9AC420E00F;
+	Wed,  4 Dec 2024 17:04:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733331842; cv=none; b=rNXbS7cfJ2Kndg2WuXvb5V2OCrcGjlQ5tygKxlvq6D9eNoc/ojzGmZGhRVDmAufviAYOX1EkdEiFiPa2c/nu/p9GyDquhFETnBkt+fUJ+7kZHerUndRmDXQNPH6qT58u6DQRX7g+o/LlCKyBJR4o1t5ESfjeEEbJ7bAAS4bLPj0=
+	t=1733331857; cv=none; b=Q2jDyUWf62Qj2qGOZFGXnA+0SF4zWUV3VyH6WNjJLg1ivdH8EJGHb3VljKQTBIFNNcqaRLMfJtJB58sO1dQQYL3yftFYRA8yuBPomke6RsFwmgsZSuENKo66ApWnkjy2PmaZokpBlzYOO97OF865S2FiA71RFYhsKEneWCp/YeI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733331842; c=relaxed/simple;
-	bh=XVgTMkaQnWZypDe9THXFjpn6WhpDQVlRzEGdbJ21auc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HVhb29KDH94p90uYyNme0sxRwT3L/n/fSmaMPaECMU26SaiO28NQuYKo88zsibWeJxV2j4ntNVgnp6Jz4v7OaVJ+oLGRYW3cG8bSFeOVcUfleVdQaoZWwTlsO1eyrtldfWRn2xfWK5tH/YkFgjU9LtgW8AIQZEBz0KJFb72hEKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V96CZvVI; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-215936688aeso36181295ad.1;
-        Wed, 04 Dec 2024 09:04:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733331840; x=1733936640; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=pKTr4vgYnNxGMKn6banAprynPQ5r+1qbhfcpS6aqFcU=;
-        b=V96CZvVIAeIDbSR339ycQkn8fQPFM1TP1koc1FOWWutsMdah8Ipv0xKKiJF80pjRAA
-         AcxkPNMCEZWRiSIaTM65GQ8XVYqR5jF/s6oqOoomCrb4vBXIEhUfmso5UAUyH5g9V89n
-         kcVDmk1FVP7Ek+Xvv92qUQgpIVRzxQ9o7OtciYMcGgx3pSm25sJdqaNTgwPkxhpt4sPQ
-         dZkUe7ILnH+PDWA4KUaM3rC8n+/l0A6uAHXsUlfRIfcHPfFhfKCVVCowFDFTLU7UZr/V
-         49WCveQMlQKI0r2OkI35avLI4DBegYqEqUO7JlblLVmzwY5CYvHOV80ioJaoCR9k7hms
-         p8wQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733331840; x=1733936640;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pKTr4vgYnNxGMKn6banAprynPQ5r+1qbhfcpS6aqFcU=;
-        b=oUd8Ahe6xDv/8PFOlzFPPJGIlwtx0N0SZNTWuyDTN0Q9OVDfNKq+b4pUBsMRDlQ9Cl
-         J5iN3PjQU+J0W1tRdvkIvYz/2mHeXVMJLgvz8soJMK52f99d04RGS9ynL02HJIeV4Z5o
-         aTdeu8ELII3Br4idNp58szaYcTIEZtgzI7Q+N6GgLdKEGWQFNchMDe6U3QIpHrnOYPfp
-         fB4rBC8frwkqGen6Hgp7L45NelanqO6cDwW5hNrEgm46XHVPULKHXvP71qxIWuGq0/bX
-         jpizMkJBX3ZJY3bUazy6kixBZC5VggR0Esdk3L1tEVE83KcEZdd5FXY3wwWx7tL/ifuH
-         0Uug==
-X-Forwarded-Encrypted: i=1; AJvYcCW+j6sfnpB09fJ691rmElBSniG5e0cxHMD8rraLHHbW+OnpUAGQjokzGWjozNe6jx4rNcsRokE/4sPfzQo=@vger.kernel.org, AJvYcCXOVJATv6VP+qaVVAJF2UOTeFNs+aY0y+kMYby5t0hqvAEFmej2c9rtZwghifN0ISOAcoB+BUPSe1rQ99HYS5iY@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywa5KOrmlfKq6Y/rBb3lLoVop5RLtF5hSDsw3F/pgVXfeS/iTC6
-	SqHAa230eOPwzupRbqsDbxckcp7WRVEopwahdqITe92E8RRHFM0=
-X-Gm-Gg: ASbGncuwbuOSWTf5la3a1XzX7lDV7s3xVRgg9oVI9cza5CPFD1lZmqVlo2ge7UpBcLu
-	B4NOoBsTUAVx5J8MfbHZy7074/w5/edNM4XX2F4e1KNz1KV3W4kS999eBoN8u6CXpu2O6tVgP86
-	MR6JOJJm+yK3of4BAWrbyqkUGfC2IbSO4J7BoJxAwQiK6D6FFt5yLhAGxWu+psMyroRjI8zL0ix
-	21653rTs7FiEPzUXjGfaRdhyPaWbo1NQpRX0g+rGLB14etb7w==
-X-Google-Smtp-Source: AGHT+IEYXZCwcvxk0zUlAPN8190KFwdu2z0T1sD7+oO3vIVKyF1lwiAKg/8rSXCynIC1VMsPscWmJA==
-X-Received: by 2002:a17:903:2450:b0:215:a05d:fb05 with SMTP id d9443c01a7336-215d007659bmr84925795ad.32.1733331839927;
-        Wed, 04 Dec 2024 09:03:59 -0800 (PST)
-Received: from localhost ([2601:646:9e00:f56e:123b:cea3:439a:b3e3])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2155338c05dsm83350895ad.199.2024.12.04.09.03.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Dec 2024 09:03:59 -0800 (PST)
-Date: Wed, 4 Dec 2024 09:03:58 -0800
-From: Stanislav Fomichev <stfomichev@gmail.com>
-To: Joe Damato <jdamato@fastly.com>
-Cc: netdev@vger.kernel.org, pabeni@redhat.com, edumazet@google.com,
-	kuba@kernel.org, mkarsten@uwaterloo.ca,
-	"David S. Miller" <davem@davemloft.net>,
-	Simon Horman <horms@kernel.org>, Shuah Khan <shuah@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:CLANG/LLVM BUILD SUPPORT:Keyword:b(?i:clang|llvm)b" <llvm@lists.linux.dev>
-Subject: Re: [PATCH net-next v2] selftests: net: cleanup busy_poller.c
-Message-ID: <Z1CLftOC58tUs6ZI@mini-arch>
-References: <20241204163239.294123-1-jdamato@fastly.com>
+	s=arc-20240116; t=1733331857; c=relaxed/simple;
+	bh=L5U4dSkV1I3cWCusRE3BIyX9nk34hT5kxbJWlQQq/1E=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:To:From:Subject:
+	 References:In-Reply-To; b=GE3/6PX6XfNhvG0FSJD5EIb483KWOdjqtduDst6IEzXP23WfPfenZwJAlyypDRAk+QlkfOJzocXM/hkSDShaoIZ9sautxlEcT0bvKEN+JraSEV8QQ9E6pvTykjqEoEkhDwua4Lj049G0FbrDEexbViK/LEW0Qw8vthuZjGgdvVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Z03Hk1+3; arc=none smtp.client-ip=217.70.183.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 254E2FF808;
+	Wed,  4 Dec 2024 17:04:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1733331851;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mN4X2mfRbhmCIAyp/AA6+Xam0Nv0+ZB04jq9dio6qPc=;
+	b=Z03Hk1+3HTvSePlLeXZJeyZVuM1IupIBCse5Hc0lL7dv7IICVwl/w0x7sHvLL9I6gXO84H
+	Y8c6R/6ojaDquwVcHfArTcXDRox6Awc6fyT+pJxqmZojatficEWjltAmRtrI6FylhVTsZV
+	/GTrSkg7AQK4qBTHhJ9cfKTNmv4iG7ly/KZz/YGBy4bQotaugMw4Jl/CochHdV/fD99GWf
+	rPpknOmjjEv35LL9F1m1Vpxb8Lu+JWdRSnWNYcgsj+DAAMEAGfFUmPfc425h+zlI9i+w+z
+	xcTfPy4K4DeUaWflUA9ukblZDdSEE0L/oB58DqEWfNJBLq0UomyIKUmwcHNcaQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241204163239.294123-1-jdamato@fastly.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 04 Dec 2024 18:04:10 +0100
+Message-Id: <D632UZERSM8I.1O3J7O9QZ64EV@bootlin.com>
+Cc: <oe-kbuild-all@lists.linux.dev>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <linux-mips@vger.kernel.org>, "Vladimir
+ Kondratiev" <vladimir.kondratiev@mobileye.com>,
+ =?utf-8?q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>, "Thomas
+ Petazzoni" <thomas.petazzoni@bootlin.com>, "Tawfik Bayouk"
+ <tawfik.bayouk@mobileye.com>, =?utf-8?q?Th=C3=A9o_Lebrun?=
+ <theo.lebrun@bootlin.com>, "Srinivas Kandagatla"
+ <srinivas.kandagatla@linaro.org>, "Rob Herring" <robh@kernel.org>,
+ "Krzysztof Kozlowski" <krzk@kernel.org>, "Conor Dooley"
+ <conor+dt@kernel.org>, "Nicolas Saenz Julienne" <nsaenz@kernel.org>,
+ "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>
+To: "kernel test robot" <lkp@intel.com>
+From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+Subject: Re: [PATCH 5/6] nvmem: rmem: add CRC validation for Mobileye EyeQ5
+ NVMEM
+X-Mailer: aerc 0.18.2-0-ge037c095a049
+References: <20241203-rmem-v1-5-24f4970cf14e@bootlin.com>
+ <202412041522.01H5Kj6F-lkp@intel.com>
+In-Reply-To: <202412041522.01H5Kj6F-lkp@intel.com>
+X-GND-Sasl: theo.lebrun@bootlin.com
 
-On 12/04, Joe Damato wrote:
-> Fix various integer type conversions by using strtoull and a temporary
-> variable which is bounds checked before being casted into the
-> appropriate cfg_* variable for use by the test program.
-> 
-> While here:
->   - free the strdup'd cfg string for overall hygenie.
->   - initialize napi_id = 0 in setup_queue to avoid warnings on some
->     compilers.
-> 
-> Signed-off-by: Joe Damato <jdamato@fastly.com>
-> ---
->  v2:
->    - initialize napi_id to 0 in setup_queue to avoid clang warning as
->      suggested by Stanislav. Tested with clang 10.0.0 and 18.1.8
+On Wed Dec 4, 2024 at 8:58 AM CET, kernel test robot wrote:
+> kernel test robot noticed the following build errors:
+>
+> [auto build test ERROR on 40384c840ea1944d7c5a392e8975ed088ecf0b37]
+>
+> url:    https://github.com/intel-lab-lkp/linux/commits/Th-o-Lebrun/dt-bin=
+dings-nvmem-rmem-Add-mobileye-eyeq5-bootloader-config/20241204-103417
+> base:   40384c840ea1944d7c5a392e8975ed088ecf0b37
+> patch link:    https://lore.kernel.org/r/20241203-rmem-v1-5-24f4970cf14e%=
+40bootlin.com
+> patch subject: [PATCH 5/6] nvmem: rmem: add CRC validation for Mobileye E=
+yeQ5 NVMEM
+> config: arm-randconfig-002 (https://download.01.org/0day-ci/archive/20241=
+204/202412041522.01H5Kj6F-lkp@intel.com/config)
+> compiler: arm-linux-gnueabi-gcc (GCC) 14.2.0
+> reproduce (this is a W=3D1 build): (https://download.01.org/0day-ci/archi=
+ve/20241204/202412041522.01H5Kj6F-lkp@intel.com/reproduce)
+>
+> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
+ion of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202412041522.01H5Kj6F-lkp=
+@intel.com/
+>
+> All errors (new ones prefixed by >>):
+>
+>    drivers/nvmem/rmem.c: In function 'rmem_eyeq5_checksum':
+>    drivers/nvmem/rmem.c:66:9: error: cleanup argument not a function
+>       66 |         void *buf __free(kfree) =3D NULL;
+>          |         ^~~~
+>    drivers/nvmem/rmem.c:97:15: error: implicit declaration of function 'k=
+malloc'; did you mean 'mm_alloc'? [-Wimplicit-function-declaration]
+>       97 |         buf =3D kmalloc(header.size, GFP_KERNEL);
+>          |               ^~~~~~~
+>          |               mm_alloc
+> >> drivers/nvmem/rmem.c:97:13: error: assignment to 'void *' from 'int' m=
+akes pointer from integer without a cast [-Wint-conversion]
+>       97 |         buf =3D kmalloc(header.size, GFP_KERNEL);
+>          |             ^
 
-Acked-by: Stanislav Fomichev <sdf@fomichev.me>
+Will fix with the following.
+V2 incoming in a few days to avoid spam.
+
+	diff --git a/drivers/nvmem/rmem.c b/drivers/nvmem/rmem.c
+	index 04796f4fa8ae..1f0caf1d2dc1 100644
+	--- a/drivers/nvmem/rmem.c
+	+++ b/drivers/nvmem/rmem.c
+	@@ -9,6 +9,7 @@
+	 #include <linux/nvmem-provider.h>
+	 #include <linux/of_reserved_mem.h>
+	 #include <linux/platform_device.h>
+	+#include <linux/slab.h>
+
+	 struct rmem {
+	        struct device *dev;
+
+Regards,
+
+--
+Th=C3=A9o Lebrun, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
 
