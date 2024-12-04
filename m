@@ -1,406 +1,165 @@
-Return-Path: <linux-kernel+bounces-431554-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431556-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E79F9E3FD9
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:40:36 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD6059E3EE6
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:59:27 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 82876B3EE61
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:58:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6122816921E
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:59:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6044A20FAA9;
-	Wed,  4 Dec 2024 15:56:04 +0000 (UTC)
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BA1A20C481;
+	Wed,  4 Dec 2024 15:57:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SA9NUZnU"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0845020DD68;
-	Wed,  4 Dec 2024 15:56:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDD7E768FD;
+	Wed,  4 Dec 2024 15:57:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733327763; cv=none; b=FAdJU05e2XTz3MwWJUWtMG5Ud+khGwsAUnDiWsjcUti1s1ySHUCN/mQgBomxvUc6V8HL4/pIGjCE5awYTV7dtGyjCmHyhoXv/r5fMxV9/CsbU2joWYWjG7HDgzhmcBEd0Nn7GKbok1ClBK5fQ8vyx1WAmTRgtxInmRzqRIxZ044=
+	t=1733327868; cv=none; b=GxQJy902+YiKKZ8B2UCZ6qCkW14dDuZEgbWz2AnryzBixCiiv7eldDAJV2epDI+6MA2pl/7DOn1rkOwUy6ABazTQB6UjShsMyhiyyzFky73tUVLQZwgdytTgOElXH7Ko1fBrDqSxm/UWqnsIygcg5kr5DvgEDtvXA8z8ob/WGag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733327763; c=relaxed/simple;
-	bh=NWcoolRJnlIcnRwWuYA3HRq67OUoRL+ks4l5fFcP5zw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=PWtzR9gTGoFgg739KBcjf8OIYAuN8BdthekEhOr6co2iNtOOCZ2p945V9we7ZpDUCUa2Qoy3C15UqSxMiOk2iw/h8WDAprsJPSkgyFBU0Y7N65uH1MQ6BInr2P4addt+7JHDRyV/hB1tZ3mdgjslEMMqWCVpfaROLf1Z9VxA5sA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me
+	s=arc-20240116; t=1733327868; c=relaxed/simple;
+	bh=YnG7z0fOKJrMFIenIZn/cMyKITkPo1UCS66LL8X/56M=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=IGAZL40xByrnpgXgTNWTgqnL+BTHzEr/blqlkOaECkWVf/c+wbWNUEb/fVmJB7EPaMc3cprLVR8MnHlOLNhip3RuRb3CEsnUh8KOZ/NjgpyJwpJagPK5kuSLWquOhnfaob9N5getAEZrpNsFGLwGMW+v7fJYi2za4rlS2eXsMrg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SA9NUZnU; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-7250c199602so6008320b3a.1;
-        Wed, 04 Dec 2024 07:56:01 -0800 (PST)
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-53e1be0ec84so1697949e87.1;
+        Wed, 04 Dec 2024 07:57:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733327865; x=1733932665; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=an+Z8/U/MO56+6B3k0dC/+jPNgqzlMa1M5Aal/WF2R8=;
+        b=SA9NUZnU+wfQ8clMcHW/kaoi5fpqrfqwAN9CgYg/E/RTdFNYtQ5oXjTBQDju2wNmpu
+         G8KI4eNiQ7JBJQ+/C3M+doEw9eLi2YDR1GXr9eHtszFm4wsueYDvzXFRRePi+f/7Fnje
+         MGKly51cjhOqMcqxOD1q82oNi9mtzf7GZax6D07ciRKNitadfs0YeWB/zVbKjmKJw+5r
+         spAk4JOXYJFh+dtUwovQHN9GyG1dVJo+F76RXCqVKBKbeXRRvEv05pYMYKM9gWm/BSug
+         ka+gV65pxk8VwxEHtDq0HwB1wAOFvqTRIspIWdZMhI1vuTfQmPZ4RAhO5qnHX2H8X53H
+         n2HQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733327761; x=1733932561;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IQa4xlJWlHUcobyR53zonKvvx8enhBXBuxLbjrutfQg=;
-        b=lYnmz5uukxra/s4HQeJhNiup+I73cN4AAwrEfbrrI+cbiUBkfk5Tc3xGyn2rRfD6EU
-         gfEVEgodOwnpik9m2t2XLwsDGtVm4n9n4FxPqMD14tadUn91My7TMLyI3udM9+IpK9x1
-         iYoWuihZ6f6JT5c0c2Agmpot8N9IveCC8b+eqZlD4ZbNfG9Eo5lEz8OF1B8NOhqPh0gN
-         z6V0cKVpGtzHzHEIDBJ8l75W1wQtvfVJcUMZmt8Rt80aliNJB0OGQkdCH2m8Pj45U7z1
-         xydpvidZz0FNocNh6LmRhNh4Il2YhAj6o8SEzjJKcAD5XgncFdMJyz3LJGU5Tvtjvhja
-         233A==
-X-Forwarded-Encrypted: i=1; AJvYcCV0sEiri37GCHPlpQmVPnzSGmcJKQ347cI6+sX5DUYpWr3JLLHLRlvwXFB2LXW7l6L0+raJLySn9jNg5/dT@vger.kernel.org, AJvYcCXpJXHkZZ8xmvD3M+m6sY28kZCe/Og7ogWWEF60C3aVcZiXyJSncd2G7lO0LSkEKU+QSQWwRmZg7JI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz6gxMNJdSm0ruPYN84fwTITihg7JgBBL1lk/zSFUnYftahHaOD
-	fGrzg6zXUBZdEImlwR68TRsrb4yOpukVUT5/g2IJln3Mz+vinX0FyvXimk0=
-X-Gm-Gg: ASbGncuIpVYEIeie6Z3voSWn8VELlDdiqWH21069LjrOpQeTxvDDgDTr3Px03RJkcEx
-	LCb8NIsWEteNmrhrpSmIjxfzH3jbfpK+Vzq1YOKLW8ndI5WSvXhD105ShHXeAeKJWRcVxXT60Ip
-	1PJvgCvjWlVR6ND5vEVxN4/GureWyZqSqxJ+VMNTx7t+n9MevCa8g5ZK3P7O3bol9bAHJfDU7mt
-	vc4E4zVdcL+SVIAFCHqiWtDwa/hPMGCKLKde6NI34BC/CaHCA==
-X-Google-Smtp-Source: AGHT+IEGECyudWT21rSarnAi2ozJOhddQIvkXw4gE9h8Kri3TQXHCyJaP4yMNgJOowV/HoOZL0Jzlg==
-X-Received: by 2002:a05:6a00:4b12:b0:71e:5d1d:1aaf with SMTP id d2e1a72fcca58-7257fccdf45mr12190725b3a.23.1733327760996;
-        Wed, 04 Dec 2024 07:56:00 -0800 (PST)
-Received: from localhost ([2601:646:9e00:f56e:123b:cea3:439a:b3e3])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72541849c28sm12486573b3a.196.2024.12.04.07.56.00
+        d=1e100.net; s=20230601; t=1733327865; x=1733932665;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=an+Z8/U/MO56+6B3k0dC/+jPNgqzlMa1M5Aal/WF2R8=;
+        b=minERGmyn+CMwQIG7BcMJPq79yxKx3XP8LEdMJAb+9WeyIll9D8QuZCshiXkERhGWp
+         ow9BsJIeYXWmDU0qUamekqstY/izu6LgblTij0Kh/r+I+LBVp3WGNG6xA5H1ZxRh1cwM
+         RFSiV9unDIIFg+OHmqq1mwYbe4gHpiMwVN5NNYaqfKQZMw9IKrqcfBgHk4cvGjoqQRPM
+         +5Gy5g2OId8byWv4UfohcpcI8y0hbFwbQ5R/O86jglhnFWutmzqoUOxin308ao0CvfxE
+         MvsatdwTTWp4af4Dsq201A1jMlG+bNZB77Rj8LwgLVDrcEx34TuP/TckHE0aO/qv3sLM
+         xXBA==
+X-Forwarded-Encrypted: i=1; AJvYcCWYe/ao2V4ZlqkPRQhB3AqinZN7K+EUJg1jOxOMNzdwWTXFOiqvbGkICOy1J3Zxe1j/5jAXsZyofrwLY6nV@vger.kernel.org, AJvYcCWvzJoxblLUTK9ZiCJf4u9b2sSij+6puVdKENXNr/MjQck2EOWu5sDKX+auI37Pgzih4wa5gooa4cI9+Xpf@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWhp1Ri1tb59mF9LYP+meiX8xyLRPycW8tNELWPWSE1eSSyzJJ
+	rsM0nVTCdcFPGE6QMuCaX3lSq9a/CQ5w/1pXYqtgD7KSoOqqZ6Sb
+X-Gm-Gg: ASbGncvAHp9BhEAr8yGoLdQ3nAvzi2lt6oSlWXvhOZmRgUFrLydCC1kVwx3XbDq7yqG
+	Bi4tR8vsGSTi8P+aGMKc1F7KIe2U16nx7zKpONlBq0hoRfbsVpPpg2aXl2N6T+gvjRJ2ByqB3mt
+	6M/UQZWeoadqM4EVrJoMIAu7hUrdgXY52VhDr44ccYej6Gx2VSBnJAOARh15Ziek+romXRfrFqE
+	7qrQq70cewmozD1pkEPftdEijqosKlNUD9vJLlMZBaXYPh/DCjJGHT5I4VmQGO0ms0gG1QW4G0O
+	eok+QND+VZUsduA=
+X-Google-Smtp-Source: AGHT+IEy9n6nxWmwqhFSvEOtXxa2/T4QYEk0NY96t8djbuTb5+3DKRoxBp5roEh8mU61qF3g4m3EWA==
+X-Received: by 2002:a05:6512:234a:b0:53d:e4d2:bb9 with SMTP id 2adb3069b0e04-53e12a3521cmr4486318e87.54.1733327864801;
+        Wed, 04 Dec 2024 07:57:44 -0800 (PST)
+Received: from [172.17.0.1] (83-233-6-197.cust.bredband2.com. [83.233.6.197])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53e1f5498easm168999e87.105.2024.12.04.07.57.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Dec 2024 07:56:00 -0800 (PST)
-From: Stanislav Fomichev <sdf@fomichev.me>
-To: netdev@vger.kernel.org
-Cc: davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	horms@kernel.org,
-	donald.hunter@gmail.com,
-	corbet@lwn.net,
-	andrew+netdev@lunn.ch,
-	kory.maincent@bootlin.com,
-	sdf@fomichev.me,
-	nicolas.dichtel@6wind.com
-Subject: [PATCH net-next v4 8/8] ethtool: regenerate uapi header from the spec
-Date: Wed,  4 Dec 2024 07:55:49 -0800
-Message-ID: <20241204155549.641348-9-sdf@fomichev.me>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241204155549.641348-1-sdf@fomichev.me>
-References: <20241204155549.641348-1-sdf@fomichev.me>
+        Wed, 04 Dec 2024 07:57:43 -0800 (PST)
+From: Marcus Folkesson <marcus.folkesson@gmail.com>
+Subject: [PATCH 0/9] Rebuild default configurations for some ARM boards
+Date: Wed, 04 Dec 2024 16:56:42 +0100
+Message-Id: <20241204-defconfigs-v1-0-86587652d37a@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIALp7UGcC/x3MQQqAIBBA0avIrBN0sIKuEi1iHG02GgoRiHdPW
+ r7F/w0qF+EKm2pQ+JEqOQ3YSQFdZ4qsxQ8DGnQWjdOeA+UUJFa9muVE62lmRzCCu3CQ95/tR+8
+ f4GScaFwAAAA=
+X-Change-ID: 20241204-defconfigs-706a21dc5e4c
+To: Russell King <linux@armlinux.org.uk>, Andrew Lunn <andrew@lunn.ch>, 
+ Gregory Clement <gregory.clement@bootlin.com>, 
+ Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, 
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Dinh Nguyen <dinguyen@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ imx@lists.linux.dev, linux-arm-msm@vger.kernel.org, 
+ Marcus Folkesson <marcus.folkesson@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1936;
+ i=marcus.folkesson@gmail.com; h=from:subject:message-id;
+ bh=YnG7z0fOKJrMFIenIZn/cMyKITkPo1UCS66LL8X/56M=;
+ b=owEBbQKS/ZANAwAIAYiATm9ZXVIyAcsmYgBnUHvE/sKv4AaxRiWeBOth6xz467RGh5qwWXEon
+ sjLcr5gT5eJAjMEAAEIAB0WIQQFUaLotmy1TWTBLGWIgE5vWV1SMgUCZ1B7xAAKCRCIgE5vWV1S
+ MimdEADQXFpBCP3zM2ifwMzmUGOrx6G7P/aLw8UR67mVpyR+t5nSRIqRdDwJGb0BbSdwEKFGuZd
+ MgOPNFZDkKduYqnqfcFoPOW0s6GKmNBsH6zsCvx3n2XwX6nvGVzl8P7DZqfNE+a7DajajRt74pq
+ tI6bpsVDQLM/7hphDkLVkOb3MiITjryc57v9p3DSsqZf4Zr2ImKOtt+pvXTmrpmSld96R6LmOVJ
+ A23Z/cRjWRtKyJnlFwt982t/zVsu24ebApAvTHYT4aZ4EY2nkWIgBTbUtdZZjF4J2DWu61JCRrb
+ /AubGtaFC/Gt5c7CVhHYEF1VYEJLULwdEVesAxMGAU89wfPCzt2dC9k656g6jxUejosEt7txbq4
+ 0ALq/dp9tb34ud+PvelWF1kw9peKgw18yyitFo9jy5fAliMcNTOFSfJ+ddzs5r//pZiVvTL8WDS
+ 8AQd1z6bpr2y6imt3u4J3Jr/xT+iF+klJgp88h1lrgIi9i6JRgVtPjhYJ6sRpW+j5iRDe5caHuT
+ ENZDbbatG80h/+IjrAbYJNoERNarGQWuCFyDCt40sjZ3vi9E+ymYJh7IE7RxXPHmcvZfqymPWP7
+ 1OumeLUAJ2WwfFS8ehe9mJ+bfqVuTY+xSovrB0r5XzWP3OALPcnEFly/lPjTiatJmuD/VWCDATH
+ tG0cwW70ZxepPsA==
+X-Developer-Key: i=marcus.folkesson@gmail.com; a=openpgp;
+ fpr=AB91D46C7E0F6E6FB2AB640EC0FE25D598F6C127
 
-No functional changes. Mostly the following formatting:
-- extra docs
-- extra enums
-- XXX_MAX = __XXX_CNT - 1 -> XXX_MAX = (__XXX_CNT - 1)
-- newlines
+I was building Yocto for a davinci based board and got the following:
 
-Signed-off-by: Stanislav Fomichev <sdf@fomichev.me>
+[INFO]: the following symbols were not found in the active configuration:
+     - CONFIG_MTD_M25P80
+     - CONFIG_DRM_TINYDRM
+
+Both of these configuration options are obsolete in newer kernels.
+When searching the tree for other instances of these I found a few in
+other defconfig files.
+
+This series is simply a
+$ make foo_defconfig
+$ make savedefconfig
+$ cp defconfig arch/arm/configs/foo_defconfig
+
+for those defconfigs that contained any of the options listed above.
+
+Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
 ---
- .../uapi/linux/ethtool_netlink_generated.h    | 89 ++++++++++++-------
- 1 file changed, 56 insertions(+), 33 deletions(-)
+Marcus Folkesson (9):
+      ARM: axm55xx_defconfig: rebuild default configuration
+      ARM: davinci_all_defconfig: rebuild default configuration
+      ARM: dove_defconfig: rebuild default configuration
+      ARM: keystone_defconfig: rebuild default configuration
+      ARM: mvebu_v5_defconfig: rebuild default configuration
+      ARM: mxs_defconfig: rebuild default configuration
+      ARM: pxa_defconfig: rebuild default configuration
+      ARM: qcom_defconfig: rebuild default configuration
+      ARM: socfpga_defconfig: rebuild default configuration
 
-diff --git a/include/uapi/linux/ethtool_netlink_generated.h b/include/uapi/linux/ethtool_netlink_generated.h
-index 35a24d490efe..b58f352fe4f2 100644
---- a/include/uapi/linux/ethtool_netlink_generated.h
-+++ b/include/uapi/linux/ethtool_netlink_generated.h
-@@ -1,23 +1,43 @@
- /* SPDX-License-Identifier: ((GPL-2.0 WITH Linux-syscall-note) OR BSD-3-Clause) */
-+/* Do not edit directly, auto-generated from: */
-+/*	Documentation/netlink/specs/ethtool.yaml */
-+/* YNL-GEN uapi header */
-+
- #ifndef _UAPI_LINUX_ETHTOOL_NETLINK_GENERATED_H
- #define _UAPI_LINUX_ETHTOOL_NETLINK_GENERATED_H
- 
-+#define ETHTOOL_FAMILY_NAME	"ethtool"
-+#define ETHTOOL_FAMILY_VERSION	1
-+
- enum {
- 	ETHTOOL_UDP_TUNNEL_TYPE_VXLAN,
- 	ETHTOOL_UDP_TUNNEL_TYPE_GENEVE,
- 	ETHTOOL_UDP_TUNNEL_TYPE_VXLAN_GPE,
- 
--	__ETHTOOL_UDP_TUNNEL_TYPE_CNT
-+	/* private: */
-+	__ETHTOOL_UDP_TUNNEL_TYPE_CNT,
-+	ETHTOOL_UDP_TUNNEL_TYPE_MAX = (__ETHTOOL_UDP_TUNNEL_TYPE_CNT - 1)
- };
- 
-+/**
-+ * enum ethtool_header_flags - common ethtool header flags
-+ * @ETHTOOL_FLAG_COMPACT_BITSETS: use compact bitsets in reply
-+ * @ETHTOOL_FLAG_OMIT_REPLY: provide optional reply for SET or ACT requests
-+ * @ETHTOOL_FLAG_STATS: request statistics, if supported by the driver
-+ */
- enum ethtool_header_flags {
--	ETHTOOL_FLAG_COMPACT_BITSETS	= 1 << 0,	/* use compact bitsets in reply */
--	ETHTOOL_FLAG_OMIT_REPLY		= 1 << 1,	/* provide optional reply for SET or ACT requests */
--	ETHTOOL_FLAG_STATS		= 1 << 2,	/* request statistics, if supported by the driver */
-+	ETHTOOL_FLAG_COMPACT_BITSETS = 1,
-+	ETHTOOL_FLAG_OMIT_REPLY = 2,
-+	ETHTOOL_FLAG_STATS = 4,
- };
- 
- enum {
--	ETHTOOL_TCP_DATA_SPLIT_UNKNOWN = 0,
-+	ETHTOOL_PHY_UPSTREAM_TYPE_MAC,
-+	ETHTOOL_PHY_UPSTREAM_TYPE_PHY,
-+};
-+
-+enum ethtool_tcp_data_split {
-+	ETHTOOL_TCP_DATA_SPLIT_UNKNOWN,
- 	ETHTOOL_TCP_DATA_SPLIT_DISABLED,
- 	ETHTOOL_TCP_DATA_SPLIT_ENABLED,
- };
-@@ -30,7 +50,7 @@ enum {
- 	ETHTOOL_A_HEADER_PHY_INDEX,
- 
- 	__ETHTOOL_A_HEADER_CNT,
--	ETHTOOL_A_HEADER_MAX = __ETHTOOL_A_HEADER_CNT - 1
-+	ETHTOOL_A_HEADER_MAX = (__ETHTOOL_A_HEADER_CNT - 1)
- };
- 
- enum {
-@@ -40,7 +60,7 @@ enum {
- 	ETHTOOL_A_BITSET_BIT_VALUE,
- 
- 	__ETHTOOL_A_BITSET_BIT_CNT,
--	ETHTOOL_A_BITSET_BIT_MAX = __ETHTOOL_A_BITSET_BIT_CNT - 1
-+	ETHTOOL_A_BITSET_BIT_MAX = (__ETHTOOL_A_BITSET_BIT_CNT - 1)
- };
- 
- enum {
-@@ -48,7 +68,7 @@ enum {
- 	ETHTOOL_A_BITSET_BITS_BIT,
- 
- 	__ETHTOOL_A_BITSET_BITS_CNT,
--	ETHTOOL_A_BITSET_BITS_MAX = __ETHTOOL_A_BITSET_BITS_CNT - 1
-+	ETHTOOL_A_BITSET_BITS_MAX = (__ETHTOOL_A_BITSET_BITS_CNT - 1)
- };
- 
- enum {
-@@ -60,7 +80,7 @@ enum {
- 	ETHTOOL_A_BITSET_MASK,
- 
- 	__ETHTOOL_A_BITSET_CNT,
--	ETHTOOL_A_BITSET_MAX = __ETHTOOL_A_BITSET_CNT - 1
-+	ETHTOOL_A_BITSET_MAX = (__ETHTOOL_A_BITSET_CNT - 1)
- };
- 
- enum {
-@@ -69,7 +89,7 @@ enum {
- 	ETHTOOL_A_STRING_VALUE,
- 
- 	__ETHTOOL_A_STRING_CNT,
--	ETHTOOL_A_STRING_MAX = __ETHTOOL_A_STRING_CNT - 1
-+	ETHTOOL_A_STRING_MAX = (__ETHTOOL_A_STRING_CNT - 1)
- };
- 
- enum {
-@@ -77,7 +97,7 @@ enum {
- 	ETHTOOL_A_STRINGS_STRING,
- 
- 	__ETHTOOL_A_STRINGS_CNT,
--	ETHTOOL_A_STRINGS_MAX = __ETHTOOL_A_STRINGS_CNT - 1
-+	ETHTOOL_A_STRINGS_MAX = (__ETHTOOL_A_STRINGS_CNT - 1)
- };
- 
- enum {
-@@ -87,7 +107,7 @@ enum {
- 	ETHTOOL_A_STRINGSET_STRINGS,
- 
- 	__ETHTOOL_A_STRINGSET_CNT,
--	ETHTOOL_A_STRINGSET_MAX = __ETHTOOL_A_STRINGSET_CNT - 1
-+	ETHTOOL_A_STRINGSET_MAX = (__ETHTOOL_A_STRINGSET_CNT - 1)
- };
- 
- enum {
-@@ -95,7 +115,7 @@ enum {
- 	ETHTOOL_A_STRINGSETS_STRINGSET,
- 
- 	__ETHTOOL_A_STRINGSETS_CNT,
--	ETHTOOL_A_STRINGSETS_MAX = __ETHTOOL_A_STRINGSETS_CNT - 1
-+	ETHTOOL_A_STRINGSETS_MAX = (__ETHTOOL_A_STRINGSETS_CNT - 1)
- };
- 
- enum {
-@@ -105,7 +125,7 @@ enum {
- 	ETHTOOL_A_STRSET_COUNTS_ONLY,
- 
- 	__ETHTOOL_A_STRSET_CNT,
--	ETHTOOL_A_STRSET_MAX = __ETHTOOL_A_STRSET_CNT - 1
-+	ETHTOOL_A_STRSET_MAX = (__ETHTOOL_A_STRSET_CNT - 1)
- };
- 
- enum {
-@@ -114,7 +134,7 @@ enum {
- 	ETHTOOL_A_PRIVFLAGS_FLAGS,
- 
- 	__ETHTOOL_A_PRIVFLAGS_CNT,
--	ETHTOOL_A_PRIVFLAGS_MAX = __ETHTOOL_A_PRIVFLAGS_CNT - 1
-+	ETHTOOL_A_PRIVFLAGS_MAX = (__ETHTOOL_A_PRIVFLAGS_CNT - 1)
- };
- 
- enum {
-@@ -182,7 +202,7 @@ enum {
- 	ETHTOOL_A_LINKINFO_TRANSCEIVER,
- 
- 	__ETHTOOL_A_LINKINFO_CNT,
--	ETHTOOL_A_LINKINFO_MAX = __ETHTOOL_A_LINKINFO_CNT - 1
-+	ETHTOOL_A_LINKINFO_MAX = (__ETHTOOL_A_LINKINFO_CNT - 1)
- };
- 
- enum {
-@@ -199,7 +219,7 @@ enum {
- 	ETHTOOL_A_LINKMODES_RATE_MATCHING,
- 
- 	__ETHTOOL_A_LINKMODES_CNT,
--	ETHTOOL_A_LINKMODES_MAX = __ETHTOOL_A_LINKMODES_CNT - 1
-+	ETHTOOL_A_LINKMODES_MAX = (__ETHTOOL_A_LINKMODES_CNT - 1)
- };
- 
- enum {
-@@ -213,7 +233,7 @@ enum {
- 	ETHTOOL_A_LINKSTATE_EXT_DOWN_CNT,
- 
- 	__ETHTOOL_A_LINKSTATE_CNT,
--	ETHTOOL_A_LINKSTATE_MAX = __ETHTOOL_A_LINKSTATE_CNT - 1
-+	ETHTOOL_A_LINKSTATE_MAX = (__ETHTOOL_A_LINKSTATE_CNT - 1)
- };
- 
- enum {
-@@ -222,7 +242,7 @@ enum {
- 	ETHTOOL_A_DEBUG_MSGMASK,
- 
- 	__ETHTOOL_A_DEBUG_CNT,
--	ETHTOOL_A_DEBUG_MAX = __ETHTOOL_A_DEBUG_CNT - 1
-+	ETHTOOL_A_DEBUG_MAX = (__ETHTOOL_A_DEBUG_CNT - 1)
- };
- 
- enum {
-@@ -232,7 +252,7 @@ enum {
- 	ETHTOOL_A_WOL_SOPASS,
- 
- 	__ETHTOOL_A_WOL_CNT,
--	ETHTOOL_A_WOL_MAX = __ETHTOOL_A_WOL_CNT - 1
-+	ETHTOOL_A_WOL_MAX = (__ETHTOOL_A_WOL_CNT - 1)
- };
- 
- enum {
-@@ -244,7 +264,7 @@ enum {
- 	ETHTOOL_A_FEATURES_NOCHANGE,
- 
- 	__ETHTOOL_A_FEATURES_CNT,
--	ETHTOOL_A_FEATURES_MAX = __ETHTOOL_A_FEATURES_CNT - 1
-+	ETHTOOL_A_FEATURES_MAX = (__ETHTOOL_A_FEATURES_CNT - 1)
- };
- 
- enum {
-@@ -276,6 +296,7 @@ enum {
- enum {
- 	ETHTOOL_A_PROFILE_UNSPEC,
- 	ETHTOOL_A_PROFILE_IRQ_MODERATION,
-+
- 	__ETHTOOL_A_PROFILE_CNT,
- 	ETHTOOL_A_PROFILE_MAX = (__ETHTOOL_A_PROFILE_CNT - 1)
- };
-@@ -362,7 +383,6 @@ enum {
- 
- 	__ETHTOOL_A_TS_STAT_CNT,
- 	ETHTOOL_A_TS_STAT_MAX = (__ETHTOOL_A_TS_STAT_CNT - 1)
--
- };
- 
- enum {
-@@ -412,7 +432,7 @@ enum {
- 	ETHTOOL_A_CABLE_TEST_HEADER,
- 
- 	__ETHTOOL_A_CABLE_TEST_CNT,
--	ETHTOOL_A_CABLE_TEST_MAX = __ETHTOOL_A_CABLE_TEST_CNT - 1
-+	ETHTOOL_A_CABLE_TEST_MAX = (__ETHTOOL_A_CABLE_TEST_CNT - 1)
- };
- 
- enum {
-@@ -433,7 +453,7 @@ enum {
- 	ETHTOOL_A_CABLE_TEST_TDR_CFG_PAIR,
- 
- 	__ETHTOOL_A_CABLE_TEST_TDR_CFG_CNT,
--	ETHTOOL_A_CABLE_TEST_TDR_CFG_MAX = __ETHTOOL_A_CABLE_TEST_TDR_CFG_CNT - 1
-+	ETHTOOL_A_CABLE_TEST_TDR_CFG_MAX = (__ETHTOOL_A_CABLE_TEST_TDR_CFG_CNT - 1)
- };
- 
- enum {
-@@ -443,7 +463,7 @@ enum {
- 	ETHTOOL_A_CABLE_TEST_TDR_NTF_NEST,
- 
- 	__ETHTOOL_A_CABLE_TEST_TDR_NTF_CNT,
--	ETHTOOL_A_CABLE_TEST_TDR_NTF_MAX = __ETHTOOL_A_CABLE_TEST_TDR_NTF_CNT - 1
-+	ETHTOOL_A_CABLE_TEST_TDR_NTF_MAX = (__ETHTOOL_A_CABLE_TEST_TDR_NTF_CNT - 1)
- };
- 
- enum {
-@@ -452,7 +472,7 @@ enum {
- 	ETHTOOL_A_CABLE_TEST_TDR_CFG,
- 
- 	__ETHTOOL_A_CABLE_TEST_TDR_CNT,
--	ETHTOOL_A_CABLE_TEST_TDR_MAX = __ETHTOOL_A_CABLE_TEST_TDR_CNT - 1
-+	ETHTOOL_A_CABLE_TEST_TDR_MAX = (__ETHTOOL_A_CABLE_TEST_TDR_CNT - 1)
- };
- 
- enum {
-@@ -580,6 +600,9 @@ enum {
- 	ETHTOOL_A_C33_PSE_PW_LIMIT_UNSPEC,
- 	ETHTOOL_A_C33_PSE_PW_LIMIT_MIN,
- 	ETHTOOL_A_C33_PSE_PW_LIMIT_MAX,
-+
-+	__ETHTOOL_A_C33_PSE_PW_LIMIT_CNT,
-+	__ETHTOOL_A_C33_PSE_PW_LIMIT_MAX = (__ETHTOOL_A_C33_PSE_PW_LIMIT_CNT - 1)
- };
- 
- enum {
-@@ -613,7 +636,7 @@ enum {
- 	ETHTOOL_A_RSS_START_CONTEXT,
- 
- 	__ETHTOOL_A_RSS_CNT,
--	ETHTOOL_A_RSS_MAX = (__ETHTOOL_A_RSS_CNT - 1),
-+	ETHTOOL_A_RSS_MAX = (__ETHTOOL_A_RSS_CNT - 1)
- };
- 
- enum {
-@@ -662,8 +685,8 @@ enum {
- };
- 
- enum {
--	ETHTOOL_MSG_USER_NONE,
--	ETHTOOL_MSG_STRSET_GET,
-+	ETHTOOL_MSG_USER_NONE = 0,
-+	ETHTOOL_MSG_STRSET_GET = 1,
- 	ETHTOOL_MSG_LINKINFO_GET,
- 	ETHTOOL_MSG_LINKINFO_SET,
- 	ETHTOOL_MSG_LINKMODES_GET,
-@@ -710,12 +733,12 @@ enum {
- 	ETHTOOL_MSG_PHY_GET,
- 
- 	__ETHTOOL_MSG_USER_CNT,
--	ETHTOOL_MSG_USER_MAX = __ETHTOOL_MSG_USER_CNT - 1
-+	ETHTOOL_MSG_USER_MAX = (__ETHTOOL_MSG_USER_CNT - 1)
- };
- 
- enum {
--	ETHTOOL_MSG_KERNEL_NONE,
--	ETHTOOL_MSG_STRSET_GET_REPLY,
-+	ETHTOOL_MSG_KERNEL_NONE = 0,
-+	ETHTOOL_MSG_STRSET_GET_REPLY = 1,
- 	ETHTOOL_MSG_LINKINFO_GET_REPLY,
- 	ETHTOOL_MSG_LINKINFO_NTF,
- 	ETHTOOL_MSG_LINKMODES_GET_REPLY,
-@@ -763,7 +786,7 @@ enum {
- 	ETHTOOL_MSG_PHY_NTF,
- 
- 	__ETHTOOL_MSG_KERNEL_CNT,
--	ETHTOOL_MSG_KERNEL_MAX = __ETHTOOL_MSG_KERNEL_CNT - 1
-+	ETHTOOL_MSG_KERNEL_MAX = (__ETHTOOL_MSG_KERNEL_CNT - 1)
- };
- 
- #endif /* _UAPI_LINUX_ETHTOOL_NETLINK_GENERATED_H */
+ arch/arm/configs/axm55xx_defconfig     | 30 ---------------
+ arch/arm/configs/davinci_all_defconfig | 18 ---------
+ arch/arm/configs/dove_defconfig        | 11 ------
+ arch/arm/configs/keystone_defconfig    | 12 +-----
+ arch/arm/configs/mvebu_v5_defconfig    |  8 ----
+ arch/arm/configs/mxs_defconfig         | 11 ------
+ arch/arm/configs/pxa_defconfig         | 69 +---------------------------------
+ arch/arm/configs/qcom_defconfig        | 27 +------------
+ arch/arm/configs/socfpga_defconfig     |  3 --
+ 9 files changed, 4 insertions(+), 185 deletions(-)
+---
+base-commit: 40384c840ea1944d7c5a392e8975ed088ecf0b37
+change-id: 20241204-defconfigs-706a21dc5e4c
+
+Best regards,
 -- 
-2.47.0
+Marcus Folkesson <marcus.folkesson@gmail.com>
 
 
