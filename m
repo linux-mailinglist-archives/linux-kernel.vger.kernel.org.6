@@ -1,238 +1,151 @@
-Return-Path: <linux-kernel+bounces-431699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8E129E407E
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:05:19 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A617D9E418C
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:29:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E79028216B
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:05:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6E241B4535F
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:00:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2C4523098C;
-	Wed,  4 Dec 2024 16:58:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD83E210185;
+	Wed,  4 Dec 2024 16:58:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Nugn7Ek5"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2050.outbound.protection.outlook.com [40.107.236.50])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CYWvZsit"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1232A227B88;
-	Wed,  4 Dec 2024 16:58:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.50
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733331525; cv=fail; b=aNs2DbPEflIu1BaVGw2Tza0GPplPF9RSp4jvFCp1kLlBDV10Xxdb7IKispM83iVZMK0nLvWGOuVR1JlmOeXEmUjMbErwkxhk5AnPS4N8uI7XdQ/pz6qRqD3CMlJ4mwP348JZamO4+V/rJRLyb69/cI2mTfPD85AzD7V+rbLvjCw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733331525; c=relaxed/simple;
-	bh=1fl2cSY9XGd/VPlxV6tzeHR+eyYidgaVf6r2hLkEqT8=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17A4A20CCFB;
+	Wed,  4 Dec 2024 16:58:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733331486; cv=none; b=O1sArXBEgE/1Z8f5gCCVISwQNeq4VlZKbTMAFEEea6TpqRkBkDzcciU0EDcUykRkUullfP5E9137ep8bFA9TRhfVKzBIta7e5OgJ2vZ7B+/le+g9S13M7tkbIBebZgX6Y6CeX8xmCZTWvWYSAQn26tTOVlOAPyfemlS5LvHu2Zs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733331486; c=relaxed/simple;
+	bh=QNHkmOZEPKxyeyJlkb7HSoHkNkMYxUTfVvYallOxT4s=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=oMaRU99ZGDdjtdkGbpvNPtEprvDDgUfseJDDLTWqBOvzxsM7aq3bigmX0bNyjKg3+IF71C11STzw6QVcUSQkDYa/zgccyAmQk3+I3aF5Kz3k4vThwjU1y/pIM/+/q29kOMaTzB0hMzmXpvTTvKrGoCOqtIampHXYJjsIX+SjJkU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Nugn7Ek5; arc=fail smtp.client-ip=40.107.236.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=UN0sZ67O8sD0sQQ30pKsZKOsMlgWAoWV10nq1xirzVHQ5CwHiRLtxNArU/bQqsyN98nlXcAsW8Kf1iwIaMBFwzDjwArrA9hLfx+tEXwpPg2w8bXmke4EkPnCuvXrKrXESuHA3FAjd3TkXNZbk/ObbVPd1X1hp4wGjSLZtL585PE0gE3ECSJ5T1YKLxRnTFRau+MZCW8vDXSiT7HiZP7MaudqnqBrMiGmR/K1/ivkxNCjRJeijVw4jWL9d/AXWZI6efCuzru983DjsU5vk3UUGpDmGO/CGfT+tCE9e0mEj6H+w6TgC97E/hAue0Xon74syfwPcsSJQ7NHCR0y8e44lg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=TJKHBtl62rTFPrqHryGAMV9RQFxQhTf+Y4DYORnKaWg=;
- b=g7K0fr73ukhAOfYxgSzhZKsWRVJjGhpbn/5SA6Iqmuj7w5gvqjXHaBIaegIbreehs+sxH2c6GD1Vc8xwtIM8OQ8eSfhr/FdlKEQ401Tilg7f7+IAHbDh+hW/80hpyHI1pUdZrlkQxYOQSgHLblpSAh1qloe8dh1mtkGleDpb7i1YtD8b9FklMB6R4l0B8ixQL6C+qyIUWocarNpP7RAxPOY3fdaHaHp+75V+43sxm2ZCQWNcC6Ra3uF8z7pdHT7+5jEW8jH43fXUPshSLWnhHFCaJEkxrXCAegAnkCMmA7hunXoSSE+u2DDEyXgoWqpsYsKFeASK3ZpQ0C7k87wnMQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=TJKHBtl62rTFPrqHryGAMV9RQFxQhTf+Y4DYORnKaWg=;
- b=Nugn7Ek5MPK3IPjsSkVHv2IIgEwzNB96nqYF9QYCXHolMB8QfLat8fJGsUluXCWUQ3UKkuEaONAOA6sii45jxER+aBlmKg+D3PF2f3lkdyun7dtElTSx+5zyk3Od165GFch9ZHLK20tojjQqs5nWL72z87gHzBa4Zo+TgEpuLHcf6I022GSkuuRriLeV6wQxqEA3tdsF2jBjPSAQrJTejB5y9Pim5/5b+I74eznfOvv9qCap7dC2glV8VMW56v7MqEk779ycoCQcMGlQJB4YJsV0hiy78KUUgVFER1Bdu7dDhEfASbaEJwwwPeYOfXNh1kUdrr38zzFlG0U6VaKotg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
- CH3PR12MB9249.namprd12.prod.outlook.com (2603:10b6:610:1bc::7) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8207.19; Wed, 4 Dec 2024 16:58:40 +0000
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::5189:ecec:d84a:133a]) by DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::5189:ecec:d84a:133a%7]) with mapi id 15.20.8207.017; Wed, 4 Dec 2024
- 16:58:40 +0000
-From: Zi Yan <ziy@nvidia.com>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Vlastimil Babka <vbabka@suse.cz>,
- Geert Uytterhoeven <geert@linux-m68k.org>, linux-mm@kvack.org,
- Andrew Morton <akpm@linux-foundation.org>,
- David Hildenbrand <david@redhat.com>, Miaohe Lin <linmiaohe@huawei.com>,
- Kefeng Wang <wangkefeng.wang@huawei.com>, John Hubbard <jhubbard@nvidia.com>,
- "Huang, Ying" <ying.huang@intel.com>, Ryan Roberts <ryan.roberts@arm.com>,
- Alexander Potapenko <glider@google.com>, Kees Cook <keescook@chromium.org>,
- linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org
-Subject: Re: [PATCH] mm: avoid zeroing user movable page twice with
- init_on_alloc=1
-Date: Wed, 04 Dec 2024 11:58:38 -0500
-X-Mailer: MailMate (1.14r6065)
-Message-ID: <B65776A4-D434-4D9F-9C42-1C45DAE5A72A@nvidia.com>
-In-Reply-To: <Z1CDbrrTn6RgNmYn@casper.infradead.org>
-References: <20241011150304.709590-1-ziy@nvidia.com>
- <CAMuHMdV1hRp_NtR5YnJo=HsfgKQeH91J537Gh4gKk3PFZhSkbA@mail.gmail.com>
- <DAFE2913-0B32-484F-83BE-080C60362DB8@nvidia.com>
- <f64f8a9e-fda8-4f7a-85a2-0113de2feb6c@suse.cz>
- <9942C08D-C188-461C-B731-F08DE294CD2B@nvidia.com>
- <Z1CDbrrTn6RgNmYn@casper.infradead.org>
-Content-Type: text/plain
-X-ClientProxiedBy: BL1PR13CA0430.namprd13.prod.outlook.com
- (2603:10b6:208:2c3::15) To DS7PR12MB9473.namprd12.prod.outlook.com
- (2603:10b6:8:252::5)
+	 MIME-Version; b=X3agdtuM2VTbgy8IQf7PaB5z5ZSPEMbB2RHRK6O7uBL+GGe+HJh+scgGcFo+KSBU2EdT5EfkVCdfErGFu3Dj90WhZZlHVBd43y80Z5HUoDm7rCBHO6tTBv3wCu1jRl7N9ATBWzGe7357/d5SE1LUoNBSN+7Aai78I6b6WMw/rho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CYWvZsit; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8D87C4CECD;
+	Wed,  4 Dec 2024 16:58:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733331485;
+	bh=QNHkmOZEPKxyeyJlkb7HSoHkNkMYxUTfVvYallOxT4s=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=CYWvZsit6BjNM4y99ITTWBFrA6dEKWc1BOOhvEnoqRf6NHcA/t6e15dvXrQ0oGc1Q
+	 A6GKWwxrv5eddlL4ANcY/8K6YdJViP5HK57iwboFFhCL39COEoLADssDdu0b5BnW43
+	 mGXhO/rNTnBn8mHNO93rkGzfmwiMSagXaDu8WfKmM4vGFcERZCxalJeuT66RqWcjjP
+	 ud1HjkW0pBFbCQbDWmjFAz0Wonj+93Evf6YaDZIzXOUqihu0fuCRLerk9VFNrGP606
+	 Q6umIXf03RSGZLP8dvWxhIE35BUoscfwS1PFxmINJO0xSay2gSAT9sNLCRL3mm/+xI
+	 3ZMCesjWc/gxQ==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Yihang Li <liyihang9@huawei.com>,
+	Xiang Chen <chenxiang66@hisilicon.com>,
+	"Martin K . Petersen" <martin.petersen@oracle.com>,
+	Sasha Levin <sashal@kernel.org>,
+	James.Bottomley@HansenPartnership.com,
+	linux-scsi@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.12 08/36] scsi: hisi_sas: Add cond_resched() for no forced preemption model
+Date: Wed,  4 Dec 2024 10:45:24 -0500
+Message-ID: <20241204154626.2211476-8-sashal@kernel.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20241204154626.2211476-1-sashal@kernel.org>
+References: <20241204154626.2211476-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|CH3PR12MB9249:EE_
-X-MS-Office365-Filtering-Correlation-Id: 224d2a84-bc0a-41e4-8e50-08dd1484e709
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Sci28EfTZlOdAdg9auTAyaDzIZz6PtHsnviGea8ELYzwdHQZ2jaOa3KMbSP6?=
- =?us-ascii?Q?7tKiudMVcytnXO2wQg55cW4KEIlRoDn+FMa9Fot29vwbb9N2tRWWRvKqUrSI?=
- =?us-ascii?Q?CUZpU8fveqBF9l3nON4VU8d1lAuupnJy7lYW1rRAqiXl+qQeydanBm/Oq6Oq?=
- =?us-ascii?Q?Rq9MHebhgBqXMXY45LnJCiZax2a3DTEpBq9AQ4GJdte2HS5YIM5Z1ct09Aya?=
- =?us-ascii?Q?qVamaF5Sm4arjmr34tm7+ks7oUiNmfiB/C6mguRyuSxi3P7+jsVRsnW7zk4M?=
- =?us-ascii?Q?gDX0v181VOLu3NrkyCYkImKBdvBXJFKOOJITiZOFxe1Ksd0UrOHmNjw1MvEe?=
- =?us-ascii?Q?faGuHPInT2Qd1urPgXSml64F18xuRwGddO6IFqOmEx0jGAOOlC8CzeJS1e6U?=
- =?us-ascii?Q?OCFVQ1fYcqCUpNqmGh95megCDCCvcD3zUjiWda+8kcOH3/MKbhA1Ae3q6gDY?=
- =?us-ascii?Q?amnXx/uV3Hu2RSGN5f/ig/SPTzo2on0w9O4qW5vumQDPtoXJF9HuBzZ3Xdul?=
- =?us-ascii?Q?XX9ML6dne+yI5R2Ry0SJ5EtjvBrR0p7HaXJMbBtZBeFof8fhoalKYpMVEftB?=
- =?us-ascii?Q?lmgWULK75MxpI4kl/E8OWeV64sWyI2j6SUsbhe7Ja+iv4IhxowVdoNogzlOC?=
- =?us-ascii?Q?gnZ1pNI+Ze1GCF+wnlNl5Ew2Z3bZGK7Akyr7rLTkm0jD0cPJ529I70xYKBPH?=
- =?us-ascii?Q?sWc7XARxBH9BCw07rWxCbXrtykNsarEguEkVWO2Ho/fw7JvHKXtHuhkfPx8y?=
- =?us-ascii?Q?KrvBAhkGKbx/XXzKBF1237R2flIU5D91+Is5tUg/MfEzZT6SO6rx5E+S6iAu?=
- =?us-ascii?Q?NEBZa9qB8Ls6kzofOuiPEKnAN/huJXLZN2Mueu4BLK15QHyPyksJ5TKrigey?=
- =?us-ascii?Q?2XeglLaGVKxH+KK5Abi7YyJr7fe1xqf2SumeEhVZxzm6pWCgOaIFsbFawmmT?=
- =?us-ascii?Q?bkC9W4DOG+UmXVTwCalVOhesM04e9iLYqEEPreTjsf9IjVovhy5xQNOJP4SR?=
- =?us-ascii?Q?Dhp+Pd5jUwbkY3Tk8tk5JWxwcQKxKSx9SZTd1tf3JsMTRLO+wDuDJsNxbCaw?=
- =?us-ascii?Q?s7yAkU0G+QnRyxhqeRhQA51y9PeYHmGMa5bmKRa0+pzeaeVSIF/xC6rcuIGP?=
- =?us-ascii?Q?G9UAIihacxy/ue5QlmIAYVKEqxYQ6co4A1em6I8j8aC/qPqemVjWQRBPfoT5?=
- =?us-ascii?Q?ga+Ndi2koy5XvTi6dyhlBjENo4W/UWaz7dMqkXM7CmC4l8fLbRCyiFukBBf2?=
- =?us-ascii?Q?vr4V9I5pzS1SaiEsSU5sr8t/MoZey8T1OAYXGoESeoJ0A4kBhnQAP3vb36sq?=
- =?us-ascii?Q?o5CIqi5Xb+/iF5PRxl4zbGlUUXwFUN7Yp0FjMdYE1qKEog=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?igi3uJ5ZpRoQIU0YC+vX8Ob/VHojrbBMT6VZXqqAtVo/fk3QLkDOQCXHPlDo?=
- =?us-ascii?Q?onLfE0MGWkAuLV6mcO6QCgPcaToVYH2AtPDQ3u2djw5pyse4NcyEBYy7l4UG?=
- =?us-ascii?Q?ce9ky6LAUvkX+/CB09fOpfd3W02S5rjwsXsFwFUChrviwTOGI5FrEgg9ZQBk?=
- =?us-ascii?Q?rKp6Xrl8nY8hnZVAAb6xSsdPacSjpv8K/Y6mG0yR7aCZcxktxpzciaWCoR1r?=
- =?us-ascii?Q?m909xai3DstouAyKhAY50z37LyDrq9s9iimLzTn/QvVCvwob1ko8kVOHGIDm?=
- =?us-ascii?Q?bKm8h3ei8GaApNj+65FfWBTBMq7z83JsUe+iBBM5bNkHhqJMtUKU2elHyWWZ?=
- =?us-ascii?Q?jzfQaQ/cncBxdevN/332PqxBBlxTB1K5cIjiYguuz8Is/7ZkGTDIC6sgmDZr?=
- =?us-ascii?Q?Vvx4r8hzht1UVM4oQvDxzSabEr8nNVHysJdeABSIqZgb6q4cbHn8tf+9pohx?=
- =?us-ascii?Q?BF+hrv/VPoggP80me1SgbVD9ggW30T4Ia/l8+quqV/LR7fT2wx22II3h0Pyq?=
- =?us-ascii?Q?cAhuoq0nTOZ+FBo4PzPVNYpUMVDllVim4hcRho9f9udu7evdQuOHSsdrEJBX?=
- =?us-ascii?Q?UwLhz+Did+yx84RoOecW7wsq4zG3ESE7n6MzcCq4QkPShgEd5KFlfp9sycUQ?=
- =?us-ascii?Q?2IRogVwe1t9rt6YRZ5NmLJn3kaoOTXgGDaoBQSaD5bqLwGoS3qDQ9qFiC8a3?=
- =?us-ascii?Q?VZifh5/Odj4kbVpjI0SVaYSTvVoQG3xRtcxqw47SQfdokTgXjSElNXT+mFL3?=
- =?us-ascii?Q?KnSFSEEay8yaScb/2AnfPFMPUUDtze9CHhTNcgrpSXnIsSv7iLw4boGN4KuV?=
- =?us-ascii?Q?StN1qsW3lDSgGXvVpmMS2wwKZO3CgHXQ5MWAbQX4IC5ibKhUnucg5t5sMbhP?=
- =?us-ascii?Q?bSl+goHGjmrX9cqhsuozDtJPg5ngQxuU+YhCPAttMRd87qo41sPExn9B0Zz0?=
- =?us-ascii?Q?qKkU/qfR7Kchv5yPvRrjQ9OiW2BlkjZVjD8tpZXJO1Yzrrj7JCWyYA+gDrec?=
- =?us-ascii?Q?sD5X5IoRZZXdxEnZuuf5FXQCGWiTQjNjYu9aOT01Yb4A6qImTgzbbUh7gxmc?=
- =?us-ascii?Q?rH038gKjFcut6zb8/lYDmhAnR7SFmXeUiqTUGpJvVk3KAneqtW5bo+goVUsj?=
- =?us-ascii?Q?9G8D6b9HnoPSDumLYikI4+Jtx7gmwODiQVc4ODxZbix695HAOJmfkvho6pBy?=
- =?us-ascii?Q?cthYB94G2uEw+HKg/ojElSGic5r07IX8sIw2KVc2Q7rYQHW3qKotiwmDF346?=
- =?us-ascii?Q?++KrU2PDQPsNdjs6M87CApG1uNEwS+jkwtvY/0z1cV51+HHkt2hSExK75V0K?=
- =?us-ascii?Q?WD9ioKm/HB49fkOouBsTtBj9ZtAEa2+6V9S5D/zThRf2ex66uPJmViFvlTaz?=
- =?us-ascii?Q?ghnu7xp1/Z007BAaOFnRqm8BLpOMj55U6WgbNrVUPzE0VPT4JQ5k8JvhQGiz?=
- =?us-ascii?Q?8WWTJSBVFOtr+HN3ISXlUpI8MrjxaEAQKM5ztKNwRcT1LQ8wv/BGGYch67SP?=
- =?us-ascii?Q?AbDQS0cStiDNXWqS4BizV+U7cnTv1t+cVFxEGqEhS6kCtiGn6evQOZM4T85N?=
- =?us-ascii?Q?LlC9zXgOyBJLUdkFK9rjJfRMS7pKhM7vGuAER36/?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 224d2a84-bc0a-41e4-8e50-08dd1484e709
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Dec 2024 16:58:40.2144
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: fdCWt9yfXFPqbZiaujnI8DWj85yLA/Nn+D/rEgTrn5q3VwNFHMtYaNUcg0ZjVPJ5
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB9249
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.12.1
+Content-Transfer-Encoding: 8bit
 
-On 4 Dec 2024, at 11:29, Matthew Wilcox wrote:
+From: Yihang Li <liyihang9@huawei.com>
 
-> On Wed, Dec 04, 2024 at 11:16:51AM -0500, Zi Yan wrote:
->>> So maybe the clearing done as part of page allocator isn't enough here.
->>>
->> Basically, mips needs to flush data cache if kmap address is aliased to
->
-> People use "aliased" in contronym ways.  Do you mean "has a
-> non-congruent alias" or "has a congruent alias"?
+[ Upstream commit 2233c4a0b948211743659b24c13d6bd059fa75fc ]
 
-I mean if kmap address goes into a different cache line than userspace
-address, a cache flush is needed to make sure data is visible to
-userspace.
+For no forced preemption model kernel, in the scenario where the
+expander is connected to 12 high performance SAS SSDs, the following
+call trace may occur:
 
->
->> userspace address. This means when mips has THP on, the patch below
->> is not enough to fix the issue.
->>
->> In post_alloc_hook(), it does not make sense to pass userspace address
->> in to determine whether to flush dcache or not.
->>
->> One way to fix it is to add something like arch_userpage_post_alloc()
->> to flush dcache if kmap address is aliased to userspace address.
->> But my questions are that
->> 1) if kmap address will always be the same for two separate kmap_local() calls,
->
-> No.  It just takes the next address in the stack.
+[  214.409199][  C240] watchdog: BUG: soft lockup - CPU#240 stuck for 22s! [irq/149-hisi_sa:3211]
+[  214.568533][  C240] pstate: 60400009 (nZCv daif +PAN -UAO -TCO BTYPE=--)
+[  214.575224][  C240] pc : fput_many+0x8c/0xdc
+[  214.579480][  C240] lr : fput+0x1c/0xf0
+[  214.583302][  C240] sp : ffff80002de2b900
+[  214.587298][  C240] x29: ffff80002de2b900 x28: ffff1082aa412000
+[  214.593291][  C240] x27: ffff3062a0348c08 x26: ffff80003a9f6000
+[  214.599284][  C240] x25: ffff1062bbac5c40 x24: 0000000000001000
+[  214.605277][  C240] x23: 000000000000000a x22: 0000000000000001
+[  214.611270][  C240] x21: 0000000000001000 x20: 0000000000000000
+[  214.617262][  C240] x19: ffff3062a41ae580 x18: 0000000000010000
+[  214.623255][  C240] x17: 0000000000000001 x16: ffffdb3a6efe5fc0
+[  214.629248][  C240] x15: ffffffffffffffff x14: 0000000003ffffff
+[  214.635241][  C240] x13: 000000000000ffff x12: 000000000000029c
+[  214.641234][  C240] x11: 0000000000000006 x10: ffff80003a9f7fd0
+[  214.647226][  C240] x9 : ffffdb3a6f0482fc x8 : 0000000000000001
+[  214.653219][  C240] x7 : 0000000000000002 x6 : 0000000000000080
+[  214.659212][  C240] x5 : ffff55480ee9b000 x4 : fffffde7f94c6554
+[  214.665205][  C240] x3 : 0000000000000002 x2 : 0000000000000020
+[  214.671198][  C240] x1 : 0000000000000021 x0 : ffff3062a41ae5b8
+[  214.677191][  C240] Call trace:
+[  214.680320][  C240]  fput_many+0x8c/0xdc
+[  214.684230][  C240]  fput+0x1c/0xf0
+[  214.687707][  C240]  aio_complete_rw+0xd8/0x1fc
+[  214.692225][  C240]  blkdev_bio_end_io+0x98/0x140
+[  214.696917][  C240]  bio_endio+0x160/0x1bc
+[  214.701001][  C240]  blk_update_request+0x1c8/0x3bc
+[  214.705867][  C240]  scsi_end_request+0x3c/0x1f0
+[  214.710471][  C240]  scsi_io_completion+0x7c/0x1a0
+[  214.715249][  C240]  scsi_finish_command+0x104/0x140
+[  214.720200][  C240]  scsi_softirq_done+0x90/0x180
+[  214.724892][  C240]  blk_mq_complete_request+0x5c/0x70
+[  214.730016][  C240]  scsi_mq_done+0x48/0xac
+[  214.734194][  C240]  sas_scsi_task_done+0xbc/0x16c [libsas]
+[  214.739758][  C240]  slot_complete_v3_hw+0x260/0x760 [hisi_sas_v3_hw]
+[  214.746185][  C240]  cq_thread_v3_hw+0xbc/0x190 [hisi_sas_v3_hw]
+[  214.752179][  C240]  irq_thread_fn+0x34/0xa4
+[  214.756435][  C240]  irq_thread+0xc4/0x130
+[  214.760520][  C240]  kthread+0x108/0x13c
+[  214.764430][  C240]  ret_from_fork+0x10/0x18
 
-So this fix will not work, since it is possible that first kmap and second
-kmap have different pages_do_alias() return values.
+This is because in the hisi_sas driver, both the hardware interrupt
+handler and the interrupt thread are executed on the same CPU. In the
+performance test scenario, function irq_wait_for_interrupt() will always
+return 0 if lots of interrupts occurs and the CPU will be continuously
+consumed. As a result, the CPU cannot run the watchdog thread. When the
+watchdog time exceeds the specified time, call trace occurs.
 
-Another way would be to make a special case for mips, like below.
-But that looks ugly, let me think about it more.
+To fix it, add cond_resched() to execute the watchdog thread.
 
-diff --git a/arch/mips/include/asm/page.h b/arch/mips/include/asm/page.h
-index bc3e3484c1bf..ef3c6f0b9159 100644
---- a/arch/mips/include/asm/page.h
-+++ b/arch/mips/include/asm/page.h
-@@ -95,6 +95,19 @@ struct vm_area_struct;
- extern void copy_user_highpage(struct page *to, struct page *from,
- 	unsigned long vaddr, struct vm_area_struct *vma);
+Signed-off-by: Yihang Li <liyihang9@huawei.com>
+Link: https://lore.kernel.org/r/20241008021822.2617339-8-liyihang9@huawei.com
+Reviewed-by: Xiang Chen <chenxiang66@hisilicon.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/scsi/hisi_sas/hisi_sas_v3_hw.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-+struct folio *vma_alloc_zeroed_movable_folio(struct vm_area_struct *vma,
-+ 				   unsigned long vaddr)
-+ {
-+	struct folio *folio;
-+
-+	folio = vma_alloc_folio(GFP_HIGHUSER_MOVABLE, 0, vma, vaddr);
-+	if (folio)
-+		clear_user_highpage(&folio->page, vaddr);
-+
-+	return folio;
-+ }
-+#define vma_alloc_zeroed_movable_folio vma_alloc_zeroed_movable_folio
-+
- #define __HAVE_ARCH_COPY_USER_HIGHPAGE
-
- /*
-diff --git a/mm/internal.h b/mm/internal.h
-index cb8d8e8e3ffa..d513fa683aa3 100644
---- a/mm/internal.h
-+++ b/mm/internal.h
-@@ -1287,7 +1287,8 @@ void touch_pmd(struct vm_area_struct *vma, unsigned long addr,
-
- static inline bool alloc_zeroed(void)
- {
--	return static_branch_maybe(CONFIG_INIT_ON_ALLOC_DEFAULT_ON,
-+	return !IS_ENABLED(CONFIG_MIPS) &&
-+		static_branch_maybe(CONFIG_INIT_ON_ALLOC_DEFAULT_ON,
- 			&init_on_alloc);
+diff --git a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
+index 4cd3a3eab6f1c..a7401bade099a 100644
+--- a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
++++ b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
+@@ -2493,6 +2493,7 @@ static int complete_v3_hw(struct hisi_sas_cq *cq)
+ 	/* update rd_point */
+ 	cq->rd_point = rd_point;
+ 	hisi_sas_write32(hisi_hba, COMPL_Q_0_RD_PTR + (0x14 * queue), rd_point);
++	cond_resched();
+ 
+ 	return completed;
  }
+-- 
+2.43.0
 
-
-Best Regards,
-Yan, Zi
 
