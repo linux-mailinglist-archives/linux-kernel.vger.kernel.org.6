@@ -1,134 +1,137 @@
-Return-Path: <linux-kernel+bounces-431476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1CCE9E3DF3
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:15:06 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 045819E3E34
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:25:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 231C9B3A254
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:08:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C8C16B47E2B
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:08:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CC6B20B20E;
-	Wed,  4 Dec 2024 15:07:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE1B820C01A;
+	Wed,  4 Dec 2024 15:08:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LyKCgVzp"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nkEu+Xic"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59F80199B8;
-	Wed,  4 Dec 2024 15:07:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D70A199B8;
+	Wed,  4 Dec 2024 15:08:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733324870; cv=none; b=LLPBA3KE364qG1WjXKaLw3++Pg1QQHuDKntLcsDDwvryferzRw15PZ0uD+aFhsM+1FNQQPaV45DAZoVP4SdyfU1FRNWmv3mybApZcDMLPOZOUVdGDYWH7GtuDiLBhBaf84D0R8eV4OMfMhVf2Qk5uBTK5Rb6fzX57KiZB5NSAhQ=
+	t=1733324881; cv=none; b=AANl3gvE9BExveGjar/A/h658Bifz1VCY7qhnRTQEv/jKNUL50uMP19DvBM8stXHPGOsIYyke7N65fJdB9eLWAQQQskghyujYzwPiNffGTywiKm7BUq0E1bTzWXhHCml5EzFykEjXIxBQsbeQgXtoye3G9m67UDTEx4xYfTvvtk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733324870; c=relaxed/simple;
-	bh=tP6EyDHdUnwdw+Y54FZrgWjH9tvcAAhrZS8JZ46NA3E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=D7iews1WtYSPLHGltfoclbccUpGvYvx51ESOw7dkN/W3z5fBuQAvNeuogxYsH8/BVpLLLUFw9xQxZ8EPcmsP9yoQRKI76ueJzN0klOVjYk4/FwBY/sQRR1hajUIGQm63PQrYna3xWXKFtyU119TzRE3pihIwpOFnHmejSnq6UJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LyKCgVzp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62A88C4CED2;
-	Wed,  4 Dec 2024 15:07:45 +0000 (UTC)
+	s=arc-20240116; t=1733324881; c=relaxed/simple;
+	bh=0kt2C/BPb11YSq+EhEeua8KQDxctV1/JE1X1KHLEYDA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IM5oMxd6uHJfW36iBARwenwd9wFT9IzaisZ1FwbG3TThztDF7yY+fW19ZeVw18qIj5BDWNipWmqYo5H1yFuWToKGM748yl5cGuiDEmZAV4pdJQCYE82ufuRTpO10xr/ZG7WbvKn07tTDy61+ZrUFy9URdocSbXXd4zsGwmrMhiA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nkEu+Xic; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68516C4CECD;
+	Wed,  4 Dec 2024 15:08:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733324869;
-	bh=tP6EyDHdUnwdw+Y54FZrgWjH9tvcAAhrZS8JZ46NA3E=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=LyKCgVzpyceLH9cwGwK8oy9aTGxEv0iGgBbnz9OMzs9FqKwTF7nAJ3QZF9tAR5tuJ
-	 jh+OYPxqw4IlGKRxuRZECghI/2/696JJpWmX3xlbpS8/8o15stMfxRTj/KF0f8iM1L
-	 Kkcr48gGoUx4ZyNTlAup+hukS6Tl/EswgjGNrehK3dcqy5xNkOXmwNyykOWgHCKTBD
-	 32/se+dpQoV9bWsW7erY7biofobEtCBpS6uJjcFc6nDM10CvpxX2j4bIjW+Wxa12xg
-	 7aNTjZ302lv30YpBr99cMxiuMMJZaAhtuzdOXcuzWG61NqscZ/DQaQlIPcSneUXq+l
-	 6SFpL/dXTbe0A==
-Message-ID: <3d6fa3c1-7488-446e-b2c9-9579c73d4b76@kernel.org>
-Date: Wed, 4 Dec 2024 16:07:45 +0100
+	s=k20201202; t=1733324880;
+	bh=0kt2C/BPb11YSq+EhEeua8KQDxctV1/JE1X1KHLEYDA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nkEu+XicCILr1p4dve1n8IUDmckfslbj50hNbRBSVCy1ZeA+s2/RPB++Pt0GQpSkd
+	 5Im3F4iNCvBlJTLMierdCw9aFJmC+ArBXI8mNoxMSu5Iggv3PdgcRQYBWnCD9QZaHn
+	 OmAWy0UwfWDeQCu0BvNrKZVMeb5E/wAdLEozIavQJlCifk/Q3V0MptnU9vaQncyFP8
+	 yRfPfvVuCCoDBhJ2y8fxCarXhjTwjqeOT/69+2F23AnSg3wI17wmuIGWWRThSnFe5b
+	 WeBMmSu7pIT+3CH23D5hSayds/q3SWmzX5C5efGPt9saYir1pe6I9e1fh6rvXNsaCu
+	 cNFUFCO8ZW0rw==
+Date: Wed, 4 Dec 2024 09:07:58 -0600
+From: Rob Herring <robh@kernel.org>
+To: =?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+Cc: Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Sam Protsenko <semen.protsenko@linaro.org>,
+	Will McVicker <willmcvicker@google.com>,
+	Roy Luo <royluo@google.com>, kernel-team@android.com,
+	linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH v2 2/8] dt-bindings: phy: samsung,usb3-drd-phy: gs101:
+ require Type-C properties
+Message-ID: <20241204150758.GA220712-robh@kernel.org>
+References: <20241203-gs101-phy-lanes-orientation-phy-v2-0-40dcf1b7670d@linaro.org>
+ <20241203-gs101-phy-lanes-orientation-phy-v2-2-40dcf1b7670d@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 3/7] dt-bindings: serial: Document DT properties for
- QUP firmware loading
-To: Viken Dadhaniya <quic_vdadhani@quicinc.com>, andi.shyti@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- gregkh@linuxfoundation.org, jirislaby@kernel.org, broonie@kernel.or,
- andersson@kernel.org, konradybcio@kernel.org, johan+linaro@kernel.org,
- dianders@chromium.org, agross@kernel.org, linux-arm-msm@vger.kernel.org,
- linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
- linux-spi@vger.kernel.org
-Cc: =quic_msavaliy@quicinc.com, quic_anupkulk@quicinc.com,
- Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
-References: <20241204150326.1470749-1-quic_vdadhani@quicinc.com>
- <20241204150326.1470749-4-quic_vdadhani@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241204150326.1470749-4-quic_vdadhani@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241203-gs101-phy-lanes-orientation-phy-v2-2-40dcf1b7670d@linaro.org>
 
-On 04/12/2024 16:03, Viken Dadhaniya wrote:
-> Document the 'qcom,load-firmware' and 'qcom,xfer-mode' properties to
-> support SE(Serial Engine) firmware loading from the protocol driver and to
-> select the data transfer mode, either GPI DMA (Generic Packet Interface)
-> or non-GPI mode (PIO/CPU DMA).
+On Tue, Dec 03, 2024 at 12:13:50PM +0000, André Draszik wrote:
+> orientation-switch is the standard declaration to inform the Type-C mux
+> layer that a remote-endpoint is capable of processing orientation
+> change messages.
 > 
-> UART controller can operate in one of two modes based on the
-> 'qcom,xfer-mode' property, and the firmware is loaded accordingly.
+> The USB PHY on gs101 needs to be configured based on the orientation of
+> the connector. For that the DTS needs a link between the phy's port and
+> a TCPCi, and we'll need to inform the phy driver that it should handle
+> the orientation (register a handler).
 > 
-> Co-developed-by: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
-> Signed-off-by: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
-> Signed-off-by: Viken Dadhaniya <quic_vdadhani@quicinc.com>
+> Update the schema to enforce that by requiring the orientation-switch
+> and port properties on gs101 (only). We disallow orientation-switch on
+> all other supported platforms, since other versions of this phy (or its
+> system integration) don't currently support or even need it.
+> 
+> Even though this new required gs101 property is an ABI break, the
+> intention for the driver is to behave as before if it's missing
+> (meaning for gs101 it will work in SS mode in one orientation only).
+> Other platforms are not affected.
+> 
+> Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
+> Signed-off-by: André Draszik <andre.draszik@linaro.org>
+> 
 > ---
+> v2:
+> * squash original patches #2 and #3
+> * actually disallow orientation-switch on !gs101 (not just optional) (Conor)
+> * update commit message to clarify that the intention for the driver is
+>   to work with old and new DTS (Conor)
+> * collect tags
+> ---
+>  Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml b/Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml
+> index 1f8b35917b11..c1d16254aeec 100644
+> --- a/Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml
+> +++ b/Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml
+> @@ -51,6 +51,9 @@ properties:
+>    "#phy-cells":
+>      const: 1
+>  
+> +  orientation-switch:
+> +    $ref: /schemas/usb/usb-switch.yaml#/properties/orientation-switch
 
-My comments from I2C patch apply here, but let's keep discussion there.
-Responding here just for formality.
+Generally, we don't reference things at a property level, but node 
+level. You can just do:
 
-Best regards,
-Krzysztof
+  - if:
+      properties:
+        compatible:
+          contains:
+            const: google,gs101-usb31drd-phy
+    then:
+      $ref: /schemas/usb/usb-switch.yaml#
+
+
+And switch additionalProperties with unevaluatedProperties.
+
+Rob
 
