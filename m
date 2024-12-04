@@ -1,187 +1,101 @@
-Return-Path: <linux-kernel+bounces-432192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C2CD9E4714
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 22:44:15 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68BC0167C42
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 21:44:12 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89F121925B9;
-	Wed,  4 Dec 2024 21:44:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="juZMzVzY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB8599E471A
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 22:46:15 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1F662119;
-	Wed,  4 Dec 2024 21:44:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76CE5280DC2
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 21:46:14 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 215C81925B9;
+	Wed,  4 Dec 2024 21:46:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="M1b+cjZe"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 560B919BBA;
+	Wed,  4 Dec 2024 21:46:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733348649; cv=none; b=Im/GfhkYYLrKnEIbrYx59CqXE1KNxpjiLVoCUWWbM5yBI6L4crWxtb5Zhd1C+VuXew1iO9H8Y/td9XKQ8XMP+ImcRWFNzDbZZJRPBAghMue3bkoHYlulZwivzXFiwWAtG2j1ArhFZ05HYL0UxtbhndIWQZe9eUdBHTGy+BeXGGM=
+	t=1733348769; cv=none; b=Md2nStNf3H36vDYEWBRqkgQqqgyozM3RpYy8L1WljQ2dPMcNjuS7gncXdPHasoC19PgdeEl7SlsI0580OFVu1U7vfDn51TQjfxA2qUopktwFkbaRIoS5onYZaBDVGunW1xIrnAKOc831M00UQmGpJHUObhnljfaZAhZpzz8FhRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733348649; c=relaxed/simple;
-	bh=stKQ7fcojg34li0rOLarPjl4Anxwtj3iQSIz+P329ns=;
+	s=arc-20240116; t=1733348769; c=relaxed/simple;
+	bh=t+1yZQ2yj5jDedfR7Qxs3G0ejCWg1EregGj5E/3jjSM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u2tQnq8sot2/jzENJaBO92LhASVdOzUF9r9cbMOAd1XelH96ejuL9QzV5q1H4XkdYxxB7+0B31ENVy/2j0zzvVl4gLsWsSkvRcdooLBXbOSYuJtKlUJsaV0GAuci21T2h+oKe8LxD/rFx4BZBCucFmlBDBT5yiWAjEjVnxLOLwE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=juZMzVzY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E79DDC4CED1;
-	Wed,  4 Dec 2024 21:44:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733348648;
-	bh=stKQ7fcojg34li0rOLarPjl4Anxwtj3iQSIz+P329ns=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=juZMzVzYnSVSBGCqozInVaum7QWNhmhTIs1HSUyguByEg0TQqqmcZYk5r8/GIzAp1
-	 YGLN15PpwDo5FxmxHTpFJqmeJafuYKGELsGZ/4XgUI+R3a+08G+LGYRqXlpAJM0IK6
-	 gbfR9goh7UquxzPm7YfgoPm6PWlFSeI4c8/kXs4L9FMRC71e222I1UP3TsKJ0wFqSW
-	 8qpDSDkUEjXhIhGXz3KoPpm3brd3WyrcWzpRH/C1wbAvdfJU2eIsyeI9ONEH/CIrJh
-	 rspKsq6NNokLMVOTHP7NoiOZAjXxdnf2XYknCjJDFDjC9mkSosSqItE68gWR16ksTy
-	 XxDIirpMCMhaA==
-Date: Wed, 4 Dec 2024 13:44:06 -0800
-From: Namhyung Kim <namhyung@kernel.org>
-To: Oliver Sang <oliver.sang@intel.com>
-Cc: oe-lkp@lists.linux.dev, lkp@intel.com, linux-kernel@vger.kernel.org,
-	James Clark <james.clark@linaro.org>,
-	Ravi Bangoria <ravi.bangoria@amd.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	James Clark <james.clark@arm.com>,
-	Atish Patra <atishp@atishpatra.org>,
-	Mingwei Zhang <mizhang@google.com>,
-	Kajol Jain <kjain@linux.ibm.com>,
-	Thomas Richter <tmricht@linux.ibm.com>,
-	Palmer Dabbelt <palmer@rivosinc.com>,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [linus:master] [perf tools]  af954f76ee:
- perf-sanity-tests.Test_data_symbol.fail
-Message-ID: <Z1DNJpDzCIBFrIZT@google.com>
-References: <202411301431.799e5531-lkp@intel.com>
- <Z04ZUHaGdsBapIEL@google.com>
- <Z1BhfpYWpUQ0p+qR@xsang-OptiPlex-9020>
+	 Content-Type:Content-Disposition:In-Reply-To; b=BCzPIg8roBLG3y51cQBb0FgSaq7ibOLLOnf0sS2hI5rBrSMPmxsTTK6dBsiGY6xul3OHgC8/EM7Iw4rW2FdgwPjf5cXV1MMQ44pGaWKTYDjwbEXNlPuKdlPf+cVN336FraULU144Mru/f7xfo1UliZp8U1ku69OTHxu3aZLnX04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=M1b+cjZe; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733348766; x=1764884766;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=t+1yZQ2yj5jDedfR7Qxs3G0ejCWg1EregGj5E/3jjSM=;
+  b=M1b+cjZePnN5fQG+4AxX99sD3oyvvDrh1IEBwow5+iQ1YYFBueceId56
+   mSrd80cxVVbQSAayMf+pB9c51sGkWnCxAuqKvcgcPRHWwefUqnU0GqSIo
+   8yLh6J0sopWqUO5RTb0mefCCS98qSSt37fl4e0Yb6vKOR+SytMfBo7TP2
+   B6PK3EDDh0ypWg19CfuPOCJyrEFUHdHFU6akUv10KNDz3jnjZdfWqkll7
+   9TG5xF7VAJOUzQJCc/VM13XTTuVDpMumKG8VCB8q7ODBMhZcKZQ4+GSbF
+   lUNujWEOVMlJo8KnICNlqGFBQgSaDICOlyAiBpihyYbSufZh05G+psTkk
+   g==;
+X-CSE-ConnectionGUID: GAq7aFgORK2XWx7NeiD3Ew==
+X-CSE-MsgGUID: NtHXmErGQ7O53tTxBhZ9gw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11276"; a="32995277"
+X-IronPort-AV: E=Sophos;i="6.12,208,1728975600"; 
+   d="scan'208";a="32995277"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Dec 2024 13:46:05 -0800
+X-CSE-ConnectionGUID: RVcurs7sRD6wYNuyblX5qw==
+X-CSE-MsgGUID: ifksASnzQY2wsyfIrvnc2w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,208,1728975600"; 
+   d="scan'208";a="93768613"
+Received: from slindbla-desk.ger.corp.intel.com (HELO intel.com) ([10.245.246.225])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Dec 2024 13:46:00 -0800
+Date: Wed, 4 Dec 2024 22:45:56 +0100
+From: Andi Shyti <andi.shyti@linux.intel.com>
+To: Jiasheng Jiang <jiashengjiangcool@gmail.com>
+Cc: nirmoy.das@linux.intel.com, jani.nikula@linux.intel.com,
+	joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com,
+	tursulin@ursulin.net, airlied@gmail.com, daniel@ffwll.ch,
+	chris@chris-wilson.co.uk, intel-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	Jiasheng Jiang <jiashengjiangcool@outlook.com>,
+	stable@vger.kernel.org, Nirmoy Das <nirmoy.das@intel.com>
+Subject: Re: [PATCH RESEND v2] drm/i915: Fix memory leak by correcting cache
+ object name in error handler
+Message-ID: <Z1DNlAPvPNtgpMXO@ashyti-mobl2.lan>
+References: <20241127201042.29620-1-jiashengjiangcool@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Z1BhfpYWpUQ0p+qR@xsang-OptiPlex-9020>
+In-Reply-To: <20241127201042.29620-1-jiashengjiangcool@gmail.com>
 
-On Wed, Dec 04, 2024 at 10:04:46PM +0800, Oliver Sang wrote:
-> hi, Namhyung Kim,
+Hi Jiasheng,
+
+On Wed, Nov 27, 2024 at 08:10:42PM +0000, Jiasheng Jiang wrote:
+> From: Jiasheng Jiang <jiashengjiangcool@outlook.com>
 > 
-> On Mon, Dec 02, 2024 at 12:32:16PM -0800, Namhyung Kim wrote:
-> > Hello,
-> > 
-> > On Sat, Nov 30, 2024 at 03:03:10PM +0800, kernel test robot wrote:
-> > > 
-> > > 
-> > > Hello,
-> > > 
-> > > kernel test robot noticed "perf-sanity-tests.Test_data_symbol.fail" on:
-> > > 
-> > > commit: af954f76eea56453713ae657f6812d4063f9bc57 ("perf tools: Check fallback error and order")
-> > > https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
-> > > 
-> > > [test failed on linus/master      7af08b57bcb9ebf78675c50069c54125c0a8b795]
-> > > [test failed on linux-next/master f486c8aa16b8172f63bddc70116a0c897a7f3f02]
-> > > 
-> > > in testcase: perf-sanity-tests
-> > > version: 
-> > > with following parameters:
-> > > 
-> > > 	perf_compiler: gcc
-> > > 
-> > > 
-> > > 
-> > > config: x86_64-rhel-8.3-bpf
-> > > compiler: gcc-12
-> > > test machine: 224 threads 2 sockets Intel(R) Xeon(R) Platinum 8480+ (Sapphire Rapids) with 256G memory
-> > > 
-> > > (please refer to attached dmesg/kmsg for entire log/backtrace)
-> > > 
-> > > 
-> > > If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> > > the same patch/commit), kindly add following tags
-> > > | Reported-by: kernel test robot <oliver.sang@intel.com>
-> > > | Closes: https://lore.kernel.org/oe-lkp/202411301431.799e5531-lkp@intel.com
-> > > 
-> > > 
-> > > 
-> > > 2024-11-28 08:31:19 sudo /usr/src/linux-perf-x86_64-rhel-8.3-bpf-af954f76eea56453713ae657f6812d4063f9bc57/tools/perf/perf test 121
-> > > 121: Test data symbol                                                : FAILED!
-> > 
-> > Thanks for the report.  But I have a request.
-> > 
-> > Can you please run the perf test with -v option so that we can see the
-> > detailed error messages when it failed?
+> Replace "slab_priorities" with "slab_dependencies" in the error handler
+> to avoid memory leak.
 > 
-> below is the log with '-v'
-> 
-> 2024-12-03 11:20:32 sudo /usr/src/linux-perf-x86_64-rhel-8.3-bpf-af954f76eea56453713ae657f6812d4063f9bc57/tools/perf/perf test 121 -v
-> 121: Test data symbol:
-> --- start ---
-> test child forked, pid 143127
->  294e400-294e439 l buf1
-> perf does have symbol 'buf1'
-> Recording workload...
-> Waiting for "perf record has started" message
-> /usr/src/perf_selftests-x86_64-rhel-8.3-bpf-af954f76eea56453713ae657f6812d4063f9bc57/tools/perf/tests/shell/test_data_symbol.sh: line 74: kill: (143139) - No such process
-> Cleaning up files...
-> ---- end(-1) ----
-> 121: Test data symbol                                                : FAILED!
+> Fixes: 32eb6bcfdda9 ("drm/i915: Make request allocation caches global")
+> Cc: <stable@vger.kernel.org> # v5.2+
+> Reviewed-by: Nirmoy Das <nirmoy.das@intel.com>
+> Signed-off-by: Jiasheng Jiang <jiashengjiangcool@outlook.com>
 
-Thanks for the log.  I think it failed to run perf mem record at all.
-
-I've set up a Sapphire Rapids and run the test.  It said:
-
-  # perf mem record -avv -C0 true
-  DEBUGINFOD_URLS=
-  nr_cblocks: 0
-  affinity: SYS
-  mmap flush: 1
-  comp level: 0
-  ------------------------------------------------------------
-  perf_event_attr:
-    type                             4 (cpu)
-    size                             136
-    config                           0x8203 (mem-loads-aux)
-    { sample_period, sample_freq }   4000
-    sample_type                      IP|TID|TIME|ADDR|CPU|PERIOD|IDENTIFIER|DATA_SRC|WEIGHT_STRUCT
-    read_format                      ID|LOST
-    disabled                         1
-    freq                             1
-    precise_ip                       3
-    sample_id_all                    1
-  ------------------------------------------------------------
-  sys_perf_event_open: pid -1  cpu 0  group_fd -1  flags 0x8 = 5
-  ------------------------------------------------------------
-  perf_event_attr:
-    type                             4 (cpu)
-    size                             136
-    config                           0x1cd (mem-loads)
-    { sample_period, sample_freq }   4000
-    sample_type                      IP|TID|TIME|ADDR|CPU|PERIOD|IDENTIFIER|DATA_SRC|WEIGHT_STRUCT
-    read_format                      ID|LOST
-    freq                             1
-    precise_ip                       3
-    sample_id_all                    1
-    { bp_addr, config1 }             0x1f
-  ------------------------------------------------------------
-  sys_perf_event_open: pid -1  cpu 0  group_fd 5  flags 0x8
-  sys_perf_event_open failed, error -22
-  Using PERF_SAMPLE_READ / :S modifier is not compatible with inherit, falling back to no-inherit.
-  Error:
-  The sys_perf_event_open() syscall returned with 22 (Invalid argument) for event (cpu/mem-loads,ldlat=30/).
-  "dmesg | grep -i perf" may provide additional information.
-
-There's an issue with fallback on the inherit bit with the sample read.
-I'll take a look.
+merged to drm-intel-next.
 
 Thanks,
-Namhyung
-
+Andi
 
