@@ -1,223 +1,278 @@
-Return-Path: <linux-kernel+bounces-431278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B6829E3B73
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 14:40:09 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A8C69E3B7A
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 14:41:31 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFE611608C6
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 13:40:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDECE285D0E
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 13:41:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 946251E0E16;
-	Wed,  4 Dec 2024 13:40:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF3A71E0E18;
+	Wed,  4 Dec 2024 13:41:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VqqzEq5E"
-Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="e+28Xtj3"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFC7F1DE4E0
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 13:39:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5507B1B87CE;
+	Wed,  4 Dec 2024 13:41:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733319602; cv=none; b=gN6KSssGE7Lrbt+bmLUWPsCyL8BfBraXJVG3Z9nFgXFag4h3lauzl3z33VQfu9+jx4uOsmLA2FSNdX2YhvVxGTujuj6QPHBGYiPfCCMt4ZdqNhLfGU/KCX/7D+n6JSd7H63OEWwn3ia/a6edKfeoXZtzGirT3xT0uC1jDijPAhs=
+	t=1733319684; cv=none; b=Lu9AfiQh+I0vwbNguRKtHAVXUhN1QbM4n6PM3a0NoY/jmdcBKwbqIVoq0iwvClCP0V25NiPvrdCRgt57tpA9Z8W+D2HQZwWaLmZvcw7BjWW9+3kKb8/VE+R9XcQNO86IHlC5Yie4ikd2bpDTtQF1Lb8rO5g8f6NlyKYYblDlKAA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733319602; c=relaxed/simple;
-	bh=dXR/hQxy6alqtubsk2QTUtiJW3+TFICSXnIhbptppC8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jCWYCNEPHP/VldKNbfk1K7zsFGmWJdIx4aLxah2xpfOwUFPFT68TrYq0ml/zZ0CCr2Ea08JzzYT9eqQHdOmX2prVZg7imhLT6SD8TptYpPWvOClTGTwy/gLuFWrUw1KrHTRdXggmd0ng407a6cLcLhip62NZZnghDt4x4yiDoqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VqqzEq5E; arc=none smtp.client-ip=209.85.219.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e39779a268bso792847276.1
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 05:39:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733319599; x=1733924399; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=rA975cv/VjNdMzrH6rk9INU4ce1m1noL+JfQkgCeIxA=;
-        b=VqqzEq5EwtYYFVMYNehtTyVGR+3E1bR8mMtSLGF47kXGueJyHkco2AtSr10TdQ5VxW
-         otjw60Ps2d2T4RN0KreDYwfkCERmifbhzwAb27dDeI4yk5y8YoefOIDaP7p2Cqk46907
-         2m//amDyTsr/5obcKWcYFsD5YZ5HcByZagwvwg6lMtj6AgCmhRyX42IGM+GTxLaVe4S1
-         Q+qXjIucbGpGsOqLmpkXCjGgwjQfqyj22FqpKCzlf2vlddk+UlWronURwh8zhNH0tu1c
-         7uEAvtbjX7k2xUbTytPKIBKgr7LUKRQY1/YP99ykyaz8dYfsZ+WZAP435nzfg3aaNxzZ
-         li5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733319599; x=1733924399;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rA975cv/VjNdMzrH6rk9INU4ce1m1noL+JfQkgCeIxA=;
-        b=pnvdSwStrhjVGrSnrAwG2n82VX9WyS5YESSIQx3rwyy2xb5gN9a6ILEify9BzjW7iW
-         vFu5JYBMDcT+PV7UQ9NJv83+7wcis66/rufTfPeA/zir2a1j5u/tTDXFdkTLKzJ03q2G
-         ISCPIEafoQK1qS1UTtKDP+XY5TENCJzZnE+5R5hCfD5UuK6nAqK+eT4XTgd081EbQOTM
-         MA8Z+V3+1lUzCL3Fuvn33frLyMfarYxRC49FkHSD3qRL+yb7gI+rYLkJvpQrCu7PaI++
-         4MPf2a/eoCiEG2N7WUAJoTDzFu2W9iR3Zn9+SyRxhsmeGchYjfryluulp+BKeGsFT28d
-         UyYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUd27R2L2jSLkxQS9Zl515og+N3Px2ajJD+64jZgv7Pg2tc0F/GECuraq5sNMgA6wlhBaHGcaOuk79tb0k=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyqye0hZ5jJ/XbTHKU7maiO7EoLbHgzzfIDjpWN+rebh5Ha2r6+
-	DBj6d1CwjqMM9EaBq0n8rjibceNp+ERoHH+gMUYZE1jWyja1l8dBXSyTa/0AssFPkP7qMIT/23C
-	yTej0rq/Mlmeavq1jSzGhR3kO+FKOP4CHylYDVg==
-X-Gm-Gg: ASbGnctvpUm0Cj62gjeCX9QWF/XIoHrFgMcHhXoKePLj6yw+blSxl5YZ0VwELLgZrVy
-	Tr122F0M0ggBjPaycKOIOhqurRt9dDQ==
-X-Google-Smtp-Source: AGHT+IHjLCC3ZI6GMy2ysLoHvvgMYW5kv3TIjIoX2VB4eMvHzXE/1pMkunSST1tpmplgwNIZ0BeYOZybXpNKgrzQpUs=
-X-Received: by 2002:a25:d846:0:b0:e38:2551:d79b with SMTP id
- 3f1490d57ef6-e397199ca75mr23007626276.15.1733319598695; Wed, 04 Dec 2024
- 05:39:58 -0800 (PST)
+	s=arc-20240116; t=1733319684; c=relaxed/simple;
+	bh=OrUBrzA867BuM25tSmoSho1+xInsbkDy8p/o5TqA0Pc=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=p0a2AQP9dSQAvyewsqks8KupovasQq3uhvC82lzd9C+gptgkpfreGfyGnGHk359p3/GydY3kf0Xg5g+B5YFenLntLWlMjkxHzupYPOPpwpvgVuDYdz24nV495GFn2gIqSvON6mI4XbO+9rIUths4pMX/2Z6TwihP+eEPlGENLFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=e+28Xtj3; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733319682; x=1764855682;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=OrUBrzA867BuM25tSmoSho1+xInsbkDy8p/o5TqA0Pc=;
+  b=e+28Xtj3qpXGuyANGWXwtfxpGBmgCCesPKu6pFOUNW4FGOEesCrMxbSt
+   M+6/YUodXeljv1gNLo5jFDylFETOSiv2nwrdGqVdrKNPSerWF05ILzOeI
+   gZpQ7YhR2mVH01/PmZJ3OsKcQ9tz80imeDzGv4Cd/uv78u9eVViRDH/90
+   15mPIsT+V8heRaasUgPR1lXt5DwUCqnSWPC0SwrvpzKe7/XMvdHWjOGIW
+   H3V9hbkxOg760saQEYXN/6s7cnEyuGk0EScXqcrB2BXqXHOLy0Cl+7gBf
+   2by9k1HIRq9KV/cQffTkfIZr6KFbOO5YkU/1mfMBuX01e3HPEa+50w9M6
+   A==;
+X-CSE-ConnectionGUID: Me78Ql4yThC/fxUXo1OPLA==
+X-CSE-MsgGUID: 5RCCAnVcQ9eMi+rg0ku/sQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11276"; a="32927184"
+X-IronPort-AV: E=Sophos;i="6.12,207,1728975600"; 
+   d="scan'208";a="32927184"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Dec 2024 05:41:21 -0800
+X-CSE-ConnectionGUID: 9P8O9cslRGKVO9efCilCog==
+X-CSE-MsgGUID: sNMJU2HuQeazbzD+h/zPrw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,207,1728975600"; 
+   d="scan'208";a="94595871"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.178])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Dec 2024 05:41:15 -0800
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Wed, 4 Dec 2024 15:41:12 +0200 (EET)
+To: Mario Limonciello <mario.limonciello@amd.com>
+cc: Hans de Goede <hdegoede@redhat.com>, 
+    "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
+    Maximilian Luz <luzmaximilian@gmail.com>, Lee Chun-Yi <jlee@suse.com>, 
+    Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, 
+    Corentin Chary <corentin.chary@gmail.com>, 
+    "Luke D . Jones" <luke@ljones.dev>, Ike Panhc <ike.pan@canonical.com>, 
+    Henrique de Moraes Holschuh <hmh@hmh.eng.br>, 
+    Alexis Belmonte <alexbelm48@gmail.com>, 
+    =?ISO-8859-15?Q?Uwe_Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>, 
+    Ai Chao <aichao@kylinos.cn>, Gergo Koteles <soyer@irl.hu>, 
+    open list <linux-kernel@vger.kernel.org>, 
+    "open list:ACPI" <linux-acpi@vger.kernel.org>, 
+    "open list:MICROSOFT SURFACE PLATFORM PROFILE DRIVER" <platform-driver-x86@vger.kernel.org>, 
+    "open list:THINKPAD ACPI EXTRAS DRIVER" <ibm-acpi-devel@lists.sourceforge.net>, 
+    Mark Pearson <mpearson-lenovo@squebb.ca>, 
+    Matthew Schwartz <matthew.schwartz@linux.dev>, Armin Wolf <W_Armin@gmx.de>
+Subject: Re: [PATCH v9 10/22] ACPI: platform_profile: Create class for ACPI
+ platform profile
+In-Reply-To: <20241202055031.8038-11-mario.limonciello@amd.com>
+Message-ID: <9ab7b709-33eb-45fa-3e5d-a1f0c8c72e14@linux.intel.com>
+References: <20241202055031.8038-1-mario.limonciello@amd.com> <20241202055031.8038-11-mario.limonciello@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241204122059.24239-1-quic_jseerapu@quicinc.com>
- <higpzg6b4e66zpykuu3wlcmaxzplzz3qasoycfytidunp7yqbn@nunjmucxkjbe> <052c98ab-1ba4-4665-8b45-3e5ad4fa553b@quicinc.com>
-In-Reply-To: <052c98ab-1ba4-4665-8b45-3e5ad4fa553b@quicinc.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Wed, 4 Dec 2024 15:39:47 +0200
-Message-ID: <CAA8EJppynecscUbUW7Ue=+oYyhFzftiYVgTc6rEuXbUhpxF7iQ@mail.gmail.com>
-Subject: Re: [PATCH v3] dmaengine: qcom: gpi: Add GPI immediate DMA support
- for SPI protocol
-To: Jyothi Kumar Seerapu <quic_jseerapu@quicinc.com>
-Cc: Vinod Koul <vkoul@kernel.org>, linux-arm-msm@vger.kernel.org, 
-	dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	quic_msavaliy@quicinc.com, quic_vtanuku@quicinc.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/mixed; boundary="8323328-281037050-1733319672=:904"
 
-On Wed, 4 Dec 2024 at 15:25, Jyothi Kumar Seerapu
-<quic_jseerapu@quicinc.com> wrote:
->
->
->
-> On 12/4/2024 6:15 PM, Dmitry Baryshkov wrote:
-> > On Wed, Dec 04, 2024 at 05:50:59PM +0530, Jyothi Kumar Seerapu wrote:
-> >> The DMA TRE(Transfer ring element) buffer contains the DMA
-> >> buffer address. Accessing data from this address can cause
-> >> significant delays in SPI transfers, which can be mitigated to
-> >> some extent by utilizing immediate DMA support.
-> >>
-> >> QCOM GPI DMA hardware supports an immediate DMA feature for data
-> >> up to 8 bytes, storing the data directly in the DMA TRE buffer
-> >> instead of the DMA buffer address. This enhancement enables faster
-> >> SPI data transfers.
-> >>
-> >> This optimization reduces the average transfer time from 25 us to
-> >> 16 us for a single SPI transfer of 8 bytes length, with a clock
-> >> frequency of 50 MHz.
-> >>
-> >> Signed-off-by: Jyothi Kumar Seerapu <quic_jseerapu@quicinc.com>
-> >> ---
-> >>
-> >> v2-> v3:
-> >>     - When to enable Immediate DMA support, control is moved to GPI driver
-> >>       from SPI driver.
-> >>     - Optimizations are done in GPI driver related to immediate dma changes.
-> >>     - Removed the immediate dma supported changes in qcom-gpi-dma.h file
-> >>       and handled in GPI driver.
-> >>
-> >>     Link to v2:
-> >>      https://lore.kernel.org/all/20241128133351.24593-2-quic_jseerapu@quicinc.com/
-> >>      https://lore.kernel.org/all/20241128133351.24593-3-quic_jseerapu@quicinc.com/
-> >>
-> >> v1 -> v2:
-> >>     - Separated the patches to dmaengine and spi subsystems
-> >>     - Removed the changes which are not required for this feature from
-> >>       qcom-gpi-dma.h file.
-> >>     - Removed the type conversions used in gpi_create_spi_tre.
-> >>
-> >>     Link to v1:
-> >>      https://lore.kernel.org/lkml/20241121115201.2191-2-quic_jseerapu@quicinc.com/
-> >>
-> >>   drivers/dma/qcom/gpi.c | 32 +++++++++++++++++++++++++++-----
-> >>   1 file changed, 27 insertions(+), 5 deletions(-)
-> >>
-> >> diff --git a/drivers/dma/qcom/gpi.c b/drivers/dma/qcom/gpi.c
-> >> index 52a7c8f2498f..35451d5a81f7 100644
-> >> --- a/drivers/dma/qcom/gpi.c
-> >> +++ b/drivers/dma/qcom/gpi.c
-> >> @@ -27,6 +27,7 @@
-> >>   #define TRE_FLAGS_IEOT             BIT(9)
-> >>   #define TRE_FLAGS_BEI              BIT(10)
-> >>   #define TRE_FLAGS_LINK             BIT(11)
-> >> +#define TRE_FLAGS_IMMEDIATE_DMA     BIT(16)
-> >>   #define TRE_FLAGS_TYPE             GENMASK(23, 16)
-> >>
-> >>   /* SPI CONFIG0 WD0 */
-> >> @@ -64,6 +65,7 @@
-> >>
-> >>   /* DMA TRE */
-> >>   #define TRE_DMA_LEN                GENMASK(23, 0)
-> >> +#define TRE_DMA_IMMEDIATE_LEN       GENMASK(3, 0)
-> >>
-> >>   /* Register offsets from gpi-top */
-> >>   #define GPII_n_CH_k_CNTXT_0_OFFS(n, k)     (0x20000 + (0x4000 * (n)) + (0x80 * (k)))
-> >> @@ -1711,6 +1713,8 @@ static int gpi_create_spi_tre(struct gchan *chan, struct gpi_desc *desc,
-> >>      dma_addr_t address;
-> >>      struct gpi_tre *tre;
-> >>      unsigned int i;
-> >> +    int len;
-> >> +    u8 immediate_dma;
-> >>
-> >>      /* first create config tre if applicable */
-> >>      if (direction == DMA_MEM_TO_DEV && spi->set_config) {
-> >> @@ -1763,14 +1767,32 @@ static int gpi_create_spi_tre(struct gchan *chan, struct gpi_desc *desc,
-> >>      tre_idx++;
-> >>
-> >>      address = sg_dma_address(sgl);
-> >> -    tre->dword[0] = lower_32_bits(address);
-> >> -    tre->dword[1] = upper_32_bits(address);
-> >> +    len = sg_dma_len(sgl);
-> >>
-> >> -    tre->dword[2] = u32_encode_bits(sg_dma_len(sgl), TRE_DMA_LEN);
-> >> +    immediate_dma = (direction == DMA_MEM_TO_DEV) && len <= 2 * sizeof(tre->dword[0]);
-> >
-> > inline this condition, remove extra brackets and split the line after &&.
-> Hi Dmitry Baryshkov, thanks for the review.
-> Sure, i will make the changes mentioned below. Please let me know otherwise.
->
-> immediate_dma = direction == DMA_MEM_TO_DEV &&
->                  len <= 2 * sizeof(tre->dword[0]);>
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-I was suggesting to _inline_ this condition rather than having a
-separate variable for it.
+--8323328-281037050-1733319672=:904
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-> >> +
-> >> +    /* Support Immediate dma for write transfers for data length up to 8 bytes */
-> >> +    if (immediate_dma) {
-> >> +            /*
-> >> +             * For Immediate dma, data length may not always be length of 8 bytes,
-> >> +             * it can be length less than 8, hence initialize both dword's with 0
-> >> +             */
-> >> +            tre->dword[0] = 0;
-> >> +            tre->dword[1] = 0;
-> >> +            memcpy(&tre->dword[0], sg_virt(sgl), len);
-> >> +
-> >> +            tre->dword[2] = u32_encode_bits(len, TRE_DMA_IMMEDIATE_LEN);
-> >> +    } else {
-> >> +            tre->dword[0] = lower_32_bits(address);
-> >> +            tre->dword[1] = upper_32_bits(address);
-> >> +
-> >> +            tre->dword[2] = u32_encode_bits(len, TRE_DMA_LEN);
-> >> +    }
-> >>
-> >>      tre->dword[3] = u32_encode_bits(TRE_TYPE_DMA, TRE_FLAGS_TYPE);
-> >> -    if (direction == DMA_MEM_TO_DEV)
-> >> -            tre->dword[3] |= u32_encode_bits(1, TRE_FLAGS_IEOT);
-> >> +    tre->dword[3] |= u32_encode_bits(!!immediate_dma, TRE_FLAGS_IMMEDIATE_DMA);
-> >> +    tre->dword[3] |= u32_encode_bits(!!(direction == DMA_MEM_TO_DEV),
-> >> +                                     TRE_FLAGS_IEOT);
-> >>
-> >>      for (i = 0; i < tre_idx; i++)
-> >>              dev_dbg(dev, "TRE:%d %x:%x:%x:%x\n", i, desc->tre[i].dword[0],
-> >> --
-> >> 2.17.1
-> >>
-> >
+On Sun, 1 Dec 2024, Mario Limonciello wrote:
 
+> When registering a platform profile handler create a class device
+> that will allow changing a single platform profile handler.
+>=20
+> The class and sysfs group are no longer needed when the platform profile
+> core is a module and unloaded, so remove them at that time as well.
+>=20
+> Reviewed-by: Armin Wolf <W_Armin@gmx.de>
+> Tested-by: Mark Pearson <mpearson-lenovo@squebb.ca>
+> Reviewed-by: Mark Pearson <mpearson-lenovo@squebb.ca>
+> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
 
+Reviewed-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
 
--- 
-With best wishes
-Dmitry
+--=20
+ i.
+
+> ---
+> v8:
+>  * Use attr->mode
+> ---
+>  drivers/acpi/platform_profile.c  | 82 ++++++++++++++++++++++++++++++--
+>  include/linux/platform_profile.h |  2 +
+>  2 files changed, 79 insertions(+), 5 deletions(-)
+>=20
+> diff --git a/drivers/acpi/platform_profile.c b/drivers/acpi/platform_prof=
+ile.c
+> index a1f0378f15e62..11eb60b09bac4 100644
+> --- a/drivers/acpi/platform_profile.c
+> +++ b/drivers/acpi/platform_profile.c
+> @@ -5,6 +5,7 @@
+>  #include <linux/acpi.h>
+>  #include <linux/bits.h>
+>  #include <linux/init.h>
+> +#include <linux/kdev_t.h>
+>  #include <linux/mutex.h>
+>  #include <linux/platform_profile.h>
+>  #include <linux/sysfs.h>
+> @@ -22,6 +23,12 @@ static const char * const profile_names[] =3D {
+>  };
+>  static_assert(ARRAY_SIZE(profile_names) =3D=3D PLATFORM_PROFILE_LAST);
+> =20
+> +static DEFINE_IDA(platform_profile_ida);
+> +
+> +static const struct class platform_profile_class =3D {
+> +=09.name =3D "platform-profile",
+> +};
+> +
+>  static ssize_t platform_profile_choices_show(struct device *dev,
+>  =09=09=09=09=09struct device_attribute *attr,
+>  =09=09=09=09=09char *buf)
+> @@ -101,8 +108,21 @@ static struct attribute *platform_profile_attrs[] =
+=3D {
+>  =09NULL
+>  };
+> =20
+> +static int profile_class_registered(struct device *dev, const void *data=
+)
+> +{
+> +=09return 1;
+> +}
+> +
+> +static umode_t profile_class_is_visible(struct kobject *kobj, struct att=
+ribute *attr, int idx)
+> +{
+> +=09if (!class_find_device(&platform_profile_class, NULL, NULL, profile_c=
+lass_registered))
+> +=09=09return 0;
+> +=09return attr->mode;
+> +}
+> +
+>  static const struct attribute_group platform_profile_group =3D {
+> -=09.attrs =3D platform_profile_attrs
+> +=09.attrs =3D platform_profile_attrs,
+> +=09.is_visible =3D profile_class_is_visible,
+>  };
+> =20
+>  void platform_profile_notify(struct platform_profile_handler *pprof)
+> @@ -160,25 +180,77 @@ int platform_profile_register(struct platform_profi=
+le_handler *pprof)
+>  =09if (cur_profile)
+>  =09=09return -EEXIST;
+> =20
+> -=09err =3D sysfs_create_group(acpi_kobj, &platform_profile_group);
+> -=09if (err)
+> -=09=09return err;
+> +=09/* create class interface for individual handler */
+> +=09pprof->minor =3D ida_alloc(&platform_profile_ida, GFP_KERNEL);
+> +=09if (pprof->minor < 0)
+> +=09=09return pprof->minor;
+> +=09pprof->class_dev =3D device_create(&platform_profile_class, pprof->de=
+v,
+> +=09=09=09=09=09 MKDEV(0, 0), pprof, "platform-profile-%d",
+> +=09=09=09=09=09 pprof->minor);
+> +=09if (IS_ERR(pprof->class_dev)) {
+> +=09=09err =3D PTR_ERR(pprof->class_dev);
+> +=09=09goto cleanup_ida;
+> +=09}
+> =20
+>  =09cur_profile =3D pprof;
+> +
+> +=09err =3D sysfs_update_group(acpi_kobj, &platform_profile_group);
+> +=09if (err)
+> +=09=09goto cleanup_cur;
+> +
+>  =09return 0;
+> +
+> +cleanup_cur:
+> +=09cur_profile =3D NULL;
+> +=09device_unregister(pprof->class_dev);
+> +
+> +cleanup_ida:
+> +=09ida_free(&platform_profile_ida, pprof->minor);
+> +
+> +=09return err;
+>  }
+>  EXPORT_SYMBOL_GPL(platform_profile_register);
+> =20
+>  int platform_profile_remove(struct platform_profile_handler *pprof)
+>  {
+> +=09int id;
+>  =09guard(mutex)(&profile_lock);
+> =20
+> -=09sysfs_remove_group(acpi_kobj, &platform_profile_group);
+>  =09cur_profile =3D NULL;
+> +
+> +=09id =3D pprof->minor;
+> +=09device_unregister(pprof->class_dev);
+> +=09ida_free(&platform_profile_ida, id);
+> +
+> +=09sysfs_update_group(acpi_kobj, &platform_profile_group);
+> +
+>  =09return 0;
+>  }
+>  EXPORT_SYMBOL_GPL(platform_profile_remove);
+> =20
+> +static int __init platform_profile_init(void)
+> +{
+> +=09int err;
+> +
+> +=09err =3D class_register(&platform_profile_class);
+> +=09if (err)
+> +=09=09return err;
+> +
+> +=09err =3D sysfs_create_group(acpi_kobj, &platform_profile_group);
+> +=09if (err)
+> +=09=09class_unregister(&platform_profile_class);
+> +
+> +=09return err;
+> +}
+> +
+> +static void __exit platform_profile_exit(void)
+> +{
+> +=09sysfs_remove_group(acpi_kobj, &platform_profile_group);
+> +=09class_unregister(&platform_profile_class);
+> +}
+> +module_init(platform_profile_init);
+> +module_exit(platform_profile_exit);
+> +
+>  MODULE_AUTHOR("Mark Pearson <markpearson@lenovo.com>");
+>  MODULE_DESCRIPTION("ACPI platform profile sysfs interface");
+>  MODULE_LICENSE("GPL");
+> diff --git a/include/linux/platform_profile.h b/include/linux/platform_pr=
+ofile.h
+> index 8ec0b8da56db5..a888fd085c513 100644
+> --- a/include/linux/platform_profile.h
+> +++ b/include/linux/platform_profile.h
+> @@ -29,6 +29,8 @@ enum platform_profile_option {
+>  struct platform_profile_handler {
+>  =09const char *name;
+>  =09struct device *dev;
+> +=09struct device *class_dev;
+> +=09int minor;
+>  =09unsigned long choices[BITS_TO_LONGS(PLATFORM_PROFILE_LAST)];
+>  =09int (*profile_get)(struct platform_profile_handler *pprof,
+>  =09=09=09=09enum platform_profile_option *profile);
+>=20
+--8323328-281037050-1733319672=:904--
 
