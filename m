@@ -1,228 +1,153 @@
-Return-Path: <linux-kernel+bounces-431512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D3229E3E7D
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:39:50 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86E4C9E3F6B
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:14:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EBE04B2A85C
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:32:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 896F5B2CBF0
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:33:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 740021F7079;
-	Wed,  4 Dec 2024 15:32:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF9B120ADD0;
+	Wed,  4 Dec 2024 15:33:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="O8OQTN0F"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Lc7VjwwL"
+Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com [209.85.217.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3C801B4124
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 15:32:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A84E21B87C4
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 15:33:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733326341; cv=none; b=bcLCK0bmVupNyGgChSEsTc2H828rrmwQyBZAWqMwEb+yNucoYgAOH3gEZ+gygb2hqvI5G1U6UvxpkbgfViHcRtIyf/li5WOpNxMm1+8cH9SfWwmlHkTEjpKK0HfWWG+Cky8slliceDStFHu0qQPNKc4Nu0U7QbZZzkzq4GNL+Ek=
+	t=1733326383; cv=none; b=bfdhnQAe6ZxvWyVRSvctbA84hqsHPntdgG4oiMmct19An1bFxxjOGlgjAuE0o+Zr1alwxTo4gfaPVhdqWx1spw5hIYsQ5nMW30dlnyuRnKezF4pEE/jWAkKhyoA0eJED08PwQkD8zpKdXypnpxChsY7TysazFZ7C4phr/lH7MzA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733326341; c=relaxed/simple;
-	bh=j+kCqjK3bmtMxFZjQ5PCA9vJKN+zQLtZquSznamDqqo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oCkvmonPKdKGM0nUhMTNSalLhSMvx5GIgQPLE9XmL356iKTGtPhD16iGNr0wmsYU+969dW098ybUqfYXT4PJi0UZpcpf6TdnRiqCXfIsVOI7drgOjyDQ5B2lcLRDGWi2M+myUn1W/kOiJviVyUC+CCTmTM1afGqb9u36KnJ5GCk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=O8OQTN0F; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1733326338;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=4tNobL2w3YDV5FmQWdRawu4zLR/LCBXJI+k7s8uNxQY=;
-	b=O8OQTN0FaBkPoTFjJ7GNeZB2kdlWDJkuo6uvu9H4Tu36Eg1YUH/Epx3akeVNWfA/WLvDIb
-	8GTc2E2X4QvJYpzRfCbHdBEE6DRvgIF4Fe47nl5d5t/dg7XfkjyQwAXFWr5pFVLCKnJsI+
-	Px2UgxCed96219yaL0v4SOTgo5D2XIk=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-158-XLzRRoZWOg6koyg7lBZXWQ-1; Wed, 04 Dec 2024 10:32:16 -0500
-X-MC-Unique: XLzRRoZWOg6koyg7lBZXWQ-1
-X-Mimecast-MFC-AGG-ID: XLzRRoZWOg6koyg7lBZXWQ
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-434a90fecfeso51005185e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 07:32:16 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733326335; x=1733931135;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+	s=arc-20240116; t=1733326383; c=relaxed/simple;
+	bh=WKAlhH29xEF4xdMd6IOvEbZvOJijsedbXkd9Fo94v+8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=i6xeHZ9Tajm00edAUlpSsarJ7adElwt10whLYtq5ut/UAeE5OZggfyHfRG379UH5Tt1jgRaKuz2dPFYZ54xrCXRTB/28XRSRmTvAbQ5wwsRn0cj6RTk43H9jmZ78669zqdLGiLtBC+Bscp6/eS8qS2hpQtbFjh+HOTn3rCu9JDE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Lc7VjwwL; arc=none smtp.client-ip=209.85.217.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-vs1-f48.google.com with SMTP id ada2fe7eead31-4afa4094708so355837137.0
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 07:33:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733326380; x=1733931180; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=4tNobL2w3YDV5FmQWdRawu4zLR/LCBXJI+k7s8uNxQY=;
-        b=rXDhB+MYkle++yBdJUEtOywwtcSfWXglK3DrjhR/m4I5ZJfATkcjPD8TZXppUZGxwC
-         bFv+pxvPkGI76GR5BLOmpU2OH0cYF8OMiWMT/GckCjuuf+vq8W9Kulcmqe8gV0KW82/7
-         Y+dDLrwwpJyXX9Tcxn5UgF4Ow1SQ/tXanxh9ml5HWkhGomnEnAQ/nK4TO48CJwZIATdc
-         JL10Y6QE1qxeZxnVCo0gYouoTZKD7dBgRV5TOYcWJF/9fEC2TC6B6GnFxrjgbaiENzbp
-         f9rqk5H+jq1qrAlgESbuL3pWj9mq2eHPjdDX2+LcGmFpQxfRVKV8czpxIvG61TwfsZOK
-         Ss/w==
-X-Forwarded-Encrypted: i=1; AJvYcCWcuc3txFaXYs3SCKVEwZYLWGJXsxvJFD4lZr0MzXWV1nHyOGBwyNI+xVc3+bqFm50q0OFp9MHb3x1yfVs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHyY1llAiYqrrfKx7IG2y/bZ11d4rvra/Rg+6bqYJRCa+e1oPE
-	00RJbp8lnoDtFeiLj7FfFGo4fWfezoQvtlO2cTztwDyloy9iFSPMv9Zp4AYUveHHgn9J2mvIM9l
-	W9H/md6DGwIA0wkGKMHyE5UaPKM7tqWME04X/VNufg+YHjbWFr2RGZRcedPUaNQ==
-X-Gm-Gg: ASbGncvCAAFgzyfRmfuD4aQmfSzquQxfKBeQYovjhvqSkbBTrET7FU0G/uTscZx+C1F
-	lTLwO+YGd2zIq6Gca9HwmtjsBUAWo508Vj5GLuVrmRQhIBW7Nx7UtRLB75+tcqQyy4nL1rZsTDR
-	C0wPAmDMNdgErChPeofXruGavLt6XTzlMOQTqg+p/G3We3ihP8yTuBtYT8NFS3OVAAud1dxPT+J
-	4YTKb6KXJMlZKKCYgdm7c7KT5otGH252AxYkKJZE+rDz9p5BwlgfSOCtPcgrxNmWHnMnsN4VsFf
-	IvMvL+aOF+qziMO4xcATk20MXCvA8kYcm4djwAMPxAZmJR3BoqyYA8mRlayiEAGyg46nUCKVJS+
-	Zdw==
-X-Received: by 2002:a05:600c:4e8a:b0:426:616e:db8d with SMTP id 5b1f17b1804b1-434d09c8d82mr61721515e9.15.1733326335235;
-        Wed, 04 Dec 2024 07:32:15 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEb7/0Sfl8AEFPFKZdAI4JhxClmqbLkNFOBfmT1SL1leeMTssIvuPjhUD7G7e7bs7BrWskvZg==
-X-Received: by 2002:a05:600c:4e8a:b0:426:616e:db8d with SMTP id 5b1f17b1804b1-434d09c8d82mr61721225e9.15.1733326334818;
-        Wed, 04 Dec 2024 07:32:14 -0800 (PST)
-Received: from ?IPV6:2003:cb:c70b:e100:38d6:8aa1:11b0:a20a? (p200300cbc70be10038d68aa111b0a20a.dip0.t-ipconnect.de. [2003:cb:c70b:e100:38d6:8aa1:11b0:a20a])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434d5280497sm27738255e9.23.2024.12.04.07.32.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Dec 2024 07:32:13 -0800 (PST)
-Message-ID: <4919faec-3e35-459f-a7d3-b5b3f188bd9c@redhat.com>
-Date: Wed, 4 Dec 2024 16:32:11 +0100
+        bh=4BM7g2tnTxffenD3gAnjnDpzGPqkZZJws6+BF+fZajU=;
+        b=Lc7VjwwLdDhtjzyshExaeLaBucdetu31MNHxwHZ0+0irwnROs763o9LVBguJ6M8BIa
+         pGgzp+hfC8ITIXW7h+6rNblFjjNIA8o+wJUJ1JtW4rkyEmpncvM3X8G191IAgS6dB0oF
+         wT/uEsIaR0GFSrDg+i5GX0D1gYG31IpBMm60ipz6ne2gLw5/Z1qRk9r1X6tTaVcW/ZKK
+         UjACsmtr5z7qAoBfc3ekQ2fjDHXXkqaH1v51WaEwOHqNZVkKbc7buwvorJCWKHIAu2z7
+         p3jcaFsDpcCooR3hkzlsEGoq8aqsqI7c/QeQnruaIEYiOnVhVbV+5qr3aYGdroNlWDYD
+         7muA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733326380; x=1733931180;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4BM7g2tnTxffenD3gAnjnDpzGPqkZZJws6+BF+fZajU=;
+        b=CCnZHVOPqC9S6tIYUpoF7EomwXKbP7M/sQzfnTsVaXoYctrMNgbDvKavrwdau63l+w
+         dXrnL0Gu28cMX9rO+r03P23tYb0cOxfWCZ55wPOTc7skDMqBvukIKCz/qXNFwBRuj8WN
+         sJ6NYHN1eI1lG//G8tHvgd0W10G0K/KR3PKZD7a2oXUA8QUXN/l5YE+jL/zy9P6yjPAQ
+         qXxQbHLb3BwWk+aUkZ+KshqaEvk/Mv9Gkm6Y9fYye247I9UDZS2enoYi0I8hnJ6UH6EB
+         zXzvNlaj2JzwSouGegMtsSFQ6MGYddto3dS8UGpJtNjnzLRlhhieyc3VAUdJm6aVoUBG
+         8q7w==
+X-Forwarded-Encrypted: i=1; AJvYcCWxK7Jk6cpX/966PKDpg6IeZsylbScg9fBhJ7NHsfwtpAJS2uHGtquq0Ou8Hi85nR9My+9HLuHNuD/rsRo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzEYR67oPAeirYmeF9/q8yPIuxKcZg8XnPERi6akV4M1gNd+eWI
+	rv9DmC0Mn4yJN7YbtqkAL9GHnYiqJqtc5GsUP2niSBM/6+siyerg0uFtrE2PSA+gqflD2Cm8jq4
+	itS3jXA+8Fa4U31qU/RfS/4cOcwORc0Ge1JUVFw==
+X-Gm-Gg: ASbGncu6axl/CmNkuEV7PQQ13wtog+ddOQLNlFRuLiUXBQ7AMhQUvDsVViaLIdmr1ao
+	8xeCAAh83b8oZ+usQAMug+ozdllYfhjAi
+X-Google-Smtp-Source: AGHT+IF0RVZVCMdJkXYjBAAcJHezPOoWCH4jS8XQLyQLEPZuJ7e6SomQNYsR4Mx3bJ489e5yJU/yOjgwrrV33kHvO74=
+X-Received: by 2002:a05:6122:1d04:b0:515:c769:9d33 with SMTP id
+ 71dfb90a1353d-515cf784e53mr6510755e0c.9.1733326380385; Wed, 04 Dec 2024
+ 07:33:00 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [GIT PULL] arm64 updates for 6.13-rc1
-To: Catalin Marinas <catalin.marinas@arm.com>,
- Yang Shi <yang@os.amperecomputing.com>
-Cc: Sasha Levin <sashal@kernel.org>,
- Linus Torvalds <torvalds@linux-foundation.org>, Will Deacon
- <will@kernel.org>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20241118100623.2674026-1-catalin.marinas@arm.com>
- <Z0STR6VLt2MCalnY@sashalap> <Z0TLhc3uxa5RnK64@arm.com>
- <0c09425b-c8ba-4ed6-b429-0bce4e7d00e9@os.amperecomputing.com>
- <Z0dhc-DtVsvufv-E@arm.com>
- <dc5e8809-825f-4c38-b487-b16c7d516311@os.amperecomputing.com>
- <e6b3e6c7-193d-43c4-a8c6-6023458723dd@redhat.com>
- <6aec1d44-4a89-4acf-a16b-4493626b93bb@os.amperecomputing.com>
- <Z1B1VS8PayXsXDzl@arm.com>
-Content-Language: en-US
-From: David Hildenbrand <david@redhat.com>
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <Z1B1VS8PayXsXDzl@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20241203141923.524658091@linuxfoundation.org> <CA+G9fYtXS+Ze5Y8ddtOjZPiYP1NEDhArQhEJYfS3n5pcLdn9Hw@mail.gmail.com>
+In-Reply-To: <CA+G9fYtXS+Ze5Y8ddtOjZPiYP1NEDhArQhEJYfS3n5pcLdn9Hw@mail.gmail.com>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Wed, 4 Dec 2024 21:02:47 +0530
+Message-ID: <CA+G9fYuDAAZkgNK4_0Y=wDcTUzs7=ggbni4iJDAPbD9ocq992g@mail.gmail.com>
+Subject: Re: [PATCH 4.19 000/138] 4.19.325-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
+	broonie@kernel.org, Dan Carpenter <dan.carpenter@linaro.org>, 
+	Anders Roxell <anders.roxell@linaro.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Matthias Schiffer <matthias.schiffer@tq-group.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	Daniel Vetter <daniel.vetter@ffwll.ch>, noralf@tronnes.org, 
+	Sam Ravnborg <sam@ravnborg.org>, simona@ffwll.ch, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 04.12.24 16:29, Catalin Marinas wrote:
-> On Mon, Dec 02, 2024 at 08:22:57AM -0800, Yang Shi wrote:
->> On 11/28/24 1:56 AM, David Hildenbrand wrote:
->>> On 28.11.24 02:21, Yang Shi wrote:
->>>>>> diff --git a/arch/arm64/mm/copypage.c b/arch/arm64/mm/copypage.c
->>>>>> index 87b3f1a25535..ef303a2262c5 100644
->>>>>> --- a/arch/arm64/mm/copypage.c
->>>>>> +++ b/arch/arm64/mm/copypage.c
->>>>>> @@ -30,9 +30,9 @@ void copy_highpage(struct page *to, struct
->>>>>> page *from)
->>>>>>          if (!system_supports_mte())
->>>>>>              return;
->>>>>> -    if (folio_test_hugetlb(src) &&
->>>>>> -        folio_test_hugetlb_mte_tagged(src)) {
->>>>>> -        if (!folio_try_hugetlb_mte_tagging(dst))
->>>>>> +    if (folio_test_hugetlb(src)) {
->>>>>> +        if (!folio_test_hugetlb_mte_tagged(src) ||
->>>>>> +            !folio_try_hugetlb_mte_tagging(dst))
->>>>>>                  return;
->>>>>>              /*
->>>>> I wonder why we had a 'return' here originally rather than a
->>>>> WARN_ON_ONCE() as we do further down for the page case. Do you seen any
->>>>> issue with the hunk below? Destination should be a new folio and not
->>>>> tagged yet:
->>>>
->>>> Yes, I did see problem. Because we copy tags for all sub pages then set
->>>> folio mte tagged when copying the data for the first subpage. The
->>>> warning will be triggered when we copy the second subpage.
->>>
->>> It's rather weird, though. We're instructed to copy a single page, yet
->>> copy tags for all pages.
->>>
->>> This really only makes sense when called from folio_copy(), where we are
->>> guaranteed to copy all pages.
->>>
->>> I'm starting to wonder if we should be able to hook into / overload
->>> folio_copy() instead, to just handle the complete hugetlb copy ourselves
->>> in one shot, and assume that copy_highpage() will never be called for
->>> hugetlb pages (WARN and don't copy tags).
->>
->> Actually folio_copy() is just called by migration. Copy huge page in CoW is
->> more complicated and uses copy_user_highpage()->copy_highpage() instead of
->> folio_copy(). It may start the page copy from any subpage. For example, if
->> the CoW is triggered by accessing to the address in the middle of 2M. Kernel
->> may copy the second half first then the first half to guarantee the accessed
->> data in cache.
-> 
-> Still trying to understand the possible call paths here. If we get a
-> write fault on a large folio, does the core code allocate a folio of the
-> same size for CoW or it starts with smaller ones? wp_page_copy()
-> allocates order 0 AFAICT, though if it was a pmd fault, it takes a
-> different path in handle_mm_fault(). But we also have huge pages using
-> contiguous ptes.
-> 
-> Unless the source and destinations folios are exactly the same size, it
-> will break many assumptions in the code above. Going the other way
-> around is also wrong, dst larger than src, we are not initialising the
-> whole dst folio.
-> 
-> Maybe going back to per-page PG_mte_tagged flag rather than per-folio
-> would keep things simple, less risk of wrong assumptions.
+On Wed, 4 Dec 2024 at 19:24, Naresh Kamboju <naresh.kamboju@linaro.org> wro=
+te:
+>
+> On Tue, 3 Dec 2024 at 20:04, Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
+> >
+> > ------------------
+> > Note, this is the LAST 4.19.y kernel to be released.  After this one, i=
+t
+> > is end-of-life.  It's been 6 years, everyone should have moved off of i=
+t
+> > by now.
+> > ------------------
+> >
+> > This is the start of the stable review cycle for the 4.19.325 release.
+> > There are 138 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> >
+> > Responses should be made by Thu, 05 Dec 2024 14:18:57 +0000.
+> > Anything received after that time might be too late.
+> >
+> > The whole patch series can be found in one patch at:
+> >         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patc=
+h-4.19.325-rc1.gz
+> > or in the git tree and branch at:
+> >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
+le-rc.git linux-4.19.y
+> > and the diffstat can be found below.
+> >
+> > thanks,
+> >
+> > greg k-h
+>
+> Results from Linaro=E2=80=99s test farm.
+> Regressions on arm.
+>
+> The arm builds failed with gcc-12 and clang-19 due to following
+> build warnings / errors.
+>
+> Build log:
+> ---------
+> drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_drv.c:177:9: error:
+> 'DRM_GEM_CMA_DRIVER_OPS' undeclared here (not in a function)
+>   177 |         DRM_GEM_CMA_DRIVER_OPS,
+>       |         ^~~~~~~~~~~~~~~~~~~~~~
+> make[5]: *** [scripts/Makefile.build:303:
+> drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_drv.o] Error 1
+>
 
-I think the magic bit here is that for hugetlb, we only get hugetlb 
-folios of the same size, and no mixtures.
+Anders bisected this down to,
 
--- 
-Cheers,
+# first bad commit:
+   [5a8529fd9205b37df58a4fd756498407d956b385]
+   drm/fsl-dcu: Use GEM CMA object functions
 
-David / dhildenb
-
+- Naresh
 
