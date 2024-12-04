@@ -1,128 +1,142 @@
-Return-Path: <linux-kernel+bounces-430729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430731-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CED8B9E356A
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 09:31:37 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A86F49E34CB
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 09:02:34 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3A22DB2903A
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 08:01:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81BBD1604A2
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 08:02:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7BC3190662;
-	Wed,  4 Dec 2024 07:52:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAD5118FC70;
+	Wed,  4 Dec 2024 07:53:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h4Bm708a"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="kkR+U3JD"
+Received: from out-185.mta1.migadu.com (out-185.mta1.migadu.com [95.215.58.185])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5550718E359
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 07:52:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D1A518DF8D
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 07:53:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733298733; cv=none; b=X0weWv6pA7YTYLPZXlsfwcnvj4te1i+8+X7HaZlUwNymJD/xNPhlmWztkhjEihbk7OOQo3J1t+3tXPIiV+TX+ofV8Z2Jx37JXLWa4hs2Nj0aQv0QrMLnLp+S93kYpUdQpR0a87V3XkXQsHyyDwi/RG4lyF98kxfPKRThVmLWBDs=
+	t=1733298820; cv=none; b=rYb5Mlb9Pm71MWwQlA4VLA6pyL6UKVpS8ZR5J4w4Tbav/zkLGUdYChhXaz1Airfw9Sfi4YbE+TMu5tsnghi2m5F5sf6XKixPbDtYVk9+1VESbWY9/nZymIzwZ49AFb9UJZ+UB0dkYJbKFqz+R9SBvTHQevy77F+LUsOKzBvAt3Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733298733; c=relaxed/simple;
-	bh=6rcAR5fx634iJHuLmG3RpP1qjECcf4AuZFK+vo0BkYs=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WAeWTFejnuYnve5XZZ224LxyInt+ukUthoiJJJgc3mkFJX0CENxPcnZ7PmhaADD//gjtAy+5h/pMv4guppYJJOAReNq0LOuJiIwnDhWFz46PP0YypKmNQTXhmHSr2EJPuGWUgPnzQXYAsvPTgCLy5YmxQC2peBZZOwTdwxcr33I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h4Bm708a; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F28C5C4CED1;
-	Wed,  4 Dec 2024 07:52:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733298732;
-	bh=6rcAR5fx634iJHuLmG3RpP1qjECcf4AuZFK+vo0BkYs=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=h4Bm708aGOwWi+sLdeoBl9r2YU87vdRoZ6A1uP2smaNA3Ov57u+rvrYCzwOWjEoA0
-	 Pn3BCI79QhR+EMfVLApskVeRtEPCKYPLLJfBJRM5Jp+b+eZ9JOs5NkT23zZShE/YX5
-	 kX/pMa8uti42JCL9M1ZXQ4DUPFg9CWPt1Wc8r+0DbXzSHFqdjD6ot+99Myl115VWJC
-	 YyPCHgYmzH4F3kNXuyDwv7+BY+OULBQ9tuJpgxQ0DpmK+yJspBTHlq31UfFkXJHvBl
-	 1P9o2RchNryrXJoBYXlTm5heVJZ2jskqdxyXtvp39YYocn/kff7Y9WfaM2gbXkOdt7
-	 BE5ElJxo6oXKA==
-Date: Wed, 4 Dec 2024 08:52:07 +0100
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Cc: Igor Mammedov <imammedo@redhat.com>, Shiju Jose <shiju.jose@huawei.com>,
- "Michael S. Tsirkin" <mst@redhat.com>, Ani Sinha <anisinha@redhat.com>,
- Dongjiu Geng <gengdongjiu1@gmail.com>, <linux-kernel@vger.kernel.org>,
- <qemu-arm@nongnu.org>, <qemu-devel@nongnu.org>
-Subject: Re: [PATCH v4 08/15] acpi/ghes: make the GHES record generation
- more generic
-Message-ID: <20241204085207.0ecae6ae@foz.lan>
-In-Reply-To: <20241125115643.00002923@huawei.com>
-References: <cover.1732266152.git.mchehab+huawei@kernel.org>
-	<b3845a8c78ef36c633d5e20af868de4ed16650a4.1732266152.git.mchehab+huawei@kernel.org>
-	<20241125115643.00002923@huawei.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1733298820; c=relaxed/simple;
+	bh=eJnkvXMDjrw+xMCFaOiv9koFGKi8dIussQ46yYe7v9g=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=oACxsxYFdFOgg1QQTbY8k21F9oXx+sPFGVOifIjNzli7Fnh103upFul4U3/Roo8V8PuVYfix3/sgRq/gXAx2QnfpHzCFKMdMhGqNDxZS14HUuAG+410oi5r0v2jd2OsIwQ9CjyW3x1hzKyy3ceLb5N4zKlUgxVjpvr2U36WPeM8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=kkR+U3JD; arc=none smtp.client-ip=95.215.58.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1733298815;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=kI9iBLCys+xSu5BTxCbQwH4kUk1hhRaGf+nDlT0SiTE=;
+	b=kkR+U3JDTgvqgd4UTSUljJmsPRHoGJxPrl70tGxP37hiWNfyp0NInJFVrNFIITU8paV6ji
+	qNilzrNdfOHAuOvUVRZt3d4xZoho1r6w6GPBA0Br5UmLYlSjBysjOBFKsYAdg7W6rk53nz
+	HdeoDrxY49B5dsEpJdidxKKDHkdzekg=
+From: Hao Ge <hao.ge@linux.dev>
+To: surenb@google.com,
+	kent.overstreet@linux.dev,
+	akpm@linux-foundation.org
+Cc: linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	hao.ge@linux.dev,
+	Hao Ge <gehao@kylinos.cn>
+Subject: [PATCH] mm/alloc_tag: fix vm_module_tags_populate's KASAN poisoning logic
+Date: Wed,  4 Dec 2024 15:52:48 +0800
+Message-Id: <20241204075248.384215-1-hao.ge@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Em Mon, 25 Nov 2024 11:56:43 +0000
-Jonathan Cameron <Jonathan.Cameron@huawei.com> escreveu:
+From: Hao Ge <gehao@kylinos.cn>
 
-> On Fri, 22 Nov 2024 10:11:25 +0100
-> Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
-> 
-> > Split the code into separate functions to allow using the
-> > common CPER filling code by different error sources.
-> > 
-> > The generic code was moved to ghes_record_cper_errors(),
-> > and ghes_gen_err_data_uncorrectable_recoverable() now contains
-> > only a logic to fill the Generic Error Data part of the record,
-> > as described at:
-> > 
-> > 	ACPI 6.2: 18.3.2.7.1 Generic Error Data
-> > 
-> > The remaining code to generate a memory error now belongs to
-> > acpi_ghes_record_errors() function.
-> > 
-> > A further patch will give it a better name.
-> > 
-> > Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>  
-> 
-> One trivial follow up that is enabled by the change you are discussing with Igor.
-> Up to you that one.
-> 
-> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> > +
-> > +int acpi_ghes_record_errors(uint16_t source_id, uint64_t physical_address)
-> > +{
-> > +    /* Memory Error Section Type */
-> > +    const uint8_t guid[] =
-> > +          UUID_LE(0xA5BC1114, 0x6F64, 0x4EDE, 0xB8, 0x63, 0x3E, 0x83, \
-> > +                  0xED, 0x7C, 0x83, 0xB1);
-> > +    Error *errp = NULL;
-> > +    int data_length;
-> > +    GArray *block;
-> > +
-> > +    if (!physical_address) {
-> > +        error_report("can not find Generic Error Status Block for source id %d",
-> > +                     source_id);
-> > +        return -1;
-> > +    }  
-> 
-> With this error check gone (as per discussion with Igor) you could use
-> g_autofree to deal with freeing block.
-> 
-> That would bring the errp check right next to the call that would result
-> in errp potentially being set and slightly improve readability.
-> 
-> Mind you there are no uses of this in hw/acpi currently so maybe this
-> isn't a good time to start :)
+After merge commit 233e89322cbe ("alloc_tag:
+fix module allocation tags populated area calculation"),
+We still encountered a KASAN bug.
 
-Yeah, I prefer to not do such cleanup now. As you said, this isn't used
-right now at ghes, and there are still two series on the top of it.
+This is because we have only actually performed
+page allocation and address mapping here.
+we need to unpoisoned portions of underlying memory.
 
-IMO, such kind of change should happen afterwards, and checking on
-other places were memory is allocated in the driver.
+Because we have a change in the size here,we need to
+re-annotate poisoned and unpoisoned portions of underlying memory
+according to the new size.
 
-Thanks,
-Mauro
+Here is the log for KASAN:
+
+[    5.041171][    T1] ==================================================================
+[    5.042047][    T1] BUG: KASAN: vmalloc-out-of-bounds in move_module+0x2c0/0x708
+[    5.042723][    T1] Write of size 240 at addr ffff80007e510000 by task systemd/1
+[    5.043412][    T1]
+[    5.043523][   T72] input: QEMU QEMU USB Tablet as /devices/pci0000:00/0000:00:01.1/0000:02:001
+[    5.043614][    T1] CPU: 0 UID: 0 PID: 1 Comm: systemd Not tainted 6.13.0-rc1+ #28
+[    5.045560][    T1] Hardware name: QEMU KVM Virtual Machine, BIOS 0.0.0 02/06/2015
+[    5.046328][    T1] Call trace:
+[    5.046670][    T1]  show_stack+0x20/0x38 (C)
+[    5.047127][    T1]  dump_stack_lvl+0x80/0xf8
+[    5.047533][    T1]  print_address_description.constprop.0+0x58/0x358
+[    5.048092][   T72] hid-generic 0003:0627:0001.0001: input,hidraw0: USB HID v0.01 Mouse [QEMU 0
+[    5.048126][    T1]  print_report+0xb0/0x280
+[    5.049682][    T1]  kasan_report+0xb8/0x108
+[    5.050170][    T1]  kasan_check_range+0xe8/0x190
+[    5.050685][    T1]  memcpy+0x58/0xa0
+[    5.051135][    T1]  move_module+0x2c0/0x708
+[    5.051586][    T1]  layout_and_allocate.constprop.0+0x308/0x5b8
+[    5.052219][    T1]  load_module+0x134/0x16c8
+[    5.052671][    T1]  init_module_from_file+0xdc/0x138
+[    5.053193][    T1]  idempotent_init_module+0x344/0x600
+[    5.053742][    T1]  __arm64_sys_finit_module+0xbc/0x150
+[    5.054289][    T1]  invoke_syscall+0xd4/0x258
+[    5.054749][    T1]  el0_svc_common.constprop.0+0xb4/0x240
+[    5.055319][    T1]  do_el0_svc+0x48/0x68
+[    5.055743][    T1]  el0_svc+0x40/0xe0
+[    5.056142][    T1]  el0t_64_sync_handler+0x10c/0x138
+[    5.056658][    T1]  el0t_64_sync+0x1ac/0x1b0
+
+Fixes: 233e89322cbe ("alloc_tag: fix module allocation tags populated area calculation")
+Signed-off-by: Hao Ge <gehao@kylinos.cn>
+
+---
+commit 233e89322cbe ("alloc_tag: fix module allocation
+tags populated area calculation") is currently in the
+mm-hotfixes-unstable branch, so this patch is
+developed based on the mm-hotfixes-unstable branch.
+---
+ lib/alloc_tag.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/lib/alloc_tag.c b/lib/alloc_tag.c
+index 4ee6caa6d2da..ad31acb1279a 100644
+--- a/lib/alloc_tag.c
++++ b/lib/alloc_tag.c
+@@ -421,7 +421,15 @@ static int vm_module_tags_populate(void)
+ 				__free_page(next_page[i]);
+ 			return -ENOMEM;
+ 		}
++
++		kasan_poison_vmalloc((void *)module_tags.start_addr,
++				     vm_module_tags->nr_pages << PAGE_SHIFT);
++
+ 		vm_module_tags->nr_pages += nr;
++
++		kasan_unpoison_vmalloc((void *)module_tags.start_addr,
++				       vm_module_tags->nr_pages << PAGE_SHIFT,
++				       KASAN_VMALLOC_PROT_NORMAL);
+ 	}
+ 
+ 	return 0;
+-- 
+2.25.1
+
 
