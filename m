@@ -1,78 +1,51 @@
-Return-Path: <linux-kernel+bounces-431521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 704379E3EBF
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:55:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2ADD89E3E79
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:39:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4DF37B355F2
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:38:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9E162816C4
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:39:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BE4E20C46E;
-	Wed,  4 Dec 2024 15:38:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1867B20C023;
+	Wed,  4 Dec 2024 15:39:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="02rvrkDS"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="L3mhpHwA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E471182D9;
-	Wed,  4 Dec 2024 15:38:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73D73182D9;
+	Wed,  4 Dec 2024 15:39:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733326699; cv=none; b=fqYgU6Vkl8utRQ3lsur3bUsD8ERtlO1Fu8vLHDxaGvIxtnRWHSbET5YSM8jZVytqL0ld7kSfZ4OtWrQzDJX7TJhpqwcqVJCt+WPdzl6Bzs1d2ZYPWWVW4WKx7t2TUgWM9ferJzJBeFC2A+7EMNSim7qJ5BnaTrRjpfUJi6iU70U=
+	t=1733326768; cv=none; b=jYo1/B9Bf3s1r6/SoJuf6QGx0mxg/Wh9AIt3+fpRy/yh16b2MyySu1JeX94pwpc+DwVURO2K4yFwdTfwj3AaJ+pbdG6X64IEFTAmUXWkFWuV9+gBAhwticMQP0wnavNmVhomojXdoFJmb11VDOTUe0ygPtBbsa8/Qi8i/TBJXqg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733326699; c=relaxed/simple;
-	bh=aLTGmo+zw8z6O/58DWYLUBRS/El7YvYIzfUNwf8G+3k=;
+	s=arc-20240116; t=1733326768; c=relaxed/simple;
+	bh=xL7uKHUI55ET+bj2OFgIp7IijAK7OQk6sjCXgBPi//c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mp0FRydZgDBvYf2NCwNx1+qk+72HRn4lGlPKA6o165UJXrAIT/FlJmrfmZH9Y4aoIDXYycQghUgVahB36MxFx8HHakZAq1iSOQawcZpNxcB07mfJYLBPyrTS/vjSAEft6rCr4hHbY/cyv1f1T2kYgXr+2Ink+Eymi3Ikn5RTEso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=02rvrkDS; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=y+7N7+5QStwcc/a083bbUwTVwKjG0kqhPvCzgW5P96c=; b=02rvrkDSQ9aAS5MdtVQ9x3/LTf
-	PZlFa5m+RlE1GJAUGW9mwJGNwO7LSPcON+LNivBhGKLdZ0Gc2PfRMAnbxFjQiwLiaTewptOokwC79
-	b7u5AYaAGixlisI48ZNLtOcXjLFyRzGEeiqggG/X+G4yEUeXww3Bnw6JvTox95NwXOaqq8pkvggxs
-	uErG0xPiPZFZIgK6CvFH3wUt6cCRqfMIznBbl31AZmaa1a8ZRNNadiFRsDRHaRXzIxdO2PdYLJSC0
-	pq+r/mkCesXufVhMDXbnjtl2+GTMNX4bjSjNo9ulekn8IlEfh9GYYpwCfehOIYS82s074ZGoOha7B
-	6WKlaPjQ==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:48622)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1tIrS2-0003Wg-0Y;
-	Wed, 04 Dec 2024 15:38:06 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1tIrRz-0005e9-36;
-	Wed, 04 Dec 2024 15:38:03 +0000
-Date: Wed, 4 Dec 2024 15:38:03 +0000
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Lei Wei <quic_leiwei@quicinc.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	quic_kkumarcs@quicinc.com, quic_suruchia@quicinc.com,
-	quic_pavir@quicinc.com, quic_linchen@quicinc.com,
-	quic_luoj@quicinc.com, srinivas.kandagatla@linaro.org,
-	bartosz.golaszewski@linaro.org, vsmuthu@qti.qualcomm.com,
-	john@phrozen.org, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH net-next v2 4/5] net: pcs: qcom-ipq9574: Add USXGMII
- interface mode support
-Message-ID: <Z1B3W94-8qjn17Sj@shell.armlinux.org.uk>
-References: <20241204-ipq_pcs_rc1-v2-0-26155f5364a1@quicinc.com>
- <20241204-ipq_pcs_rc1-v2-4-26155f5364a1@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=rQNnzryZczG7g7vr/BMGHv0s/Q1l6Oq7keg88uDjYJiwxTpsCaX8xC4o0CR4OkQB3fg55DEQBego7UtmmqbwJjcbRv0rkr8/Ys4Sj+xcC8Z49wzoKBm0Lc+6LPJuGMr9RRui1Fr8iQT/btvMRk8QadNehzJf0BCLTKb9rVn9Rcc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=L3mhpHwA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62196C4CECD;
+	Wed,  4 Dec 2024 15:39:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1733326765;
+	bh=xL7uKHUI55ET+bj2OFgIp7IijAK7OQk6sjCXgBPi//c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=L3mhpHwAy4vuOGK2PGKBCcq+J6LKivRmR7b3+qT1H+/qMgGbPnnDfjB9y/9LC9z2H
+	 S/IgF4sHoYYYrejwxfZF/eboCMD0yv63CdA1MgXDopwRXKTAFZHHGRXGKz4HjjUm2l
+	 WJANgXaqHE8TKx2ckvdSP9kfckq7XMB8AFk0Huko=
+Date: Wed, 4 Dec 2024 16:39:22 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: ondra@faster.cz
+Cc: Russell King <linux@armlinux.org.uk>, Jiri Slaby <jirislaby@kernel.org>,
+	Lino Sanfilippo <l.sanfilippo@kunbus.com>,
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
+Subject: Re: [PATCH] serial: amba-pl011: Fix RTS handling in RS485 mode
+Message-ID: <2024120456-shrug-unsafe-7dac@gregkh>
+References: <20241123-master-v1-1-260194426ea3@faster.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,25 +54,42 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241204-ipq_pcs_rc1-v2-4-26155f5364a1@quicinc.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+In-Reply-To: <20241123-master-v1-1-260194426ea3@faster.cz>
 
-On Wed, Dec 04, 2024 at 10:43:56PM +0800, Lei Wei wrote:
-> +static int ipq_pcs_link_up_config_usxgmii(struct ipq_pcs *qpcs, int speed)
-> +{
-...
-> +	/* USXGMII only support full duplex mode */
-> +	val |= XPCS_DUPLEX_FULL;
+On Sat, Nov 23, 2024 at 09:26:51PM +0100, Miroslav Ondra via B4 Relay wrote:
+> From: Miroslav Ondra <ondra@faster.cz>
+> 
+> Use hrtimer instead of udelay and mdelay calls in interrupt
+> handler to support shared interrupt lines.
+> Replace simple bool variable rs485_tx_started by 4-state
+> variable rs485_tx_state.
 
-Again... this restriction needs to be implemented in .pcs_validate() by
-knocking out the half-duplex link modes when using USXGMII mode.
+This says what you are doing, not _what_ you are doing.  Please fix this
+up.
 
-.pcs_validate() needs to be implemented whenever the PCS has
-restrictions beyond what is standard for the PHY interface mode.
+> 
+> Signed-off-by: Miroslav Ondra <ondra@faster.cz>
+> ---
+> Data loss on serial line was observed during communication through
+> serial ports ttyAMA1 and ttyAMA2 interconnected via RS485 transcievers.
+> Both ports are in one BCM2711 (Compute Module CM40) and they share 
+> the same interrupt line.
+> 
+> The problem is caused by long waiting for tx queue flush in the function
+> pl011_rs485_tx_stop. Udelay or mdelay are used to wait.
+> The function is called from the interrupt handler. If multiple devices
+> share a single interrupt line, late processing of pending interrupts
+> and data loss may occur. When operation of both devices are synchronous,
+> collisions are quite often.
+> 
+> This rework is based on the method used in tty/serial/imx.c
+> Use hrtimer instead of udelay and mdelay calls.
+> Replace simple bool variable rs485_tx_started by 4-state variable
+> rs485_tx_state.
 
-Thanks.
+This info is great, why not put this in the changelog text instead?
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+thanks,
+
+greg k-h
 
