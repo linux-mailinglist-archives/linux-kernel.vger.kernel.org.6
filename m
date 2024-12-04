@@ -1,316 +1,217 @@
-Return-Path: <linux-kernel+bounces-431259-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431260-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E28189E3B3E
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 14:26:22 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C15E19E3BAA
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 14:50:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0F1BCB2B766
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 13:25:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4EFE6B2F231
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 13:25:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E1B11AF0CD;
-	Wed,  4 Dec 2024 13:25:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E52231BD9C9;
+	Wed,  4 Dec 2024 13:25:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wWxOs2wZ"
-Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com [209.85.222.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="GfGOXyzq"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AD831B983E
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 13:25:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7F581AF0CD;
+	Wed,  4 Dec 2024 13:25:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733318714; cv=none; b=qtbDMiTnscRZ3gpIGSc0BaIFcstbF0yvVtbEfX8ZIp5G7EMgPPvPqFw4yb+EWRYdgis+0nTl4eJIm9l8gr/WgO+QWrwff5pGzn9ZkurruNxI3zsZjdbHJdexSyvMhbKPj8m1qOpMFO2HQBc/QfhkxH59E/VUHM44aBXUHKaHwS8=
+	t=1733318724; cv=none; b=nkAJtFMFtiznyBLPy9gwZ+dQkXSS3XZ28TPGkyuw1nXrxAuMHBz3fjmUbvZ8fkVyr/ntZWiSxJ0UoHHEpPjn7PKqqbAvbDAn48gWADQYP6gmMK9Px4zDgInSj0xZCUv4bAgU4i/+YUH3kIbyCCC0nwEu4b0tknZgkTZTQpZV36s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733318714; c=relaxed/simple;
-	bh=heJcFJZ6wGpaq7N/UtzOsXHKhH2gA7eWMGRP8CzCx6g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kzHAoETKNWbsl6d3HFPeqy4Y1qu7AQ2XRSYbI2GdR3wVoKQgOqO1QXkU7VNuIHw/tVH6zz7Kbsp4kP1b1LfRfWjEia2hibzfd84NbWIgBXKZa2RNHjOVfNDcRYsHx8fhJFBE+5DJMksVsx0G0Pcbq3WnM7ze0Xjq54VOLIBFwOU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wWxOs2wZ; arc=none smtp.client-ip=209.85.222.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ua1-f43.google.com with SMTP id a1e0cc1a2514c-85ba8b1c7b9so491769241.1
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 05:25:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733318712; x=1733923512; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yyRVQVb/zI9kJmYn91wAT9zCQ5BG7fVZIEQs7VqoMNo=;
-        b=wWxOs2wZzXB0N7zRkUvyforSHbq24OcGECtpV22iq0aJU31G9SChXZhQfNrOd/lsht
-         2wQIv1p97MZtin5+JXGjpA66JqdigoKJBCvQ+aCFfjCZUMe2Yoe320dBGThXYJbMa2tS
-         HbL6JoZSho71jfN9nvSSaAxWPZwZHZfWcVkC+7KRZ0aLMpOTTTA/OtYmxS5pir/y3IaO
-         9KiMqov9pxv+THHr92cgw9rJCXIjI/KWK+UJmxrfIqrKFahXvkGOU3LBIDdXaUTNMesH
-         NniIDO4njPgB7xp8hPYPKh6t55NnVJ8FWt+VzsTL4uYqMjhpZHXF6qs2DwrGPHM+qtYZ
-         TIsw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733318712; x=1733923512;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yyRVQVb/zI9kJmYn91wAT9zCQ5BG7fVZIEQs7VqoMNo=;
-        b=jqp30Tww0jfH5nlDS486FClExM4tk5BPFS1+hbs5ZTRaQvOBhgS2oG071J25815q9a
-         bNOQ4aRCCuHXT2BvSsGjOtcqaaEBfs9oxpYJ3xY1F7Ov1ID707iiVfG1K04502P2BM38
-         op7O6gqrrRuRMbS9xm8Sr2bm+dJpzGP4jpfJDZAKNK1C58Mtx/ZhgXLEqTeWrwM5MNTk
-         GtOp7LvvX5N5PGZPaVeT6pKsTf8oRqKnpOsVwDSGzkUVYeUHQG+g7mMYC+wGJWKpJMT4
-         Z57O0FmYaBpsv0D7IbOJjUDndCzx3L7g3C/VO+DDqVeL+xrDpHP6bQ4oswc8PTtCvVpQ
-         l4mQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWKFN0aB6e6JB2FZIbciEFiNptfTKS6Y4NmYHhDn3+gs7eKQGPSL+pBUDZo+WVPffUMK0dppzUr8r8WMdg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZ1pLDIYTh24/l2JNRVbXnhOSYfQ+PVl2LhJFwQDeqx7TUZOg5
-	FgSbJ6KNxKMkDe2r1OWoJY5PMmBe/u049blt9ycTjuBLaobpXzpdK6/xOGDf63uQdAdsynQDA/9
-	t4aE3OY4YitpYeuS1Z1NBQE2IBoLxDAPCrSwTwA==
-X-Gm-Gg: ASbGncthpSAE+ge5sM1LiduD6cVh1K7NqjYvhDhFFghtnukBMgpiKVrjWTUUfnbW4AL
-	KY+iws44nTqS8wqrjLkhMuNlDLAFvQb+F
-X-Google-Smtp-Source: AGHT+IF5Gr6rLMtOlq5rot61HhOPOQXJX5OJ6mgM08z0lylqA8xx32FyRxPhrJvcFQTp4nhCNYedeZJgiB8KDOM4SZ0=
-X-Received: by 2002:a05:6122:620d:20b0:515:1fde:1cb1 with SMTP id
- 71dfb90a1353d-5156a8e0b02mr24861742e0c.3.1733318711875; Wed, 04 Dec 2024
- 05:25:11 -0800 (PST)
+	s=arc-20240116; t=1733318724; c=relaxed/simple;
+	bh=pTSQXmESlS2JY3wPIWTdTx+AUZHW2TMbYv704+zBV3I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=BamH9aLbXpfIJL90AOXWIJ0m7Iq6yF3OJZgdq+BvrfinPCrIIas0G8He3GUnWaxxyVoMyU1hXAxkdd/PMBB8aZxJN4wPvWvql8m8KBfYnZhwnecbgRYAnIB5FwAiVp6XL6ycsM2l3IO61t4mJ22/LPIae3CvbZk9uNET63KuXX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=GfGOXyzq; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B46e3W2024054;
+	Wed, 4 Dec 2024 13:25:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Ijike80En5hDn5pfDSiyQN07FISCT7SCr3o5I1yhPT0=; b=GfGOXyzqFJP3zKi6
+	LNUN6fTEehg7qqOstDbADXmM/m0v+XZbTdvFOMO2bk0sGEr5V4JnFtcFY9oQXpDi
+	zhhpUeAYhsCVihjATDimX0DQJuEXrPe/90CvIiTkk4Gbj7tI++Ay24WxyFWsf9iJ
+	GBtMIby229nEa8qfTve4UdmUad8rztS7XOi7FIl7LerFk6EnQ076nb7NYo+HJYIN
+	Lb6P7iyLOydvzPlk4lhHZYQkptIsE/JgqpamB1nxBSt4/Rea+cdKK4V0xdAHyOAD
+	PKkJ5us6QheInzJyu33i73TTHdHV2zEWUv+wP0m5NLYcuFDx8th1cFzSwC6D6UTd
+	nC3MFg==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 439vnyvbut-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 04 Dec 2024 13:25:18 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B4DPHmE022841
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 4 Dec 2024 13:25:17 GMT
+Received: from [10.217.219.62] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 4 Dec 2024
+ 05:25:14 -0800
+Message-ID: <052c98ab-1ba4-4665-8b45-3e5ad4fa553b@quicinc.com>
+Date: Wed, 4 Dec 2024 18:55:11 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241203143955.605130076@linuxfoundation.org>
-In-Reply-To: <20241203143955.605130076@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Wed, 4 Dec 2024 18:55:00 +0530
-Message-ID: <CA+G9fYtNvEDcUEuv=QFC84y+pXY1UszoRYOitJztCApLV7-psg@mail.gmail.com>
-Subject: Re: [PATCH 6.11 000/817] 6.11.11-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
-	broonie@kernel.org, Anders Roxell <anders.roxell@linaro.org>, 
-	Arnd Bergmann <arnd@arndb.de>, Dan Carpenter <dan.carpenter@linaro.org>, 
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Michael Ellerman <mpe@ellerman.id.au>, 
-	Herbert Xu <herbert@gondor.apana.org.au>, 
-	Alexander Stein <alexander.stein@ew.tq-group.com>, Michal Suchanek <msuchanek@suse.de>, 
-	clang-built-linux <llvm@lists.linux.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, 3 Dec 2024 at 20:24, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> -----------
-> Note, this is will probably be the last 6.11.y kernel to be released.
-> Please move to the 6.12.y branch at this time.
-> -----------
->
-> This is the start of the stable review cycle for the 6.11.11 release.
-> There are 817 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Thu, 05 Dec 2024 14:36:47 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
-6.11.11-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-6.11.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
-
-Results from Linaro=E2=80=99s test farm.
-Regressions on arm64, arm, x86_64, riscv and powerpc.
-
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-
-The listed below errors are the same as reported on stable-rc linux-6.12.y
-
-1) The allmodconfig builds failed on arm64, arm, riscv and x86_64 due
-to following build warnings / errors.
-
-Build error allmodconfig:
-------------------------
-/drivers/gpu/drm/imx/ipuv3/parallel-display.c:75:3: error: variable
-'num_modes' is uninitialized when used here [-Werror,-Wuninitialized]
-   75 |                 num_modes++;
-      |                 ^~~~~~~~~
-/drivers/gpu/drm/imx/ipuv3/parallel-display.c:55:15: note: initialize
-the variable 'num_modes' to silence this warning
-   55 |         int num_modes;
-      |                      ^
-      |                       =3D 0
-1 error generated.
-make[8]: *** [/scripts/Makefile.build:244:
-drivers/gpu/drm/imx/ipuv3/parallel-display.o] Error 1
-/drivers/gpu/drm/imx/ipuv3/imx-ldb.c:143:3: error: variable
-'num_modes' is uninitialized when used here [-Werror,-Wuninitialized]
-  143 |                 num_modes++;
-      |                 ^~~~~~~~~
-/drivers/gpu/drm/imx/ipuv3/imx-ldb.c:133:15: note: initialize the
-variable 'num_modes' to silence this warning
-  133 |         int num_modes;
-      |                      ^
-      |                       =3D 0
-1 error generated.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] dmaengine: qcom: gpi: Add GPI immediate DMA support
+ for SPI protocol
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Vinod Koul <vkoul@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <dmaengine@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <quic_msavaliy@quicinc.com>, <quic_vtanuku@quicinc.com>
+References: <20241204122059.24239-1-quic_jseerapu@quicinc.com>
+ <higpzg6b4e66zpykuu3wlcmaxzplzz3qasoycfytidunp7yqbn@nunjmucxkjbe>
+Content-Language: en-US
+From: Jyothi Kumar Seerapu <quic_jseerapu@quicinc.com>
+In-Reply-To: <higpzg6b4e66zpykuu3wlcmaxzplzz3qasoycfytidunp7yqbn@nunjmucxkjbe>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: IiKY6zo9XGDODcvJVe-UzsiTGKNiT1zI
+X-Proofpoint-GUID: IiKY6zo9XGDODcvJVe-UzsiTGKNiT1zI
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 adultscore=0
+ mlxlogscore=999 bulkscore=0 impostorscore=0 mlxscore=0 suspectscore=0
+ spamscore=0 priorityscore=1501 lowpriorityscore=0 phishscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412040103
 
 
-2) The powerpc builds failed due to these build warnings / errors.
-Build errors on powerpc:
----------------
-ERROR: modpost: "gcm_update"
-[arch/powerpc/crypto/aes-gcm-p10-crypto.ko] undefined!
 
-3) As other reported perf build failures
-Build errors perf:
-----------------------
-   util/stat-display.c: In function 'uniquify_event_name':
-   util/stat-display.c:895:45: error: 'struct evsel' has no member
-named 'alternate_hw_config'
-     895 |         if (counter->pmu->is_core &&
-counter->alternate_hw_config !=3D PERF_COUNT_HW_MAX)
-      |                                             ^~
+On 12/4/2024 6:15 PM, Dmitry Baryshkov wrote:
+> On Wed, Dec 04, 2024 at 05:50:59PM +0530, Jyothi Kumar Seerapu wrote:
+>> The DMA TRE(Transfer ring element) buffer contains the DMA
+>> buffer address. Accessing data from this address can cause
+>> significant delays in SPI transfers, which can be mitigated to
+>> some extent by utilizing immediate DMA support.
+>>
+>> QCOM GPI DMA hardware supports an immediate DMA feature for data
+>> up to 8 bytes, storing the data directly in the DMA TRE buffer
+>> instead of the DMA buffer address. This enhancement enables faster
+>> SPI data transfers.
+>>
+>> This optimization reduces the average transfer time from 25 us to
+>> 16 us for a single SPI transfer of 8 bytes length, with a clock
+>> frequency of 50 MHz.
+>>
+>> Signed-off-by: Jyothi Kumar Seerapu <quic_jseerapu@quicinc.com>
+>> ---
+>>
+>> v2-> v3:
+>>     - When to enable Immediate DMA support, control is moved to GPI driver
+>>       from SPI driver.
+>>     - Optimizations are done in GPI driver related to immediate dma changes.
+>>     - Removed the immediate dma supported changes in qcom-gpi-dma.h file
+>>       and handled in GPI driver.
+>>
+>>     Link to v2:
+>> 	https://lore.kernel.org/all/20241128133351.24593-2-quic_jseerapu@quicinc.com/
+>> 	https://lore.kernel.org/all/20241128133351.24593-3-quic_jseerapu@quicinc.com/
+>>
+>> v1 -> v2:
+>>     - Separated the patches to dmaengine and spi subsystems
+>>     - Removed the changes which are not required for this feature from
+>>       qcom-gpi-dma.h file.
+>>     - Removed the type conversions used in gpi_create_spi_tre.
+>>    
+>>     Link to v1:
+>> 	https://lore.kernel.org/lkml/20241121115201.2191-2-quic_jseerapu@quicinc.com/
+>>
+>>   drivers/dma/qcom/gpi.c | 32 +++++++++++++++++++++++++++-----
+>>   1 file changed, 27 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/drivers/dma/qcom/gpi.c b/drivers/dma/qcom/gpi.c
+>> index 52a7c8f2498f..35451d5a81f7 100644
+>> --- a/drivers/dma/qcom/gpi.c
+>> +++ b/drivers/dma/qcom/gpi.c
+>> @@ -27,6 +27,7 @@
+>>   #define TRE_FLAGS_IEOT		BIT(9)
+>>   #define TRE_FLAGS_BEI		BIT(10)
+>>   #define TRE_FLAGS_LINK		BIT(11)
+>> +#define TRE_FLAGS_IMMEDIATE_DMA	BIT(16)
+>>   #define TRE_FLAGS_TYPE		GENMASK(23, 16)
+>>   
+>>   /* SPI CONFIG0 WD0 */
+>> @@ -64,6 +65,7 @@
+>>   
+>>   /* DMA TRE */
+>>   #define TRE_DMA_LEN		GENMASK(23, 0)
+>> +#define TRE_DMA_IMMEDIATE_LEN	GENMASK(3, 0)
+>>   
+>>   /* Register offsets from gpi-top */
+>>   #define GPII_n_CH_k_CNTXT_0_OFFS(n, k)	(0x20000 + (0x4000 * (n)) + (0x80 * (k)))
+>> @@ -1711,6 +1713,8 @@ static int gpi_create_spi_tre(struct gchan *chan, struct gpi_desc *desc,
+>>   	dma_addr_t address;
+>>   	struct gpi_tre *tre;
+>>   	unsigned int i;
+>> +	int len;
+>> +	u8 immediate_dma;
+>>   
+>>   	/* first create config tre if applicable */
+>>   	if (direction == DMA_MEM_TO_DEV && spi->set_config) {
+>> @@ -1763,14 +1767,32 @@ static int gpi_create_spi_tre(struct gchan *chan, struct gpi_desc *desc,
+>>   	tre_idx++;
+>>   
+>>   	address = sg_dma_address(sgl);
+>> -	tre->dword[0] = lower_32_bits(address);
+>> -	tre->dword[1] = upper_32_bits(address);
+>> +	len = sg_dma_len(sgl);
+>>   
+>> -	tre->dword[2] = u32_encode_bits(sg_dma_len(sgl), TRE_DMA_LEN);
+>> +	immediate_dma = (direction == DMA_MEM_TO_DEV) && len <= 2 * sizeof(tre->dword[0]);
+> 
+> inline this condition, remove extra brackets and split the line after &&.
+Hi Dmitry Baryshkov, thanks for the review.
+Sure, i will make the changes mentioned below. Please let me know otherwise.
 
-
-## Build
-* kernel: 6.11.11-rc1
-* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
-rc.git
-* git commit: 57f39ce086c9b727df2d92ea7ab7cc80e89d7ed2
-* git describe: v6.11.10-818-g57f39ce086c9
-* test details:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.11.y/build/v6.11=
-.10-818-g57f39ce086c9
-
-## Test Regressions (compared to v6.11.9-108-gc9b39c48bf4a)
-* arm, build
-  - gcc-13-lkftconfig-perf
-
-* arm64, build
-  - clang-19-allmodconfig
-  - gcc-13-lkftconfig-perf
-
-* i386, build
-  - gcc-13-lkftconfig-perf
-
-* powerpc, build
-  - clang-19-defconfig
-  - clang-nightly-defconfig
-  - gcc-13-defconfig
-  - gcc-8-defconfig
-
-* riscv, build
-  - clang-19-allmodconfig
-
-* x86_64, build
-  - clang-19-allmodconfig
-  - gcc-13-lkftconfig-perf
-
-
-## Metric Regressions (compared to v6.11.9-108-gc9b39c48bf4a)
-
-## Test Fixes (compared to v6.11.9-108-gc9b39c48bf4a)
-
-## Metric Fixes (compared to v6.11.9-108-gc9b39c48bf4a)
-
-## Test result summary
-total: 130907, pass: 108166, fail: 1524, skip: 21217, xfail: 0
-
-## Build Summary
-* arc: 5 total, 5 passed, 0 failed
-* arm: 130 total, 127 passed, 3 failed
-* arm64: 42 total, 40 passed, 2 failed
-* i386: 18 total, 15 passed, 3 failed
-* mips: 26 total, 25 passed, 1 failed
-* parisc: 4 total, 4 passed, 0 failed
-* powerpc: 32 total, 27 passed, 5 failed
-* riscv: 16 total, 14 passed, 2 failed
-* s390: 14 total, 13 passed, 1 failed
-* sh: 5 total, 5 passed, 0 failed
-* sparc: 4 total, 3 passed, 1 failed
-* x86_64: 34 total, 32 passed, 2 failed
-
-## Test suites summary
-* boot
-* commands
-* kselftest-arm64
-* kselftest-breakpoints
-* kselftest-capabilities
-* kselftest-cgroup
-* kselftest-clone3
-* kselftest-core
-* kselftest-cpu-hotplug
-* kselftest-cpufreq
-* kselftest-efivarfs
-* kselftest-exec
-* kselftest-filesystems
-* kselftest-filesystems-binderfs
-* kselftest-filesystems-epoll
-* kselftest-firmware
-* kselftest-fpu
-* kselftest-ftrace
-* kselftest-futex
-* kselftest-gpio
-* kselftest-intel_pstate
-* kselftest-ipc
-* kselftest-kcmp
-* kselftest-kvm
-* kselftest-livepatch
-* kselftest-membarrier
-* kselftest-memfd
-* kselftest-mincore
-* kselftest-mqueue
-* kselftest-net
-* kselftest-net-mptcp
-* kselftest-openat2
-* kselftest-ptrace
-* kselftest-rseq
-* kselftest-rtc
-* kselftest-rust
-* kselftest-seccomp
-* kselftest-sigaltstack
-* kselftest-size
-* kselftest-tc-testing
-* kselftest-timers
-* kselftest-tmpfs
-* kselftest-tpm2
-* kselftest-user_events
-* kselftest-vDSO
-* kselftest-watchdog
-* kselftest-x86
-* kunit
-* kvm-unit-tests
-* libgpiod
-* libhugetlbfs
-* log-parser-boot
-* log-parser-test
-* ltp-commands
-* ltp-containers
-* ltp-controllers
-* ltp-cpuhotplug
-* ltp-crypto
-* ltp-cve
-* ltp-dio
-* ltp-fcntl-locktests
-* ltp-fs
-* ltp-fs_bind
-* ltp-fs_perms_simple
-* ltp-hugetlb
-* ltp-ipc
-* ltp-math
-* ltp-mm
-* ltp-nptl
-* ltp-pty
-* ltp-sched
-* ltp-smoke
-* ltp-syscalls
-* ltp-tracing
-* rcutorture
-
---
-Linaro LKFT
-https://lkft.linaro.org
+immediate_dma = direction == DMA_MEM_TO_DEV &&
+                 len <= 2 * sizeof(tre->dword[0]);>
+>> +
+>> +	/* Support Immediate dma for write transfers for data length up to 8 bytes */
+>> +	if (immediate_dma) {
+>> +		/*
+>> +		 * For Immediate dma, data length may not always be length of 8 bytes,
+>> +		 * it can be length less than 8, hence initialize both dword's with 0
+>> +		 */
+>> +		tre->dword[0] = 0;
+>> +		tre->dword[1] = 0;
+>> +		memcpy(&tre->dword[0], sg_virt(sgl), len);
+>> +
+>> +		tre->dword[2] = u32_encode_bits(len, TRE_DMA_IMMEDIATE_LEN);
+>> +	} else {
+>> +		tre->dword[0] = lower_32_bits(address);
+>> +		tre->dword[1] = upper_32_bits(address);
+>> +
+>> +		tre->dword[2] = u32_encode_bits(len, TRE_DMA_LEN);
+>> +	}
+>>   
+>>   	tre->dword[3] = u32_encode_bits(TRE_TYPE_DMA, TRE_FLAGS_TYPE);
+>> -	if (direction == DMA_MEM_TO_DEV)
+>> -		tre->dword[3] |= u32_encode_bits(1, TRE_FLAGS_IEOT);
+>> +	tre->dword[3] |= u32_encode_bits(!!immediate_dma, TRE_FLAGS_IMMEDIATE_DMA);
+>> +	tre->dword[3] |= u32_encode_bits(!!(direction == DMA_MEM_TO_DEV),
+>> +					 TRE_FLAGS_IEOT);
+>>   
+>>   	for (i = 0; i < tre_idx; i++)
+>>   		dev_dbg(dev, "TRE:%d %x:%x:%x:%x\n", i, desc->tre[i].dword[0],
+>> -- 
+>> 2.17.1
+>>
+> 
 
