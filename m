@@ -1,139 +1,201 @@
-Return-Path: <linux-kernel+bounces-431514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7082A9E3E61
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:33:22 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 212369E3F6A
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:14:22 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1EEF163B86
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:33:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E9DA9B3AFFB
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:33:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BDFA20ADD0;
-	Wed,  4 Dec 2024 15:33:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2350C1B87C6;
+	Wed,  4 Dec 2024 15:33:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fvrljnZo"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DDg5xCTH"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54C141B87C4;
-	Wed,  4 Dec 2024 15:33:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAF53187561;
+	Wed,  4 Dec 2024 15:33:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733326389; cv=none; b=jzPhM0RBfLG98Q3CWRiZ6JTZNhxUMjVbilYSXDU1J+JwsbQn/368LCwg8XB0fRzFXEPhEKVbKUo6R6ji+IKul5pGCxVPJ3SR8GTYubpEDVfGMx/V+3Hu+87nrFQs63krSRyFe0FZYme8pYwxptZ7/1Yv7ApyY+g25rK3dfViIJo=
+	t=1733326409; cv=none; b=VRYdY5uuVkN8cNavJRxyDCbyrsBFqhhpiacSvbxh0onS/yYveh53Ig/TWjd1cztuVaXG5TwnqySmDIh8pqZ+pE3c81TEysqYmQMHfyyImFT2q7rMzT4V0MTrM1sqHo7BUOaJ4WT6YSSg9W0+foflUXjux/W/DVcsY5d3+DV5v6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733326389; c=relaxed/simple;
-	bh=4IsxGONccTRWIBQiiSaihunLO6mDN5cfXJR2FLnzkgk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZR9pDmf2mJQCNPHDK2zTY9Z/V9alx/3iCoUhzs70oJepvQXn7scNQmRiAnmvrODWL7thQqKDkdaUTOehCSWDYLXVjnzFl2dvuPMOvV/P9ks/Co9nJ4uoQZEFJvghsOeRWQG/NBBrQ/hvyfcnZrCQ380w22pX0Dxp9REDHndTvOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fvrljnZo; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-21561af95c3so36958585ad.3;
-        Wed, 04 Dec 2024 07:33:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733326387; x=1733931187; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=PU3OQZVUSvWFFgmgPiQmmq+MSi4BIan+FoV0Z++2j90=;
-        b=fvrljnZo2jJSDAVJHEqDg9qAnBdsALUdtXM+EVa+2OcWxyjU1c4Pww5bmAy4dhyt8t
-         LAOrGQJ5o3c0uj8i32m1ftagtt0MGTOJO5//KN512deQ4In8ZmLZmR/Fy7NCalqW7MUs
-         xe4ECUGSXzFxC7KVVCQ/FfeYRA82bF3+9yxKrgKU0DysBmESt7gHIZI9SUzICDOVazSy
-         4G0VOwJxxeLR4KOQAlCnjsWNit+Qcc/EM1ZSBwzk6gM332VZblN4G3PqklIMlkvDsmRH
-         O4d8t8luTn5lrNnpGrXsS1+YTQS+7bb4RoPb5g8m6djz/1rAp+arTsPnXgNCfUcRPURK
-         EmXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733326387; x=1733931187;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PU3OQZVUSvWFFgmgPiQmmq+MSi4BIan+FoV0Z++2j90=;
-        b=vSC5euXHU3PcjAivMFL2CcPFgmDVm0adw0I/W885GdaRKreBSGwXhd5/IZihNaEFl6
-         XAcaWQBHxhPAxL3rmu5XtViX6Ynv78dZrFghSN/NLXvHL6p8rTp+u5rj63lpuI1kf+5U
-         bQA45iJrOYVg+/PSaCL61pWpnZ1ZelF/VeuObioOGLj04uOV16GMtB2uK4VHvbTi/lu2
-         /n8BLFrDjF3dRBvXMaMgP8fqkHZtY6h4i2WV970lD/l/8r6Pc8es9iydE6I+pahHIpzI
-         r0VNLF1aoVOEPVmdNVTcP4hNlK0micoCItC+vTVGUCp+3izPF7daH3oaAoARhFnb3Avm
-         vkVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVbunNwQyqakwTe3OFcwNdP/vn4jkfBk3Ek6FN6ODdB972y+VLYTO0Tl7/GMdpINM848BvgE9KHSsNx6pdc@vger.kernel.org, AJvYcCXsuH6dOh2Ht5CuOzhOpGctmZ+FrWmU/XfCWg72dvmqC24hLh83ZaSOzOcoyUIgjuSsQnfNhPmPMotS2Ban@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyt9d4k565gpkkPql3nCga6X2Ys6Ry2H7dI8PdD34UVQQ+B182e
-	xj8inQw1/LwOPkbIdTXghqHoOq81hPXyzfnuecveMTmgGhlxRBCQ
-X-Gm-Gg: ASbGncuEO6t/o6cx/HGTRsK9Iz0IaimZK+vrNcvzKhvsR/VEoIEvbNENBsxB9Fm6ubh
-	7cg2V7wX+FjWWkb/PjhMQ/EXDri+W4xS/pImkCtpPrJw6jjmoxFgAau2nlFMJCoACOU7TLv0zEt
-	Mk+XiAg1VfgK9O5zvdUg3bhBazxUCnVsLGuFeGiHQ8h134qBat0hDstbe+JR8xvmcp1SPAsQ2y9
-	43YZqHgxCIVjmL6z/YK9QjE7ECt4QE3bFNAfXRzjJWiEKx/2X/LEisi2HYSpk71z24=
-X-Google-Smtp-Source: AGHT+IFU1cykT79NxOgiU5+nTldOdms9K9uBKE+fLP/WR6Rii8bf/vtOZN8XMpr5w425Ym31XSqlVA==
-X-Received: by 2002:a17:902:e5cf:b0:215:bc30:c952 with SMTP id d9443c01a7336-215bcea0b21mr94941085ad.6.1733326387272;
-        Wed, 04 Dec 2024 07:33:07 -0800 (PST)
-Received: from vaxr-BM6660-BM6360 ([2001:288:7001:2703:d6db:3ccc:88ed:bd6c])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-215908ab2dcsm54689725ad.209.2024.12.04.07.33.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Dec 2024 07:33:06 -0800 (PST)
-Date: Wed, 4 Dec 2024 23:33:03 +0800
-From: I Hsin Cheng <richard120310@gmail.com>
-To: Jan Kara <jack@suse.cz>
-Cc: viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, brauner@kernel.org
-Subject: Re: [RFC PATCH] file: Wrap locking mechanism for f_pos_lock
-Message-ID: <Z1B2Lxxenie3SA6d@vaxr-BM6660-BM6360>
-References: <20241204092325.170349-1-richard120310@gmail.com>
- <20241204102644.hvutdftkueiiyss7@quack3>
- <20241204-osterblume-blasorchester-2b05c8ee6ace@brauner>
- <20241204124829.4xpciqbz73u2e2nc@quack3>
+	s=arc-20240116; t=1733326409; c=relaxed/simple;
+	bh=sP2tlIplVJ2QVwFXPlzFGcliFejTYrT+QehRMwauIDw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=n7K9O769izCfo9h9bAXfAhpOihhCWJJQlcqJdTIdszqzJPPhq/UeeETc7Xad8bsC5egD6yfRJggehaYpuJSnRo16j+ZlGcBYpXuMQG8cEAjCa12cXWqOviOpTSD1PASgx/GNsNqV27vRh1a93taCwfazWjYMGZQO6AsTaGdAnX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DDg5xCTH; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733326408; x=1764862408;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=sP2tlIplVJ2QVwFXPlzFGcliFejTYrT+QehRMwauIDw=;
+  b=DDg5xCTHrmXvkKWuViQyfqlGgCIfJ1Zi30kSNP+uabKFt/TTznljFhWF
+   /+z5J0jIGJ2NiZoJa5PHb7D8Fa5isiy6jZSEdsBG6wzrjlSogzD0sAikr
+   ULlzh85rJAa4CVVXilUXKhZRE9/uHjaKC/Yv0dBQmb/cfkhZ5cdfwf3fz
+   8zRCK1VaRDOYic+AHYvVhRlLk6XhUj/MV98BMF+LAKUMmiewbyiRuz9oi
+   DF0FZGzdeGxOMpMoX3QkW1Z/uxTcLt2Lhlwv0mkORJFoY5cXHudwf1ANx
+   hrDfEW2VRuSKq45QCdeE2Sps9zpQW+u5iTmiH1sPBFfuFkTwJEauq39pQ
+   Q==;
+X-CSE-ConnectionGUID: h1tf6xtPSB+U4viaVaTuKw==
+X-CSE-MsgGUID: DGXqXhbWSdq2zeg+QO7vrg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11276"; a="33846356"
+X-IronPort-AV: E=Sophos;i="6.12,207,1728975600"; 
+   d="scan'208";a="33846356"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Dec 2024 07:33:27 -0800
+X-CSE-ConnectionGUID: yD4DljVcRza+lA1wwx98FQ==
+X-CSE-MsgGUID: BKnKBe7VQ9aym5aG7iV7Ng==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,207,1728975600"; 
+   d="scan'208";a="93479977"
+Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.247.1]) ([10.124.247.1])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Dec 2024 07:33:23 -0800
+Message-ID: <a005d50c-6ca8-4572-80ba-5207b95323fb@intel.com>
+Date: Wed, 4 Dec 2024 23:33:20 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241204124829.4xpciqbz73u2e2nc@quack3>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 7/7] KVM: TDX: Add TSX_CTRL msr into uret_msrs list
+To: Adrian Hunter <adrian.hunter@intel.com>, Chao Gao <chao.gao@intel.com>
+Cc: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
+ "seanjc@google.com" <seanjc@google.com>,
+ "kvm@vger.kernel.org" <kvm@vger.kernel.org>, "Huang, Kai"
+ <kai.huang@intel.com>, "Zhao, Yan Y" <yan.y.zhao@intel.com>,
+ "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "Yang, Weijiang" <weijiang.yang@intel.com>,
+ "binbin.wu@linux.intel.com" <binbin.wu@linux.intel.com>,
+ "dmatlack@google.com" <dmatlack@google.com>,
+ "pbonzini@redhat.com" <pbonzini@redhat.com>,
+ "Yamahata, Isaku" <isaku.yamahata@intel.com>,
+ "tony.lindgren@linux.intel.com" <tony.lindgren@linux.intel.com>,
+ "nik.borisov@suse.com" <nik.borisov@suse.com>,
+ "Chatre, Reinette" <reinette.chatre@intel.com>,
+ "x86@kernel.org" <x86@kernel.org>
+References: <b36dd125-ad80-4572-8258-7eea3a899bf9@intel.com>
+ <Z04Ffd7Lqxr4Wwua@google.com>
+ <c98556099074f52af1c81ec1e82f89bec92cb7cd.camel@intel.com>
+ <Z05SK2OxASuznmPq@google.com>
+ <60e2ed472e03834c13a48e774dc9f006eda92bf5.camel@intel.com>
+ <9beb9e92-b98c-42a2-a2d3-35c5b681ad03@intel.com> <Z0+vdVRptHNX5LPo@intel.com>
+ <0e34f9d0-0927-4ac8-b1cb-ef8500b8d877@intel.com> <Z0/4wsR2WCwWfZyV@intel.com>
+ <2bcd34eb-0d1f-46c0-933f-fb1d70c70a1e@intel.com> <Z1A5QWaTswaQyE3k@intel.com>
+ <c9b14955-6e2f-4490-a18c-0537ffdfff30@intel.com>
+Content-Language: en-US
+From: Xiaoyao Li <xiaoyao.li@intel.com>
+In-Reply-To: <c9b14955-6e2f-4490-a18c-0537ffdfff30@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Dec 04, 2024 at 01:48:29PM +0100, Jan Kara wrote:
-> On Wed 04-12-24 12:11:02, Christian Brauner wrote:
-> > > motivation of introducing __f_unlock_pos() in the first place? It has one
-> > 
-> > May I venture a guess:
-> > 
-> >   CALL    ../scripts/checksyscalls.sh
-> >   INSTALL libsubcmd_headers
-> >   INSTALL libsubcmd_headers
-> >   CC      fs/read_write.o
-> > In file included from ../fs/read_write.c:12:
-> > ../include/linux/file.h:78:27: error: incomplete definition of type 'struct file'
-> >    78 |                 mutex_unlock(&fd_file(f)->f_pos_lock);
-> >       |                               ~~~~~~~~~~^
-> > 
-> > If you don't include linux/fs.h before linux/file.h you'd get compilation
-> > errors and we don't want to include linux/fs.h in linux/file.h.
+On 12/4/2024 7:55 PM, Adrian Hunter wrote:
+> On 4/12/24 13:13, Chao Gao wrote:
+>> On Wed, Dec 04, 2024 at 08:57:23AM +0200, Adrian Hunter wrote:
+>>> On 4/12/24 08:37, Chao Gao wrote:
+>>>> On Wed, Dec 04, 2024 at 08:18:32AM +0200, Adrian Hunter wrote:
+>>>>> On 4/12/24 03:25, Chao Gao wrote:
+>>>>>>> +#define TDX_FEATURE_TSX (__feature_bit(X86_FEATURE_HLE) | __feature_bit(X86_FEATURE_RTM))
+>>>>>>> +
+>>>>>>> +static bool has_tsx(const struct kvm_cpuid_entry2 *entry)
+>>>>>>> +{
+>>>>>>> +	return entry->function == 7 && entry->index == 0 &&
+>>>>>>> +	       (entry->ebx & TDX_FEATURE_TSX);
+>>>>>>> +}
+>>>>>>> +
+>>>>>>> +static void clear_tsx(struct kvm_cpuid_entry2 *entry)
+>>>>>>> +{
+>>>>>>> +	entry->ebx &= ~TDX_FEATURE_TSX;
+>>>>>>> +}
+>>>>>>> +
+>>>>>>> +static bool has_waitpkg(const struct kvm_cpuid_entry2 *entry)
+>>>>>>> +{
+>>>>>>> +	return entry->function == 7 && entry->index == 0 &&
+>>>>>>> +	       (entry->ecx & __feature_bit(X86_FEATURE_WAITPKG));
+>>>>>>> +}
+>>>>>>> +
+>>>>>>> +static void clear_waitpkg(struct kvm_cpuid_entry2 *entry)
+>>>>>>> +{
+>>>>>>> +	entry->ecx &= ~__feature_bit(X86_FEATURE_WAITPKG);
+>>>>>>> +}
+>>>>>>> +
+>>>>>>> +static void tdx_clear_unsupported_cpuid(struct kvm_cpuid_entry2 *entry)
+>>>>>>> +{
+>>>>>>> +	if (has_tsx(entry))
+>>>>>>> +		clear_tsx(entry);
+>>>>>>> +
+>>>>>>> +	if (has_waitpkg(entry))
+>>>>>>> +		clear_waitpkg(entry);
+>>>>>>> +}
+>>>>>>> +
+>>>>>>> +static bool tdx_unsupported_cpuid(const struct kvm_cpuid_entry2 *entry)
+>>>>>>> +{
+>>>>>>> +	return has_tsx(entry) || has_waitpkg(entry);
+>>>>>>> +}
+>>>>>>
+>>>>>> No need to check TSX/WAITPKG explicitly because setup_tdparams_cpuids() already
+>>>>>> ensures that unconfigurable bits are not set by userspace.
+>>>>>
+>>>>> Aren't they configurable?
+>>>>
+>>>> They are cleared from the configurable bitmap by tdx_clear_unsupported_cpuid(),
+>>>> so they are not configurable from a userspace perspective. Did I miss anything?
+>>>> KVM should check user inputs against its adjusted configurable bitmap, right?
+>>>
+>>> Maybe I misunderstand but we rely on the TDX module to reject
+>>> invalid configuration.  We don't check exactly what is configurable
+>>> for the TDX Module.
+>>
+>> Ok, this is what I missed. I thought KVM validated user input and masked
+>> out all unsupported features. sorry for this.
+>>
+>>>
+>>> TSX and WAITPKG are not invalid for the TDX Module, but KVM
+>>> must either support them by restoring their MSRs, or disallow
+>>> them.  This patch disallows them for now.
+>>
+>> Yes. I agree. what if a new feature (supported by a future TDX module) also
+>> needs KVM to restore some MSRs? current KVM will allow it to be exposed (since
+>> only TSX/WAITPKG are checked); then some MSRs may get corrupted. I may think
+>> this is not a good design. Current KVM should work with future TDX modules.
 > 
-> Ah, subtle ;)
+> With respect to CPUID, I gather this kind of thing has been
+> discussed, such as here:
 > 
-> > I wouldn't add another wrapper for lock though. Just put a comment on top of
-> > __f_unlock_pos().       
+> 	https://lore.kernel.org/all/ZhVsHVqaff7AKagu@google.com/
 > 
-> Yes, I guess comment is better in that case.
+> and Rick and Xiaoyao are working on something.
 > 
-> 								Honza
+> In general, I would expect a new TDX Module would advertise support for
+> new features, but KVM would have to opt in to use them.
 > 
-> -- 
-> Jan Kara <jack@suse.com>
-> SUSE Labs, CR
 
+There were discussion[1] on whether KVM to gatekeep the 
+configurable/supported CPUIDs for TDX. I stand by Sean that KVM needs to 
+do so.
 
-No problem, I'll add comments on __f_unlock_pos() to explain for the
-inconsistency then send a formal path.
+Regarding KVM opt in the new feature, KVM gatekeeps the CPUID bit that 
+can be set by userspace is exactly the behavior of opt-in. i.e., for a 
+given KVM, it only allows a CPUID set {S} to be configured by userspace, 
+if new TDX module supports new feature X, it needs KVM to opt-in X by 
+adding X to {S} so that X is allowed to be configured by userspace.
 
-But I want to ask what's the motivation of defining "fdput_pos()" as
-static inline? If we make it "void fdput_pos()", we should be able to
-write the implementation in file.c and thus can get rid of
-"__f_unlock_pos()".
+Besides, I find current interface between KVM and userspace lacks the 
+ability to tell userspace what bits are not supported by KVM. 
+KVM_TDX_CAPABILITIES.cpuid doesn't work because it represents the 
+configurable CPUIDs, not supported CPUIDs (I think we might rename it to 
+configurable_cpuid to better reflect its meaning). So userspace has to 
+hardcode that TSX and WAITPKG is not support itself.
 
-Is it just for the inline function speed up?
-
-Best regards,
-Richard Cheng.
-
+[1] https://lore.kernel.org/all/ZuM12EFbOXmpHHVQ@google.com/
 
 
