@@ -1,195 +1,389 @@
-Return-Path: <linux-kernel+bounces-431006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA81A9E381A
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 11:59:50 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D93059E384C
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 12:07:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 62D44B3454C
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 10:58:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3E5A2B353CE
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 10:58:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA6A31B21BD;
-	Wed,  4 Dec 2024 10:57:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11F0F1B0F33;
+	Wed,  4 Dec 2024 10:58:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qMklZTWH"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=yoseli.org header.i=@yoseli.org header.b="RxUdWSAG"
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BAD31B412B
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 10:57:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9D331B0F11;
+	Wed,  4 Dec 2024 10:58:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733309825; cv=none; b=ZH/FWrreYV7PlhPgmSJk0rLjOoJKC+Ls9Lo0Y3H5dgnNJp9KQmJOyl1M/kKsUMrSpigSb3JxzjXO1W7cSsz4jyBIOREeWTrVoz1xiMJBTZA6MyafeKZV/qhmYyJYz9dkSCKJzWaQdv+uvgaiEfAXZxg1OylmcJlJxyJvtNWRzZ4=
+	t=1733309897; cv=none; b=WVpcxEtzg79QiK+7iW7v+WdM48sk20Kg529Tx70JUZxMMpy4G174b+ESsEYR+YknvvW9HvLHck8Ta2sPC9Tnzs8AeuNr4mXhuXQEfvxEoRMb/WrNmfzytSqlMABGLJzeTMI6cOXfhfh5kESSW0Yb76dEsX9Ow96TR3jTz84c4RY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733309825; c=relaxed/simple;
-	bh=X0jc67fLpdkoLWvGYPtJ2t6lBko+be5V42GTdXCU6OQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ah2thSV4schWOLaQuC8ieYm3eYFvr5pU9FqeyvtcE6wgnBQmqrIoMamRM7O0QN3ZGn0pMe7a2BI3+w/YvYDzEkSMNa5osT0YR9bN5KmF0Q9979fDdJxHhoEEKl60pmQc+4fsMGl8fu7bKeW54rxhxbjWATaVgJLYTZ5ZWzb4mJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qMklZTWH; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-385e25c5d75so3282108f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 02:57:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733309822; x=1733914622; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3S9eHrj096rces9dTnn414lc2v6tceqMDXtlGmwyprw=;
-        b=qMklZTWH3Q/jOMelZyE7x5NMO9gfHJ82k0IgvO6nJ7FCChkBanUa+8OmSAYxTsAvZQ
-         RqNzB3Hy++OqdlvKI31ehWeNX5cmPCU6K1xKgUx8FszUKjywXEhQK6xuuoB+6unKO8+0
-         ES8BgNfUw0WC6WEedNatolEsCXu0/n9exXfNGSCgOuvh9DP3Zu/PGmGGatiiMJzTPpJC
-         0noaMXg+Xha+Cuacs5pgrONENsp8XYprvCCieziRxrZp3VrAyI0ziJnobBAYpVAYX203
-         i9osp0wYCKrWNX6vD+MD17zO1uDx/wsdsu71bh+5bEgu0WKlgjRKk6AoACYHzcKLPVn3
-         aqSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733309822; x=1733914622;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3S9eHrj096rces9dTnn414lc2v6tceqMDXtlGmwyprw=;
-        b=fzwhuqyGn4+N/Sc2LLjSnhm76txmpg+U3WZvr7z3Clg68hW7jiOrnlIV/4Eev3vK/7
-         x+J1eArgUSRzACFNQDIVL75gAgIPU82KHeTvi5jCIxvtUtr9Ue7vvQzWMxBXVIKz5YMP
-         0dJ+wgGmD/qEMCMYf/gmtCVFumOA18QiwQXam34VbLOueUXAYuATNgGjOPZxiPvZNltw
-         fQSR2HF+rwRMsZr+MPUVMuhq5zZ3WLjm6OpCQm43WX+mSDRvRH1aZf0Vd+6+G/2+TD2h
-         oXqsswcW9rF5znHZSCnRoMpUGRJDgtJGzMxRVSp72NR1Yjc3HZr2xKAETdrjKl0ikbje
-         BgIw==
-X-Forwarded-Encrypted: i=1; AJvYcCUNJ8TvOB9+Tr+cpw+5hHnz391efQXyels/5BDDP6BC1yBcaQ5GEb7mSCZ74oYM/LBacaFE8VdYFc3dMTA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YweM7wb7MNMMV2gWfSB6ClHCQ7QaiQnnebMPSwq+VecUnJaKTxX
-	nPCzjuWIDqoMdgDZ4oOLtRztR/Xr99JKg4y5YvOtVRI1fMlCiCg+OrHrHkx4SNs=
-X-Gm-Gg: ASbGncsgpQrO72mdm6DCEHzqozQ0jJicPldOEMk4AnI/MhkMxqfjJqzUUpEkYIQdRJf
-	4BvdHZ2nuA3ISL2N6tJ/1cZLrLijewhT2YiijtkM1x+/QAJC28AbxC+nVYwcDS5rgtURlyyUP4P
-	mRViqyt/a81GSeT+S0zdR/96D1MWs+ttAlX+NUb+Twkd5gvXfosG0w1YNf9pPNwN8Gv/kukvuPo
-	pnuQYfDBHWn9oqIuTRaM54CZGIZooWsAgTbhJXsbmrOuZsbwhnMp4XuttHbQu6cCNBOGqw=
-X-Google-Smtp-Source: AGHT+IEEM9AsEZljH5GjZsXEAk+mrPOJrw9hP44cLvyc3CTJQnaqJ4zsxawmC4hW80yomi0T8mh7Ow==
-X-Received: by 2002:a05:6000:18a3:b0:386:5b2:a9d9 with SMTP id ffacd0b85a97d-38605b2abd8mr3656724f8f.53.1733309821653;
-        Wed, 04 Dec 2024 02:57:01 -0800 (PST)
-Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:52eb:f6ff:feb3:451a])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385ccd687c3sm18459063f8f.77.2024.12.04.02.57.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Dec 2024 02:57:01 -0800 (PST)
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Date: Wed, 04 Dec 2024 11:56:57 +0100
-Subject: [PATCH 5/5] arm64: dts: qcom: sc7180: fix psci power domain node
- names
+	s=arc-20240116; t=1733309897; c=relaxed/simple;
+	bh=orcQW2FUAdEylAf7oxBnTF+YdqhKQdju6FRswgJ8qyA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GtmAvNZ90HPBZjLuC9b7O7fevoDIJFQArZIRtqTPha0OsPmfvk9sLFEHUsVrEbVYIdK2rf1Y2WB8HwG6sgwwR7m5WzZ2m7KI4pzVBdX08+31s/Hac8SCqvguiuJrDXzt98kK81tFRBb8C3ZrVgnKJJxTfX6j5rjxfsogrMckLVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=yoseli.org; spf=none smtp.mailfrom=yoseli.org; dkim=pass (2048-bit key) header.d=yoseli.org header.i=@yoseli.org header.b=RxUdWSAG; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=yoseli.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=yoseli.org
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 577971BF205;
+	Wed,  4 Dec 2024 10:58:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yoseli.org; s=gm1;
+	t=1733309886;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CRDVbz0I8swi18s8dbytZsw/EaGL/ETlTaFBM3a4tjY=;
+	b=RxUdWSAGkLphVawLT8+fwbIvuXrH6bhh7nc47GpC6urTO02tDpwmrD/6q45g0/ZtdRwNkA
+	mlqjY40FfGufN2QQ+ckYGCWGVr0ErYyammB9PSa3mvMQlad0lXBv8pTQK39gw557TMl22E
+	joz+uiHIWHWd1hnLU4FZmXzywms5xsD4b1XqpFjMJUREOM855eB7V7hTi9JmuOtQseiMiJ
+	ndDHsg6k8HhZWqJLISR7PmZ8Vn378JSVoRVqFQj1wkM7zuYoSkoEHbSl2iRvCT9H6F19Cf
+	qzYEM+t+8TLJySKz4dGl4xxqIPUhnDk9JhXXenxJ8vItOUYJDQkbp0ZcgCYdPg==
+Message-ID: <a06e4806-8b5a-4073-96d5-2a37103e572f@yoseli.org>
+Date: Wed, 4 Dec 2024 11:58:05 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241204-topic-misc-dt-fixes-v1-5-6d320b6454e6@linaro.org>
-References: <20241204-topic-misc-dt-fixes-v1-0-6d320b6454e6@linaro.org>
-In-Reply-To: <20241204-topic-misc-dt-fixes-v1-0-6d320b6454e6@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, cros-qcom-dts-watchers@chromium.org
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2585;
- i=neil.armstrong@linaro.org; h=from:subject:message-id;
- bh=X0jc67fLpdkoLWvGYPtJ2t6lBko+be5V42GTdXCU6OQ=;
- b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBnUDV4WWqHWIKjlb6aDDBeDzpTK6Gcc6KvSw48blx2
- BsqVofiJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCZ1A1eAAKCRB33NvayMhJ0TXlD/
- 9ydTp6OJnbwT4nYhnKvWUL4PXt2eLBMUFXNtfytH3fNIvMv9Dn4cPtSfN/vIqB91udb+9e079PJZKd
- TxgaHog/ba6IA9w4d2O199Z3DbUX2pNUczVpYdCLCrHp3wf6TRoPHEVWB92Btu5n6anDR2fXdPXGSW
- Zu6VnYYvizOLOW5EgaSPhBcl/i7nboQEVFNOnQE475zGeYvRg1IpbPUn6VD9h86Ky92TaZW22kT1K9
- el3P09nPiIdxU5oq6BptRs9SsDdpFC4fF1wMlF1FEG180AdqLFQUt3vFuqNH4ZR3h53qQZb3c03h27
- vqZ1negPaeoERmLxBQkip0/EGoPxH+/SHN/UU/l3/xVA8Sl/pho95AlNtkBSmnWjyKZkHvd1cIqJKw
- YXGdyXsniO8g+kTXHttv0vWuia/Ha2cDz7Hnr4HvXak7WYBMJ5joUGfhAgGK65+sDKdXYRPvC8v5Fk
- 6cmhVgFGJfjfnQSHbpCkFrLOGiaOtAnIWeVP4uOdZdkqLNaQDlKpUMBzwibXkMROBAar0unXqNWxSr
- MwC/hE+9Syb4UHmAXT3/CIwYBQVobgaZSN0gRq/A9yqlKxY/BsI9hJv84TueCpj7f5BHZ9ojcEzpQW
- fUvqzd08T5Dm9jRROaXDR8vuvdojz3ZXtn2i54/uFeX7c/80KDb8IuAfOpYQ==
-X-Developer-Key: i=neil.armstrong@linaro.org; a=openpgp;
- fpr=89EC3D058446217450F22848169AB7B1A4CFF8AE
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] m68k: coldfire: Support resources for UART
+To: Greg Ungerer <gerg@linux-m68k.org>,
+ Geert Uytterhoeven <geert@linux-m68k.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jiri Slaby <jirislaby@kernel.org>
+Cc: linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org,
+ linux-serial@vger.kernel.org
+References: <20241202-m5441x_uart_resource-v1-1-6b28cb295fb5@yoseli.org>
+ <52517849-48ed-4fe8-8638-ec2a4dc2bcbd@linux-m68k.org>
+Content-Language: en-US
+From: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
+In-Reply-To: <52517849-48ed-4fe8-8638-ec2a4dc2bcbd@linux-m68k.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: jeanmichel.hautbois@yoseli.org
 
-Rename the psci power domain node names to match the bindings.
+Hi Greg,
 
-This Fixes:
-sc7180-acer-aspire1.dts: psci: 'cpu-cluster0', 'cpu0', 'cpu1', 'cpu2', 'cpu3', 'cpu4', 'cpu5', 'cpu6', 'cpu7' do not match any of the regexes: '^power-domain-', 'pinctrl-[0-9]+'
+On 04/12/2024 11:54, Greg Ungerer wrote:
+> Hi JM,
+> 
+> On 2/12/24 20:34, Jean-Michel Hautbois wrote:
+>> In order to use the eDMA channels for UART, the mcf_platform_uart needs
+>> to be changed. Instead of adding another custom member for the
+>> structure, use a resource tree in a platform_device per UART. It then
+>> makes it possible to have a device named like "mcfuart.N" with N the
+>> UART number.
+>>
+>> Later, adding the dma channel in the mcf tty driver will also be more
+>> straightfoward.
+>>
+>> Signed-off-by: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
+>> ---
+>>   arch/m68k/coldfire/device.c | 96 +++++++++++++ 
+>> +-------------------------------
+>>   drivers/tty/serial/mcf.c    | 69 +++++++++++++++++++-------------
+>>   2 files changed, 70 insertions(+), 95 deletions(-)
+>>
+>> diff --git a/arch/m68k/coldfire/device.c b/arch/m68k/coldfire/device.c
+>> index 
+>> b6958ec2a220cf91a78a14fc7fa18749451412f7..fd7d0b0ce7eb2970cb8ffe33589fe8d7e88c268d 100644
+>> --- a/arch/m68k/coldfire/device.c
+>> +++ b/arch/m68k/coldfire/device.c
+>> @@ -24,73 +24,35 @@
+>>   #include <linux/platform_data/dma-mcf-edma.h>
+>>   #include <linux/platform_data/mmc-esdhc-mcf.h>
+>> -/*
+>> - *    All current ColdFire parts contain from 2, 3, 4 or 10 UARTS.
+>> - */
+>> -static struct mcf_platform_uart mcf_uart_platform_data[] = {
+>> -    {
+>> -        .mapbase    = MCFUART_BASE0,
+>> -        .irq        = MCF_IRQ_UART0,
+>> -    },
+>> -    {
+>> -        .mapbase    = MCFUART_BASE1,
+>> -        .irq        = MCF_IRQ_UART1,
+>> -    },
+>> -#ifdef MCFUART_BASE2
+>> -    {
+>> -        .mapbase    = MCFUART_BASE2,
+>> -        .irq        = MCF_IRQ_UART2,
+>> -    },
+>> -#endif
+>> -#ifdef MCFUART_BASE3
+>> -    {
+>> -        .mapbase    = MCFUART_BASE3,
+>> -        .irq        = MCF_IRQ_UART3,
+>> -    },
+>> -#endif
+>> -#ifdef MCFUART_BASE4
+>> -    {
+>> -        .mapbase    = MCFUART_BASE4,
+>> -        .irq        = MCF_IRQ_UART4,
+>> -    },
+>> -#endif
+>> -#ifdef MCFUART_BASE5
+>> -    {
+>> -        .mapbase    = MCFUART_BASE5,
+>> -        .irq        = MCF_IRQ_UART5,
+>> -    },
+>> -#endif
+>> -#ifdef MCFUART_BASE6
+>> -    {
+>> -        .mapbase    = MCFUART_BASE6,
+>> -        .irq        = MCF_IRQ_UART6,
+>> -    },
+>> -#endif
+>> -#ifdef MCFUART_BASE7
+>> -    {
+>> -        .mapbase    = MCFUART_BASE7,
+>> -        .irq        = MCF_IRQ_UART7,
+>> +static u64 mcf_uart_mask = DMA_BIT_MASK(32);
+>> +
+>> +static struct resource mcf_uart0_resource[] = {
+>> +    [0] = {
+>> +        .start = MCFUART_BASE0,
+>> +        .end   = MCFUART_BASE0 + 0x3fff,
+>> +        .flags = IORESOURCE_MEM,
+>>       },
+>> -#endif
+>> -#ifdef MCFUART_BASE8
+>> -    {
+>> -        .mapbase    = MCFUART_BASE8,
+>> -        .irq        = MCF_IRQ_UART8,
+>> +    [1] = {
+>> +        .start = 2,
+>> +        .end   = 3,
+>> +        .flags = IORESOURCE_DMA,
+>>       },
+>> -#endif
+>> -#ifdef MCFUART_BASE9
+>> -    {
+>> -        .mapbase    = MCFUART_BASE9,
+>> -        .irq        = MCF_IRQ_UART9,
+>> +    [2] = {
+>> +        .start = MCF_IRQ_UART0,
+>> +        .end   = MCF_IRQ_UART0,
+>> +        .flags = IORESOURCE_IRQ,
+>>       },
+>> -#endif
+>> -    { },
+>>   };
+>> -static struct platform_device mcf_uart = {
+>> +static struct platform_device mcf_uart0 = {
+>>       .name            = "mcfuart",
+>>       .id            = 0,
+>> -    .dev.platform_data    = mcf_uart_platform_data,
+>> +    .num_resources = ARRAY_SIZE(mcf_uart0_resource),
+>> +    .resource = mcf_uart0_resource,
+>> +    .dev = {
+>> +        .dma_mask = &mcf_uart_mask,
+>> +        .coherent_dma_mask = DMA_BIT_MASK(32),
+>> +    },
+>>   };
+>>   #ifdef MCFFEC_BASE0
+>> @@ -485,12 +447,12 @@ static struct platform_device mcf_i2c5 = {
+>>   static const struct dma_slave_map mcf_edma_map[] = {
+>>       { "dreq0", "rx-tx", MCF_EDMA_FILTER_PARAM(0) },
+>>       { "dreq1", "rx-tx", MCF_EDMA_FILTER_PARAM(1) },
+>> -    { "uart.0", "rx", MCF_EDMA_FILTER_PARAM(2) },
+>> -    { "uart.0", "tx", MCF_EDMA_FILTER_PARAM(3) },
+>> -    { "uart.1", "rx", MCF_EDMA_FILTER_PARAM(4) },
+>> -    { "uart.1", "tx", MCF_EDMA_FILTER_PARAM(5) },
+>> -    { "uart.2", "rx", MCF_EDMA_FILTER_PARAM(6) },
+>> -    { "uart.2", "tx", MCF_EDMA_FILTER_PARAM(7) },
+>> +    { "mcfuart.0", "rx", MCF_EDMA_FILTER_PARAM(2) },
+>> +    { "mcfuart.0", "tx", MCF_EDMA_FILTER_PARAM(3) },
+>> +    { "mcfuart.1", "rx", MCF_EDMA_FILTER_PARAM(4) },
+>> +    { "mcfuart.1", "tx", MCF_EDMA_FILTER_PARAM(5) },
+>> +    { "mcfuart.2", "rx", MCF_EDMA_FILTER_PARAM(6) },
+>> +    { "mcfuart.2", "tx", MCF_EDMA_FILTER_PARAM(7) },
+>>       { "timer0", "rx-tx", MCF_EDMA_FILTER_PARAM(8) },
+>>       { "timer1", "rx-tx", MCF_EDMA_FILTER_PARAM(9) },
+>>       { "timer2", "rx-tx", MCF_EDMA_FILTER_PARAM(10) },
+>> @@ -623,7 +585,7 @@ static struct platform_device mcf_flexcan0 = {
+>>   #endif /* MCFFLEXCAN_SIZE */
+>>   static struct platform_device *mcf_devices[] __initdata = {
+>> -    &mcf_uart,
+>> +    &mcf_uart0,
+>>   #ifdef MCFFEC_BASE0
+>>       &mcf_fec0,
+>>   #endif
+>> diff --git a/drivers/tty/serial/mcf.c b/drivers/tty/serial/mcf.c
+>> index 
+>> 93e7dda4d39acd23daf8c0d4c29ac8d666f263c5..07b8decfdb6005f0265dd130765e45c3fd1715eb 100644
+>> --- a/drivers/tty/serial/mcf.c
+>> +++ b/drivers/tty/serial/mcf.c
+>> @@ -570,31 +570,46 @@ static struct uart_driver mcf_driver = {
+>>   static int mcf_probe(struct platform_device *pdev)
+>>   {
+>> -    struct mcf_platform_uart *platp = dev_get_platdata(&pdev->dev);
+>>       struct uart_port *port;
+>> -    int i;
+>> -
+>> -    for (i = 0; ((i < MCF_MAXPORTS) && (platp[i].mapbase)); i++) {
+>> -        port = &mcf_ports[i].port;
+>> -
+>> -        port->line = i;
+>> -        port->type = PORT_MCF;
+>> -        port->mapbase = platp[i].mapbase;
+>> -        port->membase = (platp[i].membase) ? platp[i].membase :
+>> -            (unsigned char __iomem *) platp[i].mapbase;
+>> -        port->dev = &pdev->dev;
+>> -        port->iotype = SERIAL_IO_MEM;
+>> -        port->irq = platp[i].irq;
+>> -        port->uartclk = MCF_BUSCLK;
+>> -        port->ops = &mcf_uart_ops;
+>> -        port->flags = UPF_BOOT_AUTOCONF;
+>> -        port->rs485_config = mcf_config_rs485;
+>> -        port->rs485_supported = mcf_rs485_supported;
+>> -        port->has_sysrq = IS_ENABLED(CONFIG_SERIAL_MCF_CONSOLE);
+>> -
+>> -        uart_add_one_port(&mcf_driver, port);
+>> +    struct mcf_uart *pp;
+>> +    struct resource *res;
+>> +    void __iomem *base;
+>> +    int id = pdev->id;
+>> +
+>> +    if (id == -1 || id >= MCF_MAXPORTS) {
+>> +        dev_err(&pdev->dev, "uart%d out of range\n",
+>> +            id);
+>> +        return -EINVAL;
+>>       }
+>> +    port = &mcf_ports[id].port;
+>> +    port->line = id;
+>> +
+>> +    base = devm_platform_get_and_ioremap_resource(pdev, 0, &res);
+>> +    if (IS_ERR(base))
+>> +        return PTR_ERR(base);
+>> +
+>> +    port->mapbase = res->start;
+>> +    port->membase = base;
+>> +
+>> +    port->irq = platform_get_irq(pdev, 0);
+>> +    if (port->irq < 0)
+>> +        return port->irq;
+>> +
+>> +    port->type = PORT_MCF;
+>> +    port->dev = &pdev->dev;
+>> +    port->iotype = SERIAL_IO_MEM;
+>> +    port->uartclk = MCF_BUSCLK;
+>> +    port->ops = &mcf_uart_ops;
+>> +    port->flags = UPF_BOOT_AUTOCONF;
+>> +    port->rs485_config = mcf_config_rs485;
+>> +    port->rs485_supported = mcf_rs485_supported;
+>> +    port->has_sysrq = IS_ENABLED(CONFIG_SERIAL_MCF_CONSOLE);
+>> +
+>> +    pp = container_of(port, struct mcf_uart, port);
+>> +
+>> +    uart_add_one_port(&mcf_driver, port);
+>> +
+> 
+> This breaks platforms with more than one UART - which is quite a few of
+> the ColdFire platforms. Numerous boards bring and use more than one UART.
 
-Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
----
- arch/arm64/boot/dts/qcom/sc7180.dtsi | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+I don't get why, as I have two uarts here, and each is detected properly 
+when declaring those in my platform ? I get that it breaks existing 
+detection (we are parsing all uarts even when only one or two is used) 
+but it does not prevent it to work ?
 
-diff --git a/arch/arm64/boot/dts/qcom/sc7180.dtsi b/arch/arm64/boot/dts/qcom/sc7180.dtsi
-index 76fe314d2ad50d002ee6adf4659fa685ddae89de..e7773d215f34eba9a42808eb37fac7fa1fda87b1 100644
---- a/arch/arm64/boot/dts/qcom/sc7180.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sc7180.dtsi
-@@ -580,55 +580,55 @@ psci {
- 		compatible = "arm,psci-1.0";
- 		method = "smc";
- 
--		cpu_pd0: cpu0 {
-+		cpu_pd0: power-domain-cpu0 {
- 			#power-domain-cells = <0>;
- 			power-domains = <&cluster_pd>;
- 			domain-idle-states = <&little_cpu_sleep_0 &little_cpu_sleep_1>;
- 		};
- 
--		cpu_pd1: cpu1 {
-+		cpu_pd1: power-domain-cpu1 {
- 			#power-domain-cells = <0>;
- 			power-domains = <&cluster_pd>;
- 			domain-idle-states = <&little_cpu_sleep_0 &little_cpu_sleep_1>;
- 		};
- 
--		cpu_pd2: cpu2 {
-+		cpu_pd2: power-domain-cpu2 {
- 			#power-domain-cells = <0>;
- 			power-domains = <&cluster_pd>;
- 			domain-idle-states = <&little_cpu_sleep_0 &little_cpu_sleep_1>;
- 		};
- 
--		cpu_pd3: cpu3 {
-+		cpu_pd3: power-domain-cpu3 {
- 			#power-domain-cells = <0>;
- 			power-domains = <&cluster_pd>;
- 			domain-idle-states = <&little_cpu_sleep_0 &little_cpu_sleep_1>;
- 		};
- 
--		cpu_pd4: cpu4 {
-+		cpu_pd4: power-domain-cpu4 {
- 			#power-domain-cells = <0>;
- 			power-domains = <&cluster_pd>;
- 			domain-idle-states = <&little_cpu_sleep_0 &little_cpu_sleep_1>;
- 		};
- 
--		cpu_pd5: cpu5 {
-+		cpu_pd5: power-domain-cpu5 {
- 			#power-domain-cells = <0>;
- 			power-domains = <&cluster_pd>;
- 			domain-idle-states = <&little_cpu_sleep_0 &little_cpu_sleep_1>;
- 		};
- 
--		cpu_pd6: cpu6 {
-+		cpu_pd6: power-domain-cpu6 {
- 			#power-domain-cells = <0>;
- 			power-domains = <&cluster_pd>;
- 			domain-idle-states = <&big_cpu_sleep_0 &big_cpu_sleep_1>;
- 		};
- 
--		cpu_pd7: cpu7 {
-+		cpu_pd7: power-domain-cpu7 {
- 			#power-domain-cells = <0>;
- 			power-domains = <&cluster_pd>;
- 			domain-idle-states = <&big_cpu_sleep_0 &big_cpu_sleep_1>;
- 		};
- 
--		cluster_pd: cpu-cluster0 {
-+		cluster_pd: power-domain-cluster {
- 			#power-domain-cells = <0>;
- 			domain-idle-states = <&cluster_sleep_pc
- 					      &cluster_sleep_cx_ret
+static struct resource mcf_uart2_resource[] = {
+	[0] = {
+		.start = MCFUART_BASE2,
+		.end   = MCFUART_BASE2 + 0x3fff,
+		.flags = IORESOURCE_MEM,
+	},
+	[1] = {
+		.start = 6,
+		.end   = 7,
+		.flags = IORESOURCE_DMA,
+	},
+	[2] = {
+		.start = MCF_IRQ_UART2,
+		.end   = MCF_IRQ_UART2,
+		.flags = IORESOURCE_IRQ,
+	},
+};
 
--- 
-2.34.1
+static struct platform_device mcf_uart2 = {
+	.name			= "mcfuart",
+	.id			= 2,
+	.num_resources = ARRAY_SIZE(mcf_uart2_resource),
+	.resource = mcf_uart2_resource,
+	.dev = {
+		.dma_mask = &mcf_uart_mask,
+		.coherent_dma_mask = DMA_BIT_MASK(32),
+	},
+};
+
+static struct resource mcf_uart6_resource[] = {
+	[0] = {
+		.start = MCFUART_BASE6,
+		.end   = MCFUART_BASE6 + 0x3fff,
+		.flags = IORESOURCE_MEM,
+	},
+	[1] = {
+		.start = 22,
+		.end   = 23,
+		.flags = IORESOURCE_DMA,
+	},
+	[2] = {
+		.start = MCF_IRQ_UART6,
+		.end   = MCF_IRQ_UART6,
+		.flags = IORESOURCE_IRQ,
+	},
+};
+
+static struct platform_device mcf_uart6 = {
+	.name			= "mcfuart",
+	.id			= 6,
+	.num_resources = ARRAY_SIZE(mcf_uart6_resource),
+	.resource = mcf_uart6_resource,
+	.dev = {
+		.dma_mask = &mcf_uart_mask,
+		.coherent_dma_mask = DMA_BIT_MASK(32),
+	},
+};
+
+JM
+
+> 
+> Regards
+> Greg
+> 
+> 
+> 
+>>       return 0;
+>>   }
+>> @@ -603,13 +618,11 @@ static int mcf_probe(struct platform_device *pdev)
+>>   static void mcf_remove(struct platform_device *pdev)
+>>   {
+>>       struct uart_port *port;
+>> -    int i;
+>> +    int id = pdev->id;
+>> -    for (i = 0; (i < MCF_MAXPORTS); i++) {
+>> -        port = &mcf_ports[i].port;
+>> -        if (port)
+>> -            uart_remove_one_port(&mcf_driver, port);
+>> -    }
+>> +    port = &mcf_ports[id].port;
+>> +    if (port)
+>> +        uart_remove_one_port(&mcf_driver, port);
+>>   }
+>>   / 
+>> ****************************************************************************/
+>>
+>> ---
+>> base-commit: e457f18d7f25288d143c1fe024a620d0b15caec1
+>> change-id: 20241202-m5441x_uart_resource-729b30c15363
+>>
+>> Best regards,
 
 
