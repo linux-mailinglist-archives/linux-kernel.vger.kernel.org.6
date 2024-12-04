@@ -1,127 +1,122 @@
-Return-Path: <linux-kernel+bounces-431908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 920F89E42AC
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:59:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DC689E42B0
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 19:00:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D490285B09
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:59:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F39E9285FB7
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:00:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91044217700;
-	Wed,  4 Dec 2024 17:30:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 917F321773B;
+	Wed,  4 Dec 2024 17:33:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oXwlaOyF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SDmOYKHF"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC0481A8F61;
-	Wed,  4 Dec 2024 17:30:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3D5D2144D4;
+	Wed,  4 Dec 2024 17:33:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733333453; cv=none; b=QwS8Uv3ToeY3uB7nYJ4V1Dmjx6np6WYCrdiF1khU1tT7ZVPM+7935T52TBrS754bWSQ0vcGHVteDz/8N5XorqeZWazAh4rEnaO0wGpnZz7wKaY8xGYhorbVToD5Nd9MjWfazd7zQLrNOoI5GcxoSKQwk9qfowYAPpm6pWohPj3M=
+	t=1733333609; cv=none; b=bBdlM0XST1mi6raEvqOjIPzBIBUcBBd/F75rQCaLRrx8SCeP/uZTb4nRjSf0r2dygCSSUlT3svI0ZYJpmAMEwHobMH8eJIsZICIgXs7DbJH/rk6kO9CpITKuX9aKr794HtPkd1J4jsFnBvVhG61GE+xe1C7pszGoinpUPWWCe7s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733333453; c=relaxed/simple;
-	bh=jwt44kHNB6fF2lg1PZA37n3lhUUOfzmfyHuqFyxEzww=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fHUyEPmp1YRvJWWTi4yb7y+9SMpCiH5bvA7x5o9uVE8RiQUQkaXno3Z8YalNZXb9Y0wnrUJhoToyIG9FMQ//pupUjGyTNfS/MkVLiBJnj6bsZN+I15inT6M4ZmMvHIcKUPV/Ck/3aku/0DXcDByO0X/3vi7cWrzKs1iwzdo3Buo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oXwlaOyF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BB94C4CED1;
-	Wed,  4 Dec 2024 17:30:52 +0000 (UTC)
+	s=arc-20240116; t=1733333609; c=relaxed/simple;
+	bh=NeyHoaU/Rj3PCru8adh/ZU0wsQKT1PHDSO0yhR+AOWU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ML2dt78119RlIkleb2/eNAztr+7KP9f6sfY2mk7pxyoB3RDfhyvrCHRgk5nqd1QPHNkNFu3Vzg5bmD381yza8v1ZZVQznxI/Pg38S1Lo+k1WxqtwBx0RIF5WcuV7K3kTdSocZPo8Owxckm/l+PMLz7EXedc6L59oANWKOwb6qK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SDmOYKHF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD369C4CECD;
+	Wed,  4 Dec 2024 17:33:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733333453;
-	bh=jwt44kHNB6fF2lg1PZA37n3lhUUOfzmfyHuqFyxEzww=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=oXwlaOyFHg8r2lL1BHPIjfcGkrFbwecYJGEFvO0y2n2WGa9QjxVB2n6v5AWgYvRiA
-	 cApyakaYuHBRDA9fw5DzBGwENK90QWg4pG9R9597vAPkR0WIp5Yq5AjSfFMsRYUw3k
-	 mngs9w6InT3USE+pAvgEG9lEgtSpTXYWNeVzAsNgs+8Ovvo8qCxuzc8v92iB5WCdsD
-	 3wvmgIxNiwd1Rbrg50g3wvr0ilnm5iwtLaz9v+vUHSyw6s5gDBT3gay+VrunKjU5Cw
-	 GD+XzQXuzvWGSUzuCecr1T+OWDv4blQOAuXBOPT0V1/elHBz3f45zUg+rVh8Bbl0/P
-	 1wwnsg9t27qrw==
-Message-ID: <aaac430f-ba1a-47ee-a290-0bb1559dcf24@kernel.org>
-Date: Wed, 4 Dec 2024 11:30:51 -0600
+	s=k20201202; t=1733333606;
+	bh=NeyHoaU/Rj3PCru8adh/ZU0wsQKT1PHDSO0yhR+AOWU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SDmOYKHFX9hocNkWlSnZ4KKL+Cue7FN24N6jiC66l5t8HF4kIWAqSPQAK+PLXfUy0
+	 SGL3BRJvbqgkZXwHW/rrnL6cE35SMfwPQmJ6cwto4MQWjTJrtECWsoBoZ5h5meYODZ
+	 bIaE6ABwWTff05wqpsT4FJafuLoYNhJaCuNrtQg/XdPdGiw6Ciie4JvCJF3Ngw/9dg
+	 fAGZLGDbb+neR2VMqAotEWQNBsiAEBRXT2AtpTDNYsE8yKiWphiM9Pn+6JuJBw8mcj
+	 Ngm1OBXvkJIfwpCFWBCDVfH/K02KsFvNWrhBPzkENp3gZaH0R0PA+CXWORUbnu9LTE
+	 xVrxIoIOKOZGA==
+Date: Wed, 4 Dec 2024 10:33:24 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: djakov@kernel.org
+Cc: naresh.kamboju@linaro.org, lkft@linaro.org, kees@kernel.org,
+	konradybcio@kernel.org, quic_okukatla@quicinc.com,
+	quic_rlaggysh@quicinc.com, linux-arm-msm@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] interconnect: qcom: icc-rpm: Set the count member before
+ accessing the flex array
+Message-ID: <20241204173324.GA915644@thelio-3990X>
+References: <20241203223334.233404-1-djakov@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 0/5] Verify devices transition from D3cold to D0
-To: Bjorn Helgaas <bhelgaas@google.com>
-Cc: "open list : PCI SUBSYSTEM" <linux-pci@vger.kernel.org>,
- open list <linux-kernel@vger.kernel.org>,
- "open list : USB XHCI DRIVER" <linux-usb@vger.kernel.org>,
- Daniel Drake <drake@endlessos.org>, Gary Li <Gary.Li@amd.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Mathias Nyman <mathias.nyman@intel.com>,
- Mika Westerberg <mika.westerberg@linux.intel.com>
-References: <20240823154023.360234-1-superm1@kernel.org>
-Content-Language: en-US
-From: Mario Limonciello <superm1@kernel.org>
-In-Reply-To: <20240823154023.360234-1-superm1@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241203223334.233404-1-djakov@kernel.org>
 
-On 8/23/2024 10:40, Mario Limonciello wrote:
-> From: Mario Limonciello <mario.limonciello@amd.com>
+On Wed, Dec 04, 2024 at 12:33:34AM +0200, djakov@kernel.org wrote:
+> From: Georgi Djakov <djakov@kernel.org>
 > 
-> Gary has reported that when a dock is plugged into a system at the same
-> time the autosuspend delay has tripped that the USB4 stack malfunctions.
+> The following UBSAN error is reported during boot on the db410c board on
+> a clang-19 build:
 > 
-> Messages show up like this:
-> 
-> ```
-> thunderbolt 0000:e5:00.6: ring_interrupt_active: interrupt for TX ring 0 is already enabled
-> ```
-> 
-> Furthermore the USB4 router is non-functional at this point.
-> 
-> Those messages happen because the device is still in D3cold at the time
-> that the PCI core handed control back to the USB4 connection manager
-> (thunderbolt).
-> 
-> The issue is that it takes time for a device to enter D3cold and do a
-> conventional reset, and then more time for it to exit D3cold.
-> 
-> This appears not to be a new problem; previously there were very similar
-> reports from Ryzen XHCI controllers.  Quirks were added for those.
-> Furthermore; adding extra logging it's apparent that other PCI devices
-> in the system can take more than 10ms to recover from D3cold as well.
-> 
-> This series add a wait into pci_power_up() specifically for D3cold exit and
-> then drops the quirks that were previously used for the Ryzen XHCI controllers.
-> 
-> Mario Limonciello (5):
->    PCI: Use an enum for reset type in pci_dev_wait()
->    PCI: Check PCI_PM_CTRL instead of PCI_COMMAND in pci_dev_wait()
->    PCI: Verify functions currently in D3cold have entered D0
->    PCI: Allow Ryzen XHCI controllers into D3cold and drop delays
->    PCI: Drop Radeon quirk for Macbook Pro 8.2
-> 
->   drivers/pci/pci-driver.c    |  2 +-
->   drivers/pci/pci.c           | 70 +++++++++++++++++++++++++++----------
->   drivers/pci/pci.h           | 13 ++++++-
->   drivers/pci/pcie/dpc.c      |  2 +-
->   drivers/pci/quirks.c        | 25 -------------
->   drivers/usb/host/xhci-pci.c | 11 ------
->   6 files changed, 66 insertions(+), 57 deletions(-)
-> 
+> Internal error: UBSAN: array index out of bounds: 00000000f2005512 [#1] PREEMPT SMP
+> ...
+> pc : qnoc_probe+0x5f8/0x5fc
+> ...
 
-Bjorn,
+Really happy to see more coverage of real hardware with compilers that
+support __counted_by() so that we can start getting these addressed,
+thanks for this!
 
-This series has stalled a while.
+> The cause of the error is that the counter member was not set before
+> accessing the annotated flexible array member, but after that. Fix this
+> by initializing it earlier.
+> 
+> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+> Closes: https://lore.kernel.org/r/CA+G9fYs+2mBz1y2dAzxkj9-oiBJ2Acm1Sf1h2YQ3VmBqj_VX2g@mail.gmail.com
+> Fixes: dd4904f3b924 ("interconnect: qcom: Annotate struct icc_onecell_data with __counted_by")
 
-Mika and I went back and forth and I think are generally in agreement so 
-I think it's waiting on your feedback.
+Guess Kees missed one :)
 
-Can you take another look?
+> Signed-off-by: Georgi Djakov <djakov@kernel.org>
 
-The alternative is to add some more piles of quirks, but I'm hoping that 
-we can go this direction and drop a bunch of the old ones instead.
+Reviewed-by: Nathan Chancellor <nathan@kernel.org>
 
-LMK if you want me to rebase it on 6.13-rc1 and resend a v6.
+This is exactly the thing that __builtin_counted_by_ref() is trying to
+address, as these assignments happen right after the allocation:
+
+https://gcc.gnu.org/onlinedocs/gcc/Other-Builtins.html#index-_005f_005fbuiltin_005fcounted_005fby_005fref
+
+> ---
+>  drivers/interconnect/qcom/icc-rpm.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/interconnect/qcom/icc-rpm.c b/drivers/interconnect/qcom/icc-rpm.c
+> index a8ed435f696c..ea1042d38128 100644
+> --- a/drivers/interconnect/qcom/icc-rpm.c
+> +++ b/drivers/interconnect/qcom/icc-rpm.c
+> @@ -503,6 +503,7 @@ int qnoc_probe(struct platform_device *pdev)
+>  			    GFP_KERNEL);
+>  	if (!data)
+>  		return -ENOMEM;
+> +	data->num_nodes = num_nodes;
+>  
+>  	qp->num_intf_clks = cd_num;
+>  	for (i = 0; i < cd_num; i++)
+> @@ -597,7 +598,6 @@ int qnoc_probe(struct platform_device *pdev)
+>  
+>  		data->nodes[i] = node;
+>  	}
+> -	data->num_nodes = num_nodes;
+>  
+>  	clk_bulk_disable_unprepare(qp->num_intf_clks, qp->intf_clks);
+>  
 
