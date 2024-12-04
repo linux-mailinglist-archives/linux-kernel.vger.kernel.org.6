@@ -1,194 +1,132 @@
-Return-Path: <linux-kernel+bounces-431106-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4028B9E38FA
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 12:36:32 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8500016474D
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 11:36:24 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07B611C1F29;
-	Wed,  4 Dec 2024 11:34:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="duPQ4uni"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 669249E39C3
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 13:22:01 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2D471BCA1C;
-	Wed,  4 Dec 2024 11:34:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 36005B3618C
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 11:34:12 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D750F1B392A;
+	Wed,  4 Dec 2024 11:34:07 +0000 (UTC)
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2568A1B218A;
+	Wed,  4 Dec 2024 11:34:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733312095; cv=none; b=p+/wJ9OZrAFPFYujdIN4SkxSrJzp5nQB8vHIOlOh5sY16EKw6eUaHeYQGc/cM77A4/0mvfSs4NWL4n6iHZUb06ju4w3igx37YAQgUL3eXB/CrsFRrqVzQcfVwEZxwMzY9bFJGgkCrs8gDV0XidRF7SdMgr6P9v4KX87D0awy8Ww=
+	t=1733312047; cv=none; b=fNNmMT4QDnXPkMdB06igH7PiD4KlVWJxzoxdJpttUHEL6KHRiHAMpm9qV3bNDHy4qfOSRCRLnLPYhpLbBm5jrPyB3W9FX/47WspThmsJiOctV/vpk1uXv5LRk6IU+6q6azEEEIybtfBj1nq11gNNKJBWrTtdywkiqkU+bhjY6b0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733312095; c=relaxed/simple;
-	bh=ZNPn3OUHgs654omndsNWSDHy4Rb7fo2Qhuxvg1MRzHk=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XH8JXI0FuUYaF3ubFPyNdLOhhNMbl+VCyit9zuNU3cV4saR1+p5dtX9nbtgEP7SWpJ/cj18JxaCJSbl6AAbjuT7zxtltJps4XuoW6+ghkokRFkWCPj1F+LecHy7a5/rrBpC8OzGfskdM5bER+1dZ0r0IsQNkKE0kH/i0pxC3D30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=duPQ4uni; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B43RkWn001101;
-	Wed, 4 Dec 2024 11:34:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	iiByAk0cX0/wcGs7iFI1tDw/VgKafpo5zFmvzCqogyA=; b=duPQ4univGDIWKls
-	bpakfaaEn6nYh7m/5Ybqv7Q3ZWE+QniwV9uZi4LwhNma9m48/BDPnW9quE9XDZIH
-	rf3KrpMMwH3TXV4ImFAe51gdcJk5t58+3TYYZ4k96fOLQG6Xw+ao+tf1uvob3xnC
-	KI1qJrvraeAGEiM3igJeq1nCSyVoj8xzD3a08l/nQDTy6P3mu0hM52RjYaxJ446f
-	UFd+ZBAXWgq846NDOlWMyJXm7uRevAA15Ev1TiomXBGHbciaeFPeuSZPxJBt/ARD
-	PpUGzyUY2VlONzIK7l8j8+XFonvhhcMJb0v/elZYI7iqKVOTPab6MpicHFwa5JQ7
-	gT8ESA==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 439trbmg0y-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 04 Dec 2024 11:34:41 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B4BYeB2028552
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 4 Dec 2024 11:34:40 GMT
-Received: from hu-varada-blr.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 4 Dec 2024 03:34:34 -0800
-From: Varadarajan Narayanan <quic_varada@quicinc.com>
-To: <lpieralisi@kernel.org>, <kw@linux.com>,
-        <manivannan.sadhasivam@linaro.org>, <robh@kernel.org>,
-        <bhelgaas@google.com>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <vkoul@kernel.org>, <kishon@kernel.org>, <andersson@kernel.org>,
-        <konradybcio@kernel.org>, <p.zabel@pengutronix.de>,
-        <quic_nsekar@quicinc.com>, <dmitry.baryshkov@linaro.org>,
-        <quic_varada@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-phy@lists.infradead.org>
-CC: Praveenkumar I <quic_ipkumar@quicinc.com>
-Subject: [PATCH v2 6/6] arm64: dts: qcom: ipq5332: Enable PCIe phys and controllers
-Date: Wed, 4 Dec 2024 17:03:29 +0530
-Message-ID: <20241204113329.3195627-7-quic_varada@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241204113329.3195627-1-quic_varada@quicinc.com>
-References: <20241204113329.3195627-1-quic_varada@quicinc.com>
+	s=arc-20240116; t=1733312047; c=relaxed/simple;
+	bh=WOmmx/TYJt9siuctuf82NMwVd5HB06rxCXNrNMiCQ6k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c5gtR/yEjaZLkJgUXjDaCLSt4UDPmz+4K1HS4Y0I2uTFaBw2p9Gp6cknKyf1zgVy6dEUE5IBonsajeMP1QpJbK6+zBjYJPnh//awGLe6HS/wcX1aDRHMFIZCE0nv4NkZleW70OJmaIbxMe9BMlU1OrqB6oooDb6RQ9JfKKm+jBo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de; spf=fail smtp.mailfrom=denx.de; arc=none smtp.client-ip=46.255.230.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=denx.de
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id CC1431C00A0; Wed,  4 Dec 2024 12:34:02 +0100 (CET)
+Date: Wed, 4 Dec 2024 12:34:02 +0100
+From: Pavel Machek <pavel@denx.de>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Pavel Machek <pavel@denx.de>, stable@vger.kernel.org,
+	patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+	torvalds@linux-foundation.org, akpm@linux-foundation.org,
+	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+	lkft-triage@lists.linaro.org, jonathanh@nvidia.com,
+	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
+	hargar@microsoft.com, broonie@kernel.org
+Subject: Re: [PATCH 4.19 000/138] 4.19.325-rc1 review
+Message-ID: <Z1A+Ku5D0OFOSUm4@duo.ucw.cz>
+References: <20241203141923.524658091@linuxfoundation.org>
+ <Z09KXnGlTJZBpA90@duo.ucw.cz>
+ <2024120424-diminish-staple-50d5@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: SjvZoOP9NAs9WFY07JgoiO0CJKxQMbqn
-X-Proofpoint-ORIG-GUID: SjvZoOP9NAs9WFY07JgoiO0CJKxQMbqn
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=917 mlxscore=0
- suspectscore=0 spamscore=0 malwarescore=0 adultscore=0 priorityscore=1501
- clxscore=1011 phishscore=0 lowpriorityscore=0 impostorscore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
- definitions=main-2412040090
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="rRJwBGNM29yCb0EE"
+Content-Disposition: inline
+In-Reply-To: <2024120424-diminish-staple-50d5@gregkh>
 
-From: Praveenkumar I <quic_ipkumar@quicinc.com>
 
-Enable the PCIe controller and PHY nodes for RDP 441.
+--rRJwBGNM29yCb0EE
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Praveenkumar I <quic_ipkumar@quicinc.com>
-Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
----
- arch/arm64/boot/dts/qcom/ipq5332-rdp441.dts | 74 +++++++++++++++++++++
- 1 file changed, 74 insertions(+)
+Hi!
 
-diff --git a/arch/arm64/boot/dts/qcom/ipq5332-rdp441.dts b/arch/arm64/boot/dts/qcom/ipq5332-rdp441.dts
-index 846413817e9a..83eca8435cff 100644
---- a/arch/arm64/boot/dts/qcom/ipq5332-rdp441.dts
-+++ b/arch/arm64/boot/dts/qcom/ipq5332-rdp441.dts
-@@ -62,4 +62,78 @@ data-pins {
- 			bias-pull-up;
- 		};
- 	};
-+
-+	pcie0_default: pcie0-default-state {
-+		clkreq-n-pins {
-+			pins = "gpio37";
-+			function = "pcie0_clk";
-+			drive-strength = <8>;
-+			bias-pull-up;
-+		};
-+
-+		perst-n-pins {
-+			pins = "gpio38";
-+			function = "gpio";
-+			drive-strength = <8>;
-+			bias-pull-up;
-+			output-low;
-+		};
-+
-+		wake-n-pins {
-+			pins = "gpio39";
-+			function = "pcie0_wake";
-+			drive-strength = <8>;
-+			bias-pull-up;
-+		};
-+	};
-+
-+	pcie1_default: pcie1-default-state {
-+		clkreq-n-pins {
-+			pins = "gpio46";
-+			function = "pcie1_clk";
-+			drive-strength = <8>;
-+			bias-pull-up;
-+		};
-+
-+		perst-n-pins {
-+			pins = "gpio47";
-+			function = "gpio";
-+			drive-strength = <8>;
-+			bias-pull-up;
-+			output-low;
-+		};
-+
-+		wake-n-pins {
-+			pins = "gpio48";
-+			function = "pcie1_wake";
-+			drive-strength = <8>;
-+			bias-pull-up;
-+		};
-+	};
-+};
-+
-+&pcie0_phy {
-+	status = "okay";
-+};
-+
-+&pcie0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pcie0_default>;
-+
-+	perst-gpios = <&tlmm 38 GPIO_ACTIVE_LOW>;
-+	wake-gpios = <&tlmm 39 GPIO_ACTIVE_LOW>;
-+	status = "okay";
-+};
-+
-+&pcie1_phy {
-+	status = "okay";
-+};
-+
-+&pcie1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pcie1_default>;
-+
-+	perst-gpios = <&tlmm 47 GPIO_ACTIVE_LOW>;
-+	wake-gpios = <&tlmm 48 GPIO_ACTIVE_LOW>;
-+	status = "okay";
- };
--- 
-2.34.1
+> > > This is the start of the stable review cycle for the 4.19.325 release.
+> > > There are 138 patches in this series, all will be posted as a response
+> > > to this one.  If anyone has any issues with these being applied, plea=
+se
+> > > let me know.
+> >=20
+> > Build fails:
+> >=20
+> > https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/jobs/85=
+32423815
+> >=20
+> >   CC      drivers/pinctrl/uniphier/pinctrl-uniphier-pro4.o
+> > 3895
+> >   CC      drivers/pci/of.o
+> > 3896
+> > drivers/rtc/rtc-st-lpc.c: In function 'st_rtc_probe':
+> > 3897
+> > drivers/rtc/rtc-st-lpc.c:233:11: error: 'IRQF_NO_AUTOEN' undeclared (fi=
+rst use in this function); did you mean 'IRQ_NOAUTOEN'?
+> > 3898
+> >            IRQF_NO_AUTOEN, pdev->name, rtc);
+> > 3899
+> >            ^~~~~~~~~~~~~~
+> > 3900
+> >            IRQ_NOAUTOEN
+> > 3901
+> > drivers/rtc/rtc-st-lpc.c:233:11: note: each undeclared identifier is re=
+ported only once for each function it appears in
+> > 3902
+> >   CC      drivers/pci/quirks.o
+> > 3903
+> > make[2]: *** [scripts/Makefile.build:303: drivers/rtc/rtc-st-lpc.o] Err=
+or 1
+> > 3904
+> > make[1]: *** [scripts/Makefile.build:544: drivers/rtc] Error 2
+> > 3905
+> > make[1]: *** Waiting for unfinished jobs....
+> > 3906
+> >   CC      drivers/pinctrl/uniphier/pinctrl-uniphier-sld8.o
+> > 3907
+> >   CC      drivers/soc/renesas/r8a7743-sysc.o
+>=20
+> What arch is this?  And can you not wrap error logs like this please?
 
+Not easily. But you can easily get nicely formatted logs +
+architecture details by clicking the hyperlink above.
+
+Best regards,
+								Pavel
+--=20
+DENX Software Engineering GmbH,        Managing Director: Erika Unter
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+
+--rRJwBGNM29yCb0EE
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZ1A+KgAKCRAw5/Bqldv6
+8st2AKC74IP/4VCvOaJ9Mhd5CPms1awCbQCgh3KYxqrHsKB+NVWPrTEJlYJBAN0=
+=HNVQ
+-----END PGP SIGNATURE-----
+
+--rRJwBGNM29yCb0EE--
 
