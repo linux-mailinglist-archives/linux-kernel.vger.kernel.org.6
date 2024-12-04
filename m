@@ -1,122 +1,86 @@
-Return-Path: <linux-kernel+bounces-431331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFECC9E3C0B
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:04:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F2DB9E3C0D
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:04:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5ABA2852E1
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 14:04:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 246F2281F6B
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 14:04:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4E861CEADF;
-	Wed,  4 Dec 2024 14:04:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SFcW0JUc"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49D151FDE2C;
+	Wed,  4 Dec 2024 14:04:08 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 973931F7589
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 14:04:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F8861FDE05
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 14:04:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733321043; cv=none; b=UsFWun1ZLiZfICsoU0Ow2BrvMykFjT/wI7Vigr68pnmv051qGMvOVGQb3EshwPwqoks7rr/XZEsXhL9nI2u/pPJAM6JhL0NowNyqIWk7q1uP5WQHE3QcM3sue4RSnR24cmf32aftEJ1hQnjw2rnabmHTx40ZtDtotTChnOCAZE8=
+	t=1733321047; cv=none; b=JNvGtRhlimidtAE37ysvAn8+Mkv15w3iyJgwWZPY0IYG/Jtlc1+5VHF8IZ7ouvzcHXw8gmpIlSHK3HjaLL2LNmRkaY24noKvXpue0BLXfcPNQLdvuC7VhfwWYXO4HDV8ukpAydfOuAiVgG5Rs8sLzL19bAJrUAuqGqXVig6tiA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733321043; c=relaxed/simple;
-	bh=7KLMpaj3psPE975L+wGRX1NRSUDet9hdWj+hEc/t+XE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eDdusvD7y7F8NDEltkxt0YAaTV8MMdVvl2fNtGRWR+6pgHH3amBvM/xix+80WgF9n9NOT13SirJxD4LaSdUVQ9rHNUF7iXXdoqHsAMmEg/lfR7U/pvOL8Y40Ycjre1v8p8CKYubiAIx2cCj7ur0wnqDVlM+SyaSu+U6rdy8pezw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SFcW0JUc; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733321041; x=1764857041;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=7KLMpaj3psPE975L+wGRX1NRSUDet9hdWj+hEc/t+XE=;
-  b=SFcW0JUcV5HsTJwzIxd3YL4oeL+pZTiu6QCOJVI+wkPbtIYy3HJPNVhY
-   R7owYyAgwLRtXmlOizOd9fHIZz6LgcaOrieTIl1TlYfmDEQkTu1YpcDiC
-   IY+Wi4Ni3rX7B1h9TfpGgNndRcJ56OQEbaU4uou6/DWyQbqF6+Sn4e0tV
-   M73LM1fPh1S5CSTmXQS/4a6JewjZpFN4T+/Px/ASc3A+YicRLgrYwx8Ey
-   X4NnKgMrsDzjxMefB73obluOhqc+98Lmrqj6yWRttYTXbIEPfVCXi0YCL
-   SMUx4IeADGqqeK14sbJIEsvW4CPOYOMRyoOomN7GuWH7UxbpJ9a2RKTx8
-   w==;
-X-CSE-ConnectionGUID: sO6wQLheRsCUDpVOirUw2Q==
-X-CSE-MsgGUID: ZAKB7thpQL+9Bo+/7UNRzg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11276"; a="44617556"
-X-IronPort-AV: E=Sophos;i="6.12,207,1728975600"; 
-   d="scan'208";a="44617556"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Dec 2024 06:04:00 -0800
-X-CSE-ConnectionGUID: 4yfn1dd1SteZ8DH1tW0vMg==
-X-CSE-MsgGUID: 435jbu0ITeikpMsf38kSJw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,207,1728975600"; 
-   d="scan'208";a="94600355"
-Received: from lkp-server02.sh.intel.com (HELO 1f5a171d57e2) ([10.239.97.151])
-  by orviesa008.jf.intel.com with ESMTP; 04 Dec 2024 06:03:57 -0800
-Received: from kbuild by 1f5a171d57e2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tIpys-00035D-2A;
-	Wed, 04 Dec 2024 14:03:54 +0000
-Date: Wed, 4 Dec 2024 22:03:37 +0800
-From: kernel test robot <lkp@intel.com>
-To: Jocelyn Falempe <jfalempe@redhat.com>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, Jocelyn Falempe <jfalempe@redhat.com>
-Subject: Re: [PATCH v2 1/5] drm/i915/fbdev: Add intel_fbdev_get_vaddr()
-Message-ID: <202412042119.5ErpNlAU-lkp@intel.com>
-References: <20241203092836.426422-2-jfalempe@redhat.com>
+	s=arc-20240116; t=1733321047; c=relaxed/simple;
+	bh=4Gj3kqfWElIWpR2YznFjYowx9bJlOXWWFDmdTukH3Kc=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=rWqsggya1sbeRI5RsWJmGdEfyyR72aPf79lE4kTG7ZIyTgKGd1BD3JxJgh9PUKdGSFi9DBpMT4RT9SqOwB4IcGuwOuuP0Zvuzu5xb0NWVfr2WakEBNeXduAInKOTcq1M1xc5tvkeERD002e5M1JWX2jI/NNlBGmGyPibushDkZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a7cf41b54eso132875105ab.2
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 06:04:06 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733321045; x=1733925845;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ovPKx38lZVzOl1kDleOE/Yvfcqptl8EjKTGxTyapQh8=;
+        b=D2npMfiFaR+3C7M1rwAaGNTiUKZYL0KBcH/6bChtljvHkTEqYYdB29mWN+f+OllzeT
+         I49KNHQkLA+yVs2GQFlwZ8nAu/IXU2i8WPUle261cc7rgNpCXlkPCmFLU8uRwQ4ZF+E7
+         Ze0pDMkurKHOGcujLXSdIwikSZMta1VZZWG9iRTguhpqy/9vohOjdqtJCCEM1Fv1Lo1x
+         05GCALKv/pIGzGQM8QubIQ5zVGhh+KNAmD+YNn5x/+stLu7DvbJF5M1+azSEa0Uteo6K
+         SuvT7Xung0fwtvjf1mngGaoZDTnDenoOZKp+EL+5RgmLYz2dMPJMEmLLrNBIIoZUBUEM
+         5IXA==
+X-Forwarded-Encrypted: i=1; AJvYcCVtxnBXJOSslpmN4MUgtU9jxcWd50vuQj4lVhWxWeaN39cR7rXsHugNrWrreZ/6CCme7S//iHhrOI/2pHs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6tjTYV+GCAGSWE6W5192KznWKlNfgyg4ttxpbv2yI1Z2vyetd
+	/jZL4XlqTyhjztgEAOHL9fPuteKZbL5YSvLFA4vGwphqTWKL1kLtEQWcG8Yz/BpUx0Wb0wFU1PO
+	fsetRphQH8QPk8hfHEewjyTz3JywhDPvB72qtttroWAPZVxr7lRQGKqU=
+X-Google-Smtp-Source: AGHT+IHmcyq15VqWSA8qBbrUK7rYL1FSKaYQedwe2i83e4b/FEzYZwUISd3qXbaRpUXtiRPDaScS+sIhZGiM3Ip8xIQPdtcITanX
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241203092836.426422-2-jfalempe@redhat.com>
+X-Received: by 2002:a05:6e02:1c26:b0:3a7:d7dd:e70f with SMTP id
+ e9e14a558f8ab-3a7fece32dbmr42547585ab.12.1733321043724; Wed, 04 Dec 2024
+ 06:04:03 -0800 (PST)
+Date: Wed, 04 Dec 2024 06:04:03 -0800
+In-Reply-To: <tencent_001B704B941B65254DBA10BB92337F9E7508@qq.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67506153.050a0220.17bd51.006b.GAE@google.com>
+Subject: Re: [syzbot] [nilfs?] WARNING in nilfs_rmdir
+From: syzbot <syzbot+9260555647a5132edd48@syzkaller.appspotmail.com>
+To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Jocelyn,
+Hello,
 
-kernel test robot noticed the following build warnings:
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+lost connection to test machine
 
-[auto build test WARNING on 44cff6c5b0b17a78bc0b30372bcd816cf6dd282a]
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Jocelyn-Falempe/drm-i915-fbdev-Add-intel_fbdev_get_vaddr/20241203-173213
-base:   44cff6c5b0b17a78bc0b30372bcd816cf6dd282a
-patch link:    https://lore.kernel.org/r/20241203092836.426422-2-jfalempe%40redhat.com
-patch subject: [PATCH v2 1/5] drm/i915/fbdev: Add intel_fbdev_get_vaddr()
-config: i386-randconfig-062-20241204 (https://download.01.org/0day-ci/archive/20241204/202412042119.5ErpNlAU-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241204/202412042119.5ErpNlAU-lkp@intel.com/reproduce)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202412042119.5ErpNlAU-lkp@intel.com/
+Tested on:
 
-sparse warnings: (new ones prefixed by >>)
->> drivers/gpu/drm/i915/display/intel_fb_pin.c:333:34: sparse: sparse: incorrect type in return expression (different address spaces) @@     expected void * @@     got void [noderef] __iomem * @@
-   drivers/gpu/drm/i915/display/intel_fb_pin.c:333:34: sparse:     expected void *
-   drivers/gpu/drm/i915/display/intel_fb_pin.c:333:34: sparse:     got void [noderef] __iomem *
+commit:         7a22f39b nilfs2: replace drop with clear for nlink
+git tree:       https://github.com/ea1davis/linux nilfs/syz_0163_v2
+console output: https://syzkaller.appspot.com/x/log.txt?x=1629a330580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=35f1fa828fe386c2
+dashboard link: https://syzkaller.appspot.com/bug?extid=9260555647a5132edd48
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-vim +333 drivers/gpu/drm/i915/display/intel_fb_pin.c
-
-   330	
-   331	void *intel_fb_get_vaddr(struct i915_vma *vma)
-   332	{
- > 333		return i915_vma_get_iomap(vma);
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Note: no patches were applied.
 
