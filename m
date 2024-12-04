@@ -1,29 +1,30 @@
-Return-Path: <linux-kernel+bounces-430792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430796-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B7DC9E35A8
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 09:41:59 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A8419E35AE
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 09:42:35 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 075BF16572E
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 08:41:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1DD962813D4
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 08:42:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B04D7198A05;
-	Wed,  4 Dec 2024 08:41:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4945E1AAE02;
+	Wed,  4 Dec 2024 08:41:57 +0000 (UTC)
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC756196434
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 08:41:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D9C6198841
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 08:41:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733301713; cv=none; b=Lo6g3xMGWu6i0U29QbbX4gcnpUHMY3nIqc1TwM5/X6qDrswOMGdYClKPZfYbZRBuQlh6wHpieIpQ2Pa9bkRh4YFyugmwyABvsjzcOnaF2CbK6Xyu8hmuiv98srbLOdRcefrXLj1YbjVEplAWo5jqhrYausUKe7zotgdSNsBQ8ds=
+	t=1733301715; cv=none; b=IDz2iZNUtE14tO71DtLzTn+sgJ3TN92qeBwMtA60RFy5XNQ6qVbdmbdft0b1u5DsYADvOtxqtcAz1owJoO41YU60XtJKcX6bh+dLyjrqVyMBzATfomsYn2Kl1YogOotA/0QXReTcqfF+DJzNb8Yrxojdi0JlwOLcn4PN6wEr5zc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733301713; c=relaxed/simple;
-	bh=IKDPfExthKtx+seYruE/9nS6YGL3LxsWsGO3Vnufd+w=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pG9+bp3wvMOBUq2eO3YySsw1DEba5iLPXsTZ428/vv+2wVKUFAtM0n+Rq1f0hmYr8jFvzuve0c6pwcf9+AOw0GW7eTVZbeIaHDxnzQrsqCPxK8c3MvLy0Noxl9odv/YxeDh8DoiZeDXdyw8RghrZHd7htcb/EKeCPihkQ7vQMAU=
+	s=arc-20240116; t=1733301715; c=relaxed/simple;
+	bh=mzjTFGrttSsCn/51pAntoYmX38f7QDB45JL75XW+zPY=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=h6IPeAK0h97DLSseccC4pJ8iLpJESxdVbNL2pxANujciA2NCNNIPqoVIlnukPT6t+j753/PC+2gAAiKzG3loMsLbYBDSLu47jiKTqkISc8Up1BVQkRBYjvfDwgzy1M1THEsIaoKMYgaOH/o8Qc8tSCEJJkC0tt0BCCutKL7XMqQ=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
@@ -31,16 +32,16 @@ Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
 	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
 	(Exim 4.92)
 	(envelope-from <ore@pengutronix.de>)
-	id 1tIkx7-0001Hz-42; Wed, 04 Dec 2024 09:41:45 +0100
+	id 1tIkx7-0001I0-44; Wed, 04 Dec 2024 09:41:45 +0100
 Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
 	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.96)
 	(envelope-from <ore@pengutronix.de>)
-	id 1tIkx5-001cU6-0H;
+	id 1tIkx5-001cU7-0M;
 	Wed, 04 Dec 2024 09:41:43 +0100
 Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
 	(envelope-from <ore@pengutronix.de>)
-	id 1tIkx5-004psV-2X;
+	id 1tIkx5-004psf-2d;
 	Wed, 04 Dec 2024 09:41:43 +0100
 From: Oleksij Rempel <o.rempel@pengutronix.de>
 To: "David S. Miller" <davem@davemloft.net>,
@@ -50,15 +51,18 @@ To: "David S. Miller" <davem@davemloft.net>,
 	Woojung Huh <woojung.huh@microchip.com>,
 	Andrew Lunn <andrew+netdev@lunn.ch>
 Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
+	Andrew Lunn <andrew@lunn.ch>,
 	kernel@pengutronix.de,
 	linux-kernel@vger.kernel.org,
 	netdev@vger.kernel.org,
 	UNGLinuxDriver@microchip.com,
 	Phil Elwell <phil@raspberrypi.org>
-Subject: [PATCH net-next v2 00/21] lan78xx: Preparations for PHYlink
-Date: Wed,  4 Dec 2024 09:41:32 +0100
-Message-Id: <20241204084142.1152696-1-o.rempel@pengutronix.de>
+Subject: [PATCH net-next v2 01/10] net: usb: lan78xx: Remove LAN8835 PHY fixup
+Date: Wed,  4 Dec 2024 09:41:33 +0100
+Message-Id: <20241204084142.1152696-2-o.rempel@pengutronix.de>
 X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20241204084142.1152696-1-o.rempel@pengutronix.de>
+References: <20241204084142.1152696-1-o.rempel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,45 +75,123 @@ X-SA-Exim-Mail-From: ore@pengutronix.de
 X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
 X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-changes v2:
-- split the patch set.
+Remove the PHY fixup for the LAN8835 PHY in the lan78xx driver due to
+the following reasons:
 
-This patch set is part of the preparatory work for migrating the lan78xx
-USB Ethernet driver to the PHYlink framework. During extensive testing,
-I observed that resetting the USB adapter can lead to various read/write
-errors. While the errors themselves are acceptable, they generate
-excessive log messages, resulting in significant log spam. This set
-improves error handling to reduce logging noise by addressing errors
-directly and returning early when necessary.
+- There is no publicly available information about the LAN8835 PHY.
+  However, it appears to be the integrated PHY used in the LAN7800 and
+  LAN7850 USB Ethernet controllers. These PHYs use the GMII interface,
+  not RGMII as configured by the fixup.
 
-Key highlights of this series include:
-- Enhanced error handling to reduce log spam while preserving the
-  original error values, avoiding unnecessary overwrites.
-- Improved error reporting using the `%pe` specifier for better clarity
-  in log messages.
-- Removal of redundant and problematic PHY fixups for LAN8835 and
-  KSZ9031, with detailed explanations in the respective patches.
-- Cleanup of code structure, including unified `goto` labels for better
-  readability and maintainability, even in simple editors.
+- The correct driver for handling the LAN8835 PHY functionality is the
+  Microchip PHY driver (`drivers/net/phy/microchip.c`), which properly
+  supports these integrated PHYs.
 
-Oleksij Rempel (10):
-  net: usb: lan78xx: Remove LAN8835 PHY fixup
-  net: usb: lan78xx: Remove KSZ9031 PHY fixup
-  net: usb: lan78xx: move functions to avoid forward definitions
-  net: usb: lan78xx: Improve error reporting with %pe specifier
-  net: usb: lan78xx: Fix error handling in MII read/write functions
-  net: usb: lan78xx: Improve error handling in EEPROM and OTP operations
-  net: usb: lan78xx: Add error handling to lan78xx_init_ltm
-  net: usb: lan78xx: Add error handling to set_rx_max_frame_length and
-    set_mtu
-  net: usb: lan78xx: Add error handling to lan78xx_irq_bus_sync_unlock
-  net: usb: lan78xx: Improve error handling in dataport and multicast
-    writes
+- The PHY ID `0x0007C130` is actually used by the LAN8742A PHY, which
+  only supports RMII. This interface is incompatible with the LAN78xx
+  MAC, as the LAN7801 (the only LAN78xx version without an integrated
+  PHY) supports only RGMII.
 
- drivers/net/usb/lan78xx.c | 785 +++++++++++++++++++++-----------------
- 1 file changed, 433 insertions(+), 352 deletions(-)
+- The mask applied for this fixup is overly broad, inadvertently
+  covering both Microchip LAN88xx PHYs and unrelated SMSC LAN8742A PHYs,
+  leading to potential conflicts with other devices.
 
---
+- Testing has shown that removing this fixup for LAN7800 and LAN7850
+  does not result in any noticeable difference in functionality, as the
+  Microchip PHY driver (`drivers/net/phy/microchip.c`) handles all
+  necessary configurations for these integrated PHYs.
+
+- Registering this fixup globally (not limited to USB devices) risks
+  conflicts by unintentionally modifying other interfaces whenever a
+  LAN7801 adapter is connected to the system.
+
+Note that both LAN7800 and LAN7850 USB Ethernet controllers use an
+integrated PHY with the ID `0x0007C132`. Additionally, the LAN7515, a
+specialized part for Raspberry Pi, includes an integrated LAN7800 USB
+Ethernet controller and USB hub in a multifunctional chip design, and it
+also uses the same PHY ID (`0x0007C132`).
+
+Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+---
+ drivers/net/usb/lan78xx.c | 35 -----------------------------------
+ 1 file changed, 35 deletions(-)
+
+diff --git a/drivers/net/usb/lan78xx.c b/drivers/net/usb/lan78xx.c
+index 531b1b6a37d1..6e468e77d796 100644
+--- a/drivers/net/usb/lan78xx.c
++++ b/drivers/net/usb/lan78xx.c
+@@ -473,7 +473,6 @@ struct lan78xx_net {
+ };
+ 
+ /* define external phy id */
+-#define	PHY_LAN8835			(0x0007C130)
+ #define	PHY_KSZ9031RNX			(0x00221620)
+ 
+ /* use ethtool to change the level for any given device */
+@@ -2234,29 +2233,6 @@ static void lan78xx_remove_irq_domain(struct lan78xx_net *dev)
+ 	dev->domain_data.irqdomain = NULL;
+ }
+ 
+-static int lan8835_fixup(struct phy_device *phydev)
+-{
+-	int buf;
+-	struct lan78xx_net *dev = netdev_priv(phydev->attached_dev);
+-
+-	/* LED2/PME_N/IRQ_N/RGMII_ID pin to IRQ_N mode */
+-	buf = phy_read_mmd(phydev, MDIO_MMD_PCS, 0x8010);
+-	buf &= ~0x1800;
+-	buf |= 0x0800;
+-	phy_write_mmd(phydev, MDIO_MMD_PCS, 0x8010, buf);
+-
+-	/* RGMII MAC TXC Delay Enable */
+-	lan78xx_write_reg(dev, MAC_RGMII_ID,
+-			  MAC_RGMII_ID_TXC_DELAY_EN_);
+-
+-	/* RGMII TX DLL Tune Adjust */
+-	lan78xx_write_reg(dev, RGMII_TX_BYP_DLL, 0x3D00);
+-
+-	dev->interface = PHY_INTERFACE_MODE_RGMII_TXID;
+-
+-	return 1;
+-}
+-
+ static int ksz9031rnx_fixup(struct phy_device *phydev)
+ {
+ 	struct lan78xx_net *dev = netdev_priv(phydev->attached_dev);
+@@ -2315,14 +2291,6 @@ static struct phy_device *lan7801_phy_init(struct lan78xx_net *dev)
+ 			netdev_err(dev->net, "Failed to register fixup for PHY_KSZ9031RNX\n");
+ 			return NULL;
+ 		}
+-		/* external PHY fixup for LAN8835 */
+-		ret = phy_register_fixup_for_uid(PHY_LAN8835, 0xfffffff0,
+-						 lan8835_fixup);
+-		if (ret < 0) {
+-			netdev_err(dev->net, "Failed to register fixup for PHY_LAN8835\n");
+-			return NULL;
+-		}
+-		/* add more external PHY fixup here if needed */
+ 
+ 		phydev->is_internal = false;
+ 	}
+@@ -2384,8 +2352,6 @@ static int lan78xx_phy_init(struct lan78xx_net *dev)
+ 			} else {
+ 				phy_unregister_fixup_for_uid(PHY_KSZ9031RNX,
+ 							     0xfffffff0);
+-				phy_unregister_fixup_for_uid(PHY_LAN8835,
+-							     0xfffffff0);
+ 			}
+ 		}
+ 		return -EIO;
+@@ -4243,7 +4209,6 @@ static void lan78xx_disconnect(struct usb_interface *intf)
+ 	phydev = net->phydev;
+ 
+ 	phy_unregister_fixup_for_uid(PHY_KSZ9031RNX, 0xfffffff0);
+-	phy_unregister_fixup_for_uid(PHY_LAN8835, 0xfffffff0);
+ 
+ 	phy_disconnect(net->phydev);
+ 
+-- 
 2.39.5
 
 
