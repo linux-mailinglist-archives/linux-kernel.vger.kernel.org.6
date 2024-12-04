@@ -1,121 +1,140 @@
-Return-Path: <linux-kernel+bounces-431203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431204-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 788A69E3A5A
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 13:51:08 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D9699E3A5C
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 13:51:39 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56905165E11
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 12:51:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 435272821AB
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 12:51:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F0BE1B9831;
-	Wed,  4 Dec 2024 12:51:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BCAD1B87F4;
+	Wed,  4 Dec 2024 12:51:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IMpvMVG2"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Nmv9fl9b"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52F5E19F475;
-	Wed,  4 Dec 2024 12:50:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E62D12500CE;
+	Wed,  4 Dec 2024 12:51:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733316660; cv=none; b=YXYV1ZyDvZ+lAAWFYZx6HfL/1R/z5vDZYA0stMg+TikRfB3N4p6mxdu/iWaXhdHpNq2sKEIGveWNbcJ9IH4hG+vjUFyCuDBF/KbUBKUdZDfXhOdZZm8SZRVHttRjmlB+H4y+mA4iKya6swWohEGFwyn/jOoJ+Mk93GrGBVUHXwI=
+	t=1733316692; cv=none; b=CUpzXQUI1Lajse+dt0yb6BqY5QP81sbbEWs55/ZIf8zi5pA6xvs5UgxvnUDjPHMW6+8bnJhsvpWoNNFf8WXdPc0eQ5sGZnxJIklEr5/b9D2VkGssqEIXk87FAddvs2tB6O2dHthFttJHvFd6GXmS+iKCOMZuhjyBBauAev1k9nU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733316660; c=relaxed/simple;
-	bh=NDhsbahJD+yAj12Er2ie34fi2x/7kfX4pIrDSW6gQpA=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=eUeAnHe1AUAAm8PCRlTTC+P+CtJYdaebfAFkVPIdOFU/VpDUhvfH7P4kT/mk+yv6RIKmwqrcED85YS35Wjw6HzPoY2iET6Pg2Rw+OZ+PHqoIJOvo3oPWxdWTZ+C2D2tJ0XDA107rx2E1El8xvqi1xwE9RNQXQQ1TTcRBqc3t2SM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IMpvMVG2; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4349cc45219so61017085e9.3;
-        Wed, 04 Dec 2024 04:50:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733316657; x=1733921457; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=NDhsbahJD+yAj12Er2ie34fi2x/7kfX4pIrDSW6gQpA=;
-        b=IMpvMVG24VazuNCIAv/pJgJ71EZPxV/jViQiezWk17M0v0YLRDmhbYXsMP0RqdL2gS
-         eKq8eZUClNSFSxbEbRaDgD/0u4K76NN4kMuwU/HrxW+WGgHMFFyHqZXk2XCXym/5iOQG
-         EwNUOYd5tW+WYpkNDwRpPb4fr0BzQG58TnZhVRMNLPTzMSMMhVAz9EGBSguR+4k5llxb
-         vDODDfyo6XRlSlTRFpWPNhYgfyvienL/iA4CX5ZfVOQSjEJKUbDWAVqoi3F05wzbZG8g
-         v1MLEH2tQcOU8tq6MlX6V5WDiEDEKPHjZHMkDNzDWdxv33SVERnXeJKRWfkK0KZhYT7e
-         V8GA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733316657; x=1733921457;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=NDhsbahJD+yAj12Er2ie34fi2x/7kfX4pIrDSW6gQpA=;
-        b=DMgB3f1Eo7sEs0OoYJoCvK2A64dbOnPqec7Xx2FYDT28rn1996pmBeLcUMOi8xuK3X
-         +jMMEdIRzvKHpHJkzxnghBkLQVgWl/ylYAe0QyUBQ+0OZaMQTK3UowiM3ko/n2CIvdQn
-         uxjO0f8c/275xYykJ5xa74Vg1g6CZEwc0wLUJir20mSeAHthPanN3KZhhtN7S15i1sVG
-         /kiT99svsEJFoih2RTuDn4rnFXcsbcK5coJZS59FjohkdVqMBv9hil5Kzcg6HjipAVss
-         vOG6QJorOztzQi27b+vjotzuQnhB9QS0Y+Oz4NvDvf+E+DOzAtTDSRym+0GjJXywaqU0
-         M+xg==
-X-Forwarded-Encrypted: i=1; AJvYcCV1z+zqC8nC2ewd3SVzazCTTL6PWl/dx9k8KvLVINajv2Wrr+Ynsj/3bCl1V720Nd+NY3FccT5fQJQaa5o=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5yycWab7gflDzkrGvI9GjIJ+GZoUIenL9KDb+lFQ7N9OxW5cv
-	mVIhqYbDhLtEWk0PKO6cqeV2gkVn4OQIjzsOK+VDOJIdqCUVOIzX
-X-Gm-Gg: ASbGncvFjAco5IK2OcHiRMVJXty1tMhOpIrAp77tv9IacKLj5N191WGCoFieq7ove7S
-	xpvHt3CpHAH8+RPZ7ExXILZOp8knlMsrA7096e1LJSQWkA0P1g6TAr7grhV350LREicPYKjcgdK
-	Db7/ATZYrFu5u0jddqHwPT8wjAHe/97Oecq9exGUsU6+rrfLqhrA1kw3q9hoCCmF6dWj+JxukLd
-	BQ67WCu5v2jcccpt+AfLXP/e0cbBHZI/4AJN3x9ZG2HyO+O05JN
-X-Google-Smtp-Source: AGHT+IFwWT7Pst+/G/eyPLR91512VqyL2tkvgnSgk8cxtOg8lJAvE8NQrhAfBubxyWStcdidVl8iOw==
-X-Received: by 2002:a05:6000:4024:b0:385:e94d:b152 with SMTP id ffacd0b85a97d-385fd433427mr5598869f8f.54.1733316656957;
-        Wed, 04 Dec 2024 04:50:56 -0800 (PST)
-Received: from [10.176.235.56] ([137.201.254.41])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434d5280fc4sm23624105e9.24.2024.12.04.04.50.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Dec 2024 04:50:56 -0800 (PST)
-Message-ID: <b1e4207586a7b6bc1dbaef69627eb5c6b8e956db.camel@gmail.com>
-Subject: Re: [PATCH] scsi:ufs:core: update compl_time_stamp_local_clock
- after complete a cqe
-From: Bean Huo <huobean@gmail.com>
-To: liuderong@oppo.com, alim.akhtar@samsung.com, avri.altman@wdc.com, 
-	bvanassche@acm.org, James.Bottomley@HansenPartnership.com, 
-	martin.petersen@oracle.com, peter.wang@mediatek.com, 
-	manivannan.sadhasivam@linaro.org, ahalaney@redhat.com, beanhuo@micron.com, 
-	quic_mnaresh@quicinc.com
-Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Wed, 04 Dec 2024 13:50:55 +0100
-In-Reply-To: <1733313004-350420-1-git-send-email-liuderong@oppo.com>
-References: <1733313004-350420-1-git-send-email-liuderong@oppo.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	s=arc-20240116; t=1733316692; c=relaxed/simple;
+	bh=GaOS2a2mtdazLC2Ljr7S+TzHBvqzFEWC0jbwRrqW0Lo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QnMVivkgOOyNdRI1SkiGTXcDDn5shf+V7MRIaErS8Ti7JOl6hOM3ZlLImy6hxLr/w/vZ61I0sJY6FKl7O/HxImlhdE/arHfSz9eQD/bcibZFgOUqezZEJ5ukGtM1VSHvx2H7FW9iHTk3l14xdFxrxm7yhm9SxwSneDAbt+UYIM4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Nmv9fl9b; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4FF99C4CED2;
+	Wed,  4 Dec 2024 12:51:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733316691;
+	bh=GaOS2a2mtdazLC2Ljr7S+TzHBvqzFEWC0jbwRrqW0Lo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Nmv9fl9bG8jv50qK+GwfNnq703ThaEBdH1IDJdDsmhR2AizCaEYR1xVajU79Abvoo
+	 eCJvW8uFAwJfGykGlqIgxX43+KLfVBlnlBbijxfGGDEws6p3DNSNnIUP8mQHeer0CT
+	 Gds/ZKyyZ9pFyZY5bi3UpFRS+P+AaEg3KFjmpF0hRXNaw2ya0Hr1GZgsNoS5WqvNIV
+	 7a6D2FDNcGmXYYz1jCbOz7lxmdOQUu2UZqSoTzQfKJ9DFXAxlREnPV19uPo2+jccBo
+	 j3+cNniED9SjBkxa/taHv7YCSr0+WUdtK5DH3i+Ic+gW8KM0EyfxAOgxGdjpcM4mdu
+	 4mOkm8gnJM3Mg==
+Date: Wed, 4 Dec 2024 13:51:27 +0100
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Hans Verkuil <hverkuil@xs4all.nl>
+Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, Ricardo
+ Ribalda <ribalda@chromium.org>
+Subject: Re: [PATCH v4 5/5] docs: media: profile: make it clearer about
+ maintainership duties
+Message-ID: <20241204135127.7b295c19@foz.lan>
+In-Reply-To: <57ed2ba7-ebe8-433f-bb52-914a020ca468@xs4all.nl>
+References: <cover.1733218348.git.mchehab+huawei@kernel.org>
+	<f74d32eba4c1799fe7fd407a3889a3de91fb09f2.1733218348.git.mchehab+huawei@kernel.org>
+	<57ed2ba7-ebe8-433f-bb52-914a020ca468@xs4all.nl>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, 2024-12-04 at 19:50 +0800, liuderong@oppo.com wrote:
-> =C2=A01 file changed, 1 insertion(+)
->=20
-> diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
-> index 6a26853..bd70fe1 100644
-> --- a/drivers/ufs/core/ufshcd.c
-> +++ b/drivers/ufs/core/ufshcd.c
-> @@ -5519,6 +5519,7 @@ void ufshcd_compl_one_cqe(struct ufs_hba *hba,
-> int task_tag,
-> =C2=A0
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0lrbp =3D &hba->lrb[task_t=
-ag];
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0lrbp->compl_time_stamp =
-=3D ktime_get();
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0lrbp->compl_time_stamp_local_c=
-lock =3D local_clock();
+Em Wed, 4 Dec 2024 13:11:45 +0100
+Hans Verkuil <hverkuil@xs4all.nl> escreveu:
 
-probably, we should change lrbp->compl_time_stamp =3D ktime_get(); to
-lrbp->compl_time_stamp =3D local_clock(); also, the name of
-compl_time_stamp_local_clock, is so long, should be shorter.=20
+> On 12/3/24 10:35, Mauro Carvalho Chehab wrote:
+> > During the review of the media committer's profile, it was noticed
+> > that the responsibility for timely review patches was not clear:
+> > such review is expected that all developers listed at MAINTAINERS
+> > with the "M:" tag (e.g. "maintainers" on its broad sense).
+> > 
+> > This is orthogonal of being a media committer or not. Such duty
+> > is implied at:
+> > 
+> > 	Documentation/admin-guide/reporting-issues.rst
+> > 
+> > and at the MAINTAINERS header, when it says that even when the
+> > status is "odd fixes", the patches will flow in.
+> > 
+> > So, let make it explicit at the maintainer-entry-profile that
+> > maintainers need to do timely reviews.
+> > 
+> > Also, while right now our focus is on granting committer rights to
+> > maintainers, the media-committer model may evolve in the future to
+> > accept other committers that don't have such duties.
+> > 
+> > So, make it clear at the media-committer.rst that the duties
+> > related to reviewing patches from others are for the drivers
+> > they are maintainers as well.
+> > 
+> > Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> > ---
+> >  Documentation/driver-api/media/maintainer-entry-profile.rst | 5 +++++
+> >  Documentation/driver-api/media/media-committer.rst          | 6 +++---
+> >  2 files changed, 8 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/Documentation/driver-api/media/maintainer-entry-profile.rst b/Documentation/driver-api/media/maintainer-entry-profile.rst
+> > index fa28059f7b3f..87b71f89b1df 100644
+> > --- a/Documentation/driver-api/media/maintainer-entry-profile.rst
+> > +++ b/Documentation/driver-api/media/maintainer-entry-profile.rst
+> > @@ -173,6 +173,11 @@ b. Committers' workflow: patches are handled by media committers::
+> >  On both workflows, all patches shall be properly reviewed at
+> >  linux-media@vger.kernel.org (LMML) before being merged at media-committers.git.
+> >  
+> > +Such patches will be reviewed timely by the maintainers and reviewers as
+> > +listed in the MAINTAINERS file. The subsystem maintainers will follow one of
+> > +the above workflows, e. g. they will either send a pull request or merge
+> > +patches directly at the media-committers tree.
+> > +
+> >  When patches are picked by patchwork and when merged at media-committers,
+> >  CI bots will check for errors and may provide e-mail feedback about
+> >  patch problems. When this happens, the patch submitter must fix them, or
+> > diff --git a/Documentation/driver-api/media/media-committer.rst b/Documentation/driver-api/media/media-committer.rst
+> > index 3d0987a8a93b..0bc038a0fdcc 100644
+> > --- a/Documentation/driver-api/media/media-committer.rst
+> > +++ b/Documentation/driver-api/media/media-committer.rst
+> > @@ -90,9 +90,9 @@ be a part of their maintenance tasks.
+> >  Due to that, to become a committer or a core committer, a consensus between
+> >  all subsystem maintainers is required, as they all need to trust a developer
+> >  well enough to be delegated the responsibility to maintain part of the code
+> > -and to properly review patches from third parties, in a timely manner and
+> > -keeping the status of the reviewed code at https://patchwork.linuxtv.org
+> > -updated.
+> > +and to properly review patches from third parties for the drivers that they
+> > +maintain in a timely manner and keeping the status of the patches at
+> > +https://patchwork.linuxtv.org updated.
+> >  
+> >  .. Note::
+> >    
+> 
+> Looks OK to me, but I thought this was supposed to be folded into the 3/5 and 4/5 patches?
+
+I'll fold it once you and Ricardo gives the same review/Sob as marked on 3/5 and 4/5.
 
 
-but the patch is ok to me:
-
-Reviewed-by: Bean Huo <beanhuo@micron.com>
+Thanks,
+Mauro
 
