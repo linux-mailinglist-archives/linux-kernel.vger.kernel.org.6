@@ -1,162 +1,139 @@
-Return-Path: <linux-kernel+bounces-430499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E938B9E31AD
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 04:00:37 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16F499E31AE
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 04:01:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5C9F165BC9
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 03:00:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D33B160E81
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 03:01:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE54417C61;
-	Wed,  4 Dec 2024 03:00:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 739364D9FB;
+	Wed,  4 Dec 2024 03:01:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YxuNRcYM"
-Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Sn9/+nHG"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C9D72CA9;
-	Wed,  4 Dec 2024 03:00:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 068402CA9;
+	Wed,  4 Dec 2024 03:01:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733281233; cv=none; b=H5uLp8s8Pk/aaJ5HsMyr+OARJZbDXIHeLptalXaQLQTsx89aHrJICTnbhlmaXiS8WE5wJ4vZLgd2rm088u2sw6/ZX0s7qV1m0GYngSBxSe3SpPpgmVVgPyNKNll2Q+wKA84Y6N88LJtTpeuu3bbc/Ir5SprXUoA22KTTDrHDdmw=
+	t=1733281274; cv=none; b=llBIG3Cd2WMsaM284kjMwcuDbHH3sjEt60miXbghGhoOd7qZoNeY06ZMlNQnhY5eCV7f8IMPbiPcbO9a1j0n9exFCVQqM8LbkS95QVfjiZ0gWmWsgfHmhPGmV9fYjLLNZNxje5bcRJ+dxSITPMUKwoqPKd6Nq4+cw9J9nrrlzJc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733281233; c=relaxed/simple;
-	bh=RDRAVE4QPo6F/Y2h2DKGCCKwMmlOjO56h8recxRzJaQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=o8BqH/fP1GJelCWOmkvnGJ0UOoWUeEuITmPAQHFjJZoda17seNai1YskETTHJskFvG4dU6II55fuKpfVm9URluuHRtdow9DpFYLVuj+F3b++0O0z6543rvpEvgEBcD3MPARiFcwf+AvWBJMvg756/8cxPC6NZYy71+3FF4HV5LQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YxuNRcYM; arc=none smtp.client-ip=209.85.219.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-6d87e0082b8so42236386d6.2;
-        Tue, 03 Dec 2024 19:00:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733281230; x=1733886030; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pWtav44aGPTg+SH71WZDykbhQc5sKDR+6r0BIdOJERI=;
-        b=YxuNRcYMh5uc7LRoAlIfCnCehFLIt6Sp0YzFZ7Znwu03vx2M2iQ/dflnJz9yWO7Ryi
-         7KKEvdjEFagcp2ogK+jMMNlqBqW5PZFGVNM07Hcg71uCgzXDDWrXOUvx2VEPGliXJQsa
-         Ry50ebiE+t3KeEGzWVHANTSeg4CIsC1tyLCc4PVPAmDEPpCsxbteWraYPkyh7X6gTQ43
-         S4nhN4mJKTGBs3AnK6TanzD0QYuJKiPyaNDU3aYKhn/7JbTCUJO2mDSdo/sESX40HEoR
-         vDt5hJ3k5F+cLplPVtAWv11vt13c+wX5lmNeViO0EA61lXfqfrxLui/f6Rj88Hfy2b6v
-         hEhQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733281230; x=1733886030;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pWtav44aGPTg+SH71WZDykbhQc5sKDR+6r0BIdOJERI=;
-        b=RKJuwh3RFBK5Ua/W81wJGbH6Aj8HFkmRHhJJ3WqEZCzddHm/mPHQ/ARpgIRBo5m/II
-         dDMmRtI4rRW9oCqjs8QeAvL+jQow3GS351eyI54j90d6szb5pzyw/0/NasWhAOOEulgX
-         PTZqMW+fuCAPBcgrXtlW30hHpTZBMvU5CnKJ6kgFdAcaDJ7eefX+V2ZMmhn3BPHWxniu
-         rFFf9aL/2Kz3lzUSE33xIgQubfBYj8/MZIwvGKf4v78oWM0pnt81tm2xyL/G4rwKcckl
-         D2uxYf4mU5mhOCFsaj7+PEOReaMquaK3Y5nefduPUWMsKNUkg8lX/lb4ECzNMUOC048I
-         qigg==
-X-Forwarded-Encrypted: i=1; AJvYcCW8b/5E7JFa9mms90LogkyJEFefNdD+3Nk5bgZhPe/H9FKxDuI2wkrLerO6jQjXnT6mF4XO4oCEw5aa8q6h@vger.kernel.org, AJvYcCWLvcinK5CuxqkbtDVjdzW+CXl7uteSnDDsjWiXO4z+CFS+kIghMK/3jA0QC/OBH6C5T0MLvA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwayJPvdjM27K8u9V+IeoVdhnCFscFklAONioaCoHcLnbLVkxmT
-	CQ3yz84ZTp95AuOq8bauzuz6GoWGCDa3ZEPV92VI236oSS7+nYz4S7lDT8R3QPCFgc/EFm5cX0e
-	PNPhV7mJlCuG/SrbsevMhlUP1+2k=
-X-Gm-Gg: ASbGncuA+Ag8+SE7gH+bPou4TMFQt4+oyEywg8YofPmUHBBdA9mXDY+tAtWn6+4uErp
-	GhsJcQGbphWLzeSaJ0xcnUTKAbQ/SmOMYyw==
-X-Google-Smtp-Source: AGHT+IFnywf/vYN4TukMPJc6MJF4FTs1TKly8Y7qtQnLdJa4iQXGg6E90SyigEqKtVKiJkNSusKDcdM5snxKjEeUlc8=
-X-Received: by 2002:a05:6214:5008:b0:6d8:b2f2:bcb8 with SMTP id
- 6a1803df08f44-6d8b7331a5dmr81140146d6.8.1733281230566; Tue, 03 Dec 2024
- 19:00:30 -0800 (PST)
+	s=arc-20240116; t=1733281274; c=relaxed/simple;
+	bh=QWOyW0RSuqhTNUZgpIyrrKeMl0sjLC/tNnJLur0kPaY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X+iX/xzDffWGoC7U90FaX5fzsX083NnOnHVbePxUgMEu7OPl1MDT52BirfgnMFlGjJewvV8Pua5M4WfIYiyCl2nmiDzM71y3HYFkqzmCXpiq7KJrUqrLiW8a4yKmkhtJUJPrYBUnz8UCEh7dC1HAAiK8Et+wDldbwqCZqtRZw4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Sn9/+nHG; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733281273; x=1764817273;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=QWOyW0RSuqhTNUZgpIyrrKeMl0sjLC/tNnJLur0kPaY=;
+  b=Sn9/+nHG1Ae42qDOmu5qvfBPduJdccqvnXBu2RC0RUEoS23DYEQ0+oIB
+   Oo5E3bH2/pRCT4H11IgZURYdRV0hnApQa7Y1zouMCgWEVUawFwstHUmAo
+   cMplcXep7HcU7G99/Tl8x2vEEJ0vFnvGojjZBzn/2uYhthN0QJ7HvU3Vs
+   yZ8T1zqKgo/ujFyWWgWLnhcyZuvrxRLdM2ZvZ1ZMGSkXEUgo9/7aEYSSF
+   FnbcBxrvNlggxP+D0HHv4t38lxph970rMWhf6dU84Ei4ggvIsfeAOqeNF
+   4dkelkJDxeFz4CLLCL580/5nc0tJD8HKsdr1oWGzvrEKkgbTPT7alWlQA
+   A==;
+X-CSE-ConnectionGUID: DMP5c/hMQaeVRPQW/aMklg==
+X-CSE-MsgGUID: K7gIEnYITTyNrNPMG7v9Ww==
+X-IronPort-AV: E=McAfee;i="6700,10204,11275"; a="33451401"
+X-IronPort-AV: E=Sophos;i="6.12,206,1728975600"; 
+   d="scan'208";a="33451401"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Dec 2024 19:01:12 -0800
+X-CSE-ConnectionGUID: NwlLOQ4zQyuoS95H/H3L3A==
+X-CSE-MsgGUID: nKLzkpWsQSe2kjo+Jcmvbg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,206,1728975600"; 
+   d="scan'208";a="124459102"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Dec 2024 19:01:08 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tIfdQ-00000003cpL-1Rrx;
+	Wed, 04 Dec 2024 05:01:04 +0200
+Date: Wed, 4 Dec 2024 05:01:04 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: "Huang, Ying" <ying.huang@linux.alibaba.com>
+Cc: Raghavendra K T <raghavendra.kt@amd.com>, linux-kernel@vger.kernel.org,
+	linux-cxl@vger.kernel.org, bharata@amd.com,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Dan Williams <dan.j.williams@intel.com>,
+	David Hildenbrand <david@redhat.com>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Alison Schofield <alison.schofield@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	Alistair Popple <apopple@nvidia.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, Baoquan He <bhe@redhat.com>,
+	ilpo.jarvinen@linux.intel.com,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Fontenot Nathan <Nathan.Fontenot@amd.com>,
+	Wei Huang <wei.huang2@amd.com>
+Subject: Re: [RFC PATCH] resource: Fix CXL node not populated issue
+Message-ID: <Z0_F8EuGpxPPytFM@smile.fi.intel.com>
+References: <20241202111941.2636613-1-raghavendra.kt@amd.com>
+ <87frn5wac3.fsf@DESKTOP-5N7EMDA>
+ <Z08KiPwwiw72Vo9R@smile.fi.intel.com>
+ <87iks06w17.fsf@DESKTOP-5N7EMDA>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241203060350.69472-1-laoar.shao@gmail.com> <CAHC9VhTRaX02x+KFpsxmguze3R=AAF9yjTtDxf_ghVpQ3XdU2A@mail.gmail.com>
-In-Reply-To: <CAHC9VhTRaX02x+KFpsxmguze3R=AAF9yjTtDxf_ghVpQ3XdU2A@mail.gmail.com>
-From: Yafang Shao <laoar.shao@gmail.com>
-Date: Wed, 4 Dec 2024 10:59:54 +0800
-Message-ID: <CALOAHbDgb5LW+XF1_VHGpr7zcjenMwSQzOy-pTsyV3buOW1N6Q@mail.gmail.com>
-Subject: Re: [PATCH] auditsc: Implement a workaround for a GCC bug triggered
- by task comm changes
-To: Paul Moore <paul@paul-moore.com>
-Cc: keescook@chromium.org, qiuxu.zhuo@intel.com, rostedt@goodmis.org, 
-	lkp@intel.com, audit@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Kees Cook <kees@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87iks06w17.fsf@DESKTOP-5N7EMDA>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Wed, Dec 4, 2024 at 6:06=E2=80=AFAM Paul Moore <paul@paul-moore.com> wro=
-te:
->
-> On Tue, Dec 3, 2024 at 1:04=E2=80=AFAM Yafang Shao <laoar.shao@gmail.com>=
- wrote:
-> >
-> > From: Yafang shao <laoar.shao@gmail.com>
-> >
-> > A build failure has been reported with the following details:
-> >
-> >    In file included from include/linux/string.h:390,
-> >                     from include/linux/bitmap.h:13,
-> >                     from include/linux/cpumask.h:12,
-> >                     from include/linux/smp.h:13,
-> >                     from include/linux/lockdep.h:14,
-> >                     from include/linux/spinlock.h:63,
-> >                     from include/linux/wait.h:9,
-> >                     from include/linux/wait_bit.h:8,
-> >                     from include/linux/fs.h:6,
-> >                     from kernel/auditsc.c:37:
-> >    In function 'sized_strscpy',
-> >        inlined from '__audit_ptrace' at kernel/auditsc.c:2732:2:
-> > >> include/linux/fortify-string.h:293:17: error: call to '__write_overf=
-low' declared with attribute error: detected write beyond size of object (1=
-st parameter)
-> >      293 |                 __write_overflow();
-> >          |                 ^~~~~~~~~~~~~~~~~~
-> >    In function 'sized_strscpy',
-> >        inlined from 'audit_signal_info_syscall' at kernel/auditsc.c:275=
-9:3:
-> > >> include/linux/fortify-string.h:293:17: error: call to '__write_overf=
-low' declared with attribute error: detected write beyond size of object (1=
-st parameter)
-> >      293 |                 __write_overflow();
-> >          |                 ^~~~~~~~~~~~~~~~~~
-> >
-> > The issue appears to be a GCC bug, though the root cause remains
-> > unclear at this time. For now, let's implement a workaround.
-> >
-> > Reported-by: kernel test robot <lkp@intel.com>
-> > Closes: https://lore.kernel.org/oe-kbuild-all/202410171420.1V00ICVG-lkp=
-@intel.com/
-> > Reported-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-> > Closes: https://lore.kernel.org/all/20241128182435.57a1ea6f@gandalf.loc=
-al.home/
-> > Reported-by: "Zhuo, Qiuxu" <qiuxu.zhuo@intel.com>
-> > Closes: https://lore.kernel.org/all/CY8PR11MB71348E568DBDA576F17DAFF389=
-362@CY8PR11MB7134.namprd11.prod.outlook.com/
-> > Originally-by: Kees Cook <kees@kernel.org>
-> > Link: https://lore.kernel.org/linux-hardening/202410171059.C2C395030@ke=
-escook/
-> > Signed-off-by: Yafang shao <laoar.shao@gmail.com>
-> > Tested-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-> > ---
-> >  kernel/auditsc.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> Thanks, does anyone have a link to the GCC bug report?  We really
-> should mention that in the commit description and/or metadata.
+On Wed, Dec 04, 2024 at 10:07:16AM +0800, Huang, Ying wrote:
+> Andy Shevchenko <andriy.shevchenko@linux.intel.com> writes:
+> > On Tue, Dec 03, 2024 at 02:26:52PM +0800, Huang, Ying wrote:
+> >> Raghavendra K T <raghavendra.kt@amd.com> writes:
 
-I came across a GCC bug report [0] while researching online. This
-issue was reportedly fixed in GCC-12.1 [1], yet it seems the same bug
-is still being triggered in GCC-14.2.0[2].
-Should I file a new bug report with GCC to address this?
+...
 
-[0] https://gcc.gnu.org/bugzilla/show_bug.cgi?id=3D101941
-[1] https://gcc.gnu.org/git/gitweb.cgi?p=3Dgcc.git;h=3D76fe494230477a69f8fa=
-8c8ca2d493acaf343eb1
-[2] https://lore.kernel.org/all/20241128182435.57a1ea6f@gandalf.local.home/
+> >> > git bisect had led to below commit
+> >> > Fixes: b4afe4183ec7 ("resource: fix region_intersects() vs add_memory_driver_managed()")
+> >> 
+> >> This breaks you case, sorry about that.  But this also fixed a real bug
+> >> too.  So, it's not appropriate just to revert it blindly.
+> >
+> > Linus was clear about this recently. Even if it fixes a bug, regression is
+> > still regression and might (*) lead to a revert.
+> > https://lwn.net/Articles/990599/
+> >
+> > (*) in general fixes are better than reverts, but depends on the timing in
+> >     the release cycle the revert may be the only option.
+> 
+> I don't think that the timing is so tight that we should not work on
+> proper fix firstly.  I'm trying to work with the reporter on this.
 
---
-Regards
-Yafang
+I agree on this, please do.
+
+> BTW, the commit b4afe4183ec7 ("resource: fix region_intersects() vs
+> add_memory_driver_managed()") fixed a security related bug.  The bug
+> weakened the protection to prevent users read/write system memory via
+> /dev/mem.  So, IMO, we need to be more careful about this.
+
+My point was that the regression is obvious and it needs to be fixed.
+That's all. Revert is a last resort in this sense.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
