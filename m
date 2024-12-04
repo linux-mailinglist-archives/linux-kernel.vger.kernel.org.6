@@ -1,153 +1,115 @@
-Return-Path: <linux-kernel+bounces-431609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A73509E3F5B
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:12:13 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCDCF9E3F8C
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:25:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62D67281AD6
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:12:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B9463B6292D
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:12:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 780CC20B20E;
-	Wed,  4 Dec 2024 16:11:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JLktXA8J"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FEA220C021;
+	Wed,  4 Dec 2024 16:12:22 +0000 (UTC)
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D1D620C024;
-	Wed,  4 Dec 2024 16:11:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AB0B1AF0DD
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 16:12:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.86.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733328695; cv=none; b=O+9HPAHbakdU0sdjRuIOFBe+3HB/0I/HMjGf3GpNz5OOW+oze3r/E/JYex52tBTbRk6iWX/RkSvLErJKGvwItfKCu1gUgXigykiUW/d8c3UqblJ7PuDcmCUQw9LlFUPS+9EdtvCFTsRBObouhphStdl11EFSOd0e6oRyACLNIGs=
+	t=1733328742; cv=none; b=Z6HKnfTwiiN0LX45StYRuzAZ8s33DGLJQMiHRja6J02ov3D25aAp5OajLDgtMYzqEWC3j/MO2Od9OJU2daHkky3WCtuK/4UBQbGDke70yKGkMSVZ0jNulRAwfMtUdqv6OBrTfXDQeK427dd1O88S8FYewTgDWNoViRQ07I0ZsWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733328695; c=relaxed/simple;
-	bh=DZWRdzw8jyjWGVtbAVewKcKsWqOSHE9gjFdgS3Q/roE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ohGESjzplDYbULKNWfgAPyUAaWhLb6F0NXTyjlElj8qLZd1Z5QpuWrQ7Nr+y/mK5pTy4QJcWJKFTolnokCkWnuzKF4vLwzGWQgvPjysLh9P2XVQO9F0FFNKXd5W/8QQq/KWW8uXEsJw476lXkTtuiQ6s/4n2XT+128OxgvJpQEs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JLktXA8J; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-434a83c6b01so61574475e9.0;
-        Wed, 04 Dec 2024 08:11:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733328692; x=1733933492; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=IuJJ0hUBWKWp9BXX8Y0BDsg1t+amhn0JgNxZiu+8PfQ=;
-        b=JLktXA8JPHzFT0Cq/VHqR1rl/9e9+XQFlFTypjhVcqK9B7XzOts0Ab1uKpD/n0CwF9
-         F5d1X2T53vo/73y2Bc6gp0zmuYWoS0BMWjQBM5JB3KY8Fe9uHZNsZ8TtJoffVbsZVahu
-         fCzVXlZlDnzKSm20Of7hisKNLtaxwQHTlKqS6yr+Rvjlf/AQP/hFacSrYh8mwKPtWhhP
-         1PYM2BonBqG/d0YPFoY5d75Ayq1Z23zbz5rjdDpZQwYNWg0jbAlBctO4k9cMRb4N9eCI
-         2v1vUfizO4ol5db1xFYrERBcjtakMwIqFqJdKxPXkdJni4aCCxcfs+NT3DsGucnK68ES
-         3+mg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733328692; x=1733933492;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IuJJ0hUBWKWp9BXX8Y0BDsg1t+amhn0JgNxZiu+8PfQ=;
-        b=foMsxdaR/sXDC7khqbV4mICTLrABs4NpvBFWJSfYTErzpuH16G/8k1O8LvdgNu+GVu
-         aO7MMXMaBdJXjWBoQelnQFiAUNfQYgy6tQ7xOxX/Ln4KfYwabVHWCSo/c2LL7Q6YvmSG
-         /yf5CVRJC+E0bl183Cs4KG3UI3DGV9WRNnsam50oiIUkNSKuTQ8rwbXEozV7QVAd75iE
-         +LiwLb1Ugc2jEXPpow+33a3Tt6lwjwLvydzCTUuGOic5m+5xidhiJoHwjjokVrPKM73V
-         bB2APDYbCiM2Bq7euZuBXDtZe2o1fo4xY/aLYSFIyVuM5YnJEgnxzv/bzFwA2515btmP
-         VIqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV1SysojDbj2nYqVqvO1lhxsBEgB3sRKH8GBx08XR073AgCVFA5IT57K+LmvAiwGwiGb32qll80PzaXmGg=@vger.kernel.org, AJvYcCWihgmsSow0DaJgJV08KpZxTCJpg5eZICH6deu4Hr8fQgc5QMqxgqVI82PVAAFuy5JEDw3aSvUZO01w0KY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDE2JhcVb1pgn3nj1iBfHGMUvdvTQz7pa8lvQyai/jIqy8w+4r
-	egWwJRrCCtn6x2zNefuAHZKq/632/FcoTPjnNbjw7HLXiDDuaSIvzEL+PA==
-X-Gm-Gg: ASbGncswuTC7+KFSIx18aV0NjIl+V3cHAw7wne+ZnMOSeJLxlsfh24ExamtU4HAZK5T
-	EdQo4mMbrX0VaMvsp64Lzc9aaGE1LGo6yE/oAEU/aszdbTa9yvgCvEGjcCZJJos6KhnoDT0hmB8
-	GlryiW3C8vhZShRBs8aygx40JMPZ2ybAHoTEvTNDUJJRUckbUHqy0e/qPhDlLHl4rP8M8fTIoWQ
-	Zim6UAHdyjM38a1KHfkB7DUlavHe7xecGz6YKPj5UZvLSZncOrdC6VtFJUTQ5djUyCWGP5iNvLe
-	UPflf0tkqWaV7FGphRyuMl1lU4lcPm6tV7Nd
-X-Google-Smtp-Source: AGHT+IFxym9KcoMunoySrW5nM2E/VbDCqLN5DQUcuZwy3El1YdHmWZ69OUQgETNEfKOJ1Z/XgqqH3Q==
-X-Received: by 2002:a05:600c:4ed2:b0:434:a7b6:10e0 with SMTP id 5b1f17b1804b1-434d09d00c5mr64623225e9.18.1733328692056;
-        Wed, 04 Dec 2024 08:11:32 -0800 (PST)
-Received: from orome (p200300e41f281900f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f28:1900:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385fa330ca0sm6473826f8f.11.2024.12.04.08.11.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Dec 2024 08:11:31 -0800 (PST)
-Date: Wed, 4 Dec 2024 17:11:29 +0100
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Kartik Rajput <kkartik@nvidia.com>
-Cc: jassisinghbrar@gmail.com, jonathanh@nvidia.com, 
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] mailbox: tegra-hsp: Clear mailbox before using message
-Message-ID: <zbs3ovttbpqqj66szg4ovjsmmx3qmthue2jatweonn4tfhd6yj@uujs2m4tvb7a>
-References: <20241202100559.57984-1-kkartik@nvidia.com>
+	s=arc-20240116; t=1733328742; c=relaxed/simple;
+	bh=oPJAZmjGz3hig5ERXVpw1rcG2SyM62QcVUOtlyK08xs=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 MIME-Version:Content-Type; b=hXJfuUL4a4PsYBP1NwXvMVJOr+P0YXsX0rsXG7c5e209clOpO3SImwFQdn4KRYwT+GBysTj8wZfe+7N+vyJ1Hl8eUCHZGzPKDLvbUwk9oelHCehPzjAt/65kthgQq6mLs1die8oAZd8gau6w0ikU6KDTfW3U7Q0SW0CXbUMTudg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.86.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-155-GqQcbuu3MrGacAW_QlZAsw-1; Wed, 04 Dec 2024 16:12:11 +0000
+X-MC-Unique: GqQcbuu3MrGacAW_QlZAsw-1
+X-Mimecast-MFC-AGG-ID: GqQcbuu3MrGacAW_QlZAsw
+Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
+ (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Wed, 4 Dec
+ 2024 16:11:33 +0000
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Wed, 4 Dec 2024 16:11:33 +0000
+From: David Laight <David.Laight@ACULAB.COM>
+To: 'Dan Carpenter' <dan.carpenter@linaro.org>, Naresh Kamboju
+	<naresh.kamboju@linaro.org>
+CC: "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
+	clang-built-linux <llvm@lists.linux.dev>, linux-block
+	<linux-block@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>,
+	"lkft-triage@lists.linaro.org" <lkft-triage@lists.linaro.org>, "Linux
+ Regressions" <regressions@lists.linux.dev>, Anders Roxell
+	<anders.roxell@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Nathan Chancellor
+	<nathan@kernel.org>, Jens Axboe <axboe@kernel.dk>
+Subject: RE: s390: block/blk-iocost.c:1101:11: error: call to
+ '__compiletime_assert_557' declared with 'error' attribute: clamp() low limit
+ 1 greater than high limit active
+Thread-Topic: s390: block/blk-iocost.c:1101:11: error: call to
+ '__compiletime_assert_557' declared with 'error' attribute: clamp() low limit
+ 1 greater than high limit active
+Thread-Index: AQHbRlpA05groSrCOUKR/Ly6shl2PrLWPxCw
+Date: Wed, 4 Dec 2024 16:11:33 +0000
+Message-ID: <7920126775c74fa5915afbeedcfe2058@AcuMS.aculab.com>
+References: <CA+G9fYsD7mw13wredcZn0L-KBA3yeoVSTuxnss-AEWMN3ha0cA@mail.gmail.com>
+ <5ffa868f-cbf0-42ae-ae10-5c39b0de05e7@stanley.mountain>
+In-Reply-To: <5ffa868f-cbf0-42ae-ae10-5c39b0de05e7@stanley.mountain>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="i73rqf2hzwxkm3k4"
-Content-Disposition: inline
-In-Reply-To: <20241202100559.57984-1-kkartik@nvidia.com>
-
-
---i73rqf2hzwxkm3k4
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: DgidLeuBTLP47CPX-n7TJTSFtEkO1mTuEPvDsT5XPxY_1733328730
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v3] mailbox: tegra-hsp: Clear mailbox before using message
-MIME-Version: 1.0
 
-On Mon, Dec 02, 2024 at 03:35:59PM +0530, Kartik Rajput wrote:
-> From: Pekka Pessi <ppessi@nvidia.com>
+From: Dan Carpenter <dan.carpenter@linaro.org>
+> Sent: 04 December 2024 14:39
 >=20
-> The Tegra RCE (Camera) driver expects the mailbox to be empty before
-> processing the IVC messages. On RT kernel, the threads processing the
-> IVC messages (which are invoked after `mbox_chan_received_data()` is
-> called) may be on a different CPU or running with a higher priority
-> than the HSP interrupt handler thread. This can cause it to act on the
-> message before the mailbox gets cleared in the HSP interrupt handler
-> resulting in a loss of IVC notification.
->=20
-> Fix this by clearing the mailbox data register before calling
-> `mbox_chan_received_data()`.
->=20
-> Fixes: 8f585d14030d ("mailbox: tegra-hsp: Add tegra_hsp_sm_ops")
-> Fixes: 74c20dd0f892 ("mailbox: tegra-hsp: Add 128-bit shared mailbox supp=
-ort")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Pekka Pessi <ppessi@nvidia.com>
-> Signed-off-by: Kartik Rajput <kkartik@nvidia.com>
-> ---
-> v2 -> v3:
-> 	* Updated commit description.
-> v1 -> v2:
-> 	* Added "Fixes:" tag in the commit message.
-> 	* Made similar change for 128-bit shared mailboxes.
-> ---
->  drivers/mailbox/tegra-hsp.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
+> Let's add David to the Cc list because he's the expert on clamp().
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+The traceback info misses the important point.
+I can't see the 'inlined from line 2225' message.
 
---i73rqf2hzwxkm3k4
-Content-Type: application/pgp-signature; name="signature.asc"
+We have (line 1084):
+static void __propagate_weights(struct ioc_gq *iocg, u32 active, u32 inuse,
+=09=09=09=09bool save, struct ioc_now *now)
+followed by:
+=09=09inuse =3D clamp_t(u32, inuse, 1, active);
 
------BEGIN PGP SIGNATURE-----
+But line 2225 has:
+=09__propagate_weights(iocg, 0, 0, false, now);
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmdQfzEACgkQ3SOs138+
-s6GUgBAAjKs5rZl/ePiIQdWYT8+K0W77LtI5yL80DQhzN2ZgkkEijXs5I212j15/
-vnVIaZ5jtRyToD85WLvKptoofUa9gazOt8gu/Z5OPX3LMg1+QtQDRNTugJA/LSzf
-gf0mFonV4cojn/cEl9PBfKw7DtovCHfcAQF6hUEDS2OOe9BcbKYj5mh3/jAajI8p
-0vPcuDHMMP9ZwRW8iE4aVwEKYQJL/m5LNAn3pz9OScf5kuJT0ctexd9+A8LaQyzG
-9MLXM+TMU5O2sl5YniWhrJIZ4LvZMuDlz7iv3gY8vTSKO6jLWSBhureCG2CkrA9e
-vsoMM2fTKYr3mSFClKHnpmLcjYKhyfqT0uSpWvrzvZrqNovUcCgiRj1Hj8kz07hc
-sWV6MjRnQsK/y4SoUBwHzx2xM0ZAjtpHi95yzQfSAJRUEtopAPXdj/1nGiWBPfGq
-XwTM32RjKPxJ/N5nvffp3L+eKjNgYCMeaGUEno2fdYENVOwzmuJFsisOXFccddT4
-UAxSPvpXq1w77LJK5hPmTUsT1qnOWOl6EaBmBSj//nkda+Mn4xTo7MGS5mm6mlNy
-I9qFBDkhkyngWCZBM4nKtrMCtmlAkLRCD4IByJPBFRVVoqTFphxTduMdUtwNr3/s
-xwqGlorgLhq1lN7QahW/hWK1wMtAGYWvf51kyuZUdAPRhN/AmJQ=
-=eKR8
------END PGP SIGNATURE-----
+With aggressive inlining the compiler sees 'active =3D=3D 0'
+and the lo > hi test correctly triggers.
 
---i73rqf2hzwxkm3k4--
+The previous version only verified 'lo <=3D hi' if it was a constant
+integer expression - which it isn't here.
+
+No idea what the code is trying to do, nor what value it expects
+clamp(val, 1, 0) to generate - likely to be 0 or 1 depending on
+the order of the comparisons.
+
+=09David
+
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
+PT, UK
+Registration No: 1397386 (Wales)
+
 
