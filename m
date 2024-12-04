@@ -1,64 +1,47 @@
-Return-Path: <linux-kernel+bounces-431473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60E8D9E3E59
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:31:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 04D039E3E14
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:21:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DD901B3849D
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:06:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D22C9B38C74
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:07:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAAC617E00B;
-	Wed,  4 Dec 2024 15:06:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7517420B20E;
+	Wed,  4 Dec 2024 15:06:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nYZ/tOLM"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ENrTkP4M"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 238541B21BA;
-	Wed,  4 Dec 2024 15:06:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3076204F7A;
+	Wed,  4 Dec 2024 15:06:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733324809; cv=none; b=a8gLtV2KRSHysxCUcqeGn0eyBkJx2XoH++JyycLQhdEeXjTS5e5hTPWbj8t96pkau3IKC/pZDJCB+k4VR6UpQlgEtHQLZAScLAbv/IIFiHdxDfYVlATxhrb4GxVDqg72wXCGPZ5A2egtewrlSroERl5oGlb1/LshDloJ4vRZs6o=
+	t=1733324814; cv=none; b=n3GW+8o97F/F2lfclZj9aF7Dvyetx0RJ6IWw7oioSVleQYnifZcbeAZ4oCKd2+6CiJ94HiXlK2Vk7hYjrnoOnA/tRzMneXgY0H/ezHlgwO7XbGLXMA65pQbOW7oOXXgYdO6dFBeEjkz2cxMe4f5XJavNbIRQUsYvwPqQYS4dMb0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733324809; c=relaxed/simple;
-	bh=HI19w34WI6cqPU47FjTARhORcgDBSvzCxSsLVKHwJwg=;
+	s=arc-20240116; t=1733324814; c=relaxed/simple;
+	bh=cFrBytYurF/GWACsZk20vtjBWqBGhyf4XBKasxLDN4A=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FQys/plU2iAAtzqKmDUrwBsHpqF6lMzndueL78KaqitcsYYM1uUVolvEGhn9r3KE9JQGjErR3mpDrTo95CqzoIiY0xNZPX3Kls8KlEb29cLfPJ0W/wbbIsgvHsqO/h6wBcl0ss2zW7dnppwik/dn7vutKe9+EjP4vDsqM7F9T/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nYZ/tOLM; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733324807; x=1764860807;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=HI19w34WI6cqPU47FjTARhORcgDBSvzCxSsLVKHwJwg=;
-  b=nYZ/tOLMac++tX9iPyUHX/O1ddoKyfRPU26l6fYveU+zB2/AJ/zVt/aJ
-   t+EY9RA/y17CYZY/1juIxyGGLVDvHFxfvkwyXGzh3EIheSAvgRXJe6pRi
-   J/EMYVAFy11S19KW+Rg0dVL1xGj9OeSR+Mxbwowam+RgEh4zmyuCRC+19
-   TF+Y7Hoo80hqJ66cl/vO896IbQ6rrXZkdhkC7dAiKkF0OhvimyoAJLytY
-   obDbYoIRbO1yQdiN5AWWrWQ6m37t4mm1AyOCsQjjZpcGi7jG6PGmza9sZ
-   kEolOAwEuNvNzx7hTy0BIvhn4nGgKbgdJvquTpFz4jsBfkjfxSuqqNSxR
-   w==;
-X-CSE-ConnectionGUID: s5LYzpsCQ2qgOd4hkkSnRA==
-X-CSE-MsgGUID: hS+RVtmBTgK4C6CDcmuyVw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11276"; a="37256142"
-X-IronPort-AV: E=Sophos;i="6.12,207,1728975600"; 
-   d="scan'208";a="37256142"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Dec 2024 07:06:46 -0800
-X-CSE-ConnectionGUID: zIWZrCt/SZSobVFE+XV57g==
-X-CSE-MsgGUID: 8A+/0/u/Sz6SzFvqDI6B0A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,207,1728975600"; 
-   d="scan'208";a="93471508"
-Received: from dgramcko-desk.amr.corp.intel.com (HELO [10.124.223.226]) ([10.124.223.226])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Dec 2024 07:05:14 -0800
-Message-ID: <e45dbc7c-5506-4343-b6b1-ba610e5088af@intel.com>
-Date: Wed, 4 Dec 2024 07:05:14 -0800
+	 In-Reply-To:Content-Type; b=AWCQENkz2zMBRhtyVtT28glVeg4LrUzECTieV8GcNZ27l/sWnZQjlNvqNywV/vog4SczIEgMFVzSHTqrgCRA7Yh9+nnm23dsg5mEDpAyTGgIW7vH6NiwnJ9gztpUsTAGqZZej1a5YEDuYEKTWejHT81qHw6J2twQuBv8EXlaa/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ENrTkP4M; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6534C4CEDD;
+	Wed,  4 Dec 2024 15:06:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733324814;
+	bh=cFrBytYurF/GWACsZk20vtjBWqBGhyf4XBKasxLDN4A=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ENrTkP4Mcb3EjRQkT/oy+A2uDrYxTFps8Y0hFIQkXu9f1+2f+PifYxETf5h1GJo6s
+	 M4ToEwzQ9bIxPhwybpOaT01fbEDOsYf6AWWgxPlD8D0VyYyxEFtOx03CBPY9T100EF
+	 6H5ihIEJLtjWoMBjg2rq4yG7bAh9A033KofqLvM9Zi4teXsVKk6qg6fqOR3+PqmKKm
+	 ir4kanhu9A/cGijJT8/2Gcz1LKfycBmI+XYl54HaBJ+fG3QZSLD+V0p3zyk/BcZw4R
+	 Jq45A4YVpLdHxBmbD0f21lJ8LRbUk9EilX0205Umb1ICCW/+xNtrXAJAAD8Zz+mPni
+	 OmF2mMR/Kxz9Q==
+Message-ID: <dacfdaf0-329f-4580-94e0-7c3e26b52776@kernel.org>
+Date: Wed, 4 Dec 2024 16:06:47 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,90 +49,125 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 0/4] SRF: Fix offline CPU preventing pc6 entry
-To: Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>, x86@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
- rafael.j.wysocki@intel.com, peterz@infradead.org,
- dave.hansen@linux.intel.com, gautham.shenoy@amd.com, tglx@linutronix.de,
- len.brown@intel.com, artem.bityutskiy@linux.intel.com
-References: <20241204140828.11699-1-patryk.wlazlyn@linux.intel.com>
+Subject: Re: [PATCH v1 1/7] dt-bindings: i2c: qcom,i2c-geni: Document DT
+ properties for QUP firmware loading
+To: Viken Dadhaniya <quic_vdadhani@quicinc.com>, andi.shyti@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ gregkh@linuxfoundation.org, jirislaby@kernel.org, broonie@kernel.or,
+ andersson@kernel.org, konradybcio@kernel.org, johan+linaro@kernel.org,
+ dianders@chromium.org, agross@kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+ linux-spi@vger.kernel.org
+Cc: =quic_msavaliy@quicinc.com, quic_anupkulk@quicinc.com,
+ Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
+References: <20241204150326.1470749-1-quic_vdadhani@quicinc.com>
+ <20241204150326.1470749-2-quic_vdadhani@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Dave Hansen <dave.hansen@intel.com>
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <20241204140828.11699-1-patryk.wlazlyn@linux.intel.com>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241204150326.1470749-2-quic_vdadhani@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 12/4/24 06:08, Patryk Wlazlyn wrote:
-> Changes since v7:
->   * Doing the s/mwait_play_dead/mwait_play_dead_cpuid_hint/
->           and s/mwait_play_dead_with_hint/mwait_play_dead/
-> 
->     as suggested by Gautham. It was a left-over from previous patches.
->     The function(s) got renamed in the patches and I forgot to update
->     the changelog accordingly for patch 4/4.
-> 
-> Patryk Wlazlyn (4):
->   x86/smp: Allow calling mwait_play_dead with an arbitrary hint
->   ACPI: processor_idle: Add FFH state handling
->   intel_idle: Provide the default enter_dead() handler
->   x86/smp native_play_dead: Prefer cpuidle_play_dead() over
->     mwait_play_dead()
-> 
->  arch/x86/include/asm/smp.h    |  3 +++
->  arch/x86/kernel/acpi/cstate.c | 10 ++++++++
->  arch/x86/kernel/smpboot.c     | 46 ++++-------------------------------
->  drivers/acpi/processor_idle.c |  2 ++
->  drivers/idle/intel_idle.c     | 18 ++++++++++++--
->  include/acpi/processor.h      |  5 ++++
->  6 files changed, 41 insertions(+), 43 deletions(-)
+On 04/12/2024 16:03, Viken Dadhaniya wrote:
+> Document the 'qcom,load-firmware' and 'qcom,xfer-mode' properties to
+> support SE(Serial Engine) firmware loading from the protocol driver and to
+> select the data transfer mode, either GPI DMA (Generic Packet Interface)
+> or non-GPI mode (PIO/CPU DMA).
 
-Hey Patryk,
 
-I know this series is up to v8 and we all know what it's about. But it
-would be much appreciated in the future if you could send along a cover
-letter. It's important and really does help reviewers dive into a series
-more efficiently.
+You described the desired Linux feature or behavior, not the actual
+hardware. The bindings are about the latter, so instead you need to
+rephrase the property and its description to match actual hardware
+capabilities/features/configuration etc.
+
+I don't quite get why firmware-name is not suitable here, what is
+"protocol driver" in this context and how firmware is loaded from it?
+
+> 
+> I2C controller can operate in one of two modes based on the
+> 'qcom,xfer-mode' property, and the firmware is loaded accordingly.
+> 
+> Co-developed-by: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
+> Signed-off-by: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
+> Signed-off-by: Viken Dadhaniya <quic_vdadhani@quicinc.com>
+> ---
+>  .../devicetree/bindings/i2c/qcom,i2c-geni-qcom.yaml   | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/i2c/qcom,i2c-geni-qcom.yaml b/Documentation/devicetree/bindings/i2c/qcom,i2c-geni-qcom.yaml
+> index 9f66a3bb1f80..a26f34fce1bb 100644
+> --- a/Documentation/devicetree/bindings/i2c/qcom,i2c-geni-qcom.yaml
+> +++ b/Documentation/devicetree/bindings/i2c/qcom,i2c-geni-qcom.yaml
+> @@ -66,6 +66,15 @@ properties:
+>    required-opps:
+>      maxItems: 1
+>  
+> +  qcom,load-firmware:
+> +    type: boolean
+> +    description: Optional property to load SE (serial engine) Firmware from protocol driver.
+
+
+Please wrap code according to coding style (checkpatch is not a coding
+style description, but only a tool).
+
+
+> +
+> +  qcom,xfer-mode:
+> +    description: Value 1,2 and 3 represents FIFO, CPU DMA and GSI DMA mode respectively.
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    enum: [1, 2, 3]
+
+
+Use string but anyway this would need some changes and explanation why
+lack of DMA cannot be used to determine that. CPU DMA and GSI DMA also
+need some background.
+
+
+
+Best regards,
+Krzysztof
 
