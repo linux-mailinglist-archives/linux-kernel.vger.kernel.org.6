@@ -1,123 +1,112 @@
-Return-Path: <linux-kernel+bounces-431489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 022039E3E0D
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:20:46 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BB739E3E18
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:22:31 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF63F28132B
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:20:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3C06166313
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:22:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3160720C03E;
-	Wed,  4 Dec 2024 15:20:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B25C20C001;
+	Wed,  4 Dec 2024 15:22:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.ratiu@collabora.com header.b="MC2l8HoL"
-Received: from sender4-op-o14.zoho.com (sender4-op-o14.zoho.com [136.143.188.14])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="so4yfvkv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01920205E1C;
-	Wed,  4 Dec 2024 15:20:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.14
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733325634; cv=pass; b=cyOKIN4265ciE9PWRxGNGZaHnhmAk7Sn58lzXns35yyzj96LFpeqelKDZNs8KfFpvS4uM39DqP8EuXqjFHGE9Wp6L09fuU3CjxHCF79OQZXmKYM/DS5U0nHWUtiJL828LITZTI9lHpv7gLHnVIVxMLWtk62OU/bKCU8D4sKX07M=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733325634; c=relaxed/simple;
-	bh=pNsY3H88UMxdc1Mkr9gppa6XdoCNDHF9kIE2qRziSws=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fUg16NWjPso67AbdIcJ5FeTr53y6jhCN3K1/wO7a0qyTxHyyUit/KstF/UNbFFxpJEVFMvI1Up/aj0TSBKYNc1pGKKXR6tCdcwUGrnCRZHRauvi8UmTSNLyB577VF43srbzqWBq4g0p7gLPQd4IdTda/4w4jqLphXD37seXKyOg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.ratiu@collabora.com header.b=MC2l8HoL; arc=pass smtp.client-ip=136.143.188.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1733325613; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=boAXN/K2qknXZxbaWLhya8COZAzvQzsXTGkrUwHLp0+afADd541t1E2p7HI+ctkMaWivkv4eUFkOJJOBfZA4DxIGzPsiADMdLRSFKlcAGmUhD9CYfn8JHzyJ8+KETSxq1Y0jdgsToylEFmJyUG4jGIiTsa9oKeNBzvS375Xi3yc=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1733325613; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=QP8dut9Mq3hDvfHHmrDZ5/80uuIlOS9sVHmLsu7uV3E=; 
-	b=ZnmIqIOYe4dRaXEqseOK1RYnSpESLhKDSL/WRR30F82r9dPJYX/4QLNxKziO0Y7fIUPcD6lHshgd9p0eZ0r7QTVvJsSrmU9JI96CH27rqQ+zwiZ04vB/z+v+73+mivfYKuXXJLRAcAaxsSK5nzRCnDWnjzoF11KhMnJdGJWEtAY=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=adrian.ratiu@collabora.com;
-	dmarc=pass header.from=<adrian.ratiu@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1733325613;
-	s=zohomail; d=collabora.com; i=adrian.ratiu@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=QP8dut9Mq3hDvfHHmrDZ5/80uuIlOS9sVHmLsu7uV3E=;
-	b=MC2l8HoL5J9SWKsEXFcnJsKyZ9WPJPhhf//RLvofSWmOcv65YQh3Z0f66Nk3E+/C
-	aPk1KY0I7pxZQXTpQ6BbQwnTUeVm2YRCAJEPZtDbVsBzmMGhhjB6Rwo8HTU39ihcnfC
-	uZNAIHBS3uDw2xdC1rtb7mVnZz8wSgglPIgGLP9w=
-Received: by mx.zohomail.com with SMTPS id 1733325610566947.0058495254816;
-	Wed, 4 Dec 2024 07:20:10 -0800 (PST)
-From: Adrian Ratiu <adrian.ratiu@collabora.com>
-To: Takashi Iwai <tiwai@suse.com>,
-	Jaroslav Kysela <perex@perex.cz>
-Cc: linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel@collabora.com,
-	Adrian Ratiu <adrian.ratiu@collabora.com>
-Subject: [PATCH 2/2] sound: usb: format: don't warn that raw DSD is unsupported
-Date: Wed,  4 Dec 2024 17:19:54 +0200
-Message-ID: <20241204151954.658897-2-adrian.ratiu@collabora.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241204151954.658897-1-adrian.ratiu@collabora.com>
-References: <20241204151954.658897-1-adrian.ratiu@collabora.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3C7216BE20;
+	Wed,  4 Dec 2024 15:22:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733325744; cv=none; b=jF2LekQWKewt8ekNPLcdIwbYcwlp37Lgz/MKKecgJiKCvUtO0XH4ahyxLCdCMGy/F30VZaVP6LicwIkVYU6zfKz1JOILb8LYoF2oXnANYOLvBaKH2TVf+j1to7S0s5/Zh5aFiPXotc/XxJbEA8WO49sVafWVfWyjGTmz0yj7RfY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733325744; c=relaxed/simple;
+	bh=YxbdLK0hPdinmJ7aseN6ZxvZEvKSnXJP4oKfttGQxMg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=GQj9kFpqU2Y5k3Ab57J5ndQxKfHbegDhWOmrOlvZylEM9bKHejXQ/phvrbOQsR+UUNiDbN8Cr5LcUrO4cxH5IPI+IisKJxo4jn0W4sjYsX28+UK0EWFMYFODv1od32H1RebDPHwC4XyT7Rsk+pIX6+cfAYdnXnwZCe4DBCuR0t0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=so4yfvkv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A79C0C4CECD;
+	Wed,  4 Dec 2024 15:22:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733325744;
+	bh=YxbdLK0hPdinmJ7aseN6ZxvZEvKSnXJP4oKfttGQxMg=;
+	h=From:Subject:Date:To:Cc:From;
+	b=so4yfvkvN9CDgMc6hEnOllf8Nm3zaqsK5NEJLHvCdhz31RV7sTx/cq/2nSN8Dku7t
+	 23F6IN8Gad0ycca3IE/TPM3lwhxI7iNC2BH1NAJVtJHwhtFwaQwFha6HJxkiA7y6jY
+	 AaDRjIFCQ9T0G/pwyJ4cI9YpG28v7YJt0+vsQIsL+fF536WuodGM9uyl8tS8QKPG7Q
+	 sslqF9neGm6Ws1LyD1yspxyYr43IkTWrfSzyxp1MfAkvQKUwIcGsXJeWXP3ZOWkHyp
+	 K2eneCiB2Wko+9nX4bWJlBHZy3ARSAXj9wwRxypcpDL7q9wADVPGEKCYqmhA6UcaCc
+	 Alv9sv6d3sEGA==
+From: Mark Brown <broonie@kernel.org>
+Subject: [PATCH v2 0/6] arm64/sme: Collected SME fixes
+Date: Wed, 04 Dec 2024 15:20:48 +0000
+Message-Id: <20241204-arm64-sme-reenable-v2-0-bae87728251d@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAFBzUGcC/22Nyw6CMBREf4XctddQqDxc+R+GRYERGqGYW0M0p
+ P9uJXHnZpIzyZzZyEMsPJ2TjQSr9XZxEbJDQt1o3AC2fWTK0kyrGGxkLjT7GSyAM+0ErisUulO
+ FMhUoDh+Cm33t0msTebT+uch7/1jVt/3p8n+6VXHKfXXKdVn3qi3Lyx3iMB0XGagJIXwArzVMW
+ rUAAAA=
+X-Change-ID: 20241202-arm64-sme-reenable-98e64c161a8e
+To: Catalin Marinas <catalin.marinas@arm.com>, 
+ Will Deacon <will@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, Dave Martin <Dave.Martin@arm.com>, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Mark Brown <broonie@kernel.org>, stable@vger.kernel.org
+X-Mailer: b4 0.15-dev-9b746
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1436; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=YxbdLK0hPdinmJ7aseN6ZxvZEvKSnXJP4oKfttGQxMg=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBnUHOoeQbPc1HbfhMEJ6VMwbqGljtgzH/xL/utSJwc
+ BuyUoruJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZ1BzqAAKCRAk1otyXVSH0BawB/
+ 90OIzPt6j6CGU6RuSdHVSMeewxBU+uf1YFk4npaIu9/p54fletxj5NfLw3xCyb3bdsFlmpFpk3S/AW
+ Wx/8C6TMHj/2Iuohrqgm5pUK+h8LS1WET6CSqFh45R9N1+V3MvfuLr7Z7L1mMMBd+VbV733ZiEJAFO
+ sg/pNDrso2ZbqEDbog4svL/AwhmtkaL+uIUSdikXRrNzc0TPGvQ6w4pgzXlau6eTRbuCUrPP/8rfRy
+ AcS1URPzbJ7KoSmU00K9d0c6OY2NCH7une+m/R6lM5SZcLdY23cnuE/TWDFDNO6K5DHaxpZJ2IUBnz
+ wWdJhYdYKubtbJO5c4aQUCD979PDH2
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-UAC 2 & 3 DAC's set bit 31 of the format to signal support for a
-RAW_DATA type, typically used for DSD playback.
+This series collects the various SME related fixes that were previously
+posted separately.  These should address all the issues I am aware of so
+a patch which reenables the SME configuration option is also included.
 
-This is correctly tested by (format & UAC*_FORMAT_TYPE_I_RAW_DATA),
-fp->dsd_raw = true; and call snd_usb_interface_dsd_format_quirks(),
-however a confusing and unnecessary message gets printed because
-the bit is not properly tested in the last "unsupported" if test.
-
-For example:
-
-usb 7-1: new high-speed USB device number 5 using xhci_hcd
-usb 7-1: New USB device found, idVendor=262a, idProduct=9302, bcdDevice=0.01
-usb 7-1: New USB device strings: Mfr=1, Product=2, SerialNumber=6
-usb 7-1: Product: TC44C
-usb 7-1: Manufacturer: TC44C
-usb 7-1: SerialNumber: 5000000001
-hid-generic 0003:262A:9302.001E: No inputs registered, leaving
-hid-generic 0003:262A:9302.001E: hidraw6: USB HID v1.00 Device [DDHIFI TC44C] on usb-0000:08:00.3-1/input0
-usb 7-1: 2:4 : unsupported format bits 0x100000000
-
-This last "unsupported format" is actually wrong: we know the
-format is a RAW_DATA which we assume is DSD, so there is no need
-to print the confusing message.
-
-Thus we update the condition to take into account bit 31 for DSD
-(notice the "format <<= 1;" line above).
-
-Signed-off-by: Adrian Ratiu <adrian.ratiu@collabora.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/usb/format.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Changes in v2:
+- Pull simplification of the signal restore code after the SME
+  reenablement, it's not a fix but there's some code overlap.
+- Comment updates.
+- Link to v1: https://lore.kernel.org/r/20241203-arm64-sme-reenable-v1-0-d853479d1b77@kernel.org
 
-diff --git a/sound/usb/format.c b/sound/usb/format.c
-index 0cbf1d4fbe6e..fe2e0580e296 100644
---- a/sound/usb/format.c
-+++ b/sound/usb/format.c
-@@ -142,7 +142,7 @@ static u64 parse_audio_format_i_type(struct snd_usb_audio *chip,
- 		pcm_formats |= SNDRV_PCM_FMTBIT_A_LAW;
- 	if (format & BIT(UAC_FORMAT_TYPE_I_MULAW))
- 		pcm_formats |= SNDRV_PCM_FMTBIT_MU_LAW;
--	if (format & ~0x3f) {
-+	if (format & ~0x10000003F) {
- 		usb_audio_info(chip,
- 			 "%u:%d : unsupported format bits %#llx\n",
- 			 fp->iface, fp->altsetting, format);
+---
+Mark Brown (6):
+      arm64/sme: Flush foreign register state in do_sme_acc()
+      arm64/fp: Don't corrupt FPMR when streaming mode changes
+      arm64/ptrace: Zero FPMR on streaming mode entry/exit
+      arm64/signal: Avoid corruption of SME state when entering signal handler
+      arm64/sme: Reenable SME
+      arm64/signal: Consistently invalidate the in register FP state in restore
+
+ arch/arm64/Kconfig              |  1 -
+ arch/arm64/include/asm/fpsimd.h |  1 +
+ arch/arm64/kernel/fpsimd.c      | 57 ++++++++++++++++++++++----
+ arch/arm64/kernel/ptrace.c      | 12 +++++-
+ arch/arm64/kernel/signal.c      | 89 +++++++++++------------------------------
+ 5 files changed, 84 insertions(+), 76 deletions(-)
+---
+base-commit: 40384c840ea1944d7c5a392e8975ed088ecf0b37
+change-id: 20241202-arm64-sme-reenable-98e64c161a8e
+
+Best regards,
 -- 
-2.45.2
+Mark Brown <broonie@kernel.org>
 
 
