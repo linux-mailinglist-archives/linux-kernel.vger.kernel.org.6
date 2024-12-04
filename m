@@ -1,183 +1,117 @@
-Return-Path: <linux-kernel+bounces-431504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECCB49E3E3B
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:25:40 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2ED099E3F75
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:17:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7164A28297B
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:25:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 089AAB28E7B
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:28:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D18820C03B;
-	Wed,  4 Dec 2024 15:25:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7B1620C01A;
+	Wed,  4 Dec 2024 15:28:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LT4VMiVw"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=public-files.de header.i=frank-w@public-files.de header.b="DxMgR2v5"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 384B520B1F5
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 15:25:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE5D423BB;
+	Wed,  4 Dec 2024 15:28:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733325931; cv=none; b=LMhoF1HAOZ5Upd+LcJfgLEQrYhVXIWU4+u6EJhyzVzYrDeAv2dCrWwOL1YntbbdtouIv5Dp1imMB1xTN5v0QkpW+DXPXXVlSQG9adTaXXlh7df7XrIj1+K1ryrqT2O7ju3JdicbZwWXHbjcutBZuGCZ/+lrMRbnB5Q5kiyOPw64=
+	t=1733326092; cv=none; b=VXcNIwqlhMn1qls6X+k0cDyOShC2S7h5p/aY+d0p5yso5ngUFjYt6nGLt+P1LLtHcJEBN1qyGTxkgcCr3n/9I80JnR80OU4oPDqCVwijbNQ1kjxNHJhA7qR4C9Ygtk8qV2uEgIaQxL7kvPeSajSyxrAWxZ+eQCSHv2buIlRxObM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733325931; c=relaxed/simple;
-	bh=ItfF21lgCpkme/udRWq5VgMzq0q4roB7rTlqXhTLIG8=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=WWqxR+nmyIMNSyDlltGAnfmyMDU0hAQAB0MKxQFKolyuKHzUf6l3ir1JeiwdoYFseseFaAZOewPKfMvgP5NUdEO9WO7dRoZFF6+aA1KIdWwLZoyQ/TRTQiMatYjGKh2fVxvFKTIYge//vjWtDV8gGoiSK5MiouRcOmxWe+Nqvec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LT4VMiVw; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4349f160d62so57056585e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 07:25:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733325926; x=1733930726; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=S8/NXif9wJVFj2hQElb83aSq+sssv9oaN1dht0koEM4=;
-        b=LT4VMiVwV9n/VgwbBo7nHKV4aG1r5hOCvSDgEijFyOkZUMwhXmqb7FFy0bqcb3cHku
-         Pt4ugU0bflv/xeQn3c2ld0UAtbZO7VzRiKBUH5ZUF2F1BM9nIwL9PLsz8jjwYZDdzTHy
-         lstoHHwcTMnHsL2NcljgG0PDEFnlYPuExeWTPK7X6e2tOiL6nSLmLl6lkcN8Bcq+F2FQ
-         u7lSdb+gv8cOttffoouSu2HeLJSwyc0i5VK77g5dRoilMnLRq4OPEkilqjOPZHpyCn/Y
-         DCQG7pmrvWeqrCpcYNqcHdA9pU16BDDrxRgLXXZ7oaGgvQyBmGvZQEf4iPnYhdlErt80
-         VdLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733325926; x=1733930726;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=S8/NXif9wJVFj2hQElb83aSq+sssv9oaN1dht0koEM4=;
-        b=lN8LucVjboZ6owUcHghOw5S1LmVK3+8N07/kjggPb0UGraiOCDdgoNaFmq49RA4V87
-         z+EY+5kUmePBx0rpjmtelIna6zWj0qvjtrD7HBmvqHSderqGDPT5akgWimAG0vqhAjk8
-         oDMxdPaUgZ3/VPToLEs1tkOM397gNvJDf9NdmbkEoquAgBTMF+DDA59BqFAudCPaViuV
-         oIT3G9g7LiiI994AFyEF8P6syYj43k78rcqZ03+CLgkAJx3/MkIGMx7K6O519mM8gd4b
-         dpiiCcLajSlnPuI0dLiOJnddZdM6vq1178VMMALfs5Kg1T8sAzoWK7QiGJoSmMVw+iUp
-         nM3A==
-X-Forwarded-Encrypted: i=1; AJvYcCU7t2kqYCwzLSvMo6vzb7ebj9qlHJsVYQKwxxeDI/COOReOr3WuEZ/B5SjJeTwPifuQpC0wfP8MJ4XpnDA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDXNzFx4founPUWo7Boq5TkboOGFVqtrIcyVPEd9TwIZQk7HdR
-	XKEYiqPdumwbeCJ0l4j9WdpFv8rl6xHLRznAc1k8Tr0Y4IQ+iA6jBR84dUB/ZJQ=
-X-Gm-Gg: ASbGncvXJ48dqT7yhncPHNMKy+dNELVhq3l61aqbOKl0GNOWfXi7cwpmORQdOJGN5P9
-	+sK62d/64uzBGpCstWCMBso3B5Cmk3QVeWyI6hYBnFOJGSPIoARJFe5lTIRI0zDAvL8fJP6ToAt
-	oRV4rmsGECgxexdNxDXnreDukabFJmssiGDDmW304e307Kqf8bqlDEhW/7xdZXB9FPxHnMpxfnW
-	EiTCHgpL7hmRtQLdz2ZJ4V7gvwthcVCh9Drqn7YBK59Yk7q3/c1YNB5u2p4ikLY4dZ+2qq+Qz4f
-	SA3Nwp7G0YSPxGv1DR9YlRGn
-X-Google-Smtp-Source: AGHT+IHZdt66nSwUCQIPlgcKC9J/gPvEuCIw+nsx+zth2Wzv3Qbr5bQfnlxx8iimG4axcn5Pscuwug==
-X-Received: by 2002:a5d:64ae:0:b0:385:f2a2:50df with SMTP id ffacd0b85a97d-385fd3e9e05mr5689269f8f.27.1733325926545;
-        Wed, 04 Dec 2024 07:25:26 -0800 (PST)
-Received: from ?IPV6:2a01:e0a:982:cbb0:740:b323:3531:5c75? ([2a01:e0a:982:cbb0:740:b323:3531:5c75])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385d80a77a0sm16812983f8f.58.2024.12.04.07.25.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Dec 2024 07:25:26 -0800 (PST)
-Message-ID: <0a85859a-9487-48fd-b1cb-a4a4195a8e63@linaro.org>
-Date: Wed, 4 Dec 2024 16:25:23 +0100
+	s=arc-20240116; t=1733326092; c=relaxed/simple;
+	bh=pjjfQePfOyiXfU23/6F9LerYYHMnwqmdZzt83UCtIxE=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=H+lKf8mVGu+c6Wf0Ym2PGt2kuoLtSCIM08ZiieMmj9Qx4wDrNOM76fzulZcimErDQEKnHp9VlC7LWFuCAZdfQGlZEBQM0DJmB6oymeb/Zm0ODW3uZgji1QxE2G5ATp2458Va+FHbpW4O1IZYtrLyjJXJjm4qN4nya6pyHVhjqBA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=public-files.de; spf=pass smtp.mailfrom=public-files.de; dkim=pass (2048-bit key) header.d=public-files.de header.i=frank-w@public-files.de header.b=DxMgR2v5; arc=none smtp.client-ip=212.227.17.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=public-files.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=public-files.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=public-files.de;
+	s=s31663417; t=1733326072; x=1733930872; i=frank-w@public-files.de;
+	bh=pjjfQePfOyiXfU23/6F9LerYYHMnwqmdZzt83UCtIxE=;
+	h=X-UI-Sender-Class:Date:From:To:CC:Subject:Reply-to:In-Reply-To:
+	 References:Message-ID:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=DxMgR2v5Nu8K+l4ugF2setlK9SY+S1YLY0EX31fX8E4ocdFP6bkhZu2/rM8Ogkc7
+	 c50vHSQJt2BB3LWFzlsZ/3s6JT7BMVMXFqMFIfo4sXDPKoG5WJuIxfSIxbodSzNds
+	 FdAwaTt4yEfPo5mzeuw6NWcF6MdwjLaX7cbptsKXIauDTn++jvktgCqzGQOQAPo4v
+	 eYON6ptShgRLTSoLPGqs03F8oyKq+mB3AwAsDv63++3rAWPCiz6gP15g9LEkuZ25n
+	 UiPfgMmme8qdtU212Xs8aDMX9MZz9gITBszFiDk3QJTVb6IXYtwgh6FW+pLcvdfkl
+	 m7l7ACdWWYR3/qkP3A==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [127.0.0.1] ([194.15.87.121]) by mail.gmx.net (mrgmx105
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1M89Gt-1tFGmi3scV-0065xH; Wed, 04
+ Dec 2024 16:27:52 +0100
+Date: Wed, 04 Dec 2024 16:27:50 +0100
+From: Frank Wunderlich <frank-w@public-files.de>
+To: Rob Herring <robh@kernel.org>, Frank Wunderlich <linux@fw-web.de>
+CC: Linus Walleij <linus.walleij@linaro.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Sean Wang <sean.wang@kernel.org>, linux-gpio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH v5 3/5] dt-bindings: pinctrl: add binding for MT7988 SoC
+User-Agent: K-9 Mail for Android
+Reply-to: frank-w@public-files.de
+In-Reply-To: <20241204144341.GA191772-robh@kernel.org>
+References: <20241202110045.22084-1-linux@fw-web.de> <20241202110045.22084-4-linux@fw-web.de> <20241204144341.GA191772-robh@kernel.org>
+Message-ID: <52A93441-8BF5-412A-8BE1-F662A4BE8BE0@public-files.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: neil.armstrong@linaro.org
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH v1 1/7] dt-bindings: i2c: qcom,i2c-geni: Document DT
- properties for QUP firmware loading
-To: Viken Dadhaniya <quic_vdadhani@quicinc.com>, andi.shyti@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- gregkh@linuxfoundation.org, jirislaby@kernel.org, broonie@kernel.or,
- andersson@kernel.org, konradybcio@kernel.org, johan+linaro@kernel.org,
- dianders@chromium.org, agross@kernel.org, linux-arm-msm@vger.kernel.org,
- linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
- linux-spi@vger.kernel.org
-Cc: =quic_msavaliy@quicinc.com, quic_anupkulk@quicinc.com,
- Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
-References: <20241204150326.1470749-1-quic_vdadhani@quicinc.com>
- <20241204150326.1470749-2-quic_vdadhani@quicinc.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20241204150326.1470749-2-quic_vdadhani@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:kpFFKleEuGcdJHmJZilFO693NLkTAOjN7Dy30NGmeEjUA55Vptu
+ QBH5J7IWTtURuj92DBQ2660+XQtrK7kfRWDWNreJvNhqC39TH/Io+xhQJKOi3SMQgRjKbbE
+ WTu8FV5vZVyOk73fuXPF7swyETD9G6luYQUddUExPbcCDelFKuNxW03GbS1kx/Jbx+mqAnr
+ ukw4fv3x0Y9MvFAIuYtSw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:Dy8xoDf5gfM=;WVivEMm620DfJ0o/7Vy0T8yMHy2
+ KZvWF4noSwYtFh3ihcvRp76VL/lWTgkwj3G4xl+xeKkeTIgMgMndk73Gvx3HrZHTCKvn6y6kF
+ 7s+P+6sIj3JFxbGoB7NovdcDaYRCY0MOofn4oSAIC0trjx/NT6erOEbUY1nAYkgA3nskCV5zM
+ 6c3GZm9xmiHAfB+3e2fpVIxZj3ysX4hN4WXMqyMIdVfz8JBwJHLfxqSzAyN2SNoQdjGK9/m+l
+ SVZtZ8fM5Kkqz2Qxbl2TCvl5Oj5bvk1GcuGIURkuseJL1e5PQUnU9Bxa4BPuCD1nlXOyq0J/Z
+ HRsGbGX8ogPrfQGqpYyatS1Vq+oLHnqYwLCCSLI4NFjILeWRMcMtI4WI2HrEdRP/4u2SX06lT
+ o6izjdgJALZcLJ0H/kE/JI6Bd67omLeWhjTxF0D4umcDutjilMFpetkc26/BVrQJHPl9APIRA
+ yLa4oj5J/28LdYlhCQgPBOCLxM5I2lcOv0M5KObC86U8SgCjaGJvFYspALYmhLkq9y3sZV4u/
+ LnBN9JBWrkArg8OSDVDd3AJzREeUqlT4i5Rry7E+UQ9HoCZGhN9lIvwsTKCCrMrn9Vn4ldQHK
+ D1Wfr/E7sqt747C6B4x+oPMPYoYTEulhs46CSoWL3JYju2GF+BdpneT8Xednw7iEtnvNLRE5U
+ B8CCrdqEn1uoWT9Ia4xnzxbCi9oXtos9kMc23LCLHosmi3G2dbfTdOOXfx3jFVxhcgb2qrhgp
+ IsLm5/JYTT4PjSbDHIZpSzBQaPvIpsmkrnA9Dg4lxGdo3xF7JDfNPihvSmT0uslXb1Jou0vTJ
+ NOmSoAuRth/WTt7nkjeyNb1IzlhsyvDHMVfbA2Uq+VtN8+r6imRnhetbXpnOzE+VisBfa/oTO
+ JQ3qmjPUgAZEZBc5wA1vW3lYc2xS1YaR5XxmxYlvb4EboQSSXJAXkSLNhPNuw56krNG9Ae/mf
+ tSrNG1drUs8IymUycvsVH6zbFKb6NbAKvNAy6z4j5jmVwjVSrh7OnGIn8yUahu6enT7hTqb6j
+ OynjWGUJRnW/+ERwgYF+KIpoFhHurQ12eZ7bghBtleCBY9DERazQmmoKnWDsaexhuOMiEsYAJ
+ n5sb1qPH8yJipObVfC4Mjbro8igKhp
 
-On 04/12/2024 16:03, Viken Dadhaniya wrote:
-> Document the 'qcom,load-firmware' and 'qcom,xfer-mode' properties to
-> support SE(Serial Engine) firmware loading from the protocol driver and to
-> select the data transfer mode, either GPI DMA (Generic Packet Interface)
-> or non-GPI mode (PIO/CPU DMA).
-> 
-> I2C controller can operate in one of two modes based on the
-> 'qcom,xfer-mode' property, and the firmware is loaded accordingly.
-> 
-> Co-developed-by: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
-> Signed-off-by: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
-> Signed-off-by: Viken Dadhaniya <quic_vdadhani@quicinc.com>
-> ---
->   .../devicetree/bindings/i2c/qcom,i2c-geni-qcom.yaml   | 11 +++++++++++
->   1 file changed, 11 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/i2c/qcom,i2c-geni-qcom.yaml b/Documentation/devicetree/bindings/i2c/qcom,i2c-geni-qcom.yaml
-> index 9f66a3bb1f80..a26f34fce1bb 100644
-> --- a/Documentation/devicetree/bindings/i2c/qcom,i2c-geni-qcom.yaml
-> +++ b/Documentation/devicetree/bindings/i2c/qcom,i2c-geni-qcom.yaml
-> @@ -66,6 +66,15 @@ properties:
->     required-opps:
->       maxItems: 1
->   
-> +  qcom,load-firmware:
-> +    type: boolean
-> +    description: Optional property to load SE (serial engine) Firmware from protocol driver.
-> +
-> +  qcom,xfer-mode:
-> +    description: Value 1,2 and 3 represents FIFO, CPU DMA and GSI DMA mode respectively.
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    enum: [1, 2, 3]
+Am 4=2E Dezember 2024 15:43:41 MEZ schrieb Rob Herring <robh@kernel=2Eorg>:
+>On Mon, Dec 02, 2024 at 12:00:37PM +0100, Frank Wunderlich wrote:
+>> From: Frank Wunderlich <frank-w@public-files=2Ede>
+>> changes in v5 (so not adding RB from Rob given in v4):
+>> - do not use MTK_DRIVE_8mA in example
+>> - add _0 functions for pwm
+>
+>Minor enough to keep my R-by, but if I review it again I can always find=
+=20
+>more=2E :)
 
-In the code, FIFO mode is default if not specified, please precise it in the
-bindings aswell.
+Sorry for the additional work now=2E=2E=2Ethought changes are enough to no=
+t add the RB=2E=2E=2Eok, doc says "substantially" changes for dropping the =
+given tags=2E
+Imho it can make the "code" better :) I will fix the issues reporter in ne=
+xt version but wait a bit for the other parts to get reviewed=2E
 
-Thanks,
-Neil
-
-> +
->   required:
->     - compatible
->     - interrupts
-> @@ -142,5 +151,7 @@ examples:
->           interconnect-names = "qup-core", "qup-config", "qup-memory";
->           power-domains = <&rpmhpd SC7180_CX>;
->           required-opps = <&rpmhpd_opp_low_svs>;
-> +        qcom,load-firmware;
-> +        qcom,xfer-mode = <1>;
->       };
->   ...
-
+regards Frank
 
