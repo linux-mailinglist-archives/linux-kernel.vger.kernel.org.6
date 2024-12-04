@@ -1,122 +1,98 @@
-Return-Path: <linux-kernel+bounces-432025-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F5299E45D6
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 21:34:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D18979E461F
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 21:52:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C8F4FB29F9D
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:59:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 24D1DB67BFE
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 19:07:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3089C1BBBE0;
-	Wed,  4 Dec 2024 18:59:20 +0000 (UTC)
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1196F23919E;
+	Wed,  4 Dec 2024 19:07:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=packett.cool header.i=@packett.cool header.b="eQrkpD6h"
+Received: from out-188.mta1.migadu.com (out-188.mta1.migadu.com [95.215.58.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF8A01A8F76
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 18:59:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B70361A8F9C
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 19:07:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733338759; cv=none; b=c0AuBSHD5hEvTyGiUHetNvN3aHLfYHspFOzIUDMY7znKEYDfN3R47AK9xFA7jx5BYjVIPrYJ6FU3H+i1La+XKTpq0pxO8dffRPkDcBFeqU57N3T5hzAvyvrLTgejdC1xLxTdgUMGbI0TpVbYcfShC8F8qsqGxLFQtz8aRYxIS2I=
+	t=1733339234; cv=none; b=UrjvGCmPSSqkiNmvPzCawXpnpamN644ChfdGaIw0zun8gjbpBXUzushicxbM1B+5NgVo+wjz0/Z902SmoBgwGTcvooaybanNuKak/Kz9k/FMOtNdNe3Gag9+Brs1J2Q+uoEBLBUcVkx4Y18/kKKOQzpR07ZQSQXV/tsE4x6lH1U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733338759; c=relaxed/simple;
-	bh=qHwjlkQR3ShY5K4tBiUFaFw+YpTmPQOJPvoRV0HZLBA=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=k7M8Ihfj+RvaapOLpYF7jE3wvzcKzt6QeTkGEbgLy5apUTBJ/kdBXbBBw7NJes9f8picQXO2a8JRVcU0uynP0hJxRNnqnlT2jk4KA3qNeVUjyiXPy4q79nuI6smrSG7UGQA6g56BSyk9NKH8xwW5CNhWlfjVdUZ/1+yhAOzJayg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-94-4n0Sm6D0MO2WXn6s9TvfQw-1; Wed, 04 Dec 2024 18:59:14 +0000
-X-MC-Unique: 4n0Sm6D0MO2WXn6s9TvfQw-1
-X-Mimecast-MFC-AGG-ID: 4n0Sm6D0MO2WXn6s9TvfQw
-Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
- (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Wed, 4 Dec
- 2024 18:58:36 +0000
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Wed, 4 Dec 2024 18:58:36 +0000
-From: David Laight <David.Laight@ACULAB.COM>
-To: Vincent Mailhol <mailhol.vincent@wanadoo.fr>, Linus Torvalds
-	<torvalds@linux-foundation.org>, Luc Van Oostenryck
-	<luc.vanoostenryck@gmail.com>, Nathan Chancellor <nathan@kernel.org>, "Nick
- Desaulniers" <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>, Yury Norov <yury.norov@gmail.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Kees Cook <kees@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>, Jani Nikula
-	<jani.nikula@linux.intel.com>, Joonas Lahtinen
-	<joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>, Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Rikard Falkeborn
-	<rikard.falkeborn@gmail.com>, Martin Uecker
-	<Martin.Uecker@med.uni-goettingen.de>
-CC: "linux-sparse@vger.kernel.org" <linux-sparse@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"llvm@lists.linux.dev" <llvm@lists.linux.dev>,
-	"linux-hardening@vger.kernel.org" <linux-hardening@vger.kernel.org>,
-	"intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	"coresight@lists.linaro.org" <coresight@lists.linaro.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Subject: RE: [PATCH 06/10] fortify: replace __is_constexpr() by is_const() in
- strlen()
-Thread-Topic: [PATCH 06/10] fortify: replace __is_constexpr() by is_const() in
- strlen()
-Thread-Index: AQHbROCtAolgstMk70q+qVJ51CWvhbLWcpEg
-Date: Wed, 4 Dec 2024 18:58:35 +0000
-Message-ID: <ad4482cc835543578862051431f5174f@AcuMS.aculab.com>
-References: <20241203-is_constexpr-refactor-v1-0-4e4cbaecc216@wanadoo.fr>
- <20241203-is_constexpr-refactor-v1-6-4e4cbaecc216@wanadoo.fr>
-In-Reply-To: <20241203-is_constexpr-refactor-v1-6-4e4cbaecc216@wanadoo.fr>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
+	s=arc-20240116; t=1733339234; c=relaxed/simple;
+	bh=aQE1gmaRdLJ7mHFEJuV0eH30B18Gkbbass08/5idHG0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=MK72I486fNNJ6BecCIn+sRs0jZ4XS2iPWkhHqB+tjLJZRpc3Gc4LkJ7aRjWFEnVThaH22KKHwexGCn1gZrcRhmTdRb40Zq8kdvJyvOLBrOFqHlVjPPoBITT2weUGw5Mh7vt6FKWhLHJ7rupS3X7LTYIt4mPJMm16UG86Jc7ReIk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=packett.cool; spf=pass smtp.mailfrom=packett.cool; dkim=pass (2048-bit key) header.d=packett.cool header.i=@packett.cool header.b=eQrkpD6h; arc=none smtp.client-ip=95.215.58.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=packett.cool
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=packett.cool
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=packett.cool;
+	s=key1; t=1733339231;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+lSfZLSwrFfKO4D+tL1HHWmCXCga7hprCT6tDTU5BJ4=;
+	b=eQrkpD6hvWCLJmo0fgibWsvez7c+vM0S65jUKaHpvVUrSn0Q8GlqRUmwS4dtLeTCIRhXoc
+	0L/2ohKwmjRH6aWARiXJLulyt2uW2pjWRE4mip+enrD7Iw2GL6ftKxZ4lABYeTGHNomu8F
+	kuyyHirZ9VZnIg9MkTnYuG4b/u6XO4VRzmbQ5YTEzEy4Ppm0T6vFS7eNwoqlJ+588K1HGJ
+	x3s61U8qk5vVHAt4elheQ4WX+U8ts76nKqA12wsSzG0Iy1ZZMTokOY70FxpRyHLK59P9j6
+	Ac4J6LgR9KOcr8NkAj9q/NGW6fw0qH5jjJA6T7QPuarmYeJ+QxtOErVGwGcqNg==
+From: Val Packett <val@packett.cool>
+To: 
+Cc: Val Packett <val@packett.cool>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Fabien Parent <fparent@baylibre.com>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: [PATCH 2/5] arm64: dts: mediatek: mt8516: fix wdt irq type
+Date: Wed,  4 Dec 2024 16:05:05 -0300
+Message-ID: <20241204190524.21862-3-val@packett.cool>
+In-Reply-To: <20241204190524.21862-1-val@packett.cool>
+References: <20241204190524.21862-1-val@packett.cool>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: 9fvZVDhEeoFmiddO53PKXcKDwUId42vFsjPVfEZtS2M_1733338753
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-RnJvbTogVmluY2VudCBNYWlsaG9sDQo+IFNlbnQ6IDAyIERlY2VtYmVyIDIwMjQgMTc6MzMNCj4g
-DQo+IEZyb206IFZpbmNlbnQgTWFpbGhvbCA8bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI+DQo+
-IA0KPiBpc19jb25zdCgpIGlzIGEgb25lIHRvIG9uZSByZXBsYWNlbWVudCBvZiBfX2lzX2NvbnN0
-ZXhwcigpLiBEbyB0aGUNCj4gcmVwbGFjZW1lbnQgc28gdGhhdCBfX2lzX2NvbnN0ZXhwcigpIGNh
-biBiZSByZW1vdmVkLg0KPiANCj4gU2lnbmVkLW9mZi1ieTogVmluY2VudCBNYWlsaG9sIDxtYWls
-aG9sLnZpbmNlbnRAd2FuYWRvby5mcj4NCj4gLS0tDQo+ICBpbmNsdWRlL2xpbnV4L2ZvcnRpZnkt
-c3RyaW5nLmggfCA0ICsrLS0NCj4gIDEgZmlsZSBjaGFuZ2VkLCAyIGluc2VydGlvbnMoKyksIDIg
-ZGVsZXRpb25zKC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEvaW5jbHVkZS9saW51eC9mb3J0aWZ5LXN0
-cmluZy5oIGIvaW5jbHVkZS9saW51eC9mb3J0aWZ5LXN0cmluZy5oDQo+IGluZGV4IDBkOTliZjEx
-ZDI2MGEzNDgyYmJlNDZlMzVjNzU1M2MwY2NmYjhiOTQuLmUzZjJmNzcyYzU0MzllZjcxZWI0YTkw
-NGI0Y2UyNzk1NmJjNjk3NDMgMTAwNjQ0DQo+IC0tLSBhL2luY2x1ZGUvbGludXgvZm9ydGlmeS1z
-dHJpbmcuaA0KPiArKysgYi9pbmNsdWRlL2xpbnV4L2ZvcnRpZnktc3RyaW5nLmgNCj4gQEAgLTI1
-NCw4ICsyNTQsOCBAQCBfX0ZPUlRJRllfSU5MSU5FIF9fa2VybmVsX3NpemVfdCBzdHJubGVuKGNv
-bnN0IGNoYXIgKiBjb25zdCBQT1MgcCwgX19rZXJuZWxfc2l6ZQ0KPiAgICogUmV0dXJucyBudW1i
-ZXIgb2YgY2hhcmFjdGVycyBpbiBAcCAoTk9UIGluY2x1ZGluZyB0aGUgZmluYWwgTlVMKS4NCj4g
-ICAqDQo+ICAgKi8NCj4gLSNkZWZpbmUgc3RybGVuKHApCQkJCQkJCVwNCj4gLQlfX2J1aWx0aW5f
-Y2hvb3NlX2V4cHIoX19pc19jb25zdGV4cHIoX19idWlsdGluX3N0cmxlbihwKSksCVwNCj4gKyNk
-ZWZpbmUgc3RybGVuKHApCQkJCQkJXA0KPiArCV9fYnVpbHRpbl9jaG9vc2VfZXhwcihpc19jb25z
-dChfX2J1aWx0aW5fc3RybGVuKHApKSwJXA0KPiAgCQlfX2J1aWx0aW5fc3RybGVuKHApLCBfX2Zv
-cnRpZnlfc3RybGVuKHApKQ0KDQpJJ20gc3VyZSBMaW51cyBzdWdnZXN0ZWQgYSB3YXkgb2YgZG9p
-bmcgdGhhdCB3aXRob3V0IHJlcGxpY2F0aW5nDQp0aGUgX19idWlsdGluX3N0cmxlbigpLg0KDQpJ
-bmRlZWQgaXQgbWF5IGJlIHZhbGlkIHRvIGRvOg0KCWxlbiA9IF9fYnVpbHRpbl9zdHJsZW4ocCk7
-DQoJX19idWlsdGluX2NvbnN0YW50X3AobGVuKSA/IGxlbiA6IF9fZm9ydGlmeV9zdHJsZW4ocCk7
-DQoNCglEYXZpZA0KDQo+ICBfX0ZPUlRJRllfSU5MSU5FIF9fZGlhZ25vc2VfYXMoX19idWlsdGlu
-X3N0cmxlbiwgMSkNCj4gIF9fa2VybmVsX3NpemVfdCBfX2ZvcnRpZnlfc3RybGVuKGNvbnN0IGNo
-YXIgKiBjb25zdCBQT1MgcCkNCj4gDQo+IC0tDQo+IDIuNDUuMg0KPiANCj4gDQoNCi0NClJlZ2lz
-dGVyZWQgQWRkcmVzcyBMYWtlc2lkZSwgQnJhbWxleSBSb2FkLCBNb3VudCBGYXJtLCBNaWx0b24g
-S2V5bmVzLCBNSzEgMVBULCBVSw0KUmVnaXN0cmF0aW9uIE5vOiAxMzk3Mzg2IChXYWxlcykNCg==
+The GICv2 does not support EDGE_FALLING interrupts, so the watchdog
+would refuse to attach due to a failing check coming from the GIC driver.
+
+Fixes: 5236347bde42 ("arm64: dts: mediatek: add dtsi for MT8516")
+Signed-off-by: Val Packett <val@packett.cool>
+---
+ arch/arm64/boot/dts/mediatek/mt8516.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm64/boot/dts/mediatek/mt8516.dtsi b/arch/arm64/boot/dts/mediatek/mt8516.dtsi
+index 444429341302..098c32ebf678 100644
+--- a/arch/arm64/boot/dts/mediatek/mt8516.dtsi
++++ b/arch/arm64/boot/dts/mediatek/mt8516.dtsi
+@@ -206,7 +206,7 @@ watchdog@10007000 {
+ 			compatible = "mediatek,mt8516-wdt",
+ 				     "mediatek,mt6589-wdt";
+ 			reg = <0 0x10007000 0 0x1000>;
+-			interrupts = <GIC_SPI 198 IRQ_TYPE_EDGE_FALLING>;
++			interrupts = <GIC_SPI 198 IRQ_TYPE_LEVEL_LOW>;
+ 			#reset-cells = <1>;
+ 		};
+ 
+-- 
+2.47.1
 
 
