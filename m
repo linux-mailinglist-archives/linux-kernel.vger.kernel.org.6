@@ -1,215 +1,102 @@
-Return-Path: <linux-kernel+bounces-431349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431370-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E758E9E3C3F
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:10:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A7D879E3C78
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:16:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A821728417D
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 14:10:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6CED2283356
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 14:16:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 835CD20B21B;
-	Wed,  4 Dec 2024 14:08:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="l+MKTK8M"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F3ED20B1E9;
-	Wed,  4 Dec 2024 14:08:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 740781F7096;
+	Wed,  4 Dec 2024 14:16:51 +0000 (UTC)
+Received: from gate.crashing.org (gate.crashing.org [63.228.1.57])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B53CC14A8B
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 14:16:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.228.1.57
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733321334; cv=none; b=V0aOuk+oBomwngWLRcI7Xj4Z65iizzZW55tIQOw43CRlKq9ssRkFqaI7k5zHa0NH49EMcxOFSmERC78wdMp2TCS/TScADBMA10O1OvxV1y9kmmRrSoVYDmMcr994AZLEYdv9X6N00xzfwSuWENKBhlYTkyYkql6am8nhs470yWw=
+	t=1733321811; cv=none; b=q9x1gXIjCM9okGMR4f8Q1pBY6pA2+u4smOIjOW7HRqxunFiBkPIxQKEu2GXzYr7EhksMl35BMe3oQw6YwbcalAW5zTEOCM3dJm4iX5PApphmTTtsH4bRA78ckZFGnYB7k252TASIUZYSkJEE5NWk3pNxB+PChUR7RVT/1pe1HSU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733321334; c=relaxed/simple;
-	bh=C8H/vAtl/ysCKFSDbRX2SBUQ4grZrSHvkzZz0WczXwU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Z0U7huT9oHw+Fl7/YQ54ERFx8lqtO2lZECcTrMZe/b+z+R0gREZu/A3CdcCbqv3RWyRLeUkTFQ+M74a0WqigrUCfAeSVmMTKueVkG4GSc/7Kq+Z8dsR61UxtasXqZUF5HQI5yekh72qRXPG6iWSnrJhNNMIiZYdew2BCeCewIVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=l+MKTK8M; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733321334; x=1764857334;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=C8H/vAtl/ysCKFSDbRX2SBUQ4grZrSHvkzZz0WczXwU=;
-  b=l+MKTK8MCl+1PClNQ+2jpFRCsubxQ4evPK2RLaKCPRaoezJzZJHXHhU3
-   f+WXAAKQx3E4mPFiOJVLb+hZ6G0jb8zDDiuxB5t/MsiNaTlvTIKSbMCX6
-   tUvhx9QOOHqGk8U8SzCASerNarKHv+C59IVuRGXKZP3JEVsWBkst3qof9
-   8dim9Gufj1W2dyD3wsvH7kOKVPCzL9pMKgUewDXBCch2kK27f0zI6NND1
-   WLtntWj+9bJzI7QOfL78oGBDsRRFfQhjDE6R+7aMemMFg4Af6Rox0pzoJ
-   0pGXzyO2cuxlGLE20FoV5wfEsp3tdzGOR+yZUrrBHGE5Z1s00h8QaOTz2
-   A==;
-X-CSE-ConnectionGUID: 1719QpZKSseavKbPGLuyCg==
-X-CSE-MsgGUID: 5HdtUWfPQZms9OUmbRb2+w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11276"; a="56071400"
-X-IronPort-AV: E=Sophos;i="6.12,207,1728975600"; 
-   d="scan'208";a="56071400"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Dec 2024 06:08:53 -0800
-X-CSE-ConnectionGUID: 3Hvwb+tbRcatBVEOowyDjg==
-X-CSE-MsgGUID: QWGhmExSShG1/yS+xAr2PQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,207,1728975600"; 
-   d="scan'208";a="98202798"
-Received: from dhhellew-desk2.ger.corp.intel.com.ger.corp.intel.com (HELO localhost.localdomain) ([10.245.245.116])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Dec 2024 06:08:51 -0800
-From: Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>
-To: x86@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	rafael.j.wysocki@intel.com,
-	peterz@infradead.org,
-	dave.hansen@linux.intel.com,
-	gautham.shenoy@amd.com,
-	tglx@linutronix.de,
-	len.brown@intel.com,
-	artem.bityutskiy@linux.intel.com,
-	patryk.wlazlyn@linux.intel.com
-Subject: [PATCH v8 4/4] x86/smp native_play_dead: Prefer cpuidle_play_dead() over mwait_play_dead()
-Date: Wed,  4 Dec 2024 15:08:28 +0100
-Message-ID: <20241204140828.11699-5-patryk.wlazlyn@linux.intel.com>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20241204140828.11699-1-patryk.wlazlyn@linux.intel.com>
-References: <20241204140828.11699-1-patryk.wlazlyn@linux.intel.com>
+	s=arc-20240116; t=1733321811; c=relaxed/simple;
+	bh=zjfTQ13HAS3fU4Rdw/ZS86Wh71qYaeqDmuQiS+jO2fU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bC+seUv2ekqC1GbeeJDAjGx3F9H49AziDiRXZUAqjc70iWQ+l8E74KDIUG3VkBVrmvoAhUUpmbDwk20rYRpuu4eAytDKFoeFFSVquEZZDytM7WCsPulL5HW+3u1KFw7PgPHc+AfZKBCRud/Bur4OpHGzq2+8yAPYFF5c0p/LO24=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org; spf=pass smtp.mailfrom=kernel.crashing.org; arc=none smtp.client-ip=63.228.1.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.crashing.org
+Received: from gate.crashing.org (localhost.localdomain [127.0.0.1])
+	by gate.crashing.org (8.14.1/8.14.1) with ESMTP id 4B4E9ZrU015093;
+	Wed, 4 Dec 2024 08:09:35 -0600
+Received: (from segher@localhost)
+	by gate.crashing.org (8.14.1/8.14.1/Submit) id 4B4E9YNa015085;
+	Wed, 4 Dec 2024 08:09:34 -0600
+X-Authentication-Warning: gate.crashing.org: segher set sender to segher@kernel.crashing.org using -f
+Date: Wed, 4 Dec 2024 08:09:33 -0600
+From: Segher Boessenkool <segher@kernel.crashing.org>
+To: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: Shrikanth Hegde <sshegde@linux.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Josh Poimboeuf <jpoimboe@kernel.org>, Jason Baron <jbaron@akamai.com>,
+        Steven Rostedt <rostedt@goodmis.org>, Ard Biesheuvel <ardb@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>, Naveen N Rao <naveen@kernel.org>,
+        Madhavan Srinivasan <maddy@linux.ibm.com>,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH v4 2/4] objtool/powerpc: Add support for decoding all types of uncond branches
+Message-ID: <20241204140933.GV29862@gate.crashing.org>
+References: <cover.1733245362.git.christophe.leroy@csgroup.eu> <0ca71a4b0ac679ea52bd9fdd1f607195d72b499f.1733245362.git.christophe.leroy@csgroup.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0ca71a4b0ac679ea52bd9fdd1f607195d72b499f.1733245362.git.christophe.leroy@csgroup.eu>
+User-Agent: Mutt/1.4.2.3i
 
-The current algorithm* for looking up the mwait hint for the deepest
-cstate, in mwait_play_dead_cpuid_hint() code works by inspecting CPUID
-leaf 0x5 and calculates the mwait hint based on the number of reported
-substates.  This approach depends on the hints associated with them to
-be continuous in the range [0, NUM_SUBSTATES-1]. This continuity is not
-documented and is not met on the recent Intel platforms.
+On Tue, Dec 03, 2024 at 08:44:50PM +0100, Christophe Leroy wrote:
+> Add support for 'bla' instruction.
+> 
+> This is done by 'flagging' the address as an absolute address so that
+> arch_jump_destination() can calculate it as expected. Because code is
+> _always_ 4 bytes aligned, use bit 30 as flag.
 
- * The current algorithm is implemented in the for loop inspecting edx
-   in mwait_play_dead_cpuid_hint().
+The AA field already is there, so why not, eh :-)
 
-For example, Intel's Sierra Forest report two cstates with two substates
-each in cpuid leaf 0x5:
+> Also add support for 'b' and 'ba' instructions. Objtool call them jumps.
 
-  Name*   target cstate    target subcstate (mwait hint)
-  ===========================================================
-  C1      0x00             0x00
-  C1E     0x00             0x01
+> Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
 
-  --      0x10             ----
+Reviewed-by: Segher Boessenkool <segher@kewrnel.crashing.org>
 
-  C6S     0x20             0x22
-  C6P     0x20             0x23
+> --- a/tools/objtool/arch/powerpc/decode.c
+> +++ b/tools/objtool/arch/powerpc/decode.c
+> @@ -55,12 +55,15 @@ int arch_decode_instruction(struct objtool_file *file, const struct section *sec
+>  
+>  	switch (opcode) {
+>  	case 18: /* b[l][a] */
+> -		if ((ins & 3) == 1) /* bl */
+> +		if (ins & 1)	/* bl[a] */
+>  			typ = INSN_CALL;
+> +		else		/* b[a] */
+> +			typ = INSN_JUMP_UNCONDITIONAL;
+>  
+>  		imm = ins & 0x3fffffc;
+>  		if (imm & 0x2000000)
+>  			imm -= 0x4000000;
+> +		imm |= ins & 2;	/* AA flag */
 
-  --      0x30             ----
+You could of course put that together with the 3fffffc thing, but you
+can leave that to the compiler as well :-)
 
-  /* No more (sub)states all the way down to the end. */
-  ===========================================================
 
-   * Names of the cstates are not included in the CPUID leaf 0x5, they are
-     taken from the product specific documentation.
-
-Notice that hints 0x20 and 0x21 are skipped entirely for the target
-cstate 0x20 (C6), being a cause of the problem for the current cpuid
-leaf 0x5 algorithm.
-
-Remove the old implementation of play_dead MWAIT hint calculation based
-on the CPUID leaf 0x5 in mwait_play_dead_cpuid_hint() and delegate
-calling of the mwait_play_dead() to the idle driver.
-
-Signed-off-by: Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>
-Reviewed-by: Gautham R. Shenoy <gautham.shenoy@amd.com>
----
- arch/x86/kernel/smpboot.c | 56 +++++----------------------------------
- 1 file changed, 7 insertions(+), 49 deletions(-)
-
-diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
-index 8a3545c2cae9..82801137486d 100644
---- a/arch/x86/kernel/smpboot.c
-+++ b/arch/x86/kernel/smpboot.c
-@@ -1272,6 +1272,10 @@ void play_dead_common(void)
- 	local_irq_disable();
- }
- 
-+/*
-+ * We need to flush the caches before going to sleep, lest we have
-+ * dirty data in our caches when we come back up.
-+ */
- void __noreturn mwait_play_dead(unsigned int eax_hint)
- {
- 	struct mwait_cpu_dead *md = this_cpu_ptr(&mwait_cpu_dead);
-@@ -1317,52 +1321,6 @@ void __noreturn mwait_play_dead(unsigned int eax_hint)
- 	}
- }
- 
--/*
-- * We need to flush the caches before going to sleep, lest we have
-- * dirty data in our caches when we come back up.
-- */
--static inline void mwait_play_dead_cpuid_hint(void)
--{
--	unsigned int eax, ebx, ecx, edx;
--	unsigned int highest_cstate = 0;
--	unsigned int highest_subcstate = 0;
--	int i;
--
--	if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD ||
--	    boot_cpu_data.x86_vendor == X86_VENDOR_HYGON)
--		return;
--	if (!this_cpu_has(X86_FEATURE_MWAIT))
--		return;
--	if (!this_cpu_has(X86_FEATURE_CLFLUSH))
--		return;
--	if (__this_cpu_read(cpu_info.cpuid_level) < CPUID_MWAIT_LEAF)
--		return;
--
--	eax = CPUID_MWAIT_LEAF;
--	ecx = 0;
--	native_cpuid(&eax, &ebx, &ecx, &edx);
--
--	/*
--	 * eax will be 0 if EDX enumeration is not valid.
--	 * Initialized below to cstate, sub_cstate value when EDX is valid.
--	 */
--	if (!(ecx & CPUID5_ECX_EXTENSIONS_SUPPORTED)) {
--		eax = 0;
--	} else {
--		edx >>= MWAIT_SUBSTATE_SIZE;
--		for (i = 0; i < 7 && edx; i++, edx >>= MWAIT_SUBSTATE_SIZE) {
--			if (edx & MWAIT_SUBSTATE_MASK) {
--				highest_cstate = i;
--				highest_subcstate = edx & MWAIT_SUBSTATE_MASK;
--			}
--		}
--		eax = (highest_cstate << MWAIT_SUBSTATE_SIZE) |
--			(highest_subcstate - 1);
--	}
--
--	mwait_play_dead(eax);
--}
--
- /*
-  * Kick all "offline" CPUs out of mwait on kexec(). See comment in
-  * mwait_play_dead().
-@@ -1413,9 +1371,9 @@ void native_play_dead(void)
- 	play_dead_common();
- 	tboot_shutdown(TB_SHUTDOWN_WFS);
- 
--	mwait_play_dead_cpuid_hint();
--	if (cpuidle_play_dead())
--		hlt_play_dead();
-+	/* Below returns only on error. */
-+	cpuidle_play_dead();
-+	hlt_play_dead();
- }
- 
- #else /* ... !CONFIG_HOTPLUG_CPU */
--- 
-2.47.1
-
+Segher
 
