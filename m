@@ -1,207 +1,575 @@
-Return-Path: <linux-kernel+bounces-432135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85BF99E4604
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 21:43:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 988D69E461B
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 21:51:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 434B3169D6A
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 20:43:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90486164FC4
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 20:51:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71437190055;
-	Wed,  4 Dec 2024 20:43:31 +0000 (UTC)
-Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1B94191494;
+	Wed,  4 Dec 2024 20:51:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="L/YPshOP"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2445718EFCC
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 20:43:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4534C17335C;
+	Wed,  4 Dec 2024 20:51:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733345010; cv=none; b=omlWawhbw5XMHhAXHjFqMixg7aBGA2of5Szqr2C7mD7FgUuLlJJlr/vkn+CR7VOfFFp/ilR38mi/qWdy0c+SWd+tUia1vURZqpeAQzovpDOnfeiSuV0RQnCKqRb1z9y2m1gqFUACf4kiT7gPYZ55z2/8qz9ytkhBxyw3P/77B3w=
+	t=1733345492; cv=none; b=jVLyBU3bGKAUsbDlw+2wT+sN9QIc1llgjiS7l6+SlUQTnDfFnzujrWXCtTtrAaZnxww4GWXMV02qxt3u3HY917z4IPZi70Vy8+NbH1A7YESJ5vtJVtFPDrthyKwfhE1Pga8qkmwi1qDfxDEZhpP1dtlVUghxFwuUDX3thQv/PEY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733345010; c=relaxed/simple;
-	bh=MxqrL7P+q5TtbAG4Bjz4LhtI/kOkk5CviQKzYIdVOEo=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=FL4FB+f+Ps9GRXby4V6PATCJpEaP5aW1Wbu8LxMgbG6GTvXgGz8jV3knC9jklRZe+QMSysj9NEgxiwspTLZwpMgCooemlACiHqW+kmAYy3UKBS8fjVj2mLJ4Wu0WBQRUkG1+eeodd9hNr+1Esp0G13vKCSGto6Ie/3VMkSbFn90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3a7cff77f99so1942075ab.3
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 12:43:28 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733345008; x=1733949808;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=6k9FdKQ2cY0hs7m3TWq6tSTQAE+PkoV2U5ODf+4lDTE=;
-        b=OLu3RA0ftRsrb3afbbGiMa68yIU71KkY4sAhFwGVemABiQ2phft2JvKFN/jiG3p8Z3
-         q1tBCLlr+mQkAL8MN/As0J1DAyJH4E05RECJmp7utcB6qw/InbKTiVfLP06qGNBqhNT4
-         alYFFw819RstsuEqgC3d34y3YtlJZCqFswpzTN/xma5B76rk7zCQ9nq5qqhvdadb1AIb
-         2V8QVaED+C7hmvRfJe1eNdnKQS88sScE2TK5NvUwM83VU3i1L9slbJZwIC9jvXntKEcu
-         6LT1spzvtX0wIJ+HGRUdpfyKi6ulYrE7dMSslJ4Qx/2PydeBiAz85LCX7wti7FoC0A43
-         WCOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWvecSCem5HeiamrU5yuI1Cy3XojmcGr4a0mokVnf1LdRDTSbJTbjd3AvsWSl0qxfDkL9oWIBaQBGpnHHY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNCKc16qEFT4pTK1rvYjVfuxH8mowovSqx9jUDiJTgqDzwN8jP
-	JhuWe8m6LmmWuL6xbEzlb0VN7mLnQanAFqXRm/iuE1bwBkuCTuClYyHK8nn3MH6NbMD4ArLuOor
-	5ITTPxhakpIMlnCS1H0/6YQKPrBJ7NTxJjfCc8g413FP/WPYZz5gJ8oM=
-X-Google-Smtp-Source: AGHT+IGzcfQlcveK056IjyzEAo6BuiDtS7T5gBiKtK++qt8PMl5gkvyuubW/bOBIEUWrnazFAgccABw+QgUre2ueSmGU7oZrkqBW
+	s=arc-20240116; t=1733345492; c=relaxed/simple;
+	bh=mrv1kSdGE80XLwjHV+eey2rwpc0dLczINrcEBQoEm5I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=orPNlms1JwNFFlkox46HeLHezM87tZE5KDkv99dCshZAbPMLwW+vC+n0uXKJFYw5kXbxlB3TVFeprjYMb2Ue99rypxMnLAbyuBCTnyHptktojJ4IQgFMjqjgrZrEmSZcKTuIN+fXy1xpGZKndofAqIR5FCe5wx5mMMVpi6ikPKo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=L/YPshOP; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733345490; x=1764881490;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=mrv1kSdGE80XLwjHV+eey2rwpc0dLczINrcEBQoEm5I=;
+  b=L/YPshOPuObOLphLJ6DmFhJVkosMmrdPbRCo8WecyrsajuEm05mNr90/
+   gGBzsHRNtvruMdZdZRJY0f/RFQ62Z/zX+YXbS+Ay384GHrlo9kV2gUnEL
+   tmq1dvtPkDQAL37zQgjIhIp85MWkbiux8qpNDT5E8G2Kpb3mJiyDXaL8N
+   iBIWApmUj6UABXE6NfNHWUTrC5dL7sFmwLS6W2Doi33u/Lsn1JJWyyrj8
+   EZhAvlBuExehXwImTHIrygvbkyq8NDFttpCacndjMiv2YFTq+u4dg0deM
+   bd6kH0gw4E4uiRoPSqsFeIWSQEFuSZTYrXIAxXlcoWN7vwdPa2wS1mied
+   Q==;
+X-CSE-ConnectionGUID: 8kxH2xCiTP6cwzXLpd6niA==
+X-CSE-MsgGUID: M06zWKDnQFCJZxeG1mCWxg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11276"; a="33695333"
+X-IronPort-AV: E=Sophos;i="6.12,208,1728975600"; 
+   d="scan'208";a="33695333"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Dec 2024 12:51:28 -0800
+X-CSE-ConnectionGUID: b5tCPzJORbCNwYmtiKX9Xg==
+X-CSE-MsgGUID: Y+NfdIyYTjymdSRNd4BSTw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,208,1728975600"; 
+   d="scan'208";a="117126345"
+Received: from aschofie-mobl2.amr.corp.intel.com (HELO aschofie-mobl2.lan) ([10.125.108.90])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Dec 2024 12:51:27 -0800
+Date: Wed, 4 Dec 2024 12:51:25 -0800
+From: Alison Schofield <alison.schofield@intel.com>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Vishal Verma <vishal.l.verma@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>, linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	cocci@inria.fr
+Subject: Re: [PATCH v2 05/11] kbuild: change working directory to external
+ module directory with M=
+Message-ID: <Z1DAzaKYD_rfgGnk@aschofie-mobl2.lan>
+References: <20241110013649.34903-1-masahiroy@kernel.org>
+ <20241110013649.34903-6-masahiroy@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c246:0:b0:3a6:c98d:86bc with SMTP id
- e9e14a558f8ab-3a7f9a3838cmr101282705ab.1.1733345008365; Wed, 04 Dec 2024
- 12:43:28 -0800 (PST)
-Date: Wed, 04 Dec 2024 12:43:28 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6750bef0.050a0220.17bd51.007a.GAE@google.com>
-Subject: [syzbot] [wireless?] [ext4?] general protection fault in pcpu_alloc
-From: syzbot <syzbot+e874685d80aae83785cc@syzkaller.appspotmail.com>
-To: johannes@sipsolutions.net, linux-ext4@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org, 
-	netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241110013649.34903-6-masahiroy@kernel.org>
 
-Hello,
+On Sun, Nov 10, 2024 at 10:34:33AM +0900, Masahiro Yamada wrote:
+> Currently, Kbuild always operates in the output directory of the kernel,
+> even when building external modules. This increases the risk of external
+> module Makefiles attempting to write to the kernel directory.
+> 
+> This commit switches the working directory to the external module
+> directory, allowing the removal of the $(KBUILD_EXTMOD)/ prefix from
+> some build artifacts.
+> 
+> The command for building external modules maintains backward
+> compatibility, but Makefiles that rely on working in the kernel
+> directory may break. In such cases, $(objtree) and $(srctree) should
+> be used to refer to the output and source directories of the kernel.
+> 
+> The appearance of the build log will change as follows:
+> 
+> [Before]
+> 
+>   $ make -C /path/to/my/linux M=/path/to/my/externel/module
+>   make: Entering directory '/path/to/my/linux'
+>     CC [M]  /path/to/my/externel/module/helloworld.o
+>     MODPOST /path/to/my/externel/module/Module.symvers
+>     CC [M]  /path/to/my/externel/module/helloworld.mod.o
+>     CC [M]  /path/to/my/externel/module/.module-common.o
+>     LD [M]  /path/to/my/externel/module/helloworld.ko
+>   make: Leaving directory '/path/to/my/linux'
+> 
+> [After]
+> 
+>   $ make -C /path/to/my/linux M=/path/to/my/externel/module
+>   make: Entering directory '/path/to/my/linux'
+>   make[1]: Entering directory '/path/to/my/externel/module'
+>     CC [M]  helloworld.o
+>     MODPOST Module.symvers
+>     CC [M]  helloworld.mod.o
+>     CC [M]  .module-common.o
+>     LD [M]  helloworld.ko
+>   make[1]: Leaving directory '/path/to/my/externel/module'
+>   make: Leaving directory '/path/to/my/linux'
+> 
+> Printing "Entering directory" twice is cumbersome. This will be
+> addressed later.
+> 
+> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+> ---
 
-syzbot found the following issue on:
+With this in v6.13-rc1 the cxl-test module fails depmod.
+It causes depmod  to be invoked from the incorrect place
+(or something doesn't respect INSTALL_MOD_PATH)
 
-HEAD commit:    bcc8eda6d349 Merge tag 'turbostat-2024.11.30' of git://git..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=128dbf78580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=53ebff8e07a0ee6f
-dashboard link: https://syzkaller.appspot.com/bug?extid=e874685d80aae83785cc
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14bd15e8580000
+Is there something additional that this cxl-test module needs
+to do?
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/7dd7042cbaae/disk-bcc8eda6.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/48269d20d4af/vmlinux-bcc8eda6.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/010f2b2a997f/bzImage-bcc8eda6.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/73a779ed9f88/mount_0.gz
+Repro:
+/git/new$ make V=1 M=tools/testing/cxl INSTALL_MOD_PATH=qbuild/mkosi.extra/ modules_install
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+e874685d80aae83785cc@syzkaller.appspotmail.com
-
-Oops: general protection fault, probably for non-canonical address 0xec2c282c2c2c2c2d: 0000 [#1] PREEMPT SMP KASAN PTI
-KASAN: maybe wild-memory-access in range [0x6161616161616168-0x616161616161616f]
-CPU: 0 UID: 0 PID: 5926 Comm: syz-executor Not tainted 6.12.0-syzkaller-12113-gbcc8eda6d349 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-RIP: 0010:__hlist_del include/linux/list.h:982 [inline]
-RIP: 0010:hlist_del include/linux/list.h:994 [inline]
-RIP: 0010:__alloc_object lib/debugobjects.c:232 [inline]
-RIP: 0010:pcpu_alloc+0x1a8/0x300 lib/debugobjects.c:256
-Code: 2e 4c 89 e8 48 c1 e8 03 80 3c 28 00 74 08 4c 89 ef e8 0c d2 3e fd 49 89 5d 00 48 85 db 74 1c 48 83 c3 08 48 89 d8 48 c1 e8 03 <80> 3c 28 00 74 08 48 89 df e8 ea d1 3e fd 4c 89 2b 41 80 3c 2f 00
-RSP: 0018:ffffc900038a6f60 EFLAGS: 00010006
-RAX: 0c2c2c2c2c2c2c2d RBX: 6161616161616169 RCX: 0000000000000001
-RDX: ffffffff8c09c480 RSI: ffffffff8c5e9080 RDI: ffffffff8c5e9040
-RBP: dffffc0000000000 R08: 0000000000000003 R09: fffff52000714ddc
-R10: dffffc0000000000 R11: fffff52000714ddc R12: 1ffff1100f228801
-R13: ffff8880b863fe00 R14: ffff888079144008 R15: 1ffff1100f228800
-FS:  000055555fac2500(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00005555915bb808 CR3: 000000001cad4000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- alloc_object+0xbf/0x310 lib/debugobjects.c:458
- lookup_object_or_alloc lib/debugobjects.c:685 [inline]
- __debug_object_init+0x185/0x470 lib/debugobjects.c:743
- ieee80211_alloc_hw_nm+0x126e/0x1ea0 net/mac80211/main.c:976
- mac80211_hwsim_new_radio+0x1db/0x4a90 drivers/net/wireless/virtual/mac80211_hwsim.c:5146
- hwsim_new_radio_nl+0xece/0x2290 drivers/net/wireless/virtual/mac80211_hwsim.c:6203
- genl_family_rcv_msg_doit net/netlink/genetlink.c:1115 [inline]
- genl_family_rcv_msg net/netlink/genetlink.c:1195 [inline]
- genl_rcv_msg+0xb14/0xec0 net/netlink/genetlink.c:1210
- netlink_rcv_skb+0x1e3/0x430 net/netlink/af_netlink.c:2542
- genl_rcv+0x28/0x40 net/netlink/genetlink.c:1219
- netlink_unicast_kernel net/netlink/af_netlink.c:1321 [inline]
- netlink_unicast+0x7f6/0x990 net/netlink/af_netlink.c:1347
- netlink_sendmsg+0x8e4/0xcb0 net/netlink/af_netlink.c:1891
- sock_sendmsg_nosec net/socket.c:711 [inline]
- __sock_sendmsg+0x221/0x270 net/socket.c:726
- __sys_sendto+0x363/0x4c0 net/socket.c:2197
- __do_sys_sendto net/socket.c:2204 [inline]
- __se_sys_sendto net/socket.c:2200 [inline]
- __x64_sys_sendto+0xde/0x100 net/socket.c:2200
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f811ad826dc
-Code: 2a 5a 02 00 44 8b 4c 24 2c 4c 8b 44 24 20 89 c5 44 8b 54 24 28 48 8b 54 24 18 b8 2c 00 00 00 48 8b 74 24 10 8b 7c 24 08 0f 05 <48> 3d 00 f0 ff ff 77 34 89 ef 48 89 44 24 08 e8 70 5a 02 00 48 8b
-RSP: 002b:00007ffd7f24e760 EFLAGS: 00000293 ORIG_RAX: 000000000000002c
-RAX: ffffffffffffffda RBX: 00007f811ba74620 RCX: 00007f811ad826dc
-RDX: 0000000000000024 RSI: 00007f811ba74670 RDI: 0000000000000003
-RBP: 0000000000000000 R08: 00007ffd7f24e7b4 R09: 000000000000000c
-R10: 0000000000000000 R11: 0000000000000293 R12: 0000000000000003
-R13: 0000000000000000 R14: 00007f811ba74670 R15: 0000000000000000
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:__hlist_del include/linux/list.h:982 [inline]
-RIP: 0010:hlist_del include/linux/list.h:994 [inline]
-RIP: 0010:__alloc_object lib/debugobjects.c:232 [inline]
-RIP: 0010:pcpu_alloc+0x1a8/0x300 lib/debugobjects.c:256
-Code: 2e 4c 89 e8 48 c1 e8 03 80 3c 28 00 74 08 4c 89 ef e8 0c d2 3e fd 49 89 5d 00 48 85 db 74 1c 48 83 c3 08 48 89 d8 48 c1 e8 03 <80> 3c 28 00 74 08 48 89 df e8 ea d1 3e fd 4c 89 2b 41 80 3c 2f 00
-RSP: 0018:ffffc900038a6f60 EFLAGS: 00010006
-RAX: 0c2c2c2c2c2c2c2d RBX: 6161616161616169 RCX: 0000000000000001
-RDX: ffffffff8c09c480 RSI: ffffffff8c5e9080 RDI: ffffffff8c5e9040
-RBP: dffffc0000000000 R08: 0000000000000003 R09: fffff52000714ddc
-R10: dffffc0000000000 R11: fffff52000714ddc R12: 1ffff1100f228801
-R13: ffff8880b863fe00 R14: ffff888079144008 R15: 1ffff1100f228800
-FS:  000055555fac2500(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00005555915bb808 CR3: 000000001cad4000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess):
-   0:	2e 4c 89 e8          	cs mov %r13,%rax
-   4:	48 c1 e8 03          	shr    $0x3,%rax
-   8:	80 3c 28 00          	cmpb   $0x0,(%rax,%rbp,1)
-   c:	74 08                	je     0x16
-   e:	4c 89 ef             	mov    %r13,%rdi
-  11:	e8 0c d2 3e fd       	call   0xfd3ed222
-  16:	49 89 5d 00          	mov    %rbx,0x0(%r13)
-  1a:	48 85 db             	test   %rbx,%rbx
-  1d:	74 1c                	je     0x3b
-  1f:	48 83 c3 08          	add    $0x8,%rbx
-  23:	48 89 d8             	mov    %rbx,%rax
-  26:	48 c1 e8 03          	shr    $0x3,%rax
-* 2a:	80 3c 28 00          	cmpb   $0x0,(%rax,%rbp,1) <-- trapping instruction
-  2e:	74 08                	je     0x38
-  30:	48 89 df             	mov    %rbx,%rdi
-  33:	e8 ea d1 3e fd       	call   0xfd3ed222
-  38:	4c 89 2b             	mov    %r13,(%rbx)
-  3b:	41 80 3c 2f 00       	cmpb   $0x0,(%r15,%rbp,1)
+Outputs:
+make  -C /home/cxluser/git/new/tools/testing/cxl \
+-f /home/cxluser/git/new/Makefile modules_install
+make[1]: Entering directory '/home/cxluser/git/new/tools/testing/cxl'
+make --no-print-directory -C /home/cxluser/git/new/tools/testing/cxl \
+-f /home/cxluser/git/new/Makefile modules_install
+make -f /home/cxluser/git/new/scripts/Makefile.modinst \
+sign-only=
+# INSTALL qbuild/mkosi.extra//lib/modules/6.13.0-rc1+/updates/cxl_acpi.ko
+  cp cxl_acpi.ko qbuild/mkosi.extra//lib/modules/6.13.0-rc1+/updates/cxl_acpi.ko
+# cmd_strip qbuild/mkosi.extra//lib/modules/6.13.0-rc1+/updates/cxl_acpi.ko
+  :
+# cmd_sign qbuild/mkosi.extra//lib/modules/6.13.0-rc1+/updates/cxl_acpi.ko
+  :
+# INSTALL qbuild/mkosi.extra//lib/modules/6.13.0-rc1+/updates/cxl_pmem.ko
+  cp cxl_pmem.ko qbuild/mkosi.extra//lib/modules/6.13.0-rc1+/updates/cxl_pmem.ko
+# cmd_strip qbuild/mkosi.extra//lib/modules/6.13.0-rc1+/updates/cxl_pmem.ko
+  :
+# cmd_sign qbuild/mkosi.extra//lib/modules/6.13.0-rc1+/updates/cxl_pmem.ko
+  :
+# INSTALL qbuild/mkosi.extra//lib/modules/6.13.0-rc1+/updates/cxl_port.ko
+  cp cxl_port.ko qbuild/mkosi.extra//lib/modules/6.13.0-rc1+/updates/cxl_port.ko
+# cmd_strip qbuild/mkosi.extra//lib/modules/6.13.0-rc1+/updates/cxl_port.ko
+  :
+# cmd_sign qbuild/mkosi.extra//lib/modules/6.13.0-rc1+/updates/cxl_port.ko
+  :
+# INSTALL qbuild/mkosi.extra//lib/modules/6.13.0-rc1+/updates/cxl_mem.ko
+  cp cxl_mem.ko qbuild/mkosi.extra//lib/modules/6.13.0-rc1+/updates/cxl_mem.ko
+# cmd_strip qbuild/mkosi.extra//lib/modules/6.13.0-rc1+/updates/cxl_mem.ko
+  :
+# cmd_sign qbuild/mkosi.extra//lib/modules/6.13.0-rc1+/updates/cxl_mem.ko
+  :
+# INSTALL qbuild/mkosi.extra//lib/modules/6.13.0-rc1+/updates/cxl_core.ko
+  cp cxl_core.ko qbuild/mkosi.extra//lib/modules/6.13.0-rc1+/updates/cxl_core.ko
+# cmd_strip qbuild/mkosi.extra//lib/modules/6.13.0-rc1+/updates/cxl_core.ko
+  :
+# cmd_sign qbuild/mkosi.extra//lib/modules/6.13.0-rc1+/updates/cxl_core.ko
+  :
+# INSTALL qbuild/mkosi.extra//lib/modules/6.13.0-rc1+/updates/test/cxl_test.ko
+  cp test/cxl_test.ko qbuild/mkosi.extra//lib/modules/6.13.0-rc1+/updates/test/cxl_test.ko
+# cmd_strip qbuild/mkosi.extra//lib/modules/6.13.0-rc1+/updates/test/cxl_test.ko
+  :
+# cmd_sign qbuild/mkosi.extra//lib/modules/6.13.0-rc1+/updates/test/cxl_test.ko
+  :
+# INSTALL qbuild/mkosi.extra//lib/modules/6.13.0-rc1+/updates/test/cxl_mock.ko
+  cp test/cxl_mock.ko qbuild/mkosi.extra//lib/modules/6.13.0-rc1+/updates/test/cxl_mock.ko
+# cmd_strip qbuild/mkosi.extra//lib/modules/6.13.0-rc1+/updates/test/cxl_mock.ko
+  :
+# cmd_sign qbuild/mkosi.extra//lib/modules/6.13.0-rc1+/updates/test/cxl_mock.ko
+  :
+# INSTALL qbuild/mkosi.extra//lib/modules/6.13.0-rc1+/updates/test/cxl_mock_mem.ko
+  cp test/cxl_mock_mem.ko qbuild/mkosi.extra//lib/modules/6.13.0-rc1+/updates/test/cxl_mock_mem.ko
+# cmd_strip qbuild/mkosi.extra//lib/modules/6.13.0-rc1+/updates/test/cxl_mock_mem.ko
+  :
+# cmd_sign qbuild/mkosi.extra//lib/modules/6.13.0-rc1+/updates/test/cxl_mock_mem.ko
+  :
+# DEPMOD  qbuild/mkosi.extra//lib/modules/6.13.0-rc1+
+  /home/cxluser/git/new/scripts/depmod.sh 6.13.0-rc1+
+depmod: WARNING: could not open modules.order at /home/cxluser/git/new/tools/testing/cxl/qbuild/mkosi.extra//lib/modules/6.13.0-rc1+: No such file or directory
+depmod: WARNING: /home/cxluser/git/new/tools/testing/cxl/qbuild/mkosi.extra//lib/modules/6.13.0-rc1+/updates/test/cxl_mock.ko needs unknown symbol nvdimm_bus_register
+depmod: WARNING: /home/cxluser/git/new/tools/testing/cxl/qbuild/mkosi.extra//lib/modules/6.13.0-rc1+/updates/cxl_pmem.ko needs unknown symbol to_nvdimm
+depmod: WARNING: /home/cxluser/git/new/tools/testing/cxl/qbuild/mkosi.extra//lib/modules/6.13.0-rc1+/updates/cxl_pmem.ko needs unknown symbol __nvdimm_create
+depmod: WARNING: /home/cxluser/git/new/tools/testing/cxl/qbuild/mkosi.extra//lib/modules/6.13.0-rc1+/updates/cxl_pmem.ko needs unknown symbol nvdimm_bus_unregister
+depmod: WARNING: /home/cxluser/git/new/tools/testing/cxl/qbuild/mkosi.extra//lib/modules/6.13.0-rc1+/updates/cxl_pmem.ko needs unknown symbol nvdimm_region_delete
+depmod: WARNING: /home/cxluser/git/new/tools/testing/cxl/qbuild/mkosi.extra//lib/modules/6.13.0-rc1+/updates/cxl_pmem.ko needs unknown symbol nvdimm_delete
+depmod: WARNING: /home/cxluser/git/new/tools/testing/cxl/qbuild/mkosi.extra//lib/modules/6.13.0-rc1+/updates/cxl_pmem.ko needs unknown symbol nvdimm_provider_data
+depmod: WARNING: /home/cxluser/git/new/tools/testing/cxl/qbuild/mkosi.extra//lib/modules/6.13.0-rc1+/updates/cxl_pmem.ko needs unknown symbol nvdimm_pmem_region_create
+depmod: WARNING: /home/cxluser/git/new/tools/testing/cxl/qbuild/mkosi.extra//lib/modules/6.13.0-rc1+/updates/cxl_pmem.ko needs unknown symbol nd_fletcher64
+depmod: WARNING: /home/cxluser/git/new/tools/testing/cxl/qbuild/mkosi.extra//lib/modules/6.13.0-rc1+/updates/cxl_pmem.ko needs unknown symbol nvdimm_cmd_mask
+depmod: WARNING: could not open modules.builtin at /home/cxluser/git/new/tools/testing/cxl/qbuild/mkosi.extra//lib/modules/6.13.0-rc1+: No such file or directory
+make[1]: Leaving directory '/home/cxluser/git/new/tools/testing/cxl'
+cxluser@MySS:~/git/new$
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+> 
+> Changes in v2:
+>  - Introduce a new 'srcroot' variable and clean-up code
+>  - Reword Documentation/dev-tools/coccinelle.rst
+> 
+>  Documentation/dev-tools/coccinelle.rst | 20 ++-----
+>  Documentation/kbuild/makefiles.rst     | 14 +++++
+>  Makefile                               | 80 +++++++++++++++-----------
+>  rust/Makefile                          |  4 +-
+>  scripts/Makefile.build                 |  2 +-
+>  scripts/Makefile.clean                 |  2 +-
+>  scripts/Makefile.compiler              |  2 +-
+>  scripts/Makefile.modpost               |  6 +-
+>  scripts/coccicheck                     |  6 +-
+>  scripts/nsdeps                         |  8 +--
+>  scripts/package/install-extmod-build   |  7 +++
+>  11 files changed, 85 insertions(+), 66 deletions(-)
+> 
+> diff --git a/Documentation/dev-tools/coccinelle.rst b/Documentation/dev-tools/coccinelle.rst
+> index 535ce126fb4f..6e70a1e9a3c0 100644
+> --- a/Documentation/dev-tools/coccinelle.rst
+> +++ b/Documentation/dev-tools/coccinelle.rst
+> @@ -250,25 +250,17 @@ variables for .cocciconfig is as follows:
+>  - Your directory from which spatch is called is processed next
+>  - The directory provided with the ``--dir`` option is processed last, if used
+>  
+> -Since coccicheck runs through make, it naturally runs from the kernel
+> -proper dir; as such the second rule above would be implied for picking up a
+> -.cocciconfig when using ``make coccicheck``.
+> -
+>  ``make coccicheck`` also supports using M= targets. If you do not supply
+>  any M= target, it is assumed you want to target the entire kernel.
+>  The kernel coccicheck script has::
+>  
+> -    if [ "$KBUILD_EXTMOD" = "" ] ; then
+> -        OPTIONS="--dir $srctree $COCCIINCLUDE"
+> -    else
+> -        OPTIONS="--dir $KBUILD_EXTMOD $COCCIINCLUDE"
+> -    fi
+> +    OPTIONS="--dir $srcroot $COCCIINCLUDE"
+>  
+> -KBUILD_EXTMOD is set when an explicit target with M= is used. For both cases
+> -the spatch ``--dir`` argument is used, as such third rule applies when whether
+> -M= is used or not, and when M= is used the target directory can have its own
+> -.cocciconfig file. When M= is not passed as an argument to coccicheck the
+> -target directory is the same as the directory from where spatch was called.
+> +Here, $srcroot refers to the source directory of the target: it points to the
+> +external module's source directory when M= used, and otherwise, to the kernel
+> +source directory. The third rule ensures the spatch reads the .cocciconfig from
+> +the target directory, allowing external modules to have their own .cocciconfig
+> +file.
+>  
+>  If not using the kernel's coccicheck target, keep the above precedence
+>  order logic of .cocciconfig reading. If using the kernel's coccicheck target,
+> diff --git a/Documentation/kbuild/makefiles.rst b/Documentation/kbuild/makefiles.rst
+> index 7964e0c245ae..d36519f194dc 100644
+> --- a/Documentation/kbuild/makefiles.rst
+> +++ b/Documentation/kbuild/makefiles.rst
+> @@ -449,6 +449,20 @@ $(obj)
+>    to prerequisites are referenced with $(src) (because they are not
+>    generated files).
+>  
+> +$(srcroot)
+> +  $(srcroot) refers to the root of the source you are building, which can be
+> +  either the kernel source or the external modules source, depending on whether
+> +  KBUILD_EXTMOD is set. This can be either a relative or an absolute path, but
+> +  if KBUILD_ABS_SRCTREE=1 is set, it is always an absolute path.
+> +
+> +$(srctree)
+> +  $(srctree) refers to the root of the kernel source tree. When building the
+> +  kernel, this is the same as $(srcroot).
+> +
+> +$(objtree)
+> +  $(objtree) refers to the root of the kernel object tree. It is ``.`` when
+> +  building the kernel, but it is different when building external modules.
+> +
+>  $(kecho)
+>    echoing information to user in a rule is often a good practice
+>    but when execution ``make -s`` one does not expect to see any output
+> diff --git a/Makefile b/Makefile
+> index cf1d55560ae2..e5f7ac7647a7 100644
+> --- a/Makefile
+> +++ b/Makefile
+> @@ -180,7 +180,24 @@ ifeq ("$(origin O)", "command line")
+>    KBUILD_OUTPUT := $(O)
+>  endif
+>  
+> -output := $(KBUILD_OUTPUT)
+> +ifdef KBUILD_EXTMOD
+> +    ifdef KBUILD_OUTPUT
+> +        objtree := $(realpath $(KBUILD_OUTPUT))
+> +        $(if $(objtree),,$(error specified kernel directory "$(KBUILD_OUTPUT)" does not exist))
+> +    else
+> +        objtree := $(CURDIR)
+> +    endif
+> +    output := $(KBUILD_EXTMOD)
+> +    # KBUILD_EXTMOD might be a relative path. Remember its absolute path before
+> +    # Make changes the working directory.
+> +    srcroot := $(realpath $(KBUILD_EXTMOD))
+> +    $(if $(srcroot),,$(error specified external module directory "$(KBUILD_EXTMOD)" does not exist))
+> +else
+> +    objtree := .
+> +    output := $(KBUILD_OUTPUT)
+> +endif
+> +
+> +export objtree srcroot
+>  
+>  # Do we want to change the working directory?
+>  ifneq ($(output),)
+> @@ -230,35 +247,33 @@ else # need-sub-make
+>  
+>  # We process the rest of the Makefile if this is the final invocation of make
+>  
+> -ifeq ($(abs_srctree),$(CURDIR))
+> -        # building in the source tree
+> -        srctree := .
+> -	building_out_of_srctree :=
+> +ifndef KBUILD_EXTMOD
+> +srcroot := $(abs_srctree)
+> +endif
+> +
+> +ifeq ($(srcroot),$(CURDIR))
+> +building_out_of_srctree :=
+>  else
+> -        ifeq ($(abs_srctree)/,$(dir $(CURDIR)))
+> -                # building in a subdirectory of the source tree
+> -                srctree := ..
+> -        else
+> -                srctree := $(abs_srctree)
+> -        endif
+> -	building_out_of_srctree := 1
+> +export building_out_of_srctree :=1
+>  endif
+>  
+> -ifneq ($(KBUILD_ABS_SRCTREE),)
+> -srctree := $(abs_srctree)
+> +ifdef KBUILD_ABS_SRCTREE
+> +    # Do not nothing. Use the absolute path.
+> +else ifeq ($(srcroot),$(CURDIR))
+> +    # Building in the source.
+> +    srcroot := .
+> +else ifeq ($(srcroot)/,$(dir $(CURDIR)))
+> +    # Building in a subdirectory of the source.
+> +    srcroot := ..
+>  endif
+>  
+> -objtree		:= .
+> +export srctree := $(if $(KBUILD_EXTMOD),$(abs_srctree),$(srcroot))
+>  
+> -VPATH		:=
+> -
+> -ifeq ($(KBUILD_EXTMOD),)
+>  ifdef building_out_of_srctree
+> -VPATH		:= $(srctree)
+> +export VPATH := $(srcroot)
+> +else
+> +VPATH :=
+>  endif
+> -endif
+> -
+> -export building_out_of_srctree srctree objtree VPATH
+>  
+>  # To make sure we do not include .config for any of the *config targets
+>  # catch them early, and hand them over to scripts/kconfig/Makefile
+> @@ -711,7 +726,7 @@ endif
+>  # in addition to whatever we do anyway.
+>  # Just "make" or "make all" shall build modules as well
+>  
+> -ifneq ($(filter all modules nsdeps %compile_commands.json clang-%,$(MAKECMDGOALS)),)
+> +ifneq ($(filter all modules nsdeps compile_commands.json clang-%,$(MAKECMDGOALS)),)
+>    KBUILD_MODULES := 1
+>  endif
+>  
+> @@ -1107,7 +1122,7 @@ export MODLIB
+>  
+>  PHONY += prepare0
+>  
+> -export extmod_prefix = $(if $(KBUILD_EXTMOD),$(KBUILD_EXTMOD)/)
+> +export extmod_prefix =
+>  export MODORDER := $(extmod_prefix)modules.order
+>  export MODULES_NSDEPS := $(extmod_prefix)modules.nsdeps
+>  
+> @@ -1799,14 +1814,10 @@ filechk_kernel.release = echo $(KERNELRELEASE)
+>  KBUILD_BUILTIN :=
+>  KBUILD_MODULES := 1
+>  
+> -build-dir := $(KBUILD_EXTMOD)
+> +build-dir := .
+>  
+> -compile_commands.json: $(extmod_prefix)compile_commands.json
+> -PHONY += compile_commands.json
+> -
+> -clean-dirs := $(KBUILD_EXTMOD)
+> -clean: private rm-files := $(KBUILD_EXTMOD)/Module.symvers $(KBUILD_EXTMOD)/modules.nsdeps \
+> -	$(KBUILD_EXTMOD)/compile_commands.json
+> +clean-dirs := .
+> +clean: private rm-files := Module.symvers modules.nsdeps compile_commands.json
+>  
+>  PHONY += prepare
+>  # now expand this into a simple variable to reduce the cost of shell evaluations
+> @@ -1948,7 +1959,7 @@ $(clean-dirs):
+>  
+>  clean: $(clean-dirs)
+>  	$(call cmd,rmfiles)
+> -	@find $(or $(KBUILD_EXTMOD), .) $(RCS_FIND_IGNORE) \
+> +	@find . $(RCS_FIND_IGNORE) \
+>  		\( -name '*.[aios]' -o -name '*.rsi' -o -name '*.ko' -o -name '.*.cmd' \
+>  		-o -name '*.ko.*' \
+>  		-o -name '*.dtb' -o -name '*.dtbo' \
+> @@ -1981,7 +1992,12 @@ tags TAGS cscope gtags: FORCE
+>  PHONY += rust-analyzer
+>  rust-analyzer:
+>  	+$(Q)$(CONFIG_SHELL) $(srctree)/scripts/rust_is_available.sh
+> +ifdef KBUILD_EXTMOD
+> +# FIXME: external modules must not descend into a sub-directory of the kernel
+> +	$(Q)$(MAKE) $(build)=$(objtree)/rust src=$(srctree)/rust $@
+> +else
+>  	$(Q)$(MAKE) $(build)=rust $@
+> +endif
+>  
+>  # Script to generate missing namespace dependencies
+>  # ---------------------------------------------------------------------------
+> diff --git a/rust/Makefile b/rust/Makefile
+> index b5e0a73b78f3..742740816c4b 100644
+> --- a/rust/Makefile
+> +++ b/rust/Makefile
+> @@ -362,8 +362,8 @@ rust-analyzer:
+>  	$(Q)$(srctree)/scripts/generate_rust_analyzer.py \
+>  		--cfgs='core=$(core-cfgs)' --cfgs='alloc=$(alloc-cfgs)' \
+>  		$(realpath $(srctree)) $(realpath $(objtree)) \
+> -		$(rustc_sysroot) $(RUST_LIB_SRC) $(KBUILD_EXTMOD) > \
+> -		$(if $(KBUILD_EXTMOD),$(extmod_prefix),$(objtree))/rust-project.json
+> +		$(rustc_sysroot) $(RUST_LIB_SRC) $(if $(KBUILD_EXTMOD),$(srcroot)) \
+> +		> rust-project.json
+>  
+>  redirect-intrinsics = \
+>  	__addsf3 __eqsf2 __extendsfdf2 __gesf2 __lesf2 __ltsf2 __mulsf3 __nesf2 __truncdfsf2 __unordsf2 \
+> diff --git a/scripts/Makefile.build b/scripts/Makefile.build
+> index 64cd046f8fd8..1aa928a6fb4f 100644
+> --- a/scripts/Makefile.build
+> +++ b/scripts/Makefile.build
+> @@ -3,7 +3,7 @@
+>  # Building
+>  # ==========================================================================
+>  
+> -src := $(if $(VPATH),$(VPATH)/)$(obj)
+> +src := $(srcroot)/$(obj)
+>  
+>  PHONY := $(obj)/
+>  $(obj)/:
+> diff --git a/scripts/Makefile.clean b/scripts/Makefile.clean
+> index 4fcfab40ed61..6ead00ec7313 100644
+> --- a/scripts/Makefile.clean
+> +++ b/scripts/Makefile.clean
+> @@ -3,7 +3,7 @@
+>  # Cleaning up
+>  # ==========================================================================
+>  
+> -src := $(if $(VPATH),$(VPATH)/)$(obj)
+> +src := $(srcroot)/$(obj)
+>  
+>  PHONY := __clean
+>  __clean:
+> diff --git a/scripts/Makefile.compiler b/scripts/Makefile.compiler
+> index e0842496d26e..8c1029687e2e 100644
+> --- a/scripts/Makefile.compiler
+> +++ b/scripts/Makefile.compiler
+> @@ -13,7 +13,7 @@ cc-cross-prefix = $(firstword $(foreach c, $(1), \
+>  			$(if $(shell command -v -- $(c)gcc 2>/dev/null), $(c))))
+>  
+>  # output directory for tests below
+> -TMPOUT = $(if $(KBUILD_EXTMOD),$(firstword $(KBUILD_EXTMOD))/).tmp_$$$$
+> +TMPOUT = .tmp_$$$$
+>  
+>  # try-run
+>  # Usage: option = $(call try-run, $(CC)...-o "$$TMP",option-ok,otherwise)
+> diff --git a/scripts/Makefile.modpost b/scripts/Makefile.modpost
+> index 12e7c15d099c..78d2ca4f25f5 100644
+> --- a/scripts/Makefile.modpost
+> +++ b/scripts/Makefile.modpost
+> @@ -111,13 +111,13 @@ endif
+>  else
+>  
+>  # set src + obj - they may be used in the modules's Makefile
+> -obj := $(KBUILD_EXTMOD)
+> -src := $(if $(VPATH),$(VPATH)/)$(obj)
+> +obj := .
+> +src := $(srcroot)
+>  
+>  # Include the module's Makefile to find KBUILD_EXTRA_SYMBOLS
+>  include $(kbuild-file)
+>  
+> -output-symdump := $(KBUILD_EXTMOD)/Module.symvers
+> +output-symdump := Module.symvers
+>  
+>  ifeq ($(wildcard $(objtree)/Module.symvers),)
+>  missing-input := $(objtree)/Module.symvers
+> diff --git a/scripts/coccicheck b/scripts/coccicheck
+> index e52cb43fede6..0e6bc5a10320 100755
+> --- a/scripts/coccicheck
+> +++ b/scripts/coccicheck
+> @@ -80,11 +80,7 @@ command results in a shift count error.'
+>      NPROC=1
+>  else
+>      ONLINE=0
+> -    if [ "$KBUILD_EXTMOD" = "" ] ; then
+> -        OPTIONS="--dir $srctree $COCCIINCLUDE"
+> -    else
+> -        OPTIONS="--dir $KBUILD_EXTMOD $COCCIINCLUDE"
+> -    fi
+> +    OPTIONS="--dir $srcroot $COCCIINCLUDE"
+>  
+>      # Use only one thread per core by default if hyperthreading is enabled
+>      THREADS_PER_CORE=$(LANG=C lscpu | grep "Thread(s) per core: " | tr -cd "[:digit:]")
+> diff --git a/scripts/nsdeps b/scripts/nsdeps
+> index f1718cc0d700..8ca12e2b5c03 100644
+> --- a/scripts/nsdeps
+> +++ b/scripts/nsdeps
+> @@ -19,12 +19,6 @@ if ! { echo "$SPATCH_REQ_VERSION"; echo "$SPATCH_VERSION"; } | sort -CV ; then
+>  	exit 1
+>  fi
+>  
+> -if [ "$KBUILD_EXTMOD" ]; then
+> -	src_prefix=
+> -else
+> -	src_prefix=$srctree/
+> -fi
+> -
+>  generate_deps_for_ns() {
+>  	$SPATCH --very-quiet --in-place --sp-file \
+>  		$srctree/scripts/coccinelle/misc/add_namespace.cocci -D nsdeps -D ns=$1 $2
+> @@ -34,7 +28,7 @@ generate_deps() {
+>  	local mod=${1%.ko:}
+>  	shift
+>  	local namespaces="$*"
+> -	local mod_source_files=$(sed "s|^\(.*\)\.o$|${src_prefix}\1.c|" $mod.mod)
+> +	local mod_source_files=$(sed "s|^\(.*\)\.o$|${srcroot}/\1.c|" $mod.mod)
+>  
+>  	for ns in $namespaces; do
+>  		echo "Adding namespace $ns to module $mod.ko."
+> diff --git a/scripts/package/install-extmod-build b/scripts/package/install-extmod-build
+> index 7ec1f061a519..64d958ee45f3 100755
+> --- a/scripts/package/install-extmod-build
+> +++ b/scripts/package/install-extmod-build
+> @@ -51,6 +51,13 @@ mkdir -p "${destdir}"
+>  if [ "${CC}" != "${HOSTCC}" ]; then
+>  	echo "Rebuilding host programs with ${CC}..."
+>  
+> +	# This leverages external module building.
+> +	# - Clear sub_make_done to allow the top-level Makefile to redo sub-make.
+> +	# - Filter out --no-print-directory to print "Entering directory" logs
+> +	#   when Make changes the working directory.
+> +	unset sub_make_done
+> +	MAKEFLAGS=$(echo "${MAKEFLAGS}" | sed s/--no-print-directory//)
+> +
+>  	cat <<-'EOF' >  "${destdir}/Kbuild"
+>  	subdir-y := scripts
+>  	EOF
+> -- 
+> 2.43.0
+> 
 
