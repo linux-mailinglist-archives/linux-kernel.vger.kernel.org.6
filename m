@@ -1,69 +1,88 @@
-Return-Path: <linux-kernel+bounces-431453-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431446-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F90E9E3D81
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:00:17 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57C4C9E3D72
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:57:46 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72CE516420D
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:00:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18C7D2810FD
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 14:57:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E16D220C032;
-	Wed,  4 Dec 2024 14:59:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2915E20B1F4;
+	Wed,  4 Dec 2024 14:57:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mentallysanemainliners.org header.i=@mentallysanemainliners.org header.b="CXJSZNLB"
-Received: from out-02.smtp.spacemail.com (out-02.smtp.spacemail.com [63.250.43.87])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F2kAWs3u"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6B051B4124;
-	Wed,  4 Dec 2024 14:59:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.250.43.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 173A720B803
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 14:57:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733324392; cv=none; b=exuo/sg1kpPGM36dlUERFMuZuDNds50nho1ok5zECYT7unOBHY0uI0lw3lJSK+tg/q4l6cLoBwrhCTlb1aA4q12CYV2btjwQD9oSKUTikIlKCeA0GdJ+UGHkvDkIlT3Ft8y2YchPkOGHejIOFDPoxZT4FrkqEQ3SB92LlFUro3k=
+	t=1733324256; cv=none; b=tAOf68ZOJvdwpeAepcAaHoIJQHl4Sb9LT1SHd4HnwVATpYFdah85xQ28OlZIqHZA/qIxkvIW1vxRi2OJp/O6IXa0EUre3Sn0LtIBOMzYiMC+wa/x8q0IyLDJV9v6B85W+qeGOodzbr/yBUketEEyzFrFNs/gXsr7nhb7PDROY6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733324392; c=relaxed/simple;
-	bh=BOopPzcToEprpdw2LIS55Y82go8hBPaS/MvQht0hXKk=;
+	s=arc-20240116; t=1733324256; c=relaxed/simple;
+	bh=yEZqPYC+h9ATloVU0XmNyzZGllbuEk61RrZf7nWTCPY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=iNMN+VwE4MUpY5TFKEbrmeWerVJxPIk173+MURfiXhBqbfdqjkOQ5dQf0GgTuK3qIcbBVM/HYbrKP1DwXFWHG9dLjg72ZoJ0rw/sBPqBw/zfiD/mD+d5o9CF6VqGweors6CoHIcNoB5gJjM4R1cwgx9gc6yBg8BADB/2gKmGyAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org; spf=pass smtp.mailfrom=mentallysanemainliners.org; dkim=pass (2048-bit key) header.d=mentallysanemainliners.org header.i=@mentallysanemainliners.org header.b=CXJSZNLB; arc=none smtp.client-ip=63.250.43.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mentallysanemainliners.org
-Received: from prod-lbout-phx.jellyfish.systems (unknown [198.177.122.3])
-	by smtp.spacemail.com (Postfix) with ESMTPA id 4Y3LKG0FvQz4wVY;
-	Wed, 04 Dec 2024 14:59:46 +0000 (UTC)
-Received: from localhost.localdomain (83.21.102.241.ipv4.supernova.orange.pl [83.21.102.241])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.spacemail.com (Postfix) with ESMTPSA id 4Y3LK710qhz8sWX;
-	Wed,  4 Dec 2024 14:59:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=mentallysanemainliners.org; s=spacemail; t=1733324380;
-	bh=BOopPzcToEprpdw2LIS55Y82go8hBPaS/MvQht0hXKk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=CXJSZNLBlXP7xJOKeyw91iiFtUVza9hZIAr2xPPcF3+PDekLkrwDiNJa+LY1c54vl
-	 D/noGHbrxvO2Oels2LpVvzzqJw0/xZAfWvMz9cxODtccoCeoEbiXlxgN7RUUClfui4
-	 GLeXHMCp5BWVF8wfq1VrswtdR7pjzPoEAmuwkzqBrGkTAQMU93fj3bJgfWGtHlk7R7
-	 lSuaIcVQJ8Q6hn65uOxoSXtr1AoRL+3NvVOYMp84JbogPuoC0F9ebPok8FOblq3j8P
-	 Oy9RlbJ8uQfSTJxk3ILitflezCUYLKi6LW78yLJFNZzSwN9QIx2wTBs8kQiSU4Fp/f
-	 ikjpsNqC3IkQg==
-From: Igor Belwon <igor.belwon@mentallysanemainliners.org>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>
-Cc: devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
+	 MIME-Version; b=ZJ2kK0daLj8HeLV8aEZaLZSTW46RW03prkeYfQfrDmUbfvfTbjFR0jzujsXpit52eWAt9tHk4dEtovqLqxE0SBbN2BcrZE0RSK8a2wFbwJlpnl4W1CSQ39X9TNuCjeCMGVUcs0BMmQKKN32XLdin0nDMRJistUst4aeq9lDQ0+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F2kAWs3u; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-434a766b475so63561155e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 06:57:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733324253; x=1733929053; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nHRk7vTqEYKo1g5eurOtqzkc5wPjmAmCwHqc6uMEKP4=;
+        b=F2kAWs3ub1oRiF4pqNIUpV2HOdvVary+yRD63SuXIpDU08R1/WLCei1tSL4aX3BTwR
+         9IVT301OIWzgwt+I1x4+qf+KTaGR98kkWu1bNI69ve+qZAsFtspPJmA/ro1zA1QAnBuy
+         63CbS+Vw65VeUVBVdkK4VbtjXwXTdM6h4+UI2YpIWsKs96m5yiXWaEPzwYxd1RhRWKPN
+         ecpsTWrR2KhfoYm2ygaASuHXdvkAqId1EvFECqr2d1Xvb2D9Se4sgMeFfRJsp8SLMJtv
+         CzgUoabcNmBe9WbfPvcoIwRt+8sPY/gcBDT+ClKFGKQSwFODO7NOUkut7G8zj/oGU7xn
+         K1DQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733324253; x=1733929053;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nHRk7vTqEYKo1g5eurOtqzkc5wPjmAmCwHqc6uMEKP4=;
+        b=CZk5rabnZtkUzRtCvyro0lGuSXABA3jxXjROF3fbWp+9aOlt1qL8yJe5TA9NSeQlR2
+         WWErFOg7lhWiokrBBfQjLr3yzsvaBPVPQ1ZInJczusv0SWCCHFd1dc25HfEM++Mchi+9
+         Tv4nAqm6V6UztMUH5k95W5+tgdQR6f+z3D8aeyC7Rj2b5xCeA0op4dG6PmaR5kg5l4hH
+         5lF4yhPqHGSr/9nrzIWxLyx2z35C1AWY4TqMVNVDLdmd1Wah4qA4WzA7mOCuad6ri5/b
+         K9ti1HowBvzMHaf9OspqkrQ96MSEzG3wcRRfL2d6NSCypQlzAU0wQFpUyQAreRPiKYbA
+         q5tw==
+X-Forwarded-Encrypted: i=1; AJvYcCUlrjG7quyH32wh4iwKIXNfv00kdEUhXmYkiOjMLJRO78eKuCEMgS6d9eFFwIQHm2PaZeTOhwNpbL5vJig=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyC6TlcEFRtdSEgX4yIyf4j+ttwUSkOvNahCk4x6Kl3B9orkRB6
+	hLizfyec69bf+W5wEyHMEXoEpQzm9gnuUMk/JJJV664S4VW92pGDXe99+ZPE
+X-Gm-Gg: ASbGnctSHBCbOWSyT5LWGwCbWerfnkBNP/nlpn6FL5mBTI5y5m8AzDGA+P+l50nuk3n
+	SOWkX1JpVuXd56OTv7Vg2L3RIuqE5Czxk+NoKecD7Po3YJ67oNn1T4/30sJ7DmtAKtp3no+5RSQ
+	TWyenuGTrWyahnc4S8FcZxowR1pyYMfLbuBuQiN5aGhVGdy5Kzz7QHZ/UFd4TPp+XycQ1oX3Nuo
+	aa6vwh5M+cpJdzQE7B9sS9H98cCIxhDnR8ifTRmP8hYSDqK6tM0lrFx/YDbGid6NllGnU6havR8
+	Gz2kGX93Xw==
+X-Google-Smtp-Source: AGHT+IEeOsXx/TryOQSdqrLK7Z3OQsWP9ayyBqEQj/Idaz4p5iJo5wT4VODFNQGlsjX7UAbq8UCDSA==
+X-Received: by 2002:a05:600c:3546:b0:432:7c08:d0ff with SMTP id 5b1f17b1804b1-434d0a07f0emr51584025e9.23.1733324253374;
+        Wed, 04 Dec 2024 06:57:33 -0800 (PST)
+Received: from localhost.localdomain (82-64-73-52.subs.proxad.net. [82.64.73.52])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434d527e8besm26678955e9.13.2024.12.04.06.57.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Dec 2024 06:57:32 -0800 (PST)
+From: Dave Penkler <dpenkler@gmail.com>
+To: gregkh@linuxfoundation.org,
+	linux-staging@lists.linux.dev,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/2] arm64: dts: exynos990: Add pmu and syscon-reboot nodes
-Date: Wed,  4 Dec 2024 15:55:59 +0100
-Message-ID: <20241204145559.524932-3-igor.belwon@mentallysanemainliners.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241204145559.524932-1-igor.belwon@mentallysanemainliners.org>
-References: <20241204145559.524932-1-igor.belwon@mentallysanemainliners.org>
+Cc: Dave Penkler <dpenkler@gmail.com>,
+	kernel test robot <lkp@intel.com>
+Subject: [PATCH 1/4] staging: gpib: Remove useless include
+Date: Wed,  4 Dec 2024 15:57:10 +0100
+Message-ID: <20241204145713.11889-2-dpenkler@gmail.com>
+X-Mailer: git-send-email 2.47.1
+In-Reply-To: <20241204145713.11889-1-dpenkler@gmail.com>
+References: <20241204145713.11889-1-dpenkler@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,44 +91,28 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add PMU syscon, and syscon-reboot nodes to the Exynos990 dtsi.
+linux/version.h not needed.
 
-Reboot of the Exynos990 SoC is handled by setting bit(SWRESET_TRIGGER[1])
-of SWRESET register (PMU + 0x3a00).
-
-Tested using the "reboot" command.
-
-Signed-off-by: Igor Belwon <igor.belwon@mentallysanemainliners.org>
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202410102259.zcoS9Eiu-lkp@intel.com/
+Signed-off-by: Dave Penkler <dpenkler@gmail.com>
 ---
- arch/arm64/boot/dts/exynos/exynos990.dtsi | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ drivers/staging/gpib/lpvo_usb_gpib/lpvo_usb_gpib.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/exynos/exynos990.dtsi b/arch/arm64/boot/dts/exynos/exynos990.dtsi
-index c1986f00e443..2619f821bc7c 100644
---- a/arch/arm64/boot/dts/exynos/exynos990.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynos990.dtsi
-@@ -227,6 +227,20 @@ wakeup-interrupt-controller {
- 			};
- 		};
+diff --git a/drivers/staging/gpib/lpvo_usb_gpib/lpvo_usb_gpib.c b/drivers/staging/gpib/lpvo_usb_gpib/lpvo_usb_gpib.c
+index 796c3a5be545..9a3271e885d2 100644
+--- a/drivers/staging/gpib/lpvo_usb_gpib/lpvo_usb_gpib.c
++++ b/drivers/staging/gpib/lpvo_usb_gpib/lpvo_usb_gpib.c
+@@ -10,7 +10,6 @@
  
-+		pmu_system_controller: system-controller@15860000 {
-+			compatible = "samsung,exynos990-pmu",
-+				     "samsung,exynos7-pmu", "syscon";
-+			reg = <0x15860000 0x10000>;
-+
-+			reboot: syscon-reboot {
-+				compatible = "syscon-reboot";
-+				regmap = <&pmu_system_controller>;
-+				offset = <0x3a00>; /* SWRESET */
-+				mask = <0x2>; /* SWRESET_TRIGGER */
-+				value = <0x2>;
-+			};
-+		};
-+
- 		pinctrl_cmgp: pinctrl@15c30000 {
- 			compatible = "samsung,exynos990-pinctrl";
- 			reg = <0x15c30000 0x1000>;
+ /* base module includes */
+ 
+-#include <linux/version.h>
+ #include <linux/module.h>
+ #include <linux/sched.h>
+ #include <linux/init.h>
 -- 
-2.45.2
+2.47.1
 
 
