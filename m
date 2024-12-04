@@ -1,166 +1,286 @@
-Return-Path: <linux-kernel+bounces-431644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431646-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 659F79E3FD4
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:40:06 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B2471642B8
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:40:03 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A53620CCD0;
-	Wed,  4 Dec 2024 16:39:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="ta8+rhef"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC3C39E404F
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:00:39 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 503BE15B10D;
-	Wed,  4 Dec 2024 16:39:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EBCB7B434D6
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:40:43 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D00020CCCC;
+	Wed,  4 Dec 2024 16:40:28 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4C1420CCDE
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 16:40:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733330398; cv=none; b=b3QWKxAEAd9us2T3wxJfOu1ycwEpYEg6DNqKNKQwgBEoLAGycG2bgiiRoNgmJaoiKS03UcbC2IxJ2R8G2m3qNc71pWNHZEZ5RcxCZ41vVevUtkbaODwavSyRz12lJ5kN7/zSapgZyulnspZVvBfwkXzQuLrAe76andf6DZsQaws=
+	t=1733330428; cv=none; b=sLMIgnRt256bJn8SxY80uCmDItUSipPb3CfWy4W4dyidU3lHwLP2OdRPeFj7yZIdXpM+ZqIyeELVLqDKwEBG8Rbw8Lro2a+tKa6spT9aPk63DowFnK5YkPNq7d3d4hNbVzn7Xgh+8U8/dppuakpaHkv2sP2EZ8s5naTF4mIWdKY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733330398; c=relaxed/simple;
-	bh=LI0f/8L5VMaa8rlarlrPNXlZjnS/iGICZEw87IVicV0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LreL2G8rh+OXbzv19nMkIHrB0MHhg3RQ0bzU9f/efq9mn7HA9CRZ1TjbZGv0aXSvFMyHmhIbQp8VMaKnGMy2yNCic+RFaZPJuZm54RDHqXt74VlaQRz4I39qAtl94jnMh2jDuLnDTw6TUTEDgglL4kDMnYCNdueb+B3DO20fnkI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=ta8+rhef; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=t8Qpni1g+CTP4DtqlAKjnlwu/KLFrA6csbzYi4hK4/c=; b=ta8+rhefvAfTVON2qkfHns8aKZ
-	M3XgNBM1LKMVU/0hPzAABXNPwE1ahhu39CoKAY6ro8Z5K5XSyjrV2mUmNVjMLoH8iRUQ175ViA3ai
-	Cjy25bi6xMVT0qJmza5h/5eTycpxyifsdFrPNu6Onj1aLEoBNw3U1Povys8tefq3W+sxf3HOM0wSm
-	p74skew5erUlsSllvX8L2IxRjnCSrszXm+ncYbx4w6JqSayC1b+GLpdPhtab9hx0vdbDUJFtD18IW
-	AZ30ZID3dKWRdEpD9Cipoh79ds1zjZ2Z5HL8F4GtBH9RWrGu/2wMDE+MIkxmtKUWOzLkMs7MsSRRY
-	m0bccgOw==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:43724)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1tIsPk-0003eW-0H;
-	Wed, 04 Dec 2024 16:39:48 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1tIsPf-0005hd-1N;
-	Wed, 04 Dec 2024 16:39:43 +0000
-Date: Wed, 4 Dec 2024 16:39:43 +0000
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Robin Murphy <robin.murphy@arm.com>, Furong Xu <0x1207@gmail.com>,
-	Jakub Kicinski <kuba@kernel.org>, Jon Hunter <jonathanh@nvidia.com>,
-	netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, xfr@outlook.com,
-	Suraj Jaiswal <quic_jsuraj@quicinc.com>,
-	Thierry Reding <treding@nvidia.com>,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-	Will Deacon <will@kernel.org>
-Subject: Re: [PATCH net v1] net: stmmac: TSO: Fix unbalanced DMA map/unmap
- for non-paged SKB data
-Message-ID: <Z1CFz7GpeIzkDro1@shell.armlinux.org.uk>
-References: <20241021061023.2162701-1-0x1207@gmail.com>
- <d8112193-0386-4e14-b516-37c2d838171a@nvidia.com>
- <20241128144501.0000619b@gmail.com>
- <20241202163309.05603e96@kernel.org>
- <20241203100331.00007580@gmail.com>
- <20241202183425.4021d14c@kernel.org>
- <20241203111637.000023fe@gmail.com>
- <klkzp5yn5kq5efgtrow6wbvnc46bcqfxs65nz3qy77ujr5turc@bwwhelz2l4dw>
- <df3a6a9d-4b53-4338-9bc5-c4eea48b8a40@arm.com>
- <2g2lp3bkadc4wpeslmdoexpidoiqzt7vejar5xhjx5ayt3uox3@dqdyfzn6khn6>
+	s=arc-20240116; t=1733330428; c=relaxed/simple;
+	bh=u8ATg5MXGm01y3AGVlQ/z/ajWMKu2Tnro09yw8flXa0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MPdvQrETryme0xSXDULheuDCgujoEKYswo1LIgAce+3XAolgORJL4ZIB5A+Z3GgOm/o0JtQYXJudKVEL7H+OUty/zh4ci6qX74CFWmoKvAH8QLtqVXs2LS25CVSb5bPjEAYLQD4as7fTiZ+qlHr2h6p/T/HpWrUybPx/vY6IX7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D43381063;
+	Wed,  4 Dec 2024 08:40:51 -0800 (PST)
+Received: from [10.57.90.162] (unknown [10.57.90.162])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5D7053F5A1;
+	Wed,  4 Dec 2024 08:40:21 -0800 (PST)
+Message-ID: <e36019f8-a4e5-4327-91b3-b21a869d0660@arm.com>
+Date: Wed, 4 Dec 2024 16:40:19 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2g2lp3bkadc4wpeslmdoexpidoiqzt7vejar5xhjx5ayt3uox3@dqdyfzn6khn6>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 6/8] drm/panfrost: Make re-enabling job interrupts at
+ device reset optional
+To: =?UTF-8?Q?Adri=C3=A1n_Larumbe?= <adrian.larumbe@collabora.com>,
+ Boris Brezillon <boris.brezillon@collabora.com>
+Cc: Rob Herring <robh@kernel.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Philipp Zabel <p.zabel@pengutronix.de>, kernel@collabora.com,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20241128211223.1805830-1-adrian.larumbe@collabora.com>
+ <20241128211223.1805830-7-adrian.larumbe@collabora.com>
+ <20241202122039.273f0e9f@collabora.com>
+ <em3uug2hv5lzzvujqvc34cv3jmoex5kw6q2q2pf3djpaumaxuz@4y47e2fag6ug>
+From: Steven Price <steven.price@arm.com>
+Content-Language: en-GB
+In-Reply-To: <em3uug2hv5lzzvujqvc34cv3jmoex5kw6q2q2pf3djpaumaxuz@4y47e2fag6ug>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, Dec 04, 2024 at 04:58:34PM +0100, Thierry Reding wrote:
-> This doesn't match the location from earlier, but at least there's
-> something afoot here that needs fixing. I suppose this could simply be
-> hiding any subsequent errors, so once this is fixed we might see other
-> similar issues.
+On 04/12/2024 15:34, Adrián Larumbe wrote:
+> Hi Boris,
+> 
+> On 02.12.2024 12:20, Boris Brezillon wrote:
+>> On Thu, 28 Nov 2024 21:06:21 +0000
+>> Adrián Larumbe <adrian.larumbe@collabora.com> wrote:
+>>
+>>> Rather than remasking interrupts after a device reset in the main reset
+>>> path, allow selecting whether to do this with an additional bool parameter.
+>>>
+>>> To this end, split reenabling job interrupts into two functions, one that
+>>> clears the interrupts and another one which unmasks them conditionally.
+>>>
+>>> Signed-off-by: Adrián Larumbe <adrian.larumbe@collabora.com>
+>>> ---
+>>>  drivers/gpu/drm/panfrost/panfrost_device.c | 11 +++++--
+>>>  drivers/gpu/drm/panfrost/panfrost_device.h |  2 +-
+>>>  drivers/gpu/drm/panfrost/panfrost_job.c    | 34 ++++++++++++----------
+>>>  drivers/gpu/drm/panfrost/panfrost_job.h    |  3 +-
+>>>  4 files changed, 29 insertions(+), 21 deletions(-)
+>>>
+>>> diff --git a/drivers/gpu/drm/panfrost/panfrost_device.c b/drivers/gpu/drm/panfrost/panfrost_device.c
+>>> index 4fe29286bbe3..7e5d39699982 100644
+>>> --- a/drivers/gpu/drm/panfrost/panfrost_device.c
+>>> +++ b/drivers/gpu/drm/panfrost/panfrost_device.c
+>>> @@ -395,20 +395,25 @@ bool panfrost_exception_needs_reset(const struct panfrost_device *pfdev,
+>>>  	return false;
+>>>  }
+>>>  
+>>> -void panfrost_device_reset(struct panfrost_device *pfdev)
+>>> +void panfrost_device_reset(struct panfrost_device *pfdev, bool enable_job_int)
+>>>  {
+>>> +	u32 irq_mask;
+>>> +
+>>>  	panfrost_gpu_soft_reset(pfdev);
+>>>  
+>>>  	panfrost_gpu_power_on(pfdev);
+>>>  	panfrost_mmu_reset(pfdev);
+>>> -	panfrost_job_enable_interrupts(pfdev);
+>>> +
+>>> +	irq_mask = panfrost_job_reset_interrupts(pfdev);
+>>> +	if (enable_job_int)
+>>> +		panfrost_enable_interrupts(pfdev, irq_mask);
+>>>  }
+>>>  
+>>>  static int panfrost_device_runtime_resume(struct device *dev)
+>>>  {
+>>>  	struct panfrost_device *pfdev = dev_get_drvdata(dev);
+>>>  
+>>> -	panfrost_device_reset(pfdev);
+>>> +	panfrost_device_reset(pfdev, true);
+>>>  	panfrost_devfreq_resume(pfdev);
+>>>  
+>>>  	return 0;
+>>> diff --git a/drivers/gpu/drm/panfrost/panfrost_device.h b/drivers/gpu/drm/panfrost/panfrost_device.h
+>>> index d9aea2c2cbe5..fc83d5e104a3 100644
+>>> --- a/drivers/gpu/drm/panfrost/panfrost_device.h
+>>> +++ b/drivers/gpu/drm/panfrost/panfrost_device.h
+>>> @@ -205,7 +205,7 @@ int panfrost_unstable_ioctl_check(void);
+>>>  
+>>>  int panfrost_device_init(struct panfrost_device *pfdev);
+>>>  void panfrost_device_fini(struct panfrost_device *pfdev);
+>>> -void panfrost_device_reset(struct panfrost_device *pfdev);
+>>> +void panfrost_device_reset(struct panfrost_device *pfdev, bool enable_job_int);
+>>>  
+>>>  extern const struct dev_pm_ops panfrost_pm_ops;
+>>>  
+>>> diff --git a/drivers/gpu/drm/panfrost/panfrost_job.c b/drivers/gpu/drm/panfrost/panfrost_job.c
+>>> index fba1a376f593..79d2ee3625b2 100644
+>>> --- a/drivers/gpu/drm/panfrost/panfrost_job.c
+>>> +++ b/drivers/gpu/drm/panfrost/panfrost_job.c
+>>> @@ -27,6 +27,10 @@
+>>>  #define job_write(dev, reg, data) writel(data, dev->iomem + (reg))
+>>>  #define job_read(dev, reg) readl(dev->iomem + (reg))
+>>>  
+>>> +#define JOB_INT_ENABLE_MASK			\
+>>> +	(GENMASK(16 + NUM_JOB_SLOTS - 1, 16) |	\
+>>> +	 GENMASK(NUM_JOB_SLOTS - 1, 0))
+>>> +
+>>>  struct panfrost_queue_state {
+>>>  	struct drm_gpu_scheduler sched;
+>>>  	u64 fence_context;
+>>> @@ -421,18 +425,23 @@ static struct dma_fence *panfrost_job_run(struct drm_sched_job *sched_job)
+>>>  	return fence;
+>>>  }
+>>>  
+>>> -void panfrost_job_enable_interrupts(struct panfrost_device *pfdev)
+>>> +u32 panfrost_job_reset_interrupts(struct panfrost_device *pfdev)
+>>>  {
+>>>  	int j;
+>>>  	u32 irq_mask = 0;
+>>>  
+>>> -	clear_bit(PANFROST_COMP_BIT_JOB, pfdev->is_suspended);
+>>> -
+>>>  	for (j = 0; j < NUM_JOB_SLOTS; j++) {
+>>>  		irq_mask |= MK_JS_MASK(j);
+>>>  	}
+>>>  
+>>>  	job_write(pfdev, JOB_INT_CLEAR, irq_mask);
+>>> +
+>>> +	return irq_mask;
+>>> +}
+>>
+>> Let's define an ALL_JS_INT_MASK so we can get rid of the for loop and
+>> can avoid returning a value that's constant.
+> 
+> Because ALL_JS_INT_MASK would be defined as an OR of MK_JS_MASK() applications,
+> and this macro is defined in panfrost_regs.h, I can't think of a nice location
+> for it that would be suitable for all the files where it would be called.
 
-Well, having a quick look at this, the first thing which stands out is:
+I can't speak for Boris, but I'd be quite happy with a:
 
-In stmmac_tx_clean(), we have:
+#define ALL_JS_INT_MASK 0x70007
 
-                if (likely(tx_q->tx_skbuff_dma[entry].buf &&
-                           tx_q->tx_skbuff_dma[entry].buf_type != STMMAC_TXBUF_T
-_XDP_TX)) {
-                        if (tx_q->tx_skbuff_dma[entry].map_as_page)
-                                dma_unmap_page(priv->device,
-                                               tx_q->tx_skbuff_dma[entry].buf,
-                                               tx_q->tx_skbuff_dma[entry].len,
-                                               DMA_TO_DEVICE);
-                        else
-                                dma_unmap_single(priv->device,
-                                                 tx_q->tx_skbuff_dma[entry].buf,
-                                                 tx_q->tx_skbuff_dma[entry].len,
-                                                 DMA_TO_DEVICE);
-                        tx_q->tx_skbuff_dma[entry].buf = 0;
-                        tx_q->tx_skbuff_dma[entry].len = 0;
-                        tx_q->tx_skbuff_dma[entry].map_as_page = false;
-                }
+We know NUM_JOB_SLOTS is a (hardware) constant so we can compute the
+value once. That or MK_JS_MASK(0)|MK_JS_MASK(1)|MK_JS_MASK(2) if you
+prefer, or of course the GENMASK() variant below.
 
-So, tx_skbuff_dma[entry].buf is expected to point appropriately to the
-DMA region.
+> Maybe I could implement the same loop inside panfrost_job_init() where it would be
+> called only once, and store the result in a const struct panfrost_job_slot field?
 
-Now if we look at stmmac_tso_xmit():
+It seems silly wasting memory on a compile time constant...
 
-        des = dma_map_single(priv->device, skb->data, skb_headlen(skb),
-                             DMA_TO_DEVICE);
-        if (dma_mapping_error(priv->device, des))
-                goto dma_map_err;
+>>> +
+>>> +void panfrost_enable_interrupts(struct panfrost_device *pfdev, u32 irq_mask)
+>>
+>> Let's drop the irq_mask mask (use ALL_JS_INT_MASK), and call the
+>> function panfrost_job_enable_interrupts() instead.
+> 
+> I made a mistake here naming this function, it should've been panfrost_job_enable_interrupts().
+> 
+> Other than that, I decided to keep the irq_mask argument because I'm also calling it from
+> the very end of panfrost_reset() with JOB_INT_ENABLE_MASK, where I defined it to be
+> 
+> (GENMASK(16 + NUM_JOB_SLOTS - 1, 16) | GENMASK(NUM_JOB_SLOTS - 1, 0))
+> 
+> That raises the question, what is the functional difference between writing either
+> this or MK_JS_MASK(0) | MK_JS_MASK(1) | MK_JS_MASK(2) into the JOB_INT_MASK register?
 
-        if (priv->dma_cap.addr64 <= 32) {
-...
-        } else {
-...
-                des += proto_hdr_len;
-...
-	}
+Hopefully none - the two values should be the same. Indeed the GENMASK
+variant is possibly best because it encodes using NUM_JOB_SLOTS.
+Although I have to admit I have to think harder to decode the GENMASK()
+version than either of the other alternatives above.
 
-        tx_q->tx_skbuff_dma[tx_q->cur_tx].buf = des;
-        tx_q->tx_skbuff_dma[tx_q->cur_tx].len = skb_headlen(skb);
-        tx_q->tx_skbuff_dma[tx_q->cur_tx].map_as_page = false;
-        tx_q->tx_skbuff_dma[tx_q->cur_tx].buf_type = STMMAC_TXBUF_T_SKB;
+Steve
 
-This will result in stmmac_tx_clean() calling dma_unmap_single() using
-"des" and "skb_headlen(skb)" as the buffer start and length.
+> It's also being done in panfrost_job_irq_handler_thread() so I'm not quite sure of this.
+> 
+>>> +{
+>>> +	clear_bit(PANFROST_COMP_BIT_JOB, pfdev->is_suspended);
+>>>  	job_write(pfdev, JOB_INT_MASK, irq_mask);
+>>>  }
+>>>  
+>>> @@ -725,12 +734,7 @@ panfrost_reset(struct panfrost_device *pfdev,
+>>>  	spin_unlock(&pfdev->js->job_lock);
+>>>  
+>>>  	/* Proceed with reset now. */
+>>> -	panfrost_device_reset(pfdev);
+>>> -
+>>> -	/* panfrost_device_reset() unmasks job interrupts, but we want to
+>>> -	 * keep them masked a bit longer.
+>>> -	 */
+>>> -	job_write(pfdev, JOB_INT_MASK, 0);
+>>> +	panfrost_device_reset(pfdev, false);
+>>>  
+>>>  	/* GPU has been reset, we can clear the reset pending bit. */
+>>>  	atomic_set(&pfdev->reset.pending, 0);
+>>> @@ -752,9 +756,7 @@ panfrost_reset(struct panfrost_device *pfdev,
+>>>  		drm_sched_start(&pfdev->js->queue[i].sched, 0);
+>>>  
+>>>  	/* Re-enable job interrupts now that everything has been restarted. */
+>>> -	job_write(pfdev, JOB_INT_MASK,
+>>> -		  GENMASK(16 + NUM_JOB_SLOTS - 1, 16) |
+>>> -		  GENMASK(NUM_JOB_SLOTS - 1, 0));
+>>> +	panfrost_enable_interrupts(pfdev, JOB_INT_ENABLE_MASK);
+>>>  
+>>>  	dma_fence_end_signalling(cookie);
+>>>  }
+>>> @@ -827,9 +829,7 @@ static irqreturn_t panfrost_job_irq_handler_thread(int irq, void *data)
+>>>  
+>>>  	/* Enable interrupts only if we're not about to get suspended */
+>>>  	if (!test_bit(PANFROST_COMP_BIT_JOB, pfdev->is_suspended))
+>>> -		job_write(pfdev, JOB_INT_MASK,
+>>> -			  GENMASK(16 + NUM_JOB_SLOTS - 1, 16) |
+>>> -			  GENMASK(NUM_JOB_SLOTS - 1, 0));
+>>> +		job_write(pfdev, JOB_INT_MASK, JOB_INT_ENABLE_MASK);
+>>>  
+>>>  	return IRQ_HANDLED;
+>>>  }
+>>> @@ -854,6 +854,7 @@ int panfrost_job_init(struct panfrost_device *pfdev)
+>>>  {
+>>>  	struct panfrost_job_slot *js;
+>>>  	unsigned int nentries = 2;
+>>> +	u32 irq_mask;
+>>>  	int ret, j;
+>>>  
+>>>  	/* All GPUs have two entries per queue, but without jobchain
+>>> @@ -905,7 +906,8 @@ int panfrost_job_init(struct panfrost_device *pfdev)
+>>>  		}
+>>>  	}
+>>>  
+>>> -	panfrost_job_enable_interrupts(pfdev);
+>>> +	irq_mask = panfrost_job_reset_interrupts(pfdev);
+>>> +	panfrost_enable_interrupts(pfdev, irq_mask);
+>>>  
+>>>  	return 0;
+>>>  
+>>> diff --git a/drivers/gpu/drm/panfrost/panfrost_job.h b/drivers/gpu/drm/panfrost/panfrost_job.h
+>>> index ec581b97852b..c09d42ee5039 100644
+>>> --- a/drivers/gpu/drm/panfrost/panfrost_job.h
+>>> +++ b/drivers/gpu/drm/panfrost/panfrost_job.h
+>>> @@ -46,7 +46,8 @@ void panfrost_job_close(struct panfrost_file_priv *panfrost_priv);
+>>>  int panfrost_job_get_slot(struct panfrost_job *job);
+>>>  int panfrost_job_push(struct panfrost_job *job);
+>>>  void panfrost_job_put(struct panfrost_job *job);
+>>> -void panfrost_job_enable_interrupts(struct panfrost_device *pfdev);
+>>> +u32 panfrost_job_reset_interrupts(struct panfrost_device *pfdev);
+>>> +void panfrost_enable_interrupts(struct panfrost_device *pfdev, u32 irq_mask);
+>>>  void panfrost_job_suspend_irq(struct panfrost_device *pfdev);
+>>>  int panfrost_job_is_idle(struct panfrost_device *pfdev);
+>>>  
 
-One of the requirements of the DMA mapping API is that the DMA handle
-returned by the map operation will be passed into the unmap function.
-Not something that was offset. The length will also be the same.
-
-We can clearly see above that there is a case where the DMA handle has
-been offset by proto_hdr_len, and when this is so, the value that is
-passed into the unmap operation no longer matches this requirement.
-
-So, a question to the reporter - what is the value of
-priv->dma_cap.addr64 in your failing case? You should see the value
-in the "Using %d/%d bits DMA host/device width" kernel message.
-
-Thanks.
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
