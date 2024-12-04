@@ -1,279 +1,134 @@
-Return-Path: <linux-kernel+bounces-432068-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432069-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67D309E4497
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 20:28:18 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2ECAA1672AC
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 19:28:15 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 295FC1C3BFF;
-	Wed,  4 Dec 2024 19:28:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="gbMLZqc9"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E28659E454A
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 21:06:35 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92D521C3BF5;
-	Wed,  4 Dec 2024 19:28:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 23288B43F65
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 19:28:49 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 418A31C3BF3;
+	Wed,  4 Dec 2024 19:28:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="arUw7HcK"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ED1A2391AA
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 19:28:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733340493; cv=none; b=QYHGhohpBdOcYAffg3vEvw2vcKDIZHNYyuj+98C+jH1189pXs1jN9NXFkElPK63Z0JBWbGQQarN1V/NRkjk2DGm3VqkfgjtraaIUJD5wpwdyzbGvKlCL1dPaLKoxd7fsk0EJATSc8khyh7fxaFQTBIvI26p8DmsIV7900Pnnn6w=
+	t=1733340523; cv=none; b=k6auZ9HAWq9FjwapGK4M9K0m5XQlKyiYzSjoRaNdpwSzfABnu3xX8eKqSow0s9K5PwRtRc5qRMgoA2QjAkYlBx3ZodOTr6iD8laolaHuSGKjDV8m83FWJxdzrha+hTPJPIqgU94/AyU/fOPpB2WL0jyWjC0Qof5NEAiB9ddwESo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733340493; c=relaxed/simple;
-	bh=V5Z99NBb8b6rSst4hRmnhOCuy/3r9IQFwnLv6vaxXTw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=sL6jK9UX5leYlDwjFfwO6rs/Tw50E1uGDwrvV7Pnr6csv+ZsZgLXa1mBRkfFcmQ+whHWFku0A1ppa8taFRnU7F/aAXWQFBD6mbyQyCvR8INCFg7kZ4s+u75Z1s6ZXUMox9+kJkonpGXz9GcXx90NJlHYG+BggW4GhWlwEvn8nWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=gbMLZqc9; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B4Ht5Ln003827;
-	Wed, 4 Dec 2024 19:27:54 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=ZyQpPl
-	+bjV1rX6XPFZ/MNos7dOYW2aS9HLGyFn5yUU4=; b=gbMLZqc9EIE3W13YgvcOjj
-	CIO3BdvJJhkJGEK6Cnac70Zbr8qPJLVTwVsUoHG7rkDZnITwax+GD7FvmMGxUojB
-	t5n69PjupIkZXOgE/Nmf5w0sOfMXWkK0yoTJoEkdYn3UAyst8rke2/jleu/TUTGI
-	vwCAZSJXQtYT/vvVznbPrpqc5GU+fDJN+IGTZlvv/xdmJpdkRj6IQXnieX7ibzud
-	phA5XvzF+V+qaZIluVkc6uk96d1kMZ8GGO6JG0aFszu2q5pEu0SM0UnHp0ff4hQE
-	ofttavvYMimniWLrKUy+t244SeqTZP4YLGZ/pusbci3xdK/0HVRG+AuuQo19+V7Q
-	==
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 437r4psrkq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 04 Dec 2024 19:27:54 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4B4HQFBo005253;
-	Wed, 4 Dec 2024 19:27:53 GMT
-Received: from smtprelay06.wdc07v.mail.ibm.com ([172.16.1.73])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 43a2kxn36q-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 04 Dec 2024 19:27:53 +0000
-Received: from smtpav02.dal12v.mail.ibm.com (smtpav02.dal12v.mail.ibm.com [10.241.53.101])
-	by smtprelay06.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4B4JRqnf17367572
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 4 Dec 2024 19:27:53 GMT
-Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id A5C3D5805E;
-	Wed,  4 Dec 2024 19:27:52 +0000 (GMT)
-Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 236C15805C;
-	Wed,  4 Dec 2024 19:27:52 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.31.103.152])
-	by smtpav02.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Wed,  4 Dec 2024 19:27:52 +0000 (GMT)
-Message-ID: <67b2e94f263bf9a0099efe74cce659d6acb16fe9.camel@linux.ibm.com>
-Subject: Re: [PATCH v2] ima: instantiate the bprm_creds_for_exec() hook
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: linux-integrity@vger.kernel.org
-Cc: =?ISO-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-        roberto.sassu@huawei.com, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jeff Xu <jeffxu@chromium.org>,
-        Kees Cook
-	 <kees@kernel.org>, Paul Moore <paul@paul-moore.com>,
-        audit@vger.kernel.org
-Date: Wed, 04 Dec 2024 14:27:51 -0500
-In-Reply-To: <20241204192514.40308-1-zohar@linux.ibm.com>
-References: <20241204192514.40308-1-zohar@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+	s=arc-20240116; t=1733340523; c=relaxed/simple;
+	bh=GlXHkq8uAMhoPqEqUjFkdVl0fLuJW8L3IH5dVV5FTM4=;
+	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=ahtLo6mPheib4eTemujueGyQLRtPUq3O0PW2Na9HTlfelhurSnCCzYgw3V03o/AJIkp/pLhgIURgszMzzAH2oSnWjrpZjG5kAsiGWfRofO4Qd/nXlSirEDdIwV1Srp/0mHIve/R7h2v3jtsC8PW7GY8P9FfO4+d3TwHhzaGoavI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=arUw7HcK; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733340520;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RK6WOAz1lZS9QPBVM+mwxRPXAmaKARx1aKYmA/XRfV0=;
+	b=arUw7HcKo8NWXFO3RgaviIytb3QTCHemQfMLXwd6ERA0qAcLNihZxwPDGcP6gTSocSYksI
+	ePRkZzUFFKvvPg2sBil8lzkkMWX6hjMnr4RXq07avdWxvzsQ+KvRWzfeZJ21yTspp1h2EN
+	pfqjp9NC3bj8q4eaD0SkxG9bkca1XMo=
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com
+ [209.85.166.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-322-PNL8qmf4MFWAU98E9-pOGA-1; Wed, 04 Dec 2024 14:28:39 -0500
+X-MC-Unique: PNL8qmf4MFWAU98E9-pOGA-1
+X-Mimecast-MFC-AGG-ID: PNL8qmf4MFWAU98E9-pOGA
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-84181aad98aso8044539f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 11:28:39 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733340518; x=1733945318;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=RK6WOAz1lZS9QPBVM+mwxRPXAmaKARx1aKYmA/XRfV0=;
+        b=dzt6hSGMNrNsPuHU4cbEQ7cguM6cOdIKw6LkUKO175QXJVfOwUk7lxJQqtqco4scSm
+         jWddjPH1/w4ebIW+hb44i3g/RK2o8dXvQn5jkp5hH7YG0LVfyqZcFJlzX1ICcZtG/HUH
+         wEsfs7wGfbGQyTuPo+ucpBaCTm+8w2XAI8ELt4Z0PZ19RE2m1+llbmOgJd5oSksoSdXj
+         wVDYC2qB28OqnubAQImJpZKEHcKsC7cIlK5+uptXOtkCszf17sEkG9J95xlcZWR5eZc4
+         D1/rekloPWT9bmr1JSzKEqUnbp0iFA2UmAFyQyRgVM5aMUIZNW8MFwp8l6gRPRMCLgPM
+         dklQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWSp7au3kP17Z9IyZAkxO5kIvReOV/d+4KwaFpK/rh1HlYt0h8bMp7zb0JHVlK0afOoFjdmzIEZdoNzZ2Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2zrZBZgHX4+fJ4Z5PNYd7Bd0lrME7/768Kc3vhKkFkckzqy//
+	CezeE38py6a85uie8Our3ktp+dJtIFvQKnOWvHfcpgAsE2Ti820p7ltVVDytb1dlAWQJHBBQUWv
+	OJ2HV2POaC1d870ayd4nRRAHU60kR957qMRTWWpeNy909XW1w1uVLd3ynG51UlQ==
+X-Gm-Gg: ASbGnct5FGOVZoa0+oAUElrUw+SJ6ExqCC3AaHMeSKjq3MPJTdo2W3MQjMW4p9Ge3dl
+	c7eYI4RZfNz8EO8j9XYbdQ2LZd78oXUtAylaJnDFnMGzETWiQrgEUGSq2qf4PSRUfx4/XRlf6gv
+	l0Ja6PxG1un465ZMiqlbS+kof+C28MdhGRv0JoTkXhnGMhM6snT6e0WVsrROjbozAbRB9KfDgVz
+	IDTFjNyhHMIN5D/lWbtMRgdF26r29JdGMAbtDqVuIGTU11ju9bJQbPyeYzTCxoMnF5FRWWKI4ov
+	hv0NnYjJqEWuYEwfuQ==
+X-Received: by 2002:a05:6602:160b:b0:83a:7a19:1de0 with SMTP id ca18e2360f4ac-8445b5e5949mr1171148139f.14.1733340518572;
+        Wed, 04 Dec 2024 11:28:38 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHeRYlqhtL1/xGydfmb5gnwZnBeNVosIDAQKlPSYZmhpzgWnvZI0kkN9wiVtWCY/6e0stc8Lg==
+X-Received: by 2002:a05:6602:160b:b0:83a:7a19:1de0 with SMTP id ca18e2360f4ac-8445b5e5949mr1171146539f.14.1733340518282;
+        Wed, 04 Dec 2024 11:28:38 -0800 (PST)
+Received: from ?IPV6:2601:188:ca00:a00:f844:fad5:7984:7bd7? ([2601:188:ca00:a00:f844:fad5:7984:7bd7])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4e230dded27sm3180285173.73.2024.12.04.11.28.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 04 Dec 2024 11:28:37 -0800 (PST)
+From: Waiman Long <llong@redhat.com>
+X-Google-Original-From: Waiman Long <longman@redhat.com>
+Message-ID: <59b254dc-acf6-4114-b6b4-a7ae517bfa06@redhat.com>
+Date: Wed, 4 Dec 2024 14:28:35 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: Zygmr5Q-Iz5zrBpJOh9SGFXDcZTqJoY_
-X-Proofpoint-ORIG-GUID: Zygmr5Q-Iz5zrBpJOh9SGFXDcZTqJoY_
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
- priorityscore=1501 clxscore=1011 phishscore=0 malwarescore=0
- suspectscore=0 mlxscore=0 bulkscore=0 mlxlogscore=999 adultscore=0
- lowpriorityscore=0 impostorscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2411120000 definitions=main-2412040145
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] x86/nmi: Add an emergency handler in nmi_desc & use it
+ in nmi_shootdown_cpus()
+To: Thomas Gleixner <tglx@linutronix.de>, Waiman Long <llong@redhat.com>,
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ Peter Zijlstra <peterz@infradead.org>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
+ "H. Peter Anvin" <hpa@zytor.com>
+References: <20241203150732.182065-1-longman@redhat.com> <87h67jsif0.ffs@tglx>
+ <7aa93137-4b5e-474f-a99c-47acffdf71a3@redhat.com> <87zflbqqar.ffs@tglx>
+Content-Language: en-US
+In-Reply-To: <87zflbqqar.ffs@tglx>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-This should have been patch v3.
 
-Mimi
+On 12/4/24 1:03 PM, Thomas Gleixner wrote:
+> On Wed, Dec 04 2024 at 12:23, Waiman Long wrote:
+>> On 12/4/24 8:10 AM, Thomas Gleixner wrote:
+>>> On Tue, Dec 03 2024 at 10:07, Waiman Long wrote:
+>>>> +	/*
+>>>> +	 * Call the emergency handler first, if set
+>>>> +	 * Emergency handler is not traced or checked by nmi_check_duration().
+>>>> +	 */
+>>>> +	ehandler = READ_ONCE(desc->emerg_handler);
+>>>> +	if (ehandler)
+>>>> +		handled = ehandler(type, regs);
+>>> Shouldn't this just stop processing right here?
+>> Yes in the case of crash_nmi_callback(). I suppose it is a no-return
+>> call. As the emergency handler is supposed to be a general mechanism in
+>> design, I don't want to make too many assumptions of what will happen
+>> when the handler is invoked.
+> I'm not convinced that this should be used as a general mechanism. It's
+> for emergency situations and that's where it stops. If the thing
+> returns, it's a bug IMO.
 
-On Wed, 2024-12-04 at 14:25 -0500, Mimi Zohar wrote:
-> Like direct file execution (e.g. ./script.sh), indirect file execution
-> (e.g. sh script.sh) needs to be measured and appraised.  Instantiate
-> the new security_bprm_creds_for_exec() hook to measure and verify the
-> indirect file's integrity.  Unlike direct file execution, indirect file
-> execution is optionally enforced by the interpreter.
->=20
-> Differentiate kernel and userspace enforced integrity audit messages.
->=20
-> Co-developed-by: Roberto Sassu <roberto.sassu@huawei.com>
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
-> ---
-> Changelog v3:
-> - Mickael: add comment ima_bprm_creds_for_exec(), minor code cleanup,
->   add Co-developed-by tag.
->=20
-> Changelog v2:
-> - Mickael: Use same audit messages with new audit message number
-> - Stefan Berger: Return boolean from is_bprm_creds_for_exec()
->=20
->  include/uapi/linux/audit.h            |  1 +
->  security/integrity/ima/ima_appraise.c | 27 +++++++++++++++++++++++--
->  security/integrity/ima/ima_main.c     | 29 +++++++++++++++++++++++++++
->  3 files changed, 55 insertions(+), 2 deletions(-)
->=20
-> diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
-> index 75e21a135483..826337905466 100644
-> --- a/include/uapi/linux/audit.h
-> +++ b/include/uapi/linux/audit.h
-> @@ -161,6 +161,7 @@
->  #define AUDIT_INTEGRITY_RULE	    1805 /* policy rule */
->  #define AUDIT_INTEGRITY_EVM_XATTR   1806 /* New EVM-covered xattr */
->  #define AUDIT_INTEGRITY_POLICY_RULE 1807 /* IMA policy rules */
-> +#define AUDIT_INTEGRITY_DATA_CHECK  1808 /* Userspace enforced data inte=
-grity */
-> =20
->  #define AUDIT_KERNEL		2000	/* Asynchronous audit record. NOT A REQUEST. =
-*/
-> =20
-> diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/i=
-ma/ima_appraise.c
-> index 656c709b974f..fc0d1f3cceca 100644
-> --- a/security/integrity/ima/ima_appraise.c
-> +++ b/security/integrity/ima/ima_appraise.c
-> @@ -8,6 +8,7 @@
->  #include <linux/module.h>
->  #include <linux/init.h>
->  #include <linux/file.h>
-> +#include <linux/binfmts.h>
->  #include <linux/fs.h>
->  #include <linux/xattr.h>
->  #include <linux/magic.h>
-> @@ -469,6 +470,17 @@ int ima_check_blacklist(struct ima_iint_cache *iint,
->  	return rc;
->  }
-> =20
-> +static bool is_bprm_creds_for_exec(enum ima_hooks func, struct file *fil=
-e)
-> +{
-> +	struct linux_binprm *bprm;
-> +
-> +	if (func =3D=3D BPRM_CHECK) {
-> +		bprm =3D container_of(&file, struct linux_binprm, file);
-> +		return bprm->is_check;
-> +	}
-> +	return false;
-> +}
-> +
->  /*
->   * ima_appraise_measurement - appraise file measurement
->   *
-> @@ -483,6 +495,7 @@ int ima_appraise_measurement(enum ima_hooks func, str=
-uct ima_iint_cache *iint,
->  			     int xattr_len, const struct modsig *modsig)
->  {
->  	static const char op[] =3D "appraise_data";
-> +	int audit_msgno =3D AUDIT_INTEGRITY_DATA;
->  	const char *cause =3D "unknown";
->  	struct dentry *dentry =3D file_dentry(file);
->  	struct inode *inode =3D d_backing_inode(dentry);
-> @@ -494,6 +507,16 @@ int ima_appraise_measurement(enum ima_hooks func, st=
-ruct ima_iint_cache *iint,
->  	if (!(inode->i_opflags & IOP_XATTR) && !try_modsig)
->  		return INTEGRITY_UNKNOWN;
-> =20
-> +	/*
-> +	 * Unlike any of the other LSM hooks where the kernel enforces file
-> +	 * integrity, enforcing file integrity for the bprm_creds_for_exec()
-> +	 * LSM hook with the AT_EXECVE_CHECK flag is left up to the discretion
-> +	 * of the script interpreter(userspace). Differentiate kernel and
-> +	 * userspace enforced integrity audit messages.
-> +	 */
-> +	if (is_bprm_creds_for_exec(func, file))
-> +		audit_msgno =3D AUDIT_INTEGRITY_DATA_CHECK;
-> +
->  	/* If reading the xattr failed and there's no modsig, error out. */
->  	if (rc <=3D 0 && !try_modsig) {
->  		if (rc && rc !=3D -ENODATA)
-> @@ -569,7 +592,7 @@ int ima_appraise_measurement(enum ima_hooks func, str=
-uct ima_iint_cache *iint,
->  	     (iint->flags & IMA_FAIL_UNVERIFIABLE_SIGS))) {
->  		status =3D INTEGRITY_FAIL;
->  		cause =3D "unverifiable-signature";
-> -		integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode, filename,
-> +		integrity_audit_msg(audit_msgno, inode, filename,
->  				    op, cause, rc, 0);
->  	} else if (status !=3D INTEGRITY_PASS) {
->  		/* Fix mode, but don't replace file signatures. */
-> @@ -589,7 +612,7 @@ int ima_appraise_measurement(enum ima_hooks func, str=
-uct ima_iint_cache *iint,
->  			status =3D INTEGRITY_PASS;
->  		}
-> =20
-> -		integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode, filename,
-> +		integrity_audit_msg(audit_msgno, inode, filename,
->  				    op, cause, rc, 0);
->  	} else {
->  		ima_cache_flags(iint, func);
-> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/i=
-ma_main.c
-> index 06132cf47016..5d4ac8aa2f1f 100644
-> --- a/security/integrity/ima/ima_main.c
-> +++ b/security/integrity/ima/ima_main.c
-> @@ -554,6 +554,34 @@ static int ima_bprm_check(struct linux_binprm *bprm)
->  				   MAY_EXEC, CREDS_CHECK);
->  }
-> =20
-> +/**
-> + * ima_bprm_creds_for_exec - collect/store/appraise measurement.
-> + * @bprm: contains the linux_binprm structure
-> + *
-> + * Based on the IMA policy and the execvat(2) AT_EXECVE_CHECK flag, meas=
-ure
-> + * and appraise the integrity of a file to be executed by script interpr=
-eters.
-> + * Unlike any of the other LSM hooks where the kernel enforces file inte=
-grity,
-> + * enforcing file integrity is left up to the discretion of the script
-> + * interpreter (userspace).
-> + *
-> + * On success return 0.  On integrity appraisal error, assuming the file
-> + * is in policy and IMA-appraisal is in enforcing mode, return -EACCES.
-> + */
-> +static int ima_bprm_creds_for_exec(struct linux_binprm *bprm)
-> +{
-> +	/*
-> +	 * As security_bprm_check() is called multiple times, both
-> +	 * the script and the shebang interpreter are measured, appraised,
-> +	 * and audited. Limit usage of this LSM hook to just measuring,
-> +	 * appraising, and auditing the indirect script execution
-> +	 * (e.g. ./sh example.sh).
-> +	 */
-> +	if (!bprm->is_check)
-> +		return 0;
-> +
-> +	return ima_bprm_check(bprm);
-> +}
-> +
->  /**
->   * ima_file_check - based on policy, collect/store measurement.
->   * @file: pointer to the file to be measured
-> @@ -1177,6 +1205,7 @@ static int __init init_ima(void)
-> =20
->  static struct security_hook_list ima_hooks[] __ro_after_init =3D {
->  	LSM_HOOK_INIT(bprm_check_security, ima_bprm_check),
-> +	LSM_HOOK_INIT(bprm_creds_for_exec, ima_bprm_creds_for_exec),
->  	LSM_HOOK_INIT(file_post_open, ima_file_check),
->  	LSM_HOOK_INIT(inode_post_create_tmpfile, ima_post_create_tmpfile),
->  	LSM_HOOK_INIT(file_release, ima_file_free),
+OK, I am fine with that. I will put a BUG_ON() after that in the next 
+version.
+
+Thanks,
+Longman
 
 
