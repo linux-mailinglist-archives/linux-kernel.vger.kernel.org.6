@@ -1,214 +1,154 @@
-Return-Path: <linux-kernel+bounces-430970-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430971-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E0AE9E37AC
+	by mail.lfdr.de (Postfix) with ESMTPS id D284C9E37AD
 	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 11:37:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C7BF16967B
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF1871694E1
 	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 10:37:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED6E31B4F3A;
-	Wed,  4 Dec 2024 10:34:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08C0C1AB6D4;
+	Wed,  4 Dec 2024 10:34:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="niQgSedU"
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nmGxPKOK"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9226F19259E
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 10:34:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 808F21B3955
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 10:34:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733308495; cv=none; b=Bc3WMXXFEe5KltrFG4gj0paW3IoipkrS4P9L8CbErZRu3f0O4TcjYEM2E9rvMmTwUUFwPgoydJjveyLI/HzKkncHEdxPUEBooOLq3qj4vm0p0ZGVm1SV/vhJrkxmstvnchh8vzf+2Deb9BCf0uc946qEGU001yj3g4WJPsX6JkM=
+	t=1733308495; cv=none; b=s4NKVG1ezFT8ajHytSEegQyyRK8SEkpej1E6VpuqKOourk32Ghmx2XTGNuGuQXqWXARFFhu86k12WoB3aWFavIp6xmMiynWB7wdon9hvIjxmmoIzL+QRM+0N3qCBlXz7SCI21EtBnMmSCBf9kFIF4z9cCbxC7BJRNSH732ZMcq0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1733308495; c=relaxed/simple;
-	bh=ThPPkK3Bt2gs0BoLGsQNUcJDtqUraUqu6Ng+2ewBOuo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=KLlCgtrJnVa/N0om//8EYyAA0HI5/JqQrRMaHpQUXFHUlwiFApmSZ62butVtmmT7XWWi1bUOKF2r595MSTP/teAoSROldyVsuE+uQ9YAQBRCpRynTxQuu4n88bYAPJC/znvCoPDgLKIwcgURkRwqCNx/ujv1t2olqYo/0B6/g9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=niQgSedU; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20241204103451euoutp02e21001dc73e0e4c28be280392c46a959~N8uOfb6s11090310903euoutp02a
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 10:34:51 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20241204103451euoutp02e21001dc73e0e4c28be280392c46a959~N8uOfb6s11090310903euoutp02a
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1733308491;
-	bh=+l4e4Tyx2I1+OfNbhG6k6rLroWYsZg5fA2FLlIaEGO8=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=niQgSedUrpFLE7LRUETDJiXrPBx5Jjiz5Q9jVIw3QZ5AwXbr3ZUog4id/+OC9tbwR
-	 uQwpLQRVGX/SHJKoatTqiJCnSBDFsWzAjUuKLBHo7GHN79gp9Mmu2hlXuqqY2fpsvm
-	 39T7fBgG5HSeP2pQ43MRkUyoPAFj8rUekSLTzDM4=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-	20241204103448eucas1p2787f6ba041d5859d798f8a0fe36e5869~N8uL0vWCQ1075110751eucas1p2M;
-	Wed,  4 Dec 2024 10:34:48 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-	eusmges1new.samsung.com (EUCPMTA) with SMTP id A0.27.20821.84030576; Wed,  4
-	Dec 2024 10:34:48 +0000 (GMT)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20241204103447eucas1p1290a8da81821da986015bef31ccf0e3c~N8uLKQQUG1362813628eucas1p1r;
-	Wed,  4 Dec 2024 10:34:47 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20241204103447eusmtrp2cae4b6f1f36a5e73397910cd66cdf731~N8uLJMXGw1364613646eusmtrp2t;
-	Wed,  4 Dec 2024 10:34:47 +0000 (GMT)
-X-AuditID: cbfec7f2-b09c370000005155-fe-675030486f50
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-	eusmgms2.samsung.com (EUCPMTA) with SMTP id 0E.BB.19654.74030576; Wed,  4
-	Dec 2024 10:34:47 +0000 (GMT)
-Received: from [192.168.1.44] (unknown [106.210.136.40]) by
-	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20241204103446eusmtip11cf57501b24c5ce7d747834870a33315~N8uJ2BqPW0744207442eusmtip1a;
-	Wed,  4 Dec 2024 10:34:46 +0000 (GMT)
-Message-ID: <17df9341-e299-40bb-81ae-f4c7296d73ac@samsung.com>
-Date: Wed, 4 Dec 2024 11:34:45 +0100
+	bh=t/Xw+VoKf+YwKQU16zm0iPdxdX1/4JqsN9BzS5tjM1A=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=CvNznottf4bvEBladRffR61ExtCUxDbgFc9b2UJr712vTp7Ska+4kksu9ZPL44MYjfRbHEAlEaviKW4knr8RU8fWSe+SuHVeyoQFj8oti1z+JD2+/oA/UWjWKm26bc3erP46lfoJTcWl2beJrfBXtOq3wXNDfQoiJl0kkPTvwQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nmGxPKOK; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-434acf1f9abso60647255e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 02:34:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733308491; x=1733913291; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=uO3BvUgmsprpv1MY1OmfchYOeLaMigTJVr7dgM0b+Cc=;
+        b=nmGxPKOKxbW9chmhT6sVgXgfVsWSMG6dxMcKbCpXfKdML3rfKae6baObjK2JchtWvj
+         SSQ3zANlo04n3J9MTB6G5g0EVCiYC1H7onzUsQ5WW1wfk3Bpe7D4DNtZgiuBeyIAc5eP
+         SrcEVVTDA7b8EXQG8j1WB+nQIE3q9MLXgQKIfOGnO3QQki5dNx3d4NX506VMrYeVQTJz
+         nuGRrXtZc6XgL09H0VdfNm9EXnE3kobuJAJNy9BRy3w2oB4CCJd0tA1OZ9KS/NWVLLJO
+         Y+QJ+eoOTLkSKPwJXlTkT3miYRfwI1S3Zu7cCbDgvxWhRV4ogjZut3TOqbaBgZQiVRQn
+         5XSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733308491; x=1733913291;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uO3BvUgmsprpv1MY1OmfchYOeLaMigTJVr7dgM0b+Cc=;
+        b=oSOcpxR0nOU13zEujUL6flfV0VQ0UyBV3vTpOhMl2+nb85QWuR13nCywah9v5rWNwM
+         NBb2MskGkGMDPs7D+fKRdFolNqpQF3kism/2dzqGxRRaMf6VGEE2EyzuRKIrMGvj/3jf
+         3VaxxcvsIf7ahUXuvy2FA6Q7Lw6QeTbgkpEVwPof7d4jpVrQMZoKZfjDy5AEEepeCzj9
+         CoiWcIzICHhL8lro81ioaAy2l0JFVjch4p7TLnOeU3bOJ1KNrhm4W/x8GCJRJnPIhQBC
+         7LgW5z8ciudIUb9s4F6mVjKZqDtsgVhQtI7f3s7NubzRb4W63tuMm6ZYGn+BTr0JDZGb
+         gp6w==
+X-Forwarded-Encrypted: i=1; AJvYcCUsEM4Dl2gGndZGPoGopNkYAdbqY37hFsmwhZCoIn7gSZaTe7jHtoI+/go2rof8uQoYJ8RTGOqbvhF2eic=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywc5c3SSAG1VMmulzUeTCefpcWQKFec9Vem0Z3d2aqE+BuatGJ3
+	l0i2oTvN6odOJ+n0CiUabsL6eV0hfj4/XBniG2KDgO2riC0/lNWRmkdY01BuSVuLHaVW4pk7mQ1
+	u4eg=
+X-Gm-Gg: ASbGncsRrkf0yETqg0zb0UXbM1NzwLdUlC2DMqOs6BXj6ouO9P+An7rZfIidjrEpfSw
+	bh8g5naXp+5H3lHcdpWifzHs2YHZoDLk8mSw+RpjC/xulS7GbUxuZ6hwUZpsZwbhXJvCq966+O4
+	F6EdJVI0qQETPmktTjHjYhrtRpRy3SOwcBhTm4Leb8V2epL+DQjrEJUUIJIdwHk1++qfIYxzEy/
+	KoVB0TzS3xm0qYZMndQxoVMTEGlNcBG2ybooOrkQ/VNzyaZcdQ9MNSfI8ULbsM7Xu9Ou2M=
+X-Google-Smtp-Source: AGHT+IGCG9hkg/1olMRRgCOtkZhmDQFMey8RvFnraLO4O8jzTjXEXdbntz2PRq+8ysC4kvSSIQEXFA==
+X-Received: by 2002:a05:600c:138a:b0:431:52da:9d67 with SMTP id 5b1f17b1804b1-434d09b1831mr58071775e9.3.1733308491571;
+        Wed, 04 Dec 2024 02:34:51 -0800 (PST)
+Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:52eb:f6ff:feb3:451a])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434d52c0bc7sm19667825e9.35.2024.12.04.02.34.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Dec 2024 02:34:51 -0800 (PST)
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Date: Wed, 04 Dec 2024 11:34:50 +0100
+Subject: [PATCH] dt-bindings: phy: qcom,qmp-pcie: document the SM8350 two
+ lanes PCIe PHY
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v1 13/14] riscv: dts: Introduce power domain node
- with simple-bus compatible
-To: Krzysztof Kozlowski <krzk@kernel.org>, mturquette@baylibre.com,
-	sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	drew@pdp7.com, guoren@kernel.org, wefu@redhat.com, jassisinghbrar@gmail.com,
-	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
-	frank.binns@imgtec.com, matt.coster@imgtec.com,
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
-	airlied@gmail.com, simona@ffwll.ch, ulf.hansson@linaro.org,
-	jszhang@kernel.org, m.szyprowski@samsung.com
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-	dri-devel@lists.freedesktop.org, linux-pm@vger.kernel.org
-Content-Language: en-US
-From: Michal Wilczynski <m.wilczynski@samsung.com>
-In-Reply-To: <9b75bc06-2a28-4c16-8e2b-90f824f7f79f@kernel.org>
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA02SfUxTVxjGc+693FtK6i6FjRPKhjbqhM0C0y0nmTFKht7plqAzTkjc1oy7
-	goNiWnCbOkVgDKEQcBi2FikiswRhfLOWFVlaQhFYmSAgFRA3PqwDS6UaRcFRLm7893s/zvO+
-	z5vDw4W/kf68OHkSq5BL48Ukn2hqf2LdzIRGykILCwnUMViKocanagpVtlgxpG2zeqDR3gYM
-	3XjoINEvE39S6G7LGQINlF+gUFp7NYns6lES9fTUUMipGvVAfc1FJJrLaQOoaS6dRFVtIxS6
-	6GwkUJm+GaCMs5c90PXOCGTvU+EoQ/0Sem7UU2hxoJZAmvutFGqYzvdAlqqPUXprAbHjVcZx
-	8zuKmbbbCcac6aKYlkclBGNQj1CMytANmLqKsyQzPGAkmeJr+5jb2RaMqS87zaRXtWOM42o/
-	yeQ2VACmN22QYuq7TkR6R/O3xbDxccdYRcj2z/ixw/n51NH+V77uzAlPAQZhFvDkQXorbF5w
-	EFmAzxPS5QA6OswYF7gAnC45Q3LBHIAL2iyPF0++r7lEuFlI6wDsnvyEa5oB8GqnGbgLAno7
-	TBkswtxM0Ovh5Zw7GJf3htd+Gl9+/DIdCG/bfqTc7EN/Aa3TRuAW8qULCPi4tAV3F3D6VwA7
-	ugUc+0HbuHZZiKTfgmM67fJGnkvDJjLSMa4nEKY1anC3EKT/4MNUzf0lD7yl4D04mUtzDnzg
-	PUsDxXEAfG7gNCGdCMcaH+Acn4QGlWWF34XD1vllGZwOgtXNIVx6JzTdGMM59TXw5ow3t8Ea
-	eK6pcCUtgJkZK5feCM+rcv4bai1vwvKAWL3qKOpVHtWrvKj/n1sCiArgxyYrE2SsMkzOfiVR
-	ShOUyXKZ5PPEhDqw9L+7Fi0P9ODCPafEBDAeMAHIw8W+gv1vRMqEghjpN8dZReKniuR4VmkC
-	Ih4h9hNsiAlkhbRMmsR+ybJHWcWLKsbz9E/BNGtPHyYLiwcroxxvjxzhRWvG+tcNhn14ULAr
-	fMelqFvG2oX5Ge/wLQGS3N3PNMWWouy4U2al0EUaNpTeUYrq19rvnkg2TlHOpLnAlCsx62d2
-	NpuGrlQeqXk0tMlLFHqovriosLog9dRj0Lfb1v/zROytzOzyLVZzmmeDLejZ3pI83WuVXnsj
-	giW2YP1+L/zJlP5Y42amurd2q8/TqbzFvyt0hz6qfF2Hr0s9f2D6uGzW/2H8NtX7Q3SF9EDZ
-	fJ7zr+vmtoN73gyV/+OaDZuM3hQlAnPqD3b5iuS6i++IZ0/WHdaJkgP0feO/72F7vnX5au2t
-	o3muH7pmtRE6m3+IM2hATChjpWHBuEIp/RevMK9jTgQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrAKsWRmVeSWpSXmKPExsVy+t/xu7ruBgHpBq3XRS1OXF/EZLH19yx2
-	izV7zzFZzD9yjtXi3qUtTBZXvr5ns1j39AK7xYu9jSwW11bMZbdoPraezeLlrHtsFufPb2C3
-	+Nhzj9Xi8q45bBafe48wWmz73MJmsfbIXXaLhR+3slgs2bGL0aKtcxmrxcVTrhYvL/cwW7TN
-	4rf4v2cHu8W/axtZLGa/289useXNRFaL42vDLVr2T2FxkPV4f6OV3ePNy5csHoc7vrB77P22
-	gMVj56y77B49O88wemxa1cnmcefaHjaPeScDPe53H2fy2Lyk3qNl7TEmj/f7rrJ59G1Zxehx
-	qfk6u8fm09UBglF6NkX5pSWpChn5xSW2StGGFkZ6hpYWekYmlnqGxuaxVkamSvp2NimpOZll
-	qUX6dgl6GXcmTmQvuCpWcarXqYFxp1AXIyeHhICJRPuGxSxdjFwcQgJLGSW+PvrCBJGQkbjW
-	/ZIFwhaW+HOtiw2i6DWjxI5pjWAJXgE7iYbrc8AaWARUJJb1PmSCiAtKnJz5BKxGVEBe4v6t
-	GewgtrBAmsT0LW+YQAaJCExhkVj96B8ziMMssJ1RYsPMqYwQK/4xSrw6uooNpIVZQFzi1pP5
-	YGPZBIwkHiyfzwpicwKtftrWAhTnAKpRl1g/TwiiXF6ieets5gmMQrOQHDILyaRZCB2zkHQs
-	YGRZxSiSWlqcm55bbKRXnJhbXJqXrpecn7uJEZi0th37uWUH48pXH/UOMTJxMB5ilOBgVhLh
-	DdIOSBfiTUmsrEotyo8vKs1JLT7EaAoMjInMUqLJ+cC0mVcSb2hmYGpoYmZpYGppZqwkzst2
-	5XyakEB6YklqdmpqQWoRTB8TB6dUA9Omyf9PFs306Fn62kAy+BOLoUpJnqbZmRzrxB/yn4N8
-	InJWFNytqhBdli2bsEI+PPpmWviHH7czDjTcjQptmulfNE/9ldGMn4bnxZN9j0uvO863SnXP
-	7Wlb57wsfZOV171aaanMJK3vi6SKGaKr0zpW9/Fsy/8iUJ1xdq1MkKeGwbsIhyqn7yWr115y
-	me8hKHj+1oaEdy6N8oqCC+a2iTZZCv49FdW0jT1u2cngmx93TT7ftudNJtvXrduFzgtJ5scs
-	Nkh6bnxg8sVfOppXtus6XUnPX5gvlfrfSC/pqE/9opctF5sfB/zpvTtp3/cbdqWPHPS+unAw
-	HMz/cSHX1+yIwo0LvySNtFadVkwUb1FiKc5INNRiLipOBAAdHNKv4wMAAA==
-X-CMS-MailID: 20241204103447eucas1p1290a8da81821da986015bef31ccf0e3c
-X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20241203134206eucas1p10ca2d7bb12afbd082d5f8a9ad85f94bd
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20241203134206eucas1p10ca2d7bb12afbd082d5f8a9ad85f94bd
-References: <20241203134137.2114847-1-m.wilczynski@samsung.com>
-	<CGME20241203134206eucas1p10ca2d7bb12afbd082d5f8a9ad85f94bd@eucas1p1.samsung.com>
-	<20241203134137.2114847-14-m.wilczynski@samsung.com>
-	<9b75bc06-2a28-4c16-8e2b-90f824f7f79f@kernel.org>
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241204-topic-misc-sm8350-pcie-bindings-fix-v1-1-e8eaff1699d7@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAEkwUGcC/x2NwQqDMBAFf0X23IUkpij9ldKDJhv7DsaQLSKI/
+ 27oceYwc5JKhSi9upOq7FBsuYF9dBS+U16EERuTM85bZzz/toLAKzSwrmP/NFwChGfkiLwoJxw
+ 82pgGsTKk6KmVSpWm/5f357puA2D6SXUAAAA=
+X-Change-ID: 20241204-topic-misc-sm8350-pcie-bindings-fix-81df7e1e7fd4
+To: Vinod Koul <vkoul@kernel.org>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Neil Armstrong <neil.armstrong@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1709;
+ i=neil.armstrong@linaro.org; h=from:subject:message-id;
+ bh=t/Xw+VoKf+YwKQU16zm0iPdxdX1/4JqsN9BzS5tjM1A=;
+ b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBnUDBKbj69R83Pq7mINWmrvoOmOZOBsaCNuOITPDFW
+ vSbgUneJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCZ1AwSgAKCRB33NvayMhJ0aaDD/
+ 9irTaxNrpT+nFRsd2S2ZrL2hKXVzYAfGQNaEnqdOtxn0py8Lwq0fP2x04j3wsrg2HpVebHb2ZDliOK
+ Go1KClVV8NfG14f7X3BJ7GgtFu4F+onImsx3gINcNaD3a0LUcRKA1Gg5Xs1BOwvwr/hkNQoRf0do8B
+ nbTE5kezdyuRmWOEzHZfuExapAcV7TlzQ6axKvMouDlH0VtGQwCVE5Nlxrk5/TM8+6I3FSY01rRXva
+ HT+PXxParFbv1fU0D7uO8/CZQ2yYHvULI9Glrwuo+0ITGDw852ba/uUvDf2W9t+YPaperunPchjNbb
+ qxUpZXVMg8CkgUHvJICRJy1gZYBuUBq5zZksY49KlVJpZulxBZ1GH1OOXGPZ9Zk8iu7dDAwJI6M9aW
+ fDRBOHs3rDm4UFhxg7Cas3RV+Nw+bB3UPnXa6Sab6qxjFDVVt4e5kaJV59LxYFXqUZBwr9R/AmKbZf
+ oA02SqMHHL71tVDFhLJ/Z7Yfq5SlLIn1CLdxSS57hsYzlLBIkjtAkwa8Bx9hT+cJfIjtq4r/SmsukZ
+ xSwEFhw/nrzGVMo9s8yLQ3l/QItgT6cNetdQk2DVKeGX6Tb58F+0XWqcrz7Li6xiWyMF+tCBRLs7q4
+ YtNbpcCmVwyzaHJIBXhG5AfZQpWu7NKoTT9PxwLs5eQMsZ7fpMgGsH0H5LwA==
+X-Developer-Key: i=neil.armstrong@linaro.org; a=openpgp;
+ fpr=89EC3D058446217450F22848169AB7B1A4CFF8AE
 
+Document the two lanes PCIe PHY found on SM8350 SoCs along the
+already documented single lane PCIe PHY.
 
+This fixes:
+/soc@0/phy@1c0e000: failed to match any schema with compatible: ['qcom,sm8350-qmp-gen3x2-pcie-phy']
 
-On 12/3/24 16:52, Krzysztof Kozlowski wrote:
-> On 03/12/2024 14:41, Michal Wilczynski wrote:
->> The DRM Imagination GPU requires a power-domain driver, but the driver
->> for "thead,th1520-aon" is not yet available. To ensure that the 'aon'
->> node and its child 'pd' node are properly recognized and probed by the
->> kernel, add "simple-bus" to the compatible property of the 'aon' node.
->>
->> This change allows the kernel to treat the 'aon' node as a simple bus,
->> enabling the child nodes to be probed and initialized independently. It
->> ensures that the power domain can be managed appropriately until the
->> specific AON driver is developed.
->>
->> This commit introduces some errors while running dtbs_check, as the aon
->> doesn't have the dt-bindings yet.
->>
->> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
->> ---
->>  arch/riscv/boot/dts/thead/th1520.dtsi | 11 +++++++++++
->>  1 file changed, 11 insertions(+)
->>
->> diff --git a/arch/riscv/boot/dts/thead/th1520.dtsi b/arch/riscv/boot/dts/thead/th1520.dtsi
->> index 39d39059160d..58f93ad3eb6e 100644
->> --- a/arch/riscv/boot/dts/thead/th1520.dtsi
->> +++ b/arch/riscv/boot/dts/thead/th1520.dtsi
->> @@ -6,6 +6,7 @@
->>  
->>  #include <dt-bindings/interrupt-controller/irq.h>
->>  #include <dt-bindings/clock/thead,th1520-clk.h>
->> +#include <dt-bindings/power/thead,th1520-power.h>
->>  
->>  / {
->>  	compatible = "thead,th1520";
->> @@ -229,6 +230,16 @@ stmmac_axi_config: stmmac-axi-config {
->>  		snps,blen = <0 0 64 32 0 0 0>;
->>  	};
->>  
->> +	aon {
->> +		compatible = "thead,th1520-aon", "simple-bus";
-> 
-> 1. No, that's not a bus.
+Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+---
+ Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-pcie-phy.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
 
-I understand that using "simple-bus" for the 'aon' node was not
-appropriate. Since the 'aon' node isn't needed for testing this
-patchset, I will remove it and move the power-domain device tree node to
-the SoC. Future changes to the 'aon' node will be handled in a separate
-patchset.
+diff --git a/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-pcie-phy.yaml b/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-pcie-phy.yaml
+index 13fdf5f1bebae92b59f73a0cbe12eb4fb17379f9..14b689e717e6bc60a6f2abad1a7ee1e9be998f05 100644
+--- a/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-pcie-phy.yaml
++++ b/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-pcie-phy.yaml
+@@ -32,6 +32,7 @@ properties:
+       - qcom,sm8250-qmp-gen3x2-pcie-phy
+       - qcom,sm8250-qmp-modem-pcie-phy
+       - qcom,sm8350-qmp-gen3x1-pcie-phy
++      - qcom,sm8350-qmp-gen3x2-pcie-phy
+       - qcom,sm8450-qmp-gen3x1-pcie-phy
+       - qcom,sm8450-qmp-gen4x2-pcie-phy
+       - qcom,sm8550-qmp-gen3x2-pcie-phy
+@@ -149,6 +150,7 @@ allOf:
+               - qcom,sm8250-qmp-gen3x2-pcie-phy
+               - qcom,sm8250-qmp-modem-pcie-phy
+               - qcom,sm8350-qmp-gen3x1-pcie-phy
++              - qcom,sm8350-qmp-gen3x2-pcie-phy
+               - qcom,sm8450-qmp-gen3x1-pcie-phy
+               - qcom,sm8450-qmp-gen3x2-pcie-phy
+               - qcom,sm8550-qmp-gen3x2-pcie-phy
 
-> 2. Please run scripts/checkpatch.pl and fix reported warnings. Then
-> please run `scripts/checkpatch.pl --strict` and (probably) fix more
-> warnings. Some warnings can be ignored, especially from --strict run,
-> but the code here looks like it needs a fix. Feel free to get in touch
-> if the warning is not clear.
-> 
-> Sorry, this patchset is not ready, unless by RFC you meant - do not
-> review, because it is not ready. Then it is fine. But then *clearly
-> express* this in cover letter, so we know what you expect from us (and I
-> would not waste my time to go through all this).
+---
+base-commit: c245a7a79602ccbee780c004c1e4abcda66aec32
+change-id: 20241204-topic-misc-sm8350-pcie-bindings-fix-81df7e1e7fd4
 
-My intention with this patchset was to gather feedback on the overall
-direction of the changes. I understand that clearer communication in the
-cover letter would have been beneficial. Moving forward, I will ensure
-that the patch's readiness and expectations are explicitly stated.
+Best regards,
+-- 
+Neil Armstrong <neil.armstrong@linaro.org>
 
-Thanks a lot for your review.
-Michał
-
-> 
-> Best regards,
-> Krzysztof
-> 
 
