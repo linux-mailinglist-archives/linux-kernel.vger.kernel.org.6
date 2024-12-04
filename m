@@ -1,244 +1,215 @@
-Return-Path: <linux-kernel+bounces-431936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4DA69E42E6
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F4AC9E42E5
 	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 19:07:03 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDAAB1671A3
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:06:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDD872834DA
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:07:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F47820E6EB;
-	Wed,  4 Dec 2024 17:57:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C0EC20E700;
+	Wed,  4 Dec 2024 17:58:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U8T5nPtm"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YoYt0Zmk"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1356B205AB3;
-	Wed,  4 Dec 2024 17:57:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC6BE20E6FD
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 17:58:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733335071; cv=none; b=ZYOFbgU/mVHw8PXHVv0VfOFdmWxxRhKtWlEKWEwVDLTSeM9/KlaaCHdwCKRjhXRcp8b8uxtA16pgylRBbfIVeH2kGorjeH9pa0gVCzYmuOg/vZEhqH8yZhwMBKd7Z1J0ETy+Uhpoptn8yyhfCQtVaEhpd/EUgR3HbUBpNMTz4X8=
+	t=1733335133; cv=none; b=QN6bglDbRwtDscniizD0SpKh4Lih8LJN2+Ynty0borDfhZ8oJU0k8jkVi1Q3j0m0L4K1Df+oHd7ftofC6MQwfaWKToDZbeUp197IFK2CJl4EWcP6OvkjvREV+T7fPxU+5eHE7bZ1S2mLHXSUrtwujHb2c2yRp/Y1OVevtDkc3q8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733335071; c=relaxed/simple;
-	bh=X1InaroIQM2uf/1jpiGdU6NNyYPfyZraxWsbFwr+Bcw=;
+	s=arc-20240116; t=1733335133; c=relaxed/simple;
+	bh=ZeDjHz/4HNUfAV8na48fIb/KCWnjUV7iBOUhn/IZYdM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mLMqN8t+Y1bFwtvxSqw3wjUKp9KdQQ3NHGSqGeexAJN3Jrcr+rgnIHmBQOgHUeDwL+bDAfLrkcRnkiyxcs8jnISHNXCY8mTPsfBKS+I3+vjhnfLYWkLMcvlldeCkqjtSadGzOJKqZlFbCiJopznw4HYRn/n6GQoFeHha6+helZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U8T5nPtm; arc=none smtp.client-ip=209.85.218.47
+	 To:Cc:Content-Type; b=sNv10OhQy+h783FGQWFFj9GbOay1XBi2MElGwh1K6iTToIzPlP/GY0TWTBahGrEBMfwo8OoiN7Gy2mSj5W7qxOdfkDvGQXjCe1pjnmFx9j4hdMYfwwP0J5gy+avnqW7l/NSVMfwcZofjIIdsBK+SVRsVjAfmN72HUn7yeYFp0mM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YoYt0Zmk; arc=none smtp.client-ip=209.85.167.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-aa51bf95ce1so562043566b.3;
-        Wed, 04 Dec 2024 09:57:48 -0800 (PST)
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-53dd57589c8so1293414e87.1
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 09:58:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733335067; x=1733939867; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1733335130; x=1733939930; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=wwvLjmbQdkYwGPG8ZtaFfGORqko28S8AxolG82mkgsk=;
-        b=U8T5nPtmsj2P0pHhazwnxmHErRH3QabF4jxjLhh8MbF4Uve9duoaxyUIQkWOVTSAnr
-         8Q78Hrz746rOMB73QdBcg/6tE2or2yyvKrLGkWd3ZEWJnnSdoc8W2LnPV6fnniEP03+V
-         QIYV/c3NTshoipMonlLbVu2O963GzfQG2RiP15Fb8KOd5BEy9TC5tFmrRjpwJEzNKC/t
-         WxCvuffuHNEXCesMMFDqU+VL+kc1rIUTDGEdthDDHG6xPGEbV+j63oDekm7qBjpXISwc
-         kQggRhBq6sj8u4CpQGkzREja/3JU2Mfl2pWvRuHSO+h9uvX7ON+f5C5YEaXCrkLaouQ+
-         LyTw==
+        bh=tWCeFLTJpj0LgE0RztJm+OwymY9MAnHMbb9v/QBj95I=;
+        b=YoYt0ZmkGyxt1IifeL/HX7Er/wkfSTpjwQsaXPzeyH0sLYNrBAurOTmYi2zdMxrk8s
+         tpC2iorN+dFB5rAUI9g8otMh1uA1XREgEy75GLQS2VAj6jKG+FItkFuHmgrG7V9J7vdo
+         24zpbs1N+L1QUptvljsbNyP79uyw7ja25TWhG1gN/9I7YNI994WTCboqplu0Zx/LoDcO
+         xbMphwqTIZiiyLzLby0dr0EMwav0ptugRIhLq7y2SyuPJO0Ge6bZD8bl660NQot2Nz8d
+         dVR4B6gSZmd/7Uo0DRiWSiLqt7byie0+ZSqUHOYmQGlx3/kgn5OvUeiO5NZ0YdJNh0wM
+         xsKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733335067; x=1733939867;
+        d=1e100.net; s=20230601; t=1733335130; x=1733939930;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=wwvLjmbQdkYwGPG8ZtaFfGORqko28S8AxolG82mkgsk=;
-        b=eNmM8y2rqPo7kRBI0gLAhWZ1rzveHdP6x8+GL19I06Do1Alb1RLzzCzmf0nvn8Dm2c
-         Hy4qv7RfM8ucGriwkcocfjgCwQbYAnGRwBw+49VRUySEyOHZ8TIqXIbiJzFCy9Y8mIOn
-         ILVSHnjCmj6/9IIk9ngO90E6NESs015eE6sWcLI2sl6MPbl32TATXwH66v3Ew2EylGU9
-         iSggzLXd6sAlxHIPdO+3mSBfktP/s9Z0cI2IzRrdQOF/vyLXW1g3G3Z90TlcxIWYNjO+
-         5spnUBpqUu02GLBFszIXjxMM678oy00JJqI3XNvlLcuPi8+UuVYJt+wAnEpItIiTg4gk
-         lZvg==
-X-Forwarded-Encrypted: i=1; AJvYcCVF8TrJhU8nvDYNzYcjDUc0Yz+UZm7RFr35AADNFtI/lt5lEEeDmef3nqiZOMkUf1cHmF699xCiU30sQWFI@vger.kernel.org, AJvYcCX83gXjQMXtwWyAm7spKBa3ax8PfvBKrT7/1eoSXQ9mIShVFCRaKDpvNW5KJ/clqMp/R8gyTqw6p4FLfIei@vger.kernel.org, AJvYcCXjLYBtX1zsQklYEmL6nFewqAJDWWcQTzPIy5DlR6GhOGEwHRpgB2lXK3o8IABFSHgfCA4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzszcY7MNxqQYkwWFs43KJSnQQoRgWeC5p6kOClc/RPW2j7htQl
-	PXz2obFn67KF0x4jz/fIdppAdI53NUki67YXFAhj1OVHEhs2MPnyds2dBU3yzU/ufk2yE+wjk4L
-	ia2PvYBT7N2eccr2VpALeMym2PhQ=
-X-Gm-Gg: ASbGncun7O/+Cz33Zo9CxDqr6LZhvJmrwS7EVmeVKqAO+T8gzjfIHJ9H9PlLdVnTmPv
-	Kxak1ReEGwXjGaov+lDnVtlWbiuTAEvL0K3f/F7Zi4XWYZeQ=
-X-Google-Smtp-Source: AGHT+IHtLhnUeXu2EkaEBs8dhojWXWD57YcrckBE5FnscUms54qFw7VbLXuxb1jFZe0p1Q1AVyR9dHToGmSCml8uohA=
-X-Received: by 2002:a17:907:aa2:b0:aa5:4ea6:fcae with SMTP id
- a640c23a62f3a-aa60181a7c3mr581948566b.28.1733335066688; Wed, 04 Dec 2024
- 09:57:46 -0800 (PST)
+        bh=tWCeFLTJpj0LgE0RztJm+OwymY9MAnHMbb9v/QBj95I=;
+        b=wpocAGYpFivGU1BGbQuHb3XjtxmkLJLKneRwa0MvBhq954ZeK3YNaF49iPDPJFxqu6
+         M4U5GB1TNWvWbTWqEGSGiX22g5GERRLh1wOMPQOsb5vwX4Cn+csaCOhCv3+joywQLkYu
+         SMw6YPOYr/BOVyoXB6R7wCIDfXLCEUPM6ZRi64IdEDb7hFMP93jmxLtlRcpBFDtk9IzM
+         in3Rhsfi8dcpDzArxHKWdn4sm8wHFyqcqQD5MFUsYnfsTGW//H1RuR7IDMqnE1FyQe48
+         LHXombbfy5g/BZAAtskfU/AyBj8s5cOqBp5lijI1aLk+hzH0lU25hhgyb6gw9UdYfutf
+         AA4g==
+X-Forwarded-Encrypted: i=1; AJvYcCUj5anD1tKjWvvjA5ZWESWcgImYTipiqxkRlGzsDlBzsjyEc6XS2OaA3rYsJXYkEB+AyLAC1DSPJ9THmvY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFTt1kXNBdYdw/thf9J3YM00d0NbqoXB0SV9QQuxAicjAtbJfd
+	rwWR2ZAylmqwuK6Hd+oa92iBS6+K4iyr9613KiAxAb7HSkgGHFI7LG0Er8gS7csghOpnFZG5B2k
+	0F4yKq+p4MGXxlNyxYCGOwr9QDNXPKQri
+X-Gm-Gg: ASbGnctu7xrBJzTEOpZES/HsOcmRERDTqpmnc6X3WtMt3Nz4aMkEX0UuwKmWwhExZYh
+	3vpAn4eJp2ueLXlWhcXrwUkgcOAy9Aao=
+X-Google-Smtp-Source: AGHT+IFb0L2TrCMXYydUplgGTCybAyBQnEPdAK8jOzKnUov9HVMSNjjn8/1RlxaHaPjQvcwkRXkcNwcg4JT7riXj21w=
+X-Received: by 2002:a05:6512:224b:b0:53d:f8aa:abaf with SMTP id
+ 2adb3069b0e04-53e216fb0cfmr79476e87.9.1733335129568; Wed, 04 Dec 2024
+ 09:58:49 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241126-resolve_btfids-v2-0-288c37cb89ee@weissschuh.net>
- <20241126-resolve_btfids-v2-1-288c37cb89ee@weissschuh.net>
- <CAEf4BzahMQWVH0Gaub-tWjH9GweG8Kt7OBU-f+PBhmmRDCKfrA@mail.gmail.com>
- <9a11cf2f-ddca-4a50-817f-74183d31dcaf@t-8ch.de> <CAEf4BzZqeo00C5a9QO6Ah3i-doWRbg7v_2y=y9Kfg3=JyrA=zQ@mail.gmail.com>
- <d556fc2a-c4be-4f9e-bf13-bdf418265eb3@t-8ch.de>
-In-Reply-To: <d556fc2a-c4be-4f9e-bf13-bdf418265eb3@t-8ch.de>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Wed, 4 Dec 2024 09:57:31 -0800
-Message-ID: <CAEf4Bzbxz2Bh2OkoTFA-bV5gejHD5msww9JaNt885GJMTqdwAg@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] tools/resolve_btfids: Add --fatal-warnings option
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Cc: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org
+References: <20241202184154.19321-1-ryncsn@gmail.com> <20241202184154.19321-5-ryncsn@gmail.com>
+ <CAJD7tkaO2AEeNH9b7utqUqgRqWowLtR-Ud09yC0YAhL5RQU5hw@mail.gmail.com>
+ <CAJD7tkaJt19hNF+PhTUuop0rbpsnzWRs7837jTCMpw6=uVTosg@mail.gmail.com>
+ <CAMgjq7CJt21a0=bfzvndfeLB6+9AsLwnF3sQs1-ET5CgOZsLsQ@mail.gmail.com> <CAJD7tkZLBG3SidU-tutESjVg=m+j-2b+88LxoAR+rKaL3Lw+8w@mail.gmail.com>
+In-Reply-To: <CAJD7tkZLBG3SidU-tutESjVg=m+j-2b+88LxoAR+rKaL3Lw+8w@mail.gmail.com>
+From: Kairui Song <ryncsn@gmail.com>
+Date: Thu, 5 Dec 2024 01:58:33 +0800
+Message-ID: <CAMgjq7ANFkvLWtvAHfzL1g6QTOULB9o5iJ28ot3_idFB3QPOEQ@mail.gmail.com>
+Subject: Re: [PATCH 4/4] mm, swap_cgroup: remove global swap cgroup lock
+To: Yosry Ahmed <yosryahmed@google.com>, "Paul E. McKenney" <paulmck@kernel.org>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
+	Chris Li <chrisl@kernel.org>, Hugh Dickins <hughd@google.com>, 
+	"Huang, Ying" <ying.huang@intel.com>, Roman Gushchin <roman.gushchin@linux.dev>, 
+	Shakeel Butt <shakeel.butt@linux.dev>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Barry Song <baohua@kernel.org>, Michal Hocko <mhocko@kernel.org>, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Dec 3, 2024 at 10:19=E2=80=AFPM Thomas Wei=C3=9Fschuh <linux@weisss=
-chuh.net> wrote:
+On Wed, Dec 4, 2024 at 3:18=E2=80=AFAM Yosry Ahmed <yosryahmed@google.com> =
+wrote:
 >
-> On 2024-12-03 18:06:26-0800, Andrii Nakryiko wrote:
-> > On Tue, Dec 3, 2024 at 3:09=E2=80=AFPM Thomas Wei=C3=9Fschuh <linux@wei=
-ssschuh.net> wrote:
+> On Tue, Dec 3, 2024 at 10:20=E2=80=AFAM Kairui Song <ryncsn@gmail.com> wr=
+ote:
+> >
+> > On Tue, Dec 3, 2024 at 4:36=E2=80=AFAM Yosry Ahmed <yosryahmed@google.c=
+om> wrote:
 > > >
-> > > On 2024-12-03 14:31:01-0800, Andrii Nakryiko wrote:
-> > > > On Tue, Nov 26, 2024 at 1:17=E2=80=AFPM Thomas Wei=C3=9Fschuh <linu=
-x@weissschuh.net> wrote:
+> > > On Mon, Dec 2, 2024 at 11:28=E2=80=AFAM Yosry Ahmed <yosryahmed@googl=
+e.com> wrote:
+> > > >
+> > > > On Mon, Dec 2, 2024 at 10:42=E2=80=AFAM Kairui Song <ryncsn@gmail.c=
+om> wrote:
 > > > > >
-> > > > > Currently warnings emitted by resolve_btfids are buried in the bu=
-ild log
-> > > > > and are slipping into mainline frequently.
-> > > > > Add an option to elevate warnings to hard errors so the CI bots c=
-an
-> > > > > catch any new warnings.
+> > > > > From: Kairui Song <kasong@tencent.com>
 > > > > >
-> > > > > Signed-off-by: Thomas Wei=C3=9Fschuh <linux@weissschuh.net>
-> > > > > Acked-by: Jiri Olsa <jolsa@kernel.org>
+> > > > > commit e9e58a4ec3b1 ("memcg: avoid use cmpxchg in swap cgroup mai=
+ntainance")
+> > > > > replaced the cmpxchg/xchg with a global irq spinlock because some=
+ archs
+> > > > > doesn't support 2 bytes cmpxchg/xchg. Clearly this won't scale we=
+ll.
+> > > > >
+> > > > > And as commented in swap_cgroup.c, this lock is not needed for ma=
+p
+> > > > > synchronization.
+> > > > >
+> > > > > Emulation of 2 bytes cmpxchg/xchg with atomic isn't hard, so impl=
+ement
+> > > > > it to get rid of this lock.
+> > > > >
+> > > > > Testing using 64G brd and build with build kernel with make -j96 =
+in 1.5G
+> > > > > memory cgroup using 4k folios showed below improvement (10 test r=
+un):
+> > > > >
+> > > > > Before this series:
+> > > > > Sys time: 10730.08 (stdev 49.030728)
+> > > > > Real time: 171.03 (stdev 0.850355)
+> > > > >
+> > > > > After this commit:
+> > > > > Sys time: 9612.24 (stdev 66.310789), -10.42%
+> > > > > Real time: 159.78 (stdev 0.577193), -6.57%
+> > > > >
+> > > > > With 64k folios and 2G memcg:
+> > > > > Before this series:
+> > > > > Sys time: 7626.77 (stdev 43.545517)
+> > > > > Real time: 136.22 (stdev 1.265544)
+> > > > >
+> > > > > After this commit:
+> > > > > Sys time: 6936.03 (stdev 39.996280), -9.06%
+> > > > > Real time: 129.65 (stdev 0.880039), -4.82%
+> > > > >
+> > > > > Sequential swapout of 8G 4k zero folios (24 test run):
+> > > > > Before this series:
+> > > > > 5461409.12 us (stdev 183957.827084)
+> > > > >
+> > > > > After this commit:
+> > > > > 5420447.26 us (stdev 196419.240317)
+> > > > >
+> > > > > Sequential swapin of 8G 4k zero folios (24 test run):
+> > > > > Before this series:
+> > > > > 19736958.916667 us (stdev 189027.246676)
+> > > > >
+> > > > > After this commit:
+> > > > > 19662182.629630 us (stdev 172717.640614)
+> > > > >
+> > > > > Performance is better or at least not worse for all tests above.
+> > > > >
+> > > > > Signed-off-by: Kairui Song <kasong@tencent.com>
 > > > > > ---
-> > > > >  tools/bpf/resolve_btfids/main.c | 12 ++++++++++--
-> > > > >  1 file changed, 10 insertions(+), 2 deletions(-)
+> > > > >  mm/swap_cgroup.c | 56 +++++++++++++++++++++++++++++++++++-------=
+------
+> > > > >  1 file changed, 41 insertions(+), 15 deletions(-)
 > > > > >
-> > > > > diff --git a/tools/bpf/resolve_btfids/main.c b/tools/bpf/resolve_=
-btfids/main.c
-> > > > > index bd9f960bce3d5b74dc34159b35af1e0b33524d2d..571d29d2da97fea75=
-e5f9c544a95b9ac65f9e579 100644
-> > > > > --- a/tools/bpf/resolve_btfids/main.c
-> > > > > +++ b/tools/bpf/resolve_btfids/main.c
-> > > > > @@ -141,6 +141,7 @@ struct object {
-> > > > >  };
+> > > > > diff --git a/mm/swap_cgroup.c b/mm/swap_cgroup.c
+> > > > > index a76afdc3666a..028f5e6be3f0 100644
+> > > > > --- a/mm/swap_cgroup.c
+> > > > > +++ b/mm/swap_cgroup.c
+> > > > > @@ -5,6 +5,15 @@
 > > > > >
-> > > > >  static int verbose;
-> > > > > +static int warnings;
+> > > > >  #include <linux/swapops.h> /* depends on mm.h include */
 > > > > >
-> > > > >  static int eprintf(int level, int var, const char *fmt, ...)
-> > > > >  {
-> > > > > @@ -604,6 +605,7 @@ static int symbols_resolve(struct object *obj=
-)
-> > > > >                         if (id->id) {
-> > > > >                                 pr_info("WARN: multiple IDs found=
- for '%s': %d, %d - using %d\n",
-> > > > >                                         str, id->id, type_id, id-=
->id);
-> > > > > +                               warnings++;
-> > > > >                         } else {
-> > > > >                                 id->id =3D type_id;
-> > > > >                                 (*nr)--;
-> > > > > @@ -625,8 +627,10 @@ static int id_patch(struct object *obj, stru=
-ct btf_id *id)
-> > > > >         int i;
-> > > > >
-> > > > >         /* For set, set8, id->id may be 0 */
-> > > > > -       if (!id->id && !id->is_set && !id->is_set8)
-> > > > > +       if (!id->id && !id->is_set && !id->is_set8) {
-> > > > >                 pr_err("WARN: resolve_btfids: unresolved symbol %=
-s\n", id->name);
-> > > > > +               warnings++;
-> > > > > +       }
-> > > > >
-> > > > >         for (i =3D 0; i < id->addr_cnt; i++) {
-> > > > >                 unsigned long addr =3D id->addr[i];
-> > > > > @@ -782,6 +786,7 @@ int main(int argc, const char **argv)
-> > > > >                 .funcs    =3D RB_ROOT,
-> > > > >                 .sets     =3D RB_ROOT,
-> > > > >         };
-> > > > > +       bool fatal_warnings =3D false;
-> > > > >         struct option btfid_options[] =3D {
-> > > > >                 OPT_INCR('v', "verbose", &verbose,
-> > > > >                          "be more verbose (show errors, etc)"),
-> > > > > @@ -789,6 +794,8 @@ int main(int argc, const char **argv)
-> > > > >                            "BTF data"),
-> > > > >                 OPT_STRING('b', "btf_base", &obj.base_btf_path, "=
-file",
-> > > > >                            "path of file providing base BTF"),
-> > > > > +               OPT_BOOLEAN(0, "fatal-warnings", &fatal_warnings,
-> > > > > +                           "turn warnings into errors"),
+> > > > > +#define ID_PER_UNIT (sizeof(atomic_t) / sizeof(unsigned short))
+> > > > > +struct swap_cgroup_unit {
+> > > > > +       union {
+> > > > > +               int raw;
+> > > > > +               atomic_t val;
+> > > > > +               unsigned short __id[ID_PER_UNIT];
+> > > > > +       };
+> > > > > +};
 > > > >
-> > > > We are mixing naming styles here: we have "btf_base" with underscor=
-e
-> > > > separator, and you are adding "fatal-warnings" with dash separator.=
- I
-> > > > personally like dashes, but whichever way we should stay consistent=
-.
-> > > > So let's fix it, otherwise it looks a bit sloppy.
+> > > > This doubles the size of the per-entry data, right?
 > > >
-> > > Ack.
-> > >
-> > > >
-> > > > Please also use [PATCH bpf-next v3] subject prefix to make it expli=
-cit
-> > > > that this should go through bpf-next tree.
-> > >
-> > > Ack.
-> > >
-> > > >
-> > > > pw-bot: cr
-> > > >
-> > > > >                 OPT_END()
-> > > > >         };
-> > > > >         int err =3D -1;
-> > > > > @@ -823,7 +830,8 @@ int main(int argc, const char **argv)
-> > > > >         if (symbols_patch(&obj))
-> > > > >                 goto out;
-> > > > >
-> > > > > -       err =3D 0;
-> > > > > +       if (!(fatal_warnings && warnings))
-> > > > > +               err =3D 0;
-> > > >
-> > > > nit: just
-> > > >
-> > > > if (!fatal_warnings)
-> > > >     err =3D 0;
-> > > >
-> > > > ?
-> > >
-> > > This seems wrong. Now the actual warning counter is never evaluated.
-> > > And --fatal_warnings will always lead to an error exit code.
+> > > Oh we don't, we just store 2 ids in an int instead of storing each id
+> > > individually. But the question below still stands, can't we just use
+> > > cmpxchg() directly on the id?
 > >
-> > Ah, I missed that you are using default -1 value here. I wonder if we
-> > should make it a bit more explicit?
+> > Hi Yosry,
 > >
-> > if (fatal_warnings)
-> >     err =3D warnings ? -1 : 0;
-> > else
-> >     err =3D 0;
-> >
-> > Something like that?
+> > Last time I checked the xchg status some archs still don't support
+> > xchg for 2 bytes, I just found things may have changed slightly but it
+> > seems at least parisc still doesn't support that. And looking at the
+> > code some arches still don't support cmpxchg of 2 bytes today (And I
+> > just dropped cmpxchg helper for swap_cgroup so that should be OK). RCU
+> > just dropped one-byte cmpxchg emulation 2 months ago in d4e287d7caff
+> > so that area is changing. Lacking such support is exactly the reason
+> > why there was a global lock previously, so I think the safe move is
+> > just to emulate the operation manually for now?
 >
-> The existing code was the same. Also the rest of the function
-> relies on this. IMO the pattern is clear when looking at the resulting
-> code and not the diff.
-> But if you prefer I can change it of course.
-
-That new condition breaks my brain, but luckily I don't have to look
-at it often, so I don't care all that much. Feel free to leave it as
-is.
-
+> +Paul E. McKenney
 >
-> > > > >  out:
-> > > > >         if (obj.efile.elf) {
-> > > > >                 elf_end(obj.efile.elf);
-> > > > >
-> > > > > --
-> > > > > 2.47.1
-> > > > >
+> If there's already work to support 2-byte cmpxchg() I'd rather wait
+> for that. Alternatively, if it's not too difficult, we should
+> generalize this emulation to something like cmpxchg_emu_u8() and add
+> the missing arch support. It doesn't feel right to have our own custom
+> 2-byte cmpxchg() emulation here.
+
+Actually here we need 2-byte xchg, not cmpxchg. I'm not exactly sure
+if any arch still has anything missing for that support, or is there a
+plan to support it for all archs?
 
