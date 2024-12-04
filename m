@@ -1,70 +1,50 @@
-Return-Path: <linux-kernel+bounces-431291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 016C99E3B96
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 14:46:12 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D386C164EA0
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 13:46:08 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CCD41EE029;
-	Wed,  4 Dec 2024 13:45:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b="kwR+4FO4"
-Received: from forwardcorp1d.mail.yandex.net (forwardcorp1d.mail.yandex.net [178.154.239.200])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81EB79E3C82
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:18:35 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D53D418AE2;
-	Wed,  4 Dec 2024 13:45:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.200
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 79E77B25683
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 13:53:50 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F9491F75A5;
+	Wed,  4 Dec 2024 13:53:24 +0000 (UTC)
+Received: from mblankhorst.nl (lankhorst.se [141.105.120.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 917C21F6673;
+	Wed,  4 Dec 2024 13:53:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.105.120.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733319954; cv=none; b=glpLhF+2bLBaResmgsewZqKc1j5dpbNlSb7gTPImz6SAtbOpK/N86WM1cuxths4nAmEChVFZGhqKeWlM1Msa80YdA+04kqGOhrFwcnV5mxAjCvxNe2zz85W7BFynn5wK70MdKOPLYhwMZvcIHw6voe5Jn5wrB46fUZ3EimdNmks=
+	t=1733320404; cv=none; b=WkqK45/Vxe5ZMbla10UgL95JCfeYC6C7gw5knKWnP//XVWD+rrE5/0V89wciOjRhpYmEHqhSOFIhEe1gP1EC4q5TSZvPC7vwRbtmbQQMGLlPS7Avw+gM0++mZhSnhNf/NBFe0L3fyndpW6U0vLcKv42GzsqZWCQZa+G/mKHzkDo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733319954; c=relaxed/simple;
-	bh=9pHtMb0zhA8IZCgqFuHY/Df1oDagn1gFNoblrBgk7TQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=GsCxAXz0RcBVfJeUg44s7Vl8MZBLLnABcdsXapUYoRwpKeeipvUVyndQl6R98TpqydK+BcXR5TEQWOMOmcIYUoZTpDsHi5bHVH57n4Y53uq+hYpmTwNWsb0wUAHBluo8I0ks5zUOULlSN3/ZLzCIOoSBgedCOtEC7C9cfrAyrzI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex-team.ru; spf=pass smtp.mailfrom=yandex-team.ru; dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b=kwR+4FO4; arc=none smtp.client-ip=178.154.239.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex-team.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex-team.ru
-Received: from mail-nwsmtp-smtp-corp-main-80.iva.yp-c.yandex.net (mail-nwsmtp-smtp-corp-main-80.iva.yp-c.yandex.net [IPv6:2a02:6b8:c0c:2e8b:0:640:9795:0])
-	by forwardcorp1d.mail.yandex.net (Yandex) with ESMTPS id C5D6260A5C;
-	Wed,  4 Dec 2024 16:43:59 +0300 (MSK)
-Received: from davydov-max-lin.yandex.net (unknown [2a02:6bf:8011:701:66e1:20a5:ba04:640b])
-	by mail-nwsmtp-smtp-corp-main-80.iva.yp-c.yandex.net (smtpcorp/Yandex) with ESMTPSA id lhgH281Ia8c0-xxrqopuL;
-	Wed, 04 Dec 2024 16:43:59 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru;
-	s=default; t=1733319839;
-	bh=D1MIm1QJ9PdNAbNZFIfayaS97QQZKZ2TJT5zCanRheI=;
-	h=Message-Id:Date:In-Reply-To:Cc:Subject:References:To:From;
-	b=kwR+4FO4fbmtBWD61ERQfkdv8F09T7EoK+jrju1B6fX3dBms5MZqjbT6elDEvDQpX
-	 GZn0/JcPu4B0pguZdwhQKOW8QzsZsGAmQwQWungKdRi1l1ILFEsh7vj081cidKskYG
-	 81YJK/rVp0bcfMaONsOypaDDpYdSsGPiZUggg8Ys=
-Authentication-Results: mail-nwsmtp-smtp-corp-main-80.iva.yp-c.yandex.net; dkim=pass header.i=@yandex-team.ru
-From: Maksim Davydov <davydov-max@yandex-team.ru>
-To: kvm@vger.kernel.org
-Cc: davydov-max@yandex-team.ru,
-	linux-kernel@vger.kernel.org,
-	x86@kernel.org,
-	babu.moger@amd.com,
-	seanjc@google.com,
-	mingo@redhat.com,
-	bp@alien8.de,
-	tglx@linutronix.de,
-	dave.hansen@linux.intel.com,
-	hpa@zytor.com,
-	jmattson@google.com,
-	pbonzini@redhat.com
-Subject: [PATCH v3 2/2] x86: KVM: Advertise AMD's speculation control features
-Date: Wed,  4 Dec 2024 16:43:45 +0300
-Message-Id: <20241204134345.189041-3-davydov-max@yandex-team.ru>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241204134345.189041-1-davydov-max@yandex-team.ru>
-References: <20241204134345.189041-1-davydov-max@yandex-team.ru>
+	s=arc-20240116; t=1733320404; c=relaxed/simple;
+	bh=PEDJuVP8trf41FCvKtNf3IJuUbqCJyuI8yDfBms9yGA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HlMyGczg2NGEJ0MxlT398T/Jsf9Oe75K3APw1awEYOviZhPXjvdiNpC/OwV/uSiSbGjgxPjIz3vyFEOxNQmrZhfmOrRcMtZOIQIHb7ye8a8xvE0LYRqayEdp32bCnv/ws7Xzo8vbDY2bBcm+0NGS5GVbW5F3Il27rlrOycfLArY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lankhorst.se; spf=none smtp.mailfrom=mblankhorst.nl; arc=none smtp.client-ip=141.105.120.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lankhorst.se
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=mblankhorst.nl
+From: Maarten Lankhorst <dev@lankhorst.se>
+To: linux-kernel@vger.kernel.org,
+	intel-xe@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	Tejun Heo <tj@kernel.org>,
+	Zefan Li <lizefan.x@bytedance.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Friedrich Vock <friedrich.vock@gmx.de>,
+	Maxime Ripard <mripard@kernel.org>
+Cc: cgroups@vger.kernel.org,
+	linux-mm@kvack.org,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maarten Lankhorst <dev@lankhorst.se>
+Subject: [PATCH v2 0/7] kernel/cgroups: Add "dmem" memory accounting cgroup.
+Date: Wed,  4 Dec 2024 14:44:00 +0100
+Message-ID: <20241204134410.1161769-1-dev@lankhorst.se>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,57 +53,59 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-It seems helpful to expose to userspace some speculation control features
-from 0x80000008_EBX function:
-* 16 bit. IBRS always on. Indicates whether processor prefers that
-  IBRS is always on. It simplifies speculation managing.
-* 18 bit. IBRS is preferred over software solution. Indicates that
-  software mitigations can be replaced with more performant IBRS.
-* 19 bit. IBRS provides Same Mode Protection. Indicates that when IBRS
-  is set indirect branch predictions are not influenced by any prior
-  indirect branches.
-* 29 bit. BTC_NO. Indicates that processor isn't affected by branch type
-  confusion. It's used during mitigations setting up.
+New update. Instead of calling it the 'dev' cgroup, it's now the 'dmem' cgroup.
 
-Signed-off-by: Maksim Davydov <davydov-max@yandex-team.ru>
-Reviewed-by: Jim Mattson <jmattson@google.com>
----
- arch/x86/include/asm/cpufeatures.h | 3 +++
- arch/x86/kvm/cpuid.c               | 5 +++--
- 2 files changed, 6 insertions(+), 2 deletions(-)
+Because it only deals with memory regions, the UAPI has been updated to use dmem.min/low/max/current, and to make the API cleaner, the names are changed too.
 
-diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
-index 45f87a026bba..0a709d03ee5c 100644
---- a/arch/x86/include/asm/cpufeatures.h
-+++ b/arch/x86/include/asm/cpufeatures.h
-@@ -343,7 +343,10 @@
- #define X86_FEATURE_AMD_IBPB		(13*32+12) /* Indirect Branch Prediction Barrier */
- #define X86_FEATURE_AMD_IBRS		(13*32+14) /* Indirect Branch Restricted Speculation */
- #define X86_FEATURE_AMD_STIBP		(13*32+15) /* Single Thread Indirect Branch Predictors */
-+#define X86_FEATURE_AMD_IBRS_ALWAYS_ON	(13*32+16) /* Indirect Branch Restricted Speculation always-on preferred */
- #define X86_FEATURE_AMD_STIBP_ALWAYS_ON	(13*32+17) /* Single Thread Indirect Branch Predictors always-on preferred */
-+#define X86_FEATURE_AMD_IBRS_PREFERRED	(13*32+18) /* Indirect Branch Restricted Speculation is preferred over SW solution */
-+#define X86_FEATURE_AMD_IBRS_SAME_MODE	(13*32+19) /* Indirect Branch Restricted Speculation provides Same Mode protection */
- #define X86_FEATURE_AMD_PPIN		(13*32+23) /* "amd_ppin" Protected Processor Inventory Number */
- #define X86_FEATURE_AMD_SSBD		(13*32+24) /* Speculative Store Bypass Disable */
- #define X86_FEATURE_VIRT_SSBD		(13*32+25) /* "virt_ssbd" Virtualized Speculative Store Bypass Disable */
-diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-index 7bc095add8ee..204192425e2c 100644
---- a/arch/x86/kvm/cpuid.c
-+++ b/arch/x86/kvm/cpuid.c
-@@ -756,8 +756,9 @@ void kvm_set_cpu_caps(void)
- 	kvm_cpu_cap_mask(CPUID_8000_0008_EBX,
- 		F(CLZERO) | F(XSAVEERPTR) |
- 		F(WBNOINVD) | F(AMD_IBPB) | F(AMD_IBRS) | F(AMD_SSBD) | F(VIRT_SSBD) |
--		F(AMD_SSB_NO) | F(AMD_STIBP) | F(AMD_STIBP_ALWAYS_ON) |
--		F(AMD_PSFD) | F(AMD_IBPB_RET)
-+		F(AMD_SSB_NO) | F(AMD_STIBP) | F(AMD_IBRS_ALWAYS_ON) |
-+		F(AMD_STIBP_ALWAYS_ON) | F(AMD_IBRS_PREFERRED) |
-+		F(AMD_IBRS_SAME_MODE) | F(AMD_PSFD) | F(BTC_NO) | F(AMD_IBPB_RET)
- 	);
- 
- 	/*
+dmem.current could contain a line like:
+"drm/0000:03:00.0/vram0 1073741824"
+
+But I think using "drm/card0/vram0" instead of PCIID would perhaps be good too. I'm open to changing it to that based on feedback.
+
+I've created an IGT test for min and max, and found the changes
+from Friedrich Vock sent as feedback were needed.
+I've integrated those into the first patch.
+
+Maarten Lankhorst (5):
+  kernel/cgroup: Add "dmem" memory accounting cgroup
+  drm/ttm: Handle cgroup based eviction in TTM
+  drm/xe: Implement cgroup for vram
+  drm/amdgpu: Add cgroups implementation
+  drm/xe: Hack to test with mapped pages instead of vram.
+
+Maxime Ripard (2):
+  drm/drv: Add drmm managed registration helper for dmem cgroups.
+  drm/gem: Add cgroup memory accounting for VRAM helper.
+
+ Documentation/admin-guide/cgroup-v2.rst       |  58 +-
+ Documentation/core-api/cgroup.rst             |   9 +
+ Documentation/core-api/index.rst              |   1 +
+ Documentation/gpu/drm-compute.rst             |  54 ++
+ drivers/gpu/drm/amd/amdgpu/amdgpu_vram_mgr.c  |   4 +
+ drivers/gpu/drm/drm_drv.c                     |  32 +
+ drivers/gpu/drm/drm_gem_vram_helper.c         |  15 +-
+ drivers/gpu/drm/ttm/tests/ttm_bo_test.c       |  18 +-
+ .../gpu/drm/ttm/tests/ttm_bo_validate_test.c  |   4 +-
+ drivers/gpu/drm/ttm/tests/ttm_resource_test.c |   2 +-
+ drivers/gpu/drm/ttm/ttm_bo.c                  |  54 +-
+ drivers/gpu/drm/ttm/ttm_resource.c            |  23 +-
+ drivers/gpu/drm/xe/xe_ttm_sys_mgr.c           |   5 +
+ drivers/gpu/drm/xe/xe_ttm_vram_mgr.c          |   8 +
+ include/drm/drm_drv.h                         |   5 +
+ include/drm/ttm/ttm_resource.h                |  12 +-
+ include/linux/cgroup_dmem.h                   |  67 ++
+ include/linux/cgroup_subsys.h                 |   4 +
+ include/linux/page_counter.h                  |   2 +-
+ init/Kconfig                                  |  10 +
+ kernel/cgroup/Makefile                        |   1 +
+ kernel/cgroup/dmem.c                          | 861 ++++++++++++++++++
+ mm/page_counter.c                             |   4 +-
+ 23 files changed, 1219 insertions(+), 34 deletions(-)
+ create mode 100644 Documentation/core-api/cgroup.rst
+ create mode 100644 Documentation/gpu/drm-compute.rst
+ create mode 100644 include/linux/cgroup_dmem.h
+ create mode 100644 kernel/cgroup/dmem.c
+
 -- 
-2.34.1
-
+2.43.0
 
