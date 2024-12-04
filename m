@@ -1,130 +1,129 @@
-Return-Path: <linux-kernel+bounces-431816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431574-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B448A9E41BE
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:34:46 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF31E9E411A
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:18:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A26B28CBA5
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:34:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5DF9EB3CFB7
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:03:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5050322D4C9;
-	Wed,  4 Dec 2024 17:03:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD98E217F2D;
+	Wed,  4 Dec 2024 15:58:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fOdFOy0j"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wq0sP/uY"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7E9122CE7E;
-	Wed,  4 Dec 2024 17:03:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 319B4217675
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 15:58:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733331833; cv=none; b=XVTKo+X4BLDstnVHZgEoTi0isdI8RfMN75DKbH2UaJy8pHkZ2cabWHeh5iV15Rp/sQ0LNC+98JG1k2vfyoYo89xViUIoxlVY7BP+2Dh4jvNcn8D7tXfyi32/p31VYpFN+7F161Wz3OX7TvxR+Tj8U77jLeT4Xa7twRFCdeYiixg=
+	t=1733327908; cv=none; b=UTF4MaRSFrZaIl6HX4G0Z132eZz8N+L512YncF1S0Qc3xSP8W1nYZmrTG/d62XfCj+bEtN//jmtUpKuMIgm44plw41aJ/d840/D04x4bDP9poaZd6NW5XohADYkAK+ouV71fla6OKJ/H25SbqTVDA3NqZLPRT0jVavio9q2TIOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733331833; c=relaxed/simple;
-	bh=Dl2/6Zolvx6cRik8JD2wBSapqvoRLP8984A+EP7cDuA=;
+	s=arc-20240116; t=1733327908; c=relaxed/simple;
+	bh=wU6bEN0SPz/LlKhqMAmMkomSPYpkFTOMIKtUFlzjV24=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=tNo9QmVEZvCriUkrWf+uM2Y8bz8UM9VgtwBhcXhXPEzFfltvVpvAXbk7dlxgaFaC1GD5byckBdiN4oQ1twii0LkiZeukBUe26Q/qFgMdCmtNSES93571iB8J4JYNPvY51NJmY3ugZYRRKKweXMaRfwZd8qE1jnCrzirSJ/EVabM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fOdFOy0j; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AFC4C4CECD;
-	Wed,  4 Dec 2024 17:03:52 +0000 (UTC)
+	 MIME-Version; b=V30n70nHnhizpSKwe6o8iYlid9goR9DGzf17dVypL8htK6zncboN2jnxlOQXljCC5hwlMiqje9dHC20abx7aTuxD8korvOxY+6wXEcHOO1ap/XZDiDWn9v7+py/82VtShIrVyiNGS5eS3hUmr7nWZYAGAqbJZCLh2MJcpEuXd20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wq0sP/uY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB00CC4CECD;
+	Wed,  4 Dec 2024 15:58:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733331833;
-	bh=Dl2/6Zolvx6cRik8JD2wBSapqvoRLP8984A+EP7cDuA=;
+	s=k20201202; t=1733327907;
+	bh=wU6bEN0SPz/LlKhqMAmMkomSPYpkFTOMIKtUFlzjV24=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=fOdFOy0jCRyvfgQCVlKLOOJ4HH17Bl8aqdSXchuqB1YIRTJ7gQ7O11nIEl7z5whjx
-	 Wmc03Ck0IqbF4bazEIRO73/G9fM8Raz5qfduliIozgVRijB/UctEp8FHcMlrslp8MS
-	 M5RDyJ0onnsjJrvV56iItRRYqpDvbdxjtr43fDoAVxdDXeJcl1mDoAaqso2gISA53X
-	 6LqT1gNTB3K+wkP75TOGoEf+sYCDjoB/oB+qApIpjkKDBr7Mm0w7orvZ2r10Or/Ti0
-	 Zq7Pv/32VqtR4Snax6vuYqGkdF0/Gq33z1F/W8tRBISLW89apM3pM6UT5eZRIBjVNX
-	 6FxlS1iIl0klA==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Yi Yang <yiyang13@huawei.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	Sasha Levin <sashal@kernel.org>,
-	dan.j.williams@intel.com,
-	vishal.l.verma@intel.com,
-	nvdimm@lists.linux.dev
-Subject: [PATCH AUTOSEL 4.19 6/6] nvdimm: rectify the illogical code within nd_dax_probe()
-Date: Wed,  4 Dec 2024 10:52:25 -0500
-Message-ID: <20241204155226.2215336-6-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241204155226.2215336-1-sashal@kernel.org>
-References: <20241204155226.2215336-1-sashal@kernel.org>
+	b=Wq0sP/uYRy6wBHCyaOxRnQnXx7qltJQxOLT4nHQXa89WS6mb34iS7kgNrSln2eLXA
+	 24tHjTnarFcxmtL1b6E/aAtz487ZGnTQlLB7/aGNBTR1QjHi3jtI4h/8t/05pQxs1T
+	 no99A0ICF78fPZmvBY0+p3qWP3TU8rdd/87m1SoM6UwNpHtXumes6mlWSJh9ZRiph9
+	 9jL5PsKnwZYKQ6VW0PQcTLEy501+ieKjkuVNF88VC+idjI3C+AG9qt/7nDLw692t/J
+	 17lx14rVz/61/q+LJ5fI9jUwiCJmiPIqVdEOYh0FYaj/Eb1Za98oQOqBj+iPEAUUFq
+	 28rwySq7sDjEQ==
+Received: from mchehab by mail.kernel.org with local (Exim 4.98)
+	(envelope-from <mchehab@kernel.org>)
+	id 1tIrlf-00000000HZ1-3WaO;
+	Wed, 04 Dec 2024 16:58:23 +0100
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Igor Mammedov <imammedo@redhat.com>
+Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Ani Sinha <anisinha@redhat.com>,
+	linux-kernel@vger.kernel.org,
+	qemu-devel@nongnu.org,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: [PATCH v3 4/5] acpi/generic_event_device: Update GHES migration to cover hest addr
+Date: Wed,  4 Dec 2024 16:57:58 +0100
+Message-ID: <9be1bc41db1705a23ade82ecfcb978e6e0db273a.1733327276.git.mchehab+huawei@kernel.org>
+X-Mailer: git-send-email 2.47.1
+In-Reply-To: <cover.1733327276.git.mchehab+huawei@kernel.org>
+References: <cover.1733327276.git.mchehab+huawei@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 4.19.324
 Content-Transfer-Encoding: 8bit
+Sender: Mauro Carvalho Chehab <mchehab@kernel.org>
 
-From: Yi Yang <yiyang13@huawei.com>
+The GHES migration logic at GED should now support HEST table
+location too.
 
-[ Upstream commit b61352101470f8b68c98af674e187cfaa7c43504 ]
-
-When nd_dax is NULL, nd_pfn is consequently NULL as well. Nevertheless,
-it is inadvisable to perform pointer arithmetic or address-taking on a
-NULL pointer.
-Introduce the nd_dax_devinit() function to enhance the code's logic and
-improve its readability.
-
-Signed-off-by: Yi Yang <yiyang13@huawei.com>
-Reviewed-by: Dave Jiang <dave.jiang@intel.com>
-Link: https://patch.msgid.link/20241108085526.527957-1-yiyang13@huawei.com
-Signed-off-by: Ira Weiny <ira.weiny@intel.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 ---
- drivers/nvdimm/dax_devs.c | 4 ++--
- drivers/nvdimm/nd.h       | 7 +++++++
- 2 files changed, 9 insertions(+), 2 deletions(-)
+ hw/acpi/generic_event_device.c | 29 +++++++++++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
 
-diff --git a/drivers/nvdimm/dax_devs.c b/drivers/nvdimm/dax_devs.c
-index 326f02ffca81f..5fcc9ddb795f5 100644
---- a/drivers/nvdimm/dax_devs.c
-+++ b/drivers/nvdimm/dax_devs.c
-@@ -121,12 +121,12 @@ int nd_dax_probe(struct device *dev, struct nd_namespace_common *ndns)
+diff --git a/hw/acpi/generic_event_device.c b/hw/acpi/generic_event_device.c
+index 17baf36132a8..c1116dd8d7ae 100644
+--- a/hw/acpi/generic_event_device.c
++++ b/hw/acpi/generic_event_device.c
+@@ -387,6 +387,34 @@ static const VMStateDescription vmstate_ghes_state = {
+     }
+ };
  
- 	nvdimm_bus_lock(&ndns->dev);
- 	nd_dax = nd_dax_alloc(nd_region);
--	nd_pfn = &nd_dax->nd_pfn;
--	dax_dev = nd_pfn_devinit(nd_pfn, ndns);
-+	dax_dev = nd_dax_devinit(nd_dax, ndns);
- 	nvdimm_bus_unlock(&ndns->dev);
- 	if (!dax_dev)
- 		return -ENOMEM;
- 	pfn_sb = devm_kmalloc(dev, sizeof(*pfn_sb), GFP_KERNEL);
-+	nd_pfn = &nd_dax->nd_pfn;
- 	nd_pfn->pfn_sb = pfn_sb;
- 	rc = nd_pfn_validate(nd_pfn, DAX_SIG);
- 	dev_dbg(dev, "dax: %s\n", rc == 0 ? dev_name(dax_dev) : "<none>");
-diff --git a/drivers/nvdimm/nd.h b/drivers/nvdimm/nd.h
-index 01e194a5824e4..c611bbc0f20fe 100644
---- a/drivers/nvdimm/nd.h
-+++ b/drivers/nvdimm/nd.h
-@@ -326,6 +326,13 @@ struct nd_dax *to_nd_dax(struct device *dev);
- int nd_dax_probe(struct device *dev, struct nd_namespace_common *ndns);
- bool is_nd_dax(struct device *dev);
- struct device *nd_dax_create(struct nd_region *nd_region);
-+static inline struct device *nd_dax_devinit(struct nd_dax *nd_dax,
-+					    struct nd_namespace_common *ndns)
++static const VMStateDescription vmstate_hest = {
++    .name = "acpi-hest",
++    .version_id = 1,
++    .minimum_version_id = 1,
++    .fields = (const VMStateField[]) {
++        VMSTATE_UINT64(hest_addr_le, AcpiGhesState),
++        VMSTATE_END_OF_LIST()
++    },
++};
++
++static bool hest_needed(void *opaque)
 +{
-+	if (!nd_dax)
-+		return NULL;
-+	return nd_pfn_devinit(&nd_dax->nd_pfn, ndns);
++    AcpiGedState *s = opaque;
++    return s->ghes_state.hest_addr_le;
 +}
- #else
- static inline int nd_dax_probe(struct device *dev,
- 		struct nd_namespace_common *ndns)
++
++static const VMStateDescription vmstate_hest_state = {
++    .name = "acpi-ged/hest",
++    .version_id = 1,
++    .minimum_version_id = 1,
++    .needed = hest_needed,
++    .fields = (const VMStateField[]) {
++        VMSTATE_STRUCT(ghes_state, AcpiGedState, 1,
++                       vmstate_hest, AcpiGhesState),
++        VMSTATE_END_OF_LIST()
++    }
++};
++
+ static const VMStateDescription vmstate_acpi_ged = {
+     .name = "acpi-ged",
+     .version_id = 1,
+@@ -399,6 +427,7 @@ static const VMStateDescription vmstate_acpi_ged = {
+         &vmstate_memhp_state,
+         &vmstate_cpuhp_state,
+         &vmstate_ghes_state,
++        &vmstate_hest_state,
+         NULL
+     }
+ };
 -- 
-2.43.0
+2.47.1
 
 
