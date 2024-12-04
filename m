@@ -1,275 +1,221 @@
-Return-Path: <linux-kernel+bounces-431430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1C789E3DFB
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:16:51 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EF5B9E3DF2
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:14:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 60E6AB3F327
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 14:51:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 254E3B3F928
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 14:51:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A60A20C483;
-	Wed,  4 Dec 2024 14:50:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D5F620B7EC;
+	Wed,  4 Dec 2024 14:50:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZPQyRcpI"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="uvmlHwR8"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2081.outbound.protection.outlook.com [40.107.92.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F96E20C473
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 14:50:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733323806; cv=none; b=aVtdBsKqvrPuHZeU/jyVWBTMeSj3tDVk9MgX09hXveQi2zmXL4Fygb0CFfnSEhS01IBa73QHO1S9rYZpDJJG9Yb+Q5/5mxAKzcvRZOWaTwLaUiL9aJmuuMiA1iDWiMXjHWqA9wf/5TqXUxifN0sa8byBLMpRZo2JN7HeEyXO2Qg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733323806; c=relaxed/simple;
-	bh=AExhUXemyDCEBVHNt2DkO+Z+mtl17tHAzGSlmKB5PX8=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=Kn1ACiOVJCdcvtkvQ17/BQisIVEE8aybR2ccxtPu/IwbvM0UbLIhwrObzRslELI4O+jHy22ugkaPF3oactSr0uwwE8c2JTwj11A3PE9fyItSm5tBT5Ucj4/Hscn1nEZi6Hq1vptTfecUe+/kSZ9TCT72gmsBBu4wva2uzLX70pE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZPQyRcpI; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733323805; x=1764859805;
-  h=date:from:to:cc:subject:message-id;
-  bh=AExhUXemyDCEBVHNt2DkO+Z+mtl17tHAzGSlmKB5PX8=;
-  b=ZPQyRcpIFU9WFZu6v9Q8ntAGtwNEnHVHVUPB8JuIo6v9TfPrTgnoGxNM
-   BXEvCUCYWT/ngq8fr09wSEVr2ZQmk3PyrOAA07KK3rL0qh3qudZLp9JNx
-   +nRr5k6xSuKbkeE+7cYFjWxrTI5BP6YGeXnxCVJOIl5v4MxwLPNd47xVR
-   yd1VyWYhjwYjcWdTdCqItaWnNUhBBInCkF7eNDJrHjJW5qGzEVACdWIbX
-   kMqE1yPT5T4Xf8LnchhesjB9LP7c+NsLXgMq6WM0XyNllKa5F1GrdlRyQ
-   w+EbKxoR+/4HBbeILTmKyh7+g8mdEMYtWaQPWUMJWdpDUB2DZeiiU9FPC
-   Q==;
-X-CSE-ConnectionGUID: 8XO54krSRqCKP2TEC5x6RA==
-X-CSE-MsgGUID: 6jlyfiSdR7+JOCzLICFeew==
-X-IronPort-AV: E=McAfee;i="6700,10204,11276"; a="36436491"
-X-IronPort-AV: E=Sophos;i="6.12,207,1728975600"; 
-   d="scan'208";a="36436491"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Dec 2024 06:50:02 -0800
-X-CSE-ConnectionGUID: Xj7OyOUeTo6WjyrerfouLw==
-X-CSE-MsgGUID: 6pG0t7ArTWSzKUUbnGdd0A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,207,1728975600"; 
-   d="scan'208";a="124718287"
-Received: from lkp-server02.sh.intel.com (HELO 1f5a171d57e2) ([10.239.97.151])
-  by fmviesa001.fm.intel.com with ESMTP; 04 Dec 2024 06:50:01 -0800
-Received: from kbuild by 1f5a171d57e2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tIqhS-00039W-1u;
-	Wed, 04 Dec 2024 14:49:58 +0000
-Date: Wed, 04 Dec 2024 22:46:45 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:perf/core] BUILD SUCCESS
- eca51ce01d4956ab4b8f06bb55c031f4913fffcb
-Message-ID: <202412042235.M4dJrwlJ-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDBD920B1F3;
+	Wed,  4 Dec 2024 14:50:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.81
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733323821; cv=fail; b=Rv++Nyv14RaTqtRmJoeFb6RJMsQdBQFkF3ZMSCzGeLdobq2ycK32WVWWdYAvQcLlGb3+BhLWM0jddeFV589OVPF2TKA7n3iH0UiGMBa112BEfWR9bQ7v11Vh5PfUYM71A7JgpUoK3kJwFOTThqr9x/TKR+7cLHoKJbWblsmCS5g=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733323821; c=relaxed/simple;
+	bh=ZaEP6yqTRwZ3Up3SAFODPjJ3U/FlBENra9Ifb2XRsyc=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=prJnb7F4shvPgPD2y0/vEnYySIacbuwB0Rluhpub3n83OaT253IzCzhXvymLY7RdfWRgXkY6C6T4H1u8n3iTpDw/PPpXvdZtAyVEsHzsIZbssSYem/m5nt+jO5D9aS1FoXF1jyVpL4jhHfuqfiUHUzf+qOSvgsnVU7QessbgLs4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=uvmlHwR8; arc=fail smtp.client-ip=40.107.92.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Bilrq3/ukhNPVER3ckMgZ4ThQ7nE8XGxnATMVwrfYQ2PikeFJQ1QBaUrdtayCay9FesJ5fqwdf38K/DlHQwqJYuMMOLdfolcbBbvf1DGESngmalrDkaQVcdgZE8l1QvAM8gamFkxORA/DKXHgr1eTYstsaVPA+JJLSsxcLXKRYATpXETe/1VL7vtnI6IXITCJqS4G4ziG/yRGkb9RGCSKcOyapxsarDD4nU8y4zK1VVo9bqk2nxM6vscn7wpwCGbeBgxCBxb5NY3bPZWAufKE7cAWmvWGyqh3fVOrvWzk7bpyykZODW6VWlTUb6oeeLMzfvh+x2egqgTCtXIkTaOwA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=jAN9rYY9devfMYPumnR1SYaZit3Iw+DAqoWH6mNBBN4=;
+ b=GMsCYvbIcMXCtFm5TUX9w6yHyeHkiT1pQ1OLcPFFg/6sUzpQdWQbz/wzcIShzJuRXFlpozwu8v2TX0jI3hRDrIIm47rGD806QAiyzEHb72fufyDF4CvbYUzP6Tj/f15/HyjhEHKIOLTIo2ZRZMr5iXkbTV0CMAQXWGlJaUtm9rFUkXHgepGexJ9vTA+85YzIF14zeaqqnT/kiiXZT9TclYVMGH4zb0KX7m6x6otzG0DseUT7IJvyFGlgNRaa43nn6oGdoahoGb8DGVmqChUhKUG7ewOPUoF+A7NMVDC6lerkGzcD5p/52vrserEwLBGMcruAWi08z/HQEt+cd1+JKQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=jAN9rYY9devfMYPumnR1SYaZit3Iw+DAqoWH6mNBBN4=;
+ b=uvmlHwR8y4wdOjqaL66l/23jVaqbelPMUdnfk1f7Tr4Gv1o6pUOC/4JZggTfXf5CisXyiuQf4ju2NPkOG/L50eC0tC1DkYhuF7L3W8OEgf8eewbVPuszQ5bKlUovHz9t5UefqyE2D4uoBw3/69BWo5yL2g8nrv330MEjh2ibrEw=
+Received: from SJ0PR03CA0243.namprd03.prod.outlook.com (2603:10b6:a03:3a0::8)
+ by DM4PR12MB8521.namprd12.prod.outlook.com (2603:10b6:8:17e::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.18; Wed, 4 Dec
+ 2024 14:50:14 +0000
+Received: from SJ1PEPF00001CE9.namprd03.prod.outlook.com
+ (2603:10b6:a03:3a0:cafe::ce) by SJ0PR03CA0243.outlook.office365.com
+ (2603:10b6:a03:3a0::8) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8207.19 via Frontend Transport; Wed,
+ 4 Dec 2024 14:50:13 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ SJ1PEPF00001CE9.mail.protection.outlook.com (10.167.242.25) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8230.7 via Frontend Transport; Wed, 4 Dec 2024 14:50:13 +0000
+Received: from shatadru.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 4 Dec
+ 2024 08:50:08 -0600
+From: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
+To: <gautham.shenoy@amd.com>, <mario.limonciello@amd.com>,
+	<perry.yuan@amd.com>, <rafael@kernel.org>, <viresh.kumar@linaro.org>
+CC: <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Dhananjay
+ Ugwekar" <Dhananjay.Ugwekar@amd.com>
+Subject: [PATCH 3/5] cpufreq/amd-pstate: Refactor amd_pstate_epp_reenable() and amd_pstate_epp_offline()
+Date: Wed, 4 Dec 2024 14:48:40 +0000
+Message-ID: <20241204144842.164178-4-Dhananjay.Ugwekar@amd.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20241204144842.164178-1-Dhananjay.Ugwekar@amd.com>
+References: <20241204144842.164178-1-Dhananjay.Ugwekar@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PEPF00001CE9:EE_|DM4PR12MB8521:EE_
+X-MS-Office365-Filtering-Correlation-Id: e87508f1-15ee-4106-18e6-08dd1472f560
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?0ITsuS29qAo+XXzuYzrX3Z14D36HAFI9qC9e2Cz7xZkVATYp4ME/xlUt+l1W?=
+ =?us-ascii?Q?OhAmeKzO6zVbhv7rZHH2oM5lMSbpH6VxMrklOJlREObbOWfvHZuCavc6TJZ8?=
+ =?us-ascii?Q?cU4M+017AiDyOvPYvGgxSp7hMF7RDmnnGEZIN9RvmwKS+EUd6sdBnr9S3c9/?=
+ =?us-ascii?Q?kT8a5+MDzxnidodSHhbgr3E7WYB84H/b4GrFvD49n+GfL4db9yO7NOCofH5A?=
+ =?us-ascii?Q?FZU0m/dcwPr8FDp2Ccz3zOLuq6XW8ZVvI26dTqOc/s1nL/cG1S8pQ0Lnjqzw?=
+ =?us-ascii?Q?ev/neiVvO2uNvBjiBI7+Cz+xeOf5j4uze75rh0czzXOP3BUERxWx6WwsL4lI?=
+ =?us-ascii?Q?Y/pXeH1o5NW8nLV6C/LR1zLmTGCl0rdI++5Z4UVIXVEcVuPddZoVhM3WiqgK?=
+ =?us-ascii?Q?iQAnS+T27Zz/Y8Fi0hU9SVaG5AN7Pggq0Bag0CuBDlrAEYs89KSB5rRR9Xso?=
+ =?us-ascii?Q?SAZElReMJGFY90QtsMJqlnHhiFl7y4pSg9xPiwka04e/HGvFtx+SvEISwP6B?=
+ =?us-ascii?Q?vmOjrpT2vJX3KDnSY39LIqoPww7VAiQa7ukY/0thUw5CZYmgGiWKDqFnCHi1?=
+ =?us-ascii?Q?9RaEsO4d+KRnrl71HxLhygBVSbdAJeIaxH3OHrjS6OVA5bIL9ttxkJ8Hemnq?=
+ =?us-ascii?Q?Ck9Dq/iwq/oYGeSgZrulrB38VF6kyrTQZSXvMKq50JRFKrDyGqunpY9va2Rj?=
+ =?us-ascii?Q?Opmus1twp+qTtUMth5RYbBZ18OFJF1xN33OJbbR2Paf2+rq8kSkz8in58EQk?=
+ =?us-ascii?Q?iU6iRqaP2GKrMITpcgtntKQvzK8/KNZmiVEcLbcI0n23iotEgl85IpVJtxJC?=
+ =?us-ascii?Q?woV8Xmp8tMi9012eRoVCHw1bI2zEzWAum2/WtgTeime1aUGr05/aKzOxtFnj?=
+ =?us-ascii?Q?C+Tq2ZntRAtWOhAfv8eDrlJjc7x2e56OOBJzfoDj4MG2fZfRt4Yab9KKW6wF?=
+ =?us-ascii?Q?gOi/vt+fjFKAskfuNCTSOnHvUlgL7iCcvNCeX/wwL9v4C5Q5qqmtuDz9/LQs?=
+ =?us-ascii?Q?sbXal+Ov6IJPOTJaT5HdnQgN9eU5aDjcOyu7ql3ac6Ajwy3DdJkS3qx/a+Ao?=
+ =?us-ascii?Q?v3UG78BNw7GBeO8Ty/XqSW9nAMhVxasyCDKejNoOFp/9Xd6g++JwJR/wF+/r?=
+ =?us-ascii?Q?S/oSb9BvFMYlaJAJmEOGLIgoou1HQdVYIuySD47j54sTBE71Ynv4l/0JmNU9?=
+ =?us-ascii?Q?jedANAvnsrEnfkeEYDa/WeyX8t+zKrrO/FC4IPx1LJEi85/Q4vMsgGaYW6V5?=
+ =?us-ascii?Q?vTaKvf6E3aEG5e4f82GghpBhR3zlZmeMzGjZHoFl8JNhhfNsJoMf0b5oq/a7?=
+ =?us-ascii?Q?Zv3cmszC5Vun6AQdHXBPObxUTALNcjdHjxPsYvfiRd6LoKKK2yUgM8uFykdJ?=
+ =?us-ascii?Q?xauThs2vcMnHfh9ujqYwAYNWcizjumMBvqMNf1K8hArjilYVAAQEad/olYgK?=
+ =?us-ascii?Q?B10RyZE5qN9NLZMiOhG5MJu2jsahJwps?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Dec 2024 14:50:13.0458
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: e87508f1-15ee-4106-18e6-08dd1472f560
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ1PEPF00001CE9.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB8521
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git perf/core
-branch HEAD: eca51ce01d4956ab4b8f06bb55c031f4913fffcb  perf: Map pages in advance
+Replace similar code chunks with amd_pstate_update_perf() and
+amd_pstate_set_epp() function calls.
 
-elapsed time: 727m
+Signed-off-by: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
+---
+ drivers/cpufreq/amd-pstate.c | 36 +++++++-----------------------------
+ 1 file changed, 7 insertions(+), 29 deletions(-)
 
-configs tested: 183
-configs skipped: 7
+diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.c
+index a1b2393cef22..a38be7727c9d 100644
+--- a/drivers/cpufreq/amd-pstate.c
++++ b/drivers/cpufreq/amd-pstate.c
+@@ -1630,25 +1630,17 @@ static int amd_pstate_epp_set_policy(struct cpufreq_policy *policy)
+ 
+ static void amd_pstate_epp_reenable(struct amd_cpudata *cpudata)
+ {
+-	struct cppc_perf_ctrls perf_ctrls;
+-	u64 value, max_perf;
++	u64 max_perf;
+ 	int ret;
+ 
+ 	ret = amd_pstate_cppc_enable(true);
+ 	if (ret)
+ 		pr_err("failed to enable amd pstate during resume, return %d\n", ret);
+ 
+-	value = READ_ONCE(cpudata->cppc_req_cached);
+ 	max_perf = READ_ONCE(cpudata->highest_perf);
+ 
+-	if (cpu_feature_enabled(X86_FEATURE_CPPC)) {
+-		wrmsrl_on_cpu(cpudata->cpu, MSR_AMD_CPPC_REQ, value);
+-	} else {
+-		perf_ctrls.max_perf = max_perf;
+-		cppc_set_perf(cpudata->cpu, &perf_ctrls);
+-		perf_ctrls.energy_perf = AMD_CPPC_ENERGY_PERF_PREF(cpudata->epp_cached);
+-		cppc_set_epp_perf(cpudata->cpu, &perf_ctrls, 1);
+-	}
++	amd_pstate_update_perf(cpudata, 0, 0, max_perf, false);
++	amd_pstate_set_epp(cpudata, cpudata->epp_cached);
+ }
+ 
+ static int amd_pstate_epp_cpu_online(struct cpufreq_policy *policy)
+@@ -1668,7 +1660,6 @@ static int amd_pstate_epp_cpu_online(struct cpufreq_policy *policy)
+ static void amd_pstate_epp_offline(struct cpufreq_policy *policy)
+ {
+ 	struct amd_cpudata *cpudata = policy->driver_data;
+-	struct cppc_perf_ctrls perf_ctrls;
+ 	int min_perf;
+ 	u64 value;
+ 
+@@ -1676,23 +1667,10 @@ static void amd_pstate_epp_offline(struct cpufreq_policy *policy)
+ 	value = READ_ONCE(cpudata->cppc_req_cached);
+ 
+ 	mutex_lock(&amd_pstate_limits_lock);
+-	if (cpu_feature_enabled(X86_FEATURE_CPPC)) {
+-		cpudata->epp_policy = CPUFREQ_POLICY_UNKNOWN;
+-
+-		/* Set max perf same as min perf */
+-		value &= ~AMD_CPPC_MAX_PERF(~0L);
+-		value |= AMD_CPPC_MAX_PERF(min_perf);
+-		value &= ~AMD_CPPC_MIN_PERF(~0L);
+-		value |= AMD_CPPC_MIN_PERF(min_perf);
+-		wrmsrl_on_cpu(cpudata->cpu, MSR_AMD_CPPC_REQ, value);
+-	} else {
+-		perf_ctrls.desired_perf = 0;
+-		perf_ctrls.min_perf = min_perf;
+-		perf_ctrls.max_perf = min_perf;
+-		cppc_set_perf(cpudata->cpu, &perf_ctrls);
+-		perf_ctrls.energy_perf = AMD_CPPC_ENERGY_PERF_PREF(HWP_EPP_BALANCE_POWERSAVE);
+-		cppc_set_epp_perf(cpudata->cpu, &perf_ctrls, 1);
+-	}
++
++	amd_pstate_update_perf(cpudata, min_perf, 0, min_perf, false);
++	amd_pstate_set_epp(cpudata, AMD_CPPC_EPP_BALANCE_POWERSAVE);
++
+ 	mutex_unlock(&amd_pstate_limits_lock);
+ }
+ 
+-- 
+2.34.1
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
-
-tested configs:
-alpha                            alldefconfig    gcc-14.2.0
-alpha                             allnoconfig    gcc-14.2.0
-alpha                            allyesconfig    clang-20
-arc                              allmodconfig    clang-20
-arc                               allnoconfig    gcc-14.2.0
-arc                              allyesconfig    clang-20
-arc                      axs103_smp_defconfig    gcc-14.2.0
-arc                 nsimosci_hs_smp_defconfig    clang-20
-arc                            randconfig-001    clang-20
-arc                   randconfig-001-20241204    clang-14
-arc                            randconfig-002    clang-20
-arc                   randconfig-002-20241204    clang-14
-arm                              allmodconfig    clang-20
-arm                               allnoconfig    gcc-14.2.0
-arm                              allyesconfig    clang-20
-arm                       aspeed_g4_defconfig    clang-20
-arm                         at91_dt_defconfig    clang-20
-arm                          ep93xx_defconfig    gcc-14.2.0
-arm                       imx_v6_v7_defconfig    clang-20
-arm                          ixp4xx_defconfig    gcc-14.2.0
-arm                        keystone_defconfig    gcc-14.2.0
-arm                         lpc18xx_defconfig    clang-20
-arm                          moxart_defconfig    gcc-14.2.0
-arm                        mvebu_v5_defconfig    gcc-14.2.0
-arm                          pxa3xx_defconfig    clang-15
-arm                          pxa3xx_defconfig    gcc-14.2.0
-arm                            qcom_defconfig    clang-15
-arm                            qcom_defconfig    clang-20
-arm                            randconfig-001    clang-20
-arm                   randconfig-001-20241204    clang-14
-arm                            randconfig-002    clang-20
-arm                   randconfig-002-20241204    clang-14
-arm                            randconfig-003    clang-20
-arm                   randconfig-003-20241204    clang-14
-arm                            randconfig-004    clang-20
-arm                   randconfig-004-20241204    clang-14
-arm                             rpc_defconfig    gcc-14.2.0
-arm                        shmobile_defconfig    clang-18
-arm                        shmobile_defconfig    gcc-14.2.0
-arm                          sp7021_defconfig    clang-20
-arm                           spitz_defconfig    gcc-14.2.0
-arm                         wpcm450_defconfig    clang-20
-arm64                            allmodconfig    clang-20
-arm64                             allnoconfig    gcc-14.2.0
-arm64                          randconfig-001    clang-20
-arm64                 randconfig-001-20241204    clang-14
-arm64                          randconfig-002    clang-20
-arm64                 randconfig-002-20241204    clang-14
-arm64                          randconfig-003    clang-20
-arm64                 randconfig-003-20241204    clang-14
-arm64                          randconfig-004    clang-20
-arm64                 randconfig-004-20241204    clang-14
-csky                             alldefconfig    clang-20
-csky                              allnoconfig    gcc-14.2.0
-hexagon                          allmodconfig    clang-20
-hexagon                           allnoconfig    gcc-14.2.0
-hexagon                          allyesconfig    clang-20
-i386                 buildonly-randconfig-001    gcc-12
-i386        buildonly-randconfig-001-20241204    gcc-12
-i386                 buildonly-randconfig-002    gcc-12
-i386        buildonly-randconfig-002-20241204    gcc-12
-i386                 buildonly-randconfig-003    gcc-12
-i386        buildonly-randconfig-003-20241204    gcc-12
-i386                 buildonly-randconfig-004    gcc-12
-i386        buildonly-randconfig-004-20241204    gcc-12
-i386                 buildonly-randconfig-005    gcc-12
-i386        buildonly-randconfig-005-20241204    gcc-12
-i386                 buildonly-randconfig-006    gcc-12
-i386        buildonly-randconfig-006-20241204    gcc-12
-loongarch                        allmodconfig    gcc-14.2.0
-loongarch                         allnoconfig    gcc-14.2.0
-loongarch                 loongson3_defconfig    clang-18
-m68k                             allmodconfig    gcc-14.2.0
-m68k                              allnoconfig    gcc-14.2.0
-m68k                             allyesconfig    gcc-14.2.0
-m68k                          atari_defconfig    clang-18
-m68k                          atari_defconfig    gcc-14.2.0
-m68k                       bvme6000_defconfig    gcc-14.2.0
-m68k                        m5407c3_defconfig    gcc-14.2.0
-m68k                            q40_defconfig    clang-15
-microblaze                       alldefconfig    gcc-14.2.0
-microblaze                       allmodconfig    gcc-14.2.0
-microblaze                        allnoconfig    gcc-14.2.0
-microblaze                       allyesconfig    gcc-14.2.0
-mips                              allnoconfig    gcc-14.2.0
-mips                          ath25_defconfig    clang-20
-mips                          ath79_defconfig    gcc-14.2.0
-mips                      bmips_stb_defconfig    clang-18
-mips                           ci20_defconfig    clang-18
-mips                          eyeq5_defconfig    gcc-14.2.0
-mips                          eyeq6_defconfig    clang-20
-mips                          eyeq6_defconfig    gcc-14.2.0
-mips                           ip22_defconfig    clang-15
-mips                           ip22_defconfig    gcc-14.2.0
-mips                           ip28_defconfig    gcc-14.2.0
-mips                           ip32_defconfig    gcc-14.2.0
-mips                           jazz_defconfig    clang-20
-mips                     loongson1b_defconfig    clang-15
-mips                          rb532_defconfig    clang-18
-mips                         rt305x_defconfig    clang-20
-mips                        vocore2_defconfig    clang-15
-mips                           xway_defconfig    clang-20
-nios2                         10m50_defconfig    gcc-14.2.0
-nios2                         3c120_defconfig    gcc-14.2.0
-nios2                             allnoconfig    gcc-14.2.0
-openrisc                         alldefconfig    gcc-14.2.0
-openrisc                          allnoconfig    clang-20
-openrisc                         allyesconfig    gcc-14.2.0
-openrisc                       virt_defconfig    clang-20
-parisc                           allmodconfig    gcc-14.2.0
-parisc                            allnoconfig    clang-20
-parisc                           allyesconfig    gcc-14.2.0
-parisc                generic-64bit_defconfig    clang-15
-powerpc                    adder875_defconfig    clang-15
-powerpc                          allmodconfig    gcc-14.2.0
-powerpc                           allnoconfig    clang-20
-powerpc                          allyesconfig    gcc-14.2.0
-powerpc                        fsp2_defconfig    clang-15
-powerpc                     kmeter1_defconfig    gcc-14.2.0
-powerpc                 linkstation_defconfig    clang-20
-powerpc                 linkstation_defconfig    gcc-14.2.0
-powerpc                   motionpro_defconfig    clang-18
-powerpc                   motionpro_defconfig    gcc-14.2.0
-powerpc                     mpc5200_defconfig    clang-14
-powerpc                 mpc8313_rdb_defconfig    clang-20
-powerpc                 mpc8315_rdb_defconfig    clang-15
-powerpc                  mpc866_ads_defconfig    clang-20
-powerpc                      pmac32_defconfig    gcc-14.2.0
-powerpc                     ppa8548_defconfig    clang-20
-powerpc                     skiroot_defconfig    gcc-14.2.0
-powerpc                  storcenter_defconfig    clang-15
-powerpc                     stx_gp3_defconfig    clang-20
-powerpc                     tqm5200_defconfig    gcc-14.2.0
-powerpc                      tqm8xx_defconfig    clang-20
-powerpc                         wii_defconfig    gcc-14.2.0
-riscv                            allmodconfig    gcc-14.2.0
-riscv                             allnoconfig    clang-20
-riscv                            allyesconfig    gcc-14.2.0
-riscv                    nommu_k210_defconfig    clang-20
-s390                             alldefconfig    gcc-14.2.0
-s390                             allmodconfig    gcc-14.2.0
-s390                              allnoconfig    clang-20
-s390                             allyesconfig    gcc-14.2.0
-sh                               allmodconfig    gcc-14.2.0
-sh                                allnoconfig    gcc-14.2.0
-sh                               allyesconfig    gcc-14.2.0
-sh                ecovec24-romimage_defconfig    clang-20
-sh                ecovec24-romimage_defconfig    gcc-14.2.0
-sh                         ecovec24_defconfig    gcc-14.2.0
-sh                            hp6xx_defconfig    gcc-14.2.0
-sh                          landisk_defconfig    clang-20
-sh                          rsk7264_defconfig    gcc-14.2.0
-sh                          sdk7780_defconfig    gcc-14.2.0
-sh                          sdk7786_defconfig    clang-20
-sh                           se7343_defconfig    clang-20
-sh                           se7619_defconfig    gcc-14.2.0
-sh                           se7712_defconfig    gcc-14.2.0
-sh                           se7722_defconfig    gcc-14.2.0
-sh                           se7751_defconfig    clang-20
-sh                           se7780_defconfig    gcc-14.2.0
-sh                   secureedge5410_defconfig    clang-20
-sh                     sh7710voipgw_defconfig    gcc-14.2.0
-sh                        sh7757lcr_defconfig    gcc-14.2.0
-sh                            shmin_defconfig    clang-20
-sparc                            allmodconfig    gcc-14.2.0
-sparc                             allnoconfig    gcc-14.2.0
-sparc                       sparc32_defconfig    gcc-14.2.0
-sparc                       sparc64_defconfig    clang-15
-um                               allmodconfig    clang-20
-um                                allnoconfig    clang-20
-um                               allyesconfig    clang-20
-um                             i386_defconfig    gcc-14.2.0
-um                           x86_64_defconfig    gcc-14.2.0
-x86_64      buildonly-randconfig-001-20241204    clang-19
-x86_64      buildonly-randconfig-002-20241204    clang-19
-x86_64      buildonly-randconfig-003-20241204    clang-19
-x86_64      buildonly-randconfig-004-20241204    clang-19
-x86_64      buildonly-randconfig-005-20241204    clang-19
-x86_64      buildonly-randconfig-006-20241204    clang-19
-xtensa                            allnoconfig    gcc-14.2.0
-xtensa                  nommu_kc705_defconfig    clang-20
-xtensa                    smp_lx200_defconfig    gcc-14.2.0
-xtensa                         virt_defconfig    gcc-14.2.0
-
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
