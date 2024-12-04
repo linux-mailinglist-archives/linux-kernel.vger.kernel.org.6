@@ -1,164 +1,160 @@
-Return-Path: <linux-kernel+bounces-431928-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431938-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E043F9E4506
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 20:48:49 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91A799E4610
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 21:48:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8DCCCBE4532
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:04:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5798FBE59EE
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:07:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3C1020B218;
-	Wed,  4 Dec 2024 17:52:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1298520E004;
+	Wed,  4 Dec 2024 17:59:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="K8TGU9JN";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="MSNHHMb5"
-Received: from fout-b5-smtp.messagingengine.com (fout-b5-smtp.messagingengine.com [202.12.124.148])
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="Uu1ZWldn"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F017207E0F;
-	Wed,  4 Dec 2024 17:51:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.148
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE0672B9B4
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 17:59:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733334719; cv=none; b=TMEkBO73LgcotxKSUZVyo00nhMLmN1K/w5jU9ys2rINrLbjapQG7+e3lDd31KtDwOBuoNNzOvoBWtAAV29ZBW9LzNvCRGOH/pTYEB46MnbjgTdVB4qxf4RZPvfwXpWwR3MU1QZbULtgH9neCys38UZ7mu6Jjz4rP0oXMp55sH2Q=
+	t=1733335183; cv=none; b=CKtdjWOlX4Q5ai/29Qf4BAqNACHcA2l+SCqDjM/UQePchyKlPWyqk20dr7dGgN+YZhN/x/tZvpdsonsE10fxy6G1Ui6c2/kVKzIkPzDNmCqGysONS4UNHcyms3Q6HnjSnT218T2SsAABBmpV2bsmSgzpDiRPdO8k53cYenBUdTA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733334719; c=relaxed/simple;
-	bh=FGCl+JsSEeF80YE0YF+6nZDBFRr+bBmxhB89qH3mjzU=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=Sd+8HQm/1wKK9JA9gy0iW7HbpEmsSDzaMqwZoodbO2O3eUSXjCHHKm74CCnbabCHRVKFSTfoiwTcOattm1XJcLHoyRNhTqhfWRIoajjPzTzyYwInGWCYNAFMN7JbfqiTTSfwoGwiabrCltbsiePu80J1ciryEQALzeuS9dwKxa0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=K8TGU9JN; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=MSNHHMb5; arc=none smtp.client-ip=202.12.124.148
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfout.stl.internal (Postfix) with ESMTP id 02FF7114010E;
-	Wed,  4 Dec 2024 12:51:55 -0500 (EST)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Wed, 04 Dec 2024 12:51:56 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1733334715;
-	 x=1733421115; bh=jJE2L9y+wEwp9MITaMA6HBhlkUzfR3+Jn5SAVrObSeE=; b=
-	K8TGU9JNA/8Eu09oYaCYPJ1x38aLd+5O+m6ONqg8opGJDtCUw4krurwNMDVuM/bS
-	pboxApeIJj0UYM25nVZO6jc/pjz5mxK0p9EthSOuJdLl1Uhb0UR+toFaH4m8DG/6
-	W/elIdbhx/S00iG9P7dr15V4DODFipVo2v6QWXZTyo8Aq80mzPqPys0/6bHd2UJ+
-	XuCB3Bb+VVIjuYNNcmMnYR9zMpMqTLO3aLpkbmfQdOERYkHvlwg5Zd2AzZQcwO0T
-	x/m8zxyf6GZfgrxT5lvMBNyYnZXQ2Vt/ian5bILBmsgbK00KqvtVNMpHtOTtqR/I
-	XovoBeeQyHZvl/nvJET8Qg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1733334715; x=
-	1733421115; bh=jJE2L9y+wEwp9MITaMA6HBhlkUzfR3+Jn5SAVrObSeE=; b=M
-	SNHHMb5oo8A+cXXlOyVSMFKIVOj7J9W4uUhqn38tBjghx7HUtOFmB0dA4Bot2KCr
-	bsIj/eMZnypK+WU2JcvLA+i6I4zIsmtbtaActwHdkaM3B+u6mjZnLl7h+xQ16X58
-	ySkMm4qVuVh5AGpEM1GPNEK95ZfueUre0dQ+KySSkN6kd8sDxGjFnJy4xS9eBNzo
-	WobOnWI1DETEojrVO6Ypw923PBqnMGeQnnJX6tyDZE4KpW7ZfofgJ9AT2BCkG7F3
-	pROqSiGJW5QMPfg4sfMSx3rJ+rH5ex1Yi2sos+5lQmz2tV2X+7ZeVcILnRBN810b
-	1Nq/atoJFz3ohv4OtH2HA==
-X-ME-Sender: <xms:upZQZ7SxdGZd1E4gTE9vgnsRIPL-HAhqgcDd1hmkESiEvXA5PB5OxA>
-    <xme:upZQZ8x9PakEhW_RoG4KqmaONf4jQhAkzGLpC9pyY2GZZ5TPrFzFWTVt4TxWMTSS5
-    T2HoUqwP318cky5rbs>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrieehgddutddvucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
-    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
-    guvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefg
-    gfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
-    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepudej
-    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegsphesrghlihgvnhekrdguvgdprh
-    gtphhtthhopegtihhmihhnrghghhhisehgnhhuuggurdgtohhmpdhrtghpthhtohepshgv
-    rghnjhgtsehgohhoghhlvgdrtghomhdprhgtphhtthhopeifihhllhihsehinhhfrhgrug
-    gvrggurdhorhhgpdhrtghpthhtoheprghnugihsehkvghrnhgvlhdrohhrghdprhgtphht
-    thhopegrrhhnugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepnhgrthhhrghnsehkvg
-    hrnhgvlhdrohhrghdprhgtphhtthhopeigkeeisehkvghrnhgvlhdrohhrghdprhgtphht
-    thhopehtghhlgieslhhinhhuthhrohhnihigrdguvg
-X-ME-Proxy: <xmx:upZQZw0wpCWbUKnLUXLtGT8mmbRL9TsXw3nPu9bC4_En5MdNJ5RfGQ>
-    <xmx:upZQZ7CP82B3yE7uInYvsCqXQcTBBHy9ntVV60QIO3XIR07DhIG_8w>
-    <xmx:upZQZ0gSUG03GVXljjr0mb4aG_94ObaUSqDU49c-ZOfJ0bU_g5vo-A>
-    <xmx:upZQZ_oUy0aSGB1Jgt9sGP5t1oxswFHJrniQdyqSiB8TlpLTHrO35g>
-    <xmx:u5ZQZ7Sl6Btvw0Z2OCBePmmVUt5xTxYuxO2pOIknyVjTHsv3PkW_6aCY>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id C126B2220072; Wed,  4 Dec 2024 12:51:54 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1733335183; c=relaxed/simple;
+	bh=sFkHHmtCImHld6wkMsUWlu1FWpoeRLYfav5CnVto5bk=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=AjlWsNsIHvhaNsbGRz96ArZ7P2WmucYthzLj6wzz9mi4Uuc0ZGJw8bhNVIIUs9v+1Qfe1kRaxGxqgUAEBCZA/um/DonWM1RPGLohD2CXyNAU3yfdsUEC1vzspxqDUsC0Ly8jXtbn9SgJRurMKpZFbVOOCvrlgyCeJU6GTGu0cdY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=Uu1ZWldn; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [192.168.7.205] ([71.202.166.45])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 4B4HxCTn1144807
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Wed, 4 Dec 2024 09:59:12 -0800
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 4B4HxCTn1144807
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2024111601; t=1733335154;
+	bh=+4ZSa47E2KVIZRMmIEDLu2ewgmxAczQbaZW7a8ckO+A=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=Uu1ZWldn4TbhRXdy5dte6A/4vAtxWOUaSOraIs2rqriMNa8rZBLxGCue9RirsLxMV
+	 kqJp2y7v06TBn2O3gk+swUIIXvGIEfFjahgKP0B0EuVxU8KzRT+BfMqvs/Wi2xec6x
+	 aFu+HRmvmv55XMvxy8itNPt/1jOp1dCMM38JHTOxGRC6mhF7zUgnViScGH/+wcp4nk
+	 MOofMWVfmTMdTMcZwqlgD7BEZMfKCgId9jzsycDo6NInTnZ2kBBpvR8sl257RsPFsD
+	 ZVkfGHkWvpWlt2VzN9F9Htxi05/3sE9IR2k/eOLbKUYCh21su2bxhJtLTXJVpsEGd7
+	 fodDc25k38CAw==
+Message-ID: <b7441d8a-f14a-4b0f-bf4a-a542fc7466a3@zytor.com>
+Date: Wed, 4 Dec 2024 09:59:11 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Wed, 04 Dec 2024 18:51:34 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Tor Vic" <torvic9@mailbox.org>, "Arnd Bergmann" <arnd@kernel.org>,
- linux-kernel@vger.kernel.org, x86@kernel.org
-Cc: "Thomas Gleixner" <tglx@linutronix.de>, "Ingo Molnar" <mingo@redhat.com>,
- "Borislav Petkov" <bp@alien8.de>,
- "Dave Hansen" <dave.hansen@linux.intel.com>,
- "H. Peter Anvin" <hpa@zytor.com>,
- "Linus Torvalds" <torvalds@linux-foundation.org>,
- "Andy Shevchenko" <andy@kernel.org>, "Matthew Wilcox" <willy@infradead.org>,
- "Sean Christopherson" <seanjc@google.com>,
- "Davide Ciminaghi" <ciminaghi@gnudd.com>,
- "Paolo Bonzini" <pbonzini@redhat.com>, kvm@vger.kernel.org,
- "Nathan Chancellor" <nathan@kernel.org>
-Message-Id: <9dda7e79-3c0f-48b0-824c-40a230b5cc12@app.fastmail.com>
-In-Reply-To: <6c037258-4263-426d-beb2-e6a0697be3ab@mailbox.org>
-References: <20241204103042.1904639-1-arnd@kernel.org>
- <20241204103042.1904639-10-arnd@kernel.org>
- <6c037258-4263-426d-beb2-e6a0697be3ab@mailbox.org>
-Subject: Re: [PATCH 09/11] x86: rework CONFIG_GENERIC_CPU compiler flags
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 0/3] x86: Allow variable-sized event frame
+From: Xin Li <xin@zytor.com>
+To: linux-kernel@vger.kernel.org
+Cc: luto@kernel.org, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+        peterz@infradead.org, brgerst@gmail.com
+References: <20240617084516.1484390-1-xin@zytor.com>
+ <469a7dc3-b4de-4d2b-9068-381a250273d3@zytor.com>
+Content-Language: en-US
+Autocrypt: addr=xin@zytor.com; keydata=
+ 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
+ l75w1xInsg==
+In-Reply-To: <469a7dc3-b4de-4d2b-9068-381a250273d3@zytor.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Dec 4, 2024, at 16:36, Tor Vic wrote:
-> On 12/4/24 11:30, Arnd Bergmann wrote:
-> Similar but not identical changes have been proposed in the past several 
-> times like e.g. in 1, 2 and likely even more often.
->
-> Your solution seems to be much cleaner, I like it.
+On 8/26/2024 10:32 AM, Xin Li wrote:
+> On 6/17/2024 1:45 AM, Xin Li (Intel) wrote:
+>> This was initially posted as part of the FRED patch series and turned
+>> down due to its unacceptable quality:
+>>    https://lore.kernel.org/lkml/20230410081438.1750-31-xin3.li@intel.com/
+>>
+>> And this is another attempt to meet the bar.
+>>
+> 
+> I'm expecting to get some review comments on this patch set :-)
 
-Thanks. It looks like the other two did not actually
-address the bug I'm fixing in my version.
+Try to get some reviews again :)
 
-> That said, on my Skylake platform, there is no difference between 
-> -march=x86-64 and -march=x86-64-v3 in terms of kernel binary size or 
-> performance.
-> I think Boris also said that these settings make no real difference on 
-> code generation.
+> 
+>>
+>> a FRED event frame could contain different amount of information for
+>> different event types, e.g., #MCE could push extra bytes of information,
+>> or perhaps even for different instances of the same event type. Thus
+>> the size of an event frame pushed by a FRED CPU is not fixed and the
+>> address of a pt_regs structure that is used to save the user level
+>> context of current task is not at a fixed offset from top of current
+>> task kernel stack.
+>>
+>> This patch set adds a new field named 'user_pt_regs' in the thread_info
+>> structure to save the address of user level context pt_regs structure,
+>> thus to eliminate the need of any advance information of event frame
+>> size and allow a FRED CPU to push variable-sized event frame.
+>>
+>> With the above change, we can
+>> 1) Remove the padding space at top of the init stack because there is
+>>     no user level context for init task.
+>> 2) Get rid of TOP_OF_KERNEL_STACK_PADDING on x86_64, which was defined
+>>     to 0 for IDT to keep the code consistent with 32bit.
+>>
+>>
+>> Xin Li (Intel) (3):
+>>    x86/fred: Allow variable-sized event frame
+>>    x86: Remove the padding space at top of the init stack
+>>    x86: Get rid of TOP_OF_KERNEL_STACK_PADDING on x86_64
+>>
+>>   arch/x86/entry/entry_fred.c        | 22 +++++++++++++++++
+>>   arch/x86/include/asm/processor.h   | 38 +++++++++++++++++++++++-------
+>>   arch/x86/include/asm/switch_to.h   |  2 +-
+>>   arch/x86/include/asm/thread_info.h | 19 +++++----------
+>>   arch/x86/kernel/process.c          | 21 +++++++++++++++++
+>>   arch/x86/kernel/vmlinux.lds.S      | 18 ++++++++++++--
+>>   include/linux/thread_info.h        |  1 +
+>>   kernel/fork.c                      |  6 +++++
+>>   8 files changed, 102 insertions(+), 25 deletions(-)
+>>
+>>
+>> base-commit: 49b33979e3bf0a5424420d14f026de12f34e8b1e
+> 
+> 
 
-As Nathan pointed out, I had a typo in my patch, so the
-options didn't actually do anything at all. I fixed it now
-and did a 'defconfig' test build with all three:
-
-> Other settings might make a small difference (numbers are from 2023):
->    -generic:       85.089.784 bytes
->    -core2:         85.139.932 bytes
->    -march=skylake: 85.017.808 bytes
-
-
-   text	   data	    bss	    dec	    hex	filename
-26664466	10806622	1490948	38962036	2528374	obj-x86/vmlinux-v1
-26664466	10806622	1490948	38962036	2528374	obj-x86/vmlinux-v2
-26662504	10806654	1490948	38960106	2527bea	obj-x86/vmlinux-v3
-
-which is a tiny 2KB saved between v2 and v3. I looked at
-the object code and found that the v3 version takes advantage
-of the BMI extension, which makes perfect sense. Not sure
-if it has any real performance benefits.
-
-Between v1 and v2, there is a chance to turn things like
-system_has_cmpxchg128() into a constant on v2 and higher.
-
-The v4 version is meaningless in practice since it only
-adds AVX512 instructions that are only present in very
-few CPUs and not that useful inside the kernel side from
-specialized crypto and raid helpers.
-
-      Arnd
 
