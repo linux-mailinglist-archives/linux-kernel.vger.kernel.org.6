@@ -1,354 +1,261 @@
-Return-Path: <linux-kernel+bounces-431410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26E579E3D0B
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:44:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DC6119E3D16
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:45:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5FE02826EF
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 14:44:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F75A282ACE
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 14:45:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9344020ADC6;
-	Wed,  4 Dec 2024 14:44:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1197320B815;
+	Wed,  4 Dec 2024 14:45:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=allegrodvt.com header.i=@allegrodvt.com header.b="iehwnb86"
-Received: from PAUP264CU001.outbound.protection.outlook.com (mail-francecentralazon11021122.outbound.protection.outlook.com [40.107.160.122])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="R4s585G3"
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35E0C1FECCF;
-	Wed,  4 Dec 2024 14:44:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.160.122
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733323482; cv=fail; b=HBrTAL0Zm8bil8tWrtWJ3JsG2W/poACxUVILXkPJ9yb/2+nXTPYZfpOv/Xjmfe+8mNne3LZbxs8H8SylsX8BnB07kDQLljRw3ph4hZJs10tj89HwmDXNspS3bNPDHwTPypxJeCP1IJCiKiZdfhe3Pbjje6WGdnrXYMqr6bLP8Uk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733323482; c=relaxed/simple;
-	bh=wcX7FUPsKO9ZaDKSYhbGnJr63EekvfFNHHLCMQ2DSAI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=X/mxZnkG9KMZl8AeYVtOlr0IH7zYej/1KmIn1SdU7TIArMDlPx1rqJr11JO+SA9YUwvT+88M25d6tlJgMiAPWw5xZZI5NF50ODqg7kceFjv+SPUuFTcM0/sUIXh7xAtNd8p0HBt5h0wZr5MbJ8Bclg21kua4jNN5107Lc4EanK0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=allegrodvt.com; spf=pass smtp.mailfrom=allegrodvt.com; dkim=pass (2048-bit key) header.d=allegrodvt.com header.i=@allegrodvt.com header.b=iehwnb86; arc=fail smtp.client-ip=40.107.160.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=allegrodvt.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=allegrodvt.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=BlF7Vn8CO5pQsrwa9zBppBeYvgLwjaFM/BOlPlHfIykrAily4FquGEACKur+/A3ynj7gZYDmTRCPqUVnArL9zaltno/EVu818QRSZ/COKrd5APCNEIU5nw1mL/IsC94FKqoEwd+S3CQsuupqbTGSly63UVSaOGVDBx0WGBzBrKaf1shASv4XGHN8gLqDMazjtaGNk9sibKMw/nqwqK3dglyRmi/LDlz/9Rj3TNmGCP1v7ZGSISn0DXHcJ8BOtza/N2yQqVGLo+DpmKKRSqIE322iXz1PD5NEb1iFVwpcCduMujlnLGhQJGk42y9bKbi3x6eJ2Hfn7wLQ2GcY/eaEsg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=c872q2zlt79O8wK4iNQ2xkq3Sqxn5zhCmlw9e7RPzlY=;
- b=TMzjIslmA0uvco7j7uRk+t6EdBn4yiR6h+i/VNlS8iG5/jrgsQd0vUfIi1GSEhhXFk7HEBi+mL7b0QqekAAcsF4V2xH8cjrRuB76FF2RPzs333HlQUrnt1pIxCoRg7rBn8aEA8bP37VGvGk5Ms/LVR2bwt4H24autat2N8O1T3skbIZrg0rnw2GG04Dscml9lCby4OhdHuXkNa7DZC3VF6jVoVwrBF46Cvbnc84T5W+r6lNq5HYNq7XXi7012D7TwJnX1dC5Yyrzz0o+4igU8dKe/wMZSAaoj+pieQcLE7IOo20YYmc4siDqDt0UTq7aL3n9kcsjUsa8ht+5PZzcgQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=allegrodvt.com; dmarc=pass action=none
- header.from=allegrodvt.com; dkim=pass header.d=allegrodvt.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=allegrodvt.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=c872q2zlt79O8wK4iNQ2xkq3Sqxn5zhCmlw9e7RPzlY=;
- b=iehwnb86uUfSGETFqUrcrmm+SiesWA3gIUZnSL331cTvatrcr4x1y3OBplHsVlhu1Z6/P4JekWcnMHHcQkmyVFfS4INm8J6T+e9A8mZRr99Z3e34D/Bnh0yOPK0xC1k0DxfQaQC1HGyTNDMr3M+t12R4tdafILrIX8qoeWaUNeE4gA1ebVCY3ZD4rtw+q/6FTfBMObRiIb7pz2iPA/7dUXZoQWffFASmmTnDjqvk23CXgVavu4KL0cRcZjGQvVlkZJ9RR4lyUqHxDW4Tukpe7+vEb44EcRLkdprzo2s8TqiwIyvsLAoEu/DPQgHIeI7Jj+1J5EUOI77k2gQPHLz+fA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=allegrodvt.com;
-Received: from MR1P264MB3140.FRAP264.PROD.OUTLOOK.COM (2603:10a6:501:3d::18)
- by MR0P264MB4732.FRAP264.PROD.OUTLOOK.COM (2603:10a6:501:62::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.11; Wed, 4 Dec
- 2024 14:44:32 +0000
-Received: from MR1P264MB3140.FRAP264.PROD.OUTLOOK.COM
- ([fe80::9f26:a361:4704:1a67]) by MR1P264MB3140.FRAP264.PROD.OUTLOOK.COM
- ([fe80::9f26:a361:4704:1a67%2]) with mapi id 15.20.8230.010; Wed, 4 Dec 2024
- 14:44:32 +0000
-Date: Wed, 4 Dec 2024 14:44:31 +0000
-From: Yassine Ouaissa <yassine.ouaissa@allegrodvt.com>
-To: Michael Tretter <m.tretter@pengutronix.de>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Michal Simek <michal.simek@amd.com>, 
-	Hans Verkuil <hverkuil@xs4all.nl>, Andrzej Pietrasiewicz <andrzejtp2010@gmail.com>, 
-	Wolfram Sang <wsa+renesas@sang-engineering.com>, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, 
-	Gaosheng Cui <cuigaosheng1@huawei.com>, Uwe Kleine-K??nig <u.kleine-koenig@baylibre.com>, 
-	Ricardo Ribalda <ribalda@chromium.org>, open list <linux-kernel@vger.kernel.org>, 
-	"open list:MEDIA INPUT INFRASTRUCTURE (V4L/DVB)" <linux-media@vger.kernel.org>, 
-	"moderated list:ARM/ZYNQ ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH] media: allegro-dvt: Moving the current driver to
- subdirectory
-Message-ID: <abshbp4blqxasxvf4ibumtfqcr7hytehmhzs2yag3nfpbcl47x@ndjg7al4iysk>
-References: <20241202102654.40472-1-yassine.ouaissa@allegrodvt.com>
- <Z02SLI05JhNDtXFn@pengutronix.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Disposition: inline
-In-Reply-To: <Z02SLI05JhNDtXFn@pengutronix.de>
-X-ClientProxiedBy: MR2P264CA0190.FRAP264.PROD.OUTLOOK.COM (2603:10a6:501::29)
- To MR1P264MB3140.FRAP264.PROD.OUTLOOK.COM (2603:10a6:501:3d::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C103A20ADCF;
+	Wed,  4 Dec 2024 14:45:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733323510; cv=none; b=c1j0JqjlVAaW2piLTF7YILUzuNMp01Yhy2VjdU3e5U4uPFtkZOdIvnvylW7cufWlkmQSBIG/KLiMp08vX4cG3U0QWc3YVTxeLU3hN/Rm7PUHNBtsbBvHjQ/WcgyxCkdLeRC3lLN3GTwW4+9mnZqZ1YeblFLVGULl8C70jO2X8TI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733323510; c=relaxed/simple;
+	bh=0q2kdb9ndDTRdruJhrVZO9ZNSvWgKMLJ1kjhyBsmvDM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ueS128pYeKFIou/FP+6fChHSkKnCv+rFSB1U/0CNCB+75pcRPtqncGUGshmOkeIsCkwO87k0/XiMjWsbkIB/lAc4DQCng4TkLyYrR1UNQEHEfxheu7yjN0oGA/jOS6X5n9hXkU27KIUBaY8/iRy4bfitVssn/NKcuKU18wDH52U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=R4s585G3; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id F375024000A;
+	Wed,  4 Dec 2024 14:45:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1733323504;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=AAX+jkumoVPKbPb3R17m7b0uzquPU2OrziaqtblcuSc=;
+	b=R4s585G3BJWL4cgXLIyRskocu8PxUt7uHTvuRMxMob8SnkbKtAgpd534WleeV0i1/imIuO
+	z833hqHvS+H9WyswOz19dtBID0psasTlFAb8sCHoYZstAP6M5yJZZf+BdHEqhYaiwF9u9m
+	XTtGKkxjF0wxnYUZG/F61nKanmV+m+CCk7Jj5A5YOwOeGJGrV7z/JGuH5/dbf/wCPLH76I
+	rxgRjNrzU/OknUiGb5zIp/bW+R+y7Jy3po4GhFQ8QMsP3gvhCVwu25fau8mIUxlLy4B3dX
+	MJT3n6UJ+T4qCUrl3g0hxDeTK1Enjpo74Nw1qssE3uuJ3Eq6limUQ2mL8AVVaQ==
+From: Kory Maincent <kory.maincent@bootlin.com>
+Subject: [PATCH net-next v20 0/6] net: Make timestamping selectable
+Date: Wed, 04 Dec 2024 15:44:41 +0100
+Message-Id: <20241204-feature_ptp_netnext-v20-0-9bd99dc8a867@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MR1P264MB3140:EE_|MR0P264MB4732:EE_
-X-MS-Office365-Filtering-Correlation-Id: e3e58180-da5d-41db-4cea-08dd14722a4f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|52116014|376014|1800799024|7416014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?QTZYUFEzWERNODJOYlRZUnZrYkJkeWNobU5INjlsdnppMDNnQVRnb0Vuck9p?=
- =?utf-8?B?ZGNzeDdsS3pDTXQ3VmxReERVYU9VQjYxZnRscmVMTFNtVm1XUVVWVUNiNVA4?=
- =?utf-8?B?clVuRkxpRFpad28yU2V5NFF4Wi9SMSsxdkNnNThuMkNmWVUrK2Z5N0FhYm5L?=
- =?utf-8?B?QkQzKzRPUVUwMmJ3K2I2UXhZaktBY1lwbVlKS0RibmRvaU9nMTB4SSttcE5y?=
- =?utf-8?B?ajF3U3V6SlpGbG84Tm1FeFc1MWZ1SktoMWV2Q1BuRjVicVBLNzdQNVJiaUNW?=
- =?utf-8?B?WXRaVXUyWERBajNua1U0YkN2UUUzdVlLc09ZZjM1am9pQWNJb0tEMnVOS0Za?=
- =?utf-8?B?WlVwMm82dG81dFRqTEU0OEFSZVNiUEdEbEJZYUlhZ1NXMFZHSEhGWkVFTThH?=
- =?utf-8?B?Y0M5cmVGVUpyck1UUmNXVndkOTNHZmlJYTRkZGNqajNYUHZFODROc3VBbThN?=
- =?utf-8?B?WG9KcS9tbGdMTkpOVEpvb3ZSeEJ4U2ZNc2h0Z3REQnlJY292OW81OVZnMWlB?=
- =?utf-8?B?SjN4NXh5bVZQNWltNk5yb2JpYlB2TjNrV3VxSjM1c0YyTFF5V0U1L1FaakY4?=
- =?utf-8?B?SGxWZDlrS0RmZ3djay9mNUsyenlnYXFMaTdGODVsVmRhRm9EcktmZmFlbGdR?=
- =?utf-8?B?WncxVUtFeUJaaDI4cEVVQU14alhURms4Vm1SVEVoa2xZS0VvUXJPOXpzOUFp?=
- =?utf-8?B?cUZ0bEJ6SmF5NUNzRkYwT0pDLzhIWkRDRzU3MERtYmFibGZsWkl0ZWpLR3A0?=
- =?utf-8?B?ZDJldjhZM2tRc0xwS1BPd3E3NlZnVGI3Qzg4LzVGSmdmcWhMVGNCSFVDNEsv?=
- =?utf-8?B?WXF2aU5PbkZSMjdWYnViaXFYdDVpUWxackQvWmppZXhWVkEzeDl3WlZFQ1di?=
- =?utf-8?B?ZHI5TERGU1VWMWhoU243ckpYOXYrdEFyRlZXanJGWi9CanNZdVdYS2lqQXlC?=
- =?utf-8?B?WnNrZm9lUDE0aG1TbkFwMDdiQURBbWgraGMzVkNGdEtLc0NhWXFNZnREUWxp?=
- =?utf-8?B?UFBEMldFNUxaV1J1bzBnbWw4OHZ1V3RGVkM5a1BnTVU5TmM5Sk9nSWk4bWt6?=
- =?utf-8?B?RDcyVkZELzlHOCs5YXI0TE5sbzJxcVBuUDc0V3dQTDZzTjhNazhGdmRwakYx?=
- =?utf-8?B?cGdobmN1NVVUbCtRL01hRnc0cjRFY0FDWXY5Ym9tOHZqUU1qV3ZadTBpT3JZ?=
- =?utf-8?B?TmI4aDBqMUxzdzFwUnVjQXJLYUZ4Mnl3REE1WnV1OGo3YnlBd3BCa2tKeGJx?=
- =?utf-8?B?aWl1T2FYTEtqdy9YVVBOYi8ybHZtbzhaYXRyelNDMzhNcUdZVzZMdmdnZUdM?=
- =?utf-8?B?R0IybHY0MEowN2NabXNtTFdpeW5tMkpIcnA5RFRCNFlKTXNtRmpPdU8rZFFq?=
- =?utf-8?B?dVNPL1B5YkdXdi9tbzJIa3NIVVlQZnVtajVDM0t0dm1NM2pBaVdvRG5PS0I2?=
- =?utf-8?B?M2RkZ01Qbm9aM0ZUZVVuUW9ralNDSXVSMUNXRHRqUlVvNTVqT2UyYUQ1Mjht?=
- =?utf-8?B?THFYcXN5MVVvbkxST2lGYlQzQzRmYVRNSlErbjRUaEpaejQrTk9iNUdpblRB?=
- =?utf-8?B?VGc0cUlCL0ExR1RUQ3lsMGlPN2pUM1A1RU8xdGRkYzhOUEVmcmlHcVhHeTVX?=
- =?utf-8?B?bWhaakZmL2JyTkY4cmVsZytJOXFweEN0YmlhbC9TU3VsOXp1dnpldkZqcHBI?=
- =?utf-8?B?YUlIQlBIUXUxem1TLzkyUzJLQUJYTlpuNGw0bThxYi80UGRDMFVIcEczcVVh?=
- =?utf-8?B?TEt1dFNvV0VueHFJTTA4T0wxSW5PeXFIa3A1YTdRSFFEZU52dlVPdk1rWHJT?=
- =?utf-8?B?cWdDRGZMM0trL3hYUFlKQT09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MR1P264MB3140.FRAP264.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(52116014)(376014)(1800799024)(7416014)(38350700014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?SkxDb1d0S3JMMTlMV1B0TFRrWTJZMHQzaDRqWEJnMjhwR2xvUnptWWNpOGJJ?=
- =?utf-8?B?NGZoWGlNQlhqVVYvOHoyZXlPQ0NjcGI5R1lXcGFkRlVrbGtwVnc3QXJ0bWVy?=
- =?utf-8?B?eGVSbUM2OUJ0RlZVdnZZdXFRZWdZaTU0N2kvZmhQN1pDZEFWMjlDS2p5TUxJ?=
- =?utf-8?B?OXE5ekIvMHNTREhENVQ2Sm9sbDAzMlZDKzhMRTFaYndoSk1nNVdmejJCUVpP?=
- =?utf-8?B?dzQyRWtpakRpbjR4eXJzWHlXTW54REZaNlFwY2ZjcVorQi9KUzBhM0lPcmpy?=
- =?utf-8?B?RVFsczJVRkdXalFWWjE4bUVVYnQ5RC9Xb0dWSG9ZeURybXY0bHFSUVI0bENB?=
- =?utf-8?B?WEQ4VFo5TW1SV1V4M09RZlZtbWllbVhyejBrRmNqQjFYRkdwb2pVZGJBOWVk?=
- =?utf-8?B?dTJ1a3RRQit6VDN1SVpyb0ZUY05HVE9DeGprSjhQWUJWNDY0UjZ3aUNBaGFk?=
- =?utf-8?B?NE4zTHM2bUx1QzFqNnFQbWt0ajVZR3R4MUJIZ01za1dNbUlNR1FtYmZ1N2J1?=
- =?utf-8?B?SjlQeUo4K205VnByYjJabDNkcm0yZHZOaHhGK2tqYWN4dUY5Y0huWnF6SW1H?=
- =?utf-8?B?enFMZ3k5OU9UeXJMeGJ1aGJZY1F3di82L3c0dVZxZXJZZlVaanVBMzUvdEtw?=
- =?utf-8?B?cUFyTHFoSDRLa0NtdDYxTllEeGZWWElQWmQvakx6WWFpRjNsSEMvRkhtNGta?=
- =?utf-8?B?eUVjWjk3QnhoMXZ3OHpwbHQvbThUMEhiQWhDcGwvOGl5WUdHQVZyeXo1bjVw?=
- =?utf-8?B?WHYwTjc4TG5WYUw3STZlRi94ckZ3M3hJd1lMeU5USzAyM1RLVHhJWm9LOHV0?=
- =?utf-8?B?MCt2cmhJbUpmSTdTL1VIZUtlcnh0dExvM0RBMk5KZ3pMTnJVOGQrc3M0T0tN?=
- =?utf-8?B?YXVEa0d2amtmRFYzNUp3MjJzQTVpdUNGMzAwQTlsTXZCYnJDWGcva1NzS3JK?=
- =?utf-8?B?Skt5THhqSTRJQm5ZYkNSN2lvMHlpS2R0SmtWUXFPRGlwNFdPejhxaldVQlJZ?=
- =?utf-8?B?eTEyb1g0MWh2ZStTTWZ0cDBIa0o5UDhGalFzdWpBcU16eWNCQXpISndzeHd0?=
- =?utf-8?B?UUtUb1h5QTZYakgycDdTL0ZhS1ZSMnJTWEpUQ2F1NENpclZJS1FpYTJmZmxV?=
- =?utf-8?B?N1dwZ3ozenl1REZQR3gwK3krM1EzL1FFTGhXaXFlcytOY29OVmE4ZFoxTWRG?=
- =?utf-8?B?NXVHcWtrVDhvdzhZZytTUHNRdFFkMXRNYTM1cmVSN3JoNTlJdEZqS3kvWG1M?=
- =?utf-8?B?MzQwcEtPcjFHbnlia3NGcERGd1NicGlUYS91aHV6WnZxUGtUb2pRalNIWHc2?=
- =?utf-8?B?MEFoc0tpeWFwOWpoeEljYkRVWmlSS2UxRTZuNlNQYWFvUkRuUmFWT2RvSzRF?=
- =?utf-8?B?NzlQSTYvRWtnOWE2TXV1STg3d25aS0VIQk54RFFpSTUrRTljQmUva3I0a2ov?=
- =?utf-8?B?R3JwMjV5WkhrNUZLSE8xd3lJUVZOcURTVWtSbXZ6c200RWJsaGE2WUxiVlhY?=
- =?utf-8?B?MjdCQTZhY1VMeEdnci90azNIR2JERHJXR1dRdW9jY3B6MUk4amtQZ2JVZnpw?=
- =?utf-8?B?TTJabWFneGRMM24zL3BMVU84K0VTNWFDTklTT0hZUUY0RjlSS0NTMjZuS2xV?=
- =?utf-8?B?Z3BUUUVGYzk0WjE2eXJheEtHOGhKb2ZpMExOZ3J4MkltYU1YaUVKOVZqUUlt?=
- =?utf-8?B?Ry9HV3UrMDhnKzgzNjB6S3JnVWlVdEtld3FST25jWTJxbTNjV05WYVV3dVNj?=
- =?utf-8?B?WTA1bjd5RUQ1U1l1dGJvRlZ2MzQ5MDJBMHI4ajBDajZZYWl1SjZOL1dCYzJz?=
- =?utf-8?B?bHJld2pXNml5M1hYSXJjam1EamMwM2dlZUFTQTdvcVo4UEk5OTR6Z0JrMUN2?=
- =?utf-8?B?UGllSVpLMEU0S0d6TWFiZ3pDTkJ6VzJOc0pIUTdqSzNJZE4reUYyRlhBUk5W?=
- =?utf-8?B?cGtBa1lsRmVmRzN2dHpuK253aGpyVllCdVZ3NmdvSFZHYjZYSXhuNzhIdVdK?=
- =?utf-8?B?elR0S2xqZkxVVy9LUFFPWmdTV090R3ljejNrNDR4ZTM2NTlQSnBDUndjeEF2?=
- =?utf-8?B?UXZjWlB1UzlRcVRxUStRUGs2aHZaZDZSdlZxWm8xM1ZONTA0Wk9ncjZCSmNC?=
- =?utf-8?B?L01SS05iL2NaUnlZOHhna29mYnZxUGFNOUdrUWNSUkhHOGhBQXowQ0xnMXVv?=
- =?utf-8?B?RXc9PQ==?=
-X-OriginatorOrg: allegrodvt.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e3e58180-da5d-41db-4cea-08dd14722a4f
-X-MS-Exchange-CrossTenant-AuthSource: MR1P264MB3140.FRAP264.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Dec 2024 14:44:32.7230
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 6c7a5ec0-2d92-465a-a3e1-9e3f1e9fd917
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: +VP4D8cei1YHko25r3fELE4+olxA9g9mA0fAI1O2vtLH3BDM5+om7HwZR4nUs/lUyS43CPWLFOhuBtvzm5am+FGR/YZbNIW5RFZqb/1KPcc=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MR0P264MB4732
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIANlqUGcC/43TzYrcMAwA4FcZct4US5b801PfoyyLHdvdQJsMm
+ XTYZZl3rzK0JMvY0GNs+YslSx/dJS9jvnRfTx/dkq/jZZwn+UD1dOqG1zD9yP2YZKFDhRoUQF9
+ yWH8v+eW8nl+mvE75be11QevYuuwodnLyvOQyvt3Z750E9VtU9yw7r+NlnZf3+/+u5r7/V/ZV+
+ Wp61VsIpQxoo8r8Lc7z+nOcvgzzr7t4tbsCQHXFikIWs7WeIZN6VNw/hRSCqStOFAZVCAsRlfi
+ o+IOCDcVvd2E2AEy+IDwqoHaGVKMwoMRRJWAOPDgffMWBg4PYcECcApIQFAyQXMXBg6NVw0Fxc
+ OCCFE3wQBVH7w5jKy8tjskpUCJJj0rFod0xqvHk0grSOTaaYrIE1N4c+OBAqz4sTsSgnEEWTlc
+ csztWccPZOpmTBdZSHMm/4tij06rP1sshh+h8ooj0eSKeTv9zPLIGW1glefHKNfZZAJmqhrMNQ
+ 06eXNHROGcrjj84zbbZxsFTcSGkwScePju32+0PKigLxqQEAAA=
+To: Florian Fainelli <florian.fainelli@broadcom.com>, 
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+ Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, 
+ Russell King <linux@armlinux.org.uk>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Richard Cochran <richardcochran@gmail.com>, 
+ Radu Pirea <radu-nicolae.pirea@oss.nxp.com>, 
+ Jay Vosburgh <j.vosburgh@gmail.com>, Andy Gospodarek <andy@greyhouse.net>, 
+ Nicolas Ferre <nicolas.ferre@microchip.com>, 
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+ Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
+ Jonathan Corbet <corbet@lwn.net>, 
+ Horatiu Vultur <horatiu.vultur@microchip.com>, UNGLinuxDriver@microchip.com, 
+ Simon Horman <horms@kernel.org>, Vladimir Oltean <vladimir.oltean@nxp.com>, 
+ donald.hunter@gmail.com, danieller@nvidia.com, ecree.xilinx@gmail.com, 
+ Andrew Lunn <andrew+netdev@lunn.ch>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+ linux-doc@vger.kernel.org, 
+ Maxime Chevallier <maxime.chevallier@bootlin.com>, 
+ Rahul Rameshbabu <rrameshbabu@nvidia.com>, 
+ Willem de Bruijn <willemb@google.com>, 
+ Shannon Nelson <shannon.nelson@amd.com>, 
+ Alexandra Winter <wintera@linux.ibm.com>, 
+ Kory Maincent <kory.maincent@bootlin.com>, 
+ Jacob Keller <jacob.e.keller@intel.com>
+X-Mailer: b4 0.14.1
+X-GND-Sasl: kory.maincent@bootlin.com
 
-Hi Michael,
+Up until now, there was no way to let the user select the hardware
+PTP provider at which time stamping occurs. The stack assumed that PHY time
+stamping is always preferred, but some MAC/PHY combinations were buggy.
 
-Thank you for the feedback.
+This series updates the default MAC/PHY default timestamping and aims to
+allow the user to select the desired hwtstamp provider administratively.
 
-On 02.12.2024 11:55, Michael Tretter wrote:
->Hi Yassine,
->
->On Mon, 02 Dec 2024 11:26:38 +0100, Yassine Ouaissa wrote:
->What kind of conflicts do you encounter or expect? It's kind of
->surprising that your driver would conflict with anything in the existing
->driver.
+Changes in v20:
+- Change hwtstamp provider design to avoid saving "user" (phy or net) in
+  the ptp clock structure.
+- Link to v19: https://lore.kernel.org/r/20241030-feature_ptp_netnext-v19-0-94f8aadc9d5c@bootlin.com
 
-The current "NOT allegro" driver support only the ZynqMP (ex : ZCU106/ZCU104 ).
-And the upcoming driver, has support for many platforms.
+Changes in v19:
+- Rebase on net-next
+- Link to v18: https://lore.kernel.org/r/20241023-feature_ptp_netnext-v18-0-ed948f3b6887@bootlin.com
 
->I'd like to see how you plan to integrate your driver, what it looks
->like and what conflicts with the existing driver actually occur. Without
->that information I don't see the point in moving the driver to a
->sub-directory.
+Changes in v18:
+- Few changes in the tsconfig-set ethtool command.
+- Add tsconfig-set-reply ethtool netlink socket.
+- Add missing netlink tsconfig documentation
+- Link to v17: https://lore.kernel.org/r/20240709-feature_ptp_netnext-v17-0-b5317f50df2a@bootlin.com
 
-The upcoming driver is not using the parsing, conversion inside of the
-driver. Actually the new Gen of ALLEGRO IP does that.
->
->Michael
->
->>
->> Signed-off-by: Yassine Ouaissa <yassine.ouaissa@allegrodvt.com>
->> ---
->>  MAINTAINERS                                               | 2 +-
->>  drivers/media/platform/allegro-dvt/Kconfig                | 4 ++--
->>  drivers/media/platform/allegro-dvt/Makefile               | 8 ++------
->>  drivers/media/platform/allegro-dvt/zynqmp/Makefile        | 6 ++++++
->>  .../media/platform/allegro-dvt/{ => zynqmp}/nal-h264.c    | 0
->>  .../media/platform/allegro-dvt/{ => zynqmp}/nal-h264.h    | 0
->>  .../media/platform/allegro-dvt/{ => zynqmp}/nal-hevc.c    | 0
->>  .../media/platform/allegro-dvt/{ => zynqmp}/nal-hevc.h    | 0
->>  .../media/platform/allegro-dvt/{ => zynqmp}/nal-rbsp.c    | 0
->>  .../media/platform/allegro-dvt/{ => zynqmp}/nal-rbsp.h    | 0
->>  .../{allegro-core.c => zynqmp/zynqmp-allegro-core.c}      | 2 +-
->>  .../{allegro-mail.c => zynqmp/zynqmp-allegro-mail.c}      | 2 +-
->>  .../{allegro-mail.h => zynqmp/zynqmp-allegro-mail.h}      | 0
->>  13 files changed, 13 insertions(+), 11 deletions(-)
->>  create mode 100644 drivers/media/platform/allegro-dvt/zynqmp/Makefile
->>  rename drivers/media/platform/allegro-dvt/{ => zynqmp}/nal-h264.c (100%)
->>  rename drivers/media/platform/allegro-dvt/{ => zynqmp}/nal-h264.h (100%)
->>  rename drivers/media/platform/allegro-dvt/{ => zynqmp}/nal-hevc.c (100%)
->>  rename drivers/media/platform/allegro-dvt/{ => zynqmp}/nal-hevc.h (100%)
->>  rename drivers/media/platform/allegro-dvt/{ => zynqmp}/nal-rbsp.c (100%)
->>  rename drivers/media/platform/allegro-dvt/{ => zynqmp}/nal-rbsp.h (100%)
->>  rename drivers/media/platform/allegro-dvt/{allegro-core.c => zynqmp/zynqmp-allegro-core.c} (99%)
->>  rename drivers/media/platform/allegro-dvt/{allegro-mail.c => zynqmp/zynqmp-allegro-mail.c} (99%)
->>  rename drivers/media/platform/allegro-dvt/{allegro-mail.h => zynqmp/zynqmp-allegro-mail.h} (100%)
->>
->> diff --git a/MAINTAINERS b/MAINTAINERS
->> index 7292e4a1ddb8..d79efe6f8992 100644
->> --- a/MAINTAINERS
->> +++ b/MAINTAINERS
->> @@ -795,7 +795,7 @@ R:	Pengutronix Kernel Team <kernel@pengutronix.de>
->>  L:	linux-media@vger.kernel.org
->>  S:	Maintained
->>  F:	Documentation/devicetree/bindings/media/allegro,al5e.yaml
->> -F:	drivers/media/platform/allegro-dvt/
->> +F:	drivers/media/platform/allegro-dvt/zynqmp
->>
->>  ALLIED VISION ALVIUM CAMERA DRIVER
->>  M:	Tommaso Merciai <tomm.merciai@gmail.com>
->> diff --git a/drivers/media/platform/allegro-dvt/Kconfig b/drivers/media/platform/allegro-dvt/Kconfig
->> index 2182e1277568..9bc7e99788b8 100644
->> --- a/drivers/media/platform/allegro-dvt/Kconfig
->> +++ b/drivers/media/platform/allegro-dvt/Kconfig
->> @@ -2,8 +2,8 @@
->>
->>  comment "Allegro DVT media platform drivers"
->>
->> -config VIDEO_ALLEGRO_DVT
->> -	tristate "Allegro DVT Video IP Core"
->> +config VIDEO_ZYNQMP_ALLEGRO_DVT
->> +	tristate "Allegro DVT Video IP Core for ZynqMP"
->>  	depends on V4L_MEM2MEM_DRIVERS
->>  	depends on VIDEO_DEV
->>  	depends on ARCH_ZYNQMP || COMPILE_TEST
->> diff --git a/drivers/media/platform/allegro-dvt/Makefile b/drivers/media/platform/allegro-dvt/Makefile
->> index 66108a303774..04727c5f7ef4 100644
->> --- a/drivers/media/platform/allegro-dvt/Makefile
->> +++ b/drivers/media/platform/allegro-dvt/Makefile
->> @@ -1,6 +1,2 @@
->> -# SPDX-License-Identifier: GPL-2.0
->> -
->> -allegro-objs := allegro-core.o allegro-mail.o
->> -allegro-objs += nal-rbsp.o nal-h264.o nal-hevc.o
->> -
->> -obj-$(CONFIG_VIDEO_ALLEGRO_DVT) += allegro.o
->> +# SPDX-License-Identifier: GPL-2.0-only
->> +obj-y += zynqmp/
->> diff --git a/drivers/media/platform/allegro-dvt/zynqmp/Makefile b/drivers/media/platform/allegro-dvt/zynqmp/Makefile
->> new file mode 100644
->> index 000000000000..a8ddb9cf93a8
->> --- /dev/null
->> +++ b/drivers/media/platform/allegro-dvt/zynqmp/Makefile
->> @@ -0,0 +1,6 @@
->> +# SPDX-License-Identifier: GPL-2.0
->> +
->> +zynqmp-allegro-objs := zynqmp-allegro-core.o zynqmp-allegro-mail.o
->> +zynqmp-allegro-objs += nal-rbsp.o nal-h264.o nal-hevc.o
->> +
->> +obj-$(CONFIG_VIDEO_ZYNQMP_ALLEGRO_DVT) += zynqmp-allegro.o
->> diff --git a/drivers/media/platform/allegro-dvt/nal-h264.c b/drivers/media/platform/allegro-dvt/zynqmp/nal-h264.c
->> similarity index 100%
->> rename from drivers/media/platform/allegro-dvt/nal-h264.c
->> rename to drivers/media/platform/allegro-dvt/zynqmp/nal-h264.c
->> diff --git a/drivers/media/platform/allegro-dvt/nal-h264.h b/drivers/media/platform/allegro-dvt/zynqmp/nal-h264.h
->> similarity index 100%
->> rename from drivers/media/platform/allegro-dvt/nal-h264.h
->> rename to drivers/media/platform/allegro-dvt/zynqmp/nal-h264.h
->> diff --git a/drivers/media/platform/allegro-dvt/nal-hevc.c b/drivers/media/platform/allegro-dvt/zynqmp/nal-hevc.c
->> similarity index 100%
->> rename from drivers/media/platform/allegro-dvt/nal-hevc.c
->> rename to drivers/media/platform/allegro-dvt/zynqmp/nal-hevc.c
->> diff --git a/drivers/media/platform/allegro-dvt/nal-hevc.h b/drivers/media/platform/allegro-dvt/zynqmp/nal-hevc.h
->> similarity index 100%
->> rename from drivers/media/platform/allegro-dvt/nal-hevc.h
->> rename to drivers/media/platform/allegro-dvt/zynqmp/nal-hevc.h
->> diff --git a/drivers/media/platform/allegro-dvt/nal-rbsp.c b/drivers/media/platform/allegro-dvt/zynqmp/nal-rbsp.c
->> similarity index 100%
->> rename from drivers/media/platform/allegro-dvt/nal-rbsp.c
->> rename to drivers/media/platform/allegro-dvt/zynqmp/nal-rbsp.c
->> diff --git a/drivers/media/platform/allegro-dvt/nal-rbsp.h b/drivers/media/platform/allegro-dvt/zynqmp/nal-rbsp.h
->> similarity index 100%
->> rename from drivers/media/platform/allegro-dvt/nal-rbsp.h
->> rename to drivers/media/platform/allegro-dvt/zynqmp/nal-rbsp.h
->> diff --git a/drivers/media/platform/allegro-dvt/allegro-core.c b/drivers/media/platform/allegro-dvt/zynqmp/zynqmp-allegro-core.c
->> similarity index 99%
->> rename from drivers/media/platform/allegro-dvt/allegro-core.c
->> rename to drivers/media/platform/allegro-dvt/zynqmp/zynqmp-allegro-core.c
->> index e491399afcc9..8895d7755987 100644
->> --- a/drivers/media/platform/allegro-dvt/allegro-core.c
->> +++ b/drivers/media/platform/allegro-dvt/zynqmp/zynqmp-allegro-core.c
->> @@ -31,7 +31,7 @@
->>  #include <media/videobuf2-dma-contig.h>
->>  #include <media/videobuf2-v4l2.h>
->>
->> -#include "allegro-mail.h"
->> +#include "zynqmp-allegro-mail.h"
->>  #include "nal-h264.h"
->>  #include "nal-hevc.h"
->>
->> diff --git a/drivers/media/platform/allegro-dvt/allegro-mail.c b/drivers/media/platform/allegro-dvt/zynqmp/zynqmp-allegro-mail.c
->> similarity index 99%
->> rename from drivers/media/platform/allegro-dvt/allegro-mail.c
->> rename to drivers/media/platform/allegro-dvt/zynqmp/zynqmp-allegro-mail.c
->> index aadc947a77ae..88a98f9e5d00 100644
->> --- a/drivers/media/platform/allegro-dvt/allegro-mail.c
->> +++ b/drivers/media/platform/allegro-dvt/zynqmp/zynqmp-allegro-mail.c
->> @@ -12,7 +12,7 @@
->>  #include <linux/string.h>
->>  #include <linux/videodev2.h>
->>
->> -#include "allegro-mail.h"
->> +#include "zynqmp-allegro-mail.h"
->>
->>  const char *msg_type_name(enum mcu_msg_type type)
->>  {
->> diff --git a/drivers/media/platform/allegro-dvt/allegro-mail.h b/drivers/media/platform/allegro-dvt/zynqmp/zynqmp-allegro-mail.h
->> similarity index 100%
->> rename from drivers/media/platform/allegro-dvt/allegro-mail.h
->> rename to drivers/media/platform/allegro-dvt/zynqmp/zynqmp-allegro-mail.h
->> --
->> 2.30.2
->>
->>
->
->-- 
->Pengutronix e.K.                           | Michael Tretter             |
->Steuerwalder Str. 21                       | https://www.pengutronix.de/ |
->31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
->Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+Changes in v17:
+- Fix a documentation nit.
+- Add a missing kernel_ethtool_tsinfo update from a new MAC driver.
+- Link to v16: https://lore.kernel.org/r/20240705-feature_ptp_netnext-v16-0-5d7153914052@bootlin.com
+
+Changes in v16:
+- Add a new patch to separate tsinfo into a new tsconfig command to get
+  and set the hwtstamp config.
+- Used call_rcu() instead of synchronize_rcu() to free the hwtstamp_provider
+- Moved net core changes of patch 12 directly to patch 8.
+- Link to v15: https://lore.kernel.org/r/20240612-feature_ptp_netnext-v15-0-b2a086257b63@bootlin.com
+
+Changes in v15:
+- Fix uninitialized ethtool_ts_info structure.
+- Link to v14: https://lore.kernel.org/r/20240604-feature_ptp_netnext-v14-0-77b6f6efea40@bootlin.com
+
+Changes in v14:
+- Add back an EXPORT_SYMBOL() missing.
+- Link to v13: https://lore.kernel.org/r/20240529-feature_ptp_netnext-v13-0-6eda4d40fa4f@bootlin.com
+
+Changes in v13:
+- Add PTP builtin code to fix build errors when building PTP as a module.
+- Fix error spotted by smatch and sparse.
+- Link to v12: https://lore.kernel.org/r/20240430-feature_ptp_netnext-v12-0-2c5f24b6a914@bootlin.com
+
+Changes in v12:
+- Add missing return description in the kdoc.
+- Fix few nit.
+- Link to v11: https://lore.kernel.org/r/20240422-feature_ptp_netnext-v11-0-f14441f2a1d8@bootlin.com
+
+Changes in v11:
+- Add netlink examples.
+- Remove a change of my out of tree marvell_ptp patch in the patch series.
+- Remove useless extern.
+- Link to v10: https://lore.kernel.org/r/20240409-feature_ptp_netnext-v10-0-0fa2ea5c89a9@bootlin.com
+
+Changes in v10:
+- Move declarations to net/core/dev.h instead of netdevice.h
+- Add netlink documentation.
+- Add ETHTOOL_A_TSINFO_GHWTSTAMP netlink attributes instead of a bit in
+  ETHTOOL_A_TSINFO_TIMESTAMPING bitset.
+- Send "Move from simple ida to xarray" patch standalone.
+- Add tsinfo ntf command.
+- Add rcu_lock protection mechanism to avoid memory leak.
+- Fixed doc and kdoc issue.
+- Link to v9: https://lore.kernel.org/r/20240226-feature_ptp_netnext-v9-0-455611549f21@bootlin.com
+
+Changes in v9:
+- Remove the RFC prefix.
+- Correct few NIT fixes.
+- Link to v8: https://lore.kernel.org/r/20240216-feature_ptp_netnext-v8-0-510f42f444fb@bootlin.com
+
+Changes in v8:
+- Drop the 6 first patch as they are now merged.
+- Change the full implementation to not be based on the hwtstamp layer
+  (MAC/PHY) but on the hwtstamp provider which mean a ptp clock and a
+  phc qualifier.
+- Made some patch to prepare the new implementation.
+- Expand netlink tsinfo instead of a new ts command for new hwtstamp
+  configuration uAPI and for dumping tsinfo of specific hwtstamp provider.
+- Link to v7: https://lore.kernel.org/r/20231114-feature_ptp_netnext-v7-0-472e77951e40@bootlin.com
+
+Changes in v7:
+- Fix a temporary build error.
+- Link to v6: https://lore.kernel.org/r/20231019-feature_ptp_netnext-v6-0-71affc27b0e5@bootlin.com
+
+Changes in v6:
+- Few fixes from the reviews.
+- Replace the allowlist to default_timestamp flag to know which phy is
+  using old API behavior.
+- Rename the timestamping layer enum values.
+- Move to a simple enum instead of the mix between enum and bitfield.
+- Update ts_info and ts-set in software timestamping case.
+
+Changes in v5:
+- Update to ndo_hwstamp_get/set. This bring several new patches.
+- Add few patches to make the glue.
+- Convert macb to ndo_hwstamp_get/set.
+- Add netlink specs description of new ethtool commands.
+- Removed netdev notifier.
+- Split the patches that expose the timestamping to userspace to separate
+  the core and ethtool development.
+- Add description of software timestamping.
+- Convert PHYs hwtstamp callback to use kernel_hwtstamp_config.
+
+Changes in v4:
+- Move on to ethtool netlink instead of ioctl.
+- Add a netdev notifier to allow packet trapping by the MAC in case of PHY
+  time stamping.
+- Add a PHY whitelist to not break the old PHY default time-stamping
+  preference API.
+
+Changes in v3:
+- Expose the PTP choice to ethtool instead of sysfs.
+  You can test it with the ethtool source on branch feature_ptp of:
+  https://github.com/kmaincent/ethtool
+- Added a devicetree binding to select the preferred timestamp.
+
+Changes in v2:
+- Move selected_timestamping_layer variable of the concerned patch.
+- Use sysfs_streq instead of strmcmp.
+- Use the PHY timestamp only if available.
+
+Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
+---
+Kory Maincent (6):
+      net: Make dev_get_hwtstamp_phylib accessible
+      net: Make net_hwtstamp_validate accessible
+      net: Add the possibility to support a selected hwtstamp in netdevice
+      net: ethtool: tsinfo: Enhance tsinfo to support several hwtstamp by net topology
+      net: ethtool: Add support for tsconfig command to get/set hwtstamp config
+      netlink: specs: Enhance tsinfo netlink attributes and add a tsconfig set command
+
+ Documentation/netlink/specs/ethtool.yaml     |  66 ++++
+ Documentation/networking/ethtool-netlink.rst |  82 ++++-
+ Documentation/networking/timestamping.rst    |  38 ++-
+ drivers/net/phy/phy_device.c                 |  10 +
+ include/linux/ethtool.h                      |   4 +
+ include/linux/net_tstamp.h                   |  29 ++
+ include/linux/netdevice.h                    |   4 +
+ include/uapi/linux/ethtool_netlink.h         |  29 +-
+ include/uapi/linux/net_tstamp.h              |  11 +
+ net/core/dev.h                               |   3 +
+ net/core/dev_ioctl.c                         |  47 ++-
+ net/core/timestamping.c                      |  52 +++-
+ net/ethtool/Makefile                         |   2 +-
+ net/ethtool/common.c                         | 148 ++++++++-
+ net/ethtool/common.h                         |  13 +
+ net/ethtool/netlink.c                        |  24 +-
+ net/ethtool/netlink.h                        |   8 +-
+ net/ethtool/ts.h                             |  21 ++
+ net/ethtool/tsconfig.c                       | 443 +++++++++++++++++++++++++++
+ net/ethtool/tsinfo.c                         | 358 +++++++++++++++++++++-
+ 20 files changed, 1345 insertions(+), 47 deletions(-)
+---
+base-commit: 645738c83f82fb2495813a100799a50c0c08028e
+change-id: 20231011-feature_ptp_netnext-3f278578e84b
+
+Best regards,
+-- 
+Köry Maincent, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
+
 
