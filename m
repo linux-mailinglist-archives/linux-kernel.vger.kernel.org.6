@@ -1,153 +1,139 @@
-Return-Path: <linux-kernel+bounces-431513-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431514-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86E4C9E3F6B
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:14:38 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7082A9E3E61
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:33:22 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 896F5B2CBF0
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:33:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1EEF163B86
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:33:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF9B120ADD0;
-	Wed,  4 Dec 2024 15:33:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BDFA20ADD0;
+	Wed,  4 Dec 2024 15:33:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Lc7VjwwL"
-Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com [209.85.217.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fvrljnZo"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A84E21B87C4
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 15:33:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54C141B87C4;
+	Wed,  4 Dec 2024 15:33:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733326383; cv=none; b=bfdhnQAe6ZxvWyVRSvctbA84hqsHPntdgG4oiMmct19An1bFxxjOGlgjAuE0o+Zr1alwxTo4gfaPVhdqWx1spw5hIYsQ5nMW30dlnyuRnKezF4pEE/jWAkKhyoA0eJED08PwQkD8zpKdXypnpxChsY7TysazFZ7C4phr/lH7MzA=
+	t=1733326389; cv=none; b=jzPhM0RBfLG98Q3CWRiZ6JTZNhxUMjVbilYSXDU1J+JwsbQn/368LCwg8XB0fRzFXEPhEKVbKUo6R6ji+IKul5pGCxVPJ3SR8GTYubpEDVfGMx/V+3Hu+87nrFQs63krSRyFe0FZYme8pYwxptZ7/1Yv7ApyY+g25rK3dfViIJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733326383; c=relaxed/simple;
-	bh=WKAlhH29xEF4xdMd6IOvEbZvOJijsedbXkd9Fo94v+8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=i6xeHZ9Tajm00edAUlpSsarJ7adElwt10whLYtq5ut/UAeE5OZggfyHfRG379UH5Tt1jgRaKuz2dPFYZ54xrCXRTB/28XRSRmTvAbQ5wwsRn0cj6RTk43H9jmZ78669zqdLGiLtBC+Bscp6/eS8qS2hpQtbFjh+HOTn3rCu9JDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Lc7VjwwL; arc=none smtp.client-ip=209.85.217.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-vs1-f48.google.com with SMTP id ada2fe7eead31-4afa4094708so355837137.0
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 07:33:01 -0800 (PST)
+	s=arc-20240116; t=1733326389; c=relaxed/simple;
+	bh=4IsxGONccTRWIBQiiSaihunLO6mDN5cfXJR2FLnzkgk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZR9pDmf2mJQCNPHDK2zTY9Z/V9alx/3iCoUhzs70oJepvQXn7scNQmRiAnmvrODWL7thQqKDkdaUTOehCSWDYLXVjnzFl2dvuPMOvV/P9ks/Co9nJ4uoQZEFJvghsOeRWQG/NBBrQ/hvyfcnZrCQ380w22pX0Dxp9REDHndTvOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fvrljnZo; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-21561af95c3so36958585ad.3;
+        Wed, 04 Dec 2024 07:33:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733326380; x=1733931180; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4BM7g2tnTxffenD3gAnjnDpzGPqkZZJws6+BF+fZajU=;
-        b=Lc7VjwwLdDhtjzyshExaeLaBucdetu31MNHxwHZ0+0irwnROs763o9LVBguJ6M8BIa
-         pGgzp+hfC8ITIXW7h+6rNblFjjNIA8o+wJUJ1JtW4rkyEmpncvM3X8G191IAgS6dB0oF
-         wT/uEsIaR0GFSrDg+i5GX0D1gYG31IpBMm60ipz6ne2gLw5/Z1qRk9r1X6tTaVcW/ZKK
-         UjACsmtr5z7qAoBfc3ekQ2fjDHXXkqaH1v51WaEwOHqNZVkKbc7buwvorJCWKHIAu2z7
-         p3jcaFsDpcCooR3hkzlsEGoq8aqsqI7c/QeQnruaIEYiOnVhVbV+5qr3aYGdroNlWDYD
-         7muA==
+        d=gmail.com; s=20230601; t=1733326387; x=1733931187; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=PU3OQZVUSvWFFgmgPiQmmq+MSi4BIan+FoV0Z++2j90=;
+        b=fvrljnZo2jJSDAVJHEqDg9qAnBdsALUdtXM+EVa+2OcWxyjU1c4Pww5bmAy4dhyt8t
+         LAOrGQJ5o3c0uj8i32m1ftagtt0MGTOJO5//KN512deQ4In8ZmLZmR/Fy7NCalqW7MUs
+         xe4ECUGSXzFxC7KVVCQ/FfeYRA82bF3+9yxKrgKU0DysBmESt7gHIZI9SUzICDOVazSy
+         4G0VOwJxxeLR4KOQAlCnjsWNit+Qcc/EM1ZSBwzk6gM332VZblN4G3PqklIMlkvDsmRH
+         O4d8t8luTn5lrNnpGrXsS1+YTQS+7bb4RoPb5g8m6djz/1rAp+arTsPnXgNCfUcRPURK
+         EmXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733326380; x=1733931180;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4BM7g2tnTxffenD3gAnjnDpzGPqkZZJws6+BF+fZajU=;
-        b=CCnZHVOPqC9S6tIYUpoF7EomwXKbP7M/sQzfnTsVaXoYctrMNgbDvKavrwdau63l+w
-         dXrnL0Gu28cMX9rO+r03P23tYb0cOxfWCZ55wPOTc7skDMqBvukIKCz/qXNFwBRuj8WN
-         sJ6NYHN1eI1lG//G8tHvgd0W10G0K/KR3PKZD7a2oXUA8QUXN/l5YE+jL/zy9P6yjPAQ
-         qXxQbHLb3BwWk+aUkZ+KshqaEvk/Mv9Gkm6Y9fYye247I9UDZS2enoYi0I8hnJ6UH6EB
-         zXzvNlaj2JzwSouGegMtsSFQ6MGYddto3dS8UGpJtNjnzLRlhhieyc3VAUdJm6aVoUBG
-         8q7w==
-X-Forwarded-Encrypted: i=1; AJvYcCWxK7Jk6cpX/966PKDpg6IeZsylbScg9fBhJ7NHsfwtpAJS2uHGtquq0Ou8Hi85nR9My+9HLuHNuD/rsRo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzEYR67oPAeirYmeF9/q8yPIuxKcZg8XnPERi6akV4M1gNd+eWI
-	rv9DmC0Mn4yJN7YbtqkAL9GHnYiqJqtc5GsUP2niSBM/6+siyerg0uFtrE2PSA+gqflD2Cm8jq4
-	itS3jXA+8Fa4U31qU/RfS/4cOcwORc0Ge1JUVFw==
-X-Gm-Gg: ASbGncu6axl/CmNkuEV7PQQ13wtog+ddOQLNlFRuLiUXBQ7AMhQUvDsVViaLIdmr1ao
-	8xeCAAh83b8oZ+usQAMug+ozdllYfhjAi
-X-Google-Smtp-Source: AGHT+IF0RVZVCMdJkXYjBAAcJHezPOoWCH4jS8XQLyQLEPZuJ7e6SomQNYsR4Mx3bJ489e5yJU/yOjgwrrV33kHvO74=
-X-Received: by 2002:a05:6122:1d04:b0:515:c769:9d33 with SMTP id
- 71dfb90a1353d-515cf784e53mr6510755e0c.9.1733326380385; Wed, 04 Dec 2024
- 07:33:00 -0800 (PST)
+        d=1e100.net; s=20230601; t=1733326387; x=1733931187;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PU3OQZVUSvWFFgmgPiQmmq+MSi4BIan+FoV0Z++2j90=;
+        b=vSC5euXHU3PcjAivMFL2CcPFgmDVm0adw0I/W885GdaRKreBSGwXhd5/IZihNaEFl6
+         XAcaWQBHxhPAxL3rmu5XtViX6Ynv78dZrFghSN/NLXvHL6p8rTp+u5rj63lpuI1kf+5U
+         bQA45iJrOYVg+/PSaCL61pWpnZ1ZelF/VeuObioOGLj04uOV16GMtB2uK4VHvbTi/lu2
+         /n8BLFrDjF3dRBvXMaMgP8fqkHZtY6h4i2WV970lD/l/8r6Pc8es9iydE6I+pahHIpzI
+         r0VNLF1aoVOEPVmdNVTcP4hNlK0micoCItC+vTVGUCp+3izPF7daH3oaAoARhFnb3Avm
+         vkVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVbunNwQyqakwTe3OFcwNdP/vn4jkfBk3Ek6FN6ODdB972y+VLYTO0Tl7/GMdpINM848BvgE9KHSsNx6pdc@vger.kernel.org, AJvYcCXsuH6dOh2Ht5CuOzhOpGctmZ+FrWmU/XfCWg72dvmqC24hLh83ZaSOzOcoyUIgjuSsQnfNhPmPMotS2Ban@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyt9d4k565gpkkPql3nCga6X2Ys6Ry2H7dI8PdD34UVQQ+B182e
+	xj8inQw1/LwOPkbIdTXghqHoOq81hPXyzfnuecveMTmgGhlxRBCQ
+X-Gm-Gg: ASbGncuEO6t/o6cx/HGTRsK9Iz0IaimZK+vrNcvzKhvsR/VEoIEvbNENBsxB9Fm6ubh
+	7cg2V7wX+FjWWkb/PjhMQ/EXDri+W4xS/pImkCtpPrJw6jjmoxFgAau2nlFMJCoACOU7TLv0zEt
+	Mk+XiAg1VfgK9O5zvdUg3bhBazxUCnVsLGuFeGiHQ8h134qBat0hDstbe+JR8xvmcp1SPAsQ2y9
+	43YZqHgxCIVjmL6z/YK9QjE7ECt4QE3bFNAfXRzjJWiEKx/2X/LEisi2HYSpk71z24=
+X-Google-Smtp-Source: AGHT+IFU1cykT79NxOgiU5+nTldOdms9K9uBKE+fLP/WR6Rii8bf/vtOZN8XMpr5w425Ym31XSqlVA==
+X-Received: by 2002:a17:902:e5cf:b0:215:bc30:c952 with SMTP id d9443c01a7336-215bcea0b21mr94941085ad.6.1733326387272;
+        Wed, 04 Dec 2024 07:33:07 -0800 (PST)
+Received: from vaxr-BM6660-BM6360 ([2001:288:7001:2703:d6db:3ccc:88ed:bd6c])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-215908ab2dcsm54689725ad.209.2024.12.04.07.33.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Dec 2024 07:33:06 -0800 (PST)
+Date: Wed, 4 Dec 2024 23:33:03 +0800
+From: I Hsin Cheng <richard120310@gmail.com>
+To: Jan Kara <jack@suse.cz>
+Cc: viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, brauner@kernel.org
+Subject: Re: [RFC PATCH] file: Wrap locking mechanism for f_pos_lock
+Message-ID: <Z1B2Lxxenie3SA6d@vaxr-BM6660-BM6360>
+References: <20241204092325.170349-1-richard120310@gmail.com>
+ <20241204102644.hvutdftkueiiyss7@quack3>
+ <20241204-osterblume-blasorchester-2b05c8ee6ace@brauner>
+ <20241204124829.4xpciqbz73u2e2nc@quack3>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241203141923.524658091@linuxfoundation.org> <CA+G9fYtXS+Ze5Y8ddtOjZPiYP1NEDhArQhEJYfS3n5pcLdn9Hw@mail.gmail.com>
-In-Reply-To: <CA+G9fYtXS+Ze5Y8ddtOjZPiYP1NEDhArQhEJYfS3n5pcLdn9Hw@mail.gmail.com>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Wed, 4 Dec 2024 21:02:47 +0530
-Message-ID: <CA+G9fYuDAAZkgNK4_0Y=wDcTUzs7=ggbni4iJDAPbD9ocq992g@mail.gmail.com>
-Subject: Re: [PATCH 4.19 000/138] 4.19.325-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
-	broonie@kernel.org, Dan Carpenter <dan.carpenter@linaro.org>, 
-	Anders Roxell <anders.roxell@linaro.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Matthias Schiffer <matthias.schiffer@tq-group.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	Daniel Vetter <daniel.vetter@ffwll.ch>, noralf@tronnes.org, 
-	Sam Ravnborg <sam@ravnborg.org>, simona@ffwll.ch, dri-devel@lists.freedesktop.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241204124829.4xpciqbz73u2e2nc@quack3>
 
-On Wed, 4 Dec 2024 at 19:24, Naresh Kamboju <naresh.kamboju@linaro.org> wro=
-te:
->
-> On Tue, 3 Dec 2024 at 20:04, Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> >
-> > ------------------
-> > Note, this is the LAST 4.19.y kernel to be released.  After this one, i=
-t
-> > is end-of-life.  It's been 6 years, everyone should have moved off of i=
-t
-> > by now.
-> > ------------------
-> >
-> > This is the start of the stable review cycle for the 4.19.325 release.
-> > There are 138 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> >
-> > Responses should be made by Thu, 05 Dec 2024 14:18:57 +0000.
-> > Anything received after that time might be too late.
-> >
-> > The whole patch series can be found in one patch at:
-> >         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patc=
-h-4.19.325-rc1.gz
-> > or in the git tree and branch at:
-> >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
-le-rc.git linux-4.19.y
-> > and the diffstat can be found below.
-> >
-> > thanks,
-> >
-> > greg k-h
->
-> Results from Linaro=E2=80=99s test farm.
-> Regressions on arm.
->
-> The arm builds failed with gcc-12 and clang-19 due to following
-> build warnings / errors.
->
-> Build log:
-> ---------
-> drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_drv.c:177:9: error:
-> 'DRM_GEM_CMA_DRIVER_OPS' undeclared here (not in a function)
->   177 |         DRM_GEM_CMA_DRIVER_OPS,
->       |         ^~~~~~~~~~~~~~~~~~~~~~
-> make[5]: *** [scripts/Makefile.build:303:
-> drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_drv.o] Error 1
->
+On Wed, Dec 04, 2024 at 01:48:29PM +0100, Jan Kara wrote:
+> On Wed 04-12-24 12:11:02, Christian Brauner wrote:
+> > > motivation of introducing __f_unlock_pos() in the first place? It has one
+> > 
+> > May I venture a guess:
+> > 
+> >   CALL    ../scripts/checksyscalls.sh
+> >   INSTALL libsubcmd_headers
+> >   INSTALL libsubcmd_headers
+> >   CC      fs/read_write.o
+> > In file included from ../fs/read_write.c:12:
+> > ../include/linux/file.h:78:27: error: incomplete definition of type 'struct file'
+> >    78 |                 mutex_unlock(&fd_file(f)->f_pos_lock);
+> >       |                               ~~~~~~~~~~^
+> > 
+> > If you don't include linux/fs.h before linux/file.h you'd get compilation
+> > errors and we don't want to include linux/fs.h in linux/file.h.
+> 
+> Ah, subtle ;)
+> 
+> > I wouldn't add another wrapper for lock though. Just put a comment on top of
+> > __f_unlock_pos().       
+> 
+> Yes, I guess comment is better in that case.
+> 
+> 								Honza
+> 
+> -- 
+> Jan Kara <jack@suse.com>
+> SUSE Labs, CR
 
-Anders bisected this down to,
 
-# first bad commit:
-   [5a8529fd9205b37df58a4fd756498407d956b385]
-   drm/fsl-dcu: Use GEM CMA object functions
+No problem, I'll add comments on __f_unlock_pos() to explain for the
+inconsistency then send a formal path.
 
-- Naresh
+But I want to ask what's the motivation of defining "fdput_pos()" as
+static inline? If we make it "void fdput_pos()", we should be able to
+write the implementation in file.c and thus can get rid of
+"__f_unlock_pos()".
+
+Is it just for the inline function speed up?
+
+Best regards,
+Richard Cheng.
+
+
 
