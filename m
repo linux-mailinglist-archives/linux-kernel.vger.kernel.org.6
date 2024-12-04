@@ -1,141 +1,276 @@
-Return-Path: <linux-kernel+bounces-430392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430393-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A97D19E3056
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 01:23:45 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 823031645CC
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 00:23:42 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E0E24A06;
-	Wed,  4 Dec 2024 00:23:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sQfI+OWb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82B719E3059
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 01:24:07 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52BD81372;
-	Wed,  4 Dec 2024 00:23:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43277282E3F
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 00:24:06 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEA0F1373;
+	Wed,  4 Dec 2024 00:24:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="KYvaEiHX"
+Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D30910F9
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 00:23:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733271820; cv=none; b=NxePHYcCVLagpvodf6qShHq4JHKq37Q6U1emDXNVOC1OYzNBDYxaAs38IRuk0o/lmuXReLct2OR9UqSuBG+e1EaoQDtLpMKTtYjub07in1efUTvg1jmcLPRAVt/ZfElzmUmQHUVrCqX3HN63inBD4tPD2PEjDUighZxvsA30KzI=
+	t=1733271842; cv=none; b=snoxsl15JsoIq3pAbdvtfquulsVpkdqku9KlPBxOaLPTFJbmPJtCbZ0E0jLK61N3FCXCdrroXbNPxj+Mh7WAfn6syArAJUctu3n54TqzYpELUn0p96K+JruzW4Qbu1I6mdcYojkTeSUwmLp4gSj8VS0Bydqe16t67BrGBUiFN4U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733271820; c=relaxed/simple;
-	bh=mHyvXhKyZLMpFcnJTGgrfl8X1foUR+VJ2zARLjKgCCE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=P3B11+NmLDgPA8bLiiTnNiTVwTW4a28GcHX+mzyDT58tJ0hyPNGQric3B23waT+fFW9fn4LBQTuiCsCcVWEJEFk+OpuYWzVRfgOD5DFPk6AU2ARBUIUUAzQsksjqladhpLb+4uRbrebEvt/y5CUj/S/3KBuGOFchtOS2OyfoAko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sQfI+OWb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A64AC4CEDC;
-	Wed,  4 Dec 2024 00:23:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733271819;
-	bh=mHyvXhKyZLMpFcnJTGgrfl8X1foUR+VJ2zARLjKgCCE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=sQfI+OWbM5LibBB/dCMGRyqUWzriEf25PSRkcR5pIeh+6dsR9qgEXSrCpfyOQGy3a
-	 J6N5pK7z8VtyEVzddkC5TqCkUrosd6UXqNB7JUQeHQkp4YKDe3e8Z+htorZ5xB1Ug9
-	 8ZoKO/20JXkpqPqSvsAgQbuN8yU8cEpe6vMNOzQOJ02AZ7AIEbJgNko42Zni0TGKas
-	 rj1FF+ZlqVjErDbYeb/lsA4wkAHtCcLNqMBiISgnVQk+MGrqN2eRokOBnXosbIgQMp
-	 JPxodIZF+kTkwJiUt5Gk/+V/WvYC7vQoMADqQ5Ty6stKtm3qWPBcUGNXDj5rhoTQ/f
-	 lSWht1VZqPT9w==
-From: SeongJae Park <sj@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: SeongJae Park <sj@kernel.org>,
-	stable@vger.kernel.org,
-	patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	torvalds@linux-foundation.org,
-	akpm@linux-foundation.org,
-	linux@roeck-us.net,
-	shuah@kernel.org,
-	patches@kernelci.org,
-	lkft-triage@lists.linaro.org,
-	pavel@denx.de,
-	jonathanh@nvidia.com,
-	f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com,
-	srw@sladewatkins.net,
-	rwarsow@gmx.de,
-	conor@kernel.org,
-	hargar@microsoft.com,
-	broonie@kernel.org,
-	damon@lists.linux.dev
-Subject: Re: [PATCH 6.11 000/817] 6.11.11-rc1 review
-Date: Tue,  3 Dec 2024 16:23:35 -0800
-Message-Id: <20241204002335.85653-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20241203143955.605130076@linuxfoundation.org>
-References: 
+	s=arc-20240116; t=1733271842; c=relaxed/simple;
+	bh=1a67SnFU13qE4J5y3Rgj7WQorDdDgbyoqJnmWeb0Gj8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PI+LmUvZgdQ/Jmwy8U4vgjIuNKOdf0Bl4LfMPPrhDMiLXLvDWb0NElIvyTj4s6RzHfYL90eBLORey3Jfrzar5Jn401mxuh3mkP6QrLCAlnW4uH/UQXT5cL+CaDKqkPHl08TTblXaLIy+mmc7S/mifEmxXdRB1j7o591tCxP/Ero=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=KYvaEiHX; arc=none smtp.client-ip=209.85.166.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-3a77c066a15so23816335ab.3
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 16:23:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1733271839; x=1733876639; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=f9FbCJ3x5IuqiKm/j7Dkcx5/WgXv4GorOvwEXGeUN44=;
+        b=KYvaEiHXHaUqmeS/YeFapQIzT3dI5Bq7Es/YLXHVoIw0e/XQlXucw8K8mAZPW4BrRf
+         /IHxzTZitQ1MgWKnU6U31GIQGB2I5TQDgRLcNhfQZBgoP0LsNoXJllxCAZZFlgWpmSs+
+         kNNIJ94CPiCcZfkQF38Jf4Pj0ifOcLhXdEtbM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733271839; x=1733876639;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=f9FbCJ3x5IuqiKm/j7Dkcx5/WgXv4GorOvwEXGeUN44=;
+        b=nysp8G0rDa4I8qChcR9HwKLczrXOoV25rehcCEeKemtyIgRRkQeP7e7ocXMRYG8E7z
+         ZPqXGVI/K1vgAGxmur/o/2mO3MZ84xr5K1v6byG1wEhgFYX5Avku7PGWIAnf4+xR1yb5
+         d2y6YgNuAcsL/smqBaoeDgSmMgIWe0XOQ7DR5NHw0OgqcgIvPlSqEp2YRbjS4EOGtagM
+         9KkG8hVsd5iCgfXUx4Rr/tXGhhOE8xffG2D3M7oX30YJav2SxqkXxj/OMK4nsUQNkr9B
+         GWIr1A4QwwVbCjeyqlzx5xT4FwDK2zYrbbPnuV5Js5PVuPokpZ3DcahtRd4hdpJHJqsI
+         k3Aw==
+X-Forwarded-Encrypted: i=1; AJvYcCVZyAE6RDZBe8iuUjjXo99j4A3dw9heoLbp1zOmdNBQuM7ebGRnZ5zZ40po7A/N45dJ3DTkN9tJCyhog+0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzbNl4HylVxgRYNjwG3Mad8nnlzpWmkRhw2dWeBQXCxTHZ0wr5+
+	qWycJAD3kQmYfdfJYG8VExi0fYJ/rPX/9nIAkjta/AYTI9xxStsT30YjgfK6qDZgQ8bfXXWHTiC
+	0
+X-Gm-Gg: ASbGncv/zBugNhAVsweOE5VijYyNeneTOQWb3C9CDNwo0Sabdq+V9d4b/mxRbdGet4M
+	oWdOIs+lNeFQAbMEGkpv6w9KUOt7VG8sHM4rOuz38YNgOBjIY+SIuUZoz+KpI3Pofx91wUk6nsz
+	C10C3uYzifPRXFMPIDSoMjahL/Q0d5Wrgxap7cY4QHsaqRi60LLU3SCAxNWXDnC0Ah28lpH+mja
+	G/WEWOV/mErHVn+j3AgASQ2sbjqUyPbx/1Jr8pG8iDyebvKaX5TkRh9UUKVLQ==
+X-Google-Smtp-Source: AGHT+IFFmMu7amT4tAHwLTX5LZYeNDtyDgTZPdJhuoc5E5+fNYPSbpXnhLVmJnXlu2dY0WS4xaa5Ow==
+X-Received: by 2002:a05:6e02:19c8:b0:3a7:c5b1:a55c with SMTP id e9e14a558f8ab-3a7f99baa4fmr55303285ab.0.1733271839042;
+        Tue, 03 Dec 2024 16:23:59 -0800 (PST)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4e230e9064esm2736966173.156.2024.12.03.16.23.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 03 Dec 2024 16:23:58 -0800 (PST)
+Message-ID: <115bb206-8401-4475-977d-7dd98a2b872c@linuxfoundation.org>
+Date: Tue, 3 Dec 2024 17:23:56 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] selftests: arm coresight: sysfsmode testing
+To: Linu Cherian <lcherian@marvell.com>, suzuki.poulose@arm.com,
+ mike.leach@linaro.org, james.clark@arm.com
+Cc: linux-arm-kernel@lists.infradead.org, coresight@lists.linaro.org,
+ linux-kernel@vger.kernel.org, shuah@kernel.org,
+ linux-kselftest@vger.kernel.org, sgoutham@marvell.com, gcherian@marvell.com,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20241129083813.3056909-1-lcherian@marvell.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20241129083813.3056909-1-lcherian@marvell.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On 11/29/24 01:38, Linu Cherian wrote:
+> Add sysfs mode selftest for ARM Coresight hardware tracer.
 
-On Tue, 3 Dec 2024 15:32:52 +0100 Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+Please add details on what this test does in here. Include
+the output from the test?
 
-> -----------
-> Note, this is will probably be the last 6.11.y kernel to be released.
-> Please move to the 6.12.y branch at this time.
-> -----------
+Does this test have dependencies on config? If it does, does
+this test detect and skip if config isn't enabled?
+
 > 
-> This is the start of the stable review cycle for the 6.11.11 release.
-> There are 817 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+> Signed-off-by: Linu Cherian <lcherian@marvell.com>
+> ---
+>   .../drivers/hwtracing/coresight/Makefile      |   5 +
+>   .../hwtracing/coresight/sysfs_test_trace.sh   | 144 ++++++++++++++++++
+>   2 files changed, 149 insertions(+)
+>   create mode 100644 tools/testing/selftests/drivers/hwtracing/coresight/Makefile
+>   create mode 100755 tools/testing/selftests/drivers/hwtracing/coresight/sysfs_test_trace.sh
 > 
-> Responses should be made by Thu, 05 Dec 2024 14:36:47 +0000.
-> Anything received after that time might be too late.
+> diff --git a/tools/testing/selftests/drivers/hwtracing/coresight/Makefile b/tools/testing/selftests/drivers/hwtracing/coresight/Makefile
+> new file mode 100644
+> index 000000000000..7dc68ae1c0a9
+> --- /dev/null
+> +++ b/tools/testing/selftests/drivers/hwtracing/coresight/Makefile
+> @@ -0,0 +1,5 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +
+> +TEST_PROGS = sysfs_test_trace.sh
+> +
+> +include ../../../lib.mk
+> diff --git a/tools/testing/selftests/drivers/hwtracing/coresight/sysfs_test_trace.sh b/tools/testing/selftests/drivers/hwtracing/coresight/sysfs_test_trace.sh
+> new file mode 100755
+> index 000000000000..0d6307fff1d2
+> --- /dev/null
+> +++ b/tools/testing/selftests/drivers/hwtracing/coresight/sysfs_test_trace.sh
+> @@ -0,0 +1,144 @@
+> +#!/bin/sh
+> +# SPDX-License-Identifier: GPL-2.0
+> +# Copyright (C) 2024 Marvell.
+> +
+> +# Test Arm CoreSight trace capture in sysfs mode
+> +# Based on tools/perf/tests/shell/test_arm_coresight.sh
+> +
+> +glb_err=0
+> +
+> +arm_cs_report() {
+> +	if [ $2 != 0 ]; then
+> +		echo "$1: FAIL"
+> +		glb_err=$2
+> +	else
+> +		echo "$1: PASS"
+> +	fi
+> +}
+> +
+> +is_device_sink() {
+> +	# If the node of "enable_sink" is existed under the device path, this
+> +	# means the device is a sink device.
+> +
+> +	if [ -e "$1/enable_sink" ]; then
+> +
+> +		return 0
+> +	else
+> +		return 1
+> +	fi
+> +}
+> +
+> +# Configure sink for buffer mode
+> +cfg_sink_buf_mode() {
+> +	sink_dev=$1
+> +	mode=$2
+> +	# Set buffer mode if supported
+> +	if [ -e "$sink_dev/buf_modes_available" ]; then
+> +		cat $sink_dev/buf_modes_available | grep -E -q $mode
+> +		if [ $? -eq 0 ]; then
+> +			echo $mode > $sink_dev/buf_mode_preferred
+> +			return 0
+> +		fi
+> +	fi
+> +
+> +	return 1
+> +}
+> +
+> +run_app() {
+> +
+> +	taskset -c $1 dd if=/dev/urandom  of=/dev/null bs=1M count=64
+> +}
+> +
+> +sysfs_trace() {
+> +	src_dev=$1
+> +	sink_dev=$2
+> +	cpu=$3
+> +
+> +	# Enable sink device
+> +	echo 1 > $sink_dev/enable_sink
+> +	# Enable source device
+> +	echo 1 > $src_dev/enable_source
+> +
+> +	# Run app to be traced
+> +	run_app $cpu
+> +
+> +	# Read back trace data
+> +	dd if=/dev/$sink_dev_name of=/tmp/tracedata
+> +
+> +	# Verify if read is successful
+> +	err=$?
+> +
+> +	# Disable source device
+> +	echo 0 > $src_dev/enable_source
+> +
+> +	# Diskable sink device
+> +	echo 0 > $sink_dev/enable_sink
+> +
+> +	arm_cs_report "CoreSight path testing (CPU$cpu -> $sink_dev_name)" $err
+> +}
+> +
+> +try_sysfs_trace_resrv_buf() {
+> +	src_dev=$1
+> +	sink_dev=$2
+> +	cpu=$3
+> +
+> +	# Configure the resrved buffer mode if available
+> +	cfg_sink_buf_mode $sink_dev "resrv"
+> +	if [ $? -eq 0 ]; then
+> +		echo "Running sysfs trace with resrv buf mode"
+> +		sysfs_trace $src_dev $sink_dev $cpu
+> +		# Restore buffer mode
+> +		cfg_sink_buf_mode $sink_dev "auto"
+> +		if [ $? -eq 1 ]; then
+> +			echo "Failed to restore default buf mode"
+> +		fi
+> +	fi
+> +}
+> +
+> +arm_cs_iterate_devices() {
+> +	src_dev=$1
+> +	cpu=$3
+> +	for cdev in $2/connections/out\:*; do
+> +
+> +		# Skip testing if it's not a directory
+> +		! [ -d $cdev ] && continue;
+> +
+> +		# Read out its symbol link file name
+> +		sink_dev=`readlink -f $cdev`
+> +
+> +		# Extract device name from path, e.g.
+> +		#   sink_dev = '/sys/devices/platform/20010000.etf/tmc_etf0'
+> +		#     `> sink_dev_name = 'tmc_etf0'
+> +		sink_dev_name=$(basename $sink_dev)
+> +
+> +		if is_device_sink $sink_dev; then
+> +			# Run trace with resrv buf mode (if available)
+> +			try_sysfs_trace_resrv_buf $src_dev $sink_dev $cpu
+> +
+> +			# Run the default mode
+> +			echo "Running sysfs trace with default settings"
+> +			sysfs_trace $src_dev $sink_dev $cpu
+> +		fi
+> +
+> +		arm_cs_iterate_devices $src_dev $cdev $cpu
+> +
+> +	done
+> +}
+> +
+> +arm_cs_etm_traverse_path_test() {
+> +	# Iterate for every ETM device
+> +	for dev in /sys/bus/event_source/devices/cs_etm/cpu*; do
+> +		# Canonicalize the path
+> +		dev=`readlink -f $dev`
+> +
+> +		# Find the ETM device belonging to which CPU
+> +		cpu=`cat $dev/cpu`
+> +
+> +		# Use depth-first search (DFS) to iterate outputs
+> +		arm_cs_iterate_devices $dev $dev $cpu
+> +	done
+> +}
+> +
+> +arm_cs_etm_traverse_path_test
+> +
+> +exit $glb_err
 
-This rc kernel passes DAMON functionality test[1] on my test machine.
-Attaching the test results summary below.  Please note that I retrieved the
-kernel from linux-stable-rc tree[2].
-
-Tested-by: SeongJae Park <sj@kernel.org>
-
-[1] https://github.com/damonitor/damon-tests/tree/next/corr
-[2] 57f39ce086c9 ("Linux 6.11.11-rc1")
-
-Thanks,
-SJ
-
-[...]
-
----
-
-ok 9 selftests: damon: damos_tried_regions.py
-ok 10 selftests: damon: damon_nr_regions.py
-ok 11 selftests: damon: reclaim.sh
-ok 12 selftests: damon: lru_sort.sh
-ok 13 selftests: damon: debugfs_empty_targets.sh
-ok 14 selftests: damon: debugfs_huge_count_read_write.sh
-ok 15 selftests: damon: debugfs_duplicate_context_creation.sh
-ok 16 selftests: damon: debugfs_rm_non_contexts.sh
-ok 17 selftests: damon: debugfs_target_ids_read_before_terminate_race.sh
-ok 18 selftests: damon: debugfs_target_ids_pid_leak.sh
-ok 19 selftests: damon: sysfs_update_removed_scheme_dir.sh
-ok 20 selftests: damon: sysfs_update_schemes_tried_regions_hang.py
-ok 1 selftests: damon-tests: kunit.sh
-ok 2 selftests: damon-tests: huge_count_read_write.sh
-ok 3 selftests: damon-tests: buffer_overflow.sh
-ok 4 selftests: damon-tests: rm_contexts.sh
-ok 5 selftests: damon-tests: record_null_deref.sh
-ok 6 selftests: damon-tests: dbgfs_target_ids_read_before_terminate_race.sh
-ok 7 selftests: damon-tests: dbgfs_target_ids_pid_leak.sh
-ok 8 selftests: damon-tests: damo_tests.sh
-ok 9 selftests: damon-tests: masim-record.sh
-ok 10 selftests: damon-tests: build_i386.sh
-ok 11 selftests: damon-tests: build_arm64.sh # SKIP
-ok 12 selftests: damon-tests: build_m68k.sh # SKIP
-ok 13 selftests: damon-tests: build_i386_idle_flag.sh
-ok 14 selftests: damon-tests: build_i386_highpte.sh
-ok 15 selftests: damon-tests: build_nomemcg.sh
- [33m
- [92mPASS [39m
+thanks,
+-- Shuah
 
