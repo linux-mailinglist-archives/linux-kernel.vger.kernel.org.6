@@ -1,233 +1,178 @@
-Return-Path: <linux-kernel+bounces-432023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FE799E43E0
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 19:57:46 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A38029E43E2
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 19:58:19 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5677D16256C
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:58:16 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF4231A8F9C;
+	Wed,  4 Dec 2024 18:58:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b="hKIO6NN7"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 438E8283D0A
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:57:45 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 132931A8F9C;
-	Wed,  4 Dec 2024 18:57:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XniwEMlf"
-Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 902CF1A8F96
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 18:57:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733338660; cv=none; b=UEh9GIlyWf8tA8H2w9lN5BgVNg5oP5Jeruw1j2lzxHhHDf1YGl4yM+k+hezVbfJmrDx4GUJAck2dsGYYcKgcrqD2DzIFrX2wnX13X/O1gVIAnj9n6rJFt3AnfyLj2k6P+Tk4BTaQQ0lmEo9jGThv2TmzscTffCt4gGi3I79FV3c=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733338660; c=relaxed/simple;
-	bh=OV3hp2V8eKCEXAaPuUls1lIqtHVVMRU96BImUZmQbm4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iKN3UXeuX/armvICOL2VnwF51PSv24roHXbC+hGzJm0g0+Dka3GA510g5DE7eyaqk2lq8uyyjptoLnASbf8GqQ+Fyxtn58nLSP0Vay0P9Ex7UOiGPx+mbgeRfgyxVYp7LRvtI1+ALdNl70rtVDcR8oxIq8BNvdHMDQL9EiL6FSI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XniwEMlf; arc=none smtp.client-ip=209.85.219.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-6d8c7349401so987696d6.2
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 10:57:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733338657; x=1733943457; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PShsGKOP5A/4kSqaxEWpemov0e3wuEnAMDVyESQ3RB4=;
-        b=XniwEMlfXdCFsltgZAA9xyBqGc2kmDrs5vLvFBHhAKKxy4RacZKsBJEM6WjQqLQeW0
-         dHAFWjsxZ5YdFbWcnUDfIPrteZP0xSe2ul3/DKQRcarVkkmczDBcB4xNX6XBll1TUk7y
-         tjjyjY1iwna/RPTKRn6tb60f4YiRCd+Fw2Q2xCcyHMJdkKilUAzmtNu+IaK7i2DxLOUV
-         ChOK57o+KF9w03TmCayANX0/GBC6WMTMLx1clHu3Kyn/+1Mj0d5j9Ygyxyt1H3hVLYUh
-         N9XaaC48UDKqQb7j4/wPkXF37zhpaXcSVjRZuxvRI/ttkv3k7Gf9o8nYbqGwiSMhK9Pl
-         DPqw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733338657; x=1733943457;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PShsGKOP5A/4kSqaxEWpemov0e3wuEnAMDVyESQ3RB4=;
-        b=Qkkifjtf/iiCY+Sif20jOXwGIWvSvtbz5Mot80Kq/tMONI9Zfl3BAw0QIbXwB9iUqd
-         Pv5bus7TesYK3+HP/WUB27EOcTiencL2Pm+/IQ9NXdcVuCU0cWNNaQsoVqyMrsf3Lgt5
-         LSr+0KdenWQfBj5Jo/sUhNO6y5xwQ3m98jPGHo1ZzFCCAYSGG2+uViIYADOvB/0BPuOe
-         GC4OL7DlzBrjemYGYS5hFkCQZmncpfepixFjlvy48dLt//rENAjo496hDYC9d/8+OgJz
-         8Kikf2xk2FvQkP4ScYLDVEy9/0FJUq45UW7vt9tswO23nCAYsfcOYSw/xj3C8r62K68a
-         TGcg==
-X-Forwarded-Encrypted: i=1; AJvYcCW1Qar8ZWPUbjhAWJaz09lJGc6OiBtMIE6lE0tnz9ebMyn+cdN+EAVPt5b7NOv/pqo5M4Id+czLk06JKPM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXk6Mfr33pel6oKLltMqHzLmsn9gdQCxnTj4vqv2J3IuXug+GE
-	SyAvcxxE7V4VulUi9XVIL18Ws4mWPUV1YXd4QyC0cjZX+5NwwUUMyudqIhJOaCSKB/mLpLqXp2g
-	jHyMy6vGU9b43L2O+x4yjT7nZhHHatic6KWhR
-X-Gm-Gg: ASbGncu7ww45QJzNAQwBHH+e/J9EBTclDvRinxnVqBJO3frNbfjc2LofkS/idXEz4FV
-	+fIhTaEH/fZXXPJnBnN9cSbtG/1/P
-X-Google-Smtp-Source: AGHT+IE0nEyhaK3PznGX7U3n2gojmNdZ8qVyGVv+V0HdgDaiSIR5GA7Vt+Cs1aj0M9chqIf5AMk4w5sj3jZT2vKC7ao=
-X-Received: by 2002:ad4:5aee:0:b0:6d4:2806:1765 with SMTP id
- 6a1803df08f44-6d8b740e273mr101125466d6.34.1733338657345; Wed, 04 Dec 2024
- 10:57:37 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D03CC1A8F74
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 18:58:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733338694; cv=pass; b=qFKNWXGCratmtoyruDgbQosxu953754p8/v4bPDsMAG/WZSXhxDMWM/BB5VprOwb2x0Db+/LpJRZz5DfT96Ji4CvLfKNZj4l/c80XeLncDy/DcFZs039UbR6QpBzOYZARt/5XbP2kaAcCUA5FzOHekTbX9b/MZM8P8XMJuC5Wrs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733338694; c=relaxed/simple;
+	bh=kL0wHnRKyt75a71rQDBmS5MAneELeYb7/NZPPiIpxVI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NpMEIJFWUlfh6a543w22Bs5BrI29E8YOxmqrb96gQ/gWw2FZmst4lGWENG8m4EPurukZJqf5BH+y29BUX8RcWU396gTLd2ZSGR9ws10ygv5Yb6danIFEz9/6nAdMHVgxXCZfXqWZwQQXTibNsXh0B31FTKgeg9BJWCVuOP+GhHU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b=hKIO6NN7; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1733338670; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=HLze4pzrbha0zcN1WjZEWN2pIoFijb6iPIl6xBJjqO4GhH6FJg3zxe2TFBo8j22GM1FbYD4ANcAWxSXhmbqyaxg8xtRDYXrZpGK3+ryNXke/v5nz7VK/Rd3Ig8lIhP5xzcLg8aJ1xbUjXQ25C9322zCs9ZbVVYnqMa92pPtZX7Q=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1733338670; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=jD5EgxmC/9STTH3q9eeIrSSBkYjwxLOo+Pfdmbxo/+c=; 
+	b=D7Ph3g+eX/FCaAmF8JaL/JiLCFBNNldf/eqCrsKZ19+abPfT5nFYXUc+W10uC1UIStefHKD2uLryYNb5O+UDPGHRpnu7gxnM0Hn7YYn/pCpiKre3pHkI7eZxbRIOYNK0XWGq+d3XmJ0Vk12izAljWez4tXJzqDS3JMMXHsWONO8=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=adrian.larumbe@collabora.com;
+	dmarc=pass header.from=<adrian.larumbe@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1733338670;
+	s=zohomail; d=collabora.com; i=adrian.larumbe@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:Content-Transfer-Encoding:In-Reply-To:Message-Id:Reply-To;
+	bh=jD5EgxmC/9STTH3q9eeIrSSBkYjwxLOo+Pfdmbxo/+c=;
+	b=hKIO6NN7/sp2JOjCaqxTxsmxldXDJjNdzez6SqfGrbBG2KrxUpj4gNOuJs8jbmhL
+	gSLuMYl82Mc/+HTGRK2qBzE68c2agQp01/ZA2umUx/lQfk8PdU4CjLbhorxBE9wjYj0
+	77sjXrW0plnmQuWLKCmiX/EO+I6e0fQvTICExAa0=
+Received: by mx.zohomail.com with SMTPS id 1733338670037314.62844329298014;
+	Wed, 4 Dec 2024 10:57:50 -0800 (PST)
+Date: Wed, 4 Dec 2024 18:57:46 +0000
+From: =?utf-8?Q?Adri=C3=A1n?= Larumbe <adrian.larumbe@collabora.com>
+To: Boris Brezillon <boris.brezillon@collabora.com>, 
+	Rob Herring <robh@kernel.org>, Steven Price <steven.price@arm.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Philipp Zabel <p.zabel@pengutronix.de>
+Cc: kernel@collabora.com, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 4/9] drm/panfrost: Handle error when allocating AS
+ number
+Message-ID: <tseqozsin6zltqyksnhj476kbzvg27kp4xmyo7kdzvwa4hj2mf@5unrjfg5ezuv>
+References: <20241204184945.1477677-1-adrian.larumbe@collabora.com>
+ <20241204184945.1477677-5-adrian.larumbe@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241202184154.19321-1-ryncsn@gmail.com> <20241202184154.19321-5-ryncsn@gmail.com>
- <CAJD7tkaO2AEeNH9b7utqUqgRqWowLtR-Ud09yC0YAhL5RQU5hw@mail.gmail.com>
- <CAJD7tkaJt19hNF+PhTUuop0rbpsnzWRs7837jTCMpw6=uVTosg@mail.gmail.com>
- <CAMgjq7CJt21a0=bfzvndfeLB6+9AsLwnF3sQs1-ET5CgOZsLsQ@mail.gmail.com>
- <CAJD7tkZLBG3SidU-tutESjVg=m+j-2b+88LxoAR+rKaL3Lw+8w@mail.gmail.com> <CAMgjq7ANFkvLWtvAHfzL1g6QTOULB9o5iJ28ot3_idFB3QPOEQ@mail.gmail.com>
-In-Reply-To: <CAMgjq7ANFkvLWtvAHfzL1g6QTOULB9o5iJ28ot3_idFB3QPOEQ@mail.gmail.com>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Wed, 4 Dec 2024 10:57:00 -0800
-Message-ID: <CAJD7tkZTWLyK6n+S_iWHwXVOWCO=jzUSDjpTdwA4WNc5MgQEMA@mail.gmail.com>
-Subject: Re: [PATCH 4/4] mm, swap_cgroup: remove global swap cgroup lock
-To: Kairui Song <ryncsn@gmail.com>
-Cc: "Paul E. McKenney" <paulmck@kernel.org>, linux-mm@kvack.org, 
-	Andrew Morton <akpm@linux-foundation.org>, Chris Li <chrisl@kernel.org>, 
-	Hugh Dickins <hughd@google.com>, "Huang, Ying" <ying.huang@intel.com>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Shakeel Butt <shakeel.butt@linux.dev>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Barry Song <baohua@kernel.org>, Michal Hocko <mhocko@kernel.org>, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241204184945.1477677-5-adrian.larumbe@collabora.com>
 
-On Wed, Dec 4, 2024 at 9:58=E2=80=AFAM Kairui Song <ryncsn@gmail.com> wrote=
-:
->
-> On Wed, Dec 4, 2024 at 3:18=E2=80=AFAM Yosry Ahmed <yosryahmed@google.com=
-> wrote:
-> >
-> > On Tue, Dec 3, 2024 at 10:20=E2=80=AFAM Kairui Song <ryncsn@gmail.com> =
-wrote:
-> > >
-> > > On Tue, Dec 3, 2024 at 4:36=E2=80=AFAM Yosry Ahmed <yosryahmed@google=
-.com> wrote:
-> > > >
-> > > > On Mon, Dec 2, 2024 at 11:28=E2=80=AFAM Yosry Ahmed <yosryahmed@goo=
-gle.com> wrote:
-> > > > >
-> > > > > On Mon, Dec 2, 2024 at 10:42=E2=80=AFAM Kairui Song <ryncsn@gmail=
-.com> wrote:
-> > > > > >
-> > > > > > From: Kairui Song <kasong@tencent.com>
-> > > > > >
-> > > > > > commit e9e58a4ec3b1 ("memcg: avoid use cmpxchg in swap cgroup m=
-aintainance")
-> > > > > > replaced the cmpxchg/xchg with a global irq spinlock because so=
-me archs
-> > > > > > doesn't support 2 bytes cmpxchg/xchg. Clearly this won't scale =
-well.
-> > > > > >
-> > > > > > And as commented in swap_cgroup.c, this lock is not needed for =
-map
-> > > > > > synchronization.
-> > > > > >
-> > > > > > Emulation of 2 bytes cmpxchg/xchg with atomic isn't hard, so im=
-plement
-> > > > > > it to get rid of this lock.
-> > > > > >
-> > > > > > Testing using 64G brd and build with build kernel with make -j9=
-6 in 1.5G
-> > > > > > memory cgroup using 4k folios showed below improvement (10 test=
- run):
-> > > > > >
-> > > > > > Before this series:
-> > > > > > Sys time: 10730.08 (stdev 49.030728)
-> > > > > > Real time: 171.03 (stdev 0.850355)
-> > > > > >
-> > > > > > After this commit:
-> > > > > > Sys time: 9612.24 (stdev 66.310789), -10.42%
-> > > > > > Real time: 159.78 (stdev 0.577193), -6.57%
-> > > > > >
-> > > > > > With 64k folios and 2G memcg:
-> > > > > > Before this series:
-> > > > > > Sys time: 7626.77 (stdev 43.545517)
-> > > > > > Real time: 136.22 (stdev 1.265544)
-> > > > > >
-> > > > > > After this commit:
-> > > > > > Sys time: 6936.03 (stdev 39.996280), -9.06%
-> > > > > > Real time: 129.65 (stdev 0.880039), -4.82%
-> > > > > >
-> > > > > > Sequential swapout of 8G 4k zero folios (24 test run):
-> > > > > > Before this series:
-> > > > > > 5461409.12 us (stdev 183957.827084)
-> > > > > >
-> > > > > > After this commit:
-> > > > > > 5420447.26 us (stdev 196419.240317)
-> > > > > >
-> > > > > > Sequential swapin of 8G 4k zero folios (24 test run):
-> > > > > > Before this series:
-> > > > > > 19736958.916667 us (stdev 189027.246676)
-> > > > > >
-> > > > > > After this commit:
-> > > > > > 19662182.629630 us (stdev 172717.640614)
-> > > > > >
-> > > > > > Performance is better or at least not worse for all tests above=
-.
-> > > > > >
-> > > > > > Signed-off-by: Kairui Song <kasong@tencent.com>
-> > > > > > ---
-> > > > > >  mm/swap_cgroup.c | 56 +++++++++++++++++++++++++++++++++++-----=
---------
-> > > > > >  1 file changed, 41 insertions(+), 15 deletions(-)
-> > > > > >
-> > > > > > diff --git a/mm/swap_cgroup.c b/mm/swap_cgroup.c
-> > > > > > index a76afdc3666a..028f5e6be3f0 100644
-> > > > > > --- a/mm/swap_cgroup.c
-> > > > > > +++ b/mm/swap_cgroup.c
-> > > > > > @@ -5,6 +5,15 @@
-> > > > > >
-> > > > > >  #include <linux/swapops.h> /* depends on mm.h include */
-> > > > > >
-> > > > > > +#define ID_PER_UNIT (sizeof(atomic_t) / sizeof(unsigned short)=
-)
-> > > > > > +struct swap_cgroup_unit {
-> > > > > > +       union {
-> > > > > > +               int raw;
-> > > > > > +               atomic_t val;
-> > > > > > +               unsigned short __id[ID_PER_UNIT];
-> > > > > > +       };
-> > > > > > +};
-> > > > >
-> > > > > This doubles the size of the per-entry data, right?
-> > > >
-> > > > Oh we don't, we just store 2 ids in an int instead of storing each =
-id
-> > > > individually. But the question below still stands, can't we just us=
-e
-> > > > cmpxchg() directly on the id?
-> > >
-> > > Hi Yosry,
-> > >
-> > > Last time I checked the xchg status some archs still don't support
-> > > xchg for 2 bytes, I just found things may have changed slightly but i=
-t
-> > > seems at least parisc still doesn't support that. And looking at the
-> > > code some arches still don't support cmpxchg of 2 bytes today (And I
-> > > just dropped cmpxchg helper for swap_cgroup so that should be OK). RC=
-U
-> > > just dropped one-byte cmpxchg emulation 2 months ago in d4e287d7caff
-> > > so that area is changing. Lacking such support is exactly the reason
-> > > why there was a global lock previously, so I think the safe move is
-> > > just to emulate the operation manually for now?
-> >
-> > +Paul E. McKenney
-> >
-> > If there's already work to support 2-byte cmpxchg() I'd rather wait
-> > for that. Alternatively, if it's not too difficult, we should
-> > generalize this emulation to something like cmpxchg_emu_u8() and add
-> > the missing arch support. It doesn't feel right to have our own custom
-> > 2-byte cmpxchg() emulation here.
->
-> Actually here we need 2-byte xchg, not cmpxchg. I'm not exactly sure
-> if any arch still has anything missing for that support, or is there a
-> plan to support it for all archs?
+On 04.12.2024 18:49, Adrián Larumbe wrote:
+> If we reach the beginning of the LRU AS list, then return an error.
+> 
+> Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
+> Signed-off-by: Adrián Larumbe <adrian.larumbe@collabora.com>
+> ---
+>  drivers/gpu/drm/panfrost/panfrost_job.c     | 6 +++++-
+>  drivers/gpu/drm/panfrost/panfrost_mmu.c     | 5 +++--
+>  drivers/gpu/drm/panfrost/panfrost_mmu.h     | 2 +-
+>  drivers/gpu/drm/panfrost/panfrost_perfcnt.c | 9 ++++++++-
+>  4 files changed, 17 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/panfrost/panfrost_job.c b/drivers/gpu/drm/panfrost/panfrost_job.c
+> index 83bc74f6044e..d10f66f4cc53 100644
+> --- a/drivers/gpu/drm/panfrost/panfrost_job.c
+> +++ b/drivers/gpu/drm/panfrost/panfrost_job.c
+> @@ -214,7 +214,11 @@ static int panfrost_job_hw_submit(struct panfrost_job *job, int js)
+>  		goto err_hwsubmit;
+>  	}
+>  
+> -	cfg = panfrost_mmu_as_get(pfdev, job->mmu);
+> +	ret = panfrost_mmu_as_get(pfdev, job->mmu);
+> +	if (ret < 0)
+> +		goto err_hwsubmit;
+> +
+> +	cfg = ret;
+>  
+>  	job_write(pfdev, JS_HEAD_NEXT_LO(js), lower_32_bits(jc_head));
+>  	job_write(pfdev, JS_HEAD_NEXT_HI(js), upper_32_bits(jc_head));
+> diff --git a/drivers/gpu/drm/panfrost/panfrost_mmu.c b/drivers/gpu/drm/panfrost/panfrost_mmu.c
+> index 2189e42d2bfa..03ac527b35e7 100644
+> --- a/drivers/gpu/drm/panfrost/panfrost_mmu.c
+> +++ b/drivers/gpu/drm/panfrost/panfrost_mmu.c
+> @@ -155,7 +155,7 @@ static void panfrost_mmu_disable(struct panfrost_device *pfdev, u32 as_nr)
+>  	write_cmd(pfdev, as_nr, AS_COMMAND_UPDATE);
+>  }
+>  
+> -u32 panfrost_mmu_as_get(struct panfrost_device *pfdev, struct panfrost_mmu *mmu)
+> +int panfrost_mmu_as_get(struct panfrost_device *pfdev, struct panfrost_mmu *mmu)
+>  {
+>  	int as;
+>  
+> @@ -197,7 +197,8 @@ u32 panfrost_mmu_as_get(struct panfrost_device *pfdev, struct panfrost_mmu *mmu)
+>  			if (!atomic_read(&lru_mmu->as_count))
+>  				break;
+>  		}
+> -		WARN_ON(&lru_mmu->list == &pfdev->as_lru_list);
+> +		if (WARN_ON(&lru_mmu->list == &pfdev->as_lru_list))
+> +			return -EBUSY;
+>  
+>  		list_del_init(&lru_mmu->list);
+>  		as = lru_mmu->as;
+> diff --git a/drivers/gpu/drm/panfrost/panfrost_mmu.h b/drivers/gpu/drm/panfrost/panfrost_mmu.h
+> index 022a9a74a114..e6e6966a0cca 100644
+> --- a/drivers/gpu/drm/panfrost/panfrost_mmu.h
+> +++ b/drivers/gpu/drm/panfrost/panfrost_mmu.h
+> @@ -16,7 +16,7 @@ void panfrost_mmu_fini(struct panfrost_device *pfdev);
+>  void panfrost_mmu_reset(struct panfrost_device *pfdev);
+>  void panfrost_mmu_suspend_irq(struct panfrost_device *pfdev);
+>  
+> -u32 panfrost_mmu_as_get(struct panfrost_device *pfdev, struct panfrost_mmu *mmu);
+> +int panfrost_mmu_as_get(struct panfrost_device *pfdev, struct panfrost_mmu *mmu);
+>  void panfrost_mmu_as_put(struct panfrost_device *pfdev, struct panfrost_mmu *mmu);
+>  
+>  struct panfrost_mmu *panfrost_mmu_ctx_get(struct panfrost_mmu *mmu);
+> diff --git a/drivers/gpu/drm/panfrost/panfrost_perfcnt.c b/drivers/gpu/drm/panfrost/panfrost_perfcnt.c
+> index f30817bcf8ba..c551fa1ddfe5 100644
+> --- a/drivers/gpu/drm/panfrost/panfrost_perfcnt.c
+> +++ b/drivers/gpu/drm/panfrost/panfrost_perfcnt.c
+> @@ -130,7 +130,12 @@ static int panfrost_perfcnt_enable_locked(struct panfrost_device *pfdev,
+>  
+>  	perfcnt->user = user;
+>  
+> -	as = panfrost_mmu_as_get(pfdev, perfcnt->mapping->mmu);
+> +	ret = panfrost_mmu_as_get(pfdev, perfcnt->mapping->mmu);
+> +	if (ret)
+> +		goto err_unsetuser;
 
-Not sure to be honest.
+Just realised this should be 'if (ret < 0)', will fix in a following revision.
 
-Taking a step back, with swap_cgroup_cmpxchg() do we still need the
-synchronization to begin with? It seems like swap_cgroup_record() is
-the only modifier now, could multiple callers be racing for the same
-swap slot?
+> +
+> +	as = ret;
+> +
+>  	cfg = GPU_PERFCNT_CFG_AS(as) |
+>  	      GPU_PERFCNT_CFG_MODE(GPU_PERFCNT_CFG_MODE_MANUAL);
+>  
+> @@ -164,6 +169,8 @@ static int panfrost_perfcnt_enable_locked(struct panfrost_device *pfdev,
+>  
+>  	return 0;
+>  
+> +err_unsetuser:
+> +	perfcnt->user = NULL;
+>  err_vunmap:
+>  	drm_gem_vunmap_unlocked(&bo->base, &map);
+>  err_put_mapping:
+> -- 
+> 2.47.0
+
+
+Adrian Larumbe
 
