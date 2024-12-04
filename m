@@ -1,111 +1,156 @@
-Return-Path: <linux-kernel+bounces-431595-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 523E29E40A5
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:08:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D1429E40FF
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:16:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7E8FEB28893
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:08:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 81131B36C27
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:26:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D1A81FAC30;
-	Wed,  4 Dec 2024 16:05:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B299020C489;
+	Wed,  4 Dec 2024 16:26:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eZAH1Hpc"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gnCXEqfS"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC3651F7099
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 16:05:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8967A188587;
+	Wed,  4 Dec 2024 16:26:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733328353; cv=none; b=A0YBT9fs5c1tWhpuXAlR/vAu4FN7q8Y8nBVwMIXBa4hzXu65gGLUFmbCGF0Jod848rsp+Xm4OwYVz2I3xr33gavv3408UvsZTVDvKvhbCFuBaw75JIjW9+sjFfQBaZmZ2GiA847nUmFK2GCjKuBJZsQ2k02yA+D32BwHl8lyGW0=
+	t=1733329572; cv=none; b=asJ8z/eilFzFZpNBlUcb6EAnW8i35X/lYZR4ExY+kqOUmbz1WhMFE16qCPi+Hf/Co+KEvF77C/DZUleD4UyGwdLo0FOxaOpwTUyjZSc/JCLlbewk0hNiEPPPxZQCgNzgbcvrreK4Cljzc5cpAcJE2SjYNmjb3jwyFniMDQLE24A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733328353; c=relaxed/simple;
-	bh=wd/eY6phlvlnKp9dl486zt0nJnh+efyg1sis2+V6M3U=;
+	s=arc-20240116; t=1733329572; c=relaxed/simple;
+	bh=CySl2OhgJgVkeRcK+TzjcCOnqGEVHnmeriCYAaYqB1Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eRRCLZWVqPzJb+CFGm2mOoBqTGzFdOw2870yyuJXu36jh5pY3fG1rnrsvptiLBnuVwI3+cIbAeXtFJ/CHB6GVZxcsBrdxuO6Qfrr+dTx6zFzQwbtt8Kutt4r/ZDbWwqjuAH1Jrjcp86HkOWgLAXIzp4o66uV7qxI8O9Pr09tMhc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eZAH1Hpc; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-53df1e063d8so9075247e87.3
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 08:05:51 -0800 (PST)
+	 Content-Type:Content-Disposition:In-Reply-To; b=i1n59D17XqQLMb85S+97qtAbPy0SqF6TBs7cHip1yQaHWKQE/eRNYV9qOvtyQlAvUQhgAO7qPguIcBMt25K13YUfcPy9twVUHM5z9raE1NcpgOaTBAwQ1K6XF5pFXHfmRky922dx0lhPf7uobTDkdIAHUNAR3tzDBZ0gJd7gV00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gnCXEqfS; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-53e1be0ec84so1733740e87.1;
+        Wed, 04 Dec 2024 08:26:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733328350; x=1733933150; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1733329569; x=1733934369; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=+tRejvXUxMNCLgTlAPgfWHyqlQiv1kzmjvxRvEB55ZU=;
-        b=eZAH1HpczE+3C158tbrTqGk5Pqensrsq3juWPmbS++ssDp05UX36kYELogn3kH0hTx
-         HnoA4qkSDGwdlLr97T35ZqKubxMImnpT0Rsak3QPdL52LnFPyYR+DjAigvmcDuYDdIRM
-         8Mo8qzARZZGKFoVuUvwxpg/8O2Sm+X2jaNkj0lGz0/CCurP43BRkCAs5eDiXXK86PEST
-         0rgogH+4uZ0bRZ3X3fCdt8QsREsLp3R9ISkrdfwfNwZzFtDvQgDfTGp4xBssqUKQqyHq
-         1y0lPJ9wjT5ft91TPt1fwI/Q7nVFs3EMDtfg3Q/IHrFP0EaKt8wyN9RDYdk5Y4TWgTx0
-         Zwpg==
+        bh=avsElWR/fKi9kOjnFO0ifEAxNLupFUHqYpFEY06aggo=;
+        b=gnCXEqfSIPJnXuVj7yyEstCA0LGcw2qRJYgKMa+dA3LpgHTfTHmr2LHO5IOGDfEfHc
+         Y7J/RcCFjFUOEppG2fC+qARaGd5zTbwsmh4VYGXvkoGivgSgkq6UDFiy4MVwaFF9re0N
+         TXtNnmMVH5Hk9xKFRdKjoDih9W6OSdBU4wLxXRDY173iMR+QhDaWdKtZwOG3kNZsnEYk
+         q7YUlv26b3a68rD2VXknQzbAM64gPRizA+A/DtkCM4B1N1Tp7wpLwNzM2HoVixm0GJ7U
+         drVUXjCQ5xe2g8v1DKxHTBI5VeY8qtAsDPoERZ+83+zDg7iDFrXWsfmuFl0QAD0EKv3/
+         W+Ug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733328350; x=1733933150;
+        d=1e100.net; s=20230601; t=1733329569; x=1733934369;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=+tRejvXUxMNCLgTlAPgfWHyqlQiv1kzmjvxRvEB55ZU=;
-        b=APc4Qt69Qw9yGXSxsqPAQOh0lD/jWe5XQNoN8kQCnTn4HnufFJwvPvmJz1ymTf6/eZ
-         2zlf7tRxkQ33Jfz5O6rE+15HzSK5VCQz4J3xH0uwPUIM4lZsJA7ikd6U8E+J1HTkgD+R
-         4OTAPni7gXXDYxMnrRA3efyZ8X1Z1RUVRhrLNVAvac0gL2jjk0CXkUeBOj+t8IwZhVMC
-         wKXr1gK/6GQPDhoiia0ajILaHRhhFTV2HnXEX3OA2pENBR4E2Ys43PtAHAihRiFG6QHE
-         UZZaph+wPc5FtLrq638gvZDpK+tUnTUwtLgQV4MxAd2AD887hEZtTFMsrcLS1RJw7JcY
-         +aVA==
-X-Forwarded-Encrypted: i=1; AJvYcCXjVvIt5dhZFY6vjDbNO3Ooq2EbbQtL5Or4P6KnSJ/cZX18s2OW/Y4DQsuwnI36DiMfxtiKjutPLLGXKtU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyopadFxMoISz5unIHp6R4Q2fJt8e1Ne5gn1ADEq34i8HOClTzn
-	+vYf1sCD7BH0x8QZyLakCPP/uM55684v2Hd6yssqPp70yTVcKTfH61qsxfaGt2Y=
-X-Gm-Gg: ASbGncsqjFEDeEQAMmGtX1sXZTJzms104Ylr3c+dCBX7prXHmmb1X875UQwnez9i+/L
-	DP4iWK31thUH/ylqkrc74fef26nZxnviIgU3T01+oGGWWrWzA3qW+WS4sd7KwjzJPARu0Nm8zGW
-	fAeJIXAMyo41igihddBwzi5bJiyidnw+Wk5NPFJLmWaT5CpxT9xVvquufHjH0o5sTpJW1FT5YW5
-	zgmTjg+zO0wvWI5moXm3QBxCAP0LZag8A12fzz7ofP4u+3ZWOSzLZ9jA9BDTc33Qd0cchkEmw==
-X-Google-Smtp-Source: AGHT+IGVMkIZj30kVvAf36Q6fe+cEPTr02QBVfzgeQHxUvaYCIvIXkRxggrpjHDjlMn9DSOZZc5/CA==
-X-Received: by 2002:a05:6512:3052:b0:53d:f09e:99b0 with SMTP id 2adb3069b0e04-53e12961f1fmr4259889e87.0.1733328348299;
-        Wed, 04 Dec 2024 08:05:48 -0800 (PST)
-Received: from localhost (hdeb.n1.ips.mtn.co.ug. [41.210.141.235])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa599957594sm742833166b.197.2024.12.04.08.05.47
+        bh=avsElWR/fKi9kOjnFO0ifEAxNLupFUHqYpFEY06aggo=;
+        b=bwAkrQ9S+u51HkvP6CnXufiY1z9pjoWiCAuEJhpPwAwzLF3kE75bpFgsjzbJCi08DC
+         FWTP7rooCCqiFg7jzHOLRYwoFSMhelaALBxdBcDNFnmvNZr+zaddIu+hcUerjXtkxlDF
+         44BNwCpVobGymeRe7vuWs/ztjQc7caZhbq386lAZWNHJwNl0S+b1HOOq3i0+kSlQ3gcy
+         y22mMe+Ei9vSQmBX1qONA/aLyb7ytILoSvBwUJMUZNAxIHfjSRflU5l2++Q0D3wfnOdz
+         oJecSsiFoIz1vDWmP7rFztVNMn5l4IStGVz+rHRoRtEi1oY6yvHBRjJrxlV3kuB2xBOe
+         SW3w==
+X-Forwarded-Encrypted: i=1; AJvYcCXVKv4dsvX2DAymmk1lgNxeTc7hArlowVaS6CJ47pgE7IaBNXeAlBnWTOw5vCQY/qqewMWEM9bi0pDE8Z0+@vger.kernel.org, AJvYcCXhN58QVfPoEVudZobDL08cuRrCnwu2fS4OiGBqQIgvRP0RvIVQd/Gb4sPv31VzWH1O3S6yReLspADDmu0M@vger.kernel.org
+X-Gm-Message-State: AOJu0YwqM69VSA4iEDzQ/NCjkZaG4hamGC7Drn92Zs9+WB3HBFG+7IbJ
+	5sUtH+U8rxdduUBpD3GBsgrvDnD7EGikYXraHAdXYZiIuj8Voj/n
+X-Gm-Gg: ASbGncsabe46rqD+Qpp7KcLFyT5zZa6GSO4lpvlPndtrbs6ZHVoEYV5YMWLySqKgdbS
+	KD/QSaidPTx4Uak8qA1zDxF3/ZPm4DxGKy0O3FtQF5mPxiny76+V0Kxg12BfJo+B0wIl5sySxaT
+	Z787kduckjDIBZfKR8hT2CWp9sYJ9RNHPUOUuHo5Ma+OyBGxML9/+0rljpolxmo7xEdgmQEQoC5
+	7rkmFX/lpV3Rbh+4TL/U1Qz3lPBUlB9ryq90RvqGCNCV6hptybelQ/oc+Zmh0aWO4qBL0e0kevB
+	e5b9/ZR2k3E=
+X-Google-Smtp-Source: AGHT+IHZ1hSLNbyVNKzBWLLPkHij7c2uDQguaytbWO4jC4VLwSaGA+Z10qe03u3qav3/qIqYzj4nJg==
+X-Received: by 2002:a05:6512:3b83:b0:53d:d41e:b1a8 with SMTP id 2adb3069b0e04-53e129fdd48mr4338645e87.20.1733329568568;
+        Wed, 04 Dec 2024 08:26:08 -0800 (PST)
+Received: from gmail.com (83-233-6-197.cust.bredband2.com. [83.233.6.197])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53df646f19csm2252958e87.150.2024.12.04.08.26.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Dec 2024 08:05:47 -0800 (PST)
-Date: Wed, 4 Dec 2024 19:05:42 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Dave Penkler <dpenkler@gmail.com>
-Cc: gregkh@linuxfoundation.org, linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Marcello Carla' <marcello.carla@gmx.com>
-Subject: Re: [PATCH 3/4] staging: gpib: Fix erroneous removal of blank before
- newline
-Message-ID: <83d08acd-3195-41a0-9708-ad17aaa15b5d@stanley.mountain>
-References: <20241204145713.11889-1-dpenkler@gmail.com>
- <20241204145713.11889-4-dpenkler@gmail.com>
+        Wed, 04 Dec 2024 08:26:06 -0800 (PST)
+Date: Wed, 4 Dec 2024 17:26:04 +0100
+From: Marcus Folkesson <marcus.folkesson@gmail.com>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Russell King <linux@armlinux.org.uk>,
+	Gregory Clement <gregory.clement@bootlin.com>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Dinh Nguyen <dinguyen@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH 5/9] ARM: mvebu_v5_defconfig: rebuild default
+ configuration
+Message-ID: <Z1CCnGZvuBLZ2k2P@gmail.com>
+References: <20241204-defconfigs-v1-0-86587652d37a@gmail.com>
+ <20241204-defconfigs-v1-5-86587652d37a@gmail.com>
+ <303c44ca-879c-477c-a96c-9741bf3bf31a@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="kilpMY/xPkg/Gz5s"
+Content-Disposition: inline
+In-Reply-To: <303c44ca-879c-477c-a96c-9741bf3bf31a@lunn.ch>
+
+
+--kilpMY/xPkg/Gz5s
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241204145713.11889-4-dpenkler@gmail.com>
+Content-Transfer-Encoding: quoted-printable
 
-You're going to need to resend this.  Run checkpatch.pl etc.
+On Wed, Dec 04, 2024 at 05:04:25PM +0100, Andrew Lunn wrote:
+> On Wed, Dec 04, 2024 at 04:56:47PM +0100, Marcus Folkesson wrote:
+> > This configuration contains obsolete configuration options e.g.
+> > CONFIG_MTD_M25P80 which is integrated into MTD_SPI_NOR.
+> >=20
+> > Rebuild this configuration by run:
+> > make ARCH=3Darm mvebu_v5_defconfig
+> > make ARCH=3Darm savedefconfig
+> >=20
+> > Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
+>=20
+> You probably want to wait until Arnd big removal patchset lands,
+> because this is going to be immediately outdated.
 
-On Wed, Dec 04, 2024 at 03:57:12PM +0100, Dave Penkler wrote:
-> Replace original blanks with "."
-> 
+Thanks for the info, I wasn't aware of this.
 
-Take a look at how this look like on lore:
-https://lore.kernel.org/all/20241204145713.11889-4-dpenkler@gmail.com/
-The subject is hard to see.  It's better to think of it as the title
-instead of the first sentence.
+I will give it another shot when his patchset has landed.
 
-To be honest, I don't really understand this commit.  Presumably this
-gets printed out or something?  Can you cut a paste a few lines of
-before and after text to show us how it looks like?
+>=20
+>      Andrew
 
-regards,
-dan carpenter
+Best regards,
+Marcus Folkesson
 
+--kilpMY/xPkg/Gz5s
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEBVGi6LZstU1kwSxliIBOb1ldUjIFAmdQgpcACgkQiIBOb1ld
+UjLPcA//Y76oK6kUD1ojWaB5BoNve4LYgzpwUuIeHXLEpw6zWShBHmqs6RM3dzs9
+13xOZUPx4wFAWbYi06fdTM33ep0akpMgVwbNG6z12mI3W3MbRsz/CZ7cM8oVTTIo
+NViHeU9Jk8EZVX1udBAFToQIOeO5v1TICeBQF8aWhaNv5MgUNL6H2hQ/AaHxpjmv
+P8Trltk+r3A4d6g0ZcJ7LvQcIdePls3jPwnHMNHcb8YkfPCwTAo3mqWm3N9mT/SO
+CdRsblLyGHBqu+c/9bgqAZglgyAi4xjIhWJVBwdqVn9AgHRsKwmxBkX6Pa3dqr4l
+5P+PBnoqv/CAtlO9nakNDPu4NyeYJ8M6MkKU/5wjcVIuTNnsz9ntcdsJimmC48y9
+F9HI8xvUpJjiRtd5VnrCbU0fbw1nh2G6kpCArhsgmpq4Th5EAZxhOBV6yV3ClzJJ
+5zXckqwRG9XbFZMQ5nuC9J+qIzyjqTEfIKEgOB+ZlbAs4in0H25z02z7wmUVvkNS
+yj6neRSyB2xea+W7wkSdIcxH+1WFH24AdV6nxyYtzZjrLAT87yIf+EUQUJZztk7H
+plJs5NLilJBeeKsgC0Sj67Z//MtLLv+3FQZmyOTZg9eI0qvVd3A1SKRQLopTE2vT
+oF2TutNMWmnnauYXBXta/Kk2yC0ubur3Ne9bYG4sKni3yEI6WE0=
+=vnf8
+-----END PGP SIGNATURE-----
+
+--kilpMY/xPkg/Gz5s--
 
