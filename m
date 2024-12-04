@@ -1,98 +1,106 @@
-Return-Path: <linux-kernel+bounces-430594-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430595-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23B0F9E334F
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 06:49:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28ACC9E3350
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 06:52:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 96730B218A4
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 05:49:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1865286DD0
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 05:52:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C8481865FA;
-	Wed,  4 Dec 2024 05:49:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8EF8185B54;
+	Wed,  4 Dec 2024 05:52:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="awHI/dA7"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6132E155398;
-	Wed,  4 Dec 2024 05:49:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vR9rT1kO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 060F51DA5F;
+	Wed,  4 Dec 2024 05:52:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733291355; cv=none; b=RyZAE9qLY9c5vnVrbJjWOr3MBJm3G+vSDEPI2F7HL9b/mLVPztEIl0VMrMgBIIXDsYhNP9Q/J37Slj1pmjRxrcS1GghifuZQ4NbrBxdAoG9DONTHwKZg3P+nJ0LPrJPVeFBxjXYPLpoHpdXE4RLiNaBUdatBRGZzaCq3PycEsXA=
+	t=1733291563; cv=none; b=OyLDdmMSJ/txYmGf9KDVLmrmp+SRmYpUdwpNKAX1MBuuacYA4i0y9yXCwdjTkDEkkGKIPu9GB8t/G6FKgkUNoJxT8jOI9Sh50IaASEDApf2BjNzpUYdbBSeV1W4TVtMukFAkFZE+UAyFlGnjl4pa5JbzpJD4uBpIcNk6Zg6YgMs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733291355; c=relaxed/simple;
-	bh=IkEZtadZftKjRqH9yhts5fEPqBDe38sXpY9gxB7o5Mc=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=dKKBqaYPE2kMJAJgZFQDxANe8ceKzvoX4Un9r63YJniKOJhLM6AgkhAahsxCC0Fdh0P4CbPDb/TPzb76vErZtfwccNe0+sNoJEBzq4+G6D+AAp84u/+AQPsfO/QvkxnNQTdLgoR2lwBjL76PvBt/zqEoe7sSz48ZBE/3zV+zmt8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=awHI/dA7; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1134)
-	id E66E120BCAE6; Tue,  3 Dec 2024 21:49:13 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com E66E120BCAE6
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1733291353;
-	bh=WO1k8Du3NxHFMes7jiIFdn5k2SdK8KHlt0QIB6oFTsM=;
-	h=From:To:Cc:Subject:Date:From;
-	b=awHI/dA7tv/s5c6Ko1jjxO/b8h9g0EdFwF3Gko9BwbyI3WTUOmtJq+tiIgbtAlNWB
-	 0ML7L58npWa3taJFWWeXKCkwhndc55LCdO3wx1zye7sOi1SOk8kaZmxtbx5pSF0Uwb
-	 /2rnkyZsXPFKIoQiT7hd+mULCXskH/aDyOTvuVFg=
-From: Shradha Gupta <shradhagupta@linux.microsoft.com>
-To: linux-hyperv@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Shradha Gupta <shradhagupta@linux.microsoft.com>,
-	"K. Y. Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>,
-	Dexuan Cui <decui@microsoft.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Long Li <longli@microsoft.com>,
-	Konstantin Taranov <kotaranov@microsoft.com>,
-	Souradeep Chakrabarti <schakrabarti@linux.microsoft.com>,
-	Erick Archer <erick.archer@outlook.com>,
-	Shradha Gupta <shradhagupta@microsoft.com>,
-	stable@vger.kernel.org
-Subject: [PATCH net] net :mana :Request a V2 response version for MANA_QUERY_GF_STAT
-Date: Tue,  3 Dec 2024 21:48:20 -0800
-Message-Id: <1733291300-12593-1-git-send-email-shradhagupta@linux.microsoft.com>
-X-Mailer: git-send-email 1.8.3.1
+	s=arc-20240116; t=1733291563; c=relaxed/simple;
+	bh=6PH4CBuizRBwQhle5LobHoTfnjtbvPyw5NCKz/3TYD4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=geWmMO+xIEVMh99LLd36Vv79zPqPTCL9seNNIcOpZAM9ZevkYyzFGQb8hF9xfiA7EJGlsBL2qZ5g5baEDTmryxf2I1Ak8RtBaG0opYLz2/v2Im8dHDS2QOS/3s1FBQN2fIyhjcAc2CCIW5Z89dTSoBYiEj8hYgpZfwi7708hxzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vR9rT1kO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6EAA1C4CED1;
+	Wed,  4 Dec 2024 05:52:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733291562;
+	bh=6PH4CBuizRBwQhle5LobHoTfnjtbvPyw5NCKz/3TYD4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=vR9rT1kOjE0K0HJVhuntdO9rLvhDl4El72OFHK2KZrcXjKiVQkw3IZ8ebT26t/qjo
+	 hvBbw9lKOKXzvz6m2vrG7q5nmnRCq3g7wSGlU18VmvN6jlGZo3Va+6XBJOoYqg+7Gr
+	 9be/SMlV5+sgkXmwqt0uiuzGQZtMHIGCCOI8S9EDS0Wl/3eoCo84cfmcff9XrZ4oRy
+	 VtCqvpPMCObkL+yeSRKXKXOFzUHdwEGg3Kz+xnbHe3/8pbAyiBKPmkMCdHS6jTDXhx
+	 ZR0o+vhl9909R9IK5489QgjldCAMcoetjFe20D7eAXNVHlabBLgdcGHTHmPH7b6zz+
+	 7f5nxVwi7kqcQ==
+Date: Tue, 3 Dec 2024 21:52:41 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: "Christoph Lameter (Ampere)" <cl@gentwo.org>, linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org, clm@meta.com,
+	linux-kernel@vger.kernel.org, willy@infradead.org,
+	kirill@shutemov.name, bfoster@redhat.com
+Subject: Re: [PATCHSET v6 0/12] Uncached buffered IO
+Message-ID: <20241204055241.GA7820@frogsfrogsfrogs>
+References: <20241203153232.92224-2-axboe@kernel.dk>
+ <e31a698c-09f0-c551-3dfe-646816905e65@gentwo.org>
+ <668f271f-dc44-49e1-b8dc-08e65e1fec23@kernel.dk>
+ <36599cce-42ba-ddfb-656f-162548fdb300@gentwo.org>
+ <f70b7fa7-f88e-4692-ad07-c1da4aba9300@kernel.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f70b7fa7-f88e-4692-ad07-c1da4aba9300@kernel.dk>
 
-The current requested response version(V1) for MANA_QUERY_GF_STAT query
-results in STATISTICS_FLAGS_TX_ERRORS_GDMA_ERROR value being set to
-0 always.
-In order to get the correct value for this counter we request the response
-version to be V2.
+On Tue, Dec 03, 2024 at 03:41:53PM -0700, Jens Axboe wrote:
+> On 12/3/24 3:16 PM, Christoph Lameter (Ampere) wrote:
+> > On Tue, 3 Dec 2024, Jens Axboe wrote:
+> > 
+> >> I actually did consider using some form of temporal, as it's the only
+> >> other name I liked. But I do think cached_uncached becomes pretty
+> >> unwieldy. Which is why I just stuck with uncached. Yes I know it means
+> >> different things in different circles, but probably mostly an overlap
+> >> with deeper technical things like that. An honestly almost impossible to
+> >> avoid overlap these days, everything has been used already :-)
+> >>
+> >> IOW, I think uncached is probably still the most descriptive thing out
+> >> there, even if I'm certainly open to entertaining other names. Just not
+> >> anything yet that has really resonated with me.
+> > 
+> > How about calling this a "transitory" page? It means fleeting, not
+> > persistent and I think we have not used that term with a page/folio yet.
+> 
+> I also hit the thesaurus ;-)
+> 
+> I'm honestly not too worried about the internal name, as developers can
+> figure that out. It's more about presenting an external name that sys
+> developers will not need a lot of explaining to know what it's about.
+> And something that isn't too long. BRIEFLY_CACHED? TRANSIENT_CACHE?
+> 
+> Dunno, I keep going back to uncached as it's pretty easy to grok!
 
-Cc: stable@vger.kernel.org
-Fixes: e1df5202e879 ("net :mana :Add remaining GDMA stats for MANA to ethtool")
-Signed-off-by: Shradha Gupta <shradhagupta@linux.microsoft.com>
----
- drivers/net/ethernet/microsoft/mana/mana_en.c | 1 +
- 1 file changed, 1 insertion(+)
+<shrug> RWF_DONTCACHE, to match {I,DCACHE}_DONTCACHE ? ;)
 
-diff --git a/drivers/net/ethernet/microsoft/mana/mana_en.c b/drivers/net/ethernet/microsoft/mana/mana_en.c
-index 57ac732e7707..f73848a4feb3 100644
---- a/drivers/net/ethernet/microsoft/mana/mana_en.c
-+++ b/drivers/net/ethernet/microsoft/mana/mana_en.c
-@@ -2536,6 +2536,7 @@ void mana_query_gf_stats(struct mana_port_context *apc)
- 
- 	mana_gd_init_req_hdr(&req.hdr, MANA_QUERY_GF_STAT,
- 			     sizeof(req), sizeof(resp));
-+	req.hdr.resp.msg_version = GDMA_MESSAGE_V2;
- 	req.req_stats = STATISTICS_FLAGS_RX_DISCARDS_NO_WQE |
- 			STATISTICS_FLAGS_RX_ERRORS_VPORT_DISABLED |
- 			STATISTICS_FLAGS_HC_RX_BYTES |
--- 
-2.43.0
+They sound pretty similar ("load this so I can do something with it,
+evict it immediately if possible") though I wouldn't rely on people
+outside the kernel being familiar with the existing dontcaches.
 
+--D
+
+> -- 
+> Jens Axboe
+> 
+> 
 
