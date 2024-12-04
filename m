@@ -1,192 +1,137 @@
-Return-Path: <linux-kernel+bounces-432204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24FC59E476A
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 23:05:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 840199E476F
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 23:07:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6DB2163052
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 22:05:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5FC9F163928
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 22:07:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68900191F7E;
-	Wed,  4 Dec 2024 22:04:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0464B1990DB;
+	Wed,  4 Dec 2024 22:07:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="d0sEMyxy"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jypwH+ZI"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 005DD191F6C
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 22:04:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0FE3191F9C
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 22:07:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733349898; cv=none; b=C+UL+HoC5fiDptZXYdWoWP+JljAPJxKWnmmkL+qdVEFK0GrFZxOnSLOfnyfblajnRGbVT9ogV0aK1ijhYod+BqwrfLyLzkCFGe63IKjmXpruYSvcGQSBsWmb0X2XFIgnnhB+tbuRvgUsK8ejOOw+UA1OKv9XtZxWUjc6EtwxoaE=
+	t=1733350027; cv=none; b=iQqBXmB6NUZ9EBpWAI12Tq4Uz1mwc91G7fOW/DBj9VqXmUtR2LRaSkTRPERqq2z4vcVG8nBh4zO2fPvVikFK86+hf/VfA7JbzZJM9OJFs90tezFPDIP03a5pU7nHjgAX+XqkI2WzzU87K8oPts40BYtbK+EmEF2ciQax3pK85kw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733349898; c=relaxed/simple;
-	bh=yjtLRtRCKWAPsgc1vT8YYp8ipR0xLKwjHOr2+Rn5rZw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hlT0jccGtkbH1ywlGmtZpP0Wcas9uM2quyrgpGwQFbeMGoh2uyK4cDO1j/mFKHm+rkC9FXOh0lvO83/9RZf2EYI+WQpPLXf3LjqdDlVBXC3APk45GAtJtwfXTe9SAaU3r/B5/Ix2FgWvs8UFI0wn9Eir+RRj8nUvvLE10jQOrEE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=d0sEMyxy; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733349897; x=1764885897;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=yjtLRtRCKWAPsgc1vT8YYp8ipR0xLKwjHOr2+Rn5rZw=;
-  b=d0sEMyxyxY86A3DXBkExC64VyEtwvJn53bmWYaIK9JaoA00gfx750KVO
-   +LZJq3CLPwlMxP7axaBNPtS/TtiR8jfr9tqpq5BZqVlAgZ3o4GgWwCzaR
-   +9d56+LgnWtBQRQdMRw21Iv2TE/VUc2VJsRZ2bQnG3kiz/K/03GfioV3d
-   QWY5p6/oVu2OGkp2IemSBD9iyfGX0QVsHsPzflYhO+sDKBitwneThC8BE
-   64JSFmSyN8WMYSAUv9ugXeEpjI6vlpYkbG/NMPP05JPzOBik6s+hC6dcs
-   CDKZZdt9l0aj7/Pk8JYq8Ny3ifeIerQRZYvBo9KKxo4+vECKuVns2ewhs
-   w==;
-X-CSE-ConnectionGUID: QVTM6EfgQiqpdI5DvCCrmA==
-X-CSE-MsgGUID: C9HiPdTeSR6b+JZde8cjFg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11276"; a="33558907"
-X-IronPort-AV: E=Sophos;i="6.12,208,1728975600"; 
-   d="scan'208";a="33558907"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Dec 2024 14:04:56 -0800
-X-CSE-ConnectionGUID: 3jwPoGqFTvO0TbolozmAfA==
-X-CSE-MsgGUID: gLTI/H5tTDC51CHZk4Mscg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,208,1728975600"; 
-   d="scan'208";a="124711614"
-Received: from lkp-server02.sh.intel.com (HELO 1f5a171d57e2) ([10.239.97.151])
-  by orviesa002.jf.intel.com with ESMTP; 04 Dec 2024 14:04:52 -0800
-Received: from kbuild by 1f5a171d57e2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tIxUH-0003XN-0w;
-	Wed, 04 Dec 2024 22:04:49 +0000
-Date: Thu, 5 Dec 2024 06:03:51 +0800
-From: kernel test robot <lkp@intel.com>
-To: Nikolaus Voss <nv@vosn.de>,
-	Alexander Stein <alexander.stein@ew.tq-group.com>,
-	Liu Ying <victor.liu@nxp.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Fabio Estevam <festevam@denx.de>, Marek Vasut <marex@denx.de>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	miquel.raynal@bootlin.com, nikolaus.voss@haag-streit.com
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] drm: bridge: fsl-ldb: fixup mode on freq mismatch
-Message-ID: <202412050521.d87GwldA-lkp@intel.com>
-References: <20241203191111.47B56F7@mail.steuer-voss.de>
+	s=arc-20240116; t=1733350027; c=relaxed/simple;
+	bh=hcKJkigpDfJnVEw+g7V0Jj2o3XXwPHpc8NPohID/TZw=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=LyoeEkwPuTZJTlbltuIcYMhEwU0ZYZ0dyVpo2oPNsRM9GxiGPr+oS2Us84KNeTY+MTNa3hMy7ELrJfJhktTYDre5h+EJN3j/viqdu7eQsHBDCB8DgfS1kG/VYshJwwuwOZ/G3AMZUs4miV4NWHYRcr7ymE5idf51+wl2vx4599w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jypwH+ZI; arc=none smtp.client-ip=209.85.215.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-7f8b37ede6bso266894a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 14:07:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1733350025; x=1733954825; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PtfbGj6yD8jziLUL93ECE0Ci1aFCtpcn9XBirZhmTWc=;
+        b=jypwH+ZIWriM7GEy/cIzjLytXeM1ys4jdK+aQIQ/1/5g2p4alby9vr5wlqFvvTbtRP
+         jnPkH2G47wN56kGa70ARbR4zRpOIaPjMfzOcxNKjmjjOBEjUj9IuqieHBzucsTQ2Ufbl
+         j/cJG8UcFAWT0ccPLvTrcQ+JRuzfbjUnROAi1fSHXUps1hPtrBH4g/BOEyb/j6eWs1SZ
+         o4/whbtDd8D/n1f3rQTMdJyVAnskq+mIZqJuQ9BWVDTtlg3hGyH8JthJWhw3tBkp+23J
+         Ip6zpFSVcBTbMutLZ9hyoCFhzYjJ77XkxV+TbfD2RlsJmaarnc7RAL+gJdBMhPUsngt0
+         crxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733350025; x=1733954825;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=PtfbGj6yD8jziLUL93ECE0Ci1aFCtpcn9XBirZhmTWc=;
+        b=iJ3aE/AKh/CxaMa8CQn+/DmJZ6eX5JCTd0NgdmoT8jSj4tEYzpNy7DrPYs/JcMX4VT
+         88/BCO3KqWpN4exE4mjvttKUTu5Za77bKTxQzFocV9W1sEnFgdgvP9Xz3Ouuu8Go8g2V
+         rFTZac9Xk944kXNdFLaQVbo9E3zn4HGKe0g+HWBodFgucObaN30EdT4xmVzqetc4Q1Xl
+         nXtEw/3RH0E4KL4vXgZqybITvHwF3RRUw0PAq7U3gJuMQSU3SUtX2GS8dq7qXfnQ0Z1L
+         smQ9ykeUlNnH98sToCRKoaGeF7Z7WZeEelOFeyQ8cSlWQTcxu+pOjDuGt4Huvn5IB66B
+         AfwQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVzco+cc1WJ2BPFltSUApoKmcE/oGet7XJxJAdGwPgd6tWoKdTOtdKTQJpUZE9mFg5Gx8Luk3SMRnIWW6M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJEQk2J6lXquBULnWSsYx91kPbHBtmMOxUCT8Y0dvDHIYXDzYj
+	Xrb9c2tbslfD/6q+I4BKeC5G6yICmzrFINftuwgEwvffR+GOS/n0/ciCkRJlwt6OYVSqZPUlcO5
+	tTw==
+X-Google-Smtp-Source: AGHT+IGPXD2ivV206newVgIjgG0cM79vtCVvTqItdXqiGWrhdXRy+QwdJhqaPWzEJIHaT7cvQqYC9m/CM0M=
+X-Received: from pfbcu14.prod.google.com ([2002:a05:6a00:448e:b0:724:e19a:dfd1])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a21:118e:b0:1e0:f059:cd4
+ with SMTP id adf61e73a8af0-1e16539f77cmr11618855637.4.1733350025283; Wed, 04
+ Dec 2024 14:07:05 -0800 (PST)
+Date: Wed, 4 Dec 2024 14:06:58 -0800
+In-Reply-To: <CAGdbjm+GmtYEQJsVspFC3_-5nx83qABDroPmyCHPebiKRt-4HQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241203191111.47B56F7@mail.steuer-voss.de>
+Mime-Version: 1.0
+References: <20240411140445.1038319-1-szy0127@sjtu.edu.cn> <20240411140445.1038319-3-szy0127@sjtu.edu.cn>
+ <Z0-h73xBQgGuAI3H@google.com> <CAGdbjm+GmtYEQJsVspFC3_-5nx83qABDroPmyCHPebiKRt-4HQ@mail.gmail.com>
+Message-ID: <Z1DSgmzo3sX0gWY3@google.com>
+Subject: Re: [PATCH v4 2/2] KVM: SVM: Flush cache only on CPUs running SEV guest
+From: Sean Christopherson <seanjc@google.com>
+To: Kevin Loughlin <kevinloughlin@google.com>
+Cc: Zheyun Shen <szy0127@sjtu.edu.cn>, thomas.lendacky@amd.com, pbonzini@redhat.com, 
+	tglx@linutronix.de, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Nikolaus,
+On Wed, Dec 04, 2024, Kevin Loughlin wrote:
+> On Tue, Dec 3, 2024 at 4:27=E2=80=AFPM Sean Christopherson <seanjc@google=
+.com> wrote:
+> > > @@ -2152,7 +2191,7 @@ void sev_vm_destroy(struct kvm *kvm)
+> > >        * releasing the pages back to the system for use. CLFLUSH will
+> > >        * not do this, so issue a WBINVD.
+> > >        */
+> > > -     wbinvd_on_all_cpus();
+> > > +     sev_do_wbinvd(kvm);
+> >
+> > I am 99% certain this wbinvd_on_all_cpus() can simply be dropped.  sev_=
+vm_destroy()
+> > is called after KVM's mmu_notifier has been unregistered, which means i=
+t's called
+> > after kvm_mmu_notifier_release() =3D> kvm_arch_guest_memory_reclaimed()=
+.
+>=20
+> I think we need a bit of rework before dropping it (which I propose we
+> do in a separate series), but let me know if there's a mistake in my
+> reasoning here...
+>=20
+> Right now, sev_guest_memory_reclaimed() issues writebacks for SEV and
+> SEV-ES guests but does *not* issue writebacks for SEV-SNP guests.
+> Thus, I believe it's possible a SEV-SNP guest reaches sev_vm_destroy()
+> with dirty encrypted lines in processor caches. Because SME_COHERENT
+> doesn't guarantee coherence across CPU-DMA interactions (d45829b351ee
+> ("KVM: SVM: Flush when freeing encrypted pages even on SME_COHERENT
+> CPUs")), it seems possible that the memory gets re-allocated for DMA,
+> written back from an (unencrypted) DMA, and then corrupted when the
+> dirty encrypted version gets written back over that, right?
+>=20
+> And potentially the same thing for why we can't yet drop the writeback
+> in sev_flush_encrypted_page() without a bit of rework?
 
-kernel test robot noticed the following build warnings:
+Argh, this last one probably does apply to SNP.  KVM requires SNP VMs to be=
+ backed
+with guest_memfd, and flushing for that memory is handled by sev_gmem_inval=
+idate().
+But the VMSA is kernel allocated and so needs to be flushed manually.  On t=
+he plus
+side, the VMSA flush shouldn't use WB{NO}INVD unless things go sideways, so=
+ trying
+to optimize that path isn't worth doing.
 
-[auto build test WARNING on linus/master]
-[also build test WARNING on drm-intel/for-linux-next drm-intel/for-linux-next-fixes drm-tip/drm-tip v6.13-rc1 next-20241204]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Nikolaus-Voss/drm-bridge-fsl-ldb-fixup-mode-on-freq-mismatch/20241204-115306
-base:   linus/master
-patch link:    https://lore.kernel.org/r/20241203191111.47B56F7%40mail.steuer-voss.de
-patch subject: [PATCH v2] drm: bridge: fsl-ldb: fixup mode on freq mismatch
-config: s390-allmodconfig (https://download.01.org/0day-ci/archive/20241205/202412050521.d87GwldA-lkp@intel.com/config)
-compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 592c0fe55f6d9a811028b5f3507be91458ab2713)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241205/202412050521.d87GwldA-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202412050521.d87GwldA-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   In file included from drivers/gpu/drm/bridge/fsl-ldb.c:9:
-   In file included from include/linux/module.h:19:
-   In file included from include/linux/elf.h:6:
-   In file included from arch/s390/include/asm/elf.h:181:
-   In file included from arch/s390/include/asm/mmu_context.h:11:
-   In file included from arch/s390/include/asm/pgalloc.h:18:
-   In file included from include/linux/mm.h:2223:
-   include/linux/vmstat.h:504:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-     504 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     505 |                            item];
-         |                            ~~~~
-   include/linux/vmstat.h:511:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-     511 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     512 |                            NR_VM_NUMA_EVENT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
-   include/linux/vmstat.h:524:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-     524 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     525 |                            NR_VM_NUMA_EVENT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~~
->> drivers/gpu/drm/bridge/fsl-ldb.c:125:30: warning: omitting the parameter name in a function definition is a C23 extension [-Wc23-extensions]
-     125 |                                 struct drm_bridge_state *,
-         |                                                          ^
-   drivers/gpu/drm/bridge/fsl-ldb.c:127:33: warning: omitting the parameter name in a function definition is a C23 extension [-Wc23-extensions]
-     127 |                                 struct drm_connector_state *)
-         |                                                             ^
-   6 warnings generated.
-
-
-vim +125 drivers/gpu/drm/bridge/fsl-ldb.c
-
-   123	
-   124	static int fsl_ldb_atomic_check(struct drm_bridge *bridge,
- > 125					struct drm_bridge_state *,
-   126					struct drm_crtc_state *crtc_state,
-   127					struct drm_connector_state *)
-   128	{
-   129		struct fsl_ldb *fsl_ldb = to_fsl_ldb(bridge);
-   130		const struct drm_display_mode *mode = &crtc_state->mode;
-   131		unsigned long requested_link_freq =
-   132			fsl_ldb_link_frequency(fsl_ldb, mode->clock);
-   133		unsigned long freq = clk_round_rate(fsl_ldb->clk, requested_link_freq);
-   134	
-   135		if (freq != requested_link_freq) {
-   136			/*
-   137			 * this will lead to flicker and incomplete lines on
-   138			 * the attached display, adjust the CRTC clock
-   139			 * accordingly.
-   140			 */
-   141			struct drm_display_mode *adjusted_mode = &crtc_state->adjusted_mode;
-   142			int pclk = freq / fsl_ldb_link_frequency(fsl_ldb, 1);
-   143	
-   144			if (adjusted_mode->clock != pclk) {
-   145				dev_warn(fsl_ldb->dev, "Adjusted pixel clk to match LDB clk (%d kHz -> %d kHz)!\n",
-   146					 adjusted_mode->clock, pclk);
-   147	
-   148				adjusted_mode->clock = pclk;
-   149				adjusted_mode->crtc_clock = pclk;
-   150			}
-   151		}
-   152	
-   153		return 0;
-   154	}
-   155	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> It's true that the SNP firmware will require WBINVD before
+> SNP_DF_FLUSH [1], but I think we're only currently doing that when an
+> ASID is recycled, *not* when an ASID is deactivated.
+>=20
+> [1] https://www.amd.com/content/dam/amd/en/documents/epyc-technical-docs/=
+specifications/56860.pdf
 
