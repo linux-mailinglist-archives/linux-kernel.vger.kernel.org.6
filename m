@@ -1,185 +1,98 @@
-Return-Path: <linux-kernel+bounces-431063-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDD709E3886
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 12:15:43 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C0C99E38B1
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 12:23:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E2FE281665
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 11:15:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CBD7CB267E0
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 11:14:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0A111F7090;
-	Wed,  4 Dec 2024 11:11:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="bj2C1lz/"
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F3811DEFF3;
+	Wed,  4 Dec 2024 11:11:45 +0000 (UTC)
+Received: from mail-vk1-f177.google.com (mail-vk1-f177.google.com [209.85.221.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49B8F1F6680;
-	Wed,  4 Dec 2024 11:11:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5FB81B6D1B
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 11:11:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733310715; cv=none; b=XlCrND9qPRAW39NrSyVkErNGaPyL6DFuVax6TknlwTmKEA3pjaxItqvxLycf3Z/J3ATnX+GN1uHktnoug3JuqFVYsQaeZzMGzGZ/zNgmpRHxUGkHQGx1DWmmW4KX6aIrQtjej6FM48trYL9BjmshLjyd0y2FzVjrO8/WUhR9QLQ=
+	t=1733310704; cv=none; b=tig3n8eJ02XWP0MXSOe3Lwu3ubb2G7InhLqCi7MblrLMrfINeopNZ0hup6sF4+oZXb3zGPwxXgwRxaC2G+D4zSGKP9873W5aOG6Vkfy7RaJiox+UqNG0/VgTj/SV79rYAsx3x4NKXgseae62HtuVQtP9E1yzqcEmT1/asejXh2w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733310715; c=relaxed/simple;
-	bh=FsUQzpLlESBToq4cj3LdWkpnyMvxTeQO7TkZ2B6Kzt8=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=S86uU2MOD7eJ1/ehghe1hE4Jd+qBdt33sSEyX5pR4t9Mi0Uo5ON3FjK8zWG/eKCL6HCsyiT67VpmwWTNGeLBuIE1smo+HJG6bs6+agR2QPo+n8LNxtyHrkVQTcswBFZL7jdWd5X71MkkeBqcPqyciwTDkjEme4vDctv3YlB6cng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=bj2C1lz/; arc=none smtp.client-ip=198.47.19.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 4B4BBlMh1593540
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 4 Dec 2024 05:11:47 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1733310707;
-	bh=yxTK74BG9onPeTZN2lVJE4j1Ooe6Fla/IoZvSgHbKgM=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=bj2C1lz/Et9x6RyMvXre/4LF7FZA7zGEzMDN7E+kBgcqu7ArzkduuGHkL5TpH+HcW
-	 YUrxodhkojQIztAGG2Bc7v5hoz4FS3gkJHeWpCr4R2OaX5EFFSLO/jgq5EOwg2zNuH
-	 TwKyG0ze7qivQfoG0i+v7vgjJXqxgq53nuQJVoCI=
-Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4B4BBl1Y018456
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 4 Dec 2024 05:11:47 -0600
-Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 4
- Dec 2024 05:11:46 -0600
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 4 Dec 2024 05:11:46 -0600
-Received: from uda0510294.dhcp.ti.com (uda0510294.dhcp.ti.com [172.24.227.151])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4B4BBVUO083186;
-	Wed, 4 Dec 2024 05:11:44 -0600
-From: Beleswar Padhi <b-padhi@ti.com>
-To: <andersson@kernel.org>, <mathieu.poirier@linaro.org>
-CC: <afd@ti.com>, <hnagalla@ti.com>, <u-kumar1@ti.com>,
-        <jan.kiszka@siemens.com>, <christophe.jaillet@wanadoo.fr>,
-        <b-padhi@ti.com>, <linux-remoteproc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH 4/5] remoteproc: k3-r5: Use devm_ioremap_wc() helper
-Date: Wed, 4 Dec 2024 16:41:29 +0530
-Message-ID: <20241204111130.2218497-5-b-padhi@ti.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241204111130.2218497-1-b-padhi@ti.com>
-References: <20241204111130.2218497-1-b-padhi@ti.com>
+	s=arc-20240116; t=1733310704; c=relaxed/simple;
+	bh=n5LBtRGH3H2e/8iTkx//qGhF9kLk6nyYwlFkRbpEh1M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lnJsstoU1LO3QWt3Sd3LLeKpUG8YUVEB1g63qtJa7s2+1E6w2csEFiVv9FDv6kCurefchDl/sNyzChd7uHbA8LKn+AevCxGklQe/jIDzRECYHNnUOU/R3eX44Qh52ICeIL03nq0OY82vkw/uzXZDXO+qdEmF+bRf5n3PfJilOwo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f177.google.com with SMTP id 71dfb90a1353d-515e1d6b63bso32919e0c.3
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 03:11:42 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733310701; x=1733915501;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=LPYnA7/9x57u1klscNZiVkfrCJk08FmaaTzofAiNVwY=;
+        b=ga/ZCEh2558mBGZmZh9CveOpb6eImrpReKA86B5djwcUouC6f7ULljMUM/kt8M5Et0
+         zgMVVEw/SAEl7NDgkZ2aqwEimxQYNp7tUnTkDHbPWhvGlBgkSdc2aJ1c67lAmWAWBXdB
+         Ov4B8LO6KQruBFYYvXXjgWHSpSD+t2JnA6h56BLSkgKTp7QK0JlH7heGUoVgCqL7fveD
+         smTTPEcevvwTTE0AhWhB6oTvM9sXPHMZ2IcT+a6N19ge56G8aV9BTcN/254ssxUzz9zU
+         9XamgoQNybtKamRETgSt+h51RLoYuzr3om/kvEikh0TFvp0E2BBes8JBQTOBtAua/fGI
+         ToAw==
+X-Gm-Message-State: AOJu0YzTxNVqf7I8cMexQGLNhWn5rr2NXyJ+Op2iDqJbIx3nASZAbq+g
+	jj80qf7sAwu8kWtO9fTHdK7cj3fssBYChreBIPpnsVs3PgswRpzh8piL0EN4
+X-Gm-Gg: ASbGnctDAm80KgOGIi/XSnxMpQzyakKRZfXPf4Dq8Ze8/DRWkYWPmGK6Y+UQNtNttSZ
+	itTXd9fL5QHEym6H9x+uMDPaNxOv1EbkEqq2NCsVfZjiSEyxYpIcMj7vs3zrXxjSiL1+YhfIIRQ
+	q/NwEU7ESX+RDsj9c3QoBYgv7AjLOnNnTaacvRXCURc2LiaO1wxF3G9LtAgYpeKAp7Ts9TBUuL9
+	3/8/pxzlM9qVc7Wc0eRqz3c/F1k6Suj7/gIMRzYAaTliN9NWn5O3AG+uC0C776J8LvwgElztKNk
+	P0pWMsOdij3z
+X-Google-Smtp-Source: AGHT+IEFdFFxjyjOrW3CsvBucVPuFlBTp655kHdqWtQUS3+K1f3TUZJ2Mxvp/Dx3RCI81+V9e4PaEA==
+X-Received: by 2002:a05:6122:4382:b0:50c:55f4:b529 with SMTP id 71dfb90a1353d-515bf525a49mr8390706e0c.8.1733310701041;
+        Wed, 04 Dec 2024 03:11:41 -0800 (PST)
+Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com. [209.85.217.52])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-515c71f808dsm238283e0c.30.2024.12.04.03.11.40
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 04 Dec 2024 03:11:40 -0800 (PST)
+Received: by mail-vs1-f52.google.com with SMTP id ada2fe7eead31-4adcd7e153bso1918742137.0
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 03:11:40 -0800 (PST)
+X-Received: by 2002:a05:6102:c92:b0:4af:56c:1cb5 with SMTP id
+ ada2fe7eead31-4af973adffdmr7265701137.19.1733310700528; Wed, 04 Dec 2024
+ 03:11:40 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+References: <CAHk-=whiWXVxhd0BATPPd6t36HJ49vApdJXZOYuAJtRA5pRi1g@mail.gmail.com>
+In-Reply-To: <CAHk-=whiWXVxhd0BATPPd6t36HJ49vApdJXZOYuAJtRA5pRi1g@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 4 Dec 2024 12:11:29 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdUvSwaknDnU=t1Vq7rpNkpG85bEP_ZzyTRUF2Q7H3=Stg@mail.gmail.com>
+Message-ID: <CAMuHMdUvSwaknDnU=t1Vq7rpNkpG85bEP_ZzyTRUF2Q7H3=Stg@mail.gmail.com>
+Subject: No build regressions/improvements in v6.13-rc1
+To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc: Michael Ellerman <mpe@ellerman.id.au>, Stephen Rothwell <sfr@canb.auug.org.au>
+Content-Type: text/plain; charset="UTF-8"
 
-Use a device lifecycle managed ioremap helper function. This helps
-prevent mistakes like unmapping out of order in cleanup functions and
-forgetting to unmap on all error paths.
+After 656 reports (the first one was for v2.6.36-rc2 on 2010-08-25),
+there won't be any more reports, as the linux-next team had to shut
+down the kisskb build service.
 
-Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
----
- drivers/remoteproc/ti_k3_r5_remoteproc.c | 40 +++++-------------------
- 1 file changed, 8 insertions(+), 32 deletions(-)
+Thanks to the team for all the good work during all these years!
 
-diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-index 2966cb210403..1a7681502f62 100644
---- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
-+++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-@@ -1004,17 +1004,13 @@ static int k3_r5_reserved_mem_init(struct k3_r5_rproc *kproc)
- 	/* use remaining reserved memory regions for static carveouts */
- 	for (i = 0; i < num_rmems; i++) {
- 		rmem_np = of_parse_phandle(np, "memory-region", i + 1);
--		if (!rmem_np) {
--			ret = -EINVAL;
--			goto unmap_rmem;
--		}
-+		if (!rmem_np)
-+			return -EINVAL;
- 
- 		rmem = of_reserved_mem_lookup(rmem_np);
- 		of_node_put(rmem_np);
--		if (!rmem) {
--			ret = -EINVAL;
--			goto unmap_rmem;
--		}
-+		if (!rmem)
-+			return -EINVAL;
- 
- 		kproc->rmem[i].bus_addr = rmem->base;
- 		/*
-@@ -1029,12 +1025,11 @@ static int k3_r5_reserved_mem_init(struct k3_r5_rproc *kproc)
- 		 */
- 		kproc->rmem[i].dev_addr = (u32)rmem->base;
- 		kproc->rmem[i].size = rmem->size;
--		kproc->rmem[i].cpu_addr = ioremap_wc(rmem->base, rmem->size);
-+		kproc->rmem[i].cpu_addr = devm_ioremap_wc(dev, rmem->base, rmem->size);
- 		if (!kproc->rmem[i].cpu_addr) {
- 			dev_err(dev, "failed to map reserved memory#%d at %pa of size %pa\n",
- 				i + 1, &rmem->base, &rmem->size);
--			ret = -ENOMEM;
--			goto unmap_rmem;
-+			return -ENOMEM;
- 		}
- 
- 		dev_dbg(dev, "reserved memory%d: bus addr %pa size 0x%zx va %pK da 0x%x\n",
-@@ -1045,19 +1040,6 @@ static int k3_r5_reserved_mem_init(struct k3_r5_rproc *kproc)
- 	kproc->num_rmems = num_rmems;
- 
- 	return 0;
--
--unmap_rmem:
--	for (i--; i >= 0; i--)
--		iounmap(kproc->rmem[i].cpu_addr);
--	return ret;
--}
--
--static void k3_r5_reserved_mem_exit(struct k3_r5_rproc *kproc)
--{
--	int i;
--
--	for (i = 0; i < kproc->num_rmems; i++)
--		iounmap(kproc->rmem[i].cpu_addr);
- }
- 
- /*
-@@ -1285,10 +1267,8 @@ static int k3_r5_cluster_rproc_init(struct platform_device *pdev)
- 		}
- 
- 		ret = rproc_add(rproc);
--		if (ret) {
--			dev_err(dev, "rproc_add failed, ret = %d\n", ret);
--			goto err_add;
--		}
-+		if (ret)
-+			dev_err_probe(dev, ret, "rproc_add failed\n");
- 
- 		/* create only one rproc in lockstep, single-cpu or
- 		 * single core mode
-@@ -1333,8 +1313,6 @@ static int k3_r5_cluster_rproc_init(struct platform_device *pdev)
- 
- err_powerup:
- 	rproc_del(rproc);
--err_add:
--	k3_r5_reserved_mem_exit(kproc);
- out:
- 	/* undo core0 upon any failures on core1 in split-mode */
- 	if (cluster->mode == CLUSTER_MODE_SPLIT && core == core1) {
-@@ -1379,8 +1357,6 @@ static void k3_r5_cluster_rproc_exit(void *data)
- 		mbox_free_channel(kproc->mbox);
- 
- 		rproc_del(rproc);
--
--		k3_r5_reserved_mem_exit(kproc);
- 	}
- }
- 
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.34.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
