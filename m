@@ -1,137 +1,126 @@
-Return-Path: <linux-kernel+bounces-431019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FCD89E3839
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 12:04:59 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D87159E3846
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 12:06:49 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4CF82161DCA
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 11:04:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4BFA3286A04
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 11:06:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEE9A1B21A6;
-	Wed,  4 Dec 2024 11:04:52 +0000 (UTC)
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BB0A1B6D1A;
+	Wed,  4 Dec 2024 11:05:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Robn0ufy"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0DFD16F851;
-	Wed,  4 Dec 2024 11:04:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A49A1B4F15;
+	Wed,  4 Dec 2024 11:05:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733310292; cv=none; b=AzEh0tYoU+NxZny4t8gtR5J64g9pWEzMezveMDjrfgyn0tp7LRi/vYxnZOkuYVQFIsFE1LEXal3ASQ4p6Abruc/QQy1aPJUqIo/C6LtVpF2viLBvuWWayAUSON7OZLbyhh9463XkFtXv7bjhJ25II1LKcm+QI4o2zQYYq9KtDHY=
+	t=1733310351; cv=none; b=iM9bDDMmfeIipzo4N4jBHbfKdAn+UMMEApXWHnmoFpHT/IsyMNpp+o+MM0Eukufo2FAGIA+LqC+3TVgXnk3VX8lWJnU+mtVvCpFNTyuwB4m4KEe9v5Yjl0oqm2GepVoqTfzeyz5vzLdDblvwRlHeGhc+uwT/9qX9SZz15mYtPsU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733310292; c=relaxed/simple;
-	bh=pfdWCCU3zg2HoIKV9BlVcVjxYju5eAMX7FU0CJL+T7U=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=p/4xDpL6lhZYfcWx+AQVP+iBzqAWuN2ErCxpEvpFDV6JDESnEWQDHinOYTR5HNfYFBjZn2lDMSX3EI+2Q1SZTZxCG2NmXTpe4WW7cu59j2dQDDAm1Flzm7WosBjTnWzUDX5vlbV3S+yjZE1LcjieXA7VXV9H6k/6mXLHsRf10NE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4349f160d62so54606225e9.2;
-        Wed, 04 Dec 2024 03:04:50 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733310289; x=1733915089;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5nWpVhGiEzkzR14cfmahgSoPpiD27clH2JUCpX9Y4GI=;
-        b=VMChLEWPK/3Gx4Tl8eAHXY8+KTHb6ktnXG2Y+Ddr0+A81UF9uPKNl3elJxaa6omJlq
-         zD+uH5EOEDLVZC0VyJaAFzHfdfoHuL8FyzKMiactkN+3CItPXvpwq3Hj2PdSnl0iTWNg
-         a+zgBawJgwLZ7L8nQ6YChMG1r22ToDQVtv5WGNfnf949H+M706enf7sU9pfKlHObG9OY
-         PiihAOCYOLtuNjXLV31ITITRjZ+BpVsLXt3+gvC7XhJeXY9DZdpzDDHaPLTDhKVxDanF
-         h7MNcS80MCprQ8KegPDAG+uT2wtg9cHYQ6jvmt+qUl8rDd/64l3IvJsz5tVM6zXZqNwN
-         KmmA==
-X-Forwarded-Encrypted: i=1; AJvYcCVRAt9Lt9D89M59HNM6dlp3V7X4Ql4QpJCblziDjej3TEodk3J/IYv82x38L6MAhrypONnKUk4rkoBPx0DW@vger.kernel.org, AJvYcCXFDCNKs529MjVQ1tZea5Nz8JN0C1XGWPFUKbLmi0GS3EJQzd0k41QbPvXT2e8IZeiLtDJk0PI9@vger.kernel.org
-X-Gm-Message-State: AOJu0YyT4SRtgTRQgos1vspw/nLl1RJWyaASMo5e+pg1Aobgn0DuqlVb
-	HyfL3XTqGuE/MiuCrbg4Ce5WBobs6EqCzwrP9UPL4QZmtAo03Pjb8+kdrmPjV8A=
-X-Gm-Gg: ASbGnct48p80TV2MCFlh1qYDQW06DjWh+lbKB8jqv0iLDj8yaJ9IgpVODC89NEyHWvP
-	8g7aF8LiNOLSepdmi/wZ/UQ8I86l+COz8BLzc4+uKLFpod4XfaV3QICy4coZKS2vpXKljvo44gC
-	onR0+N7AdNyJefMku86JevmTq1rX/PycQJfZtcOWXewBGPIPpThVtNcmFKnNz/dOhiWylYysd6L
-	Pg49edpcdNnTQdJoT0HA6fB08xuuEJfQvfduZBeTxjOuye7N/2WQVVF+VtKpe9fZLs=
-X-Google-Smtp-Source: AGHT+IF11i6X+UX63otizZi1hsbf9AYk/HOswsNDjbQusJRV2va98zAhq1wnwgU2U2BVZkKnLxd0kA==
-X-Received: by 2002:a05:6000:2aa:b0:385:ef2f:92ad with SMTP id ffacd0b85a97d-385fd3c5699mr5634068f8f.10.1733310288788;
-        Wed, 04 Dec 2024 03:04:48 -0800 (PST)
-Received: from costa-tp.redhat.com ([2a00:a041:e280:5300:9068:704e:a31a:c135])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385de98d618sm15410843f8f.90.2024.12.04.03.04.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Dec 2024 03:04:48 -0800 (PST)
-From: Costa Shulyupin <costa.shul@redhat.com>
-To: Waiman Long <longman@redhat.com>,
-	Tejun Heo <tj@kernel.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	=?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>,
-	cgroups@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Costa Shulyupin <costa.shul@redhat.com>
-Subject: [PATCH v2] cgroup/cpuset: Remove stale text
-Date: Wed,  4 Dec 2024 13:04:41 +0200
-Message-ID: <20241204110442.348402-1-costa.shul@redhat.com>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1733310351; c=relaxed/simple;
+	bh=JiGQ0b5hfc6zIlLKLwEQZtJz1RrCwE+wHub95g3gf8Q=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=CBli1TQoFBThbf8F43YraTDMyWxjne1uOXkwlUFPtxyMIpfdruzR2KFsB+ho3PjvxarYWuX59mti/jUBHc1HmmhMEuKc/7oDk0TS/HHs5ZxSmgNctfOhDiBjnoVrAfjKktY9gtvwocjUiJWU064dixSv0/YblK9bZcq3CzTDfb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=Robn0ufy; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [127.0.1.1] (91-157-155-49.elisa-laajakaista.fi [91.157.155.49])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 27B25B2B;
+	Wed,  4 Dec 2024 12:05:17 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1733310317;
+	bh=JiGQ0b5hfc6zIlLKLwEQZtJz1RrCwE+wHub95g3gf8Q=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=Robn0ufyBOG+hqQdgKF/N4beJb1DNDm9RxsarXTM7NGftKcnjHYN+J6jrGmyMiQoX
+	 BDRRmBRsDcTA9R4r7QbXHCNZNvMNNr4Q/b2i+jlR+7UTmyZQ/ofQHCBgo5WGW36UZv
+	 KMk6lgZC8Nfd5oPQapZ6d+Wdt3g8GHrUkc+9njZM=
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Date: Wed, 04 Dec 2024 13:05:16 +0200
+Subject: [PATCH v3 02/15] media: i2c: ds90ub960: Fix UB9702 refclk register
+ access
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241204-ub9xx-fixes-v3-2-a933c109b323@ideasonboard.com>
+References: <20241204-ub9xx-fixes-v3-0-a933c109b323@ideasonboard.com>
+In-Reply-To: <20241204-ub9xx-fixes-v3-0-a933c109b323@ideasonboard.com>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Sakari Ailus <sakari.ailus@linux.intel.com>, 
+ Hans Verkuil <hverkuil-cisco@xs4all.nl>, 
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+ Jai Luthra <jai.luthra@ideasonboard.com>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, stable@vger.kernel.org
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1341;
+ i=tomi.valkeinen@ideasonboard.com; h=from:subject:message-id;
+ bh=JiGQ0b5hfc6zIlLKLwEQZtJz1RrCwE+wHub95g3gf8Q=;
+ b=owEBbQKS/ZANAwAIAfo9qoy8lh71AcsmYgBnUDeCRelz6rQj2edvFCi2rJaavv+P4syT8E82O
+ bvOHkiM7p2JAjMEAAEIAB0WIQTEOAw+ll79gQef86f6PaqMvJYe9QUCZ1A3ggAKCRD6PaqMvJYe
+ 9QP6EACZkXJIm8OWPDB5CPgg9sL7DBp6UbTF+C5UgJ64YDMgOM2gIg92Kk8p47qRwu8MzSqy5Qz
+ dMvwwKzfkeYI6SreqhiSpIFNB1dF1TowOKcuEd1oQPRTKtAdmPkRhCgNjorPmLnLPFPmF/mpn8e
+ sAm3HkmJ3Xwhx9qTmzs/oRNs1hm/iq4cKXbxTiW5tE5vUwOmNvTjDWFHKwDlBtDdn+wMkA6BfXg
+ BSoSIkMxHrHY/fqWnwrovqaDeOcCg59ZlMBISXlyzPgLalOtWBnBu53wxl+GXOwv1Ic6ZlHEGB7
+ iyxr1z6UbnSwR0H6VLrZbMrx41q4iQXgRpEsngyzg9fsW6hrpsexSMWWCaX/GDkGJ7sUIsW8Ye5
+ QDnHXQlhAT2IKsxyXprugIM4HkFHbTqweMA+DOx0djlFKKhPgLkplfrX2OmEx8SlBnMXFkIyZ4Z
+ YdpdUwST9TtA77PVecDk2e8S2+xRtcTlFjyU4XV8Q9QGY2lmR327dWdtnCMuoZuxHwnZNB8O6S6
+ lzMIIQ0ChuWXzDjD6pUQKOTkWMykpJ0iZ8H6J/ILtmKCh8KUgXhYG9RIubjHQUXLcWxFKEyRHoy
+ l1i5uPHNFZYxqTFFKnz0CCjxIgd8NXo94wAU7uhmQI8tcYzsLfTrc+tDrumg5c2PTLBvEZecLbg
+ n/8nso7MkHoQtFQ==
+X-Developer-Key: i=tomi.valkeinen@ideasonboard.com; a=openpgp;
+ fpr=C4380C3E965EFD81079FF3A7FA3DAA8CBC961EF5
 
-Task's cpuset pointer was removed by
-commit 8793d854edbc ("Task Control Groups: make cpusets a client of cgroups")
+UB9702 has the refclk freq register at a different offset than UB960,
+but the code uses the UB960's offset for both chips. Fix this.
 
-Paragraph "The task_lock() exception ...." was removed by
-commit 2df167a300d7 ("cgroups: update comments in cpuset.c")
+The refclk freq is only used for a debug print, so there's no functional
+change here.
 
-Remove stale text:
-
- We also require taking task_lock() when dereferencing a
- task's cpuset pointer. See "The task_lock() exception", at the end of this
- comment.
-
- Accessing a task's cpuset should be done in accordance with the
- guidelines for accessing subsystem state in kernel/cgroup.c
-
-and reformat.
-
-Co-developed-by: Michal Koutný <mkoutny@suse.com>
-Co-developed-by: Waiman Long <longman@redhat.com>
-Signed-off-by: Costa Shulyupin <costa.shul@redhat.com>
-
+Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Cc: stable@vger.kernel.org
+Fixes: afe267f2d368 ("media: i2c: add DS90UB960 driver")
 ---
-v2: Address comments
+ drivers/media/i2c/ds90ub960.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
----
- kernel/cgroup/cpuset.c | 9 ++-------
- 1 file changed, 2 insertions(+), 7 deletions(-)
+diff --git a/drivers/media/i2c/ds90ub960.c b/drivers/media/i2c/ds90ub960.c
+index ffe5f25f8647..b1e848678218 100644
+--- a/drivers/media/i2c/ds90ub960.c
++++ b/drivers/media/i2c/ds90ub960.c
+@@ -352,6 +352,8 @@
+ 
+ #define UB960_SR_I2C_RX_ID(n)			(0xf8 + (n)) /* < UB960_FPD_RX_NPORTS */
+ 
++#define UB9702_SR_REFCLK_FREQ			0x3d
++
+ /* Indirect register blocks */
+ #define UB960_IND_TARGET_PAT_GEN		0x00
+ #define UB960_IND_TARGET_RX_ANA(n)		(0x01 + (n))
+@@ -3837,7 +3839,10 @@ static int ub960_enable_core_hw(struct ub960_data *priv)
+ 	if (ret)
+ 		goto err_pd_gpio;
+ 
+-	ret = ub960_read(priv, UB960_XR_REFCLK_FREQ, &refclk_freq);
++	if (priv->hw_data->is_ub9702)
++		ret = ub960_read(priv, UB9702_SR_REFCLK_FREQ, &refclk_freq);
++	else
++		ret = ub960_read(priv, UB960_XR_REFCLK_FREQ, &refclk_freq);
+ 	if (ret)
+ 		goto err_pd_gpio;
+ 
 
-diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-index d5d2b4036314..ee62207fee9f 100644
---- a/kernel/cgroup/cpuset.c
-+++ b/kernel/cgroup/cpuset.c
-@@ -207,10 +207,8 @@ static struct cpuset top_cpuset = {
- 
- /*
-  * There are two global locks guarding cpuset structures - cpuset_mutex and
-- * callback_lock. We also require taking task_lock() when dereferencing a
-- * task's cpuset pointer. See "The task_lock() exception", at the end of this
-- * comment.  The cpuset code uses only cpuset_mutex. Other kernel subsystems
-- * can use cpuset_lock()/cpuset_unlock() to prevent change to cpuset
-+ * callback_lock. The cpuset code uses only cpuset_mutex. Other kernel
-+ * subsystems can use cpuset_lock()/cpuset_unlock() to prevent change to cpuset
-  * structures. Note that cpuset_mutex needs to be a mutex as it is used in
-  * paths that rely on priority inheritance (e.g. scheduler - on RT) for
-  * correctness.
-@@ -239,9 +237,6 @@ static struct cpuset top_cpuset = {
-  * The cpuset_common_seq_show() handlers only hold callback_lock across
-  * small pieces of code, such as when reading out possibly multi-word
-  * cpumasks and nodemasks.
-- *
-- * Accessing a task's cpuset should be done in accordance with the
-- * guidelines for accessing subsystem state in kernel/cgroup.c
-  */
- 
- static DEFINE_MUTEX(cpuset_mutex);
 -- 
-2.47.0
+2.43.0
 
 
