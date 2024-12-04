@@ -1,178 +1,145 @@
-Return-Path: <linux-kernel+bounces-431274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8B8B9E3BEB
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:01:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D3E09E3B6F
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 14:39:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B78E9B32B83
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 13:37:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2CCA5285BEE
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 13:39:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7842C1F4267;
-	Wed,  4 Dec 2024 13:36:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BC871DEFF3;
+	Wed,  4 Dec 2024 13:39:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IlHKdxK8"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GdKnidh0"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF60E1B983E;
-	Wed,  4 Dec 2024 13:36:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C29E1B87CE
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 13:39:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733319414; cv=none; b=B7WNIyjb443cCrAJMQgYSwyPwVttR0XThqaRwoVjcpluFq1DZ6RsbMFN1JmjZITubpKytOaLS9nJts7bEM5b49rHHIIoUeKuhyMR63dfSA9doDXIEK1frjaV5PVKV59KBav88o/yToW94dnG6D6jUlMVtlgb5ClJ23/BqcxZWgQ=
+	t=1733319582; cv=none; b=PdT7hxYU0V1zElNNXdUVKLHQWrfvfBkUt70yqoM2K/xtAGzt57d9VF5XbpaO2+cWPjf4+hJJ5mUsaTrKs7/ExtS0TOuUssGmEy3d1/hzaEWK433XmYNZayk9cYHwrUK35r+rV7sH9CzE48J9MsO5tFqjN3kCx7RPyzPNYP9dOwE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733319414; c=relaxed/simple;
-	bh=bY4wTNpgrIodKEHThXb/JWuJnyT4kL7ZX6PteGpmmfA=;
+	s=arc-20240116; t=1733319582; c=relaxed/simple;
+	bh=7WjEyDAG90e/vJCzJ9T8CrFecen5Z937gsdDejW/c7w=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sUb87k86TZHTKGz1D1ajfT4bdTgQruCrv0wX2n7Ya6Z46pMI6oXUDPuk3nfYnnhIFOEjvxuQoEO7FpXzkUIFb0wAAe7AFpuLLbTizMaKg9jIdOx3YHEppbQDhj++2MgOcs37I+Xj8WBfCfkIXu5Et6XlsRF7PQxxVnrQ94cpMcg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IlHKdxK8; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-434a2f3bae4so63115695e9.3;
-        Wed, 04 Dec 2024 05:36:52 -0800 (PST)
+	 Content-Type:Content-Disposition:In-Reply-To; b=LnAdX6aXPXbV7SRWy4P3KXsPGFxzwy/6W+7SDz5VWQvcOQmCQAcwL5mgVVY6T70fAD1kTFMGVEmarELOaFpl0BQ6oVSYjuZ3XARPJszb0A4pAHxfqXkSNcFum/JAUgJ8UkTJY7QTa3vHaF0h42e5S8scvJL3EaWaL+YYsOHWgb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=GdKnidh0; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-215740b7fb8so115325ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 05:39:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733319411; x=1733924211; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=7960s/O5mUmVapkBN/GngD9f9VoYAFaaF9ndN6PJOGg=;
-        b=IlHKdxK8vXXQeO++buozvj67IErsvpBJgWqdv50pdPfXGZ3PEPCIvFX+RzTDjJP9L+
-         eIi1UmTEtr8VcO1BTAEQ2rJuDuuPrwVMvXleSTuUxgIZbH5U/OcikkxnB8r/HiCbKidW
-         VW8Smc1JiGcsLQqgk8JQhYejjLRoN7THfWEuprY1i3RV8yuNzWWODvcFjWWqcCNOTsIY
-         OxaJsBy6vJSUTDURQnIVsNgGwqBaVs/23dfc/evzVPsh/t+v8y34nt2QXoIyymDlLNh0
-         84TxPp7h/NuKWbgE658Gj9lYgS1VD/EMdcvoGgoUQJiaIKESTCmJ6A7whOzjyTPz7dtt
-         ww0A==
+        d=google.com; s=20230601; t=1733319581; x=1733924381; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=aTiKz+swbArTBTc2TtQ/8EsE3LUCyapvxAkumVctM4g=;
+        b=GdKnidh0dcst74Upja8+vFtWQa5JXKQxGf6a7kWFH3zE1Zp98Nc0DAlinfwJ0STIjr
+         Ob2aQYDSwDfRwD5lqj7HWyNUZ0s2sOiipe/V7OgnZHE6Z3zdXWpSSgo1CUJ2rsGWiaAo
+         obbJMfV39jPQWIgi8MXqFqjgMWO0QzkdQ7PTTwBEsKWJ63FNxOHekKcSOcJRAEvNn3U7
+         qOK9/vNMXK3B1/k5Of45Hzd3v3AOCh73E4VsAxsOTPx8c/NvdAm0Bh7pNp8zrV3YFYGW
+         84Ffv96JXxQXKi4QmoEBj8/gmQFnf0PIi7tjiQwUu5N5LC0UiiafxvT6njLNM6c7kLVq
+         45Pg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733319411; x=1733924211;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7960s/O5mUmVapkBN/GngD9f9VoYAFaaF9ndN6PJOGg=;
-        b=uStJJUC+4Lvre/dbV392iUvm5VEV2gA7UohkXIodCM9/qk7jivkTe6pQByT9bvDked
-         AVBrtXUGqfFTDME3Bij/O3uc8dxjBtZ12cnO78LNjFufwcR0KSEKNt5B9sfdEKBevvO1
-         DUyXFinJ1mdjL+z7Im3uqtduv2u2iZLd31P1/Byw2hLmHSTBQva0ZpALLUTjzCKyuQ4y
-         5fIzMNvcbhwEnnuxUmGUHlmJFuIKeotbCxaJXZ96808FkAjA3VSMTMwuSdFKmGb1dK6V
-         Zini+D+fRpBHrt37qHZFvqmuAPskX5aK2eUHnO2cUz5KIMttRbvm/Z+mRS/KhDkJCSvB
-         osDg==
-X-Forwarded-Encrypted: i=1; AJvYcCUjRYR1szx4cQg7T72ns+8HKnSJOy8lW9Js9gj6ZWGXhzFmXjFM0gj17WTwO013sNU902uRcYQ1TwnbO4U=@vger.kernel.org, AJvYcCXQQGKbjCIo4hen6saJk7kkVVkYNoHEtdr1Cp4fIWFpjUEux63p9HAex7HaZMss1c/2YKspJEqa5SldjRQyv2IG80E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBqd0JlSZ3JaUY/STCrZzl2K1J+dFfs6E1Dt3ejxT2VUnLrMW7
-	amsoqDo0frZmpDe1B2byusfCfvC7zBe58uKWtUkYrWsC82rWzM1X
-X-Gm-Gg: ASbGncvg3WGAYlXnpW7NRyVejvuNuLZq3oEQj8ERMw5GgexjX7/gVoh9EtH7lM2NW5t
-	xTGkRQqh/7PnzAxyGD6tkXp5UrYHDcoXX3d6PLOqbg3aHKPSnh6jb1aiWzhpxxHs6seW6xPxApB
-	xJr0sopu9Sq9pcdyKXIQDTBR2NxVWYO0C2uPBMtc/O3MA4tfm4UU8DHjQZqq5qeBWCVQAqU6m1b
-	QZGFc6uT8mv1+bTzC/duGEBm+xacBuvUdkTWcl9hLQEGcGeU3allDK0km0n3fg+apGb8sq91mk3
-	8oS7W+BSGH7cexfKDVj4
-X-Google-Smtp-Source: AGHT+IHuqzXYWftCkApzMu0AjTlQnxeVbzqOP4HoXbEwEWHCLRq8r1nDjTgJnSq2bW4NJEewZimJmg==
-X-Received: by 2002:a05:600c:3550:b0:434:a781:f5d5 with SMTP id 5b1f17b1804b1-434d0a15047mr64205075e9.30.1733319411092;
-        Wed, 04 Dec 2024 05:36:51 -0800 (PST)
-Received: from tom-desktop (net-188-217-53-234.cust.vodafonedsl.it. [188.217.53.234])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434d43b8557sm23177705e9.1.2024.12.04.05.36.49
+        d=1e100.net; s=20230601; t=1733319581; x=1733924381;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=aTiKz+swbArTBTc2TtQ/8EsE3LUCyapvxAkumVctM4g=;
+        b=Sgh/e5HuM9TRNOxZzPFIxiyWI1XtIcidAWKhXk0BaB+N3N6EwB65PbdMzieKBqJcRn
+         BIqgtuhj9JdAVsPuBRC57wOLGJ44MXzZpGIqf878Wzxqr2LCsGgG8pz0r5w6rECCUzWd
+         MfpVabZzzZFXTiRwurf/Z18lzrb1gX2GODQBeSghtwVoHBxm/+4FON5ypwDBEnijA5yf
+         iYYGr5mC2kum8mTWKbiVI8HjTpSO1py0K3F1f9h93wD0n3bB/LvG0ScUvrz9glfFuHoo
+         8RQFALQHutLdI4vepTaNMIdG5nQhH6x+ifPEkgs6J9k5fVpxwNceXsmoZZf+ml+pvzu+
+         Ty7g==
+X-Forwarded-Encrypted: i=1; AJvYcCU9/Y+mkiZzovRMnyEiGusl8MvRE/q19fFifvYiUdwWWAzwFB1sRcJNLtpkMy23XzkHwnxzeHixmqVxeuM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyczVepxq9M9cxbZEppsqw6nrLu0a6s8R30MzqA1qyLejdWayYN
+	tBV9fkCk30kMesDOeW1sZqS8msojVQZVIFIkN0PnX4dk2u1obXqcdxczwkw2s9uZ0E2lgYh07cl
+	VmQ==
+X-Gm-Gg: ASbGncvmgGnXBQCxKuNbcEjzZOg2GpllAh4K+jO40dV+LSzqKrjzjC7hD3a9hiuAIA7
+	Lh8UENaeO0MtkDgCwq6ew9uCQ1FrGzdNwEtN6WOSB33eq9lY0vJr1qd8l8owfhgO4cPwpZ0sv7O
+	S9O8kqQviDHmWtm1wUw6KI+zuF+Xwr4mQksAzczX6mmJgFnqboXFqXkxIpKTnExF60KEcP9eQlR
+	DKrTxa8pP4B6yOqp1uYAxOY/y/TFpcO9lKdhDHSKQpK26PVvaeErSoe0a2fS3WIbFp/81HxtC4c
+	M1eZxj/uNEwa
+X-Google-Smtp-Source: AGHT+IE8y3Oeqx7+pWQt/D6GLh1EYfEfWk9FHccWT2vIo90Klr9SrmZo7MkknMLsgkYZKIvMMOAjrw==
+X-Received: by 2002:a17:903:2a83:b0:20c:e262:2570 with SMTP id d9443c01a7336-215d6c3ec59mr2506385ad.8.1733319580530;
+        Wed, 04 Dec 2024 05:39:40 -0800 (PST)
+Received: from google.com (226.75.127.34.bc.googleusercontent.com. [34.127.75.226])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7254176148csm12346608b3a.19.2024.12.04.05.39.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Dec 2024 05:36:50 -0800 (PST)
-Date: Wed, 4 Dec 2024 14:36:48 +0100
-From: Tommaso Merciai <tomm.merciai@gmail.com>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Liu Ying <victor.liu@nxp.com>, linux-renesas-soc@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, biju.das.jz@bp.renesas.com,
-	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/bridge: ite-it6263: Support VESA input format
-Message-ID: <Z1Ba8CRrn9G7e6h4@tom-desktop>
-References: <20241203172129.778123-1-tommaso.merciai.xr@bp.renesas.com>
- <834a2690-ca06-4a8b-9a81-c4981074f95c@nxp.com>
- <Z1Aw0WafGmYDrr8K@tom-desktop>
- <cnauwpk7myky6zbfcqg5335dqif4vmggzxlq554ye2bykb5iwh@ng4oxd2c5md3>
- <Z1BVADAhfENdcc3y@tom-desktop>
- <7bzqm2qbr5zwwlltvbj77ux4hu5iwuwz25u3hwvgnwak5xyl7k@54wzvunf7cze>
+        Wed, 04 Dec 2024 05:39:39 -0800 (PST)
+Date: Wed, 4 Dec 2024 13:39:33 +0000
+From: Carlos Llamas <cmllamas@google.com>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
+	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	linux-kernel@vger.kernel.org, kernel-team@android.com,
+	David Hildenbrand <david@redhat.com>,
+	Barry Song <v-songbaohua@oppo.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>
+Subject: Re: [PATCH v6 2/9] binder: concurrent page installation
+Message-ID: <Z1BblcGDBvcdRTsO@google.com>
+References: <20241203215452.2820071-1-cmllamas@google.com>
+ <20241203215452.2820071-3-cmllamas@google.com>
+ <CAH5fLgjMZw+58Wh58QVX2hD14=r-XkbtduTSchUPO14cJAJAww@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <7bzqm2qbr5zwwlltvbj77ux4hu5iwuwz25u3hwvgnwak5xyl7k@54wzvunf7cze>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAH5fLgjMZw+58Wh58QVX2hD14=r-XkbtduTSchUPO14cJAJAww@mail.gmail.com>
 
-On Wed, Dec 04, 2024 at 03:33:09PM +0200, Dmitry Baryshkov wrote:
-> On Wed, Dec 04, 2024 at 02:11:28PM +0100, Tommaso Merciai wrote:
-> > Hi Dmitry,
-> > 
-> > On Wed, Dec 04, 2024 at 01:53:44PM +0200, Dmitry Baryshkov wrote:
-> > > On Wed, Dec 04, 2024 at 11:37:05AM +0100, Tommaso Merciai wrote:
-> > > > Hi Liu Ying,
-> > > > Thanks for your review.
-> > > > 
-> > > > On Wed, Dec 04, 2024 at 11:34:23AM +0800, Liu Ying wrote:
-> > > > > On 12/04/2024, tomm.merciai@gmail.com wrote:
-> > > > > > From: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-> > > > > > 
-> > > > > > Introduce it6263_is_input_bus_fmt_valid() and refactor the
-> > > > > > it6263_bridge_atomic_get_input_bus_fmts() function to support VESA
-> > > > > > format by selecting the LVDS input format based on the LVDS data mapping
-> > > > > > and thereby support both JEIDA and VESA input formats.
-> > > > > 
-> > > > > ite,it6263.yaml says IT6263 supports vesa-24 and vesa-30, while
-> > > > > this patch actually only adds vesa-24 support.  So, to be more
-> > > > > specific, the patch subject and commit message should reflect
-> > > > > this rather than claim "Support VESA input format".
-> > > > 
-> > > > Fully agree, thanks.
-> > > > I will fix that in v2 specifying vesa-24 like you suggest.
-> > > > 
-> > > > > 
-> > > > > > 
-> > > > > > Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-> > > > > 
-> > > > > Can you please send this patch with your Renesas email address
-> > > > > instead of Gmail email address?
-> > > > > Otherwise, add a Signed-off-by tag with your Gmail email address.
-> > > > 
-> > > > Thanks, for the point.
-> > > > What about adding Acked-by: from my renesas email address?
-> > > 
-> > > Acked-by has a different meaning. I'd say that generally it's okay to
-> > > have this light mismatch, see [1] or any of the emails that B4 generates
-> > > for web-based submission.
-> > > 
-> > > [1] https://lore.kernel.org/dri-devel/20241121164858.457921-1-robdclark@gmail.com/
-> > 
-> > Thanks for sharing this example and for the clarification.
-> > This is similar to my case :)
-> > 
-> > Then v1 procedure is correct?
-> > I can use the same formatting (From: Sob:) for sending v2?
+On Wed, Dec 04, 2024 at 10:59:19AM +0100, Alice Ryhl wrote:
+> On Tue, Dec 3, 2024 at 10:55 PM Carlos Llamas <cmllamas@google.com> wrote:
+> >
+> > Allow multiple callers to install pages simultaneously by switching the
+> > mmap_sem from write-mode to read-mode. Races to the same PTE are handled
+> > using get_user_pages_remote() to retrieve the already installed page.
+> > This method significantly reduces contention in the mmap semaphore.
+> >
+> > To ensure safety, vma_lookup() is used (instead of alloc->vma) to avoid
+> > operating on an isolated VMA. In addition, zap_page_range_single() is
+> > called under the alloc->mutex to avoid racing with the shrinker.
 > 
-> I think so
-
-Oks, thanks for the feedback.
-
-Regards,
-Tommaso
-
+> How do you avoid racing with the shrinker? You don't hold the mutex
+> when binder_install_single_page is called.
 > 
-> > 
-> > Thanks & Regards,
-> > Tommaso
-> > > 
-> > > > 
-> > > 
-> > > -- 
-> > > With best wishes
-> > > Dmitry
+> E.g. consider this execution:
 > 
-> -- 
-> With best wishes
-> Dmitry
+> 1. binder_alloc_new_buf finishes allocating the struct binder_buffer
+> and unlocks the mutex.
+
+By the time the mutex is released in binder_alloc_new_buf() all the
+pages that will be used have been removed from the freelist and the
+shrinker will have no access to them.
+
+> 2. Shrinker starts running, locks the mutex, sets the page pointer to
+> NULL and unlocks the lru spinlock. The mutex is still held.
+> 3. binder_install_buffer_pages is called and since the page pointer is
+> NULL, binder_install_single_page is called.
+> 4. binder_install_single_page allocates a page and tries to
+> vm_insert_page it. It gets an EBUSY error because the shrinker has not
+> yet called zap_page_range_single.
+> 5. binder_install_single_page looks up the page with
+> get_user_pages_remote. The page is written back to the pages array.
+> 6. The shrinker calls zap_page_range_single followed by
+> binder_free_page(page_to_free).
+> 7. The page has now been freed and zapped, but it's in the page array. UAF.
+> 
+> Is there something I'm missing?
+
+I think that would be the call to binder_lru_freelist_del().
+
 
