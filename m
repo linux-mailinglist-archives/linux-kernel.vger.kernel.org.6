@@ -1,237 +1,416 @@
-Return-Path: <linux-kernel+bounces-430813-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47F359E35EE
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 09:50:56 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16860164355
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 08:50:53 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A00D5199956;
-	Wed,  4 Dec 2024 08:50:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=uclouvain.be header.i=@uclouvain.be header.b="Uc+vB0ym"
-Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2124.outbound.protection.outlook.com [40.107.22.124])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7E6C9E35EA
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 09:50:35 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EF37196C7B;
-	Wed,  4 Dec 2024 08:50:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.124
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733302245; cv=fail; b=EfZ3ETRDpD95uUv4/xznhlE2B13IbeadWaetYVCG/h//4vjGXPCNXRx8XwAyLZ+7mmOSFzgoMUkZjDH226br9wvCtGfNSzodg+9f17Yn6aZAgZgKHQsELVkb9Bni/Dk2OAPezQED3lRWxRg/X4ZQPEfXB7HhWjqwcOMHwEHz67A=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733302245; c=relaxed/simple;
-	bh=7PPqNW5UuyAP1lvEoo1wqQNf8Dv4mGf17/9xfWvTVeA=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=UvVzLOuRGhGmWSfqIrRSNhzzmTJpsSrgME55KlWuABjHRA3AP0JiRMyOWkVb97QyUAjA391w3gcJSsDrVlAUbg31dHBujtWvdwf8/b6Z+Au8fnTVQYwzGLZEW7PPCLI31D13msBoMWar4dCOe3YGP034gyzjPr2ka7wmgZzoKzo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=uclouvain.be; spf=pass smtp.mailfrom=uclouvain.be; dkim=pass (2048-bit key) header.d=uclouvain.be header.i=@uclouvain.be header.b=Uc+vB0ym; arc=fail smtp.client-ip=40.107.22.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=uclouvain.be
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uclouvain.be
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=VsPJJ8Qb04xKjuJa9/Xwb38XqnW3LPox0mYriZzWVqsdPBypXQ+ahWfcHhb9lMR4FmpncV1rR8KEquv1S0JXpovW2Xdm+JJYMeKaYZWQuoBx4MmYBmAObuu1gBe8DD3S1mcu5/DZE14++xwFOYWBpT9BmAZ9FBWgP90ltTDnbeYE4jcKh8/5MtvLHRb5rx7NgW+du9eo+RFzO9Js/u4fEQXhvRxO0FZZwRVuiMtdjYbP2uZ8hr1NO2YPVPUirWuGVSaWF4K4ysmGdtSCemtH0g/Aia7CId2G2+CUBgVlN/jLbRQZt4wADpTW+H39b1ur1uopUL3hFVs6OilvrVNN6w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=FDMVfpYvuwEP/lRAz4CK7RvbhG5cax8UxvK6rsWdc2s=;
- b=CvWOpUQwfCcbqRYclJJuvCuLi4lEjztt7LtBLJs5E9B55M1VBffilS3l1HHvbVvbEQnXjv6lD8Lwmw2jsdpTGSJgqEnLfqbuc8FgiSfrvzrF0tnG3duMfuMPnseJwn0BaTdW3lPJEFphCd7y+3Oj+gUGRrF/hb+UlWlTkNwEHNjI/GPPCRNoOApUauf0fJeIEA5vDvZ/WMe2xQHAtxLrRkYyHgtutJIUULRBRT7v9DV6zXqKBcu4e030ulu0xvcs+GEfx24DFOcSzbDepoZdDY0U+CFgiGSS7P6AkQmn/fni+OTVY/aXmYireIpRCfY0ZsD5aHnNxPiGvtTa9hrNDQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=uclouvain.be; dmarc=pass action=none header.from=uclouvain.be;
- dkim=pass header.d=uclouvain.be; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uclouvain.be;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FDMVfpYvuwEP/lRAz4CK7RvbhG5cax8UxvK6rsWdc2s=;
- b=Uc+vB0ymQF/Hxf2t1xh1cLP61/f7SCL5gegLid+g+mkpdlM6d6U0ys3IJafKf1pu5cXi1pByIH9JoIZEmAZxBBg3WkLfP8Qg/bdoMjDRGcXP5WQJJT+s5fEPkTJa28T5oF2uKgcZeq2PQYWNSPthp6oNbNenAxWmE6yI0AKKHxI0J2jZwi+2a5KElD/alALrUy9EqflpYeWQz/Xudg8IzcPzk+dW6N3juOY3afjWbBmOq3vMNfU8onN+hvtZxb3K/LGRU45CLh1eUfPQpdstGa+IViAC4M1e4YKXBqe1tXfEH7FmLxczdLAXx5MoyoGtf5k2va2eIxIuYhptp7/a7g==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=uclouvain.be;
-Received: from AS8PR03MB9047.eurprd03.prod.outlook.com (2603:10a6:20b:5b6::13)
- by GV2PR03MB9474.eurprd03.prod.outlook.com (2603:10a6:150:e1::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.18; Wed, 4 Dec
- 2024 08:50:39 +0000
-Received: from AS8PR03MB9047.eurprd03.prod.outlook.com
- ([fe80::c90e:deef:6dcf:538c]) by AS8PR03MB9047.eurprd03.prod.outlook.com
- ([fe80::c90e:deef:6dcf:538c%6]) with mapi id 15.20.8230.008; Wed, 4 Dec 2024
- 08:50:39 +0000
-Message-ID: <ed9cf02b-6f6e-46b5-a583-4fd32fa31a91@uclouvain.be>
-Date: Wed, 4 Dec 2024 09:49:55 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] power: supply: add support for max77759 fuel gauge
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Dimitri Fedrau <dima.fedrau@gmail.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Peter Griffin <peter.griffin@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org
-References: <20241202-b4-gs101_max77759_fg-v1-0-98d2fa7bfe30@uclouvain.be>
- <20241202-b4-gs101_max77759_fg-v1-1-98d2fa7bfe30@uclouvain.be>
- <c377f3302c6c282ad826211c859e2b65bb1222cb.camel@linaro.org>
- <8f585460a1bc52f78a6d0867aed87398bde30152.camel@linaro.org>
- <18629c9edd295a524a1c9764f013a0e97e0b275f.camel@linaro.org>
- <61a54367-2406-4106-bf8b-9fda4f2d11a6@uclouvain.be>
- <d1bade77b5281c1de6b2ddcb4dbbd033e455a116.camel@linaro.org>
-Content-Language: en-US
-From: Thomas Antoine <t.antoine@uclouvain.be>
-In-Reply-To: <d1bade77b5281c1de6b2ddcb4dbbd033e455a116.camel@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: MI0P293CA0003.ITAP293.PROD.OUTLOOK.COM
- (2603:10a6:290:44::9) To AS8PR03MB9047.eurprd03.prod.outlook.com
- (2603:10a6:20b:5b6::13)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A802C288086
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 08:50:34 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1276199FB0;
+	Wed,  4 Dec 2024 08:50:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="QV2RHhNw"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5A7D196455;
+	Wed,  4 Dec 2024 08:50:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733302222; cv=none; b=oKQqDp45r8UcRblpuv2o5GFqe+Qp4mXYqT7mMIQDrJ7Vw1Pxz9Cmesw6XohE7gbLi1YN4sNmupvnDgcw/bBnJqN6eYPfepIjhRmN88ARHfpq3cMNE4HG68Yu9G7yO62NhDNtKdBAYBgL0hIB7mWalyYUJkyb0T867+lG/cdI+y8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733302222; c=relaxed/simple;
+	bh=hNlPkf5NqG8+nHPzczVze2XuO0oMwTVOsTyoFHzP1g4=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+	 In-Reply-To:Content-Type; b=Ifqt+2gv3GS5LMPjJNBHXs7HHdmiHe2xM3Ft+hPyGLGJ3BTkpoCJzl56bJojQMMZ9obnE+ABz7sesBaHLYqBm9wxtPioauZgI7Kd/cHciRPTkBHXwU/iGNL+qVINDRHJjZXt8I4GIThoOtysLGs15SDvnXYHDHEVON6qsncti7w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=QV2RHhNw; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B4373J6031984;
+	Wed, 4 Dec 2024 08:50:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	dWcYN7trE9+kxmNFdtPGUAVyMSHfGLmTpoONu/Od/sI=; b=QV2RHhNwskL5IrfI
+	Zm4hTLSIsN8qW/eA3q4u9pPH5wKOHxlp6o7c7/SXRTEodDP0qtEQKfXvzcu/tj7E
+	agufPOXfujcDuS3A+thBUy2erKN9YkiyY2A8T0rB7mJsYEd7BuLyNJRs3Y2DJk2h
+	FVFkrQtilg3YpdMrdG1b0tD4azyERPqSlPJIxEvluqFXwCGmQ0tu0u+7QRJ8RTN0
+	FuE1JuCVp+3N83nl3XFQJ/GUXzz1k5SNwDqb1tr67ir5h1PWNOviXzIinr2mDqBs
+	vjW49mlFfOweaEVQKGX3klFTmYRllZDWCSuAs6n5GyCpPusQp4pV0Acu9iOAsTQu
+	sdW4SQ==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 439trbm284-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 04 Dec 2024 08:50:06 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B48o5RK015219
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 4 Dec 2024 08:50:05 GMT
+Received: from [10.216.0.233] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 4 Dec 2024
+ 00:49:59 -0800
+Message-ID: <83337e51-6554-6543-059d-c71a50601b09@quicinc.com>
+Date: Wed, 4 Dec 2024 14:19:56 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS8PR03MB9047:EE_|GV2PR03MB9474:EE_
-X-MS-Office365-Filtering-Correlation-Id: dcae149f-75dd-4a84-0390-08dd1440b9f0
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|10070799003|366016|7416014|376014|1800799024|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Q0p6KzQ0c3AxdnMwaWJrOWh1ZTYzcFVSeW5XbElrNUtHbGlPdmRZMkZTdkNO?=
- =?utf-8?B?cFBNdks5K29XZjlxTkdlb3JJQ0ZYc3dKd0VBNTJKZkVxZzUrZTBCUE0yMjhS?=
- =?utf-8?B?eVJKbUdzcmxQQWtMa3NUdmdZVmhyaUp0ZU40OVpRM3FsZXNaN1gxTE56cmdN?=
- =?utf-8?B?VWg3UVh3OWJJK3FvZVZuUzFUSlMyeHY1Y1FLUFJiZGZsWW9oNTdTUUZqQitQ?=
- =?utf-8?B?RHNINGVrSTNKSWVPR0dCVDJKMSt1TVRUUWUvNlRpUi9lalR2YUxuV1VyY1RM?=
- =?utf-8?B?VU1saDVJTVJVeEIzb1VpYU1WcmR2SGU5TVhNTFQxMi9RNmduMDB4N2dweExq?=
- =?utf-8?B?b1hxcFMveVdqdmEzRTdyUSszL1JZTE1ZYlluS29KQllyWW9VM3g2WStuSzd3?=
- =?utf-8?B?WkwxQk9Ja25wVzd5OStHRG5EU01hWUg4U2hqTmJKWGZTelVPWTdmQ0xHV0pU?=
- =?utf-8?B?K1E3K21sT0tvTmM0bVR1S3ZNcGtXZjVaT1g2cktncENzWER2M0FrdnlOYW9l?=
- =?utf-8?B?UGQ0OWEzN3ZqYUFpeHFMbTFBeVpPelpqNFlhMnVtSlFzWHNvYkhYakFsZ3lK?=
- =?utf-8?B?Y1BLait4YktQYVhpVDJGMldmb295cXdCbFQ1YnVGTFFMRDVPdldmT25hYkV1?=
- =?utf-8?B?THhwb0Z0MUdlYUtMWUNsWUhzQUtYME04M2JoRHFCNFZYc0lWeGNNd1JpbFFn?=
- =?utf-8?B?NXdIU2N1RjFGbnlJalhjZVFhUmhveWsyekNiSFdSREhMVHFHNnNnTzZiemh1?=
- =?utf-8?B?ZzJ3ZTcveGZRWm16cHFicmV2L3FOQkdJSXA4Q1hIQ1JhV0NUbUhScWdnOWhD?=
- =?utf-8?B?c25TN3VsdVZuMzhmUlRKOURjbjdFZEY1WjNnY2hsTUl5elVsUFJob1laUmto?=
- =?utf-8?B?b2I1dUFyeUVpR1BiTUwxbXhNMTE1YnUwVDFIZFlHazNLWWVXb2VJOUpJa0tM?=
- =?utf-8?B?Qmt1L216cENGVzM1bjFIMHpXSzljNWpvRG96M3dLZkFySk82Yzdtd0N2b2po?=
- =?utf-8?B?elZmZk01TnhZNnF4cmlJRjhFN0pZN3JpME4vbEZPSWt1TW1pcXBWZUVvMTBx?=
- =?utf-8?B?ajRtR05SY2JlenBXWjdtNjBLT0NZVlFMN3FERnN3Q0RoQVB3RzBOY0V5eDls?=
- =?utf-8?B?MmRqOHJuNDBteHNuWGt1VmFpZVNSbkhWM1RHMEptZmNmMTFqKysvNFk0cUZY?=
- =?utf-8?B?VVc0VElhWlQ3bitUNnMxSERHUGUyQ3k3NUh6bEdrWUZVaEppMnVTNjBpTy8x?=
- =?utf-8?B?dFl2b3VpdC9nZnZTcU9wcGxUL1BiNXpIOXRMdUovZTBSYWQvMTh2SFZicFJ6?=
- =?utf-8?B?akxMTWlZcktCMFhTSmhDTkZ5U0JHV0lBbEJ4UXRmZHhWaDlwbDhxdkdDbUl0?=
- =?utf-8?B?MUJVUlNEamljWGRjTnVGaWFDbWs1UXhtbUtuMVhYajY5TnJueU1XbUpCZEFQ?=
- =?utf-8?B?MytGQkVzcjVPUGdtQnl5NTVFY081b2p5WkIrZ0NnamVSeHg5UGVTVEc2U21y?=
- =?utf-8?B?aWdNQSt2dVdzT3pkdFdTbmVsU0dReUpOaFQyUEtGekltRzdtNjJ4YjNOMmhU?=
- =?utf-8?B?aTJyZHI3dHdITnZ5ZHRYcFhTc2RVQ1ViaDFRWlNDR3BWZ2l3SnJMRk1jU2ZI?=
- =?utf-8?B?aHNBSjhmeWRjSzNuSUVqamZjQWVXbW5HVnk5dmg0Z0hyRllDMXR0TU9lUXJW?=
- =?utf-8?B?bi9PMmY5cDZyTXNlRFhCbXJlY21jaUhVQzljclVvOFNuUnRTQWNlU01jNVM4?=
- =?utf-8?B?WjVGK1haVThPRk9ST3Q1T3M0ekU0eWFrWFVPTzcwbXdNYjBwbUs2OFgzU1FU?=
- =?utf-8?B?bHNTdFQzQnJhandIeUdlY2RtMFVUTGZoUkUzNDZDaldmYkZGaThJdVR1OG1F?=
- =?utf-8?Q?Lw9v+hCjRK0Ea?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR03MB9047.eurprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(366016)(7416014)(376014)(1800799024)(921020);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?enFYdEoza0ViN29UalJERGI3WkpuWGdkTXBiekMyQ0xsWU5NamwzcHJhYmhj?=
- =?utf-8?B?cDh6clAwdmRYT0RYNDZaNXBKVDBXbmFNbllINVc2bFRMWCtaMEQyaVNmY29Q?=
- =?utf-8?B?aUlZK25vQjEwTVlsM0JLbWpzTW00V2hGa2lSSVkrUmFQTytIMlJKc0dUSFVj?=
- =?utf-8?B?VWJGRzVEUDhwMG5rZFloRzR6M2YzSllZQ2ppYTNaREF4QlhFeTZUeVYvQ2gz?=
- =?utf-8?B?Q0MrZ2V1Y2ZXUDU3WkJpRjRTYTFFOE1MUEZVRkdOSWNsbkwza1RxSGVWM0tO?=
- =?utf-8?B?aHc2akc3V3FTRUZuUXMxRzYza1diOE5COFN3SXlobmtadzg3VW9sMHhtOXJ1?=
- =?utf-8?B?eHRyTGZaZWFjZ3ptdTFzYVJkRVAwUnlFUG56YUNNYVhoRGExODJTODlaRExY?=
- =?utf-8?B?ck02andHeTFxbzRCR0czT1VxOEoyZVlWYngwbkl0SklLd3RwdEc2OTJZblhw?=
- =?utf-8?B?VzNWdWVOWUhNcXByWXlsT2pVYSt2azByQUhxZ3pUa2QvRVZFUi9mc3NZR2VU?=
- =?utf-8?B?RHFXOEM3ZEErbXJIREk0OFlzWFlULzlWVTQrTlYxVVlnYjBvV1RhQWdpWUQy?=
- =?utf-8?B?SnBSN3ZMUWNBZExTcWovN000QVhxK0M5TEN3QXYzK3JEbVQrakNZN2ROYjdv?=
- =?utf-8?B?RUZhRmpIR3ErWnd2UWpnMWFrbUNZbDNmT2RvalNmTC9sc2RidWd1T00vSUZ6?=
- =?utf-8?B?eTUyQVIwU3JvRzF2RkxhWUtyOUhwNm1uY2lSWWxHb3h4cm8rbUlFUlpqM2xH?=
- =?utf-8?B?dlRIYjRxWW9XL2dCYjltTFFqS3MxVmhUdkJsbmJhUzlYVFBMdHovQmlCczJY?=
- =?utf-8?B?T051VVNOWDRXbDd6ekdVU0lpem1ZKzVCZkZVVkY1YldpQzlQdjB2M211TTE0?=
- =?utf-8?B?ak4vZ0F0bW9Wci9ubEo3a1Rhd2Y1cVlkOVQ2WjAvcC83MzR6VWR6RkthRFcy?=
- =?utf-8?B?QStYbGppbUJlNXFTNmowTStUTWRqZEpGSXgrYmVjYXpuMURCUllnK2RlZTlJ?=
- =?utf-8?B?WmFnaXV1aXZhS0FyNFpPQUxBTmlCemdlbFRpL0dySW5UK3pDRTM2b1g0ZTFT?=
- =?utf-8?B?SSswTGx3UFBObEFPUnVWR1NpbUoycXdUNWhlNFppQi9yQWRIVDRmZUVrajE2?=
- =?utf-8?B?ZzV1YTdpTWdWUkZOZTBXdUtyR1FyRlB0OThBRlBmNk4yTCtvTXRPTkoxWFhC?=
- =?utf-8?B?WFVMTUNVYTdBczIvSjk3akhZMk5KS2QweDhab2JEQmVuUGRLTTE4eTNYbEU3?=
- =?utf-8?B?ZzgrSjQxYTdDNFBzZ1pHYUZPZmh6eXNhcTBwVHJNNlBnUXR6MDBRS2lReXhF?=
- =?utf-8?B?QXQ4Ym53QXhUSFNJWUFaUnNoVmdqRXoxOHNtcWloK2VoZU1NcHhCeXUwRnhm?=
- =?utf-8?B?YUhPTXA3MElTekFhTmQ0eFRBZHhZQnArT1dUc3FNbTlZeGhzbTMvVVdhbzFr?=
- =?utf-8?B?NDJjbEpmZzlNTFRvczV1OWxQUjF0RXdZOEhlZTFxaHIyRGdqWkN6ZUhSb004?=
- =?utf-8?B?SGhRMWdDWGJvZ2tsSHNmTUxWVm00bUhkMCs4UFoyYXM4OHUzdnVGQVV5Z2pM?=
- =?utf-8?B?bys3ODhJcXB5eTlQZDNjWE10N1UzUXdlVHl3OVdYK3UzM04zSHkwc05FN3hz?=
- =?utf-8?B?c1lPN2VSelFDendEYXNxdiszVngzUWVXbGs4Ny9FZHd2YVlDQWs4VkJ3Ri9V?=
- =?utf-8?B?STkzZmo1TEJvMS9nYWRjR1NUaFU2UHE5bDJWKzQ4Z1BWRlVqeWF0Zm9MYUo1?=
- =?utf-8?B?YzQxYUlXZlNFVktPdG1wK1U4R01taURYZVZBNE5BTEE5Q09RaEFqNno2Tnhz?=
- =?utf-8?B?ZW5pYjBHUEpSaEtTM2dTSDNBTWNRVFE0MDVkOTlaZkFiQi9hRm1IU1kvYkRH?=
- =?utf-8?B?L3ZWblA3ZHZzOWwrMEZaWlF2aDhEOWx5UUE2OHE3QStkVm92NlpOZy8yK2V0?=
- =?utf-8?B?VkU5MjBKVEhGRmZFSjJValkyRFhGV1JmMEZsbUVnK2hhY25ROGpZRUpIZnRm?=
- =?utf-8?B?am9FUEFBeUh1c3RHamR1SlFRR3FMZVdoTHJ6cnk2dGo0Tk94RjZsNVc1dmM2?=
- =?utf-8?B?TGw5akxFcVBLT1BhWVRNZVN4MzdpTCtVbVpET0dHcXU3WHBSOVZPVWNTeE44?=
- =?utf-8?B?cFdLaDIybHFqOWRSRUMzS3RJRS9PUWUvaHlJK1dhNldDTEpWcW1ETXFhdlhU?=
- =?utf-8?Q?q35WmTmii7Rp6OPMh/gc9oMTXRTOd1KoZn0TB0zK3SAg?=
-X-OriginatorOrg: uclouvain.be
-X-MS-Exchange-CrossTenant-Network-Message-Id: dcae149f-75dd-4a84-0390-08dd1440b9f0
-X-MS-Exchange-CrossTenant-AuthSource: AS8PR03MB9047.eurprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Dec 2024 08:50:38.8973
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 7ab090d4-fa2e-4ecf-bc7c-4127b4d582ec
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: yYRbezzs3NpvMrmGWSa3tkpeFGghYJZkEnPjMe1kApGTEEVn1wObnvuTAYw4fkoftux7uoD0lnBbZr2Xdviyuw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV2PR03MB9474
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH v3 1/6] dt-bindings: PCI: Add binding for qps615
+Content-Language: en-US
+From: Krishna Chaitanya Chundru <quic_krichai@quicinc.com>
+To: Rob Herring <robh@kernel.org>
+CC: <andersson@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+        "Lorenzo
+ Pieralisi" <lpieralisi@kernel.org>,
+        =?UTF-8?Q?Krzysztof_Wilczy=c5=84ski?=
+	<kw@linux.com>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        <cros-qcom-dts-watchers@chromium.org>,
+        Jingoo Han <jingoohan1@gmail.com>, Bartosz Golaszewski <brgl@bgdev.pl>,
+        <quic_vbadigan@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20241112-qps615_pwr-v3-0-29a1e98aa2b0@quicinc.com>
+ <20241112-qps615_pwr-v3-1-29a1e98aa2b0@quicinc.com>
+ <20241115161848.GA2961450-robh@kernel.org>
+ <74eaef67-18f2-c2a1-1b9c-ac97cefecc54@quicinc.com>
+In-Reply-To: <74eaef67-18f2-c2a1-1b9c-ac97cefecc54@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 9RHSsYHkdml5LfK89Zazk02UMSuhtbBO
+X-Proofpoint-ORIG-GUID: 9RHSsYHkdml5LfK89Zazk02UMSuhtbBO
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 mlxscore=0
+ suspectscore=0 spamscore=0 malwarescore=0 adultscore=0 priorityscore=1501
+ clxscore=1015 phishscore=0 lowpriorityscore=0 impostorscore=0 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
+ definitions=main-2412040067
 
-On 12/3/24 12:06, André Draszik wrote:
-> On Tue, 2024-12-03 at 11:30 +0100, Thomas Antoine wrote:
->> Should I explicitly deny their use in the code for the max77759 or is it
->> just for information?
-> I'd probably do something like this, which will indeed deny their reading
-> and/or writing, both via debugfs, and also normal driver access via
-> readmap_read()/write() etc:
-> 
-> static const struct regmap_range max77759_registers[] = {
-> 	regmap_reg_range(0x00, 0x4f),
-> 	regmap_reg_range(0xb0, 0xbf),
-> 	regmap_reg_range(0xd0, 0xd0),
-> 	regmap_reg_range(0xdc, 0xdf),
-> 	regmap_reg_range(0xfb, 0xfb),
-> 	regmap_reg_range(0xff, 0xff),
-> };
-> 
-> static const struct regmap_range max77759_ro_registers[] = {
-> 	regmap_reg_range(0x3d, 0x3d),
-> 	regmap_reg_range(0xfb, 0xfb),
-> 	regmap_reg_range(0xff, 0xff),
-> };
-> 
-> static const struct regmap_access_table max77759_write_table = {
-> 	.yes_ranges = max77759_registers,
-> 	.n_yes_ranges = ARRAY_SIZE(max77759_registers),
-> 	.no_ranges = max77759_ro_registers,
-> 	.n_no_ranges = ARRAY_SIZE(max77759_ro_registers),
-> };
-> 
-> static const struct regmap_access_table max77759_rd_table = {
-> 	.yes_ranges = max77759_registers,
-> 	.n_yes_ranges = ARRAY_SIZE(max77759_registers),
-> };
-> 
-> static const struct regmap_config max77759_regmap_config = {
-> 	.reg_bits = 8,
-> 	.val_bits = 8,
-> 	.max_register = 0xff,
-> 	.wr_table = &max77759_write_table,
-> 	.rd_table = &max77759_rd_table,
-> 	.cache_type = REGCACHE_NONE,
-> };
-> 
-> And maybe without cache for now. Most are probably not cacheable anyway.
 
-Thank you very much, I'll try this out.
 
-Best regards,
-Thomas
+On 11/24/2024 7:02 AM, Krishna Chaitanya Chundru wrote:
+> 
+> 
+> On 11/15/2024 9:48 PM, Rob Herring wrote:
+>> On Tue, Nov 12, 2024 at 08:31:33PM +0530, Krishna chaitanya chundru 
+>> wrote:
+>>> Add binding describing the Qualcomm PCIe switch, QPS615,
+>>> which provides Ethernet MAC integrated to the 3rd downstream port
+>>> and two downstream PCIe ports.
+>>>
+>>> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+>>> ---
+>>>   .../devicetree/bindings/pci/qcom,qps615.yaml       | 205 
+>>> +++++++++++++++++++++
+>>>   1 file changed, 205 insertions(+)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/pci/qcom,qps615.yaml 
+>>> b/Documentation/devicetree/bindings/pci/qcom,qps615.yaml
+>>> new file mode 100644
+>>> index 000000000000..e6a63a0bb0f3
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/pci/qcom,qps615.yaml
+>>> @@ -0,0 +1,205 @@
+>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>>> +%YAML 1.2
+>>> +---
+>>> +$id: http://devicetree.org/schemas/pci/qcom,qps615.yaml#
+>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>>> +
+>>> +title: Qualcomm QPS615 PCIe switch
+>>> +
+>>> +maintainers:
+>>> +  - Krishna chaitanya chundru <quic_krichai@quicinc.com>
+>>> +
+>>> +description: |
+>>> +  Qualcomm QPS615 PCIe switch has one upstream and three downstream
+>>> +  ports. The 3rd downstream port has integrated endpoint device of
+>>> +  Ethernet MAC. Other two downstream ports are supposed to connect
+>>> +  to external device.
+>>> +
+>>> +  The QPS615 PCIe switch can be configured through I2C interface before
+>>> +  PCIe link is established to change FTS, ASPM related entry delays,
+>>> +  tx amplitude etc for better power efficiency and functionality.
+>>> +
+>>> +properties:
+>>> +  compatible:
+>>> +    enum:
+>>> +      - pci1179,0623
+>>> +
+>>> +  reg:
+>>> +    maxItems: 1
+>>> +
+>>> +  i2c-parent:
+>>> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+>>> +    description: |
+>>
+>> Don't need '|' if no formatting to preserve.
+>>
+> ack
+>>> +      A phandle to the parent I2C node and the slave address of the 
+>>> device
+>>> +      used to do configure qps615 to change FTS, tx amplitude etc.
+>>> +    items:
+>>> +      - description: Phandle to the I2C controller node
+>>> +      - description: I2C slave address
+>>> +
+>>> +  vdd18-supply: true
+>>> +
+>>> +  vdd09-supply: true
+>>> +
+>>> +  vddc-supply: true
+>>> +
+>>> +  vddio1-supply: true
+>>> +
+>>> +  vddio2-supply: true
+>>> +
+>>> +  vddio18-supply: true
+>>> +
+>>> +  reset-gpios:
+>>> +    maxItems: 1
+>>> +    description:
+>>> +      GPIO controlling the RESX# pin.
+>>
+>> Is the PERST# or something else?
+>>
+> it is not PERST GPIO, it is similar to PERST in terms
+> of functionality which brings switch out from reset.
+>>> +
+>>> +  qps615,axi-clk-freq-hz:
+>>
+>> qps615 is not a vendor prefix.
+>>
+>>> +    description:
+>>> +      AXI clock rate which is internal bus of the switch
+>>> +      The switch only runs in two frequencies i.e 250MHz and 125MHz.
+>>> +    enum: [125000000, 250000000]
+>>> +
+>>> +allOf:
+>>> +  - $ref: "#/$defs/qps615-node"
+>>> +
+>>> +patternProperties:
+>>> +  "@1?[0-9a-f](,[0-7])?$":
+>>
+>> You have 3 ports. So isn't this fixed and limited to 0-2?
+>>
+> sure I will change it to below as suggested
+> "@1?[0-3](,[0-1])?$"
+>>> +    description: child nodes describing the internal downstream ports
+>>> +      the qps615 switch.
+>>
+>> Please be consistent with starting after the ':' or on the next line.
+>>
+>> And start with capital C.
+>>
+>>
+> ack
+> 
+>>> +    type: object
+>>> +    $ref: "#/$defs/qps615-node"
+>>> +    unevaluatedProperties: false
+>>> +
+>>> +$defs:
+>>> +  qps615-node:
+>>> +    type: object
+>>> +
+>>> +    properties:
+>>> +      qcom,l0s-entry-delay-ns:
+>>> +        description: Aspm l0s entry delay.
+>>> +
+>>> +      qcom,l1-entry-delay-ns:
+>>> +        description: Aspm l1 entry delay.
+>>
+>> These should probably be common being standard PCIe things. Though, why
+>> are they needed? I'm sure the timing is defined by the PCIe spec, so
+>> they are not compliant?
+>>
+> Usually the firmware in the endpoints/switches should do this these
+> configurations. But the qps615 PCIe switch doesn't have any firmware
+> running to configure these. So the hardware exposes i2c interface to
+> configure these before link training.
+>>> +
+>>> +      qcom,tx-amplitude-millivolt:
+>>> +        $ref: /schemas/types.yaml#/definitions/uint32
+>>> +        description: Change Tx Margin setting for low power 
+>>> consumption.
+>>> +
+>>> +      qcom,no-dfe-support:
+>>> +        type: boolean
+>>> +        description: Disable DFE (Decision Feedback Equalizer), 
+>>> which mitigates
+>>> +          intersymbol interference and some reflections caused by 
+>>> impedance mismatches.
+>>> +
+>>> +      qcom,nfts:
+>>> +        $ref: /schemas/types.yaml#/definitions/uint32
+>>> +        description:
+>>> +          Number of Fast Training Sequence (FTS) used during L0s to 
+>>> L0 exit
+>>> +          for bit and Symbol lock.
+>>
+>> Also something common.
+>>
+>> The problem I have with all these properties is you are using them on
+>> both the upstream and downstream sides of the PCIe links. They belong in
+>> either the device's node (downstream) or the bus's node (upstream).
+>>
+> This switch allows us to configure both upstream, downstream ports and
+> also embedded Ethernet port which is internal to the switch. These
+> properties are applicable for all of those.
+>>> +
+>>> +    allOf:
+>>> +      - $ref: /schemas/pci/pci-bus.yaml#
+>>
+>> pci-pci-bridge.yaml is more specific and closer to what this device is.
+>>
+> I tried this now, I was getting warning saying the compatible
+> /local/mnt/workspace/skales/kobj/Documentation/devicetree/bindings/pci/qcom,qps615.example.dtb: pcie@0,0: compatible: ['pci1179,0623'] does not contain items matching the given schema
+>          from schema $id: 
+> http://devicetree.org/schemas/pci/qcom,qps615.yaml#
+> /local/mnt/workspace/skales/kobj/Documentation/devicetree/bindings/pci/qcom,qps615.example.dtb: pcie@0,0: Unevaluated properties are not allowed ('#address-cells', '#size-cells', 'bus-range', 'device_type', 'ranges' were unexpected)
+> 
+> I think pci-pci-bridge is expecting the compatible string in this format
+> only "pciclass,0604".
+> 
+>>> +
+>>> +unevaluatedProperties: false
+>>> +
+>>> +required:
+>>> +  - vdd18-supply
+>>> +  - vdd09-supply
+>>> +  - vddc-supply
+>>> +  - vddio1-supply
+>>> +  - vddio2-supply
+>>> +  - vddio18-supply
+>>> +  - i2c-parent
+>>> +  - reset-gpios
+>>> +
+>>> +examples:
+>>> +  - |
+>>> +
+>>> +    #include <dt-bindings/gpio/gpio.h>
+>>> +
+>>> +    pcie {
+>>> +        #address-cells = <3>;
+>>> +        #size-cells = <2>;
+>>> +
+>>> +        pcie@0 {
+>>> +            device_type = "pci";
+>>> +            reg = <0x0 0x0 0x0 0x0 0x0>;
+>>> +
+>>> +            #address-cells = <3>;
+>>> +            #size-cells = <2>;
+>>> +            ranges;
+>>> +            bus-range = <0x01 0xff>;
+>>> +
+>>> +            pcie@0,0 {
+>>> +                compatible = "pci1179,0623";
+>>> +                reg = <0x10000 0x0 0x0 0x0 0x0>;
+>>> +                device_type = "pci";
+>>> +                #address-cells = <3>;
+>>> +                #size-cells = <2>;
+>>> +                ranges;
+>>> +                bus-range = <0x02 0xff>;
+>>> +
+>>> +                i2c-parent = <&qup_i2c 0x77>;
+>>> +
+>>> +                vdd18-supply = <&vdd>;
+>>> +                vdd09-supply = <&vdd>;
+>>> +                vddc-supply = <&vdd>;
+>>> +                vddio1-supply = <&vdd>;
+>>> +                vddio2-supply = <&vdd>;
+>>> +                vddio18-supply = <&vdd>;
+>>> +
+>>> +                reset-gpios = <&gpio 1 GPIO_ACTIVE_LOW>;
+>>> +
+>>> +                pcie@1,0 {
+>>> +                    reg = <0x20800 0x0 0x0 0x0 0x0>;
+>>> +                    #address-cells = <3>;
+>>> +                    #size-cells = <2>;
+>>> +                    device_type = "pci";
+>>> +                    ranges;
+>>> +                    bus-range = <0x03 0xff>;
+>>> +
+>>> +                    qcom,no-dfe-support;
+>>> +                };
+>>> +
+>>> +                pcie@2,0 {
+>>> +                    reg = <0x21000 0x0 0x0 0x0 0x0>;
+>>> +                    #address-cells = <3>;
+>>> +                    #size-cells = <2>;
+>>> +                    device_type = "pci";
+>>> +                    ranges;
+>>> +                    bus-range = <0x04 0xff>;
+>>> +
+>>> +                    qcom,nfts = <10>;
+>>> +                };
+>>> +
+>>> +                pcie@3,0 {
+>>> +                    reg = <0x21800 0x0 0x0 0x0 0x0>;
+>>> +                    #address-cells = <3>;
+>>> +                    #size-cells = <2>;
+>>> +                    device_type = "pci";
+>>> +                    ranges;
+>>> +                    bus-range = <0x05 0xff>;
+>>> +
+>>> +                    qcom,tx-amplitude-millivolt = <10>;
+>>> +                    pcie@0,0 {
+>>> +                        reg = <0x50000 0x0 0x0 0x0 0x0>;
+>>> +                        #address-cells = <3>;
+>>> +                        #size-cells = <2>;
+>>> +                        device_type = "pci";
+>>
+>> There's a 2nd PCI-PCI bridge?
+> This the embedded ethernet port which is as part of DSP3.
+> 
+Hi Rob,
+
+Can you please check my response on your queries, if you need
+any extra information, we can provide to sort this out.
+
+- Krishna Chaitanya.
+> - Krishna Chaitanya.
+>>
+>>> +                        ranges;
+>>> +
+>>> +                        qcom,l1-entry-delay-ns = <10>;
+>>> +                    };
+>>> +
+>>> +                    pcie@0,1 {
+>>> +                        reg = <0x50100 0x0 0x0 0x0 0x0>;
+>>> +                        #address-cells = <3>;
+>>> +                        #size-cells = <2>;
+>>> +                        device_type = "pci";
+>>> +                        ranges;
+>>> +
+>>> +                        qcom,l0s-entry-delay-ns = <10>;
+>>> +                    };
+>>> +                };
+>>> +            };
+>>> +        };
+>>> +    };
+>>>
+>>> -- 
+>>> 2.34.1
+>>>
+> 
 
