@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-430949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00C6F9E3775
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 11:31:55 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44EDC9E3776
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 11:32:09 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA5A328516F
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 10:31:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BC201652BB
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 10:32:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBD391B218A;
-	Wed,  4 Dec 2024 10:30:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BC8F1B6CFD;
+	Wed,  4 Dec 2024 10:30:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C/0ypPQH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QMkvjYUI"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A5C41B2188
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 10:30:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6603F1B2188
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 10:30:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733308220; cv=none; b=CupKTVWQAZCRcc1JPeNKiFvp6lwKjsQ8vSP95O1g0ewLUA6fprYp69lvpbob+B7b0lNdTklNM7UjDcYbrMGk20+9ByWwBmSfHrWvABpFT0pvYqmdfu04am+HacKWAX5zy24FycOiyJZyQFi1vKCA2ndE0/9318B335BfhcYFNXI=
+	t=1733308224; cv=none; b=fiheruiaqfDRcxtQ9A/7jzHYPjcwPde6XxF54Sr+p3sLnv9ErHAOTsjwQkLyryzxCEfNTBdIQXa0SKUTdwgf5jZa9xO7L/mIRFTvms6ddvpVEQsYdAhUxmqSJH4UXHZ192Q0htkWwvJxHxe+fdN1diGNQlqS2lajqWadzmoGvjs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733308220; c=relaxed/simple;
-	bh=eRwTJcvOcBqsfk9RyLjladsqQIYfI5C2P8yvjI+Gx9o=;
+	s=arc-20240116; t=1733308224; c=relaxed/simple;
+	bh=oclk2RjUWpkTXM4Ts+5VgdtwjHIVQ6ev2N6/KBWfxFY=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Pay/s+qaQyw5M+aY4UmuxUD+Nr1fTv2QvAs4UBIU8aycNAyB18EFjWPzMAQvMxXIOeCP92aiA+TjqT+T3F9MyGg2S3ZYLtdOgCXaRN2pKa+2PBYveZ7Seewe/pg8zriYLEdhnzuuPesgWNJ+8m2VVEyYh5kd/A6eOypdkRBZZrA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C/0ypPQH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED752C4CEDD;
-	Wed,  4 Dec 2024 10:30:15 +0000 (UTC)
+	 MIME-Version; b=PLTGKoXlupcgISMTjCjJ4NYsdYpJCrQQoJ0XyOeqTUAJM2+jhV7k9lMsCL/j8aDkHPXOjadsryvDkfUv+l7KvwVXrtwDRJnxKJtyUhIYmG6ifvKsoaoEEUlSCGocAcMkTqtydkowJ3eICmUczzdJTmR62bVreNISUPhvLS6r6Js=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QMkvjYUI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A833C4CEE0;
+	Wed,  4 Dec 2024 10:30:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733308219;
-	bh=eRwTJcvOcBqsfk9RyLjladsqQIYfI5C2P8yvjI+Gx9o=;
+	s=k20201202; t=1733308224;
+	bh=oclk2RjUWpkTXM4Ts+5VgdtwjHIVQ6ev2N6/KBWfxFY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=C/0ypPQHv+d2jQnT4vdgXOJNqtZHM0ljsbE2j2WV0KOPE/FHAUmBkh01/WGiayGoK
-	 +LfgJfSLQ9lCz2wwxgK/FaEVVxlsmTdqjedoZGi85iTK5rjvPPwl//ACBARKX8eVWH
-	 YqsbfyTDh7ythCMywUvXqVEqeZpxd9J3/LSz9vUI+ueEuBXOfeAyt5ZqJbOjRdFR8q
-	 ttqaf8EpEeSuURf+8V1NKM8XDMRtUIqPEa9BQfsvzUzo1Wx6kczSSQ/1sp57c0NWDh
-	 khFErVCgfprDp8IERcIcFadxh2V+YOwqymPGCdgKuPEycgWekSRUSggjEZwVcJesna
-	 3B+CgfCD9UFfA==
+	b=QMkvjYUI3ovit5VIzHqH5WGQ4rYJnIjJGktVOCmd35BIRhREnWqPhm3EdKKo9P372
+	 GpdIyWq6IByPILnN8XRTz6T7uHLWTCqW7VAiYF1xHHfa+xDbnOmPI/Uqk0ZvREdl18
+	 +tirJmp40B+TpPB3hm7WVCBRNdoMJUmzWJvPCLU3yilzHI7gasQaQIsm1hHQsWLivK
+	 HKue15Cmlap8MUDnn+IIXU70sKTCrMHsYvQCjtlM5vSK2MyoRtBtzZsFUXrFG2JlOW
+	 IA8jgVlvz9Q1TX8Ehf//CTqNERsso+G8woXVQmKdga08aQXCYR05yPzz4fhw55dbV1
+	 3gc+v2e2knxEA==
 From: Arnd Bergmann <arnd@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org
@@ -60,9 +60,9 @@ Cc: Arnd Bergmann <arnd@arndb.de>,
 	Russell King <linux@armlinux.org.uk>,
 	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
 	Tony Lindgren <tony@atomide.com>
-Subject: [PATCH 11/15] ARM: PXA: deprecate remaining board file support
-Date: Wed,  4 Dec 2024 11:29:00 +0100
-Message-Id: <20241204102904.1863796-12-arnd@kernel.org>
+Subject: [PATCH 12/15] ARM: orion5x: mark all board files as deprecated
+Date: Wed,  4 Dec 2024 11:29:01 +0100
+Message-Id: <20241204102904.1863796-13-arnd@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20241204102904.1863796-1-arnd@kernel.org>
 References: <20241204102904.1863796-1-arnd@kernel.org>
@@ -76,86 +76,231 @@ Content-Transfer-Encoding: 8bit
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-In the 2021 board file removal, the gumstix and sharpsl
-support was left around in order to make it easier to convert
-more of the PXA platform to device tree, given that both
-platforms had some level of support in qemu.
+Conversion of the old orion5x board files to devicetree has
+stalled over the past few years, so it seems better to remove
+the remaining ones in order to allow  cleaning up the device
+drivers.
 
-As far as I can tell, nobody has worked on additional DT
-conversion in that time, and qemu has in turn deprecated
-the entire PXA platform.
+Debian has previously removed the orion/kirkwood kernel
+binary from the armel distro, but building custom kernels
+from the Debian source code should keep working, so
+removing the board files after the 6.12 release ensures
+that this remains possible for the Debian Trixie release,
+assuming this will use the 6.12 LTS kernel.
 
-Schedule the remaining board files for removal now, as they
-are unlikely to be of any help in the future. If anyone
-wants to revive support for these machines, they can
-obviously still contribute device tree based code and
-work on updating the corresponding drivers.
-
-Any drivers that are only usable on legacy PXA board files
-can also get removed along with the boards, or saved by
-adding devicetree support.
+Jeremy Peper still plans to convert the Terastation 2 Pro
+to devicetree in the future, but that can be done even
+after it is removed.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/arm/configs/pxa_defconfig |  4 ----
- arch/arm/mach-pxa/Kconfig      | 10 ++++++++--
- 2 files changed, 8 insertions(+), 6 deletions(-)
+ arch/arm/configs/multi_v5_defconfig |  9 ------
+ arch/arm/configs/mvebu_v5_defconfig | 10 ------
+ arch/arm/configs/orion5x_defconfig  |  9 ------
+ arch/arm/mach-orion5x/Kconfig       | 47 +++++++++++++++++++++++------
+ 4 files changed, 37 insertions(+), 38 deletions(-)
 
-diff --git a/arch/arm/configs/pxa_defconfig b/arch/arm/configs/pxa_defconfig
-index 3b9e67546f8c..96cef84dbb8e 100644
---- a/arch/arm/configs/pxa_defconfig
-+++ b/arch/arm/configs/pxa_defconfig
-@@ -16,10 +16,6 @@ CONFIG_PROFILING=y
- CONFIG_KEXEC=y
+diff --git a/arch/arm/configs/multi_v5_defconfig b/arch/arm/configs/multi_v5_defconfig
+index e40276a28760..588366672b75 100644
+--- a/arch/arm/configs/multi_v5_defconfig
++++ b/arch/arm/configs/multi_v5_defconfig
+@@ -23,17 +23,8 @@ CONFIG_ARCH_NPCM=y
+ CONFIG_ARCH_WPCM450=y
+ CONFIG_ARCH_ORION5X=y
+ CONFIG_MACH_RD88F5182_DT=y
+-CONFIG_MACH_KUROBOX_PRO=y
+-CONFIG_MACH_DNS323=y
+-CONFIG_MACH_TS209=y
+-CONFIG_MACH_TERASTATION_PRO2=y
+-CONFIG_MACH_LINKSTATION_PRO=y
+ CONFIG_MACH_LINKSTATION_MINI=y
+-CONFIG_MACH_TS409=y
+-CONFIG_MACH_TS78XX=y
+-CONFIG_MACH_MV2120=y
+ CONFIG_MACH_D2NET_DT=y
+-CONFIG_MACH_NET2BIG=y
+ CONFIG_MACH_MSS2_DT=y
+ CONFIG_ARCH_SUNXI=y
+ CONFIG_ARCH_VERSATILE=y
+diff --git a/arch/arm/configs/mvebu_v5_defconfig b/arch/arm/configs/mvebu_v5_defconfig
+index b8d20e1d9c5d..b3396964863b 100644
+--- a/arch/arm/configs/mvebu_v5_defconfig
++++ b/arch/arm/configs/mvebu_v5_defconfig
+@@ -10,18 +10,8 @@ CONFIG_ARCH_MVEBU=y
+ CONFIG_MACH_KIRKWOOD=y
+ CONFIG_ARCH_ORION5X=y
+ CONFIG_MACH_RD88F5182_DT=y
+-CONFIG_MACH_KUROBOX_PRO=y
+-CONFIG_MACH_DNS323=y
+-CONFIG_MACH_TS209=y
+-CONFIG_MACH_TERASTATION_PRO2=y
+-CONFIG_MACH_LINKSTATION_PRO=y
+-CONFIG_MACH_LINKSTATION_LSCHL=y
+ CONFIG_MACH_LINKSTATION_MINI=y
+-CONFIG_MACH_TS409=y
+-CONFIG_MACH_TS78XX=y
+-CONFIG_MACH_MV2120=y
+ CONFIG_MACH_D2NET_DT=y
+-CONFIG_MACH_NET2BIG=y
+ CONFIG_MACH_MSS2_DT=y
+ CONFIG_HIGHMEM=y
+ CONFIG_ARM_APPENDED_DTB=y
+diff --git a/arch/arm/configs/orion5x_defconfig b/arch/arm/configs/orion5x_defconfig
+index 8e10c53818a3..664d11938143 100644
+--- a/arch/arm/configs/orion5x_defconfig
++++ b/arch/arm/configs/orion5x_defconfig
+@@ -10,16 +10,7 @@ CONFIG_ARCH_MULTI_V5=y
  # CONFIG_ARCH_MULTI_V7 is not set
- CONFIG_ARCH_PXA=y
--CONFIG_ARCH_GUMSTIX=y
--CONFIG_PXA_SHARPSL=y
--CONFIG_MACH_AKITA=y
--CONFIG_MACH_BORZOI=y
- CONFIG_ARCH_FORCE_MAX_ORDER=8
- CONFIG_CMDLINE="root=/dev/ram0 ro"
- CONFIG_CPU_FREQ=y
-diff --git a/arch/arm/mach-pxa/Kconfig b/arch/arm/mach-pxa/Kconfig
-index 10e472f4fa43..79d9785453c9 100644
---- a/arch/arm/mach-pxa/Kconfig
-+++ b/arch/arm/mach-pxa/Kconfig
-@@ -57,12 +57,15 @@ if ATAGS
- comment "Legacy board files"
+ CONFIG_ARCH_ORION5X=y
+ CONFIG_MACH_RD88F5182_DT=y
+-CONFIG_MACH_KUROBOX_PRO=y
+-CONFIG_MACH_DNS323=y
+-CONFIG_MACH_TS209=y
+-CONFIG_MACH_TERASTATION_PRO2=y
+-CONFIG_MACH_LINKSTATION_PRO=y
+ CONFIG_MACH_LINKSTATION_MINI=y
+-CONFIG_MACH_TS409=y
+-CONFIG_MACH_TS78XX=y
+-CONFIG_MACH_MV2120=y
+-CONFIG_MACH_NET2BIG=y
+ CONFIG_ARM_APPENDED_DTB=y
+ CONFIG_ARM_ATAG_DTB_COMPAT=y
+ CONFIG_VFP=y
+diff --git a/arch/arm/mach-orion5x/Kconfig b/arch/arm/mach-orion5x/Kconfig
+index ee449ca032d2..cf1bf4cd3733 100644
+--- a/arch/arm/mach-orion5x/Kconfig
++++ b/arch/arm/mach-orion5x/Kconfig
+@@ -18,7 +18,7 @@ menuconfig ARCH_ORION5X
+ if ARCH_ORION5X
  
- config ARCH_GUMSTIX
--	bool "Gumstix XScale 255 boards"
-+	bool "Gumstix XScale 255 boards (DEPRECATED)"
- 	select PXA25x
+ config ARCH_ORION5X_DT
+-	bool "Marvell Orion5x Flattened Device Tree"
++	def_bool y
+ 	select ORION_CLK
+ 	select ORION_IRQCHIP
+ 	select ORION_TIMER
+@@ -37,37 +37,49 @@ config MACH_RD88F5182_DT
+ 	  Orion-NAS (88F5182) RD2, Flattened Device Tree.
+ 
+ config MACH_KUROBOX_PRO
+-	bool "KuroBox Pro"
++	bool "KuroBox Pro (DEPRECATED)"
+ 	select I2C_BOARDINFO if I2C
+ 	depends on ATAGS
  	help
- 	  Say Y here if you intend to run this kernel on
- 	  Basix, Connex, ws-200ax, ws-400ax systems
+ 	  Say 'Y' here if you want your kernel to support the
+ 	  KuroBox Pro platform.
  
 +	  Support for this machine will go away in early 2025,
 +	  unless it gets converted to device tree.
 +
- choice
- 	prompt "Gumstix Carrier/Expansion Board"
- 	depends on ARCH_GUMSTIX
-@@ -76,7 +79,7 @@ config GUMSTIX_AM300EPD
- endchoice
- 
- config PXA_SHARPSL
--	bool "SHARP Zaurus SL-5600, SL-C7xx and SL-Cxx00 Models"
-+	bool "SHARP Zaurus SL-5600, SL-C7xx and SL-Cxx00 Models (DEPRECATED)"
- 	select SHARP_PARAM
- 	select SHARP_SCOOP
+ config MACH_DNS323
+-	bool "D-Link DNS-323"
++	bool "D-Link DNS-323 (DEPRECATED)"
+ 	select I2C_BOARDINFO if I2C
+ 	depends on ATAGS
  	help
-@@ -86,6 +89,9 @@ config PXA_SHARPSL
- 	  SL-C3000 (Spitz), SL-C3100 (Borzoi) or SL-C6000x (Tosa)
- 	  handheld computer.
+ 	  Say 'Y' here if you want your kernel to support the
+ 	  D-Link DNS-323 platform.
  
-+	  Support for these machines will go away in early 2025,
-+	  unless they get converted to device tree.
++	  Support for this machine will go away in early 2025,
++	  unless it gets converted to device tree.
 +
- config PXA_SHARPSL_DETECT_MACH_ID
- 	bool "Detect machine ID at run-time in the decompressor"
- 	depends on PXA_SHARPSL
+ config MACH_TS209
+-	bool "QNAP TS-109/TS-209"
++	bool "QNAP TS-109/TS-209 (DEPRECATED)"
+ 	depends on ATAGS
+ 	help
+ 	  Say 'Y' here if you want your kernel to support the
+ 	  QNAP TS-109/TS-209 platform.
+ 
++	  Support for this machine will go away in early 2025,
++	  unless it gets converted to device tree.
++
+ config MACH_TERASTATION_PRO2
+-	bool "Buffalo Terastation Pro II/Live"
++	bool "Buffalo Terastation Pro II/Live (DEPRECATED)"
+ 	depends on ATAGS
+ 	help
+ 	  Say 'Y' here if you want your kernel to support the
+ 	  Buffalo Terastation Pro II/Live platform.
+ 
++	  Support for this machine will go away in early 2025,
++	  unless it gets converted to device tree.
++
+ config MACH_LINKSTATION_PRO
+-	bool "Buffalo Linkstation Pro/Live"
++	bool "Buffalo Linkstation Pro/Live (DEPRECATED)"
+ 	depends on ATAGS
+ 	select I2C_BOARDINFO if I2C
+ 	help
+@@ -75,6 +87,9 @@ config MACH_LINKSTATION_PRO
+ 	  Buffalo Linkstation Pro/Live platform. Both v1 and
+ 	  v2 devices are supported.
+ 
++	  Support for this machine will go away in early 2025,
++	  unless it gets converted to device tree.
++
+ config MACH_LINKSTATION_MINI
+ 	bool "Buffalo Linkstation Mini (Flattened Device Tree)"
+ 	select ARCH_ORION5X_DT
+@@ -83,26 +98,35 @@ config MACH_LINKSTATION_MINI
+ 	  Buffalo Linkstation Mini (LS-WSGL) platform.
+ 
+ config MACH_TS409
+-	bool "QNAP TS-409"
++	bool "QNAP TS-409 (DEPRECATED)"
+ 	depends on ATAGS
+ 	help
+ 	  Say 'Y' here if you want your kernel to support the
+ 	  QNAP TS-409 platform.
+ 
++	  Support for this machine will go away in early 2025,
++	  unless it gets converted to device tree.
++
+ config MACH_TS78XX
+-	bool "Technologic Systems TS-78xx"
++	bool "Technologic Systems TS-78xx (DEPRECATED)"
+ 	depends on ATAGS
+ 	help
+ 	  Say 'Y' here if you want your kernel to support the
+ 	  Technologic Systems TS-78xx platform.
+ 
++	  Support for this machine will go away in early 2025,
++	  unless it gets converted to device tree.
++
+ config MACH_MV2120
+-	bool "HP Media Vault mv2120"
++	bool "HP Media Vault mv2120 (DEPRECATED)"
+ 	depends on ATAGS
+ 	help
+ 	  Say 'Y' here if you want your kernel to support the
+ 	  HP Media Vault mv2120 or mv5100.
+ 
++	  Support for this machine will go away in early 2025,
++	  unless it gets converted to device tree.
++
+ config MACH_D2NET_DT
+ 	bool "LaCie d2 Network / Big Disk Network (Flattened Device Tree)"
+ 	select ARCH_ORION5X_DT
+@@ -111,13 +135,16 @@ config MACH_D2NET_DT
+ 	  LaCie d2 Network NAS.
+ 
+ config MACH_NET2BIG
+-	bool "LaCie 2Big Network"
++	bool "LaCie 2Big Network (DEPRECATED)"
+ 	depends on ATAGS
+ 	select I2C_BOARDINFO if I2C
+ 	help
+ 	  Say 'Y' here if you want your kernel to support the
+ 	  LaCie 2Big Network NAS.
+ 
++	  Support for this machine will go away in early 2025,
++	  unless it gets converted to device tree.
++
+ config MACH_MSS2_DT
+ 	bool "Maxtor Shared Storage II (Flattened Device Tree)"
+ 	select ARCH_ORION5X_DT
 -- 
 2.39.5
 
