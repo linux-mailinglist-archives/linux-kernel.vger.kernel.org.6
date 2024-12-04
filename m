@@ -1,143 +1,117 @@
-Return-Path: <linux-kernel+bounces-430539-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430540-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8B939E3281
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 04:59:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B1979E3285
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 04:59:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A2CF2167BEA
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 03:59:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DE06167A4E
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 03:59:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 712E716CD35;
-	Wed,  4 Dec 2024 03:59:04 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE2C614D6F9;
-	Wed,  4 Dec 2024 03:59:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3842D16D4E6;
+	Wed,  4 Dec 2024 03:59:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="gPx+LZm1"
+Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DCA014D6F9
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 03:59:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733284744; cv=none; b=GP5utRy5ATLg4LXbha43xL5HriLY7l0C5zHgLz7qK6ptiB0uF1rAq+urI4JPosLxG/VYnwoQ+AC1DRscFV2nNh4DO+PPNIyk9oJ/ym/k5/EcT3B8+a+hDF3xgDeQF4apY4YYulb7TyyjdHLHGuKQe0lOcPQEIYDmo2hWIRvrlrM=
+	t=1733284781; cv=none; b=P2YiYaJFaTrB7Z9iJOX+9I0LYpp01zs5FtX5TQwp3OcRIGl0/vJtS1FJrooaXikxETzvzNSZDrVS/WdggUQt/qSEw+dmzrFQZTLNZslLQqcMrnyJ3WTWshHvIo8wAL7FBz5AZUzfpXwWBfSaGOPGcxDGz9m6r+hN3GebJ5MBTCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733284744; c=relaxed/simple;
-	bh=5Zu0i0HD/f0tjB+TrF1WgwVUWI+7cgyj9N9PMr50iWA=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=CpmEZvxFQUWVhJegQuuym3yiQKE7+RlmRJ7+tKcU+p2h650TaTTk0n683my8uIeea/i+Q6aZDRAZVjVYr5uGVN7BXndQ7n1fiNwqpITWK9mj+28zR7/HMxwjekKwLW+Lzih5HGFs3JsuETzticWEoFLqro+sXrZDGz65IPiMJ0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.20.42.62])
-	by gateway (Coremail) with SMTP id _____8BxIK+C009nAGRQAA--.1134S3;
-	Wed, 04 Dec 2024 11:58:59 +0800 (CST)
-Received: from [10.20.42.62] (unknown [10.20.42.62])
-	by front1 (Coremail) with SMTP id qMiowMBxJMCA009nfAJ1AA--.59317S3;
-	Wed, 04 Dec 2024 11:58:57 +0800 (CST)
-Subject: Re: [RFC 5/5] LoongArch: KVM: Enable separate vmid feature
-To: Huacai Chen <chenhuacai@kernel.org>
-Cc: Tianrui Zhao <zhaotianrui@loongson.cn>, WANG Xuerui <kernel@xen0n.name>,
- kvm@vger.kernel.org, loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20241113031727.2815628-1-maobibo@loongson.cn>
- <20241113031727.2815628-6-maobibo@loongson.cn>
- <CAAhV-H54WbE_6CM8L3q_jRjA_VXLqX_msEmzOmwy2s0dFABCgw@mail.gmail.com>
-From: bibo mao <maobibo@loongson.cn>
-Message-ID: <f0f1f709-9ae0-3b7e-a074-94538e4c3d89@loongson.cn>
-Date: Wed, 4 Dec 2024 11:58:19 +0800
-User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	s=arc-20240116; t=1733284781; c=relaxed/simple;
+	bh=KVJ99v8GTxtw9LSuDOAanYq7D0aqfVdB0hpxkdLFB7U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jn5qz8sM7+Qnr+izdgAoZmclgItOxN7s4EoAJC+YNmAfnqGDdEVvGhBBlowvUUPDRaEjwiqjxLyjq+x7X33jziOThzpmrXXbDcDoVhi6ODRjp4Tbqk9mpZcIpU60idWMjeoT7R7mBd7K+z9yX6bHpmbf28A67Dnd5tbn9VGdR30=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=gPx+LZm1; arc=none smtp.client-ip=209.85.219.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-e396c98af45so5710044276.1
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 19:59:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1733284779; x=1733889579; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FOrupCXXnAI5WtAArMxAm91491VHPiGEFp7ye8g18Fs=;
+        b=gPx+LZm1HJYGcb4iLO9oBNKcdkG0RcjmsQ0ER8qfcX23LqT4YSGf0vPHGs9GTR58O8
+         br0aToGpwMijf9o5MdzOZEwYZNFL6z4RimV4teNDeBkQDyYHJow4rFfOyIBVDED94BXz
+         Ho3GQMmikFzjNEdKep5hDFxe8FgHaaB62FL8Fp18lkA5/PalEXPMuRKNOCsmhzqfLyEl
+         Ix/MBPWHmsk/yNRYLTJlawmz9EmcpErTBrVIqFbO1iD6wPTJiqF6iUx3YtW1LCjV4MER
+         fNNMFudDWTNxETnQvlCFWN8NBgkJbEgFT7W+Ur3NxDkuS7AySPq5ukOYosIR3+ouy7sh
+         LIBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733284779; x=1733889579;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FOrupCXXnAI5WtAArMxAm91491VHPiGEFp7ye8g18Fs=;
+        b=iueXSTgm0QsLk3gKgitt6op3Nzn2yYUDz0g9QwGiEaxfOdGzq2cWHWuy412dxKVSEi
+         TDRJZvE3iorCUFJsOrqfWpTieYeUt9CZgqerzRLZyeUwu1lGDlgcsS4h9SRLHxW6vxQ7
+         VGGOVlJcWNhUBhYmRP+lWB96miuztD5+BubwHbcgU1LLjzOJ07qTDA+CPQ7cjZgEwWM0
+         VYRZCzkpiUTFOYau92odkU5BNMBjwrqilpjQpGDFIuM9SKbmQzQdJdK1gSt+D/z4Oy6t
+         qniJAij8nWgdKrd/kvMmwm41kc+xtSM1E96EKySiMMakO1ykCk0yMDCT5LLpAAUy7KCX
+         qPxA==
+X-Forwarded-Encrypted: i=1; AJvYcCWBqb3IKNeY2Q5vnwjmfPnkq6xWQngzv62seDS54/HjVwx2WDup8LFiys2mSl/0P1PbQMtx5RlzSg0e77U=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy95wHP/SRMiTv3WmDJwhtR9YwaH/xactLYMOHeIHnLKkz+93GS
+	IbP0Ua9aMX0J3BFU7Q4p6sLPmC2lh31P/UpjxR45Tsgiumc9A+1EnhkdKioty/FNXmLMaBKo0U9
+	fJPDGhFLABP3saEl7BAxaepOwx5hlZamk48kU
+X-Gm-Gg: ASbGncvkXq8s8J3rD2/WVsKQQDKmp6Q11ZmU+B7UvrVaa1j0SC1i7pWt3g2XoeP59kL
+	9rGFdcEhNoMBNqW0GkJkSPsopWv45WQ==
+X-Google-Smtp-Source: AGHT+IEo33yp7ogkVaVMdUjUzukVBKi0xOatKbmssZ5xoJqeM3IqXXDbpfBByvJAQ0DPK+A5fkN6rnUVuXX8dRSveP8=
+X-Received: by 2002:a05:6902:1143:b0:e39:a3d9:48eb with SMTP id
+ 3f1490d57ef6-e39d3e1d1b7mr4710701276.26.1733284779295; Tue, 03 Dec 2024
+ 19:59:39 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CAAhV-H54WbE_6CM8L3q_jRjA_VXLqX_msEmzOmwy2s0dFABCgw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowMBxJMCA009nfAJ1AA--.59317S3
-X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
-X-Coremail-Antispam: 1Uk129KBj93XoWxZFWktr4fJr1DuryDKr45Arc_yoW5Gr1xpr
-	W7AF98JrWv9r93Gwn0qwnYqr15X342g3W2qFn2qryfursIgFWvyF1kK34DZF1rWw4FyFyv
-	9r1vy39IvFsFyacCm3ZEXasCq-sJn29KB7ZKAUJUUUUr529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUBFb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
-	xVW8Jr0_Cr1UM2kKe7AKxVWUXVWUAwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07
-	AIYIkI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWU
-	XVWUAwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI4
-	8JMxk0xIA0c2IEe2xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_
-	Jr0_Gr1l4IxYO2xFxVAFwI0_Jrv_JF1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8Gjc
-	xK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0
-	cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8V
-	AvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E
-	14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07jjwZcUUUUU=
+References: <CAKHoSAtO1vE+_-Fo9Gc9Tv2bgtubkBYk6uEOddJr79DNQvmSQQ@mail.gmail.com>
+In-Reply-To: <CAKHoSAtO1vE+_-Fo9Gc9Tv2bgtubkBYk6uEOddJr79DNQvmSQQ@mail.gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Tue, 3 Dec 2024 22:59:28 -0500
+Message-ID: <CAHC9VhRMaQ5jZBP7SVGbxiGTqHagMrkU+CW9OFySNG6Fwh4esQ@mail.gmail.com>
+Subject: Re: "general protection fault in netlbl_unlhsh_add" in Linux Kernel
+ Version 4.9
+To: cheung wall <zzqq0103.hey@gmail.com>
+Cc: "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Sun, Dec 1, 2024 at 11:31=E2=80=AFPM cheung wall <zzqq0103.hey@gmail.com=
+> wrote:
+>
+> Hello,
+>
+> I am writing to report a potential vulnerability identified in the
+> Linux Kernel version 4.9
+> This issue was discovered using our custom vulnerability discovery
+> tool.
+>
+> Affected File: netlabel_unlabeled.c
+>
+> File: netlabel_unlabeled.c
+> Function: netlbl_unlhsh_add_addr4
+>
+> Detailed call trace:
 
+...
 
-On 2024/12/3 上午10:48, Huacai Chen wrote:
-> Hi, Bibo,
-> 
-> I think you need to probe LOONGARCH_CPU_GUESTID at the end of
-> cpu_probe_common(), otherwise cpu_has_guestid is always false.
-yes, it is always false now.
-Will negotiate with HW guys and add real probe mechanism.
+> Repro C Source Code: https://pastebin.com/aHhVhbJ4
 
-Regards
-Bibo Mao
-> 
-> Huacai
-> 
-> On Wed, Nov 13, 2024 at 11:17 AM Bibo Mao <maobibo@loongson.cn> wrote:
->>
->> With CSR GTLBC shortname for Guest TLB Control Register, separate vmid
->> feature will be enabled if bit 14 CSR_GTLBC_USEVMID is set. Enable
->> this feature if cpu_has_guestid is true when KVM module is loaded.
->>
->> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
->> ---
->>   arch/loongarch/include/asm/loongarch.h | 2 ++
->>   arch/loongarch/kvm/main.c              | 4 +++-
->>   2 files changed, 5 insertions(+), 1 deletion(-)
->>
->> diff --git a/arch/loongarch/include/asm/loongarch.h b/arch/loongarch/include/asm/loongarch.h
->> index 64ad277e096e..5fee5db3bea0 100644
->> --- a/arch/loongarch/include/asm/loongarch.h
->> +++ b/arch/loongarch/include/asm/loongarch.h
->> @@ -326,6 +326,8 @@
->>   #define  CSR_GTLBC_TGID_WIDTH          8
->>   #define  CSR_GTLBC_TGID_SHIFT_END      (CSR_GTLBC_TGID_SHIFT + CSR_GTLBC_TGID_WIDTH - 1)
->>   #define  CSR_GTLBC_TGID                        (_ULCAST_(0xff) << CSR_GTLBC_TGID_SHIFT)
->> +#define  CSR_GTLBC_USEVMID_SHIFT       14
->> +#define  CSR_GTLBC_USEVMID             (_ULCAST_(0x1) << CSR_GTLBC_USEVMID_SHIFT)
->>   #define  CSR_GTLBC_TOTI_SHIFT          13
->>   #define  CSR_GTLBC_TOTI                        (_ULCAST_(0x1) << CSR_GTLBC_TOTI_SHIFT)
->>   #define  CSR_GTLBC_USETGID_SHIFT       12
->> diff --git a/arch/loongarch/kvm/main.c b/arch/loongarch/kvm/main.c
->> index f89d1df885d7..50c977d8b414 100644
->> --- a/arch/loongarch/kvm/main.c
->> +++ b/arch/loongarch/kvm/main.c
->> @@ -336,7 +336,7 @@ int kvm_arch_enable_virtualization_cpu(void)
->>          write_csr_gcfg(0);
->>          write_csr_gstat(0);
->>          write_csr_gintc(0);
->> -       clear_csr_gtlbc(CSR_GTLBC_USETGID | CSR_GTLBC_TOTI);
->> +       clear_csr_gtlbc(CSR_GTLBC_USETGID | CSR_GTLBC_TOTI | CSR_GTLBC_USEVMID);
->>
->>          /*
->>           * Enable virtualization features granting guest direct control of
->> @@ -359,6 +359,8 @@ int kvm_arch_enable_virtualization_cpu(void)
->>
->>          /* Enable using TGID  */
->>          set_csr_gtlbc(CSR_GTLBC_USETGID);
->> +       if (cpu_has_guestid)
->> +               set_csr_gtlbc(CSR_GTLBC_USEVMID);
->>          kvm_debug("GCFG:%lx GSTAT:%lx GINTC:%lx GTLBC:%lx",
->>                    read_csr_gcfg(), read_csr_gstat(), read_csr_gintc(), read_csr_gtlbc());
->>
->> --
->> 2.39.3
->>
+As you surely know, Linux v4.9 is absolutely ancient from a kernel
+release perspective and is no longer maintained by anyone; have you
+been able to reproduce the problem on a modern kernel?  I quickly ran
+your reproducer on a Linux v6.12-rcX test system and did not see any
+errors.
 
+--=20
+paul-moore.com
 
