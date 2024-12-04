@@ -1,119 +1,116 @@
-Return-Path: <linux-kernel+bounces-431436-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B3969E3D56
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:53:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBEFF9E3D6A
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:55:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF80D2810A2
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 14:53:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 912B3280C3D
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 14:55:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F72C20ADDD;
-	Wed,  4 Dec 2024 14:52:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F008020B807;
+	Wed,  4 Dec 2024 14:53:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Az9YpqvA"
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OnRzHpt+"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B7A820A5E7
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 14:52:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D063A20D4F8
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 14:53:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733323977; cv=none; b=IAm35VEJbVhcWqmdXGIZ9rnQz7LRcilAMMCSup+TV2qSj48wmgq7ydSzB4aAH1fn8y6HNfNUW97JiihlpvbPpcQysgcQkSzvHd57dfoAqrsupZ32bdRa0Ob4pjmoxWo5oNY25au7XB3Tc4I3Y4jP52LgY+jxLWtyAj+B9igvDuM=
+	t=1733324026; cv=none; b=IXLfHPUnq2J4ckaqRxoF5+j8qekbwYr0Mw3STJA5mcjrMfnez0t+050NtbjVVCR/j6QDLeNvP2p11xKmzUdfcpNdH1/nnixET5VUOu5MoPJdui4DQhvARhIcOFL1nwjD20jJGZHO4/cjeR/vqSyvbutqYA5+wMIN8c7pEX7W+VM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733323977; c=relaxed/simple;
-	bh=3LiKv+eNX93oUQLQwuzkd/zma0J++yy3VUyud3rib0Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=REObDwDxSGRWnaIRj7VtyA63jZOd/ozasEct3qSb1zP99+Xg6ZL6sc1bIwx4islcFd7RUQUsd3GmMmkahJzUzNnwwk57PAG5A0TCiemKTQMhcPEfOYaUh5BvzuAGmnWZJ0vVOG86tT9DY48FFpAgpCcU2iLGD86x/hy2D8n+JfI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Az9YpqvA; arc=none smtp.client-ip=198.47.23.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4B4EqnT1007250;
-	Wed, 4 Dec 2024 08:52:49 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1733323969;
-	bh=7mm3A9mPvX81tl0Z0rM/8vD/v6yQ+H+FZCZOiBE3+RU=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=Az9YpqvAnvGLsRuTMAwVIeLbcvCyfNKwsV5RGsVxELPKFzcYSI5KWH+SUBJ2fSTuj
-	 I8e6y1A6tVyqapMjHJEB+5XZy/BlHyK1uUDLtzv9HVi8sgE8WrIx7PrWyIB4bNWA29
-	 XozZ+8NsTZzf9qbw8zQctB19JPMPwX5n//ZMvxho=
-Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4B4EqnWQ068057;
-	Wed, 4 Dec 2024 08:52:49 -0600
-Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 4
- Dec 2024 08:52:48 -0600
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 4 Dec 2024 08:52:48 -0600
-Received: from [10.249.42.149] ([10.249.42.149])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4B4EqmsW074167;
-	Wed, 4 Dec 2024 08:52:48 -0600
-Message-ID: <5d0a298f-559a-466b-b13a-7c6520406bb6@ti.com>
-Date: Wed, 4 Dec 2024 08:52:48 -0600
+	s=arc-20240116; t=1733324026; c=relaxed/simple;
+	bh=K7kBGbl/wdP2nCgoFHgNguRbgX9tLrTyha54rTPE+sk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=es+VWnj5AzbGznMPwpFC9A6EC55yXiSnSyLnsjEjpiVxW/1Cg/ZtT9Ng8BY2PltoWC0EDrRWIJU4kDV+TdiC2fOOZ4cq6DQS26WaL6yurzmRXW5xXPF/00TQ4pmSUj52U1TpnEhoagtzLuLbZcue5ZOJ4gMWCZh968VH6CxLwb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OnRzHpt+; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733324023;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=K7kBGbl/wdP2nCgoFHgNguRbgX9tLrTyha54rTPE+sk=;
+	b=OnRzHpt+zxCDZ5DbnZTm7ENPbbG4//j3Ntz2pB7zhwNOgqmqxbIv5eUx/wtFqbzzhHwjcd
+	q97UXp3PLg1VCTMfctUmAfWG12+DdS6rOUksubz5lOPc9P022XVURs6N5GFnHiYyBwVuJX
+	IMu+f3e3h5OUHp9wPSKoAGFww9oEK1E=
+Received: from mail-ot1-f70.google.com (mail-ot1-f70.google.com
+ [209.85.210.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-146-qPmOvZZUPny-7NQJhepnyg-1; Wed, 04 Dec 2024 09:53:42 -0500
+X-MC-Unique: qPmOvZZUPny-7NQJhepnyg-1
+X-Mimecast-MFC-AGG-ID: qPmOvZZUPny-7NQJhepnyg
+Received: by mail-ot1-f70.google.com with SMTP id 46e09a7af769-71d63a6ce62so4880973a34.2
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 06:53:42 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733324021; x=1733928821;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=K7kBGbl/wdP2nCgoFHgNguRbgX9tLrTyha54rTPE+sk=;
+        b=I7LViqY3wLuyuLW5ftBCN4RXPiM2hvQh2Af3zbQyYahXdplMm94squoZNOz/6GsfNz
+         IYWFzy9fnk5ldgxjiy3IQUC6colR6v62Q33LzMFB+Wts28Vhr6mF83EmZbc0meqeOqBo
+         CiJGb6lrW5JQxyQpGQDmOUeVH8s15VBSspLlD2B8hkwRFR6nGOFuQHVWdFdlZAMYcr9p
+         sRG+1j1kBRzTIyfl0Ik2VGbz5RW1MercOrZRacvHiV8mqKNuF7h/OTL1KPerkWXjeD+3
+         ZzgdZYm+/Y7j9yr+9rH8tA0Fdm1fx2tQLJqxOqHdCSnUzrV8uz9pRuUBOAs7h+unrRF0
+         lVSg==
+X-Forwarded-Encrypted: i=1; AJvYcCUQd2K4nt+i/zmiXVaxVD5hx27pd0lfOhli20qua1xHskMi41WShWyntuDEPLe8CTDftgPE2VcDqfGdNXE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyO3rx0VuUuOy6LWDaCNKTHuwvqJXLWqQsOPX2mIjXH4LztAT40
+	ZC4NqLuS/bv/YS3Hde9Y2LkbfUjsFVzgOBss+tgKpnUYY7dpVApV16HdspQCAcqlDz0+SEnbOc2
+	ZZHXzvYmXJBic+6NMxHhXqbtkEEcMuG64xMyfApafQTZXvz6QFgqxvIHA8n7Pc5/53bkv8/JMqs
+	aUFxli3PhLGm7lsdse0DrBT/wvapbS4cKDPA67
+X-Gm-Gg: ASbGncvUWiOt0kJwnFl358EFr7ayzAuwff/N0EsUYbL+yGYB20NCuwbUztC67lUsgtQ
+	gDo0Sv4FWIGggMUVgdmHBHXOqueTfTJc=
+X-Received: by 2002:a05:6830:388b:b0:71d:576f:29e4 with SMTP id 46e09a7af769-71dad4adba6mr6442243a34.0.1733324020840;
+        Wed, 04 Dec 2024 06:53:40 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHFS0oFHuIGv/zbXpCZrw4VpD3aJ8iYW3+nmQO54xHnhiT/5bN8TcEUROIJsrOy9LsBSbug6MeMRE0DrorOzYI=
+X-Received: by 2002:a05:6830:388b:b0:71d:576f:29e4 with SMTP id
+ 46e09a7af769-71dad4adba6mr6442234a34.0.1733324020668; Wed, 04 Dec 2024
+ 06:53:40 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] mux: mmio: Add suspend and resume support
-To: Thomas Richard <thomas.richard@bootlin.com>, Peter Rosin <peda@axentia.se>
-CC: <linux-kernel@vger.kernel.org>, <gregory.clement@bootlin.com>,
-        <theo.lebrun@bootlin.com>, <thomas.petazzoni@bootlin.com>,
-        <u-kumar1@ti.com>
-References: <20240613-mux-mmio-resume-support-v2-1-e8496099b034@bootlin.com>
- <d7e9d9f8-ac81-4cbb-897c-585741ca00c9@ti.com>
- <30397c99-936e-4abb-b214-fca6ce95c2bb@bootlin.com>
-Content-Language: en-US
-From: Andrew Davis <afd@ti.com>
-In-Reply-To: <30397c99-936e-4abb-b214-fca6ce95c2bb@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+References: <cover.1733216767.git.jstancek@redhat.com> <20b2bdfe94fed5b9694e22c79c79858502f5e014.1733216767.git.jstancek@redhat.com>
+ <Z083YZoAQEn9zrjM@mini-arch>
+In-Reply-To: <Z083YZoAQEn9zrjM@mini-arch>
+From: Jan Stancek <jstancek@redhat.com>
+Date: Wed, 4 Dec 2024 15:53:25 +0100
+Message-ID: <CAASaF6wX1GnXd3=Ue-yuCgGWNgKLy1+ChkydvYJ0dODBtcJL4A@mail.gmail.com>
+Subject: Re: [PATCH 1/5] tools: ynl: move python code to separate sub-directory
+To: Stanislav Fomichev <stfomichev@gmail.com>, donald.hunter@gmail.com
+Cc: kuba@kernel.org, pabeni@redhat.com, davem@davemloft.net, 
+	edumazet@google.com, horms@kernel.org, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 12/4/24 8:14 AM, Thomas Richard wrote:
-> On 12/4/24 14:53, Andrew Davis wrote:
->> On 9/11/24 3:53 AM, Thomas Richard wrote:
->>> The status of each mux is read during suspend and stored in the private
->>> memory of the mux_chip.
->>> Then the state is restored during the resume.
->>>
->>> Signed-off-by: Thomas Richard <thomas.richard@bootlin.com>
->>> ---
->>> In this second version, as discussed with Peter, everything is done in
->>> the
->>> mmio-mux driver.
->>> A mux_mmio_set() function was added, and used during suspend stage to get
->>> the status of the of the muxes.
->>> This status is stored in the private memory of the mux_chip.
->>> ---
->>> Changes in v2:
->>> - Remove all modifications done in the mux subsystem
->>> - Add a mux_mmio_set()
->>> - Read the status of muxes during suspend and store in the private memory
->>>     of the mux_chip.
->>
->> Do you need this private memory? Since this is already using regmap, why
->> not use the regmap cache, then you can restore all the values on resume
->> with a simple call to regcache_sync().
-> The regmap can be set without cache.
-> As you inherit the regmap, you cannot assume that the cache is enabled.
-> 
+On Tue, Dec 3, 2024 at 5:52=E2=80=AFPM Stanislav Fomichev <stfomichev@gmail=
+.com> wrote:
+>
+> On 12/03, Jan Stancek wrote:
+> > Move python code to a separate directory so it can be
+> > packaged as a python module.
+>
+> There is a bunch of selftests that depend on this location:
 
-Fair point, we don't really know much about the underlying registers.
-One thing we don't know is if they are retained during suspend, so
-saving and restoring might be unneeded in some cases. Maybe that isn't
-something we can solve at this point, could be something that should
-be done in the regmap framework instead..
+Sorry about that, I haven't realized other places it's already used at.
 
-For now, the rest of this patch seems good to me,
+> Perhaps we could have a symlink to cli.py from the original location
+> for compatibility with existing in-place usage. Same for ethtool.py
+> and other user-facing scripts.
 
-Reviewed-by: Andrew Davis <afd@ti.com>
+I can add those, but I'd still update docs references with new path.
+
+Thanks,
+Jan
+
 
