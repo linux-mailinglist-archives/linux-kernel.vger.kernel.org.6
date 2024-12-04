@@ -1,66 +1,52 @@
-Return-Path: <linux-kernel+bounces-431526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 629F79E3FCD
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:37:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B30E9E3E83
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:41:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2695CB39B70
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:42:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 169E3283207
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:41:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3745A20C499;
-	Wed,  4 Dec 2024 15:41:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DA1520C033;
+	Wed,  4 Dec 2024 15:41:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="rYB0+3jl"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Bo9J0JpG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D623020C032;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AA5C1F9F7A;
 	Wed,  4 Dec 2024 15:41:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733326911; cv=none; b=o1h4jhpLOHMpaoukS9S8BUwlfyd8nS6t6uG0YlwGIdIUGnoYwwsyP3rZDt3j1degwo6ENn9p/Szdu3xptCaO770FoPZEu9yFehkak6cspoxbjh/pf7TwrnqB/m441f8dSeNgWX7WtoiLXgt4grl9duw7/7n/aVX5epGDKy20bVc=
+	t=1733326908; cv=none; b=kIwEQPGvfeyOws/AKI757D1mzFZfQbL6z9/9U/2r+Yhr4KLSiXNAmxcpv+Ktlsv887KAwy6ErVZDlFAsbBngjm5nHne7IrL/jfVsIXN81kC8kFyJ0Fy2T6d8CMp6oFMxO6W3wd9o6PL/UIUUMY7Lb3GCOxL3+hBVX2AVe/v5LFs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733326911; c=relaxed/simple;
-	bh=9qC5XFIeEPv6fJHRL8DG9WVlABEvegbM6MfO+F5o+Wg=;
+	s=arc-20240116; t=1733326908; c=relaxed/simple;
+	bh=3mJQUjkFYRa2kKanyQLpq6EX59p67DE/Op3hPgUcRGY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QKD5CEfawMqiB6FUAIwHnmTX7ZWrAxTaWYicIAs84Xmm/WJT5WuvIBfHaegdfuUy0e7+mzkPRoAdAS0eOYfYBYldtD8UKUpYzvvAavNLXMy+35Z/17rv5ry/lIbd9XRP5H+4hONFzFzsM+9ynnYehhvHnfd7VSv4RIv7OthuM/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=rYB0+3jl; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=8JU87dSOgGQ075F3cYH/0T2VM64sEmEqoWMT1OVF2IM=; b=rYB0+3jlJp0NLAn7kVWU+IS3/b
-	6J6OdNYPyDJWBkGBE5JB2BP1/4WXwZv/Hr9DUXjtex+ZKCa7ipsABYcqAGgMugEHhAz4UaJaNwZnJ
-	WWEUa2B49PipFPPSnLJ/bZ4GwUesKkvcanU/UswuvCI+KR7oiLbuHOrnLoegi6BiJ23o=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tIrVN-00FE0Q-0y; Wed, 04 Dec 2024 16:41:33 +0100
-Date: Wed, 4 Dec 2024 16:41:33 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Cc: davem@davemloft.net, Jakub Kicinski <kuba@kernel.org>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Heiner Kallweit <hkallweit1@gmail.com>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
-	Simon Horman <horms@kernel.org>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
-	linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH net-next v3 09/10] net: freescale: ucc_geth: Introduce a
- helper to check Reduced modes
-Message-ID: <49fbbbf8-ec21-41a6-b87e-0172d0a4a2b3@lunn.ch>
-References: <20241203124323.155866-1-maxime.chevallier@bootlin.com>
- <20241203124323.155866-10-maxime.chevallier@bootlin.com>
- <ce002489-2a88-47e3-ba9a-926c3a71dea9@lunn.ch>
- <20241204092232.02b8fb9a@fedora.home>
+	 Content-Type:Content-Disposition:In-Reply-To; b=mt78hjlShfqosQ1yh3Lv/1J9jkQYhH7U7NLS4tCel1ujfdFbbdYqW+WkWpm8+MmTvNL7NA/HKzC5afz5uEJ+PA+yZf+I+U5TwbkG9fd5N35jggruaknFFXzRT/OOfEGD7e9Z6jnBg4TmkdH+Qg/qTb3r7C8vDTJpvNfKiToiTXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Bo9J0JpG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8323CC4CECD;
+	Wed,  4 Dec 2024 15:41:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1733326908;
+	bh=3mJQUjkFYRa2kKanyQLpq6EX59p67DE/Op3hPgUcRGY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Bo9J0JpGdHb7q1VRCIoxRbe+XO+bWe36dGAa3Yl/OyOkRcx5sLd0VHiBXtDlHCLkX
+	 iR1jzgZ+QD6JEpmdYKTI7xcYfRiSxIFyS5VvwWlm+wwWFsP8Ar/JkUBSTgSRK8AqMW
+	 44O6I+oz0Yyy76geqqODYyf70MODaNYIqkI34A7M=
+Date: Wed, 4 Dec 2024 16:41:44 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: n3rdopolis <bluescreen_avenger@verizon.net>
+Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Jiri Slaby <jirislaby@kernel.org>
+Subject: Re: [PATCH 1/2] ttynull: Add an option to allow ttynull to be used
+ as a console device
+Message-ID: <2024120401-grapple-saddlebag-e674@gregkh>
+References: <20241129041549.778959-1-bluescreen_avenger@verizon.net>
+ <20241129041549.778959-2-bluescreen_avenger@verizon.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,32 +55,19 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241204092232.02b8fb9a@fedora.home>
+In-Reply-To: <20241129041549.778959-2-bluescreen_avenger@verizon.net>
 
-On Wed, Dec 04, 2024 at 09:22:32AM +0100, Maxime Chevallier wrote:
-> Hello Andrew,
-> 
-> On Wed, 4 Dec 2024 03:15:52 +0100
-> Andrew Lunn <andrew@lunn.ch> wrote:
-> 
-> > > +static bool phy_interface_mode_is_reduced(phy_interface_t interface)
-> > > +{
-> > > +	return phy_interface_mode_is_rgmii(interface) ||
-> > > +	       interface == PHY_INTERFACE_MODE_RMII ||
-> > > +	       interface == PHY_INTERFACE_MODE_RTBI;
-> > > +}  
-> > 
-> > I wounder if this is useful anywhere else? Did you take a look around
-> > other MAC drivers? Maybe this should be in phy.h?
-> 
-> Yes I did consider it but it looks like ucc_geth is the only driver
-> that has a configuration that applies to all R(MII/GMII/TBI) interfaces
+On Thu, Nov 28, 2024 at 11:15:48PM -0500, n3rdopolis wrote:
+> Add a config option CONFIG_NULL_TTY_CONSOLE that will have ttynull be
+> initialized by console_initcall() and selected as a possible console
+> device.
+> Signed-off-by: n3rdopolis <bluescreen_avenger@verizon.net>
 
-O.K. What is important is you considered it. Thanks. Too many
-developers are focus on just their driver and don't think about other
-drivers and code reuse.
+Meta-comments, we need a blank line before the s-o-b line, AND we need a
+real name here, sorry.  I can't do anything with these (including
+reviewing them), until that happens.
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+thanks,
 
-    Andrew
+greg k-h
 
