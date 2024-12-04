@@ -1,127 +1,92 @@
-Return-Path: <linux-kernel+bounces-430986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A06199E37DB
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 11:49:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C6B4E9E37E2
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 11:50:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5883AB28D09
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 10:48:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4FA7BB2FEAE
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 10:48:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28A5E1B0F04;
-	Wed,  4 Dec 2024 10:48:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9F8E1B0F16;
+	Wed,  4 Dec 2024 10:48:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ivCy/Ze/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cmoigJ5g"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DCDD63D;
-	Wed,  4 Dec 2024 10:48:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F4BE187555;
+	Wed,  4 Dec 2024 10:48:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733309289; cv=none; b=kuQylYjwAMsdb4qAYTUb0Q17Yryc/PrnvJnTkST3x/fK7ISR+eD1GCAXh+k5oGme1/chzEEBoUn9mQrCUpN7MUVi2ZO7r2a9l28a7JOw1EGrpf+tUwHTZK5XDbqsZND22ONfsEy+WcVbL6Khb31Ndr7M1pXO/NU+rh9cez0AXHs=
+	t=1733309317; cv=none; b=WPs1d600iDYW31OUwyfxSqC1FsJQe4AcSiVLhqLzKNzD0qPhFAIYQt+50S2z0Ct+bqxGShuShmz1Sp6QNKR90B+PizrD6okh5KEMpMPIOjYKsQcnd7qqJyPK7GSmSUDBB1FbMgzWASJfKmbWikDo/jhDF+kBVs6A2XxuyFUq5kU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733309289; c=relaxed/simple;
-	bh=RhyhbvWtrFu1WfWv9PS18MiKCuQ8ygSq0c0oQWbb+e4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bnZjaQLxbdGrLDXnlXA9lyY9UR5EcGe1OIjw9IeQ6hrtzl7K5mvj+oB6LaoOrrylf2ZtZhyDrHrYqDU2rVdvhLjYkOPlJymGbxXWnjkF+WynawRiRK7QIyUBF78TAAY6aR9/wARRSwy6QLDvkFQAFOaIxFVpcrypBGCsnyrceBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ivCy/Ze/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48287C4CED1;
-	Wed,  4 Dec 2024 10:48:09 +0000 (UTC)
+	s=arc-20240116; t=1733309317; c=relaxed/simple;
+	bh=lPT5H7D7YN3MfncgvivZr/u25OyzzMmy1rZ9Kz4FsGw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=OuJOLvhlIQjZMnqnlGusfPREbBJKLjYo+P7wO2Dz4E8VQ07pdwxq8ba9+Sl3G3WjpR7vQWaf8Zs6cywALNuc5d4NT3GTqpNCN/4BiIa93OyDwomPdg4273k3wJEezUiQD/QMfFCeChDfgJV/HyR8z8a1/Jk5BuyVrYeMtu5xNYw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cmoigJ5g; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D0F2C4CED1;
+	Wed,  4 Dec 2024 10:48:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733309289;
-	bh=RhyhbvWtrFu1WfWv9PS18MiKCuQ8ygSq0c0oQWbb+e4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ivCy/Ze/ggHWESdhwTKar5t8+0vD14yikx68MaBW4lAxo0UTJn927lwdRIawDDue8
-	 WJuWELkHtsqA/RR6qdssrFm5ZfsoHQgzz0mr4T78GdNjkaIwQ45waiMVurIJC43xyV
-	 muV/Qeb/NNKHz6uFCKV/14nbZ51MXFUw0nvwjs6GvafmnGDmjfIDB+Nj4HbF9/l94k
-	 RONJwCukehI6p1gSES+VdzPcO9b7tTXu2PG+RJ7LCxeErmMBKKO3brOK60LzOBMsj/
-	 x2b9U1WDK5FgLQHR7g3Ty/uYVQ2zyYtHav9AAXUkZUIgsvo/1SMIfNbCwikQdnKZzR
-	 iVcPL+ZV8zhsg==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1tImvN-000000001I3-47HM;
-	Wed, 04 Dec 2024 11:48:06 +0100
-Date: Wed, 4 Dec 2024 11:48:05 +0100
-From: Johan Hovold <johan@kernel.org>
-To: Abel Vesa <abel.vesa@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+	s=k20201202; t=1733309316;
+	bh=lPT5H7D7YN3MfncgvivZr/u25OyzzMmy1rZ9Kz4FsGw=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=cmoigJ5gupatu5Wch9WDLNQZTv9eG6w9qMcUdRQ4YR3qgjmJOItwZ8WE+MW7UiFBW
+	 UMA7bHB8mm4VoTXyEFcQYgOC39T4xu2i2pyY94/P5DpRp6w4UCQGyipUGJyHTrw4q5
+	 yeH9GzqukU5s71S10e1hmyhusGzLqOSP1isOfrx8IYsTvq+qz8nBKlmRiHpUaLpO6u
+	 PjP/ANTQ2Z4IOjQU4QATMv8MMSVNtq8YZyvRptXomNkefaQ43caUql9cJG7h5GrtwZ
+	 dtMNBRwsC8Y0fMs6E+9TlasP24b9/B1zDkvbk22AnsD/2wvf7TU5IVKqAZTjEVRkhm
+	 QVD4/RrOnK2cg==
+From: Christian Brauner <brauner@kernel.org>
+To: Zhu Jun <zhujun2@cmss.chinamobile.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: [PATCH v2 1/2] arm64: dts: qcom: x1e78100-t14s: Enable support
- for both Type-A USB ports
-Message-ID: <Z1AzZbNc_9tTgiDs@hovoldconsulting.com>
-References: <20241202-x1e80100-qcp-t14-enable-usb-type-a-ports-v2-0-7360ed65c769@linaro.org>
- <20241202-x1e80100-qcp-t14-enable-usb-type-a-ports-v2-1-7360ed65c769@linaro.org>
- <Z03PzTsTi3EwaXcE@hovoldconsulting.com>
- <Z1AZW/ZXzCOVi1Zy@linaro.org>
+	viro@zeniv.linux.org.uk
+Subject: Re: [PATCH] fs: Fix typo in pnode.c
+Date: Wed,  4 Dec 2024 11:48:08 +0100
+Message-ID: <20241204-silbentrennung-wehrlos-53b670b31caa@brauner>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20241204081218.12141-1-zhujun2@cmss.chinamobile.com>
+References: <20241204081218.12141-1-zhujun2@cmss.chinamobile.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z1AZW/ZXzCOVi1Zy@linaro.org>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=910; i=brauner@kernel.org; h=from:subject:message-id; bh=lPT5H7D7YN3MfncgvivZr/u25OyzzMmy1rZ9Kz4FsGw=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQHGNdNKtp5OJmD/WCA665iZiv/T1rmJ1bMVzJMrFx+W 6X7co94RykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwES27WRkWGs/8Xh1+eUFGd8W bXQ/t1vkssmBosc7Yu4vSlZ8/dZDQ57hn0YER87T2UI6Tae3cb3s3f9tQ+Py8BP8b05GLJFSWG4 XyQgA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Wed, Dec 04, 2024 at 10:56:59AM +0200, Abel Vesa wrote:
-> On 24-12-02 16:18:37, Johan Hovold wrote:
-> > On Mon, Dec 02, 2024 at 11:23:17AM +0200, Abel Vesa wrote:
-
-> > > +&i2c5 {
-> > > +	clock-frequency = <400000>;
-> > > +
-> > > +	status = "okay";
-> > > +
-> > > +	eusb3_repeater: redriver@47 {
-> > > +		compatible = "nxp,ptn3222";
-> > > +		reg = <0x47>;
-> > 
-> > The driver doesn't seem to actually communicate with these devices
-> > currently and the addresses you specify here do not match what the
-> > schematics says.
+On Wed, 04 Dec 2024 00:12:18 -0800, Zhu Jun wrote:
+> The word 'accross' is wrong, so fix it.
 > 
-> Schematics have the addressess left shifted for the wr/rd bit.
 > 
-> > Have you verified that these addresses are correct?
-> 
-> Reading the chip id regs confirms the addresses are correct.
 
-Thanks for confirming.
+Applied with additional fixes in that comment.
 
-> > And last, but not least, the T14s may hard reset if you disconnect a
-> > thumb drive connected to one of these ports while suspended (6.13-rc1).
-> 
-> Wasn't able to reproduce this issue yet. Will spend some more time on it
-> in the following days.
+---
 
-Just triggered what appears to be a deadlock in the block layer by
-disconnecting a thumb drive while suspended. Not sure if that could
-have triggered the reset, but it is likely related to the lockdep splat
-I mentioned below.
+Applied to the vfs-6.14.misc branch of the vfs/vfs.git tree.
+Patches in the vfs-6.14.misc branch should appear in linux-next soon.
 
-> > Once it survived with a lockdep splat indicating a circular locking
-> > dependency. I see that on the CRD as well, so possibly not related to
-> > the hard reset.
-> 
-> This is most definitely the same splat triggered by the repeater PHY ops
-> being called from the eUSB2 PHY driver. We are already in discussion
-> with Vinod on how to handle multi PHY levels in the generic framework.
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-No, if it was the false-positive PHY splat I would have said so. This
-appears to be a new block-layer splat with 6.13-rc1. Don't see it with
-6.12.
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
-I'll send a report.
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
 
-Johan
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs-6.14.misc
+
+[1/1] fs: Fix typo in pnode.c
+      https://git.kernel.org/vfs/vfs/c/4a11d534d9ae
 
