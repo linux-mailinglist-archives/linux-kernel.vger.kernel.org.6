@@ -1,176 +1,177 @@
-Return-Path: <linux-kernel+bounces-432063-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432064-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31B319E4480
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 20:21:53 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A28569E4485
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 20:24:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DEF3D168575
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 19:21:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 694F2168617
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 19:24:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEDA41C3BE7;
-	Wed,  4 Dec 2024 19:21:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 003F21C3BEF;
+	Wed,  4 Dec 2024 19:24:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ajNLWKeG"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jilvUodB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84FA224B26;
-	Wed,  4 Dec 2024 19:21:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CE362391AA;
+	Wed,  4 Dec 2024 19:24:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733340106; cv=none; b=CMN/245n3RJWrKmQG9TftDcDU2jOUR8OEnUDEtuSNAeYfNYNd40045dmOdCPWw7inKYGBVXMin32fAtKeLc2MM4cxcZiHTVgWHKU7bPddiJavcOKOo0XG8uNd3JN9n7N/e4RmaRA8nbzoo9fK051DO8NvUAqiMazcOf4WDJTALs=
+	t=1733340258; cv=none; b=h6h4N19HG/5NH6ZwWm0xYjLD3xG4ruwn8iR7GItEzKxnKepzfF+onrVTlzoK/DBPeTgIFSU2ZU7UZipkI/FrWchGlp2J6sVZ2JTW81w3ppKVYphC0MwViaoer7uKZpAc5PTsSqXKlUZJZNk75EwF53isBic2pWYCU2FZnV7+hdY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733340106; c=relaxed/simple;
-	bh=XvwEqCgaLZUkQxD62yH5xGJhJYQI48sqzkTzpiBTSzU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=STTVyqbqgrEcV9oYtng/NuNXQfejGFjD4C0A+bj9YFu4KBDPvovPpKQuJElRs64zzkYTMixP6Mfv7d+MmoC43pkFmJx8OuqRtzx0BTeu/0rIi94xsHDTu+twLZ0LPw1Tj0jOr/hvKCtJX6Dh/JiDOR3N34byHpffIHX8rzY9QIc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ajNLWKeG; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B4GXaCD023317;
-	Wed, 4 Dec 2024 19:21:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	4U2a+iogl9VHRsnyNgkVeDFo4vdPT+GZFNYfMDV4B8Q=; b=ajNLWKeG8XnRXwzR
-	sE/RYcmfZN88Yo0v/2Tsa/B6Yli6kX0pz2ugKKgtTR8XLRZaBiQKW5tnCFzyDUjG
-	hah7gkMHf3/ny2P0+5hTfTmzFSpelJGn2vvpNcM6xky+llTrOhmkuUxx6icNuhE3
-	Dw15nTS7TExFUFgBMKzUhjR/LrcY79Wwo+WC3JpR4KuQkVvO8Et1HvJks5EXKxWu
-	xBPp+vfIhHJrYCL55dzy/iwpbQacAfrcmQ63ZEFzrhjvG8RPCh3LOeqI5rBLdQSg
-	DME20U/hFTlJzfEYu/uYx7VNF2C/U8/pFwKL1gqXx6quBWwfBUXN8tfHdteIFtqA
-	0uANpQ==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43aj429ymc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 04 Dec 2024 19:21:29 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B4JLS6K018655
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 4 Dec 2024 19:21:28 GMT
-Received: from [10.71.110.107] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 4 Dec 2024
- 11:21:27 -0800
-Message-ID: <20a3955e-3d10-47c5-8e68-d70342805010@quicinc.com>
-Date: Wed, 4 Dec 2024 11:21:26 -0800
+	s=arc-20240116; t=1733340258; c=relaxed/simple;
+	bh=7Nz7Fmk1v8MZPUXucg959qe8Vj0xy0XnrVAGLmjOadM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XN4MImQxAKlFaGPPqnlRhNB+EhQdAFotDrkwKOEQ1mmSuNUi1kX335/APwG6pdPMS4Yd0KArr3FdTB4ZRSMCi7fDvztj4IGG0CDSBs19b0YxeT0W7ZF55EL77qB/JysfIFNwIPBIDEd3zhcoTj9eeteiouvgWV0MzghYoR5sWBk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jilvUodB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37E47C4CECD;
+	Wed,  4 Dec 2024 19:24:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733340257;
+	bh=7Nz7Fmk1v8MZPUXucg959qe8Vj0xy0XnrVAGLmjOadM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jilvUodBBXvpy7uZs90jylcs939jMLElAtL5N2rCxsdXZL+ruqpViv3Qs9G1zoBu5
+	 pYc7AYinwE68/JBySCEmCwHnJOJZVIqQo8KMmROLNbt4AUREUEdYpJISGfRm3OscIo
+	 dVPg6NY3tt4hVLTZogUofA2q6m/qGC1wbc/P9swbbFADyO4/tLcgosoS6lEXtcZGHc
+	 rvuvc0YFyX80RtU7BAK6jiwH6PYVwcxroNHCpCogZbHfnm5cQZFMCMEdodmThCv+hu
+	 lzjY6br9ijStQR8jT+GIt+AsfcrS8zFFvJopV+SwTruREJXQgLE7Cz+V3303aCihD2
+	 L2jnITPmmC85Q==
+Date: Wed, 4 Dec 2024 11:24:15 -0800
+From: Namhyung Kim <namhyung@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: James Clark <james.clark@linaro.org>,
+	Ravi Bangoria <ravi.bangoria@amd.com>,
+	Atish Patra <atishp@atishpatra.org>,
+	Mingwei Zhang <mizhang@google.com>,
+	Kajol Jain <kjain@linux.ibm.com>,
+	Thomas Richter <tmricht@linux.ibm.com>,
+	Palmer Dabbelt <palmer@rivosinc.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Ian Rogers <irogers@google.com>, Jiri Olsa <jolsa@kernel.org>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [REGRESSION] 'perf mem record' on a Intel hybrid system broken
+Message-ID: <Z1CsX3n5U_q5ehRp@google.com>
+References: <Z1CVTJ5jzIyNiB1R@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/ci: add kms_cursor_legacy@torture-bo to apq8016
- flakes
-To: Helen Mae Koike Fornazier <helen.koike@collabora.com>
-CC: Rob Clark <robdclark@gmail.com>,
-        Dmitry Baryshkov
-	<dmitry.baryshkov@linaro.org>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten
-	<marijn.suijten@somainline.org>,
-        Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        dri-devel
-	<dri-devel@lists.freedesktop.org>,
-        freedreno
-	<freedreno@lists.freedesktop.org>
-References: <20241204-cursor_tor_skip-v1-1-f5f0bba5df7b@quicinc.com>
- <193931869a5.f923adf2270026.8321075661083367617@collabora.com>
-Content-Language: en-US
-From: Abhinav Kumar <quic_abhinavk@quicinc.com>
-In-Reply-To: <193931869a5.f923adf2270026.8321075661083367617@collabora.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: -yi9Rln1Vs3X-sbEcRIRKWHjdiusp5_y
-X-Proofpoint-ORIG-GUID: -yi9Rln1Vs3X-sbEcRIRKWHjdiusp5_y
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 bulkscore=0
- mlxscore=0 mlxlogscore=999 lowpriorityscore=0 clxscore=1015 malwarescore=0
- priorityscore=1501 spamscore=0 adultscore=0 suspectscore=0 impostorscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
- definitions=main-2412040148
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Z1CVTJ5jzIyNiB1R@x1>
 
-Hi Helen
+Hi Arnaldo,
 
-On 12/4/2024 11:14 AM, Helen Mae Koike Fornazier wrote:
-> Hi Abhinav,
+On Wed, Dec 04, 2024 at 02:45:48PM -0300, Arnaldo Carvalho de Melo wrote:
+> Hi Namhyung,
 > 
-> Thanks for your patch.
+> root@number:/tmp# perf mem record -a sleep 1s
+> Error:
+> The sys_perf_event_open() syscall returned with 22 (Invalid argument) for event (cpu_core/mem-loads,ldlat=30/).
+> "dmesg | grep -i perf" may provide additional information.
 > 
+> root@number:/tmp# dmesg | tail
+> [18865.729882] ixgbe 0000:05:00.0 enp5s0: NIC Link is Up 10 Gbps, Flow Control: RX/TX
+> [18865.848172] mlx5_core 0000:01:00.0 enp1s0f0np0: Link down
+> [18866.057990] mlx5_core 0000:01:00.1 enp1s0f1np1: Link down
+> [19066.396215] input: JBL RACE TWS (AVRCP) as /devices/virtual/input/input27
+> [19078.378477] usb 2-3: current rate 16000 is different from the runtime rate 48000
+> [21158.375680] usb 2-3: current rate 16000 is different from the runtime rate 48000
+> [31386.186675] input: JBL RACE TWS (AVRCP) as /devices/virtual/input/input28
+> [31409.098352] usb 2-3: current rate 16000 is different from the runtime rate 48000
+> [36409.737615] sysrq: Emergency Sync
+> [36409.742619] Emergency Sync complete
+> root@number:/tmp#
 > 
+> 	That I bisected down to:
 > 
-> ---- On Wed, 04 Dec 2024 15:55:17 -0300 Abhinav Kumar  wrote ---
+> ⬢ [acme@toolbox perf-tools-next]$ git bisect good 
+> af954f76eea56453713ae657f6812d4063f9bc57 is the first bad commit
+> commit af954f76eea56453713ae657f6812d4063f9bc57
+> Author: Namhyung Kim <namhyung@kernel.org>
+> Date:   Tue Oct 15 23:23:57 2024 -0700
 > 
->   > From the jobs [1] and [2] of pipeline [3], its clear that
->   > kms_cursor_legacy@torture-bo is most certainly a flake and
->   > not a fail for apq8016. Mark the test accordingly to match the results.
->   >
->   > [1] : https://gitlab.freedesktop.org/drm/msm/-/jobs/67676481
->   > [2] : https://gitlab.freedesktop.org/drm/msm/-/jobs/67677430
->   > [3]: https://gitlab.freedesktop.org/drm/msm/-/pipelines/1322770
->   >
->   > Signed-off-by: Abhinav Kumar quic_abhinavk@quicinc.com>
->   > ---
->   >  drivers/gpu/drm/ci/xfails/msm-apq8016-flakes.txt | 5 +++++
->   >  1 file changed, 5 insertions(+)
->   >
->   > diff --git a/drivers/gpu/drm/ci/xfails/msm-apq8016-flakes.txt b/drivers/gpu/drm/ci/xfails/msm-apq8016-flakes.txt
->   > new file mode 100644
->   > index 000000000000..18639853f18f
->   > --- /dev/null
->   > +++ b/drivers/gpu/drm/ci/xfails/msm-apq8016-flakes.txt
->   > @@ -0,0 +1,5 @@
->   > +# Board Name: msm-apq8016-db410c
->   > +# Failure Rate: 100
+>     perf tools: Check fallback error and order
+>     
+>     The perf_event_open might fail due to various reasons, so blindly
+>     reducing precise_ip level might not be the best way to deal with it.
+>     
+>     It seems the kernel return -EOPNOTSUPP when PMU doesn't support the
+>     given precise level.  Let's try again with the correct error code.
+>     
+>     This caused a problem on AMD, as it stops on precise_ip of 2 for IBS but
+>     user events with exclude_kernel=1 cannot make progress.  Let's add the
+>     evsel__handle_error_quirks() to this case specially.  I plan to work on
+>     the kernel side to improve this situation but it'd still need some
+>     special handling for IBS.
+>     
+>     Reviewed-by: James Clark <james.clark@linaro.org>
+>     Reviewed-by: Ravi Bangoria <ravi.bangoria@amd.com>
+>     Acked-by: Kan Liang <kan.liang@linux.intel.com>
+>     Cc: James Clark <james.clark@arm.com>
+>     Cc: Atish Patra <atishp@atishpatra.org>
+>     Cc: Mingwei Zhang <mizhang@google.com>
+>     Cc: Kajol Jain <kjain@linux.ibm.com>
+>     Cc: Thomas Richter <tmricht@linux.ibm.com>
+>     Cc: Palmer Dabbelt <palmer@rivosinc.com>
+>     Link: https://lore.kernel.org/r/20241016062359.264929-8-namhyung@kernel.org
+>     Signed-off-by: Namhyung Kim <namhyung@kernel.org>
 > 
-> Is failure rate is 100%, isn't it a fail than?
-> (I know we have other cases with Failure Rate: 100, maybe we should fix them as well)
+> If I revert that patch:
 > 
+> ⬢ [acme@toolbox perf-tools-next]$ git log --oneline -5
+> 9a9f2d6da1ea5ef5 (HEAD -> perf-tools-next) Revert "perf tools: Check fallback error and order"
+> d12d4cfc5033cd8c perf script python: Improve physical mem type resolution
+> 3f79d822e331022f perf disasm: Return a proper error when not determining the file type
+> 1a5b914261f0ebee tools features: Don't check for libunwind devel files by default
+> 40384c840ea1944d (tag: v6.13-rc1, perf-tools/perf-tools) Linux 6.13-rc1
+> ⬢ [acme@toolbox perf-tools-next]$
+> 
+> And rebuild, it works again:
+> 
+> root@number:/tmp# perf mem record -a sleep 1s
+> [ perf record: Woken up 1 times to write data ]
+> [ perf record: Captured and wrote 13.014 MB perf.data (10316 samples) ]
+> root@number:/tmp# perf evlist
+> cpu_atom/mem-loads,ldlat=30/P
+> cpu_atom/mem-stores/P
+> cpu_core/mem-loads-aux/
+> cpu_core/mem-loads,ldlat=30/
+> cpu_core/mem-stores/P
+> dummy:u
+> # Tip: use 'perf evlist -g' to show group information
+> root@number:/tmp# perf evlist -v
+> cpu_atom/mem-loads,ldlat=30/P: type: 10 (cpu_atom), size: 136, config: 0x5d0 (mem-loads), { sample_period, sample_freq }: 4000, sample_type: IP|TID|TIME|ADDR|CPU|PERIOD|IDENTIFIER|DATA_SRC|WEIGHT_STRUCT, read_format: ID|LOST, disabled: 1, freq: 1, precise_ip: 3, sample_id_all: 1, { bp_addr, config1 }: 0x1f
+> cpu_atom/mem-stores/P: type: 10 (cpu_atom), size: 136, config: 0x6d0 (mem-stores), { sample_period, sample_freq }: 4000, sample_type: IP|TID|TIME|ADDR|CPU|PERIOD|IDENTIFIER|DATA_SRC|WEIGHT_STRUCT, read_format: ID|LOST, disabled: 1, freq: 1, precise_ip: 3, sample_id_all: 1
+> cpu_core/mem-loads-aux/: type: 4 (cpu_core), size: 136, config: 0x8203 (mem-loads-aux), { sample_period, sample_freq }: 4000, sample_type: IP|TID|TIME|ADDR|CPU|PERIOD|IDENTIFIER|DATA_SRC|WEIGHT_STRUCT, read_format: ID|LOST, disabled: 1, freq: 1, precise_ip: 3, sample_id_all: 1
+> cpu_core/mem-loads,ldlat=30/: type: 4 (cpu_core), size: 136, config: 0x1cd (mem-loads), { sample_period, sample_freq }: 4000, sample_type: IP|TID|TIME|ADDR|CPU|PERIOD|IDENTIFIER|DATA_SRC|WEIGHT_STRUCT, read_format: ID|LOST, freq: 1, precise_ip: 2, sample_id_all: 1, { bp_addr, config1 }: 0x1f
+> cpu_core/mem-stores/P: type: 4 (cpu_core), size: 136, config: 0x2cd (mem-stores), { sample_period, sample_freq }: 4000, sample_type: IP|TID|TIME|ADDR|CPU|PERIOD|IDENTIFIER|DATA_SRC|WEIGHT_STRUCT, read_format: ID|LOST, disabled: 1, freq: 1, precise_ip: 3, sample_id_all: 1
+> dummy:u: type: 1 (software), size: 136, config: 0x9 (PERF_COUNT_SW_DUMMY), { sample_period, sample_freq }: 1, sample_type: IP|TID|TIME|ADDR|CPU|IDENTIFIER|DATA_SRC|WEIGHT_STRUCT, read_format: ID|LOST, exclude_kernel: 1, exclude_hv: 1, mmap: 1, comm: 1, task: 1, mmap_data: 1, sample_id_all: 1, exclude_guest: 1, mmap2: 1, comm_exec: 1, ksymbol: 1, bpf_event: 1
+> # Tip: use 'perf evlist -g' to show group information
+> root@number:/tmp# perf evlist -g
+> cpu_atom/mem-loads,ldlat=30/P
+> cpu_atom/mem-stores/P
+> {cpu_core/mem-loads-aux/,cpu_core/mem-loads,ldlat=30/}
+> cpu_core/mem-stores/P
+> dummy:u
+> root@number:/tmp#
+> 
+> Now trying to investigate this,
 
-Maybe I misunderstood the meaning of "Failure rate" for a flake.
+I think I got a related report from the kernel test robot but it was a
+Sapphire Rapids machine.  I don't have a Intel hybrid machine in hand.
+I'll try to take a look at it on Sapphire Rapids.
 
-I interpreted this as this test being flaky 100% of the time :)
+Thanks,
+Namhyung
 
-Out of the 3 runs of the test, it passed 2/3 times and failed 1/3.
-
-So its fail % actually is 33.33% in that case.
-
-I think I saw a Failure rate of 100% on msm-sm8350-hdk-flakes.txt and 
-mistook that as the rate at which flakes are seen.
-
-Let me fix this up as 33%
-
-> Regards,
-> Helen
-> 
->   > +# IGT Version: 1.28-ga73311079
->   > +# Linux Version: 6.12.0-rc2
->   > +kms_cursor_legacy@torture-bo
->   >
->   > ---
->   > base-commit: 798bb342e0416d846cf67f4725a3428f39bfb96b
->   > change-id: 20241204-cursor_tor_skip-9d128dd62c4f
->   >
->   > Best regards,
->   > --
->   > Abhinav Kumar quic_abhinavk@quicinc.com>
->   >
->   >
-> 
 
