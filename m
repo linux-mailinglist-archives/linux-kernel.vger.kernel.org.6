@@ -1,95 +1,108 @@
-Return-Path: <linux-kernel+bounces-430441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CB3B9E30E4
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 02:44:02 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94D039E30E2
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 02:43:55 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AA143B2777E
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 01:43:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E5E01672DB
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 01:43:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09C6E171CD;
-	Wed,  4 Dec 2024 01:43:51 +0000 (UTC)
-Received: from mxde.zte.com.cn (mxde.zte.com.cn [209.9.37.142])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD494F9F8;
+	Wed,  4 Dec 2024 01:43:50 +0000 (UTC)
+Received: from shelob.surriel.com (shelob.surriel.com [96.67.55.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 454C217C61;
-	Wed,  4 Dec 2024 01:43:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.9.37.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D96917C60;
+	Wed,  4 Dec 2024 01:43:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.67.55.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733276630; cv=none; b=DE//+e6on12jx3l0K6lJj3ZtH2LnLpuUod02b0JPNgjIyWv36DCn6xqZ98qjHR0XFm9OoADGMIFCqsZ5u559x+XWprVNwY6EXj2lQ2KbppQostoPrRGbiMjU6biy/iFX0C7GRilL+4+QYKFEv+Kq0vmV2mvjeHHsqwo/RewgNYM=
+	t=1733276630; cv=none; b=cKXATF3n9KFuy/O9LEvRk4f5jP2yw1/DAO0hpPuIrILeCqJEO8mmI7KfMcP7YrslOFO4poC3aOE9c5Za+SJXPRBk1ubKLyrN0XzLQfAz78IixV6v+HroqkJls7Bv8JEKBqbXslX1fWTeZnzDXq0bSYCKcAVpfTcJpm9ctLeIeFI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1733276630; c=relaxed/simple;
-	bh=CKWsZb2yT8hh1m0dbBSisGGIc5ULADabbjpPZnjoPVc=;
-	h=Date:Message-ID:In-Reply-To:References:Mime-Version:From:To:Cc:
-	 Subject:Content-Type; b=bYFd7GEBFqIxhb9EgNwxAWVs0F2Y+lbYQT6mJ8IpXJaFGUnmuJbpbjzMICyAIbsSdxdVhLtkRqwUeG7Q/76Caa3yyuxGuROrKLIBT4UYuSRXVpXIgFAYRhJJFQvnUeXPIimcdbSNwiEAVXsI984+0tGhUtzoA+QSKiE+1nIkWPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=209.9.37.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mxhk.zte.com.cn (unknown [192.168.250.138])
-	(using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-	(No client certificate requested)
-	by mxde.zte.com.cn (FangMail) with ESMTPS id 4Y30fg5pgTzBRHKW;
-	Wed,  4 Dec 2024 09:43:39 +0800 (CST)
-Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4Y30fW0MXQz5B1Kq;
-	Wed,  4 Dec 2024 09:43:31 +0800 (CST)
-Received: from szxlzmapp05.zte.com.cn ([10.5.230.85])
-	by mse-fl1.zte.com.cn with SMTP id 4B41hJ29026879;
-	Wed, 4 Dec 2024 09:43:19 +0800 (+08)
-	(envelope-from yang.yang29@zte.com.cn)
-Received: from mapi (szxlzmapp05[null])
-	by mapi (Zmail) with MAPI id mid14;
-	Wed, 4 Dec 2024 09:43:21 +0800 (CST)
-Date: Wed, 4 Dec 2024 09:43:21 +0800 (CST)
-X-Zmail-TransId: 2b07674fb3b9401-089f3
-X-Mailer: Zmail v1.0
-Message-ID: <20241204094321160yp9RJKElKXTlg-q1OzYU-@zte.com.cn>
-In-Reply-To: <20241203170816.3fe81941fe1866ca1672eba8@linux-foundation.org>
-References: 20241203164848805CS62CQPQWG9GLdQj2_BxS@zte.com.cn,20241203170816.3fe81941fe1866ca1672eba8@linux-foundation.org
+	bh=LuuVXAlVpMzdyj2GZRhwna+hzeJ+5qkzHw7X632tjd0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Cd8ejXnLDPDeawSWPcCu5lbaYZ2CyNXjh7ObE4fnO9mATVFtqCYY5nyMU0R9bF1Ab+TOYQEtb9J9JhzE0h0IrC2nFPgXqHc1QkBldkFcojcZIkh4C8eB04+S/MlJa3QYK/smgd/0105WE8dR8go+As/FC5b7Imd0EmcxFaebquM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com; spf=pass smtp.mailfrom=shelob.surriel.com; arc=none smtp.client-ip=96.67.55.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shelob.surriel.com
+Received: from fangorn.home.surriel.com ([10.0.13.7])
+	by shelob.surriel.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.97.1)
+	(envelope-from <riel@shelob.surriel.com>)
+	id 1tIeQO-000000005b9-1hBw;
+	Tue, 03 Dec 2024 20:43:32 -0500
+Message-ID: <05946af9f1c223bf20a43b9ced346e39e2f54cad.camel@surriel.com>
+Subject: Re: [PATCH v2] x86,mm: only trim the mm_cpumask once a second
+From: Rik van Riel <riel@surriel.com>
+To: Dave Hansen <dave.hansen@intel.com>, Mathieu Desnoyers
+	 <mathieu.desnoyers@efficios.com>
+Cc: kernel test robot <oliver.sang@intel.com>, oe-lkp@lists.linux.dev, 
+	lkp@intel.com, linux-kernel@vger.kernel.org, x86@kernel.org, Ingo Molnar
+	 <mingo@kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, Peter
+ Zijlstra <peterz@infradead.org>, Mel Gorman <mgorman@suse.de>
+Date: Tue, 03 Dec 2024 20:43:32 -0500
+In-Reply-To: <4360210d-0656-4328-ab67-240465ab2f9c@intel.com>
+References: <202411282207.6bd28eae-lkp@intel.com>
+	 <20241202202213.26a79ed6@fangorn>
+	 <5dcb4050-f0f3-43d6-b4b1-42fa305a0fba@efficios.com>
+	 <20241203144845.7093ea1a@fangorn>
+	 <5544716d-31be-40c6-a289-030220e518de@intel.com>
+	 <cc6d6e0be9b4fb61228f42ad82a057f60a1c1e12.camel@surriel.com>
+	 <4360210d-0656-4328-ab67-240465ab2f9c@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.1 (3.54.1-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: <yang.yang29@zte.com.cn>
-To: <jiang.kun2@zte.com.cn>
-Cc: <bsingharora@gmail.com>, <david@redhat.com>,
-        <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
-        <linux-doc@vger.kernel.org>, <wang.yong12@zte.com.cn>,
-        <wang.yaxin@zte.com.cn>, <fan.yu9@zte.com.cn>, <he.peilin@zte.com.cn>,
-        <tu.qiang35@zte.com.cn>, <qiu.yutan@zte.com.cn>,
-        <zhang.yunkai@zte.com.cn>, <ye.xingchen@zte.com.cn>,
-        <xu.xin16@zte.com.cn>, <akpm@linux-foundation.org>,
-        <Liu.Jianjun3@zte.com.cn>, <tan.hu@zte.com.cn>,
-        <jiang.xuexin@zte.com.cn>
-Subject: =?UTF-8?B?UmU6IFtQQVRDSCBsaW51eCBuZXh0XSBkZWxheWFjY3Q6IGFkZCBkZWxheSBtYXggdG8gcmVjb3JkIGRlbGF5IHBlYWs=?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl1.zte.com.cn 4B41hJ29026879
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 674FB3CA.000/4Y30fg5pgTzBRHKW
+MIME-Version: 1.0
+Sender: riel@surriel.com
 
-On Tue, 3 Dec 2024 16:48:48 +0800 (CST) <jiang.kun2@zte.com.cn> wrote:
+On Tue, 2024-12-03 at 16:46 -0800, Dave Hansen wrote:
+> On 12/3/24 12:07, Rik van Riel wrote:
+> > The tlb_flush2 threaded test does not only madvise in a
+> > loop, but also mmap and munmap from inside every thread.
+> >=20
+> > This should create massive contention on the mmap_lock,
+> > resulting in threads going to sleep while waiting in
+> > mmap and munmap.
+> >=20
+> > https://github.com/antonblanchard/will-it-scale/blob/master/tests/tlb_f=
+lush2.c
+>=20
+> Oh, wow, it only madvise()'s a 1MB allocation before doing the
+> munmap()/mmap(). I somehow remembered it being a lot larger. And,
+> yeah,
+> I see a ton of idle time which would be 100% explained by mmap_lock
+> contention.
+>=20
+> Did the original workload that you care about have idle time?
+>=20
+The workloads that I care about are things like memcache,
+web servers, web proxies, and other workloads that typically
+handle very short requests before going idle again.
 
-> From: Wang Yaxin <wang.yaxin@zte.com.cn>
-> the 'delay max' can display delay peak since the system's startup
+These programs have a LOT of context switches to and from
+the idle task.
 
-What about also add 'delay min' ? This could help us get to know how
-large the difference is between min and max, provide clues for optimizing
-potential. This is also some benchmark tools do, like stream which print:
-precision of your system timer.
--------------------------------------------------------------
-Function    Best Rate MB/s  Avg time     Min time     Max time
-Copy:          234195.8     0.073357     0.073357     0.073357
-Scale:         163856.6     0.104847     0.104847     0.104847
-Add:           177791.5     0.144944     0.144944     0.144944
+> I'm wondering if trimming mm_cpumask() on the way to idle but leaving
+> it
+> alone on a context switch to another thread is a good idea.
+>=20
+The problem with that is that you then have to set the bit
+again when switching back to the program, which creates
+contention when a number of CPUs are transitioning to and
+from idle at the same time.
 
-And please also update Documentation/accounting/delay-accounting.rst.
-Other parts LGTM, thanks!
+Atomic operations on a contended cache line from the
+context switch code end up being quite visible when
+profiling some workloads :)
+
+--=20
+All Rights Reversed.
 
