@@ -1,124 +1,113 @@
-Return-Path: <linux-kernel+bounces-431509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1E2D9E3EB6
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:53:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E4D69E3E57
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:31:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AAD6BB2A2E3
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:31:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D33FF283080
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:31:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D29020ADD0;
-	Wed,  4 Dec 2024 15:31:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E88B420C479;
+	Wed,  4 Dec 2024 15:31:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="VhmVb4Z+"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="s7cfGAPq"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00B361B4124
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 15:30:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEF8F1F708F
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 15:31:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733326260; cv=none; b=IAtcIBTXhLZCM20J6yzGTIFNSGVcW2250VycXjRkwzSuIBmqG5qMAY+JnGyDfAcgS/Pbk18Ok3eA60bRas/+v0jQpb+YWy74oldjOKDFvg18MR9NpheRimZIV9R/I3qx8KrkYLHQD+JuH5RTttkI3dK4X1Onvkd/cGU5ZVr8ZTM=
+	t=1733326262; cv=none; b=Tmw+UUntsDhlp9Lx7pFI6/PUZmxqfniLBO+JPRWfVyhgWYG074jptFhR0H/UZCmfnssosIMfnm1OCgAtMPrSqMzOmxC7/pHmvOoHTxcPCaopGoF1kAbnQsKos2vI+kdxEpJw2Jp7IZ8Hg2ew+CkiKmDJbIKwT0DYmCSckXwm5DY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733326260; c=relaxed/simple;
-	bh=wVnK2ofcypwI5P40i4apQOTUDZqigbVQ+yVfP24fI1I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m3CXbAPfqX0krzsN+ZQ1WlU8Nc7Sa3xtfloV2rtrJu+SsgPCQ12CdPLUMG2n/je5+UnAp9gpM9oz0ShAyjYjAvxo66Tpx9VCb0rl7PwS5uHwRm05cKxhrcfnc52yoCXD/a2jAD6TCSLVqgbzPvrBLmZzVaxqqis5A+9PGczw1yk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=VhmVb4Z+; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:
-	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=jsv4DyFtp2uJhVyt+kJ1zSZIlddKaM2KbUrSxNXbbHM=; b=VhmVb4Z+UIhP450eSpi9XGP++L
-	WHF1/2i0fXq701JVCHs3Q+7euJhCmkavJGAbcDQz2WP5gPFxCS6LsCKH1i2OYSynf9YRSLmiUVGZA
-	AXDjXFdw2S5FuBxISyP/pNPkWgBm+ejlyNpY3EFiPsZi2pSWulRodEh2sCY5zhmIiY+B0vAJEK/HE
-	odzhogCgy/waj8VXZBX21s5wGFiaJE/eqtj/UUHhA8ZdJM5tOT9ohuUPQ/NX68FFtIb5tQTrqmaGp
-	IYbqXKlE1Jk8Fkqzu1d9gdeUrc0b/ytKpvlYFSFuHLZE9hwBfMn6zXcKcKCU+C6VBBmOArIzMwWLO
-	c18FROEg==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:47318)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1tIrL3-0003Vq-1L;
-	Wed, 04 Dec 2024 15:30:53 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1tIrL1-0005dy-39;
-	Wed, 04 Dec 2024 15:30:51 +0000
-Date: Wed, 4 Dec 2024 15:30:51 +0000
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Arnd Bergmann <arnd@kernel.org>, Marc Zyngier <maz@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Arnd Bergmann <arnd@arndb.de>, Aaro Koskinen <aaro.koskinen@iki.fi>,
-	Andrew Lunn <andrew@lunn.ch>, Ard Biesheuvel <ardb@kernel.org>,
-	Daniel Mack <daniel@zonque.org>,
-	Gregory Clement <gregory.clement@bootlin.com>,
-	Haojian Zhuang <haojian.zhuang@gmail.com>,
-	"Jeremy J. Peper" <jeremy@jeremypeper.com>,
-	Kristoffer Ericson <kristoffer.ericson@gmail.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Mark Brown <broonie@kernel.org>,
-	Ralph Siemsen <ralph.siemsen@linaro.org>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Tony Lindgren <tony@atomide.com>, Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH 15/15] ARM: mark footbridge as deprecated
-Message-ID: <Z1B1q3Q3B_3TFlMn@shell.armlinux.org.uk>
-References: <20241204102904.1863796-1-arnd@kernel.org>
- <20241204102904.1863796-16-arnd@kernel.org>
- <CACRpkdahQhj5u9ATghszi-N2OYhFbvHF_W_eAMDAU+vhmvdrJA@mail.gmail.com>
- <Z1BpNQjWwxEKFbg0@shell.armlinux.org.uk>
- <CACRpkdY-uKYqAR2Sj_cG7dPAtXMFG0Ldka7U13qZSFr+w15WxQ@mail.gmail.com>
+	s=arc-20240116; t=1733326262; c=relaxed/simple;
+	bh=raZSwCSoIxMAMxZedsY7kgc1gQPkh8K/6vkYq+qQ0yU=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=cUAxwhQ6lgirhy0MVyfZUod3rR6Q5SnuZQm1JO0fFpV9FmtQkeaBCDjmp6bgTVyJOMoa+m+O/3cHz/QRjpYl4mTmBevSzAYrrrxvy7aigCRpwb5yKD+VYZKHJL6l+PjqVW2A2NAoVZUrB58AwstuTwdT4dmsyRb3pQenf9eaK68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=s7cfGAPq; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2e5efb04da7so6490093a91.0
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 07:31:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1733326260; x=1733931060; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=LWzYXhh1XGle9PKP984gp5jQmjBdiOdHdzDrlgt7MZk=;
+        b=s7cfGAPqPixORq7s40p3eeNZ/H1XR5cPKckVKg9m2ggNuD61U8uFHMGNSh5YYHOw10
+         PWLRT8ocbR8jRE7eFe8qEQHHCvtINmDWRtHDPVIT8ZRQf2lijLxqDnx6ctnNzl8w7ltd
+         5XKX+vMjqscW+ArK9+OzUgcr9T9YzWGXmvw1ymuRLiWJ7nsdvE1n+GXFWU3WTC8hL6z9
+         vG4S6lHJUkQdTKys0Qy4BrcXPZlT7+wcqKlyr618RWtSi3AFrSuhxewrwPA6fIMjigMK
+         hLCupV5MSqWMJgG/O2IkIdW7D2a6fQcMMNadBY87dR3T9r2Xxus3VCMEhhT6b9r0V1fk
+         k/lw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733326260; x=1733931060;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=LWzYXhh1XGle9PKP984gp5jQmjBdiOdHdzDrlgt7MZk=;
+        b=wdm6I2gVUTYC6WS6h0RqJ+ml5tpEhZ3ArEv718rj9lHIUtln5i1tCulIwdYvXI3Udl
+         FBCDleVG8vQVWl6YbborxWtkowPCdTOyS4xSG+31UQ0FfB0TdU+sOVkFw2swBlvNJ66V
+         Misp96UieeapqUM/qJxRg2uN5H9PYmJ7QpkX88TFbbUj4gm9MMmGClp0EUy8tBH7VEqY
+         uTDvJHXer2lhCLA0YPrX+DJ+DcrRiBrD5//nToPm5bUe9uDZlX4WKSv2HGCSbAHKv0a3
+         7TQow1LY/lC9OHoOsS1orZToMTp73SFibD/c8eBHhndXlHIX6WYejBT2XLff9mAZqYIe
+         mc0Q==
+X-Gm-Message-State: AOJu0Yz8+kKT4lW+MXem3OYho7uyQKnEN7vh7OBt12XfqAsZAAdFjPWD
+	4s2DkVWBCFM3nKKeRhj4YCPMWHe87hkCfH6x19ZlRNUxCoHCtuWYjI6fv1TqhaNHB7dJDvqZUJS
+	BFA==
+X-Google-Smtp-Source: AGHT+IG8hKZnFRirR/ao2e8umiwaB/AV15nxqrbtp2UlNP2cgH4Q1y4HPfvHflLtOx0OwlnKrZjyoia9Lc8=
+X-Received: from pjj15.prod.google.com ([2002:a17:90b:554f:b0:2e5:5ffc:1c36])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:1a8e:b0:2ee:f550:3848
+ with SMTP id 98e67ed59e1d1-2ef011e3802mr8465345a91.5.1733326260234; Wed, 04
+ Dec 2024 07:31:00 -0800 (PST)
+Date: Wed, 4 Dec 2024 07:30:58 -0800
+In-Reply-To: <20241204103042.1904639-12-arnd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CACRpkdY-uKYqAR2Sj_cG7dPAtXMFG0Ldka7U13qZSFr+w15WxQ@mail.gmail.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Mime-Version: 1.0
+References: <20241204103042.1904639-1-arnd@kernel.org> <20241204103042.1904639-12-arnd@kernel.org>
+Message-ID: <Z1B1phcpbiYWLgCD@google.com>
+Subject: Re: [PATCH 11/11] x86: drop 32-bit KVM host support
+From: Sean Christopherson <seanjc@google.com>
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org, 
+	Arnd Bergmann <arnd@arndb.de>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
+	"H. Peter Anvin" <hpa@zytor.com>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	Andy Shevchenko <andy@kernel.org>, Matthew Wilcox <willy@infradead.org>, 
+	Davide Ciminaghi <ciminaghi@gnudd.com>, Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-On Wed, Dec 04, 2024 at 04:14:07PM +0100, Linus Walleij wrote:
-> On Wed, Dec 4, 2024 at 3:37 PM Russell King (Oracle)
-> <linux@armlinux.org.uk> wrote:
+On Wed, Dec 04, 2024, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
 > 
-> > > I am booting it occasionally, last time to test my KCFI patches.
-> > > But admittedly that is only to test it for other SA110 users. I remember
-> > > that Christoph had problems consolidating the DMA used in this
-> > > machine as well so it is standing in the way of useful work.
-> >
-> > What problems with DMA? The fact that it uses an offset between
-> > physical and PCI bus space should be nothing that causes a problem
-> > for the kernel. As maintainer for Footbridge, I've heard nothing
-> > about there being any issue.
+> There are very few 32-bit machines that support KVM, the main exceptions
+> are the "Yonah" Generation Xeon-LV and Core Duo from 2006 and the Atom
+> Z5xx "Silverthorne" from 2008 that were all release just before their
+> 64-bit counterparts.
 > 
-> No issue other than testing and iterating the patches I think.
+> Using KVM as a host on a 64-bit CPU using a 32-bit kernel generally
+> works fine, but is rather pointless since 64-bit kernels are much better
+> supported and deal better with the memory requirements of VM guests.
 > 
-> I was thinking of this patchset to do dma_direct_set_offset():
-> https://lore.kernel.org/linux-arm-kernel/20200917173229.3311382-3-hch@lst.de/
-> 
-> It seems to have stalled some years ago, but maybe there was
-> some other reason.
-> 
-> IIRC Christoph was onto me to test it on the NetWinder, but I
-> couldn't locate a good DMA capable device to test it with.
-> (Would be the soundblaster but then I needed some userspace...)
+> Drop all the 32-bit-only portions and the "#ifdef CONFIG_X86_64" checks
+> of the x86 KVM code and add a Kconfig dependency to only allow building
+> this on 64-bit kernels.
 
-It isn't soundblaster, but waveartist, and needs special setup to be
-functional (which was all in my OSS waveartist driver.)
+While 32-bit KVM doesn't need to be a thing for x86 usage, Paolo expressed concerns
+that dropping 32-bit support on x86 would cause general 32-bit KVM support to
+bitrot horribly.  32-bit x86 doesn't get much testing, but I do at least boot VMs
+with it on a semi-regular basis.  I don't think we can say the same for other
+architectures with 32-bit variants.
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+PPC apparently still has 32-bit users[1][2], and 32-bit RISC-V is a thing, so I
+think we're stuck with 32-bit x86 for the time being. :-(
+
+[1] https://lore.kernel.org/all/87zg4aveow.fsf@mail.lhotse
+[2] https://lore.kernel.org/all/fc43f9eb-a60f-5c4a-a694-83029234a9c4@xenosoft.de
 
