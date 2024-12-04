@@ -1,302 +1,179 @@
-Return-Path: <linux-kernel+bounces-431107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77EC79E39BA
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 13:20:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDE2C9E3901
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 12:37:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6CE2FB3B1BA
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 11:36:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E4C5285B51
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 11:37:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 270621B4F3D;
-	Wed,  4 Dec 2024 11:35:09 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE8731B394B;
+	Wed,  4 Dec 2024 11:37:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ZMTo/0yi";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="CcyQ4Olh";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ZMTo/0yi";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="CcyQ4Olh"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F68F1AC456;
-	Wed,  4 Dec 2024 11:35:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CF7B1ADFF1;
+	Wed,  4 Dec 2024 11:37:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733312108; cv=none; b=LTMZmGywCDz0AcDGQsw07A0Eg0m13RLAbjpZ0dJuIGh34JKSP6iZAcuFuNxkpNTw+rYnTKgZvnCEmgD1TpuVj0n0rd+oKAxceNyoFwnvoqfvKC1QQdJ5+lGh2RD+5HIMm4wjBHQFrUrE25eTJCD0fgre3RQh79wQhl1XeBjf9pU=
+	t=1733312230; cv=none; b=DofTQATIiaEhpfDtHLSO5agqUBjTr83qLS2+6jMHWoEXIxNzmT9i/3e2EQHzh5uZfwhknRPMuGR2LRIv4vZSuUNTnzZNctRrGYaUG1fKL+yVqhxBxCKBb7KsGzXhlyxUoyTzsNw3g9iLU9sAM9yMPWn2ZQAeMvgwg49MK3dXac0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733312108; c=relaxed/simple;
-	bh=NCPtgkOSRmGk52EeOB2IiMnKVoVlPuUFd28dOdYf67k=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=rpGWFFB4QUPZD1jDAxXnRwAuedf+NN56ec+RacH7vysZKZJpUnE+ZnWsK5CfDemSqM6WP0vQONJ/GFZXnlCLwmRs7x9jdtusRLF6TipHR3hkxi29xqI23pvX8/wlsI7e0tDlOp2kxpQ7tBJxsxDiUyDhbfwQRgsLrT9mnU6JbQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Y3FmB6yxmz6K9P6;
-	Wed,  4 Dec 2024 19:34:18 +0800 (CST)
-Received: from frapeml500006.china.huawei.com (unknown [7.182.85.219])
-	by mail.maildlp.com (Postfix) with ESMTPS id BF8B2140113;
-	Wed,  4 Dec 2024 19:35:02 +0800 (CST)
-Received: from frapeml500007.china.huawei.com (7.182.85.172) by
- frapeml500006.china.huawei.com (7.182.85.219) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Wed, 4 Dec 2024 12:35:02 +0100
-Received: from frapeml500007.china.huawei.com ([7.182.85.172]) by
- frapeml500007.china.huawei.com ([7.182.85.172]) with mapi id 15.01.2507.039;
- Wed, 4 Dec 2024 12:35:02 +0100
-From: Shiju Jose <shiju.jose@huawei.com>
-To: Shiju Jose <shiju.jose@huawei.com>, Steven Rostedt <rostedt@goodmis.org>
-CC: "dave.jiang@intel.com" <dave.jiang@intel.com>, "dan.j.williams@intel.com"
-	<dan.j.williams@intel.com>, Jonathan Cameron <jonathan.cameron@huawei.com>,
-	"alison.schofield@intel.com" <alison.schofield@intel.com>,
-	"nifan.cxl@gmail.com" <nifan.cxl@gmail.com>, "vishal.l.verma@intel.com"
-	<vishal.l.verma@intel.com>, "ira.weiny@intel.com" <ira.weiny@intel.com>,
-	"dave@stgolabs.net" <dave@stgolabs.net>, "linux-cxl@vger.kernel.org"
-	<linux-cxl@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, Linuxarm <linuxarm@huawei.com>, tanxiaofei
-	<tanxiaofei@huawei.com>, "Zengtao (B)" <prime.zeng@hisilicon.com>
-Subject: RE: [PATCH v4 3/6] cxl/events: Update General Media Event Record to
- CXL spec rev 3.1
-Thread-Topic: [PATCH v4 3/6] cxl/events: Update General Media Event Record to
- CXL spec rev 3.1
-Thread-Index: AQHbOy/jEKs9N8Ou/EWSGme10Yml3rLJc4IQgABPV4CAAS95QIAATDQAgAA1zlD///prgIABEYyggAHA21CABm0UcIABWkrw
-Date: Wed, 4 Dec 2024 11:35:02 +0000
-Message-ID: <e20c76c2fb62470485ce8f37c9a5bc27@huawei.com>
-References: <20241120093745.1847-1-shiju.jose@huawei.com>
-	<20241120093745.1847-4-shiju.jose@huawei.com>
-	<180fcfd623c64cdb86cdc9059f749af0@huawei.com>
-	<20241126120237.1598854d@gandalf.local.home>
-	<a24524dccbf442d5a3c910d7f46c7b6c@huawei.com>
-	<20241127104132.6c1729e1@gandalf.local.home>
-	<53a299d3cca6417d90d553e8399f834b@huawei.com>
-	<20241127133407.7bc1376a@gandalf.local.home>
-	<dc8fa73e871949eeaf4117c622d66ac5@huawei.com>
-	<3c9808a694d242cab35bab67602edebf@huawei.com>
- <e4187844aed14d4897f0071dcfce7455@huawei.com>
-In-Reply-To: <e4187844aed14d4897f0071dcfce7455@huawei.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1733312230; c=relaxed/simple;
+	bh=1YO2PntrIDCbifJgrs9ihNDbY95WySYJBi3hOGaNyvc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iOBiK41BrfxtDgz/ppzOGe0WwH/MaaPkyqPG5QpBQLP4XTtdFgvK1cPu5WyxalHQ2Kq2YJpesX34SbShg4rpEeFFiweOsPs7fxkj12erCjgV14SAPprG0+idX4sbgM/qGzzRXPYkCLK9WsCeK2mBnDb6cuWkUoO2Hmuvv+5bzq8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ZMTo/0yi; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=CcyQ4Olh; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ZMTo/0yi; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=CcyQ4Olh; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 810901F38E;
+	Wed,  4 Dec 2024 11:37:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1733312226; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5vO78+wMZ9dV0QQjo3NmnQU7KTkxj4qpHIjvUKV8DP8=;
+	b=ZMTo/0yiwHoAgb1+NVjwjVJ+Y5CrLIRrixW/uVdwCksZHqq/UKiqWOq9Cu4x3DE59KHtUM
+	thfTY94Phgf3Pe0yHcG056eQNFnIPfvzVmSGjYPmykgRuEYPCkgxsqbSBmlfvJt5RPjFIy
+	7gULErcYzRBrVTHwOiOP78TB9+r15A0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1733312226;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5vO78+wMZ9dV0QQjo3NmnQU7KTkxj4qpHIjvUKV8DP8=;
+	b=CcyQ4Olh34n20LNBDt6NsEznSmuZ1GIA5WJgdOg/Y1BEFHz21ahx+QATE8pt+C8RAGqtXl
+	SiB8hznXYq3vuWDg==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b="ZMTo/0yi";
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=CcyQ4Olh
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1733312226; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5vO78+wMZ9dV0QQjo3NmnQU7KTkxj4qpHIjvUKV8DP8=;
+	b=ZMTo/0yiwHoAgb1+NVjwjVJ+Y5CrLIRrixW/uVdwCksZHqq/UKiqWOq9Cu4x3DE59KHtUM
+	thfTY94Phgf3Pe0yHcG056eQNFnIPfvzVmSGjYPmykgRuEYPCkgxsqbSBmlfvJt5RPjFIy
+	7gULErcYzRBrVTHwOiOP78TB9+r15A0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1733312226;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5vO78+wMZ9dV0QQjo3NmnQU7KTkxj4qpHIjvUKV8DP8=;
+	b=CcyQ4Olh34n20LNBDt6NsEznSmuZ1GIA5WJgdOg/Y1BEFHz21ahx+QATE8pt+C8RAGqtXl
+	SiB8hznXYq3vuWDg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 701A01396E;
+	Wed,  4 Dec 2024 11:37:06 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id gOZZG+I+UGdDFgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 04 Dec 2024 11:37:06 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 1FBB5A0918; Wed,  4 Dec 2024 12:36:58 +0100 (CET)
+Date: Wed, 4 Dec 2024 12:36:58 +0100
+From: Jan Kara <jack@suse.cz>
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, tytso@mit.edu,
+	adilger.kernel@dilger.ca, jack@suse.cz, ritesh.list@gmail.com,
+	hch@infradead.org, djwong@kernel.org, david@fromorbit.com,
+	zokeefe@google.com, yi.zhang@huawei.com, chengzhihao1@huawei.com,
+	yukuai3@huawei.com, yangerkun@huawei.com
+Subject: Re: [PATCH 04/27] ext4: refactor ext4_punch_hole()
+Message-ID: <20241204113658.y4usar2p6rlndglc@quack3>
+References: <20241022111059.2566137-1-yi.zhang@huaweicloud.com>
+ <20241022111059.2566137-5-yi.zhang@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241022111059.2566137-5-yi.zhang@huaweicloud.com>
+X-Rspamd-Queue-Id: 810901F38E
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.51 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[16];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_THREE(0.00)[3];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_LAST(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_DN_SOME(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	MISSING_XM_UA(0.00)[];
+	FREEMAIL_CC(0.00)[vger.kernel.org,mit.edu,dilger.ca,suse.cz,gmail.com,infradead.org,kernel.org,fromorbit.com,google.com,huawei.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[huawei.com:email,suse.com:email,suse.cz:dkim]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -2.51
+X-Spam-Flag: NO
 
->-----Original Message-----
->From: Shiju Jose <shiju.jose@huawei.com>
->Sent: 03 December 2024 15:22
->To: Steven Rostedt <rostedt@goodmis.org>
->Cc: dave.jiang@intel.com; dan.j.williams@intel.com; Jonathan Cameron
-><jonathan.cameron@huawei.com>; alison.schofield@intel.com;
->nifan.cxl@gmail.com; vishal.l.verma@intel.com; ira.weiny@intel.com;
->dave@stgolabs.net; linux-cxl@vger.kernel.org; linux-kernel@vger.kernel.org=
-;
->Linuxarm <linuxarm@huawei.com>; tanxiaofei <tanxiaofei@huawei.com>;
->Zengtao (B) <prime.zeng@hisilicon.com>
->Subject: RE: [PATCH v4 3/6] cxl/events: Update General Media Event Record =
-to
->CXL spec rev 3.1
->
->[...]
->>
->>Hi Steve,
->>
->>I debug this case and please find the info, 1. rasdaemon :  read() from
->>format file return around 1/3rd of the
->>    actual data in the file only when the total size of the format's file
->>    is above 4K bytes (page size), For example, in this case, the total
->>size was 4512 bytes,
->>    but read only 1674 bytes.
->>    This partial data resulted  tep_parse_event() in libtraceevent
->>failed internally in the parse_format()
->>    and  since __parse_event() does not return error when parse_format() =
-fail,
->>    thus initialization of the event does not fail.
->>
->>   The following  solution in rasdaemon solved the issue,
->>   (provided if no other fix for the above issue with read()),
->>    1. read() and accumulate content of format file until EOF reached.
->>    2. Increased the buffer size from 4K bytes to  8K bytes.
->>    3. May be __parse_event()  in libtraceevent  and thus
->>tep_parse_event() return error
->>        when parse_format() fail so that the initialization would fail
->>if the input data is
->>        corrupted or partial?
->
->Hi Steve,
->
->Identified the root cause of this issue in the kernel:
->The read() function for the event's format file calls seq_read() and
->seq_read_iter() in the kernel, which allocates a buffer of PAGE_SIZE (4 KB=
-) for
->sequential reads. However, it detects an overflow in the following marked =
-call
->(seq_has_overflowed()) and returns with partial data read.
->
->=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->
->File : https://elixir.bootlin.com/linux/v6.13-rc1/source/fs/seq_file.c
->
->ssize_t seq_read_iter(struct kiocb *iocb, struct iov_iter *iter) {
->	struct seq_file *m =3D iocb->ki_filp->private_data; [...]
->	/* grab buffer if we didn't have one */
->	if (!m->buf) {
->--------->		m->buf =3D seq_buf_alloc(m->size =3D PAGE_SIZE);
->		if (!m->buf)
->			goto Enomem;
->	}
->	// something left in the buffer - copy it out first [...]
->	// get a non-empty record in the buffer
->	m->from =3D 0;
->	p =3D m->op->start(m, &m->index);
->	while (1) {
->		err =3D PTR_ERR(p);
->		if (!p || IS_ERR(p))	// EOF or an error
->			break;
->[...]
->	}
->	// EOF or an error
->	m->op->stop(m, p);
->	m->count =3D 0;
->	goto Done;
->Fill:
->	// one non-empty record is in the buffer; if they want more,
->	// try to fit more in, but in any case we need to advance
->	// the iterator once for every record shown.
->	while (1) {
->		size_t offs =3D m->count;
->		loff_t pos =3D m->index;
->
->[...]
->		err =3D m->op->show(m, p);
->		if (err > 0) {		// ->show() says "skip it"
->			m->count =3D offs;
->---------->	} else if (err || seq_has_overflowed(m)) {
->			m->count =3D offs;
->			break;
->		}
->	}
->	m->op->stop(m, p);
->	n =3D copy_to_iter(m->buf, m->count, iter);
->	copied +=3D n;
->	m->count -=3D n;
->	m->from =3D n;
->Done:
->[...]
->	goto Done;
->}
->EXPORT_SYMBOL(seq_read_iter);
->=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->
->The following fix in the kernel's seq_read_iter() allows userspace to read=
- the
->content of the format file etc in one go if the requested size exceeds PAG=
-E_SIZE,
->and resolves the parsing error caused by the event's format file exceeding
->PAGE_SIZE.
->
->=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->diff --git a/fs/seq_file.c b/fs/seq_file.c index e676c8b0cf5d..f1f1af18056=
-2
->100644
->--- a/fs/seq_file.c
->+++ b/fs/seq_file.c
->@@ -207,7 +207,11 @@ ssize_t seq_read_iter(struct kiocb *iocb, struct iov_=
-iter
->*iter)
->
->        /* grab buffer if we didn't have one */
->        if (!m->buf) {
->-               m->buf =3D seq_buf_alloc(m->size =3D PAGE_SIZE);
->+               if (iter->count % PAGE_SIZE)
->+                       m->size =3D ((iter->count / PAGE_SIZE) + 1) * PAGE=
-_SIZE;
->+               else
->+                       m->size =3D (iter->count / PAGE_SIZE) * PAGE_SIZE;
->+                m->buf =3D seq_buf_alloc(m->size);
->                if (!m->buf)
->                        goto Enomem;
->        }
->=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->
->Can you suggest which fix is the right one,  kernel based fix or rasdaemon=
- based
->fix (which mentioned in the previous email)?
+On Tue 22-10-24 19:10:35, Zhang Yi wrote:
+> From: Zhang Yi <yi.zhang@huawei.com>
+> 
+> The current implementation of ext4_punch_hole() contains complex
+> position calculations and stale error tags. To improve the code's
+> clarity and maintainability, it is essential to clean up the code and
+> improve its readability, this can be achieved by: a) simplifying and
+> renaming variables; b) eliminating unnecessary position calculations;
+> c) writing back all data in data=journal mode, and drop page cache from
+> the original offset to the end, rather than using aligned blocks,
+> d) renaming the stale error tags.
+> 
+> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 
-Following change for reading trace event's format file in the kernel worked=
- fine to fix
-the parsing error,  which seems better than changing the common seq_read().=
-=20
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-diff --git a/kernel/trace/trace_events.c b/kernel/trace/trace_events.c
-index 7266ec2a4eea..9cb1c5a1f070 100644
---- a/kernel/trace/trace_events.c
-+++ b/kernel/trace/trace_events.c
-@@ -1674,6 +1674,35 @@ static int trace_format_open(struct inode *inode, st=
-ruct file *file)
- 	return 0;
- }
-=20
-+/**
-+ *	trace_format_read - read() method for format file.
-+ *	@file: the file to read from
-+ *	@buf: the buffer to read to
-+ *	@size: the maximum number of bytes to read
-+ *	@ppos: the current position in the file
-+ *
-+ *  * Return:
-+ *  * %0  - No bytes copied (EOF).
-+ *  * %>0 - Number of bytes copied.
-+ *  * %<0 - Error code.
-+ */
-+static ssize_t trace_format_read(struct file *file, char __user *buf, size=
-_t size, loff_t *ppos)
-+{
-+	ssize_t copied =3D 0;
-+	ssize_t ret;
-+
-+	do {
-+		ret =3D seq_read(file, buf + copied, size - copied, ppos);
-+		if (ret < 0)
-+			return ret;
-+		copied +=3D ret;
-+		if (copied >=3D size)
-+			break;
-+	} while (ret);
-+
-+	return copied;
-+}
-+
- #ifdef CONFIG_PERF_EVENTS
- static ssize_t
- event_id_read(struct file *filp, char __user *ubuf, size_t cnt, loff_t *pp=
-os)
-@@ -2157,7 +2186,7 @@ static const struct file_operations ftrace_enable_fop=
-s =3D {
-=20
- static const struct file_operations ftrace_event_format_fops =3D {
- 	.open =3D trace_format_open,
--	.read =3D seq_read,
-+	.read =3D trace_format_read,
- 	.llseek =3D seq_lseek,
- 	.release =3D seq_release,
- };
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->
->[...]
->>>>-- Steve
->>>
->>
->
+Again, this should get slightly simplified with the new function (no need
+for special data=journal handling) but overall it looks fine.
 
-Thanks,
-Shiju
+> -out_dio:
+> +out_invalidate_lock:
+>  	filemap_invalidate_unlock(mapping);
+> -out_mutex:
+> +out:
+>  	inode_unlock(inode);
+>  	return ret;
+>  }
+
+I agree with Darrick that just 'out' is not a great name when we are
+actually releasing inode->i_rwsem. So perhaps "out_inode_lock:"?
+
+							Honza
+
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
