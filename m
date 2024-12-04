@@ -1,126 +1,124 @@
-Return-Path: <linux-kernel+bounces-430382-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430381-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 256BB9E303B
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 01:05:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 180E69E3038
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 01:04:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BC645B27229
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 00:04:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1FCA283940
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 00:04:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F53433D1;
-	Wed,  4 Dec 2024 00:04:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 914B87FD;
+	Wed,  4 Dec 2024 00:04:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="PS6589Ef"
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mt6Z4mAl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71F253234
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 00:04:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECABD632
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 00:04:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733270660; cv=none; b=jpgPhnZVl/Hki47cGxWrrfJ7XJrQ7MjUrRGLW//OWD3f9IyjuXUesiQhnvwAn61zz90IKxv4O3qCNahLRJx+8Nm69PW0RBUCtBDhDyYI0+AvqvU3NzLAHQZhkF24yt8zDXoi/ZiMSwnyXycRDaBwMKK+y0hPhNRUyvdMWkjIRfk=
+	t=1733270657; cv=none; b=VTP1B2/HM/QdR0fUr5mrr3ieu+cpGE7x/fd5bm2MnxEjWk3zV0pWEe76HPx2Tgf6AU+ttXDDPtjW2qsdQTUGP32NWYi/1xWx1RsmSdrvoDwh0McZWBA3GSesza4fL+RScn/MAwoKnC8TgsK5mwbMP1hUFnSZdYeFFlek0Pw64MI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733270660; c=relaxed/simple;
-	bh=+ipD/Vuf+WHiBO3am03cEGfuJhA/9jJW/6w7HvVxhiM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=biXeHJpZQl+ZQ760YsK3hMU7lctRj1gJJQcXPzVJbWgU+eFC6HnVtBYdoL2GIsLngTejZYxvk60M3YQffmloA6iHd906rdiAFDH5C1/AIb8SsRvnUOsJUoTp2r4b0k2hPhYYY51E48nm/udWWXwvtk7BGU2jdUj+mDELdMEb6X8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=PS6589Ef; arc=none smtp.client-ip=209.85.215.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-7fcdb53cca6so1842548a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 16:04:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1733270658; x=1733875458; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=4m7pNMsdgNYxzBIEAAkmRSEO/6g/enlI6isMmxPuL6o=;
-        b=PS6589EfNPLkMBJE7QPiT5HZe5+kRBMX8llZn0HLTVb15lpo4ztq+DNGb4AGKFOWL5
-         LFxilEAob59DyafywN30LwTSuwi4tcv37qd2sZLFO5wDQSCzON5ntYUyw6difkD8bCUA
-         xOpaGdfxOm3nTzyfIuik9iaeeB7wYvy6FDkUk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733270658; x=1733875458;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4m7pNMsdgNYxzBIEAAkmRSEO/6g/enlI6isMmxPuL6o=;
-        b=BX+GzcRvgZGxh4eAywcDWbPjyuZPO/LJYRaUbtmtYBbCuRoK9vpx6Ha1R2Hh3XIxpt
-         beA4iRRcJCZaymThW3441NJjTfX4IzJy6cOT4BrJcX4govU7bWYqUXodRXHAZFi5XisO
-         crUDrz75YFQnFGwRQ8bnCf35ruwBgtqb1CAD8wUmljqxqMGXs2kF5lWMK1/DQE5RHpqy
-         P974Jyp4Lp3kxiyD/YmKK1OWyEwI8JuANQICrCY7Clsr0OH2H6kYCM3nc0DqsHdWEkOF
-         hRzBEDUhcIm723qvR81DBZH2Z7S13RM35WZ73lpKiNC1uDiG8as32nyE3jLIPo8wCBAa
-         yliQ==
-X-Gm-Message-State: AOJu0YyZHJjDo5dhffAoOHGqnQOZZbxKn0QT3X3oKLVg++ZGUkBROQWl
-	16AVtNN0vmVCEnzaUo8tsjhPwcVNfPyabTyW0dg1X8ysePhvDJHY8/h0zp/gV/EZTk1h+8frXkY
-	=
-X-Gm-Gg: ASbGnctKX53KN5YdzIQ9SYrE0EwPMf0X+S4ITgk/zotu33T5d+dP3LGSzJxUlurrh50
-	FOlgYMq1IG3C8KP0cs6/c0vamPKqmnOA2ClyH2LkFj2K+yOOgMHWS24mhrwwAt10nJfWH6tKYAS
-	dFpaTAWdOoqyca5ljyYfeAfthWhxifln+nFMXvzmTreNJa0rVCvf6rLczpNjSBQBK305OJy71uW
-	8SNzEhZRLAPC6DV1duXbYp3quLPHhwjI1WCZrrK+ERBY83IeFcCLUJat564UcaDjreFS9ecaMPt
-	dIgbJOz7TZhFCA==
-X-Google-Smtp-Source: AGHT+IHYAWFOhMRMmsJogPCN+keqI5onO24l06foMGQMmqGxtDSAhpXuUqKm8NyRO5YVeG1E5lAVvQ==
-X-Received: by 2002:a05:6a20:430d:b0:1db:ebf4:2cb8 with SMTP id adf61e73a8af0-1e1654132b6mr7413981637.38.1733270657782;
-        Tue, 03 Dec 2024 16:04:17 -0800 (PST)
-Received: from localhost (188.139.125.34.bc.googleusercontent.com. [34.125.139.188])
-        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-7254176f3ccsm11049434b3a.56.2024.12.03.16.04.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Dec 2024 16:04:17 -0800 (PST)
-From: Stephen Boyd <swboyd@chromium.org>
-To: Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>
-Cc: linux-kernel@vger.kernel.org,
-	patches@lists.linux.dev,
-	devicetree@vger.kernel.org
-Subject: [PATCH] of: Hide of_default_bus_match_table[]
-Date: Tue,  3 Dec 2024 16:04:12 -0800
-Message-ID: <20241204000415.2404264-1-swboyd@chromium.org>
-X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
+	s=arc-20240116; t=1733270657; c=relaxed/simple;
+	bh=XuVfx6SKEaUU8HOecuMdDWUZhTxlEqblhrMLwMnIMPc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=l1sBT+2Q1+RYGnhKsbgEaLUEHvIGN6J5RMbf3dIM6f7EMs2F+dMM4YMJXHSlZffFgZk2k60D6GttT1+MYiRc9tnHTRPyYtEH19LAhsy6FxUYikWiNzll63URkKZxVXdHY6totYdPhVXf2V0cKk3gaCTl2igCW8Wzm9u29OHLCa4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Mt6Z4mAl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63B8AC4CEDC;
+	Wed,  4 Dec 2024 00:04:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733270656;
+	bh=XuVfx6SKEaUU8HOecuMdDWUZhTxlEqblhrMLwMnIMPc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Mt6Z4mAlE7yn6BYIXwt4apxGd+C9Gb4m3BvF7MVPIL642Fls1J2Ap7C7vXwOVQTnR
+	 nx1QvB6Bi0V7fcvH6HxqeQLncUoG/53Po/+TTzyPk7SqxtuLGVIqF0ONqpv4hR66oB
+	 Q+mHCSAVXhj474bkkn1CSLtq+w7QIu30x2p7fPZ/a2xkPR8TKrKEGK2RavEL6+B0tV
+	 V7J4HFe0SmnXbt34g/0QVxN9zeApdjwrAEU2NQWbbY8KqwlDNSC63FsNS/SxqqbnNA
+	 yQMHGyvlf5yGmEeYO2kOU3yzwMHwo+2NBV/HGlywf5FzQiDA96FT2hxdVJKNiqcXFQ
+	 rKOB8aByhPbFg==
+Date: Tue, 3 Dec 2024 14:04:15 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Andrea Righi <arighi@nvidia.com>
+Cc: David Vernet <void@manifault.com>, Yury Norov <yury.norov@gmail.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] sched_ext: Introduce per-NUMA idle cpumasks
+Message-ID: <Z0-cf7gUzV8jIWIX@slm.duckdns.org>
+References: <20241203154917.123419-1-arighi@nvidia.com>
+ <20241203154917.123419-3-arighi@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241203154917.123419-3-arighi@nvidia.com>
 
-This isn't used outside this file. Hide the array in the C file.
+Hello,
 
-Signed-off-by: Stephen Boyd <swboyd@chromium.org>
----
- drivers/of/platform.c       | 2 +-
- include/linux/of_platform.h | 2 --
- 2 files changed, 1 insertion(+), 3 deletions(-)
+On Tue, Dec 03, 2024 at 04:36:11PM +0100, Andrea Righi wrote:
+...
+> Probably a better way to solve this issue is to introduce new kfunc's to
+> explicitly select specific per-NUMA cpumask and modify the scx
+> schedulers to transition to this new API, for example:
+> 
+>   const struct cpumask *scx_bpf_get_idle_numa_cpumask(int node)
+>   const struct cpumask *scx_bpf_get_idle_numa_smtmask(int node)
 
-diff --git a/drivers/of/platform.c b/drivers/of/platform.c
-index 9bafcff3e628..f09dc183975b 100644
---- a/drivers/of/platform.c
-+++ b/drivers/of/platform.c
-@@ -24,7 +24,7 @@
- 
- #include "of_private.h"
- 
--const struct of_device_id of_default_bus_match_table[] = {
-+static const struct of_device_id of_default_bus_match_table[] = {
- 	{ .compatible = "simple-bus", },
- 	{ .compatible = "simple-mfd", },
- 	{ .compatible = "isa", },
-diff --git a/include/linux/of_platform.h b/include/linux/of_platform.h
-index a2ff1ad48f7f..17471ef8e092 100644
---- a/include/linux/of_platform.h
-+++ b/include/linux/of_platform.h
-@@ -47,8 +47,6 @@ struct of_dev_auxdata {
- 	{ .compatible = _compat, .phys_addr = _phys, .name = _name, \
- 	  .platform_data = _pdata }
- 
--extern const struct of_device_id of_default_bus_match_table[];
--
- /* Platform drivers register/unregister */
- extern struct platform_device *of_device_alloc(struct device_node *np,
- 					 const char *bus_id,
+Yeah, I don't think we want to break backward compat here. Can we introduce
+a flag to switch between node-aware and flattened logic and trigger ops
+error if the wrong flavor is used? Then, we can deprecate and drop the old
+behavior after a few releases. Also, I think it can be named
+scx_bpf_get_idle_cpumask_node().
 
-base-commit: 40384c840ea1944d7c5a392e8975ed088ecf0b37
+> +static struct cpumask *get_idle_cpumask(int cpu)
+> +{
+> +	int node = cpu_to_node(cpu);
+> +
+> +	return idle_masks[node]->cpu;
+> +}
+> +
+> +static struct cpumask *get_idle_smtmask(int cpu)
+> +{
+> +	int node = cpu_to_node(cpu);
+> +
+> +	return idle_masks[node]->smt;
+> +}
+
+Hmm... why are they keyed by cpu? Wouldn't it make more sense to key them by
+node?
+
+> +static s32 scx_pick_idle_cpu(const struct cpumask *cpus_allowed, u64 flags)
+> +{
+> +	int start = cpu_to_node(smp_processor_id());
+> +	int node, cpu;
+> +
+> +	for_each_node_state_wrap(node, N_ONLINE, start) {
+> +		/*
+> +		 * scx_pick_idle_cpu_from_node() can be expensive and redundant
+> +		 * if none of the CPUs in the NUMA node can be used (according
+> +		 * to cpus_allowed).
+> +		 *
+> +		 * Therefore, check if the NUMA node is usable in advance to
+> +		 * save some CPU cycles.
+> +		 */
+> +		if (!cpumask_intersects(cpumask_of_node(node), cpus_allowed))
+> +			continue;
+> +		cpu = scx_pick_idle_cpu_from_node(node, cpus_allowed, flags);
+> +		if (cpu >= 0)
+> +			return cpu;
+
+This is fine for now but it'd be ideal if the iteration is in inter-node
+distance order so that each CPU radiates from local node to the furthest
+ones.
+
+Thanks.
+
 -- 
-https://chromeos.dev
-
+tejun
 
