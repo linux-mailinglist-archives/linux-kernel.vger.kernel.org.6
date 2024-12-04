@@ -1,193 +1,88 @@
-Return-Path: <linux-kernel+bounces-431894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 695119E426F
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:53:51 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39F6D9E40BB
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:10:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C750285198
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:53:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DA6D8B39FA8
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:08:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68517238752;
-	Wed,  4 Dec 2024 17:14:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D9E72101AC;
+	Wed,  4 Dec 2024 16:04:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="biuZ1QDD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="OZ7R/FvW"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC57A238740;
-	Wed,  4 Dec 2024 17:13:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC28E20C49B;
+	Wed,  4 Dec 2024 16:04:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733332439; cv=none; b=YTb6u0eR8DQ3OM+5oyHonh53dUmaYJgs92rhgVlu2g+nVBYZ0RcRp5dbm8g94tVUl9Gx0waYUFOU1BA0v8ijSoXyZi3S1u+XP3sfo2wVAcOpx5v20Lp5IojYsyv6gFY+buJMty1BzkhfpstgyvHkug2yOUt7VNXoLc/S2iWcOFE=
+	t=1733328273; cv=none; b=XkIhNWXoauH0vdnA+OjWhU9z7tKO6LgDOJtsEayzSLKIHAVz7cfSS9fKy5uABRRVodFeosbwnz3mKNiXUNkYt9rgAFbmtcoMqxw6ITuFcX7JAJ3i8flnBDbL8l5U1CsaL+rQ1p7Yg1D/15+qZLh7BQm8j0SHfIMZ+ihFGhAwCRE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733332439; c=relaxed/simple;
-	bh=nL2jMgDplLnwuxZm04PTOAyEHPsJP4TvdbcDsPszNz0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=t3Tpv+XzxN/2TW4RGtkwQAxJs0ZGXlRfo9yUcWhmegC2Y5Qkj6/8RMabpIA2l1piazMVjWuaAnlyqDHPbq7N6UVQrUpAHQhpsxcysV61YsLlaZQLPN2arnewuBL3CW8l+lsgRTXwVDAeJMT8WiHlljcNS9Z2EH3lIdnR2qvS3bM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=biuZ1QDD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C903C4CED6;
-	Wed,  4 Dec 2024 17:13:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733332439;
-	bh=nL2jMgDplLnwuxZm04PTOAyEHPsJP4TvdbcDsPszNz0=;
-	h=From:To:Cc:Subject:Date:From;
-	b=biuZ1QDDk7fsopP28DAxA9qhHGr7nV/eggEk4rPBRSNZL/toh96MK7o7WClDp3QKY
-	 hcw1RhRcyvXnea6kz08MCexDh0fqnuDhSnMBXY3W6gk1A6Eh0gNR9Q68JE5JxNKnk8
-	 2h09lAVbCCNY0tTaYwdslUfa1C2M5hFLv9q5lB+uy3qV5Z6Izy59JbSQQHbQvzkrgW
-	 k5BmpB8eZcRwqiKjC2/1V5OEV/eVo7sDf2LNT4hdlx7fcoy81BILJIyegIeSiB/YXE
-	 S/OaTF4FTgwnuT6/g+JX5IV3S/qw4qqxePw1zQPo+WKX90isBOvMh3uBYr1+W8gipu
-	 294t22P1tfnfQ==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Keith Busch <kbusch@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	Amey Narkhede <ameynarkhede03@gmail.com>,
-	Sasha Levin <sashal@kernel.org>,
-	mariusz.tkaczyk@linux.intel.com,
-	ilpo.jarvinen@linux.intel.com,
-	linux-pci@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19] PCI: Add 'reset_subordinate' to reset hierarchy below bridge
-Date: Wed,  4 Dec 2024 11:02:36 -0500
-Message-ID: <20241204160239.2217532-1-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1733328273; c=relaxed/simple;
+	bh=FJr0zmZlE4zUDYRymx7OxP2xJcJOMiNhM+KbvndfJ1o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UuM3GsuelacAfv/qlcOdEln0/fwr6N6dZ7IGJWWu0tJokxHer/lKUghQqc96UtypffkTlctv1lW0khTFlCBvf/jDjLoXZ8zx9quKuZEyEfDwMSO3jpEjhy3c8WHPO5sFqWKFPaoqAFj0BqYLaoLtcOes5zD970tEv5QF0IKvwaM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=OZ7R/FvW; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=0N0iHfCuUo1t+gQYjiRw3/5D4nJ73sKAtZ2d4ukZ7mM=; b=OZ7R/FvW6YYmpKfSuzSQXMe0i9
+	Qg7Ehbb/+KkZZqg653/YtBwt3dvKIoY/53ekuSBXEuSSsfsko4iJNgvJF2vHwDtK5e8HExBf3mhiY
+	Qyhho/Gb3e21CmjxS5ya6l5xynWKMGmHrNFjUKPcIB41hW16HP3gO4hhsDppg2uZq+XI=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tIrrV-00FEDI-1S; Wed, 04 Dec 2024 17:04:25 +0100
+Date: Wed, 4 Dec 2024 17:04:25 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Marcus Folkesson <marcus.folkesson@gmail.com>
+Cc: Russell King <linux@armlinux.org.uk>,
+	Gregory Clement <gregory.clement@bootlin.com>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Dinh Nguyen <dinguyen@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH 5/9] ARM: mvebu_v5_defconfig: rebuild default
+ configuration
+Message-ID: <303c44ca-879c-477c-a96c-9741bf3bf31a@lunn.ch>
+References: <20241204-defconfigs-v1-0-86587652d37a@gmail.com>
+ <20241204-defconfigs-v1-5-86587652d37a@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 4.19.324
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241204-defconfigs-v1-5-86587652d37a@gmail.com>
 
-From: Keith Busch <kbusch@kernel.org>
+On Wed, Dec 04, 2024 at 04:56:47PM +0100, Marcus Folkesson wrote:
+> This configuration contains obsolete configuration options e.g.
+> CONFIG_MTD_M25P80 which is integrated into MTD_SPI_NOR.
+> 
+> Rebuild this configuration by run:
+> make ARCH=arm mvebu_v5_defconfig
+> make ARCH=arm savedefconfig
+> 
+> Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
 
-[ Upstream commit 2fa046449a82a7d0f6d9721dd83e348816038444 ]
+You probably want to wait until Arnd big removal patchset lands,
+because this is going to be immediately outdated.
 
-The "bus" and "cxl_bus" reset methods reset a device by asserting Secondary
-Bus Reset on the bridge leading to the device.  These only work if the
-device is the only device below the bridge.
-
-Add a sysfs 'reset_subordinate' attribute on bridges that can assert
-Secondary Bus Reset regardless of how many devices are below the bridge.
-
-This resets all the devices below a bridge in a single command, including
-the locking and config space save/restore that reset methods normally do.
-
-This may be the only way to reset devices that don't support other reset
-methods (ACPI, FLR, PM reset, etc).
-
-Link: https://lore.kernel.org/r/20241025222755.3756162-1-kbusch@meta.com
-Signed-off-by: Keith Busch <kbusch@kernel.org>
-[bhelgaas: commit log, add capable(CAP_SYS_ADMIN) check]
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Reviewed-by: Alex Williamson <alex.williamson@redhat.com>
-Reviewed-by: Amey Narkhede <ameynarkhede03@gmail.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- Documentation/ABI/testing/sysfs-bus-pci | 11 +++++++++++
- drivers/pci/pci-sysfs.c                 | 26 +++++++++++++++++++++++++
- drivers/pci/pci.c                       |  2 +-
- drivers/pci/pci.h                       |  1 +
- 4 files changed, 39 insertions(+), 1 deletion(-)
-
-diff --git a/Documentation/ABI/testing/sysfs-bus-pci b/Documentation/ABI/testing/sysfs-bus-pci
-index 44d4b2be92fd4..c68d1d9a4d479 100644
---- a/Documentation/ABI/testing/sysfs-bus-pci
-+++ b/Documentation/ABI/testing/sysfs-bus-pci
-@@ -125,6 +125,17 @@ Description:
- 		will be present in sysfs.  Writing 1 to this file
- 		will perform reset.
- 
-+What:		/sys/bus/pci/devices/.../reset_subordinate
-+Date:		October 2024
-+Contact:	linux-pci@vger.kernel.org
-+Description:
-+		This is visible only for bridge devices. If you want to reset
-+		all devices attached through the subordinate bus of a specific
-+		bridge device, writing 1 to this will try to do it.  This will
-+		affect all devices attached to the system through this bridge
-+		similiar to writing 1 to their individual "reset" file, so use
-+		with caution.
-+
- What:		/sys/bus/pci/devices/.../vpd
- Date:		February 2008
- Contact:	Ben Hutchings <bwh@kernel.org>
-diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
-index f68798763af8d..d5287dfac9171 100644
---- a/drivers/pci/pci-sysfs.c
-+++ b/drivers/pci/pci-sysfs.c
-@@ -507,6 +507,31 @@ static ssize_t dev_bus_rescan_store(struct device *dev,
- }
- static DEVICE_ATTR(rescan, (S_IWUSR|S_IWGRP), NULL, dev_bus_rescan_store);
- 
-+static ssize_t reset_subordinate_store(struct device *dev,
-+				struct device_attribute *attr,
-+				const char *buf, size_t count)
-+{
-+	struct pci_dev *pdev = to_pci_dev(dev);
-+	struct pci_bus *bus = pdev->subordinate;
-+	unsigned long val;
-+
-+	if (!capable(CAP_SYS_ADMIN))
-+		return -EPERM;
-+
-+	if (kstrtoul(buf, 0, &val) < 0)
-+		return -EINVAL;
-+
-+	if (val) {
-+		int ret = __pci_reset_bus(bus);
-+
-+		if (ret)
-+			return ret;
-+	}
-+
-+	return count;
-+}
-+static DEVICE_ATTR_WO(reset_subordinate);
-+
- #if defined(CONFIG_PM) && defined(CONFIG_ACPI)
- static ssize_t d3cold_allowed_store(struct device *dev,
- 				    struct device_attribute *attr,
-@@ -778,6 +803,7 @@ static struct attribute *pci_dev_attrs[] = {
- static struct attribute *pci_bridge_attrs[] = {
- 	&dev_attr_subordinate_bus_number.attr,
- 	&dev_attr_secondary_bus_number.attr,
-+	&dev_attr_reset_subordinate.attr,
- 	NULL,
- };
- 
-diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-index aa2be8d815048..e22040c8a0aec 100644
---- a/drivers/pci/pci.c
-+++ b/drivers/pci/pci.c
-@@ -5295,7 +5295,7 @@ EXPORT_SYMBOL_GPL(pci_probe_reset_bus);
-  *
-  * Same as above except return -EAGAIN if the bus cannot be locked
-  */
--static int __pci_reset_bus(struct pci_bus *bus)
-+int __pci_reset_bus(struct pci_bus *bus)
- {
- 	int rc;
- 
-diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
-index 39725b71300f8..1db9b8ff6043d 100644
---- a/drivers/pci/pci.h
-+++ b/drivers/pci/pci.h
-@@ -36,6 +36,7 @@ int pci_mmap_fits(struct pci_dev *pdev, int resno, struct vm_area_struct *vmai,
- int pci_probe_reset_function(struct pci_dev *dev);
- int pci_bridge_secondary_bus_reset(struct pci_dev *dev);
- int pci_bus_error_reset(struct pci_dev *dev);
-+int __pci_reset_bus(struct pci_bus *bus);
- 
- /**
-  * struct pci_platform_pm_ops - Firmware PM callbacks
--- 
-2.43.0
-
+     Andrew
 
