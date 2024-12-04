@@ -1,186 +1,94 @@
-Return-Path: <linux-kernel+bounces-431821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431827-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 301C29E45B3
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 21:29:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2748F9E4456
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 20:16:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EA48DBA59DF
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:36:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C2282B2B907
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:37:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D85C227B90;
-	Wed,  4 Dec 2024 17:05:52 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA13621D5BF;
-	Wed,  4 Dec 2024 17:05:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A9351C3C07;
+	Wed,  4 Dec 2024 17:09:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YyUJnVDs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 656EF1C3BE2;
+	Wed,  4 Dec 2024 17:09:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733331952; cv=none; b=RVdLvML/4iuZ+D6efJuS6RhM2dwZe9qCYWnNDMw88ym9sNoRCNwAC1UkgruY6WZ6Dm7q98ULFO+nfavp7pYYo/lYjk3PSdQLIp5nD/IGZeE+m/dReTXQfgQP2KXCpfNezSKXzCjXtDigWe15v20lMVYb+Yxvr1aggAJGtGOSmzI=
+	t=1733332178; cv=none; b=DUQ9G+Sg5xmc3U/BHqliZ/GayblRN2/E3fIjjTxOsvfv9IxXBY5xAa0G8zh3vPx5teNePDuHgsS0nJk6K+d2konSUKGNW0Z0vcmz2r8kXJsduQGCqmILkY3azahIXqJd1kt0obt5SAltmlKkcljy17Fs+ApbPz1YE6TeYURApXk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733331952; c=relaxed/simple;
-	bh=mpFZGbRrr9pVX1ORwf0kmi2JYrm8OZvYLsm98fDvXRc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=Ww4Aj4+Et5c8vpjMUHFXBSYqoe0LCyAQd99TfbSQ/+NLuiW+TPFjDx9AJC5XqrserWMeqvEdNkRifThweSlklqI7+093sSMMsI0o0UUzzokOCveGeN+MmTAsu4i0/eO9ROi0VmyHxxapjgWywaOXqf97R99O+QmUBrXCV3+MCnQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E2DE41063;
-	Wed,  4 Dec 2024 09:06:16 -0800 (PST)
-Received: from [10.1.31.170] (XHFQ2J9959.cambridge.arm.com [10.1.31.170])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2440C3F71E;
-	Wed,  4 Dec 2024 09:05:47 -0800 (PST)
-Message-ID: <500d1007-56f5-43cb-be9d-4a39fccc6e53@arm.com>
-Date: Wed, 4 Dec 2024 17:05:45 +0000
+	s=arc-20240116; t=1733332178; c=relaxed/simple;
+	bh=R+x7WFjxT8S5OTA+WR7ZclGvWXKZowty7QKeX08QvPM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ltUFhg4OMyCYZ3piKw/o86/H7BxzfgPsqwFJ3CpzRZ4p7aKxq78KhUcmiWsMlZc3ESahC6qp7fzh2kfoKFqeGavQEtvZqVtyefErxAv3lMBjUgsfUEaVc5gyliPZ/RhYlMTft6LzaJiMFBUV50bt1AHWiUFu0MmYGNdHBtwCCN0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YyUJnVDs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D1EBC4CECD;
+	Wed,  4 Dec 2024 17:09:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733332177;
+	bh=R+x7WFjxT8S5OTA+WR7ZclGvWXKZowty7QKeX08QvPM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YyUJnVDs1VRmBbkmQIUz90/t8Rv6+2Saknahn46UALUy+945ZA4TXebkEvjmgTHXd
+	 mC1GR0D291GTL6kMDpaXL+sf4gUyrV21WyxTpcshpU38+lJuESQeKslzBMgYggD1uD
+	 BPJ8OcUVwdjpySE4F8ebLyAysmeRKivF0Lj2NTmIMRiDiJTBO6oD2s5IBRzt2+/+I5
+	 pztXK7TyO034l4oQHM8WPox43YFffvqfFXaR7xjUAVE5xMVa8hWdLpXok31ZvBBeke
+	 aR0UJNRLR3M9v0G17nL75PDo8j79Jzn+vS0Ut4uxSe8e+IpvNWCJ94qzyE6bun/eB3
+	 6eXdD7yZMTQ1g==
+Date: Wed, 4 Dec 2024 10:09:35 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
+	Arnd Bergmann <arnd@arndb.de>, Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Andy Shevchenko <andy@kernel.org>,
+	Matthew Wilcox <willy@infradead.org>,
+	Sean Christopherson <seanjc@google.com>,
+	Davide Ciminaghi <ciminaghi@gnudd.com>,
+	Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org
+Subject: Re: [PATCH 09/11] x86: rework CONFIG_GENERIC_CPU compiler flags
+Message-ID: <20241204170935.GB3356373@thelio-3990X>
+References: <20241204103042.1904639-1-arnd@kernel.org>
+ <20241204103042.1904639-10-arnd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] smaps: count large pages smaller than PMD size to
- anonymous_thp
-To: Wenchao Hao <haowenchao22@gmail.com>, David Hildenbrand
- <david@redhat.com>, Andrew Morton <akpm@linux-foundation.org>,
- Matthew Wilcox <willy@infradead.org>, Oscar Salvador <osalvador@suse.de>,
- Muhammad Usama Anjum <usama.anjum@collabora.com>,
- Andrii Nakryiko <andrii@kernel.org>, Peter Xu <peterx@redhat.com>,
- Barry Song <21cnbao@gmail.com>, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-References: <20241203134949.2588947-1-haowenchao22@gmail.com>
- <926c6f86-82c6-41bb-a24d-5418163d5c5e@redhat.com>
- <f2d58d57-df38-42eb-a00c-a993ca7299ba@arm.com>
- <31158c3e-bf1b-47e8-a41b-0417c538b62e@gmail.com>
-Content-Language: en-GB
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <31158c3e-bf1b-47e8-a41b-0417c538b62e@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241204103042.1904639-10-arnd@kernel.org>
 
-On 04/12/2024 14:40, Wenchao Hao wrote:
-> On 2024/12/3 22:42, Ryan Roberts wrote:
->> On 03/12/2024 14:17, David Hildenbrand wrote:
->>> On 03.12.24 14:49, Wenchao Hao wrote:
->>>> Currently, /proc/xxx/smaps reports the size of anonymous huge pages for
->>>> each VMA, but it does not include large pages smaller than PMD size.
->>>>
->>>> This patch adds the statistics of anonymous huge pages allocated by
->>>> mTHP which is smaller than PMD size to AnonHugePages field in smaps.
->>>>
->>>> Signed-off-by: Wenchao Hao <haowenchao22@gmail.com>
->>>> ---
->>>>   fs/proc/task_mmu.c | 6 ++++++
->>>>   1 file changed, 6 insertions(+)
->>>>
->>>> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
->>>> index 38a5a3e9cba2..b655011627d8 100644
->>>> --- a/fs/proc/task_mmu.c
->>>> +++ b/fs/proc/task_mmu.c
->>>> @@ -717,6 +717,12 @@ static void smaps_account(struct mem_size_stats *mss,
->>>> struct page *page,
->>>>           if (!folio_test_swapbacked(folio) && !dirty &&
->>>>               !folio_test_dirty(folio))
->>>>               mss->lazyfree += size;
->>>> +
->>>> +        /*
->>>> +         * Count large pages smaller than PMD size to anonymous_thp
->>>> +         */
->>>> +        if (!compound && PageHead(page) && folio_order(folio))
->>>> +            mss->anonymous_thp += folio_size(folio);
->>>>       }
->>>>         if (folio_test_ksm(folio))
->>>
->>>
->>> I think we decided to leave this (and /proc/meminfo) be one of the last
->>> interfaces where this is only concerned with PMD-sized ones:
->>>
->>> Documentation/admin-guide/mm/transhuge.rst:
->>>
->>> The number of PMD-sized anonymous transparent huge pages currently used by the
->>> system is available by reading the AnonHugePages field in ``/proc/meminfo``.
->>> To identify what applications are using PMD-sized anonymous transparent huge
->>> pages, it is necessary to read ``/proc/PID/smaps`` and count the AnonHugePages
->>> fields for each mapping. (Note that AnonHugePages only applies to traditional
->>> PMD-sized THP for historical reasons and should have been called
->>> AnonHugePmdMapped).
->>>
->>
->> Agreed. If you need per-process metrics for mTHP, we have a python script at
->> tools/mm/thpmaps which does a fairly good job of parsing pagemap. --help gives
->> you all the options.
->>
-> 
-> I tried this tool, and it is very powerful and practical IMO.
-> However, thereare two disadvantages:
-> 
-> - This tool is heavily dependent on Python and Python libraries.
->   After installing several libraries with the pip command, I was able to
->   get it running.
+Hi Arnd,
 
-I think numpy is the only package it uses which is not in the standard library?
-What other libraries did you need to install?
+On Wed, Dec 04, 2024 at 11:30:40AM +0100, Arnd Bergmann wrote:
+...
+> +++ b/arch/x86/Kconfig.cpu
+> +config X86_64_V1
+> +config X86_64_V2
+> +config X86_64_V3
+...
+> +++ b/arch/x86/Makefile
+> +        cflags-$(CONFIG_MX86_64_V1)	+= -march=x86-64
+> +        cflags-$(CONFIG_MX86_64_V2)	+= $(call cc-option,-march=x86-64-v2,-march=x86-64)
+> +        cflags-$(CONFIG_MX86_64_V3)	+= $(call cc-option,-march=x86-64-v3,-march=x86-64)
+...
+> +        rustflags-$(CONFIG_MX86_64_V1)	+= -Ctarget-cpu=x86-64
+> +        rustflags-$(CONFIG_MX86_64_V2)	+= -Ctarget-cpu=x86-64-v2
+> +        rustflags-$(CONFIG_MX86_64_V3)	+= -Ctarget-cpu=x86-64-v3
 
->   In practice, the environment we need to analyze may be a mobile or
->   embedded environment, where it is very difficult to deploy these
->   libraries.
+There appears to be an extra 'M' when using these CONFIGs in Makefile,
+so I don't think this works as is?
 
-Yes, I agree that's a problem, especially for Android. The script has proven
-useful to me for debugging in a traditional Linux distro environment though.
-
-> - It seems that this tool only counts file-backed large pages? During
-
-No; the tool counts file-backed and anon memory. But it reports it in separate
-counters. See `thpmaps --help` for full details.
-
->   the actual test, I mapped a region of anonymous pages and mapped it
->   as large pages, but the tool did not display those large pages.
->   Below is my test file(mTHP related sysfs interface is set to "always"
->   to make sure using large pages):
-
-Which mTHP sizes did you enable? Depending on your value of SIZE and which mTHP
-sizes are enabled, you may not have a correctly aligned region in p. So mTHP
-would not be allocated. Best to over-allocate then explicitly align p to the
-mTHP size, then fault it in.
-
-> 
-> int main()
-> {
->         int i;
->         char *c;
->         unsigned long *p;
-> 
->         p = mmap(NULL, SIZE, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
-
-What is SIZE here?
-
->         if (!p) {
->                 perror("fail to get memory");
->                 exit(-1);
->         }
-> 
->         c = (unsigned char *)p;
-> 
->         for (i = 0; i < SIZE / 8; i += 8)
->                 *(p + i) = 0xffff + i;
-
-Err... what's your intent here? I think you're writting to 1 in every 8 longs?
-Probably just write to the first byte of every page.
-
-Thanks,
-Ryan
-
-> 
->         while (1)
->                 sleep(10);
-> 
->         return 0;
-> }
-> 
-> Thanks,
-> wenchao
-> 
-
+Cheers,
+Nathan
 
