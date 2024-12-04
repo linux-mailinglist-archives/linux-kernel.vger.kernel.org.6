@@ -1,129 +1,213 @@
-Return-Path: <linux-kernel+bounces-430937-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430938-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A870D9E3784
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 11:33:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EFE119E3777
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 11:32:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8AB89B2E75D
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 10:27:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E385AB2EE61
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 10:29:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C014019E982;
-	Wed,  4 Dec 2024 10:27:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F12B1AE850;
+	Wed,  4 Dec 2024 10:29:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cTu10DPk"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IrtL7KoF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55F5A1AA1DF
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 10:27:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81A471632FE
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 10:29:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733308028; cv=none; b=nK01HnEDoBoyq2LoA5k5XgSbxhkaaW8iakGUBbjRj6jtYzypLBpayzFKp921dgDGaAh+hn3alf+eJUTrB7uN48xgzIMUNj4Ay+Vh7lT5qg58Qudv9P9B2S1RjJyk+Kcgkn5Dd1WnLdQhyTikV4M0Ht5lfEk6iXAuR4KNvAyJ0yA=
+	t=1733308172; cv=none; b=RBiWgtIKzHgjg/TAmXdSzPNdvBGBJ7hbpG9E1LeSBvm2x797P7dsMhFLyiDGPfhKzCJAbWyEyzoDx9TP55c0EEZp2iWNT87qR/QGfeZ/yBZOGk5fcffQzGz5P9KG3YwCSdDi1lA9Wps3E+21ph5GG9T2L0txDzNxq5y0Wh5fH8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733308028; c=relaxed/simple;
-	bh=TcvLj2S2OjDxK6FFIIsAz8V5/hiEAxoKPJXKYM4G2K4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=DxmykLjtzrXC4FfZB3dugcAwDwo67zrXPNF+NqwkXaSOvXHJAKApIHTXebmJ87s/MA7gCX4+Nig1MbdKIqd0faTlKE8B5EQf2zh7Sw7d4KZJutOmjX1spGcnYkIPzQhNssy2UbHGNtEIOuU+KZRGm+ks5123GAxV0Im5/iwQJdA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cTu10DPk; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1733308025;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TcvLj2S2OjDxK6FFIIsAz8V5/hiEAxoKPJXKYM4G2K4=;
-	b=cTu10DPkaZMuj859idm4LCfo+z+ZGb+FgCEYwILtpsq69mnr5taWzgw5qMooCIF9Blt6Kh
-	XgPgkIYF3sebDr11jSseDEvxxku2jydcEhVumlyjo46caDjLrG8eTLVwYFComa3NAl7V2H
-	xL9SI3JIhAZoaywsAQUjgaq4wXrQ90E=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-630-kxQli7LOMtmzkwIX-LkJbw-1; Wed, 04 Dec 2024 05:27:04 -0500
-X-MC-Unique: kxQli7LOMtmzkwIX-LkJbw-1
-X-Mimecast-MFC-AGG-ID: kxQli7LOMtmzkwIX-LkJbw
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-434a90febb8so37608485e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 02:27:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733308023; x=1733912823;
-        h=content-transfer-encoding:mime-version:message-id:date:references
-         :in-reply-to:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TcvLj2S2OjDxK6FFIIsAz8V5/hiEAxoKPJXKYM4G2K4=;
-        b=e+NWzeUHF4Nj3Or4lBrBFCeRYFyfN7G+zSckEXSIdQP2Bu8a6KHNTpNHy5pxtm28hq
-         Zq2QOCsHA5LKGWTbN5ryE2x+aaFYrg1mO021eTtaW1rNF2m8CNa6uVk8emPdnVXxJMss
-         CX8QDZJ0LX9SgQW6gh9zcRGUEhGsG5YdbV5oP3FvhG3sUx33UKFmj/lHgKoP8os6qD6M
-         qw8+3uwyptwKMute9brph3oP5e6VEDhQu+xV4AyGXbrMjZJryVdr/SvkgXrvkCO9SzqO
-         6XWR1++uyb2d54b5zhrm/dT0lzBp5hJ/E1t5oymQDKIrj0mdQQTPTMExDmvl4/zAL++3
-         Bbyg==
-X-Forwarded-Encrypted: i=1; AJvYcCXI6EMha4Uf+PD02XxyAxHOUrKN1SRV+MBuCdTQ8eEDZUcRnv3/FzBcgSdsQ99j55KxJg37u5JTLWmf5co=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxgbNhCHmElJPv92rDPQEYOVe5hjPwFX7bmU131uqLlKwGxzGgC
-	E7Lfg+Cs0guIDgA+8iInP6b/LDnU0a73W5TXi9vJV52BThQLDBNNyEU8fJzaj6pgZu0xy9UKd6r
-	w/wQR0HhScxxGr1lXkVXXrbjK0ggR/TAt3cM2BURhvqryXlRzPj+EHYTDfrn9ZQ==
-X-Gm-Gg: ASbGnctHwxnMS66EQ3XvsQzYTzuOneooCEwaqtLpgmNmFsg9Km466s9OJcOjVvcV+ir
-	RrXvZRtdvDQsCjrHI5oLaUijFNhHCTpXUbnzCymzLXpuI1QLFoqKXYBuzGtrtYs49oHk20Fi21+
-	dXdQSPTm2wj1tSRmgg0GAMbsID99IMs3ADA9QkuIbHdfXXPNwoo/eGSZniQkQ0YiAXhNvOcBU/p
-	uZJ1l1xHTThLIiXSUl4K9+3cGUMS5uDIitk9EpLyti9Jco=
-X-Received: by 2002:a7b:cb53:0:b0:434:a0fd:f9d1 with SMTP id 5b1f17b1804b1-434d3fcc5a1mr27614225e9.20.1733308022857;
-        Wed, 04 Dec 2024 02:27:02 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGrwtYSrQPLjelyylTwa5mbuvmc0j1pKxbIGN9w4X2omiDFt+X87GdnSjiNK+8A1PwN0nLaeg==
-X-Received: by 2002:a7b:cb53:0:b0:434:a0fd:f9d1 with SMTP id 5b1f17b1804b1-434d3fcc5a1mr27613995e9.20.1733308022549;
-        Wed, 04 Dec 2024 02:27:02 -0800 (PST)
-Received: from alrua-x1.borgediget.toke.dk ([2a0c:4d80:42:443::2])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434d527e8besm19322735e9.13.2024.12.04.02.27.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Dec 2024 02:27:01 -0800 (PST)
-Received: by alrua-x1.borgediget.toke.dk (Postfix, from userid 1000)
-	id 0AA1416BD104; Wed, 04 Dec 2024 11:27:01 +0100 (CET)
-From: Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>
-To: Alexander Lobakin <aleksander.lobakin@intel.com>, Alexei Starovoitov
- <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, John Fastabend
- <john.fastabend@gmail.com>, Andrii Nakryiko <andrii@kernel.org>
-Cc: Alexander Lobakin <aleksander.lobakin@intel.com>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
- <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Maciej Fijalkowski
- <maciej.fijalkowski@intel.com>, Stanislav Fomichev <sdf@fomichev.me>,
- Magnus Karlsson <magnus.karlsson@intel.com>,
- nex.sw.ncis.osdt.itp.upstreaming@intel.com, bpf@vger.kernel.org,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v6 01/10] xsk: align &xdp_buff_xsk harder
-In-Reply-To: <20241203173733.3181246-2-aleksander.lobakin@intel.com>
-References: <20241203173733.3181246-1-aleksander.lobakin@intel.com>
- <20241203173733.3181246-2-aleksander.lobakin@intel.com>
-X-Clacks-Overhead: GNU Terry Pratchett
-Date: Wed, 04 Dec 2024 11:27:01 +0100
-Message-ID: <87wmgfaglm.fsf@toke.dk>
+	s=arc-20240116; t=1733308172; c=relaxed/simple;
+	bh=5RmLLYfxIYfiiXZeAs59BD7aRTdabSYHES1clzll0uU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=CwQnURQqYGaNZ+5KRVojqiIqU/s99mfNzp3GThQ6do687TwehI9x2F8iT5pWO9YX7MT61mIFa54YhTH5eiXinIyQF6Q9XbWLyPYULHPHJc6B9EdOp9WoQtEzXu9PkvNZE4CKLdxxbLT7ngupE2xPRRqFWbiO0U4wspqEK1+nPb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IrtL7KoF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 338F8C4CED1;
+	Wed,  4 Dec 2024 10:29:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733308171;
+	bh=5RmLLYfxIYfiiXZeAs59BD7aRTdabSYHES1clzll0uU=;
+	h=From:To:Cc:Subject:Date:From;
+	b=IrtL7KoFF1I0VYo7gfuVoBC+Rt4Lffy3fo29tGVmve/yw9Mk428wwypyzHd6F3ias
+	 h8NkQKwgA75+ZQkmrjn0mItzskwlI0NLzyceG6Gzm2VTij3coHJXECLu2LgryFjzv8
+	 OSkhYpmD8NaAlAv5Jx/aFV/OJwpGDMJo1aT631BQ0fy6C+on3C2lKkFhNM5hwFeBYk
+	 hH/qzi8sVf6FZT6vuNSe+GbMgurk8/IHsImLonqf6JxkHjVGZGLAFfhP+ghTL4LLtF
+	 kijtGV9cRxxhn6Rks+mA7q6tjupKZuLEbdLBgDqcb4ray0JDXqkxvoYlAJ0752oS72
+	 1pcWwwvzU44Ug==
+From: Arnd Bergmann <arnd@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Aaro Koskinen <aaro.koskinen@iki.fi>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Daniel Mack <daniel@zonque.org>,
+	Gregory Clement <gregory.clement@bootlin.com>,
+	Haojian Zhuang <haojian.zhuang@gmail.com>,
+	"Jeremy J. Peper" <jeremy@jeremypeper.com>,
+	Kristoffer Ericson <kristoffer.ericson@gmail.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Mark Brown <broonie@kernel.org>,
+	Ralph Siemsen <ralph.siemsen@linaro.org>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Russell King <linux@armlinux.org.uk>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Tony Lindgren <tony@atomide.com>
+Subject: [PATCH 00/15] ARM: platform and feature deprecation
+Date: Wed,  4 Dec 2024 11:28:49 +0100
+Message-Id: <20241204102904.1863796-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Alexander Lobakin <aleksander.lobakin@intel.com> writes:
+From: Arnd Bergmann <arnd@arndb.de>
 
-> After the series "XSk buff on a diet" by Maciej, the greatest pow-2
-> which &xdp_buff_xsk can be divided got reduced from 16 to 8 on x86_64.
-> Also, sizeof(xdp_buff_xsk) now is 120 bytes, which, taking the previous
-> sentence into account, leads to that it leaves 8 bytes at the end of
-> cacheline, which means an array of buffs will have its elements
-> messed between the cachelines chaotically.
-> Use __aligned_largest for this struct. This alignment is usually 16
-> bytes, which makes it fill two full cachelines and align an array
-> nicely. ___cacheline_aligned may be excessive here, especially on
-> arches with 128-256 byte CLs, as well as 32-bit arches (76 -> 96
-> bytes on MIPS32R2), while not doing better than _largest.
->
-> Signed-off-by: Alexander Lobakin <aleksander.lobakin@intel.com>
+This is attempt to bring the source code to the state that we discussed
+this summer[1], regarding a timeline for deprecating and removing
+features:
 
-Ohh, didn't know about that attribute - neat!
+ - DEPRECATED_PARAM_STRUCT and ARCH_S3C64XX were meant to be
+   removed by now, but get an extension
 
-Reviewed-by: Toke H=C3=B8iland-J=C3=B8rgensen <toke@redhat.com>
+ - all board files except for OMAP1 and S3C get an tentative
+   end-of-life date in either 2025 or early 2026.
 
+ - IWMMXT is scheduled for removal in 2026
+
+ - ARMv6/ARM1136r0 (not ARMv6K/ARM1136r1/ARM1176) is scheduled
+   for removal in 2026, along with the OMAP24xx and i.MX31 SoCs
+   using it
+
+ - OABI, OABI-compat and NWFPE are confined to StrongARM based
+   builds and scheduled for removal once StrongARM is gone.
+
+Regarding actually removing the code, I would plan for linux-6.15 (June
+2025), removing both the board files and any drivers that have either
+become newly unused or were missed in a previous machine removal series.
+For the 2026 removals, I would plan on the release after the next LTS
+kernel, most likely 6.19.
+
+The timeline for the three StrongARM platforms is missing feedback from
+Russell, who is listed as maintainer for two of them and last confirmed
+using all three roughly five years ago[2]. I put those patches last
+in the series so they can be dropped if Russell still plans to run
+kernels after 6.12-LTS on one or more of these.
+
+      Arnd
+
+[1] https://lore.kernel.org/linux-arm-kernel/2831c5a6-cfbf-4fe0-b51c-0396e5b0aeb7@app.fastmail.com/
+[2] https://lore.kernel.org/linux-arm-kernel/20210109174357.GB1551@shell.armlinux.org.uk/
+
+Arnd Bergmann (15):
+  ARM: use CONFIG_AEABI by default everywhere
+  ARM: limit OABI support to StrongARM CPUs
+  ARM: rework ARM11 CPU selection logic
+  ARM: deprecate support for ARM1136r0
+  ARM: turn CONFIG_ATAGS off by default
+  ARM: update DEPRECATED_PARAM_STRUCT removal timeline
+  ARM: s3c64xx: extend deprecation schedule
+  ARM: update FPE_NWFPE help text
+  ARM: mark IWMMXT as deprecated
+  ARM: deprecate ARCH_DOVE
+  ARM: PXA: deprecate remaining board file support
+  ARM: orion5x: mark all board files as deprecated
+  ARM: mark mach-sa1100 as deprecated
+  ARM: mark RiscPC as deprecated
+  ARM: mark footbridge as deprecated
+
+ arch/arm/Kconfig                        | 72 +++++++++++++------------
+ arch/arm/Kconfig.platforms              |  2 +-
+ arch/arm/configs/am200epdkit_defconfig  |  3 +-
+ arch/arm/configs/aspeed_g4_defconfig    |  2 -
+ arch/arm/configs/aspeed_g5_defconfig    |  1 -
+ arch/arm/configs/assabet_defconfig      |  3 ++
+ arch/arm/configs/at91_dt_defconfig      |  2 -
+ arch/arm/configs/axm55xx_defconfig      |  2 -
+ arch/arm/configs/bcm2835_defconfig      |  1 -
+ arch/arm/configs/clps711x_defconfig     |  1 -
+ arch/arm/configs/collie_defconfig       |  2 +-
+ arch/arm/configs/davinci_all_defconfig  |  1 -
+ arch/arm/configs/dove_defconfig         |  2 +-
+ arch/arm/configs/ep93xx_defconfig       |  1 -
+ arch/arm/configs/footbridge_defconfig   |  2 +
+ arch/arm/configs/gemini_defconfig       |  1 -
+ arch/arm/configs/h3600_defconfig        |  3 +-
+ arch/arm/configs/hisi_defconfig         |  1 -
+ arch/arm/configs/imx_v4_v5_defconfig    |  1 -
+ arch/arm/configs/integrator_defconfig   |  2 -
+ arch/arm/configs/ixp4xx_defconfig       |  1 -
+ arch/arm/configs/jornada720_defconfig   |  3 +-
+ arch/arm/configs/keystone_defconfig     |  1 -
+ arch/arm/configs/lpc32xx_defconfig      |  1 -
+ arch/arm/configs/mmp2_defconfig         |  1 -
+ arch/arm/configs/moxart_defconfig       |  2 -
+ arch/arm/configs/mps2_defconfig         |  1 -
+ arch/arm/configs/multi_v4t_defconfig    |  2 -
+ arch/arm/configs/multi_v5_defconfig     | 10 ----
+ arch/arm/configs/mv78xx0_defconfig      |  3 +-
+ arch/arm/configs/mvebu_v5_defconfig     | 11 ----
+ arch/arm/configs/mxs_defconfig          |  1 -
+ arch/arm/configs/neponset_defconfig     |  3 ++
+ arch/arm/configs/netwinder_defconfig    |  3 ++
+ arch/arm/configs/nhk8815_defconfig      |  1 -
+ arch/arm/configs/omap1_defconfig        |  3 +-
+ arch/arm/configs/orion5x_defconfig      | 11 ----
+ arch/arm/configs/pxa168_defconfig       |  2 -
+ arch/arm/configs/pxa3xx_defconfig       |  2 -
+ arch/arm/configs/pxa910_defconfig       |  2 -
+ arch/arm/configs/pxa_defconfig          |  5 --
+ arch/arm/configs/rpc_defconfig          |  3 ++
+ arch/arm/configs/s3c6400_defconfig      |  2 +
+ arch/arm/configs/sama5_defconfig        |  1 -
+ arch/arm/configs/sama7_defconfig        |  1 -
+ arch/arm/configs/spear13xx_defconfig    |  1 -
+ arch/arm/configs/spitz_defconfig        |  2 +-
+ arch/arm/configs/stm32_defconfig        |  1 -
+ arch/arm/configs/versatile_defconfig    |  2 -
+ arch/arm/configs/vt8500_v6_v7_defconfig |  1 -
+ arch/arm/configs/wpcm450_defconfig      |  2 -
+ arch/arm/mach-dove/Kconfig              |  8 ++-
+ arch/arm/mach-footbridge/Kconfig        |  7 ++-
+ arch/arm/mach-imx/Kconfig               |  8 ++-
+ arch/arm/mach-omap2/Kconfig             | 17 ++++--
+ arch/arm/mach-orion5x/Kconfig           | 47 ++++++++++++----
+ arch/arm/mach-pxa/Kconfig               | 10 +++-
+ arch/arm/mach-rpc/Kconfig               |  5 +-
+ arch/arm/mach-s3c/Kconfig.s3c64xx       | 15 ++++--
+ arch/arm/mach-sa1100/Kconfig            |  5 +-
+ arch/arm/mach-versatile/Kconfig         | 15 +++---
+ arch/arm/mm/Kconfig                     | 26 ++++++++-
+ 62 files changed, 194 insertions(+), 159 deletions(-)
+
+-- 
+2.39.5
+
+Cc: Aaro Koskinen <aaro.koskinen@iki.fi>
+Cc: Andrew Lunn <andrew@lunn.ch>
+Cc: Ard Biesheuvel <ardb@kernel.org>
+Cc: Daniel Mack <daniel@zonque.org>
+Cc: Gregory Clement <gregory.clement@bootlin.com>
+Cc: Haojian Zhuang <haojian.zhuang@gmail.com>
+Cc: "Jeremy J. Peper" <jeremy@jeremypeper.com>
+Cc: Kristoffer Ericson <kristoffer.ericson@gmail.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Ralph Siemsen <ralph.siemsen@linaro.org>
+Cc: Robert Jarzmik <robert.jarzmik@free.fr>
+Cc: Russell King <linux@armlinux.org.uk>
+Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Cc: Tony Lindgren <tony@atomide.com>
+Cc: linux-arm-kernel@lists.infradead.org
 
