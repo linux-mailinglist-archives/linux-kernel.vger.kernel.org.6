@@ -1,181 +1,148 @@
-Return-Path: <linux-kernel+bounces-431802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC78C9E419D
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:31:16 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0159A9E4321
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 19:15:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91E0228C9A1
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:31:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CD8AFB3A24D
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:35:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53B472185AC;
-	Wed,  4 Dec 2024 17:03:31 +0000 (UTC)
-Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E34A921D5AB;
+	Wed,  4 Dec 2024 17:05:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="atQTsiq1"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FF88217F53
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 17:03:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F22F22D4EA
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 17:05:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733331810; cv=none; b=LnjiAhnvdyqVMMrnkDZlizbgLpBA0d3lQkFGYkbqmyiXw9JmKse1POeFQ6kz4D2yianFXq8NUNBbVrG2VVtUQrgqx6qeMZfuLar1rsq1RP8f8JJ3P//YWcb2ru0/DsYD3x9trUgAyTAs1qT+LImdtgc6cjZaNZY561iPP5sl8KQ=
+	t=1733331936; cv=none; b=h4L7Mucea2vTEFrTUeE2FU7PMj6jD9O8FMaD39E1ohlFjF1yexKLFZ0x8nH8k0hrohA3h0HFO54q+kWbTToFuAtvAZVY2IERNw7f+8IEHmBj4WXDXluLpm0ExBcz3Ysz726aJrcb9TvjjNS3lwN1KaZTRFokFr4k7Ht1L1YBaF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733331810; c=relaxed/simple;
-	bh=NBQIiV4p144RbimhQEF/GPip7J51pwG3nDufsHyPN/Y=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=QuI3tlEDw6LhdvyQlt/01FuRieYaU6XzGL1I+D1X0fsIL3MjyIcRn2bXiLH5V4rDe8GIU0lYX5swT5dxm/kGcQcEm0QoDu0SemKrtvRKg+UvfcVqiZb+fB4F+IdstjS7P5cPl0dVHn9wtl/hCtN9KLpVn30qYa8Mp+3Csnnlgvs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-8444dc6b982so104920739f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 09:03:28 -0800 (PST)
+	s=arc-20240116; t=1733331936; c=relaxed/simple;
+	bh=SwdIkwAyBADHolNVHGKonu13CQKyD3zHMnYIOIO5/MU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ocq/tEWGNP9lx3FHhg4Sa0N4ufvK4t7QT391QLauWIO+FCONFeSUKm+ooS4txh1qnu2kotMgNFnv0cDeNQz7IvpM0ROi4GoIUg5xo09iRA5epdDNPz+hT+BTF53KT80Z1ZVfEdw0ZaGL57PvU6VQsH7WDe3jDknkA7+2TtZ/4j8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=atQTsiq1; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-434a9f2da82so109335e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 09:05:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733331933; x=1733936733; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=9cuQDS9XjCoh01d12eDFy34pmkiiHwb9j2F8JlmKFAE=;
+        b=atQTsiq1HUz3tHI6wteN2wd9nRLOW/J8ZZdT+vau3PpbAZ1833JSv6cQJR3zF7CAqE
+         N1RiYJ6/BnwPFybZvA3agY8xP0ys4lx7JHj7YYyRwHOgxGaSaPT1hd0JGLa1MDpJ0GZu
+         D7QaRe1CmGzlJCAEz++giCOmECulRJ3I8jo793qV3UiChOHXrlkH+0tMj/c7qQog2fQT
+         6x6sAyxNRdBLKKwU1bYjYRpFxBrOUO9BGmIiYsFjIVjCKlJP94oLJMF+0dMgQpkOj39v
+         I7O4FnIk+pcmkkA0FLTRZVRqvaWOpqF/tPsxyUx2yc4G8JKmgeCcqbyv0/dxvFkCPe5U
+         BlRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733331808; x=1733936608;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=bER0hbP9nJUm8ccnWbqgJ29lpvoI9kCMKdaTSXtGFxA=;
-        b=H1p6Dt2BbHevr6Ifj/YFPIthduTn3xGx8Vhk1JdaG8RIEdtMMvNBtA0eH3siJwoKq4
-         CZocbPSNxs6Wo+erQ3CZAGkvM+zl3ri1CxixCwr3/JS7uYEeq13eu6pplxjZ5bJv+kUa
-         7pM5fzQceaeJaXYlA0H/9OumRznbKfVRtbqe20SpZBgVschpeJr9xSwxn1NGvf5c93FE
-         dgLi96wv+PUR1R4v2wo9lt193t+VSDQWw1l+AwvXI6LHGbvaR6S4SSDi4/Q/NB3ivNyb
-         uQZt7EXRgtAlvE9y58hbQqSLSJNrkrq6CgG+h6iq50nzMA6Qz6usvZDydnbJ5nNekCD2
-         8jqw==
-X-Forwarded-Encrypted: i=1; AJvYcCWXkCiQ+sdHK1e2AEMql4H8r+fCGnemESUKVQHEr7B841E0jtyww841A0XouHnylZQiOUihux+1QwmDb38=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxAXAEQnlqe4kG309F5kKYKwGUT/r0PrafyVWJpPWDOgLvvrTrm
-	9zhwAry6xT95ejd2lveG5TtH0WaDISHvdRsOHY8Ow50zFwXmpRWlAPRV717NLfL39+NnKppuJ/W
-	6t7RxckT19x9cs3xhNmstjaHmmf1DsDF2XLsQzQnTd5JItK/dNKY/fqA=
-X-Google-Smtp-Source: AGHT+IH5cOD5AlXg5sgkPTJMBJAKYuAdFAI6biDl6aCiZ2fgyiuqWQfeouJqDuxWVZ/LJlMsATdWCsFnzIlD3lgtAedzW71tUN3G
+        d=1e100.net; s=20230601; t=1733331933; x=1733936733;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9cuQDS9XjCoh01d12eDFy34pmkiiHwb9j2F8JlmKFAE=;
+        b=kA+VA0M2z3qLumc7KAVZsAoBSV9TvyeeBtciHXs3kF+QGDZ2TyQuiDuE+Ms/plRebI
+         xqDdwb2+joEJPwUEaXU6v4G3BGUsDo9X+/zaQJaBWk21J3Z/Cb3MeMZRibmR/qfRFlyJ
+         ul/BmdcCu4D6ZknWIjjP2ghTTesakWfqkiOJgk9y6oPxoHtpQ7n7FftN/3zsCk7cQm4a
+         Ou9qYThn77icODsafDEoF1tO0gbXPCZ1vsipwQP34kASDsYBoD7f2QNSCQRMw6vx3wJ4
+         Z3qgdDjO8Hg2lt7RBgAaozfXqnQwzPXj4M6oSqF+I+1ATjTHn1/yLQAmqmnqSuLjqycM
+         M+2g==
+X-Forwarded-Encrypted: i=1; AJvYcCX8k2rLVXvEhaC7664DAjBet038nVGxHVIabnIc8rXH7KwDqllLrCVlbd6e+uD2Cx7KOqKvSxc8uhR/R8c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKnx7Gam5Gfau3rnkrSSQVz4lVPJiYa/ji/2G1leapw0SyR9/F
+	MwuVm1LJqSG9bJZ79/TtKrOf2awSaSr4kj/Nei4p10+A6abcm+qg
+X-Gm-Gg: ASbGnctxp/BhzvoYL/WseTmPjR4y8dmas9Yqpo9JoC8xuKUJyVfYiDiSCSvW6xKiojq
+	l+HTJseGZwplX0F1x69+ZLsP5fNaJ7aLdPK6djn+m5pmB5tW3uIm4YJGtVHXcABxDNoLC//Inp3
+	0qarMIF/Z6S03SJiZhW6SlZX62+Bl/Oex82289buG4TU59vfBq80rKMdc9hq7ICTGEPM47C/T8v
+	war1wegdd+8N5ohWTWTeM99JSGsM+J29S1baPvKMVf3Te3tq6Gri8up01HYb3gHD5Hp+S52fMT5
+	gvfbIK/OSQ==
+X-Google-Smtp-Source: AGHT+IH6Z+DHxmfTB0THiad8h84UNVfaQ7Wmykz0fyCn8uzv/XiXEMhZdpHTCuKzRh2vvihTlptIgw==
+X-Received: by 2002:a05:6000:4025:b0:382:31a2:17fd with SMTP id ffacd0b85a97d-385fd532b93mr6685415f8f.55.1733331932630;
+        Wed, 04 Dec 2024 09:05:32 -0800 (PST)
+Received: from localhost.localdomain (82-64-73-52.subs.proxad.net. [82.64.73.52])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385d80a77a0sm17025470f8f.58.2024.12.04.09.05.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Dec 2024 09:05:31 -0800 (PST)
+From: Dave Penkler <dpenkler@gmail.com>
+To: gregkh@linuxfoundation.org,
+	linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Cc: dan.carpenter@linaro.org,
+	Dave Penkler <dpenkler@gmail.com>,
+	Marcello Carla' <marcello.carla@gmx.com>
+Subject: [PATCH 3/4 v2] staging: gpib: Fix erroneous removal of blank before newline
+Date: Wed,  4 Dec 2024 18:04:43 +0100
+Message-ID: <20241204170443.28333-1-dpenkler@gmail.com>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1b08:b0:3a7:e8df:3fcb with SMTP id
- e9e14a558f8ab-3a8075c50d9mr1175275ab.7.1733331807621; Wed, 04 Dec 2024
- 09:03:27 -0800 (PST)
-Date: Wed, 04 Dec 2024 09:03:27 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67508b5f.050a0220.17bd51.0070.GAE@google.com>
-Subject: [syzbot] [tipc?] general protection fault in cleanup_bearer
-From: syzbot <syzbot+46aa5474f179dacd1a3b@syzkaller.appspotmail.com>
-To: davem@davemloft.net, edumazet@google.com, horms@kernel.org, 
-	jmaloy@redhat.com, kuba@kernel.org, linux-kernel@vger.kernel.org, 
-	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com, 
-	tipc-discussion@lists.sourceforge.net, ying.xue@windriver.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+The original commit removed the blanks before the newline
+in the protocol string constants to satisfy checkpatch.pl
+This broke the driver since it relies on the correct length
+of the string constants including the blank.
+For example the original
+  #define USB_GPIB_SET_LINES   "\nIBDC \n"
+became
+  #define USB_GPIB_SET_LINES   "\nIBDC\n"
+which broke the driver.
 
-syzbot found the following issue on:
+The solution is to replace original blanks in protocol constants
+with "."
+e.g.:
+  #define USB_GPIB_SET_LINES   "\nIBDC.\n"
 
-HEAD commit:    c245a7a79602 Add linux-next specific files for 20241203
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=109860f8580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=af3fe1d01b9e7b7
-dashboard link: https://syzkaller.appspot.com/bug?extid=46aa5474f179dacd1a3b
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=152d8de8580000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/8cc90a2ea120/disk-c245a7a7.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/0f6b1a1a0541/vmlinux-c245a7a7.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/9fa3eac09ddc/bzImage-c245a7a7.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+46aa5474f179dacd1a3b@syzkaller.appspotmail.com
-
-Oops: general protection fault, probably for non-canonical address 0xdffffc0000000006: 0000 [#1] PREEMPT SMP KASAN PTI
-KASAN: null-ptr-deref in range [0x0000000000000030-0x0000000000000037]
-CPU: 0 UID: 0 PID: 5896 Comm: kworker/0:3 Not tainted 6.13.0-rc1-next-20241203-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-Workqueue: events cleanup_bearer
-RIP: 0010:read_pnet include/net/net_namespace.h:387 [inline]
-RIP: 0010:sock_net include/net/sock.h:655 [inline]
-RIP: 0010:cleanup_bearer+0x1f7/0x280 net/tipc/udp_media.c:820
-Code: 18 48 89 d8 48 c1 e8 03 42 80 3c 28 00 74 08 48 89 df e8 3c f7 99 f6 48 8b 1b 48 83 c3 30 e8 f0 e4 60 00 48 89 d8 48 c1 e8 03 <42> 80 3c 28 00 74 08 48 89 df e8 1a f7 99 f6 49 83 c7 e8 48 8b 1b
-RSP: 0018:ffffc9000410fb70 EFLAGS: 00010206
-RAX: 0000000000000006 RBX: 0000000000000030 RCX: ffff88802fe45a00
-RDX: 0000000000000001 RSI: 0000000000000008 RDI: ffffc9000410f900
-RBP: ffff88807e1f0908 R08: ffffc9000410f907 R09: 1ffff92000821f20
-R10: dffffc0000000000 R11: fffff52000821f21 R12: ffff888031d19980
-R13: dffffc0000000000 R14: dffffc0000000000 R15: ffff88807e1f0918
-FS:  0000000000000000(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000556ca050b000 CR3: 0000000031c0c000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- process_one_work kernel/workqueue.c:3229 [inline]
- process_scheduled_works+0xa66/0x1840 kernel/workqueue.c:3310
- worker_thread+0x870/0xd30 kernel/workqueue.c:3391
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:read_pnet include/net/net_namespace.h:387 [inline]
-RIP: 0010:sock_net include/net/sock.h:655 [inline]
-RIP: 0010:cleanup_bearer+0x1f7/0x280 net/tipc/udp_media.c:820
-Code: 18 48 89 d8 48 c1 e8 03 42 80 3c 28 00 74 08 48 89 df e8 3c f7 99 f6 48 8b 1b 48 83 c3 30 e8 f0 e4 60 00 48 89 d8 48 c1 e8 03 <42> 80 3c 28 00 74 08 48 89 df e8 1a f7 99 f6 49 83 c7 e8 48 8b 1b
-RSP: 0018:ffffc9000410fb70 EFLAGS: 00010206
-RAX: 0000000000000006 RBX: 0000000000000030 RCX: ffff88802fe45a00
-RDX: 0000000000000001 RSI: 0000000000000008 RDI: ffffc9000410f900
-RBP: ffff88807e1f0908 R08: ffffc9000410f907 R09: 1ffff92000821f20
-R10: dffffc0000000000 R11: fffff52000821f21 R12: ffff888031d19980
-R13: dffffc0000000000 R14: dffffc0000000000 R15: ffff88807e1f0918
-FS:  0000000000000000(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055dc220c9950 CR3: 000000007e778000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess):
-   0:	18 48 89             	sbb    %cl,-0x77(%rax)
-   3:	d8 48 c1             	fmuls  -0x3f(%rax)
-   6:	e8 03 42 80 3c       	call   0x3c80420e
-   b:	28 00                	sub    %al,(%rax)
-   d:	74 08                	je     0x17
-   f:	48 89 df             	mov    %rbx,%rdi
-  12:	e8 3c f7 99 f6       	call   0xf699f753
-  17:	48 8b 1b             	mov    (%rbx),%rbx
-  1a:	48 83 c3 30          	add    $0x30,%rbx
-  1e:	e8 f0 e4 60 00       	call   0x60e513
-  23:	48 89 d8             	mov    %rbx,%rax
-  26:	48 c1 e8 03          	shr    $0x3,%rax
-* 2a:	42 80 3c 28 00       	cmpb   $0x0,(%rax,%r13,1) <-- trapping instruction
-  2f:	74 08                	je     0x39
-  31:	48 89 df             	mov    %rbx,%rdi
-  34:	e8 1a f7 99 f6       	call   0xf699f753
-  39:	49 83 c7 e8          	add    $0xffffffffffffffe8,%r15
-  3d:	48 8b 1b             	mov    (%rbx),%rbx
-
-
+Reported-by: Marcello Carla' <marcello.carla@gmx.com>
+Fixes: fce79512a96a ("staging: gpib: Add LPVO DIY USB GPIB driver")
+Co-developed-by: Marcello Carla' <marcello.carla@gmx.com>
+Signed-off-by: Marcello Carla' <marcello.carla@gmx.com>
+Signed-off-by: Dave Penkler <dpenkler@gmail.com>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+v1 -> v2
+  Add more details to the commit message
+  Add Signed-off by co developer
+  Add spaces around assignment
+  Fix tabs
+  
+ drivers/staging/gpib/lpvo_usb_gpib/lpvo_usb_gpib.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+diff --git a/drivers/staging/gpib/lpvo_usb_gpib/lpvo_usb_gpib.c b/drivers/staging/gpib/lpvo_usb_gpib/lpvo_usb_gpib.c
+index 1a8eb3bfb61c..81c110f29e76 100644
+--- a/drivers/staging/gpib/lpvo_usb_gpib/lpvo_usb_gpib.c
++++ b/drivers/staging/gpib/lpvo_usb_gpib/lpvo_usb_gpib.c
+@@ -97,8 +97,8 @@ module_param(debug, int, 0644);
+ #define USB_GPIB_DEBUG_ON    "\nIBDE\xAA\n"
+ #define USB_GPIB_SET_LISTEN  "\nIBDT0\n"
+ #define USB_GPIB_SET_TALK    "\nIBDT1\n"
+-#define USB_GPIB_SET_LINES   "\nIBDC\n"
+-#define USB_GPIB_SET_DATA    "\nIBDM\n"
++#define USB_GPIB_SET_LINES   "\nIBDC.\n"
++#define USB_GPIB_SET_DATA    "\nIBDM.\n"
+ #define USB_GPIB_READ_LINES  "\nIBD?C\n"
+ #define USB_GPIB_READ_DATA   "\nIBD?M\n"
+ #define USB_GPIB_READ_BUS    "\nIBD??\n"
+@@ -587,7 +587,7 @@ static int usb_gpib_command(gpib_board_t *board,
+ 			    size_t *bytes_written)
+ {
+ 	int i, retval;
+-	char command[6] = "IBc\n";
++	char command[6] = "IBc.\n";
+ 
+ 	DIA_LOG(1, "enter %p\n", board);
+ 
+-- 
+2.47.1
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
