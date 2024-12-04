@@ -1,44 +1,44 @@
-Return-Path: <linux-kernel+bounces-432392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432393-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D05999E4A25
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 00:52:51 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AE689E4A1E
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 00:51:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 622161881225
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 23:50:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6506E163EA6
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 23:51:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15664216384;
-	Wed,  4 Dec 2024 23:36:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A39AD2066EE;
+	Wed,  4 Dec 2024 23:36:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fs/KHtaZ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D/WCXuV5"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E4932066EE;
-	Wed,  4 Dec 2024 23:36:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFB9420DD5B;
+	Wed,  4 Dec 2024 23:36:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733355398; cv=none; b=EOQ+aMaqSo8mvI7fadWelHq/pE4iJ5rUpI9WynXHJS1x96N7gEnc0jUuRi2E0YBneO/rl/If9TDWy6DlYhi9KTQPcjjANVNrpuFKzrNdRfXb0HtyiABfHmdA5Molisv1KQhIbxE6PY/jsGwvkyOwAq0AKToqE2zyaK0yxfpRDf8=
+	t=1733355408; cv=none; b=uMuX05zD1aALOo2W9F11JX8G+Cjff94p7+xrOiN7KaVFU7MSARiLc5HtPPf5FezaFyFGi5N/pYLErWkrAYF614QS6L0tqxxPn806d0i+Yby6U1AJd1YEpej6JjF4Xtw1mJlvexpQMYpNUvBAtY8i8CYoct1D2BzYjvA02fJ0/S8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733355398; c=relaxed/simple;
-	bh=PLBGzFh3zIkjqpoKfJqUUO/er9HY3Qo7oztQa+2/iY4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SkgD45Aaae2mNQ6PrfLb7BjOmDSk+X08svImij9W/YSJ9+WQj9z37aMSzvsrweRasjhrk0MeKQRwrk0w/ijkd2vYcIPmZZyEWY7ONI1+rI0g4SMq8IMIq6MKe+3Y+777f5nbUmIhTqUFTN/NqlBLNhAmFSs8M59zhAfLtWfaRRY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fs/KHtaZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49288C4CECD;
-	Wed,  4 Dec 2024 23:36:37 +0000 (UTC)
+	s=arc-20240116; t=1733355408; c=relaxed/simple;
+	bh=MFtM7Jc8YQIYkycGN7zLxsOEYcWNogypf6UQuSlYpF0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JDTQc6iBm4XiPn/e60k382n4rSNHwHtCDfZVH/aopiyTMzCuykOMrr1N8nu4fIU/nUQx9GPVHAScsfp+4jxbMVrcOLPF+LRX5ttjf060o3LvYOWpkIWsW/T/cOeVA/bs+gRQ2jsmGBee6v6rKYTPjvf2BaabnQ2bKedfedJlo9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D/WCXuV5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 271BCC4CECD;
+	Wed,  4 Dec 2024 23:36:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733355398;
-	bh=PLBGzFh3zIkjqpoKfJqUUO/er9HY3Qo7oztQa+2/iY4=;
+	s=k20201202; t=1733355407;
+	bh=MFtM7Jc8YQIYkycGN7zLxsOEYcWNogypf6UQuSlYpF0=;
 	h=From:To:Cc:Subject:Date:From;
-	b=Fs/KHtaZP36LBVS6XyJCLM6h/C+jP/7C9fHhLHKXi5rIurTtmDEOlHiw/kKiiydoO
-	 H2KPLKDMNZDnhqDLh3UWEgKQW7qdf2qYxtN3PRoUH2uH7hO7ZfSikufceJQqHx6Opd
-	 WW14P7U5/CEtWA0aKvJRrUQKdKWG+DplfFgCv8Ea342xxHeYuOdSGaaemRSHn2Jwfl
-	 cPceaccCAg24woq/nmO8RbFdvMBNfMFBRwP1qImdhAMFOiOQdN5oOU1dbrWENiFo0Q
-	 Cz6V54mnycjRS5SIzqoNkGhYsNaUfL4ZhMPbdpO/d8q3m+hkrLfsRDU0F9BUkN29fU
-	 qFdgeehBueIuA==
+	b=D/WCXuV5lvBj+rrm7qQpMdEwtA2p+tOK09fSRY1QnMrzU4tJCgTYZY3X3O94hB51l
+	 hXgdD8xGuOTGMT34ZmMqmhfXsKbfdmF6Ys6KgwYXSdI6t1UIiLUGt5s6DYJL7s2+Hv
+	 Tyg8nHyVUYdZs4oweeUC8sHxAjsLhFEGdj+kY2dfZ/83Ss2vBuQrBUFc8GFxy5rXdV
+	 +A1AWFJRMfKW+hbgwgePWPhy/0tvkq+fz+czc5C2temfORoWFSJjTTHQ5vA6Ub6/9v
+	 56qdph5y2Xhh81LyWST2rgt2ngjLVahfl+gq48BdQrEoye1QWbSAzjAeLpKAJcawaM
+	 E1ymNrEqbgh1A==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
@@ -46,9 +46,9 @@ Cc: Parker Newman <pnewman@connecttech.com>,
 	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.4] misc: eeprom: eeprom_93cx6: Add quirk for extra read clock cycle
-Date: Wed,  4 Dec 2024 17:25:11 -0500
-Message-ID: <20241204222518.2250533-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19] misc: eeprom: eeprom_93cx6: Add quirk for extra read clock cycle
+Date: Wed,  4 Dec 2024 17:25:20 -0500
+Message-ID: <20241204222528.2250575-1-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -58,7 +58,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 5.4.286
+X-stable-base: Linux 4.19.324
 Content-Transfer-Encoding: 8bit
 
 From: Parker Newman <pnewman@connecttech.com>
@@ -105,10 +105,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  2 files changed, 21 insertions(+)
 
 diff --git a/drivers/misc/eeprom/eeprom_93cx6.c b/drivers/misc/eeprom/eeprom_93cx6.c
-index 36a2eb837371b..6b42ba6705d3f 100644
+index 0cf2c9d676be8..31c69642f13e0 100644
 --- a/drivers/misc/eeprom/eeprom_93cx6.c
 +++ b/drivers/misc/eeprom/eeprom_93cx6.c
-@@ -186,6 +186,11 @@ void eeprom_93cx6_read(struct eeprom_93cx6 *eeprom, const u8 word,
+@@ -195,6 +195,11 @@ void eeprom_93cx6_read(struct eeprom_93cx6 *eeprom, const u8 word,
  	eeprom_93cx6_write_bits(eeprom, command,
  		PCI_EEPROM_WIDTH_OPCODE + eeprom->width);
  
@@ -120,7 +120,7 @@ index 36a2eb837371b..6b42ba6705d3f 100644
  	/*
  	 * Read the requested 16 bits.
  	 */
-@@ -252,6 +257,11 @@ void eeprom_93cx6_readb(struct eeprom_93cx6 *eeprom, const u8 byte,
+@@ -261,6 +266,11 @@ void eeprom_93cx6_readb(struct eeprom_93cx6 *eeprom, const u8 byte,
  	eeprom_93cx6_write_bits(eeprom, command,
  		PCI_EEPROM_WIDTH_OPCODE + eeprom->width + 1);
  
@@ -133,10 +133,10 @@ index 36a2eb837371b..6b42ba6705d3f 100644
  	 * Read the requested 8 bits.
  	 */
 diff --git a/include/linux/eeprom_93cx6.h b/include/linux/eeprom_93cx6.h
-index c860c72a921d0..3a485cc0e0fa0 100644
+index eb0b1988050ae..ec913059a5299 100644
 --- a/include/linux/eeprom_93cx6.h
 +++ b/include/linux/eeprom_93cx6.h
-@@ -11,6 +11,8 @@
+@@ -24,6 +24,8 @@
  	Supported chipsets: 93c46, 93c56 and 93c66.
   */
  
@@ -145,7 +145,7 @@ index c860c72a921d0..3a485cc0e0fa0 100644
  /*
   * EEPROM operation defines.
   */
-@@ -34,6 +36,7 @@
+@@ -47,6 +49,7 @@
   * @register_write(struct eeprom_93cx6 *eeprom): handler to
   * write to the eeprom register by using all reg_* fields.
   * @width: eeprom width, should be one of the PCI_EEPROM_WIDTH_* defines
@@ -153,7 +153,7 @@ index c860c72a921d0..3a485cc0e0fa0 100644
   * @drive_data: Set if we're driving the data line.
   * @reg_data_in: register field to indicate data input
   * @reg_data_out: register field to indicate data output
-@@ -50,6 +53,9 @@ struct eeprom_93cx6 {
+@@ -63,6 +66,9 @@ struct eeprom_93cx6 {
  	void (*register_write)(struct eeprom_93cx6 *eeprom);
  
  	int width;
@@ -163,7 +163,7 @@ index c860c72a921d0..3a485cc0e0fa0 100644
  
  	char drive_data;
  	char reg_data_in;
-@@ -71,3 +77,8 @@ extern void eeprom_93cx6_wren(struct eeprom_93cx6 *eeprom, bool enable);
+@@ -84,3 +90,8 @@ extern void eeprom_93cx6_wren(struct eeprom_93cx6 *eeprom, bool enable);
  
  extern void eeprom_93cx6_write(struct eeprom_93cx6 *eeprom,
  			       u8 addr, u16 data);
