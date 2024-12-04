@@ -1,139 +1,174 @@
-Return-Path: <linux-kernel+bounces-430851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFD5A9E367E
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 10:25:08 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41E059E3694
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 10:29:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5D14285E41
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 09:25:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8DFDBB23CC1
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 09:25:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 024FF1A9B4F;
-	Wed,  4 Dec 2024 09:25:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A63B91ABEDF;
+	Wed,  4 Dec 2024 09:25:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="xpd9hEgI"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="E85ttCz7"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A313DBE5E;
-	Wed,  4 Dec 2024 09:24:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58442BE5E;
+	Wed,  4 Dec 2024 09:25:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733304300; cv=none; b=k1/uCtn6cvXIC1nmf9HT7CgfC6pTCHycW4tOlAlSZKZyPJQ1MBrnpmbRnQpM4LKcnbNTAJR6anVvHAMcekwX56n+O7i2WuwK4GLbmVBQAc6/ctikdOhQD5aoK1t7LelnHT+LT5cL/My+WUFgInc/0r1RKpnYfEkXSsPxe98PyoY=
+	t=1733304308; cv=none; b=oD6CHGYtPaL5h7cF3SCvmPBVDi0a6l+qI0fGq8EG4HbzVG34IYWCdqeCl/HG/Lri8wIdZQWvMjmhO0oljl3tx/Vdk+iqdONZEg2bqTd9wrOqkWp53U12u/6vwSdGrwIhveDhoNVYZUv3OUENhFeUuXB3SUfn3yRauILDbdk6BAg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733304300; c=relaxed/simple;
-	bh=Z1ep7hZwDhdPbX5EmgjX6VI1qGLY8Zy9ALNVZJHmgBY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=vEoC5NrQ3oU2smD2iDt5couNUGcfIIkZTLSikcZ2fQaozVGtv2WcZ/qAZSUeRcOD8v9Wol3nXGF1Ks5oPnYnQtpR02iGTtPjV/t/bj76wSQYzJG43tSxiuCSCqSbn4Xf+kopnTZ3pBLgBjMt+QEsm+e+E/qasYrJguteABl3Sjw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=xpd9hEgI; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=Cy/XJ04+zf5LbxiN66hAMvCUA3gWid9DTtZSOXqwwIw=; b=xpd9hEgI7XauUdJTL4JW/stQ64
-	5V8Pt/IwwETi+P6/XqImUjn6tmDH8mGrBM985xtQ0aL16sW0E0Ru1UccmYSx6CKH5cwUqFK7UtYe3
-	JWCUBmQ//Q3GNNP7zTe01I3eGt7LjayInwDb9h36o+UVftNZBBNcOBQS5gZWbgspf8NXQY4RJMZTU
-	JgcOVNWPpXqyJx4Ro8XpKpq8oxtM0voPZg14xD8GmvqA6BpS/A95hKQhTFAxlSmeYk2fm3WNJrg7b
-	1qrRt0H20hDOM1QQxFrK0GW/9OOxiKsx7LyQBpP2n+hqgUtJrDH8HAinYxqQhkk+Wb4D438hcK49/
-	oFd3awpw==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:43590)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1tIlcl-00032d-0T;
-	Wed, 04 Dec 2024 09:24:47 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1tIlcj-0005RX-2j;
-	Wed, 04 Dec 2024 09:24:45 +0000
-Date: Wed, 4 Dec 2024 09:24:45 +0000
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	upstream@airoha.com
-Subject: Re: [net-next PATCH v8 3/4] net: dsa: Add Airoha AN8855 5-Port
- Gigabit DSA Switch driver
-Message-ID: <Z1Af3YaN3xjq_Gtb@shell.armlinux.org.uk>
-References: <20241204072427.17778-1-ansuelsmth@gmail.com>
- <20241204072427.17778-4-ansuelsmth@gmail.com>
- <20241204100922.0af25d7e@fedora.home>
- <67501d7b.050a0220.3390ac.353c@mx.google.com>
+	s=arc-20240116; t=1733304308; c=relaxed/simple;
+	bh=PKY4LPXFn8gf3Y/PMNn+IFZxA1QBme7qcuSLsElyEkk=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+	 In-Reply-To:Content-Type; b=HHhHfygCvx6cRmX5X2vxGxgUOK6//Z6MrFX0Ok/v7b6BoCZScOWBaVpN6hBw3qVudF3D4VXR71dTv2TBKpNhFsIPp78/8NjNHsPQzpQUYfjm3WwHHp8RfCarYp5+LcyumTui80ZcRijHoHs0M30oH5Qmos28KwcRkrtdp2H/w9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=E85ttCz7; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B47Ur0S024918;
+	Wed, 4 Dec 2024 09:25:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	KSwHfDvtubrWGiVXiJkI8w2z2WeskjwStT/I6Vufs84=; b=E85ttCz7oRzvvKzw
+	k1QPxl10KQ75AWyy8nUzooS82Vf21ucA/XUN/mntapNSTk3iLwzceovRY0rdWZ+I
+	NhM+1Bb3UZYHYvxUjdIBJWTWPSaluE9u37gKVDWrMJoQ+8uvy1Sm8mySxNIhrv5m
+	kb9sAUJZB86sk3P2+j1KLXTXwUrvjUDHk8fdoeqxxClPo9TB+t3Yx3SVqBX42qtK
+	oGNP0tfdKIlGMSYvta1GQ4o/akoj8vWPQ4shMnas921gkcDr4o/3tX4BhPxlJDBV
+	Kfv2QYafUaBCeyYL9J4ZwvWS/y5vQ3z5U149C/zoBqyzBB1OARNHtelnXFtc7SqH
+	WHf07w==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 439vnyur08-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 04 Dec 2024 09:25:02 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B49P0x2009889
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 4 Dec 2024 09:25:00 GMT
+Received: from [10.217.217.81] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 4 Dec 2024
+ 01:24:56 -0800
+Message-ID: <cfb08783-a561-4636-853e-0903713008f8@quicinc.com>
+Date: Wed, 4 Dec 2024 14:54:53 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <67501d7b.050a0220.3390ac.353c@mx.google.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 4/7] dt-bindings: clock: qcom: Add SM8750 GCC
+From: Taniya Das <quic_tdas@quicinc.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+        Melody Olvera
+	<quic_molvera@quicinc.com>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Trilok Soni <quic_tsoni@quicinc.com>,
+        "Satya Durga
+ Srinivasu Prabhala" <quic_satyap@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20241112002807.2804021-1-quic_molvera@quicinc.com>
+ <20241112002807.2804021-5-quic_molvera@quicinc.com>
+ <vzu23hoou5rbcucrsnauq4ygxmqzuonyvxvnarsgxycc7wrnro@vpxauk6zmq36>
+ <9d0bb244-ecbd-4630-a774-6f2cd1ffb2cb@quicinc.com>
+Content-Language: en-US
+In-Reply-To: <9d0bb244-ecbd-4630-a774-6f2cd1ffb2cb@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 6uYUI4IC6xZAeCU0qb7dwZDfbUPoiFZ6
+X-Proofpoint-GUID: 6uYUI4IC6xZAeCU0qb7dwZDfbUPoiFZ6
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 adultscore=0
+ mlxlogscore=999 bulkscore=0 impostorscore=0 mlxscore=0 suspectscore=0
+ spamscore=0 priorityscore=1501 lowpriorityscore=0 phishscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412040073
 
-On Wed, Dec 04, 2024 at 10:14:31AM +0100, Christian Marangi wrote:
-> On Wed, Dec 04, 2024 at 10:09:22AM +0100, Maxime Chevallier wrote:
-> > > +	case 5:
-> > > +		phy_interface_set_rgmii(config->supported_interfaces);
-> > > +		__set_bit(PHY_INTERFACE_MODE_SGMII,
-> > > +			  config->supported_interfaces);
-> > > +		__set_bit(PHY_INTERFACE_MODE_2500BASEX,
-> > > +			  config->supported_interfaces);
-> > > +		break;
-> > > +	}
-> > > +
-> > > +	config->mac_capabilities = MAC_ASYM_PAUSE | MAC_SYM_PAUSE |
-> > > +				   MAC_10 | MAC_100 | MAC_1000FD;
-> > 
-> > For port 5, you may also add the MAC_2500FD capability as it supports
-> > 2500BASEX ?
-> > 
+
+
+On 12/4/2024 12:47 PM, Taniya Das wrote:
 > 
-> I didn't account for the CPU port that runs at 2.5. The LAN port are
-> only 1g. Will add or maybe add the 2500FD only for cpu port?
 > 
-> Maybe Russel can help in this?
-
-*ll* please.
-
-Well, 2500BASE-X runs at 2.5G, so if MAC_2500FD isn't set in the mask,
-validation will fail for 2500BASE-X.
-
-> > > +		case SPEED_5000:
-> > > +			reg |= AN8855_PMCR_FORCE_SPEED_5000;
-> > > +			break;
-> > 
-> > There's no mention of any mode that can give support for the 5000Mbps
-> > speed, is it a leftover from previous work on the driver ?
-> > 
+> On 11/20/2024 1:47 PM, Krzysztof Kozlowski wrote:
+>> On Mon, Nov 11, 2024 at 04:28:04PM -0800, Melody Olvera wrote:
+>>> From: Taniya Das <quic_tdas@quicinc.com>
+>>>
+>>> Add bindings documentation for the SM8750 General Clock Controller.
+>>
+>> Subject prefix - use proper file prefix:
+>> dt-bindings: clock: qcom,sm8650-gcc:
+>>
+>>>
+>>> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+>>> Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
+>>> ---
+>>>   .../bindings/clock/qcom,sm8650-gcc.yaml       |   8 +-
+>>>   include/dt-bindings/clock/qcom,sm8750-gcc.h   | 226 ++++++++++++++++++
+>>>   2 files changed, 232 insertions(+), 2 deletions(-)
+>>>   create mode 100644 include/dt-bindings/clock/qcom,sm8750-gcc.h
+>>>
+>>> diff --git 
+>>> a/Documentation/devicetree/bindings/clock/qcom,sm8650-gcc.yaml 
+>>> b/Documentation/devicetree/bindings/clock/qcom,sm8650-gcc.yaml
+>>> index 976f29cce809..e50b5f1cad75 100644
+>>> --- a/Documentation/devicetree/bindings/clock/qcom,sm8650-gcc.yaml
+>>> +++ b/Documentation/devicetree/bindings/clock/qcom,sm8650-gcc.yaml
+>>> @@ -13,11 +13,15 @@ description: |
+>>>     Qualcomm global clock control module provides the clocks, resets 
+>>> and power
+>>>     domains on SM8650
+>>> -  See also:: include/dt-bindings/clock/qcom,sm8650-gcc.h
+>>> +  See also: include/dt-bindings/clock/qcom,sm8650-gcc.h
+>>> +            include/dt-bindings/reset/qcom,sm8750-gcc.h
+>>>   properties:
+>>>     compatible:
+>>> -    const: qcom,sm8650-gcc
+>>> +    items:
+>>
+>> No need for items, simpler is just enum.
+>>
 > 
-> Added 5000 as this is present in documentation bits but CPU can only go
-> up to 2.5. Should I drop it? Idea was to futureproof it since it really
-> seems they added these bits with the intention of having a newer switch
-> with more advanced ports.
+> will fix in the next patch.
+> 
 
-Is there any mention of supporting interfaces faster than 2500BASE-X ?
+As there are binding differences between SM8650 and SM8750 will bring 
+back the new file as in v1 
+https://patchwork.kernel.org/project/linux-clk/patch/20241021230359.2632414-5-quic_molvera@quicinc.com/ 
+  and fix the unused bindings.
+
+>>> +      - enum:
+>>> +          - qcom,sm8650-gcc
+>>> +          - qcom,sm8750-gcc
+>>
+>> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>>
+>> Best regards,
+>> Krzysztof
+>>
+> 
 
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Thanks & Regards,
+Taniya Das.
 
