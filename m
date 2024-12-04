@@ -1,62 +1,58 @@
-Return-Path: <linux-kernel+bounces-431869-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 924549E4486
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 20:24:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C5BA9E4579
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 21:16:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 32C3ABC3A0E
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:47:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E9C0BBA16F4
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:50:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBFF5231B0D;
-	Wed,  4 Dec 2024 17:12:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 062552116E7;
+	Wed,  4 Dec 2024 17:13:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XZtIMYF3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h8HA1Zt7"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23A7A231AF4;
-	Wed,  4 Dec 2024 17:12:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E0982111B8;
+	Wed,  4 Dec 2024 17:13:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733332370; cv=none; b=qvc/zmQSyFxhcNuDOrXlhkZA+337WN9FxydD2jem6t/SM8OnqAeucEIxV3CNBE+dNSahRjHVch/44ZZvZwxmU4BXyGj4PvTgBzymflTrs9/GLcOu8LxAOBPQq3iIlfbfPzQ2U1c+Wvc8luBEnrM6/DNMiRaA6L2dpdIY1YsbWfw=
+	t=1733332403; cv=none; b=uxJd5b7sk+mCWuZGHSrYVLwmn/U/00svPTmKy37HuApr/34yfzrQejZwmxtRuBgFxho+gk8EnXbp7ue6HndTK6q1Jn2Dj55PGQdgflnbgzRWGScNibT3gLuOXK7aIL3QZSuXgV/X90/5ENseaPW5t0cbGa1bAqnf9uWrpPLYTiA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733332370; c=relaxed/simple;
-	bh=+DSOcSN36hHwURdw2ODcs92UNCbE7AuLFPiehLo63PI=;
+	s=arc-20240116; t=1733332403; c=relaxed/simple;
+	bh=HcMhPImvTT4zfizAJqvG20GxrdA+50plVMVe8cC05KE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ioXlQczWUhWZjiTh1lkjtblZI+o7gZSvmENpEXH5an8s12vZvGOh1JnUWz/LKOJfcco4trTZpUWbx2Zclo2hH4HZgjZwSZw9u1KrKcq2oBTjRShuPhhWO3gzJ79kOhJMJ9RrYHzSqaBaq1dnVJYAdOuarYuYDRJ9YfZcUOF7zqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XZtIMYF3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBCAEC4CECD;
-	Wed,  4 Dec 2024 17:12:48 +0000 (UTC)
+	 MIME-Version; b=Q3GF+nJEqbwj5qrt3EGcyZgwb1kfkdfUdyIvo872LJejFLu0lLTQAITIfg3YndMcjQr+L+e+IJXnM2eaWf6ANc7wSg1f8pSK86cxWK0rbdjjyb/vuemfri/cprKVxK7SgF1r5bOw4qvByYLGlm0PwBkp/oLp3OjzYryXvmAC0f0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h8HA1Zt7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7AD18C4CECD;
+	Wed,  4 Dec 2024 17:13:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733332370;
-	bh=+DSOcSN36hHwURdw2ODcs92UNCbE7AuLFPiehLo63PI=;
+	s=k20201202; t=1733332403;
+	bh=HcMhPImvTT4zfizAJqvG20GxrdA+50plVMVe8cC05KE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=XZtIMYF3LqUsOc/JBGaIv5JezIWICTEeq2rn4d+H5TjOf9JXugxCT+u1H56Finmry
-	 HVOcFE7/gz1ZQ4eUhdea8uA/8AelVTtLqhSG+oefhK4TNlm/4/pMal8i2lDeE9typy
-	 aK+8YJuqQieUwoCxrojqkRrlgYti2gkfSA+wZki49efIymE5DpgTb/pCxWr9sy8rbt
-	 R4efO2NOPxzzGnHqrF9uvoGcS9jYg4EjXO/9EpBvoKd1Cvj1NHeVi+miWSmBtf8+rj
-	 vfTKgzP2fmdQRLs2RMXo+U+WQc+MN+McuIDAIh4rr5Z7mvzJjdfe0pWbyP8TuxkWAh
-	 /woX+bqgKLNgQ==
+	b=h8HA1Zt712gJo2q8XgmURCL8WJjz6Momgdrbpl9VBwyg/Xas1SWwjPcEufGuxVsxZ
+	 hwasvy9mEcCV2RnObSXyAMZUm8mSudH9L8aW8h3CrcWDB/7q7OzKdEMOcAi7899dVB
+	 5G3ZFEhaPA8H6TU1ex87SrRL5/mCi1HyX5STIK+dSRQcw0hewP0KuPbkLR8yB9bnxC
+	 j/yS/ic8zlQlUBjzTZX3ARsKGCqBhdCIaTkg2cH+wUK9Zp/r1JaMmHNQw92miYrU4r
+	 fouUkfUlSRc/UfPVji3zeY1kGB1/je/X6N9vcA1LApMD+QNzPUhIZPcM6P1W9rW6zv
+	 pU2QmM4MQtZ7Q==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Keith Busch <kbusch@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	Amey Narkhede <ameynarkhede03@gmail.com>,
+Cc: Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
 	Sasha Levin <sashal@kernel.org>,
-	ilpo.jarvinen@linux.intel.com,
-	mariusz.tkaczyk@linux.intel.com,
-	linux-pci@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.6 08/12] PCI: Add 'reset_subordinate' to reset hierarchy below bridge
-Date: Wed,  4 Dec 2024 11:01:05 -0500
-Message-ID: <20241204160115.2216718-8-sashal@kernel.org>
+	linux-i3c@lists.infradead.org
+Subject: [PATCH AUTOSEL 5.15 2/6] i3c: mipi-i3c-hci: Mask ring interrupts before ring stop request
+Date: Wed,  4 Dec 2024 11:01:52 -0500
+Message-ID: <20241204160200.2217169-2-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241204160115.2216718-1-sashal@kernel.org>
-References: <20241204160115.2216718-1-sashal@kernel.org>
+In-Reply-To: <20241204160200.2217169-1-sashal@kernel.org>
+References: <20241204160200.2217169-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,131 +61,45 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.6.63
+X-stable-base: Linux 5.15.173
 Content-Transfer-Encoding: 8bit
 
-From: Keith Busch <kbusch@kernel.org>
+From: Jarkko Nikula <jarkko.nikula@linux.intel.com>
 
-[ Upstream commit 2fa046449a82a7d0f6d9721dd83e348816038444 ]
+[ Upstream commit 6ca2738174e4ee44edb2ab2d86ce74f015a0cc32 ]
 
-The "bus" and "cxl_bus" reset methods reset a device by asserting Secondary
-Bus Reset on the bridge leading to the device.  These only work if the
-device is the only device below the bridge.
+Bus cleanup path in DMA mode may trigger a RING_OP_STAT interrupt when
+the ring is being stopped. Depending on timing between ring stop request
+completion, interrupt handler removal and code execution this may lead
+to a NULL pointer dereference in hci_dma_irq_handler() if it gets to run
+after the io_data pointer is set to NULL in hci_dma_cleanup().
 
-Add a sysfs 'reset_subordinate' attribute on bridges that can assert
-Secondary Bus Reset regardless of how many devices are below the bridge.
+Prevent this my masking the ring interrupts before ring stop request.
 
-This resets all the devices below a bridge in a single command, including
-the locking and config space save/restore that reset methods normally do.
-
-This may be the only way to reset devices that don't support other reset
-methods (ACPI, FLR, PM reset, etc).
-
-Link: https://lore.kernel.org/r/20241025222755.3756162-1-kbusch@meta.com
-Signed-off-by: Keith Busch <kbusch@kernel.org>
-[bhelgaas: commit log, add capable(CAP_SYS_ADMIN) check]
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Reviewed-by: Alex Williamson <alex.williamson@redhat.com>
-Reviewed-by: Amey Narkhede <ameynarkhede03@gmail.com>
+Signed-off-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+Link: https://lore.kernel.org/r/20240920144432.62370-2-jarkko.nikula@linux.intel.com
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- Documentation/ABI/testing/sysfs-bus-pci | 11 +++++++++++
- drivers/pci/pci-sysfs.c                 | 26 +++++++++++++++++++++++++
- drivers/pci/pci.c                       |  2 +-
- drivers/pci/pci.h                       |  1 +
- 4 files changed, 39 insertions(+), 1 deletion(-)
+ drivers/i3c/master/mipi-i3c-hci/dma.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/ABI/testing/sysfs-bus-pci b/Documentation/ABI/testing/sysfs-bus-pci
-index ecf47559f495b..7f3e6bc3ff0ff 100644
---- a/Documentation/ABI/testing/sysfs-bus-pci
-+++ b/Documentation/ABI/testing/sysfs-bus-pci
-@@ -163,6 +163,17 @@ Description:
- 		will be present in sysfs.  Writing 1 to this file
- 		will perform reset.
+diff --git a/drivers/i3c/master/mipi-i3c-hci/dma.c b/drivers/i3c/master/mipi-i3c-hci/dma.c
+index b9b6be1864384..61a5abac50dc0 100644
+--- a/drivers/i3c/master/mipi-i3c-hci/dma.c
++++ b/drivers/i3c/master/mipi-i3c-hci/dma.c
+@@ -174,10 +174,10 @@ static void hci_dma_cleanup(struct i3c_hci *hci)
+ 	for (i = 0; i < rings->total; i++) {
+ 		rh = &rings->headers[i];
  
-+What:		/sys/bus/pci/devices/.../reset_subordinate
-+Date:		October 2024
-+Contact:	linux-pci@vger.kernel.org
-+Description:
-+		This is visible only for bridge devices. If you want to reset
-+		all devices attached through the subordinate bus of a specific
-+		bridge device, writing 1 to this will try to do it.  This will
-+		affect all devices attached to the system through this bridge
-+		similiar to writing 1 to their individual "reset" file, so use
-+		with caution.
-+
- What:		/sys/bus/pci/devices/.../vpd
- Date:		February 2008
- Contact:	Ben Hutchings <bwh@kernel.org>
-diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
-index 3317b93547167..92e8ac85f58e8 100644
---- a/drivers/pci/pci-sysfs.c
-+++ b/drivers/pci/pci-sysfs.c
-@@ -517,6 +517,31 @@ static ssize_t bus_rescan_store(struct device *dev,
- static struct device_attribute dev_attr_bus_rescan = __ATTR(rescan, 0200, NULL,
- 							    bus_rescan_store);
++		rh_reg_write(INTR_SIGNAL_ENABLE, 0);
+ 		rh_reg_write(RING_CONTROL, 0);
+ 		rh_reg_write(CR_SETUP, 0);
+ 		rh_reg_write(IBI_SETUP, 0);
+-		rh_reg_write(INTR_SIGNAL_ENABLE, 0);
  
-+static ssize_t reset_subordinate_store(struct device *dev,
-+				struct device_attribute *attr,
-+				const char *buf, size_t count)
-+{
-+	struct pci_dev *pdev = to_pci_dev(dev);
-+	struct pci_bus *bus = pdev->subordinate;
-+	unsigned long val;
-+
-+	if (!capable(CAP_SYS_ADMIN))
-+		return -EPERM;
-+
-+	if (kstrtoul(buf, 0, &val) < 0)
-+		return -EINVAL;
-+
-+	if (val) {
-+		int ret = __pci_reset_bus(bus);
-+
-+		if (ret)
-+			return ret;
-+	}
-+
-+	return count;
-+}
-+static DEVICE_ATTR_WO(reset_subordinate);
-+
- #if defined(CONFIG_PM) && defined(CONFIG_ACPI)
- static ssize_t d3cold_allowed_store(struct device *dev,
- 				    struct device_attribute *attr,
-@@ -621,6 +646,7 @@ static struct attribute *pci_dev_attrs[] = {
- static struct attribute *pci_bridge_attrs[] = {
- 	&dev_attr_subordinate_bus_number.attr,
- 	&dev_attr_secondary_bus_number.attr,
-+	&dev_attr_reset_subordinate.attr,
- 	NULL,
- };
- 
-diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-index 93f2f4dcf6d69..fb702d17ed9a7 100644
---- a/drivers/pci/pci.c
-+++ b/drivers/pci/pci.c
-@@ -6068,7 +6068,7 @@ EXPORT_SYMBOL_GPL(pci_probe_reset_bus);
-  *
-  * Same as above except return -EAGAIN if the bus cannot be locked
-  */
--static int __pci_reset_bus(struct pci_bus *bus)
-+int __pci_reset_bus(struct pci_bus *bus)
- {
- 	int rc;
- 
-diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
-index d5e9010a135a1..83cd646bde3f0 100644
---- a/drivers/pci/pci.h
-+++ b/drivers/pci/pci.h
-@@ -46,6 +46,7 @@ bool pci_reset_supported(struct pci_dev *dev);
- void pci_init_reset_methods(struct pci_dev *dev);
- int pci_bridge_secondary_bus_reset(struct pci_dev *dev);
- int pci_bus_error_reset(struct pci_dev *dev);
-+int __pci_reset_bus(struct pci_bus *bus);
- 
- struct pci_cap_saved_data {
- 	u16		cap_nr;
+ 		if (rh->xfer)
+ 			dma_free_coherent(&hci->master.dev,
 -- 
 2.43.0
 
