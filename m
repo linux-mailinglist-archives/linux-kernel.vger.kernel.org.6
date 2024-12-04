@@ -1,150 +1,136 @@
-Return-Path: <linux-kernel+bounces-431519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FB6E9E3FA5
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:28:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 206859E3E86
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:42:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 32574B2C827
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:36:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4AA428346B
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:42:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CF5120ADD3;
-	Wed,  4 Dec 2024 15:36:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A73020C478;
+	Wed,  4 Dec 2024 15:42:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q+9+s9rM"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="nusfCG3X"
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F617187561
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 15:36:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 160AA20B816;
+	Wed,  4 Dec 2024 15:42:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733326580; cv=none; b=H0dWUFLZ1l9rifWpVkrO7sssvxjYxI0CgFnRDxGS/Lmpsn6hHF852rkslx0Beib+21XzK8pxL2z8Gpv2mZZybr16mUfEY6+7jwfjWN9e9DHIgY3RoGsAlhdIJOJ6oCOFoZBGrbDHBlypyHuaVAAndRVPJGjh+K+EI+3wCON8fW4=
+	t=1733326933; cv=none; b=MGTupTDWq29vn7th8j/oBEQ4lOpn4TgEjIWRUWoc2aCrzlovVmw2A4FDDAaysz3lsyMjoQIFlyGYwinHFwpohRjnSwv85+mj4b3+uypcF9SVfGdrX7N89oWEaEeKoT3haoRMDYmChhgZbTQ1KcDk3cUnZQbG0K6nh4nG+3X0rnc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733326580; c=relaxed/simple;
-	bh=SOg4U58pctz73sCbUo9T2j2IOYdIASzSlvdlUNsaXHc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FU4UhQZ8BYQ8BuDCgTe+4TBsoSkKkKFIFg8p1Av6+04VW11I/j3SRyBbjEHp2S7nnT0Log8H02m5CakcwQ+tvdw64fRHtV4vF+6Hzo7X6X4xGialsSZBGfO/hc9ZtpLFCRAa2U5oGB8NyZiTISr0Da59fzQygmCtPJR3Ca86xkU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q+9+s9rM; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-385df53e559so4102062f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 07:36:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733326577; x=1733931377; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=zclw9J11Yaq/On5xckpqjl4TPnhtbhcGF/0oEDc114s=;
-        b=Q+9+s9rM9zvYjRAecWRK0QPwSuygvY7bh2I94EKOIWD0JJw4eYOOlsuP2PP6rfj5FD
-         ZNJH8ULzBZg8enb0dqVZyXk7vQPaKiv5TNKB2KBt4pe5pqg8kLWr7qwetad8ferGgBYD
-         DTJeQdUJpvhiZtFd2Hk1naa00XDeM+r5RsYa4nsGE9pvTj/WDQrXkQtAq9bP0q46VMXb
-         6g8sA8Ts5r4xZG4GV3h+8qa1YUOy5TGItkZHqpLDlqHu57jhSOWX08n1VAAp8AwW+o9k
-         5klWW01UrMoKMQH3E+tegTVEqer+3v5xbGsb04GhIdyQ6vVmSbojHverebUUt+n46XEF
-         37Dw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733326577; x=1733931377;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zclw9J11Yaq/On5xckpqjl4TPnhtbhcGF/0oEDc114s=;
-        b=Zduw10UY4qgs+0dmvvo3KUksjEcaUzHQsoq/aptBOn58PJZfvem8U1QYuPn9IgnLYp
-         E2BvboBb7UXA1G1vuazfr4m0Jefa9HOSowbDT39Zwv8rn+YA0G4lKerv4dnUiub0bq0a
-         oHgPVp3CKj6l9qzVFPioF/6Q4ItnL87bQIMvgkpg8/LjF5z36/aAHbJ44QGdpAQrXDrP
-         Sx4lXLrLCigMSPffbdio6WE2Hl4IJquiHbqzlQ9yvs2LPiJadCsN8yh9PC3sAlytEEHA
-         Wzz+F2h5sw8NACKJBgbFzpiaDWQ8TUVKAYoKZb89jPYwhj6mT9i0+UvV93w+/ufOPizQ
-         b06Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVAstaGCIRpH2y/dzGYlKZhEA74rP+9RfK1P4ycvBTW+Bmf5kPkJXzDYrxkR/GnqzMwwZdKIJhuFvRDclY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwvoWAzRNRpGqBQkHrBvRg0eIVxT3Xz4Y5fDyTNi1D9Mzffxewg
-	//yw5nZaYY73RkLrK9/M2FIcfOZhqRau2oUnrtfwMtpvATY7Y6O8dRuy2puW
-X-Gm-Gg: ASbGncvp2ZXIP+vgwyybhTzAcwgPryYOcMvep33uIPQBDFnObq2J1ICcqOgINC7LILj
-	1Hv6B8HY5NZAv3zxHmIjeNmy+JbPMewxDj5PibN/vsBmokfYUHcViSr2XTgISjocr2h//C01+t6
-	P4cOWaQ/hqd1biMRkEfqGfHjQGXVzHaFdkdMHomT4AJg0VMRzWbaW1bGdKuFNIjhaT0bIKvmuOn
-	tmeNd3yzpIOAttwd/a8vhPAz+imWSqqXOkeU4n3lBOHNbHa8eE2iXArZ+AucsjHn9uDUmYcdUxM
-	+eS5KVIaKw==
-X-Google-Smtp-Source: AGHT+IEkTfaXH/Z38oXTKSr37ArhtWR8oYC91y2lJwJ5Q1vNBAtYyQtIDtg8OhhBBlD800tMKVZ61Q==
-X-Received: by 2002:a05:6000:460e:b0:385:ee59:4500 with SMTP id ffacd0b85a97d-385fd423b55mr6331141f8f.39.1733326577501;
-        Wed, 04 Dec 2024 07:36:17 -0800 (PST)
-Received: from localhost.localdomain (82-64-73-52.subs.proxad.net. [82.64.73.52])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434d52b6854sm28921025e9.42.2024.12.04.07.36.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Dec 2024 07:36:16 -0800 (PST)
-From: Dave Penkler <dpenkler@gmail.com>
-To: gregkh@linuxfoundation.org,
-	linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Cc: Dave Penkler <dpenkler@gmail.com>,
-	Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH v4] staging: gpib: Fix i386 build issue
-Date: Wed,  4 Dec 2024 16:36:12 +0100
-Message-ID: <20241204153612.22867-1-dpenkler@gmail.com>
-X-Mailer: git-send-email 2.47.1
+	s=arc-20240116; t=1733326933; c=relaxed/simple;
+	bh=bnmAm1jUiG8QXJyizFgCwu3PvdmDTJ36Tvtsyi2/MGA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=grIueSs33DKRIM19/yhAyopan2NdRf9eJNIHMeJ8MVxLqSisZnmpi7rZzBfF3/W4YutFcME+oxzOaDeu2uYc83ar7PgRIhjKWaHCBI8oQSxXbvyPIUG3OXk8/0cqDF92Qg6RTAYC1tucelVSP69tr8UYzFIjOjptGi0QhkCi++A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=nusfCG3X; arc=none smtp.client-ip=80.241.56.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4Y3M7x37nBz9sry;
+	Wed,  4 Dec 2024 16:36:45 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1733326605;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vEbiDca7zp0P6QUlbgj1AObVHCUUIBhvErhOW/G7qOA=;
+	b=nusfCG3XW4GE0jLvDBNVvKMcqFnRfue+dvUhLx5lcON4bL8Zokmj1mbdE6KDijuiKdDbx3
+	arJTxXvnw1TnBh21WwsBQMMzxP569K2EdmHlkTei9/4nEqPNSDNKxkWvsUAVo87wKTiHGS
+	lUrrepgxAfHxKYZ1EicD7s7vyvW1Rq1ANJljZTkaREU53O41DpxUKm9IoNfRYJCrpoCF8k
+	z0He0BtS/HxFZTSwW3rpB/yto9OlPvQNaqByGVLU0/5zdH4QYpjVEDU/E8YxGrLpz5ZtEP
+	31L/qIIumrRwcXe6cGJraVVIJ0Wgq8RnPN2pt1DARerj1v5y6RTUXwsXgdYJ/w==
+Message-ID: <6c037258-4263-426d-beb2-e6a0697be3ab@mailbox.org>
+Date: Wed, 4 Dec 2024 16:36:40 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH 09/11] x86: rework CONFIG_GENERIC_CPU compiler flags
+Content-Language: en-US
+To: Arnd Bergmann <arnd@kernel.org>, linux-kernel@vger.kernel.org,
+ x86@kernel.org
+Cc: Arnd Bergmann <arnd@arndb.de>, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Andy Shevchenko <andy@kernel.org>, Matthew Wilcox <willy@infradead.org>,
+ Sean Christopherson <seanjc@google.com>,
+ Davide Ciminaghi <ciminaghi@gnudd.com>, Paolo Bonzini <pbonzini@redhat.com>,
+ kvm@vger.kernel.org
+References: <20241204103042.1904639-1-arnd@kernel.org>
+ <20241204103042.1904639-10-arnd@kernel.org>
+From: Tor Vic <torvic9@mailbox.org>
+In-Reply-To: <20241204103042.1904639-10-arnd@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-MBO-RS-META: 4e9m7dwkykgcxtqczw8zqyhhwrynqgzr
+X-MBO-RS-ID: 2b3f8d057a29b455e8d
 
-These drivers cast resource_type_t to void * causing the build to fail.
 
-With CONFIG_X86_PAE enabled the resource_size_t type is a 64bit unsigned int
-which cannot be cast to a 32 bit pointer.
 
-Disable these drivers if X68_PAE is enabled
+On 12/4/24 11:30, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+> 
+> Building an x86-64 kernel with CONFIG_GENERIC_CPU is documented to
+> run on all CPUs, but the Makefile does not actually pass an -march=
+> argument, instead relying on the default that was used to configure
+> the toolchain.
+> 
+> In many cases, gcc will be configured to -march=x86-64 or -march=k8
+> for maximum compatibility, but in other cases a distribution default
+> may be either raised to a more recent ISA, or set to -march=native
+> to build for the CPU used for compilation. This still works in the
+> case of building a custom kernel for the local machine.
+> 
+> The point where it breaks down is building a kernel for another
+> machine that is older the the default target. Changing the default
+> to -march=x86-64 would make it work reliable, but possibly produce
+> worse code on distros that intentionally default to a newer ISA.
+> 
+> To allow reliably building a kernel for either the oldest x86-64
+> CPUs or a more recent level, add three separate options for
+> v1, v2 and v3 of the architecture as defined by gcc and clang
+> and make them all turn on CONFIG_GENERIC_CPU. Based on this it
+> should be possible to change runtime feature detection into
+> build-time detection for things like cmpxchg16b, or possibly
+> gate features that are only available on older architectures.
+> 
 
-Reported-by: Guenter Roeck <linux@roeck-us.net>
-Link: https://lore.kernel.org/all/f10e976e-7a04-4454-b38d-39cd18f142da@roeck-us.net/
-Fixes: e9dc69956d4d ("staging: gpib: Add Computer Boards GPIB driver")
-Fixes: e1339245eba3 ("staging: gpib: Add Computer Equipment Corporation GPIB driver")
-Fixes: bb1bd92fa0f2 ("staging: gpib: Add ines GPIB driver")
-Fixes: 0cd5b05551e0 ("staging: gpib: Add TNT4882 chip based GPIB driver")
----
-v1 -> v2 changed pci_resource_start to pci_resource_len for second parameter of ioremap
-v2 -> v3 add changes for cb7210 and tnt4882 drivers
-v3 -> v4 disable build of drivers when X86_PAE is enabled
+Hi Arnd,
 
-drivers/staging/gpib/Kconfig | 4 ++++
- 1 file changed, 4 insertions(+)
+Similar but not identical changes have been proposed in the past several 
+times like e.g. in 1, 2 and likely even more often.
 
-diff --git a/drivers/staging/gpib/Kconfig b/drivers/staging/gpib/Kconfig
-index a9b811165f6b..a62d7d36ea85 100644
---- a/drivers/staging/gpib/Kconfig
-+++ b/drivers/staging/gpib/Kconfig
-@@ -50,6 +50,7 @@ config GPIB_CEC_PCI
- 	tristate "CEC PCI board"
- 	depends on PCI
- 	depends on HAS_IOPORT
-+	depends on !X86_PAE
- 	select GPIB_COMMON
- 	select GPIB_NEC7210
- 	help
-@@ -62,6 +63,7 @@ config GPIB_CEC_PCI
- config GPIB_NI_PCI_ISA
- 	tristate "NI PCI/ISA compatible boards"
- 	depends on ISA_BUS || PCI || PCMCIA
-+	depends on !X86_PAE
- 	select GPIB_COMMON
- 	select GPIB_NEC7210
- 	help
-@@ -85,6 +87,7 @@ config GPIB_CB7210
-        tristate "Measurement Computing compatible boards"
- 	depends on HAS_IOPORT
- 	depends on ISA_BUS || PCI || PCMCIA
-+	depends on !X86_PAE
-        select GPIB_COMMON
- 	select GPIB_NEC7210
-        help
-@@ -174,6 +177,7 @@ config GPIB_INES
-        tristate "INES"
- 	depends on PCI || ISA_BUS || PCMCIA
- 	depends on HAS_IOPORT
-+	depends on !X86_PAE
-        select GPIB_COMMON
-        select GPIB_NEC7210
-        help
--- 
-2.47.1
+Your solution seems to be much cleaner, I like it.
+
+That said, on my Skylake platform, there is no difference between 
+-march=x86-64 and -march=x86-64-v3 in terms of kernel binary size or 
+performance.
+I think Boris also said that these settings make no real difference on 
+code generation.
+
+Other settings might make a small difference (numbers are from 2023):
+   -generic:       85.089.784 bytes
+   -core2:         85.139.932 bytes
+   -march=skylake: 85.017.808 bytes
+
+----
+[1] 
+https://lore.kernel.org/all/4_u6ZNYPbaK36xkLt8ApRhiRTyWp_-NExHCH_tTFO_fanDglEmcbfowmiB505heI4md2AuR9hS-VSkf4s90sXb5--AnNTOwvPaTmcgzRYSY=@proton.me/
+
+[2] 
+https://lore.kernel.org/all/20230707105601.133221-1-dimitri.ledkov@canonical.com/
+
 
 
