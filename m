@@ -1,170 +1,162 @@
-Return-Path: <linux-kernel+bounces-431934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58BF09E42DC
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 19:06:16 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 978B39E42DB
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 19:06:05 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 081222853E5
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:06:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 63D0316978E
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:06:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E71F2207E0F;
-	Wed,  4 Dec 2024 17:56:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF72C2391B9;
+	Wed,  4 Dec 2024 17:56:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="EdNz09I5"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="bPH6Na9t"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30FFB2391AD;
-	Wed,  4 Dec 2024 17:56:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76F4223919F
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 17:56:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733335003; cv=none; b=l6VWyhwuiblJI5nvOp57jZ+ptP7el8RtpHuttBDWg5YqTJ01vqP6+uvN0MQyvDGDX74lAvStSS8FxactWoslx8KjmwGENTLWnu5cM/hMCT1ZvX2HBT5OAMl6xaycUtKag8knv3Jlp4eARrLmzNxMSDzV2gLQeAXlQtZRmTc/aLM=
+	t=1733335001; cv=none; b=SKj0N0GfarsOeFC1F2JPG/vVAKjGIxSx3KKhCfeTL98FYi6Tf9XBWBtmhPkQP3Dk+yuNrJFAbrq8fvzPFMf9k22ijnJX/zZVlq6cbKNKqgUKg+I8uY/0/iqWruCL0qC5l2IQKxHxP9oQpdfWPjjzimLB9hJzeuTzL45pXLLtyIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733335003; c=relaxed/simple;
-	bh=eqMyNIsN1uT5Xpv2zdcqbksS85BUsOtJ32KdNLU1I0U=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=oMfRAexDJhbF8ohsQKMMLKG2fglTQZ39GfddJHf7gj8hbPEjRbIhAQhO2QYstyeBwqfCcouJzfk0hvZmv0WVPrGXJZo0Mi7m/Zxjl6jNNoECT0zMmZRnI1Hd3yj0lQ6PPvXQs0eSMfG262RAoOdkKMK06ERZ6GHxJHADf2haTrk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=EdNz09I5; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [192.168.7.205] ([71.202.166.45])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 4B4Hu3u71144059
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Wed, 4 Dec 2024 09:56:04 -0800
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 4B4Hu3u71144059
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2024111601; t=1733334965;
-	bh=fSeKtgNwkCpt2FTgB9H0vrQNEgwFumN/S7wiZwtuQ+Y=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=EdNz09I5sLH7fW5kPPKAD247aZDUOBUyGT2Su2dVsBmPC1bNO4c5Rd8lrqXYzNkUI
-	 mE2QCgM+ARHlxSp+NlGLtLZTl0Z/4aF8bygTRcpiDSGNEau7skDUXw9XZfzvdoRDHp
-	 RdDFkFEQd/BQj6DaUiocpEw6qHuIM7fy24VpBMqIUDQHYHhxiiJa5G/vR8nxyUX4HC
-	 wSIIjThDlQRzR+MIAljT7S8fU02HdDNGfrqlI4GLmRnUETHToYxk2mUQ6/m1Dv6Fcw
-	 W2vO3KFsQAbZGg6WL5tbr+rPDv+tZPRr3PY/OHRVQKMfpDKXePAph4Kw8vU5y6JbD2
-	 bEy2YRBbaNA0Q==
-Message-ID: <308cddef-9efa-47ab-b499-34c52480dd09@zytor.com>
-Date: Wed, 4 Dec 2024 09:56:02 -0800
+	s=arc-20240116; t=1733335001; c=relaxed/simple;
+	bh=s/MHza7MJXkG1nFdbn0QPB47+YtSmoXdrGZrnxOt8A8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TYA+7lcWT4ujp4LjDyIwEWvA/2qkYw9aX9ig56ylzNWUlyXRA4Vy2WAZMyT5O6q1CrU+3JE2tYKe1fDVEmpy8Ji7UJ2zxO8PG4LyaVwTbbBUoru0lU+imoz7ReFT1qB5/6KL8CuV2lQLS5mRR0y0dQQwJPOsdjjd1FuXQj49pWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=bPH6Na9t; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-53de8ecafeeso85096e87.1
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 09:56:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1733334997; x=1733939797; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HHj3vJrbaX31W8+69i1XvzHVe+zVu7K9ouv5A/K5k60=;
+        b=bPH6Na9t9yMwKrFxmnR6RCCxrkqS4LAkw+b6Hyr/V8CPX5SLSNoJCfl3XuQnrdNZT2
+         CGtCvneWyX2c0pOCrDJ4qbCNILJ4korLnI3zE5sphNG2yYfCxx+8koq6D7bKawraJocN
+         sTHKacKjSYiogEkTc011VBbkmLMwitrsuoU5I=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733334997; x=1733939797;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HHj3vJrbaX31W8+69i1XvzHVe+zVu7K9ouv5A/K5k60=;
+        b=G3+mt1nzUafiMgt7wMJAvmUFU4l2ruN3NzwMivaxOzpco9J6Bu4oBXQqQSiffbKANz
+         lxabtUWOOJiOkJykYyYX1S71Uet/7IK9h6DMDRThf/iHS9dWVfjBZfRwf/q/tWEVBAqz
+         DsNhJJG/zm8SJhX7gcXRp6SXEt+JeC3nbwlCkvktvhCpEevtbLyQDSiBsPv/t7r8TQzl
+         j9XTOcyaa38FjsdVnm1UVKE+l9+XC5DgANP3wKBu8L4yXLVq3t6w7SBzAMZyMUwCXqPS
+         Le/nJFOy960FOxHOaA/WPDH954muWo5Om65QxESo/HPVDpS4v6alWCisYFnj4ZEAhOY6
+         vr8g==
+X-Forwarded-Encrypted: i=1; AJvYcCXKUO5kXhwk8VSSLerWMJJo1DgTxYbsZrp7Sykc3JH4x7n7LTT9twIhQEct5jdnntYwhWDgpNp7y4UjuJg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+HacCMhIGsGOTUpxlisznFuObXF8qVJk3X5NJKamg2gpX/ezc
+	kcLVFynTTbSVeEGOwHAA22XdEWcDjJBIgHn8RxDlkZgpKTvbmbSXpLcHVpoCF2q5x1LOk3Qb74P
+	yFDpT
+X-Gm-Gg: ASbGncsir5CG10BWuw1RT9UT/5GXSq4JTSGj67I8HZLUd/+Tl/Ym5feqMqzwJdrYTgZ
+	TQbYHJYx54FUCk0INApxMvc9zLWSTn5ih94J4pZ926LDG/u33Xzq/gU8PmrtwX7bDrklxBg7WsZ
+	EcCcpHegpVtNhLtv12u+a50XQmbXGb0Bku2PbmeGNjfMw1ZmCR3AfvsNkPG7jzcZJt+be7TvBah
+	yrjrLrmwtCSxOZs286bahV71Vt/t5p9OBefJZO1ygAlw9MFBKDnzWTy++L+X8BEXX3+FkbBcnwG
+	wTYNvRjZdeFnyE18bg==
+X-Google-Smtp-Source: AGHT+IHGxaIaImXPSt9cy3qvNR33WHi7S6/hUXckmHWc1vCppNor7bKXREbX0WxEYxrey2Wgv+Z2rQ==
+X-Received: by 2002:a05:6512:3ba2:b0:53d:ed5c:4bd3 with SMTP id 2adb3069b0e04-53e12a38888mr2439559e87.53.1733334997063;
+        Wed, 04 Dec 2024 09:56:37 -0800 (PST)
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com. [209.85.208.170])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53e1c90a959sm338017e87.259.2024.12.04.09.56.36
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 04 Dec 2024 09:56:36 -0800 (PST)
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2f75c56f16aso65172791fa.0
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 09:56:36 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXELJl5Z1Ez2Lx/BeC9Jg+WXJASjy7PInxz22spFs7m0pKBSPPtEqvj3+p1Er3WqpznW7nnwquPYr7/DcI=@vger.kernel.org
+X-Received: by 2002:a05:651c:892:b0:2ff:d3c6:9cf4 with SMTP id
+ 38308e7fff4ca-30009c0f677mr35650171fa.1.1733334995614; Wed, 04 Dec 2024
+ 09:56:35 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 0/4] x86/cpufeatures: Automatically generate required
- and disabled feature masks
-From: Xin Li <xin@zytor.com>
-To: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
-Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-        will@kernel.org, peterz@infradead.org, akpm@linux-foundation.org,
-        acme@kernel.org, namhyung@kernel.org, brgerst@gmail.com,
-        andrew.cooper3@citrix.com, nik.borisov@suse.com
-References: <20240628174544.3118826-1-xin@zytor.com>
- <23b9e88b-9d3b-4c34-a243-232ca2f53527@zytor.com>
-Content-Language: en-US
-Autocrypt: addr=xin@zytor.com; keydata=
- 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
- l75w1xInsg==
-In-Reply-To: <23b9e88b-9d3b-4c34-a243-232ca2f53527@zytor.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20241127105709.4014302-1-treapking@chromium.org>
+ <CAD=FV=XhDdBJXfC72PZAbgaSpVx4ubtKSRFptock0SMRg=+Miw@mail.gmail.com>
+ <CA+ASDXPXiyga6mKLBacupCXa0wsBbXCrmq20RFo7T2eSF8kbzQ@mail.gmail.com>
+ <CAD=FV=XuResyZK1ke1NtaGREfwm_3MB-u5t6vw459kYPt0LZwQ@mail.gmail.com> <Z0-4umP9TnNAbJXO@google.com>
+In-Reply-To: <Z0-4umP9TnNAbJXO@google.com>
+From: Doug Anderson <dianders@chromium.org>
+Date: Wed, 4 Dec 2024 09:56:24 -0800
+X-Gmail-Original-Message-ID: <CAD=FV=XnFuerG3VG6DRtPZzPSBObxP4T4vBcTb5DAA1CaAPgRw@mail.gmail.com>
+Message-ID: <CAD=FV=XnFuerG3VG6DRtPZzPSBObxP4T4vBcTb5DAA1CaAPgRw@mail.gmail.com>
+Subject: Re: [PATCH] wifi: mwifiex: decrease timeout waiting for host sleep
+ from 10s to 5s
+To: Brian Norris <briannorris@chromium.org>
+Cc: Pin-yen Lin <treapking@chromium.org>, Francesco Dolcini <francesco@dolcini.it>, 
+	Kalle Valo <kvalo@kernel.org>, David Lin <yu-hao.lin@nxp.com>, linux-kernel@vger.kernel.org, 
+	linux-wireless@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 8/19/2024 11:25 PM, Xin Li wrote:
-> On 6/28/2024 10:45 AM, Xin Li (Intel) wrote:
->> The x86 build process first generates required and disabled feature
->> masks based on current build config, and then uses these generated
->> masks to compile the source code. When a CPU feature is not enabled
->> in a build config, e.g., when CONFIG_X86_FRED=n, its feature disable
->> flag, i.e., DISABLE_FRED, needs to be properly defined and added to
->> a specific disabled CPU features mask in <asm/disabled-features.h>,
->> as the following patch does:
->> https://lore.kernel.org/all/20231205105030.8698-8-xin3.li@intel.com/.
->> As a result, the FRED feature bit is surely cleared in the generated
->> kernel binary when CONFIG_X86_FRED=n.
->>
->> Recently there is another case to repeat the same exercise for the
->> AMD SEV-SNP CPU feature:
->> https://lore.kernel.org/all/20240126041126.1927228-2- 
->> michael.roth@amd.com/.
->> https://lore.kernel.org/all/20240126041126.1927228-23- 
->> michael.roth@amd.com/.
->>
->> It was one thing when there were four of CPU feature masks, but with
->> over 20 it is going to cause mistakes, e.g.,
->> https://lore.kernel.org/lkml/aaed79d5-d683-d1bc-7ba1- 
->> b33c8d6db618@suse.com/.
->>
->> We want to eliminate the stupidly repeated exercise to manually assign
->> features to CPU feature words through introducing an AWK script to
->> automatically generate a header with required and disabled CPU feature
->> masks based on current build config, and this patch set does that.
->>
->> Link to v3:
->> https://lore.kernel.org/lkml/20240622171435.3725548-1-xin@zytor.com/
->>
->> Changes since v3:
->> * Add a few high-level comments to the AWK script (Nikolay Borisov).
->> * Use '1U' instead of '1' in feature mask shifting (Andrew Cooper).
->> * Checking NCAPINTS isn't necessary anymore.  It was needed when these
->>    macros had to be manually updated, but now if cpufeatures.h changes
->>    this header will be regenerated (Brian Gerst).
->> * Enforce CPU feature mask values to be unsigned.
->>
->> Changes since v2:
->> * Remove AWK code that generates extra debugging comments (Brian Gerst).
->> * Move SSE_MASK to verify_cpu.S, the only place it is used (Brian Gerst).
->> * Add a patch to generate macros {REQUIRED|DISABLED}_MASK_BIT_SET in the
->>    new AWK script (Brian Gerst).
->>
->> Changes since v1:
->> * Keep the X86_{REQUIRED,DISABLED}_FEATURE_ prefixes solely in
->>    arch/x86/Kconfig.cpufeatures (Borislav Petkov).
->> * Explain how config option names X86_{REQUIRED,DISABLED}_FEATURE_<name>
->>    are formed (Borislav Petkov).
->> * Remove code generating unused macros {REQUIRED,DISABLED}_FEATURE(x)
->>    to tell if a CPU feature, e.g., X86_FEATURE_FRED, is a required or
->>    disabled feature for this particular compile-time configuration.
->>
-> 
-> A gentle ping...
-> 
+Hi,
 
-Another ping!
+On Tue, Dec 3, 2024 at 6:04=E2=80=AFPM Brian Norris <briannorris@chromium.o=
+rg> wrote:
+>
+> 10 seconds is likely that *something* is wrong (or at least suboptimal),
+> but IMO, it's not quite at unreasonable levels. But yes, my point was
+> mainly that it's squishy, and I personally wouldn't want to be the one
+> running with the lowest CONFIG_DPM_WATCHDOG_TIMEOUT out there, given the
+> known behavior of multiple drivers and the timeout-means-panic behavior.
+>
+> > Maybe the ChromeOS should change to 15 seconds for the DPM Watchdog
+> > timer and that's a better solution and leave the WiFi driver how it
+> > is?
+>
+> That seems reasonable.
 
+FWIW, I created a public feature request for this:
+
+https://issuetracker.google.com/382269699
+
+...we'll see if we can get anyone to bite on it. ...and then see if
+upstream folks like the idea too.
+
+
+> To be clear, I'm OK with this patch, if we can get a little more
+> confidence in it (like the timing data and HW info). I *think* 5 vs 10
+> isn't a big deal here, but I don't have much other than my guess at the
+> moment.
+>
+> > Another thought: I wonder if it's possible to be dynamic and somehow
+> > set the timeout as "max(10, dpm_watchdog_timeout / 2)". Not that I've
+>
+> You probably meant min()?
+
+Yeah, I always screw that up. Sigh.
+
+
+> > >  Can you try testing (and gather timing numbers) when
+> > > suspending soon after initiating scans? It's hard to judge what the
+> > > lower limit of this timeout should really be without any numbers, jus=
+t
+> > > like it's hard to judge whether your 10 second watchdog is reasonable=
+.
+> >
+> > Pin-yen: is this something you could gather?
+> >
+> >
+> > > Also, for the record, since we might have to field regression reports
+> > > for other systems: what hardware (chip variant, FW version) are you
+> > > seeing problems on?
+> >
+> > Pin-yen: I'm assuming you'll provide this.
+>
+> I'll leave it up to y'all (Doug and Pin-Yen) whether you want to provide
+> the above to provide a little more confidence, or if you want to
+> reconsider your use of CONFIG_DPM_WATCHDOG_TIMEOUT.
+
+Possibly the answer could be both?
 
