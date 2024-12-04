@@ -1,57 +1,60 @@
-Return-Path: <linux-kernel+bounces-430926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AC979E374F
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 11:16:12 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 64BBB165BEC
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 10:16:09 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 862261ADFF7;
-	Wed,  4 Dec 2024 10:16:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="WYjwtfdU"
-Received: from smtp-bc0c.mail.infomaniak.ch (smtp-bc0c.mail.infomaniak.ch [45.157.188.12])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 640089E375B
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 11:20:03 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E3F32500D2
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 10:16:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.12
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C509BB27FA7
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 10:16:34 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 099BB2500D2;
+	Wed,  4 Dec 2024 10:16:30 +0000 (UTC)
+Received: from lithops.sigma-star.at (mailout.nod.at [116.203.167.152])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ECBC1AC456
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 10:16:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.167.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733307366; cv=none; b=Iv0I8Uu6wTrGkyeNwgSuaOpMAOpJ/d/kfqdhrxVyf6oLeVgfkK8qmeiPeat7J+Ho/8TwfeCeuGRCQwom+yKd384XsOjHfCISaPyykIRwN8s/B9DZ1fLuke7MD06VEpDgtUdjYDdFQ07UzTWmP7M2Gn4TDxhM4TUXNFNhj2J4cP0=
+	t=1733307389; cv=none; b=UQTfvmkEQt2LV9IDlcnFUMB4BRMEMxeHDZSYUnfkdNMdcNKWaFzjJqj79MVm3bFvOCTbMN6sttUvetAs5EGoNoJccMdg4MK9MxbdGEYcuiQAocyjyVajhXpwLkunfR3I3gSYjMzm1XZ0KQFhuzUuQnO06Gb+JNEBugDWpcIeF4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733307366; c=relaxed/simple;
-	bh=rKSAyG07/h2eMatj22GyJdWRpjcsvVHB9qLi+04StoA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=POnj5QGTsdYfDJbgp1tHXFXtr3OGft/Dp/z4SndQBYvL64PeOyFvLM5Ztte5vmHZrDtfcmN7ZmhaZP4gV5sSGnHA7hEKBlDzIBmEkZsLGy3+4gdSVcFuPhyYFaBSrI5KT71yHG5wfRB7ZshQd7oxfut3ZGx5nGepr3SItjVkjng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=WYjwtfdU; arc=none smtp.client-ip=45.157.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-3-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246c])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Y3D1j6x2kzw15;
-	Wed,  4 Dec 2024 11:15:53 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1733307353;
-	bh=7QdWrJp74Ayt3Lkyd8RV7Cyw5fURDnlvpTchBSBsUL8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WYjwtfdUADrkIBWJpzYpQMVuZxXAHmOIbs9Z6Xy5WTRHD53ofEvHfOluKuHVlR/1t
-	 skdniFdXJ0qg2p5nMXvmVPS0pJec8Ost+LvfXPZotIm6w44GNhbLEWekVxPyoSX2aE
-	 uxJ1dy7jFaf76PLA4lTRGCA3RLmjsJwXGg3LJslQ=
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4Y3D1j0rV6zL46;
-	Wed,  4 Dec 2024 11:15:53 +0100 (CET)
-Date: Wed, 4 Dec 2024 11:15:49 +0100
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Mimi Zohar <zohar@linux.ibm.com>
-Cc: linux-integrity@vger.kernel.org, roberto.sassu@huawei.com, 
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, Jeff Xu <jeffxu@chromium.org>, 
-	Kees Cook <kees@kernel.org>, Paul Moore <paul@paul-moore.com>, audit@vger.kernel.org, 
-	Fan Wu <wufan@linux.microsoft.com>
-Subject: Re: [PATCH v2] ima: instantiate the bprm_creds_for_exec() hook
-Message-ID: <20241204.IeZeTheing4e@digikod.net>
-References: <20241203233424.287880-1-zohar@linux.ibm.com>
+	s=arc-20240116; t=1733307389; c=relaxed/simple;
+	bh=J83xAVX1wNgXoAthQnyhhlj+V2At6qbxXRE9HluNC1E=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=Xz3+w+SWgzhwKeoxjJOtkQOcN/26CF0e3SQzJuL7i1DibSqI1N0S0BT0l3r7TLqwca249J8X8aw+1et4k/1cqGooz5AfF/60HBj5WhWzzJaLaSL5f+Sd9sGbHFWrjGJchqrS+15rZHq0NhMEFJgrgYN440mYj9xkfGV1surwf3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at; spf=fail smtp.mailfrom=nod.at; arc=none smtp.client-ip=116.203.167.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nod.at
+Received: from localhost (localhost [127.0.0.1])
+	by lithops.sigma-star.at (Postfix) with ESMTP id 397832BFA2A;
+	Wed,  4 Dec 2024 11:16:24 +0100 (CET)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
+	with ESMTP id Uzn9N6zbpPUV; Wed,  4 Dec 2024 11:16:23 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+	by lithops.sigma-star.at (Postfix) with ESMTP id D65F42E6140;
+	Wed,  4 Dec 2024 11:16:23 +0100 (CET)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id xc-aCKUjhrdj; Wed,  4 Dec 2024 11:16:23 +0100 (CET)
+Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
+	by lithops.sigma-star.at (Postfix) with ESMTP id B78752BFA2A;
+	Wed,  4 Dec 2024 11:16:23 +0100 (CET)
+Date: Wed, 4 Dec 2024 11:16:23 +0100 (CET)
+From: Richard Weinberger <richard@nod.at>
+To: Pintu Agarwal <pintu.ping@gmail.com>
+Cc: Miquel Raynal <miquel.raynal@bootlin.com>, 
+	Vignesh Raghavendra <vigneshr@ti.com>, 
+	linux-mtd <linux-mtd@lists.infradead.org>, 
+	chengzhihao1 <chengzhihao1@huawei.com>, 
+	linux-kernel <linux-kernel@vger.kernel.org>
+Message-ID: <1562063374.32195797.1733307383533.JavaMail.zimbra@nod.at>
+In-Reply-To: <CAOuPNLhZZ1rs3Hhuwh2b3HLaqrAVUY7YwviQVUXgVi6XTZxnMw@mail.gmail.com>
+References: <CAOuPNLhxBBihr38p_XMQEgkiLFc+DPxkQf4oewF8U1+ihaFn-Q@mail.gmail.com> <CAOuPNLhhWzoBQH85zEd95LbONtrknq+b7tfcze50VPa9bEnXzw@mail.gmail.com> <87ldww4zrx.fsf@bootlin.com> <342000380.28770675.1733242094522.JavaMail.zimbra@nod.at> <CAOuPNLhZZ1rs3Hhuwh2b3HLaqrAVUY7YwviQVUXgVi6XTZxnMw@mail.gmail.com>
+Subject: Re: Block based OTA update needs mtdblock
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,183 +62,45 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241203233424.287880-1-zohar@linux.ibm.com>
-X-Infomaniak-Routing: alpha
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Zimbra 8.8.12_GA_3807 (ZimbraWebClient - FF133 (Linux)/8.8.12_GA_3809)
+Thread-Topic: Block based OTA update needs mtdblock
+Thread-Index: UB2+P/e388gS0Z+vHPLuyTSHrFuNnw==
 
-On Tue, Dec 03, 2024 at 06:34:24PM -0500, Mimi Zohar wrote:
-> Like direct file execution (e.g. ./script.sh), indirect file exection
-> (e.g. sh script.sh) needs to be measured and appraised.  Instantiate
-> the new security_bprm_creds_for_exec() hook to measure and verify the
-> indirect file's integrity.  Unlike direct file execution, indirect file
-> execution is optionally enforced by the interpreter.
-> 
-> Differentiate kernel and userspace enforced integrity audit messages.
-> 
+----- Urspr=C3=BCngliche Mail -----
+> Von: "Pintu Agarwal" <pintu.ping@gmail.com>
+>> >> Did anybody used block based OTA update NAND A/B system without using
+>> >> mtd_block ?
+>> >
+>> > Not on my side, it is actually a good question. Richard, any ideas?
+>>
+>> What about using ubiupdatevol?
+>>
+> As I explained above, ubiupdatevol actually performs a full volume
+> update, right ?
+> I think the partial/incremental update is not possible with this. Once
+> the update is triggered it should finish fully.
+> But for OTA updates (Delta/Incremental), only the delta changes can
+> also be applied.
+> Please refer to this [1] about updates mechanism.
+> [1] https://medium.com/@yigitpirildak/android-ota-update-mechanism-ecc8f6=
+f69f71
+> [2]
+> https://source.android.com/docs/core/ota/tools#:~:text=3DAn%20incremental=
+%20update%20is%20an,need%20to%20include%20unchanged%20files.
+>=20
+> On our NAND target we support OTA updates, including incremental ota upda=
+tes.
+> But without mtdblock the incremental OTA update (on A/B system) will not =
+work.
+> This is the main issue.
+> For full updates on ubi volumes we are already using the
+> "ubiupdatevol" mechanism.
 
-I guess there is a missing tag:
+Well, for dynamic volumes you can use the UBI_IOCEBCH ioctl to replace LEBs=
+.
+So, incremental updates are doable too.
 
-Co-developed-by: Roberto Sassu <roberto.sassu@huawei.com>
-
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
-
-With some minor comments, this looks good to me. I'll include this patch
-or the next one in my patch series.  Thanks!
-
-> ---
-> Changelog v2:
-> - Mickael: Use same audit messages with new audit message number
-> - Stefan Berger: Return boolean from is_bprm_creds_for_exec() 
-> 
->  include/uapi/linux/audit.h            |  1 +
->  security/integrity/ima/ima_appraise.c | 28 +++++++++++++++++++++++++--
->  security/integrity/ima/ima_main.c     | 22 +++++++++++++++++++++
->  3 files changed, 49 insertions(+), 2 deletions(-)
-> 
-> diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
-> index 75e21a135483..826337905466 100644
-> --- a/include/uapi/linux/audit.h
-> +++ b/include/uapi/linux/audit.h
-> @@ -161,6 +161,7 @@
->  #define AUDIT_INTEGRITY_RULE	    1805 /* policy rule */
->  #define AUDIT_INTEGRITY_EVM_XATTR   1806 /* New EVM-covered xattr */
->  #define AUDIT_INTEGRITY_POLICY_RULE 1807 /* IMA policy rules */
-> +#define AUDIT_INTEGRITY_DATA_CHECK  1808 /* Userspace enforced data integrity */
->  
->  #define AUDIT_KERNEL		2000	/* Asynchronous audit record. NOT A REQUEST. */
->  
-> diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
-> index 656c709b974f..144e0b39fbcd 100644
-> --- a/security/integrity/ima/ima_appraise.c
-> +++ b/security/integrity/ima/ima_appraise.c
-> @@ -8,6 +8,7 @@
->  #include <linux/module.h>
->  #include <linux/init.h>
->  #include <linux/file.h>
-> +#include <linux/binfmts.h>
->  #include <linux/fs.h>
->  #include <linux/xattr.h>
->  #include <linux/magic.h>
-> @@ -469,6 +470,18 @@ int ima_check_blacklist(struct ima_iint_cache *iint,
->  	return rc;
->  }
->  
-> +static bool is_bprm_creds_for_exec(enum ima_hooks func, struct file *file)
-> +{
-> +	struct linux_binprm *bprm = NULL;
-> +
-> +	if (func == BPRM_CHECK) {
-
-struct linux_binprm *bprm;
-
-> +		bprm = container_of(&file, struct linux_binprm, file);
-> +		if (bprm->is_check)
-> +			return true;
-
-return bprm->is_check;
-
-> +	}
-> +	return false;
-> +}
-> +
->  /*
->   * ima_appraise_measurement - appraise file measurement
->   *
-> @@ -483,6 +496,7 @@ int ima_appraise_measurement(enum ima_hooks func, struct ima_iint_cache *iint,
->  			     int xattr_len, const struct modsig *modsig)
->  {
->  	static const char op[] = "appraise_data";
-> +	int audit_msgno = AUDIT_INTEGRITY_DATA;
->  	const char *cause = "unknown";
->  	struct dentry *dentry = file_dentry(file);
->  	struct inode *inode = d_backing_inode(dentry);
-> @@ -494,6 +508,16 @@ int ima_appraise_measurement(enum ima_hooks func, struct ima_iint_cache *iint,
->  	if (!(inode->i_opflags & IOP_XATTR) && !try_modsig)
->  		return INTEGRITY_UNKNOWN;
->  
-> +	/*
-> +	 * Unlike any of the other LSM hooks where the kernel enforces file
-> +	 * integrity, enforcing file integrity for the bprm_creds_for_exec()
-> +	 * LSM hook with the AT_EXECVE_CHECK flag is left up to the discretion
-> +	 * of the script interpreter(userspace). Differentiate kernel and
-> +	 * userspace enforced integrity audit messages.
-> +	 */
-> +	if (is_bprm_creds_for_exec(func, file))
-> +		audit_msgno = AUDIT_INTEGRITY_DATA_CHECK;
-> +
->  	/* If reading the xattr failed and there's no modsig, error out. */
->  	if (rc <= 0 && !try_modsig) {
->  		if (rc && rc != -ENODATA)
-> @@ -569,7 +593,7 @@ int ima_appraise_measurement(enum ima_hooks func, struct ima_iint_cache *iint,
->  	     (iint->flags & IMA_FAIL_UNVERIFIABLE_SIGS))) {
->  		status = INTEGRITY_FAIL;
->  		cause = "unverifiable-signature";
-> -		integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode, filename,
-> +		integrity_audit_msg(audit_msgno, inode, filename,
->  				    op, cause, rc, 0);
->  	} else if (status != INTEGRITY_PASS) {
->  		/* Fix mode, but don't replace file signatures. */
-> @@ -589,7 +613,7 @@ int ima_appraise_measurement(enum ima_hooks func, struct ima_iint_cache *iint,
->  			status = INTEGRITY_PASS;
->  		}
->  
-> -		integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode, filename,
-> +		integrity_audit_msg(audit_msgno, inode, filename,
->  				    op, cause, rc, 0);
->  	} else {
->  		ima_cache_flags(iint, func);
-> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-> index 06132cf47016..f0830e6d0cda 100644
-> --- a/security/integrity/ima/ima_main.c
-> +++ b/security/integrity/ima/ima_main.c
-> @@ -554,6 +554,27 @@ static int ima_bprm_check(struct linux_binprm *bprm)
->  				   MAY_EXEC, CREDS_CHECK);
->  }
->  
-> +/**
-> + * ima_bprm_creds_for_exec - collect/store/appraise measurement.
-> + * @bprm: contains the linux_binprm structure
-> + *
-> + * Based on the IMA policy and the execvat(2) AT_CHECK flag, measure and
-
-AT_EXECVE_CHECK
-
-> + * appraise the integrity of a file to be executed by script interpreters.
-> + * Unlike any of the other LSM hooks where the kernel enforces file integrity,
-> + * enforcing file integrity is left up to the discretion of the script
-> + * interpreter (userspace).
-> + *
-> + * On success return 0.  On integrity appraisal error, assuming the file
-> + * is in policy and IMA-appraisal is in enforcing mode, return -EACCES.
-> + */
-> +static int ima_bprm_creds_for_exec(struct linux_binprm *bprm)
-> +{
-
-We could have a comment explaining that ima_bprm_check() will not be
-called a second time bi the bprm_check_security hook if bprm->is_check
-is true because this hook would then not be called.  This would not be a
-security issue anyway, just a useless call.
-
-> +	if (!bprm->is_check)
-> +		return 0;
-> +
-> +	return ima_bprm_check(bprm);
-> +}
-> +
->  /**
->   * ima_file_check - based on policy, collect/store measurement.
->   * @file: pointer to the file to be measured
-> @@ -1177,6 +1198,7 @@ static int __init init_ima(void)
->  
->  static struct security_hook_list ima_hooks[] __ro_after_init = {
->  	LSM_HOOK_INIT(bprm_check_security, ima_bprm_check),
-> +	LSM_HOOK_INIT(bprm_creds_for_exec, ima_bprm_creds_for_exec),
->  	LSM_HOOK_INIT(file_post_open, ima_file_check),
->  	LSM_HOOK_INIT(inode_post_create_tmpfile, ima_post_create_tmpfile),
->  	LSM_HOOK_INIT(file_release, ima_file_free),
-> -- 
-> 2.47.0
-> 
-> 
+Thanks,
+//richard
 
