@@ -1,131 +1,182 @@
-Return-Path: <linux-kernel+bounces-430414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430415-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A854E9E30A8
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 02:12:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC76D9E30AA
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 02:13:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4A909B26FA7
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 01:12:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D3242836FF
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 01:13:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE6EABA38;
-	Wed,  4 Dec 2024 01:12:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B51AFEAC7;
+	Wed,  4 Dec 2024 01:13:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o/K11b0Q"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Vw91Wwjp"
+Received: from mail-il1-f170.google.com (mail-il1-f170.google.com [209.85.166.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48ECE63D;
-	Wed,  4 Dec 2024 01:12:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FDA28F6E
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 01:13:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733274725; cv=none; b=f31a1E0KfVlbTfOiXGGbfqM63cqhoXFf14YeNpDs9F5sdP6bcF5F626YUUkuVOCwF8lUgyoxz9hp4YW6qA+A2WAtKKsyqvwqEqYA8W1tcHxBl57+SdX7zUiyTJalbao3RJTmEZl0D9+0olD411S3fJJyF4xw3Evh0fRqX/CbEEg=
+	t=1733274805; cv=none; b=fsnsubBz7LDA2B3oQvRm/4MT3wEXedNhE2hHEEQrQTurw4rHHXw3jSkgstL0yrIf0bXnaSOenoqj5yL48W80ry/kpZjqAc7tIxm9787H7FNz6qiz8/jOxNgQUMYNMgKIJCpia7paZO81sIvgUnyPZHXNCbct8g20Q1UsKscbUbk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733274725; c=relaxed/simple;
-	bh=763Q33cesnFLz/F287OyxBs3fuu5TUB7AZvEBp0vBAk=;
+	s=arc-20240116; t=1733274805; c=relaxed/simple;
+	bh=X9QMyCri7xd0ctEKT112opd9F2dHzDJbNA+4wFyXh5k=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=l7s7sFLIMGsFqDKMu95uWtzPRXXRfPjJGpMRJn+ReaNpkjuwCxyhY7Ic0Zsm1/3A05ECgJNVWIqy2fHwgGfqnJR1Pz6xo0CvlqvDjS7zI+qUJ04jw5QsW83GsJne/bF5k/Eb28DfGUkrO62I+jZkHA6WXcGTNCQPo3YicBxmZkE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o/K11b0Q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA73AC4CEE1;
-	Wed,  4 Dec 2024 01:12:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733274724;
-	bh=763Q33cesnFLz/F287OyxBs3fuu5TUB7AZvEBp0vBAk=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=o/K11b0QVleBbg0StRpJxsDY1TO1ONOycjeTFN8/lhyzeAsGIAEoA7BzdAFykkR8G
-	 pMMIJpznop/TmCW2UMXrHNm4GfipO+nRPKBlTbSnqpUft+SBNwggXNNm912G713Nuq
-	 Jo48EhhOFPM+VERFTOOEzy+Z60hC2278uZY8TNvCl8LhLNDEd/wwuVphLEDmIlxfjI
-	 cjJp9m7CDve0z/Qj3Ouh1LVOwHYTKMO3xPUTLjFlI9HcOTEY34EgOOqlLbKRfDu9LE
-	 GxdIyLT34HslJcaD9JUiarRVTH4XzGUqibizO8NAnpGEIZEKsTDi1pGdNaUp9tpF5E
-	 YyqSjze1SMTMw==
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-53df80eeeedso6366215e87.2;
-        Tue, 03 Dec 2024 17:12:04 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVZrFmZz6K257oIuoT17Wyek53fXoR6S48Y6B2sxu9t8peq5uzMCyLn1qHWCmadElEqA7YFM9W4ibaM2PH78Q==@vger.kernel.org, AJvYcCVqVsl54TFRURIsGxmb9p3SF4f71uLayI+wfQkhxmRa2yB+dHtzsiVpU2TLQQvz12A5OmNUOS+3Ef8Wb2NB@vger.kernel.org, AJvYcCVvG211z51Ng8hDmw7hoUULyAsyjdF2Zqi4FuPlLej4Rsl0wjbCTHjEtdPiYV9xC/2D1G4pF9VVo12+Bg==@vger.kernel.org, AJvYcCWmeDVcFcawmnbdMTYUoKuKMeL99jrqY2nxTAIlvJytivape37Lt2QiPhwBCnQHKy8gT13zB1f25mCPMfw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCwKm2/iHOW2s6yzAsQtWg+QVkQ/QY4x4pqvWk0iLShrhPcAYD
-	V+psutk7G+bOOx7CkzEBO9t2ZXvhLEH1mINAO2rxV+fmnoO7ncQXrDvQThv6e6nRuYVEVBkp4MF
-	4F+Q/my9U/GZhQjT3K0Ww4BoW+nw=
-X-Google-Smtp-Source: AGHT+IGP7jCsBuS29VUw55WfMqwUrppo+WokdJLiuLvhcPQEbTEYDMMfP6oFn+2xAWP/c+lLBU+OkaEYPcfRMPKGqm8=
-X-Received: by 2002:a05:6512:2252:b0:53d:ab0d:b9ef with SMTP id
- 2adb3069b0e04-53e12a27675mr2301885e87.43.1733274723002; Tue, 03 Dec 2024
- 17:12:03 -0800 (PST)
+	 To:Cc:Content-Type; b=CBzMBIYYy8JJKvij2IK2C9T9vvDcCPYiv0utU0oiDaMoXxGKHMNGpJ/NtIRwbDEVhCpIKMAessJ/QER+RjpUAWsfETFVNaEcmvDDHM6WJOmLbMCJk+el3f7za10n2L0iW7TEe0airRegr3aHHt/lrWGIVaW2TeAP0Lj4AJ00+jc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Vw91Wwjp; arc=none smtp.client-ip=209.85.166.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f170.google.com with SMTP id e9e14a558f8ab-3a7dfcd40fcso34785ab.1
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 17:13:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1733274802; x=1733879602; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=p1M+SJMhJjrH+hJzaD87l5T01lxeHhsp9ZAJGXnGoUM=;
+        b=Vw91WwjposEBAiMD0WlkOIbyoNMFpOu310ZH8BD772vVjnoeN8KpCaBFFlp+lyBSyI
+         PCH2LAG3WthFLGX4DJD5xeXCivUgmvTXsxFF3hG4NAXVO+3+NBrP23c67m1wHAF7V0RW
+         M16WWD8Qn0jbuzkjrpaJmipwsyHxY3h4ouyDh3khYtXxHWjB44HgCVGHEKPJAIatCbKb
+         5Iso8ZWGPYNGdkGmArSb7RTZ71z6VwpgQMHkuwJnFpBpNA7AZdkjxmY9ehVOVMY7G+2F
+         qmscawg1kc57e5HP83zAvvkrI9Ur6tqOAIPUcb7OSE/gBa5EMODkY6ZxNKY60+4fe5fn
+         NpaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733274802; x=1733879602;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=p1M+SJMhJjrH+hJzaD87l5T01lxeHhsp9ZAJGXnGoUM=;
+        b=MOdxXncLuHqDeoX3idxmwLU62DRpxv/opV1x//ieXc25+ECuHleRRCr30Km4MEWsyj
+         sKsAThUkmUjDzN/+r/w2uPKZZ4+jTYX7fC9y8CSTEufsCNbHrGP/U37EYt4GcRXZ3F6U
+         wPZ6PRPqEs7ab5RnG84bFC+2wcd/jOx8xE6vpuGhbxSyNbHw81rrrpXnld3ZL00kEEb1
+         boLCwwZBooVq9PnqoA5hjaMKTQkjNGH6vOAj4SfIQKEAMwdZhyeRjp8BZVIE5UrYtwDO
+         Bv3DOWnqIbMhOe9dLinY0agL7zP4flOJikSqC9hC1naurWse1S4/RFTDpw+HDgQiy/Q2
+         9szw==
+X-Forwarded-Encrypted: i=1; AJvYcCXF6YaYBsl//EQouTaMTzTRJhSA3k//tJIpgVriafz+1Dt/cPjo2d24+Px37HfLhvesCR2tZ7mzmFVySqE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz91vKt1rqasOGhVQJF51Jfmh9ZDHEWw9PGUOPGFXZYOYItyECG
+	ugXeiI10Ap093HSVpovSetovi6jmvalwm7AH9KCBJlM40pQMUXLYdWbsd3GwZDKsEmYtZWFune8
+	bWEhOSCAhGz6j81YvZ832MteA8Mha6q+HJGJt
+X-Gm-Gg: ASbGncs4umEnAYvlP2xcugMsrFvY/SHu9iiSsff5GZtrNr/xS5qBaEkVYxBzRXMRBAB
+	iNbnA4e0yDisr7yFlyPtShBcTldMR4Q==
+X-Google-Smtp-Source: AGHT+IEbjOm4y6thPTmyr0jvptApsGhO5csQIoANRSYlbJjNqTjiLjxSqDn+CjPq7HdDxPboOhmxx+SLQa7qYKWc5CY=
+X-Received: by 2002:a05:6e02:2408:b0:3a7:cb21:7b26 with SMTP id
+ e9e14a558f8ab-3a800ab4305mr964485ab.1.1733274802505; Tue, 03 Dec 2024
+ 17:13:22 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241202145946.108093528@infradead.org> <20241202150810.048548103@infradead.org>
- <20241202151533.GF8562@noisy.programming.kicks-ass.net> <CAHk-=wh7KugYO+R-1DMmkLz4fD_-A9BMyrWTVsH_K0a86Ojn4A@mail.gmail.com>
- <d707cb3b-1569-45d9-bdc3-dcc98eb88bc4@sirena.org.uk> <93a900b2-7740-4bfa-bfac-1ec2e5bfa383@sirena.org.uk>
-In-Reply-To: <93a900b2-7740-4bfa-bfac-1ec2e5bfa383@sirena.org.uk>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Wed, 4 Dec 2024 10:11:26 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQ5Y5HN7UZU2JhW9Yvqkp1ye4NMzHce-2pCnPSRNANX7g@mail.gmail.com>
-Message-ID: <CAK7LNAQ5Y5HN7UZU2JhW9Yvqkp1ye4NMzHce-2pCnPSRNANX7g@mail.gmail.com>
-Subject: Re: [PATCH -v2 1/7] module: Convert symbol namespace to string literal
-To: Mark Brown <broonie@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Peter Zijlstra <peterz@infradead.org>, 
-	mcgrof@kernel.org, x86@kernel.org, hpa@zytor.com, petr.pavlu@suse.com, 
-	samitolvanen@google.com, da.gomez@samsung.com, nathan@kernel.org, 
-	nicolas@fjasle.eu, linux-kernel@vger.kernel.org, 
-	linux-modules@vger.kernel.org, linux-kbuild@vger.kernel.org, 
-	hch@infradead.org, gregkh@linuxfoundation.org, linux-next@vger.kernel.org
+References: <20241121185315.3416855-1-mizhang@google.com> <Z0-R-_GPWu-iVAYM@google.com>
+In-Reply-To: <Z0-R-_GPWu-iVAYM@google.com>
+From: Jim Mattson <jmattson@google.com>
+Date: Tue, 3 Dec 2024 17:13:11 -0800
+Message-ID: <CALMp9eTCe1-ZA47kcktTQ4WZ=GUbg8x3HpBd0Rf9Yx_pDFkkNg@mail.gmail.com>
+Subject: Re: [RFC PATCH 00/22] KVM: x86: Virtualize IA32_APERF and IA32_MPERF MSRs
+To: Sean Christopherson <seanjc@google.com>
+Cc: Mingwei Zhang <mizhang@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Huang Rui <ray.huang@amd.com>, "Gautham R. Shenoy" <gautham.shenoy@amd.com>, 
+	Mario Limonciello <mario.limonciello@amd.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Viresh Kumar <viresh.kumar@linaro.org>, 
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Len Brown <lenb@kernel.org>, 
+	"H. Peter Anvin" <hpa@zytor.com>, Perry Yuan <perry.yuan@amd.com>, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Dec 4, 2024 at 7:06=E2=80=AFAM Mark Brown <broonie@kernel.org> wrot=
-e:
+On Tue, Dec 3, 2024 at 3:19=E2=80=AFPM Sean Christopherson <seanjc@google.c=
+om> wrote:
 >
-> On Tue, Dec 03, 2024 at 07:20:05PM +0000, Mark Brown wrote:
-> > On Mon, Dec 02, 2024 at 11:33:58AM -0800, Linus Torvalds wrote:
+> On Thu, Nov 21, 2024, Mingwei Zhang wrote:
+> > Linux guests read IA32_APERF and IA32_MPERF on every scheduler tick
+> > (250 Hz by default) to measure their effective CPU frequency. To avoid
+> > the overhead of intercepting these frequent MSR reads, allow the guest
+> > to read them directly by loading guest values into the hardware MSRs.
+> >
+> > These MSRs are continuously running counters whose values must be
+> > carefully tracked during all vCPU state transitions:
+> > - Guest IA32_APERF advances only during guest execution
 >
-> > > If we have these kinds of big scripted things, right after the merge
-> > > window tends to be the best time to do them. The conflict potential o=
-f
-> > > leaving it hanging in linux-next can be somewhat annoying. They may b=
-e
-> > > fairly unlikely, and easy to resolve individually, but it's one of
-> > > those "one is trivial to deal with, but even just a handful is
-> > > annoying".
+> That's not what this series does though.  Guest APERF advances while the =
+vCPU is
+> loaded by KVM_RUN, which is *very* different than letting APERF run freel=
+y only
+> while the vCPU is actively executing in the guest.
 >
-> > > So I'll run your script and take your commit message, and we'll have
-> > > this part over and done with.
+> E.g. a vCPU that is memory oversubscribed via zswap will account a signif=
+icant
+> amount of CPU time in APERF when faulting in swapped memory, whereas trad=
+itional
+> file-backed swap will not due to the task being scheduled out while waiti=
+ng on I/O.
+
+Are you saying that APERF should stop completely outside of VMX
+non-root operation / guest mode?
+While that is possible, the overhead would be significantly
+higher...probably high enough to make it impractical.
+
+> In general, the "why" of this series is missing.  What are the use cases =
+you are
+> targeting?  What are the exact semantics you want to define?  *Why* did a=
+re you
+> proposed those exact semantics?
+
+I get the impression that the questions above are largely rhetorical,
+and that you would not be happy with the answers anyway, but if you
+really are inviting a version 2, I will gladly expound upon the why.
+
+> E.g. emulated I/O that is handled in KVM will be accounted to APERF, but =
+I/O that
+> requires userspace exits will not.  It's not necessarily wrong for heavy =
+userspace
+> I/O to cause observed frequency to drop, but it's not obviously correct e=
+ither.
 >
-> > I *think* this is interacting in a fun way with at least the IIO
-> > subsystem in -next (Linus' tree is fine, I didn't do too much
-> > investigation as I'd quite like the -next build to finish some time
-> > today):
+> The use cases matter a lot for APERF/MPERF, because trying to reason abou=
+t what's
+> desirable for an oversubscribed setup requires a lot more work than defin=
+ing
+> semantics for setups where all vCPUs are hard pinned 1:1 and memory is mo=
+re or
+> less just partitioned.  Not to mention the complexity for trying to suppo=
+rt all
+> potential use cases is likely quite a bit higher.
 >
-> Yes, this is breaking ASoC and possibly other things as well.  I guess
-> any tree adding a new use of these macros needs to merge mainline to
-> avoid a mess here.
+> And if the use case is specifically for slice-of-hardware, hard pinned/pa=
+rtitioned
+> VMs, does it matter if the host's view of APERF/MPERF is not accurately c=
+aptured
+> at all times?  Outside of maybe a few CPUs running bookkeeping tasks, the=
+ only
+> workloads running on CPUs should be vCPUs.  It's not clear to me that obs=
+erving
+> the guest utilization is outright wrong in that case.
 
-In this development cycle, I think subsystems should queue up patches
-on top of -rc2 instead of -rc1.
+My understanding is that Google Cloud customers have been asking for
+this feature for all manner of VM families for years, and most of
+those VM families are not slice-of-hardware, since we just launched
+our first such offering a few months ago.
 
+> One idea for supporting APERF/MPERF in KVM would be to add a kernel param=
+ to
+> disable/hide APERF/MPERF from the host, and then let KVM virtualize/passt=
+hrough
+> APERF/MPERF if and only if the feature is supported in hardware, but hidd=
+en from
+> the kernel.  I.e. let the system admin gift APERF/MPERF to KVM.
 
-Meanwhile, linux-next needs to carry the following fixup.
+Part of our goal has been to enable guest APERF/MPERF without
+impacting the use of host APERF/MPERF, since one of the first things
+our support teams look at in response to a performance complaint is
+the effective frequencies of the CPUs as reported on the host.
 
-
-diff --git a/drivers/iio/imu/inv_icm42600/inv_icm42600_core.c
-b/drivers/iio/imu/inv_icm42600/inv_icm42600_core.c
-index 550cc53e7559..f415f300afb6 100644
---- a/drivers/iio/imu/inv_icm42600/inv_icm42600_core.c
-+++ b/drivers/iio/imu/inv_icm42600/inv_icm42600_core.c
-@@ -908,4 +908,4 @@ EXPORT_NS_GPL_DEV_PM_OPS(inv_icm42600_pm_ops,
-IIO_ICM42600) =3D {
- MODULE_AUTHOR("InvenSense, Inc.");
- MODULE_DESCRIPTION("InvenSense ICM-426xx device driver");
- MODULE_LICENSE("GPL");
--MODULE_IMPORT_NS(IIO_INV_SENSORS_TIMESTAMP);
-+MODULE_IMPORT_NS("IIO_INV_SENSORS_TIMESTAMP");
-
-
-
-
---=20
-Best Regards
-Masahiro Yamada
+I can explain all of this in excruciating detail, but I'm not really
+motivated by your initial response, which honestly seems a bit
+hostile. At least you looked at the code, which is a far warmer
+reception than I usually get.
 
