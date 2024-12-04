@@ -1,49 +1,89 @@
-Return-Path: <linux-kernel+bounces-432223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D0629E47DE
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 23:29:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7EB69E47BC
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 23:21:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0FE861880368
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 22:29:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FB331880206
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 22:21:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A95141C3C1F;
-	Wed,  4 Dec 2024 22:29:49 +0000 (UTC)
-Received: from lobo.ruivo.org (lobo.ruivo.org [173.14.175.98])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D7401C3BFC;
+	Wed,  4 Dec 2024 22:21:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dmxe6/43"
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1F9614D43D
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 22:29:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.14.175.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3E641C3C04
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 22:21:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733351389; cv=none; b=WIEsFyQ8hYvzLJ/IZFOukXWPSYQWOI5zOp6U/X8CLyuCGHpSGJ1lsn7TXEtSczQ5drWcO4qvy3znkSybfqItMENQmruqRh+4wO6wPvS4tZO63FHMzQa+YnugsNqvLuGKE/cZXzqf8gR1YXqoqjE03VB4CSH24ONab3vVTeCNGfo=
+	t=1733350871; cv=none; b=r+OT2xwFMoYgFJNc3SnxsPkHuYsiuZ7ua2+iIkyKZ66zfw4JWMGofyF3emmaxytgazEt1jlXcO5mnA5x/yLPm95BCCmOLc8CzQcTAeFA95P+lYlIN5QEuoxXtRHVOmpzS7x03MtA1l+SGotqoGP/wIsBUpOhBgeHa4yUeZjUUys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733351389; c=relaxed/simple;
-	bh=ux5zMYTkey3E5tiiH4Tq3NsLZqwUsZVzg1+aB3mwpPw=;
+	s=arc-20240116; t=1733350871; c=relaxed/simple;
+	bh=1XfksjHiUmLDBwfWEVhZRw6suaxhtKcDRmMSFnlRbIA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Zh4d/4fYARcIV6mm87W1gMvuL1yYIQxex9tJ++1uD9immlqMGHpjVnThFfUFPsxTV/M6Y7lVkYux9E/qpcNFOYWuw1BnYDxjYjGuHaFt8oYdS19IhrRRpECt8pRenR0BaveuVb7/XfiXsT1RtXoVU3bkECtfwmNKJl39EFKOAK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ruivo.org; spf=pass smtp.mailfrom=ruivo.org; arc=none smtp.client-ip=173.14.175.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ruivo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ruivo.org
-Received: by lobo.ruivo.org (Postfix, from userid 1011)
-	id 4416A102562; Wed,  4 Dec 2024 17:21:11 -0500 (EST)
-X-Spam-Level: 
-Received: from jake.ruivo.org (bob.qemu.ruivo [192.168.72.19])
-	by lobo.ruivo.org (Postfix) with ESMTPSA id CDAE4102550;
-	Wed,  4 Dec 2024 17:20:54 -0500 (EST)
-Received: by jake.ruivo.org (Postfix, from userid 1000)
-	id B087C17A0923; Wed, 04 Dec 2024 17:20:54 -0500 (EST)
-Date: Wed, 4 Dec 2024 17:20:54 -0500
-From: Aristeu Rozanski <aris@ruivo.org>
-To: Koichiro Den <koichiro.den@canonical.com>
-Cc: linux-mm@kvack.org, muchun.song@linux.dev, akpm@linux-foundation.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] hugetlb: prioritize surplus allocation from current node
-Message-ID: <20241204222054.GA37229@cathedrallabs.org>
-References: <20241204165503.628784-1-koichiro.den@canonical.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=SL29CWStRDyT25mJ5Q1uGQaDmINdChwdyVBjatJf3vcwci+2fhJP8tKyYbH/07g8U6NHgdDMJMMedCY/59jIqWKVn+TBivNfvNKP0OfIJaDbR95tEUPoJp+T4CsM9iejktIGIWtdK8OE0TEOJ+32yX+IK0pTYXrJhMXWmqKH4+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dmxe6/43; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2ffdd9fc913so2349251fa.3
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 14:21:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733350868; x=1733955668; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=OH4y0lMP3bH1lveKpeX+aBwZ95mtO7UpbBtdFwlO2l8=;
+        b=dmxe6/43c5nCrEDsG3SuGqFFn2sZ5xxLPNi64hW6yfrIbDLs7Mmwrz+Qocjc1aNx+e
+         zKfk5JCTscvALQor1UUfbV71YrNF0Dm3KTlpQrjtV2iAMX7KwuodapleVx0PDMbiSAmh
+         WEw72zL+NiJ1AXsd5PSCyElTaN2JLQbhEv8TcmwE8GuixEK8c4b+bsYpCI2YB2A0snOx
+         6u7ouy14GrUisYNRT5QGnVMFGdtL2DKWS3G+AFJTWlDDwRXFZcTVb+2PxIq/ID5pxsDx
+         zPSmFXeG0E4XZa4bBZvkSiNRr+bJ/IOhBEPl8c2z/SFxAiDTmiIbBjt1MBq6XbNumeAe
+         fBUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733350868; x=1733955668;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OH4y0lMP3bH1lveKpeX+aBwZ95mtO7UpbBtdFwlO2l8=;
+        b=eG0fPpAC3FKsOQhRlGescaWLru0gSQXoENUTtXy/g1R9bwzcuYjeP5v8UIRNhmLEco
+         zPMgm8bptz+bWz7X39qYHtHRwbAhDTYgWasQuVg6n+mI1grC9Ji0hnAfrxLmWsUDVLDR
+         qgoriVqBGNBJs3XXvTPZI1RXORHCR48xi0LSZDcRiaZFH/YIdHNlaGUNCH83YRArzx8O
+         n87/1uFQMelm4WGOJiqx1IoJxTpjsO/f3i2T4+tkLvu1aLkY/bF/8Fc2BLL5LMNe2Kdd
+         jYbecNgCdIGufNakG0//ITng+RDyFbi+IEZSfKC1+twu20vjhc/MsLVRVQiHN1G+pWx1
+         04Pg==
+X-Forwarded-Encrypted: i=1; AJvYcCXVA3iURRF1+idUGknKV4K+s69YSYm6gIUqfR4aiXp+RBqbcaqSkbBcKCbPj+u//RBL0Wh4IMROLgDbbnE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwW/PPg7b4wagckalgj7mM2AvDyXLVze46dbC90Sb3ygcjOi31i
+	9mwVlEBZ1/dYqs2LbduZ42/tMA9wVot3/Semcq3og/zEPHaqQg7dUlTFb1qYu2o=
+X-Gm-Gg: ASbGncuLAXGj05AmipcG7d5HOhHjXCaX2xxhGHOWRzR/YV/iCJO8GOgzC+28G64gPbh
+	VMrMYo3ElEDPzY/RCsvAe1mlYGPfc0ADcbOVjF7UPftAexVczKVbK4Kn5HR4JG7TvDKqXzznNo0
+	ZKGZRKlT3gHrJe3aS+JHYYYb9jAFFJdcMEXvGToq3LwB5k4NYKSjy3QW0A7XuKYoMrXX4LL7Yzv
+	fDwuPH+DP5c9wI+wJKYOG2iLRP1JIsQ+pRN648L9JM8uJ+AmiMrhjHxzSJ6E017lsHlhhxJJTZ4
+	XP+hN1RrL93kVK9u/V0N8vR7RxM+Zg==
+X-Google-Smtp-Source: AGHT+IFQNKupoOz5B2N+8vVrOXLHYn4xv4Wtyf/8DA/aT70hkUWOnF+im9j6wqbTorBqmEkgbKr9BA==
+X-Received: by 2002:a2e:a904:0:b0:2fa:cac0:2a14 with SMTP id 38308e7fff4ca-30009c30156mr45544571fa.11.1733350868075;
+        Wed, 04 Dec 2024 14:21:08 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30020e20aa9sm23431fa.80.2024.12.04.14.21.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Dec 2024 14:21:06 -0800 (PST)
+Date: Thu, 5 Dec 2024 00:21:04 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Melody Olvera <quic_molvera@quicinc.com>
+Cc: Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Abel Vesa <abel.vesa@linaro.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>, Trilok Soni <quic_tsoni@quicinc.com>, 
+	linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
+Subject: Re: [PATCH v3 2/2] interconnect: qcom: Add interconnect provider
+ driver for SM8750
+Message-ID: <snccv4rebzwolmqknc2jm6nkfxchi3hm2vauxnneefsisc3xwe@slfyaiss2vat>
+References: <20241204-sm8750_master_interconnects-v3-0-3d9aad4200e9@quicinc.com>
+ <20241204-sm8750_master_interconnects-v3-2-3d9aad4200e9@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -52,74 +92,26 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241204165503.628784-1-koichiro.den@canonical.com>
-User-Agent: Mutt/2.2.13 (2024-03-09)
+In-Reply-To: <20241204-sm8750_master_interconnects-v3-2-3d9aad4200e9@quicinc.com>
 
-On Thu, Dec 05, 2024 at 01:55:03AM +0900, Koichiro Den wrote:
-> Previously, surplus allocations triggered by mmap were typically made
-> from the node where the process was running. On a page fault, the area
-> was reliably dequeued from the hugepage_freelists for that node.
-> However, since commit 003af997c8a9 ("hugetlb: force allocating surplus
-> hugepages on mempolicy allowed nodes"), dequeue_hugetlb_folio_vma() may
-> fall back to other nodes unnecessarily even if there is no MPOL_BIND
-> policy, causing folios to be dequeued from nodes other than the current
-> one.
+On Wed, Dec 04, 2024 at 01:26:06PM -0800, Melody Olvera wrote:
+> From: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
 > 
-> Also, allocating from the node where the current process is running is
-> likely to result in a performance win, as mmap-ing processes often
-> touch the area not so long after allocation. This change minimizes
-> surprises for users relying on the previous behavior while maintaining
-> the benefit introduced by the commit.
+> Introduce SM8750 interconnect provider driver using the interconnect
+> framework.
 > 
-> So, prioritize the node the current process is running on when possible.
-> 
-> Signed-off-by: Koichiro Den <koichiro.den@canonical.com>
+> Signed-off-by: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
+> Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
 > ---
->  mm/hugetlb.c | 20 +++++++++++++++++---
->  1 file changed, 17 insertions(+), 3 deletions(-)
+>  drivers/interconnect/qcom/Kconfig  |    9 +
+>  drivers/interconnect/qcom/Makefile |    2 +
+>  drivers/interconnect/qcom/sm8750.c | 1705 ++++++++++++++++++++++++++++++++++++
+>  3 files changed, 1716 insertions(+)
 > 
-> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-> index 5c8de0f5c760..0fa24e105202 100644
-> --- a/mm/hugetlb.c
-> +++ b/mm/hugetlb.c
-> @@ -2463,7 +2463,13 @@ static int gather_surplus_pages(struct hstate *h, long delta)
->  	long needed, allocated;
->  	bool alloc_ok = true;
->  	int node;
-> -	nodemask_t *mbind_nodemask = policy_mbind_nodemask(htlb_alloc_mask(h));
-> +	nodemask_t *mbind_nodemask, alloc_nodemask;
-> +
-> +	mbind_nodemask = policy_mbind_nodemask(htlb_alloc_mask(h));
-> +	if (mbind_nodemask)
-> +		nodes_and(alloc_nodemask, *mbind_nodemask, cpuset_current_mems_allowed);
-> +	else
-> +		alloc_nodemask = cpuset_current_mems_allowed;
->  
->  	lockdep_assert_held(&hugetlb_lock);
->  	needed = (h->resv_huge_pages + delta) - h->free_huge_pages;
-> @@ -2479,8 +2485,16 @@ static int gather_surplus_pages(struct hstate *h, long delta)
->  	spin_unlock_irq(&hugetlb_lock);
->  	for (i = 0; i < needed; i++) {
->  		folio = NULL;
-> -		for_each_node_mask(node, cpuset_current_mems_allowed) {
-> -			if (!mbind_nodemask || node_isset(node, *mbind_nodemask)) {
-> +
-> +		/* Prioritize current node */
-> +		if (node_isset(numa_mem_id(), alloc_nodemask))
-> +			folio = alloc_surplus_hugetlb_folio(h, htlb_alloc_mask(h),
-> +					numa_mem_id(), NULL);
-> +
-> +		if (!folio) {
-> +			for_each_node_mask(node, alloc_nodemask) {
-> +				if (node == numa_mem_id())
-> +					continue;
->  				folio = alloc_surplus_hugetlb_folio(h, htlb_alloc_mask(h),
->  						node, NULL);
->  				if (folio)
 
-Acked-by: Aristeu Rozanski <aris@ruivo.org>
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
 -- 
-Aristeu
-
+With best wishes
+Dmitry
 
