@@ -1,111 +1,117 @@
-Return-Path: <linux-kernel+bounces-431270-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 059849E3B58
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 14:36:39 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F645163299
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 13:36:29 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B60CF1DE4E1;
-	Wed,  4 Dec 2024 13:36:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BPaRFFLC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C17F9E3B5B
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 14:37:01 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16EDE1DE2B2;
-	Wed,  4 Dec 2024 13:36:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F370E285846
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 13:36:59 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3C101D54C2;
+	Wed,  4 Dec 2024 13:36:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dUL48ZwF"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 185D11E47C5
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 13:36:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733319368; cv=none; b=fGqvMU1d5IFrx6Eom/iYqO6j+X16XMu3QVwC0aeQRFEPtlcaRLUZ2wzc6htt0xPqZ75A39//ED57yFt9I8XnHT91osVEHKMUrrlrYFh7pN+aCzuSHGBa8Xf5N3nMKGOu1UPjTLnBr5VEDjzaH13tBURcmYSeG2N4LaziLrV/Yv0=
+	t=1733319383; cv=none; b=RZxa/WxrYx12z6EBd+DOog8Lwi7fuD8J26Kx90mH8hUBv3h6cZE8yrfQnmCuZtCjBwnAL60TcpzcP6ZVVqypziO1Sgld50CxYNwwviBGcOtlgw8pLDjPPrNtqcD6Ge90/NUq6ufmtZC4aHLOR5cuvzI8q6q1dlADE7lDpr5VlCw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733319368; c=relaxed/simple;
-	bh=Si3lDv3dhTLBqjaTl3xWq8GImWdI03PuIq4p38ToNT4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=mwCbB5oPkPTkTZqx6oC8Qfox8AP9w5ofCAs++7pCRWho4MWDiCbd+BPJhKVSaXde5uHn5FZ8TFkBP37SCmvI0un1+hP9QqQS3SyocE1ZFF5t0fM0NsVL79ddEoYZsQGD34aun5YMs/bJIxIOMM+5W7d8HAAQuXD+qYnSK8n6OwE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BPaRFFLC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A1F2C4CED1;
-	Wed,  4 Dec 2024 13:36:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733319367;
-	bh=Si3lDv3dhTLBqjaTl3xWq8GImWdI03PuIq4p38ToNT4=;
-	h=Date:From:To:Cc:Subject:From;
-	b=BPaRFFLC9nC0ptHCnnys6W8rcY3m47kYdMvvaviSjq7r78xRvVeCvuUaGvbi4CscQ
-	 8bDeZArtBOgs4pKjXCiXLOsMn4g+fVW6cuLkqHle2RGKreQXFMdsiIrZi1xpQLQxNt
-	 ifaPHpIQOrUKlyPDlOa/zhWjAQxWComqaG0MFEwegmXi7z9TFL2w5zJTmvH1dRumd8
-	 sKniHKpeOqxqAkN8x/QUNPLPZ0PP0+dknOtuOahjMbg/i6xiKBMpASbL/ygcveM+pq
-	 LBHnZ0I0XkSR/EXQawF7GtTywE723Qz1kHRILEeOKSOHQx1EsLk+B89YTvEskU5mbU
-	 WCJsMRmZhiJ2g==
-Date: Wed, 4 Dec 2024 13:36:02 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Lucas De Marchi <lucas.demarchi@intel.com>,
-	Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>,
-	DRM XE List <intel-xe@lists.freedesktop.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the drm-xe tree
-Message-ID: <Z1BawrcFMsj0ByLk@sirena.org.uk>
+	s=arc-20240116; t=1733319383; c=relaxed/simple;
+	bh=G3H9vPm74tu0lvdzHCfMTn/mY2bbhXewyUb/tIQ3V/I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EhtUbYmpeICLDFGzNsy9BOy/cfz70El07a4bB6U/1hA+5nBcDmF7I6Ec2mDw9FHQYXJC6ZYk1dyI21FLXVmBE1ryTE/A0+pQVypoLton8VStQM+2Iz7n/zVA0Jb8MDTDZhPPOxl0jibWLEGrI5D8dtv2rx4QtKB65oPhNrn0czE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dUL48ZwF; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733319379;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gAKk5WRAWeLj8mWsqp9Osu+484W5ZjNbKQlb66yg3SM=;
+	b=dUL48ZwFHQH3w99vmR3MmtuYOaolvCM1AdTsfnUKZKPQ8RMMh/r9oNV9bt8MjkBCpX8ptO
+	24UKWneCrMJTwxhbSEFLXBpeAUIfL1uP1MMYSCOginhhI+W22s7JXsbK6Uf8trZzAeQtnF
+	jonXw5+cv3WeTjKfLFU/Lm1RDkQAXjg=
+Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com
+ [209.85.208.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-597-QBqVpzIZNX64D5NeEFhwdA-1; Wed, 04 Dec 2024 08:36:18 -0500
+X-MC-Unique: QBqVpzIZNX64D5NeEFhwdA-1
+X-Mimecast-MFC-AGG-ID: QBqVpzIZNX64D5NeEFhwdA
+Received: by mail-ed1-f72.google.com with SMTP id 4fb4d7f45d1cf-5d0c64ce365so3792944a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 05:36:18 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733319377; x=1733924177;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gAKk5WRAWeLj8mWsqp9Osu+484W5ZjNbKQlb66yg3SM=;
+        b=wE1v0O+bN0DBbEn8/M760yyBb3zteHzGChS8+3Bod/crp9slM8g5Jo/8k10we6L/Qa
+         MhdPZ1UIdB4zM6Ui9XYrjJTuYCHl6Q1cNiEpxurRAFB6VqCPZstPja473vSKI6+wpdX/
+         fFVbe9Tt21LiRvKtohezLhrGp03N/9efDlogj9tCFEz+Q5qUIXnYvYsKchaLsLkxOL6u
+         HOZljcDzM6w6GoPM4FhpSxCqL4nm0vSwjUayVz+Hk6LATYD/sihN8JrB9s12aZW42Wiq
+         tJ31+DrA5NiyyVCN2xRIXuVxSvoPVVcAe+dvtPhcgy4a+a40c23BDnc4yt3VEIgpoj9z
+         msiA==
+X-Forwarded-Encrypted: i=1; AJvYcCVOhRocL03wbWCYdh/3KKSmTYbT9V4HP/4UgFlqN9j7Lk16gM0TdDXjVjrgddTcAO2JgwRqB81NawZMfKo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVib1DECJynuVHI5FzH4zbRVzxtr0RrPAJwE2HSwtej90NBmyC
+	vIgtbzM5qNWwgV6iD0vvt73+cxRZcarmNdd+Twx3rk3a1EXGF2l7xn8QtM8tqZ7+DpyRRZmO0WK
+	y1QVpJ/4U9EWLgqj9kPmjl/Q/CtNR13jXJVYo7v5k463vEbjZu9armgaklCSOzvfPPO9/dpefkQ
+	9FZKbO0e/xTm2xj/HyuEHOuS/1etJaTln/N02R
+X-Gm-Gg: ASbGncu8DM2F5bKetkthx8b3KQXdvn+Yvni+BC0zdpoB9TGBKYg8iIwo0Sbjs6OIHQi
+	fB9ZpRJuuy5vcuXs6mpnd/kFwZ3mUKIXIotg4d+KUADsChmxkJXJ+iAZbVCkw2zt8
+X-Received: by 2002:a17:906:329a:b0:aa3:49b6:243 with SMTP id a640c23a62f3a-aa5f7cc14f8mr413856366b.9.1733319377602;
+        Wed, 04 Dec 2024 05:36:17 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IG9EZvVnmBeGnetwReNdL3BjxaGWr5jMEtJFqHT7yFYKm3v/3OzQl7rY1r9CK1O+SUO5D0KIc+BN2UTnSYPnuo=
+X-Received: by 2002:a17:906:329a:b0:aa3:49b6:243 with SMTP id
+ a640c23a62f3a-aa5f7cc14f8mr413854066b.9.1733319377242; Wed, 04 Dec 2024
+ 05:36:17 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="kguu343zm9FQzSso"
-Content-Disposition: inline
+References: <20241105123807.1257948-1-rrobaina@redhat.com> <2d9292c28df34c50c1c0d1cbf6ce3b52@paul-moore.com>
+ <20241113230425.GJ3387508@ZenIV> <19328b27f98.28a7.85c95baa4474aabc7814e68940a78392@paul-moore.com>
+ <20241114040948.GK3387508@ZenIV> <CAHC9VhTyp6ao8n0EVp_JdgRXFfP0nLkf0YMKPmiAurFJ_CM0fQ@mail.gmail.com>
+In-Reply-To: <CAHC9VhTyp6ao8n0EVp_JdgRXFfP0nLkf0YMKPmiAurFJ_CM0fQ@mail.gmail.com>
+From: Ricardo Robaina <rrobaina@redhat.com>
+Date: Wed, 4 Dec 2024 10:36:06 -0300
+Message-ID: <CAABTaaCXu6aeTLwVngOpnCVQJ1z3_TYcdjiA=nkvGyvTN1O8TQ@mail.gmail.com>
+Subject: Re: [PATCH v1] audit: fix suffixed '/' filename matching in __audit_inode_child()
+To: Paul Moore <paul@paul-moore.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, audit@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, eparis@redhat.com, rgb@redhat.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hello everyone, thank you all who reviewed this patch!
 
---kguu343zm9FQzSso
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Wed, Nov 27, 2024 at 2:43=E2=80=AFAM Paul Moore <paul@paul-moore.com> wr=
+ote:
+>
+> > Anyway, regarding audit_compare_dname_path(), handling just the last '/=
+' is
+> > not enough - there might be any number of trailing slashes, not just on=
+e.
+>
+> Good reminder, thanks.  I see that Ricardo has sent an updated patch,
+> I haven't looked at it yet (waiting for the merge window to close),
+> but hopefully he has taken that into account (hint: now would be a
+> good time to verify that Ricardo <g>).
+>
 
-Hi all,
+Yes, I did take this into account. As well as the other cleanup suggestions=
+.
 
-After merging the drm-xe tree, today's linux-next build (x86
-allmodconfig) failed like this:
+- Ricardo
 
-In file included from /tmp/next/build/include/linux/module.h:22,
-                 from /tmp/next/build/include/linux/device/driver.h:21,
-                 from /tmp/next/build/include/linux/device.h:32,
-                 from /tmp/next/build/include/linux/auxiliary_bus.h:11,
-                 from /tmp/next/build/include/linux/intel_vsec.h:5,
-                 from /tmp/next/build/drivers/gpu/drm/xe/xe_vsec.c:7:
-/tmp/next/build/drivers/gpu/drm/xe/xe_vsec.c:233:18: error: expected ',' or ';' before 'INTEL_VSEC'
-  233 | MODULE_IMPORT_NS(INTEL_VSEC);
-      |                  ^~~~~~~~~~
-/tmp/next/build/include/linux/moduleparam.h:26:61: note: in definition of macro '__MODULE_INFO'
-   26 |                 = __MODULE_INFO_PREFIX __stringify(tag) "=" info
-      |                                                             ^~~~
-/tmp/next/build/include/linux/module.h:299:33: note: in expansion of macro 'MODULE_INFO'
-  299 | #define MODULE_IMPORT_NS(ns)    MODULE_INFO(import_ns, ns)
-      |                                 ^~~~~~~~~~~
-/tmp/next/build/drivers/gpu/drm/xe/xe_vsec.c:233:1: note: in expansion of macro 'MODULE_IMPORT_NS'
-  233 | MODULE_IMPORT_NS(INTEL_VSEC);
-      | ^~~~~~~~~~~~~~~~
-
-You need to merge up cdd30ebb1b9f36159d66f088b61aee264e649d7a ("module:
-Convert symbol namespace to string literal") from mainline and fix up
-for the changes in MODULE_IMPORT_NS.  I'll apply a fixup for now.
-
---kguu343zm9FQzSso
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmdQWsEACgkQJNaLcl1U
-h9BTkAf8CXjx264yuh1pv3bz3YKkorH5JtTv1rkbHODX66qAMdQzmRwNI+ph3WtD
-GbooP/pPe9jKnpNRgZVeGdQ3iee7zdQsJBEFEfmYpwA3XJSczAOZ0q0M8hk+kRKQ
-NnI8LOtg5ZTFDUvk7MRlJp033aneRljhiVhbpE+EjlyqYEl1cPFGqTR5/dA3H4gX
-Xw2RuY+YrQVjuixw9pSiDS4OE7k91TyOeYa+f6SNLGEaBeU6zqAhkKLu70r+cTuR
-vnO1+++a5wKELKollGZATD55BYy5U+b21eTAVbp2SCuiZcd/nZdWuvi8Pf8BuKyf
-Dwo2y3m026nXs/gC/Czm5tTh7nFCyQ==
-=8dLq
------END PGP SIGNATURE-----
-
---kguu343zm9FQzSso--
 
