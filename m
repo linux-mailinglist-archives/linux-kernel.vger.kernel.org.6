@@ -1,133 +1,116 @@
-Return-Path: <linux-kernel+bounces-430434-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430435-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBC6B9E30D8
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 02:40:01 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5487164AA5
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 01:39:58 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92CA1EEC5;
-	Wed,  4 Dec 2024 01:39:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IyajlRYL"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3FA09E30DA
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 02:40:16 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CC7253BE
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 01:39:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2ACDEB22105
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 01:40:14 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 052F3125D6;
+	Wed,  4 Dec 2024 01:40:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="dOXvOE5E"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 193BF17C60;
+	Wed,  4 Dec 2024 01:40:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733276396; cv=none; b=cN0LJpCjXgMuQn9QMfD94SXpVlHOXUCzqQZtT5gzHDkwL8nn8iRWc+7L4o92NwWEkH5dv2z7eJ+WQD+NfBs+Nz7AuYxiXm25/+6nMkaF/9YT9aEp0SO6IhqfLt/7KygHkawnwtuYxn18ND2Trscvvv2yP3RiI4jSZrCcR8uYbyo=
+	t=1733276409; cv=none; b=U/ZPTQIm6iwkQgzEfWki7PTtAD/RAkUUV6mktn7OBCTFvQaHsoNG8/4xGU5Kqt+RBTw/AJvseOmNjfnUp7gKXBAr7193nbw9vou14fXKWb9lAe6vjPoryOyBjUwyxQxwZBrmeQuNNRXrM7/1Hi4yq/6zJffF+PRS2a+eJPJnPhU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733276396; c=relaxed/simple;
-	bh=5Ol0rnel7frJYPWxR6WOOs6MvPTLmEjvI5btrLgxu5Q=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=pmwfIbkrlB3iKRe8WmJorqfsjqgbtgSgPlKagruzfliubrU/RmFnPCzhOxRRKBY/1wkp4yIiwovZbklTiFjNtExxygcnRzdPcQ4E81ztWh3AvkviH2nglFd4IZN7KCAbC7zIu3lFveU5DVotEpLfR5X5F7W9Yw7HGG2QQGNLXjw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IyajlRYL; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1733276391;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5Ol0rnel7frJYPWxR6WOOs6MvPTLmEjvI5btrLgxu5Q=;
-	b=IyajlRYLmvSD3xlCbyEnn4e8941l2CmZKUonJ/09IFnkOPFWJ0lW7QVUCKZ0M7EfYOTHLJ
-	bBU9HwpY+QYm9uHFEmUe+vwiuHVQW8CBCGFtUnRZPMYLmeosP7rcgOX1JoPPEJGZs9s9dn
-	Pps7+lYyc0EOcQQR1ZAgJ9s7Ub9Bh/4=
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com
- [209.85.166.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-627-vSmc8fhTM-CmzRiPBBRO7A-1; Tue, 03 Dec 2024 20:39:50 -0500
-X-MC-Unique: vSmc8fhTM-CmzRiPBBRO7A-1
-X-Mimecast-MFC-AGG-ID: vSmc8fhTM-CmzRiPBBRO7A
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-843dd952aa7so601918239f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 17:39:50 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733276389; x=1733881189;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5Ol0rnel7frJYPWxR6WOOs6MvPTLmEjvI5btrLgxu5Q=;
-        b=TsHNYnAm+0fH9hsvbjdttiMM4N5F1MyG/0i7louhiQnheJqlyBTMI7br5LBKpKo4Hh
-         bYtNxROgsjqrSocGVwwY4SXivzIwiPrPfMoLHTc2VeFsAKIZM7eqWJOpNuiuNhBJv1rF
-         J+FFHsQIoe+D5cW0mO0biCR3fBKJnIm+N6y900oSTNHRVUMtXMB4Mvf4T/HWieKK6OS8
-         ayLtcdIkafgnAXGIngOQAbpPMV+26xqQkhM2rq7NQHcaouJNPi2nFZYqrZyiSsl61xpW
-         smk5bwDaABRteQ3afbuP95e/g+kS/sgfEszzBVKDwFyJf9go8U4KkzcK3T0Zp7JL1OHk
-         y5yQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVaRHn5VJtNJB02JCwtF9A6cGY0n9O45eV6Qzy7o+foRzVd4hN6Y/glkdBik6UtSWyuQQXLYh+9Osok01Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6lxp4Xk5hTChJQQkfK+L9ZQ/sErCA8G48FHqVqB3lnV8eySl+
-	6TzKNpz4f5nVF46+yoAcVezMcmEywoUFmQN3I7vdOcOc1dgbOc21I2RtI0UcKHgL8UzfBWHcW7b
-	5T2s0eij6FhUBCbNxuIkNeYDVpg8zQAiD0WIAG/3fqf1w2dPYfcxDmYHRfosSYw==
-X-Gm-Gg: ASbGncs7TD9x6/9G82YTDc1h30t10Uc4xjentMudITQnGLrNB+QdU59j/tJsp/nG/P+
-	iqbasfSCrYnKA4jESVJzCO+sDCx6sUN8VH0Y2cBRFRXa1t5ripULiOBE+1nhOBQRiPedNHCxrEz
-	sUJ6wTklgbUTNPr1HpupT13M16wK8QsQAZvUWru7M3v+RCqoDK8wFEyRtX/e/o/YrJH3NJId3G4
-	KX/w+PnOuYNdSFD+VrRKMh1Y35otY4SCEhjIvYWUUagfjK/RlgdGZFk8uk9WIyNu5ggbmMAcJdd
-	qh7/sE15jcakIfXQMw==
-X-Received: by 2002:a05:6602:6c0a:b0:83a:9f64:6c75 with SMTP id ca18e2360f4ac-8445b53ee22mr672219339f.3.1733276389465;
-        Tue, 03 Dec 2024 17:39:49 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IErCvEkrixCbhbL7MtaDL5770KrUB2GnE5McK3ptHue31aNm1KT+phjOo8E4QiNVeG2NpNz/w==
-X-Received: by 2002:a05:6602:6c0a:b0:83a:9f64:6c75 with SMTP id ca18e2360f4ac-8445b53ee22mr672218239f.3.1733276389188;
-        Tue, 03 Dec 2024 17:39:49 -0800 (PST)
-Received: from ?IPV6:2601:188:ca00:a00:f844:fad5:7984:7bd7? ([2601:188:ca00:a00:f844:fad5:7984:7bd7])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4e230e908b4sm2771705173.158.2024.12.03.17.39.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Dec 2024 17:39:48 -0800 (PST)
-From: Waiman Long <llong@redhat.com>
-X-Google-Original-From: Waiman Long <longman@redhat.com>
-Message-ID: <0467ac99-dd3d-410a-8326-df4396d0cabb@redhat.com>
-Date: Tue, 3 Dec 2024 20:39:45 -0500
+	s=arc-20240116; t=1733276409; c=relaxed/simple;
+	bh=+fdGp0tfLKiul7gcilr3TCG47gTdfqjUtcz8Nhuezic=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qNhZGWlpXTRcolVZhd+WVVoPsEM3YJ6yOjmp7c1O4rOrjsD8LaGXoefpDf2Sy0qdZhIDdVob0fexnZQqXfbVCJSWoaLYfXw2F+LvGLkK86afvW+adYMG9d5hwajDwnUJOIaEv8eOhu/z2nOpK5Piiyq1XiJg12LlIUbnwSz/WeM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=dOXvOE5E; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=LtlNoXC2E/KYeWHUZCLBZfpMtcafZku+/XcAX0RRuoc=; b=dOXvOE5EXDDEC/nHFxtYakLK6l
+	vGH32MrSj8hx/XnLkOFgYPknT4OwJFCkjdkcIR0D5rP+VZbfn46+eMXhrK+8wAijQ6Pi4BBI+g39Q
+	lrByIWryrq+4pzY1GoDiXw9GiIWjeG8wmXDNL4qCNAlpovPmcp7lj9UxBk/4phHRimlY=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tIeMs-00F9Wd-VH; Wed, 04 Dec 2024 02:39:54 +0100
+Date: Wed, 4 Dec 2024 02:39:54 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Divya Koppera <divya.koppera@microchip.com>
+Cc: arun.ramadoss@microchip.com, UNGLinuxDriver@microchip.com,
+	hkallweit1@gmail.com, linux@armlinux.org.uk, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	richardcochran@gmail.com, vadim.fedorenko@linux.dev
+Subject: Re: [PATCH net-next v5 3/5] net: phy: Kconfig: Add ptp library
+ support and 1588 optional flag in Microchip phys
+Message-ID: <67b0c8ac-5079-478c-9495-d255f063a828@lunn.ch>
+References: <20241203085248.14575-1-divya.koppera@microchip.com>
+ <20241203085248.14575-4-divya.koppera@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] x86/nmi: Add an emergency handler in nmi_desc & use it
- in nmi_shootdown_cpus()
-To: Rik van Riel <riel@surriel.com>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- Peter Zijlstra <peterz@infradead.org>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
- "H. Peter Anvin" <hpa@zytor.com>
-References: <20241203150732.182065-1-longman@redhat.com>
- <e63226d5a0e3e2c942202972c099617aee999c1a.camel@surriel.com>
-Content-Language: en-US
-In-Reply-To: <e63226d5a0e3e2c942202972c099617aee999c1a.camel@surriel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241203085248.14575-4-divya.koppera@microchip.com>
 
+On Tue, Dec 03, 2024 at 02:22:46PM +0530, Divya Koppera wrote:
+> Add ptp library support in Kconfig
+> As some of Microchip T1 phys support ptp, add dependency
+> of 1588 optional flag in Kconfig
+> 
+> Reviewed-by: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+> Signed-off-by: Divya Koppera <divya.koppera@microchip.com>
+> ---
+> v4 -> v5
+> Addressed below review comments.
+> - Indentation fix
+> - Changed dependency check to if check for PTP_1588_CLOCK_OPTIONAL
+> 
+> v1 -> v2 -> v3 -> v4
+> - No changes
+> ---
+>  drivers/net/phy/Kconfig | 9 ++++++++-
+>  1 file changed, 8 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/phy/Kconfig b/drivers/net/phy/Kconfig
+> index 15828f4710a9..e97d389bb250 100644
+> --- a/drivers/net/phy/Kconfig
+> +++ b/drivers/net/phy/Kconfig
+> @@ -287,8 +287,15 @@ config MICROCHIP_PHY
+>  
+>  config MICROCHIP_T1_PHY
+>  	tristate "Microchip T1 PHYs"
+> +	select MICROCHIP_PHYPTP if NETWORK_PHY_TIMESTAMPING && \
+> +				  PTP_1588_CLOCK_OPTIONAL
+>  	help
+> -	  Supports the LAN87XX PHYs.
+> +	  Supports the LAN8XXX PHYs.
+> +
+> +config MICROCHIP_PHYPTP
+> +	tristate "Microchip PHY PTP"
+> +	help
+> +	  Currently supports LAN887X T1 PHY
 
-On 12/3/24 8:00 PM, Rik van Riel wrote:
-> On Tue, 2024-12-03 at 10:07 -0500, Waiman Long wrote:
->> Another way to fix this problem while allowing panic() calls from
->> NMI context is by adding a new emergency NMI handler to the nmi_desc
->> structure and provide a new set_emergency_nmi_handler() helper to
->> atomically set crash_nmi_callback() in any context. The new emergency
->> handler will be invoked first before other handlers in the linked
->> list. That will eliminate the need to take any lock and serve the
->> panic
->> in NMI use case.
->>
->> Signed-off-by: Waiman Long <longman@redhat.com>
-> I've seen that panic come by a number of times, but
-> never came up with a good fix.
->
-> Your idea certainly looks like it should work, and
-> avoid all the issues along the way.
->
-> Acked-by: Rik van Riel <riel@surriel.com>
+How many different PTP implementations does Microchip have?
 
-Thanks for the review.
+I see mscc_ptp.c, lan743x_ptp.c, lan966x_ptp.c and sparx5_ptp.c. Plus
+this one.
 
-Cheers,
-Longman
+Does Microchip keep reinventing the wheel? Or can this library be used
+in place of any of these? And how many more ptp implementations will
+microchip have in the future? Maybe MICROCHIP_PHYPTP is too generic,
+maybe you should leave space for the next PTP implementation?
 
+	Andrew
 
