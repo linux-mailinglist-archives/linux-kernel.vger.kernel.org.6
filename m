@@ -1,203 +1,144 @@
-Return-Path: <linux-kernel+bounces-431322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDA899E3BF3
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:01:54 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54A3A9E3BF5
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:02:12 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54A9916411F
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 14:01:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A227285513
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 14:02:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AFC5208983;
-	Wed,  4 Dec 2024 14:00:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADF611F75A9;
+	Wed,  4 Dec 2024 14:00:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XOv9OT13"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AJvs1OAk"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 852DA1FBEB4
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 14:00:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C1E91F7590
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 14:00:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733320838; cv=none; b=ilsHsMgJSCYO9SxFm2A/G/hN6pE9VWXAjl5HDQdgMDaT8HAH51I5aURqZXep4RSoQi5qihJRK7c9lxocYlPtgnIKYy5MsVKvdPwLolwCLyuUF64ZbcH4jtZvCZC+QDrCciKqHxNOyc53bCd4lOKOUuodt8HAaFBbmd0mthkmJLc=
+	t=1733320847; cv=none; b=ELUcJ4c77OwvnqE3TD8KRAJGWjefoFmHzkeXZ8sB3vDznr50Bm7ulzRMtWqZvaXdbQcoTCfJ7mgUo+9rSoaRsWtjRD6RrpfStHBa0C9qs5GXF78M6HvjY+pd62ekPKhxvPLGBPCQVVg7/STzI6Q1GQvxlJd/7LZ6Byz8yLVEvOs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733320838; c=relaxed/simple;
-	bh=oQlxhyNXi4VLEYzBv6Mg8vKwQUxEbTCMppfaXRioQD4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YdRnr3KUqMRx46XpyVIN1zRgV2LeclTTj8tRHUC4YYJpYnFc+nr4Sj3pLnTmyEs3WvHfUU5JZwpli7LIUh6FFDmo5UYu0mn07ye9RN1UhoDrL+lnj2BSVK8oKlDOgmR8mq+ThCjriuVE0tA2Ek2aCo9AanQKx63OMpvV8g/xvhk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XOv9OT13; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-434a2f3bae4so63427425e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 06:00:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733320835; x=1733925635; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wo1Wzwh3Br92Add/ZhBjQllfXt/4cGMlJOhUAuIwj4I=;
-        b=XOv9OT13Gl5mM0HtNkz3oZJNM0Wfj0NxwXlXp2obUn/8Nhr7BQui3fSrQ4UMO46WcH
-         jqm23aRMMXDMmFwHQ2QP70D0u49233dZ8F4DJxa49uoraaxx4CGoYN9Wor2qeOKI8JQj
-         huzIuFk9LxwmPxIGfmMI/Q5ybd5OZwjnk9SpGzjwyoXa3XHyZhLkpD/rVMx3ePm39qBZ
-         alEWMJQs5+LqW1q1CTsXNNDDc+FNsTF1R3dI5E16gzEUUwWB0ZwOvnjgeclA3SRaYD+V
-         bk/Otn3LD3Encxtt89RvOos/GcyWNoj+XpD5mMNeM7C0Jqph71qb4xMMYHUoP8YIXILv
-         1Dsg==
+	s=arc-20240116; t=1733320847; c=relaxed/simple;
+	bh=K5XkhdPpHqBscx9cuL2xc9SfulCNC53nfSWJYshtIgc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=C1Ibt3lSSf8a4mzTTu9bkyEPfkE7y7KeGGU7oFFLJ7nvm9nYYdQ/EUmSzMQ4M1U34xj35k1IKeUWwcFhqHxzqAmoLI8YbhL2YYZUqmBmj5TOZD4JwuCCTDpx7Tk6oSGqkM+9ql+Df1+SoixZ655FI6fwwQUsoNkZUQYyBeuQjV4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AJvs1OAk; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733320844;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pd0pcYkSUAXYAkPdvS5Z/9VshciCSve8tgQub98YvW4=;
+	b=AJvs1OAkSmulOov1wnFwhZFbQIAb3zcYSCdtZrVblRvRXC/Z6ISvyN/eo7kgQ8gI4Q36n+
+	D45ADGyFh1hTaIMaxNF7hscVwIozDDaFENNpYLUVSFeuVEvGFyOMxM97dSeubAzcFne6SF
+	/UIJwyOIq/QQaqVGk/Zw1cSnfhGcR7M=
+Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com
+ [209.85.208.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-328-F2JthX6IMyyomNfSEclP-w-1; Wed, 04 Dec 2024 09:00:43 -0500
+X-MC-Unique: F2JthX6IMyyomNfSEclP-w-1
+X-Mimecast-MFC-AGG-ID: F2JthX6IMyyomNfSEclP-w
+Received: by mail-ed1-f72.google.com with SMTP id 4fb4d7f45d1cf-5cfad454c02so4664136a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 06:00:42 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733320835; x=1733925635;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wo1Wzwh3Br92Add/ZhBjQllfXt/4cGMlJOhUAuIwj4I=;
-        b=jW2O0cP5iHQvwW7sIPEgD2+/H4/MylRMNRXhhOw7snY7gwi4dgiNQHMlp7bvMfbbZP
-         ZHK9kEufALARZsZyEsFRyTCurcO4CSIv1tTFKHmWDeGEHitsEjDNWC7l6c0O3hYZS50r
-         oTLvxzq30Ns24835ZvZeB0z27DYBHRBcMtTvdoq1Jw3pbgRGacYmSbB7NF6RWQFmOs0g
-         x6T//jU5FuMwiyrTndxwlQq1hAyDYzFjOhOUrX7Ej3pC5ev7CC2oB5KGefyerBnmqouI
-         GJIktlhGqZBeTXAwNGf4dfGgQaeUHVf0cbSuXALH12sEtG4EPN+hltocoyRrHvSg4IsY
-         evQA==
-X-Forwarded-Encrypted: i=1; AJvYcCVWQjUYZHokbuSP6bGauJBBfvv4d0dHw5UWIK1DqguBpCSYFE8tgFid7onyznATJDFAzKU49vNJqWU4by4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwUtvwejZ76TW3eykVwQlFcPYL+5vjpBtfYT9+p/vsRF56mvuLN
-	2IcPhOIRNrw5o9GNpONmYTJ7qasC6/vkJ3cdD9TTD93YHzZg5Q30HsFRqyHZq7E=
-X-Gm-Gg: ASbGncveLwJ4LQ1qMbMTCCPdXitgV9E022itZAL520C+3PadyT8Gxz20DU6N7R7jTCV
-	jwhd+zaixg7YKcocHcjk6f7qi/bJg/4zxzmDguLP6PgGKDl6NmO7+fyeyNhQFpP9yuL0OizPQb1
-	v37P9ewJN+DIUG1I7NNuL/huV6Dh3fovlvQizyJSd1WwGwn+/AmGrK5Feslm9No775SxA9ycQP0
-	RBdUUTycgWQIyA+mVBW24GcGpD3hn2T1lSEsvo4068u409sr4MSjnfRZpAmacsWm4KwZ78=
-X-Google-Smtp-Source: AGHT+IEz3Wzkbnj/7JvjYGuWMu1+ciM8h8hDG3as1EYvNSR4aLNyIUb+eq8UmZ+7LI9j3XWrrIrsuA==
-X-Received: by 2002:a05:6000:210d:b0:385:de67:228d with SMTP id ffacd0b85a97d-385fd3e90camr4308405f8f.21.1733320834201;
-        Wed, 04 Dec 2024 06:00:34 -0800 (PST)
-Received: from localhost.localdomain ([2a00:2381:fd67:101:8e2:966d:36c4:3579])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385e2c84d52sm13689978f8f.49.2024.12.04.06.00.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Dec 2024 06:00:33 -0800 (PST)
-From: Alexey Klimov <alexey.klimov@linaro.org>
-To: andersson@kernel.org,
-	konradybcio@kernel.org,
-	linux-arm-msm@vger.kernel.org
-Cc: linux-sound@vger.kernel.org,
-	srinivas.kandagatla@linaro.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	dmitry.baryshkov@linaro.org,
-	krzysztof.kozlowski@linaro.org,
-	caleb.connolly@linaro.org,
-	a39.skl@gmail.com,
-	konrad.dybcio@oss.qualcomm.com,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v6 4/4] arm64: dts: qcom: qrb4210-rb2: add HDMI/I2S audio playback support
-Date: Wed,  4 Dec 2024 14:00:27 +0000
-Message-ID: <20241204140027.2198763-5-alexey.klimov@linaro.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241204140027.2198763-1-alexey.klimov@linaro.org>
-References: <20241204140027.2198763-1-alexey.klimov@linaro.org>
+        d=1e100.net; s=20230601; t=1733320841; x=1733925641;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pd0pcYkSUAXYAkPdvS5Z/9VshciCSve8tgQub98YvW4=;
+        b=P57lU1D8pxgrZkpAAkq3RtWGuIMfZVAX+iVOro0eInm/ZHGm63YC+tmjj8aSXIKhC2
+         UrEkjgd3uASlUnpaZDVNdBSsOnGrhSUN76xfDSqYXQiaC/5o33Wut3FfJ5Q3v06y/WFp
+         Q4599v9ZLKgcOCmC4P0z6almQXAqzmdlgMWwHuIm264W2ZM8wLcaceem46fDUZ8FoFnK
+         JVM88xXQ0ft6euxRJYbYeVZBS1P7MOerOtkrR5H8hMtbxtq8dhQRJmjP737H4mB3FLHe
+         ol0Oq89YTLHPRzXS+3d7nryRYiYHQ4E+kVELJj8Iz+UpYjnm4mewR5KicjBuWl69RqjS
+         FuFA==
+X-Gm-Message-State: AOJu0YwMDY4RBeH9gdJntS2geNCcbG52ZTllSC5mQvQ7d8AKDrhWTi+2
+	wNS8ViQof1X3cileMeywRN3LcMrxFGuN13MvjPoS4F2g2Z5wTVmvtRQVi1wTSMJ89TVBLqKZe+d
+	Wxt9i4BVNQ2F2yZBvOOKvjRdFXUd37LLLiw5d/ZMySrC1rTI5DR7PMTv24rWW7w==
+X-Gm-Gg: ASbGncsj16V2uZGkxQYrVwrv89oaiUtAZMs0Xzb++97mG8kZKnhkk9CJ1wMz/48s3fE
+	9Gr729uIYOSSGk99yU5vb84MI+u9uxYoFJxKdUVfvjCr+Dl7HRUvIO+w1uGi3WAbgvnjCnAYtPW
+	/saluelHVWtaICLHUBS9IPtusFUJA7XiGwnguMI4RPWgcvxIyf5Ah5qWO3IuxTZAEEAOTumwD9i
+	pG1T3gGKs4w75zfibxPRkAvY/m501zcFV45c9K7Ghf2GyKCVnYbAemJpS2e51ho4BaZOepdoERd
+	g7Pa5s90PfjoyH42HRaLiXsmbtQJ20IAwK9WhJiLO8JFHed98unGsXQvU5bwBAe9f/nL2fWbk63
+	FRISqIuHIGQ4yCp+alG7tKAyG
+X-Received: by 2002:a05:6402:270c:b0:5d0:d311:dd4 with SMTP id 4fb4d7f45d1cf-5d10cb81b94mr6097514a12.22.1733320840762;
+        Wed, 04 Dec 2024 06:00:40 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFeZUJPH3qksYgzj+j2Ik055uUV0znVH3V1OqEMo7YPDSZPvLXpT2JePuXn1yrYMCeFxYxLZA==
+X-Received: by 2002:a05:6402:270c:b0:5d0:d311:dd4 with SMTP id 4fb4d7f45d1cf-5d10cb81b94mr6097102a12.22.1733320836460;
+        Wed, 04 Dec 2024 06:00:36 -0800 (PST)
+Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d0e75a2315sm3767619a12.39.2024.12.04.06.00.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 04 Dec 2024 06:00:35 -0800 (PST)
+Message-ID: <b982d20d-2f34-492e-8910-dfaf3adde552@redhat.com>
+Date: Wed, 4 Dec 2024 15:00:35 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] MAINTAINERS: Add missing file entries for the USB video
+ class driver
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ linux-media@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+References: <20241117213833.22952-1-laurent.pinchart@ideasonboard.com>
+Content-Language: en-US, nl
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <20241117213833.22952-1-laurent.pinchart@ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Add sound node and dsp-related piece to enable HDMI audio
-playback support on Qualcomm QRB4210 RB2 board. That is the
-only sound output supported for now.
+Hi,
 
-The audio playback is verified using the following commands:
+On 17-Nov-24 10:38 PM, Laurent Pinchart wrote:
+> The USB video class driver is missing a few F: entries for files related
+> to the driver that have been added to the kernel over the years. Add
+> them.
+> 
+> Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-amixer -c0 cset iface=MIXER,name='SEC_MI2S_RX Audio Mixer MultiMedia1' 1
-aplay -D hw:0,0 /usr/share/sounds/alsa/Front_Center.wav
+Thanks, patch looks good to me:
 
-The same path can be used as-is for I2S playback via first low-speed
-connector when DIP switches are configured in a way to passthrough i2s
-data to that low-speed connector instead of to lt9611uxc bridge.
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
 
-Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
----
- arch/arm64/boot/dts/qcom/qrb4210-rb2.dts | 51 ++++++++++++++++++++++++
- 1 file changed, 51 insertions(+)
+Regards,
 
-diff --git a/arch/arm64/boot/dts/qcom/qrb4210-rb2.dts b/arch/arm64/boot/dts/qcom/qrb4210-rb2.dts
-index a9540e92d3e6..edfb18c85da8 100644
---- a/arch/arm64/boot/dts/qcom/qrb4210-rb2.dts
-+++ b/arch/arm64/boot/dts/qcom/qrb4210-rb2.dts
-@@ -6,6 +6,8 @@
- /dts-v1/;
- 
- #include <dt-bindings/leds/common.h>
-+#include <dt-bindings/sound/qcom,q6afe.h>
-+#include <dt-bindings/sound/qcom,q6asm.h>
- #include <dt-bindings/usb/pd.h>
- #include "sm4250.dtsi"
- #include "pm6125.dtsi"
-@@ -103,6 +105,47 @@ led-wlan {
- 		};
- 	};
- 
-+	sound {
-+		compatible = "qcom,qrb4210-rb2-sndcard";
-+		pinctrl-0 = <&lpi_i2s2_active>;
-+		pinctrl-names = "default";
-+		model = "Qualcomm-RB2-WSA8815-Speakers-DMIC0";
-+		audio-routing = "MM_DL1", "MultiMedia1 Playback",
-+				"MM_DL2", "MultiMedia2 Playback";
-+
-+		mm1-dai-link {
-+			link-name = "MultiMedia1";
-+
-+			cpu {
-+				sound-dai = <&q6asmdai MSM_FRONTEND_DAI_MULTIMEDIA1>;
-+			};
-+		};
-+
-+		mm2-dai-link {
-+			link-name = "MultiMedia2";
-+
-+			cpu {
-+				sound-dai = <&q6asmdai MSM_FRONTEND_DAI_MULTIMEDIA2>;
-+			};
-+		};
-+
-+		hdmi-i2s-dai-link {
-+			link-name = "HDMI/I2S Playback";
-+
-+			cpu {
-+				sound-dai = <&q6afedai SECONDARY_MI2S_RX>;
-+			};
-+
-+			platform {
-+				sound-dai = <&q6routing>;
-+			};
-+
-+			codec {
-+				sound-dai = <&lt9611_codec 0>;
-+			};
-+		};
-+	};
-+
- 	vreg_hdmi_out_1p2: regulator-hdmi-out-1p2 {
- 		compatible = "regulator-fixed";
- 		regulator-name = "VREG_HDMI_OUT_1P2";
-@@ -318,6 +361,14 @@ &pon_resin {
- 	status = "okay";
- };
- 
-+/* SECONDARY I2S uses 1 I2S SD Line for audio on LT9611UXC HDMI Bridge */
-+&q6afedai {
-+	dai@18 {
-+		reg = <SECONDARY_MI2S_RX>;
-+		qcom,sd-lines = <0>;
-+	};
-+};
-+
- &qupv3_id_0 {
- 	status = "okay";
- };
--- 
-2.45.2
+Hans
+
+
+
+> ---
+>  MAINTAINERS | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index f65f00392789..af018330f6fd 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -24076,7 +24076,11 @@ L:	linux-media@vger.kernel.org
+>  S:	Maintained
+>  W:	http://www.ideasonboard.org/uvc/
+>  T:	git git://linuxtv.org/media_tree.git
+> +F:	Documentation/userspace-api/media/drivers/uvcvideo.rst
+> +F:	Documentation/userspace-api/media/v4l/metafmt-uvc.rst
+> +F:	drivers/media/common/uvc.c
+>  F:	drivers/media/usb/uvc/
+> +F:	include/linux/usb/uvc.h
+>  F:	include/uapi/linux/uvcvideo.h
+>  
+>  USB WEBCAM GADGET
+> 
+> base-commit: 5516200c466f92954551406ea641376963c43a92
 
 
