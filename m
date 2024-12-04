@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-430946-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430947-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E2159E3774
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 11:31:20 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAE729E37B3
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 11:38:40 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B218168BB0
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 10:31:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EC272B30A82
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 10:31:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B641D1B3931;
-	Wed,  4 Dec 2024 10:30:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DB351B0F36;
+	Wed,  4 Dec 2024 10:30:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CQfnRHb0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SSHuERQ6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CAC11B4126
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 10:30:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E45C1AA7A5
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 10:30:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733308207; cv=none; b=DxdLQCDNCogqBk0csUsVTKXIydVtnBAznnJRBwNT5W3QB6UGGOkTzvSbjih7WTsVD0KPWXUPwZzgTEG0wae4VhIHag8FI11T/TRd6zRhF1OhA1OQqlwIjE+B1KxcQ9WAYlOrGZrv+X9ogqlM6e7pV5rPj36CKeqHlZB6VEndneQ=
+	t=1733308211; cv=none; b=fyqoruroL+dPZJxS3GV6jRa6ppr72zZdi8qqGhTBnK2gKeugpvTmqXKr78O56TGf1QCWBcBlkiXy+7+aClBs4IW9+bBHhLC9Mf08XHZPiOGAc1tUC8BzntC5k3S4lAwbUZYs3mWaMf1WjitxIccpnXh3rDX6L1RZvrKPvg2wLPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733308207; c=relaxed/simple;
-	bh=YkbOGSzICrZiR+4fHhpecKjehdpXOnctJBrLxxFsimY=;
+	s=arc-20240116; t=1733308211; c=relaxed/simple;
+	bh=o9i3NEXM3yLAVapt19Pwv61KGYVGmrYSEnA6hPSma3w=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=C2H4ZWFOHKt7Kzmh09PBRjpQDzqUAEKfGyPQaNoWdmWVnUVPHWUO30UzUpi+hUQis2FKmCPM5Rf5AvXXNFBH8DaqrU3A4hURxQduTZElSnpbnfZVzlKnlhM5e6TNhfgx0MkMfhgkYXZFBNfUXMBTYofaqwbfe2Eb3yvzfGbGEuE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CQfnRHb0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BDB04C4CED6;
-	Wed,  4 Dec 2024 10:30:02 +0000 (UTC)
+	 MIME-Version; b=MWyC6hjbga89E1qTAN43lXn7q7v8E3zPEzvtseINU8/GdIXxDueBMrRnee+c5EFHV2m9Y1WMxkkICVuPG4CVSPz1xekiYD8/cIacNhun9vIJmDCA2bAsiIk+cudEySzhTsKaOpP30+gQG02VpIGgXuvb6foFc3Hdz1FzWhiapn0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SSHuERQ6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BC64C4CEDD;
+	Wed,  4 Dec 2024 10:30:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733308206;
-	bh=YkbOGSzICrZiR+4fHhpecKjehdpXOnctJBrLxxFsimY=;
+	s=k20201202; t=1733308211;
+	bh=o9i3NEXM3yLAVapt19Pwv61KGYVGmrYSEnA6hPSma3w=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=CQfnRHb0g7Q2z22aBdhfz3xK93jft7nmq9SDrBId79yDhfUqGwMCXaI/TGjS2kNOf
-	 yIiDq36ob2rdhpFtENjXW3Olkirzz8fweFp/Th0sYvnVK5DRXZLEZeg5FD/ygz7Ax7
-	 /+oGcbhuqg5clF7nPmWzkLG0jzX/Me7FRjPE30dRHnv84lnrKngwuuslGF8oXFFo7F
-	 irTLNhwvAHOmiNMbZp/MUEbWLu+tzd4kQxjwshqqfY46uNG6O9USGb+k/xAqm5fOmY
-	 9t9l2/2B6yhLs4BIASw7ysz2MMfJuBNM5FMWHV7Fn7lJGAUjsIndY+M7xF7ZkTN/gg
-	 U8vOFUCBQDVvQ==
+	b=SSHuERQ6p80T31BEClJXEmzgpjbOckqnLeLun2JcXJU70vqNaC45bCedi4UdlTHUj
+	 j82sWIqRY1MM/ffnuW+p01oSwbjwFPreC9cf9KNvk2+wMqkpFxNk0HuoaHglg3wAME
+	 TcVt2f8hWdiShQwwusUpC8O+CosWmgp3sjGpCWHSxCnisho+ztx+gvHK9p/K+eMiU4
+	 Dh7SL6G4B5mSIuzqsVmGozUuLiuqxz9da1r1XdlpqtLxgxFM4pUug5o07C1iIPGGn+
+	 RBsaQsZUs9dZtC3v76XDLNOgLWfHZV08PcIAMzj1/hbQ9stenMWGocxZB92IS/kBPM
+	 x5JPYUaXHNMEA==
 From: Arnd Bergmann <arnd@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org
@@ -60,9 +60,9 @@ Cc: Arnd Bergmann <arnd@arndb.de>,
 	Russell King <linux@armlinux.org.uk>,
 	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
 	Tony Lindgren <tony@atomide.com>
-Subject: [PATCH 08/15] ARM: update FPE_NWFPE help text
-Date: Wed,  4 Dec 2024 11:28:57 +0100
-Message-Id: <20241204102904.1863796-9-arnd@kernel.org>
+Subject: [PATCH 09/15] ARM: mark IWMMXT as deprecated
+Date: Wed,  4 Dec 2024 11:28:58 +0100
+Message-Id: <20241204102904.1863796-10-arnd@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20241204102904.1863796-1-arnd@kernel.org>
 References: <20241204102904.1863796-1-arnd@kernel.org>
@@ -76,45 +76,48 @@ Content-Transfer-Encoding: 8bit
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-The help text is seriously outdated and predates the introduction of
-VFP floating point units that were available as early as some ARM926
-based systems.
+With no remaining users and support getting removed from future compilers,
+there seems little point in keeping iwmmxt around much longer.
 
-Change the help text to reflect that this is now a legacy feature
-and that it will go away along with OABI support in the future.
+On the other hand, the iwmmxt support in the kernel rarely gets in the
+way, so there is little cost, so set a removal date of early 2026 for
+the moment. If anyone is still using this, it can be extended as long
+there is binutils support.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/arm/Kconfig | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ arch/arm/Kconfig | 14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
 
 diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index 5278764162f8..d92531c3f982 100644
+index d92531c3f982..9e8f100ad514 100644
 --- a/arch/arm/Kconfig
 +++ b/arch/arm/Kconfig
-@@ -1661,16 +1661,16 @@ menu "Floating point emulation"
- comment "At least one emulation must be selected"
+@@ -509,13 +509,21 @@ config PLAT_VERSATILE
+ source "arch/arm/mm/Kconfig"
  
- config FPE_NWFPE
--	bool "NWFPE math emulation"
-+	bool "NWFPE math emulation (DEPRECATED)"
- 	depends on (!AEABI || OABI_COMPAT) && !THUMB2_KERNEL
+ config IWMMXT
+-	bool "Enable iWMMXt support"
+-	depends on CPU_XSCALE || CPU_XSC3 || CPU_MOHAWK
+-	default y if PXA27x || PXA3xx || ARCH_MMP
++	bool "Enable iWMMXt support (DEPRECATED)"
++	depends on PXA27x || PXA3xx || ARCH_MMP
  	help
- 	  Say Y to include the NWFPE floating point emulator in the kernel.
--	  This is necessary to run most binaries. Linux does not currently
--	  support floating point hardware so you need to say Y here even if
--	  your machine has an FPA or floating point co-processor podule.
+ 	  Enable support for iWMMXt context switching at run time if
+ 	  running on a CPU that supports it.
  
--	  You may say N here if you are going to load the Acorn FPEmulator
--	  early in the bootup.
-+	  This is only used on OABI userspace binaries, either using a
-+	  pure OABI (!CONFIG_AEABI) kernel, or the OABI emulation.
++	  Machines that actually support this feature are very rare,
++	  and support is deprecated in new gcc-14.  While there were a
++	  few applications that used this in the past, none are known
++	  to still do so.
 +
-+	  Support for NWFPE will be removed in the future when OABI
-+	  support is removed.
- 
- config FPE_NWFPE_XP
- 	bool "Support extended precision"
++	  If you use this, please send a patch to remove the
++	  deprecation, otherwise this will be removed in early
++	  2026.
++
+ if !MMU
+ source "arch/arm/Kconfig-nommu"
+ endif
 -- 
 2.39.5
 
