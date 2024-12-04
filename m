@@ -1,55 +1,55 @@
-Return-Path: <linux-kernel+bounces-432002-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432003-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F26F9E43BB
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 19:50:47 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 250589E43BC
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 19:51:01 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A02116630C
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:50:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99E942853C3
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:50:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3329B1C3BEA;
-	Wed,  4 Dec 2024 18:50:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CAFF1A8F9A;
+	Wed,  4 Dec 2024 18:50:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b="HXboe/nj"
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b="DuZHHq97"
 Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C1191C3BE5
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 18:50:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48AE91B395D
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 18:50:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733338236; cv=pass; b=OzOX0BMxRNq62l/hCzdADZ47O8ct5tMl7NSb1/4V70r2UTpvoR20JH2T19y+uO7uJUSKKZePEPCoJNx32mLgC9pBP5YIImBMuy2rCHTyjFD40b10qJ0A3HsgEVD7b/ls1mgCb0CRzt4tMngWzfIeDzgg1SNSiDcYV9pk5W2FTQE=
+	t=1733338238; cv=pass; b=py3XMO7RTUObFDPvtOw7AMdbPQzv5eiQVMGZBhBPPudoBsULXY+2AuJVePGzA7Awo3eCnNXNTcW43ja5+cOuDvcb65QsbxwfpvzvopVEp4n10miH/otDAvn6YNTR/lNT8duPVIaucPehJLhZnwVj5WmfDXogGz1oWtZPzU4hzPQ=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733338236; c=relaxed/simple;
-	bh=wENLujEaE0/jDv9eUtx7VbQkHBJh+HI5TA1D/Kh87Ok=;
+	s=arc-20240116; t=1733338238; c=relaxed/simple;
+	bh=0vAis1+9Iur4U7JyeJ4ywRTB8A0fnL0rvs6QK2NOuuM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ajba0xbxQTUlEjLZzA9xmi+GHz1QiqhqCZhfNO4EvEUNO2t0P2AWmfBiE5Buk+0eU3ggLvJUx0g1gWNnRshqiVIP9xQC1L9dvSA6yX2KmFIbkN8YVNp3pidVokDigbOXrQA61C5nsiQrl1LVPaRCBOw6hCteEediqW+3HAvRs0I=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b=HXboe/nj; arc=pass smtp.client-ip=136.143.188.112
+	 MIME-Version:Content-Type; b=uehy4Tho8AlQjmF9qLYECAOH//hpDqI/HCsO71qdvsvh7IMc+Y4OZXmAsu//+fthljeCbneL+sYuURip6JIFCYhCJsqFa47W40MYdnvqCMORkYz2chhZTS79DIEqcysGHpY6qm3OM2qBJ2DKmA7i3WnMU5NBLNXFcui40/i47+4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b=DuZHHq97; arc=pass smtp.client-ip=136.143.188.112
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1733338214; cv=none; 
+ARC-Seal: i=1; a=rsa-sha256; t=1733338216; cv=none; 
 	d=zohomail.com; s=zohoarc; 
-	b=EiinLxhL34XIKGHWkXDMwD8VhFjkL5rkn128Fzponp3WFZvjI4g/SlhRNZqGFzSd1Dt67dx9N8n5KhxqOghs+XF7vFoiXwhw100LhiuFaUfhfTOcPso/fN6SuhjetseGGRmNNCbo2aayND1UNKqPV/6/wIqSJTj+RxuOAAiy+R0=
+	b=iEI1bfMMruzPfJ6/0atm1MUxOgMXB6Hn5hTgVCYtJdcs5Y/4JbgsVMZAhMq7XB7FeKodCyQjGRURy10xkJtVLRRNJqH3e8Gt0XYoNWfrvS3+SzJqerm/IRCtzPrcxJazNpM/y81qrI5kVaX5m+dBF5tFMpZgJ9epn5XvxiopHf4=
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1733338214; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=kjtahGPaTpINYYZfuLGp4VkVf+IQcM1cz95cqRqH8GE=; 
-	b=eTPw+7m4wxlXwmQfHV2nItyT0v/fvZoQei0r1d78rN3nzCFjo7zXJ8g+yGcBLmUxYK3slkNWBfIoxbcXZpIWgWICWyS5fRIr/LYmO8AD/VS1P0Ks6ypWPK+4ncDIeEKNhfo/ZT+H6NKca5op8lm1a1HNhGUiBevG+mkJye7VwGM=
+	t=1733338216; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=ttdCHXLB8sd6tHbLHmHbCUNcVhrUROqKuRsqIlLsEfs=; 
+	b=lCrTLIwfiAltfPlLICnSEVHrMe3+W9W3cYQiK1N+sBllwVjvRMZHsXMM9HmXPH/bTP4SitAh12lVpfyaH5ow6oweR+N7FbTMGOKZdnwP7LuKUyM5fhb8eLVHFrBERtqRAW1Zu/ZSFJD5Pdk8PghyN/boNI+jrzQYBhskXxDQ4mc=
 ARC-Authentication-Results: i=1; mx.zohomail.com;
 	dkim=pass  header.i=collabora.com;
 	spf=pass  smtp.mailfrom=adrian.larumbe@collabora.com;
 	dmarc=pass header.from=<adrian.larumbe@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1733338214;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1733338216;
 	s=zohomail; d=collabora.com; i=adrian.larumbe@collabora.com;
 	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=kjtahGPaTpINYYZfuLGp4VkVf+IQcM1cz95cqRqH8GE=;
-	b=HXboe/njq5d/+cVgEc7927qDFDglAi8ZLe2tk/IF4tO9SpNFUyCQ9fh77+Y/Dv+f
-	bsmqsrbjzTwEz5Iehg0e0hioxAkqmEmISfpOx7Wfyb9sCKg0cYX0Zroy5r//1wSAxER
-	mFClzVHePVTypNGMHqf4Iv5EX7D+OMx2qFM2K2/c=
-Received: by mx.zohomail.com with SMTPS id 1733338212967952.7450718448498;
-	Wed, 4 Dec 2024 10:50:12 -0800 (PST)
+	bh=ttdCHXLB8sd6tHbLHmHbCUNcVhrUROqKuRsqIlLsEfs=;
+	b=DuZHHq97v8Lqhb05c0l45V1Ms6CyBedZGo9waSERKQjOrfc0p5QoFYdRTQiJplMe
+	z7Ry0uUd4NET4c/hycnqfOQgXs2yzbgIe3YEjInOU9Ect5cx5sN08pL0idOsu8HeGgs
+	Y6rWG0pZt7xhhZswzx1bobjIyC0UtdX+c5D55iWc=
+Received: by mx.zohomail.com with SMTPS id 1733338215510420.7367774673804;
+	Wed, 4 Dec 2024 10:50:15 -0800 (PST)
 From: =?UTF-8?q?Adri=C3=A1n=20Larumbe?= <adrian.larumbe@collabora.com>
 To: Boris Brezillon <boris.brezillon@collabora.com>,
 	Rob Herring <robh@kernel.org>,
@@ -64,9 +64,9 @@ Cc: kernel@collabora.com,
 	=?UTF-8?q?Adri=C3=A1n=20Larumbe?= <adrian.larumbe@collabora.com>,
 	dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 2/9] drm/panfrost: Handle inexistent GPU during probe
-Date: Wed,  4 Dec 2024 18:49:31 +0000
-Message-ID: <20241204184945.1477677-3-adrian.larumbe@collabora.com>
+Subject: [PATCH v3 3/9] drm/panfrost: Handle job HW submit errors
+Date: Wed,  4 Dec 2024 18:49:32 +0000
+Message-ID: <20241204184945.1477677-4-adrian.larumbe@collabora.com>
 X-Mailer: git-send-email 2.47.0
 In-Reply-To: <20241204184945.1477677-1-adrian.larumbe@collabora.com>
 References: <20241204184945.1477677-1-adrian.larumbe@collabora.com>
@@ -79,63 +79,80 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Just in case we're dealing with a yet not recognised device.
+Avoid waiting for the DRM scheduler job timedout handler, and instead, let
+the DRM scheduler core signal the error fence immediately when HW job
+submission fails.
 
-Reviewed-by: Steven Price <steven.price@arm.com>
+That means we must also decrement the runtime-PM refcnt for the device,
+because the job will never be enqueued or inflight.
+
+Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
 Signed-off-by: Adrián Larumbe <adrian.larumbe@collabora.com>
 ---
- drivers/gpu/drm/panfrost/panfrost_gpu.c | 15 +++++++++++++--
- 1 file changed, 13 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/panfrost/panfrost_job.c | 20 ++++++++++++++++----
+ 1 file changed, 16 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpu/drm/panfrost/panfrost_gpu.c b/drivers/gpu/drm/panfrost/panfrost_gpu.c
-index f94337a6c302..8d049a07d393 100644
---- a/drivers/gpu/drm/panfrost/panfrost_gpu.c
-+++ b/drivers/gpu/drm/panfrost/panfrost_gpu.c
-@@ -240,9 +240,10 @@ static const struct panfrost_model gpu_models[] = {
- 	/* MediaTek MT8188 Mali-G57 MC3 */
- 	GPU_MODEL(g57, 0x9093,
- 		GPU_REV(g57, 0, 0)),
-+	{0},
- };
- 
--static void panfrost_gpu_init_features(struct panfrost_device *pfdev)
-+static int panfrost_gpu_init_features(struct panfrost_device *pfdev)
- {
- 	u32 gpu_id, num_js, major, minor, status, rev;
- 	const char *name = "unknown";
-@@ -327,6 +328,12 @@ static void panfrost_gpu_init_features(struct panfrost_device *pfdev)
- 		break;
- 	}
- 
-+	if (!model->name) {
-+		dev_err(pfdev->base.dev, "GPU model not found: mali-%s id rev %#x %#x\n",
-+			name, gpu_id, rev);
-+		return -ENODEV;
-+	}
-+
- 	bitmap_from_u64(pfdev->features.hw_features, hw_feat);
- 	bitmap_from_u64(pfdev->features.hw_issues, hw_issues);
- 
-@@ -347,6 +354,8 @@ static void panfrost_gpu_init_features(struct panfrost_device *pfdev)
- 
- 	dev_info(pfdev->base.dev, "shader_present=0x%0llx l2_present=0x%0llx",
- 		 pfdev->features.shader_present, pfdev->features.l2_present);
-+
-+	return 0;
+diff --git a/drivers/gpu/drm/panfrost/panfrost_job.c b/drivers/gpu/drm/panfrost/panfrost_job.c
+index f640d211cc3a..83bc74f6044e 100644
+--- a/drivers/gpu/drm/panfrost/panfrost_job.c
++++ b/drivers/gpu/drm/panfrost/panfrost_job.c
+@@ -195,7 +195,7 @@ panfrost_enqueue_job(struct panfrost_device *pfdev, int slot,
+ 	return 1;
  }
  
- void panfrost_cycle_counter_get(struct panfrost_device *pfdev)
-@@ -489,7 +498,9 @@ int panfrost_gpu_init(struct panfrost_device *pfdev)
- 	if (err)
- 		return err;
+-static void panfrost_job_hw_submit(struct panfrost_job *job, int js)
++static int panfrost_job_hw_submit(struct panfrost_job *job, int js)
+ {
+ 	struct panfrost_device *pfdev = job->pfdev;
+ 	unsigned int subslot;
+@@ -207,10 +207,11 @@ static void panfrost_job_hw_submit(struct panfrost_job *job, int js)
  
--	panfrost_gpu_init_features(pfdev);
-+	err = panfrost_gpu_init_features(pfdev);
-+	if (err)
-+		return err;
+ 	ret = pm_runtime_get_sync(pfdev->base.dev);
+ 	if (ret < 0)
+-		return;
++		goto err_hwsubmit;
  
- 	err = dma_set_mask_and_coherent(pfdev->base.dev,
- 					DMA_BIT_MASK(FIELD_GET(0xff00,
+ 	if (WARN_ON(job_read(pfdev, JS_COMMAND_NEXT(js)))) {
+-		return;
++		ret = -EINVAL;
++		goto err_hwsubmit;
+ 	}
+ 
+ 	cfg = panfrost_mmu_as_get(pfdev, job->mmu);
+@@ -261,6 +262,12 @@ static void panfrost_job_hw_submit(struct panfrost_job *job, int js)
+ 			job, js, subslot, jc_head, cfg & 0xf);
+ 	}
+ 	spin_unlock(&pfdev->js->job_lock);
++
++	return 0;
++
++err_hwsubmit:
++	pm_runtime_put_autosuspend(pfdev->base.dev);
++	return ret;
+ }
+ 
+ static int panfrost_acquire_object_fences(struct drm_gem_object **bos,
+@@ -382,6 +389,7 @@ static struct dma_fence *panfrost_job_run(struct drm_sched_job *sched_job)
+ 	struct panfrost_device *pfdev = job->pfdev;
+ 	int slot = panfrost_job_get_slot(job);
+ 	struct dma_fence *fence = NULL;
++	int ret;
+ 
+ 	if (unlikely(job->base.s_fence->finished.error))
+ 		return NULL;
+@@ -400,7 +408,11 @@ static struct dma_fence *panfrost_job_run(struct drm_sched_job *sched_job)
+ 		dma_fence_put(job->done_fence);
+ 	job->done_fence = dma_fence_get(fence);
+ 
+-	panfrost_job_hw_submit(job, slot);
++	ret = panfrost_job_hw_submit(job, slot);
++	if (ret) {
++		dma_fence_put(fence);
++		return ERR_PTR(ret);
++	}
+ 
+ 	return fence;
+ }
 -- 
 2.47.0
 
