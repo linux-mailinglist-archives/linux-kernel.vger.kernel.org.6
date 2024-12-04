@@ -1,95 +1,152 @@
-Return-Path: <linux-kernel+bounces-430660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B4C79E3431
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 08:39:45 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1918A9E343D
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 08:42:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 105AC280F67
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 07:39:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 77678B27B37
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 07:42:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C0CE18C907;
-	Wed,  4 Dec 2024 07:39:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FC1A18FDBD;
+	Wed,  4 Dec 2024 07:42:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lyg8RjUG"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LqvDH7UT"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5E5213D281;
-	Wed,  4 Dec 2024 07:39:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67B0218E025;
+	Wed,  4 Dec 2024 07:42:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733297979; cv=none; b=NT3fMrlIFMsAjry5/IP6aTAwa3iwuNVh/v9r4RIFUgKhicjkeMHWr8MInFIbUjCCiuTrTQQVH22H+qp4P3JiIvqJGoQXcSAepBxCps42Poip0beTdymEdWZIyFgAvBLsIkOyi+p7KKEGccnZRpXGXycanvCtjShgO/qV4AMxE8M=
+	t=1733298153; cv=none; b=pRzbvjtDWe8b0MK0bWvvJS5pYnPq51BoavkJ5yBVOerGLlDlVICyK9pf4F3AbZjHtz2QlZ2rJBfuadjWxhO9qxJgDBZVe4NdwW2ECV6Ais+AilWRF3wwZ7tJpjdDK8zzzTnlzjZ8ez8OLscKb6vXapCB7L60iGyoZFBV4tT4O7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733297979; c=relaxed/simple;
-	bh=OZXyxFp5uWXU4+gtNDcxN94xsKibQqokm4SOMt4Xt5Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eSHjB/uMFKkfUePk38OjAKtQynghOB8ZH1LWsl/AxJwWAgZfatnuNUF9JDLWepiHi/IsNwbjermdECs2v4IceXfpFEygzBReFeZTguAZBL4VROD2/HtsuqwzLwQO3Eia5AO0lzxOZfwMK5XlGCKV0aI0vce+2aU69JgyvxdXpU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lyg8RjUG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D646C4CED1;
-	Wed,  4 Dec 2024 07:39:37 +0000 (UTC)
+	s=arc-20240116; t=1733298153; c=relaxed/simple;
+	bh=K42FUlB9Nt15dod2oykG+ZKdZDbK5Uic2xMqq2DGkdE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kb7UjqGtz7p2Hem7GVyloMb5OjZkes1g30MB5exYAj3dqkXKgtds9YhhxCY4i5GE6HWgVZJsr5jduuZDkTwQMD46pXF7QhIU7mHQ32vc2CEDECwCG/qF8LRUOXGlkxyXafQXA24L852CUoR6LlD0jmKnxy9HP5KQIbMlTlBWZmE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LqvDH7UT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1179C4CEE2;
+	Wed,  4 Dec 2024 07:42:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733297978;
-	bh=OZXyxFp5uWXU4+gtNDcxN94xsKibQqokm4SOMt4Xt5Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lyg8RjUGEl2gykO3cMw2tW7YE9qGqj3QwcLCyiSYGF8nZakDz4PXSmeILOTBxhian
-	 nTYR9rhzSDSt5uTlCPM/pP6n2XiPQMn8tB3oPMAZic+P4gyILBUzUZHMElyT9qmUUW
-	 hJr8S2Twk6DORz+F+XqCe3Tf3OvXY0txcULPWNW/vANxL5EnEg/d07W2hGt3b860ID
-	 VqFKGOqt+kTmlRbvkxxdBmdzlG3YNEEW72B/Rj9oU5lb5apCGLOAsLqMLZhyOiggX0
-	 w050em0y8RPkWSFtU6v/tfkAD5eG2er6wPX5c5Q1agAQ7GVKYLrt951bkKGLd7WSQZ
-	 3fEA8Rr7Rvpqg==
-Date: Wed, 4 Dec 2024 08:39:34 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, quentin.schulz@cherry.de, 
-	sebastian.reichel@collabora.com, linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	dse@thaumatec.com, Heiko Stuebner <heiko.stuebner@cherry.de>, 
-	Conor Dooley <conor.dooley@microchip.com>
-Subject: Re: [PATCH v5 1/2] dt-bindings: phy: Add Rockchip MIPI C-/D-PHY
- schema
-Message-ID: <mdlcm57lway2wqwh7tp6bj6mi3nlwuaeadbsmgx3h6kcfdisq5@76ikce4yqfs4>
-References: <20241203164934.1500616-1-heiko@sntech.de>
- <20241203164934.1500616-2-heiko@sntech.de>
+	s=k20201202; t=1733298153;
+	bh=K42FUlB9Nt15dod2oykG+ZKdZDbK5Uic2xMqq2DGkdE=;
+	h=From:To:Cc:Subject:Date:From;
+	b=LqvDH7UTcropXYAHcM9fkPDByy/hd+aN0GQ4GZ2chTEfCE+ivCxoFhV4ax6MIYzPV
+	 voJrBu+wXtCDPmsHvBRH0lfq7n6OWd6uyQLOSVBKox0Tt/coE5jqDqPxUp6p0Mp4Dn
+	 8x3t+GkDtf7wa0nhV1zRcFTtbViVVHt5bIwxP99stK89A3BNE/AqACLe3vRA9qzV73
+	 m7h+IHOhN29WWAlNH64PHkxQzOhDOiK7SL1wCYzyp+0lTI0N+3ubimlPQP/py1RI6j
+	 66Y5DAEmmwg14Nnqdtkokvsdfacn1txlrvVC2vGEYB1GWHDIaFRy8HHMEkkc4jEnP3
+	 z9Gatb+nnksig==
+Received: from mchehab by mail.kernel.org with local (Exim 4.98)
+	(envelope-from <mchehab+huawei@kernel.org>)
+	id 1tIk1m-00000004Kif-3t7i;
+	Wed, 04 Dec 2024 08:42:30 +0100
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Igor Mammedov <imammedo@redhat.com>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Shiju Jose <shiju.jose@huawei.com>,
+	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Ani Sinha <anisinha@redhat.com>,
+	Dongjiu Geng <gengdongjiu1@gmail.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Peter Maydell <peter.maydell@linaro.org>,
+	Shannon Zhao <shannon.zhaosl@gmail.com>,
+	kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	qemu-arm@nongnu.org,
+	qemu-devel@nongnu.org
+Subject: [PATCH v5 00/16] Prepare GHES driver to support error injection
+Date: Wed,  4 Dec 2024 08:41:08 +0100
+Message-ID: <cover.1733297707.git.mchehab+huawei@kernel.org>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241203164934.1500616-2-heiko@sntech.de>
+Content-Transfer-Encoding: 8bit
+Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-On Tue, Dec 03, 2024 at 05:49:31PM +0100, Heiko Stuebner wrote:
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - rockchip,rk3576-mipi-dcphy
-> +      - rockchip,rk3588-mipi-dcphy
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  "#phy-cells":
-> +    const: 1
-> +    description: |
-> +      Argument is mode to operate in. Supported modes are:
-> +        - PHY_TYPE_DPHY
-> +        - PHY_TYPE_CPHY
-> +      See include/dt-bindings/phy/phy.h for constants.
+During the development of a patch series meant to allow GHESv2 error injections,
+it was requested a change on how CPER offsets are calculated, by adding a new
+BIOS pointer and reworking the GHES logic. See:
 
+https://lore.kernel.org/qemu-devel/cover.1726293808.git.mchehab+huawei@kernel.org/
 
-That's the only difference from version I gave review. It is approved
-style of passing phy type/mode, so adding this is not valid reason to
-drop my review tag and request re-review.
+Such change ended being a big patch, so several intermediate steps are needed,
+together with several cleanups and renames.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+As agreed during v10 review, I'll be splitting the big patch series into separate pull 
+requests, starting with the cleanup series. This is the first patch set, containing
+only such preparation patches.
 
-Best regards,
-Krzysztof
+The next series will contain the shift to use offsets from the location of the
+HEST table, together with a migration logic to make it compatible with 9.1.
+
+---
+
+v5:
+- added a new patch:
+  acpi/ghes: don't check if physical_address is not zero
+- removed a duplicated le64_to_cpu();
+- changed a comment about writing 1 to read ack register.
+
+v4:
+- merged a patch renaming the function which calculate offsets to:
+  get_hw_error_offsets(), to avoid the need of such change at the next
+  patch series;
+- removed a functional change at the logic which makes
+  the GHES record generation more generic;
+- a couple of trivial changes on patch descriptions and line break cleanups.
+
+v3:
+- improved some patch descriptions;
+- some patches got reordered to better reflect the changes;
+- patch v2 08/15: acpi/ghes: Prepare to support multiple sources on ghes
+  was split on two patches. The first one is in this cleanup series:
+      acpi/ghes: Change ghes fill logic to work with only one source
+  contains just the simplification logic. The actual preparation will
+  be moved to this series:
+     https://lore.kernel.org/qemu-devel/cover.1727782588.git.mchehab+huawei@kernel.org/
+
+v2: 
+- some indentation fixes;
+- some description improvements;
+- fixed a badly-solved merge conflict that ended renaming a parameter.
+
+Mauro Carvalho Chehab (16):
+  acpi/ghes: get rid of ACPI_HEST_SRC_ID_RESERVED
+  acpi/ghes: simplify acpi_ghes_record_errors() code
+  acpi/ghes: simplify the per-arch caller to build HEST table
+  acpi/ghes: better handle source_id and notification
+  acpi/ghes: Fix acpi_ghes_record_errors() argument
+  acpi/ghes: Remove a duplicated out of bounds check
+  acpi/ghes: Change the type for source_id
+  acpi/ghes: don't check if physical_address is not zero
+  acpi/ghes: make the GHES record generation more generic
+  acpi/ghes: better name GHES memory error function
+  acpi/ghes: don't crash QEMU if ghes GED is not found
+  acpi/ghes: rename etc/hardware_error file macros
+  acpi/ghes: better name the offset of the hardware error firmware
+  acpi/ghes: move offset calculus to a separate function
+  acpi/ghes: Change ghes fill logic to work with only one source
+  docs: acpi_hest_ghes: fix documentation for CPER size
+
+ docs/specs/acpi_hest_ghes.rst  |   6 +-
+ hw/acpi/generic_event_device.c |   4 +-
+ hw/acpi/ghes-stub.c            |   2 +-
+ hw/acpi/ghes.c                 | 259 +++++++++++++++++++--------------
+ hw/arm/virt-acpi-build.c       |   5 +-
+ include/hw/acpi/ghes.h         |  16 +-
+ target/arm/kvm.c               |   2 +-
+ 7 files changed, 169 insertions(+), 125 deletions(-)
+
+-- 
+2.47.1
+
 
 
