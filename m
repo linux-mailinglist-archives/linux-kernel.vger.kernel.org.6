@@ -1,408 +1,174 @@
-Return-Path: <linux-kernel+bounces-432188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 499829E4708
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 22:40:40 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B8A2318800FF
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 21:40:39 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80B842066EF;
-	Wed,  4 Dec 2024 21:38:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="BTHybL10"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2088.outbound.protection.outlook.com [40.107.223.88])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CB759E46F5
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 22:38:56 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 387D3202C57
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 21:38:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.88
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733348333; cv=fail; b=PEoAg7AWM7NMc/sHcHDNupzLdy5Fqu2Ob+U++B3010GE73kDYKS1TjwRm2DNUG7Q81xaZNw23wQkeEayJmrq0laKQVSkvq0haeO4y7xclGzwR/nooENJXxjit+0EuIaH277ePe/3w9vQ8s2IcYBuOiJNmTS53HoqGbJ8hGEPj5M=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733348333; c=relaxed/simple;
-	bh=faILLQ0K/A4xVMbTbe2ijH+d0QteHoVqmGT9HDSKVII=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Y7XIISbaDstgS1r0rs0W9rvb8Q9omxqXSB+gqpOK8FLxjhF0krN35hDI7V30cDT4DwNMA4zjFmRcZDtlFLHIKDjOq4/caQL/dwCpzjZ54AIvZtgbiIpnbBoj+l1T0vKZ0Zq7wWqqEbHkvyYwR2axs/K3rdqfzaVLPJvS5FiABPw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=BTHybL10; arc=fail smtp.client-ip=40.107.223.88
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=iRiMVoi80pRXedK6XaMWOpUuf9Qe+iFpfnTPQR3XHtCzCtNLBMoWT3aiUJtfvg97cd2tViI0DQ/G8GUT+PLsmdqaJZ5d40YFgHqC6oTOsnwQGTJr1EYYafv//xnl5pO4VptNGhmGLpXp4SD4H8aNDOqgn7WZSv1EnFTzfhrGNYwSz8QXqrLZDNnYoUH/wP8iDvpku+/dGvS2N4ZDvgGIyYzsB82ua73Y+0Q3f5H5T+9+TC2u2nHENZQHiIAQEo4XvEmayE+NrImRjiPyThLus5ZvAzn4DUOz55XOYZmk2OOJtMAUUzEy/ieh9GazwPn7FkHHm0qF7+IVNH2KCtt3Zw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9JD9iEkpsR/D34L2zmydsjU3gvB5+MR4TzJdf9I8yoA=;
- b=PG4bXtqhqAeYZS+EI1ic02nHj+FXe1OTD3hueTcD2gS4m0qMlL9Rr5DVYUnG96b9qYA/CExCHfz7QC6cjbM/RuywUckITlDp0ZpillzHgrpVnp2jk4vcKjYALL/mLZXrK4g1R0jI0MMGwKREVcgrwF6hm/bF40b2pZtJGlTSfSGhzs+2QNu6I4/ls5IdkRd8zSCznlEumnw2xhK2WE4ZAYREKlxHcUDZJ0iZMbJ6+qD7K3BjIn/X4ioIwYAVjyQLyDadzMwuQ/xYbC4q3fCtl9TwnBlBBOhDeNqYGt/hWzWgmlvg3YQ7WuKaAkbfp1UvcYX/69wXUi9cl+NK79EBNQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9JD9iEkpsR/D34L2zmydsjU3gvB5+MR4TzJdf9I8yoA=;
- b=BTHybL10VCEd3hQeTNJ0wqQoUauq4SuWd/Fd0mVMTrFjYql/jVl7sEsz1hVV46lAfBkUiec31Jz/M6g4+ptImZeXPXKM9VFSzSU/iWbfUUN3NcPUyT4GxXCRHSoQjQjzN/Oa1K7n1nXwqYfEVS6mRGK4R+nVwqWnUWz7sOTG2dY=
-Received: from CH2PR05CA0004.namprd05.prod.outlook.com (2603:10b6:610::17) by
- BY5PR12MB4147.namprd12.prod.outlook.com (2603:10b6:a03:205::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.20; Wed, 4 Dec
- 2024 21:38:45 +0000
-Received: from CH1PEPF0000AD82.namprd04.prod.outlook.com
- (2603:10b6:610:0:cafe::53) by CH2PR05CA0004.outlook.office365.com
- (2603:10b6:610::17) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8230.12 via Frontend Transport; Wed,
- 4 Dec 2024 21:38:45 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
-Received: from SATLEXMB03.amd.com (165.204.84.17) by
- CH1PEPF0000AD82.mail.protection.outlook.com (10.167.244.91) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8230.7 via Frontend Transport; Wed, 4 Dec 2024 21:38:45 +0000
-Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 4 Dec
- 2024 15:38:44 -0600
-Received: from xsjlizhih51.xilinx.com (10.180.168.240) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Wed, 4 Dec 2024 15:38:43 -0600
-From: Lizhi Hou <lizhi.hou@amd.com>
-To: <ogabbay@kernel.org>, <quic_jhugo@quicinc.com>,
-	<dri-devel@lists.freedesktop.org>
-CC: Lizhi Hou <lizhi.hou@amd.com>, <linux-kernel@vger.kernel.org>,
-	<min.ma@amd.com>, <max.zhen@amd.com>, <sonal.santan@amd.com>,
-	<king.tam@amd.com>, <mario.limonciello@amd.com>
-Subject: [PATCH V1 7/7] accel/amdxdna: Read firmware interface version from registers
-Date: Wed, 4 Dec 2024 13:37:29 -0800
-Message-ID: <20241204213729.3113941-8-lizhi.hou@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241204213729.3113941-1-lizhi.hou@amd.com>
-References: <20241204213729.3113941-1-lizhi.hou@amd.com>
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0CA752825EF
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 21:38:55 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 789DB1A8F76;
+	Wed,  4 Dec 2024 21:37:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b="gIGEHX8k"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6FEA192B7F
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 21:37:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733348240; cv=none; b=j8D+KHlw6TrCPUZeBTz43rx3i89VnZFw60n+XV/UJOVLsegwktT7ZxPu3q4LRIwKOPGSFAPoyNfLx+25JrVIFC7xdkfRHY3Gj83ae8MYfjUE7oDyil57pxQi2VIn1M65palkQ2EBcH6CfwQYtnhNFBNKtsLwyCe/+1vzsYmkoso=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733348240; c=relaxed/simple;
+	bh=fy+pxMrmnsyQfFxxdCTaRGfuEvaDxfL5SPDCrXubOnA=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=GPhbEOnUqqO3MZDCAEPpZvygrmPF/Gdjze6id0OhGpbpQ0sQP+hOmr8dy7QLuZEKFJal/KOGKm3t59HRWx/IYA+WJts/eiM2drWa5tnpLUGvj/78KItg0jcY+j3EVynsDIprE+3iZsbl0j7WZT3rHKfxxA8gXPKbOCslZ2jlZGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net; spf=pass smtp.mailfrom=openvpn.com; dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b=gIGEHX8k; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=openvpn.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-aa51b8c5f4dso26766566b.2
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 13:37:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=openvpn.net; s=google; t=1733348237; x=1733953037; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:from:subject:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=W4IDpXfDUAONKq+cWOVBMq9xtvXDC36Ij7SjYZaH4g8=;
+        b=gIGEHX8kj67hBcvLHFlB3hrVnuT37dpNnu+/8lObBZxl5Dtptmkehpez9Em5eiFrTE
+         T+qygC+MsM8Q6OMp+yYFwVWGYDTCe5cgNefc6RjPd+sA9zAvyA9iQLwOsklpXnoXAfV4
+         w97dcUIet4Ql0vHOxenpMoRSg3nEGywtaXdtQOjxWk8LBWOpukX1pab9tJRXmRAQ9DtM
+         AcVVtnEwaiG/yYOJSaJ0Y4zM449d3KmslqbKE4n+IaKYvZM1yK4m8Rn0meqG0k0TVV0t
+         SHaQ/eIT3ZtO+PUfAaSv8NBaETKXK/L6/EfGpHR8RSC65dsIeBRLVKniKZNI8IYIvxWA
+         Cucw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733348237; x=1733953037;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:from:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=W4IDpXfDUAONKq+cWOVBMq9xtvXDC36Ij7SjYZaH4g8=;
+        b=Ciyp2ck7aYaoaml5gzVdBJ2OSyQjqom2GTusQ4vIizRzK6Fwjq4EkoMt5mghOYw/tA
+         kC+6Y/dAJ5/H4SQUQhKceigfaXJ4MLVwmirz/YdHdi6tpI0FSa1MtMTvh2STdK7rmiQs
+         Ly4f0n3bhxawI55/LY8VCz9DqTz8G0uXOr72ybwMxy4OVj97bkvYHNGMZ4n6UK8Yt18y
+         YkAw9oovgks8QIJANtkTXHk9GgmlBjGm6iy08ALb26Fm9Rdjmyh2lKYUmcH1m3Yy6XUw
+         NcjFuJRHHkBSdgSKHAVGRZeG7Nksr9g12n/WtyOEf1/vxfaMHwddGI1Vcig9wBUanFjp
+         dSBw==
+X-Forwarded-Encrypted: i=1; AJvYcCX+7uNWshD70jDwWNDOYUvSbcaR2XqMsXKlYKitoAqOIGTq+hhynAsU75H1ujP0SbLKiO6TLmwA1Ub1ix8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+qPopmrKwt7DwwSoskjaDif2y4WVUSCfu0DH4J4Cp7s0U5C9R
+	D/wRKy3Nfd5y4SPJ6+0O2QzipGyChU6OoXF08GoUIZStyJzxSicwElrqoWNcYhw=
+X-Gm-Gg: ASbGnct3oM66xLFcNl+xf2cQWqIZjPhYkAjosKMzvbeCiYmYdbGrobpB5MuQN5uYXyp
+	4B+PhmmOAMSh15FWpwkA0/2Me8sJNDV1fRgJN6soggOrTUMT7zavK0ibHPW1nO3y0GdfZxWsYZ0
+	3iLVONfEZad/ytwQtNst7YgO6b2rpTU5xqEwLxw6BLzeUwbAUdl+MZ1yS0uLicAo45LfO+wYOYM
+	/RndpqHbnDxkbKH9b4bI3FyFw6Nv5NOli9WSoe9d1ZljvX3vU2P6AIFR4KdAK4O0Kfkag3g16fT
+	uN97EQGL1uvn
+X-Google-Smtp-Source: AGHT+IGAORJ+Dk+2ScYG31kssFqIu3BwXeqwBMZ24RDyqCAL/h2XcG5Eo/2ESGkKXI1Zgcbz8dhQsQ==
+X-Received: by 2002:a17:906:218a:b0:aa5:f331:e052 with SMTP id a640c23a62f3a-aa5f7eee063mr618419866b.40.1733348236929;
+        Wed, 04 Dec 2024 13:37:16 -0800 (PST)
+Received: from ?IPV6:2001:67c:2fbc:1:9715:a35f:73a4:7403? ([2001:67c:2fbc:1:9715:a35f:73a4:7403])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa62608d2fbsm4615066b.149.2024.12.04.13.37.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 04 Dec 2024 13:37:16 -0800 (PST)
+Message-ID: <af88a027-61ca-44f2-8d93-43d06076e2a6@openvpn.net>
+Date: Wed, 4 Dec 2024 22:37:56 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v12 11/22] ovpn: implement TCP transport
+From: Antonio Quartulli <antonio@openvpn.net>
+To: Paolo Abeni <pabeni@redhat.com>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Donald Hunter <donald.hunter@gmail.com>,
+ Shuah Khan <shuah@kernel.org>, sd@queasysnail.net, ryazanov.s.a@gmail.com,
+ Andrew Lunn <andrew@lunn.ch>
+Cc: Simon Horman <horms@kernel.org>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+References: <20241202-b4-ovpn-v12-0-239ff733bf97@openvpn.net>
+ <20241202-b4-ovpn-v12-11-239ff733bf97@openvpn.net>
+ <784fddc4-336c-4674-8277-c7cebea6b94f@redhat.com>
+ <2a1b614c-c52d-44c7-8cb8-c68a8864508d@openvpn.net>
+Content-Language: en-US
+Autocrypt: addr=antonio@openvpn.net; keydata=
+ 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
+Organization: OpenVPN Inc.
+In-Reply-To: <2a1b614c-c52d-44c7-8cb8-c68a8864508d@openvpn.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-Received-SPF: None (SATLEXMB03.amd.com: lizhi.hou@amd.com does not designate
- permitted sender hosts)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH1PEPF0000AD82:EE_|BY5PR12MB4147:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1fa0bbac-422e-4d61-53c1-08dd14ac07eb
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|1800799024|36860700013|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?uIdm2Of59yQr/jQqwbE/U2MKZACYigduIjix2GpwHfgYIwVW9JOSSRfdaiRA?=
- =?us-ascii?Q?QIfikOJXTWqL8phoqAn6h3p+nBW3hWC83ZiRt7r5lTFuuiyRKrYGfT+REKac?=
- =?us-ascii?Q?HEDbW5ehvHfjxf60FoouMp5DvH4Pahc+q6HpjwJ3lJ1ULVNqmpyJhivA84xq?=
- =?us-ascii?Q?K4w9qB2Gxh79n9PmspRTT1MKlqjzdhu9ygCtcTUgh1joIWSiYaxS6zarWfyI?=
- =?us-ascii?Q?onJIyLM+LwBqUvVhd8Njsih71el4Jug/1jVT41TqDYNXX5vliOfT8pDC9gKu?=
- =?us-ascii?Q?feZ7Bllx3GOcBQ79VS1saErN42NIHdfoxe2hsgqS+P9Jcy+/D9I5nUnS7+t7?=
- =?us-ascii?Q?FmzYVu9iqpiUH+NifRHuJey9Pc4mZXXEd2bho2NA0/pmMd23rwETlIzRQfos?=
- =?us-ascii?Q?Cu9Ve+zJHVoENtgnKIlpHXLkVZL4CHs/gpiX7xSrBLBRGaLpTRANZYgk2rvw?=
- =?us-ascii?Q?OyhiQw3P2jV1GA7DRpeIiwUS1fSQWqAuQTZLvhPbH1qxn88sq6pRZx+Yztzn?=
- =?us-ascii?Q?tJhLZyIXPM1CSAPfBOGmQNH+FbntijU6sdLrMJPDIVn49dFAz1uCIwgkiGlr?=
- =?us-ascii?Q?pmoGdEBgdxAm4bhQcwXyOkZl0Ti/6mJ6k4dWakoojq8dAfKXVbsSxilIIcM/?=
- =?us-ascii?Q?KaWMOL6YTIBDaNhcBisBzu4xhxE4IZY+m7MYzlYn88LXok4Sqmy1QyQleVUH?=
- =?us-ascii?Q?zAh6TRxvFnoHz6Rvlphd/cxsnR/kwCduvkD822nxyxJt1BSb5MKyyZuUOue+?=
- =?us-ascii?Q?/PWAX9+aKqYRJOgLrE7dEAv+rD/QlNFVxsoYDirkq9bliPW6kRr7vPNq07uX?=
- =?us-ascii?Q?Ir8JKJwzGALD9u2u4if5iD9I2KF7BCOEYWdFKa7LsCFTGmPaQ7azPvkw3W0d?=
- =?us-ascii?Q?kEZtT6/9I1+B7VpunXPT4VkKwb4YytkhZmYKnUligQbn1VEOfeyZEX6ZuWQO?=
- =?us-ascii?Q?8timzHk1pYnQDojs7/8ZjGR4DoHijQxlEO8OsTS0GtCKWYwheUVgejsLwJ2W?=
- =?us-ascii?Q?erxH2efSBPYkkSyTi9NwRybhdNSp/D9lV658QPwY0jXfilZ0LcdlVNEHDU/e?=
- =?us-ascii?Q?ANED1g/MXPHkzTPqcWKa4sxAv0y4Fn2NcbaGJVt6E1rspqfxsO+pyLhcgyhp?=
- =?us-ascii?Q?vC8mK9/oKcUpfkkNJ4+hklJBeg/LO+TEJ/3a5EJxJaJaTOBmErf5wVbXgfYF?=
- =?us-ascii?Q?8avmCyEt2iHq5z9wzEOPEv+wwrUzI6L17fbeEi76Y88Dbx+7dMh3SgP2K7+t?=
- =?us-ascii?Q?c2aa+ORU78xXt50aJfxHWz4v/9UEQOJ4ydbVUmbkQ2Vdb+8JP+v/rFgMhOQY?=
- =?us-ascii?Q?V66a9mbM1jHV0EouL3wLM9fJdojtwQOdTBpUOHOUgiLK2RjIVJrmL9TrJEQJ?=
- =?us-ascii?Q?z877MXA7MKi4VD+TxJ7f0MUaYOeBVjj1MHGVIeru+/35BiWo5Eelbz/pxnX6?=
- =?us-ascii?Q?acQAb/bxCJVEGunxUvu+0KOwgmR3eUHW?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(36860700013)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Dec 2024 21:38:45.5334
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1fa0bbac-422e-4d61-53c1-08dd14ac07eb
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CH1PEPF0000AD82.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4147
 
-The latest released firmware supports reading firmware interface version
-from registers directly. The driver's probe routine reads the major and
-minor version numbers. If the firmware interface does not compatible with
-the driver, the driver's probe routine returns failure.
+On 04/12/2024 12:15, Antonio Quartulli wrote:
+[...]
+>>> +static void ovpn_tcp_close(struct sock *sk, long timeout)
+>>> +{
+>>> +    struct ovpn_socket *sock;
+>>> +
+>>> +    rcu_read_lock();
+>>> +    sock = rcu_dereference_sk_user_data(sk);
+>>> +
+>>> +    strp_stop(&sock->peer->tcp.strp);
+>>> +    barrier();
+>>
+>> Again, is not clear to me the role of the above barrier, please 
+>> document it.
+> 
+> Also taken from espintcp_close(), with the idea to avoid reordering 
+> during the shut down sequence.
+> 
+> Will add a comment here too.
 
-Co-developed-by: Min Ma <min.ma@amd.com>
-Signed-off-by: Min Ma <min.ma@amd.com>
-Signed-off-by: Lizhi Hou <lizhi.hou@amd.com>
----
- drivers/accel/amdxdna/aie2_message.c | 26 ----------
- drivers/accel/amdxdna/aie2_pci.c     | 74 ++++++++++++++++++++++------
- drivers/accel/amdxdna/aie2_pci.h     |  6 +--
- drivers/accel/amdxdna/npu1_regs.c    |  2 +-
- drivers/accel/amdxdna/npu2_regs.c    |  2 +-
- drivers/accel/amdxdna/npu4_regs.c    |  2 +-
- drivers/accel/amdxdna/npu5_regs.c    |  2 +-
- 7 files changed, 64 insertions(+), 50 deletions(-)
+Actually, after checking this specific barrier(), I realized this is not 
+needed, because we are doing the socket detach later, after calling the 
+ovpn_peer_del() (which is different from what is happening in espintcp).
 
-diff --git a/drivers/accel/amdxdna/aie2_message.c b/drivers/accel/amdxdna/aie2_message.c
-index 13b5a96f8d25..f6d46e1e5086 100644
---- a/drivers/accel/amdxdna/aie2_message.c
-+++ b/drivers/accel/amdxdna/aie2_message.c
-@@ -100,32 +100,6 @@ int aie2_get_runtime_cfg(struct amdxdna_dev_hdl *ndev, u32 type, u64 *value)
- 	return 0;
- }
- 
--int aie2_check_protocol_version(struct amdxdna_dev_hdl *ndev)
--{
--	DECLARE_AIE2_MSG(protocol_version, MSG_OP_GET_PROTOCOL_VERSION);
--	struct amdxdna_dev *xdna = ndev->xdna;
--	int ret;
--
--	ret = aie2_send_mgmt_msg_wait(ndev, &msg);
--	if (ret) {
--		XDNA_ERR(xdna, "Failed to get protocol version, ret %d", ret);
--		return ret;
--	}
--
--	if (resp.major != ndev->priv->protocol_major) {
--		XDNA_ERR(xdna, "Incompatible firmware protocol version major %d minor %d",
--			 resp.major, resp.minor);
--		return -EINVAL;
--	}
--
--	if (resp.minor < ndev->priv->protocol_minor) {
--		XDNA_ERR(xdna, "Firmware minor version smaller than supported");
--		return -EINVAL;
--	}
--
--	return 0;
--}
--
- int aie2_assign_mgmt_pasid(struct amdxdna_dev_hdl *ndev, u16 pasid)
- {
- 	DECLARE_AIE2_MSG(assign_mgmt_pasid, MSG_OP_ASSIGN_MGMT_PASID);
-diff --git a/drivers/accel/amdxdna/aie2_pci.c b/drivers/accel/amdxdna/aie2_pci.c
-index 489744a2e226..2d2b6b66617a 100644
---- a/drivers/accel/amdxdna/aie2_pci.c
-+++ b/drivers/accel/amdxdna/aie2_pci.c
-@@ -33,17 +33,51 @@ MODULE_PARM_DESC(aie2_max_col, "Maximum column could be used");
-  * The related register and ring buffer information is on SRAM BAR.
-  * This struct is the register layout.
-  */
-+#define MGMT_MBOX_MAGIC 0x55504e5f /* _NPU */
- struct mgmt_mbox_chann_info {
--	u32	x2i_tail;
--	u32	x2i_head;
--	u32	x2i_buf;
--	u32	x2i_buf_sz;
--	u32	i2x_tail;
--	u32	i2x_head;
--	u32	i2x_buf;
--	u32	i2x_buf_sz;
-+	__u32	x2i_tail;
-+	__u32	x2i_head;
-+	__u32	x2i_buf;
-+	__u32	x2i_buf_sz;
-+	__u32	i2x_tail;
-+	__u32	i2x_head;
-+	__u32	i2x_buf;
-+	__u32	i2x_buf_sz;
-+	__u32	magic;
-+	__u32	msi_id;
-+	__u32	prot_major;
-+	__u32	prot_minor;
-+	__u32	rsvd[4];
- };
- 
-+static int aie2_check_protocol(struct amdxdna_dev_hdl *ndev, u32 fw_major, u32 fw_minor)
-+{
-+	struct amdxdna_dev *xdna = ndev->xdna;
-+
-+	/*
-+	 * The driver supported mailbox behavior is defined by
-+	 * ndev->priv->protocol_major and protocol_minor.
-+	 *
-+	 * When protocol_major and fw_major are different, it means driver
-+	 * and firmware are incompatible.
-+	 */
-+	if (ndev->priv->protocol_major != fw_major) {
-+		XDNA_ERR(xdna, "Incompatible firmware protocol major %d minor %d",
-+			 fw_major, fw_minor);
-+		return -EINVAL;
-+	}
-+
-+	/*
-+	 * When protocol_minor is greater then fw_minor, that means driver
-+	 * relies on operation the installed firmware does not support.
-+	 */
-+	if (ndev->priv->protocol_minor > fw_minor) {
-+		XDNA_ERR(xdna, "Firmware minor version smaller than supported");
-+		return -EINVAL;
-+	}
-+	return 0;
-+}
-+
- static void aie2_dump_chann_info_debug(struct amdxdna_dev_hdl *ndev)
- {
- 	struct amdxdna_dev *xdna = ndev->xdna;
-@@ -57,6 +91,8 @@ static void aie2_dump_chann_info_debug(struct amdxdna_dev_hdl *ndev)
- 	XDNA_DBG(xdna, "x2i ringbuf 0x%x", ndev->mgmt_x2i.rb_start_addr);
- 	XDNA_DBG(xdna, "x2i rsize   0x%x", ndev->mgmt_x2i.rb_size);
- 	XDNA_DBG(xdna, "x2i chann index 0x%x", ndev->mgmt_chan_idx);
-+	XDNA_DBG(xdna, "mailbox protocol major 0x%x", ndev->mgmt_prot_major);
-+	XDNA_DBG(xdna, "mailbox protocol minor 0x%x", ndev->mgmt_prot_minor);
- }
- 
- static int aie2_get_mgmt_chann_info(struct amdxdna_dev_hdl *ndev)
-@@ -87,6 +123,12 @@ static int aie2_get_mgmt_chann_info(struct amdxdna_dev_hdl *ndev)
- 	for (i = 0; i < sizeof(info_regs) / sizeof(u32); i++)
- 		reg[i] = readl(ndev->sram_base + off + i * sizeof(u32));
- 
-+	if (info_regs.magic != MGMT_MBOX_MAGIC) {
-+		XDNA_ERR(ndev->xdna, "Invalid mbox magic 0x%x", info_regs.magic);
-+		ret = -EINVAL;
-+		goto done;
-+	}
-+
- 	i2x = &ndev->mgmt_i2x;
- 	x2i = &ndev->mgmt_x2i;
- 
-@@ -99,14 +141,20 @@ static int aie2_get_mgmt_chann_info(struct amdxdna_dev_hdl *ndev)
- 	x2i->mb_tail_ptr_reg = AIE2_MBOX_OFF(ndev, info_regs.x2i_tail);
- 	x2i->rb_start_addr   = AIE2_SRAM_OFF(ndev, info_regs.x2i_buf);
- 	x2i->rb_size         = info_regs.x2i_buf_sz;
--	ndev->mgmt_chan_idx  = CHANN_INDEX(ndev, x2i->rb_start_addr);
- 
-+	ndev->mgmt_chan_idx  = info_regs.msi_id;
-+	ndev->mgmt_prot_major = info_regs.prot_major;
-+	ndev->mgmt_prot_minor = info_regs.prot_minor;
-+
-+	ret = aie2_check_protocol(ndev, ndev->mgmt_prot_major, ndev->mgmt_prot_minor);
-+
-+done:
- 	aie2_dump_chann_info_debug(ndev);
- 
- 	/* Must clear address at FW_ALIVE_OFF */
- 	writel(0, SRAM_GET_ADDR(ndev, FW_ALIVE_OFF));
- 
--	return 0;
-+	return ret;
- }
- 
- int aie2_runtime_cfg(struct amdxdna_dev_hdl *ndev,
-@@ -155,12 +203,6 @@ static int aie2_mgmt_fw_init(struct amdxdna_dev_hdl *ndev)
- {
- 	int ret;
- 
--	ret = aie2_check_protocol_version(ndev);
--	if (ret) {
--		XDNA_ERR(ndev->xdna, "Check header hash failed");
--		return ret;
--	}
--
- 	ret = aie2_runtime_cfg(ndev, AIE2_RT_CFG_INIT, NULL);
- 	if (ret) {
- 		XDNA_ERR(ndev->xdna, "Runtime config failed");
-diff --git a/drivers/accel/amdxdna/aie2_pci.h b/drivers/accel/amdxdna/aie2_pci.h
-index 5f0bfe152455..7b42308767b2 100644
---- a/drivers/accel/amdxdna/aie2_pci.h
-+++ b/drivers/accel/amdxdna/aie2_pci.h
-@@ -39,9 +39,6 @@
- })
- 
- #define CHAN_SLOT_SZ SZ_8K
--#define CHANN_INDEX(ndev, rbuf_off) \
--	(((rbuf_off) - SRAM_REG_OFF((ndev), MBOX_CHANN_OFF)) / CHAN_SLOT_SZ)
--
- #define MBOX_SIZE(ndev) \
- ({ \
- 	typeof(ndev) _ndev = (ndev); \
-@@ -170,6 +167,8 @@ struct amdxdna_dev_hdl {
- 	struct xdna_mailbox_chann_res	mgmt_x2i;
- 	struct xdna_mailbox_chann_res	mgmt_i2x;
- 	u32				mgmt_chan_idx;
-+	u32				mgmt_prot_major;
-+	u32				mgmt_prot_minor;
- 
- 	u32				total_col;
- 	struct aie_version		version;
-@@ -262,7 +261,6 @@ int aie2_suspend_fw(struct amdxdna_dev_hdl *ndev);
- int aie2_resume_fw(struct amdxdna_dev_hdl *ndev);
- int aie2_set_runtime_cfg(struct amdxdna_dev_hdl *ndev, u32 type, u64 value);
- int aie2_get_runtime_cfg(struct amdxdna_dev_hdl *ndev, u32 type, u64 *value);
--int aie2_check_protocol_version(struct amdxdna_dev_hdl *ndev);
- int aie2_assign_mgmt_pasid(struct amdxdna_dev_hdl *ndev, u16 pasid);
- int aie2_query_aie_version(struct amdxdna_dev_hdl *ndev, struct aie_version *version);
- int aie2_query_aie_metadata(struct amdxdna_dev_hdl *ndev, struct aie_metadata *metadata);
-diff --git a/drivers/accel/amdxdna/npu1_regs.c b/drivers/accel/amdxdna/npu1_regs.c
-index c8f4d1cac65d..e408af57e378 100644
---- a/drivers/accel/amdxdna/npu1_regs.c
-+++ b/drivers/accel/amdxdna/npu1_regs.c
-@@ -65,7 +65,7 @@ const struct dpm_clk_freq npu1_dpm_clk_table[] = {
- const struct amdxdna_dev_priv npu1_dev_priv = {
- 	.fw_path        = "amdnpu/1502_00/npu.sbin",
- 	.protocol_major = 0x5,
--	.protocol_minor = 0x1,
-+	.protocol_minor = 0x7,
- 	.rt_config	= npu1_default_rt_cfg,
- 	.dpm_clk_tbl	= npu1_dpm_clk_table,
- 	.col_align	= COL_ALIGN_NONE,
-diff --git a/drivers/accel/amdxdna/npu2_regs.c b/drivers/accel/amdxdna/npu2_regs.c
-index ac63131f9c7c..286bd0d475e2 100644
---- a/drivers/accel/amdxdna/npu2_regs.c
-+++ b/drivers/accel/amdxdna/npu2_regs.c
-@@ -64,7 +64,7 @@
- const struct amdxdna_dev_priv npu2_dev_priv = {
- 	.fw_path        = "amdnpu/17f0_00/npu.sbin",
- 	.protocol_major = 0x6,
--	.protocol_minor = 0x1,
-+	.protocol_minor = 0x6,
- 	.rt_config	= npu4_default_rt_cfg,
- 	.dpm_clk_tbl	= npu4_dpm_clk_table,
- 	.col_align	= COL_ALIGN_NATURE,
-diff --git a/drivers/accel/amdxdna/npu4_regs.c b/drivers/accel/amdxdna/npu4_regs.c
-index a713ac18adfc..00c52833ce89 100644
---- a/drivers/accel/amdxdna/npu4_regs.c
-+++ b/drivers/accel/amdxdna/npu4_regs.c
-@@ -85,7 +85,7 @@ const struct dpm_clk_freq npu4_dpm_clk_table[] = {
- const struct amdxdna_dev_priv npu4_dev_priv = {
- 	.fw_path        = "amdnpu/17f0_10/npu.sbin",
- 	.protocol_major = 0x6,
--	.protocol_minor = 0x1,
-+	.protocol_minor = 12,
- 	.rt_config	= npu4_default_rt_cfg,
- 	.dpm_clk_tbl	= npu4_dpm_clk_table,
- 	.col_align	= COL_ALIGN_NATURE,
-diff --git a/drivers/accel/amdxdna/npu5_regs.c b/drivers/accel/amdxdna/npu5_regs.c
-index 67a5d5bc8a49..118849272f27 100644
---- a/drivers/accel/amdxdna/npu5_regs.c
-+++ b/drivers/accel/amdxdna/npu5_regs.c
-@@ -64,7 +64,7 @@
- const struct amdxdna_dev_priv npu5_dev_priv = {
- 	.fw_path        = "amdnpu/17f0_11/npu.sbin",
- 	.protocol_major = 0x6,
--	.protocol_minor = 0x1,
-+	.protocol_minor = 12,
- 	.rt_config	= npu4_default_rt_cfg,
- 	.dpm_clk_tbl	= npu4_dpm_clk_table,
- 	.col_align	= COL_ALIGN_NATURE,
+So I'll just drop this barrier here.
+
+Regards,
+
 -- 
-2.34.1
+Antonio Quartulli
+OpenVPN Inc.
 
 
