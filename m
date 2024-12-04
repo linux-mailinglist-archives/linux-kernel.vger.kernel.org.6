@@ -1,128 +1,143 @@
-Return-Path: <linux-kernel+bounces-431327-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EDCB9E3BFF
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:03:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AE599E3C07
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:03:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 649B1285DE1
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 14:03:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D504E282F1E
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 14:03:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D4561F76B7;
-	Wed,  4 Dec 2024 14:03:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1839B1FC100;
+	Wed,  4 Dec 2024 14:03:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AbNSluFY"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Er7TdoqP"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0EE01F7063;
-	Wed,  4 Dec 2024 14:03:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A9B61F943D;
+	Wed,  4 Dec 2024 14:03:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733320985; cv=none; b=Tc4KeVom9dxU6vdNznHkS4buaycAhSLTJ4M2q5PkTBw1tITD0yCxo1qe0X/Vo9ExsQXN+w/EGqNgnB86P58pez2xJpbrZq1PMLwXC5SH44zly6+2eVRYDK2txMdZ9eA79kvqdopAJLzXDbTq+N5xG+PusPMmQSEvnlP7acCou5A=
+	t=1733320993; cv=none; b=M7dwLceiCVcQ2gM6l2u5d95Lor+2X749+EePnVEG5KUytkbQMl6YMfuDcp7/YjX/htADf8cNDjrmWt/1WEZzuBP5anDCTkQOAWWMB7VJ8cgUwOBhBRTFsewVuCZxEW0CK6tJdloWD16z7ogimqzi4an8gzTAXdPssFozjVTD7MM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733320985; c=relaxed/simple;
-	bh=3KGHbh74PL8FENaLPeIGYJZyqpRguO1ac32S/lCqWBY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=J1BELklo0Svpca0nqLgRrTU2+M/OdMn12Rj/cqf/yw81O8Xc0L1Qwk5pt9nK3ySQbbqF2MlDRZoJ+mSYFSceJ+3jRaTptFGf2bKD4b+c+3LDmJBkM8k71+vnx2dg0M6pvgk/ZUIL8RHWDIpGocezPZzVF073mdbND2Rd7RsAnqY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AbNSluFY; arc=none smtp.client-ip=209.85.167.54
+	s=arc-20240116; t=1733320993; c=relaxed/simple;
+	bh=wiR5htVN+22hbXfWg7ML4jVM0P0Y7+RaaSQ2h6rUHR4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fLYOWMWnEVpdXEjdDHf2xtaECjnK5JFRzjaR4NFG2r+H2F7rJcfry0YURHIbtAaWy3s/VVukhk5D/bA9AP+meTBtrEsn0srhWpBKP7kSTsrNvun51/n5dOBoc+FyJ+yjZgh5xzqQVUVvx+iIvhCEWimQ3capxfYi4hz7l/niYG8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Er7TdoqP; arc=none smtp.client-ip=209.85.210.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-53dde4f0f23so6850259e87.3;
-        Wed, 04 Dec 2024 06:03:03 -0800 (PST)
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-7252f48acf2so5007521b3a.2;
+        Wed, 04 Dec 2024 06:03:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733320982; x=1733925782; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0pLINUAWWHpZc7WEX/isPU9K9d9FAmMIJVRAMNTydl4=;
-        b=AbNSluFY4aaH7vFnTCn9xwxQCIXnqGHLay85UH5gI/0zt7w7x3L32FUrom+WRu7b/q
-         cpiMQs1yS5cBuJyvK3nc0rDG6C4X/GEBRZYGIE0uZePcJaoa+eXkHMmx5+fGxAuZn4Qn
-         s0sLKs6lSQRWzfu9vjEZhtiNbV8vY5hn4yTVvUumtDx+U0Bo2LQlh+X0WOD6zEh0rKWp
-         jpL3T0we0Fadk5bgTzTdZpqOvQ13PhiB5Teqqm0WKivbQyHhqBn+snt0lXt0DZfP87Q4
-         +wI/SPrxUs0EQFhGYid/fXyb2LifRtocfRS7XUKQAjpPLBs4cQNmnfjBrDOz9bFP/fxm
-         mX9w==
+        d=gmail.com; s=20230601; t=1733320990; x=1733925790; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=0SkLnU8JcXk82S6VfOwZc1CCUFMw4TrFjPFHV116tyI=;
+        b=Er7TdoqP+PeyhGDdrO09WzCjhyJMA2N9eIGSzvTcgdNPToFGyCZhMt8dA16RyxrA2L
+         QW+JmMrysUGUJAyA8+LP+U+RTF5xhpSXDqq49/pKlE0pHTuBPre5eNtBRfGmJYotOn0W
+         z/34vh+yNMDm8DTGHcVKxDV96/nkINDNvpnpn98IfjtGYBJUagbngbg04V6ZiKU3ZERD
+         nB5CV+pdWgzlyfY9Fr5MINiKc22vPtPvcJc+Kc7nksFgfBSqQOHliUsyxPPAexSVxRnS
+         pavjQlLUmUg3ZDEMt8lxCsjS/BybXLZXInwzGAmuFbSTQ6Asr/C/IhDagPQ38TEhQIJU
+         /iXw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733320982; x=1733925782;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0pLINUAWWHpZc7WEX/isPU9K9d9FAmMIJVRAMNTydl4=;
-        b=ainIGH4v1cLFmNDYGU/IbjAV6zRr9ROetQguxaz7fdVfo0y5nRpBneYvy7jj9cce8q
-         WFII2tFWXj9RagMZe9+Ar7ILzCaVWsufw84cPdxqBHeO+esxQo06zrcOUpeeVWGA05Ye
-         Rzsq1Nq40ChYL5xjP1Tujc9H2RqO0h4Df7NdT2Rr/eI23As/BpEgSwITgcDqXW1qivRo
-         sNKytVQy7YU9nex1n5hlrm+2x4Gc7PFGGlzg6N/hsebskedgyt1mW+aoGBY1d7ki+vE2
-         ebZL1unia9dfRnMScR4ZZoGQhR/l5ij6GXFQ3GQdn1NRiX5THJfX5Z9RYP4nzsusAqG2
-         Ny/w==
-X-Forwarded-Encrypted: i=1; AJvYcCWL6VRMMIKN4Tl5bvkQkDgQ9lBr6XFMOwVVg3HWeZhiKtpya9TpYwxoueFVxYDVKbYvDSmKJAP6jbluTwv5@vger.kernel.org, AJvYcCWLqye0/G+n/Kzl/uL2qskpdsr0oFMwYAuasGLi0UMQqdTBdaytjZmmCBxsrprbjbG2T0E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTNGC7ghg1caJxRwkBxq17gxCXLcAAroUE+T+USlqCe/CCUwUT
-	Lb9wCBs0uiYNpOcWF8QxmhmM2TSamuKF04Ov0MfujXUAYXfzkrK8/+UVZgerJzEoHEH7PC8+FYl
-	HWQi39kIlCDJSq8YE6FNo4CMb0A==
-X-Gm-Gg: ASbGncuwpk7P9IgxY0eK7zyYihzxZKbrZ9nLG5srIR4eh3eHODn3FLeXgLOezuQDKL7
-	bKUZM6sDea0HcEjDVi5ZjHyZPfRQTPnF65Ddzt/7UgmKNyQ==
-X-Google-Smtp-Source: AGHT+IFM8eESFGwByTwn9nzvvRumhG+01+X3aWsUAJaLsxSd+y2sT6upYNjKhhLCxS3WrtgnS9mpqP6Rpo0mFVw+sNE=
-X-Received: by 2002:a05:6512:1247:b0:53d:a321:db74 with SMTP id
- 2adb3069b0e04-53e12a28208mr4148964e87.50.1733320980056; Wed, 04 Dec 2024
- 06:03:00 -0800 (PST)
+        d=1e100.net; s=20230601; t=1733320991; x=1733925791;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0SkLnU8JcXk82S6VfOwZc1CCUFMw4TrFjPFHV116tyI=;
+        b=D77/jEnysl+lOkX3lvnPCTXp2NnqFijOrg0eqCFwIYxI++a+NwnXeX0oCvdANE4qQD
+         UEdc6Tl5KxmmfiR13kLxQWTATg3VEoImLk1FXVpXvirkzSlG43BUECOa3HKwutGefYFQ
+         bPo5tRibZIuJyfNpSrn7rPRtDqKoEUDpmUOw9/UQ0J821HXQosvjwou3ejnptILJxYsh
+         4k6N7XowAN3Vw/C6QB3UYrkQlEyCl6qIFAeEOOy33FxkFHwiZjwmFZZIM3prUquVw1Bj
+         EYWrN/tyRLg2Vk4hX6D2az+ep8jf5+ammIAV+IVHy+7Keipg+lUnsDqbK8aFZQttkfn1
+         A4gg==
+X-Forwarded-Encrypted: i=1; AJvYcCU8evdWcpme1BA7FCJSeEPjzxh85oLlgY9wm6OuVkG+NEhEImyTcgZ+BYxMrptkJzkUf5ByonikeEvvoOUoZjv/@vger.kernel.org, AJvYcCUZb8yHjQg/Ug1VxzLrBb+HoGPE9/mPJSOE7/0XO/2fotxqbXWfOiiW91rZaXttXn9DQ5xAvHpeBGeB4JFd@vger.kernel.org, AJvYcCV0Q94XUQlGQZuOlcD3P7TqF0Q+geVhXn0J9G4wDhemrlOdoVVYbw641Yb/9oX17k1qTfsug/eZn/rM@vger.kernel.org, AJvYcCW2d0Ap2YZZY3i6U9F/r1rm8g8p5rDl+iqyIe6lUrUmGkYTcsWqAUzYUfvoqjZESBxAGfOccY/yaxktSqe0YDwy@vger.kernel.org, AJvYcCWQgBITDpsyRmD2QiwKKlkJAAksc+vQVx1NDnVibdPpWBa1JuiZiVuSPEWMniog7IX6upmiL74R@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFMVowSzTlNueGjBS7Sr4Bg+GURMynFvIK9XDhTKta+ZkiUm/S
+	YhiwxBJVlYV0GW0jxwa7LyBdM2C27DYtP+6EzyzIou33smfO2dwm
+X-Gm-Gg: ASbGncu9srxqV8li3BvcrtTk4lSzCLE61b4u5ATI9OvT6jr+wuEg7qT9OBJJYVp2UwY
+	pM+5aCx+7jy61Qze28HQb97BeJpi9woEE1e75IsTzDVg/IO8VYAFm7i9rNghruRArEfWeVCvybO
+	clOIaaa3oIeZVkrFtr5Ydw9YIDY3Ayo3Ln7spF+QfxAcrFi/t29e0M6Y6w/qlavx3flWlJqS2f/
+	F5cMupOcKp1DP3SllL3OO6CC5ubSEkILcX3Yj4Odt01sAREI25bPKY=
+X-Google-Smtp-Source: AGHT+IEUKdzmeAo1eoMyTnSkc02brGe/K04CdFfkaSutlwK1ABZqZrvFGOq8UuSIGqZcRz48RNbWJg==
+X-Received: by 2002:aa7:8888:0:b0:71e:41b3:a56b with SMTP id d2e1a72fcca58-72587f9083amr6136440b3a.24.1733320990387;
+        Wed, 04 Dec 2024 06:03:10 -0800 (PST)
+Received: from fedora ([43.228.180.230])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-725417612b5sm12374317b3a.30.2024.12.04.06.02.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Dec 2024 06:03:09 -0800 (PST)
+Date: Wed, 4 Dec 2024 14:02:57 +0000
+From: Hangbin Liu <liuhangbin@gmail.com>
+To: Kenjiro Nakayama <nakayamakenjiro@gmail.com>
+Cc: Pablo Neira Ayuso <pablo@netfilter.org>,
+	Jozsef Kadlecsik <kadlec@netfilter.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Alan Stern <stern@rowland.harvard.edu>,
+	Andrea Parri <parri.andrea@gmail.com>,
+	Will Deacon <will@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	David Howells <dhowells@redhat.com>,
+	Jade Alglave <j.alglave@ucl.ac.uk>,
+	Luc Maranget <luc.maranget@inria.fr>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Akira Yokosawa <akiyks@gmail.com>,
+	Daniel Lustig <dlustig@nvidia.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Shuah Khan <shuah@kernel.org>, netfilter-devel@vger.kernel.org,
+	coreteam@netfilter.org, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, linux-arch@vger.kernel.org,
+	lkmm@lists.linux.dev, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH net-next v2] selftests/net: call sendmmsg via
+ udpgso_bench.sh
+Message-ID: <Z1BhEQ5RsJqB2ugr@fedora>
+References: <20241203222843.26983-1-nakayamakenjiro@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241204103042.1904639-1-arnd@kernel.org> <20241204103042.1904639-6-arnd@kernel.org>
- <CAMzpN2joPcvg887tJLF_4SU4aJt+wTGy2M_xaExrozLS-mvXsw@mail.gmail.com> <00e344d7-8d2f-41d3-8c6a-1a828ee95967@app.fastmail.com>
-In-Reply-To: <00e344d7-8d2f-41d3-8c6a-1a828ee95967@app.fastmail.com>
-From: Brian Gerst <brgerst@gmail.com>
-Date: Wed, 4 Dec 2024 09:02:48 -0500
-Message-ID: <CAMzpN2gTUks3K3Hvwq3MEVBCN-9HHTLM4+FNdHkuQOmgX0Tfjg@mail.gmail.com>
-Subject: Re: [PATCH 05/11] x86: remove HIGHMEM64G support
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Arnd Bergmann <arnd@kernel.org>, linux-kernel@vger.kernel.org, x86@kernel.org, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Andy Shevchenko <andy@kernel.org>, 
-	Matthew Wilcox <willy@infradead.org>, Sean Christopherson <seanjc@google.com>, 
-	Davide Ciminaghi <ciminaghi@gnudd.com>, Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241203222843.26983-1-nakayamakenjiro@gmail.com>
 
-On Wed, Dec 4, 2024 at 8:43=E2=80=AFAM Arnd Bergmann <arnd@arndb.de> wrote:
->
-> On Wed, Dec 4, 2024, at 14:29, Brian Gerst wrote:
-> > On Wed, Dec 4, 2024 at 5:34=E2=80=AFAM Arnd Bergmann <arnd@kernel.org> =
-wrote:
-> >>
-> >>  - In the early days of x86-64 hardware, there was sometimes the need
-> >>    to run a 32-bit kernel to work around bugs in the hardware drivers,
-> >>    or in the syscall emulation for 32-bit userspace. This likely still
-> >>    works but there should never be a need for this any more.
-> >>
-> >> Removing this also drops the need for PHYS_ADDR_T_64BIT and SWIOTLB.
-> >> PAE mode is still required to get access to the 'NX' bit on Atom
-> >> 'Pentium M' and 'Core Duo' CPUs.
-> >
-> > 8GB of memory is still useful for 32-bit guest VMs.
->
-> Can you give some more background on this?
->
-> It's clear that one can run a virtual machine this way and it
-> currently works, but are you able to construct a case where this
-> is a good idea, compared to running the same userspace with a
-> 64-bit kernel?
->
-> From what I can tell, any practical workload that requires
-> 8GB of total RAM will likely run into either the lowmem
-> limits or into virtual addressig limits, in addition to the
-> problems of 32-bit kernels being generally worse than 64-bit
-> ones in terms of performance, features and testing.
-
-I use a 32-bit VM to test 32-bit kernel builds.  I haven't benchmarked
-kernel builds with 4GB/8GB yet, but logically more memory would be
-better for caching files.
-
-
-Brian Gerst
+On Wed, Dec 04, 2024 at 07:28:44AM +0900, Kenjiro Nakayama wrote:
+> Currently, sendmmsg is implemented in udpgso_bench_tx.c,
+> but it is not called by any test script.
+> 
+> This patch adds a test for sendmmsg in udpgso_bench.sh.
+> This allows for basic API testing and benchmarking
+> comparisons with GSO.
+> 
+> Signed-off-by: Kenjiro Nakayama <nakayamakenjiro@gmail.com>
+> ---
+>  tools/testing/selftests/net/udpgso_bench.sh | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/tools/testing/selftests/net/udpgso_bench.sh b/tools/testing/selftests/net/udpgso_bench.sh
+> index 640bc43452fa..88fa1d53ba2b 100755
+> --- a/tools/testing/selftests/net/udpgso_bench.sh
+> +++ b/tools/testing/selftests/net/udpgso_bench.sh
+> @@ -92,6 +92,9 @@ run_udp() {
+>  	echo "udp"
+>  	run_in_netns ${args}
+>  
+> +	echo "udp sendmmsg"
+> +	run_in_netns ${args} -m
+> +
+>  	echo "udp gso"
+>  	run_in_netns ${args} -S 0
+>  
+> -- 
+> 2.39.3 (Apple Git-146)
+> 
+Reviewed-by: Hangbin Liu <liuhangbin@gmail.com>
 
