@@ -1,115 +1,238 @@
-Return-Path: <linux-kernel+bounces-431849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C63F19E4209
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:42:48 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5DD49E4273
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:54:11 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7656A169762
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:54:08 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5805211499;
+	Wed,  4 Dec 2024 17:14:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="boImCWjO"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86C49285528
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:42:47 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C73BC2049F3;
-	Wed,  4 Dec 2024 17:12:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2Y00N63q"
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C58DB2066FC
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 17:12:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFE12211480;
+	Wed,  4 Dec 2024 17:14:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733332325; cv=none; b=iumxS4JoTH1OIwuUBaBPffi1wWsxDV1U++OQPLQM1G5QOrStwPZHRjUslwL5+V0tV/hMr/gz+jcdDfNzHZ3AX8tjDugw+NorfmNBjHXUfu06FtWH/r35aErfEPR17jYtHhFJNZ6Y+BMjbZkaVnupYLBIxLpJWNvc36HRk6uT7N4=
+	t=1733332450; cv=none; b=S1kbXOpTkJQkKprhjc/q2CIsX8PUAbTuxh8azkmYJTi1vuPrDz3x51bXjT2JxEx20vOd7LFQeRyFgK7bFqgnSKuwvrkwLcLuhS4AtdnyN6wvYd1WWIhpj0MDsZGsICFNo3olZtUA4TMRFr+7xb/m/I53iT3sn6/VV1svwg6emYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733332325; c=relaxed/simple;
-	bh=RQW+i9PUSE0Qxy6TrXCzEg5OcyFxu2ieuaZrHjYXOyY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JKMQ8XkSfMVRx8aj8aAyamIC6l0jP0CThzOVx7sBqgxwjWajqeoTIio6e7120CZgITz/wMOgX89frDQvNhhKs/AGp/g3qKDfvIXIzXVRIbbrZV7XAT1oSEKCUZoT0oA5pJVDQYGPM0N+SfpUKuA8TdCSWtcaZ/H9zjY/k+m2OU8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2Y00N63q; arc=none smtp.client-ip=209.85.216.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2e9ff7a778cso968775a91.1
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 09:12:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733332323; x=1733937123; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RQW+i9PUSE0Qxy6TrXCzEg5OcyFxu2ieuaZrHjYXOyY=;
-        b=2Y00N63qSKYzpg+WED4Lo4lt1VSrJl2lEPHD98OJ0BTu2wxABf/lytOtwgZ/uEcZRZ
-         LykuiCMN+OfFvLkjVL5ZDl00h4ODYkMEXd+WQ1cVt1tVpYfqzHay1drMsxkV395mpVfE
-         lFsZQKt+ewXebd5MC0AJP7lVUNpBvlpd/YlSG03L/W9a6pRda5aqhW81RJnQGeMIScib
-         DrN/dwwzbcgxxFe6+FljAX0lMIoo/P8jmq6B0G75ybRbd+pStHEWxLlhMGfFR1mLT1Bq
-         GdbmNmY4JPrZsMAUE+wxXhDsXQSTmLcV4IeCnUqEgJ5MoItIG6uAjRlQ+OJPqkrZmQyr
-         htOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733332323; x=1733937123;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RQW+i9PUSE0Qxy6TrXCzEg5OcyFxu2ieuaZrHjYXOyY=;
-        b=wmDwHrhcztFp/9yKFoaXN6LzwckcU0nT9lGlgdlu8w+fLwjS31tXnVpNjW+JUszwRW
-         Bk8rV1jQ9ZASI91Wu3Tt6zRvp2fpw3bIwrH3WR+uaoOg4uI4YHw4KfvB/ziUZBPzTX53
-         Tvm9qbDttmYpB0x3LIMY0IMhB3n7joKhqnW7L4GQ3XYpr76Bo5nJgU33JZNHOZRANgLg
-         sG9ONju8AkAibiLdaPRFJeXm23G7Zsu1AH87NnIrf1pvJr5u9D+TeGHq3t/3R+LrEu8o
-         HuBatwICdY9PBWnNxdbbklNkgPWKRVTNUrCxHHSFAA+ZvsxfKUFiOD+Qw//9j4oYm03b
-         Fxuw==
-X-Forwarded-Encrypted: i=1; AJvYcCXst9e1KLGMMsmofrahU1ySp2XW38GTxWi/y2Fv/Kxg1OJfaGbEkahHLy25xoAaCxW127obXAsN81HbQpw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyoewRNI2J6Dsdx9eWAh2Ke2U7olPxOetFztBiT+oZZba/e0mzB
-	L+DjniYejGBbu2pkG7z/jpOtPWSe/stF3vPL257KIcX7sJMlBCggHMuLXKHG2uqOYohY6E3544U
-	1949OvP91RID/+jSeCsQTu0AaFwmulFrXtrrt
-X-Gm-Gg: ASbGncuJF85dFkJh0E5j8IlvppSTT2TKbtgnRwrQ0xF2V/YnScXsX456G+Ikfs6rGYE
-	XVxaDVtcdnqEzD3TtDx0OTbsD9Sqv1KIgP2/hplQKV2DfeZMt8fyfWAaIUaCVwg==
-X-Google-Smtp-Source: AGHT+IGsbeCJf05tmNmbLH0VE04Aiwfh7Htg0RRLY1iR+e8nHZX1kxB+Hyn1sOnKB+pphXgXlc1sE6uNGzfcfwzpjOo=
-X-Received: by 2002:a17:90b:3b52:b0:2ee:9661:eafb with SMTP id
- 98e67ed59e1d1-2ef41c191edmr195451a91.12.1733332322845; Wed, 04 Dec 2024
- 09:12:02 -0800 (PST)
+	s=arc-20240116; t=1733332450; c=relaxed/simple;
+	bh=T11iJzjX9vhpO8MRlSolJbG6EMQMPdcnGxRx1r7tIio=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=n02Cf/YREZzCIpBKDDMBPLaYxE23SH/9nn7BJRZvCd4Iyg7BM19trRijkN8vyvWBJfD2FHz0lUia5c9n+/OicxhD45HmG878r7wtfkubWUKbz3nUfHpY/ZQN1ZwYCFktZjIa0N9PNHF6/RD10UKAgfPAxAGvDUliyrpsite3e/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=boImCWjO; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733332448; x=1764868448;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=T11iJzjX9vhpO8MRlSolJbG6EMQMPdcnGxRx1r7tIio=;
+  b=boImCWjO6cTXFR01iCdglWYzG089SvwKpbvWJ0LtVTUl+2oniOCRfPng
+   CbiaYGHI9FFm1wD9rlwxudg5WSVAD/xEkBWWfUh8EJzTZOiw7yUSViIrI
+   0gOMh1ZtwNGJz0ILTp8uSLIIu1Q3sXODjCqL2ftn9U8kgGGFmrjAWDb73
+   w88WxBi+0gxZYzR9uSVoB4h3hrr4mJ3vKy4XOMvEya3NIQ1z2Ukny7iC2
+   z06Kmg4vMEohF+EC5QRJGEIbknkkPnVv/BG+IA96cbsqKVdODphfZ/+ZQ
+   ro6lTofFqCRrs3Kr/O2VjItsCHnEv59jUuVHwUQ4GT25VhiymMOFZMFIf
+   Q==;
+X-CSE-ConnectionGUID: jdldZrfLSKqvT77Ycj+o0w==
+X-CSE-MsgGUID: iae4sPP+QH2+jcHJm/avqA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11276"; a="33740163"
+X-IronPort-AV: E=Sophos;i="6.12,208,1728975600"; 
+   d="scan'208";a="33740163"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Dec 2024 09:14:08 -0800
+X-CSE-ConnectionGUID: x8sYC6H4Qi6SJ44mNX5BEw==
+X-CSE-MsgGUID: QQmmU4T7T5e817uTO49iCg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,208,1728975600"; 
+   d="scan'208";a="94012859"
+Received: from lkp-server02.sh.intel.com (HELO 1f5a171d57e2) ([10.239.97.151])
+  by fmviesa008.fm.intel.com with ESMTP; 04 Dec 2024 09:14:04 -0800
+Received: from kbuild by 1f5a171d57e2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tIsws-0003KL-2C;
+	Wed, 04 Dec 2024 17:14:02 +0000
+Date: Thu, 5 Dec 2024 01:13:06 +0800
+From: kernel test robot <lkp@intel.com>
+To: Ming-Jen Chen <mjchen0829@gmail.com>, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-input@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, sudeep.holla@arm.com,
+	arnd@arndb.de, peng.fan@nxp.com, conor+dt@kernel.org,
+	krzk+dt@kernel.org, robh@kernel.org, dmitry.torokhov@gmail.com
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev
+Subject: Re: [PATCH v4 1/2] input: keypad: add new keypad driver for MA35D1
+Message-ID: <202412050142.nkbl6PnK-lkp@intel.com>
+References: <20241204021014.5083-2-mjchen0829@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <67253504.050a0220.3c8d68.08e1.GAE@google.com> <67272d83.050a0220.35b515.0198.GAE@google.com>
- <1ce3a220-7f68-4a68-a76c-b37fdf9bfc70@kernel.dk>
-In-Reply-To: <1ce3a220-7f68-4a68-a76c-b37fdf9bfc70@kernel.dk>
-From: Aleksandr Nogikh <nogikh@google.com>
-Date: Wed, 4 Dec 2024 18:11:51 +0100
-Message-ID: <CANp29Y5U3oMc3jYkxmnfd_9YYvWK3TwUhAbhA111k57AYRLd+A@mail.gmail.com>
-Subject: Re: [syzbot] [io-uring?] general protection fault in io_sqe_buffer_register
-To: Jens Axboe <axboe@kernel.dk>
-Cc: syzbot <syzbot+05c0f12a4d43d656817e@syzkaller.appspotmail.com>, 
-	io-uring@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241204021014.5083-2-mjchen0829@gmail.com>
 
-Hi Jens,
+Hi Ming-Jen,
 
-Just in case:
+kernel test robot noticed the following build errors:
 
-Syzbot reported this commit as the result of the cause (bug origin)
-bisection, not as the commit after which the problem was gone. So
-(unless it actually is a fixing commit) reporting it back via #syz fix
-is not correct.
+[auto build test ERROR on dtor-input/next]
+[also build test ERROR on dtor-input/for-linus hid/for-next soc/for-next linus/master v6.13-rc1 next-20241203]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
---=20
-Aleksandr
+url:    https://github.com/intel-lab-lkp/linux/commits/Ming-Jen-Chen/input-keypad-add-new-keypad-driver-for-MA35D1/20241204-123001
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/dtor/input.git next
+patch link:    https://lore.kernel.org/r/20241204021014.5083-2-mjchen0829%40gmail.com
+patch subject: [PATCH v4 1/2] input: keypad: add new keypad driver for MA35D1
+config: s390-allmodconfig (https://download.01.org/0day-ci/archive/20241205/202412050142.nkbl6PnK-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 592c0fe55f6d9a811028b5f3507be91458ab2713)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241205/202412050142.nkbl6PnK-lkp@intel.com/reproduce)
 
-On Wed, Dec 4, 2024 at 6:07=E2=80=AFPM Jens Axboe <axboe@kernel.dk> wrote:
->
-> #syz fix: io_uring/rsrc: get rid of the empty node and dummy_ubuf
->
-> --
-> Jens Axboe
->
-> --
-> You received this message because you are subscribed to the Google Groups=
- "syzkaller-bugs" group.
-> To unsubscribe from this group and stop receiving emails from it, send an=
- email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> To view this discussion visit https://groups.google.com/d/msgid/syzkaller=
--bugs/1ce3a220-7f68-4a68-a76c-b37fdf9bfc70%40kernel.dk.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202412050142.nkbl6PnK-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   In file included from drivers/input/keyboard/ma35d1_keypad.c:9:
+   In file included from include/linux/input.h:19:
+   In file included from include/linux/device.h:32:
+   In file included from include/linux/device/driver.h:21:
+   In file included from include/linux/module.h:19:
+   In file included from include/linux/elf.h:6:
+   In file included from arch/s390/include/asm/elf.h:181:
+   In file included from arch/s390/include/asm/mmu_context.h:11:
+   In file included from arch/s390/include/asm/pgalloc.h:18:
+   In file included from include/linux/mm.h:2228:
+   include/linux/vmstat.h:503:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     503 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     504 |                            item];
+         |                            ~~~~
+   include/linux/vmstat.h:510:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     510 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     511 |                            NR_VM_NUMA_EVENT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/vmstat.h:517:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     517 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+   include/linux/vmstat.h:523:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     523 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     524 |                            NR_VM_NUMA_EVENT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~~
+>> drivers/input/keyboard/ma35d1_keypad.c:83:17: error: call to undeclared function 'readl'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+      83 |         key_event[0] = readl(keypad->mmio_base + KPI_KPE0);
+         |                        ^
+   drivers/input/keyboard/ma35d1_keypad.c:89:2: error: call to undeclared function 'writel'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+      89 |         writel(key_event[0], (keypad->mmio_base + KPI_KPE0));
+         |         ^
+   drivers/input/keyboard/ma35d1_keypad.c:123:12: error: call to undeclared function 'readl'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     123 |         kstatus = readl(keypad->mmio_base + KPI_STATUS);
+         |                   ^
+   drivers/input/keyboard/ma35d1_keypad.c:129:4: error: call to undeclared function 'writel'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     129 |                         writel(PDWAKE, (keypad->mmio_base + KPI_STATUS));
+         |                         ^
+   drivers/input/keyboard/ma35d1_keypad.c:148:2: error: call to undeclared function 'writel'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     148 |         writel(val, keypad->mmio_base + KPI_CONF);
+         |         ^
+   drivers/input/keyboard/ma35d1_keypad.c:159:8: error: call to undeclared function 'readl'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     159 |         val = readl(keypad->mmio_base + KPI_KPE0) & ~ENKP;
+         |               ^
+   drivers/input/keyboard/ma35d1_keypad.c:160:2: error: call to undeclared function 'writel'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     160 |         writel(val, keypad->mmio_base + KPI_CONF);
+         |         ^
+   drivers/input/keyboard/ma35d1_keypad.c:166:17: warning: array index 12 is past the end of the array (that has type 'const unsigned int[12]') [-Warray-bounds]
+     166 |         u32 min_diff = debounce_values[NUM_SETTINGS];
+         |                        ^               ~~~~~~~~~~~~
+   drivers/input/keyboard/ma35d1_keypad.c:53:1: note: array 'debounce_values' declared here
+      53 | static const unsigned int debounce_values[NUM_SETTINGS] = {
+         | ^
+   drivers/input/keyboard/ma35d1_keypad.c:173:25: warning: array index 12 is past the end of the array (that has type 'const unsigned int[12]') [-Warray-bounds]
+     173 |         keypad->debounce_val = debounce_register[NUM_SETTINGS];
+         |                                ^                 ~~~~~~~~~~~~
+   drivers/input/keyboard/ma35d1_keypad.c:57:1: note: array 'debounce_register' declared here
+      57 | static const unsigned int debounce_register[NUM_SETTINGS] = {
+         | ^
+   drivers/input/keyboard/ma35d1_keypad.c:349:3: error: call to undeclared function 'writel'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     349 |                 writel(readl(keypad->mmio_base + KPI_CONF) | WAKEUP, keypad->mmio_base + KPI_CONF);
+         |                 ^
+   drivers/input/keyboard/ma35d1_keypad.c:349:10: error: call to undeclared function 'readl'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     349 |                 writel(readl(keypad->mmio_base + KPI_CONF) | WAKEUP, keypad->mmio_base + KPI_CONF);
+         |                        ^
+   drivers/input/keyboard/ma35d1_keypad.c:359:3: error: call to undeclared function 'writel'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     359 |                 writel(readl(keypad->mmio_base + KPI_CONF) & ~(WAKEUP),
+         |                 ^
+   drivers/input/keyboard/ma35d1_keypad.c:359:10: error: call to undeclared function 'readl'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     359 |                 writel(readl(keypad->mmio_base + KPI_CONF) & ~(WAKEUP),
+         |                        ^
+   6 warnings and 11 errors generated.
+
+
+vim +/readl +83 drivers/input/keyboard/ma35d1_keypad.c
+
+    72	
+    73	static void ma35d1_keypad_scan_matrix(struct ma35d1_keypad *keypad, unsigned int status)
+    74	{
+    75		struct input_dev *input_dev = keypad->input_dev;
+    76		u32 row_shift = get_count_order(keypad->kpi_col);
+    77		u32 *keymap = input_dev->keycode;
+    78		u32 code, key, index;
+    79		u32 key_event[4];
+    80		u64 pressed_keys = 0, released_keys = 0;
+    81	
+    82		/* Read key event status */
+  > 83		key_event[0] = readl(keypad->mmio_base + KPI_KPE0);
+    84		key_event[1] = readl(keypad->mmio_base + KPI_KPE1);
+    85		key_event[2] = readl(keypad->mmio_base + KPI_KRE0);
+    86		key_event[3] = readl(keypad->mmio_base + KPI_KRE1);
+    87	
+    88		/* Clear key event status */
+    89		writel(key_event[0], (keypad->mmio_base + KPI_KPE0));
+    90		writel(key_event[1], (keypad->mmio_base + KPI_KPE1));
+    91		writel(key_event[2], (keypad->mmio_base + KPI_KRE0));
+    92		writel(key_event[3], (keypad->mmio_base + KPI_KRE1));
+    93	
+    94		pressed_keys  = key_event[0] | ((u64)key_event[1] << 32);
+    95		released_keys = key_event[2] | ((u64)key_event[3] << 32);
+    96	
+    97		/* Process pressed keys */
+    98		for_each_set_bit(index, (const unsigned long *)&pressed_keys, KEY_EVENT_BITS) {
+    99			code = MATRIX_SCAN_CODE(index / 8, (index % 8), row_shift);
+   100			key = keymap[code];
+   101	
+   102			input_event(input_dev, EV_MSC, MSC_SCAN, code);
+   103			input_report_key(input_dev, key, 1);
+   104		}
+   105	
+   106		/* Process released keys */
+   107		for_each_set_bit(index, (const unsigned long *)&released_keys, KEY_EVENT_BITS) {
+   108			code = MATRIX_SCAN_CODE(index / 8, (index % 8), row_shift);
+   109			key = keymap[code];
+   110	
+   111			input_event(input_dev, EV_MSC, MSC_SCAN, code);
+   112			input_report_key(input_dev, key, 0);
+   113		}
+   114	
+   115		input_sync(input_dev);
+   116	}
+   117	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
