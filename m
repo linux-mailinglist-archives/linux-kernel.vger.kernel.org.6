@@ -1,58 +1,60 @@
-Return-Path: <linux-kernel+bounces-431690-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431693-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BF4F9E439F
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 19:43:59 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26A979E4233
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:47:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 30CAAB62CCA
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:03:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F3FC4B61137
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:03:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4AA3218588;
-	Wed,  4 Dec 2024 16:58:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57C9321C187;
+	Wed,  4 Dec 2024 16:58:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sH0xiY0W"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PS9dOT2Z"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3B62217658;
-	Wed,  4 Dec 2024 16:58:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A76F721C16F;
+	Wed,  4 Dec 2024 16:58:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733331513; cv=none; b=hQuOspK7v8XuOsop2YjGEq5zs5cGcuseca8dXJ6/s7tU3FLLGWMAxuVYQe6ngwe99BKnykZ+1DC1jn7Y5fEYiPafSzVJ97xEQYa7nOQViYnR2QW/IiB5QnJGfv/w/hs7RCRD6L3QfNAlwvttVgXPJvnHwwTieE0wXeSxgDKU/Ho=
+	t=1733331517; cv=none; b=eo+6PHeDYPAfMIeyDiNWdrtO/ac19ICvAIfGZUjQOBJCBoukKkEDuZOMNqLY0uAUGgofNY7hDKjbG/xcQchJwesV4C3IKiNTkaczCdvuhS8FBW+EKFrZWlxwkovUn8ml8IEtjCFDH3iuKKUi9+8lTSUDIN/8NtP/ux/RTGrnvko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733331513; c=relaxed/simple;
-	bh=4wZ7mgbg3QsWwyRiCe6fx32xJMPPe2OYSz0Oxrbzf14=;
+	s=arc-20240116; t=1733331517; c=relaxed/simple;
+	bh=WXIbVvxTlJvBoUek1MnVbfGc5Mt4uhb2gkV11zvU4pY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=L5zmxD+SIvRCNW2ZSVvsAPJ4QBCWYgVTZBLfoljbOGF/TVAIc4X6tuQsK2nD73N+PkcGDzAlY/M7F2cytoPXgZu+ije2+kM34i+Qg4tdliqQvEk4cO9WmTyp5vRO7Qz/SirNyAHsWRsGG6/Msfe9NnsgDD78HcDMQY1s+XC/TkE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sH0xiY0W; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 813BFC4CED1;
-	Wed,  4 Dec 2024 16:58:31 +0000 (UTC)
+	 MIME-Version; b=TIKZA0HgJZYRAo7ocTm7MWxX8jXDaY/2+omFQaCwYDAP2MfCP5lc6UwYicTKRFGdhtQCxBgYZvLkmr+TCHy57V5Ftf6VritegoOn+5wZPKtyCdrVxN4nLsZuDcGsFTEtrQzjM4ayS8Ucrf8W1RYd/gLgoBIUEgeZDGCprWolOlk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PS9dOT2Z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55B45C4CECD;
+	Wed,  4 Dec 2024 16:58:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733331512;
-	bh=4wZ7mgbg3QsWwyRiCe6fx32xJMPPe2OYSz0Oxrbzf14=;
+	s=k20201202; t=1733331517;
+	bh=WXIbVvxTlJvBoUek1MnVbfGc5Mt4uhb2gkV11zvU4pY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=sH0xiY0W1Yc7+8mc620UJfEutvD6C61j22Z+jtSy8y41B2tTLlS51wOhLh0ddOnLF
-	 XHheBlFeZR9j5gWeuyfG+U0GqFvyHwomnIEHBwPvd/+YhgpZYXFbUAzsAZ+7/ZhyqD
-	 GSvOkNCmwI0bYc0KlM0c1xwgk8TKx2iRHLT8CpnfctavSCaR2SQW11WHOh+hE2ngaG
-	 kP/eJP/jfPTlmvCx4uPnK0YKSNjg36UDlywRCndVyy33uZb2e0UpvgP6Bl7gVvv33w
-	 GpAx6iWeMytrg21+BryYWVtZNmFcbzbAJrqgT+xuSaNlaLb3fQtsbuZ4X47QQZv9Ya
-	 bdcFtHSv92Lug==
+	b=PS9dOT2ZL5zzNspKIt2JxUy0Gbp9Akg0AMxi3orX5UKWCJiVOzRYD0IgGH4MgA9Y0
+	 X/a77Je+7LVxjTegs6U/+ZUrq9yIdBmreuu1EQB3NE0TIK0R0GLE8sKEhF20sQer71
+	 knWoEeaUKEaXctiUq7Qgzw4Rd4Dqeo7w5rBL2hn0JQVLSpfWunPc1qA+A09amtSFgg
+	 uopWEd82NzYj/0EzCjyooXVS+MVZmj+iIsrxb0CF8aO5bVLF4LSgLbaYo23m9Hz62L
+	 NIombaMKV8B0ACLwKzPT9LwQaC7OES2jo4qZC4xZlU0RPDRDNMrCqPB/IqDHTL3U69
+	 xZEmUS/lY53+A==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
 Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
 	Bjorn Andersson <andersson@kernel.org>,
 	Sasha Levin <sashal@kernel.org>,
 	mturquette@baylibre.com,
 	sboyd@kernel.org,
 	linux-arm-msm@vger.kernel.org,
 	linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.12 20/36] clk: qcom: rcg2: add clk_rcg2_shared_floor_ops
-Date: Wed,  4 Dec 2024 10:45:36 -0500
-Message-ID: <20241204154626.2211476-20-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.12 23/36] clk: qcom: dispcc-sm8550: enable support for SAR2130P
+Date: Wed,  4 Dec 2024 10:45:39 -0500
+Message-ID: <20241204154626.2211476-23-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20241204154626.2211476-1-sashal@kernel.org>
 References: <20241204154626.2211476-1-sashal@kernel.org>
@@ -69,115 +71,97 @@ Content-Transfer-Encoding: 8bit
 
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-[ Upstream commit aec8c0e28ce4a1f89fd82fcc06a5cc73147e9817 ]
+[ Upstream commit 1335c7eb7012f23dc073b8ae4ffcfc1f6e69cfb3 ]
 
-Generally SDCC clocks use clk_rcg2_floor_ops, however on SAR2130P
-platform it's recommended to use rcg2_shared_ops for all Root Clock
-Generators to park them instead of disabling. Implement a mix of those,
-clk_rcg2_shared_floor_ops.
+The display clock controller on SAR2130P is very close to the clock
+controller on SM8550 (and SM8650). Reuse existing driver to add support
+for the controller on SAR2130P.
 
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Link: https://lore.kernel.org/r/20241027-sar2130p-clocks-v5-6-ecad2a1432ba@linaro.org
+Link: https://lore.kernel.org/r/20241027-sar2130p-clocks-v5-10-ecad2a1432ba@linaro.org
 Signed-off-by: Bjorn Andersson <andersson@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/qcom/clk-rcg.h  |  1 +
- drivers/clk/qcom/clk-rcg2.c | 48 +++++++++++++++++++++++++++++++++----
- 2 files changed, 44 insertions(+), 5 deletions(-)
+ drivers/clk/qcom/Kconfig         |  4 ++--
+ drivers/clk/qcom/dispcc-sm8550.c | 18 ++++++++++++++++--
+ 2 files changed, 18 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
-index 8e0f3372dc7a8..80f1f4fcd52a6 100644
---- a/drivers/clk/qcom/clk-rcg.h
-+++ b/drivers/clk/qcom/clk-rcg.h
-@@ -198,6 +198,7 @@ extern const struct clk_ops clk_byte2_ops;
- extern const struct clk_ops clk_pixel_ops;
- extern const struct clk_ops clk_gfx3d_ops;
- extern const struct clk_ops clk_rcg2_shared_ops;
-+extern const struct clk_ops clk_rcg2_shared_floor_ops;
- extern const struct clk_ops clk_rcg2_shared_no_init_park_ops;
- extern const struct clk_ops clk_dp_ops;
+diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+index a3e2a09e2105b..46a6cdee65e5d 100644
+--- a/drivers/clk/qcom/Kconfig
++++ b/drivers/clk/qcom/Kconfig
+@@ -959,10 +959,10 @@ config SM_DISPCC_8450
+ config SM_DISPCC_8550
+ 	tristate "SM8550 Display Clock Controller"
+ 	depends on ARM64 || COMPILE_TEST
+-	depends on SM_GCC_8550 || SM_GCC_8650
++	depends on SM_GCC_8550 || SM_GCC_8650 || SAR_GCC_2130P
+ 	help
+ 	  Support for the display clock controller on Qualcomm Technologies, Inc
+-	  SM8550 or SM8650 devices.
++	  SAR2130P, SM8550 or SM8650 devices.
+ 	  Say Y if you want to support display devices and functionality such as
+ 	  splash screen.
  
-diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
-index bf26c5448f006..bf6406f5279a4 100644
---- a/drivers/clk/qcom/clk-rcg2.c
-+++ b/drivers/clk/qcom/clk-rcg2.c
-@@ -1186,15 +1186,23 @@ clk_rcg2_shared_force_enable_clear(struct clk_hw *hw, const struct freq_tbl *f)
- 	return clk_rcg2_clear_force_enable(hw);
- }
- 
--static int clk_rcg2_shared_set_rate(struct clk_hw *hw, unsigned long rate,
--				    unsigned long parent_rate)
-+static int __clk_rcg2_shared_set_rate(struct clk_hw *hw, unsigned long rate,
-+				      unsigned long parent_rate,
-+				      enum freq_policy policy)
- {
- 	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
- 	const struct freq_tbl *f;
- 
--	f = qcom_find_freq(rcg->freq_tbl, rate);
--	if (!f)
-+	switch (policy) {
-+	case FLOOR:
-+		f = qcom_find_freq_floor(rcg->freq_tbl, rate);
-+		break;
-+	case CEIL:
-+		f = qcom_find_freq(rcg->freq_tbl, rate);
-+		break;
-+	default:
- 		return -EINVAL;
-+	}
- 
- 	/*
- 	 * In case clock is disabled, update the M, N and D registers, cache
-@@ -1207,10 +1215,28 @@ static int clk_rcg2_shared_set_rate(struct clk_hw *hw, unsigned long rate,
- 	return clk_rcg2_shared_force_enable_clear(hw, f);
- }
- 
-+static int clk_rcg2_shared_set_rate(struct clk_hw *hw, unsigned long rate,
-+				    unsigned long parent_rate)
-+{
-+	return __clk_rcg2_shared_set_rate(hw, rate, parent_rate, CEIL);
-+}
-+
- static int clk_rcg2_shared_set_rate_and_parent(struct clk_hw *hw,
- 		unsigned long rate, unsigned long parent_rate, u8 index)
- {
--	return clk_rcg2_shared_set_rate(hw, rate, parent_rate);
-+	return __clk_rcg2_shared_set_rate(hw, rate, parent_rate, CEIL);
-+}
-+
-+static int clk_rcg2_shared_set_floor_rate(struct clk_hw *hw, unsigned long rate,
-+					  unsigned long parent_rate)
-+{
-+	return __clk_rcg2_shared_set_rate(hw, rate, parent_rate, FLOOR);
-+}
-+
-+static int clk_rcg2_shared_set_floor_rate_and_parent(struct clk_hw *hw,
-+		unsigned long rate, unsigned long parent_rate, u8 index)
-+{
-+	return __clk_rcg2_shared_set_rate(hw, rate, parent_rate, FLOOR);
- }
- 
- static int clk_rcg2_shared_enable(struct clk_hw *hw)
-@@ -1348,6 +1374,18 @@ const struct clk_ops clk_rcg2_shared_ops = {
+diff --git a/drivers/clk/qcom/dispcc-sm8550.c b/drivers/clk/qcom/dispcc-sm8550.c
+index 7f9021ca0ecb0..e41d4104d7702 100644
+--- a/drivers/clk/qcom/dispcc-sm8550.c
++++ b/drivers/clk/qcom/dispcc-sm8550.c
+@@ -75,7 +75,7 @@ static struct pll_vco lucid_ole_vco[] = {
+ 	{ 249600000, 2000000000, 0 },
  };
- EXPORT_SYMBOL_GPL(clk_rcg2_shared_ops);
  
-+const struct clk_ops clk_rcg2_shared_floor_ops = {
-+	.enable = clk_rcg2_shared_enable,
-+	.disable = clk_rcg2_shared_disable,
-+	.get_parent = clk_rcg2_shared_get_parent,
-+	.set_parent = clk_rcg2_shared_set_parent,
-+	.recalc_rate = clk_rcg2_shared_recalc_rate,
-+	.determine_rate = clk_rcg2_determine_floor_rate,
-+	.set_rate = clk_rcg2_shared_set_floor_rate,
-+	.set_rate_and_parent = clk_rcg2_shared_set_floor_rate_and_parent,
+-static const struct alpha_pll_config disp_cc_pll0_config = {
++static struct alpha_pll_config disp_cc_pll0_config = {
+ 	.l = 0xd,
+ 	.alpha = 0x6492,
+ 	.config_ctl_val = 0x20485699,
+@@ -106,7 +106,7 @@ static struct clk_alpha_pll disp_cc_pll0 = {
+ 	},
+ };
+ 
+-static const struct alpha_pll_config disp_cc_pll1_config = {
++static struct alpha_pll_config disp_cc_pll1_config = {
+ 	.l = 0x1f,
+ 	.alpha = 0x4000,
+ 	.config_ctl_val = 0x20485699,
+@@ -594,6 +594,13 @@ static const struct freq_tbl ftbl_disp_cc_mdss_mdp_clk_src[] = {
+ 	{ }
+ };
+ 
++static const struct freq_tbl ftbl_disp_cc_mdss_mdp_clk_src_sar2130p[] = {
++	F(200000000, P_DISP_CC_PLL0_OUT_MAIN, 3, 0, 0),
++	F(325000000, P_DISP_CC_PLL0_OUT_MAIN, 3, 0, 0),
++	F(514000000, P_DISP_CC_PLL0_OUT_MAIN, 3, 0, 0),
++	{ }
 +};
-+EXPORT_SYMBOL_GPL(clk_rcg2_shared_floor_ops);
 +
- static int clk_rcg2_shared_no_init_park(struct clk_hw *hw)
- {
- 	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
+ static const struct freq_tbl ftbl_disp_cc_mdss_mdp_clk_src_sm8650[] = {
+ 	F(19200000, P_BI_TCXO, 1, 0, 0),
+ 	F(85714286, P_DISP_CC_PLL0_OUT_MAIN, 3, 0, 0),
+@@ -1750,6 +1757,7 @@ static struct qcom_cc_desc disp_cc_sm8550_desc = {
+ };
+ 
+ static const struct of_device_id disp_cc_sm8550_match_table[] = {
++	{ .compatible = "qcom,sar2130p-dispcc" },
+ 	{ .compatible = "qcom,sm8550-dispcc" },
+ 	{ .compatible = "qcom,sm8650-dispcc" },
+ 	{ }
+@@ -1780,6 +1788,12 @@ static int disp_cc_sm8550_probe(struct platform_device *pdev)
+ 		disp_cc_mdss_mdp_clk_src.freq_tbl = ftbl_disp_cc_mdss_mdp_clk_src_sm8650;
+ 		disp_cc_mdss_dptx1_usb_router_link_intf_clk.clkr.hw.init->parent_hws[0] =
+ 			&disp_cc_mdss_dptx1_link_div_clk_src.clkr.hw;
++	} else if (of_device_is_compatible(pdev->dev.of_node, "qcom,sar2130p-dispcc")) {
++		disp_cc_pll0_config.l = 0x1f;
++		disp_cc_pll0_config.alpha = 0x4000;
++		disp_cc_pll0_config.user_ctl_val = 0x1;
++		disp_cc_pll1_config.user_ctl_val = 0x1;
++		disp_cc_mdss_mdp_clk_src.freq_tbl = ftbl_disp_cc_mdss_mdp_clk_src_sar2130p;
+ 	}
+ 
+ 	clk_lucid_ole_pll_configure(&disp_cc_pll0, regmap, &disp_cc_pll0_config);
 -- 
 2.43.0
 
