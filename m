@@ -1,101 +1,98 @@
-Return-Path: <linux-kernel+bounces-431368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C1B89E3C72
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:16:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B24D19E3C77
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:16:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1CD61163198
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 14:16:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8AF6D166A47
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 14:16:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC1BF1FA826;
-	Wed,  4 Dec 2024 14:16:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1F171FF7CF;
+	Wed,  4 Dec 2024 14:16:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cn8v+tl9"
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FKtzrwC3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3A93198A05;
-	Wed,  4 Dec 2024 14:16:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AC53198A05;
+	Wed,  4 Dec 2024 14:16:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733321768; cv=none; b=YKEMnV9r5M/nc6qiwbxGYuTQ9OPskaXHdw0wkYWJ+iz1t0bKVuPaOBCQNqpkJrhOnef+/Fm0KLSoDbn59yFhqsRqTBHPjn+Fmxgbl51JTUYJyLVpbAG0B53Fh93R479iMTmOOK7+gQr9Ln2YABJ0Hs7OoKwC3bl49AWSRYhgoJY=
+	t=1733321778; cv=none; b=dfFFns42k7VItWgUX5NVKBmjfup7spDC4pOoR8jO5OyHnLQsme3ls1qiVRpC6aVkuDVU5WaTR6Qsi47b2QSNuOpHVbGSLwW9bizkb95Af0G0xOvSSQe3VH52MLt/3anZCQGY4rg+fv2rfIKoR1HbJ3iGT+YEHMHm/TnPtnQgGM4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733321768; c=relaxed/simple;
-	bh=32EqbbKgH8JsssiHgI4ePkOybtoGOsnklDhrUj1Cn6E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CWtol3uTwXV25w8wDxt3SNxMdv1Od57RKsPagChRUb4NTHr8d+pQtkNjitTkRRz5RK09Mw5/Ka8q8f8npHWTVbc6w/s4m3PQFA8NHBQur4jH3XCpgLa6KrHOsu+Q9I1TxEmQtmVqh3d4nnkDgrqNSzmVQLi9z2g/YSL5sCVzQFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Cn8v+tl9; arc=none smtp.client-ip=209.85.215.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-7fbbe0fb0b8so5201666a12.0;
-        Wed, 04 Dec 2024 06:16:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733321766; x=1733926566; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6UoYI/6wjjQHlIxm1akrbMbioBvwu+FdjbV698jP2Z0=;
-        b=Cn8v+tl93SnDA9l8vIbzHWLCWvNVvEHAXNneUzjFkmOfwpN+8bmXO+d2aVukoSHDf0
-         bLfXoGhUDnK1D1UylG8PrxcmyFG6VkggZEbTF3ioe+K+j/rlniE/w/aAOwHIVYAM4iAp
-         siZJssoLvJOqPFeHj2UaHjWE6UBJ4SaknVi5juTSiLKOn8YnPf09+MnI1EGIXOBBbKec
-         2tTtjmVlL3L7LNIoeZQf0TTTjFUJBolht4TicLXK2G2xwDHodHzTd3PwZahvxpAG9S3q
-         SBRtzswc4Ps6C+giJWwaI5CDcK+BRIrk4Go9ry26JlKsgt12KpToHnEY1056ezrppLSn
-         MMOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733321766; x=1733926566;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6UoYI/6wjjQHlIxm1akrbMbioBvwu+FdjbV698jP2Z0=;
-        b=WZjTkZCf+uK9er3Ou/T2cHwWjY0kon1flhcD7TADOLHQSz7c1hOSnjR6aaO4jT2vJb
-         4F8WxVeAdoiP8mOKLmnYJ0A9jRM6seAl1eZLrJTJRtrXfelcbhRQY/y7GnDbCd+a5kzM
-         N+v3u2WUf/WS/H4XjiliWjYpOeHJ7jhu53QDZDBLmLuL5AMd00gJ0IVXSXZ684YKWODZ
-         JBSoz9LCs/FFq0pS/NBQ2cDH7BkvPMiZTBSIKDcUBDdm2uRU8bMgcJgVeJu1j1PK8fkd
-         GN49t0soMKCPgJgzga4cAfGHcu2zFHYdf7rdvlz5ZVLICbc1QHFcqoPKWJmDf8jrhs4m
-         QHtw==
-X-Forwarded-Encrypted: i=1; AJvYcCVsCad5N9TyemcCty/ojok6McqPLvVdwLpMHNkajsXiUnsa5hfEPn8hTeyRPYyJQQtvV/SdlHvzTRfSZg==@vger.kernel.org, AJvYcCXvZMEbOUjRo4w1OlLiXdn+pntaMOYzjwwVXJ+k+CGZTq82y8Mo0TNn8HzAsZ1gcy96XEY5lDWcNaF4vVyv@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVwOdu5L6gKn6HwRclXa4su98pbzqQk0NNnwhv++nE4By9kye5
-	17NS2zBma/HNFFHkHRyN9rf0CYi5W3JB6H49XVoXsijpTYw4o5zI
-X-Gm-Gg: ASbGncvf/OMCJXk+A14tRgAcYvfG2Hmj/1c1lpntZkoI1Wm62qc18i/LLw5NjkDOT8v
-	f1B2Bz27pYtnYFRUFLiD0rN/PRbMFNoFm7aAcUojHYWVwe6fWOm/BU6Em0onmzipe8R5OihLfmw
-	lgmdcc+pbOSuSRSjIsEkBlVc2rgVouAaDqcNMYaiqL2a90FUc5WsS4SRicnCYMfJ47JkrJmlYut
-	WOj/0SWdTwj0I9Dq/LeIRjwaSfoPFOGr5oE/2Ip03OoZ8Lzl3krtc3eWYFSa9Q=
-X-Google-Smtp-Source: AGHT+IHR1+FBG4a3NUTYX7/FuhDP57kaiIUB1PCkRWwNo20wTo+HWNWdUciIaNY0VnGFsuvIxQd0EA==
-X-Received: by 2002:a05:6a21:3943:b0:1e0:cc01:43e4 with SMTP id adf61e73a8af0-1e1653c8321mr8713277637.27.1733321765983;
-        Wed, 04 Dec 2024 06:16:05 -0800 (PST)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-725417fb36asm12317528b3a.116.2024.12.04.06.16.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Dec 2024 06:16:05 -0800 (PST)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Wed, 4 Dec 2024 06:16:04 -0800
-From: Guenter Roeck <linux@roeck-us.net>
-To: Stanislav Jakubek <stano.jakubek@gmail.com>
-Cc: Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Frank Li <Frank.Li@nxp.com>
-Subject: Re: [PATCH] hwmon: (tmp108) Add basic regulator support
-Message-ID: <2715de47-b880-48d2-8aec-76c377455e87@roeck-us.net>
-References: <Z0WJg5MMu_1AFYog@standask-GA-A55M-S2HP>
+	s=arc-20240116; t=1733321778; c=relaxed/simple;
+	bh=Fc6w8nphRLmfLmeDvo1AnME2gK8eg5/F7cqZLhFXv1I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=C3IiCPzrFXLrirZwsk6xR1b4OA/swMzCKNMnsQdwoxpg3z1lY8TYHVq36y51rjfnNSxr8C1yXnClkQKNyWHDbTTZWb74WXReMdtDQKgzvBW3DfxMO9lpLvoTA5TPAkgtvjmnDKm6OS3ZRm8tecoLL6uLvfWOSKEhqi/R+MVCTiU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FKtzrwC3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87761C4CECD;
+	Wed,  4 Dec 2024 14:16:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733321777;
+	bh=Fc6w8nphRLmfLmeDvo1AnME2gK8eg5/F7cqZLhFXv1I=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=FKtzrwC3vkt8vxhhKIInYOsEya+i5E/nqxW8GD/0zfV9Rk2+s0Kpgtnpg/j9l0Sbc
+	 FCwUbOIFZxTSL3laNixOE0ir6dum1FSGRjjbE+sop2p4XB07p0xLvfm3PVRI11wVQ4
+	 XrzHWvWpub25n1Auo7CRohJhow71U9M94EQWsiC/vtiErVF3PE8N3a02sHnn73ePwF
+	 3BDqposvlGL1v3BBoZE7LV1m4Yj5JXaJgRD+p/fWT5f+hH7SRokURUo1rBVvizS1SI
+	 MOnPD6MWgcu47kjr5h8uyHpisufc2FjtoiJGhyB6Op8IbsdQNfLUcxKYqKUX5SSOv+
+	 4jWJZ/ZzEeyLQ==
+Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-29666708da7so4223666fac.0;
+        Wed, 04 Dec 2024 06:16:17 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVDwaA6pb1/i8J9SZeryfWeOLO6Upa391a51MleDnwx/2AkABiAwpMyUeJ0kTkKGBSrcploTwroOtdFVOY=@vger.kernel.org, AJvYcCX1GuSqZi+27N94bGY/WMPwjYtSXWSkiWoAkrOswZy2LzwozdmmwX1L73NxerOxt+hhty+iaYL04aA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIvkJcFS2BNpGvfZJpUk9nSQMyBMYE5PFI8oEZb25Ielb2FvLA
+	fEb5VDt9BKEodG5CFYHrgHpcMnNfe4hy1xBUJXdbr2oL8Z5K1W2e/PdMl+TjHCOgTejxmobqV78
+	TyXXzbroWjynF6AD33ATV7JvsTNs=
+X-Google-Smtp-Source: AGHT+IFk/r60vYgO0Ks6VuJEKbdILY4SBQ/Dzs+tQLh00873VXCEGKvFQCbt5zBm5zDGHWaAPDpTD9Q7kXQUnmlS3ko=
+X-Received: by 2002:a05:6871:580d:b0:29e:2586:cff7 with SMTP id
+ 586e51a60fabf-29e9b3a80b2mr2159531fac.42.1733321776893; Wed, 04 Dec 2024
+ 06:16:16 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z0WJg5MMu_1AFYog@standask-GA-A55M-S2HP>
+References: <2787627.mvXUDI8C0e@rjwysocki.net> <2024120450-makeshift-haggler-625c@gregkh>
+In-Reply-To: <2024120450-makeshift-haggler-625c@gregkh>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 4 Dec 2024 15:16:05 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0hyi_2KL-h_+CbCSsZcQXEP3BspBxCbhzmfX2KydSfRKQ@mail.gmail.com>
+Message-ID: <CAJZ5v0hyi_2KL-h_+CbCSsZcQXEP3BspBxCbhzmfX2KydSfRKQ@mail.gmail.com>
+Subject: Re: [PATCH v1] PM: sleep: Update stale comment in device_resume()
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM <linux-pm@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, 
+	Saravana Kannan <saravanak@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 26, 2024 at 09:40:35AM +0100, Stanislav Jakubek wrote:
-> TMP108/P3T1085 are powered by the V+/VCC regulator, add support for it.
-> 
-> Signed-off-by: Stanislav Jakubek <stano.jakubek@gmail.com>
+On Wed, Dec 4, 2024 at 2:12=E2=80=AFPM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> On Wed, Dec 04, 2024 at 02:02:04PM +0100, Rafael J. Wysocki wrote:
+> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> >
+> > There is no function called __device_suspend() any more and it is still
+> > mentioned in a comment in device_resume(), so update that comment.
+> >
+> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > ---
+> >  drivers/base/power/main.c |    2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > Index: linux-pm/drivers/base/power/main.c
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>
+> Are you not using git?  This looks like the old cvs output :)
 
-Applied.
+I use git, but for patch generation I prefer quilt which has produced
+this patch.
 
-Thanks,
-Guenter
+> Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
