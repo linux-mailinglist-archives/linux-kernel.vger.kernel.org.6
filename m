@@ -1,221 +1,238 @@
-Return-Path: <linux-kernel+bounces-430973-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B37A89E37C6
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 11:44:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77D549E37B4
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 11:38:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 842DEB34E3F
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 10:38:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 373A7285EA2
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 10:38:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33BE11ACDF0;
-	Wed,  4 Dec 2024 10:37:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 567631B218A;
+	Wed,  4 Dec 2024 10:37:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nWuwf61Z"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g6ds8cdB"
+Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com [209.85.221.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2E711AA7A5;
-	Wed,  4 Dec 2024 10:37:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26FC91AA7A5
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 10:37:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733308632; cv=none; b=tjJS87dm5aQ5FLtV1pp+lpnCYTpWltcmhnG6KSBH70vzlgYBmtQm7OliVJ3ozNmoQ9cEqtI6bsZaP94fgbJ36X9S++NVrqzY0a1GM76bQys0JyUzRwcipbscohBUkWFUIquPp7uZiIm3ZwXT6J7F4tHwK705E10t1fdvn3xLGsg=
+	t=1733308649; cv=none; b=Mp3rYDJEmjrCSY0Lb25ksa1c4mOn02abMRaBJxBU88EoFuzmrfvjfFiMrWxFZE3t23mjd9PTylir8wNnO82BLwSKUdtLKcyzzDiWaIM8nbryQ4ja/KK9HrfWdwSVDVLWPsx0TdlTjurTlSj8MJ8vaaCFNx+Vp2WFqJ1GBGesNXk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733308632; c=relaxed/simple;
-	bh=oi4VCCSmHU55JcMhGyEuFOKOlzmvtbjpX1oEEtafnPI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FfVMv/CnALIIRuQ3Z84RKUcwSo/fCHPW/jf59Hdc+8zx+y7X2N8T7Q/sv4LiX5fWSOy/Vq6Y8eknz7SWFBrVvaeRYGCjjxxkovSKOMJCpldqi2oVF9onklv3T2rNfnMrGSx0F33uT4u94VjkVuxONzCr+NNBl9eOohmaXwnzQCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nWuwf61Z; arc=none smtp.client-ip=209.85.128.45
+	s=arc-20240116; t=1733308649; c=relaxed/simple;
+	bh=AsUzAlE7CCQ9KxdYCTTq2bSry9kqReBJdSEg7a0Rnfw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dx+anBlVL1T2ELSE4H1unFbVSH5Jk4b9TGUTtxGZqbW4A5KMOIQZKLJVtkkKkVpFJapgwZ+qR7sBHQK/4f7ZdTdKMoJd3tlKGFMufmT2YTv73/VJuPEJDvLjlTOltgkf4mEN7Sdo10FYalF+dKjU+jE8lBOlkzvAuP4D1jQSYYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g6ds8cdB; arc=none smtp.client-ip=209.85.221.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-434acf1f9abso60670345e9.2;
-        Wed, 04 Dec 2024 02:37:10 -0800 (PST)
+Received: by mail-vk1-f179.google.com with SMTP id 71dfb90a1353d-51532deb867so1485628e0c.0
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 02:37:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733308629; x=1733913429; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=L3ttYxp6rhOt03opBOFaCp7oUwpLFGdn3JPE802PBas=;
-        b=nWuwf61Z2uxMNS23bCIHvgTLmg1q5ZHzPqkkB/pIJxRG6aOrn5PzjrSPba75DRlJzx
-         KCjfDAJUtswjnvyGTY8LYmftQU+44TWh0LJlCHhv+27ksKBlmM6Yz/KJdw4mlNyy41Br
-         qjgzq/ZSSZzpM/iqj1nCW7bjyWBdxQ0JsyftJkS92V+8OwaUGPgBFLXQlL4DQw4JWDF9
-         NvKQBQSzVX1ECzBQfCLHbAbuqmHtyfiu/+YGAwa3fKKtzgjmbqIhoY2q7R2YXwnoljQJ
-         /l/pqhxGh2yD3FeBiwHPFNfxNPLOroc9BT4TddAZzliYgR2tQtG7AbDwHJXnyoAaSqD/
-         HgEw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733308629; x=1733913429;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1733308646; x=1733913446; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=L3ttYxp6rhOt03opBOFaCp7oUwpLFGdn3JPE802PBas=;
-        b=WKr3huUF/I4GI+Qle96tgb+AH0RvaVHUpuVshwb1Q6XoG90yleilguDXxrgCYrlcaE
-         12zdeNX90cHU/6HRYjzC5PwUiPUOwPv6HgHMyaPnty0o42cPLBKg1ZiwYRUKiVaL3t0D
-         ZWDUdc6HE8jjZcXDXrJ4RVsOdfHocK5yIyn2nJFvPZ8lQEJP4nth+S9IDA/orbsOkOxY
-         Iss1YK1SA0pmDA0McqH252hEis6Z//dQsRre7VXu4jEFbpi2GtWLgctwNMTWBpGd7IKH
-         jzzxwBByCD90QqcJVd7ydqJPKDwsA3bky/i6jH2t/+P1WHk8DvcKohvUNz200NWl5qZ6
-         jd3w==
-X-Forwarded-Encrypted: i=1; AJvYcCXxk0HXzxxHz52Xp4o1OqPEJZZqvtuEj+8DpjtdFKnOC5LLyxG1KT1svsAUWAeH2i23lQer9Q70wGb+Gqk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJarJO1zLlVXDDTSGf5Hjxd60UE9sCSXpmDkZbVhxp5/FSkk6P
-	rRYHFyu0r/kDNP/vaDPIYhkRURe+1DY+hVc/hXwxrA8b5CvX/svZ
-X-Gm-Gg: ASbGncufilm/WdUnhOhCR/eYDT4nh3JbzgCdYmSSJoxANOImNkB7XJ3gGIYKAXONTsR
-	zFFcprx69kuHHWCFcaevCdDLDMwj/PhgTCHjobapMJyYetebP3fptBRPRX/+NQcxrFM1NXkxC3Q
-	hp7/e1KzCD9tGhukYx+cjccQiVAR/aI7L9nk9sGJeyrBQ28HtIGibBJFEf8mT2v+jzHQ/FC/lx9
-	8+fxPEhMo5E3qYicQoAbppnCv4z5shN04AZdkKhNT1/k/UMVktLLj79ezmMKkiTdxJ/+2ScFthV
-	JabwJlOA9eIzEUT6sAS5
-X-Google-Smtp-Source: AGHT+IFk6yd+S1MM72aq43fUVFUVQJ8IJuecR2VdiHKgNuoOL+p3FwaA3bVzIhygdzDfT4fCU6sesg==
-X-Received: by 2002:a05:600c:1d19:b0:434:a1d3:a306 with SMTP id 5b1f17b1804b1-434d09b2401mr51927465e9.5.1733308628639;
-        Wed, 04 Dec 2024 02:37:08 -0800 (PST)
-Received: from tom-desktop (net-188-217-53-234.cust.vodafonedsl.it. [188.217.53.234])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434d527e287sm19861935e9.12.2024.12.04.02.37.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Dec 2024 02:37:08 -0800 (PST)
-Date: Wed, 4 Dec 2024 11:37:05 +0100
-From: Tommaso Merciai <tomm.merciai@gmail.com>
-To: Liu Ying <victor.liu@nxp.com>
-Cc: linux-renesas-soc@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	biju.das.jz@bp.renesas.com,
-	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/bridge: ite-it6263: Support VESA input format
-Message-ID: <Z1Aw0WafGmYDrr8K@tom-desktop>
-References: <20241203172129.778123-1-tommaso.merciai.xr@bp.renesas.com>
- <834a2690-ca06-4a8b-9a81-c4981074f95c@nxp.com>
+        bh=IZbxezCA1GDh5/tCHGYe+MRSelgs1h7TrsEnWijG4Y0=;
+        b=g6ds8cdBQD7JAkKAKbFt2rKfWOtZev9ACf1xCXgAuEb+4pvDmRbRqGYMw9GSv4Mhf8
+         uHJoyhbPAmqO7MwEJPtimxc4gV6cIQvgF0smWo98WCW0nOSNF6y4hqk5U4FjjvyuTTX/
+         e2nBWIX2rWWJvqj5tMwozrq1QxVWnrTtY3Ay/zQor4wddz15zukqh7L7rM8ViLu4aa0a
+         xbDcCXchsplDVmJvQbfI75lXzLw6y9ctiQFAF+Rq6OWryuYq28cqRG3PkZrYxaDR2e3m
+         olbZJLWCNlffdSrkm108JBvJaeTChkdfzGWUUaO9WKLxHFb0Kd1SpTpAI1Om7y1autOx
+         +2lg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733308646; x=1733913446;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IZbxezCA1GDh5/tCHGYe+MRSelgs1h7TrsEnWijG4Y0=;
+        b=pM/uCrZNgzC+vCxoynOThZw564vQpFZSySd9arpMN5KflIa6rV3AWs95awjfDMbFo2
+         eo2fV11Y2SaVIv/Ha4jeFR7udkldmD1YtqPor20Y0Fdu89P6MyahQv7TgAOezAJrtAwW
+         kGbVRt2ChNUkxFDk1iuVxwXuvem3YSNp040RNocsVY1lazWypw7QxR7nXB6TJU5gkOdm
+         FWwERZANvqQGU1e3CTt0iNms8MKUJGLQWvg+HMheFeJjB8jk4hoThxEt8qwa6qJMf7Cj
+         L+Lwyd2QAQ3uCYTK8sFnekiu+y2SgWVqSJ2WeAcIIypRFSGwJ5PGRNEYuWnkh6zosn+t
+         9dzQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVWXdclxrFIa4RM7oxtrnxUCoY69C40QRrZtBjMpwgc7te/pWF2JqW4BV/T1M+xws14rhzHboECfKGsico=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0DkN+7zxAeZcWz8S1LRIBraIJhJAyH0L3NMuRFHUw4w5Sp5De
+	Mqj54SgcsOClhjzBNCAng5ix6s6QcaUKatq5eGjpfK4kt1WQ0wCKE0MUH4Pqt0GxbhxYlD9qtFI
+	7PRLg750tOWwzCF4za5T2XvKHNaU=
+X-Gm-Gg: ASbGncumW/QBziMt4CUUIeeLDDjKHHR2byNj2W8ZPYml+VMjqkZFCHqVdogcwx2PmwL
+	6115SadmSJVQdyyHI/7XE8i7fdna3YKOyxS2nHBnVZmKLqTOKrAzUlHM7cJBywj3v
+X-Google-Smtp-Source: AGHT+IHynhX/MX8+WVPjQua2f8a9Inty5yJv/GwXFtGCCbN7HirfTPNz/j5lLcj3e1kdQQopvdnQpiUTWAIhbC53AWA=
+X-Received: by 2002:a05:6122:21a5:b0:515:3bfb:d4d0 with SMTP id
+ 71dfb90a1353d-515bf29dda6mr7446680e0c.1.1733308645997; Wed, 04 Dec 2024
+ 02:37:25 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <834a2690-ca06-4a8b-9a81-c4981074f95c@nxp.com>
+References: <20241204040158.2768519-1-chenridong@huaweicloud.com> <20241204040158.2768519-2-chenridong@huaweicloud.com>
+In-Reply-To: <20241204040158.2768519-2-chenridong@huaweicloud.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Wed, 4 Dec 2024 23:37:15 +1300
+Message-ID: <CAGsJ_4yBJBLucTP6945VTf9UQ_y6wcPyooevHT+mUu_junkjWQ@mail.gmail.com>
+Subject: Re: [RFC PATCH v3 1/2] mm: vmascan: add find_folios_written_back() helper
+To: Chen Ridong <chenridong@huaweicloud.com>
+Cc: akpm@linux-foundation.org, mhocko@suse.com, hannes@cmpxchg.org, 
+	yosryahmed@google.com, yuzhao@google.com, david@redhat.com, 
+	willy@infradead.org, ryan.roberts@arm.com, wangkefeng.wang@huawei.com, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, chenridong@huawei.com, 
+	wangweiyang2@huawei.com, xieym_ict@hotmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Liu Ying,
-Thanks for your review.
+On Wed, Dec 4, 2024 at 5:11=E2=80=AFPM Chen Ridong <chenridong@huaweicloud.=
+com> wrote:
+>
+> From: Chen Ridong <chenridong@huawei.com>
+>
+> Add find_folios_written_back() helper, which will be called in the
+> shrink_inactive_list function in subsequent patch.
 
-On Wed, Dec 04, 2024 at 11:34:23AM +0800, Liu Ying wrote:
-> On 12/04/2024, tomm.merciai@gmail.com wrote:
-> > From: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-> > 
-> > Introduce it6263_is_input_bus_fmt_valid() and refactor the
-> > it6263_bridge_atomic_get_input_bus_fmts() function to support VESA
-> > format by selecting the LVDS input format based on the LVDS data mapping
-> > and thereby support both JEIDA and VESA input formats.
-> 
-> ite,it6263.yaml says IT6263 supports vesa-24 and vesa-30, while
-> this patch actually only adds vesa-24 support.  So, to be more
-> specific, the patch subject and commit message should reflect
-> this rather than claim "Support VESA input format".
+This is not about adding a helper but rather extracting a function
+that can be used
+by both lru_gen and the traditional active/inactive LRU. Making it a
+separate patch
+may not be ideal, as it isn=E2=80=99t an external function that warrants
+special attention.
+Combining patch 1 and patch 2 into a single patch creates a more cohesive a=
+nd
+logical flow, making it easier to review.
 
-Fully agree, thanks.
-I will fix that in v2 specifying vesa-24 like you suggest.
+>
+> Signed-off-by: Chen Ridong <chenridong@huawei.com>
+> ---
+>  mm/vmscan.c | 73 +++++++++++++++++++++++++++++++----------------------
+>  1 file changed, 43 insertions(+), 30 deletions(-)
+>
+> diff --git a/mm/vmscan.c b/mm/vmscan.c
+> index 76378bc257e3..af1ff76f83e7 100644
+> --- a/mm/vmscan.c
+> +++ b/mm/vmscan.c
+> @@ -283,6 +283,48 @@ static void set_task_reclaim_state(struct task_struc=
+t *task,
+>         task->reclaim_state =3D rs;
+>  }
+>
+> +/**
+> + * find_folios_written_back - Find and move the written back folios to a=
+ new list.
+> + * @list: filios list
+> + * @clean: the written back folios list
+> + * @skip: whether skip to move the written back folios to clean list.
+> + */
+> +static inline void find_folios_written_back(struct list_head *list,
+> +               struct list_head *clean, bool skip)
+> +{
+> +       struct folio *folio;
+> +       struct folio *next;
+> +
+> +       list_for_each_entry_safe_reverse(folio, next, list, lru) {
+> +               if (!folio_evictable(folio)) {
+> +                       list_del(&folio->lru);
+> +                       folio_putback_lru(folio);
+> +                       continue;
+> +               }
+> +
+> +               if (folio_test_reclaim(folio) &&
+> +                   (folio_test_dirty(folio) || folio_test_writeback(foli=
+o))) {
+> +                       /* restore LRU_REFS_FLAGS cleared by isolate_foli=
+o() */
+> +                       if (lru_gen_enabled() && folio_test_workingset(fo=
+lio))
+> +                               folio_set_referenced(folio);
+> +                       continue;
+> +               }
+> +
+> +               if (skip || folio_test_active(folio) || folio_test_refere=
+nced(folio) ||
+> +                   folio_mapped(folio) || folio_test_locked(folio) ||
+> +                   folio_test_dirty(folio) || folio_test_writeback(folio=
+)) {
+> +                       /* don't add rejected folios to the oldest genera=
+tion */
+> +                       if (lru_gen_enabled())
+> +                               set_mask_bits(&folio->flags, LRU_REFS_MAS=
+K | LRU_REFS_FLAGS,
+> +                                             BIT(PG_active));
+> +                       continue;
+> +               }
+> +
+> +               /* retry folios that may have missed folio_rotate_reclaim=
+able() */
+> +               list_move(&folio->lru, clean);
+> +       }
+> +}
+> +
+>  /*
+>   * flush_reclaim_state(): add pages reclaimed outside of LRU-based recla=
+im to
+>   * scan_control->nr_reclaimed.
+> @@ -4567,8 +4609,6 @@ static int evict_folios(struct lruvec *lruvec, stru=
+ct scan_control *sc, int swap
+>         int reclaimed;
+>         LIST_HEAD(list);
+>         LIST_HEAD(clean);
+> -       struct folio *folio;
+> -       struct folio *next;
+>         enum vm_event_item item;
+>         struct reclaim_stat stat;
+>         struct lru_gen_mm_walk *walk;
+> @@ -4597,34 +4637,7 @@ static int evict_folios(struct lruvec *lruvec, str=
+uct scan_control *sc, int swap
+>                         scanned, reclaimed, &stat, sc->priority,
+>                         type ? LRU_INACTIVE_FILE : LRU_INACTIVE_ANON);
+>
+> -       list_for_each_entry_safe_reverse(folio, next, &list, lru) {
+> -               if (!folio_evictable(folio)) {
+> -                       list_del(&folio->lru);
+> -                       folio_putback_lru(folio);
+> -                       continue;
+> -               }
+> -
+> -               if (folio_test_reclaim(folio) &&
+> -                   (folio_test_dirty(folio) || folio_test_writeback(foli=
+o))) {
+> -                       /* restore LRU_REFS_FLAGS cleared by isolate_foli=
+o() */
+> -                       if (folio_test_workingset(folio))
+> -                               folio_set_referenced(folio);
+> -                       continue;
+> -               }
+> -
+> -               if (skip_retry || folio_test_active(folio) || folio_test_=
+referenced(folio) ||
+> -                   folio_mapped(folio) || folio_test_locked(folio) ||
+> -                   folio_test_dirty(folio) || folio_test_writeback(folio=
+)) {
+> -                       /* don't add rejected folios to the oldest genera=
+tion */
+> -                       set_mask_bits(&folio->flags, LRU_REFS_MASK | LRU_=
+REFS_FLAGS,
+> -                                     BIT(PG_active));
+> -                       continue;
+> -               }
+> -
+> -               /* retry folios that may have missed folio_rotate_reclaim=
+able() */
+> -               list_move(&folio->lru, &clean);
+> -       }
+> -
+> +       find_folios_written_back(&list, &clean, skip_retry);
+>         spin_lock_irq(&lruvec->lru_lock);
+>
+>         move_folios_to_lru(lruvec, &list);
+> --
+> 2.34.1
+>
 
-> 
-> > 
-> > Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-> 
-> Can you please send this patch with your Renesas email address
-> instead of Gmail email address?
-> Otherwise, add a Signed-off-by tag with your Gmail email address.
-
-Thanks, for the point.
-What about adding Acked-by: from my renesas email address?
-
-> 
-> > ---
-> >  drivers/gpu/drm/bridge/ite-it6263.c | 25 ++++++++++++++++++++++---
-> >  1 file changed, 22 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/drivers/gpu/drm/bridge/ite-it6263.c b/drivers/gpu/drm/bridge/ite-it6263.c
-> > index cbabd4e20d3e..83d1db29157a 100644
-> > --- a/drivers/gpu/drm/bridge/ite-it6263.c
-> > +++ b/drivers/gpu/drm/bridge/ite-it6263.c
-> > @@ -48,6 +48,7 @@
-> >  #define  REG_COL_DEP			GENMASK(1, 0)
-> >  #define  BIT8				FIELD_PREP(REG_COL_DEP, 1)
-> >  #define  OUT_MAP			BIT(4)
-> > +#define  VESA				BIT(4)
-> >  #define  JEIDA				0
-> >  #define  REG_DESSC_ENB			BIT(6)
-> >  #define  DMODE				BIT(7)
-> > @@ -428,12 +429,30 @@ static inline void it6263_lvds_reset(struct it6263 *it)
-> >  	fsleep(10000);
-> >  }
-> >  
-> > +static bool it6263_is_input_bus_fmt_valid(u32 input_fmt)
-> 
-> 1) Inline this small function.
-> 2) Change the argument input_fmt type from u32 to int to
->    match the type of it->lvds_data_mapping.
-
-Will fix that in v2, thanks :)
-
-> 
-> static inline bool it6263_is_input_bus_fmt_valid(int input_fmt)
-> 
-> > +{
-> > +	switch (input_fmt) {
-> > +	case MEDIA_BUS_FMT_RGB888_1X7X4_JEIDA:
-> > +	case MEDIA_BUS_FMT_RGB888_1X7X4_SPWG:
-> > +		return true;
-> > +	}
-> > +	return false;
-> > +}
-> > +
-> >  static inline void it6263_lvds_set_interface(struct it6263 *it)
-> >  {
-> > +	u8 fmt;
-> > +
-> >  	/* color depth */
-> >  	regmap_write_bits(it->lvds_regmap, LVDS_REG_2C, REG_COL_DEP, BIT8);
-> > +
-> > +	if (it->lvds_data_mapping == MEDIA_BUS_FMT_RGB888_1X7X4_SPWG)
-> > +		fmt = VESA;
-> > +	else
-> > +		fmt = JEIDA;
-> > +
-> >  	/* output mapping */
-> > -	regmap_write_bits(it->lvds_regmap, LVDS_REG_2C, OUT_MAP, JEIDA);
-> > +	regmap_write_bits(it->lvds_regmap, LVDS_REG_2C, OUT_MAP, fmt);
-> >  
-> >  	if (it->lvds_dual_link) {
-> >  		regmap_write_bits(it->lvds_regmap, LVDS_REG_2C, DMODE, DISO);
-> > @@ -714,14 +733,14 @@ it6263_bridge_atomic_get_input_bus_fmts(struct drm_bridge *bridge,
-> >  
-> >  	*num_input_fmts = 0;
-> >  
-> > -	if (it->lvds_data_mapping != MEDIA_BUS_FMT_RGB888_1X7X4_JEIDA)
-> > +	if (!it6263_is_input_bus_fmt_valid(it->lvds_data_mapping))
-> >  		return NULL;
-> >  
-> >  	input_fmts = kmalloc(sizeof(*input_fmts), GFP_KERNEL);
-> >  	if (!input_fmts)
-> >  		return NULL;
-> >  
-> > -	input_fmts[0] = MEDIA_BUS_FMT_RGB888_1X7X4_JEIDA;
-> > +	input_fmts[0] = it->lvds_data_mapping;
-> >  	*num_input_fmts = 1;
-> >  
-> >  	return input_fmts;
-> 
-> -- 
-> Regards,
-> Liu Ying
-
-Thanks & Regards,
-Tommaso
-
-
-> 
+Thanks
+Barry
 
