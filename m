@@ -1,130 +1,231 @@
-Return-Path: <linux-kernel+bounces-431963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431974-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAA139E4628
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 21:57:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EB8899E4478
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 20:20:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 886DFB391D8
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:21:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91FE5BA18ED
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:26:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D36181A8F7C;
-	Wed,  4 Dec 2024 18:21:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43D9F1F5424;
+	Wed,  4 Dec 2024 18:25:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P8zJzR0H"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EqclULk5"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C99423918A;
-	Wed,  4 Dec 2024 18:21:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60A1E1F03C5;
+	Wed,  4 Dec 2024 18:25:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733336505; cv=none; b=NZPSMX3ldyKl2pK7xfbNNt/Fwh5S6I5Dirc38930UOFx/7vvF4ZVVu9pf63m2ENRBV3V20ztLidMOcQ2LilVV2kuDlISu9JodrkT8FqrtO9rvL+p1SaS2fllz2y8SVW8trRYF4qBCzahHfOEjl4ZLPcc9OjYTsltAOlviGX7XYQ=
+	t=1733336713; cv=none; b=MmvvmAETJAGikrBQkVV22E9mXk6FnsDldtDrCYoT34rE2/ZV/FkTOQZwfoleiW1h3z0gMj0wjzC5hTfQ7HwkZLL20buoN7B2ZcKvQDOlKKBqCfdR8Y8qaHjiFaaiFgR9csPSGn6IG7pBk8CEbSFb/OqUfqHOs/QwRLKa8QnU8rQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733336505; c=relaxed/simple;
-	bh=uME13l5HovQ3NZyv34mfUDUdqGg1uJwju50MkEmn3vQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QljQ7eY1nPi6ozBMjLr+WQZRueM9ruim0rwDojIyg6eZi/R+cfwzhcUXlCk3RGIAipBo6rnWPaAhFFJayx/IHBLYpbzhDBsXawW6DHbe6ekoYPcIdfmuPdwzt9dAMf+zWECeCFbgz0+pD6nD/y+/c2K0afbFuSvMNKZC7taPHSY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P8zJzR0H; arc=none smtp.client-ip=209.85.167.54
+	s=arc-20240116; t=1733336713; c=relaxed/simple;
+	bh=ovRKtQYK618KQAT7xksv0b6oZxulWAFP/r65yBLnjJc=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=kR5o0cjqKsSs4XshANTgP0hG57SLwOohCvG1D0iWrm//1E/6lDmAuha6eWg6nP3pf41AqeX9580E3HLJKoRxFtWRpNmP3qFfEdszPMOCnwhT3nHsBwwcc8ZTiiTlm1xpa7F11jIi8aPVx0S5ZnWbwVkqbE/lsvXqImtjr2J7ozI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EqclULk5; arc=none smtp.client-ip=209.85.128.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-53de8ecb39bso146653e87.2;
-        Wed, 04 Dec 2024 10:21:43 -0800 (PST)
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4349ec4708bso84065e9.2;
+        Wed, 04 Dec 2024 10:25:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733336502; x=1733941302; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1733336710; x=1733941510; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=uME13l5HovQ3NZyv34mfUDUdqGg1uJwju50MkEmn3vQ=;
-        b=P8zJzR0HjnbeGcX1DzZL+RtzGWJiq54pmlkX9DrPWYGyRT77Rf8MfvMXJASJkRYyX9
-         8R9RDma09a25Ufepuoj6RN4WCU5IDqeZdyq0SYeVZJlYq5gjr9XinWnHsMvn/w6iKPno
-         Ddxfu4zpVoV44lhlrtTnadHvQEayvOBMo3F+7Si55hah8BTn/iAsV8CcILaEIYsQJPS0
-         YFnxfJ/++0cn3WnxtHYMJh0v9bGk99bsHLrLzyrcxHQvTV1ClVznrDVMnPvY8UV0JBrs
-         JwZkztVrCSDqa9GVQbGLNgtuGgtrEw7GKoSOGRLHUTZjcHeLdhf7EyyRj0gwS46hHCUh
-         Tf7w==
+        bh=e7z7JJ9yAoVzYehdb1uFB7loYdyMG6J39Tna2NdUaaw=;
+        b=EqclULk5jVMWt7vx8leooNUXzs5TxEDzHhVthYYY2Vahb5dVLritEhoJiGH1r9sGxI
+         EblujPYnub3TE21cDeI3U6iL0toRUY3obFe+k2U48weNLFcXF10sB1abIBZRZ4wrHY1b
+         fKNeIhuR3Nw7ooEKb1Z72ckxilcmF85l4/FVh2ZXNbb9ETnHbHcQ6vBNDBO1E94gtBSD
+         TpDoMPZmNAyWQ+TTwj713JnoHqLWjTCAMpvFoCj6GgmzxSfWpxq1brAAOAVtBtDup80q
+         KYcH7eevpK0Ytodw1dhIWa3uDhlsU8BHDMizhmIPCYft9hKEvqk7vyAHRrbjS19xZKbW
+         LGew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733336502; x=1733941302;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1733336710; x=1733941510;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=uME13l5HovQ3NZyv34mfUDUdqGg1uJwju50MkEmn3vQ=;
-        b=dOrOXYKcFwz5HwDMfmzsMiC8Y0jRQYVmOIv3/UfuH5UY5naFnmgyg7jaEjpSaxm8Nd
-         IZZRti4LQBICqLnzxiIdjK6Nq2/0B7CI6f4zmuf3XdQo/Hb+7VHTZUec4nsQswFbsSMQ
-         p8roWVQ0MvGLcYYbWUdn06kUQ5vsYBI5+afoFOlQVC2TvwFjTvA4/zx2UylZxEgD0gUt
-         hNOaKwn2GMr6WB0t8SxKD1hDMp0Vc5gha9DRgv4H5Zu3nz/dn1XWhthcmP305+cxnvhr
-         H7T7Sn7s+l+zfydjANhCg5TAjXYnENjnWdu9Yuek8Sm4sfxIo0YeRIDTSEnVNOu9HkgF
-         EUEA==
-X-Forwarded-Encrypted: i=1; AJvYcCUO/Vu20E9x4r/wDPledn53EtxLLUXFIg5czQbnMGl3yWrsPdYmxeAsgw6ZBNY8aNXVDPo=@vger.kernel.org, AJvYcCVwhLLXwJt1EpAqJnP+S8TkbIlc6VbWR4BZXFw3cXMCUYkpiHbK3qlkhabfhezfspsUI5dMTe5n4YY8+A/i@vger.kernel.org
-X-Gm-Message-State: AOJu0YxzjlZagBfspnHyTt4YHPe6VskBmeKH6Vcv6FnvsKPuzstt0iGo
-	fthpoNY+G/YoUYQ2XYqF0uBrAb2G3GBPpT3uS+rs7ocsJ4bR497tdcnzP2M/9GCYeIXU1eQ5q0k
-	u+jy+oPSj0Y3dm1OYU5isrTMxcmU=
-X-Gm-Gg: ASbGncuJSWdNlaY3xqW7LR824lgir+qQSKkkVE7jCXbYGSVMUb0gAuuVM7vDlcgw9bX
-	+6TczZcY606XeUVoqucpvilv1aokwah8=
-X-Google-Smtp-Source: AGHT+IHqZimxoCyGtBnst+WJ5pzCbapVWH5mhYIjHSkEmNWXMwGSZsnIZshHuLlPBJphjw0Ao4JRV6PYRdpAc2LLuH4=
-X-Received: by 2002:a05:6512:3ca2:b0:53e:1b9d:4a4 with SMTP id
- 2adb3069b0e04-53e1b9d0560mr3729506e87.3.1733336501332; Wed, 04 Dec 2024
- 10:21:41 -0800 (PST)
+        bh=e7z7JJ9yAoVzYehdb1uFB7loYdyMG6J39Tna2NdUaaw=;
+        b=d5k+Vw07dCCPn5W1N1K4wX85KkuNW/GGcElDjxGbzy3roPwflMZLHk2Msj/9F/mzzz
+         Jc5sneGHp0mG4MfonGV5i5dzj7if7MmspLSvjHD09EYwH0mUqS1QycndmvJctBzc+EQ6
+         6ytbQIEifDQS1CV00yQ6/3ltpwTonxRnNL7niJ5ocYiko9JsrIIOhSRLMXYqtwyMlzXH
+         51A7Kxugd+FcTYUgD4MNPA6K2VETsbqhIT5eOmWqULhC49rpC3n7K9dwtgqbinVLe+CI
+         j0NYJvT2llP0KPbnVfKSZjFVuXhqZ+xJH8A9HQj+S8nTzV5Uwze+OvETXWu58uAd+6z5
+         g/sQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWg8cI3DLbkosVqon88TZg3Stm87NAaSlnTZmmoFGkq2xItYEJXYqBldA3ihevRlfl4bLCvTGUr3cmcBRtS@vger.kernel.org, AJvYcCWif7jViRnbSuK4bfD/oVVyJBWvV44FdiEiaQdBV1ahvSJLQ1MLHivAmYhIsi53spc6VV5WMwieqO0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzY+4ZKulYzWiXSV9PjodwYCS12iFEzBVyhi7UPpFBKxiGTnnu+
+	tZ12IAnyXCu12Lzmu7xNKQqaEoneRpDPGHb1bsl9uGMqwFamDxSk2p+tuA==
+X-Gm-Gg: ASbGnct7VCJFxao3O74/kw48i9KoLWg8HoyY2M9b+ziEIJLmu3lXkOw9LIytO3FSecp
+	QbTXRRw/0obQzFiyjm16kTfrlULbY2RL8tMZR54yvr5W66uHsONNj5Vb25KdLMKi6M2/lcvBLDI
+	sdgiXjVWaY535l7SCvAT2AH3s++Y8vESWSm3HjZBpxqE4WGBCBqZLpoc4jZ4aZbMhIOY8yWLWoz
+	0YlMAPLwHvZyXSrRR8WDrknMds1EyPdTrdwuGsdNfVjaBTV2wPpcu7WVhoIFa5RKVBkYPeDWLhW
+	7hRoGz8ofAMn3xoJ2comiExOjWYd
+X-Google-Smtp-Source: AGHT+IHE8SXsbpXZSHNLMaGjZ2a2vzAycZ+3bDp+ty6QQecn0m681DvDIp0IxDnOFuMhww7hC/s7JQ==
+X-Received: by 2002:a05:600c:1ca2:b0:434:9d0d:1347 with SMTP id 5b1f17b1804b1-434d0a03f25mr26594415e9.5.1733336709510;
+        Wed, 04 Dec 2024 10:25:09 -0800 (PST)
+Received: from 7b58d44c4ff6.v.cablecom.net (84-72-156-211.dclient.hispeed.ch. [84.72.156.211])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434d52cbf57sm31959755e9.39.2024.12.04.10.25.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Dec 2024 10:25:09 -0800 (PST)
+From: Lothar Rubusch <l.rubusch@gmail.com>
+To: lars@metafoo.de,
+	Michael.Hennerich@analog.com,
+	jic23@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org
+Cc: devicetree@vger.kernel.org,
+	linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	eraretuya@gmail.com,
+	l.rubusch@gmail.com
+Subject: [PATCH v4 05/10] iio: accel: adxl345: extend list of defines
+Date: Wed,  4 Dec 2024 18:24:46 +0000
+Message-Id: <20241204182451.144381-6-l.rubusch@gmail.com>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20241204182451.144381-1-l.rubusch@gmail.com>
+References: <20241204182451.144381-1-l.rubusch@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241204103042.1904639-1-arnd@kernel.org> <20241204103042.1904639-4-arnd@kernel.org>
- <87ed2nsi4d.ffs@tglx> <3B214995-70A6-4777-B7E3-F10018F7D71E@zytor.com>
-In-Reply-To: <3B214995-70A6-4777-B7E3-F10018F7D71E@zytor.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Wed, 4 Dec 2024 20:21:04 +0200
-Message-ID: <CAHp75VfZW2A1s+QLdVHXnFV16dWhM=T5gtWw97d1gM-Pys+CZw@mail.gmail.com>
-Subject: Re: [PATCH 03/11] x86: Kconfig.cpu: split out 64-bit atom
-To: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Arnd Bergmann <arnd@kernel.org>, linux-kernel@vger.kernel.org, 
-	x86@kernel.org, Arnd Bergmann <arnd@arndb.de>, Ingo Molnar <mingo@redhat.com>, 
-	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Andy Shevchenko <andy@kernel.org>, 
-	Matthew Wilcox <willy@infradead.org>, Sean Christopherson <seanjc@google.com>, 
-	Davide Ciminaghi <ciminaghi@gnudd.com>, Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Dec 4, 2024 at 5:55=E2=80=AFPM H. Peter Anvin <hpa@zytor.com> wrote=
-:
->
-> On December 4, 2024 5:16:50 AM PST, Thomas Gleixner <tglx@linutronix.de> =
-wrote:
-> >On Wed, Dec 04 2024 at 11:30, Arnd Bergmann wrote:
-> >> From: Arnd Bergmann <arnd@arndb.de>
-> >>
-> >> Both 32-bit and 64-bit builds allow optimizing using "-march=3Datom", =
-but
-> >> this is somewhat suboptimal, as gcc and clang use this option to refer
-> >> to the original in-order "Bonnell" microarchitecture used in the early
-> >> "Diamondville" and "Silverthorne" processors that were mostly 32-bit o=
-nly.
-> >>
-> >> The later 22nm "Silvermont" architecture saw a significant redesign to
-> >> an out-of-order architecture that is reflected in the -mtune=3Dsilverm=
-ont
-> >> flag in the compilers, and all of these are 64-bit capable.
-> >
-> >In theory. There are quite some crippled variants of silvermont which
-> >are 32-bit only (either fused or at least officially not-supported to
-> >run 64-bit)...
+Extend the list of constants. Keep them the header file for readability.
+The constants allow the implementation of events like FIFO-watermark,
+single tap, double tap, freefall, etc.
 
-> Yeah. That was a sad story, which I unfortunately am not at liberty to sh=
-are.
+Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
+---
+ drivers/iio/accel/adxl345.h | 89 ++++++++++++++++++++++++++++++++-----
+ 1 file changed, 77 insertions(+), 12 deletions(-)
 
-Are they available in the wild? What I know with that core are
-Merrifield, Moorefield, and Bay Trail that were distributed in
-millions and are perfectly available, but I never heard about ones
-that are 32-bit only. The Avoton and Rangley I have read about on
-https://en.wikipedia.org/wiki/Silvermont seems specific to the servers
-and routers and most likely are gone from use.
+diff --git a/drivers/iio/accel/adxl345.h b/drivers/iio/accel/adxl345.h
+index 3d5c8719db3..ed81d5cf445 100644
+--- a/drivers/iio/accel/adxl345.h
++++ b/drivers/iio/accel/adxl345.h
+@@ -9,37 +9,102 @@
+ #define _ADXL345_H_
+ 
+ #define ADXL345_REG_DEVID		0x00
++#define ADXL345_REG_THRESH_TAP	0x1D
+ #define ADXL345_REG_OFSX		0x1E
+ #define ADXL345_REG_OFSY		0x1F
+ #define ADXL345_REG_OFSZ		0x20
+-#define ADXL345_REG_OFS_AXIS(index)	(ADXL345_REG_OFSX + (index))
++/* Tap duration */
++#define ADXL345_REG_DUR		0x21
++/* Tap latency */
++#define ADXL345_REG_LATENT		0x22
++/* Tap window */
++#define ADXL345_REG_WINDOW		0x23
++/* Activity threshold */
++#define ADXL345_REG_THRESH_ACT		0x24
++/* Inactivity threshold */
++#define ADXL345_REG_THRESH_INACT	0x25
++/* Inactivity time */
++#define ADXL345_REG_TIME_INACT	0x26
++/* Axis enable control for activity and inactivity detection */
++#define ADXL345_REG_ACT_INACT_CTRL	0x27
++/* Free-fall threshold */
++#define ADXL345_REG_THRESH_FF		0x28
++/* Free-fall time */
++#define ADXL345_REG_TIME_FF		0x29
++/* Axis control for single tap or double tap */
++#define ADXL345_REG_TAP_AXIS		0x2A
++/* Source of single tap or double tap */
++#define ADXL345_REG_ACT_TAP_STATUS	0x2B
++/* Data rate and power mode control */
+ #define ADXL345_REG_BW_RATE		0x2C
+ #define ADXL345_REG_POWER_CTL		0x2D
++#define ADXL345_REG_INT_ENABLE		0x2E
++#define ADXL345_REG_INT_MAP		0x2F
++#define ADXL345_REG_INT_SOURCE		0x30
+ #define ADXL345_REG_DATA_FORMAT		0x31
+-#define ADXL345_REG_DATAX0		0x32
+-#define ADXL345_REG_DATAY0		0x34
+-#define ADXL345_REG_DATAZ0		0x36
+-#define ADXL345_REG_DATA_AXIS(index)	\
+-	(ADXL345_REG_DATAX0 + (index) * sizeof(__le16))
++#define ADXL345_REG_XYZ_BASE		0x32
++#define ADXL345_REG_DATA_AXIS(index)				\
++	(ADXL345_REG_XYZ_BASE + (index) * sizeof(__le16))
++
++#define ADXL345_REG_FIFO_CTL		0x38
++#define ADXL345_REG_FIFO_STATUS		0x39
++
++#define ADXL345_DEVID			0xE5
++
++#define ADXL345_FIFO_CTL_SAMLPES(x)	(0x1f & (x))
++#define ADXL345_FIFO_CTL_TRIGGER(x)	(0x20 & ((x) << 5)) /* 0: INT1, 1: INT2 */
++#define ADXL345_FIFO_CTL_MODE(x)	(0xc0 & ((x) << 6))
+ 
++#define ADXL345_INT_DATA_READY		BIT(7)
++#define ADXL345_INT_SINGLE_TAP		BIT(6)
++#define ADXL345_INT_DOUBLE_TAP		BIT(5)
++#define ADXL345_INT_ACTIVITY		BIT(4)
++#define ADXL345_INT_INACTIVITY		BIT(3)
++#define ADXL345_INT_FREE_FALL		BIT(2)
++#define ADXL345_INT_WATERMARK		BIT(1)
++#define ADXL345_INT_OVERRUN		BIT(0)
++
++#define ADXL345_S_TAP_MSK	ADXL345_INT_SINGLE_TAP
++#define ADXL345_D_TAP_MSK	ADXL345_INT_DOUBLE_TAP
++
++#define ADXL345_INT1			0
++#define ADXL345_INT2			1
++
++/*
++ * BW_RATE bits - Bandwidth and output data rate. The default value is
++ * 0x0A, which translates to a 100 Hz output data rate
++ */
+ #define ADXL345_BW_RATE			GENMASK(3, 0)
++#define ADXL345_BW_LOW_POWER	BIT(4)
+ #define ADXL345_BASE_RATE_NANO_HZ	97656250LL
+ 
+-#define ADXL345_POWER_CTL_MEASURE	BIT(3)
+ #define ADXL345_POWER_CTL_STANDBY	0x00
++#define ADXL345_POWER_CTL_WAKEUP	GENMASK(1, 0)
++#define ADXL345_POWER_CTL_SLEEP	BIT(2)
++#define ADXL345_POWER_CTL_MEASURE	BIT(3)
++#define ADXL345_POWER_CTL_AUTO_SLEEP	BIT(4)
++#define ADXL345_POWER_CTL_LINK	BIT(5)
+ 
+ #define ADXL345_DATA_FORMAT_RANGE	GENMASK(1, 0)	/* Set the g range */
+-#define ADXL345_DATA_FORMAT_JUSTIFY	BIT(2)	/* Left-justified (MSB) mode */
++#define ADXL345_DATA_FORMAT_IS_LEFT_JUSTIFIED	BIT(2)
+ #define ADXL345_DATA_FORMAT_FULL_RES	BIT(3)	/* Up to 13-bits resolution */
+-#define ADXL345_DATA_FORMAT_SPI_3WIRE	BIT(6)	/* 3-wire SPI mode */
+-#define ADXL345_DATA_FORMAT_SELF_TEST	BIT(7)	/* Enable a self test */
+-
++#define ADXL345_DATA_FORMAT_SPI_3WIRE	BIT(6)
++#define ADXL345_DATA_FORMAT_SELF_TEST	BIT(7)
+ #define ADXL345_DATA_FORMAT_2G		0
+ #define ADXL345_DATA_FORMAT_4G		1
+ #define ADXL345_DATA_FORMAT_8G		2
+ #define ADXL345_DATA_FORMAT_16G		3
+ 
+-#define ADXL345_DEVID			0xE5
++#define ADXL345_REG_OFS_AXIS(index)	(ADXL345_REG_OFSX + (index))
++
++/*
++ * FIFO stores a maximum of 32 entries, which equates to a maximum of 33 entries
++ * available at any given time because an additional entry is available at the
++ * output filter of the device.
++ *
++ * (see datasheet FIFO_STATUS description on "Entries Bits")
++ */
++#define ADXL345_FIFO_SIZE  33
+ 
+ /*
+  * In full-resolution mode, scale factor is maintained at ~4 mg/LSB
+-- 
+2.39.2
 
-
---=20
-With Best Regards,
-Andy Shevchenko
 
