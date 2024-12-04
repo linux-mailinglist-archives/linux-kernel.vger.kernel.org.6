@@ -1,127 +1,161 @@
-Return-Path: <linux-kernel+bounces-431668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 145789E4138
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:21:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id F09369E4114
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:18:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E02C0B3AB69
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:57:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 31DE1B2D231
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:57:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E614920CCF0;
-	Wed,  4 Dec 2024 16:57:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A622E20D4E0;
+	Wed,  4 Dec 2024 16:57:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="YXfjL6Qf"
-Received: from mail-il1-f174.google.com (mail-il1-f174.google.com [209.85.166.174])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="c3Oyxv/k"
+Received: from mail-il1-f182.google.com (mail-il1-f182.google.com [209.85.166.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B459A20C49E
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 16:56:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86EC120C499
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 16:57:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733331422; cv=none; b=pw/XgXJ7Tqr11RoIpNqKwYVklKz3YrP8xc+H+enSFmLXqWvhn+LhlURQNPRj6AkPPVF3yeymsVFpJM21o8XJ2o8WbpMzRO0htjc7q6Ykcedqr/+qXKSVLm9Xy3P+yXFEatyKhVIW/ipa//Yhf4Ev5H1ZB5DUZJUWvwfUkfaDoLw=
+	t=1733331461; cv=none; b=HVuju/KusfIVfSadJ9iHhIN8Ukj5T5hPjDUi4N94hKqVQn9D647b50kfh8jcsNnxJR0i928/F6ZD7dyXRYF+nj0ytKf2uq8FfKT6AkOQUQhowZKmbVxfh/SoNDtWwkLAyKirN2Uo2jHV4mIJpFknSCSKv9xFjEG0fTLUfScPU6M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733331422; c=relaxed/simple;
-	bh=XaoMXII8e6mfuATSLsXtjEWnRh3UwxsQH2bojJPG7NA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AuRS0fPJZbMk0YlOjRDcJe/pJWPfF6OOA2vuRiJZkUyRJSsfkKZ/2dGBEiDV883r/b/aTtVL6BOSeSm+0Xq8Qpns7T7SW1eyka5Cl6VwhbIKHTlsukSVSw/AhZ/8y8ZbIG6wzMOEiLtMwhjoUWGEtoNKTIxpkXnsss/jBrLbQ84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=YXfjL6Qf; arc=none smtp.client-ip=209.85.166.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-il1-f174.google.com with SMTP id e9e14a558f8ab-3a790d6e782so29209075ab.2
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 08:56:59 -0800 (PST)
+	s=arc-20240116; t=1733331461; c=relaxed/simple;
+	bh=0HUzdTNj6kvO/sxYp+pg359CCM/bjPbiDVwJpcSLg88=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hXWrCxEx9D+DInjCaCKO2dCTPG3fGdHSDIbDna9dDCQXCgd2u+x4RM1qNtZGgaFkFVSIS8vyiR31OQKJ2xV1QOnQ2Yt7qYUGTXLHrt7Qg9FdNALdxVxESqzvVzL06OEqjUoVIe0GWMIjEhvPDs0XEYU26yi7Eps1eN2CsYrYkh8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=c3Oyxv/k; arc=none smtp.client-ip=209.85.166.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f182.google.com with SMTP id e9e14a558f8ab-3a781e908a7so158945ab.0
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 08:57:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1733331419; x=1733936219; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=7iTXrzkVbRdOn7ya7jAgMy2aC6OZ+AghQ3qdoT+WQZ8=;
-        b=YXfjL6Qf7iqmC5EujnCqD4rd/5wY14LEHuMK8FfQfxCEbVDn3lObDh9PrpYoRtshh4
-         hnd4lH8pIZxucE1n85k50NkzlXbBIzcNJw5We8xQiegZhRmcghhKsAIKPD/TZ5NYf+d2
-         lX71pTROwjTskPsblJiRWtUOuMmry6pO/OkdI=
+        d=google.com; s=20230601; t=1733331458; x=1733936258; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sfmZWfaFUyauxIzYDnk1HIum5vCQdB8u8dJVsYfif1M=;
+        b=c3Oyxv/kzmiznaUPrXSJLDY2VK/2Q8b6RHMmOV+84ItJ5kf1coPkvNo4uaCfXX3Hus
+         P2JQFiBFvU1rmXRcv1inBFHLIkVUhsIg6Py7efPMdXMGtzNbqNBrEjLpM3xEsCsjIzch
+         zgW9zKD/BWtYxxt4oqSoaYDzAv2voAYJDIqgOjhdDQktwvuAoZ3Boo4a8OZtJRlwBZww
+         X+64LOK8FaNCz48IZn+ZECmrJlQRfM0lyVjjxanyb9ohtn9O/cxi2LuzTUpw7ahBSPIk
+         Vr7bDC7abhJos4jx880eYCiQZM13O6C5Ro2YqO93PuM14OO4IQnGkvL/NxVTdSOmCt5t
+         HyqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733331419; x=1733936219;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7iTXrzkVbRdOn7ya7jAgMy2aC6OZ+AghQ3qdoT+WQZ8=;
-        b=PEywbWZqQHdr2AXTyG+hrif5fSgRxCcjm05ZZpUDXpMcrlQk4VhT3GM/WtMLgls8gx
-         qUIIleirHa86c3KANS3fvx84JWavd6/CLw6QJJM932p5OLakm2ym4HEToRXc0SAhKs0J
-         luFsgbRGih3zBWMZ56aKx2iWxX4YtvPztQaIctInUJFsZtoerLaUUS/Uf8ApHuBBFfCo
-         QD/PrtzSGmcceChoTeUmYk71g4ShwysZOWSESZz51dyJJEsfQOVWeIzULmMf5VCnEm7O
-         wytQ1BqiR39exyTBPziRLHORbtTEXHmZgf0rq9fJeD6qNahIvCvO61G1JLwxq62Li2+p
-         cCVg==
-X-Forwarded-Encrypted: i=1; AJvYcCWpDngyBpam4mDcJvHCmqLZfdUMMFQ6O3Kon2mWkJTkE7ZydA0I1mvzcJijAkwxuEDgxwVbK6oZptZEHas=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzpWDcymn5AbqjABJKjEgwPT7RTxaAl0Ea5VEC+7tDm+hTogPR0
-	YMnmDD4ciBRED5HWHrtj7dzpuXYjteLKlV4fZkmriYwNWWhqZoypIrfY0ZfHRUI=
-X-Gm-Gg: ASbGnctAtU1uC6cvkYKpYC83symn9T2sBD5b4AV43//JKaePh/OP2asrbQEI8154zCz
-	Z5S1Q5jBrd80/wTW4SSjRb4nyactEgE03BFia3QyA6JqDi5HT+xjj0IaWcACdiwZX7mY5kT4ln1
-	P9SGJwGRPeWsWeRz6YkA8b8PvthzkIR1PvWKlGJNCAzlgjyj3xZnbOjBu/yeBZGNN+oICIapNOa
-	OODGXSUf942n37wbFA5PyP6gcH/RTyErIJ94oWiJQpkv5aGwg+Je7s1eBAj5g==
-X-Google-Smtp-Source: AGHT+IHYHfBvUu0DZFh16zcxTkFpKxetrmBGHduH1Px3jq7+qvQd558v6EZlAarkWJRanQMBCA2qaQ==
-X-Received: by 2002:a05:6e02:174c:b0:3a7:e0c0:5f25 with SMTP id e9e14a558f8ab-3a7f9a2952dmr79789725ab.4.1733331418893;
-        Wed, 04 Dec 2024 08:56:58 -0800 (PST)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a7dcc6146fsm26878105ab.74.2024.12.04.08.56.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Dec 2024 08:56:58 -0800 (PST)
-Message-ID: <8e7b4812-bb10-4f5f-92f9-86aa33203c3a@linuxfoundation.org>
-Date: Wed, 4 Dec 2024 09:56:57 -0700
+        d=1e100.net; s=20230601; t=1733331458; x=1733936258;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sfmZWfaFUyauxIzYDnk1HIum5vCQdB8u8dJVsYfif1M=;
+        b=F4UP2j3kSePzz7eFm1fK70VGYG1ij1bD8U9Z7lj3FLo3XCql436NOAnXcnrmlp/NYj
+         YkbVvbDaGA7DikAep8L5a6V0+UiBRiB/rtoODOmC94djxKwZJ6Fkr+/DudYFUYx7Idqa
+         /uVUYq7yS70+R1Va6TL0mWciUuypBiCDy1/4FpuU3AA5kR3SBHy8W/5f5lktY+otwB6h
+         4BAzFR2IlqPy0adkv7g2tz3MQQw2P+oykfOQBYWizge6Om9D2RX5BAEm8BK4yShun0hf
+         Fvj+xuNmzuYuUvxb+ZLkxEJKzE4gEIgpnDgGYv4MMvHTilPoufdNQKYEMt6JLasI2LKY
+         PqBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXVVJ7kayPWyyTkWQAOvhgKDoeY6HL1JJhVbp/K66/rJcgbqqxyEInze1s5HDbtKtKXU8BE6Lj/IdqJt/E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTCbJ3hg4B2iZVVhygLIie5v1mBjVmqw6BP58XNTusbmo0Tpql
+	Rg8jAh2hv3cbhgHLbcr/NEKAVZt6PtM2rcNSMv8UqRcEn3v7PKQjjXVwstAtUdK4j4r2DEzWdt0
+	Th1CadPK3+NB0zTxSy4DaJoI1ECReaImsYLbx
+X-Gm-Gg: ASbGncsjaaGElKDgT4DSKHTJ7J2Ds3AU+gExXUY2bOT3yOFUlWmu7S9uTVaMA/8UwQc
+	LLH/2trtVo8axQ2WedwQy8+eh1/LEGw==
+X-Google-Smtp-Source: AGHT+IGsVjekEc6VwhrFlrIDeAOXUGOndFAXAYVwx/+uQqFZtni53tvqfJXUpqrgjf1M2MWknzQGCI3eZVcZBFQ1W38=
+X-Received: by 2002:a05:6e02:370a:b0:3a7:a468:69df with SMTP id
+ e9e14a558f8ab-3a800ab423fmr3177165ab.3.1733331458201; Wed, 04 Dec 2024
+ 08:57:38 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4.19 000/138] 4.19.325-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20241203141923.524658091@linuxfoundation.org>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20241203141923.524658091@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20241204134345.189041-1-davydov-max@yandex-team.ru> <20241204134345.189041-2-davydov-max@yandex-team.ru>
+In-Reply-To: <20241204134345.189041-2-davydov-max@yandex-team.ru>
+From: Jim Mattson <jmattson@google.com>
+Date: Wed, 4 Dec 2024 08:57:27 -0800
+Message-ID: <CALMp9eRa3yJ=-azTVtsapHsfCFTo74mTMQXPkguxD3P8upYchg@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] x86: KVM: Advertise FSRS and FSRC on AMD to userspace
+To: Maksim Davydov <davydov-max@yandex-team.ru>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, x86@kernel.org, 
+	babu.moger@amd.com, seanjc@google.com, mingo@redhat.com, bp@alien8.de, 
+	tglx@linutronix.de, dave.hansen@linux.intel.com, hpa@zytor.com, 
+	pbonzini@redhat.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 12/3/24 07:30, Greg Kroah-Hartman wrote:
-> ------------------
-> Note, this is the LAST 4.19.y kernel to be released.  After this one, it
-> is end-of-life.  It's been 6 years, everyone should have moved off of it
-> by now.
-> ------------------
-> 
-> This is the start of the stable review cycle for the 4.19.325 release.
-> There are 138 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Thu, 05 Dec 2024 14:18:57 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.325-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.19.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-> 
+On Wed, Dec 4, 2024 at 5:43=E2=80=AFAM Maksim Davydov
+<davydov-max@yandex-team.ru> wrote:
+>
+> Fast short REP STOSB and fast short CMPSB support on AMD processors are
+> provided in other CPUID function in comparison with Intel processors:
+> * FSRS: 10 bit in 0x80000021_EAX
+> * FSRC: 11 bit in 0x80000021_EAX
 
-Compiled and booted on my test system. No dmesg regressions.
+I have to wonder why these bits aren't documented in the APM. I assume
+you pulled them out of some PPR? I would be hesitant to include CPUID
+bit definitions that may be microarchitecture-specific rather than
+architectural.
 
-Tested-by: Shuah Khan <skhan@linuxfoundation.org>
+Perhaps someone from AMD should at least ACK this change?
 
-thanks,
--- Shuah
+> AMD bit numbers differ from existing definition of FSRC and
+> FSRS. So, the new appropriate values have to be added with new names.
+>
+> It's safe to advertise these features to userspace because they are a par=
+t
+> of CPU model definition and they can't be disabled (as existing Intel
+> features).
+>
+> Fixes: 2a4209d6a9cb ("KVM: x86: Advertise fast REP string features inhere=
+nt to the CPU")
+> Signed-off-by: Maksim Davydov <davydov-max@yandex-team.ru>
+> ---
+>  arch/x86/include/asm/cpufeatures.h | 2 ++
+>  arch/x86/kvm/cpuid.c               | 4 ++--
+>  2 files changed, 4 insertions(+), 2 deletions(-)
+>
+> diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cp=
+ufeatures.h
+> index 17b6590748c0..45f87a026bba 100644
+> --- a/arch/x86/include/asm/cpufeatures.h
+> +++ b/arch/x86/include/asm/cpufeatures.h
+> @@ -460,6 +460,8 @@
+>  #define X86_FEATURE_NULL_SEL_CLR_BASE  (20*32+ 6) /* Null Selector Clear=
+s Base */
+>  #define X86_FEATURE_AUTOIBRS           (20*32+ 8) /* Automatic IBRS */
+>  #define X86_FEATURE_NO_SMM_CTL_MSR     (20*32+ 9) /* SMM_CTL MSR is not =
+present */
+> +#define X86_FEATURE_AMD_FSRS           (20*32+10) /* AMD Fast short REP =
+STOSB supported */
+> +#define X86_FEATURE_AMD_FSRC           (20*32+11) /* AMD Fast short REP =
+CMPSB supported */
+>
+>  #define X86_FEATURE_SBPB               (20*32+27) /* Selective Branch Pr=
+ediction Barrier */
+>  #define X86_FEATURE_IBPB_BRTYPE                (20*32+28) /* MSR_PRED_CM=
+D[IBPB] flushes all branch type predictions */
+> diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
+> index 097bdc022d0f..7bc095add8ee 100644
+> --- a/arch/x86/kvm/cpuid.c
+> +++ b/arch/x86/kvm/cpuid.c
+> @@ -799,8 +799,8 @@ void kvm_set_cpu_caps(void)
+>
+>         kvm_cpu_cap_mask(CPUID_8000_0021_EAX,
+>                 F(NO_NESTED_DATA_BP) | F(LFENCE_RDTSC) | 0 /* SmmPgCfgLoc=
+k */ |
+> -               F(NULL_SEL_CLR_BASE) | F(AUTOIBRS) | 0 /* PrefetchCtlMsr =
+*/ |
+> -               F(WRMSR_XX_BASE_NS)
+> +               F(NULL_SEL_CLR_BASE) | F(AUTOIBRS) | F(AMD_FSRS) |
+> +               F(AMD_FSRC) | 0 /* PrefetchCtlMsr */ | F(WRMSR_XX_BASE_NS=
+)
+>         );
+>
+>         kvm_cpu_cap_check_and_set(X86_FEATURE_SBPB);
+> --
+> 2.34.1
+>
 
