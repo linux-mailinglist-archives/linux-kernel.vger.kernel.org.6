@@ -1,176 +1,126 @@
-Return-Path: <linux-kernel+bounces-432222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6AF29E47D3
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 23:28:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 426649E47E0
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 23:30:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6AC016459D
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 22:28:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D311188038E
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 22:30:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 347FE1F03DC;
-	Wed,  4 Dec 2024 22:27:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBDD01A3034;
+	Wed,  4 Dec 2024 22:30:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="d587a/xC"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="hfsRkg0I"
+Received: from mail-io1-f42.google.com (mail-io1-f42.google.com [209.85.166.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C824D18FC75;
-	Wed,  4 Dec 2024 22:27:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 612F923918F
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 22:30:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733351278; cv=none; b=dls8AwCPyEyyTA5Zf9rSGrzhQqYGhswbQQoPYAnMdB6UeykYY8EGjHyVe446uRHwKtdIBRAWohlaA8i6QUoi+7JdJrZIYGWKMa9Gg5sHdzkbn7qmZw+GVG8oZrDqEhPOoC5Wjyr1lAMTInSn6hqHU2m+YZHUZZYH+iBnoo89Ar0=
+	t=1733351440; cv=none; b=tBsOCrzgVkJOlnrg+vJ4Sy1imcJfh9b2uYBnDIQf5iOXm/6k+C/EbJ4wVred5h6XdjFiCI8NdRx4pB0HpQ4Gi6Fq6O2/dpcRNrVm95qDViPNjFd0MgxrXI03GxIhukoF7ypGWW2QcVr8JZI9iQpXe3oSJfKYhPwTSCHBduIbESA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733351278; c=relaxed/simple;
-	bh=V0EjKFyoMiFzOVSQ2/2Apzaa49TPf9F5tzWQ/pgCq8s=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=srqNuBx51IZJbQJ26niA1kV2OzQzX7MUeRn8823CjZnemClXp6qdLGZMB+KNPm+WJAhUoZVcRmBRkG1Gs8MnkyZG79g84rKzqzwm1qmgr0uAllqpc0n08OF6nybixbaROhd//E8stRGVY/8Q38M493JKylEhhda4WXM4SaPw6vQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=d587a/xC; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B4Ffhtp023308;
-	Wed, 4 Dec 2024 22:27:44 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=KRjpFeJFwblmAtEAARVx5E
-	6IoRyDcUDcuisAWgu+n+g=; b=d587a/xCCUV1xlZVo1Dl/5L+of2hPGKT5zxEOH
-	thyRn+cQD2qZfs5Ofjma1eiGH0MFDBSbFIodivsMW824TDF/8ozzr1LvX2GUeI91
-	qPTMgGUCVddolZSgSQ5I4TJLiWr0uvF0XqgU7RLr7m6LNjT77FVWQ/BupgkZh68/
-	wxD8aAF9gHw2kM3cd48H7W87NBYX8trgtXDOj1mXlXK0ysCEM3I6VTzZV/fNcaH8
-	Sma2aP8594N1NallT5AzxdUGX/FNtrTDT3RyFiCG08N6y1SDzayX8ddl/kLkYRjX
-	6EkzfZ7Xmg5hmM0oKZdzi+qiJLKPEOgFrRA2SjP/WTdqh6XA==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43aj42ab51-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 04 Dec 2024 22:27:43 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B4MRgJw026652
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 4 Dec 2024 22:27:42 GMT
-Received: from hu-molvera-lv.qualcomm.com (10.49.16.6) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 4 Dec 2024 14:27:42 -0800
-From: Melody Olvera <quic_molvera@quicinc.com>
-Date: Wed, 4 Dec 2024 14:27:25 -0800
-Subject: [PATCH RESEND v2] dt-bindings: arm-smmu: Document SM8750 SMMU
+	s=arc-20240116; t=1733351440; c=relaxed/simple;
+	bh=2W76BwgYTaY8BMBUrSK3r3wqcVj4DI/Bw19AahkjuHg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uOQljjaxHHhAzaD6HRN/MZbSQpwLMofduK/wdgqtnKRq+4fZegfESEYBtxlWVaTF/C5Rf4x788r+Nk/7NyVLnk1HHFlGruSS2vHc0LvuN0+w76X/oVD7c6s3G+vQqyvNG3gDSWsnoWTPtShYyUpVqYWa1lQifKijEl0Sijr6XaI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=hfsRkg0I; arc=none smtp.client-ip=209.85.166.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f42.google.com with SMTP id ca18e2360f4ac-84198253281so15477639f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 14:30:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1733351437; x=1733956237; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=kBAPx5MutJG9QZBlRN1w16+Dcb9X7267OMnJ/wnzsDk=;
+        b=hfsRkg0II3McClw2KA4kCf0fQegnBtjQm4EBaIcwV07WIuO3lFhQuUC3Qh+ghi53qh
+         xLDoV/x6DyzgwtgA+TwYi0izkoIP17GCWxhQRYSLT/VLfR16hbd/7A7KnN/t0z1hhJYc
+         0hKLsDJYG2jvpQdcFhkZwe+T9iZsImDUSYYcg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733351437; x=1733956237;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kBAPx5MutJG9QZBlRN1w16+Dcb9X7267OMnJ/wnzsDk=;
+        b=ShYx+r+jdciw+DjGf00+zsqKlyEDrnshHfKaH8GI5cSXGKZSAzjhgntDqFEw1U4n56
+         IsieEH5/LkIYYdI4ajCNkIEpyNZYHx8YLrCL1TGym4CPG+QfG4eBtGyaTwvoP6ZQVFFw
+         P1Mi0oJv6wkF/jSEzK2neXnOcqIcMgLc1bQFmi8jzwt3mzD/eOWzVzvrjvJ3CaBFMN3L
+         T0eyiU2e3BMjxkFuzhlcezvFwAMIae/9IyAraj1JbTKgrJ1Qhm3P7Fpl1m64MYA1Rp+n
+         ErKO8H7rZLIb0v8jWtjU4YKntEQcbGFc2vCIpllUCVzKUvWLU17gk5BeqKsyqIwLvrnH
+         f3Ww==
+X-Gm-Message-State: AOJu0YytmgiZywqdOhg2mysKem0U3kZ+7BIy5A5lI5CDR807Vgm146fp
+	XimwLxeXx+abgySD6daSQxRHwfTb0iDSXg1JJ4vCWBqhg5mCmIe4qJ5WkcrMbuU=
+X-Gm-Gg: ASbGncuHHhqB5ZkTczYTV5vKffK5YPSxgIK7gLJoRWUZX5PRKLGfpw1VlDYHeYouuJ2
+	WBNcN1RijDAT3u3kg6BEaTWdHsPHKqdejx7DwNs200PC/rewDAElbl8vPboovgoAgVWVciTKpRa
+	5HVZpMyKyCGh+adf7szB3JTsLDdpsSyCW0qxZej3z1AQxtk4T8Lg84QrYob6L7pptllYV3b6CBh
+	E9j4OOwzQdslKy1o1tItU+EJqLEMquUhKFZhDsX4N5txR2inI6kDAtSySNigA==
+X-Google-Smtp-Source: AGHT+IEtpVsNZMHovsy1F6jhvCGEmwJf1FkuOsG4iZhtjX2gQi9WDFjwraG74nPduIC6i7nXb7aOkA==
+X-Received: by 2002:a05:6602:6b09:b0:83b:2c8e:c4 with SMTP id ca18e2360f4ac-8445b56f271mr1063808939f.9.1733351437544;
+        Wed, 04 Dec 2024 14:30:37 -0800 (PST)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4e28611b767sm25155173.42.2024.12.04.14.30.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 04 Dec 2024 14:30:37 -0800 (PST)
+Message-ID: <297cfe11-0418-4633-8c15-4ffc7d290a3d@linuxfoundation.org>
+Date: Wed, 4 Dec 2024 15:30:36 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20241204-sm8750_master_smmu-v2-1-9e73e3fc15f2@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAEzXUGcC/0XMsQ6CMBSF4Vchd7akLbQUJwdZHXQ0htR6kSaWa
- gvEhPDuVhfH/yTnWyBisBhhmy0QcLbR+iEF32Rgej3ckdhbauCUl4zTkkSnKkFbp+OIoY3OTYQ
- qWelrXdRSSUjHZ8DOvn/oGY7NqTns4ZL2LnhHxj6g/pMsobTgrMq5olIISRh5Tda0zj9mDHr3D
- TuY3HgH6/oBfVqR27AAAAA=
-X-Change-ID: 20241204-sm8750_master_smmu-0867ab939686
-To: Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
-        "Joerg
- Roedel" <joro@8bytes.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        "Satya Durga
- Srinivasu Prabhala" <quic_satyap@quicinc.com>,
-        Trilok Soni
-	<quic_tsoni@quicinc.com>
-CC: <linux-arm-kernel@lists.infradead.org>, <linux-arm-msm@vger.kernel.org>,
-        <iommu@lists.linux.dev>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Melody Olvera <quic_molvera@quicinc.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1733351262; l=2153;
- i=quic_molvera@quicinc.com; s=20241204; h=from:subject:message-id;
- bh=V0EjKFyoMiFzOVSQ2/2Apzaa49TPf9F5tzWQ/pgCq8s=;
- b=b77X0mjGkOducpwujz+ZTFigyyl4sxFcRudE/3M71yfrHCMXSz3OvnqXB2KCIKYweMCE4YVkf
- WXjsjpTpNhFAIaUO5T6SQ6zhQUHGzyi9zCJ+z22B+qZ+5N/wZZApIBi
-X-Developer-Key: i=quic_molvera@quicinc.com; a=ed25519;
- pk=1DGLp3zVYsHAWipMaNZZTHR321e8xK52C9vuAoeca5c=
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: YXbxqXhYN0xtRyb2g79QR4yAhObGnCo9
-X-Proofpoint-ORIG-GUID: YXbxqXhYN0xtRyb2g79QR4yAhObGnCo9
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 bulkscore=0
- mlxscore=0 mlxlogscore=972 lowpriorityscore=0 clxscore=1015 malwarescore=0
- priorityscore=1501 spamscore=0 adultscore=0 suspectscore=0 impostorscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
- definitions=main-2412040172
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] selftests/vDSO: support DT_GNU_HASH
+To: Xi Ruoyao <xry111@xry111.site>, Fangrui Song <i@maskray.me>,
+ Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>
+References: <20240915064944.2044066-1-maskray@google.com>
+ <f229fbad-731c-4dd4-8c66-ff8829c2c958@linuxfoundation.org>
+ <c828b254fb93bd136b36d3a06ab1d9d29ce13d88.camel@xry111.site>
+ <b2723ccd-bf0a-4d9b-a545-f9e3dc336539@linuxfoundation.org>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <b2723ccd-bf0a-4d9b-a545-f9e3dc336539@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Document the SM8750 SMMU block.
+On 12/3/24 17:04, Shuah Khan wrote:
+> On 11/27/24 04:44, Xi Ruoyao wrote:
+>> On Thu, 2024-09-19 at 09:37 -0600, Shuah Khan wrote:
+>>> On 9/15/24 00:49, Fangrui Song wrote:
+>>>> glibc added support for DT_GNU_HASH in 2006 and DT_HASH has been
+>>>> obsoleted for more than one decade in many Linux distributions.
+>>>>
+>>>> Many vDSOs support DT_GNU_HASH. This patch adds selftests support.
+>>>>
+>>>> Signed-off-by: Fangrui Song <maskray@google.com>
+>>>> Tested-by: Xi Ruoyao <xry111@xry111.site>
+>>>> -- 
+>>>> Changes from v1:
+>>>> * fix style of a multi-line comment. ignore false positive suggestions from checkpath.pl: `ELF(Word) *`
+>>>> ---
+>>>>    tools/testing/selftests/vDSO/parse_vdso.c | 105 ++++++++++++++++------
+>>>>    1 file changed, 79 insertions(+), 26 deletions(-)
+>>>>
+>>>
+>>> Quick note that this will be picked up after the merge window closes.
+>>
+>> Hi Shuah,
+>>
+>> The patch seems forgotten.
+>>
+> 
+> Thank for the reminder. I will pick this up now.
+> 
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
----
-Resending since I forgot to include linux-arm-msm.
+Please rebase the patch to 6.13-rc1 and send it.
 
-Changes in V2:
-- added additional documentation for gpu and clocks
----
- Documentation/devicetree/bindings/iommu/arm,smmu.yaml | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/iommu/arm,smmu.yaml b/Documentation/devicetree/bindings/iommu/arm,smmu.yaml
-index c1e11bc6b7a054e6e839b4cff356231170d95093..e4e067a2b778e3b9ed30bbb973b50b2b86ddd2f1 100644
---- a/Documentation/devicetree/bindings/iommu/arm,smmu.yaml
-+++ b/Documentation/devicetree/bindings/iommu/arm,smmu.yaml
-@@ -61,6 +61,7 @@ properties:
-               - qcom,sm8450-smmu-500
-               - qcom,sm8550-smmu-500
-               - qcom,sm8650-smmu-500
-+              - qcom,sm8750-smmu-500
-               - qcom,x1e80100-smmu-500
-           - const: qcom,smmu-500
-           - const: arm,mmu-500
-@@ -102,6 +103,7 @@ properties:
-               - qcom,sm8450-smmu-500
-               - qcom,sm8550-smmu-500
-               - qcom,sm8650-smmu-500
-+              - qcom,sm8750-smmu-500
-               - qcom,x1e80100-smmu-500
-           - const: qcom,adreno-smmu
-           - const: qcom,smmu-500
-@@ -550,6 +552,23 @@ allOf:
-             - description: GPU SNoC bus clock
-             - description: GPU AHB clock
- 
-+  - if:
-+      properties:
-+        compatible:
-+          items:
-+            - const: qcom,sm8750-smmu-500
-+            - const: qcom,adreno-smmu
-+            - const: qcom,smmu-500
-+            - const: arm,mmu-500
-+    then:
-+      properties:
-+        clock-names:
-+          items:
-+            - const: hlos
-+        clocks:
-+          items:
-+            - description: HLOS vote clock
-+
-   # Disallow clocks for all other platforms with specific compatibles
-   - if:
-       properties:
-
----
-base-commit: bcf2acd8f64b0a5783deeeb5fd70c6163ec5acd7
-change-id: 20241204-sm8750_master_smmu-0867ab939686
-
-Best regards,
--- 
-Melody Olvera <quic_molvera@quicinc.com>
+thanks,
+-- Shuah
 
 
