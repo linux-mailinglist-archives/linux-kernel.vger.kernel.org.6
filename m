@@ -1,174 +1,162 @@
-Return-Path: <linux-kernel+bounces-432180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9FF39E46FB
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 22:39:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA9FE9E470C
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 22:42:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 10EE716775F
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 21:39:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C5791880149
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 21:42:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50C5C1DF748;
-	Wed,  4 Dec 2024 21:38:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67EA31925A6;
+	Wed,  4 Dec 2024 21:41:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DaLa6SN8"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GtnTQzqc"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B73A192D83;
-	Wed,  4 Dec 2024 21:38:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9EF918FC9F;
+	Wed,  4 Dec 2024 21:41:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733348307; cv=none; b=Ll9rLe1RVTpr8zV3UnaaVaBjGwU2xoWsv2SVy1Vd0yI3JLvKPe6dsYNujdKnM9z7xqr3dBTgW9v7wGYmcGegEZmgdDeYBKseU4aNUodvxaMo3sYe4gZPT3ygr3y4YSMjVdPp3A1+8yeTebikIwc+tam4FK8i+rC/doP3Zo6IqtY=
+	t=1733348517; cv=none; b=Jj27IQdOeAkYzqJvjkbRS+ccS17c1jyl0S8GyZyNdG0M3YLInb7WxlZOhPS0yCl2JLoCrv7R7MWtumO97V045vj7ZqsMRDhdADQSKsejs2QO6Q1xrlhI5KLnWOpcPtykigw0OIjUXwnm6dxpR1i86/NLYn1IJJQEfdixlbVE21w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733348307; c=relaxed/simple;
-	bh=l7yTTVmUjjV/VqhMA+V6zq/8SizxCbJ3CpajJl/oHWU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=telj18vnG3E9wedUB3ev4URfqMArmropHB47mquHmjacfOS9ZFOzkx0jWM7FwqvIyOKjCVjvEJG/C3vNxR1wSmrVCq2AgIQSB+xDRY34PTaT0q35rJsVe8okFqB5b2srSsddOwA2J8OZOw6y90Lrsz03yHYQCwzhz8jjbkz6hMQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DaLa6SN8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB3FAC4CED1;
-	Wed,  4 Dec 2024 21:38:26 +0000 (UTC)
+	s=arc-20240116; t=1733348517; c=relaxed/simple;
+	bh=L+MXiSrlAdeLzXu2q7KS7LTJbiV6hJ7FNtxsnAgyNcc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SiPv5gXTclDfsijcWSdmRaK1BFhgvRxgKk7qQXtw3kyKlMOO5feEsQujkDMWj7fvFcVvkHv1LfBnAQVnuTCTyGIqQMV7G0c6sGX6krdOc9X9FavY/ZuU7AtOxZnABLpVs9glJv+2J/ArbB3seO++iJsnj5FdCCmIkkacE3xwrL0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GtnTQzqc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47428C4AF09;
+	Wed,  4 Dec 2024 21:41:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733348307;
-	bh=l7yTTVmUjjV/VqhMA+V6zq/8SizxCbJ3CpajJl/oHWU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=DaLa6SN8BM+PWpWbnGgM/0/tA6qmf5zQSGmYTk7AUVcBGNBDoBy+gM5Js4eAUiQHL
-	 P9Uumhwjzqj/Le/bOyXm1WPqjrGe0vDFv3i2W4Rov71hgR8R+qkoR63ur3eX4Z8GCr
-	 BHp9uTH30RGNibOtI24PG4Kulnajp0w5Q8OZzSxhaUyuF3GsWG7DXKm70V13xLQ9S7
-	 FzF6D9besA9lacQI/SZXJ1LUqa++mmoph5kRWV3MUw8SVYz+R31qH+ySWuhZvGewuZ
-	 JD9XB5K0NUWrcKkgbzvlarO7SnfhzGIYyOCKEH0Fw9SY6nXmIhW89Td9tkUeCAzh5J
-	 iURygTF4RlJnw==
-Date: Wed, 4 Dec 2024 15:38:25 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Herve Codina <herve.codina@bootlin.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, Lizhi Hou <lizhi.hou@amd.com>,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	Allan Nielsen <allan.nielsen@microchip.com>,
-	Horatiu Vultur <horatiu.vultur@microchip.com>,
-	Steen Hegelund <steen.hegelund@microchip.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v4 1/6] driver core: Introduce
- device_{add,remove}_of_node()
-Message-ID: <20241204213825.GA3016970@bhelgaas>
+	s=k20201202; t=1733348516;
+	bh=L+MXiSrlAdeLzXu2q7KS7LTJbiV6hJ7FNtxsnAgyNcc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=GtnTQzqcklmOErMSkXxjbNWK7Ek5JkdzQJKWaDrPjZ5zbDC/BZdbJ4q2M9CFGnwfJ
+	 pYegjtrE8zKvicVOQkY9RqlNe8/x3BQ6FPaxQJpWafpy4v/YytZV96cjW4UzoEaW31
+	 3fd+GXymWy3vGOVLYGoBj5f8NJNncThN7zOVQK/KlEvgRl/43DWI692B2S2cGhbpCC
+	 /chZWbWXbVWAYUA+Zr+7+k3L9TBNMEjj/nplo5KEn2rHuC9L339RXOZJr2PKe/XPBp
+	 Btam+AgdvJjcPLk8ACS7FVCyYoV2QOgwuf6I2NT58KSPLvtdXxBHwlA/KEVz6hp8XU
+	 dfFZYS2/nn0zQ==
+Received: by mail-oi1-f170.google.com with SMTP id 5614622812f47-3ea49150430so207402b6e.1;
+        Wed, 04 Dec 2024 13:41:56 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCU/hF19VJRR3IWBCTCAXb0M5MfxG4bZdoKsjiwQe8u+3pksE1LeZsYOcg5pnmrtHLjvUHwN94GvWvjPkK0=@vger.kernel.org, AJvYcCW2o7XT6mOFjUUqjM5CPI/kx5Yi6AHbKGvbpivr3XNHAqc+3zou1LHU2p6dyEL+ZCtS1yUPTOnT90Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzIqKHnfsDf8wpGaOkPHVISzeezYp9QV3aqSMrdU646iujD/JFM
+	0ZIZjGvcqcpOyhui3xShDlM0uT1+VR6MnHkoVmocKzRC72xcGMfGRVHbYBCm2iq4CDAlzu2r7Bj
+	ubR7p+JGgWktGoe2+mUeDuKP8OpI=
+X-Google-Smtp-Source: AGHT+IE2Y9fFiN5Lqdk+EEY5xp07PQODyKcqal+d0LX+D3tS2vLCiPjO3uaVoBhtjCh3hIVLrk3A++1UpJqLGOy5oAo=
+X-Received: by 2002:a05:6808:1c0d:b0:3ea:4bcc:4d9b with SMTP id
+ 5614622812f47-3eae4f3b758mr10479653b6e.18.1733348515605; Wed, 04 Dec 2024
+ 13:41:55 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241202131522.142268-2-herve.codina@bootlin.com>
+References: <5839859.DvuYhMxLoT@rjwysocki.net>
+In-Reply-To: <5839859.DvuYhMxLoT@rjwysocki.net>
+From: Len Brown <lenb@kernel.org>
+Date: Wed, 4 Dec 2024 16:41:43 -0500
+X-Gmail-Original-Message-ID: <CAJvTdKm4Fermz1zgTWohEGSoGpoB3CJL2FF-u6y9FAEBwBbcnQ@mail.gmail.com>
+Message-ID: <CAJvTdKm4Fermz1zgTWohEGSoGpoB3CJL2FF-u6y9FAEBwBbcnQ@mail.gmail.com>
+Subject: Re: [RFC/RFT][PATCH v0.1] ACPI: OSL: Use usleep_range() in acpi_os_sleep()
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Linux ACPI <linux-acpi@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	Linux PM <linux-pm@vger.kernel.org>, Len Brown <len.brown@intel.com>, 
+	Arjan van de Ven <arjan@linux.intel.com>, Pierre Gondois <pierre.gondois@arm.com>, 
+	Dietmar Eggemann <dietmar.eggemann@arm.com>, Hans de Goede <hdegoede@redhat.com>, 
+	Mario Limonciello <mario.limonciello@amd.com>, "Gautham R. Shenoy" <gautham.shenoy@amd.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-[cc->to Greg, Rafael]
+On Thu, Nov 21, 2024 at 8:15=E2=80=AFAM Rafael J. Wysocki <rjw@rjwysocki.ne=
+t> wrote:
+>
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>
+> As stated by Len in [1], the extra delay added by msleep() to the
+> sleep time value passed to it can be significant, roughly between
+> 1.5 ns on systems with HZ =3D 1000 and as much as 15 ms on systems with
+> HZ =3D 100, which is hardly acceptable, at least for small sleep time
+> values.
 
-On Mon, Dec 02, 2024 at 02:15:13PM +0100, Herve Codina wrote:
-> An of_node can be set to a device using device_set_node().
-> This function cannot prevent any of_node and/or fwnode overwrites.
-> 
-> When adding an of_node on an already present device, the following
-> operations need to be done:
-> - Attach the of_node if no of_node were already attached
-> - Attach the of_node as a fwnode if no fwnode were already attached
-> 
-> This is the purpose of device_add_of_node().
-> device_remove_of_node() reverts the operations done by
-> device_add_of_node().
-> 
-> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
-> ---
->  drivers/base/core.c    | 52 ++++++++++++++++++++++++++++++++++++++++++
->  include/linux/device.h |  2 ++
+Maybe the problem statement is more clear with a concrete example:
 
-I suppose this series would go via the PCI tree since the bulk of the
-changes are there.  If so, I would look for an ack from the driver
-core folks (Greg, Rafael).
+msleep(5) on the default HZ=3D250 on a modern PC takes about 11.9 ms.
+This results in over 800 ms of spurious system resume delay
+on systems such as the Dell XPS-13-9300, which use ASL Sleep(5ms)
+in a tight loop.
 
->  2 files changed, 54 insertions(+)
-> 
-> diff --git a/drivers/base/core.c b/drivers/base/core.c
-> index 8b056306f04e..3953c5ab7316 100644
-> --- a/drivers/base/core.c
-> +++ b/drivers/base/core.c
-> @@ -5216,6 +5216,58 @@ void set_secondary_fwnode(struct device *dev, struct fwnode_handle *fwnode)
->  }
->  EXPORT_SYMBOL_GPL(set_secondary_fwnode);
->  
-> +/**
-> + * device_remove_of_node - Remove an of_node from a device
-> + * @dev: device whose device-tree node is being removed
-> + */
-> +void device_remove_of_node(struct device *dev)
-> +{
-> +	dev = get_device(dev);
-> +	if (!dev)
-> +		return;
-> +
-> +	if (!dev->of_node)
-> +		goto end;
-> +
-> +	if (dev->fwnode == of_fwnode_handle(dev->of_node))
-> +		dev->fwnode = NULL;
-> +
-> +	of_node_put(dev->of_node);
-> +	dev->of_node = NULL;
-> +
-> +end:
-> +	put_device(dev);
-> +}
-> +EXPORT_SYMBOL_GPL(device_remove_of_node);
-> +
-> +/**
-> + * device_add_of_node - Add an of_node to an existing device
-> + * @dev: device whose device-tree node is being added
-> + * @of_node: of_node to add
-> + */
-> +void device_add_of_node(struct device *dev, struct device_node *of_node)
-> +{
-> +	if (!of_node)
-> +		return;
-> +
-> +	dev = get_device(dev);
-> +	if (!dev)
-> +		return;
-> +
-> +	if (WARN(dev->of_node, "%s: Cannot replace node %pOF with %pOF\n",
-> +		 dev_name(dev), dev->of_node, of_node))
-> +		goto end;
-> +
-> +	dev->of_node = of_node_get(of_node);
-> +
-> +	if (!dev->fwnode)
-> +		dev->fwnode = of_fwnode_handle(of_node);
-> +
-> +end:
-> +	put_device(dev);
-> +}
-> +EXPORT_SYMBOL_GPL(device_add_of_node);
-> +
->  /**
->   * device_set_of_node_from_dev - reuse device-tree node of another device
->   * @dev: device whose device-tree node is being set
-> diff --git a/include/linux/device.h b/include/linux/device.h
-> index 667cb6db9019..ef4c0f3c41cd 100644
-> --- a/include/linux/device.h
-> +++ b/include/linux/device.h
-> @@ -1149,6 +1149,8 @@ int device_online(struct device *dev);
->  void set_primary_fwnode(struct device *dev, struct fwnode_handle *fwnode);
->  void set_secondary_fwnode(struct device *dev, struct fwnode_handle *fwnode);
->  void device_set_node(struct device *dev, struct fwnode_handle *fwnode);
-> +void device_add_of_node(struct device *dev, struct device_node *of_node);
-> +void device_remove_of_node(struct device *dev);
->  void device_set_of_node_from_dev(struct device *dev, const struct device *dev2);
->  
->  static inline struct device_node *dev_of_node(struct device *dev)
-> -- 
-> 2.47.0
-> 
+(yes, this additional cost used to be over 1200 ms before the v6.12
+msleep rounding fix)
+
+> -       msleep(ms);
+> +       u64 usec =3D ms * USEC_PER_MSEC, delta_us =3D 50;
+
+> +       if (ms > 5)
+> +               delta_us =3D (USEC_PER_MSEC / 100) * ms
+
+I measured 100 resume cycles on the Dell XPS 13 9300 on 4 kernels.
+Here is the measured fastest kernel resume time in msec for each:
+
+1. 1921.292 v6.12 msleep (baseline)
+2. 1115.579 v6.12 delta_us =3D (USEC_PER_MSEC / 100) * ms (this patch)
+3. 1113.396 v6.12 delta_us =3D 50
+4. 1107.835 v6.12 delta_us =3D 0
+
+(I didn't average the 100 runs, because random very long device
+hiccups  throw off the average)
+
+So any of #2, #3 and #4 are a huge step forward from what is shipping today=
+!
+
+So considering #2 vs #3 vs #4....
+
+I agree that it is a problem for the timer sub-system to work to
+maintain a 1ns granularity
+that it can't actually deliver.
+
+I think it is fine for the timer sub-system to allow calls to opt into
+timer slack --
+some callers may actually know what number to use.
+
+However, I don't think that the timer sub-system should force callers to gu=
+ess
+how much slack is appropriate.  I think that a caller with 0 slack
+should be internally
+rounded up by the timer sub-system to the granularity that it can
+actually deliver
+with the timer that is currently in use on that system.
+
+Note also that slack of 0 doesn't mean that no coalescing can happen.
+A slack=3D0 timer can land within the slack another timer, and the other
+timer will be pulled forward to coalesce.
+
+The 50 usec default for user timer slack is certainly a magic number born
+of tests of interesting workloads on interesting systems on a certain date.
+It may not be the right number for other workloads, or other systems
+with other timers on other dates.
+
+My opinion...
+
+I don't see a justification for increasing timer slack with increasing dura=
+tion.
+User-space timers don't pay this additional delay, why should the ASL
+programmer?
+
+Also, the graduated increasing slack with duration is a guess no more
+valid than the guess of a flat 50 usec.
+
+A flat 50 or a flat 0 have the virtue of being simple -- they will be simpl=
+er
+to understand and maintain in the future.
+
+But I can live with any of these options, since they are all a big step for=
+ward.
+
+thanks,
+Len Brown, Intel Open Source Technology Center
 
