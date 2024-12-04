@@ -1,259 +1,475 @@
-Return-Path: <linux-kernel+bounces-432065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35EAD9E448B
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 20:25:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3F7B9E448F
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 20:26:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0A001686BF
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 19:25:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB04B166E24
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 19:26:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8BBA1C3BF5;
-	Wed,  4 Dec 2024 19:25:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8652B1C3C09;
+	Wed,  4 Dec 2024 19:26:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="HiAzTTOM"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="ew5P/ekN"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B77C2391AA;
-	Wed,  4 Dec 2024 19:25:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733340341; cv=none; b=DtXYC5pHkyL/u9DVK0FNfjQIslBfGze5hIbtiJihRWjPPxPKPI59tKzMD7kbn1OG5WlqplXbunlaHlc8rNHSgMhUlUL0C3bmLv60wYk2/Eg6aOQ4vNQ9oGtpMGi0a7vI7DJ5EAXIzr7SwnxBjI39NkqG7Mb2ec2MhrcEohIYPw0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733340341; c=relaxed/simple;
-	bh=EerDhxJpSU5cCC4UM+W+smPICn3fsnMpZc0x2ONSUZQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JgzZ3pTr85NI0vXuf8xp2QsGqoUIlxqxm4ynKCFsL1GsN6fOxCfVz2LoQYZ5uy3pR/VF2EAvKfONQt+bS4Cfzg0SzqFi4if7A4zMb7x0vOTk7BTDle1Scc15XZrUwmEK2XfUYjzCQ2QlZ7BIqvvtMIp9r5sD3ofYPUtvtHCvMOU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=HiAzTTOM; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B4FxYJK010244;
-	Wed, 4 Dec 2024 19:25:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=pp1; bh=JJ9ZRvfwunck08W7rLxglNPCEXNky9oQEKVt+rM4a
-	+4=; b=HiAzTTOMK0wWE7PZWBTbx5yxSAzoJZcFqFOnYG9UYhRRWkVdmRhuKjRjO
-	HpNaJ0MBfyTb4UcTojRcSJEWKavzfPOJT43TnIUZcQVwrrTJkWWxbU8Xa+2+BRFG
-	MthWFOAKTGvzjXITzv0BjzD+p0ErSCqUj4on0/kkv0n1BugkpbRa9J604cGZgFqc
-	/i0Oc4CUBjuXv2zt2WQYC1AEaCJUaepvS9ef0sRsW+7sb1DW9wp2XcmkgGX6bC+Y
-	uH/WuKq/eJEjvEF/r06Ou8TXvEqWLduoLth78OHOtOXltet1sevTgZ7N5RI/PFqL
-	dlfH0iw8dTPR/uCIEouUHHVRWWC+Q==
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43ahve3qjb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 04 Dec 2024 19:25:24 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4B4IwtrH022960;
-	Wed, 4 Dec 2024 19:25:23 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 438e1n5b9h-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 04 Dec 2024 19:25:23 +0000
-Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
-	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4B4JPLtY30802616
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 4 Dec 2024 19:25:21 GMT
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 4935820049;
-	Wed,  4 Dec 2024 19:25:21 +0000 (GMT)
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 87D4320040;
-	Wed,  4 Dec 2024 19:25:19 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.watson.ibm.com (unknown [9.31.103.152])
-	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Wed,  4 Dec 2024 19:25:19 +0000 (GMT)
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: linux-integrity@vger.kernel.org
-Cc: Mimi Zohar <zohar@linux.ibm.com>,
-        =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-        roberto.sassu@huawei.com, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jeff Xu <jeffxu@chromium.org>,
-        Kees Cook <kees@kernel.org>, Paul Moore <paul@paul-moore.com>,
-        audit@vger.kernel.org
-Subject: [PATCH v2] ima: instantiate the bprm_creds_for_exec() hook
-Date: Wed,  4 Dec 2024 14:25:14 -0500
-Message-ID: <20241204192514.40308-1-zohar@linux.ibm.com>
-X-Mailer: git-send-email 2.47.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B31A1B4130;
+	Wed,  4 Dec 2024 19:26:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733340390; cv=pass; b=D/VUz0w5l6IfBkvIH4/ObSyHYwxF+CEGndgMbxcSIDtyBik2ET0BJjw05kS6G5JFWHB4yaZMM11EeAMfi4NMOwNn4Ud+95fW1RAD8UaGdJDs9bdAR5c6DBjmEQQ08fVGXQbehae861MaFvJQklTTwWbnHkx4pwXfDJzd2lHDGaw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733340390; c=relaxed/simple;
+	bh=h8ARnmfbTqF/cI3q9mowC7+FcZgp77jQGxY5HlVPKMU=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=ggD6OpOMUy4i7edSTO2d7L/zkm5emzUQhJ/L0/h+2D1YC+JbLgcVBOcfo7MHPIs/g4Rn54Rn8mCjjG/DLFZxEbq5FtwDI0aL6GrQHZo6HUgam2Dap5KUvczm5ADj31m4V18jgHmQNOMIPV1gU8BIQ29hw2r/NBXAcQBOhtdfth0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=ew5P/ekN; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1733340352; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=XIwroMswiSsLiZ3HgtEZFwvaVmvR2N6pBF+Vt2d2mr72R7vZS4r26hLbYVEP3luaxIvZFKAzoBl4mS6kU6XmSHU+IiQcAMnudX1stUDfwSpaezqnhPl5Iw4QCOkeGr0EO92G+qWf9IqmbIuM1kmJJBdspRS4YttURnCbpYcQM9g=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1733340352; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=iXSruM2DtO1V1jXF1qxqYiltGJ6X2Z7W1MHrcYL9i1k=; 
+	b=gwD/aFMIjtpfd//dqdqUQ/HHPSpREM88fwB5DjrWtdA1aGf+VzsEMYYf8ZPWKeEQ/t2eIX/G1p5iOlaQJr79E/Y7h6vDIH0BbDMX2gO7QRfOI6nhtwVVYeJS7xRAqjBYDx4xBgk3RQIUx+YxdRGxn5NVSymwHYIxMV708ajxtKc=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1733340352;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=iXSruM2DtO1V1jXF1qxqYiltGJ6X2Z7W1MHrcYL9i1k=;
+	b=ew5P/ekNO7qTA0tfv9Z+m25DEwH1Nj26NjGlST+5hFfBqXnNJNKPQD1KKw7SlFPD
+	EVCosCCUjrdOvyGVc+BFQXf/qoUhVhRldDC6SsVUK8H5P5Nco1cHyZLPKTZ7UP3X2s8
+	4zXHxa24cGe58pn9k0SLVujgkjz0EmJG+wDa3jfY=
+Received: by mx.zohomail.com with SMTPS id 173334034960492.0857786888331;
+	Wed, 4 Dec 2024 11:25:49 -0800 (PST)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: iOqdpHeouk3A7X1sMprDgAJHPij2y0EY
-X-Proofpoint-ORIG-GUID: iOqdpHeouk3A7X1sMprDgAJHPij2y0EY
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 phishscore=0
- clxscore=1015 priorityscore=1501 adultscore=0 mlxscore=0
- lowpriorityscore=0 spamscore=0 malwarescore=0 impostorscore=0 bulkscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412040145
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.200.121\))
+Subject: Re: [PATCH v3 15/16] rust: platform: add basic platform device /
+ driver abstractions
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <20241022213221.2383-16-dakr@kernel.org>
+Date: Wed, 4 Dec 2024 16:25:32 -0300
+Cc: gregkh@linuxfoundation.org,
+ rafael@kernel.org,
+ bhelgaas@google.com,
+ ojeda@kernel.org,
+ alex.gaynor@gmail.com,
+ boqun.feng@gmail.com,
+ gary@garyguo.net,
+ bjorn3_gh@protonmail.com,
+ benno.lossin@proton.me,
+ tmgross@umich.edu,
+ a.hindborg@samsung.com,
+ aliceryhl@google.com,
+ airlied@gmail.com,
+ fujita.tomonori@gmail.com,
+ lina@asahilina.net,
+ pstanner@redhat.com,
+ ajanulgu@redhat.com,
+ lyude@redhat.com,
+ robh@kernel.org,
+ saravanak@google.com,
+ rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ linux-pci@vger.kernel.org,
+ devicetree@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <7EA482EF-1D3E-4C3E-A805-4F404758610C@collabora.com>
+References: <20241022213221.2383-1-dakr@kernel.org>
+ <20241022213221.2383-16-dakr@kernel.org>
+To: Danilo Krummrich <dakr@kernel.org>
+X-Mailer: Apple Mail (2.3826.200.121)
+X-ZohoMailClient: External
 
-Like direct file execution (e.g. ./script.sh), indirect file execution
-(e.g. sh script.sh) needs to be measured and appraised.  Instantiate
-the new security_bprm_creds_for_exec() hook to measure and verify the
-indirect file's integrity.  Unlike direct file execution, indirect file
-execution is optionally enforced by the interpreter.
+Hi Danilo,
 
-Differentiate kernel and userspace enforced integrity audit messages.
+> On 22 Oct 2024, at 18:31, Danilo Krummrich <dakr@kernel.org> wrote:
+>=20
+> Implement the basic platform bus abstractions required to write a =
+basic
+> platform driver. This includes the following data structures:
+>=20
+> The `platform::Driver` trait represents the interface to the driver =
+and
+> provides `pci::Driver::probe` for the driver to implement.
+>=20
+> The `platform::Device` abstraction represents a `struct =
+platform_device`.
+>=20
+> In order to provide the platform bus specific parts to a generic
+> `driver::Registration` the `driver::RegistrationOps` trait is =
+implemented
+> by `platform::Adapter`.
+>=20
+> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+> ---
+> MAINTAINERS                     |   1 +
+> rust/bindings/bindings_helper.h |   1 +
+> rust/helpers/helpers.c          |   1 +
+> rust/helpers/platform.c         |  13 ++
+> rust/kernel/lib.rs              |   1 +
+> rust/kernel/platform.rs         | 217 ++++++++++++++++++++++++++++++++
+> 6 files changed, 234 insertions(+)
+> create mode 100644 rust/helpers/platform.c
+> create mode 100644 rust/kernel/platform.rs
+>=20
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 87eb9a7869eb..173540375863 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -6985,6 +6985,7 @@ F: rust/kernel/device.rs
+> F: rust/kernel/device_id.rs
+> F: rust/kernel/devres.rs
+> F: rust/kernel/driver.rs
+> +F: rust/kernel/platform.rs
+>=20
+> DRIVERS FOR OMAP ADAPTIVE VOLTAGE SCALING (AVS)
+> M: Nishanth Menon <nm@ti.com>
+> diff --git a/rust/bindings/bindings_helper.h =
+b/rust/bindings/bindings_helper.h
+> index 312f03cbdce9..217c776615b9 100644
+> --- a/rust/bindings/bindings_helper.h
+> +++ b/rust/bindings/bindings_helper.h
+> @@ -18,6 +18,7 @@
+> #include <linux/of_device.h>
+> #include <linux/pci.h>
+> #include <linux/phy.h>
+> +#include <linux/platform_device.h>
+> #include <linux/refcount.h>
+> #include <linux/sched.h>
+> #include <linux/slab.h>
+> diff --git a/rust/helpers/helpers.c b/rust/helpers/helpers.c
+> index 8bc6e9735589..663cdc2a45e0 100644
+> --- a/rust/helpers/helpers.c
+> +++ b/rust/helpers/helpers.c
+> @@ -17,6 +17,7 @@
+> #include "kunit.c"
+> #include "mutex.c"
+> #include "page.c"
+> +#include "platform.c"
+> #include "pci.c"
+> #include "rbtree.c"
+> #include "rcu.c"
+> diff --git a/rust/helpers/platform.c b/rust/helpers/platform.c
+> new file mode 100644
+> index 000000000000..ab9b9f317301
+> --- /dev/null
+> +++ b/rust/helpers/platform.c
+> @@ -0,0 +1,13 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +#include <linux/platform_device.h>
+> +
+> +void *rust_helper_platform_get_drvdata(const struct platform_device =
+*pdev)
+> +{
+> + return platform_get_drvdata(pdev);
+> +}
+> +
+> +void rust_helper_platform_set_drvdata(struct platform_device *pdev, =
+void *data)
+> +{
+> + platform_set_drvdata(pdev, data);
+> +}
+> diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
+> index 5946f59f1688..9e8dcd6d7c01 100644
+> --- a/rust/kernel/lib.rs
+> +++ b/rust/kernel/lib.rs
+> @@ -53,6 +53,7 @@
+> pub mod net;
+> pub mod of;
+> pub mod page;
+> +pub mod platform;
+> pub mod prelude;
+> pub mod print;
+> pub mod rbtree;
+> diff --git a/rust/kernel/platform.rs b/rust/kernel/platform.rs
+> new file mode 100644
+> index 000000000000..addf5356f44f
+> --- /dev/null
+> +++ b/rust/kernel/platform.rs
+> @@ -0,0 +1,217 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +//! Abstractions for the platform bus.
+> +//!
+> +//! C header: =
+[`include/linux/platform_device.h`](srctree/include/linux/platform_device.=
+h)
+> +
+> +use crate::{
+> +    bindings, container_of, device,
+> +    device_id::RawDeviceId,
+> +    driver,
+> +    error::{to_result, Result},
+> +    of,
+> +    prelude::*,
+> +    str::CStr,
+> +    types::{ARef, ForeignOwnable},
+> +    ThisModule,
+> +};
+> +
+> +/// An adapter for the registration of platform drivers.
+> +pub struct Adapter<T: Driver>(T);
+> +
+> +impl<T: Driver + 'static> driver::RegistrationOps for Adapter<T> {
+> +    type RegType =3D bindings::platform_driver;
+> +
+> +    fn register(
+> +        pdrv: &mut Self::RegType,
+> +        name: &'static CStr,
+> +        module: &'static ThisModule,
+> +    ) -> Result {
+> +        pdrv.driver.name =3D name.as_char_ptr();
+> +        pdrv.probe =3D Some(Self::probe_callback);
+> +
+> +        // Both members of this union are identical in data layout =
+and semantics.
+> +        pdrv.__bindgen_anon_1.remove =3D Some(Self::remove_callback);
+> +        pdrv.driver.of_match_table =3D T::ID_TABLE.as_ptr();
+> +
+> +        // SAFETY: `pdrv` is guaranteed to be a valid `RegType`.
+> +        to_result(unsafe { bindings::__platform_driver_register(pdrv, =
+module.0) })
+> +    }
+> +
+> +    fn unregister(pdrv: &mut Self::RegType) {
+> +        // SAFETY: `pdrv` is guaranteed to be a valid `RegType`.
+> +        unsafe { bindings::platform_driver_unregister(pdrv) };
+> +    }
+> +}
+> +
+> +impl<T: Driver + 'static> Adapter<T> {
+> +    fn id_info(pdev: &Device) -> Option<&'static T::IdInfo> {
+> +        let table =3D T::ID_TABLE;
+> +        let id =3D T::of_match_device(pdev)?;
+> +
+> +        Some(table.info(id.index()))
+> +    }
+> +
+> +    extern "C" fn probe_callback(pdev: *mut =
+bindings::platform_device) -> core::ffi::c_int {
+> +        // SAFETY: The platform bus only ever calls the probe =
+callback with a valid `pdev`.
+> +        let dev =3D unsafe { device::Device::from_raw(&mut =
+(*pdev).dev) };
+> +        // SAFETY: `dev` is guaranteed to be embedded in a valid =
+`struct platform_device` by the
+> +        // call above.
+> +        let mut pdev =3D unsafe { Device::from_dev(dev) };
+> +
+> +        let info =3D Self::id_info(&pdev);
+> +        match T::probe(&mut pdev, info) {
+> +            Ok(data) =3D> {
+> +                // Let the `struct platform_device` own a reference =
+of the driver's private data.
+> +                // SAFETY: By the type invariant `pdev.as_raw` =
+returns a valid pointer to a
+> +                // `struct platform_device`.
+> +                unsafe { =
+bindings::platform_set_drvdata(pdev.as_raw(), data.into_foreign() as _) =
+};
+> +            }
+> +            Err(err) =3D> return Error::to_errno(err),
+> +        }
+> +
+> +        0
+> +    }
+> +
+> +    extern "C" fn remove_callback(pdev: *mut =
+bindings::platform_device) {
+> +        // SAFETY: `pdev` is a valid pointer to a `struct =
+platform_device`.
+> +        let ptr =3D unsafe { bindings::platform_get_drvdata(pdev) };
+> +
+> +        // SAFETY: `remove_callback` is only ever called after a =
+successful call to
+> +        // `probe_callback`, hence it's guaranteed that `ptr` points =
+to a valid and initialized
+> +        // `KBox<T>` pointer created through `KBox::into_foreign`.
+> +        let _ =3D unsafe { KBox::<T>::from_foreign(ptr) };
+> +    }
+> +}
+> +
+> +/// Declares a kernel module that exposes a single platform driver.
+> +///
+> +/// # Examples
+> +///
+> +/// ```ignore
+> +/// kernel::module_platform_driver! {
+> +///     type: MyDriver,
+> +///     name: "Module name",
+> +///     author: "Author name",
+> +///     description: "Description",
+> +///     license: "GPL v2",
+> +/// }
+> +/// ```
+> +#[macro_export]
+> +macro_rules! module_platform_driver {
+> +    ($($f:tt)*) =3D> {
+> +        $crate::module_driver!(<T>, $crate::platform::Adapter<T>, { =
+$($f)* });
+> +    };
+> +}
+> +
+> +/// IdTable type for platform drivers.
+> +pub type IdTable<T> =3D &'static dyn =
+kernel::device_id::IdTable<of::DeviceId, T>;
+> +
+> +/// The platform driver trait.
+> +///
+> +/// # Example
+> +///
+> +///```
+> +/// # use kernel::{bindings, c_str, of, platform};
+> +///
+> +/// struct MyDriver;
+> +///
+> +/// kernel::of_device_table!(
+> +///     OF_TABLE,
+> +///     MODULE_OF_TABLE,
+> +///     <MyDriver as platform::Driver>::IdInfo,
+> +///     [
+> +///         (of::DeviceId::new(c_str!("redhat,my-device")), ())
+> +///     ]
+> +/// );
+> +///
+> +/// impl platform::Driver for MyDriver {
+> +///     type IdInfo =3D ();
+> +///     const ID_TABLE: platform::IdTable<Self::IdInfo> =3D =
+&OF_TABLE;
+> +///
+> +///     fn probe(
+> +///         _pdev: &mut platform::Device,
+> +///         _id_info: Option<&Self::IdInfo>,
+> +///     ) -> Result<Pin<KBox<Self>>> {
+> +///         Err(ENODEV)
+> +///     }
+> +/// }
+> +///```
+> +/// Drivers must implement this trait in order to get a platform =
+driver registered. Please refer to
+> +/// the `Adapter` documentation for an example.
+> +pub trait Driver {
+> +    /// The type holding information about each device id supported =
+by the driver.
+> +    ///
+> +    /// TODO: Use associated_type_defaults once stabilized:
+> +    ///
+> +    /// type IdInfo: 'static =3D ();
+> +    type IdInfo: 'static;
+> +
+> +    /// The table of device ids supported by the driver.
+> +    const ID_TABLE: IdTable<Self::IdInfo>;
+> +
+> +    /// Platform driver probe.
+> +    ///
+> +    /// Called when a new platform device is added or discovered.
+> +    /// Implementers should attempt to initialize the device here.
+> +    fn probe(dev: &mut Device, id_info: Option<&Self::IdInfo>) -> =
+Result<Pin<KBox<Self>>>;
+> +
+> +    /// Find the [`of::DeviceId`] within [`Driver::ID_TABLE`] =
+matching the given [`Device`], if any.
+> +    fn of_match_device(pdev: &Device) -> Option<&of::DeviceId> {
+> +        let table =3D Self::ID_TABLE;
+> +
+> +        // SAFETY:
+> +        // - `table` has static lifetime, hence it's valid for read,
+> +        // - `dev` is guaranteed to be valid while it's alive, and so =
+is
+> +        //   `pdev.as_dev().as_raw()`.
+> +        let raw_id =3D unsafe { =
+bindings::of_match_device(table.as_ptr(), pdev.as_dev().as_raw()) };
+> +
+> +        if raw_id.is_null() {
+> +            None
+> +        } else {
+> +            // SAFETY: `DeviceId` is a `#[repr(transparent)` wrapper =
+of `struct of_device_id` and
+> +            // does not add additional invariants, so it's safe to =
+transmute.
+> +            Some(unsafe { &*raw_id.cast::<of::DeviceId>() })
+> +        }
+> +    }
+> +}
+> +
+> +/// The platform device representation.
+> +///
+> +/// A platform device is based on an always reference counted =
+`device:Device` instance. Cloning a
+> +/// platform device, hence, also increments the base device' =
+reference count.
+> +///
+> +/// # Invariants
+> +///
+> +/// `Device` holds a valid reference of `ARef<device::Device>` whose =
+underlying `struct device` is a
+> +/// member of a `struct platform_device`.
+> +#[derive(Clone)]
+> +pub struct Device(ARef<device::Device>);
+> +
+> +impl Device {
+> +    /// Convert a raw kernel device into a `Device`
+> +    ///
+> +    /// # Safety
+> +    ///
+> +    /// `dev` must be an `Aref<device::Device>` whose underlying =
+`bindings::device` is a member of a
+> +    /// `bindings::platform_device`.
+> +    unsafe fn from_dev(dev: ARef<device::Device>) -> Self {
+> +        Self(dev)
+> +    }
+> +
+> +    fn as_dev(&self) -> &device::Device {
 
-Co-developed-by: Roberto Sassu <roberto.sassu@huawei.com>
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
----
-Changelog v3:
-- Mickael: add comment ima_bprm_creds_for_exec(), minor code cleanup,
-  add Co-developed-by tag.
+This has to be pub, since a platform::Device is at least as useful as a =
+device::Device.
 
-Changelog v2:
-- Mickael: Use same audit messages with new audit message number
-- Stefan Berger: Return boolean from is_bprm_creds_for_exec()
+IOW: if an API takes &device::Device, there is no reason why someone =
+with a &platform::Device
+shouldn=E2=80=99t be able to call it.
 
- include/uapi/linux/audit.h            |  1 +
- security/integrity/ima/ima_appraise.c | 27 +++++++++++++++++++++++--
- security/integrity/ima/ima_main.c     | 29 +++++++++++++++++++++++++++
- 3 files changed, 55 insertions(+), 2 deletions(-)
+In particular, having this as private makes it impossible for a platform =
+driver to use Abdiel=E2=80=99s DMA allocator at [0].
 
-diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
-index 75e21a135483..826337905466 100644
---- a/include/uapi/linux/audit.h
-+++ b/include/uapi/linux/audit.h
-@@ -161,6 +161,7 @@
- #define AUDIT_INTEGRITY_RULE	    1805 /* policy rule */
- #define AUDIT_INTEGRITY_EVM_XATTR   1806 /* New EVM-covered xattr */
- #define AUDIT_INTEGRITY_POLICY_RULE 1807 /* IMA policy rules */
-+#define AUDIT_INTEGRITY_DATA_CHECK  1808 /* Userspace enforced data integrity */
- 
- #define AUDIT_KERNEL		2000	/* Asynchronous audit record. NOT A REQUEST. */
- 
-diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
-index 656c709b974f..fc0d1f3cceca 100644
---- a/security/integrity/ima/ima_appraise.c
-+++ b/security/integrity/ima/ima_appraise.c
-@@ -8,6 +8,7 @@
- #include <linux/module.h>
- #include <linux/init.h>
- #include <linux/file.h>
-+#include <linux/binfmts.h>
- #include <linux/fs.h>
- #include <linux/xattr.h>
- #include <linux/magic.h>
-@@ -469,6 +470,17 @@ int ima_check_blacklist(struct ima_iint_cache *iint,
- 	return rc;
- }
- 
-+static bool is_bprm_creds_for_exec(enum ima_hooks func, struct file *file)
-+{
-+	struct linux_binprm *bprm;
-+
-+	if (func == BPRM_CHECK) {
-+		bprm = container_of(&file, struct linux_binprm, file);
-+		return bprm->is_check;
-+	}
-+	return false;
-+}
-+
- /*
-  * ima_appraise_measurement - appraise file measurement
-  *
-@@ -483,6 +495,7 @@ int ima_appraise_measurement(enum ima_hooks func, struct ima_iint_cache *iint,
- 			     int xattr_len, const struct modsig *modsig)
- {
- 	static const char op[] = "appraise_data";
-+	int audit_msgno = AUDIT_INTEGRITY_DATA;
- 	const char *cause = "unknown";
- 	struct dentry *dentry = file_dentry(file);
- 	struct inode *inode = d_backing_inode(dentry);
-@@ -494,6 +507,16 @@ int ima_appraise_measurement(enum ima_hooks func, struct ima_iint_cache *iint,
- 	if (!(inode->i_opflags & IOP_XATTR) && !try_modsig)
- 		return INTEGRITY_UNKNOWN;
- 
-+	/*
-+	 * Unlike any of the other LSM hooks where the kernel enforces file
-+	 * integrity, enforcing file integrity for the bprm_creds_for_exec()
-+	 * LSM hook with the AT_EXECVE_CHECK flag is left up to the discretion
-+	 * of the script interpreter(userspace). Differentiate kernel and
-+	 * userspace enforced integrity audit messages.
-+	 */
-+	if (is_bprm_creds_for_exec(func, file))
-+		audit_msgno = AUDIT_INTEGRITY_DATA_CHECK;
-+
- 	/* If reading the xattr failed and there's no modsig, error out. */
- 	if (rc <= 0 && !try_modsig) {
- 		if (rc && rc != -ENODATA)
-@@ -569,7 +592,7 @@ int ima_appraise_measurement(enum ima_hooks func, struct ima_iint_cache *iint,
- 	     (iint->flags & IMA_FAIL_UNVERIFIABLE_SIGS))) {
- 		status = INTEGRITY_FAIL;
- 		cause = "unverifiable-signature";
--		integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode, filename,
-+		integrity_audit_msg(audit_msgno, inode, filename,
- 				    op, cause, rc, 0);
- 	} else if (status != INTEGRITY_PASS) {
- 		/* Fix mode, but don't replace file signatures. */
-@@ -589,7 +612,7 @@ int ima_appraise_measurement(enum ima_hooks func, struct ima_iint_cache *iint,
- 			status = INTEGRITY_PASS;
- 		}
- 
--		integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode, filename,
-+		integrity_audit_msg(audit_msgno, inode, filename,
- 				    op, cause, rc, 0);
- 	} else {
- 		ima_cache_flags(iint, func);
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index 06132cf47016..5d4ac8aa2f1f 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -554,6 +554,34 @@ static int ima_bprm_check(struct linux_binprm *bprm)
- 				   MAY_EXEC, CREDS_CHECK);
- }
- 
-+/**
-+ * ima_bprm_creds_for_exec - collect/store/appraise measurement.
-+ * @bprm: contains the linux_binprm structure
-+ *
-+ * Based on the IMA policy and the execvat(2) AT_EXECVE_CHECK flag, measure
-+ * and appraise the integrity of a file to be executed by script interpreters.
-+ * Unlike any of the other LSM hooks where the kernel enforces file integrity,
-+ * enforcing file integrity is left up to the discretion of the script
-+ * interpreter (userspace).
-+ *
-+ * On success return 0.  On integrity appraisal error, assuming the file
-+ * is in policy and IMA-appraisal is in enforcing mode, return -EACCES.
-+ */
-+static int ima_bprm_creds_for_exec(struct linux_binprm *bprm)
-+{
-+	/*
-+	 * As security_bprm_check() is called multiple times, both
-+	 * the script and the shebang interpreter are measured, appraised,
-+	 * and audited. Limit usage of this LSM hook to just measuring,
-+	 * appraising, and auditing the indirect script execution
-+	 * (e.g. ./sh example.sh).
-+	 */
-+	if (!bprm->is_check)
-+		return 0;
-+
-+	return ima_bprm_check(bprm);
-+}
-+
- /**
-  * ima_file_check - based on policy, collect/store measurement.
-  * @file: pointer to the file to be measured
-@@ -1177,6 +1205,7 @@ static int __init init_ima(void)
- 
- static struct security_hook_list ima_hooks[] __ro_after_init = {
- 	LSM_HOOK_INIT(bprm_check_security, ima_bprm_check),
-+	LSM_HOOK_INIT(bprm_creds_for_exec, ima_bprm_creds_for_exec),
- 	LSM_HOOK_INIT(file_post_open, ima_file_check),
- 	LSM_HOOK_INIT(inode_post_create_tmpfile, ima_post_create_tmpfile),
- 	LSM_HOOK_INIT(file_release, ima_file_free),
--- 
-2.47.0
+> +        &self.0
+> +    }
+> +
+> +    fn as_raw(&self) -> *mut bindings::platform_device {
+> +        // SAFETY: By the type invariant `self.0.as_raw` is a pointer =
+to the `struct device`
+> +        // embedded in `struct platform_device`.
+> +        unsafe { container_of!(self.0.as_raw(), =
+bindings::platform_device, dev) }.cast_mut()
+> +    }
+> +}
+> +
+> +impl AsRef<device::Device> for Device {
+> +    fn as_ref(&self) -> &device::Device {
+> +        &self.0
+> +    }
+> +}
+> --=20
+> 2.46.2
+>=20
+
+=E2=80=94 Daniel
+
+[0]: https://lkml.org/lkml/2024/12/3/1281
 
 
