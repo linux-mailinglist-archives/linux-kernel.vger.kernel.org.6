@@ -1,179 +1,189 @@
-Return-Path: <linux-kernel+bounces-430738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2EA69E34E0
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 09:04:31 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB4A29E3543
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 09:28:22 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DACC3162907
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 08:04:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C4549B35E22
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 08:04:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3BB21AF0B8;
-	Wed,  4 Dec 2024 07:59:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BB9A1AD3E4;
+	Wed,  4 Dec 2024 07:59:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QUcR8Tdh"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JclNz/p7"
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 847B41AE876;
-	Wed,  4 Dec 2024 07:59:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7B9D18D64B;
+	Wed,  4 Dec 2024 07:59:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733299161; cv=none; b=OjKyzjYc5CU3i28nTlgcQrgPAV5kGSvdzqAhWVScsxq38fyEogEWzMxJe/elMd2S3J6s/1oZcwQlYuO9sh+yQcgVjwfzs1YlhCrO0uwIzf7Nla5c0Kq174wiyzeh800wKBHn5seGCEtFHjz3v8CeVxenmnXx7G6UlM/IkTAGOhM=
+	t=1733299155; cv=none; b=eKpeyM0bOmYY20QM/59SuDbOpy94MFvfHsX4wXgX0c/Saas3FeY98jYbrVHsozuvAFYY1Hum8Nc36cFmEvsJFeidOw85goU9m4vcp9tq+a6lvdqU/8PWR3Dyo39lvohnt7NF1iAn50YRPH7WXCjhXjU0tei2UiTNBFTytFAJbF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733299161; c=relaxed/simple;
-	bh=rjw6F3m54cN6FFFuRReZrj6CVL8zRG63qtVX2uMNiOY=;
+	s=arc-20240116; t=1733299155; c=relaxed/simple;
+	bh=dla2OavfONZnuxYDO0na34UIfYLSxKvedCCKO3QRYZ8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dD3EeGsUK7jKQ73nwOLGJTzZZ3CoEVgLHGncSdLUJPzG8btucCshKC2E5poDOAHVYCFQ6XrbCRs9Uss1U1e+JovaUOMrnlhyZDNn+PnlXx+lx19DvdXkqShEaKD5p45p7AdxDUZ4yBB5sRatYD6PhsVEeZceT5LGS/ZRRLnwDJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QUcR8Tdh; arc=none smtp.client-ip=192.198.163.12
+	 Content-Type:Content-Disposition:In-Reply-To; b=Un6UcDBRIfjzjS7+wZiPVwU61eHGqlLv/fNqDhP05/ERp2e+g8F/reZ5ole8dbadGd7rP220/xDBH2yhqvReBKJeR/cF2lyyQYCVFXfvw02mXxv+JUDxbIqZVR03LvF700lc9tkCMrc6qI+yR+300SIPbTtr7d+N+HZCGoSscbo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JclNz/p7; arc=none smtp.client-ip=192.198.163.12
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733299160; x=1764835160;
+  t=1733299154; x=1764835154;
   h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=rjw6F3m54cN6FFFuRReZrj6CVL8zRG63qtVX2uMNiOY=;
-  b=QUcR8Tdh1Z37T1g3PBK8G/reDHJobBuDibfqKylVJWZqa3Bae+4nR9BH
-   AERKn620jkDeXmfPr1uwmeoYikPteNjVlKrKrguUHkSeYlhtw4OSNXjp3
-   k6VBkjRZGk7nKXLuZikVRg0oOvywtCMamUsWQcx8PvcXOmz8RiJM7Bi00
-   Wo7FD5HHQzzVkfvezRf8FRWc0ANgQttFzlTH8VK2urrrfLGQ69x+7qbeR
-   8y8UQxo0RzzBB7yNZH9vPfXWODPKzCW93Z2SjgxHk2XCxyN+AEaojUahN
-   2rmJYTT2LCuYIndWqkLfBHWsDhezPGYjA5jaKafLfad3Ijvr3HqFbL1l5
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=dla2OavfONZnuxYDO0na34UIfYLSxKvedCCKO3QRYZ8=;
+  b=JclNz/p7mx6mBdc8+/GR5bLQV831eJgwghDElIpENkaMKWTYquwfhhEP
+   9DI+v1eZk1dWy7hwM5v+bj82E8TaYPutObUucGpxmzKodiNxHGzW9hOaF
+   l1EHJu7gSRG1ALfC9h17B0wQW0ETCuNW/Z0XHF7E0CWfad4kesNh3FGBp
+   aFPD1NQfHJ20hUJLNsxEt77uI5SVZHB1PWG3p0eUXGnKLAM15zy/rgJyD
+   3JDE1V6UEnQZD7EACz0czz6GyLMF+FGpRBijvY9CI3gw321pIqgQ05aTu
+   h/YecjOaqfBUP1z77vUOWYYBLqIo2ShfG52GGgFyQrWY0McyS8cVxyeDF
    w==;
-X-CSE-ConnectionGUID: j9FI3y2AS5mXvd6xPXXq0w==
-X-CSE-MsgGUID: lgYrisdeQFaxasD0cIF9xw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11275"; a="37489223"
+X-CSE-ConnectionGUID: UA2HucZnT3yrEoIIIE7bFw==
+X-CSE-MsgGUID: uj/f0C7XR0+oaw/YT2SVWg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11275"; a="37489212"
 X-IronPort-AV: E=Sophos;i="6.12,207,1728975600"; 
-   d="scan'208";a="37489223"
+   d="scan'208";a="37489212"
 Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Dec 2024 23:59:19 -0800
-X-CSE-ConnectionGUID: O+inB0qeSrCGWFOhV5KGJw==
-X-CSE-MsgGUID: e0xiNP/WSAel1C9qSXwlDQ==
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Dec 2024 23:59:13 -0800
+X-CSE-ConnectionGUID: PC4KpNUfSrGyLVf7P94GMw==
+X-CSE-MsgGUID: IfGixa41TfS8YD1r6539OA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="98707703"
+   d="scan'208";a="98707680"
 Received: from lkp-server02.sh.intel.com (HELO 1f5a171d57e2) ([10.239.97.151])
-  by orviesa003.jf.intel.com with ESMTP; 03 Dec 2024 23:59:16 -0800
+  by orviesa003.jf.intel.com with ESMTP; 03 Dec 2024 23:59:09 -0800
 Received: from kbuild by 1f5a171d57e2 with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1tIkHq-0002jD-1M;
-	Wed, 04 Dec 2024 07:59:11 +0000
-Date: Wed, 4 Dec 2024 15:58:07 +0800
+	id 1tIkHj-0002jB-1x;
+	Wed, 04 Dec 2024 07:59:01 +0000
+Date: Wed, 4 Dec 2024 15:58:08 +0800
 From: kernel test robot <lkp@intel.com>
-To: Zhiyuan Wan <kmlinuxm@gmail.com>, andrew@lunn.ch
-Cc: oe-kbuild-all@lists.linux.dev, hkallweit1@gmail.com,
-	linux@armlinux.org.uk, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, willy.liu@realtek.com,
-	Zhiyuan Wan <kmlinuxm@gmail.com>
-Subject: Re: [PATCH net-next] net: phy: realtek: disable broadcast address
- feature of rtl8211f
-Message-ID: <202412041557.EtqjkJE5-lkp@intel.com>
-References: <20241203125430.2078090-1-kmlinuxm@gmail.com>
+To: =?unknown-8bit?B?VGjDqW8=?= Lebrun <theo.lebrun@bootlin.com>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Nicolas Saenz Julienne <nsaenz@kernel.org>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Cc: oe-kbuild-all@lists.linux.dev, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
+	Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
+	=?unknown-8bit?Q?Gr=C3=A9gory?= Clement <gregory.clement@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Tawfik Bayouk <tawfik.bayouk@mobileye.com>,
+	=?unknown-8bit?B?VGjDqW8=?= Lebrun <theo.lebrun@bootlin.com>
+Subject: Re: [PATCH 5/6] nvmem: rmem: add CRC validation for Mobileye EyeQ5
+ NVMEM
+Message-ID: <202412041522.01H5Kj6F-lkp@intel.com>
+References: <20241203-rmem-v1-5-24f4970cf14e@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=unknown-8bit
 Content-Disposition: inline
-In-Reply-To: <20241203125430.2078090-1-kmlinuxm@gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241203-rmem-v1-5-24f4970cf14e@bootlin.com>
 
-Hi Zhiyuan,
+Hi Théo,
 
-kernel test robot noticed the following build warnings:
+kernel test robot noticed the following build errors:
 
-[auto build test WARNING on net-next/main]
+[auto build test ERROR on 40384c840ea1944d7c5a392e8975ed088ecf0b37]
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Zhiyuan-Wan/net-phy-realtek-disable-broadcast-address-feature-of-rtl8211f/20241203-205751
-base:   net-next/main
-patch link:    https://lore.kernel.org/r/20241203125430.2078090-1-kmlinuxm%40gmail.com
-patch subject: [PATCH net-next] net: phy: realtek: disable broadcast address feature of rtl8211f
-config: i386-buildonly-randconfig-006 (https://download.01.org/0day-ci/archive/20241204/202412041557.EtqjkJE5-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241204/202412041557.EtqjkJE5-lkp@intel.com/reproduce)
+url:    https://github.com/intel-lab-lkp/linux/commits/Th-o-Lebrun/dt-bindings-nvmem-rmem-Add-mobileye-eyeq5-bootloader-config/20241204-103417
+base:   40384c840ea1944d7c5a392e8975ed088ecf0b37
+patch link:    https://lore.kernel.org/r/20241203-rmem-v1-5-24f4970cf14e%40bootlin.com
+patch subject: [PATCH 5/6] nvmem: rmem: add CRC validation for Mobileye EyeQ5 NVMEM
+config: arm-randconfig-002 (https://download.01.org/0day-ci/archive/20241204/202412041522.01H5Kj6F-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241204/202412041522.01H5Kj6F-lkp@intel.com/reproduce)
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202412041557.EtqjkJE5-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202412041522.01H5Kj6F-lkp@intel.com/
 
-All warnings (new ones prefixed by >>):
+All errors (new ones prefixed by >>):
 
-   drivers/net/phy/realtek.c: In function 'rtl821x_probe':
->> drivers/net/phy/realtek.c:147:51: warning: passing argument 1 of 'PTR_ERR' makes pointer from integer without a cast [-Wint-conversion]
-     147 |                 return dev_err_probe(dev, PTR_ERR(ret),
-         |                                                   ^~~
-         |                                                   |
-         |                                                   int
-   In file included from include/linux/kernfs.h:9,
-                    from include/linux/sysfs.h:16,
-                    from include/linux/kobject.h:20,
-                    from include/linux/of.h:18,
-                    from drivers/net/phy/realtek.c:11:
-   include/linux/err.h:52:61: note: expected 'const void *' but argument is of type 'int'
-      52 | static inline long __must_check PTR_ERR(__force const void *ptr)
-         |                                                 ~~~~~~~~~~~~^~~
+   drivers/nvmem/rmem.c: In function 'rmem_eyeq5_checksum':
+   drivers/nvmem/rmem.c:66:9: error: cleanup argument not a function
+      66 |         void *buf __free(kfree) = NULL;
+         |         ^~~~
+   drivers/nvmem/rmem.c:97:15: error: implicit declaration of function 'kmalloc'; did you mean 'mm_alloc'? [-Wimplicit-function-declaration]
+      97 |         buf = kmalloc(header.size, GFP_KERNEL);
+         |               ^~~~~~~
+         |               mm_alloc
+>> drivers/nvmem/rmem.c:97:13: error: assignment to 'void *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+      97 |         buf = kmalloc(header.size, GFP_KERNEL);
+         |             ^
 
 
-vim +/PTR_ERR +147 drivers/net/phy/realtek.c
+vim +97 drivers/nvmem/rmem.c
 
-   126	
-   127	static int rtl821x_probe(struct phy_device *phydev)
-   128	{
-   129		struct device *dev = &phydev->mdio.dev;
-   130		struct rtl821x_priv *priv;
-   131		u32 phy_id = phydev->drv->phy_id;
-   132		int ret;
-   133	
-   134		priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-   135		if (!priv)
-   136			return -ENOMEM;
-   137	
-   138		priv->clk = devm_clk_get_optional_enabled(dev, NULL);
-   139		if (IS_ERR(priv->clk))
-   140			return dev_err_probe(dev, PTR_ERR(priv->clk),
-   141					     "failed to get phy clock\n");
-   142	
-   143		dev_dbg(dev, "disabling MDIO address 0 for this phy");
-   144		ret = phy_modify_paged(phydev, 0xa43, RTL8211F_PHYCR1,
-   145					       RTL8211F_PHYAD0_EN, 0);
-   146		if (ret < 0) {
- > 147			return dev_err_probe(dev, PTR_ERR(ret),
-   148					     "disabling MDIO address 0 failed\n");
-   149		}
-   150		/* Deny broadcast address as PHY address */
-   151		if (phydev->mdio.addr == 0)
-   152			return -ENODEV;
-   153	
-   154		ret = phy_read_paged(phydev, 0xa43, RTL8211F_PHYCR1);
-   155		if (ret < 0)
-   156			return ret;
-   157	
-   158		priv->phycr1 = ret & (RTL8211F_ALDPS_PLL_OFF | RTL8211F_ALDPS_ENABLE | RTL8211F_ALDPS_XTAL_OFF);
-   159		if (of_property_read_bool(dev->of_node, "realtek,aldps-enable"))
-   160			priv->phycr1 |= RTL8211F_ALDPS_PLL_OFF | RTL8211F_ALDPS_ENABLE | RTL8211F_ALDPS_XTAL_OFF;
-   161	
-   162		priv->has_phycr2 = !(phy_id == RTL_8211FVD_PHYID);
-   163		if (priv->has_phycr2) {
-   164			ret = phy_read_paged(phydev, 0xa43, RTL8211F_PHYCR2);
-   165			if (ret < 0)
-   166				return ret;
-   167	
-   168			priv->phycr2 = ret & RTL8211F_CLKOUT_EN;
-   169			if (of_property_read_bool(dev->of_node, "realtek,clkout-disable"))
-   170				priv->phycr2 &= ~RTL8211F_CLKOUT_EN;
-   171		}
-   172	
-   173		phydev->priv = priv;
-   174	
-   175		return 0;
-   176	}
-   177	
+    62	
+    63	static int rmem_eyeq5_checksum(struct rmem *priv)
+    64	{
+    65		struct rmem_eyeq5_header header;
+    66		void *buf __free(kfree) = NULL;
+    67		u32 computed_crc, *target_crc;
+    68		size_t data_size;
+    69		int ret;
+    70	
+    71		ret = rmem_read(priv, 0, &header, sizeof(header));
+    72		if (ret)
+    73			return ret;
+    74	
+    75		if (header.magic != RMEM_EYEQ5_MAGIC)
+    76			return -EINVAL;
+    77	
+    78		/*
+    79		 * Avoid massive kmalloc() if header read is invalid;
+    80		 * the check would be done by the next rmem_read() anyway.
+    81		 */
+    82		if (header.size > priv->mem->size)
+    83			return -EINVAL;
+    84	
+    85		/*
+    86		 *           0 +-------------------+
+    87		 *             | Header (12 bytes) | \
+    88		 *             +-------------------+ |
+    89		 *             |                   | | data to be CRCed
+    90		 *             |        ...        | |
+    91		 *             |                   | /
+    92		 *   data_size +-------------------+
+    93		 *             |   CRC (4 bytes)   |
+    94		 * header.size +-------------------+
+    95		 */
+    96	
+  > 97		buf = kmalloc(header.size, GFP_KERNEL);
+    98		if (!buf)
+    99			return -ENOMEM;
+   100	
+   101		ret = rmem_read(priv, 0, buf, header.size);
+   102		if (ret)
+   103			return ret;
+   104	
+   105		data_size = header.size - sizeof(*target_crc);
+   106		target_crc = buf + data_size;
+   107		computed_crc = crc32(U32_MAX, buf, data_size) ^ U32_MAX;
+   108	
+   109		if (computed_crc == *target_crc)
+   110			return 0;
+   111	
+   112		dev_err(priv->dev,
+   113			"checksum failed: computed %#x, expected %#x, header (%#x, %#x, %#x)\n",
+   114			computed_crc, *target_crc, header.magic, header.version, header.size);
+   115		return -EINVAL;
+   116	}
+   117	
 
 -- 
 0-DAY CI Kernel Test Service
