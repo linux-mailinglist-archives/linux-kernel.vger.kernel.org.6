@@ -1,193 +1,316 @@
-Return-Path: <linux-kernel+bounces-431258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4849D9E3B2D
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 14:21:20 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E28189E3B3E
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 14:26:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82C6628539D
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 13:21:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0F1BCB2B766
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 13:25:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBD3E1C4A10;
-	Wed,  4 Dec 2024 13:20:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E1B11AF0CD;
+	Wed,  4 Dec 2024 13:25:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kmqS0heq"
-Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wWxOs2wZ"
+Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com [209.85.222.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F1371BAED6;
-	Wed,  4 Dec 2024 13:20:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AD831B983E
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 13:25:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733318422; cv=none; b=D+sRtSxNdSzQlCCXsDhoez4ili+pLy3+j/bjLHbNaTNYl2plmmiebBhqQalXsVFh6dQagWUZGzyDYNx/7B5PyoLkoFLM4JQpx/EVo4QH3Gm9hsh7yHjNdYAGBeg42ZAmBc5iaOAEEK05y/++4DNf+aIUY1+c6gDthLjL6oTsjSc=
+	t=1733318714; cv=none; b=qtbDMiTnscRZ3gpIGSc0BaIFcstbF0yvVtbEfX8ZIp5G7EMgPPvPqFw4yb+EWRYdgis+0nTl4eJIm9l8gr/WgO+QWrwff5pGzn9ZkurruNxI3zsZjdbHJdexSyvMhbKPj8m1qOpMFO2HQBc/QfhkxH59E/VUHM44aBXUHKaHwS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733318422; c=relaxed/simple;
-	bh=K6QgkrCW9p4a5nV9AQL6NCsWLRReMfGSEo1wLC6V9dU=;
+	s=arc-20240116; t=1733318714; c=relaxed/simple;
+	bh=heJcFJZ6wGpaq7N/UtzOsXHKhH2gA7eWMGRP8CzCx6g=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DFAhNTXwNQyMucOPwGkOMMjsev+2pIhymsOwsypd41kP9BkFojoZ8hHm3kBUjpkq9XZcUcZFN4tL5xnWJYuxFFt2W5znyvhG5OoMGGTruiG9+lNChyfMOpDsUBIYnBhHp0s84uNQv+t1yc5xgMbh/pqjXbNZPfitA4TR13riPZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kmqS0heq; arc=none smtp.client-ip=209.85.222.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-7b6648e25e3so361210885a.2;
-        Wed, 04 Dec 2024 05:20:20 -0800 (PST)
+	 To:Cc:Content-Type; b=kzHAoETKNWbsl6d3HFPeqy4Y1qu7AQ2XRSYbI2GdR3wVoKQgOqO1QXkU7VNuIHw/tVH6zz7Kbsp4kP1b1LfRfWjEia2hibzfd84NbWIgBXKZa2RNHjOVfNDcRYsHx8fhJFBE+5DJMksVsx0G0Pcbq3WnM7ze0Xjq54VOLIBFwOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wWxOs2wZ; arc=none smtp.client-ip=209.85.222.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ua1-f43.google.com with SMTP id a1e0cc1a2514c-85ba8b1c7b9so491769241.1
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 05:25:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733318419; x=1733923219; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1733318712; x=1733923512; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=RhybzS6XmwGoo1Mv8T/GZCRWnnv9rmIzvBCr8dzxC3E=;
-        b=kmqS0heqf/cYxeRANrLU0k3oeISZKPkl/EQvrRFe673ZuBoSUXrd9AL5YUj/K/y8B4
-         +b756Dfq9yMGGaCYg2YBgM1pqQwo5Gi8q2ogjOu3LP3nflEro5ceKqn/MGbCFGuiQG2D
-         wuaaPFPIopfg/vlPU56QpVNZd3M/rX2pM8uF3j4MIJz1zOMZ4PSe3VXP6VgRNIsrTLZ5
-         DRDWxb9Mc1wYOBDch96vrVkRtpdse7aJ17liy3rCMh64Mf3OUYRb9wC5kjRQR6kiodsP
-         aZgBKKoUPjAHH9uKOhxl+nsbKZ2JX9snyqGoBiMXex0wXi0FazdkPPEEQ+lR7zxnEh3S
-         lm7g==
+        bh=yyRVQVb/zI9kJmYn91wAT9zCQ5BG7fVZIEQs7VqoMNo=;
+        b=wWxOs2wZzXB0N7zRkUvyforSHbq24OcGECtpV22iq0aJU31G9SChXZhQfNrOd/lsht
+         2wQIv1p97MZtin5+JXGjpA66JqdigoKJBCvQ+aCFfjCZUMe2Yoe320dBGThXYJbMa2tS
+         HbL6JoZSho71jfN9nvSSaAxWPZwZHZfWcVkC+7KRZ0aLMpOTTTA/OtYmxS5pir/y3IaO
+         9KiMqov9pxv+THHr92cgw9rJCXIjI/KWK+UJmxrfIqrKFahXvkGOU3LBIDdXaUTNMesH
+         NniIDO4njPgB7xp8hPYPKh6t55NnVJ8FWt+VzsTL4uYqMjhpZHXF6qs2DwrGPHM+qtYZ
+         TIsw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733318419; x=1733923219;
+        d=1e100.net; s=20230601; t=1733318712; x=1733923512;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=RhybzS6XmwGoo1Mv8T/GZCRWnnv9rmIzvBCr8dzxC3E=;
-        b=OpusvoBVXS2GlKJDsjS8WuBJ5DGrRz5VC9ZOqz++8YCaXMbjEopcPSH8jvEeujKpuy
-         3zGmtWLoz2R2TpfM+JK5gq+NNgvS3yYzvSTOlOzonB9pRxmbOmvPpTjRaETW5DH/MqgR
-         u82neNwOsFh1dR0smq7I8xARLkRZzAf0TIS3YQCeynx0VIOqHtZWktytuysggHUy2Sjo
-         NtoaomxVbnO1HkWuJ74LCZ71Vh4MKOGnGaejlNImp3lDz9FN5yqGLfhXppQSlKPtWZk0
-         0bhH4/jZo1UI9xG12sQiMeS7eRStbCdz5SWiU8Id9EJUYFG6aVoJy9qXp3IAgDuijH42
-         4+Lw==
-X-Forwarded-Encrypted: i=1; AJvYcCUfYyikfPj84tYg5SpwprA7B6KucwF9HNWgmloJb0F7urIBNXrUua20Fq4e3A+OdOyG82+fLoiRPOaCZaM=@vger.kernel.org, AJvYcCX/9d1h523Hvf+OwL4ChEjIleRYwQrxlr2FfCrxhh2B4fzFQEZsmQUNUbtRaHceSZsZQMz29G6avsvkJe8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzkPKBNisvU5WmDwGBTW5W0obKZiqXtjbs6215gAjN65Ih4Spgx
-	FwocsYhusTNqa4g1TreA72TRCDEL4SE3I36NGs2yB/Wb6/d6WQ+LQMnross5k53UPCIHC/JNboP
-	4EFF1AiTWNsLPk9a+dvX6gFQxyNo=
-X-Gm-Gg: ASbGncsAywhS0O2BsVzHS/6QlpsCfMcYZGJxiUBEs1EwxnWEjsbR3UWgxywe1Uc/oje
-	5VDnL1C9iaQAWLH8QcticbFakjfUQd6d9hdnt1TMGl3Kd1jydGbbu4vc0pn9bIA==
-X-Google-Smtp-Source: AGHT+IF6dDkypmXQvYc9+7y43bamRzr2Y1zTcUH87cj5STyjJHOiNCE/ZtVpAjLhyAjlxd7XA7e4dZisukIv4dHbJhQ=
-X-Received: by 2002:a05:620a:4898:b0:7b1:43e2:712b with SMTP id
- af79cd13be357-7b6a5d2ae0fmr749900385a.11.1733318419279; Wed, 04 Dec 2024
- 05:20:19 -0800 (PST)
+        bh=yyRVQVb/zI9kJmYn91wAT9zCQ5BG7fVZIEQs7VqoMNo=;
+        b=jqp30Tww0jfH5nlDS486FClExM4tk5BPFS1+hbs5ZTRaQvOBhgS2oG071J25815q9a
+         bNOQ4aRCCuHXT2BvSsGjOtcqaaEBfs9oxpYJ3xY1F7Ov1ID707iiVfG1K04502P2BM38
+         op7O6gqrrRuRMbS9xm8Sr2bm+dJpzGP4jpfJDZAKNK1C58Mtx/ZhgXLEqTeWrwM5MNTk
+         GtOp7LvvX5N5PGZPaVeT6pKsTf8oRqKnpOsVwDSGzkUVYeUHQG+g7mMYC+wGJWKpJMT4
+         Z57O0FmYaBpsv0D7IbOJjUDndCzx3L7g3C/VO+DDqVeL+xrDpHP6bQ4oswc8PTtCvVpQ
+         l4mQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWKFN0aB6e6JB2FZIbciEFiNptfTKS6Y4NmYHhDn3+gs7eKQGPSL+pBUDZo+WVPffUMK0dppzUr8r8WMdg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZ1pLDIYTh24/l2JNRVbXnhOSYfQ+PVl2LhJFwQDeqx7TUZOg5
+	FgSbJ6KNxKMkDe2r1OWoJY5PMmBe/u049blt9ycTjuBLaobpXzpdK6/xOGDf63uQdAdsynQDA/9
+	t4aE3OY4YitpYeuS1Z1NBQE2IBoLxDAPCrSwTwA==
+X-Gm-Gg: ASbGncthpSAE+ge5sM1LiduD6cVh1K7NqjYvhDhFFghtnukBMgpiKVrjWTUUfnbW4AL
+	KY+iws44nTqS8wqrjLkhMuNlDLAFvQb+F
+X-Google-Smtp-Source: AGHT+IF5Gr6rLMtOlq5rot61HhOPOQXJX5OJ6mgM08z0lylqA8xx32FyRxPhrJvcFQTp4nhCNYedeZJgiB8KDOM4SZ0=
+X-Received: by 2002:a05:6122:620d:20b0:515:1fde:1cb1 with SMTP id
+ 71dfb90a1353d-5156a8e0b02mr24861742e0c.3.1733318711875; Wed, 04 Dec 2024
+ 05:25:11 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1733218348.git.mchehab+huawei@kernel.org>
- <f74d32eba4c1799fe7fd407a3889a3de91fb09f2.1733218348.git.mchehab+huawei@kernel.org>
- <57ed2ba7-ebe8-433f-bb52-914a020ca468@xs4all.nl> <20241204135127.7b295c19@foz.lan>
-In-Reply-To: <20241204135127.7b295c19@foz.lan>
-From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Date: Wed, 4 Dec 2024 14:20:03 +0100
-Message-ID: <CAPybu_1QjvP-Lc+7DHm8WWR+pb761HgYxSCj9+K_8D_-cWp5jg@mail.gmail.com>
-Subject: Re: [PATCH v4 5/5] docs: media: profile: make it clearer about
- maintainership duties
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: Hans Verkuil <hverkuil@xs4all.nl>, linux-kernel@vger.kernel.org, 
-	linux-media@vger.kernel.org, Ricardo Ribalda <ribalda@chromium.org>
+References: <20241203143955.605130076@linuxfoundation.org>
+In-Reply-To: <20241203143955.605130076@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Wed, 4 Dec 2024 18:55:00 +0530
+Message-ID: <CA+G9fYtNvEDcUEuv=QFC84y+pXY1UszoRYOitJztCApLV7-psg@mail.gmail.com>
+Subject: Re: [PATCH 6.11 000/817] 6.11.11-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
+	broonie@kernel.org, Anders Roxell <anders.roxell@linaro.org>, 
+	Arnd Bergmann <arnd@arndb.de>, Dan Carpenter <dan.carpenter@linaro.org>, 
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Michael Ellerman <mpe@ellerman.id.au>, 
+	Herbert Xu <herbert@gondor.apana.org.au>, 
+	Alexander Stein <alexander.stein@ew.tq-group.com>, Michal Suchanek <msuchanek@suse.de>, 
+	clang-built-linux <llvm@lists.linux.dev>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Dec 4, 2024 at 2:16=E2=80=AFPM Mauro Carvalho Chehab
-<mchehab+huawei@kernel.org> wrote:
+On Tue, 3 Dec 2024 at 20:24, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
 >
-> Em Wed, 4 Dec 2024 13:11:45 +0100
-> Hans Verkuil <hverkuil@xs4all.nl> escreveu:
+> -----------
+> Note, this is will probably be the last 6.11.y kernel to be released.
+> Please move to the 6.12.y branch at this time.
+> -----------
 >
-> > On 12/3/24 10:35, Mauro Carvalho Chehab wrote:
-> > > During the review of the media committer's profile, it was noticed
-> > > that the responsibility for timely review patches was not clear:
-> > > such review is expected that all developers listed at MAINTAINERS
-> > > with the "M:" tag (e.g. "maintainers" on its broad sense).
-> > >
-> > > This is orthogonal of being a media committer or not. Such duty
-> > > is implied at:
-> > >
-> > >     Documentation/admin-guide/reporting-issues.rst
-> > >
-> > > and at the MAINTAINERS header, when it says that even when the
-> > > status is "odd fixes", the patches will flow in.
-> > >
-> > > So, let make it explicit at the maintainer-entry-profile that
-> > > maintainers need to do timely reviews.
-> > >
-> > > Also, while right now our focus is on granting committer rights to
-> > > maintainers, the media-committer model may evolve in the future to
-> > > accept other committers that don't have such duties.
-> > >
-> > > So, make it clear at the media-committer.rst that the duties
-> > > related to reviewing patches from others are for the drivers
-> > > they are maintainers as well.
-> > >
-> > > Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Reviewed-by: Ricardo Ribalda <ribalda@chromium.org>
-> > > ---
-> > >  Documentation/driver-api/media/maintainer-entry-profile.rst | 5 ++++=
-+
-> > >  Documentation/driver-api/media/media-committer.rst          | 6 +++-=
+> This is the start of the stable review cycle for the 6.11.11 release.
+> There are 817 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Thu, 05 Dec 2024 14:36:47 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
+6.11.11-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-6.11.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
+
+Results from Linaro=E2=80=99s test farm.
+Regressions on arm64, arm, x86_64, riscv and powerpc.
+
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+
+The listed below errors are the same as reported on stable-rc linux-6.12.y
+
+1) The allmodconfig builds failed on arm64, arm, riscv and x86_64 due
+to following build warnings / errors.
+
+Build error allmodconfig:
+------------------------
+/drivers/gpu/drm/imx/ipuv3/parallel-display.c:75:3: error: variable
+'num_modes' is uninitialized when used here [-Werror,-Wuninitialized]
+   75 |                 num_modes++;
+      |                 ^~~~~~~~~
+/drivers/gpu/drm/imx/ipuv3/parallel-display.c:55:15: note: initialize
+the variable 'num_modes' to silence this warning
+   55 |         int num_modes;
+      |                      ^
+      |                       =3D 0
+1 error generated.
+make[8]: *** [/scripts/Makefile.build:244:
+drivers/gpu/drm/imx/ipuv3/parallel-display.o] Error 1
+/drivers/gpu/drm/imx/ipuv3/imx-ldb.c:143:3: error: variable
+'num_modes' is uninitialized when used here [-Werror,-Wuninitialized]
+  143 |                 num_modes++;
+      |                 ^~~~~~~~~
+/drivers/gpu/drm/imx/ipuv3/imx-ldb.c:133:15: note: initialize the
+variable 'num_modes' to silence this warning
+  133 |         int num_modes;
+      |                      ^
+      |                       =3D 0
+1 error generated.
+
+
+2) The powerpc builds failed due to these build warnings / errors.
+Build errors on powerpc:
+---------------
+ERROR: modpost: "gcm_update"
+[arch/powerpc/crypto/aes-gcm-p10-crypto.ko] undefined!
+
+3) As other reported perf build failures
+Build errors perf:
+----------------------
+   util/stat-display.c: In function 'uniquify_event_name':
+   util/stat-display.c:895:45: error: 'struct evsel' has no member
+named 'alternate_hw_config'
+     895 |         if (counter->pmu->is_core &&
+counter->alternate_hw_config !=3D PERF_COUNT_HW_MAX)
+      |                                             ^~
+
+
+## Build
+* kernel: 6.11.11-rc1
+* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
+rc.git
+* git commit: 57f39ce086c9b727df2d92ea7ab7cc80e89d7ed2
+* git describe: v6.11.10-818-g57f39ce086c9
+* test details:
+https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.11.y/build/v6.11=
+.10-818-g57f39ce086c9
+
+## Test Regressions (compared to v6.11.9-108-gc9b39c48bf4a)
+* arm, build
+  - gcc-13-lkftconfig-perf
+
+* arm64, build
+  - clang-19-allmodconfig
+  - gcc-13-lkftconfig-perf
+
+* i386, build
+  - gcc-13-lkftconfig-perf
+
+* powerpc, build
+  - clang-19-defconfig
+  - clang-nightly-defconfig
+  - gcc-13-defconfig
+  - gcc-8-defconfig
+
+* riscv, build
+  - clang-19-allmodconfig
+
+* x86_64, build
+  - clang-19-allmodconfig
+  - gcc-13-lkftconfig-perf
+
+
+## Metric Regressions (compared to v6.11.9-108-gc9b39c48bf4a)
+
+## Test Fixes (compared to v6.11.9-108-gc9b39c48bf4a)
+
+## Metric Fixes (compared to v6.11.9-108-gc9b39c48bf4a)
+
+## Test result summary
+total: 130907, pass: 108166, fail: 1524, skip: 21217, xfail: 0
+
+## Build Summary
+* arc: 5 total, 5 passed, 0 failed
+* arm: 130 total, 127 passed, 3 failed
+* arm64: 42 total, 40 passed, 2 failed
+* i386: 18 total, 15 passed, 3 failed
+* mips: 26 total, 25 passed, 1 failed
+* parisc: 4 total, 4 passed, 0 failed
+* powerpc: 32 total, 27 passed, 5 failed
+* riscv: 16 total, 14 passed, 2 failed
+* s390: 14 total, 13 passed, 1 failed
+* sh: 5 total, 5 passed, 0 failed
+* sparc: 4 total, 3 passed, 1 failed
+* x86_64: 34 total, 32 passed, 2 failed
+
+## Test suites summary
+* boot
+* commands
+* kselftest-arm64
+* kselftest-breakpoints
+* kselftest-capabilities
+* kselftest-cgroup
+* kselftest-clone3
+* kselftest-core
+* kselftest-cpu-hotplug
+* kselftest-cpufreq
+* kselftest-efivarfs
+* kselftest-exec
+* kselftest-filesystems
+* kselftest-filesystems-binderfs
+* kselftest-filesystems-epoll
+* kselftest-firmware
+* kselftest-fpu
+* kselftest-ftrace
+* kselftest-futex
+* kselftest-gpio
+* kselftest-intel_pstate
+* kselftest-ipc
+* kselftest-kcmp
+* kselftest-kvm
+* kselftest-livepatch
+* kselftest-membarrier
+* kselftest-memfd
+* kselftest-mincore
+* kselftest-mqueue
+* kselftest-net
+* kselftest-net-mptcp
+* kselftest-openat2
+* kselftest-ptrace
+* kselftest-rseq
+* kselftest-rtc
+* kselftest-rust
+* kselftest-seccomp
+* kselftest-sigaltstack
+* kselftest-size
+* kselftest-tc-testing
+* kselftest-timers
+* kselftest-tmpfs
+* kselftest-tpm2
+* kselftest-user_events
+* kselftest-vDSO
+* kselftest-watchdog
+* kselftest-x86
+* kunit
+* kvm-unit-tests
+* libgpiod
+* libhugetlbfs
+* log-parser-boot
+* log-parser-test
+* ltp-commands
+* ltp-containers
+* ltp-controllers
+* ltp-cpuhotplug
+* ltp-crypto
+* ltp-cve
+* ltp-dio
+* ltp-fcntl-locktests
+* ltp-fs
+* ltp-fs_bind
+* ltp-fs_perms_simple
+* ltp-hugetlb
+* ltp-ipc
+* ltp-math
+* ltp-mm
+* ltp-nptl
+* ltp-pty
+* ltp-sched
+* ltp-smoke
+* ltp-syscalls
+* ltp-tracing
+* rcutorture
+
 --
-> > >  2 files changed, 8 insertions(+), 3 deletions(-)
-> > >
-> > > diff --git a/Documentation/driver-api/media/maintainer-entry-profile.=
-rst b/Documentation/driver-api/media/maintainer-entry-profile.rst
-> > > index fa28059f7b3f..87b71f89b1df 100644
-> > > --- a/Documentation/driver-api/media/maintainer-entry-profile.rst
-> > > +++ b/Documentation/driver-api/media/maintainer-entry-profile.rst
-> > > @@ -173,6 +173,11 @@ b. Committers' workflow: patches are handled by =
-media committers::
-> > >  On both workflows, all patches shall be properly reviewed at
-> > >  linux-media@vger.kernel.org (LMML) before being merged at media-comm=
-itters.git.
-> > >
-> > > +Such patches will be reviewed timely by the maintainers and reviewer=
-s as
-> > > +listed in the MAINTAINERS file. The subsystem maintainers will follo=
-w one of
-> > > +the above workflows, e. g. they will either send a pull request or m=
-erge
-> > > +patches directly at the media-committers tree.
-> > > +
-> > >  When patches are picked by patchwork and when merged at media-commit=
-ters,
-> > >  CI bots will check for errors and may provide e-mail feedback about
-> > >  patch problems. When this happens, the patch submitter must fix them=
-, or
-> > > diff --git a/Documentation/driver-api/media/media-committer.rst b/Doc=
-umentation/driver-api/media/media-committer.rst
-> > > index 3d0987a8a93b..0bc038a0fdcc 100644
-> > > --- a/Documentation/driver-api/media/media-committer.rst
-> > > +++ b/Documentation/driver-api/media/media-committer.rst
-> > > @@ -90,9 +90,9 @@ be a part of their maintenance tasks.
-> > >  Due to that, to become a committer or a core committer, a consensus =
-between
-> > >  all subsystem maintainers is required, as they all need to trust a d=
-eveloper
-> > >  well enough to be delegated the responsibility to maintain part of t=
-he code
-> > > -and to properly review patches from third parties, in a timely manne=
-r and
-> > > -keeping the status of the reviewed code at https://patchwork.linuxtv=
-.org
-> > > -updated.
-> > > +and to properly review patches from third parties for the drivers th=
-at they
-> > > +maintain in a timely manner and keeping the status of the patches at
-> > > +https://patchwork.linuxtv.org updated.
-> > >
-> > >  .. Note::
-> > >
-> >
-> > Looks OK to me, but I thought this was supposed to be folded into the 3=
-/5 and 4/5 patches?
->
-> I'll fold it once you and Ricardo gives the same review/Sob as marked on =
-3/5 and 4/5.
->
->
-> Thanks,
-> Mauro
->
-
-
---=20
-Ricardo Ribalda
+Linaro LKFT
+https://lkft.linaro.org
 
