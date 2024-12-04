@@ -1,173 +1,210 @@
-Return-Path: <linux-kernel+bounces-432130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 407869E45D3
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 21:33:35 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 873509E45E2
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 21:38:48 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0581285840
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 20:33:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D5BB169899
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 20:38:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B1CD18DF73;
-	Wed,  4 Dec 2024 20:33:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FDEF18E764;
+	Wed,  4 Dec 2024 20:38:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=helen.koike@collabora.com header.b="lIvSMnZM"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="qoCHFVF4";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="V0SSfTMk"
+Received: from fout-b7-smtp.messagingengine.com (fout-b7-smtp.messagingengine.com [202.12.124.150])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1A2A1531E8;
-	Wed,  4 Dec 2024 20:33:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733344410; cv=pass; b=p45ksI5tYBWuXz2io7jjG4b50YS3U0XHSpQpIVG+CQylbKMukLCOaUCsG0C+UwYfg5/8okU0aOFRQcYl4KcWde0Z/zgdPhHdc279uSdDiY/xazSZH9RHltMccUmuFVuNMl/6TuTKNeIwuklOYHVT4lQ2VC9PvLIuixtC4RhN2aE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733344410; c=relaxed/simple;
-	bh=Ol+JXb5Zh1yHNbSDoMk5CCk4Td4vgRfMN/hetZI2Lgc=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=FaBrYealkM1hej3GF0IHIgytkpmtjiq2BoHCj/NnUbdrwOx8TjGVYHp/0IfQbf/S64psCTXsPMovr9jBtMWcb6d9hQKaULmbz/RpNQ1sv1i1NQXLJaMKwe4Q4UBWjtxMnx/BdR6JnXviupUx3QpCW9s6JgtNOKuNZHmmmbkrQRQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=helen.koike@collabora.com header.b=lIvSMnZM; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1733344384; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=dmboizcmPLouPwkpAFlnvXlApJpw1fL/XD5uBeTZdda2O0IkEgLXgii8v6QBPLH18FQyX/nLW/P3Lcd2im0soN+J4boEmy0OjYvmF/1EK0wnZ2mgisk3BSYwZJv+FjvjyxiaBsfgGMIKGKv63KFV14IJBVI15twfCoz690gShYU=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1733344384; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=0WHgurEffc4IU34BPpyNJvfGIYmAwAM0WUxEVWgpiKY=; 
-	b=eohVHJ9hjyT3FByzZyIGOEHJeTBONjeOh9b2hBghqRvJHfA6eqvigngzCwTyzbCH+dsbp1571VdEfFCCnkzjTsPdjN3OvkEAI8GYiapiiC8Pk7pAc1AcMJS8/iJNeIHOEmAlfc0VVJEdK+vlCdgAsuw1hPUv5DHJUWWKJTjOIic=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=helen.koike@collabora.com;
-	dmarc=pass header.from=<helen.koike@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1733344384;
-	s=zohomail; d=collabora.com; i=helen.koike@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=0WHgurEffc4IU34BPpyNJvfGIYmAwAM0WUxEVWgpiKY=;
-	b=lIvSMnZM2jM/saNZpSynuPs79b3gtMyMJRG80cR6Kl1wv4gcIR3SERxF00551dbA
-	Aq4LxLR/i+Xc+BZmMHeaG+xddm4nB5zJ0/d3aAxFTyNcARxJSkkYGOqECm2VWu1sZTe
-	LE1aWXjCQoI3V45Z3vJdW4H8cf7uCOR/4EBjw/JY=
-Received: from mail.zoho.com by mx.zohomail.com
-	with SMTP id 1733344382514675.959292617333; Wed, 4 Dec 2024 12:33:02 -0800 (PST)
-Date: Wed, 04 Dec 2024 17:33:02 -0300
-From: Helen Mae Koike Fornazier <helen.koike@collabora.com>
-To: "Abhinav Kumar" <quic_abhinavk@quicinc.com>,
-	"Vignesh Raman" <vignesh.raman@collabora.com>
-Cc: "Rob Clark" <robdclark@gmail.com>,
-	"Dmitry Baryshkov" <dmitry.baryshkov@linaro.org>,
-	"Sean Paul" <sean@poorly.run>,
-	"Marijn Suijten" <marijn.suijten@somainline.org>,
-	"Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>,
-	"Maxime Ripard" <mripard@kernel.org>,
-	"Thomas Zimmermann" <tzimmermann@suse.de>,
-	"David Airlie" <airlied@gmail.com>,
-	"Simona Vetter" <simona@ffwll.ch>,
-	"linux-kernel" <linux-kernel@vger.kernel.org>,
-	"linux-arm-msm" <linux-arm-msm@vger.kernel.org>,
-	"dri-devel" <dri-devel@lists.freedesktop.org>,
-	"freedreno" <freedreno@lists.freedesktop.org>
-Message-ID: <19393604e18.f9b6fe7d298023.1937039548910081216@collabora.com>
-In-Reply-To: <20a3955e-3d10-47c5-8e68-d70342805010@quicinc.com>
-References: <20241204-cursor_tor_skip-v1-1-f5f0bba5df7b@quicinc.com>
- <193931869a5.f923adf2270026.8321075661083367617@collabora.com> <20a3955e-3d10-47c5-8e68-d70342805010@quicinc.com>
-Subject: Re: [PATCH] drm/ci: add kms_cursor_legacy@torture-bo to apq8016
- flakes
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C8B93D0D5;
+	Wed,  4 Dec 2024 20:38:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.150
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733344720; cv=none; b=V+x5z8jpFR95jBPYqknPHkmKV72Fhr/eNlVnQnPh/p42WqafmQ3NQGD4ly079AEVXRIOu7BcwoblU5MiI3pRlWtJc5xN07GpVegPFrRhtSHEXElxr6m1BBYFrK1i7TqGJ25C4aVSJ+u+VcOR5iDX+CJnUJ3o/d9QoNUnhrSXze4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733344720; c=relaxed/simple;
+	bh=VQBTDrrTUucSRw8JgUt8ni66mHo0/auasFVHGVJMEzI=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=Z7ExpYlU/zdlPEVQGgoC8w9OMt4QFNjtWfS6PK26nZM6Vh1CCj/BnUH8BRcO8W9y3J/QvWQCYM+KlpD0iPZQ8TS/CW0vJOegR6nT0mpD6ONLyGCjOKHyYewJOx1/ZxKoKnF5PRAa7njfffeltrFImj15NjsY1pzF1MkcZLSI/T0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=qoCHFVF4; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=V0SSfTMk; arc=none smtp.client-ip=202.12.124.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfout.stl.internal (Postfix) with ESMTP id 104B31140171;
+	Wed,  4 Dec 2024 15:38:37 -0500 (EST)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-10.internal (MEProxy); Wed, 04 Dec 2024 15:38:37 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1733344716;
+	 x=1733431116; bh=ksk/xRcQCZNYpbBOvPXhkI3woRZO+aaqHCZZvSVVLLw=; b=
+	qoCHFVF4S5D2doDweDzCR4Ylyq8+iJA2Up03bTAnYLbmxRXQYJj7j3dcCWpQ3lY4
+	OHUp1dm2BVtiEu3MrA2q5ydj8+mRE7QBCqp0ECCp0VKB3PLBtgEo0mcRIFBPb33x
+	1ddeIEHFVFcM5s68EYf3i1px0E8Z3viKt+vqhwoagDxMw+kKK2k+/YFcAugMVQLP
+	Z/zGclMKCapYGS2EBQJzexoGYUUKHcVkHeqAvk94Akr/YuP7GG3VTBLkNaaJ+SsU
+	wtqmE+7d+6o3KLQ3quxb7TsVWdj6ptxaSTeiBN3Dm1ELxvHCHxgCHxTFpfTGpuWN
+	1mPxAbxmu5tEsIjVb1jSaA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1733344716; x=
+	1733431116; bh=ksk/xRcQCZNYpbBOvPXhkI3woRZO+aaqHCZZvSVVLLw=; b=V
+	0SSfTMkDud9RO0XEh9wgmA5abO7TD/+iNLFPtVPfNft6slLo9XV7+QVyruNKUFMy
+	clOLwQoK9I/A68fArltA42j6Y/GgCCLq5cSL11YhqL9DI2owaKFgotCaZVxm4Hzr
+	YlAodhIHstCawUKA9F11zr9Yd1EC/R1ypo0KfhHl5CwHuzl0ngY2yn7+GPPY4YdG
+	oZW/uqDHY3IaDnAWoHc3WO4nraq/2HJQ1HxbnXe3YxoMrS66LlKAxyyoI2oi1SOb
+	KlEh8KlbcAk0cMgfXbaQGKjyxbirWorhs7dyYq00qBDCSQRAVCponj1Upc4J57s3
+	1lVVUOHH7GQPimn8y6YoA==
+X-ME-Sender: <xms:zL1QZ_3FDXLAbKztnXiCuxxARK19Rpm9C7I5UUPyQQ4FrbNHvl5Ghg>
+    <xme:zL1QZ-G28CL1974tU6SbCKP9-l0SKBDoG6nUWU7GC38C1uGpP4q3Uo4eJri4LFmfo
+    qQL5S6u5AofKYpvKrs>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrieehgddufeehucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtqhertdertdej
+    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
+    guvgeqnecuggftrfgrthhtvghrnhepvdfhvdekueduveffffetgfdvveefvdelhedvvdeg
+    jedvfeehtdeggeevheefleejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
+    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepudej
+    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegsphesrghlihgvnhekrdguvgdprh
+    gtphhtthhopegrnhguhidrshhhvghvtghhvghnkhhosehgmhgrihhlrdgtohhmpdhrtghp
+    thhtohepfhhnthhothhhsehgmhgrihhlrdgtohhmpdhrtghpthhtoheptghimhhinhgrgh
+    hhihesghhnuhguugdrtghomhdprhgtphhtthhopehsvggrnhhjtgesghhoohhglhgvrdgt
+    ohhmpdhrtghpthhtohepfihilhhlhiesihhnfhhrrgguvggrugdrohhrghdprhgtphhtth
+    hopegrnhguhieskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghrnhgusehkvghrnhgv
+    lhdrohhrghdprhgtphhtthhopeigkeeisehkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:zL1QZ_5bmNF3wlrWiVzllBMuNvMPA9v7KB3SR9GBLyM-1FDlGZXRTA>
+    <xmx:zL1QZ03LkHcoMaIYTBYMu5HiJI4Pc84pP6zanTJlo4c2kGtnKDs3Hw>
+    <xmx:zL1QZyGCjWz5jpGcHxDpchV68ZKoknPHrnt3PRb2jby8ugFZnbU7hQ>
+    <xmx:zL1QZ1-qfHAFb6YwugznW2kovljpts5sG44MQBd7OjlpzrCFDdmg_Q>
+    <xmx:zL1QZwVlPoss2pnnJk2SobNTuiMeFEdt3C1ATY5yVXZod2haWD5EuxSq>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 1DF612220072; Wed,  4 Dec 2024 15:38:36 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Importance: Medium
-User-Agent: Zoho Mail
-X-Mailer: Zoho Mail
+Date: Wed, 04 Dec 2024 21:38:05 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Andy Shevchenko" <andy.shevchenko@gmail.com>,
+ "Arnd Bergmann" <arnd@kernel.org>, "Ferry Toth" <fntoth@gmail.com>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
+ "Thomas Gleixner" <tglx@linutronix.de>, "Ingo Molnar" <mingo@redhat.com>,
+ "Borislav Petkov" <bp@alien8.de>,
+ "Dave Hansen" <dave.hansen@linux.intel.com>,
+ "H. Peter Anvin" <hpa@zytor.com>,
+ "Linus Torvalds" <torvalds@linux-foundation.org>,
+ "Andy Shevchenko" <andy@kernel.org>, "Matthew Wilcox" <willy@infradead.org>,
+ "Sean Christopherson" <seanjc@google.com>,
+ "Davide Ciminaghi" <ciminaghi@gnudd.com>,
+ "Paolo Bonzini" <pbonzini@redhat.com>, kvm@vger.kernel.org
+Message-Id: <206b50a2-922f-4a29-8c1a-b8695b19e65c@app.fastmail.com>
+In-Reply-To: 
+ <CAHp75VfzHmV2anw6C8iSCiwnJc2YNa+1aLDj6Frf9OZyGjD0MQ@mail.gmail.com>
+References: <20241204103042.1904639-1-arnd@kernel.org>
+ <20241204103042.1904639-9-arnd@kernel.org>
+ <CAHp75VfzHmV2anw6C8iSCiwnJc2YNa+1aLDj6Frf9OZyGjD0MQ@mail.gmail.com>
+Subject: Re: [PATCH 08/11] x86: document X86_INTEL_MID as 64-bit-only
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Dec 4, 2024, at 19:55, Andy Shevchenko wrote:
+> +Cc: Ferry
+>
+> On Wed, Dec 4, 2024 at 12:31=E2=80=AFPM Arnd Bergmann <arnd@kernel.org=
+> wrote:
+>>
+>> From: Arnd Bergmann <arnd@arndb.de>
+>>
+>> The X86_INTEL_MID code was originally introduced for the
+>> 32-bit Moorestown/Medfield/Clovertrail platform, later the 64-bit
+>> Merrifield/Moorefield variant got added, but the final
+>
+> variant got --> variants were
 
+Fixed
 
+>> Morganfield/Broxton 14nm chips were canceled before they hit
+>> the market.
+>
+> Inaccurate. "Broxton for Mobile", and not "Broxton" in general.
 
+Changed to "but the final Morganfield 14nm platform was canceled
+before it hit the market"=20
 
----- On Wed, 04 Dec 2024 16:21:26 -0300 Abhinav Kumar  wrote ---
+>> To help users understand what the option actually refers to,
+>> update the help text, and make it a hard dependency on 64-bit
+>> kernels. While they could theoretically run a 32-bit kernel,
+>> the devices originally shipped with 64-bit one in 2015, so that
+>> was proabably never tested.
+>
+> probably
 
- > Hi Helen 
- >  
- > On 12/4/2024 11:14 AM, Helen Mae Koike Fornazier wrote: 
- > > Hi Abhinav, 
- > > 
- > > Thanks for your patch. 
- > > 
- > > 
- > > 
- > > ---- On Wed, 04 Dec 2024 15:55:17 -0300 Abhinav Kumar  wrote --- 
- > > 
- > >   > From the jobs [1] and [2] of pipeline [3], its clear that 
- > >   > kms_cursor_legacy@torture-bo is most certainly a flake and 
- > >   > not a fail for apq8016. Mark the test accordingly to match the results. 
- > >   > 
- > >   > [1] : https://gitlab.freedesktop.org/drm/msm/-/jobs/67676481 
- > >   > [2] : https://gitlab.freedesktop.org/drm/msm/-/jobs/67677430 
- > >   > [3]: https://gitlab.freedesktop.org/drm/msm/-/pipelines/1322770 
- > >   > 
- > >   > Signed-off-by: Abhinav Kumar quic_abhinavk@quicinc.com> 
- > >   > --- 
- > >   >  drivers/gpu/drm/ci/xfails/msm-apq8016-flakes.txt | 5 +++++ 
- > >   >  1 file changed, 5 insertions(+) 
- > >   > 
- > >   > diff --git a/drivers/gpu/drm/ci/xfails/msm-apq8016-flakes.txt b/drivers/gpu/drm/ci/xfails/msm-apq8016-flakes.txt 
- > >   > new file mode 100644 
- > >   > index 000000000000..18639853f18f 
- > >   > --- /dev/null 
- > >   > +++ b/drivers/gpu/drm/ci/xfails/msm-apq8016-flakes.txt 
- > >   > @@ -0,0 +1,5 @@ 
- > >   > +# Board Name: msm-apq8016-db410c 
- > >   > +# Failure Rate: 100 
- > > 
- > > Is failure rate is 100%, isn't it a fail than? 
- > > (I know we have other cases with Failure Rate: 100, maybe we should fix them as well) 
- > > 
- >  
- > Maybe I misunderstood the meaning of "Failure rate" for a flake. 
- >  
- > I interpreted this as this test being flaky 100% of the time :) 
+Fixed.
 
-Ah right, I see, inside deqp-runner (that auto-retries).
+> It's all other way around (from SW point of view). For unknown reasons
+> Intel decided to release only 32-bit SW and it became the only thing
+> that was heavily tested (despite misunderstanding by some developers
+> that pointed finger to the HW without researching the issue that
+> appears to be purely software in a few cases) _that_ time.  Starting
+> ca. 2017 I enabled 64-bit for Merrifield and from then it's being used
+> by both 32- and 64-bit builds.
+>
+> I'm totally fine to drop 32-bit defaults for Merrifield/Moorefield,
+> but let's hear Ferry who might/may still have a use case for that.
 
-I'd like to hear Vignesh's opinion on this.
+Ok. I tried to find the oldest Android image and saw it used a 64-bit
+kernel, but that must have been after your work then.
 
-(In any case, we probably should document this better)
+>
+>> -               Moorestown MID devices
+>
+> FTR, a year or so ago it was a (weak) interest to revive Medfield, but
+> I think it would require too much work even for the person who is
+> quite familiar with HW, U-Boot, and Linux kernel, so it is most
+> unlikely to happen.
 
-Regards,
-Helen
+Ok.
 
- >  
- > Out of the 3 runs of the test, it passed 2/3 times and failed 1/3. 
- >  
- > So its fail % actually is 33.33% in that case. 
- >  
- > I think I saw a Failure rate of 100% on msm-sm8350-hdk-flakes.txt and 
- > mistook that as the rate at which flakes are seen. 
- >  
- > Let me fix this up as 33% 
- >  
- > > Regards, 
- > > Helen 
- > > 
- > >   > +# IGT Version: 1.28-ga73311079 
- > >   > +# Linux Version: 6.12.0-rc2 
- > >   > +kms_cursor_legacy@torture-bo 
- > >   > 
- > >   > --- 
- > >   > base-commit: 798bb342e0416d846cf67f4725a3428f39bfb96b 
- > >   > change-id: 20241204-cursor_tor_skip-9d128dd62c4f 
- > >   > 
- > >   > Best regards, 
- > >   > -- 
- > >   > Abhinav Kumar quic_abhinavk@quicinc.com> 
- > >   > 
- > >   > 
- > > 
- > 
+>> +
+>> +         The only supported devices are the 22nm Merrified (Z34xx) a=
+nd
+>> +         Moorefield (Z35xx) SoC used in Android devices such as the
+>> +         Asus Zenfone 2, Asus FonePad 8 and Dell Venue 7.
+>
+> The list is missing the Intel Edison DIY platform which is probably
+> the main user of Intel MID kernels nowadays.
 
+Ah, that explains a lot ;-)
+
+Changed now to
+
+          The only supported devices are the 22nm Merrified (Z34xx) and
+          Moorefield (Z35xx) SoC used in the Intel Edison board and
+          a small number of Android devices such as the Asus Zenfone 2,
+          Asus FonePad 8 and Dell Venue 7.
+
+> ...
+>
+>> -         Intel MID platforms are based on an Intel processor and chi=
+pset which
+>> -         consume less power than most of the x86 derivatives.
+>
+> Why remove this? AFAIK it states the truth.
+
+It seemed irrelevant for users that configure the kernel. I've
+put it back now.
+
+Thanks for the review!
+
+     Arnd
 
