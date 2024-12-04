@@ -1,197 +1,153 @@
-Return-Path: <linux-kernel+bounces-431891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D82A9E448C
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 20:25:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id AA1299E4455
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 20:16:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 00EE0B45836
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:53:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B0974B37693
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:16:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E0CA237EBB;
-	Wed,  4 Dec 2024 17:13:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C13F214A9B;
+	Wed,  4 Dec 2024 17:01:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vcjvr3iw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cs52pY+U"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A46F237EA9;
-	Wed,  4 Dec 2024 17:13:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEA76214A64;
+	Wed,  4 Dec 2024 17:01:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733332431; cv=none; b=UAS6JTg0+AlCh7h2Wxqouq3CT5q79RWGxpUbAHWvEwkEi2TdCU8cVVe79VZi02vlCHNocVaKYv9L8Tnv+0dvq30A0ekDsRkIXFlkxbhgy2a7DZ7Pmt56rikC2+Hpc0okisio9UcOprpaBu7e7oF9zoQh8B3RqEDRaMGIxuRnNtk=
+	t=1733331681; cv=none; b=pu/FzFEIjiBZhK6NOsfxHCOGww+ZVQllHbcuX0XLH9LAtzgBeYIRt5xLH/C3fqjeE+soM8Nwf6Sznox2uWnZ8gHTC2Cd7Do3OvXCErwLpdJXxXv2WfMMk2TXohaBCc94Inx+k12i47sTQYuq4M/S9kxxHK6NPAzfLsBXPjpqjQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733332431; c=relaxed/simple;
-	bh=8M/Jum5fWN8HQfQEjzcs3WHILNDZXYw63L8S27jfc1k=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gC/S1Hoi0Zj9J/JEb95/er2brbSwoUcuXf0ctAVtePeO6IFPp4uo2B9eb8IdfBeDF96JctfueN/bK55sYM71XiFk16pPpXuodTgHOWoVcP53qDqNrnIY4/Sj3sW3nUCBeCW7f4AUoSb/JfylGs9Y7Ar5vjJcqNiCjiwIM++thDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vcjvr3iw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8460C4CECD;
-	Wed,  4 Dec 2024 17:13:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733332430;
-	bh=8M/Jum5fWN8HQfQEjzcs3WHILNDZXYw63L8S27jfc1k=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Vcjvr3iwoJK2OtfkovHJQeDKkrwKwC1O3S/519oKN54dBGIBfJEbRszM+oBqB+0By
-	 ueuDMu7OWJwnYHcV2ZMfvKYM3ECa2HO5QNa+w917BmwROtzg2arH85TFShTZsYTz0r
-	 9ouLzSonA8PxOqHX2mVVYk+EtV1rBPjrwHPVIqF5MwHOZ0eb99/NFN6jH0k7Ihq9dZ
-	 vpG+G0vKCeMN3VJv4nkuYP9Px82i5G8Ur8SG4UjTcr2Qbk4yau64pz3n8LtcZ3xvab
-	 OJzpVkLhYTwGfRJQY1vS+LwOH7wmP9hFDi6eL2Zte3mp09hwaCe37gL2KtvaGWom41
-	 yVU9L2q9wLWOQ==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Keith Busch <kbusch@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	Amey Narkhede <ameynarkhede03@gmail.com>,
-	Sasha Levin <sashal@kernel.org>,
-	ilpo.jarvinen@linux.intel.com,
-	mariusz.tkaczyk@linux.intel.com,
-	stuart.w.hayes@gmail.com,
-	linux-pci@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 2/4] PCI: Add 'reset_subordinate' to reset hierarchy below bridge
-Date: Wed,  4 Dec 2024 11:02:23 -0500
-Message-ID: <20241204160227.2217428-2-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241204160227.2217428-1-sashal@kernel.org>
-References: <20241204160227.2217428-1-sashal@kernel.org>
+	s=arc-20240116; t=1733331681; c=relaxed/simple;
+	bh=6gPE+fenbPtKeQLn3Z+1VggrmVSyTAw3blFgm50DDCQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EplQKT8Cu5PexO8dQofS4nrW0t3OZgd4hMI+4K4wv1f+UQwubNQmtVlmldaVHtkigrEXJz/I1iH27xq0ptcWrXW1JgVd/lhoOxRzaPtySYNpeRfWUuwFlrJYxh/40D5QxZ5LOY4zTQEXRXt3Vi44ZHa9HvJsOJEuZ+qPOcRiLBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Cs52pY+U; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-385e87b25f0so726169f8f.0;
+        Wed, 04 Dec 2024 09:01:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733331678; x=1733936478; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=m0pOXTmAKAV8r7uAQE4p3uR7vbfVoxqeLgjHnVe01Fk=;
+        b=Cs52pY+UOQP45ARZHkQLT38LSCfzMfN8xGVN0L+IXSBs+zKfyxd8YJHM+EWnfIXFmO
+         1I+pdE4fiZt7dzWawuzQMwd7fi+kIaMVl206aSK0kcfDM2V2k9vG6WwQ+9UriFtB0/xY
+         /DPy90Ivg64oLtI01u4Z0ix5r3nx5VMe5ySNzENdHlDhOVH9pnbdPzew8BD8Vsdl3+I2
+         OsqOpGj4sM1zAopmhlywmoGwqOy/viQbXRBZCoO4H0nmYX6BjzljdOxAw/pvgUanQ46w
+         0BJHlLHeweZzwYSnGb5YHFIw31zZA3tM75zKnYolwyeg0dImflGVVgSW+29cBvXaQwLC
+         muiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733331678; x=1733936478;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=m0pOXTmAKAV8r7uAQE4p3uR7vbfVoxqeLgjHnVe01Fk=;
+        b=EsI44VF/LIqgz8Quw4o/Ih/0w42JlI413ZcdfTNs4OO5+2GgFGDgMtLlJqUR+g+hZm
+         g4zoZdqW5cw+y7V9HYWm8fKQb1vrTwbZ4qoy3D47GutJ01KRuc0fxSZM4ftC6svR07nH
+         29TPvX36mcSr2THv5uni+WEXQ4fwS2pMOFeZrZpnyKnmlEuNGre3SEOMmE7lxna40pYA
+         gcdo3DIhJtaJewdlDtwmCFoMdw5cqShV1HECPg4My7pvbDZ2iYJvGLkz7q8MtbtPvX31
+         Ba+osuK4exNr5rhGSmbYF0adEPMiawA7SiPWePIlyiir6R56sG0RayXDqsPq5Sb+5zNs
+         FFQw==
+X-Forwarded-Encrypted: i=1; AJvYcCVgt0106Abedngm+r9uW75oVMCbpZwKXqfQYRvEX3lxmDm/47RHDXC+k4O9ffUIq/e+Lpg=@vger.kernel.org, AJvYcCX9ZREtb4KP3qL0eJthIZnG0LSFvriGfiomXEMyAAJ0rqwJzx1fD27B1BBLa3etEq0ByCydeGaSmlJbhgZ7@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6WyzOHlbYZForbch6aipAmzzL5LlEdfAphHVvGAz0V/ADXxD9
+	dYGi/b4ydwW78LMXx17+jHlmqzz3V5G2ehBdbB2O7yVexSUIFpUGxURVY7rDbcv7pkXswA2MTOK
+	ACrMJ5XaZM7u8FDoJZBRUvLFiTRg=
+X-Gm-Gg: ASbGncu3sBJwBefN5tgm2RaKCP1Y2y3fOn8IXPHShxFGWhPmzhleNwNdhQ+65BNIUne
+	9jUALgF3Xpt8PEPginUdaCrPzr6GnmXm4Ng==
+X-Google-Smtp-Source: AGHT+IH1NBy6bWFZw7pkijVpmV68E0djJQ+VXoqqh5rsAmEl6Cif36GjAkNjEZfz2bgrojCnwjYaLtlxrBeG8uhkMtA=
+X-Received: by 2002:a5d:47ad:0:b0:385:e9c0:85d9 with SMTP id
+ ffacd0b85a97d-3861bb8936cmr102707f8f.16.1733331676993; Wed, 04 Dec 2024
+ 09:01:16 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 5.4.286
-Content-Transfer-Encoding: 8bit
+References: <20241126005206.3457974-1-andrii@kernel.org> <20241127165848.42331fd7078565c0f4e0a7e9@linux-foundation.org>
+ <CAEf4BzZF8Gt_H=7J9SYXGorcjukQAqPJoX-a8vqBFdo73ZnXFA@mail.gmail.com>
+In-Reply-To: <CAEf4BzZF8Gt_H=7J9SYXGorcjukQAqPJoX-a8vqBFdo73ZnXFA@mail.gmail.com>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Wed, 4 Dec 2024 09:01:06 -0800
+Message-ID: <CAADnVQKwZqajMd04Fp2CMmNbSAkfSKkUZiBwzoo4Dno1AzX7zQ@mail.gmail.com>
+Subject: Re: [PATCH mm/stable] mm: fix vrealloc()'s KASAN poisoning logic
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Andrii Nakryiko <andrii@kernel.org>, 
+	linux-mm <linux-mm@kvack.org>, Uladzislau Rezki <urezki@gmail.com>, 
+	Christoph Hellwig <hch@infradead.org>, Vlastimil Babka <vbabka@suse.cz>, dakr@kernel.org, 
+	Michal Hocko <mhocko@suse.com>, LKML <linux-kernel@vger.kernel.org>, 
+	bpf <bpf@vger.kernel.org>, Alexei Starovoitov <ast@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Keith Busch <kbusch@kernel.org>
+Andrew,
 
-[ Upstream commit 2fa046449a82a7d0f6d9721dd83e348816038444 ]
+What is the status of this urgent fix ?
 
-The "bus" and "cxl_bus" reset methods reset a device by asserting Secondary
-Bus Reset on the bridge leading to the device.  These only work if the
-device is the only device below the bridge.
+vrealloc() is broken with kasan atm.
 
-Add a sysfs 'reset_subordinate' attribute on bridges that can assert
-Secondary Bus Reset regardless of how many devices are below the bridge.
-
-This resets all the devices below a bridge in a single command, including
-the locking and config space save/restore that reset methods normally do.
-
-This may be the only way to reset devices that don't support other reset
-methods (ACPI, FLR, PM reset, etc).
-
-Link: https://lore.kernel.org/r/20241025222755.3756162-1-kbusch@meta.com
-Signed-off-by: Keith Busch <kbusch@kernel.org>
-[bhelgaas: commit log, add capable(CAP_SYS_ADMIN) check]
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Reviewed-by: Alex Williamson <alex.williamson@redhat.com>
-Reviewed-by: Amey Narkhede <ameynarkhede03@gmail.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- Documentation/ABI/testing/sysfs-bus-pci | 11 +++++++++++
- drivers/pci/pci-sysfs.c                 | 26 +++++++++++++++++++++++++
- drivers/pci/pci.c                       |  2 +-
- drivers/pci/pci.h                       |  1 +
- 4 files changed, 39 insertions(+), 1 deletion(-)
-
-diff --git a/Documentation/ABI/testing/sysfs-bus-pci b/Documentation/ABI/testing/sysfs-bus-pci
-index 8bfee557e50ea..e84434d48dcf0 100644
---- a/Documentation/ABI/testing/sysfs-bus-pci
-+++ b/Documentation/ABI/testing/sysfs-bus-pci
-@@ -125,6 +125,17 @@ Description:
- 		will be present in sysfs.  Writing 1 to this file
- 		will perform reset.
- 
-+What:		/sys/bus/pci/devices/.../reset_subordinate
-+Date:		October 2024
-+Contact:	linux-pci@vger.kernel.org
-+Description:
-+		This is visible only for bridge devices. If you want to reset
-+		all devices attached through the subordinate bus of a specific
-+		bridge device, writing 1 to this will try to do it.  This will
-+		affect all devices attached to the system through this bridge
-+		similiar to writing 1 to their individual "reset" file, so use
-+		with caution.
-+
- What:		/sys/bus/pci/devices/.../vpd
- Date:		February 2008
- Contact:	Ben Hutchings <bwh@kernel.org>
-diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
-index 90d5a29a6ff3d..131c6d7e86f8f 100644
---- a/drivers/pci/pci-sysfs.c
-+++ b/drivers/pci/pci-sysfs.c
-@@ -505,6 +505,31 @@ static ssize_t bus_rescan_store(struct device *dev,
- static struct device_attribute dev_attr_bus_rescan = __ATTR(rescan, 0200, NULL,
- 							    bus_rescan_store);
- 
-+static ssize_t reset_subordinate_store(struct device *dev,
-+				struct device_attribute *attr,
-+				const char *buf, size_t count)
-+{
-+	struct pci_dev *pdev = to_pci_dev(dev);
-+	struct pci_bus *bus = pdev->subordinate;
-+	unsigned long val;
-+
-+	if (!capable(CAP_SYS_ADMIN))
-+		return -EPERM;
-+
-+	if (kstrtoul(buf, 0, &val) < 0)
-+		return -EINVAL;
-+
-+	if (val) {
-+		int ret = __pci_reset_bus(bus);
-+
-+		if (ret)
-+			return ret;
-+	}
-+
-+	return count;
-+}
-+static DEVICE_ATTR_WO(reset_subordinate);
-+
- #if defined(CONFIG_PM) && defined(CONFIG_ACPI)
- static ssize_t d3cold_allowed_store(struct device *dev,
- 				    struct device_attribute *attr,
-@@ -628,6 +653,7 @@ static struct attribute *pci_dev_attrs[] = {
- static struct attribute *pci_bridge_attrs[] = {
- 	&dev_attr_subordinate_bus_number.attr,
- 	&dev_attr_secondary_bus_number.attr,
-+	&dev_attr_reset_subordinate.attr,
- 	NULL,
- };
- 
-diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-index 41050a35631fa..ad5bd17f77a3b 100644
---- a/drivers/pci/pci.c
-+++ b/drivers/pci/pci.c
-@@ -5538,7 +5538,7 @@ EXPORT_SYMBOL_GPL(pci_probe_reset_bus);
-  *
-  * Same as above except return -EAGAIN if the bus cannot be locked
-  */
--static int __pci_reset_bus(struct pci_bus *bus)
-+int __pci_reset_bus(struct pci_bus *bus)
- {
- 	int rc;
- 
-diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
-index 725d2b0d45693..7a737ef76e6de 100644
---- a/drivers/pci/pci.h
-+++ b/drivers/pci/pci.h
-@@ -41,6 +41,7 @@ int pci_mmap_fits(struct pci_dev *pdev, int resno, struct vm_area_struct *vmai,
- int pci_probe_reset_function(struct pci_dev *dev);
- int pci_bridge_secondary_bus_reset(struct pci_dev *dev);
- int pci_bus_error_reset(struct pci_dev *dev);
-+int __pci_reset_bus(struct pci_bus *bus);
- 
- #define PCI_PM_D2_DELAY         200
- #define PCI_PM_D3_WAIT          10
--- 
-2.43.0
-
+On Wed, Nov 27, 2024 at 10:16=E2=80=AFPM Andrii Nakryiko
+<andrii.nakryiko@gmail.com> wrote:
+>
+> On Wed, Nov 27, 2024 at 4:58=E2=80=AFPM Andrew Morton <akpm@linux-foundat=
+ion.org> wrote:
+> >
+> > On Mon, 25 Nov 2024 16:52:06 -0800 Andrii Nakryiko <andrii@kernel.org> =
+wrote:
+> >
+> > > When vrealloc() reuses already allocated vmap_area, we need to
+> > > re-annotate poisoned and unpoisoned portions of underlying memory
+> > > according to the new size.
+> >
+> > What are the consequences of this oversight?
+> >
+> > When fixing a flaw, please always remember to describe the visible
+> > effects of that flaw.
+> >
+>
+> See [0] for false KASAN splat. I should have left a link to that, sorry.
+>
+>   [0] https://lore.kernel.org/bpf/67450f9b.050a0220.21d33d.0004.GAE@googl=
+e.com/
+>
+> > > Note, hard-coding KASAN_VMALLOC_PROT_NORMAL might not be exactly
+> > > correct, but KASAN flag logic is pretty involved and spread out
+> > > throughout __vmalloc_node_range_noprof(), so I'm using the bare minim=
+um
+> > > flag here and leaving the rest to mm people to refactor this logic an=
+d
+> > > reuse it here.
+> > >
+> > > Fixes: 3ddc2fefe6f3 ("mm: vmalloc: implement vrealloc()")
+> >
+> > Because a cc:stable might be appropriate here.  But without knowing the
+> > effects, it's hard to determine this.
+>
+> This is KASAN-related, so the effect is a KASAN mis-reporting issue
+> where there is none.
+>
+> >
+> > > --- a/mm/vmalloc.c
+> > > +++ b/mm/vmalloc.c
+> > > @@ -4093,7 +4093,8 @@ void *vrealloc_noprof(const void *p, size_t siz=
+e, gfp_t flags)
+> > >               /* Zero out spare memory. */
+> > >               if (want_init_on_alloc(flags))
+> > >                       memset((void *)p + size, 0, old_size - size);
+> > > -
+> > > +             kasan_poison_vmalloc(p + size, old_size - size);
+> > > +             kasan_unpoison_vmalloc(p, size, KASAN_VMALLOC_PROT_NORM=
+AL);
+> > >               return (void *)p;
+> > >       }
+> > >
+> >
 
