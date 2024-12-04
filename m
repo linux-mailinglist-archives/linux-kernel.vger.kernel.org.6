@@ -1,267 +1,374 @@
-Return-Path: <linux-kernel+bounces-431498-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CCFF9E3E21
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:23:43 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 996409E3F16
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:03:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC9A1281E24
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:23:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 16412B35139
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:21:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1D3B20D50E;
-	Wed,  4 Dec 2024 15:22:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DB0D20C021;
+	Wed,  4 Dec 2024 15:21:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U2H5PksU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X5WfSJBY"
+Received: from mail-io1-f41.google.com (mail-io1-f41.google.com [209.85.166.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10F8420C037
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 15:22:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F16220ADC6;
+	Wed,  4 Dec 2024 15:21:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733325756; cv=none; b=rxCukOFrKNg8nEHKtGEwywS0JK3lTKdWWkaUWR4k2aRO2gdEGDptZfrIFtNBHQtSbm6WfgHoM76aWsZ9xZS7clFP2AaDIMiSdpzwo0Wa7qxa4uM/VVDMkDPs9bKgxUkrCptvDIuvD1eejD4AxgG/QpjiSc29ALoHzmwm+2546Gw=
+	t=1733325685; cv=none; b=DJ1TAa1znM6pr4R3M74/ZjHkvhaRYhXByfn/Bk/WHJSZc33zT9Cf0modvqh1tj92fgzgGBfsDAGRA+yHB7DGaAEM0K+RsQ+VtbxTIl7F8i3cfe6wRwuAvMnBTZ4gl/sRRSkKDV6rxT/vhdiBpgZa0BoDgzCiYGvIEmq+KqQGBdg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733325756; c=relaxed/simple;
-	bh=eI1tefeXL+TZyNSuc2hjvlfnxnuJuAFK0jlaMH14RBU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Bw7CAZvo1gAVNn0qOYBfmuBkxuxgJX76CjPP3m9ofHNRhODHRoE90cRSfPTtXlaBXhqfSQqhIdPe54GZkI87m5JgA/Fvgclcb/XhvzV+PqSPyDn3jbklCEDNkh9iozzxvXtiW+hk9krFt5fXyARuK+Zt15Dgsy4WjlGb4aoqh6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U2H5PksU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F690C4CEDF;
-	Wed,  4 Dec 2024 15:22:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733325755;
-	bh=eI1tefeXL+TZyNSuc2hjvlfnxnuJuAFK0jlaMH14RBU=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=U2H5PksU7VxBODqWz2wkYH4LpAtnVsXX9z0m1U6UHr9xf3Mz60c2cwzBGe0OdEHeK
-	 AiJpxyx8wCcVM+GNXBDa3APp0BX7UR6/spg0ulXp2kfOp8eBcGiqp4/zalFoj2ZmaN
-	 uof4Fpe7ihF7CNTHN2HQx5NjZLF5VlSsclah/ASRl9I3L9K2cMVHxcGLvnMG28HAUH
-	 eb5FyM+2ylC9RY5vOnX/TWOtO8ixxCK+Urj0xrcl4/qaEhQw1iqZIGhVqIgyzOEpzR
-	 rRzc8vXhVFhss/etgemsRrn1Y26AG3j5GMFNecPlJj2D+JUWAzILrV11+L/IjLJDTd
-	 C7thHSskPOXQw==
-From: Mark Brown <broonie@kernel.org>
-Date: Wed, 04 Dec 2024 15:20:54 +0000
-Subject: [PATCH v2 6/6] arm64/signal: Consistently invalidate the in
- register FP state in restore
+	s=arc-20240116; t=1733325685; c=relaxed/simple;
+	bh=rse/mHEaQ4pwvIL0MDej0dzbGWoZ2J37FA4ePeik7QU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VCw5kBl4GYCQ0UIn9eizInuY8m2I8QYgL3xFGWmlp0ckLTRNNV8B/WVoMGaAUDeNUiOtASx5umpaYk8WXri+yjbwLYprLsJWO/RagrL5t/NScFnzm6uBskwVIdMAC9HTozQyRdVDqU+0lEakt+Q8EUL3QBbvTPjpplN5ao86h6U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X5WfSJBY; arc=none smtp.client-ip=209.85.166.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-io1-f41.google.com with SMTP id ca18e2360f4ac-84183532291so302888739f.2;
+        Wed, 04 Dec 2024 07:21:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733325682; x=1733930482; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0mWIbiNnKNYcwhrgwtmIyW8/OFwoBBcUW/PJNh6ViAc=;
+        b=X5WfSJBYyS/k0aun0fYvpEA6KKhbKeXUPtd2Bx4utP0U2AlnigEbLG2O/Fu8rILDis
+         f5eYYzbAqmFH3F5lKfcK110QkL0+dfHtd6V7A/vK67MPyNSqf74CCTYGolv7yWp+V+hR
+         rAv+3PP6yDzasNlYtrYwfCYIuLgjWc0Kc5g9Vefk5ZrRcqEgCBHW9uvmw5rI3tNyC/8K
+         HMjbG+KvxRIau4OG9WKsRNp6Hdn89mJ0kfdeYiec18g21bLhh9Dsqlepqj/HC0NqSZxc
+         zh1hWbJtUtrcxwpJyj/jcjkBHNKqCukHS7ggipntbTKRJDyivJrTR1TgsGpnfOieeqdF
+         gqWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733325682; x=1733930482;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0mWIbiNnKNYcwhrgwtmIyW8/OFwoBBcUW/PJNh6ViAc=;
+        b=Hu81D4GXkF/JxbYj0+iIsFH3x3dLzoOmzuIHci4kwKxww+kINwByACAVUZFoaOtazw
+         jHdNt77WIznaWlzOkSUPIcM1G9S0jaJ525zREA3Njax8WAwKcQepUSamLHGPc7KhrMCM
+         tzyPsPEi/ZmF7kwzO+FKo3v7Qr0PjAEvnL+qaCiytPrrqcHPB10Alukt448ARd3h3vYB
+         ov6IyKK75dFTqFXy/owWU6SubzhFq+Z+wNRGe0PaPip4PcUq2PDTLF3L/j0gNB4+ehEh
+         2BY/vGMoa9L1sLlv44pjJ2rCJGZA5DtY47pSKVDy5I/ebHqxLZfoxWPdb7dVV6vaFriB
+         tXPA==
+X-Forwarded-Encrypted: i=1; AJvYcCWCckWAZcW5fm06t/8JdhRYhh8p63xKWTMSmv1sNfpc4NQOIh4jVufLy7XOfbx6oDH/KMq6aXfsNUXKzfMz@vger.kernel.org, AJvYcCWmS1Lv5sHvGOj3XWeF5aC5+eo5T3JikXkaIFKG73B9HhlhRpsGcxkpp1Tx7nTVmoGVV0o9Vi1Ij58SfCV3@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7urDbW0mjB/dCbk/0EKZuPOyBmkGposk0ckmWyP38VbsIvutr
+	9/0WKLQaXi6gbi0sleLVmJ4dGNopoufmR4BjdUd7PZqXajs4kn3P4hrlyyUbwVCZbJQ8IJp9JDK
+	Y/YWTZ0YNQn0QXIlnRb8vxtQnT7Q=
+X-Gm-Gg: ASbGncu7KKd7zsQafNzRMDNqJB2NBZqd4hEt0bcrYazPiFZcCLchi1oQBisInOy6pkV
+	rmY63x9pmwe7F7GVwLdNTCTEFsdflHgvQZ1YpS1qZl88io+4xNP/080ZmNEFlfw==
+X-Google-Smtp-Source: AGHT+IHDPo/m1Tgonui7uUaMfEFTF1kB0w/zjAZ5wQ/m2NZv6qbrVx899uJo0oDWh0QmO8HzCYsC+VfkeFHabmPKV1c=
+X-Received: by 2002:a05:6602:6b19:b0:843:e9c0:8290 with SMTP id
+ ca18e2360f4ac-8445b5585a1mr786739639f.6.1733325682440; Wed, 04 Dec 2024
+ 07:21:22 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241204-arm64-sme-reenable-v2-6-bae87728251d@kernel.org>
-References: <20241204-arm64-sme-reenable-v2-0-bae87728251d@kernel.org>
-In-Reply-To: <20241204-arm64-sme-reenable-v2-0-bae87728251d@kernel.org>
-To: Catalin Marinas <catalin.marinas@arm.com>, 
- Will Deacon <will@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, Dave Martin <Dave.Martin@arm.com>, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Mark Brown <broonie@kernel.org>
-X-Mailer: b4 0.15-dev-9b746
-X-Developer-Signature: v=1; a=openpgp-sha256; l=7574; i=broonie@kernel.org;
- h=from:subject:message-id; bh=eI1tefeXL+TZyNSuc2hjvlfnxnuJuAFK0jlaMH14RBU=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBnUHOsbe0GDhU62lb7UKSWwAgaI1b1a8VR3tzw/dfD
- 1mu3GAGJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZ1BzrAAKCRAk1otyXVSH0KOCB/
- 4p5VAQLLhXOeFnoHp6R0itwyVFkGH1spAboKblwKdR8i+wqsNaLIfICVhZ54UQPw9jtYPjjsrh9Ea0
- sw9jRxJVbGL4BAy/5Msu9vVYaLkHZxOHLSCJA0eQcUIRTslxqGe6W6JpOXliPSNmckmbRgUIzv5f/h
- G/u6atg61wUf3tSb7goYClKr1P18RjSPc18DXBPJu0SLbv7O40nmjB44MYbkrlbkT6sSLpX2qciaL8
- E/ALIsLrT5CpzQVsGxYn5KC+F64l9hr5B/2JPX0QIK3TM+iOG87JsOgcMyMXAtVT7CDOCjYHnHidmk
- NrfcXRH9OO26RGKlEzPPQWNigcd/O/
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+References: <20241114160721.1527934-1-quic_bibekkum@quicinc.com>
+ <20241114160721.1527934-4-quic_bibekkum@quicinc.com> <CAF6AEGuwWsAkRyF-h5Aj3KzM7iksb12HsfJ5Ks+-P8hv60MWFg@mail.gmail.com>
+ <9beca099-5cf3-42b5-b1f9-fb1551219b18@quicinc.com> <CAF6AEGvAOswFTpS5PHrgCsG_2-QN_Bi4YjZbPpV+r3x=9D2aUQ@mail.gmail.com>
+ <d2d8d9e9-74b1-4b05-84a2-dcfa204e6e00@quicinc.com>
+In-Reply-To: <d2d8d9e9-74b1-4b05-84a2-dcfa204e6e00@quicinc.com>
+From: Rob Clark <robdclark@gmail.com>
+Date: Wed, 4 Dec 2024 07:21:10 -0800
+Message-ID: <CAF6AEGtBva41Fz0tS4gRwK21ZqzDH5yGrWLY6TMeS6u7OFfS0Q@mail.gmail.com>
+Subject: Re: [PATCH RESEND v17 3/5] iommu/arm-smmu: add support for PRR bit setup
+To: Bibek Kumar Patro <quic_bibekkum@quicinc.com>
+Cc: will@kernel.org, robin.murphy@arm.com, joro@8bytes.org, jgg@ziepe.ca, 
+	jsnitsel@redhat.com, robh@kernel.org, krzysztof.kozlowski@linaro.org, 
+	quic_c_gdjako@quicinc.com, dmitry.baryshkov@linaro.org, iommu@lists.linux.dev, 
+	linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, Connor Abbott <cwabbott0@gmail.com>, 
+	Rob Clark <robdclark@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-When restoring the SVE and SME specific floating point register states we
-flush the task floating point state, marking the hardware state as stale so
-that preemption does not result in us saving register state from the signal
-handler on top of the restored context and forcing a reload from memory.
-For the plain FPSIMD state we don't do this, we just copy the state from
-userspace and then force an immediate reload of the register state.
-This isn't racy against context switch since we copy the incoming data
-onto the stack rather than directly into the task struct but it's still
-messy and inconsistent.
+On Wed, Dec 4, 2024 at 3:27=E2=80=AFAM Bibek Kumar Patro
+<quic_bibekkum@quicinc.com> wrote:
+>
+>
+>
+> On 11/22/2024 10:33 PM, Rob Clark wrote:
+> > On Fri, Nov 22, 2024 at 8:19=E2=80=AFAM Bibek Kumar Patro
+> > <quic_bibekkum@quicinc.com> wrote:
+> >>
+> >>
+> >>
+> >> On 11/20/2024 10:47 PM, Rob Clark wrote:
+> >>> On Thu, Nov 14, 2024 at 8:10=E2=80=AFAM Bibek Kumar Patro
+> >>> <quic_bibekkum@quicinc.com> wrote:
+> >>>>
+> >>>> Add an adreno-smmu-priv interface for drm/msm to call
+> >>>> into arm-smmu-qcom and initiate the PRR bit setup or reset
+> >>>> sequence as per request.
+> >>>>
+> >>>> This will be used by GPU to setup the PRR bit and related
+> >>>> configuration registers through adreno-smmu private
+> >>>> interface instead of directly poking the smmu hardware.
+> >>>>
+> >>>> Suggested-by: Rob Clark <robdclark@gmail.com>
+> >>>> Signed-off-by: Bibek Kumar Patro <quic_bibekkum@quicinc.com>
+> >>>> ---
+> >>>>    drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c | 37 +++++++++++++++++=
++++++
+> >>>>    drivers/iommu/arm/arm-smmu/arm-smmu.h      |  2 ++
+> >>>>    include/linux/adreno-smmu-priv.h           | 14 ++++++++
+> >>>>    3 files changed, 53 insertions(+)
+> >>>>
+> >>>> diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c b/drivers/io=
+mmu/arm/arm-smmu/arm-smmu-qcom.c
+> >>>> index d26f5aea248e..0e4f3fbda961 100644
+> >>>> --- a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
+> >>>> +++ b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
+> >>>> @@ -16,6 +16,8 @@
+> >>>>
+> >>>>    #define QCOM_DUMMY_VAL -1
+> >>>>
+> >>>> +#define GFX_ACTLR_PRR          (1 << 5)
+> >>>> +
+> >>>>    static struct qcom_smmu *to_qcom_smmu(struct arm_smmu_device *smm=
+u)
+> >>>>    {
+> >>>>           return container_of(smmu, struct qcom_smmu, smmu);
+> >>>> @@ -99,6 +101,32 @@ static void qcom_adreno_smmu_resume_translation(=
+const void *cookie, bool termina
+> >>>>           arm_smmu_cb_write(smmu, cfg->cbndx, ARM_SMMU_CB_RESUME, re=
+g);
+> >>>>    }
+> >>>>
+> >>>> +static void qcom_adreno_smmu_set_prr_bit(const void *cookie, bool s=
+et)
+> >>>> +{
+> >>>> +       struct arm_smmu_domain *smmu_domain =3D (void *)cookie;
+> >>>> +       struct arm_smmu_device *smmu =3D smmu_domain->smmu;
+> >>>> +       struct arm_smmu_cfg *cfg =3D &smmu_domain->cfg;
+> >>>> +       u32 reg =3D 0;
+> >>>> +
+> >>>> +       reg =3D  arm_smmu_cb_read(smmu, cfg->cbndx, ARM_SMMU_CB_ACTL=
+R);
+> >>>> +       reg &=3D ~GFX_ACTLR_PRR;
+> >>>> +       if (set)
+> >>>> +               reg |=3D FIELD_PREP(GFX_ACTLR_PRR, 1);
+> >>>> +       arm_smmu_cb_write(smmu, cfg->cbndx, ARM_SMMU_CB_ACTLR, reg);
+> >>>> +}
+> >>>> +
+> >>>> +static void qcom_adreno_smmu_set_prr_addr(const void *cookie, phys_=
+addr_t page_addr)
+> >>>> +{
+> >>>> +       struct arm_smmu_domain *smmu_domain =3D (void *)cookie;
+> >>>> +       struct arm_smmu_device *smmu =3D smmu_domain->smmu;
+> >>>> +
+> >>>> +       writel_relaxed(lower_32_bits(page_addr),
+> >>>> +                               smmu->base + ARM_SMMU_GFX_PRR_CFG_LA=
+DDR);
+> >>>> +
+> >>>> +       writel_relaxed(upper_32_bits(page_addr),
+> >>>> +                               smmu->base + ARM_SMMU_GFX_PRR_CFG_UA=
+DDR);
+> >>>> +}
+> >>>> +
+> >>>>    #define QCOM_ADRENO_SMMU_GPU_SID 0
+> >>>>
+> >>>>    static bool qcom_adreno_smmu_is_gpu_device(struct device *dev)
+> >>>> @@ -210,6 +238,7 @@ static bool qcom_adreno_can_do_ttbr1(struct arm_=
+smmu_device *smmu)
+> >>>>    static int qcom_adreno_smmu_init_context(struct arm_smmu_domain *=
+smmu_domain,
+> >>>>                   struct io_pgtable_cfg *pgtbl_cfg, struct device *d=
+ev)
+> >>>>    {
+> >>>> +       const struct device_node *np =3D smmu_domain->smmu->dev->of_=
+node;
+> >>>>           struct adreno_smmu_priv *priv;
+> >>>>
+> >>>>           smmu_domain->cfg.flush_walk_prefer_tlbiasid =3D true;
+> >>>> @@ -239,6 +268,14 @@ static int qcom_adreno_smmu_init_context(struct=
+ arm_smmu_domain *smmu_domain,
+> >>>>           priv->get_fault_info =3D qcom_adreno_smmu_get_fault_info;
+> >>>>           priv->set_stall =3D qcom_adreno_smmu_set_stall;
+> >>>>           priv->resume_translation =3D qcom_adreno_smmu_resume_trans=
+lation;
+> >>>> +       priv->set_prr_bit =3D NULL;
+> >>>> +       priv->set_prr_addr =3D NULL;
+> >>>> +
+> >>>> +       if (of_device_is_compatible(np, "qcom,smmu-500") &&
+> >>>> +                       of_device_is_compatible(np, "qcom,adreno-smm=
+u")) {
+> >>>
+> >>> fwiw, it seems like PRR actually works on sc7180, which is _not_
+> >>> mmu-500, so I guess the support actually goes back further.
+> >>>
+> >>
+> >> As I checked sc7180 was on previous variant of SMMU,
+> >> so targets on this variant have different steps to set PRR bit.
+> >> <Do not have both prr bit and PRR page registers>.
+> >
+> > Experimentally, I have to set both the PRR LADDR/UADDR regs and
+> > ACTLR.PRR bit on sc7180 to get the sparse-residency tests passing.  So
+> > the underlying hw seems to work in the same way as mmu-500.  _But_
+> > this is on a sc7180 chromebook, the situation might be different
+> > depending on fw on things that have QC hyp.
+> >
+>
+> I checked on sc7180 chipset which is based on the smmu-v2,
+> this time by looking for these offsets specifically. I can see the
+> nomenclature of the PRR related registers are a bit different
+> compared to MMU-500 variant.
+> Also the implementation register is 64 bit instead of
+> dual 32 bit as in case of MMU-500. and PRR bit is not marked in
+> ACTLR register offset.
 
-Simplify things and avoid a potential source of error by moving the
-invalidation of the CPU state to the main restore_sigframe() and
-reworking the restore of the FPSIMD state to update the task struct and
-rely on loading as part of the general do_notify_resume() handling for
-return to user like we do for the SVE and SME state.
+Interesting.. in my experiments it needed both the ACTLR.PRR bit set
+and the LADDR/UADDR.  Maybe it was just happy coincidence that two 32b
+writes worked?
 
-As a result of this the only user of fpsimd_update_current_state() is
-the 32 bit signal code which should not have any SVE state, add an
-assert there that we don't have SVE enabled.
+> So turns out PRR is supported but with some modification and
+> can be carried out with same compatible based approach only - as per
+> my understanding.
+>
+> In current patch plan was to provide support for MMU-500 based targets
+> and won't break any legacy targets, so we can take the PRR support
+> for legacy targets in different series once our evaluation is done on
+> smmu-v2 ?
 
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- arch/arm64/kernel/fpsimd.c |  9 +++---
- arch/arm64/kernel/signal.c | 70 +++++++++++++++-------------------------------
- 2 files changed, 27 insertions(+), 52 deletions(-)
+I guess it wouldn't be the end of the world, but it would mean that
+drm would need to expose PRR support to userspace separately from
+sparse binding support.  Maybe we need to do that anyways.  (I'm not
+really sure how many different a6xx+smmu-v2 devices are out there, but
+I guess they are all based on the same generation of snapdragon?)
 
-diff --git a/arch/arm64/kernel/fpsimd.c b/arch/arm64/kernel/fpsimd.c
-index 2b045d4d8f71ace5bf01a596dda279285a0998a5..74080204073d06819838873996b8cb60043d89de 100644
---- a/arch/arm64/kernel/fpsimd.c
-+++ b/arch/arm64/kernel/fpsimd.c
-@@ -1868,7 +1868,8 @@ void fpsimd_update_current_state(struct user_fpsimd_state const *state)
- 	get_cpu_fpsimd_context();
- 
- 	current->thread.uw.fpsimd_state = *state;
--	if (test_thread_flag(TIF_SVE))
-+	/* This should only ever be used for 32 bit processes */
-+	if (WARN_ON_ONCE(test_thread_flag(TIF_SVE)))
- 		fpsimd_to_sve(current);
- 
- 	task_fpsimd_load();
-@@ -1894,9 +1895,9 @@ void fpsimd_flush_task_state(struct task_struct *t)
- {
- 	t->thread.fpsimd_cpu = NR_CPUS;
- 	/*
--	 * If we don't support fpsimd, bail out after we have
--	 * reset the fpsimd_cpu for this task and clear the
--	 * FPSTATE.
-+	 * If we don't support fpsimd, bail out after we have reset
-+	 * the fpsimd_cpu for this task and clear the FPSTATE.  We
-+	 * check here rather than forcing callers to check.
- 	 */
- 	if (!system_supports_fpsimd())
- 		return;
-diff --git a/arch/arm64/kernel/signal.c b/arch/arm64/kernel/signal.c
-index 79c9c5cd0802149b3cde20b398617437d79181f2..335c2327baf74eac9634cf594855dbf26a7d6b01 100644
---- a/arch/arm64/kernel/signal.c
-+++ b/arch/arm64/kernel/signal.c
-@@ -271,7 +271,7 @@ static int preserve_fpsimd_context(struct fpsimd_context __user *ctx)
- 
- static int restore_fpsimd_context(struct user_ctxs *user)
- {
--	struct user_fpsimd_state fpsimd;
-+	struct user_fpsimd_state *fpsimd = &current->thread.uw.fpsimd_state;
- 	int err = 0;
- 
- 	/* check the size information */
-@@ -279,18 +279,14 @@ static int restore_fpsimd_context(struct user_ctxs *user)
- 		return -EINVAL;
- 
- 	/* copy the FP and status/control registers */
--	err = __copy_from_user(fpsimd.vregs, &(user->fpsimd->vregs),
--			       sizeof(fpsimd.vregs));
--	__get_user_error(fpsimd.fpsr, &(user->fpsimd->fpsr), err);
--	__get_user_error(fpsimd.fpcr, &(user->fpsimd->fpcr), err);
-+	err = __copy_from_user(fpsimd->vregs, &(user->fpsimd->vregs),
-+			       sizeof(fpsimd->vregs));
-+	__get_user_error(fpsimd->fpsr, &(user->fpsimd->fpsr), err);
-+	__get_user_error(fpsimd->fpcr, &(user->fpsimd->fpcr), err);
- 
- 	clear_thread_flag(TIF_SVE);
- 	current->thread.fp_type = FP_STATE_FPSIMD;
- 
--	/* load the hardware registers from the fpsimd_state structure */
--	if (!err)
--		fpsimd_update_current_state(&fpsimd);
--
- 	return err ? -EFAULT : 0;
- }
- 
-@@ -396,7 +392,7 @@ static int restore_sve_fpsimd_context(struct user_ctxs *user)
- {
- 	int err = 0;
- 	unsigned int vl, vq;
--	struct user_fpsimd_state fpsimd;
-+	struct user_fpsimd_state *fpsimd = &current->thread.uw.fpsimd_state;
- 	u16 user_vl, flags;
- 
- 	if (user->sve_size < sizeof(*user->sve))
-@@ -439,16 +435,6 @@ static int restore_sve_fpsimd_context(struct user_ctxs *user)
- 	if (user->sve_size < SVE_SIG_CONTEXT_SIZE(vq))
- 		return -EINVAL;
- 
--	/*
--	 * Careful: we are about __copy_from_user() directly into
--	 * thread.sve_state with preemption enabled, so protection is
--	 * needed to prevent a racing context switch from writing stale
--	 * registers back over the new data.
--	 */
--
--	fpsimd_flush_task_state(current);
--	/* From now, fpsimd_thread_switch() won't touch thread.sve_state */
--
- 	sve_alloc(current, true);
- 	if (!current->thread.sve_state) {
- 		clear_thread_flag(TIF_SVE);
-@@ -471,14 +457,10 @@ static int restore_sve_fpsimd_context(struct user_ctxs *user)
- fpsimd_only:
- 	/* copy the FP and status/control registers */
- 	/* restore_sigframe() already checked that user->fpsimd != NULL. */
--	err = __copy_from_user(fpsimd.vregs, user->fpsimd->vregs,
--			       sizeof(fpsimd.vregs));
--	__get_user_error(fpsimd.fpsr, &user->fpsimd->fpsr, err);
--	__get_user_error(fpsimd.fpcr, &user->fpsimd->fpcr, err);
--
--	/* load the hardware registers from the fpsimd_state structure */
--	if (!err)
--		fpsimd_update_current_state(&fpsimd);
-+	err = __copy_from_user(fpsimd->vregs, user->fpsimd->vregs,
-+			       sizeof(fpsimd->vregs));
-+	__get_user_error(fpsimd->fpsr, &user->fpsimd->fpsr, err);
-+	__get_user_error(fpsimd->fpcr, &user->fpsimd->fpcr, err);
- 
- 	return err ? -EFAULT : 0;
- }
-@@ -587,16 +569,6 @@ static int restore_za_context(struct user_ctxs *user)
- 	if (user->za_size < ZA_SIG_CONTEXT_SIZE(vq))
- 		return -EINVAL;
- 
--	/*
--	 * Careful: we are about __copy_from_user() directly into
--	 * thread.sme_state with preemption enabled, so protection is
--	 * needed to prevent a racing context switch from writing stale
--	 * registers back over the new data.
--	 */
--
--	fpsimd_flush_task_state(current);
--	/* From now, fpsimd_thread_switch() won't touch thread.sve_state */
--
- 	sme_alloc(current, true);
- 	if (!current->thread.sme_state) {
- 		current->thread.svcr &= ~SVCR_ZA_MASK;
-@@ -664,16 +636,6 @@ static int restore_zt_context(struct user_ctxs *user)
- 	if (nregs != 1)
- 		return -EINVAL;
- 
--	/*
--	 * Careful: we are about __copy_from_user() directly into
--	 * thread.zt_state with preemption enabled, so protection is
--	 * needed to prevent a racing context switch from writing stale
--	 * registers back over the new data.
--	 */
--
--	fpsimd_flush_task_state(current);
--	/* From now, fpsimd_thread_switch() won't touch ZT in thread state */
--
- 	err = __copy_from_user(thread_zt_state(&current->thread),
- 			       (char __user const *)user->zt +
- 					ZT_SIG_REGS_OFFSET,
-@@ -1028,6 +990,18 @@ static int restore_sigframe(struct pt_regs *regs,
- 	if (err == 0)
- 		err = parse_user_sigframe(&user, sf);
- 
-+	/*
-+	 * Careful: we are about __copy_from_user() directly into
-+	 * thread floating point state with preemption enabled, so
-+	 * protection is needed to prevent a racing context switch
-+	 * from writing stale registers back over the new data. Mark
-+	 * the register floating point state as invalid and unbind the
-+	 * task from the CPU to force a reload before we return to
-+	 * userspace. fpsimd_flush_task_state() has a check for FP
-+	 * support.
-+	 */
-+	fpsimd_flush_task_state(current);
-+
- 	if (err == 0 && system_supports_fpsimd()) {
- 		if (!user.fpsimd)
- 			return -EINVAL;
+BR,
+-R
 
--- 
-2.39.5
-
+> We would explore more on this PRR feature for smmu-v2 based targets,
+> before supporting it.
+>
+> Thanks & regards,
+> Bibek
+>
+> >> It's MMU-500 targets only where PRR support is with both PRR bit
+> >> and PRR page addr registers. As I was re-visiting our discussions on v=
+13
+> >> regarding this - I remember that's why we started using the SMMU-
+> >> compatible string based PRR procedure selection instead of the reserve=
+d-
+> >> memory node. [1] i.e Based on SMMU variant (as selected by compatible
+> >> string), specific sequence will be selected.
+> >>
+> >> So for now only MMU-500 based selection has been supported as part of
+> >> this series and will add subsequent support for other SMMU-variants
+> >> thereafter.
+> >>
+> >>> I'm curious if we can just rely on this being supported by any hw tha=
+t
+> >>> has a6xx or newer?
+> >>>
+> >>
+> >> I'd need to check on targets which will be based on a6xx onwards, on
+> >> what will be the procedure planned to support PRR feature. I'll update
+> >> the information over this space.
+> >
+> > One of the open questions about the drm/msm sparse-memory patchset is
+> > whether we need to expose to userspace whether PRR is supported, or if
+> > we can just rely on sparse-binding support implying sparse residency
+> > (ie, PRR) support. All a6xx devices support per-process pgtables,
+> > which is the only requirement for basic sparseBinding support.  But
+> > PRR is required to additionally expose
+> > sparseResidencyBuffer/sparseResidencyImage2D.
+> >
+> > I think, long term, turnip probably will want to drop support for
+> > older kernels and remove support for legacy buffer mapping.  But if we
+> > have some a6xx devices without PRR, then to do that we'd need to
+> > decouple sparse binding and sparse residency.  (Vulkan allows a driver
+> > to expose the former without the latter.)
+> >
+> > BR,
+> > -R
+> >
+> >> [1]:
+> >> https://lore.kernel.org/all/5790afa3-f9c0-4720-9804-8a7ff3d91854@quici=
+nc.com/#:~:text=3D%3E%20I%20guess%20if,part%20as%20well.
+> >>
+> >> Thanks & regards,
+> >> Bibek
+> >>
+> >>> BR,
+> >>> -R
+> >>>
+> >>>> +               priv->set_prr_bit =3D qcom_adreno_smmu_set_prr_bit;
+> >>>> +               priv->set_prr_addr =3D qcom_adreno_smmu_set_prr_addr=
+;
+> >>>> +       }
+> >>>>
+> >>>>           return 0;
+> >>>>    }
+> >>>> diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu.h b/drivers/iommu/a=
+rm/arm-smmu/arm-smmu.h
+> >>>> index e2aeb511ae90..2dbf3243b5ad 100644
+> >>>> --- a/drivers/iommu/arm/arm-smmu/arm-smmu.h
+> >>>> +++ b/drivers/iommu/arm/arm-smmu/arm-smmu.h
+> >>>> @@ -154,6 +154,8 @@ enum arm_smmu_cbar_type {
+> >>>>    #define ARM_SMMU_SCTLR_M               BIT(0)
+> >>>>
+> >>>>    #define ARM_SMMU_CB_ACTLR              0x4
+> >>>> +#define ARM_SMMU_GFX_PRR_CFG_LADDR     0x6008
+> >>>> +#define ARM_SMMU_GFX_PRR_CFG_UADDR     0x600C
+> >>>>
+> >>>>    #define ARM_SMMU_CB_RESUME             0x8
+> >>>>    #define ARM_SMMU_RESUME_TERMINATE      BIT(0)
+> >>>> diff --git a/include/linux/adreno-smmu-priv.h b/include/linux/adreno=
+-smmu-priv.h
+> >>>> index c637e0997f6d..614665153b3e 100644
+> >>>> --- a/include/linux/adreno-smmu-priv.h
+> >>>> +++ b/include/linux/adreno-smmu-priv.h
+> >>>> @@ -50,6 +50,18 @@ struct adreno_smmu_fault_info {
+> >>>>     *                 the GPU driver must call resume_translation()
+> >>>>     * @resume_translation: Resume translation after a fault
+> >>>>     *
+> >>>> + * *CAUTION* : PRR callbacks (set_prr_bit/set_prr_addr) are NULL te=
+rminated for
+> >>>> + *             targets without PRR support. Exercise caution and ve=
+rify target
+> >>>> + *             capabilities before invoking these callbacks to prev=
+ent potential
+> >>>> + *             runtime errors or unexpected behavior.
+> >>>> + *
+> >>>> + * @set_prr_bit:   Extendible interface to be used by GPU to modify=
+ the
+> >>>> + *                ACTLR register bits, currently used to configure
+> >>>> + *                Partially-Resident-Region (PRR) bit for feature's
+> >>>> + *                setup and reset sequence as requested.
+> >>>> + * @set_prr_addr:  Configure the PRR_CFG_*ADDR register with the
+> >>>> + *                physical address of PRR page passed from
+> >>>> + *                GPU driver.
+> >>>>     *
+> >>>>     * The GPU driver (drm/msm) and adreno-smmu work together for con=
+trolling
+> >>>>     * the GPU's SMMU instance.  This is by necessity, as the GPU is =
+directly
+> >>>> @@ -67,6 +79,8 @@ struct adreno_smmu_priv {
+> >>>>        void (*get_fault_info)(const void *cookie, struct adreno_smmu=
+_fault_info *info);
+> >>>>        void (*set_stall)(const void *cookie, bool enabled);
+> >>>>        void (*resume_translation)(const void *cookie, bool terminate=
+);
+> >>>> +    void (*set_prr_bit)(const void *cookie, bool set);
+> >>>> +    void (*set_prr_addr)(const void *cookie, phys_addr_t page_addr)=
+;
+> >>>>    };
+> >>>>
+> >>>>    #endif /* __ADRENO_SMMU_PRIV_H */
+> >>>> --
+> >>>> 2.34.1
+> >>>>
+> >>
+>
 
