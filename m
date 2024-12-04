@@ -1,116 +1,164 @@
-Return-Path: <linux-kernel+bounces-431135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 259669E3956
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 12:56:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 319559E3933
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 12:48:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E05AF28503D
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 11:56:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6857284734
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 11:48:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F41E51B414D;
-	Wed,  4 Dec 2024 11:56:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fau.de header.i=@fau.de header.b="DZd7wSIk"
-Received: from mx-rz-2.rrze.uni-erlangen.de (mx-rz-2.rrze.uni-erlangen.de [131.188.11.21])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 657491B4136;
+	Wed,  4 Dec 2024 11:48:31 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1B1A1B3950;
-	Wed,  4 Dec 2024 11:56:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=131.188.11.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AF421B218A
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 11:48:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733313394; cv=none; b=o8AdxHppkYFgPqBocgMJb57f6ny52lAqGJ6kLVWNuaXNSovcuMFiaiJVWwMqQbn1Fpw5TDKBjeZI8Q0oatoXeUNbbtVhVWlPjPMVYAGrH8T3h4vgBA2t47rhPD41LR+l3uOeQ6lC4SBNZ6zuiwfo4utlGGM4C3P1XPCHWT+cmb4=
+	t=1733312910; cv=none; b=BdpsKS2Qr0ee8ckemAL5kEbWva8FZCBLXDZStwqCdLL/R3vicZ7JGEg9RmD0FWuMngrra49OqBKPfEdkS0Hb7Tth6+L92eK190e/CIleemRZXT1nymfWsrbEqv5FrVEqj0xPWU5U+mJ1umJfpNXsIaixp0SVahPfvaP67ctKJkQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733313394; c=relaxed/simple;
-	bh=gfrZtkK4A+DOGZgYgjVo7j3CV+EEQ4cZ7jeW9wIdt5w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JKWrHOzGdkt15T2MxVRpe68s5sPbDxzIzawMa5T1Yxg2kELGjFnnE0EhA8KC77aMiChJgUfjdTCQRSWcRIZ027o+g+K91OOlzoZDWzTXBByhPzYK2yKvNOsum819gZc3iXMOhdVZD70QXN8ROmpYKeWw/bUglTnImnYHwO/E2x4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fau.de; spf=pass smtp.mailfrom=fau.de; dkim=pass (2048-bit key) header.d=fau.de header.i=@fau.de header.b=DZd7wSIk; arc=none smtp.client-ip=131.188.11.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fau.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fau.de
-Received: from mx-rz-smart.rrze.uni-erlangen.de (mx-rz-smart.rrze.uni-erlangen.de [IPv6:2001:638:a000:1025::1e])
+	s=arc-20240116; t=1733312910; c=relaxed/simple;
+	bh=m+ghy4Awkew6QPTuHp5SbuCCh6zgaq/e1ev+fd2Nmio=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=F994IRkiGttus76WHuPftnTpyJF1QgFNTTQXUI7+eXWFxTVyV9WJiEp4kcJ7H1DPRVDXuHucN6WjxvgzvjsKjNuM/kDmEpKymZym/pn55R70rBwOn+PUOF7ZnXXF09+SjRhEhsmhM1j0RP5tueLW/YZrpyap2+ERMIm9bMQk1LA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1tInrQ-0005g7-3X; Wed, 04 Dec 2024 12:48:04 +0100
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1tInrO-001ds8-2w;
+	Wed, 04 Dec 2024 12:48:03 +0100
+Received: from pengutronix.de (pd9e59fec.dip0.t-ipconnect.de [217.229.159.236])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-rz-2.rrze.uni-erlangen.de (Postfix) with ESMTPS id 4Y3G3B0qktzPk68;
-	Wed,  4 Dec 2024 12:47:18 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fau.de; s=fau-2021;
-	t=1733312838; bh=gfrZtkK4A+DOGZgYgjVo7j3CV+EEQ4cZ7jeW9wIdt5w=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From:To:CC:
-	 Subject;
-	b=DZd7wSIkv3/2Bo17KZyUK+M4I12AusFLMbl7/xkJGRxWEaQiOZSMLxZsSq97WfoIe
-	 xCtO+mNR1btfdG0KMG7ZRmCKkqizO0LmQQVVjKyOhmVvQOC2MTQ+DJEjBgDGerCxBH
-	 WSG5ItX77bL4K0alAUoE3mRAw9zgZ8MppkthHJXt+ZnE141KxJejQpHtuYBkUJSXe4
-	 GBpmsAaPOX2vrtIpCo7BrHmasRwlLxcpmw5Fd8sob9j6YxPdVi8wrhUtgUOh8ldJIJ
-	 +Ntw7gLEmCOD15F5k0CWCA7AmBV2OjYXAZBOTk1aev7Hall1AE4Y160UydnmJAw87o
-	 ENwrdWn1nEgCQ==
-X-Virus-Scanned: amavisd-new at boeck4.rrze.uni-erlangen.de (RRZE)
-X-RRZE-Flag: Not-Spam
-X-RRZE-Submit-IP: 131.188.37.42
-Received: from [131.188.37.42] (faui7y.informatik.uni-erlangen.de [131.188.37.42])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: U2FsdGVkX1/suPM4bff5/GBbiflfuJQPB+JDQHv2SKk=)
-	by smtp-auth.uni-erlangen.de (Postfix) with ESMTPSA id 4Y3G374hqTzPkl7;
-	Wed,  4 Dec 2024 12:47:15 +0100 (CET)
-Message-ID: <ce09216d-ccb2-4cf3-8c68-4de468411db5@fau.de>
-Date: Wed, 4 Dec 2024 12:47:15 +0100
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id 4635A38565C;
+	Wed, 04 Dec 2024 11:48:03 +0000 (UTC)
+Date: Wed, 4 Dec 2024 12:48:02 +0100
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
+Cc: Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, linux-can@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, NXP S32 Linux <s32@nxp.com>, imx@lists.linux.dev, 
+	Christophe Lizzi <clizzi@redhat.com>, Alberto Ruiz <aruizrui@redhat.com>, 
+	Enric Balletbo <eballetb@redhat.com>
+Subject: Re: [PATCH v4 3/3] can: flexcan: add NXP S32G2/S32G3 SoC support
+Message-ID: <20241204-fantastic-rare-civet-8d24ec-mkl@pengutronix.de>
+References: <20241204074916.880466-1-ciprianmarian.costea@oss.nxp.com>
+ <20241204074916.880466-4-ciprianmarian.costea@oss.nxp.com>
+ <20241204-chipmunk-of-unmatched-research-e89301-mkl@pengutronix.de>
+ <1147e8d9-b6e1-4290-9cfa-888d93f185e9@oss.nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] net/sched: netem: account for backlog updates from child
- qdisc
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Jamal Hadi Salim <jhs@mojatatu.com>, Cong Wang <xiyou.wangcong@gmail.com>,
- Jiri Pirko <jiri@resnulli.us>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
- Simon Horman <horms@kernel.org>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241125231825.2586179-1-martin.ottens@fau.de>
- <20241202191312.3d3c8097@kernel.org>
-Content-Language: en-US, de-DE
-From: Martin Ottens <martin.ottens@fau.de>
-In-Reply-To: <20241202191312.3d3c8097@kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="wkzoli5onnal3nbj"
+Content-Disposition: inline
+In-Reply-To: <1147e8d9-b6e1-4290-9cfa-888d93f185e9@oss.nxp.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+
+
+--wkzoli5onnal3nbj
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v4 3/3] can: flexcan: add NXP S32G2/S32G3 SoC support
+MIME-Version: 1.0
 
-On 03.12.24 04:13, Jakub Kicinski wrote:
-> I don't understand why we need to perform packet accounting=20
-> in a separate new member (t_len). You seem to fix qlen accounting,
-> anyway, and I think sch->limit should apply to the qdisc and all
-> its children. Not just qdisc directly (since most classful qdiscs
-> don't hold packets).
+On 04.12.2024 13:38:51, Ciprian Marian Costea wrote:
+> > Unrelated to this patch, but I want to extend the "FLEXCAN hardware
+> > feature flags" table in "flexcan.h". Can you provide the needed
+> > information?
+> >=20
+>=20
+> I would say the following S32G related information could be added:
+>=20
+> > > /* FLEXCAN hardware feature flags
+> > >   *
+> > >   * Below is some version info we got:
+> > >   *    SOC   Version   IP-Version  Glitch- [TR]WRN_INT IRQ Err Memory=
+ err RTR rece-   FD Mode     MB
+> > >   *                                Filter? connected?  Passive detect=
+ion  ption in MB Supported?
+> > >   * MCF5441X FlexCAN2  ?               no       yes        no       n=
+o        no           no     16
+> > >   *    MX25  FlexCAN2  03.00.00.00     no        no        no       n=
+o        no           no     64
+> > >   *    MX28  FlexCAN2  03.00.04.00    yes       yes        no       n=
+o        no           no     64
+> > >   *    MX35  FlexCAN2  03.00.00.00     no        no        no       n=
+o        no           no     64
+> > >   *    MX53  FlexCAN2  03.00.00.00    yes        no        no       n=
+o        no           no     64
+> > >   *    MX6s  FlexCAN3  10.00.12.00    yes       yes        no       n=
+o       yes           no     64
+> > >   *    MX8QM FlexCAN3  03.00.23.00    yes       yes        no       n=
+o       yes          yes     64
+> > >   *    MX8MP FlexCAN3  03.00.17.01    yes       yes        no      ye=
+s       yes          yes     64
+> > >   *    VF610 FlexCAN3  ?               no       yes        no      ye=
+s       yes?          no     64
+> > >   *  LS1021A FlexCAN2  03.00.04.00     no       yes        no       n=
+o       yes           no     64
+> > >   *  LX2160A FlexCAN3  03.00.23.00     no       yes        no      ye=
+s       yes          yes     64
+>       *  S32G2/S32G3 FlexCAN3 03.00.39.00  no       yes        no      ye=
+s       yes          yes    128
+> > >   *
+> > >   * Some SOCs do not have the RX_WARN & TX_WARN interrupt line connec=
+ted.
+> > >   */
+>=20
+> Would you like me to send another version of this patchset with above
+> information included ?
 
-Netem is a classful qdisc but different from others because it holds=20
-packets in its internal tfifo and optional additionally in a child=20
-qdisc. However, sch->limit currently only considers the packets in=20
-the tfifo and not the packets hold by a child, but child qdiscs=20
-expect this value to refer to the number of packets that are in=20
-netem and all its children together. If the children change this=20
-value (using 'qdisc_tree_reduce_backlog'), then the number of=20
-packets in the tfifo no longer matches sch->limit.
-By adding t_len, the number of packets in the tfifo will be tracked=20
-independently from sch->limit therefore sch->limit can be changes=20
-by children without unwanted behavior. t_len is required, because=20
-currently the limit option of netem refers to the maximum number=20
-of packets in the tfifo - therefore the behavior of netem is not
-changed by this patch.
+No. Once we have Krzysztof's ACK for the DT binding changes, I'll take
+this series.
 
-> I'm not a qdisc expert, so if you feel confident about this code you
-> need to explain the thinking in the commit message..
+I think we'll make that a separate patch and maybe add more information.
 
-With the patch I try to fix the error without changing the behavior=20
-of netem (e.g., change the meaning of the limit option to apply to=20
-the tfifo length and the packets in the child qdisc). Maybe there=20
-are even better approaches - I am happy about any feedback. I will=20
-revise the explanation in the patch to make this clearer and=20
-resubmit it.
+regards,
+Marc
+
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--wkzoli5onnal3nbj
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmdQQXAACgkQKDiiPnot
+vG/cWwf7BsY4qQ2B0RNVdnEdOrirNIF8mOdtvMlQ4y5MgRz1ZrOiKflW/+nnZfYQ
+vQ3UV23BhNhyWh28rZDzmFzbEQ4DzlGFSFchrc7ZPizyJ5nQkwWql2/CdSbtRD4r
+hg+EdFSZ7OJ9V1odYciU+bIXH8iFOMizYPFBIPG9XKTv5e4AwOMbU7m2yuN58q/F
+k6oEDwpdgPG2f+PVSRsDEyBR/REhea6V62ZI9lFwrQJlPs2t65k8ePP6izP6b0Xd
+Jndx2sIxWBtjUSZyrtWdSFlsYiSYL9ruU2yFQ/YuaRoq4HBeoZaXtcA5yaDrU/lk
+y5rpEt4pMPPM0Qk/bljCwcFIjV9mCw==
+=PhJv
+-----END PGP SIGNATURE-----
+
+--wkzoli5onnal3nbj--
 
