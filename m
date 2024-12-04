@@ -1,162 +1,526 @@
-Return-Path: <linux-kernel+bounces-432363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEC769E49DE
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 00:47:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 725A69E49FC
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 00:49:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7897718832D7
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 23:45:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9ED5D16392E
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 23:48:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6F7F207E1B;
-	Wed,  4 Dec 2024 23:33:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12B58214A60;
+	Wed,  4 Dec 2024 23:35:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="WQ6my0+P"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="Dt7sQnNU"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FE331F5422
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 23:33:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0309221325A
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 23:35:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733355221; cv=none; b=ruNekEZGjoUWi7o5zuyC1+rBDilNS5AySuhAQlCUSsJDe3JgsKqf1L5xyXX4hQtBY0GOXzeiCMv8nspv8dVaUEXlz6QDZbmYOlP1BiSnaomTL97bwugZto8IOsVy7upSx2haAQQKairA7oar1AHRLcwP9G3EUEbciy1Y58y4yDc=
+	t=1733355334; cv=none; b=KlaL4Z5FNyni3DRttmk/Erw9U5jWjlxhuYStPYOOqER5qUKTjujx0NOpnLOGu7S40wajOwrmt887+nmDEpNlP0PH49/SEsyeRwfTaikrUJ4SUB+tJoiUPMiEFm64HtE0b8IrM9l0V4BRBYoNM5yfHvfHeasBtY9vprb2FhhHHIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733355221; c=relaxed/simple;
-	bh=sZe8DIbzPwMfs/xLDhyn+o7Khr47svgEAlMqJ5RfcI0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NPjGiPKvNzbhWWq96lfR7duEBUVM4l+eDbkwl4Js7/vo8zDdB5QDC8o2iAk64HkB7z+0GSHNzFIIEnwUzUbtqvMWRbAZVStD4/nxrSB66Ea59CISYkGM1BWAOeFWGMLosURR/8aPfmPtrrq7sZAUeS/SxGmDjGsF7fzNstNLd94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=WQ6my0+P; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5d0c098c870so624192a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 15:33:38 -0800 (PST)
+	s=arc-20240116; t=1733355334; c=relaxed/simple;
+	bh=0IwTr6HpQp3D9x1OzyHnTRDd7uxcu4H34c/0vonOn3E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oREk3b11Yt3P+3Aaj8+RbfyTp3Ctq8vxAW4tPikCgXRJKKvPO4OosJR3Y1wc0Bm0O/dBL4HfY5ImnR8ZYCtj2nz+y+2GEhNwfZe/9HuKECaXmBoYLEI+thjXnwQKfjeSpwpVn7v3SXQxMIjuOGt1HCgor3qMFnIpRImRYBYj17U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=Dt7sQnNU; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-7258bce5289so287738b3a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 15:35:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1733355217; x=1733960017; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=NWC7guZheExcmhaMVwsCPe87jgz0IEzjxPFX8O+PaBg=;
-        b=WQ6my0+POj/B26Id5fDFdzhQNxklocPA8f8NRNS+RMrpgcBHoYJ0a6DiaeHvPuIvvK
-         Fsi/e6obTC9jcE1SGGpK2XdBo8lB5wFGhmUn5AdkoS604AL8QuhuFfxQ4obwiTtWvmWm
-         xzcqGH123jsbZGYIfFeT3nlAYT6mFnnUQAFOg=
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1733355331; x=1733960131; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=XAKE8cpfPcbtyjTOWhYv8v+Xo8+sCTwWN32DcxUif70=;
+        b=Dt7sQnNU7Eo8zEAgHLN9VirrO8r+uuwbdOz/fcYxfeRXmTM+ZI4wFMBFqWoLt6HYIz
+         jSeLoNC5mio9VYmmihbj1fO7PCF2eVpTY7olrD4Tk+m8L74qYjnLR0EqejkyELc2wfL7
+         sg4LKSGDll89SCDvZ91aVA2RAwSqIm1IasURORrYKIqUWkPfnqK2aNtzT7Z6kz/kFBuY
+         boElb5YQ13ArmIGd6qYrq3FCpTv9f1HPVuA3Ud+cYOpjqKMYUQjlJSQh14pH3XlkPsIv
+         FVAZVkuMof2mPsEqoomWrv9uVF+0kTsk2u3/LlM7+NnbpXKUt5IHtHX5nmIRcwRHv+KY
+         P0jA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733355217; x=1733960017;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=NWC7guZheExcmhaMVwsCPe87jgz0IEzjxPFX8O+PaBg=;
-        b=qdrpEnOvcWAxZVM1GvOuqPo/Kc301XWGLut04rQAXzxnS0o4+SA6/1Io5VJGaQVqYl
-         ToDCt2ruqMRT4Vmqn7siZf57sey608e2h47tXW4NdWHsEEwsBWC2RHPbI7WZVmSbeshM
-         G/eMEJvE4Bwu5j/4aR9TxB2khRZ3M4434cogV3161sEcralskA8b0XQjXQD13xO9zFHq
-         eGN3gG9iHqrsNv7GaYwLAUjQ1VK/RkRCRqeOKLf1U53Riem6c5NIj+t3Gg8Hq7w1VSgC
-         qNI5phGoZ+9uMUwJqGTF3BafJnM8QDiRGnFYufUB0erfTDz4kpAN748ZihaQePPiWenj
-         thfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVd2bIjDUfsIoaiI2Y41wVtjIph/3VGe0ALBfeyFvnLJELRH12xRLOAkGDnI2mo0G9RAs+l/KtByGx5XpM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwIKmk1fOpJU7nGmCNAZWLdWUTtYGX+klOvKYblLXXLOqpNPE0y
-	7loFFuPxeedTBpMhgCoiqb+4jgzZDhK7LiiyAYOqicqWRxNJeqUrhPE7JMHKTewwEfpanwIIwJn
-	Ml9o=
-X-Gm-Gg: ASbGnculZFBJIIJsw8uH0sQPujhdbHJRBIWazdBuCEVN+43NG+pZOZyhtperdsAaaQA
-	ZeuWQcqMUXWOnJznV8McHJFwjuaeLTuv7sWl0MANcw6BdU0I2FbnyKNbAeVfknr5A8fuO0YXfUQ
-	mT8CIZ0YByrUUoxe5OPiOyoCSNlf5Y84/cycdwdaG2/Zj+ZfypdScTTIewCWvNh4DthkBgR1kS/
-	4w9DHNEJMWIHGhPucZP2MbGJZ5wzbrRyRowDh7ptXs6A7VBDUpxLUYxJxeuIDwDHRcaQAdarfj1
-	EEttGIjA6cJ1E4bJ2+mHxy41
-X-Google-Smtp-Source: AGHT+IHT6MJgGSWFF/G0uGyraLDHUM3mzZ/x7L2MWFEPMsGRCShM/mIcl57oVpvnXp8QuT3i8tuECg==
-X-Received: by 2002:a05:6402:2711:b0:5d0:d845:2882 with SMTP id 4fb4d7f45d1cf-5d124fe209emr1067248a12.13.1733355217342;
-        Wed, 04 Dec 2024 15:33:37 -0800 (PST)
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com. [209.85.218.52])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa62601b620sm13636966b.125.2024.12.04.15.33.35
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Dec 2024 15:33:36 -0800 (PST)
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-aa55171d73cso276313466b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 15:33:35 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWtQalCmtsy9PjKK7Ix+Q/d0nYNefOb8OhL3StfZJ24u726gpnqszKeh71CyerEvVwW7PLEMj4mE8mu5w0=@vger.kernel.org
-X-Received: by 2002:a17:906:f5a3:b0:aa6:112f:50ba with SMTP id
- a640c23a62f3a-aa62188c9e3mr133284866b.13.1733355215584; Wed, 04 Dec 2024
- 15:33:35 -0800 (PST)
+        d=1e100.net; s=20230601; t=1733355331; x=1733960131;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XAKE8cpfPcbtyjTOWhYv8v+Xo8+sCTwWN32DcxUif70=;
+        b=IR8ZT8nADHhCnGYJuU+vWsWVQWcJmSPbGOBPwOPw/l7XyyiU2gqtc0HN/fsGitzKAl
+         o0JXAS3VT2OlgkcwQlP/y2Il2mMrxaDDqngpQVH/Rc5SiQdUYVOEctnWJXTEAKMM2DRW
+         +MyNTqHb2rG/U09NhD+zHl4jh8SQFm3C8aI0+/+s4c8IbxI9ma2NxY5kYbHUSlye/cbv
+         KPni0z6kJylQEllE/lSAGAUTKORCZ4ZOnOUOwjDTwLJ/BLIFk3wt9qkUFDHP4ijIDo0d
+         M1o0H54nOTyb/XPu0JEtiNpFPSpqaoUEJPxf5+lKSEbuOB+1vaeM51YyRqvQZaz9FYVg
+         7msQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVfYaLqYNwM2GAk2aiZjcGIZTpEB98uoEKX8rd1xMdNmoZMZr4zN+yAW2oUmBtaZqE13+lQinxEjbYFCl4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxu5qZUMD+M9paPQ0w5vueP8XRYTkOeRh8CfuECy+ReX+K1F2qq
+	FXSEdZYzVg1C/en6TgwZ0bEZgwSl1Me4uGbvo7k6Rf+ETVwqxWZm1QYN5PZza54=
+X-Gm-Gg: ASbGncuD9bnQVaPl954kYP9jjuLA6z8Gs5fsHGeKxPvSxUAzNVu3D7ZbYre590zQCJ2
+	zPagdWfVuCuYkNwAhBfWeEPoOjeqvnp9i9X89iFy5M39OXTwOSzK907UGBAhikdQmaPi0clwFgr
+	ghQWYub9U3yitmQy4TaLYSPyQOQoy983z1D6rtjQcwySi3uTT+D5MHvPIfNU3jDbnRaZb+XEsOm
+	NjH5v8IXsSg+h2X9YAXXIuaF46lkNtWxzX5Bioa
+X-Google-Smtp-Source: AGHT+IFvFMBE7uj4dTqu+ZQ6iZPmIp6xa4XgW5TXCJqiysCXu+Piz+hpgoJ5JM/eHw3lSe46f4uJdQ==
+X-Received: by 2002:a17:902:da8e:b0:215:4a4e:9262 with SMTP id d9443c01a7336-215d0028f15mr85644415ad.8.1733355330888;
+        Wed, 04 Dec 2024 15:35:30 -0800 (PST)
+Received: from ghost ([50.145.13.30])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-725a29caaa7sm51104b3a.30.2024.12.04.15.35.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Dec 2024 15:35:30 -0800 (PST)
+Date: Wed, 4 Dec 2024 15:35:27 -0800
+From: Charlie Jenkins <charlie@rivosinc.com>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org, cocci@inria.fr
+Subject: Re: [PATCH v2 05/11] kbuild: change working directory to external
+ module directory with M=
+Message-ID: <Z1DnP-GJcfseyrM3@ghost>
+References: <20241110013649.34903-1-masahiroy@kernel.org>
+ <20241110013649.34903-6-masahiroy@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241204103042.1904639-1-arnd@kernel.org> <20241204103042.1904639-10-arnd@kernel.org>
- <CAHk-=wh_b8b1qZF8_obMKpF+xfYnPZ6t38F1+5pK-eXNyCdJ7g@mail.gmail.com> <d189f1a1-40d4-4f19-b96e-8b5dd4b8cefe@app.fastmail.com>
-In-Reply-To: <d189f1a1-40d4-4f19-b96e-8b5dd4b8cefe@app.fastmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 4 Dec 2024 15:33:19 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wji1sV93yKbc==Z7OSSHBiDE=LAdG_d5Y-zPBrnSs0k2A@mail.gmail.com>
-Message-ID: <CAHk-=wji1sV93yKbc==Z7OSSHBiDE=LAdG_d5Y-zPBrnSs0k2A@mail.gmail.com>
-Subject: Re: [PATCH 09/11] x86: rework CONFIG_GENERIC_CPU compiler flags
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Arnd Bergmann <arnd@kernel.org>, linux-kernel@vger.kernel.org, x86@kernel.org, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, 
-	Andy Shevchenko <andy@kernel.org>, Matthew Wilcox <willy@infradead.org>, 
-	Sean Christopherson <seanjc@google.com>, Davide Ciminaghi <ciminaghi@gnudd.com>, 
-	Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241110013649.34903-6-masahiroy@kernel.org>
 
-On Wed, 4 Dec 2024 at 11:44, Arnd Bergmann <arnd@arndb.de> wrote:
->
-> I guess the other side of it is that the current selection
-> between pentium4/core2/k8/bonnell/generic is not much better,
-> given that in practice nobody has any of the
-> pentium4/core2/k8/bonnell variants any more.
+On Sun, Nov 10, 2024 at 10:34:33AM +0900, Masahiro Yamada wrote:
+> Currently, Kbuild always operates in the output directory of the kernel,
+> even when building external modules. This increases the risk of external
+> module Makefiles attempting to write to the kernel directory.
+> 
+> This commit switches the working directory to the external module
+> directory, allowing the removal of the $(KBUILD_EXTMOD)/ prefix from
+> some build artifacts.
+> 
+> The command for building external modules maintains backward
+> compatibility, but Makefiles that rely on working in the kernel
+> directory may break. In such cases, $(objtree) and $(srctree) should
+> be used to refer to the output and source directories of the kernel.
+> 
+> The appearance of the build log will change as follows:
+> 
+> [Before]
+> 
+>   $ make -C /path/to/my/linux M=/path/to/my/externel/module
+>   make: Entering directory '/path/to/my/linux'
+>     CC [M]  /path/to/my/externel/module/helloworld.o
+>     MODPOST /path/to/my/externel/module/Module.symvers
+>     CC [M]  /path/to/my/externel/module/helloworld.mod.o
+>     CC [M]  /path/to/my/externel/module/.module-common.o
+>     LD [M]  /path/to/my/externel/module/helloworld.ko
+>   make: Leaving directory '/path/to/my/linux'
+> 
+> [After]
+> 
+>   $ make -C /path/to/my/linux M=/path/to/my/externel/module
+>   make: Entering directory '/path/to/my/linux'
+>   make[1]: Entering directory '/path/to/my/externel/module'
+>     CC [M]  helloworld.o
+>     MODPOST Module.symvers
+>     CC [M]  helloworld.mod.o
+>     CC [M]  .module-common.o
+>     LD [M]  helloworld.ko
+>   make[1]: Leaving directory '/path/to/my/externel/module'
+>   make: Leaving directory '/path/to/my/linux'
+> 
+> Printing "Entering directory" twice is cumbersome. This will be
+> addressed later.
 
-Yeah, I think that whole part of the x86 Kconfig is almost entirely historical.
+This change has caused O=<relative directory> to fail.
 
-It's historical also in the sense that a lot of those decisions matter
-a whole lot less these days.
+For example:
 
-The whole CPU tuning issue is happily mostly a thing of the past,
-since all modern CPU's do fairly well, and you don't have the crazy
-glass jaws of yesteryear with in-order cores and the insane
-instruction choice sensitivity of the P4 uarch.
+make O=build defconfig
+make -j$(nproc) V=1 O=build bindeb-pkg
 
-And on our side, we've just also basically turned to much more dynamic
-models, with either instruction rewriting or static branches or both.
+outputs:
 
-So I suspect:
+make ARCH=x86 KERNELRELEASE=6.13.0-rc1 KBUILD_BUILD_VERSION=3  run-command KBUILD_RUN_COMMAND='+$(srctree)/scripts/package/builddeb linux-libc-dev'
+dh_installchangelogs -plinux-image-6.13.0-rc1
+../scripts/package/builddeb linux-headers-6.13.0-rc1
+dh_compress -plinux-image-6.13.0-rc1
+dh_fixperms -plinux-image-6.13.0-rc1
+dh_gencontrol -plinux-image-6.13.0-rc1 -- -fdebian/image.files
+Rebuilding host programs with x86_64-linux-gnu-gcc...
+make[6]: Entering directory '/scratch/kernels/linux/build'
+/scratch/kernels/linux/Makefile:190: *** specified kernel directory "build" does not exist.  Stop.
 
-> A more radical solution would be to just drop the entire
-> menu for 64-bit kernels and always default to "-march=x86_64
-> -mtune=generic" and 64 byte L1 cachelines.
+It is stepping into this directory and then trying to find the directory
+it just stepped into so $(realpath $(KBUILD_OUTPUT)) returns an empty
+string.
 
-would actually be perfectly acceptable. The non-generic choices are
-all entirely historical and not really very interesting.
+Using an absolute directory resolves this problem, but I believe it
+shouldn't be necessary.
 
-Absolutely nobody sane cares about instruction scheduling for the old P4 cores.
+- Charlie
 
-In the bad old 32-bit days, we had real code generation issues with
-basic instruction set, ie the whole "some CPU's are P6-class, but
-don't actually support the CMOVxx instruction". Those days are gone.
-
-And yes, on x86-64, we still have the whole cmpxchg16b issue, which
-really is a slight annoyance. But the emphasis is on "slight" - we
-basically have one back for this in the SLAB code, and a couple of
-dynamic tests for one particular driver (iommu 128-bit IRTE mode).
-
-So yeah, the cmpxchg16b thing is annoying, but _realistically_ I don't
-think we care.
-
-And some day we will forget about it, notice that those (few) AMD
-early 64-bit CPU's can't possibly have been working for the last year
-or two, and we'll finally just kill that code, but in the meantime the
-cost of maintaining it is so slight that it's not worth actively going
-out to kill it.
-
-I do think that the *one* option we might have is "optimize for the
-current CPU" for people who just want to build their own kernel for
-their own machine. That's a nice easy choice to give people, and
-'-march=native' is kind of simple to use.
-
-Will that work when you cross-compile? No. Do we care? Also no. It's
-basically a simple "you want to optimize for your own local machine"
-switch.
-
-Maybe that could replace some of the 32-bit choices too?
-
-             Linus
+> 
+> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+> ---
+> 
+> Changes in v2:
+>  - Introduce a new 'srcroot' variable and clean-up code
+>  - Reword Documentation/dev-tools/coccinelle.rst
+> 
+>  Documentation/dev-tools/coccinelle.rst | 20 ++-----
+>  Documentation/kbuild/makefiles.rst     | 14 +++++
+>  Makefile                               | 80 +++++++++++++++-----------
+>  rust/Makefile                          |  4 +-
+>  scripts/Makefile.build                 |  2 +-
+>  scripts/Makefile.clean                 |  2 +-
+>  scripts/Makefile.compiler              |  2 +-
+>  scripts/Makefile.modpost               |  6 +-
+>  scripts/coccicheck                     |  6 +-
+>  scripts/nsdeps                         |  8 +--
+>  scripts/package/install-extmod-build   |  7 +++
+>  11 files changed, 85 insertions(+), 66 deletions(-)
+> 
+> diff --git a/Documentation/dev-tools/coccinelle.rst b/Documentation/dev-tools/coccinelle.rst
+> index 535ce126fb4f..6e70a1e9a3c0 100644
+> --- a/Documentation/dev-tools/coccinelle.rst
+> +++ b/Documentation/dev-tools/coccinelle.rst
+> @@ -250,25 +250,17 @@ variables for .cocciconfig is as follows:
+>  - Your directory from which spatch is called is processed next
+>  - The directory provided with the ``--dir`` option is processed last, if used
+>  
+> -Since coccicheck runs through make, it naturally runs from the kernel
+> -proper dir; as such the second rule above would be implied for picking up a
+> -.cocciconfig when using ``make coccicheck``.
+> -
+>  ``make coccicheck`` also supports using M= targets. If you do not supply
+>  any M= target, it is assumed you want to target the entire kernel.
+>  The kernel coccicheck script has::
+>  
+> -    if [ "$KBUILD_EXTMOD" = "" ] ; then
+> -        OPTIONS="--dir $srctree $COCCIINCLUDE"
+> -    else
+> -        OPTIONS="--dir $KBUILD_EXTMOD $COCCIINCLUDE"
+> -    fi
+> +    OPTIONS="--dir $srcroot $COCCIINCLUDE"
+>  
+> -KBUILD_EXTMOD is set when an explicit target with M= is used. For both cases
+> -the spatch ``--dir`` argument is used, as such third rule applies when whether
+> -M= is used or not, and when M= is used the target directory can have its own
+> -.cocciconfig file. When M= is not passed as an argument to coccicheck the
+> -target directory is the same as the directory from where spatch was called.
+> +Here, $srcroot refers to the source directory of the target: it points to the
+> +external module's source directory when M= used, and otherwise, to the kernel
+> +source directory. The third rule ensures the spatch reads the .cocciconfig from
+> +the target directory, allowing external modules to have their own .cocciconfig
+> +file.
+>  
+>  If not using the kernel's coccicheck target, keep the above precedence
+>  order logic of .cocciconfig reading. If using the kernel's coccicheck target,
+> diff --git a/Documentation/kbuild/makefiles.rst b/Documentation/kbuild/makefiles.rst
+> index 7964e0c245ae..d36519f194dc 100644
+> --- a/Documentation/kbuild/makefiles.rst
+> +++ b/Documentation/kbuild/makefiles.rst
+> @@ -449,6 +449,20 @@ $(obj)
+>    to prerequisites are referenced with $(src) (because they are not
+>    generated files).
+>  
+> +$(srcroot)
+> +  $(srcroot) refers to the root of the source you are building, which can be
+> +  either the kernel source or the external modules source, depending on whether
+> +  KBUILD_EXTMOD is set. This can be either a relative or an absolute path, but
+> +  if KBUILD_ABS_SRCTREE=1 is set, it is always an absolute path.
+> +
+> +$(srctree)
+> +  $(srctree) refers to the root of the kernel source tree. When building the
+> +  kernel, this is the same as $(srcroot).
+> +
+> +$(objtree)
+> +  $(objtree) refers to the root of the kernel object tree. It is ``.`` when
+> +  building the kernel, but it is different when building external modules.
+> +
+>  $(kecho)
+>    echoing information to user in a rule is often a good practice
+>    but when execution ``make -s`` one does not expect to see any output
+> diff --git a/Makefile b/Makefile
+> index cf1d55560ae2..e5f7ac7647a7 100644
+> --- a/Makefile
+> +++ b/Makefile
+> @@ -180,7 +180,24 @@ ifeq ("$(origin O)", "command line")
+>    KBUILD_OUTPUT := $(O)
+>  endif
+>  
+> -output := $(KBUILD_OUTPUT)
+> +ifdef KBUILD_EXTMOD
+> +    ifdef KBUILD_OUTPUT
+> +        objtree := $(realpath $(KBUILD_OUTPUT))
+> +        $(if $(objtree),,$(error specified kernel directory "$(KBUILD_OUTPUT)" does not exist))
+> +    else
+> +        objtree := $(CURDIR)
+> +    endif
+> +    output := $(KBUILD_EXTMOD)
+> +    # KBUILD_EXTMOD might be a relative path. Remember its absolute path before
+> +    # Make changes the working directory.
+> +    srcroot := $(realpath $(KBUILD_EXTMOD))
+> +    $(if $(srcroot),,$(error specified external module directory "$(KBUILD_EXTMOD)" does not exist))
+> +else
+> +    objtree := .
+> +    output := $(KBUILD_OUTPUT)
+> +endif
+> +
+> +export objtree srcroot
+>  
+>  # Do we want to change the working directory?
+>  ifneq ($(output),)
+> @@ -230,35 +247,33 @@ else # need-sub-make
+>  
+>  # We process the rest of the Makefile if this is the final invocation of make
+>  
+> -ifeq ($(abs_srctree),$(CURDIR))
+> -        # building in the source tree
+> -        srctree := .
+> -	building_out_of_srctree :=
+> +ifndef KBUILD_EXTMOD
+> +srcroot := $(abs_srctree)
+> +endif
+> +
+> +ifeq ($(srcroot),$(CURDIR))
+> +building_out_of_srctree :=
+>  else
+> -        ifeq ($(abs_srctree)/,$(dir $(CURDIR)))
+> -                # building in a subdirectory of the source tree
+> -                srctree := ..
+> -        else
+> -                srctree := $(abs_srctree)
+> -        endif
+> -	building_out_of_srctree := 1
+> +export building_out_of_srctree :=1
+>  endif
+>  
+> -ifneq ($(KBUILD_ABS_SRCTREE),)
+> -srctree := $(abs_srctree)
+> +ifdef KBUILD_ABS_SRCTREE
+> +    # Do not nothing. Use the absolute path.
+> +else ifeq ($(srcroot),$(CURDIR))
+> +    # Building in the source.
+> +    srcroot := .
+> +else ifeq ($(srcroot)/,$(dir $(CURDIR)))
+> +    # Building in a subdirectory of the source.
+> +    srcroot := ..
+>  endif
+>  
+> -objtree		:= .
+> +export srctree := $(if $(KBUILD_EXTMOD),$(abs_srctree),$(srcroot))
+>  
+> -VPATH		:=
+> -
+> -ifeq ($(KBUILD_EXTMOD),)
+>  ifdef building_out_of_srctree
+> -VPATH		:= $(srctree)
+> +export VPATH := $(srcroot)
+> +else
+> +VPATH :=
+>  endif
+> -endif
+> -
+> -export building_out_of_srctree srctree objtree VPATH
+>  
+>  # To make sure we do not include .config for any of the *config targets
+>  # catch them early, and hand them over to scripts/kconfig/Makefile
+> @@ -711,7 +726,7 @@ endif
+>  # in addition to whatever we do anyway.
+>  # Just "make" or "make all" shall build modules as well
+>  
+> -ifneq ($(filter all modules nsdeps %compile_commands.json clang-%,$(MAKECMDGOALS)),)
+> +ifneq ($(filter all modules nsdeps compile_commands.json clang-%,$(MAKECMDGOALS)),)
+>    KBUILD_MODULES := 1
+>  endif
+>  
+> @@ -1107,7 +1122,7 @@ export MODLIB
+>  
+>  PHONY += prepare0
+>  
+> -export extmod_prefix = $(if $(KBUILD_EXTMOD),$(KBUILD_EXTMOD)/)
+> +export extmod_prefix =
+>  export MODORDER := $(extmod_prefix)modules.order
+>  export MODULES_NSDEPS := $(extmod_prefix)modules.nsdeps
+>  
+> @@ -1799,14 +1814,10 @@ filechk_kernel.release = echo $(KERNELRELEASE)
+>  KBUILD_BUILTIN :=
+>  KBUILD_MODULES := 1
+>  
+> -build-dir := $(KBUILD_EXTMOD)
+> +build-dir := .
+>  
+> -compile_commands.json: $(extmod_prefix)compile_commands.json
+> -PHONY += compile_commands.json
+> -
+> -clean-dirs := $(KBUILD_EXTMOD)
+> -clean: private rm-files := $(KBUILD_EXTMOD)/Module.symvers $(KBUILD_EXTMOD)/modules.nsdeps \
+> -	$(KBUILD_EXTMOD)/compile_commands.json
+> +clean-dirs := .
+> +clean: private rm-files := Module.symvers modules.nsdeps compile_commands.json
+>  
+>  PHONY += prepare
+>  # now expand this into a simple variable to reduce the cost of shell evaluations
+> @@ -1948,7 +1959,7 @@ $(clean-dirs):
+>  
+>  clean: $(clean-dirs)
+>  	$(call cmd,rmfiles)
+> -	@find $(or $(KBUILD_EXTMOD), .) $(RCS_FIND_IGNORE) \
+> +	@find . $(RCS_FIND_IGNORE) \
+>  		\( -name '*.[aios]' -o -name '*.rsi' -o -name '*.ko' -o -name '.*.cmd' \
+>  		-o -name '*.ko.*' \
+>  		-o -name '*.dtb' -o -name '*.dtbo' \
+> @@ -1981,7 +1992,12 @@ tags TAGS cscope gtags: FORCE
+>  PHONY += rust-analyzer
+>  rust-analyzer:
+>  	+$(Q)$(CONFIG_SHELL) $(srctree)/scripts/rust_is_available.sh
+> +ifdef KBUILD_EXTMOD
+> +# FIXME: external modules must not descend into a sub-directory of the kernel
+> +	$(Q)$(MAKE) $(build)=$(objtree)/rust src=$(srctree)/rust $@
+> +else
+>  	$(Q)$(MAKE) $(build)=rust $@
+> +endif
+>  
+>  # Script to generate missing namespace dependencies
+>  # ---------------------------------------------------------------------------
+> diff --git a/rust/Makefile b/rust/Makefile
+> index b5e0a73b78f3..742740816c4b 100644
+> --- a/rust/Makefile
+> +++ b/rust/Makefile
+> @@ -362,8 +362,8 @@ rust-analyzer:
+>  	$(Q)$(srctree)/scripts/generate_rust_analyzer.py \
+>  		--cfgs='core=$(core-cfgs)' --cfgs='alloc=$(alloc-cfgs)' \
+>  		$(realpath $(srctree)) $(realpath $(objtree)) \
+> -		$(rustc_sysroot) $(RUST_LIB_SRC) $(KBUILD_EXTMOD) > \
+> -		$(if $(KBUILD_EXTMOD),$(extmod_prefix),$(objtree))/rust-project.json
+> +		$(rustc_sysroot) $(RUST_LIB_SRC) $(if $(KBUILD_EXTMOD),$(srcroot)) \
+> +		> rust-project.json
+>  
+>  redirect-intrinsics = \
+>  	__addsf3 __eqsf2 __extendsfdf2 __gesf2 __lesf2 __ltsf2 __mulsf3 __nesf2 __truncdfsf2 __unordsf2 \
+> diff --git a/scripts/Makefile.build b/scripts/Makefile.build
+> index 64cd046f8fd8..1aa928a6fb4f 100644
+> --- a/scripts/Makefile.build
+> +++ b/scripts/Makefile.build
+> @@ -3,7 +3,7 @@
+>  # Building
+>  # ==========================================================================
+>  
+> -src := $(if $(VPATH),$(VPATH)/)$(obj)
+> +src := $(srcroot)/$(obj)
+>  
+>  PHONY := $(obj)/
+>  $(obj)/:
+> diff --git a/scripts/Makefile.clean b/scripts/Makefile.clean
+> index 4fcfab40ed61..6ead00ec7313 100644
+> --- a/scripts/Makefile.clean
+> +++ b/scripts/Makefile.clean
+> @@ -3,7 +3,7 @@
+>  # Cleaning up
+>  # ==========================================================================
+>  
+> -src := $(if $(VPATH),$(VPATH)/)$(obj)
+> +src := $(srcroot)/$(obj)
+>  
+>  PHONY := __clean
+>  __clean:
+> diff --git a/scripts/Makefile.compiler b/scripts/Makefile.compiler
+> index e0842496d26e..8c1029687e2e 100644
+> --- a/scripts/Makefile.compiler
+> +++ b/scripts/Makefile.compiler
+> @@ -13,7 +13,7 @@ cc-cross-prefix = $(firstword $(foreach c, $(1), \
+>  			$(if $(shell command -v -- $(c)gcc 2>/dev/null), $(c))))
+>  
+>  # output directory for tests below
+> -TMPOUT = $(if $(KBUILD_EXTMOD),$(firstword $(KBUILD_EXTMOD))/).tmp_$$$$
+> +TMPOUT = .tmp_$$$$
+>  
+>  # try-run
+>  # Usage: option = $(call try-run, $(CC)...-o "$$TMP",option-ok,otherwise)
+> diff --git a/scripts/Makefile.modpost b/scripts/Makefile.modpost
+> index 12e7c15d099c..78d2ca4f25f5 100644
+> --- a/scripts/Makefile.modpost
+> +++ b/scripts/Makefile.modpost
+> @@ -111,13 +111,13 @@ endif
+>  else
+>  
+>  # set src + obj - they may be used in the modules's Makefile
+> -obj := $(KBUILD_EXTMOD)
+> -src := $(if $(VPATH),$(VPATH)/)$(obj)
+> +obj := .
+> +src := $(srcroot)
+>  
+>  # Include the module's Makefile to find KBUILD_EXTRA_SYMBOLS
+>  include $(kbuild-file)
+>  
+> -output-symdump := $(KBUILD_EXTMOD)/Module.symvers
+> +output-symdump := Module.symvers
+>  
+>  ifeq ($(wildcard $(objtree)/Module.symvers),)
+>  missing-input := $(objtree)/Module.symvers
+> diff --git a/scripts/coccicheck b/scripts/coccicheck
+> index e52cb43fede6..0e6bc5a10320 100755
+> --- a/scripts/coccicheck
+> +++ b/scripts/coccicheck
+> @@ -80,11 +80,7 @@ command results in a shift count error.'
+>      NPROC=1
+>  else
+>      ONLINE=0
+> -    if [ "$KBUILD_EXTMOD" = "" ] ; then
+> -        OPTIONS="--dir $srctree $COCCIINCLUDE"
+> -    else
+> -        OPTIONS="--dir $KBUILD_EXTMOD $COCCIINCLUDE"
+> -    fi
+> +    OPTIONS="--dir $srcroot $COCCIINCLUDE"
+>  
+>      # Use only one thread per core by default if hyperthreading is enabled
+>      THREADS_PER_CORE=$(LANG=C lscpu | grep "Thread(s) per core: " | tr -cd "[:digit:]")
+> diff --git a/scripts/nsdeps b/scripts/nsdeps
+> index f1718cc0d700..8ca12e2b5c03 100644
+> --- a/scripts/nsdeps
+> +++ b/scripts/nsdeps
+> @@ -19,12 +19,6 @@ if ! { echo "$SPATCH_REQ_VERSION"; echo "$SPATCH_VERSION"; } | sort -CV ; then
+>  	exit 1
+>  fi
+>  
+> -if [ "$KBUILD_EXTMOD" ]; then
+> -	src_prefix=
+> -else
+> -	src_prefix=$srctree/
+> -fi
+> -
+>  generate_deps_for_ns() {
+>  	$SPATCH --very-quiet --in-place --sp-file \
+>  		$srctree/scripts/coccinelle/misc/add_namespace.cocci -D nsdeps -D ns=$1 $2
+> @@ -34,7 +28,7 @@ generate_deps() {
+>  	local mod=${1%.ko:}
+>  	shift
+>  	local namespaces="$*"
+> -	local mod_source_files=$(sed "s|^\(.*\)\.o$|${src_prefix}\1.c|" $mod.mod)
+> +	local mod_source_files=$(sed "s|^\(.*\)\.o$|${srcroot}/\1.c|" $mod.mod)
+>  
+>  	for ns in $namespaces; do
+>  		echo "Adding namespace $ns to module $mod.ko."
+> diff --git a/scripts/package/install-extmod-build b/scripts/package/install-extmod-build
+> index 7ec1f061a519..64d958ee45f3 100755
+> --- a/scripts/package/install-extmod-build
+> +++ b/scripts/package/install-extmod-build
+> @@ -51,6 +51,13 @@ mkdir -p "${destdir}"
+>  if [ "${CC}" != "${HOSTCC}" ]; then
+>  	echo "Rebuilding host programs with ${CC}..."
+>  
+> +	# This leverages external module building.
+> +	# - Clear sub_make_done to allow the top-level Makefile to redo sub-make.
+> +	# - Filter out --no-print-directory to print "Entering directory" logs
+> +	#   when Make changes the working directory.
+> +	unset sub_make_done
+> +	MAKEFLAGS=$(echo "${MAKEFLAGS}" | sed s/--no-print-directory//)
+> +
+>  	cat <<-'EOF' >  "${destdir}/Kbuild"
+>  	subdir-y := scripts
+>  	EOF
+> -- 
+> 2.43.0
 
