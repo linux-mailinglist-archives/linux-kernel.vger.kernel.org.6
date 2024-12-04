@@ -1,165 +1,120 @@
-Return-Path: <linux-kernel+bounces-431294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89D309E3C4B
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:11:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 39BC79E3BB4
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 14:53:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A9A5EB37237
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 13:47:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1010BB33272
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 13:47:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 311801F471E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 691871F472F;
 	Wed,  4 Dec 2024 13:46:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BbhAeE/0"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lWd5vNvl"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 073A01EB9E7
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 13:46:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 298061F130D;
+	Wed,  4 Dec 2024 13:46:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733319989; cv=none; b=Kmf4VUjUoGHPIXQBNKfwvIWbshel54an1cuwW5zIQKsaeocgL5TspB4A+EAlkTfVYfGck+oBUXKxDmFUrf65ZTqnqd8K3+z+plnowA/FqAastELsQAm6zJa5wArtl0I5iEKlT3vSuEXb1y/J1DD9sl9nI7ThZ8nQlhuY/QNQfBk=
+	t=1733319989; cv=none; b=CpppEwv38gUi9fVrLurlPrSfVvB/HBq8UuD365UBcMw6/CtlBPZCXvFlAesXC8ZIpwRkBuQKCNBdEJNPb9eDxaNRD1djZ152FRMLiOQOIz/fEjdDycZ+fPstkZBe2l1pcMWZwi7p05hHsi9YgGUnRpdalM3NbC/NwZUoGsMO1fI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1733319989; c=relaxed/simple;
-	bh=Cbw6URr7BpchOgGvOsnvOBm3jM/gD4ppQ0a/dAj4D/k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=a2hYtmLobj/L/7Lun9gKFskemEBSKwKI2hMj2dC0MO2mnr56nRuQtbHyD8oQ0aZ7auWQRuJsGLCjcckgXCYZfbvTey/2rNr/FoDbwp7C9pIO7tHkn4nuSuIIGrof3LEgJ9tCP55z8GroNDDQsN3fWbaUR6X2vwUQ+Tgov4yXcsM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BbhAeE/0; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1733319986;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WBQV+/reYDzQHVW2bMORUzTYkYet838A4ueVXpJ2mu0=;
-	b=BbhAeE/0ashp5iFMkmIabxGvjloM2WRStsCP241H7p4yEw8ZCjK9HwXVZbpL/tG4ygCmGd
-	B0DEB/ImOX2lkYkfSZnjVBC141OVzqG554V5E88Pg1bhFNPoICO/4stmHRXVgRc5ak9F5A
-	+P0jqxiTPVkJgpFmXeFVNiegm1p0vx4=
-Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
- [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-248-Bhxs1FNPPD-Fbdp21qlsFA-1; Wed, 04 Dec 2024 08:46:25 -0500
-X-MC-Unique: Bhxs1FNPPD-Fbdp21qlsFA-1
-X-Mimecast-MFC-AGG-ID: Bhxs1FNPPD-Fbdp21qlsFA
-Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-aa52bfbdfebso474564666b.3
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 05:46:25 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733319984; x=1733924784;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WBQV+/reYDzQHVW2bMORUzTYkYet838A4ueVXpJ2mu0=;
-        b=Z7IJaDyKzrl1lTOjyjfWRmctvy/PlbsR5Wq9t0uRCt7hbEgOPVQDI9wNr8d+QaJ8sr
-         P4TEvJwpZX53ejmssilYIdJA0xLaGuaBDkfJOygw4ZwgylzxMJKysGoHylQ7EY6R7l7t
-         CeNISyVCBQAwXmWrWt4duIBxSnTUOZZZqbLpwTY6udKFTpe3zFaemS2QrSYnvpVz8s5i
-         D5FqxvWLeXwKx9J1NLQ7BcwFkKvnLPH6D9sTQ9rTEquiiFjluf+i+/zByYcHMPUtwLyR
-         ei6bFHiSU1ilv0vdbsw74YtIyMpQxqdnL1n7s1tQL+o+soxscmjcEkQyXV479PUAT8a6
-         SQOw==
-X-Forwarded-Encrypted: i=1; AJvYcCXupyGPAeyq6GOFZ3BVz4yBh9pjrS2BSdSFL7QGjq/dAoVZaYbV2M9QOPXbgvfxsLu1QfoClNP/5WI8w2c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwgUFGTtgqq5xXi/K+jmHkeAIIqDGgvZLFDZtLM45zIAh6B8qYe
-	4hKIBh+ffcGzkvtp6qgrU/L9exTh8grxqJhcC/uKEn32huTBE/e/Uyu6yqsG4xHNAUWwtJVevAH
-	kgU7fDrDQ6Uy3SX4AniN2JXzn1NXkheGdzZkpvEv2kVeY6zF3nocjupYwEKQqSA==
-X-Gm-Gg: ASbGncvMKBzkffyajahiEZUJNJ77+ATCibnnUm2sAlQmpPnnD2hpbmDc+cpSr8C8ZyJ
-	iw7cvokDXcTKVryhjBlAVxhWUazB4IIJ20CJrNm/j1FnX5ytUDXsv0DtIBS4qPvb2FJSl6IviqV
-	2duM5/xP/iFzzu2/z/Z7MeywMsGQ9EY4F66z2gLctqRGmmUI822YWu2cnLb9xr+YfNf8gjDiExZ
-	Zi+dOSs3Q6BXTiD36MlvvwM3AXYTEbt2MwsZlaVx9SM/Lxw0OYMKdhPsos6bx9A6//J3yTtdksH
-	9mKC+r/eh7QzW2nsXrXUtV1VVa5ou8Llrj9IJl5irvjsbNPrfGmHPHb782ct01roPZteoidELLX
-	WqFdWS9vgeVIf/+DhrW3sVb/9
-X-Received: by 2002:a17:907:7842:b0:aa5:14b3:a040 with SMTP id a640c23a62f3a-aa5f7cc2e89mr671377766b.5.1733319984313;
-        Wed, 04 Dec 2024 05:46:24 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGJSFHFdnQSI6RXejuptvZDyxZwz+jBIMo7QA5Sw245xohyQAA0QRuXSgUOrjTafewvvQXSsA==
-X-Received: by 2002:a17:907:7842:b0:aa5:14b3:a040 with SMTP id a640c23a62f3a-aa5f7cc2e89mr671262266b.5.1733319973080;
-        Wed, 04 Dec 2024 05:46:13 -0800 (PST)
-Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa5997d56eesm733692966b.81.2024.12.04.05.46.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Dec 2024 05:46:12 -0800 (PST)
-Message-ID: <76c867e3-f13f-4afd-93be-639616dc9458@redhat.com>
-Date: Wed, 4 Dec 2024 14:46:12 +0100
+	bh=tiJL532+Qt/g2RiE/c7vlfmJYqL2oa53TymtfgPrzYk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=QHgVPwiPDnxlWoPHuBBeP9oW1wQWv54F7rHxWSTGoA1eaMGC3f4RP3059puPcI/AtJOthI+wy9X3nyKMZQTnD5nyDnyiSqHYDqyUdODLqBYZB6FEP2WFI/WUuzFD4Sb15/Gm3g3mNWGOGBckZZLpR1ie7bIMiynXvWiF+ixTkVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lWd5vNvl; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733319988; x=1764855988;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=tiJL532+Qt/g2RiE/c7vlfmJYqL2oa53TymtfgPrzYk=;
+  b=lWd5vNvlThxGEI47aRznLknnqixmCaUskj43KgXyLxXtvVgIr7357+NX
+   2tkuPTOVAurPQFMLdqtGiQz48tMQuY3Ykg36+0wAB07lIWCISxsIqrs5q
+   1iaPR7yifNAeBI3+gJhrqTPem0Z8+ZdxzRlgm9skzkPYVFIq+Nnr1PNjS
+   cUuj9CgimcP5ga+e/iACWaaIlRBl2i1c6gZsRtiOq0fwGcFcmm9HmBiwn
+   9WL+1iAZVdJ/UR+z77teotmsQDKU63v6CIwHZ3iZS2f/GMhWM/xjbf25W
+   /XWCyNpvsyR4VpkEh/BFiP6ef2PPGq7XtGr3XIR7YqfucP61Q3Nj8tQ4E
+   Q==;
+X-CSE-ConnectionGUID: iH+S//AiRZqbNJ4Ay6p41A==
+X-CSE-MsgGUID: StNru5JtS5eB2V4Q7kUXNQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11276"; a="44250476"
+X-IronPort-AV: E=Sophos;i="6.12,207,1728975600"; 
+   d="scan'208";a="44250476"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Dec 2024 05:46:28 -0800
+X-CSE-ConnectionGUID: DtaBQed/QNmFaboYeijYHg==
+X-CSE-MsgGUID: bCJzwpIeQ1OfZnpYyoTcDQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,207,1728975600"; 
+   d="scan'208";a="98199050"
+Received: from mwiniars-desk2.ger.corp.intel.com (HELO localhost) ([10.245.246.205])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Dec 2024 05:46:25 -0800
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Mark Brown <broonie@kernel.org>, Lucas De Marchi
+ <lucas.demarchi@intel.com>, Thomas =?utf-8?Q?Hellstr=C3=B6m?=
+ <thomas.hellstrom@linux.intel.com>, DRM XE List
+ <intel-xe@lists.freedesktop.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>, Dave Airlie
+ <airlied@redhat.com>, Simona Vetter <simona.vetter@ffwll.ch>
+Subject: Re: linux-next: build failure after merge of the drm-xe tree
+In-Reply-To: <Z1BawrcFMsj0ByLk@sirena.org.uk>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <Z1BawrcFMsj0ByLk@sirena.org.uk>
+Date: Wed, 04 Dec 2024 15:46:21 +0200
+Message-ID: <87a5db36j6.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/4] media: uvcvideo: Do not set an async control owned
- by other fh
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Ricardo Ribalda <ribalda@chromium.org>
-Cc: Hans Verkuil <hverkuil-cisco@xs4all.nl>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Guennadi Liakhovetski <guennadi.liakhovetski@intel.com>,
- Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
- linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20241129220339.GD2652@pendragon.ideasonboard.com>
- <CANiDSCsXi-WQLpbeXMat5FoM8AnYoJ0nVeCkTDMvEus8pXCC3w@mail.gmail.com>
- <20241202001846.GD6105@pendragon.ideasonboard.com>
- <fb321ade-40e7-4b1e-8fcd-c6475767239d@xs4all.nl>
- <20241202081157.GB16635@pendragon.ideasonboard.com>
- <445e551c-c527-443c-8913-6999455bd366@xs4all.nl>
- <633ca07b-6795-429f-874d-474a68396f45@redhat.com>
- <CANiDSCvmRrf1vT3g9Mzkc790RUo3GuQaFzu5+_G66b3_62RuXw@mail.gmail.com>
- <839446b3-1d16-4af8-997a-f2a37eb4711e@redhat.com>
- <CANiDSCszkv=YQPJOSE8EarXWPhZxkk-KR9enLScUOV_P0nzTCg@mail.gmail.com>
- <20241203193251.GA4242@pendragon.ideasonboard.com>
-Content-Language: en-US, nl
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <20241203193251.GA4242@pendragon.ideasonboard.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-Hi,
+On Wed, 04 Dec 2024, Mark Brown <broonie@kernel.org> wrote:
+> Hi all,
+>
+> After merging the drm-xe tree, today's linux-next build (x86
+> allmodconfig) failed like this:
+>
+> In file included from /tmp/next/build/include/linux/module.h:22,
+>                  from /tmp/next/build/include/linux/device/driver.h:21,
+>                  from /tmp/next/build/include/linux/device.h:32,
+>                  from /tmp/next/build/include/linux/auxiliary_bus.h:11,
+>                  from /tmp/next/build/include/linux/intel_vsec.h:5,
+>                  from /tmp/next/build/drivers/gpu/drm/xe/xe_vsec.c:7:
+> /tmp/next/build/drivers/gpu/drm/xe/xe_vsec.c:233:18: error: expected ',' or ';' before 'INTEL_VSEC'
+>   233 | MODULE_IMPORT_NS(INTEL_VSEC);
+>       |                  ^~~~~~~~~~
+> /tmp/next/build/include/linux/moduleparam.h:26:61: note: in definition of macro '__MODULE_INFO'
+>    26 |                 = __MODULE_INFO_PREFIX __stringify(tag) "=" info
+>       |                                                             ^~~~
+> /tmp/next/build/include/linux/module.h:299:33: note: in expansion of macro 'MODULE_INFO'
+>   299 | #define MODULE_IMPORT_NS(ns)    MODULE_INFO(import_ns, ns)
+>       |                                 ^~~~~~~~~~~
+> /tmp/next/build/drivers/gpu/drm/xe/xe_vsec.c:233:1: note: in expansion of macro 'MODULE_IMPORT_NS'
+>   233 | MODULE_IMPORT_NS(INTEL_VSEC);
+>       | ^~~~~~~~~~~~~~~~
+>
+> You need to merge up cdd30ebb1b9f36159d66f088b61aee264e649d7a ("module:
+> Convert symbol namespace to string literal") from mainline and fix up
+> for the changes in MODULE_IMPORT_NS.  I'll apply a fixup for now.
 
-On 3-Dec-24 8:32 PM, Laurent Pinchart wrote:
-> On Mon, Dec 02, 2024 at 02:29:24PM +0100, Ricardo Ribalda wrote:
->> On Mon, 2 Dec 2024 at 13:19, Hans de Goede wrote:
->>> On 2-Dec-24 11:50 AM, Ricardo Ribalda wrote:
->>>> On Mon, 2 Dec 2024 at 11:27, Hans de Goede wrote:
+Commit cdd30ebb1b9f ("module: Convert symbol namespace to string
+literal") isn't even in a tagged release yet. We'll get it when -rc1 is
+out *and* backmerged to drm-next.
 
-<snip>
+BR,
+Jani.
 
->>>>> Note that if we simply return -EBUSY on set until acked by a status
->>>>> event we also avoid the issue of ctrl->handle getting overwritten,
->>>>> but that relies on reliable status events; or requires timeout handling.
->>>>>
->>>>> 3. I agree with Ricardo that a timeout based approach for cameras which
->>>>> to not properly send status events for async ctrls is going to be
->>>>> problematic. Things like pan/tilt homing can take multiple seconds which
->>>>> is really long to use as a timeout if we plan to return -EBUSY until
->>>>> the timeout triggers. I think it would be better to just rely on
->>>>> the hardware sending a stall, or it accepting and correctly handling
->>>>> a new CUR_SET command while the previous one is still being processed.
->>>>>
->>>>> I guess we can track if the hw does send status events when async ctrls
->>>>> complete and then do the -EBUSY thing without going out to the hw after
->>>>> the first time an async ctrl has been acked by a status event.
-> 
-> That sounds quite complex, and wouldn't guard against the status event
-> being occasionally lost. I'm more concerned about devices that only
-> occasionally mess up sending the status event, not devices that never
-> send it.
-
-I did wonder if we would see devices where the status event is
-occasionally lost.
-
-I think that patches 1-4 of "[PATCH v6 0/5] media: uvcvideo: Two +1 fixes for
-async controls" solves the issue at hand nicely, so lets go with that.
-
-And I hereby withdraw my proposal for a per ctrl flag to track if
-we get status events for that control, because as you say that will
-not work in the case where the status events are missing some of
-the time (rather then the status events simply being never send).
-
-Regards,
-
-Hans
-
-
+-- 
+Jani Nikula, Intel
 
