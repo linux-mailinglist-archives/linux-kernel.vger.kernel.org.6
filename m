@@ -1,121 +1,127 @@
-Return-Path: <linux-kernel+bounces-432251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75A069E484E
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 00:00:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2176B9E4863
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2024 00:01:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1618E18803E8
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 23:00:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 74F23168F1C
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 23:01:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17EB6190471;
-	Wed,  4 Dec 2024 23:00:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E38A91F543E;
+	Wed,  4 Dec 2024 23:01:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="El6aj0a4"
-Received: from mail-il1-f179.google.com (mail-il1-f179.google.com [209.85.166.179])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fY5Oqv6i"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE7A62B9B7
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 23:00:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C39F23918B
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 23:01:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733353248; cv=none; b=fBMG7/3e2clel8EPL+mMQIt4BYBZtRLVJ6lkNqtSvG6b3oshDqlAQx1JliMFHKXVshnQSkbRC6+J4FU+FspD2nhtC2uBuqdPTnrLuAbdzfedY5uu1t8QS6xadf2qYQijELZmcNrkApSFWDBvKD4pQUlz/RgEBynV4o+uGrDtVSI=
+	t=1733353301; cv=none; b=r5bjMqNsStN5NoAlkbKorCvhrkDpBdhyjWac3Z836gzSsJR4RKM/wXDksfAKVnQ0KM/ICg3FyjVpEjd0tGEyh5OZt6RQyDWetB4xqxzhv/3ky0+A70Dx6yhCmzvNjglwdhLGJ8ahIcYrURfnbL8L7jlPLnnhCO69SgkfWKhL+pA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733353248; c=relaxed/simple;
-	bh=utYlGDElJuh7cwgqAPQiMQ/JryL/ykc++w0qj22g69Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dptoLV0ExOR+OPFUOJjnjMuejlzXL7R1ZWSquj6FjvTgjsXj3XXP1nbn/nkK6unbvkQx3L0iAhF22hVsxzEpAH1kxU9JAxldxj+JTZhjKi3bp/thsFSs6FfZvvC6p70T6IFb/Dz2hOqSxz2cbC0FUw2fSG5pZFEc5vWJncVNnIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=El6aj0a4; arc=none smtp.client-ip=209.85.166.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-il1-f179.google.com with SMTP id e9e14a558f8ab-3a77562332aso815965ab.3
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 15:00:46 -0800 (PST)
+	s=arc-20240116; t=1733353301; c=relaxed/simple;
+	bh=dZvdIAAIVCb1Gn6fGg1mI/DXu0J+s56rXzMjSqtVB7k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=B5XQEEDhrvIyOReyhdipANoUfoghiicywFyEpz4MG2fvufk8svFs6A6MsKQKKaPzG+v4u9fAZSn8zUqj51htbCv20TTFp+ZZnhhJSPIJCtUWam1qpa7toFpGFD3C9cuTPLNB4MKokTy25c87fjDwmKSZ1ij/OeqejcKTl+S3lQg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fY5Oqv6i; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2ffbea0acc2so2799911fa.1
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 15:01:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1733353246; x=1733958046; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=v8MjONOCveuqKobe9hgyWba31JDPN2COa51czWRUjXQ=;
-        b=El6aj0a4YWTO6Kabwotitl3GjBN5QszqBQ6SYS6i+Z+zPALrQyXdzgGf3mB3uYfTR9
-         NeicOIcx1Qg4y/SxjONBmO6Dsen+TjiRKnTJb1BKcZ6thlMCfXJnkEj5TORmYaCoKeCy
-         fbdnmtnK47QBxXi/9QJiEMZ5dHzg60bTs49eo=
+        d=linaro.org; s=google; t=1733353296; x=1733958096; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=9vaTYGf0bQtIjfkF3yhPnmJiZRJ8Kz7bkXSyKGXSTLE=;
+        b=fY5Oqv6iVNGz5a75L+TcLjyw/m0PcoKYfX2u+3vz7J+XJEfIdxt+th9QCWAoAqe2t0
+         +MAxCoS2mz0tKnEzfOL5itN7zigHBrKLJMvhtIRqDK05fp5sdWxpQAl8tMAQW/VtOohy
+         ScFtWSzw+lPFQk8GIJD+OEqVLuOprqC5Aj0+XTX7fNkdRgFCg5LtGphGyOuokdk9QtON
+         jd5THf5Ce5IcMC+knBDKoEWJaGGHW6L4nZFyMJrivM/oWRzMbUjtjPLQd2cLu5DEBusU
+         OJoup6a7e0KNG84/wp82ODxa/t/Ro+y/HXtc1IMPx/AzFpZXdXwUA+sUBmQJsEprcs8Z
+         REGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733353246; x=1733958046;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=v8MjONOCveuqKobe9hgyWba31JDPN2COa51czWRUjXQ=;
-        b=Ql1Dvk/pQ4sY/SPlG5MShrHkWSpFJ3X1IaNRc/Jyh+0CbPelfMEmQ0wIezrja11yjb
-         xokbSESkWItExL7d98n7Rzwb/X7AI0Y+MwrUfZb3ftXCJf5So0y33bnHc+Eqa85UZMrR
-         wDerpX85mYRYc3/3ySuS3ospuUKuFofjbTESFpj7lPV0r9fqGCKJwV1/xUcKcSEb3Tq6
-         5s9K9izc4QMmJptuWLrYo28tr9CWaz/1A9jxxjE2umP9pKPLZ/sKD/A53W9LYYro+owT
-         bZgh0owu5EsW26E6UAUU/mC8RAL1xr/+7mWFLWSqa/1tnTPQcr7LLuEU1wKnOW072ExX
-         FaHw==
-X-Forwarded-Encrypted: i=1; AJvYcCXbSQfdIBYHnr2blWptFQeYqljf69xMyeCVKZRgvIMhuk7Eu+jDKKv5J08VBWAogJ/v3Z0UoLw0LZIvmbo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxbj7enR6Mgu8TZI2qJ3yq9z5aAURSihGRfTd51ycKrERfHwvSE
-	HPV8z5JNzYMUznSVUMd8/7/qhO/lW5fBlucgdWeaiATZgUVc+lQQEEKJfw0prkY=
-X-Gm-Gg: ASbGncsZGmiZA1DnWkCq3UXhQHJ65U2Fg6jsqYoRn1q0EcolxVcaYZA0fiikzHtl1XO
-	ZuCoeUewbzp31SL3y5+kKgx7l6VIkITk9/NkKFWwDjO3hx20+MjMG5oKFEvy0SLk6/CyJmbqAHo
-	h0Rylo++16Kdvw3btqc96zZfVY2Z0qfhF6saXq2Dy87F93B5FQWZzRov1xM59bWcUXOlB8NCzMV
-	aXSZNBdKhDXsa4Iyi1YbxBLg2+/rrU8LHukcjH+ID0Im6GXCjlPZB+WQOooYg==
-X-Google-Smtp-Source: AGHT+IFUgmhlOoSihcP/nqxkjyWw10Hk/UBc2m9j6X81IuSx2AXGwM+0j3uEXoKmJvc8OaldrCUQ/w==
-X-Received: by 2002:a05:6e02:164f:b0:3a6:ac4e:264a with SMTP id e9e14a558f8ab-3a7f9a46431mr98377155ab.10.1733353245600;
-        Wed, 04 Dec 2024 15:00:45 -0800 (PST)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4e28611b614sm35076173.38.2024.12.04.15.00.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Dec 2024 15:00:45 -0800 (PST)
-Message-ID: <f0fc34fa-d208-4bd2-8e0d-bfba60b06b90@linuxfoundation.org>
-Date: Wed, 4 Dec 2024 16:00:44 -0700
+        d=1e100.net; s=20230601; t=1733353296; x=1733958096;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9vaTYGf0bQtIjfkF3yhPnmJiZRJ8Kz7bkXSyKGXSTLE=;
+        b=qvPqPSec2WGC1LHfx3559D6aOa3v++w7TLCK0mA2cxDl8jGbnjSKa5iYGwj/GwuO8V
+         8kFDC77TgHl+cICyEDJGypkrnB4PDSjUMXfhxcHdW8WJq+UIkWmJmJ7WiJKk48adepiE
+         Kh/mfJvU+iSxJCsKcHceqnpMNpCcFSkIbtmQxhCIJQQVX2EeIhAHerl7BGdRjFPbOXez
+         1Xv25MFdvvYCra+6Fb0eudC1KVogO/t5vrsaHwPjgcfr7EkVdlwgARuO8MQF+Haqzffp
+         onh3x6ZBDRYodwvObrLi+5Wsb0891w19Xn/TFnLGHBMV9xI7OvhTNQZ1tbqIvuIJsXfu
+         osJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWARSGPHp27duucyI58mG22vv1ybQrlteGlxus4dIb57Jzcsrt2W41ySjWqvTWbVxKid87LQBimHzJfrMQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNf5fzfDuAEwQaeQ+xykZyGXpS482X9k57y8PRLuNV4nAHMzO0
+	3U0rGX7wfqxpCSZLg9ceOQcA1tu0grEtB15wWaBMHDnZMAOX31F0uNlZB7bDmiw=
+X-Gm-Gg: ASbGncvx87Y0/xjeOmmbml6Jrz0LXH8Z+37MWRXVm2sMX2S+0ec6fcH9mRR3+Nen87k
+	mXAW9vZRNBZXgidbniL9qrIrAsTX9yXnM2Fd98B2N2+4Nerd3e6sXwnQIQ+mInjRF+tYHgt9ake
+	M7Qci15S14byELxITv0YKC0w+nCj9gay0WtqvRqGAZVeKltVfRGqID2dd5+qlpuodUwNPOdZpAz
+	wa4zb6XAYgUGcVYkjRQ2x3UFsOnKYDG7cBsRzk/zIWMnG28XwTfdkziwqZxQQI7uvjteV16E3Qe
+	bsXik7A7y3If04ZWNmg9fsBJe++gJQ==
+X-Google-Smtp-Source: AGHT+IFTuplv2isdxHj5cnxXRgLfLSYqhiljXH2if0rM2tCYLl4uD9OrVYwTUyo0WS8OVxU2kC/gEw==
+X-Received: by 2002:a2e:bd0c:0:b0:2ff:d7e8:b71b with SMTP id 38308e7fff4ca-30009c940a7mr53718381fa.12.1733353296270;
+        Wed, 04 Dec 2024 15:01:36 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30020da27f1sm124871fa.37.2024.12.04.15.01.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Dec 2024 15:01:34 -0800 (PST)
+Date: Thu, 5 Dec 2024 01:01:32 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Varadarajan Narayanan <quic_varada@quicinc.com>
+Cc: lpieralisi@kernel.org, kw@linux.com, manivannan.sadhasivam@linaro.org, 
+	robh@kernel.org, bhelgaas@google.com, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	vkoul@kernel.org, kishon@kernel.org, andersson@kernel.org, konradybcio@kernel.org, 
+	p.zabel@pengutronix.de, quic_nsekar@quicinc.com, linux-arm-msm@vger.kernel.org, 
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-phy@lists.infradead.org
+Subject: Re: [PATCH v2 2/6] phy: qcom: Introduce PCIe UNIPHY 28LP driver
+Message-ID: <f2yfxyuhoiavwziq3nd64mly3qdxif5abt2qp4qvrizqytqrid@fqfb22rpu6ug>
+References: <20241204113329.3195627-1-quic_varada@quicinc.com>
+ <20241204113329.3195627-3-quic_varada@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] selftests: prctl: Fix resource leaks
-To: liujing <liujing@cmss.chinamobile.com>, shuah@kernel.org,
- osmtendev@gmail.com
-Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20241128061827.4165-1-liujing@cmss.chinamobile.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20241128061827.4165-1-liujing@cmss.chinamobile.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241204113329.3195627-3-quic_varada@quicinc.com>
 
-On 11/27/24 23:18, liujing wrote:
-> After using the fopen function successfully, you need to call
-> fclose to close the file before finally returning.
+On Wed, Dec 04, 2024 at 05:03:25PM +0530, Varadarajan Narayanan wrote:
+> From: Nitheesh Sekar <quic_nsekar@quicinc.com>
 > 
-> Signed-off-by: liujing <liujing@cmss.chinamobile.com>
+> Add Qualcomm PCIe UNIPHY 28LP driver support present
+> in Qualcomm IPQ5332 SoC and the phy init sequence.
 > 
-> diff --git a/tools/testing/selftests/prctl/set-process-name.c b/tools/testing/selftests/prctl/set-process-name.c
-> index 562f707ba771..7be7afff0cd2 100644
-> --- a/tools/testing/selftests/prctl/set-process-name.c
-> +++ b/tools/testing/selftests/prctl/set-process-name.c
-> @@ -66,9 +66,12 @@ int check_name(void)
->   		return -EIO;
->   
->   	fscanf(fptr, "%s", output);
-> -	if (ferror(fptr))
-> +	if (ferror(fptr)) {
-> +		fclose(fptr);
->   		return -EIO;
-> +	}
->   
-> +	fclose(fptr);
->   	int res = prctl(PR_GET_NAME, name, NULL, NULL, NULL);
->   
->   	if (res < 0)
+> Signed-off-by: Nitheesh Sekar <quic_nsekar@quicinc.com>
+> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+> ---
+> v2: Drop IPQ5018 related code and data
+>     Use uniform prefix for struct names
+>     Place "}, {", on the same line
+>     In qcom_uniphy_pcie_init(), use for-loop instead of while
+>     Swap reset and clock disable order in qcom_uniphy_pcie_power_off
+>     Add reset assert to qcom_uniphy_pcie_power_on's error path
+>     Use macros for usleep duration
+>     Inlined qcom_uniphy_pcie_get_resources & use devm_platform_get_and_ioremap_resource
+>     Drop 'clock-output-names' from phy_pipe_clk_register
+> ---
+>  drivers/phy/qualcomm/Kconfig                  |  12 +
+>  drivers/phy/qualcomm/Makefile                 |   1 +
+>  .../phy/qualcomm/phy-qcom-uniphy-pcie-28lp.c  | 307 ++++++++++++++++++
+>  3 files changed, 320 insertions(+)
+>  create mode 100644 drivers/phy/qualcomm/phy-qcom-uniphy-pcie-28lp.c
+> 
 
-How did you find this problem? This file will be closed when
-the test exits - do you need this fclose()?
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-thanks,
--- Shuah
+-- 
+With best wishes
+Dmitry
 
