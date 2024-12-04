@@ -1,204 +1,202 @@
-Return-Path: <linux-kernel+bounces-431652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA9F49E3FE8
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:42:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BA449E3FEE
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:43:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6AD9165035
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:42:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6AD11653F3
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:42:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74D0B20E306;
-	Wed,  4 Dec 2024 16:41:06 +0000 (UTC)
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B427A20C495;
+	Wed,  4 Dec 2024 16:42:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="K/XRXq1C"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED91020D508;
-	Wed,  4 Dec 2024 16:41:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D5E415B10D
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 16:42:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733330466; cv=none; b=pBwZGrZl5aBhkuR4OXpEI0RdgQBYJTnOOG2fh6CYqNrDuy7IqR5Yj5IFAYVb95tUoPn+efocdYmlm7fiC7GERbB5yShDj0560pueDwiuc1rHKKKaGPzhpbw9VCnfhGglwiXPuK8o7Rt4Vo+CMxffvWQoQxUKvr1+XKV4AxNltmM=
+	t=1733330539; cv=none; b=AOZGendCq7/IiFo0O+dfdRzMTkVMtrZfpyV/fz/C8aUZ8m1P+PiCQKZPZ4Wt36GJlaByxGpFcFVt5ryjza944w4JOuhR78RYqWt2mrIWEMPQ1lwTAnvwaJbTbEPOjzqJxfvbM565gKfZbh2t0f9SFF5a7x/uDPPosGPtWg0N2IM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733330466; c=relaxed/simple;
-	bh=YomcDZLsGkHJ93XYiHcO82QDo1w9Pr3neNOGqdenPeA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=aAC/qx6hqoA7pEAx/sCw4cosuyhadaUhZ7wz4GeBthlW2Y9BLx5iwh4f96iM0GTD4hTc/Fk97m1MSQYwUK4dLugS9cOVYi0Fu5qOvcZXH4xYtdsNGji5IY3MyJQN8Sa+BVEmXMWmCtd1v67rBzqNBF/tGtqEWc9aUDKR5ZeeUaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-aa55da18f89so1044166566b.0;
-        Wed, 04 Dec 2024 08:41:03 -0800 (PST)
+	s=arc-20240116; t=1733330539; c=relaxed/simple;
+	bh=vZmSb4Y+KcJLAiE3V0encVzpxcWrsvCZOGlqtPSrsXw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=OJGFLMbzteAZ4AKo8brM2apDXrcfUiN2FtjkqvsddHsiCNybzybgeiKtgoQI0fhx7fj40LM0np/mteuDJfK5baqvRvLatlL/Kgeob0GeVthEjpkzbW2k2hxW1vbfTT7tNkJovnVFDY45t1+iAKnLPSel6/N0qMl7YE25nTecfXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=K/XRXq1C; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733330536;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=aTboGuxBsv1/D7jYDtP1EAK+nV/89N3aSEIGaAgBjps=;
+	b=K/XRXq1CEW7VoqhFknXXzL5h7ow1yTOsw9q47I5xrmO1vZj9dsWcvJZes1F8EwT++219At
+	Ox5m98ntQl3HfqF1Jw+NuzKVvLanASCt15rsWYIfMBpCagz9tk53wuOvy5ekiDxmmQByIB
+	0yspIOkYe1x+SWgzfUlnr8kYQF44qT4=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-33-IH1SD8uMNXOwEaXg2NXZow-1; Wed, 04 Dec 2024 11:42:15 -0500
+X-MC-Unique: IH1SD8uMNXOwEaXg2NXZow-1
+X-Mimecast-MFC-AGG-ID: IH1SD8uMNXOwEaXg2NXZow
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-434a37a57dfso45705e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 08:42:15 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733330462; x=1733935262;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1733330534; x=1733935334;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=cp5LZ1kxAlRspYk7ziqigDfPMTtHysD3G76P4O98mfc=;
-        b=PCg2it7Dy+DB+dUV3p/njBpA4e/D3QDvI+2anX49f44whHDsrPGwNrzbo4gUhwZf9Q
-         gvRltYJvX7zGEzpSRQsQ9r7cF7EvHHHcQJgqJng3q2/5OxP04hhEvznNg5maIpgP8qyK
-         EpBwxPdTUBqZrZ1vtwm2/PXu5wj+0ZnE8fj6Ukij0Pan8KzVuTo+vE95rsLOBwsdZv6E
-         9ezBGbIB8bEDXS805oTLj89OtVtOR2mpFoYbyC+PYkXwi8YF7kzE2B6K8gWzH56QaFh/
-         1SoWnNx7hLFbahT74tRivPlmdKiDO/dyzHVadoRQ6fHqMPPgeUvafxpC1Jacv9vFDNcV
-         6aTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUKtaGkjHvq1uEOi1X8kjCamcFd+ZS3SAKoh8bX83Fp1OvQDwSZqaxaZn8inWM7FTYn0Ta589nEW4wrcXmxRvEe@vger.kernel.org, AJvYcCViXz/fMTtCLi7q+MKOVMQBu32gPE2f50/Umya6LRkAGvsHESo8gCumwm5vzitDaFLqTYfdtcJrtlkJyEk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/CJJUkLgqqfnmx7BZ1sTgh3v64AZWLbK5v2UZlIEeKOkOmw+w
-	7U+TPvxjf1RbYAX38/D+8LiGkp0ThTHXmA2lgPoH0zQU0UYtS16j
-X-Gm-Gg: ASbGncv8Aqf1mY1UCxn4FjgzLq7HvcT49n4cdtle/BewoXMy4eEArst3mV893eZVilO
-	jpmWsoStmWaMsQzbWhpVPSY9TbZRI3egW7VfOGiU34IkFddrpymuK9ZKBiIk5k15ByLeGXNYvCQ
-	76zRl9WGJl1JX/2IiUdiU7c4oExjd0V9txaKjCIUlxIjHPwpON6I71MBwTltl3LN+0GI3550v0n
-	RD1dBUA39K3IIWAtS4uvHTrQ1hm2T2qzvjwUDYDU7C8V7DyLBxRvd+85J37LCSprw1yi5jnWQjh
-	lQ==
-X-Google-Smtp-Source: AGHT+IHO0yNu3MoObM3YmZd7Bqm+/kY4WR82IcRqXNzewqckpka6AEx2/xT8dMOgvIORsma2yOwlbg==
-X-Received: by 2002:a17:906:cc9:b0:a99:e939:d69e with SMTP id a640c23a62f3a-aa5f7f35a67mr507569266b.51.1733330462155;
-        Wed, 04 Dec 2024 08:41:02 -0800 (PST)
-Received: from localhost (fwdproxy-lla-001.fbsv.net. [2a03:2880:30ff:1::face:b00c])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa5998e6a1asm750102766b.98.2024.12.04.08.41.01
+        bh=aTboGuxBsv1/D7jYDtP1EAK+nV/89N3aSEIGaAgBjps=;
+        b=nFImoYXq3e1NKj/zuEq1Z0caQgrHKHNVzgBvt6Jxj2kb3dm5gIh6Bqpv5erXt7bCwU
+         ydd2ee1amihufdrvB1lUzMbLHVzYV+xuokSnsWg94rfgkE+AAfAxPf/fiWDNPbhCob/S
+         W0kmsCmHrB36Bvl4zW2Drgo67fPZ+gRU/0sW2aIYGAg0T3PQX052DY02kbkS+hY6va+L
+         PXj/IKlGESM7I5EPsG9j7Bd9p7PCNr5ZROq/2xYlIrZrW/hQN/bTJPwW2mwTTHh5SnRO
+         TDXnRkU0vzB76aAf2bSdOPjRWljk74yGUXwQ1pU6ddUNZgW/ie9B+oMxjDM3fA++a1TN
+         j/tQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWYAy7Ajl+zIUGpjX39f0SHSYbTMQqqa1TAs4SBEbswtMxMr4xBkv55huCceJpstbDZ4gKowNiTxJlZVg0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPtBnRQ698zPi+ABO8Aj70lqqu2BBKbT+1i5UWOMLXHB+hDU+i
+	pq6P116I6YkQdARbTu7t53Tf/Ax8G2Iw2uHlR9DRlYqpBO4Q7bPiD7IMEID1pRInSo6vHKBRK2g
+	4sA/cQEFfKSC+u9M+JOkC8QXtb095h19yASkwG57rtx3QiX9q1CMg3tAEJVA71w==
+X-Gm-Gg: ASbGnctQodlujxc8bz5X3Q2No+8Pi2bRmFC0ZPE18IACa4cOtJy8qf1Yf5RVETVDNMX
+	FrHFtyXS/mDiPlS3aBBu1VrxxznJwH5UmOc+qjaA4cRIUBqmUh4nouT4IinRb+1tPhsSGp5E8M5
+	xLgdZsZtuukStyufLaWSwW8QWk0SLzX9ZB2BYEOdUTtK49sgYE4g2j44WFZi+nn5OOlgBQVlGJv
+	++03LWa8OksW2e7ZgOQyZ173GP/x39AQ1cxljd6DkfYNCg1JbUh/v5DxK2H9ro7dLz0AVelT0GZ
+	OABOPqsJCFqynyyUvL6JNA==
+X-Received: by 2002:a05:600c:3c9b:b0:434:a706:c0f0 with SMTP id 5b1f17b1804b1-434d09b5fbdmr65866625e9.14.1733330534037;
+        Wed, 04 Dec 2024 08:42:14 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IG3vYYe0JYqWvdtnCbpcYPrqQ5wdtxOa58ZiyFbEhfHIUG+ni9gR0oBxI2tXG6+uCSAb9oHLw==
+X-Received: by 2002:a05:600c:3c9b:b0:434:a706:c0f0 with SMTP id 5b1f17b1804b1-434d09b5fbdmr65866395e9.14.1733330533682;
+        Wed, 04 Dec 2024 08:42:13 -0800 (PST)
+Received: from imammedo.users.ipa.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434d52cbd5asm29512655e9.40.2024.12.04.08.42.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Dec 2024 08:41:01 -0800 (PST)
-From: Breno Leitao <leitao@debian.org>
-Date: Wed, 04 Dec 2024 08:40:45 -0800
-Subject: [PATCH net-next 4/4] netconsole: selftest: verify userdata entry
- limit
+        Wed, 04 Dec 2024 08:42:13 -0800 (PST)
+Date: Wed, 4 Dec 2024 17:42:12 +0100
+From: Igor Mammedov <imammedo@redhat.com>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, Shiju Jose
+ <shiju.jose@huawei.com>, "Michael S. Tsirkin" <mst@redhat.com>, Ani Sinha
+ <anisinha@redhat.com>, Dongjiu Geng <gengdongjiu1@gmail.com>,
+ linux-kernel@vger.kernel.org, qemu-arm@nongnu.org, qemu-devel@nongnu.org
+Subject: Re: [PATCH v5 14/16] acpi/ghes: move offset calculus to a separate
+ function
+Message-ID: <20241204174212.4c6558aa@imammedo.users.ipa.redhat.com>
+In-Reply-To: <5a2bda4722e2d45839a75f3a193f6b8f4841c773.1733297707.git.mchehab+huawei@kernel.org>
+References: <cover.1733297707.git.mchehab+huawei@kernel.org>
+	<5a2bda4722e2d45839a75f3a193f6b8f4841c773.1733297707.git.mchehab+huawei@kernel.org>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241204-netcons_overflow_test-v1-4-a85a8d0ace21@debian.org>
-References: <20241204-netcons_overflow_test-v1-0-a85a8d0ace21@debian.org>
-In-Reply-To: <20241204-netcons_overflow_test-v1-0-a85a8d0ace21@debian.org>
-To: Andrew Lunn <andrew+netdev@lunn.ch>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Shuah Khan <shuah@kernel.org>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-kselftest@vger.kernel.org, Breno Leitao <leitao@debian.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3502; i=leitao@debian.org;
- h=from:subject:message-id; bh=YomcDZLsGkHJ93XYiHcO82QDo1w9Pr3neNOGqdenPeA=;
- b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBnUIYVHQTBNZj7dFIHe4XblV2VV/QByfF5NQGkt
- ioydQXukr6JAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCZ1CGFQAKCRA1o5Of/Hh3
- bXPUEACn4DPPvEGE3XTGBPu/ibwdBM9YYUMy4lUVQ76eZv7QVfrRDLG7AbwUbLHhndQVsvqoPG8
- bmykl0uRhspf0MNB+ugX9BfaQM8BvVnAxGhj/DbFvYdxs+gVAdJfujiXEG7axVPhsN4maoOsijw
- Vu51P9JfcO2jp84IO2Oj3noIqJQ9dzIXPQYHo9mBqZqzm+tRdUOF6yCVz7ZxRGerasSnpvMszML
- O6qCCQOXjlKd3ZxqtnuF1wbmvfMFizzAqX5ITp7/ZSMAuyua3AZ9GTjw3TLhEzlAzRhsdEH8Eni
- mIbqLz+aRCP5proEVnkc1AlHLZhr1ZLpEgLuguwEg67jdjpaq/U8ALZvpt+b1b5E9is6ck/YYI1
- arL9sEeLn/xZdwOk8c9/NlZDbkjKJ7UCnvydjgOtQhvqtlq++ToEgfWkgRsQ01LhmKmX9NQTJEC
- 0eJ+zV1CU6tDSXTzJm8qtYnbbaW5UbsEnZYirIx6glEdGsECFP3PCU0fms0CsbHwecHFF4HzUU9
- ceR05gJsUk0KFSiMuAPW2EyFxeM5ilQS2HBqguiAVR1C8Z9GiQIRUmjaL83gDIjukGWG4oPy8YB
- ZGv5ODoPSQj2qRxvhYVRu1k2/lpxvMk30b7pvin2nViDOE8yTPtsHSHendgFLDiykYQXSodG1TP
- aFbCj1R8O7Xpv5w==
-X-Developer-Key: i=leitao@debian.org; a=openpgp;
- fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
 
-Add a new selftest for netconsole that tests the userdata entry limit
-functionality. The test performs two key verifications:
+On Wed,  4 Dec 2024 08:41:22 +0100
+Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
 
-1. Create MAX_USERDATA_ITEMS (16) userdata entries successfully
-2. Confirm that attempting to create an additional userdata entry fails
+> Currently, CPER address location is calculated as an offset of
+> the hardware_errors table. It is also badly named, as the
+> offset actually used is the address where the CPER data starts,
+> and not the beginning of the error source.
+> 
+> Move the logic which calculates such offset to a separate
+> function, in preparation for a patch that will be changing the
+> logic to calculate it from the HEST table.
+> 
+> While here, properly name the variable which stores the cper
+> address.
+> 
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 
-The selftest script uses the netcons library and checks the behavior
-by attempting to create entries beyond the maximum allowed limit.
+Reviewed-by: Igor Mammedov <imammedo@redhat.com>
 
-Signed-off-by: Breno Leitao <leitao@debian.org>
----
- MAINTAINERS                                        |  2 +-
- .../selftests/drivers/net/netcons_overflow.sh      | 67 ++++++++++++++++++++++
- 2 files changed, 68 insertions(+), 1 deletion(-)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 8af5c9a28e68c4b6a785e2e6b82db20b3cf59822..62192db4641a4056d1eab911f5c141fb37eaed36 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -16092,7 +16092,7 @@ S:	Maintained
- F:	Documentation/networking/netconsole.rst
- F:	drivers/net/netconsole.c
- F:	tools/testing/selftests/drivers/net/lib/sh/lib_netcons.sh
--F:	tools/testing/selftests/drivers/net/netcons_basic.sh
-+F:	tools/testing/selftests/drivers/net/netcons\*
- 
- NETDEVSIM
- M:	Jakub Kicinski <kuba@kernel.org>
-diff --git a/tools/testing/selftests/drivers/net/netcons_overflow.sh b/tools/testing/selftests/drivers/net/netcons_overflow.sh
-new file mode 100755
-index 0000000000000000000000000000000000000000..a19f613553578dc185b7332a827463d9b0c6685f
---- /dev/null
-+++ b/tools/testing/selftests/drivers/net/netcons_overflow.sh
-@@ -0,0 +1,67 @@
-+#!/usr/bin/env bash
-+# SPDX-License-Identifier: GPL-2.0
-+
-+#  This test verifies that users can successfully create up to
-+#  MAX_USERDATA_ITEMS userdata entries without encountering any failures.
-+#
-+#  Additionally, it tests for expected failure when attempting to exceed this
-+#  maximum limit.
-+#
-+# Author: Breno Leitao <leitao@debian.org>
-+
-+set -euo pipefail
-+
-+SCRIPTDIR=$(dirname "$(readlink -e "${BASH_SOURCE[0]}")")
-+
-+source "${SCRIPTDIR}"/lib/sh/lib_netcons.sh
-+# This is coming from netconsole code. Check for it in drivers/net/netconsole.c
-+MAX_USERDATA_ITEMS=16
-+
-+# Function to create userdata entries
-+function create_userdata_max_entries() {
-+	# All these keys should be created without any error
-+	for i in $(seq $MAX_USERDATA_ITEMS)
-+	do
-+		# USERDATA_KEY is used by set_user_data
-+		USERDATA_KEY="key"${i}
-+		set_user_data
-+	done
-+}
-+
-+# Function to verify the entry limit
-+function verify_entry_limit() {
-+	# Allowing the test to fail without exiting, since the next command
-+	# will fail
-+	set +e
-+	mkdir "${NETCONS_PATH}/userdata/key_that_will_fail" 2> /dev/null
-+	ret="$?"
-+	set -e
-+	if [ "$ret" -eq 0 ];
-+	then
-+		echo "Adding more than ${MAX_USERDATA_ITEMS} entries in userdata should fail, but it didn't" >&2
-+		ls "${NETCONS_PATH}/userdata/" >&2
-+		exit "${ksft_fail}"
-+	fi
-+}
-+
-+# ========== #
-+# Start here #
-+# ========== #
-+
-+modprobe netdevsim 2> /dev/null || true
-+modprobe netconsole 2> /dev/null || true
-+
-+# Check for basic system dependency and exit if not found
-+check_for_dependencies
-+
-+# Remove the namespace, interfaces and netconsole target on exit
-+trap cleanup EXIT
-+# Create one namespace and two interfaces
-+set_network
-+# Create a dynamic target for netconsole
-+create_dynamic_target
-+# populate the maximum number of supported keys in userdata
-+create_userdata_max_entries
-+# Verify an additional entry is not allowed
-+verify_entry_limit
-+exit "${ksft_pass}"
-
--- 
-2.43.5
+> ---
+>  hw/acpi/ghes.c | 40 +++++++++++++++++++++++++++++++---------
+>  1 file changed, 31 insertions(+), 9 deletions(-)
+> 
+> diff --git a/hw/acpi/ghes.c b/hw/acpi/ghes.c
+> index 90d76b9c2d8c..a4453ee357bc 100644
+> --- a/hw/acpi/ghes.c
+> +++ b/hw/acpi/ghes.c
+> @@ -364,10 +364,37 @@ void acpi_ghes_add_fw_cfg(AcpiGhesState *ags, FWCfgState *s,
+>      ags->present = true;
+>  }
+>  
+> +static void get_hw_error_offsets(uint64_t ghes_addr,
+> +                                 uint64_t *cper_addr,
+> +                                 uint64_t *read_ack_register_addr)
+> +{
+> +    if (!ghes_addr) {
+> +        return;
+> +    }
+> +
+> +    /*
+> +     * non-HEST version supports only one source, so no need to change
+> +     * the start offset based on the source ID. Also, we can't validate
+> +     * the source ID, as it is stored inside the HEST table.
+> +     */
+> +
+> +    cpu_physical_memory_read(ghes_addr, cper_addr,
+> +                             sizeof(*cper_addr));
+> +
+> +    *cper_addr = le64_to_cpu(*cper_addr);
+> +
+> +    /*
+> +     * As the current version supports only one source, the ack offset is
+> +     * just sizeof(uint64_t).
+> +     */
+> +    *read_ack_register_addr = ghes_addr +
+> +			      ACPI_GHES_ERROR_SOURCE_COUNT * sizeof(uint64_t);
+> +}
+> +
+>  void ghes_record_cper_errors(const void *cper, size_t len,
+>                               uint16_t source_id, Error **errp)
+>  {
+> -    uint64_t error_block_addr, read_ack_register_addr, read_ack_register = 0;
+> +    uint64_t cper_addr = 0, read_ack_register_addr = 0, read_ack_register;
+>      uint64_t start_addr;
+>      AcpiGedState *acpi_ged_state;
+>      AcpiGhesState *ags;
+> @@ -389,18 +416,13 @@ void ghes_record_cper_errors(const void *cper, size_t len,
+>  
+>      start_addr += source_id * sizeof(uint64_t);
+>  
+> -    cpu_physical_memory_read(start_addr, &error_block_addr,
+> -                             sizeof(error_block_addr));
+> +    get_hw_error_offsets(start_addr, &cper_addr, &read_ack_register_addr);
+>  
+> -    error_block_addr = le64_to_cpu(error_block_addr);
+> -    if (!error_block_addr) {
+> +    if (!cper_addr) {
+>          error_setg(errp, "can not find Generic Error Status Block");
+>          return;
+>      }
+>  
+> -    read_ack_register_addr = start_addr +
+> -                             ACPI_GHES_ERROR_SOURCE_COUNT * sizeof(uint64_t);
+> -
+>      cpu_physical_memory_read(read_ack_register_addr,
+>                               &read_ack_register, sizeof(read_ack_register));
+>  
+> @@ -421,7 +443,7 @@ void ghes_record_cper_errors(const void *cper, size_t len,
+>          &read_ack_register, sizeof(uint64_t));
+>  
+>      /* Write the generic error data entry into guest memory */
+> -    cpu_physical_memory_write(error_block_addr, cper, len);
+> +    cpu_physical_memory_write(cper_addr, cper, len);
+>  
+>      return;
+>  }
 
 
