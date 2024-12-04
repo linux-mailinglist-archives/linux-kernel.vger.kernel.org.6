@@ -1,95 +1,120 @@
-Return-Path: <linux-kernel+bounces-431522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2ADD89E3E79
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:39:34 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6609B9E3F3D
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:08:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9E162816C4
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:39:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 28F7DB39D66
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:39:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1867B20C023;
-	Wed,  4 Dec 2024 15:39:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CAF020C490;
+	Wed,  4 Dec 2024 15:39:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="L3mhpHwA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ATH+asxk"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73D73182D9;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C0D120C02C;
 	Wed,  4 Dec 2024 15:39:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733326768; cv=none; b=jYo1/B9Bf3s1r6/SoJuf6QGx0mxg/Wh9AIt3+fpRy/yh16b2MyySu1JeX94pwpc+DwVURO2K4yFwdTfwj3AaJ+pbdG6X64IEFTAmUXWkFWuV9+gBAhwticMQP0wnavNmVhomojXdoFJmb11VDOTUe0ygPtBbsa8/Qi8i/TBJXqg=
+	t=1733326770; cv=none; b=Q5s3mI000tUqojBzQ0KqzPhWnoFS81mVKhUztNkRYL99SnEHeXK5XNaL7N6AIDCxDUOqxqQIq0H2uwfYLIq9ATYeyQ0HD8S20xsdEbq4bDTVt2IR5yLfD66XbC5/du6cncngkn93HHAWKw20l1Jc+j4AhK/MrcPRiyrInF0gLt4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733326768; c=relaxed/simple;
-	bh=xL7uKHUI55ET+bj2OFgIp7IijAK7OQk6sjCXgBPi//c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rQNnzryZczG7g7vr/BMGHv0s/Q1l6Oq7keg88uDjYJiwxTpsCaX8xC4o0CR4OkQB3fg55DEQBego7UtmmqbwJjcbRv0rkr8/Ys4Sj+xcC8Z49wzoKBm0Lc+6LPJuGMr9RRui1Fr8iQT/btvMRk8QadNehzJf0BCLTKb9rVn9Rcc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=L3mhpHwA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62196C4CECD;
-	Wed,  4 Dec 2024 15:39:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1733326765;
-	bh=xL7uKHUI55ET+bj2OFgIp7IijAK7OQk6sjCXgBPi//c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=L3mhpHwAy4vuOGK2PGKBCcq+J6LKivRmR7b3+qT1H+/qMgGbPnnDfjB9y/9LC9z2H
-	 S/IgF4sHoYYYrejwxfZF/eboCMD0yv63CdA1MgXDopwRXKTAFZHHGRXGKz4HjjUm2l
-	 WJANgXaqHE8TKx2ckvdSP9kfckq7XMB8AFk0Huko=
-Date: Wed, 4 Dec 2024 16:39:22 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: ondra@faster.cz
-Cc: Russell King <linux@armlinux.org.uk>, Jiri Slaby <jirislaby@kernel.org>,
-	Lino Sanfilippo <l.sanfilippo@kunbus.com>,
-	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
-Subject: Re: [PATCH] serial: amba-pl011: Fix RTS handling in RS485 mode
-Message-ID: <2024120456-shrug-unsafe-7dac@gregkh>
-References: <20241123-master-v1-1-260194426ea3@faster.cz>
+	s=arc-20240116; t=1733326770; c=relaxed/simple;
+	bh=1KLvifziJbjh4pRqHKFaVZ0dtAKC1haIZRmPiJO9xZY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=f3/c176S73Gm1HlBz5+Jv+3izR456t4YubIWwxxYE/Ozcz9AWzNYdAtzuQmQR6SgjFjScmZPKMZqL+bIum9DEYOd3dii0pQvxw52Y6Yj23exHcbD21X6COzinmz/bFAMGd5umKlZfdjce8IItwpQDTJdvgksc2638aDurFGN17Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ATH+asxk; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-434aafd68e9so57328965e9.0;
+        Wed, 04 Dec 2024 07:39:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733326764; x=1733931564; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=aMys5V1UTDgHq7pxYmVg8DrcO/JHKqHwaoAxkhnrpU0=;
+        b=ATH+asxkFAdUw4bQkq1Z7ArhuiWnmcxTi4wh0Eq1mb+zIpvW3ZcfU1W/ga6nBJlDw/
+         hNsiQRVp3hHklfmbuCRQ6YkWVYVDIJOt5A5X/jzdj4y02RLXPd3LAh3tE8TaaPHhvkSQ
+         Vtg/2Ry143dKdoxh8kA0Gl8XfW9vz1PmHudDuIpbIVTGAP+5XUe6g/22vqkz9DeLTHAs
+         k9Tu+3By9DxFqSp+4rIZF1EMPVYVAp84G6TegwfxRuBYxMlv5R4dXm+Tvh49kkNDPgKO
+         6zDUJfEdr2UvSkAn+z6LelE9SZc3WmUsZ/xu4mNUi1hKRwR9ylFccfD/UCTFjWCtV4t8
+         8OCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733326764; x=1733931564;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=aMys5V1UTDgHq7pxYmVg8DrcO/JHKqHwaoAxkhnrpU0=;
+        b=GX9lCm2niZ1bNPyOrbVYSApzAwSXlhhfEJaccyditMqe8Qht4YxiKsGK0LxLeJtWQj
+         j3T+mzr8RZBVo10DiWY6RDlWKsNv1DrllQk2fv6o6wQoOZ+ae17kcBBGyq6FdL3X5x96
+         NKFTrIGPSAF+pdbn/ZMUuMVCF2CT2UlzUpA48p5iJm6TZL6d6iggohYrLNf6fJWbCFgy
+         Qa412AKIqISnwei4BCs8AySSfkgzp8X9OJPENEsb+d9v4TN1T895pVJkkIpXfjKU/0ND
+         r9bFP0yuAsfOv5B1g5x8Q5OY73soLnlHYK1mgkb5aexschLs9nQkaZ6Q5g0kKPay5RVQ
+         Cq1g==
+X-Forwarded-Encrypted: i=1; AJvYcCUcfRVxO2mvcrspbnO11ZyWsudnac2xgnQZsagukw5+mbyI4K2wxWICxeeswS0i0/2ByiaD7ZYnjA==@vger.kernel.org, AJvYcCVeiTe17DkOwAQYXrcusABnUdJ/agTnzadhfLZ/ofZHcVGuF0relMgfXjg0Dos4ekKUp4Lijxfop22A98d1@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywwl+ECLCvNfnbvWOoFLdKD0egN0e0fOWfjHm+/AIJnCSIh2Ydx
+	y+uEvngQENse56dPBnbEE4rvQkokKh6gqGAaWc2gn6TrZgMBP10SWiLc/lukuH3vkQ==
+X-Gm-Gg: ASbGnctsHNw8jxi9wC8bcMevaNr04/I8718rCgyyHMPjrR9EU3o6eg1xalFyH5XXJ5r
+	oqLRd3hkp0HQUiycYJlx/Sv+uO/pPW8dYawusNE/E9/7gE9qz5zp7S9qpbLjvs3VXsC2tF9fJNz
+	znYrc+U8PyBvri7ERBMxgMyv6zNsigr9bddI0VrwDTB6aNiJOtVkLOh/An4iFr91rIJKllyC2O+
+	Y1Q+rmU6UcDsORsWCIYwlULAMCJRL9lZgSUbOBcaKAsgJilQQw=
+X-Google-Smtp-Source: AGHT+IFDtt6Y8nH2grDoAeaoEZHxBB0gdeNB563wKehiNeGHaviDfMWxStlrMNFWOalCeJSFG7AR+Q==
+X-Received: by 2002:a05:600c:1ca2:b0:434:9e1d:7629 with SMTP id 5b1f17b1804b1-434d0a1dab3mr53925035e9.33.1733326764433;
+        Wed, 04 Dec 2024 07:39:24 -0800 (PST)
+Received: from localhost ([194.120.133.65])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434d52a46e6sm29130355e9.30.2024.12.04.07.39.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Dec 2024 07:39:24 -0800 (PST)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Jens Axboe <axboe@kernel.dk>,
+	Pavel Begunkov <asml.silence@gmail.com>,
+	io-uring@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] io_uring/kbuf: fix unintentional sign extension on shift of reg.bgid
+Date: Wed,  4 Dec 2024 15:39:23 +0000
+Message-Id: <20241204153923.401674-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241123-master-v1-1-260194426ea3@faster.cz>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Sat, Nov 23, 2024 at 09:26:51PM +0100, Miroslav Ondra via B4 Relay wrote:
-> From: Miroslav Ondra <ondra@faster.cz>
-> 
-> Use hrtimer instead of udelay and mdelay calls in interrupt
-> handler to support shared interrupt lines.
-> Replace simple bool variable rs485_tx_started by 4-state
-> variable rs485_tx_state.
+Shifting reg.bgid << IORING_OFF_PBUF_SHIFT results in a promotion
+from __u16 to a 32 bit signed integer, this is then sign extended
+to a 64 bit unsigned long on 64 bit architectures. If reg.bgid is
+greater than 0x7fff then this leads to a sign extended result where
+all the upper 32 bits of mmap_offset are set to 1. Fix this by
+casting reg.bgid to the same type as mmap_offset before performing
+the shift.
 
-This says what you are doing, not _what_ you are doing.  Please fix this
-up.
+Fixes: ff4afde8a61f ("io_uring/kbuf: use region api for pbuf rings")
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ io_uring/kbuf.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> 
-> Signed-off-by: Miroslav Ondra <ondra@faster.cz>
-> ---
-> Data loss on serial line was observed during communication through
-> serial ports ttyAMA1 and ttyAMA2 interconnected via RS485 transcievers.
-> Both ports are in one BCM2711 (Compute Module CM40) and they share 
-> the same interrupt line.
-> 
-> The problem is caused by long waiting for tx queue flush in the function
-> pl011_rs485_tx_stop. Udelay or mdelay are used to wait.
-> The function is called from the interrupt handler. If multiple devices
-> share a single interrupt line, late processing of pending interrupts
-> and data loss may occur. When operation of both devices are synchronous,
-> collisions are quite often.
-> 
-> This rework is based on the method used in tty/serial/imx.c
-> Use hrtimer instead of udelay and mdelay calls.
-> Replace simple bool variable rs485_tx_started by 4-state variable
-> rs485_tx_state.
+diff --git a/io_uring/kbuf.c b/io_uring/kbuf.c
+index e91260a6156b..15e5e6ec5968 100644
+--- a/io_uring/kbuf.c
++++ b/io_uring/kbuf.c
+@@ -640,7 +640,7 @@ int io_register_pbuf_ring(struct io_ring_ctx *ctx, void __user *arg)
+ 			return -ENOMEM;
+ 	}
+ 
+-	mmap_offset = reg.bgid << IORING_OFF_PBUF_SHIFT;
++	mmap_offset = (unsigned long)reg.bgid << IORING_OFF_PBUF_SHIFT;
+ 	ring_size = flex_array_size(br, bufs, reg.ring_entries);
+ 
+ 	memset(&rd, 0, sizeof(rd));
+-- 
+2.39.5
 
-This info is great, why not put this in the changelog text instead?
-
-thanks,
-
-greg k-h
 
