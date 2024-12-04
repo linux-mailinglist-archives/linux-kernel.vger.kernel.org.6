@@ -1,218 +1,334 @@
-Return-Path: <linux-kernel+bounces-431618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DEB89E3F86
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:24:08 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8FDE9E3FBD
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:33:01 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23DD2163A69
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:24:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 018A4B32037
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:25:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C68020C485;
-	Wed,  4 Dec 2024 16:24:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91EF520C49C;
+	Wed,  4 Dec 2024 16:24:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UfaDex+D"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PSqVLw+n"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F35714A28;
-	Wed,  4 Dec 2024 16:23:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B974E19993D;
+	Wed,  4 Dec 2024 16:24:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733329439; cv=none; b=C9BWKrXUAJmZP7QiiCNUGxkfLy16Urm8zfJcowPO75JpAllwNSjC03CGYEDEl7639ySZaM7v8Olo1JyBAZxroUtU5LbuGTKDCixo+qZSnxQ94A1wE1RpGDJng3YWGDvq5vvAx6z95pmDHMK6HtHGaG2rG9gfwLREsqhVOnUUOoo=
+	t=1733329497; cv=none; b=eJoCaBIvjFQHgLfN6cFwJF/9vhdrF2kATlrkuvKaDMa/2+SkfTyRTaSC28Z1hxJzy9lnpwd+Z6mk1DYm/t2j5vu33jfvWMgUw2zlRV2S9+48EEIjnczAw0/DsFM+MPMNc9qEHwfhb2A+BRkqDcTQerI5yN42O4WqncbxtMBWPJk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733329439; c=relaxed/simple;
-	bh=gCp3VuiSIzzhFE1yRWuwo9UmejJgL3ynt7Sw4FXSQwo=;
+	s=arc-20240116; t=1733329497; c=relaxed/simple;
+	bh=uB7DsP1F0FDOCbpTD/scevBqJRno5Bgra1OjBEcv41A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nwkrJWRbBMSgteALLisxVlW39/2qXABtYIx27ibxn8PKbqvWRuCeb/h04f0RkqEFZWq3I/ZBZCO96HqVOIXPBy6liRxI5Oa39fWACfhXGgGlTZ7ijqRy3dpKyCr5iOBXtZKBvF61PUJNalxhl30VD3fuJ03l/zDPr2aZrOk2WP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UfaDex+D; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4349cc45219so63321355e9.3;
-        Wed, 04 Dec 2024 08:23:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733329436; x=1733934236; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZopfNxUqKzOig+vq2vgMrOIZ/FkZeqWW6Q7fCMolsnI=;
-        b=UfaDex+D/fSVZtLS7GlyHgsy075cgoGZ0vVvL9xcJcRm/S3MNr2iucBaJ+NIlIbXdj
-         6cByJ1/2cpY2MDRI1qzQ4Qw7oe5V4GGO8dw6vhJZFXdyp5yUd4P4k9WcZvTZfieBLHep
-         QoXWjerBnaptWYpJAZ29QELydwgCH6E6+gUInreAD3lmtSchxiLYt6P/HBigb+nfBkMm
-         xDIR0glKOEM4FyJdPNbFkylaYyZ2/rfjZjeXCsyv2Y0AuSLdAcWPmM41LwrSRkZZEZz1
-         D/pfMJ/oZ8KCaYGnV8Nod75+/cOS80+a5D3kCj6BEjb9M3mcN4P29Tnk86ECqd2MSUiK
-         a4tw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733329436; x=1733934236;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZopfNxUqKzOig+vq2vgMrOIZ/FkZeqWW6Q7fCMolsnI=;
-        b=eLIem3uU5pdlaZk4WZjXMr6c+DCvVKric8sxRjkACpaXHu/IdVNyztujA8/x8Gz2Hh
-         +x/RrRP5QLLS9i5Vr7CaHHUX2dYJWlTsHO4Wk0UvX9W6PJHpxgSTlEQwgUEbJYdRl2Xa
-         xxYdLqs0hwdl2sHNYG5hPD9Qe8YZpBz0ej7bZBgdhqki/X7RuERs4c4BwLGs/tXzZwWg
-         iG1CL0Ug8BGBIsVNap5W2LIXcRrcCKPs1k/xIU3Ek+1ju0gyaQzGFNmXnMHYe2ghyvdJ
-         wFLQQaQm/qAPM+npvX+4ycoanGlFO2qPRV+QN1gyZ6evIDKuYBZp0pjlJLfGg9WHvGUH
-         9bZw==
-X-Forwarded-Encrypted: i=1; AJvYcCUpcsBvG4AmUhgWDTMcaGIQ0PiXBOQS96dLqjlyhFR3WRzH7ib0jXTzjdbYUedhSajed1CRHsSx@vger.kernel.org, AJvYcCV3LuZwcuebTCaQsoie+6vmLqRab4vuNHEmukLxy/xRVp23tff49g9Qj3jt8iotuCjrsQ6Jw5W+XmPW2gQ=@vger.kernel.org, AJvYcCVvTAjlGqpDvEA2MC8HpjnGYu6nIhuzYD5Pkcj9hilpfbXnCYKmUxhwSRfMJ0SpNcWFtyeCN6IL/EVs+L0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyaKiGHVNrBJIEijRohttHlx2Z5P8I6/+8fMlmFAR6vnjsEyXxZ
-	rYly96sQiRKTZVw8By/ofiintsAqa6nkCwNplFAy5GJL3gTn4j6B
-X-Gm-Gg: ASbGnctLa4Mh9NAi9qvXrXsqY+XUegJwasS/UK+T3nK5VA8kyirNal+He4WJtSSqb2g
-	z9cE4y6lrjJlxMHh3CiGFM/ZR6/TeO5T5jfa7hX7vgGf0p68Vjoo0LenVt25+gCaU7kVLeFwfNJ
-	EiUE3yspOK0VPgTgoS1mj7dEzv88vmtBtmwLdQZovnVnt5hPFbxhfn6Q8XZCu535RAG5ejm8n8x
-	TCc7ondW5tScWXJfQLBYgc0Z10Msro01biVNT/eaylC0NPlFDzNtTaRMJuPiiBKB4lCrlU0Z5Ji
-	dqLAp+74/4i/djPSlZ2PAGaQoaila9AykLH3
-X-Google-Smtp-Source: AGHT+IEBAuqD6aE0GozRqXuDmFoNCDvwnIaAsz1vt2MpdwK3ooetePeFd9j6ErzZeQHLGJ23gIUJhA==
-X-Received: by 2002:a05:600c:3b23:b0:431:1868:417f with SMTP id 5b1f17b1804b1-434d09c154fmr72688655e9.17.1733329436035;
-        Wed, 04 Dec 2024 08:23:56 -0800 (PST)
-Received: from orome (p200300e41f281900f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f28:1900:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434d04defb7sm47745125e9.0.2024.12.04.08.23.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Dec 2024 08:23:55 -0800 (PST)
-Date: Wed, 4 Dec 2024 17:23:53 +0100
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Parker Newman <parker@finest.io>
-Cc: Andrew Lunn <andrew@lunn.ch>, Paolo Abeni <pabeni@redhat.com>, 
-	Alexandre Torgue <alexandre.torgue@foss.st.com>, Jose Abreu <joabreu@synopsys.com>, 
-	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, netdev@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, 
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Parker Newman <pnewman@connecttech.com>
-Subject: Re: [PATCH v1 1/1] net: stmmac: dwmac-tegra: Read iommu stream id
- from device tree
-Message-ID: <mpgilwqb5zg5kb4n7r6zwbhy4uutdh6rq5s2yc6ndhcj6gqgri@qkfr4qwjj3ym>
-References: <cover.1731685185.git.pnewman@connecttech.com>
- <f2a14edb5761d372ec939ccbea4fb8dfd1fdab91.1731685185.git.pnewman@connecttech.com>
- <ed2ec1c2-65c7-4768-99f1-987e5fa39a54@redhat.com>
- <20241115135940.5f898781.parker@finest.io>
- <bb52bdc1-df2e-493d-a58f-df3143715150@lunn.ch>
- <20241118084400.35f4697a.parker@finest.io>
- <984a8471-7e49-4549-9d8a-48e1a29950f6@lunn.ch>
- <20241119131336.371af397.parker@finest.io>
- <f00bccd3-62d5-46a9-b448-051894267c7a@lunn.ch>
- <20241119144729.72e048a5.parker@finest.io>
+	 Content-Type:Content-Disposition:In-Reply-To; b=h1P5YCDfSmSAp7Su897QhFH7q1LXyeKRq5rowScSRFXdI0yhGNCiyzWqo7p67bT+rBjHcqw/PQhHLY3hhDpS9roFBYEmsstSRsnhxXVvISQU50PZGarcEUpK/cjDviR4X+MsNauqN31bL6g8DFQKleKySKgy4y481orViYEhV/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PSqVLw+n; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09824C4CECD;
+	Wed,  4 Dec 2024 16:24:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733329497;
+	bh=uB7DsP1F0FDOCbpTD/scevBqJRno5Bgra1OjBEcv41A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PSqVLw+nBR1NMFIgbfB6/zuFxO9GaTDvlgXutNOD+ud7zC6pHYP8v0KXpaO5/fV4G
+	 ytHbMLE1f7czCdrXQTvz03oNktG3i8+bea1NEJyb+yb2S9IYtzdtoqxcJxfrbD1hhc
+	 cUxhuVr5r1RR2MXT5/eJtqq8SbA7Mv/JpGITHDe/2sN9POxuDlxjMyTpqbFKdbgic7
+	 q63+HpFVuqJIWcfnaQLiQnX+Q3KNraCdajCnJ+IEHsjvTwQn5qLYQMOA9iY5+LSm92
+	 k6IGSL3vNYv+pWbC5VILpdiSQRrkz+A06PUe5/dxadyqbRi9jA9zWNmEkAPO8CagQz
+	 VMFKCqdUcwUKQ==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1tIsBK-000000000uP-15N5;
+	Wed, 04 Dec 2024 17:24:55 +0100
+Date: Wed, 4 Dec 2024 17:24:54 +0100
+From: Johan Hovold <johan@kernel.org>
+To: Abel Vesa <abel.vesa@linaro.org>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Rajendra Nayak <quic_rjendra@quicinc.com>,
+	Sibi Sankar <quic_sibis@quicinc.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Trilok Soni <quic_tsoni@quicinc.com>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v5 2/6] usb: typec: Add support for Parade PS8830 Type-C
+ Retimer
+Message-ID: <Z1CCVjEZMQ6hJ-wK@hovoldconsulting.com>
+References: <20241112-x1e80100-ps8830-v5-0-4ad83af4d162@linaro.org>
+ <20241112-x1e80100-ps8830-v5-2-4ad83af4d162@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="qqjxn4twghzwb4kk"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241119144729.72e048a5.parker@finest.io>
+In-Reply-To: <20241112-x1e80100-ps8830-v5-2-4ad83af4d162@linaro.org>
 
+On Tue, Nov 12, 2024 at 07:01:11PM +0200, Abel Vesa wrote:
+> The Parade PS8830 is a USB4, DisplayPort and Thunderbolt 4 retimer,
+> controlled over I2C. It usually sits between a USB/DisplayPort PHY
+> and the Type-C connector, and provides orientation and altmode handling.
+> 
+> The boards that use this retimer are the ones featuring the Qualcomm
+> Snapdragon X Elite SoCs.
 
---qqjxn4twghzwb4kk
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v1 1/1] net: stmmac: dwmac-tegra: Read iommu stream id
- from device tree
-MIME-Version: 1.0
+> +static int ps883x_sw_set(struct typec_switch_dev *sw,
+> +			 enum typec_orientation orientation)
+> +{
+> +	struct ps883x_retimer *retimer = typec_switch_get_drvdata(sw);
+> +	int ret = 0;
+> +
+> +	ret = typec_switch_set(retimer->typec_switch, orientation);
+> +	if (ret)
+> +		return ret;
+> +
+> +	mutex_lock(&retimer->lock);
+> +
+> +	if (retimer->orientation != orientation) {
+> +		retimer->orientation = orientation;
+> +
+> +		ret = ps883x_set(retimer);
+> +	}
+> +
+> +	mutex_unlock(&retimer->lock);
+> +
+> +	return ret;
+> +}
 
-On Tue, Nov 19, 2024 at 02:47:29PM -0500, Parker Newman wrote:
-> On Tue, 19 Nov 2024 20:18:00 +0100
-> Andrew Lunn <andrew@lunn.ch> wrote:
->=20
-> > > I think there is some confusion here. I will try to summarize:
-> > > - Ihe iommu is supported by the Tegra SOC.
-> > > - The way the mgbe driver is written the iommu DT property is REQUIRE=
-D.
-> >
-> > If it is required, please also include a patch to
-> > nvidia,tegra234-mgbe.yaml and make iommus required.
-> >
->=20
-> I will add this when I submit a v2 of the patch.
->=20
-> > > - "iommus" is a SOC DT property and is defined in tegra234.dtsi.
-> > > - The mgbe device tree nodes in tegra234.dtsi DO have the iommus prop=
-erty.
-> > > - There are no device tree changes required to to make this patch wor=
-k.
-> > > - This patch works fine with existing device trees.
-> > >
-> > > I will add the fallback however in case there is changes made to the =
-iommu
-> > > subsystem in the future.
-> >
-> > I would suggest you make iommus a required property and run the tests
-> > over the existing .dts files.
-> >
-> > I looked at the history of tegra234.dtsi. The ethernet nodes were
-> > added in:
-> >
-> > 610cdf3186bc604961bf04851e300deefd318038
-> > Author: Thierry Reding <treding@nvidia.com>
-> > Date:   Thu Jul 7 09:48:15 2022 +0200
-> >
-> >     arm64: tegra: Add MGBE nodes on Tegra234
-> >
-> > and the iommus property is present. So the requires is safe.
-> >
-> > Please expand the commit message. It is clear from all the questions
-> > and backwards and forwards, it does not provide enough details.
-> >
->=20
-> I will add more details when I submit V2.
->=20
-> > I just have one open issue. The code has been like this for over 2
-> > years. Why has it only now started crashing?
-> >
->=20
-> It is rare for Nvidia Jetson users to use the mainline kernel. Nvidia
-> provides a custom kernel package with many out of tree drivers including a
-> driver for the mgbe controllers.
->=20
-> Also, while the Orin AGX SOC (tegra234) has 4 instances of the mgbe contr=
-oller,
-> the Nvidia Orin AGX devkit only uses mgbe0. Connect Tech has carrier boar=
-ds
-> that use 2 or more of the mgbe controllers which is why we found the bug.
+This seems to indicate a bigger problem, but I see this function called
+during early resume while the i2c controller is suspended:
 
-Correct. Also, this was a really stupid thing that I overlooked. I don't
-recall the exact circumstances, but I vaguely recall there had been
-discussions about adding the tegra_dev_iommu_get_stream_id() helper
-(that this patch uses) around the time that this driver was created. In
-the midst of all of this I likely forgot to update the driver after the
-discussions had settled.
+[   54.213900] ------------[ cut here ]------------
+[   54.213942] i2c i2c-2: Transfer while suspended
+[   54.214125] WARNING: CPU: 0 PID: 126 at drivers/i2c/i2c-core.h:56 __i2c_transfer+0x874/0x968 [i2c_core]
+...
+[   54.214833] CPU: 0 UID: 0 PID: 126 Comm: kworker/0:2 Not tainted 6.13.0-rc1 #11
+[   54.214844] Hardware name: Qualcomm CRD, BIOS 6.0.231221.BOOT.MXF.2.4-00348.1-HAMOA-1 12/21/2023
+[   54.214852] Workqueue: events pmic_glink_altmode_worker [pmic_glink_altmode]
+...
+[   54.215090] Call trace:
+[   54.215097]  __i2c_transfer+0x874/0x968 [i2c_core] (P)
+[   54.215112]  __i2c_transfer+0x874/0x968 [i2c_core] (L)
+[   54.215126]  i2c_transfer+0x94/0xf0 [i2c_core]
+[   54.215140]  i2c_transfer_buffer_flags+0x5c/0x90 [i2c_core]
+[   54.215153]  regmap_i2c_write+0x20/0x58 [regmap_i2c]
+[   54.215166]  _regmap_raw_write_impl+0x740/0x894
+[   54.215184]  _regmap_bus_raw_write+0x60/0x7c
+[   54.215192]  _regmap_write+0x60/0x1b4
+[   54.215200]  regmap_write+0x4c/0x78
+[   54.215207]  ps883x_set+0xb0/0x10c [ps883x]
+[   54.215219]  ps883x_sw_set+0x74/0x98 [ps883x]
+[   54.215227]  typec_switch_set+0x58/0x90 [typec]
+[   54.215248]  pmic_glink_altmode_worker+0x3c/0x23c [pmic_glink_altmode]
+[   54.215257]  process_one_work+0x20c/0x610
+[   54.215274]  worker_thread+0x23c/0x378
+[   54.215283]  kthread+0x124/0x128
+[   54.215291]  ret_from_fork+0x10/0x20
+[   54.215303] irq event stamp: 28140
+[   54.215309] hardirqs last  enabled at (28139): [<ffffd15e3bc2a434>] __up_console_sem+0x6c/0x80
+[   54.215325] hardirqs last disabled at (28140): [<ffffd15e3c596aa4>] el1_dbg+0x24/0x8c
+[   54.215341] softirqs last  enabled at (28120): [<ffffd15e3bb9b82c>] handle_softirqs+0x4c4/0x4dc
+[   54.215355] softirqs last disabled at (27961): [<ffffd15e3bb501ec>] __do_softirq+0x14/0x20
+[   54.215363] ---[ end trace 0000000000000000 ]---
+[   54.216889] Enabling non-boot CPUs ...
 
-Anyway, I agree with the conclusion that we don't need a compatibility
-fallback for this, both because it would be actively wrong to do it and
-we've had the required IOMMU properties in device tree since the start,
-so there can't be any regressions caused by this.
+This can be reproduced on the CRD (or T14s) by disconnecting, for
+example, a mass storage device while the laptop is suspended.
 
-I don't think it's necessary to make the iommus property required,
-though, because there's technically no requirement for these devices to
-be attached to an IOMMU. They usually are, and it's better if they are,
-but they should be able to work correctly without an IOMMU.
+> +static int ps883x_retimer_set(struct typec_retimer *rtmr,
+> +			      struct typec_retimer_state *state)
+> +{
+> +	struct ps883x_retimer *retimer = typec_retimer_get_drvdata(rtmr);
+> +	struct typec_mux_state mux_state;
+> +	int ret = 0;
+> +
+> +	mutex_lock(&retimer->lock);
+> +
+> +	if (state->mode != retimer->mode) {
+> +		retimer->mode = state->mode;
+> +
+> +		if (state->alt)
+> +			retimer->svid = state->alt->svid;
+> +		else
+> +			retimer->svid = 0; // No SVID
 
-Thanks, and apologies for dropping the ball on this,
-Thierry
+Nit: I'd prefer if you avoid c99 comments for consistency.
 
---qqjxn4twghzwb4kk
-Content-Type: application/pgp-signature; name="signature.asc"
+> +		ret = ps883x_set(retimer);
+> +	}
+> +
+> +	mutex_unlock(&retimer->lock);
+> +
+> +	if (ret)
+> +		return ret;
+> +
+> +	mux_state.alt = state->alt;
+> +	mux_state.data = state->data;
+> +	mux_state.mode = state->mode;
+> +
+> +	return typec_mux_set(retimer->typec_mux, &mux_state);
+> +}
 
------BEGIN PGP SIGNATURE-----
+> +static int ps883x_retimer_probe(struct i2c_client *client)
+> +{
+> +	struct device *dev = &client->dev;
+> +	struct typec_switch_desc sw_desc = { };
+> +	struct typec_retimer_desc rtmr_desc = { };
+> +	struct ps883x_retimer *retimer;
+> +	int ret;
+> +
+> +	retimer = devm_kzalloc(dev, sizeof(*retimer), GFP_KERNEL);
+> +	if (!retimer)
+> +		return -ENOMEM;
+> +
+> +	retimer->client = client;
+> +
+> +	mutex_init(&retimer->lock);
+> +
+> +	retimer->regmap = devm_regmap_init_i2c(client, &ps883x_retimer_regmap);
+> +	if (IS_ERR(retimer->regmap))
+> +		return dev_err_probe(dev, PTR_ERR(retimer->regmap),
+> +				     "failed to allocate register map\n");
+> +
+> +	ret = ps883x_get_vregs(retimer);
+> +	if (ret)
+> +		return ret;
+> +
+> +	retimer->xo_clk = devm_clk_get(dev, NULL);
+> +	if (IS_ERR(retimer->xo_clk))
+> +		return dev_err_probe(dev, PTR_ERR(retimer->xo_clk),
+> +				     "failed to get xo clock\n");
+> +
+> +	retimer->reset_gpio = devm_gpiod_get(dev, "reset", GPIOD_ASIS);
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmdQghYACgkQ3SOs138+
-s6GbwA//QaUQrLioM0UTRNYWW6ecsfiMO/nk5jBbz5LbMh7211gzUPPg83dUc3w8
-PnF586hTlqDo6mLikH3nc7DOt18GNUfjadV8xtLuJX6kYH/VDUEvjQaznfVpfrXo
-QdsbMn8MJT6DCq9Qcjvv3shtaGlDyJY/CFKkdKUVwvaw5IXzWdtoxX5Q9vF3v/W3
-fxoHRE90syhc9GmFKH9ntlt1Ku+mpNOm6pWYB6QLNTMqctjXJZsxnM+EvGqL57k7
-+UCaJvfR2laTf41FkDbLGziIrHmSwoZLMIh08eyIjTGFfOvKqtpO9/a5ckCo9a+t
-zjlhdWI0GzRplmw2KYxkWGboZCUrGHzNSbp2GRUKaBs0MB7UVVrVCIDJ2Vj81l4f
-JoVhBQUQjNXSuQtZM3GKNq/8SkuQUfdSSt7xCw1lBMBCxXtbEtz7FvbmBjd2qx5o
-8vIzqLhXQNp5QfJZT+tTtWnAIm+5GEIZG2mr/pg9CCPKqtAhugSNZc18Me/IS+CM
-xXZWZLTQrfmHzUq2eTe0l9iVaTwLUf9ZDF3giHwXoyposgYTugBcHzbp10v1jB4M
-L/GJKcC8Lmv1vHMtTrhRJk/UWNSL4TVC7gmcvfXPQRdPB4Q9lXFTuHs0w+ggZVi4
-W2Ino7yR62yUh5iLveyTQqBAv5FT2c2EkB7TECfxyb0xGOLYpTw=
-=kEPd
------END PGP SIGNATURE-----
+GPIOD_ASIS is documented as requiring you to later set the direction,
+but this does not happen unconditionally below.
 
---qqjxn4twghzwb4kk--
+> +	if (IS_ERR(retimer->reset_gpio))
+> +		return dev_err_probe(dev, PTR_ERR(retimer->reset_gpio),
+> +				     "failed to get reset gpio\n");
+> +
+> +	retimer->typec_switch = typec_switch_get(dev);
+> +	if (IS_ERR(retimer->typec_switch))
+> +		return dev_err_probe(dev, PTR_ERR(retimer->typec_switch),
+> +				     "failed to acquire orientation-switch\n");
+> +
+> +	retimer->typec_mux = typec_mux_get(dev);
+> +	if (IS_ERR(retimer->typec_mux)) {
+> +		ret = dev_err_probe(dev, PTR_ERR(retimer->typec_mux),
+> +				    "failed to acquire mode-mux\n");
+> +		goto err_switch_put;
+> +	}
+> +
+> +	ret = drm_aux_bridge_register(dev);
+> +	if (ret)
+> +		goto err_mux_put;
+> +
+> +	ret = ps883x_enable_vregs(retimer);
+> +	if (ret)
+> +		goto err_mux_put;
+> +
+> +	ret = clk_prepare_enable(retimer->xo_clk);
+> +	if (ret) {
+> +		dev_err(dev, "failed to enable XO: %d\n", ret);
+> +		goto err_vregs_disable;
+> +	}
+> +
+> +	sw_desc.drvdata = retimer;
+> +	sw_desc.fwnode = dev_fwnode(dev);
+> +	sw_desc.set = ps883x_sw_set;
+> +
+> +	retimer->sw = typec_switch_register(dev, &sw_desc);
+> +	if (IS_ERR(retimer->sw)) {
+> +		ret = dev_err_probe(dev, PTR_ERR(retimer->sw),
+> +				    "failed to register typec switch\n");
+> +		goto err_clk_disable;
+> +	}
+> +
+> +	rtmr_desc.drvdata = retimer;
+> +	rtmr_desc.fwnode = dev_fwnode(dev);
+> +	rtmr_desc.set = ps883x_retimer_set;
+> +
+> +	retimer->retimer = typec_retimer_register(dev, &rtmr_desc);
+> +	if (IS_ERR(retimer->retimer)) {
+> +		ret = dev_err_probe(dev, PTR_ERR(retimer->sw),
+> +				    "failed to register typec retimer\n");
+> +		goto err_switch_unregister;
+> +	}
+
+The registration functions do not return -EPROBE_DEFER so I'd prefer if
+you switch back to dev_err() here as we already discussed. A driver must
+not probe defer after having registered child devices so it's important
+to document which functions can actually trigger a probe deferral. 
+
+I know there's been a recent change to the dev_err_probe() suggesting
+that it could be used anyway, but I think that's a really bad idea and
+I'm considering sending a revert for that.
+
+> +
+> +	/* skip resetting if already configured */
+> +	if (regmap_test_bits(retimer->regmap, REG_USB_PORT_CONN_STATUS_0,
+> +			     CONN_STATUS_0_CONNECTION_PRESENT))
+> +		return 0;
+
+What if the device is held in reset? This looks like it only works if
+the boot firmware has already enabled the retimer. Otherwise you may
+return success from probe here with the retimer still in reset.
+
+> +	gpiod_direction_output(retimer->reset_gpio, 1);
+> +
+> +	/* VDD IO supply enable to reset release delay */
+> +	usleep_range(4000, 14000);
+> +
+> +	gpiod_set_value(retimer->reset_gpio, 0);
+> +
+> +	/* firmware initialization delay */
+> +	msleep(60);
+> +
+> +	return 0;
+> +
+> +err_switch_unregister:
+> +	typec_switch_unregister(retimer->sw);
+> +err_vregs_disable:
+> +	ps883x_disable_vregs(retimer);
+> +err_clk_disable:
+> +	clk_disable_unprepare(retimer->xo_clk);
+> +err_mux_put:
+> +	typec_mux_put(retimer->typec_mux);
+> +err_switch_put:
+> +	typec_switch_put(retimer->typec_switch);
+> +
+> +	return ret;
+> +}
+> +
+> +static void ps883x_retimer_remove(struct i2c_client *client)
+> +{
+> +	struct ps883x_retimer *retimer = i2c_get_clientdata(client);
+> +
+> +	typec_retimer_unregister(retimer->retimer);
+> +	typec_switch_unregister(retimer->sw);
+> +
+> +	gpiod_set_value(retimer->reset_gpio, 1);
+> +
+> +	clk_disable_unprepare(retimer->xo_clk);
+> +
+> +	ps883x_disable_vregs(retimer);
+> +
+> +	typec_mux_put(retimer->typec_mux);
+> +	typec_switch_put(retimer->typec_switch);
+> +}
+
+Johan
 
