@@ -1,201 +1,281 @@
-Return-Path: <linux-kernel+bounces-431515-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 212369E3F6A
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:14:22 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F5BA9E3E69
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:35:39 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E9DA9B3AFFB
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:33:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C669F167229
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:35:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2350C1B87C6;
-	Wed,  4 Dec 2024 15:33:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5780D20C468;
+	Wed,  4 Dec 2024 15:35:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DDg5xCTH"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b="CY6yzd10"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAF53187561;
-	Wed,  4 Dec 2024 15:33:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733326409; cv=none; b=VRYdY5uuVkN8cNavJRxyDCbyrsBFqhhpiacSvbxh0onS/yYveh53Ig/TWjd1cztuVaXG5TwnqySmDIh8pqZ+pE3c81TEysqYmQMHfyyImFT2q7rMzT4V0MTrM1sqHo7BUOaJ4WT6YSSg9W0+foflUXjux/W/DVcsY5d3+DV5v6A=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733326409; c=relaxed/simple;
-	bh=sP2tlIplVJ2QVwFXPlzFGcliFejTYrT+QehRMwauIDw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=n7K9O769izCfo9h9bAXfAhpOihhCWJJQlcqJdTIdszqzJPPhq/UeeETc7Xad8bsC5egD6yfRJggehaYpuJSnRo16j+ZlGcBYpXuMQG8cEAjCa12cXWqOviOpTSD1PASgx/GNsNqV27vRh1a93taCwfazWjYMGZQO6AsTaGdAnX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DDg5xCTH; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733326408; x=1764862408;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=sP2tlIplVJ2QVwFXPlzFGcliFejTYrT+QehRMwauIDw=;
-  b=DDg5xCTHrmXvkKWuViQyfqlGgCIfJ1Zi30kSNP+uabKFt/TTznljFhWF
-   /+z5J0jIGJ2NiZoJa5PHb7D8Fa5isiy6jZSEdsBG6wzrjlSogzD0sAikr
-   ULlzh85rJAa4CVVXilUXKhZRE9/uHjaKC/Yv0dBQmb/cfkhZ5cdfwf3fz
-   8zRCK1VaRDOYic+AHYvVhRlLk6XhUj/MV98BMF+LAKUMmiewbyiRuz9oi
-   DF0FZGzdeGxOMpMoX3QkW1Z/uxTcLt2Lhlwv0mkORJFoY5cXHudwf1ANx
-   hrDfEW2VRuSKq45QCdeE2Sps9zpQW+u5iTmiH1sPBFfuFkTwJEauq39pQ
-   Q==;
-X-CSE-ConnectionGUID: h1tf6xtPSB+U4viaVaTuKw==
-X-CSE-MsgGUID: DGXqXhbWSdq2zeg+QO7vrg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11276"; a="33846356"
-X-IronPort-AV: E=Sophos;i="6.12,207,1728975600"; 
-   d="scan'208";a="33846356"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Dec 2024 07:33:27 -0800
-X-CSE-ConnectionGUID: yD4DljVcRza+lA1wwx98FQ==
-X-CSE-MsgGUID: BKnKBe7VQ9aym5aG7iV7Ng==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,207,1728975600"; 
-   d="scan'208";a="93479977"
-Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.247.1]) ([10.124.247.1])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Dec 2024 07:33:23 -0800
-Message-ID: <a005d50c-6ca8-4572-80ba-5207b95323fb@intel.com>
-Date: Wed, 4 Dec 2024 23:33:20 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69BA020C00E
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 15:35:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733326525; cv=pass; b=fnR4+HhH+UOXHbNcev8159Jlgo5d5UFH5ZYMgfSVWCDwDrmunEFnbKwDf5CoBjKuXvJCXtV0K5MyVcaRmHfc5Jqyw/0UpjcUh7W1HSXZ3resUfDwvdST+g9JHQCvxBRVIi5s+7281vl8PPPKAxqsbHyRY9CE+rbJKzf5wOAvA4k=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733326525; c=relaxed/simple;
+	bh=Nbwo6P/uPRE67HPJ566qFcdfmFRXCxUNpSVcBk+G6rw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qr2HSIQeZoXGnkgOnLUQ6U5y3YFauQFC5nmnvXLSsBCZYPPb9786L/3adGqYK/qIMA7o5OubMuMtg3k25oaPzY4ujnGAzreZ1UzbRNu89kovDVWz+g9KwYCNm3lvNYZqaRqTtJRErTluIzzkdIYrOABHBohHDig/KeomcrE3VQ0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b=CY6yzd10; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1733326497; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=AIehJ9fEbhhm4kJwkGWgSEJh8czsOsL3QPurO4kBAHslwz46Z8m2obN2VSNV3Q7Tw3bgT6bgbAiH0xn1ub6Sl5y4MbmK80BJ4XVagxo4CZxUPDgP4JFNXOjSJ2Iki/7tx+yZa4xRY1QRuEcWe49dyjA4cOluhUR4XL+d7r2SBRs=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1733326497; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=ZmWhxALGEwNNIpNs+NHmz3ldac02c9QiqU+UbgXG3/8=; 
+	b=V/pSqO/a2J4LkvI5y6NYmHIMnwMID+NXo1M5cyszOMzmh+NawyYAW5qPr+/GZck4Y8cBJ+VmJ8Vog6dt2HM2IVOSSda0OH40T7wTiZnDrY0xW0Y3WWu2MwByRmZ6gFvLKmcwpvVB4D3R5y1MnIy8pQm4QlgNWH2pxToqnLUi1BY=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=adrian.larumbe@collabora.com;
+	dmarc=pass header.from=<adrian.larumbe@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1733326497;
+	s=zohomail; d=collabora.com; i=adrian.larumbe@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:Content-Transfer-Encoding:In-Reply-To:Message-Id:Reply-To;
+	bh=ZmWhxALGEwNNIpNs+NHmz3ldac02c9QiqU+UbgXG3/8=;
+	b=CY6yzd10YcUQKUCYm7FWBuWnHdR3yLjI3UNdkgITGerABYwerNurZp0rQoApTDUI
+	S4jlQ+hRCCWCczzSl5+96L54jx4uGnSJqkUZV6BiKdgEq+orSlzG+AHVhEmVipGuD2P
+	3mFnXGO/lNJzEmZvrsA5Il0oFqW4D/v4S/wPCP9k=
+Received: by mx.zohomail.com with SMTPS id 1733326494458739.7174182116206;
+	Wed, 4 Dec 2024 07:34:54 -0800 (PST)
+Date: Wed, 4 Dec 2024 15:34:50 +0000
+From: =?utf-8?Q?Adri=C3=A1n?= Larumbe <adrian.larumbe@collabora.com>
+To: Boris Brezillon <boris.brezillon@collabora.com>
+Cc: Rob Herring <robh@kernel.org>, Steven Price <steven.price@arm.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Philipp Zabel <p.zabel@pengutronix.de>, kernel@collabora.com, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 6/8] drm/panfrost: Make re-enabling job interrupts at
+ device reset optional
+Message-ID: <em3uug2hv5lzzvujqvc34cv3jmoex5kw6q2q2pf3djpaumaxuz@4y47e2fag6ug>
+References: <20241128211223.1805830-1-adrian.larumbe@collabora.com>
+ <20241128211223.1805830-7-adrian.larumbe@collabora.com>
+ <20241202122039.273f0e9f@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 7/7] KVM: TDX: Add TSX_CTRL msr into uret_msrs list
-To: Adrian Hunter <adrian.hunter@intel.com>, Chao Gao <chao.gao@intel.com>
-Cc: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
- "seanjc@google.com" <seanjc@google.com>,
- "kvm@vger.kernel.org" <kvm@vger.kernel.org>, "Huang, Kai"
- <kai.huang@intel.com>, "Zhao, Yan Y" <yan.y.zhao@intel.com>,
- "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "Yang, Weijiang" <weijiang.yang@intel.com>,
- "binbin.wu@linux.intel.com" <binbin.wu@linux.intel.com>,
- "dmatlack@google.com" <dmatlack@google.com>,
- "pbonzini@redhat.com" <pbonzini@redhat.com>,
- "Yamahata, Isaku" <isaku.yamahata@intel.com>,
- "tony.lindgren@linux.intel.com" <tony.lindgren@linux.intel.com>,
- "nik.borisov@suse.com" <nik.borisov@suse.com>,
- "Chatre, Reinette" <reinette.chatre@intel.com>,
- "x86@kernel.org" <x86@kernel.org>
-References: <b36dd125-ad80-4572-8258-7eea3a899bf9@intel.com>
- <Z04Ffd7Lqxr4Wwua@google.com>
- <c98556099074f52af1c81ec1e82f89bec92cb7cd.camel@intel.com>
- <Z05SK2OxASuznmPq@google.com>
- <60e2ed472e03834c13a48e774dc9f006eda92bf5.camel@intel.com>
- <9beb9e92-b98c-42a2-a2d3-35c5b681ad03@intel.com> <Z0+vdVRptHNX5LPo@intel.com>
- <0e34f9d0-0927-4ac8-b1cb-ef8500b8d877@intel.com> <Z0/4wsR2WCwWfZyV@intel.com>
- <2bcd34eb-0d1f-46c0-933f-fb1d70c70a1e@intel.com> <Z1A5QWaTswaQyE3k@intel.com>
- <c9b14955-6e2f-4490-a18c-0537ffdfff30@intel.com>
-Content-Language: en-US
-From: Xiaoyao Li <xiaoyao.li@intel.com>
-In-Reply-To: <c9b14955-6e2f-4490-a18c-0537ffdfff30@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241202122039.273f0e9f@collabora.com>
 
-On 12/4/2024 7:55 PM, Adrian Hunter wrote:
-> On 4/12/24 13:13, Chao Gao wrote:
->> On Wed, Dec 04, 2024 at 08:57:23AM +0200, Adrian Hunter wrote:
->>> On 4/12/24 08:37, Chao Gao wrote:
->>>> On Wed, Dec 04, 2024 at 08:18:32AM +0200, Adrian Hunter wrote:
->>>>> On 4/12/24 03:25, Chao Gao wrote:
->>>>>>> +#define TDX_FEATURE_TSX (__feature_bit(X86_FEATURE_HLE) | __feature_bit(X86_FEATURE_RTM))
->>>>>>> +
->>>>>>> +static bool has_tsx(const struct kvm_cpuid_entry2 *entry)
->>>>>>> +{
->>>>>>> +	return entry->function == 7 && entry->index == 0 &&
->>>>>>> +	       (entry->ebx & TDX_FEATURE_TSX);
->>>>>>> +}
->>>>>>> +
->>>>>>> +static void clear_tsx(struct kvm_cpuid_entry2 *entry)
->>>>>>> +{
->>>>>>> +	entry->ebx &= ~TDX_FEATURE_TSX;
->>>>>>> +}
->>>>>>> +
->>>>>>> +static bool has_waitpkg(const struct kvm_cpuid_entry2 *entry)
->>>>>>> +{
->>>>>>> +	return entry->function == 7 && entry->index == 0 &&
->>>>>>> +	       (entry->ecx & __feature_bit(X86_FEATURE_WAITPKG));
->>>>>>> +}
->>>>>>> +
->>>>>>> +static void clear_waitpkg(struct kvm_cpuid_entry2 *entry)
->>>>>>> +{
->>>>>>> +	entry->ecx &= ~__feature_bit(X86_FEATURE_WAITPKG);
->>>>>>> +}
->>>>>>> +
->>>>>>> +static void tdx_clear_unsupported_cpuid(struct kvm_cpuid_entry2 *entry)
->>>>>>> +{
->>>>>>> +	if (has_tsx(entry))
->>>>>>> +		clear_tsx(entry);
->>>>>>> +
->>>>>>> +	if (has_waitpkg(entry))
->>>>>>> +		clear_waitpkg(entry);
->>>>>>> +}
->>>>>>> +
->>>>>>> +static bool tdx_unsupported_cpuid(const struct kvm_cpuid_entry2 *entry)
->>>>>>> +{
->>>>>>> +	return has_tsx(entry) || has_waitpkg(entry);
->>>>>>> +}
->>>>>>
->>>>>> No need to check TSX/WAITPKG explicitly because setup_tdparams_cpuids() already
->>>>>> ensures that unconfigurable bits are not set by userspace.
->>>>>
->>>>> Aren't they configurable?
->>>>
->>>> They are cleared from the configurable bitmap by tdx_clear_unsupported_cpuid(),
->>>> so they are not configurable from a userspace perspective. Did I miss anything?
->>>> KVM should check user inputs against its adjusted configurable bitmap, right?
->>>
->>> Maybe I misunderstand but we rely on the TDX module to reject
->>> invalid configuration.  We don't check exactly what is configurable
->>> for the TDX Module.
->>
->> Ok, this is what I missed. I thought KVM validated user input and masked
->> out all unsupported features. sorry for this.
->>
->>>
->>> TSX and WAITPKG are not invalid for the TDX Module, but KVM
->>> must either support them by restoring their MSRs, or disallow
->>> them.  This patch disallows them for now.
->>
->> Yes. I agree. what if a new feature (supported by a future TDX module) also
->> needs KVM to restore some MSRs? current KVM will allow it to be exposed (since
->> only TSX/WAITPKG are checked); then some MSRs may get corrupted. I may think
->> this is not a good design. Current KVM should work with future TDX modules.
+Hi Boris,
+
+On 02.12.2024 12:20, Boris Brezillon wrote:
+> On Thu, 28 Nov 2024 21:06:21 +0000
+> Adrián Larumbe <adrian.larumbe@collabora.com> wrote:
 > 
-> With respect to CPUID, I gather this kind of thing has been
-> discussed, such as here:
+> > Rather than remasking interrupts after a device reset in the main reset
+> > path, allow selecting whether to do this with an additional bool parameter.
+> > 
+> > To this end, split reenabling job interrupts into two functions, one that
+> > clears the interrupts and another one which unmasks them conditionally.
+> > 
+> > Signed-off-by: Adrián Larumbe <adrian.larumbe@collabora.com>
+> > ---
+> >  drivers/gpu/drm/panfrost/panfrost_device.c | 11 +++++--
+> >  drivers/gpu/drm/panfrost/panfrost_device.h |  2 +-
+> >  drivers/gpu/drm/panfrost/panfrost_job.c    | 34 ++++++++++++----------
+> >  drivers/gpu/drm/panfrost/panfrost_job.h    |  3 +-
+> >  4 files changed, 29 insertions(+), 21 deletions(-)
+> > 
+> > diff --git a/drivers/gpu/drm/panfrost/panfrost_device.c b/drivers/gpu/drm/panfrost/panfrost_device.c
+> > index 4fe29286bbe3..7e5d39699982 100644
+> > --- a/drivers/gpu/drm/panfrost/panfrost_device.c
+> > +++ b/drivers/gpu/drm/panfrost/panfrost_device.c
+> > @@ -395,20 +395,25 @@ bool panfrost_exception_needs_reset(const struct panfrost_device *pfdev,
+> >  	return false;
+> >  }
+> >  
+> > -void panfrost_device_reset(struct panfrost_device *pfdev)
+> > +void panfrost_device_reset(struct panfrost_device *pfdev, bool enable_job_int)
+> >  {
+> > +	u32 irq_mask;
+> > +
+> >  	panfrost_gpu_soft_reset(pfdev);
+> >  
+> >  	panfrost_gpu_power_on(pfdev);
+> >  	panfrost_mmu_reset(pfdev);
+> > -	panfrost_job_enable_interrupts(pfdev);
+> > +
+> > +	irq_mask = panfrost_job_reset_interrupts(pfdev);
+> > +	if (enable_job_int)
+> > +		panfrost_enable_interrupts(pfdev, irq_mask);
+> >  }
+> >  
+> >  static int panfrost_device_runtime_resume(struct device *dev)
+> >  {
+> >  	struct panfrost_device *pfdev = dev_get_drvdata(dev);
+> >  
+> > -	panfrost_device_reset(pfdev);
+> > +	panfrost_device_reset(pfdev, true);
+> >  	panfrost_devfreq_resume(pfdev);
+> >  
+> >  	return 0;
+> > diff --git a/drivers/gpu/drm/panfrost/panfrost_device.h b/drivers/gpu/drm/panfrost/panfrost_device.h
+> > index d9aea2c2cbe5..fc83d5e104a3 100644
+> > --- a/drivers/gpu/drm/panfrost/panfrost_device.h
+> > +++ b/drivers/gpu/drm/panfrost/panfrost_device.h
+> > @@ -205,7 +205,7 @@ int panfrost_unstable_ioctl_check(void);
+> >  
+> >  int panfrost_device_init(struct panfrost_device *pfdev);
+> >  void panfrost_device_fini(struct panfrost_device *pfdev);
+> > -void panfrost_device_reset(struct panfrost_device *pfdev);
+> > +void panfrost_device_reset(struct panfrost_device *pfdev, bool enable_job_int);
+> >  
+> >  extern const struct dev_pm_ops panfrost_pm_ops;
+> >  
+> > diff --git a/drivers/gpu/drm/panfrost/panfrost_job.c b/drivers/gpu/drm/panfrost/panfrost_job.c
+> > index fba1a376f593..79d2ee3625b2 100644
+> > --- a/drivers/gpu/drm/panfrost/panfrost_job.c
+> > +++ b/drivers/gpu/drm/panfrost/panfrost_job.c
+> > @@ -27,6 +27,10 @@
+> >  #define job_write(dev, reg, data) writel(data, dev->iomem + (reg))
+> >  #define job_read(dev, reg) readl(dev->iomem + (reg))
+> >  
+> > +#define JOB_INT_ENABLE_MASK			\
+> > +	(GENMASK(16 + NUM_JOB_SLOTS - 1, 16) |	\
+> > +	 GENMASK(NUM_JOB_SLOTS - 1, 0))
+> > +
+> >  struct panfrost_queue_state {
+> >  	struct drm_gpu_scheduler sched;
+> >  	u64 fence_context;
+> > @@ -421,18 +425,23 @@ static struct dma_fence *panfrost_job_run(struct drm_sched_job *sched_job)
+> >  	return fence;
+> >  }
+> >  
+> > -void panfrost_job_enable_interrupts(struct panfrost_device *pfdev)
+> > +u32 panfrost_job_reset_interrupts(struct panfrost_device *pfdev)
+> >  {
+> >  	int j;
+> >  	u32 irq_mask = 0;
+> >  
+> > -	clear_bit(PANFROST_COMP_BIT_JOB, pfdev->is_suspended);
+> > -
+> >  	for (j = 0; j < NUM_JOB_SLOTS; j++) {
+> >  		irq_mask |= MK_JS_MASK(j);
+> >  	}
+> >  
+> >  	job_write(pfdev, JOB_INT_CLEAR, irq_mask);
+> > +
+> > +	return irq_mask;
+> > +}
 > 
-> 	https://lore.kernel.org/all/ZhVsHVqaff7AKagu@google.com/
+> Let's define an ALL_JS_INT_MASK so we can get rid of the for loop and
+> can avoid returning a value that's constant.
+
+Because ALL_JS_INT_MASK would be defined as an OR of MK_JS_MASK() applications,
+and this macro is defined in panfrost_regs.h, I can't think of a nice location
+for it that would be suitable for all the files where it would be called.
+
+Maybe I could implement the same loop inside panfrost_job_init() where it would be
+called only once, and store the result in a const struct panfrost_job_slot field?
+
+> > +
+> > +void panfrost_enable_interrupts(struct panfrost_device *pfdev, u32 irq_mask)
 > 
-> and Rick and Xiaoyao are working on something.
-> 
-> In general, I would expect a new TDX Module would advertise support for
-> new features, but KVM would have to opt in to use them.
-> 
+> Let's drop the irq_mask mask (use ALL_JS_INT_MASK), and call the
+> function panfrost_job_enable_interrupts() instead.
 
-There were discussion[1] on whether KVM to gatekeep the 
-configurable/supported CPUIDs for TDX. I stand by Sean that KVM needs to 
-do so.
+I made a mistake here naming this function, it should've been panfrost_job_enable_interrupts().
 
-Regarding KVM opt in the new feature, KVM gatekeeps the CPUID bit that 
-can be set by userspace is exactly the behavior of opt-in. i.e., for a 
-given KVM, it only allows a CPUID set {S} to be configured by userspace, 
-if new TDX module supports new feature X, it needs KVM to opt-in X by 
-adding X to {S} so that X is allowed to be configured by userspace.
+Other than that, I decided to keep the irq_mask argument because I'm also calling it from
+the very end of panfrost_reset() with JOB_INT_ENABLE_MASK, where I defined it to be
 
-Besides, I find current interface between KVM and userspace lacks the 
-ability to tell userspace what bits are not supported by KVM. 
-KVM_TDX_CAPABILITIES.cpuid doesn't work because it represents the 
-configurable CPUIDs, not supported CPUIDs (I think we might rename it to 
-configurable_cpuid to better reflect its meaning). So userspace has to 
-hardcode that TSX and WAITPKG is not support itself.
+(GENMASK(16 + NUM_JOB_SLOTS - 1, 16) | GENMASK(NUM_JOB_SLOTS - 1, 0))
 
-[1] https://lore.kernel.org/all/ZuM12EFbOXmpHHVQ@google.com/
+That raises the question, what is the functional difference between writing either
+this or MK_JS_MASK(0) | MK_JS_MASK(1) | MK_JS_MASK(2) into the JOB_INT_MASK register?
 
+It's also being done in panfrost_job_irq_handler_thread() so I'm not quite sure of this.
+
+> > +{
+> > +	clear_bit(PANFROST_COMP_BIT_JOB, pfdev->is_suspended);
+> >  	job_write(pfdev, JOB_INT_MASK, irq_mask);
+> >  }
+> >  
+> > @@ -725,12 +734,7 @@ panfrost_reset(struct panfrost_device *pfdev,
+> >  	spin_unlock(&pfdev->js->job_lock);
+> >  
+> >  	/* Proceed with reset now. */
+> > -	panfrost_device_reset(pfdev);
+> > -
+> > -	/* panfrost_device_reset() unmasks job interrupts, but we want to
+> > -	 * keep them masked a bit longer.
+> > -	 */
+> > -	job_write(pfdev, JOB_INT_MASK, 0);
+> > +	panfrost_device_reset(pfdev, false);
+> >  
+> >  	/* GPU has been reset, we can clear the reset pending bit. */
+> >  	atomic_set(&pfdev->reset.pending, 0);
+> > @@ -752,9 +756,7 @@ panfrost_reset(struct panfrost_device *pfdev,
+> >  		drm_sched_start(&pfdev->js->queue[i].sched, 0);
+> >  
+> >  	/* Re-enable job interrupts now that everything has been restarted. */
+> > -	job_write(pfdev, JOB_INT_MASK,
+> > -		  GENMASK(16 + NUM_JOB_SLOTS - 1, 16) |
+> > -		  GENMASK(NUM_JOB_SLOTS - 1, 0));
+> > +	panfrost_enable_interrupts(pfdev, JOB_INT_ENABLE_MASK);
+> >  
+> >  	dma_fence_end_signalling(cookie);
+> >  }
+> > @@ -827,9 +829,7 @@ static irqreturn_t panfrost_job_irq_handler_thread(int irq, void *data)
+> >  
+> >  	/* Enable interrupts only if we're not about to get suspended */
+> >  	if (!test_bit(PANFROST_COMP_BIT_JOB, pfdev->is_suspended))
+> > -		job_write(pfdev, JOB_INT_MASK,
+> > -			  GENMASK(16 + NUM_JOB_SLOTS - 1, 16) |
+> > -			  GENMASK(NUM_JOB_SLOTS - 1, 0));
+> > +		job_write(pfdev, JOB_INT_MASK, JOB_INT_ENABLE_MASK);
+> >  
+> >  	return IRQ_HANDLED;
+> >  }
+> > @@ -854,6 +854,7 @@ int panfrost_job_init(struct panfrost_device *pfdev)
+> >  {
+> >  	struct panfrost_job_slot *js;
+> >  	unsigned int nentries = 2;
+> > +	u32 irq_mask;
+> >  	int ret, j;
+> >  
+> >  	/* All GPUs have two entries per queue, but without jobchain
+> > @@ -905,7 +906,8 @@ int panfrost_job_init(struct panfrost_device *pfdev)
+> >  		}
+> >  	}
+> >  
+> > -	panfrost_job_enable_interrupts(pfdev);
+> > +	irq_mask = panfrost_job_reset_interrupts(pfdev);
+> > +	panfrost_enable_interrupts(pfdev, irq_mask);
+> >  
+> >  	return 0;
+> >  
+> > diff --git a/drivers/gpu/drm/panfrost/panfrost_job.h b/drivers/gpu/drm/panfrost/panfrost_job.h
+> > index ec581b97852b..c09d42ee5039 100644
+> > --- a/drivers/gpu/drm/panfrost/panfrost_job.h
+> > +++ b/drivers/gpu/drm/panfrost/panfrost_job.h
+> > @@ -46,7 +46,8 @@ void panfrost_job_close(struct panfrost_file_priv *panfrost_priv);
+> >  int panfrost_job_get_slot(struct panfrost_job *job);
+> >  int panfrost_job_push(struct panfrost_job *job);
+> >  void panfrost_job_put(struct panfrost_job *job);
+> > -void panfrost_job_enable_interrupts(struct panfrost_device *pfdev);
+> > +u32 panfrost_job_reset_interrupts(struct panfrost_device *pfdev);
+> > +void panfrost_enable_interrupts(struct panfrost_device *pfdev, u32 irq_mask);
+> >  void panfrost_job_suspend_irq(struct panfrost_device *pfdev);
+> >  int panfrost_job_is_idle(struct panfrost_device *pfdev);
+> >  
 
