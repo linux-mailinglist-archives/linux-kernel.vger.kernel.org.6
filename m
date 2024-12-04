@@ -1,186 +1,149 @@
-Return-Path: <linux-kernel+bounces-432032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431712-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FBD59E4412
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 20:06:14 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BD089E446A
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 20:18:49 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD337164820
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 19:06:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DECC8B65F6F
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:08:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6438A1C3BE3;
-	Wed,  4 Dec 2024 19:06:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6025D1C3BF6;
+	Wed,  4 Dec 2024 16:59:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="e+HTR7Y4"
-Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mzp5cRA6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AB6323919E
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 19:06:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCA4C1C3BE5;
+	Wed,  4 Dec 2024 16:59:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733339167; cv=none; b=DdX1bP8HYHwEh2eezcgS+I5Yo2vpJjnegSwGhNYgqQq/W6RYbraDgUUha/j2AKTtcDjU5pdp4C34n7knCDuiWVNDNbaebLwvkcc8V8Vp72LULKukCOFPsj8RASajSbxSPD0CPAo8IJciGqgQY5mcOX8xTUlv6SqepgSJ97O9q6U=
+	t=1733331590; cv=none; b=JQj2m7ZuGvxeOYo2s4yQrgVinPL9pLACeHhmdHiyJwn7aLphz09k3DOSUxytPEvETcALzMbVPlIMU/tr+H+aDyRsS5iGkEAXCp1bLZO+vYb4w04KUdiR6zVxiR4CWkm0NOhnc/YvsPcR2Q8HOe/IzCcjKfUy3yIwJLBvqfgrWNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733339167; c=relaxed/simple;
-	bh=65fxsdph7FrFvZX6a2W4aEbZiEgacsW3UUoh/EurRa0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=n6q7N7F39fxknuJ+PiAl1QXUDNHxLNXrMGxdKf5v4mkgmQ1SPr+3mqcad00NF43WgAT3a0Eqh9siKmHuQ1ZvPo1R6XdsK1bpRElwu708XnVBdT4LdnQOQGFcC/I++HqthO0c+b5Y8vTKjK/jVa7VGyy6uM6NlkHE1bNlng2Bejo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=e+HTR7Y4; arc=none smtp.client-ip=209.85.222.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7b676152a86so134403385a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 11:06:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1733339165; x=1733943965; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=rwAMqF5C2/XSwGsn6tg9idQ+gKok1OrDZ/TQYQQC3ME=;
-        b=e+HTR7Y4brFOEn+P1MjdI0U2YLGGW/MjqhUWA4PRZjUQoDrYnL7TzQZBODnxKDui8A
-         0DPv/2SW0ObETQh7aBmz27o3YfeEBxCT2t9g6d7ZHAgu8yvrL3U28ElCxA+0rpPnQe1N
-         2GXeUAqNt24Ptx5e/BJ2YnTYiiI19XTFJJSm4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733339165; x=1733943965;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rwAMqF5C2/XSwGsn6tg9idQ+gKok1OrDZ/TQYQQC3ME=;
-        b=KDCRmqfN/P6cudqJMf6oe1ro2Iim5LJd44KOSLlYuBKojCOQ26ve/DtQ2G12S0y3RI
-         07hjt+oA7uS6eSGG9oQerV7VLgZhbhVisouo/FaEtGE+p/FqFRP3lyuQqP4Tx5hwZS1N
-         sJrUCLnMZSu/U72NyZ/MB6dzRNQsioFpduflqAo2hWAtYenu2QARR+l+1IMgoE7mYlKV
-         LsUpFEpSvjfvsQa64maxzihYZD9rL3/Iumvpjps2oyuGDidjQUBSCTOGSgpeUR98Eqvp
-         0oiOqVtLMrfkGFXKcXaElXkeDVpPkbjfNMUOpDGZIRkNJCDEbDIPN7rHJlf0QV6y6uJk
-         BYPA==
-X-Forwarded-Encrypted: i=1; AJvYcCWH2A8YmHmXgXleq56d3YHibfs6+x/PFi2WN5QAZu2Aw7elz22qnVAJpLIQ//SREVdYsYNuUgHR6/TGFXY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5ZwllZaxRcoNYBhdcNazqL4EuPvaO04imN4w3b8dRf2y7J7BJ
-	NEeHxBsLAgoKcyNOBjVGpMbjAWd7ij1H01IdZsZ/+29WwN8dLahfNbBxSkiUw9gqzDa1rLciLX8
-	ETg==
-X-Gm-Gg: ASbGnctmzbOAG/LK3t+qqlbYB07nMZNAyC/D9CMGbZJeFPzx9WrBJQ2Vorp0UgTwB/1
-	rAMmNhyYv6pv3XX154WpqAcJ61yGwhQ00pt44Ik9fLIujZRdBVFumEfSsfIWycKaYB17pxVqpH6
-	g7aaxBYU1V22uMrqRDOONRlopooEmDnvAZ3Qd/hAd2iVj02NV6A1LwtZI9eLudQuyDFjann5zdM
-	HjGvHkHDSYauy2o74XGfYzz+wPrwih+G+8XnFvG2gwYAgowJAGEfUV4JNmR1hD/zlfvZ4WMbh56
-	nuky34HqaQV6mw==
-X-Google-Smtp-Source: AGHT+IET8ru0K2M3tO3OOrXNHAiQ22hdOskTrfOZXT2O7Z5zjNnzqqS/g1Ime/BQv4SnXZ/y8604qA==
-X-Received: by 2002:a05:620a:6005:b0:7b1:48d1:574d with SMTP id af79cd13be357-7b6b4185bdfmr97267185a.8.1733339164891;
-        Wed, 04 Dec 2024 11:06:04 -0800 (PST)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b6849aac82sm635574085a.94.2024.12.04.11.06.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Dec 2024 11:06:04 -0800 (PST)
-Message-ID: <5b36a3c7-f691-49e5-a4c6-803ddccdd5ea@broadcom.com>
-Date: Wed, 4 Dec 2024 11:05:58 -0800
+	s=arc-20240116; t=1733331590; c=relaxed/simple;
+	bh=EDGtG5EBGtH2cHj7KVKZS1fbq4ioEggx+uprl8swCfg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Ls1RLssq+NE7nkK+WYihNOb44dKeWn8hZ4n5hbJTQlM0TWRG5CpTubmE2D1Cm2a1qC+3R60UjbUM0wz8IuN77UzxElBQ7x4zDDZUawSgodzekQJLxyx/upkOgFntqLmfx12QartkFlH2hwzEY8l9hv93ndvLiSmlc2cPuQka/UE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mzp5cRA6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45075C4CECD;
+	Wed,  4 Dec 2024 16:59:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733331590;
+	bh=EDGtG5EBGtH2cHj7KVKZS1fbq4ioEggx+uprl8swCfg=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=mzp5cRA6ER1rjkiXkm2H/mimrEhEShynHCM3Ugnjse1HEUEW7WJ4/p2bSeHjM1BxR
+	 CVu6cH4hFhi00o/fJJUSaTFXbQ4D52uxMnrtsujfZGXCKrShUL8thuiTXYySbr8yCO
+	 IaLibW7WjEQtPy0n1BtC/b4pb+r7FYdB6WRLlS7WJmKiSdoAgH31OxyYt9JImYhHlK
+	 AFqpUKtXYhpHFUWrBA+ZxcvcAqGEbB9kwC8ghKpkJJQ+5WeVxFtmQ/oLrNk/f6+18F
+	 v+Mvz+jfKLQQXB9s+SLnYllT8ffnzpnJjPpFQgWkilE49oRcE9/sG//irRiA683R8j
+	 CDKcaMe/9j7Jw==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Jan Stancek <jstancek@redhat.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Sasha Levin <sashal@kernel.org>,
+	bristot@kernel.org,
+	tglozar@redhat.com,
+	limingming890315@gmail.com,
+	linux-trace-kernel@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.11 05/33] tools/rtla: fix collision with glibc sched_attr/sched_set_attr
+Date: Wed,  4 Dec 2024 10:47:18 -0500
+Message-ID: <20241204154817.2212455-5-sashal@kernel.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20241204154817.2212455-1-sashal@kernel.org>
+References: <20241204154817.2212455-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/7] arm64: dts: broadcom: Fix device tree warnings for
- BCM2712 display pipeline
-To: Krzysztof Kozlowski <krzk@kernel.org>,
- Dave Stevenson <dave.stevenson@raspberrypi.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, Eric Anholt <eric@anholt.net>,
- =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>,
- Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
- Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
- Doug Berger <opendmb@gmail.com>, Linus Walleij <linus.walleij@linaro.org>,
- Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
- linux-gpio@vger.kernel.org
-References: <20241202-dt-bcm2712-fixes-v1-0-fac67cc2f98a@raspberrypi.com>
- <20241202-dt-bcm2712-fixes-v1-4-fac67cc2f98a@raspberrypi.com>
- <c8093283-f2c1-4a66-823a-50aeabb3c82b@kernel.org>
-Content-Language: en-US
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
- xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
- M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
- JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
- PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
- KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
- AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
- IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
- ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
- bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
- Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
- tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
- TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
- zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
- WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
- IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
- U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
- 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
- pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
- MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
- IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
- gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
- obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
- N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
- CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
- C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
- wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
- EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
- fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
- MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
- 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
- 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
-In-Reply-To: <c8093283-f2c1-4a66-823a-50aeabb3c82b@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.11.10
+Content-Transfer-Encoding: 8bit
 
-On 12/2/24 07:20, Krzysztof Kozlowski wrote:
-> On 02/12/2024 15:31, Dave Stevenson wrote:
->> Fixes up errors on HDMI and interrupt controllers that weren't
-> 
-> What errors? I can't find anything in the commit. Describe the error.
-> 
->> noticed before merging.
->>
->> Fixes: de9bc2dba3db ("arm64: dts: broadcom: Add display pipeline support to BCM2712")
->> Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
->> ---
->>   arch/arm64/boot/dts/broadcom/bcm2712.dtsi | 8 ++++----
->>   1 file changed, 4 insertions(+), 4 deletions(-)
->>
->> diff --git a/arch/arm64/boot/dts/broadcom/bcm2712.dtsi b/arch/arm64/boot/dts/broadcom/bcm2712.dtsi
->> index 39305e0869ec..f42fad2d8b37 100644
->> --- a/arch/arm64/boot/dts/broadcom/bcm2712.dtsi
->> +++ b/arch/arm64/boot/dts/broadcom/bcm2712.dtsi
->> @@ -336,7 +336,7 @@ ddc1: i2c@7d508280 {
->>   			#size-cells = <0>;
->>   		};
->>   
->> -		bsc_irq: intc@7d508380 {
->> +		bsc_irq: interrupt-controller@7d508380 {
-> 
-> 
-> Do not mix cleanups with bugfixes.
-> 
-> BTW, do not mix DTS to DRM. DRM has its own development style. DTS
-> *cannot* be merged there, so combining these series is not welcomed and
-> leads to issues (like DRM applying DTS!).
+From: Jan Stancek <jstancek@redhat.com>
 
-That is not what was done, I took the DTS patches via the Broadcom ARM 
-SoC tree, as I usually do, unless someone tells me otherwise.
+[ Upstream commit 0eecee340672c4b512f6f4a8c6add26df05d130c ]
 
-We got a number of DTS warnings after I took Dave's patches so I asked 
-for those to be fixed, as it turns out there are binding and DTS fixes.
+glibc commit 21571ca0d703 ("Linux: Add the sched_setattr
+and sched_getattr functions") now also provides 'struct sched_attr'
+and sched_setattr() which collide with the ones from rtla.
 
-I intend to squash these fixes with their original commit, so all of 
-those commit messages will be discarded, they are only meant to be 
-transitional.
+  In file included from src/trace.c:11:
+  src/utils.h:49:8: error: redefinition of ‘struct sched_attr’
+     49 | struct sched_attr {
+        |        ^~~~~~~~~~
+  In file included from /usr/include/bits/sched.h:60,
+                   from /usr/include/sched.h:43,
+                   from /usr/include/tracefs/tracefs.h:10,
+                   from src/trace.c:4:
+  /usr/include/linux/sched/types.h:98:8: note: originally defined here
+     98 | struct sched_attr {
+        |        ^~~~~~~~~~
+
+Define 'struct sched_attr' conditionally, similar to what strace did:
+  https://lore.kernel.org/all/20240930222913.3981407-1-raj.khem@gmail.com/
+and rename rtla's version of sched_setattr() to avoid collision.
+
+Link: https://lore.kernel.org/8088f66a7a57c1b209cd8ae0ae7c336a7f8c930d.1728572865.git.jstancek@redhat.com
+Signed-off-by: Jan Stancek <jstancek@redhat.com>
+Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ tools/tracing/rtla/src/utils.c | 4 ++--
+ tools/tracing/rtla/src/utils.h | 2 ++
+ 2 files changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/tools/tracing/rtla/src/utils.c b/tools/tracing/rtla/src/utils.c
+index 9ac71a66840c1..0735fcb827ed7 100644
+--- a/tools/tracing/rtla/src/utils.c
++++ b/tools/tracing/rtla/src/utils.c
+@@ -233,7 +233,7 @@ long parse_ns_duration(char *val)
+ 
+ #define SCHED_DEADLINE		6
+ 
+-static inline int sched_setattr(pid_t pid, const struct sched_attr *attr,
++static inline int syscall_sched_setattr(pid_t pid, const struct sched_attr *attr,
+ 				unsigned int flags) {
+ 	return syscall(__NR_sched_setattr, pid, attr, flags);
+ }
+@@ -243,7 +243,7 @@ int __set_sched_attr(int pid, struct sched_attr *attr)
+ 	int flags = 0;
+ 	int retval;
+ 
+-	retval = sched_setattr(pid, attr, flags);
++	retval = syscall_sched_setattr(pid, attr, flags);
+ 	if (retval < 0) {
+ 		err_msg("Failed to set sched attributes to the pid %d: %s\n",
+ 			pid, strerror(errno));
+diff --git a/tools/tracing/rtla/src/utils.h b/tools/tracing/rtla/src/utils.h
+index d44513e6c66a0..99c9cf81bcd02 100644
+--- a/tools/tracing/rtla/src/utils.h
++++ b/tools/tracing/rtla/src/utils.h
+@@ -46,6 +46,7 @@ update_sum(unsigned long long *a, unsigned long long *b)
+ 	*a += *b;
+ }
+ 
++#ifndef SCHED_ATTR_SIZE_VER0
+ struct sched_attr {
+ 	uint32_t size;
+ 	uint32_t sched_policy;
+@@ -56,6 +57,7 @@ struct sched_attr {
+ 	uint64_t sched_deadline;
+ 	uint64_t sched_period;
+ };
++#endif /* SCHED_ATTR_SIZE_VER0 */
+ 
+ int parse_prio(char *arg, struct sched_attr *sched_param);
+ int parse_cpu_set(char *cpu_list, cpu_set_t *set);
 -- 
-Florian
+2.43.0
+
 
