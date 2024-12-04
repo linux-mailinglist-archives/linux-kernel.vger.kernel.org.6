@@ -1,120 +1,97 @@
-Return-Path: <linux-kernel+bounces-430535-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430536-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2A7A9E3247
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 04:48:09 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B42C9E324D
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 04:52:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 700CCB250C8
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 03:48:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CA1ECB2395F
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 03:52:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C59515573F;
-	Wed,  4 Dec 2024 03:48:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C262015A848;
+	Wed,  4 Dec 2024 03:52:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="bmokr1QK"
-Received: from out30-97.freemail.mail.aliyun.com (out30-97.freemail.mail.aliyun.com [115.124.30.97])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BCAC17BA1;
-	Wed,  4 Dec 2024 03:47:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.97
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="RN+42dGA"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01C6A14A4FF;
+	Wed,  4 Dec 2024 03:52:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733284081; cv=none; b=sa2dbI+ZiM1Bu16NxRuCAVHK/5fAy584eyYyJFjhQPYzOgNOz9ZD4Yk+niQyUjrcYvr18bnobNCPuWZhmSb6GouWiqcVlKQ1iUuWBEHKa21oqW+Ss4v1eDmRhgceT74Q10j2MdwtXBHp98H5/LoIda8NxVI0M8ayRzvaBxMbMBo=
+	t=1733284336; cv=none; b=HlIsvKdksYa6kb/nWnvhM1GQlOpJjQJ3M06cI75PLT/z6vLEdw/RLKcKCP7nAZQgwZrvsSAEaVU7mIma+2WrkVwle4oCDK+aJUUZoIR9MpoFx4qSKh3fuLdpAbF/R2se5lynSIqa7PxYyfnkOVgjbtwske2ArxBtEKkZt+ndFyo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733284081; c=relaxed/simple;
-	bh=yLCGlJ1N1/GBNMtuCkIzGBcSOO79gvcY8Vg+NleXdlw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KbFYQ1gERI8ScBhEAPqtHSvaQ4ZOGF+8ZhK8oWgoCvU8/W3LXe5K23J+zk3zghS3myAN+5C1bapWgGdKnrHf96swgfK2hSd2ob4qJ/4m9FQrSwmwmR2JNpLXG2e20XEFR/c9vk0ae0R3HfSB8Ki+LLK8WkfVrJIG3cDczx1hdPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=bmokr1QK; arc=none smtp.client-ip=115.124.30.97
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1733284070; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=RNn+AlnjbPZN6/wfvX/gSHfjWLTDt0n5gO20Q5PTBh8=;
-	b=bmokr1QK2FIEkG5lFKxL+TWJ22nKXTAY/0Eu+loFb+9EQU3LJ+JF1sP79oRs7K3Drz5VEQwJSzoGfBgJnQbcmxPlr3GH/5KsOBrwy+EGA2x3bj6P6oJLxK/YUKKrHnoFZoA84LA423auVatSg3b0pgJqORSK4Z5h0fyx+bRJp2M=
-Received: from 30.221.128.184(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0WKohVzX_1733284068 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Wed, 04 Dec 2024 11:47:49 +0800
-Message-ID: <6c3e1f5a-916c-4959-a505-d3d3917e5c9c@linux.alibaba.com>
-Date: Wed, 4 Dec 2024 11:47:48 +0800
+	s=arc-20240116; t=1733284336; c=relaxed/simple;
+	bh=fLYACWwFucewfXjZr5YEb2nJPip67Lv2+g81QB2bxzc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Ta/Zm1jCgWD8Yqdlc7ZLHaLjJQlMX8r1e4Fv6Yu8OZzQZDq6nCE8YALgTKhNWRqp4YCwL3/Osx9pq0kRKP/j4aaTqJor3jqUH02F5oXyAYvHZDIrpt5sbT0v7Hy3/Tvqv5sQxq1wlgYHo6S0KHL3ZWD+JJvEBsLVqDGMIsM41Qc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=RN+42dGA; arc=none smtp.client-ip=117.135.210.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=jnuZr
+	+sMFHO3kQXK5Q3ZVgkSaE9cD/7A4wzl+1kx1sc=; b=RN+42dGAMOqXyOOZFxQF3
+	AYgGCCrl4MnabwV+A2l+ZnXjlOB3G2/NOYN8RDN8PdBdypf9djkTJVsx85wuTEKP
+	EUAOHppbqmukufSC3xCsKUfottMauxd8ZYbfB662x5qKa5X1DJGQUbEANhlB/Ar3
+	/aTzHqrvgDKSwOAwijIBFs=
+Received: from localhost.localdomain (unknown [])
+	by gzga-smtp-mtada-g0-0 (Coremail) with SMTP id _____wDHd1Zc0U9nHxKYBA--.64832S2;
+	Wed, 04 Dec 2024 11:49:49 +0800 (CST)
+From: MoYuanhao <moyuanhao3676@163.com>
+To: edumazet@google.com,
+	davem@davemloft.net,
+	dsahern@kernel.org,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	horms@kernel.org
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	MoYuanhao <moyuanhao3676@163.com>
+Subject: [PATCH net-next] tcp: Check space before adding MPTCP options
+Date: Wed,  4 Dec 2024 11:49:46 +0800
+Message-Id: <20241204034946.10794-1-moyuanhao3676@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] ocfs2: Revert "ocfs2: fix the la space leak when
- unmounting an ocfs2 volume"
-To: Heming Zhao <heming.zhao@suse.com>, ocfs2-devel@lists.linux.dev
-Cc: linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
- gregkh@linuxfoundation.org, Heming Zhao <heing.zhao@suse.com>,
- stable@vger.kernel.org
-References: <20241204033243.8273-1-heming.zhao@suse.com>
- <20241204033243.8273-2-heming.zhao@suse.com>
-Content-Language: en-US
-From: Joseph Qi <joseph.qi@linux.alibaba.com>
-In-Reply-To: <20241204033243.8273-2-heming.zhao@suse.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wDHd1Zc0U9nHxKYBA--.64832S2
+X-Coremail-Antispam: 1Uf129KBjvdXoWrZr1DJF13tr4kWr4rArW3GFg_yoWfXrb_Aw
+	n7Kr4kGr4rZrn2yF4kCF45AFWIgrWa9a1vgr1Skasrt348ZF1qgr4kJr93J3Z7CF45Ary7
+	Jwn8JrWfWry3ujkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUUxnY3UUUUU==
+X-CM-SenderInfo: 5pr13t5qkd0jqwxwqiywtou0bp/1tbiNhKrfmdPyhvF7AAAsh
 
+Ensure enough space before adding MPTCP options in tcp_syn_options()
+Added a check to verify sufficient remaining space
+before inserting MPTCP options in SYN packets.
+This prevents issues when space is insufficient.
 
+Signed-off-by: MoYuanhao <moyuanhao3676@163.com>
+---
+ net/ipv4/tcp_output.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-On 12/4/24 11:32 AM, Heming Zhao wrote:
-> This reverts commit dfe6c5692fb5 ("ocfs2: fix the la space leak when
-> unmounting an ocfs2 volume").
-> 
-> In commit dfe6c5692fb5, the commit log stating "This bug has existed
-> since the initial OCFS2 code." is incorrect. The correct introduction
-> commit is 30dd3478c3cd ("ocfs2: correctly use ocfs2_find_next_zero_bit()").
-> 
-
-Could you please elaborate more how it happens?
-And it seems no difference with the new version. So we may submit a
-standalone revert patch to those backported stable kernels (< 6.10).
-
-Thanks,
-Joseph
-
-> Fixes: dfe6c5692fb5 ("ocfs2: fix the la space leak when unmounting an ocfs2 volume")
-> Signed-off-by: Heming Zhao <heing.zhao@suse.com>
-> Cc: <stable@vger.kernel.org>
-> ---
->  fs/ocfs2/localalloc.c | 19 -------------------
->  1 file changed, 19 deletions(-)
-> 
-> diff --git a/fs/ocfs2/localalloc.c b/fs/ocfs2/localalloc.c
-> index 8ac42ea81a17..5df34561c551 100644
-> --- a/fs/ocfs2/localalloc.c
-> +++ b/fs/ocfs2/localalloc.c
-> @@ -1002,25 +1002,6 @@ static int ocfs2_sync_local_to_main(struct ocfs2_super *osb,
->  		start = bit_off + 1;
->  	}
->  
-> -	/* clear the contiguous bits until the end boundary */
-> -	if (count) {
-> -		blkno = la_start_blk +
-> -			ocfs2_clusters_to_blocks(osb->sb,
-> -					start - count);
-> -
-> -		trace_ocfs2_sync_local_to_main_free(
-> -				count, start - count,
-> -				(unsigned long long)la_start_blk,
-> -				(unsigned long long)blkno);
-> -
-> -		status = ocfs2_release_clusters(handle,
-> -				main_bm_inode,
-> -				main_bm_bh, blkno,
-> -				count);
-> -		if (status < 0)
-> -			mlog_errno(status);
-> -	}
-> -
->  bail:
->  	if (status)
->  		mlog_errno(status);
+diff --git a/net/ipv4/tcp_output.c b/net/ipv4/tcp_output.c
+index 5485a70b5fe5..0e5b9a654254 100644
+--- a/net/ipv4/tcp_output.c
++++ b/net/ipv4/tcp_output.c
+@@ -883,8 +883,10 @@ static unsigned int tcp_syn_options(struct sock *sk, struct sk_buff *skb,
+ 		unsigned int size;
+ 
+ 		if (mptcp_syn_options(sk, skb, &size, &opts->mptcp)) {
+-			opts->options |= OPTION_MPTCP;
+-			remaining -= size;
++			if (remaining >= size) {
++				opts->options |= OPTION_MPTCP;
++				remaining -= size;
++			}
+ 		}
+ 	}
+ 
+-- 
+2.25.1
 
 
