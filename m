@@ -1,179 +1,97 @@
-Return-Path: <linux-kernel+bounces-431383-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431384-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D1529E3CB5
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:30:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 940A99E3CA8
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:25:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7936DB38ABF
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 14:22:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3D9BEB3FAFB
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 14:22:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DA3F1FECDC;
-	Wed,  4 Dec 2024 14:22:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC39A2040BD;
+	Wed,  4 Dec 2024 14:22:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="f/X7kzKN"
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rxU7py+B"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 286E61FC100
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 14:22:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E6D21BD014;
+	Wed,  4 Dec 2024 14:22:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733322129; cv=none; b=ICo/Cbl3hYayozJ75aqlVrRSHIpgC9gycaAsr2qcEA8TogjgEuboaVislWJlOEgSD9Dn5MldYVRju+FK0co/IjchtDLiGP7punr44jDDnzleipeOkvMhCdj/y553+/mU+n334awAbp59c1vBJLX8rfXXrJC6QWmnpdYBz3XA2pw=
+	t=1733322148; cv=none; b=eD0zbmGl2ygF9sMdeIfhJY22Vqf+fDS36NGiuNIF52Nqv3WmVgQp336SOW2XpHJuop38cQUr0ilwFcu4CACr3wsk4QpuBBgtSyWlg9vkQBhbztx7n+ghAJm1qOYBrwIhVldXm1uVvQQmE16qYHzxiR9jwzWmYKb9lbkT58z7JFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733322129; c=relaxed/simple;
-	bh=jZFPdtuKM/4MGujdMzoVO7WTjmvayBrMQSDKHpFSMK0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Vcp/A3YuN1+mFOK1v8QnuVO0gMXuzFvOxj/HepOokMxQMCFgHquCqwxHPqjFGdPTwBrlpY7ib9uidS/RKDftQ1InYhQq5+YsE2z+hRle01Te51mLfLEMRVRYuwsjWCEFAWGaVOGAXmTsuWWKBmNyX2w4Tfdb47r6+NW3OGxKyGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=f/X7kzKN; arc=none smtp.client-ip=209.85.160.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-466ab386254so212171cf.1
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 06:22:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733322127; x=1733926927; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jZFPdtuKM/4MGujdMzoVO7WTjmvayBrMQSDKHpFSMK0=;
-        b=f/X7kzKNo1W5XUY0QV1eRYLg75v5F/nl5WWqiHuFZ1G9XuvOw7ajwuDeoXY+OQCiSJ
-         wwELstnqpIFG1IN5DsM1rukinUuyD9K94Dc6RWw3nwnEP0BYmA9IBd8fAKA0VvkqxdfQ
-         N2K857WyJhGiVZYYfq2hmsP2r9q+xFSqPUlIJ0+lDOpRdmKQSAt7wNHAVSRNkPcayrSI
-         7972oSYalDh626i9yg5m2a3JLAOPPuOTt3lCQP2r4XM2g4PB6FdStr+P08/g3SbBKDT9
-         I5hcU0rVuRZaHWvuLwjmh/7kV1P96xLKBCY3uixhQQxFND6lg/iSxqX8NrS+sOtFIaOC
-         dESg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733322127; x=1733926927;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jZFPdtuKM/4MGujdMzoVO7WTjmvayBrMQSDKHpFSMK0=;
-        b=BpYJMXg8mBF9SdAnDVWbqkb6hwBHF1ZByMQ5Kgc1qz5Ex8AFxIteRacwms0T8GjETb
-         pZ0Gs5fmXYPSZ3uec1z0SpVv1IotPwGaXgTYIWII5hNsMDuuFt5euugSQDa/wa9wlnSD
-         aYvEjmX2G9JkRjMHqlklJquOQCG7DRBsaLgL+9XYCdOJH4bMhugYDMjEy5B9sIYBWJdO
-         6Od+h6yrdChDlSln7P5E3vjFtf0LNQL5mLqiXOpEcIhfXoWegUN4rGKSDsnETIEkPL4S
-         BTjrmLW2aAqRRIRHLdNudlz93KDfnfThh5gVii3hIDyQQ89dZPx+EiX/5LuB2D+CBkFS
-         XynQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUQZQvW575yC6sSP7evE27GAvnzBD9JlvjyP8F0WppEeOfey+pEmbqmCiZK0F8Xq1TCvtEFKmHYdBA4wo8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwaTDOMW8Dc8Iddwmh3EaoyuDA6OP42taIbIq4L1DAZpiZltDOV
-	gp4aYFeSxnMsnZJPmLfsj5YSxlV08R0ZT7WLf0DDd7/moCKMh5ti8R1qTX2M90MnRd4LrwSWeKi
-	11enPpW8kfFRmBvvCWlJA4iECEXIiIM4J83md
-X-Gm-Gg: ASbGnctDwZ6AhuZRQRqAEQzhAD5AXYO68STsK52T3JZzSz2Gvg+mMgUKOCkvF8dV4b9
-	yvfoURqV6Y7zh+1CVNrBx56k2xGwaVVnyYDG6X55fQB9x8VtvoA9X2f1qiFbk9Qh/
-X-Google-Smtp-Source: AGHT+IEpQhE7D5Vey9wUDnuOEEvDJ2gnQubvBzk/ZoMblukjuUumP/CvUjMEuRtoZLBwjzXpYGjqRO+eWikphM5x5+E=
-X-Received: by 2002:a05:622a:124e:b0:466:8c7c:3663 with SMTP id
- d75a77b69052e-4671b68fa81mr2911711cf.5.1733322126557; Wed, 04 Dec 2024
- 06:22:06 -0800 (PST)
+	s=arc-20240116; t=1733322148; c=relaxed/simple;
+	bh=CCyS4K6qH/1DQ/HGcYr/W1D5AC4ouG8yMRT5gs8nL6k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eeiRSc9DtdRZCiDDo9+pCaeDMSEeJh42xjRK6wV/28IYmx0NsOPp+gS361tifTOrzU5cGOWxH0aSw/GRt96EIrTqQmQjw16JSlipbTTN61XXbHqkKuYVAMRBCmDq4jIpec0zSqgCeJ++NWc6vMLYiijuNqShqPM8S3f55LEy3u8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rxU7py+B; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9622AC4CECD;
+	Wed,  4 Dec 2024 14:22:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733322147;
+	bh=CCyS4K6qH/1DQ/HGcYr/W1D5AC4ouG8yMRT5gs8nL6k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rxU7py+B1rzxO1rwvwjkwSfstGL2d7Ydzk2eMWyY6MvP7M4dhhs6TWO9RCqpoEGpq
+	 +GFBuLNpYHgQokCjGSh2CguCiJUK3WNucXamRd5mSMU7JfuciAEwtnucZkKPL3Z0GF
+	 KhLvRbBo7XnXQqxjoNsDdJrV1niEVibkXH0b8fh7mlXz44DoSus8PK4rXSLADWqKpT
+	 dAEfjbuuSfuihx1/i9W9oQs8gqPF350v8SIib1tnoORLGtiaSbO0t1BZBm5p7PHBSo
+	 zNRzZgQteJ0XbQzavIliblf4ajk6clNRKBpTlrxyCqi2Fq80oCCQhpysFMRANjtD02
+	 qCeGqvfmwJ/CA==
+Date: Wed, 4 Dec 2024 08:22:25 -0600
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Konrad Dybcio <konradybcio@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Petr Vorel <pvorel@suse.cz>, linux-usb@vger.kernel.org,
+	Conor Dooley <conor+dt@kernel.org>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	Yassine Oudjana <y.oudjana@protonmail.com>,
+	Konrad Dybcio <konradybcio@gmail.com>,
+	Alexander Reimelt <alexander.reimelt@posteo.de>,
+	Bjorn Andersson <andersson@kernel.org>,
+	linux-arm-msm@vger.kernel.org,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+	=?utf-8?B?S3J5xaF0b2YgxIxlcm7DvQ==?= <cleverline1mc@gmail.com>,
+	Wesley Cheng <quic_wcheng@quicinc.com>,
+	Dominik Kobinski <dominikkobinski314@gmail.com>,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	Harry Austen <hpausten@protonmail.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>
+Subject: Re: [PATCH RFT 1/4] dt-bindings: usb: qcom,dwc3: Make ss_phy_irq
+ optional for MSM8996
+Message-ID: <173332214517.177124.9883201791486953471.robh@kernel.org>
+References: <20241129-topic-qcom_usb_dtb_fixup-v1-0-cba24120c058@oss.qualcomm.com>
+ <20241129-topic-qcom_usb_dtb_fixup-v1-1-cba24120c058@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CGME20241203081005epcas2p247b3d05bc767b1a50ba85c4433657295@epcas2p2.samsung.com>
- <20241203081247.1533534-1-youngmin.nam@samsung.com> <CANn89iK+7CKO31=3EvNo6-raUzyibwRRN8HkNXeqzuP9q8k_tA@mail.gmail.com>
- <CADVnQynUspJL4e3UnZTKps9WmgnE-0ngQnQmn=8gjSmyg4fQ5A@mail.gmail.com>
- <20241203181839.7d0ed41c@kernel.org> <Z0/O1ivIwiVVNRf0@perf>
- <CANn89iKms_9EX+wArf1FK7Cy3-Cr_ryX+MJ2YC8yt1xmvpY=Uw@mail.gmail.com> <009e01db4620$f08f42e0$d1adc8a0$@samsung.com>
-In-Reply-To: <009e01db4620$f08f42e0$d1adc8a0$@samsung.com>
-From: Neal Cardwell <ncardwell@google.com>
-Date: Wed, 4 Dec 2024 09:21:50 -0500
-Message-ID: <CADVnQykPo35mQ1y16WD3zppENCeOi+2Ea_2m-AjUQVPc9SXm4g@mail.gmail.com>
-Subject: Re: [PATCH] tcp: check socket state before calling WARN_ON
-To: "Dujeong.lee" <dujeong.lee@samsung.com>
-Cc: Eric Dumazet <edumazet@google.com>, Youngmin Nam <youngmin.nam@samsung.com>, 
-	Jakub Kicinski <kuba@kernel.org>, davem@davemloft.net, dsahern@kernel.org, 
-	pabeni@redhat.com, horms@kernel.org, guo88.liu@samsung.com, 
-	yiwang.cai@samsung.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	joonki.min@samsung.com, hajun.sung@samsung.com, d7271.choe@samsung.com, 
-	sw.ju@samsung.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241129-topic-qcom_usb_dtb_fixup-v1-1-cba24120c058@oss.qualcomm.com>
 
-On Wed, Dec 4, 2024 at 2:48=E2=80=AFAM Dujeong.lee <dujeong.lee@samsung.com=
-> wrote:
->
-> On Wed, Dec 4, 2024 at 4:14 PM Eric Dumazet wrote:
-> > To: Youngmin Nam <youngmin.nam@samsung.com>
-> > Cc: Jakub Kicinski <kuba@kernel.org>; Neal Cardwell <ncardwell@google.c=
-om>;
-> > davem@davemloft.net; dsahern@kernel.org; pabeni@redhat.com;
-> > horms@kernel.org; dujeong.lee@samsung.com; guo88.liu@samsung.com;
-> > yiwang.cai@samsung.com; netdev@vger.kernel.org; linux-
-> > kernel@vger.kernel.org; joonki.min@samsung.com; hajun.sung@samsung.com;
-> > d7271.choe@samsung.com; sw.ju@samsung.com
-> > Subject: Re: [PATCH] tcp: check socket state before calling WARN_ON
-> >
-> > On Wed, Dec 4, 2024 at 4:35=E2=80=AFAM Youngmin Nam <youngmin.nam@samsu=
-ng.com>
-> > wrote:
-> > >
-> > > On Tue, Dec 03, 2024 at 06:18:39PM -0800, Jakub Kicinski wrote:
-> > > > On Tue, 3 Dec 2024 10:34:46 -0500 Neal Cardwell wrote:
-> > > > > > I have not seen these warnings firing. Neal, have you seen this=
- in
-> > the past ?
-> > > > >
-> > > > > I can't recall seeing these warnings over the past 5 years or so,
-> > > > > and (from checking our monitoring) they don't seem to be firing i=
-n
-> > > > > our fleet recently.
-> > > >
-> > > > FWIW I see this at Meta on 5.12 kernels, but nothing since.
-> > > > Could be that one of our workloads is pinned to 5.12.
-> > > > Youngmin, what's the newest kernel you can repro this on?
-> > > >
-> > > Hi Jakub.
-> > > Thank you for taking an interest in this issue.
-> > >
-> > > We've seen this issue since 5.15 kernel.
-> > > Now, we can see this on 6.6 kernel which is the newest kernel we are
-> > running.
-> >
-> > The fact that we are processing ACK packets after the write queue has b=
-een
-> > purged would be a serious bug.
-> >
-> > Thus the WARN() makes sense to us.
-> >
-> > It would be easy to build a packetdrill test. Please do so, then we can
-> > fix the root cause.
-> >
-> > Thank you !
->
->
-> Please let me share some more details and clarifications on the issue fro=
-m ramdump snapshot locally secured.
->
-> 1) This issue has been reported from Android-T linux kernel when we enabl=
-ed panic_on_warn for the first time.
-> Reproduction rate is not high and can be seen in any test cases with publ=
-ic internet connection.
->
-> 2) Analysis from ramdump (which is not available at the moment).
-> 2-A) From ramdump, I was able to find below values.
-> tp->packets_out =3D 0
-> tp->retrans_out =3D 1
-> tp->max_packets_out =3D 1
-> tp->max_packets_Seq =3D 1575830358
-> tp->snd_ssthresh =3D 5
-> tp->snd_cwnd =3D 1
-> tp->prior_cwnd =3D 10
-> tp->wite_seq =3D 1575830359
-> tp->pushed_seq =3D 1575830358
-> tp->lost_out =3D 1
-> tp->sacked_out =3D 0
 
-Thanks for all the details! If the ramdump becomes available again at
-some point, would it be possible to pull out the following values as
-well:
+On Fri, 29 Nov 2024 23:12:45 +0100, Konrad Dybcio wrote:
+> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> 
+> MSM8996 has two DWC3 hosts, one of which is USB2, which naturally
+> means it doesn't have a SuperSpeed interrupt. 3 interrupts are already
+> allowed, apply the same logic to interrupt-names.
+> 
+> This fixes warnings such as:
+> 
+> usb@76f8800: interrupt-names: ['pwr_event', 'qusb2_phy', 'hs_phy_irq'] is too short
+> 
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> ---
+>  Documentation/devicetree/bindings/usb/qcom,dwc3.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+> 
 
-tp->mss_cache
-inet_csk(sk)->icsk_pmtu_cookie
-inet_csk(sk)->icsk_ca_state
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
-Thanks,
-neal
 
