@@ -1,193 +1,207 @@
-Return-Path: <linux-kernel+bounces-430610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B5709E3382
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 07:20:00 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B037C9E3387
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 07:22:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E094828405F
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 06:19:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E89DCB22F65
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 06:22:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D84D188012;
-	Wed,  4 Dec 2024 06:19:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CDB9188587;
+	Wed,  4 Dec 2024 06:21:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="aXKVKy+C"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="YY9qsTCo"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D3CF136E;
-	Wed,  4 Dec 2024 06:19:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9CE5136E;
+	Wed,  4 Dec 2024 06:21:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733293191; cv=none; b=NWnpyKDJfJLT2UMgrLyqEsq9mKzC9Ew7eHS3akMeUoGGPlog6TyZgqZ3fdS3VfiPKmjpzllvHBY+eAvEOP0NVQ3z4oLHrzrpS3BTg6as7q9f+H5t5o4laJmbJZAYtNOzoZumrH8HmHQKZTAv/wdPMXWwN+pzPQ/e5Prlf5byYCc=
+	t=1733293315; cv=none; b=T25jPHOm/xqjhR8QZ5vDkyCEVpH9LtRk6yBkFfaY6zIwSwvZY+9LKw7OBAt2SW9IQx2ED8BA2GZDjzKlczC28tubvvEaF2xJhAcNs6kK+Pmz0c1aCzk4G8Xvt0MFZfzehWfxwweUmKyXi4xmQwG+uZE6pI5lvlnSI7UZTF7ZgHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733293191; c=relaxed/simple;
-	bh=Mer2Y3HAwbgB+Wip6EA8m2Q8D5ezjCsqGvB8X+pAV6s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mzjtdg73OTcCg86vdUqKp705tanHWdiTARO1/kjAmo3k6oRUBxAlNLaVGEKOeCP5vbmBQr8oOYgadrv1DnXHUlRKv572c3y0B1EjBAgZcqIA8isJTHg4furZIj1QyfZ3reGKJxqYWe/oihtoBZUGdCB49oc2qnKHZ0pAx1BjcTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=aXKVKy+C; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1733293185;
-	bh=Mer2Y3HAwbgB+Wip6EA8m2Q8D5ezjCsqGvB8X+pAV6s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aXKVKy+CKndFeqCAjOCJSeSBlZug0uEzXbXqVGrdapY1ddKFdAaRXRhxzl61q+wLZ
-	 hSwSLMpjPqONjOUVrpDWxrJr9mW46k4nxrcpDw+71ssbySnhdDuBLLLeG6Trl0ZrVS
-	 BjNrikEUkXXxapFC46vZpLIXHSfmbmkCtsCEXfFQ=
-Date: Wed, 4 Dec 2024 07:19:43 +0100
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Masahiro Yamada <masahiroy@kernel.org>, 
-	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, 
-	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] tools/resolve_btfids: Add --fatal-warnings option
-Message-ID: <d556fc2a-c4be-4f9e-bf13-bdf418265eb3@t-8ch.de>
-References: <20241126-resolve_btfids-v2-0-288c37cb89ee@weissschuh.net>
- <20241126-resolve_btfids-v2-1-288c37cb89ee@weissschuh.net>
- <CAEf4BzahMQWVH0Gaub-tWjH9GweG8Kt7OBU-f+PBhmmRDCKfrA@mail.gmail.com>
- <9a11cf2f-ddca-4a50-817f-74183d31dcaf@t-8ch.de>
- <CAEf4BzZqeo00C5a9QO6Ah3i-doWRbg7v_2y=y9Kfg3=JyrA=zQ@mail.gmail.com>
+	s=arc-20240116; t=1733293315; c=relaxed/simple;
+	bh=6hYZ2PKm0Rt8YrKJeQb5VKDn8wpuJFm3xrWGdD73WC8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=PAO08ME76/1s70hg+M/cmuVkBYmC98V4MSk2nODHyuIHv9WHYfkJk/vEDwdOHt2JchNRiM9LADzAjRQZA4GzKpebpaR56eZ1Qlul/QPWYtLwyzx6Hrwqj3vOwEKrOWjX5CEXPTfcLPybb9ybcE4ExS9NgC91WGDPkj1k+/7BK3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=YY9qsTCo; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B3HKxkJ017944;
+	Wed, 4 Dec 2024 06:21:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	9G/f7T76jDD1SjEGzVfzhkwijkWZZdBKBue9O/RSMkQ=; b=YY9qsTCo7RKwB0hr
+	dTRpdiH4o2YyKAB7/gVNdWu3wPQMRutfWBcrgkQfn3Hq/19CVqSuRtavoCTHPOWp
+	Jk0T3iRukHYdaQD66WK8dfxsPv00EBXBjXYaHedjkfAZt61h0Gap5p1/oU/W8Oz4
+	nHFLxLor7ubZtklF6HEyojE5WPIIXdg7741iT7W0m3jeIvXre6lyvhw8MUoPl+BC
+	hAXdLRkSs357W+XdeHsgtM7kcEQpTsJoB+3Zi7t+n55S7fBJZNv7bVAvUJe5zlKl
+	nTnxIvZnzE0hBlD2R4Zg8coFIXK+h/gM6zt2JvYZdDRLF+pbLKtf/nBFSrL51hLQ
+	+GoQDA==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 437tstje6s-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 04 Dec 2024 06:21:45 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B46Lh8Z023900
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 4 Dec 2024 06:21:43 GMT
+Received: from [10.217.217.81] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 3 Dec 2024
+ 22:21:39 -0800
+Message-ID: <bdfadb99-a125-47d8-a28a-bc4de13e2e84@quicinc.com>
+Date: Wed, 4 Dec 2024 11:51:36 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEf4BzZqeo00C5a9QO6Ah3i-doWRbg7v_2y=y9Kfg3=JyrA=zQ@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/7] clk: qcom: rpmh: Add support for SM8750 rpmh
+ clocks
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Melody Olvera
+	<quic_molvera@quicinc.com>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Trilok Soni <quic_tsoni@quicinc.com>,
+        "Satya Durga
+ Srinivasu Prabhala" <quic_satyap@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        "Bryan
+ O'Donoghue" <bryan.odonoghue@linaro.org>
+References: <20241112002807.2804021-1-quic_molvera@quicinc.com>
+ <20241112002807.2804021-3-quic_molvera@quicinc.com>
+ <5pgwerxhqhyr2u47grqzgzvvng4rojzq4gozil7vy37bew5pqj@wt676vfjs7bg>
+Content-Language: en-US
+From: Taniya Das <quic_tdas@quicinc.com>
+In-Reply-To: <5pgwerxhqhyr2u47grqzgzvvng4rojzq4gozil7vy37bew5pqj@wt676vfjs7bg>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: j7elynnRQFbgZJRxHT93Z9XyfzyAc8tu
+X-Proofpoint-GUID: j7elynnRQFbgZJRxHT93Z9XyfzyAc8tu
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ malwarescore=0 spamscore=0 impostorscore=0 mlxlogscore=999 mlxscore=0
+ priorityscore=1501 suspectscore=0 phishscore=0 adultscore=0 clxscore=1015
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412040049
 
-On 2024-12-03 18:06:26-0800, Andrii Nakryiko wrote:
-> On Tue, Dec 3, 2024 at 3:09 PM Thomas Weißschuh <linux@weissschuh.net> wrote:
-> >
-> > On 2024-12-03 14:31:01-0800, Andrii Nakryiko wrote:
-> > > On Tue, Nov 26, 2024 at 1:17 PM Thomas Weißschuh <linux@weissschuh.net> wrote:
-> > > >
-> > > > Currently warnings emitted by resolve_btfids are buried in the build log
-> > > > and are slipping into mainline frequently.
-> > > > Add an option to elevate warnings to hard errors so the CI bots can
-> > > > catch any new warnings.
-> > > >
-> > > > Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
-> > > > Acked-by: Jiri Olsa <jolsa@kernel.org>
-> > > > ---
-> > > >  tools/bpf/resolve_btfids/main.c | 12 ++++++++++--
-> > > >  1 file changed, 10 insertions(+), 2 deletions(-)
-> > > >
-> > > > diff --git a/tools/bpf/resolve_btfids/main.c b/tools/bpf/resolve_btfids/main.c
-> > > > index bd9f960bce3d5b74dc34159b35af1e0b33524d2d..571d29d2da97fea75e5f9c544a95b9ac65f9e579 100644
-> > > > --- a/tools/bpf/resolve_btfids/main.c
-> > > > +++ b/tools/bpf/resolve_btfids/main.c
-> > > > @@ -141,6 +141,7 @@ struct object {
-> > > >  };
-> > > >
-> > > >  static int verbose;
-> > > > +static int warnings;
-> > > >
-> > > >  static int eprintf(int level, int var, const char *fmt, ...)
-> > > >  {
-> > > > @@ -604,6 +605,7 @@ static int symbols_resolve(struct object *obj)
-> > > >                         if (id->id) {
-> > > >                                 pr_info("WARN: multiple IDs found for '%s': %d, %d - using %d\n",
-> > > >                                         str, id->id, type_id, id->id);
-> > > > +                               warnings++;
-> > > >                         } else {
-> > > >                                 id->id = type_id;
-> > > >                                 (*nr)--;
-> > > > @@ -625,8 +627,10 @@ static int id_patch(struct object *obj, struct btf_id *id)
-> > > >         int i;
-> > > >
-> > > >         /* For set, set8, id->id may be 0 */
-> > > > -       if (!id->id && !id->is_set && !id->is_set8)
-> > > > +       if (!id->id && !id->is_set && !id->is_set8) {
-> > > >                 pr_err("WARN: resolve_btfids: unresolved symbol %s\n", id->name);
-> > > > +               warnings++;
-> > > > +       }
-> > > >
-> > > >         for (i = 0; i < id->addr_cnt; i++) {
-> > > >                 unsigned long addr = id->addr[i];
-> > > > @@ -782,6 +786,7 @@ int main(int argc, const char **argv)
-> > > >                 .funcs    = RB_ROOT,
-> > > >                 .sets     = RB_ROOT,
-> > > >         };
-> > > > +       bool fatal_warnings = false;
-> > > >         struct option btfid_options[] = {
-> > > >                 OPT_INCR('v', "verbose", &verbose,
-> > > >                          "be more verbose (show errors, etc)"),
-> > > > @@ -789,6 +794,8 @@ int main(int argc, const char **argv)
-> > > >                            "BTF data"),
-> > > >                 OPT_STRING('b', "btf_base", &obj.base_btf_path, "file",
-> > > >                            "path of file providing base BTF"),
-> > > > +               OPT_BOOLEAN(0, "fatal-warnings", &fatal_warnings,
-> > > > +                           "turn warnings into errors"),
-> > >
-> > > We are mixing naming styles here: we have "btf_base" with underscore
-> > > separator, and you are adding "fatal-warnings" with dash separator. I
-> > > personally like dashes, but whichever way we should stay consistent.
-> > > So let's fix it, otherwise it looks a bit sloppy.
-> >
-> > Ack.
-> >
-> > >
-> > > Please also use [PATCH bpf-next v3] subject prefix to make it explicit
-> > > that this should go through bpf-next tree.
-> >
-> > Ack.
-> >
-> > >
-> > > pw-bot: cr
-> > >
-> > > >                 OPT_END()
-> > > >         };
-> > > >         int err = -1;
-> > > > @@ -823,7 +830,8 @@ int main(int argc, const char **argv)
-> > > >         if (symbols_patch(&obj))
-> > > >                 goto out;
-> > > >
-> > > > -       err = 0;
-> > > > +       if (!(fatal_warnings && warnings))
-> > > > +               err = 0;
-> > >
-> > > nit: just
-> > >
-> > > if (!fatal_warnings)
-> > >     err = 0;
-> > >
-> > > ?
-> >
-> > This seems wrong. Now the actual warning counter is never evaluated.
-> > And --fatal_warnings will always lead to an error exit code.
-> 
-> Ah, I missed that you are using default -1 value here. I wonder if we
-> should make it a bit more explicit?
-> 
-> if (fatal_warnings)
->     err = warnings ? -1 : 0;
-> else
->     err = 0;
-> 
-> Something like that?
 
-The existing code was the same. Also the rest of the function
-relies on this. IMO the pattern is clear when looking at the resulting
-code and not the diff.
-But if you prefer I can change it of course.
 
-> > > >  out:
-> > > >         if (obj.efile.elf) {
-> > > >                 elf_end(obj.efile.elf);
-> > > >
-> > > > --
-> > > > 2.47.1
-> > > >
+On 11/15/2024 9:01 PM, Dmitry Baryshkov wrote:
+> On Mon, Nov 11, 2024 at 04:28:02PM -0800, Melody Olvera wrote:
+>> From: Taniya Das <quic_tdas@quicinc.com>
+>>
+>> Add the RPMH clocks present in SM8750 SoC and fix the match table to
+>> sort it alphabetically.
+>>
+>> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+>> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+>> Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
+>> ---
+>>   drivers/clk/qcom/clk-rpmh.c | 28 +++++++++++++++++++++++++++-
+>>   1 file changed, 27 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
+>> index eefc322ce367..a3b381e34e48 100644
+>> --- a/drivers/clk/qcom/clk-rpmh.c
+>> +++ b/drivers/clk/qcom/clk-rpmh.c
+>> @@ -368,6 +368,10 @@ DEFINE_CLK_RPMH_VRM(rf_clk2, _d, "rfclkd2", 1);
+>>   DEFINE_CLK_RPMH_VRM(rf_clk3, _d, "rfclkd3", 1);
+>>   DEFINE_CLK_RPMH_VRM(rf_clk4, _d, "rfclkd4", 1);
+>>   
+>> +DEFINE_CLK_RPMH_VRM(rf_clk3, _a2, "rfclka3", 2);
+>> +DEFINE_CLK_RPMH_VRM(rf_clk4, _a2, "rfclka4", 2);
+>> +DEFINE_CLK_RPMH_VRM(rf_clk5, _a2, "rfclka5", 2);
+> 
+> Are the two last clocks defined "for the future platforms"?
+> 
+
+Yes, but I will remove them in the next patch set.
+
+>> +
+>>   DEFINE_CLK_RPMH_VRM(clk1, _a1, "clka1", 1);
+>>   DEFINE_CLK_RPMH_VRM(clk2, _a1, "clka2", 1);
+>>   DEFINE_CLK_RPMH_VRM(clk3, _a1, "clka3", 1);
+>> @@ -807,6 +811,27 @@ static const struct clk_rpmh_desc clk_rpmh_x1e80100 = {
+>>   	.num_clks = ARRAY_SIZE(x1e80100_rpmh_clocks),
+>>   };
+>>   
+>> +static struct clk_hw *sm8750_rpmh_clocks[] = {
+>> +	[RPMH_CXO_CLK]		= &clk_rpmh_bi_tcxo_div2.hw,
+>> +	[RPMH_CXO_CLK_A]	= &clk_rpmh_bi_tcxo_div2_ao.hw,
+>> +	[RPMH_LN_BB_CLK1]	= &clk_rpmh_clk6_a2.hw,
+>> +	[RPMH_LN_BB_CLK1_A]	= &clk_rpmh_clk6_a2_ao.hw,
+>> +	[RPMH_LN_BB_CLK3]	= &clk_rpmh_clk8_a2.hw,
+>> +	[RPMH_LN_BB_CLK3_A]	= &clk_rpmh_clk8_a2_ao.hw,
+>> +	[RPMH_RF_CLK1]		= &clk_rpmh_rf_clk1_a.hw,
+>> +	[RPMH_RF_CLK1_A]	= &clk_rpmh_rf_clk1_a_ao.hw,
+>> +	[RPMH_RF_CLK2]		= &clk_rpmh_rf_clk2_a.hw,
+>> +	[RPMH_RF_CLK2_A]	= &clk_rpmh_rf_clk2_a_ao.hw,
+>> +	[RPMH_RF_CLK3]		= &clk_rpmh_rf_clk3_a2.hw,
+>> +	[RPMH_RF_CLK3_A]	= &clk_rpmh_rf_clk3_a2_ao.hw,
+>> +	[RPMH_IPA_CLK]		= &clk_rpmh_ipa.hw,
+>> +};
+>> +
+>> +static const struct clk_rpmh_desc clk_rpmh_sm8750 = {
+>> +	.clks = sm8750_rpmh_clocks,
+>> +	.num_clks = ARRAY_SIZE(sm8750_rpmh_clocks),
+>> +};
+>> +
+>>   static struct clk_hw *of_clk_rpmh_hw_get(struct of_phandle_args *clkspec,
+>>   					 void *data)
+>>   {
+>> @@ -894,6 +919,7 @@ static const struct of_device_id clk_rpmh_match_table[] = {
+>>   	{ .compatible = "qcom,sa8775p-rpmh-clk", .data = &clk_rpmh_sa8775p},
+>>   	{ .compatible = "qcom,sar2130p-rpmh-clk", .data = &clk_rpmh_sar2130p},
+>>   	{ .compatible = "qcom,sc7180-rpmh-clk", .data = &clk_rpmh_sc7180},
+>> +	{ .compatible = "qcom,sc7280-rpmh-clk", .data = &clk_rpmh_sc7280},
+>>   	{ .compatible = "qcom,sc8180x-rpmh-clk", .data = &clk_rpmh_sc8180x},
+>>   	{ .compatible = "qcom,sc8280xp-rpmh-clk", .data = &clk_rpmh_sc8280xp},
+>>   	{ .compatible = "qcom,sdm845-rpmh-clk", .data = &clk_rpmh_sdm845},
+>> @@ -909,7 +935,7 @@ static const struct of_device_id clk_rpmh_match_table[] = {
+>>   	{ .compatible = "qcom,sm8450-rpmh-clk", .data = &clk_rpmh_sm8450},
+>>   	{ .compatible = "qcom,sm8550-rpmh-clk", .data = &clk_rpmh_sm8550},
+>>   	{ .compatible = "qcom,sm8650-rpmh-clk", .data = &clk_rpmh_sm8650},
+>> -	{ .compatible = "qcom,sc7280-rpmh-clk", .data = &clk_rpmh_sc7280},
+> 
+> Please don't mix fixes and actual code. I'd suggest splitting sc7280
+> move to the separate commit.
+> 
+
+Sure, I will split in a separate commit.
+
+>> +	{ .compatible = "qcom,sm8750-rpmh-clk", .data = &clk_rpmh_sm8750},
+>>   	{ .compatible = "qcom,x1e80100-rpmh-clk", .data = &clk_rpmh_x1e80100},
+>>   	{ }
+>>   };
+>> -- 
+>> 2.46.1
+>>
+> 
+
+-- 
+Thanks & Regards,
+Taniya Das.
 
