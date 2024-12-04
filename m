@@ -1,59 +1,59 @@
-Return-Path: <linux-kernel+bounces-431692-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91E369E4071
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:03:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 24F959E4078
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:04:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 51EF01620A0
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:03:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 84245168219
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:04:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 839842185BD;
-	Wed,  4 Dec 2024 16:58:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6304321C18D;
+	Wed,  4 Dec 2024 16:58:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oupCBwGT"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ngZKVQxJ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D876D21858F;
-	Wed,  4 Dec 2024 16:58:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B482321C198;
+	Wed,  4 Dec 2024 16:58:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733331516; cv=none; b=ZLHKjNGd22EBZ7bTt2+41W4nWmpxCyxLL+Joyv6GJm4KV/69s0BkUDOiTtd5xiNNrieS8JsuoVWdlxN4WuUvoNvyjNberAq+eTQs/RTE6/XKaK/CSjY7G7H4OIJNu8HN7AzN4JLdsxN25AXl9rRDy0NkEltmVH0XSqDkuzwTKVw=
+	t=1733331519; cv=none; b=NmxE89G0To2qURF6sNNrUjWKP19UTTEz4/OK9X86/daSUSSwdEbvf1IbH5W9ib86wQ8c1UZafzywqYGfCGCE4ufSRvIJAwubo0H0Uf7PKKeQ36h9oVMdh3UWvpz1aEpihRCzf19JzTl2MlAZ0c8S5DBm78wfWbMxQmMnCcdyrZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733331516; c=relaxed/simple;
-	bh=xwgudsxGIo94rntV7Ii8BArBcCp9b9lcNfpvcnRWsHw=;
+	s=arc-20240116; t=1733331519; c=relaxed/simple;
+	bh=wN8wO8W0gVEkSJGK4xGzUnurDDPyKsvPEccqxqeSioc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=FPDwKaq6bzeFlL0GGsPIG3zQGUhJOI4pTJ1neAIgzljEakVCJFq05l5Wz9ToPfo/ytRDkD6gWEJD7Bzrx1M2V7lb+PYcoVhxLXttvlzsejmQh/rDXfkluIuKvEYuBT9+An7c49oU1fSXIOX54srw/8T/9SepPwLQLrX3X57vLb0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oupCBwGT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9ACBCC4CED6;
-	Wed,  4 Dec 2024 16:58:34 +0000 (UTC)
+	 MIME-Version; b=RoJUgmtDJGDcxWJ0ZsGgBfNdCwNaoyYgNAMh0LhO1eYqsKBXFQ4QPfHwh1M/Feuats5IhvKBRJ/UMC3Fn5tfgYsJ7bdIgCSFhtXt81KylNufKkokVRvP8SqjR9togqhqc8MxDK+kA0NQ/6jI+lPoBQWszWq+4PfjNa+0Ax+r3sQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ngZKVQxJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 290F8C4CECD;
+	Wed,  4 Dec 2024 16:58:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733331515;
-	bh=xwgudsxGIo94rntV7Ii8BArBcCp9b9lcNfpvcnRWsHw=;
+	s=k20201202; t=1733331519;
+	bh=wN8wO8W0gVEkSJGK4xGzUnurDDPyKsvPEccqxqeSioc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=oupCBwGT5zzTOgC8oDg2u/3ki2tN9wzSYe0an5z/oHyvoR+kbQ1HCLYOBe559Hfb2
-	 5T2KNHXT3pfqM5UVFAn6IRcUuEobqhh1X4LXAs7cyn19BvpGDz7dQwaFIUEe/qYZYV
-	 nFAlIyd2woaBqIVfdPUqupacTlzVefiwwrSnpEQ5R9q0ujK6M/busmkbIVH7T4WwQs
-	 zlM3Upz2Lu1o/11gxCgdj3j9rKNm+HKoIeK4TlSZBbcxj2u9rZ3+CeOHZ/I2tOjRde
-	 VJ0s8YiAjnI3oMQodymSKMBv4ftJ0/HVEIMfU73MGwSollm9oq8weukrsech6X0FkS
-	 WNZLOIF8wP/oQ==
+	b=ngZKVQxJ98EDTA10iaQmUL9IYP6yYDwFYpO87mSKGsByTfKNBvmYiqhTN516+UEcA
+	 q4gEW76gD5Ggb+WmopbnbOzVibFoW2pfeCWKPGB0IiYqySXSwqMQF209VrAdd6FICE
+	 PlvUzaX4I+bfmQjZsSOwT990rUTuZAFPGOujuOCIF7Jl5Ib7JG1NTtQRJGw9ucegSM
+	 uT0xV/fGduicgDhXqmue5r3o5l96tdHYPFbIblKlcNXMqhEwVulYOEcW8KrR+32DEw
+	 zRl/75QghYbjYO0kqMdu/hwxm9tNrjpyGp48dMCyxOKzG6accjmZLTCyilabb0AXny
+	 /5e0YqwJp8SrQ==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+Cc: Devi Priya <quic_devipriy@quicinc.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
 	Bjorn Andersson <andersson@kernel.org>,
 	Sasha Levin <sashal@kernel.org>,
 	mturquette@baylibre.com,
 	sboyd@kernel.org,
 	linux-arm-msm@vger.kernel.org,
 	linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.12 22/36] clk: qcom: tcsrcc-sm8550: add SAR2130P support
-Date: Wed,  4 Dec 2024 10:45:38 -0500
-Message-ID: <20241204154626.2211476-22-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.12 24/36] clk: qcom: clk-alpha-pll: Add NSS HUAYRA ALPHA PLL support for ipq9574
+Date: Wed,  4 Dec 2024 10:45:40 -0500
+Message-ID: <20241204154626.2211476-24-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20241204154626.2211476-1-sashal@kernel.org>
 References: <20241204154626.2211476-1-sashal@kernel.org>
@@ -68,72 +68,57 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.12.1
 Content-Transfer-Encoding: 8bit
 
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+From: Devi Priya <quic_devipriy@quicinc.com>
 
-[ Upstream commit d2e0a043530b9d6f37a8de8f05e0725667aba0a6 ]
+[ Upstream commit 79dfed29aa3f714e0a94a39b2bfe9ac14ce19a6a ]
 
-The SAR2130P platform has the same TCSR Clock Controller as the SM8550,
-except for the lack of the UFS clocks. Extend the SM8550 TCSRCC driver
-to support SAR2130P.
+Add support for NSS Huayra alpha pll found on ipq9574 SoCs.
+Programming sequence is the same as that of Huayra type Alpha PLL,
+so we can re-use the same.
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Link: https://lore.kernel.org/r/20241027-sar2130p-clocks-v5-9-ecad2a1432ba@linaro.org
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
+Link: https://lore.kernel.org/r/20241028060506.246606-2-quic_srichara@quicinc.com
 Signed-off-by: Bjorn Andersson <andersson@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/qcom/tcsrcc-sm8550.c | 18 ++++++++++++++++--
- 1 file changed, 16 insertions(+), 2 deletions(-)
+ drivers/clk/qcom/clk-alpha-pll.c | 11 +++++++++++
+ drivers/clk/qcom/clk-alpha-pll.h |  1 +
+ 2 files changed, 12 insertions(+)
 
-diff --git a/drivers/clk/qcom/tcsrcc-sm8550.c b/drivers/clk/qcom/tcsrcc-sm8550.c
-index e5e8f2e82b949..41d73f92a000a 100644
---- a/drivers/clk/qcom/tcsrcc-sm8550.c
-+++ b/drivers/clk/qcom/tcsrcc-sm8550.c
-@@ -129,6 +129,13 @@ static struct clk_branch tcsr_usb3_clkref_en = {
+diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
+index be9bee6ab65f6..49687512184b9 100644
+--- a/drivers/clk/qcom/clk-alpha-pll.c
++++ b/drivers/clk/qcom/clk-alpha-pll.c
+@@ -267,6 +267,17 @@ const u8 clk_alpha_pll_regs[][PLL_OFF_MAX_REGS] = {
+ 		[PLL_OFF_OPMODE] = 0x30,
+ 		[PLL_OFF_STATUS] = 0x3c,
  	},
- };
- 
-+static struct clk_regmap *tcsr_cc_sar2130p_clocks[] = {
-+	[TCSR_PCIE_0_CLKREF_EN] = &tcsr_pcie_0_clkref_en.clkr,
-+	[TCSR_PCIE_1_CLKREF_EN] = &tcsr_pcie_1_clkref_en.clkr,
-+	[TCSR_USB2_CLKREF_EN] = &tcsr_usb2_clkref_en.clkr,
-+	[TCSR_USB3_CLKREF_EN] = &tcsr_usb3_clkref_en.clkr,
-+};
++	[CLK_ALPHA_PLL_TYPE_NSS_HUAYRA] =  {
++		[PLL_OFF_L_VAL] = 0x04,
++		[PLL_OFF_ALPHA_VAL] = 0x08,
++		[PLL_OFF_TEST_CTL] = 0x0c,
++		[PLL_OFF_TEST_CTL_U] = 0x10,
++		[PLL_OFF_USER_CTL] = 0x14,
++		[PLL_OFF_CONFIG_CTL] = 0x18,
++		[PLL_OFF_CONFIG_CTL_U] = 0x1c,
++		[PLL_OFF_STATUS] = 0x20,
++	},
 +
- static struct clk_regmap *tcsr_cc_sm8550_clocks[] = {
- 	[TCSR_PCIE_0_CLKREF_EN] = &tcsr_pcie_0_clkref_en.clkr,
- 	[TCSR_PCIE_1_CLKREF_EN] = &tcsr_pcie_1_clkref_en.clkr,
-@@ -146,6 +153,12 @@ static const struct regmap_config tcsr_cc_sm8550_regmap_config = {
- 	.fast_io = true,
  };
+ EXPORT_SYMBOL_GPL(clk_alpha_pll_regs);
  
-+static const struct qcom_cc_desc tcsr_cc_sar2130p_desc = {
-+	.config = &tcsr_cc_sm8550_regmap_config,
-+	.clks = tcsr_cc_sar2130p_clocks,
-+	.num_clks = ARRAY_SIZE(tcsr_cc_sar2130p_clocks),
-+};
-+
- static const struct qcom_cc_desc tcsr_cc_sm8550_desc = {
- 	.config = &tcsr_cc_sm8550_regmap_config,
- 	.clks = tcsr_cc_sm8550_clocks,
-@@ -153,7 +166,8 @@ static const struct qcom_cc_desc tcsr_cc_sm8550_desc = {
+diff --git a/drivers/clk/qcom/clk-alpha-pll.h b/drivers/clk/qcom/clk-alpha-pll.h
+index 55eca04b23a1f..c6d1b8429f951 100644
+--- a/drivers/clk/qcom/clk-alpha-pll.h
++++ b/drivers/clk/qcom/clk-alpha-pll.h
+@@ -32,6 +32,7 @@ enum {
+ 	CLK_ALPHA_PLL_TYPE_BRAMMO_EVO,
+ 	CLK_ALPHA_PLL_TYPE_STROMER,
+ 	CLK_ALPHA_PLL_TYPE_STROMER_PLUS,
++	CLK_ALPHA_PLL_TYPE_NSS_HUAYRA,
+ 	CLK_ALPHA_PLL_TYPE_MAX,
  };
- 
- static const struct of_device_id tcsr_cc_sm8550_match_table[] = {
--	{ .compatible = "qcom,sm8550-tcsr" },
-+	{ .compatible = "qcom,sar2130p-tcsr", .data = &tcsr_cc_sar2130p_desc },
-+	{ .compatible = "qcom,sm8550-tcsr", .data = &tcsr_cc_sm8550_desc },
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, tcsr_cc_sm8550_match_table);
-@@ -162,7 +176,7 @@ static int tcsr_cc_sm8550_probe(struct platform_device *pdev)
- {
- 	struct regmap *regmap;
- 
--	regmap = qcom_cc_map(pdev, &tcsr_cc_sm8550_desc);
-+	regmap = qcom_cc_map(pdev, of_device_get_match_data(&pdev->dev));
- 	if (IS_ERR(regmap))
- 		return PTR_ERR(regmap);
  
 -- 
 2.43.0
