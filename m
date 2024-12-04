@@ -1,440 +1,350 @@
-Return-Path: <linux-kernel+bounces-431408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3471C9E3D07
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:43:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 043559E3D5C
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:53:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BEAC22824BB
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 14:43:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B282B281072
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 14:53:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C49EE20ADCE;
-	Wed,  4 Dec 2024 14:43:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07BA120B811;
+	Wed,  4 Dec 2024 14:53:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rNSr/yv3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Pmdd5bal"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A646E20A5D8;
-	Wed,  4 Dec 2024 14:43:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46A99205AB3;
+	Wed,  4 Dec 2024 14:53:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733323423; cv=none; b=QzkVO+RhCdmMFuG4JlepAXPBUyHYxU9ngISZSyocIvyuoz2rR4eYgcUi+QnFe8Cn2Ylm+wOOtZjuoINbLo3mq0+1OKUs8ovwOCQ59/RVPAiXle1yFZCOA5yH5fqwlxUenA3bxkw54EFYR/amC0cyO7ZFIb//G78kd2SJWY8k1AE=
+	t=1733323986; cv=none; b=BEZBpD4dUl317KnQieTbOMh2awjyyXd7VzmUKJzav0aCJAMD4+7OGHP0XJ2k2es8sKnHNrkGIJG/Zs9CvlTjlJngemOMIRGL8Uz4LH8u8/9sCOKrx/Cn5uAYhXD7wMhe5zhhV32gDoa4TTcPQOrDcFC2pTtEW9qTluFQ/XY5V90=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733323423; c=relaxed/simple;
-	bh=undE9DTFHVhAQNgkdMypYeAhhRQBawi8NRp2IEnHt4I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VqpmYO55YioLi2Ca1vpVR0DRGeYVX+rbMiJtkZEzJtLBTLx3vSD4xzxlOn4oXv9QG7i6429uRn2t+2yKCZRHoBBlGebqYlUR4ol0eTWewGVyDHaQLAs85jqOSgwL+kS/3qNoJOAnLrzSKgy+UNxjWTRSa4ZhHDwip3DVp5jZCqQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rNSr/yv3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1679BC4CECD;
-	Wed,  4 Dec 2024 14:43:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733323423;
-	bh=undE9DTFHVhAQNgkdMypYeAhhRQBawi8NRp2IEnHt4I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rNSr/yv3mj0EZ/m19i9RxOi7Nnlo/ogkCfR8bstdKVHxnpVm1srNVqcNNAT0btNi3
-	 C+lK1KSh5Yg33D4Hc4e2P0mVokgOosFLtXz1Ed1AupAgTtTo9/Ru1n7qcopV/vATBM
-	 qgnQokM6eCoLHQtjNutQsARREPrgLTcHrCCyBq8a0dXgEKstk5h8402MOavxy56C/S
-	 UegD73F9aJ3EvvkF8FUFFemQcoFlp8ARql4eo/g469HN2u4NsVywqK4FP8qkMrh94K
-	 6dHnlAeKVE7hHw9hOH+rjiXDz2gJ2wgJ54uEp7UC/ZOEfLlN3hJVUzDx+XVxtQxvj1
-	 LxpalJjq4+huA==
-Date: Wed, 4 Dec 2024 08:43:41 -0600
-From: Rob Herring <robh@kernel.org>
-To: Frank Wunderlich <linux@fw-web.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Sean Wang <sean.wang@kernel.org>,
-	Frank Wunderlich <frank-w@public-files.de>,
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH v5 3/5] dt-bindings: pinctrl: add binding for MT7988 SoC
-Message-ID: <20241204144341.GA191772-robh@kernel.org>
-References: <20241202110045.22084-1-linux@fw-web.de>
- <20241202110045.22084-4-linux@fw-web.de>
+	s=arc-20240116; t=1733323986; c=relaxed/simple;
+	bh=5H9xiq6zQ/EOKxt05SxXOzasrc6/C/oXkvCoJzbAo3c=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
+	 In-Reply-To:To:CC; b=bo80N8AMkqSORO4ZdOPYY/KJTEYDnfQe0NbxozCK6nFj6SDLYFtEAzaPrNIbHCdC4SD8DtnjYrk4cf8JSsO3FvP9VQx5DoX9q36tJ3olYq/LPpPnFRdgT9wATf1u+WbuVCEijMLtJqwYopQSNd9QlTfTdmNCVkxRNC1SYSW1QYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Pmdd5bal; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B46kdCJ023313;
+	Wed, 4 Dec 2024 14:52:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	D90expnj0SSF/9ucUSQPsvixz5/QNnMYJizpIQMPybs=; b=Pmdd5balSEsMIRaP
+	39RdXI/gWvXM0dgCKj2PVYYXgkHpQ3TIb8+mDwn1nantSYr/1CveFVmxQ22MfJ1C
+	wATuiAZ2BQzZmWPDlFgxCGJcBgij1RUWwWmAohFT+OKlQxHb0/b89WqZhDPrcTGQ
+	tI6uWZI5TWOibiOJNMhc5TtNu6Z5t0agXaFZrMaswOJqVz4Ydj+qCji2srHbG0iC
+	Uwt/mnFl5ATCZ4L/QYXJuxQe+pVp3j1z7FEGvCPEzEFxEMcyc1KXrjVe5irc7cvj
+	/9hetgbxyhu4aaf5PMbD8FWGhLQz9Vgz8s/E1WQMUxO+mY0mBxsLBaipwdo27wbA
+	SowD5w==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43aj4298f2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 04 Dec 2024 14:52:51 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B4EqoGC004299
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 4 Dec 2024 14:52:50 GMT
+Received: from nsssdc-sh01-lnx.ap.qualcomm.com (10.80.80.8) by
+ nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Wed, 4 Dec 2024 06:52:44 -0800
+From: Lei Wei <quic_leiwei@quicinc.com>
+Date: Wed, 4 Dec 2024 22:43:53 +0800
+Subject: [PATCH net-next v2 1/5] dt-bindings: net: pcs: Add Ethernet PCS
+ for Qualcomm IPQ9574 SoC
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241202110045.22084-4-linux@fw-web.de>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20241204-ipq_pcs_rc1-v2-1-26155f5364a1@quicinc.com>
+References: <20241204-ipq_pcs_rc1-v2-0-26155f5364a1@quicinc.com>
+In-Reply-To: <20241204-ipq_pcs_rc1-v2-0-26155f5364a1@quicinc.com>
+To: "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet
+	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni
+	<pabeni@redhat.com>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Andrew Lunn
+	<andrew@lunn.ch>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Russell King
+	<linux@armlinux.org.uk>
+CC: <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <quic_kkumarcs@quicinc.com>,
+        <quic_suruchia@quicinc.com>, <quic_pavir@quicinc.com>,
+        <quic_linchen@quicinc.com>, <quic_luoj@quicinc.com>,
+        <quic_leiwei@quicinc.com>, <srinivas.kandagatla@linaro.org>,
+        <bartosz.golaszewski@linaro.org>, <vsmuthu@qti.qualcomm.com>,
+        <john@phrozen.org>, <linux-arm-msm@vger.kernel.org>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1733323958; l=8670;
+ i=quic_leiwei@quicinc.com; s=20240829; h=from:subject:message-id;
+ bh=5H9xiq6zQ/EOKxt05SxXOzasrc6/C/oXkvCoJzbAo3c=;
+ b=w08EN6Coz6JbfdAJHO4habL4TLj3rmBbHSzAUsVjSlgfOk8qFvOPoPGocy19qO0cCvl+/54Ny
+ BXKgTDcraBVD1A4sedRXPqkLu2cxG/bhtvu/UGwS6PClpQGdWar0qPD
+X-Developer-Key: i=quic_leiwei@quicinc.com; a=ed25519;
+ pk=uFXBHtxtDjtIrTKpDEZlMLSn1i/sonZepYO8yioKACM=
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: tt8rb_3g4ZK6AFimI23gp5WVXQ4bsQkS
+X-Proofpoint-ORIG-GUID: tt8rb_3g4ZK6AFimI23gp5WVXQ4bsQkS
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 bulkscore=0
+ mlxscore=0 mlxlogscore=999 lowpriorityscore=0 clxscore=1011 malwarescore=0
+ priorityscore=1501 spamscore=0 adultscore=0 suspectscore=0 impostorscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
+ definitions=main-2412040114
 
-On Mon, Dec 02, 2024 at 12:00:37PM +0100, Frank Wunderlich wrote:
-> From: Frank Wunderlich <frank-w@public-files.de>
-> 
-> This adds bindings for MT7988 pinctrl driver.
-> 
-> Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
-> ---
-> changes in v5 (so not adding RB from Rob given in v4):
-> - do not use MTK_DRIVE_8mA in example
-> - add _0 functions for pwm
+The 'UNIPHY' PCS block in the IPQ9574 SoC includes PCS and SerDes
+functions. It supports different interface modes to enable Ethernet
+MAC connections to different types of external PHYs/switch. It includes
+PCS functions for 1Gbps and 2.5Gbps interface modes and XPCS functions
+for 10Gbps interface modes. There are three UNIPHY (PCS) instances
+in IPQ9574 SoC which provide PCS/XPCS functions to the six Ethernet
+ports.
 
-Minor enough to keep my R-by, but if I review it again I can always find 
-more. :)
+Signed-off-by: Lei Wei <quic_leiwei@quicinc.com>
+---
+ .../bindings/net/pcs/qcom,ipq9574-pcs.yaml         | 190 +++++++++++++++++++++
+ include/dt-bindings/net/qcom,ipq9574-pcs.h         |  15 ++
+ 2 files changed, 205 insertions(+)
 
-> 
-> changes in v4:
-> - dt-binding: pinctrl: fix dt_binding_check fixed-string error
-> 
-> '^mux$' should not be valid under {'pattern': '^\\^[a-zA-Z0-9,\\-._#@]+\\$$'}
-> 	hint: Fixed strings belong in 'properties', not 'patternProperties'
-> 
-> changes in v3:
-> - limit conf subnode name with optional suffix like mmc on mt7986
-> - match mux subnode without wildcards
-> 
-> changes in v2:
-> - drop gpio-cells description
-> - move ref in mux subnode up
-> - order uart-functions alphanumeric and fix typo
-> ---
->  .../pinctrl/mediatek,mt7988-pinctrl.yaml      | 578 ++++++++++++++++++
->  1 file changed, 578 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pinctrl/mediatek,mt7988-pinctrl.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/pinctrl/mediatek,mt7988-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/mediatek,mt7988-pinctrl.yaml
-> new file mode 100644
-> index 000000000000..dd5584557135
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/pinctrl/mediatek,mt7988-pinctrl.yaml
-> @@ -0,0 +1,578 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/pinctrl/mediatek,mt7988-pinctrl.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: MediaTek MT7988 Pin Controller
-> +
-> +maintainers:
-> +  - Sean Wang <sean.wang@kernel.org>
-> +
-> +description:
-> +  The MediaTek's MT7988 Pin controller is used to control SoC pins.
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - mediatek,mt7988-pinctrl
-> +
-> +  reg:
-> +    minItems: 7
-> +    maxItems: 7
-> +
-> +  reg-names:
-> +    items:
-> +      - const: gpio
-> +      - const: iocfg_tr
-> +      - const: iocfg_br
-> +      - const: iocfg_rb
-> +      - const: iocfg_lb
-> +      - const: iocfg_tl
-> +      - const: eint
-> +
-> +  gpio-controller: true
-> +
-> +  "#gpio-cells":
-> +    const: 2
-> +
-> +  gpio-ranges:
-> +    minItems: 1
-> +    maxItems: 5
-> +    description:
-> +      GPIO valid number range.
-> +
-> +  interrupt-controller: true
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  "#interrupt-cells":
-> +    const: 2
-> +
-> +allOf:
-> +  - $ref: pinctrl.yaml#
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - reg-names
-> +  - gpio-controller
-> +  - "#gpio-cells"
-> +
-> +patternProperties:
-> +  '-pins$':
-> +    type: object
-> +    additionalProperties: false
-> +
-> +    properties:
-> +      'mux':
+diff --git a/Documentation/devicetree/bindings/net/pcs/qcom,ipq9574-pcs.yaml b/Documentation/devicetree/bindings/net/pcs/qcom,ipq9574-pcs.yaml
+new file mode 100644
+index 000000000000..74573c28d6fe
+--- /dev/null
++++ b/Documentation/devicetree/bindings/net/pcs/qcom,ipq9574-pcs.yaml
+@@ -0,0 +1,190 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/net/pcs/qcom,ipq9574-pcs.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Ethernet PCS for Qualcomm IPQ9574 SoC
++
++maintainers:
++  - Lei Wei <quic_leiwei@quicinc.com>
++
++description:
++  The UNIPHY hardware blocks in the Qualcomm IPQ SoC include PCS and SerDes
++  functions. They enable connectivity between the Ethernet MAC inside the
++  PPE (packet processing engine) and external Ethernet PHY/switch. There are
++  three UNIPHY instances in IPQ9574 SoC which provide PCS functions to the
++  six Ethernet ports.
++
++  For SGMII (1Gbps PHY) or 2500BASE-X (2.5Gbps PHY) interface modes, the PCS
++  function is enabled by using the PCS block inside UNIPHY. For USXGMII (10Gbps
++  PHY), the XPCS block in UNIPHY is used.
++
++  The SerDes provides 125M (1Gbps mode) or 312.5M (2.5Gbps and 10Gbps modes)
++  RX and TX clocks to the NSSCC (Networking Sub System Clock Controller). The
++  NSSCC divides these clocks and generates the MII RX and TX clocks to each
++  of the MII interfaces between the PCS and MAC, as per the link speeds and
++  interface modes.
++
++  Different IPQ SoC may support different number of UNIPHYs (PCSes) since the
++  number of ports and their capabilities can be different between these SoCs
++
++  Below diagram depicts the UNIPHY (PCS) connections for an IPQ9574 SoC based
++  board. In this example, the PCS0 has four GMIIs/XGMIIs, which can connect
++  with four MACs to support QSGMII (4 x 1Gbps) or 10G_QXGMII (4 x 2.5Gbps)
++  interface modes.
++
++  -           +-------+ +---------+  +-------------------------+
++    +---------+CMN PLL| |  GCC    |  |   NSSCC (Divider)       |
++    |         +----+--+ +----+----+  +--+-------+--------------+
++    |              |         |          ^       |
++    |       31.25M |  SYS/AHB|clk  RX/TX|clk    +------------+
++    |       ref clk|         |          |       |            |
++    |              |         v          | MII RX|TX clk   MAC| RX/TX clk
++    |25/50M     +--+---------+----------+-------+---+      +-+---------+
++    |ref clk    |  |   +----------------+       |   |      | |     PPE |
++    v           |  |   |     UNIPHY0            V   |      | V         |
++  +-------+     |  v   |       +-----------+ (X)GMII|      |           |
++  |       |     |  +---+---+   |           |--------|------|-- MAC0    |
++  |       |     |  |       |   |           | (X)GMII|      |           |
++  |  Quad |     |  |SerDes |   | PCS/XPCS  |--------|------|-- MAC1    |
++  |       +<----+  |       |   |           | (X)GMII|      |           |
++  |(X)GPHY|     |  |       |   |           |--------|------|-- MAC2    |
++  |       |     |  |       |   |           | (X)GMII|      |           |
++  |       |     |  +-------+   |           |--------|------|-- MAC3    |
++  +-------+     |              |           |        |      |           |
++                |              +-----------+        |      |           |
++                +-----------------------------------+      |           |
++                +--+---------+----------+-------+---+      |           |
++  +-------+     |            UNIPHY1                |      |           |
++  |       |     |              +-----------+        |      |           |
++  |(X)GPHY|     | +-------+    |           | (X)GMII|      |           |
++  |       +<----+ |SerDes |    | PCS/XPCS  |--------|------|- MAC4     |
++  |       |     | |       |    |           |        |      |           |
++  +-------+     | +-------+    |           |        |      |           |
++                |              +-----------+        |      |           |
++                +-----------------------------------+      |           |
++                +--+---------+----------+-------+---+      |           |
++  +-------+     |           UNIPHY2                 |      |           |
++  |       |     |              +-----------+        |      |           |
++  |(X)GPHY|     | +-------+    |           | (X)GMII|      |           |
++  |       +<----+ |SerDes |    | PCS/XPCS  |--------|------|- MAC5     |
++  |       |     | |       |    |           |        |      |           |
++  +-------+     | +-------+    |           |        |      |           |
++                |              +-----------+        |      |           |
++                +-----------------------------------+      +-----------+
++
++properties:
++  compatible:
++    enum:
++      - qcom,ipq9574-pcs
++
++  reg:
++    maxItems: 1
++
++  '#address-cells':
++    const: 1
++
++  '#size-cells':
++    const: 0
++
++  clocks:
++    items:
++      - description: System clock
++      - description: AHB clock needed for register interface access
++
++  clock-names:
++    items:
++      - const: sys
++      - const: ahb
++
++  '#clock-cells':
++    const: 1
++    description: See include/dt-bindings/net/qcom,ipq9574-pcs.h for constants
++
++patternProperties:
++  '^pcs-mii@[0-4]$':
++    type: object
++    description: PCS MII interface.
++
++    properties:
++      reg:
++        minimum: 0
++        maximum: 4
++        description: MII index
++
++      clocks:
++        items:
++          - description: PCS MII RX clock
++          - description: PCS MII TX clock
++
++      clock-names:
++        items:
++          - const: rx
++          - const: tx
++
++    required:
++      - reg
++      - clocks
++      - clock-names
++
++    additionalProperties: false
++
++required:
++  - compatible
++  - reg
++  - '#address-cells'
++  - '#size-cells'
++  - clocks
++  - clock-names
++  - '#clock-cells'
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/qcom,ipq9574-gcc.h>
++
++    ethernet-pcs@7a00000 {
++        compatible = "qcom,ipq9574-pcs";
++        reg = <0x7a00000 0x10000>;
++        #address-cells = <1>;
++        #size-cells = <0>;
++        clocks = <&gcc GCC_UNIPHY0_SYS_CLK>,
++                 <&gcc GCC_UNIPHY0_AHB_CLK>;
++        clock-names = "sys",
++                      "ahb";
++        #clock-cells = <1>;
++
++        pcs-mii@0 {
++            reg = <0>;
++            clocks = <&nsscc 116>,
++                     <&nsscc 117>;
++            clock-names = "rx",
++                          "tx";
++        };
++
++        pcs-mii@1 {
++            reg = <1>;
++            clocks = <&nsscc 118>,
++                     <&nsscc 119>;
++            clock-names = "rx",
++                          "tx";
++        };
++
++        pcs-mii@2 {
++            reg = <2>;
++            clocks = <&nsscc 120>,
++                     <&nsscc 121>;
++            clock-names = "rx",
++                          "tx";
++        };
++
++        pcs-mii@3 {
++            reg = <3>;
++            clocks = <&nsscc 122>,
++                     <&nsscc 123>;
++            clock-names = "rx",
++                          "tx";
++        };
++    };
+diff --git a/include/dt-bindings/net/qcom,ipq9574-pcs.h b/include/dt-bindings/net/qcom,ipq9574-pcs.h
+new file mode 100644
+index 000000000000..96bd036aaa70
+--- /dev/null
++++ b/include/dt-bindings/net/qcom,ipq9574-pcs.h
+@@ -0,0 +1,15 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
++/*
++ * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
++ *
++ * Device Tree constants for the Qualcomm IPQ9574 PCS
++ */
++
++#ifndef _DT_BINDINGS_PCS_QCOM_IPQ9574_H
++#define _DT_BINDINGS_PCS_QCOM_IPQ9574_H
++
++/* The RX and TX clocks which are provided from the SerDes to NSSCC. */
++#define PCS_RX_CLK		0
++#define PCS_TX_CLK		1
++
++#endif /* _DT_BINDINGS_PCS_QCOM_IPQ9574_H */
 
-Drop quotes.
+-- 
+2.34.1
 
-
-> +        type: object
-> +        additionalProperties: false
-> +        $ref: /schemas/pinctrl/pinmux-node.yaml
-> +        description: |
-> +          pinmux configuration nodes.
-> +
-> +          The following table shows the effective values of "group", "function"
-> +          properties and chip pinout pins
-> +
-> +          groups               function           pins (in pin#)
-> +          ---------------------------------------------------------------------
-> +          "tops_jtag0_0"       "jtag"             0, 1, 2, 3, 4
-> +          "wo0_jtag"           "jtag"             50, 51, 52, 53, 54
-> +          "wo1_jtag"           "jtag"             50, 51, 52, 53, 54
-> +          "wo2_jtag"           "jtag"             50, 51, 52, 53, 54
-> +          "jtag"               "jtag"             58, 59, 60, 61, 62
-> +          "tops_jtag0_1"       "jtag"             58, 59, 60, 61, 62
-> +          "int_usxgmii"        "int_usxgmii"      2, 3
-> +          "pwm0"               "pwm"              57
-> +          "pwm1"               "pwm"              21
-> +          "pwm2"               "pwm"              80
-> +          "pwm2_0"             "pwm"              58
-> +          "pwm3"               "pwm"              81
-> +          "pwm3_0"             "pwm"              59
-> +          "pwm4"               "pwm"              82
-> +          "pwm4_0"             "pwm"              60
-> +          "pwm5"               "pwm"              83
-> +          "pwm5_0"             "pwm"              61
-> +          "pwm6"               "pwm"              69
-> +          "pwm6_0"             "pwm"              62
-> +          "pwm7"               "pwm"              70
-> +          "pwm7_0"             "pwm"              4
-> +          "dfd"                "dfd"              0, 1, 2, 3, 4
-> +          "xfi_phy0_i2c0"      "i2c"              0, 1
-> +          "xfi_phy1_i2c0"      "i2c"              0, 1
-> +          "xfi_phy_pll_i2c0"   "i2c"              3, 4
-> +          "xfi_phy_pll_i2c1"   "i2c"              3, 4
-> +          "i2c0_0"             "i2c"              5, 6
-> +          "i2c1_sfp"           "i2c"              5, 6
-> +          "xfi_pextp_phy0_i2c" "i2c"              5, 6
-> +          "xfi_pextp_phy1_i2c" "i2c"              5, 6
-> +          "i2c0_1"             "i2c"              15, 16
-> +          "u30_phy_i2c0"       "i2c"              15, 16
-> +          "u32_phy_i2c0"       "i2c"              15, 16
-> +          "xfi_phy0_i2c1"      "i2c"              15, 16
-> +          "xfi_phy1_i2c1"      "i2c"              15, 16
-> +          "xfi_phy_pll_i2c2"   "i2c"              15, 16
-> +          "i2c1_0"             "i2c"              17, 18
-> +          "u30_phy_i2c1"       "i2c"              17, 18
-> +          "u32_phy_i2c1"       "i2c"              17, 18
-> +          "xfi_phy_pll_i2c3"   "i2c"              17, 18
-> +          "sgmii0_i2c"         "i2c"              17, 18
-> +          "sgmii1_i2c"         "i2c"              17, 18
-> +          "i2c1_2"             "i2c"              69, 70
-> +          "i2c2_0"             "i2c"              69, 70
-> +          "i2c2_1"             "i2c"              71, 72
-> +          "mdc_mdio0"          "eth"              5, 6
-> +          "2p5g_ext_mdio"      "eth"              28, 29
-> +          "gbe_ext_mdio"       "eth"              30, 31
-> +          "mdc_mdio1"          "eth"              69, 70
-> +          "pcie_wake_n0_0"     "pcie"             7
-> +          "pcie_clk_req_n0_0"  "pcie"             8
-> +          "pcie_wake_n3_0"     "pcie"             9
-> +          "pcie_clk_req_n3"    "pcie"             10
-> +          "pcie_clk_req_n0_1"  "pcie"             10
-> +          "pcie_p0_phy_i2c"    "pcie"             7, 8
-> +          "pcie_p1_phy_i2c"    "pcie"             7, 8
-> +          "pcie_p3_phy_i2c"    "pcie"             9, 10
-> +          "pcie_p2_phy_i2c"    "pcie"             7, 8
-> +          "ckm_phy_i2c"        "pcie"             9, 10
-> +          "pcie_wake_n0_1"     "pcie"             13
-> +          "pcie_wake_n3_1"     "pcie"             14
-> +          "pcie_2l_0_pereset"  "pcie"             19
-> +          "pcie_1l_1_pereset"  "pcie"             20
-> +          "pcie_clk_req_n2_1"  "pcie"             63
-> +          "pcie_2l_1_pereset"  "pcie"             73
-> +          "pcie_1l_0_pereset"  "pcie"             74
-> +          "pcie_wake_n1_0"     "pcie"             75
-> +          "pcie_clk_req_n1"    "pcie"             76
-> +          "pcie_wake_n2_0"     "pcie"             77
-> +          "pcie_clk_req_n2_0"  "pcie"             78
-> +          "pcie_wake_n2_1"     "pcie"             79
-> +          "pmic"               "pmic"             11
-> +          "watchdog"           "watchdog"         12
-> +          "spi0_wp_hold"       "spi"              22, 23
-> +          "spi0"               "spi"              24, 25, 26, 27
-> +          "spi1"               "spi"              28, 29, 30, 31
-> +          "spi2"               "spi"              32, 33, 34, 35
-> +          "spi2_wp_hold"       "spi"              36, 37
-> +          "snfi"               "flash"            22, 23, 24, 25, 26, 27
-> +          "emmc_45"            "flash"            21, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37
-> +          "sdcard"             "flash"            32, 33, 34, 35, 36, 37
-> +          "emmc_51"            "flash"            38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49
-> +          "uart2"              "uart"             0, 1, 2, 3
-> +          "tops_uart0_0"       "uart"             22, 23
-> +          "uart2_0"            "uart"             28, 29, 30, 31
-> +          "uart1_0"            "uart"             32, 33, 34, 35
-> +          "uart2_1"            "uart"             32, 33, 34, 35
-> +          "net_wo0_uart_txd_0" "uart"             28
-> +          "net_wo1_uart_txd_0" "uart"             29
-> +          "net_wo2_uart_txd_0" "uart"             30
-> +          "tops_uart1_0"       "uart"             28, 29
-> +          "tops_uart0_1"       "uart"             30, 31
-> +          "tops_uart1_1"       "uart"             36, 37
-> +          "uart0"              "uart"             55, 56
-> +          "tops_uart0_2"       "uart"             55, 56
-> +          "uart2_2"            "uart"             50, 51, 52, 53
-> +          "uart1_1"            "uart"             58, 59, 60, 61
-> +          "uart2_3"            "uart"             58, 59, 60, 61
-> +          "uart1_2"            "uart"             80, 81, 82, 83
-> +          "uart1_2_lite"       "uart"             80, 81
-> +          "tops_uart1_2"       "uart"             80, 81
-> +          "net_wo0_uart_txd_1" "uart"             80
-> +          "net_wo1_uart_txd_1" "uart"             81
-> +          "net_wo2_uart_txd_1" "uart"             82
-> +          "udi"                "udi"              32, 33, 34, 35, 36
-> +          "i2s"                "audio"            50, 51, 52, 53, 54
-> +          "pcm"                "audio"            50, 51, 52, 53
-> +          "gbe0_led1"          "led"              58
-> +          "gbe1_led1"          "led"              59
-> +          "gbe2_led1"          "led"              60
-> +          "gbe3_led1"          "led"              61
-> +          "2p5gbe_led1"        "led"              62
-> +          "gbe0_led0"          "led"              64
-> +          "gbe1_led0"          "led"              65
-> +          "gbe2_led0"          "led"              66
-> +          "gbe3_led0"          "led"              67
-> +          "2p5gbe_led0"        "led"              68
-> +          "drv_vbus_p1"        "usb"              63
-> +          "drv_vbus"           "usb"              79
-> +
-> +        properties:
-> +          function:
-> +            description:
-> +              A string containing the name of the function to mux to the group.
-> +            enum: [audio, dfd, eth, flash, i2c, int_usxgmii, jtag, led, pcie, pmic, pwm, spi,
-> +                   uart, udi, usb, watchdog]
-> +          groups:
-> +            description:
-> +              An array of strings. Each string contains the name of a group.
-
-blank line
-
-> +        required:
-> +          - function
-> +          - groups
-> +
-> +        allOf:
-> +          - if:
-> +              properties:
-> +                function:
-> +                  const: audio
-> +            then:
-> +              properties:
-> +                groups:
-> +                  enum: [i2s, pcm]
-> +          - if:
-> +              properties:
-> +                function:
-> +                  const: jtag
-> +            then:
-> +              properties:
-> +                groups:
-> +                  enum: [jtag, tops_jtag0_0, tops_jtag0_1, wo0_jtag, wo1_jtag, wo2_jtag]
-> +          - if:
-> +              properties:
-> +                function:
-> +                  const: int_usxgmii
-> +            then:
-> +              properties:
-> +                groups:
-> +                  enum: [int_usxgmii]
-
-Use const if only 1. Elsewhere too.
-
-> +          - if:
-> +              properties:
-> +                function:
-> +                  const: dfd
-> +            then:
-> +              properties:
-> +                groups:
-> +                  enum: [dfd]
-> +          - if:
-> +              properties:
-> +                function:
-> +                  const: flash
-> +            then:
-> +              properties:
-> +                groups:
-> +                  enum: [emmc_45, emmc_51, sdcard, snfi]
-> +          - if:
-> +              properties:
-> +                function:
-> +                  const: eth
-> +            then:
-> +              properties:
-> +                groups:
-> +                  enum: [2p5g_ext_mdio, gbe_ext_mdio, mdc_mdio0, mdc_mdio1]
-> +          - if:
-> +              properties:
-> +                function:
-> +                  const: i2c
-> +            then:
-> +              properties:
-> +                groups:
-> +                  enum: [xfi_phy0_i2c0, xfi_phy1_i2c0, xfi_phy_pll_i2c0,
-> +                         xfi_phy_pll_i2c1, i2c0_0, i2c1_sfp, xfi_pextp_phy0_i2c,
-> +                         xfi_pextp_phy1_i2c, i2c0_1, u30_phy_i2c0, u32_phy_i2c0,
-> +                         xfi_phy0_i2c1, xfi_phy1_i2c1, xfi_phy_pll_i2c2, i2c1_0,
-> +                         u30_phy_i2c1, u32_phy_i2c1, xfi_phy_pll_i2c3, sgmii0_i2c,
-> +                         sgmii1_i2c, i2c1_2, i2c2_0, i2c2_1]
-> +          - if:
-> +              properties:
-> +                function:
-> +                  const: led
-> +            then:
-> +              properties:
-> +                groups:
-> +                  enum: [2p5gbe_led0, 2p5gbe_led1, gbe0_led0, gbe0_led1, gbe1_led0, gbe1_led1,
-> +                         gbe2_led0, gbe2_led1, gbe3_led0, gbe3_led1, wf5g_led0, wf5g_led1]
-> +          - if:
-> +              properties:
-> +                function:
-> +                  const: pcie
-> +            then:
-> +              properties:
-> +                groups:
-> +                  items:
-> +                    enum: [pcie_wake_n0_0, pcie_clk_req_n0_0, pcie_wake_n3_0,
-> +                           pcie_clk_req_n3, pcie_p0_phy_i2c, pcie_p1_phy_i2c,
-> +                           pcie_p3_phy_i2c, pcie_p2_phy_i2c, ckm_phy_i2c,
-> +                           pcie_wake_n0_1, pcie_wake_n3_1, pcie_2l_0_pereset,
-> +                           pcie_1l_1_pereset, pcie_clk_req_n2_1, pcie_2l_1_pereset,
-> +                           pcie_1l_0_pereset, pcie_wake_n1_0, pcie_clk_req_n1,
-> +                           pcie_wake_n2_0, pcie_clk_req_n2_0, pcie_wake_n2_1,
-> +                           pcie_clk_req_n0_1]
-> +                  maxItems: 3
-> +          - if:
-> +              properties:
-> +                function:
-> +                  const: pmic
-> +            then:
-> +              properties:
-> +                groups:
-> +                  items:
-> +                    enum: [pmic]
-> +                  maxItems: 1
-
-This can be just:
-
-groups:
-  const: pmic
-
-A few other places too.
-
-Rob
 
