@@ -1,105 +1,129 @@
-Return-Path: <linux-kernel+bounces-431010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B00DF9E3855
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 12:08:15 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 943849E3865
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 12:10:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7B634B31AD4
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 11:01:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F08EFB33E21
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 11:01:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4912F1B2199;
-	Wed,  4 Dec 2024 11:01:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tMqFm5ar"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C060C1B2193;
+	Wed,  4 Dec 2024 11:01:20 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91D921AF0AE;
-	Wed,  4 Dec 2024 11:01:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 921761AF0AE;
+	Wed,  4 Dec 2024 11:01:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733310065; cv=none; b=rfO4o9fT0SlA0UTG0KC0TrSS6lPKj/VtIu2DE7edOVO6kYEpuH4zV3ZXDYcll3VPgEYGdoa6fbMAn03pP90x1u9SsGzbF2eBJYXxToXFDsgbCh3tEihSFXzBaDGNvkBjg8XtRZw6e2b3XXE99pA7tGxjPmppy+0DVKGJwGSCToE=
+	t=1733310080; cv=none; b=anb2AbjQf62nBkvp+Zjmw9jlM9kmZTykCPf69FCTwQaxbKtBc9LIQIOtZ52ONuCzaFxfGvZ9HINSMHZ/IE7R/SNlZw/5KwRCPlaUQo9Y1gyjkcnBEipq8P4I6IYagmxFa4PpTG+YuTNz4Flp9zqATfGyE6xmsCj9MwxHcfpR9+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733310065; c=relaxed/simple;
-	bh=zMeQnCSXMhMpabd2mv5aFnby1I1S8bBNePtGcJHBo+w=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ddt1QeGC9XVBYIwFOIFcoH3MLUmfYIsVNSz0P8ani20TWM50SfU6ZttXlBadNGQz3ofIYqY5ery56lu36T5SZrc0VTKgVDVNw/OtTMulfpv5It8jKa0NXV5rkGaV2K3aluOe/lK9nDLgB2vEULRc7YHJsHQJ79UpQW7PnMXR56w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tMqFm5ar; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CD5DC4CED1;
-	Wed,  4 Dec 2024 11:01:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733310065;
-	bh=zMeQnCSXMhMpabd2mv5aFnby1I1S8bBNePtGcJHBo+w=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=tMqFm5arAJxP/iuOHQH0rmIez/xmyUF8j3wKmqCP8wJK5VkAWndD+0w1hPDY6yGBR
-	 sZTnSlbj+vaDnYrBHBUfJivxqgvzA+nwTaY7MqUPWjuLIdR+UPt7MTlUurmWOyayfo
-	 A5e0JOE1NUSUxKqWRcQefGVza8wfDQQhw2JS4fHLz8pUotA70APDlPJDI4OkNZMjoL
-	 BFVQm61Y7xo7DE2gmIIYr/YzxpIJ+/o58aqM6ORtr2YTldkl5w0Jzrc02HrnIZgJxi
-	 GScFBHLxcTEstFhOJFJsTVuUdZzhNJfvXwx1xrgYsTCToDgzJFe2kZDSXcMniJnMYR
-	 bLwQTjeFm4d/Q==
-From: Christian Brauner <brauner@kernel.org>
-To: linux-ext4@vger.kernel.org,
-	Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	tytso@mit.edu,
-	adilger.kernel@dilger.ca,
-	jack@suse.cz,
-	yi.zhang@huawei.com,
-	chengzhihao1@huawei.com,
-	yukuai3@huawei.com,
-	yangerkun@huawei.com
-Subject: Re: [PATCH 0/2] jbd2: two straightforward fixes
-Date: Wed,  4 Dec 2024 12:00:55 +0100
-Message-ID: <20241204-landen-umwirbt-06fd455b45d2@brauner>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241203014407.805916-1-yi.zhang@huaweicloud.com>
-References: <20241203014407.805916-1-yi.zhang@huaweicloud.com>
+	s=arc-20240116; t=1733310080; c=relaxed/simple;
+	bh=c2NvD8YPqwoJEBvfGdqJXIumIQ7XNQdIdtsGxgK/kP4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=GZ1MFoCH5/jgKSNArckPolUvnBu9X2uhhcvk64MNbW9Rv98Xb2Zc0e6vO6eK5OHL7hIhF5JqcAL20PX9ObF099HspSHmeDsvnyIpqPqA+rZUTVnenR+vdkbocxkUOcRsUszfnIEWZhC/hCXNpQrZPU5E172ND9c7FozxdBtK1h0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4Y3DzP6TNzz2GcVp;
+	Wed,  4 Dec 2024 18:58:57 +0800 (CST)
+Received: from dggpemf200006.china.huawei.com (unknown [7.185.36.61])
+	by mail.maildlp.com (Postfix) with ESMTPS id C003714011B;
+	Wed,  4 Dec 2024 19:01:14 +0800 (CST)
+Received: from [10.67.120.129] (10.67.120.129) by
+ dggpemf200006.china.huawei.com (7.185.36.61) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 4 Dec 2024 19:01:14 +0800
+Message-ID: <e053e75a-bde1-4e69-9a8d-d1f54be06bdb@huawei.com>
+Date: Wed, 4 Dec 2024 19:01:14 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1253; i=brauner@kernel.org; h=from:subject:message-id; bh=zMeQnCSXMhMpabd2mv5aFnby1I1S8bBNePtGcJHBo+w=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQHmGXoMJ9frfaOOWuDqY5/656V559GJd1kcGz3/yE2c 3FXzk37jlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIns4WD4Z1T4xLBMdm753z9x zjwKpscnT06IN5+i9SNLXjiWOaK9lOGf1YMQ9gu39l/TY7FbyMWw2VibJUBZ8IEg+7bHVb9PJWz hAQA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v4 1/3] page_pool: fix timing for checking and
+ disabling napi_local
+To: Jakub Kicinski <kuba@kernel.org>
+CC: <davem@davemloft.net>, <pabeni@redhat.com>, <liuyonglong@huawei.com>,
+	<fanghaiqing@huawei.com>, <zhangkun09@huawei.com>, Alexander Lobakin
+	<aleksander.lobakin@intel.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Jesper Dangaard Brouer <hawk@kernel.org>, Ilias Apalodimas
+	<ilias.apalodimas@linaro.org>, Eric Dumazet <edumazet@google.com>, Simon
+ Horman <horms@kernel.org>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+References: <20241120103456.396577-1-linyunsheng@huawei.com>
+ <20241120103456.396577-2-linyunsheng@huawei.com>
+ <20241202184954.3a4095e3@kernel.org>
+Content-Language: en-US
+From: Yunsheng Lin <linyunsheng@huawei.com>
+In-Reply-To: <20241202184954.3a4095e3@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ dggpemf200006.china.huawei.com (7.185.36.61)
 
-On Tue, 03 Dec 2024 09:44:05 +0800, Zhang Yi wrote:
-> From: Zhang Yi <yi.zhang@huawei.com>
+On 2024/12/3 10:49, Jakub Kicinski wrote:
+> On Wed, 20 Nov 2024 18:34:53 +0800 Yunsheng Lin wrote:
+>> page_pool page may be freed from skb_defer_free_flush() in
+>> softirq context without binding to any specific napi, it
+>> may cause use-after-free problem due to the below time window,
+>> as below, CPU1 may still access napi->list_owner after CPU0
+>> free the napi memory:
+>>
+>>             CPU 0                           CPU1
+>>       page_pool_destroy()          skb_defer_free_flush()
+>>              .                               .
+>>              .                napi = READ_ONCE(pool->p.napi);
+>>              .                               .
+>> page_pool_disable_direct_recycling()         .
+>>    driver free napi memory                   .
+>>              .                               .
+>>              .       napi && READ_ONCE(napi->list_owner) == cpuid
+>>              .                               .
+>>
+>> Use rcu mechanism to avoid the above problem.
+>>
+>> Note, the above was found during code reviewing on how to fix
+>> the problem in [1].
+>>
+>> 1. https://lore.kernel.org/lkml/8067f204-1380-4d37-8ffd-007fc6f26738@kernel.org/T/
 > 
-> Zhang Yi (2):
->   jbd2: increase IO priority for writing revoke records
->   jbd2: flush filesystem device before updating tail sequence
+> Please split it from the rest of the series, it's related but not
+> really logically connected (dma mappings and NAPI recycling are 
+> different features of page pool).
 > 
-> fs/jbd2/commit.c | 4 ++--
->  fs/jbd2/revoke.c | 2 +-
->  2 files changed, 3 insertions(+), 3 deletions(-)
+>> @@ -1126,6 +1133,12 @@ void page_pool_destroy(struct page_pool *pool)
+>>  	if (!page_pool_release(pool))
+>>  		return;
+>>  
+>> +	/* Paired with rcu lock in page_pool_napi_local() to enable clearing
+>> +	 * of pool->p.napi in page_pool_disable_direct_recycling() is seen
+>> +	 * before returning to driver to free the napi instance.
+>> +	 */
+>> +	synchronize_rcu();
 > 
-> [...]
+> I don't think this is in the right place.
+> Why not inside page_pool_disable_direct_recycling() ?
 
-Applied to the vfs.fixes branch of the vfs/vfs.git tree.
-Patches in the vfs.fixes branch should appear in linux-next soon.
+It is in page_pool_destroy() mostly because:
+1. Only call synchronize_rcu() when there is inflight pages, which should
+   be an unlikely case, and  synchronize_rcu() might need to be called at
+   least for the case of pool->p.napi not being NULL if it is called inside
+   page_pool_disable_direct_recycling().
+2. the above synchronize_rcu() in page_pool_destroy() is also reused
+   for the fixing of dma unmappings.
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.fixes
-
-[1/2] jbd2: increase IO priority for writing revoke records
-      https://git.kernel.org/vfs/vfs/c/ac1e21bd8c88
-[2/2] jbd2: flush filesystem device before updating tail sequence
-      https://git.kernel.org/vfs/vfs/c/a0851ea9cd55
+> 
+> Hopefully this doesn't cause long stalls during reconfig, normally
+> NAPIs and page pools are freed together, and NAPI removal implies
+> synchronize_rcu(). That's why it's not really a problem for majority
+> of drivers. You should perhaps make a note of this in the commit
+> message.
+> 
 
