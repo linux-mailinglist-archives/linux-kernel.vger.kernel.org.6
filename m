@@ -1,128 +1,184 @@
-Return-Path: <linux-kernel+bounces-431138-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431139-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 067F99E395A
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 12:58:05 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7EA39E39A8
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 13:16:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B86DB2830CA
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 11:58:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 48105B3A76B
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 11:58:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04D441B4F0D;
-	Wed,  4 Dec 2024 11:57:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B8851B4F0A;
+	Wed,  4 Dec 2024 11:58:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZC5Jdn01"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="RcMeFKnZ";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Hp82bWE4";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="G9dMZVQS";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="5hkzPGud"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97B7A1ABEDC;
-	Wed,  4 Dec 2024 11:57:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D9F81ADFE3;
+	Wed,  4 Dec 2024 11:58:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733313476; cv=none; b=tFnrzhRP5xTA1pj2UeiRd7fzdMdWiA/Lua8E79ExJ+vFEj8KfSwx2tgM+pELJqtmIjSQmKqh7WNJdV45jM8udrGscTgEceXh4myHOxIbMDqimI3Fc3/qkBc7oN5iT31qFjYlCt57+jYune1pA8sqJsErDFmZCWRHcimfK4gV2Pc=
+	t=1733313499; cv=none; b=IZM/Dp6nEJeLhWyE5NGjzFUpGdCaRx7of1d1WhcjEnkT3+D8oBkkXh0F98T1WCKW8GQZM9BWM1fhfGLZ3BAOH7zaTgNTY1xRfS31d8qVkGqaI8eQPpUrl/RUuRRBh0VKRfgjqMUpkQLUFEJ5Uh/i3nYI2Uvt8Q5872l61LYEdDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733313476; c=relaxed/simple;
-	bh=oP0UxJ1SexpNYel+q3Ldy/dOEsfTJEnknxgC+x34Fcg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kfeRNd2JT09sIbb0R0gqTXamZd2JGVvO2z18zdEWGu7STRMYjEzY3t4EdC5ybUw8Ed9anpalfQrI4cRAydrETzF97TAagXjtZajMtTZCDck8wZu1v8dUdKBongdO3VD0+9YBTVizLfQklFnfuVkcT4DQylyoXkzwpf4OXemt2QY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZC5Jdn01; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733313475; x=1764849475;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=oP0UxJ1SexpNYel+q3Ldy/dOEsfTJEnknxgC+x34Fcg=;
-  b=ZC5Jdn01KkDQUj0F4dHlt/phetTpMx1hcQ7Uz08zM0vrlJyUxi28OWp/
-   wgHIdeR/MmstgiUpmUlXPyJqGniqK8OGxqyoUpd2UrwnibQW5L1F2NtWE
-   cucyRt957De8CwoaPQCVTfWDBLm7l5clzFfm32jlSAK3dFsu/zvCm61tj
-   /MTEKwA/6Gm7PGBi6wBDY0UKQqT4BhSdvhqg+ER0qmPCvkJbLPTD+a4ki
-   KP9colqr8FagHx1jKa1wVfTunEXz4hgg5rGZn9zlN1KkJBs0MfQFaX858
-   YrDpIgRt+Be2vg9WiJbZJLiuZwuIQ1hKPi1YW+qTi2eYa1yjDx/h9tZ7y
-   g==;
-X-CSE-ConnectionGUID: VdvgeMheRj6HKrE9hGCuJw==
-X-CSE-MsgGUID: YtPeAxwdR2C0dCELFpD/0g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11276"; a="32934351"
-X-IronPort-AV: E=Sophos;i="6.12,207,1728975600"; 
-   d="scan'208";a="32934351"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Dec 2024 03:57:49 -0800
-X-CSE-ConnectionGUID: VLIkdnLkRE+Uu0b/lyEb2Q==
-X-CSE-MsgGUID: svvCZBXNQPKFXMvy7bmjLw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,207,1728975600"; 
-   d="scan'208";a="93639903"
-Received: from p12ill20yoongsia.png.intel.com ([10.88.227.28])
-  by orviesa009.jf.intel.com with ESMTP; 04 Dec 2024 03:57:44 -0800
-From: Song Yoong Siang <yoong.siang.song@intel.com>
-To: Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	"David S . Miller" <davem@davemloft.net>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Mykola Lysenko <mykolal@fb.com>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	KP Singh <kpsingh@kernel.org>,
-	Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Shuah Khan <shuah@kernel.org>
-Cc: netdev@vger.kernel.org,
-	bpf@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH bpf-next 1/1] selftests/bpf: Enable Tx hwtstamp in xdp_hw_metadata
-Date: Wed,  4 Dec 2024 19:57:15 +0800
-Message-Id: <20241204115715.3148412-1-yoong.siang.song@intel.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1733313499; c=relaxed/simple;
+	bh=Fqh9zlEm/D4e/66lmT4eQS04SrHg3TY71jHBmz92b70=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sMwndISE3vwT/JF0Pex/OZLGZc5ZI5C+CfcN1aasJl23h5Gvtau9fiGGSgdcPLCFk7xJCwwlgvkwuv2Az4tTsDvPSv2NQARgYHMIxKOW1ZkJ6fBkeBDHy194mh3KiFTl3s5iKRODopet5HYI/LDe+pKGrl4bokDBKttmDGyfzv8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=RcMeFKnZ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Hp82bWE4; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=G9dMZVQS; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=5hkzPGud; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id ACBF821184;
+	Wed,  4 Dec 2024 11:58:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1733313495; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=B4NnXQPjf7rhAc2hNxC/j5jTlUW8gxPaB93QnpPiHPI=;
+	b=RcMeFKnZnN/AYDMmaTW1S4lk2/K1OKT2fX+Szd3s7uRlE0HwWZdOX8Psftk7W7OIKKUHsl
+	0e/4y9WVt+PUN5+dLs/VKztWKBMtp/+Vd4mITvKBVdEF41JfkH/b3G4pfeyZWMcrj0mrVW
+	HjRUvomGxxnapZRsIJ21vf3INWQf8kw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1733313495;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=B4NnXQPjf7rhAc2hNxC/j5jTlUW8gxPaB93QnpPiHPI=;
+	b=Hp82bWE4cQ2LFMpsCefeBDjJ3KLYCtk7U+yPdvR/E3ZL5ESea7VmJGoJRvbMBCSs+1WK5b
+	80+1MPu6EUkPkVBw==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=G9dMZVQS;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=5hkzPGud
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1733313494; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=B4NnXQPjf7rhAc2hNxC/j5jTlUW8gxPaB93QnpPiHPI=;
+	b=G9dMZVQSDhjkZqzh0fQGQ0q5IdR3xmCaOoS5DVheAaOIuZA5u3wfPE5lojfNy6CdIemuhI
+	xWj2bJB2FECgnWTOrOnMWbY2AgakolLTpNNxxnfprgrr2N/868gFKpz83cde6/8o1VwZye
+	ahL7HOMuR6W+xe7yvFjKpHY+vbY2h6s=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1733313494;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=B4NnXQPjf7rhAc2hNxC/j5jTlUW8gxPaB93QnpPiHPI=;
+	b=5hkzPGudWza5ExgCkE2t98o5M47d9M2/TUNNgjv8NgHuB+tv3+5VKisHvaUgVSdPn9a3dS
+	fXQssEzeJur5tIBw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 94B421396E;
+	Wed,  4 Dec 2024 11:58:14 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id oIxTJNZDUGf7HAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 04 Dec 2024 11:58:14 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 58102A0918; Wed,  4 Dec 2024 12:58:14 +0100 (CET)
+Date: Wed, 4 Dec 2024 12:58:14 +0100
+From: Jan Kara <jack@suse.cz>
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, tytso@mit.edu,
+	adilger.kernel@dilger.ca, jack@suse.cz, ritesh.list@gmail.com,
+	hch@infradead.org, djwong@kernel.org, david@fromorbit.com,
+	zokeefe@google.com, yi.zhang@huawei.com, chengzhihao1@huawei.com,
+	yukuai3@huawei.com, yangerkun@huawei.com
+Subject: Re: [PATCH 06/27] ext4: refactor ext4_collapse_range()
+Message-ID: <20241204115814.5yqjont7ugtovc5g@quack3>
+References: <20241022111059.2566137-1-yi.zhang@huaweicloud.com>
+ <20241022111059.2566137-7-yi.zhang@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241022111059.2566137-7-yi.zhang@huaweicloud.com>
+X-Rspamd-Queue-Id: ACBF821184
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.51 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_COUNT_THREE(0.00)[3];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[16];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	MIME_TRACE(0.00)[0:+];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_CC(0.00)[vger.kernel.org,mit.edu,dilger.ca,suse.cz,gmail.com,infradead.org,kernel.org,fromorbit.com,google.com,huawei.com];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.cz:email,huawei.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -2.51
+X-Spam-Flag: NO
 
-Set tx_type to HWTSTAMP_TX_ON to enable hardware timestamping for all
-outgoing packets.
+On Tue 22-10-24 19:10:37, Zhang Yi wrote:
+> From: Zhang Yi <yi.zhang@huawei.com>
+> 
+> Simplify ext4_collapse_range() and align its code style with that of
+> ext4_zero_range() and ext4_punch_hole(). Refactor it by: a) renaming
+> variables, b) removing redundant input parameter checks and moving
+> the remaining checks under i_rwsem in preparation for future
+> refactoring, and c) renaming the three stale error tags.
+> 
+> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 
-Besides, set XDP_UMEM_TX_METADATA_LEN flag to reserve tx_metadata_len bytes
-of per-chunk metadata.
+Looks good. Feel free to add:
 
-Signed-off-by: Song Yoong Siang <yoong.siang.song@intel.com>
----
- tools/testing/selftests/bpf/xdp_hw_metadata.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-diff --git a/tools/testing/selftests/bpf/xdp_hw_metadata.c b/tools/testing/selftests/bpf/xdp_hw_metadata.c
-index 06266aad2f99..6f7b15d6c6ed 100644
---- a/tools/testing/selftests/bpf/xdp_hw_metadata.c
-+++ b/tools/testing/selftests/bpf/xdp_hw_metadata.c
-@@ -79,7 +79,7 @@ static int open_xsk(int ifindex, struct xsk *xsk, __u32 queue_id)
- 		.fill_size = XSK_RING_PROD__DEFAULT_NUM_DESCS,
- 		.comp_size = XSK_RING_CONS__DEFAULT_NUM_DESCS,
- 		.frame_size = XSK_UMEM__DEFAULT_FRAME_SIZE,
--		.flags = XSK_UMEM__DEFAULT_FLAGS,
-+		.flags = XDP_UMEM_TX_METADATA_LEN,
- 		.tx_metadata_len = sizeof(struct xsk_tx_metadata),
- 	};
- 	__u32 idx = 0;
-@@ -551,6 +551,7 @@ static void hwtstamp_enable(const char *ifname)
- {
- 	struct hwtstamp_config cfg = {
- 		.rx_filter = HWTSTAMP_FILTER_ALL,
-+		.tx_type = HWTSTAMP_TX_ON,
- 	};
- 
- 	hwtstamp_ioctl(SIOCGHWTSTAMP, ifname, &saved_hwtstamp_cfg);
+Just one nit below:
+
+> -out_stop:
+> +out_handle:
+>  	ext4_journal_stop(handle);
+> -out_mmap:
+> +out_invalidate_lock:
+>  	filemap_invalidate_unlock(mapping);
+> -out_mutex:
+> +out:
+>  	inode_unlock(inode);
+>  	return ret;
+>  }
+
+Again, I think "out_inode_lock" would be a better name than just "out".
+
+								Honza
+
 -- 
-2.34.1
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
