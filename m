@@ -1,135 +1,127 @@
-Return-Path: <linux-kernel+bounces-431905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 686369E4285
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:56:37 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 920F89E42AC
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:59:38 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B30A8161729
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:56:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D490285B09
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:59:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F77D213242;
-	Wed,  4 Dec 2024 17:21:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91044217700;
+	Wed,  4 Dec 2024 17:30:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CVBThe/w"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oXwlaOyF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08D1720D4E4
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 17:21:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC0481A8F61;
+	Wed,  4 Dec 2024 17:30:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733332870; cv=none; b=cBWuUstHOD1g+SaSlgdPZNMOaicXB4w1aeSxhdYMYwy4qDuDKN7ec3P+Bx2xypDZ7uXMdHBG0wAoLMsSmxFjnFEqaJ94xlv/5nsamvZ9/4qYdRNAFBpoHh+YElmhtGXoK+P/cG9SVjFO/LeYgC6zlX7HzNzPW2LPKROXfr+5zaU=
+	t=1733333453; cv=none; b=QwS8Uv3ToeY3uB7nYJ4V1Dmjx6np6WYCrdiF1khU1tT7ZVPM+7935T52TBrS754bWSQ0vcGHVteDz/8N5XorqeZWazAh4rEnaO0wGpnZz7wKaY8xGYhorbVToD5Nd9MjWfazd7zQLrNOoI5GcxoSKQwk9qfowYAPpm6pWohPj3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733332870; c=relaxed/simple;
-	bh=cS4i0U6cm/rszccFiZBNCF5t6wXp4Gy6L1mmeeVxTLA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iXFOXGRaD6tzlgtM/CH6nN6HUaUCJiO0YnXlkPj24rfoSDosQ44QUpPUO0nccQREKBCWvdqcA8WVKWxEhtFNLRwMhwcxP3rqoOueT40dv7NHLi1oismGttRPbAGy1UlrylYTEElDblNtDNLTVlYeGs3xRj8Etzl2iwDMvdFl9ck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CVBThe/w; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-53de8ecb39bso46644e87.2
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 09:21:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733332867; x=1733937667; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=CwUi8SmsPb5Vycsa9GB+I0BWedaEfg/jRhZVV6qa67w=;
-        b=CVBThe/wFYiiF4xr5/DzIJxa8qCYtzwYoZgfE8E27JgRqP7KxhwxFgzsweU4OPYr5Z
-         m+b0kwFPSXpaklLcxAi/dReIHBYD9unZsuprrWSp2oBnpkyXVm2mY4u9DXsGc1B/iBe7
-         tQE3cORTNB29jbrdglWB9VGJeQbUdYU0Kdf0iQorbnLy3NDd1Fx5235qtaaeroihLlXU
-         PlFzV8koM41ZmAiAQwtJxzTFPc5vRQON4XA/IDjawHAUuxwRShmEiwbCcDMySxMGYL4e
-         ZvOdUtq6z+D4XwZa3dw7vLRjUft6oP0zskdTiZBbdnVA5tZ7jKNs+oc+rlx8Uyd5Wd/j
-         2Ymw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733332867; x=1733937667;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CwUi8SmsPb5Vycsa9GB+I0BWedaEfg/jRhZVV6qa67w=;
-        b=u+yjYSTghI2wRLO4evwU1qMhQ1liUfLnoZkVUhZ0b0c0TAQnKxhV3sATcUUVs5GcZM
-         sjpyMvVsDm5Sn8UfsJ5y2Aho8inBhZ87OZlfYtRgbkZhMr8OP3eFjFXdF0nLpIX+emzt
-         gSiX1gEP6rE2a/nSPqbBWrq9Y2xAwtX3jVyUgdhIiEhmwPBoapu74wK6WMgHz5ulZ1Yv
-         rZnxgLIXcr2XhFDnjgHrGyGwxbmnfTpJzHlCjkXeWkwoZBO+OzxGRNLdM926giCYQ3Sl
-         KYWOdrTRP86ITjR7S3tF/GPoxIJKJiPgnew2brkU94/Rk3NXF435UkP598iOwPwLDSQU
-         aaMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWmzZUbs9MK54iWWLgHKjgJW89A1mZ4fBHatSR5j3xxxPlauluQAcyqY9E3Dv1ig8seafw4kB810O4YV4g=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9jdEfht73wLDPKpl/mwJuOJchyMamIulC4+DTSjvmanAGvw8R
-	RzgYI0nc9Q1OOfbF5gI8JsToLrp3uHCLP5kMfbOUk4e80pP2gk06VYQsUvCxR6w=
-X-Gm-Gg: ASbGncsTzNwggaIYYIkQs/rXgTKC59p/LiO3CIzBbXmeSnpQwSiPZV9amSMCP6f+d9n
-	FO3qj7mNa7RQ2B8O3aCCYgY1vOiCPeP83TE8W6JzwufQyPGDsyMw70L8LbgrMwEYlN3NhMSMijD
-	nGJ6YTyb/V6o36AvmidcEVXxHIbiUtCJcbE4+TGyE6jKlb1gYsGwC6RAGdkwQGqALVmDpZIqxPh
-	PJIMWJ5YI6SuFeBbJPTJGriv5LIO/PZAepWOX1fvWrl1a+4HRAfLHNxD5nqABJ5g4nK4a2biA==
-X-Google-Smtp-Source: AGHT+IEPTiihAPUsJWXirfrgqA0sgpTCOG2Fx4MskWfdIdP1ollzTCwt1fpOL8Ol16tbpJQQ/vIs4w==
-X-Received: by 2002:a05:6512:4028:b0:53e:1b94:727d with SMTP id 2adb3069b0e04-53e1b947326mr3303792e87.10.1733332867234;
-        Wed, 04 Dec 2024 09:21:07 -0800 (PST)
-Received: from localhost (hdeb.n1.ips.mtn.co.ug. [41.210.141.235])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa5997d55b1sm755789866b.72.2024.12.04.09.21.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Dec 2024 09:21:06 -0800 (PST)
-Date: Wed, 4 Dec 2024 20:21:02 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Dave Penkler <dpenkler@gmail.com>
-Cc: gregkh@linuxfoundation.org, linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Marcello Carla' <marcello.carla@gmx.com>
-Subject: Re: [PATCH 3/4 v2] staging: gpib: Fix erroneous removal of blank
- before newline
-Message-ID: <1012388b-f316-47a3-a98f-0f40dc74948e@stanley.mountain>
-References: <20241204170443.28333-1-dpenkler@gmail.com>
+	s=arc-20240116; t=1733333453; c=relaxed/simple;
+	bh=jwt44kHNB6fF2lg1PZA37n3lhUUOfzmfyHuqFyxEzww=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fHUyEPmp1YRvJWWTi4yb7y+9SMpCiH5bvA7x5o9uVE8RiQUQkaXno3Z8YalNZXb9Y0wnrUJhoToyIG9FMQ//pupUjGyTNfS/MkVLiBJnj6bsZN+I15inT6M4ZmMvHIcKUPV/Ck/3aku/0DXcDByO0X/3vi7cWrzKs1iwzdo3Buo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oXwlaOyF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BB94C4CED1;
+	Wed,  4 Dec 2024 17:30:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733333453;
+	bh=jwt44kHNB6fF2lg1PZA37n3lhUUOfzmfyHuqFyxEzww=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=oXwlaOyFHg8r2lL1BHPIjfcGkrFbwecYJGEFvO0y2n2WGa9QjxVB2n6v5AWgYvRiA
+	 cApyakaYuHBRDA9fw5DzBGwENK90QWg4pG9R9597vAPkR0WIp5Yq5AjSfFMsRYUw3k
+	 mngs9w6InT3USE+pAvgEG9lEgtSpTXYWNeVzAsNgs+8Ovvo8qCxuzc8v92iB5WCdsD
+	 3wvmgIxNiwd1Rbrg50g3wvr0ilnm5iwtLaz9v+vUHSyw6s5gDBT3gay+VrunKjU5Cw
+	 GD+XzQXuzvWGSUzuCecr1T+OWDv4blQOAuXBOPT0V1/elHBz3f45zUg+rVh8Bbl0/P
+	 1wwnsg9t27qrw==
+Message-ID: <aaac430f-ba1a-47ee-a290-0bb1559dcf24@kernel.org>
+Date: Wed, 4 Dec 2024 11:30:51 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241204170443.28333-1-dpenkler@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 0/5] Verify devices transition from D3cold to D0
+To: Bjorn Helgaas <bhelgaas@google.com>
+Cc: "open list : PCI SUBSYSTEM" <linux-pci@vger.kernel.org>,
+ open list <linux-kernel@vger.kernel.org>,
+ "open list : USB XHCI DRIVER" <linux-usb@vger.kernel.org>,
+ Daniel Drake <drake@endlessos.org>, Gary Li <Gary.Li@amd.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ Mathias Nyman <mathias.nyman@intel.com>,
+ Mika Westerberg <mika.westerberg@linux.intel.com>
+References: <20240823154023.360234-1-superm1@kernel.org>
+Content-Language: en-US
+From: Mario Limonciello <superm1@kernel.org>
+In-Reply-To: <20240823154023.360234-1-superm1@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Dec 04, 2024 at 06:04:43PM +0100, Dave Penkler wrote:
-> The original commit removed the blanks before the newline
-> in the protocol string constants to satisfy checkpatch.pl
-> This broke the driver since it relies on the correct length
-> of the string constants including the blank.
-> For example the original
->   #define USB_GPIB_SET_LINES   "\nIBDC \n"
-> became
->   #define USB_GPIB_SET_LINES   "\nIBDC\n"
-> which broke the driver.
+On 8/23/2024 10:40, Mario Limonciello wrote:
+> From: Mario Limonciello <mario.limonciello@amd.com>
 > 
-> The solution is to replace original blanks in protocol constants
-> with "."
-> e.g.:
->   #define USB_GPIB_SET_LINES   "\nIBDC.\n"
+> Gary has reported that when a dock is plugged into a system at the same
+> time the autosuspend delay has tripped that the USB4 stack malfunctions.
+> 
+> Messages show up like this:
+> 
+> ```
+> thunderbolt 0000:e5:00.6: ring_interrupt_active: interrupt for TX ring 0 is already enabled
+> ```
+> 
+> Furthermore the USB4 router is non-functional at this point.
+> 
+> Those messages happen because the device is still in D3cold at the time
+> that the PCI core handed control back to the USB4 connection manager
+> (thunderbolt).
+> 
+> The issue is that it takes time for a device to enter D3cold and do a
+> conventional reset, and then more time for it to exit D3cold.
+> 
+> This appears not to be a new problem; previously there were very similar
+> reports from Ryzen XHCI controllers.  Quirks were added for those.
+> Furthermore; adding extra logging it's apparent that other PCI devices
+> in the system can take more than 10ms to recover from D3cold as well.
+> 
+> This series add a wait into pci_power_up() specifically for D3cold exit and
+> then drops the quirks that were previously used for the Ryzen XHCI controllers.
+> 
+> Mario Limonciello (5):
+>    PCI: Use an enum for reset type in pci_dev_wait()
+>    PCI: Check PCI_PM_CTRL instead of PCI_COMMAND in pci_dev_wait()
+>    PCI: Verify functions currently in D3cold have entered D0
+>    PCI: Allow Ryzen XHCI controllers into D3cold and drop delays
+>    PCI: Drop Radeon quirk for Macbook Pro 8.2
+> 
+>   drivers/pci/pci-driver.c    |  2 +-
+>   drivers/pci/pci.c           | 70 +++++++++++++++++++++++++++----------
+>   drivers/pci/pci.h           | 13 ++++++-
+>   drivers/pci/pcie/dpc.c      |  2 +-
+>   drivers/pci/quirks.c        | 25 -------------
+>   drivers/usb/host/xhci-pci.c | 11 ------
+>   6 files changed, 66 insertions(+), 57 deletions(-)
 > 
 
-Let me help you write the commit message.
+Bjorn,
 
-    The USB_GPIB_SET_LINES string used to be: "\nIBDC \n" but when we
-    were merging this code into the upstream kernel we deleted the space
-    character before the newline to make checkpatch happy.  That turned
-    out to be a mistake.
+This series has stalled a while.
 
-    The "\nIBDC" part of the string is a command that we pass to the
-    firmware and the next character is u8 value.  It gets set in
-    set_control_line().
+Mika and I went back and forth and I think are generally in agreement so 
+I think it's waiting on your feedback.
 
-	msg[leng - 2] = value ? (retval & ~line) : retval | line;
+Can you take another look?
 
-    Imagine the parameter was supposed to be 8.
-      Old: "\nIBDC8\n"
-      New: "\nIBD8\n"
+The alternative is to add some more piles of quirks, but I'm hoping that 
+we can go this direction and drop a bunch of the old ones instead.
 
-    The firmware doesn't recognize IBD as a valid command and [whatever
-    starts beeping and sets the computer on fire].
-
-    Put a . where the parameter is supposed to go which fixes the driver
-    and makes checkpatch happy.  Same thing with the other defines.
-
-regards,
-dan carpenter
-
+LMK if you want me to rebase it on 6.13-rc1 and resend a v6.
 
