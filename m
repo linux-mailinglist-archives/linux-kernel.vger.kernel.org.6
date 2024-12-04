@@ -1,63 +1,60 @@
-Return-Path: <linux-kernel+bounces-431865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431867-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B899F9E4231
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:46:52 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7D239E4236
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:47:14 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF5AE169480
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:46:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 827512844AA
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:47:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 153A1206F37;
-	Wed,  4 Dec 2024 17:12:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2671231317;
+	Wed,  4 Dec 2024 17:12:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n0OrDanE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I4fqp54W"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61CE020765C;
-	Wed,  4 Dec 2024 17:12:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33973231306;
+	Wed,  4 Dec 2024 17:12:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733332361; cv=none; b=GNbdkmtc7GYQOVsG6i8Wzh3+HzAoCoD12g4GHrtgTe70MzJ6wi6MkK6RAAsM40mqZ9Kx6M35gcvTM3IK7qSke/ORCTsWlm93LsSRGZ4yiSJdwHxI4pWOKSv1KnXXWM6RJdKMDvg85bA/MjOcegNKk1yUX9VYhpa4RerZksBmADk=
+	t=1733332365; cv=none; b=d1Rz2uFneOLDyeKFa09365PRWj8yNVksxuBAIgBSBPRp6A2+jmdnrMRaxTFcZnCLJyu8vKpgOACHL7IPhbBN9roM6kjJm+89xS6He1gJ460PuFcO6Q213DAKnYxGsQ6XEBxnUemzSe2iPvB1JcczXoVcRPnKyuL90kK09EDnxKI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733332361; c=relaxed/simple;
-	bh=G0vd4FDjx3uLl/Z+msCeyMHX4sbiyxk8MJ1jBLPFtkk=;
+	s=arc-20240116; t=1733332365; c=relaxed/simple;
+	bh=HuxB6KVIfrvuDkl68u45sUsV45BI6M3dLaAKByXjQs4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=X9KU82zE39Nry4Nub6A/IxVZN/WAkEIlgSoxhrvCP4B+PSuvMNOTgZE2nVjwL7Q5FqeFKHROjEhMHWwjxvwmYtBkP2VE3XZYfneBgin6istnzi4QBJ0Qugsebd1GORZQcL7Edy4KoE9ZgU91xBksbnGyiDOAH4B7NcAnWWpv70c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n0OrDanE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B39B9C4CED1;
-	Wed,  4 Dec 2024 17:12:39 +0000 (UTC)
+	 MIME-Version:Content-Type; b=PF2rdjs0C9oz6dCKtGF70xf3kwmpp4Mu3BbY+WnfWwuaCr7QQZ2+LudZiR5E09QnVShSRgzJL6pBLHU6SnRHQG4H6afxDEdHfbUZMlXfHokjjZQxh5s5cDl/L5K4aRofjDocAesuReinXkxaHRyTKaM8DjVnPVtaWvLfPe6FWjs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I4fqp54W; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 770D7C4CED1;
+	Wed,  4 Dec 2024 17:12:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733332361;
-	bh=G0vd4FDjx3uLl/Z+msCeyMHX4sbiyxk8MJ1jBLPFtkk=;
+	s=k20201202; t=1733332364;
+	bh=HuxB6KVIfrvuDkl68u45sUsV45BI6M3dLaAKByXjQs4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=n0OrDanEyg0vGqmALVxhicz+GLD2upC7qQcNNqLoto0/FdqUpBOd0XRNUgbsvKSBi
-	 MG0zp6sDpxbUeQHuFMeJ1BqHR+XsGYDZQMqmqMBQqNiAcUz2GzdYlRbuy4vdBVIYMb
-	 QTF89hY7d6O9+Meb9JWOOSaDqqRMjGdPYtM4gpHit1Jzsl9q9c9NlEd1NdPO1M/+j8
-	 InHGVAOSO4Trm3Dpb3Mj2yOC1bWYJ4x/jfHqyNJsYIA9iFwTy/xZYiCeDFfefGt48x
-	 cOpZPtanu1LAD+1kPWTRVCBM0HnupGD10ze93ZziraNayXT6AxGJAR+/NzI3tqb+xV
-	 8UNQP7u7swoOA==
+	b=I4fqp54WlF5XpX/uKTkm6D0TOdZuVHeMg4WhU9tF8imaESWxegkiWIaO0cfxul2wL
+	 w+6aNI3ybKKBF1t0eN7/KW+cKD1niFwX8tHgm/qSXDQ7b5fAx3tG2TudpcAsorvZ+c
+	 2gkbTOBA5/pVQ5iJXjR9qS31WRfsN2kINF6ifJFaUnxJFWc5FsgeavFVvoYrTf60qJ
+	 fJFEY4n7Bz9PEIM0C/2NFbpHATe3hnswD9kyg2Z5AQq2pj4qGUu2w2KSqJfT9jTwc2
+	 N5bVPC3am6HevsWjJFbPWwBtRXrA8fLo2okr0gTSrqBGdIrV3YROgpUEVz0s3hEKZL
+	 RoRtCcDGg5T+w==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: devi priya <quic_devipriy@quicinc.com>,
-	Anusha Rao <quic_anusha@quicinc.com>,
-	Sricharan Ramabadhran <quic_srichara@quicinc.com>,
+Cc: Jian-Hong Pan <jhp@endlessos.org>,
 	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
 	Sasha Levin <sashal@kernel.org>,
+	nirmal.patel@linux.intel.com,
 	lpieralisi@kernel.org,
 	kw@linux.com,
-	bhelgaas@google.com,
-	linux-arm-msm@vger.kernel.org,
 	linux-pci@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.6 04/12] PCI: qcom: Add support for IPQ9574
-Date: Wed,  4 Dec 2024 11:01:01 -0500
-Message-ID: <20241204160115.2216718-4-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.6 06/12] PCI: vmd: Set devices to D0 before enabling PM L1 Substates
+Date: Wed,  4 Dec 2024 11:01:03 -0500
+Message-ID: <20241204160115.2216718-6-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20241204160115.2216718-1-sashal@kernel.org>
 References: <20241204160115.2216718-1-sashal@kernel.org>
@@ -73,43 +70,76 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.6.63
 Content-Transfer-Encoding: 8bit
 
-From: devi priya <quic_devipriy@quicinc.com>
+From: Jian-Hong Pan <jhp@endlessos.org>
 
-[ Upstream commit a63b74f2e35be3829f256922037ae5cee6bb844a ]
+[ Upstream commit d66041063192497a4a97d21dbf86b79a03a7f4fb ]
 
-Add the new IPQ9574 platform which is based on the Qcom IP rev. 1.27.0
-and Synopsys IP rev. 5.80a.
+The remapped PCIe Root Port and the child device have PM L1 Substates
+capability, but they are disabled originally.
 
-The platform itself has four PCIe Gen3 controllers: two single-lane and
-two dual-lane, all are based on Synopsys IP rev. 5.70a. As such, reuse
-all the members of 'ops_2_9_0'.
+Here is a failed example on ASUS B1400CEAE:
 
-Link: https://lore.kernel.org/r/20240801054803.3015572-5-quic_srichara@quicinc.com
-Co-developed-by: Anusha Rao <quic_anusha@quicinc.com>
-Signed-off-by: Anusha Rao <quic_anusha@quicinc.com>
-Signed-off-by: devi priya <quic_devipriy@quicinc.com>
-Signed-off-by: Sricharan Ramabadhran <quic_srichara@quicinc.com>
-[kwilczynski: commit log]
+  Capabilities: [900 v1] L1 PM Substates
+        L1SubCap: PCI-PM_L1.2+ PCI-PM_L1.1- ASPM_L1.2+ ASPM_L1.1- L1_PM_Substates+
+                  PortCommonModeRestoreTime=32us PortTPowerOnTime=10us
+        L1SubCtl1: PCI-PM_L1.2- PCI-PM_L1.1- ASPM_L1.2+ ASPM_L1.1-
+                   T_CommonMode=0us LTR1.2_Threshold=101376ns
+        L1SubCtl2: T_PwrOn=50us
+
+Enable PCI-PM L1 PM Substates for devices below VMD while they are in D0
+(see PCIe r6.0, sec 5.5.4).
+
+Link: https://lore.kernel.org/r/20241001083438.10070-4-jhp@endlessos.org
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=218394
+Signed-off-by: Jian-Hong Pan <jhp@endlessos.org>
 Signed-off-by: Krzysztof Wilczyński <kwilczynski@kernel.org>
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Reviewed-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pci/controller/dwc/pcie-qcom.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/pci/controller/vmd.c | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
-index d3ca6d3493130..2427237cbe9c7 100644
---- a/drivers/pci/controller/dwc/pcie-qcom.c
-+++ b/drivers/pci/controller/dwc/pcie-qcom.c
-@@ -1618,6 +1618,7 @@ static const struct of_device_id qcom_pcie_match[] = {
- 	{ .compatible = "qcom,pcie-ipq8064-v2", .data = &cfg_2_1_0 },
- 	{ .compatible = "qcom,pcie-ipq8074", .data = &cfg_2_3_3 },
- 	{ .compatible = "qcom,pcie-ipq8074-gen3", .data = &cfg_2_9_0 },
-+	{ .compatible = "qcom,pcie-ipq9574", .data = &cfg_2_9_0 },
- 	{ .compatible = "qcom,pcie-msm8996", .data = &cfg_2_3_2 },
- 	{ .compatible = "qcom,pcie-qcs404", .data = &cfg_2_4_0 },
- 	{ .compatible = "qcom,pcie-sa8540p", .data = &cfg_1_9_0 },
+diff --git a/drivers/pci/controller/vmd.c b/drivers/pci/controller/vmd.c
+index ade18991e7366..992fea22fd9f8 100644
+--- a/drivers/pci/controller/vmd.c
++++ b/drivers/pci/controller/vmd.c
+@@ -751,11 +751,9 @@ static int vmd_pm_enable_quirk(struct pci_dev *pdev, void *userdata)
+ 	if (!(features & VMD_FEAT_BIOS_PM_QUIRK))
+ 		return 0;
+ 
+-	pci_enable_link_state_locked(pdev, PCIE_LINK_STATE_ALL);
+-
+ 	pos = pci_find_ext_capability(pdev, PCI_EXT_CAP_ID_LTR);
+ 	if (!pos)
+-		return 0;
++		goto out_state_change;
+ 
+ 	/*
+ 	 * Skip if the max snoop LTR is non-zero, indicating BIOS has set it
+@@ -763,7 +761,7 @@ static int vmd_pm_enable_quirk(struct pci_dev *pdev, void *userdata)
+ 	 */
+ 	pci_read_config_dword(pdev, pos + PCI_LTR_MAX_SNOOP_LAT, &ltr_reg);
+ 	if (!!(ltr_reg & (PCI_LTR_VALUE_MASK | PCI_LTR_SCALE_MASK)))
+-		return 0;
++		goto out_state_change;
+ 
+ 	/*
+ 	 * Set the default values to the maximum required by the platform to
+@@ -775,6 +773,13 @@ static int vmd_pm_enable_quirk(struct pci_dev *pdev, void *userdata)
+ 	pci_write_config_dword(pdev, pos + PCI_LTR_MAX_SNOOP_LAT, ltr_reg);
+ 	pci_info(pdev, "VMD: Default LTR value set by driver\n");
+ 
++out_state_change:
++	/*
++	 * Ensure devices are in D0 before enabling PCI-PM L1 PM Substates, per
++	 * PCIe r6.0, sec 5.5.4.
++	 */
++	pci_set_power_state_locked(pdev, PCI_D0);
++	pci_enable_link_state_locked(pdev, PCIE_LINK_STATE_ALL);
+ 	return 0;
+ }
+ 
 -- 
 2.43.0
 
