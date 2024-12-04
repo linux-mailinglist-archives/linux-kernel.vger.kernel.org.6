@@ -1,134 +1,105 @@
-Return-Path: <linux-kernel+bounces-431520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF17B9E3E73
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:37:58 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 704379E3EBF
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:55:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C780281391
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:37:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4DF37B355F2
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:38:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BC9320C02E;
-	Wed,  4 Dec 2024 15:37:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BE4E20C46E;
+	Wed,  4 Dec 2024 15:38:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ORN7kT1K"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="02rvrkDS"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 658E6182D9;
-	Wed,  4 Dec 2024 15:37:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E471182D9;
+	Wed,  4 Dec 2024 15:38:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733326670; cv=none; b=CmRGa3IWWyeCjvY+FgdXzjuz7jja5m20/LAF6PF3JRqpdcn9xcVdeFZQ/G/o9tVLap2n8EAW7nZbxYm85E/uJVavBB6kEMMc5Arew0K33gXynTKMB02m0WZcPzJ1v29bbNmBcpJb43EB54dtHuFx1tMP6cToWa6zTpcmz0Tq09U=
+	t=1733326699; cv=none; b=fqYgU6Vkl8utRQ3lsur3bUsD8ERtlO1Fu8vLHDxaGvIxtnRWHSbET5YSM8jZVytqL0ld7kSfZ4OtWrQzDJX7TJhpqwcqVJCt+WPdzl6Bzs1d2ZYPWWVW4WKx7t2TUgWM9ferJzJBeFC2A+7EMNSim7qJ5BnaTrRjpfUJi6iU70U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733326670; c=relaxed/simple;
-	bh=mz9WS0Cz66il0FOJLswE8qNx2ZxttVVFvXfHD5UQR8M=;
+	s=arc-20240116; t=1733326699; c=relaxed/simple;
+	bh=aLTGmo+zw8z6O/58DWYLUBRS/El7YvYIzfUNwf8G+3k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WuileKFWcDoSFk9xKhIZs6NNzi1ZXo7kUm3TJSL0nPKJEo1R/YdhkrQ3yqXHGe7nlWC/PRtaVutvCRB1Y9WpV3eampUiir63iPu/rhzap6mtfs/ZWuy8Tw7rxwdNpOR63ASfOp08zQql389Ug1pt9pW90vxGqBCmvkuHULqcdJk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ORN7kT1K; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-7259a26ad10so322578b3a.1;
-        Wed, 04 Dec 2024 07:37:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733326668; x=1733931468; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=XePlx1QIgk8VgfmNUtG3QcTLLTBW/dlI16JoLuecilM=;
-        b=ORN7kT1KWze8RsKgL84Y/QlKiCIRUjdigDmQO3uU5jzHs3yUKkSgbPJEpfH5149vjv
-         /NYwpFZuzUaBDlWihTbbWmM8BC7ShPLSzjzf6l6fyEsxC7tQ9PJGTP28WOwuivNz4baI
-         Ltpvl/XsJCMFSYB0sJxaydiz+v+7tRje8Omd1sjnKrZ4M1TdSrD0/NCU3OHBrhf8rek5
-         1QULALxOj0S2TiyV9LL3jQ4Z3y2ATm9SQw1WW1uiwfyIUD2abg0H2TrYiDrsTyLmu9qU
-         IzYhaEkR74B9YfkAsAGPXIcmA6zulMq8UfrpttBVwn3+A3sNxzL4oE3XZccDCUEeJBl/
-         HvOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733326668; x=1733931468;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XePlx1QIgk8VgfmNUtG3QcTLLTBW/dlI16JoLuecilM=;
-        b=GMASNOLDpJpaTEQCJ/TvZnWLOMfbrahuBuI7EfDPOOuN+KXluaEKFiYJ/eZqGq+stt
-         W1Qwoy35uXxYsqpqHBvE/2EWaYN66kyllnki+DoGXNl06hafllPACahd/q7kJYxZL7Uy
-         fJIsRSXpBp0qcOTSJ/LtXZU09xMUY5d08AmUNsPOClbNkTflejkLiqRZbIeIDsiIX8Pq
-         g5f7QeUo9kMNyWn07VlWTRK/Russ+4yOv0zPWubFxQuC4Ye2BohIHMf+lFX9urCywyyR
-         m+RMSHQW2opYC9azkHiqLWZShbdVgTCNvB0RYlW4zIaeForuW5gW5holnqHLk58ZuoYS
-         +CUw==
-X-Forwarded-Encrypted: i=1; AJvYcCUMIc3/FHXRpLYerInsCrWN+rCMBdmfmYw8bxnVgpZ8YkOK24p3p93UWuqPZGlFDtMo6jBrV4ozpnLtCgU+@vger.kernel.org, AJvYcCWsYvWhXHtGebE+vHNbYyrhNDTE/wwb9MqdGGSOL0fdVLcxmFQHd+dnkfqMmzt1hVK71RTEbfIpHPiFQriePyuc@vger.kernel.org, AJvYcCXK/sB8FegHGDx0/oVRBtqaKKQ+tUsiclC5sQocS1EFZqWFfiqxa3CzjipN0PDoEPutoJ8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxcdOIx4yPcNJ9u2zxSVQoWAy2dTmLCIhmrPcy17p3E8CN9d/Jm
-	G5jLkvwbijBv8RBfq9MJqJcnEoew5laNbJJ2uzg60WaSEUjZzFM=
-X-Gm-Gg: ASbGncvZ7yMvTLoc1Nk2Rri+DK50B8it+ZgwLajcZ/Pu0VjvAS7BANbJ57HmGWfb1ku
-	bPoksMOdBQazAMJpaxQYuLJu+GrW47gmNQQYXjhnV22WJ0Bl5B6PLotNXjhAnhWCWUI1svQ9ACN
-	HH6JwdaEtFuMb/tgbWZ0nD+mFx6gwTACsLlAKYtX9GrR6NTADVtL4+4qYZmv9xw9WKSmraA9ZoD
-	kLWGzIXpwQSin9Axn/+SQQ8I4K21FRDffGW2X3BZSddSiIRqA==
-X-Google-Smtp-Source: AGHT+IHjF9fLaaJKo31QaNdNnOQRJjOkOHR5MDxMG4OGqUKVLDH9AL+hXQbnVZj1eNfsz8H3gzx7uw==
-X-Received: by 2002:a05:6a00:7185:b0:725:9253:62c8 with SMTP id d2e1a72fcca58-72592536489mr2372552b3a.2.1733326668425;
-        Wed, 04 Dec 2024 07:37:48 -0800 (PST)
-Received: from localhost ([2601:646:9e00:f56e:123b:cea3:439a:b3e3])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fc9c324943sm10091109a12.48.2024.12.04.07.37.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Dec 2024 07:37:47 -0800 (PST)
-Date: Wed, 4 Dec 2024 07:37:47 -0800
-From: Stanislav Fomichev <stfomichev@gmail.com>
-To: Marco Leogrande <leogrande@google.com>
-Cc: Andrii Nakryiko <andrii@kernel.org>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Mykola Lysenko <mykolal@fb.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	Shuah Khan <shuah@kernel.org>,
-	"Alessandro Carminati (Red Hat)" <alessandro.carminati@gmail.com>,
-	willemb@google.com, zhuyifei@google.com, bpf@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH bpf-next] tools/testing/selftests/bpf/test_tc_tunnel.sh:
- Fix wait for server bind
-Message-ID: <Z1B3S2Yh3v069n7e@mini-arch>
-References: <20241202204530.1143448-1-leogrande@google.com>
- <Z05NhvyagBbHs8Gq@mini-arch>
- <CAD1qLz0UwaFsk3ZnQ9e5RG1XvJ2i=7FJhtf_9AB6KVZ1fbEh3w@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=mp0FRydZgDBvYf2NCwNx1+qk+72HRn4lGlPKA6o165UJXrAIT/FlJmrfmZH9Y4aoIDXYycQghUgVahB36MxFx8HHakZAq1iSOQawcZpNxcB07mfJYLBPyrTS/vjSAEft6rCr4hHbY/cyv1f1T2kYgXr+2Ink+Eymi3Ikn5RTEso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=02rvrkDS; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=y+7N7+5QStwcc/a083bbUwTVwKjG0kqhPvCzgW5P96c=; b=02rvrkDSQ9aAS5MdtVQ9x3/LTf
+	PZlFa5m+RlE1GJAUGW9mwJGNwO7LSPcON+LNivBhGKLdZ0Gc2PfRMAnbxFjQiwLiaTewptOokwC79
+	b7u5AYaAGixlisI48ZNLtOcXjLFyRzGEeiqggG/X+G4yEUeXww3Bnw6JvTox95NwXOaqq8pkvggxs
+	uErG0xPiPZFZIgK6CvFH3wUt6cCRqfMIznBbl31AZmaa1a8ZRNNadiFRsDRHaRXzIxdO2PdYLJSC0
+	pq+r/mkCesXufVhMDXbnjtl2+GTMNX4bjSjNo9ulekn8IlEfh9GYYpwCfehOIYS82s074ZGoOha7B
+	6WKlaPjQ==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:48622)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1tIrS2-0003Wg-0Y;
+	Wed, 04 Dec 2024 15:38:06 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1tIrRz-0005e9-36;
+	Wed, 04 Dec 2024 15:38:03 +0000
+Date: Wed, 4 Dec 2024 15:38:03 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Lei Wei <quic_leiwei@quicinc.com>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	quic_kkumarcs@quicinc.com, quic_suruchia@quicinc.com,
+	quic_pavir@quicinc.com, quic_linchen@quicinc.com,
+	quic_luoj@quicinc.com, srinivas.kandagatla@linaro.org,
+	bartosz.golaszewski@linaro.org, vsmuthu@qti.qualcomm.com,
+	john@phrozen.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH net-next v2 4/5] net: pcs: qcom-ipq9574: Add USXGMII
+ interface mode support
+Message-ID: <Z1B3W94-8qjn17Sj@shell.armlinux.org.uk>
+References: <20241204-ipq_pcs_rc1-v2-0-26155f5364a1@quicinc.com>
+ <20241204-ipq_pcs_rc1-v2-4-26155f5364a1@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAD1qLz0UwaFsk3ZnQ9e5RG1XvJ2i=7FJhtf_9AB6KVZ1fbEh3w@mail.gmail.com>
+In-Reply-To: <20241204-ipq_pcs_rc1-v2-4-26155f5364a1@quicinc.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On 12/03, Marco Leogrande wrote:
-> On Mon, Dec 2, 2024 at 4:15 PM Stanislav Fomichev <stfomichev@gmail.com> wrote:
-> > Do you see this failing in your CI or in the BPF CI?
-> 
-> I see this failing in our internal CI, in around 1% to 2% of the CI runs.
-> 
-> > It seems ok
-> > to add wait_for_port here, but the likelihood of the issue seems
-> > minuscule. There is a bunch of ip/tc/etc calls between this
-> > server_listen and the next client_connect (and I'd be surprised to hear
-> > that netcat is still not listening by the time we reach next
-> > client_connect).
-> 
-> I'm surprised as well, and I've not found a good correlation with the
-> root cause of the delayed server start, besides generic "slowness".
-> 
-> You also make a good point - by calling wait_for_port this early we
-> "waste" the opportunity to run the other ip commands in parallel in
-> the meantime.
-> I had considered moving this wait down, just before the next
-> client_connect, but I concluded it might be less readable since it
-> would be so distant from the server_listen it pairs with. But I can
-> make that change if it seems better.
+On Wed, Dec 04, 2024 at 10:43:56PM +0800, Lei Wei wrote:
+> +static int ipq_pcs_link_up_config_usxgmii(struct ipq_pcs *qpcs, int speed)
+> +{
+...
+> +	/* USXGMII only support full duplex mode */
+> +	val |= XPCS_DUPLEX_FULL;
 
-Thanks for the details, let's keep as is.
+Again... this restriction needs to be implemented in .pcs_validate() by
+knocking out the half-duplex link modes when using USXGMII mode.
 
-Acked-by: Stanislav Fomichev <sdf@fomichev.me>
+.pcs_validate() needs to be implemented whenever the PCS has
+restrictions beyond what is standard for the PHY interface mode.
+
+Thanks.
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
