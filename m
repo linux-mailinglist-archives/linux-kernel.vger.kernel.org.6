@@ -1,128 +1,211 @@
-Return-Path: <linux-kernel+bounces-432094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FC769E4503
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 20:48:21 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B51499E4631
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 22:00:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3CD2A283917
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 19:48:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C8A9BBA49BB
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 19:40:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 248F11F03E0;
-	Wed,  4 Dec 2024 19:48:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EE501F03FE;
+	Wed,  4 Dec 2024 19:38:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=verizon.net header.i=@verizon.net header.b="pAAJrZ1N"
-Received: from sonic316-11.consmr.mail.bf2.yahoo.com (sonic316-11.consmr.mail.bf2.yahoo.com [74.6.130.121])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="CPPIFP2/"
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4D341A8F82
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 19:48:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.6.130.121
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D1BC1F03FF
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 19:38:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733341691; cv=none; b=qazCp7EZztQra4aODJkbWQci9J9zM8E0w7z02qKFgnJSto5ssG1GJZKa2jkBzkP+akLF7PGV5I4GkidYcGWf79KN5SGwPQTv+yuHnmHa8LT5WykzFl+1DGj14HpebdK/Za4oz07/PgsEjVifdolTCnvyVcsLUC7Q96qTDPjKTa0=
+	t=1733341111; cv=none; b=dyC8x36mljUc493EhwMCgnbDM1CyvQF45+k1T1m9CmIsiRrA6+t67qHUx2n/ZZ8+/nt6761NZWIzoWJcEgb9s8EpTlcQaJmcjzvpwFcLub6bEIo9j/ZOZSxGlV8+OB9hul6/i2dNr9YoghTBzW14PGeFG3d/0KLtsYcype8rMZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733341691; c=relaxed/simple;
-	bh=K0wcnXLcZ/RtqU+ivOA6ood/1YWbzuCuZIIkq/uqnlk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=k+ybng0umTVH3llJ9VCjhdXt5X72qfpOIkYaurG6uztKnMtVGMzWhA1LqSou7cYWrXgkBlL1nT3Yr/5DBee06q4iaxPmpz74doSbp3ZC5aogXdV+E8iXQOEYWAShxxdm1t8fRxvdHWmiHyrfF94+r1uR4lfjJKP0hThfJmrFKcg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=verizon.net; spf=pass smtp.mailfrom=verizon.net; dkim=pass (2048-bit key) header.d=verizon.net header.i=@verizon.net header.b=pAAJrZ1N; arc=none smtp.client-ip=74.6.130.121
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=verizon.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=verizon.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=verizon.net; s=a2048; t=1733341686; bh=mYbA5vc0s8RXvK4HptomEuPbET34RtMCpXkIm36hcVA=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject:Reply-To; b=pAAJrZ1ND1pNRiAXMERonizcRRE15cSim2jOeErf9hm0GTsbchckuqROL2HPnSVOykPi+IvxVxHWlDLToHS2hIePlumnS0DegbcF77YUFUvUoCjIdlDtawvp87nvud42WVBraG50EJLBlDahV5FDTxXie7da3tahnLl6toimjs+wo11JqtgmSsxx493ypmsf1xOLqkhiC1lFrhDtl2nJiPpWURIXNiy+wpfLvQZDSjsbIwQF9UNTyD8YkIWHSt5kjDD2YZ7Arc44hPb37btKtZ/FDPgUwTFDb7b6ccryl9kNduxXbWgpC+LOEj4UmZw55TagxbAM9Bsq0rCj1SIRnw==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1733341686; bh=WAxwGgAcWUWU9usn30GpiMfMxhhpNn2RFeXlwQvAkwB=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=oyloTeA1b+RUOHAwxTwPOvtGS08a7MFvp7MVEJtg7oQjSA3y0nF4gyllrPnOjOKm+b3FM1xsSfiDkDsPnANaSkthYfzeU/zmE7LVZuXohImCS6z37lu9dKAVW5AxULEbuJ7i0UKpCqMjhfV6YmdDDBIHxS3dJ/1xG7tDoueAo3PuHJjlZ1PYq0LQ+qXmQDc843Jl3/uIYYb/jEWO1JGtCod6U7k77dF3eWzC6WK51YiQvNiJ4sCXngm4+GyT8137JIeNLDZyU5RQbDw7a060b2jEZAG34IP8gefhl0fQmGbHiDoToBxt+ipuDsdUWeQxtmUonqU+LqN60jXwhHEePA==
-X-YMail-OSG: fvlMYtAVM1lIxQN4lY5k_6afP1vDxCLoa6W4oReg2WvVjjiGK7SXqF.B1JeI7c5
- VSH49IfJG0SY5xThI4BZ_AEoz8BXraouHLe7VhWN2zl66nC3LlnnY6QG9yBtvzVUT5kyHGka9_FB
- wdXjvjunlopf1JeYiGWShXTssCZGgHD2czVbx8pvPz_M3j7Vf34HZf4eX2z7Vt7isSoJc_HKMEui
- DhcoIFYT938b_ftkoFryMgqdygAzhijIm4Xk3WoaytzXhRFEADJjP5s8v.T0ko_KjVXDLbhYV3K_
- t42tDqEorpDIF20hLind0y7lelJAAyyAdzhygplj2DHiuuGWc9Q2BfWmh4QKIgg0KQ06OGCnBzm9
- aC9Ld4qtTXOpb3IpZZgA7Vkgph4VdlriXN8r3ikCrs0L5NcclWaRiyzS6EuXjW3F_i_NAqgYD8b7
- tYM25eN60kz_hHVMkjUMcB5KCZzot7OAl4ijjcNv0iybzrU8s0J5urqAoSBZ30yF738oMQRPpGl1
- M96s5QlChYAxJDlEGjEHZ3EKhk1OHEIWhcM7xtB0EEVvdqEHCwRTw.R62oOtS8Qj7f_7msOHPD33
- dVI6t0IcUINH_W7FU0vgN1pJbz1XNBsWyzo0WuFEg92i4iy3wyXGIZEAyuSDISYQIl8VlUoGyOFO
- Ks1QeuWr1st3MDzDC0msHNLwlxMVIddW4GtecmpGzajFpTUT_YV6y0aCN6zPnY1Q5SFPaScFKKiQ
- zGn1mbGRIZXjyCQwQJwVG0E9BPU6muumM9yZIPr3yZS_oPBf4k.9RcOZ5Av_k0A67RBqCJZjeRGJ
- IfwFIAAYVKhVrTK37ugASZ4.Khpu7aXd7iduYxz5FqBRKYqP6..w.g1jROqXF5VXjwiwlajv05B4
- hTMNhkG2_MBDt3NBWmV.Esidf_knJ4t27zL_1crFmE1O.o.VJgBdhXa9smap7uVHDlFi.sz7oz..
- MRfvMsi824dWI4kR6oyfUB6QMiaGMi2gdeQOm8KWdHrRJ.IZ5_rU1PH5C4BJm4f.F.Plb.172OBt
- zGCyMkQ0uCtpdKP5rOZ8Aw2bmbTUT0GfAUkOwP.PY59bHSKAPjW5dnBfwkhdvEva.rEl2PTAqcXL
- p6rlwFWO1r2Rz8bdzNXL2KYnGkSqWYf_nr40tZ.pb0OTUBl9xnEjw9JddMj5NR26j7A8t9tHZvdo
- FCCP2zMuL.0IzINHB1M9_P7O9anxo0m1ZcChwlzeQET.toIxVL5iIDJQ5PrD6zZmQNu0p2aoUYEP
- lxaQx9MaRT0lqaalAFjWkARU2CSWt1VkUYi0uWX64SUquiiPjOC6kqF3yzWf7pqPWYJlCFiphBRJ
- BgJxhdKxtKwEmW_HPTiM9gG1aHwW2YIVe1ZsmqJfGaTZhbFa5qiP9PDSo7H8nhrGZrAQ2_NO5aCW
- 5i0ULLIGebZoJPMlIDhRrLwlDn_wObePAOR.flEkIFNwwL00FmoroZnUCXZPAKspcAJcWhNuU_GS
- TodrV7vXS0NxpxtQxoFQboMniOzHiRBFR78mC66ZIAFV6q48E4pXfp8.B8v772nsyRssGZRuuJUM
- 4AyoY9Jvm1oZJ8LZeKb12uB1Asz64a1d88piKLJgoCqneOQClOMRvOlw24n7s8Fpwk5X7q6tvfNz
- _3w9n_Dk1ooo0cQuAR_L0BRU485lyDhqCmLG14U9w7BZw_onUipKmQVU.qY66LkfX29Kj8YkbcJB
- DU0F4HQLnxxhE95nHvpUJQJK3MiaTR_g6EDbqBpwE2WyDesF.DtG10XgeXcdPfkwLaPmJTkaTL6B
- aDQxsmnzbdsW8x7Z1PTOl800bjM35mimGNtc3.VSguakCFcr6AQUXUMyvVQnGA8qkp1NZZyKwUyj
- l6Gc7w0RmrqjetzErm3FleWc4Bo6me_3JAMWIZpYQBzOrRTwrj6hmpDdkGs1.tRQqqSMaX3Mg0uo
- QbHnmBDyPc3pzld_8chi9e744prFrrSXVWngWrrXpYepxwUXrovF.0A9I9F2M8BILWO0V_NiOq4x
- qQ.BX7PjUmJOZG624JSJDa0I_BAgnGtZ9YteJM933bWITw9mWfmtNvtYeqTJxyhZU9ds2CEbl1mA
- BXfZg6ujjAfPEW6fa5wiIdS3bFKTLys6ytqChdc6XtqQ447ejNVKvcLl7sAWfZK7N1emHFJaEWSG
- 6m7Ch01_aWjEUIzOyPFbDGx9RK30yTbWdVLK013g4BfIHr4fEPrC9py2q3.7S_jW3w.t0B8yaF0I
- poGTGrWHyZcHO2PGjt0sJBu5aSvW5rI23OCGMs_MViV4EZop2OXGNmLFRkFRfMqY-
-X-Sonic-MF: <bluescreen_avenger@verizon.net>
-X-Sonic-ID: b98b651c-f1cd-48ec-860b-add473fb1d46
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic316.consmr.mail.bf2.yahoo.com with HTTP; Wed, 4 Dec 2024 19:48:06 +0000
-Received: by hermes--production-bf1-66bb576cbb-q5j52 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 5adf508ed2686e3ad514bc3ba5d7462d;
-          Wed, 04 Dec 2024 19:37:56 +0000 (UTC)
-From: n3rdopolis <bluescreen_avenger@verizon.net>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
- Jiri Slaby <jirislaby@kernel.org>
-Subject: Re: [PATCH 1/2] ttynull: Add an option to allow ttynull to be used as a
- console device
-Date: Wed, 04 Dec 2024 14:37:55 -0500
-Message-ID: <6622246.K2JlShyGXD@nerdopolis2>
-In-Reply-To: <2024120408-moneyless-stood-cda2@gregkh>
-References: <20241129041549.778959-1-bluescreen_avenger@verizon.net>
- <1791540.X513TT2pbd@nerdopolis2> <2024120408-moneyless-stood-cda2@gregkh>
+	s=arc-20240116; t=1733341111; c=relaxed/simple;
+	bh=YQT4drBY7tScD1DUIq0hp7zQqqa+RMUYBdm9PfSPvGA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=B+SX1JW47fcPeZXgHpFB84Y39LgwKEqPk+j/XgLaXaLBACjEoOvpakuP9Pt5GXfdgQkWkdrcXd9BX0tapMkkFIbNspDApyaFxCAsVVQdD8mLcAz2Kdsszc+QQz7o0YpqXFF+wa6k21Ojlk0LighCtuLTUfppRQVAyUURCAxH2Hw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=CPPIFP2/; arc=none smtp.client-ip=209.85.216.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2ee51f8c47dso139629a91.1
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 11:38:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1733341109; x=1733945909; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=pEkYOP8DWRCVJGmJ8XdCFkWDl0dAyfXQuWbp6O8DcxU=;
+        b=CPPIFP2/+cxYLrC0N/Zf4Pb6Ku9HUUZRmbnZ66PUR8fWI0hTof9Ef65vYboKUm2ulH
+         wt+h3255dmzj5YE4NeGy0cYUYQWUwUfDb/JtIhJy873w+42TcQv8n4cpiN9opfFZCYCx
+         EPbCScz0DMqNxOmdrAiX3n0eAEMNGnJm2rZTY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733341109; x=1733945909;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pEkYOP8DWRCVJGmJ8XdCFkWDl0dAyfXQuWbp6O8DcxU=;
+        b=W5IbYN3TtUK4mAyHiHJETJasRCP/YvlmVSqbwLIgTrsatTOF7a0IUxNxR+L7TwJfY3
+         xJo4sbWZnnQjUd3Bs73WOHJ501Z2Ah8r5JJ1yMGc8mfAn4LP9txJ1LWzinnxnvgYRZRG
+         J5JxbF9NUNZLkNM8qnnN686s/A/emmWh1UjqFD9M1KBJ42A6FbwQUqNxBGhV4VcMGmyE
+         Nq6sXRiS7E1fRZptEGOZp/afM5d9CCplxCB9ir4v4maf0k4aaxeDPCVo/umgAlaAHDXo
+         U2HMLw7Eq1/Zcuf2DPUU5IHE9c/0VTJc03aXHlEKNNOcbM/gci/DHc6KtmnF4d74ZTKK
+         mRHA==
+X-Gm-Message-State: AOJu0YweAQv3SY6Wfzmzw/oXCXaQnSF1grUiR8NIyPklwiB+hw5IKnyg
+	mNjvqOev1OiRX1Xk8Gm1UVKKLf1wAkINdnXNbTATjN4R/Cx3HDfJl4qGwuQPHg==
+X-Gm-Gg: ASbGnctqueW2Pee69B4KOrRZ1ELohAX0y5tQwbMlcDdoUwInsI0OTuNZ4umNtyF8T4B
+	GsVDcbv7IML1FVmE8YHFDGYeoI+ITTTLlPs7IVRwEECdK+zmiVHKRHEc8TTCiK/P5wJXMZAbhv3
+	NisELegAthUPWCloQaeP3fAgKpwWN/yaGl1SdSJFzVlzBrG2CgQ3mRar2bcfpinPxGQEmZ4LnXN
+	vq3ZBZ78x/39cc129eW+OXWIuOzsFdxuofL8rUPze9n30E1XbWmk9TJaCL8FQgncxvoJSvvr1gK
+	sjACSmEmCSCt
+X-Google-Smtp-Source: AGHT+IFNB0C42TjAbUDS23zWcK1xjIKXEKMvRIoan0OfO+4kulipHTZoHnQzUMSLAmc8D4LMu5IPuQ==
+X-Received: by 2002:a17:90b:2547:b0:2ee:f22a:61dd with SMTP id 98e67ed59e1d1-2ef01274f35mr9109441a91.32.1733341109636;
+        Wed, 04 Dec 2024 11:38:29 -0800 (PST)
+Received: from localhost ([2a00:79e0:2e14:7:8ab8:57a6:96ad:47f7])
+        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-2ef27066dc4sm1805536a91.48.2024.12.04.11.38.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 04 Dec 2024 11:38:29 -0800 (PST)
+Date: Wed, 4 Dec 2024 11:38:27 -0800
+From: Brian Norris <briannorris@chromium.org>
+To: Nilay Shroff <nilay@linux.ibm.com>
+Cc: linux-kernel@vger.kernel.org, kees@kernel.org, nathan@kernel.org,
+	yury.norov@gmail.com, linux@weissschuh.net, gjoyce@ibm.com,
+	Steffen Klassert <steffen.klassert@secunet.com>,
+	Daniel Jordan <daniel.m.jordan@oracle.com>,
+	linux-crypto@vger.kernel.org
+Subject: Re: [PATCH] cpumask: work around false-postive stringop-overread
+ errors
+Message-ID: <Z1Cvs1xNSDQRJ1Ri@google.com>
+References: <20241112124127.1666300-1-nilay@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-X-Mailer: WebService/1.1.22941 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.aol
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241112124127.1666300-1-nilay@linux.ibm.com>
 
-On Wednesday, December 4, 2024 1:06:50 PM EST Greg Kroah-Hartman wrote:
-> On Wed, Dec 04, 2024 at 12:06:56PM -0500, n3rdopolis wrote:
-> > On Wednesday, December 4, 2024 10:41:44 AM EST Greg Kroah-Hartman wrote:
-> > > On Thu, Nov 28, 2024 at 11:15:48PM -0500, n3rdopolis wrote:
-> > > > Add a config option CONFIG_NULL_TTY_CONSOLE that will have ttynull be
-> > > > initialized by console_initcall() and selected as a possible console
-> > > > device.
-> > > > Signed-off-by: n3rdopolis <bluescreen_avenger@verizon.net>
-> > > 
-> > > Meta-comments, we need a blank line before the s-o-b line, AND we need a
-> > > real name here, sorry.  I can't do anything with these (including
-> > > reviewing them), until that happens.
-> > > 
-> > Oh, I thought that I didn't need a real name
-> > 
-> > I found a recent thread that seems like it suggests that I thought
-> > https://lore.kernel.org/all/20241121165806.476008-40-alex.bennee@linaro.org/[1]
-> > https://drewdevault.com/2023/10/31/On-real-names.html[2]
-> > Or do I need to wait for that change to the guideline be merged?
+Hi Nilay,
+
+I see you didn't CC the maintainers for this file. You might consider
+looking through:
+https://www.kernel.org/doc/html/latest/process/submitting-patches.html
+And:
+
+$ scripts/get_maintainer.pl -f kernel/padata.c
+Steffen Klassert <steffen.klassert@secunet.com> (maintainer:PADATA PARALLEL EXECUTION MECHANISM)
+Daniel Jordan <daniel.m.jordan@oracle.com> (maintainer:PADATA PARALLEL EXECUTION MECHANISM)
+linux-crypto@vger.kernel.org (open list:PADATA PARALLEL EXECUTION MECHANISM)
+linux-kernel@vger.kernel.org (open list:PADATA PARALLEL EXECUTION MECHANISM)
+
+I'll leave the full contents intact below for their sake, with a few
+inline comments as well:
+
+On Tue, Nov 12, 2024 at 06:11:24PM +0530, Nilay Shroff wrote:
+> While building the powerpc code using gcc 13, I came across following
+> errors generated for kernel/padata.c file:
 > 
-> That change has been merged a long time ago, but as far as I can tell,
-> this signed-off-by you used here does not meet this category.
+>   CC      kernel/padata.o
+> In file included from ./include/linux/string.h:390,
+>                  from ./arch/powerpc/include/asm/paca.h:16,
+>                  from ./arch/powerpc/include/asm/current.h:13,
+>                  from ./include/linux/thread_info.h:23,
+>                  from ./include/asm-generic/preempt.h:5,
+>                  from ./arch/powerpc/include/generated/asm/preempt.h:1,
+>                  from ./include/linux/preempt.h:79,
+>                  from ./include/linux/spinlock.h:56,
+>                  from ./include/linux/swait.h:7,
+>                  from ./include/linux/completion.h:12,
+>                  from kernel/padata.c:14:
+> In function ‘bitmap_copy’,
+>     inlined from ‘cpumask_copy’ at ./include/linux/cpumask.h:839:2,
+>     inlined from ‘__padata_set_cpumasks’ at kernel/padata.c:730:2:
+> ./include/linux/fortify-string.h:114:33: error: ‘__builtin_memcpy’ reading between 257 and 536870904 bytes from a region of size 256 [-Werror=stringop-overread]
+>   114 | #define __underlying_memcpy     __builtin_memcpy
+>       |                                 ^
+> ./include/linux/fortify-string.h:633:9: note: in expansion of macro ‘__underlying_memcpy’
+>   633 |         __underlying_##op(p, q, __fortify_size);                        \
+>       |         ^~~~~~~~~~~~~
+> ./include/linux/fortify-string.h:678:26: note: in expansion of macro ‘__fortify_memcpy_chk’
+>   678 | #define memcpy(p, q, s)  __fortify_memcpy_chk(p, q, s,                  \
+>       |                          ^~~~~~~~~~~~~~~~~~~~
+> ./include/linux/bitmap.h:259:17: note: in expansion of macro ‘memcpy’
+>   259 |                 memcpy(dst, src, len);
+>       |                 ^~~~~~
+> kernel/padata.c: In function ‘__padata_set_cpumasks’:
+> kernel/padata.c:713:48: note: source object ‘pcpumask’ of size [0, 256]
+>   713 |                                  cpumask_var_t pcpumask,
+>       |                                  ~~~~~~~~~~~~~~^~~~~~~~
+> In function ‘bitmap_copy’,
+>     inlined from ‘cpumask_copy’ at ./include/linux/cpumask.h:839:2,
+>     inlined from ‘__padata_set_cpumasks’ at kernel/padata.c:730:2:
+> ./include/linux/fortify-string.h:114:33: error: ‘__builtin_memcpy’ reading between 257 and 536870904 bytes from a region of size 256 [-Werror=stringop-overread]
+>   114 | #define __underlying_memcpy     __builtin_memcpy
+>       |                                 ^
+> ./include/linux/fortify-string.h:633:9: note: in expansion of macro ‘__underlying_memcpy’
+>   633 |         __underlying_##op(p, q, __fortify_size);                        \
+>       |         ^~~~~~~~~~~~~
+> ./include/linux/fortify-string.h:678:26: note: in expansion of macro ‘__fortify_memcpy_chk’
+>   678 | #define memcpy(p, q, s)  __fortify_memcpy_chk(p, q, s,                  \
+>       |                          ^~~~~~~~~~~~~~~~~~~~
+> ./include/linux/bitmap.h:259:17: note: in expansion of macro ‘memcpy’
+>   259 |                 memcpy(dst, src, len);
+>       |                 ^~~~~~
+> kernel/padata.c: In function ‘__padata_set_cpumasks’:
+> kernel/padata.c:713:48: note: source object ‘pcpumask’ of size [0, 256]
+>   713 |                                  cpumask_var_t pcpumask,
+>       |                                  ~~~~~~~~~~~~~~^~~~~~~~
 > 
-Oh, what would it take to meet that category? I've been using this nick to
-contribute to other projects, and it matches my GitHub name, and FreeDesktop
-GitLab name
+> Apparentrly, above errors only menifests with GCC 13.x and config option
+> CONFIG_FORTIFY_SOURCE. Furthermore, if I use gcc 11.x or gcc 12.x then I
+> don't encounter above errors. Prima facie, these erros appear to be false-
+> positive. Brian informed me that currently some efforts are underway by
+> GCC developers to emit more verbose information when GCC detects string
+> overflow errors and that might help to further narrow down the root cause
+> of this error. So for now, silence these errors using -Wno-stringop-
+> overread gcc option while building kernel/padata.c file until we find the
+> root cause.
 
-Thanks
-> thanks,
+You might consider running this paragraph through a spelling checker if you submit a
+v2.
+
+> Link: https://lore.kernel.org/all/7cbbd751-8332-4ab2-afa7-8c353834772a@linux.ibm.com/
+> Cc: briannorris@chromium.org
+> Cc: kees@kernel.org
+> Cc: nathan@kernel.org
+> Cc: yury.norov@gmail.com
+> Cc: linux@weissschuh.net
+> Cc: gjoyce@ibm.com
+> Signed-off-by: Nilay Shroff <nilay@linux.ibm.com>
+> ---
+>  kernel/Makefile | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> greg k-h
+> diff --git a/kernel/Makefile b/kernel/Makefile
+> index 87866b037fbe..e5adba7a30f1 100644
+> --- a/kernel/Makefile
+> +++ b/kernel/Makefile
+> @@ -120,6 +120,7 @@ obj-$(CONFIG_CFI_CLANG) += cfi.o
+>  obj-$(CONFIG_PERF_EVENTS) += events/
+>  
+>  obj-$(CONFIG_USER_RETURN_NOTIFIER) += user-return-notifier.o
+> +CFLAGS_padata.o += $(call cc-disable-warning, stringop-overread)
+
+Personally, I'd recommend a comment here, noting that these warnings
+seem to produce false positives on GCC 13+. But otherwise, this seems OK
+to me:
+
+Reviewed-by: Brian Norris <briannorris@chromium.org>
+
+>  obj-$(CONFIG_PADATA) += padata.o
+>  obj-$(CONFIG_JUMP_LABEL) += jump_label.o
+>  obj-$(CONFIG_CONTEXT_TRACKING) += context_tracking.o
+> -- 
+> 2.45.2
 > 
-
-
-
-
 
