@@ -1,154 +1,195 @@
-Return-Path: <linux-kernel+bounces-432228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C5F59E47F0
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 23:36:39 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 804C19E47F7
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 23:37:13 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C24016486C
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 22:36:49 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D57F91F541D;
+	Wed,  4 Dec 2024 22:36:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="CVnzOQgP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3591C284AA2
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 22:36:38 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 978231F709D;
-	Wed,  4 Dec 2024 22:36:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fB4WuRcM"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E70281F03E2
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 22:36:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3377918DF6D
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 22:36:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733351783; cv=none; b=YDcwr/cEZjv9hRK3FiT7bPBndQLoXmIHkPaLu4h2wl+zlSB63YjuhMG84x1JVwqLu83O4XcmhqPa9akXhHC8zz5rd3lo8R1geBNW97hCFqX3HAbmCcnci8QEJYqzKnDzPa9RMCB4Idr76O4M3793D3eAKoz+LH+hAmvS4DPDXaE=
+	t=1733351789; cv=none; b=Fv3pCWYKqUHlKFihAMEXENLwdHYieoRCg8Q9zKgAeFHfCy+pJPdJp+AGcK+VPP4IjsvlwUVBi6FpqyvsnL5elypwtTIW3ReE9jQkUri5tEmsw61j8LT6aJ0leGNOQKlEibTGRvGfgOk0yO+IQWEEnOtsIYGTJacHvDc/PUF6c/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733351783; c=relaxed/simple;
-	bh=8nyNe6nBOf2Dk/jqULA7hpqv08Qyov1aCsfLJP+e0ac=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IBMy9/M6s/vpK7TKA4BgXltW2z18oVPCN/X4qXqXh+4BCkwlHcW1LymXEXsuiYhASqt0BHW5ToES12rvzg0XbiqnCRzOT1ns1TSyR+4bQkGjHDMiFjHXjy4gYLE/oihWQnOwDZDDgQ27PKhZmPzptxmrv0Ixeh2yyqq/9hQ8xYM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fB4WuRcM; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-53df1e063d8so467147e87.3
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 14:36:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733351778; x=1733956578; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=+mmQIbMpMz7O0AOKTkxfl8dFrxJ33xOJobw0OfEwbNw=;
-        b=fB4WuRcM3FIp3T0F7f5PzJzFKbU/bMYUYGPDay+g8J48QH0dCklAeeNTvHN3ZmW/Yd
-         9C0xzANYRgGvyyjJxKgQzKq1mRnbNWxpkFdrKB/XVHomB0HhOZwlVfQnbgCrkgB3JFEJ
-         JFgH0auMNwDgnydg/bUUCSk6vRZk07hwwJuYtnXfwkDqdQFMRB0O+5dfXToOQbH0DKxJ
-         9qkDmYVDfxCj7Q0jrdONvImyT3Q6YJ/9Hi8R2DLDDWXhQBjbTkmZOz1S1/k7/gI7P7ek
-         O7EkwK42zF/uvdRPRGogcgaflKYKCJ+qv1hj2asg5NwIITHtI2+Va7d6K/APbo0YKG6A
-         cEmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733351778; x=1733956578;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+mmQIbMpMz7O0AOKTkxfl8dFrxJ33xOJobw0OfEwbNw=;
-        b=o51q2RiLyw1RL2CZd3SSlzsVxT7eXpc6WjNcn7H9HFUkCpDnVDp8FeG1NmDzSBKSDF
-         DuRcU4y3ILgZifcwPFAKTbmIR4s3pcIdzRTV94Zg3+duNrCpm4exnz0DdJi4lIYJyySa
-         mf19yDMpp8UYqZaIUgiwe7Q7BxULRVDGRN1qxTsBScoSkkDBqWh0c+m7pmYlmarwn7GY
-         TLJO/t/1hor4Az4ue0uJ0MQKS5xRI9BZFLJlpr0LOwmc4tWU6gSOQNpn3qnTLW6k40HI
-         cPEEXYl0lVIUwUUXVd8rQN9/yFBMQCQLwqmVXnDaucOzToroxtjDVZPOgraO2M5M735B
-         D5BA==
-X-Forwarded-Encrypted: i=1; AJvYcCW5GXryNi/cXaYNuB6OV9mUTKd8jOI3ggWbE8GzlG3Zr59i05uuZDlF0FA+mxq8JwKZWASjkoiuGYojFCI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz2glWtU/7T3jRdiuN435LMFipJ9g8sEQmDgm/glFgAA9qGdXyT
-	nAMJzac3c7KRD+MwACMOj9Rp0j8Q8mSpmBp5bpo2vZJd0OUsj6P94HGddb9eyec=
-X-Gm-Gg: ASbGncvCP/lMU6ugqIS0USJgmRaxpdD5z1yix6aLwx3Z5uyNPB3fY/89o1DmaTTK+lt
-	tKgaPhutRaESlFpiM069SWDjPoieeIni8JJoYBS01J9OIwY3MEGYuI+kRjG9msdZlo95Hnz93yo
-	j7xnnRLq+sFSoTodxZU/P6otb/wCLsPSCUUiPEXhrJ5n7yoD/bwieYM8rNUaJvs4XTr+ls0ky55
-	AgZjzKuDZoE+hXMW1N1+OBEkW0QnTHQibEFeE9l1LvnbcpmCVWhbPO95L0vNPcowmpkif4QjQMo
-	/UrcDPBZ9cBi4/AU6JCBULJOc5fv3A==
-X-Google-Smtp-Source: AGHT+IGuGoCD3puMElK86ZdB02YG7dUQkM6ohz8Me4tads6hOhrBog3l0JNlc1YxUZmWAvJj211T6g==
-X-Received: by 2002:a05:6512:220d:b0:53d:d3c1:9fc4 with SMTP id 2adb3069b0e04-53e12a31944mr5017238e87.41.1733351778075;
-        Wed, 04 Dec 2024 14:36:18 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53e229ca47esm21650e87.264.2024.12.04.14.36.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Dec 2024 14:36:16 -0800 (PST)
-Date: Thu, 5 Dec 2024 00:36:14 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Viken Dadhaniya <quic_vdadhani@quicinc.com>
-Cc: andi.shyti@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, gregkh@linuxfoundation.org, jirislaby@kernel.org, 
-	broonie@kernel.or, andersson@kernel.org, konradybcio@kernel.org, 
-	johan+linaro@kernel.org, dianders@chromium.org, agross@kernel.org, 
-	linux-arm-msm@vger.kernel.org, linux-i2c@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, linux-spi@vger.kernel.org, 
-	=quic_msavaliy@quicinc.com, quic_anupkulk@quicinc.com, 
-	Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
-Subject: Re: [PATCH v1 1/7] dt-bindings: i2c: qcom,i2c-geni: Document DT
- properties for QUP firmware loading
-Message-ID: <garuc5au5464xpmj3exlull4o2763xrkqubplde56xmyfhfhmn@cpd4bbt4dfyr>
-References: <20241204150326.1470749-1-quic_vdadhani@quicinc.com>
- <20241204150326.1470749-2-quic_vdadhani@quicinc.com>
+	s=arc-20240116; t=1733351789; c=relaxed/simple;
+	bh=/eLmxoMarIRFWShqykMYsWfAXvN/KtokE6TigjvmROo=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=Y8d/ZIJRrNj+nUqVW41DmSYjDx8u0HlxEmbKpBMpiI8jD6C+Bcz3vKM+uwPxQeR2oBBSruYfuWA2YQ6BNCXV1WhmJQKPZydyUTELq3MghwY8cW42dVmD5EP5hZZChG/ox3XJgcvtKjAp23BP/aVKFmQ2JFpy07GCat7PQ6cma+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=CVnzOQgP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03DB6C4CEDF;
+	Wed,  4 Dec 2024 22:36:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1733351786;
+	bh=/eLmxoMarIRFWShqykMYsWfAXvN/KtokE6TigjvmROo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=CVnzOQgPJiM8ugGXq90SXymx4VXl9O3R3bsUDWFSmuIeY+gmbfbdcOc1lsUrtVZA7
+	 4dFL6NFsE7oQ5eWlDu4Gex/CG5uQI6D8KZJg9ypY9ihdR45fG9dWdiBNKGkSQroCcq
+	 E+HRGP8768hyb/WlY7miKuHKULbEjL05M5DsaGuc=
+Date: Wed, 4 Dec 2024 14:36:25 -0800
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Qi Zheng <zhengqi.arch@bytedance.com>
+Cc: david@redhat.com, jannh@google.com, hughd@google.com,
+ willy@infradead.org, muchun.song@linux.dev, vbabka@kernel.org,
+ peterx@redhat.com, mgorman@suse.de, catalin.marinas@arm.com,
+ will@kernel.org, dave.hansen@linux.intel.com, luto@kernel.org,
+ peterz@infradead.org, x86@kernel.org, lorenzo.stoakes@oracle.com,
+ zokeefe@google.com, rientjes@google.com, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 09/11] mm: pgtable: reclaim empty PTE page in
+ madvise(MADV_DONTNEED)
+Message-Id: <20241204143625.a09c2b8376b2415b985cf50a@linux-foundation.org>
+In-Reply-To: <92aba2b319a734913f18ba41e7d86a265f0b84e2.1733305182.git.zhengqi.arch@bytedance.com>
+References: <cover.1733305182.git.zhengqi.arch@bytedance.com>
+	<92aba2b319a734913f18ba41e7d86a265f0b84e2.1733305182.git.zhengqi.arch@bytedance.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241204150326.1470749-2-quic_vdadhani@quicinc.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, Dec 04, 2024 at 08:33:20PM +0530, Viken Dadhaniya wrote:
-> Document the 'qcom,load-firmware' and 'qcom,xfer-mode' properties to
-> support SE(Serial Engine) firmware loading from the protocol driver and to
-> select the data transfer mode, either GPI DMA (Generic Packet Interface)
-> or non-GPI mode (PIO/CPU DMA).
+On Wed,  4 Dec 2024 19:09:49 +0800 Qi Zheng <zhengqi.arch@bytedance.com> wrote:
+
+> Now in order to pursue high performance, applications mostly use some
+> high-performance user-mode memory allocators, such as jemalloc or
+> tcmalloc. These memory allocators use madvise(MADV_DONTNEED or MADV_FREE)
+> to release physical memory, but neither MADV_DONTNEED nor MADV_FREE will
+> release page table memory, which may cause huge page table memory usage.
 > 
-> I2C controller can operate in one of two modes based on the
-> 'qcom,xfer-mode' property, and the firmware is loaded accordingly.
+> The following are a memory usage snapshot of one process which actually
+> happened on our server:
 > 
-> Co-developed-by: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
-> Signed-off-by: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
-> Signed-off-by: Viken Dadhaniya <quic_vdadhani@quicinc.com>
-> ---
->  .../devicetree/bindings/i2c/qcom,i2c-geni-qcom.yaml   | 11 +++++++++++
->  1 file changed, 11 insertions(+)
+>         VIRT:  55t
+>         RES:   590g
+>         VmPTE: 110g
 > 
-> diff --git a/Documentation/devicetree/bindings/i2c/qcom,i2c-geni-qcom.yaml b/Documentation/devicetree/bindings/i2c/qcom,i2c-geni-qcom.yaml
-> index 9f66a3bb1f80..a26f34fce1bb 100644
-> --- a/Documentation/devicetree/bindings/i2c/qcom,i2c-geni-qcom.yaml
-> +++ b/Documentation/devicetree/bindings/i2c/qcom,i2c-geni-qcom.yaml
-> @@ -66,6 +66,15 @@ properties:
->    required-opps:
->      maxItems: 1
+> In this case, most of the page table entries are empty. For such a PTE
+> page where all entries are empty, we can actually free it back to the
+> system for others to use.
+> 
+> As a first step, this commit aims to synchronously free the empty PTE
+> pages in madvise(MADV_DONTNEED) case. We will detect and free empty PTE
+> pages in zap_pte_range(), and will add zap_details.reclaim_pt to exclude
+> cases other than madvise(MADV_DONTNEED).
+> 
+> Once an empty PTE is detected, we first try to hold the pmd lock within
+> the pte lock. If successful, we clear the pmd entry directly (fast path).
+> Otherwise, we wait until the pte lock is released, then re-hold the pmd
+> and pte locks and loop PTRS_PER_PTE times to check pte_none() to re-detect
+> whether the PTE page is empty and free it (slow path).
+
+"wait until the pte lock is released" sounds nasty.  I'm not
+immediately seeing the code which does this.  PLease provide more
+description?
+
+> For other cases such as madvise(MADV_FREE), consider scanning and freeing
+> empty PTE pages asynchronously in the future.
+> 
+> The following code snippet can show the effect of optimization:
+> 
+>         mmap 50G
+>         while (1) {
+>                 for (; i < 1024 * 25; i++) {
+>                         touch 2M memory
+>                         madvise MADV_DONTNEED 2M
+>                 }
+>         }
+> 
+> As we can see, the memory usage of VmPTE is reduced:
+> 
+>                         before                          after
+> VIRT                   50.0 GB                        50.0 GB
+> RES                     3.1 MB                         3.1 MB
+> VmPTE                102640 KB                         240 KB
+> 
+> ...
+>
+> --- a/mm/Kconfig
+> +++ b/mm/Kconfig
+> @@ -1301,6 +1301,21 @@ config ARCH_HAS_USER_SHADOW_STACK
+>  	  The architecture has hardware support for userspace shadow call
+>            stacks (eg, x86 CET, arm64 GCS or RISC-V Zicfiss).
 >  
-> +  qcom,load-firmware:
-> +    type: boolean
-> +    description: Optional property to load SE (serial engine) Firmware from protocol driver.
+> +config ARCH_SUPPORTS_PT_RECLAIM
+> +	def_bool n
 > +
-> +  qcom,xfer-mode:
-> +    description: Value 1,2 and 3 represents FIFO, CPU DMA and GSI DMA mode respectively.
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    enum: [1, 2, 3]
+> +config PT_RECLAIM
+> +	bool "reclaim empty user page table pages"
+> +	default y
+> +	depends on ARCH_SUPPORTS_PT_RECLAIM && MMU && SMP
+> +	select MMU_GATHER_RCU_TABLE_FREE
+> +	help
+> +	  Try to reclaim empty user page table pages in paths other than munmap
+> +	  and exit_mmap path.
 > +
->  required:
->    - compatible
->    - interrupts
-> @@ -142,5 +151,7 @@ examples:
->          interconnect-names = "qup-core", "qup-config", "qup-memory";
->          power-domains = <&rpmhpd SC7180_CX>;
->          required-opps = <&rpmhpd_opp_low_svs>;
-> +        qcom,load-firmware;
+> +	  Note: now only empty user PTE page table pages will be reclaimed.
+> +
 
-please use instead:
-firmware-name = "qcom/sc7180/qupv3.elf"
+Why is this optional?  What is the case for permitting PT_RECLAIM to e
+disabled?
 
-> +        qcom,xfer-mode = <1>;
->      };
->  ...
+>  source "mm/damon/Kconfig"
+>  
+>  endmenu
+>
+> ...
+>
+> +void try_to_free_pte(struct mm_struct *mm, pmd_t *pmd, unsigned long addr,
+> +		     struct mmu_gather *tlb)
+> +{
+> +	pmd_t pmdval;
+> +	spinlock_t *pml, *ptl;
+> +	pte_t *start_pte, *pte;
+> +	int i;
+> +
+> +	pml = pmd_lock(mm, pmd);
+> +	start_pte = pte_offset_map_rw_nolock(mm, pmd, addr, &pmdval, &ptl);
+> +	if (!start_pte)
+> +		goto out_ptl;
+> +	if (ptl != pml)
+> +		spin_lock_nested(ptl, SINGLE_DEPTH_NESTING);
+> +
+> +	/* Check if it is empty PTE page */
+> +	for (i = 0, pte = start_pte; i < PTRS_PER_PTE; i++, pte++) {
+> +		if (!pte_none(ptep_get(pte)))
+> +			goto out_ptl;
+> +	}
+
+Are there any worst-case situations in which we'll spend uncceptable
+mounts of time running this loop?
+
+> +	pte_unmap(start_pte);
+> +
+> +	pmd_clear(pmd);
+> +
+> +	if (ptl != pml)
+> +		spin_unlock(ptl);
+> +	spin_unlock(pml);
+> +
+> +	free_pte(mm, addr, tlb, pmdval);
+> +
+> +	return;
+> +out_ptl:
+> +	if (start_pte)
+> +		pte_unmap_unlock(start_pte, ptl);
+> +	if (ptl != pml)
+> +		spin_unlock(pml);
+> +}
 > -- 
-> 2.34.1
-> 
-
--- 
-With best wishes
-Dmitry
+> 2.20.1
 
