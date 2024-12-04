@@ -1,94 +1,165 @@
-Return-Path: <linux-kernel+bounces-431827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2748F9E4456
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 20:16:23 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDC9C9E45E8
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 21:39:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C2282B2B907
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:37:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D266ABC735A
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:54:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A9351C3C07;
-	Wed,  4 Dec 2024 17:09:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D571239195;
+	Wed,  4 Dec 2024 17:14:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YyUJnVDs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="NrB/wZga"
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 656EF1C3BE2;
-	Wed,  4 Dec 2024 17:09:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72EFD211489
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 17:14:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733332178; cv=none; b=DUQ9G+Sg5xmc3U/BHqliZ/GayblRN2/E3fIjjTxOsvfv9IxXBY5xAa0G8zh3vPx5teNePDuHgsS0nJk6K+d2konSUKGNW0Z0vcmz2r8kXJsduQGCqmILkY3azahIXqJd1kt0obt5SAltmlKkcljy17Fs+ApbPz1YE6TeYURApXk=
+	t=1733332452; cv=none; b=Sa3HQYu9dFWIRo5O2lwzdbMOx1TUvQxFpglyiL/B+rLnx9K1HnUDc0+UYsrDXJiM8DmdIwL9noVVBMJ36yaSgtUSKub7ZcKayA9mlrQ9XLCk6QYpm9JJtx5s5TdKD1Bb4+UTrsUEvub29epG+Tm2F4ibBwWxDHtfcp91OpZyEd4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733332178; c=relaxed/simple;
-	bh=R+x7WFjxT8S5OTA+WR7ZclGvWXKZowty7QKeX08QvPM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ltUFhg4OMyCYZ3piKw/o86/H7BxzfgPsqwFJ3CpzRZ4p7aKxq78KhUcmiWsMlZc3ESahC6qp7fzh2kfoKFqeGavQEtvZqVtyefErxAv3lMBjUgsfUEaVc5gyliPZ/RhYlMTft6LzaJiMFBUV50bt1AHWiUFu0MmYGNdHBtwCCN0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YyUJnVDs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D1EBC4CECD;
-	Wed,  4 Dec 2024 17:09:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733332177;
-	bh=R+x7WFjxT8S5OTA+WR7ZclGvWXKZowty7QKeX08QvPM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YyUJnVDs1VRmBbkmQIUz90/t8Rv6+2Saknahn46UALUy+945ZA4TXebkEvjmgTHXd
-	 mC1GR0D291GTL6kMDpaXL+sf4gUyrV21WyxTpcshpU38+lJuESQeKslzBMgYggD1uD
-	 BPJ8OcUVwdjpySE4F8ebLyAysmeRKivF0Lj2NTmIMRiDiJTBO6oD2s5IBRzt2+/+I5
-	 pztXK7TyO034l4oQHM8WPox43YFffvqfFXaR7xjUAVE5xMVa8hWdLpXok31ZvBBeke
-	 aR0UJNRLR3M9v0G17nL75PDo8j79Jzn+vS0Ut4uxSe8e+IpvNWCJ94qzyE6bun/eB3
-	 6eXdD7yZMTQ1g==
-Date: Wed, 4 Dec 2024 10:09:35 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
-	Arnd Bergmann <arnd@arndb.de>, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Andy Shevchenko <andy@kernel.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	Sean Christopherson <seanjc@google.com>,
-	Davide Ciminaghi <ciminaghi@gnudd.com>,
-	Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org
-Subject: Re: [PATCH 09/11] x86: rework CONFIG_GENERIC_CPU compiler flags
-Message-ID: <20241204170935.GB3356373@thelio-3990X>
-References: <20241204103042.1904639-1-arnd@kernel.org>
- <20241204103042.1904639-10-arnd@kernel.org>
+	s=arc-20240116; t=1733332452; c=relaxed/simple;
+	bh=Ew39j4rptFmnjXHKC0iR2M1IneuhRBmz1EbEqrrGU0A=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ru1nXe9K2WgT6Ej7rsiRidBAntyoTggDrPtXFt8+FtqIya30BqzcYi9gz6tC36h/bhr41TnHWcglc2L7jophhWwOM0jqGxbpjQ5lhmmqHBaJCFIy+bbxI0Juo5DrT4yI3xLL2VfID4BZwzJ4G8KGccQJCtT8CTWdzdb7RXVRYuM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=NrB/wZga; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 4C2F34000A;
+	Wed,  4 Dec 2024 17:14:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1733332448;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Ew39j4rptFmnjXHKC0iR2M1IneuhRBmz1EbEqrrGU0A=;
+	b=NrB/wZgaik00gmlgN1/tNVZh79DyQB1fsObYlOucrNizVYlhzZOqKzkyU3SDKA7SO9INVl
+	9SePLUFQo3Teczb9XUb9kGxltxmBYU0Wnj4le0nB93EBvtOyyqjTGLjUo2O+YLdQ65pNqm
+	Pbb8Vcq8QbM1AwDwHY/7G/XeSUiWCupeLRVr9YCRqGTIXbAhEcz98Yp8ST5OgIG0VVyXpJ
+	AxPHYy1X/l5eoBx0f9e72DjE7NbqxL7y+QKwHHaa4pOxRzDGKoIkVUdhj+ljV3QR0fhcWd
+	pcQBCzbIH3JarQ3CPoqKRlnl8v/Mj6rgYfdzS0VcwNW+gI5zX8DCZneuBueT7Q==
+Date: Wed, 4 Dec 2024 18:14:05 +0100
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Saravana Kannan <saravanak@google.com>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ Francesco <francesco.dolcini@toradex.com>, Tomi Valkeinen
+ <tomi.valkeinen@ideasonboard.com>, kernel-team@android.com,
+ linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzysztof.kozlowski@linaro.org>, Conor Dooley
+ <conor@kernel.org>, =?UTF-8?Q?Herv=C3=A9?= Codina
+ <herve.codina@bootlin.com>
+Subject: Re: [PATCH v3] driver core: fw_devlink: Stop trying to optimize
+ cycle detection logic
+Message-ID: <20241204181405.2ff902c1@booty>
+In-Reply-To: <CAMuHMdWaBn9PuEqiH2dekDzOLXeqn1KTT_x3qq7Zk_KUxg2qeQ@mail.gmail.com>
+References: <20241030171009.1853340-1-saravanak@google.com>
+	<20241204124826.2e055091@booty>
+	<CAMuHMdWaBn9PuEqiH2dekDzOLXeqn1KTT_x3qq7Zk_KUxg2qeQ@mail.gmail.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241204103042.1904639-10-arnd@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: luca.ceresoli@bootlin.com
 
-Hi Arnd,
+Hi Geert,
 
-On Wed, Dec 04, 2024 at 11:30:40AM +0100, Arnd Bergmann wrote:
-...
-> +++ b/arch/x86/Kconfig.cpu
-> +config X86_64_V1
-> +config X86_64_V2
-> +config X86_64_V3
-...
-> +++ b/arch/x86/Makefile
-> +        cflags-$(CONFIG_MX86_64_V1)	+= -march=x86-64
-> +        cflags-$(CONFIG_MX86_64_V2)	+= $(call cc-option,-march=x86-64-v2,-march=x86-64)
-> +        cflags-$(CONFIG_MX86_64_V3)	+= $(call cc-option,-march=x86-64-v3,-march=x86-64)
-...
-> +        rustflags-$(CONFIG_MX86_64_V1)	+= -Ctarget-cpu=x86-64
-> +        rustflags-$(CONFIG_MX86_64_V2)	+= -Ctarget-cpu=x86-64-v2
-> +        rustflags-$(CONFIG_MX86_64_V3)	+= -Ctarget-cpu=x86-64-v3
+thanks for your feedback.
 
-There appears to be an extra 'M' when using these CONFIGs in Makefile,
-so I don't think this works as is?
+On Wed, 4 Dec 2024 13:52:56 +0100
+Geert Uytterhoeven <geert@linux-m68k.org> wrote:
 
-Cheers,
-Nathan
+> Hi Luca,
+>=20
+> On Wed, Dec 4, 2024 at 12:48=E2=80=AFPM Luca Ceresoli <luca.ceresoli@boot=
+lin.com> wrote:
+> > On Wed, 30 Oct 2024 10:10:07 -0700
+> > Saravana Kannan <saravanak@google.com> wrote:
+> > =20
+> > > In attempting to optimize fw_devlink runtime, I introduced numerous c=
+ycle
+> > > detection bugs by foregoing cycle detection logic under specific
+> > > conditions. Each fix has further narrowed the conditions for optimiza=
+tion.
+> > >
+> > > It's time to give up on these optimization attempts and just run the =
+cycle
+> > > detection logic every time fw_devlink tries to create a device link.
+> > >
+> > > The specific bug report that triggered this fix involved a supplier f=
+wnode
+> > > that never gets a device created for it. Instead, the supplier fwnode=
+ is
+> > > represented by the device that corresponds to an ancestor fwnode.
+> > >
+> > > In this case, fw_devlink didn't do any cycle detection because the cy=
+cle
+> > > detection logic is only run when a device link is created between the
+> > > devices that correspond to the actual consumer and supplier fwnodes.
+> > >
+> > > With this change, fw_devlink will run cycle detection logic even when
+> > > creating SYNC_STATE_ONLY proxy device links from a device that is an
+> > > ancestor of a consumer fwnode.
+> > >
+> > > Reported-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+> > > Closes: https://lore.kernel.org/all/1a1ab663-d068-40fb-8c94-f0715403d=
+276@ideasonboard.com/
+> > > Fixes: 6442d79d880c ("driver core: fw_devlink: Improve detection of o=
+verlapping cycles")
+> > > Tested-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+> > > Signed-off-by: Saravana Kannan <saravanak@google.com> =20
+> >
+> > After rebasing my work for the hotplug connector driver using device
+> > tree overlays [0] on v6.13-rc1 I started getting these OF errors on
+> > overlay removal:
+> >
+> > OF: ERROR: memory leak, expected refcount 1 instead of 2, of_node_get()=
+/of_node_put() unbalanced - destroy cset entry: attach overlay node /addon-=
+connector/devices/panel-dsi-lvds
+> > OF: ERROR: memory leak, expected refcount 1 instead of 2, of_node_get()=
+/of_node_put() unbalanced - destroy cset entry: attach overlay node /addon-=
+connector/devices/backlight-addon
+> > OF: ERROR: memory leak, expected refcount 1 instead of 2, of_node_get()=
+/of_node_put() unbalanced - destroy cset entry: attach overlay node /addon-=
+connector/devices/battery-charger
+> > OF: ERROR: memory leak, expected refcount 1 instead of 2, of_node_get()=
+/of_node_put() unbalanced - destroy cset entry: attach overlay node /addon-=
+connector/devices/regulator-addon-5v0-sys
+> > OF: ERROR: memory leak, expected refcount 1 instead of 2, of_node_get()=
+/of_node_put() unbalanced - destroy cset entry: attach overlay node /addon-=
+connector/devices/regulator-addon-3v3-sys
+> >
+> > ...and many more. Exactly one per each device in the overlay 'devices'
+> > node, each implemented by a platform driver. =20
+>=20
+> FTR, I am not seeing that when loading/removing
+> r8a77990-ebisu-cn41-msiof0-25lc040.dtso
+> https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git=
+/commit/?h=3Dtopic/renesas-overlays&id=3Ddd998e8db58b67744eb91f11f13544401c=
+975470
+
+This overlay is adding an SPI device. In my overlay I don't have any
+SPI devices, but I have I2C and other devices and I'm getting those
+errors only about devices implemented by platform drivers. Not sure
+that matters, but that's the first difference that came to mind.
+
+Best regards,
+Luca
+
+--=20
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
