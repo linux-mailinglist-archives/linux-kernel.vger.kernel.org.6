@@ -1,141 +1,223 @@
-Return-Path: <linux-kernel+bounces-430562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E00E9E32D6
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 06:02:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 412059E32D5
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 06:02:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5E00283BE6
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 05:02:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E743A283DDC
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 05:02:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C0ED18452C;
-	Wed,  4 Dec 2024 05:02:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BF2F17335C;
+	Wed,  4 Dec 2024 05:02:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="LkYJodZQ"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qrgiif3C"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DD702500D2;
-	Wed,  4 Dec 2024 05:02:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACF7D2500D2;
+	Wed,  4 Dec 2024 05:02:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733288526; cv=none; b=YWn6qG0o+egs1MN5+upjh4bLCgxYj4XVZd3I3eE9CAd6haj/+LLmvObHJTNqkA6CgS8+Z2JbwqXKRyeYjmEnKOeN8CNmsmWVjXwBDwFr38jdLC/PCQvMiIgjglHsMjFALgKgWDiQNHqi4pbRQqZrfV/yNzmx3X9wSpU0fPBJFW8=
+	t=1733288520; cv=none; b=tm23w+22Og2Z26bYri/JS42oZlrAugdaNX3bjx9uBJ5bGuKOjEIffro9tVHFSfO0ZV1YTFur3nQnlHmUVPoAulBVm05/PKV8kKTrUeHsRtpSBOOXEqmogUNIHJLMvqzqen0BSYCkd0nCVThYP6EhAwayIUVQJjpyYSP65ckMj8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733288526; c=relaxed/simple;
-	bh=GnlVFOTcxvnw7IjZn/QE30JbutuH7Q8Nof7P5Bi1Png=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dT1fY2oyVhVlM2UVv5I3S5fz13Al5C9H1XtWU561CeRYs0zt4FBZBs5jmEsFO69xH09el0GGmMnzB4Ldd+B0cN78HOnrB9VBY7ZIvu75+9JhPIFpcPIKzutXvbRBCwZYMsHsRng1OuLmzKnjGlBmz4SGNQ/m2b0juBzFc58hrqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=LkYJodZQ; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 4B451rh91719832
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 3 Dec 2024 23:01:53 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1733288513;
-	bh=7DhUtPoGTteIH7DDUn9cBBWATVGD5xciR65qwj35AMo=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=LkYJodZQptK5Ov/2agxu1hQJFiQq9ogLyzt9ycpuU136ErY6+CfHi4uatuuYQE+lk
-	 UZ1TgL+tAJVstYkd0l06JjIZafmT+t+iJjN2RSDAd/cxjtivzgzuRe7vKIFJcLhKgX
-	 sate8IUHbWjMbtbSd5rZiQr97iCMhTNLEMDDDDCQ=
-Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4B451r6S015782
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 3 Dec 2024 23:01:53 -0600
-Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 3
- Dec 2024 23:01:52 -0600
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 3 Dec 2024 23:01:52 -0600
-Received: from localhost (uda0492258.dhcp.ti.com [10.24.72.81])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4B451pSo018690;
-	Tue, 3 Dec 2024 23:01:52 -0600
-Date: Wed, 4 Dec 2024 10:31:50 +0530
-From: s-vadapalli <s-vadapalli@ti.com>
-To: Enric Balletbo i Serra <eballetb@redhat.com>
-CC: s-vadapalli <s-vadapalli@ti.com>, Nishanth Menon <nm@ti.com>,
-        "Vignesh
- Raghavendra" <vigneshr@ti.com>,
-        Tero Kristo <kristo@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Dasnavis Sabiya
-	<sabiya.d@ti.com>
-Subject: Re: [PATCH] arm64: dts: ti: k3-am69-sk: Add USB SuperSpeed support
-Message-ID: <o37g5m3qvod4mydnjytyubobmvit7zjmh5xhv6jxjze3reiqct@wkwm36yvftyr>
-References: <20241126-am69sk-dt-usb-v1-1-aa55aed7b89e@redhat.com>
- <2nuncc5rscu6h74ylaiu6yozg34aoigaj5d4uzvdtolt5q7bmv@6hacpxyb2532>
- <CALE0LRtUN2N_Z05jH_BMSg7yvirSRob0pSErmQxTu8AatmODgw@mail.gmail.com>
- <CALE0LRu-Sx5oTVNY3hm+Msu-zb04a7_ZD+r3xF1eRfR_WtK0VA@mail.gmail.com>
- <wbsg3fmco6rwjj7vtiqtqv7trfjor73j7rjx7efnlafo4pz4bc@awixm2iygd55>
- <CALE0LRvZNnNJ8jBG35bU8Ev5Fvr2400O5qXUsRn0zufkidJeJw@mail.gmail.com>
+	s=arc-20240116; t=1733288520; c=relaxed/simple;
+	bh=Z2r+meoiww+z2J9ZDDWze7d4oLsTH8tux9nd2txvRIY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bl//NYlqaVF6Eb3t/AqoapHOQFi5Dbx5LIiiF2EBgYzcGsFv+hD7y8W4JyppOaCtGzNn9RxrToSMp3M+CIK268saALflzs2aHjhx2vS/6V6I+/vVQxgRV7uQHD91ExWCdTO74WV+KGhP1hGBoyU+QJ0eozcujJxgQ20QOSGTmTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qrgiif3C; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2044DC4CED1;
+	Wed,  4 Dec 2024 05:02:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733288520;
+	bh=Z2r+meoiww+z2J9ZDDWze7d4oLsTH8tux9nd2txvRIY=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=qrgiif3CtJvXRKiXzEPXN1LmIvWpr5Ot0OqWz6F3PZAFeVA/uP0/1HKREU+YAAPWr
+	 do7FIvz8RzjKRCoG/VYabxkwUGuuRNhLC6IrWVYfbUX1niO4d0r4kmN3Ft9fUCZ14M
+	 q64Xt6DOjqDDjjERCQIYKnxUJ4PF/MJk9R7c5BN8FsIC65wK5Pi3ZFCtE0+Urcp7bn
+	 EyEuwnIVbc3Vp2nMY0BgwiVSxlSfBdsusWiHnbD/SPHSby2WFeUfNLULQ5AGnxTssj
+	 TcC9AqzA/jsjCZL/7CbfgAePkZwjOa1UMaejGCr+v9O2V9M7ZKEjFSk/MXQLp+XqfC
+	 DwcbF+k28rqYw==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 54549CE071A; Tue,  3 Dec 2024 21:01:59 -0800 (PST)
+Date: Tue, 3 Dec 2024 21:01:59 -0800
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Guenter Roeck <linux@roeck-us.net>, LKML <linux-kernel@vger.kernel.org>,
+	Linux Trace Kernel <linux-trace-kernel@vger.kernel.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	linux-mips@vger.kernel.org, Paul Burton <paulburton@kernel.org>
+Subject: Re: [PATCH v2] tracing: Remove definition of trace_*_rcuidle()
+Message-ID: <60749a43-17ad-4491-a13f-a2db7b6cb00c@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20241003181629.36209057@gandalf.local.home>
+ <bddb02de-957a-4df5-8e77-829f55728ea2@roeck-us.net>
+ <20241203155542.462b1b21@gandalf.local.home>
+ <ee401848-f7a1-4877-b896-36bec32ca985@roeck-us.net>
+ <20241203220153.3f81f12b@gandalf.local.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CALE0LRvZNnNJ8jBG35bU8Ev5Fvr2400O5qXUsRn0zufkidJeJw@mail.gmail.com>
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+In-Reply-To: <20241203220153.3f81f12b@gandalf.local.home>
 
-On Tue, Dec 03, 2024 at 04:29:02PM +0100, Enric Balletbo i Serra wrote:
-> Hi,
+On Tue, Dec 03, 2024 at 10:01:53PM -0500, Steven Rostedt wrote:
+> On Tue, 3 Dec 2024 17:48:33 -0800
+> Guenter Roeck <linux@roeck-us.net> wrote:
 > 
-> On Thu, Nov 28, 2024 at 10:58 AM s-vadapalli <s-vadapalli@ti.com> wrote:
-> >
-> > On Thu, Nov 28, 2024 at 10:47:42AM +0100, Enric Balletbo i Serra wrote:
-> > > Hi,
-> >
-> > [...]
-> >
-> > > So I changed the dr_mode to otg instead of host and tried to configure
-> > > a usb mass storage gadget but unfortunately didn't work, but this
-> > > could be a driver problem, I got the following error
-> > >
-> > >   UDC core: g1: couldn't find an available UDC
-> > >
-> > > As the devicetree should describe the hardware, and as far as I can
-> > > see it should support the type-c port act as a gadget, I'm fine with
-> > > changing the dr_mode, unless anyone have more information about this,
-> > > the thing that makes me think a bit more is that, in the TI kernel
-> > > this is set to host, so I'm wondering if I'm missing something or is
-> > > just that was never tested.
-> >
-> > Are all interfaces (Type-A and Type-C) functional as Host when the
-> > dr_mode is set to "otg"? (Do USB devices connected to the interfaces
-> > enumerate on AM69-SK?) If yes, then it could be a DIP Switch setting
-> > that is related to OTG mode of operation or a USB-C Mux that needs to be
-> > configured.
-> >
+> > Hmm. If you say so. Note that powerpc has the same or a similar problem.
+> > 
+> > [    0.142039][    T0] RCU not watching for tracepoint
+> > [    0.142488][    T0]
+> > [    0.142659][    T0] =============================
+> > [    0.142755][    T0] WARNING: suspicious RCU usage
+> > [    0.142914][    T0] 6.13.0-rc1-00058-ge75ce84aa5d3 #1 Not tainted
+> > [    0.143082][    T0] -----------------------------
+> > [    0.143178][    T0] kernel/notifier.c:586 notify_die called but RCU thinks we're quiescent!
+> > 
+> > 
+> > [    0.152733][    T0] RCU not watching for tracepoint
+> > [    0.152770][    T0]
+> > [    0.152995][    T0] =============================
+> > [    0.153092][    T0] WARNING: suspicious RCU usage
+> > [    0.153187][    T0] 6.13.0-rc1-00058-ge75ce84aa5d3 #1 Not tainted
+> > [    0.153301][    T0] -----------------------------
+> > [    0.153394][    T0] include/linux/rcupdate.h:850 rcu_read_lock() used illegally while idle!
+> > 
+> > [    0.165396][    T0] RCU not watching for tracepoint
+> > [    0.165540][    T0]
+> > [    0.165712][    T0] =============================
+> > [    0.165811][    T0] WARNING: suspicious RCU usage
+> > [    0.165909][    T0] 6.13.0-rc1-00058-ge75ce84aa5d3 #1 Not tainted
+> > [    0.166026][    T0] -----------------------------
+> > [    0.166122][    T0] include/linux/rcupdate.h:878 rcu_read_unlock() used illegally while idle!
+> > 
+> > and many more.
 > 
-> Yes, all interfaces (Type-A and Type-C) are functional as host when
-> the dr_mode is set to "otg". Looking at SK-AM69 Processor Start Kit
-> User's Guide (Rev. A) [1] I don't see any DIP Switch related to the
-> OTG  mode. Looks like the type-c connector connects directly to the
-> SoC through a USB HUB (TUSB4041).
+> Grumble. It's just that one file. I wonder if we could just do a hack like
+> this?
 > 
-> [1] https://www.ti.com/lit/ug/spruj70a/spruj70a.pdf?ts=1733215039014
+> Paul?
 
-In that case, please post the patch setting "dr_mode" to "otg". As to
-why "peripheral"/"gadget" operation doesn't work could be addressed
-separately and seems to be independent of the device-tree. The reason
-for suggesting "otg" instead of "host" is to ensure that the device-tree
-describes the Hardware. Since "host" mode is still functional with
-"dr_mode" set to "otg", at-least for the use-cases that you have in mind,
-I believe that "otg" should be acceptable.
+Looks plausible to me, though I don't understand why the introduction
+of trace() doesn't permit removal of the corresponding current code.
+(Or did I miss a previous patch that did just that?)
 
-Regards,
-Siddharth.
+							Thanx, Paul
+
+> diff --git a/kernel/trace/trace_preemptirq.c b/kernel/trace/trace_preemptirq.c
+> index 5c03633316a6..58098873efa9 100644
+> --- a/kernel/trace/trace_preemptirq.c
+> +++ b/kernel/trace/trace_preemptirq.c
+> @@ -10,11 +10,42 @@
+>  #include <linux/module.h>
+>  #include <linux/ftrace.h>
+>  #include <linux/kprobes.h>
+> +#include <linux/hardirq.h>
+>  #include "trace.h"
+>  
+>  #define CREATE_TRACE_POINTS
+>  #include <trace/events/preemptirq.h>
+>  
+> +/*
+> + * Use regular trace points on architectures that implement noinstr
+> + * tooling: these calls will only happen with RCU enabled, which can
+> + * use a regular tracepoint.
+> + *
+> + * On older architectures, RCU may not be watching in idle. In that
+> + * case, wake up RCU to watch while calling the tracepoint. These
+> + * aren't NMI-safe - so exclude NMI contexts:
+> + */
+> +#ifdef CONFIG_ARCH_WANTS_NO_INSTR
+> +#define trace(point, args)	trace_##point(args)
+> +#else
+> +#define trace(point, args)					\
+> +	do {							\
+> +		if (trace_##point##_enabled()) {		\
+> +			bool exit_rcu = false;			\
+> +			if (in_nmi())				\
+> +				break;				\
+> +			if (!IS_ENABLED(CONFIG_TINY_RCU) &&	\
+> +			    is_idle_task(current)) {		\
+> +				ct_irq_enter();			\
+> +				exit_rcu = true;		\
+> +			}					\
+> +			trace_##point(args);			\
+> +			if (exit_rcu)				\
+> +				ct_irq_exit();			\
+> +		}						\
+> +	} while (0)
+> +#endif
+> +
+>  #ifdef CONFIG_TRACE_IRQFLAGS
+>  /* Per-cpu variable to prevent redundant calls when IRQs already off */
+>  static DEFINE_PER_CPU(int, tracing_irq_cpu);
+> @@ -28,7 +59,7 @@ static DEFINE_PER_CPU(int, tracing_irq_cpu);
+>  void trace_hardirqs_on_prepare(void)
+>  {
+>  	if (this_cpu_read(tracing_irq_cpu)) {
+> -		trace_irq_enable(CALLER_ADDR0, CALLER_ADDR1);
+> +		trace(irq_enable, TP_ARGS(CALLER_ADDR0, CALLER_ADDR1));
+>  		tracer_hardirqs_on(CALLER_ADDR0, CALLER_ADDR1);
+>  		this_cpu_write(tracing_irq_cpu, 0);
+>  	}
+> @@ -39,7 +70,7 @@ NOKPROBE_SYMBOL(trace_hardirqs_on_prepare);
+>  void trace_hardirqs_on(void)
+>  {
+>  	if (this_cpu_read(tracing_irq_cpu)) {
+> -		trace_irq_enable(CALLER_ADDR0, CALLER_ADDR1);
+> +		trace(irq_enable, TP_ARGS(CALLER_ADDR0, CALLER_ADDR1));
+>  		tracer_hardirqs_on(CALLER_ADDR0, CALLER_ADDR1);
+>  		this_cpu_write(tracing_irq_cpu, 0);
+>  	}
+> @@ -61,7 +92,7 @@ void trace_hardirqs_off_finish(void)
+>  	if (!this_cpu_read(tracing_irq_cpu)) {
+>  		this_cpu_write(tracing_irq_cpu, 1);
+>  		tracer_hardirqs_off(CALLER_ADDR0, CALLER_ADDR1);
+> -		trace_irq_disable(CALLER_ADDR0, CALLER_ADDR1);
+> +		trace(irq_disable, TP_ARGS(CALLER_ADDR0, CALLER_ADDR1));
+>  	}
+>  
+>  }
+> @@ -75,7 +106,7 @@ void trace_hardirqs_off(void)
+>  	if (!this_cpu_read(tracing_irq_cpu)) {
+>  		this_cpu_write(tracing_irq_cpu, 1);
+>  		tracer_hardirqs_off(CALLER_ADDR0, CALLER_ADDR1);
+> -		trace_irq_disable(CALLER_ADDR0, CALLER_ADDR1);
+> +		trace(irq_disable, TP_ARGS(CALLER_ADDR0, CALLER_ADDR1));
+>  	}
+>  }
+>  EXPORT_SYMBOL(trace_hardirqs_off);
+> @@ -86,13 +117,13 @@ NOKPROBE_SYMBOL(trace_hardirqs_off);
+>  
+>  void trace_preempt_on(unsigned long a0, unsigned long a1)
+>  {
+> -	trace_preempt_enable(a0, a1);
+> +	trace(preempt_enable, TP_ARGS(a0, a1));
+>  	tracer_preempt_on(a0, a1);
+>  }
+>  
+>  void trace_preempt_off(unsigned long a0, unsigned long a1)
+>  {
+> -	trace_preempt_disable(a0, a1);
+> +	trace(preempt_disable, TP_ARGS(a0, a1));
+>  	tracer_preempt_off(a0, a1);
+>  }
+>  #endif
+> 
+> 
+> I tested this by forcing x86 to use this code, and it appeared to work.
+> 
+> -- Steve
 
