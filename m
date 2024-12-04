@@ -1,166 +1,265 @@
-Return-Path: <linux-kernel+bounces-431919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AC599E4517
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 20:52:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id F3BF79E44FB
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 20:47:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 31C45BE32AD
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:02:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1EE53B645CD
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:04:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76320202C2E;
-	Wed,  4 Dec 2024 17:45:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F12D6207DFF;
+	Wed,  4 Dec 2024 17:50:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CcUH48bU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="V+CixEyr"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5BD81A8F9C;
-	Wed,  4 Dec 2024 17:45:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AE67206F3C;
+	Wed,  4 Dec 2024 17:50:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733334352; cv=none; b=Pi7LTQLXDeLLNpMKU0cKinc0xJvikf7oavLvUw4itSMaSLed/KMU8uIq6TUwlcsfWxoCpQjkf/35IfqwaXM6u9FoA+ZNvwD1CKY6OOg6EBH8GxxmHwbxB/MD+3Mg47KgF5ZO57Y4URcq9vzWH9inM/thhLiYDztpKj0HqEtT/oM=
+	t=1733334605; cv=none; b=SAvRUu+wxpBESDog3A/2dXHlHl88qzuKls2Q6GVRL4Fxjv+IdPvX0wU2VclZlGJ1WiRkUWf6lZdJRUsSnTVbSvjbtzHlP/LnpuojCNPyC/xAmEwdXYNAO95eBSFjJX2u45lUWN5IS6NU1dcwABeToWKVpC8KQBAh0zuqdCtaUfw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733334352; c=relaxed/simple;
-	bh=p2OSfFRQ9Wh94bKbN2s0n+Ia+MCVZjyKqKQNDfzMkuA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=FbW78P7mdnETJBvYvLTR4hHACPyAnST9WLQI+hrLwsjOV4KmS9KEBajm4o+WITA636QPMIKYfyNYzqTa/X3hODSuwtyCsuCaaxDoHizzjaVwiiJ3/L1J2GR6+lxkeT57Foahq5SEv3IDJlz3Jx6VaZsypTKpZ3OnjFV1kYfWN5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CcUH48bU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B868DC4CECD;
-	Wed,  4 Dec 2024 17:45:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733334352;
-	bh=p2OSfFRQ9Wh94bKbN2s0n+Ia+MCVZjyKqKQNDfzMkuA=;
-	h=Date:From:To:Cc:Subject:From;
-	b=CcUH48bUARBLcnmje9oXN/LYDfaUVnFiQYQ2rG409x9bzcbeNLfNDMlsi/SFLOVhI
-	 EkzKRp7ASMxm3vcVA1U4O9kWiuOHCAhDvmweED7DTt49LLm85MSdzQA4yRG2GjTvPc
-	 h8Gq/yGzxCXAQhfQ5EMm9kuJC4g9j4mUMDJxC9OaSnB/yDo79mUyZcHSNS+YMB3PTl
-	 i4xDd2f5TgQfl+zg8PmgNLu+JREtLeO8s2BduLxvu8YstfuJkwvcqw7XoOxR8KV1qZ
-	 tBhzSLYg3HBFcUadKeeM3mrnBzIz9nW0QKOcmVkeZoyCZQiJYZCPlZ6DYoN7qGySA+
-	 maqGzmsLvOSVg==
-Date: Wed, 4 Dec 2024 14:45:48 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: James Clark <james.clark@linaro.org>,
-	Ravi Bangoria <ravi.bangoria@amd.com>,
-	Atish Patra <atishp@atishpatra.org>,
-	Mingwei Zhang <mizhang@google.com>,
-	Kajol Jain <kjain@linux.ibm.com>,
-	Thomas Richter <tmricht@linux.ibm.com>,
-	Palmer Dabbelt <palmer@rivosinc.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Ian Rogers <irogers@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org
-Subject: [REGRESSION] 'perf mem record' on a Intel hybrid system broken
-Message-ID: <Z1CVTJ5jzIyNiB1R@x1>
+	s=arc-20240116; t=1733334605; c=relaxed/simple;
+	bh=opmGdehnxln2nQW1oGD8VtWYJxzY95xTjOSYrBeQQVI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=tIjV2Ho8KCKEA99pdUmblbfORclzZFmzr0bzMRe+d8pdr87PWFF9TPNfafT7xw+lhXyac72UUY01SeBi9/2j69BAW5hzkTiIAOCjPF10MUBzJi5Hbb/29QmqzzJiz60YZkUGcmnLaN3R1XMdCewVSegHRZRFYbPwiIvW5u/pqzM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=V+CixEyr; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B4EYRvw020496;
+	Wed, 4 Dec 2024 17:49:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	uVyJPQ3V2aziLhjmvXLA9/9uqX/uOZt5e+r48GBUVns=; b=V+CixEyrIxrWE8E8
+	rafj9nXfIh3qRNQOONvc+E1+qLWusbyAhhaovl7QGK1r3+v5VWeuWa1sWNwdZ7rp
+	MLZG18/XVYFq4sonGtggVYAld+4RBr/hU9gPFn3Rtp8INWmIS7DjIjNpnDWHJeZW
+	HAbZwkIBOWruMl/lSyKX9yBzcTA/CTbD7pEgNvXIvaiGC8qzEodoFtH6jCmHYKJi
+	xt0LbjH9mLcfOVhn6VW0aMDAqHRh6opC2HzvHKjv81RaJtqOYXrWM97oWRqZCLPQ
+	XRqzMtihRA3Wlhvkdh1ZDLIFDzMCA6W2irLu4+GHrie9MspW/1AhrlgiOpbouqhc
+	MIGA8Q==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43a3exbygn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 04 Dec 2024 17:49:58 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B4HnvKb008376
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 4 Dec 2024 17:49:57 GMT
+Received: from [10.216.58.11] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 4 Dec 2024
+ 09:49:53 -0800
+Message-ID: <a260a2a7-5cb3-468c-b73e-ef83f021278c@quicinc.com>
+Date: Wed, 4 Dec 2024 23:19:50 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] clk: qcom: dispcc-sm8750: Add SM8750 Display clock
+ controller
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Stephen Boyd
+	<sboyd@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Michael
+ Turquette <mturquette@baylibre.com>,
+        Neil Armstrong
+	<neil.armstrong@linaro.org>,
+        Rob Herring <robh@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20241128-sm8750-dispcc-v1-0-120705a4015c@linaro.org>
+ <20241128-sm8750-dispcc-v1-3-120705a4015c@linaro.org>
+ <5f05f2305f37bd40bf92299c04480fbf.sboyd@kernel.org>
+ <ef6f9bd0-c24b-4964-9228-bdab1221fff5@linaro.org>
+Content-Language: en-US
+From: Taniya Das <quic_tdas@quicinc.com>
+In-Reply-To: <ef6f9bd0-c24b-4964-9228-bdab1221fff5@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: c8rQ7TiPKTtS53QXweTMtx1ZEJ-mxxIY
+X-Proofpoint-GUID: c8rQ7TiPKTtS53QXweTMtx1ZEJ-mxxIY
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 lowpriorityscore=0
+ mlxlogscore=999 clxscore=1015 phishscore=0 adultscore=0 suspectscore=0
+ malwarescore=0 spamscore=0 priorityscore=1501 impostorscore=0 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
+ definitions=main-2412040135
 
-Hi Namhyung,
 
-root@number:/tmp# perf mem record -a sleep 1s
-Error:
-The sys_perf_event_open() syscall returned with 22 (Invalid argument) for event (cpu_core/mem-loads,ldlat=30/).
-"dmesg | grep -i perf" may provide additional information.
 
-root@number:/tmp# dmesg | tail
-[18865.729882] ixgbe 0000:05:00.0 enp5s0: NIC Link is Up 10 Gbps, Flow Control: RX/TX
-[18865.848172] mlx5_core 0000:01:00.0 enp1s0f0np0: Link down
-[18866.057990] mlx5_core 0000:01:00.1 enp1s0f1np1: Link down
-[19066.396215] input: JBL RACE TWS (AVRCP) as /devices/virtual/input/input27
-[19078.378477] usb 2-3: current rate 16000 is different from the runtime rate 48000
-[21158.375680] usb 2-3: current rate 16000 is different from the runtime rate 48000
-[31386.186675] input: JBL RACE TWS (AVRCP) as /devices/virtual/input/input28
-[31409.098352] usb 2-3: current rate 16000 is different from the runtime rate 48000
-[36409.737615] sysrq: Emergency Sync
-[36409.742619] Emergency Sync complete
-root@number:/tmp#
+On 12/4/2024 3:35 PM, Krzysztof Kozlowski wrote:
+> On 03/12/2024 23:09, Stephen Boyd wrote:
+>> Quoting Krzysztof Kozlowski (2024-11-28 07:08:01)
+>>> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+>>> index 2ec9be21ff678e3343cccafa85801aa68805f440..d9ab42c625ddd61f9bf1857522d44d4547e42bf5 100644
+>>> --- a/drivers/clk/qcom/Kconfig
+>>> +++ b/drivers/clk/qcom/Kconfig
+>>> @@ -1022,6 +1022,16 @@ config SM_DISPCC_8550
+>>>            Say Y if you want to support display devices and functionality such as
+>>>            splash screen.
+>>>   
+>>> +config SM_DISPCC_8750
+>>> +       tristate "SM8750 Display Clock Controller"
+>>> +       depends on ARM64 || COMPILE_TEST
+>>
+>> Please select QCOM_GDSC
+> 
+> Ack
+> 
+>>
+>>> +       depends on SM_GCC_8750
+>>
+>> select? Or imply? It's a functional dependency, not a build time one.
+> 
+> ARM64 is as well functional dependency, ARCH_QCOM present in all other
+> drivers as well. It is all the same. The point is to limit the config
+> options available to users/distros when they do not need them. In this
+> particular case: if user does not select main clock controller (GCC)
+> then allowing to choose Display clock controller is pointless.
+> 
+>>
+>>> +       help
+>>> diff --git a/drivers/clk/qcom/dispcc-sm8750.c b/drivers/clk/qcom/dispcc-sm8750.c
+>>> new file mode 100644
+>>> index 0000000000000000000000000000000000000000..ff64ff93c4dbdd2aae22b55dd0e404544cc9373e
+>>> --- /dev/null
+>>> +++ b/drivers/clk/qcom/dispcc-sm8750.c
+>>> @@ -0,0 +1,1960 @@
+>>> +// SPDX-License-Identifier: GPL-2.0-only
+>>> +/*
+>>> + * Copyright (c) 2021, The Linux Foundation. All rights reserved.
+>>> + * Copyright (c) 2023-2024, Linaro Ltd.
+>>> + */
+>>> +
+>>> +#include <linux/clk.h>
+>>
+>> Is this include used?
+> 
+> Not used, copy pasta from older driver. I'll clean it up.
+> 
+>>
+>>> +#include <linux/clk-provider.h>
+>>> +#include <linux/err.h>
+>>> +#include <linux/kernel.h>
+>>> +#include <linux/module.h>
+>>> +#include <linux/of.h>
+>>> +#include <linux/platform_device.h>
+>>> +#include <linux/regmap.h>
+>>> +#include <linux/pm_runtime.h>
+>>> +
+>>> +#include <dt-bindings/clock/qcom,sm8750-dispcc.h>
+>>> +
+>>> +#include "common.h"
+>>> +#include "clk-alpha-pll.h"
+>>> +#include "clk-branch.h"
+>>> +#include "clk-pll.h"
+>>> +#include "clk-rcg.h"
+>>> +#include "clk-regmap.h"
+>>> +#include "clk-regmap-divider.h"
+>>> +#include "clk-regmap-mux.h"
+>>> +#include "reset.h"
+>>> +#include "gdsc.h"
+>> [...]
+>>> +};
+>>> +
+>>> +static struct clk_rcg2 disp_cc_mdss_mdp_clk_src = {
+>>> +       .cmd_rcgr = 0x8150,
+>>> +       .mnd_width = 0,
+>>> +       .hid_width = 5,
+>>> +       .parent_map = disp_cc_parent_map_9,
+>>> +       .freq_tbl = ftbl_disp_cc_mdss_mdp_clk_src,
+>>> +       .clkr.hw.init = &(const struct clk_init_data) {
+>>> +               .name = "disp_cc_mdss_mdp_clk_src",
+>>> +               .parent_data = disp_cc_parent_data_9,
+>>> +               .num_parents = ARRAY_SIZE(disp_cc_parent_data_9),
+>>> +               .flags = CLK_SET_RATE_PARENT,
+>>> +               .ops = &clk_rcg2_shared_ops, /* TODO: switch to cesta managed clocks */
+>>
+>> What is cesta?
+> 
+> Cesta is a new hardware block which receives votes from consumers and
+> then manages groups of clocks. We do not have drivers for it, so I am
+> not sure how this here will work out.
+> 
+> I will grow the explanation in comment.
+> 
 
-	That I bisected down to:
+Clocks can work without cesta block as well.
 
-⬢ [acme@toolbox perf-tools-next]$ git bisect good 
-af954f76eea56453713ae657f6812d4063f9bc57 is the first bad commit
-commit af954f76eea56453713ae657f6812d4063f9bc57
-Author: Namhyung Kim <namhyung@kernel.org>
-Date:   Tue Oct 15 23:23:57 2024 -0700
+>>
+>>> +       },
+>>> +};
+>>> +
+>>> +static struct clk_rcg2 disp_cc_mdss_pclk0_clk_src = {
+>>> +       .cmd_rcgr = 0x8108,
+>>> +       .mnd_width = 8,
+>>> +       .hid_width = 5,
+>>> +       .parent_map = disp_cc_parent_map_1,
+>>> +       .freq_tbl = ftbl_disp_cc_esync0_clk_src,
+>>> +       .clkr.hw.init = &(const struct clk_init_data) {
+>>> +               .name = "disp_cc_mdss_pclk0_clk_src",
+>>> +               .parent_data = disp_cc_parent_data_1,
+>>> +               .num_parents = ARRAY_SIZE(disp_cc_parent_data_1),
+>>> +               .flags = CLK_SET_RATE_PARENT,
+>>> +               .ops = &clk_pixel_ops,
+>>> +       },
+>> [...]
+>>> +               .enable_reg = 0x80b4,
+>>> +               .enable_mask = BIT(0),
+>>> +               .hw.init = &(const struct clk_init_data) {
+>>> +                       .name = "disp_cc_osc_clk",
+>>> +                       .parent_hws = (const struct clk_hw*[]) {
+>>> +                               &disp_cc_osc_clk_src.clkr.hw,
+>>> +                       },
+>>> +                       .num_parents = 1,
+>>> +                       .flags = CLK_SET_RATE_PARENT,
+>>> +                       .ops = &clk_branch2_ops,
+>>> +               },
+>>> +       },
+>>> +};
+>>> +
+>>> +static struct gdsc mdss_gdsc = {
+>>> +       .gdscr = 0x9000,
+>>> +       .en_rest_wait_val = 0x2,
+>>> +       .en_few_wait_val = 0x2,
+>>> +       .clk_dis_wait_val = 0xf,
+>>> +       .pd = {
+>>> +               .name = "mdss_gdsc",
+>>> +       },
+>>> +       .pwrsts = PWRSTS_OFF_ON,
+>>> +       .flags = POLL_CFG_GDSCR | HW_CTRL | RETAIN_FF_ENABLE,
+>>> +       // TODO: no supply?
+>>
+>> What is this?
+> 
+> Development note. I will clean it up.
+> 
+> 
+> 
+> Best regards,
+> Krzysztof
+> 
 
-    perf tools: Check fallback error and order
-    
-    The perf_event_open might fail due to various reasons, so blindly
-    reducing precise_ip level might not be the best way to deal with it.
-    
-    It seems the kernel return -EOPNOTSUPP when PMU doesn't support the
-    given precise level.  Let's try again with the correct error code.
-    
-    This caused a problem on AMD, as it stops on precise_ip of 2 for IBS but
-    user events with exclude_kernel=1 cannot make progress.  Let's add the
-    evsel__handle_error_quirks() to this case specially.  I plan to work on
-    the kernel side to improve this situation but it'd still need some
-    special handling for IBS.
-    
-    Reviewed-by: James Clark <james.clark@linaro.org>
-    Reviewed-by: Ravi Bangoria <ravi.bangoria@amd.com>
-    Acked-by: Kan Liang <kan.liang@linux.intel.com>
-    Cc: James Clark <james.clark@arm.com>
-    Cc: Atish Patra <atishp@atishpatra.org>
-    Cc: Mingwei Zhang <mizhang@google.com>
-    Cc: Kajol Jain <kjain@linux.ibm.com>
-    Cc: Thomas Richter <tmricht@linux.ibm.com>
-    Cc: Palmer Dabbelt <palmer@rivosinc.com>
-    Link: https://lore.kernel.org/r/20241016062359.264929-8-namhyung@kernel.org
-    Signed-off-by: Namhyung Kim <namhyung@kernel.org>
-
-If I revert that patch:
-
-⬢ [acme@toolbox perf-tools-next]$ git log --oneline -5
-9a9f2d6da1ea5ef5 (HEAD -> perf-tools-next) Revert "perf tools: Check fallback error and order"
-d12d4cfc5033cd8c perf script python: Improve physical mem type resolution
-3f79d822e331022f perf disasm: Return a proper error when not determining the file type
-1a5b914261f0ebee tools features: Don't check for libunwind devel files by default
-40384c840ea1944d (tag: v6.13-rc1, perf-tools/perf-tools) Linux 6.13-rc1
-⬢ [acme@toolbox perf-tools-next]$
-
-And rebuild, it works again:
-
-root@number:/tmp# perf mem record -a sleep 1s
-[ perf record: Woken up 1 times to write data ]
-[ perf record: Captured and wrote 13.014 MB perf.data (10316 samples) ]
-root@number:/tmp# perf evlist
-cpu_atom/mem-loads,ldlat=30/P
-cpu_atom/mem-stores/P
-cpu_core/mem-loads-aux/
-cpu_core/mem-loads,ldlat=30/
-cpu_core/mem-stores/P
-dummy:u
-# Tip: use 'perf evlist -g' to show group information
-root@number:/tmp# perf evlist -v
-cpu_atom/mem-loads,ldlat=30/P: type: 10 (cpu_atom), size: 136, config: 0x5d0 (mem-loads), { sample_period, sample_freq }: 4000, sample_type: IP|TID|TIME|ADDR|CPU|PERIOD|IDENTIFIER|DATA_SRC|WEIGHT_STRUCT, read_format: ID|LOST, disabled: 1, freq: 1, precise_ip: 3, sample_id_all: 1, { bp_addr, config1 }: 0x1f
-cpu_atom/mem-stores/P: type: 10 (cpu_atom), size: 136, config: 0x6d0 (mem-stores), { sample_period, sample_freq }: 4000, sample_type: IP|TID|TIME|ADDR|CPU|PERIOD|IDENTIFIER|DATA_SRC|WEIGHT_STRUCT, read_format: ID|LOST, disabled: 1, freq: 1, precise_ip: 3, sample_id_all: 1
-cpu_core/mem-loads-aux/: type: 4 (cpu_core), size: 136, config: 0x8203 (mem-loads-aux), { sample_period, sample_freq }: 4000, sample_type: IP|TID|TIME|ADDR|CPU|PERIOD|IDENTIFIER|DATA_SRC|WEIGHT_STRUCT, read_format: ID|LOST, disabled: 1, freq: 1, precise_ip: 3, sample_id_all: 1
-cpu_core/mem-loads,ldlat=30/: type: 4 (cpu_core), size: 136, config: 0x1cd (mem-loads), { sample_period, sample_freq }: 4000, sample_type: IP|TID|TIME|ADDR|CPU|PERIOD|IDENTIFIER|DATA_SRC|WEIGHT_STRUCT, read_format: ID|LOST, freq: 1, precise_ip: 2, sample_id_all: 1, { bp_addr, config1 }: 0x1f
-cpu_core/mem-stores/P: type: 4 (cpu_core), size: 136, config: 0x2cd (mem-stores), { sample_period, sample_freq }: 4000, sample_type: IP|TID|TIME|ADDR|CPU|PERIOD|IDENTIFIER|DATA_SRC|WEIGHT_STRUCT, read_format: ID|LOST, disabled: 1, freq: 1, precise_ip: 3, sample_id_all: 1
-dummy:u: type: 1 (software), size: 136, config: 0x9 (PERF_COUNT_SW_DUMMY), { sample_period, sample_freq }: 1, sample_type: IP|TID|TIME|ADDR|CPU|IDENTIFIER|DATA_SRC|WEIGHT_STRUCT, read_format: ID|LOST, exclude_kernel: 1, exclude_hv: 1, mmap: 1, comm: 1, task: 1, mmap_data: 1, sample_id_all: 1, exclude_guest: 1, mmap2: 1, comm_exec: 1, ksymbol: 1, bpf_event: 1
-# Tip: use 'perf evlist -g' to show group information
-root@number:/tmp# perf evlist -g
-cpu_atom/mem-loads,ldlat=30/P
-cpu_atom/mem-stores/P
-{cpu_core/mem-loads-aux/,cpu_core/mem-loads,ldlat=30/}
-cpu_core/mem-stores/P
-dummy:u
-root@number:/tmp#
-
-Now trying to investigate this,
-
-- Arnaldo
+-- 
+Thanks & Regards,
+Taniya Das.
 
