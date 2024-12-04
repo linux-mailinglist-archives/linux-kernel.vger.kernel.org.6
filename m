@@ -1,127 +1,128 @@
-Return-Path: <linux-kernel+bounces-430730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FFC39E353A
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 09:26:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CED8B9E356A
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 09:31:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0F16EB2FBFB
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 08:02:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3A22DB2903A
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 08:01:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90AC5197521;
-	Wed,  4 Dec 2024 07:52:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7BC3190662;
+	Wed,  4 Dec 2024 07:52:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="JfPDQira"
-Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h4Bm708a"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38EF618E368;
-	Wed,  4 Dec 2024 07:52:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5550718E359
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 07:52:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733298734; cv=none; b=MqY1K/Kzv/QHsP/u3HXz6mkHXBN36U1URRN9MQ8ZIgGTGu+eMJTyZ4ltPgs8SgLpfAlB31Bua+zLiv/SY1usw7XL6ntfhd8UPGiyNT23/QzwA554k+yjZs/6wX0BAFxd53VWRQ6PTway3bXOsPHmsKU08J3q88ORJwUh+Ekd+KY=
+	t=1733298733; cv=none; b=X0weWv6pA7YTYLPZXlsfwcnvj4te1i+8+X7HaZlUwNymJD/xNPhlmWztkhjEihbk7OOQo3J1t+3tXPIiV+TX+ofV8Z2Jx37JXLWa4hs2Nj0aQv0QrMLnLp+S93kYpUdQpR0a87V3XkXQsHyyDwi/RG4lyF98kxfPKRThVmLWBDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733298734; c=relaxed/simple;
-	bh=O/unXNLcf1eONeSIFuIlI3mgX9zgjQWIx/EDoMBp9mw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Hz37ksNGrECkQvqwD7OxAPWN6T7bzgsx4fmr4wMh/9qX3HyhIBEfCsWsT8viBsqu5IkhhyiqB+EkGnmXnBRASYIoM89r9lqrEP9RSyER3ING1XBECVADNMV6ZEu4Ys7pvdnKrKtp8cjx08Vm8iuxkOh3CgIhSjUskI4TtZ3qfQg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=JfPDQira; arc=none smtp.client-ip=198.47.23.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 4B47q32M1757814
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 4 Dec 2024 01:52:03 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1733298723;
-	bh=qvLdxoCg2whNqusOckWdCk+BimF7TYRi9/jur9YYrOk=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=JfPDQiraJHbcleiFqbXaEJfok7m5INVrjh5UfBgZ3uhz5Dw/Yo5U953pAlOcNf5Uy
-	 QgTQ0lWT4j3IdaKEn+8t0TXiqgpLY1YDFR2wJTWwKZAVEWWvaME2ADQuIPVFPwR73/
-	 kNP6U8NrWaBg59gXw9AC2MrSqzKMzHdb3loJnO/Q=
-Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4B47q3b9012229
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 4 Dec 2024 01:52:03 -0600
-Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 4
- Dec 2024 01:52:03 -0600
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE106.ent.ti.com
- (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 4 Dec 2024 01:52:03 -0600
-Received: from [10.24.69.37] (a0497641-hp-z2-tower-g9-workstation-desktop-pc.dhcp.ti.com [10.24.69.37] (may be forged))
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4B47q0QJ114667;
-	Wed, 4 Dec 2024 01:52:00 -0600
-Message-ID: <e280d338-d05d-4910-8017-bc121eb2b94b@ti.com>
-Date: Wed, 4 Dec 2024 13:21:59 +0530
+	s=arc-20240116; t=1733298733; c=relaxed/simple;
+	bh=6rcAR5fx634iJHuLmG3RpP1qjECcf4AuZFK+vo0BkYs=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=WAeWTFejnuYnve5XZZ224LxyInt+ukUthoiJJJgc3mkFJX0CENxPcnZ7PmhaADD//gjtAy+5h/pMv4guppYJJOAReNq0LOuJiIwnDhWFz46PP0YypKmNQTXhmHSr2EJPuGWUgPnzQXYAsvPTgCLy5YmxQC2peBZZOwTdwxcr33I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h4Bm708a; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F28C5C4CED1;
+	Wed,  4 Dec 2024 07:52:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733298732;
+	bh=6rcAR5fx634iJHuLmG3RpP1qjECcf4AuZFK+vo0BkYs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=h4Bm708aGOwWi+sLdeoBl9r2YU87vdRoZ6A1uP2smaNA3Ov57u+rvrYCzwOWjEoA0
+	 Pn3BCI79QhR+EMfVLApskVeRtEPCKYPLLJfBJRM5Jp+b+eZ9JOs5NkT23zZShE/YX5
+	 kX/pMa8uti42JCL9M1ZXQ4DUPFg9CWPt1Wc8r+0DbXzSHFqdjD6ot+99Myl115VWJC
+	 YyPCHgYmzH4F3kNXuyDwv7+BY+OULBQ9tuJpgxQ0DpmK+yJspBTHlq31UfFkXJHvBl
+	 1P9o2RchNryrXJoBYXlTm5heVJZ2jskqdxyXtvp39YYocn/kff7Y9WfaM2gbXkOdt7
+	 BE5ElJxo6oXKA==
+Date: Wed, 4 Dec 2024 08:52:07 +0100
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Cc: Igor Mammedov <imammedo@redhat.com>, Shiju Jose <shiju.jose@huawei.com>,
+ "Michael S. Tsirkin" <mst@redhat.com>, Ani Sinha <anisinha@redhat.com>,
+ Dongjiu Geng <gengdongjiu1@gmail.com>, <linux-kernel@vger.kernel.org>,
+ <qemu-arm@nongnu.org>, <qemu-devel@nongnu.org>
+Subject: Re: [PATCH v4 08/15] acpi/ghes: make the GHES record generation
+ more generic
+Message-ID: <20241204085207.0ecae6ae@foz.lan>
+In-Reply-To: <20241125115643.00002923@huawei.com>
+References: <cover.1732266152.git.mchehab+huawei@kernel.org>
+	<b3845a8c78ef36c633d5e20af868de4ed16650a4.1732266152.git.mchehab+huawei@kernel.org>
+	<20241125115643.00002923@huawei.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 0/6] arm64: dts: ti: k3-j7*: Add missing ESM and
-To: <robh@kernel.org>, <conor+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <vigneshr@ti.com>, <nm@ti.com>
-CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kristo@kernel.org>, <u-kumar1@ti.com>
-References: <20240425211233.2006233-1-n-francis@ti.com>
-Content-Language: en-US
-From: Neha Malcom Francis <n-francis@ti.com>
-In-Reply-To: <20240425211233.2006233-1-n-francis@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Hi Vignesh,
+Em Mon, 25 Nov 2024 11:56:43 +0000
+Jonathan Cameron <Jonathan.Cameron@huawei.com> escreveu:
 
-Pinging on the below old patch series, applies cleanly with 3-way merge on the 
-latest tip as well, so should be okay to pick up if all looks fine.
+> On Fri, 22 Nov 2024 10:11:25 +0100
+> Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
+> 
+> > Split the code into separate functions to allow using the
+> > common CPER filling code by different error sources.
+> > 
+> > The generic code was moved to ghes_record_cper_errors(),
+> > and ghes_gen_err_data_uncorrectable_recoverable() now contains
+> > only a logic to fill the Generic Error Data part of the record,
+> > as described at:
+> > 
+> > 	ACPI 6.2: 18.3.2.7.1 Generic Error Data
+> > 
+> > The remaining code to generate a memory error now belongs to
+> > acpi_ghes_record_errors() function.
+> > 
+> > A further patch will give it a better name.
+> > 
+> > Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>  
+> 
+> One trivial follow up that is enabled by the change you are discussing with Igor.
+> Up to you that one.
+> 
+> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> > +
+> > +int acpi_ghes_record_errors(uint16_t source_id, uint64_t physical_address)
+> > +{
+> > +    /* Memory Error Section Type */
+> > +    const uint8_t guid[] =
+> > +          UUID_LE(0xA5BC1114, 0x6F64, 0x4EDE, 0xB8, 0x63, 0x3E, 0x83, \
+> > +                  0xED, 0x7C, 0x83, 0xB1);
+> > +    Error *errp = NULL;
+> > +    int data_length;
+> > +    GArray *block;
+> > +
+> > +    if (!physical_address) {
+> > +        error_report("can not find Generic Error Status Block for source id %d",
+> > +                     source_id);
+> > +        return -1;
+> > +    }  
+> 
+> With this error check gone (as per discussion with Igor) you could use
+> g_autofree to deal with freeing block.
+> 
+> That would bring the errp check right next to the call that would result
+> in errp potentially being set and slightly improve readability.
+> 
+> Mind you there are no uses of this in hw/acpi currently so maybe this
+> isn't a good time to start :)
 
-On 26/04/24 02:42, Neha Malcom Francis wrote:
-> Add missing ESM and watchdog nodes for the sake of devicetree completion
-> of hardware description w.r.t Linux and ESM and WDT enablement on
-> U-Boot. This patch series adds the missing nodes for J721E and J7200.
-> 
-> Boot logs (updated for v3):
-> https://gist.github.com/nehamalcom/5dc94ab60f57df5d515d0a6d0da6e0d1
-> 
-> Changes since v3:
-> - added patch (6/6) for adding bootph-pre-ram in main_esm nodes (Udit)
-> - no change to boot logs
-> 
-> Changes since v2:
-> https://lore.kernel.org/all/20240412042537.666137-1-n-francis@ti.com/
-> - corrected register size for MCU watchdog instance in J7200 (Udit)
-> - added Reviewed-by tag (Udit)
-> 
-> Changes since v1:
-> https://lore.kernel.org/all/20240326122723.2329402-1-n-francis@ti.com/
-> - modified node name numbering to be in sync with TRM (Udit)
-> - disabled wkup_esm node in J721E (Udit)
-> - added patch (5/5) for MCU domain watchdog instances in J7200 (Udit)
-> Neha Malcom Francis (6):
-> 
-> arm64: dts: ti: k3-j721e-mcu: Add the WKUP ESM instance
->    arm64: dts: ti: k3-j721e-mcu: Add the MCU domain watchdog instances
->    arm64: dts: ti: k3-j721e-main: Add the MAIN domain watchdog instances
->    arm64: dts: ti: k3-j7200-main: Add the MAIN domain watchdog instances
->    arm64: dts: ti: k3-j7200-mcu: Add the MCU domain watchdog instances
->    arm64: dts: ti: k3-j7*-main: Add bootph-pre-ram to main_esm
-> 
->   arch/arm64/boot/dts/ti/k3-j7200-main.dtsi     | 28 ++++++
->   .../boot/dts/ti/k3-j7200-mcu-wakeup.dtsi      | 26 +++++
->   arch/arm64/boot/dts/ti/k3-j721e-main.dtsi     | 94 +++++++++++++++++++
->   .../boot/dts/ti/k3-j721e-mcu-wakeup.dtsi      | 32 +++++++
->   4 files changed, 180 insertions(+)
-> 
+Yeah, I prefer to not do such cleanup now. As you said, this isn't used
+right now at ghes, and there are still two series on the top of it.
 
--- 
-Thanking You
-Neha Malcom Francis
+IMO, such kind of change should happen afterwards, and checking on
+other places were memory is allocated in the driver.
+
+Thanks,
+Mauro
 
