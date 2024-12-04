@@ -1,55 +1,60 @@
-Return-Path: <linux-kernel+bounces-431819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A2269E41C3
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:35:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 932279E41C9
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:36:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0BDF1BA5587
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:35:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54B57284C53
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:36:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFA3D21D597;
-	Wed,  4 Dec 2024 17:05:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B13A227BB3;
+	Wed,  4 Dec 2024 17:06:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="ORW1M6NS"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="mNUb00zM"
+Received: from out-175.mta1.migadu.com (out-175.mta1.migadu.com [95.215.58.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7187122D4EA;
-	Wed,  4 Dec 2024 17:05:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05FBF227BB8
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 17:06:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733331912; cv=none; b=Beq0HVFOhq+H2OW2aAOzjPPzqT5BSQmoTnuECTX44rPLKsHrUEpwztEB7DpE+ONXClPxdNWfa8hcdOW/tNnzHaasBV+QXodyVGd67biuX1FeUIYBFbXT66bas71OcFHBjkrniqTQC3OSS+VjtcVOEls7s7cRc4J3AOYV2Bnxkq4=
+	t=1733331965; cv=none; b=TUFyEzGL9C5L6frZIGjeBCoxTwIYae6yKjWvCX3CWCUIdbuIjFMcxms/v1jpOW9CUPQLooXSl+HP0/mVL4T/aOQvyaq0Sr46q8kE2gI6WHTQZxGAGPyEVS6OINJqsMqFKenK2x2jjPhIHLxdr5Y1m/1z5/rYnXD4X0bvW/Z3Yws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733331912; c=relaxed/simple;
-	bh=78gxj/BzoWW/qirjW9VkHtBeuxgnIovOYGaNqmENlXM=;
+	s=arc-20240116; t=1733331965; c=relaxed/simple;
+	bh=AoTckwQB4XbKtAP8rqnU2ismAgxj2gHD9zXwJ51Zm90=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kQWuXFBbxsfoey7qvPrjVt+SZFCODOzeSX1lPfJPtmDKc1TteQMFzKgyNWHEKW2ASLWSS/NMClsuNZ1RuDJMutdTKRLgow2kysyKrKJ7+MJctF+MSXp/5G5fu0p3wbiU3OddMFVdVjarX9zIAXl/A82TZBh/WhoGJ/Kl7tf7wBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=ORW1M6NS; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id E82114D4;
-	Wed,  4 Dec 2024 18:04:39 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1733331880;
-	bh=78gxj/BzoWW/qirjW9VkHtBeuxgnIovOYGaNqmENlXM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ORW1M6NSD/L10kyaJaBu69hYJhJ+ZqX0mJM0fy66bzh7YHxRWFubGNkNF7eKLB1KR
-	 9CNIPWNKHYNh8kV+TjHEtQ3xd/UR78LQvYnDJUWm1qM+Ji7XmZeIZOoU6PWiZ0F3Pi
-	 IJoycTEnrm+Kr9CxYCPs4C2ThkNRheyOw3EmO5/0=
-Date: Wed, 4 Dec 2024 19:04:56 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Dheeraj Reddy Jonnalagadda <dheeraj.linuxdev@gmail.com>
-Cc: dafna@fastmail.com, linux-media@vger.kernel.org, mchehab@kernel.org,
-	heiko@sntech.de, linux-rockchip@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 media-next] media: rkisp1: Fix unused value issue
-Message-ID: <20241204170456.GA16224@pendragon.ideasonboard.com>
-References: <20241119072653.72260-1-dheeraj.linuxdev@gmail.com>
- <20241119075944.GA31681@pendragon.ideasonboard.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=rCss316DQPR10QVhxwYjztwuo+UreVKqqfXITO4Z44rCOFvla5gu1ON2Rj7jrfBUBkH03LRtOBzjjb+GQzxoLJZQdnZvLVo8GiV07RkbDNkyLoLvBWqUC5ToiiJVwNfuHQJqlNBVG1j8PoFe8/y8p+9CywJD0vG8lQbIjnJaKmA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=mNUb00zM; arc=none smtp.client-ip=95.215.58.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 4 Dec 2024 09:05:52 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1733331959;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+oKz/iIFSJt8QV4dTWE8NqIm8tqA1k/wjDtf1ROk5ho=;
+	b=mNUb00zMmPKJLU9WWW6DAtG2KbV2BqOuUIIQutxjmnUHKd7oRf4XaK1YklQJLb1egmpyt7
+	llDzMq7U9GygeDGRAavdF4005NxaQLKaAuheduXysjWnX2aYiT1pc4oWetukFMp7OnqmEe
+	BK9EOgl3yvbgGJccBwl7j9uRm/wPfe8=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Kairui Song <ryncsn@gmail.com>
+Cc: Yosry Ahmed <yosryahmed@google.com>, linux-mm@kvack.org, 
+	Andrew Morton <akpm@linux-foundation.org>, Chris Li <chrisl@kernel.org>, Hugh Dickins <hughd@google.com>, 
+	"Huang, Ying" <ying.huang@intel.com>, Roman Gushchin <roman.gushchin@linux.dev>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Barry Song <baohua@kernel.org>, Michal Hocko <mhocko@kernel.org>, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/4] mm, memcontrol: avoid duplicated memcg enable check
+Message-ID: <tvywr2jdciwljtdx3wlyxgw6ocdkfoqt6hmuchhrqyk66lfsr7@gkz2rfl2u4y2>
+References: <20241202184154.19321-1-ryncsn@gmail.com>
+ <20241202184154.19321-2-ryncsn@gmail.com>
+ <CAJD7tkYemGu0iqt+ZW9t5zr21PbHkFBRnc=EixiwoNbq0xq5Ew@mail.gmail.com>
+ <CAMgjq7Aeh9LCtSkG_RMrZjO_tvGryYA-QuvU9k1ahOzEv8LkgQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,66 +63,44 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241119075944.GA31681@pendragon.ideasonboard.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMgjq7Aeh9LCtSkG_RMrZjO_tvGryYA-QuvU9k1ahOzEv8LkgQ@mail.gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, Nov 19, 2024 at 09:59:44AM +0200, Laurent Pinchart wrote:
-> Hi Dheeraj,
+On Tue, Dec 03, 2024 at 04:25:57PM +0800, Kairui Song wrote:
+> On Tue, Dec 3, 2024 at 3:11 AM Yosry Ahmed <yosryahmed@google.com> wrote:
+> >
+> > On Mon, Dec 2, 2024 at 10:42 AM Kairui Song <ryncsn@gmail.com> wrote:
+> > >
+> > > From: Kairui Song <kasong@tencent.com>
+> > >
+> > > mem_cgroup_uncharge_swap() implies a mem_cgroup_disabled() check,
+> > > which is already checked by the caller here. Skip it by calling
+> > > __mem_cgroup_uncharge_swap() directly.
+> > >
+> > > Signed-off-by: Kairui Song <kasong@tencent.com>
+> > > ---
+> > >  mm/memcontrol.c | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > >
+> > > diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> > > index 7b3503d12aaf..d3d1eb506eee 100644
+> > > --- a/mm/memcontrol.c
+> > > +++ b/mm/memcontrol.c
+> > > @@ -4615,7 +4615,7 @@ void mem_cgroup_swapin_uncharge_swap(swp_entry_t entry, unsigned int nr_pages)
+> > >                  * let's not wait for it.  The page already received a
+> > >                  * memory+swap charge, drop the swap entry duplicate.
+> > >                  */
+> > > -               mem_cgroup_uncharge_swap(entry, nr_pages);
+> > > +               __mem_cgroup_uncharge_swap(entry, nr_pages);
+> >
+> > Would it be better to instead remove the mem_cgroup_disabled() check
+> > here and have a single check in this path?
 > 
-> Thank you for the patch.
+> Good suggestion, and the kernel test bot just reported
+> __mem_cgroup_uncharge_swap is undefined with !CONFIG_SWAP, so better
+> to fix it by removing the check instead.
 > 
-> On Tue, Nov 19, 2024 at 12:56:53PM +0530, Dheeraj Reddy Jonnalagadda wrote:
-> > This commit fixes an unused value issue detected by Coverity (CID
-> > 1519008). The error condition for the invalid MIPI CSI-2 is not
-> > properly handled as the break statement would only exit the switch block
-> > and not the entire loop. Fixed this by returning the error immediately
-> > after the switch block.
-> 
-> The patch doesn't "return immediately". You can write "Fix this by
-> breaking from the look immediately after the switch block when an error
-> occurs." or something similar.
-> 
-> > 'Fixes: 8d4f126fde89 ("media: rkisp1: Make the internal CSI-2 receiver
-> > optional")'
-> 
-> The Fixes tag should be formatted on a single line, without outer
-> quotes, and without a blank line between it and the Signed-off-by line:
-> 
-> Fixes: 8d4f126fde89 ("media: rkisp1: Make the internal CSI-2 receiver optional")
 
-That commit ID doesn't exist in the git history. The commit
-corresponding to the message is 7d4f126fde89. I'll update the commit
-message accordingly.
-
-> > Signed-off-by: Dheeraj Reddy Jonnalagadda <dheeraj.linuxdev@gmail.com>
-> 
-> I can update the commit message when applying the patch, there's no need
-> to submit a v5, unless if you want to. Please let me know if I should
-> take this version and update the commit message, or if you will send a
-> v5.
-> 
-> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> 
-> > ---
-> >  drivers/media/platform/rockchip/rkisp1/rkisp1-dev.c | 3 +++
-> >  1 file changed, 3 insertions(+)
-> > 
-> > diff --git a/drivers/media/platform/rockchip/rkisp1/rkisp1-dev.c b/drivers/media/platform/rockchip/rkisp1/rkisp1-dev.c
-> > index dd114ab77800..9ad5026ab10a 100644
-> > --- a/drivers/media/platform/rockchip/rkisp1/rkisp1-dev.c
-> > +++ b/drivers/media/platform/rockchip/rkisp1/rkisp1-dev.c
-> > @@ -228,6 +228,9 @@ static int rkisp1_subdev_notifier_register(struct rkisp1_device *rkisp1)
-> >  			break;
-> >  		}
-> >  
-> > +		if (ret)
-> > +			break;
-> > +
-> >  		/* Parse the endpoint and validate the bus type. */
-> >  		ret = v4l2_fwnode_endpoint_parse(ep, &vep);
-> >  		if (ret) {
-
--- 
-Regards,
-
-Laurent Pinchart
+This sounds reasonable.
 
