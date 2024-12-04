@@ -1,218 +1,338 @@
-Return-Path: <linux-kernel+bounces-430612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D1219E338A
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 07:28:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE9BA9E338C
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 07:30:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B366FB227F7
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 06:28:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F616283D3A
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 06:30:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1BFA18756A;
-	Wed,  4 Dec 2024 06:27:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DAE6187858;
+	Wed,  4 Dec 2024 06:30:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="k1LsMKSL"
-Received: from TY3P286CU002.outbound.protection.outlook.com (mail-japaneastazon11010025.outbound.protection.outlook.com [52.101.229.25])
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="NPppGEpK"
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D5DA136E;
-	Wed,  4 Dec 2024 06:27:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.229.25
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733293678; cv=fail; b=BFprkeldgRy7XrAYUY3NPtKEnoXzxVrqmHokUu8dChDrGumoQqOHkpxRMLY12iXVtH8VSHE0o5pa5qRdafkjHgruN4xJa7t676F7QwXVVkng7hOePkhZfzvnSQ3ASivTmNVrLkCeYLIlnEXSrQAfkZuEUVQG+UOQLKv2sjWcNpQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733293678; c=relaxed/simple;
-	bh=EjcraNzZV6kDQ7nCQfrCtY2L5F2vX4/8eVva3XOkvyw=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=KTs+pTa9SnjvHlEbZTV2ZEqHruauqhuS0sb4/4Z/s9UJpajds0nAUfhPWGbxKPRDKnNsOFqRLadzEH/T6+Ne/BXUg5wqGVcYA6V7LWTK8GPUFFmVpslara13XZbX4G9E4jcWcwz1S6111OZ4/Ewf2eez5fXEyMLG4eozR2FO2/8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=k1LsMKSL; arc=fail smtp.client-ip=52.101.229.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=foM6fuMcbR2jmD68/VWE8V8ofPm09lwXCm4lADP+Gmo9S7JV6AnAQ4w3Vp7AHtS2tE6aENizC8Us/bX/Omdi9QGFjIm+45Xt+mKUArtnZ8nvb6RzFu23Tm4RmBGFE3JScnIL9G0UAmMCPuD0KdCpFBQVyydn5lVFN9xrYtyR7DVZ6NlOT85yaR7alp9z1A0bo8VQBO27NMaQrASEi1i8/CiVwAaxgd0cj3txrLZD+IYNSj9Lx9Oik3dnDd7zKuShwOM+1wVuUAH8CqoOOZVm4FCGRGWKNkSZBX1N01Gu3pbaWEPoUsKwraqZ/3Mg8fU4pD/QcN/yHE0YWa+bwf4VCw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=EjcraNzZV6kDQ7nCQfrCtY2L5F2vX4/8eVva3XOkvyw=;
- b=wPvZdXfeJLr4BRd5KbUpC/4+Dv/cLHYvpZG+gUSJMJCWjT/ad40K2NLYDtfeza4JnrmRtBu93eG1yTpZzokIVe4kSg3f0yXbYwxTT5q7VVyEKmRZsYa46nJjVdgyko9HDn/M0mLCuM9Vz4oFnqsSkHkWtKxwrTpt4++wz3IOqTVpWwgz10qq6yvJSWhsjKyDir7zVaz8nxd7BgnDpWHUMcbbUYU2KOTr/Sh3PKGcQmEo6FUBUJMaw1qRfmL/s6czjhPYPqkpTFrCKYDTMkwUDPepWRyVQ1I8km7SWKE9UJPF8oBD9T4sFdB8wndGd7Ry3XE1CA7+eEOjynN4DJ9eqw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=EjcraNzZV6kDQ7nCQfrCtY2L5F2vX4/8eVva3XOkvyw=;
- b=k1LsMKSLKxFmyKynAT89Z3bXiGb7H/d47PgXNpKD61qgUGJbyhMzxJWjUXCsFmzTz/vzr9hCY3lH1sfLOdgiQdLVSEx2NW4Mf75khN1cYIoYMlF+/CR8YJGU9qXQi8/vRAN/S0pAUxu14SYAsaGPF72Z+g76MXYZIlaOdGfb6p8=
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com (2603:1096:400:3d0::7)
- by OS3PR01MB6054.jpnprd01.prod.outlook.com (2603:1096:604:d3::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.11; Wed, 4 Dec
- 2024 06:27:51 +0000
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::86ef:ca98:234d:60e1]) by TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::86ef:ca98:234d:60e1%5]) with mapi id 15.20.8207.014; Wed, 4 Dec 2024
- 06:27:51 +0000
-From: Biju Das <biju.das.jz@bp.renesas.com>
-To: Liu Ying <victor.liu@nxp.com>, "tomm.merciai@gmail.com"
-	<tomm.merciai@gmail.com>
-CC: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Tommaso
- Merciai <tommaso.merciai.xr@bp.renesas.com>, Andrzej Hajda
-	<andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, Robert
- Foss <rfoss@kernel.org>, laurent.pinchart
-	<laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, Jernej
- Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] drm/bridge: ite-it6263: Support VESA input format
-Thread-Topic: [PATCH] drm/bridge: ite-it6263: Support VESA input format
-Thread-Index: AQHbRafhYhDs5vdfJ0a+HUDeBItd1LLVb4KAgAAuaPA=
-Date: Wed, 4 Dec 2024 06:27:51 +0000
-Message-ID:
- <TY3PR01MB113464084E6020F0B138ABD2886372@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-References: <20241203172129.778123-1-tommaso.merciai.xr@bp.renesas.com>
- <834a2690-ca06-4a8b-9a81-c4981074f95c@nxp.com>
-In-Reply-To: <834a2690-ca06-4a8b-9a81-c4981074f95c@nxp.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TY3PR01MB11346:EE_|OS3PR01MB6054:EE_
-x-ms-office365-filtering-correlation-id: 87cb4c0f-a3b6-4c9b-0873-08dd142cc768
-x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|366016|7416014|376014|1800799024|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?S2tWZDBLd3AvbENmMzFoMGVLMmF6YWttdkVHVDkzZ1RCdjA5anJwenJhRjhF?=
- =?utf-8?B?VWZUM09Za2hFN1VXaXczSXEyU1U5RlRrUU14YlRSdEMyaE05enFReTJkMUlv?=
- =?utf-8?B?SmE4ZWlwZlY5eEhKeUNVeUVBTk9HVk9PRkVBQThOQUNGSkgrU1VUVmIzakJ6?=
- =?utf-8?B?NEZSRW5JaTE3OVlFeGo5UnBBZytET3ZGc20xZnh1ZitaRmlwUGJPbUFzV3JJ?=
- =?utf-8?B?VG9UR3FaNllzckl3RVNreE9zaEZZWmlFTzNYL0xmYTN2TkNVcVhNS21tL3ll?=
- =?utf-8?B?aGNTbGpVaUhpRkRSZVlnbnEwYjdoZ1AybjdMd3RGNUNPZ1RFTUs1WExWWENI?=
- =?utf-8?B?WVJuQjJkcEE0WlBkNmdKaWYxMUJkNDVxUU5mSk51aWpFUXRTdVFSUjlua01W?=
- =?utf-8?B?MVhXVno1WWlYa3ZsNmtHSGFSWlMzTzZvTmo0L2FwRmxKRWZpTWlEWVZNZ2tY?=
- =?utf-8?B?MVUzc0Zjek5FZDJDdFJIZ1ljMWZ5amIrc1JpMUZ5NG1wNHVWNUZ5YmVwVDVS?=
- =?utf-8?B?RGQ3eVpMTFRLek55ay9tQ0lMMTBzOWs1ckF3NWZlYUlkZHk2dG4xbyttb1lO?=
- =?utf-8?B?cEloRHVzalZnWDNlM1d4b2tFWHFEeEFUS0ZBcE9rRlB6dUhLR1c5Snpjc2ZW?=
- =?utf-8?B?WSttcEhtUjkrZHJueW1wUDRzY3M4YTVDZHROd3RwdEVibkVlQ25nZlpjK3RE?=
- =?utf-8?B?RnBkby9oNzdRaENPdDZ1UGdLbEZXNlFzQUlXVmdnRWN4REFNYk5RNjFYL2lM?=
- =?utf-8?B?K0JBczd2SE1zYVdlWGNVRUlFVy9kVzdqMzlEeWsreVJOVVA1Vktid3JneVVY?=
- =?utf-8?B?azFMdXlrVTM3ejFxRmRMVlM3L1hKNTRwcW9wbWxOMU1jZ0xmeUxUQnhqSEI0?=
- =?utf-8?B?OFdRYXVrUTFhelJtcUtBbklYeGdqVDBwbFdzOW5qT3pmeEJJWE5tNWhIUm5F?=
- =?utf-8?B?MFBNZG82ZW1MZUtqeGRpTDFXQ0JwSzg1VHJFU0lwcWltZ1pSODNyWUdKbnQz?=
- =?utf-8?B?YmFqY2svWTltWitnQ2dqenNhejRicjk3aVhVc0N5R2tta2RsbEVhSUpubnpM?=
- =?utf-8?B?R2IzRzhNb2xsOUx4bGtKN2dCVDdIT21VNXNqT21iWGtxaFAxYjJGTnpsYVRs?=
- =?utf-8?B?WW1zSFhydnpNRFdpanZIQVRzRG5kN0NLcWVHRkhET09xTHRnNEZlR2NOYXg2?=
- =?utf-8?B?TnFxbGY1R0ExYm90OERvWlRMbzZtVVhjdlpYOSticUZTekMvRlFML3Fhc09o?=
- =?utf-8?B?RnFiQ0hCNGxOZXVuVXgrNHovRGd5NEtuWHF2MWhDUTcxVG05d24rcGRCYVFT?=
- =?utf-8?B?eHB6dG5NZFZXdUtCTE1QS0R2eFdMdFBVNFowMlpJc1Y2ajVpNjNwU0hWc0c3?=
- =?utf-8?B?UDNYeFllblRJMk92dnJCZGVkWGdIeVVMd1Zoc1piNkVYKy8zRTZTd1l3bUhO?=
- =?utf-8?B?WFkyTElJUHB4Uk40M2JIbzN1UGcxWW4zdWpDQ1krL1pwUFU5SmU5U0luTklR?=
- =?utf-8?B?Rnl4Qk5OZk8wOHNvZHIzTWdRMXNXWUx5enYvclkrNStPY2laUFpMTHFoVGdM?=
- =?utf-8?B?QTJWTTJTWUNMMkg4ZnBNRmI5U0NHZnNFbzFFNlJha2VVd1ovNEpoL1ZMM1hJ?=
- =?utf-8?B?RldPVWRTMU16SGxHRm9HdDNUOWtKL3VHZ0Y3RzJjcXdrRWtVdi8rYWMvbUw1?=
- =?utf-8?B?YW1LTWlwQktRM3M0QjIzZVZzc3h0RE13S3NmWDZSclpZbHU1TzVnc20raCtP?=
- =?utf-8?B?T0Z5QTMvNDlXSkJSQUU5eW85ZTdyWjlHNHJKcGNkaTY2MkgrYTlBVGZ0YVlQ?=
- =?utf-8?B?aTlFZ0REMXR1cjVXY0tEdWJuT083ZjZ6ek5ZRTZrbFpHSUxlbDYxeUJHbEhN?=
- =?utf-8?B?Nm45MGo0Q3RmSHk1WDNMM2ZhMStwVStPb051YlRMc0c4VGc9PQ==?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB11346.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?SXV3c2F1aEE2ZGlhZnpFNnY1Y0JVSU1VQUQ0Q01Td1ptRE83OUtlMVpaUS9u?=
- =?utf-8?B?djJsVWZMeXZXMnhId0VqNVNHT1ZwUDV5WFFJYm5OdzhUMnBLSXFzV0ZTbldn?=
- =?utf-8?B?d0NFcjIyM0EwOWFXbXRURUhPdXhjTFVCdnovNUJERlZTcU43QWIrOGtENmdH?=
- =?utf-8?B?azdqbFZPM0E4WDFsUDJscGtIQ0FlbC9ia1MvdFFNZXgrOHZMTDFIUXpiVk5n?=
- =?utf-8?B?ZEp0L1QxQzZMNkdNMnJRWXZ2U0VyenhoRXVaSDY1aHJxMTJzSjJESitubTk1?=
- =?utf-8?B?L1FiYW56UFJZWnZYOVdWdTViTEI2N1BWM2VvaUw4T3UrbkMvTHQ0RHlueEp3?=
- =?utf-8?B?d3hYb2VxZHB0R1RudG1xUXZkOXg0K0NOUnJCYWh0M2FMdFpWRUZYQy8yWVMy?=
- =?utf-8?B?VjlGWHN5T3IxeUk3TG5PdHQ0RXpzSHN5bmVkcnhRV24yd09xRkJtQWlFdUVP?=
- =?utf-8?B?Uml4eWhjc2djMGcxY1ZlSzkycHFNTlJiYjJEeDk3WERNT0MxU2lDejcxWDFP?=
- =?utf-8?B?N1BXZTlQeWVXMUp2QWdDaGJiNmVUQWR4STdMUnVUaXNJb1hDOFFiT1gzL3hv?=
- =?utf-8?B?UEowNW90Mkkrd2wrTndSS2IyQU0vcXplVGt3OE1EMTIvTVpDeUdBRDRWUkUw?=
- =?utf-8?B?NGZTdVdIdkU0QVpYUW1BUTdzdmJtZmJUREZEZ3pWN1BoUnRNWlZNendma1pG?=
- =?utf-8?B?eCtUMTlFVFY3endrc3JQQmZ3SnpXYUszdWxWVGJ3bmVRdXRGdmZrVDJGcVMz?=
- =?utf-8?B?U3BVL05meXlkeWdnRFJQTGVSN2d6T2ZKeWN1Tm1nTmNLV0RpYlc3djlhRWkz?=
- =?utf-8?B?cWVLalJvWjFJK3dsdER6SjJKaWM5YUk1R1Vldlk1WHd2STdrYXNIdVlqVjZP?=
- =?utf-8?B?T092ZjYrYjloazJaRmdPSzRXVnBhVDkzVXpDN0xOeXJSUDZEaTNWdUM5eno0?=
- =?utf-8?B?S2dYbXBpTGVqbzkrZ01oRjQ5N1loK3RGbUtnUEdHcTZUbzVKOUtKSUVCR0dD?=
- =?utf-8?B?U3VFaVd5cjVnSkU4aTJyb3Z1anRkMm8ybnBMNXdRcFRZUVY5NHN4NjV1ZTdx?=
- =?utf-8?B?c1cwWUpGbkozVGlZNGNQaXVkWUZGeGluTlNMOXRJbjdTejBVT0JYdXRSUFpJ?=
- =?utf-8?B?Z0d2ZFU2NE9icEtUK2ZNUUlEU1lJbm5KQld1aFNCWTFrWHFndlJ3dU5CMG53?=
- =?utf-8?B?MmlLY1FsVDh5NFQ3SWp1NFFmdHp1RGU3ZzRFZ3JWUGo3T0RXRjdRaEFHMkRv?=
- =?utf-8?B?VFlwU0ZwMDNXRWZLb1oxV3FXcTdTTDVmQzF6THlKY2lGTHJJZG9UQkc1Szdq?=
- =?utf-8?B?ZVMyeUhxaWlrOVBoTzB3aml0eU1TdTNIU1d1aDBUMTljQU40ZWxrMENBU0Qv?=
- =?utf-8?B?d2VxRU1URmdWMVZ2RXlTT0I4dCtkUzNRK0xkQWt1UjdSTDdSdnRsV0FRd1Rt?=
- =?utf-8?B?OW84aUxFY2tqTVVGK3pydEx6RTJuTklHcW9YMFhpY0ZvQnh6RzZVVmd5MnRk?=
- =?utf-8?B?QUVKbEl3VFBRMVJndktmWWtYalpnYXRLdXoreEcyUGN3cTZLcUpOK1QvZ3pX?=
- =?utf-8?B?RFZueTBVT09TUWx0TTEvWjFad3l3MUhxSzRyQmdJaW5uTEl0SEF2NVlPYW1I?=
- =?utf-8?B?S3FVVUgxd1BTMzhZRllvMVpVeVA1TTVzd0xuUXEyL2lyMkg2dWJFa2tZL1E1?=
- =?utf-8?B?TUs2L3Z1aWg1djV5dDl0VldtUG9tZHNoUzFqK1FlaSszQm1PLzRkc3FZTk9W?=
- =?utf-8?B?UGVGWm9VRnlvR2xHNkM0TW96TkszSWFlQndCY3k1SHJuY2tvTVorenROQXox?=
- =?utf-8?B?T0RaVlM0U1FyU0JWUnZCTWlCZWEvMkpjQ25DWmlobXU3Q0o3cG1ISDV3TVFm?=
- =?utf-8?B?WGs0Q1V4M3NtV2F0c0YwMFhVaFprTUUvRUlmdmFrYU92MHMyeDhuRDBHZ0Fh?=
- =?utf-8?B?eCttejg4aVZXSmFyT0lwSnNhM2xyV2lPbFErUzJSYjlXcFAzWmVjMGRNZjhn?=
- =?utf-8?B?K2lvOU9tUmluVGpVTjBNOWpkcll2bUw3elUvVC9yZUhDZ0N1TXhlcnJEdFU5?=
- =?utf-8?B?R0RrUWZEaHpyVjFQUDFJNGlMNFEzbisySldSNXZXWUpjcU5kY0F4aWFWRDdn?=
- =?utf-8?B?ZFRGOEEzRkN4NUNBWTNBWGtkdFlMRUQ3TStPRFBBYk9vUXVCNnVKNnFDckd2?=
- =?utf-8?B?cHc9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75A87143888
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 06:30:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733293849; cv=none; b=M5cp3LLQrDwPfZKyRvxnynqn75lnQUDlUDbu94Dr7cyqZS1mn0wB/1NS/6zUvkzQ7M3EfjyzFll5phNpzX97nKdPyzjpxd30Lo6D0funAvpR3CuHn+id4Um3mZUtAObPkpfc4IIx+k1nfmnBmrvwEj2j3Ei0Cnu0cElAja7HMW0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733293849; c=relaxed/simple;
+	bh=u8/FhKS6syL2h6vpp19qkb8ugo62/NjIFJc/lxA1Q2g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZvQap0FIrWEntkuZJaVusy8WxkNyfjWldPu6PVpCkj/4tgIUMYRlFite6IxqpPSlH5ipoeYCOFSCu7NJqH6kQ1n4KYoIeDo0offx+pu8zvJ7ZMEdEkYPsk0VxSNCTvm9nyacGlas3YXU0H7q38spJUK/m5f0ZtHZr2huhQHFcN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=NPppGEpK; arc=none smtp.client-ip=185.125.188.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com [209.85.221.71])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 0DEB73F1CE
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 06:30:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1733293843;
+	bh=Vu4AWTTF9NWZIyLPtlOp2MAWisE9ji+w1i+PTwK1h7E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type;
+	b=NPppGEpKp/TpkMNPQRqE0T+VnrpgmQtdx97Cl8TtWhuzJoWYOAPnRcQGImRGZ7mr5
+	 dZp67K9Dt3lUpGT75FXO2odokmf6/WGBZs4pvDXqcOjS/6Jr2T1hRPa4X/DRSjFSN7
+	 YmqJ3nEwdiuPLBSkd3Ey/tgIcFnMo8C5ITCAuvkgRIxxSyzNJVUHEk26wW2HGE0Tlw
+	 QkuGklL6Ql3j3RwvywJtUPTup1E+w4jPK4Z7u/Mzbxd46QllGubX6X7J+vlUqSDoo4
+	 RWHe90cGE9Ck/+T47/bd8TkTfDoNskR0Cr1CmIaesqgaS8rQvMaOTqswfT70yJ86pG
+	 dW/tdebZeqE0Q==
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-385e27c5949so2766268f8f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 22:30:43 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733293842; x=1733898642;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Vu4AWTTF9NWZIyLPtlOp2MAWisE9ji+w1i+PTwK1h7E=;
+        b=gBh0LRhbwE52G4W5aU4qmYA+HdNC8bNtLUi9tepuEr43wzbmftpUfPfRrdNS7+P5kh
+         FA+8k6cqGaip+4uViNeO/XNbuoZED89scS/CU5chJASIsWe9f+t6Zm06a5NyQlWAmb9R
+         dWcmtHvhME/G8SqQr3p8IS0FS0cIQ8JqIpfxDvavf2Gmh2zfnuX2gOHRcoWlj9rjZ4mu
+         LON28ttrTLfjF41sXuLC6xibYsHuxv6CcfikpFwDhuwIKronmKMjRzwFPlg1aFeVqxTo
+         yK1B3/dXFL8r6cXjYWRSa2G4g46T/HsB+65CReY5Z7UdrAYZFyoalNn0sV7/ItJw1ZVk
+         Kbhw==
+X-Forwarded-Encrypted: i=1; AJvYcCVboObf5dsTmyzOPIpMdt22qn0ALYRvUgJzVSnVAzBdcAAzBpt+MQq8tH1zOSA5FtcBg+c6LoK63GEEcwk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4mk7Pz3uS0hXYV5O/FTip2M9AQsD9ztRw6boNn1UtYx58EAaN
+	hh5MDX7qzI1vf1rYF8R+IjV0OTjtbXOt8Fp7MciJZA5W7rdonedfAbFVGDXtcsVCICG6zAkIzGz
+	foav0tuYyaGScHdG+GQ82WMp8L806YTaWrvAtyfrwpSuoS22X4hSZtyxGDMUgQNgZuS/Dm3P/D2
+	mpHPmlKRpYP5IJWI5uifBcBq9zmEmLBizRTYPmGnt/kaBJHt6n8jA0
+X-Gm-Gg: ASbGnct0/YsnOQdDjhWUnuBrtbQ9pdqv+jTPgQQ/hkNlt7Enfa9tDq1SWxsLWtB3LOQ
+	zYxbDAfYG7OvsJwGHtK9MTxRW5RLkhX6U
+X-Received: by 2002:a05:6000:2b0d:b0:385:e9c0:c069 with SMTP id ffacd0b85a97d-385fd433373mr3201327f8f.57.1733293842510;
+        Tue, 03 Dec 2024 22:30:42 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFgKkV5ER1fJMeaNPt9eXdid2Bgy53nhFydaMsm5HpgMyJxVgBYK7Sk/f/FxzBOxkqpnahXd9nHs6aTfHvCS8o=
+X-Received: by 2002:a05:6000:2b0d:b0:385:e9c0:c069 with SMTP id
+ ffacd0b85a97d-385fd433373mr3201311f8f.57.1733293842135; Tue, 03 Dec 2024
+ 22:30:42 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TY3PR01MB11346.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 87cb4c0f-a3b6-4c9b-0873-08dd142cc768
-X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Dec 2024 06:27:51.2972
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: sediIbEtOUh5arJFcJAqElW5dwG1y+xgeQ5d08HbDsfofpLRHtqAM8k3UeBpdjwWGBlcTxK7i7bjg2fXR0qDTM8jgV65k5ZwP1l8Rf+1SBY=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS3PR01MB6054
+References: <20241202023041.492547-1-en-wei.wu@canonical.com> <CABBYNZLBGSKp_ew1Zk5YXrpsdue4aHObfavNcQQ8KOCymt7Eww@mail.gmail.com>
+In-Reply-To: <CABBYNZLBGSKp_ew1Zk5YXrpsdue4aHObfavNcQQ8KOCymt7Eww@mail.gmail.com>
+From: En-Wei WU <en-wei.wu@canonical.com>
+Date: Wed, 4 Dec 2024 14:30:31 +0800
+Message-ID: <CAMqyJG0n5evc5-BAyT+R5+Sq15VJoqoEo2uhH6bjAd_Y5egiQQ@mail.gmail.com>
+Subject: Re: [PATCH v2] Bluetooth: btusb: avoid NULL pointer dereference in skb_dequeue()
+To: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Cc: marcel@holtmann.org, linux-bluetooth@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, pmenzel@molgen.mpg.de, quic_tjiang@quicinc.com, 
+	kuan-ying.lee@canonical.com, anthony.wong@canonical.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-SGkgTGl1IFlpbmcsDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogTGl1
-IFlpbmcgPHZpY3Rvci5saXVAbnhwLmNvbT4NCj4gU2VudDogMDQgRGVjZW1iZXIgMjAyNCAwMzoz
-NA0KPiBUbzogdG9tbS5tZXJjaWFpQGdtYWlsLmNvbQ0KPiBTdWJqZWN0OiBSZTogW1BBVENIXSBk
-cm0vYnJpZGdlOiBpdGUtaXQ2MjYzOiBTdXBwb3J0IFZFU0EgaW5wdXQgZm9ybWF0DQo+IA0KPiBP
-biAxMi8wNC8yMDI0LCB0b21tLm1lcmNpYWlAZ21haWwuY29tIHdyb3RlOg0KPiA+IEZyb206IFRv
-bW1hc28gTWVyY2lhaSA8dG9tbWFzby5tZXJjaWFpLnhyQGJwLnJlbmVzYXMuY29tPg0KPiA+DQo+
-ID4gSW50cm9kdWNlIGl0NjI2M19pc19pbnB1dF9idXNfZm10X3ZhbGlkKCkgYW5kIHJlZmFjdG9y
-IHRoZQ0KPiA+IGl0NjI2M19icmlkZ2VfYXRvbWljX2dldF9pbnB1dF9idXNfZm10cygpIGZ1bmN0
-aW9uIHRvIHN1cHBvcnQgVkVTQQ0KPiA+IGZvcm1hdCBieSBzZWxlY3RpbmcgdGhlIExWRFMgaW5w
-dXQgZm9ybWF0IGJhc2VkIG9uIHRoZSBMVkRTIGRhdGENCj4gPiBtYXBwaW5nIGFuZCB0aGVyZWJ5
-IHN1cHBvcnQgYm90aCBKRUlEQSBhbmQgVkVTQSBpbnB1dCBmb3JtYXRzLg0KPiANCj4gaXRlLGl0
-NjI2My55YW1sIHNheXMgSVQ2MjYzIHN1cHBvcnRzIHZlc2EtMjQgYW5kIHZlc2EtMzAsIHdoaWxl
-IHRoaXMgcGF0Y2ggYWN0dWFsbHkgb25seSBhZGRzIHZlc2EtMjQNCj4gc3VwcG9ydC4gIFNvLCB0
-byBiZSBtb3JlIHNwZWNpZmljLCB0aGUgcGF0Y2ggc3ViamVjdCBhbmQgY29tbWl0IG1lc3NhZ2Ug
-c2hvdWxkIHJlZmxlY3QgdGhpcyByYXRoZXINCj4gdGhhbiBjbGFpbSAiU3VwcG9ydCBWRVNBIGlu
-cHV0IGZvcm1hdCIuDQo+IA0KPiA+DQo+ID4gU2lnbmVkLW9mZi1ieTogVG9tbWFzbyBNZXJjaWFp
-IDx0b21tYXNvLm1lcmNpYWkueHJAYnAucmVuZXNhcy5jb20+DQo+IA0KPiBDYW4geW91IHBsZWFz
-ZSBzZW5kIHRoaXMgcGF0Y2ggd2l0aCB5b3VyIFJlbmVzYXMgZW1haWwgYWRkcmVzcyBpbnN0ZWFk
-IG9mIEdtYWlsIGVtYWlsIGFkZHJlc3M/DQo+IE90aGVyd2lzZSwgYWRkIGEgU2lnbmVkLW9mZi1i
-eSB0YWcgd2l0aCB5b3VyIEdtYWlsIGVtYWlsIGFkZHJlc3MuDQoNCklmIEkgYW0gY29ycmVjdCwg
-eW91IGNhbiBjbGVhcmx5IHNlZSB0aGUgUmVuZXNhcyBlbWFpbCBhZGRyZXNzIGFmdGVyIHN1Ympl
-Y3QuDQpTbywgdGhlIHByb2NlZHVyZSBmb2xsb3dlZCBieSBUb21tYXNvIGlzIGNvcnJlY3QuDQoN
-CllvdSBjYW4gdXNlIGdtYWlsIGFjY291bnQgZm9yIHNlbmQgcGF0Y2gsIGJ1dCB5b3UganVzdCBu
-ZWVkIHRvIGFkZCBGcm9tIHRhZyBhbmQgU29CIHRhZw0KYWZ0ZXIgc3ViamVjdCB3aXRoIGNvbXBh
-bnkgYWRkcmVzcy4NCg0KUGxlYXNlIHNob3V0IGlmIGFueW9uZSB0aGluayB0aGlzIHByb2NlZHVy
-ZSBpcyB3cm9uZy4NCg0KPHNuaXBwZXQ+DQpTdWJqZWN0OiBSZTogW1BBVENIXSBkcm0vYnJpZGdl
-OiBpdGUtaXQ2MjYzOiBTdXBwb3J0IFZFU0EgaW5wdXQgZm9ybWF0DQoNCkZyb206IFRvbW1hc28g
-TWVyY2lhaSA8dG9tbWFzby5tZXJjaWFpLnhyQGJwLnJlbmVzYXMuY29tPg0KDQpJbnRyb2R1Y2Ug
-aXQ2MjYzX2lzX2lucHV0X2J1c19mbXRfdmFsaWQoKSBhbmQgcmVmYWN0b3IgdGhlDQo8L3NuaXBw
-ZXQ+DQoNCg0KQ2hlZXJzLA0KQmlqdQ0K
+On Tue, 3 Dec 2024 at 05:23, Luiz Augusto von Dentz
+<luiz.dentz@gmail.com> wrote:
+>
+> Hi En-Wei,
+>
+> On Sun, Dec 1, 2024 at 9:30=E2=80=AFPM En-Wei Wu <en-wei.wu@canonical.com=
+> wrote:
+> >
+> > The WCN7851 (0489:e0f3) Bluetooth controller supports firmware crash du=
+mp
+> > collection through devcoredump. During this process, the crash dump dat=
+a
+> > is queued to a dump queue as skb for further processing.
+> >
+> > A NULL pointer dereference occurs in skb_dequeue() when processing the
+> > dump queue due to improper return value handling:
+> >
+> > [ 93.672166] Bluetooth: hci0: ACL memdump size(589824)
+> >
+> > [ 93.672475] BUG: kernel NULL pointer dereference, address: 00000000000=
+00008
+> > [ 93.672517] Workqueue: hci0 hci_devcd_rx [bluetooth]
+> > [ 93.672598] RIP: 0010:skb_dequeue+0x50/0x80
+> >
+> > The issue stems from handle_dump_pkt_qca() returning the wrong value on
+> > success. It currently returns the value from hci_devcd_init() (0 on
+> > success), but callers expect > 0 to indicate successful dump handling.
+> > This causes hci_recv_frame() to free the skb while it's still queued fo=
+r
+> > dump processing, leading to the NULL pointer dereference when
+> > hci_devcd_rx() tries to dequeue it.
+> >
+> > Fix this by:
+> >
+> > 1. Extracting dump packet detection into new is_dump_pkt_qca() function
+> > 2. Making handle_dump_pkt_qca() return 0 on success and negative errno
+> >    on failure, consistent with other kernel interfaces
+> >
+> > This prevents premature skb freeing by ensuring proper handling of
+> > dump packets.
+> >
+> > Fixes: 20981ce2d5a5 ("Bluetooth: btusb: Add WCN6855 devcoredump support=
+")
+> > Signed-off-by: En-Wei Wu <en-wei.wu@canonical.com>
+> > ---
+> > changes in v2:
+> > - Fix typo in the title
+> > - Re-flow a line in the commit message to fit 72 characters
+> > - Add a blank line before btusb_recv_acl_qca()
+> >
+> > drivers/bluetooth/btusb.c | 76 ++++++++++++++++++++++++---------------
+> >  1 file changed, 48 insertions(+), 28 deletions(-)
+> >
+> > diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
+> > index 279fe6c115fa..741be218610e 100644
+> > --- a/drivers/bluetooth/btusb.c
+> > +++ b/drivers/bluetooth/btusb.c
+> > @@ -2930,22 +2930,16 @@ static void btusb_coredump_qca(struct hci_dev *=
+hdev)
+> >                 bt_dev_err(hdev, "%s: triggle crash failed (%d)", __fun=
+c__, err);
+> >  }
+> >
+> > -/*
+> > - * =3D=3D0: not a dump pkt.
+> > - * < 0: fails to handle a dump pkt
+> > - * > 0: otherwise.
+> > - */
+> > +/* Return: 0 on success, negative errno on failure. */
+> >  static int handle_dump_pkt_qca(struct hci_dev *hdev, struct sk_buff *s=
+kb)
+> >  {
+> > -       int ret =3D 1;
+> > +       int ret =3D 0;
+> >         u8 pkt_type;
+> >         u8 *sk_ptr;
+> >         unsigned int sk_len;
+> >         u16 seqno;
+> >         u32 dump_size;
+> >
+> > -       struct hci_event_hdr *event_hdr;
+> > -       struct hci_acl_hdr *acl_hdr;
+> >         struct qca_dump_hdr *dump_hdr;
+> >         struct btusb_data *btdata =3D hci_get_drvdata(hdev);
+> >         struct usb_device *udev =3D btdata->udev;
+> > @@ -2955,30 +2949,14 @@ static int handle_dump_pkt_qca(struct hci_dev *=
+hdev, struct sk_buff *skb)
+> >         sk_len =3D skb->len;
+> >
+> >         if (pkt_type =3D=3D HCI_ACLDATA_PKT) {
+> > -               acl_hdr =3D hci_acl_hdr(skb);
+> > -               if (le16_to_cpu(acl_hdr->handle) !=3D QCA_MEMDUMP_ACL_H=
+ANDLE)
+> > -                       return 0;
+> >                 sk_ptr +=3D HCI_ACL_HDR_SIZE;
+> >                 sk_len -=3D HCI_ACL_HDR_SIZE;
+>
+> I know this is in the original code, but this is totally unsafe, we
+> can't go accessing the skb->data pointer without validating it has
+> this size, not to mention it is a little odd, to say the least, to
+> encode a dump event into a an ACL data packet, but then again it was
+> in the original code so I assume the firmware really does weird things
+> like this.
+>
+> Anyway if we know for sure this is a dump packet it shall be possible
+> to use the likes of skb_pull_data and stop doing unsafe access like
+> this.
+>
+> > -               event_hdr =3D (struct hci_event_hdr *)sk_ptr;
+> > -       } else {
+> > -               event_hdr =3D hci_event_hdr(skb);
+> >         }
+> >
+> > -       if ((event_hdr->evt !=3D HCI_VENDOR_PKT)
+> > -               || (event_hdr->plen !=3D (sk_len - HCI_EVENT_HDR_SIZE))=
+)
+> > -               return 0;
+> > -
+> >         sk_ptr +=3D HCI_EVENT_HDR_SIZE;
+> >         sk_len -=3D HCI_EVENT_HDR_SIZE;
+>
+> Ditto, just use skb_pull_data.
+>
+> >         dump_hdr =3D (struct qca_dump_hdr *)sk_ptr;
+> > -       if ((sk_len < offsetof(struct qca_dump_hdr, data))
+> > -               || (dump_hdr->vse_class !=3D QCA_MEMDUMP_VSE_CLASS)
+> > -           || (dump_hdr->msg_type !=3D QCA_MEMDUMP_MSG_TYPE))
+> > -               return 0;
+> > -
+> > -       /*it is dump pkt now*/
+> >         seqno =3D le16_to_cpu(dump_hdr->seqno);
+> >         if (seqno =3D=3D 0) {
+> >                 set_bit(BTUSB_HW_SSR_ACTIVE, &btdata->flags);
+> > @@ -3052,17 +3030,59 @@ static int handle_dump_pkt_qca(struct hci_dev *=
+hdev, struct sk_buff *skb)
+> >         return ret;
+> >  }
+> >
+> > +/* Return: true if packet is a dump packet, false otherwise. */
+> > +static bool is_dump_pkt_qca(struct hci_dev *hdev, struct sk_buff *skb)
+> > +{
+> > +       u8 pkt_type;
+> > +       u8 *sk_ptr;
+> > +       unsigned int sk_len;
+> > +
+> > +       struct hci_event_hdr *event_hdr;
+> > +       struct hci_acl_hdr *acl_hdr;
+> > +       struct qca_dump_hdr *dump_hdr;
+> > +
+> > +       pkt_type =3D hci_skb_pkt_type(skb);
+> > +       sk_ptr =3D skb->data;
+> > +       sk_len =3D skb->len;
+> > +
+> > +       if (pkt_type =3D=3D HCI_ACLDATA_PKT) {
+> > +               acl_hdr =3D hci_acl_hdr(skb);
+> > +               if (le16_to_cpu(acl_hdr->handle) !=3D QCA_MEMDUMP_ACL_H=
+ANDLE)
+> > +                       return false;
+> > +               sk_ptr +=3D HCI_ACL_HDR_SIZE;
+> > +               sk_len -=3D HCI_ACL_HDR_SIZE;
+> > +               event_hdr =3D (struct hci_event_hdr *)sk_ptr;
+>
+> At this point we can actually use skb_pull_data as well since I don't
+> think the stack is supposed to process data packets with
+> QCA_MEMDUMP_ACL_HANDLE as handle.
+>
+> > +       } else {
+> > +               event_hdr =3D hci_event_hdr(skb);
+> > +       }
+> > +
+> > +       if ((event_hdr->evt !=3D HCI_VENDOR_PKT)
+> > +               || (event_hdr->plen !=3D (sk_len - HCI_EVENT_HDR_SIZE))=
+)
+> > +               return false;
+> > +
+> > +       sk_ptr +=3D HCI_EVENT_HDR_SIZE;
+> > +       sk_len -=3D HCI_EVENT_HDR_SIZE;
+>
+> Unsafe access, sk_len might loop around as well.
+>
+> > +       dump_hdr =3D (struct qca_dump_hdr *)sk_ptr;
+> > +       if ((sk_len < offsetof(struct qca_dump_hdr, data))
+> > +               || (dump_hdr->vse_class !=3D QCA_MEMDUMP_VSE_CLASS)
+> > +           || (dump_hdr->msg_type !=3D QCA_MEMDUMP_MSG_TYPE))
+> > +               return false;
+> > +
+> > +       return true;
+>
+> This should probably be places in a qca specific portion, also this is
+> not very efficient, so I wonder if we should have some means for
+> driver to register handles for its vendor events like this, so driver
+> don't have to go pick the packet appart to detect that it is not
+> really meant for the Bluetooth stack to process.
+>
+Agree, I think maybe we can go over that in the future.
+
+> > +}
+> > +
+> >  static int btusb_recv_acl_qca(struct hci_dev *hdev, struct sk_buff *sk=
+b)
+> >  {
+> > -       if (handle_dump_pkt_qca(hdev, skb))
+> > -               return 0;
+> > +       if (is_dump_pkt_qca(hdev, skb))
+> > +               return handle_dump_pkt_qca(hdev, skb);
+>
+> This should be something like btqca_recv_acl, etc.
+>
+For the new helper is_dump_pkt_qca(), I think it's suitable to be
+moved into a vendor specific file (btqca.c) like you said.
+
+But I'm wondering if we should do the same thing to
+btusb_recv_acl_qca()/btusb_recv_event_qca(), because they are meant to
+be only used in the btusb.c.
+
+> >         return hci_recv_frame(hdev, skb);
+> >  }
+> >
+> >  static int btusb_recv_evt_qca(struct hci_dev *hdev, struct sk_buff *sk=
+b)
+> >  {
+> > -       if (handle_dump_pkt_qca(hdev, skb))
+> > -               return 0;
+> > +       if (is_dump_pkt_qca(hdev, skb))
+> > +               return handle_dump_pkt_qca(hdev, skb);
+>
+> Ditto, also since there is a clear difference between event vs ACL
+> packet I don't think it should be calling the same helper function to
+> detect if it is a dump packet or not.
+>
+> >         return hci_recv_frame(hdev, skb);
+> >  }
+> >
+> > --
+> > 2.43.0
+> >
+>
+>
+> --
+> Luiz Augusto von Dentz
+Best regards,
+En-Wei.
 
