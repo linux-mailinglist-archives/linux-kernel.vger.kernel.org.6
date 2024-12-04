@@ -1,127 +1,125 @@
-Return-Path: <linux-kernel+bounces-430481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F4099E3169
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 03:30:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E51E9E316D
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 03:31:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E4CB81619CB
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 02:30:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C54F5162E90
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 02:31:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5BA638DE1;
-	Wed,  4 Dec 2024 02:30:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2579942052;
+	Wed,  4 Dec 2024 02:31:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JoHELSPh"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="XYmyFWF/"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9CFB4A1A;
-	Wed,  4 Dec 2024 02:30:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B69124A1A;
+	Wed,  4 Dec 2024 02:31:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733279417; cv=none; b=OUmUexim3ldBS/viRtKNfBwsD9B5/UG1mtXc+gectXBoA6GIlFtkTI5anMuGYItJVK7Bi6Ud3NnTdyLU/3KxuABO2Qi2wJDkpGIg38UfqRuCgBn+ITWEgRFCADlj4ZCu2BAEN71WaPBniDm1+anqHgCg8ii1LdGvDnRBs2I/bAQ=
+	t=1733279492; cv=none; b=fExnnAghcPC7Bfp5mQJS9Uu36lgjTJBtftTOfj3aIJ9Plh1KmHBforZtwHADJqflJtVmTeQX4cZQW2yxYAxpOeWSHsxCmrs0861xgS10PQV1ktuDU05xdJJqXehTU6N0TFrhGvrYRjtTohG+2q07ES3lD8Wu144mIzt4zdy0xJI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733279417; c=relaxed/simple;
-	bh=TkML1wd3A6nrijWYmjiPifcOFSF0bOEPG/gMs9sM6uI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aAnuiIAgrB4gloSrq48R211txSq+T1lSP3R5SNGs3OnwyfI3V8nNo7yQfIRyZpyA2Sb+vG+544dkJ/OnkyQekLXv3amVZSOyBXP08Ze2rboAMBMsgLbyhBBOvZrCt3/Y/slXdoVCPLjmtuxa1fkjnAvFGIaOe3Vf3JaKVUukBK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JoHELSPh; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-21583eec308so4321775ad.1;
-        Tue, 03 Dec 2024 18:30:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733279415; x=1733884215; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TkML1wd3A6nrijWYmjiPifcOFSF0bOEPG/gMs9sM6uI=;
-        b=JoHELSPh+4bSb7rBzqplRl/JPbynIzU+aUl5O9j/Nu0QXTTos89Sse9cnTZlOpo9sl
-         lU1cBxpKNWm0Dk/IqKqR3u2jycsCpfxV8iuAwMRDlPmCn+we8GEvQMUEu7a28qu0EM7C
-         n7jPPuHiPY3uimt5n7Qj6rU9MU3PWLdEK6nD2iHuScPDvlAH7avKKVkDYtrzPGPZrXAL
-         JKPddA3xeU0r3AXwYr5/I8tjxk1UBuH8EQ9/S9yKEt35x7nhBLcDuuSI22tQaQg0CG3Y
-         SdXvR6SWwK8P2c7dICf9d8ol3kwSZTM936OHFCMXum+aF/cGG0QjGnIpgJ53JNw1uFlx
-         2IVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733279415; x=1733884215;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TkML1wd3A6nrijWYmjiPifcOFSF0bOEPG/gMs9sM6uI=;
-        b=QZ5gETqaXRDHOVqYzf5SoAjetOX+g7PX8QEVIy1xGlaBHDNxm1fwgg2qMiu7BYh54s
-         0WpHFxR3jvDaNvmjgi0GaYUalzDUs3Ns/RmwkaRjqJTB8231JgYrO7AVJ/V5Fye+3tRC
-         AhHtS1l8rPJoIDQJqIjx+0uLxwTR1JON6UDRJjuYnJITxg5CBRiw2y+IvQzB928p3Vwz
-         IFxC2WCXFAnWp2KkbrKdnQBQf95I2Fq/8hmPrSvqUuqZQjQS6NJtkpaOwINA6H3Q2+cJ
-         w2U6j+CXfYrmruHm9m4voySBlkSfyq5RqFP4HChll7etGKIfiFJyfRlDlDOV43gNhzIe
-         5HRg==
-X-Forwarded-Encrypted: i=1; AJvYcCUdOrei1QgSfI9GfNUITqKTIcY6c0VFF24sognbi1d6h6dIBACC6ojjLh6hwqLMUEU4AiEv1rqvf2wc45fWJVs=@vger.kernel.org, AJvYcCXSIztl4yntykbG/8U4Rd6gHmfA36fbfT17IwZRvdCBVNAZKZL96vaolACmRB7rAOnrq2TDQcTbt+yGw8Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+ubSokt4jWG25T1+NmnarZRQ85YYVz+lnsYpnQmWotm1g8+lV
-	VQFjlOQkVvL8nxqRUIQisAGR+p8uSLRL2BoufsplIl5GfNCEwI8G2hfAGOoayJ3lp1O0SZra4WJ
-	oml5lwMqVOmyMRlkbNZOVDOkoTyo=
-X-Gm-Gg: ASbGncsBbEi3DIJg/hBebjVRv2mf5sj/B95AO8u7tVXW4xwq9AgTg9eC02dER2Fy3OO
-	v58uhGC/ArZfITISJlz+4xDYWa7x9abI=
-X-Google-Smtp-Source: AGHT+IHic2zv8qoOFI8sT+YJKvRg09ySS7SrTpOeSgPj73Z0B/8oFUixNvGCq60KY4H4WNgnWM/k+1z/WHTamhHqY6A=
-X-Received: by 2002:a17:90b:384e:b0:2ee:a00d:2ef8 with SMTP id
- 98e67ed59e1d1-2ef0128353fmr2582457a91.8.1733279414987; Tue, 03 Dec 2024
- 18:30:14 -0800 (PST)
+	s=arc-20240116; t=1733279492; c=relaxed/simple;
+	bh=puJM9U10pJ7ZZsZL46RbJm49Zgm255rDCPma8dTWHD4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZYx+KDnFpM0bfDJo+Qf8WekVgL7D2UiMAsj6cPjc4W57GQj4Sx/9sg/er2tXPMD0qqwozrbNZ74i9OtjIEfZz13ijP76hjzlhKE4eXwOgds33dxZIJUo6dIhaDKAeN/s9cRohJMIx7smDQdouozlZLTZ8UjHqPJPg5TIVFYOjTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=XYmyFWF/; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=Wc0zGDWbT/aWt7/2spsG4Ol8nYa9ime9o6DHO4l9Rgs=; b=XYmyFWF/coqCWpSpJO0fItL9DD
+	n7ikGwD8cA4/aR8JfZg5ahGp1pZ5szOLgr1htHpQvKlqGvJIySx2XPq3xHIfJUG6MtSxgHpOc9qGU
+	WGsJ2V3pSBkvBRKnJsaZbX1puCcpWEwwU6PRedVWdu1j+NelsNV5ayu6w1HYRyS0mSgQ=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tIfAd-00F9mN-VB; Wed, 04 Dec 2024 03:31:19 +0100
+Date: Wed, 4 Dec 2024 03:31:19 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: David Oberhollenzer <david.oberhollenzer@sigma-star.at>
+Cc: netdev@vger.kernel.org, Julian.FRIEDRICH@frequentis.com,
+	f.fainelli@gmail.com, olteanv@gmail.com, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	linux-kernel@vger.kernel.org, upstream+netdev@sigma-star.at
+Subject: Re: [PATCH v2] net: dsa: mv88e6xxx: propperly shutdown PPU re-enable
+ timer on destroy
+Message-ID: <8c882807-c8c1-4d44-ac13-19d12b2d976f@lunn.ch>
+References: <20241203144448.30880-1-david.oberhollenzer@sigma-star.at>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CANiq72ksaJcpjHi8=vuWLTLLfik9smaqY9oJXjwtieXgJ6Gy9Q@mail.gmail.com>
- <20241204015711.635816-1-jtostler1@gmail.com>
-In-Reply-To: <20241204015711.635816-1-jtostler1@gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Wed, 4 Dec 2024 03:30:02 +0100
-Message-ID: <CANiq72kT-BEBrbe7LHajc2OcDSfnEAFQ+pu=ko1_KUhbs99x4Q@mail.gmail.com>
-Subject: Re: [PATCH] rust: alloc: Add doctest for `ArrayLayout`
-To: jtostler1@gmail.com
-Cc: alex.gaynor@gmail.com, boqun.feng@gmail.com, linux-kernel@vger.kernel.org, 
-	ojeda@kernel.org, rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241203144448.30880-1-david.oberhollenzer@sigma-star.at>
 
-On Wed, Dec 4, 2024 at 2:57=E2=80=AFAM <jtostler1@gmail.com> wrote:
->
-> Looking at the documentation for sending patches it's unclear whether
-> the commit message for a v2 of a patch should be modified for cases
-> like this, or the only changes should be the in patch changelogs,
-> after the marker line. What would usually be the preferred course of
-> action in cases like this?
->
-> Same as above about v2 patch messages. Should I add it to commit, or
-> include that in patch changelogs?
+On Tue, Dec 03, 2024 at 03:43:40PM +0100, David Oberhollenzer wrote:
+> The mv88e6xxx has an internal PPU that polls PHY state. If we want to
+> access the internal PHYs, we need to disable it. Because enable/disable
+> of the PPU is a slow operation, a 10ms timer is used to re-enable it,
+> canceled with every access, so bulk operations effectively only disable
+> it once and re-enable it some 10ms after the last access.
+> 
+> If a PHY is accessed and then the mv88e6xxx module is removed before
+> the 10ms are up, the PPU re-enable ends up accessing a dangling pointer.
+> 
+> This especially affects probing during bootup. The MDIO bus and PHY
+> registration may succeed, but registration with the DSA framework
+> may fail later on (e.g. because the CPU port depends on another,
+> very slow device that isn't done probing yet, returning -EPROBE_DEFER).
+> In this case, probe() fails, but the MDIO subsystem may already have
+> accessed the MIDO bus or PHYs, arming timer.
+> 
+> This is fixed as follows:
+>  - If probe fails after mv88e6xxx_phy_init(), make sure we also call
+>    mv88e6xxx_phy_destroy() before returning
+>  - In mv88e6xxx_phy_destroy(), grab the ppu_mutex to make sure the work
+>    function either has already exited, or (should it run) cannot do
+>    anything, fails to grab the mutex and returns.
 
-The changelog between series goes outside the commit, and is meant to
-help reviewers see what you changed (otherwise they would need to run
-e.g. a range diff and visually inspect it). The commits themselves
-should describe the changes in that commit, ignoring what happened in
-other versions, and it is meant for the future to explain what the
-change is and why it was introduced in the tree.
+On first reading this, i did not understand the code is using
+mutex_trylock() which made me think it could deadlock. Maybe change
+this to "mutex_trylock() fails to get the mutex and returns.
 
-So if you do A in v1 and B in v2, then the commit message of v1 would
-explain A, v2 would explain B, and the changelog v1->v2 for reviewers
-simply states the A->B change (i.e. briefly) so that reviewers know
-what happened.
+But i'm not actually sure this is needed. There are plenty of other
+examples of destroying a work which does not take a mutex.
 
-[ Sometimes it is important to explain in the commit message
-nevertheless why an approach like B is better than A, but you would do
-that in order to clarify why B was picked, not just because A happened
-to appear in a previous version because it was tried first and
-discarded. ]
+>  - In addition to destroying the timer, also destroy the work item, in
+>    case the timer has already fired.
+>  - Do all of this synchronously, to make sure timer & work item are
+>    destroyed and none of the callbacks are running.
 
-I hope that makes sense!
+This is the important part, doing it synchronously. cancel_work_sync()
+should be enough.
 
-> I agree, I think adding a third where the length is set to
-> `isize::MAX as usize / 2` illustrates how when `len < isize::MAX`,
-> the overflow can still occur.
+>  static void mv88e6xxx_phy_ppu_state_destroy(struct mv88e6xxx_chip *chip)
+>  {
+> +	mutex_lock(&chip->ppu_mutex);
+>  	del_timer_sync(&chip->ppu_timer);
+> +	cancel_work_sync(&chip->ppu_work);
+> +	mutex_unlock(&chip->ppu_mutex);
+>  }
 
-Great, thanks!
+/**
+ * del_timer_sync - Delete a pending timer and wait for a running callback
+ * @timer:	The timer to be deleted
+ *
+ * See timer_delete_sync() for detailed explanation.
+ *
+ * Do not use in new code. Use timer_delete_sync() instead.
 
-Cheers,
-Miguel
+
+    Andrew
+
+---
+pw-bot: cr
 
