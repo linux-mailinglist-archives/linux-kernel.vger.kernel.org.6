@@ -1,123 +1,167 @@
-Return-Path: <linux-kernel+bounces-432211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F28919E47AC
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 23:17:27 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEA849E47B0
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 23:18:27 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 521BE16805F
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 22:17:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27464285416
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 22:18:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B0E61B0F19;
-	Wed,  4 Dec 2024 22:17:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72B451AC43A;
+	Wed,  4 Dec 2024 22:18:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GZA2ZicY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lpuBpkja"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D927D2391AF;
-	Wed,  4 Dec 2024 22:17:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C33CA199FA4
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 22:18:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733350636; cv=none; b=VV+y/EjH3MPz0T94hRBZOP4e3mWBBk00N5aP+06jNu4yv8iIWYwfX1BkOqTkdA4ryy6bjIjDGlfYbuWXUxUjVWP3quETaWAtgGDHyRBC+dolalUv0WY8UgeWOOTneyQIGLcG6+NKeX7BjEp/Pn8O6OYXySDELVng+xmMbrQaUbw=
+	t=1733350703; cv=none; b=JlV4IILJp4+LCrL6RrloMSYXC4DSS7l/eDS4Z5yUr1+RXF32SLof9mFLsJIoLaFbDpvbSZ+ppAu2Ioy6tuJzv9cQW0nQFiU4muTC9yDRanVgTcvMyNfyLpJh4yS6zyA+HI5c8f/B26g73uhCZuyHz6KIe4VJ4fXfFEjB9YCYpDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733350636; c=relaxed/simple;
-	bh=Fl90+AqVZ9g5FdLJ8/BupUsex03x1wVTP97T4Uaj06M=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=kSOFscB684evXKPw4itFO6FMSphkq7TGs7ic2SOzCytddGW4VNBVNrLSwnEIACMWm3qZ+SXeKloDhs7JSodSis64IPl0EXpWPiK82IjRUAh3XrZMlB1uNGERcRB3JboRJsWHGlbrBtX5O7BbiZ0R0ZWaRUWBb0MZfyx59oZ2fGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GZA2ZicY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50552C4CECD;
-	Wed,  4 Dec 2024 22:17:15 +0000 (UTC)
+	s=arc-20240116; t=1733350703; c=relaxed/simple;
+	bh=qU5q0LrfZfd0gc6aCN9UL8zXfE1IkaXyTJAJEv6IAJA=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=naCRJa5z22+kBIEOrl7eEHKHf9gGetbEuYzsQ93dMTNSBmbrzP4Icgj5vnsdGgpE74htQAujCcO7lFrha5VzL1SjRyomHTc3REa3T3J1ZFl5TNQNgEO7mBwtlieCntdpoY7ttW9+cR/J93+APGygO8actUZZ1LAqfRwEL4VokXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lpuBpkja; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE170C4CEDF;
+	Wed,  4 Dec 2024 22:18:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733350635;
-	bh=Fl90+AqVZ9g5FdLJ8/BupUsex03x1wVTP97T4Uaj06M=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=GZA2ZicYA8xRMEjiQ04uuo75ZOxXfKrYkkUF8KjRSQmaHqvPoNLt+kqYAP7inAZiv
-	 cfmvV3KlqCI26nDtl6rm8+eTMqQwrfHzwB4+ymcYoaNLdIgABTg9A/AVw8WOxgfZgm
-	 VC3pWBrMS3Ksawh1GjFMQbbiF0f63haVVuWMLV20JWUBlAMKEsyD/QbWFGQdyFi5XE
-	 CzpGOpDfFF7E3Ff5+LUG8h6FkOXfgI8siyzWEjg/LtatIfBy3B2Ry/Y+RHYA3gFon1
-	 iXYrRJyjg5qnYM/pqI5PVKlAjROPhGBJY73DyUOf+zsLXTxqWcUOg3JI56sKj4T+Qm
-	 tSSFTIkK1GShg==
-Date: Wed, 4 Dec 2024 16:17:14 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Krishna Chaitanya Chundru <quic_krichai@quicinc.com>
-Cc: cros-qcom-dts-watchers@chromium.org,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, quic_vbadigan@quicinc.com,
-	quic_ramkri@quicinc.com, quic_nitegupt@quicinc.com,
-	quic_skananth@quicinc.com, quic_vpernami@quicinc.com,
-	quic_mrana@quicinc.com, mmareddy@quicinc.com,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-Subject: Re: [PATCH 2/3] PCI: dwc: Add ECAM support with iATU configuration
-Message-ID: <20241204221714.GA3023492@bhelgaas>
+	s=k20201202; t=1733350703;
+	bh=qU5q0LrfZfd0gc6aCN9UL8zXfE1IkaXyTJAJEv6IAJA=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=lpuBpkjayZLGNHDd5Nm0JwCmC2cSiqR3n6bBL0kmAA44deplIPR3QGho8Tft0MsV1
+	 cnJ9Kpkih9/ALRlBL0IYnpnkRMPy9BKABkWQw61O4FJNHIwQO6DJR3tg61kIoCE1Iv
+	 hejDpZXl37SI6+TvtajLzIYd/TG2CnO40GoRR0lLViIyjnC1eU8A3xIdXA6c1iFWla
+	 DgGMpDt9m7CH3+vJ8XCBCSJGVC+7Cs54g59qgPkBeR5fr39XPuPtxXQx8I55n/ldPk
+	 WoWdOJJtcjd/S8gkiO3WLBEESV+JCfm+BmWLRF+fUq/MXvpVxxU9yFKGjy+g//purk
+	 Sb3tilCaVuWmw==
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfauth.phl.internal (Postfix) with ESMTP id E9428120006A;
+	Wed,  4 Dec 2024 17:18:21 -0500 (EST)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-10.internal (MEProxy); Wed, 04 Dec 2024 17:18:21 -0500
+X-ME-Sender: <xms:LdVQZw140ccJoZBYp-VWOw-jHBSutfZAbckYPLHqNQEBIvKVnJrqFA>
+    <xme:LdVQZ7Hn_X-7yB7XP7mb_oFJsxs4SB3ycZGhcP8nfxvEu3qoNhfwPTlRXYqpDKI3W
+    rNw6IKvm_dMEfr7-8U>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrieehgdduheehucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
+    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusehkvghrnhgvlh
+    drohhrgheqnecuggftrfgrthhtvghrnhepjeetgeeuhfffvefgheeuteduveeiueeuffeh
+    vdevhfejtdfhuddtteehgfefkeelnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenuc
+    evlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnugdo
+    mhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidquddvkeehudejtddvgedqvdekje
+    dttddvieegqdgrrhhnugeppehkvghrnhgvlhdrohhrghesrghrnhgusgdruggvpdhnsggp
+    rhgtphhtthhopedutddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohephigrnhhghi
+    hinhhglhhirghngheshhhurgifvghirdgtohhmpdhrtghpthhtohepjhhirhhishhlrggs
+    hieskhgvrhhnvghlrdhorhhgpdhrtghpthhtohephhgtrgeslhhinhhugidrihgsmhdrtg
+    homhdprhgtphhtthhopehstghhnhgvlhhlvgeslhhinhhugidrihgsmhdrtghomhdprhgt
+    phhtthhopegrnhgurhhihidrshhhvghvtghhvghnkhhosehlihhnuhigrdhinhhtvghlrd
+    gtohhmpdhrtghpthhtohepihhlphhordhjrghrvhhinhgvnheslhhinhhugidrihhnthgv
+    lhdrtghomhdprhgtphhtthhopehgrhgvghhkhheslhhinhhugihfohhunhgurghtihhonh
+    drohhrghdprhgtphhtthhopehlihhnuhigsehrohgvtghkqdhushdrnhgvthdprhgtphht
+    thhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:LdVQZ44E0alFHkc7uQH1W3zPRPu02HhkJlWEHja1wXr43j2Dcl3q0Q>
+    <xmx:LdVQZ53w4bOWG7sOo6y3qRTbJ0PDU75DG9WO2c0xaGRS9msh2XMStw>
+    <xmx:LdVQZzFFYMgrv08RUo0uZKt8vHZQRa8S3GjviIhsetXXkJorJ19Kvg>
+    <xmx:LdVQZy8YOpeIcacJMXjZcKf44wNI6LSALD2IrozbEJJgk9N_rBq-SQ>
+    <xmx:LdVQZ4kXaBUIYbDVQGeZlnhgj5q5AnQnURmnT6-kTF_cGnS2nK4tAk0j>
+Feedback-ID: i36794607:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id B8F442220073; Wed,  4 Dec 2024 17:18:21 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b42e1ec7-11a0-ab6b-c552-86d204dcb041@quicinc.com>
+Date: Wed, 04 Dec 2024 23:17:56 +0100
+From: "Arnd Bergmann" <arnd@kernel.org>
+To: "Guenter Roeck" <linux@roeck-us.net>
+Cc: "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>,
+ "Niklas Schnelle" <schnelle@linux.ibm.com>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ "Jiri Slaby" <jirislaby@kernel.org>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ linux-serial@vger.kernel.org, "Heiko Carstens" <hca@linux.ibm.com>,
+ linux-kernel@vger.kernel.org, "Yang Yingliang" <yangyingliang@huawei.com>
+Message-Id: <acdab483-05a4-4fa8-ae1c-70ed53402aa2@app.fastmail.com>
+In-Reply-To: <4446d7dc-efb0-4395-8fcb-7177d9e07b5c@roeck-us.net>
+References: <38bf3b8b-81c4-42c9-902d-b5719f3881c5@roeck-us.net>
+ <3b75b92805648577ed05ff221d0c56e381aa1c7c.camel@linux.ibm.com>
+ <472eb22a-dcb1-4fbb-bf2c-a4173706bc7a@app.fastmail.com>
+ <27685942-fb62-44c5-86ed-98beb547ffed@roeck-us.net>
+ <744920ba-551c-466b-ac5c-2607b81261a0@app.fastmail.com>
+ <Z0QtZky8Sr7qUW7v@smile.fi.intel.com>
+ <00f5e842-3ee9-4d83-8836-0ff4f703fa3c@app.fastmail.com>
+ <Z0RSZ-YD_BozMs1n@smile.fi.intel.com>
+ <be43108e-4135-4927-ba58-141836fde6af@app.fastmail.com>
+ <30a38025-afae-4bdf-a468-21ae2cd5a7b3@app.fastmail.com>
+ <4446d7dc-efb0-4395-8fcb-7177d9e07b5c@roeck-us.net>
+Subject: Re: [PATCH 1/1] tty: serial: handle HAS_IOPORT dependencies
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Wed, Dec 04, 2024 at 07:45:29AM +0530, Krishna Chaitanya Chundru wrote:
-> On 12/4/2024 12:25 AM, Bjorn Helgaas wrote:
-> > On Sun, Nov 17, 2024 at 03:30:19AM +0530, Krishna chaitanya chundru wrote:
-> > > The current implementation requires iATU for every configuration
-> > > space access which increases latency & cpu utilization.
-> > > 
-> > > Configuring iATU in config shift mode enables ECAM feature to access the
-> > > config space, which avoids iATU configuration for every config access.
+On Wed, Dec 4, 2024, at 22:09, Guenter Roeck wrote:
+> On Mon, Nov 25, 2024 at 04:59:00PM +0100, Arnd Bergmann wrote:
+>> On Mon, Nov 25, 2024, at 12:06, Arnd Bergmann wrote:
+>> > +unsigned int nr_uarts = ARRAY_SIZE(old_serial_port);;
+>> > +
+>> 
+>> Unfortunately, this breaks on non-x86 because of the check
+>> added in 59cfc45f17d6 ("serial: 8250: Do nothing if nr_uarts=0").
+>> 
+>> I still think it's the right idea, but need to unwind further
+>> to make this possible, and find a different fix for the bug
+>> from that commit.
+>> 
+>
+> I decided to apply the patch below to my fixes branch. It doesn't change
+> the code, it just gets rid of the warning backtrace.
 
-> > > +static int dw_pcie_config_ecam_iatu(struct dw_pcie_rp *pp)
-> > > +{
-> > > +	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
-> > > +	struct dw_pcie_ob_atu_cfg atu = {0};
-> > > +	struct resource_entry *bus;
-> > > +	int ret, bus_range_max;
-> > > +
-> > > +	bus = resource_list_first_type(&pp->bridge->windows, IORESOURCE_BUS);
-> > > +
-> > > +	/*
-> > > +	 * Bus 1 config space needs type 0 atu configuration
-> > > +	 * Remaining buses need type 1 atu configuration
-> > 
-> > I'm confused about the bus numbering; you refer to "bus 1" and "bus
-> > 2".  Is bus 1 the root bus, i.e., the primary bus of a Root Port?
-> > 
-> > The root bus number would typically be 0, not 1, and is sometimes
-> > programmable.  I don't know how the DesignWare core works, but since
-> > you have "bus" here, referring to "bus 1" and "bus 2" here seems
-> > overly specific.
-> > 
-> root bus is bus 0 and we don't need any iATU configuration for it as
-> its config space is accessible from the system memory, for usp port of
-> the switch or the direct the endpoint i.e bus 1 we need to send
-> Configuration Type 0 requests and for other buses we need to send
-> Configuration Type 1 requests this is as per PCIe spec, I will try to
-> include PCIe spec details in next patch.
+I got stuck in this rabbit hole of running into more issues
+with the 8250 driver. Any time you touch something, it breaks
+elsewhere.
 
-I understand the Type 0/Type 1 differences.  The question is whether
-the root bus number is hard-wired to 0.
+I've uploaded what I have here now:
 
-I don't think specifying "bus 1" really adds anything.  The point is
-that we need Type 0 accesses for anything directly below a Root Port
-(regardless of what the RP's secondary bus number is), and Type 1 for
-things deeper.
+https://git.kernel.org/pub/scm/linux/kernel/git/arnd/playground.git/log/?h=8250-cleanup
 
-When DWC supports multiple Root Ports in a Root Complex, they will not
-all have a secondary bus number of 1.
+but this probably needs more testing, and a few smaller changes
 
-Bjorn
+>  drivers/tty/serial/8250/8250_port.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/tty/serial/8250/8250_port.c 
+> b/drivers/tty/serial/8250/8250_port.c
+> index 4d63d80e78a9..649e74e9b52f 100644
+> --- a/drivers/tty/serial/8250/8250_port.c
+> +++ b/drivers/tty/serial/8250/8250_port.c
+> @@ -467,7 +467,8 @@ static void set_io_from_upio(struct uart_port *p)
+>  		break;
+>  #endif
+>  	default:
+> -		WARN(1, "Unsupported UART type %x\n", p->iotype);
+> +		WARN(p->iotype != UPIO_PORT || p->iobase,
+> +		     "Unsupported UART type %x\n", p->iotype);
+>  		p->serial_in = no_serial_in;
+>  		p->serial_out = no_serial_out;
+>  	}
+
+I had considered this at first but didn't really want to do
+it like this because we should not be registering empty ports
+on platforms that don't use the setserial style override for
+the port configuration.
+
+It does of course address the warning, just not the
+underlying bug.
+
+      Arnd
 
