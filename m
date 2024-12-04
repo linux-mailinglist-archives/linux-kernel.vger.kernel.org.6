@@ -1,213 +1,242 @@
-Return-Path: <linux-kernel+bounces-431404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 746299E3E5C
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:32:14 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9BC69E3E82
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:41:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A7D0CB33611
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 14:39:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AE395B2A0BA
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 14:43:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 667B420A5ED;
-	Wed,  4 Dec 2024 14:39:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28DE620ADC9;
+	Wed,  4 Dec 2024 14:43:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="q6l0doVf"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IzWAt6GH"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D215920899C
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 14:39:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC6A920A5D9
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 14:43:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733323176; cv=none; b=SayLQWSKxymL8o4DPG0knU7fcPpA4i1XhJEprx6ku95ILMWE1DYCV2eFo+Ii1O2wrkwhldr1VDBr1xkIAR+jq8OJZZ/nuCbOVak0K9LU7HT19joey6MLwXTnrKAketfJPCaP+jHMT1xVNxwL43r67Za7C7Ggkz8EvGFQYwWcItQ=
+	t=1733323408; cv=none; b=qyqYFGv5JPG0Fv+PVA3MOWX02yDxZrP65fD/6rrtamdhVCZGwkfBmZYfKGSBUr9bagZMMBkJeNSqxVGzGal//9MXA4FQHivS6DacbzXMQ8PKd8r+t7FLw6W6OlV2q6xPe1gfgVmBopgJd9x7Deee4oFJV9pY7C/QuGdxm98DvhU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733323176; c=relaxed/simple;
-	bh=7vm+GgU7IzYoJVoPQmQEkbgSGw3DdebIEtgOIlj7sr4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TIxAOg3tTV4HXzli3C3M+cNcsFl+4GhFdzFZKOqmR0kWzYJBBzL3w1HLW1Eddc+3NIfxtrcM7oS6aRYZ/tE6kTMx5pqMgmXjziPd4u/jcB5WsVazbsZPpL14LHhUKiY7ppMgKgPfJO+7hDcOMInFPB9S0neq2/Pnkmzls3lk6Zo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=q6l0doVf; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-434a1833367so6178175e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 06:39:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733323173; x=1733927973; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=u7Deb6ozPBCd5HaUFhdz6hCVVIOvpic/u3v2HTGhW9U=;
-        b=q6l0doVfthszIGrrzjjOf+4PrPTNF2YKj8VPyhcjxIkXjY2BXcpn+1zK4No3MOd7DE
-         eA6Urr0lz9isJYDloS+E71oJYyULmvpICeKNH/pmS8GfhZI7k9DVznEWnRWELKjHDEFF
-         lGLrfp6RYfo9oFyacfthTbLHHhHshRSMmGmeyPKU4MoDCt9YGRe4sHjML9r1ypD/9dwa
-         +mfOO1wJn3P5F1dBe6J7M7MUAdNJ3zlLuF9nA+wMs5ds9+rNeIHQ65ppKteUSsWxrymP
-         5Ap3/aYcLbM7HK/E+aYtteo+fikcxVyWJOBkHUm274EhKrLNty3y430RgFNMRyJjKD4p
-         e1/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733323173; x=1733927973;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=u7Deb6ozPBCd5HaUFhdz6hCVVIOvpic/u3v2HTGhW9U=;
-        b=vs0TaVXe8g2dqRye1He2PVMR+TLRv63DwRdyNPNj54KNTk0waUKRIpNywms97jvGlY
-         w5AJv3ZwZ4kA3thjjSYUCLC7fpsg7c7IvFH1/HNGKQiRPUq4zYq5i5TncmYPvO9q5oWG
-         wnsLQJjGypim1z1FWiwtOJUJ1VZG4nyEBwIexObdKtX/xam5acCTpdkW7PfawnUqncd6
-         KQPAVBRXXX2m77krpFYdY80Ip1cFhktWPpNqMTTdEEatwMUoY5Fh0V6LTGqNsN+/tnnY
-         Da49YX4/JtAnkL0XY4qzrm1FfEK3/Tl0k5TER/3fwZAMiFpb1gP/4MrcQRwGeaSs/bNx
-         LdTg==
-X-Forwarded-Encrypted: i=1; AJvYcCVc/M+mBVyapb+hktXfMxltk14wGaNDwbH5bfK0mo5LuwBltyGfsTd6FRdGCFyjy9EZuYPcMmz6RDu40do=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+jrZoFwWbum4lICi5LeSHeBn7eZKEdURVIS+bNIhfuEVOEFlb
-	j7NPdE37cH81cFRGu4H1Q5EZ/FwdHrUFtBZ9EC0Tnsif8nSpp+A13UUdUEsS97U=
-X-Gm-Gg: ASbGncuxw/10XnMbLAAql/4rQbfWyjhdeRcq2Fs3idkwXQHTKRdKMh0Uzo1iJi4YDSw
-	+FXgufdx05zsxKvFIdsAqaoLFd80hSwWoMAaPQikv/mQxpaNtB7kkUAsiAEUmN2LzOWUvCNdzd4
-	aYCnBFL9QihitrPm5hHr/uFoBR9JRMtukm1OwtLWbtK6ygKLwhjPPN+0SBrWYjYJ4bvdh7CQw4U
-	YS77DWYylfMHh3c7DUtmF4UgBp9i7leZ2nXOaUD1Dx5APBNZkL1GI0=
-X-Google-Smtp-Source: AGHT+IFgNAhlHmTZM9dIRgErvl8+0lGzD3UNMNEnIcEA1d5Rnbb0Ap2o8TKx3zX6wtjKyR3FwkoocA==
-X-Received: by 2002:a05:600c:198e:b0:434:9cf6:a2a5 with SMTP id 5b1f17b1804b1-434afb9ecc7mr229792735e9.8.1733323173202;
-        Wed, 04 Dec 2024 06:39:33 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434d528ab4esm26074105e9.26.2024.12.04.06.39.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Dec 2024 06:39:32 -0800 (PST)
-Date: Wed, 4 Dec 2024 17:39:29 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Naresh Kamboju <naresh.kamboju@linaro.org>,
-	David Laight <David.Laight@aculab.com>
-Cc: linux-s390@vger.kernel.org, clang-built-linux <llvm@lists.linux.dev>,
-	linux-block <linux-block@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	lkft-triage@lists.linaro.org,
-	Linux Regressions <regressions@lists.linux.dev>,
-	Anders Roxell <anders.roxell@linaro.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Nathan Chancellor <nathan@kernel.org>, Jens Axboe <axboe@kernel.dk>
-Subject: Re: s390: block/blk-iocost.c:1101:11: error: call to
- '__compiletime_assert_557' declared with 'error' attribute: clamp() low
- limit 1 greater than high limit active
-Message-ID: <5ffa868f-cbf0-42ae-ae10-5c39b0de05e7@stanley.mountain>
-References: <CA+G9fYsD7mw13wredcZn0L-KBA3yeoVSTuxnss-AEWMN3ha0cA@mail.gmail.com>
+	s=arc-20240116; t=1733323408; c=relaxed/simple;
+	bh=kvFdArL1ZY74UgL0StTd3arSWzQkhQzPAtiY5apGJKg=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=jCuOcdo5oaBG8/bIcpYCQvNvjCyJvQYIcyzDG6uf6YO8NjPXq3oEP2CDIG30NYEGRDIMUqDoPsSaoxbuFhZm91ikK+YP3cImaoSJDqCPipCuVV7rYx1bWmRn82ka5lY5XeA4OhGFvZ4WagsPZ0yhLJn2zUicy9F7UmvQkCNINMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IzWAt6GH; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733323405;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zS0GUTcXAW8C5l6NDquyV5IGiwNX/D1m1BEkvfj9tDg=;
+	b=IzWAt6GH3h/AGdQ+tC/29N4p1T01tPJyWjPQQ88yp5+K2B4cZH9Al+SbixTCu0q5s5qBQb
+	xM4GBZZusf9EyC7OIynv50Edbiuu4ucEuUteMFZyGAqcxhTtZYNVyVa592EHoEzSrXPyY3
+	WKJK0X4ahk37BrMJ2HIZNQ5idZKP7bw=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-376-eKNXhUbnNBiYHoyN_JsVJg-1; Wed,
+ 04 Dec 2024 09:43:22 -0500
+X-MC-Unique: eKNXhUbnNBiYHoyN_JsVJg-1
+X-Mimecast-MFC-AGG-ID: eKNXhUbnNBiYHoyN_JsVJg
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1F1311955DA4;
+	Wed,  4 Dec 2024 14:43:21 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.48])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 59466195609D;
+	Wed,  4 Dec 2024 14:43:19 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <67506987.050a0220.17bd51.006f.GAE@google.com>
+References: <67506987.050a0220.17bd51.006f.GAE@google.com>
+To: syzbot <syzbot+404b4b745080b6210c6c@syzkaller.appspotmail.com>
+Cc: dhowells@redhat.com, jlayton@kernel.org,
+    linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+    netfs@lists.linux.dev, syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [netfs?] kernel BUG in iov_iter_revert (2)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+G9fYsD7mw13wredcZn0L-KBA3yeoVSTuxnss-AEWMN3ha0cA@mail.gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1203229.1733323398.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date: Wed, 04 Dec 2024 14:43:18 +0000
+Message-ID: <1203250.1733323398@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-Let's add David to the Cc list because he's the expert on clamp().
+This looks like it's probably a separate bug.
 
-regards,
-dan carpenter
+David
 
-On Wed, Dec 04, 2024 at 04:01:09PM +0530, Naresh Kamboju wrote:
-> The s390 builds failed with clang-19 with defconfig on the
-> Linux next-20241203 tag due to following build warnings / errors.
-> Build pass with gcc-13 defconfig for s390.
-> 
-> First seen on Linux next-20241203 tag
-> GOOD: Linux next-20241128 tag
-> BAD: Linux next-20241203 tag
-> 
-> List of arch and toolchains :
->   s390 defconfig with clang-19
-> 
-> s390:
->   build:
->     * clang-19-defconfig
->     * korg-clang-19-lkftconfig-lto-full
->     * korg-clang-19-lkftconfig-hardening
->     * korg-clang-19-lkftconfig-lto-thing
-> 
-> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-> 
-> Build log:
-> ===========
-> block/blk-iocost.c:1101:11: error: call to '__compiletime_assert_557'
-> declared with 'error' attribute: clamp() low limit 1 greater than high
-> limit active
->  1101 |                 inuse = clamp_t(u32, inuse, 1, active);
->       |                         ^
-> include/linux/minmax.h:218:36: note: expanded from macro 'clamp_t'
->   218 | #define clamp_t(type, val, lo, hi) __careful_clamp(type, val, lo, hi)
->       |                                    ^
-> include/linux/minmax.h:195:2: note: expanded from macro '__careful_clamp'
->   195 |         __clamp_once(type, val, lo, hi, __UNIQUE_ID(v_),
-> __UNIQUE_ID(l_), __UNIQUE_ID(h_))
->       |         ^
-> include/linux/minmax.h:188:2: note: expanded from macro '__clamp_once'
->   188 |         BUILD_BUG_ON_MSG(statically_true(ulo > uhi),
->                  \
->       |         ^
-> note: (skipping 2 expansions in backtrace; use
-> -fmacro-backtrace-limit=0 to see all)
-> include/linux/compiler_types.h:530:2: note: expanded from macro
-> '_compiletime_assert'
->   530 |         __compiletime_assert(condition, msg, prefix, suffix)
->       |         ^
-> include/linux/compiler_types.h:523:4: note: expanded from macro
-> '__compiletime_assert'
->   523 |                         prefix ## suffix();
->          \
->       |                         ^
-> <scratch space>:38:1: note: expanded from here
->    38 | __compiletime_assert_557
->       | ^
-> block/blk-iocost.c:1101:11: error: call to '__compiletime_assert_557'
-> declared with 'error' attribute: clamp() low limit 1 greater than high
-> limit active
-> include/linux/minmax.h:218:36: note: expanded from macro 'clamp_t'
->   218 | #define clamp_t(type, val, lo, hi) __careful_clamp(type, val, lo, hi)
->       |                                    ^
-> include/linux/minmax.h:195:2: note: expanded from macro '__careful_clamp'
->   195 |         __clamp_once(type, val, lo, hi, __UNIQUE_ID(v_),
-> __UNIQUE_ID(l_), __UNIQUE_ID(h_))
->       |         ^
-> include/linux/minmax.h:188:2: note: expanded from macro '__clamp_once'
->   188 |         BUILD_BUG_ON_MSG(statically_true(ulo > uhi),
->                  \
->       |         ^
-> note: (skipping 2 expansions in backtrace; use
-> -fmacro-backtrace-limit=0 to see all)
-> include/linux/compiler_types.h:530:2: note: expanded from macro
-> '_compiletime_assert'
->   530 |         __compiletime_assert(condition, msg, prefix, suffix)
->       |         ^
-> include/linux/compiler_types.h:523:4: note: expanded from macro
-> '__compiletime_assert'
->   523 |                         prefix ## suffix();
->          \
->       |                         ^
-> <scratch space>:38:1: note: expanded from here
->    38 | __compiletime_assert_557
->       | ^
-> 2 errors generated.
-> 
-> Links:
-> ---
-> - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20241203/testrun/26188938/suite/build/test/clang-19-defconfig/log
-> - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20241203/testrun/26188938/suite/build/test/clang-19-defconfig/history/
-> - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20241203/testrun/26188938/suite/build/test/clang-19-defconfig/details/
-> 
-> Steps to reproduce:
-> ------------
-> # tuxmake --runtime podman --target-arch s390 --toolchain clang-19
-> --kconfig defconfig LLVM_IAS=1
-> 
-> metadata:
-> ----
->   git describe: next-20241203
->   git repo: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
->   git sha: c245a7a79602ccbee780c004c1e4abcda66aec32
->   kernel config:
-> https://storage.tuxsuite.com/public/linaro/lkft/builds/2pjAPS9UrJkbAKFHktQei7eqW4Y/config
->   build url: https://storage.tuxsuite.com/public/linaro/lkft/builds/2pjAPS9UrJkbAKFHktQei7eqW4Y/
->   toolchain: clang-19
->   config: clang-19-defconfig
->   arch: s390
-> 
-> --
-> Linaro LKFT
-> https://lkft.linaro.org
+syzbot <syzbot+404b4b745080b6210c6c@syzkaller.appspotmail.com> wrote:
+
+> syzbot has tested the proposed patch but the reproducer is still trigger=
+ing an issue:
+> possible deadlock in __submit_bio
+> =
+
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D
+> WARNING: possible circular locking dependency detected
+> 6.13.0-rc1-syzkaller-dirty #0 Not tainted
+> ------------------------------------------------------
+> kswapd0/75 is trying to acquire lock:
+> ffff888034c41438 (&q->q_usage_counter(io)#37){++++}-{0:0}, at: __submit_=
+bio+0x2c6/0x560 block/blk-core.c:629
+> =
+
+> but task is already holding lock:
+> ffffffff8ea35b00 (fs_reclaim){+.+.}-{0:0}, at: balance_pgdat mm/vmscan.c=
+:6864 [inline]
+> ffffffff8ea35b00 (fs_reclaim){+.+.}-{0:0}, at: kswapd+0xbf1/0x36f0 mm/vm=
+scan.c:7246
+> =
+
+> which lock already depends on the new lock.
+> =
+
+> =
+
+> the existing dependency chain (in reverse order) is:
+> =
+
+> -> #1 (fs_reclaim){+.+.}-{0:0}:
+>        lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
+>        __fs_reclaim_acquire mm/page_alloc.c:3851 [inline]
+>        fs_reclaim_acquire+0x88/0x130 mm/page_alloc.c:3865
+>        might_alloc include/linux/sched/mm.h:318 [inline]
+>        slab_pre_alloc_hook mm/slub.c:4055 [inline]
+>        slab_alloc_node mm/slub.c:4133 [inline]
+>        __do_kmalloc_node mm/slub.c:4282 [inline]
+>        __kmalloc_node_noprof+0xb2/0x4d0 mm/slub.c:4289
+>        __kvmalloc_node_noprof+0x72/0x190 mm/util.c:650
+>        sbitmap_init_node+0x2d4/0x670 lib/sbitmap.c:132
+>        scsi_realloc_sdev_budget_map+0x2a7/0x460 drivers/scsi/scsi_scan.c=
+:246
+>        scsi_add_lun drivers/scsi/scsi_scan.c:1106 [inline]
+>        scsi_probe_and_add_lun+0x3173/0x4bd0 drivers/scsi/scsi_scan.c:128=
+7
+>        __scsi_add_device+0x228/0x2f0 drivers/scsi/scsi_scan.c:1622
+>        ata_scsi_scan_host+0x236/0x740 drivers/ata/libata-scsi.c:4575
+>        async_run_entry_fn+0xa8/0x420 kernel/async.c:129
+>        process_one_work kernel/workqueue.c:3229 [inline]
+>        process_scheduled_works+0xa66/0x1840 kernel/workqueue.c:3310
+>        worker_thread+0x870/0xd30 kernel/workqueue.c:3391
+>        kthread+0x2f0/0x390 kernel/kthread.c:389
+>        ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+>        ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+> =
+
+> -> #0 (&q->q_usage_counter(io)#37){++++}-{0:0}:
+>        check_prev_add kernel/locking/lockdep.c:3161 [inline]
+>        check_prevs_add kernel/locking/lockdep.c:3280 [inline]
+>        validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3904
+>        __lock_acquire+0x1397/0x2100 kernel/locking/lockdep.c:5226
+>        lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
+>        bio_queue_enter block/blk.h:75 [inline]
+>        blk_mq_submit_bio+0x1536/0x2390 block/blk-mq.c:3091
+>        __submit_bio+0x2c6/0x560 block/blk-core.c:629
+>        __submit_bio_noacct_mq block/blk-core.c:710 [inline]
+>        submit_bio_noacct_nocheck+0x4d3/0xe30 block/blk-core.c:739
+>        swap_writepage_bdev_async mm/page_io.c:451 [inline]
+>        __swap_writepage+0x5fc/0x1400 mm/page_io.c:474
+>        swap_writepage+0x8f4/0x1170 mm/page_io.c:289
+>        pageout mm/vmscan.c:689 [inline]
+>        shrink_folio_list+0x3c0e/0x8cb0 mm/vmscan.c:1367
+>        evict_folios+0x5568/0x7be0 mm/vmscan.c:4593
+>        try_to_shrink_lruvec+0x9a6/0xc70 mm/vmscan.c:4789
+>        shrink_one+0x3b9/0x850 mm/vmscan.c:4834
+>        shrink_many mm/vmscan.c:4897 [inline]
+>        lru_gen_shrink_node mm/vmscan.c:4975 [inline]
+>        shrink_node+0x37c5/0x3e50 mm/vmscan.c:5956
+>        kswapd_shrink_node mm/vmscan.c:6785 [inline]
+>        balance_pgdat mm/vmscan.c:6977 [inline]
+>        kswapd+0x1ca9/0x36f0 mm/vmscan.c:7246
+>        kthread+0x2f0/0x390 kernel/kthread.c:389
+>        ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+>        ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+> =
+
+> other info that might help us debug this:
+> =
+
+>  Possible unsafe locking scenario:
+> =
+
+>        CPU0                    CPU1
+>        ----                    ----
+>   lock(fs_reclaim);
+>                                lock(&q->q_usage_counter(io)#37);
+>                                lock(fs_reclaim);
+>   rlock(&q->q_usage_counter(io)#37);
+> =
+
+>  *** DEADLOCK ***
+> =
+
+> 1 lock held by kswapd0/75:
+>  #0: ffffffff8ea35b00 (fs_reclaim){+.+.}-{0:0}, at: balance_pgdat mm/vms=
+can.c:6864 [inline]
+>  #0: ffffffff8ea35b00 (fs_reclaim){+.+.}-{0:0}, at: kswapd+0xbf1/0x36f0 =
+mm/vmscan.c:7246
+> =
+
+> stack backtrace:
+> CPU: 0 UID: 0 PID: 75 Comm: kswapd0 Not tainted 6.13.0-rc1-syzkaller-dir=
+ty #0
+> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1=
+.16.3-2~bpo12+1 04/01/2014
+> Call Trace:
+>  <TASK>
+>  __dump_stack lib/dump_stack.c:94 [inline]
+>  dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+>  print_circular_bug+0x13a/0x1b0 kernel/locking/lockdep.c:2074
+>  check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2206
+>  check_prev_add kernel/locking/lockdep.c:3161 [inline]
+>  check_prevs_add kernel/locking/lockdep.c:3280 [inline]
+>  validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3904
+>  __lock_acquire+0x1397/0x2100 kernel/locking/lockdep.c:5226
+>  lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
+>  bio_queue_enter block/blk.h:75 [inline]
+>  blk_mq_submit_bio+0x1536/0x2390 block/blk-mq.c:3091
+>  __submit_bio+0x2c6/0x560 block/blk-core.c:629
+>  __submit_bio_noacct_mq block/blk-core.c:710 [inline]
+>  submit_bio_noacct_nocheck+0x4d3/0xe30 block/blk-core.c:739
+>  swap_writepage_bdev_async mm/page_io.c:451 [inline]
+>  __swap_writepage+0x5fc/0x1400 mm/page_io.c:474
+>  swap_writepage+0x8f4/0x1170 mm/page_io.c:289
+>  pageout mm/vmscan.c:689 [inline]
+>  shrink_folio_list+0x3c0e/0x8cb0 mm/vmscan.c:1367
+>  evict_folios+0x5568/0x7be0 mm/vmscan.c:4593
+>  try_to_shrink_lruvec+0x9a6/0xc70 mm/vmscan.c:4789
+>  shrink_one+0x3b9/0x850 mm/vmscan.c:4834
+>  shrink_many mm/vmscan.c:4897 [inline]
+>  lru_gen_shrink_node mm/vmscan.c:4975 [inline]
+>  shrink_node+0x37c5/0x3e50 mm/vmscan.c:5956
+>  kswapd_shrink_node mm/vmscan.c:6785 [inline]
+>  balance_pgdat mm/vmscan.c:6977 [inline]
+>  kswapd+0x1ca9/0x36f0 mm/vmscan.c:7246
+>  kthread+0x2f0/0x390 kernel/kthread.c:389
+>  ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+>  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+>  </TASK>
+
 
