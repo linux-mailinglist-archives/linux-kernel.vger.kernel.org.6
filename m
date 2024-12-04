@@ -1,153 +1,297 @@
-Return-Path: <linux-kernel+bounces-432120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 844AC9E4650
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 22:11:58 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD9F09E46A5
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 22:30:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 28B6BB81DF3
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 20:12:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DFAF8B35356
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 20:18:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CB1A1F5430;
-	Wed,  4 Dec 2024 20:10:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40FA11C3BF0;
+	Wed,  4 Dec 2024 20:18:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="V8CbS3xh";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="1T5uLIvK"
-Received: from fout-b6-smtp.messagingengine.com (fout-b6-smtp.messagingengine.com [202.12.124.149])
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=morinfr.org header.i=@morinfr.org header.b="AAPmrbuu"
+Received: from smtp2-g21.free.fr (smtp2-g21.free.fr [212.27.42.2])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 770891C3BF0;
-	Wed,  4 Dec 2024 20:10:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.149
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3F171F03C8
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 20:18:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.27.42.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733343050; cv=none; b=nCJJpCY9/zMNJq1bTm574B3JcI1q/Y7D6emyOmRC8gUexln7Go4UY89Ro4GMC/eGMEdz/f2jYVFgKoec9GINTyf5ZiJpC9CxnjQAO4sOWzEHrvUqPYv7VVGHLrd9oNqKppDePz3v8MesjH84F4bOHfCok+5JXLZO/S/0AMxGVtI=
+	t=1733343522; cv=none; b=ZaWwdOlBuc4dSehlOq3DLJE4l+iewek3Y5Z9AhBXzAuQolKpc+lY6q7VJvIXwpI4KvoX2S2wL5OuKQbwLcpAzAJGPxdKEg3Jwc13S1XMPahm4/X67p7JhewysUx8fKkw2AcGpC5rx6Q9dXd0blazKNZu5eBCRG/gwEQT+POYJmM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733343050; c=relaxed/simple;
-	bh=7wuKBcN5kNBT7zIXxcl5PSl5qU59alXDELGaSP0uOfk=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=BPv1mdDiC60CLBUQC8qyHfV4SUkYv42nnSH3naKmgrmF5KwT+gQlp+IIGuyv7g1PrPpnlxUcnkldnho4/mFmHvXE2S1fnnsFRUcgY+zUyo2twWdvhpvh+qYko6ak30gTq12Ja/Mce5p0HV4aeEUb25fD2uSyagFdscpfoxCqj3w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=V8CbS3xh; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=1T5uLIvK; arc=none smtp.client-ip=202.12.124.149
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfout.stl.internal (Postfix) with ESMTP id 5346B11401BB;
-	Wed,  4 Dec 2024 15:10:46 -0500 (EST)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Wed, 04 Dec 2024 15:10:46 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1733343046;
-	 x=1733429446; bh=+pTkT1NCxwV2/cGRATL4ar4kOp5miZIhwWMWvCm7vsM=; b=
-	V8CbS3xh5FNtjgrWeOjySBAk1vJuFG688HFl50tjSl6VbPY0T/i2nK5Lu4apFqg+
-	HodGcILYXCkE9ivdd3GVt1LtbAl7S4NqcEb3i0McN0fRgV1wUguhOXv3pP/46IDu
-	S/TcE6pxXUSTUx6lf3louiB1fNDO33nLkses3iUBnlPn5YVG4jMf6+NzYJ3Kpeac
-	VhpdDe9d9r07e75yWX2UqxoD3TanhsiVPaFWW+mMRLKMOlfkZszUmqzvJebvKlZP
-	EMg8xMge+LK3mjonh6X9U4nNg7tahX9HGCoEcdtmdjIK6pDSBU3d6rOfdQOXBkHV
-	p93Vi9cGucvYj9BKULZN3A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1733343046; x=
-	1733429446; bh=+pTkT1NCxwV2/cGRATL4ar4kOp5miZIhwWMWvCm7vsM=; b=1
-	T5uLIvKFHbFWwSSyBZSyZGy/4VpQzV6irTI4Lj9R3lpmmj2OJBvB/xilheAF20K0
-	kL7+WUwIwCzSstqaOoq0PBgbZ6oxpOUcD8Rh/1jh2+6PFaNyAaW7VjdYZdKMvYpZ
-	8cZlxwjVhHhcvMjJz3pHFsUaHuC1sLhOU9EcUixjcM9OOXw5m3pcS3HXNGbmXvYn
-	RpcX+gN4xFbrhX1M1f+v8wA1vLjAa7mdYiCX9vzwKZbvE7mymY+pQtHbl1CdJ61i
-	Cnx6HjG1w2Fto3am5COa9kcecWTHqE38RdOiBhQMX39tiOEbDWXiS+X0HrsT9JE6
-	VvzxsePPMzQdUcq10NTqA==
-X-ME-Sender: <xms:RbdQZwUgaqG7miOJ0jVtMLzh3mfw96Df5YzeXUJ3EG2S1cWPeJPt4w>
-    <xme:RbdQZ0k8hjWrJLuufi0fQOqeuAJ0P0Jr_ZUrUC_rPib8T01cVg-xLE4k_fO1hoZMU
-    c8vh8vsaZ1FwIzX1XU>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrieehgdduvdelucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
-    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
-    guvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefg
-    gfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
-    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepuddu
-    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehjsghruhhnvghtsegsrgihlhhisg
-    hrvgdrtghomhdprhgtphhtthhopehkhhhilhhmrghnsegsrgihlhhisghrvgdrtghomhdp
-    rhgtphhtthhopehmthhurhhquhgvthhtvgessggrhihlihgsrhgvrdgtohhmpdhrtghpth
-    htohepmhgrrhhtihhnrdgslhhumhgvnhhsthhinhhglhesghhoohhglhgvmhgrihhlrdgt
-    ohhmpdhrtghpthhtohepsghrohhonhhivgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoh
-    epshgsohihugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepnhgvihhlrdgrrhhmshht
-    rhhonhhgsehlihhnrghrohdrohhrghdprhgtphhtthhopehlihhnuhigqdgrmhhlohhgih
-    gtsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoheplhhinhhugidq
-    rghrmhdqkhgvrhhnvghlsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhg
-X-ME-Proxy: <xmx:RbdQZ0aZ_TwgVBRyl-x_CFgxTbgr4p7_o5y19PTRnNfZ0bzz_8SLgw>
-    <xmx:RbdQZ_WSGhWFi6uUOODa8gzy8mtWn7k7mYRWmLrNb8ycPTWIT0VQhA>
-    <xmx:RbdQZ6l0eAjyi2k-_HoMrE8tBz_T8LMs56dKajZOc9useNI7I64nyQ>
-    <xmx:RbdQZ0cezG4w-pIyU7B9dO6pOsy_agfkGBXlCzm2uFRzCMrnAU0YxQ>
-    <xmx:RrdQZzeDeeRl9SZ-m0D1fIKJBc0NMLXaDD8-AHUtnwoVnyI_rscrjQvp>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id D6D442220072; Wed,  4 Dec 2024 15:10:45 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1733343522; c=relaxed/simple;
+	bh=Sjht0SIbGIJmV4Zkg33H4LWMQtoam3W7YOpKwrH11Z0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=UhQ7BK07nH7p7x1X/5rBJTgIugk5FHKqNxtWr6KmX6kcnQOdhI+HsfZ6+awjwqJ/6Sfq8PIA+gZTFkghIxnFefOu05gOibaXFpA3liAsGI0XiMU/cWayeATXUJCWW5crJt9vCnmv71dWyHZ4togoO474LC/+EMyKbtmWhE4zNRA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=morinfr.org; spf=pass smtp.mailfrom=morinfr.org; dkim=pass (1024-bit key) header.d=morinfr.org header.i=@morinfr.org header.b=AAPmrbuu; arc=none smtp.client-ip=212.27.42.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=morinfr.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=morinfr.org
+Received: from bender.morinfr.org (unknown [82.66.66.112])
+	by smtp2-g21.free.fr (Postfix) with ESMTPS id 171412003D6;
+	Wed,  4 Dec 2024 21:18:23 +0100 (CET)
+Authentication-Results: smtp2-g21.free.fr;
+	dkim=pass (1024-bit key; unprotected) header.d=morinfr.org header.i=@morinfr.org header.a=rsa-sha256 header.s=20170427 header.b=AAPmrbuu;
+	dkim-atps=neutral
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=morinfr.org
+	; s=20170427; h=Content-Type:MIME-Version:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=dTlDqv7olU87IQIE2dewdgcv4kCpLh7+KqQHWF4gT98=; b=AAPmrbuu2sGUnAfyf/4zkGmwi4
+	Cx1/ZRoxWbOLqiSzJ2vW+SF0IWi9VGyP/spz5wIv2KCpFYuqEGERiQ8lgL5QutP667n1TjuDzrasC
+	Ku1WhIQaGXS64MsouvcnrGzsAr3Xq8XhU/Q3VVZ1XqfZiqOKqJ9lhcueIsu3VynUHNAg=;
+Received: from guillaum by bender.morinfr.org with local (Exim 4.96)
+	(envelope-from <guillaume@morinfr.org>)
+	id 1tIvpH-0018OT-12;
+	Wed, 04 Dec 2024 21:18:23 +0100
+Date: Wed, 4 Dec 2024 21:18:23 +0100
+From: Guillaume Morin <guillaume@morinfr.org>
+To: linux-kernel@vger.kernel.org
+Cc: Guillaume Morin <guillaume@morinfr.org>, linux-mm@kvack.org,
+	Muchun Song <muchun.song@linux.dev>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Peter Xu <peterx@redhat.com>, David Hildenbrand <david@redhat.com>,
+	Eric Hagberg <ehagberg@janestreet.com>
+Subject: [PATCH v2] mm/hugetlb: support FOLL_FORCE|FOLL_WRITE
+Message-ID: <Z1C5D1D3NJFnADPz@bender.morinfr.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Wed, 04 Dec 2024 21:10:24 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Jerome Brunet" <jbrunet@baylibre.com>, "Stephen Boyd" <sboyd@kernel.org>
-Cc: "Neil Armstrong" <neil.armstrong@linaro.org>,
- "Michael Turquette" <mturquette@baylibre.com>,
- "Kevin Hilman" <khilman@baylibre.com>,
- "Martin Blumenstingl" <martin.blumenstingl@googlemail.com>,
- linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- "Mark Brown" <broonie@kernel.org>
-Message-Id: <0241900c-3533-42d1-8dc0-df64181e6aca@app.fastmail.com>
-In-Reply-To: <1jfrn3l615.fsf@starbuckisacylon.baylibre.com>
-References: 
- <20241127-clk-audio-fix-rst-missing-v1-1-9f9d0ab98fce@baylibre.com>
- <f8de4a2a-776f-4c10-b75e-e845bcc38dde@app.fastmail.com>
- <1j4j3r32ld.fsf@starbuckisacylon.baylibre.com>
- <306b0b30-5a32-4c7c-86b4-57d50e2307e8@app.fastmail.com>
- <1jy1131kxz.fsf@starbuckisacylon.baylibre.com>
- <c06317c6-b2b2-4b6d-96e4-0c2cfc6846de@app.fastmail.com>
- <1jplmf1jqa.fsf@starbuckisacylon.baylibre.com>
- <ce67e512-a15b-4482-8194-b917096f4eeb@app.fastmail.com>
- <df0a53ee859e450d84e81547099f5f36.sboyd@kernel.org>
- <1jr06pkof6.fsf@starbuckisacylon.baylibre.com>
- <37b656cc8272552ba07c93c5a9a59641.sboyd@kernel.org>
- <1jfrn3l615.fsf@starbuckisacylon.baylibre.com>
-Subject: Re: [PATCH] clk: amlogic: axg-audio: select RESET_MESON_AUX
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Wed, Dec 4, 2024, at 18:19, Jerome Brunet wrote:
-> On Tue 03 Dec 2024 at 12:15, Stephen Boyd <sboyd@kernel.org> wrote:
->>> 
->>> May I add back the boiler plate code in drivers/clk/meson, similar to
->>> what was proposed in the RFC [1] and propose the generic implementation
->>> in parallel ? It will just be a matter of switching when/if it is approved.
->>
->> Sure. You can make devm_meson_clk_rst_aux_register() use the same
->> signature as I proposed above so that it's a one line patch later. And
->> definitely drop the imply RESET_MESON and depends on REGMAP part. Maybe
->> you can put it in the clkc-utils file?
+Eric reported that PTRACE_POKETEXT fails when applications use hugetlb
+for mapping text using huge pages. Before commit 1d8d14641fd9
+("mm/hugetlb: support write-faults in shared mappings"), PTRACE_POKETEXT
+worked by accident, but it was buggy and silently ended up mapping pages
+writable into the page tables even though VM_WRITE was not set.
 
-> * Why drop 'imply RESET_MESON_AUX' ? I would still like the
->   COMMON_CLK_AXG_AUDIO to 'strongly suggest' RESET_MESON_AUX, with
->   dependency problem sorted out.
+In general, FOLL_FORCE|FOLL_WRITE does currently not work with hugetlb.
+Let's implement FOLL_FORCE|FOLL_WRITE properly for hugetlb, such that
+what used to work in the past by accident now properly works, allowing
+applications using hugetlb for text etc. to get properly debugged.
 
-You can do it the other way round and use 'default
-COMMON_CLK_AXG_AUDIO' if you want to tie the two together
-with the same effect but avoid the ugly "imply" statement.
+This change might also be required to implement uprobes support for
+hugetlb [1].
 
-I still think it's best to just leave it out. From a user
-perspective, the dependency isn't really that the clk
-driver needs the reset driver, but instead it's the audio
-driver that needs both.
+[1] https://lore.kernel.org/lkml/ZiK50qob9yl5e0Xz@bender.morinfr.org/
 
-      Arnd
+Cc: Muchun Song <muchun.song@linux.dev>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Peter Xu <peterx@redhat.com>
+Cc: David Hildenbrand <david@redhat.com>
+Cc: Eric Hagberg <ehagberg@janestreet.com>
+Signed-off-by: Guillaume Morin <guillaume@morinfr.org>
+---
+Changes in v2:
+ - Improved commit message
+
+ mm/gup.c     | 93 ++++++++++++++++++++++++++--------------------------
+ mm/hugetlb.c | 20 ++++++-----
+ 2 files changed, 58 insertions(+), 55 deletions(-)
+
+diff --git a/mm/gup.c b/mm/gup.c
+index 746070a1d8bf..c680edf33248 100644
+--- a/mm/gup.c
++++ b/mm/gup.c
+@@ -587,6 +587,33 @@ static struct folio *try_grab_folio_fast(struct page *page, int refs,
+ }
+ #endif	/* CONFIG_HAVE_GUP_FAST */
+ 
++/* Common code for can_follow_write_* */
++static inline bool can_follow_write_common(struct page *page,
++		struct vm_area_struct *vma, unsigned int flags)
++{
++	/* Maybe FOLL_FORCE is set to override it? */
++	if (!(flags & FOLL_FORCE))
++		return false;
++
++	/* But FOLL_FORCE has no effect on shared mappings */
++	if (vma->vm_flags & (VM_MAYSHARE | VM_SHARED))
++		return false;
++
++	/* ... or read-only private ones */
++	if (!(vma->vm_flags & VM_MAYWRITE))
++		return false;
++
++	/* ... or already writable ones that just need to take a write fault */
++	if (vma->vm_flags & VM_WRITE)
++		return false;
++
++	/*
++	 * See can_change_pte_writable(): we broke COW and could map the page
++	 * writable if we have an exclusive anonymous page ...
++	 */
++	return page && PageAnon(page) && PageAnonExclusive(page);
++}
++
+ static struct page *no_page_table(struct vm_area_struct *vma,
+ 				  unsigned int flags, unsigned long address)
+ {
+@@ -613,6 +640,22 @@ static struct page *no_page_table(struct vm_area_struct *vma,
+ }
+ 
+ #ifdef CONFIG_PGTABLE_HAS_HUGE_LEAVES
++/* FOLL_FORCE can write to even unwritable PUDs in COW mappings. */
++static inline bool can_follow_write_pud(pud_t pud, struct page *page,
++					struct vm_area_struct *vma,
++					unsigned int flags)
++{
++	/* If the pud is writable, we can write to the page. */
++	if (pud_write(pud))
++		return true;
++
++	if (!can_follow_write_common(page, vma, flags))
++		return false;
++
++	/* ... and a write-fault isn't required for other reasons. */
++	return !vma_soft_dirty_enabled(vma) || pud_soft_dirty(pud);
++}
++
+ static struct page *follow_huge_pud(struct vm_area_struct *vma,
+ 				    unsigned long addr, pud_t *pudp,
+ 				    int flags, struct follow_page_context *ctx)
+@@ -625,7 +668,8 @@ static struct page *follow_huge_pud(struct vm_area_struct *vma,
+ 
+ 	assert_spin_locked(pud_lockptr(mm, pudp));
+ 
+-	if ((flags & FOLL_WRITE) && !pud_write(pud))
++	if ((flags & FOLL_WRITE) &&
++	    !can_follow_write_pud(pud, page, vma, flags))
+ 		return NULL;
+ 
+ 	if (!pud_present(pud))
+@@ -677,27 +721,7 @@ static inline bool can_follow_write_pmd(pmd_t pmd, struct page *page,
+ 	if (pmd_write(pmd))
+ 		return true;
+ 
+-	/* Maybe FOLL_FORCE is set to override it? */
+-	if (!(flags & FOLL_FORCE))
+-		return false;
+-
+-	/* But FOLL_FORCE has no effect on shared mappings */
+-	if (vma->vm_flags & (VM_MAYSHARE | VM_SHARED))
+-		return false;
+-
+-	/* ... or read-only private ones */
+-	if (!(vma->vm_flags & VM_MAYWRITE))
+-		return false;
+-
+-	/* ... or already writable ones that just need to take a write fault */
+-	if (vma->vm_flags & VM_WRITE)
+-		return false;
+-
+-	/*
+-	 * See can_change_pte_writable(): we broke COW and could map the page
+-	 * writable if we have an exclusive anonymous page ...
+-	 */
+-	if (!page || !PageAnon(page) || !PageAnonExclusive(page))
++	if (!can_follow_write_common(page, vma, flags))
+ 		return false;
+ 
+ 	/* ... and a write-fault isn't required for other reasons. */
+@@ -798,27 +822,7 @@ static inline bool can_follow_write_pte(pte_t pte, struct page *page,
+ 	if (pte_write(pte))
+ 		return true;
+ 
+-	/* Maybe FOLL_FORCE is set to override it? */
+-	if (!(flags & FOLL_FORCE))
+-		return false;
+-
+-	/* But FOLL_FORCE has no effect on shared mappings */
+-	if (vma->vm_flags & (VM_MAYSHARE | VM_SHARED))
+-		return false;
+-
+-	/* ... or read-only private ones */
+-	if (!(vma->vm_flags & VM_MAYWRITE))
+-		return false;
+-
+-	/* ... or already writable ones that just need to take a write fault */
+-	if (vma->vm_flags & VM_WRITE)
+-		return false;
+-
+-	/*
+-	 * See can_change_pte_writable(): we broke COW and could map the page
+-	 * writable if we have an exclusive anonymous page ...
+-	 */
+-	if (!page || !PageAnon(page) || !PageAnonExclusive(page))
++	if (!can_follow_write_common(page, vma, flags))
+ 		return false;
+ 
+ 	/* ... and a write-fault isn't required for other reasons. */
+@@ -1285,9 +1289,6 @@ static int check_vma_flags(struct vm_area_struct *vma, unsigned long gup_flags)
+ 		if (!(vm_flags & VM_WRITE) || (vm_flags & VM_SHADOW_STACK)) {
+ 			if (!(gup_flags & FOLL_FORCE))
+ 				return -EFAULT;
+-			/* hugetlb does not support FOLL_FORCE|FOLL_WRITE. */
+-			if (is_vm_hugetlb_page(vma))
+-				return -EFAULT;
+ 			/*
+ 			 * We used to let the write,force case do COW in a
+ 			 * VM_MAYWRITE VM_SHARED !VM_WRITE vma, so ptrace could
+diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+index ea2ed8e301ef..52517b7ce308 100644
+--- a/mm/hugetlb.c
++++ b/mm/hugetlb.c
+@@ -5169,6 +5169,13 @@ static void set_huge_ptep_writable(struct vm_area_struct *vma,
+ 		update_mmu_cache(vma, address, ptep);
+ }
+ 
++static void set_huge_ptep_maybe_writable(struct vm_area_struct *vma,
++					 unsigned long address, pte_t *ptep)
++{
++	if (vma->vm_flags & VM_WRITE)
++		set_huge_ptep_writable(vma, address, ptep);
++}
++
+ bool is_hugetlb_entry_migration(pte_t pte)
+ {
+ 	swp_entry_t swp;
+@@ -5802,13 +5809,6 @@ static vm_fault_t hugetlb_wp(struct folio *pagecache_folio,
+ 	if (!unshare && huge_pte_uffd_wp(pte))
+ 		return 0;
+ 
+-	/*
+-	 * hugetlb does not support FOLL_FORCE-style write faults that keep the
+-	 * PTE mapped R/O such as maybe_mkwrite() would do.
+-	 */
+-	if (WARN_ON_ONCE(!unshare && !(vma->vm_flags & VM_WRITE)))
+-		return VM_FAULT_SIGSEGV;
+-
+ 	/* Let's take out MAP_SHARED mappings first. */
+ 	if (vma->vm_flags & VM_MAYSHARE) {
+ 		set_huge_ptep_writable(vma, vmf->address, vmf->pte);
+@@ -5837,7 +5837,8 @@ static vm_fault_t hugetlb_wp(struct folio *pagecache_folio,
+ 			SetPageAnonExclusive(&old_folio->page);
+ 		}
+ 		if (likely(!unshare))
+-			set_huge_ptep_writable(vma, vmf->address, vmf->pte);
++			set_huge_ptep_maybe_writable(vma, vmf->address,
++						     vmf->pte);
+ 
+ 		delayacct_wpcopy_end();
+ 		return 0;
+@@ -5943,7 +5944,8 @@ static vm_fault_t hugetlb_wp(struct folio *pagecache_folio,
+ 	spin_lock(vmf->ptl);
+ 	vmf->pte = hugetlb_walk(vma, vmf->address, huge_page_size(h));
+ 	if (likely(vmf->pte && pte_same(huge_ptep_get(mm, vmf->address, vmf->pte), pte))) {
+-		pte_t newpte = make_huge_pte(vma, &new_folio->page, !unshare);
++		const bool writable = !unshare && (vma->vm_flags & VM_WRITE);
++		pte_t newpte = make_huge_pte(vma, &new_folio->page, writable);
+ 
+ 		/* Break COW or unshare */
+ 		huge_ptep_clear_flush(vma, vmf->address, vmf->pte);
+-- 
+2.39.1
+
+-- 
+Guillaume Morin <guillaume@morinfr.org>
 
