@@ -1,98 +1,148 @@
-Return-Path: <linux-kernel+bounces-431283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A5F79E3B83
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 14:43:46 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 379F7164A18
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 13:43:43 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F76B1EF08A;
-	Wed,  4 Dec 2024 13:43:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qrQteQqK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 962D19E3B84
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 14:44:06 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CB1F1E3DFE;
-	Wed,  4 Dec 2024 13:43:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 563AD285E24
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 13:44:05 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56B6E1E3796;
+	Wed,  4 Dec 2024 13:43:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="Y9VSWAbx";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="5Fe+5ZP5"
+Received: from fout-b2-smtp.messagingengine.com (fout-b2-smtp.messagingengine.com [202.12.124.145])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E56A71DFE15;
+	Wed,  4 Dec 2024 13:43:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733319812; cv=none; b=cWWpGhfZ9WSa5ezdo26xVhcXxcaNgpoeQbSPytSB7tS8l4PbV/Kdo0RWY17QtlINDOWUBgqBIcs/XoZFcK/Gn/jZsBBtLd6dcF1+NOjipgKcJ2BFawwrphXSvG71nJVlGz1AkpvAg7pd3v4vPlc0durfbtaLcaUNPrUKwKLCL9s=
+	t=1733319834; cv=none; b=oGB5uyY+cV3iAF4Fvb9/ekaWs71mCz2cYanwDgLBCk7sPDr1lSJzUGcCAHuxNJTFUqjE4OcH2WeMHpv/rL5Wo5XkIyEvKmNxS7p0sD+fjVja9FCootKk2jHBZ5b6DyJOWGN3J2mkZnTPNONFjrfDmXGdQD9vMHNuKNujUcI+8a4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733319812; c=relaxed/simple;
-	bh=MHnEIuFoxqivOFqlqe2JujMLNr6o8ryJEBDVHgeAfYU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=i9py1ZLqivo5JvasTFiUpLwLE9/jXBvJsJ9YIf/yrHNpRr6Aq0kW7fOtLY73rIuW2D9Xwt+fPAvBFwSGuYmqAgBnsdcDBPnQa6/6rilVYUGWjJ+41wvO+b3GvYZ/LVmLdpRPE5bqodsyH1pyPUu1yJP2PGLHmiylsWCY8Wvfq+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qrQteQqK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 333AAC4CED1;
-	Wed,  4 Dec 2024 13:43:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733319812;
-	bh=MHnEIuFoxqivOFqlqe2JujMLNr6o8ryJEBDVHgeAfYU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=qrQteQqK4t+jsqSchkQ3kaCFoWFrySAJcNZMuTakeYqpnm8ZtH/GUb2zboN6OxYXw
-	 eWaWdLfTQiNZCnKjTZ83iAQTJCd6AYxJoWvu3JKOk1lHpUpcQ/1IwgBY1lf5Zodty9
-	 6Vow3i3TkgjjP9wXhQB0RoyoKf+8J5GRULg59ZD8ngpNX9zW5xbzLdYJCZWnc7b+fJ
-	 gW0to9HCGLbF9b5HXBqohw7JK9+Y0lAQLHZloQhUrbVOu1j/avvKtxaAiFQd0pwyW9
-	 7GQqQ6oNs0mj++0/1yyg1r94WDe3bmvrU6Ct7Lt7xNHeKepH6analjuqEfnaWum1me
-	 jk+nQ0WXslfsw==
-Received: from mchehab by mail.kernel.org with local (Exim 4.98)
-	(envelope-from <mchehab+huawei@kernel.org>)
-	id 1tIpf8-00000004ebx-0fAo;
-	Wed, 04 Dec 2024 14:43:30 +0100
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: linux-media@vger.kernel.org
-Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v4 2/5] MAINTAINERS: fix a couple issues at media input infrastructure
-Date: Wed,  4 Dec 2024 14:43:03 +0100
-Message-ID: <edb356f1ff58fe5938ffb275aa2574d127bed822.1733319659.git.mchehab+huawei@kernel.org>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <8f663390c31d6c0c7acec3f39a4a7bf334a01309.1733319659.git.mchehab+huawei@kernel.org>
-References: <8f663390c31d6c0c7acec3f39a4a7bf334a01309.1733319659.git.mchehab+huawei@kernel.org>
+	s=arc-20240116; t=1733319834; c=relaxed/simple;
+	bh=IWY185UDxJQuTVgIgRa6TjkOFyZfoJ0/Ue//WdZuESE=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=TJKVoyaQJ6M70M4zDe/t1Vbgmx0wGBL3g+zC9rQeuFNqWrYTNGFvkWPeyeRNQ2lIBYRns+BD0iRZozn2icpxEIeUN592TjfVhK5lsPeUzm4TBqvdwNlyG3ASxJh0QK9iTGxmZbdTi6FJWMl6Lbpk/seowxkvR5rsxxgTRUSpbt4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=Y9VSWAbx; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=5Fe+5ZP5; arc=none smtp.client-ip=202.12.124.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfout.stl.internal (Postfix) with ESMTP id 7018D11401A8;
+	Wed,  4 Dec 2024 08:43:50 -0500 (EST)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-10.internal (MEProxy); Wed, 04 Dec 2024 08:43:50 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1733319830;
+	 x=1733406230; bh=szqLPMx8pEbitHya79Wlpl8ZoRcwrEZDRJ1xqCJU1kk=; b=
+	Y9VSWAbxTTbeAB2nPIdNLl3wa6McC0xNpmBHITMEqVmWmq3A8C3QmQ0m1Aerr2M1
+	OsXsEYq0Z+3zu1XB9rM9phvVhVB0ZiiheHpZtLuX9Zg0Gkv/w2HHV0wnSDNQWqws
+	Atid/Sjl5gjMm0vrhafV+ce8mkhm23uZ30fdRAZJtGo9yOFrQQTfvtTredQfyNP/
+	mO9Md55X6PQfNTvqMjfSf1L0+RQdvS2uYFU51Icrq4IRavb7kQjzewNkIuQ8hPUY
+	R5eNNym/AoKDMMDdsuUoxL6pip0R4ig/Mj0nWkpROLahrTYScrxBCXw5N2E48WrK
+	fE8sQnKxhCM3X0Z5a7RKCQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1733319830; x=
+	1733406230; bh=szqLPMx8pEbitHya79Wlpl8ZoRcwrEZDRJ1xqCJU1kk=; b=5
+	Fe+5ZP5f9JxI4ZoOdSO2sG4nEHJ2O2fM56rEjdH29TXVcBGGeDkAbRihAkKfYYJa
+	PuyY2gRPHQXwk+JeO7J/7U3maPCrhPVLkspPMby9lOuXWniQdRSlUjy89pFwWtWG
+	xDnNO69B6l9lEwm1fzh6s/zxosJ6LBWwGFMfmi/nHf51Uad0WlVw+gkcKpG+A87R
+	exTkHJtNPGSR4PKmea02h7FQ9/4zTwnwd3Ogwv4eMX7c2GHN2q3xuKxsieREYJsN
+	PylRqteNZ7vwTEoS9TSwqjazcXNeOoj5o4e3KwHNLhrGxXKckApUadFUrvCZgNKZ
+	KVmm2U64uJHkNVDwU9mlw==
+X-ME-Sender: <xms:lVxQZ6up72_fCoflwn4HvGF9LdETVKpcXIE9ePmNbURsM4nRAyXsWA>
+    <xme:lVxQZ_f7FPfX7KZ_tV-iWu0cZa1Xti8GlI6mLkTsLlIXY5WqneCh0NzeAZ0kUlpdY
+    OQ4vIimX8w8n7VOo6M>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrieehgdehvdcutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
+    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
+    hsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthhqredtredtjeen
+    ucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdrug
+    gvqeenucggtffrrghtthgvrhhnpedvhfdvkeeuudevfffftefgvdevfedvleehvddvgeej
+    vdefhedtgeegveehfeeljeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmh
+    grihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopeduiedp
+    mhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepsghpsegrlhhivghnkedruggvpdhrtg
+    hpthhtohepsghrghgvrhhsthesghhmrghilhdrtghomhdprhgtphhtthhopegtihhmihhn
+    rghghhhisehgnhhuuggurdgtohhmpdhrtghpthhtohepshgvrghnjhgtsehgohhoghhlvg
+    drtghomhdprhgtphhtthhopeifihhllhihsehinhhfrhgruggvrggurdhorhhgpdhrtghp
+    thhtoheprghnugihsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrrhhnugeskhgvrh
+    hnvghlrdhorhhgpdhrtghpthhtohepgiekieeskhgvrhhnvghlrdhorhhgpdhrtghpthht
+    ohepthhglhigsehlihhnuhhtrhhonhhigidruggv
+X-ME-Proxy: <xmx:lVxQZ1yKY3_jv4r-jD8N9LFXrRF1VCORFW-7qy4FLlWeOQBU-0H6LA>
+    <xmx:lVxQZ1P9Y0U_MoJvDv_F0FoiIC-tIHzdrVHf9UnLerzxoUb-eJzjTw>
+    <xmx:lVxQZ68y8x9r2JfwD8lz-FV7yzmpm1lzqs7_4Isd9eaYND1abN3pEw>
+    <xmx:lVxQZ9VqUBZiVBINP0H-Z8glVXPx8M_okDQKBtkBp2zy71jtjixOiA>
+    <xmx:llxQZ1epkuu0tyfx9MzmyP-jVOAUeOgjX5Em7FIWy-3057BLz_htSvUg>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 1B4332220071; Wed,  4 Dec 2024 08:43:49 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Date: Wed, 04 Dec 2024 14:43:28 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Brian Gerst" <brgerst@gmail.com>, "Arnd Bergmann" <arnd@kernel.org>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
+ "Thomas Gleixner" <tglx@linutronix.de>, "Ingo Molnar" <mingo@redhat.com>,
+ "Borislav Petkov" <bp@alien8.de>,
+ "Dave Hansen" <dave.hansen@linux.intel.com>,
+ "H. Peter Anvin" <hpa@zytor.com>,
+ "Linus Torvalds" <torvalds@linux-foundation.org>,
+ "Andy Shevchenko" <andy@kernel.org>, "Matthew Wilcox" <willy@infradead.org>,
+ "Sean Christopherson" <seanjc@google.com>,
+ "Davide Ciminaghi" <ciminaghi@gnudd.com>,
+ "Paolo Bonzini" <pbonzini@redhat.com>, kvm@vger.kernel.org
+Message-Id: <00e344d7-8d2f-41d3-8c6a-1a828ee95967@app.fastmail.com>
+In-Reply-To: 
+ <CAMzpN2joPcvg887tJLF_4SU4aJt+wTGy2M_xaExrozLS-mvXsw@mail.gmail.com>
+References: <20241204103042.1904639-1-arnd@kernel.org>
+ <20241204103042.1904639-6-arnd@kernel.org>
+ <CAMzpN2joPcvg887tJLF_4SU4aJt+wTGy2M_xaExrozLS-mvXsw@mail.gmail.com>
+Subject: Re: [PATCH 05/11] x86: remove HIGHMEM64G support
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-The media input infrastructure is missing a record for our maintainer's
-entry profile. Also, patchwork link is wrong.
+On Wed, Dec 4, 2024, at 14:29, Brian Gerst wrote:
+> On Wed, Dec 4, 2024 at 5:34=E2=80=AFAM Arnd Bergmann <arnd@kernel.org>=
+ wrote:
+>>
+>>  - In the early days of x86-64 hardware, there was sometimes the need
+>>    to run a 32-bit kernel to work around bugs in the hardware drivers,
+>>    or in the syscall emulation for 32-bit userspace. This likely still
+>>    works but there should never be a need for this any more.
+>>
+>> Removing this also drops the need for PHYS_ADDR_T_64BIT and SWIOTLB.
+>> PAE mode is still required to get access to the 'NX' bit on Atom
+>> 'Pentium M' and 'Core Duo' CPUs.
+>
+> 8GB of memory is still useful for 32-bit guest VMs.
 
-Fix it.
+Can you give some more background on this?
 
-Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
----
+It's clear that one can run a virtual machine this way and it
+currently works, but are you able to construct a case where this
+is a good idea, compared to running the same userspace with a
+64-bit kernel?
 
-Patch resent, as linux-media was not on its Cc list.
+From what I can tell, any practical workload that requires
+8GB of total RAM will likely run into either the lowmem
+limits or into virtual addressig limits, in addition to the
+problems of 32-bit kernels being generally worse than 64-bit
+ones in terms of performance, features and testing.
 
-
- MAINTAINERS | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 1e930c7a58b1..264c0caec2df 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -14510,8 +14510,9 @@ MEDIA INPUT INFRASTRUCTURE (V4L/DVB)
- M:	Mauro Carvalho Chehab <mchehab@kernel.org>
- L:	linux-media@vger.kernel.org
- S:	Maintained
-+P:	Documentation/driver-api/media/maintainer-entry-profile.rst
- W:	https://linuxtv.org
--Q:	http://patchwork.kernel.org/project/linux-media/list/
-+Q:	https://patchwork.linuxtv.org/project/linux-media/list/
- T:	git git://linuxtv.org/media.git
- F:	Documentation/admin-guide/media/
- F:	Documentation/devicetree/bindings/media/
--- 
-2.47.1
-
+      Arnd
 
