@@ -1,145 +1,110 @@
-Return-Path: <linux-kernel+bounces-432107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CD2F9E45B2
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 21:28:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD5289E4546
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 21:05:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1B1FEB2F114
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 20:03:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BD4C28418C
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 20:05:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1126C1F03DA;
-	Wed,  4 Dec 2024 20:03:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ADE61F03D4;
+	Wed,  4 Dec 2024 20:05:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="K2VUz5Vy"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q6W5Bzkj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 419001531C1;
-	Wed,  4 Dec 2024 20:03:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E8DC1A8F79;
+	Wed,  4 Dec 2024 20:05:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733342603; cv=none; b=pVWHxQbhQP2i1RIexIyzWEqh4MdVkIqBjjD96/8h3ly26E4rE3XB2DK6FCprbOvK2rjEKTs5oXJ76au/PG64q8K2/CUz3xUbt4DLlADZqZjS5XeRw/M9Y+WHLX84Wbsq0IsvuqND4obKtIZb5hArkY+kkrxPkL4+cRTohLAnTw0=
+	t=1733342718; cv=none; b=mi3DEQRS75Hcwj5O3C87vEGYUjRZa/2+9mkrCxjYttjweVogt7M202EJ7DzKDDPlPsv7u+IpGbAXQZ7+o8rMCuiT0G7pFCMlaOKdXCDjC5sFe7hxGtlXN74ZAGyDFPUkB9Qv+Re0BUbTxYxq0YWm/cMyIEaajMyUjxxImOzHWHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733342603; c=relaxed/simple;
-	bh=2M7uRz2BBNPKwPDf3dd58a9lU6iILrU8/npc7OhOqnM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HaRY6JIAosFT45334RdbnTGU8rqJQTBuaO3U3rywp/7eReEYOyMuSyrfZ1s7VCM0tR+TsAeDEim30jpyAHvoXYkRrYkhC71nw7EAzJEtPpYHeULbyfjOUyKrQN4B0rsAiTYre5dPhte8GBC/k87cCn1gVj6sXv51YleMhQt50yY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=K2VUz5Vy; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 984AA40E0286;
-	Wed,  4 Dec 2024 20:03:16 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id 0mvLpFChjbae; Wed,  4 Dec 2024 20:03:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1733342592; bh=N3RioEMALy81DolBlUwEFWVsjxc+/QqKKebdk5ubV1A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=K2VUz5VyE9r7vkrHxoAtB3De7AADB8qn8cWJOo4B2ydvwFfNTtRpxWFNHerxockM7
-	 +MpRDJ+PmtH1FCIV6EFKplXfD1brJIaq3aIP6GCfiej0m6b2xmQkErrRKgwZ7ela1U
-	 4bSOiSCnETBnQWlnXqGhz5Zp5FEEv5NyBC3bveF/3CT60vMShKkr9qMcfvmTwCuzXF
-	 okCYE1IQCncOKmU/MUOb4SsQ0mthO6CFWGC9gaO6x9cYCAPfO/psXREuD6ZXeH7fgw
-	 rKRKjN8C5Fmx9YdREYrPbg2CLKijUs2wqzpnjfigCMpG7OjUQjTSnmqrkRWTG4T7gY
-	 2dU+5goiU8d80R+91PyKsAqj4qgRxsAJO+mAU911Pg8W7VLo+kDJ1+3jGdKEp+QDWU
-	 yMKHQDu0FEAyRgqQC3Gmzazm8KcqWR5774tuTL6I0x7NrCSlvShzI8Q10oWbwzjAcj
-	 0druu8owfGbA1OCHOQUs1m46HufNaY8nU35gIBSuMdTb6gP5vAnJBr9zC6zAsRae0H
-	 +4yrRbD32Tp06PZydldoQmoR0FWnfWDVHUwmRpAtklcXlv99H6TyFBIlXw0dkkzba7
-	 HC1btMa6MJor4sqqJHFIaRlFVw+THEuahqVPHEo91HX5WC92fmX3fvPGEV8e6GBgMR
-	 Sbrf1pPWFM8CuxyRysh21spU=
-Received: from zn.tnic (p200300ea9736a14b329c23fffea6a903.dip0.t-ipconnect.de [IPv6:2003:ea:9736:a14b:329c:23ff:fea6:a903])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id A185640E0269;
-	Wed,  4 Dec 2024 20:03:01 +0000 (UTC)
-Date: Wed, 4 Dec 2024 21:02:55 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: "Nikunj A. Dadhania" <nikunj@amd.com>
-Cc: linux-kernel@vger.kernel.org, thomas.lendacky@amd.com, x86@kernel.org,
-	kvm@vger.kernel.org, mingo@redhat.com, tglx@linutronix.de,
-	dave.hansen@linux.intel.com, pgonda@google.com, seanjc@google.com,
-	pbonzini@redhat.com
-Subject: Re: [PATCH v15 01/13] x86/sev: Carve out and export SNP guest
- messaging init routines
-Message-ID: <20241204200255.GCZ1C1b3krGc_4QOeg@fat_crate.local>
-References: <20241203090045.942078-1-nikunj@amd.com>
- <20241203090045.942078-2-nikunj@amd.com>
- <20241203141950.GCZ08ThrMOHmDFeaa2@fat_crate.local>
- <fef7abe1-29ce-4818-b8b5-988e5e6a2027@amd.com>
+	s=arc-20240116; t=1733342718; c=relaxed/simple;
+	bh=RldED8HMCKySelxt0TW6GW/GL2Ep4PQFNk69MJ3zo1Q=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=JvFXsLIfrGPi/pawVSn2e2CbZIJPgO7zj0PR4rhPh2izAmmxb/PLKd5eYLSxcA1qVA4RT3pI2JFOGq2og9tX7Mh4+XMT6lQ8JipL1d/qpzr58Cdu5xRKXLpb7ZflteSjBzNoz5DIVwq6NskyYQhrU4xIoTdySDIsM3zxB+Fc0T4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q6W5Bzkj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F38E5C4CECD;
+	Wed,  4 Dec 2024 20:05:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733342717;
+	bh=RldED8HMCKySelxt0TW6GW/GL2Ep4PQFNk69MJ3zo1Q=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=q6W5BzkjvXaHTIrnZTdGD5iCwNNhaZN7gMTJBXt+HRzr29Z5/0WmVdr+g1CES8myA
+	 +q712arDusrNfXCgjpVAYXHdiYMfkQXKHqnSbKpAgis9/s7oY/zKWz67tc/1eStlFd
+	 A276u4hxM3e9zNyp2hDsfkIpvTCWQB7An+sYPJ3qz8GcVOvPPk5+3r98KXm58QxA4y
+	 DelmbPkfLUV9+eJshoeBO6HMu88EgXilXtU45V47pWiGHFhjn1PYrTjabDqg04/BeY
+	 cOuTi45bsVVavblkC9rWBptE19kaBJ8XUBcfEWJYUcSJUWWZsDpJID7CnIKF9draQA
+	 w8w5IyC/lQAlw==
+Message-ID: <4e87e30244204b4e71f9b0f630171a40.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <fef7abe1-29ce-4818-b8b5-988e5e6a2027@amd.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1jfrn3l615.fsf@starbuckisacylon.baylibre.com>
+References: <20241127-clk-audio-fix-rst-missing-v1-1-9f9d0ab98fce@baylibre.com> <306b0b30-5a32-4c7c-86b4-57d50e2307e8@app.fastmail.com> <1jy1131kxz.fsf@starbuckisacylon.baylibre.com> <c06317c6-b2b2-4b6d-96e4-0c2cfc6846de@app.fastmail.com> <1jplmf1jqa.fsf@starbuckisacylon.baylibre.com> <ce67e512-a15b-4482-8194-b917096f4eeb@app.fastmail.com> <df0a53ee859e450d84e81547099f5f36.sboyd@kernel.org> <1jr06pkof6.fsf@starbuckisacylon.baylibre.com> <37b656cc8272552ba07c93c5a9a59641.sboyd@kernel.org> <1jfrn3l615.fsf@starbuckisacylon.baylibre.com>
+Subject: Re: [PATCH] clk: amlogic: axg-audio: select RESET_MESON_AUX
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Neil Armstrong <neil.armstrong@linaro.org>, Michael Turquette <mturquette@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>, linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
+To: Jerome Brunet <jbrunet@baylibre.com>
+Date: Wed, 04 Dec 2024 12:05:14 -0800
+User-Agent: alot/0.12.dev1+gaa8c22fdeedb
 
-On Wed, Dec 04, 2024 at 03:30:13PM +0530, Nikunj A. Dadhania wrote:
-> The above ones I have retained old code.
+Quoting Jerome Brunet (2024-12-04 09:19:50)
+> On Tue 03 Dec 2024 at 12:15, Stephen Boyd <sboyd@kernel.org> wrote:
+>=20
+> > Quoting Jerome Brunet (2024-12-03 03:15:41)
+> >> On Mon 02 Dec 2024 at 18:53, Stephen Boyd <sboyd@kernel.org> wrote:
+> >
+> > Is the half finished migration a problem for this cycle? I was intending
+> > to send the revert later this week and try again next cycle.
+>=20
+> Not really, with the fix you applied. There is just code present in
+> reset that should not be used in its current form. I'd prefer to
+> sanitise the situation sooner rather than later.
 
-Right.
+Alright. Let's just sort it out in the next few weeks for the next merge
+window then. Maybe you can just do it once then and get auxiliary bus
+maintainers to ack the patch so you can merge the helper locally and use
+it in the amlogic clk tree.
 
-> GFP_KERNEL_ACCOUNT allocation are accounted in kmemcg and the below note from[1]
-> ----------------------------------------------------------------------------
-> Untrusted allocations triggered from userspace should be a subject of kmem
-> accounting and must have __GFP_ACCOUNT bit set. There is the handy
-> GFP_KERNEL_ACCOUNT shortcut for GFP_KERNEL allocations that should be accounted.
-> ----------------------------------------------------------------------------
+> >
+> > Sure. You can make devm_meson_clk_rst_aux_register() use the same
+> > signature as I proposed above so that it's a one line patch later. And
+> > definitely drop the imply RESET_MESON and depends on REGMAP part. Maybe
+> > you can put it in the clkc-utils file?
+>=20
+> Sure. Few things I'd like to clarify
+>=20
+> * I tend think like Arnd, platform data will be needed eventually. Not
+>   sure having 2 functions, one with the param, one without is really
+>   worth it. We could just pass NULL when it is not needed. It is not
+>   uncommon. Would it be acceptable ? (for the generic helper, the
+>   temporary solution does not need that for sure)
 
-Interesting.
+I'll defer to the maintainers there. I don't feel strongly.
 
-> For mdesc, I had kept it similar to snp_dev allocation, that is why it is 
-> having GFP_KERNEL.
-> 
->         snp_dev = devm_kzalloc(&pdev->dev, sizeof(struct snp_guest_dev), GFP_KERNEL);
->         if (!snp_dev)
-> -               goto e_unmap;
-> -
-> -       mdesc = devm_kzalloc(&pdev->dev, sizeof(struct snp_msg_desc), GFP_KERNEL);
-> 
-> Let me know if mdesc allocation need to be GFP_KERNEL_ACCOUNT.
+>=20
+> * You mean (meson-)clkc-utils.c ? I could but that would add dependency on
+>   the auxiliary_bus for clock controllers that don't need it. It is a
+>   minor problem really that I could just ignore.
+>   I'd rather keep this helper separate if possible.
 
-Let's audit that thing:
+Ok, no worries.
 
-* snp_init_crypto - not really untrusted allocation. It is on the driver probe
-path.
+>=20
+> * Why drop 'imply RESET_MESON_AUX' ? I would still like the
+>   COMMON_CLK_AXG_AUDIO to 'strongly suggest' RESET_MESON_AUX, with
+>   dependency problem sorted out.
 
-* get_report - I don't think so:
-
-        /*      
-         * The intermediate response buffer is used while decrypting the
-         * response payload. Make sure that it has enough space to cover the
-         * authtag.
-         */
-        resp_len = sizeof(report_resp->data) + mdesc->ctx->authsize;
-        report_resp = kzalloc(resp_len, GFP_KERNEL_ACCOUNT);
-
-That resp_len is limited and that's on the guest_ioctl path which cannot
-happen concurrently?
-
-* get_ext_report - ditto
-
-* alloc_shared_pages - all the allocations are limited but I guess that could
-remain _ACCOUNT as a measure for future robustness.
-
-And that was it.
-
-So AFAICT, only one use case is semi-valid.
-
-So maybe we should convert those remaining ones to boring GFP_KERNEL...
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Because eventually you'll lose this Kconfig. I guess you'll want to add
+that to the driver Kconfig option to maintain "strongly suggested".
 
