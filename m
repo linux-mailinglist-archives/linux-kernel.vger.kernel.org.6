@@ -1,112 +1,132 @@
-Return-Path: <linux-kernel+bounces-430491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E30129E3193
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 03:46:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DD8BC9E3195
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 03:46:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8EA8285B84
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 02:45:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2AC1285F66
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 02:46:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBA4713A271;
-	Wed,  4 Dec 2024 02:45:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VQqjHkCL"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B51A376026
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 02:45:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 214F227701;
+	Wed,  4 Dec 2024 02:46:45 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9AAABE4E
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 02:46:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733280348; cv=none; b=cJNHwJK0PSGQhI5YODnsSV7HaVh5/bsPXSMgv83/J8a+zQk7Uv9OXOGRirOgM7iZnXvRJ69pNdwcQgmCAh5rrRzMPY7YEAduxAF6pQqxjB8adxS3c4loOEfDicaORhz7u27DgDBISv2abCuS84HRW1HpRXJB+r0dW1U6BUGmJog=
+	t=1733280404; cv=none; b=VoqVgkJQlv+s85Vdiieor2WT2ok4UPTV8Dq0jcG7XLoPWRCgf01CRktPAQpcvBeV/IOM7KoV3HTnDoOQ8OQjqqhHfVABtlU3dao976uRFKqzuruevQ13FUvzABbu5RwFQxksnXct/liUbpPPpY/iBq0usKIdhwL8jFl8ag2sk0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733280348; c=relaxed/simple;
-	bh=Uz82vSmSg4xAKvNdyUovhi8qPKmFolkeJ+4MDgY16pk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=juM9Do+0GdWugDi6dCMOM0Zhft1X11LsycIXuN1PeY5vS3tVelRRSg3mDRvV2S4itrWYEFbVBptkmProUjbk2cZdDjdWobqNTz9N3pJGhsNf3ehgZGSCaAoZF0BY4tRFAiv13O1t5oGMRBqfv+ns1YAVtuCUQICJ03S009io0J8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VQqjHkCL; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1733280345;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Uz82vSmSg4xAKvNdyUovhi8qPKmFolkeJ+4MDgY16pk=;
-	b=VQqjHkCL+eMol8fCmMFHakcBqADUAsgwE+Kw3Kvt/kKMIj5FscXR7ZYnWT6z+EBRC2PQo6
-	VMy0DQpIVaWASdbz4eXkd9IYQVdj5qpIJS5Et+4dlOHnK690aFtEd/iSEW0Qi7GZksHEFc
-	4L2FBpBDUlZwAWJr4QdqJffNu2SBceY=
-Received: from mail-vs1-f69.google.com (mail-vs1-f69.google.com
- [209.85.217.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-171-D9-xyYUlOCSt-k1TMIAuTA-1; Tue, 03 Dec 2024 21:45:42 -0500
-X-MC-Unique: D9-xyYUlOCSt-k1TMIAuTA-1
-X-Mimecast-MFC-AGG-ID: D9-xyYUlOCSt-k1TMIAuTA
-Received: by mail-vs1-f69.google.com with SMTP id ada2fe7eead31-4af4c4f07aeso1746833137.1
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 18:45:42 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733280342; x=1733885142;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Uz82vSmSg4xAKvNdyUovhi8qPKmFolkeJ+4MDgY16pk=;
-        b=wgk1GscKbit5JC5Gi9u8d+u2yBICeo0zoL49EEV7aLQmzLcVNCqilj5cqM4zaT4qyy
-         uuBo68rG2M0IhQ9VDQXLsouDWoFzakqMkp6Yfavw24F2LZl6CtQP+x2LdrjvXs7lfyoR
-         0ok0MqG2k+hNcpVfBj9grEp4kyZ9RVW07MAsrJSujbA2xiy1FKTv26TxIRPubD3XW2x3
-         WwpZYQbjrLNYNGYC4kSRCXQSFlG9ezT/ngnT131KrXyP7Wd09BCtIuyE+B5SsfZG+Ba/
-         MLA3e0TszDJTHz4N978rXxsN3fEQmpzKtkP4dsP9nHSx/FLwPmd8sMKwyhvCE/aDf+yI
-         dVew==
-X-Forwarded-Encrypted: i=1; AJvYcCX+CgWTdI4klQNu+HSPbVCr0eGJ88qOaU0Itb/GsaemARCotvhugFIlPlAgKm5uQFRJDtAUyJDRoZokFkQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yym1Achl0bpzriproLBMIRLIKMUZbuvtrU8tDovQAP7nBxfNnRG
-	x+awUV/rCBg/G+FixI88c44Qx9NmjzMG8//ngfUwnV1ZUgE/XE0ar5WkODF4Lf+a+Rpf9LljsJO
-	5iW5zc9msytwdrJ9xkX34KeWcIAKo9ryS0JDj4yTKsCa12+4MyZsaK+xia5Z3umkhcU+gi5Td9U
-	hNTR6fDkvRinTY2IfUJBSfKlTDBiawhrQis7RG
-X-Gm-Gg: ASbGncuXIupXA6nG2h9yRJsIll3XZmd2PcczZwtvKWuFtB6YMni7RiQRJGGynopeLS3
-	pqQdHuhOZkRB7HuVd+kS4F4zkmob1W5e1
-X-Received: by 2002:a05:6102:38d1:b0:4af:56a8:737c with SMTP id ada2fe7eead31-4af971b193emr6430656137.12.1733280342239;
-        Tue, 03 Dec 2024 18:45:42 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IF+v2rQ020MNSJM5uPbSBJm0D0/Db89xQqRoZNc5welU5BaKs9HJz5sd95RktgMEEi3m5Dwg3PuqbEbHeQzKSU=
-X-Received: by 2002:a05:6102:38d1:b0:4af:56a8:737c with SMTP id
- ada2fe7eead31-4af971b193emr6430646137.12.1733280341977; Tue, 03 Dec 2024
- 18:45:41 -0800 (PST)
+	s=arc-20240116; t=1733280404; c=relaxed/simple;
+	bh=6TfBRBylDlHYU+NrZUTyNjD7PcuWOnKS9qPYLJZ7WW4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=J8vGcaz0Bn2iz+G2dOJgVPw2IFl5eIDpP0TzNE/IYcw5SD/q43FnmN/UcM+Rvf8NAh3MQjJY1jSt+5zZupAjBbS12i3eqCQX52XLsT1kzcaV0Md/MpW4tv5j7jveT1slwXZKpzmzQztNS0nZEzDAbRPn+XADza1AQnI7gi9AqzM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F2D41FEC;
+	Tue,  3 Dec 2024 18:47:08 -0800 (PST)
+Received: from [10.162.16.41] (a077893.blr.arm.com [10.162.16.41])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 720823F5A1;
+	Tue,  3 Dec 2024 18:46:39 -0800 (PST)
+Message-ID: <d0b45f75-d500-4049-8240-56a0db4038d3@arm.com>
+Date: Wed, 4 Dec 2024 08:16:36 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241203073025.67065-1-koichiro.den@canonical.com> <20241203073025.67065-4-koichiro.den@canonical.com>
-In-Reply-To: <20241203073025.67065-4-koichiro.den@canonical.com>
-From: Jason Wang <jasowang@redhat.com>
-Date: Wed, 4 Dec 2024 10:45:29 +0800
-Message-ID: <CACGkMEsd_fVOFcFGmW0g7DbD_G5cAudWuxc9LD9PNPm=HvNHQw@mail.gmail.com>
-Subject: Re: [PATCH net-next v2 3/5] virtio_net: add missing
- netdev_tx_reset_queue() to virtnet_tx_resize()
-To: Koichiro Den <koichiro.den@canonical.com>
-Cc: virtualization@lists.linux.dev, mst@redhat.com, xuanzhuo@linux.alibaba.com, 
-	eperezma@redhat.com, andrew+netdev@lunn.ch, davem@davemloft.net, 
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, jiri@resnulli.us, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2] mm/hugetlb: Make __NR_USED_SUBPAGE check conditional
+To: Muchun Song <muchun.song@linux.dev>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+ Oscar Salvador <osalvador@suse.de>, linux-kernel@vger.kernel.org
+References: <20241203023207.123416-1-anshuman.khandual@arm.com>
+ <A9973D39-9840-40F2-91DA-1CA8ADC06AA1@linux.dev>
+ <3733d1e8-6e9d-4337-aeda-a6d5366d4a4c@arm.com>
+ <9C1A9184-7432-45CB-89E4-D0A62C992C76@linux.dev>
+Content-Language: en-US
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <9C1A9184-7432-45CB-89E4-D0A62C992C76@linux.dev>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Dec 3, 2024 at 3:32=E2=80=AFPM Koichiro Den <koichiro.den@canonical=
-.com> wrote:
->
-> virtnet_tx_resize() flushes remaining tx skbs, so DQL counters need to
-> be reset.
->
-> Fixes: c8bd1f7f3e61 ("virtio_net: add support for Byte Queue Limits")
-> Cc: <stable@vger.kernel.org> # v6.11+
-> Signed-off-by: Koichiro Den <koichiro.den@canonical.com>
-> ---
 
-Acked-by: Jason Wang <jasowang@redhat.com>
 
-Thanks
+On 12/3/24 13:50, Muchun Song wrote:
+> 
+> 
+>> On Dec 3, 2024, at 15:46, Anshuman Khandual <anshuman.khandual@arm.com> wrote:
+>>
+>>
+>> On 12/3/24 08:59, Muchun Song wrote:
+>>>
+>>>
+>>>> On Dec 3, 2024, at 10:32, Anshuman Khandual <anshuman.khandual@arm.com> wrote:
+>>>>
+>>>> The HugeTLB order check against __NR_USED_SUBPAGE is required only when
+>>>> HUGETLB_PAGE_OPTIMIZE_VMEMMAP is enabled. Hence BUG_ON() trigger should
+>>>> happen only when applicable.
+>>>>
+>>>> Cc: Muchun Song <muchun.song@linux.dev>
+>>>> Cc: Andrew Morton <akpm@linux-foundation.org>
+>>>> Cc: Oscar Salvador <osalvador@suse.de>
+>>>> Cc: linux-mm@kvack.org
+>>>> Cc: linux-kernel@vger.kernel.org
+>>>> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+>>>> ---
+>>>> This patch applies on v6.13-rc1
+>>>>
+>>>> Changes in V2:
+>>>>
+>>>> - Fixed #ifdef with CONFIG_HUGETLB_PAGE_OPTIMIZE_VMEMMAP per Oscar
+>>>>
+>>>> Changes in V1:
+>>>>
+>>>> https://lore.kernel.org/all/20241202090728.78935-1-anshuman.khandual@arm.com/
+>>>>
+>>>> mm/hugetlb.c | 6 ++++--
+>>>> 1 file changed, 4 insertions(+), 2 deletions(-)
+>>>>
+>>>> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+>>>> index ea2ed8e301ef..e6a5b21e3578 100644
+>>>> --- a/mm/hugetlb.c
+>>>> +++ b/mm/hugetlb.c
+>>>> @@ -4513,11 +4513,13 @@ void __init hugetlb_add_hstate(unsigned int order)
+>>>> 	struct hstate *h;
+>>>> 	unsigned long i;
+>>>>
+>>>> - 	if (size_to_hstate(PAGE_SIZE << order)) {
+>>>> + 	if (size_to_hstate(PAGE_SIZE << order))
+>>>> 		return;
+>>>> - 	}
+>>>> +
+>>>> 	BUG_ON(hugetlb_max_hstate >= HUGE_MAX_HSTATE);
+>>>> +#ifdef CONFIG_HUGETLB_PAGE_OPTIMIZE_VMEMMAP
+>>>> 	BUG_ON(order < order_base_2(__NR_USED_SUBPAGE));
+>>>
+>>> Hi Anshuman,
+>>>
+>>> __NR_USED_SUBPAGE indicates how many struct pages are used to store
+>>> extra metadata for a HugeTLB page. So we need to make sure the order
+>>> of a HugeTLB page should be bigger than or equal to order_base_2(__NR_USED_SUBPAGE).
+>>> So It is not related to HVO. I don't think the changes make sense.
+>>
+>> I did think about that but order_base_2(__NR_USED_SUBPAGE) actually
+>> turns out to be just 2 as __NR_USED_SUBPAGE is 3. Would not HugeTLB
+>> size be always greater than four base pages in reality, thus making
+>> this BUG_ON() check just redundant ?
+> 
+> Currently, there is no architectures supporting hugetlb page smaller
+> than 4 base pages. I think the smallest size is 64KB in arm64, but who
+> knows whether if certain architectures supports 8KB in the future or
+> we want to uses more struct pages to store metadata for increasing
+> __NR_USED_SUBPAGE (e.g. change it to 17). So I tend to keep this
+> BUG_ON remain to catch unexpected bugs.
 
+Sure, fair enough.
 
