@@ -1,117 +1,132 @@
-Return-Path: <linux-kernel+bounces-431931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25BD99E42D5
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 19:05:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 85BA79E42D7
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 19:05:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 915B41666C8
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:05:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 651C1168FE4
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:05:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D57720E30D;
-	Wed,  4 Dec 2024 17:53:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F02A239195;
+	Wed,  4 Dec 2024 17:56:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dvY6gWCY"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="brjefTs6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E230E20E306;
-	Wed,  4 Dec 2024 17:53:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B14FD239180;
+	Wed,  4 Dec 2024 17:56:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733334833; cv=none; b=YPupMSIwxsRqoq9rDGDTk/BnVjo7x8KCgjgVXdj0g0efAuuWi7y+ovtGyNtJ9KVMpNqVBu96aZkqC3fKZufQcHxB2+O0k++IPeV/Q04UEq93pyFXb7sD7c/DzNcUjTqBKPmGOlZ2IreBbYllS+3oqfSVY+eiCgC2oZNloL98J8s=
+	t=1733334961; cv=none; b=k5vWxPfKQjcopDFtZXWnF/Fa3MdNIAFVgRPD/1mZ23Vjeois4pAOipuyFKLCjR1sD7/JEMUrPqvHJgL4qYC76E83nsfsV+LSDClQD3GDyvJilGzzmGGCuGHH4ZP/WVdjNntK/NtJ+es0wWu4bqjlcmJY3GOUHBgMjxRy63PJdMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733334833; c=relaxed/simple;
-	bh=YgI6bbVf8fawNLoh5G27JRcUteiQDukkT9IoSyRi4/g=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ajun7SM8n0sg8hD1k8Fett4zawKyXWGqVLLi9SWguWU9gj9ymS8er3SSoptdvcg1wUfTqnvIGCNTVoS+aG488d7BIlmqTEK45n4i9CysOZeO6Gf32StQlXJpwuRAazZQL6igJenqlUjJ7+RaK9EhNtVJ4sXrUQVpKTT/aE/4WwE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dvY6gWCY; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2ffa49f623cso89410091fa.1;
-        Wed, 04 Dec 2024 09:53:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733334830; x=1733939630; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Gzu3n2Qpj3CtMKuLFOgq+iWAfCQoArTJr+VrPbBeo9E=;
-        b=dvY6gWCYperKkFM10bamyG2DJb6eyxD/mWr0DrFWndVM/9Hgx+dwH3EUB3bOva1hGd
-         Of4POnF8zRn+gxU6RJGtv02B4r3Oaw31sw3Yd/egP/MPLDdH5eBlDX1lNTksyZ4eBARn
-         p0YkoYYDT85nfkzAcK77dh7cNPxZWjb3ZpqtP7+bRdqfMB4BPE4y/9N/b4X5OKG1EA7l
-         hhcPiUGSEscfh/lpbI+2U5/54jcttTbthW6wR4PNXoVkmLsgjxKbkS220MIbWK37T+D0
-         wTeJM+DisSj+WGG6HpCVCjDiTF6D3EA+uWESAhrmooi0ZVYMTMlbDhZjIRQn81dbH9LF
-         li6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733334830; x=1733939630;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Gzu3n2Qpj3CtMKuLFOgq+iWAfCQoArTJr+VrPbBeo9E=;
-        b=uhHz2TqEarbBUCo6xEltDPFkdEb0aQHz/MpomQJGHDdcA3LqPSXxj7UI2Mtko7oVI8
-         P09WVhAQqyBWA+vn21tYrsUCTnkWwcrP9MDhRFefd1Sx+NjQ99b4rdYHsWBfH/1a0njs
-         Hqd8vC/L4D0Jc6s62u08gzh0kb4gfdipUoit0eZcHUxMTMZzOqo94h4W2UjM5ykwJ/9a
-         O2EtTGX/mzJXIdx/NggsRLQdZf/70P0ryB7Rkf5bAz7XZN7abYYDSKd4Lfd2k+k+Xcv3
-         uUXsxzaTh7gpSuumXVh2FiGg+9bRwKQXtKAUIKmka8Hc9TBmdZlY4OK5RWcMlMYasFFn
-         JMYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVmo44LDR4yOEoO7qpJ0z708U/K3hhysaCwpgCwUVYk5xheks6u9+12C0I5tXe/mm0ivkk4lH4dWkqzT4Y=@vger.kernel.org, AJvYcCW1hsr3icy0dT9vosrI4dGGKqfmMO7b4MpVfGIi65NklGZldMjWM5igQVXj0JQ55MeMDKAt62w8GGup@vger.kernel.org
-X-Gm-Message-State: AOJu0YzoSLoW0Im6UI3VIDrs9DRsbT5fyU/cpgeyfxwkXplxTa7LWMKg
-	SztYc8ocKT0sfScYunHZldaJwPEjoHbd9xXGmDu7vSRDKAlxX6Ts
-X-Gm-Gg: ASbGncufG+9oY92wfQ/3YqXpg3UtXkZ48cmeqrQmyV54mxy7qteS1YmlhjJ8MX3MZDN
-	+AIdOFQ6SEvLz4f7KU3SWNlDRSSdV/5qGX3urx2ZpK4bOlSiPgFnVw07duZuRtpeVon9X/uZA6L
-	Yl1xBBqXjmwwVcRtdylcXCf6uSNmYyaW9CmEsKMY1iLpBvvxMkEAPl99/Qon5WAMxnpoFDJJbwl
-	S+qVlPoZ2NWTo1lF6yj54LTcCkgeqHHxumFls7iDWkCWHQsT1tX0UBSEhU1nox98lw=
-X-Google-Smtp-Source: AGHT+IFBp8c7Yqy9B76Hkkh7O7QcdGo83+Q1/4MpNXwhFipbF7NUX1lTPPYUaOz1fhbjmJvK4fW8Ww==
-X-Received: by 2002:a05:651c:502:b0:300:1c7a:e22f with SMTP id 38308e7fff4ca-3001c7ae68amr6011191fa.5.1733334829763;
-        Wed, 04 Dec 2024 09:53:49 -0800 (PST)
-Received: from foxbook (adqz254.neoplus.adsl.tpnet.pl. [79.185.159.254])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3001959c429sm2305771fa.103.2024.12.04.09.53.44
-        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
-        Wed, 04 Dec 2024 09:53:48 -0800 (PST)
-Date: Wed, 4 Dec 2024 18:53:35 +0100
-From: Michal Pecio <michal.pecio@gmail.com>
-To: Mathias Nyman <mathias.nyman@intel.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/1] usb: xhci: Fix NULL pointer dereference on certain
- command aborts
-Message-ID: <20241204185335.7514166d@foxbook>
-In-Reply-To: <20241203205249.513f1153@foxbook>
-References: <20241203205123.05b32413@foxbook>
-	<20241203205249.513f1153@foxbook>
+	s=arc-20240116; t=1733334961; c=relaxed/simple;
+	bh=TOM9aePxdCLGUo6xUM1G1Spcg2FXy7L874bypRvmAP8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=a34+bfob42fhuB8yeA57vYo1EhDoWYmXT4bUdIFDherVB3DR8HhiPvEf0uQbcwkClwAXQCLxtmPG7y5iVJm1x6XWmUeNc2wkpLlGLk+SSJz8QyzyjB4FzbC0nrUgM0R6PxJ9qIpP+DyRWhNnGnMHdvAbqo6ponmZiqXT2KSMJsE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=brjefTs6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50A0CC4CED1;
+	Wed,  4 Dec 2024 17:55:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733334961;
+	bh=TOM9aePxdCLGUo6xUM1G1Spcg2FXy7L874bypRvmAP8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=brjefTs6cDkW2nRCNYmkohhi5xASlnMC2hrszHenetY8dFlSvH5qSNQfbDIYwb79c
+	 U1qMNITZbY2wTvUycDBZh+am0aRbxrpetbs/9Jz1NCVxtUdLSTIdCIeM3W+NxARIX4
+	 aR166jdbrJyQAPU3a3+3TcErS/dYKcc4dwkktEKkMysFSm/tpdXBCPruP1Uxswi/oP
+	 9lGKQ7Ex3wF/hMhFDyANPFU6N4ak509P6Omr4OC7kVMpY8obKtub+isqwuE42t+kzo
+	 1DrXF4agK5awyZEKwYj5jDUzxPsqsSlqfbCxbmZjUL1ggxSsPi5r9RfDVPMW3TveEG
+	 qYOWKrOkbRERg==
+Date: Wed, 4 Dec 2024 17:55:56 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Neil Armstrong <neil.armstrong@linaro.org>
+Cc: Support Opensource <support.opensource@diasemi.com>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Roy Im <roy.im.opensource@diasemi.com>, linux-input@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: input: convert dlg,da7280.txt to dt-schema
+Message-ID: <20241204-duplicity-throwing-42a3faca5199@spud>
+References: <20241204-topic-misc-da7280-convert-v1-1-0f89971beca9@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="UJpZzxk7m7DI9NMl"
+Content-Disposition: inline
+In-Reply-To: <20241204-topic-misc-da7280-convert-v1-1-0f89971beca9@linaro.org>
 
-I confirmed that the bug is real and behaves exactly as expected, using
-a USB microcontroller programmed to NAK the status stage of SET_ADDRESS
-requests forever and to reconnect if the host gives up enumerating it.
 
-Command timeout was reduced to 500ms to sooner reach the segment's end
-and some relevant debug info was added, hopefully self-explanatory:
+--UJpZzxk7m7DI9NMl
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-[  +0,378926] usb 10-1: new full-speed USB device number 109 using xhci_hcd
-[  +0,501006] xhci_hcd 0000:03:00.0: cur_cmd 0000000000000000 enq ffff88814671bff0 deq ffff88814671b000
-[  +0,000001] xhci_hcd 0000:03:00.0: Timeout while waiting for setup device command
-[  +0,000005] xhci_hcd 0000:03:00.0: !!! avoiding dereferencing a NULL pointer !!!
-[  +0,712001] xhci_hcd 0000:03:00.0: cur_cmd 0000000000000000 enq ffff88814671b010 deq ffff88814671b010
-[  +0,000001] xhci_hcd 0000:03:00.0: Timeout while waiting for setup device command
-[  +0,207981] usb 10-1: device not accepting address 109, error -62
+On Wed, Dec 04, 2024 at 11:54:35AM +0100, Neil Armstrong wrote:
 
-The driver and host controller continue working normally after one hour
-of testing and several avoided crashes.
+> +  dlg,bemf-sens-enable:
+> +    type: boolean
+> +    description:
+> +      Enable for internal loop computations
+> +
+> +  dlg,freq-track-enable:
+> +    type: boolean
+> +    description:
+> +      Enable for resonant frequency tracking
+> +
+> +  dlg,acc-enable:
+> +    type: boolean
+> +    description:
+> +      Enable for active acceleration
+> +
+> +  dlg,rapid-stop-enable:
+> +    type: boolean
+> +    description:
+> +      Enable for rapid stop
+> +
+> +  dlg,amp-pid-enable:
+> +    type: boolean
 
-The only thing I haven't tried is actually crashing the kernel, but
-considering what's inside xhci_mod_cmd_timer() I think it's obvious
-that this is exactly what would happen next without this patch.
+Shouldn't these ones be "flag"?
 
-Regards,
-Michal
+> +    description:
+> +      Enable for the amplitude PID
+> +
+> +  dlg,mem-array:
+> +    $ref: /schemas/types.yaml#/definitions/uint8-array
+> +    minItems: 100
+> +    description:
+> +      Customized waveform memory (patterns) data downloaded to the device during initialization
+> +
+> +required:
+> +  - compatible
+
+Is this right? The text binding has: compatible, reg, interrupt-parent,
+and a handful of vendor properties required. I don't see a mention for
+the drop in the commit message.
+
+Cheers,
+Conor.
+
+
+
+--UJpZzxk7m7DI9NMl
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ1CXrAAKCRB4tDGHoIJi
+0hTOAP9aMNlPB4ninZpAhijkEK3jkIpRWqkJ/XhPR0rp0mU5WAEAnRwTPZl+B0cN
+mQtpCXERWPXq9+Nyu4Po1/WxyYPezgU=
+=Nizb
+-----END PGP SIGNATURE-----
+
+--UJpZzxk7m7DI9NMl--
 
