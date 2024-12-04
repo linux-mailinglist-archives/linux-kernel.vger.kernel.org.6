@@ -1,146 +1,130 @@
-Return-Path: <linux-kernel+bounces-430879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFDF99E36CE
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 10:40:03 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59C8F9E36CF
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 10:40:17 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CBBB3169428
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 09:40:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1EA0F283A5F
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 09:40:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECB97BE5E;
-	Wed,  4 Dec 2024 09:39:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 411B9199FB0;
+	Wed,  4 Dec 2024 09:40:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="m8S/85sh"
-Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gCtcplt4"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBA2113AA2E
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 09:39:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE251194A59
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 09:40:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733305191; cv=none; b=BUEADfeg02W0cnBikY+fHGuqsZ9K362+zHoUTjDUz9yVCOwxPrpRlWQtzrgcUtD7X/TP8YZtsm8EaMPtT/7tWM/FHYArVtISIP31156wiQo73MRhgX9Am/rGq57RK6sVyNqyG/OUfcVAO2qlE3wrvsJTDXaI8re8sUTJ9h/swm0=
+	t=1733305213; cv=none; b=VyXU4Hv/8PKei70kafi968X8Xn+TT9fu6lDbGYNFvycsLRy/YUKNHI9rT+4cESa+T4Uq3OYZuUKPnp9XaQRoXfjUepFhaPSRA1SrlRPdJn+ZLNK/TaXMMfMKGop0tzZXlw/gRM/5vjMLYjVhakHb+/8AxDCbX4xFACeELxo6Ed8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733305191; c=relaxed/simple;
-	bh=/iIljwrvnL8U+w7cXQ38QKEArA8EUUyDef/DJpx53R8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CxcbVnz7QpIUccf7Qhba+Ylt2DILlV2f6n/WYMVRLkpPQjxBJzsuBwLMRW9Ih+XKmt/CiKwf6fAVp9WAzpeWHvsZBBENMl5MwEJoAcX+XBgDhDN8h4WAaTA/FUrPuTCrnZfCIJxBzzJ+oatBBiKHeIksrX1ve3YCBp8WYrEUxRE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=m8S/85sh; arc=none smtp.client-ip=209.85.215.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-7fbbe0fb0b8so4948649a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 01:39:49 -0800 (PST)
+	s=arc-20240116; t=1733305213; c=relaxed/simple;
+	bh=ciZiSF8l2bRuo96MgTGys453NaZJ21QaR/1Vkn6LbeU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dkDX+vDj/1gA9BAI9EjSTCoxQdbLk8tzUh/Y+i3Zh6W+6ajrEPkGQRm6IxXvtXUwPiTYqfgMLxpiuklExpUxi8qHo3yrMG+VoRkrU7Cre0SZ2lFwMuBKGNCLPNUkhuQ+xV/HXc1i6PJUMArVZpub+rZ+98atQAHP+UdoCKHK0cs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gCtcplt4; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-385e87b25f0so386439f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 01:40:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1733305189; x=1733909989; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=LmKQFaFDxD0Y+gWKKpkjZY/jkt1D47sAd7yQDFNQk7s=;
-        b=m8S/85shWBpWFjaTgDyvRXo5kzBgsXGP/bW20Q0cmDz6BPqvRsJ5c1MLU6wB94Z/du
-         S/NciOzXTEASyihNAqTCWrrOmM5aX6NbAVqY1YZ4O2qaQmQf6ws6Gv71qwBDH5iLgBcq
-         0XCO5wnoFNhbHdczxsklaMIk58vHiuNCoHkQ0=
+        d=google.com; s=20230601; t=1733305210; x=1733910010; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aFrZSoqi/L4Q/j3dvgmVmN/U9TUdf5LF8q9wgVtrI3c=;
+        b=gCtcplt4f6XD4q1jiJHyZE69SyX1IQ+aZqKXEmsXIhfui4dnhrq+4fM5jIVtU6RwOc
+         wRCRgNmARsOyDh9FtMhTP93xQNABe+/SuLHQr8Blkq0batbnhTGdgn1HFNWAi8tVXF1J
+         E8cLYPcd4j7ZNZJ7qUJKYR2/rW/XMw8ltVU3FGmpq7hfk02C2dt4P9Hng3evZQCz2gMo
+         bNasRKUzdZMf8MhvUlCiwlaVMoRFOYgtyNNQzgg78MoUw3sMO3Ry9AnmNggTAu9TRFnF
+         qoRimJW1ISLuOY0BGcjiSbnMiAHmVhn9RQWguWjVduYnNKCwjjOFd/xWmdyF3UYIgWZo
+         qnSw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733305189; x=1733909989;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LmKQFaFDxD0Y+gWKKpkjZY/jkt1D47sAd7yQDFNQk7s=;
-        b=nUIbkkNjjrTtjVrc8suhZ8RzlXgXkaYXhbXNFSPBikzpUP9yWJOpSj6+1pl6NlrwzL
-         0Nu4JvEDkyeKTbQLjCGzr+8yNuk2wUZJ50YFzDdern580LMUtYQlnu/21FYQxR0Tsieu
-         GAYSw5JyPpNhcRpUDFB2sKtH0RrYYWXIVCiFR884JBePK8LM/Q2oYJuGo7qMlfpLvg3i
-         SH1NldvdeZJYFXi8DQE2tb5K+JZ+G1ufDGLd8HFV+8ivNqeZxYj/oFjS45LRYGC6dUm/
-         l2l2V+SwQNNUQliUL7r+NSht3hhZ2Ta9hDPA2JNi7zmCgIBrdCKn15+bskCLHH62+zIT
-         ObOg==
-X-Forwarded-Encrypted: i=1; AJvYcCVKuV7I++8xy/qopAPSTrnzt9+rCJzinmy61ItMN4xka1YVpsDyzZxHV8BM6z47g3YOIUS1oqRXSJKgaFY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQ2J1nRD+1WSuDWqFW2eDUROwUcM3jqCJwLh9x9TfGyOl/8Im3
-	16GtlGAvEQ/AqoT0TZUWLT54s8TCRnnB7wiWYb5e6Kkk3pN/UqRmPaBeILZAKGcUQnb1lMHBWH4
-	=
-X-Gm-Gg: ASbGnct3L3MeCQkw4GXPUdo7Cv5qodoByPTiuDQ8JIdabLjdKZkYkZ+jVoNC9cfbZzC
-	135CKFvGfZosSl3sqoHJi9l6bfSEqvHIY2kXf7S/3HuuaSr1IpcFTgGhUG4c7m+Q/AlxDuUIHtt
-	hRnpLaDFhWWxKr1hz16sT22PQFyI/BJnwl1JOoPohYRnmT2NYj/gDZPJf4mO00pO3yp8sWTKJ+w
-	STTtRw5XFywJcGHynfVM4vX8QFSXc/KW0HvDMn8rdatNCAmxq1m1p0yQnEof9YooBWn
-X-Google-Smtp-Source: AGHT+IEXmsp2Cw7/pay6uwf+WDn2jkrMrMPX/IyvfyMp5biRmOor0cpwmgHeDuThnXWYu9lRSdyKkQ==
-X-Received: by 2002:a05:6a20:6a28:b0:1e0:d0ac:133b with SMTP id adf61e73a8af0-1e1653f2f2fmr7945090637.33.1733305189083;
-        Wed, 04 Dec 2024 01:39:49 -0800 (PST)
-Received: from wenstp920.tpe.corp.google.com ([2401:fa00:1:10:2eb1:a68a:2625:b944])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72541814a57sm11910814b3a.167.2024.12.04.01.39.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Dec 2024 01:39:48 -0800 (PST)
-From: Chen-Yu Tsai <wenst@chromium.org>
-To: Neil Armstrong <neil.armstrong@linaro.org>,
-	Jessica Zhang <quic_jesszhan@quicinc.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>
-Cc: Chen-Yu Tsai <wenst@chromium.org>,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] drm/panel: visionox-rm69299: Remove redundant assignments of panel fields
-Date: Wed,  4 Dec 2024 17:39:41 +0800
-Message-ID: <20241204093942.1374693-1-wenst@chromium.org>
-X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
+        d=1e100.net; s=20230601; t=1733305210; x=1733910010;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=aFrZSoqi/L4Q/j3dvgmVmN/U9TUdf5LF8q9wgVtrI3c=;
+        b=oyX5rLxYeBPKmTz+OU744WQ8fZgGQS1/IF7wkuIaHnpZm7eTjvrXM1FZPYCXQk5kWz
+         aMLTX4XT/Ve4kNPVNk0p/PdvJQGcnlNVXEmQY2cH6PyeY2amlaUR2Yb+gXCDOAo9s9YQ
+         DivlzZk5qYlAahkzDLx3jpdfBDf9fAnEfeFxbpa/qfgiz7mtHFJL3VJsFP0mh6MBssxw
+         weWvxHBDs2cIroA5eYcrOsYu1+zgmnqgxkRu/AvVJxZw2ReLhQzu6vyqRu7H3Gix75sD
+         mf1DWBoxW5tUzUsVd7Scr3HboYwvO4hHMufVenvkPb6CGcKETIArrq35nxqSSeRqcKgk
+         9N5A==
+X-Forwarded-Encrypted: i=1; AJvYcCXkDkCopVYR1gV1mBZ8yGK7FApmS6IN9zGumhqwtMVamrQ2Nxx8iCIGwsyfVOWpW2Ge5nFUMBgqXX6lYJ4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwOqcXv2OvglWQNktf9mk1SeW7Xf/EqNjdnFYIYSNNFCQI/XXLS
+	Aa2KZpkn1MnQABAdPbtPfmYsAruiAKv7aNQgWokciR6jQcGcdDyz1QMnGGCZnBsfEd/Qtp3dhJQ
+	etGuVawgL62MfPAr7FOOcNAAYq2QPoIx4Jrh4
+X-Gm-Gg: ASbGnct+/7Lhr+qRGeNuy6cgx/4wDmYMYc6QVtegtjfmSdkrNAPmyjhqHPrqgaU7z5a
+	O7OQNME5ssuIvQASizi3Fr2N2u81PuuBovqTPfsnMUFd3Tn/p2A6I+RndW8cSHg==
+X-Google-Smtp-Source: AGHT+IGRblWIDZ2C6Yh3qV1LG4hQ2laf1qX4XN6zuWGMVMNt8LaHH44zWnW45GQaqyEOBqEtoQDCxGpUzAmCqXr5PCo=
+X-Received: by 2002:a5d:6484:0:b0:385:e10a:4d97 with SMTP id
+ ffacd0b85a97d-385fd9abec7mr4009298f8f.21.1733305210170; Wed, 04 Dec 2024
+ 01:40:10 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241203215452.2820071-1-cmllamas@google.com> <20241203215452.2820071-5-cmllamas@google.com>
+In-Reply-To: <20241203215452.2820071-5-cmllamas@google.com>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Wed, 4 Dec 2024 10:39:58 +0100
+Message-ID: <CAH5fLgiarbw82R34Ct=GP3-6ophJOuhuRoerr427gHsEPy+Rcg@mail.gmail.com>
+Subject: Re: [PATCH v6 4/9] binder: store shrinker metadata under page->private
+To: Carlos Llamas <cmllamas@google.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>, 
+	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
+	Joel Fernandes <joel@joelfernandes.org>, Christian Brauner <brauner@kernel.org>, 
+	Suren Baghdasaryan <surenb@google.com>, linux-kernel@vger.kernel.org, kernel-team@android.com, 
+	Matthew Wilcox <willy@infradead.org>, "Liam R. Howlett" <Liam.Howlett@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-drm_panel_init() was made to initialize the fields in |struct drm_panel|.
-There is no need to separately initialize them again.
+On Tue, Dec 3, 2024 at 10:56=E2=80=AFPM Carlos Llamas <cmllamas@google.com>=
+ wrote:
+>
+> Instead of pre-allocating an entire array of struct binder_lru_page in
+> alloc->pages, install the shrinker metadata under page->private. This
+> ensures the memory is allocated and released as needed alongside pages.
+>
+> By converting the alloc->pages[] into an array of struct page pointers,
+> we can access these pages directly and only reference the shrinker
+> metadata where it's being used (e.g. inside the shrinker's callback).
 
-Drop the separate assignments that are redundant. Also fix up any uses
-of `ctx->panel.dev` to use `dev` directly.
+Using many allocations instead of a single array will increase the
+number of allocations a lot. Is it worth it?
 
-Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
----
-Changes since v1:
-- Also fix uses of `ctx->panel.dev`
+> Rename struct binder_lru_page to struct binder_shrinker_mdata to better
+> reflect its purpose. Add convenience functions that wrap the allocation
+> and freeing of pages along with their shrinker metadata.
+>
+> Note I've reworked this patch to avoid using page->lru and page->index
+> directly, as Matthew pointed out that these are being removed [1].
+>
+> Link: https://lore.kernel.org/all/ZzziucEm3np6e7a0@casper.infradead.org/ =
+[1]
+> Cc: Matthew Wilcox <willy@infradead.org>
+> Cc: Liam R. Howlett <Liam.Howlett@oracle.com>
+> Reviewed-by: Suren Baghdasaryan <surenb@google.com>
+> Signed-off-by: Carlos Llamas <cmllamas@google.com>
 
- drivers/gpu/drm/panel/panel-visionox-rm69299.c | 9 ++-------
- 1 file changed, 2 insertions(+), 7 deletions(-)
+[...]
 
-diff --git a/drivers/gpu/drm/panel/panel-visionox-rm69299.c b/drivers/gpu/drm/panel/panel-visionox-rm69299.c
-index 272490b9565b..be3a9797fbce 100644
---- a/drivers/gpu/drm/panel/panel-visionox-rm69299.c
-+++ b/drivers/gpu/drm/panel/panel-visionox-rm69299.c
-@@ -193,7 +193,6 @@ static int visionox_rm69299_probe(struct mipi_dsi_device *dsi)
- 
- 	mipi_dsi_set_drvdata(dsi, ctx);
- 
--	ctx->panel.dev = dev;
- 	ctx->dsi = dsi;
- 
- 	ctx->supplies[0].supply = "vdda";
-@@ -201,13 +200,11 @@ static int visionox_rm69299_probe(struct mipi_dsi_device *dsi)
- 	ctx->supplies[1].supply = "vdd3p3";
- 	ctx->supplies[1].init_load_uA = 13200;
- 
--	ret = devm_regulator_bulk_get(ctx->panel.dev, ARRAY_SIZE(ctx->supplies),
--				      ctx->supplies);
-+	ret = devm_regulator_bulk_get(dev, ARRAY_SIZE(ctx->supplies), ctx->supplies);
- 	if (ret < 0)
- 		return ret;
- 
--	ctx->reset_gpio = devm_gpiod_get(ctx->panel.dev,
--					 "reset", GPIOD_OUT_LOW);
-+	ctx->reset_gpio = devm_gpiod_get(dev, "reset", GPIOD_OUT_LOW);
- 	if (IS_ERR(ctx->reset_gpio)) {
- 		dev_err(dev, "cannot get reset gpio %ld\n", PTR_ERR(ctx->reset_gpio));
- 		return PTR_ERR(ctx->reset_gpio);
-@@ -215,8 +212,6 @@ static int visionox_rm69299_probe(struct mipi_dsi_device *dsi)
- 
- 	drm_panel_init(&ctx->panel, dev, &visionox_rm69299_drm_funcs,
- 		       DRM_MODE_CONNECTOR_DSI);
--	ctx->panel.dev = dev;
--	ctx->panel.funcs = &visionox_rm69299_drm_funcs;
- 	drm_panel_add(&ctx->panel);
- 
- 	dsi->lanes = 4;
--- 
-2.47.0.338.g60cca15819-goog
+> +static void binder_free_page(struct page *page)
+> +{
+> +       kfree((void *)page_private(page));
+> +       __free_page(page);
 
+I would cast the page_private to a pointer of the right type here.
+There may be tools or future improvements to kfree that use the type
+information.
+
+Alice
 
