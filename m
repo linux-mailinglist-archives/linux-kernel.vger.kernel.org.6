@@ -1,129 +1,103 @@
-Return-Path: <linux-kernel+bounces-431372-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00C639E3C84
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:18:46 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE8A39E3C87
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:18:54 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 22BFB163BC5
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 14:18:51 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F72A1FECCD;
+	Wed,  4 Dec 2024 14:18:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kw9UZ11H"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9D77280B98
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 14:18:44 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93B591F75A9;
-	Wed,  4 Dec 2024 14:18:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Pp4ApjzZ"
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CFFC1E3DCF
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 14:18:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 689061FA844;
+	Wed,  4 Dec 2024 14:18:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733321922; cv=none; b=ZQOCTjp8h+OLfnksNgvHCks2NPewr0dlX1N8tgyKcmVYK88Dzxa0MP5AeSH+GoU1rQUOpC0Szy+vYQDV+1SUJLi+pF3DzudUIR8gP12eitCn3m4omwyRFXp+gkCF8sFWnhISHk9z2hR2JL/1a0Nll2NjULGCRdIxgpDIlHlzBRw=
+	t=1733321923; cv=none; b=Ls/hen5XB9uts/50qXB8r/MIbgxFPsNJlrXG/nXP69WADCpWQzrJUWE6hfMDJs827ydSHA8K6ZkIRyYCQfNve1jn6vJp7DOKzxHTsTi0VGNQAdAsn2QXJFy9axiVT23Dt0C3aCAHOVfI8kep2A2/7fHofocL5jn0YTCJlFjgSVo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733321922; c=relaxed/simple;
-	bh=WgMzzPONzvXMDffdEbLrbj7uxW0Hra0oNVW7bnaTYSQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MY1D0ErNegMXUounLDMar0EhuelYpclapFcmTX5IPsRTHjiJW8vwalXZx6duBWyF1DlL0vB2+iUg0rUOmrsV9wbTOhqgXZrq/+MiYEbcc36cpRk4j8+3hIARbuH0MieMMvJ4JiGtn8EJyjbSQRkY9LpDKPM1R8Mwiz8sv0idTUk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Pp4ApjzZ; arc=none smtp.client-ip=209.85.219.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e38938a55e7so5803099276.2
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 06:18:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733321919; x=1733926719; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WgMzzPONzvXMDffdEbLrbj7uxW0Hra0oNVW7bnaTYSQ=;
-        b=Pp4ApjzZFqEGci12v2Jd6KFEAwzPy4Ot8Kx8y2vX5UE+xKwxqCtivb+KBERXloG4i+
-         6ISrWlaacJMKY93oCLH0VDFqjwrKXpR3CbaVSNmZUsRLIFA7Yt2WjtnYO3S0uZ+3OI5f
-         jJE+0D4kCoufQsxesh3v5VK6+G5UobVk1qhCS9gH8dTKFzhRBCJlNU8kPr7SAFTKqSzq
-         dv/QfJaL0p/rqCfM/sY/gs5FKOY1TnkhHkfd5UAiQ0+VREcAKRDzIutsydRmTb1VkeSh
-         bhIjVgf7lBjAEgQYXzfypnb56eyFoX9lD9H+irbDCNZsBAKNR6uih2vLVXumS2LAkSfD
-         AFeA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733321919; x=1733926719;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WgMzzPONzvXMDffdEbLrbj7uxW0Hra0oNVW7bnaTYSQ=;
-        b=b7YWO0GZ5A+0TIF8jG+gaJKL0P1aNf+Zl7CoUmNOZuFE3g8zRLMLiQuhTGbPyqI2od
-         3Bs+pKaNLQJB0cLSzwhiiMMaWuuhbX9Luk9PWAosAg7cMy8dcNnzBpUfRSuKPLvpQt19
-         p5re6nLH28POWpTALMXeOKcxVG8KSOEagXA7Tkk/O2GVSUnp4Q4TezPXxJBUOgjxq8jm
-         /qWIPKLLhWaPGjo1Hd/BBIoJgf/0HGfn5NzMZaECKWpwe4vLmTwO4GOYtitfMHCxfHdS
-         +WPxWuIIqTju1n1dsB5ElZ5UnQGAysmTJNuvRSS3F22EmfmDU4/1H/XytyVFkPWU3jzU
-         l3gg==
-X-Gm-Message-State: AOJu0YxNRLuI3PnXqs2AX2G2OLBxkGcRy/uftSJR1QqPRb0yw7uvODDf
-	3Qbm54lAhTko7JojoMy4CZUsxFZ1mwmdMnz5lIloq0g68wdEkv7ckkpsxbLoVpLnT5Hbgw3hjlL
-	Fp9qUmJJl5Tclijk7EeQmKxSB/MjoVVzYJ0WH7w==
-X-Gm-Gg: ASbGnctokaZT0JVVGkBQfL/hUcPvBRSH9eTj9ooKKJ7XnaajENB/93BnU5q0XyB8VTX
-	DYeOYjlkbdvj+OKTLZ1GrHYr/WE4wVQ==
-X-Google-Smtp-Source: AGHT+IHEBiMzARXCmqv420GKkYL/RmMowf+ypMis1l/b3gAkWJs2OLgwlqwdaIBmHS5oWLjT+lsU/IYaahq4W2xwfOs=
-X-Received: by 2002:a05:6902:18d5:b0:e30:6dea:3ab4 with SMTP id
- 3f1490d57ef6-e39d3e1c824mr7567913276.23.1733321919294; Wed, 04 Dec 2024
- 06:18:39 -0800 (PST)
+	s=arc-20240116; t=1733321923; c=relaxed/simple;
+	bh=3ayiCYKdCeeZmDby0tpBL5OzMxBMtlsn6IKrJFlYFh4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cfQI3KrA3xDNbiDqIYLjbL8w13mPrIEnSPJ1Y32U5Thsut/VYBStsWayrR67k8bIWTLVeJojSR6sojXxNp2gZzNqXGgbZL+QetZK1PZ8ChER7JQxrg11L5C97Cdh0a6xYLhUdtQR6BpoYoID3ngB50vM3enTgfIY90fffRfSFgg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kw9UZ11H; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B357C4CED1;
+	Wed,  4 Dec 2024 14:18:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733321923;
+	bh=3ayiCYKdCeeZmDby0tpBL5OzMxBMtlsn6IKrJFlYFh4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kw9UZ11HUAYdBJsMifrjAa18mRMEzktZVajukp5KWD1M/sJZqoDg7RnW72ILEALMY
+	 F2SWNKiRXX9JJKKrnRoF7e6gZGPtczMgMKSfH+7j0NUtOJ5QCGQR1m6hR2Q4+TnL9P
+	 mpHnImPpxFldkkOyTRcjj3ut/SdR2avsohwkxNLaiIU9ezE7mN5oKHW1ELRhqPDIqQ
+	 OefV3uorVMNUXC7gpuG1qVurnXsi3Ifn71NUskkw3HQ8PRgoDjJ0VAbNclVgdULTdI
+	 G1aQak+i3rWPWJVOBSNQ0R6Idcomt8V1xv2Zcuu5w75aROZoHYZsqVBZzGZfWAzi+7
+	 l1oyXeZQcFPoA==
+Date: Wed, 4 Dec 2024 14:18:38 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Jani Nikula <jani.nikula@linux.intel.com>
+Cc: Lucas De Marchi <lucas.demarchi@intel.com>,
+	Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>,
+	DRM XE List <intel-xe@lists.freedesktop.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Dave Airlie <airlied@redhat.com>,
+	Simona Vetter <simona.vetter@ffwll.ch>
+Subject: Re: linux-next: build failure after merge of the drm-xe tree
+Message-ID: <57279266-d844-47d7-9c53-17fdae080b9e@sirena.org.uk>
+References: <Z1BawrcFMsj0ByLk@sirena.org.uk>
+ <87a5db36j6.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241204102904.1863796-1-arnd@kernel.org> <20241204102904.1863796-14-arnd@kernel.org>
-In-Reply-To: <20241204102904.1863796-14-arnd@kernel.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 4 Dec 2024 15:18:27 +0100
-Message-ID: <CACRpkdYQUiN8VNTgK7-9bnr40TiACT3MSScb5QF3mz4MawzXHQ@mail.gmail.com>
-Subject: Re: [PATCH 13/15] ARM: mark mach-sa1100 as deprecated
-To: Arnd Bergmann <arnd@kernel.org>, Kristoffer Ericson <kristoffer.ericson@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	Arnd Bergmann <arnd@arndb.de>, Aaro Koskinen <aaro.koskinen@iki.fi>, Andrew Lunn <andrew@lunn.ch>, 
-	Ard Biesheuvel <ardb@kernel.org>, Daniel Mack <daniel@zonque.org>, 
-	Gregory Clement <gregory.clement@bootlin.com>, Haojian Zhuang <haojian.zhuang@gmail.com>, 
-	"Jeremy J. Peper" <jeremy@jeremypeper.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	Mark Brown <broonie@kernel.org>, Ralph Siemsen <ralph.siemsen@linaro.org>, 
-	Robert Jarzmik <robert.jarzmik@free.fr>, Russell King <linux@armlinux.org.uk>, 
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Tony Lindgren <tony@atomide.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="IurF841KVjN5RdcV"
+Content-Disposition: inline
+In-Reply-To: <87a5db36j6.fsf@intel.com>
+X-Cookie: My mind is a potato field ...
 
-On Wed, Dec 4, 2024 at 11:30=E2=80=AFAM Arnd Bergmann <arnd@kernel.org> wro=
-te:
 
-> From: Arnd Bergmann <arnd@arndb.de>
->
-> Most of the old StrongARM1100 machines were removed two years ago as part
-> of a wider cleanup, the remaining four were left either because someone
-> showed interest in converting them to devicetree, or because they were
-> still supported by qemu and therefore useful to keep the platform alive.
->
-> None of the devicetree conversion actually happened, and qemu has
-> marked the platform as deprecated, so do the same in the kernel now.
->
-> If anyone is still running one of these four machines and planning
-> to keep updating their kernels, please speak up now so we can adapt
-> the plans as needed.
->
-> If nobody is found using StrongARM1100 any more, it can be removing
-> during 2025, leaving 6.12-LTS as the last longterm support kernel
-> for it.
->
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+--IurF841KVjN5RdcV
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-I do have an HP Compaq iPAQ still running.
+On Wed, Dec 04, 2024 at 03:46:21PM +0200, Jani Nikula wrote:
+> On Wed, 04 Dec 2024, Mark Brown <broonie@kernel.org> wrote:
 
-BUT. I know very well that me and anyone else who actually want
-to keep running that platform better get our act together and convert
-it to device tree if we want to continue using it. If others are up
-for testing I can surely help out.
+> > You need to merge up cdd30ebb1b9f36159d66f088b61aee264e649d7a ("module:
+> > Convert symbol namespace to string literal") from mainline and fix up
+> > for the changes in MODULE_IMPORT_NS.  I'll apply a fixup for now.
 
-Kristoffer Ericson is still listed as MAINTAINER for the Journada
-so including him in the mail thread.
+> Commit cdd30ebb1b9f ("module: Convert symbol namespace to string
+> literal") isn't even in a tagged release yet. We'll get it when -rc1 is
+> out *and* backmerged to drm-next.
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+Yes, it's very disruptive :(
 
-Yours,
-Linus Walleij
+--IurF841KVjN5RdcV
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmdQZL0ACgkQJNaLcl1U
+h9BNaQf/RRCVZDUfBV8IMrJHgZV8/JM2OJEoX30BUV0DsnX7wU7pvL3TJ4wH2utQ
+bdg5p6bDnd0vxPhzxqy/rKu/r2frXWAI93t9PZe5B43W7rwp2Mi3b9qLAPEHY+fj
+1MnVqlc4GCA4sCsdXp4RceARIrlCOFVYYdBv7ob3DyAwoxHSrbw32uoYIdFdmbGw
+Q3VALlrenY5pbwmqBjolHcufNvuI1V5RcZxV70MBhf7aw1zBNSQWFo3SkC6g/tfx
+InqGiM0XDRygIA0NLS6OaOJG+K+Ot4xcNTv5x/GhmMSMiYXSOaUNdKZUSmQS2iRL
+aXihEaCvS3E1NlqoEB4UJfzT/R8fiQ==
+=vMto
+-----END PGP SIGNATURE-----
+
+--IurF841KVjN5RdcV--
 
