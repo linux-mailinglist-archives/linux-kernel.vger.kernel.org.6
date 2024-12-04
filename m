@@ -1,173 +1,204 @@
-Return-Path: <linux-kernel+bounces-432138-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432139-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 343D69E4620
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 21:52:54 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 546E99E4638
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 22:01:35 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED9FD28526E
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 20:52:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E210D166726
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 21:01:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8558A191493;
-	Wed,  4 Dec 2024 20:52:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4BA419046E;
+	Wed,  4 Dec 2024 21:01:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="jtZbbN3h";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="EYkNwwM0"
-Received: from fout-b7-smtp.messagingengine.com (fout-b7-smtp.messagingengine.com [202.12.124.150])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ff906mvn"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F19017335C;
-	Wed,  4 Dec 2024 20:52:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F39918D626;
+	Wed,  4 Dec 2024 21:01:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733345565; cv=none; b=CR8mdx5oJNj3ggAkWeSBM03nvAgjIG0ma8jsy0pCAyjDfOSKAaro9zFPB8GE39NywDPFXKzLzUZyiDzQwJHzYccwO0J0TWKKMKW8/vmZO+qUKYP5Jb3mDgsEVeAOiM448Ly1Z8I51cRLpahLxJweweWr4OuPCqAdpYHbcBwuKTk=
+	t=1733346088; cv=none; b=ZZjCs5zv9Ih3pbbJhISlYnfVRUjA+eBtYWRwCBsC1WNA+gITD8mbH3x44KeedAlL4c5kORD71/K/ZNr+LxhX0VueUG4GvdQCE+N8pvzoPeLPnIj0pS96cW/KjrjWVE6pmw/pKQx+uc7gCK+IP5wSpFWxe3CgSR3Blz8TTYErBGk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733345565; c=relaxed/simple;
-	bh=paSPirvo2hOk24PuqUZvfkWTNvDtkMqM8JhfKacPhS0=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=X7Z0OHiWN2JBJNQDQWBx3Yb8RnCsdRNQ1p3vYZnlJVhoOhMf3W60/1CIg+HGO+Fsk8rvjXpuxMo3Et9yFx5c11sDrpmavq9tdYPYTKMbmqHgrLPl/Ntrlds6SkwhgcikRNj2vSFU+OC2iYtH3kDKi+HJ9gg1g3PP3Q4rxHsBcz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=jtZbbN3h; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=EYkNwwM0; arc=none smtp.client-ip=202.12.124.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfout.stl.internal (Postfix) with ESMTP id 775DB1140151;
-	Wed,  4 Dec 2024 15:52:42 -0500 (EST)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Wed, 04 Dec 2024 15:52:42 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1733345562;
-	 x=1733431962; bh=IARXqKJwMmq8+o594ye4w7KUMzZo7+xJIp2pYHwAhu0=; b=
-	jtZbbN3hDZFJCu+ykQ+vucyGEqK+JgVQ+uW1DbBKuaMFaeaGVSUUDf+lZsfYC1lu
-	nrdd1Zosp7xkokwqieU5F+zaqxA5pZf1eUoOsvy5Nw0tX0EC/tP9gW1nl3O8XAlK
-	8J3BYpVt6DtuJ+yat+o/oVFggiz35xVpKALD+NCtfLODU2TQuL3psEwPb+IAPUmj
-	7Zdapy2a6PF9+4L0CBIm/9msfujXrlY+zM1SeK10YKIWbrxjfkNZ1PM+3Nh/GZWr
-	9euE3vA7FSkmp137VIVMVllA61swXcAwrVCwhwQEHAiCVO2B8qzwYQ1O0ikkac1P
-	zDQfDYe4O1g8wYHvcChNbQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1733345562; x=
-	1733431962; bh=IARXqKJwMmq8+o594ye4w7KUMzZo7+xJIp2pYHwAhu0=; b=E
-	YkNwwM0E7CEak+uP4n0DAY4kDFY8c5x/DMb2vLQZFJ+75/yHwiVOluJYL7ZabENa
-	SrMi8N/Dq8KvL7OwWqn4ftxFlLa0EWIj83KIDekBnpxdZ6bt2WPVji7/tUSfBC85
-	TI3eaoMlCV0wSg0sWJmiuWyjFNKJ7Mku7PsrzQohnXgDjN/pJOd6lnOin8DYRSBO
-	qJyDITmbGVCY6Z4gnLu1gcL6bvFtg0avlJJVsSaY6ORLQMsfh+nurXZYs4QaqD09
-	jMkPpmPvYjtSez1K6xkHy3PoFywVv0qbUzRlqdNU+RolibgjeCygvS88nqmlZgOF
-	/ArI9BfkPm09MhhAuF1vg==
-X-ME-Sender: <xms:GcFQZw_b1_3yQmnXEQPOwpfKv3s-J4eEUvmRRBRRI9LNb-8LVaTAKA>
-    <xme:GcFQZ4vbgT9wLxlcZD8dxOpAZDmqiYsLSgLYnu5ng1zSOdn9e2W3X1uQDuC7tRhgL
-    kiX8Oq5Dmw7MoNiHW0>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrieehgddufeekucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtqhertdertdej
-    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
-    guvgeqnecuggftrfgrthhtvghrnhepvdfhvdekueduveffffetgfdvveefvdelhedvvdeg
-    jedvfeehtdeggeevheefleejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
-    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepudei
-    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegsphesrghlihgvnhekrdguvgdprh
-    gtphhtthhopegrnhguhidrshhhvghvtghhvghnkhhosehgmhgrihhlrdgtohhmpdhrtghp
-    thhtoheptghimhhinhgrghhhihesghhnuhguugdrtghomhdprhgtphhtthhopehsvggrnh
-    hjtgesghhoohhglhgvrdgtohhmpdhrtghpthhtohepfihilhhlhiesihhnfhhrrgguvggr
-    ugdrohhrghdprhgtphhtthhopegrnhguhieskhgvrhhnvghlrdhorhhgpdhrtghpthhtoh
-    eprghrnhgusehkvghrnhgvlhdrohhrghdprhgtphhtthhopeigkeeisehkvghrnhgvlhdr
-    ohhrghdprhgtphhtthhopehtghhlgieslhhinhhuthhrohhnihigrdguvg
-X-ME-Proxy: <xmx:GcFQZ2C0DZvNq-j9kmCne1c41Mc2ccRZlNduYb5BVxtXndeq3u7oZw>
-    <xmx:GcFQZwd5RyKGmu8ZBzXo9YXL0zuQJVOFc_JA8hWvdgErKe-CTLSSXQ>
-    <xmx:GcFQZ1OW4q_104X1mv2eeA_npl7Rz9uGi__KrJXxXJqwv50DHDNi6A>
-    <xmx:GcFQZ6kv84UGoYbIvjxqK6jwuxUMTyvLzbZkc_zgd6mKeX-ktqxDTg>
-    <xmx:GsFQZ2sU2KMiqepgfuT_SpYptr3hdceedKoMjBoPgkGVXmcmnIMCPt8y>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 3FFCA2220072; Wed,  4 Dec 2024 15:52:41 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1733346088; c=relaxed/simple;
+	bh=+B1b48erQIeQixduuLKyl6Gzmhalqkxt2Aqtmj7j3GM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S9Xo2CkEXdYygCmbMjmOesq34AG1eHT7MxhIjJxqkl49IyXuFvcmwNjmsuBFA71JAZQLiDc7gmXAUAGjSkNH/ShvDJsSaoVAFSV9OrBkRaseHXfL31T910yLhoNA4FF4aOOwgTO73UcaFVl1XDBCHSDkwuI4PLGoTmHP5qrwXH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ff906mvn; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733346086; x=1764882086;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=+B1b48erQIeQixduuLKyl6Gzmhalqkxt2Aqtmj7j3GM=;
+  b=Ff906mvnYMV5si/CcTD0cLqwit7SefMn5eCjJnVSgvK/zri0F9MRPgee
+   b18ZskXh9ysUVjA0LobPevxfKtW/9Edlh/fHs/uR+xqQ1QLiVkvFkkgFq
+   q28MbxR0zL/FLPs7X1oor0yTfbORv4pQRJEi6v1QG1yJ2jzo8P9Ibl2Ia
+   bvysHY2fltIrLIfjmno8N3eRP5ZZ7XvGcLeEbx74wAZH2JgG+OmG77N12
+   61AsO67FEXzuEjyB2lWg5UDokPSLeVUj+QHQBrNSsg6SrPzEogNJdcvo8
+   5mnn0+/KIbdax5lG+3HQZvRG+oq5N7BODA7drmeGbPwnytu3EbJpUcN+b
+   g==;
+X-CSE-ConnectionGUID: qYsQ8u/SR4GCsXi9JFAfqQ==
+X-CSE-MsgGUID: 52ci3bg1QL28QnQgKWFfZw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11276"; a="33376970"
+X-IronPort-AV: E=Sophos;i="6.12,208,1728975600"; 
+   d="scan'208";a="33376970"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Dec 2024 13:01:25 -0800
+X-CSE-ConnectionGUID: nWMhahjzT6unCm7yL0vWZw==
+X-CSE-MsgGUID: rdAyQyECS1GnVqSYeIN72A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,208,1728975600"; 
+   d="scan'208";a="97937244"
+Received: from lkp-server02.sh.intel.com (HELO 1f5a171d57e2) ([10.239.97.151])
+  by fmviesa003.fm.intel.com with ESMTP; 04 Dec 2024 13:01:21 -0800
+Received: from kbuild by 1f5a171d57e2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tIwUo-0003UF-2o;
+	Wed, 04 Dec 2024 21:01:18 +0000
+Date: Thu, 5 Dec 2024 05:00:57 +0800
+From: kernel test robot <lkp@intel.com>
+To: Maarten Lankhorst <dev@lankhorst.se>, linux-kernel@vger.kernel.org,
+	intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	Tejun Heo <tj@kernel.org>, Zefan Li <lizefan.x@bytedance.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Friedrich Vock <friedrich.vock@gmx.de>,
+	Maxime Ripard <mripard@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev,
+	Linux Memory Management List <linux-mm@kvack.org>,
+	cgroups@vger.kernel.org,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Subject: Re: [PATCH v2.1 1/1] kernel/cgroup: Add "dmem" memory accounting
+ cgroup
+Message-ID: <202412050415.jf4sa0gH-lkp@intel.com>
+References: <20241204143112.1250983-1-dev@lankhorst.se>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Wed, 04 Dec 2024 21:52:01 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Andy Shevchenko" <andy.shevchenko@gmail.com>,
- "Arnd Bergmann" <arnd@kernel.org>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
- "Thomas Gleixner" <tglx@linutronix.de>, "Ingo Molnar" <mingo@redhat.com>,
- "Borislav Petkov" <bp@alien8.de>,
- "Dave Hansen" <dave.hansen@linux.intel.com>,
- "H. Peter Anvin" <hpa@zytor.com>,
- "Linus Torvalds" <torvalds@linux-foundation.org>,
- "Andy Shevchenko" <andy@kernel.org>, "Matthew Wilcox" <willy@infradead.org>,
- "Sean Christopherson" <seanjc@google.com>,
- "Davide Ciminaghi" <ciminaghi@gnudd.com>,
- "Paolo Bonzini" <pbonzini@redhat.com>, kvm@vger.kernel.org
-Message-Id: <d84fc2e4-ca81-42b1-ae44-292d0b32c7ed@app.fastmail.com>
-In-Reply-To: 
- <CAHp75VcQcDD3gbfc6UzH3wYgge6EqSBEyWWOQ_dTkz8Eo+XgFw@mail.gmail.com>
-References: <20241204103042.1904639-1-arnd@kernel.org>
- <20241204103042.1904639-7-arnd@kernel.org>
- <CAHp75VcQcDD3gbfc6UzH3wYgge6EqSBEyWWOQ_dTkz8Eo+XgFw@mail.gmail.com>
-Subject: Re: [PATCH 06/11] x86: drop SWIOTLB and PHYS_ADDR_T_64BIT for PAE
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241204143112.1250983-1-dev@lankhorst.se>
 
-On Wed, Dec 4, 2024, at 19:41, Andy Shevchenko wrote:
-> On Wed, Dec 4, 2024 at 12:31=E2=80=AFPM Arnd Bergmann <arnd@kernel.org=
-> wrote:
->>
->> From: Arnd Bergmann <arnd@arndb.de>
->>
->> Since kernels with and without CONFIG_X86_PAE are now limited
->> to the low 4GB of physical address space, there is no need to
->> use either swiotlb or 64-bit phys_addr_t any more, so stop
->> selecting these and fix up the build warnings from that.
->
-> ...
->
->>         mtrr_type_lookup(addr, addr + PMD_SIZE, &uniform);
->>         if (!uniform) {
->>                 pr_warn_once("%s: Cannot satisfy [mem %#010llx-%#010l=
-lx] with a huge-page mapping due to MTRR override.\n",
->> -                            __func__, addr, addr + PMD_SIZE);
->> +                            __func__, (u64)addr, (u64)addr + PMD_SIZ=
-E);
->
-> Instead of castings I would rather:
-> 1) have addr and size (? does above have off-by-one error?) or end;
-> 2) use struct resource / range with the respective %p[Rr][a] specifier
-> or use %pa.
+Hi Maarten,
 
-Changed as below now. I'm still not sure whether the mtrr_type_lookup
-end argument is meant to be inclusive or exclusive, so I've left
-that alone, but the printed range should be correct now.
+kernel test robot noticed the following build warnings:
 
-Thanks,
+[auto build test WARNING on tj-cgroup/for-next]
+[also build test WARNING on akpm-mm/mm-everything linus/master v6.13-rc1 next-20241204]
+[cannot apply to drm-misc/drm-misc-next drm-tip/drm-tip]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-     Arnd
+url:    https://github.com/intel-lab-lkp/linux/commits/Maarten-Lankhorst/kernel-cgroup-Add-dmem-memory-accounting-cgroup/20241204-233207
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/tj/cgroup.git for-next
+patch link:    https://lore.kernel.org/r/20241204143112.1250983-1-dev%40lankhorst.se
+patch subject: [PATCH v2.1 1/1] kernel/cgroup: Add "dmem" memory accounting cgroup
+config: sh-allmodconfig (https://download.01.org/0day-ci/archive/20241205/202412050415.jf4sa0gH-lkp@intel.com/config)
+compiler: sh4-linux-gcc (GCC) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241205/202412050415.jf4sa0gH-lkp@intel.com/reproduce)
 
-@@ -740,11 +740,12 @@ int pud_set_huge(pud_t *pud, phys_addr_t addr, pgp=
-rot_t prot)
- int pmd_set_huge(pmd_t *pmd, phys_addr_t addr, pgprot_t prot)
- {
-        u8 uniform;
-+       struct resource res =3D DEFINE_RES_MEM(addr, PMD_SIZE);
-=20
-        mtrr_type_lookup(addr, addr + PMD_SIZE, &uniform);
-        if (!uniform) {
--               pr_warn_once("%s: Cannot satisfy [mem %#010llx-%#010llx]=
- with a huge-page mapping due to MTRR override.\n",
--                            __func__, (u64)addr, (u64)addr + PMD_SIZE);
-+               pr_warn_once("%s: Cannot satisfy %pR with a huge-page ma=
-pping due to MTRR override.\n",
-+                            __func__, &res);
-                return 0;
-        }
-=20
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202412050415.jf4sa0gH-lkp@intel.com/
 
+All warnings (new ones prefixed by >>):
+
+   kernel/cgroup/dmem.c: In function 'dmem_cgroup_state_evict_valuable':
+>> kernel/cgroup/dmem.c:302:30: warning: variable 'climit' set but not used [-Wunused-but-set-variable]
+     302 |         struct page_counter *climit, *ctest;
+         |                              ^~~~~~
+--
+>> kernel/cgroup/dmem.c:300: warning: Excess function parameter 'dev' description in 'dmem_cgroup_state_evict_valuable'
+>> kernel/cgroup/dmem.c:300: warning: Excess function parameter 'index' description in 'dmem_cgroup_state_evict_valuable'
+>> kernel/cgroup/dmem.c:635: warning: Function parameter or struct member 'region' not described in 'dmem_cgroup_try_charge'
+>> kernel/cgroup/dmem.c:635: warning: Excess function parameter 'dev' description in 'dmem_cgroup_try_charge'
+
+
+vim +/climit +302 kernel/cgroup/dmem.c
+
+   280	
+   281	/**
+   282	 * dmem_cgroup_state_evict_valuable() - Check if we should evict from test_pool
+   283	 * @dev: &dmem_cgroup_region
+   284	 * @index: The index number of the region being tested.
+   285	 * @limit_pool: The pool for which we hit limits
+   286	 * @test_pool: The pool for which to test
+   287	 * @ignore_low: Whether we have to respect low watermarks.
+   288	 * @ret_hit_low: Pointer to whether it makes sense to consider low watermark.
+   289	 *
+   290	 * This function returns true if we can evict from @test_pool, false if not.
+   291	 * When returning false and @ignore_low is false, @ret_hit_low may
+   292	 * be set to true to indicate this function can be retried with @ignore_low
+   293	 * set to true.
+   294	 *
+   295	 * Return: bool
+   296	 */
+   297	bool dmem_cgroup_state_evict_valuable(struct dmem_cgroup_pool_state *limit_pool,
+   298					      struct dmem_cgroup_pool_state *test_pool,
+   299					      bool ignore_low, bool *ret_hit_low)
+ > 300	{
+   301		struct dmem_cgroup_pool_state *pool = test_pool;
+ > 302		struct page_counter *climit, *ctest;
+   303		u64 used, min, low;
+   304	
+   305		/* Can always evict from current pool, despite limits */
+   306		if (limit_pool == test_pool)
+   307			return true;
+   308	
+   309		if (limit_pool) {
+   310			if (!parent_dmemcs(limit_pool->cs))
+   311				return true;
+   312	
+   313			for (pool = test_pool; pool && limit_pool != pool; pool = pool_parent(pool))
+   314				{}
+   315	
+   316			if (!pool)
+   317				return false;
+   318		} else {
+   319			/*
+   320			 * If there is no cgroup limiting memory usage, use the root
+   321			 * cgroup instead for limit calculations.
+   322			 */
+   323			for (limit_pool = test_pool; pool_parent(limit_pool); limit_pool = pool_parent(limit_pool))
+   324				{}
+   325		}
+   326	
+   327		climit = &limit_pool->cnt;
+   328		ctest = &test_pool->cnt;
+   329	
+   330		dmem_cgroup_calculate_protection(limit_pool, test_pool);
+   331	
+   332		used = page_counter_read(ctest);
+   333		min = READ_ONCE(ctest->emin);
+   334	
+   335		if (used <= min)
+   336			return false;
+   337	
+   338		if (!ignore_low) {
+   339			low = READ_ONCE(ctest->elow);
+   340			if (used > low)
+   341				return true;
+   342	
+   343			*ret_hit_low = true;
+   344			return false;
+   345		}
+   346		return true;
+   347	}
+   348	EXPORT_SYMBOL_GPL(dmem_cgroup_state_evict_valuable);
+   349	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
