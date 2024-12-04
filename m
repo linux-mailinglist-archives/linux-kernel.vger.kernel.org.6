@@ -1,156 +1,165 @@
-Return-Path: <linux-kernel+bounces-432151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7AC49E4748
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 22:57:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44A3D9E4677
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 22:19:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6F1D7B3C42B
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 21:19:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E77B28340D
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 21:19:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F27A1922D3;
-	Wed,  4 Dec 2024 21:19:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECF771917EE;
+	Wed,  4 Dec 2024 21:19:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="N546XD7u";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="wJTARv45"
-Received: from fout-b7-smtp.messagingengine.com (fout-b7-smtp.messagingengine.com [202.12.124.150])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SqejnV9n"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7D2C18B499;
-	Wed,  4 Dec 2024 21:19:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4337A18B499;
+	Wed,  4 Dec 2024 21:19:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733347164; cv=none; b=FOk77+N8kdakYLHYFRTMpHdoaCm2FZfK/BO8V2eI0p5Rx8QGLgJ2M3R7YBp8uE1TTkGGOb7FmaK0JhfvnLWIo7v/+gm5Cc5bzj2HUBmrwD3dWQkCUSk4hPpVwruxYZ2j8Ye0nObVSl0KmY9ZSKSE4Rb/O0xHj4eJVQxbnPgoHpY=
+	t=1733347158; cv=none; b=FHvKTubsxZiVLRquZpKOSH7BvHRkCsS0awjji2MUY2JkRUkpMdf+3eHU/u92VZp4HP0Zr7YNpK+/rRl75mU7BarPcpj5SbTqxl+rJmwIfyw33eBXDBVI+ey/fjLeGEiUSHo/En1nwOikpXK+b7GsorsVDHjBv+Yvqq5pT9sTJwY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733347164; c=relaxed/simple;
-	bh=B9rF6FOEtdcHjCqXaF3lLBrBQRZ/1DKxyuLdj9gFU8U=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=WQVMvd6wppF8v3pOQFvfFQyqD4/RWEhKVeC4YJYwAnOD4orRQFJn9loPd+1oAC28+/rHlEOC5MBUoyrEtiKHf494+XontD2pqb441JmOczaaQ3EvLL+3gAs6K9sFziG227KVn6/rpe5+KBAFWXhDHYSXefRSvmueqm5CeRTebmQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=N546XD7u; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=wJTARv45; arc=none smtp.client-ip=202.12.124.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfout.stl.internal (Postfix) with ESMTP id 83EEA11401F3;
-	Wed,  4 Dec 2024 16:19:21 -0500 (EST)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Wed, 04 Dec 2024 16:19:21 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1733347161;
-	 x=1733433561; bh=jHuW44WHE4NttJ2lU/dAb7RZUYUvNG29kEL8erso4UQ=; b=
-	N546XD7ulWwS6rtihoFmb+2lqBlfynmHxY8kEQn/i4LXmJLRmewiSmNOywu+9BGK
-	0rzJnXkKGQVN4+/v+sD8URrufzA712i889g/mqzQG2rDjeHMCxXo3Xd/WoRruPLL
-	pg9pgzBCD5HLXJ8L082hRTFWbke/nGNoymaC0d7IJ5yesbaS6E0SLbQvCH7Pq21D
-	EQvPJxz4o/rKgeZSb8hWo7suegNMkqWwjKVwGIh/a5dgUe+h9BpPPTTa7P+BVj9B
-	SZuZwxihFY80abcJcnt6bmWKMTiBfdK8WHW1rfKGWBumBNXjn1MYR+228wyS6ulg
-	NhuiTP5eltQgO9dSidAUkQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1733347161; x=
-	1733433561; bh=jHuW44WHE4NttJ2lU/dAb7RZUYUvNG29kEL8erso4UQ=; b=w
-	JTARv45O/ZLYiJqQ8aukll2KNCN+0jqs//PIyAogVNa/YWRRhta/zBQ/KjfHYx+Q
-	K6fnHd2OL4ISjOt+PhQWqt42Uun3ckMLDqxc/mosETpcI3I3h6yt5uljRJgoKyu/
-	xyHxUwBSstOUgUvoz+ELKqXTW4/Fvc8TYtoYlAlVWe9Nm59K6nKMhKeKmxfUhT7r
-	H1esN3txX5r4KK858Vh79Kku21zivpXP6wbLAghBqI0M4OU1SCh4EDl5pvUeplpV
-	GbQc+KB/9pR82mvm7SHgC5MwhZtfkhHeXjRhN51UDrRd6irLl236v9f3oe82ESua
-	MxvqfX5fGBiSlgC1AjlMg==
-X-ME-Sender: <xms:WcdQZ_4fhmR9vAK-YmdRNwhIhiul0e_y228X0-S3-HOe6A5czLWHXQ>
-    <xme:WcdQZ07v91e4oWajIf2cQKEeul6I0ErXrCavxw2ZAm-6p3DpA1OxNXFGrUs3Q8fmJ
-    UtWAJq7gbK6tpxE8FQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrieehgddugeefucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtqhertdertdej
-    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
-    guvgeqnecuggftrfgrthhtvghrnhepvdfhvdekueduveffffetgfdvveefvdelhedvvdeg
-    jedvfeehtdeggeevheefleejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
-    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepudei
-    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegsphesrghlihgvnhekrdguvgdprh
-    gtphhtthhopegrnhguhidrshhhvghvtghhvghnkhhosehgmhgrihhlrdgtohhmpdhrtghp
-    thhtoheptghimhhinhgrghhhihesghhnuhguugdrtghomhdprhgtphhtthhopehsvggrnh
-    hjtgesghhoohhglhgvrdgtohhmpdhrtghpthhtohepfihilhhlhiesihhnfhhrrgguvggr
-    ugdrohhrghdprhgtphhtthhopegrnhguhieskhgvrhhnvghlrdhorhhgpdhrtghpthhtoh
-    eprghrnhgusehkvghrnhgvlhdrohhrghdprhgtphhtthhopeigkeeisehkvghrnhgvlhdr
-    ohhrghdprhgtphhtthhopehtghhlgieslhhinhhuthhrohhnihigrdguvg
-X-ME-Proxy: <xmx:WcdQZ2dQ2WxzFag0toogK5vMHgGPntAJszGjZiK5YX9mnj4GMDlCtA>
-    <xmx:WcdQZwIym0w2vvEomwk0F8HtTGGxC9I2KLDGZvmw6h20U5bDPVMySg>
-    <xmx:WcdQZzLbHR_o0S749OYD91CrsggHV3IOCPpwKKxcf3lrAqxDF3J1XA>
-    <xmx:WcdQZ5zcowHs14-PrjYQ5D8O160BXctQpATkNPSnS4AG7F-gNR53jQ>
-    <xmx:WcdQZ05MHqS9VNOOZqL0N4jZW6BpssjgO9GOhZ_a-LX0ar2s0sPeuOI9>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id F07A72220073; Wed,  4 Dec 2024 16:19:20 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1733347158; c=relaxed/simple;
+	bh=y8BsGXjqxVRpKujAE+Zpsf0iQlQlKLvP+XXznm8jwaQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=S6aQerTVbwLObQFQ+V4xwwam0gI9N4Jqqyjz5ExZ5QqdjxFNlh9utv4wB48cB2X0HKggiI/PBsfV16X4hFaGc8ywyQEYJoXNKO1VY5TcK9BWEU/aQ4MkXjAq3Lp7QzlUixJ3x8mu1mpCsRMdraoPu1lOYPGSp7dz8MbMBgDFqjU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SqejnV9n; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E06E1C4CECD;
+	Wed,  4 Dec 2024 21:19:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733347158;
+	bh=y8BsGXjqxVRpKujAE+Zpsf0iQlQlKLvP+XXznm8jwaQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=SqejnV9nO/eEBpnkIh0HQaoFDQrCg91rAVSBDR3gARg6fGA4MLW3Q8AkQk3pjIPZk
+	 RBe1u2hilOegnqrmZLZFSQB2RT18mUZ8mA1LyvX28ym4q5rhnd5ypx9mg6P72OwATg
+	 0XJsiSbQfAgavVZYffDc4lGrZQVw6AP2v5sTwEBO9v3593CwMFckdTuSSrAW62oZoo
+	 BcItGZ0QvZrBH14AtIUBKw7/P8K8tJNoVHIkMSukoTOac4HVYEfksf+AyzVi6v6cFS
+	 Xt4/6mgqPP4/C5zhXNUSbHVI4ls46+tqKCQhc1t5hoFQLyCCEeONRhQq7pSMySPT9V
+	 Y6IExXdGBQUpg==
+Date: Wed, 4 Dec 2024 15:19:16 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+Cc: andersson@kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	cros-qcom-dts-watchers@chromium.org,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, quic_vbadigan@quicinc.com,
+	linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 6/6] PCI: pwrctl: Add power control driver for qps615
+Message-ID: <20241204211916.GA3009300@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Wed, 04 Dec 2024 22:18:58 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Andy Shevchenko" <andy.shevchenko@gmail.com>,
- "Arnd Bergmann" <arnd@kernel.org>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
- "Thomas Gleixner" <tglx@linutronix.de>, "Ingo Molnar" <mingo@redhat.com>,
- "Borislav Petkov" <bp@alien8.de>,
- "Dave Hansen" <dave.hansen@linux.intel.com>,
- "H. Peter Anvin" <hpa@zytor.com>,
- "Linus Torvalds" <torvalds@linux-foundation.org>,
- "Andy Shevchenko" <andy@kernel.org>, "Matthew Wilcox" <willy@infradead.org>,
- "Sean Christopherson" <seanjc@google.com>,
- "Davide Ciminaghi" <ciminaghi@gnudd.com>,
- "Paolo Bonzini" <pbonzini@redhat.com>, kvm@vger.kernel.org
-Message-Id: <9dc6213a-99c4-4267-a5b1-62181a3ecfea@app.fastmail.com>
-In-Reply-To: 
- <CAHp75VcYojM8uYURbaNjquod7n_EJe58Er-57Dw0iaZFc-+i8Q@mail.gmail.com>
-References: <20241204103042.1904639-1-arnd@kernel.org>
- <20241204103042.1904639-5-arnd@kernel.org>
- <CAHp75VcYojM8uYURbaNjquod7n_EJe58Er-57Dw0iaZFc-+i8Q@mail.gmail.com>
-Subject: Re: [PATCH 04/11] x86: split CPU selection into 32-bit and 64-bit
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241112-qps615_pwr-v3-6-29a1e98aa2b0@quicinc.com>
 
-On Wed, Dec 4, 2024, at 19:31, Andy Shevchenko wrote:
-> On Wed, Dec 4, 2024 at 12:31=E2=80=AFPM Arnd Bergmann <arnd@kernel.org=
-> wrote:
->>
->> From: Arnd Bergmann <arnd@arndb.de>
->>
->> The x86 CPU selection menu is confusing for a number of reasons.
->> One of them is how it's possible to build a 32-bit kernel for
->> a small number of early 64-bit microarchitectures (K8, Core2)
->
-> Core 2
+On Tue, Nov 12, 2024 at 08:31:38PM +0530, Krishna chaitanya chundru wrote:
+> QPS615 is the PCIe switch which has one upstream and three downstream
+> ports. To one of the downstream ports ethernet MAC is connected as endpoint
+> device. Other two downstream ports are supposed to connect to external
+> device. One Host can connect to QPS615 by upstream port. QPS615 switch
+> needs to be configured after powering on and before PCIe link was up.
 
-Fixed
+s/is the/is a/
 
->> +choice
->> +       prompt "x86-64 Processor family"
->> +       depends on X86_64
->> +       default GENERIC_CPU
->> +       help
->> +         This is the processor type of your CPU. This information is
->> +         used for optimizing purposes. In order to compile a kernel
->> +         that can run on all supported x86 CPU types (albeit not
->> +         optimally fast), you can specify "Generic-x86-64" here.
->> +
->> +         Here are the settings recommended for greatest speed:
->> +         - "Opteron/Athlon64/Hammer/K8" for all K8 and newer AMD CPU=
-s.
->> +         - "Intel P4" for the Pentium 4/Netburst microarchitecture.
->> +         - "Core 2/newer Xeon" for all core2 and newer Intel CPUs.
->
-> Core 2
+> The PCIe controller driver already enables link training at the host side
+> even before qps615 driver probe happens, due to this when driver enables
+> power to the switch it participates in the link training and PCIe link
+> may come up before configuring the switch through i2c. To prevent the
+> host from participating in link training, disable link training on the
+> host side to ensure the link does not come up before the switch is
+> configured via I2C.
+> 
+> Based up on dt property and type of the port, qps615 is configured
+> through i2c.
 
-Fixed, though this is the preexisting help text that I just
-moved around.
+> +config PCI_PWRCTL_QPS615
+> +	tristate "PCI Power Control driver for QPS615"
+> +	select PCI_PWRCTL
+> +	help
+> +	  Say Y here to enable the pwrctl driver for Qualcomm
+> +	  QPS615 PCIe switch which enables and configures it
+> +	  through i2c.
 
-      Arnd
+Does this work if build as a module?  I guess maybe the QPS615 doesn't
+even get powered on without this, so it would be configured and then
+powered on after module-load time?
+
+s/pwrctl/pwrctrl/ (also in filename, code, variables, etc below)
+
+Will need to be rebased to account for the pwrctl -> pwrctrl rename in
+v6.13-rc1.
+
+> +static int qps615_pwrctl_power_on(struct qps615_pwrctl_ctx *ctx)
+> +{
+> +	struct qps615_pwrctl_cfg *cfg;
+> +	int ret, i;
+> +
+> +	ret = regulator_bulk_enable(ARRAY_SIZE(ctx->supplies), ctx->supplies);
+> +	if (ret < 0)
+> +		return dev_err_probe(ctx->pwrctl.dev, ret, "cannot enable regulators\n");
+> +
+> +	gpiod_set_value(ctx->reset_gpio, 0);
+> +
+> +	 /* wait for the internal osc frequency to stablise */
+
+s/stablise/stabilise/
+
+> +	usleep_range(10000, 10500);
+> +
+> +	ret = qps615_pwrctl_assert_deassert_reset(ctx, false);
+> +	if (ret)
+> +		goto out;
+> +
+> +	if (ctx->cfg[QPS615_USP].axi_freq_125) {
+> +		ret = qps615_pwrctl_i2c_write(ctx->client, QPS615_BUS_CONTROL, BIT(16));
+> +		if (ret)
+> +			dev_err(ctx->pwrctl.dev, "Setting AXI clk freq failed %d\n", ret);
+> +	}
+> +
+> +	for (i = 0; i < QPS615_MAX; i++) {
+> +		cfg = &ctx->cfg[i];
+> +		if (cfg->disable_port) {
+> +			ret = qps615_pwrctl_disable_port(ctx, i);
+> +			if (ret) {
+> +				dev_err(ctx->pwrctl.dev, "Disabling port failed\n");
+> +				goto out;
+> +			}
+> +		}
+
+A helper function could remove a level of indentation for the body of
+this loop.
+
+> +static int qps615_pwrctl_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct pci_host_bridge *bridge;
+> +	enum qps615_pwrctl_ports port;
+> +	struct qps615_pwrctl_ctx *ctx;
+> +	int ret, addr;
+> +
+> +	bridge = pci_find_host_bridge(to_pci_dev(dev->parent)->bus);
+
+Move to where "bridge" is used.
+
+> +	platform_set_drvdata(pdev, ctx);
+
+Can this be moved to the point where we know we won't return an error?
+
+Bjorn
 
