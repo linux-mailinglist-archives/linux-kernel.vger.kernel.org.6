@@ -1,158 +1,131 @@
-Return-Path: <linux-kernel+bounces-430764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EA659E353D
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 09:27:14 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 212DE9E3562
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 09:30:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E860F281218
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 08:27:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A13DBB2D218
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 08:27:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1C9C192D6C;
-	Wed,  4 Dec 2024 08:27:08 +0000 (UTC)
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E6B3192D9A;
+	Wed,  4 Dec 2024 08:27:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hwmlboSm"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE97D136338
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 08:27:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7EF0136338;
+	Wed,  4 Dec 2024 08:27:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733300828; cv=none; b=lHzXFl4anCbDTQD+PtFrxTMdm0D2q9bsUCM8fuoG6lnmNJGloDX49+lRW744kyRieG6KpgRPBKASYmDW8XUTGukhtvxcYuBytGTBx4Wo+A8iBWwdE5iKyZayqOqmrwOTZtn6zFFu2eL/sZjYO+z969L2wOcTnfxXFjDEWfWoUHc=
+	t=1733300856; cv=none; b=Se2grQLGcVgH1EeR+K4oXCIcJm8fEGAwuAy313lDwEB2lwaeTIGrVBkV+UfHiOxRaXbneTsmp6iweUUbg2xTBf8+sUZeWj6VpaHzZsAykDTvH0S14if/C3xHI2uqFotnxwLD3JN7SzgK4Y1WYxb89+6dLFFbObsHMPAm5DVbzLA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733300828; c=relaxed/simple;
-	bh=fnGAHa77/FVpNqcbKWKxJyAlq8e4WYcADYH7Wq24Nmw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qJ/7lDN4QH9gWJTZnmzL4/AFjB2B2kU+QBc7EZzV7K45krdp/fbnBdxgUAdUIPf1U3vnIhGWgZYLgjJqK19VIo8HV7MVASIAqcHCpVE3fF8ice4gBiRCxjzDxAqI7mShhmIUjEJ9lr6zBQ/1amsSo8NxPl/jGtzE0sOjnBvAaFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 5A3DC60007;
-	Wed,  4 Dec 2024 08:27:01 +0000 (UTC)
-Message-ID: <7e93d7a9-caa8-40c4-997a-d96ad94dbe94@ghiti.fr>
-Date: Wed, 4 Dec 2024 09:27:00 +0100
+	s=arc-20240116; t=1733300856; c=relaxed/simple;
+	bh=ucfBwFNm0ABhHUXqA9vCNAbh5NsOj2dYkGl7XgX6DzY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CAXzvWQAT52bbwU3octDhNaAL5NJBklHIQb+LG3+OJ/t8Ff6+adKas+yz8vGxxokbYP3sbs0Zwwlt2on8G4wjN2/DYv6dtyJ+pqrOn0mnp3zy/g7SLfsWyZrOt5IpikF4y8WFFCuCOX9WEtDVcGCLLTNPmBn1CpF+/ER/k59ZF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hwmlboSm; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-aa5f1909d6fso335722366b.3;
+        Wed, 04 Dec 2024 00:27:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733300853; x=1733905653; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=0yzShrViHPdCPjMWdlFTiNS/QjPXPWPOzuyMGv4WSxU=;
+        b=hwmlboSmT8T72ukGkExGl3tCHWJEHfj5Sb75hbgJNqk4JvsL4QuDy66TTecCOQLcvn
+         zQ4Iq1GdjuabR6LoEp/tjS8korsRg00tb/uJMREDmpPsdty2z4AmIDchzg76mXIYqsiu
+         FpO3tCkfGHUVAo0H1unUFSHgbTJ+UqYoDnGn1f0248XyL2WKjyKFJFHVoFmKdq6tOvRZ
+         Ujft6yUAiykL/pdk8FQzgwSujgl4a1o/8hB0z8P17PCyjsB9Npleye9C1ZHnFgJRtPrU
+         4OSOsMIfKyDBMqVTQrVdSkH3fCut+FMZiBcIDPf41d1oy5yAl7mUnyM1xD7ERt3RzWun
+         8GbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733300853; x=1733905653;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0yzShrViHPdCPjMWdlFTiNS/QjPXPWPOzuyMGv4WSxU=;
+        b=J1N6g02mqW6BjMMgL0rI2pt5w9zcuegDQ3ed20/QVkeU/PaA/s+V2mBAFVMDqNjYhv
+         5E6XwLdUwiSaZ2CDfydBYfoyh8K0wVqEgdVLzrPUAUiDA+5qwi/cRuqudbiqLYetuvbb
+         Fi+3ByGLUDREmR8VJNVXCKTL2eBZsCaNaXi3Ps9zPen27O/vGN9Z2Nvsmv5MXy71RK5D
+         ufpvvpdkafwh+GCUK5LVcVVntByXkRRnT7WVR0g6IycVSJ6+0SOWOIgI4n8ETQbxhaoQ
+         MCFQem6jlob442JYgNF0onekGGFK33+Af7CzHokxcNX9UBm9aQFBNPRjjuw8ouf9mX4r
+         ODuw==
+X-Forwarded-Encrypted: i=1; AJvYcCXnP6riKMtRONNmg3q5nzC/F4LCOVMhIDtf3SSSF1ZCo5isJiAU0zNwGg0OC4NBelvUKdJoF7naQLlDV11Q@vger.kernel.org, AJvYcCXwukdGcHhWZJqjMEh4BokJZ30MwwXLYxCE7M/lfNtZFFJCwvlrYUyFcR2lLC16xgQvvhkourMl3G9GgyzV@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxu6yR/9F4BJsMF5TAF+kYfCQuGIVgMHGAEJJCNdWXpLUCGtuOt
+	Q7ACtoM3dvL36XWl4Dqs3QMAYMhKXaT+QR2Z+2NaMT8YgzV9l2qo
+X-Gm-Gg: ASbGnctMG7+6lZYzROlCEBB34BzLu7I5zQPmEmfQW6v9/+JJ5ISm5i26TlH/T0fIhxW
+	oq4dTZh/HjsJMg5fUfarZ0DV0ZIvzizNTxYLCBIc3uyIZbO3ZxHPwivj48Q//eE8KejbYbVU9RN
+	SKNlL9nbUjmfG48k2FZS9wLwR1GPsyW0/DQj1UKSLoECqZHGoE2Jhhmik7XdEktdzoUt0UVUNgO
+	fiutaN077XJxnQ3+chMOhlC+MArExA6K0h4sIN+6jE66tzSK6Y69nCxUa6G
+X-Google-Smtp-Source: AGHT+IEo+659fUpkUFFkpxGn3gIqjDDx/wXNSC5AVajmYgifn/7dCNbegBe0YK6GdEfvUasEaSSYhA==
+X-Received: by 2002:a17:907:6eab:b0:a9a:3e33:8d9e with SMTP id a640c23a62f3a-aa5f7dab9d4mr596771966b.28.1733300852808;
+        Wed, 04 Dec 2024 00:27:32 -0800 (PST)
+Received: from f (cst-prg-22-5.cust.vodafone.cz. [46.135.22.5])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa5998e6f99sm704374666b.131.2024.12.04.00.27.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Dec 2024 00:27:32 -0800 (PST)
+Date: Wed, 4 Dec 2024 09:27:22 +0100
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: Zilin Guan <zilin@seu.edu.cn>
+Cc: dhowells@redhat.com, jlayton@kernel.org, netfs@lists.linux.dev, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, xujianhao01@gmail.com
+Subject: Re: [QUESTION] inconsistent use of smp_mb()
+Message-ID: <ulg54pf2qnlzqfj247fypypzun2yvwepqrcwaqzlr6sn3ukuab@rov7btfppktc>
+References: <20241204064818.2760263-1-zilin@seu.edu.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RESEND PATCH] riscv: Fixup boot failure when
- CONFIG_DEBUG_RT_MUTEXES=y
-Content-Language: en-US
-To: guoren@kernel.org, paul.walmsley@sifive.com, palmer@dabbelt.com,
- bjorn@rivosinc.com, conor@kernel.org, leobras@redhat.com,
- peterz@infradead.org, parri.andrea@gmail.com, will@kernel.org,
- longman@redhat.com, boqun.feng@gmail.com, arnd@arndb.de,
- alexghiti@rivosinc.com
-Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
- Guo Ren <guoren@linux.alibaba.com>
-References: <20241130153310.3349484-1-guoren@kernel.org>
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <20241130153310.3349484-1-guoren@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-GND-Sasl: alex@ghiti.fr
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241204064818.2760263-1-zilin@seu.edu.cn>
 
-Hi Guo,
+On Wed, Dec 04, 2024 at 06:48:18AM +0000, Zilin Guan wrote:
+> Hello,
+> 
+> I have a question regarding the use of smp_rmb() to enforce 
+> memory ordering in two related functions.
+> 
+> In the function netfs_unbuffered_write_iter_locked() from the file 
+> fs/netfs/direct_write.c, smp_rmb() is explicitly used after the 
+> wait_on_bit() call to ensure that the error and transferred fields are 
+> read in the correct order following the NETFS_RREQ_IN_PROGRESS flag:
+> 
+> 105	wait_on_bit(&wreq->flags, NETFS_RREQ_IN_PROGRESS,
+> 106		    TASK_UNINTERRUPTIBLE);
+> 107	smp_rmb(); /* Read error/transferred after RIP flag */
+> 108	ret = wreq->error;
+> 109	if (ret == 0) {
+> 110		ret = wreq->transferred;
+> 111		iocb->ki_pos += ret;
+> 112	}
+> 
+> However, in the function netfs_end_writethrough() from the file 
+> fs/netfs/write_issue.c, there is no such use of smp_rmb() after 
+> the corresponding wait_on_bit() call, despite accessing the same filed 
+> of wreq->error and relying on the same NETFS_RREQ_IN_PROGRESS flag:
+> 
+> 681	wait_on_bit(&wreq->flags, NETFS_RREQ_IN_PROGRESS, 
+> 		    TASK_UNINTERRUPTIBLE);
+> 682	ret = wreq->error;
+> 
+> My question is why does the first function require a CPU memory barrier 
+> smp_rmb() to enforce ordering, whereas the second function does not?
 
-On 30/11/2024 16:33, guoren@kernel.org wrote:
-> From: Guo Ren <guoren@linux.alibaba.com>
->
-> When CONFIG_DEBUG_RT_MUTEXES=y, mutex_lock->rt_mutex_try_acquire
-> would change from rt_mutex_cmpxchg_acquire to
-> rt_mutex_slowtrylock():
-> 	raw_spin_lock_irqsave(&lock->wait_lock, flags);
-> 	ret = __rt_mutex_slowtrylock(lock);
-> 	raw_spin_unlock_irqrestore(&lock->wait_lock, flags);
->
-> Because queued_spin_#ops to ticket_#ops is changed one by one by
-> jump_label, raw_spin_lock/unlock would cause a deadlock during the
-> changing.
->
-> That means in arch/riscv/kernel/jump_label.c:
-> 1.
-> arch_jump_label_transform_queue() ->
-> mutex_lock(&text_mutex); +-> raw_spin_lock  -> queued_spin_lock
-> 			 |-> raw_spin_unlock -> queued_spin_unlock
-> patch_insn_write -> change the raw_spin_lock to ticket_lock
-> mutex_unlock(&text_mutex);
-> ...
->
-> 2. /* Dirty the lock value */
-> arch_jump_label_transform_queue() ->
-> mutex_lock(&text_mutex); +-> raw_spin_lock -> *ticket_lock*
->                           |-> raw_spin_unlock -> *queued_spin_unlock*
-> 			  /* BUG: ticket_lock with queued_spin_unlock */
-> patch_insn_write  ->  change the raw_spin_unlock to ticket_unlock
-> mutex_unlock(&text_mutex);
-> ...
->
-> 3. /* Dead lock */
-> arch_jump_label_transform_queue() ->
-> mutex_lock(&text_mutex); +-> raw_spin_lock -> ticket_lock /* deadlock! */
->                           |-> raw_spin_unlock -> ticket_unlock
-> patch_insn_write -> change other raw_spin_#op -> ticket_#op
-> mutex_unlock(&text_mutex);
->
-> So, the solution is to disable mutex usage of
-> arch_jump_label_transform_queue() during early_boot_irqs_disabled, just
-> like we have done for stop_machine.
->
-> Reported-by: Conor Dooley <conor@kernel.org>
-> Signed-off-by: Guo Ren <guoren@linux.alibaba.com>
-> Signed-off-by: Guo Ren <guoren@kernel.org>
-> Fixes: ab83647fadae ("riscv: Add qspinlock support")
-> Link: https://lore.kernel.org/linux-riscv/CAJF2gTQwYTGinBmCSgVUoPv0_q4EPt_+WiyfUA1HViAKgUzxAg@mail.gmail.com/T/#mf488e6347817fca03bb93a7d34df33d8615b3775
-> Cc: Palmer Dabbelt <palmer@dabbelt.com>
-> Cc: Alexandre Ghiti <alexghiti@rivosinc.com>
-> ---
->   arch/riscv/kernel/jump_label.c | 12 +++++++++---
->   1 file changed, 9 insertions(+), 3 deletions(-)
->
-> diff --git a/arch/riscv/kernel/jump_label.c b/arch/riscv/kernel/jump_label.c
-> index 6eee6f736f68..654ed159c830 100644
-> --- a/arch/riscv/kernel/jump_label.c
-> +++ b/arch/riscv/kernel/jump_label.c
-> @@ -36,9 +36,15 @@ bool arch_jump_label_transform_queue(struct jump_entry *entry,
->   		insn = RISCV_INSN_NOP;
->   	}
->   
-> -	mutex_lock(&text_mutex);
-> -	patch_insn_write(addr, &insn, sizeof(insn));
-> -	mutex_unlock(&text_mutex);
-> +	if (early_boot_irqs_disabled) {
-> +		riscv_patch_in_stop_machine = 1;
-> +		patch_insn_write(addr, &insn, sizeof(insn));
-> +		riscv_patch_in_stop_machine = 0;
-> +	} else {
-> +		mutex_lock(&text_mutex);
-> +		patch_insn_write(addr, &insn, sizeof(insn));
-> +		mutex_unlock(&text_mutex);
-> +	}
->   
->   	return true;
->   }
+The fence is redundant.
 
+Per the comment in wait_on_bit:
+ * Returned value will be zero if the bit was cleared in which case the
+ * call has ACQUIRE semantics, or %-EINTR if the process received a
+ * signal and the mode permitted wake up on that signal.
 
-Sorry for the late answer, I've been sick lately!
-
-Thank you very much for looking into this and finding this not-so-bad 
-solution! I remind everyone that this is a temporary solution until we 
-can use an alternative instead of a static key.
-
-You can add:
-
-Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
-Tested-by: Alexandre Ghiti <alexghiti@rivosinc.com>
-
-The revert is still on the table IMO, let's Palmer decide.
-
-Thank you again Guo, really appreciate you took the time to find this 
-solution!
-
-Alex
-
+Since both sites pass TASK_UNINTERRUPTIBLE this will only ever return
+after the bit is sorted out, already providing the needed fence.
 
