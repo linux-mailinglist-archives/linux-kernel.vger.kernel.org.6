@@ -1,103 +1,88 @@
-Return-Path: <linux-kernel+bounces-431147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F3789E3979
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 13:05:44 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 679189E3A06
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 13:32:19 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E41316944C
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 12:05:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF940B318E0
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 12:07:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C90A41B6CF9;
-	Wed,  4 Dec 2024 12:05:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B70661B85E2;
+	Wed,  4 Dec 2024 12:06:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="YOPM27LM";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="HiIksDW9";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="TGliZR8x";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ySWB1iAa"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ljZNXT52"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE23C1B414A;
-	Wed,  4 Dec 2024 12:05:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F108198A32
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 12:06:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733313933; cv=none; b=JJJpkeNGq37caeVgT12syB9X4MFFK8VdHDKwehym6XySfXR7PHdP7B4QwA/giz6MfVJYZ9zHNZDS8VEMbvft7oI9IpfggIAwP8qaI8x9Qq70PIRN/S+ut0J4QG2oqWPePgWjcjGnm/TWCUvaUfUyRMUsdFfjzNS5rFbUUeK2PH0=
+	t=1733314010; cv=none; b=Yhd15xPfe3a0169FxzspiYJE+GXTmhGUZrgR5MKraFo5Ekwlhx0lQVb6HmJeWS0MP9ZD6g0LhqpRVdaiB0dx92fZZQ8kDI/adYWzya2cSm0x+FwBP/8zQa4oCwBAKq1NEz91059gBFJXgw3VKrXrdRb2ofMZHTdQbV/f8sf2rOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733313933; c=relaxed/simple;
-	bh=n5ibmNeHATLwSIxnz5fTtLU1dkBdJBjDv3ZZIe3bFbI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nPzWyJhpaIjbqNgvuHtV8pZRsgLbTHmCuLQ8sHfFfNl4QFy9IAKMwID3o58YY5w+u5VCsJykrH53Pe2zgG4FqZLyeEjEIsZ1XuYRi7vSzGDQKd5fIxSNDmzTmxHcTJEPMcPLYGRyPThlqehgzuKH5oo3fHrbMLViNRIURipgiaM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=YOPM27LM; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=HiIksDW9; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=TGliZR8x; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ySWB1iAa; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 0F7672115B;
-	Wed,  4 Dec 2024 12:05:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1733313929; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EvK9kGpyqlJLIZfqsmrhUNVq5qGxQvvYQh+x/z0bEQc=;
-	b=YOPM27LMbfdEX3+sbpa3rd8Kg69eSNeId+XWyn8a3VFtHfwyPLJqYNdgibXYndc4R06mZ/
-	2UCXO4QrbsV+3FM/0OUed5JzZqaZ06jyc9lL/3T7YEi2UysXcySeqRTTDSBapM9Yhc5D2g
-	HnyA4GrFyKRYZpmSCPdqC7QCw8RhvDg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1733313929;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EvK9kGpyqlJLIZfqsmrhUNVq5qGxQvvYQh+x/z0bEQc=;
-	b=HiIksDW9VIz8stUZyRCPdJHXxL0lxZVt69uU8JOdtypmOkmgIY0xW+Wof6Iqi6yVDT70jI
-	u8Bw4y7xEZhETFDg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1733313928; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EvK9kGpyqlJLIZfqsmrhUNVq5qGxQvvYQh+x/z0bEQc=;
-	b=TGliZR8x837fpWRWb3KoeDsVL2B9ejk2/rxzy9Wm7HmvxSFGFcBhEsv1ZZXvM7zdGWZ6QT
-	8pgR7R9A1V/c72NLyYgNxVIPYl7e/BHxS/BsOGcBHyJc7BonhE54Szx0R0kNAM6/MnXIJT
-	InCc59B9UUOqP58MKWZqmUGpDtUB/IY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1733313928;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EvK9kGpyqlJLIZfqsmrhUNVq5qGxQvvYQh+x/z0bEQc=;
-	b=ySWB1iAaeKSXGwAip6zBBWATHBQcynM8gn0abJyFAlkD7kcZrSaXeif1c5fzO0IFnDuqRp
-	rNgvPNOx749DmCBQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id F1AA01396E;
-	Wed,  4 Dec 2024 12:05:27 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id s32zOodFUGdxHwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 04 Dec 2024 12:05:27 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id A24FCA0918; Wed,  4 Dec 2024 13:05:27 +0100 (CET)
-Date: Wed, 4 Dec 2024 13:05:27 +0100
-From: Jan Kara <jack@suse.cz>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, tytso@mit.edu,
-	adilger.kernel@dilger.ca, jack@suse.cz, ritesh.list@gmail.com,
-	hch@infradead.org, djwong@kernel.org, david@fromorbit.com,
-	zokeefe@google.com, yi.zhang@huawei.com, chengzhihao1@huawei.com,
-	yukuai3@huawei.com, yangerkun@huawei.com
-Subject: Re: [PATCH 09/27] ext4: move out inode_lock into ext4_fallocate()
-Message-ID: <20241204120527.jus6ymhsddxhlqjz@quack3>
-References: <20241022111059.2566137-1-yi.zhang@huaweicloud.com>
- <20241022111059.2566137-10-yi.zhang@huaweicloud.com>
+	s=arc-20240116; t=1733314010; c=relaxed/simple;
+	bh=JDuHv6uKQbsHmnfZl4eZomwStWLbB2P9XNr61tQtoTk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=OIJvmBYtfqSqOn2y3zv3W7+GD1Lt7cpkhetWNsvbeXDGczH4XVl69NTgthVLOU+s+8x9IXuCaSJogyFi2a7dZj46RVWrs0RKt4VCuAOtjnuFGHCiWWBxpBUHxazi6VCNOlYSAbnnUrE5L6HI4rKTuCSR9zeEZtSDBqV3BLzM2K0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ljZNXT52; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-434aafd68e9so55321965e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 04:06:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733314006; x=1733918806; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ywma13jqMEAR0GKd8Er2i+hQcM6w7VPqBl5YrMVzLNg=;
+        b=ljZNXT527HsCuXDN04ftSTOa7EdLqkLaJgxqyahBN/Hy3l0O+uPycEaB5EmEKsdMxe
+         kV7ey+bTmpyZV6esyDa3I5Br6Pmw77su4JefNShB474nT3N9vmjSh79QBlWEo4y7UNUl
+         XOAH6Ioxsx6Dpk94+vGwVOHQXCYsFUXRhU+5JxbfuhF/sTw2CFWpQn1vQhP4NOuH6fwB
+         4/MTZgWGcwrt3XDaFjKwYS9Q3voxeby96NcSmTjWllX8xAjFq6/INHXwPVsuRUWdqo2Q
+         sWEvU1nRomKubzL6/hzh/o4DUxrFDJjzPB7kNhTI66RxbAYXJFLdp94NK8pCESdn/b8f
+         XQng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733314006; x=1733918806;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ywma13jqMEAR0GKd8Er2i+hQcM6w7VPqBl5YrMVzLNg=;
+        b=JXhC6BgT+oPprC6kz07iw/x9U42Vk8Je4HQve7nW6EzKrrkV70IOpZ2jSP7t8qjG0o
+         P9wDvXVayxuY5F7GdKcCwuyKUR+QxuoOioPJWyk3S0iq3cgq4ueQ+HwHYb8OBgQGQ8Cc
+         sSfqlmtDmiuI8AVyqn+u2d62lFbQa3psJ0EZNM23OTAXOSSVc23RQ49HGyuY939G0D2C
+         0SHub8fZshBPnmztPstxbw2IQ90nqm3rQ9QSu2COY4srm8yE2LDdCG9zHfxE69+6ys35
+         EFv73mGiiuU55MXkwJFgiQjIRyRbmIeNbKvRr1X2C0ddC28p13njn0cnHGNKndmrh6X6
+         iY8A==
+X-Forwarded-Encrypted: i=1; AJvYcCV4iBEQshx21kDv8q83ruGoofLfLKszEQhqdiPvAvrSMitksBQQ3b90MlllfZpAskf3t9vvMBLtDRz4Y6A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQ43zKBKi0K8RfO7uHYn476EcpZmaGXv1CXMr4bDRRvIu3eJCb
+	oAiquxsctuWpS0GjaiWviw2dW9wxMosSYZ0IKR3Mm0i32ZnfiG3XB9CDOvDgdvE=
+X-Gm-Gg: ASbGnctTL6OhYV49TPVyvS75/fWPMfRHS//ma0VsejC0yf3wsVI6OJny3lBxmQ5Ozzg
+	he/Hhgv42N2C6/4VetBI42CA36+Gma+HbbnlFEJgFkoEuEjv0wDnJx0Z4xeKbbB1wnj04QV8UDi
+	lM0bSqOWvkiQSHJ5fRov1lIxOCz4Rui2fUGWlLo59WZaxl+LXFaRdvdUPrM8VAhCl7mUZ/Pey6Y
+	+iyQmSlEpYZQJ9H3UXxQ4rU8izSq9pMDJN6GywW1PpuwGCht0l3jZs=
+X-Google-Smtp-Source: AGHT+IGJUj6d/zYcZD5M/Et3lJs2ShDAAV/RYF8yEIzq3ilyWBo8QUqo+ERoO6DKk5D16w9J5pmwRQ==
+X-Received: by 2002:a5d:5f83:0:b0:385:df4e:3691 with SMTP id ffacd0b85a97d-385fd418da7mr4972574f8f.42.1733314005639;
+        Wed, 04 Dec 2024 04:06:45 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385fd599b31sm4473289f8f.21.2024.12.04.04.06.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Dec 2024 04:06:45 -0800 (PST)
+Date: Wed, 4 Dec 2024 15:06:41 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Yevgeny Kliteynik <kliteyn@nvidia.com>
+Cc: Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
+	Tariq Toukan <tariqt@nvidia.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Muhammad Sammar <muhammads@nvidia.com>, netdev@vger.kernel.org,
+	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH v3 net] net/mlx5: DR, prevent potential error pointer
+ dereference
+Message-ID: <07477254-e179-43e2-b1b3-3b9db4674195@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -106,319 +91,39 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241022111059.2566137-10-yi.zhang@huaweicloud.com>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TAGGED_RCPT(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[16];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[vger.kernel.org,mit.edu,dilger.ca,suse.cz,gmail.com,infradead.org,kernel.org,fromorbit.com,google.com,huawei.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email,huawei.com:email]
-X-Spam-Score: -2.30
-X-Spam-Flag: NO
+X-Mailer: git-send-email haha only kidding
 
-On Tue 22-10-24 19:10:40, Zhang Yi wrote:
-> From: Zhang Yi <yi.zhang@huawei.com>
-> 
-> Currently, all five sub-functions of ext4_fallocate() acquire the
-> inode's i_rwsem at the beginning and release it before exiting. This
-> process can be simplified by factoring out the management of i_rwsem
-> into the ext4_fallocate() function.
-> 
-> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+The dr_domain_add_vport_cap() function generally returns NULL on error
+but sometimes we want it to return ERR_PTR(-EBUSY) so the caller can
+retry.  The problem here is that "ret" can be either -EBUSY or -ENOMEM
+and if it's and -ENOMEM then the error pointer is propogated back and
+eventually dereferenced in dr_ste_v0_build_src_gvmi_qpn_tag().
 
-Ah, nice. Feel free to add:
+Fixes: 11a45def2e19 ("net/mlx5: DR, Add support for SF vports")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+v2: fix typo in commit message
+v3: better style
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+ .../net/ethernet/mellanox/mlx5/core/steering/sws/dr_domain.c  | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-and please ignore my comments about renaming 'out' labels :).
-
-								Honza
-
-> ---
->  fs/ext4/extents.c | 90 +++++++++++++++--------------------------------
->  fs/ext4/inode.c   | 13 +++----
->  2 files changed, 33 insertions(+), 70 deletions(-)
-> 
-> diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
-> index 2f727104f53d..a2db4e85790f 100644
-> --- a/fs/ext4/extents.c
-> +++ b/fs/ext4/extents.c
-> @@ -4573,23 +4573,18 @@ static long ext4_zero_range(struct file *file, loff_t offset,
->  	int ret, flags, credits;
->  
->  	trace_ext4_zero_range(inode, offset, len, mode);
-> +	WARN_ON_ONCE(!inode_is_locked(inode));
->  
-> -	inode_lock(inode);
-> -
-> -	/*
-> -	 * Indirect files do not support unwritten extents
-> -	 */
-> -	if (!(ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS))) {
-> -		ret = -EOPNOTSUPP;
-> -		goto out;
-> -	}
-> +	/* Indirect files do not support unwritten extents */
-> +	if (!(ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS)))
-> +		return -EOPNOTSUPP;
->  
->  	if (!(mode & FALLOC_FL_KEEP_SIZE) &&
->  	    (end > inode->i_size || end > EXT4_I(inode)->i_disksize)) {
->  		new_size = end;
->  		ret = inode_newsize_ok(inode, new_size);
->  		if (ret)
-> -			goto out;
-> +			return ret;
->  	}
->  
->  	/* Wait all existing dio workers, newcomers will block on i_rwsem */
-> @@ -4597,7 +4592,7 @@ static long ext4_zero_range(struct file *file, loff_t offset,
->  
->  	ret = file_modified(file);
->  	if (ret)
-> -		goto out;
-> +		return ret;
->  
->  	/*
->  	 * Prevent page faults from reinstantiating pages we have released
-> @@ -4687,8 +4682,6 @@ static long ext4_zero_range(struct file *file, loff_t offset,
->  	ext4_journal_stop(handle);
->  out_invalidate_lock:
->  	filemap_invalidate_unlock(mapping);
-> -out:
-> -	inode_unlock(inode);
->  	return ret;
->  }
->  
-> @@ -4702,12 +4695,11 @@ static long ext4_do_fallocate(struct file *file, loff_t offset,
->  	int ret;
->  
->  	trace_ext4_fallocate_enter(inode, offset, len, mode);
-> +	WARN_ON_ONCE(!inode_is_locked(inode));
->  
->  	start_lblk = offset >> inode->i_blkbits;
->  	len_lblk = EXT4_MAX_BLOCKS(len, offset, inode->i_blkbits);
->  
-> -	inode_lock(inode);
-> -
->  	/* We only support preallocation for extent-based files only. */
->  	if (!(ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS))) {
->  		ret = -EOPNOTSUPP;
-> @@ -4739,7 +4731,6 @@ static long ext4_do_fallocate(struct file *file, loff_t offset,
->  					EXT4_I(inode)->i_sync_tid);
->  	}
->  out:
-> -	inode_unlock(inode);
->  	trace_ext4_fallocate_exit(inode, offset, len_lblk, ret);
->  	return ret;
->  }
-> @@ -4774,9 +4765,8 @@ long ext4_fallocate(struct file *file, int mode, loff_t offset, loff_t len)
->  
->  	inode_lock(inode);
->  	ret = ext4_convert_inline_data(inode);
-> -	inode_unlock(inode);
->  	if (ret)
-> -		return ret;
-> +		goto out;
->  
->  	if (mode & FALLOC_FL_PUNCH_HOLE)
->  		ret = ext4_punch_hole(file, offset, len);
-> @@ -4788,7 +4778,8 @@ long ext4_fallocate(struct file *file, int mode, loff_t offset, loff_t len)
->  		ret = ext4_zero_range(file, offset, len, mode);
->  	else
->  		ret = ext4_do_fallocate(file, offset, len, mode);
-> -
-> +out:
-> +	inode_unlock(inode);
->  	return ret;
->  }
->  
-> @@ -5298,36 +5289,27 @@ static int ext4_collapse_range(struct file *file, loff_t offset, loff_t len)
->  	int ret;
->  
->  	trace_ext4_collapse_range(inode, offset, len);
-> -
-> -	inode_lock(inode);
-> +	WARN_ON_ONCE(!inode_is_locked(inode));
->  
->  	/* Currently just for extent based files */
-> -	if (!ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS)) {
-> -		ret = -EOPNOTSUPP;
-> -		goto out;
-> -	}
-> -
-> +	if (!ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS))
-> +		return -EOPNOTSUPP;
->  	/* Collapse range works only on fs cluster size aligned regions. */
-> -	if (!IS_ALIGNED(offset | len, EXT4_CLUSTER_SIZE(sb))) {
-> -		ret = -EINVAL;
-> -		goto out;
-> -	}
-> -
-> +	if (!IS_ALIGNED(offset | len, EXT4_CLUSTER_SIZE(sb)))
-> +		return -EINVAL;
->  	/*
->  	 * There is no need to overlap collapse range with EOF, in which case
->  	 * it is effectively a truncate operation
->  	 */
-> -	if (end >= inode->i_size) {
-> -		ret = -EINVAL;
-> -		goto out;
-> -	}
-> +	if (end >= inode->i_size)
-> +		return -EINVAL;
->  
->  	/* Wait for existing dio to complete */
->  	inode_dio_wait(inode);
->  
->  	ret = file_modified(file);
->  	if (ret)
-> -		goto out;
-> +		return ret;
->  
->  	/*
->  	 * Prevent page faults from reinstantiating pages we have released from
-> @@ -5402,8 +5384,6 @@ static int ext4_collapse_range(struct file *file, loff_t offset, loff_t len)
->  	ext4_journal_stop(handle);
->  out_invalidate_lock:
->  	filemap_invalidate_unlock(mapping);
-> -out:
-> -	inode_unlock(inode);
->  	return ret;
->  }
->  
-> @@ -5429,39 +5409,27 @@ static int ext4_insert_range(struct file *file, loff_t offset, loff_t len)
->  	loff_t start;
->  
->  	trace_ext4_insert_range(inode, offset, len);
-> -
-> -	inode_lock(inode);
-> +	WARN_ON_ONCE(!inode_is_locked(inode));
->  
->  	/* Currently just for extent based files */
-> -	if (!ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS)) {
-> -		ret = -EOPNOTSUPP;
-> -		goto out;
-> -	}
-> -
-> +	if (!ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS))
-> +		return -EOPNOTSUPP;
->  	/* Insert range works only on fs cluster size aligned regions. */
-> -	if (!IS_ALIGNED(offset | len, EXT4_CLUSTER_SIZE(sb))) {
-> -		ret = -EINVAL;
-> -		goto out;
-> -	}
-> -
-> +	if (!IS_ALIGNED(offset | len, EXT4_CLUSTER_SIZE(sb)))
-> +		return -EINVAL;
->  	/* Offset must be less than i_size */
-> -	if (offset >= inode->i_size) {
-> -		ret = -EINVAL;
-> -		goto out;
-> -	}
-> -
-> +	if (offset >= inode->i_size)
-> +		return -EINVAL;
->  	/* Check whether the maximum file size would be exceeded */
-> -	if (len > inode->i_sb->s_maxbytes - inode->i_size) {
-> -		ret = -EFBIG;
-> -		goto out;
-> -	}
-> +	if (len > inode->i_sb->s_maxbytes - inode->i_size)
-> +		return -EFBIG;
->  
->  	/* Wait for existing dio to complete */
->  	inode_dio_wait(inode);
->  
->  	ret = file_modified(file);
->  	if (ret)
-> -		goto out;
-> +		return ret;
->  
->  	/*
->  	 * Prevent page faults from reinstantiating pages we have released from
-> @@ -5562,8 +5530,6 @@ static int ext4_insert_range(struct file *file, loff_t offset, loff_t len)
->  	ext4_journal_stop(handle);
->  out_invalidate_lock:
->  	filemap_invalidate_unlock(mapping);
-> -out:
-> -	inode_unlock(inode);
->  	return ret;
->  }
->  
-> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> index 1d128333bd06..bea19cd6e676 100644
-> --- a/fs/ext4/inode.c
-> +++ b/fs/ext4/inode.c
-> @@ -3962,15 +3962,14 @@ int ext4_punch_hole(struct file *file, loff_t offset, loff_t length)
->  	unsigned long blocksize = i_blocksize(inode);
->  	handle_t *handle;
->  	unsigned int credits;
-> -	int ret = 0;
-> +	int ret;
->  
->  	trace_ext4_punch_hole(inode, offset, length, 0);
-> -
-> -	inode_lock(inode);
-> +	WARN_ON_ONCE(!inode_is_locked(inode));
->  
->  	/* No need to punch hole beyond i_size */
->  	if (offset >= inode->i_size)
-> -		goto out;
-> +		return 0;
->  
->  	/*
->  	 * If the hole extends beyond i_size, set the hole to end after
-> @@ -3990,7 +3989,7 @@ int ext4_punch_hole(struct file *file, loff_t offset, loff_t length)
->  	if (offset & (blocksize - 1) || end & (blocksize - 1)) {
->  		ret = ext4_inode_attach_jinode(inode);
->  		if (ret < 0)
-> -			goto out;
-> +			return ret;
->  	}
->  
->  	/* Wait all existing dio workers, newcomers will block on i_rwsem */
-> @@ -3998,7 +3997,7 @@ int ext4_punch_hole(struct file *file, loff_t offset, loff_t length)
->  
->  	ret = file_modified(file);
->  	if (ret)
-> -		goto out;
-> +		return ret;
->  
->  	/*
->  	 * Prevent page faults from reinstantiating pages we have released from
-> @@ -4082,8 +4081,6 @@ int ext4_punch_hole(struct file *file, loff_t offset, loff_t length)
->  	ext4_journal_stop(handle);
->  out_invalidate_lock:
->  	filemap_invalidate_unlock(mapping);
-> -out:
-> -	inode_unlock(inode);
->  	return ret;
->  }
->  
-> -- 
-> 2.46.1
-> 
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/steering/sws/dr_domain.c b/drivers/net/ethernet/mellanox/mlx5/core/steering/sws/dr_domain.c
+index 3d74109f8230..49f22cad92bf 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/steering/sws/dr_domain.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/steering/sws/dr_domain.c
+@@ -297,7 +297,9 @@ dr_domain_add_vport_cap(struct mlx5dr_domain *dmn, u16 vport)
+ 	if (ret) {
+ 		mlx5dr_dbg(dmn, "Couldn't insert new vport into xarray (%d)\n", ret);
+ 		kvfree(vport_caps);
+-		return ERR_PTR(ret);
++		if (ret == -EBUSY)
++			return ERR_PTR(-EBUSY);
++		return NULL;
+ 	}
+ 
+ 	return vport_caps;
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.45.2
+
 
