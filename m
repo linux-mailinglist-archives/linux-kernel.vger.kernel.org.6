@@ -1,84 +1,91 @@
-Return-Path: <linux-kernel+bounces-430526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7793E9E3221
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 04:33:01 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C2ED9E3222
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 04:33:11 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 435B3162A93
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 03:32:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22D26283397
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 03:33:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8381343166;
-	Wed,  4 Dec 2024 03:32:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6A20155C97;
+	Wed,  4 Dec 2024 03:32:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="NiR9RgT7"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="HrdDNHTD"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 020842F26
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 03:32:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F36C14F9F7
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 03:32:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733283175; cv=none; b=hlq5cGhuN4PCCK35GiZ8Da45F0tviKYjbZOQaNRhX3ykJhY7oaWjMj25Q3u7VipAMhbb7XzBpqwG9lJ2FC9QH0VffW3Kpi4Hkbvqfi2KLvkca2lT89KxdfwLIo1Wg/5go8M2aQlhrItGlLLrtw2m/ykD+FdqmcgInqWQt2nVBds=
+	t=1733283179; cv=none; b=RgaUG4RO2XDiMN2wPSOdkYncwMTryEf0YiYP3Es4EvEmGNsDfsGfNmQdYC6q1Ow9nQ48+D8FVOR0BLBGpdbyqouCEM2WADEeC8MKlCAvlMjqyVLWnKmmIHNxFvGjOnFC8YKGS0i0LEBa+S/0KI2xrzSGI09Yy9CXDkUq9w8b1Sc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733283175; c=relaxed/simple;
-	bh=rGxRr+3GnC8oRnWqfBazKCBIX3f96M/vvnV9gVhUqg0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=V1CB+F61/aZCev8sakLx3RZtMHVQeKzxKtP/g/gnyW0WaZv99SLp2RX5ADsRsiCxzPbEW6Iv2oDx1SXUnw4Pu8A79GmRSpN9bYxpiEvM3/Yc6jAsZgHtxjjKr9o8AhtOl3VowTXSOsbZIzZTj8rr5LGPQjfe8ux1lYReGVTMRP0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=NiR9RgT7; arc=none smtp.client-ip=209.85.128.48
+	s=arc-20240116; t=1733283179; c=relaxed/simple;
+	bh=HETMPyYFonTIlUEtDkB4W+NGpx0pChnBvtqpUMwbz5Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Z4kwQEjUFU3JbFWhv3C0GS8f5UFewkEVNaYZRnRzH6yzxAz4yncPnNILhfPKlWUARHRa+zeaUsEzo8+XTDF9ENCV0W8ilDBBoN67K5A9nwTaNXBGuUVdsWgpdc5eHQUz729emN+c7cAQtlIydLRZRIbqxWkM0Ib9Qi2umIRFo9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=HrdDNHTD; arc=none smtp.client-ip=209.85.128.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-434a12d106dso6297675e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 19:32:53 -0800 (PST)
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4348f65e373so7381845e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 19:32:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1733283172; x=1733887972; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=7JAjjJaJE2SqnwfAB7C5rQkjjf+jzpgp+0xXtzPoRG0=;
-        b=NiR9RgT7fEXTcrXOSNOwR+FNCSvYizFwu7ddgUFtAgT7PgsH45S98/vl2ZjBVE7Bdn
-         31e0zQOK1swEXHgPfqTGft92hXw2WuzGQSWQVKVGfwKtnW3wHW1maA4TDWZ1/f3rtbll
-         t9fu/jYmeT9rxW/SAYFVrp66cf2oXArtERMncxvDwuw0PlC+UlZSUnQdZh70wPezWTHn
-         YyGFqpXsU1PlhZjvoQ9dGrDazmPUm72O/rzvQvp2PVbfFofh21gDxaZ2l3L4q6bGeE3w
-         4wpCt43rTTruagtjONXqNdAXMcr+y/hKH5z52vER+iGHNSNpzG/3zyu0PWHR+s7eB+JY
-         vy9g==
+        d=suse.com; s=google; t=1733283175; x=1733887975; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IyQZbBp455IiiS0cimMqLKVcykFWRydlh8NnN31mrV4=;
+        b=HrdDNHTD9DwHwb7xvHvSwiMY3SSdcxaT0xZewai1RP+/nETanu6wWDUD8Y3WAvw+5z
+         +F6TGbIdPfQP+wR0rFLdn8DjHkhBbl2W6bZge9gfLp2h9oPOiuigEsD2YDgEOZg3s4H7
+         5ucvKFvoXV4dsC/I4lqzUU40avdJrgfeXvGNDof2SfY3QeMZhVVY7tBTo43huu53cKZq
+         RTL34c49Z8guY++MOwSHcXbTtXI0kATRCLvwNIpXMSmDyBidM/ae2OXgAesJWeZQWYMn
+         SU9TG0xfbyvC7R6wThyC7JRWVFLXpkaUH2Z9kNnrNcXAj4feWFc+V3xutDR5SwACYzuB
+         53ow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733283172; x=1733887972;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7JAjjJaJE2SqnwfAB7C5rQkjjf+jzpgp+0xXtzPoRG0=;
-        b=eU3sRvsgz6qKD32Aqq35o5D2RZkgCh/FFE1zF2qFatsOGPF+JaXS35ENmQPuv3m4NZ
-         S3hR42KTgBx6zznxn9QXQM2xNvLBnIM2sRCl7BH0HFBgqVwGWIIo87FUNSq/VHvRwPnG
-         m4cyogqSsZMKsuqtvhgJLyPXwwolVgg7sf+9bEt2cS11P5W6+zkWFIM9ggR2z+aHClFI
-         fL+DF2ekyxEfnHcYzWXIbW+EcRBWlDn7fq9FsbCAZDCsMAK9mu7OMb483a+Ls+sR5FqS
-         bqpxkLNx8jxlHBl9IdhOtXa8HQxoV5RXy0KTBAl1Lz5UM7wba2oSBht/5Khkw7mZOLFa
-         tFrg==
-X-Forwarded-Encrypted: i=1; AJvYcCWzRw2lpLv6q/cTZGAakyI7/6KQelwZFzIXIYOkVhgW7yLo15ZddxrvmKb8iKLJYanPkN0gWE66BHpN97c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxuI2xSYFFbz1zNM0HHfp2Yu+YCYlcw80ohN1G8CbLpE+6jud4y
-	Yr8Wg6vp02vtP18K6YpxeN2FcsEHOF5J4NVk7asyDPllQYolUb8ZJ8fFhzYBqrE=
-X-Gm-Gg: ASbGncvfRF7fadbnDvIYG4vjUIt512r3704OjhQjYrRrjPiWUs9bALQLEpeHDTU1LZP
-	IADLNljPtFIh6jNOdtvZRPX1nYFHoDx3fNJwAKiM2t8qCY27jFaly44AtpN5Yu385dVZ2dkiB4I
-	4efPzfQwGg0wACZgjQIxNo6P1bztknNEjawgbdB4/2WtDwDYlxRVfTgHmy+NTEPwwk+1kyC9mRh
-	EZ7kNbIH1rotbQmYOvYDXzsifYsHfrvA2ipNWonXtZP+H4Wqr3O2cqQHFCxxQ==
-X-Google-Smtp-Source: AGHT+IEwUcZcwfhH+KayGgzitkNGYCWrij8kJDqhz1bcku7MrZ3FcKOjRX65X0ZPwHdwOZtmGeMRtQ==
-X-Received: by 2002:a5d:47a7:0:b0:385:f479:ef45 with SMTP id ffacd0b85a97d-385fd41b1damr1484510f8f.9.1733283172189;
-        Tue, 03 Dec 2024 19:32:52 -0800 (PST)
+        d=1e100.net; s=20230601; t=1733283175; x=1733887975;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IyQZbBp455IiiS0cimMqLKVcykFWRydlh8NnN31mrV4=;
+        b=iTG3OonR6Ro3oHbe6N1vGuPOBt26C7NqLE+gnApwp5MfSyPoiy5z3slVx3bD7KctvX
+         W9Lpc/+vqD8+g8YeaBN152Cq4gg8fS0NGltzzpTDwJTueF87Alz8o9G3IaSZ13JGgXnX
+         AGLX9mSkoIPVUznJUYcbKeWEVSa7O4F6SgpiLbuCYs1f3rTiuWb6hP5TDttDmBZnC5GN
+         Bp0Mlan91+5nk/ttzGdJoV3XVTB0E1X+qpFDhtGOgbRkw0vtjAwl0ouClpY1kI2ADZF1
+         9BcLQEnNNcKtHQezPliLPGW/Cs5DXQScqeXCLdJkfxt+6/QCRuJm9MWb2gfFPxtE7Dd4
+         3AKA==
+X-Forwarded-Encrypted: i=1; AJvYcCXKY5FjgU2HF7WAbC6Rt15Z3Yd7mzblZn57+TmksSs9oZWIiwc1m0eBuM981iqMv179+1OLMuztRmXxBuw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyHEp3JVXgzw3VmKWpcQDtZzqsGqupDRxStxskKwJWWXXvTs72Z
+	fvGLEmwb+M+tB/TpKAX5lpY/1+M5lrCifFtWolW9eKOkdkw4MLDBCQUBDDBB/mp0eC9PHTP4Rvm
+	lRl24HA==
+X-Gm-Gg: ASbGncvNBDn6ycb4uON9vVm0pFXDNZhExU9Cz+gFQL5YVxEAQb4y3oWALnhmQVr7dzu
+	guTLf+Qdj+7hY7LWZWIFW/m+qm224wpc4MIhZm8TSPmHsUO24wS4fwIpYx5BHOiMs2THpxrIBvt
+	n42VZFdsSuUOGLZv/QUzZgR5JL4tonWDgSSGtDeSfv6mumTehdFLVJMpROL7sgJFLDCTeQzWnkG
+	BrLSVPWDtvbXWW8CaxxqDLL9MgxuEUTYqpk9/bOqqb28hgZjXj/4FgO6gkubQ==
+X-Google-Smtp-Source: AGHT+IE/jHB53rXLi5u7lvRJEF+CPq4Zu3rqIEuQoyRi8fGpj8biZzILxPOqXkFg+fFvWqVlPTnhJQ==
+X-Received: by 2002:a5d:6dae:0:b0:385:e10a:4d98 with SMTP id ffacd0b85a97d-385fd3cfcb3mr1524139f8f.8.1733283175560;
+        Tue, 03 Dec 2024 19:32:55 -0800 (PST)
 Received: from localhost.localdomain ([114.254.72.7])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-215a04dc249sm37476025ad.203.2024.12.03.19.32.49
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-215a04dc249sm37476025ad.203.2024.12.03.19.32.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Dec 2024 19:32:51 -0800 (PST)
+        Tue, 03 Dec 2024 19:32:54 -0800 (PST)
 From: Heming Zhao <heming.zhao@suse.com>
 To: joseph.qi@linux.alibaba.com,
 	ocfs2-devel@lists.linux.dev
 Cc: Heming Zhao <heming.zhao@suse.com>,
 	linux-kernel@vger.kernel.org,
 	akpm@linux-foundation.org,
-	gregkh@linuxfoundation.org
-Subject: [PATCH 0/2] Revert then resubmit ocfs2 commit dfe6c5692fb5
-Date: Wed,  4 Dec 2024 11:32:38 +0800
-Message-ID: <20241204033243.8273-1-heming.zhao@suse.com>
+	gregkh@linuxfoundation.org,
+	Heming Zhao <heing.zhao@suse.com>,
+	stable@vger.kernel.org
+Subject: [PATCH 1/2] ocfs2: Revert "ocfs2: fix the la space leak when unmounting an ocfs2 volume"
+Date: Wed,  4 Dec 2024 11:32:39 +0800
+Message-ID: <20241204033243.8273-2-heming.zhao@suse.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20241204033243.8273-1-heming.zhao@suse.com>
+References: <20241204033243.8273-1-heming.zhao@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,27 +94,50 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-SUSE QA team detected a mistake in my commit dfe6c5692fb5 ("ocfs2: fix
-the la space leak when unmounting an ocfs2 volume"). I am very sorry for
-my error. (If my eyes are correct) From the mailling list mails, this
-patch shouldn't be applied to 4.19 5.4 5.10 5.15 6.1 6.6, and these
-branches should perform a revert operation.
+This reverts commit dfe6c5692fb5 ("ocfs2: fix the la space leak when
+unmounting an ocfs2 volume").
 
-Reason for revert:
-In commit dfe6c5692fb5, I mistakenly wrote: "This bug has existed since
-the initial OCFS2 code.". The statement is wrong. The correct
-introduction commit is 30dd3478c3cd. IOW, if the branch doesn't include
-30dd3478c3cd, dfe6c5692fb5 should also not be included.
+In commit dfe6c5692fb5, the commit log stating "This bug has existed
+since the initial OCFS2 code." is incorrect. The correct introduction
+commit is 30dd3478c3cd ("ocfs2: correctly use ocfs2_find_next_zero_bit()").
 
-I am not sure whether the revert and resubmit patch operations are
-correct or not. Please guide me if the approach is incorrect.
+Fixes: dfe6c5692fb5 ("ocfs2: fix the la space leak when unmounting an ocfs2 volume")
+Signed-off-by: Heming Zhao <heing.zhao@suse.com>
+Cc: <stable@vger.kernel.org>
+---
+ fs/ocfs2/localalloc.c | 19 -------------------
+ 1 file changed, 19 deletions(-)
 
-Heming Zhao (2):
-  ocfs2: Revert "ocfs2: fix the la space leak when unmounting an ocfs2
-    volume"
-  ocfs2: fix the la space leak when unmounting an ocfs2 volume
-
-
+diff --git a/fs/ocfs2/localalloc.c b/fs/ocfs2/localalloc.c
+index 8ac42ea81a17..5df34561c551 100644
+--- a/fs/ocfs2/localalloc.c
++++ b/fs/ocfs2/localalloc.c
+@@ -1002,25 +1002,6 @@ static int ocfs2_sync_local_to_main(struct ocfs2_super *osb,
+ 		start = bit_off + 1;
+ 	}
+ 
+-	/* clear the contiguous bits until the end boundary */
+-	if (count) {
+-		blkno = la_start_blk +
+-			ocfs2_clusters_to_blocks(osb->sb,
+-					start - count);
+-
+-		trace_ocfs2_sync_local_to_main_free(
+-				count, start - count,
+-				(unsigned long long)la_start_blk,
+-				(unsigned long long)blkno);
+-
+-		status = ocfs2_release_clusters(handle,
+-				main_bm_inode,
+-				main_bm_bh, blkno,
+-				count);
+-		if (status < 0)
+-			mlog_errno(status);
+-	}
+-
+ bail:
+ 	if (status)
+ 		mlog_errno(status);
 -- 
 2.43.0
 
