@@ -1,157 +1,118 @@
-Return-Path: <linux-kernel+bounces-430411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 460FA9E309F
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 02:02:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 451439E30A1
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 02:07:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 49852B2320E
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 01:02:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09B4A2837BF
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 01:07:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB4C2848C;
-	Wed,  4 Dec 2024 01:01:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65EF48F5E;
+	Wed,  4 Dec 2024 01:07:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="io0b02hF"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="B05DU6Hq"
+Received: from mail-il1-f171.google.com (mail-il1-f171.google.com [209.85.166.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFAF933D1;
-	Wed,  4 Dec 2024 01:01:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F8B1747F
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 01:06:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733274119; cv=none; b=MIQL3pv6GaFQQ5s6lHEK4JoX8xeLoACNtrpJCPelcTJ3aIDwFUS7C/C5fAzf9GXj/w43rPauu/jSm5ZN23J/EPj3JBZbUp94gGxbHuusHN77zFZvPdOjo6sxmP4AuBbltaDyUOP4FAbhYjBs9rnFmPwmvbMiPhKkZZjxCumLfjg=
+	t=1733274420; cv=none; b=Rpr8H+avoU7wa0+JddSOjah3qZst+ICxtbOsNyPGy+r5Z6M8zmPOMPvobqIgddhihbLk1MTeu3ub37sIz8m2XLjL7Mc4lIvuwZCOi5DuAVI/KA5xJH9tYwENrbmprafh8C4VmSDLiPQMbGNtcA9axzZp9d6/hqP5vAWRgd+Ehjo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733274119; c=relaxed/simple;
-	bh=Q/hE6vafS8AK9DXxlgN7oJoBBfn5dM/iZsb7tKqHl08=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oe2ePS9jwV3Jh9jMTgilqa2Tg61Sflg2kboSJOjta9rMDhn1mIE6wZgsJnb3P7yQAx2CwDZZoSloehhHSdfTbqAMeYhyDewMwDAEsEpZ2aqLtkvgyuV3OANM/PJ/ZW63E7rXHZ/FMk3ktihnb28T/s9sB2+SVfwJr2CFkW0b5yM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=io0b02hF; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2155157c58cso30727985ad.0;
-        Tue, 03 Dec 2024 17:01:57 -0800 (PST)
+	s=arc-20240116; t=1733274420; c=relaxed/simple;
+	bh=MC7AljCRogbPP7nv98cOsHc26oZBN/K1ecZLTmoeVsw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dODCCeOej9WFV03yPyEd+A5XsiQcRUN0rGrPEWv562QlITGjOiYYnTHh90ks9WEbsH75cc603B3I+JY4YBuiEYuGoggrwaCgj9KhvUWlAWp+jW2uSlJyc070Wj2aICxKx7vda69Kmm6/AAhnPzPhf2tgZ13KGQWRDfqygjCPVFM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=B05DU6Hq; arc=none smtp.client-ip=209.85.166.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-il1-f171.google.com with SMTP id e9e14a558f8ab-3a77980fe3aso1574925ab.0
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2024 17:06:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733274117; x=1733878917; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=WwZUXExGPKhAMcqBJ8vWwXOyG5Enp2SY9gQFDpob96I=;
-        b=io0b02hF8bgk6xZnqZPnPQMPjxH8TpaHtONfV9rlqZJxrLJ9i/08DyaWJ29tD15BU6
-         eXANYKZIB42dkPOpA1RwZqJNQZNnk14mUk2SFQECMQQgLPVitXd9cr0Qaebz6jYA1CPW
-         2WA+EE8EskwrOrPEV655+Bq37P5rbKWKI0qQD1/tFU7qh7jFSq8ZYrs7yx1049azeVIV
-         e0xC5rYpxAET/vxgnHKtur/j9QXx5bQ6/fMZZ2OjEsqx3c/GWDgcPZ7HsQzA2NDRo+rW
-         mlecIDmqTSN1SBBqxmeeXvQTDkvEgpOMlKRgBZ2HXo2tKYw648WTBbLYc9NsHBXsbvF/
-         jxHA==
+        d=linuxfoundation.org; s=google; t=1733274418; x=1733879218; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=B+Jz/Q6nlrwZViX03mS36dj9lZ7L1D6LvW4jUlY+Okc=;
+        b=B05DU6HqnqBBJLf6glsXGpUEC92uhrH7rTNlFwJfRapv3NrWeod43g/BUjrNg84P8a
+         UwKM2humEP6TCRRRxAvyhDzeVMAApYgs4PWYps3vEjcATqARIqJEZgKYMw40wMz9IRqC
+         0NX4n20/MnnErBNMyKCu01gLZag2vVDpdF/xA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733274117; x=1733878917;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WwZUXExGPKhAMcqBJ8vWwXOyG5Enp2SY9gQFDpob96I=;
-        b=LaWxHRx/yASyxPY8ihKBWn39ucQFm9ge866N7Pbb2hIG2UkE5flItY/qkEjqNND66C
-         QAe3L9HWQTKjm0cp7mtKZmY6skYspeFrDG5kKTYUgfiqQV8WDkWv0oHfaZT9QXmOm4AQ
-         o1lJnMk+XqYtqbyGyHidXLU71Gil/Ii2HB9QaKnsfjePCWM91mWJW0ycJRN4mdmFpYq+
-         Sft9pasumZMbdfsgo7tjRpqcXLK7Vbu/IUcuh1GNTr2RSVPZw/3DFxKum3UPb2m/qJVJ
-         KWzL0vI9umSSArR+YCuQ4dnB4VLRUk1DJ8OemHG7TXrxfJF2BqjqEHzJUxa0A9agi1Ly
-         gwfg==
-X-Forwarded-Encrypted: i=1; AJvYcCU59lKX97mZJHPuFuhLVm3moYDGtF8HJvqGcGXDofmpn3lkxkH5XFvjANCGe3yrR7KL3CI=@vger.kernel.org, AJvYcCVKRthlYPg4Tzr/5zLp92Iz4UP8Qbe62/TV1wmTgpkIFQI+QypUOijuPLMZu4tsbQzcT6bpmDGxzTFyxnkA@vger.kernel.org, AJvYcCW3l6lVWRRFH45NxD6gtiyQgL2vrsQSyQOhzqc3aydbEXH94MbRX8OyfDL8M0EXzelyba9HhOc+@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2mCGQrcKHiuPPuM+JOXBotKzfR5Mp7k8VShocD5IiVu0IHc8U
-	eh08R2Jp/LWIPD+IGZ7OPlRcVsDCwIAZw3Hcn/XqIVFHuoo5SG5z
-X-Gm-Gg: ASbGncsZD2t/HgIr24Eu26wQEPCE6LoeliHppovTsNcgwrRrxHyEeLRnAQbqEfsZ+WN
-	Qj4Gl0DDYLxnMlHABvm+AMoMF1J/mrwH0WpzBwHVt1Bf/HRLZM3KxVueDgoMQNkxSANOR//e46W
-	DnV2Hx4wr/cxpT+Q2CRp7fsn8W27eH/ES+mrgmPiRX1E3iEHu/3tBogXsO8PgEUwF6DKNyZj/7c
-	IZ1hUVv4cNTkj/et309M6fGEJ3rl+hPafFQXBexDSozVYUaCWjZt4B8
-X-Google-Smtp-Source: AGHT+IG8NXj6SK5e+9gYKjJFpUbhvuBG5Y8EpnYjjYRQzPOKD43zqUoo13ElslwuS4fLvattED1nDQ==
-X-Received: by 2002:a17:902:e846:b0:215:ba2b:cd51 with SMTP id d9443c01a7336-215bd0d71e4mr52971975ad.15.1733274116866;
-        Tue, 03 Dec 2024 17:01:56 -0800 (PST)
-Received: from localhost ([2601:647:6881:9060:32d6:f9ea:3b48:6054])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2157597c2f6sm53000185ad.204.2024.12.03.17.01.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Dec 2024 17:01:56 -0800 (PST)
-Date: Tue, 3 Dec 2024 17:01:55 -0800
-From: Cong Wang <xiyou.wangcong@gmail.com>
-To: Levi Zim <rsworktech@outlook.com>
-Cc: John Fastabend <john.fastabend@gmail.com>,
-	Jakub Sitnicki <jakub@cloudflare.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>, David Ahern <dsahern@kernel.org>,
-	netdev@vger.kernel.org, bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net 0/2] Fix NPE discovered by running bpf kselftest
-Message-ID: <Z0+qA4Lym/TWOoSh@pop-os.localdomain>
-References: <20241130-tcp-bpf-sendmsg-v1-0-bae583d014f3@outlook.com>
- <MEYP282MB23129373641D74DE831E07E9C6342@MEYP282MB2312.AUSP282.PROD.OUTLOOK.COM>
+        d=1e100.net; s=20230601; t=1733274418; x=1733879218;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=B+Jz/Q6nlrwZViX03mS36dj9lZ7L1D6LvW4jUlY+Okc=;
+        b=kliXpymS1mmT6BpD2ArfAhARnztJYUbjQCEIMj7j0BrDFrA1nNzF0XPGMdEAyWy1I0
+         8R6X0C18T879F2z+/HG35HOGwGXG7GqejquSZRiDLBSl0Zc+u4kvUxrc2txAxsZ58+1D
+         Ga5mZN1ntD+L2mPMoPGMflHzhZOOZCT5MrsElVcvH20DXXcdc6PLK8TZGpYxGHt/QJxJ
+         Sw2BpBUQw5Bs7bEP41zVUdvZ3JGR++21EfGsP5hn+I4gksnQvfO7dpO2p3iePluWF2rZ
+         oyhJIEjYBVdLwqONELmH2q5CkYUZ+aD9VrfYCgt2tXHIJCutLVRMQzlxQS00xRdt4AHW
+         03Bg==
+X-Forwarded-Encrypted: i=1; AJvYcCVRzwKzubTr97whW7AsxlVI7Mjd1XxNCRpTeREJVPJ4auQZ3y8AMn7copYu2amspnjEgJ8Zd6jOkEMzFIY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzdWWbYyEIDnXHshXU20Ns7CRz6Lu3kHi4L30Gm3O51LuddUNbm
+	s2a1rrlljcBD/E/DzC0B9/hO7LQg33PPfaaj8nS6fass3H6iXa8hZkoElgGMhto=
+X-Gm-Gg: ASbGncuTGTUVYM4TBPUdu0ZSk/kA/1k+L7+29uOu1+hPUA2YZVBeHJKHc/6DkPHj7FI
+	U/sPmGJt46hrD4Q/mHqyX+xefWZcFgMOjT4lvhgZFTiGuqsLeZdqabTblc97U6ktYGzJEx3JdBd
+	vNprSHwny5fi8CIjW1qnZYXLIYBaf1U3SbyDxHMJziObxLzqzQZdgKdvB/rkS75XJJuSERCaPkL
+	9r9VicFLrYh/EpoRVNrXLYq9vby9VcnrOck0UkqEaEVI2vT4q0BSG3LpoNicw==
+X-Google-Smtp-Source: AGHT+IFF+W8l62dy02x+rstW26StonwY7Oe2+iYejLd+cAhPUZAboveR614K5+yughF75bXFV6i5tQ==
+X-Received: by 2002:a05:6e02:1c2a:b0:3a7:ea2e:3992 with SMTP id e9e14a558f8ab-3a7ea2e3b09mr117670445ab.3.1733274417755;
+        Tue, 03 Dec 2024 17:06:57 -0800 (PST)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4e230da8ea7sm2809030173.32.2024.12.03.17.06.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 03 Dec 2024 17:06:56 -0800 (PST)
+Message-ID: <e6b160f0-88f8-415a-9734-2ba659619688@linuxfoundation.org>
+Date: Tue, 3 Dec 2024 18:06:55 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <MEYP282MB23129373641D74DE831E07E9C6342@MEYP282MB2312.AUSP282.PROD.OUTLOOK.COM>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 DONOTMERGE] docs: clarify rules wrt tagging other
+ people
+To: Thorsten Leemhuis <linux@leemhuis.info>, Jonathan Corbet <corbet@lwn.net>
+Cc: workflows@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Simona Vetter <simona.vetter@ffwll.ch>,
+ Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <c29ef5fa12e37c3a289e46d4442b069af94e5b05.1733127212.git.linux@leemhuis.info>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <c29ef5fa12e37c3a289e46d4442b069af94e5b05.1733127212.git.linux@leemhuis.info>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sun, Dec 01, 2024 at 09:42:08AM +0800, Levi Zim wrote:
-> On 2024-11-30 21:38, Levi Zim via B4 Relay wrote:
-> > I found that bpf kselftest sockhash::test_txmsg_cork_hangs in
-> > test_sockmap.c triggers a kernel NULL pointer dereference:
+On 12/2/24 01:14, Thorsten Leemhuis wrote:
+> Point out that explicit permission is usually needed to tag other people
+> in changes, but mention that implicit permission can be sufficient in
+> certain cases. This fixes slight inconsistencies between Reported-by:
+> and Suggested-by: and makes the usage more intuitive.
+> 
+> While at it, explicitly mention the dangers of our bugzilla instance, as
+> it makes it easy to forget that email addresses visible there are only
+> shown to logged-in users.
+> 
+> The latter is not a theoretical issue, as one maintainer mentioned that
+> his employer received a EU GDPR (general data protection regulation)
 
-Interesting, I also ran this test recently and I didn't see such a
-crash.
+Thank you for taking care of this.
 
-> > 
-> > BUG: kernel NULL pointer dereference, address: 0000000000000008
-> >   ? __die_body+0x6e/0xb0
-> >   ? __die+0x8b/0xa0
-> >   ? page_fault_oops+0x358/0x3c0
-> >   ? local_clock+0x19/0x30
-> >   ? lock_release+0x11b/0x440
-> >   ? kernelmode_fixup_or_oops+0x54/0x60
-> >   ? __bad_area_nosemaphore+0x4f/0x210
-> >   ? mmap_read_unlock+0x13/0x30
-> >   ? bad_area_nosemaphore+0x16/0x20
-> >   ? do_user_addr_fault+0x6fd/0x740
-> >   ? prb_read_valid+0x1d/0x30
-> >   ? exc_page_fault+0x55/0xd0
-> >   ? asm_exc_page_fault+0x2b/0x30
-> >   ? splice_to_socket+0x52e/0x630
-> >   ? shmem_file_splice_read+0x2b1/0x310
-> >   direct_splice_actor+0x47/0x70
-> >   splice_direct_to_actor+0x133/0x300
-> >   ? do_splice_direct+0x90/0x90
-> >   do_splice_direct+0x64/0x90
-> >   ? __ia32_sys_tee+0x30/0x30
-> >   do_sendfile+0x214/0x300
-> >   __se_sys_sendfile64+0x8e/0xb0
-> >   __x64_sys_sendfile64+0x25/0x30
-> >   x64_sys_call+0xb82/0x2840
-> >   do_syscall_64+0x75/0x110
-> >   entry_SYSCALL_64_after_hwframe+0x4b/0x53
-> > 
-> > This is caused by tcp_bpf_sendmsg() returning a larger value(12289) than
-> > size(8192), which causes the while loop in splice_to_socket() to release
-> > an uninitialized pipe buf.
-> > 
-> > The underlying cause is that this code assumes sk_msg_memcopy_from_iter()
-> > will copy all bytes upon success but it actually might only copy part of
-> > it.
-> I am not sure what Fixes tag I should put. Git blame leads me to a refactor
-> commit
-> and I am not familiar with this part of code base. Any suggestions?
+Reviewed-by: Shuah Khan <skhan@linuxfoundation.org>
 
-I think it is the following commit which introduced memcopy_from_iter()
-(which was renamed to sk_msg_memcopy_from_iter() later):
+thanks,
+-- Shuah
 
-commit 4f738adba30a7cfc006f605707e7aee847ffefa0
-Author: John Fastabend <john.fastabend@gmail.com>
-Date:   Sun Mar 18 12:57:10 2018 -0700
 
-    bpf: create tcp_bpf_ulp allowing BPF to monitor socket TX/RX data
 
-Please double check.
-
-Thanks.
 
