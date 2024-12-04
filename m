@@ -1,60 +1,58 @@
-Return-Path: <linux-kernel+bounces-431840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431843-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 197B69E41F8
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:40:44 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C09B9E41FE
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:41:33 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E2DEC168908
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:40:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0E25287E13
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:41:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0BF220FA95;
-	Wed,  4 Dec 2024 17:11:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2F5F2101AA;
+	Wed,  4 Dec 2024 17:11:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WC/0hcny"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hEKAezYZ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 510AF20FAA1;
-	Wed,  4 Dec 2024 17:11:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2009230995;
+	Wed,  4 Dec 2024 17:11:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733332304; cv=none; b=LCMEGH1VSjOS7c6wrzivvQJ8s+xr0FCzDQGsST9QrZ4nIQD4ntvUzHpk9zDkUCxJrV2yVjSng4p9i72XPVzMa1Zs8qsE7UpYhDUkMGDminMIUz6zZdyV9/QJThDYurwS7t6qd3ATQojhbC4EXvJPeWV61tMogAVhosUAQ6mAE3Y=
+	t=1733332310; cv=none; b=HMzBDsTmE7okLiFqpbWwbhcvzAgw6G40ioxc40SyPOwrlF/6dCEKrNcaRNBtAasQ18q1HtPzaue6KmjAfiTnHnD1QslvrRedp/imnVAtCeV8NDNuhiDfBUkBXbHM/1GMAkMOejtHcdL3LkOwzDjSCnY5i8cXQtP42NMqQK6IIEM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733332304; c=relaxed/simple;
-	bh=YuE73BkZ0RKOKhmYk3ZgKO630w+ip7/J13UrungYeNk=;
+	s=arc-20240116; t=1733332310; c=relaxed/simple;
+	bh=k1jOQVgSF2aXA8uiylaUo68g12VS2FuU1O43wOhZ6cU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nM4aO4HUtE5AXlGzi0rSO3SJuGAnW4D4vw4AXpuuy9WnN/RVI10Wcowf4qHMRJCZBVtNAZFn9LGp2BRyBVuQjUb+LQVL3lrpHcihcpmdHWBE3ZNOO6Dde3esIiMk6GuUviAqXhh7eqQsGxB8xqwTXh9LZ7XpQSWntprpQOXCEv8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WC/0hcny; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EEDE5C4CEDF;
-	Wed,  4 Dec 2024 17:11:42 +0000 (UTC)
+	 MIME-Version; b=oGj6u18xPbyze+rrEGZjTFNEBrrgpnOAxpvFkUhLIzWErkwYl9+GF4OMLUvDnED1NrIl7g/TSpw9uoX7E4xlzumqNGcOsuA+tLsysvGXxp4YEea8zSuaJq3/R8vA5RQGsZrbfjfEwzckoLhjgGHmCOeEX5SjQqrU+WrSMJmxOhU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hEKAezYZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C608CC4CEDF;
+	Wed,  4 Dec 2024 17:11:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733332304;
-	bh=YuE73BkZ0RKOKhmYk3ZgKO630w+ip7/J13UrungYeNk=;
+	s=k20201202; t=1733332309;
+	bh=k1jOQVgSF2aXA8uiylaUo68g12VS2FuU1O43wOhZ6cU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=WC/0hcnykl2vTkT8Vb8PTP3N+gU/qS3gD56SClkJjf8NCKesZJRofW/JWwm1qUFZk
-	 91MY+q+FfpYKdRaEfR7/cnwgHeq4V+wSNC3xR8+U+wRl0AZdK0UD8JOah6kGGnJRu1
-	 m7Qpv9N3ErG/ezQLZvYUxnTr8DMgdinXrSL43fvSkShNtnWVvf4NIK+4emCGGSxe9z
-	 js12QaqYrjlLWScPLpRg9ezQguNjfBnD9bZfCv6HK6wiOrOpVOSvnom5u3SMcEnzuP
-	 T2kjO0qQz4CAM6GDckdQuJnLZzdEm+1ywfw/DaKB1kNTwEdGUBIzjcWzLtOh1PydB1
-	 nVUKbXf4opY2A==
+	b=hEKAezYZgBOTWO7+H8Y1DAlDeJhhO1+i0Y0gspGdtWMFWB0wdcjzi9z4nRufdDcTo
+	 pk96gDYFB/eBa4vKCqXxb/B78DKOxIW0rjpCxIgk5jiaCazb0IhZNd6erAM0C6f7XB
+	 w36txTowlGc3S7kmME8waHBYN/BE8aqo4D89T7mQR/F1M0Y4ejZrMQLc6MSoTPk7dr
+	 ooqGXvF2hbLaKzie3odW9xSgNGF3VaHqR8Vh2HPsTHGY4E/Bp0VFcp73O58ynaPz16
+	 m9Sd/XVRdgElSofOu8jBBtfKAG9Dc9HZRQLaHBhKwRbfF5Rrr7DHp05h8f59dIXjL/
+	 TrDbZ4oAiBGSw==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Mayank Rana <quic_mrana@quicinc.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Bjorn Andersson <andersson@kernel.org>,
 	Sasha Levin <sashal@kernel.org>,
-	kevin.xie@starfivetech.com,
-	lpieralisi@kernel.org,
-	kw@linux.com,
-	linux-pci@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.12 08/15] PCI: starfive: Enable controller runtime PM before probing host bridge
-Date: Wed,  4 Dec 2024 10:59:56 -0500
-Message-ID: <20241204160010.2216008-8-sashal@kernel.org>
+	mathieu.poirier@linaro.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.12 11/15] remoteproc: qcom: pas: enable SAR2130P audio DSP support
+Date: Wed,  4 Dec 2024 10:59:59 -0500
+Message-ID: <20241204160010.2216008-11-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20241204160010.2216008-1-sashal@kernel.org>
 References: <20241204160010.2216008-1-sashal@kernel.org>
@@ -69,61 +67,34 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.12.1
 Content-Transfer-Encoding: 8bit
 
-From: Mayank Rana <quic_mrana@quicinc.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-[ Upstream commit 6168efbebace0db443185d4c6701ca8170a8788d ]
+[ Upstream commit 009e288c989b3fe548a45c82da407d7bd00418a9 ]
 
-A PCI controller device, e.g., StarFive, is parent to PCI host bridge
-device. We must enable runtime PM of the controller before enabling runtime
-PM of the host bridge, which will happen in pci_host_probe(), to avoid this
-warning:
+Enable support for the Audio DSP on the Qualcomm SAR2130P platform,
+reusing the SM8350 resources.
 
-  pcie-starfive 940000000.pcie: Enabling runtime PM for inactive device with active children
-
-Fix this issue by enabling StarFive controller device's runtime PM before
-calling pci_host_probe() in plda_pcie_host_init().
-
-Link: https://lore.kernel.org/r/20241111-runtime_pm-v7-1-9c164eefcd87@quicinc.com
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Signed-off-by: Mayank Rana <quic_mrana@quicinc.com>
-[bhelgaas: commit log]
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+Link: https://lore.kernel.org/r/20241027-sar2130p-adsp-v1-3-bd204e39d24e@linaro.org
+Signed-off-by: Bjorn Andersson <andersson@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pci/controller/plda/pcie-starfive.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ drivers/remoteproc/qcom_q6v5_pas.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/pci/controller/plda/pcie-starfive.c b/drivers/pci/controller/plda/pcie-starfive.c
-index c9933ecf68338..0564fdce47c2a 100644
---- a/drivers/pci/controller/plda/pcie-starfive.c
-+++ b/drivers/pci/controller/plda/pcie-starfive.c
-@@ -404,6 +404,9 @@ static int starfive_pcie_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
-+	pm_runtime_enable(&pdev->dev);
-+	pm_runtime_get_sync(&pdev->dev);
-+
- 	plda->host_ops = &sf_host_ops;
- 	plda->num_events = PLDA_MAX_EVENT_NUM;
- 	/* mask doorbell event */
-@@ -413,11 +416,12 @@ static int starfive_pcie_probe(struct platform_device *pdev)
- 	plda->events_bitmap <<= PLDA_NUM_DMA_EVENTS;
- 	ret = plda_pcie_host_init(&pcie->plda, &starfive_pcie_ops,
- 				  &stf_pcie_event);
--	if (ret)
-+	if (ret) {
-+		pm_runtime_put_sync(&pdev->dev);
-+		pm_runtime_disable(&pdev->dev);
- 		return ret;
-+	}
- 
--	pm_runtime_enable(&pdev->dev);
--	pm_runtime_get_sync(&pdev->dev);
- 	platform_set_drvdata(pdev, pcie);
- 
- 	return 0;
+diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
+index ef82835e98a4e..0a7477ea832ed 100644
+--- a/drivers/remoteproc/qcom_q6v5_pas.c
++++ b/drivers/remoteproc/qcom_q6v5_pas.c
+@@ -1421,6 +1421,7 @@ static const struct of_device_id adsp_of_match[] = {
+ 	{ .compatible = "qcom,sa8775p-cdsp1-pas", .data = &sa8775p_cdsp1_resource},
+ 	{ .compatible = "qcom,sa8775p-gpdsp0-pas", .data = &sa8775p_gpdsp0_resource},
+ 	{ .compatible = "qcom,sa8775p-gpdsp1-pas", .data = &sa8775p_gpdsp1_resource},
++	{ .compatible = "qcom,sar2130p-adsp-pas", .data = &sm8350_adsp_resource},
+ 	{ .compatible = "qcom,sc7180-adsp-pas", .data = &sm8250_adsp_resource},
+ 	{ .compatible = "qcom,sc7180-mpss-pas", .data = &mpss_resource_init},
+ 	{ .compatible = "qcom,sc7280-adsp-pas", .data = &sm8350_adsp_resource},
 -- 
 2.43.0
 
