@@ -1,192 +1,171 @@
-Return-Path: <linux-kernel+bounces-430629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430631-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF0209E33BE
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 07:57:44 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C638167D12
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 06:57:41 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 750C818A6C4;
-	Wed,  4 Dec 2024 06:57:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PdcTnbkt"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FAF39E33D0
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 08:04:56 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 060C94A33;
-	Wed,  4 Dec 2024 06:57:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 573C0B23857
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 07:04:53 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 855C318B492;
+	Wed,  4 Dec 2024 07:04:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gaTkN8LS"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31FB31E522;
+	Wed,  4 Dec 2024 07:04:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733295456; cv=none; b=b09+BucWUCc217SgYd7HIQlsSPAtoa8D5fQqPG3EyAMnh6DPPYjsz+zfieymQ2pwZrFAvsv7WA7f3aCFQK62saQt89sW39ukFSvJLwiTXhX3TEhunYp1BCCkP7UaMAQHVNLHt4Rd1zQ2vYJ+MG9REka1XVJkGfjQj66isG5+T1U=
+	t=1733295885; cv=none; b=gTmAMSZ2M+SlYUnZAYv8EyJc5YYz9azFKCUABa5W9K5mDva5iyRM7srYEZhjmL3unizNHG599JD0Z6+56WotxOn9CwyIRF7GftPBNBAXjGfYueoRAn2VEQGlkHbK5dUStwGQ6x6YyXFNUVeocT2KWOFJFUAASEZTqItgfLZR3gw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733295456; c=relaxed/simple;
-	bh=unW9c3b8w97RuIQaYDhvSoZuXkNfKWuuuAg0Qb1R2ek=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lAfTvOOQvQIrlrr/kLYrIC0fIoylUaukpypM8Fxi0KBajBjNSN13vChiARRZT2bDDjcOs94gdHPrzFJhP877EouBzuyTtPRaf7b3V4KECuJqXA8wWW/iAsIQPyH+M4a6etLxfBISP36gMCwJ7f1CoRW2yo5U1nA+ruJ+zGEXAE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PdcTnbkt; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733295455; x=1764831455;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=unW9c3b8w97RuIQaYDhvSoZuXkNfKWuuuAg0Qb1R2ek=;
-  b=PdcTnbkt+bNp3kjesJ3z914Iu4jnRBAaxXGL9+l7nJPWoa/cbgs8gECm
-   MinC14dQ789vGEvAkFfc9y174XE5oIAsHpsF7kt5T7vbf+htPBOLmmu1L
-   7FKIpEoe9aIZpWx30bfsdQgw53Zi7l9FHiVQw/IPlmgphbYoNUez/q5y5
-   VtOEvAAVImTcb6j7a4bRU7RAcimNU9qc29KhV6+D8S4DznMh3ozf5OJfp
-   gfOiumIwncIqrPnrS91WJi6Hd6QiDvW6mTOC3W6FRU+e9VgzcB7O6fsne
-   RxQAXz0aCosNlkyZx2XDHi5MoeehcS95DVojrV+hqXC8HIKOfMM/tMQT4
-   w==;
-X-CSE-ConnectionGUID: TGOiiXt/Rtys4iUviAHwhA==
-X-CSE-MsgGUID: ir+kIgGlRGeI8+1bI+MRWA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11275"; a="32886469"
-X-IronPort-AV: E=Sophos;i="6.12,207,1728975600"; 
-   d="scan'208";a="32886469"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Dec 2024 22:57:33 -0800
-X-CSE-ConnectionGUID: 2TQO+xD8SqS/8izJg33gOQ==
-X-CSE-MsgGUID: vBGKPLjoT+m6BImqRVlR3Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,207,1728975600"; 
-   d="scan'208";a="124604473"
-Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.245.89.141])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Dec 2024 22:57:28 -0800
-Message-ID: <2bcd34eb-0d1f-46c0-933f-fb1d70c70a1e@intel.com>
-Date: Wed, 4 Dec 2024 08:57:23 +0200
+	s=arc-20240116; t=1733295885; c=relaxed/simple;
+	bh=y1zcHNuFMtOK1xVot3c066LSvj2hzh3Xina5bH0XTI4=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OKHJFcIB0fGwzxbc6N5qpgOe04YcxS94wfnCO29l4pYd7rbtwQUDs+F7X9jqoL0JWfRJjyzQ+3f6nJGIeVtisLSs5Fy3L7l4itr8VJ3BgCrGMqzjymqKX8T2E3qlr0XdKbwwhpyVFpDGGbeBHgRr4+NVLGjL7UMQ6uewHAUtHkY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gaTkN8LS; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-434a736518eso78364765e9.1;
+        Tue, 03 Dec 2024 23:04:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733295882; x=1733900682; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=jwyiS6gRtCqYWJ7fdo4umY0N/8KDpHNznz4qNJQIKfo=;
+        b=gaTkN8LSc2y9tvL+xHSF7ysMTQl0QPSMgRGlPXCkc9LcLAJBvdHqcjXpLbibDOZZFj
+         FSR8D9f1g6+iT4dxbH3c4OPTLAgUTiJuf9hdEMV6itDiQ4wR1JksL7UTWNIMq6SDPF3D
+         4wdsMnSKd2AR1RglmX3DfQC8zAbBrQzt50skFYKpKskQ9fRQfrfWRHMTkFcqorisvkJ7
+         qbEd9VpXJfEcxqnfAg4t78vvjSBOwEtNs2j7f+vF61jTLxVBI14Urb88BpCWSFkKqwXe
+         ajhHr8/1B541kkKL9nqk8WbVe2+8BbNgJdZLHYgjlCqiYrd3Tf/1TXekcLQSqrYsT7SO
+         FL4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733295882; x=1733900682;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jwyiS6gRtCqYWJ7fdo4umY0N/8KDpHNznz4qNJQIKfo=;
+        b=G+DdHQeQ8Toponm5Qs3shiAHfBYnxOVHCPZSxAp60D5/700v77wSqh2hozfRdk7I5g
+         YocSNqF2lASTmBZN3uBf3gAsMhjwbZoFKJENAJFsq+El0BlNl4gtRHtCdajvr3WZNpw1
+         WS7wKBerNtv0pliyty894Jk2c1oTOjvJWfCe0MQlBdAVQMWb0cYLXxKbYRjVAcESPEfU
+         Q2BEBxWqVJRChowz/hHVMGzEDreP5ChhotGlOi5GQ/6tbDE6NibZhj6HdmeKAVGPtGUN
+         Dg3RvuANazihDQseWN7sWAS73asnVvgHi02n79SG2zbmPC7sw/UTc+MF4cTWCcz1MsX9
+         sXxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU18WFqxgnAyz6fdnQ+pK3PF0UKLfij+BqlVxw6rQXE43mKB4U7qG/qkjmXcJ3JlzdxTLGodj4ujnCO+07e@vger.kernel.org, AJvYcCVN6p4GEFVpQduvS3mPZvSqQmjqvrsH7B0gldHWrLs64HKyXas9Z/l69PDTIVFVW250MI0XhnrCCXFu@vger.kernel.org, AJvYcCX8oDOC32rbEN0rcgSdi3JgheKq+oiKefsdcX/Y6RTTRhtJIJSHD/BfK2rg3kZbiDLi+WaQmI+gwMk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwxBWHcJET3rwtgSzwZ2Lo7K307lMgZ2z5KjjcVn2WlFdv9nvMd
+	Zu0F0opVyITZS7LwID+/GEzg3v+D2OYEBIxFiwNYwt0MwvV3cPNr
+X-Gm-Gg: ASbGncv9lXavJkmWp/GR8YpsLoIQWb3tb/ZSrF7Yh6jDbO72LCACdDWp8AwAe88ttGj
+	0hzafDranIwPskc/+dkF/VCPeYNPg4O/426YIIReuDFniVoVg4BetzVzXhbrBvOB7ofTqcagLkY
+	DIZIgF8TG9Jfq0R4s3GcSQ4O+pwcRNIr0QoZpHoxWiSqUTT7jsyr5Xwu7NuQM2Y7Dxb0IxBE+wn
+	rrI34HgmzV1ATh4SV1fe1n23Jk2Yr9WS8AbqeWoRnKE1viYcS63ey8U8j0uiuqo5OgzyLM95BHt
+	0wYGBQ==
+X-Google-Smtp-Source: AGHT+IE5566rseFLsNSfCM+v5uvPvaWhpfPmfuWheegU9cdIQXdrXYkEn7yLdEjSKRuHjO1bEUnuGQ==
+X-Received: by 2002:a05:600c:45c6:b0:434:a5c2:53c1 with SMTP id 5b1f17b1804b1-434d0a0da50mr41789005e9.23.1733295882059;
+        Tue, 03 Dec 2024 23:04:42 -0800 (PST)
+Received: from Ansuel-XPS. (93-34-91-161.ip49.fastwebnet.it. [93.34.91.161])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434d5288264sm13406365e9.19.2024.12.03.23.04.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Dec 2024 23:04:41 -0800 (PST)
+Message-ID: <674fff09.050a0220.293594.24be@mx.google.com>
+X-Google-Original-Message-ID: <Z0__BmSNRWVkrEVJ@Ansuel-XPS.>
+Date: Wed, 4 Dec 2024 08:04:38 +0100
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-pm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	upstream@airoha.com
+Subject: Re: [PATCH v5 2/2] cpufreq: airoha: Add EN7581 CPUFreq SMCCC driver
+References: <20241203163158.580-1-ansuelsmth@gmail.com>
+ <20241203163158.580-2-ansuelsmth@gmail.com>
+ <20241204053211.6gdogcpi4g3eavw5@vireshk-i7>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 7/7] KVM: TDX: Add TSX_CTRL msr into uret_msrs list
-To: Chao Gao <chao.gao@intel.com>
-Cc: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
- "seanjc@google.com" <seanjc@google.com>,
- "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
- "Li, Xiaoyao" <xiaoyao.li@intel.com>, "Huang, Kai" <kai.huang@intel.com>,
- "Zhao, Yan Y" <yan.y.zhao@intel.com>,
- "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "Yang, Weijiang" <weijiang.yang@intel.com>,
- "binbin.wu@linux.intel.com" <binbin.wu@linux.intel.com>,
- "dmatlack@google.com" <dmatlack@google.com>,
- "pbonzini@redhat.com" <pbonzini@redhat.com>,
- "Yamahata, Isaku" <isaku.yamahata@intel.com>,
- "tony.lindgren@linux.intel.com" <tony.lindgren@linux.intel.com>,
- "nik.borisov@suse.com" <nik.borisov@suse.com>,
- "Chatre, Reinette" <reinette.chatre@intel.com>,
- "x86@kernel.org" <x86@kernel.org>
-References: <Zz/6NBmZIcRUFvLQ@intel.com> <Z0cmEd5ehnYT8uc-@google.com>
- <b36dd125-ad80-4572-8258-7eea3a899bf9@intel.com>
- <Z04Ffd7Lqxr4Wwua@google.com>
- <c98556099074f52af1c81ec1e82f89bec92cb7cd.camel@intel.com>
- <Z05SK2OxASuznmPq@google.com>
- <60e2ed472e03834c13a48e774dc9f006eda92bf5.camel@intel.com>
- <9beb9e92-b98c-42a2-a2d3-35c5b681ad03@intel.com> <Z0+vdVRptHNX5LPo@intel.com>
- <0e34f9d0-0927-4ac8-b1cb-ef8500b8d877@intel.com> <Z0/4wsR2WCwWfZyV@intel.com>
-Content-Language: en-US
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-In-Reply-To: <Z0/4wsR2WCwWfZyV@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241204053211.6gdogcpi4g3eavw5@vireshk-i7>
 
-On 4/12/24 08:37, Chao Gao wrote:
-> On Wed, Dec 04, 2024 at 08:18:32AM +0200, Adrian Hunter wrote:
->> On 4/12/24 03:25, Chao Gao wrote:
->>>> +#define TDX_FEATURE_TSX (__feature_bit(X86_FEATURE_HLE) | __feature_bit(X86_FEATURE_RTM))
->>>> +
->>>> +static bool has_tsx(const struct kvm_cpuid_entry2 *entry)
->>>> +{
->>>> +	return entry->function == 7 && entry->index == 0 &&
->>>> +	       (entry->ebx & TDX_FEATURE_TSX);
->>>> +}
->>>> +
->>>> +static void clear_tsx(struct kvm_cpuid_entry2 *entry)
->>>> +{
->>>> +	entry->ebx &= ~TDX_FEATURE_TSX;
->>>> +}
->>>> +
->>>> +static bool has_waitpkg(const struct kvm_cpuid_entry2 *entry)
->>>> +{
->>>> +	return entry->function == 7 && entry->index == 0 &&
->>>> +	       (entry->ecx & __feature_bit(X86_FEATURE_WAITPKG));
->>>> +}
->>>> +
->>>> +static void clear_waitpkg(struct kvm_cpuid_entry2 *entry)
->>>> +{
->>>> +	entry->ecx &= ~__feature_bit(X86_FEATURE_WAITPKG);
->>>> +}
->>>> +
->>>> +static void tdx_clear_unsupported_cpuid(struct kvm_cpuid_entry2 *entry)
->>>> +{
->>>> +	if (has_tsx(entry))
->>>> +		clear_tsx(entry);
->>>> +
->>>> +	if (has_waitpkg(entry))
->>>> +		clear_waitpkg(entry);
->>>> +}
->>>> +
->>>> +static bool tdx_unsupported_cpuid(const struct kvm_cpuid_entry2 *entry)
->>>> +{
->>>> +	return has_tsx(entry) || has_waitpkg(entry);
->>>> +}
->>>
->>> No need to check TSX/WAITPKG explicitly because setup_tdparams_cpuids() already
->>> ensures that unconfigurable bits are not set by userspace.
->>
->> Aren't they configurable?
+On Wed, Dec 04, 2024 at 11:02:11AM +0530, Viresh Kumar wrote:
+> On 03-12-24, 17:31, Christian Marangi wrote:
+> > diff --git a/drivers/cpufreq/airoha-cpufreq.c b/drivers/cpufreq/airoha-cpufreq.c
+> > +struct airoha_cpufreq_priv {
+> > +	struct clk_hw hw;
+> > +	struct generic_pm_domain pd;
+> > +
+> > +	int opp_token;
+> > +	struct dev_pm_domain_list *pd_list;
+> > +	struct platform_device *cpufreq_dt;
+> > +};
+> > +
+> > +static long airoha_cpufreq_clk_round(struct clk_hw *hw, unsigned long rate,
+> > +				     unsigned long *parent_rate)
+> > +{
+> > +	return rate;
+> > +}
+> > +
+> > +static unsigned long airoha_cpufreq_clk_get(struct clk_hw *hw,
+> > +					    unsigned long parent_rate)
+> > +{
+> > +	const struct arm_smccc_1_2_regs args = {
+> > +		.a0 = AIROHA_SIP_AVS_HANDLE,
+> > +		.a1 = AIROHA_AVS_OP_GET_FREQ,
+> > +	};
+> > +	struct arm_smccc_1_2_regs res;
+> > +
+> > +	arm_smccc_1_2_smc(&args, &res);
+> > +
+> > +	/* SMCCC returns freq in MHz */
+> > +	return (int)(res.a0 * 1000 * 1000);
 > 
-> They are cleared from the configurable bitmap by tdx_clear_unsupported_cpuid(),
-> so they are not configurable from a userspace perspective. Did I miss anything?
-> KVM should check user inputs against its adjusted configurable bitmap, right?
+> Why casting to "int" when we can return ulong ?
+>
 
-Maybe I misunderstand but we rely on the TDX module to reject
-invalid configuration.  We don't check exactly what is configurable
-for the TDX Module.
+Leftover from old. Yes will drop. Coincidentally arm_smccc_1_2_regs
+entry are already ulong.
 
-TSX and WAITPKG are not invalid for the TDX Module, but KVM
-must either support them by restoring their MSRs, or disallow
-them.  This patch disallows them for now.
-
+> > +}
+> > +
+> > +/* Airoha CPU clk SMCC is always enabled */
+> > +static int airoha_cpufreq_clk_is_enabled(struct clk_hw *hw)
+> > +{
+> > +	return true;
+> > +}
+> > +
+> > +static const struct clk_ops airoha_cpufreq_clk_ops = {
+> > +	.recalc_rate = airoha_cpufreq_clk_get,
+> > +	.is_enabled = airoha_cpufreq_clk_is_enabled,
+> > +	.round_rate = airoha_cpufreq_clk_round,
+> > +};
+> > +
+> > +static const char * const airoha_cpufreq_clk_names[] = { "cpu", NULL };
+> > +
+> > +/* NOP function to disable OPP from setting clock */
+> > +static int airoha_cpufreq_config_clks_nop(struct device *dev,
+> > +					  struct opp_table *opp_table,
+> > +					  struct dev_pm_opp *opp,
+> > +					  void *data, bool scaling_down)
+> > +{
+> > +	return 0;
+> > +}
 > 
->>
->>>
->>>> +
->>>> #define KVM_TDX_CPUID_NO_SUBLEAF	((__u32)-1)
->>>>
->>>> static void td_init_cpuid_entry2(struct kvm_cpuid_entry2 *entry, unsigned char idx)
->>>> @@ -124,6 +162,8 @@ static void td_init_cpuid_entry2(struct kvm_cpuid_entry2 *entry, unsigned char i
->>>> 	/* Work around missing support on old TDX modules */
->>>> 	if (entry->function == 0x80000008)
->>>> 		entry->eax = tdx_set_guest_phys_addr_bits(entry->eax, 0xff);
->>>> +
->>>> +	tdx_clear_unsupported_cpuid(entry);
->>>> }
->>>>
->>>> static int init_kvm_tdx_caps(const struct tdx_sys_info_td_conf *td_conf,
->>>> @@ -1235,6 +1275,9 @@ static int setup_tdparams_cpuids(struct kvm_cpuid2 *cpuid,
->>>> 		if (!entry)
->>>> 			continue;
->>>>
->>>> +		if (tdx_unsupported_cpuid(entry))
->>>> +			return -EINVAL;
->>>> +
->>>> 		copy_cnt++;
->>>>
->>>> 		value = &td_params->cpuid_values[i];
->>>> -- 
->>>> 2.43.0
->>>>
->>
+> I wonder whats better here. Provide this helper or provide a dummy clk-set-rate
+> at the provider itself ?
+>
 
+The idea I prefer this is to save a few CPU cycle and also to prevent
+bad usage of the CLK if anyone starts to use it. Returning 0 from a set_rate
+would provide bad information. Or your idea was to declare a set_rate
+and always return an error like -EINVAL? 
+
+-- 
+	Ansuel
 
