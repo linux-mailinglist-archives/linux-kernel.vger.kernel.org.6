@@ -1,291 +1,151 @@
-Return-Path: <linux-kernel+bounces-431314-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78BCE9E3BDC
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 14:57:59 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2B2E9E3BF2
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:01:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38B75280F97
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 13:57:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 37719B26C66
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 13:59:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3026D1F7084;
-	Wed,  4 Dec 2024 13:57:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75AE91F6688;
+	Wed,  4 Dec 2024 13:59:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="AJk6yCS7";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Qc5JYu1O"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lxFU4rYn"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD2BF1F6680;
-	Wed,  4 Dec 2024 13:57:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D7391B85CA
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 13:59:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733320672; cv=none; b=B0dRLXj0igFRkI0ALGMdDLO4SmbPZ3iXacaNaxBIcejpnpIP6xCkaOzjxd3TtwEcIVmnG4Yz3/g6w267pc3rSm9jTILa9wXTcUdDC0d7ou+QXWtZnKW+WPcoFJxxW7BOvIyUYEtYei2DjaTIQJO3d33OgAfcqQboAJRP+MGHWXE=
+	t=1733320746; cv=none; b=OTsh7jy4MMjgTpoh5lohTgE1idGYgeQrs3Su3dueWFNaSjC9qT0l/ThipSgrfQG1EraKjSXehSTzBpcf6JoLwrkhylnSTO0upBzHrTgiQXlvMol3fuSb/EAon2Lxvb2Nu8O0XzYEmDghVJw2wFRljpVLwzLqa6/crKtijvLA71o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733320672; c=relaxed/simple;
-	bh=nRcE87+L5bCgoKKJIoTjYdbyogAeN7zenePjAQb0F78=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=l+KAF0uHYsCkTloqmIfDfU4kcmkgwmS0nrZ2OmMYm1vVsIjaxH86BrrD/kgcg2YHvp3hpesUDFqxvXyeasJtTXuHXE5SrCjmqsdxz+pikqZvXlgLrRTv+qMTv3Xhf73CY7u+ND6/AZUaltOfz7e9cMStR7t89j1DhMhghzK2AIw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=AJk6yCS7; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Qc5JYu1O; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1733320668;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=O8gMBaIWat/OC+daKLF/DrYEDK3rTNp+SHrrdeWTGo4=;
-	b=AJk6yCS77aWTtXPj71xsZCYeiYnNwSK2NZH6NgU8rogWhB7l+4kXbG2yjdyy/qPGJc8Ze0
-	mKRQe3OE1a47NDP0V45qudfLKpaT1KqOZDV7H8C6ByYt+1ZiDGIW7MDma09IFxwvjuPf1T
-	ZqOojKm+3WDjW6/pj7k2y5/dC/Y/9TY4B7Uom4cb4L8EE4HjQ+PbNWH4CFVKIc5hM1QX/K
-	/YxRHheXIFzTxU+OvGkI9ji6FfN7pzVgZRcKJmuNaUl3NRGc25GXOy3iSMr//2WG14bJZQ
-	KmJWaSOKlo3ogqipLJ3wbih/xb68hACAlIm0C3tAtfB5uziMiaWDMZrDepa9TQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1733320668;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=O8gMBaIWat/OC+daKLF/DrYEDK3rTNp+SHrrdeWTGo4=;
-	b=Qc5JYu1O1PkVaW+DC6Z5efyRWpKu6lebzkvOwpsmta3x4Bq25zwtdPx1O9s1NNfh2BTVXe
-	06TjE52LP4Ai7uDQ==
-To: Marc Zyngier <maz@kernel.org>, iommu@lists.linux.dev,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- loongarch@lists.linux.dev, linux-riscv@lists.infradead.org,
- linux-pci@vger.kernel.org
-Cc: Joerg Roedel <joro@8bytes.org>, Suravee Suthikulpanit
- <suravee.suthikulpanit@amd.com>, David Woodhouse <dwmw2@infradead.org>, Lu
- Baolu <baolu.lu@linux.intel.com>, Shawn Guo <shawnguo@kernel.org>, Sascha
- Hauer <s.hauer@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Huacai
- Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, Jiaxun Yang
- <jiaxun.yang@flygoat.com>, Andrew Lunn <andrew@lunn.ch>, Gregory Clement
- <gregory.clement@bootlin.com>, Sebastian Hesselbarth
- <sebastian.hesselbarth@gmail.com>, Anup Patel <anup@brainfault.org>, Paul
- Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
- Albert Ou <aou@eecs.berkeley.edu>, Lorenzo Pieralisi
- <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?=
- <kw@linux.com>, Manivannan
- Sadhasivam <manivannan.sadhasivam@linaro.org>, Bjorn Helgaas
- <bhelgaas@google.com>, Toan Le <toan@os.amperecomputing.com>, Alyssa
- Rosenzweig <alyssa@rosenzweig.io>
-Subject: Re: [PATCH 02/11] genirq/msi: Add helper for creating MSI-parent
- irq domains
-In-Reply-To: <20241204124549.607054-3-maz@kernel.org>
-References: <20241204124549.607054-1-maz@kernel.org>
- <20241204124549.607054-3-maz@kernel.org>
-Date: Wed, 04 Dec 2024 14:57:47 +0100
-Message-ID: <878qsvsg84.ffs@tglx>
+	s=arc-20240116; t=1733320746; c=relaxed/simple;
+	bh=h+I9a18brvfcXfamplXm1IUv1WGTQgP89NzSRG9bAxI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kKsbw9WsVIncsByK+CtEakTH6ShKR6FR3VGhir8d7+HEQzQXm5rvQXHDoQcSmF/IjdmbFm9G9sC2o0Nr4bq8N9ZVUhDwmyI/flkeadP9hOKFLoGZBerveu8q/yxegctfIjNIwyBqzfukuVrw9YBSIUXYl4pXzyPUVB3jR3yoCb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lxFU4rYn; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-53df67d6659so10808185e87.3
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 05:59:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733320743; x=1733925543; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WHK1HVNEZ43w2Z1xUykye6r5z7hYi8iWdxWZtLZeFMk=;
+        b=lxFU4rYnyz9HjbWbaaYmvk9fupLtKXwYjyjRV0+T0NHnM9UdhWv5uuOMtmdEvZM/6Z
+         rIX7UoAQtbHd34Wfw7NdYdskZMZzDN/y6dDEBhHdBtAthCpyikeZeUivnd/wy12LzxYF
+         ggKrTcE3iW0hey0rJfnNOgf4V8vg9bbU2S9xwYfA5mYAK8X7TtjQrnVIrRM0hRQAGeWm
+         aW6IROh14fjgZ6zEdn0kORkDRca+Pz4bifGS+ZzajqljzdqGKWd8SiduWxlmHwB7SuzA
+         fV32FrBH1tZ6DiU3yEZCV4SDglIozHLFYnbW8w/SdQyL1WcSM4B2qlzMmlOy7TkJyr92
+         0YPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733320743; x=1733925543;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WHK1HVNEZ43w2Z1xUykye6r5z7hYi8iWdxWZtLZeFMk=;
+        b=hJ7sdZMGgLlVvMrNCzB+2yKpb+t0qzTCL6knLyAZ9Y5JvdyeEeA2XGooFDmycqwsJV
+         3nYZPugSWOxR5pCDord435l3nxAfJH0INTX81mnohkwo2PvJkAP3yc6egjibenPsbVZn
+         X2L3U3eB+ITGHuXov80SukjQC2Cl2fejCL/R3HIT/EPi8E18MGnGqWz8B3iAQE95Na0P
+         /Ac3+vwkrg56A1QZTaBFUsCZQFSH3BgBe636WzRKRWjzHaXmShJcpGKbHI8KdarWN3TN
+         4rLepyVxF/OFDvooXh8FkLNw5cyrRFaN/f0+VFa4vXIcT7yspxSN4Qk77Af3QIX2tmu0
+         EZ4Q==
+X-Gm-Message-State: AOJu0YzYvpmYQ2g/KfiUBXl1HyCtPJb4bAHLi+cz1/c+FQYBluoAjB/i
+	BxOdwSjFZ7P6sY+nq6djrVOOfOqjG/dpEAmZfRAyCsjwB887dk+LETpEzQnnb673KYT9/fwEIee
+	A7KRVqAxz0I3NytaCNSWYd5zUXBBb0c1ztC4BQQ==
+X-Gm-Gg: ASbGncsyp5jPjFL67ApUyNi7hSFsV3ZUYLT9yjxyaSWEcj5iGuHaIq9NnoL1Htrcost
+	q2OxdzAahe7a8+kIAtfE2HQklQyIr3g==
+X-Google-Smtp-Source: AGHT+IFUO9mBPhpg6S0Kvk3PDrX6OFpFY+tvVAd/2zYNYYChe+XyIM673D7LgWSMhxfZcFzoPfmo0nt91APgbJwU7p0=
+X-Received: by 2002:a05:6512:39cb:b0:53d:a3a7:fe84 with SMTP id
+ 2adb3069b0e04-53e129ef587mr6063237e87.8.1733320742975; Wed, 04 Dec 2024
+ 05:59:02 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20241204102904.1863796-1-arnd@kernel.org> <20241204102904.1863796-3-arnd@kernel.org>
+In-Reply-To: <20241204102904.1863796-3-arnd@kernel.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 4 Dec 2024 14:58:51 +0100
+Message-ID: <CACRpkdY243J4C3A9_13eTN84T2SeOjyoh0bWk6U1mqffUd6urw@mail.gmail.com>
+Subject: Re: [PATCH 02/15] ARM: limit OABI support to StrongARM CPUs
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	Arnd Bergmann <arnd@arndb.de>, Aaro Koskinen <aaro.koskinen@iki.fi>, Andrew Lunn <andrew@lunn.ch>, 
+	Ard Biesheuvel <ardb@kernel.org>, Daniel Mack <daniel@zonque.org>, 
+	Gregory Clement <gregory.clement@bootlin.com>, Haojian Zhuang <haojian.zhuang@gmail.com>, 
+	"Jeremy J. Peper" <jeremy@jeremypeper.com>, Kristoffer Ericson <kristoffer.ericson@gmail.com>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Mark Brown <broonie@kernel.org>, 
+	Ralph Siemsen <ralph.siemsen@linaro.org>, Robert Jarzmik <robert.jarzmik@free.fr>, 
+	Russell King <linux@armlinux.org.uk>, 
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Tony Lindgren <tony@atomide.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Dec 04 2024 at 12:45, Marc Zyngier wrote:
-> Creating an irq domain that serves as an MSI parent requires
-> a substantial amount of esoteric boiler-plate code, some of
-> which is often provided twice (such as the bus token).
+On Wed, Dec 4, 2024 at 11:29=E2=80=AFAM Arnd Bergmann <arnd@kernel.org> wro=
+te:
+
+> From: Arnd Bergmann <arnd@arndb.de>
 >
-> To make things a bit simpler for the unsuspecting MSI tinkerer,
-> provide a helper that does it for them, and serves as documentation
-> of what needs to be provided.
+> As discussed on the mailing lists, there is no way to build OABI userspac=
+e
+> binaries any more since gcc-4.8, and now support is also getting dropped =
+in
+> binutils, which will make it impossible to build pure OABI kernels at som=
+e
+> point in the future.
 >
-> Signed-off-by: Marc Zyngier <maz@kernel.org>
-> ---
->  include/linux/msi.h |  7 +++++++
->  kernel/irq/msi.c    | 40 ++++++++++++++++++++++++++++++++++++++++
->  2 files changed, 47 insertions(+)
+> I found no evidence of anyone still sing OABI userspace on embedded syste=
+ms
+> that keep getting kernel updates, but there are a few desktop-class machi=
+nes
+> that date back to the 1990s using Intel StrongARM processors that were
+> supported by old versions of Debian, Red Hat or the official Corel
+> Netwinder distribution.
 >
-> diff --git a/include/linux/msi.h b/include/linux/msi.h
-> index b10093c4d00ea..f08d14cf07103 100644
-> --- a/include/linux/msi.h
-> +++ b/include/linux/msi.h
-> @@ -594,6 +594,13 @@ struct irq_domain *msi_create_irq_domain(struct fwnode_handle *fwnode,
->  					 struct msi_domain_info *info,
->  					 struct irq_domain *parent);
->  
-> +struct irq_domain *msi_create_parent_irq_domain(struct fwnode_handle *fwnode,
-> +						const struct msi_parent_ops *msi_parent_ops,
-> +						const struct irq_domain_ops *ops,
-> +						unsigned long flags, unsigned long size,
-> +						void *host_data,
-> +						struct irq_domain *parent);
+> Add a much stricter Kconfig dependency for both native OABI and OABI_COMP=
+AT
+> enabled kernels, only allowing either of them to be selected when buildin=
+g
+> a kernel that targets a StrongARM based machine.
+>
+> Link: https://lore.kernel.org/lkml/2831c5a6-cfbf-4fe0-b51c-0396e5b0aeb7@a=
+pp.fastmail.com/
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-Can we please make this a template based interface similar to
-msi_create_device_irq_domain()?
+For
+>  arch/arm/configs/versatile_defconfig   |  1 -
 
-> +/**
-> + * msi_create_parent_irq_domain - Create an MSI-parent interrupt domain
-> + * @fwnode:		Optional fwnode of the interrupt controller
-> + * @msi_parent_ops:	MSI parent callbacks and configuration
-> + * @ops:		Interrupt domain ballbacks
-> + * @flags:		Interrupt domain flags
-> + * @size:		Interrupt domain size (0 if arbitrarily large)
-> + * @host_data:		Interrupt domain private data
-> + * @parent:		Parent irq domain
-> + *
-> + * Return: pointer to the created &struct irq_domain or %NULL on failure
-> + */
-> +struct irq_domain *msi_create_parent_irq_domain(struct fwnode_handle *fwnode,
-> +						const struct msi_parent_ops *msi_parent_ops,
-> +						const struct irq_domain_ops *ops,
-> +						unsigned long flags, unsigned long size,
-> +						void *host_data,
-> +						struct irq_domain *parent)
-> +{
-> +	struct irq_domain_info info = {
-> +		.fwnode		= fwnode,
-> +		.size		= size,
-> +		.hwirq_max	= size,
-> +		.ops		= ops,
-> +		.host_data	= host_data,
-> +		.domain_flags	= flags | IRQ_DOMAIN_FLAG_MSI_PARENT,
-> +		.parent		= parent,
-> +		.bus_token	= msi_parent_ops->bus_select_token,
-> +	};
-
-Instead of hiding the template in the function?
-
-We've been burnt with interfaces which might require extensions over
-time before and I just converted the GIC patch (3/11) over to a template
-at call site model. It results in the same code size reduction at the
-call sites, but allows us to expand the template without touching any
-existing driver in the future. See below.
-
-It might be a good idea to have a specific msi_irq_domain_info template
-which only contains the information required instead of reusing and
-expanding irq_domain_info.
-
-Hmm?
-
-Thanks,
-
-        tglx
----
---- a/drivers/irqchip/irq-gic-v2m.c
-+++ b/drivers/irqchip/irq-gic-v2m.c
-@@ -263,24 +263,25 @@ static struct msi_parent_ops gicv2m_msi_
- 
- static __init int gicv2m_allocate_domains(struct irq_domain *parent)
- {
--	struct irq_domain *inner_domain;
- 	struct v2m_data *v2m;
-+	struct irq_domain_info info = {
-+		.ops		= &gic2m_domain_ops,
-+		.parent		= parent,
-+		.msi_parent_ops = &gicv2m_msi_parent_ops,
-+	};
- 
- 	v2m = list_first_entry_or_null(&v2m_nodes, struct v2m_data, entry);
- 	if (!v2m)
- 		return 0;
- 
--	inner_domain = irq_domain_create_hierarchy(parent, 0, 0, v2m->fwnode,
--						   &gicv2m_domain_ops, v2m);
--	if (!inner_domain) {
--		pr_err("Failed to create GICv2m domain\n");
--		return -ENOMEM;
--	}
--
--	irq_domain_update_bus_token(inner_domain, DOMAIN_BUS_NEXUS);
--	inner_domain->flags |= IRQ_DOMAIN_FLAG_MSI_PARENT;
--	inner_domain->msi_parent_ops = &gicv2m_msi_parent_ops;
--	return 0;
-+	info->fwnode = v2m->fwnode;
-+	info->host_data = v2m;
-+
-+	if (msi_create_parent_irq_domain(&info))
-+		return 0;
-+
-+	pr_err("Failed to create GICv2m domain\n");
-+	return -ENOMEM;
- }
- 
- static int __init gicv2m_init_one(struct fwnode_handle *fwnode,
---- a/drivers/irqchip/irq-gic-v3-its.c
-+++ b/drivers/irqchip/irq-gic-v3-its.c
-@@ -5076,31 +5076,27 @@ static void __init __iomem *its_map_one(
- 
- static int its_init_domain(struct its_node *its)
- {
--	struct irq_domain *inner_domain;
--	struct msi_domain_info *info;
-+	struct msi_domain_info *msi_info;
-+	struct irq_domain_info info = {
-+		.fwnode		= its->fwnode_handle,
-+		.ops		= &its_domain_ops,
-+		.parent		= its_parent,
-+		.msi_parent_ops = &gic_v3_its_msi_parent_ops,
-+		.flags		= its->msi_domain_flags,
-+	};
- 
--	info = kzalloc(sizeof(*info), GFP_KERNEL);
--	if (!info)
-+	msi_info = kzalloc(sizeof(*info), GFP_KERNEL);
-+	if (!msi_info)
- 		return -ENOMEM;
- 
--	info->ops = &its_msi_domain_ops;
--	info->data = its;
--
--	inner_domain = irq_domain_create_hierarchy(its_parent,
--						   its->msi_domain_flags, 0,
--						   its->fwnode_handle, &its_domain_ops,
--						   info);
--	if (!inner_domain) {
--		kfree(info);
--		return -ENOMEM;
--	}
--
--	irq_domain_update_bus_token(inner_domain, DOMAIN_BUS_NEXUS);
--
--	inner_domain->msi_parent_ops = &gic_v3_its_msi_parent_ops;
--	inner_domain->flags |= IRQ_DOMAIN_FLAG_MSI_PARENT;
--
--	return 0;
-+	msi_info->ops = &its_msi_domain_ops;
-+	msi_info->data = its;
-+	info.host_data = msi_info;
-+
-+	if (msi_create_parent_irq_domain(&info))
-+		return 0;
-+	kfree(info);
-+	return -ENOMEM;
- }
- 
- static int its_init_vpe_domain(void)
---- a/drivers/irqchip/irq-gic-v3-mbi.c
-+++ b/drivers/irqchip/irq-gic-v3-mbi.c
-@@ -209,17 +209,14 @@ static const struct msi_parent_ops gic_v
- 
- static int mbi_allocate_domain(struct irq_domain *parent)
- {
--	struct irq_domain *nexus_domain;
-+	struct irq_domain_info info = {
-+		.fwnode		= parent->fwnode,
-+		.ops		= &mbi_domain_ops,
-+		.parent		= parent,
-+		.msi_parent_ops = &gic_v3_mbi_msi_parent_ops,
-+	};
- 
--	nexus_domain = irq_domain_create_hierarchy(parent, 0, 0, parent->fwnode,
--						   &mbi_domain_ops, NULL);
--	if (!nexus_domain)
--		return -ENOMEM;
--
--	irq_domain_update_bus_token(nexus_domain, DOMAIN_BUS_NEXUS);
--	nexus_domain->flags |= IRQ_DOMAIN_FLAG_MSI_PARENT;
--	nexus_domain->msi_parent_ops = &gic_v3_mbi_msi_parent_ops;
--	return 0;
-+	return msi_create_parent_irq_domain(&info) ? 0 : -ENOMEM;
- }
- 
- int __init mbi_init(struct fwnode_handle *fwnode, struct irq_domain *parent)
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
 
+> diff --git a/arch/arm/configs/footbridge_defconfig b/arch/arm/configs/foo=
+tbridge_defconfig
+(...)
+>  CONFIG_ARCH_NETWINDER=3Dy
+> +# CONFIG_AEABI is not set
+>  CONFIG_FPE_NWFPE=3Dy
+>  CONFIG_FPE_NWFPE_XP=3Dy
+> -# CONFIG_AEABI is not set
 
+Hm why do we need a separate netwinder_defconfig if this defconfig already
+supports it?
+
+I am occasionally booting the NetWinder and then I use this defconfig,
+the netwinder_defconfig wasn't even working for me.
+
+Do you want to propose a separate patch to delete netwinder_defconfig,
+otherwise I can send one. I think everyone (which is like ... 3 people) are
+using footbridge_defconfig.
+
+Yours,
+Linus Walleij
 
