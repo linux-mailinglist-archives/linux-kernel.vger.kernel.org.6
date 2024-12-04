@@ -1,64 +1,46 @@
-Return-Path: <linux-kernel+bounces-432083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 416FE9E4742
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 22:52:55 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C6EF9E4728
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 22:48:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 43176B6453E
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 19:38:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 13A28B30011
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 19:40:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8840B202C57;
-	Wed,  4 Dec 2024 19:37:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D37EC206F3F;
+	Wed,  4 Dec 2024 19:38:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="JcPz/vYA"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="mny+SgVH"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 279501F540A;
-	Wed,  4 Dec 2024 19:37:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 721671F03C9;
+	Wed,  4 Dec 2024 19:37:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733341068; cv=none; b=RAq177Kyco/Sg/Ab956PLduR4R5cTpTzzOMeGDGk9w0eykySRDa9YUipn01zKeEItRzklfuMPDY4u+qSqvkhsnixj/sAEZ/34uiEUL/MCZaZXWZYcf5yZDt0q4GcZ0oxdL90DSxAs9MyV9J+wgwP4Bid7mAQOl8aEdR5wPHhFb4=
+	t=1733341081; cv=none; b=CBcApkhhkPFlJZYF7AtNYpY7fRhog16qQLudALWPw7l0dpOJ8ckWAjMaaD11oaD45BgrNCPkTlLHf39V6NWFj9panMJ/J3RHydhonUWKlc0VehbHva+yHIWCnGCUy64nnzNB+U/V1S/9Gzg1BTsWy3oSR3ltxB8yQxE5At0DZsw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733341068; c=relaxed/simple;
-	bh=gZ07YdL8YR89AQ1pkLtEVxOY0cvmmLaP8+IsEdybwsU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=FTR2prvWdZxGXjLH6VP5jr3IqdgwCg7+8KNmtK94Vg9Bd7WiJPrqD7SAFTffaPu/UX9sLbXvRam767u+uIZaLAlWZw7d81zWh7Nty7fWjZla9URqzyUdcPVAkA3wOV0rYg5cgLfX7/LIasfYUZtyqvSvnHUjc8iJpE6UjMidwRo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=JcPz/vYA; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B4G7bNg030963;
-	Wed, 4 Dec 2024 19:37:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	zPCXmqMiSiAftVrIeuSeVwSPk5JNmkYmP1w+3VC+J88=; b=JcPz/vYAsKr9RpBB
-	Sx6TMCO5ZaRAgKxoeKp5MtApoe7blKLasDHoiu+svz6xT2YahQh/mZ9vYUp/8gqj
-	IUarNNref93a2Z1CZuIBUtlyGKKvOVPdFo5BR4mMjztB9SgBgqRbYBIZ97PFoC+m
-	t7a9H7XMTG6vV88iANHA/lTntmaROAbVXRDfqnYT/81tg+mCMIN29ejVISEB2oCc
-	jW0e/qeJB0cbNhZ9TzySwFr/OQoPbYBfnfnEgCDue+8BzdH8xC5xcojxw9ISl6AI
-	LZ6LmDyeOhpHUr/q25+Xl8CDOYCEA+hsnREvVB/gwPDz2Eh62ArEY5qq/ZOH/TMu
-	t01DYA==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 439w90wav2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 04 Dec 2024 19:37:42 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B4Jbf5u004439
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 4 Dec 2024 19:37:41 GMT
-Received: from hu-molvera-lv.qualcomm.com (10.49.16.6) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 4 Dec 2024 11:37:40 -0800
-From: Melody Olvera <quic_molvera@quicinc.com>
-Date: Wed, 4 Dec 2024 11:37:19 -0800
-Subject: [PATCH v3 7/8] dt-bindings: clock: qcom: Document the SM8750 TCSR
- Clock Controller
+	s=arc-20240116; t=1733341081; c=relaxed/simple;
+	bh=f8xLN3ZcudczNgNboJNAgfLSKfWN18Qam/y5laaAdVY=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=Scz0j6DnwaDLBAgWDXB/bWzInnqTuRyYMxR+uPr4e79aEKclabd6MUAdJI22qm+mRUHu0OvsHu69ki2sqC9j/lvEk1bcW9bMJxXAe+Pa7Zo+DHssYna4tAtKfd8zMwY3acOwNxPnVMjXRHGxcT/fswtn3Jys4hFaoHfAjgHezV4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=mny+SgVH; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1733341068;
+	bh=f8xLN3ZcudczNgNboJNAgfLSKfWN18Qam/y5laaAdVY=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=mny+SgVHsEk6gvlupIf+uMy+bUeC2vs8+pfGnPcvTKgaMvh8UYBlFP8WtUGxkNoks
+	 xus6vLFzU7vQudCuEOzYxgMxJh71/n3cAFZywhKAzhA1VIr4Pwh4rvqGv1coEKwGpA
+	 2CYGZG+DZNb4G8DihPlgKn63HPn4rxVQJdfTa9ts=
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Date: Wed, 04 Dec 2024 20:37:44 +0100
+Subject: [PATCH bpf-next v3 1/2] tools/resolve_btfids: Add --fatal_warnings
+ option
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,103 +48,104 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20241204-sm8750_master_clks-v3-7-1a8f31a53a86@quicinc.com>
-References: <20241204-sm8750_master_clks-v3-0-1a8f31a53a86@quicinc.com>
-In-Reply-To: <20241204-sm8750_master_clks-v3-0-1a8f31a53a86@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Taniya Das <quic_tdas@quicinc.com>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Melody Olvera
-	<quic_molvera@quicinc.com>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski@linaro.org>
+Content-Transfer-Encoding: 8bit
+Message-Id: <20241204-resolve_btfids-v3-1-e6a279a74cfd@weissschuh.net>
+References: <20241204-resolve_btfids-v3-0-e6a279a74cfd@weissschuh.net>
+In-Reply-To: <20241204-resolve_btfids-v3-0-e6a279a74cfd@weissschuh.net>
+To: Masahiro Yamada <masahiroy@kernel.org>, 
+ Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+ Andrii Nakryiko <andrii@kernel.org>, 
+ Martin KaFai Lau <martin.lau@linux.dev>, 
+ Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+ Yonghong Song <yonghong.song@linux.dev>, 
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+ Jiri Olsa <jolsa@kernel.org>
+Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ bpf@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1733341058; l=2005;
- i=quic_molvera@quicinc.com; s=20241204; h=from:subject:message-id;
- bh=ySYPgeVBwlX6fAJgBZVf8FK/j8AMPcK1DVz9NNfgaSs=;
- b=zmSQIF7H9jW7r4O5gFvjtVG/PPhD1q2X7mmG2/FEK5Hwt1Oi3Y+pUIA4pSgApwKKlFuR+qiLS
- ymZC0mJ5i9vDFIOCfK8xaAe0PmsNqWCBMZF6gDPmhWFr0eKGf7BAbWO
-X-Developer-Key: i=quic_molvera@quicinc.com; a=ed25519;
- pk=1DGLp3zVYsHAWipMaNZZTHR321e8xK52C9vuAoeca5c=
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: aaXGufzUCgnbHnsa9Aauj5PFSEWIcuAP
-X-Proofpoint-GUID: aaXGufzUCgnbHnsa9Aauj5PFSEWIcuAP
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 bulkscore=0
- impostorscore=0 phishscore=0 suspectscore=0 adultscore=0 mlxscore=0
- spamscore=0 clxscore=1015 priorityscore=1501 malwarescore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412040150
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1733341067; l=2329;
+ i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
+ bh=f8xLN3ZcudczNgNboJNAgfLSKfWN18Qam/y5laaAdVY=;
+ b=+05UzyPxH/V9pGb78h49Ua93Fh8kEAapaePFhC9Be2JJO1yD+3OQdlVpucuHXAzsqpr0ZlcLe
+ VuLO4P+FtEKDLtG3OjY9hmtaPHFmMLP2a7iteHmaSC38p7io3eVNwbz
+X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
+ pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-From: Taniya Das <quic_tdas@quicinc.com>
+Currently warnings emitted by resolve_btfids are buried in the build log
+and are slipping into mainline frequently.
+Add an option to elevate warnings to hard errors so the CI bots can
+catch any new warnings.
 
-Add bindings documentation for the SM8750 Clock Controller.
-
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
-Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+Acked-by: Jiri Olsa <jolsa@kernel.org>
 ---
- .../devicetree/bindings/clock/qcom,sm8550-tcsr.yaml       |  2 ++
- include/dt-bindings/clock/qcom,sm8750-tcsr.h              | 15 +++++++++++++++
- 2 files changed, 17 insertions(+)
+ tools/bpf/resolve_btfids/main.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8550-tcsr.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8550-tcsr.yaml
-index 3b546deb514af2ffe35d80337335509e8f6a559d..f3afbb25e8682de83fb16acaa35448545f77ce77 100644
---- a/Documentation/devicetree/bindings/clock/qcom,sm8550-tcsr.yaml
-+++ b/Documentation/devicetree/bindings/clock/qcom,sm8550-tcsr.yaml
-@@ -16,6 +16,7 @@ description: |
-   See also:
-   - include/dt-bindings/clock/qcom,sm8550-tcsr.h
-   - include/dt-bindings/clock/qcom,sm8650-tcsr.h
-+  - include/dt-bindings/clock/qcom,sm8750-tcsr.h
+diff --git a/tools/bpf/resolve_btfids/main.c b/tools/bpf/resolve_btfids/main.c
+index bd9f960bce3d5b74dc34159b35af1e0b33524d2d..d47191c6e55e10215269774f4bdfc6e5b4bf72f8 100644
+--- a/tools/bpf/resolve_btfids/main.c
++++ b/tools/bpf/resolve_btfids/main.c
+@@ -141,6 +141,7 @@ struct object {
+ };
  
- properties:
-   compatible:
-@@ -24,6 +25,7 @@ properties:
-           - qcom,sar2130p-tcsr
-           - qcom,sm8550-tcsr
-           - qcom,sm8650-tcsr
-+          - qcom,sm8750-tcsr
-           - qcom,x1e80100-tcsr
-       - const: syscon
+ static int verbose;
++static int warnings;
  
-diff --git a/include/dt-bindings/clock/qcom,sm8750-tcsr.h b/include/dt-bindings/clock/qcom,sm8750-tcsr.h
-new file mode 100644
-index 0000000000000000000000000000000000000000..1c502ac7c7f40807f930583301e9b7b73ebea477
---- /dev/null
-+++ b/include/dt-bindings/clock/qcom,sm8750-tcsr.h
-@@ -0,0 +1,15 @@
-+/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-+/*
-+ * Copyright (c) 2024, Qualcomm Innovation Center, Inc. All rights reserved.
-+ */
-+
-+#ifndef _DT_BINDINGS_CLK_QCOM_TCSR_CC_SM8750_H
-+#define _DT_BINDINGS_CLK_QCOM_TCSR_CC_SM8750_H
-+
-+/* TCSR_CC clocks */
-+#define TCSR_PCIE_0_CLKREF_EN				0
-+#define TCSR_UFS_CLKREF_EN				1
-+#define TCSR_USB2_CLKREF_EN				2
-+#define TCSR_USB3_CLKREF_EN				3
-+
-+#endif
+ static int eprintf(int level, int var, const char *fmt, ...)
+ {
+@@ -604,6 +605,7 @@ static int symbols_resolve(struct object *obj)
+ 			if (id->id) {
+ 				pr_info("WARN: multiple IDs found for '%s': %d, %d - using %d\n",
+ 					str, id->id, type_id, id->id);
++				warnings++;
+ 			} else {
+ 				id->id = type_id;
+ 				(*nr)--;
+@@ -625,8 +627,10 @@ static int id_patch(struct object *obj, struct btf_id *id)
+ 	int i;
+ 
+ 	/* For set, set8, id->id may be 0 */
+-	if (!id->id && !id->is_set && !id->is_set8)
++	if (!id->id && !id->is_set && !id->is_set8) {
+ 		pr_err("WARN: resolve_btfids: unresolved symbol %s\n", id->name);
++		warnings++;
++	}
+ 
+ 	for (i = 0; i < id->addr_cnt; i++) {
+ 		unsigned long addr = id->addr[i];
+@@ -782,6 +786,7 @@ int main(int argc, const char **argv)
+ 		.funcs    = RB_ROOT,
+ 		.sets     = RB_ROOT,
+ 	};
++	bool fatal_warnings = false;
+ 	struct option btfid_options[] = {
+ 		OPT_INCR('v', "verbose", &verbose,
+ 			 "be more verbose (show errors, etc)"),
+@@ -789,6 +794,8 @@ int main(int argc, const char **argv)
+ 			   "BTF data"),
+ 		OPT_STRING('b', "btf_base", &obj.base_btf_path, "file",
+ 			   "path of file providing base BTF"),
++		OPT_BOOLEAN(0, "fatal_warnings", &fatal_warnings,
++			    "turn warnings into errors"),
+ 		OPT_END()
+ 	};
+ 	int err = -1;
+@@ -823,7 +830,8 @@ int main(int argc, const char **argv)
+ 	if (symbols_patch(&obj))
+ 		goto out;
+ 
+-	err = 0;
++	if (!(fatal_warnings && warnings))
++		err = 0;
+ out:
+ 	if (obj.efile.elf) {
+ 		elf_end(obj.efile.elf);
 
 -- 
-2.46.1
+2.47.1
 
 
