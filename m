@@ -1,95 +1,211 @@
-Return-Path: <linux-kernel+bounces-431358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CBF09E3C94
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:20:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7627B9E3CF3
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:39:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 28F94B2477E
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 14:13:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0A104B3D787
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 14:13:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D49C61FDE2A;
-	Wed,  4 Dec 2024 14:12:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F035A1F756F;
+	Wed,  4 Dec 2024 14:12:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="OIyS2PcS";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="t8iGz6n4"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b="U1WW9Sti"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8EE01F756C;
-	Wed,  4 Dec 2024 14:12:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 189951E25FF
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 14:12:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733321531; cv=none; b=hDCK+srstQ8GCRu/EAMMwGMrCu9PiyX2JpST65QOciH+Eg6EwSymQcyQ6PjxNuiGY9+4+oYRT6h9C5AGwr/3mEUQl/DELEJL6gCNyy1MMojPyFRZ0LHwI/BaSHxghZ7VwWX+VIPoXP5lB3MushrHmBveCaykCgcwGkm2PLa5sXk=
+	t=1733321559; cv=none; b=pN+a4HtW4OJ+7fe/R8lDBcnXRPEUBJCLrgT6SZUMJV29ZXRDg4IeCFim4BlC+isFQn4qP+tsr4IP65xpkwriobJLYj+MLqTpKKQ9Y19c21vXWUKy9oX7Nx3M9kQEfjHWESLWp98psYL3mLb1Wa0L5Ea7OHy3+W/oWCuyX+RQc+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733321531; c=relaxed/simple;
-	bh=3DT0UZH1VPZxYphESAnn43RiNwQrocDeEgh8vXUL/LA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=kdl0gTQLBUJtz+VIV0D2lcObpfouyOF4OKmu0DLqqHEWpvJFFXBQQCKqRfMpivdkf7Vkq6AjMZptx19b+0eniMTdHdQaPrgp/m/flyyor3I5ZAudJt8LGqEnOxMvpKR9BwAYhPEldZwJgrI4Xj8/OnHH+YNb4rOp6mczdFPIl3o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=OIyS2PcS; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=t8iGz6n4; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1733321527;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KBZxumzVqfbms8AJEOZ7oxvAy/UxoJZoiGlXqp2Tp88=;
-	b=OIyS2PcSvtNoWPDvyfQB7fnN9CKR1IZ0P39lTtEgKOZ+2JisPrLxmVBCpE8tejLJN78xbx
-	0ub3up9ALdQC8ST7dvzHdLyleCDIrdfMMNF+DGlZFU3c+Sx0XUbhTO02kfAY/ULMzXTW5h
-	jVuZWqfNbe5cWTg27aAVy38qlsaZFXnXLBdJYW+9h9vVzzWcojj3tdI46sTWus3/Rp1wMR
-	yOrbsnFUyubRitS8pMJ1OELpsmyi5mr7htdhqw1ks5vgvRfiLAoc/C7jaPj50ijWEe7B+M
-	FO+g95YVXdTs8jZDs7xR9OSk7m4Vb6k77IIt1/rOHdWILNxKBA2utDWHcfpVuw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1733321528;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KBZxumzVqfbms8AJEOZ7oxvAy/UxoJZoiGlXqp2Tp88=;
-	b=t8iGz6n4cL5/XLUWyrFxkPaGxCBC/F9hefCQxPOP7OLx+SC41rSqXmV7QHZIZQCVpk4rCf
-	zCRonOuKu2TdAyDQ==
-To: Costa Shulyupin <costa.shul@redhat.com>
-Cc: longman@redhat.com, ming.lei@redhat.com, pauld@redhat.com,
- juri.lelli@redhat.com, vschneid@redhat.com, Tejun Heo <tj@kernel.org>,
- Johannes Weiner <hannes@cmpxchg.org>, Michal =?utf-8?Q?Koutn=C3=BD?=
- <mkoutny@suse.com>,
- linux-kernel@vger.kernel.org, cgroups@vger.kernel.org
-Subject: Re: [RFC PATCH v4 2/4] genirq/cpuhotplug: Dynamically isolate CPUs
- from managed interrupts
-In-Reply-To: <CADDUTFx3bS4bQ+6s2MSpAL=aN+5CP7V9i5vu-EnrfLrSYbQ_vg@mail.gmail.com>
-References: <20241201124244.997754-1-costa.shul@redhat.com>
- <20241201124244.997754-3-costa.shul@redhat.com> <87zflfv7rh.ffs@tglx>
- <CADDUTFx3bS4bQ+6s2MSpAL=aN+5CP7V9i5vu-EnrfLrSYbQ_vg@mail.gmail.com>
-Date: Wed, 04 Dec 2024 15:12:07 +0100
-Message-ID: <8734j3sfk8.ffs@tglx>
+	s=arc-20240116; t=1733321559; c=relaxed/simple;
+	bh=LAFRiXoR1eyxZsUiSRybV2rO5rZ40IaIIYJpcZeGuP0=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=QkYE+8sz+wXKK8Ffd/N30aB2VJZzAguIRG1SGH7sK68YEDjPmDsZDnJK+YvOc6QDuW+gf+oSTI78iocW7hQR+QrGO96HJRSUdIa3qDTSdbGK+S4t9hm8N0RNIwT6ONb5PJu6fdqT6QCd6PxXBKqWRqRLqkONXaPpoXSWtrzGkb8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net; spf=pass smtp.mailfrom=openvpn.com; dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b=U1WW9Sti; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=openvpn.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-aa52edbcb63so165588666b.1
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 06:12:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=openvpn.net; s=google; t=1733321555; x=1733926355; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:from:subject:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=T36hNeDh4s4ctdjTEG4EQB7Xp8fYpuEsKp+LcwDEnrs=;
+        b=U1WW9Stiae7zmDripK8w2eMLSs1/rH0KLL7EApRDMTh2h+KTPZBzgHY0nRytWdp0xW
+         PBrVqPsAR59cydJYHencOiLEaASxPhnmSt1mrDngrbNZmV6l67g97/H6qveO9si+v+vr
+         jdMrH8wUcS2SsiWrqvgiwQqMF0I+O/MmwgcqrVgVSsmZpsH49WrFjviQKE8nRlZYiViO
+         9r4se3RvqN56s8xRBOaBDoGz3XbHaaH0VUK3VCFVz/moEQ54i3KkbPd+jNIEl/84hNu7
+         dhc5Kh99k+0kNn4WkVyNOJDGgO3ZgaG30YKx6n+SWvtpYxCU6+XOCP6eAAw0xR51zJUd
+         aT5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733321555; x=1733926355;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:from:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=T36hNeDh4s4ctdjTEG4EQB7Xp8fYpuEsKp+LcwDEnrs=;
+        b=wzRN5fZCU0SXySpYLriT7fQnkWEeUxWCiSqLwE6QDoI6TlAc8WxBXzV7h2XaVLHwH7
+         R3zCdW/LsmpA+Z61/qI+zGLQO5HfOPW7eJXEu0oHfjl0T+CngMdVZk1pm9lmQVXYyb+G
+         6570LZsjGpfyGDQYAAiDopvm9Cv0yboiBdLmmv0N1p0rLZKgtJGT7SLticcJSxqfLYr4
+         mTnHLEchGrDOyAliAbHG1pWzCf1rPoVsMBjVbG76bBPC8+BJ6CWVsicAWWfKco3iU783
+         UMLprbZSdMUHjwlWUqWzNUO4xSg5lP4XueHGUWjesSraIOZQ64aP/EkyPkwkHX5mfft8
+         O+mQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV5perXIFt0n+DIBrSKKLPXkut+dEHx7wI1zYxkGOyHshkxNXJwrdN/bhEUe3/SAVy2uzQ0NA7faEp0ACc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwdbAdnZ3Co7gg6oyxLBumALgN305bXrEz28AZYUm906WGbZMCx
+	YuVRcns4Pel5hMdBhNTQsvaDpFPIXqwMtSdembl9wpKU+oRjqwHCassqc7BnMB4=
+X-Gm-Gg: ASbGncsIXnLvdOD4kcECEKKEHlWLTlHbjgrEwfcNHoFUYdaAEoFJg5E8VrQ1OmWov/e
+	vTzBqm6GimvG46AO4XcEFdFFe2onRp6OqIEn1VpdWby57ySZqEg3jnB8tnaKq/UBZozFBPfzcRh
+	QBaR0AcgNeA6JlkBma/ANCQustLXeZ0lqkQieaoeqAn5u+RM/euRttiIGF3XqF9k0D3XSgw/BgV
+	F4vrpIddto4a27W38REk/hbksZFbDEcA7WzDDCPT06EqeAtkNdRd2ncSaE+1GNmSb9t+nVaER1p
+	q6ezJMGz3E5h
+X-Google-Smtp-Source: AGHT+IFDpFDh2hT5bc54V4RHf7eiVb15vsRRml8Z5zP57LBHiQjS1dQpicFqMeRkHePjXUbJdALHIw==
+X-Received: by 2002:a17:906:31ce:b0:aa5:4d1c:78aa with SMTP id a640c23a62f3a-aa5f70da47bmr651138966b.5.1733321555424;
+        Wed, 04 Dec 2024 06:12:35 -0800 (PST)
+Received: from ?IPV6:2001:67c:2fbc:1:85f4:5278:b2f6:64fb? ([2001:67c:2fbc:1:85f4:5278:b2f6:64fb])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa5998e6345sm738249566b.109.2024.12.04.06.12.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 04 Dec 2024 06:12:34 -0800 (PST)
+Message-ID: <5ad48b64-1f83-4a62-addd-3008d5faa2f5@openvpn.net>
+Date: Wed, 4 Dec 2024 15:13:14 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v12 13/22] ovpn: implement peer lookup logic
+From: Antonio Quartulli <antonio@openvpn.net>
+To: Sabrina Dubroca <sd@queasysnail.net>
+Cc: Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
+ ryazanov.s.a@gmail.com, Simon Horman <horms@kernel.org>,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Donald Hunter <donald.hunter@gmail.com>, Shuah Khan <shuah@kernel.org>,
+ Andrew Lunn <andrew@lunn.ch>
+References: <20241202-b4-ovpn-v12-0-239ff733bf97@openvpn.net>
+ <20241202-b4-ovpn-v12-13-239ff733bf97@openvpn.net>
+ <5052453b-edd8-44e2-8df7-00ea439805ad@openvpn.net> <Z08tV5vQe2S4iawi@hog>
+ <b4627d32-8d17-4253-8687-a451d7a1052e@openvpn.net>
+Content-Language: en-US
+Autocrypt: addr=antonio@openvpn.net; keydata=
+ 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
+Organization: OpenVPN Inc.
+In-Reply-To: <b4627d32-8d17-4253-8687-a451d7a1052e@openvpn.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Dec 04 2024 at 15:56, Costa Shulyupin wrote:
-> On Sun, 1 Dec 2024 at 15:43, Thomas Gleixner <tglx@linutronix.de> wrote:
-> It is introduced by commit a46c27026da1 (blk-mq: don't schedule block
-> kworker on isolated CPUs)
->
-> I don't know what to do with the remaining drivers.
+On 04/12/2024 09:28, Antonio Quartulli wrote:
+> On 03/12/2024 17:09, Sabrina Dubroca wrote:
+>> 2024-12-03, 15:58:17 +0100, Antonio Quartulli wrote:
+>>> On 02/12/2024 16:07, Antonio Quartulli wrote:
+>>> [...]
+>>>> +#define ovpn_get_hash_slot(_key, _key_len, _tbl) ({    \
+>>>> +    typeof(_tbl) *__tbl = &(_tbl);            \
+>>>> +    jhash(_key, _key_len, 0) % HASH_SIZE(*__tbl);    \
+>>>> +})
+>>>> +
+>>>> +#define ovpn_get_hash_head(_tbl, _key, _key_len) ({        \
+>>>> +    typeof(_tbl) *__tbl = &(_tbl);                \
+>>>> +    &(*__tbl)[ovpn_get_hash_slot(_key, _key_len, *__tbl)];    \
+>>>> +})
+>>>
+>>> clang a reporting various warnings like this:
+>>>
+>>> ../drivers/net/ovpn/peer.c:406:9: warning: variable '__tbl' is 
+>>> uninitialized
+>>> when used within its own initialization [-Wuninitialized]
+>>>    406 |         head = ovpn_get_hash_head(ovpn->peers->by_id, &peer_id,
+>>>        |                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>>>    407 |                                   sizeof(peer_id));
+>>>        |                                   ~~~~~~~~~~~~~~~~
+>>> ../drivers/net/ovpn/peer.c:179:48: note: expanded from macro
+>>> 'ovpn_get_hash_head'
+>>>    179 |         &(*__tbl)[ovpn_get_hash_slot(_key, _key_len, 
+>>> *__tbl)];  \
+>>>        |                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~
+>>> ../drivers/net/ovpn/peer.c:173:26: note: expanded from macro
+>>> 'ovpn_get_hash_slot'
+>>>    173 |         typeof(_tbl) *__tbl = &(_tbl);                  \
+>>>        |                       ~~~~~     ^~~~
+>>>
+>>> Anybody willing to help me understand this issue?
+>>>
+>>> I have troubles figuring out how __tbl is being used uninitialized.
+>>> I wonder if the parameters naming is fooling clang (or me) somehow.
+>>
+>> Not really a solution to this specific issue, but do you actually need
+>> ovpn_get_hash_slot as a separate macro? AFAICT all users could also be
+>> converted to ovpn_get_hash_head, then you can merge ovpn_get_hash_slot
+>> into ovpn_get_hash_head and maybe clang won't get confused?
+>>
+>> No guarantee that this fixes anything (except saving one or two lines
+>> in a few functions).
+> 
+> This is what it used to be before (and no error was reported), but I had 
+> to split the macro because I need to isolate the slot computation for 
+> nulls comparison. So there are some users for ovpn_get_hash_slot()
+> 
+> I will quickly try changing the naming and see if clang gets happier.
 
-As long as that is not fixed, you obviously cannot change the semantics.
+Indeed it's the declaration of __tbl in ovpn_get_hash_slot() that 
+confuses clang.
+I'll rename both __tbl and add a comment to remember why we did that.
 
-> I am exploring the possibility of improving CPU isolation from best-effort
-> to guaranteed.
+Regards,
 
-If all drivers are fixed then the interrupt enabled state itself becomes
-irrelevant. If there is nothing which tickles them then they won't be
-raised, no?
+> 
+> Regards,
+> 
+> 
 
-Thanks,
+-- 
+Antonio Quartulli
+OpenVPN Inc.
 
-        tglx
 
