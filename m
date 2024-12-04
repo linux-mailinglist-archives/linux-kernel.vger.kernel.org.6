@@ -1,81 +1,55 @@
-Return-Path: <linux-kernel+bounces-431663-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68AD19E40B2
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:10:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A43F79E430D
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 19:11:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 46D5CB36E86
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:54:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A36ECB2E065
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:56:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3D5820CCED;
-	Wed,  4 Dec 2024 16:54:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=finest.io header.i=parker@finest.io header.b="OtiORDSQ"
-Received: from mout.perfora.net (mout.perfora.net [74.208.4.196])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7E9D20CCD9;
+	Wed,  4 Dec 2024 16:56:49 +0000 (UTC)
+Received: from shelob.surriel.com (shelob.surriel.com [96.67.55.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDCA81E519;
-	Wed,  4 Dec 2024 16:54:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.208.4.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6262A20C474;
+	Wed,  4 Dec 2024 16:56:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.67.55.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733331246; cv=none; b=QZdJP/3k79o3Yx1EAgGJ53nS1ViWOC7IPF51gG3YPZ0jTAsEaUDKUnmBtG2VOXvX1ujgbb43nU6oPuceUQy1txqsYqjPCKM20yQmWSaJfDP0Ggox5dLLruhmzRJiXFVnzHnh6kI4cc8r0QQjZWfde1EThve3InN3bFowgvlLLPg=
+	t=1733331409; cv=none; b=RRKWl1/6xvZDXT9aFKKTHOp9/nPOd64NwSgTNVWhi0d5RycA0JLdUtvFmBJa+LDVODsCJ+FnfO1lI0EUIUlKO+slPleIAyhduDhUR0jnVcAUpnB1IV07hGu0CjRjzsB5lZheb6hsJTiTGvvnvqC6AwIRdkno+YEpBGLEnwN4jPo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733331246; c=relaxed/simple;
-	bh=e2bE1gMZRJN1ciwkvkaR9ANnZMaK8Y5vwF1qpUwSV18=;
+	s=arc-20240116; t=1733331409; c=relaxed/simple;
+	bh=dSSVlfxoBSEu/gmdnis4ez0qKbf9Yv+hLMkbMSzRuBI=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dx8pXJHUIP31L0oclE6liD5gRwOrZNhz2Uo6ro6le5Vj9UZ9fh1xTpXIqLGEZZAd9OoZ9dIgwa9DM40KJ5l9d4TCnANzTrw0XYbgx78yFFrYn6zE9vUAmr9z525EZH1Psc7y+y3nZfzdcYBfEFfijZGEfnJ22mHDR2QsiF7TiY0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=finest.io; spf=pass smtp.mailfrom=finest.io; dkim=pass (2048-bit key) header.d=finest.io header.i=parker@finest.io header.b=OtiORDSQ; arc=none smtp.client-ip=74.208.4.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=finest.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=finest.io
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=finest.io;
-	s=s1-ionos; t=1733331200; x=1733936000; i=parker@finest.io;
-	bh=uEGlJe4Bxvq2OHTVxLPMc+APrj2QmcCgizfZ45v1DZc=;
-	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:Message-ID:In-Reply-To:
-	 References:MIME-Version:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=OtiORDSQ8S6w37NRH56VRSCd0cTq6VmBcplAa7Gr39JvCDlmJyuM6lY5WoKnq/fe
-	 8GtiSf0tZQ1QLobs3u5hXTNxwxd8QWU6WKctZtyHiN2LdOl/MgwBiDo8p1kZlqN9H
-	 hWOdZdWqGbTZjI00E3FczvmMT+x5NYCxAgO/hMGV2cWQpsWEWIKUsZIihwz3nb2j/
-	 oEs4fe1gZpzaF3oK3ThOClQu3WOVfx/IaB29LORJfZSdhdD9TU9jsEEPZapp4Fthy
-	 J/ytHfbs3wKtSgRYsN+ATlC1DFni0o8uKIVMtbwF6NcJT4gjqH1+dV8xiHubjRtY0
-	 Zlplrj90wNGtscrBRg==
-X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
-Received: from SWDEV2.connecttech.local ([98.159.241.229]) by
- mrelay.perfora.net (mreueus003 [74.208.5.2]) with ESMTPSA (Nemesis) id
- 0MeQHZ-1t15bD0w63-00MNLo; Wed, 04 Dec 2024 17:53:20 +0100
-Date: Wed, 4 Dec 2024 11:53:17 -0500
-From: Parker Newman <parker@finest.io>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Paolo Abeni <pabeni@redhat.com>, Alexandre
- Torgue <alexandre.torgue@foss.st.com>, Jose Abreu <joabreu@synopsys.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
- <kuba@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Jonathan
- Hunter <jonathanh@nvidia.com>, netdev@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
- linux-kernel@vger.kernel.org, Parker Newman <pnewman@connecttech.com>
-Subject: Re: [PATCH v1 1/1] net: stmmac: dwmac-tegra: Read iommu stream id
- from device tree
-Message-ID: <20241204115317.008f497c.parker@finest.io>
-In-Reply-To: <mpgilwqb5zg5kb4n7r6zwbhy4uutdh6rq5s2yc6ndhcj6gqgri@qkfr4qwjj3ym>
-References: <cover.1731685185.git.pnewman@connecttech.com>
-	<f2a14edb5761d372ec939ccbea4fb8dfd1fdab91.1731685185.git.pnewman@connecttech.com>
-	<ed2ec1c2-65c7-4768-99f1-987e5fa39a54@redhat.com>
-	<20241115135940.5f898781.parker@finest.io>
-	<bb52bdc1-df2e-493d-a58f-df3143715150@lunn.ch>
-	<20241118084400.35f4697a.parker@finest.io>
-	<984a8471-7e49-4549-9d8a-48e1a29950f6@lunn.ch>
-	<20241119131336.371af397.parker@finest.io>
-	<f00bccd3-62d5-46a9-b448-051894267c7a@lunn.ch>
-	<20241119144729.72e048a5.parker@finest.io>
-	<mpgilwqb5zg5kb4n7r6zwbhy4uutdh6rq5s2yc6ndhcj6gqgri@qkfr4qwjj3ym>
-Organization: Connect Tech Inc.
-X-Mailer: Claws Mail 3.17.5 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+	 MIME-Version:Content-Type; b=u+VRbdARmcoiMXLzBZBNRp7GTodROFDqjPgsoNWu+hxDNKPog7a1yeH5rwz4GLerquMpt1utuqpJaokhQ5hJgNUOuxjjzxxEkDgpUfDIse+5NmC60jdb/JbnPoXVuT/mNVYh48k74jUj2pvLNEV8QexsGCqWrbFKWd2ns+bka4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com; spf=pass smtp.mailfrom=shelob.surriel.com; arc=none smtp.client-ip=96.67.55.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shelob.surriel.com
+Received: from [2601:18c:9101:a8b6:82e7:cf5d:dfd9:50ef] (helo=fangorn)
+	by shelob.surriel.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.97.1)
+	(envelope-from <riel@shelob.surriel.com>)
+	id 1tIsfz-000000007aN-1y0K;
+	Wed, 04 Dec 2024 11:56:35 -0500
+Date: Wed, 4 Dec 2024 11:56:34 -0500
+From: Rik van Riel <riel@surriel.com>
+To: Oliver Sang <oliver.sang@intel.com>
+Cc: <oe-lkp@lists.linux.dev>, <lkp@intel.com>,
+ <linux-kernel@vger.kernel.org>, <x86@kernel.org>, Ingo Molnar
+ <mingo@kernel.org>, Dave Hansen <dave.hansen@intel.com>, Linus Torvalds
+ <torvalds@linux-foundation.org>, Peter Zijlstra <peterz@infradead.org>, Mel
+ Gorman <mgorman@suse.de>, "Mathieu Desnoyers"
+ <mathieu.desnoyers@efficios.com>
+Subject: [PATCH v3] x86,mm: only trim the mm_cpumask once a second
+Message-ID: <20241204115634.28964c62@fangorn>
+In-Reply-To: <Z1BV7NG/Qp0BNw3Y@xsang-OptiPlex-9020>
+References: <202411282207.6bd28eae-lkp@intel.com>
+	<20241202194358.59089122@fangorn>
+	<Z1BV7NG/Qp0BNw3Y@xsang-OptiPlex-9020>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,121 +58,177 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:2blSxbCR+yhs7uQqwCDAGl8YVMbUYXlFl2S+vj7UoTf7mx/o3/0
- cVfef/xPPbcAmmGZKCxA5219hwxj7zniR8sS22Xc3Xbp7A13Qx+l8bhI3xk+BuvS6yTVQqx
- 3rIB0xJVNf7VE2+YX2oc/bOGwKGpbXNLPBXPSyloSYE5GIaRSjVblAuPZ0wLQN81nTmTamP
- zGtrJCDhCP43c/+iSDIJg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:VHLldsp8lP4=;qDrO+hlZavqr0m0PZUgQCQN7L7x
- OkLC7CJic9SAE4vZjfIWlNuBl/yLUXuuolv7XTNZEbg126/CEFnIXMLGLVj6/HXMmIjY+o8U8
- m2kvxNkShFHsZzVmIkLxXHUt6fiHRYVdmAHgAH8WtmVW6AsemzztV2bdIb1Za6HRl+XWCfP9q
- xMbKfqSGyWpdQk/se9G2lGoqe8/hHL5gRYoiTMzJyo/jsGzjqW6gs9W2ojeF1uH987ELN0qqJ
- cpwqvehuCb3qYgPRB1PnzD0ChJdCEVAglRmktl7q6qktmSunidefr0YaqbE5U/cJ6BSRaNQiI
- HZ7J/z2qiQmUkp3wFfyY7GLw84+elwNbVwq1hq/3m5EtlbFUeypNKB7xBX9Xym+gUKshPcMWI
- WSkLGyPm2SOG9cxpNkNKc/DTghchEnLj4smaChMuXlDWRAplm/4TGa4JrZI2E8bsBzxzD3npk
- D7HaJ5xyiXZ9hea1xvXVPnqFujpcjiSHsLxHiA65CIfMAwvS4qxlc7VDr3bDkk2kLehIIJzl9
- eaS+/0b97KVFZOG6KaTxHnA8SjVxU1U7ENSdWFIbI4xoLd3s+Dzma0tU6V9IyJQajIyGlBXuV
- VbfMODpOLGkU7g0ZUiK6J4PYqWgG9Q5tbTMn8CVhKUCmXF0DXgRw//6zGrfM8+Q7aeKlUjRNO
- DfLhsI90y3TqhZ93xbyzYc1p8dYZJTAgH1LezOrJc640tZ+BlB6D0qvLBixZQqV+Wlkh3NqLu
- M3NDOoycnH+jrl5KHKtJ1agh/Ij3EkKa7OWwDLjbq+lsd/3qLh+sGFGwPGMBkLNUbGUDjlrFr
- bHtjIlcqa1+ionooviwWUVbrSH/jxelWZZFhqFyJR6nnzlzELGirxmbjUrYV7xjPA2lu3c7jk
- wp6taO+BsZZHWXQQbZCuvG+qpxWpIsBwQepNFGAhWpWSu3ywmwUjyRTbLxam6Ki4famPQ8mS9
- B1qXrh+gMTfwtY3WhYLlCtv4Wn/CkC9epjsE0Qxy+Vhqp3wHrDkAcQLfd5j521jRiV4bHYC/+
- jxrGHLowUbqlDEVOT06LqVVRKlh7PRPG+/siH+2
+Sender: riel@surriel.com
 
-On Wed, 4 Dec 2024 17:23:53 +0100
-Thierry Reding <thierry.reding@gmail.com> wrote:
+On Wed, 4 Dec 2024 21:15:24 +0800
+Oliver Sang <oliver.sang@intel.com> wrote:
 
-> On Tue, Nov 19, 2024 at 02:47:29PM -0500, Parker Newman wrote:
-> > On Tue, 19 Nov 2024 20:18:00 +0100
-> > Andrew Lunn <andrew@lunn.ch> wrote:
-> >
-> > > > I think there is some confusion here. I will try to summarize:
-> > > > - Ihe iommu is supported by the Tegra SOC.
-> > > > - The way the mgbe driver is written the iommu DT property is REQU=
-IRED.
-> > >
-> > > If it is required, please also include a patch to
-> > > nvidia,tegra234-mgbe.yaml and make iommus required.
-> > >
-> >
-> > I will add this when I submit a v2 of the patch.
-> >
-> > > > - "iommus" is a SOC DT property and is defined in tegra234.dtsi.
-> > > > - The mgbe device tree nodes in tegra234.dtsi DO have the iommus p=
-roperty.
-> > > > - There are no device tree changes required to to make this patch =
-work.
-> > > > - This patch works fine with existing device trees.
-> > > >
-> > > > I will add the fallback however in case there is changes made to t=
-he iommu
-> > > > subsystem in the future.
-> > >
-> > > I would suggest you make iommus a required property and run the test=
-s
-> > > over the existing .dts files.
-> > >
-> > > I looked at the history of tegra234.dtsi. The ethernet nodes were
-> > > added in:
-> > >
-> > > 610cdf3186bc604961bf04851e300deefd318038
-> > > Author: Thierry Reding <treding@nvidia.com>
-> > > Date:   Thu Jul 7 09:48:15 2022 +0200
-> > >
-> > >     arm64: tegra: Add MGBE nodes on Tegra234
-> > >
-> > > and the iommus property is present. So the requires is safe.
-> > >
-> > > Please expand the commit message. It is clear from all the questions
-> > > and backwards and forwards, it does not provide enough details.
-> > >
-> >
-> > I will add more details when I submit V2.
-> >
-> > > I just have one open issue. The code has been like this for over 2
-> > > years. Why has it only now started crashing?
-> > >
-> >
-> > It is rare for Nvidia Jetson users to use the mainline kernel. Nvidia
-> > provides a custom kernel package with many out of tree drivers includi=
-ng a
-> > driver for the mgbe controllers.
-> >
-> > Also, while the Orin AGX SOC (tegra234) has 4 instances of the mgbe co=
-ntroller,
-> > the Nvidia Orin AGX devkit only uses mgbe0. Connect Tech has carrier b=
-oards
-> > that use 2 or more of the mgbe controllers which is why we found the b=
-ug.
->
-> Correct. Also, this was a really stupid thing that I overlooked. I don't
-> recall the exact circumstances, but I vaguely recall there had been
-> discussions about adding the tegra_dev_iommu_get_stream_id() helper
-> (that this patch uses) around the time that this driver was created. In
-> the midst of all of this I likely forgot to update the driver after the
-> discussions had settled.
->
-> Anyway, I agree with the conclusion that we don't need a compatibility
-> fallback for this, both because it would be actively wrong to do it and
-> we've had the required IOMMU properties in device tree since the start,
-> so there can't be any regressions caused by this.
->
-> I don't think it's necessary to make the iommus property required,
-> though, because there's technically no requirement for these devices to
-> be attached to an IOMMU. They usually are, and it's better if they are,
-> but they should be able to work correctly without an IOMMU.
->
-Thanks for confirming from the Nvidia side! I wasn't sure if they would
-work without the iommu. That said, if you did NOT want to use the iommu
-and removed the iommu DT property then the probe will fail after my patch.
-Would we not need a guard around the writes to MGBE_WRAP_AXI_ASID0_CTRL as=
- well?
 
-Thanks,
-Parker
+> we noticed there is the v2 for this patch, not sure if any significant ch=
+anges
+> which could impact performance? if so, please notify us and we could test
+> further. thanks
 
-> Thanks, and apologies for dropping the ball on this,
-> Thierry
+To some extent, I suspect we should expect some regressions with the
+will-it-scale tlb_flush2 threaded test, since for "normal" workloads
+the context switch code is the fast path, and madvise is much less
+common.
+
+However, v3 of the patch (below) shifts a lot less work into
+flush_tlb_func, where it is done by all CPUs, and does more of
+that work on the calling CPU, where it is done only once, instead.
+
+For performance, I'm just going to throw it over to you, because
+the largest 2 socket systems I have access to do not seem to behave
+like your (much larger) 2 socket system.
+
+---8<---
+
+=46rom 3118ddb2260bd92a8b0679b7e6fd51ee494c17c9 Mon Sep 17 00:00:00 2001
+From: Rik van Riel <riel@fb.com>
+Date: Mon, 2 Dec 2024 09:57:31 -0800
+Subject: [PATCH] x86,mm: only trim the mm_cpumask once a second
+
+Setting and clearing CPU bits in the mm_cpumask is only ever done
+by the CPU itself, from the context switch code or the TLB flush
+code.
+
+Synchronization is handled by switch_mm_irqs_off blocking interrupts.
+
+Sending TLB flush IPIs to CPUs that are in the mm_cpumask, but no
+longer running the program causes a regression in the will-it-scale
+tlbflush2 test. This test is contrived, but a large regression here
+might cause a small regression in some real world workload.
+
+Instead of always sending IPIs to CPUs that are in the mm_cpumask,
+but no longer running the program, send these IPIs only once a second.
+
+The rest of the time we can skip over CPUs where the loaded_mm is
+different from the target mm.
+
+Signed-off-by: Rik van Riel <riel@surriel.com>
+Reported-by: kernel test roboto <oliver.sang@intel.com>
+Closes: https://lore.kernel.org/oe-lkp/202411282207.6bd28eae-lkp@intel.com/
+---
+ arch/x86/include/asm/mmu.h         |  2 ++
+ arch/x86/include/asm/mmu_context.h |  1 +
+ arch/x86/include/asm/tlbflush.h    |  1 +
+ arch/x86/mm/tlb.c                  | 35 +++++++++++++++++++++++++++---
+ 4 files changed, 36 insertions(+), 3 deletions(-)
+
+diff --git a/arch/x86/include/asm/mmu.h b/arch/x86/include/asm/mmu.h
+index ce4677b8b735..3b496cdcb74b 100644
+--- a/arch/x86/include/asm/mmu.h
++++ b/arch/x86/include/asm/mmu.h
+@@ -37,6 +37,8 @@ typedef struct {
+ 	 */
+ 	atomic64_t tlb_gen;
+=20
++	unsigned long next_trim_cpumask;
++
+ #ifdef CONFIG_MODIFY_LDT_SYSCALL
+ 	struct rw_semaphore	ldt_usr_sem;
+ 	struct ldt_struct	*ldt;
+diff --git a/arch/x86/include/asm/mmu_context.h b/arch/x86/include/asm/mmu_=
+context.h
+index 2886cb668d7f..795fdd53bd0a 100644
+--- a/arch/x86/include/asm/mmu_context.h
++++ b/arch/x86/include/asm/mmu_context.h
+@@ -151,6 +151,7 @@ static inline int init_new_context(struct task_struct *=
+tsk,
+=20
+ 	mm->context.ctx_id =3D atomic64_inc_return(&last_mm_ctx_id);
+ 	atomic64_set(&mm->context.tlb_gen, 0);
++	mm->context.next_trim_cpumask =3D jiffies + HZ;
+=20
+ #ifdef CONFIG_X86_INTEL_MEMORY_PROTECTION_KEYS
+ 	if (cpu_feature_enabled(X86_FEATURE_OSPKE)) {
+diff --git a/arch/x86/include/asm/tlbflush.h b/arch/x86/include/asm/tlbflus=
+h.h
+index 69e79fff41b8..02fc2aa06e9e 100644
+--- a/arch/x86/include/asm/tlbflush.h
++++ b/arch/x86/include/asm/tlbflush.h
+@@ -222,6 +222,7 @@ struct flush_tlb_info {
+ 	unsigned int		initiating_cpu;
+ 	u8			stride_shift;
+ 	u8			freed_tables;
++	u8			trim_cpumask;
+ };
+=20
+ void flush_tlb_local(void);
+diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
+index 1aac4fa90d3d..a758143afa01 100644
+--- a/arch/x86/mm/tlb.c
++++ b/arch/x86/mm/tlb.c
+@@ -892,9 +892,36 @@ static void flush_tlb_func(void *info)
+ 			nr_invalidate);
+ }
+=20
+-static bool tlb_is_not_lazy(int cpu, void *data)
++static bool should_flush_tlb(int cpu, void *data)
+ {
+-	return !per_cpu(cpu_tlbstate_shared.is_lazy, cpu);
++	struct flush_tlb_info *info =3D data;
++
++	/* Lazy TLB will get flushed at the next context switch. */
++	if (per_cpu(cpu_tlbstate_shared.is_lazy, cpu))
++		return false;
++
++	/* No mm means kernel memory flush. */
++	if (!info->mm)
++		return true;
++
++	/* The target mm is loaded, and the CPU is not lazy. */
++	if (per_cpu(cpu_tlbstate.loaded_mm, cpu) =3D=3D info->mm)
++		return true;
++
++	/* In cpumask, but not the loaded mm? Periodically remove by flushing. */
++	if (info->trim_cpumask)
++		return true;
++
++	return false;
++}
++
++static bool should_trim_cpumask(struct mm_struct *mm)
++{
++	if (time_after(jiffies, mm->context.next_trim_cpumask)) {
++		mm->context.next_trim_cpumask =3D jiffies + HZ;
++		return true;
++	}
++	return false;
+ }
+=20
+ DEFINE_PER_CPU_SHARED_ALIGNED(struct tlb_state_shared, cpu_tlbstate_shared=
+);
+@@ -928,7 +955,7 @@ STATIC_NOPV void native_flush_tlb_multi(const struct cp=
+umask *cpumask,
+ 	if (info->freed_tables)
+ 		on_each_cpu_mask(cpumask, flush_tlb_func, (void *)info, true);
+ 	else
+-		on_each_cpu_cond_mask(tlb_is_not_lazy, flush_tlb_func,
++		on_each_cpu_cond_mask(should_flush_tlb, flush_tlb_func,
+ 				(void *)info, 1, cpumask);
+ }
+=20
+@@ -979,6 +1006,7 @@ static struct flush_tlb_info *get_flush_tlb_info(struc=
+t mm_struct *mm,
+ 	info->freed_tables	=3D freed_tables;
+ 	info->new_tlb_gen	=3D new_tlb_gen;
+ 	info->initiating_cpu	=3D smp_processor_id();
++	info->trim_cpumask	=3D 0;
+=20
+ 	return info;
+ }
+@@ -1021,6 +1049,7 @@ void flush_tlb_mm_range(struct mm_struct *mm, unsigne=
+d long start,
+ 	 * flush_tlb_func_local() directly in this case.
+ 	 */
+ 	if (cpumask_any_but(mm_cpumask(mm), cpu) < nr_cpu_ids) {
++		info->trim_cpumask =3D should_trim_cpumask(mm);
+ 		flush_tlb_multi(mm_cpumask(mm), info);
+ 	} else if (mm =3D=3D this_cpu_read(cpu_tlbstate.loaded_mm)) {
+ 		lockdep_assert_irqs_enabled();
+--=20
+2.47.0
 
 
