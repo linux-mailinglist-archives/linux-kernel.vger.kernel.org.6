@@ -1,204 +1,119 @@
-Return-Path: <linux-kernel+bounces-432123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBB1F9E4581
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 21:20:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 268029E458F
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 21:21:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95272284EA5
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 20:20:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CD60284FF3
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 20:21:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 173E41F03C8;
-	Wed,  4 Dec 2024 20:19:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 457101F5416;
+	Wed,  4 Dec 2024 20:21:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="Hx8/tiI5"
-Received: from smtpout.efficios.com (smtpout.efficios.com [158.69.130.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M2cEbKOw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 153E71F03D1
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 20:19:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=158.69.130.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94F881C3BF5;
+	Wed,  4 Dec 2024 20:21:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733343596; cv=none; b=hBJkopmO8Na44z3OnLn0rv3cF43FZrqHLmc+elNaVS9qFoZilAhFhHvDZGPcsyG9fZJeytZKJHh162XcWjftgqLLwljRTeFZ7DRbXFYVofmIDi6sVUZXMvAVdZqrep7fQCZf5ZEe8Uz4DLfq+CyG5ciptcIRtbCw/LkQ26mV440=
+	t=1733343675; cv=none; b=Rd1fYY/OxNyX1ObptTzi/gdJ/GI/LQd78wWmKZViR+QIePRTXs2aB7+3Dbg00Q+X1BaBgIoyvAk3CZQ/XABk4lIDr0D0DOK0QHzy5XNOPGgAKmQwg6J/i5/zfD70eC3+XYbzC3fKmlpK3WFCy0muVVczD+MOOxvKa9QxCUMPd8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733343596; c=relaxed/simple;
-	bh=+B1oBcmjip8MCv2+oNZlZ/mq046xmivhhOIvQgpgSuo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jg2F7jqRT/M/d+YhsVHvLK1MUAv/iH1NjDWg3q2bVva5DG4SDpFqH0G3So0pCxE7IgFfd4puHPmnmYKWDZog+hoCqChWoWYlCbazEclRnz2u7Yagb2VkrBjBGPGz5vHEMrkgDPeFY8udyrOXyTbgkyxEfdm4sPTy6ev4xyJPHAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=Hx8/tiI5; arc=none smtp.client-ip=158.69.130.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
-	s=smtpout1; t=1733343586;
-	bh=+B1oBcmjip8MCv2+oNZlZ/mq046xmivhhOIvQgpgSuo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Hx8/tiI5eYY8Rxea/n9Vta7TH43LVvqNlZZLVn4VX7SpXfHcME7cMd+25TdMWXmNc
-	 P5CQ+KK3jZZHnCmn48xg6WfqgWtL5cXKlaNZoRsiIfS44tsM4I4RtECOj6xPP10yqM
-	 JXuVx7RZKa9bgXj5HcGg/h/cHdkX4TEBJTY/qo+Fw6fwXgWQPlLiZ4gJfDDlZnBgrD
-	 QtwYeBoYB+1Q0X7B/1FqhotLdoN7132+m52w9D7KJ9qLKH41s/3WSk6gsvOTu3/En5
-	 fmZ3thMX8dJcUwjB/KrrbBor+lCS85saI2IM6T2/XoiNZwVs7uq7Z62xJfJEriMWnc
-	 OFbro8NDVc1bA==
-Received: from [172.16.0.134] (96-127-217-162.qc.cable.ebox.net [96.127.217.162])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4Y3TQV1tSBzTxh;
-	Wed,  4 Dec 2024 15:19:46 -0500 (EST)
-Message-ID: <43835b8c-53cd-428f-a46f-554bfa5c2cdd@efficios.com>
-Date: Wed, 4 Dec 2024 15:19:46 -0500
+	s=arc-20240116; t=1733343675; c=relaxed/simple;
+	bh=Fvm8TjgK6dJo9sv6O3H2+X+LOIwV0o7fADFI/iSpstQ=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=Mzk84MUoLHj97HaSllw7A8K6lx7sisVHJL5NNVjXEBSkc6AfVD64V0Mq75u2jBoJbAdRQmH9kftqyF8SplnZH2605ZhMF9REVSdljW3ba+6lzrt+fMyPXmPSP2yGxuUdXi4AHslYcoNqh1q+qwDLZheSFB3UFJ5rbVwTsEFi4kE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M2cEbKOw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3121C4CED1;
+	Wed,  4 Dec 2024 20:21:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733343674;
+	bh=Fvm8TjgK6dJo9sv6O3H2+X+LOIwV0o7fADFI/iSpstQ=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=M2cEbKOwrwNXj/0EW5nPs7opxCoG9ZxUJ6pP+Ao0yOfCpW+0b/QRhU8GIo5XzO2/W
+	 9giaByRFWJLRCKWF+ueHmf5tSkYX+aLu1kM497LHq/lAmlcprxdbRz5hpOO0tGip7o
+	 96tH3N7Uk9Ysb3154VA1c0Sz7UAO6ShuCbkTz2qrRdU5IdGIsjWk0uV/X9m4N/QUDY
+	 DlI2mpNybcduhZDH6L0P2JeKABEKKCjy1VKIaDs9fIzq/2Jb8T0cjjvf3UY00zfjHo
+	 KaXAy0e0iK83A/Sj08R7/R/wbpxfrgce6lLjgfTH0BIwk+1sHHR13uWFBKMtJUZ3nj
+	 EdkVwnlbvWKAg==
+Message-ID: <1b05b11b2a8287c0ff4b6bdd079988c7.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] x86,mm: only trim the mm_cpumask once a second
-To: Rik van Riel <riel@surriel.com>, Oliver Sang <oliver.sang@intel.com>
-Cc: oe-lkp@lists.linux.dev, lkp@intel.com, linux-kernel@vger.kernel.org,
- x86@kernel.org, Ingo Molnar <mingo@kernel.org>,
- Dave Hansen <dave.hansen@intel.com>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Peter Zijlstra <peterz@infradead.org>, Mel Gorman <mgorman@suse.de>
-References: <202411282207.6bd28eae-lkp@intel.com>
- <20241202194358.59089122@fangorn> <Z1BV7NG/Qp0BNw3Y@xsang-OptiPlex-9020>
- <20241204115634.28964c62@fangorn>
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Content-Language: en-US
-In-Reply-To: <20241204115634.28964c62@fangorn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <07bfb02a-1df3-4a03-83bb-d7edc540739d@samsung.com>
+References: <20241203134137.2114847-1-m.wilczynski@samsung.com> <CGME20241203134155eucas1p1e90c71c4f8eb5da41d2cc8a500f54dc7@eucas1p1.samsung.com> <20241203134137.2114847-6-m.wilczynski@samsung.com> <f21ffd12-167b-4d10-9017-33041ec322b0@kernel.org> <07bfb02a-1df3-4a03-83bb-d7edc540739d@samsung.com>
+Subject: Re: [RFC PATCH v1 05/14] dt-bindings: clock: thead,th1520: Add support for Video Output subsystem
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, dri-devel@lists.freedesktop.org, linux-pm@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>, Michal Wilczynski <m.wilczynski@samsung.com>, airlied@gmail.com, aou@eecs.berkeley.edu, conor+dt@kernel.org, drew@pdp7.com, frank.binns@imgtec.com, guoren@kernel.org, jassisinghbrar@gmail.com, jszhang@kernel.org, krzk+dt@kernel.org, m.szyprowski@samsung.com, maarten.lankhorst@linux.intel.com, matt.coster@imgtec.com, mripard@kernel.org, mturquette@baylibre.com, palmer@dabbelt.com, paul.walmsley@sifive.com, robh@kernel.org, simona@ffwll.ch, tzimmermann@suse.de, ulf.hansson@linaro.org, wefu@redhat.com
+Date: Wed, 04 Dec 2024 12:21:11 -0800
+User-Agent: alot/0.12.dev1+gaa8c22fdeedb
 
-On 2024-12-04 11:56, Rik van Riel wrote:
-[...]
-> 
-> Signed-off-by: Rik van Riel <riel@surriel.com>
-> Reported-by: kernel test roboto <oliver.sang@intel.com>
-> Closes: https://lore.kernel.org/oe-lkp/202411282207.6bd28eae-lkp@intel.com/
-> ---
->   arch/x86/include/asm/mmu.h         |  2 ++
->   arch/x86/include/asm/mmu_context.h |  1 +
->   arch/x86/include/asm/tlbflush.h    |  1 +
->   arch/x86/mm/tlb.c                  | 35 +++++++++++++++++++++++++++---
->   4 files changed, 36 insertions(+), 3 deletions(-)
-> 
-> diff --git a/arch/x86/include/asm/mmu.h b/arch/x86/include/asm/mmu.h
-> index ce4677b8b735..3b496cdcb74b 100644
-> --- a/arch/x86/include/asm/mmu.h
-> +++ b/arch/x86/include/asm/mmu.h
-> @@ -37,6 +37,8 @@ typedef struct {
->   	 */
->   	atomic64_t tlb_gen;
->   
-> +	unsigned long next_trim_cpumask;
-> +
->   #ifdef CONFIG_MODIFY_LDT_SYSCALL
->   	struct rw_semaphore	ldt_usr_sem;
->   	struct ldt_struct	*ldt;
-> diff --git a/arch/x86/include/asm/mmu_context.h b/arch/x86/include/asm/mmu_context.h
-> index 2886cb668d7f..795fdd53bd0a 100644
-> --- a/arch/x86/include/asm/mmu_context.h
-> +++ b/arch/x86/include/asm/mmu_context.h
-> @@ -151,6 +151,7 @@ static inline int init_new_context(struct task_struct *tsk,
->   
->   	mm->context.ctx_id = atomic64_inc_return(&last_mm_ctx_id);
->   	atomic64_set(&mm->context.tlb_gen, 0);
-> +	mm->context.next_trim_cpumask = jiffies + HZ;
->   
->   #ifdef CONFIG_X86_INTEL_MEMORY_PROTECTION_KEYS
->   	if (cpu_feature_enabled(X86_FEATURE_OSPKE)) {
-> diff --git a/arch/x86/include/asm/tlbflush.h b/arch/x86/include/asm/tlbflush.h
-> index 69e79fff41b8..02fc2aa06e9e 100644
-> --- a/arch/x86/include/asm/tlbflush.h
-> +++ b/arch/x86/include/asm/tlbflush.h
-> @@ -222,6 +222,7 @@ struct flush_tlb_info {
->   	unsigned int		initiating_cpu;
->   	u8			stride_shift;
->   	u8			freed_tables;
-> +	u8			trim_cpumask;
->   };
->   
->   void flush_tlb_local(void);
-> diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
-> index 1aac4fa90d3d..a758143afa01 100644
-> --- a/arch/x86/mm/tlb.c
-> +++ b/arch/x86/mm/tlb.c
-> @@ -892,9 +892,36 @@ static void flush_tlb_func(void *info)
->   			nr_invalidate);
->   }
->   
-> -static bool tlb_is_not_lazy(int cpu, void *data)
-> +static bool should_flush_tlb(int cpu, void *data)
->   {
-> -	return !per_cpu(cpu_tlbstate_shared.is_lazy, cpu);
-> +	struct flush_tlb_info *info = data;
-> +
-> +	/* Lazy TLB will get flushed at the next context switch. */
-> +	if (per_cpu(cpu_tlbstate_shared.is_lazy, cpu))
-> +		return false;
-> +
-> +	/* No mm means kernel memory flush. */
-> +	if (!info->mm)
-> +		return true;
-> +
-> +	/* The target mm is loaded, and the CPU is not lazy. */
-> +	if (per_cpu(cpu_tlbstate.loaded_mm, cpu) == info->mm)
-> +		return true;
-> +
-> +	/* In cpumask, but not the loaded mm? Periodically remove by flushing. */
-> +	if (info->trim_cpumask)
-> +		return true;
-> +
-> +	return false;
-> +}
-> +
-> +static bool should_trim_cpumask(struct mm_struct *mm)
-> +{
-> +	if (time_after(jiffies, mm->context.next_trim_cpumask)) {
-> +		mm->context.next_trim_cpumask = jiffies + HZ;
+Quoting Michal Wilczynski (2024-12-04 02:11:26)
+> On 12/3/24 16:45, Krzysztof Kozlowski wrote:
+> > On 03/12/2024 14:41, Michal Wilczynski wrote:
+>=20
+> [1] - https://openbeagle.org/beaglev-ahead/beaglev-ahead/-/blob/main/docs=
+/TH1520%20Video%20Image%20Processing%20User%20Manual.pdf
+> >=20
+> >> +      these registers reside in the same address space, access to
+> >> +      them is coordinated through a shared syscon regmap provided by
+> >> +      the specified syscon node.
+> >=20
+> > Drop last sentence. syscon regmap is a Linux term, not hardware one.
+> >=20
+> > Anyway, this needs to be constrained per variant.
+> >=20
+> >> +
+> >>    "#clock-cells":
+> >>      const: 1
+> >>      description:
+> >> @@ -36,8 +51,6 @@ properties:
+> >> =20
+> >>  required:
+> >>    - compatible
+> >> -  - reg
+> >=20
+> > No, that's a clear NAK. You claim you have no address space but in the
+> > same time you have address space via regmap.
+>=20
+> I see your concern. The VOSYS subsystem's address space includes
+> registers for various components, such as clock gates and reset
+> controls, which are scattered throughout the address space as specified
+> in the manual 4.4.1 [2]. Initially, I attempted to use a shared syscon
+> regmap for access, but I realize this might not be the best approach.
+>=20
+> To address this, I'll specify the 'reg' property in each node to define
+> the address ranges explicitly fragmenting the address space for the VOSYS
+> manually.
+>=20
+> vosys_clk: clock-controller@ffef528050 {
+>         compatible =3D "thead,th1520-clk-vo";
+>         reg =3D <0xff 0xef528050 0x0 0x8>;
+>         #clock-cells =3D <1>;
+> };
+>=20
+> pd: power-domain@ffef528000 {
+>         compatible =3D "thead,th1520-pd";
+>         reg =3D <0xff 0xef528000 0x0 0x8>;
+>         #power-domain-cells =3D <1>;
+> };
 
-AFAIU this should_trim_cpumask can be called from many cpus
-concurrently for a given mm, so we'd want READ_ONCE/WRITE_ONCE
-on the next_trim_cpumask.
+You should have one node:
 
-Thanks,
-
-Mathieu
-
-> +		return true;
-> +	}
-> +	return false;
->   }
->   
->   DEFINE_PER_CPU_SHARED_ALIGNED(struct tlb_state_shared, cpu_tlbstate_shared);
-> @@ -928,7 +955,7 @@ STATIC_NOPV void native_flush_tlb_multi(const struct cpumask *cpumask,
->   	if (info->freed_tables)
->   		on_each_cpu_mask(cpumask, flush_tlb_func, (void *)info, true);
->   	else
-> -		on_each_cpu_cond_mask(tlb_is_not_lazy, flush_tlb_func,
-> +		on_each_cpu_cond_mask(should_flush_tlb, flush_tlb_func,
->   				(void *)info, 1, cpumask);
->   }
->   
-> @@ -979,6 +1006,7 @@ static struct flush_tlb_info *get_flush_tlb_info(struct mm_struct *mm,
->   	info->freed_tables	= freed_tables;
->   	info->new_tlb_gen	= new_tlb_gen;
->   	info->initiating_cpu	= smp_processor_id();
-> +	info->trim_cpumask	= 0;
->   
->   	return info;
->   }
-> @@ -1021,6 +1049,7 @@ void flush_tlb_mm_range(struct mm_struct *mm, unsigned long start,
->   	 * flush_tlb_func_local() directly in this case.
->   	 */
->   	if (cpumask_any_but(mm_cpumask(mm), cpu) < nr_cpu_ids) {
-> +		info->trim_cpumask = should_trim_cpumask(mm);
->   		flush_tlb_multi(mm_cpumask(mm), info);
->   	} else if (mm == this_cpu_read(cpu_tlbstate.loaded_mm)) {
->   		lockdep_assert_irqs_enabled();
-
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
-
+    clock-controller@ffef528000 {
+      compatible =3D "thead,th1520-vo";
+      reg =3D <0xff 0xef528050 0x0 0x1a04>;
+      #clock-cells =3D <1>;
+      #power-domain-cells =3D <1>;
+    };
 
