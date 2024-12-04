@@ -1,123 +1,119 @@
-Return-Path: <linux-kernel+bounces-431542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431544-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FC629E3FDB
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:40:47 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56E6F9E3F68
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:13:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A66D4B2A189
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:52:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7F814B2E1CD
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:55:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D47D20C481;
-	Wed,  4 Dec 2024 15:52:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C285320C481;
+	Wed,  4 Dec 2024 15:54:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=laura.nao@collabora.com header.b="BJwNCBh4"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="WhJhohOB"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54425207A33;
-	Wed,  4 Dec 2024 15:52:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733327558; cv=pass; b=ImlO4sJUTXMb0HO5dHDJXeE7PA+cjHgBRFsYWCup0b1/2bXoGx51iUo21+p1mMCL8y4+gsWydMbsJdwyKPKvPSUhRlzsbOgMxk1FDDmX8h8QhJ+Zjj24UNHMcMgSoMRfmHkzh+M+oPZg+dhomom4BR/kn0H4N7qg3xU1q+dQGvA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733327558; c=relaxed/simple;
-	bh=3GgiW3N3LZXUecZzX/Z2bD7+HxZswZiDkcxIzU0Xo+s=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ABheIGRiSKyKFPcin9/5vFIelBvu4vXPyCgkHaruUc59YFTTMN9WVctHx62oNmowF7jLUrJU8vs3+2JSuGyUO5d4+1Mx1sgErGIhiRkI1rwEEdRiiN/67yjOJlt8//ewLRppMZV0DDYxuJUy5WTeZGqBWFudyRXkXAb7sbOwXY4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=laura.nao@collabora.com header.b=BJwNCBh4; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1733327539; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=hNs4+qe1RmVGYY2POaIHuG1D8b9khVvg9QRQTKlRWSOiaU7RcJ4rRAUJpSjORgMcFR61xUMNZLY5MLFTjQoEAraUwMsmwImKiZDSmZpq6cdLhGBcGxDcIDK64SJCYp30R/+pNFOUSPOdbIYkqOpTFbtAIoNKkQ0a7B/GfMHnVMo=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1733327539; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=t+IOc0/iUALeNouk/Un46l8WsfTzgxm/2DTtzgWefrU=; 
-	b=EqhoHs6thdnmqnu25+iGd8pnF7vHIguvkMBCXsC++uwiURKcbmaPXDhNg8Rw+e78QYTBYcBIH9h4Y6P2p12+dUXnsZkou5aG94CDy8DI7I19fAbse8Tswf52zCuuFqNSDw2EsOLAh0hCUNvl5GbyZ+xxc8YA7FfI2HsGu4bDu+I=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=laura.nao@collabora.com;
-	dmarc=pass header.from=<laura.nao@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1733327539;
-	s=zohomail; d=collabora.com; i=laura.nao@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-Id:Message-Id:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Reply-To;
-	bh=t+IOc0/iUALeNouk/Un46l8WsfTzgxm/2DTtzgWefrU=;
-	b=BJwNCBh4EdmZGLio2uXycnjDwApd/XO27+TkvJMtxZT1Q1eSoAzZUaLkx6sDClH8
-	Kl/F/v/sgTzd+nDGSSYhDFuC8JpmxuplaIDQ4HN40GXsBkmUTnpQyd5PyfKkC4SswaC
-	NDDJA7GpSEJCyzVVapL3Aj+jOCLstz/NcnBzf9YE=
-Received: by mx.zohomail.com with SMTPS id 1733327536916423.899350380492;
-	Wed, 4 Dec 2024 07:52:16 -0800 (PST)
-From: Laura Nao <laura.nao@collabora.com>
-To: ubizjak@gmail.com
-Cc: laura.nao@collabora.com,
-	alan.maguire@oracle.com,
-	bpf@vger.kernel.org,
-	chrome-platform@lists.linux.dev,
-	kernel@collabora.com,
-	linux-kernel@vger.kernel.org,
-	regressions@lists.linux.dev
-Subject: Re: [REGRESSION] module BTF validation failure (Error -22) on next
-Date: Wed,  4 Dec 2024 16:53:05 +0100
-Message-Id: <20241204155305.444280-1-laura.nao@collabora.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20241115171712.427535-1-laura.nao@collabora.com>
-References: <20241115171712.427535-1-laura.nao@collabora.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A5811FA16B;
+	Wed,  4 Dec 2024 15:54:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733327697; cv=none; b=KLubh+kgC7/vs/z6BL3U8t+0Vt3gcPYi1qHJsjPFms+EpE3jXx0eeYQEGEJxODyJvHo0zEjPsYpS7Vgc4CFYd663Yd2AGb38Dfo8kmqau5ToMmTbKkbD0qI4gOSmm+Df0TbTqXhp1dFwUgxzRhGC4GGktik3D1JX7RnPJSVlXEM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733327697; c=relaxed/simple;
+	bh=9Pow6k65nRmJ7jJKQmjfsRvWtHyOg8AZItDZER8eJAU=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=i1nq9NTi8ZnXfwBBg7EQr0t82rS3p0mcSLvjJjviXryqUZ4yk2JQx1sP+Xu687L57Occ/uEJGJrSZK5PY1juEJOhC2MZKKIMdfe22r0/A5e+4D8v2Szqgzto78BNqV1kWLTudsQlOGreTUGfQh2OQDYJe0objiG1yJpDbMk0IcA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=WhJhohOB; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [127.0.0.1] ([76.133.66.138])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 4B4FroTQ1093386
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Wed, 4 Dec 2024 07:53:51 -0800
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 4B4FroTQ1093386
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2024111601; t=1733327632;
+	bh=TVvEsO4ehvXFJZo4F/lcbSnfyqO1B3TFGIRqUVjNtsE=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=WhJhohOBQ8UXRuprzVrD5Mc3tCkF6QV5Xlw8MN/QbqCO2Rq23xRDtTKpJPe7Exy4s
+	 CtqHOlSxGWkqsOJ3KIY6PK858oT3whXCa36FiDcBmI4sO+q1PM1tjCY1nGca42PJyJ
+	 r5EtkFDE4no6b4OC8IePlVkI0A0oRWUPmJT01nTKb9fD6LAX/LH2+ecaKdBiyzd90k
+	 +/IGRkn77s9U36wVYy4I5q4k/IRv3bi3XvU+oInSmZs2AkTnpQvy10jzUSK+TIKtHr
+	 4TMREUEeXxMy7t/QVRiGZf3v7pOZ3ESwd+922y5bDWbWXJQnFluoOcVXXmLggrgRKe
+	 Ish1swMXtShkw==
+Date: Wed, 04 Dec 2024 07:53:47 -0800
+From: "H. Peter Anvin" <hpa@zytor.com>
+To: Arnd Bergmann <arnd@arndb.de>, Brian Gerst <brgerst@gmail.com>,
+        Arnd Bergmann <arnd@kernel.org>
+CC: linux-kernel@vger.kernel.org, x86@kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andy Shevchenko <andy@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Sean Christopherson <seanjc@google.com>,
+        Davide Ciminaghi <ciminaghi@gnudd.com>,
+        Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org
+Subject: Re: [PATCH 05/11] x86: remove HIGHMEM64G support
+User-Agent: K-9 Mail for Android
+In-Reply-To: <00e344d7-8d2f-41d3-8c6a-1a828ee95967@app.fastmail.com>
+References: <20241204103042.1904639-1-arnd@kernel.org> <20241204103042.1904639-6-arnd@kernel.org> <CAMzpN2joPcvg887tJLF_4SU4aJt+wTGy2M_xaExrozLS-mvXsw@mail.gmail.com> <00e344d7-8d2f-41d3-8c6a-1a828ee95967@app.fastmail.com>
+Message-ID: <64221AAE-4A99-42D8-A78F-9B1B866CB24A@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 11/15/24 18:17, Laura Nao wrote:
-> I managed to reproduce the issue locally and I've uploaded the vmlinux[1]
-> (stripped of DWARF data) and vmlinux.raw[2] files, as well as one of the
-> modules[3] and its btf data[4] extracted with:
-> 
-> bpftool -B vmlinux btf dump file cros_kbd_led_backlight.ko > cros_kbd_led_backlight.ko.raw
-> 
-> Looking again at the logs[5], I've noticed the following is reported:
-> 
-> [    0.415885] BPF: 	 type_id=115803 offset=177920 size=1152
-> [    0.416029] BPF:
-> [    0.416083] BPF: Invalid offset
-> [    0.416165] BPF:
-> 
-> There are two different definitions of rcu_data in '.data..percpu', one
-> is a struct and the other is an integer:
-> 
-> type_id=115801 offset=177920 size=1152 (VAR 'rcu_data')
-> type_id=115803 offset=177920 size=1152 (VAR 'rcu_data')
-> 
-> [115801] VAR 'rcu_data' type_id=115572, linkage=static
-> [115803] VAR 'rcu_data' type_id=1, linkage=static
-> 
-> [115572] STRUCT 'rcu_data' size=1152 vlen=69
-> [1] INT 'long unsigned int' size=8 bits_offset=0 nr_bits=64 encoding=(none)
-> 
-> I assume that's not expected, correct?
-> 
-> I'll dig a bit deeper and report back if I can find anything else.
+On December 4, 2024 5:43:28 AM PST, Arnd Bergmann <arnd@arndb=2Ede> wrote:
+>On Wed, Dec 4, 2024, at 14:29, Brian Gerst wrote:
+>> On Wed, Dec 4, 2024 at 5:34=E2=80=AFAM Arnd Bergmann <arnd@kernel=2Eorg=
+> wrote:
+>>>
+>>>  - In the early days of x86-64 hardware, there was sometimes the need
+>>>    to run a 32-bit kernel to work around bugs in the hardware drivers,
+>>>    or in the syscall emulation for 32-bit userspace=2E This likely sti=
+ll
+>>>    works but there should never be a need for this any more=2E
+>>>
+>>> Removing this also drops the need for PHYS_ADDR_T_64BIT and SWIOTLB=2E
+>>> PAE mode is still required to get access to the 'NX' bit on Atom
+>>> 'Pentium M' and 'Core Duo' CPUs=2E
+>>
+>> 8GB of memory is still useful for 32-bit guest VMs=2E
+>
+>Can you give some more background on this?
+>
+>It's clear that one can run a virtual machine this way and it
+>currently works, but are you able to construct a case where this
+>is a good idea, compared to running the same userspace with a
+>64-bit kernel?
+>
+>From what I can tell, any practical workload that requires
+>8GB of total RAM will likely run into either the lowmem
+>limits or into virtual addressig limits, in addition to the
+>problems of 32-bit kernels being generally worse than 64-bit
+>ones in terms of performance, features and testing=2E
+>
+>      Arnd
+>
 
-I ran a bisection, and it appears the culprit commit is:
-https://lore.kernel.org/all/20241021080856.48746-2-ubizjak@gmail.com/
-
-Hi Uros, do you have any suggestions or insights on resolving this issue?
-
-This problem is now impacting mainline as well. The full context can be 
-found at the beginning of this thread[1].
-
-Thanks,
-
-Laura
-
-[1] https://lore.kernel.org/all/20241106160820.259829-1-laura.nao@collabora.com/
-
-#regzbot introduced: 001217defd
+The biggest proven is that without HIGHMEM you put a limit of just under 1=
+ GB (892 MiB if I recall correctly), *not* 4 GB, on 32-bit kernels=2E That =
+is *well* below the amount of RAM present in late-era 32-bit legacy systems=
+, which were put in production as "recently" as 20 years ago and may still =
+be in niche production uses=2E Embedded systems may be significantly more r=
+ecent; I know for a fact that 32-bit systems were put in production in the =
+2010s=2E
 
 
