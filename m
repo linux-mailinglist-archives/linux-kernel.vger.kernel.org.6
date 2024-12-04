@@ -1,179 +1,158 @@
-Return-Path: <linux-kernel+bounces-431990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B7229E438D
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 19:40:43 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 38034166268
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:40:40 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1707B1A8F81;
-	Wed,  4 Dec 2024 18:40:38 +0000 (UTC)
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79CC99E4391
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 19:41:29 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5BAB1A8F76
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 18:40:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.86.151
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 340292811FD
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:41:28 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54D5F1A8F93;
+	Wed,  4 Dec 2024 18:41:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ABKjWSJe"
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42CCB1A8F7C
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 18:41:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733337637; cv=none; b=MnhIUN6KvCL0p8eRyNRS2vbw7JdVU3aJnYcCYEoaZpLiBM/KEz3QgIATzuQPC0f7Dq7yGIJmXUmZo0D7NjJM1I+mt1Pp413q2tNpPfeBfXOSFZUrMUHrnNGLVISLUxUmzgU+lo6cOmUQLBjFt3f+oGkkk/nzw0KUyftzcOeldg8=
+	t=1733337681; cv=none; b=FaeexPiA75lgKOI4UhHjum9486YOLJqPHefcAzHwGf7YzRTgcqYGIAWG0r3smOoLpoPF+QqCShPv0Z4O1USeJFWRU1Ln0/Co1CaZPlzbREcSco7hvg16trClkGNnUkTecH6dc5glU+gPwaGjhr3WSQ21/R0YiP1JTEkyYtNUgvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733337637; c=relaxed/simple;
-	bh=MtCOK0HVkC7gUFMSIgVVL4Xc+Z55LO/CooQTrZpf8Mw=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=s7ET6I0NOSFmtJO/KbaNs0y9MFtboyEhFrmF8t0ehDhkJi4L9v34f+MFakJGSYByuSMZEgB78wM5THBDdGrNlSHVJHSNFWkUR5Nn+tktOKLCrZylywto3BdhbQPb/El1TnOKU/yl0EoVGmsnFB+YMNrcBCOBWfpkBUsDVqp6Qk4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.86.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-43--ru7XJDzPXaGunFvat9ayQ-1; Wed, 04 Dec 2024 18:40:33 +0000
-X-MC-Unique: -ru7XJDzPXaGunFvat9ayQ-1
-X-Mimecast-MFC-AGG-ID: -ru7XJDzPXaGunFvat9ayQ
-Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
- (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Wed, 4 Dec
- 2024 18:39:53 +0000
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Wed, 4 Dec 2024 18:39:53 +0000
-From: David Laight <David.Laight@ACULAB.COM>
-To: Vincent Mailhol <mailhol.vincent@wanadoo.fr>, Linus Torvalds
-	<torvalds@linux-foundation.org>, Luc Van Oostenryck
-	<luc.vanoostenryck@gmail.com>, Nathan Chancellor <nathan@kernel.org>, "Nick
- Desaulniers" <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>, Yury Norov <yury.norov@gmail.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Kees Cook <kees@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>, Jani Nikula
-	<jani.nikula@linux.intel.com>, Joonas Lahtinen
-	<joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>, Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Rikard Falkeborn
-	<rikard.falkeborn@gmail.com>, Martin Uecker
-	<Martin.Uecker@med.uni-goettingen.de>
-CC: "linux-sparse@vger.kernel.org" <linux-sparse@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"llvm@lists.linux.dev" <llvm@lists.linux.dev>,
-	"linux-hardening@vger.kernel.org" <linux-hardening@vger.kernel.org>,
-	"intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	"coresight@lists.linaro.org" <coresight@lists.linaro.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Subject: RE: [PATCH 02/10] compiler.h: add is_const() as a replacement of
- __is_constexpr()
-Thread-Topic: [PATCH 02/10] compiler.h: add is_const() as a replacement of
- __is_constexpr()
-Thread-Index: AQHbROFPJXcuwP9wN0+yRzIQ2cx/pbLWa+gg
-Date: Wed, 4 Dec 2024 18:39:53 +0000
-Message-ID: <1d807c7471b9434aa8807e6e86c964ec@AcuMS.aculab.com>
-References: <20241203-is_constexpr-refactor-v1-0-4e4cbaecc216@wanadoo.fr>
- <20241203-is_constexpr-refactor-v1-2-4e4cbaecc216@wanadoo.fr>
-In-Reply-To: <20241203-is_constexpr-refactor-v1-2-4e4cbaecc216@wanadoo.fr>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
+	s=arc-20240116; t=1733337681; c=relaxed/simple;
+	bh=aFvkf6CoLhhQD1bUAXfhKyLoVgb7mHgs8SfvSrpcRyE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=k7A2Cj52+qz7it9MaGlc3TtKboCCcVTM25/ucBi3i2bS4EUaIRDJBpTb8mI1dhjmwIH8mR7VezqtfJLT7uJhjW1fAptu/iiLz7PEGCaVc1JKsSIWvvsPsGBbEQNK1X5WiAMC5++iC+IAaVHTo34/luSmUiu/kfg5gjR+4/Ke4QQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ABKjWSJe; arc=none smtp.client-ip=209.85.160.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-46695dd02e8so134211cf.2
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 10:41:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733337679; x=1733942479; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=P1AAYwi8Z4SqDfUi5bpBNtYcExyup2ajr9ZSuxLD3q4=;
+        b=ABKjWSJeFFCXrLLQuIVXueYynDDfVa+szJOloA+cFP2ZTY4Mc0KtlGUEe8gambI6QF
+         LgOeoeoES72+JV377ZFaoIUuqRQHwwNX6m8eQyEWj92IcWLdneTfGWUHrEF2ONyop5WL
+         OjrPcm2Fcd/yAKf7Eb4ZRN77l6mitvVh0+mhXtIyf02nbfV5e58ev/JatZs2WDvJHCSD
+         BfAN7CxVMaoI+lF2pQtWqwxeoSIs3lGgCX3a/6/lTukOlanMMdDWYEk2lUJIrztJLOFm
+         jpeQumX6H82qLgfzUglgSfzUZYzs/8O6cuoM0r3L96MhEIc+ZzEN81KFaNF+AYsP3BLv
+         F6cA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733337679; x=1733942479;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=P1AAYwi8Z4SqDfUi5bpBNtYcExyup2ajr9ZSuxLD3q4=;
+        b=nnypMNtDC6LWiCfCDYaEf2hq8/Uy+0KwJbI8vKLbI6KCjUZFo6fdOEHKCWRqSk/y1N
+         NW3Cq7zadrFJHm23/cLTog0Tp25UBl5WCh8RS7XLlrqrJK6J7OQ7s/LI7kgiddClh0Ik
+         K3soTw4lYCxvekjDiC57FSWEiWdRNpaDckmjV64rsXaXCINzOS2L1al5keIcAg7FGWdv
+         MHSLM9sLQQBiOvtE2yHNlzcWM/VmG/1HBfzF0DpeH5gYJVSxB0ZOt4k6cyvr8LI/E73H
+         GWATdEgDVhBgVW2lA2GHyEzDaSK5mijMumBmVtthV1r8TZBs4r9Q9chA/uzydyLNa2HM
+         MGAw==
+X-Gm-Message-State: AOJu0Yy8ykAVF9qk1ykuMH0IH7FzPlFJB46odX0EiXRf2X4l4APmvQFd
+	7EX1ytAzU5Lu7OfSRBb453HrR4SybFzm+0nWmSqBuC3UAHUAl4y+ZLE9vxwh
+X-Gm-Gg: ASbGncsnS/wQFStXG75/LMbuVh5HI/9xzXTrSJhPJilFdbcQbJK2nMjakXgvmtxOWRo
+	L1CgcCBJ7ZxSUD8Oevh85t/41SmfLSbUvByPG0aHWmtXOcZ5CJzCHevmZh4GRWZ6YwUwlusQiX1
+	snklIvbhf2zpTwo4tlUDhaNVcdD13gUEBZO0EvZbM4YqWAardG+mJw7cNdbUtgNh0zUr9NPmZWg
+	P1sNU5mp0lJLcWrm+08og6PBabWwUjuBbuTKjXD+5SQYPDTN/DlaTghIle0PKqLOdTP/ViMyQq5
+	LEbF2TPnQCo=
+X-Google-Smtp-Source: AGHT+IF2hEzFNib6Ma+PiwJlxiujxiSoOivETzyDigbmywVRpr/Lh7ZBMq7eDwaB/6PGZxo5nZYjzw==
+X-Received: by 2002:a05:622a:188b:b0:466:92ff:dc48 with SMTP id d75a77b69052e-46717ce5b2cmr88419661cf.53.1733337678799;
+        Wed, 04 Dec 2024 10:41:18 -0800 (PST)
+Received: from 159.1.168.192.in-addr.arpa ([2600:4041:5be7:7c00:7154:df0a:6071:bff8])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-466c4066934sm76718431cf.25.2024.12.04.10.41.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Dec 2024 10:41:17 -0800 (PST)
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Wed, 04 Dec 2024 13:41:06 -0500
+Subject: [PATCH] checkpatch: check return of `git_commit_info`
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: i_vVWxXkH8WdGLKe0kmNMiUa9Vk6bvpamEQLeQTQNSA_1733337631
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241204-checkpatch-missing-commit-v1-1-68b34c94944e@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAEGiUGcC/x3MwQqDMAyA4VeRnBdog8Lmq8gOmmZtGK3SiAjiu
+ 6/s+B3+/wKTqmIwdhdUOdR0LQ3+0QGnuURBDc1AjnpPrkdOwt9t3jlhVjMtEXnNWXek5zK8/DJ
+ QCB5av1X56Pl/T+/7/gEx1eGLawAAAA==
+X-Change-ID: 20241204-checkpatch-missing-commit-28b591b52dd1
+To: Andy Whitcroft <apw@canonical.com>, Joe Perches <joe@perches.com>, 
+ Dwaipayan Ray <dwaipayanray1@gmail.com>, 
+ Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc: linux-kernel@vger.kernel.org, Tamir Duberstein <tamird@gmail.com>
+X-Mailer: b4 0.15-dev
 
-RnJvbTogVmluY2VudCBNYWlsaG9sDQo+IFNlbnQ6IDAyIERlY2VtYmVyIDIwMjQgMTc6MzMNCj4g
-DQo+IEZyb206IFZpbmNlbnQgTWFpbGhvbCA8bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI+DQo+
-IA0KPiBfX2lzX2NvbnN0ZXhwcigpLCB3aGlsZSBiZWluZyBvbmUgb2YgdGhlIG1vc3QgZ2xvcmlv
-dXMgb25lIGxpbmVyIGhhY2sNCj4gZXZlciB3aXRuZXNzZWQgYnkgbWFua2luZCwgaXMgb3Zlcmx5
-IGNvbXBsZXguIEZvbGxvd2luZyB0aGUgYWRvcHRpb24NCj4gb2YgQzExIGluIHRoZSBrZXJuZWws
-IHRoaXMgbWFjcm8gY2FuIGJlIHNpbXBsaWZpZWQgdGhyb3VnaCB0aGUgdXNlIG9mDQo+IGEgX0dl
-bmVyaWMoKSBzZWxlY3Rpb24uDQoNCllvdSBzaG91bGQgZ2l2ZSBjcmVkaXQgdG8gc29tZSBvZiB0
-aGUgZWFybGllciBwYXRjaGVzIHRoYXQgZG8gdGhlIHNhbWUuDQpJJ20gc3VyZSB0aGVyZSB3ZXJl
-IHNvbWUgcmVsYXRlZCBvbmVzIGZyb20gTGludXMgLSBub3QgYXBwbGllZCB5ZXQuDQoNCj4gDQo+
-IEZpcnN0LCBzcGxpdCB0aGUgbWFjcm8gaW4gdHdvOg0KPiANCj4gICAtIF9faXNfY29uc3RfemVy
-byh4KTogYW4gaGVscGVyIG1hY3JvOyB0ZWxscyB3aGV0aGVyIHggaXMgdGhlDQo+ICAgICBpbnRl
-Z2VyIGNvbnN0YW50IGV4cHJlc3Npb24gMCBvciBzb21ldGhpbmcgZWxzZS4NCj4gDQo+ICAgLSBp
-c19jb25zdCh4KTogcmVwbGFjZW1lbnQgb2YgX19pc19jb25zdGV4cHIoKTsgdGVsbHMgd2hldGhl
-ciB4IGlzIGENCj4gICAgIGludGVnZXIgY29uc3RhbnQgZXhwcmVzc2lvbi4NCj4gDQo+IFRoZSBz
-cGxpdCBzZXJ2ZXMgdHdvIHB1cnBvc2VzOiBmaXJzdCBtYWtlIGl0IGVhc2llciB0byB1bmRlcnN0
-YW5kOw0KPiBzZWNvbmQsIF9faXNfY29uc3RfemVybygpIHdpbGwgYmUgcmV1c2VkIGFzIGEgYnVp
-bGRpbmcgYmxvY2sgZm9yIG90aGVyDQo+IGlzX2NvbnN0XyooKSBtYWNyb3MgdGhhdCB3aWxsIGJl
-IGludHJvZHVjZWQgbGF0ZXIgb24uDQo+IA0KPiBUaGUgY29yZSBwcmluY2lwbGUgb2YgX19pc19j
-b25zdGV4cHIoKSB0byBhYnVzZSB0aGUgcmV0dXJuIHR5cGUgb2YgdGhlDQo+IHRlcm5hcnkgb3Bl
-cmF0b3IgcmVtYWlucywgYnV0IGFsbCB0aGUgc3Vycm91bmRpbmcgc2l6ZW9mKCkgaGFjaw0KPiBk
-aXNhcHBlYXIuDQo+IA0KPiBPbiBhIHNpZGUgbm90ZSwgd2hpbGUgbm90IHJlbGV2YW50IHRvIHRo
-ZSBrZXJuZWwsIF9faXNfY29uc3RleHByKCkNCj4gcmVsaWVkIG9uIHRoZSBHTlUgZXh0ZW5zaW9u
-IHRoYXQgc2l6ZW9mKHZvaWQpIGlzIDEuIGNvbnN0X2V4cHIoKSBkb2VzDQo+IG5vdCB1c2UgYW55
-IEdOVSBleHRlbnNpb25zLCBtYWtpbmcgaXQgSVNPIEMgY29tcGxpYW50Lg0KPiANCj4gX19pc19j
-b25zdGV4cHIoKSBpcyB0ZW1wb3JhcmlseSBrZXB0IGFuZCB3aWxsIGJlIHJlbW92ZWQgb25jZSBh
-bGwgaXRzDQo+IHVzZXJzIGdldCBtaWdyYXRlZCB0byBpc19jb25zdCgpIChvciBvbmUgb2YgaXRz
-IGZyaWVuZCkuDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBWaW5jZW50IE1haWxob2wgPG1haWxob2wu
-dmluY2VudEB3YW5hZG9vLmZyPg0KPiAtLS0NCj4gIGluY2x1ZGUvbGludXgvY29tcGlsZXIuaCB8
-IDQxICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrDQo+ICAxIGZpbGUg
-Y2hhbmdlZCwgNDEgaW5zZXJ0aW9ucygrKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2luY2x1ZGUvbGlu
-dXgvY29tcGlsZXIuaCBiL2luY2x1ZGUvbGludXgvY29tcGlsZXIuaA0KPiBpbmRleCBhMmE1NmE1
-MGRkODUyMjdhNGZkYzYyMjM2YTI3MTBjYTM3YzViYTUyLi4zMGNlMDZkZjQxNTNjZmRjMGZhZDli
-YzdiZmZhYjkwOTdmOGIwNDUwIDEwMDY0NA0KPiAtLS0gYS9pbmNsdWRlL2xpbnV4L2NvbXBpbGVy
-LmgNCj4gKysrIGIvaW5jbHVkZS9saW51eC9jb21waWxlci5oDQo+IEBAIC0zMTYsNiArMzE2LDQ3
-IEBAIHN0YXRpYyBpbmxpbmUgdm9pZCAqb2Zmc2V0X3RvX3B0cihjb25zdCBpbnQgKm9mZikNCj4g
-ICNkZWZpbmUgc3RhdGljYWxseV90cnVlKHgpIChfX2J1aWx0aW5fY29uc3RhbnRfcCh4KSAmJiAo
-eCkpDQo+ICAjZGVmaW5lIHN0YXRpY2FsbHlfZmFsc2UoeCkgKF9fYnVpbHRpbl9jb25zdGFudF9w
-KHgpICYmICh4KSA9PSAwKQ0KPiANCj4gKy8qDQo+ICsgKiBXaGV0aGVyIHggaXMgdGhlIGludGVn
-ZXIgY29uc3RhbnQgZXhwcmVzc2lvbiAwIG9yIHNvbWV0aGluZyBlbHNlLg0KPiArICoNCj4gKyAq
-IERldGFpbHM6DQo+ICsgKiAgIC0gVGhlIEMxMSBzdGFuZGFyZCBkZWZpbmVzIGluIMKnNi4zLjIu
-My4zDQo+ICsgKiAgICAgICAodm9pZCAqKTxpbnRlZ2VyIGNvbnN0YW50IGV4cHJlc3Npb24gd2l0
-aCB0aGUgdmFsdWUgMD4NCj4gKyAqICAgICBhcyBhIG51bGwgcG9pbnRlciBjb25zdGFudCAoYy5m
-LiB0aGUgTlVMTCBtYWNybykuDQo+ICsgKiAgIC0gSWYgeCBldmFsdWF0ZXMgdG8gdGhlIGludGVn
-ZXIgY29uc3RhbnQgZXhwcmVzc2lvbiAwLA0KPiArICogICAgICAgKHZvaWQgKikoeCkNCj4gKyAq
-ICAgICBpcyBhIG51bGwgcG9pbnRlciBjb25zdGFudC4gRWxzZSwgaXQgaXMgYSB2b2lkICogZXhw
-cmVzc2lvbi4NCj4gKyAqICAgLSBJbiBhIHRlcm5hcnkgZXhwcmVzc2lvbjoNCj4gKyAqICAgICAg
-IGNvbmRpdGlvbiA/IG9wZXJhbmQxIDogb3BlcmFuZDINCj4gKyAqICAgICBpZiBvbmUgb2YgdGhl
-IHR3byBvcGVyYW5kcyBpcyBvZiB0eXBlIHZvaWQgKiBhbmQgdGhlIG90aGVyIG9uZQ0KPiArICog
-ICAgIHNvbWUgb3RoZXIgcG9pbnRlciB0eXBlLCB0aGUgQzExIHN0YW5kYXJkIGRlZmluZXMgaW4g
-wqc2LjUuMTUuNg0KPiArICogICAgIHRoZSByZXN1bHRpbmcgdHlwZSBhcyBiZWxvdzoNCj4gKyAq
-ICAgICAgIGlmIG9uZSBvcGVyYW5kIGlzIGEgbnVsbCBwb2ludGVyIGNvbnN0YW50LCB0aGUgcmVz
-dWx0IGhhcyB0aGUNCj4gKyAqICAgICAgIHR5cGUgb2YgdGhlIG90aGVyIG9wZXJhbmQ7IG90aGVy
-d2lzZSBbLi4uXSB0aGUgcmVzdWx0IHR5cGUgaXMNCj4gKyAqICAgICAgIGEgcG9pbnRlciB0byBh
-biBhcHByb3ByaWF0ZWx5IHF1YWxpZmllZCB2ZXJzaW9uIG9mIHZvaWQuDQo+ICsgKiAgIC0gQXMg
-c3VjaCwgaW4NCj4gKyAqICAgICAgIDAgPyAodm9pZCAqKSh4KSA6IChjaGFyICopMA0KPiArICog
-ICAgIGlmIHggaXMgdGhlIGludGVnZXIgY29uc3RhbnQgZXhwcmVzc2lvbiAwLCBvcGVyYW5kMSBp
-cyBhIG51bGwNCj4gKyAqICAgICBwb2ludGVyIGNvbnN0YW50IGFuZCB0aGUgcmVzdWx0aW5nIHR5
-cGUgaXMgdGhhdCBvZiBvcGVyYW5kMjoNCj4gKyAqICAgICBjaGFyICouIElmIHggaXMgYW55dGhp
-bmcgZWxzZSwgdGhlIHR5cGUgaXMgdm9pZCAqLg0KPiArICogICAtIFRoZSAobG9uZykgY2FzdCBz
-aWxlbmNlcyBhIGNvbXBpbGVyIHdhcm5pbmcgZm9yIHdoZW4geCBpcyBub3QgMC4NCj4gKyAqICAg
-LSBGaW5hbGx5LCB0aGUgX0dlbmVyaWMoKSBkaXNwYXRjaGVzIHRoZSByZXN1bHRpbmcgdHlwZSBp
-bnRvIGENCj4gKyAqICAgICBCb29sZWFuLg0KDQpUaGUgY29tbWVudCBpcyBhYnNvbHV0ZWx5IGV4
-Y2Vzc2l2ZS4NCkknbSBzdXJlIEkgbWFuYWdlZCBhYm91dCAyIGxpbmVzIGluIG9uZSBvZiB0aGUg
-cGF0Y2hlcyBJIGRpZC4NCg0KPiArICoNCj4gKyAqIEdsb3J5IHRvIE1hcnRpbiBVZWNrZXIgPE1h
-cnRpbi5VZWNrZXJAbWVkLnVuaS1nb2V0dGluZ2VuLmRlPg0KDQpJSVJDIE1hcnRpbiBoYXMgYWdy
-ZWVkIGluIHRoZSBwYXN0IHRoYXQgdGhlIGFjY3JlZGl0YXRpb24gY2FuDQpiZSByZW1vdmVkIC0g
-ZXNwZWNpYWxseSBzaW5jZSBpdCByZWZlcnMgdG8gdGhlICdzaXplb2YgKHZvaWQpJyB0cmljay4N
-Cg0KPiArICovDQo+ICsjZGVmaW5lIF9faXNfY29uc3RfemVybyh4KSBcDQo+ICsJX0dlbmVyaWMo
-MCA/ICh2b2lkICopKGxvbmcpKHgpIDogKGNoYXIgKikwLCBjaGFyICo6IDEsIHZvaWQgKjogMCkN
-Cj4gKw0KPiArLyoNCj4gKyAqIFJldHVybnMgYSBjb25zdGFudCBleHByZXNzaW9uIHdoaWxlIGRl
-dGVybWluaW5nIGlmIGl0cyBhcmd1bWVudCBpcyBhDQo+ICsgKiBjb25zdGFudCBleHByZXNzaW9u
-LCBtb3N0IGltcG9ydGFudGx5IHdpdGhvdXQgZXZhbHVhdGluZyB0aGUgYXJndW1lbnQuDQoNCllv
-dSBuZWVkIHRvIGRpZmZlcmVudGlhdGUgYmV0d2VlbiBhICdjb25zdGFudCBpbnRlZ2VyIGV4cHJl
-c3Npb24nDQphbmQgYSAnY29tcGlsZSB0aW1lIGNvbnN0YW50Jy4NCiANCj4gKyAqDQo+ICsgKiBJ
-ZiBnZXR0aW5nIGEgY29uc3RhbnQgZXhwcmVzc2lvbiBpcyBub3QgcmVsZXZhbnQgdG8geW91LCB1
-c2UgdGhlIG1vcmUNCj4gKyAqIHBvd2VyZnVsIF9fYnVpbHRpbl9jb25zdGFudF9wKCkgaW5zdGVh
-ZC4NCg0KX19idWlsdGluX2NvbnN0YW50X3AoKSBpcyBub3QgJ21vcmUgcG93ZXJmdWwnIGl0IGlz
-IHRlc3RpbmcgZm9yDQpzb21ldGhpbmcgZGlmZmVyZW50Lg0KDQoJRGF2aWQNCg0KPiArICovDQo+
-ICsjZGVmaW5lIGlzX2NvbnN0KHgpIF9faXNfY29uc3RfemVybygwICogKHgpKQ0KPiArDQo+ICAv
-Kg0KPiAgICogVGhpcyBpcyBuZWVkZWQgaW4gZnVuY3Rpb25zIHdoaWNoIGdlbmVyYXRlIHRoZSBz
-dGFjayBjYW5hcnksIHNlZQ0KPiAgICogYXJjaC94ODYva2VybmVsL3NtcGJvb3QuYzo6c3RhcnRf
-c2Vjb25kYXJ5KCkgZm9yIGFuIGV4YW1wbGUuDQo+IA0KPiAtLQ0KPiAyLjQ1LjINCj4gDQoNCi0N
-ClJlZ2lzdGVyZWQgQWRkcmVzcyBMYWtlc2lkZSwgQnJhbWxleSBSb2FkLCBNb3VudCBGYXJtLCBN
-aWx0b24gS2V5bmVzLCBNSzEgMVBULCBVSw0KUmVnaXN0cmF0aW9uIE5vOiAxMzk3Mzg2IChXYWxl
-cykNCg==
+Avoid string concatenation with an undefined variable when a reference
+to a missing commit is contained in a `Fixes` tag.
+
+Given this patch:
+
+: From: Tamir Duberstein <tamird@gmail.com>
+: Subject: Test patch
+: Date: Fri, 25 Oct 2024 19:30:51 -0400
+:
+: This is a test patch.
+:
+: Fixes: deadbeef111
+: Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+: --- /dev/null
+: +++ b/new-file
+: @@ -0,0 +1 @@
+: +Test.
+
+Before:
+
+WARNING: Please use correct Fixes: style 'Fixes: <12 chars of sha1> ("<title line>")' - ie: 'Fixes:  ("commit title")'
+WARNING: Unknown commit id 'deadbeef111', maybe rebased or not pulled?
+Use of uninitialized value $cid in concatenation (.) or string at scripts/checkpatch.pl line 3242.
+
+After:
+
+WARNING: Unknown commit id 'deadbeef111', maybe rebased or not pulled?
+
+This patch also reduce duplication slightly.
+
+Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+---
+ scripts/checkpatch.pl | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+index 9eed3683ad76caffbbb2418e5dbea7551d374406..14639f83be91643245bba3aea6a980d50c04b1cc 100755
+--- a/scripts/checkpatch.pl
++++ b/scripts/checkpatch.pl
+@@ -3237,12 +3237,12 @@ sub process {
+ 			my ($cid, $ctitle) = git_commit_info($orig_commit, $id,
+ 							     $title);
+ 
+-			if ($ctitle ne $title || $tag_case || $tag_space ||
+-			    $id_length || $id_case || !$title_has_quotes) {
++			if (defined($cid) && ($ctitle ne $title || $tag_case || $tag_space || $id_length || $id_case || !$title_has_quotes)) {
++				my $fixed = "Fixes: $cid (\"$ctitle\")";
+ 				if (WARN("BAD_FIXES_TAG",
+-				     "Please use correct Fixes: style 'Fixes: <12 chars of sha1> (\"<title line>\")' - ie: 'Fixes: $cid (\"$ctitle\")'\n" . $herecurr) &&
++				     "Please use correct Fixes: style 'Fixes: <12 chars of sha1> (\"<title line>\")' - ie: '$fixed'\n" . $herecurr) &&
+ 				    $fix) {
+-					$fixed[$fixlinenr] = "Fixes: $cid (\"$ctitle\")";
++					$fixed[$fixlinenr] = $fixed;
+ 				}
+ 			}
+ 		}
+
+---
+base-commit: 40384c840ea1944d7c5a392e8975ed088ecf0b37
+change-id: 20241204-checkpatch-missing-commit-28b591b52dd1
+
+Best regards,
+-- 
+Tamir Duberstein <tamird@gmail.com>
 
 
