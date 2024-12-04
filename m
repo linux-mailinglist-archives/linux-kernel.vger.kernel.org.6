@@ -1,65 +1,81 @@
-Return-Path: <linux-kernel+bounces-431172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E29F59E3A1D
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 13:39:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBA269E3A12
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 13:36:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E22E3B339B5
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 12:29:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8AF83286562
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 12:36:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A5931B0F1A;
-	Wed,  4 Dec 2024 12:27:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0F0A1B87CA;
+	Wed,  4 Dec 2024 12:36:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b="woRovcdm"
-Received: from mxout1.routing.net (mxout1.routing.net [134.0.28.11])
+	dkim=pass (2048-bit key) header.d=fau.de header.i=@fau.de header.b="j5web6Zl"
+Received: from mx-rz-1.rrze.uni-erlangen.de (mx-rz-1.rrze.uni-erlangen.de [131.188.11.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF0EF1F130E
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 12:27:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.0.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F3E61AF0BE;
+	Wed,  4 Dec 2024 12:36:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=131.188.11.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733315246; cv=none; b=VJ4Q6sHQOW1xYKo24ROEo7gCXwv4lfj7u8qXwkMan9dh5raYgLOFHLoNNOGT+ENlP3dv2mKfgTeeAHv6j0cL3r25lZ3m0vn/mrEUYHclkYz99rGFIQ0AdW0YRVElCuiMHtepTJPBzCjcmAjj9CNRVK6Y48w8PbT3e0YPGN5WRsQ=
+	t=1733315807; cv=none; b=eg14No3SwVZNpoGjBhxwoKGRZQaOnmQyyRkpU0pJl/6kYguwpQcFX6mbxkz0ItmGhIc5wiNcd5hYbJxVAodmmR2QMQN2Cqok3I3Af9+Iwgkmcnjc26x721YRi3U/2gxCj2PWV2GUROVYOZLRU05Px3RlOz1dhurEGFS01wvSxNY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733315246; c=relaxed/simple;
-	bh=vIhMkl0NZPgk3UZYg3Cu3xyqdqxjleMaAj4gQ36m+Rc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=U8pNVDuFKYhBplgjO4FnWZY4ez4SfgTD6rW7tFG5018ACszih4nP+mfJTnFQUOlgNGKQ4VjHxl4MqVYiznRT630dLaaHd4LrR158KIs6mmSU9vDE4B3OYZVK/gWl3mOXAfgEHamtQh4ZNS8ssRZcjPmDlWbjUmi6nQnvIuTt57w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de; spf=pass smtp.mailfrom=fw-web.de; dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b=woRovcdm; arc=none smtp.client-ip=134.0.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fw-web.de
-Received: from mxbox3.masterlogin.de (unknown [192.168.10.78])
-	by mxout1.routing.net (Postfix) with ESMTP id DA2B83FEAE;
-	Wed,  4 Dec 2024 12:27:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailerdienst.de;
-	s=20200217; t=1733315236;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=eF41jGmtQ2ePJq8YvI4gtqnFpvR6q54sJaHzjkAkjuQ=;
-	b=woRovcdmww3ZzfJaz9SrjOagpgePADSL5orXQoEgclO9zosSSy3X831g7R48VTcBa2cRRS
-	y+p7TZ1Wwpw08JlTtafANLQBRPM9wBboY9LuW6xvVC0EAMDrmgL7Jv89qieS5U/McZh5l9
-	l2pF5mp7R7eHLGHpzlrDthDUZO0GYUg=
-Received: from frank-u24.. (fttx-pool-194.15.87.121.bambit.de [194.15.87.121])
-	by mxbox3.masterlogin.de (Postfix) with ESMTPSA id E962636037C;
-	Wed,  4 Dec 2024 12:27:14 +0000 (UTC)
-From: Frank Wunderlich <linux@fw-web.de>
-To: Chunfeng Yun <chunfeng.yun@mediatek.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: Daniel Golle <daniel@makrotopia.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	linux-phy@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Frank Wunderlich <frank-w@public-files.de>
-Subject: [RFC] phy: mediatek: xsphy: support type switch by pericfg
-Date: Wed,  4 Dec 2024 13:27:05 +0100
-Message-ID: <20241204122706.25190-1-linux@fw-web.de>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1733315807; c=relaxed/simple;
+	bh=IEmkH8GSW9/Y3OBntL3jN3DJgggJ54xA6hhNJT1vCLQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=KrAzEVPYYscb1NpolZSkEdV+mpqzT0mPjZZDpi8tZ41T5c/tFBLlDdKaTy0WwTKAdhTmaaVXZmFdpiDLZl3IZxnNIIXjzNsQN6sznxEwIS25HkaVYr2n+3KAqIYg4vgcjyWAr/g54jZekJ3icPt60z0IdVINFFhXd2Nzyzz9KvM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fau.de; spf=pass smtp.mailfrom=fau.de; dkim=pass (2048-bit key) header.d=fau.de header.i=@fau.de header.b=j5web6Zl; arc=none smtp.client-ip=131.188.11.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fau.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fau.de
+Received: from mx-rz-smart.rrze.uni-erlangen.de (mx-rz-smart.rrze.uni-erlangen.de [IPv6:2001:638:a000:1025::1e])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-rz-1.rrze.uni-erlangen.de (Postfix) with ESMTPS id 4Y3H070tSfz8tX0;
+	Wed,  4 Dec 2024 13:29:43 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fau.de; s=fau-2021;
+	t=1733315383; bh=GzLRBhecWewOSKJk7GdiLRVGMSTktg2TiiUmTGfAi24=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From:To:CC:
+	 Subject;
+	b=j5web6ZlH+nobHJly+RcWyf9VYJLJPv19smEPJKfeqYK2NDC6NyR8jN+YpjQlJpB+
+	 gErueCeECfXfirKpoFx6LgDvYL2EdFOFFr2t2LQNpysWPSHSl5L+KxsCfGrt28ctvm
+	 N56K3jGiIK7v9euRD/mVqHB2aD3ngw7z3QrIC+ggMALPr/Hlq/CR+3QzcvaLRKmZaV
+	 ihoaJUvLPoyZjSeKDebcS0iEDMQvtlmGys7FZQZJQpUoIJU7BXwD3UbTR6LrMHueVl
+	 or/3Ep+VqSoWlRtgcM8jpOhwsR8a6GRpWah77iFXyJpFfoTf2bmS4/GYNcH47ayDKm
+	 wYHogMW37/WUg==
+X-Virus-Scanned: amavisd-new at boeck1.rrze.uni-erlangen.de (RRZE)
+X-RRZE-Flag: Not-Spam
+X-RRZE-Submit-IP: 131.188.47.107
+Received: from faui76b (faui76b.informatik.uni-erlangen.de [131.188.47.107])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: U2FsdGVkX1+h1vXgyFd22LVdiaXYJGWnfnea6/l2Vfw=)
+	by smtp-auth.uni-erlangen.de (Postfix) with ESMTPSA id 4Y3H044FBpz8tZf;
+	Wed,  4 Dec 2024 13:29:40 +0100 (CET)
+From: Martin Ottens <martin.ottens@fau.de>
+To: 
+Cc: Martin Ottens <martin.ottens@fau.de>,
+	Stephen Hemminger <stephen@networkplumber.org>,
+	Jamal Hadi Salim <jhs@mojatatu.com>,
+	Cong Wang <xiyou.wangcong@gmail.com>,
+	Jiri Pirko <jiri@resnulli.us>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] net/sched: netem: account for backlog updates from child qdisc
+Date: Wed,  4 Dec 2024 13:29:29 +0100
+Message-Id: <20241204122929.3492005-1-martin.ottens@fau.de>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20241202191312.3d3c8097@kernel.org>
+References: <20241202191312.3d3c8097@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,219 +83,149 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Mail-ID: 25c0c98c-cfa9-4aae-ab48-f859e8afd9cd
 
-From: Daniel Golle <daniel@makrotopia.org>
+In general, 'qlen' of any classful qdisc should keep track of the
+number of packets that the qdisc itself and all of its children holds.
+In case of netem, 'qlen' only accounts for the packets in its internal
+tfifo. When netem is used with a child qdisc, the child qdisc can use
+'qdisc_tree_reduce_backlog' to inform its parent, netem, about created
+or dropped SKBs. This function updates 'qlen' and the backlog statistics
+of netem, but netem does not account for changes made by a child qdisc.
+'qlen' then indicates the wrong number of packets in the tfifo.
+If a child qdisc creates new SKBs during enqueue and informs its parent
+about this, netem's 'qlen' value is increased. When netem dequeues the
+newly created SKBs from the child, the 'qlen' in netem is not updated.
+If 'qlen' reaches the configured sch->limit, the enqueue function stops
+working, even though the tfifo is not full.
 
-Patch from Sam Shih <sam.shih@mediatek.com> found in MediaTek SDK
-released under GPL.
+Reproduce the bug:
+Ensure that the sender machine has GSO enabled. Configure netem as root
+qdisc and tbf as its child on the outgoing interface of the machine
+as follows:
+$ tc qdisc add dev <oif> root handle 1: netem delay 100ms limit 100
+$ tc qdisc add dev <oif> parent 1:0 tbf rate 50Mbit burst 1542 latency 50ms
 
-Get syscon and use it to set the PHY type.
-Extend support to PCIe and SGMII mode in addition to USB2 and USB3.
+Send bulk TCP traffic out via this interface, e.g., by running an iPerf3
+client on the machine. Check the qdisc statistics:
+$ tc -s qdisc show dev <oif>
 
-Signed-off-by: Daniel Golle <daniel@makrotopia.org>
-Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
+tbf segments the GSO SKBs (tbf_segment) and updates the netem's 'qlen'.
+The interface fully stops transferring packets and "locks". In this case,
+the child qdisc and tfifo are empty, but 'qlen' indicates the tfifo is at
+its limit and no more packets are accepted.
+
+This patch adds a counter for the entries in the tfifo. Netem's 'qlen' is
+only decreased when a packet is returned by its dequeue function, and not
+during enqueuing into the child qdisc. External updates to 'qlen' are thus
+accounted for and only the behavior of the backlog statistics changes. As
+in other qdiscs, 'qlen' then keeps track of  how many packets are held in
+netem and all of its children. As before, sch->limit remains as the
+maximum number of packets in the tfifo. The same applies to netem's
+backlog statistics.
+(Note: the 'backlog' byte-statistic of netem is incorrect in the example
+above even after the patch is applied due to a bug in tbf. See my
+previous patch ([PATCH] net/sched: tbf: correct backlog statistic for
+GSO packets)).
+
+Signed-off-by: Martin Ottens <martin.ottens@fau.de>
 ---
-xsphy is needed on mt7988 to get ssusb0 working
+ net/sched/sch_netem.c | 22 ++++++++++++++++------
+ 1 file changed, 16 insertions(+), 6 deletions(-)
 
-current way is using a syscon node like this
-
-	topmisc: topmisc@11d10000 {
-		compatible = "mediatek,mt7988-topmisc", "syscon",
-			     "mediatek,mt7988-power-controller";
-		reg = <0 0x11d10000 0 0x10000>;
-		#clock-cells = <1>;
-		#power-domain-cells = <1>;
-		#address-cells = <1>;
-		#size-cells = <0>;
-	};
-
-	xs-phy@11e10000 {
-		compatible = "mediatek,mt7988-xsphy",
-			     "mediatek,xsphy";
-		#address-cells = <2>;
-		#size-cells = <2>;
-		ranges;
-		status = "disabled";
-
-		xphyu2port0: usb-phy@11e10000 {
-			reg = <0 0x11e10000 0 0x400>;
-			clocks = <&infracfg CLK_INFRA_USB_UTMI>;
-			clock-names = "ref";
-			#phy-cells = <1>;
-		};
-
-		xphyu3port0: usb-phy@11e13000 {
-			reg = <0 0x11e13400 0 0x500>;
-			clocks = <&infracfg CLK_INFRA_USB_PIPE>;
-			clock-names = "ref";
-			#phy-cells = <1>;
-			mediatek,syscon-type = <&topmisc 0x218 0>;
-		};
-	};
-
-maybe there are ways to avoid syscon without writing a dedicated driver
-for the topmisc.
-topmisc node itself is also used in ethernet-block mapped to the
-mediatek,infracfg property.
----
- drivers/phy/mediatek/phy-mtk-xsphy.c | 85 +++++++++++++++++++++++++++-
- 1 file changed, 84 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/phy/mediatek/phy-mtk-xsphy.c b/drivers/phy/mediatek/phy-mtk-xsphy.c
-index 7c248f5cfca5..3f94d0dee1b9 100644
---- a/drivers/phy/mediatek/phy-mtk-xsphy.c
-+++ b/drivers/phy/mediatek/phy-mtk-xsphy.c
-@@ -11,10 +11,12 @@
- #include <linux/clk.h>
- #include <linux/delay.h>
- #include <linux/iopoll.h>
-+#include <linux/mfd/syscon.h>
- #include <linux/module.h>
- #include <linux/of_address.h>
- #include <linux/phy/phy.h>
- #include <linux/platform_device.h>
-+#include <linux/regmap.h>
+diff --git a/net/sched/sch_netem.c b/net/sched/sch_netem.c
+index fe6fed291a7b..71ec9986ed37 100644
+--- a/net/sched/sch_netem.c
++++ b/net/sched/sch_netem.c
+@@ -79,6 +79,8 @@ struct netem_sched_data {
+ 	struct sk_buff	*t_head;
+ 	struct sk_buff	*t_tail;
  
- #include "phy-mtk-io.h"
- 
-@@ -81,12 +83,22 @@
- #define XSP_SR_COEF_DIVISOR	1000
- #define XSP_FM_DET_CYCLE_CNT	1024
- 
-+/* PHY switch between pcie/usb3/sgmii */
-+#define USB_PHY_SWITCH_CTRL	0x0
-+#define RG_PHY_SW_TYPE		GENMASK(3, 0)
-+#define RG_PHY_SW_PCIE		0x0
-+#define RG_PHY_SW_USB3		0x1
-+#define RG_PHY_SW_SGMII		0x2
++	u32 t_len;
 +
- struct xsphy_instance {
- 	struct phy *phy;
- 	void __iomem *port_base;
- 	struct clk *ref_clk;	/* reference clock of anolog phy */
- 	u32 index;
- 	u32 type;
-+	struct regmap *type_sw;
-+	u32 type_sw_reg;
-+	u32 type_sw_index;
- 	/* only for HQA test */
- 	int efuse_intr;
- 	int efuse_tx_imp;
-@@ -259,6 +271,10 @@ static void phy_parse_property(struct mtk_xsphy *xsphy,
- 			inst->efuse_intr, inst->efuse_tx_imp,
- 			inst->efuse_rx_imp);
- 		break;
-+	case PHY_TYPE_PCIE:
-+	case PHY_TYPE_SGMII:
-+		/* nothing to do */
-+		break;
- 	default:
- 		dev_err(xsphy->dev, "incompatible phy type\n");
- 		return;
-@@ -305,6 +321,62 @@ static void u3_phy_props_set(struct mtk_xsphy *xsphy,
- 				     RG_XTP_LN0_RX_IMPSEL, inst->efuse_rx_imp);
+ 	/* optional qdisc for classful handling (NULL at netem init) */
+ 	struct Qdisc	*qdisc;
+ 
+@@ -383,6 +385,7 @@ static void tfifo_reset(struct Qdisc *sch)
+ 	rtnl_kfree_skbs(q->t_head, q->t_tail);
+ 	q->t_head = NULL;
+ 	q->t_tail = NULL;
++	q->t_len = 0;
  }
  
-+/* type switch for usb3/pcie/sgmii */
-+static int phy_type_syscon_get(struct xsphy_instance *instance,
-+			       struct device_node *dn)
-+{
-+	struct of_phandle_args args;
-+	int ret;
-+
-+	/* type switch function is optional */
-+	if (!of_property_read_bool(dn, "mediatek,syscon-type"))
-+		return 0;
-+
-+	ret = of_parse_phandle_with_fixed_args(dn, "mediatek,syscon-type",
-+					       2, 0, &args);
-+	if (ret)
-+		return ret;
-+
-+	instance->type_sw_reg = args.args[0];
-+	instance->type_sw_index = args.args[1] & 0x3; /* <=3 */
-+	instance->type_sw = syscon_node_to_regmap(args.np);
-+	of_node_put(args.np);
-+	dev_info(&instance->phy->dev, "type_sw - reg %#x, index %d\n",
-+		 instance->type_sw_reg, instance->type_sw_index);
-+
-+	return PTR_ERR_OR_ZERO(instance->type_sw);
-+}
-+
-+static int phy_type_set(struct xsphy_instance *instance)
-+{
-+	int type;
-+	u32 offset;
-+
-+	if (!instance->type_sw)
-+		return 0;
-+
-+	switch (instance->type) {
-+	case PHY_TYPE_USB3:
-+		type = RG_PHY_SW_USB3;
-+		break;
-+	case PHY_TYPE_PCIE:
-+		type = RG_PHY_SW_PCIE;
-+		break;
-+	case PHY_TYPE_SGMII:
-+		type = RG_PHY_SW_SGMII;
-+		break;
-+	case PHY_TYPE_USB2:
-+	default:
-+		return 0;
-+	}
-+
-+	offset = instance->type_sw_index * BITS_PER_BYTE;
-+	regmap_update_bits(instance->type_sw, instance->type_sw_reg,
-+			   RG_PHY_SW_TYPE << offset, type << offset);
-+
-+	return 0;
-+}
-+
- static int mtk_phy_init(struct phy *phy)
- {
- 	struct xsphy_instance *inst = phy_get_drvdata(phy);
-@@ -325,6 +397,10 @@ static int mtk_phy_init(struct phy *phy)
- 	case PHY_TYPE_USB3:
- 		u3_phy_props_set(xsphy, inst);
- 		break;
-+	case PHY_TYPE_PCIE:
-+	case PHY_TYPE_SGMII:
-+		/* nothing to do, only used to set type */
-+		break;
- 	default:
- 		dev_err(xsphy->dev, "incompatible phy type\n");
- 		clk_disable_unprepare(inst->ref_clk);
-@@ -403,12 +479,15 @@ static struct phy *mtk_phy_xlate(struct device *dev,
+ static void tfifo_enqueue(struct sk_buff *nskb, struct Qdisc *sch)
+@@ -412,6 +415,7 @@ static void tfifo_enqueue(struct sk_buff *nskb, struct Qdisc *sch)
+ 		rb_link_node(&nskb->rbnode, parent, p);
+ 		rb_insert_color(&nskb->rbnode, &q->t_root);
+ 	}
++	q->t_len++;
+ 	sch->q.qlen++;
+ }
  
- 	inst->type = args->args[0];
- 	if (!(inst->type == PHY_TYPE_USB2 ||
--	      inst->type == PHY_TYPE_USB3)) {
-+	      inst->type == PHY_TYPE_USB3 ||
-+	      inst->type == PHY_TYPE_PCIE ||
-+	      inst->type == PHY_TYPE_SGMII)) {
- 		dev_err(dev, "unsupported phy type: %d\n", inst->type);
- 		return ERR_PTR(-EINVAL);
+@@ -518,7 +522,7 @@ static int netem_enqueue(struct sk_buff *skb, struct Qdisc *sch,
+ 			1<<get_random_u32_below(8);
  	}
  
- 	phy_parse_property(xsphy, inst);
-+	phy_type_set(inst);
+-	if (unlikely(sch->q.qlen >= sch->limit)) {
++	if (unlikely(q->t_len >= sch->limit)) {
+ 		/* re-link segs, so that qdisc_drop_all() frees them all */
+ 		skb->next = segs;
+ 		qdisc_drop_all(skb, sch, to_free);
+@@ -702,8 +706,8 @@ static struct sk_buff *netem_dequeue(struct Qdisc *sch)
+ tfifo_dequeue:
+ 	skb = __qdisc_dequeue_head(&sch->q);
+ 	if (skb) {
+-		qdisc_qstats_backlog_dec(sch, skb);
+ deliver:
++		qdisc_qstats_backlog_dec(sch, skb);
+ 		qdisc_bstats_update(sch, skb);
+ 		return skb;
+ 	}
+@@ -719,8 +723,7 @@ static struct sk_buff *netem_dequeue(struct Qdisc *sch)
  
- 	return inst->phy;
- }
-@@ -510,6 +589,10 @@ static int mtk_xsphy_probe(struct platform_device *pdev)
- 			dev_err(dev, "failed to get ref_clk(id-%d)\n", port);
- 			return PTR_ERR(inst->ref_clk);
+ 		if (time_to_send <= now && q->slot.slot_next <= now) {
+ 			netem_erase_head(q, skb);
+-			sch->q.qlen--;
+-			qdisc_qstats_backlog_dec(sch, skb);
++			q->t_len--;
+ 			skb->next = NULL;
+ 			skb->prev = NULL;
+ 			/* skb->dev shares skb->rbnode area,
+@@ -747,16 +750,21 @@ static struct sk_buff *netem_dequeue(struct Qdisc *sch)
+ 					if (net_xmit_drop_count(err))
+ 						qdisc_qstats_drop(sch);
+ 					qdisc_tree_reduce_backlog(sch, 1, pkt_len);
++					sch->qstats.backlog -= pkt_len;
++					sch->q.qlen--;
+ 				}
+ 				goto tfifo_dequeue;
+ 			}
++			sch->q.qlen--;
+ 			goto deliver;
  		}
-+
-+		retval = phy_type_syscon_get(inst, child_np);
-+		if (retval)
-+			return retval;
- 	}
  
- 	provider = devm_of_phy_provider_register(dev, mtk_phy_xlate);
+ 		if (q->qdisc) {
+ 			skb = q->qdisc->ops->dequeue(q->qdisc);
+-			if (skb)
++			if (skb) {
++				sch->q.qlen--;
+ 				goto deliver;
++			}
+ 		}
+ 
+ 		qdisc_watchdog_schedule_ns(&q->watchdog,
+@@ -766,8 +774,10 @@ static struct sk_buff *netem_dequeue(struct Qdisc *sch)
+ 
+ 	if (q->qdisc) {
+ 		skb = q->qdisc->ops->dequeue(q->qdisc);
+-		if (skb)
++		if (skb) {
++			sch->q.qlen--;
+ 			goto deliver;
++		}
+ 	}
+ 	return NULL;
+ }
 -- 
-2.43.0
+2.39.5
 
 
