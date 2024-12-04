@@ -1,218 +1,186 @@
-Return-Path: <linux-kernel+bounces-431356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 448D69E3CFE
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:41:56 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1D599E3CCA
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 15:32:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7372DB3D0AF
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 14:12:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BBCE3B3D340
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 14:12:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FC46209671;
-	Wed,  4 Dec 2024 14:10:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CD1D1FBCB2;
+	Wed,  4 Dec 2024 14:11:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H/lWxIYj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="esApVVK/"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 559941F8923;
-	Wed,  4 Dec 2024 14:10:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D34B41F756C
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 14:11:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733321438; cv=none; b=EPNnU7uNHnr/utnI8iwW4EUYyCQiRIG9VJqOMIUqq6hQ7ddgakifd4UdoIOppiTAnqRMUDEW62awx4RsndcpzU1XAdQf3wsZXXgmofF7Fd50XYQyID/XnP3G4BuHtLNbywYQIY6n0C8H3ePsxDpHt+UpL7GfsNKw418cT9LYNy8=
+	t=1733321497; cv=none; b=Rjnj4HUPx6Kd4pvl8FqIM5ww1saQK5x3jq0JNnZ43i+HDopxLJsOgut0dP+EnmVLvlssSzugcz/x3hEjkBRH71kqiEJpw/c5lM02mC6MZ2K3IxvSJru1prKeRc+uVYo+569SjBVmg1DfGybokpG8xMV17RDzKjOYJu47ADvE1rk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733321438; c=relaxed/simple;
-	bh=YYSDsgbu4kMtRDP07uuP9pCt0culwplV4KoPxA6I3hI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dPBpR9ffUnK+C7+bYsaxbQxIQFQT4XFgjS5JJFFEeQT9S7rYHjlUVtYHSdkVl+mHow/ub2E7SNwaDo/v6jvuJwdRzhoCkbHB6dzn+BY3AJJ1VLQyoToBoHYfR8zZ5cU92+sQr5Rds3s4KebK9vy0pvQf4ZhQDiYUOGJC8N6aQRI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H/lWxIYj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27C5CC4CECD;
-	Wed,  4 Dec 2024 14:10:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733321437;
-	bh=YYSDsgbu4kMtRDP07uuP9pCt0culwplV4KoPxA6I3hI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=H/lWxIYjb/XMOitGejfbUCVwTnb0OQSj1sa+6z8o3yOf4vflWP64boaCLJocOV4Ua
-	 nWsNmJVSmkzqfwRHMOn67u+rRQFvBClGDfQ/Z1xKOdG+O1PzGPCXaoReoDJzuY1pes
-	 3wdqP2Nox7ZMZg6TyUIWi7RRSKoA31J3sf0D1MGdije5K/uCQmqCFd9zOCs4VmwH2u
-	 NPKaS/BiZG333RDBeSLQ6fVxw9IL0Rqx/C9HPxQnY7YrGy+V73ArLNIb3S/ljP4U/k
-	 MyDtgIJr1GYIQSxcgORFPh7DH+JyjoEPRMucX+x1IT3LSVl3ZRjeAiHIjtHA3gwAVH
-	 010T6iI30fqhg==
-Date: Wed, 4 Dec 2024 19:40:34 +0530
-From: Vinod Koul <vkoul@kernel.org>
-To: =?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-Cc: Kishon Vijay Abraham I <kishon@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Sam Protsenko <semen.protsenko@linaro.org>,
-	Will McVicker <willmcvicker@google.com>,
-	Roy Luo <royluo@google.com>, kernel-team@android.com,
-	linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH 8/9] phy: exynos5-usbdrd: subscribe to orientation
- notifier if required
-Message-ID: <Z1Bi2gRJefYy1tyo@vaman>
-References: <20241127-gs101-phy-lanes-orientation-phy-v1-0-1b7fce24960b@linaro.org>
- <20241127-gs101-phy-lanes-orientation-phy-v1-8-1b7fce24960b@linaro.org>
+	s=arc-20240116; t=1733321497; c=relaxed/simple;
+	bh=Olq8n9V/c4ByFTjwghd3RJxLHgwGeb1Qki0jTylZSXg=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=VdqrdTj5A5QCh/suSgaOBOpysLal//+/tgDH+rr+7m4RxLYjyR+p5Mx4Xj7wGnZ2IyOgBwQik1dbGPO5IcyGJSx9Ri7VutVwBtBfkgehmT9BsFDyMAGL0WIkjnVBh8Qd5i519G9qpIiMASrnojXWDRsmFpXg6v95i44qZNli/ms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=esApVVK/; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733321494;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6bC3keQdTl30q+RF/rmG2+pay8wGwfywBaMyPdC8zJk=;
+	b=esApVVK/T+M/yQg0a+CjK/gZ4f/T4d48i158YykBSLnIHtQFL8KczcOx/m3WTcCtHAJfiM
+	rXwEUvvIENIdgcxqS+hTyg36NMMV1Ta1w0A04gTE5qKMlrzdf9RLyP0K4FstfJrlo1G1aa
+	kMX/JuRFIdbGbr7ZJtX5PskTwEyMlSE=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-447-kpMovubyMEK9BYAP0K7I0w-1; Wed,
+ 04 Dec 2024 09:11:31 -0500
+X-MC-Unique: kpMovubyMEK9BYAP0K7I0w-1
+X-Mimecast-MFC-AGG-ID: kpMovubyMEK9BYAP0K7I0w
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B3B571955F40;
+	Wed,  4 Dec 2024 14:11:28 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.48])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id DA46D19560A2;
+	Wed,  4 Dec 2024 14:11:26 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <67238110.050a0220.35b515.015e.GAE@google.com>
+References: <67238110.050a0220.35b515.015e.GAE@google.com>
+To: syzbot <syzbot+404b4b745080b6210c6c@syzkaller.appspotmail.com>
+Cc: dhowells@redhat.com, jlayton@kernel.org,
+    linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+    netfs@lists.linux.dev, syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [netfs?] kernel BUG in iov_iter_revert (2)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241127-gs101-phy-lanes-orientation-phy-v1-8-1b7fce24960b@linaro.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1129890.1733321485.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date: Wed, 04 Dec 2024 14:11:25 +0000
+Message-ID: <1129891.1733321485@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On 27-11-24, 10:58, André Draszik wrote:
-> gs101's SS phy needs to be configured differently based on the
-> connector orientation, as the SS link can only be established if the
-> mux is configured correctly.
-> 
-> The code to handle programming of the mux is in place already, this commit
-> now adds the missing pieces to subscribe to the Type-C orientation
-> switch event.
-> 
-> Note that for this all to work we rely on the USB controller
-> re-initialising us. It should invoke our .exit() upon cable unplug, and
-> during cable plug we'll receive the orientation event after which we
-> expect our .init() to be called.
-> 
-> Above reinitialisation happens if the DWC3 controller can enter runtime
-> suspend automatically. For the DWC3 driver, this is an opt-in:
->     echo auto > /sys/devices/.../11110000.usb/power/control
-> Once done, things work as long as the UDC is not bound as otherwise it
-> stays busy because it doesn't cancel / stop outstanding TRBs. For now
-> we have to manually unbind the UDC in that case:
->      echo "" > sys/kernel/config/usb_gadget/.../UDC
-> 
-> Signed-off-by: André Draszik <andre.draszik@linaro.org>
-> ---
->  drivers/phy/samsung/Kconfig              |  1 +
->  drivers/phy/samsung/phy-exynos5-usbdrd.c | 60 ++++++++++++++++++++++++++++++++
->  2 files changed, 61 insertions(+)
-> 
-> diff --git a/drivers/phy/samsung/Kconfig b/drivers/phy/samsung/Kconfig
-> index f10afa3d7ff5..fc7bd1088576 100644
-> --- a/drivers/phy/samsung/Kconfig
-> +++ b/drivers/phy/samsung/Kconfig
-> @@ -80,6 +80,7 @@ config PHY_EXYNOS5_USBDRD
->  	tristate "Exynos5 SoC series USB DRD PHY driver"
->  	depends on (ARCH_EXYNOS && OF) || COMPILE_TEST
->  	depends on HAS_IOMEM
-> +	depends on TYPEC || (TYPEC=n && COMPILE_TEST)
->  	depends on USB_DWC3_EXYNOS
->  	select GENERIC_PHY
->  	select MFD_SYSCON
-> diff --git a/drivers/phy/samsung/phy-exynos5-usbdrd.c b/drivers/phy/samsung/phy-exynos5-usbdrd.c
-> index 1a34e9b4618a..2010d25ee817 100644
-> --- a/drivers/phy/samsung/phy-exynos5-usbdrd.c
-> +++ b/drivers/phy/samsung/phy-exynos5-usbdrd.c
-> @@ -394,6 +394,7 @@ struct exynos5_usbdrd_phy_drvdata {
->   * @extrefclk: frequency select settings when using 'separate
->   *	       reference clocks' for SS and HS operations
->   * @regulators: regulators for phy
-> + * @sw: TypeC orientation switch handle
->   * @orientation: TypeC connector orientation - normal or flipped
->   */
->  struct exynos5_usbdrd_phy {
-> @@ -415,6 +416,7 @@ struct exynos5_usbdrd_phy {
->  	u32 extrefclk;
->  	struct regulator_bulk_data *regulators;
->  
-> +	struct typec_switch_dev *sw;
->  	enum typec_orientation orientation;
->  };
->  
-> @@ -1400,6 +1402,60 @@ static int exynos5_usbdrd_phy_clk_handle(struct exynos5_usbdrd_phy *phy_drd)
->  	return 0;
->  }
->  
-> +#if IS_ENABLED(CONFIG_TYPEC)
-> +static int exynos5_usbdrd_orien_sw_set(struct typec_switch_dev *sw,
-> +				       enum typec_orientation orientation)
-> +{
-> +	struct exynos5_usbdrd_phy *phy_drd = typec_switch_get_drvdata(sw);
-> +
-> +	scoped_guard(mutex, &phy_drd->phy_mutex)
-> +		phy_drd->orientation = orientation;
-> +
-> +	return 0;
-> +}
-> +
-> +static void exynos5_usbdrd_orien_switch_unregister(void *data)
-> +{
-> +	struct exynos5_usbdrd_phy *phy_drd = data;
-> +
-> +	typec_switch_unregister(phy_drd->sw);
-> +}
-> +
-> +static int exynos5_usbdrd_setup_notifiers(struct exynos5_usbdrd_phy *phy_drd)
-> +{
-> +	int ret;
-> +
-> +	phy_drd->orientation = (enum typec_orientation)-1;
+#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.gi=
+t v6.13-rc1
 
-Should this be TYPEC_ORIENTATION_NONE?
+netfs: Fix enomem handling in buffered reads
 
-> +	if (device_property_present(phy_drd->dev, "orientation-switch")) {
-> +		struct typec_switch_desc sw_desc = { };
-> +
-> +		sw_desc.drvdata = phy_drd;
-> +		sw_desc.fwnode = dev_fwnode(phy_drd->dev);
-> +		sw_desc.set = exynos5_usbdrd_orien_sw_set;
-> +
-> +		phy_drd->sw = typec_switch_register(phy_drd->dev, &sw_desc);
-> +		if (IS_ERR(phy_drd->sw))
-> +			return dev_err_probe(phy_drd->dev,
-> +					     PTR_ERR(phy_drd->sw),
-> +					     "Failed to register TypeC orientation switch\n");
-> +
-> +		ret = devm_add_action_or_reset(phy_drd->dev,
-> +					       exynos5_usbdrd_orien_switch_unregister,
-> +					       phy_drd);
-> +		if (ret)
-> +			return dev_err_probe(phy_drd->dev, ret,
-> +					     "Failed to register TypeC orientation devm action\n");
-> +	}
-> +
-> +	return 0;
-> +}
-> +#else /* CONFIG_TYPEC */
-> +static int exynos5_usbdrd_setup_notifiers(struct exynos5_usbdrd_phy *phy_drd)
-> +{
-> +	return 0;
-> +}
-> +#endif /* CONFIG_TYPEC */
-> +
->  static const struct exynos5_usbdrd_phy_config phy_cfg_exynos5[] = {
->  	{
->  		.id		= EXYNOS5_DRDPHY_UTMI,
-> @@ -1789,6 +1845,10 @@ static int exynos5_usbdrd_phy_probe(struct platform_device *pdev)
->  	if (ret)
->  		return dev_err_probe(dev, ret, "failed to get regulators\n");
->  
-> +	ret = exynos5_usbdrd_setup_notifiers(phy_drd);
-> +	if (ret)
-> +		return ret;
-> +
->  	dev_vdbg(dev, "Creating usbdrd_phy phy\n");
->  
->  	for (i = 0; i < EXYNOS5_DRDPHYS_NUM; i++) {
-> 
-> -- 
-> 2.47.0.338.g60cca15819-goog
+If netfs_read_to_pagecache() gets an error from either ->prepare_read() or
+from netfs_prepare_read_iterator(), it needs to decrement ->nr_outstanding=
+,
+cancel the subrequest and break out of the issuing loop.  Currently, it
+only does this for two of the cases, but there are two more that aren't
+handled.
 
--- 
-~Vinod
+Fix this by moving the handling to a common place and jumping to it from
+all four places.  This is in preference to inserting a wrapper around
+netfs_prepare_read_iterator() as proposed by Dmitry Antipov[1].
+
+Fixes: ee4cdf7ba857 ("netfs: Speed up buffered reading")
+Reported-by: syzbot+404b4b745080b6210c6c@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=3D404b4b745080b6210c6c
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Dmitry Antipov <dmantipov@yandex.ru>
+cc: Jeff Layton <jlayton@kernel.org>
+cc: netfs@lists.linux.dev
+cc: linux-fsdevel@vger.kernel.org
+Link: https://lore.kernel.org/r/20241202093943.227786-1-dmantipov@yandex.r=
+u/ [1]
+---
+ fs/netfs/buffered_read.c |   28 ++++++++++++++++------------
+ 1 file changed, 16 insertions(+), 12 deletions(-)
+
+diff --git a/fs/netfs/buffered_read.c b/fs/netfs/buffered_read.c
+index 7ac34550c403..4dc9b8286355 100644
+--- a/fs/netfs/buffered_read.c
++++ b/fs/netfs/buffered_read.c
+@@ -275,22 +275,14 @@ static void netfs_read_to_pagecache(struct netfs_io_=
+request *rreq)
+ 			netfs_stat(&netfs_n_rh_download);
+ 			if (rreq->netfs_ops->prepare_read) {
+ 				ret =3D rreq->netfs_ops->prepare_read(subreq);
+-				if (ret < 0) {
+-					atomic_dec(&rreq->nr_outstanding);
+-					netfs_put_subrequest(subreq, false,
+-							     netfs_sreq_trace_put_cancel);
+-					break;
+-				}
++				if (ret < 0)
++					goto prep_failed;
+ 				trace_netfs_sreq(subreq, netfs_sreq_trace_prepare);
+ 			}
+ =
+
+ 			slice =3D netfs_prepare_read_iterator(subreq);
+-			if (slice < 0) {
+-				atomic_dec(&rreq->nr_outstanding);
+-				netfs_put_subrequest(subreq, false, netfs_sreq_trace_put_cancel);
+-				ret =3D slice;
+-				break;
+-			}
++			if (slice < 0)
++				goto prep_iter_failed;
+ =
+
+ 			rreq->netfs_ops->issue_read(subreq);
+ 			goto done;
+@@ -302,6 +294,8 @@ static void netfs_read_to_pagecache(struct netfs_io_re=
+quest *rreq)
+ 			trace_netfs_sreq(subreq, netfs_sreq_trace_submit);
+ 			netfs_stat(&netfs_n_rh_zero);
+ 			slice =3D netfs_prepare_read_iterator(subreq);
++			if (slice < 0)
++				goto prep_iter_failed;
+ 			__set_bit(NETFS_SREQ_CLEAR_TAIL, &subreq->flags);
+ 			netfs_read_subreq_terminated(subreq, 0, false);
+ 			goto done;
+@@ -310,6 +304,8 @@ static void netfs_read_to_pagecache(struct netfs_io_re=
+quest *rreq)
+ 		if (source =3D=3D NETFS_READ_FROM_CACHE) {
+ 			trace_netfs_sreq(subreq, netfs_sreq_trace_submit);
+ 			slice =3D netfs_prepare_read_iterator(subreq);
++			if (slice < 0)
++				goto prep_iter_failed;
+ 			netfs_read_cache_to_pagecache(rreq, subreq);
+ 			goto done;
+ 		}
+@@ -318,6 +314,14 @@ static void netfs_read_to_pagecache(struct netfs_io_r=
+equest *rreq)
+ 		WARN_ON_ONCE(1);
+ 		break;
+ =
+
++	prep_iter_failed:
++		ret =3D slice;
++	prep_failed:
++		subreq->error =3D ret;
++		atomic_dec(&rreq->nr_outstanding);
++		netfs_put_subrequest(subreq, false, netfs_sreq_trace_put_cancel);
++		break;
++
+ 	done:
+ 		size -=3D slice;
+ 		start +=3D slice;
+
 
