@@ -1,153 +1,122 @@
-Return-Path: <linux-kernel+bounces-430830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-430831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 328D39E3646
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 10:13:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6713D9E362A
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 10:07:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0333BB307A9
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 09:03:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 15EC3B2A629
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 09:04:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2A1D1AAE10;
-	Wed,  4 Dec 2024 09:03:32 +0000 (UTC)
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10926196C7B;
+	Wed,  4 Dec 2024 09:04:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oUPDjmdd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D52D019CC2D
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 09:03:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6616117D354;
+	Wed,  4 Dec 2024 09:04:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733303012; cv=none; b=thdogDTyhVvfUUm2XzfMN5yIMJiL9D7aS/dhPsVkTTaVJtp9A28U7yLNXMDj9DJdPMs5wamQAPnZI4HLwSLHfNahQDcU+6wJEmAuBQLrgepbbSt1jzNm1VW1IKCW4F0KuZJWBc9Erz9YypXLhkLMfREajL82cczMMHwUF9WRP40=
+	t=1733303072; cv=none; b=f+z+qVKUNL1XBkd2nlM4RffSwpcZ/otCZkUE1Aoa9Qczze2gcEoKYKAM109Dd0ESQssvv/B7o4ZGUZn9sxWQoYMWYOUV9DbKb8R4H4YRtKrh3emOkC1hXTZTlGPYXmyI7Y/YrWJ1tvAL/NSa3XWkyL93A4iiqFNN72PmBoIOBAg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733303012; c=relaxed/simple;
-	bh=KVHXDWUdGtD0F2AgNxM+gGfnXRiYl23g3rcCj0MlqQM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WAMDrc9Ru/k1xtWMiBJF2difn4ABCfjEIp39aCWeuZLVr2PH8TXcxt+9f/hZoUELo9LA+bgIMg0I4ZiQ0NPt5d30Llnj1W1Cv8TPfseQ1xYon4kh4Afa/NwxpQXVDT1yRZ2hcsQN8G1umefO4zM5gUtXGejzTp16IlpFDOfVNxw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 22AB921167;
-	Wed,  4 Dec 2024 09:03:29 +0000 (UTC)
-Authentication-Results: smtp-out1.suse.de;
-	none
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0A5A5139C2;
-	Wed,  4 Dec 2024 09:03:29 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id DFk2AuEaUGfoZAAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Wed, 04 Dec 2024 09:03:29 +0000
-Message-ID: <15096b27-6f27-45fc-8a8b-de781a9c42a5@suse.cz>
-Date: Wed, 4 Dec 2024 10:03:28 +0100
+	s=arc-20240116; t=1733303072; c=relaxed/simple;
+	bh=VT8ZfVdCX2f7yWT+xNjlJWjbNeNrv22Jv1EIIDNEunU=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=eGxWWYncJRgeoluubJ+Xs/8Yi0r9ScKBNnrpjsZm3h89q2rgS5/H+0CO8ZfDVr6sGBMULz29miXEIGYAKbk1dhwU2chJTfasVt+RqW7V5YlzxCxWq5IBA3V8nC2ymR0GgmRpHbeIYnt873PUjgUwB1oOk7+eqGo0mhsxsAkqakY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oUPDjmdd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7AE8C4CED1;
+	Wed,  4 Dec 2024 09:04:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733303071;
+	bh=VT8ZfVdCX2f7yWT+xNjlJWjbNeNrv22Jv1EIIDNEunU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=oUPDjmddCGZGbyLZZD1MzXPndzo55vLhSrq1uC/YHc1lbEAgA1APGQ8GTVh+Ba+4I
+	 tM78cUufghWaVjkEuv5mlwycA4BnNi6/0jwXnBJin8Xn10MAyTpk9IJBm3KQgFJZK3
+	 /LuOEDPh+YBA7j8D4GGEEO49E/7IFtGsUwGfx9LVrPWyu6daToQTaCYwlgqDK2CNhv
+	 YZg7YioF2Pl6uVVusLaFz7FMptlyRuSgtzJAs/L9Rk3BpMmNv1Ypk859PQebCvP1/5
+	 hrd2LC3EHi/nTt5TV8c0LB6mKrNGJymhVPC6FqYPbIlwvDbdITYMgEVtIj5OLYXC8J
+	 D8EPQ9a++hAXw==
+Received: from 82-132-237-135.dab.02.net ([82.132.237.135] helo=wait-a-minute.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1tIlJ6-000Nlg-VV;
+	Wed, 04 Dec 2024 09:04:29 +0000
+Date: Wed, 04 Dec 2024 09:04:26 +0000
+Message-ID: <87ikrzstt1.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Oliver Upton <oliver.upton@linux.dev>
+Cc: kvmarm@lists.linux.dev,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Mingwei Zhang <mizhang@google.com>,
+	Colton Lewis <coltonlewis@google.com>,
+	Raghavendra Rao Ananta <rananta@google.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 05/14] KVM: arm64: Always allow fixed cycle counter
+In-Reply-To: <Z0-HBsBgf6WB7x4R@linux.dev>
+References: <20241203193220.1070811-1-oliver.upton@linux.dev>
+	<20241203193220.1070811-6-oliver.upton@linux.dev>
+	<87ldwwsbad.wl-maz@kernel.org>
+	<Z0-HBsBgf6WB7x4R@linux.dev>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND v2 4/6] mm/page_alloc: sort out the
- alloc_contig_range() gfp flags mess
-Content-Language: en-US
-To: Oscar Salvador <osalvador@suse.de>, David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- linuxppc-dev@lists.ozlabs.org, Andrew Morton <akpm@linux-foundation.org>,
- Zi Yan <ziy@nvidia.com>, Michael Ellerman <mpe@ellerman.id.au>,
- Nicholas Piggin <npiggin@gmail.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Naveen N Rao <naveen@kernel.org>, Madhavan Srinivasan <maddy@linux.ibm.com>
-References: <20241203094732.200195-1-david@redhat.com>
- <20241203094732.200195-5-david@redhat.com>
- <feffbbe8-4176-48e8-b503-ef53d7914197@suse.cz>
- <96c92857-4850-4f85-9474-ac193c5ea48c@redhat.com>
- <04c1d28e-bbea-4499-9a6d-770f9ca53ba9@suse.cz>
- <d736f1c0-343e-4031-88ba-3b33b73dbeba@redhat.com>
- <Z1AaC5Hj2RV_5FDD@localhost.localdomain>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- EP+ylKVEKb0Q2A==
-In-Reply-To: <Z1AaC5Hj2RV_5FDD@localhost.localdomain>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Pre-Result: action=no action;
-	module=replies;
-	Message is reply to one we originated
-X-Spamd-Result: default: False [-4.00 / 50.00];
-	REPLY(-4.00)[];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU]
-X-Spam-Flag: NO
-X-Spam-Score: -4.00
-X-Rspamd-Queue-Id: 22AB921167
-X-Rspamd-Pre-Result: action=no action;
-	module=replies;
-	Message is reply to one we originated
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Level: 
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 82.132.237.135
+X-SA-Exim-Rcpt-To: oliver.upton@linux.dev, kvmarm@lists.linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, mizhang@google.com, coltonlewis@google.com, rananta@google.com, catalin.marinas@arm.com, will@kernel.org, mark.rutland@arm.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On 12/4/24 09:59, Oscar Salvador wrote:
-> On Tue, Dec 03, 2024 at 08:19:02PM +0100, David Hildenbrand wrote:
->> It was always set using "GFP_USER | __GFP_MOVABLE | __GFP_RETRY_MAYFAIL",
->> and I removed the same flag combination in #2 from memory offline code, and
->> we do have the exact same thing in do_migrate_range() in
->> mm/memory_hotplug.c.
->> 
->> We should investigate if__GFP_HARDWALL is the right thing to use here, and
->> if we can get rid of that by switching to GFP_KERNEL in all these places.
+On Tue, 03 Dec 2024 22:32:38 +0000,
+Oliver Upton <oliver.upton@linux.dev> wrote:
 > 
-> Why would not we want __GFP_HARDWALL set?
-> Without it, we could potentially migrate the page to a node which is not
-> part of the cpuset of the task that originally allocated it, thus violating the
-> policy? Is not that a problem?
+> On Tue, Dec 03, 2024 at 09:32:10PM +0000, Marc Zyngier wrote:
+> > On Tue, 03 Dec 2024 19:32:11 +0000,
+> > Oliver Upton <oliver.upton@linux.dev> wrote:
+> > > 
+> > > The fixed CPU cycle counter is mandatory for PMUv3, so it doesn't make a
+> > > lot of sense allowing userspace to filter it. Only apply the PMU event
+> > > filter to *programmed* event counters.
+> > 
+> > But that's a change in ABI, isn't it? We explicitly say in the
+> > documentation that the cycle counter can be filtered by specifying
+> > event 0x11.
+> 
+> Yeah... A bit of a dirty shortcut I took because I don't like the ABI,
+> but distaste isn't enough to break it :)
+> 
+> > More importantly, the current filtering works in terms of events, and
+> > not in terms of counters.
+> > 
+> > Instead of changing the ABI, how about simply not supporting filtering
+> > on such non-compliant HW? Surely that would simplify a few things.
+> 
+> Yeah, that sounds reasonable. Especially if we allow programmable event
+> counters where the event ID space doesn't match the architecture.
 
-The task doing the alloc_contig_range() will likely not be the same task as
-the one that originally allocated the page, so its policy would be
-different, no? So even with __GFP_HARDWALL we might be already migrating
-outside the original tasks's constraint? Am I missing something?
+Another thing I have been wondering is if a slightly better approach
+would be to move some of the handling to the PMU driver itself, and
+let it emulate PMUv3 if it can. This would allow conversion of event
+numbers in situ rather than polluting the PMUv3 code in KVM.
+
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
