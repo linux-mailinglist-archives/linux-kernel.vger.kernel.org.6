@@ -1,144 +1,139 @@
-Return-Path: <linux-kernel+bounces-431409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431415-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04E839E3E16
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:22:10 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 128799E3E65
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 16:35:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6198DB2FA65
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 14:44:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2732DB3A13F
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 14:46:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C410D20A5F3;
-	Wed,  4 Dec 2024 14:44:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 115E420C461;
+	Wed,  4 Dec 2024 14:45:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lrC+cOU9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="PKkmeevQ"
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E65B1FECCF
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 14:44:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB23520ADE3;
+	Wed,  4 Dec 2024 14:45:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733323451; cv=none; b=NN7xd4BkvIkP1aYi1l5jcZkwYlWZzOjUBKhg7Oad/Q5Ie5QmQjzah3wiMd5n2BWbbFZFzmlSZOVAthyM/QUxr9Z4CPH9H5glgp8xRUaym4AxE7eTdQStWruH20YCcUee0RhDx45vygMLsLZpPGL+um2ofEBMljUc8ETttFp15F0=
+	t=1733323512; cv=none; b=QV7Y+6qtjj1t4Wdm1SugW5di/VUi5Iw1kU+f+k5iWcU33fSLa7jQRj2x4Xp59T9OYLNDgF100urT2YX+VbX/V4MBKHLjcBMkAWErz4d8ujyBEVc9/xdLWE1wOI9xMSVW89JVK81LCMGaMZTeC5cKRuYT5rtC7s1uOxHpJ/EgI+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733323451; c=relaxed/simple;
-	bh=46Z+0L3Ezl1nEU0WOzGgLjKKbkTUHUDezy6UcLo3ymg=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=S8YD6IZJ4B0iClM22v4R4sA9o/UMyHajeLgW/pE8E4x2KJOrVIf/Kvj6V/w4MTUKD+tljJhek5fnI9jJW5h3ZxkTdRFxTjVgOZzk4HWv/IS5OFYrNpfImLAFqOSRJwsyKF51nbWPfMlv7DSmlLypmqjiyKNPTQUl0i4iPAyu0MI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lrC+cOU9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB475C4CECD;
-	Wed,  4 Dec 2024 14:44:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733323451;
-	bh=46Z+0L3Ezl1nEU0WOzGgLjKKbkTUHUDezy6UcLo3ymg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=lrC+cOU9t2aIN5VGnd60OD+O5OJYkXOlFjiIlZUs4x6xIjD0MNV46qY16lYhhdsoW
-	 q+m9EwjaUJ5LDOLFDA1EJdRIYx2iqGOpRJYoz0+yeqyR3sL6EBlI3I982mqgPm6aZ8
-	 BqwiImmwKE3CzxPsJpBrBeJV+u5ooIX5JDo3+edGWi0Mq0gZ45wJum4tUhUklW5ITG
-	 WXffdHgSfZkWXS9UoOmICEWA1mRpj4D6hYucu1bxhfec/n5s0T77Qtv7gH5p7ZHdnI
-	 A6tNs2fNlA6FUerhX0F8LvRSL/WjnuAAcbMb6Bpz1c1JEhhXWnm6yVi2erZ3C9hfVU
-	 lLU8WlTnsS0qg==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1tIqbo-000TUi-LZ;
-	Wed, 04 Dec 2024 14:44:08 +0000
-Date: Wed, 04 Dec 2024 14:44:07 +0000
-Message-ID: <86ldwvtsnc.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Arnd Bergmann <arnd@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Arnd Bergmann <arnd@arndb.de>,
-	Aaro Koskinen <aaro.koskinen@iki.fi>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Daniel Mack <daniel@zonque.org>,
-	Gregory Clement <gregory.clement@bootlin.com>,
-	Haojian Zhuang <haojian.zhuang@gmail.com>,
-	"Jeremy J. Peper" <jeremy@jeremypeper.com>,
-	Kristoffer Ericson <kristoffer.ericson@gmail.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Mark Brown <broonie@kernel.org>,
-	Ralph Siemsen <ralph.siemsen@linaro.org>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Russell King <linux@armlinux.org.uk>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Tony Lindgren <tony@atomide.com>
-Subject: Re: [PATCH 15/15] ARM: mark footbridge as deprecated
-In-Reply-To: <CACRpkdahQhj5u9ATghszi-N2OYhFbvHF_W_eAMDAU+vhmvdrJA@mail.gmail.com>
-References: <20241204102904.1863796-1-arnd@kernel.org>
-	<20241204102904.1863796-16-arnd@kernel.org>
-	<CACRpkdahQhj5u9ATghszi-N2OYhFbvHF_W_eAMDAU+vhmvdrJA@mail.gmail.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1733323512; c=relaxed/simple;
+	bh=ZjvHZkc5inY+pRASyJgpQhjoZd37S6DxzdVDTHf6W+I=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=PVH7jV3qgnhT8yQwdWlq03wnqpoFOp71EKUYrX3h2bW49gMBw0WdVJrwTzVN9ixXISFn2ydVHE5TBifkliMGMOfL2+uiESvYGjqDte1bhiP53zqER8+TUusvoo2FgH0O+0rNVKdhJaZrU/zBWjqPro3zbbXGqKoLXJ6yfuJjCvw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=PKkmeevQ; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 31B82240008;
+	Wed,  4 Dec 2024 14:45:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1733323508;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uMy6XiHeL00a21AbpVvnbAktcJJ0pCxX4TSIpkEjL+M=;
+	b=PKkmeevQYDm6OoSuXeVAgtJrFaFnPsrB0i8h2xa/KiQROdqvHfLkmtM1/zTP6qvfgE1T4M
+	WlMK/kUrn3CVIBjt2R6OR6aetZcOfvVFDkFrzPDN6eO5hxEg3VEtLTNrkF00dj3+qgijoB
+	1CktsGWQaTm+B2QyumOIdTFy86LD5koJApeKgsFTVDyrcAy1WBkC7cK2P0QFhP7lvRzBXJ
+	Neozive5coTsdkR9A+nXe/QyDSnxoGeeQsbJjTOHSsW4DnSxbBlpQ18VCjBDGJtu8eFiOH
+	ZwInT7+ixlp+dIfyGLbuEgkdMvW+GWstHRnirNofumrH8IVTAUazQP3F9V8z2Q==
+From: Kory Maincent <kory.maincent@bootlin.com>
+Date: Wed, 04 Dec 2024 15:44:43 +0100
+Subject: [PATCH net-next v20 2/6] net: Make net_hwtstamp_validate
+ accessible
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: linus.walleij@linaro.org, arnd@kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, arnd@arndb.de, aaro.koskinen@iki.fi, andrew@lunn.ch, ardb@kernel.org, daniel@zonque.org, gregory.clement@bootlin.com, haojian.zhuang@gmail.com, jeremy@jeremypeper.com, kristoffer.ericson@gmail.com, krzk@kernel.org, broonie@kernel.org, ralph.siemsen@linaro.org, robert.jarzmik@free.fr, linux@armlinux.org.uk, sebastian.hesselbarth@gmail.com, tony@atomide.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241204-feature_ptp_netnext-v20-2-9bd99dc8a867@bootlin.com>
+References: <20241204-feature_ptp_netnext-v20-0-9bd99dc8a867@bootlin.com>
+In-Reply-To: <20241204-feature_ptp_netnext-v20-0-9bd99dc8a867@bootlin.com>
+To: Florian Fainelli <florian.fainelli@broadcom.com>, 
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+ Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, 
+ Russell King <linux@armlinux.org.uk>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Richard Cochran <richardcochran@gmail.com>, 
+ Radu Pirea <radu-nicolae.pirea@oss.nxp.com>, 
+ Jay Vosburgh <j.vosburgh@gmail.com>, Andy Gospodarek <andy@greyhouse.net>, 
+ Nicolas Ferre <nicolas.ferre@microchip.com>, 
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+ Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
+ Jonathan Corbet <corbet@lwn.net>, 
+ Horatiu Vultur <horatiu.vultur@microchip.com>, UNGLinuxDriver@microchip.com, 
+ Simon Horman <horms@kernel.org>, Vladimir Oltean <vladimir.oltean@nxp.com>, 
+ donald.hunter@gmail.com, danieller@nvidia.com, ecree.xilinx@gmail.com, 
+ Andrew Lunn <andrew+netdev@lunn.ch>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+ linux-doc@vger.kernel.org, 
+ Maxime Chevallier <maxime.chevallier@bootlin.com>, 
+ Rahul Rameshbabu <rrameshbabu@nvidia.com>, 
+ Willem de Bruijn <willemb@google.com>, 
+ Shannon Nelson <shannon.nelson@amd.com>, 
+ Alexandra Winter <wintera@linux.ibm.com>, 
+ Kory Maincent <kory.maincent@bootlin.com>, 
+ Jacob Keller <jacob.e.keller@intel.com>
+X-Mailer: b4 0.14.1
+X-GND-Sasl: kory.maincent@bootlin.com
 
-On Wed, 04 Dec 2024 14:29:09 +0000,
-Linus Walleij <linus.walleij@linaro.org> wrote:
->=20
-> On Wed, Dec 4, 2024 at 11:30=E2=80=AFAM Arnd Bergmann <arnd@kernel.org> w=
-rote:
->=20
-> > From: Arnd Bergmann <arnd@arndb.de>
-> >
-> > Along with RiscPC and SA1100, these are the last remaining Intel Strong=
-ARM
-> > machines. The Corel NetWinder used to be particular popular in the late
-> > 1990s, but was discontinued during the bankruptcy of rebel.com in 2001.
-> > The other machine is the DEC (later Intel) EBSA285 evaluation board that
-> > was made in small numbers in 1997 for software developers.
->=20
-> IIRC David Rusling at DEC was sending this board out to interested
-> developers.
->=20
-> > The footbridge/netwinder platform was the main target for the first Deb=
-ian
-> > 2.0 "Hamm" release on the Arm architecture back in 1998, but was dropped
-> > in Debian 6.0 "Squeeze" in 2011, which only supported ARMv4T and higher
-> > with the EABI based ports as ARMv4 hardware had fallen already out of
-> > use by that time.
-> >
-> > Link: http://netwinder.org/
-> > Cc: Linus Walleij <linus.walleij@linaro.org>
-> > Cc: Russell King <linux@armlinux.org.uk>
-> > Cc: Ralph Siemsen <ralph.siemsen@linaro.org>
-> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
->=20
-> I am booting it occasionally, last time to test my KCFI patches.
-> But admittedly that is only to test it for other SA110 users. I remember
-> that Christoph had problems consolidating the DMA used in this
-> machine as well so it is standing in the way of useful work.
->=20
-> Apart from Ralph and me I know Marc Z has been known to boot
-> this machine, so paging him as well.
+Make the net_hwtstamp_validate function accessible in prevision to use
+it from ethtool to validate the hwtstamp configuration before setting it.
 
-I won't be crying. It's probably been a couple of years since I last
-switched it on, and it is IMO ready to join the DEC Shark on the shelf
-of "used to be great" HW.
+Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
+Reviewed-by: Jacob Keller <jacob.e.keller@intel.com>
+Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
+---
 
-FWIW,
+Change in v8:
+- New patch
 
-Acked-by: Marc Zyngier <maz@kernel.org>
+Change in v10:
+- Remove export symbol as ethtool can't be built as a module.
+- Move the declaration to net/core/dev.h instead of netdevice.h
+---
+ net/core/dev.h       | 1 +
+ net/core/dev_ioctl.c | 2 +-
+ 2 files changed, 2 insertions(+), 1 deletion(-)
 
-	M.
+diff --git a/net/core/dev.h b/net/core/dev.h
+index 357543cbde65..aa91eed55a40 100644
+--- a/net/core/dev.h
++++ b/net/core/dev.h
+@@ -312,5 +312,6 @@ int dev_set_hwtstamp_phylib(struct net_device *dev,
+ 			    struct netlink_ext_ack *extack);
+ int dev_get_hwtstamp_phylib(struct net_device *dev,
+ 			    struct kernel_hwtstamp_config *cfg);
++int net_hwtstamp_validate(const struct kernel_hwtstamp_config *cfg);
+ 
+ #endif
+diff --git a/net/core/dev_ioctl.c b/net/core/dev_ioctl.c
+index 67cf68817f23..1f09930fca26 100644
+--- a/net/core/dev_ioctl.c
++++ b/net/core/dev_ioctl.c
+@@ -184,7 +184,7 @@ static int dev_ifsioc_locked(struct net *net, struct ifreq *ifr, unsigned int cm
+ 	return err;
+ }
+ 
+-static int net_hwtstamp_validate(const struct kernel_hwtstamp_config *cfg)
++int net_hwtstamp_validate(const struct kernel_hwtstamp_config *cfg)
+ {
+ 	enum hwtstamp_tx_types tx_type;
+ 	enum hwtstamp_rx_filters rx_filter;
 
---=20
-Without deviation from the norm, progress is not possible.
+-- 
+2.34.1
+
 
