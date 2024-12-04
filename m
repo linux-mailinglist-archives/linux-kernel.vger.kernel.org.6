@@ -1,56 +1,58 @@
-Return-Path: <linux-kernel+bounces-431890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36E8D9E4268
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:52:51 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C7D59E440C
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 20:05:59 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C165168B05
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:52:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A1ACDBC6A28
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:53:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB4CA2101BA;
-	Wed,  4 Dec 2024 17:13:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A9F4237ED5;
+	Wed,  4 Dec 2024 17:13:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s/+KBFfR"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qkgG07JT"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40CEC237594;
-	Wed,  4 Dec 2024 17:13:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 816C2237EC4;
+	Wed,  4 Dec 2024 17:13:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733332428; cv=none; b=okivpPMNeYf7mMXHeFnkh7VP2EpapVNvBreFaMk+aDogjOvq95iEqlPSs4AC8vZZQ5O4l6YXLoxNtoL/uRzGc3p/3ZElH84s0Fa6h9rGRamBh016S2BFPk6/NrOVh2tC2j78Mwu3gsfNWqH3S4O8wQPYopqFWQ7rnMHJBWOiP3A=
+	t=1733332433; cv=none; b=j37W7sw4FWH/8R1wlLX7FThX20GZubfA1miNhEfzQ9vLF8qHEF+4gZSy9/tm2zhAnEj8dhy8ZUWmOkZgxj2RWZ6+WfirZGrsOTksz6FSD/pd8hOiDgth9KIuDxVuToAg/RcsYW6jNBBlxUry9fyLp53BXJPRbKarX9zY0xRAPiI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733332428; c=relaxed/simple;
-	bh=ad6UmUYhmMl1O+IfDWma9JgsNLXjIHywrXQY2P24+Y4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Kx/zeOHgDtdBXffByFu7wlwp6TLWzbWcy0qSOU9yLzU418acz3KFa9xKHeZlLPc/JA+jFNITUZqq9Ld/xBqumyu4V3GqYGKnjP07uHF6nS+eTmUrerVOy/KNoUOhtg+jTH4dfZTRc3upkZZXz8Vv5C069ug8PFNqIERu9/W1B7g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s/+KBFfR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07B3AC4CECD;
-	Wed,  4 Dec 2024 17:13:46 +0000 (UTC)
+	s=arc-20240116; t=1733332433; c=relaxed/simple;
+	bh=C+g6V3G6N0wSuZKsL3GtAbz0xw+hls9DGzXMrgjgSGM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=rF+kQZsUmeuJLOzs8vyV7C73RGf6XJKYPRjpMggZ6cCd9PLm+UixshdTrC7VL/8dG2k/pjCSQPr2Z9kwWj/bRsP2s/vrjaTEcoVlPf/40gtnpSjSNBvmMq14Rf6qBzIhFOhE3mNG8efJRUw0gfbrhjnY6D4ObQhFjeNuCla6fiE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qkgG07JT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B768C4CED6;
+	Wed,  4 Dec 2024 17:13:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733332427;
-	bh=ad6UmUYhmMl1O+IfDWma9JgsNLXjIHywrXQY2P24+Y4=;
-	h=From:To:Cc:Subject:Date:From;
-	b=s/+KBFfRyOnwGjf/FY+k/kiLOZf6VMV3TGijrD9dwROXQkdF5lEzPsBMgg4HOgQ+r
-	 wLJcPAPXJfG0XbQGMDHtU/wMivsO9Lybs6qn5IXFCvfyv8mDwje6HDOwpS22h9tgLB
-	 ioO4ygPC1cM82Dp3AfFxtWuTsxXbBT8mI3NP4sC7ucm94AkraaETdLOXQ6B1fM2nYy
-	 Xiw9wELsgwKkzFVicvRSE4lzrG9J9ZFRjQOcCZOjK+8+9+BUc5GJ2Xc3UeKcWLZnIj
-	 37AuPUboGYlGYkCeSVqstZdNmwU8heTAOTwSIIJZGhSmtCo4dK+WHXA0HsNW/XVNGc
-	 Ztvz5wtaqJfyg==
+	s=k20201202; t=1733332432;
+	bh=C+g6V3G6N0wSuZKsL3GtAbz0xw+hls9DGzXMrgjgSGM=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=qkgG07JTb3wons4wfUL4+7EAyNJOA3OKFIaBpgq9NPPG+Mm0FESMwS2fPfzgZH45i
+	 LDKcDsnGg+pMla1NismC8Gq9N1F073nY1pysWzH0vdh0UiVCZuz8aEDA/4wRe6wH0e
+	 WUwhhQp6eP3NxVSuHcq+93ITcnPHj1n103eDI+3piW2vfYJN3QoMatk3vCsyRs4jS8
+	 02WsJQH7G3v1wDjnx/Sv7fovZRy2bMg8I1vZc2xFa60+JmrKqtKP8nvad24w1YoLK7
+	 1zFF94fVEduRHN02Biy11O9M5M1UnEGltNNNd2vzaUdS5H5Gfp5PsXxauz4o0k2YZL
+	 Rm4SGDueeJ4yA==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Qi Han <hanqi@vivo.com>,
-	Chao Yu <chao@kernel.org>,
-	Jaegeuk Kim <jaegeuk@kernel.org>,
+Cc: Mengyuan Lou <mengyuanlou@net-swift.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
 	Sasha Levin <sashal@kernel.org>,
-	linux-f2fs-devel@lists.sourceforge.net
-Subject: [PATCH AUTOSEL 5.4 1/4] f2fs: fix f2fs_bug_on when uninstalling filesystem call f2fs_evict_inode.
-Date: Wed,  4 Dec 2024 11:02:22 -0500
-Message-ID: <20241204160227.2217428-1-sashal@kernel.org>
+	linux-pci@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.4 3/4] PCI: Add ACS quirk for Wangxun FF5xxx NICs
+Date: Wed,  4 Dec 2024 11:02:24 -0500
+Message-ID: <20241204160227.2217428-3-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20241204160227.2217428-1-sashal@kernel.org>
+References: <20241204160227.2217428-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,82 +64,61 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 5.4.286
 Content-Transfer-Encoding: 8bit
 
-From: Qi Han <hanqi@vivo.com>
+From: Mengyuan Lou <mengyuanlou@net-swift.com>
 
-[ Upstream commit d5c367ef8287fb4d235c46a2f8c8d68715f3a0ca ]
+[ Upstream commit aa46a3736afcb7b0793766d22479b8b99fc1b322 ]
 
-creating a large files during checkpoint disable until it runs out of
-space and then delete it, then remount to enable checkpoint again, and
-then unmount the filesystem triggers the f2fs_bug_on as below:
+Wangxun FF5xxx NICs are similar to SFxxx, RP1000 and RP2000 NICs.  They may
+be multi-function devices, but they do not advertise an ACS capability.
 
-------------[ cut here ]------------
-kernel BUG at fs/f2fs/inode.c:896!
-CPU: 2 UID: 0 PID: 1286 Comm: umount Not tainted 6.11.0-rc7-dirty #360
-Oops: invalid opcode: 0000 [#1] PREEMPT SMP NOPTI
-RIP: 0010:f2fs_evict_inode+0x58c/0x610
-Call Trace:
- __die_body+0x15/0x60
- die+0x33/0x50
- do_trap+0x10a/0x120
- f2fs_evict_inode+0x58c/0x610
- do_error_trap+0x60/0x80
- f2fs_evict_inode+0x58c/0x610
- exc_invalid_op+0x53/0x60
- f2fs_evict_inode+0x58c/0x610
- asm_exc_invalid_op+0x16/0x20
- f2fs_evict_inode+0x58c/0x610
- evict+0x101/0x260
- dispose_list+0x30/0x50
- evict_inodes+0x140/0x190
- generic_shutdown_super+0x2f/0x150
- kill_block_super+0x11/0x40
- kill_f2fs_super+0x7d/0x140
- deactivate_locked_super+0x2a/0x70
- cleanup_mnt+0xb3/0x140
- task_work_run+0x61/0x90
+But the hardware does isolate FF5xxx functions as though it had an ACS
+capability and PCI_ACS_RR and PCI_ACS_CR were set in the ACS Control
+register, i.e., all peer-to-peer traffic is directed upstream instead of
+being routed internally.
 
-The root cause is: creating large files during disable checkpoint
-period results in not enough free segments, so when writing back root
-inode will failed in f2fs_enable_checkpoint. When umount the file
-system after enabling checkpoint, the root inode is dirty in
-f2fs_evict_inode function, which triggers BUG_ON. The steps to
-reproduce are as follows:
+Add ACS quirk for FF5xxx NICs in pci_quirk_wangxun_nic_acs() so the
+functions can be in independent IOMMU groups.
 
-dd if=/dev/zero of=f2fs.img bs=1M count=55
-mount f2fs.img f2fs_dir -o checkpoint=disable:10%
-dd if=/dev/zero of=big bs=1M count=50
-sync
-rm big
-mount -o remount,checkpoint=enable f2fs_dir
-umount f2fs_dir
-
-Let's redirty inode when there is not free segments during checkpoint
-is disable.
-
-Signed-off-by: Qi Han <hanqi@vivo.com>
-Reviewed-by: Chao Yu <chao@kernel.org>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Link: https://lore.kernel.org/r/E16053DB2B80E9A5+20241115024604.30493-1-mengyuanlou@net-swift.com
+Signed-off-by: Mengyuan Lou <mengyuanlou@net-swift.com>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/inode.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/pci/quirks.c | 15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
 
-diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-index 53e1a757e4e17..b0cbb01df8cba 100644
---- a/fs/f2fs/inode.c
-+++ b/fs/f2fs/inode.c
-@@ -631,8 +631,10 @@ int f2fs_write_inode(struct inode *inode, struct writeback_control *wbc)
- 		!is_inode_flag_set(inode, FI_DIRTY_INODE))
- 		return 0;
+diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
+index b60954b04a077..6a2d64d050c04 100644
+--- a/drivers/pci/quirks.c
++++ b/drivers/pci/quirks.c
+@@ -4870,18 +4870,21 @@ static int pci_quirk_brcm_acs(struct pci_dev *dev, u16 acs_flags)
+ }
  
--	if (!f2fs_is_checkpoint_ready(sbi))
-+	if (!f2fs_is_checkpoint_ready(sbi)) {
-+		f2fs_mark_inode_dirty_sync(inode, true);
- 		return -ENOSPC;
-+	}
- 
- 	/*
- 	 * We need to balance fs here to prevent from producing dirty node pages
+ /*
+- * Wangxun 10G/1G NICs have no ACS capability, and on multi-function
+- * devices, peer-to-peer transactions are not be used between the functions.
+- * So add an ACS quirk for below devices to isolate functions.
++ * Wangxun 40G/25G/10G/1G NICs have no ACS capability, but on
++ * multi-function devices, the hardware isolates the functions by
++ * directing all peer-to-peer traffic upstream as though PCI_ACS_RR and
++ * PCI_ACS_CR were set.
+  * SFxxx 1G NICs(em).
+  * RP1000/RP2000 10G NICs(sp).
++ * FF5xxx 40G/25G/10G NICs(aml).
+  */
+ static int  pci_quirk_wangxun_nic_acs(struct pci_dev *dev, u16 acs_flags)
+ {
+ 	switch (dev->device) {
+-	case 0x0100 ... 0x010F:
+-	case 0x1001:
+-	case 0x2001:
++	case 0x0100 ... 0x010F: /* EM */
++	case 0x1001: case 0x2001: /* SP */
++	case 0x5010: case 0x5025: case 0x5040: /* AML */
++	case 0x5110: case 0x5125: case 0x5140: /* AML */
+ 		return pci_acs_ctrl_enabled(acs_flags,
+ 			PCI_ACS_SV | PCI_ACS_RR | PCI_ACS_CR | PCI_ACS_UF);
+ 	}
 -- 
 2.43.0
 
