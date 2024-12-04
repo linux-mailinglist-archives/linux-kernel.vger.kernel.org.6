@@ -1,132 +1,143 @@
-Return-Path: <linux-kernel+bounces-431263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EB389E3B75
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 14:40:23 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A039F9E3B7F
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 14:42:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 46C5FB2FC4F
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 13:29:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4316FB315DB
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 13:30:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A1C11BF300;
-	Wed,  4 Dec 2024 13:29:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kRijPg2L"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 573B31BFE06;
+	Wed,  4 Dec 2024 13:29:51 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1BA81BAED6;
-	Wed,  4 Dec 2024 13:29:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAD531B85E2;
+	Wed,  4 Dec 2024 13:29:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733318972; cv=none; b=gjSfxEI6Jxqk1f3LnKCCnhOoGts4Y/+D2kVA1I5zJNvxpmQIVvRPg150Vnt9xkR5hSbV3TYjzK8/GovrQHQ6tVALBaTZL2wd7YOsVnY+0DQ8+nyb78PItr8VvbG72Sey6lvNTcDErbd6pJyoiWFbHgp9s3cMHTjzJYiMlwN4NZw=
+	t=1733318991; cv=none; b=GV7AKpqChf6U9GVOhbyseVZ5NTvuxbxsCKOMfvQSPAkN3tEWfM+PN4cGpSfkUL9iCtwMj/sNoWRk/50qPIhcxhjcvwD+/a1YyAxIXNrarDl4bM2NujtRuw79ycOREGjbpjakUc7WsS/S34U7eTCoUNNMot2FHblUvPlStbmuDTg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733318972; c=relaxed/simple;
-	bh=8LgSuA+WBQTgsBc7R3pJ6N4Ie4tNuspeOQJsTHEnPSk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ILMuyV742OW1XpyqZkpAKATC2Pa5nEbgGFm3MZN5jct/bc9ovHKwdSaaY+d8r2aG41Lt7uNUFU+pMPlPgHsHEZE0uwWQ0KPZFtmPljCZiOXOJAYO3Gtn77yZZoyn8bvvuRXhW1P/tmWolbE/6d1SpFzztqhF+I0uymdKrz0N4v0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kRijPg2L; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-53df6322ea7so11784524e87.0;
-        Wed, 04 Dec 2024 05:29:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733318969; x=1733923769; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fT7/iM28e3ijCY97txSoUKDIQiA4vS4c3ajFKAjinfw=;
-        b=kRijPg2LiZzlgh9p9UKHGbucz64anb5aPd+n3SdZZCt+0z76w/LihWQa61QXufwyS3
-         JEiLmA2ZjpuGbG+ru2vn1HHzLkb4s1jsXkdN4EoDCc2cpX9Q8PFL21D+xlurvHNdOfxx
-         8snh6O2LE80N0/yFg52Y1dKOH0cjs/5uGDuVnNseDCDIuEClkn9JzxZ6UG0ljuGRFOBo
-         j74e72xcAf/CJ07CYmRmdcFbc1I50eVjpEbEbcrWQiUWEyvikucuzBa2NbBoJgtarVDG
-         UWiUwDffhHxSxbkuH0Y5ZZj1BKH+MYYXOXpMkc5CL4jncbZDdDeix380q0i4FMvoM7aP
-         BLsw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733318969; x=1733923769;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fT7/iM28e3ijCY97txSoUKDIQiA4vS4c3ajFKAjinfw=;
-        b=uQvfz9T50Lg3rvJYVT513ftj3dA08Rm+yvZGQrPBXCoipCWUgBhmLb06aGj8TpOGFp
-         QAEFkJngc7zVJvBQ6gyo/U6OtU84RKzysmvR3bdwwI3lOhZAiRFUJYapgCLcioKY7qnQ
-         Ap7eqiBV5OWdCmJM5GHiX5FLx0LCX5tUYY8uiS/MMnbRLPORSQ+DytmN/Frj/H3QYxDq
-         ZUsl8kjvdmJkOvSwJBRyeI4SApnKH3G5cW1HNu61iMunOFppdxnLpadnv7EtIxD6tI8V
-         ma1qOxnqGrfZ4Yi7fEh1Ab/R7EIzQ3/L5lHvZqYQaKe2ivJ9J4HiCuCXLNuDR/afVxIS
-         Xi3w==
-X-Forwarded-Encrypted: i=1; AJvYcCUi4R7SApy9YSOJxGcBwulIMc6swbCtwJnekfiwprDdsCglFWB1fP2X5veaUcHSSpbMstk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxnGg/YO4Q/leaPTTtJNfFMk0H5IhJn778N6vLgLul9MP5YWj3Z
-	bT5ztL74pv0A+FR5unBDJwqVi4Uuvq5CWsCuEFGTNszzkGtPWlYY58S1+Kl7KIrXqdhMQ0pHnDl
-	rDttx/On4SOhwENWySZgqDrptVb09
-X-Gm-Gg: ASbGncvMV0VFcWkZaRZ9PYUmc09+zmP71c1lpBcUxZ92NSSbjSgjK/y2bHzXhv4O36K
-	xeK9Pg87k8naUs5zF27nrHeI1mQhVoO0UXDjMJSzQ0rt0mw==
-X-Google-Smtp-Source: AGHT+IHQ/z4ayQeLSfV1OPqA1bxmHeGUn3/wBpzgSPvCqpElKZx/4rueiPY+Mv8VyS1esGzWIwWSiGdWuokpyzB/ZHg=
-X-Received: by 2002:ac2:4e0c:0:b0:53e:1ee1:25b3 with SMTP id
- 2adb3069b0e04-53e1ee1263amr1421442e87.27.1733318968843; Wed, 04 Dec 2024
- 05:29:28 -0800 (PST)
+	s=arc-20240116; t=1733318991; c=relaxed/simple;
+	bh=taL63lGoC+rOfxqQvmZWNVQDc87d8a10c/kclBT9mpM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=r4uLD7DS5LxUPFkTVMVtg8puKNfVavvAfxMBK6BmQUw6Wl6bkR4BSHsFKy1w9TVEKBOftxV3gHHOthBabIdm+C0C6QkM/cqD1KbhsWtHXwC40mMmBSE//AA59IDeqOKk7uSIXGh8mjjRyOHUETyt60RFCX3SYFclwJENGXdXzfA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B719C4CED1;
+	Wed,  4 Dec 2024 13:29:49 +0000 (UTC)
+Message-ID: <a9eed620-5cf7-4fdc-a00a-87b488c2a63c@xs4all.nl>
+Date: Wed, 4 Dec 2024 14:29:47 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241204103042.1904639-1-arnd@kernel.org> <20241204103042.1904639-6-arnd@kernel.org>
-In-Reply-To: <20241204103042.1904639-6-arnd@kernel.org>
-From: Brian Gerst <brgerst@gmail.com>
-Date: Wed, 4 Dec 2024 08:29:17 -0500
-Message-ID: <CAMzpN2joPcvg887tJLF_4SU4aJt+wTGy2M_xaExrozLS-mvXsw@mail.gmail.com>
-Subject: Re: [PATCH 05/11] x86: remove HIGHMEM64G support
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org, 
-	Arnd Bergmann <arnd@arndb.de>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
-	"H. Peter Anvin" <hpa@zytor.com>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	Andy Shevchenko <andy@kernel.org>, Matthew Wilcox <willy@infradead.org>, 
-	Sean Christopherson <seanjc@google.com>, Davide Ciminaghi <ciminaghi@gnudd.com>, 
-	Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 5/5] docs: media: profile: make it clearer about
+ maintainership duties
+Content-Language: en-US
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+ Ricardo Ribalda <ribalda@chromium.org>
+References: <cover.1733218348.git.mchehab+huawei@kernel.org>
+ <f74d32eba4c1799fe7fd407a3889a3de91fb09f2.1733218348.git.mchehab+huawei@kernel.org>
+ <57ed2ba7-ebe8-433f-bb52-914a020ca468@xs4all.nl>
+ <20241204135127.7b295c19@foz.lan>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+In-Reply-To: <20241204135127.7b295c19@foz.lan>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Dec 4, 2024 at 5:34=E2=80=AFAM Arnd Bergmann <arnd@kernel.org> wrot=
-e:
->
-> From: Arnd Bergmann <arnd@arndb.de>
->
-> The HIGHMEM64G support was added in linux-2.3.25 to support (then)
-> high-end Pentium Pro and Pentium III Xeon servers with more than 4GB of
-> addressing, NUMA and PCI-X slots started appearing.
->
-> I have found no evidence of this ever being used in regular dual-socket
-> servers or consumer devices, all the users seem obsolete these days,
-> even by i386 standards:
->
->  - Support for NUMA servers (NUMA-Q, IBM x440, unisys) was already
->    removed ten years ago.
->
->  - 4+ socket non-NUMA servers based on Intel 450GX/450NX, HP F8 and
->    ServerWorks ServerSet/GrandChampion could theoretically still work
->    with 8GB, but these were exceptionally rare even 20 years ago and
->    would have usually been equipped with than the maximum amount of
->    RAM.
->
->  - Some SKUs of the Celeron D from 2004 had 64-bit mode fused off but
->    could still work in a Socket 775 mainboard designed for the later
->    Core 2 Duo and 8GB. Apparently most BIOSes at the time only allowed
->    64-bit CPUs.
->
->  - In the early days of x86-64 hardware, there was sometimes the need
->    to run a 32-bit kernel to work around bugs in the hardware drivers,
->    or in the syscall emulation for 32-bit userspace. This likely still
->    works but there should never be a need for this any more.
->
-> Removing this also drops the need for PHYS_ADDR_T_64BIT and SWIOTLB.
-> PAE mode is still required to get access to the 'NX' bit on Atom
-> 'Pentium M' and 'Core Duo' CPUs.
+On 12/4/24 13:51, Mauro Carvalho Chehab wrote:
+> Em Wed, 4 Dec 2024 13:11:45 +0100
+> Hans Verkuil <hverkuil@xs4all.nl> escreveu:
+> 
+>> On 12/3/24 10:35, Mauro Carvalho Chehab wrote:
+>>> During the review of the media committer's profile, it was noticed
+>>> that the responsibility for timely review patches was not clear:
+>>> such review is expected that all developers listed at MAINTAINERS
+>>> with the "M:" tag (e.g. "maintainers" on its broad sense).
+>>>
+>>> This is orthogonal of being a media committer or not. Such duty
+>>> is implied at:
+>>>
+>>> 	Documentation/admin-guide/reporting-issues.rst
+>>>
+>>> and at the MAINTAINERS header, when it says that even when the
+>>> status is "odd fixes", the patches will flow in.
+>>>
+>>> So, let make it explicit at the maintainer-entry-profile that
+>>> maintainers need to do timely reviews.
+>>>
+>>> Also, while right now our focus is on granting committer rights to
+>>> maintainers, the media-committer model may evolve in the future to
+>>> accept other committers that don't have such duties.
+>>>
+>>> So, make it clear at the media-committer.rst that the duties
+>>> related to reviewing patches from others are for the drivers
+>>> they are maintainers as well.
+>>>
+>>> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+>>> ---
+>>>  Documentation/driver-api/media/maintainer-entry-profile.rst | 5 +++++
+>>>  Documentation/driver-api/media/media-committer.rst          | 6 +++---
+>>>  2 files changed, 8 insertions(+), 3 deletions(-)
+>>>
+>>> diff --git a/Documentation/driver-api/media/maintainer-entry-profile.rst b/Documentation/driver-api/media/maintainer-entry-profile.rst
+>>> index fa28059f7b3f..87b71f89b1df 100644
+>>> --- a/Documentation/driver-api/media/maintainer-entry-profile.rst
+>>> +++ b/Documentation/driver-api/media/maintainer-entry-profile.rst
+>>> @@ -173,6 +173,11 @@ b. Committers' workflow: patches are handled by media committers::
+>>>  On both workflows, all patches shall be properly reviewed at
+>>>  linux-media@vger.kernel.org (LMML) before being merged at media-committers.git.
+>>>  
+>>> +Such patches will be reviewed timely by the maintainers and reviewers as
+>>> +listed in the MAINTAINERS file. The subsystem maintainers will follow one of
+>>> +the above workflows, e. g. they will either send a pull request or merge
+>>> +patches directly at the media-committers tree.
+>>> +
+>>>  When patches are picked by patchwork and when merged at media-committers,
+>>>  CI bots will check for errors and may provide e-mail feedback about
+>>>  patch problems. When this happens, the patch submitter must fix them, or
+>>> diff --git a/Documentation/driver-api/media/media-committer.rst b/Documentation/driver-api/media/media-committer.rst
+>>> index 3d0987a8a93b..0bc038a0fdcc 100644
+>>> --- a/Documentation/driver-api/media/media-committer.rst
+>>> +++ b/Documentation/driver-api/media/media-committer.rst
+>>> @@ -90,9 +90,9 @@ be a part of their maintenance tasks.
+>>>  Due to that, to become a committer or a core committer, a consensus between
+>>>  all subsystem maintainers is required, as they all need to trust a developer
+>>>  well enough to be delegated the responsibility to maintain part of the code
+>>> -and to properly review patches from third parties, in a timely manner and
+>>> -keeping the status of the reviewed code at https://patchwork.linuxtv.org
+>>> -updated.
+>>> +and to properly review patches from third parties for the drivers that they
+>>> +maintain in a timely manner and keeping the status of the patches at
+>>> +https://patchwork.linuxtv.org updated.
+>>>  
+>>>  .. Note::
+>>>    
+>>
+>> Looks OK to me, but I thought this was supposed to be folded into the 3/5 and 4/5 patches?
 
-8GB of memory is still useful for 32-bit guest VMs.
+For the record:
 
+Reviewed-by: Hans Verkuil <hverkuil@xs4all.nl>
 
-Brian Gerst
+You can also add that for patches 1 and 2 (I found them in lore.kernel.org).
+
+Regards,
+
+	Hans
+
+> 
+> I'll fold it once you and Ricardo gives the same review/Sob as marked on 3/5 and 4/5.
+> 
+> 
+> Thanks,
+> Mauro
+
 
