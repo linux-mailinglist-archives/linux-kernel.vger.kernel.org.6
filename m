@@ -1,100 +1,97 @@
-Return-Path: <linux-kernel+bounces-431826-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99A249E41D0
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:37:27 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB5D89E41D5
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:38:00 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E5641624FB
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:37:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DEEB286C09
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 17:37:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 501A21C3BE0;
-	Wed,  4 Dec 2024 17:08:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 106411F03CB;
+	Wed,  4 Dec 2024 17:10:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="GpY+XFKl"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pz/m5ukH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F4C91C3BE2
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 17:08:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F836768FD;
+	Wed,  4 Dec 2024 17:10:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733332135; cv=none; b=Nm1Sf+SftLRBXj8LoQ4SCEk0AvsVZawe3ntmNtCVz2h0aG9bCXnE2bzC3hJqnHjO8plTftTI+75Pqt0JeEkyzYzGsD2QRpTk4Cp7mgjtu5BCXMvjIZiMAd6UVDsXYHSR/q5YTUMK7KgZejZt7wo/X6IilGsep2TTlVqBNHpKHpU=
+	t=1733332214; cv=none; b=T8N4V1c807dmpN0dZC6zpTyv0CUCM2twGKtJx9V8lB3fo2KlR8QM7/TcRJH60l1yZmFJOPnvCWEa0EbHf/ypf7Iw4ce+bL74QIM+nN3m8t5o4rVEFLIZ2unAOnNKHOwbVzlBhTKSNz6dDQ1uTyQRueC8a3H12ql+nLAWY/6L9Go=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733332135; c=relaxed/simple;
-	bh=5gCPZVrrifqnSFAQWHbs+OifVGQuIbzw/66LkaDUaWg=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=CEH4D06vUQtJgZHfgFjpUxk2hwGGM6jGXxdbR0N+q5wSzqo0Ey6jFoKwHNAo9AsLbNju0+kwldLMdnAuoxYN1ybc1cVLz2rdcK4xs1+8Zf174megYoq7WmYRLkzXAEC8MKvw04O+lREN4lSYKH0Jer01uw9pJosi+DofQBjkslU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=GpY+XFKl; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-724e6c53fe2so34894b3a.3
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2024 09:08:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1733332134; x=1733936934; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=nili2EeXhBBnCR9E7SrWkjme6AdYdFkZANnDcpM0kP4=;
-        b=GpY+XFKlZNrV3hUUZGDIaXqUfM4WonHUI5bCYdmZwWEDR8S62d8geDp6dIAqnw8XNF
-         J0e0MDGPUh/D6JNSfxPrEEmuFQVObYTBM3SkN05xdpwmxdD/vh07vraA7RQkRGe8j5g+
-         y786XWszefTJVdCHTW1K1ONTjPWTYdXR1akRogvlbQnOCNCNP81ah7cN/Tm/gDYtI+8J
-         TRBNeIcOIJ4OpQgN6ldvsb6ZSyV8wVcvzizgmicXYvov3JiXNS3AEihrqsIfAuppPBbr
-         PU6U2advuXR8TQPK1Qiy5lzlIJfgrR2XfVgmyY0EGCo5QXE3uLRznn86ezyJRyKKK+Cc
-         1hWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733332134; x=1733936934;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nili2EeXhBBnCR9E7SrWkjme6AdYdFkZANnDcpM0kP4=;
-        b=BMB0SNSzzatsfdo58DE5iqMqA4XPvaJLUF30czsrkenps2z/laiUeRH/5GeyHfw4ch
-         CRwLZ36hC6cZqCCiQ6OWaMzEFQmB/TPwfvuJnIz6JRC9Z+W7txD93oi48DI7WUElMrCF
-         joJHXqTNCom/xj13uHN2KvZbMWWr5GPPGaj5tvhwDjG6jIF4n/B6iwZrrQKvm0ZAnkel
-         cCwZJ6Lwr7/7ex/P6hwlATeiIQfZnyLdvXulzW1AdS4dPaoISntcVq3JhWGGOwLTa/oO
-         K8ccPYGGI2zBDeEnZGjTCVSYN4F1GobiWs2wdNNHbC4H+thAnIoWcemni6f7emviWO8L
-         0srg==
-X-Forwarded-Encrypted: i=1; AJvYcCUy16XneLpxDdAHHB7ua7cMKYUIcDZGf/IJuow+Cq1cyUc8IQULUHTqS8sRJC8rg6IvBuprMZRadnE6g3c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyV1R1HjvT0X1gHZFmTaV3mwxddO7SaY79QKlkWNU/trNrBt9lN
-	VpaWa2s84YqQ0OZYpnJxJIRJVlJn4tGalLcz/8BTUMmoZ8VTr3MruE6WAwGmtpA=
-X-Gm-Gg: ASbGncuJ0NvpmU9pkafNE847ABqdiRvbQcl0ZCFbkb4DDhzQm4RE3SmJeNzy3oyvxiP
-	YUCrYm7Ekns1G5XS7L9bQNuSm+my4szosDvLe6kPLIWjstL8YJF9fk+QlJk7jdrmpY3NjAeFpPb
-	SWFx9sa8JgWRj6Qlt088JMo0LSSZD8DsKv3TVkqGSAb1K0BYxgPDT2EWDcFsZS+iFO+DXu9TWQt
-	J15Xj05O9LluV1cx3jwcAjhE8EW/00fA5fSz5uruyp9NBsCm3wmLcwMWg==
-X-Google-Smtp-Source: AGHT+IE/dcKUbzDldznX90U6aZ3I9fPcXtLjv21sHTghzH/vPO7ZipqAKTafj4KlAoSHYtxs5LKwZg==
-X-Received: by 2002:a05:6a00:3d52:b0:724:f1c7:dfbb with SMTP id d2e1a72fcca58-72587f00457mr7404358b3a.7.1733332133692;
-        Wed, 04 Dec 2024 09:08:53 -0800 (PST)
-Received: from ?IPV6:2620:10d:c096:122::1:2343? ([2620:10d:c090:600::1:a7a9])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7254180fcb0sm12954875b3a.147.2024.12.04.09.08.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Dec 2024 09:08:53 -0800 (PST)
-Message-ID: <61930195-ef48-4ce0-b1e1-f3a8a0a7fc30@kernel.dk>
-Date: Wed, 4 Dec 2024 10:08:52 -0700
+	s=arc-20240116; t=1733332214; c=relaxed/simple;
+	bh=srhR42igPHOP88vC5+31EX3+TZIitMY6D0mNNuXDRkE=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=e+S6tlYFiWp2/1LFkxTeSOxnerC8W1GGkQ3SPovkOVbglEGUGA+g3qiSL7ZmW/LDoADoEw7RbXwNdFnQJ9dNiCA5NZsJu149yEiWVRW+ZmbdZ6QtsYea07JWVZJKuLzwFlHZDHoZ9kqQDM7fRSITTSwq7QSUIMjADUQCOeR5rTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pz/m5ukH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB9B7C4CED1;
+	Wed,  4 Dec 2024 17:10:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733332213;
+	bh=srhR42igPHOP88vC5+31EX3+TZIitMY6D0mNNuXDRkE=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=pz/m5ukHO+JFf5myDR57agTDiLQwze+wDGy/I+x6glQi/paUofY7JkTxdzAHkTicI
+	 IkJfFOUJS7wkDxdpqEnQqEzy3K5GjyYT2Jq3HrV5zIdT6x5jRhsJw33gDN5+Qt7krW
+	 g0v5CTnLG2cH2Znyy1I2cew3Q7fpMbgzTB1SJUNuEXs9QnzzbBYcn+8Qd/FL1s7N7o
+	 M1v1RP/FXJnHcX8qhdxvyi+tPkOJz6C5GtAHwYkf+KRAJm2+4+MiNlLC8Aerbnbj4x
+	 EOf1//FAnBUIKqMXsTvCvSJhnZkJmAq5cFwmUUmC1fcVgF0DlckantaoGHmE/q6Gtc
+	 0M3dv60ALUoSA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 710503806659;
+	Wed,  4 Dec 2024 17:10:29 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Jens Axboe <axboe@kernel.dk>
-Subject: Re: [syzbot] [io-uring?] general protection fault in
- io_uring_show_fdinfo (2)
-To: syzbot <syzbot+6cb1e1ecb22a749ef8e8@syzkaller.appspotmail.com>
-Cc: asml.silence@gmail.com, io-uring@vger.kernel.org,
- linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-References: <67251dc5.050a0220.529b6.015d.GAE@google.com>
- <67255272.050a0220.35b515.017b.GAE@google.com>
-Content-Language: en-US
-In-Reply-To: <67255272.050a0220.35b515.017b.GAE@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH bpf-next] tools/testing/selftests/bpf/test_tc_tunnel.sh: Fix
+ wait for server bind
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <173333222826.1270267.13827895138847245146.git-patchwork-notify@kernel.org>
+Date: Wed, 04 Dec 2024 17:10:28 +0000
+References: <20241202204530.1143448-1-leogrande@google.com>
+In-Reply-To: <20241202204530.1143448-1-leogrande@google.com>
+To: Marco Leogrande <leogrande@google.com>
+Cc: andrii@kernel.org, eddyz87@gmail.com, mykolal@fb.com, ast@kernel.org,
+ daniel@iogearbox.net, martin.lau@linux.dev, song@kernel.org,
+ yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
+ sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, shuah@kernel.org,
+ alessandro.carminati@gmail.com, willemb@google.com, zhuyifei@google.com,
+ bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org
 
-#syz fix: io_uring/rsrc: get rid of the empty node and dummy_ubuf
+Hello:
 
+This patch was applied to bpf/bpf-next.git (master)
+by Alexei Starovoitov <ast@kernel.org>:
+
+On Mon,  2 Dec 2024 12:45:30 -0800 you wrote:
+> Commit f803bcf9208a ("selftests/bpf: Prevent client connect before
+> server bind in test_tc_tunnel.sh") added code that waits for the
+> netcat server to start before the netcat client attempts to connect to
+> it. However, not all calls to 'server_listen' were guarded.
+> 
+> This patch adds the existing 'wait_for_port' guard after the remaining
+> call to 'server_listen'.
+> 
+> [...]
+
+Here is the summary with links:
+  - [bpf-next] tools/testing/selftests/bpf/test_tc_tunnel.sh: Fix wait for server bind
+    https://git.kernel.org/bpf/bpf-next/c/e2f0791124a1
+
+You are awesome, thank you!
 -- 
-Jens Axboe
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
