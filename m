@@ -1,84 +1,122 @@
-Return-Path: <linux-kernel+bounces-432013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-432025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CAC19E45C0
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 21:31:21 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F5299E45D6
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 21:34:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F23AAB45673
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:53:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C8F4FB29F9D
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:59:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 456F61C3BE2;
-	Wed,  4 Dec 2024 18:51:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="iZZGSebo"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3089C1BBBE0;
+	Wed,  4 Dec 2024 18:59:20 +0000 (UTC)
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67FF726AC1;
-	Wed,  4 Dec 2024 18:51:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF8A01A8F76
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 18:59:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733338291; cv=none; b=r5XHcm5SNcYAgMFVYowD+4U5Yf28Jhzc902JFGKpNc5/+I774qqz+Mn4RMCAorWiOPPlRMjareDR2pkNNnAldXbDgSwzb7ABKC0jos1BEmQ1LAFQldWRZvI/kaNIg6oflPFQepkPExu2kH1nhRYt1F3mOcqfWquEX2uRWEUIANY=
+	t=1733338759; cv=none; b=c0AuBSHD5hEvTyGiUHetNvN3aHLfYHspFOzIUDMY7znKEYDfN3R47AK9xFA7jx5BYjVIPrYJ6FU3H+i1La+XKTpq0pxO8dffRPkDcBFeqU57N3T5hzAvyvrLTgejdC1xLxTdgUMGbI0TpVbYcfShC8F8qsqGxLFQtz8aRYxIS2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733338291; c=relaxed/simple;
-	bh=l9Gq4VrWql6pFYa/zpV4swTzVUCQHgcZyumww0xkHz4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j7Jn+cPAkqidpvnzEi6JbuErho6uFoQbcls3gkf4V+9//xn1NnTFKwRNVACHafX+2OucS5KyNBzhSJzX6QUUNwBsW2TOFbFbUfyt5n2wkE5AE2RKWHyZVX3KRGu5S3/QdegSNGKok1viVHv0/daUuSf89LuhICO/eZQxKrImHyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=iZZGSebo; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=gzwaDKFITa3a1kTuMDLUi8RHqXoRF8SnJ574ygIwsd8=; b=iZZGSeboGs336wLmOOqXq+foP+
-	nAGvWZZ+SPmzamZr8qKmSDivHHisRlQa2H+KQPjwIRJLsX7JdQMiS/CDOBE7U/g7Ti4GJKrbjPNlb
-	oS4d94OeCdyOm1vcyKt3uoY63qF0oCAYsVgs7HjrdUcZVxcjzc05gKIyj9tHwOxk/5i/FI9icc7XJ
-	v+MW324n61ZHgRmXDo/39K9ECJsUKMJNmd+kdQFCkxlvJ6DfKSn9bjpEuRYofCnMR65WDqjMHbP+c
-	s0zoZY/AixFtSfsgH+8KCw1jQaICZPXV0LynPTnRMp3MY/EvJL0rfcJGyuzx6qstLCQ8PsAtr+vOi
-	LASG/mfg==;
-Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tIuT8-0000000BocF-1oSK;
-	Wed, 04 Dec 2024 18:51:26 +0000
-Date: Wed, 4 Dec 2024 18:51:26 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Tamir Duberstein <tamird@gmail.com>
-Cc: Jens Axboe <axboe@kernel.dk>,
-	syzbot <syzbot+092bbab7da235a02a03a@syzkaller.appspotmail.com>,
-	asml.silence@gmail.com, io-uring@vger.kernel.org,
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-	Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [syzbot] [io-uring?] KASAN: null-ptr-deref Write in
- sys_io_uring_register
-Message-ID: <Z1Ckrl-gC3HpPj0W@casper.infradead.org>
-References: <67505f88.050a0220.17bd51.0069.GAE@google.com>
- <6be84787-b1d9-4a20-85f3-34d8d9a0d492@kernel.dk>
- <a41eb55f-01b3-4388-a98c-cc0de15179bd@kernel.dk>
- <CAJ-ks9kN_qddZ3Ne5d=cADu5POC1rHd4rQcbVSD_spnZOrLLZg@mail.gmail.com>
- <1ab4e254-0254-4089-888b-2ec2ce152302@kernel.dk>
- <Z1CCbyZVOXQRDz_2@casper.infradead.org>
- <CAJ-ks9k5BZ1eSezMZX2oRT8JbNDra1-PoFa+dWnboW_kT4d11A@mail.gmail.com>
- <CAJ-ks9mfswrDNPjbakUsEtCTY-GbEoOGkOCrfAymDbDvUFgz5g@mail.gmail.com>
+	s=arc-20240116; t=1733338759; c=relaxed/simple;
+	bh=qHwjlkQR3ShY5K4tBiUFaFw+YpTmPQOJPvoRV0HZLBA=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 MIME-Version:Content-Type; b=k7M8Ihfj+RvaapOLpYF7jE3wvzcKzt6QeTkGEbgLy5apUTBJ/kdBXbBBw7NJes9f8picQXO2a8JRVcU0uynP0hJxRNnqnlT2jk4KA3qNeVUjyiXPy4q79nuI6smrSG7UGQA6g56BSyk9NKH8xwW5CNhWlfjVdUZ/1+yhAOzJayg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-94-4n0Sm6D0MO2WXn6s9TvfQw-1; Wed, 04 Dec 2024 18:59:14 +0000
+X-MC-Unique: 4n0Sm6D0MO2WXn6s9TvfQw-1
+X-Mimecast-MFC-AGG-ID: 4n0Sm6D0MO2WXn6s9TvfQw
+Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
+ (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Wed, 4 Dec
+ 2024 18:58:36 +0000
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Wed, 4 Dec 2024 18:58:36 +0000
+From: David Laight <David.Laight@ACULAB.COM>
+To: Vincent Mailhol <mailhol.vincent@wanadoo.fr>, Linus Torvalds
+	<torvalds@linux-foundation.org>, Luc Van Oostenryck
+	<luc.vanoostenryck@gmail.com>, Nathan Chancellor <nathan@kernel.org>, "Nick
+ Desaulniers" <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>, Yury Norov <yury.norov@gmail.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Kees Cook <kees@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>, Jani Nikula
+	<jani.nikula@linux.intel.com>, Joonas Lahtinen
+	<joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>, Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Rikard Falkeborn
+	<rikard.falkeborn@gmail.com>, Martin Uecker
+	<Martin.Uecker@med.uni-goettingen.de>
+CC: "linux-sparse@vger.kernel.org" <linux-sparse@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"llvm@lists.linux.dev" <llvm@lists.linux.dev>,
+	"linux-hardening@vger.kernel.org" <linux-hardening@vger.kernel.org>,
+	"intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"coresight@lists.linaro.org" <coresight@lists.linaro.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Subject: RE: [PATCH 06/10] fortify: replace __is_constexpr() by is_const() in
+ strlen()
+Thread-Topic: [PATCH 06/10] fortify: replace __is_constexpr() by is_const() in
+ strlen()
+Thread-Index: AQHbROCtAolgstMk70q+qVJ51CWvhbLWcpEg
+Date: Wed, 4 Dec 2024 18:58:35 +0000
+Message-ID: <ad4482cc835543578862051431f5174f@AcuMS.aculab.com>
+References: <20241203-is_constexpr-refactor-v1-0-4e4cbaecc216@wanadoo.fr>
+ <20241203-is_constexpr-refactor-v1-6-4e4cbaecc216@wanadoo.fr>
+In-Reply-To: <20241203-is_constexpr-refactor-v1-6-4e4cbaecc216@wanadoo.fr>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJ-ks9mfswrDNPjbakUsEtCTY-GbEoOGkOCrfAymDbDvUFgz5g@mail.gmail.com>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: 9fvZVDhEeoFmiddO53PKXcKDwUId42vFsjPVfEZtS2M_1733338753
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 
-On Wed, Dec 04, 2024 at 01:39:37PM -0500, Tamir Duberstein wrote:
-> > I thought I did, but when I ran it again just now, this test did catch
-> > it. So there is coverage.
-> 
-> Matthew, would you consider a patch that migrates the xarray tests to kunit?
+RnJvbTogVmluY2VudCBNYWlsaG9sDQo+IFNlbnQ6IDAyIERlY2VtYmVyIDIwMjQgMTc6MzMNCj4g
+DQo+IEZyb206IFZpbmNlbnQgTWFpbGhvbCA8bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI+DQo+
+IA0KPiBpc19jb25zdCgpIGlzIGEgb25lIHRvIG9uZSByZXBsYWNlbWVudCBvZiBfX2lzX2NvbnN0
+ZXhwcigpLiBEbyB0aGUNCj4gcmVwbGFjZW1lbnQgc28gdGhhdCBfX2lzX2NvbnN0ZXhwcigpIGNh
+biBiZSByZW1vdmVkLg0KPiANCj4gU2lnbmVkLW9mZi1ieTogVmluY2VudCBNYWlsaG9sIDxtYWls
+aG9sLnZpbmNlbnRAd2FuYWRvby5mcj4NCj4gLS0tDQo+ICBpbmNsdWRlL2xpbnV4L2ZvcnRpZnkt
+c3RyaW5nLmggfCA0ICsrLS0NCj4gIDEgZmlsZSBjaGFuZ2VkLCAyIGluc2VydGlvbnMoKyksIDIg
+ZGVsZXRpb25zKC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEvaW5jbHVkZS9saW51eC9mb3J0aWZ5LXN0
+cmluZy5oIGIvaW5jbHVkZS9saW51eC9mb3J0aWZ5LXN0cmluZy5oDQo+IGluZGV4IDBkOTliZjEx
+ZDI2MGEzNDgyYmJlNDZlMzVjNzU1M2MwY2NmYjhiOTQuLmUzZjJmNzcyYzU0MzllZjcxZWI0YTkw
+NGI0Y2UyNzk1NmJjNjk3NDMgMTAwNjQ0DQo+IC0tLSBhL2luY2x1ZGUvbGludXgvZm9ydGlmeS1z
+dHJpbmcuaA0KPiArKysgYi9pbmNsdWRlL2xpbnV4L2ZvcnRpZnktc3RyaW5nLmgNCj4gQEAgLTI1
+NCw4ICsyNTQsOCBAQCBfX0ZPUlRJRllfSU5MSU5FIF9fa2VybmVsX3NpemVfdCBzdHJubGVuKGNv
+bnN0IGNoYXIgKiBjb25zdCBQT1MgcCwgX19rZXJuZWxfc2l6ZQ0KPiAgICogUmV0dXJucyBudW1i
+ZXIgb2YgY2hhcmFjdGVycyBpbiBAcCAoTk9UIGluY2x1ZGluZyB0aGUgZmluYWwgTlVMKS4NCj4g
+ICAqDQo+ICAgKi8NCj4gLSNkZWZpbmUgc3RybGVuKHApCQkJCQkJCVwNCj4gLQlfX2J1aWx0aW5f
+Y2hvb3NlX2V4cHIoX19pc19jb25zdGV4cHIoX19idWlsdGluX3N0cmxlbihwKSksCVwNCj4gKyNk
+ZWZpbmUgc3RybGVuKHApCQkJCQkJXA0KPiArCV9fYnVpbHRpbl9jaG9vc2VfZXhwcihpc19jb25z
+dChfX2J1aWx0aW5fc3RybGVuKHApKSwJXA0KPiAgCQlfX2J1aWx0aW5fc3RybGVuKHApLCBfX2Zv
+cnRpZnlfc3RybGVuKHApKQ0KDQpJJ20gc3VyZSBMaW51cyBzdWdnZXN0ZWQgYSB3YXkgb2YgZG9p
+bmcgdGhhdCB3aXRob3V0IHJlcGxpY2F0aW5nDQp0aGUgX19idWlsdGluX3N0cmxlbigpLg0KDQpJ
+bmRlZWQgaXQgbWF5IGJlIHZhbGlkIHRvIGRvOg0KCWxlbiA9IF9fYnVpbHRpbl9zdHJsZW4ocCk7
+DQoJX19idWlsdGluX2NvbnN0YW50X3AobGVuKSA/IGxlbiA6IF9fZm9ydGlmeV9zdHJsZW4ocCk7
+DQoNCglEYXZpZA0KDQo+ICBfX0ZPUlRJRllfSU5MSU5FIF9fZGlhZ25vc2VfYXMoX19idWlsdGlu
+X3N0cmxlbiwgMSkNCj4gIF9fa2VybmVsX3NpemVfdCBfX2ZvcnRpZnlfc3RybGVuKGNvbnN0IGNo
+YXIgKiBjb25zdCBQT1MgcCkNCj4gDQo+IC0tDQo+IDIuNDUuMg0KPiANCj4gDQoNCi0NClJlZ2lz
+dGVyZWQgQWRkcmVzcyBMYWtlc2lkZSwgQnJhbWxleSBSb2FkLCBNb3VudCBGYXJtLCBNaWx0b24g
+S2V5bmVzLCBNSzEgMVBULCBVSw0KUmVnaXN0cmF0aW9uIE5vOiAxMzk3Mzg2IChXYWxlcykNCg==
 
-how would that help?  it's already a kernel module as well as being a
-userspace testsuite.  kunit just seemed to add useless boilerplate last
-tie i looked.
 
