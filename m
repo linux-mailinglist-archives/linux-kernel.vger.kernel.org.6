@@ -1,69 +1,130 @@
-Return-Path: <linux-kernel+bounces-431962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-431963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C91C99E4529
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 20:56:42 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAA139E4628
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 21:57:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0C449B36C17
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:20:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 886DFB391D8
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2024 18:21:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C25D01A8F60;
-	Wed,  4 Dec 2024 18:20:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D36181A8F7C;
+	Wed,  4 Dec 2024 18:21:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="czlmAW6m"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P8zJzR0H"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BB7F23918A
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2024 18:20:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C99423918A;
+	Wed,  4 Dec 2024 18:21:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733336452; cv=none; b=YOVejp36jnCpjWnYkswmdNdEJzZ/8JeuB78VmnrRgu4v3M1RNViLZxxn7T5cdrLnEFZpeWvnmsclmZzZf5cAhUr0VHvvLPt0GWH85VHneKW09gjsQJYt1D+BMI2ACBSA3/Q4Kf+3E+olv2AXpo9vsIX7m3I+5s8csHqYc5q4098=
+	t=1733336505; cv=none; b=NZPSMX3ldyKl2pK7xfbNNt/Fwh5S6I5Dirc38930UOFx/7vvF4ZVVu9pf63m2ENRBV3V20ztLidMOcQ2LilVV2kuDlISu9JodrkT8FqrtO9rvL+p1SaS2fllz2y8SVW8trRYF4qBCzahHfOEjl4ZLPcc9OjYTsltAOlviGX7XYQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733336452; c=relaxed/simple;
-	bh=vTfYTgZ2HhDd4sDtskxxkSPUDGOGE1J5hwe4gG5aidY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EFYBxZLBBSo22H2FkB/oynDXoUuND4Za7mQR6EmEQQYPDNE12zyE89Xkt4uGVf7UM8Si3txEySYfkBi/fn9jG+r8dYu8kZq463nOwi+r4roi6lS6yGQMl+Q8RJ1cY24liRabRAQ9WioCCnbsH3LwXkzXT5qEiSljvfyyh8vEO5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=czlmAW6m; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9A8BC4CECD;
-	Wed,  4 Dec 2024 18:20:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733336452;
-	bh=vTfYTgZ2HhDd4sDtskxxkSPUDGOGE1J5hwe4gG5aidY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=czlmAW6m49YwIa0dmF44ABJYMThfiWonKWE4fH4ajYEVKHWTqq5afkrnCeCf5t1zT
-	 WpErwprZJhloUtz0eTzBPL9l20imOZUAQ6ls/+xrBbODwRrFD6FMvb2N2uuKBn+m+b
-	 GTvxffUFtylKZXDUVaUcRPKuGcszM+56t8/Emr387fWGWlio6GE2oK8tmwEwxHCdVS
-	 MRSA3/B5pAvj5+59TZj83MLkWSXT4t1o/+WmcRmDY11cq6Ii/IhcJ37iWEajzkCFmr
-	 mZ+L2FpuaQ7ZKFP2w6dHuHR7QKvHqPMJJsiL2rr5olTRvGKWaGPARE4QF3WhgLEob0
-	 SUrHcj+euDzgA==
-Date: Wed, 4 Dec 2024 10:20:49 -0800
-From: Keith Busch <kbusch@kernel.org>
-To: "brookxu.cn" <brookxu.cn@gmail.com>
-Cc: axboe@kernel.dk, hch@lst.de, sagi@grimberg.me,
-	linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
-	hare@suse.de, lengchao@huawei.com
-Subject: Re: [PATCH v3 0/4] nvme: various bugs fix & code cleanup
-Message-ID: <Z1CdgbZr9a8WbW1b@kbusch-mbp>
-References: <cover.1733196360.git.chunguang.xu@shopee.com>
+	s=arc-20240116; t=1733336505; c=relaxed/simple;
+	bh=uME13l5HovQ3NZyv34mfUDUdqGg1uJwju50MkEmn3vQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QljQ7eY1nPi6ozBMjLr+WQZRueM9ruim0rwDojIyg6eZi/R+cfwzhcUXlCk3RGIAipBo6rnWPaAhFFJayx/IHBLYpbzhDBsXawW6DHbe6ekoYPcIdfmuPdwzt9dAMf+zWECeCFbgz0+pD6nD/y+/c2K0afbFuSvMNKZC7taPHSY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P8zJzR0H; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-53de8ecb39bso146653e87.2;
+        Wed, 04 Dec 2024 10:21:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733336502; x=1733941302; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uME13l5HovQ3NZyv34mfUDUdqGg1uJwju50MkEmn3vQ=;
+        b=P8zJzR0HjnbeGcX1DzZL+RtzGWJiq54pmlkX9DrPWYGyRT77Rf8MfvMXJASJkRYyX9
+         8R9RDma09a25Ufepuoj6RN4WCU5IDqeZdyq0SYeVZJlYq5gjr9XinWnHsMvn/w6iKPno
+         Ddxfu4zpVoV44lhlrtTnadHvQEayvOBMo3F+7Si55hah8BTn/iAsV8CcILaEIYsQJPS0
+         YFnxfJ/++0cn3WnxtHYMJh0v9bGk99bsHLrLzyrcxHQvTV1ClVznrDVMnPvY8UV0JBrs
+         JwZkztVrCSDqa9GVQbGLNgtuGgtrEw7GKoSOGRLHUTZjcHeLdhf7EyyRj0gwS46hHCUh
+         Tf7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733336502; x=1733941302;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uME13l5HovQ3NZyv34mfUDUdqGg1uJwju50MkEmn3vQ=;
+        b=dOrOXYKcFwz5HwDMfmzsMiC8Y0jRQYVmOIv3/UfuH5UY5naFnmgyg7jaEjpSaxm8Nd
+         IZZRti4LQBICqLnzxiIdjK6Nq2/0B7CI6f4zmuf3XdQo/Hb+7VHTZUec4nsQswFbsSMQ
+         p8roWVQ0MvGLcYYbWUdn06kUQ5vsYBI5+afoFOlQVC2TvwFjTvA4/zx2UylZxEgD0gUt
+         hNOaKwn2GMr6WB0t8SxKD1hDMp0Vc5gha9DRgv4H5Zu3nz/dn1XWhthcmP305+cxnvhr
+         H7T7Sn7s+l+zfydjANhCg5TAjXYnENjnWdu9Yuek8Sm4sfxIo0YeRIDTSEnVNOu9HkgF
+         EUEA==
+X-Forwarded-Encrypted: i=1; AJvYcCUO/Vu20E9x4r/wDPledn53EtxLLUXFIg5czQbnMGl3yWrsPdYmxeAsgw6ZBNY8aNXVDPo=@vger.kernel.org, AJvYcCVwhLLXwJt1EpAqJnP+S8TkbIlc6VbWR4BZXFw3cXMCUYkpiHbK3qlkhabfhezfspsUI5dMTe5n4YY8+A/i@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzjlZagBfspnHyTt4YHPe6VskBmeKH6Vcv6FnvsKPuzstt0iGo
+	fthpoNY+G/YoUYQ2XYqF0uBrAb2G3GBPpT3uS+rs7ocsJ4bR497tdcnzP2M/9GCYeIXU1eQ5q0k
+	u+jy+oPSj0Y3dm1OYU5isrTMxcmU=
+X-Gm-Gg: ASbGncuJSWdNlaY3xqW7LR824lgir+qQSKkkVE7jCXbYGSVMUb0gAuuVM7vDlcgw9bX
+	+6TczZcY606XeUVoqucpvilv1aokwah8=
+X-Google-Smtp-Source: AGHT+IHqZimxoCyGtBnst+WJ5pzCbapVWH5mhYIjHSkEmNWXMwGSZsnIZshHuLlPBJphjw0Ao4JRV6PYRdpAc2LLuH4=
+X-Received: by 2002:a05:6512:3ca2:b0:53e:1b9d:4a4 with SMTP id
+ 2adb3069b0e04-53e1b9d0560mr3729506e87.3.1733336501332; Wed, 04 Dec 2024
+ 10:21:41 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1733196360.git.chunguang.xu@shopee.com>
+References: <20241204103042.1904639-1-arnd@kernel.org> <20241204103042.1904639-4-arnd@kernel.org>
+ <87ed2nsi4d.ffs@tglx> <3B214995-70A6-4777-B7E3-F10018F7D71E@zytor.com>
+In-Reply-To: <3B214995-70A6-4777-B7E3-F10018F7D71E@zytor.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Wed, 4 Dec 2024 20:21:04 +0200
+Message-ID: <CAHp75VfZW2A1s+QLdVHXnFV16dWhM=T5gtWw97d1gM-Pys+CZw@mail.gmail.com>
+Subject: Re: [PATCH 03/11] x86: Kconfig.cpu: split out 64-bit atom
+To: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Arnd Bergmann <arnd@kernel.org>, linux-kernel@vger.kernel.org, 
+	x86@kernel.org, Arnd Bergmann <arnd@arndb.de>, Ingo Molnar <mingo@redhat.com>, 
+	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, Andy Shevchenko <andy@kernel.org>, 
+	Matthew Wilcox <willy@infradead.org>, Sean Christopherson <seanjc@google.com>, 
+	Davide Ciminaghi <ciminaghi@gnudd.com>, Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Dec 03, 2024 at 11:34:39AM +0800, brookxu.cn wrote:
-> From: "Chunguang.xu" <chunguang.xu@shopee.com>
-> 
-> Here try to fix the hang issue of nvme-rdma, memory leak issue of
-> nvme-tcp, and cleanup the relative code of nvme-tcp.
+On Wed, Dec 4, 2024 at 5:55=E2=80=AFPM H. Peter Anvin <hpa@zytor.com> wrote=
+:
+>
+> On December 4, 2024 5:16:50 AM PST, Thomas Gleixner <tglx@linutronix.de> =
+wrote:
+> >On Wed, Dec 04 2024 at 11:30, Arnd Bergmann wrote:
+> >> From: Arnd Bergmann <arnd@arndb.de>
+> >>
+> >> Both 32-bit and 64-bit builds allow optimizing using "-march=3Datom", =
+but
+> >> this is somewhat suboptimal, as gcc and clang use this option to refer
+> >> to the original in-order "Bonnell" microarchitecture used in the early
+> >> "Diamondville" and "Silverthorne" processors that were mostly 32-bit o=
+nly.
+> >>
+> >> The later 22nm "Silvermont" architecture saw a significant redesign to
+> >> an out-of-order architecture that is reflected in the -mtune=3Dsilverm=
+ont
+> >> flag in the compilers, and all of these are 64-bit capable.
+> >
+> >In theory. There are quite some crippled variants of silvermont which
+> >are 32-bit only (either fused or at least officially not-supported to
+> >run 64-bit)...
 
-Thanks, applied to nvme-6.13.
+> Yeah. That was a sad story, which I unfortunately am not at liberty to sh=
+are.
+
+Are they available in the wild? What I know with that core are
+Merrifield, Moorefield, and Bay Trail that were distributed in
+millions and are perfectly available, but I never heard about ones
+that are 32-bit only. The Avoton and Rangley I have read about on
+https://en.wikipedia.org/wiki/Silvermont seems specific to the servers
+and routers and most likely are gone from use.
+
+
+--=20
+With Best Regards,
+Andy Shevchenko
 
